@@ -9,7 +9,8 @@ lib/elua/Elua.h
 lib_elua_libelua_la_SOURCES = \
 	lib/elua/elua_private.h \
 	lib/elua/elua.c \
-	lib/elua/io.c
+	lib/elua/io.c \
+	lib/elua/cache.c
 
 lib_elua_libelua_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@ \
 	-DLOCALE_DIR=\"@LOCALE_DIR@\" \
@@ -29,7 +30,6 @@ bin_PROGRAMS += bin/elua/elua
 
 bin_elua_elua_SOURCES = \
 	bin/elua/main.h \
-	bin/elua/cache.c \
 	bin/elua/main.c
 
 bin_elua_elua_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@ \

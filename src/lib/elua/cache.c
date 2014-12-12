@@ -1,14 +1,11 @@
-#include "config.h" 
-
-/* elua bytecode caching */
+#include "Elua.h"
+#include "elua_private.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <unistd.h>
-
-#include "main.h"
 
 /* bytecode caching */
 
@@ -152,8 +149,8 @@ getf_map(lua_State *L EINA_UNUSED, void *ud, size_t *size)
    return fmap;
 }
 
-int
-elua_loadfile(lua_State *L, const char *fname)
+EAPI int
+elua_io_loadfile(lua_State *L, const char *fname)
 {
    Map_Stream s;
    int status;
@@ -191,7 +188,7 @@ static int
 loadfile(lua_State *L)
 {
    const char *fname = luaL_optstring(L, 1, NULL);
-   int status = elua_loadfile(L, fname),
+   int status = elua_io_loadfile(L, fname),
        hasenv = (lua_gettop(L) >= 3);
    if (!status)
      {
@@ -207,8 +204,8 @@ loadfile(lua_State *L)
    return 2;
 }
 
-void
-elua_register_cache(lua_State *L)
+EAPI void
+elua_io_register(lua_State *L)
 {
    lua_pushcfunction(L, loadfile);
    lua_setglobal(L, "loadfile");

@@ -195,7 +195,7 @@ elua_dolib(lua_State *L, const char *libname)
 static int
 elua_dofile(lua_State *L, const char *fname)
 {
-   return elua_report(L, elua_loadfile(L, fname) || elua_docall(L, 0, 1));
+   return elua_report(L, elua_io_loadfile(L, fname) || elua_docall(L, 0, 1));
 }
 
 static int
@@ -238,14 +238,14 @@ elua_doscript(lua_State *L, int argc, char **argv, int n, int *quit)
         if (f)
           {
              fclose(f);
-             status = elua_loadfile(L, fname);
+             status = elua_io_loadfile(L, fname);
           }
         else
           status = !elua_loadapp(L, fname);
      }
    else
      {
-        status = elua_loadfile(L, fname);
+        status = elua_io_loadfile(L, fname);
      }
    lua_insert(L, -(narg + 1));
    if (!status)
@@ -444,7 +444,7 @@ elua_main(lua_State *L)
           }
      }
    snprintf(modfile, sizeof(modfile), "%s/module.lua", coref);
-   if (elua_report(L, elua_loadfile(L, modfile)))
+   if (elua_report(L, elua_io_loadfile(L, modfile)))
      {
         m->status = 1;
         return 0;
@@ -460,7 +460,7 @@ elua_main(lua_State *L)
    lua_call(L, 2, 0);
 
    snprintf(modfile, sizeof(modfile), "%s/gettext.lua", coref);
-   if (elua_report(L, elua_loadfile(L, modfile)))
+   if (elua_report(L, elua_io_loadfile(L, modfile)))
      {
         m->status = 1;
         return 0;
@@ -468,7 +468,7 @@ elua_main(lua_State *L)
    elua_state_setup_i18n(L);
    lua_call(L, 1, 0);
 
-   elua_register_cache(L);
+   elua_io_register(L);
    lua_gc(L, LUA_GCRESTART, 0);
 
    INF("elua lua state initialized");
