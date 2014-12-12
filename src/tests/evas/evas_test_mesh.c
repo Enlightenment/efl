@@ -48,6 +48,11 @@
         eo_do(mesh2, evas_3d_mesh_file_set(buffer, NULL));                                                      \
         res = _compare_meshes(mesh, mesh2);                                                                     \
         fail_if(res == 1);                                                                                      \
+        eo_do(mesh, evas_3d_mesh_mmap_set(eina_file_open(file->path, 0), NULL));                                \
+        eo_do(mesh, evas_3d_mesh_save(buffer, NULL));                                                           \
+        eo_do(mesh2, evas_3d_mesh_mmap_set(eina_file_open(buffer, 0), NULL));                                   \
+        res = _compare_meshes(mesh, mesh2);                                                                     \
+        fail_if(res == 1);                                                                                      \
         eo_del(mesh2);                                                                                          \
         eo_del(mesh);                                                                                           \
      }
