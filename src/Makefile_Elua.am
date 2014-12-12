@@ -29,7 +29,6 @@ lib_elua_libelua_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 bin_PROGRAMS += bin/elua/elua
 
 bin_elua_elua_SOURCES = \
-	bin/elua/main.h \
 	bin/elua/main.c
 
 bin_elua_elua_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@ \

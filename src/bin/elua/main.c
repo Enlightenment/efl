@@ -1,10 +1,25 @@
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 /* The Lua runtime component of the EFL */
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <getopt.h>
 
-#include "main.h"
+#ifdef ENABLE_NLS
+# include <locale.h>
+# include <libintl.h>
+# define _(x) dgettext(PACKAGE, x)
+#else
+# define _(x) (x)
+#endif
+
+#include <Eina.h>
+#include <Ecore.h>
+
+#include "Elua.h"
 
 typedef struct Arg_Data
 {
@@ -25,7 +40,13 @@ static int          elua_appload_ref = LUA_REFNIL;
 static const char  *elua_progname    = NULL;
 static Eina_Prefix *elua_prefix      = NULL;
 
-int el_log_domain = -1;
+static int _el_log_domain = -1;
+
+#define DBG(...) EINA_LOG_DOM_DBG(_el_log_domain, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_el_log_domain, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_el_log_domain, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_el_log_domain, __VA_ARGS__)
+#define CRT(...) EINA_LOG_DOM_CRITICAL(_el_log_domain, __VA_ARGS__)
 
 static void
 elua_errmsg(const char *pname, const char *msg)
@@ -279,8 +300,8 @@ elua_bin_shutdown(lua_State *L, int c)
    if (elua_prefix) eina_prefix_free(elua_prefix);
 
    if (L) lua_close(L);
-   if (el_log_domain != EINA_LOG_DOMAIN_GLOBAL)
-     eina_log_domain_unregister(el_log_domain);
+   if (_el_log_domain != EINA_LOG_DOMAIN_GLOBAL)
+     eina_log_domain_unregister(_el_log_domain);
    elua_shutdown();
    exit(c);
 }
@@ -537,14 +558,14 @@ main(int argc, char **argv)
 
    elua_init();
 
-   if (!(el_log_domain = eina_log_domain_register("elua", EINA_COLOR_ORANGE)))
+   if (!(_el_log_domain = eina_log_domain_register("elua", EINA_COLOR_ORANGE)))
      {
         printf("cannot set elua log domain\n");
         ERR("could not set elua log domain.");
-        el_log_domain = EINA_LOG_DOMAIN_GLOBAL;
+        _el_log_domain = EINA_LOG_DOMAIN_GLOBAL;
      }
 
-   INF("elua logging initialized: %d", el_log_domain);
+   INF("elua logging initialized: %d", _el_log_domain);
 
    if (!(L = luaL_newstate()))
      {
