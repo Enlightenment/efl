@@ -9942,6 +9942,13 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
 	edje_edit_string_free(s);
      }
 
+   /* Filter */
+   if (epr->filter.part && epr->filter.state)
+     {
+        BUF_APPENDF(I4"filter: \"%s\" \"%s\";\n",
+                    epr->filter.part, epr->filter.state);
+     }
+
    /* Action */
    switch (epr->action)
      {
