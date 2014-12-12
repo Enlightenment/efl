@@ -3146,9 +3146,10 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
              enginelist[p++] = ELM_SOFTWARE_PSL1GHT;
           }
 #endif
-
 #ifdef HAVE_ELEMENTARY_X
-        else if ((getenv("DISPLAY")) && (!getenv("ELM_ENGINE")))
+        else if (!elm_config_engine_get() &&
+                 !elm_config_preferred_engine_get() &&
+                 getenv("DISPLAY") && !getenv("ELM_ENGINE"))
           {
              if (_accel_is_gl())
                {
@@ -3162,9 +3163,10 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
                }
           }
 #endif
-
 #ifdef HAVE_ELEMENTARY_WAYLAND
-        else if ((getenv("WAYLAND_DISPLAY")) && (!getenv("ELM_ENGINE")))
+        else if (!elm_config_engine_get() &&
+                 !elm_config_preferred_engine_get() &&
+                 getenv("WAYLAND_DISPLAY") && !getenv("ELM_ENGINE"))
           {
              if (_accel_is_gl())
                {
