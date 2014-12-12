@@ -2724,7 +2724,6 @@ macroexpand(cpp_reader * pfile, HASHNODE * hp)
 	 * macarg absorbed the rest of the args. */
 	i = 0;
 	rest_args = 0;
-	rest_args = 0;
 	FORWARD(1);		/* Discard the open-parenthesis before the first arg.  */
 	do
 	  {
