@@ -12,6 +12,15 @@ static Eldbus_Connection *_conn = NULL;
 static Eldbus_Object *_obj = NULL;
 static Eldbus_Proxy *_proxy = NULL;
 
+static Eldbus_Object *_disp_obj = NULL;
+static Eldbus_Proxy *_disp_proxy = NULL;
+
+typedef enum {
+     VERSION_ON_LOW_BATTERY,
+     VERSION_WARNING_LEVEL
+}Ecore_System_Upower_Version;
+static Ecore_System_Upower_Version _version = 0;
+
 #ifdef CRI
 #undef CRI
 #endif
@@ -33,26 +42,77 @@ static Eldbus_Proxy *_proxy = NULL;
 #define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
 
 static Eina_Bool _ecore_on_battery = EINA_FALSE;
-static unsigned int _ecore_low_battery = 0;
+static Eina_Bool _ecore_low_battery = EINA_FALSE;
+static int _ecore_battery_level = -1;
 
-static int uversions[3] = {0}; //major, minor, micro
+static Eina_Bool _ecore_system_upower_display_device_init(void);
 static void _ecore_system_upower_shutdown(void);
 
 static void
 _battery_eval(void)
 {
-   if (uversions[0] >= 1) return;
-   if (uversions[1] >= 99)
-     ecore_power_state_set(_ecore_low_battery);
-   else
+   Ecore_Power_State power_state = ECORE_POWER_STATE_MAINS;
+
+   if (_ecore_low_battery)
      {
-        if (_ecore_low_battery)
-          ecore_power_state_set(ECORE_POWER_STATE_LOW);
-        else if (_ecore_on_battery)
-          ecore_power_state_set(ECORE_POWER_STATE_BATTERY);
-        else
-          ecore_power_state_set(ECORE_POWER_STATE_MAINS);
+        power_state = ECORE_POWER_STATE_LOW;
      }
+   else if (_ecore_on_battery)
+     {
+        power_state = ECORE_POWER_STATE_BATTERY;
+
+        /* FIXME: get level value from libupower? */
+        if (_ecore_battery_level >= 3)
+          {
+             power_state = ECORE_POWER_STATE_LOW;
+          }
+     }
+
+   ecore_power_state_set(power_state);
+}
+
+static void
+_warning_level_from_variant(Eldbus_Message_Iter *variant)
+{
+   unsigned int val;
+
+   if (!eldbus_message_iter_get_and_next(variant, 'u', &val))
+     {
+        ERR("Error getting WarningLevel.");
+        return;
+     }
+
+   _ecore_battery_level = val;
+   _battery_eval();
+}
+
+static void
+_warning_level_get_cb(void *data EINA_UNUSED,
+                      const Eldbus_Message *msg,
+                      Eldbus_Pending *pending EINA_UNUSED)
+{
+   Eldbus_Message_Iter *variant;
+   const char *errname, *errmsg;
+
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
+     {
+        ERR("Message error %s - %s", errname, errmsg);
+        return;
+     }
+   if (!eldbus_message_arguments_get(msg, "v", &variant))
+     {
+        ERR("Error getting arguments.");
+        return;
+     }
+
+   _warning_level_from_variant(variant);
+}
+
+static void
+_warning_level_get(Eldbus_Proxy *proxy)
+{
+   eldbus_proxy_property_get(proxy, "WarningLevel",
+                             _warning_level_get_cb, NULL);
 }
 
 static void
@@ -72,17 +132,10 @@ _on_low_battery_from_variant(Eldbus_Message_Iter *variant)
 }
 
 static void
-_on_low_battery_from_uint(unsigned int level)
-{
-   DBG("OnLowBattery=%hhu", level);
-   _ecore_low_battery = level;
-   _battery_eval();
-}
-
-static void
 _on_low_battery_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
                         Eldbus_Pending *pending EINA_UNUSED)
 {
+   Eldbus_Message_Iter *variant;
    const char *errname, *errmsg;
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
@@ -90,49 +143,20 @@ _on_low_battery_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
         ERR("Message error %s - %s", errname, errmsg);
         return;
      }
-
-   if (uversions[0] >= 1)
+   if (!eldbus_message_arguments_get(msg, "v", &variant))
      {
-        ERR("Unsupported new UPower version!");
+        ERR("Error getting arguments.");
         return;
      }
-   if (uversions[1] >= 99)
-     {
-        unsigned int level;
 
-        if (!eldbus_message_arguments_get(msg, "u", &level))
-          {
-             ERR("Error getting arguments.");
-             return;
-          }
-        _on_low_battery_from_uint(level);
-     }
-   else
-     {
-        Eldbus_Message_Iter *variant;
-
-        if (!eldbus_message_arguments_get(msg, "v", &variant))
-          {
-             ERR("Error getting arguments.");
-             return;
-          }
-        _on_low_battery_from_variant(variant);
-     }
+   _on_low_battery_from_variant(variant);
 }
 
 static void
 _on_low_battery_get(Eldbus_Proxy *proxy)
 {
-   /* version specific battery properties */
-   if (uversions[0] < 1)
-     {
-        if (uversions[1] >= 99)
-          {/* FIXME: this module needs a huge refactoring since WarningLevel property is per-device */}
-        else
-          eldbus_proxy_property_get(proxy, "OnLowBattery", _on_low_battery_get_cb, NULL);
-     }
-   else
-     CRI("SOMEBODY SHOULD BE MAINTAINING THIS MODULE!!!!!!!");
+   eldbus_proxy_property_get(proxy, "OnLowBattery",
+                             _on_low_battery_get_cb, NULL);
 }
 
 static void
@@ -180,6 +204,88 @@ _on_battery_get(Eldbus_Proxy *proxy)
 }
 
 static void
+_battery_state_get()
+{
+   switch (_version)
+     {
+      case VERSION_ON_LOW_BATTERY:
+         _on_low_battery_get(_proxy);
+         break;
+      case VERSION_WARNING_LEVEL:
+         if (_ecore_system_upower_display_device_init())
+           _warning_level_get(_disp_proxy);
+         break;
+      default:
+         break;
+     }
+}
+
+static void
+_daemon_version_from_variant(Eldbus_Message_Iter *variant)
+{
+   const char *val;
+   char **version;
+   int standard[3] = {0, 99, 0}; // upower >= 0.99.0 provides WarningLevel instead of OnLowBattery
+   int i;
+
+   if (!eldbus_message_iter_get_and_next(variant, 's', &val))
+     {
+        ERR("Error getting DaemonVersion.");
+        return;
+     }
+   version = eina_str_split(val, ".", 3);
+
+   for (i = 0; i < 3; i ++)
+     {
+        if (atoi(version[i]) > standard[i])
+          {
+             _version = VERSION_WARNING_LEVEL;
+             break;
+          }
+        else if (atoi(version[i]) < standard[i])
+          {
+             _version = VERSION_ON_LOW_BATTERY;
+             break;
+          }
+        else if (i == 2)
+          {
+             _version = VERSION_WARNING_LEVEL;
+             break;
+          }
+     }
+
+   _battery_state_get();
+}
+
+static void
+_daemon_version_get_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
+                          Eldbus_Pending *pending EINA_UNUSED)
+{
+   Eldbus_Message_Iter *variant;
+   const char *errname, *errmsg;
+
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
+     {
+        ERR("Message error %s - %s", errname, errmsg);
+        return;
+     }
+   if (!eldbus_message_arguments_get(msg, "v", &variant))
+     {
+        ERR("Error getting arguments.");
+        return;
+     }
+
+   _daemon_version_from_variant(variant);
+}
+
+static void
+_daemon_version_get(Eldbus_Proxy *proxy)
+{
+   eldbus_proxy_property_get(proxy, "DaemonVersion",
+                             _daemon_version_get_cb, NULL);
+}
+
+static void
 _props_changed(void *data, const Eldbus_Message *msg)
 {
    Eldbus_Proxy *proxy = data;
@@ -201,31 +307,10 @@ _props_changed(void *data, const Eldbus_Message *msg)
           continue;
         if (strcmp(key, "OnBattery") == 0)
           _on_battery_from_variant(var);
-        if (uversions[0] >= 1)
-          {
-             ERR("Unsupported new UPower version!");
-             return;
-          }
-        if (uversions[1] >= 99)
-          {
-             /* FIXME: this will never be hit since it's on the wrong proxy */
-#if 0
-             if (strcmp(key, "WarningLevel") == 0)
-               {
-                  unsigned int level;
-
-                  if (!eldbus_message_iter_get_and_next(var, 'u', &level))
-                    ERR("Error getting OnBattery.");
-                  else
-                    _on_low_battery_from_uint(level);
-               }
-#endif
-          }
-        else
-          {
-             if (strcmp(key, "OnLowBattery") == 0)
-               _on_low_battery_from_variant(var);
-          }
+        if (strcmp(key, "OnLowBattery") == 0)
+          _on_low_battery_from_variant(var);
+        if (strcmp(key, "WarningLevel") == 0)
+          _warning_level_from_variant(var);
      }
 
    while (eldbus_message_iter_get_and_next(invalidated, 's', &prop))
@@ -234,44 +319,9 @@ _props_changed(void *data, const Eldbus_Message *msg)
           _on_battery_get(proxy);
         if (strcmp(prop, "OnLowBattery") == 0)
           _on_low_battery_get(proxy);
+        if (strcmp(prop, "WarningLevel") == 0)
+          _warning_level_get(proxy);
      }
-}
-
-static void
-_version_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
-{
-   const char *errname, *errmsg, *v;
-   char vers[128], *e;
-   unsigned int i;
-   Eldbus_Message_Iter *variant;
-
-   /* FIXME: if either of these fail...do something? */
-   if (eldbus_message_error_get(msg, &errname, &errmsg))
-     {
-        ERR("Message error %s - %s", errname, errmsg);
-        return;
-     }
-   if ((!eldbus_message_arguments_get(msg, "v", &variant)) ||
-       (!eldbus_message_iter_get_and_next(variant, 's', &v)))
-     {
-        ERR("Error getting version.");
-        return;
-     }
-   e = strncpy(vers, v, sizeof(vers) - 1);
-   for (i = 0; e[0] && (i < 3); i++, e++)
-     {
-        errno = 0;
-        uversions[i] = strtol(e, &e, 10);
-        if (errno) break;
-     }
-   if ((uversions[0] >= 1) || (uversions[1] >= 99))
-     {
-        /* may as well kill the module since it'll do more harm than good */
-        ERR("Unsupported new UPower version!");
-        _ecore_system_upower_shutdown();
-        return;
-     }
-   _on_low_battery_get(data);
 }
 
 static void _upower_name_owner_cb(void *data,
@@ -285,10 +335,53 @@ static void _upower_name_owner_cb(void *data,
        old_id, new_id);
 
    if ((new_id) && (new_id[0]))
-     eldbus_proxy_property_get(proxy, "DaemonVersion", _version_get, proxy);
+     {
+        _daemon_version_get(proxy);
+     }
 }
 
-static void _ecore_system_upower_shutdown(void);
+static Eina_Bool
+_ecore_system_upower_display_device_init(void)
+{
+   Eldbus_Signal_Handler *s;
+
+   _disp_obj =
+      eldbus_object_get(_conn, "org.freedesktop.UPower",
+                        "/org/freedesktop/UPower/devices/DisplayDevice");
+   if (!_disp_obj)
+     {
+        ERR("could not get object name=org.freedesktop.UPower, "
+            "path=/org/freedesktop/UPower/devices/DisplayDevice");
+        goto disp_error;
+     }
+
+   _disp_proxy = eldbus_proxy_get(_disp_obj, "org.freedesktop.UPower");
+   if (!_disp_proxy)
+     {
+        ERR("could not get proxy interface=org.freedesktop.UPower, "
+            "name=org.freedesktop.UPower, "
+            "path=/org/freedesktop/UPower/devices/DisplayDevice");
+        goto disp_error;
+     }
+
+   s = eldbus_proxy_properties_changed_callback_add(_disp_proxy,
+                                                    _props_changed,
+                                                    _disp_proxy);
+   if (!s)
+     {
+        ERR("could not add signal handler for properties changed for proxy "
+            "interface=org.freedesktop.UPower, "
+            "name=org.freedesktop.UPower, "
+            "path=/org/freedesktop/UPower/devices/DisplayDevice");
+        goto disp_error;
+     }
+
+   return EINA_TRUE;
+
+disp_error:
+   _ecore_system_upower_shutdown();
+   return EINA_FALSE;
+}
 
 static Eina_Bool
 _ecore_system_upower_init(void)
@@ -353,6 +446,17 @@ _ecore_system_upower_shutdown(void)
    eldbus_name_owner_changed_callback_del(_conn, "org.freedesktop.UPower",
                                           _upower_name_owner_cb,
                                           NULL);
+  if (_disp_proxy)
+     {
+        eldbus_proxy_unref(_disp_proxy);
+        _disp_proxy = NULL;
+     }
+
+   if (_disp_obj)
+     {
+        eldbus_object_unref(_disp_obj);
+        _disp_obj = NULL;
+     }
 
    if (_proxy)
      {
@@ -379,7 +483,6 @@ _ecore_system_upower_shutdown(void)
      }
 
    eldbus_shutdown();
-   memset(&uversions, 0, sizeof(uversions));
 }
 
 EINA_MODULE_INIT(_ecore_system_upower_init);
