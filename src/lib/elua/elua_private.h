@@ -1,6 +1,18 @@
 #ifndef _ELUA_PRIVATE_H
 #define _ELUA_PRIVATE_H
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#ifdef ENABLE_NLS
+# include <locale.h>
+# include <libintl.h>
+# define _(x) dgettext(PACKAGE, x)
+#else
+# define _(x) (x)
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 

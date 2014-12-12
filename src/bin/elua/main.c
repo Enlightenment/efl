@@ -326,40 +326,6 @@ const luaL_reg cutillib[] =
    { NULL                , NULL                    }
 };
 
-static int
-elua_gettext_bind_textdomain(lua_State *L)
-{
-#ifdef ENABLE_NLS
-   const char *textdomain = luaL_checkstring(L, 1);
-   const char *dirname    = luaL_checkstring(L, 2);
-   const char *ret;
-   if (!textdomain[0] || !strcmp(textdomain, PACKAGE))
-     {
-        lua_pushnil(L);
-        lua_pushliteral(L, "invalid textdomain");
-        return 2;
-     }
-   if (!(ret = bindtextdomain(textdomain, dirname)))
-     {
-        lua_pushnil(L);
-        lua_pushstring(L, strerror(errno));
-        return 2;
-     }
-   bind_textdomain_codeset(textdomain, "UTF-8");
-   lua_pushstring(L, ret);
-   return 1;
-#else
-   lua_pushliteral(L, "");
-   return 1;
-#endif
-}
-
-const luaL_reg gettextlib[] =
-{
-   { "bind_textdomain", elua_gettext_bind_textdomain },
-   { NULL, NULL }
-};
-
 static void
 elua_print_help(const char *pname, FILE *stream)
 {
@@ -412,12 +378,6 @@ elua_main(lua_State *L)
 
    int    argc = m->argc;
    char **argv = m->argv;
-
-#ifdef ENABLE_NLS
-   char *(*dgettextp)(const char*, const char*) = dgettext;
-   char *(*dngettextp)(const char*, const char*, const char*, unsigned long)
-      = dngettext;
-#endif
 
    elua_progname = (argv[0] && argv[0][0]) ? argv[0] : "elua";
 
@@ -507,14 +467,7 @@ elua_main(lua_State *L)
         m->status = 1;
         return 0;
      }
-   lua_createtable(L, 0, 0);
-   luaL_register(L, NULL, gettextlib);
-#ifdef ENABLE_NLS
-   lua_pushlightuserdata(L, *((void**)&dgettextp));
-   lua_setfield(L, -2, "dgettext");
-   lua_pushlightuserdata(L, *((void**)&dngettextp));
-   lua_setfield(L, -2, "dngettext");
-#endif
+   elua_state_setup_i18n(L);
    lua_call(L, 1, 0);
 
    elua_register_cache(L);

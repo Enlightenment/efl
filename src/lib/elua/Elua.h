@@ -54,8 +54,14 @@ extern "C" {
 
 #ifdef EFL_BETA_API_SUPPORT
 
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+
 EAPI int elua_init(void);
 EAPI int elua_shutdown(void);
+
+EAPI void elua_state_setup_i18n(lua_State *L);
 
 #endif
 

@@ -63,3 +63,55 @@ elua_shutdown(void)
    eina_shutdown();
    return _elua_init_counter;
 }
+
+static int
+_elua_gettext_bind_textdomain(lua_State *L)
+{
+#ifdef ENABLE_NLS
+   const char *textdomain = luaL_checkstring(L, 1);
+   const char *dirname    = luaL_checkstring(L, 2);
+   const char *ret;
+   if (!textdomain[0] || !strcmp(textdomain, PACKAGE))
+     {
+        lua_pushnil(L);
+        lua_pushliteral(L, "invalid textdomain");
+        return 2;
+     }
+   if (!(ret = bindtextdomain(textdomain, dirname)))
+     {
+        lua_pushnil(L);
+        lua_pushstring(L, strerror(errno));
+        return 2;
+     }
+   bind_textdomain_codeset(textdomain, "UTF-8");
+   lua_pushstring(L, ret);
+   return 1;
+#else
+   lua_pushliteral(L, "");
+   return 1;
+#endif
+}
+
+const luaL_reg gettextlib[] =
+{
+   { "bind_textdomain", _elua_gettext_bind_textdomain },
+   { NULL, NULL }
+};
+
+EAPI void
+elua_state_setup_i18n(lua_State *L)
+{
+#ifdef ENABLE_NLS
+   char *(*dgettextp)(const char*, const char*) = dgettext;
+   char *(*dngettextp)(const char*, const char*, const char*, unsigned long)
+      = dngettext;
+#endif
+   lua_createtable(L, 0, 0);
+   luaL_register(L, NULL, gettextlib);
+#ifdef ENABLE_NLS
+   lua_pushlightuserdata(L, *((void**)&dgettextp));
+   lua_setfield(L, -2, "dgettext");
+   lua_pushlightuserdata(L, *((void**)&dngettextp));
+   lua_setfield(L, -2, "dngettext");
+#endif
+}
