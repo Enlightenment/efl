@@ -3324,37 +3324,56 @@ evas_textblock2_cursor_word_end(Evas_Textblock2_Cursor *cur)
 EAPI Eina_Bool
 evas_textblock2_cursor_char_next(Evas_Textblock2_Cursor *cur)
 {
-   int ind;
-   const Eina_Unicode *text;
-
    if (!cur) return EINA_FALSE;
    TB_NULL_CHECK(cur->node, EINA_FALSE);
 
-   ind = cur->pos;
-   text = eina_ustrbuf_string_get(cur->node->unicode);
-   if (text[ind]) ind++;
-   /* Only allow pointing a null if it's the last paragraph.
-    * because we don't have a PS there. */
-   if (text[ind])
+   Eina_Inlist *node = EINA_INLIST_GET(cur->node);
+   size_t len = eina_ustrbuf_length_get(cur->node->unicode);
+
+   /* Len -1 to account for the PS */
+   if (cur->pos < len)
      {
-        cur->pos = ind;
+        cur->pos++;
         return EINA_TRUE;
      }
    else
      {
-        if (!evas_textblock2_cursor_paragraph_next(cur))
+        if (node->next)
           {
-             /* If we already were at the end, that means we don't have
-              * where to go next we should return FALSE */
-             if (cur->pos == (size_t) ind)
-                return EINA_FALSE;
-
-             cur->pos = ind;
+             cur->node = EINA_INLIST_CONTAINER_GET(node->next, Evas_Object_Textblock2_Node_Text);
+             cur->pos = 0;
              return EINA_TRUE;
           }
         else
           {
+             return EINA_FALSE;
+          }
+     }
+}
+
+EAPI Eina_Bool
+evas_textblock2_cursor_char_prev(Evas_Textblock2_Cursor *cur)
+{
+   if (!cur) return EINA_FALSE;
+   TB_NULL_CHECK(cur->node, EINA_FALSE);
+
+   if (cur->pos > 0)
+     {
+        cur->pos--;
+        return EINA_TRUE;
+     }
+   else
+     {
+        Eina_Inlist *node = EINA_INLIST_GET(cur->node);
+        if (node->prev)
+          {
+             cur->node = EINA_INLIST_CONTAINER_GET(node->prev, Evas_Object_Textblock2_Node_Text);
+             cur->pos = eina_ustrbuf_length_get(cur->node->unicode) - 1;
              return EINA_TRUE;
+          }
+        else
+          {
+             return EINA_FALSE;
           }
      }
 }
@@ -3645,6 +3664,18 @@ _evas_textblock2_node_text_new(void)
    return n;
 }
 
+static inline Eina_Unicode *
+_unicode_strchrnul(Eina_Unicode *str, Eina_Unicode c)
+{
+   for ( ; *str ; str++)
+     {
+        if (*str == c)
+           return str;
+     }
+
+   return str;
+}
+
 /**
  * @internal
  * Break a paragraph. This does not add a PS but only splits the paragraph
@@ -3654,38 +3685,75 @@ _evas_textblock2_node_text_new(void)
  * @param fnode the format node of the PS just added.
  * @return Returns no value.
  */
-static Evas_Object_Textblock2_Node_Text *
-_evas_textblock2_cursor_break_paragraph(Evas_Textblock2_Cursor *cur)
+static void
+_evas_textblock2_node_text_insert(Evas_Textblock2_Data *o, Evas_Textblock2_Cursor *cur,
+      Eina_Unicode *text)
 {
    Evas_Object_Textblock2_Node_Text *n;
+   Eina_Unicode *par_sep;
+   par_sep = _unicode_strchrnul(text, _PARAGRAPH_SEPARATOR);
 
-   if (!cur) return NULL;
-   Evas_Textblock2_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
-
-   n = _evas_textblock2_node_text_new();
-   o->text_nodes = _NODE_TEXT(eina_inlist_append_relative(
-            EINA_INLIST_GET(o->text_nodes),
-            EINA_INLIST_GET(n),
-            EINA_INLIST_GET(cur->node)));
-   /* Handle text and format changes. */
-   if (cur->node)
+   if (*par_sep)
      {
-        size_t len, start;
-        const Eina_Unicode *text;
-
-        /* cur->pos now points to the PS, move after. */
-        start = cur->pos + 1;
-        len = eina_ustrbuf_length_get(cur->node->unicode) - start;
-        if (len > 0)
+        Eina_Unicode *append_text = NULL;
+        /* If adding before the end, we need to split the node. */
+        if (cur->pos < eina_ustrbuf_length_get(cur->node->unicode))
           {
-             text = eina_ustrbuf_string_get(cur->node->unicode);
-             eina_ustrbuf_append_length(n->unicode, text + start, len);
-             eina_ustrbuf_remove(cur->node->unicode, start, start + len);
-             cur->node->dirty = EINA_TRUE;
-          }
-     }
+             size_t len, start;
+             /* cur->pos now points to the PS, move after. */
+             start = cur->pos;
+             len = eina_ustrbuf_length_get(cur->node->unicode) - start;
+             if (len > 0)
+               {
+                  const Eina_Unicode *ntext;
 
-   return n;
+                  ntext = eina_ustrbuf_string_get(cur->node->unicode);
+                  append_text = eina_unicode_strdup(ntext + start);
+                  eina_ustrbuf_remove(cur->node->unicode, start, start + len);
+                  cur->node->dirty = EINA_TRUE;
+               }
+
+          }
+
+        n = cur->node;
+        while (*par_sep)
+          {
+             Evas_Object_Textblock2_Node_Text *lastn = n;
+
+             int add_len = par_sep - text;
+             eina_ustrbuf_append_length(cur->node->unicode, text, add_len);
+             n->dirty = EINA_TRUE;
+
+             text += add_len + 1; /* Skip the PS too */
+             par_sep = _unicode_strchrnul(text, _PARAGRAPH_SEPARATOR);
+
+             n = _evas_textblock2_node_text_new();
+             o->text_nodes = _NODE_TEXT(eina_inlist_append_relative(
+                      EINA_INLIST_GET(o->text_nodes),
+                      EINA_INLIST_GET(n),
+                      EINA_INLIST_GET(lastn)));
+          }
+
+        eina_ustrbuf_prepend_length(n->unicode, text, par_sep - text);
+
+        /* FIXME: Too slow, could do with zero copy. */
+        if (append_text)
+          {
+             eina_ustrbuf_append(n->unicode, append_text);
+          }
+        n->dirty = EINA_TRUE;
+
+        cur->node = n;
+        cur->pos = par_sep - text;
+     }
+   else
+     {
+        int add_len = par_sep - text;
+        eina_ustrbuf_insert_length(cur->node->unicode, text, add_len, cur->pos);
+        cur->node->dirty = EINA_TRUE;
+
+        cur->pos += add_len;
+     }
 }
 
 /**
@@ -3823,9 +3891,9 @@ _evas_textblock2_cursor_text_prepend(Evas_Textblock2_Cursor *cur, const char *_t
    text = eina_unicode_utf8_to_unicode(_text, &len);
    Evas_Textblock2_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
 
-   n = cur->node;
-   if (n)
+   if (cur->node)
      {
+        n = cur->node;
      }
    else if (o->text_nodes)
      {
@@ -3841,29 +3909,12 @@ _evas_textblock2_cursor_text_prepend(Evas_Textblock2_Cursor *cur, const char *_t
         cur->node = n;
      }
 
-   /* FIXME: I can do the post set/get thing more efficient. */
-   int pos = evas_textblock2_cursor_pos_get(cur);
-   eina_ustrbuf_insert_length(n->unicode, text, len, cur->pos);
-
-   int last_sep = 0;
-   int i;
-   for (i = 0 ; i < len ; i++)
-     {
-        if (text[i] == _PARAGRAPH_SEPARATOR)
-          {
-             cur->pos = i - last_sep;
-             cur->node = _evas_textblock2_cursor_break_paragraph(cur);
-             last_sep = i;
-          }
-     }
+   _evas_textblock2_node_text_insert(o, cur, text);
 
    /* Update all the cursors after our position. */
    _evas_textblock2_cursors_update_offset(cur, cur->node, cur->pos, len);
 
-   evas_textblock2_cursor_pos_set(cur, pos + len);
-
    _evas_textblock2_changed(o, cur->obj);
-   n->dirty = EINA_TRUE;
    free(text);
 
    if (!o->cursor->node)
