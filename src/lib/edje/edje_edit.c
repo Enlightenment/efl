@@ -8040,7 +8040,11 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
    epr->tween.time = ZERO;
    epr->targets = NULL;
    epr->after = NULL;
-
+   epr->sample_name = NULL;
+   epr->speed = 1.0;
+   epr->channel = EDJE_CHANNEL_EFFECT;
+   epr->tone_name = NULL;
+   epr->duration = 0.1;
 
    //Update table_programs
    ed->collection->patterns.table_programs_size++;
@@ -8125,6 +8129,8 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
    _edje_if_string_free(ed, epr->filter.state);
    _edje_if_string_free(ed, epr->state);
    _edje_if_string_free(ed, epr->state2);
+   _edje_if_string_free(ed, epr->sample_name);
+   _edje_if_string_free(ed, epr->tone_name);
 
    EINA_LIST_FREE(epr->targets, prt)
      free(prt);
@@ -8297,6 +8303,110 @@ edje_edit_program_source_set(Evas_Object *obj, const char *prog, const char *sou
    //Update patterns
    _edje_programs_patterns_clean(ed->collection);
    _edje_programs_patterns_init(ed->collection);
+
+   return EINA_TRUE;
+}
+
+EAPI const char *
+edje_edit_program_sample_name_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(NULL);
+
+   if (!epr->sample_name) return NULL;
+   return eina_stringshare_add(epr->sample_name);
+}
+
+EAPI Eina_Bool
+edje_edit_program_sample_name_set(Evas_Object *obj, const char *prog, const char *name)
+{
+   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_EPR_OR_RETURN(EINA_FALSE);
+
+   if (!name) return EINA_FALSE;
+
+   _edje_if_string_free(ed, epr->sample_name);
+   epr->sample_name = eina_stringshare_add(name);
+
+   return EINA_TRUE;
+}
+
+EAPI const char *
+edje_edit_program_tone_name_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(NULL);
+
+   if (!epr->tone_name) return NULL;
+   return eina_stringshare_add(epr->tone_name);
+}
+
+EAPI Eina_Bool
+edje_edit_program_tone_name_set(Evas_Object *obj, const char *prog, const char *name)
+{
+   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_EPR_OR_RETURN(EINA_FALSE);
+
+   if (!name) return EINA_FALSE;
+
+   _edje_if_string_free(ed, epr->tone_name);
+   epr->tone_name = eina_stringshare_add(name);
+
+   return EINA_TRUE;
+}
+
+EAPI double
+edje_edit_program_sample_speed_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(-1);
+
+   return epr->speed;
+}
+
+EAPI Eina_Bool
+edje_edit_program_sample_speed_set(Evas_Object *obj, const char *prog, double speed)
+{
+   GET_EPR_OR_RETURN(EINA_FALSE);
+
+   if (speed < 0) return EINA_FALSE;
+
+   epr->speed = speed;
+
+   return EINA_TRUE;
+}
+
+EAPI double
+edje_edit_program_tone_duration_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(-1);
+
+   return epr->duration;
+}
+
+EAPI Eina_Bool
+edje_edit_program_tone_duration_set(Evas_Object *obj, const char *prog, double duration)
+{
+   GET_EPR_OR_RETURN(EINA_FALSE);
+
+   if (duration < 0) return EINA_FALSE;
+
+   epr->duration = duration;
+
+   return EINA_TRUE;
+}
+
+EAPI unsigned char
+edje_edit_program_channel_get(Evas_Object *obj, const char *prog)
+{
+   GET_EPR_OR_RETURN(0);
+
+   return epr->channel;
+}
+
+EAPI Eina_Bool
+edje_edit_program_channel_set(Evas_Object *obj, const char *prog, Edje_Channel channel)
+{
+   GET_EPR_OR_RETURN(EINA_FALSE);
+
+   epr->channel = channel;
 
    return EINA_TRUE;
 }

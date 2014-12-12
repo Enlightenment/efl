@@ -5952,6 +5952,101 @@ EAPI double edje_edit_program_transition_time_get(Evas_Object *obj, const char *
  */
 EAPI Eina_Bool edje_edit_program_transition_time_set(Evas_Object *obj, const char *prog, double seconds);
 
+/** Get sample name of the program.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program.
+ *
+ * @return const char* sample_name on success, NULL otherwise.
+ */
+EAPI const char * edje_edit_program_sample_name_get(Evas_Object *obj, const char *prog);
+
+/** Set sample name of the program.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program.
+ * @param name The name of the sample.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_program_sample_name_set(Evas_Object *obj, const char *prog, const char *name);
+
+/** Get tone name of the program.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program.
+ *
+ * @return const char* tone_name on success, NULL otherwise.
+ */
+EAPI const char * edje_edit_program_tone_name_get(Evas_Object *obj, const char *prog);
+
+/** Set tone name of the program.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program.
+ * @param name The name of the tone.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_program_tone_name_set(Evas_Object *obj, const char *prog, const char *name);
+
+/** Get sample speed of the program.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program.
+ *
+ * @return double speed on success, -1 otherwise.
+ */
+EAPI double edje_edit_program_sample_speed_get(Evas_Object *obj, const char *prog);
+
+/** Set sample speed of the program.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program.
+ * @param speed New speed value.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_program_sample_speed_set(Evas_Object *obj, const char *prog, double speed);
+
+/** Get tone duration of the program.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program.
+ *
+ * @return double duration on success, -1 otherwise.
+ */
+EAPI double edje_edit_program_tone_duration_get(Evas_Object *obj, const char *prog);
+
+/** Set tone duration of the program.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program.
+ * @param duration New duration value.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_program_tone_duration_set(Evas_Object *obj, const char *prog, double duration);
+
+/** Get sample channel of the program.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program.
+ *
+ * @return channel on success, 0 otherwise.
+ */
+EAPI unsigned char edje_edit_program_channel_get(Evas_Object *obj, const char *prog);
+
+/** Set sample channel of the program.
+ *
+ * @param obj Object being edited.
+ * @param prog The name of the program.
+ * @param channel New channel value.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_program_channel_set(Evas_Object *obj, const char *prog, Edje_Channel channel);
+
 /** Get filter part name of the program.
  *
  * @param obj Object being edited.
