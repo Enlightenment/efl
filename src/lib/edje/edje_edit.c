@@ -10867,6 +10867,8 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
    Edje_Part_Collection *pc;
    Eina_Bool ret = EINA_TRUE, broadcast;
    Eina_List *alias_list = NULL;
+   const char *alias;
+   Eina_Iterator *it;
 
    obj = edje_edit_object_add(ed->base->evas);
    if (!edje_object_file_set(obj, ed->file->path, group)) return EINA_FALSE;
@@ -10947,6 +10949,17 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
 
    /* Parts */
    BUF_APPEND(I2"parts {\n");
+   if ((pc->aliased) && (pc->alias))
+     {
+        it = eina_hash_iterator_data_new(pc->aliased);
+        EINA_ITERATOR_FOREACH(it, alias)
+           BUF_APPENDF(I3"alias: \"%s\" ", alias);
+        eina_iterator_free(it);
+        it = eina_hash_iterator_data_new(pc->alias);
+        EINA_ITERATOR_FOREACH(it, alias)
+           BUF_APPENDF("\"%s\";\n", alias);
+        eina_iterator_free(it);
+     }
    for (i = 0; i < pc->parts_count; i++)
      {
         Edje_Part *ep;
