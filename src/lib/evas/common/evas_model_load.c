@@ -8,11 +8,35 @@
 #include "evas_private.h"
 
 void
-evas_common_load_model_to_file(Evas_3D_Mesh *model, const char *file)
+_evas_common_load_model(Evas_3D_Mesh *model,
+                        Eina_File *file,
+                        const char *file_path)
 {
    char *p;
    char *loader_type = NULL;
 
+   p = strrchr(file_path, '.');
+   if (p)
+     {
+        p++;
+#define CHECK_EXTENTION_BY_FILE_NAME(extention)                \
+        if (!strcasecmp(p, #extention))                        \
+          {                                                    \
+             evas_model_load_file_##extention(model, file);    \
+             loader_type = #extention;                         \
+          }
+        CHECK_EXTENTION_BY_FILE_NAME(eet)
+        CHECK_EXTENTION_BY_FILE_NAME(md2)
+        CHECK_EXTENTION_BY_FILE_NAME(obj)
+        CHECK_EXTENTION_BY_FILE_NAME(ply)
+#undef CHECK_EXTENTION_BY_FILE_NAME
+     }
+   if (!loader_type) ERR("Invalid mesh file type.");
+}
+
+void
+evas_common_load_model_from_file(Evas_3D_Mesh *model, const char *file)
+{
    Eina_File *tmp_file = eina_file_open(file, 0);
    Eina_File *e_file = eina_file_dup(tmp_file);
 
@@ -29,23 +53,27 @@ evas_common_load_model_to_file(Evas_3D_Mesh *model, const char *file)
 
    eina_file_close(tmp_file);
 
-   p = strrchr(file, '.');
-   if (p)
+   _evas_common_load_model(model, e_file, file);
+
+   eina_file_close(e_file);
+   e_file = NULL;
+}
+
+void
+evas_common_load_model_from_eina_file(Evas_3D_Mesh *model, Eina_File *file)
+{
+   Eina_File *e_file = eina_file_dup(file);
+
+   if (e_file == NULL)
      {
-        p++;
-#define CHECK_EXTENTION_BY_FILE_NAME(extention)                \
-        if (!strcasecmp(p, #extention))                        \
-          {                                                    \
-             evas_model_load_file_##extention(model, e_file);  \
-             loader_type = #extention;                         \
-          }
-        CHECK_EXTENTION_BY_FILE_NAME(eet)
-        CHECK_EXTENTION_BY_FILE_NAME(md2)
-        CHECK_EXTENTION_BY_FILE_NAME(obj)
-        CHECK_EXTENTION_BY_FILE_NAME(ply)
-#undef CHECK_EXTENTION_BY_FILE_NAME
+        ERR("Failed to open file %s\n", file);
+        eina_file_close(e_file);
+        e_file = NULL;
+        ERR("Failed to initialize loader.");
+        return;
      }
-   if (!loader_type) ERR("Invalid mesh file type.");
+
+   _evas_common_load_model(model, e_file, eina_file_filename_get(e_file));
 
    eina_file_close(e_file);
    e_file = NULL;

@@ -4,6 +4,21 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
    data: Evas_3D_Mesh_Data;
 
    methods {
+      mmap_set {
+         /**
+          * Load mesh data from Eina_File.
+          *
+          * Loading a mesh from existing Eina_File is supported. Currently, only MD2, OBJ,
+          * PLY and EET file formats are supported.
+          *
+          * @ingroup Evas_3D_Mesh
+          */
+         params {
+            @in Eina_File* file; /*@ Eina_File with mesh data. */
+            @in const(char)* key; /*@ Key in the mesh file. */
+         }
+      }
+
       file_set {
          /**
           * Load mesh data from file.
