@@ -33,6 +33,7 @@ tags
 *.eo.legacy.h
 *.eo.hh
 *.eo.lua
+*.luac
 .dir-locals.el
 /efl-*-doc.tar.bz2
 /ar-lib
