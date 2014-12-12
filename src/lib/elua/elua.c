@@ -1,5 +1,3 @@
-#include <Eina.h>
-
 #include "Elua.h"
 #include "elua_private.h"
 

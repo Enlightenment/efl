@@ -316,13 +316,11 @@ struct Main_Data
    int    status;
 };
 
-int elua_popen(lua_State *L);
-
 const luaL_reg cutillib[] =
 {
    { "init_module"       , elua_init_module        },
    { "register_callbacks", elua_register_callbacks },
-   { "popenv"            , elua_popen              },
+   { "popenv"            , elua_io_popen           },
    { NULL                , NULL                    }
 };
 

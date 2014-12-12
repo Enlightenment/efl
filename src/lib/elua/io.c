@@ -1,8 +1,5 @@
-#include "config.h" 
-
-/* elua io extras, largely taken from lua io lib source */
-
-#include "main.h"
+#include "Elua.h"
+#include "elua_private.h"
 
 /* expand fname to full path name (so that PATH is ignored) plus turn
  * stuff into a command, and also verify whether the path exists */
@@ -344,8 +341,8 @@ elua_newfile(lua_State *L)
    return f;
 }
 
-int
-elua_popen(lua_State *L)
+EAPI int
+elua_io_popen(lua_State *L)
 {
    const char *fname = luaL_checkstring(L, 1);
    const char *mode  = luaL_optstring(L, 2, "r");
