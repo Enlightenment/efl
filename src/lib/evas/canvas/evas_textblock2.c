@@ -3654,12 +3654,12 @@ _evas_textblock2_node_text_new(void)
  * @param fnode the format node of the PS just added.
  * @return Returns no value.
  */
-static void
+static Evas_Object_Textblock2_Node_Text *
 _evas_textblock2_cursor_break_paragraph(Evas_Textblock2_Cursor *cur)
 {
    Evas_Object_Textblock2_Node_Text *n;
 
-   if (!cur) return;
+   if (!cur) return NULL;
    Evas_Textblock2_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
 
    n = _evas_textblock2_node_text_new();
@@ -3684,6 +3684,8 @@ _evas_textblock2_cursor_break_paragraph(Evas_Textblock2_Cursor *cur)
              cur->node->dirty = EINA_TRUE;
           }
      }
+
+   return n;
 }
 
 /**
@@ -3811,7 +3813,7 @@ _evas_textblock2_invalidate_all(Evas_Textblock2_Data *o)
 }
 
 static int
-_evas_textblock2_cursor_text_append(Evas_Textblock2_Cursor *cur, const char *_text)
+_evas_textblock2_cursor_text_prepend(Evas_Textblock2_Cursor *cur, const char *_text)
 {
    Evas_Object_Textblock2_Node_Text *n;
    Eina_Unicode *text;
@@ -3839,20 +3841,26 @@ _evas_textblock2_cursor_text_append(Evas_Textblock2_Cursor *cur, const char *_te
         cur->node = n;
      }
 
+   /* FIXME: I can do the post set/get thing more efficient. */
+   int pos = evas_textblock2_cursor_pos_get(cur);
    eina_ustrbuf_insert_length(n->unicode, text, len, cur->pos);
 
+   int last_sep = 0;
    int i;
    for (i = 0 ; i < len ; i++)
      {
         if (text[i] == _PARAGRAPH_SEPARATOR)
           {
-             _evas_textblock2_cursor_break_paragraph(cur);
+             cur->pos = i - last_sep;
+             cur->node = _evas_textblock2_cursor_break_paragraph(cur);
+             last_sep = i;
           }
-        evas_textblock2_cursor_char_next(cur);
      }
 
    /* Update all the cursors after our position. */
    _evas_textblock2_cursors_update_offset(cur, cur->node, cur->pos, len);
+
+   evas_textblock2_cursor_pos_set(cur, pos + len);
 
    _evas_textblock2_changed(o, cur->obj);
    n->dirty = EINA_TRUE;
@@ -3866,12 +3874,7 @@ _evas_textblock2_cursor_text_append(Evas_Textblock2_Cursor *cur, const char *_te
 EAPI int
 evas_textblock2_cursor_text_prepend(Evas_Textblock2_Cursor *cur, const char *_text)
 {
-   int len;
-   /*append is essentially prepend without advancing */
-   len = _evas_textblock2_cursor_text_append(cur, _text);
-   if (len == 0) return 0;
-   cur->pos += len; /*Advance */
-   return len;
+   return _evas_textblock2_cursor_text_prepend(cur, _text);
 }
 
 EOLIAN static void
