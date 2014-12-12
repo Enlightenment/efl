@@ -1566,13 +1566,20 @@ _edje_lua_script_writer(lua_State *L EINA_UNUSED, const void *chunk_buf, size_t 
    Script_Lua_Writer *data;
    void *old;
 
+
    data = (Script_Lua_Writer *)_data;
    old = data->buf;
-   data->buf = malloc(data->size + chunk_size);
-   memcpy(data->buf, old, data->size);
-   memcpy(&((data->buf)[data->size]), chunk_buf, chunk_size);
-   if (old) free(old);
-   data->size += chunk_size;
+   data->buf = realloc(data->buf, data->size + chunk_size);
+   if (data->buf)
+     {
+        memcpy(&((data->buf)[data->size]), chunk_buf, chunk_size);
+        data->size += chunk_size;
+     }
+    else
+     {
+        ERR("Failed to copy chunk buffer.\n");
+        data->buf = old;
+     }
 
    return 0;
 }
