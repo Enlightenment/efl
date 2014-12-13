@@ -126,6 +126,7 @@ static void      _access_activate_cb(void *data EINA_UNUSED,
                                      Evas_Object *part_obj EINA_UNUSED,
                                      Elm_Object_Item *item);
 static void _decorate_item_set(Elm_Gen_Item *);
+static void _internal_elm_genlist_clear(Evas_Object *obj, Eina_Bool standby);
 
 static Eina_Bool
 _is_no_select(Elm_Gen_Item *it)
@@ -4597,8 +4598,18 @@ _item_mouse_up_cb(void *data,
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
+   it->walking++;
+   sd->walking++;
    if (sd->focused_item != EO_OBJ(it))
      elm_object_item_focus_set(EO_OBJ(it), EINA_TRUE);
+   it->walking--;
+   sd->walking--;
+
+   if ((sd->clear_me) && (!sd->walking))
+     {
+        _internal_elm_genlist_clear(WIDGET(it), EINA_TRUE);
+        return;
+     }
 
    if (sd->multi &&
        ((sd->multi_select_mode != ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL) ||
@@ -5500,7 +5511,7 @@ _clear(Elm_Genlist_Data *sd)
 
 static void
 _internal_elm_genlist_clear(Evas_Object *obj,
-                   Eina_Bool standby)
+                            Eina_Bool standby)
 {
    Eina_Inlist *next, *l;
 
