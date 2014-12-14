@@ -1687,6 +1687,7 @@ found:
 
    act = _x11_dnd_action_map(drop->action);
 
+   dropable->last.in = EINA_FALSE;
    if ((!strcmp(dropable->last.type, text_uri)))
      {
         cnp_debug("We found a URI... (%scached) %s\n",
