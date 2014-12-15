@@ -3360,7 +3360,7 @@ evas_textblock2_cursor_char_prev(Evas_Textblock2_Cursor *cur)
         if (node->prev)
           {
              cur->node = EINA_INLIST_CONTAINER_GET(node->prev, Evas_Object_Textblock2_Node_Text);
-             cur->pos = eina_ustrbuf_length_get(cur->node->unicode) - 1;
+             cur->pos = eina_ustrbuf_length_get(cur->node->unicode);
              return EINA_TRUE;
           }
         else
