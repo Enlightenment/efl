@@ -1775,15 +1775,16 @@ _elm_list_looping_left_cb(void *data,
      elm_list_item_selected_set(it, EINA_TRUE);
    else
      elm_object_item_focus_set(it, EINA_TRUE);
+   _elm_widget_focus_highlight_signal_emit(list, "elm,action,focus,move,left", "elm");
    elm_layout_signal_emit(list, "elm,action,looping,left,end", "elm");
    sd->item_looping_on = EINA_FALSE;
 }
 
 static void
 _elm_list_looping_right_cb(void *data,
-                          Evas_Object *obj EINA_UNUSED,
-                          const char *emission EINA_UNUSED,
-                          const char *source EINA_UNUSED)
+                           Evas_Object *obj EINA_UNUSED,
+                           const char *emission EINA_UNUSED,
+                           const char *source EINA_UNUSED)
 {
    Evas_Object *list = data;
 
@@ -1794,15 +1795,16 @@ _elm_list_looping_right_cb(void *data,
      elm_list_item_selected_set(it, EINA_TRUE);
    else
      elm_object_item_focus_set(it, EINA_TRUE);
+   _elm_widget_focus_highlight_signal_emit(list, "elm,action,focus,move,right", "elm");
    elm_layout_signal_emit(list, "elm,action,looping,right,end", "elm");
    sd->item_looping_on = EINA_FALSE;
 }
 
 static void
 _elm_list_looping_up_cb(void *data,
-                          Evas_Object *obj EINA_UNUSED,
-                          const char *emission EINA_UNUSED,
-                          const char *source EINA_UNUSED)
+                        Evas_Object *obj EINA_UNUSED,
+                        const char *emission EINA_UNUSED,
+                        const char *source EINA_UNUSED)
 {
    Evas_Object *list = data;
 
@@ -1813,6 +1815,7 @@ _elm_list_looping_up_cb(void *data,
      elm_list_item_selected_set(it, EINA_TRUE);
    else
      elm_object_item_focus_set(it, EINA_TRUE);
+   _elm_widget_focus_highlight_signal_emit(list, "elm,action,focus,move,up", "elm");
    elm_layout_signal_emit(list, "elm,action,looping,up,end", "elm");
    sd->item_looping_on = EINA_FALSE;
 }
@@ -1832,8 +1835,80 @@ _elm_list_looping_down_cb(void *data,
      elm_list_item_selected_set(it, EINA_TRUE);
    else
      elm_object_item_focus_set(it, EINA_TRUE);
+   _elm_widget_focus_highlight_signal_emit(list, "elm,action,focus,move,down", "elm");
    elm_layout_signal_emit(list, "elm,action,looping,down,end", "elm");
    sd->item_looping_on = EINA_FALSE;
+}
+
+static void
+_elm_list_focus_highlight_move_down_end_cb(void *data,
+                                           Evas_Object *obj EINA_UNUSED,
+                                           const char *emission EINA_UNUSED,
+                                           const char *source EINA_UNUSED)
+{
+   Evas_Object *list = data;
+   Elm_List_Item *it = (Elm_List_Item *)elm_list_first_item_get(list);
+   ELM_LIST_DATA_GET(list, sd);
+
+   if (!_elm_config->item_select_on_focus_disable)
+     elm_list_item_selected_set(it, EINA_TRUE);
+   else
+     elm_object_item_focus_set(it, EINA_TRUE);
+   elm_layout_signal_emit(list, "elm,action,looping,down,end", "elm");
+   sd->item_looping_on = EINA_FALSE;
+
+   _elm_widget_focus_highlight_signal_emit(list, "elm,action,focus,move,home,up", "elm");
+}
+
+static void
+_elm_list_focus_highlight_move_up_end_cb(void *data,
+                                         Evas_Object *obj EINA_UNUSED,
+                                         const char *emission EINA_UNUSED,
+                                         const char *source EINA_UNUSED)
+{
+   Evas_Object *li = data;
+   Elm_List_Item *it = (Elm_List_Item *)elm_list_last_item_get(li);
+
+   if (!_elm_config->item_select_on_focus_disable)
+     elm_list_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
+   else
+     elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
+
+   _elm_widget_focus_highlight_signal_emit(li, "elm,action,focus,move,home,down", "elm");
+}
+
+static void
+_elm_list_focus_highlight_move_right_end_cb(void *data,
+                                            Evas_Object *obj EINA_UNUSED,
+                                            const char *emission EINA_UNUSED,
+                                            const char *source EINA_UNUSED)
+{
+   Evas_Object *li = data;
+   Elm_List_Item *it = (Elm_List_Item *)elm_list_first_item_get(li);
+
+   if (!_elm_config->item_select_on_focus_disable)
+     elm_list_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
+   else
+     elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
+
+   _elm_widget_focus_highlight_signal_emit(li, "elm,action,focus,move,home,left", "elm");
+}
+
+static void
+_elm_list_focus_highlight_move_left_end_cb(void *data,
+                                           Evas_Object *obj EINA_UNUSED,
+                                           const char *emission EINA_UNUSED,
+                                           const char *source EINA_UNUSED)
+{
+   Evas_Object *li = data;
+   Elm_List_Item *it = (Elm_List_Item *)elm_list_last_item_get(li);
+
+   if (!_elm_config->item_select_on_focus_disable)
+     elm_list_item_selected_set((Elm_Object_Item *)it, EINA_TRUE);
+   else
+     elm_object_item_focus_set((Elm_Object_Item *)it, EINA_TRUE);
+
+   _elm_widget_focus_highlight_signal_emit(li, "elm,action,focus,move,home,right", "elm");
 }
 
 EOLIAN static void
@@ -2999,6 +3074,17 @@ _elm_list_elm_widget_focused_item_get(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 EOLIAN static void
 _elm_list_elm_widget_item_loop_enabled_set(Eo *obj EINA_UNUSED, Elm_List_Data *sd, Eina_Bool enable)
 {
+   if (enable == EINA_TRUE)
+      {
+         _elm_widget_focus_highlight_signal_callback_add(obj, "elm,focus,move,down,end",
+                                                         "elm", _elm_list_focus_highlight_move_down_end_cb, obj);
+         _elm_widget_focus_highlight_signal_callback_add(obj, "elm,focus,move,up,end",
+                                                         "elm", _elm_list_focus_highlight_move_up_end_cb, obj);
+         _elm_widget_focus_highlight_signal_callback_add(obj, "elm,focus,move,left,end",
+                                                         "elm", _elm_list_focus_highlight_move_left_end_cb, obj);
+         _elm_widget_focus_highlight_signal_callback_add(obj, "elm,focus,move,right,end",
+                                                         "elm", _elm_list_focus_highlight_move_right_end_cb, obj);
+      }
    sd->item_loop_enable = !!enable;
 }
 

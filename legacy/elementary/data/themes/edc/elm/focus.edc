@@ -73,6 +73,16 @@ group { name: "elm/focus_highlight/top/default";
             rel1.relative: 0 -1;
             rel2.relative: 1 0;
          }
+         description { state: "move_left" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: -1 0;
+            rel2.relative: 0 1;
+         }
+         description { state: "move_right" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 1 0;
+            rel2.relative: 2 1;
+         }
       }
       part { name: "clip"; type: RECT;
          scale: 1;
@@ -84,11 +94,19 @@ group { name: "elm/focus_highlight/top/default";
          }
          description { state: "move_down" 0.0;
             inherit: "default" 0.0;
-            color: 0 0 0 0;
+            color: 255 255 255 0;
          }
          description { state: "move_up" 0.0;
             inherit: "default" 0.0;
-            color: 0 0 0 0 ;
+            color: 255 255 255 0 ;
+         }
+         description { state: "move_left" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 0;
+         }
+         description { state: "move_right" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 0 ;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -225,6 +243,58 @@ group { name: "elm/focus_highlight/top/default";
          after: "move_home_from_down2";
       }
       program { name: "move_home_from_down2";
+         action: STATE_SET "default" 0.0;
+         transition: LIN 0.3;
+         target: "base";
+         target: "clip";
+      }
+      program { name: "move_left";
+         signal: "elm,action,focus,move,left";
+         source: "elm";
+         transition: LIN 0.3;
+         action: STATE_SET "move_left" 0.0;
+         target: "base";
+         target: "clip";
+         after: "move_left_end";
+      }
+      program { name: "move_left_end";
+         action: SIGNAL_EMIT "elm,focus,move,left,end" "elm";
+      }
+      program { name: "move_right";
+         signal: "elm,action,focus,move,right";
+         source: "elm";
+         transition: LIN 0.3;
+         action: STATE_SET "move_right" 0.0;
+         target: "base";
+         target: "clip";
+         after: "move_right_end";
+      }
+      program { name: "move_right_end";
+         action: SIGNAL_EMIT "elm,focus,move,right,end" "elm";
+      }
+      program { name: "move_home_from_right";
+         signal: "elm,action,focus,move,home,right";
+         source: "elm";
+         action: STATE_SET "move_right" 0.0;
+         target: "base";
+         target: "clip";
+         after: "move_home_from_right2";
+      }
+      program { name: "move_home_from_right2";
+         action: STATE_SET "default" 0.0;
+         transition: LIN 0.3;
+         target: "base";
+         target: "clip";
+      }
+      program { name: "move_home_from_left";
+         signal: "elm,action,focus,move,home,left";
+         source: "elm";
+         action: STATE_SET "move_left" 0.0;
+         target: "base";
+         target: "clip";
+         after: "move_home_from_left2";
+      }
+      program { name: "move_home_from_left2";
          action: STATE_SET "default" 0.0;
          transition: LIN 0.3;
          target: "base";
