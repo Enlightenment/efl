@@ -646,7 +646,7 @@ _is_white(Eina_Unicode c)
     * 205F MEDIUM MATHEMATICAL SPACE
     * 3000 IDEOGRAPHIC SPACE
     */
-   if (
+   return (
          (c == 0x20) ||
          ((c >= 0x9) && (c <= 0xd)) ||
          (c == 0x85) ||
@@ -659,9 +659,7 @@ _is_white(Eina_Unicode c)
          (c == 0x202f) ||
          (c == 0x205f) ||
          (c == 0x3000)
-      )
-     return EINA_TRUE;
-   return EINA_FALSE;
+         );
 }
 
 typedef enum
