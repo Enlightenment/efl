@@ -109,10 +109,9 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 EOLIAN static Eina_Bool
 _elm_table_elm_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 {
-   Eina_Bool super_ret = EINA_FALSE;
-   eo_do_super(obj, MY_CLASS, super_ret = elm_obj_widget_theme_apply());
-   if (super_ret == EINA_FALSE)
-      return EINA_FALSE;
+   Eina_Bool int_ret = EINA_FALSE;
+   eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
+   if (!int_ret) return EINA_FALSE;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
