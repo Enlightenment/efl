@@ -2364,15 +2364,7 @@ _layout_par(Ctxt *c)
 
              if ((break_position = _it_break_position_get(it, line_breaks)) > 0)
                {
-                  if (eina_ustrbuf_string_get(
-                           c->par->text_node->unicode)[break_position] == _PARAGRAPH_SEPARATOR)
-                    {
-                       break_position = -1;
-                    }
-                  else
-                    {
-                       break_position++;
-                    }
+                  break_position++;
                }
 
                {
