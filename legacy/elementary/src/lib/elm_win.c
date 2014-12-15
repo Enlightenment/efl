@@ -4823,7 +4823,7 @@ _elm_win_elm_widget_theme_apply(Eo *obj, Elm_Win_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
-   if (!int_ret) return EINA_TRUE;
+   if (!int_ret) return EINA_FALSE;
 
    sd->focus_highlight.theme_changed = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
