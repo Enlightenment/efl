@@ -368,7 +368,7 @@ struct _Evas_Object_Textblock2
       int                              l, r, t, b;
    } style_pad;
    double                              valign;
-   char                               *markup_text;
+   char                               *utf8_text;
    void                               *engine_data;
    const char                         *bidi_delimiters;
    struct {
@@ -2610,7 +2610,7 @@ _layout(const Evas_Object *eo_obj, int w, int h, int *w_ret, int *h_ret)
    Ctxt ctxt, *c;
    int style_pad_l = 0, style_pad_r = 0, style_pad_t = 0, style_pad_b = 0;
 
-   LYDBG("ZZ: layout %p %4ix%4i | w=%4i | last_w=%4i --- '%s'\n", eo_obj, w, h, obj->cur->geometry.w, o->last_w, o->markup_text);
+   LYDBG("ZZ: layout %p %4ix%4i | w=%4i | last_w=%4i --- '%s'\n", eo_obj, w, h, obj->cur->geometry.w, o->last_w, o->utf8_text);
    /* setup context */
    c = &ctxt;
    c->obj = (Evas_Object *)eo_obj;
@@ -3852,10 +3852,10 @@ _evas_textblock2_changed(Evas_Textblock2_Data *o, Evas_Object *eo_obj)
    o->formatted.valid = 0;
    o->native.valid = 0;
    o->content_changed = 1;
-   if (o->markup_text)
+   if (o->utf8_text)
      {
-        free(o->markup_text);
-        o->markup_text = NULL;
+        free(o->utf8_text);
+        o->utf8_text = NULL;
      }
 
    evas_object_change(eo_obj, obj);
