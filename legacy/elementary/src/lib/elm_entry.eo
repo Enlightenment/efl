@@ -1118,9 +1118,9 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
       }
       entry_append {
          /*@
-         Appends @p entry to the text of the entry.
+         Appends @p str to the text of the entry.
 
-         Adds the text in @p entry to the end of any text already present in the
+         Adds the text in @p str to the end of any text already present in the
          widget.
 
          The appended text is subject to any filters set for the widget.
@@ -1130,7 +1130,7 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in const(char)* entry; /*@ The text to be displayed */
+            @in const(char)* str; /*@ The text to be appended */
          }
       }
       context_menu_item_add {
