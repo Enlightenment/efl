@@ -433,6 +433,10 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             available, enabling this option will instead fallback to using shaped
             windows, with elm_win_shaped_set().
 
+            @note Alpha window can be enabled automatically by window theme style's property.
+            If "alpha" data.item is "1" or "true" in window style(eg. elm/win/base/default),
+            the window is switched to alpha automatically without the explicit api call.
+
             @see elm_win_alpha_set()
 
             @ingroup Win */

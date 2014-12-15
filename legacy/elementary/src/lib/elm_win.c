@@ -209,8 +209,8 @@ struct _Elm_Win_Data
    Eina_Bool    skip_focus : 1;
    Eina_Bool    floating : 1;
    Eina_Bool    noblank : 1;
-   Eina_Bool    theme_alpha : 1;
-   Eina_Bool    application_alpha : 1;
+   Eina_Bool    theme_alpha : 1; /**< alpha value fetched by a theme. this has higher priority than application_alpha */
+   Eina_Bool    application_alpha : 1; /**< alpha value set by an elm_win_alpha_set() api. this has lower priority than theme_alpha */
 };
 
 static const char SIG_DELETE_REQUEST[] = "delete,request";
