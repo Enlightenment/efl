@@ -154,7 +154,10 @@ _text_signal_emit(Elm_Layout_Smart_Data *sd,
 
    //FIXME: Don't limit to "elm.text" prefix.
    //Send signals for all text parts after elm 2.0
-   if (sub_d->type != TEXT || strcmp("elm.text", sub_d->part)) return;
+   if ((sub_d->type != TEXT) ||
+       (!((!strcmp("elm.text", sub_d->part)) ||
+          (!strncmp("elm.text.", sub_d->part, 9)))))
+     return;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
