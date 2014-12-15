@@ -662,3 +662,16 @@ eina_str_toupper(char **str)
    for (p = *str; (*p); p++)
       *p = toupper((unsigned char)(*p));
 }
+
+EAPI unsigned char *
+eina_memdup(unsigned char *mem, size_t size, Eina_Bool terminate)
+{
+   unsigned char *ret;
+
+   terminate = !!terminate;
+   ret = malloc(size + terminate);
+   memcpy(ret, mem, size);
+   if (terminate)
+     ret[size] = 0;
+   return ret;
+}

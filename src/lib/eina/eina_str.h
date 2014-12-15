@@ -345,6 +345,15 @@ static inline size_t eina_str_join(char *dst, size_t size, char sep, const char 
 
 static inline size_t eina_strlen_bounded(const char *str, size_t maxlen) EINA_PURE EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
+/**
+ * @brief memory duplication function with optional termination for strings
+ * @param mem The memory to copy
+ * @param size The size of @p mem
+ * @param terminate If true, the returned memory will be nul terminated with '\0'
+ * @return the copied memory, must be freed
+ * @since 1.13
+ */
+EAPI unsigned char *eina_memdup(unsigned char *mem, size_t size, Eina_Bool terminate);
 #include "eina_inline_str.x"
 
 /**
