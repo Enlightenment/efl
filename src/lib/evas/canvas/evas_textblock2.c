@@ -235,7 +235,6 @@ struct _Evas_Object_Textblock2_Node_Text
 {
    EINA_INLIST;
    Eina_UStrbuf                       *unicode;  /**< Actual paragraph text. */
-   char                               *utf8;  /**< Text in utf8 format. */
    Evas_Object_Textblock2_Paragraph    *par;  /**< Points to the paragraph node of which this node is a part. */
    Eina_Bool                           dirty : 1;  /**< EINA_TRUE if already handled/format changed, else EINA_FALSE. */
    Eina_Bool                           is_new : 1;  /**< EINA_TRUE if its a new paragraph, else EINA_FALSE. */
@@ -3626,8 +3625,6 @@ _evas_textblock2_node_text_free(Evas_Object_Textblock2_Node_Text *n)
 {
    if (!n) return;
    eina_ustrbuf_free(n->unicode);
-   if (n->utf8)
-      free(n->utf8);
    if (n->par)
       n->par->text_node = NULL;
    free(n);
