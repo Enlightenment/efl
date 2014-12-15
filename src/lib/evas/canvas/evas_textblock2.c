@@ -3921,8 +3921,8 @@ evas_textblock2_cursor_text_prepend(Evas_Textblock2_Cursor *cur, const char *_te
 EOLIAN static void
 _evas_textblock2_efl_text_text_set(Eo *obj, Evas_Textblock2_Data *pd EINA_UNUSED, const char *text)
 {
-   /* FIXME: This is not even slightly correct. */
    Evas_Textblock2_Cursor *main_cur = evas_object_textblock2_cursor_get(obj);
+   evas_obj_textblock2_clear();
    evas_textblock2_cursor_text_prepend(main_cur, text);
 }
 
