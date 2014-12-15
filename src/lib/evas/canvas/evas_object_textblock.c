@@ -481,7 +481,6 @@ struct _Evas_Textblock_Cursor
 #define TEXTBLOCK_PAR_INDEX_SIZE 10
 struct _Evas_Object_Textblock
 {
-   DATA32                              magic;
    Evas_Textblock_Style               *style;
    Evas_Textblock_Style               *style_user;
    Evas_Textblock_Cursor              *cursor;
@@ -11079,7 +11078,6 @@ evas_object_textblock_free(Evas_Object *eo_obj)
      }
    if (o->repch) eina_stringshare_del(o->repch);
    if (o->ellip_ti) _item_free(eo_obj, NULL, _ITEM(o->ellip_ti));
-   o->magic = 0;
   _format_command_shutdown();
 }
 
