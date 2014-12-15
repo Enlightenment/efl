@@ -63,7 +63,7 @@ static const Elm_Win_Trap *trap = NULL;
          }                                                      \
        if (cursd->modal_count == 0)                             \
          {                                                      \
-            edje_object_signal_emit(cursd->layout, \
+            edje_object_signal_emit(cursd->edje, \
                         "elm,action,hide_blocker", "elm");      \
             evas_object_smart_callback_call(cursd->main_menu, \
                         "elm,action,unblock_menu", NULL);       \
@@ -80,7 +80,7 @@ static const Elm_Win_Trap *trap = NULL;
          }                                                      \
        if (cursd->modal_count > 0)                              \
          {                                                      \
-            edje_object_signal_emit(cursd->layout, \
+            edje_object_signal_emit(cursd->edje, \
                              "elm,action,show_blocker", "elm"); \
             evas_object_smart_callback_call(cursd->main_menu, \
                              "elm,action,block_menu", NULL);    \
@@ -99,7 +99,7 @@ struct _Elm_Win_Data
    Evas_Object          *img_obj, *frame_obj;
    Evas_Object          *client_obj; /* rect representing the client */
    Evas_Object          *spacer_obj;
-   Eo                   *layout;
+   Eo                   *edje; /**< edje object for a window layout */
    Eo                   *box;
    Evas_Object          *obj; /* The object itself */
 #ifdef HAVE_ELEMENTARY_X
@@ -786,7 +786,7 @@ _elm_win_resize_job(void *data)
      }
 
    evas_object_resize(sd->obj, w, h);
-   evas_object_resize(sd->layout, w, h);
+   evas_object_resize(sd->edje, w, h);
 }
 
 static void
@@ -1673,12 +1673,12 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
    if ((sd->modal) && (sd->modal_count > 0)) 
      ERR("Deleted modal win was blocked by another modal win which was created after creation of that win.");
 
-   evas_object_event_callback_del_full(sd->layout,
+   evas_object_event_callback_del_full(sd->edje,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _elm_win_on_resize_obj_changed_size_hints,
                                        obj);
    evas_object_del(sd->box);
-   evas_object_del(sd->layout);
+   evas_object_del(sd->edje);
 
    /* NB: child deletion handled by parent's smart del */
 
@@ -2107,11 +2107,11 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    Evas_Coord w, h, minw, minh, maxw, maxh;
    double wx, wy;
 
-   evas_object_size_hint_min_get(sd->layout, &minw, &minh);
+   evas_object_size_hint_min_get(sd->edje, &minw, &minh);
    if (minw < 1) minw = 1;
    if (minh < 1) minh = 1;
 
-   evas_object_size_hint_weight_get(sd->layout, &wx, &wy);
+   evas_object_size_hint_weight_get(sd->edje, &wx, &wy);
    if (!wx) maxw = minw;
    else maxw = 32767;
    if (!wy) maxh = minh;
@@ -2977,8 +2977,8 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
      }
 
    ELM_WIN_DATA_GET(data, sd);
-   evas_object_size_hint_weight_set(sd->layout, weight_x, weight_y);
-   evas_object_smart_changed(sd->layout);
+   evas_object_size_hint_weight_set(sd->edje, weight_x, weight_y);
+   evas_object_smart_changed(sd->edje);
 }
 
 static Eina_Bool
@@ -3537,16 +3537,16 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
    sd->wm_rot.wm_supported = ecore_evas_wm_rotation_supported_get(sd->ee);
    sd->wm_rot.preferred_rot = -1; // it means that elm_win doesn't use preferred rotation.
 
-   sd->layout = edje_object_add(sd->evas);
+   sd->edje = edje_object_add(sd->evas);
    _elm_win_theme_internal(obj, sd);
 
    sd->box = evas_object_box_add(sd->evas);
    evas_object_box_layout_set(sd->box, _window_layout_stack, obj, NULL);
-   edje_object_part_swallow(sd->layout, "elm.swallow.contents", sd->box);
-   evas_object_move(sd->layout, 0, 0);
-   evas_object_resize(sd->layout, 1, 1);
-   edje_object_update_hints_set(sd->layout, EINA_TRUE);
-   evas_object_event_callback_add(sd->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+   edje_object_part_swallow(sd->edje, "elm.swallow.contents", sd->box);
+   evas_object_move(sd->edje, 0, 0);
+   evas_object_resize(sd->edje, 1, 1);
+   edje_object_update_hints_set(sd->edje, EINA_TRUE);
+   evas_object_event_callback_add(sd->edje, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _elm_win_on_resize_obj_changed_size_hints, obj);
 
    eo_do(obj, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_WINDOW));
@@ -3556,7 +3556,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
         eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, NULL));
      }
 
-   evas_object_show(sd->layout);
+   evas_object_show(sd->edje);
 }
 
 EOLIAN static void
@@ -3918,15 +3918,15 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
    if (dbus_connect)
      {
         DBG("Setting menu to D-Bus");
-        edje_object_part_unswallow(sd->layout, sd->main_menu);
-        edje_object_signal_emit(sd->layout, "elm,action,hide_menu", "elm");
+        edje_object_part_unswallow(sd->edje, sd->main_menu);
+        edje_object_signal_emit(sd->edje, "elm,action,hide_menu", "elm");
         _elm_menu_menu_bar_hide(sd->main_menu);
      }
    else
      {
         DBG("Setting menu to local mode");
-        edje_object_part_swallow(sd->layout, "elm.swallow.menu", sd->main_menu);
-        edje_object_signal_emit(sd->layout, "elm,action,show_menu", "elm");
+        edje_object_part_swallow(sd->edje, "elm.swallow.menu", sd->main_menu);
+        edje_object_signal_emit(sd->edje, "elm,action,show_menu", "elm");
         evas_object_show(sd->main_menu);
      }
 }
@@ -4813,12 +4813,12 @@ _elm_win_theme_internal(Eo *obj, Elm_Win_Data *sd)
    Eina_Bool ret = EINA_FALSE;
    const char *s;
 
-   if (!_elm_theme_object_set(obj, sd->layout, "win", "base",
+   if (!_elm_theme_object_set(obj, sd->edje, "win", "base",
                                elm_widget_style_get(obj)))
      return EINA_FALSE;
 
-   edje_object_mirrored_set(sd->layout, elm_widget_mirrored_get(obj));
-   edje_object_scale_set(sd->layout,
+   edje_object_mirrored_set(sd->edje, elm_widget_mirrored_get(obj));
+   edje_object_scale_set(sd->edje,
                          elm_widget_scale_get(obj) * elm_config_scale_get());
 
    evas_object_smart_callback_call(obj, SIG_THEME_CHANGED, NULL);
@@ -4826,7 +4826,7 @@ _elm_win_theme_internal(Eo *obj, Elm_Win_Data *sd)
 
    if (!sd->theme_alpha && !sd->application_alpha)
      {
-        s = edje_object_data_get(sd->layout, "alpha");
+        s = edje_object_data_get(sd->edje, "alpha");
         if (s)
           {
              if (!strcmp(s, "1") ||
