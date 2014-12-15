@@ -588,6 +588,7 @@ embryo script and from C code.";
                params {
                   string: "label" "infinite bouce";
                   string: "unit format" "";
+                  bool: "pulse" 1;
                }
             }
          }
@@ -635,6 +636,7 @@ embryo script and from C code.";
                   string: "label" "infinite bouce";
                   bool: "horizontal" 0;
                   string: "unit format" "";
+                  bool: "pulse" 1;
                }
             }
          }
@@ -667,6 +669,7 @@ embryo script and from C code.";
                rel2.offset: 0 -50;
                params {
                   string: "style" "wheel";
+                  bool: "pulse" 1;
                }
             }
          }

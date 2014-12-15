@@ -44,7 +44,7 @@ external_progressbar_state_set(void *data EINA_UNUSED, Evas_Object *obj,
    if (p->unit)
      elm_progressbar_unit_format_set(obj, p->unit);
    if (p->pulse_exists)
-     elm_progressbar_pulse(obj, p->pulse);
+     elm_progressbar_pulse_set(obj, p->pulse);
 }
 
 static Eina_Bool
@@ -89,7 +89,7 @@ external_progressbar_param_set(void *data EINA_UNUSED, Evas_Object *obj,
      {
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
-             elm_progressbar_pulse(obj, param->i);
+             elm_progressbar_pulse_set(obj, param->i);
              return EINA_TRUE;
           }
      }
