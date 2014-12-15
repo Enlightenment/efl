@@ -3941,38 +3941,25 @@ _evas_textblock2_efl_text_text_get(Eo *obj, Evas_Textblock2_Data *pd)
 EAPI void
 evas_textblock2_cursor_char_delete(Evas_Textblock2_Cursor *cur)
 {
-   Evas_Object_Textblock2_Node_Text *n, *n2;
+   Evas_Object_Textblock2_Node_Text *n;
    const Eina_Unicode *text;
-   int chr, ind, ppos;
+   int ind, ppos;
 
    if (!cur || !cur->node) return;
    Evas_Textblock2_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
    n = cur->node;
 
    text = eina_ustrbuf_string_get(n->unicode);
-   ind = cur->pos;
+   ppos = ind = cur->pos;
+
    if (text[ind])
-      chr = text[ind++];
+     {
+        ind++;
+        eina_ustrbuf_remove(n->unicode, cur->pos, ind);
+     }
    else
-      chr = 0;
-
-   if (chr == 0) return;
-   ppos = cur->pos;
-   eina_ustrbuf_remove(n->unicode, cur->pos, ind);
-
-   if (chr == _PARAGRAPH_SEPARATOR)
      {
         _evas_textblock2_cursor_nodes_merge(cur);
-     }
-
-   if (cur->pos == eina_ustrbuf_length_get(n->unicode))
-     {
-	n2 = _NODE_TEXT(EINA_INLIST_GET(n)->next);
-	if (n2)
-	  {
-	     cur->node = n2;
-	     cur->pos = 0;
-	  }
      }
 
    _evas_textblock2_cursors_update_offset(cur, n, ppos, -(ind - ppos));
