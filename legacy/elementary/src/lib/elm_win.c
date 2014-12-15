@@ -231,6 +231,7 @@ static const char SIG_INDICATOR_PROP_CHANGED[] = "indicator,prop,changed";
 static const char SIG_ROTATION_CHANGED[] = "rotation,changed";
 static const char SIG_PROFILE_CHANGED[] = "profile,changed";
 static const char SIG_WM_ROTATION_CHANGED[] = "wm,rotation,changed";
+static const char SIG_THEME_CHANGED[] = "theme,changed";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_DELETE_REQUEST, ""},
@@ -281,6 +282,7 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
                                           void *event_info);
 static void
 _elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj);
+static Eina_Bool _elm_win_theme_internal(Eo *obj, Elm_Win_Data *sd);
 
 #ifdef HAVE_ELEMENTARY_X
 static void _elm_win_xwin_update(Elm_Win_Data *sd);
@@ -3536,7 +3538,8 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
    sd->wm_rot.preferred_rot = -1; // it means that elm_win doesn't use preferred rotation.
 
    sd->layout = edje_object_add(sd->evas);
-   _elm_theme_object_set(obj, sd->layout, "win", "base", "default");
+   _elm_win_theme_internal(obj, sd);
+
    sd->box = evas_object_box_add(sd->evas);
    evas_object_box_layout_set(sd->box, _window_layout_stack, obj, NULL);
    edje_object_part_swallow(sd->layout, "elm.swallow.contents", sd->box);
@@ -4818,6 +4821,25 @@ _elm_win_focus_highlight_enabled_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
    return sd->focus_highlight.enabled;
 }
 
+static Eina_Bool
+_elm_win_theme_internal(Eo *obj, Elm_Win_Data *sd)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   if (!_elm_theme_object_set(obj, sd->layout, "win", "base",
+                               elm_widget_style_get(obj)))
+     return EINA_FALSE;
+
+   edje_object_mirrored_set(sd->layout, elm_widget_mirrored_get(obj));
+   edje_object_scale_set(sd->layout,
+                         elm_widget_scale_get(obj) * elm_config_scale_get());
+
+   evas_object_smart_callback_call(obj, SIG_THEME_CHANGED, NULL);
+   eo_do(obj, ret = elm_obj_widget_disable());
+
+   return ret;
+}
+
 EOLIAN static Eina_Bool
 _elm_win_elm_widget_theme_apply(Eo *obj, Elm_Win_Data *sd)
 {
@@ -4826,6 +4848,8 @@ _elm_win_elm_widget_theme_apply(Eo *obj, Elm_Win_Data *sd)
    if (!int_ret) return EINA_FALSE;
 
    sd->focus_highlight.theme_changed = EINA_TRUE;
+   if (!_elm_win_theme_internal(obj, sd))
+     return EINA_FALSE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
 
    return EINA_TRUE;
