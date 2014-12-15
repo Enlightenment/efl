@@ -348,7 +348,6 @@ struct _Evas_Textblock2_Cursor
 #define TEXTBLOCK2_PAR_INDEX_SIZE 10
 struct _Evas_Object_Textblock2
 {
-   DATA32                              magic;
    Eina_Stringshare                    *style;
    Eina_Stringshare                    *style_user;
    Evas_Textblock2_Cursor              *cursor;
@@ -5329,7 +5328,6 @@ evas_object_textblock2_free(Evas_Object *eo_obj)
 	free(cur);
      }
    if (o->ellip_ti) _item_free(eo_obj, NULL, _ITEM(o->ellip_ti));
-   o->magic = 0;
   _format_command_shutdown();
 }
 
