@@ -3556,20 +3556,6 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
         eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, NULL));
      }
 
-   if (edje_object_data_get(sd->layout, "alpha"))
-     {
-        const char *s = edje_object_data_get(sd->layout, "alpha");
-        if (s)
-          {
-             if (!strcmp(s, "1") ||
-                 !strcmp(s, "true"))
-               {
-                  sd->application_alpha = 1;
-                  _elm_win_apply_alpha(obj, sd);
-               }
-          }
-     }
-
    evas_object_show(sd->layout);
 }
 
@@ -4825,6 +4811,7 @@ static Eina_Bool
 _elm_win_theme_internal(Eo *obj, Elm_Win_Data *sd)
 {
    Eina_Bool ret = EINA_FALSE;
+   const char *s;
 
    if (!_elm_theme_object_set(obj, sd->layout, "win", "base",
                                elm_widget_style_get(obj)))
@@ -4836,6 +4823,20 @@ _elm_win_theme_internal(Eo *obj, Elm_Win_Data *sd)
 
    evas_object_smart_callback_call(obj, SIG_THEME_CHANGED, NULL);
    eo_do(obj, ret = elm_obj_widget_disable());
+
+   if (!sd->theme_alpha && !sd->application_alpha)
+     {
+        s = edje_object_data_get(sd->layout, "alpha");
+        if (s)
+          {
+             if (!strcmp(s, "1") ||
+                 !strcmp(s, "true"))
+               {
+                  sd->application_alpha = 1;
+                  _elm_win_apply_alpha(obj, sd);
+               }
+          }
+     }
 
    return ret;
 }
