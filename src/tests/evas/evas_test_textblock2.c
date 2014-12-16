@@ -145,8 +145,22 @@ END_TEST;
 void evas_test_textblock2(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock2_simple);
-   tcase_add_test(tc, evas_textblock2_set_get);
+   //tcase_add_test(tc, evas_textblock2_cursor);
+#ifdef HAVE_FRIBIDI
+   //tcase_add_test(tc, evas_textblock2_split_cursor);
+#endif
+   //tcase_add_test(tc, evas_textblock2_size);
+   //tcase_add_test(tc, evas_textblock2_editing);
+   //tcase_add_test(tc, evas_textblock2_style);
    tcase_add_test(tc, evas_textblock2_evas);
+   //tcase_add_test(tc, evas_textblock2_text_getters);
+   //tcase_add_test(tc, evas_textblock2_formats);
+   //case_add_test(tc, evas_textblock2_format_removal);
+   tcase_add_test(tc, evas_textblock2_set_get);
+   //tcase_add_test(tc, evas_textblock2_geometries);
+   //tcase_add_test(tc, evas_textblock2_various);
+   //tcase_add_test(tc, evas_textblock2_wrapping);
+   //tcase_add_test(tc, evas_textblock2_items);
    tcase_add_test(tc, evas_textblock2_delete);
 }
 
