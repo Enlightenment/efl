@@ -84,6 +84,7 @@ static const char o_type[] = "textblock2";
 /* The char to be inserted instead of visible formats */
 #define _REPLACEMENT_CHAR 0xFFFC
 #define _PARAGRAPH_SEPARATOR 0x2029
+#define _PARAGRAPH_SEPARATOR_UTF8 "\xE2\x80\xA9"
 #define _NEWLINE '\n'
 #define _TAB '\t'
 
@@ -3924,12 +3925,37 @@ _evas_textblock2_efl_text_text_set(Eo *obj, Evas_Textblock2_Data *pd EINA_UNUSED
 
 
 EOLIAN static const char *
-_evas_textblock2_efl_text_text_get(Eo *obj, Evas_Textblock2_Data *pd)
+_evas_textblock2_efl_text_text_get(Eo *obj EINA_UNUSED, Evas_Textblock2_Data *pd)
 {
-   (void) obj;
-   (void) pd;
-   /* FIXME: Do something. */
-   return "";
+   Evas_Object_Textblock2_Node_Text *n;
+   Eina_Strbuf *txt = NULL;
+
+   const char *markup;
+   if (pd->utf8_text)
+     {
+        markup = pd->utf8_text;
+        return markup;
+     }
+
+   txt = eina_strbuf_new();
+   EINA_INLIST_FOREACH(pd->text_nodes, n)
+     {
+        char *buf;
+        int len = 0;
+        buf = eina_unicode_unicode_to_utf8(eina_ustrbuf_string_get(n->unicode), &len);
+        eina_strbuf_append_length(txt, buf, len);
+        if (EINA_INLIST_GET(n)->next)
+          {
+             eina_strbuf_append(txt, _PARAGRAPH_SEPARATOR_UTF8);
+          }
+
+        free(buf);
+     }
+
+   pd->utf8_text = eina_strbuf_string_steal(txt);
+   eina_strbuf_free(txt);
+
+   return pd->utf8_text;
 }
 
 EAPI void
