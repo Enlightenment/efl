@@ -2591,7 +2591,7 @@ _key_action_move(Evas_Object *obj, const char *params)
                        if (_item_horizontal_loop(obj, ELM_FOCUS_RIGHT))
                          return EINA_TRUE;
                     }
-                  return EINA_TRUE;
+                  return EINA_FALSE;
                }
              if (!sd->horizontal)
                eo_left = elm_gengrid_item_prev_get(sd->focused_item);
@@ -2612,7 +2612,7 @@ _key_action_move(Evas_Object *obj, const char *params)
                        if (_item_horizontal_loop(obj, ELM_FOCUS_RIGHT))
                          return EINA_TRUE;
                     }
-                  return EINA_TRUE;
+                  return EINA_FALSE;
                }
              if (!_elm_config->item_select_on_focus_disable)
                {
@@ -2676,7 +2676,7 @@ _key_action_move(Evas_Object *obj, const char *params)
                        if (_item_horizontal_loop(obj, ELM_FOCUS_UP))
                          return EINA_TRUE;
                     }
-                  return EINA_TRUE;
+                  return EINA_FALSE;
                }
              if (!sd->horizontal)
                eo_right = elm_gengrid_item_next_get(sd->focused_item);
@@ -2750,7 +2750,7 @@ _key_action_move(Evas_Object *obj, const char *params)
              Elm_Object_Item *eo_up;
 
              if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_UP))
-               return EINA_TRUE;
+               return EINA_FALSE;
              if (!sd->horizontal)
                eo_up = get_up_item(sd, sd->focused_item);
              else
@@ -2807,7 +2807,7 @@ _key_action_move(Evas_Object *obj, const char *params)
              Elm_Object_Item *eo_down;
 
              if (_elm_gengrid_item_edge_check(sd->focused_item, ELM_FOCUS_DOWN))
-               return EINA_TRUE;
+               return EINA_FALSE;
              if (!sd->horizontal)
                eo_down = get_down_item(sd, sd->focused_item);
              else
