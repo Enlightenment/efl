@@ -3708,7 +3708,7 @@ _evas_textblock2_node_text_insert(Evas_Textblock2_Data *o, Evas_Textblock2_Curso
              Evas_Object_Textblock2_Node_Text *lastn = n;
 
              int add_len = par_sep - text;
-             eina_ustrbuf_append_length(cur->node->unicode, text, add_len);
+             eina_ustrbuf_append_length(n->unicode, text, add_len);
              n->dirty = EINA_TRUE;
 
              text += add_len + 1; /* Skip the PS too */
