@@ -89,7 +89,9 @@
     cmd(SIG_ITEM_FOCUSED, "item,focused", "") \
     cmd(SIG_ITEM_UNFOCUSED, "item,unfocused", "") \
     cmd(SIG_PRESSED, "pressed", "") \
-    cmd(SIG_RELEASED, "released", "")
+    cmd(SIG_RELEASED, "released", "") \
+    cmd(SIG_ITEM_REORDER_START, "item,reorder,anim,start", "") \
+    cmd(SIG_ITEM_REORDER_STOP, "item,reorder,anim,stop", "")
 
 ELM_PRIV_GENLIST_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
@@ -109,7 +111,11 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
-
+static void _item_move_after(Elm_Gen_Item *it, Elm_Gen_Item *after);
+static void _item_move_before(Elm_Gen_Item *it, Elm_Gen_Item *before);
+EOLIAN static void _elm_genlist_reorder_mode_set(Eo *obj EINA_UNUSED,
+                                                 Elm_Genlist_Data *sd,
+                                                 Eina_Bool reorder_mode);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -2716,6 +2722,98 @@ _key_action_move_dir(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool multi)
    return EINA_FALSE;
 }
 
+static void
+_anim_end(Elm_Genlist_Data *sd)
+{
+   if (sd->reorder.dir == ELM_FOCUS_UP)
+     _item_move_after(sd->reorder.it2, sd->reorder.it1);
+   else if (sd->reorder.dir == ELM_FOCUS_DOWN)
+     _item_move_after(sd->reorder.it1, sd->reorder.it2);
+
+   ecore_job_del(sd->calc_job);
+   sd->calc_job = ecore_job_add(_calc_job, sd->obj);
+}
+
+static Eina_Bool
+_item_swap_cb(void *data, double pos)
+{
+   Elm_Genlist_Data *sd = data;
+   double frame = pos;
+   Evas_Coord xx1, yy1, xx2, yy2;
+   double dx, dy;
+
+   switch (sd->reorder.tween_mode)
+     {
+        case ECORE_POS_MAP_LINEAR:
+           frame = ecore_animator_pos_map(frame, sd->reorder.tween_mode, 0, 0);
+           break;
+        case ECORE_POS_MAP_ACCELERATE:
+        case ECORE_POS_MAP_DECELERATE:
+        case ECORE_POS_MAP_SINUSOIDAL:
+           frame = ecore_animator_pos_map(frame, sd->reorder.tween_mode, 1.0, 0);
+           break;
+        case ECORE_POS_MAP_DIVISOR_INTERP:
+        case ECORE_POS_MAP_BOUNCE:
+        case ECORE_POS_MAP_SPRING:
+           frame = ecore_animator_pos_map(frame, sd->reorder.tween_mode, 1.0, 1.0);
+           break;
+        default:
+           // use ECORE_POS_MAP_LINEAR as default tween mode
+           frame = ecore_animator_pos_map(frame, sd->reorder.tween_mode, 0, 0);
+           break;
+     }
+
+   dx = sd->reorder.x2 - sd->reorder.x1;
+   dy = sd->reorder.y2 - sd->reorder.y1;
+
+   xx1 = sd->reorder.x1 + (dx * frame);
+   yy1 = sd->reorder.y1 + (dy * frame);
+   xx2 = sd->reorder.x2 - (dx * frame);
+   yy2 = sd->reorder.y2 - (dy * frame);
+
+   evas_object_move(VIEW(sd->reorder.it2), xx2, yy2);
+   evas_object_move(VIEW(sd->reorder.it1), xx1, yy1);
+
+   if (pos == 1.0)
+     {
+        elm_genlist_item_bring_in((Elm_Object_Item *)sd->reorder.it2, ELM_GENLIST_ITEM_SCROLLTO_IN);
+        _anim_end(sd);
+        evas_object_smart_callback_call(sd->obj, SIG_ITEM_REORDER_STOP, sd->reorder.it1);
+        sd->reorder.running = EINA_FALSE;
+     }
+
+   _elm_widget_focus_highlight_start(sd->obj);
+
+   return EINA_TRUE;
+}
+
+
+static void
+_swap_items(Elm_Gen_Item *it1, Elm_Gen_Item *it2, Elm_Focus_Direction dir)
+{
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it1, sd);
+   Evas_Coord xx1, yy1, xx2, yy2;
+
+   if (!it1 || !it2) return;
+
+   sd->reorder.running = EINA_TRUE;
+   sd->reorder.dir = dir;
+   sd->reorder.it1 = it1;
+   sd->reorder.it2 = it2;
+
+   evas_object_geometry_get(VIEW(it1), &xx1, &yy1, NULL, NULL);
+   evas_object_geometry_get(VIEW(it2), &xx2, &yy2, NULL, NULL);
+   sd->reorder.x1 = xx1;
+   sd->reorder.y1 = yy1;
+   sd->reorder.x2 = xx2;
+   sd->reorder.y2 = yy2;
+
+   evas_object_raise(VIEW(it1));
+   evas_object_smart_callback_call(sd->obj, SIG_ITEM_REORDER_START, sd->reorder.it1);
+   //TODO: Add elm config for time
+   ecore_animator_timeline_add(0.3, _item_swap_cb, sd);
+}
+
 static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
 {
@@ -2762,6 +2860,18 @@ _key_action_move(Evas_Object *obj, const char *params)
      }
    else if (!strcmp(dir, "up"))
      {
+        if (sd->reorder.running) return EINA_TRUE;
+        if (sd->reorder_mode)
+          {
+             Elm_Gen_Item *up = (Elm_Gen_Item *)elm_genlist_item_prev_get(sd->focused_item);
+             ELM_GENLIST_ITEM_DATA_GET(sd->focused_item, focused_it);
+             ELM_GENLIST_ITEM_DATA_GET(up, up2);
+
+             _swap_items(focused_it, up2, ELM_FOCUS_UP);
+
+             return EINA_TRUE;
+          }
+
         if (_key_action_move_dir(obj, ELM_FOCUS_UP, EINA_FALSE)) return EINA_TRUE;
         else return EINA_FALSE;
      }
@@ -2773,6 +2883,18 @@ _key_action_move(Evas_Object *obj, const char *params)
      }
    else if (!strcmp(dir, "down"))
      {
+        if (sd->reorder.running) return EINA_TRUE;
+        if (sd->reorder_mode)
+          {
+             Elm_Gen_Item *down = (Elm_Gen_Item *)elm_genlist_item_next_get(sd->focused_item);
+             ELM_GENLIST_ITEM_DATA_GET(sd->focused_item, focused_it);
+             ELM_GENLIST_ITEM_DATA_GET(down, down2);
+
+             _swap_items(focused_it, down2, ELM_FOCUS_DOWN);
+
+             return EINA_TRUE;
+          }
+
         if (_key_action_move_dir(obj, ELM_FOCUS_DOWN, EINA_FALSE)) return EINA_TRUE;
         else return EINA_FALSE;
      }
@@ -7340,6 +7462,25 @@ _elm_genlist_decorate_mode_set(Eo *obj, Elm_Genlist_Data *sd, Eina_Bool decorate
 
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, sd->obj);
+}
+
+EAPI void
+elm_genlist_reorder_mode_start(Evas_Object *obj, Ecore_Pos_Map tween_mode)
+{
+   ELM_GENLIST_CHECK(obj);
+   ELM_GENLIST_DATA_GET(obj, sd);
+
+   sd->reorder.tween_mode = tween_mode;
+   _elm_genlist_reorder_mode_set(obj, sd, EINA_TRUE);
+}
+
+EAPI void
+elm_genlist_reorder_mode_stop(Evas_Object *obj)
+{
+   ELM_GENLIST_CHECK(obj);
+   ELM_GENLIST_DATA_GET(obj, sd);
+
+   _elm_genlist_reorder_mode_set(obj, sd, EINA_FALSE);
 }
 
 EOLIAN static void
