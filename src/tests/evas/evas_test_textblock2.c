@@ -101,9 +101,30 @@ START_TEST(evas_textblock2_set_get)
 }
 END_TEST
 
+/* Aux evas stuff, such as scale. */
+START_TEST(evas_textblock2_evas)
+{
+   Evas_Coord w, h, sw, sh;
+   START_TB_TEST();
+   const char *buf = "Test";
+   eo_do(tb, efl_text_set(buf));
+   evas_object_textblock2_size_formatted_get(tb, &w, &h);
+   evas_object_scale_set(tb, 3.0);
+   evas_object_textblock2_size_formatted_get(tb, &sw, &sh);
+   fail_if((sw <= w) || (sh <= h));
+
+   evas_object_scale_set(tb, 0.5);
+   evas_object_textblock2_size_formatted_get(tb, &sw, &sh);
+   fail_if((sw >= w) || (sh >= h));
+
+   END_TB_TEST();
+}
+END_TEST
+
 void evas_test_textblock2(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock2_simple);
    tcase_add_test(tc, evas_textblock2_set_get);
+   tcase_add_test(tc, evas_textblock2_evas);
 }
 
