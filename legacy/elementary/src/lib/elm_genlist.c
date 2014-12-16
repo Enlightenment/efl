@@ -2791,10 +2791,10 @@ _item_swap_cb(void *data, double pos)
 static void
 _swap_items(Elm_Gen_Item *it1, Elm_Gen_Item *it2, Elm_Focus_Direction dir)
 {
+   if (!it1 || !it2) return;
+
    ELM_GENLIST_DATA_GET_FROM_ITEM(it1, sd);
    Evas_Coord xx1, yy1, xx2, yy2;
-
-   if (!it1 || !it2) return;
 
    sd->reorder.running = EINA_TRUE;
    sd->reorder.dir = dir;
