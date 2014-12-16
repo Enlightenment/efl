@@ -3,3 +3,6 @@
 /elm_suite.log
 /elm_suite.trs
 /test-suite.log
+/elm_cxx_suite
+/elm_cxx_suite.log
+/elm_cxx_suite.trs

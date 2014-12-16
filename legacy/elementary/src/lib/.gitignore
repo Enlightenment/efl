@@ -1,9 +1,11 @@
 /Elementary.h
+/Elementary.hh
 /elm_intro.h
 /*.eo.c
 /*.eo.h
 /*.eo.legacy.h
 /*.eo.hh
+/*.eo.impl.hh
 /*.eot.h
 /eldbus_elementary_colorclass.c
 /eldbus_elementary_colorclass.h

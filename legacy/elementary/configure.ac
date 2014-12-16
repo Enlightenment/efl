@@ -31,10 +31,10 @@ EFL_INIT
 # C++ bindings
 
 AC_ARG_ENABLE([cxx-bindings],
-   [AS_HELP_STRING([--enable-cxx-bindings],
-       [enable C++11 bindings. @<:@default=disabled@:>@])],
+   [AS_HELP_STRING([--disable-cxx-bindings],
+       [Disable C++11 bindings. @<:@default=enabled@:>@])],
    [want_cxx11="${enableval}"],
-   [want_cxx11="no"])
+   [want_cxx11="yes"])
 
 # Tests
 
@@ -271,6 +271,7 @@ if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
         eina-cxx >= efl_version
         evas-cxx >= efl_version
         eio-cxx >= efl_version
+        edje-cxx >= efl_version
       ],
       [
         requirement_elm_pc="${requirement_elm_pc} \
@@ -279,10 +280,12 @@ if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
           eina-cxx >= efl_version \
           evas-cxx >= efl_version \
           eio-cxx >= efl_version \
+          edje-cxx >= efl_version \
         "
         have_cxx11="yes"
         LDFLAGS="${LDFLAGS} -fPIC -DPIC"
         CXXFLAGS="${CXXFLAGS} -fPIC -DPIC"
+        AC_CONFIG_FILES([src/lib/Elementary.hh])
       ],
       [have_cxx11="no"]
    )

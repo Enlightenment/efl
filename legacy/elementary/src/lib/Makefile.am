@@ -641,6 +641,7 @@ elm_eolian_c = $(elm_eolian_files:%.eo=%.eo.c)
 elm_eolian_h = $(elm_eolian_files:%.eo=%.eo.h)
 elm_eolian_legacy_h = $(elm_eolian_files:%.eo=%.eo.legacy.h)
 elm_eolian_hh = $(elm_eolian_files:%.eo=%.eo.hh)
+elm_eolian_impl_hh = $(elm_eolian_files:%.eo=%.eo.impl.hh)
 
 elm_eolian_eot_h = $(elm_eolian_type_files:%.eot=%.eot.h)
 
@@ -657,134 +658,14 @@ EXTRA_DIST += ${elementaryeolianfiles_DATA}
 nodist_includesunstable_HEADERS = $(elm_eolian_h) $(elm_eolian_legacy_h) $(elm_eolian_eot_h)
 CLEANFILES += $(nodist_includesunstable_HEADERS)
 
-elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
-elementaryeolianfiles_DATA = \
-	     elm_widget.eo \
-	     elm_container.eo \
-	     elm_layout.eo \
-	     elm_interface_scrollable.eo \
-	     elm_pan.eo \
-	     elm_frame.eo \
-	     elm_hover.eo \
-	     elm_access.eo \
-	     elm_actionslider.eo \
-	     elm_app_client.eo \
-	     elm_app_client_view.eo \
-	     elm_app_server.eo \
-	     elm_app_server_view.eo \
-	     elm_atspi_app_object.eo \
-	     elm_atspi_bridge.eo \
-	     elm_interface_atspi_accessible.eo \
-	     elm_interface_atspi_action.eo \
-	     elm_interface_atspi_component.eo \
-	     elm_interface_atspi_editable_text.eo \
-	     elm_interface_atspi_image.eo \
-	     elm_interface_atspi_selection.eo \
-	     elm_interface_atspi_text.eo \
-	     elm_interface_atspi_value.eo \
-	     elm_interface_atspi_widget_action.eo \
-	     elm_interface_atspi_window.eo \
-	     elm_bg.eo \
-	     elm_box.eo \
-	     elm_bubble.eo \
-	     elm_button.eo \
-	     elm_calendar.eo \
-	     elm_check.eo \
-	     elm_clock.eo \
-	     elm_colorselector.eo \
-	     elm_conformant.eo \
-	     elm_ctxpopup.eo \
-	     elm_datetime.eo \
-	     elm_dayselector.eo \
-	     elm_diskselector.eo \
-	     elm_entry.eo \
-	     elm_fileselector.eo \
-	     elm_fileselector_button.eo \
-	     elm_fileselector_entry.eo \
-	     elm_flipselector.eo \
-	     elm_flip.eo \
-	     elm_general.eot \
-	     elm_gengrid.eo \
-	     elm_gengrid_pan.eo \
-	     elm_genlist.eo \
-	     elm_genlist_pan.eo \
-	     elm_gesture_layer.eo \
-	     elm_glview.eo \
-	     elm_grid.eo \
-	     elm_hoversel.eo \
-	     elm_image.eo \
-	     elm_icon.eo \
-	     elm_index.eo \
-	     elm_interface_fileselector.eo \
-	     elm_inwin.eo \
-	     elm_label.eo \
-	     elm_list.eo \
-	     elm_map_pan.eo \
-	     elm_map.eo \
-	     elm_menu.eo \
-	     elm_multibuttonentry.eo \
-	     elm_naviframe.eo \
-	     elm_panel.eo \
-	     elm_mapbuf.eo \
-	     elm_notify.eo \
-	     elm_panes.eo \
-	     elm_photocam.eo \
-	     elm_photocam_pan.eo \
-	     elm_photo.eo \
-	     elm_player.eo \
-	     elm_plug.eo \
-	     elm_popup.eo \
-	     elm_prefs.eo \
-	     elm_progressbar.eo \
-	     elm_radio.eo \
-	     elm_route.eo \
-	     elm_scroller.eo \
-	     elm_segment_control.eo \
-	     elm_separator.eo \
-	     elm_slider.eo \
-	     elm_slideshow.eo \
-	     elm_spinner.eo \
-	     elm_systray.eo \
-	     elm_table.eo \
-	     elm_thumb.eo \
-	     elm_toolbar.eo \
-	     elm_video.eo \
-	     elm_view_list.eo \
-	     elm_view_form.eo \
-	     elm_web.eo \
-	     elm_win.eo \
-	     elm_win_standard.eo \
-	     elm_widget_item.eo \
-	     elm_color_item.eo \
-	     elm_dayselector_item.eo \
-	     elm_hoversel_item.eo \
-	     elm_segment_control_item.eo \
-	     elm_slideshow_item.eo \
-	     elm_flipselector_item.eo \
-	     elm_menu_item.eo \
-	     elm_ctxpopup_item.eo \
-	     elm_index_item.eo \
-	     elm_multibuttonentry_item.eo \
-	     elm_naviframe_item.eo \
-	     elm_genlist_item.eo \
-	     elm_gengrid_item.eo \
-	     elm_list_item.eo \
-	     elm_toolbar_item.eo \
-	     elm_diskselector_item.eo \
-	     elm_popup_item.eo
-
 EXTRA_DIST += ${elementaryeolianfiles_DATA}
 
 includecxxbindingsdir = $(includedir)/elementary-cxx-@VMAJ@
 
 if HAVE_CXX11
-nodist_includecxxbindings_HEADERS = Elementary.hh $(elm_eolian_hh)
-CLEANFILES += Elementary.hh $(nodist_includecxxbindings_HEADERS)
-Elementary.hh: $(elm_eolian_hh)
-	@echo @ECHO_E@ "#ifndef ELEMENTARY_CXX_HH\n#define ELEMENTARY_CXX_HH\n" > $(top_builddir)/src/lib/Elementary.hh
-	@echo @ECHO_E@ "#ifdef EFL_BETA_API_SUPPORT" >> $(top_builddir)/src/lib/Elementary.hh
-	@for i in $(elm_eolian_hh); do echo "#include <$$(basename $$i)>" >> $(top_builddir)/src/lib/Elementary.hh; done
-	@echo @ECHO_E@ "#endif\n\n#endif\n" >> $(top_builddir)/src/lib/Elementary.hh
+nodist_includecxxbindings_HEADERS = Elementary.hh $(elm_eolian_hh) $(elm_eolian_impl_hh)
+CLEANFILES += $(nodist_includecxxbindings_HEADERS)
+EXTRA_DIST += Elementary.hh.in
 endif
 
 
