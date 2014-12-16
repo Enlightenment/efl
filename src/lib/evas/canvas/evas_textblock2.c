@@ -3367,24 +3367,24 @@ evas_textblock2_cursor_char_prev(Evas_Textblock2_Cursor *cur)
      }
 }
 
+/* FIXME: Probably remove this func. */
+EAPI void
+evas_textblock2_cursor_paragraph_char_first(Evas_Textblock2_Cursor *cur)
+{
+   if (!cur) return;
+   TB_NULL_CHECK(cur->node);
+
+   cur->pos = 0;
+}
+
+/* FIXME: Probably remove this func. */
 EAPI void
 evas_textblock2_cursor_paragraph_char_last(Evas_Textblock2_Cursor *cur)
 {
-   int ind;
-
    if (!cur) return;
    TB_NULL_CHECK(cur->node);
-   ind = eina_ustrbuf_length_get(cur->node->unicode);
-   /* If it's not the last paragraph, go back one, because we want to point
-    * to the PS, not the NULL */
-   if (EINA_INLIST_GET(cur->node)->next)
-      ind--;
 
-   if (ind >= 0)
-      cur->pos = ind;
-   else
-      cur->pos = 0;
-
+   cur->pos = eina_ustrbuf_length_get(cur->node->unicode);
 }
 
 EAPI void
