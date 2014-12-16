@@ -3493,7 +3493,7 @@ evas_textblock2_cursor_pos_get(const Evas_Textblock2_Cursor *cur)
    n = o->text_nodes;
    while (n != cur->node)
      {
-        npos += eina_ustrbuf_length_get(n->unicode);
+        npos += eina_ustrbuf_length_get(n->unicode) + 1; /* One for the ps */
         n = _NODE_TEXT(EINA_INLIST_GET(n)->next);
      }
    return npos + cur->pos;
@@ -3518,9 +3518,9 @@ evas_textblock2_cursor_pos_set(Evas_Textblock2_Cursor *cur, int _pos)
      }
 
    n = o->text_nodes;
-   while (n && (pos >= eina_ustrbuf_length_get(n->unicode)))
+   while (n && (pos > eina_ustrbuf_length_get(n->unicode)))
      {
-        pos -= eina_ustrbuf_length_get(n->unicode);
+        pos -= eina_ustrbuf_length_get(n->unicode) + 1; /* One for the ps */
         n = _NODE_TEXT(EINA_INLIST_GET(n)->next);
      }
 
