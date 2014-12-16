@@ -1,6 +1,8 @@
 #ifndef EFL_EO_JS_GET_VALUE_HH
 #define EFL_EO_JS_GET_VALUE_HH
 
+#include <eo_js_compatibility.hh>
+
 #if 0
 #include <v8.h>
 #else
@@ -33,13 +35,9 @@ inline int get_value_from_javascript
     return v->Uint32Value();
   else
     {
-#if 0
-      isolate->
-#else
-        v8::
-#endif
-        ThrowException
-        (v8::Exception::TypeError(v8::String::New/*FromUtf8*/(/*isolate,*/ "Type expected is different. Expected Integral type")));
+      compatibility_throw
+        (isolate, v8::Exception::TypeError
+         (compatibility_new<v8::String>(isolate, "Type expected is different. Expected Integral type")));
 
       throw std::logic_error("");
     }
@@ -48,7 +46,7 @@ inline int get_value_from_javascript
 
 inline char* get_value_from_javascript
   (v8::Local<v8::Value> v
-   , v8::Isolate* /*isolate*/
+   , v8::Isolate* isolate
    , value_tag<char*>)
 {
   if(v->IsNull())
@@ -62,13 +60,9 @@ inline char* get_value_from_javascript
     }
   else
     {
-#if 0
-      isolate->
-#else
-        v8::
-#endif
-        ThrowException
-        (v8::Exception::TypeError(v8::String::New/*FromUtf8*/(/*isolate,*/ "Type expected is different. Expected Integral type")));
+      compatibility_throw
+        (isolate, v8::Exception::TypeError
+         (compatibility_new<v8::String>(isolate, "Type expected is different. Expected Integral type")));
 
       throw std::logic_error("");
     }
@@ -85,7 +79,7 @@ inline const char* get_value_from_javascript
 
 inline Eo* get_value_from_javascript
   (v8::Local<v8::Value> v
-   , v8::Isolate* /*isolate*/
+   , v8::Isolate* isolate
    , value_tag<Eo*>)
 {
   if(v->IsNull())
@@ -102,22 +96,17 @@ inline Eo* get_value_from_javascript
             }
         }
     }
-#if 0
-      isolate->
-#else
-        v8::
-#endif
-        ThrowException
-        (v8::Exception::TypeError(v8::String::New/*FromUtf8*/(/*isolate,*/ "Type expected is different. Expected floating point type")));
-      throw std::logic_error("");
-      return nullptr;
+  compatibility_throw
+    (isolate, v8::Exception::TypeError
+     (compatibility_new<v8::String>(isolate, "Type expected is different. Expected floating point type")));
+  throw std::logic_error("");
   return nullptr;
 }
 
 template <typename T>
 inline T get_value_from_javascript
   (v8::Local<v8::Value> v
-   , v8::Isolate* /*isolate*/
+   , v8::Isolate* isolate
    , value_tag<T>
    , typename std::enable_if<std::is_enum<T>::value>::type* = 0)
 {
@@ -127,13 +116,9 @@ inline T get_value_from_javascript
     return static_cast<T>(v->Uint32Value());
   else
     {
-#if 0
-      isolate->
-#else
-        v8::
-#endif
-        ThrowException
-        (v8::Exception::TypeError(v8::String::New/*FromUtf8*/(/*isolate,*/ "Type expected is different. Expected Integral type")));
+      compatibility_throw
+        (isolate, v8::Exception::TypeError
+         (compatibility_new<v8::String>(isolate, "Type expected is different. Expected Integral type")));
 
       throw std::logic_error("");
     }
@@ -142,7 +127,7 @@ inline T get_value_from_javascript
       
 inline int get_value_from_javascript
   (v8::Local<v8::Value> v
-   , v8::Isolate* /*isolate*/
+   , v8::Isolate* isolate
    , value_tag<Eina_Bool>)
 {
   if(v->IsBoolean() || v->IsBooleanObject())
@@ -151,13 +136,9 @@ inline int get_value_from_javascript
     }
   else
     {
-#if 0
-      isolate->
-#else
-        v8::
-#endif
-        ThrowException
-        (v8::Exception::TypeError(v8::String::New/*FromUtf8*/(/*isolate,*/ "Type expected is different. Expected Boolean type")));
+      compatibility_throw
+        (isolate, v8::Exception::TypeError
+         (compatibility_new<v8::String>(isolate, "Type expected is different. Expected Boolean type")));
 
       throw std::logic_error("");
     }
@@ -177,13 +158,9 @@ inline double get_value_from_javascript
     }
   else
     {
-#if 0
-      isolate->
-#else
-        v8::
-#endif
-        ThrowException
-        (v8::Exception::TypeError(v8::String::New/*FromUtf8*/(/*isolate,*/ "Type expected is different. Expected floating point type")));
+      compatibility_throw
+        (isolate, v8::Exception::TypeError
+         (compatibility_new<v8::String>(isolate, "Type expected is different. Expected floating point type")));
       throw std::logic_error("");
     }
   return 0.0;
@@ -191,20 +168,15 @@ inline double get_value_from_javascript
 
 template <typename T>
 inline T get_value_from_javascript
-  (v8::Local<v8::Value>, v8::Isolate*, value_tag<T>
+  (v8::Local<v8::Value>, v8::Isolate* isolate, value_tag<T>
    , typename std::enable_if<!std::is_floating_point<T>::value && !std::is_integral<T>::value
    && !std::is_enum<T>::value>::type* = 0)
 {
   std::cerr << "Trying to convert to " << typeid(T).name() << " to call a C function" << std::endl;
-  //std::abort();
-#if 0
-      isolate->
-#else
-        v8::
-#endif
-        ThrowException
-        (v8::Exception::TypeError(v8::String::New/*FromUtf8*/(/*isolate,*/ "Not implemented yet")));
-      throw std::logic_error("");
+  compatibility_throw
+    (isolate, v8::Exception::TypeError
+     (compatibility_new<v8::String>(isolate, "Not implemented yet")));
+  throw std::logic_error("");
 }
       
 } } }

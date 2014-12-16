@@ -37,123 +37,6 @@ struct method_caller
   struct is_out : eina::_mpl::tuple_contains<std::integral_constant<std::size_t, I>, Out>
   {};
 
-#if 0
-  template <typename U, std::size_t I, typename Outs>
-  static
-  typename std::tuple_element<I, parameters_t>::type
-  get_value(v8::FunctionCallbackInfo<v8::Value>const& args, Outs& /*outs*/, v8::Isolate* isolate
-            , std::false_type)
-  {
-    std::cout << "is NOT out" << std::endl;
-    return js::get_value_from_javascript
-      (args[I], isolate
-       , js::value_tag<typename std::tuple_element
-       <I, typename eina::_mpl::function_params<U>::type>::type>());
-  }
-  template <typename U, std::size_t I, typename Outs>
-  static
-  typename std::add_pointer<
-  typename std::tuple_element
-    <eina::_mpl::tuple_find<std::integral_constant<std::size_t, I>, Out>::value
-     , Outs>::type>::type
-  get_value(v8::FunctionCallbackInfo<v8::Value>const&, Outs& outs, v8::Isolate*
-            , std::true_type)
-  {
-    std::cout << "is out" << std::endl;
-    return &std::get<eina::_mpl::tuple_find<std::integral_constant<std::size_t, I>, Out>::value>
-      (outs);
-  }
-
-  template <typename R>
-  void create_return_unique_value(v8::FunctionCallbackInfo<v8::Value> const& args
-                                  , R const& r) const
-  {
-    args.GetReturnValue().Set(js::get_value_from_c(r, args.GetIsolate()));
-  }
-  
-  template <typename Outs>
-  void create_return_value(v8::FunctionCallbackInfo<v8::Value> const& args
-                           , Outs const& outs
-                           , typename std::enable_if<std::tuple_size<Outs>::value == 1>::type* = 0) const
-  {
-    create_return_unique_value(args, std::get<0u>(outs));
-  }
-
-  template <typename Outs>
-  void create_return_value(v8::FunctionCallbackInfo<v8::Value> const&
-                           , Outs const&
-                           , typename std::enable_if<std::tuple_size<Outs>::value == 0>::type* = 0) const
-  {
-    // nothing
-  }
-
-  template <typename Outs>
-  void create_return_value(v8::FunctionCallbackInfo<v8::Value> const& args
-                           , Outs const& outs
-                           , typename std::enable_if<(std::tuple_size<Outs>::value > 1)>::type* = 0) const
-  {
-    v8::Isolate* isolate = args.GetIsolate();
-    int const length = std::tuple_size<Outs>::value;
-    v8::Local<v8::Array> ret = v8::Array::New(isolate, length);
-    set_return<0u>(isolate, ret, outs, eina::make_index_sequence<std::tuple_size<Outs>::value>());
-    args.GetReturnValue().Set(ret);
-  }
-  
-  template <typename R, typename Outs>
-  void create_return_value(v8::FunctionCallbackInfo<v8::Value> const& args
-                           , R const& r
-                           , Outs const&
-                           , typename std::enable_if<std::tuple_size<Outs>::value == 0>::type* = 0) const
-  {
-    create_return_unique_value(args, r);
-  }
-
-  template <std::size_t Offset, typename Outs, std::size_t...S>
-  void set_return(v8::Isolate* isolate, v8::Local<v8::Array> r
-                  , Outs const& outs, eina::index_sequence<S...>) const
-  {
-    std::initializer_list<int> l
-      = {(r->Set(S+Offset, js::get_value_from_c(std::get<S>(outs), isolate)),0)...};
-    static_cast<void>(l);
-  }
-
-  template <typename R, typename Outs>
-  void create_return_value(v8::FunctionCallbackInfo<v8::Value> const& args
-                           , R const& r
-                           , Outs const& outs
-                           , typename std::enable_if<std::tuple_size<Outs>::value != 0>::type* = 0) const
-  {
-    v8::Isolate* isolate = args.GetIsolate();
-    int const length = std::tuple_size<Outs>::value + 1;
-    v8::Local<v8::Array> ret = v8::Array::New(isolate, length);
-    ret->Set(0, js::get_value_from_c(r, isolate));
-    set_return<1u>(isolate, ret, outs, eina::make_index_sequence<std::tuple_size<Outs>::value>());
-    args.GetReturnValue().Set(ret);
-  }
-  
-  template <std::size_t... I>
-  void aux(v8::FunctionCallbackInfo<v8::Value> const& args, eina::index_sequence<I...>
-           , std::true_type) const
-  {
-    typename eina::_mpl::tuple_transform<Out, out_transform<parameters_t> >::type outs {};
-    static_cast<void>(outs);
-    
-    function(get_value<F, I>(args, outs, args.GetIsolate(), typename is_out<I>::type())...);
-    create_return_value(args, outs);
-  }
-
-  template <std::size_t... I>
-  void aux(v8::FunctionCallbackInfo<v8::Value> const& args, eina::index_sequence<I...>
-           , std::false_type) const
-  {
-    typename eina::_mpl::tuple_transform<Out, out_transform<parameters_t> >::type outs {};
-    static_cast<void>(outs);
-
-    typename eina::_mpl::function_return<F>::type r =
-      function(get_value<F, I>(args, outs, args.GetIsolate(), typename is_out<I>::type())...);
-    create_return_value(args, r, outs);
-  }
-#else
   template <typename U, std::size_t I, typename Outs>
   static
   typename std::tuple_element<I, parameters_t>::type
@@ -180,86 +63,94 @@ struct method_caller
       (outs);
   }
 
-  // template <typename R>
-  // void create_return_unique_value(v8::Arguments const& args
-  //                                 , R const& r) const
-  // {
-  //   args.GetReturnValue().Set(js::get_value_from_c(r, args.GetIsolate()));
-  // }
+  template <typename R>
+  v8::Handle<v8::Value>
+  create_return_unique_value(compatibility_callback_info_type args
+                             , R const& r) const
+  {
+    return js::get_value_from_c(r, args.GetIsolate());
+  }
   
-  // template <typename Outs>
-  // void create_return_value(v8::Arguments const& args
-  //                          , Outs const& outs
-  //                          , typename std::enable_if<std::tuple_size<Outs>::value == 1>::type* = 0) const
-  // {
-  //   create_return_unique_value(args, std::get<0u>(outs));
-  // }
+  template <typename Outs>
+  v8::Handle<v8::Value> 
+  create_return_value(compatibility_callback_info_type args
+                      , Outs const& outs
+                      , typename std::enable_if<std::tuple_size<Outs>::value == 1>::type* = 0) const
+  {
+    return create_return_unique_value(args, std::get<0u>(outs));
+  }
 
-  // template <typename Outs>
-  // void create_return_value(v8::Arguments const&
-  //                          , Outs const&
-  //                          , typename std::enable_if<std::tuple_size<Outs>::value == 0>::type* = 0) const
-  // {
-  //   // nothing
-  // }
+  template <typename Outs>
+  v8::Handle<v8::Value> 
+  create_return_value(compatibility_callback_info_type
+                      , Outs const&
+                      , typename std::enable_if<std::tuple_size<Outs>::value == 0>::type* = 0) const
+  {
+    // nothing
+    return v8::Handle<v8::Value>();
+  }
 
-  // template <typename Outs>
-  // void create_return_value(v8::Arguments const& args
-  //                          , Outs const& outs
-  //                          , typename std::enable_if<(std::tuple_size<Outs>::value > 1)>::type* = 0) const
-  // {
-  //   v8::Isolate* isolate = args.GetIsolate();
-  //   int const length = std::tuple_size<Outs>::value;
-  //   v8::Local<v8::Array> ret = v8::Array::New(isolate, length);
-  //   set_return<0u>(isolate, ret, outs, eina::make_index_sequence<std::tuple_size<Outs>::value>());
-  //   args.GetReturnValue().Set(ret);
-  // }
+  template <typename Outs>
+  v8::Handle<v8::Value>
+  create_return_value(compatibility_callback_info_type args
+                      , Outs const& outs
+                      , typename std::enable_if<(std::tuple_size<Outs>::value > 1)>::type* = 0) const
+  {
+    v8::Isolate* isolate = args.GetIsolate();
+    int const length = std::tuple_size<Outs>::value;
+    v8::Local<v8::Array> ret = compatibility_new<v8::Array>(isolate, length);
+    set_return<0u>(isolate, ret, outs, eina::make_index_sequence<std::tuple_size<Outs>::value>());
+    return compatibility_return(ret, args);
+  }
   
-  // template <typename R, typename Outs>
-  // void create_return_value(v8::FunctionCallbackInfo<v8::Value> const& args
-  //                          , R const& r
-  //                          , Outs const&
-  //                          , typename std::enable_if<std::tuple_size<Outs>::value == 0>::type* = 0) const
-  // {
-  //   create_return_unique_value(args, r);
-  // }
+  template <typename R, typename Outs>
+  v8::Handle<v8::Value>
+  create_return_value(compatibility_callback_info_type args
+                      , R const& r
+                      , Outs const&
+                      , typename std::enable_if<std::tuple_size<Outs>::value == 0>::type* = 0) const
+  {
+    return create_return_unique_value(args, r);
+  }
 
-  // template <std::size_t Offset, typename Outs, std::size_t...S>
-  // void set_return(v8::Isolate* isolate, v8::Local<v8::Array> r
-  //                 , Outs const& outs, eina::index_sequence<S...>) const
-  // {
-  //   std::initializer_list<int> l
-  //     = {(r->Set(S+Offset, js::get_value_from_c(std::get<S>(outs), isolate)),0)...};
-  //   static_cast<void>(l);
-  // }
+  template <std::size_t Offset, typename Outs, std::size_t...S>
+  void set_return(v8::Isolate* isolate, v8::Local<v8::Array> r
+                  , Outs const& outs, eina::index_sequence<S...>) const
+  {
+    std::initializer_list<int> l
+      = {(r->Set(S+Offset, js::get_value_from_c(std::get<S>(outs), isolate)),0)...};
+    static_cast<void>(l);
+  }
 
-  // template <typename R, typename Outs>
-  // void create_return_value(v8::FunctionCallbackInfo<v8::Value> const& args
-  //                          , R const& r
-  //                          , Outs const& outs
-  //                          , typename std::enable_if<std::tuple_size<Outs>::value != 0>::type* = 0) const
-  // {
-  //   v8::Isolate* isolate = args.GetIsolate();
-  //   int const length = std::tuple_size<Outs>::value + 1;
-  //   v8::Local<v8::Array> ret = v8::Array::New(isolate, length);
-  //   ret->Set(0, js::get_value_from_c(r, isolate));
-  //   set_return<1u>(isolate, ret, outs, eina::make_index_sequence<std::tuple_size<Outs>::value>());
-  //   args.GetReturnValue().Set(ret);
-  // }
+  template <typename R, typename Outs>
+  compatibility_return_type
+  create_return_value(compatibility_callback_info_type args
+                      , R const& r
+                      , Outs const& outs
+                      , typename std::enable_if<std::tuple_size<Outs>::value != 0>::type* = 0) const
+  {
+    v8::Isolate* isolate = args.GetIsolate();
+    int const length = std::tuple_size<Outs>::value + 1;
+    v8::Local<v8::Array> ret = compatibility_new<v8::Array>(isolate, length);
+    ret->Set(0, js::get_value_from_c(r, isolate));
+    set_return<1u>(isolate, ret, outs, eina::make_index_sequence<std::tuple_size<Outs>::value>());
+    return compatibility_return(ret, args);
+  }
   
   template <std::size_t... I>
-  void aux(compatibility_callback_info_type args, eina::index_sequence<I...>
-           , std::true_type) const
+  compatibility_return_type
+  aux(compatibility_callback_info_type args, eina::index_sequence<I...>
+      , std::true_type) const
   {
     typename eina::_mpl::tuple_transform<Out, out_transform<parameters_t> >::type outs {};
     static_cast<void>(outs);
     
     function(get_value<F, I>(args, outs, args.GetIsolate(), typename is_out<I>::type())...);
-    // create_return_value(args, outs);
+    return create_return_value(args, outs);
   }
 
   template <std::size_t... I>
-  void aux(compatibility_callback_info_type args, eina::index_sequence<I...>
+  compatibility_return_type aux(compatibility_callback_info_type args, eina::index_sequence<I...>
            , std::false_type) const
   {
     typename eina::_mpl::tuple_transform<Out, out_transform<parameters_t> >::type outs {};
@@ -267,9 +158,8 @@ struct method_caller
 
     typename eina::_mpl::function_return<F>::type r =
       function(get_value<F, I>(args, outs, args.GetIsolate(), typename is_out<I>::type())...);
-    // create_return_value(args, r, outs);
+    return create_return_value(args, r, outs);
   }
-#endif
   
   template <typename P>
   struct out_transform
@@ -292,10 +182,19 @@ struct method_caller
         Eo* eo = static_cast<Eo*>(v8::External::Cast(*external)->Value());
         try
           {
-            eo_do(eo, aux(args, eina::make_index_sequence<std::tuple_size<parameters_t>::value>()
-                          , std::is_same<void, typename eina::_mpl::function_return<F>::type>()));
+            eo_do
+              (eo,
+               return compatibility_return
+               (
+                aux(args, eina::make_index_sequence<std::tuple_size<parameters_t>::value>()
+                    , std::is_same<void, typename eina::_mpl::function_return<F>::type>())
+                , args)
+              );
           }
-        catch(std::logic_error const&) {}
+        catch(std::logic_error const&)
+          {
+            return compatibility_return();
+          }
       }
     else
       {
@@ -303,7 +202,6 @@ struct method_caller
           (v8::Exception::TypeError
            (compatibility_new<v8::String>(nullptr, "Expected more arguments for this call")));
       }
-    return compatibility_return();
   }
   
   F function;
