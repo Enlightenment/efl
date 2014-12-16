@@ -8,3 +8,9 @@
 
 // check if the rect (x, y, w, h) includes whole body of rect (xx, yy, ww, hh)
 #define ELM_RECTS_INCLUDE(x, y, w, h, xx, yy, ww, hh) (((x) <= (xx)) && (((x) + (w)) >= ((xx + (ww))) && ((y) <= (yy)) && (((y) + (h)) >= ((yy) + (hh)))))
+
+// check if the rect (x,y,w,h) is either left of or stays out of body of rect(xx,yy,ww,hh) 
+#define ELM_RECTS_X_AXIS_OUT(x, y, w, h, xx, yy, ww, hh) (((x) < (xx)) || (((x) + (w)) > ((xx) + (ww))) || (((y) + (h)) > ((yy) + (hh))))
+
+// check if the rect (x,y,w,h) is either top of or stays out of body of rect(xx,yy,ww,hh) 
+#define ELM_RECTS_Y_AXIS_OUT(x, y, w, h, xx, yy, ww, hh) (((y) < (yy)) || (((x) + (w)) > ((xx) + (ww))) || (((y) + (h)) > ((yy) + (hh))))

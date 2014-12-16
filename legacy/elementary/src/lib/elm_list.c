@@ -3038,16 +3038,14 @@ _elm_list_item_coordinates_adjust(Elm_List_Item_Data *it,
    *h = ih;
    if (!sd->h_mode)
      {
-        //TODO: Enhance it later. declare a macro in elm_macros.h
-        if ((ix < vx) || (ix + iw) > (vx + vw) || (iy + ih) > (vy + vh))
+        if (ELM_RECTS_X_AXIS_OUT(ix, iy, iw, ih, vx, vy, vw, vh))
           *y = iy - ih;
         else if (iy < vy)
           *y = iy + ih;
      }
    else
      {
-        //TODO: Enhance it later. declare a macro in elm_macros.h
-        if ((iy < vy) || (ix + iw) > (vx + vw) || (iy + ih) > (vy + vh))
+        if (ELM_RECTS_Y_AXIS_OUT(ix, iy, iw, ih, vx, vy, vw, vh))
           *x = ix - iw;
         else if (ix < vx)
           *x = ix + iw;
