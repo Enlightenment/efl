@@ -3977,6 +3977,10 @@ evas_textblock2_cursor_char_delete(Evas_Textblock2_Cursor *cur)
         ind++;
         eina_ustrbuf_remove(n->unicode, cur->pos, ind);
      }
+   else if (!EINA_INLIST_GET(n)->next)
+     {
+        return;
+     }
    else
      {
         _evas_textblock2_cursor_nodes_merge(cur);
