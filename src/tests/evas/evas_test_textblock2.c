@@ -140,7 +140,135 @@ START_TEST(evas_textblock2_delete)
 
    END_TB_TEST();
 }
-END_TEST;
+END_TEST
+
+/* Should handle all the text editing. */
+START_TEST(evas_textblock2_editing)
+{
+   START_TB_TEST();
+   const char *buf = "First par." _PS "Second par.";
+   eo_do(tb, efl_text_set(buf));
+   Evas_Textblock2_Cursor *main_cur = evas_object_textblock2_cursor_get(tb);
+
+   /* Check deletion works */
+   /* Try deleting after the end of the textblock2 */
+     {
+        char *content;
+        evas_textblock2_cursor_paragraph_last(cur);
+        content = strdup(eo_do(tb, efl_text_get()));
+        evas_textblock2_cursor_char_delete(cur);
+        fail_if(strcmp(content, eo_do(tb, efl_text_get())));
+        free(content);
+     }
+
+   /* Delete the first char */
+   evas_textblock2_cursor_paragraph_first(cur);
+   evas_textblock2_cursor_char_delete(cur);
+   fail_if(strcmp(eo_do(tb, efl_text_get()),
+            "irst par." _PS "Second par."));
+
+   /* Delete some arbitrary char */
+   evas_textblock2_cursor_char_next(cur);
+   evas_textblock2_cursor_char_next(cur);
+   evas_textblock2_cursor_char_next(cur);
+   evas_textblock2_cursor_char_delete(cur);
+   fail_if(strcmp(eo_do(tb, efl_text_get()),
+            "irs par." _PS "Second par."));
+
+   /* Delete a range */
+   evas_textblock2_cursor_pos_set(main_cur, 1);
+   evas_textblock2_cursor_pos_set(cur, 6);
+   evas_textblock2_cursor_range_delete(cur, main_cur);
+   fail_if(strcmp(eo_do(tb, efl_text_get()),
+            "ir." _PS "Second par."));
+   evas_textblock2_cursor_paragraph_char_first(main_cur);
+   evas_textblock2_cursor_paragraph_char_last(cur);
+   evas_textblock2_cursor_char_next(cur);
+   evas_textblock2_cursor_range_delete(cur, main_cur);
+   fail_if(strcmp(eo_do(tb, efl_text_get()),
+            "Second par."));
+
+   eo_do(tb, efl_text_set(buf));
+   evas_textblock2_cursor_paragraph_last(main_cur);
+   evas_textblock2_cursor_text_prepend(main_cur, "Test<b>bla</b>bla.");
+   evas_textblock2_cursor_paragraph_last(cur);
+   evas_textblock2_cursor_paragraph_char_first(main_cur);
+   evas_textblock2_cursor_range_delete(cur, main_cur);
+   fail_if(strcmp(eo_do(tb, efl_text_get()),
+            "First par." _PS ""));
+
+   /* Merging paragraphs */
+   eo_do(tb, efl_text_set(buf));
+   evas_textblock2_cursor_paragraph_char_last(cur);
+   evas_textblock2_cursor_copy(cur, main_cur);
+   evas_textblock2_cursor_char_delete(cur);
+
+   evas_textblock2_cursor_paragraph_first(cur);
+   fail_if(evas_textblock2_cursor_paragraph_next(cur));
+
+   /* Split paragraphs */
+   evas_textblock2_cursor_text_prepend(cur, _PS);
+
+   evas_textblock2_cursor_paragraph_first(cur);
+   fail_if(!evas_textblock2_cursor_paragraph_next(cur));
+   fail_if(evas_textblock2_cursor_paragraph_next(cur));
+
+   /* Merge paragraphs using range deletion */
+   eo_do(tb, efl_text_set(buf));
+   evas_textblock2_cursor_paragraph_first(cur);
+   evas_textblock2_cursor_paragraph_char_last(cur);
+   evas_textblock2_cursor_copy(cur, main_cur);
+   evas_textblock2_cursor_char_prev(cur);
+   evas_textblock2_cursor_char_next(main_cur);
+
+   evas_textblock2_cursor_range_delete(cur, main_cur);
+   evas_textblock2_cursor_paragraph_first(cur);
+   fail_if(evas_textblock2_cursor_paragraph_next(cur));
+
+     {
+        /* Limit to 1000 iterations so we'll never get into an infinite loop,
+         * even if broken */
+        int limit = 1000;
+        eo_do(tb, efl_text_set("this is a test eauoeuaou" _PS "this is a test1" _PS "this is a test 3"));
+        evas_textblock2_cursor_paragraph_last(cur);
+        while (evas_textblock2_cursor_pos_get(cur) > 0)
+          {
+             limit--;
+             fail_if(limit <= 0);
+             evas_textblock2_cursor_copy(cur, main_cur);
+             evas_textblock2_cursor_char_prev(cur);
+             evas_textblock2_cursor_word_start(cur);
+             evas_textblock2_cursor_range_delete(cur, main_cur);
+          }
+     }
+
+
+   /* Insert illegal characters inside the format. */
+     {
+        const char *content;
+        eo_do(tb, efl_text_set("a\n"));
+        evas_textblock2_cursor_pos_set(cur, 1);
+        content = evas_textblock2_cursor_content_get(cur);
+
+        eo_do(tb, efl_text_set("a\t"));
+        evas_textblock2_cursor_pos_set(cur, 1);
+        content = evas_textblock2_cursor_content_get(cur);
+
+        eo_do(tb, efl_text_set("a\xEF\xBF\xBC"));
+        evas_textblock2_cursor_pos_set(cur, 1);
+        content = evas_textblock2_cursor_content_get(cur);
+
+        eo_do(tb, efl_text_set("a\xE2\x80\xA9"));
+        evas_textblock2_cursor_pos_set(cur, 1);
+        content = evas_textblock2_cursor_content_get(cur);
+        (void) content;
+     }
+
+   /* FIXME: Also add text appending/prepending */
+
+   END_TB_TEST();
+}
+END_TEST
 
 void evas_test_textblock2(TCase *tc)
 {
@@ -150,7 +278,7 @@ void evas_test_textblock2(TCase *tc)
    //tcase_add_test(tc, evas_textblock2_split_cursor);
 #endif
    //tcase_add_test(tc, evas_textblock2_size);
-   //tcase_add_test(tc, evas_textblock2_editing);
+   tcase_add_test(tc, evas_textblock2_editing);
    //tcase_add_test(tc, evas_textblock2_style);
    tcase_add_test(tc, evas_textblock2_evas);
    //tcase_add_test(tc, evas_textblock2_text_getters);
