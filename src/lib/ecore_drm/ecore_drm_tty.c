@@ -155,7 +155,7 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
         if (ioctl(dev->tty.fd, KDSETMODE, KD_GRAPHICS))
           {
              ERR("Could not set graphics mode: %m");
-             return EINA_FALSE;
+             goto err_kmode;
           }
      }
 
@@ -166,10 +166,14 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
    if (ioctl(dev->tty.fd, VT_SETMODE, &vtmode) < 0)
      {
         ERR("Could not set Terminal Mode: %m");
-        return EINA_FALSE;
+        goto err_setmode;
      }
 
    return EINA_TRUE;
+err_setmode:
+   ioctl(dev->tty.fd, KDSETMODE, KD_TEXT);
+err_kmode:
+   return EINA_FALSE;
 }
 
 /**
