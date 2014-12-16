@@ -121,10 +121,32 @@ START_TEST(evas_textblock2_evas)
 }
 END_TEST
 
+START_TEST(evas_textblock2_delete)
+{
+   START_TB_TEST();
+
+   eo_do(tb, efl_text_set("a" _PS "b"));
+
+   evas_textblock2_cursor_pos_set(cur, 1);
+   evas_textblock2_cursor_char_delete(cur);
+   ck_assert_str_eq("ab", eo_do(tb, efl_text_get()));
+
+   evas_textblock2_cursor_char_delete(cur);
+   ck_assert_str_eq("a", eo_do(tb, efl_text_get()));
+
+   evas_textblock2_cursor_char_prev(cur);
+   evas_textblock2_cursor_char_delete(cur);
+   ck_assert_str_eq("", eo_do(tb, efl_text_get()));
+
+   END_TB_TEST();
+}
+END_TEST;
+
 void evas_test_textblock2(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock2_simple);
    tcase_add_test(tc, evas_textblock2_set_get);
    tcase_add_test(tc, evas_textblock2_evas);
+   tcase_add_test(tc, evas_textblock2_delete);
 }
 
