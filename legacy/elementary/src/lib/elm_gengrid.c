@@ -182,6 +182,14 @@ _item_show_region(void *data)
                row = cvh / sd->item_height;
                if (row <= 0) row = 1;
                x = (it->position - 1) / row;
+               if (elm_widget_mirrored_get(sd->obj))
+                 {
+                    col = sd->item_count / row;
+                    if (sd->item_count % row == 0)
+                      col--;
+                    x = col - x;
+                 }
+
                y = (it->position - 1) % row;
                if (x >= 1)
                  it_xpos = ((x - GG_IT(it)->prev_group) * sd->item_width)
@@ -1972,6 +1980,7 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *eo_it,
    Evas_Coord cx = 0, cy = 0; //prev or next item's geometry
    Elm_Object_Item *eo_item = NULL;
    Elm_Gen_Item *tmp = it;
+   Eina_Bool mirrored = elm_widget_mirrored_get(WIDGET(it));
 
    evas_object_geometry_get(VIEW(it), &ix, &iy, NULL, NULL);
 
@@ -1988,9 +1997,13 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *eo_it,
           {
              ELM_GENGRID_ITEM_DATA_GET(eo_item, item);
              evas_object_geometry_get(VIEW(item), &cx, &cy, NULL, NULL);
-             if (((sd->horizontal) && (ix == cx) && (iy > cy))||
-                 ((!sd->horizontal) && (iy == cy) && (ix > cx)))
+             if ((sd->horizontal) && (ix == cx) && (iy > cy))
                return EINA_FALSE;
+             else if ((!sd->horizontal) && (iy == cy))
+               if ((!mirrored && (ix >cx)) || (mirrored && (ix < cx)))
+                 return EINA_FALSE;
+               else
+                 return EINA_TRUE;
              else
                return EINA_TRUE;
           }
@@ -2010,9 +2023,13 @@ _elm_gengrid_item_edge_check(Elm_Object_Item *eo_it,
           {
              ELM_GENGRID_ITEM_DATA_GET(eo_item, item);
              evas_object_geometry_get(VIEW(item), &cx, &cy, NULL, NULL);
-             if (((sd->horizontal) && (ix == cx) && (iy < cy)) ||
-                 ((!sd->horizontal) && (iy == cy) && (ix < cx)))
+             if ((sd->horizontal) && (ix == cx) && (iy < cy))
                return EINA_FALSE;
+             else if ((!sd->horizontal) && (iy == cy))
+               if ((!mirrored && (ix < cx)) || (mirrored && (ix > cx)))
+                 return EINA_FALSE;
+               else
+                 return EINA_TRUE;
              else
                return EINA_TRUE;
           }
@@ -2568,6 +2585,7 @@ _key_action_move(Evas_Object *obj, const char *params)
    Evas_Coord page_x = 0;
    Evas_Coord page_y = 0;
    Elm_Object_Item *it = NULL;
+   Eina_Bool mirrored = elm_widget_mirrored_get(obj);
 
    eo_do(obj,
          elm_interface_scrollable_content_pos_get(&x, &y),
@@ -2578,7 +2596,8 @@ _key_action_move(Evas_Object *obj, const char *params)
 
    if (sd->reorder_mode && sd->reorder.running) return EINA_TRUE;
 
-   if (!strcmp(dir, "left"))
+   if ((!strcmp(dir, "left") && !mirrored) ||
+       (!strcmp(dir, "right") && mirrored))
      {
         if (sd->reorder_mode)
           {
@@ -2641,7 +2660,8 @@ _key_action_move(Evas_Object *obj, const char *params)
                return _item_focus_left(sd);
           }
      }
-   else if (!strcmp(dir, "left_multi"))
+   else if ((!strcmp(dir, "left_multi") && !mirrored) ||
+            (!strcmp(dir, "right_multi") && mirrored))
      {
         if (sd->horizontal)
           {
@@ -2658,7 +2678,8 @@ _key_action_move(Evas_Object *obj, const char *params)
              else return EINA_FALSE;
           }
      }
-   else if (!strcmp(dir, "right"))
+   else if ((!strcmp(dir, "right") && !mirrored) ||
+            (!strcmp(dir, "left") && mirrored))
      {
         if (sd->reorder_mode)
           {
@@ -2726,7 +2747,8 @@ _key_action_move(Evas_Object *obj, const char *params)
                return _item_focus_right(sd);
           }
      }
-   else if (!strcmp(dir, "right_multi"))
+   else if ((!strcmp(dir, "right_multi") && !mirrored) ||
+            (!strcmp(dir, "left_multi") && mirrored))
      {
         if (sd->horizontal)
           {
