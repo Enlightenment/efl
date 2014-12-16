@@ -3491,8 +3491,6 @@ int dns_hosts_loadfile(struct dns_hosts *hosts, FILE *fp) {
 			wc++;
 
 			switch (wc) {
-			case 0:
-				break;
 			case 1:
 				ent.af	= (strchr(word, ':'))? AF_INET6 : AF_INET;
 				skip	= (1 != dns_inet_pton(ent.af, word, &ent.addr));
