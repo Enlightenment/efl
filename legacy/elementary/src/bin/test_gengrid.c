@@ -738,6 +738,7 @@ _prepend_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
    id->mode = 0;
    id->path = eina_stringshare_add(buf);
    id->item = elm_gengrid_item_prepend(grid, gic, id, grid_sel, NULL);
+   if (id->item) elm_gengrid_item_show(id->item, ELM_GENGRID_ITEM_SCROLLTO_IN);
 }
 
 static void
@@ -753,6 +754,7 @@ _append_bt_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EI
    id->mode = 0;
    id->path = eina_stringshare_add(buf);
    id->item = elm_gengrid_item_append(grid, gic, id, grid_sel, NULL);
+   if (id->item) elm_gengrid_item_show(id->item, ELM_GENGRID_ITEM_SCROLLTO_IN);
 }
 
 static void
