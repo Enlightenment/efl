@@ -2863,7 +2863,7 @@ _key_action_move(Evas_Object *obj, const char *params)
         if (sd->reorder.running) return EINA_TRUE;
         if (sd->reorder_mode)
           {
-             Elm_Gen_Item *up = (Elm_Gen_Item *)elm_genlist_item_prev_get(sd->focused_item);
+             Elm_Object_Item *up = elm_genlist_item_prev_get(sd->focused_item);
              ELM_GENLIST_ITEM_DATA_GET(sd->focused_item, focused_it);
              ELM_GENLIST_ITEM_DATA_GET(up, up2);
 
@@ -2886,7 +2886,7 @@ _key_action_move(Evas_Object *obj, const char *params)
         if (sd->reorder.running) return EINA_TRUE;
         if (sd->reorder_mode)
           {
-             Elm_Gen_Item *down = (Elm_Gen_Item *)elm_genlist_item_next_get(sd->focused_item);
+             Elm_Object_Item *down = elm_genlist_item_next_get(sd->focused_item);
              ELM_GENLIST_ITEM_DATA_GET(sd->focused_item, focused_it);
              ELM_GENLIST_ITEM_DATA_GET(down, down2);
 
