@@ -381,10 +381,7 @@ cpp_lex(struct operation *op, cpp_reader * pfile)
 		/* Merge character into result; ignore excess chars.  */
 		if (num_chars < max_chars + 1)
 		  {
-		     if (width < HOST_BITS_PER_INT)
-			result = (result << width) | (c & ((1 << width) - 1));
-		     else
-			result = c;
+                     result = (result << width) | (c & ((1 << width) - 1));
 #ifdef MULTIBYTE_CHARS
 		     token_buffer[num_chars - 1] = c;
 #endif
