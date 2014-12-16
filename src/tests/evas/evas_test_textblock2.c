@@ -62,8 +62,48 @@ START_TEST(evas_textblock2_simple)
 }
 END_TEST
 
+/* Various setters and getters */
+START_TEST(evas_textblock2_set_get)
+{
+   START_TB_TEST();
+   const char *buf = "";
+   eo_do(tb, efl_text_set(buf));
+   fail_if(strcmp(evas_object_textblock2_style_get(tb), style_buf));
+
+   evas_object_textblock2_valign_set(tb, -1.0);
+   fail_if(evas_object_textblock2_valign_get(tb) != 0.0);
+   evas_object_textblock2_valign_set(tb, 0.0);
+   fail_if(evas_object_textblock2_valign_get(tb) != 0.0);
+   evas_object_textblock2_valign_set(tb, 0.432);
+   fail_if(evas_object_textblock2_valign_get(tb) != 0.432);
+   evas_object_textblock2_valign_set(tb, 1.0);
+   fail_if(evas_object_textblock2_valign_get(tb) != 1.0);
+   evas_object_textblock2_valign_set(tb, 1.5);
+   fail_if(evas_object_textblock2_valign_get(tb) != 1.0);
+
+   evas_object_textblock2_bidi_delimiters_set(tb, ",.|");
+   fail_if(strcmp(evas_object_textblock2_bidi_delimiters_get(tb), ",.|"));
+   evas_object_textblock2_bidi_delimiters_set(tb, ",|");
+   fail_if(strcmp(evas_object_textblock2_bidi_delimiters_get(tb), ",|"));
+   evas_object_textblock2_bidi_delimiters_set(tb, NULL);
+   fail_if(evas_object_textblock2_bidi_delimiters_get(tb));
+   evas_object_textblock2_bidi_delimiters_set(tb, ",|");
+   fail_if(strcmp(evas_object_textblock2_bidi_delimiters_get(tb), ",|"));
+
+   /* Hinting */
+   eo_do(tb, efl_text_set("This is" _PS "a test\nbla"));
+   /* Force relayout */
+   evas_object_textblock2_size_formatted_get(tb, NULL, NULL);
+   evas_font_hinting_set(evas, EVAS_FONT_HINTING_NONE);
+   evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO);
+   evas_font_hinting_set(evas, EVAS_FONT_HINTING_BYTECODE);
+   END_TB_TEST();
+}
+END_TEST
+
 void evas_test_textblock2(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock2_simple);
+   tcase_add_test(tc, evas_textblock2_set_get);
 }
 
