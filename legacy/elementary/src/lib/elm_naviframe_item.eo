@@ -32,7 +32,8 @@ class Elm_Naviframe_Item(Elm_Widget_Item)
    methods {
       pop_to {
             /*@
-             Pop the items between the top and the above one on the given item.
+             Pop the top item and delete the items between the top and the above
+             one on the given item.
 
              The items between the top and the given item will be deleted first,
              and then the top item will be popped at last.
