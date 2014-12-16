@@ -3456,11 +3456,10 @@ evas_textblock2_cursor_line_char_last(Evas_Textblock2_Cursor *cur)
         cur->pos = it->text_pos;
         if (it->type == EVAS_TEXTBLOCK2_ITEM_TEXT)
           {
-             ind = _ITEM_TEXT(it)->text_props.text_len - 1;
-             if (!IS_AT_END(_ITEM_TEXT(it), ind)) ind++;
+             ind = _ITEM_TEXT(it)->text_props.text_len;
              cur->pos += ind;
           }
-        else if (!EINA_INLIST_GET(ln)->next && !EINA_INLIST_GET(ln->par)->next)
+        else
           {
              cur->pos++;
           }
