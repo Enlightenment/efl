@@ -39,8 +39,6 @@ test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    ck = elm_check_add(win);
-   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(ck, "Icon sized to check");
    elm_object_part_content_set(ck, "icon", ic);
    elm_check_state_set(ck, EINA_TRUE);
@@ -85,8 +83,6 @@ test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    ck = elm_check_add(win);
-   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(ck, "Disabled check");
    elm_object_part_content_set(ck, "icon", ic);
    elm_check_state_set(ck, EINA_TRUE);
@@ -96,12 +92,10 @@ test_check(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_show(ic);
 
    ck = elm_check_add(win);
-   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, ck);
    elm_object_disabled_set(ck, EINA_TRUE);
    evas_object_show(ck);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
@@ -136,8 +130,6 @@ test_check_toggle(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 
    tg = elm_check_add(win);
    elm_object_style_set(tg, "toggle");
-   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(tg, "Icon sized to toggle");
    elm_object_part_content_set(tg, "icon", ic);
    elm_check_state_set(tg, EINA_TRUE);
