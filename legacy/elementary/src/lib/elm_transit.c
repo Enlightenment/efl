@@ -701,7 +701,7 @@ elm_transit_tween_mode_factor_get(const Elm_Transit *transit, double *v1, double
 EAPI void
 elm_transit_tween_mode_factor_n_set(Elm_Transit *transit, unsigned int v_size, double *v)
 {
-   int i;
+   unsigned int i;
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    if (v_size > 4) v_size = 4;
    for (i = 0; i < v_size; i++)
