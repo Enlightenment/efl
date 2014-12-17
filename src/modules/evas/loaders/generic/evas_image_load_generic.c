@@ -173,7 +173,8 @@ _load(Eina_File *ef, const char *key,
         // single extn not too long
         if (((end - dot1) <= 5) && (!illegal_char(dot1)))
           {
-             strcpy(&(decoders[decoders_num][0]), img_loader);
+             strncpy(&(decoders[decoders_num][0]), img_loader, 127);
+             decoders[decoders_num][127] = 0;
              dotcat(&(decoders[decoders_num][0]), dot1);
              decoders_num++;
           }
