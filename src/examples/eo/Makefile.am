@@ -28,7 +28,7 @@ isa/eo_isa_mixin.h \
 isa/eo_isa_simple.c \
 isa/eo_isa_simple.h
 
-eo_isa_LDADD = $(top_builddir)/src/lib/eo/libeo.la @EO_LDFLAGS@ @EFL_PTHREAD_LIBS@
+eo_isa_LDADD = $(top_builddir)/src/lib/eo/libeo.la $(top_builddir)/src/lib/eina/libeina.la @EO_LDFLAGS@ @EFL_PTHREAD_LIBS@
 
 if EO_BUILD_EXAMPLE_EVAS
 
@@ -60,7 +60,7 @@ simple/simple_mixin.h \
 simple/simple_simple.c \
 simple/simple_simple.h
 
-eo_simple_LDADD = $(top_builddir)/src/lib/eo/libeo.la @EO_LDFLAGS@ @EFL_PTHREAD_LIBS@
+eo_simple_LDADD = $(top_builddir)/src/lib/eo/libeo.la $(top_builddir)/src/lib/eina/libeina.la @EO_LDFLAGS@ @EFL_PTHREAD_LIBS@
 
 DATA_FILES = Makefile.examples
 
