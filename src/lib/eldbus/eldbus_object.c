@@ -560,12 +560,15 @@ eldbus_object_path_get(const Eldbus_Object *obj)
 }
 
 static void
-_on_pending_free(void *data, const void *dead_pointer)
+_on_object_message_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
-   Eldbus_Object *obj = data;
-   Eldbus_Pending *pending = (Eldbus_Pending*) dead_pointer;
+   Eldbus_Message_Cb cb = eldbus_pending_data_del(pending, "__user_cb");
+   Eldbus_Object *obj = eldbus_pending_data_del(pending, "__object");
+
    ELDBUS_OBJECT_CHECK(obj);
    obj->pendings = eina_inlist_remove(obj->pendings, EINA_INLIST_GET(pending));
+
+   cb(data, msg, pending);
 }
 
 EAPI Eldbus_Pending *
@@ -576,11 +579,17 @@ eldbus_object_send(Eldbus_Object *obj, Eldbus_Message *msg, Eldbus_Message_Cb cb
    ELDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(msg, NULL);
 
-   pending = _eldbus_connection_send(obj->conn, msg, cb, cb_data, timeout);
-   if (!cb) return NULL;
+   if (!cb)
+     {
+        _eldbus_connection_send(obj->conn, msg, NULL, NULL, timeout);
+        return NULL;
+     }
+   pending = _eldbus_connection_send(obj->conn, msg, _on_object_message_cb,
+                                     cb_data, timeout);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pending, NULL);
 
-   eldbus_pending_free_cb_add(pending, _on_pending_free, obj);
+   eldbus_pending_data_set(pending, "__user_cb", cb);
+   eldbus_pending_data_set(pending, "__object", obj);
    obj->pendings = eina_inlist_append(obj->pendings, EINA_INLIST_GET(pending));
 
    return pending;

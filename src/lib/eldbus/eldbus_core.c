@@ -769,9 +769,11 @@ eldbus_idler(void *data)
         return ECORE_CALLBACK_CANCEL;
      }
    DBG("Connection@%p: Dispatching", conn);
+   eldbus_init();
    eldbus_connection_ref(conn);
    dbus_connection_dispatch(conn->dbus_conn);
    eldbus_connection_unref(conn);
+   eldbus_shutdown();
    return ECORE_CALLBACK_RENEW;
 }
 

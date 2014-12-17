@@ -521,13 +521,15 @@ eldbus_proxy_interface_get(const Eldbus_Proxy *proxy)
 }
 
 static void
-_on_pending_free(void *data, const void *dead_pointer)
+_on_proxy_message_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
-   Eldbus_Proxy *proxy = data;
-   Eldbus_Pending *pending = (Eldbus_Pending *)dead_pointer;
+   Eldbus_Message_Cb cb = eldbus_pending_data_del(pending, "__user_cb");
+   Eldbus_Proxy *proxy = eldbus_pending_data_del(pending, "__proxy");
+
    ELDBUS_PROXY_CHECK(proxy);
    proxy->pendings = eina_inlist_remove(proxy->pendings,
                                         EINA_INLIST_GET(pending));
+   cb(data, msg, pending);
 }
 
 static Eldbus_Pending *
@@ -535,11 +537,17 @@ _eldbus_proxy_send(Eldbus_Proxy *proxy, Eldbus_Message *msg, Eldbus_Message_Cb c
 {
    Eldbus_Pending *pending;
 
-   pending = _eldbus_connection_send(proxy->obj->conn, msg, cb, cb_data, timeout);
-   if (!cb) return NULL;
+   if (!cb)
+     {
+        _eldbus_connection_send(proxy->obj->conn, msg, NULL, NULL, timeout);
+        return NULL;
+     }
+   pending = _eldbus_connection_send(proxy->obj->conn, msg,
+                                     _on_proxy_message_cb, cb_data, timeout);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pending, NULL);
 
-   eldbus_pending_free_cb_add(pending, _on_pending_free, proxy);
+   eldbus_pending_data_set(pending, "__user_cb", cb);
+   eldbus_pending_data_set(pending, "__proxy", proxy);
    proxy->pendings = eina_inlist_append(proxy->pendings,
                                         EINA_INLIST_GET(pending));
 

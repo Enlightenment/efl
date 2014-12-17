@@ -80,10 +80,14 @@ cleanup:
 }
 
 static void
-_on_pending_free(void *data, const void *dead_pointer)
+_on_conn_message_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
-   Eldbus_Connection *conn = data;
-   eldbus_connection_pending_del(conn, (void *)dead_pointer);
+   Eldbus_Message_Cb cb = eldbus_pending_data_del(pending, "__user_cb");
+   Eldbus_Connection *conn = eldbus_pending_data_del(pending, "__connection");
+
+   EINA_SAFETY_ON_NULL_RETURN(conn);
+   eldbus_connection_pending_del(conn, pending);
+   cb(data, msg, pending);
 }
 
 EAPI Eldbus_Pending *
@@ -94,12 +98,18 @@ eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Mess
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(msg, NULL);
 
-   pending = _eldbus_connection_send(conn, msg, cb, cb_data, timeout);
-   if (!cb) return NULL;
+   if (!cb)
+     {
+        _eldbus_connection_send(conn, msg, NULL, NULL, timeout);
+        return NULL;
+     }
+   pending = _eldbus_connection_send(conn, msg, _on_conn_message_cb, cb_data,
+                                     timeout);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pending, NULL);
 
+   eldbus_pending_data_set(pending, "__user_cb", cb);
+   eldbus_pending_data_set(pending, "__connection", conn);
    eldbus_connection_pending_add(conn, pending);
-   eldbus_pending_free_cb_add(pending, _on_pending_free, conn);
    return pending;
 }
 
