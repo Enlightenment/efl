@@ -2874,7 +2874,7 @@ EAPI double ecore_animator_pos_map(double pos, Ecore_Pos_Map map, double v1, dou
  *
  * @see _Ecore_Pos_Map
  */
-EAPI double ecore_animator_pos_map_n(double pos, Ecore_Pos_Map map, int v_size, double v[]);
+EAPI double ecore_animator_pos_map_n(double pos, Ecore_Pos_Map map, int v_size, double *v);
 
 /**
  * @brief Set the source of animator ticks for the mainloop

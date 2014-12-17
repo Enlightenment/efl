@@ -394,8 +394,8 @@ _pos_map_cubic_bezier(double pos,
 EAPI double
 ecore_animator_pos_map_n(double        pos,
                          Ecore_Pos_Map map,
-                         int v_size,
-                         double v[])
+                         int           v_size,
+                         double       *v)
 {
     double v0 = 0, v1 = 0, v2 = 0, v3 = 0;
 
