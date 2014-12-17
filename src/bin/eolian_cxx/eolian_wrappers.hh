@@ -350,14 +350,14 @@ parameter_type(Eolian_Function_Parameter const& parameter,
      {
         if (type.front().native == "char *")
           type = { efl::eolian::type_to_native(type) };
-        type.front().is_out = true;
+        type.is_out = true;
         type.front().native += "*";
      }
    if (parameter_is_const(parameter, func_type))
      {
-        type[0].native.insert(0, "const ");
-        if (!type[0].binding.empty())
-          type[0].binding.insert(0, "const ");
+        type.front().native.insert(0, "const ");
+        if (!type.front().binding.empty())
+          type.front().binding.insert(0, "const ");
      }
    return type;
 }

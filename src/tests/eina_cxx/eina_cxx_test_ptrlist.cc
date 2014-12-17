@@ -47,10 +47,10 @@ static const Eo_Class_Description class_desc = {
 
 EO_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, NULL);
 
-struct wrapper : efl::eo::base
+struct wrapper : efl::eo::concrete
 {
   explicit wrapper(Eo* o)
-    : base(o) {}
+    : concrete(o) {}
 };
 
 START_TEST(eina_cxx_ptrlist_push_back)

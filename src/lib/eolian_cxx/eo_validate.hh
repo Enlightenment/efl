@@ -23,7 +23,7 @@ _is_valid(eolian_type_instance const& type)
 {
    // if (type.empty() || (*type.rbegin()).category == eolian_type::complex_)
    //   return false;
-   for (auto rit = type.rbegin(), last = type.rend(); rit != last; ++rit)
+   for (auto rit = type.parts.rbegin(), last = type.parts.rend(); rit != last; ++rit)
      {
         if ((*rit).binding.empty() && (*rit).category == eolian_type::complex_)
             return false;

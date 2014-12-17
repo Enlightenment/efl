@@ -66,8 +66,8 @@ inline std::ostream&
 operator<<(std::ostream& out, inheritance_operations_description const& x)
 {
    out << "template <typename T>"
-       << endl << "int initialize_operation_description(efl::eo::detail::tag<"
-       << x._cls.name_space << "::" << x._cls.name << ">" << endl
+       << endl << "int initialize_operation_description(::efl::eo::detail::tag<"
+       << full_name(x._cls) << ">" << endl
        << tab(11)
        << ", Eo_Op_Description* ops)" << endl
        << "{" << endl
@@ -103,7 +103,7 @@ operator<<(std::ostream& out, inheritance_wrappers const& x)
             << _ns_as_prefix(x._cls) << "_"
             << x._cls.name << "_" << func.name
             << "_wrapper(Eo* objid EINA_UNUSED, "
-            << "efl::eo::detail::Inherit_Private_Data* self"
+            << "::efl::eo::detail::Inherit_Private_Data* self"
             << (func.params.size() ? ", " : "")
             << parameters_c_declaration(func.params)
             << ")" << endl
@@ -122,7 +122,7 @@ operator<<(std::ostream& out, inheritance_wrappers const& x)
             << tab(2) << "}" << endl
             << tab(1) << "catch (...)" << endl
             << tab(2) << "{" << endl
-            << tab(3) << "eina_error_set( efl::eina::unknown_error() );" << endl
+            << tab(3) << "eina_error_set( ::efl::eina::unknown_error() );" << endl
             << tab(2) << "}" << endl;
 
         if (!function_is_void(func))
@@ -146,7 +146,7 @@ operator<<(std::ostream& out, inheritance_base_operations_size const& x)
 {
    out << "template<>"
        << endl << "struct operation_description_class_size< "
-       <<  x._cls.name_space << "::" << x._cls.name << " >" << endl
+       << full_name(x._cls) << " >" << endl
        << "{" << endl
        << tab(1) << "static const int value = "
        << x._cls.functions.size()
@@ -209,7 +209,7 @@ operator<<(std::ostream& out, inheritance_base_operations const& x)
 {
    out << "template<>" << endl
        << "struct operations< "
-       << x._cls.name_space << "::" << x._cls.name << " >" << endl
+       << full_name(x._cls) << " >" << endl
        << "{" << endl
        << tab(1) << "template <typename T>" << endl
        << tab(1) << "struct type" << endl
@@ -263,10 +263,10 @@ operator<<(std::ostream& out, inheritance_call_constructors const& x)
         eo_constructor const& ctor = *it;
         out << "inline void" << endl
             << "call_constructor(tag< "
-            << x._cls.name_space << "::" << x._cls.name << " >" << endl
+            << full_name(x._cls) << " >" << endl
             << tab(5) << ", Eo* eo, Eo_Class const* cls EINA_UNUSED," << endl
             << tab(5) << "args_class<"
-            << x._cls.name_space << "::" << x._cls.name
+            << full_name(x._cls)
             << ", ::std::tuple<"
             << parameters_types(ctor.params)
             << "> > const& args)" << endl
@@ -281,11 +281,11 @@ operator<<(std::ostream& out, inheritance_call_constructors const& x)
 
    out << "inline void" << endl
        << "call_constructor(tag< "
-       << x._cls.name_space << "::" << x._cls.name << " >" << endl
+       << full_name(x._cls) << " >" << endl
        << tab(5) << ", Eo* eo, Eo_Class const* cls EINA_UNUSED," << endl
        << tab(5) << "args_class<"
-       << x._cls.name_space << "::" << x._cls.name
-       << ", ::std::tuple<efl::eo::parent_type> > const& args)" << endl
+       << full_name(x._cls)
+       << ", ::std::tuple<::efl::eo::parent_type> > const& args)" << endl
        << "{" << endl
        << tab(1) << "eo_do_super(eo, cls, ::eo_constructor());" << endl
        << tab(1) << "eo_do(eo, ::eo_parent_set(args.get<0>()._eo_raw));" << endl
@@ -341,7 +341,7 @@ struct inheritance_extension
 inline std::ostream&
 operator<<(std::ostream& out, inheritance_extension const& x)
 {
-   std::string cls = x._cls.name_space + "::" + x._cls.name;
+   full_name const cls(x._cls);
    out << "template<>" << endl
        << "struct extension_inheritance< "
        << cls << ">" << endl
@@ -381,7 +381,7 @@ inline std::ostream&
 operator<<(std::ostream& out, inheritance_eo_class_getter const& x)
 {
    out << "inline Eo_Class const* get_eo_class(tag<"
-       << x._cls.name_space << "::" << x._cls.name << ">)" << endl
+       << full_name(x._cls) << ">)" << endl
        << "{" << endl
        << tab(1) << "return (" << x._cls.eo_name << ");" << endl
        << "}" << endl << endl;

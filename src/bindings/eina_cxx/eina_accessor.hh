@@ -4,7 +4,7 @@
 #include <Eina.h>
 #include <eina_error.hh>
 #include <eina_throw.hh>
-#include <eina_eo_base_fwd.hh>
+#include <eina_eo_concrete_fwd.hh>
 
 #include <memory>
 #include <iterator>
@@ -151,7 +151,7 @@ template <typename T, typename Enable = T>
 struct accessor;
 
 template <typename T>
-struct accessor<T, typename std::enable_if< ! std::is_base_of<efl::eo::base, T>::value, T>::type>
+struct accessor<T, typename std::enable_if< ! std::is_base_of<::efl::eo::concrete, T>::value, T>::type>
   : accessor_common_base<T>
 {
   typedef accessor_common_base<T> _base_type;
@@ -262,7 +262,7 @@ struct accessor<T, typename std::enable_if< ! std::is_base_of<efl::eo::base, T>:
 };
 
 template <typename T>
-struct accessor<T, typename std::enable_if<std::is_base_of<efl::eo::base, T>::value, T>::type>
+struct accessor<T, typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value, T>::type>
   : accessor_common_base<T>
 {
   typedef accessor_common_base<T> _base_type;
@@ -404,7 +404,7 @@ struct accessor_iterator;
  * Random access iterator for <tt>eina::accessor</tt>.
  */
 template <typename T>
-struct accessor_iterator<T, typename std::enable_if< ! std::is_base_of<efl::eo::base, T>::value, T>::type>
+struct accessor_iterator<T, typename std::enable_if< ! std::is_base_of<::efl::eo::concrete, T>::value, T>::type>
 {
   typedef T value_type; /**< Type of the elements. */
   typedef value_type* pointer; /**< Pointer to element type. */
@@ -553,10 +553,10 @@ struct accessor_iterator<T, typename std::enable_if< ! std::is_base_of<efl::eo::
 };
 
 /**
- * Specialization for all data types that are not derivated from efl::eo::base.
+ * Specialization for all data types that are not derivated from efl::eo::concrete.
  */
 template <typename T>
-struct accessor_iterator<T, typename std::enable_if<std::is_base_of<efl::eo::base, T>::value, T>::type>
+struct accessor_iterator<T, typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value, T>::type>
 {
   typedef T value_type; /**< Type of the elements. */
   typedef value_type* pointer; /**< Pointer to element type. */

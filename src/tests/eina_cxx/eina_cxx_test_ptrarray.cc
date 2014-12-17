@@ -15,10 +15,10 @@
 const Eo_Class *simple_class_get(void);
 #define MY_CLASS simple_class_get()
 
-struct wrapper : efl::eo::base
+struct wrapper : efl::eo::concrete
 {
   explicit wrapper(Eo* o)
-    : base(o) {}
+    : concrete(o) {}
 };
 
 START_TEST(eina_cxx_ptrarray_push_back)

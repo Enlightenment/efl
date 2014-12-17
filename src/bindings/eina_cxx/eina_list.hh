@@ -227,7 +227,7 @@ public:
 };
 
 template <typename T, typename CloneAllocator>
-class list<T, CloneAllocator, typename std::enable_if<std::is_base_of<efl::eo::base, T>::value>::type>
+class list<T, CloneAllocator, typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>::type>
   : ptr_list<Eo, typename std::conditional
              <std::is_same<CloneAllocator, default_clone_allocator_placeholder>::value
               , eo_clone_allocator, CloneAllocator>::type>
@@ -482,7 +482,7 @@ public:
 };
 
 template <typename T>
-class range_list<T, typename std::enable_if<std::is_base_of<efl::eo::base, T>::value>::type>
+class range_list<T, typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>::type>
   : range_ptr_list<typename std::conditional<std::is_const<T>::value, Eo const, Eo>::type>
 {
   typedef range_ptr_list<typename std::conditional<std::is_const<T>::value, Eo const, Eo>::type> _base_type;

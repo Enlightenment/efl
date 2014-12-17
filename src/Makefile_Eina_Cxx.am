@@ -12,7 +12,7 @@ bindings/eina_cxx/eina_accessor.hh       \
 bindings/eina_cxx/eina_array.hh \
 bindings/eina_cxx/eina_clone_allocators.hh       \
 bindings/eina_cxx/eina_error.hh     \
-bindings/eina_cxx/eina_eo_base_fwd.hh     \
+bindings/eina_cxx/eina_eo_concrete_fwd.hh     \
 bindings/eina_cxx/eina_fold.hh     \
 bindings/eina_cxx/eina_inarray.hh  \
 bindings/eina_cxx/eina_inlist.hh   \

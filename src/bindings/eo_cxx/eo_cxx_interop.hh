@@ -39,19 +39,19 @@ to_c(bool* x)
 }
 
 template <typename T>
-T to_c(T const& v, typename std::enable_if<!std::is_convertible<T*, efl::eo::base*>::value>::type* = 0)
+T to_c(T const& v, typename std::enable_if<!std::is_convertible<T*, ::efl::eo::concrete*>::value>::type* = 0)
 {
    return v;
 }
 
 template <typename T>
-Eo* to_c(T const& v, typename std::enable_if<std::is_convertible<T*, efl::eo::base*>::value>::type* = 0)
+Eo* to_c(T const& v, typename std::enable_if<std::is_convertible<T*, ::efl::eo::concrete*>::value>::type* = 0)
 {
    return v._eo_ptr();
 }
 
 template <typename T>
-Eo** to_c(T* v, typename std::enable_if<std::is_convertible<T*, efl::eo::base*>::value>::type* = 0)
+Eo** to_c(T* v, typename std::enable_if<std::is_convertible<T*, ::efl::eo::concrete*>::value>::type* = 0)
 {
    static_assert(sizeof(T) == sizeof(Eo*), "");
    return static_cast<Eo**>(static_cast<void*>(v));
@@ -137,7 +137,7 @@ struct traits
 
 template <typename T>
 struct traits
- <T, typename std::enable_if<std::is_base_of<efl::eo::base, T>::value>::type>
+ <T, typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>::type>
 {
    typedef Eo* type;
 };
@@ -193,7 +193,7 @@ to_cxx(Eina_Iterator* x, std::tuple<std::false_type, Args...>, tag< efl::eina::i
 template <typename T, typename ...Args>
 T
 to_cxx(Eo const* x, std::tuple<std::false_type, Args...>, tag< T >
-       , typename std::enable_if<std::is_base_of<efl::eo::base, T>::value>* = 0)
+       , typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>* = 0)
 {
    // Workaround for erroneous constness
    return T{ ::eo_ref(const_cast<Eo*>(x))};
@@ -202,7 +202,7 @@ to_cxx(Eo const* x, std::tuple<std::false_type, Args...>, tag< T >
 template <typename T, typename ...Args>
 T
 to_cxx(Eo const* x, std::tuple<std::true_type, Args...>, tag< T >
-       , typename std::enable_if<std::is_base_of<efl::eo::base, T>::value>* = 0)
+       , typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>* = 0)
 {
    // Workaround for erroneous constness
    return T{const_cast<Eo*>(x)};

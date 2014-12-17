@@ -18,6 +18,7 @@ lib/eolian_cxx/grammar/comment.hh \
 lib/eolian_cxx/grammar/eo_class_constructors_generator.hh \
 lib/eolian_cxx/grammar/eo_class_events_generator.hh \
 lib/eolian_cxx/grammar/eo_class_functions_generator.hh \
+lib/eolian_cxx/grammar/namespace_generator.hh \
 lib/eolian_cxx/grammar/eo_class_generator.hh \
 lib/eolian_cxx/grammar/eo_header_generator.hh \
 lib/eolian_cxx/grammar/inheritance_base_generator.hh \

@@ -40,7 +40,7 @@ void inherit_constructor(void* this_, Args args);
 ///
 /// The derived class @p D will inherit all EO operations and event
 /// callbacks from the parent class @p P, as well as from the <c>Base
-/// Class</c> (@ref efl::eo::base) since every EO C++ Class must
+/// Class</c> (@ref efl::eo::concrete) since every EO C++ Class must
 /// inherit from it.
 ///
 /// efl::eo::inherit makes use of meta-template elements to build (in

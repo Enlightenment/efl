@@ -4,7 +4,7 @@
 
 #include <iosfwd>
 
-#include "eo_types.hh"
+#include "type_generator.hh"
 #include "tab.hh"
 #include "comment.hh"
 
@@ -50,14 +50,14 @@ operator<<(std::ostream& out, event_callback_add const& x)
        << tab(1) << "{" << endl
        << tab(2) << "typedef typename std::remove_reference<F>::type function_type;" << endl
        << tab(2) << "::std::unique_ptr<function_type> f ( new function_type(std::move(callback_)) );" << endl
-       << tab(2) << "eo_do(" << add_cast_to_t(x._add_cast_to_t) << "_eo_ptr()," << endl
+       << tab(2) << "eo_do(" << add_cast_to_t(x._add_cast_to_t) << "_concrete_eo_ptr()," << endl
        << tab(4) << "eo_event_callback_priority_add" << endl
        << tab(4) << "(" << x._event.eo_name << ", priority_," << endl
-       << tab(4) << "&efl::eo::_detail::event_callback<" << x._cls.name_space << "::" << x._cls.name << ", function_type>, f.get()));" << endl
+       << tab(4) << "&::efl::eo::_detail::event_callback<" << full_name(x._cls) << ", function_type>, f.get()));" << endl
        << tab(2) << "return ::efl::eo::make_signal_connection" << endl
        << tab(3) << "(f, " << add_cast_to_t(x._add_cast_to_t)
-       << "_eo_ptr(), &efl::eo::_detail::event_callback<"
-       << x._cls.name_space << "::" << x._cls.name << ", function_type>," << endl
+       << "_concrete_eo_ptr(), &::efl::eo::_detail::event_callback<"
+       << full_name(x._cls) << ", function_type>," << endl
        << tab(3) << x._event.eo_name << " );" << endl
        << tab(1) << "}" << endl;
    return out;
@@ -79,7 +79,7 @@ operator<<(std::ostream& out, event_callback_call const& x)
        << tab(1) << "void" << endl
        << tab(1) << "callback_" << x._event.name << "_call(T* info)" << endl
        << tab(1) << "{" << endl
-       << tab(2) << "eo_do(" << add_cast_to_t(x._add_cast_to_t) << "_eo_ptr(), eo_event_callback_call" << endl
+       << tab(2) << "eo_do(" << add_cast_to_t(x._add_cast_to_t) << "_concrete_eo_ptr(), eo_event_callback_call" << endl
        << tab(4) << "(" << x._event.eo_name << ", info));" << endl
        << tab(1) << "}" << endl;
    return out;
@@ -101,6 +101,7 @@ operator<<(std::ostream& out, events const& x)
         out << event_callback_add(e, x._cls, x._add_cast_to_t) << endl
            << event_callback_call(e, x._add_cast_to_t);
      }
+   out << endl;
    return out;
 }
 

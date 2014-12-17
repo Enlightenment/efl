@@ -22,6 +22,34 @@ namespace eolian_cxx {
 
 extern efl::eina::log_domain domain;
 
+void
+remove_repeated_base(const char* klass_name, efl::eolian::parents_container_type& cont)
+{
+   Eolian_Class const* klass = ::eolian_class_get_by_name(klass_name);
+   if (!klass)
+     {
+        std::cerr << "Error: could not get eolian class name `" << klass_name << "'" << std::endl;
+        return;
+     }
+
+   Eina_Iterator* inheritances = ::eolian_class_inherits_get(klass);
+   void* curr = 0;
+
+   EINA_ITERATOR_FOREACH(inheritances, curr)
+     {
+        if (!curr)
+          continue;
+
+        const char* parent = static_cast<const char*>(curr);
+        cont.erase(
+          std::remove(cont.begin(), cont.end(), safe_lower(class_format_cxx(parent)))
+          , cont.end());
+
+        remove_repeated_base(parent, cont);
+     }
+   eina_iterator_free(inheritances);
+}
+
 static efl::eolian::parameters_container_type
 _convert_eolian_parameters(Eina_Iterator *parameters,
                           Eolian_Function_Type func_type)
@@ -148,13 +176,6 @@ _convert_property_get_to_function(Eolian_Class const& klass,
    return get_;
 }
 
-static std::string
-_convert_class_name(std::string const& name)
-{
-  return (name == "eo_base" || name == "eo::base" || name == "")
-    ? "efl::eo::base"
-    : name;
-}
 
 void
 convert_eolian_inheritances(efl::eolian::eo_class& cls, Eolian_Class const& klass)
@@ -163,23 +184,21 @@ convert_eolian_inheritances(efl::eolian::eo_class& cls, Eolian_Class const& klas
      ::eolian_class_inherits_get(&klass);
    void *curr;
 
-   if (!eina_iterator_next(inheritances, &curr) || !curr)
+   EINA_ITERATOR_FOREACH(inheritances, curr)
      {
-        cls.parent = "efl::eo::base";
-        eina_iterator_free(inheritances);
-        return;
+        std::string parent = safe_lower(static_cast<const char*>(curr));
+        cls.parents.push_back(class_format_cxx(parent));
      }
-   else
-     {
-        // First element is the parent
-        const char *ptr = static_cast<const char*>(curr);
-        cls.parent = _convert_class_name(class_format_cxx(safe_lower(ptr)));
+   eina_iterator_free(inheritances);
 
-        EINA_ITERATOR_FOREACH(inheritances, curr)
-         {
-           std::string extension = safe_lower(static_cast<const char*>(curr));
-           cls.extensions.push_back(_convert_class_name(class_format_cxx(extension)));
-         }
+   if (cls.parents.empty())
+     return;
+
+   inheritances = ::eolian_class_inherits_get(&klass);
+   EINA_ITERATOR_FOREACH(inheritances, curr)
+     {
+        if (curr)
+          remove_repeated_base(static_cast<const char*>(curr), cls.parents);
      }
    eina_iterator_free(inheritances);
 }
@@ -213,6 +232,9 @@ convert_eolian_functions(efl::eolian::eo_class& cls, Eolian_Class const& klass)
         Eolian_Function const& func = *first;
         Eolian_Function_Type const func_type = function_op_type(func);
 
+        if (!function_is_visible(func, func_type))
+          continue;
+
         if (function_is_constructor(klass, func))
           {
              cls.constructors.push_back({
@@ -221,7 +243,7 @@ convert_eolian_functions(efl::eolian::eo_class& cls, Eolian_Class const& klass)
                   convert_comments_function(klass, func)
              });
           }
-        else if (function_is_visible(func, func_type))
+        else
           {
              cls.functions.push_back({
                  function_type(func),
@@ -238,6 +260,9 @@ convert_eolian_functions(efl::eolian::eo_class& cls, Eolian_Class const& klass)
      {
         Eolian_Function const& func = *first;
         Eolian_Function_Type t = ::eolian_function_type_get(&func);
+
+        if (!function_is_visible(func, t))
+          continue;
 
         if(t == EOLIAN_PROP_GET)
           {

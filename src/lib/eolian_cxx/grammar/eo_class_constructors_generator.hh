@@ -9,6 +9,7 @@
 #include "tab.hh"
 #include "comment.hh"
 #include "parameters_generator.hh"
+#include "namespace_generator.hh"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -27,34 +28,6 @@ operator<<(std::ostream& out, class_name const& x)
    return out;
 }
 
-struct class_extensions
-{
-   eo_class const& _cls;
-   class_extensions(eo_class const& cls)
-     : _cls(cls)
-   {}
-};
-
-inline std::ostream&
-operator<<(std::ostream& out, class_extensions const& x)
-{
-   eo_class const& cls = x._cls;
-   extensions_container_type::const_iterator it, first = cls.extensions.begin();
-   extensions_container_type::const_iterator last = cls.extensions.end();
-   for (it = first; it != last; ++it)
-     {
-        if (it != first) out << ",\n";
-        out << tab(2)
-            << "efl::eo::detail::extension_inheritance<"
-            <<  *it << ">::template type< ::";
-        if(!cls.name_space.empty())
-          out <<  cls.name_space << "::";
-        out << cls.name << ">";
-     }
-   out << endl;
-   return out;
-}
-
 struct class_inheritance
 {
    eo_class const& _cls;
@@ -68,12 +41,14 @@ operator<<(std::ostream& out, class_inheritance const& x)
 {
    eo_class const& cls = x._cls;
 
-   out << class_name(cls.parent);
-   if (cls.extensions.size() > 0)
+   parents_container_type::const_iterator it,
+     first = cls.parents.cbegin(),
+     last = cls.parents.cend();
+   for (it = first; it != last; ++it)
      {
-        out << "," << endl << class_extensions(cls);
+        out << tab(2) << (it == first ? ": " : ", ")
+            << "::" << abstract_namespace << "::" << *it << endl;
      }
-   out << endl;
    return out;
 }
 
@@ -208,14 +183,14 @@ operator<<(std::ostream& out, functors_constructor_methods const& x)
    return out;
 }
 
-struct functions_constructor_methods
+struct constructor_method_function_declarations
 {
    eo_class const& _cls;
-   functions_constructor_methods(eo_class const& cls) : _cls(cls) {}
+   constructor_method_function_declarations(eo_class const& cls) : _cls(cls) {}
 };
 
 inline std::ostream&
-operator<<(std::ostream& out, functions_constructor_methods const& x)
+operator<<(std::ostream& out, constructor_method_function_declarations const& x)
 {
    constructors_container_type::const_iterator it,
      first = x._cls.constructors.cbegin(),
@@ -224,14 +199,56 @@ operator<<(std::ostream& out, functions_constructor_methods const& x)
      {
         eo_constructor const& c = *it;
 
-        out << comment(c.comment, 1)
+        // "eo_constructor" is already called in the eo_add_ref macro (used in
+        // _ctors_call).
+        // Creating a function with this name yields an error in the eo_add_ref
+        // macro expansion, because "eo_constructor" will refers to the class
+        // function instead of the Eo.Base function which is intended.
+        if (c.name == "eo_constructor")
+          {
+             continue;
+          }
+
+        out << comment(c.comment, 0)
             << template_parameters_declaration(c.params, 1)
             << tab(1) << constructor_functor_type_decl(c) << " " << c.name << "("
-            << parameters_declaration(c.params) << ")" << endl
-            << tab(1) << "{" << endl
-            << tab(2) << "return " << constructor_functor_type_decl(c) << "("
+            << parameters_declaration(c.params) << ") const;" << endl << endl;
+     }
+
+   return out;
+}
+
+struct constructor_method_function_definitions
+{
+   eo_class const& _cls;
+   constructor_method_function_definitions(eo_class const& cls) : _cls(cls) {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, constructor_method_function_definitions const& x)
+{
+   constructors_container_type::const_iterator it,
+     first = x._cls.constructors.cbegin(),
+     last = x._cls.constructors.cend();
+   for (it = first; it != last; ++it)
+     {
+        eo_constructor const& c = *it;
+
+        // Same explanation as the one in constructor_method_function_declarations
+        if (c.name == "eo_constructor")
+          {
+             continue;
+          }
+
+        out << template_parameters_declaration(c.params, 0)
+            << "inline " << abstract_full_name(x._cls)
+            << "::" << constructor_functor_type_decl(c) << " "
+            << abstract_full_name(x._cls, false) << "::" << c.name << "("
+            << parameters_declaration(c.params) << ") const" << endl
+            << "{" << endl
+            << tab(1) << "return " << constructor_functor_type_decl(c) << "("
             << parameters_forward(c.params) << ");" << endl
-            << tab(1) << "}" << endl << endl;
+            << "}" << endl << endl;
      }
 
    return out;
@@ -248,10 +265,6 @@ struct constructor_with_constructor_methods
 inline std::ostream&
 operator<<(std::ostream& out, constructor_with_constructor_methods const& x)
 {
-   //
-   // TODO Require constructor methods of all base classes ?
-   //
-
    unsigned cb_count = 0;
 
    constructors_container_type::const_iterator it,
@@ -296,7 +309,7 @@ operator<<(std::ostream& out, constructor_with_constructor_methods const& x)
         }
         assert(cb_idx == cb_count);
    }
-   out << "efl::eo::parent_type _p = (efl::eo::parent = nullptr))" << endl
+   out << "::efl::eo::parent_type _p = (::efl::eo::parent = nullptr))" << endl
        << tab(2) << ": " << x._cls.name << "(_ctors_call(";
    for (it = first; it != last; ++it)
      {
@@ -325,7 +338,7 @@ operator<<(std::ostream& out, constructor_eo const& x)
    out << comment(doc, 1)
        << tab(1)
        << "explicit " << x._cls.name << "(Eo* eo)" << endl
-       << tab(2) << ": " << class_name(x._cls.parent) << "(eo)" << endl
+       << tab(2) << ": ::efl::eo::concrete(eo)" << endl
        << tab(1) << "{}" << endl << endl;
 
    out << comment(
@@ -335,7 +348,7 @@ operator<<(std::ostream& out, constructor_eo const& x)
                  )
        << tab(1)
        << "explicit " << x._cls.name << "(std::nullptr_t)" << endl
-       << tab(2) << ": " << class_name(x._cls.parent) << "(nullptr)" << endl
+       << tab(2) << ": ::efl::eo::concrete(nullptr)" << endl
        << tab(1) << "{}" << endl << endl;
    return out;
 }
@@ -355,7 +368,7 @@ operator<<(std::ostream& out, copy_constructor const& x)
    out << comment(doc, 1)
        << tab(1)
        << x._cls.name << "(" << x._cls.name << " const& other)" << endl
-       << tab(2) << ": " << class_name(x._cls.parent)
+       << tab(2) << ": " << x._cls.name
        << "(eo_ref(other._eo_ptr()))" << endl
        << tab(1) << "{}" << endl << endl;
    return out;
@@ -427,7 +440,7 @@ operator<<(std::ostream& out, function_call_constructor_methods const& x)
      }
    assert(cb_idx == cb_count);
 
-   out << "efl::eo::parent_type _p)" << endl
+   out << "::efl::eo::parent_type _p)" << endl
        << tab(1) << "{" << endl
        << tab(2) << "Eo* _ret_eo = eo_add_ref(" << x._cls.eo_name << ", _p._eo_raw, ";
    for (it = first; it != last; ++it)
@@ -449,7 +462,7 @@ operator<<(std::ostream& out, function_call_constructor_methods const& x)
                       d.out << tab(2)
                             << "eo_do(_ret_eo," << endl
                             << tab(3) << "eo_event_callback_add(EO_EV_DEL, "
-                            << "&efl::eolian::free_callback_calback<F" << cb_idx++
+                            << "&::efl::eolian::free_callback_calback<F" << cb_idx++
                             << ">, _c" << (it-first) << "." << callback_tmp(d.name)
                             << "));" << endl;
                  })

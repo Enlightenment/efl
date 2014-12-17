@@ -3,7 +3,7 @@
 
 #include <Eo.h>
 #include <eina_ptrarray.hh>
-#include <eina_eo_base_fwd.hh>
+#include <eina_eo_concrete_fwd.hh>
 
 #include <iostream>
 
@@ -132,7 +132,7 @@ struct _ptr_eo_array_iterator : _ptr_array_iterator<Eo>
 };
 
 template <typename T, typename CloneAllocator>
-class array<T, CloneAllocator, typename std::enable_if<std::is_base_of<efl::eo::base, T>::value>::type>
+class array<T, CloneAllocator, typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>::type>
   : ptr_array<Eo, typename std::conditional
              <std::is_same<CloneAllocator, default_clone_allocator_placeholder>::value
               , eo_clone_allocator, CloneAllocator>::type>

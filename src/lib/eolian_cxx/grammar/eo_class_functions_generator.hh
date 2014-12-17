@@ -9,6 +9,7 @@
 #include "comment.hh"
 #include "parameters_generator.hh"
 #include "type_generator.hh"
+#include "namespace_generator.hh"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -27,60 +28,110 @@ operator<<(std::ostream& out, function_call const& x)
               << "(" << parameters_forward_to_c(x._func.params) << ")";
 }
 
-struct function
+struct function_declaration
 {
+   eo_class const& _cls;
    eo_function const& _func;
-   function(eo_function const& func) : _func(func) {}
+   function_declaration(eo_class const& cls, eo_function const& func)
+     : _cls(cls), _func(func)
+   {}
 };
 
 inline std::ostream&
-operator<<(std::ostream& out, function const& x)
+operator<<(std::ostream& out, function_declaration const& x)
 {
    eo_function const& func = x._func;
 
-   out << comment(x._func.comment, 1);
-   out << template_parameters_declaration(func.params, 1);
+   out << comment(x._func.comment, 1)
+       << template_parameters_declaration(func.params, 1)
+       << tab(1);
 
-   if (function_is_static(func))
-     out << tab(1) << "static ";
+   bool is_static = function_is_static(func);
+   if (is_static)
+     out << "static ";
 
-   out << tab(1)
-       << reinterpret_type(func.ret) << " " << func.name << "("
+   out << reinterpret_type(func.ret) << " " << func.name << "("
        << parameters_declaration(func.params)
-       << ") const" << endl
-       << tab(1) << "{" << endl;
+       << (is_static ? ");" : ") const;") << endl << endl;
 
-   if (!function_is_void(func))
-     out << tab(2)
-         << func.ret.front().native << " _tmp_ret;" << endl;
-
-   out << callbacks_heap_alloc("_eo_ptr()", func.params, 2);
-
-   out << tab(2)
-       << "eo_do(_eo_ptr(), " << function_call(x._func) << ");" << endl;
-
-   if (!function_is_void(func))
-     out << tab(2) << "return " << to_cxx(func.ret, "_tmp_ret") << ";" << endl;
-
-   out << tab(1) << "}" << endl;
    return out;
 }
 
-struct functions
+struct function_definition
 {
-   functions_container_type const& _funcs;
-   functions(functions_container_type const& funcs) : _funcs(funcs) {}
+   eo_class const& _cls;
+   eo_function const& _func;
+   function_definition(eo_class const& cls, eo_function const& func)
+     : _cls(cls), _func(func)
+   {}
 };
 
 inline std::ostream&
-operator<<(std::ostream& out, functions const& x)
+operator<<(std::ostream& out, function_definition const& x)
 {
-   functions_container_type::const_iterator it,
-     first = x._funcs.begin(),
-     last = x._funcs.end();
-   for (it = first; it != last; it++)
+   eo_function const& func = x._func;
+
+   bool is_static = function_is_static(func);
+
+   out << template_parameters_declaration(func.params, 0)
+       << "inline " << reinterpret_type(func.ret) << " "
+       << abstract_full_name(x._cls, false) << "::" << func.name << "("
+       << parameters_declaration(func.params)
+       << (is_static ? ")" : ") const") << endl
+       << "{" << endl;
+
+   if (!function_is_void(func))
+     out << tab(1)
+         << func.ret.front().native << " _tmp_ret;" << endl;
+
+   if (!is_static)
+      out << callbacks_heap_alloc("_concrete_eo_ptr()", func.params, 1);
+
+   // TODO : register free callback for static methods
+
+   out << tab(1) << "eo_do("
+       << (is_static ? "_eo_class(), " : "_concrete_eo_ptr(), ")
+       << function_call(x._func) << ");" << endl;
+
+   if (!function_is_void(func))
+     out << tab(1) << "return " << to_cxx(func.ret, "_tmp_ret") << ";" << endl;
+
+   out << "}" << endl << endl;
+   return out;
+}
+
+struct function_declarations
+{
+   eo_class const& _cls;
+   function_declarations(eo_class const& cls)
+     : _cls(cls)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, function_declarations const& x)
+{
+   for (eo_function const& f : x._cls.functions)
      {
-        out << function(*it) << endl;
+        out << function_declaration(x._cls, f) << endl;
+     }
+   return out;
+}
+
+struct function_definitions
+{
+   eo_class const& _cls;
+   function_definitions(eo_class const& cls)
+     : _cls(cls)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, function_definitions const& x)
+{
+   for (eo_function const& f : x._cls.functions)
+     {
+        out << function_definition(x._cls, f) << endl;
      }
    return out;
 }

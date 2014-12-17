@@ -101,14 +101,7 @@ generator_options(const Eolian_Class& klass)
         std::string eo_parent_file = class_base_file(*ext);
         if (!eo_parent_file.empty())
           {
-             // we have our own eo_base.hh
-             std::string eo_base_eo = "eo_base.eo";
-             if (eo_parent_file.length() < eo_base_eo.length() ||
-                 !std::equal(eo_base_eo.begin(), eo_base_eo.end(),
-                             eo_parent_file.end() - eo_base_eo.length()))
-               {
-                  gen_opts.cxx_headers.push_back(eo_parent_file + ".hh");
-               }
+             gen_opts.cxx_headers.push_back(eo_parent_file + ".hh");
           }
         else
           {

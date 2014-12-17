@@ -16,7 +16,7 @@ START_TEST(eolian_cxx_test_wrapper_size)
 {
   efl::eo::eo_init init;
 
-  ::efl::eo::base b(nullptr);
+  ::efl::eo::concrete b(nullptr);
   ::callback c;
 
   fail_if(sizeof(b) != sizeof(Eo*));

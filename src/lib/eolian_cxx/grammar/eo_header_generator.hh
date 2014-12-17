@@ -56,7 +56,7 @@ operator<<(std::ostream& out, include_dependencies const& x)
         it != last; ++it)
      for (auto it_p = (*it).params.begin(), last_p = (*it).params.end();
           it_p != last_p; ++it_p)
-       for (eolian_type const& subtype : (*it_p).type)
+       for (eolian_type const& subtype : (*it_p).type.parts)
          for (std::string header : subtype.includes)
            headers.insert(header);
 
@@ -64,7 +64,7 @@ operator<<(std::ostream& out, include_dependencies const& x)
         it != last; ++it)
         for (auto it_p = (*it).params.begin(), last_p = (*it).params.end();
              it_p != last_p; ++it_p)
-          for (eolian_type const& subtype : (*it_p).type)
+          for (eolian_type const& subtype : (*it_p).type.parts)
             for (std::string header : subtype.includes)
               headers.insert(header);
 
@@ -87,38 +87,6 @@ onceguard_tail(std::ostream& out, eo_class const& cls)
 {
    std::string key = ::_onceguard_key(cls);
    out << "#endif // EFL_GENERATED_" << key << "_HH" << endl;
-}
-
-inline void
-namespace_head(std::ostream& out, eo_class const& cls)
-{
-   if (cls.name_space != "")
-     {
-        std::string ns = cls.name_space;
-        size_t pos = 0;
-        while ((pos = ns.find("::")) != std::string::npos)
-          {
-             out << "namespace " << ns.substr(0, pos) << " { ";
-             ns.erase(0, pos+2);
-          }
-        out << "namespace " << ns << " {" << endl << endl;
-     }
-}
-
-inline void
-namespace_tail(std::ostream& out, eo_class const& cls)
-{
-   if (cls.name_space != "")
-     {
-        std::string ns = cls.name_space;
-        size_t pos = 0;
-        while ((pos = ns.find("::")) != std::string::npos)
-          {
-             out << "} ";
-             ns.erase(0, pos+2);
-          }
-        out << "} " << endl << endl;
-     }
 }
 
 inline void
@@ -151,9 +119,7 @@ eo_header_generator(std::ostream& out, eo_class const& cls, eo_generator_options
 {
    onceguard_head(out, cls);
    include_headers(out, cls, opts);
-   namespace_head(out, cls);
    eo_class_generator(out, cls);
-   namespace_tail(out, cls);
    eo_inheritance_detail_generator(out, cls);
    onceguard_tail(out, cls);
    out << endl;
