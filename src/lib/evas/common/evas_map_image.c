@@ -4,6 +4,9 @@
 #ifdef EVAS_CSERVE2
 #include "evas_cs2_private.h"
 #endif
+#ifdef BUILD_NEON
+#include <arm_neon.h>
+#endif
 
 #ifdef BUILD_MMX
 # undef SCALE_USING_MMX
