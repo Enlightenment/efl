@@ -114,7 +114,6 @@ struct _Eldbus_Pending
    Eina_Inlist      *data;
    Eina_Inlist      *cbs_free;
    Eldbus_Message    *msg_sent;
-   Eina_Bool called : 1;
 };
 
 struct _Eldbus_Message_Iter

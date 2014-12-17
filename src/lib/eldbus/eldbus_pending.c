@@ -219,8 +219,6 @@ static void
 eldbus_pending_dispatch(Eldbus_Pending *pending, Eldbus_Message *msg)
 {
    DBG("pending=%p msg=%p", pending, msg);
-   if (pending->called) return;
-   pending->called = 1;
    if (pending->cb)
      pending->cb((void *)pending->cb_data, msg, pending);
 
