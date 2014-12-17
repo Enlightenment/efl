@@ -1,4 +1,34 @@
--- Elua getopt module
+--[[ getopt.lua: An argument parsing library for Lua 5.1 and later.
+
+    This module is provided as a self-contained implementation with builtin
+    documentation.
+
+    TODO:
+        - arguments that can only be specified once (for now you can check
+          that manually by going over array values of opts)
+        - i18n support
+        - support for desc callback failures
+
+    Copyright (c) 2014 Daniel "q66" Kolesa <quaker66@gmail.com>
+
+    Permission is hereby granted, free of charge, to any person obtaining a
+    copy of this software and associated documentation files (the "Software"),
+    to deal in the Software without restriction, including without limitation
+    the rights to use, copy, modify, merge, publish, distribute, sublicense,
+    and/or sell copies of the Software, and to permit persons to whom the
+    Software is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+    THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+    DEALINGS IN THE SOFTWARE.
+]]
 
 local M = {}
 
@@ -125,6 +155,118 @@ local getopt_u  = function(parser)
     return opts, args
 end
 
+--[[
+    Given a parser definition, parse the arguments and return all optional
+    arguments, all positional arguments and the parser itself.
+
+    It takes exactly one argument, a parser.
+
+    The parser is a dictionary. It can contain these fields:
+        - usage - a usage string.
+        - prog - a program name.
+        - error_cb - a callback that is called when parsing fails.
+        - done_cb - a callback that is called when it's done parsing.
+        - args - the arguments.
+        - descs - argument descriptions.
+
+    In case of errors, this function returns nil and an error message.
+    You can also handle any error from the error callback of course.
+
+    Usage string is an arbitrary string that can contain a sequence "%prog".
+    This sequence is replaced with program name.
+
+    Program name can be explicitly specified here. If it's not, it's retrieved
+    from "args" as zeroth index. If that is nil, "program" is used.
+
+    Error callback is called on errors right before this function returns. It
+    returns no values. It takes the parser and an error message as arguments.
+
+    Done callack is called on success right before this function returns. It
+    takes the parser, optionala rguments and positional arguments.
+
+    Arguments ("args") is an array with zeroth index optionally specifying
+    program name. It contains strings, similarly to "argv" in other languages.
+
+    Descriptions (descs) is an array of tables, each table being an argument
+    description.
+
+    -- RETURN VALUES --
+
+    --- OPTIONAL ARGS ---
+
+    The returned optional arguments is a mixed table. It contains mappings
+    from argument names (without prefix) to values. The argument name here
+    is in this order: alias, short name, long name. The meaning of aliases
+    is described below. This also means that any given argument has one key
+    only. If a value is not given (optional or doesn't take it) it's the
+    boolean value "true" instead. If it is given, it's either the string
+    value or whatever a callback returns (see below).
+
+    It also contains array elements as the order of given arguments goes.
+    Those array elements have this layout:
+
+    { optn, short = shortn, long = longn, alias = aliasn, val = stringval, ... }
+
+    "optn" refers to the same name as above (in order alias, short, long).
+    "shortn" refers to the short name given in the description. "longn"
+    refers to the long name given in the description. "alias" refers to
+    the optional alias. "val" is the string value that was given, if given.
+    This is then followed by zero or more values which are return values
+    of either option callback (see below) or the string value or nothing.
+
+    --- POSITIONAL ARGS ---
+
+    The returned positional arguments is a simple array of strings.
+
+    -- DESCRIPTIONS --
+
+    The most important part of the parser is descriptions. It describes
+    what kind of arguments can be given and also describes categories
+    for the help listing.
+
+    A description is represented by a table. The table has this layout:
+
+    { shortn, longn, optional, help = helpmsg, metavar = metavar,
+      alias = alias, callback = retcb, list = list
+    }
+
+    "shortn" refers to the short name. For example if you want your argument
+    to be specifeable as "-x", you use "x". "longn" here refers to the long
+    name. For "--help", it's "help".
+
+    "optional" refers to whether it is required to specify value of the
+    argument. The boolean value "true" means that a value is always needed.
+    The value "false" means that the value can never be given.
+    The value "nil" means that the value is optional.
+
+    "help" refers to the description of the parameter in help listing.
+    The field "metavar" specifies the string under which the value field
+    will be displayed in help listing (see the documentation for "help").
+
+    The field "alias" can be used to specify an alias under which the
+    value/argument will be known in the returned optional arguments (i.e.
+    opts[alias]). It's fully optional, see above in "optional args".
+
+    The field "callback" can be used to specify a function that takes the
+    description, the parser and the string value and returns one or more
+    values. Those values will then be present in optional args. When multiple
+    values are returned from such callback, the mapping opts[n] will get you
+    an array of these values.
+
+    The field "list" can be used to specify a value into which values will
+    be appended. When you pass such parameter to your application multiple
+    times, the list will contain all the values provided. The mapping opts[n]
+    will refer to the list rather than the last value given like without list.
+
+    A description can also be used to specify a category, purely for help
+    listing purposes:
+
+    { category = "catname", alias = alias }
+
+    The alias here refers to a name by which the category can be referred
+    to when printing help. Useful when your category name is long and contains
+    spaces and you want a simple "--help=mycat".
+]]
 M.parse = function(parser)
     local ret, opts, args = pcall(getopt_u, parser)
     if not ret then
@@ -263,6 +405,62 @@ local help = function(parser, f, category)
     f:write(table.concat(buf))
 end
 
+--[[
+    Given a parser, print help. The parser is the very same parser as given
+    to a normal parsing function.
+
+    Arguments:
+        - parser - the parser.
+        - category - optional, allows you to specify a category to print,
+          in which case only the given category will print (normally all
+          categories will print).
+        - f - optional file stream, defaults to io.stderr.
+
+    Keep in mind that if the second argument is given and it's not a string,
+    it's considered to be the file stream (without category being specified).
+
+    The help uses this format:
+
+    --------------
+
+    <USAGE STRING>
+
+    <HEADER>
+
+    The following options are supported:
+
+    <CATEGORYNAME>:
+      -x,             --long               Description for no argument.
+      -h[?<METAVAR>], --help=[?<METAVAR>]  Description for optional argument.
+      -f<METAVAR>,    --foo=<METAVAR>      Description for mandatory argument.
+
+    <ANOTHERCATEGORYNAME>:
+      <MOREARGS>
+
+    <FOOTER>
+
+    --------------
+
+    The usage string can be either custom (specified within the parser) or
+    default, which is "Usage: <progname> [OPTIONS]" where "<progname>" is
+    replaced by the program name (either specified in the parser explicitly
+    or zeroth argument in the given args or "program" as a fallback).
+
+    The header is printed only when given as part of the parser.
+
+    The "The following optins are supported:" line is only printed when there
+    are options to print.
+
+    Same goes for the footer as for the header.
+
+    A metavar can be specified explicitly as part of the parameter description
+    in the parser. If not specified, it will check whether a "long" option is
+    given; if it is, it will use an uppercase version of it (for example a
+    default metavar for "--help" would be "HELP"). If it's not, it will
+    fallback to simply "VAL".
+
+    Please refer to parser documentation for more information.
+]]
 M.help = function(parser, category, f)
     if category and type(category) ~= "string" then
         f, category = category, f
@@ -277,14 +475,19 @@ M.help = function(parser, category, f)
     return true
 end
 
+-- A utility callback for geometry parsing (--foo=x:y:w:h).
 M.geometry_parse_cb = function(desc, parser, v)
     return v:match("^(%d+):(%d+):(%d+):(%d+)$")
 end
 
+-- A utility callback for size parsing (--foo=WxH).
 M.size_parse_cb = function(desc, parser, v)
     return v:match("^(%d+)x(%d+)$")
 end
 
+-- A utility callback generator for help. Returns a utility callback when
+-- called with file stream as an argument (optional, defaults to stderr).
+-- For help args that take a value, the value will be used as a category name.
 M.help_cb = function(fstream)
     return function(desc, parser, v)
         M.help(parser, v, fstream)
