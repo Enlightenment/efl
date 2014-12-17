@@ -193,7 +193,8 @@ evas_image_save_file_tgv(RGBA_Image *im,
 
 #ifdef DEBUG_STATS
    struct timespec ts1, ts2;
-   long long tsdiff, mse = 0, mse_div = 0, mse_alpha = 0;
+   long long tsdiff, mse = 0, mse_div = 0, mse_alpha = 0, pixels_count = 0;
+   double mean_x = 0, mean_y = 0, var_x = 0, var_y = 0, cov_xy = 0;
    clock_gettime(CLOCK_MONOTONIC, &ts1);
 #endif
 
@@ -464,6 +465,17 @@ evas_image_save_file_tgv(RGBA_Image *im,
                                       const int b = (B_VAL(&(todo[k])) - B_VAL(&(done[k])));
                                       const int a = (A_VAL(&(todo[k])) - A_VAL(&(done[k])));
                                       mse += r*r + g*g + b*b;
+
+                                      /*refer http://planetmath.org/onepassalgorithmtocomputesamplevariance*/
+                                      const double delta_x = (double)todo[k] - mean_x;
+                                      const double delta_y = (double)done[k] - mean_y;
+                                      mean_x = mean_x + (double)(delta_x / (pixels_count + 1));
+                                      mean_y = mean_y + (double)(delta_y / (pixels_count + 1));
+                                      var_x = var_x + ((double)(todo[k] - mean_x) * delta_x);
+                                      var_y = var_y + ((double)(done[k] - mean_y) * delta_y);
+                                      cov_xy = cov_xy + ((double)(todo[k] - mean_x) * (double)(done[k] - mean_y));
+                                      pixels_count++;
+
                                       if (alpha) mse_alpha += a*a;
                                       mse_div++;
                                    }
@@ -509,7 +521,12 @@ evas_image_save_file_tgv(RGBA_Image *im,
 #ifdef DEBUG_STATS
    if (mse_div && mse)
      {
-        // TODO: Add DSSIM too
+        /* Calculating dssim http://en.wikipedia.org/wiki/Structural_similarity */
+        double c1 = 0.01 * 255.0;
+        double c2 = 0.03 * 255.0;
+        double temp = (mean_x * mean_x + mean_y * mean_y + c1) * (var_x * var_x + var_y * var_y + c2);
+        double ssim = (2 * mean_x * mean_y + c1) * ( 2 * cov_xy + c2) / temp;
+        double dssim = (1 - ssim) / 2.0;
         double dmse = (double) mse / (double) (mse_div * 3.0);
         double psnr = 20 * log10(255.0) - 10 * log10(dmse);
         double dmse_alpha = (double) mse_alpha / (double) mse_div;
@@ -518,8 +535,8 @@ evas_image_save_file_tgv(RGBA_Image *im,
         tsdiff = ((ts2.tv_sec - ts1.tv_sec) * 1000LL) + ((ts2.tv_nsec - ts1.tv_nsec) / 1000000LL);
         if (!alpha)
           {
-             INF("ETC%d encoding stats: %dx%d, Time: %lldms, RGB PSNR: %.02fdB",
-                 alpha ? 2 : 1, image_stride, image_height, tsdiff, psnr);
+             INF("ETC%d encoding stats: %dx%d, Time: %lldms, RGB PSNR: %.02fdB DSSIM: %.02f",
+                 alpha ? 2 : 1, image_stride, image_height, tsdiff, psnr, dssim);
           }
         else
           {
