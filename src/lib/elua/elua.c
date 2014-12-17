@@ -62,6 +62,24 @@ elua_shutdown(void)
    return _elua_init_counter;
 }
 
+static void
+_elua_errmsg(const char *pname, const char *msg)
+{
+   ERR("%s%s%s", pname ? pname : "", pname ? ": " : "", msg);
+}
+
+EAPI int
+elua_report_error(lua_State *L, const char *pname, int status)
+{
+   if (status && !lua_isnil(L, -1))
+     {
+        const char *msg = lua_tostring(L, -1);
+        _elua_errmsg(pname, msg ? msg : "(non-string error)");
+        lua_pop(L, 1);
+     }
+   return status;
+}
+
 static int
 _elua_gettext_bind_textdomain(lua_State *L)
 {

@@ -61,6 +61,8 @@ extern "C" {
 EAPI int elua_init(void);
 EAPI int elua_shutdown(void);
 
+EAPI int elua_report_error(lua_State *L, const char *pname, int status);
+
 EAPI void elua_state_setup_i18n(lua_State *L);
 
 EAPI int elua_io_popen(lua_State *L);

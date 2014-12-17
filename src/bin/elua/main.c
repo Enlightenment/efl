@@ -48,24 +48,6 @@ static int _el_log_domain = -1;
 #define ERR(...) EINA_LOG_DOM_ERR(_el_log_domain, __VA_ARGS__)
 #define CRT(...) EINA_LOG_DOM_CRITICAL(_el_log_domain, __VA_ARGS__)
 
-static void
-elua_errmsg(const char *pname, const char *msg)
-{
-   ERR("%s%s%s", pname ? pname : "", pname ? ": " : "", msg);
-}
-
-static int
-elua_report(lua_State *L, int status)
-{
-   if (status && !lua_isnil(L, -1))
-     {
-        const char *msg = lua_tostring(L, -1);
-        elua_errmsg(elua_progname, msg ? msg : "(non-string error)");
-        lua_pop(L, 1);
-     }
-   return status;
-}
-
 static int
 elua_traceback(lua_State *L)
 {
@@ -210,20 +192,21 @@ elua_dolib(lua_State *L, const char *libname)
 {
    lua_rawgeti(L, LUA_REGISTRYINDEX, elua_require_ref);
    lua_pushstring(L, libname);
-   return elua_report(L, lua_pcall(L, 1, 0, 0));
+   return elua_report_error(L, elua_progname, lua_pcall(L, 1, 0, 0));
 }
 
 static int
 elua_dofile(lua_State *L, const char *fname)
 {
-   return elua_report(L, elua_io_loadfile(L, fname) || elua_docall(L, 0, 1));
+   return elua_report_error(L, elua_progname, elua_io_loadfile(L, fname)
+                            || elua_docall(L, 0, 1));
 }
 
 static int
 elua_dostr(lua_State *L, const char *chunk, const char *chname)
 {
-   return elua_report(L, luaL_loadbuffer(L, chunk, strlen(chunk), chname)
-                 || elua_docall(L, 0, 0));
+   return elua_report_error(L, elua_progname, luaL_loadbuffer(L, chunk,
+                            strlen(chunk), chname) || elua_docall(L, 0, 0));
 }
 
 static Eina_Bool
@@ -282,7 +265,7 @@ elua_doscript(lua_State *L, int argc, char **argv, int n, int *quit)
         *quit = lua_toboolean(L, -1);
         lua_pop(L, 1);
      }
-   return elua_report(L, status);
+   return elua_report_error(L, elua_progname, status);
 }
 
 void
@@ -465,7 +448,7 @@ elua_main(lua_State *L)
           }
      }
    snprintf(modfile, sizeof(modfile), "%s/module.lua", coref);
-   if (elua_report(L, elua_io_loadfile(L, modfile)))
+   if (elua_report_error(L, elua_progname, elua_io_loadfile(L, modfile)))
      {
         m->status = 1;
         return 0;
@@ -481,7 +464,7 @@ elua_main(lua_State *L)
    lua_call(L, 2, 0);
 
    snprintf(modfile, sizeof(modfile), "%s/gettext.lua", coref);
-   if (elua_report(L, elua_io_loadfile(L, modfile)))
+   if (elua_report_error(L, elua_progname, elua_io_loadfile(L, modfile)))
      {
         m->status = 1;
         return 0;
