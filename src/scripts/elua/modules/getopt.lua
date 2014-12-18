@@ -87,8 +87,10 @@ local parse_l = function(opts, opt, descs, args, parser)
     if desc.list then
         desc.list[#desc.list + 1] = optret
         opts[optn] = desc.list
+    elseif optret ~= nil then
+        opts[optn] = optret
     else
-        opts[optn] = optret or true
+        opts[optn] = true
     end
     local dopts = desc.opts
     if    dopts then
@@ -106,6 +108,7 @@ local parse_s = function(opts, optstr, descs, args, parser)
         local argr = desc[3]
         if argr or argr == nil then
             if optstr == "" then
+                optstr = nil
                 if #args == 0 then
                     if argr then
                         error("option -" .. opt .. " requires an argument", 3)
@@ -128,8 +131,10 @@ local parse_s = function(opts, optstr, descs, args, parser)
         if desc.list then
             desc.list[#desc.list + 1] = optret
             opts[optn] = desc.list
+        elseif optret ~= nil then
+            opts[optn] = optret
         else
-            opts[optn] = optret or true
+            opts[optn] = true
         end
         local dopts = desc.opts
         if    dopts then
