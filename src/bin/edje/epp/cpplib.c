@@ -3324,20 +3324,21 @@ do_include(cpp_reader * pfile, struct directive *keyword,
      {
 	strncpy(fname, (const char *)fbeg, flen);
 	fname[flen] = 0;
-	if (redundant_include_p(pfile, fname))
-      {
-         free(fname);
-         return 0;
-      }
+        if (redundant_include_p(pfile, fname))
+          {
+             free(fname);
+             return 0;
+          }
 	if (importing)
 	   f = lookup_import(pfile, fname, NULL);
 	else
 	   f = open_include_file(pfile, fname, NULL);
-	if (f == -2)
-      {
-         free(fname);
-         return 0;		/* Already included this file */
-      }
+        /* Already included this file */
+        if (f == -2)
+          {
+             free(fname);
+             return 0;
+          }
      }
    else
      {
