@@ -93,8 +93,8 @@ ctrl_pt1_mouse_move_cb(void *data, Evas *e EINA_UNUSED,
 
    x = (ev->cur.canvas.x - (w/2));
    y = (ev->cur.canvas.y - (h/2));
-   if (x < 0) x = 0;
-   if (y < 0) y = 0;
+   if (x < -(w/2)) x = -(w/2);
+   if (y < -(h/2)) y = -(h/2);
    if (x > WIN_W) x = WIN_W - (w/2);
    if (y > WIN_H) y = WIN_H - (h/2);
    evas_object_move(obj, x, y);
@@ -117,8 +117,8 @@ ctrl_pt2_mouse_move_cb(void *data, Evas *e EINA_UNUSED,
 
    x = (ev->cur.canvas.x - (w/2));
    y = (ev->cur.canvas.y - (h/2));
-   if (x < 0) x = 0;
-   if (y < 0) y = 0;
+   if (x < -(w/2)) x = -(w/2);
+   if (y < -(h/2)) y = -(h/2);
    if (x > WIN_W) x = WIN_W - (w/2);
    if (y > WIN_H) y = WIN_H - (h/2);
    evas_object_move(obj, x, y);
