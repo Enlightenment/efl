@@ -117,6 +117,7 @@ test_thumb.c \
 test_toolbar.c \
 test_tooltip.c \
 test_transit.c \
+test_transit_bezier.c \
 test_video.c \
 test_weather.c \
 test_web.c \
