@@ -4109,7 +4109,7 @@ _eo_del_cb(void *data EINA_UNUSED, Eo *eo_item, const Eo_Event_Description *desc
    Elm_Widget_Item_Data *item = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_TRUE);
    if (item->del_func)
-      item->del_func((void *)item->data, item->widget, item);
+      item->del_func((void *)item->data, item->widget, item->eo_obj);
    return EINA_TRUE;
 }
 
@@ -4244,7 +4244,7 @@ _elm_widget_item_pre_notify_del(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *i
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    if (!item->del_func) return;
-   item->del_func((void *)item->data, item->widget, item);
+   item->del_func((void *)item->data, item->widget, item->eo_obj);
    item->del_func = NULL;
 }
 
@@ -4276,7 +4276,7 @@ _elm_widget_item_del_cb_set(Eo *eo_item EINA_UNUSED,
 
    if ((item->del_func) && (item->del_func != func))
      WRN("You're replacing a previously set del_cb %p of item %p with %p",
-         item->del_func, item, func);
+         item->del_func, item->eo_obj, func);
 
    item->del_func = func;
 }
