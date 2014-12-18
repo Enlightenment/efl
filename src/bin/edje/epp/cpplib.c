@@ -5686,6 +5686,7 @@ push_parse_file(cpp_reader * pfile, const char *fname)
    char               *p;
    int                 f;
    cpp_buffer         *fp;
+   char               *epath = 0;
 
    /* The code looks at the defaults through this pointer, rather than through
     * the constant structure above.  This pointer gets changed if an environment
@@ -5833,8 +5834,6 @@ push_parse_file(cpp_reader * pfile, const char *fname)
 
    {				/* read the appropriate environment variable and if it exists
 				 * replace include_defaults with the listed path. */
-      char               *epath = 0;
-
       switch ((opts->objc << 1) + opts->cplusplus)
 	{
 	case 0:
@@ -6008,6 +6007,7 @@ push_parse_file(cpp_reader * pfile, const char *fname)
 	     if (fd < 0)
 	       {
 		  cpp_perror_with_name(pfile, pend->arg);
+          if (epath) free(include_defaults);
 		  return FATAL_EXIT_CODE;
 	       }
 	     cpp_push_buffer(pfile, NULL, 0);
@@ -6153,6 +6153,7 @@ push_parse_file(cpp_reader * pfile, const char *fname)
 	       {
 		  cpp_perror_with_name(pfile, pend->arg);
                   if (f) close(f);
+          if (epath) free(include_defaults);
 		  return FATAL_EXIT_CODE;
 	       }
 	     cpp_push_buffer(pfile, NULL, 0);
@@ -6173,6 +6174,7 @@ push_parse_file(cpp_reader * pfile, const char *fname)
 
    if (finclude(pfile, f, fname, 0, NULL))
       output_line_command(pfile, 0, same_file);
+   if (epath) free(include_defaults);
    return SUCCESS_EXIT_CODE;
 }
 
