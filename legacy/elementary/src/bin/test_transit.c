@@ -64,7 +64,7 @@ _custom_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit EINA_UNUSE
 }
 
 static void
-_transit_rotation_translation_color(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_transit_rotation_color(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Transit *trans;
 
@@ -72,9 +72,6 @@ _transit_rotation_translation_color(void *data EINA_UNUSED, Evas_Object *obj, vo
    elm_transit_object_add(trans, obj);
    elm_transit_auto_reverse_set(trans, EINA_TRUE);
    elm_transit_repeat_times_set(trans, 2);
-
-   /* Translation Effect */
-   elm_transit_effect_translation_add(trans, -70.0, -150.0, 70.0, 150.0);
 
    /* Color Effect */
    elm_transit_effect_color_add(trans, 100, 255, 100, 255, 50, 30, 50, 50);
@@ -244,7 +241,6 @@ test_transit(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bx);
-   evas_object_size_hint_min_set(bx, 318, 318);
    evas_object_show(bx);
 
    ic = elm_image_add(win);
@@ -253,26 +249,30 @@ test_transit(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "ImageAnimation Effect");
+   elm_object_text_set(bt, "Image Animation");
    elm_object_part_content_set(bt, "icon", ic);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_show(ic);
    evas_object_smart_callback_add(bt, "clicked", _transit_image_animation, ic);
 
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "Color, Rotation and Translation");
+   elm_object_text_set(bt, "Rotation + Color");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_smart_callback_add(bt, "clicked",
-                                  _transit_rotation_translation_color, NULL);
+                                  _transit_rotation_color, NULL);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Wipe Effect");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_smart_callback_add(bt, "clicked", _transit_wipe, NULL);
 
+   evas_object_resize(win, 300, 300);
    evas_object_show(win);
 }
 
