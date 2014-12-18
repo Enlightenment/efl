@@ -27,14 +27,14 @@ void test_box_align(void *data, Evas_Object *obj, void *event_info);
 void test_button(void *data, Evas_Object *obj, void *event_info);
 void test_cnp(void *data, Evas_Object *obj, void *event_info);
 void test_transit(void *data, Evas_Object *obj, void *event_info);
-void test_transit2(void *data, Evas_Object *obj, void *event_info);
-void test_transit3(void *data, Evas_Object *obj, void *event_info);
-void test_transit4(void *data, Evas_Object *obj, void *event_info);
-void test_transit5(void *data, Evas_Object *obj, void *event_info);
-void test_transit6(void *data, Evas_Object *obj, void *event_info);
-void test_transit7(void *data, Evas_Object *obj, void *event_info);
-void test_transit8(void *data, Evas_Object *obj, void *event_info);
-void test_transit9(void *data, Evas_Object *obj, void *event_info);
+void test_transit_blend(void *data, Evas_Object *obj, void *event_info);
+void test_transit_chain(void *data, Evas_Object *obj, void *event_info);
+void test_transit_custom(void *data, Evas_Object *obj, void *event_info);
+void test_transit_fade(void *data, Evas_Object *obj, void *event_info);
+void test_transit_flip(void *data, Evas_Object *obj, void *event_info);
+void test_transit_resizable_flip(void *data, Evas_Object *obj, void *event_info);
+void test_transit_resizing(void *data, Evas_Object *obj, void *event_info);
+void test_transit_zoom(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector_button(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector_entry(void *data, Evas_Object *obj, void *event_info);
 void test_clock(void *data, Evas_Object *obj, void *event_info);
@@ -587,14 +587,15 @@ add_tests:
 
    //------------------------------//
    ADD_TEST(NULL, "Effects", "Transit", test_transit);
-   ADD_TEST(NULL, "Effects", "Transit 2", test_transit2);
-   ADD_TEST(NULL, "Effects", "Transit 3", test_transit3);
-   ADD_TEST(NULL, "Effects", "Transit 4", test_transit4);
-   ADD_TEST(NULL, "Effects", "Transit 5", test_transit5);
-   ADD_TEST(NULL, "Effects", "Transit 6", test_transit6);
-   ADD_TEST(NULL, "Effects", "Transit 7", test_transit7);
-   ADD_TEST(NULL, "Effects", "Transit 8", test_transit8);
-   ADD_TEST(NULL, "Effects", "Transit 9", test_transit9);
+   ADD_TEST(NULL, "Effects", "Transit Resizing", test_transit_resizing);
+   ADD_TEST(NULL, "Effects", "Transit Flip", test_transit_flip);
+   ADD_TEST(NULL, "Effects", "Transit Zoom", test_transit_zoom);
+   ADD_TEST(NULL, "Effects", "Transit Blend", test_transit_blend);
+   ADD_TEST(NULL, "Effects", "Transit Fade", test_transit_fade);
+   ADD_TEST(NULL, "Effects", "Transit Resizable Flip",
+            test_transit_resizable_flip);
+   ADD_TEST(NULL, "Effects", "Transit Custom", test_transit_custom);
+   ADD_TEST(NULL, "Effects", "Transit Chain", test_transit_chain);
    ADD_TEST(NULL, "Effects", "Flip", test_flip);
    ADD_TEST(NULL, "Effects", "Flip 2", test_flip2);
    ADD_TEST(NULL, "Effects", "Flip 3", test_flip3);

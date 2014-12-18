@@ -278,11 +278,11 @@ test_transit(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
 /* Resizing Effect */
 void
-test_transit2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_transit_resizing(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt;
 
-   win = elm_win_util_standard_add("transit2", "Transit 2");
+   win = elm_win_util_standard_add("transit2", "Transit Resizing");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bt = elm_button_add(win);
@@ -298,11 +298,11 @@ test_transit2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
 /* Flip Effect */
 void
-test_transit3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_transit_flip(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bt2;
 
-   win = elm_win_util_standard_add("transit3", "Transit 3");
+   win = elm_win_util_standard_add("transit3", "Transit Flip");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bt = elm_button_add(win);
@@ -325,11 +325,11 @@ test_transit3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
 /* Zoom Effect */
 void
-test_transit4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_transit_zoom(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt;
 
-   win = elm_win_util_standard_add("transit4", "Transit 4");
+   win = elm_win_util_standard_add("transit4", "Transit Zoom");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bt = elm_button_add(win);
@@ -346,12 +346,12 @@ test_transit4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
 /* Blend Effect */
 void
-test_transit5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_transit_blend(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bt2, *ic;
    char buf[PATH_MAX];
 
-   win = elm_win_util_standard_add("transit5", "Transit 5");
+   win = elm_win_util_standard_add("transit5", "Transit Blend");
    elm_win_autodel_set(win, EINA_TRUE);
 
    ic = elm_image_add(win);
@@ -386,12 +386,12 @@ test_transit5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
 /* Fade Effect */
 void
-test_transit6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_transit_fade(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bt2, *ic;
    char buf[PATH_MAX];
 
-   win = elm_win_util_standard_add("transit6","Transit 6");
+   win = elm_win_util_standard_add("transit6","Transit Fade");
    elm_win_autodel_set(win, EINA_TRUE);
 
    ic = elm_image_add(win);
@@ -426,11 +426,11 @@ test_transit6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
 /* Resizable Flip Effect */
 void
-test_transit7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_transit_resizable_flip(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bt2;
 
-   win = elm_win_util_standard_add("transit7", "Transit 7");
+   win = elm_win_util_standard_add("transit7", "Transit Resizable Flip");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bt = elm_button_add(win);
@@ -453,13 +453,13 @@ test_transit7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
 /* Custom Effect */
 void
-test_transit8(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_transit_custom(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt;
    Elm_Transit *trans;
    Elm_Transit_Effect *effect_context;
 
-   win = elm_win_util_standard_add("transit8", "Transit 8");
+   win = elm_win_util_standard_add("transit8", "Transit Custom");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bt = elm_button_add(win);
@@ -487,12 +487,12 @@ test_transit8(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
 /* Chain Transit Effect */
 void
-test_transit9(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_transit_chain(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bt, *bt2, *bt3, *bt4;
    Elm_Transit *trans, *trans2, *trans3, *trans4;
 
-   win = elm_win_util_standard_add("transit9", "Transit 9");
+   win = elm_win_util_standard_add("transit9", "Transit Chain");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bt = elm_button_add(win);
