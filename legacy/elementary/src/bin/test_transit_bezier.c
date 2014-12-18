@@ -45,7 +45,7 @@ update_curve(transit_data *td)
    double v[4];
    int i = 0;
    double progress;
-   Evas_Coord prev_x = 0, prev_y = (WIN_H - BTN_SIZE);
+   Evas_Coord prev_x = 0, prev_y = (WIN_H - BTN_SIZE - 1);
    Evas_Coord cur_x, cur_y;
    double tx, ty;
    char buf[256];
@@ -56,14 +56,14 @@ update_curve(transit_data *td)
      {
         progress = (((double) i) / (SEGMENT_MAX - 1));
 
-        tx = (pow((1 - progress), 3) * 0) + (3 * progress * pow((1 - progress), 2) * v[0]) + (3 * pow(progress, 2) * (1 - progress) * v[2]) + (pow(progress, 3) * 1);
-        ty = (pow((1 - progress), 3) * 0) + (3 * progress * pow((1 - progress), 2) * v[1]) + (3 * pow(progress, 2) * (1 - progress) * v[3]) + (pow(progress, 3) * 1);
-        if (!td->line[i])
-          {
-             td->line[i] = evas_object_line_add(td->e);
-             evas_object_resize(td->line[i], WIN_W, (WIN_H - BTN_SIZE));
-             evas_object_show(td->line[i]);
-          }
+        tx = (pow((1 - progress), 3) * 0) +
+             (3 * progress * pow((1 - progress), 2) * v[0]) +
+             (3 * pow(progress, 2) * (1 - progress) * v[2]) +
+             (pow(progress, 3) * 1);
+        ty = (pow((1 - progress), 3) * 0) +
+             (3 * progress * pow((1 - progress), 2) * v[1]) +
+             (3 * pow(progress, 2) * (1 - progress) * v[3]) +
+             (pow(progress, 3) * 1);
 
         cur_x = (int)(tx * WIN_W);
         cur_y = ((WIN_H - BTN_SIZE - 1) - ((int)(ty * (WIN_H - BTN_SIZE))));
@@ -184,7 +184,7 @@ btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    elm_transit_object_add(transit, obj);
    elm_transit_tween_mode_set(transit, ELM_TRANSIT_TWEEN_MODE_BEZIER_CURVE);
    elm_transit_tween_mode_factor_n_set(transit, 4, v);
-   elm_transit_effect_translation_add(transit, 0, 0, 350, 0);
+   elm_transit_effect_translation_add(transit, 0, 0, (WIN_W - BTN_SIZE), 0);
    elm_transit_auto_reverse_set(transit, EINA_TRUE);
    elm_transit_del_cb_set(transit, transit_del_cb, td);
    elm_transit_duration_set(transit, 1);
@@ -200,14 +200,15 @@ void
 test_transit_bezier(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    static transit_data td;
-   Evas_Object *bg;
    char buf[PATH_MAX];
+   Evas_Object *bg;
+   int i;
 
    memset(&td, 0x0, sizeof(td));
 
    //Win
    td.win = elm_win_add(NULL, "test",  ELM_WIN_BASIC);
-   elm_win_title_set(td.win, "Transit Tween Bezier Curve");
+   elm_win_title_set(td.win, "Transit Bezier");
    elm_win_autodel_set(td.win, EINA_TRUE);
 
    td.e = evas_object_evas_get(td.win);
@@ -219,6 +220,14 @@ test_transit_bezier(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_show(bg);
 
    snprintf(buf, sizeof(buf), "%s/images/bubble.png", elm_app_data_dir_get());
+
+   //Create Lines
+   for (i = 0; i < SEGMENT_MAX; i++)
+     {
+        td.line[i] = evas_object_line_add(td.e);
+        evas_object_resize(td.line[i], WIN_W, (WIN_H - BTN_SIZE));
+        evas_object_show(td.line[i]);
+     }
 
    //Control Point 1 Line
    td.ctrl_pt1_line = evas_object_line_add(td.e);
