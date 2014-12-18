@@ -74,7 +74,9 @@ update_curve(transit_data *td)
         prev_y = cur_y;
      }
    snprintf(buf, sizeof(buf),
-            "<align=left>Control Points (%0.2f, %0.2f, %0.2f, %0.2f)\n</align>",
+            "<align=left><b>Control Points:</b></br>"
+            "x1: %0.2f   y1: %0.2f</br>"
+            "x2: %0.2f   y2: %0.2f</align>",
             v[0], v[1], v[2], v[3]);
    elm_object_text_set(td->label, buf);
 }
@@ -266,7 +268,7 @@ test_transit_bezier(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 
    //Label
    td.label = elm_label_add(td.win);
-   evas_object_resize(td.label, WIN_W, 25);
+   evas_object_resize(td.label, WIN_W, 50);
    evas_object_pass_events_set(td.label, EINA_TRUE);
    evas_object_show(td.label);
 
