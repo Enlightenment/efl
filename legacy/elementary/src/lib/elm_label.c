@@ -378,7 +378,7 @@ _elm_label_evas_object_smart_add(Eo *obj, Elm_Label_Data *priv)
    evas_object_event_callback_add(wd->resize_obj, EVAS_CALLBACK_RESIZE,
                                   _on_label_resize, obj);
 
-   edje_object_signal_callback_add(wd->resize_obj, "elm,state,slide,end", "",
+   edje_object_signal_callback_add(wd->resize_obj, "elm,state,slide,end", "elm",
                                    _on_slide_end, obj);
 
    /* access */

@@ -69,6 +69,7 @@ group { name: "elm/label/base/slide_long";
          if (pos >= 1.0) {
             id = timer(0.5, "slide_to_begin", 1);
             set_int(g_timer_id, id);
+            emit("elm,state,slide,end","elm");
          }
       }
       public slide_to_end() {
@@ -148,7 +149,7 @@ group { name: "elm/label/base/slide_long";
    }
    programs {
       program { name: "start_slide";
-         signal: "elm,state,slide,start"; source: "elm"; 
+         signal: "elm,state,slide,start"; source: "elm";
          script {
             start_slide();
          }
@@ -183,6 +184,7 @@ group { name: "elm/label/base/slide_short";
          if (pos >= 1.0) {
             id = timer(0.5, "slide_to_begin", 1);
             set_int(g_timer_id, id);
+            emit("elm,state,slide,end","elm");
          }
       }
       public slide_to_end() {
@@ -314,6 +316,7 @@ group { name: "elm/label/base/slide_bounce";
          if (pos >= 1.0) {
             id = timer(0.5, "slide_to_end", 1);
             set_int(g_timer_id, id);
+            emit("elm,state,slide,end","elm");
          }
       }
       public slide_to_begin() {
