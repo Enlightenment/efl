@@ -3325,13 +3325,19 @@ do_include(cpp_reader * pfile, struct directive *keyword,
 	strncpy(fname, (const char *)fbeg, flen);
 	fname[flen] = 0;
 	if (redundant_include_p(pfile, fname))
-	   return 0;
+      {
+         free(fname);
+         return 0;
+      }
 	if (importing)
 	   f = lookup_import(pfile, fname, NULL);
 	else
 	   f = open_include_file(pfile, fname, NULL);
 	if (f == -2)
-	   return 0;		/* Already included this file */
+      {
+         free(fname);
+         return 0;		/* Already included this file */
+      }
      }
    else
      {
@@ -3380,13 +3386,19 @@ do_include(cpp_reader * pfile, struct directive *keyword,
 	      * of redundant include files: #import, #pragma once, and
 	      * redundant_include_p.  It would be nice if they were unified.  */
 	     if (redundant_include_p(pfile, fname))
-		return 0;
+           {
+              free(fname);
+              return 0;
+           }
 	     if (importing)
 		f = lookup_import(pfile, fname, searchptr);
 	     else
 		f = open_include_file(pfile, fname, searchptr);
 	     if (f == -2)
-		return 0;	/* Already included this file */
+           {
+              free(fname);
+              return 0;	/* Already included this file */
+           }
 #ifdef EACCES
 	     else if (f == -1 && errno == EACCES)
 		cpp_warning(pfile, "Header file %s exists, but is not readable",
@@ -3467,6 +3479,7 @@ do_include(cpp_reader * pfile, struct directive *keyword,
 	     if (!strcmp(ptr->fname, fname))
 	       {
 		  close(f);
+          free(fname);
 		  return 0;	/* This file was once'd. */
 	       }
 	  }
@@ -3524,6 +3537,7 @@ do_include(cpp_reader * pfile, struct directive *keyword,
 	if (angle_brackets)
 	   pfile->system_include_depth--;
      }
+   free(fname);
    return 0;
 }
 
