@@ -184,8 +184,8 @@ _elm_image_internal_sizing_eval(Evas_Object *obj, Elm_Image_Data *sd)
         evas_object_move(sd->img, x, y);
         evas_object_image_fill_set(sd->img, 0, 0, w, h);
 
-        if (x < 0) w+=x;
-        if (y < 0) h+=y;
+        if (x < 0) w += x;
+        if (y < 0) h += y;
 
         evas_object_resize(sd->img, w, h);
      }
