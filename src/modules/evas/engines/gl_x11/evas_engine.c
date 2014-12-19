@@ -914,7 +914,7 @@ evgl_eng_gles1_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
 #ifdef GL_GLES
    EGLSurface egl_sfc;
    EGLConfig egl_cfg;
-   int i, num = 0;
+   int i, num = 0, best = 0;
    EGLConfig configs[200];
    int config_attrs[40];
    Eina_Bool found = EINA_FALSE;
@@ -924,12 +924,24 @@ evgl_eng_gles1_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
    /* Now we need to iterate over all EGL configurations to check the compatible
     * ones and finally check their visual ID. */
 
+   if ((cfg->depth_bits > EVAS_GL_DEPTH_NONE) &&
+       (cfg->depth_bits <= EVAS_GL_DEPTH_BIT_32))
+     depth = 8 * ((int) cfg->depth_bits);
+
+   if ((cfg->stencil_bits > EVAS_GL_STENCIL_NONE) &&
+       (cfg->stencil_bits <= EVAS_GL_STENCIL_BIT_16))
+     stencil = 1 << ((int) cfg->stencil_bits - 1);
+
+   if ((cfg->multisample_bits > EVAS_GL_MULTISAMPLE_NONE) &&
+       (cfg->multisample_bits <= EVAS_GL_MULTISAMPLE_HIGH))
+     msaa = evgl->caps.msaa_samples[(int) cfg->multisample_bits - 1];
+
    i = 0;
    config_attrs[i++] = EGL_SURFACE_TYPE;
    config_attrs[i++] = EGL_PIXMAP_BIT;
    config_attrs[i++] = EGL_RENDERABLE_TYPE;
    config_attrs[i++] = EGL_OPENGL_ES_BIT;
-   if (cfg->color_format == EVAS_GL_RGBA_8888)
+   if (alpha)
      {
         config_attrs[i++] = EGL_ALPHA_SIZE;
         config_attrs[i++] = 1; // should it be 8?
@@ -940,24 +952,21 @@ evgl_eng_gles1_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
         config_attrs[i++] = EGL_ALPHA_SIZE;
         config_attrs[i++] = 0;
      }
-   if ((cfg->depth_bits > EVAS_GL_DEPTH_NONE) &&
-       (cfg->depth_bits <= EVAS_GL_DEPTH_BIT_32))
+   if (depth)
      {
         depth = 8 * ((int) cfg->depth_bits);
         config_attrs[i++] = EGL_DEPTH_SIZE;
         config_attrs[i++] = depth;
         DBG("Requesting depth buffer size %d", depth);
      }
-   if ((cfg->stencil_bits > EVAS_GL_STENCIL_NONE) &&
-       (cfg->stencil_bits <= EVAS_GL_STENCIL_BIT_16))
+   if (stencil)
      {
         stencil = 1 << ((int) cfg->stencil_bits - 1);
         config_attrs[i++] = EGL_STENCIL_SIZE;
         config_attrs[i++] = stencil;
         DBG("Requesting stencil buffer size %d", stencil);
      }
-   if ((cfg->multisample_bits > EVAS_GL_MULTISAMPLE_NONE) &&
-       (cfg->multisample_bits <= EVAS_GL_MULTISAMPLE_HIGH))
+   if (msaa)
      {
         msaa = evgl->caps.msaa_samples[(int) cfg->multisample_bits - 1];
         config_attrs[i++] = EGL_SAMPLE_BUFFERS;
@@ -978,6 +987,7 @@ evgl_eng_gles1_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
         return NULL;
      }
 
+   DBG("Found %d potential configurations", num);
    for (i = 0; (i < num) && !found; i++)
      {
         EGLint val = 0;
@@ -1003,6 +1013,7 @@ evgl_eng_gles1_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
                {
                   if (xvi[j].depth >= colordepth)
                     {
+                       if (!best) best = i;
                        if (alpha)
                          {
                             fmt = XRenderFindVisualFormat(eng_get_ob(re)->disp, xvi[j].visual);
@@ -1026,9 +1037,9 @@ evgl_eng_gles1_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
    if (!found)
      {
         // This config will probably not work, but we try anyways.
-        ERR("XGetVisualInfo failed. Trying with the first EGL config.");
+        ERR("XGetVisualInfo failed. Trying with EGL config #%d", best);
         if (num)
-          egl_cfg = configs[0];
+          egl_cfg = configs[best];
         else
           egl_cfg = eng_get_ob(re)->egl_config;
      }
