@@ -352,6 +352,7 @@
         *d = MUL4_SYM(cval, val1);
         cv += cd; // col
 #    endif
+        if (anti_alias) *d = _aa_coverage_apply(line, ww, w, *d);
 #   endif
 #  else
         *d = *s;
@@ -359,7 +360,6 @@
         u += ud;
         v += vd;
 # endif //COLBLACK
-        if (anti_alias) *d = _aa_coverage_apply(line, ww, w, *d);
         d++;
         ww--;
      }
