@@ -33,13 +33,75 @@ local M = {}
 
 local prefixes = { "-", "--" }
 
+local ac_process_name = function(np, nm)
+    if not nm or #nm < 2 then
+        return
+    end
+    local t = np[nm]
+    if t then
+        t[#t + 1] = nm
+    else
+        np[nm] = { nm }
+    end
+    for i = 1, #nm do
+        local pnm = nm:sub(1, i - 1) .. nm:sub(i + 1)
+        local t = np[pnm]
+        if not t then
+            t = {}
+            np[pnm] = t
+        end
+        t[#t + 1] = nm
+    end
+end
+
+local get_autocorrect = function(descs, wrong, vi)
+    if #wrong < 2 then
+        return nil
+    end
+
+    local np = {}
+    local pn = {}
+
+    for i, v in ipairs(descs) do
+        ac_process_name(np, v[vi])
+    end
+
+    for i = 1, #wrong do
+        local nm = wrong:sub(1, i - 1) .. wrong:sub(i + 1)
+        local inp = np[nm]
+        if inp then
+            if inp == true then
+                pn[nm] = true
+            else
+                for i, pnm in ipairs(inp) do
+                    pn[pnm] = true
+                end
+            end
+        end
+    end
+
+    local try = next(pn)
+    if not try then
+        return nil
+    end
+    if not next(pn, try) then
+        return "\nmaybe you meant '" .. prefixes[vi] .. try .. "'?"
+    end
+    local narr = {}
+    for k, v in pairs(pn) do
+        narr[#narr + 1] = "'" .. prefixes[vi] .. k .. "'"
+    end
+    return "\nmaybe you meant one of: " .. table.concat(narr, ", ") .. "?"
+end
+
 local get_desc = function(opt, j, descs)
     for i, v in ipairs(descs) do
         if v[j] == opt then
             return v
         end
     end
-    error("option " .. prefixes[j] .. opt .. " not recognized", 0)
+    local ac = get_autocorrect(descs, opt, j) or ""
+    error("option " .. prefixes[j] .. opt .. " not recognized" .. ac, 0)
 end
 
 local is_arg = function(opt, j, descs)
@@ -469,14 +531,7 @@ M.help = function(parser, category, f)
     if category and type(category) ~= "string" then
         f, category = category, f
     end
-    f = f or io.stderr
-    local ret, err = pcall(help, parser, f, category)
-    if not ret then
-        f:write(err, "\n\n")
-        help(parser, f)
-        return false, err
-    end
-    return true
+    return pcall(help, parser, f or io.stderr, category)
 end
 
 -- A utility callback for geometry parsing (--foo=x:y:w:h).
@@ -502,7 +557,10 @@ end
 -- For help args that take a value, the value will be used as a category name.
 M.help_cb = function(fstream)
     return function(desc, parser, v)
-        M.help(parser, v, fstream)
+        local succ, err = M.help(parser, v, fstream)
+        if not succ then
+            error(err, 0)
+        end
     end
 end
 
