@@ -7,7 +7,6 @@
         - arguments that can only be specified once (for now you can check
           that manually by going over array values of opts)
         - i18n support
-        - support for desc callback failures
 
     Copyright (c) 2014 Daniel "q66" Kolesa <quaker66@gmail.com>
 
@@ -40,7 +39,7 @@ local get_desc = function(opt, j, descs)
             return v
         end
     end
-    error("option " .. prefixes[j] .. opt .. " not recognized", 4)
+    error("option " .. prefixes[j] .. opt .. " not recognized", 0)
 end
 
 local is_arg = function(opt, j, descs)
@@ -66,14 +65,14 @@ local parse_l = function(opts, opt, descs, args, parser)
         if not optval then
             if #args == 0 then
                 if argr then
-                    error("option --" .. opt .. " requires an argument", 3)
+                    error("option --" .. opt .. " requires an argument", 0)
                 end
             elseif argr or not is_arg(args[1], 2, descs) then
                 optval = table.remove(args, 1)
             end
         end
     elseif optval then
-        error("option --" .. opt .. " cannot have an argument", 3)
+        error("option --" .. opt .. " cannot have an argument", 0)
     end
     local rets
     if desc.callback then
@@ -111,7 +110,7 @@ local parse_s = function(opts, optstr, descs, args, parser)
                 optstr = nil
                 if #args == 0 then
                     if argr then
-                        error("option -" .. opt .. " requires an argument", 3)
+                        error("option -" .. opt .. " requires an argument", 0)
                     end
                 elseif argr or not is_arg(args[1], 1, descs) then
                     optstr = table.remove(args, 1)
@@ -437,7 +436,7 @@ end
     <CATEGORYNAME>:
       -x,             --long               Description for no argument.
       -h[?<METAVAR>], --help=[?<METAVAR>]  Description for optional argument.
-      -f<METAVAR>,    --foo=<METAVAR>      Description for mandatory argument.
+      -f[<METAVAR>],  --foo=[<METAVAR>]    Description for mandatory argument.
 
     <ANOTHERCATEGORYNAME>:
       <MOREARGS>
@@ -482,12 +481,20 @@ end
 
 -- A utility callback for geometry parsing (--foo=x:y:w:h).
 M.geometry_parse_cb = function(desc, parser, v)
-    return v:match("^(%d+):(%d+):(%d+):(%d+)$")
+    local x, y, w, h = v:match("^(%d+):(%d+):(%d+):(%d+)$")
+    if not x then
+        error("bad geometry value: " .. v, 0)
+    end
+    return x, y, w, h
 end
 
 -- A utility callback for size parsing (--foo=WxH).
 M.size_parse_cb = function(desc, parser, v)
-    return v:match("^(%d+)x(%d+)$")
+    local w, h = v:match("^(%d+)x(%d+)$")
+    if not w then
+        error("bad size value: " .. v, 0)
+    end
+    return w, h
 end
 
 -- A utility callback generator for help. Returns a utility callback when
