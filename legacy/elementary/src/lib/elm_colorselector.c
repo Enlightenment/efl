@@ -1574,7 +1574,7 @@ _elm_colorselector_evas_object_smart_add(Eo *obj, Elm_Colorselector_Data *priv)
    elm_box_padding_set(priv->picker,
                        (h_pad * elm_widget_scale_get(obj) * elm_config_scale_get()),
                        (v_pad * elm_widget_scale_get(obj) * elm_config_scale_get()));
-   elm_box_align_set(priv->palette_box, 0.5, 0.5);
+   elm_box_align_set(priv->picker, 0.5, 0.5);
 
    priv->mode = ELM_COLORSELECTOR_BOTH;
    priv->focused = ELM_COLORSELECTOR_PALETTE;
