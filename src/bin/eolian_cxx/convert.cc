@@ -1,5 +1,6 @@
 
 #include <vector>
+#include <set>
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
@@ -23,8 +24,11 @@ namespace eolian_cxx {
 extern efl::eina::log_domain domain;
 
 void
-remove_repeated_base(const char* klass_name, efl::eolian::parents_container_type& cont)
+add_parent_recursive(const char* klass_name, std::set<std::string>& parents)
 {
+   if (!klass_name)
+     return;
+
    Eolian_Class const* klass = ::eolian_class_get_by_name(klass_name);
    if (!klass)
      {
@@ -32,20 +36,14 @@ remove_repeated_base(const char* klass_name, efl::eolian::parents_container_type
         return;
      }
 
+   parents.insert(class_format_cxx(safe_lower(klass_name)));
+
    Eina_Iterator* inheritances = ::eolian_class_inherits_get(klass);
    void* curr = 0;
 
    EINA_ITERATOR_FOREACH(inheritances, curr)
      {
-        if (!curr)
-          continue;
-
-        const char* parent = static_cast<const char*>(curr);
-        cont.erase(
-          std::remove(cont.begin(), cont.end(), safe_lower(class_format_cxx(parent)))
-          , cont.end());
-
-        remove_repeated_base(parent, cont);
+        add_parent_recursive(static_cast<const char*>(curr), parents);
      }
    eina_iterator_free(inheritances);
 }
@@ -184,23 +182,15 @@ convert_eolian_inheritances(efl::eolian::eo_class& cls, Eolian_Class const& klas
      ::eolian_class_inherits_get(&klass);
    void *curr;
 
+   std::set<std::string> parents;
+
    EINA_ITERATOR_FOREACH(inheritances, curr)
      {
-        std::string parent = safe_lower(static_cast<const char*>(curr));
-        cls.parents.push_back(class_format_cxx(parent));
+        add_parent_recursive(static_cast<const char*>(curr), parents);
      }
    eina_iterator_free(inheritances);
 
-   if (cls.parents.empty())
-     return;
-
-   inheritances = ::eolian_class_inherits_get(&klass);
-   EINA_ITERATOR_FOREACH(inheritances, curr)
-     {
-        if (curr)
-          remove_repeated_base(static_cast<const char*>(curr), cls.parents);
-     }
-   eina_iterator_free(inheritances);
+   cls.parents.assign(parents.begin(), parents.end());
 }
 
 void

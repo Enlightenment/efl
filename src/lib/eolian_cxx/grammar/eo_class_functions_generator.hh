@@ -61,8 +61,9 @@ struct function_definition
 {
    eo_class const& _cls;
    eo_function const& _func;
-   function_definition(eo_class const& cls, eo_function const& func)
-     : _cls(cls), _func(func)
+   bool _concrete;
+   function_definition(eo_class const& cls, eo_function const& func, bool concrete)
+     : _cls(cls), _func(func), _concrete(concrete)
    {}
 };
 
@@ -74,8 +75,14 @@ operator<<(std::ostream& out, function_definition const& x)
    bool is_static = function_is_static(func);
 
    out << template_parameters_declaration(func.params, 0)
-       << "inline " << reinterpret_type(func.ret) << " "
-       << abstract_full_name(x._cls, false) << "::" << func.name << "("
+       << "inline " << reinterpret_type(func.ret) << " ";
+
+   if (x._concrete)
+     out << full_name(x._cls, false);
+   else
+     out << abstract_full_name(x._cls, false);
+
+   out << "::" << func.name << "("
        << parameters_declaration(func.params)
        << (is_static ? ")" : ") const") << endl
        << "{" << endl;
@@ -121,8 +128,10 @@ operator<<(std::ostream& out, function_declarations const& x)
 struct function_definitions
 {
    eo_class const& _cls;
-   function_definitions(eo_class const& cls)
+   bool _concrete;
+   function_definitions(eo_class const& cls, bool concrete)
      : _cls(cls)
+     , _concrete(concrete)
    {}
 };
 
@@ -131,7 +140,7 @@ operator<<(std::ostream& out, function_definitions const& x)
 {
    for (eo_function const& f : x._cls.functions)
      {
-        out << function_definition(x._cls, f) << endl;
+        out << function_definition(x._cls, f, x._concrete) << endl;
      }
    return out;
 }

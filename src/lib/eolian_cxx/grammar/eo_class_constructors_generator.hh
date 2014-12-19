@@ -46,8 +46,7 @@ operator<<(std::ostream& out, class_inheritance const& x)
      last = cls.parents.cend();
    for (it = first; it != last; ++it)
      {
-        out << tab(2) << (it == first ? ": " : ", ")
-            << "::" << abstract_namespace << "::" << *it << endl;
+        out << tab(2) << ", ::" << abstract_namespace << "::" << *it << endl;
      }
    return out;
 }
@@ -241,9 +240,9 @@ operator<<(std::ostream& out, constructor_method_function_definitions const& x)
           }
 
         out << template_parameters_declaration(c.params, 0)
-            << "inline " << abstract_full_name(x._cls)
+            << "inline " << full_name(x._cls)
             << "::" << constructor_functor_type_decl(c) << " "
-            << abstract_full_name(x._cls, false) << "::" << c.name << "("
+            << full_name(x._cls, false) << "::" << c.name << "("
             << parameters_declaration(c.params) << ") const" << endl
             << "{" << endl
             << tab(1) << "return " << constructor_functor_type_decl(c) << "("

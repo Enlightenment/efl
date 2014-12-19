@@ -15,15 +15,19 @@ using std::endl;
 struct full_name
 {
    eo_class const& _cls;
-   full_name(eo_class const& cls) : _cls(cls) {}
+   bool _from_global;
+   full_name(eo_class const& cls, bool from_global = true)
+     : _cls(cls), _from_global(from_global) {}
 };
 
 inline std::ostream&
 operator<<(std::ostream& out, full_name const& x)
 {
+   if (x._from_global)
+     out << "::";
    if(!x._cls.name_space.empty())
-     out << "::" << x._cls.name_space;
-   return out << "::" << x._cls.name;
+     out << x._cls.name_space << "::";
+   return out << x._cls.name;
 }
 
 struct abstract_full_name

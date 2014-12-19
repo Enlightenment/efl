@@ -105,10 +105,7 @@ eo_class_generator(std::ostream& out, eo_class const& cls)
        << namespace_head(cls)
        << comment(cls.comment)
        << "struct " << cls.name << endl
-       << class_inheritance(cls)
        << '{' << endl
-       << functors_constructor_methods(cls)
-       << constructor_method_function_declarations(cls)
        << function_declarations(cls)
        << events(cls)
        << eo_class_getter(cls)
@@ -120,22 +117,29 @@ eo_class_generator(std::ostream& out, eo_class const& cls)
        << "}" << endl << endl
        << namespace_head(cls)
        << "struct " << cls.name << endl
-       << tab(2) << ": " << abstract_full_name(cls) << endl
-       << tab(2) << ", ::efl::eo::concrete" << endl
+       << tab(2) << ": ::efl::eo::concrete" << endl
+       << class_inheritance(cls)
        << '{' << endl
+       << functors_constructor_methods(cls)
        << constructor_with_constructor_methods(cls)
        << constructor_eo(cls)
        << copy_constructor(cls)
        << destructor(cls)
+       << constructor_method_function_declarations(cls)
+       << function_declarations(cls)
+       << events(cls)
+       << eo_class_getter(cls)
         << "private:" << endl
        << function_call_constructor_methods(cls)
+       << tab(2) << "Eo* _concrete_eo_ptr() const { return _eo_ptr(); }" << endl
        << "};" << endl << endl
        << "static_assert(sizeof(" << full_name(cls) << ") == sizeof(Eo*), \"\");" << endl
        << "static_assert(std::is_standard_layout<" << full_name(cls) << ">::value, \"\");" << endl
        << endl
        << namespace_tail(cls)
        << constructor_method_function_definitions(cls)
-       << function_definitions(cls)
+       << function_definitions(cls, true)
+       << function_definitions(cls, false)
        << class_implicit_conversion_definition(cls);
 }
 

@@ -74,7 +74,7 @@ example_complex_types()
 
    efl::evas::grid grid(efl::eo::parent = canvas);
    grid.position_set(0, 0);
-   grid.color_set(0, 0, 0, 255);
+   grid.object_smart::color_set(0, 0, 0, 255);
    grid.size_set(5, 5);
    grid.visibility_set(true);
 
