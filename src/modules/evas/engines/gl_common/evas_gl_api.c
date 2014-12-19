@@ -723,8 +723,8 @@ _evgl_glGetString(GLenum name)
 #endif
 
       case GL_EXTENSIONS:
-        return (GLubyte *) evgl_api_ext_string_get
-              (EINA_TRUE, (rsc->current_ctx->version == EVAS_GL_GLES_1_X));
+        // No need to check context version, this is GLESv2 API.
+        return (GLubyte *) evgl_api_ext_string_get(EINA_TRUE, EINA_FALSE);
 
       default:
         // GL_INVALID_ENUM is generated if name is not an accepted value.

@@ -2326,6 +2326,9 @@ evgl_safe_extension_add(const char *name, void *funcptr)
 {
    if (!name) return;
 
+   if (evgl_engine->api_debug_mode)
+     DBG("Whitelisting function [%p] %s", funcptr, name);
+
    if (funcptr)
      eina_hash_set(evgl_engine->safe_extensions, name, funcptr);
    else

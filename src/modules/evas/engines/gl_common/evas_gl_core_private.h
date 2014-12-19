@@ -328,5 +328,7 @@ extern EVGL_Context  *_evgl_current_context_get(void);
 extern int            _evgl_not_in_pixel_get(void);
 extern int            _evgl_direct_enabled(void);
 extern EVGLNative_Context _evgl_native_context_get(Evas_GL_Context *ctx);
+Eina_Bool             _evgl_api_gles1_ext_init(void);
+Evas_GL_API*          _evgl_api_gles1_internal_get(void);
 
 #endif //_EVAS_GL_CORE_PRIVATE_H
