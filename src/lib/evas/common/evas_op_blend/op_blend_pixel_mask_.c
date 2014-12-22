@@ -25,29 +25,7 @@ _op_blend_p_mas_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
                      });
 }
 
-static void
-_op_blend_pas_mas_dp(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
-   DATA32 *e;
-   int alpha;
-   UNROLL8_PLD_WHILE(d, l, e,
-                     {
-                        alpha = *m;
-                        switch(alpha)
-                          {
-                          case 0:
-                             break;
-                          case 255:
-                             *d = *s;
-                             break;
-                          default:
-                             alpha++;
-                             *d = INTERP_256(alpha, *s, *d);
-                             break;
-                          }
-                        m++;  s++;  d++;
-                     });
-}
-
+#define _op_blend_pas_mas_dp _op_blend_p_mas_dp
 #define _op_blend_pan_mas_dp _op_blend_pas_mas_dp
 
 #define _op_blend_p_mas_dpan _op_blend_p_mas_dp
