@@ -38,14 +38,19 @@ void
 evas_common_load_model_from_file(Evas_3D_Mesh *model, const char *file)
 {
    Eina_File *tmp_file = eina_file_open(file, 0);
+
+   if (tmp_file == NULL)
+     {
+        ERR("Failed to open file %s\n", file);
+        ERR("Failed to initialize loader.");
+        return;
+     }
+
    Eina_File *e_file = eina_file_dup(tmp_file);
 
    if (e_file == NULL)
      {
-        ERR("Failed to open file %s\n", file);
         eina_file_close(tmp_file);
-        eina_file_close(e_file);
-        e_file = NULL;
         file = NULL;
         ERR("Failed to initialize loader.");
         return;
@@ -66,9 +71,6 @@ evas_common_load_model_from_eina_file(Evas_3D_Mesh *model, Eina_File *file)
 
    if (e_file == NULL)
      {
-        ERR("Failed to open file %s\n", file);
-        eina_file_close(e_file);
-        e_file = NULL;
         ERR("Failed to initialize loader.");
         return;
      }
