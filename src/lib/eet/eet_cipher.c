@@ -1110,8 +1110,10 @@ eet_decipher(const void   *data,
 
    err = gcry_cipher_setiv(cipher, iv, MAX_IV_LEN);
    if (err)
-     goto on_error;
-
+     {
+        free(ret);
+        goto on_error;
+     }
    err = gcry_cipher_setkey(cipher, ik, MAX_KEY_LEN);
    if (err)
      goto on_error;
