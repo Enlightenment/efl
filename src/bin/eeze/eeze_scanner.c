@@ -353,6 +353,7 @@ cb_stor_chg(const char *device, Eeze_Udev_Event ev, void *data EINA_UNUSED, Eeze
             }
           eina_stringshare_del(str);
           dev = calloc(1, sizeof(Eeze_Scanner_Device));
+          if (!dev) return;
           dev->device = eina_stringshare_add(device);
           dev->poller = ecore_poller_add(ECORE_POLLER_CORE, 32,
                                          (Ecore_Task_Cb)cdrom_timer, dev);
