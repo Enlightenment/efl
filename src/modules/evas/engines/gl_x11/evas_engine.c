@@ -914,12 +914,13 @@ evgl_eng_gles1_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
 #ifdef GL_GLES
    EGLSurface egl_sfc;
    EGLConfig egl_cfg;
-   int i, num = 0, best = 0;
+   int i, num = 0, best = -1;
    EGLConfig configs[200];
    int config_attrs[40];
    Eina_Bool found = EINA_FALSE;
    int msaa = 0, depth = 0, stencil = 0;
    Visual *visual = NULL;
+   Eina_Bool retried = EINA_FALSE;
 
    /* Now we need to iterate over all EGL configurations to check the compatible
     * ones and finally check their visual ID. */
@@ -936,6 +937,7 @@ evgl_eng_gles1_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
        (cfg->multisample_bits <= EVAS_GL_MULTISAMPLE_HIGH))
      msaa = evgl->caps.msaa_samples[(int) cfg->multisample_bits - 1];
 
+try_again:
    i = 0;
    config_attrs[i++] = EGL_SURFACE_TYPE;
    config_attrs[i++] = EGL_PIXMAP_BIT;
@@ -1013,7 +1015,7 @@ evgl_eng_gles1_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
                {
                   if (xvi[j].depth >= colordepth)
                     {
-                       if (!best) best = i;
+                       if (best < 0) best = i;
                        if (alpha)
                          {
                             fmt = XRenderFindVisualFormat(eng_get_ob(re)->disp, xvi[j].visual);
@@ -1036,12 +1038,26 @@ evgl_eng_gles1_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
 
    if (!found)
      {
-        // This config will probably not work, but we try anyways.
-        ERR("XGetVisualInfo failed. Trying with EGL config #%d", best);
-        if (num)
-          egl_cfg = configs[best];
+        if (num && (best >= 0))
+          {
+             ERR("No matching config found. Trying with EGL config #%d", best);
+             egl_cfg = configs[best];
+          }
+        else if (msaa && !retried)
+          {
+             ERR("Trying again without MSAA.");
+             msaa = 0;
+             retried = EINA_TRUE;
+             goto try_again;
+          }
         else
-          egl_cfg = eng_get_ob(re)->egl_config;
+          {
+             // This config will probably not work, but we try anyways.
+             // NOTE: Maybe it would be safer to just return NULL here, leaving
+             // the app responsible for changing its config.
+             ERR("XGetVisualInfo failed. Trying with the window's EGL config.");
+             egl_cfg = eng_get_ob(re)->egl_config;
+          }
      }
 
    egl_sfc = eglCreatePixmapSurface(eng_get_ob(re)->egl_disp, egl_cfg, px, NULL);
