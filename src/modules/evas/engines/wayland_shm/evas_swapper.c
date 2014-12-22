@@ -331,6 +331,7 @@ _evas_swapper_shm_pool_new(Wl_Swapper *ws)
    if ((fd = mkstemp(name)) < 0)
      {
         ERR("Could not create temporary file.");
+        free(name);
         return EINA_FALSE;
      }
 
