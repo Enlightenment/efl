@@ -1610,6 +1610,8 @@ _canvas_event_feed_mouse_move_internal(Eo *eo_e, void *_pd, int x, int y, unsign
         EINA_LIST_FOREACH(copy, l, eo_obj)
           {
              Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+
+             if (!obj) continue;
              /* if its under the pointer and its visible and its in the new */
              /* in list */
              // FIXME: i don't think we need this
