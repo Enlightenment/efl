@@ -3,7 +3,7 @@
 
  * @see _mesh_aabb(Evas_3D_Mesh **mesh_b, const Evas_3D_Node *node);
  * Rotate axises (keys 1-4) for model and bounding box view from another angle.
- * Compile with "gcc -o evas-3d-aabb evas-3d-aabb.c `pkg-config --libs --cflags evas ecore ecore-evas eo`"
+ * Compile with "gcc -o evas-3d-aabb evas-3d-aabb.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`"
  */
 
 #define EFL_EO_API_SUPPORT
@@ -227,7 +227,7 @@ main(void)
    material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
 
    eo_do(mesh,
-         evas_3d_mesh_file_set("sonic.md2", NULL),
+         efl_file_set("sonic.md2", NULL),
          evas_3d_mesh_frame_material_set(0, material),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 

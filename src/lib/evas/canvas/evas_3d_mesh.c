@@ -813,33 +813,38 @@ _evas_3d_mesh_mmap_set(Eo *obj, Evas_3D_Mesh_Data *pd,
    evas_common_load_model_from_eina_file(obj, file);
 }
 
-EOLIAN static void
-_evas_3d_mesh_file_set(Eo *obj, Evas_3D_Mesh_Data *pd,
-                       const char *file, const char *key EINA_UNUSED)
+EOLIAN static Eina_Bool
+_evas_3d_mesh_efl_file_file_set(Eo *obj, Evas_3D_Mesh_Data *pd,
+                                const char *file,
+                                const char *key EINA_UNUSED)
 {
    _mesh_fini(pd);
    _mesh_init(pd);
 
-   if (file == NULL) return;
+   if (file == NULL) return EINA_FALSE;
 
    evas_common_load_model_from_file(obj, file);
+   return EINA_TRUE;
 }
 
-EOLIAN static void
-_evas_3d_mesh_save(Eo *obj, Evas_3D_Mesh_Data *pd,
-                   const char *file, const char *key EINA_UNUSED)
+EOLIAN static Eina_Bool
+_evas_3d_mesh_efl_file_save(Eo *obj, Evas_3D_Mesh_Data *pd,
+                   const char *file,
+                   const char *key EINA_UNUSED,
+                   const char *flags EINA_UNUSED)
 {
-   if ((file == NULL) || (obj == NULL) || (pd == NULL)) return;
+   if ((file == NULL) || (obj == NULL) || (pd == NULL)) return EINA_FALSE;
 
    Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, 0);
 
    if (f == NULL)
      {
         ERR("Not existing mesh frame.");
-        return;
+        return EINA_FALSE;
      }
 
    evas_common_save_model_to_file(obj, file, f);
+   return EINA_TRUE;
 }
 
 static inline void

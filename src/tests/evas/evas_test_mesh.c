@@ -43,13 +43,13 @@
         fail_if(mesh == NULL);                                                                                  \
         fail_if(mesh2 == NULL);                                                                                 \
         snprintf(buffer, PATH_MAX, "%s", ext);                                                                  \
-        eo_do(mesh, evas_3d_mesh_file_set(file->path, NULL));                                                   \
-        eo_do(mesh, evas_3d_mesh_save(buffer, NULL));                                                           \
-        eo_do(mesh2, evas_3d_mesh_file_set(buffer, NULL));                                                      \
+        eo_do(mesh, efl_file_set(file->path, NULL),                                                             \
+                    efl_file_save(buffer, NULL, NULL));                                                         \
+        eo_do(mesh2, efl_file_set(buffer, NULL));                                                               \
         res = _compare_meshes(mesh, mesh2);                                                                     \
         fail_if(res == 1);                                                                                      \
-        eo_do(mesh, evas_3d_mesh_mmap_set(eina_file_open(file->path, 0), NULL));                                \
-        eo_do(mesh, evas_3d_mesh_save(buffer, NULL));                                                           \
+        eo_do(mesh, evas_3d_mesh_mmap_set(eina_file_open(file->path, 0), NULL),                                 \
+                    efl_file_save(buffer, NULL, NULL));                                                         \
         eo_do(mesh2, evas_3d_mesh_mmap_set(eina_file_open(buffer, 0), NULL));                                   \
         res = _compare_meshes(mesh, mesh2);                                                                     \
         fail_if(res == 1);                                                                                      \

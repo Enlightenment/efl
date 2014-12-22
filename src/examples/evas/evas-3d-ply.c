@@ -7,7 +7,7 @@
 * and geometry to "saved_man_all_with_mods.ply", "saved_man_only_geometry.ply" and "saved_man_without_UVs.ply".
 *
 * @verbatim
-* gcc -o evas-3d-ply evas-3d-ply.c `pkg-config --libs --cflags evas ecore ecore-evas eo`
+* gcc -o evas-3d-ply evas-3d-ply.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`
 * @endverbatim
 */
 
@@ -189,18 +189,20 @@ main(void)
         mesh[i] = eo_add(EVAS_3D_MESH_CLASS, evas);
 
         eo_do(mesh[i],
-              evas_3d_mesh_file_set(path_file[i % 8], NULL),
+              efl_file_set(path_file[i % 8], NULL),
               evas_3d_mesh_frame_material_set(0, material),
               evas_3d_mesh_shade_mode_set(draw_mode[(i % 16) / 8]));
 
         snprintf(buffer, PATH_MAX, "%s/Saved_%s", folder, file_name[i % 8]);
-        eo_do(mesh[i], evas_3d_mesh_save(buffer, NULL));
+        eo_do(mesh[i], efl_file_save(buffer, NULL, NULL));
 
         if (i > 15)
-          eo_do(mesh[i],
-                evas_3d_mesh_file_set(path_file[i % 8], NULL),
-                evas_3d_mesh_frame_material_set(0, material),
-                evas_3d_mesh_shade_mode_set(draw_mode[(i % 16) / 8]));
+          {
+             eo_do(mesh[i],
+                   efl_file_set(path_file[i % 8], NULL),
+                   evas_3d_mesh_frame_material_set(0, material),
+                   evas_3d_mesh_shade_mode_set(draw_mode[(i % 16) / 8]));
+          }
 
         mesh_node[i] = eo_add(EVAS_3D_NODE_CLASS, evas,
                               evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
@@ -234,7 +236,7 @@ main(void)
    /* Set the image object as render target for 3D scene. */
    eo_do(image, evas_obj_image_scene_set(scene));
 
-   ecore_animator_frametime_set(0.01);
+   ecore_animator_frametime_set(0.03);
    for (i = 0; i < NUMBER_OF_MESHES; i++)
      anim = ecore_animator_add(_animate_scene, mesh_node[i]);
 

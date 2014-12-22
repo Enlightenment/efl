@@ -1,4 +1,4 @@
-class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
+class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
 {
    legacy_prefix: null;
    data: Evas_3D_Mesh_Data;
@@ -15,36 +15,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
           */
          params {
             @in Eina_File* file; /*@ Eina_File with mesh data. */
-            @in const(char)* key; /*@ Key in the mesh file. */
-         }
-      }
-
-      file_set {
-         /**
-          * Load mesh data from file.
-          *
-          * Loading a mesh from existing file is supported. Currently, only MD2, OBJ, PLY and EET file
-          * formats are supported.
-          *
-          * @ingroup Evas_3D_Mesh
-          */
-         params {
-            @in const(char)* file; /*@ Path to the mesh file. */
-            @in const(char)* key; /*@ Key in the mesh file. */
-         }
-      }
-
-      save {
-         /**
-          * Save mesh data to file.
-          *
-          * Saving a mesh to file is supported. Currently, only OBJ, PLY and EET file
-          * format are supported.
-          *
-          * @ingroup Evas_3D_Mesh
-          */
-         params {
-            @in const(char)* file; /*@ Path to the mesh file. */
             @in const(char)* key; /*@ Key in the mesh file. */
          }
       }
@@ -494,6 +464,8 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface)
       Eo.Base.destructor;
       Evas_3D_Object.update_notify;
       Evas_3D_Object.change_notify;
+      Efl.File.file.set;
+      Efl.File.save;
    }
 
 }

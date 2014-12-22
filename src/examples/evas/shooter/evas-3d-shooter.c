@@ -8,7 +8,7 @@
 * The warrior isn't passable for camera, neither is wall. There is a possibility to go upstairs
 * and break down.
 *
-* Compile with "gcc -g evas-3d-shooter.c evas-3d-shooter-header.c -o evas-3d-shooter `pkg-config --libs --cflags evas ecore ecore-evas eo` -lm"
+* Compile with "gcc -g evas-3d-shooter.c evas-3d-shooter-header.c -o evas-3d-shooter `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm"
 */
 
 #include "evas-3d-shooter-header.h"
@@ -840,8 +840,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
    /* Setup material and texture for eagle. */
 
    data->mesh_eagle = eo_add(EVAS_3D_MESH_CLASS, evas);
-   eo_do(data->mesh_eagle,
-         evas_3d_mesh_file_set("shooter/eagle.obj", NULL));
+   eo_do(data->mesh_eagle, efl_file_set("shooter/eagle.obj", NULL));
 
    data->material_eagle = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
 
@@ -1294,8 +1293,7 @@ _mesh_setup_warrior(Scene_Data *data, int index)
 {
    data->mesh_level[index] = eo_add(EVAS_3D_MESH_CLASS, evas);
 
-   eo_do(data->mesh_level[index],
-         evas_3d_mesh_file_set("shooter/warrior.md2", NULL));
+   eo_do(data->mesh_level[index], efl_file_set("shooter/warrior.md2", NULL));
 
    data->material_level = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
    eo_do(data->mesh_level[index],
@@ -1328,8 +1326,7 @@ void
 _mesh_setup_snake(Scene_Data *data)
 {
    data->mesh_snake = eo_add(EVAS_3D_MESH_CLASS, evas);
-   eo_do(data->mesh_snake,
-         evas_3d_mesh_file_set("shooter/snake.md2", NULL));
+   eo_do(data->mesh_snake, efl_file_set("shooter/snake.md2", NULL));
 
    data->material_snake = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
    eo_do(data->mesh_snake,
