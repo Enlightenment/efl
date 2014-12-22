@@ -17,6 +17,7 @@
  * @li @ref eina_hash_08.c
  * @li @ref eina_inarray_01.c
  * @li @ref eina_inarray_02.c
+ * @li @ref eina_inarray_03.c
  * @li @ref eina_inlist_01.c
  * @li @ref eina_inlist_02.c
  * @li @ref eina_inlist_03.c
@@ -73,6 +74,7 @@
  * @example eina_hash_08.c
  * @example eina_inarray_01.c
  * @example eina_inarray_02.c
+ * @example eina_inarray_03.c
  * @example eina_inlist_01.c
  * @example eina_inlist_02.c
  * @example eina_inlist_03.c

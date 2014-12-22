@@ -149,6 +149,38 @@
  */
 
 /**
+ * @page eina_inarray_example_03 Eina inline array insert, sort and search
+ * @dontinclude eina_inarray_03.c
+ *
+ * This example creates an inline array of integers, and demonstrates the
+ * difference between eina_inarray_insert and eina_inarray_sort, and
+ * eina_inarray_search and eina_inarray_search_sort.
+ * @ref eina_inarray_example_01.
+ *
+ * We start with some variable declarations and eina initialization:
+ * @skip int
+ * @until eina_init
+ *
+ * We then create the array much like we did on @ref eina_inarray_example_01 :
+ * @until inarray_new
+ *
+ * We then add element using eina_inarray_insert and print. Then remove that
+ * element and add again using eina_inarray_insert_sorted and prints. This
+ * shows the 2 different positions the elment gets added. Then searches an
+ * element in the unsorted array using eina_inarray_search, then sorts the
+ * array and then searches the same element using eina_inarray_search_sorted.
+ * @until }
+ *
+ * The source for this example: @ref eina_inarray_03_c
+ */
+
+/**
+ * @page eina_inarray_03_c eina_inarray_03.c
+ * @include eina_inarray_03.c
+ * @example eina_inarray_03.c
+ */
+
+/**
  * @defgroup Eina_Inline_Array_Group Inline Array
  * @ingroup Eina_Containers_Group
  * @since 1.2
