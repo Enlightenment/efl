@@ -79,7 +79,6 @@ BuildRequires:  pkgconfig(libtbm)
 
 #eeze
 BuildRequires:  libudev-devel
-BuildRequires:  pkgconfig(capi-system-sensor)
 BuildRequires:  libmount-devel
 BuildRequires:  pkgconfig(dlog)
 
@@ -524,7 +523,6 @@ CFLAGS+=" -DMESA_EGL_NO_X11_HEADERS "
 %endif
 
 %reconfigure \
-    --enable-tizen \
     --enable-g-main-loop \
     --disable-xim \
     --disable-scim \
@@ -759,7 +757,6 @@ grep --silent ECORE_IMF_MODULE "$f" \
 %endif
 %{_libdir}/ecore_evas/engines/*/*/module.so
 %{_libdir}/ecore_imf/modules/*/*/module.so
-%{_libdir}/ecore/system/tizen/*/module.so
 %{_libdir}/ecore/system/systemd/v-*/module.so
 %{_datadir}/ecore/checkme
 %{_datadir}/ecore_*/checkme
