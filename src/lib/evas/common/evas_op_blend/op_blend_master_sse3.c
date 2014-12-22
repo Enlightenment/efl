@@ -31,7 +31,7 @@ evas_common_op_blend_init_sse3(void)
 
    init_blend_pixel_span_funcs_sse3();
    init_blend_pixel_color_span_funcs_sse3();
-   init_blend_pixel_mask_span_funcs_sse3();
+   init_blend_pixel_mask_span_funcs_sse3(); // FIXME
    init_blend_color_span_funcs_sse3();
    init_blend_mask_color_span_funcs_sse3();
 
@@ -49,7 +49,7 @@ evas_common_op_blend_rel_init_sse3(void)
 #ifdef BUILD_SSE3
    init_blend_rel_pixel_span_funcs_sse3();
    init_blend_rel_pixel_color_span_funcs_sse3();
-   init_blend_rel_pixel_mask_span_funcs_sse3();
+   init_blend_rel_pixel_mask_span_funcs_sse3(); // FIXME
    init_blend_rel_color_span_funcs_sse3();
    init_blend_rel_mask_color_span_funcs_sse3();
 

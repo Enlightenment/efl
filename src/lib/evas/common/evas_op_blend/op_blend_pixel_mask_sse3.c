@@ -2,6 +2,9 @@
 
 #ifdef BUILD_SSE3
 
+// FIXME: These functions most likely don't perform the correct operation.
+// Test them with masks and images.
+#if 0
 static void
 _op_blend_p_mas_dp_sse3(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 
@@ -150,6 +153,12 @@ _op_blend_pas_mas_dp_sse3(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d, 
          m += 8; s += 8; d += 8; l -= 8;
       })
 }
+#endif
+
+// FIXME
+#define _op_blend_p_mas_dp_sse3 NULL
+#define _op_blend_pas_mas_dp_sse3 _op_blend_p_mas_dp_sse3
+// -----
 
 #define _op_blend_pan_mas_dp_sse3 _op_blend_pas_mas_dp_sse3
 
@@ -169,8 +178,10 @@ init_blend_pixel_mask_span_funcs_sse3(void)
    op_blend_span_funcs[SP_AN][SM_AS][SC_N][DP_AN][CPU_SSE3] = _op_blend_pan_mas_dpan_sse3;
 }
 
+// FIXME
 #define _op_blend_pt_p_mas_dp_sse3 NULL
 #define _op_blend_pt_pan_mas_dp_sse3 NULL
+// -----
 
 #define _op_blend_pt_pas_mas_dp_sse3 _op_blend_pt_p_mas_dp_sse3
 
@@ -194,6 +205,7 @@ init_blend_pixel_mask_pt_funcs_sse3(void)
 
 /* blend_rel pixel x mask -> dst */
 
+#if 0
 static void
 _op_blend_rel_p_mas_dp_sse3(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 
@@ -256,6 +268,10 @@ _op_blend_rel_p_mas_dp_sse3(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
          d += 8; m += 8; s += 8; l -= 8;
       })
 }
+#else
+// FIXME
+#define _op_blend_rel_p_mas_dp_sse3 NULL
+#endif
 
 #define _op_blend_rel_pas_mas_dp_sse3 _op_blend_rel_p_mas_dp_sse3
 #define _op_blend_rel_pan_mas_dp_sse3 _op_blend_rel_p_mas_dp_sse3

@@ -109,7 +109,7 @@ op_blend_init(void)
      {
         init_blend_pixel_span_funcs_mmx();
         init_blend_pixel_color_span_funcs_mmx();
-        init_blend_pixel_mask_span_funcs_mmx();
+        init_blend_pixel_mask_span_funcs_mmx(); // FIXME
         init_blend_color_span_funcs_mmx();
         init_blend_mask_color_span_funcs_mmx();
         
@@ -125,7 +125,7 @@ op_blend_init(void)
      {
         init_blend_pixel_span_funcs_neon();
         init_blend_pixel_color_span_funcs_neon();
-        init_blend_pixel_mask_span_funcs_neon();
+        init_blend_pixel_mask_span_funcs_neon(); // FIXME
         init_blend_color_span_funcs_neon();
         init_blend_mask_color_span_funcs_neon();
         

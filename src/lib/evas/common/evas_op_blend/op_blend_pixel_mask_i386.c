@@ -1,6 +1,10 @@
 /* blend pixel x mask --> dst */
 
 #ifdef BUILD_MMX
+
+// FIXME: These functions most likely don't perform the correct operation.
+// Test them with masks and images.
+#if 0
 static void
 _op_blend_pas_mas_dp_mmx(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
    DATA32 *e = d + l;
@@ -62,8 +66,13 @@ _op_blend_pan_mas_dp_mmx(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d, i
 	m++;  s++;  d++;
      }
 }
+#else
+// FIXME
+#define _op_blend_p_mas_dp_mmx NULL
+#define _op_blend_pas_mas_dp_mmx _op_blend_p_mas_dp_mmx
+#endif
 
-#define _op_blend_p_mas_dp_mmx _op_blend_pas_mas_dp_mmx
+#define _op_blend_pan_mas_dp_mmx _op_blend_pas_mas_dp_mmx
 
 #define _op_blend_p_mas_dpan_mmx _op_blend_p_mas_dp_mmx
 #define _op_blend_pan_mas_dpan_mmx _op_blend_pan_mas_dp_mmx
@@ -128,9 +137,9 @@ init_blend_pixel_mask_pt_funcs_mmx(void)
 
 #ifdef BUILD_MMX
 
-#define _op_blend_rel_p_mas_dpan_mmx _op_blend_p_mas_dpan_mmx
-#define _op_blend_rel_pas_mas_dpan_mmx _op_blend_pas_mas_dpan_mmx
-#define _op_blend_rel_pan_mas_dpan_mmx _op_blend_pan_mas_dpan_mmx
+#define _op_blend_rel_p_mas_dpan_mmx NULL
+#define _op_blend_rel_pas_mas_dpan_mmx _op_blend_rel_p_mas_dpan_mmx
+#define _op_blend_rel_pan_mas_dpan_mmx _op_blend_rel_pas_mas_dpan_mmx
 
 static void
 init_blend_rel_pixel_mask_span_funcs_mmx(void)
