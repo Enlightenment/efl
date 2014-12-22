@@ -840,8 +840,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
    /* Setup material and texture for eagle. */
 
    data->mesh_eagle = eo_add(EVAS_3D_MESH_CLASS, evas);
-   eo_do(data->mesh_eagle,
-         evas_3d_mesh_file_set("shooter/eagle.obj", NULL));
+   evas_3d_mesh_file_set(data->mesh_eagle, "shooter/eagle.obj", NULL);
 
    data->material_eagle = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
 
@@ -1294,8 +1293,7 @@ _mesh_setup_warrior(Scene_Data *data, int index)
 {
    data->mesh_level[index] = eo_add(EVAS_3D_MESH_CLASS, evas);
 
-   eo_do(data->mesh_level[index],
-         evas_3d_mesh_file_set("shooter/warrior.md2", NULL));
+   evas_3d_mesh_file_set(data->mesh_level[index], "shooter/warrior.md2", NULL);
 
    data->material_level = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
    eo_do(data->mesh_level[index],
@@ -1328,8 +1326,7 @@ void
 _mesh_setup_snake(Scene_Data *data)
 {
    data->mesh_snake = eo_add(EVAS_3D_MESH_CLASS, evas);
-   eo_do(data->mesh_snake,
-         evas_3d_mesh_file_set("shooter/snake.md2", NULL));
+   evas_3d_mesh_file_set(data->mesh_snake, "shooter/snake.md2", NULL);
 
    data->material_snake = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
    eo_do(data->mesh_snake,

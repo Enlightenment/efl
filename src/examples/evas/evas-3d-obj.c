@@ -7,7 +7,7 @@
 * and geometry to "saved_man.obj".
 *
 * @verbatim
-* gcc -o evas-3d-obj evas-3d-obj.c `pkg-config --libs --cflags evas ecore ecore-evas`
+* gcc -o evas-3d-obj evas-3d-obj.c `pkg-config --libs --cflags evas ecore ecore-evas eo`
 * @endverbatim
 */
 
@@ -133,8 +133,8 @@ main(void)
    mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
    material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
 
+   evas_3d_mesh_file_set(mesh, "man_mesh.obj", NULL);
    eo_do(mesh,
-         evas_3d_mesh_file_set("man_mesh.obj", NULL),
          evas_3d_mesh_frame_material_set(0, material),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 
@@ -159,7 +159,7 @@ main(void)
                                     1.0, 1.0, 1.0, 1.0),
          evas_3d_material_shininess_set(50.0));
 
-         eo_do(mesh, evas_3d_mesh_save("saved_man.obj", NULL));
+   evas_3d_mesh_save(mesh, "saved_man.obj", NULL);
 
    mesh_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                              evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));

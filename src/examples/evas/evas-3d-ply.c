@@ -187,20 +187,22 @@ main(void)
    for (i = 0; i < NUMBER_OF_MESHES; i++)
      {
         mesh[i] = eo_add(EVAS_3D_MESH_CLASS, evas);
+        evas_3d_mesh_file_set(mesh[i], path_file[i % 8], NULL);
 
         eo_do(mesh[i],
-              evas_3d_mesh_file_set(path_file[i % 8], NULL),
               evas_3d_mesh_frame_material_set(0, material),
               evas_3d_mesh_shade_mode_set(draw_mode[(i % 16) / 8]));
 
         snprintf(buffer, PATH_MAX, "%s/Saved_%s", folder, file_name[i % 8]);
-        eo_do(mesh[i], evas_3d_mesh_save(buffer, NULL));
+        evas_3d_mesh_save(mesh[i], buffer, NULL, NULL);
 
         if (i > 15)
-          eo_do(mesh[i],
-                evas_3d_mesh_file_set(path_file[i % 8], NULL),
-                evas_3d_mesh_frame_material_set(0, material),
-                evas_3d_mesh_shade_mode_set(draw_mode[(i % 16) / 8]));
+          {
+             evas_3d_mesh_file_set(mesh[i], path_file[i % 8], NULL);
+             eo_do(mesh[i],
+                   evas_3d_mesh_frame_material_set(0, material),
+                   evas_3d_mesh_shade_mode_set(draw_mode[(i % 16) / 8]));
+          }
 
         mesh_node[i] = eo_add(EVAS_3D_NODE_CLASS, evas,
                               evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
@@ -234,7 +236,7 @@ main(void)
    /* Set the image object as render target for 3D scene. */
    eo_do(image, evas_obj_image_scene_set(scene));
 
-   ecore_animator_frametime_set(0.01);
+   ecore_animator_frametime_set(0.03);
    for (i = 0; i < NUMBER_OF_MESHES; i++)
      anim = ecore_animator_add(_animate_scene, mesh_node[i]);
 
