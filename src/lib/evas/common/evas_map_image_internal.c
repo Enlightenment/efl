@@ -116,7 +116,7 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
           {
              func = evas_common_gfx_func_composite_pixel_mask_span_get(sa, ssa, da, cw, render_op);
              if (mul_col != 0xffffffff)
-               func2 = evas_common_gfx_func_composite_pixel_color_span_get(sa, ssa, mul_col, da, cw, render_op);
+               func2 = evas_common_gfx_func_composite_pixel_color_span_get(sa, ssa, mul_col, da, cw, EVAS_RENDER_COPY);
           }
 
         if (anti_alias) src->cache_entry.flags.alpha = EINA_TRUE;
@@ -202,7 +202,7 @@ FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
           {
              func = evas_common_gfx_func_composite_pixel_mask_span_get(sa, ssa, da, cw, dc->render_op);
              if (mul_col != 0xffffffff)
-               func2 = evas_common_gfx_func_composite_pixel_color_span_get(sa, ssa, dc->mul.col, da, cw, dc->render_op);
+               func2 = evas_common_gfx_func_composite_pixel_color_span_get(sa, ssa, dc->mul.col, da, cw, EVAS_RENDER_COPY);
           }
      }
 
