@@ -619,7 +619,15 @@ evas_module_shutdown(void)
      evas_static_module[i].shutdown();
 
    EINA_LIST_FREE(eina_evas_modules, en)
-     eina_module_free(en);
+     {
+// yes - looks zstupid. just to keep compilers from complaining with warnings
+        if (!en) continue;
+// NEVER FREE MODULES - they MAY be needed after shutdown - eg indirect func
+// symbols from gl for example to shut down extensions. so yes - you may
+// think this is a leak. technically it is, but it's needed to keep things
+// running, so ignore this one
+//        eina_module_free(en);
+     }
 
    eina_hash_free(evas_modules[EVAS_MODULE_TYPE_ENGINE]);
    evas_modules[EVAS_MODULE_TYPE_ENGINE] = NULL;
