@@ -89,7 +89,7 @@ _nsevent_window_is_type_of(NSEvent *event, Class class)
 {
    /* An NSPeriodic event has no window (undefined behaviour) */
    if ([event type] == NSPeriodic) return EINA_FALSE;
-   return [[[event window] class] isKindOfClass:class];
+   return [[event window] isKindOfClass:class];
 }
 
 static inline Eina_Bool
