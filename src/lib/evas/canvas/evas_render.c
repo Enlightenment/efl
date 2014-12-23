@@ -311,10 +311,6 @@ _evas_mask_redraw_set(Evas_Public_Data *e EINA_UNUSED,
         EINA_COW_WRITE_BEGIN(evas_object_mask_cow, obj->mask,
                              Evas_Object_Mask_Data, mask)
           mask->redraw = EINA_TRUE;
-          mask->x = obj->cur->geometry.x;
-          mask->y = obj->cur->geometry.y;
-          mask->w = obj->cur->geometry.w;
-          mask->h = obj->cur->geometry.h;
         EINA_COW_WRITE_END(evas_object_mask_cow, obj->mask, mask);
      }
 

@@ -68,7 +68,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
    int c, cx, cy, cw, ch;
    int i;
    int sx, sy, sw, sh;
-   double mmx, mmy, mmw, mmh;
+   double mmx = 0.0, mmy = 0.0, mmw = 0.0, mmh = 0.0;
 
    if (dc != gc->dc) return;
    tex = fg->ext_dat;
