@@ -1241,6 +1241,10 @@ _elm_colorselector_elm_layout_sizing_eval(Eo *obj, Elm_Colorselector_Data *sd)
         _full_sizing_eval(obj);
         break;
 
+      case ELM_COLORSELECTOR_ALL:
+        _full_sizing_eval(obj);
+        break;
+
       default:
         return;
      }
