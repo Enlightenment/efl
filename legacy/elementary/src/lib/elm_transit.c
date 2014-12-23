@@ -2322,21 +2322,32 @@ _transit_effect_rotation_op(Elm_Transit_Effect *effect, Elm_Transit *transit, do
    EINA_SAFETY_ON_NULL_RETURN(effect);
    EINA_SAFETY_ON_NULL_RETURN(transit);
    Elm_Transit_Effect_Rotation *rotation = effect;
-   Evas_Map *map;
+   Elm_Transit_Obj_Data *obj_data;
+   Evas_Map *map, *base_map;
    Evas_Coord x, y, w, h;
    float degree;
    float half_w, half_h;
    Eina_List *elist;
    Evas_Object *obj;
 
-   map = evas_map_new(4);
-   if (!map) return;
-
-   evas_map_util_object_move_sync_set(map, EINA_TRUE);
-
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
-        evas_map_util_points_populate_from_object_full(map, obj, 0);
+        obj_data = evas_object_data_get(obj, _transit_key);
+        if (obj_data->state->map_enabled)
+          {
+             base_map = obj_data->state->map;
+             if (!base_map) return;
+             map = evas_map_dup(base_map);
+             if (!map) return;
+          }
+        else
+          {
+             map = evas_map_new(4);
+             if (!map) return;
+             evas_map_util_points_populate_from_object_full(map, obj, 0);
+          }
+        evas_map_util_object_move_sync_set(map, EINA_TRUE);
+
         degree = rotation->from + (float)(progress * rotation->to);
 
         evas_object_geometry_get(obj, &x, &y, &w, &h);
@@ -2348,8 +2359,9 @@ _transit_effect_rotation_op(Elm_Transit_Effect *effect, Elm_Transit *transit, do
         if (!transit->smooth) evas_map_smooth_set(map, EINA_FALSE);
         evas_object_map_enable_set(obj, EINA_TRUE);
         evas_object_map_set(obj, map);
+
+        evas_map_free(map);
      }
-   evas_map_free(map);
 }
 
 static Elm_Transit_Effect *
