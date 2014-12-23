@@ -201,6 +201,18 @@ struct extension_inheritance<concrete>
    };
 };
 
+struct concrete_address_of
+{
+   explicit concrete_address_of(void* p) : p(p) {}
+   void* p;
+};
+
+struct concrete_address_const_of
+{
+   explicit concrete_address_const_of(void const* p) : p(p) {}
+   void const* p;
+};
+
 }
 
 /// @brief Downcast @p U to @p T.

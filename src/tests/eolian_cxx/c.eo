@@ -1,0 +1,8 @@
+class C (A)
+{
+   legacy_prefix: null;
+   data: C_Data;
+   implements {
+      Eo.Base.constructor;
+   }
+}
