@@ -966,8 +966,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          This tells evas, that while the nochange flag is greater than 0, do not
          mark objects as "changed" when making changes.
 
-			@warning Do not use this function unless you know what Evas exactly
-			         works with "changed" state.
+         @warning Do not use this function unless you know what Evas exactly
+         works with "changed" state.
 
          @ingroup Evas_Canvas */
 
@@ -996,8 +996,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          This tells evas, that while the nochange flag is greater than 0, do not
          mark objects as "changed" when making changes.
 
-			@warning Do not use this function unless you know what Evas exactly
-			         works with "changed" state.
+         @warning Do not use this function unless you know what Evas exactly
+         works with "changed" state.
 
          @ingroup Evas_Canvas */
 
