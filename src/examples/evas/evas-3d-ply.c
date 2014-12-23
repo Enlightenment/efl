@@ -7,7 +7,7 @@
 * and geometry to "saved_man_all_with_mods.ply", "saved_man_only_geometry.ply" and "saved_man_without_UVs.ply".
 *
 * @verbatim
-* gcc -o evas-3d-ply evas-3d-ply.c `pkg-config --libs --cflags evas ecore ecore-evas eo`
+* gcc -o evas-3d-ply evas-3d-ply.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`
 * @endverbatim
 */
 
@@ -187,19 +187,19 @@ main(void)
    for (i = 0; i < NUMBER_OF_MESHES; i++)
      {
         mesh[i] = eo_add(EVAS_3D_MESH_CLASS, evas);
-        evas_3d_mesh_file_set(mesh[i], path_file[i % 8], NULL);
 
         eo_do(mesh[i],
+              efl_file_set(path_file[i % 8], NULL),
               evas_3d_mesh_frame_material_set(0, material),
               evas_3d_mesh_shade_mode_set(draw_mode[(i % 16) / 8]));
 
         snprintf(buffer, PATH_MAX, "%s/Saved_%s", folder, file_name[i % 8]);
-        evas_3d_mesh_save(mesh[i], buffer, NULL, NULL);
+        eo_do(mesh[i], efl_file_save(buffer, NULL, NULL));
 
         if (i > 15)
           {
-             evas_3d_mesh_file_set(mesh[i], path_file[i % 8], NULL);
              eo_do(mesh[i],
+                   efl_file_set(path_file[i % 8], NULL),
                    evas_3d_mesh_frame_material_set(0, material),
                    evas_3d_mesh_shade_mode_set(draw_mode[(i % 16) / 8]));
           }

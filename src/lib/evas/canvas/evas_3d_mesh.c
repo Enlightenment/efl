@@ -931,16 +931,4 @@ evas_3d_mesh_interpolate_vertex_buffer_get(Evas_3D_Mesh *mesh, int frame,
      }
 }
 
-EAPI void
-evas_3d_mesh_file_set(Eo *obj, const char *file, const char *key)
-{
-   eo_do((Eo *) obj, efl_file_set(file, key));
-}
-
-EAPI Eina_Bool
-evas_3d_mesh_save(const Eo *obj, const char *file, const char *key, const char *flags)
-{
-   return eo_do((Eo *) obj, efl_file_save(file, key, flags));
-}
-
 #include "canvas/evas_3d_mesh.eo.c"

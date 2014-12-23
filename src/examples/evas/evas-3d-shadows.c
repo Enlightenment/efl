@@ -3,7 +3,7 @@
  *
  * @see evas_3d_scene_shadows_enable_set(Eina_Bool _shadows_enabled)
  *
- * Compile with "gcc -o evas-3d-shadows evas-3d-shadows.c `pkg-config --libs --cflags evas ecore ecore-evas eo` -lm"
+ * Compile with "gcc -o evas-3d-shadows evas-3d-shadows.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm"
  */
 
 
@@ -218,8 +218,8 @@ main(void)
    mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
    material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
 
-   evas_3d_mesh_file_set(mesh, "sonic.md2", NULL);
    eo_do(mesh,
+         efl_file_set("sonic.md2", NULL),
          evas_3d_mesh_frame_material_set(0, material),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 

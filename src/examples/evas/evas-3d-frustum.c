@@ -5,7 +5,7 @@
  * See in terminal output value of z coordinate of far plane of frustum
  * and check OBB's points inside frustum.
  * @see evas_3d_node_obb_frustum_check.
- * Compile with "gcc -o evas-3d-frustum evas-3d-frustum.c `pkg-config --libs --cflags evas ecore ecore-evas eo`"
+ * Compile with "gcc -o evas-3d-frustum evas-3d-frustum.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`"
  */
 
 #define EFL_EO_API_SUPPORT
@@ -174,8 +174,8 @@ _mesh_setup_model(Scene_Data *data)
          evas_3d_material_texture_set( EVAS_3D_MATERIAL_DIFFUSE, data->texture_model),
          evas_3d_material_shininess_set(100.0));
 
-   evas_3d_mesh_file_set(data->mesh_model, "eagle.md2", NULL);
    eo_do(data->mesh_model,
+         efl_file_set("eagle.md2", NULL),
          evas_3d_mesh_frame_material_set(0, data->material_model),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE));
 }

@@ -9,7 +9,7 @@
 * Show it in right side.
 *
 * @verbatim
-* gcc -o evas-3d-eet evas-3d-eet.c `pkg-config --libs --cflags eina evas ecore ecore-evas eo`
+* gcc -o evas-3d-eet evas-3d-eet.c `pkg-config --libs --cflags efl eina evas ecore ecore-evas eo`
 * @endverbatim
 */
 
@@ -150,9 +150,8 @@ main(void)
    mesh2 = eo_add(EVAS_3D_MESH_CLASS, evas);
    material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
 
-   evas_3d_mesh_file_set(mesh, "sonic.md2", NULL);
-
    eo_do(mesh,
+         efl_file_set("sonic.md2", NULL),
          evas_3d_mesh_frame_material_set(0, material),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 
@@ -169,10 +168,10 @@ main(void)
                                     0.50, 0.00, 0.50, 0.30),
          evas_3d_material_shininess_set(50.0));
 
-   evas_3d_mesh_save(mesh, "saved_Sonic_EET.eet", NULL, NULL);
-   evas_3d_mesh_file_set(mesh2, "saved_Sonic_EET.eet", NULL);
+   eo_do(mesh, efl_file_save("saved_Sonic_EET.eet", NULL, NULL));
 
    eo_do(mesh2,
+         efl_file_set("saved_Sonic_EET.eet", NULL),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 
    mesh_node = eo_add(EVAS_3D_NODE_CLASS, evas,
