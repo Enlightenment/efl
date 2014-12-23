@@ -1146,7 +1146,11 @@ _elm_prefs_efl_file_file_set(Eo *obj, Elm_Prefs_Data *sd, const char *file, cons
      sd->file = eina_stringshare_printf("%s/%s", prefix, "preferences.epb");
    else
      {
+#ifndef _WIN32
         if (*file != '/') /* relative */
+#else
+        if (!(strchr(file,':'))) /* relative */
+#endif
           sd->file = eina_stringshare_printf("%s/%s", prefix, file);
         else
           sd->file = eina_stringshare_add(file);
