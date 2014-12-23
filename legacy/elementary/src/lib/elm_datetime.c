@@ -124,7 +124,7 @@ _expanded_fmt_str_get(char ch)
    switch (ch)
      {
       case 'c':
-#ifdef HAVE_LANGINFO_H
+#if defined(HAVE_LANGINFO_H) || defined (HAVE_EVIL)
         exp_fmt = nl_langinfo(D_T_FMT);
 #else
         exp_fmt = "";
@@ -132,7 +132,7 @@ _expanded_fmt_str_get(char ch)
         break;
 
       case 'x':
-#ifdef HAVE_LANGINFO_H
+#if defined(HAVE_LANGINFO_H) || defined (HAVE_EVIL)
         exp_fmt = nl_langinfo(D_FMT);
 #else
         exp_fmt = "";
@@ -140,7 +140,7 @@ _expanded_fmt_str_get(char ch)
         break;
 
       case 'X':
-#ifdef HAVE_LANGINFO_H
+#if defined(HAVE_LANGINFO_H) || defined (HAVE_EVIL)
         exp_fmt = nl_langinfo(T_FMT);
 #else
         exp_fmt = "";
@@ -148,7 +148,7 @@ _expanded_fmt_str_get(char ch)
         break;
 
       case 'r':
-#ifdef HAVE_LANGINFO_H
+#if defined(HAVE_LANGINFO_H) || defined (HAVE_EVIL)
         exp_fmt = nl_langinfo(T_FMT_AMPM);
 #else
         exp_fmt = "";
@@ -321,7 +321,7 @@ _reload_format(Evas_Object *obj)
    // FIXME: provide nl_langinfo on Windows if possible
    // fetch the default format from Libc.
    if (!sd->user_format)
-#ifdef HAVE_LANGINFO_H
+#if defined(HAVE_LANGINFO_H) || defined (HAVE_EVIL)
      strncpy(sd->format, nl_langinfo(D_T_FMT), ELM_DATETIME_MAX_FORMAT_LEN);
 #else
      strncpy(sd->format, "", ELM_DATETIME_MAX_FORMAT_LEN);
