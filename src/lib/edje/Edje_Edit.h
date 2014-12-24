@@ -1454,6 +1454,26 @@ EAPI Eina_Bool edje_edit_part_mouse_events_get(Evas_Object *obj, const char *par
  */
 EAPI Eina_Bool edje_edit_part_mouse_events_set(Evas_Object *obj, const char *part, Eina_Bool mouse_events);
 
+/** Get anti-alising for part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to get if the anti-aliasing is accepted.
+ *
+ * @return @c EINA_TRUE if part will draw anti-alised, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_anti_alias_get(Evas_Object *obj, const char *part);
+
+/** Set anti-alising for part.
+ *
+ * @param obj Object being edited.
+ * @param part The part to set if the anti-aliasing is accepted.
+ * @param mouse_events EINA_TRUE if part should to draw anti-aliased, @c EINA_FALSE otherwise.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool edje_edit_part_anti_alias_set(Evas_Object *obj, const char *part, Eina_Bool anti_alias);
+
+
 /** Get repeat_events for part.
  *
  * @param obj Object being edited.

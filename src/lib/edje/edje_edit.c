@@ -3684,6 +3684,28 @@ edje_edit_part_mouse_events_set(Evas_Object *obj, const char *part, Eina_Bool mo
 }
 
 EAPI Eina_Bool
+edje_edit_part_anti_alias_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(EINA_FALSE);
+   return rp->part->anti_alias;
+}
+
+EAPI Eina_Bool
+edje_edit_part_anti_alias_set(Evas_Object *obj, const char *part, Eina_Bool anti_alias)
+{
+   GET_RP_OR_RETURN(EINA_FALSE);
+
+   if (!rp->object) return EINA_FALSE;
+
+   rp->part->anti_alias = anti_alias ? 1 : 0;
+   evas_object_anti_alias_set(obj, rp->part->anti_alias);
+   evas_object_precise_is_inside_set(obj, rp->part->precise_is_inside);
+
+   return EINA_TRUE;
+}
+
+
+EAPI Eina_Bool
 edje_edit_part_repeat_events_get(Evas_Object *obj, const char *part)
 {
    GET_RP_OR_RETURN(EINA_FALSE);
