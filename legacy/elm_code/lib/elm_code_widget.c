@@ -5,7 +5,7 @@
 #include <Eo.h>
 #include <Elementary.h>
 
-#include "elm_code_widget.h"
+#include "Elm_Code.h"
 
 #include "elm_code_private.h"
 
