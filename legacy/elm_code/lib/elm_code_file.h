@@ -35,7 +35,7 @@ typedef struct _Elm_Code_Line
 
 } Elm_Code_Line;
 
-typedef struct _Elm_Code_File
+struct _Elm_Code_File
 {
    void *parent;
 
@@ -43,7 +43,7 @@ typedef struct _Elm_Code_File
    Eina_File *file;
    void *map;
 
-} Elm_Code_File;
+};
 
 /**
  * @brief File handling functions.

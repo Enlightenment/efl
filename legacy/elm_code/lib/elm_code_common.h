@@ -5,6 +5,7 @@
 #include <Eina.h>
 
 typedef struct _Elm_Code Elm_Code;
+typedef struct _Elm_Code_File Elm_Code_File;
 
 EAPI extern const Eo_Event_Description ELM_CODE_EVENT_LINE_SET_DONE;
 EAPI extern const Eo_Event_Description ELM_CODE_EVENT_FILE_LOAD_DONE;
@@ -35,8 +36,6 @@ typedef enum {
 
    ELM_CODE_TOKEN_TYPE_COUNT
 } Elm_Code_Token_Type;
-
-#include "elm_code_file.h"
 
 #ifdef __cplusplus
 extern "C" {

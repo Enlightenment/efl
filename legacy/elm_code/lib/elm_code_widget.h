@@ -2,7 +2,9 @@
 # define ELM_CODE_WIDGET_H_
 
 #include <Evas.h>
+
 #include "elm_code_common.h"
+#include "elm_code_file.h"
 
 #ifdef __cplusplus
 extern "C" {
