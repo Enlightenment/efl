@@ -131,8 +131,7 @@ _elm_image_internal_sizing_eval(Evas_Object *obj, Elm_Image_Data *sd)
    else
      {
         double alignh = 0.5, alignv = 0.5;
-        int iw = 0, ih = 0;
-
+        int iw = 0, ih = 0, offset_w = 0, offset_h = 0;
         evas_object_image_size_get(sd->img, &iw, &ih);
 
         iw = ((double)iw) * sd->scale;
@@ -178,14 +177,17 @@ _elm_image_internal_sizing_eval(Evas_Object *obj, Elm_Image_Data *sd)
         if (alignh == EVAS_HINT_FILL) alignh = 0.5;
         if (alignv == EVAS_HINT_FILL) alignv = 0.5;
 
-        x = sd->img_x + ((sd->img_w - w) * alignh);
-        y = sd->img_y + ((sd->img_h - h) * alignv);
+        offset_w = ((sd->img_w - w) * alignh);
+        offset_h = ((sd->img_h - h) * alignv);
+
+        x = sd->img_x + offset_w;
+        y = sd->img_y + offset_h;
 
         evas_object_move(sd->img, x, y);
         evas_object_image_fill_set(sd->img, 0, 0, w, h);
 
-        if (x < 0) w += x;
-        if (y < 0) h += y;
+        if (offset_w < 0) w += offset_w;
+        if (offset_h < 0) h += offset_h;
 
         evas_object_resize(sd->img, w, h);
      }
