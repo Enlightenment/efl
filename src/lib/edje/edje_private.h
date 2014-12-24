@@ -1085,6 +1085,7 @@ struct _Edje_Part
    unsigned char          effect; /* 0 = plain... */
    unsigned char          mouse_events; /* it will affect/respond to mouse events */
    unsigned char          repeat_events; /* it will repeat events to objects below */
+   unsigned char          anti_alias;
    Evas_Event_Flags       ignore_flags;
    unsigned char          scale; /* should certain properties scale with edje scale factor? */
    Edje_3D_Vec            scale_3d;

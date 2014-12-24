@@ -244,6 +244,7 @@ static void st_collections_group_parts_part_insert_before(void);
 static void st_collections_group_parts_part_insert_after(void);
 static void st_collections_group_parts_part_effect(void);
 static void st_collections_group_parts_part_mouse_events(void);
+static void st_collections_group_parts_part_anti_alias(void);
 static void st_collections_group_parts_part_repeat_events(void);
 static void st_collections_group_parts_part_ignore_flags(void);
 static void st_collections_group_parts_part_scale(void);
@@ -575,6 +576,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.insert_after", st_collections_group_parts_part_insert_after},
      {"collections.group.parts.part.effect", st_collections_group_parts_part_effect},
      {"collections.group.parts.part.mouse_events", st_collections_group_parts_part_mouse_events},
+     {"collections.group.parts.part.anti_alias", st_collections_group_parts_part_anti_alias},
      {"collections.group.parts.part.repeat_events", st_collections_group_parts_part_repeat_events},
      {"collections.group.parts.part.ignore_flags", st_collections_group_parts_part_ignore_flags},
      {"collections.group.parts.part.scale", st_collections_group_parts_part_scale},
@@ -3049,6 +3051,7 @@ _part_copy(Edje_Part *ep, Edje_Part *ep2)
 
    ep->type = ep2->type;
    ep->mouse_events = ep2->mouse_events;
+   ep->anti_alias = ep2->anti_alias;
    ep->repeat_events = ep2->repeat_events;
    ep->ignore_flags = ep2->ignore_flags;
    ep->scale = ep2->scale;
@@ -4087,6 +4090,7 @@ edje_cc_handlers_part_make(int id)
    ep->id = id;
    ep->type = EDJE_PART_TYPE_IMAGE;
    ep->mouse_events = pcp->default_mouse_events;
+   ep->anti_alias = 1;
    ep->repeat_events = 0;
    ep->ignore_flags = EVAS_EVENT_FLAG_NONE;
    ep->scale = 0;
@@ -4794,6 +4798,24 @@ st_collections_group_parts_part_nomouse(void)
 {
    check_arg_count(0);
    current_part->mouse_events = 0;
+}
+
+/**
+    @page edcref
+    @property
+        anti_alias
+    @parameters
+        [1 or 0]
+    @effect
+        Takes a boolean value specifying whether part is anti_alias (1) or not
+        (0). The default value is 1.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_anti_alias(void)
+{
+   check_arg_count(1);
+   current_part->anti_alias = parse_bool(0);
 }
 
 /**

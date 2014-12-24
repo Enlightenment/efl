@@ -3032,6 +3032,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    ep->name = eina_stringshare_add(name);
    ep->mouse_events = 1;
    ep->repeat_events = 0;
+   ep->anti_alias = 1;
    ep->ignore_flags = EVAS_EVENT_FLAG_NONE;
    ep->pointer_mode = EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
    ep->precise_is_inside = 0;
