@@ -3987,18 +3987,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
              _edje_map_prop_set(map, pf, chosen_desc, ep, mo);
 
-             if (ep->nested_smart)
-               {  /* Apply map to smart obj holding nested parts */
-                  eo_do(ep->nested_smart,
+             Evas_Object *map_obj;
+
+             /* Apply map to smart obj holding nested parts */
+             if (ep->nested_smart) map_obj = ep->nested_smart;
+             else map_obj = mo;
+             if (map_obj)
+               {
+                  eo_do(map_obj,
                         evas_obj_map_set(map),
                         evas_obj_map_enable_set(EINA_TRUE));
-               }
-             else
-               {
-                  if (mo)
-                    eo_do(mo,
-                          evas_obj_map_set(map),
-                          evas_obj_map_enable_set(EINA_TRUE));
                }
           }
         else
