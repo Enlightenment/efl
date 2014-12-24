@@ -631,8 +631,10 @@ _drm_animator_tick_source_set(void)
 
 
 
+// disable gl vsync for now - nvidia doesnt work well.
+//#define ECORE_X_VSYNC_GL 1
 
-
+#ifdef ECORE_X_VSYNC_GL
 static Ecore_Con_Server *vsync_server = NULL;
 static Eina_Bool handlers = EINA_FALSE;
 static Eina_Prefix *_prefix = NULL;
@@ -766,6 +768,7 @@ _glvsync_animator_tick_source_set(void)
      }
    return EINA_TRUE;
 }
+#endif
 
 // XXX: missing mode 3 == separate x connection with compiled in dri2 proto
 // handling ala mesa (taken from mesa likely)
@@ -851,10 +854,14 @@ ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
         vsync_root = root;
 #ifdef ECORE_X_VSYNC_DRM
         if (mode == 1) return _drm_animator_tick_source_set();
+# ifdef ECORE_X_VSYNC_GL
         else
+# endif
 #endif
+#ifdef ECORE_X_VSYNC_GL
         if (mode == 2) return _glvsync_animator_tick_source_set();
         else return EINA_FALSE;
+#endif
      }
    return EINA_TRUE;
 }
