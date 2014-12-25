@@ -772,7 +772,7 @@ main(int argc, char **argv)
             while ((i < (argc - 1)) && (argv[(i + 1)][0] != '-'))
                 eina_array_push(extra_dirs, argv[++i]);
         }
-        else if (!strcmp(argv[i], "-d"))
+        else if (!strcmp(argv[i], "-f"))
             flush = EINA_TRUE;
     }
 
