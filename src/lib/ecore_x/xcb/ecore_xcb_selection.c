@@ -810,12 +810,15 @@ _ecore_xcb_selection_parser_xmozurl(const char *target EINA_UNUSED,
    if (!buf) return NULL;
    sel = calloc(1, sizeof(Ecore_X_Selection_Data_X_Moz_Url));
    if (!sel)
-     {
-        free(buf);
-        return NULL;
-     }
+     goto error_sel;
+
    sel->links = eina_inarray_new(sizeof(char*), 0);
+   if (!sel->links)
+     goto error_links;
+
    sel->link_names = eina_inarray_new(sizeof(char*), 0);
+   if (!sel->link_names)
+     goto error_link_names;
    prev = buf;
    for (n = memchr(buf, '\n', sz); n; n = memchr(prev, '\n', sz - (prev - buf)))
      {
@@ -834,6 +837,16 @@ _ecore_xcb_selection_parser_xmozurl(const char *target EINA_UNUSED,
    ECORE_XCB_SELECTION_DATA(sel)->data = (void*)data;
    ECORE_XCB_SELECTION_DATA(sel)->free = _ecore_xcb_selection_data_xmozurl_free;
    return sel;
+
+error_link_names:
+   eina_inarray_free(sel->links);
+
+error_links:
+   free(sel);
+
+error_sel:
+   free(buf);
+   return NULL;
 }
 
 static void *
