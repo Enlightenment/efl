@@ -74,6 +74,7 @@ DIR *opendir(char const *name)
    if (!tmp)
      {
         errno = ENOMEM;
+        free(dir);
         return NULL;
      }
 
