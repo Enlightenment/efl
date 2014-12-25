@@ -9803,6 +9803,7 @@ edje_edit_source_generate(Evas_Object *obj)
           }
 
         BUF_APPEND(I0"}\n\n");
+        eina_list_free(images);
      }
    /* if styles were found, print them */
    if (styles)
@@ -9811,6 +9812,7 @@ edje_edit_source_generate(Evas_Object *obj)
         EINA_LIST_FOREACH(styles, l, entry)
            _edje_generate_source_of_style(ed, entry, buf);
         BUF_APPEND(I0 "}\n\n");
+        eina_list_free(styles);
      }
    /* if fonts were found, print them */
    if (fonts)
@@ -9825,6 +9827,7 @@ edje_edit_source_generate(Evas_Object *obj)
           }
 
         BUF_APPEND(I0 "}\n\n");
+        eina_list_free(fonts);
      }
    /* if color_classes were found, print them */
    if (color_classes)
@@ -9835,6 +9838,7 @@ edje_edit_source_generate(Evas_Object *obj)
 	  _edje_generate_source_of_colorclass(ed, entry, buf);
 
 	BUF_APPEND(I0 "}\n\n");
+        eina_list_free(color_classes);
      }
 
    /* print the main code of group collections */
