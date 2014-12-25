@@ -9740,6 +9740,11 @@ edje_edit_source_generate(Evas_Object *obj)
              /* find image name according to it's id that is in description */
              entry = _edje_image_name_find(eed, part_desc_image->image.id);
              COLLECT_RESOURCE(entry, images);
+             for (j = 0; j < part_desc_image->image.tweens_count; j++)
+               {
+                  entry = _edje_image_name_find(eed, part_desc_image->image.tweens[j]->id);
+                  COLLECT_RESOURCE(entry, images);
+               }
              /*  look through all other's descriptions. */
              for (j = 0; j < part->other.desc_count; j++)
                {
