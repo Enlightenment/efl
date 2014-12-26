@@ -1203,8 +1203,6 @@ _elm_list_nearest_visible_item_get(Evas_Object *obj, Elm_List_Item_Data *it)
    evas_object_geometry_get(obj, &vx, &vy, &vw, &vh);
    evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih);
 
-   item_list = eina_list_data_find_list(sd->items, EO_OBJ(it));
-
    if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, ix, iy, iw, ih))
      {
         if (!elm_object_item_disabled_get(EO_OBJ(it)))
@@ -1212,6 +1210,8 @@ _elm_list_nearest_visible_item_get(Evas_Object *obj, Elm_List_Item_Data *it)
         else
           search_next = EINA_TRUE;
      }
+
+   item_list = eina_list_data_find_list(sd->items, EO_OBJ(it));
 
    if ((!sd->h_mode && (iy < vy)) ||
        (sd->h_mode && (iw < vw)) ||
@@ -1223,7 +1223,10 @@ _elm_list_nearest_visible_item_get(Evas_Object *obj, Elm_List_Item_Data *it)
              evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
              if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch) &&
                  !elm_object_item_disabled_get(EO_OBJ(item)))
-               return item;
+               {
+                  eina_list_free(item_list);
+                  return item;
+               }
           }
      }
    else
@@ -1234,7 +1237,10 @@ _elm_list_nearest_visible_item_get(Evas_Object *obj, Elm_List_Item_Data *it)
              evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
              if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch) &&
                  !elm_object_item_disabled_get(EO_OBJ(item)))
-               return item;
+               {
+                  eina_list_free(item_list);
+                  return item;
+               }
           }
      }
    return it;
