@@ -690,7 +690,10 @@ _elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
    if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, ix, iy, iw, ih))
      {
         if (!elm_object_item_disabled_get(eo_it))
-          return eo_it;
+          {
+             eina_list_free(item_list);
+             return eo_it;
+          }
         else
           search_next = EINA_TRUE;
      }
@@ -709,7 +712,10 @@ _elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
              evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
              if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch) &&
                  !elm_object_item_disabled_get(EO_OBJ(item)))
-               return EO_OBJ(item);
+               {
+                  eina_list_free(item_list);
+                  return EO_OBJ(item);
+               }
           }
      }
    else
@@ -724,9 +730,13 @@ _elm_toolbar_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
              evas_object_geometry_get(VIEW(item), &cx, &cy, &cw, &ch);
              if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, cx, cy, cw, ch) &&
                  !elm_object_item_disabled_get(EO_OBJ(item)))
-               return EO_OBJ(item);
+               {
+                  eina_list_free(item_list);
+                  return EO_OBJ(item);
+               }
           }
      }
+   eina_list_free(item_list);
    return eo_it;
 }
 
