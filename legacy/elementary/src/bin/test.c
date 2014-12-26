@@ -35,6 +35,7 @@ void test_transit_flip(void *data, Evas_Object *obj, void *event_info);
 void test_transit_resizable_flip(void *data, Evas_Object *obj, void *event_info);
 void test_transit_resizing(void *data, Evas_Object *obj, void *event_info);
 void test_transit_zoom(void *data, Evas_Object *obj, void *event_info);
+void test_transit_tween(void *data, Evas_Object *obj, void *event_info);
 void test_transit_bezier(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector_button(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector_entry(void *data, Evas_Object *obj, void *event_info);
@@ -597,6 +598,7 @@ add_tests:
             test_transit_resizable_flip);
    ADD_TEST(NULL, "Effects", "Transit Custom", test_transit_custom);
    ADD_TEST(NULL, "Effects", "Transit Chain", test_transit_chain);
+   ADD_TEST(NULL, "Effects", "Transit Tween Mode", test_transit_tween);
    ADD_TEST(NULL, "Effects", "Transit Bezier", test_transit_bezier);
    ADD_TEST(NULL, "Effects", "Flip", test_flip);
    ADD_TEST(NULL, "Effects", "Flip 2", test_flip2);

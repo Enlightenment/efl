@@ -3,6 +3,14 @@
 #endif
 #include <Elementary.h>
 
+#define TWEEN_NUM 7
+#define BTN_NUM (TWEEN_NUM + 1)
+#define BTN_W 50
+#define BTN_H 50
+#define WIN_H (BTN_NUM * BTN_H)
+#define WIN_W WIN_H
+#define TRANSIT_DURATION 2.0
+
 typedef struct _Custom_Effect Custom_Effect;
 
 struct _Custom_Effect
@@ -226,6 +234,58 @@ _transit_resizable_flip(void *data, Evas_Object *obj, void *event_info EINA_UNUS
 
    elm_transit_duration_set(trans, 5.0);
    elm_transit_go(trans);
+}
+
+static void
+_transit_tween(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Elm_Transit_Tween_Mode ettm = (Elm_Transit_Tween_Mode)data;
+   Elm_Transit *trans;
+   Evas_Coord x;
+
+   evas_object_geometry_get(obj, &x, NULL, NULL, NULL);
+
+   trans = elm_transit_add();
+   elm_transit_tween_mode_set(trans, ettm);
+   elm_transit_effect_translation_add(trans, 0, 0, ((x ? -1 : 1) * (WIN_W - BTN_W)), 0);
+   elm_transit_object_add(trans, obj);
+   elm_transit_duration_set(trans, TRANSIT_DURATION);
+   elm_transit_objects_final_state_keep_set(trans, EINA_TRUE);
+
+   elm_transit_go(trans);
+}
+
+static void
+_transit_tween_all(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object **bt = data;
+   Elm_Transit *trans[TWEEN_NUM];
+   Evas_Coord x;
+   int i;
+
+   for (i = 0; i < TWEEN_NUM; i++)
+     {
+        evas_object_geometry_get(bt[i], &x, NULL, NULL, NULL);
+
+        trans[i] = elm_transit_add();
+        elm_transit_tween_mode_set(trans[i], i);
+        elm_transit_effect_translation_add(trans[i], 0, 0, ((x ? -1 : 1) * (WIN_W - BTN_W)), 0);
+        elm_transit_object_add(trans[i], bt[i]);
+        elm_transit_duration_set(trans[i], TRANSIT_DURATION);
+        elm_transit_objects_final_state_keep_set(trans[i], EINA_TRUE);
+     }
+
+   for (i = 0; i < TWEEN_NUM; i++)
+     {
+        elm_transit_go(trans[i]);
+     }
+}
+
+static void
+_win_delete_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object **bt = data;
+   free(bt);
 }
 
 /* Translation, Rotation, Color, Wipe, ImagemAnimation Effect */
@@ -552,5 +612,46 @@ test_transit_chain(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    elm_transit_chain_transit_add(trans3, trans4);
 
    evas_object_resize(win, 400, 400);
+   evas_object_show(win);
+}
+
+/* Transit Tween Mode */
+void
+test_transit_tween(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *label, **bt = malloc(sizeof(Evas_Object*) * BTN_NUM);
+   int i;
+
+   char *modes[] = {"LINEAR", "SINUSOIDAL", "DECELERATE", "ACCELERATE", "DIVISOR_INTERP", "BOUNCE", "SPRING"};
+
+   win = elm_win_util_standard_add("transit10", "Transit Tween Mode");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_smart_callback_add(win, "delete,request", _win_delete_cb, bt);
+
+   for (i = 0; i < TWEEN_NUM; i++)
+     {
+        label = elm_label_add(win);
+        elm_object_text_set(label, modes[i]);
+        evas_object_resize(label, WIN_W, BTN_H);
+        evas_object_move(label, 0, (i * BTN_H));
+        evas_object_show(label);
+
+        bt[i] = elm_button_add(win);
+        evas_object_resize(bt[i], BTN_W, BTN_H);
+        evas_object_move(bt[i], 0, (i * BTN_H));
+        evas_object_show(bt[i]);
+
+        evas_object_smart_callback_add(bt[i], "clicked", _transit_tween, (void *)i);
+     }
+
+   bt[TWEEN_NUM] = elm_button_add(win);
+   elm_object_text_set(bt[TWEEN_NUM], "Go");
+   evas_object_resize(bt[TWEEN_NUM], WIN_W, BTN_H);
+   evas_object_move(bt[TWEEN_NUM], 0, (WIN_H - BTN_H));
+   evas_object_show(bt[TWEEN_NUM]);
+
+   evas_object_smart_callback_add(bt[TWEEN_NUM], "clicked", _transit_tween_all, bt);
+
+   evas_object_resize(win, WIN_W, WIN_H);
    evas_object_show(win);
 }
