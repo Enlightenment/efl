@@ -1243,6 +1243,8 @@ _elm_list_nearest_visible_item_get(Evas_Object *obj, Elm_List_Item_Data *it)
                }
           }
      }
+   eina_list_free(item_list);
+
    return it;
 }
 

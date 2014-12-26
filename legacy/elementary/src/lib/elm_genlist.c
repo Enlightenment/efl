@@ -3103,6 +3103,8 @@ _elm_genlist_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
                }
           }
      }
+   eina_list_free(item_list);
+
    return eo_it;
 }
 
