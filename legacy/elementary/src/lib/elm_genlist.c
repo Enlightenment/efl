@@ -2783,6 +2783,7 @@ _item_swap_cb(void *data, double pos)
         elm_genlist_item_bring_in((Elm_Object_Item *)sd->reorder.it2, ELM_GENLIST_ITEM_SCROLLTO_IN);
         _anim_end(sd);
         evas_object_smart_callback_call(sd->obj, SIG_ITEM_REORDER_STOP, sd->reorder.it1);
+        evas_object_smart_callback_call(sd->obj, SIG_MOVED, EO_OBJ(sd->reorder.it1));
         sd->reorder.running = EINA_FALSE;
      }
 
