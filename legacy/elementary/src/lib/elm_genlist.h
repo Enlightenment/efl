@@ -278,6 +278,8 @@
  *   parameter is the item that was released.
  * - @c "clicked,double" - The user has double-clicked an item.  The @c
  *   event_info parameter is the item that was double-clicked.
+ * - @c "clicked,right" - The user has right-clicked an item.  The @c
+ *   event_info parameter is the item that was right-clicked. (since 1.13)
  * - @c "selected" - This is called when a user has made an item selected.
  *   The event_info parameter is the genlist item that was selected.
  * - @c "unselected" - This is called when a user has made an item

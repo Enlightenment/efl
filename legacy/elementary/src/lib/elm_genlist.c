@@ -43,6 +43,7 @@
 #define ELM_PRIV_GENLIST_SIGNALS(cmd) \
     cmd(SIG_ACTIVATED, "activated", "") \
     cmd(SIG_CLICKED_DOUBLE, "clicked,double", "") \
+    cmd(SIG_CLICKED_RIGHT, "clicked,right", "") \
     cmd(SIG_SELECTED, "selected", "") \
     cmd(SIG_UNSELECTED, "unselected", "") \
     cmd(SIG_EXPANDED, "expanded", "") \
@@ -4648,6 +4649,9 @@ _item_mouse_up_cb(void *data,
    Evas_Event_Mouse_Up *ev = event_info;
    Eina_Bool dragged = EINA_FALSE;
    Elm_Gen_Item *it = data;
+
+   if (ev->button == 3)
+     evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_RIGHT, EO_OBJ(it));
 
    if (ev->button != 1) return;
    it->down = EINA_FALSE;
