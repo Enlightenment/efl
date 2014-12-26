@@ -577,7 +577,7 @@ group { "elm/genlist/item/default_style/default"; nomouse;
       tag: "tab" "\t";
    }
    styles.style { "genlist_style_selected";
-      base: "font="FN" font_size=10 align=left valign=0.5 color=#3399ffff style=glow glow_color=#3399ff18 glow2_color=#3399ff12 text_class=list_item_selected";
+      base: "font="FN" font_size=10 align=left valign=0.5 color=#3399ffff style=shadow,bottom shadow_color=#00000080 text_class=list_item_selected";
       tag: "br" "\n";
       tag: "ps" "ps";
       tag: "hilight" "+ font_weight=Bold";
