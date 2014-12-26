@@ -2338,6 +2338,7 @@ _item_multi_select_up(Elm_Genlist_Data *sd)
      {
         ELM_GENLIST_ITEM_DATA_GET(eo_prev, prev);
         if ((prev->generation == sd->generation) &&
+            (!_is_no_select(prev)) &&
             (!elm_object_item_disabled_get(eo_prev)))
           break;
         eo_prev = EO_OBJ(ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev));
@@ -2369,6 +2370,7 @@ _item_multi_select_down(Elm_Genlist_Data *sd)
      {
         ELM_GENLIST_ITEM_DATA_GET(eo_next, next);
         if ((next->generation == sd->generation) &&
+            (!_is_no_select(next)) &&
             (!elm_object_item_disabled_get(eo_next)))
           break;
         eo_next = EO_OBJ(ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next));
@@ -2422,6 +2424,7 @@ _item_single_select_up(Elm_Genlist_Data *sd)
    while (prev)
      {
         if ((prev->generation == sd->generation) &&
+            (!_is_no_select(prev)) &&
             (!elm_object_item_disabled_get(EO_OBJ(prev))))
           break;
         prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
@@ -2452,6 +2455,7 @@ _item_single_select_down(Elm_Genlist_Data *sd)
    while ((next))
      {
         if ((next->generation == sd->generation) &&
+            (!_is_no_select(next)) &&
             (!elm_object_item_disabled_get(EO_OBJ(next))))
           break;
         next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
