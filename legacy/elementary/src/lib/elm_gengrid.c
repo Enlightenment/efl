@@ -2361,6 +2361,8 @@ _item_move_cb(void *data, double pos)
                               ELM_GENGRID_ITEM_SCROLLTO_IN);
         evas_object_smart_callback_call(sd->obj, SIG_ITEM_REORDER_STOP,
                                         EO_OBJ(sd->reorder.it1));
+        evas_object_smart_callback_call(sd->obj, SIG_MOVED,
+                                        EO_OBJ(sd->reorder.it1));
         sd->reorder.running = EINA_FALSE;
      }
    _elm_widget_focus_highlight_start(sd->obj);
