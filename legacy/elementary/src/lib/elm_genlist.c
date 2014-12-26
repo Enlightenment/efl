@@ -4034,6 +4034,13 @@ _item_mouse_down_cb(void *data,
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    Elm_Object_Item *eo_it = EO_OBJ(it);
 
+   if (ev->button == 3)
+     {
+        evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+        it->dx = ev->canvas.x - x;
+        it->dy = ev->canvas.y - y;
+        return;
+     }
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
@@ -4649,9 +4656,19 @@ _item_mouse_up_cb(void *data,
    Evas_Event_Mouse_Up *ev = event_info;
    Eina_Bool dragged = EINA_FALSE;
    Elm_Gen_Item *it = data;
+   Evas_Coord x, y, dx, dy;
 
    if (ev->button == 3)
-     evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_RIGHT, EO_OBJ(it));
+     {
+        evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+        dx = it->dx - (ev->canvas.x - x);
+        dy = it->dy - (ev->canvas.y - y);
+        if (dx < 0) dx = -dx;
+        if (dy < 0) dy = -dy;
+        if ((dx < 5) && (dy < 5))
+          evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_RIGHT, EO_OBJ(it));
+        return;
+     }
 
    if (ev->button != 1) return;
    it->down = EINA_FALSE;
