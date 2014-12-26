@@ -3699,7 +3699,6 @@ edje_edit_part_anti_alias_set(Evas_Object *obj, const char *part, Eina_Bool anti
 
    rp->part->anti_alias = anti_alias ? 1 : 0;
    evas_object_anti_alias_set(obj, rp->part->anti_alias);
-   evas_object_precise_is_inside_set(obj, rp->part->precise_is_inside);
 
    return EINA_TRUE;
 }
