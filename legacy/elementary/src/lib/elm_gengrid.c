@@ -4055,12 +4055,21 @@ EOLIAN static Eina_List*
 _elm_gengrid_realized_items_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 {
    Elm_Gen_Item *it;
+   Eina_Bool done = EINA_FALSE;
 
    Eina_List *ret = NULL;
 
    EINA_INLIST_FOREACH(sd->items, it)
      {
-        if (it->realized) ret = eina_list_append(ret, EO_OBJ(it));
+        if (it->realized)
+          {
+             done = EINA_TRUE;
+             ret = eina_list_append(ret, EO_OBJ(it));
+          }
+        else
+          {
+             if (done) break;
+          }
      }
 
    return ret;
