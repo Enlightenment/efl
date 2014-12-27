@@ -240,9 +240,9 @@ static void
 _transit_tween_del_cb(void *data, Elm_Transit *trans EINA_UNUSED)
 {
    Evas_Object *btn = data;
-   int disabled = (int) evas_object_data_get(btn, "disabled");
+   int disabled = (int)(uintptr_t)evas_object_data_get(btn, "disabled");
    if (disabled > 0)
-     evas_object_data_set(btn, "disabled", (void *)(--disabled));
+     evas_object_data_set(btn, "disabled", (void *)(uintptr_t)(--disabled));
    if (disabled == 0) elm_object_disabled_set(btn, EINA_FALSE);
 }
 
@@ -268,8 +268,8 @@ _transit_tween(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    elm_transit_del_cb_set(trans, _transit_tween_del_cb, bt_all);
    elm_transit_go(trans);
 
-   disabled = (int) evas_object_data_get(bt_all, "disabled");
-   evas_object_data_set(bt_all, "disabled", (void *)(++disabled));
+   disabled = (int)(uintptr_t)evas_object_data_get(bt_all, "disabled");
+   evas_object_data_set(bt_all, "disabled", (void *)(uintptr_t)(++disabled));
    elm_object_disabled_set(bt_all, EINA_TRUE);
 }
 
@@ -671,7 +671,7 @@ test_transit_tween(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
         evas_object_show(label);
 
         bt[i] = elm_button_add(win);
-        evas_object_data_set(bt[i], "tween", (void *)i);
+        evas_object_data_set(bt[i], "tween", (void *)(uintptr_t)i);
         elm_object_text_set(bt[i], "Go");
         evas_object_resize(bt[i], BTN_W, BTN_H);
         evas_object_move(bt[i], 0, (i * BTN_H));
