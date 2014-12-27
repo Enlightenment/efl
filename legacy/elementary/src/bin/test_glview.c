@@ -341,12 +341,33 @@ static const char vertex_shader[] =
    "}\n";
 
 static void
+_print_gl_log(Evas_GL_API *gl, GLuint id)
+{
+   GLint log_len = 0;
+   char *log;
+
+   if (gl->glIsShader(id))
+     gl->glGetShaderiv(id, GL_INFO_LOG_LENGTH, &log_len);
+   else if (gl->glIsProgram(id))
+     gl->glGetProgramiv(id, GL_INFO_LOG_LENGTH, &log_len);
+
+   log = malloc(log_len * sizeof(char));
+
+   if (gl->glIsShader(id))
+     gl->glGetShaderInfoLog(id, log_len, NULL, log);
+   else if (gl->glIsProgram(id))
+     gl->glGetProgramInfoLog(id, log_len, NULL, log);
+
+   printf("%s", log);
+   free(log);
+}
+
+static void
 gears_init(GLData *gld)
 {
    Evas_GL_API *gl = gld->glapi;
 
    const char *p;
-   char msg[512];
 
    gl->glEnable(GL_CULL_FACE);
    gl->glEnable(GL_DEPTH_TEST);
@@ -355,15 +376,13 @@ gears_init(GLData *gld)
    gld->vtx_shader = gl->glCreateShader(GL_VERTEX_SHADER);
    gl->glShaderSource(gld->vtx_shader, 1, &p, NULL);
    gl->glCompileShader(gld->vtx_shader);
-   gl->glGetShaderInfoLog(gld->vtx_shader, sizeof msg, NULL, msg);
-   printf("vertex shader info: %s\n", msg);
+   _print_gl_log(gl, gld->vtx_shader);
 
    p = fragment_shader;
    gld->fgmt_shader = gl->glCreateShader(GL_FRAGMENT_SHADER);
    gl->glShaderSource(gld->fgmt_shader, 1, &p, NULL);
    gl->glCompileShader(gld->fgmt_shader);
-   gl->glGetShaderInfoLog(gld->fgmt_shader, sizeof msg, NULL, msg);
-   printf("fragment shader info: %s\n", msg);
+   _print_gl_log(gl, gld->fgmt_shader);
 
    gld->program = gl->glCreateProgram();
    gl->glAttachShader(gld->program, gld->vtx_shader);
@@ -372,8 +391,7 @@ gears_init(GLData *gld)
    gl->glBindAttribLocation(gld->program, 1, "normal");
 
    gl->glLinkProgram(gld->program);
-   gl->glGetProgramInfoLog(gld->program, sizeof msg, NULL, msg);
-   printf("info: %s\n", msg);
+   _print_gl_log(gl, gld->program);
 
    gl->glUseProgram(gld->program);
    gld->proj_location  = gl->glGetUniformLocation(gld->program, "proj");
