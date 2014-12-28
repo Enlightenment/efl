@@ -1945,7 +1945,9 @@ tests/evas/images/Pic4.wbmp \
 tests/evas/images/Pic4.webp \
 tests/evas/images/Pic4.xpm \
 tests/evas/meshes/md2/sonic.md2 \
-tests/evas/meshes/obj/man_mesh.obj
+tests/evas/meshes/obj/man_mesh.obj \
+tests/evas/images/gray.jpg \
+tests/evas/images/bg_gray.png
 
 if HAVE_ELUA
 
