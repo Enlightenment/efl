@@ -222,6 +222,8 @@ eeze_udev_syspath_set_sysattr(const char *syspath,
    test = udev_device_set_sysattr_value(device, sysattr, val);
    if (test == 0)
      ret = EINA_TRUE;
+#else
+   (void)value;
 #endif
 
   udev_device_unref(device);
