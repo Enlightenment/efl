@@ -9583,6 +9583,7 @@ edje_edit_source_generate(Evas_Object *obj)
    Eina_Strbuf *buf = NULL;
    Eina_Bool ret = EINA_TRUE;
    Eina_List *images = NULL, *color_classes = NULL, *styles = NULL, *fonts = NULL;
+   Eina_List *sounds = NULL;
    Eina_List *l;
 
    GET_ED_OR_RETURN(NULL);
@@ -9647,6 +9648,26 @@ edje_edit_source_generate(Evas_Object *obj)
              COLLECT_RESOURCE(part_desc->color_class, color_classes);
           }
      }
+   /* collect all sound samples, that uses in current collection */
+   for (j = 0;
+        j < (unsigned int)ed->collection->patterns.table_programs_size;
+        j++)
+      {
+         Edje_Program *epr;
+         Edje_Sound_Sample *sample;
+         epr = ed->collection->patterns.table_programs[j];
+         if ((!epr) || (epr->action != EDJE_ACTION_TYPE_SOUND_SAMPLE))
+           continue;
+         for(i = 0; i < (unsigned int)ed->file->sound_dir->samples_count; i++)
+           {
+              sample = &ed->file->sound_dir->samples[i];
+              if (!strcmp(sample->name, epr->sample_name))
+                {
+                   COLLECT_RESOURCE(sample, sounds);
+                   break;
+                }
+           }
+      }
 
    buf = eina_strbuf_new();
 
@@ -9701,6 +9722,45 @@ edje_edit_source_generate(Evas_Object *obj)
 
    /* print the main code of group collections */
    BUF_APPEND(I0"collections {\n");
+   /* if sounds were found, print them */
+   if (sounds)
+     {
+        Edje_Sound_Sample *uses_sample;
+        BUF_APPEND(I1"sounds {\n");
+        EINA_LIST_FOREACH(sounds, l, uses_sample)
+          {
+             BUF_APPEND(I2"sample {\n");
+             BUF_APPENDF(I3"name: \"%s\" ", uses_sample->name);
+             switch (uses_sample->compression)
+               {
+                case EDJE_SOUND_SOURCE_TYPE_INLINE_RAW:
+                  {
+                     BUF_APPEND("RAW;\n");
+                     break;
+                  }
+                case EDJE_SOUND_SOURCE_TYPE_INLINE_COMP:
+                  {
+                     BUF_APPEND("COMP;\n");
+                     break;
+                  }
+                case EDJE_SOUND_SOURCE_TYPE_INLINE_LOSSY:
+                  {
+                     BUF_APPENDF("LOSSY %f;\n", uses_sample->quality);
+                     break;
+                  }
+                case EDJE_SOUND_SOURCE_TYPE_INLINE_AS_IS:
+                  {
+                     BUF_APPEND("AS_IS;\n");
+                     break;
+                  }
+                default:
+                  break;
+               }
+             BUF_APPENDF(I3"source: \"%s\";\n", uses_sample->snd_src);
+             BUF_APPEND(I2"}\n");
+          }
+        BUF_APPEND(I1"}\n");
+     }
    _edje_generate_source_of_group(ed, ce, buf);
    BUF_APPEND(I0"}");
 
