@@ -1832,6 +1832,15 @@ _item_realize(Elm_Gen_Item *it,
         evas_object_smart_callback_call(WIDGET(it), SIG_REALIZED, EO_OBJ(it));
      }
 
+   //Send signal so that item set it's style according to it's depth
+   if (GL_IT(it)->expanded_depth > 0)
+     {
+        char buf[126];
+        snprintf(buf, sizeof(buf), "elm,state,expanded_depth,%d",
+                 GL_IT(it)->expanded_depth);
+        edje_object_signal_emit(VIEW(it), buf, "elm");
+     }
+
    if ((!calc) && (sd->decorate_all_mode) &&
        (it->item->type != ELM_GENLIST_ITEM_GROUP))
      {
