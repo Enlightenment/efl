@@ -2479,8 +2479,6 @@ module_open(Evas_Module *em)
    // gl_current_surface_get is in gl generic
    ORD(gl_current_context_get);
 
-   setenv("EGL_PLATFORM", "x11", 1);
-
    gl_symbols();
 
    /* now advertise out own api */
