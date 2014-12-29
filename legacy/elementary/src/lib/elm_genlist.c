@@ -141,15 +141,20 @@ static const char SIGNAL_GROUP_FIRST[] = "elm,state,group,first";
 static const char SIGNAL_GROUP_LAST[] = "elm,state,group,last";
 static const char SIGNAL_GROUP_MIDDLE[] = "elm,state,group,middle";
 
-
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
 static void _item_move_after(Elm_Gen_Item *it, Elm_Gen_Item *after);
 static void _item_move_before(Elm_Gen_Item *it, Elm_Gen_Item *before);
-EOLIAN static void _elm_genlist_reorder_mode_set(Eo *obj EINA_UNUSED,
-                                                 Elm_Genlist_Data *sd,
-                                                 Eina_Bool reorder_mode);
+static void  _calc_job(void *data);
+static Eina_Bool _item_block_recalc(Item_Block *itb, int in, Eina_Bool qadd);
+static void _item_mouse_callbacks_add(Elm_Gen_Item *it, Evas_Object *view);
+static void _item_mouse_callbacks_del(Elm_Gen_Item *it, Evas_Object *view);
+static void _access_activate_cb(void *data EINA_UNUSED,
+                                Evas_Object *part_obj EINA_UNUSED,
+                                Elm_Object_Item *item);
+static void _decorate_item_set(Elm_Gen_Item *);
+static void _internal_elm_genlist_clear(Evas_Object *obj, Eina_Bool standby);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -158,15 +163,6 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
-static void      _calc_job(void *);
-static Eina_Bool _item_block_recalc(Item_Block *, int, Eina_Bool);
-static void      _item_mouse_callbacks_add(Elm_Gen_Item *, Evas_Object *);
-static void      _item_mouse_callbacks_del(Elm_Gen_Item *, Evas_Object *);
-static void      _access_activate_cb(void *data EINA_UNUSED,
-                                     Evas_Object *part_obj EINA_UNUSED,
-                                     Elm_Object_Item *item);
-static void _decorate_item_set(Elm_Gen_Item *);
-static void _internal_elm_genlist_clear(Evas_Object *obj, Eina_Bool standby);
 
 static Eina_Bool
 _is_no_select(Elm_Gen_Item *it)
@@ -7555,25 +7551,6 @@ _elm_genlist_decorate_mode_set(Eo *obj, Elm_Genlist_Data *sd, Eina_Bool decorate
    sd->calc_job = ecore_job_add(_calc_job, sd->obj);
 }
 
-EAPI void
-elm_genlist_reorder_mode_start(Evas_Object *obj, Ecore_Pos_Map tween_mode)
-{
-   ELM_GENLIST_CHECK(obj);
-   ELM_GENLIST_DATA_GET(obj, sd);
-
-   sd->reorder.tween_mode = tween_mode;
-   _elm_genlist_reorder_mode_set(obj, sd, EINA_TRUE);
-}
-
-EAPI void
-elm_genlist_reorder_mode_stop(Evas_Object *obj)
-{
-   ELM_GENLIST_CHECK(obj);
-   ELM_GENLIST_DATA_GET(obj, sd);
-
-   _elm_genlist_reorder_mode_set(obj, sd, EINA_FALSE);
-}
-
 EOLIAN static void
 _elm_genlist_reorder_mode_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Eina_Bool reorder_mode)
 {
@@ -7598,6 +7575,25 @@ _elm_genlist_reorder_mode_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Eina_Bo
               edje_object_signal_emit(view, SIGNAL_REORDER_MODE_UNSET, "elm");
         }
    }
+}
+
+EAPI void
+elm_genlist_reorder_mode_start(Evas_Object *obj, Ecore_Pos_Map tween_mode)
+{
+   ELM_GENLIST_CHECK(obj);
+   ELM_GENLIST_DATA_GET(obj, sd);
+
+   sd->reorder.tween_mode = tween_mode;
+   _elm_genlist_reorder_mode_set(obj, sd, EINA_TRUE);
+}
+
+EAPI void
+elm_genlist_reorder_mode_stop(Evas_Object *obj)
+{
+   ELM_GENLIST_CHECK(obj);
+   ELM_GENLIST_DATA_GET(obj, sd);
+
+   _elm_genlist_reorder_mode_set(obj, sd, EINA_FALSE);
 }
 
 EOLIAN static Eina_Bool
