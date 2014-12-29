@@ -870,7 +870,7 @@ group { name: "elm/hover/base/menu/default";
    }
    programs {
       program { name: "end";
-         signal: "mouse,up,1"; source: "base";
+         signal: "mouse,up,*"; source: "base";
          action: SIGNAL_EMIT "elm,action,dismiss" "elm";
       }
       program { name: "bottomshow";
@@ -1130,7 +1130,7 @@ group { name: "elm/hover/base/main_menu_submenu/default";
    }
    programs {
       program { name: "end";
-         signal: "mouse,up,1"; source: "base";
+         signal: "mouse,up,*"; source: "base";
          action: SIGNAL_EMIT "elm,action,dismiss" "elm";
       }
       program { name: "show";

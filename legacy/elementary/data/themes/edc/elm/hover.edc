@@ -128,7 +128,7 @@ group { name: "elm/hover/base/default";
    }
    programs {
       program { name: "end";
-         signal: "mouse,up,1"; source: "base";
+         signal: "mouse,up,*"; source: "base";
          action: SIGNAL_EMIT "elm,action,dismiss" "elm";
       }
    }
@@ -351,7 +351,7 @@ group { name: "elm/hover/base/popout";
    }
    programs {
       program { name: "end";
-         signal: "mouse,up,1"; source: "base";
+         signal: "mouse,up,*"; source: "base";
          action: SIGNAL_EMIT "elm,action,dismiss" "elm";
       }
       program { name: "show";
@@ -585,7 +585,7 @@ group { name: "elm/hover/base/hoversel_vertical/default";
    }
    programs {
       program { name: "end";
-         signal: "mouse,up,1"; source: "base";
+         signal: "mouse,up,*"; source: "base";
          action: SIGNAL_EMIT "elm,action,dismiss" "elm";
       }
       program { name: "show";
@@ -758,7 +758,7 @@ group { name: "elm/hover/base/hoversel_horizontal/default";
    }
    programs {
       program { name: "end";
-         signal: "mouse,up,1"; source: "base";
+         signal: "mouse,up,*"; source: "base";
          action: SIGNAL_EMIT "elm,action,dismiss" "elm";
       }
       program { name: "show";
