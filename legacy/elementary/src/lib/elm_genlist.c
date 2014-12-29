@@ -1827,7 +1827,7 @@ _item_realize(Elm_Gen_Item *it,
         evas_object_smart_callback_call(WIDGET(it), SIG_REALIZED, EO_OBJ(it));
      }
 
-   //Send signal so that item set it's style according to it's depth
+   //Send a signal so that an item changes its style according to its expand depth
    if (GL_IT(it)->expanded_depth > 0)
      {
         char buf[126];
