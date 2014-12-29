@@ -4659,7 +4659,7 @@ _item_mouse_up_cb(void *data,
    Elm_Gen_Item *it = data;
    Evas_Coord x, y, dx, dy;
 
-   if (ev->button == 3)
+   if ((ev->button == 3) && (!it->dragging))
      {
         evas_object_geometry_get(obj, &x, &y, NULL, NULL);
         dx = it->dx - (ev->canvas.x - x);
