@@ -41,6 +41,21 @@ group { name: "elm/fileselector/base/default";
             }
          }
       }
+      part { name: "elm.swallow.search"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1 {
+               to: "elm.swallow.home";
+               relative: 1.0 0.0;
+               offset: 3 0;
+            }
+            rel2 {
+               to_y: "elm.swallow.home";
+               relative: 1.0 1.0;
+               offset: -4 0;
+            }
+         }
+      }
       part { name: "elm.spinner.clip"; type: RECT;
          description { state: "default" 0.0;
             rel1.to: "elm.swallow.spinner";
@@ -97,22 +112,6 @@ group { name: "elm/fileselector/base/default";
          }
       }
       part { name: "elm.swallow.filename"; type: SWALLOW;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            align: 0.5 1.0;
-            rel1 {
-               to_y: "elm.swallow.search";
-               relative: 0.0 0.0;
-               offset: 3 -4;
-            }
-            rel2 {
-               to_y: "elm.swallow.search";
-               relative: 1.0 0.0;
-               offset: -4 -4;
-            }
-         }
-      }
-      part { name: "elm.swallow.search"; type: SWALLOW;
          description { state: "default" 0.0;
             fixed: 1 1;
             align: 0.5 1.0;
