@@ -119,6 +119,7 @@ static const char SIGNAL_EXPANDED[] = "elm,state,expanded";
 static const char SIGNAL_CONTRACTED[] = "elm,state,contracted";
 static const char SIGNAL_FLIP_ENABLED[] = "elm,state,flip,enabled";
 static const char SIGNAL_DECORATE_ENABLED[] = "elm,state,decorate,enabled";
+static const char SIGNAL_DECORATE_DISABLED[] = "elm,state,decorate,disabled";
 static const char SIGNAL_DECORATE_ENABLED_EFFECT[] = "elm,state,decorate,enabled,effect";
 static const char SIGNAL_REORDER_ENABLED[] = "elm,state,reorder,enabled";
 static const char SIGNAL_REORDER_DISABLED[] = "elm,state,reorder,disabled";
@@ -3529,6 +3530,8 @@ _decorate_all_item_unrealize(Elm_Gen_Item *it)
    _view_clear(it->deco_all_view, &(GL_IT(it)->deco_all_texts),
                &(GL_IT(it)->deco_all_contents), &(GL_IT(it)->deco_all_states),
                &(GL_IT(it)->deco_all_content_objs));
+
+   edje_object_signal_emit(VIEW(it), SIGNAL_DECORATE_DISABLED, "elm");
 
    edje_object_message_signal_process(it->deco_all_view);
    _item_mouse_callbacks_del(it, it->deco_all_view);
