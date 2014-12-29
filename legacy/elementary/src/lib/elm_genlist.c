@@ -118,6 +118,7 @@ static const char SIGNAL_UNSELECTED[] = "elm,state,unselected";
 static const char SIGNAL_EXPANDED[] = "elm,state,expanded";
 static const char SIGNAL_CONTRACTED[] = "elm,state,contracted";
 static const char SIGNAL_FLIP_ENABLED[] = "elm,state,flip,enabled";
+static const char SIGNAL_FLIP_DISABLED[] = "elm,state,flip,disabled";
 static const char SIGNAL_DECORATE_ENABLED[] = "elm,state,decorate,enabled";
 static const char SIGNAL_DECORATE_DISABLED[] = "elm,state,decorate,disabled";
 static const char SIGNAL_DECORATE_ENABLED_EFFECT[] = "elm,state,decorate,enabled,effect";
@@ -7687,6 +7688,8 @@ _elm_genlist_item_flip_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bool flip)
 {
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
 
+   Eina_Bool prev_flip = it->flipped;
+
    flip = !!flip;
    if (it->flipped == flip) return;
 
@@ -7696,6 +7699,14 @@ _elm_genlist_item_flip_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bool flip)
      }
    else
      {
+        if (prev_flip != flip)
+          {
+             edje_object_signal_emit(VIEW(it), SIGNAL_FLIP_DISABLED, "elm");
+             if (GL_IT(it)->wsd->decorate_all_mode)
+               edje_object_signal_emit(it->deco_all_view, SIGNAL_FLIP_DISABLED,
+                                       "elm");
+          }
+
         it->flipped = flip;
         _item_cache_zero(GL_IT(it)->wsd);
         elm_genlist_item_update(eo_it);
