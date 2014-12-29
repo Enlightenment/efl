@@ -39,6 +39,7 @@ EAPI const char ELM_GENGRID_PAN_SMART_NAME[] = "elm_gengrid_pan";
 #define ELM_PRIV_GENGRID_SIGNALS(cmd) \
    cmd(SIG_ACTIVATED, "activated", "") \
    cmd(SIG_CLICKED_DOUBLE, "clicked,double", "") \
+   cmd(SIG_CLICKED_RIGHT, "clicked,right", "") \
    cmd(SIG_LONGPRESSED, "longpressed", "") \
    cmd(SIG_SELECTED, "selected", "") \
    cmd(SIG_UNSELECTED, "unselected", "") \
@@ -569,6 +570,14 @@ _item_mouse_down_cb(void *data,
    Evas_Coord x, y;
    ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
 
+   if (ev->button == 3)
+     {
+        evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+        it->dx = ev->canvas.x - x;
+        it->dy = ev->canvas.y - y;
+        return;
+     }
+
    if (ev->button != 1) return;
 
    it->down = 1;
@@ -644,6 +653,19 @@ _item_mouse_up_cb(void *data,
    Elm_Gen_Item *it = data;
    Elm_Object_Item *eo_it = EO_OBJ(it);
    ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
+   Evas_Coord x, y, dx, dy;
+
+   if ((ev->button == 3) && (!it->dragging))
+     {
+        evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+        dx = it->dx - (ev->canvas.x - x);
+        dy = it->dy - (ev->canvas.y - y);
+        if (dx < 0) dx = -dx;
+        if (dy < 0) dy = -dy;
+        if ((dx < 5) && (dy < 5))
+          evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_RIGHT, EO_OBJ(it));
+        return;
+     }
 
    if (ev->button != 1) return;
 

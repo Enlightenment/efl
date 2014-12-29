@@ -172,6 +172,8 @@
  *   parameter is the item that was released.
  * - @c "clicked,double" - The user has double-clicked an item.
  *   The @p event_info parameter is the gengrid item that was double-clicked.
+ * - @c "clicked,right" - The user has right-clicked an item. The @p
+ *   event_info parameter is the item that was right-clicked. (since 1.13)
  * - @c "longpressed" - This is called when the item is pressed for a certain
  *   amount of time. By default it's 1 second.
  * - @c "selected" - The user has made an item selected. The

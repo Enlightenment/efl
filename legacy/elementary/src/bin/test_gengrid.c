@@ -223,6 +223,12 @@ grid_double_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 }
 
 static void
+grid_right_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   printf("Right clicked: %p\n", event_info);
+}
+
+static void
 grid_longpressed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("longpressed %p\n", event_info);
@@ -358,6 +364,7 @@ create_gengrid(Evas_Object *obj, int items)
    evas_object_smart_callback_add(grid, "selected", grid_selected, NULL);
    evas_object_smart_callback_add(grid, "unselected", grid_unselected, NULL);
    evas_object_smart_callback_add(grid, "clicked,double", grid_double_clicked, NULL);
+   evas_object_smart_callback_add(grid, "clicked,right", grid_right_clicked, NULL);
    evas_object_smart_callback_add(grid, "longpressed", grid_longpressed, NULL);
    evas_object_smart_callback_add(grid, "pressed", grid_pressed, NULL);
    evas_object_smart_callback_add(grid, "released", grid_released, NULL);
