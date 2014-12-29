@@ -21,6 +21,7 @@
 
 static const char SIG_ACTIVATED[] = "activated";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
+static const char SIG_CLICKED_RIGHT[] = "clicked,right";
 static const char SIG_SELECTED[] = "selected";
 static const char SIG_UNSELECTED[] = "unselected";
 static const char SIG_LONGPRESSED[] = "longpressed";
@@ -36,6 +37,7 @@ static const char SIG_ITEM_UNFOCUSED[] = "item,unfocused";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_ACTIVATED, ""},
    {SIG_CLICKED_DOUBLE, ""},
+   {SIG_CLICKED_RIGHT, ""},
    {SIG_SELECTED, ""},
    {SIG_UNSELECTED, ""},
    {SIG_LONGPRESSED, ""},
@@ -1630,10 +1632,19 @@ _mouse_down_cb(void *data,
    Evas_Event_Mouse_Down *ev = event_info;
    Elm_List_Item_Data *it = data;
    Evas_Object *obj;
+   Evas_Coord x, y;
 
    ELM_LIST_ITEM_CHECK_OR_RETURN(it);
    obj = WIDGET(it);
    ELM_LIST_DATA_GET(obj, sd);
+
+   if (ev->button == 3)
+     {
+        evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+        sd->dx = ev->canvas.x - x;
+        sd->dy = ev->canvas.y - y;
+        return;
+     }
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;
@@ -1676,10 +1687,23 @@ _mouse_up_cb(void *data,
    Evas_Object *obj;
    Elm_List_Item_Data *it = data;
    Evas_Event_Mouse_Up *ev = event_info;
+   Evas_Coord x, y, dx, dy;
 
    ELM_LIST_ITEM_CHECK_OR_RETURN(it);
    obj = WIDGET(it);
    ELM_LIST_DATA_GET(obj, sd);
+
+   if (ev->button == 3)
+     {
+        evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+        dx = sd->dx - (ev->canvas.x - x);
+        dy = sd->dy - (ev->canvas.y - y);
+        if (dx < 0) dx = -dx;
+        if (dy < 0) dy = -dy;
+        if ((dx < 5) && (dy < 5))
+          evas_object_smart_callback_call(obj, SIG_CLICKED_RIGHT, EO_OBJ(it));
+        return;
+     }
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;

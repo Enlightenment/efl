@@ -262,6 +262,14 @@ scroll_bottom(void        *data EINA_UNUSED,
 }
 
 static void
+clicked_right(void        *data EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED,
+              void        *event_info EINA_UNUSED)
+{
+   printf("Clicked right!\n");
+}
+
+static void
 scroll_left(void        *data EINA_UNUSED,
             Evas_Object *obj EINA_UNUSED,
             void        *event_info EINA_UNUSED)
@@ -437,6 +445,7 @@ test_list(void        *data EINA_UNUSED,
 
    evas_object_smart_callback_add(li, "edge,top", scroll_top, NULL);
    evas_object_smart_callback_add(li, "edge,bottom", scroll_bottom, NULL);
+   evas_object_smart_callback_add(li, "clicked,right", clicked_right, NULL);
 }
 
 void

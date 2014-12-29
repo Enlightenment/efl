@@ -29,6 +29,8 @@
  *   is the item that was activated.
  * - @c "clicked,double" - The user has double-clicked an item.
  *   The @p event_info parameter is the item that was double-clicked.
+ * - @c "clicked,right" - The user has right-clicked an item. The @p
+ *   event_info parameter is the item that was right-clicked. (since 1.13)
  * - @c "selected" - when the user selected an item
  * - @c "unselected" - when the user unselected an item
  * - @c "longpressed" - an item in the list is long-pressed
