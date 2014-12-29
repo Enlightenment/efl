@@ -1429,7 +1429,7 @@ EOLIAN static Evas_Textgrid_Font_Style
 _evas_textgrid_supported_font_styles_get(Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o EINA_UNUSED)
 {
    /* FIXME: to do */
-   return 0;
+   return EVAS_TEXTGRID_FONT_STYLE_NORMAL;
 }
 
 EOLIAN static void

@@ -5,10 +5,13 @@ class Evas.Textgrid (Evas.Object, Efl.Text_Properties)
    properties {
       supported_font_styles {
          set {
-            /*@ No description supplied by the EAPI. */
+            /*@
+            This function is not implemented yet, do not use. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
+            /*@
+            This function is not implemented yet, do not use.
+            @return EVAS_TEXTGRID_FONT_STYLE_NORMAL */
          }
          values {
             Evas_Textgrid_Font_Style styles;
