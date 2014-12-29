@@ -323,6 +323,7 @@
  * - @c "longpressed" - This is called when the item is pressed for a certain
  *   amount of time. By default it's 1 second. The event_info parameter is the
  *   longpressed genlist item.
+ * - @c "scroll" - the content has been scrolled (moved) (since 1.13)
  * - @c "scroll,anim,start" - This is called when scrolling animation has
  *   started.
  * - @c "scroll,anim,stop" - This is called when scrolling animation has

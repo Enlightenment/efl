@@ -59,6 +59,7 @@
     cmd(SIG_DRAG_STOP, "drag,stop", "") \
     cmd(SIG_DRAG, "drag", "") \
     cmd(SIG_LONGPRESSED, "longpressed", "") \
+    cmd(SIG_SCROLL, "scroll", "") \
     cmd(SIG_SCROLL_ANIM_START, "scroll,anim,start", "") \
     cmd(SIG_SCROLL_ANIM_STOP, "scroll,anim,stop", "") \
     cmd(SIG_SCROLL_DRAG_START, "scroll,drag,start", "") \
@@ -5223,6 +5224,13 @@ _scroll_drag_start_cb(Evas_Object *obj,
 }
 
 static void
+_scroll_cb(Evas_Object *obj,
+           void *data EINA_UNUSED)
+{
+   evas_object_smart_callback_call(obj, SIG_SCROLL, NULL);
+}
+
+static void
 _scroll_drag_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
@@ -5505,6 +5513,7 @@ _elm_genlist_evas_object_smart_add(Eo *obj, Elm_Genlist_Data *priv)
    eo_do(obj,
          elm_interface_scrollable_animate_start_cb_set(_scroll_animate_start_cb),
          elm_interface_scrollable_animate_stop_cb_set(_scroll_animate_stop_cb),
+         elm_interface_scrollable_scroll_cb_set(_scroll_cb),
          elm_interface_scrollable_drag_start_cb_set(_scroll_drag_start_cb),
          elm_interface_scrollable_drag_stop_cb_set(_scroll_drag_stop_cb),
          elm_interface_scrollable_edge_left_cb_set(_edge_left_cb),
