@@ -1319,7 +1319,7 @@ _decorate_all_item_realize(Elm_Gen_Item *it,
    _item_mouse_callbacks_del(it, VIEW(it));
    _item_mouse_callbacks_add(it, it->deco_all_view);
 
-   _item_text_realize(it, it->deco_all_view, &it->item->deco_all_texts, NULL);
+   _item_text_realize(it, it->deco_all_view, &GL_IT(it)->deco_all_texts, NULL);
    if (it->flipped)
      edje_object_signal_emit
        (it->deco_all_view, SIGNAL_FLIP_ENABLED, "elm");
@@ -5377,7 +5377,7 @@ _decorate_item_realize(Elm_Gen_Item *it)
 
    /* text_get, content_get, state_get */
    _item_text_realize
-     (it, it->item->deco_it_view, &it->item->deco_it_texts, NULL);
+     (it, it->item->deco_it_view, &GL_IT(it)->deco_it_texts, NULL);
    if (!it->item->deco_it_contents)
      it->item->deco_it_contents =
        elm_widget_stringlist_get
