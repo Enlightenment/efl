@@ -1900,8 +1900,8 @@ _tap_gesture_test(Evas_Object *obj,
            }
          else if (eina_list_count(pe_list) > st->n_taps_needed)
            {  /* If we arleady got too many touches for this gesture. */
-              ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
-                    &st->info, EINA_FALSE);
+              _state_set(gesture, ELM_GESTURE_STATE_ABORT,
+                         &st->info, EINA_FALSE);
            }
 
          if (gesture->state == ELM_GESTURE_STATE_MOVE)
@@ -1925,8 +1925,8 @@ _tap_gesture_test(Evas_Object *obj,
 
               if (move && (n > 0))
                 {
-                   ev_flag = _state_set(gesture, ELM_GESTURE_STATE_MOVE,
-                         &st->info, EINA_TRUE);
+                   _state_set(gesture, ELM_GESTURE_STATE_MOVE,
+                              &st->info, EINA_TRUE);
                 }
            }
 
@@ -1977,8 +1977,8 @@ _tap_gesture_test(Evas_Object *obj,
                    /* We don't report MOVE when (n >= st->n_taps_needed)
                       because will be END or ABORT at this stage */
                    st->info.n = eina_list_count(st->l);
-                   ev_flag = _state_set(gesture, ELM_GESTURE_STATE_MOVE,
-                         &st->info, EINA_TRUE);
+                   _state_set(gesture, ELM_GESTURE_STATE_MOVE,
+                              &st->info, EINA_TRUE);
                 }
            }
 
