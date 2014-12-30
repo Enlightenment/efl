@@ -111,6 +111,7 @@ test_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
    evas_object_show(win);
 }
 
+/* Test: Icon Transparent */
 static void
 icon_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -140,5 +141,116 @@ test_icon_transparent(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 
    evas_object_smart_callback_add(ic, "clicked", icon_clicked, NULL);
 
+   evas_object_show(win);
+}
+
+/* Test: Icon Standard */
+static void
+_standard_list_populate(Evas_Object *list, Elm_Icon_Lookup_Order order)
+{
+   Evas_Object *ic;
+   Eina_List* l;
+   const char *group;
+   char name[128], *p;
+
+   elm_list_clear(list);
+   l = elm_theme_group_base_list(NULL, "elm/icon/");
+   EINA_LIST_FREE(l, group)
+     {
+        // group = "/elm/icon/standard-name/style/maybe_another_style??"
+         snprintf(name, sizeof(name), "%s", group + 9);
+         p = strrchr(name, '/');
+         *p = '\0';
+         printf("Found group:%s  Name:%s\n", group, name);
+
+         // quick hack to show only standard-compliant icons
+         // apart from the "folder" one, all the others have "-" in the name
+         if ((strrchr(name, '-') != NULL) || !strcmp(name, "folder"))
+           {
+               ic = elm_icon_add(list);
+               elm_icon_order_lookup_set(ic, order);
+               elm_icon_standard_set(ic, name);
+               evas_object_size_hint_min_set(ic, 32, 32);
+               elm_list_item_append(list, name, ic, NULL, NULL, NULL);
+           }
+
+         eina_stringshare_del(group);
+     }
+   eina_list_free(l);
+   elm_list_go(list);
+}
+
+static void
+_rdg_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                void *event_info EINA_UNUSED)
+{
+   _standard_list_populate(data, elm_radio_value_get(obj));
+}
+
+void
+test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *li, *box, *hbox, *fr, *rd, *rdg;
+
+
+   win = elm_win_util_standard_add("icon-test-std", "Icon Standard");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
+   fr = elm_frame_add(box);
+   elm_object_text_set(fr, "standard icon order lookup");
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(box, fr);
+   evas_object_show(fr);
+
+   li = elm_list_add(box);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, li);
+   evas_object_show(li);
+   _standard_list_populate(li, ELM_ICON_LOOKUP_FDO_THEME);
+
+   hbox = elm_box_add(fr);
+   elm_box_horizontal_set(hbox, EINA_TRUE);
+   elm_object_content_set(fr, hbox);
+   evas_object_show(hbox);
+
+   rdg = elm_radio_add(hbox);
+   elm_radio_state_value_set(rdg, ELM_ICON_LOOKUP_FDO_THEME);
+   elm_object_text_set(rdg, "fdo, theme");
+   elm_box_pack_end(hbox, rdg);
+   evas_object_show(rdg);
+   evas_object_smart_callback_add(rdg, "changed", _rdg_changed_cb, li);
+
+   rd = elm_radio_add(hbox);
+   elm_radio_state_value_set(rd, ELM_ICON_LOOKUP_THEME_FDO);
+   elm_radio_group_add(rd, rdg);
+   elm_object_text_set(rd, "theme, fdo");
+   elm_box_pack_end(hbox, rd);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, li);
+
+   rd = elm_radio_add(hbox);
+   elm_radio_state_value_set(rd, ELM_ICON_LOOKUP_FDO);
+   elm_radio_group_add(rd, rdg);
+   elm_object_text_set(rd, "fdo only");
+   elm_box_pack_end(hbox, rd);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, li);
+
+   rd = elm_radio_add(hbox);
+   elm_radio_state_value_set(rd, ELM_ICON_LOOKUP_THEME);
+   elm_radio_group_add(rd, rdg);
+   elm_object_text_set(rd, "theme only");
+   elm_box_pack_end(hbox, rd);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, li);
+
+   evas_object_resize(win, 300, 400);
    evas_object_show(win);
 }
