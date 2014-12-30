@@ -580,7 +580,11 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
                             Eina_Bool calc)
 {
    if (!it->realized) return;
-   if (GL_IT(it)->wsd->reorder_it == it) return;
+   if (GL_IT(it)->wsd->reorder_it == it)
+     {
+        WRN("reordering item should not be unrealized");
+        return;
+     }
 
    evas_event_freeze(evas_object_evas_get(WIDGET(it)));
    if (!calc)
