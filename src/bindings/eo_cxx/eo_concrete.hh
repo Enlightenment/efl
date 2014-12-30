@@ -47,6 +47,15 @@ struct concrete
    {
    }
 
+
+   /// @brief Default constructor.
+   ///
+   /// Constructs a NULL initialized efl::eo::concrete object.
+   ///
+   concrete() : _eo_raw(nullptr)
+   {
+   }
+
    /// @brief Class destructor.
    ///
    ~concrete()

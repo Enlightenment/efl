@@ -108,6 +108,14 @@ to_cxx(Eo* x, std::tuple<std::false_type>, tag<T>)
    return T(::eo_ref(x));
 }
 
+template <typename T>
+inline T
+to_cxx(Eo** x, std::tuple<std::false_type>, tag<T>)
+{
+   static_assert(sizeof(Eo*) == sizeof(typename std::remove_pointer<T>::type), "");
+   return static_cast<T>((static_cast<void*>(x)));
+}
+
 #ifdef _EVAS_H
 template <typename T>
 Evas_Object_Textblock_Node_Format *

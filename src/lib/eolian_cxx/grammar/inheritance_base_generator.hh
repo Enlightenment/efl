@@ -65,11 +65,7 @@ struct inheritance_operations_description
 inline std::ostream&
 operator<<(std::ostream& out, inheritance_operations_description const& x)
 {
-   extensions_container_type::const_iterator it, first, last;
    std::string s;
-
-   first = x._cls.extensions.begin();
-   last = x._cls.extensions.end();
 
    out << "template <typename T>"
        << endl << "int initialize_operation_description(::efl::eo::detail::tag<"
@@ -84,21 +80,13 @@ operator<<(std::ostream& out, inheritance_operations_description const& x)
         out << inheritance_operation(x._cls, i);
      }
 
-   out << tab(1)
-       << "initialize_operation_description<T>(efl::eo::detail::tag<"
-       << x._cls.parent
-       << ">(), &ops["
-       << x._cls.functions.size() << "]);" << endl;
-
-   s += " + operation_description_class_size<" + x._cls.parent + ">::value";
-
-   for (it = first; it != last; ++it)
+   for (std::string const& parent : x._cls.parents)
      {
         out << tab(1)
-            << "initialize_operation_description<T>(efl::eo::detail::tag<"
-            << *it << ">(), &ops[" << x._cls.functions.size() << s << "]);" << endl;
+            << "initialize_operation_description<T>(::efl::eo::detail::tag<::"
+            << parent << ">(), &ops[" << x._cls.functions.size() << s << "]);" << endl;
 
-        s += " + operation_description_class_size< " + *it + ">::value";
+        s += " + operation_description_class_size<::" + parent + ">::value";
      }
 
    out << tab(1) << "return 0;" << endl
@@ -168,21 +156,16 @@ struct inheritance_base_operations_size
 inline std::ostream&
 operator<<(std::ostream& out, inheritance_base_operations_size const& x)
 {
-   extensions_container_type::const_iterator it, first = x._cls.extensions.begin();
-   extensions_container_type::const_iterator last = x._cls.extensions.end();
-   first = x._cls.extensions.begin();
-
    out << "template<>"
        << endl << "struct operation_description_class_size< "
        << full_name(x._cls) << " >" << endl
        << "{" << endl
        << tab(1) << "static const int value = "
-       << x._cls.functions.size()
-       << " + operation_description_class_size<" << class_name(x._cls.parent) << ">::value";
+       << x._cls.functions.size();
 
-   for (it = first; it != last; ++it)
+   for (std::string const& parent : x._cls.parents)
      {
-        out << " + operation_description_class_size< " << *it << " >::value";
+        out << " + operation_description_class_size<::" << parent << " >::value";
      }
 
    out << ";" << endl
@@ -205,14 +188,14 @@ inline std::ostream&
 operator<<(std::ostream& out, inheritance_base_operations_extensions const& x)
 {
    eo_class const& cls = x._cls;
-   extensions_container_type::const_iterator it, first = cls.extensions.begin();
-   extensions_container_type::const_iterator last = cls.extensions.end();
+   ancestors_container_type::const_iterator it, first = cls.parents.begin();
+   ancestors_container_type::const_iterator last = cls.parents.end();
 
-   out << endl << tab(3) << ": operations< " << class_name(cls.parent) << " >::template type<T>";
    for (it = first; it != last; ++it)
      {
-        out << "," << endl << tab(3)
-            << "operations< " << *it
+        out << endl
+            << tab(3) << (it == first ? ": " : ", ")
+            << "virtual operations< ::" << *it
             << " >::template type<T>";
      }
 
@@ -247,12 +230,12 @@ operator<<(std::ostream& out, inheritance_base_operations_function const& x)
    if (!is_void)
      out << tab(3) << func.ret.front().native << " _tmp_ret = {};"  << endl;
 
-   out << callbacks_heap_alloc("static_cast<T*>(this)->_eo_ptr()", func.params, 3)
+   out << callbacks_heap_alloc("dynamic_cast<T*>(this)->_eo_ptr()", func.params, 3)
        << endl;
 
    out << tab(3)
-       << "eo_do_super(static_cast<T*>(this)->_eo_ptr()," << endl
-       << tab(5) << "static_cast<T*>(this)->_eo_class()," << endl
+       << "eo_do_super(dynamic_cast<T*>(this)->_eo_ptr()," << endl
+       << tab(5) << "dynamic_cast<T*>(this)->_eo_class()," << endl
        << tab(5) << function_call(func) << ");" << endl;
 
    if (!is_void)
@@ -325,10 +308,10 @@ operator<<(std::ostream& out, inheritance_call_constructors const& x)
      {
         eo_constructor const& ctor = *it;
         out << "inline void" << endl
-            << "call_constructor(tag< "
+            << "call_constructor(::efl::eo::detail::tag< "
             << full_name(x._cls) << " >" << endl
             << tab(5) << ", Eo* eo, Eo_Class const* cls EINA_UNUSED," << endl
-            << tab(5) << "args_class<"
+            << tab(5) << "::efl::eo::detail::args_class<"
             << full_name(x._cls)
             << ", ::std::tuple<"
             << parameters_types(ctor.params)
@@ -343,10 +326,10 @@ operator<<(std::ostream& out, inheritance_call_constructors const& x)
      }
 
    out << "inline void" << endl
-       << "call_constructor(tag< "
+       << "call_constructor(::efl::eo::detail::tag< "
        << full_name(x._cls) << " >" << endl
        << tab(5) << ", Eo* eo, Eo_Class const* cls EINA_UNUSED," << endl
-       << tab(5) << "args_class<"
+       << tab(5) << "::efl::eo::detail::args_class<"
        << full_name(x._cls)
        << ", ::std::tuple<::efl::eo::parent_type> > const& args)" << endl
        << "{" << endl
@@ -354,81 +337,6 @@ operator<<(std::ostream& out, inheritance_call_constructors const& x)
        << tab(1) << "eo_do(eo, ::eo_parent_set(args.get<0>()._eo_raw));" << endl
        << "}" << endl << endl;
 
-   return out;
-}
-
-struct inheritance_extension_function
-{
-   eo_function const& _func;
-   inheritance_extension_function(eo_function const& func) : _func(func) {}
-};
-
-inline std::ostream&
-operator<<(std::ostream& out, inheritance_extension_function const& x)
-{
-   out << template_parameters_declaration(x._func.params, 1);
-
-   bool is_void = function_is_void(x._func);
-   out << tab(2)
-       << reinterpret_type(x._func.ret) << " "
-       << x._func.name << "("
-       << parameters_declaration(x._func.params)
-       << ")" << endl
-       << tab(2) << "{" << endl;
-
-   if (!is_void)
-     {
-        out << tab(3) << x._func.ret.front().native << " _tmp_ret = {};"  << endl;
-     }
-
-   out << callbacks_heap_alloc("static_cast<U*>(this)->_eo_ptr()", x._func.params, 2)
-       << endl;
-
-   out << tab(3) << "eo_do(static_cast<U*>(this)->_eo_ptr(), "
-       << function_call(x._func) << ");" << endl;
-
-   if (!function_is_void(x._func))
-     out << tab(4) << "return " << to_cxx(x._func.ret, "_tmp_ret") << ";" << endl;
-   out << tab(2) << "}" << endl
-       << endl;
-
-   return out;
-}
-
-struct inheritance_extension
-{
-   eo_class const& _cls;
-   inheritance_extension(eo_class const& cls) : _cls(cls) {}
-};
-
-inline std::ostream&
-operator<<(std::ostream& out, inheritance_extension const& x)
-{
-   full_name const cls(x._cls);
-   out << "template<>" << endl
-       << "struct extension_inheritance< "
-       << cls << ">" << endl
-       << "{" << endl
-       << tab(1) << "template <typename U>" << endl
-       << tab(1) << "struct type" << endl
-       << tab(1) << "{" << endl
-       << tab(2) << "operator " << cls << "() const" << endl
-       << tab(2) << "{" << endl
-       << tab(3) << "return " << cls
-       << "(eo_ref(static_cast<U const*>(this)->_eo_ptr()));" << endl
-       << tab(2) << "}" << endl
-       << endl;
-   functions_container_type::const_iterator it,
-     first = x._cls.functions.begin(),
-     last = x._cls.functions.end();
-   for (it = first; it != last; ++it)
-     {
-        out << inheritance_extension_function(*it);
-     }
-   out << events(x._cls, true);
-   out << tab(1) << "};" << endl
-       << "};" << endl
-       << endl;
    return out;
 }
 
@@ -460,7 +368,6 @@ eo_inheritance_detail_generator(std::ostream& out, eo_class const& cls)
        << inheritance_base_operations_size(cls)
        << inheritance_operations_description(cls)
        << inheritance_call_constructors(cls)
-       << inheritance_extension(cls)
        << inheritance_eo_class_getter(cls)
        <<  "} } }" << endl;
 }

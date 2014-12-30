@@ -41,9 +41,9 @@ operator<<(std::ostream& out, class_inheritance const& x)
 {
    eo_class const& cls = x._cls;
 
-   parents_container_type::const_iterator it,
-     first = cls.parents.cbegin(),
-     last = cls.parents.cend();
+   ancestors_container_type::const_iterator it,
+     first = cls.ancestors.cbegin(),
+     last = cls.ancestors.cend();
    for (it = first; it != last; ++it)
      {
         out << tab(2) << ", ::" << abstract_namespace << "::" << *it << endl;

@@ -14,7 +14,7 @@ struct bar
 : efl::eo::inherit<bar, simple>
 {
   bar()
-    : inherit_base()
+    : inherit_base(efl::eo::parent = nullptr)
   {}
 
   bool simple_get()

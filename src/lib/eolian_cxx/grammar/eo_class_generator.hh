@@ -151,7 +151,7 @@ struct address_of_inheritance
 inline std::ostream&
 operator<<(std::ostream& out, address_of_inheritance const& x)
 {
-   for (std::string const& parent : x._cls.parents)
+   for (std::string const& parent : x._cls.ancestors)
      {
         out << tab(2) << ", ::" << abstract_namespace << "::" << parent << "::"
             << x._struct_name << "<" << x._struct_name << ">" << endl;

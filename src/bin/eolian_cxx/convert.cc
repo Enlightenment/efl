@@ -24,7 +24,7 @@ namespace eolian_cxx {
 extern efl::eina::log_domain domain;
 
 void
-add_parent_recursive(const char* klass_name, std::set<std::string>& parents)
+add_ancestor_recursive(const char* klass_name, std::set<std::string>& ancestor)
 {
    if (!klass_name)
      return;
@@ -36,14 +36,14 @@ add_parent_recursive(const char* klass_name, std::set<std::string>& parents)
         return;
      }
 
-   parents.insert(class_format_cxx(safe_lower(klass_name)));
+   ancestor.insert(class_format_cxx(safe_lower(klass_name)));
 
    Eina_Iterator* inheritances = ::eolian_class_inherits_get(klass);
    void* curr = 0;
 
    EINA_ITERATOR_FOREACH(inheritances, curr)
      {
-        add_parent_recursive(static_cast<const char*>(curr), parents);
+        add_ancestor_recursive(static_cast<const char*>(curr), ancestor);
      }
    eina_iterator_free(inheritances);
 }
@@ -182,15 +182,17 @@ convert_eolian_inheritances(efl::eolian::eo_class& cls, Eolian_Class const& klas
      ::eolian_class_inherits_get(&klass);
    void *curr;
 
-   std::set<std::string> parents;
+   std::set<std::string> ancestors;
 
    EINA_ITERATOR_FOREACH(inheritances, curr)
      {
-        add_parent_recursive(static_cast<const char*>(curr), parents);
+        const char* klass_name = static_cast<const char*>(curr);
+        cls.parents.push_back(class_format_cxx(safe_lower(klass_name)));
+        add_ancestor_recursive(klass_name, ancestors);
      }
    eina_iterator_free(inheritances);
 
-   cls.parents.assign(parents.begin(), parents.end());
+   cls.ancestors.assign(ancestors.begin(), ancestors.end());
 }
 
 void

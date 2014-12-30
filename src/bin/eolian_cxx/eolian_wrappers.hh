@@ -348,7 +348,7 @@ parameter_type(Eolian_Function_Parameter const& parameter,
    assert(!type.empty());
    if (parameter_is_out(parameter))
      {
-        if (type.front().native == "char *")
+        if (type.front().native.find("char") != std::string::npos)
           type = { efl::eolian::type_to_native(type) };
         type.is_out = true;
         type.front().native += "*";

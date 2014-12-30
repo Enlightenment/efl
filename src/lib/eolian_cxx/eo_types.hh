@@ -14,7 +14,7 @@ struct eo_parameter;
 struct eo_function;
 struct eo_event;
 
-typedef std::vector<std::string> parents_container_type;
+typedef std::vector<std::string> ancestors_container_type;
 typedef std::vector<std::string> includes_container_type;
 typedef std::vector<eo_constructor> constructors_container_type;
 typedef std::vector<eo_function> functions_container_type;
@@ -215,7 +215,8 @@ struct eo_class
    eo_class_type type;
    std::string name;
    std::string eo_name;
-   parents_container_type parents;
+   ancestors_container_type parents;
+   ancestors_container_type ancestors;
    constructors_container_type constructors;
    functions_container_type functions;
    events_container_type events;
