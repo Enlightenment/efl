@@ -1479,7 +1479,7 @@ _ecore_con_cl_timer_update(Ecore_Con_Client *obj)
                   ecore_timer_reset(cl->until_deletion);
                }
              else
-               cl->until_deletion = ecore_timer_add(cl->disconnect_time, (Ecore_Task_Cb)_ecore_con_client_timer, cl);
+               cl->until_deletion = ecore_timer_add(cl->disconnect_time, (Ecore_Task_Cb)_ecore_con_client_timer, obj);
           }
         else if (cl->until_deletion)
           {
@@ -1499,7 +1499,7 @@ _ecore_con_cl_timer_update(Ecore_Con_Client *obj)
                   ecore_timer_reset(cl->until_deletion);
                }
              else
-               cl->until_deletion = ecore_timer_add(host_server->client_disconnect_time, (Ecore_Task_Cb)_ecore_con_client_timer, cl);
+               cl->until_deletion = ecore_timer_add(host_server->client_disconnect_time, (Ecore_Task_Cb)_ecore_con_client_timer, obj);
           }
         else if (cl->until_deletion)
           {
