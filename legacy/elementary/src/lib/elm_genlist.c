@@ -2415,6 +2415,8 @@ _item_multi_select_down(Elm_Genlist_Data *sd)
    if (!sd->multi) return EINA_FALSE;
 
    eo_next = elm_genlist_item_next_get(sd->last_selected_item);
+   if (!eo_next) return EINA_TRUE;
+
    while ((eo_next))
      {
         ELM_GENLIST_ITEM_DATA_GET(eo_next, next);
@@ -2424,7 +2426,6 @@ _item_multi_select_down(Elm_Genlist_Data *sd)
           break;
         eo_next = EO_OBJ(ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next));
      }
-   if (!eo_next) return EINA_TRUE;
 
    if (elm_genlist_item_selected_get(eo_next))
      {
