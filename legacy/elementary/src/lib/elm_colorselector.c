@@ -1218,6 +1218,17 @@ _full_sizing_eval(Evas_Object *obj)
    _component_sizing_eval(obj);
 }
 
+static void
+_picker_sizing_eval(Evas_Object *obj)
+{
+   Evas_Coord minw = -1, minh = -1;
+
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
+
+   evas_object_size_hint_min_get(sd->picker, &minw, &minh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+}
+
 EOLIAN static void
 _elm_colorselector_elm_layout_sizing_eval(Eo *obj, Elm_Colorselector_Data *sd)
 {
@@ -1239,6 +1250,10 @@ _elm_colorselector_elm_layout_sizing_eval(Eo *obj, Elm_Colorselector_Data *sd)
 
       case ELM_COLORSELECTOR_BOTH:
         _full_sizing_eval(obj);
+        break;
+
+      case ELM_COLORSELECTOR_PICKER:
+        _picker_sizing_eval(obj);
         break;
 
       case ELM_COLORSELECTOR_ALL:
