@@ -134,7 +134,10 @@ _init_gl(Evas_Object *obj)
 
    gl->glGenBuffers(1, &gld->vbo);
    gl->glBindBuffer(GL_ARRAY_BUFFER, gld->vbo);
-   gl->glBufferData(GL_ARRAY_BUFFER, 3 * 3 * 4, vVertices, GL_STATIC_DRAW);
+   gl->glBufferData(GL_ARRAY_BUFFER, sizeof(vVertices), vVertices, GL_STATIC_DRAW);
+   gl->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+                             0, 0);
+   gl->glEnableVertexAttribArray(0);
 }
 
 static void
@@ -190,9 +193,6 @@ _draw_gl(Evas_Object *obj)
    gl->glUseProgram(gld->program);
 
    gl->glBindBuffer(GL_ARRAY_BUFFER, gld->vbo);
-   gl->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-                             0, 0);
-   gl->glEnableVertexAttribArray(0);
 
    gl->glDrawArrays(GL_TRIANGLES, 0, 3);
 
