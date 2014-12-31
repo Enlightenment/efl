@@ -137,7 +137,17 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
    evas_object_size_hint_min_get(o, &minw, &minh);
-   if ((w < minw) || (h < minh)) return;
+   evas_object_box_align_get(o, &ax, &ay);
+   if (w < minw)
+     {
+        x = x + ((w - minw) * (1.0 - ax));
+        w = minw;
+     }
+   if (h < minh)
+     {
+        y = y + ((h - minh) * (1.0 - ay));
+        h = minh;
+     }
    count = eina_list_count(priv->children);
 
    /* accummulate expand as same way but after switched x and y for horizontal mode */
@@ -152,7 +162,6 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
      }
    if (!expand)
      {
-        evas_object_box_align_get(o, &ax, &ay);
         if (rtl) ax = 1.0 - ax;
         if (horizontal)
           {
