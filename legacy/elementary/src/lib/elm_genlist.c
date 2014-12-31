@@ -5769,6 +5769,9 @@ _internal_elm_genlist_clear(Evas_Object *obj,
         ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
         _clear(sd);
      }
+
+   if (sd->selected) ELM_SAFE_FREE(sd->selected, eina_list_free);
+
    sd->pan_x = 0;
    sd->pan_y = 0;
    sd->minw = 0;
