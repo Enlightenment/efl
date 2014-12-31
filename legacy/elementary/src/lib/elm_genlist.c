@@ -1313,6 +1313,12 @@ _decorate_all_item_realize(Elm_Gen_Item *it,
    _elm_genlist_item_position_state_update(it);
    _elm_genlist_item_state_update(it, NULL);
 
+   if (GL_IT(it)->wsd->reorder_mode)
+     {
+        edje_object_signal_emit(it->deco_all_view, SIGNAL_REORDER_MODE_UNSET,
+                                "elm");
+     }
+
    if (effect_on)
      edje_object_signal_emit
         (it->deco_all_view, SIGNAL_DECORATE_ENABLED_EFFECT, "elm");
@@ -1649,13 +1655,11 @@ _item_realize(Elm_Gen_Item *it,
 
    _item_order_update(EINA_INLIST_GET(it), in);
 
-   if (!it->deco_all_view)
-     {
-        if (sd->reorder_mode)
-          edje_object_signal_emit(VIEW(it), SIGNAL_REORDER_MODE_SET, "elm");
-        else
-          edje_object_signal_emit(VIEW(it), SIGNAL_REORDER_MODE_UNSET, "elm");
-    }
+   if (sd->reorder_mode)
+     edje_object_signal_emit(VIEW(it), SIGNAL_REORDER_MODE_SET, "elm");
+   else
+     edje_object_signal_emit(VIEW(it), SIGNAL_REORDER_MODE_UNSET, "elm");
+
    treesize = edje_object_data_get(VIEW(it), "treesize");
    if (treesize) tsize = atoi(treesize);
 
@@ -7567,14 +7571,24 @@ _elm_genlist_reorder_mode_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Eina_Bo
    EINA_LIST_FREE(realized, eo_it)
     {
        ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
-       Evas_Object *view;
-       if (it->deco_all_view) view = it->deco_all_view;
-       else view = VIEW(it);
-
        if (sd->reorder_mode)
-         edje_object_signal_emit(view, SIGNAL_REORDER_MODE_SET, "elm");
+         {
+            edje_object_signal_emit(VIEW(it), SIGNAL_REORDER_MODE_SET, "elm");
+            if (it->deco_all_view)
+              {
+                 edje_object_signal_emit(it->deco_all_view,
+                                         SIGNAL_REORDER_MODE_SET, "elm");
+              }
+         }
        else
-         edje_object_signal_emit(view, SIGNAL_REORDER_MODE_UNSET, "elm");
+         {
+            edje_object_signal_emit(VIEW(it), SIGNAL_REORDER_MODE_UNSET, "elm");
+            if (it->deco_all_view)
+              {
+                 edje_object_signal_emit(it->deco_all_view,
+                                         SIGNAL_REORDER_MODE_UNSET, "elm");
+              }
+         }
     }
 }
 
