@@ -1649,7 +1649,7 @@ _item_realize(Elm_Gen_Item *it,
 
    _item_order_update(EINA_INLIST_GET(it), in);
 
-   if (!(it->deco_all_view) && (it->item->type != ELM_GENLIST_ITEM_GROUP))
+   if (!it->deco_all_view)
      {
         if (sd->reorder_mode)
           edje_object_signal_emit(VIEW(it), SIGNAL_REORDER_MODE_SET, "elm");
@@ -7567,18 +7567,15 @@ _elm_genlist_reorder_mode_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Eina_Bo
    EINA_LIST_FREE(realized, eo_it)
     {
        ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
-       if (it->item->type != ELM_GENLIST_ITEM_GROUP)
-         {
-            Evas_Object *view;
-            if (it->deco_all_view) view = it->deco_all_view;
-            else view = VIEW(it);
+       Evas_Object *view;
+       if (it->deco_all_view) view = it->deco_all_view;
+       else view = VIEW(it);
 
-            if (sd->reorder_mode)
-              edje_object_signal_emit(view, SIGNAL_REORDER_MODE_SET, "elm");
-            else
-              edje_object_signal_emit(view, SIGNAL_REORDER_MODE_UNSET, "elm");
-        }
-   }
+       if (sd->reorder_mode)
+         edje_object_signal_emit(view, SIGNAL_REORDER_MODE_SET, "elm");
+       else
+         edje_object_signal_emit(view, SIGNAL_REORDER_MODE_UNSET, "elm");
+    }
 }
 
 EAPI void
