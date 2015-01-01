@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
                                                                "destroy_accessor"));
 
     Eina_Array *array = [](){
-        int impl[2] = {42, 24};
+        static int impl[2] = {42, 24};
         Eina_Array *a = eina_array_new(2);
         eina_array_push(a, impl);
         eina_array_push(a, impl+1);
