@@ -23,7 +23,8 @@ bindings/eina_js/eina_js_container.cc \
 bindings/eina_js/eina_js_value.cc \
 bindings/eina_js/eina_js_error.cc \
 bindings/eina_js/eina_js_accessor.cc \
-bindings/eina_js/eina_js_log.cc
+bindings/eina_js/eina_js_log.cc \
+bindings/eina_js/eina_js_iterator.cc
 
 #installed_einacxxmainheadersdir = $(includedir)/eina-cxx-@VMAJ@
 #dist_installed_einacxxmainheaders_DATA = \
@@ -64,12 +65,14 @@ check_PROGRAMS += tests/eina_js/eina_js_suite \
 tests/eina_js/eina_js_value \
 tests/eina_js/eina_js_error \
 tests/eina_js/eina_js_accessor \
-tests/eina_js/eina_js_log
+tests/eina_js/eina_js_log \
+tests/eina_js/eina_js_iterator
 TESTS += tests/eina_js/eina_js_suite \
 tests/eina_js/eina_js_value \
 tests/eina_js/eina_js_error \
 tests/eina_js/eina_js_accessor \
-tests/eina_js/eina_js_log
+tests/eina_js/eina_js_log \
+tests/eina_js/eina_js_iterator
 
 tests_eina_js_eina_js_suite_SOURCES = \
 tests/eina_js/eina_js_suite.cc
@@ -85,6 +88,9 @@ tests/eina_js/eina_js_accessor.cc
 
 tests_eina_js_eina_js_log_SOURCES = \
 tests/eina_js/eina_js_log.cc
+
+tests_eina_js_eina_js_iterator_SOURCES = \
+tests/eina_js/eina_js_iterator.cc
 
 tests_eina_js_eina_js_suite_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
@@ -151,6 +157,19 @@ tests_eina_js_eina_js_log_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
 @EINA_JS_CFLAGS@
 tests_eina_js_eina_js_log_LDADD = @CHECK_LIBS@ @USE_EINA_JS_LIBS@ @USE_EINA_LIBS@ @USE_EO_LIBS@
 tests_eina_js_eina_js_log_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EINA_JS_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
+
+tests_eina_js_eina_js_iterator_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_WD=\"`pwd`\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eina_js\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eina_js\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eina_js\" \
+@CHECK_CFLAGS@ \
+@EINA_CXX_CFLAGS@ \
+@EO_CXX_CFLAGS@ \
+@EO_CFLAGS@ \
+@EINA_JS_CFLAGS@
+tests_eina_js_eina_js_iterator_LDADD = @CHECK_LIBS@ @USE_EINA_JS_LIBS@ @USE_EINA_LIBS@ @USE_EO_LIBS@
+tests_eina_js_eina_js_iterator_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EINA_JS_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 
 endif
 endif
