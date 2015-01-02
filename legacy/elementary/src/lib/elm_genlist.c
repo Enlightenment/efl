@@ -499,8 +499,7 @@ _view_create(Elm_Gen_Item *it, const char *style)
 }
 
 static void
-_view_clear(Evas_Object *view, Eina_List **texts, Eina_List **contents,
-            Eina_List **content_objs)
+_view_clear(Evas_Object *view, Eina_List **texts, Eina_List **contents)
 {
    const char *part;
    Evas_Object *c;
@@ -510,9 +509,8 @@ _view_clear(Evas_Object *view, Eina_List **texts, Eina_List **contents,
      edje_object_part_text_set(view, part, NULL);
 
    if (texts) ELM_SAFE_FREE(*texts, elm_widget_stringlist_free);
-   if (contents) ELM_SAFE_FREE(*contents, elm_widget_stringlist_free);
 
-   EINA_LIST_FREE(*content_objs, c)
+   EINA_LIST_FREE(*contents, c)
      evas_object_del(c);
 }
 
@@ -594,7 +592,7 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
      evas_object_smart_callback_call(WIDGET(it), SIG_UNREALIZED, EO_OBJ(it));
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
 
-   _view_clear(VIEW(it), &(it->texts), &(it->contents), &(it->content_objs));
+   _view_clear(VIEW(it), &(it->texts), &(it->contents));
    ELM_SAFE_FREE(it->item_focus_chain, eina_list_free);
 
    eo_do(EO_OBJ(it), elm_wdg_item_track_cancel());
@@ -1339,7 +1337,6 @@ _decorate_all_item_realize(Elm_Gen_Item *it,
    _item_mouse_callbacks_del(it, VIEW(it));
    _item_mouse_callbacks_add(it, it->deco_all_view);
 
-   _item_text_realize(it, it->deco_all_view, &GL_IT(it)->deco_all_texts, NULL);
    if (it->flipped)
      edje_object_signal_emit
        (it->deco_all_view, SIGNAL_FLIP_ENABLED, "elm");
@@ -1724,15 +1721,15 @@ _item_realize(Elm_Gen_Item *it,
      }
    else
      {
-        if (eina_list_count(it->content_objs) != 0)
+        if (eina_list_count(it->contents) != 0)
           ERR_ABORT("If you see this error, please notify us and we"
                     "will fix it");
 
         _item_text_realize(it, VIEW(it), &it->texts, NULL);
-        _view_inflate(VIEW(it), it, &it->content_objs);
-        if (it->has_contents != (!!it->content_objs))
+        _view_inflate(VIEW(it), it, &it->contents);
+        if (it->has_contents != (!!it->contents))
           it->item->mincalcd = EINA_FALSE;
-        it->has_contents = !!it->content_objs;
+        it->has_contents = !!it->contents;
         if (it->flipped)
           {
              edje_object_signal_emit(VIEW(it), SIGNAL_FLIP_ENABLED, "elm");
@@ -1811,7 +1808,7 @@ _item_realize(Elm_Gen_Item *it,
           {
              Evas_Object* eobj;
              Eina_List* l;
-             EINA_LIST_FOREACH(it->content_objs, l, eobj)
+             EINA_LIST_FOREACH(it->contents, l, eobj)
                 if (elm_widget_is(eobj) && elm_object_focus_allow_get(eobj))
                   it->item_focus_chain = eina_list_append
                       (it->item_focus_chain, eobj);
@@ -1822,7 +1819,7 @@ _item_realize(Elm_Gen_Item *it,
           {
              Evas_Object* t_eobj;
              Eina_List* tl;
-             EINA_LIST_FOREACH(it->content_objs, tl, t_eobj)
+             EINA_LIST_FOREACH(it->contents, tl, t_eobj)
                 if (elm_widget_is(t_eobj) && elm_object_focus_allow_get(t_eobj))
                   it->item_focus_chain = eina_list_append
                       (it->item_focus_chain, t_eobj);
@@ -3536,7 +3533,7 @@ _decorate_all_item_unrealize(Elm_Gen_Item *it)
                                 "elm");
      }
 
-   _view_clear(it->deco_all_view, &(GL_IT(it)->deco_all_texts), NULL,
+   _view_clear(it->deco_all_view, &(GL_IT(it)->deco_all_texts),
                &(GL_IT(it)->deco_all_contents));
 
    edje_object_signal_emit(VIEW(it), SIGNAL_DECORATE_DISABLED, "elm");
@@ -4919,7 +4916,7 @@ _decorate_item_unrealize(Elm_Gen_Item *it)
 
    evas_event_freeze(evas_object_evas_get(obj));
 
-   _view_clear(GL_IT(it)->deco_it_view, &(GL_IT(it)->deco_it_texts), NULL,
+   _view_clear(GL_IT(it)->deco_it_view, &(GL_IT(it)->deco_it_texts),
                &(GL_IT(it)->deco_it_contents));
 
    edje_object_part_unswallow(it->item->deco_it_view, VIEW(it));
@@ -5746,7 +5743,7 @@ _item_select(Elm_Gen_Item *it)
      {
         Evas_Object *swallow_obj;
         Eina_List *l;
-        EINA_LIST_FOREACH(it->content_objs, l, swallow_obj)
+        EINA_LIST_FOREACH(it->contents, l, swallow_obj)
           {
              if (elm_widget_is(swallow_obj) && elm_object_focus_get(swallow_obj))
                {
@@ -5839,7 +5836,7 @@ _elm_genlist_item_elm_widget_item_disable(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *i
                edje_object_signal_emit
                  (it->deco_all_view, SIGNAL_ENABLED, "elm");
           }
-        EINA_LIST_FOREACH(it->content_objs, l, obj)
+        EINA_LIST_FOREACH(it->contents, l, obj)
           elm_widget_disabled_set(obj, eo_do(EO_OBJ(it), elm_wdg_item_disabled_get()));
      }
 }
@@ -6831,7 +6828,7 @@ _elm_genlist_item_all_contents_unset(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, 
 
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
 
-   EINA_LIST_FREE(it->content_objs, content)
+   EINA_LIST_FREE(it->contents, content)
      {
         elm_widget_sub_object_del(WIDGET(it), content);
         evas_object_smart_member_del(content);
@@ -6871,8 +6868,8 @@ _elm_genlist_item_fields_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
      }
    if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_CONTENT))
      {
-        it->content_objs = _item_content_realize
-           (it, VIEW(it), it->content_objs, "contents", parts);
+        it->contents = _item_content_realize
+           (it, VIEW(it), it->contents, "contents", parts);
         if (it->flipped)
           {
              GL_IT(it)->flip_contents =
@@ -6894,15 +6891,15 @@ _elm_genlist_item_fields_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
                                       GL_IT(it)->deco_all_contents,
                                       "contents", parts);
           }
-        if (it->has_contents != (!!it->content_objs))
+        if (it->has_contents != (!!it->contents))
           it->item->mincalcd = EINA_FALSE;
-        it->has_contents = !!it->content_objs;
+        it->has_contents = !!it->contents;
         if (it->item->type == ELM_GENLIST_ITEM_NONE)
           {
              Evas_Object* eobj;
              Eina_List* l;
              it->item_focus_chain = eina_list_free(it->item_focus_chain);
-             EINA_LIST_FOREACH(it->content_objs, l, eobj)
+             EINA_LIST_FOREACH(it->contents, l, eobj)
                if (elm_widget_is(eobj) && elm_object_focus_allow_get(eobj))
                  it->item_focus_chain = eina_list_append(it->item_focus_chain, eobj);
           }
@@ -6935,6 +6932,7 @@ _elm_genlist_item_item_class_update(Eo *eo_it, Elm_Gen_Item *it,
         elm_widget_stringlist_free(it->item->deco_it_texts);
         it->item->deco_it_texts = NULL;
      }
+
    if (GL_IT(it)->wsd->decorate_all_mode)
      {
         elm_widget_stringlist_free(it->item->deco_all_texts);
