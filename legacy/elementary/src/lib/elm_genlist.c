@@ -304,31 +304,29 @@ _item_text_realize(Elm_Gen_Item *it,
                    Eina_List **source,
                    const char *parts)
 {
-   if (it->itc->func.text_get)
+   const Eina_List *l;
+   const char *key;
+   char *s;
+
+   if (!it->itc->func.text_get) return;
+
+   if (!(*source))
+     *source = elm_widget_stringlist_get
+        (edje_object_data_get(target, "texts"));
+   EINA_LIST_FOREACH(*source, l, key)
      {
-        const Eina_List *l;
-        const char *key;
+        if (parts && fnmatch(parts, key, FNM_PERIOD)) continue;
 
-        if (!(*source))
-          *source = elm_widget_stringlist_get
-              (edje_object_data_get(target, "texts"));
-        EINA_LIST_FOREACH(*source, l, key)
+        s = it->itc->func.text_get
+           ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
+        if (s)
           {
-             if (parts && fnmatch(parts, key, FNM_PERIOD))
-               continue;
-
-             char *s = it->itc->func.text_get
-                 ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
-
-             if (s)
-               {
-                  edje_object_part_text_escaped_set(target, key, s);
-                  free(s);
-               }
-             else
-               {
-                  edje_object_part_text_set(target, key, "");
-               }
+             edje_object_part_text_escaped_set(target, key, s);
+             free(s);
+          }
+        else
+          {
+             edje_object_part_text_set(target, key, "");
           }
      }
 }
