@@ -90,7 +90,7 @@ struct stringshare
    * shared this constructor simple increment its reference counter and
    * wraps the shared pointer.
    *
-   * @see stringshare(char* str, steal_stringshare_ref_t)
+   * @see stringshare(const char* str, steal_stringshare_ref_t)
    */
   stringshare(const char* str)
     : _string( ::eina_stringshare_add(str) )
@@ -118,7 +118,7 @@ struct stringshare
    *
    * @see stringshare(const char* str)
    */
-  stringshare(char* str, steal_stringshare_ref_t)
+  stringshare(const char* str, steal_stringshare_ref_t)
     : _string( str )
   {
   }
