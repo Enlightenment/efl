@@ -220,7 +220,7 @@ struct Elm_Gen_Item_Type
    Eina_List              *deco_it_texts, *deco_it_contents, *deco_it_states;
    Eina_List              *deco_all_texts, *deco_all_contents,
                           *deco_all_states;
-   Eina_List              *flip_contents, *flip_content_objs;
+   Eina_List              *flip_contents;
    Ecore_Timer            *swipe_timer;
    Evas_Coord              scrl_x, scrl_y, old_scrl_y;
 

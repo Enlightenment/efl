@@ -1748,9 +1748,9 @@ _item_realize(Elm_Gen_Item *it,
         if (it->flipped)
           {
              edje_object_signal_emit(VIEW(it), SIGNAL_FLIP_ENABLED, "elm");
-             it->item->flip_content_objs =
+             it->item->flip_contents =
                 _item_content_realize(it, VIEW(it),
-                                      GL_IT(it)->flip_content_objs, "flips",
+                                      GL_IT(it)->flip_contents, "flips",
                                       NULL);
           }
 
@@ -4981,9 +4981,7 @@ static void
 _item_unrealize_cb(Elm_Gen_Item *it)
 {
    Evas_Object *content;
-   elm_widget_stringlist_free(it->item->flip_contents);
-   it->item->flip_contents = NULL;
-   EINA_LIST_FREE(it->item->flip_content_objs, content)
+   EINA_LIST_FREE(it->item->flip_contents, content)
      evas_object_del(content);
 
    /* access */
@@ -6892,9 +6890,9 @@ _elm_genlist_item_fields_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
            (it, VIEW(it), it->content_objs, "contents", parts);
         if (it->flipped)
           {
-             GL_IT(it)->flip_content_objs =
+             GL_IT(it)->flip_contents =
                 _item_content_realize(it, VIEW(it),
-                                      GL_IT(it)->flip_content_objs,
+                                      GL_IT(it)->flip_contents,
                                       "flips", parts);
           }
         if (GL_IT(it)->deco_it_view)
@@ -6947,24 +6945,15 @@ _elm_genlist_item_item_class_update(Eo *eo_it, Elm_Gen_Item *it,
    ELM_SAFE_FREE(it->contents, elm_widget_stringlist_free);
    ELM_SAFE_FREE(it->states, elm_widget_stringlist_free);
 
-   if (it->flipped)
-     {
-        elm_widget_stringlist_free(it->item->flip_contents);
-        it->item->flip_contents = NULL;
-     }
    if (it->item->deco_it_view)
      {
         elm_widget_stringlist_free(it->item->deco_it_texts);
         it->item->deco_it_texts = NULL;
-        elm_widget_stringlist_free(it->item->deco_it_contents);
-        it->item->deco_it_contents = NULL;
      }
    if (GL_IT(it)->wsd->decorate_all_mode)
      {
         elm_widget_stringlist_free(it->item->deco_all_texts);
         it->item->deco_all_texts = NULL;
-        elm_widget_stringlist_free(it->item->deco_all_contents);
-        it->item->deco_all_contents = NULL;
      }
 
    elm_genlist_item_update(eo_it);
