@@ -331,24 +331,24 @@ _item_text_realize(Elm_Gen_Item *it,
      }
 }
 
-static Eina_List *
+static void
 _item_content_realize(Elm_Gen_Item *it,
                       Evas_Object *target,
-                      Eina_List *contents,
+                      Eina_List **contents,
                       const char *src,
                       const char *parts)
 {
+   Evas_Object *content;
+
    if (!parts)
      {
-        Evas_Object *c;
-        EINA_LIST_FREE(contents, c)
-          evas_object_del(c);
+        EINA_LIST_FREE(*contents, content)
+          evas_object_del(content);
      }
    if (it->itc->func.content_get)
      {
         Eina_List *source;
         const char *key;
-        Evas_Object *ic = NULL;
 
         source = elm_widget_stringlist_get(edje_object_data_get(target, src));
 
@@ -360,30 +360,27 @@ _item_content_realize(Elm_Gen_Item *it,
              Evas_Object *old = edje_object_part_swallow_get(target, key);
              if (old)
                {
-                  contents = eina_list_remove(contents, old);
+                  *contents = eina_list_remove(*contents, old);
                   evas_object_del(old);
                }
+             content = NULL;
              if (it->itc->func.content_get)
-               ic = it->itc->func.content_get
-                   ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
-             if (ic)
+               content = it->itc->func.content_get
+                  ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
+             if (!content) continue;
+             *contents = eina_list_append(*contents, content);
+             if (!edje_object_part_swallow(target, key, content))
                {
-                  contents = eina_list_append(contents, ic);
-                  if (!edje_object_part_swallow(target, key, ic))
-                    {
-                       ERR("%s (%p) can not be swallowed into %s",
-                            evas_object_type_get(ic), ic, key);
-                       evas_object_hide(ic);
-                       continue;
-                    }
-                  elm_widget_sub_object_add(WIDGET(it), ic);
-                  if (eo_do(EO_OBJ(it), elm_wdg_item_disabled_get()))
-                    elm_widget_disabled_set(ic, EINA_TRUE);
+                  ERR("%s (%p) can not be swallowed into %s",
+                      evas_object_type_get(content), content, key);
+                  evas_object_hide(content);
+                  continue;
                }
+             elm_widget_sub_object_add(WIDGET(it), content);
+             if (eo_do(EO_OBJ(it), elm_wdg_item_disabled_get()))
+               elm_widget_disabled_set(content, EINA_TRUE);
           }
      }
-
-   return contents;
 }
 
 static void
@@ -1252,7 +1249,7 @@ _view_inflate(Evas_Object *view, Elm_Gen_Item *it, Eina_List **sources,
 {
    if (!view) return;
    _item_text_realize(it, view, sources, NULL);
-   *contents = _item_content_realize(it, view, *contents, "contents", NULL);
+    _item_content_realize(it, view, contents, "contents", NULL);
    _item_state_realize(it, view, NULL);
 }
 
@@ -1734,10 +1731,8 @@ _item_realize(Elm_Gen_Item *it,
         if (it->flipped)
           {
              edje_object_signal_emit(VIEW(it), SIGNAL_FLIP_ENABLED, "elm");
-             it->item->flip_contents =
-                _item_content_realize(it, VIEW(it),
-                                      GL_IT(it)->flip_contents, "flips",
-                                      NULL);
+             _item_content_realize(it, VIEW(it), &GL_IT(it)->flip_contents,
+                                   "flips", NULL);
           }
 
         /* access: unregister item which have no text and content */
@@ -6867,28 +6862,23 @@ _elm_genlist_item_fields_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
      }
    if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_CONTENT))
      {
-        it->contents = _item_content_realize
-           (it, VIEW(it), it->contents, "contents", parts);
+        _item_content_realize(it, VIEW(it), &it->contents, "contents", parts);
         if (it->flipped)
           {
-             GL_IT(it)->flip_contents =
-                _item_content_realize(it, VIEW(it),
-                                      GL_IT(it)->flip_contents,
-                                      "flips", parts);
+             _item_content_realize(it, VIEW(it), &GL_IT(it)->flip_contents,
+                                   "flips", parts);
           }
         if (GL_IT(it)->deco_it_view)
           {
-             GL_IT(it)->deco_it_contents =
-                _item_content_realize(it, GL_IT(it)->deco_it_view,
-                                      GL_IT(it)->deco_it_contents,
-                                      "contents", parts);
+             _item_content_realize(it, GL_IT(it)->deco_it_view,
+                                   &GL_IT(it)->deco_it_contents,
+                                   "contents", parts);
           }
         if (GL_IT(it)->wsd->decorate_all_mode)
           {
-             GL_IT(it)->deco_all_contents =
-                _item_content_realize(it, it->deco_all_view,
-                                      GL_IT(it)->deco_all_contents,
-                                      "contents", parts);
+             _item_content_realize(it, it->deco_all_view,
+                                   &GL_IT(it)->deco_all_contents,
+                                   "contents", parts);
           }
         if (it->has_contents != (!!it->contents))
           it->item->mincalcd = EINA_FALSE;
