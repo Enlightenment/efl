@@ -3529,8 +3529,7 @@ _decorate_all_item_unrealize(Elm_Gen_Item *it)
                                 "elm");
      }
 
-   _view_clear(it->deco_all_view, &(GL_IT(it)->deco_all_texts),
-               &(GL_IT(it)->deco_all_contents));
+   _view_clear(it->deco_all_view, NULL, &(GL_IT(it)->deco_all_contents));
 
    edje_object_signal_emit(VIEW(it), SIGNAL_DECORATE_DISABLED, "elm");
 
@@ -4912,8 +4911,7 @@ _decorate_item_unrealize(Elm_Gen_Item *it)
 
    evas_event_freeze(evas_object_evas_get(obj));
 
-   _view_clear(GL_IT(it)->deco_it_view, &(GL_IT(it)->deco_it_texts),
-               &(GL_IT(it)->deco_it_contents));
+   _view_clear(GL_IT(it)->deco_it_view, NULL, &(GL_IT(it)->deco_it_contents));
 
    edje_object_part_unswallow(it->item->deco_it_view, VIEW(it));
    evas_object_smart_member_add(VIEW(it), sd->pan_obj);
@@ -5304,7 +5302,7 @@ _decorate_item_realize(Elm_Gen_Item *it)
      ERR_ABORT("If you see this error, please notify us and we"
                "will fix it");
 
-   _view_inflate(it->item->deco_it_view, it, &GL_IT(it)->deco_it_texts,
+   _view_inflate(it->item->deco_it_view, it, NULL,
                  &GL_IT(it)->deco_it_contents);
    edje_object_part_swallow
      (it->item->deco_it_view,
@@ -6914,8 +6912,6 @@ _elm_genlist_item_item_class_update(Eo *eo_it, Elm_Gen_Item *it,
    it->item->nocache_once = EINA_TRUE;
 
    ELM_SAFE_FREE(it->texts, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(GL_IT(it)->deco_it_texts, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(GL_IT(it)->deco_all_texts, elm_widget_stringlist_free);
 
    elm_genlist_item_update(eo_it);
 }
