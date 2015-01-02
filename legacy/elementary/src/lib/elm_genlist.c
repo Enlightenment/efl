@@ -1247,9 +1247,11 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it,
 }
 
 static void
-_view_inflate(Evas_Object *view, Elm_Gen_Item *it, Eina_List **contents)
+_view_inflate(Evas_Object *view, Elm_Gen_Item *it, Eina_List **sources,
+              Eina_List **contents)
 {
    if (!view) return;
+   _item_text_realize(it, view, sources, NULL);
    *contents = _item_content_realize(it, view, *contents, "contents", NULL);
    _item_state_realize(it, view, NULL);
 }
@@ -1340,7 +1342,7 @@ _decorate_all_item_realize(Elm_Gen_Item *it,
    if (it->flipped)
      edje_object_signal_emit
        (it->deco_all_view, SIGNAL_FLIP_ENABLED, "elm");
-   _view_inflate(it->deco_all_view, it, &(GL_IT(it)->deco_all_contents));
+   _view_inflate(it->deco_all_view, it, NULL, &(GL_IT(it)->deco_all_contents));
    edje_object_part_swallow
      (it->deco_all_view, "elm.swallow.decorate.content", VIEW(it));
 
@@ -1725,8 +1727,7 @@ _item_realize(Elm_Gen_Item *it,
           ERR_ABORT("If you see this error, please notify us and we"
                     "will fix it");
 
-        _item_text_realize(it, VIEW(it), &it->texts, NULL);
-        _view_inflate(VIEW(it), it, &it->contents);
+        _view_inflate(VIEW(it), it, &it->texts, &it->contents);
         if (it->has_contents != (!!it->contents))
           it->item->mincalcd = EINA_FALSE;
         it->has_contents = !!it->contents;
@@ -5308,10 +5309,8 @@ _decorate_item_realize(Elm_Gen_Item *it)
      ERR_ABORT("If you see this error, please notify us and we"
                "will fix it");
 
-   /* text_get, content_get, state_get */
-   _item_text_realize
-     (it, it->item->deco_it_view, &GL_IT(it)->deco_it_texts, NULL);
-   _view_inflate(it->item->deco_it_view, it, &GL_IT(it)->deco_it_contents);
+   _view_inflate(it->item->deco_it_view, it, &GL_IT(it)->deco_it_texts,
+                 &GL_IT(it)->deco_it_contents);
    edje_object_part_swallow
      (it->item->deco_it_view,
      edje_object_data_get(it->item->deco_it_view, "mode_part"), VIEW(it));
@@ -6925,19 +6924,8 @@ _elm_genlist_item_item_class_update(Eo *eo_it, Elm_Gen_Item *it,
    it->item->nocache_once = EINA_TRUE;
 
    ELM_SAFE_FREE(it->texts, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(it->contents, elm_widget_stringlist_free);
-
-   if (it->item->deco_it_view)
-     {
-        elm_widget_stringlist_free(it->item->deco_it_texts);
-        it->item->deco_it_texts = NULL;
-     }
-
-   if (GL_IT(it)->wsd->decorate_all_mode)
-     {
-        elm_widget_stringlist_free(it->item->deco_all_texts);
-        it->item->deco_all_texts = NULL;
-     }
+   ELM_SAFE_FREE(GL_IT(it)->deco_it_texts, elm_widget_stringlist_free);
+   ELM_SAFE_FREE(GL_IT(it)->deco_all_texts, elm_widget_stringlist_free);
 
    elm_genlist_item_update(eo_it);
 }
