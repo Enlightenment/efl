@@ -387,41 +387,34 @@ _item_content_realize(Elm_Gen_Item *it,
 }
 
 static void
-_item_state_realize(Elm_Gen_Item *it,
-                    Evas_Object *target,
-                    Eina_List **source,
-                    const char *parts)
+_item_state_realize(Elm_Gen_Item *it, Evas_Object *target, const char *parts)
 {
-   if (it->itc->func.state_get)
+   Eina_List *src;
+   const char *key;
+   char buf[4096];
+
+   if (!it->itc->func.state_get) return;
+
+   src = elm_widget_stringlist_get(edje_object_data_get(target, "states"));
+   EINA_LIST_FREE(src, key)
      {
-        const Eina_List *l;
-        const char *key;
-        char buf[4096];
+        if (parts && fnmatch(parts, key, FNM_PERIOD)) continue;
 
-        if (!(*source))
-          *source = elm_widget_stringlist_get
-              (edje_object_data_get(target, "states"));
-        EINA_LIST_FOREACH(*source, l, key)
+        Eina_Bool on = it->itc->func.state_get
+           ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
+
+        if (on)
           {
-             if (parts && fnmatch(parts, key, FNM_PERIOD))
-               continue;
-
-             Eina_Bool on = it->itc->func.state_get
-                 ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
-
-             if (on)
-               {
-                  snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
-                  edje_object_signal_emit(target, buf, "elm");
-               }
-             else
-               {
-                  snprintf(buf, sizeof(buf), "elm,state,%s,passive", key);
-                  edje_object_signal_emit(target, buf, "elm");
-               }
+             snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
+             edje_object_signal_emit(target, buf, "elm");
           }
-        edje_object_message_signal_process(target);
+        else
+          {
+             snprintf(buf, sizeof(buf), "elm,state,%s,passive", key);
+             edje_object_signal_emit(target, buf, "elm");
+          }
      }
+   edje_object_message_signal_process(target);
 }
 
 /**
@@ -507,7 +500,7 @@ _view_create(Elm_Gen_Item *it, const char *style)
 
 static void
 _view_clear(Evas_Object *view, Eina_List **texts, Eina_List **contents,
-            Eina_List **states, Eina_List **content_objs)
+            Eina_List **content_objs)
 {
    const char *part;
    Evas_Object *c;
@@ -518,7 +511,6 @@ _view_clear(Evas_Object *view, Eina_List **texts, Eina_List **contents,
 
    if (texts) ELM_SAFE_FREE(*texts, elm_widget_stringlist_free);
    if (contents) ELM_SAFE_FREE(*contents, elm_widget_stringlist_free);
-   if (states) ELM_SAFE_FREE(*states, elm_widget_stringlist_free);
 
    EINA_LIST_FREE(*content_objs, c)
      evas_object_del(c);
@@ -602,7 +594,7 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
      evas_object_smart_callback_call(WIDGET(it), SIG_UNREALIZED, EO_OBJ(it));
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
 
-   _view_clear(VIEW(it), &(it->texts), &(it->contents), &(it->states), &(it->content_objs));
+   _view_clear(VIEW(it), &(it->texts), &(it->contents), &(it->content_objs));
    ELM_SAFE_FREE(it->item_focus_chain, eina_list_free);
 
    eo_do(EO_OBJ(it), elm_wdg_item_track_cancel());
@@ -1261,6 +1253,7 @@ _view_inflate(Evas_Object *view, Elm_Gen_Item *it, Eina_List **contents)
 {
    if (!view) return;
    *contents = _item_content_realize(it, view, *contents, "contents", NULL);
+   _item_state_realize(it, view, NULL);
 }
 
 static void
@@ -1351,8 +1344,6 @@ _decorate_all_item_realize(Elm_Gen_Item *it,
      edje_object_signal_emit
        (it->deco_all_view, SIGNAL_FLIP_ENABLED, "elm");
    _view_inflate(it->deco_all_view, it, &(GL_IT(it)->deco_all_contents));
-   _item_state_realize
-      (it, it->deco_all_view, &it->item->deco_all_states, NULL);
    edje_object_part_swallow
      (it->deco_all_view, "elm.swallow.decorate.content", VIEW(it));
 
@@ -1742,7 +1733,6 @@ _item_realize(Elm_Gen_Item *it,
         if (it->has_contents != (!!it->content_objs))
           it->item->mincalcd = EINA_FALSE;
         it->has_contents = !!it->content_objs;
-        _item_state_realize(it, VIEW(it), &it->states, NULL);
         if (it->flipped)
           {
              edje_object_signal_emit(VIEW(it), SIGNAL_FLIP_ENABLED, "elm");
@@ -3547,7 +3537,7 @@ _decorate_all_item_unrealize(Elm_Gen_Item *it)
      }
 
    _view_clear(it->deco_all_view, &(GL_IT(it)->deco_all_texts), NULL,
-                &(GL_IT(it)->deco_all_states), &(GL_IT(it)->deco_all_contents));
+               &(GL_IT(it)->deco_all_contents));
 
    edje_object_signal_emit(VIEW(it), SIGNAL_DECORATE_DISABLED, "elm");
 
@@ -4929,8 +4919,7 @@ _decorate_item_unrealize(Elm_Gen_Item *it)
 
    evas_event_freeze(evas_object_evas_get(obj));
 
-   _view_clear(GL_IT(it)->deco_it_view, &(GL_IT(it)->deco_it_texts),
-               NULL, &(GL_IT(it)->deco_it_states),
+   _view_clear(GL_IT(it)->deco_it_view, &(GL_IT(it)->deco_it_texts), NULL,
                &(GL_IT(it)->deco_it_contents));
 
    edje_object_part_unswallow(it->item->deco_it_view, VIEW(it));
@@ -5326,8 +5315,6 @@ _decorate_item_realize(Elm_Gen_Item *it)
    _item_text_realize
      (it, it->item->deco_it_view, &GL_IT(it)->deco_it_texts, NULL);
    _view_inflate(it->item->deco_it_view, it, &GL_IT(it)->deco_it_contents);
-   _item_state_realize
-     (it, it->item->deco_it_view, &it->item->deco_it_states, NULL);
    edje_object_part_swallow
      (it->item->deco_it_view,
      edje_object_data_get(it->item->deco_it_view, "mode_part"), VIEW(it));
@@ -6922,7 +6909,8 @@ _elm_genlist_item_fields_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
      }
 
    if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_STATE))
-     _item_state_realize(it, VIEW(it), &it->states, parts);
+     _item_state_realize(it, VIEW(it), parts);
+
    if (!it->item->mincalcd)
      elm_genlist_item_update(eo_item);
 }
@@ -6941,7 +6929,6 @@ _elm_genlist_item_item_class_update(Eo *eo_it, Elm_Gen_Item *it,
 
    ELM_SAFE_FREE(it->texts, elm_widget_stringlist_free);
    ELM_SAFE_FREE(it->contents, elm_widget_stringlist_free);
-   ELM_SAFE_FREE(it->states, elm_widget_stringlist_free);
 
    if (it->item->deco_it_view)
      {
