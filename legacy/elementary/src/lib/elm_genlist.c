@@ -1248,8 +1248,8 @@ _view_inflate(Evas_Object *view, Elm_Gen_Item *it, Eina_List **sources,
               Eina_List **contents)
 {
    if (!view) return;
-   _item_text_realize(it, view, sources, NULL);
-    _item_content_realize(it, view, contents, "contents", NULL);
+   if (sources) _item_text_realize(it, view, sources, NULL);
+   if (contents) _item_content_realize(it, view, contents, "contents", NULL);
    _item_state_realize(it, view, NULL);
 }
 
