@@ -363,8 +363,13 @@ _item_content_realize(Elm_Gen_Item *it,
              if (ic)
                {
                   res = eina_list_append(res, ic);
-                  edje_object_part_swallow(target, key, ic);
-                  evas_object_show(ic);
+                  if (!edje_object_part_swallow(target, key, ic))
+                    {
+                       ERR("%s (%p) can not be swallowed into %s",
+                            evas_object_type_get(ic), ic, key);
+                       evas_object_hide(ic);
+                       continue;
+                    }
                   elm_widget_sub_object_add(WIDGET(it), ic);
                   if (eo_do(EO_OBJ(it), elm_wdg_item_disabled_get()))
                     elm_widget_disabled_set(ic, EINA_TRUE);
