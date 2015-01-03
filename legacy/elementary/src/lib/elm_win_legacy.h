@@ -36,6 +36,28 @@ EAPI Evas_Object          *elm_win_add(Evas_Object *parent, const char *name, El
 EAPI Evas_Object          *elm_win_util_standard_add(const char *name, const char *title);
 
 /**
+ * Adds a window object with dialog setup
+ *
+ * @param parent The parent window
+ * @param name The name of the window
+ * @param title The title for the window
+ *
+ * This creates a window like elm_win_add() but also puts in a standard
+ * background with elm_bg_add(), as well as setting the window title to
+ * @p title. The window type created is of type ELM_WIN_DIALOG_BASIC.
+ * This tipe of window will be handled in special mode by window managers
+ * with regards of it's @p parent window.
+ *
+ * @return The created object, or @c NULL on failure
+ *
+ * @see elm_win_add()
+ *
+ * @ingroup Win
+ * @since 1.13
+ */
+EAPI Evas_Object          *elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title);
+
+/**
  * Set the floating mode of a window.
  *
  * @param obj The window object
