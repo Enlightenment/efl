@@ -34,6 +34,52 @@
  * Default images provided by Elementary's default theme are described
  * below.
  *
+ * These are names that follow (more or less) the @b Freedesktop icon naming
+ * specification. Use of these names are @b preferred, at least if you want to
+ * give your user the ability to use other themes. All these icons can be
+ * seen in the elementary_test application, the test is called "Icon Standard".
+ * 
+ * @li @c "folder" (since 1.13)
+ * @li @c "user-home" (since 1.13)
+ * @li @c "user-trash" (since 1.13)
+ *
+ * @li @c "view-close" (since 1.13)
+ * @li @c "view-refresh" (since 1.13)
+ *
+ * @li @c "window-close" (since 1.13)
+ *
+ * @li @c "document-close" (since 1.13)
+ * @li @c "document-edit" (since 1.13)
+ *
+ * @li @c "dialog-info" (since 1.13)
+ * @li @c "dialog-close" (since 1.13)
+ *
+ * @li @c "arrow-up" (since 1.13)
+ * @li @c "arrow-down" (since 1.13)
+ * @li @c "arrow-left" (since 1.13)
+ * @li @c "arrow-right" (since 1.13)
+ * @li @c "arrow-up-left" (since 1.13)
+ * @li @c "arrow-up-right" (since 1.13)
+ * @li @c "arrow-down-left" (since 1.13)
+ * @li @c "arrow-down-right" (since 1.13)
+ *
+ * @li @c "edit-delete" (since 1.13)
+ *
+ * @li @c "application-chat" (since 1.13)
+ * @li @c "application-clock" (since 1.13)
+ *
+ * @li @c "media-seek-forward" (since 1.13)
+ * @li @c "media-seek-backward" (since 1.13)
+ * @li @c "media-skip-forward" (since 1.13)
+ * @li @c "media-skip-backward" (since 1.13)
+ * @li @c "media-playback-pause" (since 1.13)
+ * @li @c "media-playback-start" (since 1.13)
+ * @li @c "media-playback-stop" (since 1.13)
+ * @li @c "media-eject" (since 1.13)
+ *
+ * @li @c "audio-volume" (since 1.13)
+ * @li @c "audio-volume-muted" (since 1.13)
+ * 
  * These are names for icons that were first intended to be used in
  * toolbars, but can be used in many other places too:
  * @li @c "home"
