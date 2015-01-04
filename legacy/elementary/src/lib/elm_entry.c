@@ -616,6 +616,7 @@ _drag_drop_cb(void *data EINA_UNUSED,
               Elm_Selection_Data *drop)
 {
    Eina_Bool rv;
+   char *buf;
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
@@ -626,7 +627,16 @@ _drag_drop_cb(void *data EINA_UNUSED,
 
    if (!rv) WRN("Warning: Failed to position cursor: paste anyway");
 
-   elm_entry_entry_insert(obj, drop->data);
+   buf = malloc(drop->len + 1);
+   if (!buf)
+     {
+        ERR("Failed to allocate memory for dropped text %p", obj);
+        return EINA_FALSE;
+     }
+   memcpy(buf, drop->data, drop->len);
+   buf[drop->len] = '\0';
+   elm_entry_entry_insert(obj, buf);
+   free(buf);
    edje_object_part_text_cursor_copy
      (sd->entry_edje, "elm.text", EDJE_CURSOR_USER, /*->*/ EDJE_CURSOR_MAIN);
 
