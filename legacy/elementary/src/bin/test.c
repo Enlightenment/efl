@@ -530,7 +530,7 @@ add_tests:
    ADD_TEST(NULL, "Window / Background", "Window Socket", test_win_socket);
    ADD_TEST(NULL, "Window / Background", "Window Plug", test_win_plug);
    ADD_TEST(NULL, "Window / Background", "Window WM Rotation", test_win_wm_rotation);
-   ADD_TEST(NULL, "Window / Background", "Window Dialog", test_win_dialog);
+   ADD_TEST(NULL, "Window / Background", "Window Standard/Dialog", test_win_dialog);
 
    //------------------------------//
    ADD_TEST(NULL, "Images", "Icon", test_icon);

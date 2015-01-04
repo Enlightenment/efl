@@ -3,22 +3,46 @@
 #endif
 #include <Elementary.h>
 
+
+
 void
-test_win_dialog(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_bt_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *bt;
+   Evas_Object *dia, *lb;
    Evas_Object *parent = data;
 
-   win = elm_win_util_dialog_add(parent, "window-dia", "Dialog Window");
+   dia = elm_win_util_dialog_add(parent, "window-dia", "A Dialog Window");
+   elm_win_autodel_set(dia, EINA_TRUE);
+
+   lb = elm_label_add(dia);
+   elm_object_text_set(lb, "This is a Dialog Window");
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(dia, lb);
+   evas_object_show(lb);
+
+   evas_object_resize(dia, 200, 150);
+   evas_object_show(dia);
+}
+
+void
+test_win_dialog(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *box, *bt;
+
+   win = elm_win_util_standard_add("window-dia", "A Standard Window");
    elm_win_autodel_set(win, EINA_TRUE);
 
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+   
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "This is a dialog window");
-   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bt);
+   elm_object_text_set(bt, "Create a new dialog");
+   evas_object_smart_callback_add(bt, "clicked", _bt_clicked_cb, win);
+   elm_box_pack_end(box, bt);
    evas_object_show(bt);
 
-   evas_object_resize(win, 320, 160);
+   evas_object_resize(win, 400, 400);
    evas_object_show(win);
 }
