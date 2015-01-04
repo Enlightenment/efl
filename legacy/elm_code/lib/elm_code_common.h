@@ -1,9 +1,6 @@
 #ifndef ELM_CODE_COMMON_H_
 # define ELM_CODE_COMMON_H_
 
-#include <Eo.h>
-#include <Eina.h>
-
 typedef struct _Elm_Code Elm_Code;
 typedef struct _Elm_Code_File Elm_Code_File;
 

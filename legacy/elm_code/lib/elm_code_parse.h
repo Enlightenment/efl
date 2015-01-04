@@ -1,10 +1,6 @@
 #ifndef ELM_CODE_PARSE_H_
 # define ELM_CODE_PARSE_H_
 
-#include <Eina.h>
-
-#include "elm_code_common.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif

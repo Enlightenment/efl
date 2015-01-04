@@ -1,15 +1,9 @@
 #ifndef ELM_CODE_H_
 # define ELM_CODE_H_
 
-#include <Elementary.h>
-#include <Eo.h>
 #include <Eina.h>
-
-#include <elm_code_common.h>
-#include <elm_code_file.h>
-#include <elm_code_parse.h>
-#include <elm_code_widget.h>
-#include <elm_code_diff_widget.h>
+#include <Eo.h>
+#include <Elementary.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -36,6 +30,12 @@
 #  define EAPI
 # endif
 #endif /* ! _WIN32 */
+
+#include "elm_code_common.h"
+#include "elm_code_file.h"
+#include "elm_code_parse.h"
+#include "elm_code_widget.h"
+#include "elm_code_diff_widget.h"
 
 #ifdef __cplusplus
 extern "C" {
