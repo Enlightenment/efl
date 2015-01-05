@@ -4675,7 +4675,7 @@ EAPI Eina_Bool edje_edit_image_replace(Evas_Object *obj, const char *name, const
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.(including the
  * case when one of the names is not valid)
  *
- * @since 1.12
+ * @since 1.13
  */
 EAPI Eina_Bool edje_edit_image_rename(Evas_Object *obj, const char *name, const char *new_name);
 
