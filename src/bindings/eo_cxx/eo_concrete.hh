@@ -213,12 +213,14 @@ struct extension_inheritance<concrete>
 struct concrete_address_of
 {
    explicit concrete_address_of(void* p) : p(p) {}
+   operator void*() { return p; }
    void* p;
 };
 
 struct concrete_address_const_of
 {
    explicit concrete_address_const_of(void const* p) : p(p) {}
+   operator void const*() { return p; }
    void const* p;
 };
 
