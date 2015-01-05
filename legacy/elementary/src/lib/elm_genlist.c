@@ -7598,11 +7598,19 @@ _elm_genlist_item_flip_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 EOLIAN static void
 _elm_genlist_select_mode_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Elm_Object_Select_Mode mode)
 {
-   if (mode >= ELM_OBJECT_SELECT_MODE_MAX)
+   if ((mode >= ELM_OBJECT_SELECT_MODE_MAX) || (sd->select_mode == mode))
      return;
 
-   if (sd->select_mode != mode)
-     sd->select_mode = mode;
+   sd->select_mode = mode;
+
+   if ((sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
+       (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
+     {
+        Eina_List *l, *ll;
+        Elm_Gen_Item *it;
+        EINA_LIST_FOREACH_SAFE(sd->selected, l, ll, it)
+           _item_unselect(it);
+     }
 }
 
 EOLIAN static Elm_Object_Select_Mode
