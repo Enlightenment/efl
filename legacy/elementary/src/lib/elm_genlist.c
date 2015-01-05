@@ -7631,10 +7631,11 @@ _elm_genlist_item_select_mode_set(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it,
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    if (it->generation < sd->generation) return;
-   if (mode >= ELM_OBJECT_SELECT_MODE_MAX)
+
+   if ((mode >= ELM_OBJECT_SELECT_MODE_MAX) || (it->select_mode == mode))
      return;
-   if (it->select_mode != mode)
-     it->select_mode = mode;
+
+   it->select_mode = mode;
 
    if (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
      {
