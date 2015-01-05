@@ -1339,7 +1339,7 @@ _ecore_evas_wl_common_pre_render(Ecore_Evas *ee)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!ee) return;
+   if (!ee) return 0;
    if (ee->in_async_render)
      {
         /* EDBG("ee=%p is rendering asynchronously, skip", ee); */
@@ -1442,7 +1442,7 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
    Ecore_Wl_Window *win = NULL;
    Ecore_Evas_Engine_Wl_Data *wdata;
 
-   if (!ee) return;
+   if (!ee) return 0;
    if (!(wdata = ee->engine.data)) return 0;
    if (!(win = wdata->win)) return 0;
 
