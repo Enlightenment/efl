@@ -7,7 +7,10 @@
 #define EFL_CXX_EO_PRIVATE_HH
 
 #include "eo_ops.hh"
-#include "eo_concrete.hh"
+
+namespace eo { 
+struct base;
+}
 
 namespace efl { namespace eo { namespace detail {
 
@@ -86,9 +89,7 @@ Eo_Class const* do_eo_class_new(Eo_Class_Description& class_desc)
 }
 
 template <typename T> struct operation_description_class_size;
-
-template<>
-struct operation_description_class_size<efl::eo::concrete> { static const int value = 0; };
+template <> struct operation_description_class_size< ::eo::base> : std::integral_constant<std::size_t, 0u> {};
 
 /// @internal
 ///
@@ -135,8 +136,8 @@ namespace detail {
 template <typename T> struct operations;
 
 template <>
-struct operations<efl::eo::concrete> { template <typename T> struct type {}; };
-
+struct operations< ::eo::base> { template <typename T> struct type {}; };
+  
 /// @internal
 ///
 /// @brief Provides the operations of an extension as well as its
@@ -164,7 +165,7 @@ struct Inherit_Private_Data
 
 namespace efl { namespace eo { namespace detail {
 template <typename T>
-int initialize_operation_description(efl::eo::detail::tag<efl::eo::concrete>
+int initialize_operation_description(efl::eo::detail::tag< ::eo::base>
                                  , Eo_Op_Description* ops)
 {
    (void)ops;

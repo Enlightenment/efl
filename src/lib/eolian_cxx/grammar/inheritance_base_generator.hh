@@ -333,7 +333,6 @@ operator<<(std::ostream& out, inheritance_call_constructors const& x)
        << full_name(x._cls)
        << ", ::std::tuple<::efl::eo::parent_type> > const& args)" << endl
        << "{" << endl
-       << tab(1) << "eo_do_super(eo, cls, ::eo_constructor());" << endl
        << tab(1) << "eo_do(eo, ::eo_parent_set(args.get<0>()._eo_raw));" << endl
        << "}" << endl << endl;
 
@@ -362,14 +361,15 @@ operator<<(std::ostream& out, inheritance_eo_class_getter const& x)
 inline void
 eo_inheritance_detail_generator(std::ostream& out, eo_class const& cls)
 {
-   out << inheritance_wrappers(cls)
-       << "namespace efl { namespace eo { namespace detail {" << endl << endl
-       << inheritance_base_operations(cls) << endl
-       << inheritance_base_operations_size(cls)
-       << inheritance_operations_description(cls)
-       << inheritance_call_constructors(cls)
-       << inheritance_eo_class_getter(cls)
-       <<  "} } }" << endl;
+   if(cls.eo_name != "EO_BASE_CLASS")
+     out << inheritance_wrappers(cls)
+         << "namespace efl { namespace eo { namespace detail {" << endl << endl
+         << inheritance_base_operations(cls) << endl
+         << inheritance_base_operations_size(cls)
+         << inheritance_operations_description(cls)
+         << inheritance_call_constructors(cls)
+         << inheritance_eo_class_getter(cls)
+         <<  "} } }" << endl;
 }
 
 } } } // namespace efl { namespace eolian { namespace grammar {

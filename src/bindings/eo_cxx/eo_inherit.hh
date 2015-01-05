@@ -81,7 +81,7 @@ struct inherit
         (_eo_cls, NULL,
          detail::inherit_constructor
          <tuple_type, E...>
-         (static_cast<void*>(this), tuple_type(std::move(args)...)));
+         (static_cast<void*>(this), tuple_type(std::forward<Args>(args)...)));
   }
 
    /// @brief Class destructor.
