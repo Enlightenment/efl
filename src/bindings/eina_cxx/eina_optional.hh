@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <algorithm>
 #include <utility>
+#include <type_traits>
 
 /**
  * @addtogroup Eina_Cxx_Data_Types_Group
@@ -86,7 +87,7 @@ struct optional
     */
    optional(T&& other) : engaged(false)
    {
-      _construct(std::move(other));
+      _construct(std::forward<T>(other));
    }
 
    /**
@@ -99,7 +100,35 @@ struct optional
     */
    optional(T const& other) : engaged(false)
    {
-     _construct(std::move(other));
+     _construct(other);
+   }
+
+   /**
+    * @brief Create an engaged object by moving @p other content.
+    * @param other R-value reference to the desired type.
+    *
+    * This constructor creates an <tt>eina::optional</tt> object in an
+    * engaged state. The contained value is initialized by moving
+    * @p other.
+    */
+   template <typename U>
+   optional(U&& other, typename std::enable_if<std::is_convertible<U, T>::value>::type* = 0) : engaged(false)
+   {
+     _construct(std::forward<U>(other));
+   }
+
+   /**
+    * @brief Create an engaged object by copying @p other content.
+    * @param other Constant reference to the desired type.
+    *
+    * This constructor creates an <tt>eina::optional</tt> object in an
+    * engaged state. The contained value is initialized by copying
+    * @p other.
+    */
+   template <typename U>
+   optional(U const& other, typename std::enable_if<std::is_convertible<U, T>::value>::type* = 0) : engaged(false)
+   {
+     _construct(other);
    }
 
    /**
