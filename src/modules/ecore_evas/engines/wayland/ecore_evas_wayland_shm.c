@@ -177,9 +177,11 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
         fh = 22;
      }
 
-   /* FIXME: Get if parent is alpha, and set */
    if (parent)
-     p = ecore_wl_window_find(parent);
+     {
+        p = ecore_wl_window_find(parent);
+        ee->alpha = ecore_wl_window_alpha_get(p);
+     }
 
    wdata->parent = p;
    wdata->win = 
