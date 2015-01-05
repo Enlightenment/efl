@@ -7497,11 +7497,8 @@ _elm_genlist_item_type_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 EAPI Elm_Genlist_Item_Class *
 elm_genlist_item_class_new(void)
 {
-   Elm_Genlist_Item_Class *itc;
-
-   itc = calloc(1, sizeof(Elm_Genlist_Item_Class));
-   if (!itc)
-     return NULL;
+   Elm_Genlist_Item_Class *itc = ELM_NEW(Elm_Genlist_Item_Class);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(itc, NULL);
 
    itc->version = CLASS_ALLOCATED;
    itc->refcount = 1;
