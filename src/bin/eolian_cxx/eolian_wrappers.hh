@@ -359,6 +359,10 @@ parameter_type(Eolian_Function_Parameter const& parameter,
         if (!type.front().binding.empty())
           type.front().binding.insert(0, "const ");
      }
+   if (::eolian_parameter_is_nonull(&parameter))
+     {
+        type.is_nonull = true;
+     }
    return type;
 }
 

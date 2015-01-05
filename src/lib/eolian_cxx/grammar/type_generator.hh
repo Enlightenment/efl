@@ -93,6 +93,8 @@ operator<<(std::ostream& out, efl::eolian::grammar::reinterpret_type const& x)
 
    if (x._type.is_out && type_is_binding(x._type.front()))
      res += "*";
+   else if (!x._type.is_nonull && x._type.front().is_class)
+     res = "::efl::eina::optional< " + res + " >";
 
    return out << res;
 }

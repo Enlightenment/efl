@@ -80,17 +80,21 @@ struct eolian_type_instance
 {
   eolian_type_instance()
     : is_out(false)
+    , is_nonull(false)
     , parts()
   {}
 
   eolian_type_instance(std::initializer_list<eolian_type> il,
-                       bool is_out_ = false)
+                       bool is_out_ = false,
+                       bool is_nonull_ = false)
     : is_out(is_out_)
+    , is_nonull(is_nonull_)
     , parts(il)
   {}
 
   explicit eolian_type_instance(std::size_t size)
     : is_out(false)
+    , is_nonull(false)
     , parts(size)
   {}
 
@@ -101,6 +105,7 @@ struct eolian_type_instance
   eolian_type const& front() const { return parts.front(); }
 
   bool is_out;
+  bool is_nonull;
   eolian_type_container parts;
 };
 
@@ -143,6 +148,12 @@ type_is_class(eolian_type_instance const& type)
 {
    assert(!type.empty());
    return type_is_class(type.front());
+}
+
+inline bool
+type_is_nonull(eolian_type_instance const& type)
+{
+   return type.is_nonull;
 }
 
 inline eolian_type

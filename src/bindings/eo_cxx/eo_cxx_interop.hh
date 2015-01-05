@@ -20,9 +20,25 @@ to_c(std::string const& x)
 }
 
 inline const char*
+to_c(eina::optional<std::string> const& x)
+{
+   if (!x)
+     return nullptr;
+   return x->c_str();
+}
+
+inline const char*
 to_c(efl::eina::stringshare const& x)
 {
    return x.c_str();
+}
+
+inline const char*
+to_c(eina::optional<efl::eina::stringshare> const& x)
+{
+   if (!x)
+     return nullptr;
+   return x->c_str();
 }
 
 inline Eina_Bool
@@ -51,6 +67,14 @@ Eo* to_c(T const& v, typename std::enable_if<std::is_convertible<T*, ::efl::eo::
 }
 
 template <typename T>
+Eo* to_c(eina::optional<T> const& v, typename std::enable_if<std::is_convertible<T*, ::efl::eo::concrete*>::value>::type* = 0)
+{
+   if (!v)
+     return nullptr;
+   return v->_eo_ptr();
+}
+
+template <typename T>
 Eo** to_c(T* v, typename std::enable_if<std::is_convertible<T*, ::efl::eo::concrete*>::value>::type* = 0)
 {
    static_assert(sizeof(T) == sizeof(Eo*), "");
@@ -62,6 +86,15 @@ R to_native(T const& v)
 {
    static_assert(sizeof(T) == sizeof(R), "");
    return v.native_handle();
+}
+
+template <typename R, typename T>
+R to_native(eina::optional<T> const& v)
+{
+   static_assert(sizeof(T) == sizeof(R), "");
+   if (!v)
+     return nullptr;
+   return v->native_handle();
 }
 
 template <typename R, typename T>
@@ -109,6 +142,24 @@ to_cxx(Eo* x, std::tuple<std::false_type>, tag<T>)
 }
 
 template <typename T>
+inline eina::optional<T>
+to_cxx(Eo* x, std::tuple<std::true_type>, tag<eina::optional<T> >)
+{
+   if (!x)
+     return nullptr;
+   return T(x);
+}
+
+template <typename T>
+inline eina::optional<T>
+to_cxx(Eo* x, std::tuple<std::false_type>, tag<eina::optional<T> >)
+{
+   if (!x)
+     return nullptr;
+   return T(::eo_ref(x));
+}
+
+template <typename T>
 inline T
 to_cxx(Eo** x, std::tuple<std::false_type>, tag<T>)
 {
@@ -134,6 +185,14 @@ to_cxx(Eina_Bool x, std::tuple<std::false_type>, tag<bool>)
 inline std::string
 to_cxx(const char* x, std::tuple<std::false_type>, tag<std::string>)
 {
+   return std::string(x);
+}
+
+inline eina::optional<std::string>
+to_cxx(const char* x, std::tuple<std::false_type>, tag<eina::optional<std::string> >)
+{
+   if (!x)
+     return nullptr;
    return std::string(x);
 }
 
@@ -165,9 +224,27 @@ to_cxx(const Eina_List* x, std::tuple<std::false_type, Args...>, tag< efl::eina:
 }
 
 template <typename T, typename ...Args>
+inline eina::optional<efl::eina::range_list<T const> >
+to_cxx(const Eina_List* x, std::tuple<std::false_type, Args...>, tag< eina::optional<efl::eina::range_list<T> > >)
+{
+   if (!x)
+     return nullptr;
+   return efl::eina::range_list<T const> {x};
+}
+
+template <typename T, typename ...Args>
 inline efl::eina::range_list<T>
 to_cxx(Eina_List* x, std::tuple<std::false_type, Args...>, tag< efl::eina::range_list<T> >)
 {
+   return efl::eina::range_list<T>{x};
+}
+
+template <typename T, typename ...Args>
+inline eina::optional<efl::eina::range_list<T> >
+to_cxx(Eina_List* x, std::tuple<std::false_type, Args...>, tag< eina::optional<efl::eina::range_list<T> > >)
+{
+   if (!x)
+     return nullptr;
    return efl::eina::range_list<T>{x};
 }
 
@@ -178,10 +255,27 @@ to_cxx(Eina_List* x, std::tuple<std::true_type, Args...>, tag< efl::eina::list<T
    return efl::eina::list<T> {x};
 }
 
+template <typename T, typename ...Args>
+inline eina::optional<efl::eina::list<T> >
+to_cxx(Eina_List* x, std::tuple<std::true_type, Args...>, tag< eina::optional<efl::eina::list<T> > >)
+{
+   if (!x)
+     return nullptr;
+   return efl::eina::list<T> {x};
+}
+
 inline eina::stringshare
 to_cxx(Eina_Stringshare const* x, const std::false_type, tag<eina::stringshare>)
 {
    return ::eina_stringshare_ref(x);
+}
+
+inline eina::optional<eina::stringshare>
+to_cxx(Eina_Stringshare const* x, const std::false_type, tag<eina::optional<eina::stringshare> >)
+{
+   if (!x)
+     return nullptr;
+   return eina::stringshare(::eina_stringshare_ref(x));
 }
 
 template <typename T, typename ...Args>
@@ -192,9 +286,27 @@ to_cxx(Eina_Accessor* x, std::tuple<std::false_type, Args...>, tag< efl::eina::a
 }
 
 template <typename T, typename ...Args>
+inline eina::optional<efl::eina::accessor<T> >
+to_cxx(Eina_Accessor* x, std::tuple<std::false_type, Args...>, tag< eina::optional<efl::eina::accessor<T> > >)
+{
+   if (!x)
+     return nullptr;
+   return efl::eina::accessor<T>(x);
+}
+
+template <typename T, typename ...Args>
 inline efl::eina::iterator<T>
 to_cxx(Eina_Iterator* x, std::tuple<std::false_type, Args...>, tag< efl::eina::iterator<T> >)
 {
+   return efl::eina::iterator<T>(x);
+}
+
+template <typename T, typename ...Args>
+inline eina::optional<efl::eina::iterator<T> >
+to_cxx(Eina_Iterator* x, std::tuple<std::false_type, Args...>, tag< eina::optional<efl::eina::iterator<T> > >)
+{
+   if (!x)
+     return nullptr;
    return efl::eina::iterator<T>(x);
 }
 
@@ -208,11 +320,33 @@ to_cxx(Eo const* x, std::tuple<std::false_type, Args...>, tag< T >
 }
 
 template <typename T, typename ...Args>
+eina::optional<T>
+to_cxx(Eo const* x, std::tuple<std::false_type, Args...>, tag< eina::optional<T> >
+       , typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>* = 0)
+{
+   // Workaround for erroneous constness
+   if (!x)
+     return nullptr;
+   return T{ ::eo_ref(const_cast<Eo*>(x))};
+}
+
+template <typename T, typename ...Args>
 T
 to_cxx(Eo const* x, std::tuple<std::true_type, Args...>, tag< T >
        , typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>* = 0)
 {
    // Workaround for erroneous constness
+   return T{const_cast<Eo*>(x)};
+}
+
+template <typename T, typename ...Args>
+eina::optional<T>
+to_cxx(Eo const* x, std::tuple<std::true_type, Args...>, tag< eina::optional<T> >
+       , typename std::enable_if<std::is_base_of<::efl::eo::concrete, T>::value>* = 0)
+{
+   // Workaround for erroneous constness
+   if (!x)
+     return nullptr;
    return T{const_cast<Eo*>(x)};
 }
 
