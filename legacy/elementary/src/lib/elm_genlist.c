@@ -6904,11 +6904,10 @@ _elm_genlist_item_item_class_update(Eo *eo_it, Elm_Gen_Item *it,
                                    const Elm_Genlist_Item_Class *itc)
 {
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
-
-   if (!it->item->block) return;
    EINA_SAFETY_ON_NULL_RETURN(itc);
-   if (it->generation < GL_IT(it)->wsd->generation) return;
    it->itc = itc;
+   if (!it->item->block) return;
+   if (it->generation < GL_IT(it)->wsd->generation) return;
    it->item->nocache_once = EINA_TRUE;
 
    ELM_SAFE_FREE(it->texts, elm_widget_stringlist_free);
