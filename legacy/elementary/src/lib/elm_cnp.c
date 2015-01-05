@@ -2901,6 +2901,7 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format EINA_UNUSED, const ch
    Evas_Object *icon = NULL;
    int x, y, x2 = 0, y2 = 0, x3, y3, w = 0, h = 0;
    const char *types[2] = { "text/uri-list", NULL };
+   Ecore_Wl_Window *parent = NULL;
 
    _wl_elm_dnd_init();
 
@@ -2974,8 +2975,28 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format EINA_UNUSED, const ch
    _dragx = x3 - x2;
    _dragy = y3 - y2;
 
-   ecore_wl_dnd_drag_start(ecore_wl_input_get(),
-                           elm_win_wl_window_get(obj),
+   if (elm_widget_is(obj))
+     {
+        Evas_Object *top;
+
+        top = elm_widget_top_get(obj);
+        if (!top) top = elm_widget_top_get(elm_widget_parent_widget_get(obj));
+        if (top && (eo_isa(top, ELM_WIN_CLASS)))
+          parent = elm_win_wl_window_get(top);
+     }
+   if (!parent)
+     {
+        Evas *evas;
+
+        if (!(evas = evas_object_evas_get(obj)))
+          return 0;
+        if (!(ee = ecore_evas_ecore_evas_get(evas)))
+          return 0;
+
+        parent = ecore_evas_wayland_window_get(ee);
+     }
+
+   ecore_wl_dnd_drag_start(ecore_wl_input_get(), parent, 
                            elm_win_wl_window_get(dragwin),
                            x3, y3, w, h);
 
@@ -3262,7 +3283,6 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
 {
    Dropable *drop;
    unsigned int win = 0;
-   char *p, *s = NULL, *entrytag;
    Elm_Selection_Data sdata;
    static const char *tagstring =
      "<item absize=240x180 href=file://%s></item>";
@@ -3270,26 +3290,10 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
    win = _wl_elm_widget_window_get(sel->requestwidget);
    drop = _wl_dropable_find_geom(win, savedtypes.x, savedtypes.y);
 
-   p = data;
-   if ((!strncmp(p, "file:/", 6)) || (p[0] == '/'))
-     {
-        int len = 0;
-
-        len = sel->buflen;
-        if (!strncmp(p, "file:/", 6))
-          {
-             p += 5;
-             len -= 5;
-          }
-        if (!(s = malloc(len + 1))) return;
-        memcpy(s, p, len);
-        s[len] = 0;
-     }
-
    if (savedtypes.textreq)
      {
         savedtypes.textreq = 0;
-        savedtypes.imgfile = s;
+        savedtypes.imgfile = data;
      }
 
    sdata.x = savedtypes.x;
@@ -3305,13 +3309,8 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
         if ((cbs->types & ELM_SEL_FORMAT_MARKUP) &&
               (cbs->types & ELM_SEL_FORMAT_IMAGE))
           {
-             int l = 0;
-
              sdata.format = ELM_SEL_FORMAT_MARKUP;
-             l = strlen(tagstring) + strlen(savedtypes.imgfile);
-             entrytag = alloca(l + 1);
-             snprintf(entrytag, l + 1, tagstring, savedtypes.imgfile);
-             sdata.data = entrytag;
+             sdata.data = (char *)savedtypes.imgfile;
              if (cbs->dropcb) cbs->dropcb(cbs->dropdata, drop->obj, &sdata);
              ecore_wl_dnd_drag_end(ecore_wl_input_get());
           }
