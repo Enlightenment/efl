@@ -2989,9 +2989,9 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format EINA_UNUSED, const ch
         Evas *evas;
 
         if (!(evas = evas_object_evas_get(obj)))
-          return 0;
+          return EINA_FALSE;
         if (!(ee = ecore_evas_ecore_evas_get(evas)))
-          return 0;
+          return EINA_FALSE;
 
         parent = ecore_evas_wayland_window_get(ee);
      }
