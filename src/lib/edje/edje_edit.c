@@ -7320,6 +7320,30 @@ edje_edit_image_replace(Evas_Object *obj, const char *name, const char *new_name
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_edit_image_rename(Evas_Object *obj, const char *name, const char *new_name)
+{
+   Edje_Image_Directory_Entry *de = NULL;
+   unsigned int i;
+   GET_ED_OR_RETURN(EINA_FALSE);
+
+   // Check if image with 'new_name' already exists
+   if (edje_edit_image_id_get(obj, new_name) >= 0) 
+      return EINA_FALSE;
+
+   for (i = 0; i < ed->file->image_dir->entries_count; ++i)
+     {
+        de = ed->file->image_dir->entries + i;
+        if ((de->entry) && (!strcmp(name, de->entry)))
+          break;
+     }
+   if (i == ed->file->image_dir->entries_count) return EINA_FALSE;
+
+   _edje_if_string_replace(ed, &de->entry, new_name);
+
+   return EINA_TRUE;
+}
+
 EAPI Eina_List*
 edje_edit_image_usage_list_get(Evas_Object *obj, const char *name, Eina_Bool first_only)
 {

@@ -4666,6 +4666,19 @@ EAPI Eina_Bool edje_edit_image_del(Evas_Object *obj, const char *name);
  */
 EAPI Eina_Bool edje_edit_image_replace(Evas_Object *obj, const char *name, const char *new_name);
 
+/** Rename image
+ *
+ * @param obj Object being edited.
+ * @param name The name of the image to be renamed.
+ * @param new_name The new_name of the image.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.(including the
+ * case when one of the names is not valid)
+ *
+ * @since 1.12
+ */
+EAPI Eina_Bool edje_edit_image_rename(Evas_Object *obj, const char *name, const char *new_name);
+
 /** Get list of (Edje_Part_Image_Use *) - group-part-state triplets where given
  * image is used
  *
