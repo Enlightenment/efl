@@ -3,6 +3,111 @@
 
 static Eina_Bool logind = EINA_FALSE;
 
+static Eina_Bool
+_ecore_drm_launcher_cb_vt_switch(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Drm_Device *dev;
+   Ecore_Event_Key *ev;
+   int keycode;
+   int vt;
+
+   dev = data;
+   ev = event;
+   keycode = ev->keycode - 8;
+
+   if ((ev->modifiers & ECORE_EVENT_MODIFIER_CTRL) &&
+       (ev->modifiers & ECORE_EVENT_MODIFIER_ALT) &&
+       (keycode >= KEY_F1) && (keycode <= KEY_F8))
+     {
+        vt = (keycode - KEY_F1 + 1);
+
+        if (!_ecore_drm_tty_switch(dev, vt))
+          ERR("Failed to activate vt: %m");
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+
+static Eina_Bool
+_ecore_drm_launcher_cb_vt_signal(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Drm_Device *dev;
+   Ecore_Event_Signal_User *ev;
+   siginfo_t sigdata;
+
+   dev = data;
+   ev = event;
+
+   sigdata = ev->data;
+   if (sigdata.si_code != SI_KERNEL) return ECORE_CALLBACK_RENEW;
+
+   if (ev->number == 1)
+     {
+        if (!logind)
+          {
+             Ecore_Drm_Input *input;
+             Ecore_Drm_Output *output;
+             Ecore_Drm_Sprite *sprite;
+             Eina_List *l;
+
+             /* disable inputs (suspends) */
+             EINA_LIST_FOREACH(dev->inputs, l, input)
+                ecore_drm_inputs_disable(input);
+
+             /* disable hardware cursor */
+             EINA_LIST_FOREACH(dev->outputs, l, output)
+                ecore_drm_output_cursor_size_set(output, 0, 0, 0);
+
+             /* disable sprites */
+             EINA_LIST_FOREACH(dev->sprites, l, sprite)
+                ecore_drm_sprites_fb_set(sprite, 0, 0);
+
+             /* drop drm master */
+             ecore_drm_device_master_drop(dev);
+
+             _ecore_drm_event_activate_send(EINA_FALSE);
+          }
+
+        /* issue ioctl to release vt */
+        if (!ecore_drm_tty_release(dev))
+          ERR("Could not release VT: %m");
+     }
+   else if (ev->number == 2)
+     {
+        if (!logind)
+          {
+             Ecore_Drm_Output *output;
+             Ecore_Drm_Input *input;
+             Eina_List *l;
+
+             /* set drm master */
+             if (!ecore_drm_device_master_set(dev))
+               ERR("Could not set drm master: %m");
+
+             /* set output mode */
+             EINA_LIST_FOREACH(dev->outputs, l, output)
+                ecore_drm_output_enable(output);
+
+             /* enable inputs */
+             EINA_LIST_FOREACH(dev->inputs, l, input)
+                ecore_drm_inputs_enable(input);
+
+             if (ecore_drm_tty_acquire(dev))
+               _ecore_drm_event_activate_send(EINA_TRUE);
+             else
+               ERR("Could not acquire VT: %m");
+          }
+        else
+          {
+             if (!ecore_drm_tty_acquire(dev))
+               ERR("Could not acquire VT: %m");
+          }
+     }
+
+   return ECORE_CALLBACK_RENEW;
+}
+
 EAPI Eina_Bool
 ecore_drm_launcher_connect(Ecore_Drm_Device *dev)
 {
@@ -10,20 +115,30 @@ ecore_drm_launcher_connect(Ecore_Drm_Device *dev)
      {
         DBG("Launcher: Not Support logind\n");
         if (geteuid() == 0)
-          {
-             DBG("Launcher: Try to keep going with root privilege\n");
-             if (!ecore_drm_tty_open(dev, NULL))
-               {
-                  ERR("Launcher: failed to open tty with root privilege\n");
-                  return EINA_FALSE;
-               }
-          }
+          DBG("Launcher: Try to keep going with root privilege\n");
         else
           {
              ERR("Launcher: Need Root Privilege or logind\n");
              return EINA_FALSE;
           }
      }
+
+   if (!ecore_drm_tty_open(dev, NULL))
+     {
+        ERR("Launcher: failed to open tty\n");
+        return EINA_FALSE;
+     }
+
+   /* setup handler for signals */
+   dev->tty.event_hdlr =
+      ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER,
+                              _ecore_drm_launcher_cb_vt_signal, dev);
+
+   /* setup handler for key event of vt switch */
+   dev->tty.switch_hdlr =
+      ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
+                              _ecore_drm_launcher_cb_vt_switch, dev);
+
    DBG("Launcher: Success Connect\n");
 
    return EINA_TRUE;
@@ -37,8 +152,15 @@ ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev)
         logind = EINA_FALSE;
         _ecore_drm_logind_disconnect(dev);
      }
-   else
-     ecore_drm_tty_close(dev);
+
+   if (!ecore_drm_tty_close(dev))
+     ERR("Launcher: failed to close tty\n");
+
+   if (dev->tty.event_hdlr) ecore_event_handler_del(dev->tty.event_hdlr);
+   dev->tty.event_hdlr = NULL;
+
+   if (dev->tty.switch_hdlr) ecore_event_handler_del(dev->tty.switch_hdlr);
+   dev->tty.switch_hdlr = NULL;
 }
 
 static int

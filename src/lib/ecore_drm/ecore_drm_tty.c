@@ -12,103 +12,12 @@
 # define KDSKBMUTE 0x4B51
 #endif
 
-static Eina_Bool
-_ecore_drm_tty_cb_vt_switch(void *data, int type EINA_UNUSED, void *event)
+Eina_Bool
+_ecore_drm_tty_switch(Ecore_Drm_Device *dev, int activate_vt)
 {
-   Ecore_Drm_Device *dev;
-   Ecore_Event_Key *ev;
-   int keycode;
-   int vt;
-
-   dev = data;
-   ev = event;
-   keycode = ev->keycode - 8; 
-
-   if ((ev->modifiers & ECORE_EVENT_MODIFIER_CTRL) &&
-       (ev->modifiers & ECORE_EVENT_MODIFIER_ALT) &&
-       (keycode >= KEY_F1) && (keycode <= KEY_F8))
-     {
-        vt = (keycode - KEY_F1 + 1);
-
-        if (ioctl(dev->tty.fd, VT_ACTIVATE, vt) < 0)
-          ERR("Failed to activate vt: %m");
-     }
-
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool 
-_ecore_drm_tty_cb_signal(void *data, int type EINA_UNUSED, void *event)
-{
-   Ecore_Drm_Device *dev;
-   Ecore_Event_Signal_User *ev;
-   siginfo_t sigdata;
-
-   dev = data;
-   ev = event;
-
-   sigdata = ev->data;
-   if (sigdata.si_code != SI_KERNEL) return ECORE_CALLBACK_RENEW;
-
-   if (ev->number == 1)
-     {
-        Ecore_Drm_Input *input;
-        Ecore_Drm_Output *output;
-        Ecore_Drm_Sprite *sprite;
-        Eina_List *l;
-
-        /* disable inputs (suspends) */
-        EINA_LIST_FOREACH(dev->inputs, l, input)
-          ecore_drm_inputs_disable(input);
-
-        /* disable hardware cursor */
-        EINA_LIST_FOREACH(dev->outputs, l, output)
-          ecore_drm_output_cursor_size_set(output, 0, 0, 0);
-
-        /* disable sprites */
-        EINA_LIST_FOREACH(dev->sprites, l, sprite)
-          ecore_drm_sprites_fb_set(sprite, 0, 0);
-
-        /* drop drm master */
-        if (ecore_drm_device_master_drop(dev))
-          {
-             /* issue ioctl to release vt */
-             if (!ecore_drm_tty_release(dev))
-               ERR("Could not release VT: %m");
-          }
-        else
-          ERR("Could not drop drm master: %m");
-
-        _ecore_drm_event_activate_send(EINA_FALSE);
-     }
-   else if (ev->number == 2)
-     {
-        /* issue ioctl to acquire vt */
-        if (ecore_drm_tty_acquire(dev))
-          {
-             Ecore_Drm_Output *output;
-             Ecore_Drm_Input *input;
-             Eina_List *l;
-
-             /* set drm master */
-             if (!ecore_drm_device_master_set(dev))
-               ERR("Could not set drm master: %m");
-
-             /* set output mode */
-             EINA_LIST_FOREACH(dev->outputs, l, output)
-               ecore_drm_output_enable(output);
-
-             /* enable inputs */
-             EINA_LIST_FOREACH(dev->inputs, l, input)
-               ecore_drm_inputs_enable(input);
-
-             _ecore_drm_event_activate_send(EINA_TRUE);
-          }
-        else
-          ERR("Could not acquire VT: %m");
-     }
-
-   return ECORE_CALLBACK_RENEW;
+   if (!ioctl(dev->tty.fd, VT_ACTIVATE, activate_vt) < 0)
+     return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static Eina_Bool 
@@ -246,16 +155,6 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
         return EINA_FALSE;
      }
 
-   /* setup handler for signals */
-   dev->tty.event_hdlr = 
-     ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, 
-                             _ecore_drm_tty_cb_signal, dev);
-
-   /* setup handler for key event of vt switch */
-   dev->tty.switch_hdlr =
-     ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
-                             _ecore_drm_tty_cb_vt_switch, dev);
-
    /* set current tty into env */
    setenv("ECORE_DRM_TTY", tty, 1);
 
@@ -300,14 +199,6 @@ ecore_drm_tty_close(Ecore_Drm_Device *dev)
    close(dev->tty.fd);
 
    dev->tty.fd = -1;
-
-   /* destroy the event handler */
-   if (dev->tty.event_hdlr) ecore_event_handler_del(dev->tty.event_hdlr);
-   dev->tty.event_hdlr = NULL;
-
-   /* destroy the event handler */
-   if (dev->tty.switch_hdlr) ecore_event_handler_del(dev->tty.switch_hdlr);
-   dev->tty.switch_hdlr = NULL;
 
    /* clear the tty name */
    if (dev->tty.name) eina_stringshare_del(dev->tty.name);
