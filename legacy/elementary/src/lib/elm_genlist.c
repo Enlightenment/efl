@@ -7385,6 +7385,9 @@ _elm_genlist_decorate_mode_set(Eo *obj, Elm_Genlist_Data *sd, Eina_Bool decorate
 
    decorated = !!decorated;
    if (sd->decorate_all_mode == decorated) return;
+   // decorate_all_mode should be set first
+   // because content_get func. will be called after this
+   // and user can check whether decorate_all_mode_ is enabled.
    sd->decorate_all_mode = decorated;
 
    ELM_SAFE_FREE(sd->tree_effect_animator, ecore_animator_del);
