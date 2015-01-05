@@ -7491,7 +7491,7 @@ _elm_genlist_item_type_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
 {
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it, ELM_GENLIST_ITEM_MAX);
 
-   return it->item->type;
+   return GL_IT(it)->type;
 }
 
 EAPI Elm_Genlist_Item_Class *
