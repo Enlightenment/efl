@@ -198,8 +198,10 @@ edje_shutdown(void)
      return _edje_init_count;
 
    if (_edje_timer)
-     ecore_animator_del(_edje_timer);
-   _edje_timer = NULL;
+     {
+        ecore_animator_del(_edje_timer);
+        _edje_timer = NULL;
+     }
 
    _edje_shutdown_core();
 
