@@ -3284,18 +3284,24 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
    Dropable *drop;
    unsigned int win = 0;
    Elm_Selection_Data sdata;
-   static const char *tagstring =
-     "<item absize=240x180 href=file://%s></item>";
+   int len = 0;
+   char *s = NULL;
 
    win = _wl_elm_widget_window_get(sel->requestwidget);
    drop = _wl_dropable_find_geom(win, savedtypes.x, savedtypes.y);
 
+   len = strlen(data);
+   if (!(s = malloc(len + 1))) return;
+   memcpy(s, data, len);
+   s[len] = 0;
+
    if (savedtypes.textreq)
      {
         savedtypes.textreq = 0;
-        savedtypes.imgfile = data;
+        savedtypes.imgfile = s;
      }
 
+   sdata.len = len;
    sdata.x = savedtypes.x;
    sdata.y = savedtypes.y;
 
