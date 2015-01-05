@@ -7637,6 +7637,10 @@ _elm_genlist_item_select_mode_set(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it,
 
    it->select_mode = mode;
 
+   if ((it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
+     _item_unselect(it);
+
    if (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
      {
         it->item->mincalcd = EINA_FALSE;
