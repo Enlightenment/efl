@@ -776,16 +776,30 @@ _edje_fix_parts_id(Edje *ed)
 }
 
 static void
-_edje_if_string_free(Edje *ed, const char *str)
+_edje_if_string_free(Edje *ed, const char **str)
 {
    Eet_Dictionary *dict;
 
    if (!ed || !str) return;
 
    dict = eet_dictionary_get(ed->file->ef);
-   if (eet_dictionary_string_check(dict, str)) return;
-   eina_stringshare_del(str);
-   str = NULL;
+   if (eet_dictionary_string_check(dict, *str)) return;
+   eina_stringshare_del(*str);
+   *str = NULL;
+}
+
+static void
+_edje_if_string_replace(Edje *ed, const char **str, const char *str_new)
+{
+   Eet_Dictionary *dict;
+
+   if (!ed || !str) return;
+
+   dict = eet_dictionary_get(ed->file->ef);
+   if (*str && eet_dictionary_string_check(dict, *str))
+     *str = eina_stringshare_add(str_new);
+   else
+     eina_stringshare_replace(str, str_new);
 }
 
 static Edje_Style *
@@ -1015,8 +1029,7 @@ _delete_play_actions(Evas_Object *obj, const char* name, int action_type, Eet_Fi
                {
                   program->speed = 0;
                   program->channel = EDJE_CHANNEL_EFFECT;
-                  _edje_if_string_free(eed, program->sample_name);
-                  program->sample_name = NULL;
+                  _edje_if_string_free(eed, &program->sample_name);
                   program->action = EDJE_ACTION_TYPE_NONE;
                   is_collection_changed = EINA_TRUE;
                }
@@ -1024,8 +1037,7 @@ _delete_play_actions(Evas_Object *obj, const char* name, int action_type, Eet_Fi
                       !strcmp(program->tone_name, name))
                {
                   program->duration = 0;
-                  _edje_if_string_free(eed, program->tone_name);
-                  program->tone_name = NULL;
+                  _edje_if_string_free(eed, &program->tone_name);
                   program->action = EDJE_ACTION_TYPE_NONE;
                   is_collection_changed = EINA_TRUE;
                }
@@ -1173,7 +1185,7 @@ edje_edit_sound_sample_del(Evas_Object *obj, const char* name)
            return EINA_FALSE;
         }
 
-      _edje_if_string_free(ed, sound_sample->name);
+      _edje_if_string_free(ed, &sound_sample->name);
       --ed->file->sound_dir->samples_count;
 
       sound_sample_last = ed->file->sound_dir->samples +
@@ -1287,8 +1299,7 @@ edje_edit_sound_tone_del(Evas_Object *obj, const char* name)
            return EINA_FALSE;
         }
 
-
-      _edje_if_string_free(ed, sound_tone->name);
+      _edje_if_string_free(ed, &sound_tone->name);
       --ed->file->sound_dir->tones_count;
 
       Edje_Sound_Tone *sound_tone_last = ed->file->sound_dir->tones +
@@ -1988,7 +1999,7 @@ edje_edit_group_limits_##TYPE##_del(Evas_Object * obj, const char * name, int va
      if ((ed->collection->limits.TYPE[i]->value == value) \
          && (!strcmp(ed->collection->limits.TYPE[i]->name, name))) \
        { \
-          _edje_if_string_free(ed, ed->collection->limits.TYPE[i]->name); \
+          _edje_if_string_free(ed, &ed->collection->limits.TYPE[i]->name); \
           free(ed->collection->limits.TYPE[i]); \
           if (i < new_count) \
             { \
@@ -2289,7 +2300,7 @@ edje_edit_group_data_del(Evas_Object *obj, const char *key)
    if (!value) return EINA_FALSE;
 
    eina_hash_del(ed->collection->data, key, value);
-   _edje_if_string_free(ed, value->str);
+   _edje_if_string_free(ed, &value->str);
    free(value);
 
    return EINA_TRUE;
@@ -2310,7 +2321,7 @@ edje_edit_data_del(Evas_Object *obj, const char *itemname)
      return EINA_FALSE;
 
    eina_hash_del(ed->file->data, itemname, value);
-   _edje_if_string_free(ed, value->str);
+   _edje_if_string_free(ed, &value->str);
    free(value);
 
    return EINA_TRUE;
@@ -2363,10 +2374,9 @@ edje_edit_group_data_value_set(Evas_Object *obj, const char *key, const char *va
    es = eina_hash_find(ed->collection->data, key);
    if (es)
      {
-        _edje_if_string_free(ed, es->str);
-        es->str = eina_stringshare_add(value);
+        _edje_if_string_replace(ed, &es->str, value);
         es->id = 0;
-	return EINA_TRUE;
+        return EINA_TRUE;
      }
 
    return EINA_FALSE;
@@ -2385,8 +2395,7 @@ edje_edit_data_value_set(Evas_Object *obj, const char *itemname, const char *val
    es = eina_hash_find(ed->file->data, itemname);
    if (es)
      {
-        _edje_if_string_free(ed, es->str);
-        es->str = eina_stringshare_add(value);
+        _edje_if_string_replace(ed, &es->str, value);
         es->id = 0;
         return EINA_TRUE;
      }
@@ -2549,7 +2558,7 @@ edje_edit_color_class_del(Evas_Object *obj, const char *name)
    EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
      if (strcmp(cc->name, name) == 0)
        {
-	 _edje_if_string_free(ed, cc->name);
+	 _edje_if_string_free(ed, &cc->name);
 	 ed->file->color_classes = eina_list_remove(ed->file->color_classes, cc);
 	 free(cc);
 	 return EINA_TRUE;
@@ -2571,9 +2580,8 @@ edje_edit_color_class_name_set(Evas_Object *obj, const char *name, const char *n
    EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
      if (!strcmp(cc->name, name))
        {
-	 _edje_if_string_free(ed, cc->name);
-	 cc->name = (char*)eina_stringshare_add(newname);
-	 return EINA_TRUE;
+          _edje_if_string_replace(ed, &cc->name, newname);
+          return EINA_TRUE;
        }
 
    return EINA_FALSE;
@@ -2636,7 +2644,7 @@ edje_edit_style_del(Evas_Object * obj, const char* style)
 
    ed->file->styles = eina_list_remove(ed->file->styles, s);
 
-   _edje_if_string_free(ed, s->name);
+   _edje_if_string_free(ed, (const char **)&s->name);
    //~ //s->style HOWTO FREE ???
    while (s->tags)
    {
@@ -2645,10 +2653,10 @@ edje_edit_style_del(Evas_Object * obj, const char* style)
       t = s->tags->data;
 
       s->tags = eina_list_remove(s->tags, t);
-      _edje_if_string_free(ed, t->key);
-      _edje_if_string_free(ed, t->value);
-      _edje_if_string_free(ed, t->font);
-      _edje_if_string_free(ed, t->text_class);
+      _edje_if_string_free(ed, &t->key);
+      _edje_if_string_free(ed, &t->value);
+      _edje_if_string_free(ed, &t->font);
+      _edje_if_string_free(ed, &t->text_class);
       free(t);
       t = NULL;
    }
@@ -2691,8 +2699,7 @@ edje_edit_style_tag_name_set(Evas_Object * obj, const char* style, const char* t
 
    t = _edje_edit_style_tag_get(ed, style, tag);
    if (!t) return EINA_FALSE;
-   _edje_if_string_free(ed, t->key);
-   t->key = eina_stringshare_add(new_name);
+   _edje_if_string_replace(ed, &t->key, new_name);
    return EINA_TRUE;
 }
 
@@ -2726,8 +2733,7 @@ edje_edit_style_tag_value_set(Evas_Object * obj, const char* style, const char* 
 
    t = _edje_edit_style_tag_get(ed, style, tag);
    if (!t) return EINA_FALSE;
-   _edje_if_string_free(ed, t->value);
-   t->value = eina_stringshare_add(new_value);
+   _edje_if_string_replace(ed, &t->value, new_value);
    return EINA_TRUE;
 }
 
@@ -2771,10 +2777,10 @@ edje_edit_style_tag_del(Evas_Object * obj, const char* style, const char* tag)
    if (!s || !t) return EINA_FALSE;
 
    s->tags = eina_list_remove(s->tags, t);
-   _edje_if_string_free(ed, t->key);
-   _edje_if_string_free(ed, t->value);
-   _edje_if_string_free(ed, t->font);
-   _edje_if_string_free(ed, t->text_class);
+   _edje_if_string_free(ed, &t->key);
+   _edje_if_string_free(ed, &t->value);
+   _edje_if_string_free(ed, &t->font);
+   _edje_if_string_free(ed, &t->text_class);
    free(t);
    t = NULL;
    return EINA_TRUE;
@@ -2854,7 +2860,7 @@ edje_edit_external_del(Evas_Object *obj, const char *external)
    e = _edje_edit_external_get(ed, external);
    if (!e) return EINA_FALSE;
 
-   _edje_if_string_free(ed, e->entry);
+   _edje_if_string_free(ed, &e->entry);
    e->entry = NULL;
 
    return EINA_TRUE;
@@ -2948,8 +2954,7 @@ edje_edit_part_name_set(Evas_Object *obj, const char* part, const char* new_name
 
    //printf("Set name of part: %s [new name: %s]\n", part, new_name);
 
-   _edje_if_string_free(ed, rp->part->name);
-   rp->part->name = (char *)eina_stringshare_add(new_name);
+   _edje_if_string_replace(ed, &rp->part->name, new_name);
 
    _edje_edit_flag_script_dirty(eed, EINA_TRUE);
 
@@ -2967,8 +2972,7 @@ edje_edit_part_name_set(Evas_Object *obj, const char* part, const char* new_name
   edje_edit_part_api_##Value##_set(Evas_Object *obj, const char *part, const char *s) \
   {									\
      GET_RP_OR_RETURN(EINA_FALSE);					\
-     _edje_if_string_free(ed, rp->part->api.Value);			\
-     rp->part->api.Value = eina_stringshare_add(s);			\
+     _edje_if_string_replace(ed, &rp->part->api.Value, s);		\
      return EINA_TRUE;							\
   }
 
@@ -3134,9 +3138,9 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    /* Create default description */
    if (!edje_edit_state_add(obj, name, "default", 0.0))
      {
-        _edje_if_string_free(ed, ep->name);
+        _edje_if_string_free(ed, &ep->name);
         if (source)
-          _edje_if_string_free(ed, ep->source);
+          _edje_if_string_free(ed, &ep->source);
         eina_mempool_free(ce->mp.part, ep);
         eina_mempool_free(_edje_real_part_mp, rp);
         return EINA_FALSE;
@@ -3232,7 +3236,7 @@ edje_edit_part_del(Evas_Object *obj, const char* part)
    /* Free Edje_Part and all descriptions */
    ce = eina_hash_find(ed->file->collection, ed->group);
 
-   _edje_if_string_free(ed, ep->name);
+   _edje_if_string_free(ed, &ep->name);
    if (ep->default_desc)
      {
 	_edje_collection_free_part_description_free(ep->type, ep->default_desc, ce, 0);
@@ -3910,9 +3914,8 @@ edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source
           }
         // this fall through case is intentional
       case EDJE_PART_TYPE_TEXTBLOCK:
-        _edje_if_string_free(ed, rp->part->source);
-        if (source) rp->part->source = eina_stringshare_add(source);
-        else rp->part->source = NULL;
+        if (source) _edje_if_string_replace(ed, &rp->part->source, source);
+        else _edje_if_string_free(ed, &rp->part->source);
         return EINA_TRUE;
       case EDJE_PART_TYPE_EXTERNAL: //EXTERNAL part has source property but it cannot be changed
         break;
@@ -4197,7 +4200,7 @@ edje_edit_part_item_del(Evas_Object *obj, const char *part, const char* name)
 
    {
       Edje_Pack_Element **tmp;
-      _edje_if_string_free(ed, item->name);
+      _edje_if_string_free(ed, &item->name);
       --ep->items_count;
 
       while (i < ep->items_count)
@@ -4712,16 +4715,14 @@ edje_edit_state_name_set(Evas_Object *obj, const char *part, const char *state, 
 		 !strcmp(epr->state, pd->state.name) &&
 		 pd->state.value == epr->value)
 	       {
-		  _edje_if_string_free(ed, epr->state);
-		  epr->state = eina_stringshare_add(new_name);
+		  _edje_if_string_replace(ed, &epr->state, new_name);
 		  epr->value = value;
 	       }
 	  }
      }
 
    /* set name */
-   _edje_if_string_free(ed, pd->state.name);
-   pd->state.name = (char *)eina_stringshare_add(new_name);
+   _edje_if_string_replace(ed, &pd->state.name, new_name);
    /* set value */
    pd->state.value = new_value;
 
@@ -5076,9 +5077,10 @@ _edje_edit_part_state_copy(Evas_Object *obj, const char *part, const char *part_
 	rpto->part->other.desc[rpto->part->other.desc_count++] = pdto;
      }
 
+
 #define PD_STRING_COPY(To, From, _x)			\
-   _edje_if_string_free(ed, To->_x);			\
-   To->_x = (char *)eina_stringshare_add(From->_x);
+   if (From->_x) \
+     To->_x = (char *)eina_stringshare_add(From->_x);
 
    /* Copy all value */
    *pdto = *pdfrom;
@@ -5169,9 +5171,9 @@ _edje_edit_part_state_copy(Evas_Object *obj, const char *part, const char *part_
 	   /* XXX: optimize this, most likely we don't need to remove and add */
 	   EINA_LIST_FREE(ext_to->external_params, p)
 	     {
-		_edje_if_string_free(ed, p->name);
+		_edje_if_string_free(ed, &p->name);
 		if (p->s)
-		  _edje_if_string_free(ed, p->s);
+		  _edje_if_string_free(ed, &p->s);
 		free(p);
 	     }
 	   EINA_LIST_FOREACH(ext_from->external_params, l, p)
@@ -6042,8 +6044,7 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
    p->type = type;
    p->i = 0;
    p->d = 0;
-   _edje_if_string_free(ed, p->s);
-   p->s = NULL;
+   _edje_if_string_free(ed, &p->s);
 
    switch (type)
      {
@@ -6080,7 +6081,7 @@ edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const cha
 	    if ((type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE) ||
 		  (type == EDJE_EXTERNAL_PARAM_TYPE_STRING))
 	      {
-		 _edje_if_string_free(ed, p->s);
+		 _edje_if_string_free(ed, &p->s);
 		 if (!found) free(p);
 		 else *p = old_p;
 		 eina_stringshare_del(sname);
@@ -6532,8 +6533,7 @@ edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, 
 
    txt = (Edje_Part_Description_Text *) pd;
 
-   _edje_if_string_free(ed, txt->text.text.str);
-   txt->text.text.str = (char *)eina_stringshare_add(text);
+   _edje_if_string_replace(ed, &txt->text.text.str, text);
    txt->text.text.id = 0;
 
    for (i = 0; i < ed->table_parts_size; i++)
@@ -6544,8 +6544,7 @@ edje_edit_state_text_set(Evas_Object *obj, const char *part, const char *state, 
             (real->typedata.text) && (real->typedata.text->text_source == rp))
           {
              txt = _edje_real_part_text_text_source_description_get(real, NULL);
-             _edje_if_string_free(ed, txt->text.text.str);
-             txt->text.text.str = (char *)eina_stringshare_add(text);
+             _edje_if_string_replace(ed, &txt->text.text.str, text);
              txt->text.text.id = 0;
           }
      }
@@ -6904,8 +6903,7 @@ edje_edit_state_font_set(Evas_Object *obj, const char *part, const char *state, 
 
    txt = (Edje_Part_Description_Text*) pd;
 
-   _edje_if_string_free(ed, txt->text.font.str);
-   txt->text.font.str = (char *)eina_stringshare_add(font);
+   _edje_if_string_replace(ed, &txt->text.font.str, font);
    txt->text.font.id = 0;
 
    edje_object_calc_force(obj);
@@ -6981,8 +6979,7 @@ edje_edit_state_text_text_source_set(Evas_Object *obj, const char *part, const c
         txt->text.id_text_source = id_text_source;
 
         text_source = source_txt->text.text.str;
-        _edje_if_string_free(ed, txt->text.text.str);
-        txt->text.text.str = eina_stringshare_add(text_source);
+        _edje_if_string_replace(ed, &txt->text.text.str, text_source);
         txt->text.text.id = 0;
      }
    else
@@ -7106,8 +7103,7 @@ edje_edit_state_text_repch_set(Evas_Object *obj, const char *part, const char *s
      return EINA_FALSE;
 
    txt = (Edje_Part_Description_Text*) pd;
-   _edje_if_string_free(ed, txt->text.repch.str);
-   txt->text.repch.str = eina_stringshare_add(repch);
+   _edje_if_string_replace(ed, &txt->text.repch.str, repch);
    txt->text.repch.id = 0;
 
    edje_object_calc_force(obj);
@@ -7488,7 +7484,7 @@ edje_edit_image_del(Evas_Object *obj, const char* name)
            eet_write(eetf, entry, data, size, 0);
         }
 
-      _edje_if_string_free(ed, de->entry);
+      _edje_if_string_free(ed, &de->entry);
       --ed->file->image_dir->entries_count;
 
       if (de_last->id != de->id)
@@ -7572,8 +7568,7 @@ edje_edit_image_data_add(Evas_Object *obj, const char *name, int id)
    if ((unsigned int) id >= ed->file->image_dir->entries_count) return EINA_FALSE;
 
    de = ed->file->image_dir->entries + id;
-   _edje_if_string_free(ed, de->entry);
-   de->entry = eina_stringshare_add(name);
+   _edje_if_string_replace(ed, &de->entry, name);
    de->source_type = 1;
    de->source_param = 1;
 
@@ -8144,15 +8139,15 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
      }
 
    //Free Edje_Program
-   _edje_if_string_free(ed, epr->name);
-   _edje_if_string_free(ed, epr->signal);
-   _edje_if_string_free(ed, epr->source);
-   _edje_if_string_free(ed, epr->filter.part);
-   _edje_if_string_free(ed, epr->filter.state);
-   _edje_if_string_free(ed, epr->state);
-   _edje_if_string_free(ed, epr->state2);
-   _edje_if_string_free(ed, epr->sample_name);
-   _edje_if_string_free(ed, epr->tone_name);
+   _edje_if_string_free(ed, &epr->name);
+   _edje_if_string_free(ed, &epr->signal);
+   _edje_if_string_free(ed, &epr->source);
+   _edje_if_string_free(ed, &epr->filter.part);
+   _edje_if_string_free(ed, &epr->filter.state);
+   _edje_if_string_free(ed, &epr->state);
+   _edje_if_string_free(ed, &epr->state2);
+   _edje_if_string_free(ed, &epr->sample_name);
+   _edje_if_string_free(ed, &epr->tone_name);
 
    EINA_LIST_FREE(epr->targets, prt)
      free(prt);
@@ -8288,8 +8283,7 @@ edje_edit_program_name_set(Evas_Object *obj, const char *prog, const char* new_n
 
    //printf("SET NAME for program: %s [new name: %s]\n", prog, new_name);
 
-   _edje_if_string_free(ed, epr->name);
-   epr->name = eina_stringshare_add(new_name);
+   _edje_if_string_replace(ed, &epr->name, new_name);
 
    _edje_edit_flag_script_dirty(eed, EINA_TRUE);
 
@@ -8316,10 +8310,9 @@ edje_edit_program_source_set(Evas_Object *obj, const char *prog, const char *sou
 
    /* Remove from program array */
    _edje_program_remove(ed->collection, epr);
-   _edje_if_string_free(ed, epr->source);
 
    /* Insert it back */
-   epr->source = eina_stringshare_add(source);
+   _edje_if_string_replace(ed, &epr->source, source);
    _edje_program_insert(ed->collection, epr);
 
    //Update patterns
@@ -8346,8 +8339,7 @@ edje_edit_program_sample_name_set(Evas_Object *obj, const char *prog, const char
 
    if (!name) return EINA_FALSE;
 
-   _edje_if_string_free(ed, epr->sample_name);
-   epr->sample_name = eina_stringshare_add(name);
+   _edje_if_string_replace(ed, &epr->sample_name, name);
 
    return EINA_TRUE;
 }
@@ -8369,8 +8361,7 @@ edje_edit_program_tone_name_set(Evas_Object *obj, const char *prog, const char *
 
    if (!name) return EINA_FALSE;
 
-   _edje_if_string_free(ed, epr->tone_name);
-   epr->tone_name = eina_stringshare_add(name);
+   _edje_if_string_replace(ed, &epr->tone_name, name);
 
    return EINA_TRUE;
 }
@@ -8450,8 +8441,7 @@ edje_edit_program_filter_part_set(Evas_Object *obj, const char *prog, const char
 
    if (!filter_part) return EINA_FALSE;
 
-   _edje_if_string_free(ed, epr->filter.part);
-   epr->filter.part = eina_stringshare_add(filter_part);
+   _edje_if_string_replace(ed, &epr->filter.part, filter_part);
 
    return EINA_TRUE;
 }
@@ -8473,8 +8463,7 @@ edje_edit_program_filter_state_set(Evas_Object *obj, const char *prog, const cha
 
    if (!filter_state) return EINA_FALSE;
 
-   _edje_if_string_free(ed, epr->filter.state);
-   epr->filter.state = eina_stringshare_add(filter_state);
+   _edje_if_string_replace(ed, &epr->filter.state, filter_state);
 
    return EINA_TRUE;
 }
@@ -8499,10 +8488,9 @@ edje_edit_program_signal_set(Evas_Object *obj, const char *prog, const char *sig
 
    /* Remove from program array */
    _edje_program_remove(ed->collection, epr);
-   _edje_if_string_free(ed, epr->signal);
 
    /* Insert it back */
-   epr->signal = eina_stringshare_add(sig);
+   _edje_if_string_replace(ed, &epr->signal, sig);
    _edje_program_insert(ed->collection, epr);
 
    //Update patterns
@@ -8530,8 +8518,7 @@ edje_edit_program_state_set(Evas_Object *obj, const char *prog, const char *stat
 
    //printf("SET STATE for program: %s\n", prog);
 
-   _edje_if_string_free(ed, epr->state);
-   epr->state = eina_stringshare_add(state);
+   _edje_if_string_replace(ed, &epr->state, state);
 
    return EINA_TRUE;
 }
@@ -8554,8 +8541,7 @@ edje_edit_program_state2_set(Evas_Object *obj, const char *prog, const char *sta
 
    //printf("SET STATE2 for program: %s\n", prog);
 
-   _edje_if_string_free(ed, epr->state2);
-   epr->state2 = eina_stringshare_add(state2);
+   _edje_if_string_replace(ed, &epr->state2, state2);
 
    return EINA_TRUE;
 }
@@ -9061,8 +9047,7 @@ edje_edit_program_api_name_set(Evas_Object *obj, const char *prog, const char* n
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
 
-   _edje_if_string_free(ed, epr->api.name);
-   epr->api.name = eina_stringshare_add(name);
+   _edje_if_string_replace(ed, &epr->api.name, name);
 
    return EINA_TRUE;
 }
@@ -9073,8 +9058,7 @@ edje_edit_program_api_description_set(Evas_Object *obj, const char *prog, const 
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
 
-   _edje_if_string_free(ed, epr->api.description);
-   epr->api.description = eina_stringshare_add(description);
+   _edje_if_string_replace(ed, &epr->api.description, description);
 
    return EINA_TRUE;
 }
@@ -11550,10 +11534,7 @@ _edje_edit_internal_save(Evas_Object *obj, int current_only, Eina_Bool generate_
 
    /* Set compiler name */
    if (strcmp(ef->compiler, "edje_edit"))
-     {
-	_edje_if_string_free(ed, ef->compiler);
-	ef->compiler = (char *)eina_stringshare_add("edje_edit");
-     }
+     _edje_if_string_replace(ed, &ef->compiler, "edje_edit");
 
    if (!_edje_edit_edje_file_save(eetf, ef))
      {
