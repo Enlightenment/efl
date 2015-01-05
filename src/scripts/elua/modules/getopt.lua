@@ -4,8 +4,7 @@
     documentation.
 
     TODO:
-        - arguments that can only be specified once (for now you can check
-          that manually by going over array values of opts)
+        - mutually exclusive groups
         - i18n support
 
     Copyright (c) 2014 Daniel "q66" Kolesa <quaker66@gmail.com>
@@ -29,9 +28,19 @@
     DEALINGS IN THE SOFTWARE.
 ]]
 
+local arg = _G.arg -- Capture global 'arg'
+
 local M = {}
 
 local prefixes = { "-", "--" }
+
+local ssub, sfind, sgsub, sformat, smatch = string.sub,  string.find,
+                                            string.gsub, string.format,
+                                            string.match
+
+local slower, supper, srep = string.lower, string.upper, string.rep
+
+local unpack = table.unpack or unpack
 
 local ac_process_name = function(np, nm)
     if not nm or #nm < 2 then
@@ -44,7 +53,7 @@ local ac_process_name = function(np, nm)
         np[nm] = { nm }
     end
     for i = 1, #nm do
-        local pnm = nm:sub(1, i - 1) .. nm:sub(i + 1)
+        local pnm = ssub(nm, 1, i - 1) .. ssub(nm, i + 1)
         local t = np[pnm]
         if not t then
             t = {}
@@ -67,7 +76,7 @@ local get_autocorrect = function(descs, wrong, vi)
     end
 
     for i = 1, #wrong do
-        local nm = wrong:sub(1, i - 1) .. wrong:sub(i + 1)
+        local nm = ssub(wrong, 1, i - 1) .. ssub(wrong, i + 1)
         local inp = np[nm]
         if inp then
             if inp == true then
@@ -114,34 +123,24 @@ local is_arg = function(opt, j, descs)
     return false
 end
 
-local parse_l = function(opts, opt, descs, args, parser)
-    local optval
-    local i = opt:find("=")
-    if i then
-        opt, optval = opt:sub(1, i - 1), opt:sub(i + 1)
-    end
-
-    local desc = get_desc(opt, 2, descs)
-    local argr = desc[3]
-    if argr or argr == nil then
-        if not optval then
-            if #args == 0 then
-                if argr then
-                    error("option --" .. opt .. " requires an argument", 0)
-                end
-            elseif argr or not is_arg(args[1], 2, descs) then
-                optval = table.remove(args, 1)
-            end
-        end
-    elseif optval then
-        error("option --" .. opt .. " cannot have an argument", 0)
-    end
+local write_arg = function(desc, j, opts, opt, optval, parser, argcounts)
     local rets
     if desc.callback then
         rets = { desc:callback(parser, optval, opts) }
     end
     if not rets or #rets == 0 then rets = { optval } end
     local optn = desc.alias or desc[1] or desc[2]
+    local cnt = desc.max_count or (desc.list and -1 or 1)
+    local acnt = argcounts[optn]
+    if acnt then
+        if cnt >= 0 and acnt >= cnt then
+            error("option " .. prefixes[j] .. opt
+                .. " can be specified at most " .. cnt .. " times", 0)
+        end
+        argcounts[optn] = acnt + 1
+    else
+        argcounts[optn] = 1
+    end
     opts[#opts + 1] = { optn, short = desc[1], long = desc[2],
         alias = desc.alias, val = optval, unpack(rets) }
     local optret = #rets > 1 and rets or rets[1]
@@ -160,62 +159,67 @@ local parse_l = function(opts, opt, descs, args, parser)
     end
 end
 
-local parse_s = function(opts, optstr, descs, args, parser)
-    while optstr ~= "" do
-        local optval
-        local opt = optstr:sub(1, 1)
-        optstr = optstr:sub(2)
-        local desc = get_desc(opt, 1, descs)
-        local argr = desc[3]
-        if argr or argr == nil then
-            if optstr == "" then
-                optstr = nil
-                if #args == 0 then
-                    if argr then
-                        error("option -" .. opt .. " requires an argument", 0)
-                    end
-                elseif argr or not is_arg(args[1], 1, descs) then
-                    optstr = table.remove(args, 1)
-                end
-            end
-            optval, optstr = optstr, ""
-        end
-        local rets
-        if desc.callback then
-            rets = { desc:callback(parser, optval, opts) }
-        end
-        if not rets or #rets == 0 then rets = { optval } end
-        local optn = desc.alias or desc[1] or desc[2]
-        opts[#opts + 1] = { optn, short = desc[1], long = desc[2],
-            alias = desc.alias, val = optval, unpack(rets) }
-        local optret = #rets > 1 and rets or rets[1]
-        if desc.list then
-            desc.list[#desc.list + 1] = optret
-            opts[optn] = desc.list
-        elseif optret ~= nil then
-            opts[optn] = optret
-        else
-            opts[optn] = true
-        end
-        local dopts = desc.opts
-        if    dopts then
-              dopts[#dopts + 1] = opts[#opts]
-              dopts[optn]       = opts[optn ]
-        end
+local parse_l = function(opts, opt, descs, args, parser, argcounts)
+    local optval
+    local i = sfind(opt, "=")
+    if i then
+        opt, optval = ssub(opt, 1, i - 1), ssub(opt, i + 1)
     end
+
+    local desc = get_desc(opt, 2, descs)
+    local argr = desc[3]
+    if argr or argr == nil then
+        if not optval then
+            if #args == 0 then
+                if argr then
+                    error("option --" .. opt .. " requires an argument", 0)
+                end
+            elseif argr or not is_arg(args[1], 2, descs) then
+                optval = table.remove(args, 1)
+            end
+        end
+    elseif optval then
+        error("option --" .. opt .. " cannot have an argument", 0)
+    end
+    write_arg(desc, 2, opts, opt, optval, parser, argcounts)
+end
+
+local parse_s = function(opts, optstr, descs, args, parser, argcounts)
+    local opt = ssub(optstr, 1, 1)
+    local optval = ssub(optstr, 2)
+    local desc = get_desc(opt, 1, descs)
+    local argr = desc[3]
+    if argr or argr == nil then
+        if optval == "" then
+            optval = nil
+            if #args == 0 then
+                if argr then
+                    error("option -" .. opt .. " requires an argument", 0)
+                end
+            elseif argr or not is_arg(args[1], 1, descs) then
+                optval = table.remove(args, 1)
+            end
+        end
+    elseif optval ~= "" then
+        error("option -" .. opt .. " cannot have an argument", 0)
+    else
+        optval = nil
+    end
+    write_arg(desc, 1, opts, opt, optval, parser, argcounts)
 end
 
 local getopt_u  = function(parser)
-    local args  = { unpack(parser.args) }
+    local argcounts = {}
+    local args  = { unpack(parser.args or arg) }
     local descs = parser.descs
     local opts  = {}
-    while #args > 0 and args[1]:sub(1, 1) == "-" and args[1] ~= "-" do
+    while #args > 0 and ssub(args[1], 1, 1) == "-" and args[1] ~= "-" do
         local v = table.remove(args, 1)
         if v == "--" then break end
-        if v:sub(1, 2) == "--" then
-            parse_l(opts, v:sub(3), descs, args, parser)
+        if ssub(v, 1, 2) == "--" then
+            parse_l(opts, ssub(v, 3), descs, args, parser, argcounts)
         else
-            parse_s(opts, v:sub(2), descs, args, parser)
+            parse_s(opts, ssub(v, 2), descs, args, parser, argcounts)
         end
     end
     return opts, args
@@ -293,7 +297,7 @@ end
     A description is represented by a table. The table has this layout:
 
     { shortn, longn, optional, help = helpmsg, metavar = metavar,
-      alias = alias, callback = retcb, list = list
+      alias = alias, callback = retcb, list = list, max_count = max_count
     }
 
     "shortn" refers to the short name. For example if you want your argument
@@ -324,6 +328,10 @@ end
     times, the list will contain all the values provided. The mapping opts[n]
     will refer to the list rather than the last value given like without list.
 
+    The field "max_count" can be used to specify a limit on how many arguments
+    can be provided. Its implicit value is 1, unless a list is provided,
+    in which case it's -1 (which is a value for infinity here).
+
     A description can also be used to specify a category, purely for help
     listing purposes:
 
@@ -349,7 +357,7 @@ end
 local parse = M.parse
 
 local repl_prog = function(str, progn)
-    return (str:gsub("%f[%%]%%prog", progn):gsub("%%%%prog", "%%prog"))
+    return (sgsub(sgsub(str, "%f[%%]%%prog", progn), "%%%%prog", "%%prog"))
 end
 
 local buf_write = function(self, ...)
@@ -360,7 +368,7 @@ end
 local get_metavar = function(desc)
     local mv = desc.metavar
     if not mv and (desc[3] or desc[3] == nil) then
-        mv = desc[2] and desc[2]:upper() or "VAL"
+        mv = desc[2] and supper(desc[2]) or "VAL"
     elseif desc[3] == false then
         mv = nil
     end
@@ -369,11 +377,11 @@ end
 
 local help = function(parser, f, category)
     local usage = parser.usage
-    local progn = parser.prog or parser.args[0] or "program"
+    local progn = parser.prog or (parser.args or arg)[0] or "program"
     if usage then
         usage = repl_prog(usage, progn)
     else
-        usage = ("Usage: %s [OPTIONS]"):format(progn)
+        usage = sformat("Usage: %s [OPTIONS]", progn)
     end
     local buf = { write = buf_write }
     buf:write(usage, "\n")
@@ -418,12 +426,12 @@ local help = function(parser, f, category)
                     local sdf = lls - sln
                     if desc[2] then ln[#ln + 1] = ", " end
                     if sdf > 0 then
-                        ln[#ln + 1] = (" "):rep(sdf)
+                        ln[#ln + 1] = srep(" ", sdf)
                     end
                 elseif not desc[2] and mv then
                     ln[#ln + 1] = mv
                 else
-                    ln[#ln + 1] = (" "):rep(lls + 2)
+                    ln[#ln + 1] = srep(" ", lls + 2)
                 end
                 if desc[2] then
                     ln[#ln + 1] = "--" .. desc[2]
@@ -434,10 +442,10 @@ local help = function(parser, f, category)
                 lln = math.max(lln, #ln)
                 lns[#lns + 1] = { ln, desc.help }
             elseif nign and desc.category then
-                local lcat  = category   and   category:lower() or nil
-                local alias = desc.alias and desc.alias:lower() or nil
+                local lcat  = category   and   slower(category) or nil
+                local alias = desc.alias and slower(desc.alias) or nil
                 iscat = (not category) or (alias                 == lcat)
-                                       or (desc.category:lower() == lcat)
+                                       or (slower(desc.category) == lcat)
                 if iscat then
                     wascat = true
                     lns[#lns + 1] = { false, desc.category }
@@ -514,7 +522,7 @@ end
 
     The header is printed only when given as part of the parser.
 
-    The "The following optins are supported:" line is only printed when there
+    The "The following options are supported:" line is only printed when there
     are options to print.
 
     Same goes for the footer as for the header.
@@ -534,32 +542,46 @@ M.help = function(parser, category, f)
     return pcall(help, parser, f or io.stderr, category)
 end
 
+-- A utility callback to parse a number
+-- If a 'base' field is present in the description, uses that.
+M.number_cb = function(desc, parser, v)
+    local n = tonumber(v, desc.base)
+    if not n then
+        error("bad number value: " .. v, 0)
+    end
+    return n
+end
+
 -- A utility callback for geometry parsing (--foo=x:y:w:h).
 M.geometry_parse_cb = function(desc, parser, v)
-    local x, y, w, h = v:match("^(%d+):(%d+):(%d+):(%d+)$")
+    local x, y, w, h = smatch(v, "^(%d+):(%d+):(%d+):(%d+)$")
     if not x then
-        error("bad geometry value: " .. v, 0)
+        error("bad geometry value (X:Y:W:H expected): " .. v, 0)
     end
-    return x, y, w, h
+    return tonumber(x), tonumber(y), tonumber(w), tonumber(h)
 end
 
 -- A utility callback for size parsing (--foo=WxH).
 M.size_parse_cb = function(desc, parser, v)
-    local w, h = v:match("^(%d+)x(%d+)$")
+    local w, h = smatch(v, "^(%d+)x(%d+)$")
     if not w then
-        error("bad size value: " .. v, 0)
+        error("bad size value (WxH expected): " .. v, 0)
     end
-    return w, h
+    return tonumber(w), tonumber(h)
 end
 
 -- A utility callback generator for help. Returns a utility callback when
 -- called with file stream as an argument (optional, defaults to stderr).
+-- If the second argument is true, exits the program with successful exit code.
 -- For help args that take a value, the value will be used as a category name.
-M.help_cb = function(fstream)
+M.help_cb = function(fstream, exit)
     return function(desc, parser, v)
         local succ, err = M.help(parser, v, fstream)
         if not succ then
             error(err, 0)
+        end
+        if exit then
+            os.exit(0, true) -- need 0 for lua 5.1
         end
     end
 end
