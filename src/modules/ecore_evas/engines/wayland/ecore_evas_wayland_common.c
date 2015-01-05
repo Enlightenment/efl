@@ -572,6 +572,7 @@ _ecore_evas_wl_common_free(Ecore_Evas *ee)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!ee) return;
    wdata = ee->engine.data;
    if (wdata->frame_callback) wl_callback_destroy(wdata->frame_callback);
    wdata->frame_callback = NULL;
@@ -595,6 +596,7 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!ee) return;
    if (w < 1) w = 1;
    if (h < 1) h = 1;
 
@@ -1162,6 +1164,7 @@ _ecore_evas_wl_common_aspect_set(Ecore_Evas *ee, double aspect)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!ee) return;
    if (ee->prop.aspect == aspect) return;
    ee->prop.aspect = aspect;
 }
@@ -1182,6 +1185,7 @@ _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int la
    Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
    Evas_Object *old;
 
+   if (!ee) return;
    old = ee->prop.cursor.object;
    if (obj == NULL)
      {
@@ -1335,6 +1339,7 @@ _ecore_evas_wl_common_pre_render(Ecore_Evas *ee)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!ee) return;
    if (ee->in_async_render)
      {
         /* EDBG("ee=%p is rendering asynchronously, skip", ee); */
@@ -1437,6 +1442,7 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
    Ecore_Wl_Window *win = NULL;
    Ecore_Evas_Engine_Wl_Data *wdata;
 
+   if (!ee) return;
    if (!(wdata = ee->engine.data)) return 0;
    if (!(win = wdata->win)) return 0;
 
