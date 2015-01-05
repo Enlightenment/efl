@@ -630,39 +630,6 @@ struct _Evas_GL_Texture_Async_Preload
    Eina_Bool unpack_row_length;
 };
 
-#if 0
-extern Evas_GL_Program_Source shader_rect_frag_src;
-extern Evas_GL_Program_Source shader_rect_vert_src;
-extern Evas_GL_Program_Source shader_font_frag_src;
-extern Evas_GL_Program_Source shader_font_vert_src;
-
-extern Evas_GL_Program_Source shader_img_frag_src;
-extern Evas_GL_Program_Source shader_img_vert_src;
-extern Evas_GL_Program_Source shader_img_nomul_frag_src;
-extern Evas_GL_Program_Source shader_img_nomul_vert_src;
-extern Evas_GL_Program_Source shader_img_bgra_frag_src;
-extern Evas_GL_Program_Source shader_img_bgra_vert_src;
-extern Evas_GL_Program_Source shader_img_bgra_nomul_frag_src;
-extern Evas_GL_Program_Source shader_img_bgra_nomul_vert_src;
-extern Evas_GL_Program_Source shader_img_mask_frag_src;
-extern Evas_GL_Program_Source shader_img_mask_vert_src;
-
-extern Evas_GL_Program_Source shader_yuv_frag_src;
-extern Evas_GL_Program_Source shader_yuv_vert_src;
-extern Evas_GL_Program_Source shader_yuv_nomul_frag_src;
-extern Evas_GL_Program_Source shader_yuv_nomul_vert_src;
-
-extern Evas_GL_Program_Source shader_yuy2_frag_src;
-extern Evas_GL_Program_Source shader_yuy2_vert_src;
-extern Evas_GL_Program_Source shader_yuy2_nomul_frag_src;
-extern Evas_GL_Program_Source shader_yuy2_nomul_vert_src;
-
-extern Evas_GL_Program_Source shader_tex_frag_src;
-extern Evas_GL_Program_Source shader_tex_vert_src;
-extern Evas_GL_Program_Source shader_tex_nomul_frag_src;
-extern Evas_GL_Program_Source shader_tex_nomul_vert_src;
-#endif
-
 /* GL_Common function that are used by gl_generic inherited module */
 EAPI void         evas_gl_common_image_all_unload(Evas_Engine_GL_Context *gc);
 EAPI void         evas_gl_common_image_ref(Evas_GL_Image *im);

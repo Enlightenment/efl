@@ -1414,6 +1414,7 @@ static int
 _evas_gl_common_context_push(int rtype,
                              Evas_Engine_GL_Context *gc,
                              Evas_GL_Texture *tex,
+                             Evas_GL_Texture *texm,
                              GLuint prog,
                              int x, int y, int w, int h,
                              Eina_Bool blend,
@@ -1442,6 +1443,7 @@ _evas_gl_common_context_push(int rtype,
           {
              if ((gc->pipe[i].region.type == rtype)
                  && (!tex || gc->pipe[i].shader.cur_tex == current_tex)
+                 && (!texm || gc->pipe[i].shader.cur_texm == texm->pt->texture)
                  && (gc->pipe[i].shader.cur_prog == prog)
                  && (gc->pipe[i].shader.smooth == smooth)
                  && (gc->pipe[i].shader.blend == blend)
@@ -1518,6 +1520,8 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
    Eina_Bool blend = EINA_FALSE;
    GLuint prog = gc->shared->shader[SHADER_RECT].prog;
    int pn = 0, i;
+
+   // FIXME: Line masking is not implemented
 
    if (!(gc->dc->render_op == EVAS_RENDER_COPY) && (a < 255))
      blend = EINA_TRUE;
@@ -1910,7 +1914,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
      }
 
    pn = _evas_gl_common_context_push(RTYPE_IMAGE,
-                                     gc, tex,
+                                     gc, tex, mtex,
                                      prog,
                                      x, y, w, h,
                                      blend,
@@ -1981,7 +1985,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
         PUSH_TEXSAM(pn, samx, samy);
         PUSH_TEXSAM(pn, samx, samy);
         PUSH_TEXSAM(pn, samx, samy);
-        
+
         PUSH_TEXSAM(pn, samx, samy);
         PUSH_TEXSAM(pn, samx, samy);
         PUSH_TEXSAM(pn, samx, samy);
@@ -2011,7 +2015,7 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
      prog = gc->shared->shader[SHADER_FONT_MASK].prog;
 
    pn = _evas_gl_common_context_push(RTYPE_FONT,
-                                     gc, tex,
+                                     gc, tex, mtex,
                                      prog,
                                      x, y, w, h,
                                      1,
@@ -2100,7 +2104,7 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
                                                           SHADER_YUV_MASK, SHADER_YUV_MASK)].prog;
 
    pn = _evas_gl_common_context_push(RTYPE_YUV,
-                                     gc, tex,
+                                     gc, tex, mtex,
                                      prog,
                                      x, y, w, h,
                                      blend,
@@ -2202,7 +2206,7 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
                                                           SHADER_YUY2_MASK, SHADER_YUY2_MASK)].prog;
 
    pn = _evas_gl_common_context_push(RTYPE_YUY2,
-                                     gc, tex,
+                                     gc, tex, mtex,
                                      prog,
                                      x, y, w, h,
                                      blend,
@@ -2295,7 +2299,7 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
                                                           SHADER_NV12_MASK, SHADER_NV12_MASK)].prog;
 
    pn = _evas_gl_common_context_push(RTYPE_NV12,
-                                     gc, tex,
+                                     gc, tex, mtex,
                                      prog,
                                      x, y, w, h,
                                      blend,
@@ -2396,7 +2400,7 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
       SHADER_RGB_A_PAIR_MASK, SHADER_RGB_A_PAIR_MASK)].prog;
 
    pn = _evas_gl_common_context_push(RTYPE_IMAGE,
-                                     gc, tex,
+                                     gc, tex, mtex,
                                      prog,
                                      x, y, w, h,
                                      EINA_TRUE,
@@ -2630,7 +2634,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
      }
 
    pn = _evas_gl_common_context_push(RTYPE_MAP,
-                                     gc, tex,
+                                     gc, tex, mtex,
                                      prog,
                                      x, y, w, h,
                                      blend,

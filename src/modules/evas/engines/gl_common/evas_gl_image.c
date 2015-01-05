@@ -1117,7 +1117,7 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
    mask_y = dc->clip.mask_y;
    if (mask)
      {
-        evas_gl_common_image_update(gc, im);
+        evas_gl_common_image_update(gc, mask);
         if (!mask->tex)
           {
              ERR("Failed to apply mask image");
@@ -1160,19 +1160,7 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
        ((gc->shared->info.tune.cutout.max > 0) &&
            (gc->dc->cutout.active > gc->shared->info.tune.cutout.max)))
      {
-        if (mask)
-          {
-             _evas_gl_common_image_push(gc, im,
-                                        dx, dy, dw, dh,
-                                        sx, sy, sw, sh,
-                                        gc->dc->clip.x, gc->dc->clip.y,
-                                        gc->dc->clip.w, gc->dc->clip.h,
-                                        r, g, b, a,
-                                        mask, mask_x, mask_y,
-                                        smooth,
-                                        yuv, yuy2, nv12, rgb_a_pair);
-          }
-        else if (gc->dc->clip.use)
+        if (mask || gc->dc->clip.use)
           {
              _evas_gl_common_image_push(gc, im,
                                         dx, dy, dw, dh,
