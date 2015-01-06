@@ -205,7 +205,7 @@ eo_class_generator(std::ostream& out, eo_class const& cls)
        << "struct " << cls.name << endl
        << '{' << endl
        << function_declarations(cls)
-       << events(cls)
+       << events(cls, cls.own_events) << endl
        << eo_class_getter(cls)
        << class_implicit_conversion_declaration(cls)
        << abstract_address_of(cls)
@@ -226,7 +226,7 @@ eo_class_generator(std::ostream& out, eo_class const& cls)
        << destructor(cls)
        << constructor_method_function_declarations(cls)
        << function_declarations(cls)
-       << events(cls)
+       << events(cls, cls.concrete_events) << endl
        << eo_class_getter(cls)
        << concrete_address_of(cls)
         << "private:" << endl

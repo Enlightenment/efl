@@ -107,7 +107,8 @@ eo_class_validate(const eo_class& cls)
           }
      }
    // events
-   _validate(cls.events, cls);
+   _validate(cls.own_events, cls);
+   _validate(cls.concrete_events, cls);
 }
 
 } } // namespace efl { namespace eolian {

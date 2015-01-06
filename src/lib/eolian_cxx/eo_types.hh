@@ -230,7 +230,8 @@ struct eo_class
    ancestors_container_type ancestors;
    constructors_container_type constructors;
    functions_container_type functions;
-   events_container_type events;
+   events_container_type own_events;
+   events_container_type concrete_events;
    std::string comment;
    std::string name_space;
 };
@@ -268,6 +269,8 @@ struct eo_event
    std::string eo_name;
    //parameters_container_type params; // XXX desirable.
    std::string comment;
+
+   bool operator<(eo_event const& other) const { return name < other.name; }
 };
 
 

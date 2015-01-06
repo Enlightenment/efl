@@ -1,6 +1,7 @@
 
 #include <vector>
 #include <set>
+#include <map>
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
@@ -22,6 +23,7 @@
 namespace eolian_cxx {
 
 extern efl::eina::log_domain domain;
+typedef std::map<efl::eolian::eo_event, bool> event_map;
 
 void
 add_ancestor_recursive(const char* klass_name, std::set<std::string>& ancestor)
@@ -45,6 +47,40 @@ add_ancestor_recursive(const char* klass_name, std::set<std::string>& ancestor)
      {
         add_ancestor_recursive(static_cast<const char*>(curr), ancestor);
      }
+   eina_iterator_free(inheritances);
+}
+
+void
+add_events_recursive(event_map& events, Eolian_Class const& klass, std::set<std::string>& ancestors)
+{
+   for (efl::eolian::eo_event const& e : event_list(klass))
+     {
+        auto it = events.find(e);
+        if (it == events.end())
+          events[e] = true;
+        else
+          it->second = false;
+     }
+
+   Eina_Iterator* inheritances = ::eolian_class_inherits_get(&klass);
+   void* curr = 0;
+
+   EINA_ITERATOR_FOREACH(inheritances, curr)
+     {
+        const char* ancestor_name = static_cast<const char*>(curr);
+        if (!ancestor_name || ancestors.find(ancestor_name) != ancestors.end())
+          continue;
+
+        Eolian_Class const* ancestor_klass = ::eolian_class_get_by_name(ancestor_name);
+        if (!ancestor_klass)
+          {
+             std::cerr << "Error: could not get eolian class name `" << ancestor_name << "'" << std::endl;
+             continue;
+          }
+        ancestors.insert(ancestor_name);
+        add_events_recursive(events, *ancestor_klass, ancestors);
+     }
+
    eina_iterator_free(inheritances);
 }
 
@@ -199,8 +235,24 @@ void
 convert_eolian_events(efl::eolian::eo_class& cls, Eolian_Class const& klass)
 {
    efl::eolian::events_container_type events = event_list(klass);
-   cls.events.reserve(cls.events.size() + events.size());
-   cls.events.insert(cls.events.end(), events.begin(), events.end());
+   cls.own_events.reserve(cls.own_events.size() + events.size());
+   cls.own_events.insert(cls.own_events.end(), events.begin(), events.end());
+
+   event_map concrete_events;
+   std::set<std::string> ancestors;
+
+   add_events_recursive(concrete_events, klass, ancestors);
+
+   for (auto const& e : events)
+     {
+        concrete_events[e] = true;
+     }
+
+   for (auto const& pair : concrete_events)
+     {
+        if (pair.second)
+          cls.concrete_events.push_back(pair.first);
+     }
 }
 
 efl::eolian::eo_class

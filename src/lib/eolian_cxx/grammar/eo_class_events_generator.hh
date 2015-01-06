@@ -49,7 +49,7 @@ operator<<(std::ostream& out, event_callback_add const& x)
        << tab(8) << "::efl::eo::callback_priorities::default_)" << endl
        << tab(1) << "{" << endl
        << tab(2) << "typedef typename std::remove_reference<F>::type function_type;" << endl
-       << tab(2) << "::std::unique_ptr<function_type> f ( new function_type(std::move(callback_)) );" << endl
+       << tab(2) << "::std::unique_ptr<function_type> f ( new function_type(std::forward<F>(callback_)) );" << endl
        << tab(2) << "eo_do(" << add_cast_to_t(x._add_cast_to_t) << "_concrete_eo_ptr()," << endl
        << tab(4) << "eo_event_callback_priority_add" << endl
        << tab(4) << "(" << x._event.eo_name << ", priority_," << endl
@@ -88,15 +88,16 @@ operator<<(std::ostream& out, event_callback_call const& x)
 struct events
 {
    eo_class const& _cls;
+   events_container_type const& _events;
    bool _add_cast_to_t;
-   events(eo_class const& cls, bool add_cast_to_t = false)
-     : _cls(cls), _add_cast_to_t(add_cast_to_t) {}
+   events(eo_class const& cls, events_container_type const& evts, bool add_cast_to_t = false)
+     : _cls(cls), _events(evts), _add_cast_to_t(add_cast_to_t) {}
 };
 
 inline std::ostream&
 operator<<(std::ostream& out, events const& x)
 {
-   for (eo_event const& e : x._cls.events)
+   for (eo_event const& e : x._events)
      {
         out << event_callback_add(e, x._cls, x._add_cast_to_t) << endl
            << event_callback_call(e, x._add_cast_to_t);
