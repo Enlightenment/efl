@@ -120,6 +120,8 @@ static Eina_Bool
 _ecore_drm_dbus_session_take(const char *session)
 {
    Eldbus_Proxy *proxy;
+   Eldbus_Message *msg, *reply;
+   const char *errname, *errmsg;
 
    if ((session) && (strcmp(session, dsession)))
      {
@@ -135,9 +137,18 @@ _ecore_drm_dbus_session_take(const char *session)
      }
 
    /* send call to take control */
-   if (eldbus_proxy_call(proxy, "TakeControl", NULL, NULL, -1, "b", EINA_FALSE))
+   if (!(msg = eldbus_proxy_method_call_new(proxy, "TakeControl")))
      {
-        ERR("Could not send message to proxy");
+        ERR("Could not create method call for proxy");
+        return EINA_FALSE;
+     }
+
+   eldbus_message_arguments_append(msg, "b", EINA_FALSE);
+
+   reply = eldbus_proxy_send_and_block(proxy, msg, -1);
+   if (eldbus_message_error_get(reply, &errname, &errmsg))
+     {
+        ERR("Eldbus Message Error: %s %s", errname, errmsg);
         return EINA_FALSE;
      }
 
@@ -148,6 +159,8 @@ static Eina_Bool
 _ecore_drm_dbus_session_release(const char *session)
 {
    Eldbus_Proxy *proxy;
+   Eldbus_Message *msg, *reply;
+   const char *errname, *errmsg;
 
    if ((session) && (strcmp(session, dsession)))
      {
@@ -163,8 +176,18 @@ _ecore_drm_dbus_session_release(const char *session)
      }
 
    /* send call to release control */
-   if (!eldbus_proxy_call(proxy, "ReleaseControl", NULL, NULL, -1, ""))
-     ERR("Could not send ReleaseControl message to proxy");
+   if (!(msg = eldbus_proxy_method_call_new(proxy, "ReleaseControl")))
+     {
+        ERR("Could not create method call for proxy");
+        return EINA_FALSE;
+     }
+
+   reply = eldbus_proxy_send_and_block(proxy, msg, -1);
+   if (eldbus_message_error_get(reply, &errname, &errmsg))
+     {
+        ERR("Eldbus Message Error: %s %s", errname, errmsg);
+        return EINA_FALSE;
+     }
 
    return EINA_TRUE;
 }
