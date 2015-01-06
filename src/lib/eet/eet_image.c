@@ -314,10 +314,6 @@ eet_data_image_jpeg_alpha_convert(int         *size,
 
 /*---*/
 
-static int _eet_image_words_bigendian = -1;
-
-/*---*/
-
 #define SWAP64(x) eina_swap64(x)
 #define SWAP32(x) eina_swap32(x)
 #define SWAP16(x) eina_swap16(x)
@@ -339,6 +335,37 @@ static int _eet_image_words_bigendian = -1;
 #define CONV16(x) {if (_eet_image_words_bigendian) {SWAP16(x); }}
 #define CONV32(x) {if (_eet_image_words_bigendian) {SWAP32(x); }}
 #define CONV64(x) {if (_eet_image_words_bigendian) {SWAP64(x); }}
+
+/*---*/
+
+static int _eet_image_words_bigendian = -1;
+
+static inline void
+_eet_image_endian_check(void)
+{
+   if (_eet_image_words_bigendian == -1)
+     {
+        unsigned long int v;
+
+        v = htonl(0x12345678);
+        if (v == 0x12345678)
+          _eet_image_words_bigendian = 1;
+        else
+          _eet_image_words_bigendian = 0;
+     }
+}
+
+static inline void
+_eet_image_endian_swap(void *data, unsigned int length)
+{
+   if (_eet_image_words_bigendian)
+     {
+        unsigned int *buffer = data;
+        unsigned int i;
+
+        for (i = 0; i < length; i++) SWAP32(buffer[i]);
+     }
+}
 
 /*---*/
 
@@ -1067,45 +1094,29 @@ eet_data_image_lossless_convert(int         *size,
                                 unsigned int h,
                                 int          alpha)
 {
-   if (_eet_image_words_bigendian == -1)
-     {
-        unsigned long int v;
+   unsigned char *d;
+   int *header;
 
-        v = htonl(0x12345678);
-        if (v == 0x12345678)
-          _eet_image_words_bigendian = 1;
-        else
-          _eet_image_words_bigendian = 0;
-     }
+   _eet_image_endian_check();
 
-   {
-      unsigned char *d;
-      int *header;
+   d = malloc((w * h * 4) + (8 * 4));
+   if (!d)
+     return NULL;
 
-      d = malloc((w * h * 4) + (8 * 4));
-      if (!d)
-        return NULL;
+   header = (int *)d;
+   memset(d, 0, 32);
 
-      header = (int *)d;
-      memset(d, 0, 32);
+   header[0] = 0xac1dfeed;
+   header[1] = w;
+   header[2] = h;
+   header[3] = alpha;
 
-      header[0] = 0xac1dfeed;
-      header[1] = w;
-      header[2] = h;
-      header[3] = alpha;
+   memcpy(d + 32, data, w * h * 4);
 
-      memcpy(d + 32, data, w * h * 4);
+   _eet_image_endian_swap(header, ((w * h) + 8));
 
-      if (_eet_image_words_bigendian)
-        {
-           unsigned int i;
-
-           for (i = 0; i < ((w * h) + 8); i++) SWAP32(header[i]);
-        }
-
-      *size = ((w * h * 4) + (8 * 4));
-      return d;
-   }
+   *size = ((w * h * 4) + (8 * 4));
+   return d;
 }
 
 static void *
@@ -1116,16 +1127,7 @@ eet_data_image_lossless_compressed_convert(int         *size,
                                            int          alpha,
                                            int          compression)
 {
-   if (_eet_image_words_bigendian == -1)
-     {
-        unsigned long int v;
-
-        v = htonl(0x12345678);
-        if (v == 0x12345678)
-          _eet_image_words_bigendian = 1;
-        else
-          _eet_image_words_bigendian = 0;
-     }
+   _eet_image_endian_check();
 
    {
       unsigned char *d, *comp;
@@ -1144,7 +1146,7 @@ eet_data_image_lossless_compressed_convert(int         *size,
            if (!bigend_data) return NULL;
 
            memcpy(bigend_data, data, w * h * 4);
-           for (i = 0; i < w * h; i++) SWAP32(bigend_data[i]);
+           _eet_image_endian_swap(bigend_data, w * h);
 
            data = (const char *) bigend_data;
         }
@@ -1200,13 +1202,8 @@ eet_data_image_lossless_compressed_convert(int         *size,
       header[3] = alpha;
       header[4] = compression;
 
-      if (_eet_image_words_bigendian)
-        {
-           unsigned int i;
-           
-           for (i = 0; i < 8; i++) SWAP32(header[i]);
-           free(bigend_data);
-        }
+      _eet_image_endian_swap(header, 8);
+      free(bigend_data);
 
       memcpy(d + (8 * sizeof(int)), comp, buflen);
       *size = (8 * sizeof(int)) + buflen;
@@ -1538,6 +1535,8 @@ finish:
    return result;
 }
 
+
+
 static void *
 eet_data_image_jpeg_convert(int         *size,
                             const void  *data,
@@ -1636,16 +1635,7 @@ eet_data_image_jpeg_alpha_convert(int         *size,
 
    (void)alpha; /* unused */
 
-   if (_eet_image_words_bigendian == -1)
-     {
-        unsigned long int v;
-
-        v = htonl(0x12345678);
-        if (v == 0x12345678)
-          _eet_image_words_bigendian = 1;
-        else
-          _eet_image_words_bigendian = 0;
-     }
+   _eet_image_endian_check();
 
    {
       const int *ptr;
@@ -1796,12 +1786,7 @@ eet_data_image_jpeg_alpha_convert(int         *size,
    header[0] = 0xbeeff00d;
    header[1] = sz1;
    header[2] = sz2;
-   if (_eet_image_words_bigendian)
-     {
-        int i;
-
-        for (i = 0; i < 3; i++) SWAP32(header[i]);
-     }
+   _eet_image_endian_swap(header, 3);
 
    memcpy(d + 12, d1, sz1);
    memcpy(d + 12 + sz1, d2, sz2);
@@ -2160,16 +2145,7 @@ eet_data_image_header_decode_cipher(const void   *data,
           }
      }
 
-   if (_eet_image_words_bigendian == -1)
-     {
-        unsigned long int v;
-
-        v = htonl(0x12345678);
-        if (v == 0x12345678)
-          _eet_image_words_bigendian = 1;
-        else
-          _eet_image_words_bigendian = 0;
-     }
+   _eet_image_endian_check();
 
    if (size < 32)
      {
@@ -2178,12 +2154,7 @@ eet_data_image_header_decode_cipher(const void   *data,
      }
 
    memcpy(header, data, 32);
-   if (_eet_image_words_bigendian)
-     {
-        int i;
-
-        for (i = 0; i < 8; i++) SWAP32(header[i]);
-     }
+   _eet_image_endian_swap(header, 8);
 
    if ((unsigned)header[0] == 0xac1dfeed)
      {
@@ -2515,12 +2486,7 @@ _eet_data_image_decode_inside(const void   *data,
                }
           }
         /* Fix swapiness. */
-        if (_eet_image_words_bigendian)
-          {
-             unsigned int x;
-
-             for (x = 0; x < (w * h); x++) SWAP32(d[x]);
-          }
+        _eet_image_endian_swap(d, w * h);
      }
    else if (comp == 0 && lossy == EET_IMAGE_JPEG)
      {
@@ -2531,12 +2497,7 @@ _eet_data_image_decode_inside(const void   *data,
              int sz1, sz2;
 
              memcpy(header, data, 32);
-             if (_eet_image_words_bigendian)
-               {
-                  int i;
-
-                  for (i = 0; i < 8; i++) SWAP32(header[i]);
-               }
+             _eet_image_endian_swap(header, 8);
 
              sz1 = header[1];
              sz2 = header[2];
