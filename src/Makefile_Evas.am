@@ -1896,6 +1896,7 @@ tests/evas/evas_test_render_engines.c \
 tests/evas/evas_test_filters.c \
 tests/evas/evas_test_image.c \
 tests/evas/evas_test_mesh.c \
+tests/evas/evas_test_mask.c \
 tests/evas/evas_tests_helpers.h \
 tests/evas/evas_suite.h
 
