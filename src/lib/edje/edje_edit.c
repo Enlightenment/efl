@@ -1760,6 +1760,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    EDIT_EMN(RECTANGLE, Edje_Part_Description_Common, de);
    EDIT_EMN(TEXT, Edje_Part_Description_Text, de);
    EDIT_EMN(IMAGE, Edje_Part_Description_Image, de);
+   EDIT_EMN(PROXY, Edje_Part_Description_Proxy, de);
    EDIT_EMN(SWALLOW, Edje_Part_Description_Common, de);
    EDIT_EMN(TEXTBLOCK, Edje_Part_Description_Text, de);
    EDIT_EMN(GROUP, Edje_Part_Description_Common, de);
@@ -2165,6 +2166,7 @@ edje_edit_group_alias_add(Evas_Object *obj, const char *group_name, const char *
    EDIT_EMN(RECTANGLE, Edje_Part_Description_Common, de);
    EDIT_EMN(TEXT, Edje_Part_Description_Text, de);
    EDIT_EMN(IMAGE, Edje_Part_Description_Image, de);
+   EDIT_EMN(PROXY, Edje_Part_Description_Proxy, de);
    EDIT_EMN(SWALLOW, Edje_Part_Description_Common, de);
    EDIT_EMN(TEXTBLOCK, Edje_Part_Description_Text, de);
    EDIT_EMN(GROUP, Edje_Part_Description_Common, de);
