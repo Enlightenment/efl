@@ -147,20 +147,20 @@ ecore_drm_launcher_connect(Ecore_Drm_Device *dev)
 EAPI void
 ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev)
 {
-   if (logind)
-     {
-        logind = EINA_FALSE;
-        _ecore_drm_logind_disconnect(dev);
-     }
-
-   if (!ecore_drm_tty_close(dev))
-     ERR("Launcher: failed to close tty\n");
-
    if (dev->tty.event_hdlr) ecore_event_handler_del(dev->tty.event_hdlr);
    dev->tty.event_hdlr = NULL;
 
    if (dev->tty.switch_hdlr) ecore_event_handler_del(dev->tty.switch_hdlr);
    dev->tty.switch_hdlr = NULL;
+
+   if (!ecore_drm_tty_close(dev))
+     ERR("Launcher: failed to close tty\n");
+
+   if (logind)
+     {
+        logind = EINA_FALSE;
+        _ecore_drm_logind_disconnect(dev);
+     }
 }
 
 static int
