@@ -6694,7 +6694,7 @@ _elm_genlist_item_expanded_get(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it)
 {
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
 
-   return it->item->expanded;
+   return GL_IT(it)->expanded;
 }
 
 EOLIAN static int
@@ -6702,7 +6702,7 @@ _elm_genlist_item_expanded_depth_get(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it)
 {
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it, 0);
 
-   return it->item->expanded_depth;
+   return GL_IT(it)->expanded_depth;
 }
 
 static Eina_Bool
