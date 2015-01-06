@@ -6823,7 +6823,7 @@ _elm_genlist_item_all_contents_unset(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, 
    EINA_LIST_FREE(it->contents, content)
      {
         elm_widget_sub_object_del(WIDGET(it), content);
-        evas_object_smart_member_del(content);
+        edje_object_part_unswallow(VIEW(it), content);
         evas_object_hide(content);
         if (l) *l = eina_list_append(*l, content);
      }
