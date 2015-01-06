@@ -1535,15 +1535,85 @@ finish:
    return result;
 }
 
-
-
-static void *
-eet_data_image_jpeg_convert(int         *size,
-                            const void  *data,
+static inline void *
+_eet_data_image_grey_encode(const void *data,
                             unsigned int w,
                             unsigned int h,
-                            int          alpha,
-                            int          quality)
+                            int quality,
+                            int *size)
+{
+   const int *ptr;
+   void *dst = NULL;
+   size_t sz = 0;
+   struct _JPEG_error_mgr jerr;
+   JSAMPROW *jbuf;
+   struct jpeg_compress_struct cinfo;
+   unsigned char *buf;
+
+   buf = alloca(3 * w);
+
+   cinfo.err = jpeg_std_error(&(jerr.pub));
+   jerr.pub.error_exit = _eet_image_jpeg_error_exit_cb;
+   jerr.pub.emit_message = _eet_image_jpeg_emit_message_cb;
+   jerr.pub.output_message = _eet_image_jpeg_output_message_cb;
+   if (setjmp(jerr.setjmp_buffer))
+     {
+        return NULL;
+     }
+
+   jpeg_create_compress(&cinfo);
+   if (eet_jpeg_membuf_dst(&cinfo, &dst, &sz))
+     {
+        jpeg_destroy_compress(&cinfo);
+        return NULL;
+     }
+
+   cinfo.image_width = w;
+   cinfo.image_height = h;
+   cinfo.input_components = 1;
+   cinfo.in_color_space = JCS_GRAYSCALE;
+   jpeg_set_defaults(&cinfo);
+   jpeg_set_quality(&cinfo, quality, TRUE);
+   if (quality >= 90)
+     {
+        cinfo.comp_info[0].h_samp_factor = 1;
+        cinfo.comp_info[0].v_samp_factor = 1;
+        cinfo.comp_info[1].h_samp_factor = 1;
+        cinfo.comp_info[1].v_samp_factor = 1;
+        cinfo.comp_info[2].h_samp_factor = 1;
+        cinfo.comp_info[2].v_samp_factor = 1;
+     }
+
+   jpeg_start_compress(&cinfo, TRUE);
+
+   while (cinfo.next_scanline < cinfo.image_height)
+     {
+        unsigned int i, j;
+
+        ptr = ((const int *)data) + cinfo.next_scanline * w;
+        /* convert scaline from ARGB to RGB packed */
+        for (j = 0, i = 0; i < w; i++)
+          {
+             buf[j++] = ((*ptr) >> 24) & 0xff;
+             ptr++;
+          }
+        jbuf = (JSAMPROW *)(&buf);
+        jpeg_write_scanlines(&cinfo, jbuf, 1);
+     }
+
+   jpeg_finish_compress(&cinfo);
+   jpeg_destroy_compress(&cinfo);
+
+   *size = sz;
+   return dst;
+}
+
+static inline void *
+_eet_data_image_rgb_encode(const void *data,
+                           unsigned int w,
+                           unsigned int h,
+                           int quality,
+                           int *size)
 {
    struct jpeg_compress_struct cinfo;
    struct _JPEG_error_mgr jerr;
@@ -1552,8 +1622,6 @@ eet_data_image_jpeg_convert(int         *size,
    size_t sz = 0;
    JSAMPROW *jbuf;
    unsigned char *buf;
-
-   (void)alpha; /* unused */
 
    buf = alloca(3 * w);
 
@@ -1621,11 +1689,22 @@ eet_data_image_jpeg_convert(int         *size,
 }
 
 static void *
+eet_data_image_jpeg_convert(int         *size,
+                            const void  *data,
+                            unsigned int w,
+                            unsigned int h,
+                            int          alpha EINA_UNUSED,
+                            int          quality)
+{
+   return _eet_data_image_rgb_encode(data, w, h, quality, size);
+}
+
+static void *
 eet_data_image_jpeg_alpha_convert(int         *size,
                                   const void  *data,
                                   unsigned int w,
                                   unsigned int h,
-                                  int          alpha,
+                                  int          alpha EINA_UNUSED,
                                   int          quality)
 {
    unsigned char *d1, *d2;
@@ -1633,147 +1712,18 @@ eet_data_image_jpeg_alpha_convert(int         *size,
    int *header;
    int sz1, sz2;
 
-   (void)alpha; /* unused */
-
    _eet_image_endian_check();
 
-   {
-      const int *ptr;
-      void *dst = NULL;
-      size_t sz = 0;
-      struct _JPEG_error_mgr jerr;
-      JSAMPROW *jbuf;
-      struct jpeg_compress_struct cinfo;
-      unsigned char *buf;
+   d1 = _eet_data_image_rgb_encode(data, w, h, quality, &sz1);
+   d2 = _eet_data_image_grey_encode(data, w, h, quality, &sz2);
 
-      buf = alloca(3 * w);
-
-      cinfo.err = jpeg_std_error(&(jerr.pub));
-      jerr.pub.error_exit = _eet_image_jpeg_error_exit_cb;
-      jerr.pub.emit_message = _eet_image_jpeg_emit_message_cb;
-      jerr.pub.output_message = _eet_image_jpeg_output_message_cb;
-      if (setjmp(jerr.setjmp_buffer))
+   if (!d1 || !d2)
+     {
+        free(d1);
+        free(d2);
         return NULL;
+     }
 
-      jpeg_create_compress(&cinfo);
-      if (eet_jpeg_membuf_dst(&cinfo, &dst, &sz))
-        {
-           jpeg_destroy_compress(&cinfo);
-           return NULL;
-        }
-
-      cinfo.image_width = w;
-      cinfo.image_height = h;
-      cinfo.input_components = 3;
-      cinfo.in_color_space = JCS_RGB;
-      cinfo.optimize_coding = FALSE;
-      cinfo.dct_method = JDCT_ISLOW; // JDCT_FLOAT JDCT_IFAST(quality loss)
-      if (quality < 60) cinfo.dct_method = JDCT_IFAST;
-      jpeg_set_defaults(&cinfo);
-      jpeg_set_quality(&cinfo, quality, TRUE);
-      if (quality >= 90)
-        {
-           cinfo.comp_info[0].h_samp_factor = 1;
-           cinfo.comp_info[0].v_samp_factor = 1;
-           cinfo.comp_info[1].h_samp_factor = 1;
-           cinfo.comp_info[1].v_samp_factor = 1;
-           cinfo.comp_info[2].h_samp_factor = 1;
-           cinfo.comp_info[2].v_samp_factor = 1;
-        }
-
-      jpeg_start_compress(&cinfo, TRUE);
-
-      while (cinfo.next_scanline < cinfo.image_height)
-        {
-           unsigned int i, j;
-
-           ptr = ((const int *)data) + cinfo.next_scanline * w;
-           /* convert scaline from ARGB to RGB packed */
-           for (j = 0, i = 0; i < w; i++)
-             {
-                buf[j++] = ((*ptr) >> 16) & 0xff;
-                buf[j++] = ((*ptr) >> 8) & 0xff;
-                buf[j++] = ((*ptr)) & 0xff;
-                ptr++;
-             }
-           jbuf = (JSAMPROW *)(&buf);
-           jpeg_write_scanlines(&cinfo, jbuf, 1);
-        }
-
-      jpeg_finish_compress(&cinfo);
-      jpeg_destroy_compress(&cinfo);
-
-      d1 = dst;
-      sz1 = sz;
-   }
-   {
-      const int *ptr;
-      void *dst = NULL;
-      size_t sz = 0;
-      struct _JPEG_error_mgr jerr;
-      JSAMPROW *jbuf;
-      struct jpeg_compress_struct cinfo;
-      unsigned char *buf;
-
-      buf = alloca(3 * w);
-
-      cinfo.err = jpeg_std_error(&(jerr.pub));
-      jerr.pub.error_exit = _eet_image_jpeg_error_exit_cb;
-      jerr.pub.emit_message = _eet_image_jpeg_emit_message_cb;
-      jerr.pub.output_message = _eet_image_jpeg_output_message_cb;
-      if (setjmp(jerr.setjmp_buffer))
-        {
-           free(d1);
-           return NULL;
-        }
-
-      jpeg_create_compress(&cinfo);
-      if (eet_jpeg_membuf_dst(&cinfo, &dst, &sz))
-        {
-           jpeg_destroy_compress(&cinfo);
-           free(d1);
-           return NULL;
-        }
-
-      cinfo.image_width = w;
-      cinfo.image_height = h;
-      cinfo.input_components = 1;
-      cinfo.in_color_space = JCS_GRAYSCALE;
-      jpeg_set_defaults(&cinfo);
-      jpeg_set_quality(&cinfo, quality, TRUE);
-      if (quality >= 90)
-        {
-           cinfo.comp_info[0].h_samp_factor = 1;
-           cinfo.comp_info[0].v_samp_factor = 1;
-           cinfo.comp_info[1].h_samp_factor = 1;
-           cinfo.comp_info[1].v_samp_factor = 1;
-           cinfo.comp_info[2].h_samp_factor = 1;
-           cinfo.comp_info[2].v_samp_factor = 1;
-        }
-
-      jpeg_start_compress(&cinfo, TRUE);
-
-      while (cinfo.next_scanline < cinfo.image_height)
-        {
-           unsigned int i, j;
-
-           ptr = ((const int *)data) + cinfo.next_scanline * w;
-           /* convert scaline from ARGB to RGB packed */
-           for (j = 0, i = 0; i < w; i++)
-             {
-                buf[j++] = ((*ptr) >> 24) & 0xff;
-                ptr++;
-             }
-           jbuf = (JSAMPROW *)(&buf);
-           jpeg_write_scanlines(&cinfo, jbuf, 1);
-        }
-
-      jpeg_finish_compress(&cinfo);
-      jpeg_destroy_compress(&cinfo);
-
-      d2 = dst;
-      sz2 = sz;
-   }
    d = malloc(12 + sz1 + sz2);
    if (!d)
      {
