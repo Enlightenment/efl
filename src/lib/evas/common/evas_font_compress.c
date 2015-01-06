@@ -488,7 +488,6 @@ evas_common_font_glyph_draw(RGBA_Font_Glyph *fg,
    DATA32 *dst = dst_image->image.data;
    DATA32 coltab[16], col;
    DATA16 mtab[16], v;
-   DATA8 tmp;
 
    w = fgo->bitmap.width; h = fgo->bitmap.rows;
    // skip if totally clipped out
@@ -533,8 +532,7 @@ evas_common_font_glyph_draw(RGBA_Font_Glyph *fg,
           {
              v = (i << 4) | i;
              coltab[i] = MUL_SYM(v, col);
-             tmp = (coltab[i] >> 24);
-             mtab[i] = 256 - (tmp + (tmp >> 7));
+             mtab[i] = 256 - (coltab[i] >> 24);
           }
 #ifdef BUILD_MMX
         if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
