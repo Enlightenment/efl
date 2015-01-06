@@ -1140,8 +1140,6 @@ eet_data_image_lossless_compressed_convert(int         *size,
 
       if (_eet_image_words_bigendian)
         {
-           unsigned int i;
-
            bigend_data = (int *) malloc(w * h * 4);
            if (!bigend_data) return NULL;
 
