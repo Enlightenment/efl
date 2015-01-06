@@ -5705,10 +5705,22 @@ _item_select(Elm_Gen_Item *it)
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    Elm_Object_Item *eo_it = EO_OBJ(it);
 
+   if (eo_do(eo_it, elm_wdg_item_disabled_get())) return;
+
    if (_is_no_select(it) ||
        (it->generation < sd->generation) ||
        (it->decorate_it_set))
      return;
+
+   if (!sd->multi)
+     {
+        const Eina_List *l, *ll;
+        Elm_Gen_Item *it2;
+        EINA_LIST_FOREACH_SAFE(sd->selected, l, ll, it2)
+         {
+            if (it2 != it) _item_unselect(it2);
+         }
+     }
 
    if (!it->selected)
      {
@@ -5716,9 +5728,6 @@ _item_select(Elm_Gen_Item *it)
         sd->selected =
           eina_list_append(sd->selected, eo_it);
      }
-   else if ((sd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS) &&
-            (it->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS))
-     return;
 
    evas_object_ref(obj);
    it->walking++;
@@ -6531,31 +6540,14 @@ _elm_genlist_item_selected_set(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   if ((it->generation < sd->generation) || eo_do(EO_OBJ(it), elm_wdg_item_disabled_get()))
-     return;
+   if ((it->generation < sd->generation) ||
+       eo_do(EO_OBJ(it), elm_wdg_item_disabled_get())) return;
+
    selected = !!selected;
    if (it->selected == selected) return;
 
-   if (selected)
-     {
-        if (!sd->multi)
-          {
-             while (sd->selected)
-               {
-                  Elm_Object_Item *eo_sel = sd->selected->data;
-                  ELM_GENLIST_ITEM_DATA_GET(eo_sel, sel);
-                  if (it->unhighlight_cb)
-                    it->unhighlight_cb(sel);
-                  it->unsel_cb(sel);
-               }
-          }
-        it->highlight_cb(it);
-        it->sel_cb(it);
-
-        return;
-     }
-   if (it->unhighlight_cb) it->unhighlight_cb(it);
-   it->unsel_cb(it);
+   if (selected) _item_select(it);
+   else _item_unselect(it);
 }
 
 EOLIAN static Eina_Bool
