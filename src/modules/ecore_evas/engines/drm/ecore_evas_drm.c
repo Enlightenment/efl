@@ -532,9 +532,9 @@ _ecore_evas_drm_shutdown(void)
 {
    if (--_ecore_evas_init_count != 0) return _ecore_evas_init_count;
 
-   ecore_drm_sprites_destroy(dev);
    /* NB: No need to free outputs here. Is done in device free */
    ecore_drm_inputs_destroy(dev);
+   ecore_drm_sprites_destroy(dev);
    ecore_drm_device_close(dev);
    ecore_drm_device_free(dev);
    ecore_drm_launcher_disconnect(dev);
