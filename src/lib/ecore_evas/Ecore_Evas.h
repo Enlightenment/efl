@@ -2611,7 +2611,7 @@ EAPI Eina_Bool ecore_evas_extn_plug_connect(Evas_Object *obj, const char *svcnam
 EAPI void ecore_evas_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
 
 /**
- * @brief Retrieve the coordinates of the mouse pointer
+ * @brief Set the coordinates of the mouse pointer
  *
  * @param ee The Ecore_Evas containing the pointer
  * @param x The horizontal coordinate to move the pointer to
