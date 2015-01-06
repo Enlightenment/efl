@@ -348,6 +348,7 @@ _on_ethumb_thumb_error(Ethumb_Client *client EINA_UNUSED,
 
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    edje_object_signal_emit(wd->resize_obj, EDJE_SIGNAL_GENERATE_ERROR, "elm");
+   edje_object_signal_emit(wd->resize_obj, EDJE_SIGNAL_PULSE_STOP, "elm");
    evas_object_smart_callback_call
      (sd->obj, SIG_GENERATE_ERROR, NULL);
 }
