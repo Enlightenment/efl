@@ -2,7 +2,7 @@
 #include <config.h>
 #endif
 
-#include <v8.h>
+#include V8_INCLUDE_HEADER
 #include <Eina.h>
 #include <cstdlib>
 

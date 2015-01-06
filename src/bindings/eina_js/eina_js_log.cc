@@ -5,8 +5,9 @@
 #include <string>
 #include <eina_js_log.hh>
 #include <eina_js_value.hh>
+#include <eina_js_compatibility.hh>
 
-namespace efl { namespace js {
+namespace efl { namespace eina { namespace js {
 
 v8::Local<v8::String> to_v8_string(v8::Isolate *isolate, const char *fmt,
                                    va_list args)
@@ -20,8 +21,7 @@ v8::Local<v8::String> to_v8_string(v8::Isolate *isolate, const char *fmt,
                                    s.size());
 #else
     auto s = eina_stringshare_vprintf(fmt, args);
-    auto ret = v8::String::NewFromUtf8(isolate, s, v8::String::kNormalString,
-                                       eina_stringshare_strlen(s));
+    auto ret = compatibility_new<v8::String>(isolate, s);
     eina_stringshare_del(s);
     return ret;
 #endif
@@ -609,4 +609,4 @@ void register_log_timing(v8::Isolate *isolate, v8::Handle<v8::Object> global,
     global->Set(name, FunctionTemplate::New(isolate, func)->GetFunction());
 }
 
-} } // namespace efl { namespace js {
+} } } // namespace efl { namespace js {

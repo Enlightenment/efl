@@ -1,7 +1,7 @@
 #ifndef EINA_JS_ACCESSOR_HH
 #define EINA_JS_ACCESSOR_HH
 
-#include <v8.h>
+#include V8_INCLUDE_HEADER
 #include <Eina.hh>
 #include <memory>
 

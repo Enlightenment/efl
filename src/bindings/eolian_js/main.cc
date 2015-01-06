@@ -4,7 +4,7 @@
 #endif
 
 #include <node/node.h>
-#include <node/uv.h>
+#include UV_INCLUDE_HEADER
 
 #include <iostream>
 

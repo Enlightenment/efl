@@ -1,9 +1,9 @@
 #ifndef EFL_EO_JS_GET_VALUE_FROM_C_HH
 #define EFL_EO_JS_GET_VALUE_FROM_C_HH
 
-#include <eo_js_compatibility.hh>
+#include <eina_js_compatibility.hh>
 
-#include <v8.h>
+#include V8_INCLUDE_HEADER
 
 #include <type_traits>
 #include <cstdlib>

@@ -1,7 +1,7 @@
 #ifndef EFL_EO_JS_CALL_FUNCTION_HH
 #define EFL_EO_JS_CALL_FUNCTION_HH
 
-#include <v8.h>
+#include V8_INCLUDE_HEADER
 
 #include <eina_tuple.hh>
 #include <eina_tuple_c.hh>

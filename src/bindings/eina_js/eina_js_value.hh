@@ -1,11 +1,13 @@
 #ifndef EINA_JS_VALUE_HH
 #define EINA_JS_VALUE_HH
 
-#include <v8.h>
+#include V8_INCLUDE_HEADER
 #include <Eina.hh>
 #include <type_traits>
 
-namespace efl { namespace js {
+#include <eina_js_compatibility.hh>
+
+namespace efl { namespace eina { namespace js {
 
 namespace detail {
 
@@ -27,7 +29,7 @@ typename std::enable_if<is_representable_as_v8_integer<T>::value
                         v8::Local<v8::Value>>::type
 to_v8_number(const T &v, v8::Isolate *isolate)
 {
-    return v8::Integer::New(isolate, v);
+  return compatibility_new<v8::Integer>(isolate, v);
 }
 
 template<class T>
@@ -36,7 +38,7 @@ typename std::enable_if<is_representable_as_v8_integer<T>::value
                         v8::Local<v8::Value>>::type
 to_v8_number(const T &v, v8::Isolate *isolate)
 {
-    return v8::Integer::NewFromUnsigned(isolate, v);
+  return compatibility_new<v8::Integer>(isolate, v);
 }
 
 template<class T>
@@ -46,7 +48,7 @@ typename std::enable_if<(std::is_integral<T>::value
                         v8::Local<v8::Value>>::type
 to_v8_number(const T &v, v8::Isolate *isolate)
 {
-    return v8::Number::New(isolate, v);
+  return compatibility_new<v8::Number>(isolate, v);
 }
 
 template<class T>
@@ -55,8 +57,7 @@ typename std::enable_if<std::is_same<T, ::efl::eina::stringshare>::value
     v8::Local<v8::Value>>::type
 to_v8_string(const T &v, v8::Isolate *isolate)
 {
-    return v8::String::NewFromUtf8(isolate, v.c_str(),
-                                   v8::String::kNormalString, v.size());
+  return compatibility_new<v8::String>(isolate, v.c_str());
 }
 
 } // namespace detail
@@ -139,6 +140,6 @@ void register_make_value(v8::Isolate *isolate, v8::Handle<v8::Object> global,
 void register_destroy_value(v8::Isolate *isolate, v8::Handle<v8::Object> global,
                             v8::Handle<v8::String> name);
 
-} } // namespace efl::js
+} } } // namespace efl::js
 
 #endif /* EINA_JS_VALUE_HH */

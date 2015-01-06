@@ -4,7 +4,7 @@
 
 #include <eina_js_error.hh>
 
-namespace efl { namespace js {
+namespace efl { namespace eina {namespace js {
 
 EAPI
 void convert_error_to_javascript_exception(v8::Isolate *isolate)
@@ -17,7 +17,7 @@ void convert_error_to_javascript_exception(v8::Isolate *isolate)
      if (!err)
          return;
 
-     Local<Object> je = Object::New(isolate);
+     Local<Object> je = compatibility_new<v8::Object>(isolate);
      je->Set(String::NewFromUtf8(isolate, "code"),
              String::NewFromUtf8(isolate, "Eina_Error"));
      je->Set(String::NewFromUtf8(isolate, "value"),
@@ -25,4 +25,4 @@ void convert_error_to_javascript_exception(v8::Isolate *isolate)
      isolate->ThrowException(je);
 }
 
-} } // namespace efl { namespace js {
+} } } // namespace efl { namespace js {

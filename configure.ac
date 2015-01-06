@@ -999,15 +999,45 @@ EFL_EVAL_PKGS([EINA_CXX])
 EFL_LIB_END([Eina_Cxx])
 #### End of Eina CXX
 
-AC_ARG_ENABLE([js-bindings],
-   [AS_HELP_STRING([--enable-js-bindings],[enable JavaScript bindings. @<:@default=disabled@:>@])],
-   [want_js="${enableval}"], [want_js="no"])
-AM_CONDITIONAL([HAVE_JS], [test "x${want_js}" = "xyes"])
+AC_ARG_WITH([js],
+   [AS_HELP_STRING([--with-js=@<:@nodejs/libv8/libuv/none@:>@],[enable JavaScript bindings using nodejs or libv8/libuv as build dependencies. The libuv option implies libv8. @<:@default=none@:>@])],
+   [want_js="${withval}"], [want_js="none"])
+
+AC_LANG_PUSH([C++])
+case "$want_js" in
+     nodejs)
+        AM_CONDITIONAL([HAVE_JS], [1])
+        AC_CHECK_HEADER([node/v8.h],
+                        [
+                          AC_DEFINE_UNQUOTED([V8_INCLUDE_HEADER], ["node/v8.h"], [Include header for libv8])
+                          AC_DEFINE_UNQUOTED([UV_INCLUDE_HEADER], ["node/uv.h"], [Include header for libuv])
+                        ],
+                        [AC_MSG_ERROR([Could not find include headers from nodejs.])])
+        ;;
+     libv8)
+        AM_CONDITIONAL([HAVE_JS], [1])
+        EFL_DEPEND_PKG([EINA_JS], [V8], [v8 >= 3.25.28])
+        EFL_DEPEND_PKG([EO_JS], [V8], [v8 >= 3.25.28])
+        AC_DEFINE_UNQUOTED([V8_INCLUDE_HEADER], ["v8.h"], [Include header for libv8])
+        ;;
+     libuv)
+        AM_CONDITIONAL([HAVE_JS], [1])
+        EFL_DEPEND_PKG([EINA_JS], [V8], [v8 >= 3.25.28])
+        EFL_DEPEND_PKG([EINA_JS], [UV], [v8 >= 1.1.0])
+        EFL_DEPEND_PKG([EO_JS], [V8], [v8 >= 3.25.28])
+        EFL_DEPEND_PKG([EO_JS], [UV], [v8 >= 1.1.0])
+        AC_DEFINE_UNQUOTED([V8_INCLUDE_HEADER], ["v8.h"], [Include header for libv8])
+        AC_DEFINE_UNQUOTED([UV_INCLUDE_HEADER], ["uv.h"], [Include header for libuv])
+        ;;
+     none)
+        AM_CONDITIONAL([HAVE_JS], [0])
+        ;;
+     *) AC_MSG_ERROR([Invalid javascript dependency (${want_js}): must be none, nodejs, libv8 or libuv]) ;;
+esac
+AC_LANG_POP([C++])
 
 #### Eina JS
 EFL_LIB_START([Eina_Js])
-
-EFL_DEPEND_PKG([EINA_JS], [V8], [v8 >= 3.25.28])
 
 EFL_INTERNAL_DEPEND_PKG([EINA_JS], [eina])
 EFL_ADD_CFLAGS([EINA_JS], [${EFL_PTHREAD_CFLAGS}])
@@ -1018,8 +1048,6 @@ EFL_LIB_END([Eina_Js])
 
 #### Eina JS
 EFL_LIB_START([Eo_Js])
-
-EFL_DEPEND_PKG([EO_JS], [V8], [v8 >= 3.25.28])
 
 EFL_INTERNAL_DEPEND_PKG([EO_JS], [eina])
 EFL_ADD_CFLAGS([EO_JS], [${EFL_PTHREAD_CFLAGS}])

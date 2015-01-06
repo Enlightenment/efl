@@ -1,13 +1,9 @@
-#ifndef EFL_EO_JS_COMPATIBILITY_HH
-#define EFL_EO_JS_COMPATIBILITY_HH
+#ifndef EFL_EINA_JS_COMPATIBILITY_HH
+#define EFL_EINA_JS_COMPATIBILITY_HH
 
 #include <type_traits>
 
-#if 0
-#include <v8.h>
-#else
-#include <node/v8.h>
-#endif
+#include V8_INCLUDE_HEADER
 
 namespace v8 {
 
@@ -16,7 +12,7 @@ struct FunctionCallbackInfo;
   
 }
 
-namespace efl { namespace eo { namespace js {
+namespace efl { namespace eina { namespace js {
 
 template <typename T = v8::External, typename Enable = void>
 struct _libv8_isolate_test;

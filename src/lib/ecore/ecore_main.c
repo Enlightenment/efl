@@ -158,12 +158,7 @@ timerfd_settime(int                      fd EINA_UNUSED,
 #endif
 
 #ifdef USE_LIBUV
-#define USE_NODEJS
-#ifdef USE_NODEJS
-#include <node/uv.h>
-#else
-#include <uv.h>
-#endif
+#include UV_INCLUDE_HEADER
 #include <dlfcn.h>
 static uv_prepare_t _ecore_main_uv_prepare;
 static uv_check_t _ecore_main_uv_check;
@@ -464,7 +459,9 @@ _ecore_main_fdh_poll_add(Ecore_Fd_Handler *fdh)
    DBG("_ecore_main_fdh_poll_add");
    int r = 0;
 
+#ifdef USE_LIBUV
    if(!_dl_uv_run)
+#endif
      {
        if ((!fdh->file) && HAVE_EPOLL && epoll_fd >= 0)
          {
@@ -472,7 +469,9 @@ _ecore_main_fdh_poll_add(Ecore_Fd_Handler *fdh)
                                 _ecore_poll_events_from_fdh(fdh), fdh);
          }
      }
+#ifdef USE_LIBUV
    else
+#endif
      {
 #ifdef USE_LIBUV
        if(!fdh->file)
@@ -511,7 +510,9 @@ _ecore_main_fdh_poll_add(Ecore_Fd_Handler *fdh)
 static inline void
 _ecore_main_fdh_poll_del(Ecore_Fd_Handler *fdh)
 {
+#ifdef USE_LIBUV
    if(!_dl_uv_run)
+#endif
      {
        if ((!fdh->file) && HAVE_EPOLL && epoll_fd >= 0)
          {
@@ -537,7 +538,9 @@ _ecore_main_fdh_poll_del(Ecore_Fd_Handler *fdh)
              }
          }
      }
+#ifdef USE_LIBUV
    else
+#endif
      {
 #ifdef USE_LIBUV
        DBG("_ecore_main_fdh_poll_del libuv %p", fdh);
@@ -558,7 +561,9 @@ _ecore_main_fdh_poll_modify(Ecore_Fd_Handler *fdh)
 {
    DBG("_ecore_main_fdh_poll_modify %p", fdh);
    int r = 0;
+#ifdef USE_LIBUV
    if(!_dl_uv_run)
+#endif
      {
        if ((!fdh->file) && HAVE_EPOLL && epoll_fd >= 0)
          {
@@ -572,7 +577,9 @@ _ecore_main_fdh_poll_modify(Ecore_Fd_Handler *fdh)
            r = epoll_ctl(efd, EPOLL_CTL_MOD, fdh->fd, &ev);
          }
      }
+#ifdef USE_LIBUV
    else
+#endif
      {
 #ifdef USE_LIBUV
         abort();
@@ -956,8 +963,9 @@ detect_time_changes_stop(void)
 #endif
 }
 
-static void _ecore_main_loop_idler_cb(uv_idle_t* handle EINA_UNUSED);
+//static void _ecore_main_loop_idler_cb(uv_idle_t* handle EINA_UNUSED);
 
+#ifdef USE_LIBUV
 static
 void _ecore_main_loop_timer_run(uv_timer_t* timer)
 {
@@ -1043,8 +1051,7 @@ void _ecore_main_loop_timer_run(uv_timer_t* timer)
     
   DBG("exit\n");
 }
-
-static void _ecore_main_loop_uv_prepare(uv_prepare_t* handle);
+//static void _ecore_main_loop_uv_prepare(uv_prepare_t* handle);
 
 static void
 _ecore_main_loop_idler_cb(uv_idle_t* handle EINA_UNUSED)
@@ -1135,6 +1142,7 @@ _ecore_main_loop_uv_check(uv_check_t* handle EINA_UNUSED)
    in_main_loop--;
    _ecore_unlock();
 }
+#endif
 
 void
 _ecore_main_loop_init(void)
@@ -2186,6 +2194,7 @@ _ecore_main_fd_handlers_buf_call(void)
    return ret;
 }
 
+#ifdef USE_LIBUV
 static void
 _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
 {
@@ -2276,6 +2285,7 @@ _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
    _ecore_unlock();
    in_main_loop--;
 }
+#endif
 
 #if !defined(USE_G_MAIN_LOOP)
 enum {

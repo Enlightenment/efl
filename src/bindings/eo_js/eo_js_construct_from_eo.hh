@@ -1,7 +1,7 @@
 #ifndef EFL_EO_JS_CONSTRUCT_FROM_EO_HH
 #define EFL_EO_JS_CONSTRUCT_FROM_EO_HH
 
-#include <v8.h>
+#include V8_INCLUDE_HEADER
 
 #include <eina_tuple.hh>
 #include <eina_tuple_c.hh>

@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <eina_js_container.hh>
+#include <eina_js_compatibility.hh>
 #include <Eina.hh>
 
 #include <iterator>
@@ -31,7 +32,7 @@ struct eina_container_common : eina_container_type_specific<C, typename C::value
           s << ",";
       }
     std::cout << "string " << s.str() << std::endl;
-    return v8::String::NewFromUtf8(isolate, s.str().c_str());
+    return compatibility_new<v8::String>(isolate, s.str().c_str());
   }
 
   C _container;

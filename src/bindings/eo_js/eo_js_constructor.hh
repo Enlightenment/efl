@@ -1,11 +1,7 @@
 #ifndef EFL_EO_JS_CONSTRUCTOR_HH
 #define EFL_EO_JS_CONSTRUCTOR_HH
 
-#if 0
-#include <v8.h>
-#else
-#include <node/v8.h>
-#endif
+#include V8_INCLUDE_HEADER
 
 #include <eina_tuple.hh>
 #include <eina_function.hh>

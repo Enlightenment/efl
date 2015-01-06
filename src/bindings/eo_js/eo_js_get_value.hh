@@ -1,13 +1,9 @@
 #ifndef EFL_EO_JS_GET_VALUE_HH
 #define EFL_EO_JS_GET_VALUE_HH
 
-#include <eo_js_compatibility.hh>
+#include <eina_js_compatibility.hh>
 
-#if 0
-#include <v8.h>
-#else
-#include <node/v8.h>
-#endif
+#include V8_INCLUDE_HEADER
 
 #include <type_traits>
 #include <cstdlib>

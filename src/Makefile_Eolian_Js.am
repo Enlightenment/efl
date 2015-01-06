@@ -27,7 +27,7 @@ lib_eolian_js_libeolian_js_la_SOURCES =\
 	$(generated_evas_canvas_js_bindings)
 
 lib_eolian_js_libeolian_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/lib/efl/interfaces \
-@EINA_CFLAGS@ @EINA_CXX_CFLAGS@ @EO_JS_CFLAGS@ @EO_CFLAGS@ @EVAS_CFLAGS@ @ECORE_CFLAGS@ @ECORE_EVAS_CFLAGS@ @EINA_CFLAGS@ \
+@EINA_CFLAGS@ @EINA_CXX_CFLAGS@ @EINA_JS_CFLAGS@ @EO_JS_CFLAGS@ @EO_CFLAGS@ @EVAS_CFLAGS@ @ECORE_CFLAGS@ @ECORE_EVAS_CFLAGS@ @EINA_CFLAGS@ \
 -I$(top_builddir)/src/lib/evas/canvas \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
@@ -66,7 +66,7 @@ tests_eolian_js_eolian_js_suite_CXXFLAGS = 	\
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eolian_js\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eolian_js\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eolian_js\" \
-@CHECK_CFLAGS@ @EOLIAN_CXX_CFLAGS@ @EO_JS_CFLAGS@ @EINA_JS_CFLAGS@ \
+@CHECK_CFLAGS@ @EOLIAN_CXX_CFLAGS@ @EINA_JS_CFLAGS@ @EO_JS_CFLAGS@ @EINA_JS_CFLAGS@ \
 @EOLIAN_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_CFLAGS@ @EINA_CXX_CFLAGS@ \
 @EO_JS_CFLAGS@ @EO_CXX_CFLAGS@
 

@@ -243,7 +243,7 @@ int main(int argc, char** argv)
        os << "}\n\n";
      }
    os << "#include <Eo_Js.hh>\n\n";
-   os << "#include <node/v8.h>\n\n";
+   os << "#include V8_INCLUDE_HEADER\n\n";
    os << "extern \"C\" {\n";
 
    if(is_evas(klass))

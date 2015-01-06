@@ -1,7 +1,7 @@
 #ifndef EINA_JS_ERROR_HH
 #define EINA_JS_ERROR_HH
 
-#include <v8.h>
+#include V8_INCLUDE_HEADER
 #include <Eina.hh>
 
 namespace efl { namespace js {
