@@ -915,6 +915,13 @@ _elm_image_efl_file_file_set(Eo *obj, Elm_Image_Data *sd, const char *file, cons
    return ret;
 }
 
+EOLIAN static void
+_elm_image_edje_object_signal_emit(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, const char *emission, const char *source)
+{
+   if (sd->edje)
+     edje_object_signal_emit(sd->img, emission, source);
+}
+
 EOLIAN static Eina_Bool
 _elm_image_mmap_set(Eo *obj, Elm_Image_Data *sd, const Eina_File *f, const char *key)
 {

@@ -1,4 +1,5 @@
 class Elm_Image (Elm_Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
+                 Edje.Object,
                  Elm_Interface_Atspi_Image, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_image;
@@ -541,6 +542,7 @@ class Elm_Image (Elm_Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
       Efl.Image.load_size.get;
       Efl.Image.smooth_scale.set;
       Efl.Image.smooth_scale.get;
+      Edje.Object.signal_emit;
       Evas.Object_Smart.hide;
       Evas.Object_Smart.clip.set;
       Evas.Object_Smart.clip_unset;
