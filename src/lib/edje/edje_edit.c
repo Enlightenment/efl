@@ -11138,7 +11138,6 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
    /* Data */
    if (pc->data)
      {
-        Eina_Iterator *it;
         Eina_Hash_Tuple *tuple;
         BUF_APPEND(I2"data {\n");
 
