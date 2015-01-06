@@ -5,14 +5,13 @@ generated_eo_cxx_bindings = \
 lib/eo/eo_base.eo.hh \
 lib/eo/eo_abstract_class.eo.hh
 
-CLEANFILES += $(generated_eo_cxx_bindings)
-
-installed_eocxxheadersdir = $(includedir)/eo-cxx-@VMAJ@
-nodist_installed_eocxxheaders_DATA = $(generated_eo_cxx_bindings)
-
 ### Library
 
 if HAVE_CXX11
+
+CLEANFILES += $(generated_eo_cxx_bindings)
+
+nodist_installed_eocxxheaders_DATA = $(generated_eo_cxx_bindings)
 
 installed_eocxxmainheadersdir = $(includedir)/eo-cxx-@VMAJ@/
 dist_installed_eocxxmainheaders_DATA = \
