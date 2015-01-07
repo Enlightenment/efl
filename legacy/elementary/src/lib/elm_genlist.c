@@ -6211,10 +6211,16 @@ _elm_genlist_item_insert_before(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_genlist_item_sorted_insert(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Type type, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data)
+_elm_genlist_item_sorted_insert(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Type type, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data)
 {
    Elm_Gen_Item *rel = NULL;
    Elm_Gen_Item *it;
+
+   if (parent)
+     {
+        ELM_GENLIST_ITEM_CHECK_OR_RETURN(((Elm_Gen_Item *)parent), NULL);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(obj == WIDGET(((Elm_Gen_Item *)parent)), NULL);
+     }
 
    it = _elm_genlist_item_new
        (sd, itc, data, parent, type, func, func_data);
