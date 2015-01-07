@@ -116,6 +116,7 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
              if (mul_col != 0xffffffff)
                func2 = evas_common_gfx_func_composite_pixel_color_span_get(sa, ssa, mul_col, da, cw, render_op);
           }
+        if (sa || anti_alias) src->cache_entry.flags.alpha = EINA_TRUE;
      }
    if (havecol == 0)
      {
@@ -197,6 +198,7 @@ FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
              if (mul_col != 0xffffffff)
                func2 = evas_common_gfx_func_composite_pixel_color_span_get(sa, ssa, dc->mul.col, da, cw, dc->render_op);
           }
+        if (sa || anti_alias) src->cache_entry.flags.alpha = EINA_TRUE;
      }
 
    if (havecol == 0)
