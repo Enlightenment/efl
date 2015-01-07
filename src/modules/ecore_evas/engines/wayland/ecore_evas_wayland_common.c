@@ -608,25 +608,33 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
    if (!ee->prop.fullscreen)
      {
         int fw = 0, fh = 0;
-        int maxw, maxh;
-        int minw, minh;
-        double a;
+        int maxw = 0, maxh = 0;
+        int minw = 0, minh = 0;
+        double a = 0.0;
 
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
         if (ECORE_EVAS_PORTRAIT(ee))
           {
-             minw = (ee->prop.min.w - fw);
-             minh = (ee->prop.min.h - fh);
-             maxw = (ee->prop.max.w + fw);
-             maxh = (ee->prop.max.h + fh);
+             if (ee->prop.min.w > 0) 
+               minw = (ee->prop.min.w - fw);
+             if (ee->prop.min.h > 0) 
+               minh = (ee->prop.min.h - fh);
+             if (ee->prop.max.w > 0) 
+               maxw = (ee->prop.max.w + fw);
+             if (ee->prop.max.h > 0) 
+               maxh = (ee->prop.max.h + fh);
           }
         else
           {
-             minw = (ee->prop.min.w - fh);
-             minh = (ee->prop.min.h - fw);
-             maxw = (ee->prop.max.w + fh);
-             maxh = (ee->prop.max.h + fw);
+             if (ee->prop.min.w > 0)
+               minw = (ee->prop.min.w - fh);
+             if (ee->prop.min.h > 0)
+               minh = (ee->prop.min.h - fw);
+             if (ee->prop.max.w > 0)
+               maxw = (ee->prop.max.w + fh);
+             if (ee->prop.max.h > 0)
+               maxh = (ee->prop.max.h + fw);
           }
 
         /* adjust size using aspect */
@@ -690,10 +698,15 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
                h = (minh + (((h - minh) / ee->prop.step.h) * ee->prop.step.h));
           }
 
-        if (w > maxw) w = maxw;
-        else if (w < minw) w = minw;
-        if (h > maxh) h = maxh;
-        else if (h < minh) h = minh;
+        if ((maxw > 0) && (w > maxw)) 
+          w = maxw;
+        else if (w < minw) 
+          w = minw;
+
+        if ((maxh > 0) && (h > maxh)) 
+          h = maxh;
+        else if (h < minh) 
+          h = minh;
 
         orig_w = w;
         orig_h = h;
