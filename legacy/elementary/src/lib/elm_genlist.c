@@ -6276,7 +6276,7 @@ _elm_genlist_item_sorted_insert(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const
              sd->requeued = EINA_FALSE;
           }
 
-        if (it->group)
+        if (GL_IT(it)->type == ELM_GENLIST_ITEM_GROUP)
           sd->group_items = eina_list_append(sd->group_items, it);
 
         sd->items = eina_inlist_sorted_state_insert
