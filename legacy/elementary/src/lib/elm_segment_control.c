@@ -404,6 +404,7 @@ _elm_segment_control_item_elm_widget_item_part_text_set(Eo *eo_item EINA_UNUSED,
           edje_object_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
         else
           edje_object_signal_emit(VIEW(item), "elm,state,text,hidden", "elm");
+        edje_object_part_text_escaped_set(VIEW(item), "elm.text", label);
      }
    else
      {
@@ -417,11 +418,10 @@ _elm_segment_control_item_elm_widget_item_part_text_set(Eo *eo_item EINA_UNUSED,
              snprintf(buf, sizeof(buf), "elm,state,%s,hidden", part);
              edje_object_signal_emit(VIEW(item), buf, "elm");
           }
+        edje_object_part_text_escaped_set(VIEW(item), part, label);
      }
 
    edje_object_message_signal_process(VIEW(item));
-   //label can be NULL also.
-   edje_object_part_text_escaped_set(VIEW(item), part, label);
 }
 
 EOLIAN static const char *
