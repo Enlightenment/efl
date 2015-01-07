@@ -2560,6 +2560,8 @@ _elm_genlist_item_focused(Elm_Object_Item *eo_it)
 static void
 _elm_genlist_item_unfocused(Elm_Object_Item *eo_it)
 {
+   if (!eo_it) return;
+
    ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
    Evas_Object *obj = WIDGET(it);
    ELM_GENLIST_DATA_GET(obj, sd);
@@ -5623,18 +5625,6 @@ _elm_genlist_eo_base_constructor(Eo *obj, Elm_Genlist_Data *sd)
 }
 
 static void
-_clear(Elm_Genlist_Data *sd)
-{
-   sd->anchor_item = NULL;
-   ELM_SAFE_FREE(sd->queue_idle_enterer, ecore_idle_enterer_del);
-   ELM_SAFE_FREE(sd->must_recalc_idler, ecore_idler_del);
-   ELM_SAFE_FREE(sd->queue, eina_list_free);
-   ELM_SAFE_FREE(sd->reorder_move_animator, ecore_animator_del);
-   sd->show_item = NULL;
-   sd->reorder_old_pan_y = 0;
-}
-
-static void
 _internal_elm_genlist_clear(Evas_Object *obj,
                             Eina_Bool standby)
 {
@@ -5643,6 +5633,9 @@ _internal_elm_genlist_clear(Evas_Object *obj,
    ELM_GENLIST_DATA_GET(obj, sd);
 
    if (!standby) sd->generation++;
+
+   _elm_genlist_item_unfocused(sd->focused_item);
+   if (sd->mode_item) sd->mode_item = NULL;
 
    ELM_SAFE_FREE(sd->state, eina_inlist_sorted_state_free);
 
@@ -5675,17 +5668,21 @@ _internal_elm_genlist_clear(Evas_Object *obj,
    if (!sd->queue)
      {
         ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
-        _clear(sd);
+        sd->anchor_item = NULL;
+        ELM_SAFE_FREE(sd->queue_idle_enterer, ecore_idle_enterer_del);
+        ELM_SAFE_FREE(sd->must_recalc_idler, ecore_idler_del);
+        ELM_SAFE_FREE(sd->reorder_move_animator, ecore_animator_del);
+        sd->reorder_old_pan_y = 0;
      }
 
    if (sd->selected) ELM_SAFE_FREE(sd->selected, eina_list_free);
+
+   sd->show_item = NULL;
 
    sd->pan_x = 0;
    sd->pan_y = 0;
    sd->minw = 0;
    sd->minh = 0;
-
-   ELM_SAFE_FREE(sd->event_block_rect, evas_object_del);
 
    if (sd->pan_obj)
      {
@@ -5694,6 +5691,11 @@ _internal_elm_genlist_clear(Evas_Object *obj,
      }
    elm_layout_sizing_eval(sd->obj);
    eo_do(obj, elm_interface_scrollable_content_region_show(0, 0, 0, 0));
+
+   ELM_SAFE_FREE(sd->event_block_rect, evas_object_del);
+   ELM_SAFE_FREE(sd->scr_hold_timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->queue, eina_list_free);
+
    evas_event_thaw(evas_object_evas_get(sd->obj));
    evas_event_thaw_eval(evas_object_evas_get(sd->obj));
 }
