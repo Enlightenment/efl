@@ -1242,7 +1242,7 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3D_S
    Evas_Mat4 matrix_vp;
 
    glEnable(GL_POLYGON_OFFSET_FILL);
-   glPolygonOffset(4.0, 10000.0);
+   glPolygonOffset(4.0, 100.0);
    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, drawable->texDepth, 0);
    e3d_renderer_target_set(renderer, drawable);
    e3d_renderer_clear(renderer, &c);

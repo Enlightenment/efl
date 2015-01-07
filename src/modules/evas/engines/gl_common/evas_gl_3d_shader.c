@@ -501,7 +501,7 @@ _vertex_shader_string_get(E3D_Shader_String *shader,
 
      if (flags & E3D_SHADER_FLAG_SHADOWED)
      {
-        ADD_LINE("lpos = uMatrixLight * vec4(aPosition0.xyz, 1.0);");
+        ADD_LINE("lpos = uMatrixLight * position;");
      }
 
    ADD_LINE("}");
@@ -1143,7 +1143,7 @@ _fragment_shader_string_get(E3D_Shader_String *shader,
         ADD_LINE("fragmentNormalMap();");
      }
 
-     if (flags & E3D_SHADER_FLAG_FOG_ENABLED)
+     if ((flags & E3D_SHADER_FLAG_FOG_ENABLED) && (mode != EVAS_3D_SHADE_MODE_SHADOW_MAP_RENDER))
      {
         ADD_LINE("float z = gl_FragCoord.z / gl_FragCoord.w;");
         ADD_LINE("float fogFactor = exp2( -uFogFactor * uFogFactor * z * z * 1.44 );");

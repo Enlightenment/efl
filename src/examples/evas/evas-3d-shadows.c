@@ -201,7 +201,7 @@ main(void)
          evas_3d_light_ambient_set(0.2, 0.2, 0.2, 1.0),
          evas_3d_light_diffuse_set(1.0, 1.0, 1.0, 1.0),
          evas_3d_light_specular_set(1.0, 1.0, 1.0, 1.0),
-         evas_3d_light_projection_perspective_set(45.0, 1.0, 2.0, 1000.0));
+         evas_3d_light_projection_perspective_set(60.0, 1.0, 2.0, 1000.0));
 
    light_node =
       eo_add(EVAS_3D_NODE_CLASS, evas,
