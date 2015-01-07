@@ -4954,7 +4954,7 @@ _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
    rp->typedata.swallow->swallow_params.max.h = -1;
    if (eo_isa(rp->typedata.swallow->swallowed_object, EDJE_OBJECT_CLASS))
      {
-        Evas_Coord w, h;
+        Evas_Coord w = 0, h = 0;
 
 #if 0
         edje_object_size_min_get(rp->typedata.swallow->swallowed_object, &w, &h);
@@ -4969,7 +4969,7 @@ _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
 	    eo_isa(rp->typedata.swallow->swallowed_object, EVAS_POLYGON_CLASS) ||
 	    eo_isa(rp->typedata.swallow->swallowed_object, EVAS_LINE_CLASS))
      {
-        Evas_Coord w, h;
+        Evas_Coord w = 0, h = 0;
 
         evas_object_geometry_get(rp->typedata.swallow->swallowed_object, NULL, NULL, &w, &h);
 #if 0
@@ -4980,8 +4980,8 @@ _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
         rp->typedata.swallow->swallow_params.max.h = h;
      }
      {
-        Evas_Coord w1, h1, w2, h2, aw, ah;
-        Evas_Aspect_Control am;
+        Evas_Coord w1 = 0, h1 = 0, w2 = 0, h2 = 0, aw = 0, ah = 0;
+        Evas_Aspect_Control am = EVAS_ASPECT_CONTROL_NONE;
 
         evas_object_size_hint_min_get(rp->typedata.swallow->swallowed_object, &w1, &h1);
         evas_object_size_hint_max_get(rp->typedata.swallow->swallowed_object, &w2, &h2);
