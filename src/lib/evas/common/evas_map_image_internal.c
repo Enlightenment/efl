@@ -175,9 +175,9 @@ FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
    da = dst->cache_entry.flags.alpha;
 
    // allocate some s to hold out span list
-   spans = alloca((yend - ystart + 1) * sizeof(Line));
+   spans = alloca((yend - ystart + 3) * sizeof(Line));
    memcpy(spans, &ms->spans[ystart - ms->ystart],
-          (yend - ystart + 1) * sizeof(Line));
+          (yend - ystart + 3) * sizeof(Line));
    _clip_spans(spans, ystart, yend, cx, cw, EINA_TRUE);
 
    // if operation is solid, bypass buf and draw func and draw direct to dst
