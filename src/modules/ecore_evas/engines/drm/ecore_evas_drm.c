@@ -224,9 +224,16 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
    evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, method);
 
-   /* FIXME: Support initial rotation ?? */
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
+   if(ee->rotation == 90 || ee->rotation == 270)
+     {
+        evas_output_size_set(ee->evas, h, w);
+        evas_output_viewport_set(ee->evas, 0, 0, h, w);
+     }
+   else
+     {
+        evas_output_size_set(ee->evas, w, h);
+        evas_output_viewport_set(ee->evas, 0, 0, w, h);
+     }
 
    if (ee->can_async_render)
      evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
