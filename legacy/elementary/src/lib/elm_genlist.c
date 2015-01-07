@@ -6136,19 +6136,26 @@ _elm_genlist_item_prepend(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_G
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_genlist_item_insert_after(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Object_Item *eo_after, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data)
+_elm_genlist_item_insert_after(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *eo_parent, Elm_Object_Item *eo_after, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data)
 {
    ELM_GENLIST_ITEM_DATA_GET(eo_after, after);
    Elm_Gen_Item *it;
 
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(after, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((obj == WIDGET(after)), NULL);
+   if (eo_parent)
+     {
+        ELM_GENLIST_ITEM_DATA_GET(eo_parent, parent);
+        ELM_GENLIST_ITEM_CHECK_OR_RETURN(parent, NULL);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL((obj == WIDGET(parent)), NULL);
+     }
 
    /* It makes no sense to insert after in an empty list with after !=
     * NULL, something really bad is happening in your app. */
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->items, NULL);
 
    it = _elm_genlist_item_new
-       (sd, itc, data, parent, type, func, func_data);
+       (sd, itc, data, eo_parent, type, func, func_data);
    if (!it) return NULL;
 
    if (!it->parent)
@@ -6174,19 +6181,26 @@ _elm_genlist_item_insert_after(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const 
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_genlist_item_insert_before(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Object_Item *eo_before, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data)
+_elm_genlist_item_insert_before(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *eo_parent, Elm_Object_Item *eo_before, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data)
 {
    ELM_GENLIST_ITEM_DATA_GET(eo_before, before);
    Elm_Gen_Item *it;
 
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(before, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((obj == WIDGET(before)), NULL);
+   if (eo_parent)
+     {
+        ELM_GENLIST_ITEM_DATA_GET(eo_parent, parent);
+        ELM_GENLIST_ITEM_CHECK_OR_RETURN(parent, NULL);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL((obj == WIDGET(parent)), NULL);
+     }
 
    /* It makes no sense to insert before in an empty list with before
     * != NULL, something really bad is happening in your app. */
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->items, NULL);
 
    it = _elm_genlist_item_new
-       (sd, itc, data, parent, type, func, func_data);
+       (sd, itc, data, eo_parent, type, func, func_data);
    if (!it) return NULL;
 
    if (!it->parent)
@@ -6211,19 +6225,20 @@ _elm_genlist_item_insert_before(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_genlist_item_sorted_insert(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Type type, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data)
+_elm_genlist_item_sorted_insert(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *eo_parent, Elm_Genlist_Item_Type type, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data)
 {
    Elm_Gen_Item *rel = NULL;
    Elm_Gen_Item *it;
 
-   if (parent)
+   if (eo_parent)
      {
-        ELM_GENLIST_ITEM_CHECK_OR_RETURN(((Elm_Gen_Item *)parent), NULL);
-        EINA_SAFETY_ON_FALSE_RETURN_VAL(obj == WIDGET(((Elm_Gen_Item *)parent)), NULL);
+        ELM_GENLIST_ITEM_DATA_GET(eo_parent, parent);
+        ELM_GENLIST_ITEM_CHECK_OR_RETURN(parent, NULL);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL((obj == WIDGET(parent)), NULL);
      }
 
    it = _elm_genlist_item_new
-       (sd, itc, data, parent, type, func, func_data);
+       (sd, itc, data, eo_parent, type, func, func_data);
    if (!it) return NULL;
    Elm_Object_Item *eo_it = EO_OBJ(it);
 
