@@ -460,9 +460,12 @@ _elm_diskselector_item_eo_base_destructor(Eo *eo_it, Elm_Diskselector_Item_Data 
           }
      }
 
-   sd->string_check_idle_enterer =
-      ecore_idle_enterer_before_add(_string_check_idle_enterer_cb,
-                                    obj);
+   if (!sd->string_check_idle_enterer)
+     {
+        sd->string_check_idle_enterer =
+           ecore_idle_enterer_before_add(_string_check_idle_enterer_cb,
+                                         obj);
+     }
 
    _sizing_eval(obj);
 
