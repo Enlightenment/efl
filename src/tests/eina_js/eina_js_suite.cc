@@ -70,7 +70,7 @@ bool ExecuteString(v8::Isolate* isolate,
                    v8::Handle<v8::String> source,
                    v8::Handle<v8::Value> name)
 {
-  v8::HandleScope handle_scope(isolate);
+  efl::eina::js::compatibility_handle_scope handle_scope(isolate);
   v8::TryCatch try_catch;
   v8::ScriptOrigin origin(name);
   v8::Handle<v8::Script> script = v8::Script::Compile(source, &origin);
@@ -106,10 +106,11 @@ bool ExecuteString(v8::Isolate* isolate,
   }
 }
 
-void Print(const v8::FunctionCallbackInfo<v8::Value>& args) {
+efl::eina::js::compatibility_return_type Print(efl::eina::js::compatibility_callback_info_type args)
+{
   bool first = true;
   for (int i = 0; i < args.Length(); i++) {
-    v8::HandleScope handle_scope(args.GetIsolate());
+    efl::eina::js::compatibility_handle_scope handle_scope(args.GetIsolate());
     if (first) {
       first = false;
     } else {
@@ -121,24 +122,24 @@ void Print(const v8::FunctionCallbackInfo<v8::Value>& args) {
   }
   printf("\n");
   fflush(stdout);
+  return efl::eina::js::compatibility_return();
 }
 
 EAPI void eina_container_register(v8::Handle<v8::ObjectTemplate> global, v8::Isolate* isolate);
 EAPI v8::Handle<v8::FunctionTemplate> get_list_instance_template();
 
-int main(int argc, char* argv[])
+int main(int, char*[])
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
-  
-  v8::V8::InitializeICU();
-  v8::V8::SetFlagsFromCommandLine(&argc, argv, true);
+
+  efl::eina::js::compatibility_initialize();
   v8::Isolate* isolate = v8::Isolate::New();
   assert(isolate != 0);
 
   v8::Isolate::Scope isolate_scope(isolate);
   
-  v8::HandleScope handle_scope(isolate);
+  efl::eina::js::compatibility_handle_scope handle_scope(isolate);
   v8::Handle<v8::Context> context;
 
   efl::eina::ptr_list<int> list;
@@ -146,13 +147,13 @@ int main(int argc, char* argv[])
   list.push_back(new int(10));
   list.push_back(new int(15));
 
-  efl::js::range_eina_list<int> raw_list(list.native_handle());
+  efl::eina::js::range_eina_list<int> raw_list(list.native_handle());
   {
     // Create a template for the global object.
-    v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate);
+    v8::Handle<v8::ObjectTemplate> global = efl::eina::js::compatibility_new<v8::ObjectTemplate>(isolate);
     // Bind the global 'print' function to the C++ Print callback.
-    global->Set(v8::String::NewFromUtf8(isolate, "print"),
-                v8::FunctionTemplate::New(isolate, Print));
+    global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "print"),
+                efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, Print));
     eina_container_register(global, isolate);
     // // Bind the global 'read' function to the C++ Read callback.
     // global->Set(v8::String::NewFromUtf8(isolate, "read"),
@@ -167,7 +168,7 @@ int main(int argc, char* argv[])
     // global->Set(v8::String::NewFromUtf8(isolate, "version"),
     //             v8::FunctionTemplate::New(isolate, Version));
 
-    context = v8::Context::New(isolate, NULL, global);
+    context = efl::eina::js::compatibility_new<v8::Context>(isolate, nullptr, global);
   }
   if (context.IsEmpty()) {
     fprintf(stderr, "Error creating context\n");
@@ -177,15 +178,16 @@ int main(int argc, char* argv[])
   {
     // Enter the execution environment before evaluating any code.
     v8::Context::Scope context_scope(context);
-    v8::Local<v8::String> name(v8::String::NewFromUtf8(context->GetIsolate(), "(shell)"));
+    v8::Local<v8::String> name(efl::eina::js::compatibility_new<v8::String>
+                               (nullptr, "(shell)"));
 
-    v8::Handle<v8::Value> a[] = {v8::External::New(isolate, &raw_list)};
-    context->Global()->Set(v8::String::NewFromUtf8(isolate, "raw_list")
+    v8::Handle<v8::Value> a[] = {efl::eina::js::compatibility_new<v8::External>(isolate, &raw_list)};
+    context->Global()->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "raw_list")
                 , get_list_instance_template()->GetFunction()->NewInstance(1, a));     
     
-    v8::HandleScope handle_scope(context->GetIsolate());
-    ExecuteString(context->GetIsolate(),
-                  v8::String::NewFromUtf8(context->GetIsolate(), script),
+    efl::eina::js::compatibility_handle_scope handle_scope(v8::Isolate::GetCurrent());
+    ExecuteString(v8::Isolate::GetCurrent(),
+                  efl::eina::js::compatibility_new<v8::String>(v8::Isolate::GetCurrent(), script),
                   name);
   }
   context->Exit();

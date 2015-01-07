@@ -9,7 +9,7 @@
 
 #include <iterator>
 
-namespace efl { namespace js {
+namespace efl { namespace eina { namespace js {
     
 template <typename T>
 struct eina_array : eina_container_common<efl::eina::array
@@ -70,6 +70,6 @@ struct range_eina_array : eina_container_common<efl::eina::range_array<T> >
   js::container_type get_container_type() const { return array_container_type; }
 };
 
-} }
+} } }
 
 #endif

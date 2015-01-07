@@ -245,6 +245,78 @@ compatibility_throw(v8::Local<v8::Value> exception)
 {
   return compatibility_throw_impl(exception, std::integral_constant<bool, v8_uses_isolate>());
 }
+
+template <typename T>
+struct compatibility_persistent
+{
+};
+
+template <typename T = std::integral_constant<bool, v8_uses_isolate> >
+struct _v8_object_internal_field;
+
+template <>
+struct _v8_object_internal_field<std::true_type> : v8::Object
+{
+};
+
+template <>
+struct _v8_object_internal_field<std::false_type> : v8::Object
+{
+  void* GetAlignedPointerFromInternalField(int index)
+  {
+    return GetPointerFromInternalField(index);
+  }
+};
+      
+template <typename T = void*>
+inline T compatibility_get_pointer_internal_field(v8::Handle<v8::Object> object, std::size_t index)
+{
+  return reinterpret_cast<T>
+    (static_cast<_v8_object_internal_field<>*>(*object)->GetAlignedPointerFromInternalField(index));
+}
+
+template <typename T = void, bool = v8_uses_isolate>
+struct compatibility_handle_scope_impl;
+
+template <typename T>
+struct compatibility_handle_scope_impl<T, true> : v8::HandleScope
+{
+  compatibility_handle_scope_impl(v8::Isolate* isolate)
+    : HandleScope(isolate)
+  {}
+};
+
+template <typename T>
+struct compatibility_handle_scope_impl<T, false> : v8::HandleScope
+{
+  compatibility_handle_scope_impl(v8::Isolate*)
+  {}
+};
+
+using compatibility_handle_scope = compatibility_handle_scope_impl<>;
+
+template <bool = v8_uses_isolate>
+struct _v8_initialize_icu;
+
+template <>
+struct _v8_initialize_icu<true> : v8::V8
+{
+};
+
+template <>
+struct _v8_initialize_icu<false> : v8::V8
+{
+  static bool InitializeICU(const char* = NULL)
+  {
+    return true;
+  }
+};
+      
+inline void compatibility_initialize()
+{
+  v8::V8::Initialize();
+  static_cast<_v8_initialize_icu<>*>(nullptr)->InitializeICU();
+}
       
 } } }
 

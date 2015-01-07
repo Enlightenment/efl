@@ -6,11 +6,11 @@
 #include <eina_js_value.hh>
 #include <Eo.hh>
 
-void print(const v8::FunctionCallbackInfo<v8::Value> &args)
+efl::eina::js::compatibility_return_type print(efl::eina::js::compatibility_callback_info_type args)
 {
   bool first = true;
   for (int i = 0; i < args.Length(); i++) {
-    v8::HandleScope handle_scope(args.GetIsolate());
+    efl::eina::js::compatibility_handle_scope handle_scope(args.GetIsolate());
     if (first) {
       first = false;
     } else {
@@ -21,6 +21,7 @@ void print(const v8::FunctionCallbackInfo<v8::Value> &args)
   }
   printf("\n");
   fflush(stdout);
+  return efl::eina::js::compatibility_return();
 }
 
 static const char script[] =
@@ -70,15 +71,15 @@ int main(int argc, char *argv[])
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
 
-  v8::V8::Initialize();
-  v8::V8::InitializeICU();
+  efl::eina::js::compatibility_initialize();
   v8::V8::SetFlagsFromCommandLine(&argc, argv, true);
   v8::Isolate* isolate = v8::Isolate::New();
 
   v8::Isolate::Scope isolate_scope(isolate);
-  v8::HandleScope handle_scope(isolate);
+  efl::eina::js::compatibility_handle_scope handle_scope(isolate);
   v8::Handle<v8::Context> context
-      = v8::Context::New(isolate, NULL, v8::ObjectTemplate::New(isolate));
+    = efl::eina::js::compatibility_new<v8::Context>
+    (isolate, nullptr, efl::eina::js::compatibility_new<v8::ObjectTemplate>(isolate));
 
   if (context.IsEmpty()) {
     fprintf(stderr, "Error creating context\n");
@@ -90,182 +91,182 @@ int main(int argc, char *argv[])
     v8::Context::Scope context_scope(context);
     v8::Handle<v8::Object> global = context->Global();
 
-    global->Set(v8::String::NewFromUtf8(isolate, "print"),
-                v8::FunctionTemplate::New(isolate, print)->GetFunction());
-    efl::js::register_make_value(isolate, global,
-                                 v8::String::NewFromUtf8(isolate,
-                                                         "make_value"));
-    efl::js::register_destroy_value(isolate, global,
-                                    v8::String::NewFromUtf8(isolate,
-                                                            "destroy_value"));
+    global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "print"),
+                efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, print)->GetFunction());
+    efl::eina::js::register_make_value
+      (isolate, global
+       , efl::eina::js::compatibility_new<v8::String>(isolate, "make_value"));
+    efl::eina::js::register_destroy_value
+      (isolate, global
+       , efl::eina::js::compatibility_new<v8::String>(isolate, "destroy_value"));
 
-    assert(efl::js::value_cast<v8::Local<v8::Value>>
+    assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
            (efl::eina::value(std::numeric_limits<uint64_t>::max()),
             isolate)->IsNumber());
-    assert(efl::js::value_cast<v8::Local<v8::Value>>
+    assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
            (efl::eina::value(std::numeric_limits<uint64_t>::max()),
             isolate)->NumberValue()
            == double(UINT64_MAX));
 
-    assert(efl::js::value_cast<v8::Local<v8::Value>>
+    assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
            (efl::eina::value(std::numeric_limits<unsigned char>::max()),
             isolate)->IsUint32());
-    assert(efl::js::value_cast<v8::Local<v8::Value>>
+    assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
            (efl::eina::value(std::numeric_limits<unsigned char>::max()),
             isolate)->Uint32Value() == UINT8_MAX);
 
     if (sizeof(short) > sizeof(int32_t)) {
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<unsigned short>::max()),
                 isolate)->IsNumber());
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<unsigned short>::max()),
                 isolate)->NumberValue()
                == double(std::numeric_limits<unsigned short>::max()));
 
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<short>::max()),
                 isolate)->IsNumber());
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<short>::max()),
                 isolate)->NumberValue()
                == double(std::numeric_limits<short>::max()));
     } else {
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<unsigned short>::max()),
                 isolate)->IsUint32());
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<unsigned short>::max()),
                 isolate)->Uint32Value()
                == std::numeric_limits<unsigned short>::max());
 
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<short>::max()),
                 isolate)->IsInt32());
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<short>::max()),
                 isolate)->Int32Value()
                == std::numeric_limits<short>::max());
     }
 
     if (sizeof(int) > sizeof(int32_t)) {
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<unsigned int>::max()),
                 isolate)->IsNumber());
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<unsigned int>::max()),
                 isolate)->NumberValue()
                == double(std::numeric_limits<unsigned int>::max()));
 
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<int>::max()),
                 isolate)->IsNumber());
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<int>::max()),
                 isolate)->NumberValue()
                == double(std::numeric_limits<int>::max()));
     } else {
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<unsigned int>::max()),
                 isolate)->IsUint32());
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<unsigned int>::max()),
                 isolate)->Uint32Value()
                == std::numeric_limits<unsigned int>::max());
 
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<int>::max()),
                 isolate)->IsInt32());
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<int>::max()),
                 isolate)->Int32Value()
                == std::numeric_limits<int>::max());
     }
 
     if (sizeof(long) > sizeof(int32_t)) {
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<unsigned long>::max()),
                 isolate)->IsNumber());
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<unsigned long>::max()),
                 isolate)->NumberValue()
                == double(std::numeric_limits<unsigned long>::max()));
 
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<long>::max()),
                 isolate)->IsNumber());
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<long>::max()),
                 isolate)->NumberValue()
                == double(std::numeric_limits<long>::max()));
     } else {
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<unsigned long>::max()),
                 isolate)->IsUint32());
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<unsigned long>::max()),
                 isolate)->Uint32Value()
                == std::numeric_limits<unsigned long>::max());
 
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<long>::max()),
                 isolate)->IsInt32());
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::numeric_limits<long>::max()),
                 isolate)->Int32Value()
                == std::numeric_limits<long>::max());
     }
 
-    assert(efl::js::value_cast<v8::Local<v8::Value>>
+    assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
            (efl::eina::value(std::numeric_limits<float>::max()),
             isolate)->IsNumber());
-    assert(efl::js::value_cast<v8::Local<v8::Value>>
+    assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
            (efl::eina::value(std::numeric_limits<float>::max()),
             isolate)->NumberValue()
            == double(std::numeric_limits<float>::max()));
 
-    assert(efl::js::value_cast<v8::Local<v8::Value>>
+    assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
            (efl::eina::value(42.42), isolate)->IsNumber());
-    assert(efl::js::value_cast<v8::Local<v8::Value>>
+    assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
            (efl::eina::value(42.42), isolate)->NumberValue()
            == 42.42);
 
     assert(efl::eina::get<int>
-           (efl::js::value_cast<efl::eina::value>
-            (v8::Boolean::New(isolate, true))) == 1);
+           (efl::eina::js::value_cast<efl::eina::value>
+            (efl::eina::js::compatibility_new<v8::Boolean>(isolate, true))) == 1);
     assert(efl::eina::get<int32_t>
-           (efl::js::value_cast<efl::eina::value>
-            (v8::Integer::New(isolate, INT32_MAX))) == INT32_MAX);
+           (efl::eina::js::value_cast<efl::eina::value>
+            (efl::eina::js::compatibility_new<v8::Integer>(isolate, INT32_MAX))) == INT32_MAX);
     assert(efl::eina::get<uint32_t>
-           (efl::js::value_cast<efl::eina::value>
-            (v8::Integer::NewFromUnsigned(isolate, UINT32_MAX)))
+           (efl::eina::js::value_cast<efl::eina::value>
+            (efl::eina::js::compatibility_new<v8::Integer>(isolate, UINT32_MAX)))
            == UINT32_MAX);
     assert(efl::eina::get<double>
-           (efl::js::value_cast<efl::eina::value>
-            (v8::Number::New(isolate,
+           (efl::eina::js::value_cast<efl::eina::value>
+            (efl::eina::js::compatibility_new<v8::Number>(isolate,
                              std::numeric_limits<double>::max())))
            == std::numeric_limits<double>::max());
 
     {
         const char utf8_data[] = "Matroška";
 
-        assert(efl::js::value_cast<efl::eina::value>
-               (v8::String::NewFromUtf8(isolate, utf8_data))
+        assert(efl::eina::js::value_cast<efl::eina::value>
+               (efl::eina::js::compatibility_new<v8::String>(isolate, utf8_data))
                == efl::eina::value(std::string(utf8_data)));
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(std::string(utf8_data)), isolate)
-               ->StrictEquals(v8::String::NewFromUtf8(isolate, utf8_data)));
+               ->StrictEquals(efl::eina::js::compatibility_new<v8::String>(isolate, utf8_data)));
 #ifndef EINA_JS_TEST_SKIP_STRINGSHARE
-        assert(efl::js::value_cast<v8::Local<v8::Value>>
+        assert(efl::eina::js::value_cast<v8::Local<v8::Value>>
                (efl::eina::value(efl::eina::stringshare(utf8_data)), isolate)
-               ->StrictEquals(v8::String::NewFromUtf8(isolate, utf8_data)));
+               ->StrictEquals(efl::eina::js::compatibility_new<v8::String>(isolate, utf8_data)));
 #endif // EINA_JS_TEST_SKIP_STRINGSHARE
     }
 
     {
-        v8::HandleScope handle_scope(isolate);
+        efl::eina::js::compatibility_handle_scope handle_scope(isolate);
         v8::TryCatch try_catch;
-        auto source = v8::String::NewFromUtf8(isolate, script);
+        auto source = efl::eina::js::compatibility_new<v8::String>(isolate, script);
         v8::Handle<v8::Script> script = v8::Script::Compile(std::move(source));
 
         assert(!script.IsEmpty());

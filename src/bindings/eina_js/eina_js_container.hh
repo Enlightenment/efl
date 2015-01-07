@@ -3,7 +3,9 @@
 
 #include <algorithm>
 
-namespace efl { namespace js {
+#include <eina_js_compatibility.hh>
+
+namespace efl { namespace eina { namespace js {
 
 enum container_type
 {
@@ -44,7 +46,7 @@ struct eina_container_type_specific
 {
   v8::Local<v8::Value> get(v8::Isolate* isolate, std::size_t index) const
   {
-    return v8::Number::New(isolate, *std::next(container_get().begin(), index));
+    return efl::eina::js::compatibility_new<v8::Number>(isolate, *std::next(container_get().begin(), index));
   }
   int index_of(v8::Isolate*, v8::Local<v8::Value> v) const
   {
@@ -84,6 +86,6 @@ struct eina_container_type_specific
   C const& container_get() const { return static_cast<eina_container_common<C>const&>(*this)._container; }
 };
     
-} }
+} } }
 
 #endif

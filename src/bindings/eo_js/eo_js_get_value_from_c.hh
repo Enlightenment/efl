@@ -18,7 +18,7 @@ inline v8::Local<v8::Value>
 get_value_from_c(T v, v8::Isolate* isolate
                  , typename std::enable_if<std::is_integral<T>::value && !std::is_same<T,bool>::value>::type* = 0)
 {
-  return compatibility_new<v8::Integer>(isolate, v);
+  return eina::js::compatibility_new<v8::Integer>(isolate, v);
 }
 
 template <typename T>
@@ -26,7 +26,7 @@ inline v8::Local<v8::Value>
 get_value_from_c(T v, v8::Isolate* isolate
                  , typename std::enable_if<std::is_same<T,bool>::value>::type* = 0)
 {
-  return compatibility_new<v8::Boolean>(isolate, v);
+  return eina::js::compatibility_new<v8::Boolean>(isolate, v);
 }
       
 // template <typename T>
@@ -42,13 +42,13 @@ inline v8::Local<v8::Value>
 get_value_from_c(T v, v8::Isolate* isolate
                  , typename std::enable_if<std::is_floating_point<T>::value>::type* = 0)
 {
-  return compatibility_new<v8::Number>(isolate, v);
+  return eina::js::compatibility_new<v8::Number>(isolate, v);
 }
 
 inline v8::Local<v8::Value>
 get_value_from_c(const char* v, v8::Isolate* isolate)
 {
-  return compatibility_new<v8::String>(isolate, v);
+  return eina::js::compatibility_new<v8::String>(isolate, v);
 }
 
 inline v8::Local<v8::Value>

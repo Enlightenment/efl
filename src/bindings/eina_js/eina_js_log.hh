@@ -5,7 +5,7 @@
 #include <Eina.hh>
 #include <type_traits>
 
-namespace efl { namespace js {
+namespace efl { namespace eina { namespace js {
 
 void register_log_level_critical(v8::Isolate *isolate,
                                  v8::Handle<v8::Object> global,
@@ -121,6 +121,6 @@ void register_log_state_stop(v8::Isolate *isolate,
 void register_log_timing(v8::Isolate *isolate, v8::Handle<v8::Object> global,
                          v8::Handle<v8::String> name);
 
-} } // namespace efl::js
+} } } // namespace efl::js
 
 #endif /* EINA_JS_LOG_HH */

@@ -3,6 +3,7 @@
 #endif
 
 #include <eina_js_error.hh>
+#include <eina_js_compatibility.hh>
 
 namespace efl { namespace eina {namespace js {
 
@@ -17,12 +18,12 @@ void convert_error_to_javascript_exception(v8::Isolate *isolate)
      if (!err)
          return;
 
-     Local<Object> je = compatibility_new<v8::Object>(isolate);
-     je->Set(String::NewFromUtf8(isolate, "code"),
-             String::NewFromUtf8(isolate, "Eina_Error"));
-     je->Set(String::NewFromUtf8(isolate, "value"),
-             String::NewFromUtf8(isolate, eina_error_msg_get(err)));
-     isolate->ThrowException(je);
+     Local<Object> je = eina::js::compatibility_new<v8::Object>(isolate);
+     je->Set(compatibility_new<v8::String>(isolate, "code"),
+             compatibility_new<v8::String>(isolate, "Eina_Error"));
+     je->Set(compatibility_new<v8::String>(isolate, "value"),
+             compatibility_new<v8::String>(isolate, eina_error_msg_get(err)));
+     compatibility_throw(isolate, je);
 }
 
 } } } // namespace efl { namespace js {

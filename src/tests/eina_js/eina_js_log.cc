@@ -8,11 +8,11 @@
 #include <eina_js_log.hh>
 #include <Eo.hh>
 
-void print(const v8::FunctionCallbackInfo<v8::Value> &args)
+efl::eina::js::compatibility_return_type print(efl::eina::js::compatibility_callback_info_type args)
 {
   bool first = true;
   for (int i = 0; i < args.Length(); i++) {
-    v8::HandleScope handle_scope(args.GetIsolate());
+    efl::eina::js::compatibility_handle_scope handle_scope(args.GetIsolate());
     if (first) {
       first = false;
     } else {
@@ -23,6 +23,7 @@ void print(const v8::FunctionCallbackInfo<v8::Value> &args)
   }
   printf("\n");
   fflush(stdout);
+  return efl::eina::js::compatibility_return();
 }
 
 static void eina_log_print_cb_js_test(const Eina_Log_Domain *d,
@@ -141,15 +142,15 @@ int main(int argc, char *argv[])
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
 
-  v8::V8::Initialize();
-  v8::V8::InitializeICU();
+  efl::eina::js::compatibility_initialize();
   v8::V8::SetFlagsFromCommandLine(&argc, argv, true);
   v8::Isolate* isolate = v8::Isolate::New();
 
   v8::Isolate::Scope isolate_scope(isolate);
-  v8::HandleScope handle_scope(isolate);
+  efl::eina::js::compatibility_handle_scope handle_scope(isolate);
   v8::Handle<v8::Context> context
-      = v8::Context::New(isolate, NULL, v8::ObjectTemplate::New(isolate));
+    = efl::eina::js::compatibility_new<v8::Context>
+    (isolate, nullptr, efl::eina::js::compatibility_new<v8::ObjectTemplate>(isolate));
 
   if (context.IsEmpty()) {
     fprintf(stderr, "Error creating context\n");
@@ -161,175 +162,123 @@ int main(int argc, char *argv[])
     v8::Context::Scope context_scope(context);
     v8::Handle<v8::Object> global = context->Global();
 
-    global->Set(v8::String::NewFromUtf8(isolate, "print"),
-                v8::FunctionTemplate::New(isolate, print)->GetFunction());
+    global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "print"),
+                efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, print)->GetFunction());
     {
         int d = eina_log_domain_register("mydomain", "");
         eina_log_domain_registered_level_set(d, EINA_LOG_LEVEL_DBG);
-        global->Set(v8::String::NewFromUtf8(isolate, "mydomain"),
-                    efl::js::value_cast<v8::Local<v8::Value>>(d, isolate));
+        global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "mydomain"),
+                    efl::eina::js::value_cast<v8::Local<v8::Value>>(d, isolate));
     }
-    efl::js::register_log_level_critical(isolate, global,
-                                         v8::String::NewFromUtf8(isolate,
-                                                                 "LOG_LEVEL"
-                                                                 "_CRITICAL"));
-    efl::js::register_log_level_err(isolate, global,
-                                    v8::String::NewFromUtf8(isolate,
-                                                            "LOG_LEVEL_ERR"));
-    efl::js::register_log_level_warn(isolate, global,
-                                     v8::String::NewFromUtf8(isolate,
-                                                             "LOG_LEVEL_WARN"));
-    efl::js::register_log_level_info(isolate, global,
-                                     v8::String::NewFromUtf8(isolate,
-                                                             "LOG_LEVEL_INFO"));
-    efl::js::register_log_level_dbg(isolate, global,
-                                    v8::String::NewFromUtf8(isolate,
-                                                            "LOG_LEVEL_DBG"));
-    efl::js::register_log_domain_global(isolate, global,
-                                        v8::String::NewFromUtf8(isolate,
-                                                                "LOG_DOMAIN"
-                                                                "_GLOBAL"));
-    efl::js::register_log_print(isolate, global,
-                                v8::String::NewFromUtf8(isolate, "log_print"));
-    efl::js::register_log_domain_register(isolate, global,
-                                          v8::String::NewFromUtf8(isolate,
-                                                                  "log_domain"
-                                                                  "_register"));
-    efl::js::register_log_domain_unregister(isolate, global,
-                                            v8::String::NewFromUtf8(isolate,
-                                                                    "log_domain"
-                                                                    "_unregis"
-                                                                    "ter"));
-    efl::js
-    ::register_log_domain_registered_level_get(isolate, global,
-                                               v8::String
-                                               ::NewFromUtf8(isolate,
-                                                             "log_domain"
-                                                             "_registered_level"
-                                                             "_get"));
-    efl::js
-    ::register_log_domain_registered_level_set(isolate, global,
-                                               v8::String
-                                               ::NewFromUtf8(isolate,
-                                                             "log_domain"
-                                                             "_registered_level"
-                                                             "_set"));
-    efl::js::register_log_print_cb_set(isolate, global,
-                                       v8::String::NewFromUtf8(isolate,
-                                                               "log_print_cb"
-                                                               "_set"));
-    efl::js::register_log_level_set(isolate, global,
-                                    v8::String::NewFromUtf8(isolate,
-                                                            "log_level_set"));
-    efl::js::register_log_level_get(isolate, global,
-                                    v8::String::NewFromUtf8(isolate,
-                                                            "log_level_get"));
-    efl::js::register_log_level_check(isolate, global,
-                                      v8::String::NewFromUtf8(isolate,
-                                                              "log_level"
-                                                              "_check"));
-    efl::js::register_log_color_disable_set(isolate, global,
-                                            v8::String::NewFromUtf8(isolate,
-                                                                    "log_color"
-                                                                    "_disable"
-                                                                    "_set"));
-    efl::js::register_log_color_disable_get(isolate, global,
-                                            v8::String::NewFromUtf8(isolate,
-                                                                    "log_color"
-                                                                    "_disable"
-                                                                    "_get"));
-    efl::js::register_log_file_disable_set(isolate, global,
-                                           v8::String::NewFromUtf8(isolate,
-                                                                   "log_file"
-                                                                   "_disable"
-                                                                   "_set"));
-    efl::js::register_log_file_disable_get(isolate, global,
-                                           v8::String::NewFromUtf8(isolate,
-                                                                   "log_file"
-                                                                   "_disable"
-                                                                   "_get"));
-    efl::js
-    ::register_log_abort_on_critical_set(isolate, global,
-                                         v8::String::NewFromUtf8(isolate,
-                                                                 "log_abort_on"
-                                                                 "_critical"
-                                                                 "_set"));
-    efl::js
-    ::register_log_abort_on_critical_get(isolate, global,
-                                         v8::String::NewFromUtf8(isolate,
-                                                                 "log_abort_on"
-                                                                 "_critical"
-                                                                 "_get"));
-    efl::js
-    ::register_log_function_disable_set(isolate, global,
-                                        v8::String::NewFromUtf8(isolate,
-                                                                "log_function"
-                                                                "_disable"
-                                                                "_set"));
-    efl::js
-    ::register_log_function_disable_get(isolate, global,
-                                        v8::String::NewFromUtf8(isolate,
-                                                                "log_function"
-                                                                "_disable"
-                                                                "_get"));
-    efl::js
-    ::register_log_abort_on_critical_set(isolate, global,
-                                         v8::String::NewFromUtf8(isolate,
-                                                                 "log_abort_on"
-                                                                 "_critical"
-                                                                 "_set"));
-    efl::js
-    ::register_log_abort_on_critical_get(isolate, global,
-                                         v8::String::NewFromUtf8(isolate,
-                                                                 "log_abort_on"
-                                                                 "_critical"
-                                                                 "_get"));
-    efl::js
-    ::register_log_abort_on_critical_level_set(isolate, global,
-                                               v8::String
-                                               ::NewFromUtf8(isolate,
-                                                             "log_abort_on"
-                                                             "_critical"
-                                                             "_level_set"));
-    efl::js
-    ::register_log_abort_on_critical_level_get(isolate, global,
-                                               v8::String
-                                               ::NewFromUtf8(isolate,
-                                                             "log_abort_on"
-                                                             "_critical"
-                                                             "_level_get"));
-    efl::js::register_log_domain_level_set(isolate, global,
-                                           v8::String::NewFromUtf8(isolate,
-                                                                   "log_domain"
-                                                                   "_level"
-                                                                   "_set"));
-    efl::js::register_log_domain_level_get(isolate, global,
-                                           v8::String::NewFromUtf8(isolate,
-                                                                   "log_domain"
-                                                                   "_level"
-                                                                   "_get"));
-    efl::js::register_log_state_start(isolate, global,
-                                      v8::String::NewFromUtf8(isolate,
-                                                              "LOG_STATE"
-                                                              "_START"));
-    efl::js::register_log_state_stop(isolate, global,
-                                     v8::String::NewFromUtf8(isolate,
-                                                             "LOG_STATE_STOP"));
-    efl::js::register_log_timing(isolate, global,
-                                 v8::String::NewFromUtf8(isolate,
-                                                         "log_timing"));
+    efl::eina::js::register_log_level_critical
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>
+       (isolate, "LOG_LEVEL_CRITICAL"));
+    efl::eina::js::register_log_level_err
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "LOG_LEVEL_ERR"));
+    efl::eina::js::register_log_level_warn
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "LOG_LEVEL_WARN"));
+    efl::eina::js::register_log_level_info
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "LOG_LEVEL_INFO"));
+    efl::eina::js::register_log_level_dbg
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "LOG_LEVEL_DBG"));
+    efl::eina::js::register_log_domain_global
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "LOG_DOMAIN_GLOBAL"));
+    efl::eina::js::register_log_print
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_print"));
+    efl::eina::js::register_log_domain_register
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_domain_register"));
+    efl::eina::js::register_log_domain_unregister
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_domain_unregister"));
+    efl::eina::js::register_log_domain_registered_level_get
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_domain_registered_level_get"));
+    efl::eina::js::register_log_domain_registered_level_set
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_domain_registered_level_set"));
+    efl::eina::js::register_log_print_cb_set
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_print_cb_set"));
+    efl::eina::js::register_log_level_set
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_level_set"));
+    efl::eina::js::register_log_level_get
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_level_get"));
+    efl::eina::js::register_log_level_check
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_level_check"));
+    efl::eina::js::register_log_color_disable_set
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_color_disable_set"));
+    efl::eina::js::register_log_color_disable_get
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_color_disable_get"));
+    efl::eina::js::register_log_file_disable_set
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_file_disable_set"));
+    efl::eina::js::register_log_file_disable_get
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_file_disable_get"));
+    efl::eina::js::register_log_abort_on_critical_set
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_abort_on_critical_set"));
+    efl::eina::js::register_log_abort_on_critical_get
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_abort_on_critical_get"));
+    efl::eina::js::register_log_function_disable_set
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_function_disable_set"));
+    efl::eina::js::register_log_function_disable_get
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_function_disable_get"));
+    efl::eina::js::register_log_abort_on_critical_set
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_abort_on_critical_set"));
+    efl::eina::js::register_log_abort_on_critical_get
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_abort_on_critical_get"));
+    efl::eina::js::register_log_abort_on_critical_level_set
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_abort_on_critical_level_set"));
+    efl::eina::js::register_log_abort_on_critical_level_get
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_abort_on_critical_level_get"));
+    efl::eina::js::register_log_domain_level_set
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_domain_level_set"));
+    efl::eina::js::register_log_domain_level_get
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_domain_level_get"));
+    efl::eina::js::register_log_state_start
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "LOG_STATE_START"));
+    efl::eina::js::register_log_state_stop
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "LOG_STATE_STOP"));
+    efl::eina::js::register_log_timing
+      (isolate, global,
+       efl::eina::js::compatibility_new<v8::String>(isolate, "log_timing"));
 
     eina_log_print_cb_set(eina_log_print_cb_js_test, NULL);
     eina_log_level_set(EINA_LOG_LEVEL_DBG);
     eina_log_abort_on_critical_set(EINA_FALSE);
 
     {
-        v8::HandleScope handle_scope(isolate);
+        efl::eina::js::compatibility_handle_scope handle_scope(isolate);
         v8::TryCatch try_catch;
         v8::Handle<v8::Script> script = [&]() {
-            auto source = v8::String::NewFromUtf8(isolate, raw_script);
-            auto filename = v8::String::NewFromUtf8(isolate, "offspring.js");
-            return v8::Script::Compile(source, filename);
+          auto source = efl::eina::js::compatibility_new<v8::String>(isolate, raw_script);
+          auto filename = efl::eina::js::compatibility_new<v8::String>(isolate, "offspring.js");
+          return v8::Script::Compile(source, filename);
         }();
 
         assert(!script.IsEmpty());

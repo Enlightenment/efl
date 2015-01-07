@@ -31,9 +31,9 @@ inline int get_value_from_javascript
     return v->Uint32Value();
   else
     {
-      compatibility_throw
+      eina::js::compatibility_throw
         (isolate, v8::Exception::TypeError
-         (compatibility_new<v8::String>(isolate, "Type expected is different. Expected Integral type")));
+         (eina::js::compatibility_new<v8::String>(isolate, "Type expected is different. Expected Integral type")));
 
       throw std::logic_error("");
     }
@@ -56,9 +56,9 @@ inline char* get_value_from_javascript
     }
   else
     {
-      compatibility_throw
+      eina::js::compatibility_throw
         (isolate, v8::Exception::TypeError
-         (compatibility_new<v8::String>(isolate, "Type expected is different. Expected Integral type")));
+         (eina::js::compatibility_new<v8::String>(isolate, "Type expected is different. Expected Integral type")));
 
       throw std::logic_error("");
     }
@@ -92,9 +92,9 @@ inline Eo* get_value_from_javascript
             }
         }
     }
-  compatibility_throw
+  eina::js::compatibility_throw
     (isolate, v8::Exception::TypeError
-     (compatibility_new<v8::String>(isolate, "Type expected is different. Expected floating point type")));
+     (eina::js::compatibility_new<v8::String>(isolate, "Type expected is different. Expected floating point type")));
   throw std::logic_error("");
   return nullptr;
 }
@@ -112,9 +112,9 @@ inline T get_value_from_javascript
     return static_cast<T>(v->Uint32Value());
   else
     {
-      compatibility_throw
+      eina::js::compatibility_throw
         (isolate, v8::Exception::TypeError
-         (compatibility_new<v8::String>(isolate, "Type expected is different. Expected Integral type")));
+         (eina::js::compatibility_new<v8::String>(isolate, "Type expected is different. Expected Integral type")));
 
       throw std::logic_error("");
     }
@@ -132,9 +132,9 @@ inline int get_value_from_javascript
     }
   else
     {
-      compatibility_throw
+      eina::js::compatibility_throw
         (isolate, v8::Exception::TypeError
-         (compatibility_new<v8::String>(isolate, "Type expected is different. Expected Boolean type")));
+         (eina::js::compatibility_new<v8::String>(isolate, "Type expected is different. Expected Boolean type")));
 
       throw std::logic_error("");
     }
@@ -154,9 +154,9 @@ inline double get_value_from_javascript
     }
   else
     {
-      compatibility_throw
+      eina::js::compatibility_throw
         (isolate, v8::Exception::TypeError
-         (compatibility_new<v8::String>(isolate, "Type expected is different. Expected floating point type")));
+         (eina::js::compatibility_new<v8::String>(isolate, "Type expected is different. Expected floating point type")));
       throw std::logic_error("");
     }
   return 0.0;
@@ -169,9 +169,9 @@ inline T get_value_from_javascript
    && !std::is_enum<T>::value>::type* = 0)
 {
   std::cerr << "Trying to convert to " << typeid(T).name() << " to call a C function" << std::endl;
-  compatibility_throw
+  eina::js::compatibility_throw
     (isolate, v8::Exception::TypeError
-     (compatibility_new<v8::String>(isolate, "Not implemented yet")));
+     (eina::js::compatibility_new<v8::String>(isolate, "Not implemented yet")));
   throw std::logic_error("");
 }
       

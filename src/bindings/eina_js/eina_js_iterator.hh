@@ -7,7 +7,7 @@
 
 #include <eina_js_value.hh>
 
-namespace efl { namespace js {
+namespace efl { namespace eina { namespace js {
 
 /* Exports the \p iterator to be manipulated by the JS code. The iterator should
    remain alive as long as there is JS code referencing it. The JS code is able
@@ -23,67 +23,69 @@ namespace efl { namespace js {
 template<class T>
 v8::Local<v8::Object> export_iterator(::efl::eina::iterator<T> *i,
                                       v8::Isolate *isolate)
-{
-    using v8::Local;
-    using v8::Value;
-    using v8::Object;
-    using v8::String;
-    using v8::FunctionCallbackInfo;
-    using v8::FunctionTemplate;
-    using v8::ObjectTemplate;
+  ;
+// {
+//     using v8::Local;
+//     using v8::Value;
+//     using v8::Object;
+//     using v8::String;
+//     using v8::FunctionCallbackInfo;
+//     using v8::FunctionTemplate;
+//     using v8::ObjectTemplate;
 
-    typedef ::efl::eina::iterator<T> value_type;
-    typedef value_type *ptr_type;
-    typedef void (*deleter_t)(void*);
+//     typedef ::efl::eina::iterator<T> value_type;
+//     typedef value_type *ptr_type;
+//     typedef void (*deleter_t)(void*);
 
-    auto obj_tpl = ObjectTemplate::New(isolate);
-    obj_tpl->SetInternalFieldCount(2);
+//     auto obj_tpl = ObjectTemplate::New(isolate);
+//     obj_tpl->SetInternalFieldCount(2);
 
-    auto ret = obj_tpl->NewInstance();
+//     auto ret = obj_tpl->NewInstance();
 
-    auto next = [](const FunctionCallbackInfo<Value> &info) {
-        if (info.Length() != 0)
-            return;
+//     auto next = [](const FunctionCallbackInfo<Value> &info) {
+//         if (info.Length() != 0)
+//             return;
 
-        void *ptr = info.This()->GetAlignedPointerFromInternalField(0);
-        auto &value = *static_cast<ptr_type>(ptr);
-        Local<Object> o = v8::Object::New(info.GetIsolate());
-        o->Set(String::NewFromUtf8(info.GetIsolate(), "value"),
-               value_cast<Local<Value>>(*value, info.GetIsolate()));
-        info.GetReturnValue().Set(o);
-        ++value;
-    };
+//         void *ptr = info.This()->GetAlignedPointerFromInternalField(0);
+//         auto &value = *static_cast<ptr_type>(ptr);
+//         Local<Object> o = v8::Object::New(info.GetIsolate());
+//         o->Set(String::NewFromUtf8(info.GetIsolate(), "value"),
+//                value_cast<Local<Value>>(*value, info.GetIsolate()));
+//         info.GetReturnValue().Set(o);
+//         ++value;
+//     };
 
-    ret->Set(String::NewFromUtf8(isolate, "next"),
-             FunctionTemplate::New(isolate, next)->GetFunction());
+//     ret->Set(String::NewFromUtf8(isolate, "next"),
+//              FunctionTemplate::New(isolate, next)->GetFunction());
 
-    {
-        deleter_t deleter = [](void *i) {
-            delete static_cast<ptr_type>(i);
-        };
-        ret->SetAlignedPointerInInternalField(0, i);
-        ret->SetAlignedPointerInInternalField(1,
-                                              reinterpret_cast<void*>(deleter));
-    }
+//     {
+//         deleter_t deleter = [](void *i) {
+//             delete static_cast<ptr_type>(i);
+//         };
+//         ret->SetAlignedPointerInInternalField(0, i);
+//         ret->SetAlignedPointerInInternalField(1,
+//                                               reinterpret_cast<void*>(deleter));
+//     }
 
-    return ret;
-}
+//     return ret;
+// }
 
 /* Extracts and returns a copy from the internal iterator object from the JS
    object. */
 template<class T>
 ::efl::eina::iterator<T> *import_iterator(v8::Handle<v8::Object> o)
-{
-    typedef ::efl::eina::iterator<T> value_type;
-    typedef value_type *ptr_type;
+  ;
+// {
+//     typedef ::efl::eina::iterator<T> value_type;
+//     typedef value_type *ptr_type;
 
-    return reinterpret_cast<ptr_type>(o->GetAlignedPointerFromInternalField(0));
-}
+//     return reinterpret_cast<ptr_type>(o->GetAlignedPointerFromInternalField(0));
+// }
 
 void register_destroy_iterator(v8::Isolate *isolate,
                                v8::Handle<v8::Object> global,
                                v8::Handle<v8::String> name);
 
-} } // namespace efl::js
+} } } // namespace efl::js
 
 #endif /* EINA_JS_ITERATOR_HH */

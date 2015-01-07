@@ -4,13 +4,14 @@
 
 #include <cassert>
 #include <eina_js_error.hh>
+#include <eina_js_compatibility.hh>
 #include <Eo.hh>
 
-void print(const v8::FunctionCallbackInfo<v8::Value> &args)
+efl::eina::js::compatibility_return_type print(efl::eina::js::compatibility_callback_info_type args)
 {
   bool first = true;
   for (int i = 0; i < args.Length(); i++) {
-    v8::HandleScope handle_scope(args.GetIsolate());
+    efl::eina::js::compatibility_handle_scope handle_scope(args.GetIsolate());
     if (first) {
       first = false;
     } else {
@@ -21,18 +22,21 @@ void print(const v8::FunctionCallbackInfo<v8::Value> &args)
   }
   printf("\n");
   fflush(stdout);
+  return efl::eina::js::compatibility_return();
 }
 
-void clear_eina_error(const v8::FunctionCallbackInfo<v8::Value> &args)
+efl::eina::js::compatibility_return_type clear_eina_error(efl::eina::js::compatibility_callback_info_type args)
 {
     eina_error_set(0);
     efl::js::convert_error_to_javascript_exception(args.GetIsolate());
+    return efl::eina::js::compatibility_return();
 }
 
-void set_eina_error(const v8::FunctionCallbackInfo<v8::Value> &args)
+efl::eina::js::compatibility_return_type set_eina_error(efl::eina::js::compatibility_callback_info_type args)
 {
     eina_error_set(eina_error_msg_static_register("foobar"));
     efl::js::convert_error_to_javascript_exception(args.GetIsolate());
+    return efl::eina::js::compatibility_return();
 }
 
 static const char script[] =
@@ -62,15 +66,15 @@ int main(int argc, char *argv[])
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
 
-  v8::V8::Initialize();
-  v8::V8::InitializeICU();
+  efl::eina::js::compatibility_initialize();
   v8::V8::SetFlagsFromCommandLine(&argc, argv, true);
   v8::Isolate* isolate = v8::Isolate::New();
 
   v8::Isolate::Scope isolate_scope(isolate);
-  v8::HandleScope handle_scope(isolate);
+  efl::eina::js::compatibility_handle_scope handle_scope(isolate);
   v8::Handle<v8::Context> context
-      = v8::Context::New(isolate, NULL, v8::ObjectTemplate::New(isolate));
+    = efl::eina::js::compatibility_new<v8::Context>
+    (isolate, nullptr, efl::eina::js::compatibility_new<v8::ObjectTemplate>(isolate));
 
   if (context.IsEmpty()) {
     fprintf(stderr, "Error creating context\n");
@@ -82,19 +86,19 @@ int main(int argc, char *argv[])
     v8::Context::Scope context_scope(context);
     v8::Handle<v8::Object> global = context->Global();
 
-    global->Set(v8::String::NewFromUtf8(isolate, "print"),
-                v8::FunctionTemplate::New(isolate, print)->GetFunction());
-    global->Set(v8::String::NewFromUtf8(isolate, "clear_eina_error"),
-                v8::FunctionTemplate::New(isolate, clear_eina_error)
+    global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "print"),
+                efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, print)->GetFunction());
+    global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "clear_eina_error"),
+                efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, clear_eina_error)
                 ->GetFunction());
-    global->Set(v8::String::NewFromUtf8(isolate, "set_eina_error"),
-                v8::FunctionTemplate::New(isolate, set_eina_error)
+    global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "set_eina_error"),
+                efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, set_eina_error)
                 ->GetFunction());
 
     {
-        v8::HandleScope handle_scope(isolate);
+        efl::eina::js::compatibility_handle_scope handle_scope(isolate);
         v8::TryCatch try_catch;
-        auto source = v8::String::NewFromUtf8(isolate, script);
+        auto source = efl::eina::js::compatibility_new<v8::String>(isolate, script);
         v8::Handle<v8::Script> script = v8::Script::Compile(std::move(source));
 
         assert(!script.IsEmpty());

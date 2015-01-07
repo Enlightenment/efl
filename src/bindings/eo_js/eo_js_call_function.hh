@@ -19,12 +19,12 @@
 
 namespace efl { namespace eo { namespace js {
 
-inline compatibility_return_type call_function(compatibility_callback_info_type args)
+inline eina::js::compatibility_return_type call_function(eina::js::compatibility_callback_info_type args)
 {
   std::cerr << "call_function" << std::endl;
   void* data = v8::External::Cast(*args.Data())->Value();
-  std::function<compatibility_return_type(compatibility_callback_info_type)>*
-    f = static_cast<std::function<compatibility_return_type(compatibility_callback_info_type)>*>(data);
+  std::function<eina::js::compatibility_return_type(eina::js::compatibility_callback_info_type)>*
+    f = static_cast<std::function<eina::js::compatibility_return_type(eina::js::compatibility_callback_info_type)>*>(data);
   return (*f)(args);
 }
       
@@ -40,7 +40,7 @@ struct method_caller
   template <typename U, std::size_t I, typename Outs>
   static
   typename std::tuple_element<I, parameters_t>::type
-  get_value(compatibility_callback_info_type args, Outs& /*outs*/, v8::Isolate* isolate
+  get_value(eina::js::compatibility_callback_info_type args, Outs& /*outs*/, v8::Isolate* isolate
             , std::false_type)
   {
     std::cout << "is NOT out" << std::endl;
@@ -55,7 +55,7 @@ struct method_caller
   typename std::tuple_element
     <eina::_mpl::tuple_find<std::integral_constant<std::size_t, I>, Out>::value
      , Outs>::type>::type
-  get_value(compatibility_callback_info_type, Outs& outs, v8::Isolate*
+  get_value(eina::js::compatibility_callback_info_type, Outs& outs, v8::Isolate*
             , std::true_type)
   {
     std::cout << "is out" << std::endl;
@@ -65,7 +65,7 @@ struct method_caller
 
   template <typename R>
   v8::Handle<v8::Value>
-  create_return_unique_value(compatibility_callback_info_type args
+  create_return_unique_value(eina::js::compatibility_callback_info_type args
                              , R const& r) const
   {
     return js::get_value_from_c(r, args.GetIsolate());
@@ -73,7 +73,7 @@ struct method_caller
   
   template <typename Outs>
   v8::Handle<v8::Value> 
-  create_return_value(compatibility_callback_info_type args
+  create_return_value(eina::js::compatibility_callback_info_type args
                       , Outs const& outs
                       , typename std::enable_if<std::tuple_size<Outs>::value == 1>::type* = 0) const
   {
@@ -82,7 +82,7 @@ struct method_caller
 
   template <typename Outs>
   v8::Handle<v8::Value> 
-  create_return_value(compatibility_callback_info_type
+  create_return_value(eina::js::compatibility_callback_info_type
                       , Outs const&
                       , typename std::enable_if<std::tuple_size<Outs>::value == 0>::type* = 0) const
   {
@@ -92,20 +92,20 @@ struct method_caller
 
   template <typename Outs>
   v8::Handle<v8::Value>
-  create_return_value(compatibility_callback_info_type args
+  create_return_value(eina::js::compatibility_callback_info_type args
                       , Outs const& outs
                       , typename std::enable_if<(std::tuple_size<Outs>::value > 1)>::type* = 0) const
   {
     v8::Isolate* isolate = args.GetIsolate();
     int const length = std::tuple_size<Outs>::value;
-    v8::Local<v8::Array> ret = compatibility_new<v8::Array>(isolate, length);
+    v8::Local<v8::Array> ret = eina::js::compatibility_new<v8::Array>(isolate, length);
     set_return<0u>(isolate, ret, outs, eina::make_index_sequence<std::tuple_size<Outs>::value>());
-    return compatibility_return(ret, args);
+    return eina::js::compatibility_return(ret, args);
   }
   
   template <typename R, typename Outs>
   v8::Handle<v8::Value>
-  create_return_value(compatibility_callback_info_type args
+  create_return_value(eina::js::compatibility_callback_info_type args
                       , R const& r
                       , Outs const&
                       , typename std::enable_if<std::tuple_size<Outs>::value == 0>::type* = 0) const
@@ -123,23 +123,23 @@ struct method_caller
   }
 
   template <typename R, typename Outs>
-  compatibility_return_type
-  create_return_value(compatibility_callback_info_type args
+  eina::js::compatibility_return_type
+  create_return_value(eina::js::compatibility_callback_info_type args
                       , R const& r
                       , Outs const& outs
                       , typename std::enable_if<std::tuple_size<Outs>::value != 0>::type* = 0) const
   {
     v8::Isolate* isolate = args.GetIsolate();
     int const length = std::tuple_size<Outs>::value + 1;
-    v8::Local<v8::Array> ret = compatibility_new<v8::Array>(isolate, length);
+    v8::Local<v8::Array> ret = eina::js::compatibility_new<v8::Array>(isolate, length);
     ret->Set(0, js::get_value_from_c(r, isolate));
     set_return<1u>(isolate, ret, outs, eina::make_index_sequence<std::tuple_size<Outs>::value>());
-    return compatibility_return(ret, args);
+    return eina::js::compatibility_return(ret, args);
   }
   
   template <std::size_t... I>
-  compatibility_return_type
-  aux(compatibility_callback_info_type args, eina::index_sequence<I...>
+  eina::js::compatibility_return_type
+  aux(eina::js::compatibility_callback_info_type args, eina::index_sequence<I...>
       , std::true_type) const
   {
     typename eina::_mpl::tuple_transform<Out, out_transform<parameters_t> >::type outs {};
@@ -150,7 +150,7 @@ struct method_caller
   }
 
   template <std::size_t... I>
-  compatibility_return_type aux(compatibility_callback_info_type args, eina::index_sequence<I...>
+  eina::js::compatibility_return_type aux(eina::js::compatibility_callback_info_type args, eina::index_sequence<I...>
            , std::false_type) const
   {
     typename eina::_mpl::tuple_transform<Out, out_transform<parameters_t> >::type outs {};
@@ -171,7 +171,7 @@ struct method_caller
     };
   };
 
-  compatibility_return_type operator()(compatibility_callback_info_type args)
+  eina::js::compatibility_return_type operator()(eina::js::compatibility_callback_info_type args)
   {
     std::cerr << "call function operator()(args)" << std::endl;
     int input_parameters = std::tuple_size<In>::value;
@@ -184,7 +184,7 @@ struct method_caller
           {
             eo_do
               (eo,
-               return compatibility_return
+               return eina::js::compatibility_return
                (
                 aux(args, eina::make_index_sequence<std::tuple_size<parameters_t>::value>()
                     , std::is_same<void, typename eina::_mpl::function_return<F>::type>())
@@ -193,14 +193,14 @@ struct method_caller
           }
         catch(std::logic_error const&)
           {
-            return compatibility_return();
+            return eina::js::compatibility_return();
           }
       }
     else
       {
-        return compatibility_throw
+        return eina::js::compatibility_throw
           (v8::Exception::TypeError
-           (compatibility_new<v8::String>(nullptr, "Expected more arguments for this call")));
+           (eina::js::compatibility_new<v8::String>(nullptr, "Expected more arguments for this call")));
       }
   }
   
@@ -210,8 +210,8 @@ struct method_caller
 template <typename In, typename Out, typename Ownership, typename F>
 v8::Handle<v8::Value> call_function_data(v8::Isolate* isolate, F f)
 {
-  return compatibility_new<v8::External>
-    (isolate, new std::function<compatibility_return_type(compatibility_callback_info_type const&)>
+  return eina::js::compatibility_new<v8::External>
+    (isolate, new std::function<eina::js::compatibility_return_type(eina::js::compatibility_callback_info_type const&)>
      (method_caller<In, Out, Ownership, F>{f}));
 }
 

@@ -4,13 +4,17 @@
 
 #include <cassert>
 #include <eina_js_accessor.hh>
+#include <eina_js_compatibility.hh>
 #include <Eo.hh>
+#include <Eina.hh>
 
-void print(const v8::FunctionCallbackInfo<v8::Value> &args)
+#include <iostream>
+
+efl::eina::js::compatibility_return_type print(efl::eina::js::compatibility_callback_info_type args)
 {
   bool first = true;
   for (int i = 0; i < args.Length(); i++) {
-    v8::HandleScope handle_scope(args.GetIsolate());
+    efl::eina::js::compatibility_handle_scope handle_scope(args.GetIsolate());
     if (first) {
       first = false;
     } else {
@@ -21,6 +25,7 @@ void print(const v8::FunctionCallbackInfo<v8::Value> &args)
   }
   printf("\n");
   fflush(stdout);
+  return efl::eina::js::compatibility_return();
 }
 
 static const char script[] =
@@ -36,15 +41,15 @@ int main(int argc, char *argv[])
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
 
-  v8::V8::Initialize();
-  v8::V8::InitializeICU();
+  efl::eina::js::compatibility_initialize();
   v8::V8::SetFlagsFromCommandLine(&argc, argv, true);
   v8::Isolate* isolate = v8::Isolate::New();
 
   v8::Isolate::Scope isolate_scope(isolate);
-  v8::HandleScope handle_scope(isolate);
+  efl::eina::js::compatibility_handle_scope handle_scope(isolate);
   v8::Handle<v8::Context> context
-      = v8::Context::New(isolate, NULL, v8::ObjectTemplate::New(isolate));
+    = efl::eina::js::compatibility_new<v8::Context>
+    (isolate, nullptr, efl::eina::js::compatibility_new<v8::ObjectTemplate>(isolate));
 
   if (context.IsEmpty()) {
     fprintf(stderr, "Error creating context\n");
@@ -56,11 +61,11 @@ int main(int argc, char *argv[])
     v8::Context::Scope context_scope(context);
     v8::Handle<v8::Object> global = context->Global();
 
-    global->Set(v8::String::NewFromUtf8(isolate, "print"),
-                v8::FunctionTemplate::New(isolate, print)->GetFunction());
-    efl::js::register_destroy_accessor(isolate, global,
-                                       v8::String::NewFromUtf8(isolate,
-                                                               "destroy_accessor"));
+    global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "print"),
+                efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, print)->GetFunction());
+    efl::eina::js::register_destroy_accessor
+      (isolate, global
+       , efl::eina::js::compatibility_new<v8::String>(isolate, "destroy_accessor"));
 
     Eina_Array *array = [](){
         static int impl[2] = {42, 24};
@@ -71,16 +76,16 @@ int main(int argc, char *argv[])
     }();
     efl::eina::accessor<int> acc(eina_array_accessor_new(array));
 
-    v8::Local<v8::Object> wrapped_acc = efl::js::export_accessor(acc, isolate);
+    v8::Local<v8::Object> wrapped_acc = efl::eina::js::export_accessor(acc, isolate);
 
-    global->Set(v8::String::NewFromUtf8(isolate, "acc"), wrapped_acc);
+    global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "acc"), wrapped_acc);
 
-    assert(efl::js::import_accessor<int>(wrapped_acc)[0] == 42);
+    assert(efl::eina::js::import_accessor<int>(wrapped_acc)[0] == 42);
 
     {
-        v8::HandleScope handle_scope(isolate);
+        efl::eina::js::compatibility_handle_scope h(isolate);
         v8::TryCatch try_catch;
-        auto source = v8::String::NewFromUtf8(isolate, script);
+        auto source = efl::eina::js::compatibility_new<v8::String>(isolate, script);
         v8::Handle<v8::Script> script = v8::Script::Compile(std::move(source));
 
         assert(!script.IsEmpty());
