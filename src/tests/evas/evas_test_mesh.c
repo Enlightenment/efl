@@ -55,6 +55,7 @@
         fail_if(res == 1);                                                                                      \
         eo_del(mesh2);                                                                                          \
         eo_del(mesh);                                                                                           \
+        unlink(buffer);                                                                                         \
      }
 
 static Evas_3D_Mesh_Frame *
