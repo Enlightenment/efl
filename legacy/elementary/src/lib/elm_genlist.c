@@ -6312,6 +6312,17 @@ EOLIAN static void
 _elm_genlist_multi_select_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Eina_Bool multi)
 {
    sd->multi = !!multi;
+
+   if (!sd->multi && sd->selected)
+     {
+        Eina_List *l, *ll;
+        Elm_Gen_Item *it;
+        Elm_Gen_Item *last = sd->selected->data;
+        EINA_LIST_FOREACH_SAFE(sd->selected, l, ll, it)
+          {
+             if (last != it) _item_unselect(it);
+          }
+     }
 }
 
 EOLIAN static Eina_Bool
