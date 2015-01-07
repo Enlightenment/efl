@@ -86,6 +86,7 @@ IC("edit",        "toolbar/edit",        "icon_edit.png",        16, 0);
 IC("refresh",     "toolbar/refresh",     "icon_refresh.png",     16, 0);
 IC("file",        "toolbar/file",        "icon_file.png",        16, 0);
 IC("no_photo",    "photo/no_photo",      "icon_head.png",        16, 0);
+IC("search",      "toolbar/search",      "icon_search.png",      16, 0);
 #undef IC
 
 #define IC(Name, File, Min, Max) \

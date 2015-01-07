@@ -1180,6 +1180,40 @@ _anchor_clicked(void *data,
    }
 }
 
+static void
+_files_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+     Evas_Event_Key_Down *ev = event_info;
+     Evas_Object *par, *searchbar;
+
+     par = data;
+     searchbar = evas_object_data_get(par, "search");
+
+     if (!searchbar) return;
+
+     if (((ev->string) && *(ev->string) &&
+               (isalpha(*ev->string) ||
+                isdigit(*ev->string))))
+       {
+
+          elm_entry_entry_append(searchbar, ev->string);
+       }
+     else if (ev->string &&
+              *(ev->string) &&
+              !strcmp(ev->key, "BackSpace"))
+       {
+          char buf[PATH_MAX];
+          const char *en;
+          en = elm_entry_entry_get(searchbar);
+          if (strlen(en) > 0)
+            {
+               memmove(buf, en, strlen(en) -1);
+               buf[strlen(en) -1] = '\0';
+               elm_entry_entry_set(searchbar, buf);
+            }
+       }
+}
+
 static Evas_Object *
 _files_list_add(Evas_Object *obj)
 {
@@ -1201,6 +1235,7 @@ _files_list_add(Evas_Object *obj)
      (li, "contract,request", _on_list_contract_req, obj);
    evas_object_smart_callback_add(li, "expanded", _on_list_expanded, obj);
    evas_object_smart_callback_add(li, "contracted", _on_list_contracted, obj);
+   evas_object_event_callback_add(li, EVAS_CALLBACK_KEY_DOWN, _files_key_down, obj);
 
    elm_widget_sub_object_add(obj, li);
 
@@ -1227,6 +1262,7 @@ _files_grid_add(Evas_Object *obj)
    evas_object_smart_callback_add(grid, "selected", _on_item_selected, obj);
    evas_object_smart_callback_add(grid, "unselected", _on_item_unselected, obj);
    evas_object_smart_callback_add(grid, "activated", _on_item_activated, obj);
+   evas_object_event_callback_add(grid, EVAS_CALLBACK_KEY_DOWN, _files_key_down, obj);
 
    elm_widget_sub_object_add(obj, grid);
 
@@ -1468,6 +1504,9 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
    priv->name_entry = en;
 
    //search entry
+   ic = elm_icon_add(obj);
+   elm_icon_standard_set(ic, "search");
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    en = elm_entry_add(obj);
    elm_entry_scrollable_set(en, EINA_TRUE);
    elm_widget_mirrored_automatic_set(en, EINA_FALSE);
@@ -1476,9 +1515,12 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
    elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
    elm_object_domain_translatable_part_text_set(en, "guide",
                                                 PACKAGE, N_("Search"));
+   elm_object_part_content_set(en, "icon", ic);
+   elm_entry_icon_visible_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(en, "changed", _preedit_cb, obj);
+   evas_object_data_set(obj, "search", en);
 
    elm_widget_sub_object_add(obj, en);
    priv->search_entry = en;
