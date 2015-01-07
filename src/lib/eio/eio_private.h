@@ -498,4 +498,7 @@ void eio_async_error(void *data, Ecore_Thread *thread);
 
 Eina_List *eio_pack_send(Ecore_Thread *thread, Eina_List *pack, double *start);
 
+void eio_file_register(Eio_File *common);
+void eio_file_unregister(Eio_File *common);
+
 #endif

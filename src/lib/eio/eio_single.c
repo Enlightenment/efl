@@ -326,6 +326,7 @@ eio_file_free(Eio_File *common)
      eina_hash_free(common->worker.associated);
    if (common->main.associated)
      eina_hash_free(common->main.associated);
+   eio_file_unregister(common);
    free(common);
 }
 
@@ -359,7 +360,11 @@ eio_long_file_set(Eio_File *common,
                                       cancel_cb,
                                       common,
                                       EINA_FALSE);
-   if (thread) common->thread = thread;
+   if (thread)
+     {
+        common->thread = thread;
+        eio_file_register(common);
+     }
    return !!thread;
 }
 
@@ -388,7 +393,11 @@ eio_file_set(Eio_File *common,
    */
    thread = ecore_thread_run(job_cb, end_cb, cancel_cb, common);
 
-   if (thread) common->thread = thread;
+   if (thread)
+     {
+        common->thread = thread;
+        eio_file_register(common);
+     }
    return !!thread;
 }
 

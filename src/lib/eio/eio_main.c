@@ -233,6 +233,22 @@ eio_pack_send(Ecore_Thread *thread, Eina_List *pack, double *start)
    return pack;
 }
 
+// For now use a list for simplicity and we should not have that many
+// pending request
+static Eina_List *tracked_thread = NULL;
+
+void
+eio_file_register(Eio_File *common)
+{
+   tracked_thread = eina_list_append(tracked_thread, common);
+}
+
+void
+eio_file_unregister(Eio_File *common)
+{
+   tracked_thread = eina_list_remove(tracked_thread, common);
+}
+
 /**
  * @endcond
  */
@@ -308,6 +324,8 @@ eio_shutdown(void)
    Eio_File_Char *cin;
    Eio_Progress *pg;
    Eio_File_Associate *asso;
+   Eio_File *f;
+   Eina_List *l;
 
    if (_eio_init_count <= 0)
      {
@@ -318,8 +336,17 @@ eio_shutdown(void)
      return _eio_init_count;
 
    eina_log_timing(_eio_log_dom_global,
-		   EINA_LOG_STATE_START,
-		   EINA_LOG_STATE_SHUTDOWN);
+                   EINA_LOG_STATE_START,
+                   EINA_LOG_STATE_SHUTDOWN);
+
+   EINA_LIST_FOREACH(tracked_thread, l, f)
+     ecore_thread_cancel(f->thread);
+
+   EINA_LIST_FREE(tracked_thread, f)
+     {
+        if (!ecore_thread_wait(f->thread, 0.5))
+          CRI("We couldn't terminate in less than 30s some pending IO. This can led to some crash.");
+     }
 
    eio_monitor_shutdown();
 
