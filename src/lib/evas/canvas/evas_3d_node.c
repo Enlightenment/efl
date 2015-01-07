@@ -1358,6 +1358,7 @@ _evas_3d_node_mesh_frame_get(Eo *obj EINA_UNUSED, Evas_3D_Node_Data *pd, Evas_3D
 EOLIAN static void
 _evas_3d_node_bounding_box_get(Eo *obj EINA_UNUSED, Evas_3D_Node_Data *pd, Evas_Real *x, Evas_Real *y, Evas_Real *z, Evas_Real *x2, Evas_Real *y2, Evas_Real *z2)
 {
+   eo_do(obj, evas_3d_object_update());
    if (x) *x = pd->aabb.p0.x;
    if (y) *y = pd->aabb.p0.y;
    if (z) *z = pd->aabb.p0.z;
@@ -1369,6 +1370,7 @@ _evas_3d_node_bounding_box_get(Eo *obj EINA_UNUSED, Evas_3D_Node_Data *pd, Evas_
 EOLIAN static void
 _evas_3d_node_bounding_sphere_get(Eo *obj EINA_UNUSED, Evas_3D_Node_Data *pd, Evas_Real *x, Evas_Real *y, Evas_Real *z, Evas_Real *r)
 {
+   eo_do(obj, evas_3d_object_update());
    if (x) *x = pd->bsphere.center.x;
    if (y) *y = pd->bsphere.center.y;
    if (z) *z = pd->bsphere.center.z;

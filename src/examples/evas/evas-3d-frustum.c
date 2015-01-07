@@ -8,7 +8,7 @@
  * Use 'z', 'x', 'c', 'Z', 'X' and 'C' keys to change scaling constants of mesh.
  * See in terminal output value distance to far plane of frustum and value of visibility of node
  * @see evas_3d_camera_node_visible_get.
- * Compile with "gcc -o evas-3d-frustum evas-3d-frustum.c `pkg-config --libs --cflags evas ecore ecore-evas eo eina` -lm"
+ * Compile with "gcc -o evas-3d-frustum evas-3d-frustum.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm"
  */
 
 #define EFL_EO_API_SUPPORT
@@ -45,7 +45,7 @@ Evas_Object *background,*image;
 Evas_Real obj_x = 0.0, obj_y = 0.0, obj_z = 0.0, obj_sc_x = 1.0, obj_sc_y = 1.0, obj_sc_z = 1.0;
 Evas_Real fleft = -5, fright = 5, fbottom = -5, fup = 5, fnear = 20, ffar = 1000;
 Evas_Real radius = 0;
-Evas_3D_Frustum_Mode key = EVAS_3D_FRUSTUM_MODE_BSPHERE;
+Evas_3D_Frustum_Mode key = EVAS_3D_FRUSTUM_MODE_AABB;
 
 typedef struct _vec3
 {
@@ -112,160 +112,103 @@ _on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void 
    Scene_Data *scene = (Scene_Data *)data;
    Evas_Event_Key_Down *ev = event_info;
    Eina_Bool frustum;
+   Evas_Real x, y, z;
 
    if (!strcmp("w", ev->key))
      {
         ffar += 20;
-        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar),
-                             frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar));
      }
    else if(!strcmp("s", ev->key))
      {
         ffar -= 20;
-        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar),
-                             frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar));
      }
    else if(!strcmp("t", ev->key))
      {
         fnear += 2;
-        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar),
-                             frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar));
      }
    else if(!strcmp("g", ev->key))
      {
         fnear -= 2;
-        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar),
-                             frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar));
      }
    else if(!strcmp("i", ev->key))
      {
         obj_y++;
         eo_do(scene->mesh_node_model,
-              evas_3d_node_position_set(obj_x, obj_y, obj_z),
-              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
-              evas_3d_object_update());
-        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+              evas_3d_node_position_set(obj_x, obj_y, obj_z));
      }
    else if(!strcmp("k", ev->key))
      {
         obj_y--;
         eo_do(scene->mesh_node_model,
-              evas_3d_node_position_set(obj_x, obj_y, obj_z),
-              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
-              evas_3d_object_update());
-        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+              evas_3d_node_position_set(obj_x, obj_y, obj_z));
      }
    else if(!strcmp("o", ev->key))
      {
         obj_z++;
         eo_do(scene->mesh_node_model,
-              evas_3d_node_position_set(obj_x, obj_y, obj_z),
-              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
-              evas_3d_object_update());
-        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+              evas_3d_node_position_set(obj_x, obj_y, obj_z));
      }
    else if(!strcmp("u", ev->key))
      {
         obj_z--;
         eo_do(scene->mesh_node_model,
-              evas_3d_node_position_set(obj_x, obj_y, obj_z),
-              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
-              evas_3d_object_update());
-        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+              evas_3d_node_position_set(obj_x, obj_y, obj_z));
      }
    else if(!strcmp("l", ev->key))
      {
         obj_x++;
         eo_do(scene->mesh_node_model,
-              evas_3d_node_position_set(obj_x, obj_y, obj_z),
-              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
-              evas_3d_object_update());
-        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+              evas_3d_node_position_set(obj_x, obj_y, obj_z));
      }
    else if(!strcmp("j", ev->key))
      {
         obj_x--;
         eo_do(scene->mesh_node_model,
-              evas_3d_node_position_set(obj_x, obj_y, obj_z),
-              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
-              evas_3d_object_update());
-        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+              evas_3d_node_position_set(obj_x, obj_y, obj_z));
      }
    else if(!strcmp("z", ev->key))
      {
         obj_sc_y+=0.02;
         eo_do(scene->mesh_node_model,
-              evas_3d_node_position_set(obj_x, obj_y, obj_z),
-              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
-              evas_3d_object_update());
-        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z));
      }
    else if(!strcmp("Z", ev->key))
      {
         obj_sc_y-=0.02;
         eo_do(scene->mesh_node_model,
-              evas_3d_node_position_set(obj_x, obj_y, obj_z),
-              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
-              evas_3d_object_update());
-        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z));
      }
    else if(!strcmp("x", ev->key))
      {
         obj_sc_z+=0.02;
         eo_do(scene->mesh_node_model,
-              evas_3d_node_position_set(obj_x, obj_y, obj_z),
-              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
-              evas_3d_object_update());
-        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z));
      }
    else if(!strcmp("X", ev->key))
      {
         obj_sc_z-=0.02;
         eo_do(scene->mesh_node_model,
-              evas_3d_node_position_set(obj_x, obj_y, obj_z),
-              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
-              evas_3d_object_update());
-        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z));
      }
    else if(!strcmp("c", ev->key))
      {
         obj_sc_x+=0.02;
         eo_do(scene->mesh_node_model,
-              evas_3d_node_position_set(obj_x, obj_y, obj_z),
-              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
-              evas_3d_object_update());
-        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z));
      }
    else if(!strcmp("C", ev->key))
      {
         obj_sc_x-=0.02;
         eo_do(scene->mesh_node_model,
-              evas_3d_node_position_set(obj_x, obj_y, obj_z),
-              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z),
-              evas_3d_object_update());
-        eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+              evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z));
      }
    else if(!strcmp("Return", ev->key))
      {
-        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar),
-                             frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
-        fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
+        eo_do(scene->camera, evas_3d_camera_projection_frustum_set(fleft, fright, fbottom, fup, fnear, ffar));
      }
    else if (!strcmp("1", ev->key))
      {
@@ -297,6 +240,8 @@ _on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void 
      }
 
    _redraw_bounding_object(data);
+   eo_do(scene->camera, frustum = evas_3d_camera_node_visible_get(scene->camera_node, scene->mesh_node_model, key));
+   fprintf(stdout, "far - %f frustum - %d radius - %f\n", ffar, frustum, radius);
 }
 
 static void
@@ -328,7 +273,7 @@ _light_setup(Scene_Data *data)
                                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_LIGHT));
    eo_do(data->light_node,
          evas_3d_node_light_set(data->light),
-         evas_3d_node_position_set(0.0, 0.0, 0.0),
+         evas_3d_node_position_set(0.0, 0.0, 200.0),
          evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_3D_SPACE_PARENT, 0.0, 0.0, 1.0));
 
    eo_do(data->root_node, evas_3d_node_member_add(data->light_node));
@@ -595,7 +540,6 @@ main(void)
    evas_object_focus_set(image, EINA_TRUE);
    eo_do(image, evas_obj_image_scene_set(data.scene));
 
-   eo_do(data.mesh_node_model, evas_3d_object_update());
    _redraw_bounding_object(&data);
    _show_help();
 
