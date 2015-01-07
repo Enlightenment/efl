@@ -6297,7 +6297,7 @@ _elm_genlist_item_sorted_insert(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const
 
    if (rel)
      {
-        it->item->rel = rel;
+        GL_IT(it)->rel = rel;
         rel->item->rel_revs = eina_list_append(rel->item->rel_revs, it);
      }
 
