@@ -924,7 +924,7 @@ _color_bars_add(Evas_Object *obj)
 
    for (i = 0; i < 4; i++)
      {
-        sd->cb_data[i] = ELM_NEW(Color_Bar_Data);
+        if (!sd->cb_data[i]) sd->cb_data[i] = ELM_NEW(Color_Bar_Data);
         sd->cb_data[i]->parent = obj;
 
         switch (i)
@@ -947,7 +947,7 @@ _color_bars_add(Evas_Object *obj)
           }
 
         /* load colorbar area */
-        sd->cb_data[i]->colorbar = edje_object_add(e);
+        if (!sd->cb_data[i]->colorbar) sd->cb_data[i]->colorbar = edje_object_add(e);
         elm_widget_theme_object_set
           (obj, sd->cb_data[i]->colorbar, "colorselector", "base",
           elm_widget_style_get(obj));
@@ -960,7 +960,7 @@ _color_bars_add(Evas_Object *obj)
         elm_widget_sub_object_add(obj, sd->cb_data[i]->colorbar);
 
         /* load colorbar image */
-        sd->cb_data[i]->bar = edje_object_add(e);
+        if (!sd->cb_data[i]->bar) sd->cb_data[i]->bar = edje_object_add(e);
         snprintf(buf, sizeof(buf), "%s/%s", colorbar_name,
                  elm_widget_style_get(obj));
         elm_widget_theme_object_set
@@ -970,7 +970,7 @@ _color_bars_add(Evas_Object *obj)
         elm_widget_sub_object_add(obj, sd->cb_data[i]->bar);
 
         /* provide expanded touch area */
-        sd->cb_data[i]->touch_area = evas_object_rectangle_add(e);
+        if (!sd->cb_data[i]->touch_area) sd->cb_data[i]->touch_area = evas_object_rectangle_add(e);
         evas_object_color_set(sd->cb_data[i]->touch_area, 0, 0, 0, 0);
         edje_object_part_swallow
           (sd->cb_data[i]->colorbar, "elm.arrow_bg",
@@ -988,7 +988,7 @@ _color_bars_add(Evas_Object *obj)
            changing color of the opacity bar */
         if ((i == 1) || (i == 2))
           {
-             sd->cb_data[i]->bg_rect = evas_object_rectangle_add(e);
+             if (!sd->cb_data[i]->bg_rect) sd->cb_data[i]->bg_rect = evas_object_rectangle_add(e);
              evas_object_color_set
                (sd->cb_data[i]->bg_rect, sd->er, sd->eg, sd->eb, 255);
              edje_object_part_swallow
@@ -999,7 +999,7 @@ _color_bars_add(Evas_Object *obj)
           }
         if (i == 3)
           {
-             sd->cb_data[i]->bg_rect = edje_object_add(e);
+             if (!sd->cb_data[i]->bg_rect) sd->cb_data[i]->bg_rect = edje_object_add(e);
              snprintf(buf, sizeof(buf), "%s/%s", colorbar_name,
                       elm_widget_style_get(obj));
              elm_widget_theme_object_set
@@ -1014,7 +1014,7 @@ _color_bars_add(Evas_Object *obj)
           }
 
         /* load arrow image, pointing the colorbar */
-        sd->cb_data[i]->arrow = edje_object_add(e);
+        if (!sd->cb_data[i]->arrow) sd->cb_data[i]->arrow = edje_object_add(e);
         elm_widget_theme_object_set
           (obj, sd->cb_data[i]->arrow, "colorselector", "arrow",
           elm_widget_style_get(obj));
@@ -1030,7 +1030,7 @@ _color_bars_add(Evas_Object *obj)
             (sd->cb_data[i]->arrow, sd->er, sd->eg, sd->eb, 255);
 
         /* load left button */
-        sd->cb_data[i]->lbt = elm_button_add(obj);
+        if (!sd->cb_data[i]->lbt) sd->cb_data[i]->lbt = elm_button_add(obj);
         snprintf(buf, sizeof(buf), "colorselector/left/%s",
                  elm_widget_style_get(obj));
         elm_object_style_set(sd->cb_data[i]->lbt, buf);
@@ -1050,7 +1050,7 @@ _color_bars_add(Evas_Object *obj)
           sd->cb_data[i]);
 
         /* load right button */
-        sd->cb_data[i]->rbt = elm_button_add(obj);
+        if (!sd->cb_data[i]->rbt) sd->cb_data[i]->rbt = elm_button_add(obj);
         snprintf(buf, sizeof(buf), "colorselector/right/%s",
                  elm_widget_style_get(obj));
         elm_object_style_set(sd->cb_data[i]->rbt, buf);
