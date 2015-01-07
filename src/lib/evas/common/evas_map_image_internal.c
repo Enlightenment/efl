@@ -94,15 +94,13 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    /* FIXME: even if anti-alias is enabled, only edges may require the
       pixels composition. we can optimize it. */
 
-   if ((!sa) && (!dst->cache_entry.flags.alpha) &&
+   if ((!sa) && (!da) &&
        (mul_col == 0xffffffff) && (!havea) && (!anti_alias) && (!mask_ie))
      {
         direct = 1;
      }
    else
      {
-        int pa;
-
         buf = alloca(cw * sizeof(DATA32));
         if (havea) sa = 1;
         if (!mask_ie)
@@ -118,9 +116,6 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
              if (mul_col != 0xffffffff)
                func2 = evas_common_gfx_func_composite_pixel_color_span_get(sa, ssa, mul_col, da, cw, render_op);
           }
-
-        if (anti_alias) src->cache_entry.flags.alpha = EINA_TRUE;
-        else src->cache_entry.flags.alpha = pa;
      }
    if (havecol == 0)
      {
@@ -187,8 +182,6 @@ FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
    // if operation is solid, bypass buf and draw func and draw direct to dst
    if (!direct)
      {
-        int pa;
-
         buf = alloca(cw * sizeof(DATA32));
         if (ms->havea) sa = 1;
         if (mask_ie)
