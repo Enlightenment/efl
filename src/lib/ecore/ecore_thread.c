@@ -780,7 +780,7 @@ ecore_thread_wait(Ecore_Thread *thread, double wait)
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker*) thread;
    Ecore_Thread_Waiter waiter;
 
-   if (!thread) return ;
+   if (!thread) return EINA_TRUE;
 
    waiter.data = worker->data;
    waiter.func_end = worker->func_end;
