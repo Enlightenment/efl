@@ -76,8 +76,8 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
      }
 
    // allocate some spans to hold out span list
-   spans = alloca((yend - ystart + 1) * sizeof(Line));
-   memset(spans, 0, (yend - ystart + 1) * sizeof(Line));
+   spans = alloca((yend - ystart + 3) * sizeof(Line));
+   memset(spans, 0, (yend - ystart + 3) * sizeof(Line));
 
    // calculate the spans list
    _calc_spans(p, spans, ystart, yend, cx, cy, cw, ch);
