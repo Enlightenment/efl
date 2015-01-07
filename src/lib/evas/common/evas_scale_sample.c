@@ -485,9 +485,9 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    if ((dst_region_w == src_region_w) && (dst_region_h == src_region_h))
      {
 #ifdef HAVE_PIXMAN
-# ifdef PIXMAN_IMAGE_SCALE_SAMPLE        
-        if ((src->pixman.im) && (dst->pixman.im) && ((!dc->mul.use) ||
-                                                     ((dc->mul.use) && (dc->mul.col == 0xffffffff))) &&
+# ifdef PIXMAN_IMAGE_SCALE_SAMPLE
+        if ((src->pixman.im) && (dst->pixman.im) && (!dc->clip.mask) &&
+            ((!dc->mul.use) || ((dc->mul.use) && (dc->mul.col == 0xffffffff))) &&
             ((dc->render_op == _EVAS_RENDER_COPY) ||
              (dc->render_op == _EVAS_RENDER_BLEND)))
           {
