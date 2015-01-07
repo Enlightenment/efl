@@ -658,9 +658,10 @@ evas_object_textgrid_render(Evas_Object *eo_obj,
                   else c = eina_array_data_get(palette, cells->fg);
                   if ((c) && (c->a > 0))
                     {
-                       evas_object_textgrid_row_text_append(row, eo_obj, o, xp,
-                                                            cells->codepoint,
-                                                            c->r, c->g, c->b, c->a);
+                       if (cells->codepoint > 0)
+                         evas_object_textgrid_row_text_append(row, eo_obj, o, xp,
+                                                              cells->codepoint,
+                                                              c->r, c->g, c->b, c->a);
                        // XXX: underlines and strikethroughs dont get
                        // merged into horizontal runs like bg rects above
                        if (cells->underline)
