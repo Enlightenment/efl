@@ -2,7 +2,7 @@
  * Simple Evas example illustrating a trasnparent window
  *
  * @verbatim
- * gcc -o evas-transparent evas-transparent.c `pkg-config --libs --cflags evas ecore ecore-evas eina`
+ * gcc -o evas-map-aa evas-map-aa.c `pkg-config --libs --cflags evas ecore ecore-evas eina`
  * @endverbatim
  */
 
