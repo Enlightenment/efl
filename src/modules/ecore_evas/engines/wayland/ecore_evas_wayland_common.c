@@ -611,6 +611,7 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
         int maxw, maxh;
         int minw, minh;
         double a;
+
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
         if (ECORE_EVAS_PORTRAIT(ee))
