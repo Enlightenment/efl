@@ -101,6 +101,12 @@ ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buf
    win->opaque.w = w;
    win->opaque.h = h;
 
+   win->opaque_region = 
+     wl_compositor_create_region(_ecore_wl_compositor_get());
+
+   win->input_region = 
+     wl_compositor_create_region(_ecore_wl_compositor_get());
+
    win->title = NULL;
    win->class_name = NULL;
 
@@ -131,6 +137,9 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
    win->anim_callback = NULL;
 
    if (win->subsurfs) _ecore_wl_subsurfs_del_all(win);
+
+   if (win->input_region) wl_region_destroy(win->input_region);
+   if (win->opaque_region) wl_region_destroy(win->opaque_region);
 
 #ifdef USE_IVI_SHELL
    if (win->ivi_surface) ivi_surface_destroy(win->ivi_surface);
@@ -228,6 +237,19 @@ ecore_wl_window_commit(Ecore_Wl_Window *win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
+
+   if (win->opaque_region)
+     {
+        if (win->surface)
+          wl_surface_set_opaque_region(win->surface, win->opaque_region);
+     }
+
+   if (win->input_region)
+     {
+        if (win->surface)
+          wl_surface_set_input_region(win->surface, win->input_region);
+     }
+
    if ((win->surface) && (win->has_buffer)) 
      wl_surface_commit(win->surface);
 }
@@ -253,7 +275,7 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
              wl_surface_attach(win->surface, buffer, x, y);
              wl_surface_damage(win->surface, 0, 0, 
                                win->allocation.w, win->allocation.h);
-             wl_surface_commit(win->surface);
+             ecore_wl_window_commit(win);
           }
         break;
       default:
@@ -796,39 +818,27 @@ ecore_wl_window_input_region_set(Ecore_Wl_Window *win, int x, int y, int w, int 
 
    win->input.x = x;
    win->input.y = y;
-   if ((w > 0) && (h > 0))
-     {
-        if ((win->input.w == w) && (win->input.h == h))
-          return;
+   win->input.w = w;
+   win->input.h = h;
 
-        win->input.w = w;
-        win->input.h = h;
-     }
-
-   if ((win->type != ECORE_WL_WINDOW_TYPE_FULLSCREEN) || 
-       (win->type != ECORE_WL_WINDOW_TYPE_DND))
+   if (win->type != ECORE_WL_WINDOW_TYPE_DND)
      {
-        if ((w > 0) && (h > 0))
+        switch (win->rotation)
           {
-             struct wl_region *region = NULL;
-
-             region = 
-               wl_compositor_create_region(_ecore_wl_compositor_get());
-             if (!region)
-               {
-                  wl_surface_set_input_region(win->surface, NULL);
-                  return;
-               }
-
-             wl_region_add(region, x, y, w, h);
-             wl_surface_set_input_region(win->surface, region);
-             wl_region_destroy(region);
+           case 0:
+             wl_region_add(win->input_region, x, y, w, h);
+             break;
+           case 180:
+             wl_region_add(win->input_region, x, x + y, w, h);
+             break;
+           case 90:
+             wl_region_add(win->input_region, y, x, h, w);
+             break;
+           case 270:
+             wl_region_add(win->input_region, x + y, x, h, w);
+             break;
           }
-        else
-          wl_surface_set_input_region(win->surface, NULL);
      }
-
-   /* ecore_wl_window_commit(win); */
 }
 
 /* @since 1.8 */
@@ -841,50 +851,35 @@ ecore_wl_window_opaque_region_set(Ecore_Wl_Window *win, int x, int y, int w, int
 
    win->opaque.x = x;
    win->opaque.y = y;
-   if ((w > 0) && (h > 0))
-     {
-        if ((win->opaque.w == w) && (win->opaque.h == h))
-          return;
+   win->opaque.w = w;
+   win->opaque.h = h;
 
-        win->opaque.w = w;
-        win->opaque.h = h;
+   if ((win->transparent) || (win->alpha)) return;
+
+   switch (win->rotation)
+     {
+      case 0:
+        wl_region_add(win->opaque_region, x, y, w, h);
+        break;
+      case 180:
+        wl_region_add(win->opaque_region, x, x + y, w, h);
+        break;
+      case 90:
+        wl_region_add(win->opaque_region, y, x, h, w);
+        break;
+      case 270:
+        wl_region_add(win->opaque_region, x + y, x, h, w);
+        break;
      }
 
-   if (((w > 0) && (h > 0)) && ((!win->transparent) && (!win->alpha)))
-     {
-        struct wl_region *region = NULL;
+   /* if ((w > 0) && (h > 0)) */
+   /*   { */
+   /*      if ((win->opaque.w == w) && (win->opaque.h == h)) */
+   /*        return; */
 
-        region = 
-          wl_compositor_create_region(_ecore_wl_compositor_get());
-        if (!region)
-          {
-             wl_surface_set_opaque_region(win->surface, NULL);
-             return;
-          }
-
-        switch (win->rotation)
-          {
-           case 0:
-             wl_region_add(region, x, y, w, h);
-             break;
-           case 180:
-             wl_region_add(region, x, x + y, w, h);
-             break;
-           case 90:
-             wl_region_add(region, y, x, h, w);
-             break;
-           case 270:
-             wl_region_add(region, x + y, x, h, w);
-             break;
-          }
-
-        wl_surface_set_opaque_region(win->surface, region);
-        wl_region_destroy(region);
-     }
-   else
-     wl_surface_set_opaque_region(win->surface, NULL);
-
-   /* ecore_wl_window_commit(win); */
+   /*      win->opaque.w = w; */
+   /*      win->opaque.h = h; */
+   /*   } */
 }
 
 /* @since 1.8 */
