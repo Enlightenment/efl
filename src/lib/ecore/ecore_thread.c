@@ -733,6 +733,79 @@ ecore_thread_cancel(Ecore_Thread *thread)
    return EINA_FALSE;
 }
 
+typedef struct _Ecore_Thread_Waiter Ecore_Thread_Waiter;
+struct _Ecore_Thread_Waiter
+{
+   Ecore_Thread_Cb func_cancel;
+   Ecore_Thread_Cb func_end;
+   const void *data;
+};
+
+static void
+_ecore_thread_wait_reset(Ecore_Thread_Waiter *waiter,
+                         Ecore_Pthread_Worker *worker)
+{
+   worker->data = waiter->data;
+   worker->func_cancel = waiter->func_cancel;
+   worker->func_end = waiter->func_end;
+   // The waiter will be checked by _wait, NULL meaning it is done
+   waiter->func_end = NULL;
+   waiter->func_cancel = NULL;
+   waiter->data = NULL;
+}
+
+static void
+_ecore_thread_wait_cancel(void *data, Ecore_Thread *thread)
+{
+   Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker*) thread;
+   Ecore_Thread_Waiter *waiter = data;
+
+   waiter->func_cancel((void*) waiter->data, thread);
+   _ecore_thread_wait_reset(waiter, worker);
+}
+
+static void
+_ecore_thread_wait_end(void *data, Ecore_Thread *thread)
+{
+   Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker*) thread;
+   Ecore_Thread_Waiter *waiter = data;
+
+   waiter->func_end((void*) waiter->data, thread);
+   _ecore_thread_wait_reset(waiter, worker);
+}
+
+EAPI Eina_Bool
+ecore_thread_wait(Ecore_Thread *thread, double wait)
+{
+   Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker*) thread;
+   Ecore_Thread_Waiter waiter;
+
+   if (!thread) return ;
+
+   waiter.data = worker->data;
+   waiter.func_end = worker->func_end;
+   waiter.func_cancel = worker->func_cancel;
+   // Now trick the thread to call the wrapper function
+   worker->data = &waiter;
+   worker->func_cancel = _ecore_thread_wait_cancel;
+   worker->func_end = _ecore_thread_wait_end;
+
+   while (waiter.data)
+     {
+        double start, end;
+
+        start = ecore_time_get();
+        ecore_main_loop_thread_safe_call_wait(wait);
+        end = ecore_time_get();
+
+        wait -= end - start;
+
+        if (wait <= 0) break;
+     }
+
+   return (waiter.data == NULL) ? EINA_TRUE : EINA_FALSE;
+}
+
 EAPI Eina_Bool
 ecore_thread_check(Ecore_Thread *thread)
 {

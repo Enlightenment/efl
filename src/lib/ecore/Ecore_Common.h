@@ -386,6 +386,19 @@ EAPI void ecore_main_loop_thread_safe_call_async(Ecore_Cb callback, void *data);
 EAPI void *ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback, void *data);
 
 /**
+ * @brief Wait for the next thread call in the main loop.
+ * @since 1.13.0
+ *
+ * @param wait How long to wait for this callback to be called
+ *
+ * Note: This function should only be called in the main loop
+ * and will actually block the main loop until either a call
+ * is triggered from a thread or the time specified by wait has
+ * passed.
+ */
+EAPI void ecore_main_loop_thread_safe_call_wait(double wait);
+
+/**
  * @brief This function suspend the main loop in a know state
  * @since 1.1.0
  *
@@ -1817,6 +1830,15 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy, Ecore_T
  * @see ecore_thread_check()
  */
 EAPI Eina_Bool ecore_thread_cancel(Ecore_Thread *thread);
+
+/**
+ * @brief Block the main loop until the thread execution is over.
+ *
+ * @param thread The thread to wait on.
+ * @param wait Maximum time to wait before exiting anyway.
+ * @return EINA_TRUE if the thread execution is over.
+ */
+EAPI Eina_Bool ecore_thread_wait(Ecore_Thread *thread, double wait);
 
 /**
  * Checks if a thread is pending cancellation

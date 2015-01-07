@@ -583,6 +583,12 @@ ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback,
    return ret;
 }
 
+EAPI void
+ecore_main_loop_thread_safe_call_wait(double wait)
+{
+   ecore_pipe_wait(_thread_call, 1, wait);
+}
+
 EAPI int
 ecore_thread_main_loop_begin(void)
 {
