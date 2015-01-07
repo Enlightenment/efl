@@ -376,18 +376,20 @@ _ls_filter_cb(void *data,
    Eina_Bool dir = EINA_FALSE;
    char *pch = NULL, *temp = NULL;
    char temp_path[EINA_PATH_MAX];
+   ELM_FILESELECTOR_DATA_GET(lreq->obj, sd);
 
-   if (!lreq->sd->hidden_visible && info->path[info->name_start] == '.')
+   if (!sd) return EINA_FALSE;
+   if (!sd->hidden_visible && info->path[info->name_start] == '.')
      return EINA_FALSE;
 
    if (info->type == EINA_FILE_DIR)
      dir = EINA_TRUE;
 
-   if (lreq->sd->only_folder && !dir)
+   if (sd->only_folder && !dir)
      return EINA_FALSE;
 
    //Search entry filter
-   if ((lreq->sd->search_string) && (lreq->sd->search_string[0] != '\0'))
+   if ((sd->search_string) && (sd->search_string[0] != '\0'))
      {
         strcpy(temp_path, info->path);
         pch = strchr(temp_path, '/');
@@ -397,11 +399,12 @@ _ls_filter_cb(void *data,
              pch = strchr(pch + 1, '/');
           }
         temp++;
-        if ((temp) && (lreq->sd->search_string) && (!strstr(temp, lreq->sd->search_string)))
+        if ((temp) && (sd->search_string) &&
+            (!strstr(temp, sd->search_string)))
           return EINA_FALSE;
      }
 
-   cf = lreq->sd->current_filter;
+   cf = sd->current_filter;
    if (!cf)
      return EINA_TRUE;
 
@@ -528,13 +531,15 @@ _file_list_cmp(const void *a, const void *b)
 static void
 _signal_first(Listing_Request *lreq)
 {
-   if (!lreq->first) return;
+   ELM_FILESELECTOR_DATA_GET(lreq->obj, sd);
 
-   if (lreq->sd->multi)
+   if (!lreq->first) return;
+   if (!sd) return;
+
+   if (sd->multi)
      {
         char *path;
-        EINA_LIST_FREE(lreq->sd->paths, path)
-          free(path);
+        EINA_LIST_FREE(sd->paths, path) free(path);
      }
 
    evas_object_smart_callback_call
@@ -542,11 +547,11 @@ _signal_first(Listing_Request *lreq)
 
    if (!lreq->parent_it)
      {
-        if (lreq->sd->mode == ELM_FILESELECTOR_LIST)
-          elm_genlist_clear(lreq->sd->files_view);
+        if (sd->mode == ELM_FILESELECTOR_LIST)
+          elm_genlist_clear(sd->files_view);
         else
-          elm_gengrid_clear(lreq->sd->files_view);
-        eina_stringshare_replace(&lreq->sd->path, lreq->path);
+          elm_gengrid_clear(sd->files_view);
+        eina_stringshare_replace(&sd->path, lreq->path);
         _anchors_do(lreq->obj, lreq->path);
      }
 
@@ -561,10 +566,12 @@ _ls_main_cb(void *data,
    Listing_Request *lreq = data;
    Elm_Object_Item *item;
    int itcn = ELM_FILE_UNKNOW;
-
+   ELM_FILESELECTOR_DATA_GET(lreq->obj, sd);
+   
    if (eio_file_check(handler)) return;
+   if (!sd) return;
 
-   if (!lreq->sd->files_view || lreq->sd->current != handler)
+   if (!sd->files_view || sd->current != handler)
      {
         eio_file_cancel(handler);
         return;
@@ -581,31 +588,31 @@ _ls_main_cb(void *data,
           itcn = ELM_FILE_IMAGE;
      }
 
-   if (lreq->sd->mode == ELM_FILESELECTOR_LIST)
+   if (sd->mode == ELM_FILESELECTOR_LIST)
      {
-        item = elm_genlist_item_sorted_insert(lreq->sd->files_view, list_itc[itcn],
+        item = elm_genlist_item_sorted_insert(sd->files_view, list_itc[itcn],
                                               eina_stringshare_add(info->path),
                                               lreq->parent_it,
-                                              ((lreq->sd->expand) && (itcn == ELM_DIRECTORY))
+                                              ((sd->expand) && (itcn == ELM_DIRECTORY))
                                               ? ELM_GENLIST_ITEM_TREE : ELM_GENLIST_ITEM_NONE,
                                               _file_list_cmp, NULL, NULL);
 
         if (lreq->selected && !strcmp(info->path, lreq->selected))
           {
              elm_genlist_item_selected_set(item, EINA_TRUE);
-             elm_object_text_set(lreq->sd->name_entry, ecore_file_file_get(info->path));
+             elm_object_text_set(sd->name_entry, ecore_file_file_get(info->path));
           }
      }
-   else if (lreq->sd->mode == ELM_FILESELECTOR_GRID)
+   else if (sd->mode == ELM_FILESELECTOR_GRID)
      {
-        item = elm_gengrid_item_sorted_insert(lreq->sd->files_view, grid_itc[itcn],
+        item = elm_gengrid_item_sorted_insert(sd->files_view, grid_itc[itcn],
                                               eina_stringshare_add(info->path),
                                               _file_grid_cmp, NULL, NULL);
 
         if (lreq->selected && !strcmp(info->path, lreq->selected))
           {
              elm_gengrid_item_selected_set(item, EINA_TRUE);
-             elm_object_text_set(lreq->sd->name_entry, ecore_file_file_get(info->path));
+             elm_object_text_set(sd->name_entry, ecore_file_file_get(info->path));
           }
      }
 }
@@ -613,8 +620,6 @@ _ls_main_cb(void *data,
 static void
 _listing_request_cleanup(Listing_Request *lreq)
 {
-   EINA_REFCOUNT_UNREF(lreq->sd) _elm_fileselector_smart_del_do(lreq->sd);
-
    eina_stringshare_del(lreq->path);
    eina_stringshare_del(lreq->selected);
    free(lreq);
@@ -624,12 +629,16 @@ static void
 _ls_done_cb(void *data, Eio_File *handler EINA_UNUSED)
 {
    Listing_Request *lreq = data;
+   ELM_FILESELECTOR_DATA_GET(lreq->obj, sd);
 
    _signal_first(lreq);
-   elm_progressbar_pulse(lreq->sd->spinner, EINA_FALSE);
-   elm_layout_signal_emit(lreq->obj, "elm,action,spinner,hide", "elm");
+   if (sd)
+     {
+        elm_progressbar_pulse(sd->spinner, EINA_FALSE);
+        elm_layout_signal_emit(lreq->obj, "elm,action,spinner,hide", "elm");
+        sd->current = NULL;
+     }
 
-   lreq->sd->current = NULL;
    _listing_request_cleanup(lreq);
 }
 
@@ -637,12 +646,14 @@ static void
 _ls_error_cb(void *data, Eio_File *handler, int error EINA_UNUSED)
 {
    Listing_Request *lreq = data;
+   ELM_FILESELECTOR_DATA_GET(lreq->obj, sd);
 
-   elm_progressbar_pulse(lreq->sd->spinner, EINA_FALSE);
-   elm_layout_signal_emit(lreq->obj, "elm,action,spinner,hide", "elm");
-
-   if (lreq->sd->current == handler)
-     lreq->sd->current = NULL;
+   if (sd)
+     {
+        elm_progressbar_pulse(sd->spinner, EINA_FALSE);
+        elm_layout_signal_emit(lreq->obj, "elm,action,spinner,hide", "elm");
+        if (sd->current == handler) sd->current = NULL;
+     }
    _listing_request_cleanup(lreq);
 }
 
@@ -661,12 +672,11 @@ _populate(Evas_Object *obj,
 
    if (sd->monitor) eio_monitor_del(sd->monitor);
    if (sd->current) eio_file_cancel(sd->current);
+   sd->monitor = NULL;
+   sd->current = NULL;
 
    lreq = malloc(sizeof (Listing_Request));
    if (!lreq) return;
-
-   lreq->sd = sd;
-   EINA_REFCOUNT_REF(lreq->sd);
 
    lreq->parent_it = parent_it; /* FIXME: should we refcount the parent_it ? */
    lreq->obj = obj;
@@ -1551,6 +1561,8 @@ _elm_fileselector_evas_object_smart_del(Eo *obj EINA_UNUSED, Elm_Fileselector_Da
 
    if (sd->monitor) eio_monitor_del(sd->monitor);
    if (sd->current) eio_file_cancel(sd->current);
+   sd->monitor = NULL;
+   sd->current = NULL;
 
    EINA_LIST_FREE(sd->handlers, h)
      {
