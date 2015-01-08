@@ -123,9 +123,6 @@ struct _Elm_Genlist_Data
     * default. this can be changed by
     * elm_genlist_longpress_timeout_set() */
    double                                longpress_timeout;
-   /* a generation of genlist. when genlist is cleared, this value
-    * will be increased and a new generation will start */
-   int                                   generation;
    Eina_Compare_Cb                       item_compare_cb;
    Eina_Compare_Cb                       item_compare_data_cb;
 
@@ -177,9 +174,6 @@ struct _Elm_Genlist_Data
    Eina_Bool                             on_sub_del : 1;
 
    Eina_Bool                             highlight : 1;
-   /* a flag whether genlist is marked as to be cleared or not. if
-    * this flag is true, genlist clear was already deferred.  */
-   Eina_Bool                             clear_me : 1;
    Eina_Bool                             h_bounce : 1;
    Eina_Bool                             v_bounce : 1;
    Eina_Bool                             bring_in : 1; /* a flag to

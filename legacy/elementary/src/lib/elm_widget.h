@@ -812,8 +812,6 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  * @see elm_widget_item_internal_del()
  * @param item a valid item.
  */
-#define elm_widget_item_del(item) \
-  _elm_widget_item_internal_del(item)
 #define elm_widget_item_pre_notify_del(item) \
   elm_widget_item_internal_pre_notify_del(item)
 #define elm_widget_item_del_cb_set(item, del_cb) \
