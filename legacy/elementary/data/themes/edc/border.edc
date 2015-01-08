@@ -45,7 +45,7 @@ group { name: "e/widgets/border/default/border";
          }
          description { state: "shaded";
             inherit: "default";
-            rel2.to: "top";
+            rel2.to: "e.swallow.client";
          }
       }
       part { name: "client_clip"; type: RECT; mouse_events: 0;
@@ -622,15 +622,10 @@ group { name: "e/widgets/border/default/border";
          action: STATE_SET "default" 0.0;
          target: "knob_spinner";
       }
-      program { name: "shade_hide";
-         action: STATE_SET "hidden" 0.0;
-         target: "client_clip";
-      }
       program {
          signal: "e,state,shaded"; source: "e";
          action: STATE_SET "shaded" 0.0;
          target: "shadow";
-         after: "shade_hide";
          after: "shading";
       }
       program { name: "shading";
