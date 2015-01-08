@@ -195,7 +195,7 @@ elm_font_available_hash_add(Eina_List *list)
    font_hash = _elm_font_available_hash_add(font_hash, "Monospace:style=Bold Oblique");
 
    EINA_LIST_FOREACH(list, l, key)
-     if (key) _elm_font_available_hash_add(font_hash, key);
+     if (key) font_hash = _elm_font_available_hash_add(font_hash, key);
 
    return font_hash;
 }
