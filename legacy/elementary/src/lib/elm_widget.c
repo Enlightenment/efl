@@ -1098,6 +1098,15 @@ _elm_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj
         else
           sdc->orient_mode = sd->orient_mode;
 
+        if (!sdc->on_create)
+          {
+             if (!sdc->disabled && (elm_widget_disabled_get(obj)))
+               {
+                  elm_widget_focus_disabled_handle(sobj);
+                  eo_do(sobj, elm_obj_widget_disable());
+               }
+          }
+
         _elm_widget_top_win_focused_set(sobj, sd->top_win_focused);
 
         /* update child focusable-ness on self and parents, now that a
@@ -2860,19 +2869,71 @@ _elm_widget_top_win_focused_get(const Evas_Object *obj)
    return sd->top_win_focused;
 }
 
+static void
+_elm_widget_disabled_eval(const Evas_Object *obj, Eina_Bool disabled)
+{
+   const Eina_List *l;
+   Evas_Object *child;
+   ELM_WIDGET_DATA_GET(obj, sd);
+
+   if (disabled)
+     {
+        EINA_LIST_FOREACH(sd->subobjs, l, child)
+          {
+              if (elm_widget_is(child))
+                {
+                   elm_widget_focus_disabled_handle(child);
+                   eo_do(child, elm_obj_widget_disable());
+                   _elm_widget_disabled_eval(child, EINA_TRUE);
+                }
+          }
+     }
+   else
+     {
+        EINA_LIST_FOREACH(sd->subobjs, l, child)
+          {
+             ELM_WIDGET_DATA_GET(child, sdc);
+             if (elm_widget_is(child) && !sdc->disabled)
+               {
+                  elm_widget_focus_disabled_handle(child);
+                  eo_do(child, elm_obj_widget_disable());
+                  _elm_widget_disabled_eval(child, EINA_FALSE);
+               }
+          }
+     }
+}
+
 EOLIAN static void
 _elm_widget_disabled_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool disabled)
 {
+   Eina_Bool parent_state = EINA_FALSE;
    if (sd->disabled == disabled) return;
    sd->disabled = !!disabled;
-   elm_widget_focus_disabled_handle(obj);
-   eo_do(obj, elm_obj_widget_disable());
+
+   if (disabled)
+     {
+        elm_widget_focus_disabled_handle(obj);
+        eo_do(obj, elm_obj_widget_disable());
+        _elm_widget_disabled_eval(obj, EINA_TRUE);
+     }
+   else
+     {
+        parent_state = elm_widget_disabled_get(elm_widget_parent_get(obj));
+        if (parent_state) return;
+        elm_widget_focus_disabled_handle(obj);
+        eo_do(obj, elm_obj_widget_disable());
+        _elm_widget_disabled_eval(obj, EINA_FALSE);
+     }
 }
 
 EOLIAN static Eina_Bool
 _elm_widget_disabled_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
-   return sd->disabled;
+   Eina_Bool disabled = EINA_FALSE;
+
+   if (sd->disabled) disabled = EINA_TRUE;
+   else disabled = elm_widget_disabled_get(elm_widget_parent_get(obj));
+   return disabled;
 }
 
 EOLIAN static void

@@ -252,6 +252,8 @@ void test_task_switcher(void *data, Evas_Object *obj, void *event_info);
 void test_application_server_message(void *data, Evas_Object *obj, void *event_info);
 void test_application_server_phone(void *data, Evas_Object *obj, void *event_info);
 void test_win_dialog(void *data, Evas_Object *obj, void *event_info);
+void test_box_disable(void *data, Evas_Object *obj, void *event_info);
+void test_layout_disable(void *data, Evas_Object *obj, void *event_info);
 
 Evas_Object *win, *tbx; // TODO: refactoring
 void *tt;
@@ -838,6 +840,9 @@ add_tests:
    ADD_TEST(NULL, "Application client/server", "Task switcher", test_task_switcher);
    ADD_TEST(NULL, "Application client/server", "Phone", test_application_server_phone);
    ADD_TEST(NULL, "Application client/server", "Message", test_application_server_message);
+
+   ADD_TEST(NULL, "Widgets Disable/Enable", "Box", test_box_disable);
+   ADD_TEST(NULL, "Widgets Disable/Enable", "Layout", test_layout_disable);
 
 #undef ADD_TEST
 

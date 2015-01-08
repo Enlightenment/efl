@@ -47,6 +47,7 @@ test_ctxpopup.c \
 test_cursor.c \
 test_datetime.c \
 test_dayselector.c \
+test_disable.c \
 test_diskselector.c \
 test_dnd.c \
 test_eio.c \
