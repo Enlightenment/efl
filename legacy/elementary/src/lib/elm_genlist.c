@@ -1260,9 +1260,10 @@ _view_inflate(Evas_Object *view, Elm_Gen_Item *it, Eina_List **sources,
 static void
 _elm_genlist_item_index_update(Elm_Gen_Item *it)
 {
-   if (it->position_update || it->item->block->position_update)
+   if (it->position_update || GL_IT(it)->block->position_update)
      {
-        evas_object_smart_callback_call(WIDGET(it), SIG_INDEX_UPDATE, EO_OBJ(it));
+        evas_object_smart_callback_call(WIDGET(it), SIG_INDEX_UPDATE,
+                                        EO_OBJ(it));
         it->position_update = EINA_FALSE;
      }
 }
