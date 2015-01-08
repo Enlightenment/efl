@@ -1446,7 +1446,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
            memset(tmp, 0, arrsize);
 
         _eo_classes = tmp;
-        _eo_classes[klass->header.id - 1] = klass;
+        _eo_classes[_UNMASK_ID(klass->header.id) - 1] = klass;
      }
    eina_spinlock_release(&_eo_class_creation_lock);
 
