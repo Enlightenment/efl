@@ -569,6 +569,7 @@ ecore_imf_context_ibus_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx
              EINA_LIST_FOREACH(ibusimcontext->preedit_attrs, l, attr1)
                {
                   attr2 = (Ecore_IMF_Preedit_Attr *)calloc(1, sizeof(Ecore_IMF_Preedit_Attr));
+                  if (!attr2) continue;
                   attr2->preedit_type = attr1->preedit_type;
                   attr2->start_index = attr1->start_index;
                   attr2->end_index = attr1->end_index;
