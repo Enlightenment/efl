@@ -5820,7 +5820,7 @@ _elm_genlist_item_elm_widget_item_part_text_get(Eo *eo_it EINA_UNUSED, Elm_Gen_I
 }
 
 EOLIAN static void
-_elm_genlist_item_elm_widget_item_disable(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
+_elm_genlist_item_elm_widget_item_disable(Eo *eo_it, Elm_Gen_Item *it)
 {
    Eina_List *l;
    Evas_Object *obj;
@@ -5828,6 +5828,9 @@ _elm_genlist_item_elm_widget_item_disable(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *i
    if (it->generation < GL_IT(it)->wsd->generation) return;
 
    _item_unselect(it);
+   if (eo_it == GL_IT(it)->wsd->focused_item)
+     _elm_genlist_item_unfocused(eo_it);
+   ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
 
    if (it->realized)
      {
