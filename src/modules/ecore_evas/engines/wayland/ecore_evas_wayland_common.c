@@ -211,25 +211,33 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    if (!ee->prop.fullscreen)
      {
         int fw = 0, fh = 0;
-        int maxw, maxh;
-        int minw, minh;
-        double a;
+        int maxw = 0, maxh = 0;
+        int minw = 0, minh = 0;
+        double a = 0.0;
 
         evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
 
         if (ECORE_EVAS_PORTRAIT(ee))
           {
-             minw = (ee->prop.min.w + fw);
-             minh = (ee->prop.min.h + fh);
-             maxw = (ee->prop.max.w + fw);
-             maxh = (ee->prop.max.h + fh);
+             if (ee->prop.min.w > 0) 
+               minw = (ee->prop.min.w - fw);
+             if (ee->prop.min.h > 0) 
+               minh = (ee->prop.min.h - fh);
+             if (ee->prop.max.w > 0) 
+               maxw = (ee->prop.max.w + fw);
+             if (ee->prop.max.h > 0) 
+               maxh = (ee->prop.max.h + fh);
           }
         else
           {
-             minw = (ee->prop.min.w + fh);
-             minh = (ee->prop.min.h + fw);
-             maxw = (ee->prop.max.w + fh);
-             maxh = (ee->prop.max.h + fw);
+             if (ee->prop.min.w > 0)
+               minw = (ee->prop.min.w - fh);
+             if (ee->prop.min.h > 0)
+               minh = (ee->prop.min.h - fw);
+             if (ee->prop.max.w > 0)
+               maxw = (ee->prop.max.w + fh);
+             if (ee->prop.max.h > 0)
+               maxh = (ee->prop.max.h + fw);
           }
 
         /* adjust size using aspect */
@@ -293,10 +301,15 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
                nh = (minh + (((nh - minh) / ee->prop.step.h) * ee->prop.step.h));
           }
 
-        if (nw > maxw) nw = maxw;
-        else if (nw < minw) nw = minw;
-        if (nh > maxh) nh = maxh;
-        else if (nh < minh) nh = minh;
+        if ((maxw > 0) && (nw > maxw)) 
+          nw = maxw;
+        else if (nw < minw) 
+          nw = minw;
+
+        if ((maxh > 0) && (nh > maxh)) 
+          nh = maxh;
+        else if (nh < minh) 
+          nh = minh;
 
         orig_w = nw;
         orig_h = nh;
