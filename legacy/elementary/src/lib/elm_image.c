@@ -180,15 +180,24 @@ _elm_image_internal_sizing_eval(Evas_Object *obj, Elm_Image_Data *sd)
         offset_w = ((sd->img_w - w) * alignh);
         offset_h = ((sd->img_h - h) * alignv);
 
-        x = sd->img_x + offset_w;
-        y = sd->img_y + offset_h;
+        if (sd->aspect_fixed && !sd->fill_inside)
+          {
+             evas_object_image_fill_set(sd->img, offset_w, offset_h, w, h);
+
+             w = sd->img_w;
+             h = sd->img_h;
+             x = sd->img_x;
+             y = sd->img_y;
+          }
+        else
+          {
+             evas_object_image_fill_set(sd->img, 0, 0, w, h);
+
+             x = sd->img_x + offset_w;
+             y = sd->img_y + offset_h;
+          }
 
         evas_object_move(sd->img, x, y);
-        evas_object_image_fill_set(sd->img, 0, 0, w, h);
-
-        if (offset_w < 0) w += offset_w;
-        if (offset_h < 0) h += offset_h;
-
         evas_object_resize(sd->img, w, h);
      }
    evas_object_move(sd->hit_rect, x, y);
