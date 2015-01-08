@@ -8,8 +8,8 @@
 #include <eina_function.hh>
 #include <Eo.h>
 
-#include <eo_js_get_value.hh>
-#include <eo_js_get_value_from_c.hh>
+#include <eina_js_get_value.hh>
+#include <eina_js_get_value_from_c.hh>
 
 #include <cstdlib>
 #include <functional>

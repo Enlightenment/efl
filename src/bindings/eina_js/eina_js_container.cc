@@ -13,6 +13,7 @@
 #include <eina_ptrlist.hh>
 #include <eina_js_list.hh>
 #include <eina_js_array.hh>
+#include <eina_js_get_value_from_c.hh>
 
 #include <tuple>
 
@@ -25,7 +26,6 @@ struct tag { typedef T type; };
 
 namespace {
 
-/*v8::UniquePersistent<v8::ObjectTemplate>*/
 compatibility_persistent<v8::ObjectTemplate> instance_persistents[container_type_size];
 v8::Handle<v8::FunctionTemplate> instance_templates[container_type_size];
 
@@ -77,22 +77,26 @@ v8::Local<v8::Object> slice(eina_container_base& self, v8::Isolate* isolate, v8:
   std::abort();
 }
 
-void length(v8::Local<v8::String>, v8::PropertyCallbackInfo<v8::Value> const& info)
+compatibility_accessor_getter_return_type length
+  (v8::Local<v8::String>, compatibility_accessor_callback_info_type info)
 {
   v8::Local<v8::Object> self_obj = v8::Local<v8::Object>::Cast(info.This());
-  eina_container_base* self = static_cast<eina_container_base*>(self_obj->GetAlignedPointerFromInternalField(0));
-  info.GetReturnValue().Set((uint32_t)self->size());
+  eina_container_base* self = static_cast<eina_container_base*>
+    (compatibility_get_pointer_internal_field(self_obj, 0));
+  return compatibility_return(compatibility_new<v8::Number>(nullptr, self->size()), info);
 }
 
-void index_get(uint32_t index, v8::PropertyCallbackInfo<v8::Value>const& info)
+compatibility_accessor_getter_return_type index_get
+  (uint32_t index, compatibility_accessor_callback_info_type info)
 {
   std::cout << "index_get " << index << std::endl;
   v8::Local<v8::Object> self_obj = v8::Local<v8::Object>::Cast(info.This());
-  eina_container_base* self = static_cast<eina_container_base*>(self_obj->GetAlignedPointerFromInternalField(0));
-  info.GetReturnValue().Set(self->get(info.GetIsolate(), index));
+  eina_container_base* self = static_cast<eina_container_base*>
+    (compatibility_get_pointer_internal_field(self_obj, 0));
+  return compatibility_return(self->get(info.GetIsolate(), index), info);
 }
 
-void new_eina_list(v8::FunctionCallbackInfo<v8::Value> const& args)
+compatibility_return_type new_eina_list(compatibility_callback_info_type args)
 {
   if(args.IsConstructCall())
     {
@@ -100,7 +104,8 @@ void new_eina_list(v8::FunctionCallbackInfo<v8::Value> const& args)
         {
           eina_container_base* p = new range_eina_list<int>;
           std::cerr << "called eina list constructor p = " << p << std::endl;
-          args.This()->SetAlignedPointerInInternalField(0, dynamic_cast<void*>(p));
+          compatibility_set_pointer_internal_field
+            (args.This(), 0, dynamic_cast<void*>(p));
         }
       else
         {
@@ -111,7 +116,8 @@ void new_eina_list(v8::FunctionCallbackInfo<v8::Value> const& args)
               eina_container_base* base = reinterpret_cast<eina_container_base*>
                 (v8::External::Cast(*args[0])->Value());
               std::cout << "base " << base << std::endl;
-              args.This()->SetAlignedPointerInInternalField(0, dynamic_cast<void*>(base));
+              compatibility_set_pointer_internal_field
+                (args.This(), 0, dynamic_cast<void*>(base));
             }
           else
             std::abort();
@@ -119,9 +125,10 @@ void new_eina_list(v8::FunctionCallbackInfo<v8::Value> const& args)
     }
   else
     std::abort();
+  return compatibility_return();
 }
 
-void new_eina_array(v8::FunctionCallbackInfo<v8::Value> const& args)
+compatibility_return_type new_eina_array(compatibility_callback_info_type args)
 {
   if(args.IsConstructCall())
     {
@@ -129,7 +136,8 @@ void new_eina_array(v8::FunctionCallbackInfo<v8::Value> const& args)
         {
           eina_container_base* p = new eina_array<int>;
           std::cerr << "called eina array constructor p = " << p << std::endl;
-          args.This()->SetAlignedPointerInInternalField(0, dynamic_cast<void*>(p));
+          compatibility_set_pointer_internal_field
+            (args.This(), 0, dynamic_cast<void*>(p));
         }
       else
         {
@@ -140,7 +148,8 @@ void new_eina_array(v8::FunctionCallbackInfo<v8::Value> const& args)
               eina_container_base* base = reinterpret_cast<eina_container_base*>
                 (v8::External::Cast(*args[0])->Value());
               std::cout << "base " << base << std::endl;
-              args.This()->SetAlignedPointerInInternalField(0, dynamic_cast<void*>(base));
+              compatibility_set_pointer_internal_field
+                (args.This(), 0, dynamic_cast<void*>(base));
             }
           else
             std::abort();
@@ -148,6 +157,7 @@ void new_eina_array(v8::FunctionCallbackInfo<v8::Value> const& args)
     }
   else
     std::abort();
+  return compatibility_return();
 }
   
 template <typename F>
@@ -171,13 +181,13 @@ struct function_result<R(*)(Sig...)>
 template <typename T>
 struct is_persistent : std::false_type {};
 
-template <typename T, typename U>
-struct is_persistent<v8::Persistent<T, U> > : std::true_type {};
+template <typename...A>
+struct is_persistent<v8::Persistent<A...> > : std::true_type {};
       
 template <std::size_t I, typename Sig>
 typename std::tuple_element<I, Sig>::type
 get_element(v8::Isolate* isolate
-            , v8::FunctionCallbackInfo<v8::Value> const& args
+            , compatibility_callback_info_type args
             , typename std::enable_if
             <is_persistent<typename std::tuple_element<I, Sig>::type>::value>::type* = 0)
 {
@@ -188,7 +198,7 @@ get_element(v8::Isolate* isolate
 template <std::size_t I, typename Sig>
 typename std::tuple_element<I, Sig>::type
 get_element(v8::Isolate* /*isolate*/
-            , v8::FunctionCallbackInfo<v8::Value> const& args
+            , compatibility_callback_info_type args
             , typename std::enable_if
             <!is_persistent<typename std::tuple_element<I, Sig>::type>::value>::type* = 0)
 {
@@ -198,7 +208,7 @@ get_element(v8::Isolate* /*isolate*/
       
 template <typename Sig, typename R, typename T, typename F, std::size_t... N>
 R call_impl(v8::Isolate* isolate
-            , v8::FunctionCallbackInfo<v8::Value> const& args
+            , compatibility_callback_info_type args
             , T* self, F* f
             , eina::index_sequence<N...>)
 {
@@ -215,55 +225,67 @@ R call_impl(v8::Isolate* isolate
 }
 
 template <typename Sig, typename T, typename F, typename R>
-void call_generic_impl(v8::FunctionCallbackInfo<v8::Value> const& args, tag<R>)
+compatibility_return_type call_generic_impl(compatibility_callback_info_type args, tag<R>)
 {
-  T* self = static_cast<T*>(args.This()->GetAlignedPointerFromInternalField(0));
+  T* self = static_cast<T*>
+    (compatibility_get_pointer_internal_field<>(args.This(), 0));
   F* f = reinterpret_cast<F*>(v8::External::Cast(*args.Data())->Value());
-  args.GetReturnValue().Set
-    (js::call_impl<Sig, R>(args.GetIsolate(), args, self, f
-                           , eina::make_index_sequence<std::tuple_size<Sig>::value>()));
+  return compatibility_return
+    (js::get_value_from_c
+     (js::call_impl<Sig, R>(args.GetIsolate(), args, self, f
+                            , eina::make_index_sequence<std::tuple_size<Sig>::value>())
+      , args.GetIsolate())
+     , args);
 }
 
 template <typename Sig, typename T, typename F>
-void call_generic_impl(v8::FunctionCallbackInfo<v8::Value> const& args, tag<void>)
+compatibility_return_type call_generic_impl(compatibility_callback_info_type args, tag<void>)
 {
-  T* self = static_cast<T*>(args.This()->GetAlignedPointerFromInternalField(0));
+  T* self = static_cast<T*>
+    (compatibility_get_pointer_internal_field(args.This(), 0));
   F* f = reinterpret_cast<F*>(v8::External::Cast(*args.Data())->Value());
   js::call_impl<Sig, void>(args.GetIsolate(), args, self, f
                            , eina::make_index_sequence<std::tuple_size<Sig>::value>());
+  return compatibility_return();
 }
   
 template <typename Sig, typename R, typename T, typename F>
-void call_generic(v8::FunctionCallbackInfo<v8::Value> const& args)
+compatibility_return_type call_generic(compatibility_callback_info_type args)
 {
-  efl::js::call_generic_impl<Sig, T, F>(args, tag<R>());
+  return efl::eina::js::call_generic_impl<Sig, T, F>(args, tag<R>());
 }
 
 template <typename Sig, typename T, typename F, typename R>
-void call_function_impl(v8::FunctionCallbackInfo<v8::Value> const& args, tag<R>)
+compatibility_return_type call_function_impl(compatibility_callback_info_type args, tag<R>)
 {
   std::cout << "return type " << typeid(R).name() << std::endl;
-  T* self = static_cast<T*>(args.This()->GetAlignedPointerFromInternalField(0));
+  T* self = static_cast<T*>
+    (compatibility_get_pointer_internal_field(args.This(), 0));
   F f = reinterpret_cast<F>(v8::External::Cast(*args.Data())->Value());
-  args.GetReturnValue().Set
-    (js::call_impl<Sig, R>(args.GetIsolate(), args, self, f
-                           , eina::make_index_sequence<std::tuple_size<Sig>::value>()));
+  return compatibility_return
+    (/*js::get_value_from_c*/
+     (js::call_impl<Sig, R>(args.GetIsolate(), args, self, f
+                            , eina::make_index_sequence<std::tuple_size<Sig>::value>())
+      /*, args.GetIsolate()*/)
+     , args);
 }
 
 template <typename Sig, typename T, typename F>
-void call_function_impl(v8::FunctionCallbackInfo<v8::Value> const& args, tag<void>)
+compatibility_return_type call_function_impl(compatibility_callback_info_type args, tag<void>)
 {
-  T* self = static_cast<T*>(args.This()->GetAlignedPointerFromInternalField(0));
+  T* self = static_cast<T*>
+    (compatibility_get_pointer_internal_field(args.This(), 0));
   F f = reinterpret_cast<F>(v8::External::Cast(*args.Data())->Value());
   js::call_impl<Sig, void>(args.GetIsolate(), args, self, f
                            , eina::make_index_sequence<std::tuple_size<Sig>::value>());
+  return compatibility_return();
 }
 
 template <typename Sig, typename R, typename T, typename F>
-void call_function(v8::FunctionCallbackInfo<v8::Value> const& args)
+compatibility_return_type call_function(compatibility_callback_info_type args)
 {
   std::cout << "R: " << typeid(R).name() << std::endl;
-  efl::js::call_function_impl<Sig, T, F>(args, tag<R>());
+  return efl::eina::js::call_function_impl<Sig, T, F>(args, tag<R>());
 }
 
 template <typename T, typename F>
@@ -271,12 +293,12 @@ void register_(v8::Isolate* isolate, const char* name, F f, v8::Handle<v8::Objec
                , typename std::enable_if<std::is_function<typename std::remove_pointer<F>::type>::value>::type* = 0)
 {
   std::cout << "registering " << name << " with pointer " << reinterpret_cast<void*>(f) << std::endl;
-  template_->Set(v8::String::NewFromUtf8(isolate, name)
-                 , v8::FunctionTemplate::New
-                 (isolate, &efl::js::call_function
+  template_->Set(compatibility_new<v8::String>(isolate, name)
+                 , compatibility_new<v8::FunctionTemplate>
+                 (isolate, &efl::eina::js::call_function
                   <typename eina::_mpl::pop_front<typename function_params<F>::type, 2u>::type
                   , typename function_result<F>::type, T, F>
-                  , v8::External::New
+                  , compatibility_new<v8::External>
                   (isolate, reinterpret_cast<void*>(f))));
 }
 
@@ -289,23 +311,23 @@ void register_(v8::Isolate* isolate, const char* name, F&& f, v8::Handle<v8::Obj
                          (std::declval<T&>(), std::declval<v8::Isolate*>()
                           , std::declval<Sig>()...)
                         );
-  template_->Set(v8::String::NewFromUtf8(isolate, name)
-                 , v8::FunctionTemplate::New
+  template_->Set(compatibility_new<v8::String>(isolate, name)
+                 , compatibility_new<v8::FunctionTemplate>
                  (isolate
-                  , &efl::js::call_generic<std::tuple<Sig...>, result_type, T, F>
-                  , v8::External::New
+                  , &efl::eina::js::call_generic<std::tuple<Sig...>, result_type, T, F>
+                  , compatibility_new<v8::External>
                   (isolate, new F(std::forward<F>(f)))));
 }
 
 v8::Local<v8::ObjectTemplate> register_template(v8::Isolate* isolate, v8::Handle<v8::FunctionTemplate> constructor)
 {
-  v8::Handle<v8::ObjectTemplate> instance_t = constructor->InstanceTemplate();
+  v8::Local<v8::ObjectTemplate> instance_t = constructor->InstanceTemplate();
   instance_t->SetInternalFieldCount(1);
 
-  instance_t->SetIndexedPropertyHandler(& efl::js::index_get);
+  instance_t->SetIndexedPropertyHandler(& efl::eina::js::index_get);
 
   v8::Local<v8::ObjectTemplate> prototype = constructor->PrototypeTemplate();
-  prototype->SetAccessor(v8::String::NewFromUtf8(isolate, "length"), &efl::js::length);
+  prototype->SetAccessor(compatibility_new<v8::String>(isolate, "length"), &efl::eina::js::length);
 
   using namespace std::placeholders;
   js::register_<js::eina_container_base>
@@ -325,26 +347,30 @@ v8::Local<v8::ObjectTemplate> register_template(v8::Isolate* isolate, v8::Handle
 }
 
 void register_class(v8::Isolate* isolate, container_type type, const char* class_name
-                    , v8::FunctionCallback callback)
+                    , compatibility_function_callback callback)
 {
-  v8::Handle<v8::FunctionTemplate> constructor = v8::FunctionTemplate::New(isolate, callback);
-  constructor->SetClassName(v8::String::NewFromUtf8(isolate, class_name));
+  v8::Handle<v8::FunctionTemplate> constructor
+    = compatibility_new<v8::FunctionTemplate>(isolate, callback);
+  constructor->SetClassName(compatibility_new<v8::String>(isolate, class_name));
 
-  v8::Local<v8::ObjectTemplate> instance_t = efl::js::register_template(isolate, constructor);
+  v8::Local<v8::ObjectTemplate> instance_t = efl::eina::js::register_template(isolate, constructor);
   
-  efl::js::instance_persistents[type] = v8::UniquePersistent<v8::ObjectTemplate> (isolate, instance_t);
-  efl::js::instance_templates[type] = constructor;
+  efl::eina::js::instance_persistents[type]
+    = compatibility_persistent<v8::ObjectTemplate> {isolate, instance_t};
+  efl::eina::js::instance_templates[type] = constructor;
 }
   
 } } } }
 
-EAPI void eina_container_register(v8::Handle<v8::ObjectTemplate>, v8::Isolate* isolate)
+EAPI void eina_container_register(v8::Handle<v8::Object>, v8::Isolate* isolate)
 {
-  efl::js::register_class(isolate, efl::js::list_container_type, "eina_list", &efl::js::new_eina_list);
-  efl::js::register_class(isolate, efl::js::array_container_type, "eina_array", &efl::js::new_eina_array);
+  efl::eina::js::register_class(isolate, efl::eina::js::list_container_type
+                                , "eina_list", &efl::eina::js::new_eina_list);
+  efl::eina::js::register_class(isolate, efl::eina::js::array_container_type
+                                , "eina_array", &efl::eina::js::new_eina_array);
 }
 
 EAPI v8::Handle<v8::FunctionTemplate> get_list_instance_template()
 {
-  return efl::js::instance_templates[efl::js::list_container_type];
+  return efl::eina::js::instance_templates[efl::eina::js::list_container_type];
 }

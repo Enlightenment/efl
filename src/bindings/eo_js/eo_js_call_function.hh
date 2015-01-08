@@ -8,8 +8,8 @@
 #include <eina_function.hh>
 #include <Eo.h>
 
-#include <eo_js_get_value.hh>
-#include <eo_js_get_value_from_c.hh>
+#include <eina_js_get_value.hh>
+#include <eina_js_get_value_from_c.hh>
 
 #include <cstdlib>
 #include <functional>
@@ -44,9 +44,9 @@ struct method_caller
             , std::false_type)
   {
     std::cout << "is NOT out" << std::endl;
-    return js::get_value_from_javascript
+    return eina::js::get_value_from_javascript
       (args[I], isolate
-       , js::value_tag<typename std::tuple_element
+       , eina::js::value_tag<typename std::tuple_element
        <I, typename eina::_mpl::function_params<U>::type>::type>());
   }
   template <typename U, std::size_t I, typename Outs>
@@ -68,7 +68,7 @@ struct method_caller
   create_return_unique_value(eina::js::compatibility_callback_info_type args
                              , R const& r) const
   {
-    return js::get_value_from_c(r, args.GetIsolate());
+    return eina::js::get_value_from_c(r, args.GetIsolate());
   }
   
   template <typename Outs>
@@ -118,7 +118,7 @@ struct method_caller
                   , Outs const& outs, eina::index_sequence<S...>) const
   {
     std::initializer_list<int> l
-      = {(r->Set(S+Offset, js::get_value_from_c(std::get<S>(outs), isolate)),0)...};
+      = {(r->Set(S+Offset, eina::js::get_value_from_c(std::get<S>(outs), isolate)),0)...};
     static_cast<void>(l);
   }
 
@@ -132,7 +132,7 @@ struct method_caller
     v8::Isolate* isolate = args.GetIsolate();
     int const length = std::tuple_size<Outs>::value + 1;
     v8::Local<v8::Array> ret = eina::js::compatibility_new<v8::Array>(isolate, length);
-    ret->Set(0, js::get_value_from_c(r, isolate));
+    ret->Set(0, eina::js::get_value_from_c(r, isolate));
     set_return<1u>(isolate, ret, outs, eina::make_index_sequence<std::tuple_size<Outs>::value>());
     return eina::js::compatibility_return(ret, args);
   }

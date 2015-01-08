@@ -1,5 +1,5 @@
-#ifndef EFL_EO_JS_GET_VALUE_FROM_C_HH
-#define EFL_EO_JS_GET_VALUE_FROM_C_HH
+#ifndef EFL_EINA_JS_GET_VALUE_FROM_C_HH
+#define EFL_EINA_JS_GET_VALUE_FROM_C_HH
 
 #include <eina_js_compatibility.hh>
 
@@ -9,7 +9,7 @@
 #include <cstdlib>
 #include <typeinfo>
 
-namespace efl { namespace eo { namespace js {
+namespace efl { namespace eina { namespace js {
 
 template <typename T> struct print_tag {};
 
@@ -27,6 +27,13 @@ get_value_from_c(T v, v8::Isolate* isolate
                  , typename std::enable_if<std::is_same<T,bool>::value>::type* = 0)
 {
   return eina::js::compatibility_new<v8::Boolean>(isolate, v);
+}
+
+template <typename T>
+inline v8::Local<T>
+get_value_from_c(v8::Local<T> v, v8::Isolate*)
+{
+  return v;
 }
       
 // template <typename T>

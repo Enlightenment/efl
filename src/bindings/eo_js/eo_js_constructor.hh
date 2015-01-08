@@ -7,7 +7,7 @@
 #include <eina_function.hh>
 #include <Eo.h>
 
-#include <eo_js_get_value.hh>
+#include <eina_js_get_value.hh>
 
 #include <cstdlib>
 #include <functional>
@@ -94,9 +94,9 @@ struct constructor_caller
     {
       typename std::tuple_element<I, typename eina::_mpl::function_params<U>::type>::type
         tmp = 
-        js::get_value_from_javascript
+        eina::js::get_value_from_javascript
         (v, isolate
-         , js::value_tag<typename std::tuple_element
+         , eina::js::value_tag<typename std::tuple_element
          <I, typename eina::_mpl::function_params<U>::type>::type>());
       return tmp;
     }
@@ -140,7 +140,8 @@ struct constructor_caller
       {
         try
           {
-            Eo* parent = js::get_value_from_javascript(args[0], args.GetIsolate(), js::value_tag<Eo*>());
+            Eo* parent = eina::js::get_value_from_javascript
+              (args[0], args.GetIsolate(), eina::js::value_tag<Eo*>());
             Eo* eo = eo_add
               (klass
                , parent

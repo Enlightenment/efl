@@ -19,7 +19,6 @@ lib_eina_js_libeina_js_la_DEPENDENCIES = @EINA_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
 lib_eina_js_libeina_js_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 lib_eina_js_libeina_js_la_SOURCES = \
-bindings/eina_js/eina_js_compatibility.hh \
 bindings/eina_js/eina_js_container.cc \
 bindings/eina_js/eina_js_value.cc \
 bindings/eina_js/eina_js_error.cc \
@@ -33,6 +32,7 @@ bindings/eina_cxx/Eina.hh
 
 #installed_einacxxheadersdir = $(includedir)/eina-cxx-@VMAJ@/eina-cxx
 #dist_installed_einacxxheaders_DATA = \
+bindings/eina_js/eina_js_compatibility.hh \
 bindings/eina_cxx/eina_accessor.hh       \
 bindings/eina_cxx/eina_array.hh \
 bindings/eina_cxx/eina_clone_allocators.hh       \

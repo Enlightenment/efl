@@ -1,5 +1,5 @@
-#ifndef EFL_EO_JS_GET_VALUE_HH
-#define EFL_EO_JS_GET_VALUE_HH
+#ifndef EFL_EINA_JS_GET_VALUE_HH
+#define EFL_EINA_JS_GET_VALUE_HH
 
 #include <eina_js_compatibility.hh>
 
@@ -10,7 +10,7 @@
 #include <iostream>
 #include <typeinfo>
 
-namespace efl { namespace eo { namespace js {
+namespace efl { namespace eina { namespace js {
 
 template <typename T>
 struct value_tag
