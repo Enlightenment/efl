@@ -617,7 +617,7 @@ EAPI Eina_Stringshare *
 eina_stringshare_printf(const char *fmt, ...)
 {
    va_list args;
-   char *tmp;
+   char *tmp = NULL;
    const char *ret;
    int len;
 
@@ -629,7 +629,10 @@ eina_stringshare_printf(const char *fmt, ...)
    va_end(args);
 
    if (len < 1)
-     return NULL;
+     {
+        free(tmp);
+        return NULL;
+     }
 
    ret = eina_stringshare_add_length(tmp, len);
    free(tmp);
@@ -640,7 +643,7 @@ eina_stringshare_printf(const char *fmt, ...)
 EAPI Eina_Stringshare *
 eina_stringshare_vprintf(const char *fmt, va_list args)
 {
-   char *tmp;
+   char *tmp = NULL;
    const char *ret;
    int len;
 
@@ -650,7 +653,10 @@ eina_stringshare_vprintf(const char *fmt, va_list args)
    len = vasprintf(&tmp, fmt, args);
 
    if (len < 1)
-     return NULL;
+     {
+        free(tmp);
+        return NULL;
+     }
 
    ret = eina_stringshare_add_length(tmp, len);
    free(tmp);
