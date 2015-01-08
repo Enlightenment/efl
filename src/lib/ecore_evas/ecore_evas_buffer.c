@@ -741,6 +741,17 @@ ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
    return bdata->pixels;
 }
 
+EAPI Ecore_Evas *
+ecore_evas_buffer_ecore_evas_parent_get(Ecore_Evas *ee)
+{
+   Ecore_Evas_Engine_Buffer_Data *bdata;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ee, NULL);
+
+   bdata = ee->engine.data;
+   return evas_object_data_get(bdata->image, "Ecore_Evas_Parent");
+}
+
 EAPI Evas_Object *
 ecore_evas_object_image_new(Ecore_Evas *ee_target)
 {
