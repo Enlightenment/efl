@@ -228,7 +228,6 @@ test_win_inline(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    win2 = elm_win_add(win, "inlined", ELM_WIN_INLINED_IMAGE);
    evas_object_event_callback_add(elm_win_inlined_image_object_get(win2), EVAS_CALLBACK_MOUSE_DOWN, cb_mouse_down, NULL);
    fill(win2, EINA_TRUE);
-   elm_win_resize_object_add(win, win2);
 
    evas_object_move(win2, 20, 60);
    evas_object_resize(win2, 300, 200);
