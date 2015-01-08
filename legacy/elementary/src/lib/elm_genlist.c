@@ -5900,6 +5900,11 @@ _elm_genlist_item_elm_widget_item_del_pre(Eo *eo_it, Elm_Gen_Item *it)
 EOLIAN static void
 _elm_genlist_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it, const char *emission, const char *source)
 {
+   if (!it->realized)
+     {
+        WRN("Item is not realized yet");
+        return;
+     }
    edje_object_signal_emit(VIEW(it), emission, source);
 }
 
