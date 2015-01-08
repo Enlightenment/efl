@@ -1901,7 +1901,23 @@ _x11_elm_widget_xwin_get(const Evas_Object *obj)
         if (!evas) return 0;
         ee = ecore_evas_ecore_evas_get(evas);
         if (!ee) return 0;
-        xwin = _elm_ee_xwin_get(ee);
+
+        while(!xwin)
+          {
+             const char *engine_name = ecore_evas_engine_name_get(ee);
+             if (!strcmp(engine_name, ELM_BUFFER))
+               {
+                  ee = ecore_evas_buffer_ecore_evas_parent_get(ee);
+                  if (!ee) return 0;
+                  xwin = _elm_ee_xwin_get(ee);
+               }
+             else
+               {
+                  /* In case the engine is not a buffer, we want to check once. */
+                  xwin = _elm_ee_xwin_get(ee);
+                  if (!xwin) return 0;
+               }
+          }
      }
    return xwin;
 }
@@ -3492,7 +3508,22 @@ _wl_elm_widget_window_get(Evas_Object *obj)
         if (!(ee = ecore_evas_ecore_evas_get(evas)))
           return 0;
 
-        win = ecore_evas_wayland_window_get(ee);
+        while(!win)
+          {
+             const char *engine_name = ecore_evas_engine_name_get(ee);
+             if (!strcmp(engine_name, ELM_BUFFER))
+               {
+                  ee = ecore_evas_buffer_ecore_evas_parent_get(ee);
+                  if (!ee) return 0;
+                  win = ecore_evas_wayland_window_get(ee);
+               }
+             else
+               {
+                  /* In case the engine is not a buffer, we want to check once. */
+                  win = ecore_evas_wayland_window_get(ee);
+                  if (!win) return 0;
+               }
+          }
      }
 
    return ecore_wl_window_id_get(win);
