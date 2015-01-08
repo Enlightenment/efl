@@ -6066,12 +6066,19 @@ _list_last_recursive(Eina_List *list)
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_genlist_item_append(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data)
+_elm_genlist_item_append(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *eo_parent, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data)
 {
    Elm_Gen_Item *it;
 
+   if (eo_parent)
+     {
+        ELM_GENLIST_ITEM_DATA_GET(eo_parent, parent);
+        ELM_GENLIST_ITEM_CHECK_OR_RETURN(parent, NULL);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL((obj == WIDGET(parent)), NULL);
+     }
+
    it = _elm_genlist_item_new
-       (sd, itc, data, parent, type, func, func_data);
+       (sd, itc, data, eo_parent, type, func, func_data);
    if (!it) return NULL;
 
    if (!it->parent)
@@ -6092,7 +6099,7 @@ _elm_genlist_item_append(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_Ge
         if (!eo_it2) eo_it2 = EO_OBJ(it->parent);
         ELM_GENLIST_ITEM_DATA_GET(eo_it2, it2);
         sd->items = eina_inlist_append_relative
-            (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(it2));
+           (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(it2));
         it->item->rel = it2;
         it2->item->rel_revs = eina_list_append(it2->item->rel_revs, it);
      }
@@ -6103,12 +6110,19 @@ _elm_genlist_item_append(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_Ge
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_genlist_item_prepend(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data)
+_elm_genlist_item_prepend(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *eo_parent, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data)
 {
    Elm_Gen_Item *it;
 
+   if (eo_parent)
+     {
+        ELM_GENLIST_ITEM_DATA_GET(eo_parent, parent);
+        ELM_GENLIST_ITEM_CHECK_OR_RETURN(parent, NULL);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL((obj == WIDGET(parent)), NULL);
+     }
+
    it = _elm_genlist_item_new
-       (sd, itc, data, parent, type, func, func_data);
+       (sd, itc, data, eo_parent, type, func, func_data);
    if (!it) return NULL;
 
    if (!it->parent)
@@ -6129,7 +6143,7 @@ _elm_genlist_item_prepend(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_G
         if (!eo_it2) eo_it2 = EO_OBJ(it->parent);
         ELM_GENLIST_ITEM_DATA_GET(eo_it2, it2);
         sd->items = eina_inlist_prepend_relative
-            (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(it2));
+           (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(it2));
         it->item->rel = it2;
         it2->item->rel_revs = eina_list_append(it2->item->rel_revs, it);
      }
