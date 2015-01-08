@@ -5906,6 +5906,8 @@ _elm_genlist_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED, Elm_Gen_Ite
         return;
      }
    edje_object_signal_emit(VIEW(it), emission, source);
+   if (it->deco_all_view)
+     edje_object_signal_emit(it->deco_all_view, emission, source);
 }
 
 EOLIAN static void
