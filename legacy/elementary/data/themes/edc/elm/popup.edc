@@ -172,7 +172,7 @@ group { name: "elm/button/base/popup/transparent";
 }
 
 group { name: "elm/popup/base/default";
-   alias: " elm/popup/base/transparent";
+   alias: "elm/popup/base/transparent";
    styles {
       style { name: "popup_title_style";
          base: "font="FNBD" font_size=10 text_class=label align=center color=#fff style=shadow,bottom shadow_color=#00000080 wrap=mixed";
