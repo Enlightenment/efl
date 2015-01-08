@@ -1003,6 +1003,9 @@ AC_ARG_WITH([js],
    [AS_HELP_STRING([--with-js=@<:@nodejs/libv8/libuv/none@:>@],[enable JavaScript bindings using nodejs or libv8/libuv as build dependencies. The libuv option implies libv8. @<:@default=none@:>@])],
    [want_js="${withval}"], [want_js="none"])
 
+AC_DEFINE_IF([HAVE_NODEJS], [test "x${want_js}" = "xnodejs"],
+  [1], [Using NodeJS])
+
 AC_LANG_PUSH([C++])
 case "$want_js" in
      nodejs)
@@ -4778,6 +4781,7 @@ echo "  Cryptography..: ${build_crypto}"
 echo "  X11...........: ${with_x11}"
 echo "  OpenGL........: ${with_opengl}"
 echo "  C++11.........: ${have_cxx11}"
+echo "  JavaScript....: ${want_js}"
 echo "  GUI libs......: ${build_gui}"
 echo "Evas............: ${efl_lib_optional_evas} (${features_evas})"
 echo "  Engines.......: ${features_evas_engine}"

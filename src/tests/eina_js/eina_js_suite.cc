@@ -125,7 +125,7 @@ efl::eina::js::compatibility_return_type Print(efl::eina::js::compatibility_call
   return efl::eina::js::compatibility_return();
 }
 
-EAPI void eina_container_register(v8::Handle<v8::ObjectTemplate> global, v8::Isolate* isolate);
+EAPI void eina_container_register(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI v8::Handle<v8::FunctionTemplate> get_list_instance_template();
 
 int main(int, char*[])
@@ -154,7 +154,6 @@ int main(int, char*[])
     // Bind the global 'print' function to the C++ Print callback.
     global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "print"),
                 efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, Print));
-    eina_container_register(global, isolate);
     // // Bind the global 'read' function to the C++ Read callback.
     // global->Set(v8::String::NewFromUtf8(isolate, "read"),
     //             v8::FunctionTemplate::New(isolate, Read));
@@ -169,6 +168,7 @@ int main(int, char*[])
     //             v8::FunctionTemplate::New(isolate, Version));
 
     context = efl::eina::js::compatibility_new<v8::Context>(isolate, nullptr, global);
+    eina_container_register(context->Global(), isolate);
   }
   if (context.IsEmpty()) {
     fprintf(stderr, "Error creating context\n");
@@ -193,3 +193,25 @@ int main(int, char*[])
   context->Exit();
 }
 
+//#ifdef USE_NODEJS
+#include <node/node.h>
+
+namespace {
+
+void init(v8::Handle<v8::Object> exports)
+{
+  try
+    {
+      eina_container_register(exports, v8::Isolate::GetCurrent());
+    }
+  catch(...)
+    {
+      std::cout << "Error" << std::endl;
+    }
+}
+  
+}
+
+NODE_MODULE(eina_js_suite, init)
+
+//#endif
