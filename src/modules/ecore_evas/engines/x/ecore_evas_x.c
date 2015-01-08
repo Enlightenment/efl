@@ -1920,6 +1920,8 @@ _ecore_evas_x_free(Ecore_Evas *ee)
    _ecore_evas_x_group_leader_unset(ee);
    if (edata->sync_counter)
      ecore_x_sync_counter_free(edata->sync_counter);
+   if (edata->netwm_sync_counter)
+     ecore_x_sync_counter_free(edata->netwm_sync_counter);
    if (edata->win_shaped_input)
      ecore_x_window_free(edata->win_shaped_input);
    ecore_event_window_unregister(ee->prop.window);
