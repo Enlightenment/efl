@@ -141,6 +141,8 @@ static const char SIGNAL_GROUP_FIRST[] = "elm,state,group,first";
 static const char SIGNAL_GROUP_LAST[] = "elm,state,group,last";
 static const char SIGNAL_GROUP_MIDDLE[] = "elm,state,group,middle";
 
+static void _item_unrealize(Elm_Gen_Item *it);
+static void _item_select(Elm_Gen_Item *it);
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
@@ -596,7 +598,7 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
 
    eo_do(EO_OBJ(it), elm_wdg_item_track_cancel());
 
-   it->unrealize_cb(it);
+   _item_unrealize(it);
 
    it->realized = EINA_FALSE;
    it->want_unrealize = EINA_FALSE;
@@ -3633,7 +3635,7 @@ _item_unselect(Elm_Gen_Item *it)
 {
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   it->unhighlight_cb(it); /* unhighlight the item first */
+   _item_unhighlight(it); /* unhighlight the item first */
    if (!it->selected) return; /* then check whether the item is selected */
 
   if (GL_IT(it)->wsd->focus_on_selection_enabled)
@@ -3680,7 +3682,7 @@ _item_mouse_move_cb(void *data,
           {
              sd->on_hold = EINA_TRUE;
              if ((!sd->wasselected) && (!it->flipped))
-               it->unsel_cb(it);
+               _item_unselect(it);
           }
      }
    if (sd->multi_touched)
@@ -3778,7 +3780,7 @@ _item_mouse_move_cb(void *data,
         it->dragging = EINA_TRUE;
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
         if (!sd->wasselected)
-          it->unsel_cb(it);
+          _item_unselect(it);
         if (dy < 0)
           {
              if (ady > adx)
@@ -3845,7 +3847,7 @@ _long_press_cb(void *data)
         EINA_LIST_FREE(list, eo_it_tmp)
           {
              ELM_GENLIST_ITEM_DATA_GET(eo_it_tmp, it_tmp);
-             if (it != it_tmp) it->unsel_cb(it_tmp);
+             if (it != it_tmp) _item_unselect(it_tmp);
           }
 
         if (elm_genlist_item_expanded_get(EO_OBJ(it)))
@@ -3988,8 +3990,7 @@ _item_multi_down_cb(void *data,
    sd->multi_touched = EINA_TRUE;
    sd->prev_mx = ev->canvas.x;
    sd->prev_my = ev->canvas.y;
-   if (!sd->wasselected)
-     it->unsel_cb(it);
+   if (!sd->wasselected) _item_unselect(it);
    sd->wasselected = EINA_FALSE;
    sd->longpressed = EINA_FALSE;
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
@@ -4102,7 +4103,7 @@ _item_mouse_down_cb(void *data,
    // and finally call the user callbacks.
    // NOTE: keep this code at the bottom, as the user can change the
    //       list at this point (clear, delete, etc...)
-   it->highlight_cb(it);
+   _item_highlight(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
         evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, eo_it);
@@ -4601,11 +4602,11 @@ _access_activate_cb(void *data EINA_UNUSED,
      {
         if (!it->selected)
           {
-             it->highlight_cb(it);
-             it->sel_cb(it);
+             _item_highlight(it);
+             _item_select(it);
           }
         else
-          it->unsel_cb(it);
+          _item_unselect(it);
      }
    else
      {
@@ -4615,7 +4616,7 @@ _access_activate_cb(void *data EINA_UNUSED,
                {
                   Elm_Object_Item *eo_sel = sd->selected->data;
                   Elm_Gen_Item *sel = eo_data_scope_get(eo_sel, ELM_GENLIST_ITEM_CLASS);
-                  it->unsel_cb(sel);
+                  _item_unselect(sel);
                }
           }
         else
@@ -4627,11 +4628,11 @@ _access_activate_cb(void *data EINA_UNUSED,
                {
                   ELM_GENLIST_ITEM_DATA_GET(eo_it2, it2);
                   if (it2 != it)
-                    it->unsel_cb(it2);
+                    _item_unselect(it2);
                }
           }
-        it->highlight_cb(it);
-        it->sel_cb(it);
+        _item_highlight(it);
+        _item_select(it);
      }
 }
 
@@ -4696,7 +4697,7 @@ _item_mouse_up_cb(void *data,
    if (sd->multi_touched)
      {
         if ((!sd->multi) && (!it->selected) && (it->highlighted))
-          it->unhighlight_cb(it);
+          _item_unhighlight(it);
         if (sd->multi_down) return;
         _multi_touch_gesture_eval(it);
         return;
@@ -4753,7 +4754,7 @@ _item_mouse_up_cb(void *data,
      {
         sd->longpressed = EINA_FALSE;
         if ((!sd->wasselected) && (!it->flipped))
-          it->unsel_cb(it);
+          _item_unselect(it);
         sd->wasselected = EINA_FALSE;
         return;
      }
@@ -4779,11 +4780,11 @@ _item_mouse_up_cb(void *data,
      {
         if (!it->selected)
           {
-             it->highlight_cb(it);
-             it->sel_cb(it);
+             _item_highlight(it);
+             _item_select(it);
           }
         else
-          it->unsel_cb(it);
+         _item_unselect(it);
      }
    else
      {
@@ -4793,7 +4794,7 @@ _item_mouse_up_cb(void *data,
                {
                   Elm_Object_Item *eo_sel = sd->selected->data;
                   Elm_Gen_Item *sel = eo_data_scope_get(eo_sel, ELM_GENLIST_ITEM_CLASS);
-                  it->unsel_cb(sel);
+                  _item_unselect(sel);
                }
           }
         else
@@ -4805,11 +4806,11 @@ _item_mouse_up_cb(void *data,
                {
                   ELM_GENLIST_ITEM_DATA_GET(eo_it2, it2);
                   if (it2 != it)
-                    it->unsel_cb(it2);
+                    _item_unselect(it2);
                }
           }
-        it->highlight_cb(it);
-        it->sel_cb(it);
+        _item_highlight(it);
+        _item_select(it);
      }
 
    if (sd->focused_item != EO_OBJ(it))
@@ -4923,7 +4924,7 @@ _decorate_item_finished_signal_cb(void *data,
 }
 
 static void
-_item_unrealize_cb(Elm_Gen_Item *it)
+_item_unrealize(Elm_Gen_Item *it)
 {
    Evas_Object *content;
    EINA_LIST_FREE(it->item->flip_contents, content)
@@ -5892,13 +5893,6 @@ _elm_genlist_item_new(Elm_Genlist_Data *sd,
    it->parent = parent;
    it->func.func = func;
    it->func.data = func_data;
-
-   it->del_cb = (Ecore_Cb)_item_del;
-   it->highlight_cb = (Ecore_Cb)_item_highlight;
-   it->unhighlight_cb = (Ecore_Cb)_item_unhighlight;
-   it->sel_cb = (Ecore_Cb)_item_select;
-   it->unsel_cb = (Ecore_Cb)_item_unselect;
-   it->unrealize_cb = (Ecore_Cb)_item_unrealize_cb;
 
    GL_IT(it) = ELM_NEW(Elm_Gen_Item_Type);
    GL_IT(it)->wsd = sd;
@@ -7505,7 +7499,7 @@ _flip_job(void *data)
    Elm_Gen_Item *it = (Elm_Gen_Item *)data;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   it->unsel_cb(it);
+   _item_unselect(it);
    _elm_genlist_item_unrealize(it, EINA_FALSE);
 
    it->flipped = EINA_TRUE;
