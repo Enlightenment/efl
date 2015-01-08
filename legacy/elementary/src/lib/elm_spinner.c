@@ -590,7 +590,7 @@ _access_activate_cb(void *data,
    Evas_Object *eo, *inc_btn;
    const char* increment_part;
 
-   if (!strcmp(elm_widget_style_get(data), "vertical"))
+   if (!strncmp(elm_widget_style_get(data), "vertical", 8))
      increment_part = "up_bt";
    else
      increment_part = "right_bt";
@@ -632,7 +632,7 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
    const char* increment_part;
    const char* decrement_part;
 
-   if (!strcmp(elm_widget_style_get(obj), "vertical"))
+   if (!strncmp(elm_widget_style_get(obj), "vertical", 8))
      {
         increment_part = "up_bt";
         decrement_part = "down_bt";
@@ -807,7 +807,7 @@ _elm_spinner_elm_widget_focus_next(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED, E
    const char* increment_part;
    const char* decrement_part;
 
-   if (!strcmp(elm_widget_style_get(obj), "vertical"))
+   if (!strncmp(elm_widget_style_get(obj), "vertical", 8))
      {
         increment_part = "up_bt";
         decrement_part = "down_bt";
