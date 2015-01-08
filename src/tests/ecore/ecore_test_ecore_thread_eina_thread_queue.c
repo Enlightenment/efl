@@ -9,6 +9,8 @@
 
 #include "ecore_suite.h"
 
+#define DEBUG 0
+
 /////////////////////////////////////////////////////////////////////////////
 static Eina_Thread_Queue *thq1, *thq2, *thqmaster;
 
@@ -77,7 +79,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t1)
         Msg *msg;
         void *ref;
         msg = eina_thread_queue_wait(thq2, &ref);
-        printf("V: %i   [%i]\n", msg->value, eina_thread_queue_pending_get(thq2));
+        if (DEBUG) printf("V: %i   [%i]\n", msg->value, eina_thread_queue_pending_get(thq2));
         if (msg->value != (val + 1))
           {
              printf("ERRR %i not next after %i\n", msg->value, val);
@@ -214,7 +216,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t3)
         thq = sub->queue;
         eina_thread_queue_wait_done(thqmaster, ref);
         msg = eina_thread_queue_wait(thq, &ref);
-        printf("V %09i: %p - %i  [%i]\n", cnt, thq, msg->value, eina_thread_queue_pending_get(thqmaster));
+        if (DEBUG) printf("V %09i: %p - %i  [%i]\n", cnt, thq, msg->value, eina_thread_queue_pending_get(thqmaster));
         if (thq == thq1)
           {
              if ((val1 + 1) != msg->value)
@@ -305,7 +307,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t4)
         Msg4 *msg;
         void *ref;
         msg = eina_thread_queue_wait(thq1, &ref);
-        printf("V %08i: %i  [%i]\n", cnt, msg->value, eina_thread_queue_pending_get(thq1));
+        if (DEBUG) printf("V %08i: %i  [%i]\n", cnt, msg->value, eina_thread_queue_pending_get(thq1));
         if (msg->value >= 10000000)
           {
              if ((val2 + 1) != msg->value)
@@ -400,7 +402,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t5)
         msg = eina_thread_queue_poll(thq2, &ref);
         if (msg)
           {
-             printf("V: %i   [%i]\n", msg->value, eina_thread_queue_pending_get(thq2));
+             if (DEBUG) printf("V: %i   [%i]\n", msg->value, eina_thread_queue_pending_get(thq2));
              if (msg->value != (val + 1))
                {
                   printf("ERRR %i not next after %i\n", msg->value, val);
@@ -413,7 +415,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t5)
           }
         else
           {
-             printf("V: none!\n");
+             if (DEBUG) printf("V: none!\n");
              usleep((rand() % 10) * 1000);
           }
      }
@@ -459,7 +461,7 @@ th52_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         Msg6 *msg;
         void *ref;
         msg = eina_thread_queue_wait(thq1, &ref);
-        printf("v %08i: %i  [%i]\n", cnt, msg->value, eina_thread_queue_pending_get(thq1));
+        if (DEBUG) printf("v %08i: %i  [%i]\n", cnt, msg->value, eina_thread_queue_pending_get(thq1));
         eina_thread_queue_wait_done(thq1, ref);
         cnt++;
         eina_spinlock_take(&msgnum_lock);
@@ -478,7 +480,7 @@ th53_do(void *data EINA_UNUSED, Ecore_Thread *th EINA_UNUSED)
         Msg6 *msg;
         void *ref;
         msg = eina_thread_queue_wait(thq1, &ref);
-        printf("v %08i: %i  [%i]\n", cnt, msg->value, eina_thread_queue_pending_get(thq1));
+        if (DEBUG) printf("v %08i: %i  [%i]\n", cnt, msg->value, eina_thread_queue_pending_get(thq1));
         eina_thread_queue_wait_done(thq1, ref);
         cnt++;
         eina_spinlock_take(&msgnum_lock);
@@ -501,7 +503,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t6)
    for (;;)
      {
         eina_spinlock_take(&msgnum_lock);
-        printf("msgnum %i\n", msgnum);
+        if (DEBUG) printf("msgnum %i\n", msgnum);
         if (msgnum == 10000)
           {
              eina_spinlock_release(&msgnum_lock);
@@ -563,7 +565,7 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
           {
              eina_thread_queue_wait_done(thq1, ref);
              msgcnt++;
-             printf("msgcnt: %i\n", msgcnt);
+             if (DEBUG) printf("msgcnt: %i\n", msgcnt);
           }
         if (msgcnt == 1000000) break;
      }
