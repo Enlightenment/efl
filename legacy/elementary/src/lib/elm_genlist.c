@@ -5827,8 +5827,7 @@ _elm_genlist_item_elm_widget_item_disable(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *i
 
    if (it->generation < GL_IT(it)->wsd->generation) return;
 
-   if (it->selected)
-     elm_genlist_item_selected_set(EO_OBJ(it), EINA_FALSE);
+   _item_unselect(it);
 
    if (it->realized)
      {
