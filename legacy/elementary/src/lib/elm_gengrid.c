@@ -1039,10 +1039,10 @@ _reorder_item_move_animator_cb(void *data)
         GG_IT(it)->ry += dy;
      }
 
-   if ((((dx > 0) && (GG_IT(it)->rx >= GG_IT(it)->tx)) ||
-        ((dx <= 0) && (GG_IT(it)->rx <= GG_IT(it)->tx)))
-       && (((dy > 0) && (GG_IT(it)->ry >= GG_IT(it)->ty)) ||
-           ((dy <= 0) && (GG_IT(it)->ry <= GG_IT(it)->ty))))
+   if (((dx > 0) && (GG_IT(it)->rx >= GG_IT(it)->tx)) ||
+        ((dx <= 0) && (GG_IT(it)->rx <= GG_IT(it)->tx))
+       || ((dy > 0) && (GG_IT(it)->ry >= GG_IT(it)->ty)) ||
+           ((dy <= 0) && (GG_IT(it)->ry <= GG_IT(it)->ty)))
      {
         evas_object_move(VIEW(it), GG_IT(it)->tx, GG_IT(it)->ty);
         if (it->group)
