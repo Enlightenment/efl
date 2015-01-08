@@ -5657,6 +5657,9 @@ _item_select(Elm_Gen_Item *it)
 
    if (eo_do(eo_it, elm_wdg_item_disabled_get())) return;
    if (_is_no_select(it) || (it->decorate_it_set)) return;
+   if ((sd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS) &&
+       (it->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS) && it->selected)
+     return;
 
    if (!sd->multi)
      {
