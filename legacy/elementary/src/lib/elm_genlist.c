@@ -5602,6 +5602,8 @@ _internal_elm_genlist_clear(Evas_Object *obj)
    ELM_SAFE_FREE(sd->state, eina_inlist_sorted_state_free);
 
    evas_event_freeze(evas_object_evas_get(sd->obj));
+   // Do not use EINA_INLIST_FOREACH or EINA_INLIST_FOREACH_SAFE
+   // because sd->items can be modified inside elm_widget_item_del()
    for (l = sd->items, next = l ? l->next : NULL;
         l;
         l = next, next = next ? next->next : NULL)
