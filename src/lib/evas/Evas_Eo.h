@@ -539,6 +539,28 @@ typedef enum _Evas_3D_Node_Type
 } Evas_3D_Node_Type;
 
 /**
+ * Types of node orientation
+ *
+ * @since 1.13
+ * @ingroup Evas_3D_Types
+ */
+typedef enum _Evas_3D_Node_Orientation_Type
+{
+   /**< Node with no orientation properties */
+   EVAS_3D_NODE_ORIENTATION_TYPE_NONE = 0,
+   /**< Node orientation is given as a point to look at and a vector
+        that indicates the angle at which the subject is looking at the point */
+   EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_AT,
+   /**< Node orientation is given as id of another part to look at and a vector
+        that indicates the angle at which the subject is looking at the part */
+   EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_TO,
+   /**< Node orientation is given as an angle and an axis to rotate around */
+   EVAS_3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS,
+   /**< Node orientation is given as a quaternion */
+   EVAS_3D_NODE_ORIENTATION_TYPE_QUATERNION,
+} Evas_3D_Node_Orientation_Type;
+
+/**
  * Vertex attribute IDs
  *
  * @since 1.10

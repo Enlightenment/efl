@@ -1347,8 +1347,9 @@ struct _Edje_Part_Description_Spec_Mesh_Node
    AABB     aabb2;
 
    struct {
-      Evas_Real      angle;
-      Edje_3D_Vec    axis;
+      Evas_3D_Node_Orientation_Type      type;
+      FLOAT_T                            data[6];
+      int                                look_to; /* -1 = whole part collection, or part ID */
    } orientation;
 
    struct {
@@ -1370,10 +1371,13 @@ struct _Edje_Part_Description_Spec_Light
       Edje_3D_Vec   point;
 
       unsigned char space;
-      Edje_3D_Vec   look1;
-      Edje_3D_Vec   look2;
-      int           look_to; /* -1 = whole part collection, or part ID */
    } position;
+
+   struct {
+      Evas_3D_Node_Orientation_Type      type;
+      FLOAT_T                            data[6];
+      int                                look_to; /* -1 = whole part collection, or part ID */
+   } orientation;
 };
 
 struct _Edje_Part_Description_Spec_Camera
@@ -1388,10 +1392,13 @@ struct _Edje_Part_Description_Spec_Camera
    struct {
       Edje_3D_Vec   point;
       unsigned char space;
-      Edje_3D_Vec   look1;
-      Edje_3D_Vec   look2;
-      int           look_to; /* -1 = whole part collection, or part ID */
    } position;
+
+   struct {
+      Evas_3D_Node_Orientation_Type      type;
+      FLOAT_T                            data[6];
+      int                                look_to; /* -1 = whole part collection, or part ID */
+   } orientation;
 };
 
 
