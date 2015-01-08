@@ -1821,7 +1821,9 @@ _elm_win_evas_object_smart_move(Eo *obj, Elm_Win_Data *sd, Evas_Coord x, Evas_Co
      }
    if (sd->frame_obj)
      {
-        /* FIXME: We should update ecore_wl_window_location here !! */
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        ecore_wl_window_update_location(sd->wl.win, x, y);
+#endif
         sd->screen.x = x;
         sd->screen.y = y;
      }
