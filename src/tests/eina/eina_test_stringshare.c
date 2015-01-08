@@ -210,8 +210,10 @@ START_TEST(eina_stringshare_print)
    const char *t3;
 
    fail_if(eina_stringshare_printf(0) != NULL);
-   fail_if(eina_stringshare_printf("%s", "") != NULL);
-   fail_if(eina_stringshare_nprintf(0, "%s", "") != NULL);
+   fail_if(eina_stringshare_printf("%s", "") == NULL);
+   fail_if(strlen(eina_stringshare_printf("%s", "")) > 0);
+   fail_if(eina_stringshare_nprintf(0, "%s", "") == NULL);
+   fail_if(strlen(eina_stringshare_nprintf(0, "%s", "")) > 0);
 
    t1 = eina_stringshare_printf("x%sy", TEST1);
    t2 = my_vprintf("x%sy", TEST1);
