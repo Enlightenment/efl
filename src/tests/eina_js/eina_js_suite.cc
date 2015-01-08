@@ -198,15 +198,38 @@ int main(int, char*[])
 
 namespace {
 
+efl::eina::ptr_list<int> list;
+efl::eina::js::range_eina_list<int> raw_list;
+
 void init(v8::Handle<v8::Object> exports)
 {
   try
     {
+      eina_init();
+      eo_init();
+      
+      std::cerr << __LINE__ << std::endl;
+      list.push_back(new int(5));
+      list.push_back(new int(10));
+      list.push_back(new int(15));
+      std::cerr << __LINE__ << std::endl;
+
+      raw_list = efl::eina::js::range_eina_list<int>(list.native_handle());
+
+      std::cerr << __LINE__ << std::endl;
       eina_container_register(exports, v8::Isolate::GetCurrent());
+      std::cerr << __LINE__ << std::endl;
+
+      v8::Handle<v8::Value> a[] = {efl::eina::js::compatibility_new<v8::External>(nullptr, &raw_list)};
+      std::cerr << __LINE__ << std::endl;
+      exports->Set(efl::eina::js::compatibility_new<v8::String>(nullptr, "raw_list")
+                   , get_list_instance_template()->GetFunction()->NewInstance(1, a));
+
+      std::cerr << "registered" << std::endl;
     }
   catch(...)
     {
-      std::cout << "Error" << std::endl;
+      std::cerr << "Error" << std::endl;
     }
 }
   

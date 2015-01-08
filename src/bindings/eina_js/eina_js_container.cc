@@ -27,6 +27,7 @@ struct tag { typedef T type; };
 namespace {
 
 compatibility_persistent<v8::ObjectTemplate> instance_persistents[container_type_size];
+compatibility_persistent<v8::FunctionTemplate> constructor_persistents[container_type_size];
 v8::Handle<v8::FunctionTemplate> instance_templates[container_type_size];
 
 v8::Local<v8::Object> concat(eina_container_base& lhs, v8::Isolate* isolate, v8::Local<v8::Value> other)
@@ -40,12 +41,17 @@ v8::Local<v8::Object> concat(eina_container_base& lhs, v8::Isolate* isolate, v8:
         {
           eina_container_base& rhs = *static_cast<eina_container_base*>
             (efl::eina::js::compatibility_get_pointer_internal_field(obj, 0));
+          std::cout << "me " << &lhs << " other " << &rhs << std::endl;
           std::type_info const& typeinfo_lhs = typeid(lhs)
             , &typeinfo_rhs = typeid(rhs);
           if(!typeinfo_lhs.before(typeinfo_rhs) && !typeinfo_rhs.before(typeinfo_lhs))
             {
-              v8::Handle<v8::Value> a[] = {efl::eina::js::compatibility_new<v8::External>(isolate, rhs.concat(lhs))};
-              v8::Local<v8::Object> result = instance_templates[lhs.get_container_type()]->GetFunction()->NewInstance(1, a);
+              v8::Handle<v8::Value> a[] =
+                {efl::eina::js::compatibility_new<v8::External>(isolate, rhs.concat(lhs))};
+              std::cerr << __func__ << ":" << __LINE__<< std::endl;
+              v8::Local<v8::Object> result =
+                instance_templates[lhs.get_container_type()]->GetFunction()->NewInstance(1, a);
+              std::cerr << __func__ << ":" << __LINE__<< std::endl;
               return result;
             }
           else
@@ -83,7 +89,8 @@ compatibility_accessor_getter_return_type length
   v8::Local<v8::Object> self_obj = v8::Local<v8::Object>::Cast(info.This());
   eina_container_base* self = static_cast<eina_container_base*>
     (compatibility_get_pointer_internal_field(self_obj, 0));
-  return compatibility_return(compatibility_new<v8::Number>(nullptr, self->size()), info);
+  std::cout << "size " << self->size() << std::endl;
+  return compatibility_return(js::get_value_from_c(self->size(), info.GetIsolate()), info);
 }
 
 compatibility_accessor_getter_return_type index_get
@@ -98,6 +105,7 @@ compatibility_accessor_getter_return_type index_get
 
 compatibility_return_type new_eina_list(compatibility_callback_info_type args)
 {
+  std::cerr << "new_eina_list" << std::endl;
   if(args.IsConstructCall())
     {
       if(args.Length() == 0)
@@ -130,6 +138,7 @@ compatibility_return_type new_eina_list(compatibility_callback_info_type args)
 
 compatibility_return_type new_eina_array(compatibility_callback_info_type args)
 {
+  std::cerr << "new_eina_array" << std::endl;
   if(args.IsConstructCall())
     {
       if(args.Length() == 0)
@@ -219,7 +228,8 @@ R call_impl(v8::Isolate* isolate
       std::cout << "was called" << std::endl;
     }
   } print_;
-  std::cout << "self " << self << " pointer " << (void*)f << std::endl;
+  std::cout << "self " << self << " pointer " << (void*)f
+            << " F " << typeid(F).name() << std::endl;
   assert(self != 0);
   return (*f)(*self, isolate, js::get_element<N, Sig>(isolate, args)...);
 }
@@ -357,6 +367,8 @@ void register_class(v8::Isolate* isolate, container_type type, const char* class
   
   efl::eina::js::instance_persistents[type]
     = compatibility_persistent<v8::ObjectTemplate> {isolate, instance_t};
+  efl::eina::js::constructor_persistents[type]
+    = compatibility_persistent<v8::FunctionTemplate> {isolate, constructor};
   efl::eina::js::instance_templates[type] = constructor;
 }
   
@@ -374,3 +386,4 @@ EAPI v8::Handle<v8::FunctionTemplate> get_list_instance_template()
 {
   return efl::eina::js::instance_templates[efl::eina::js::list_container_type];
 }
+

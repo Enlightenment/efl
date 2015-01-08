@@ -3,6 +3,7 @@
 console.log("teste1");
 
 var suite = require('../../../build/src/tests/eina_js/eina_js_suite');
+assert = require('assert');
 
 // function assert(condition, message)
 // {
@@ -12,10 +13,10 @@ var suite = require('../../../build/src/tests/eina_js/eina_js_suite');
 // }
 
 console.log("teste");
-var l1 = raw_list;
+var l1 = suite.raw_list;
 console.log ("l1 ", l1.toString());
 assert (l1.length == 3);
-var l2 = raw_list;
+var l2 = suite.raw_list;
 console.log ("l2 ", l2.toString());
 assert (l2.length == 3);
 var c = l1.concat(l2);
@@ -49,3 +50,5 @@ console.log ("s2 ", s2.toString());
 assert (s2.length == 2);
 assert (s2[0] == l1[1]);
 assert (s2[1] == l1[2]);
+
+console.log ("Test execution with success");

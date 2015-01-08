@@ -44,7 +44,7 @@ namespace detail {
 template <typename T>
 eina_container_base* concat(T const& self, eina_container_base const& other)
 {
-  std::cout << __func__ << std::endl;
+  std::cout << __func__ << " " << typeid(container_type).name() << std::endl;
   T const& rhs = static_cast<T const&>(other);
   typedef typename T::container_type container_type;
   container_type container(self._container.begin(), self._container.end());
@@ -106,11 +106,14 @@ struct range_eina_list : eina_container_common<efl::eina::range_list<T> >
   
   eina_container_base* concat(eina_container_base const& other) const
   {
-    std::cout << __func__ << std::endl;
+    std::cout << __func__ << " " << typeid(container_type).name() << std::endl;
     range_eina_list<T>const& rhs = static_cast<range_eina_list<T>const&>(other);
+    std::cout << __func__ << ":" << __LINE__ << std::endl;
     efl::eina::list<T, clone_allocator_type>
       list(this->_container.begin(), this->_container.end());
+    std::cout << __func__ << ":" << __LINE__ << std::endl;
     list.insert(list.end(), rhs._container.begin(), rhs._container.end());
+    std::cout << __func__ << ":" << __LINE__ << std::endl;
     return new eina_list<T>(list.release_native_handle());
   }
   eina_container_base* slice(std::int64_t i, std::int64_t j) const
