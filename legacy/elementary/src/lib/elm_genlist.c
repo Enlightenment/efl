@@ -5719,9 +5719,10 @@ _item_select(Elm_Gen_Item *it)
    if (!sd->multi)
      {
         const Eina_List *l, *ll;
-        Elm_Gen_Item *it2;
-        EINA_LIST_FOREACH_SAFE(sd->selected, l, ll, it2)
+        Elm_Object_Item *eo_it2;
+        EINA_LIST_FOREACH_SAFE(sd->selected, l, ll, eo_it2)
          {
+            ELM_GENLIST_ITEM_DATA_GET(eo_it2, it2);
             if (it2 != it) _item_unselect(it2);
          }
      }
@@ -6341,11 +6342,15 @@ _elm_genlist_multi_select_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Eina_Bo
    if (!sd->multi && sd->selected)
      {
         Eina_List *l, *ll;
-        Elm_Gen_Item *it;
-        Elm_Gen_Item *last = sd->selected->data;
-        EINA_LIST_FOREACH_SAFE(sd->selected, l, ll, it)
+        Elm_Object_Item *eo_it;
+        Elm_Object_Item *last = sd->selected->data;
+        EINA_LIST_FOREACH_SAFE(sd->selected, l, ll, eo_it)
           {
-             if (last != it) _item_unselect(it);
+             if (last != eo_it)
+               {
+                  ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
+                  _item_unselect(it);
+               }
           }
      }
 }
