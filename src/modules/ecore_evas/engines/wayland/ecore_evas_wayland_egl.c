@@ -183,7 +183,10 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
      }
 
    if (parent)
-     p = ecore_wl_window_find(parent);
+     {
+        p = ecore_wl_window_find(parent);
+        ee->alpha = ecore_wl_window_alpha_get(p);
+     }
 
    wdata->parent = p;
    wdata->win = 
@@ -204,8 +207,6 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
    /* FIXME: This needs to be set based on theme & scale */
    if (ee->prop.draw_frame)
      evas_output_framespace_set(ee->evas, fx, fy, fw, fh);
-
-   /* FIXME: Get if parent is alpha, and set */
 
    if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
      {
