@@ -28,7 +28,7 @@ struct event_information
 struct event_callback_information
 {
   event_information* event_info;
-  v8::Persistent<v8::Function> function;
+  eina::js::compatibility_persistent<v8::Function> function;
 };
 
 inline Eina_Bool event_callback(void* data, Eo* obj, Eo_Event_Description const*
@@ -39,7 +39,7 @@ inline Eina_Bool event_callback(void* data, Eo* obj, Eo_Event_Description const*
   v8::Local<v8::Object> self = (*event->event_info->constructor)->NewInstance(1, a);
 
   v8::Handle<v8::Value> call_args[] = {self};
-  event->function->Call(v8::Context::GetCurrent()->Global(), 1, call_args);
+  event->function->Call(v8::Isolate::GetCurrent()->GetCurrentContext()->Global(), 1, call_args);
   
   return EO_CALLBACK_CONTINUE;
 }
@@ -61,9 +61,9 @@ inline eina::js::compatibility_return_type event_call(eina::js::compatibility_ca
           Eo* eo = static_cast<Eo*>(v8::External::Cast(*external)->Value());
 
           event_callback_information* i = new event_callback_information
-            {event, eina::js::compatibility_new<v8::Persistent<v8::Function> >
+            {event, eina::js::compatibility_persistent<v8::Function>
              (args.GetIsolate()
-              , v8::Handle<v8::Function>(v8::Function::Cast(*arg1->ToObject())))};
+              , eina::js::compatibility_cast<v8::Function>(*arg1->ToObject()))};
           
           eo_do(eo, eo_event_callback_priority_add
                 (event->event, EO_CALLBACK_PRIORITY_DEFAULT, &event_callback, i));

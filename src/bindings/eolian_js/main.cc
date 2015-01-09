@@ -3,6 +3,8 @@
 #include "config.h"
 #endif
 
+#ifdef HAVE_NODEJS
+
 #include <node/node.h>
 #include UV_INCLUDE_HEADER
 
@@ -46,3 +48,5 @@ void init(v8::Handle<v8::Object> exports)
 }
 
 NODE_MODULE(efl, init)
+
+#endif

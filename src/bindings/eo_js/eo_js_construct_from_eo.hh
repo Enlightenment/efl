@@ -19,14 +19,12 @@
 
 namespace efl { namespace eo { namespace js {
 
-#if 0
-#else
-inline v8::Handle<v8::Value> construct_from_eo(v8::Arguments const& args)
+inline eina::js::compatibility_return_type construct_from_eo(eina::js::compatibility_callback_info_type args)
 {
   if(args.IsConstructCall())
     {
       args.This()->SetInternalField(0, args[0]);
-      return v8::Handle<v8::Value>();
+      return eina::js::compatibility_return();
     }
   else
     {
@@ -35,10 +33,9 @@ inline v8::Handle<v8::Value> construct_from_eo(v8::Arguments const& args)
       for(int i = 0; i != args.Length(); ++i)
         argv[i] = args[i];
       args.Callee()->NewInstance(argc, &argv[0]);
-      return v8::Handle<v8::Value>();
+      return eina::js::compatibility_return();
     }
 }
-#endif
       
 } } }
 

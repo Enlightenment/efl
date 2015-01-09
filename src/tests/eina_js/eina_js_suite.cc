@@ -193,7 +193,7 @@ int main(int, char*[])
   context->Exit();
 }
 
-//#ifdef USE_NODEJS
+#ifdef HAVE_NODEJS
 #include <node/node.h>
 
 namespace {
@@ -237,4 +237,4 @@ void init(v8::Handle<v8::Object> exports)
 
 NODE_MODULE(eina_js_suite, init)
 
-//#endif
+#endif

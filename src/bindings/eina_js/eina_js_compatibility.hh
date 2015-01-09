@@ -15,6 +15,8 @@ template <typename T>
 struct UniquePersistent;
 
 class AccessorInfo;
+
+class Arguments;
   
 }
 
@@ -65,7 +67,9 @@ struct _libv8_callback_info_test
 };
 
 template <typename T = v8::ObjectTemplate, typename Enable = void>
-struct _libv8_property_callback_info_test;
+struct _libv8_property_callback_info_test
+  : std::true_type
+{};
 
 typedef v8::Handle<v8::Value>(*_libv8_getter_callback)(v8::Local<v8::String>, v8::AccessorInfo const&);
 typedef void(*_libv8_setter_callback)(v8::Local<v8::String>, v8::Local<v8::Value>, v8::AccessorInfo const&);
@@ -83,26 +87,26 @@ struct _libv8_property_callback_info_test
       , v8::PropertyAttribute
       , v8::Handle<v8::AccessorSignature>
       )>::value>::type>
-  : std::true_type
-{
-};
-
-template <typename T>
-struct _libv8_property_callback_info_test
-<T, typename std::enable_if
- <std::is_same<decltype( & T::SetAccessor)
-   , void (T::*)
-     (v8::Handle<v8::String>
-      , _libv8_getter_callback
-      , _libv8_setter_callback
-      , v8::Handle<v8::Value>
-      , v8::AccessControl
-      , v8::PropertyAttribute
-      , v8::Handle<v8::AccessorSignature>
-      )>::value>::type>
   : std::false_type
 {
 };
+
+// template <typename T>
+// struct _libv8_property_callback_info_test
+// <T, typename std::enable_if
+//  <std::is_same<decltype( & T::SetAccessor)
+//    , void (T::*)
+//      (v8::Handle<v8::String>
+//       , _libv8_getter_callback
+//       , _libv8_setter_callback
+//       , v8::Handle<v8::Value>
+//       , v8::AccessControl
+//       , v8::PropertyAttribute
+//       , v8::Handle<v8::AccessorSignature>
+//       )>::value>::type>
+//   : std::false_type
+// {
+// };
       
 static constexpr bool const v8_uses_isolate = _libv8_isolate_test<>::value;
 static constexpr bool const v8_uses_callback_info = _libv8_callback_info_test<>::value;
@@ -111,6 +115,9 @@ static constexpr bool const v8_uses_property_callback_info = _libv8_property_cal
 using compatibility_return_type = std::conditional<v8_uses_callback_info, void, v8::Handle<v8::Value> >::type;
 using compatibility_callback_info_type
  = std::conditional<v8_uses_callback_info, v8::FunctionCallbackInfo<v8::Value> const&, v8::Arguments const&>
+  ::type;
+using compatibility_callback_info_pointer
+ = std::conditional<v8_uses_callback_info, v8::FunctionCallbackInfo<v8::Value> const*, v8::Arguments const*>
   ::type;
 
 typedef compatibility_return_type(*compatibility_function_callback)(compatibility_callback_info_type);
@@ -122,8 +129,8 @@ using compatibility_accessor_callback_info_type
                     , v8::PropertyCallbackInfo<v8::Value> const&, v8::AccessorInfo const&>
   ::type;
       
-static_assert(!v8_uses_callback_info, "");
-static_assert(!v8_uses_isolate, "");
+static_assert(v8_uses_callback_info, "");
+static_assert(v8_uses_isolate, "");
 
 template <typename T>
 struct compatibility_type_tag {};
@@ -137,22 +144,23 @@ struct compatibility_string<std::true_type> : v8::String {};
 template <>
 struct compatibility_string<std::false_type> : v8::String
 {
-  static v8::Local<v8::String> NewFromUtf8(v8::Isolate*, const char* data)
+  template <typename... Args>
+  static v8::Local<v8::String> NewFromUtf8(v8::Isolate*, const char* data, Args...args)
   {
-    return v8::String::New(data);
+    return New(data, args...);
   }
 };
       
-template <typename...Args>
-auto compatibility_new_impl(v8::Isolate* isolate, std::true_type, compatibility_type_tag<v8::String>
+template <typename T, typename...Args>
+auto compatibility_new_impl(v8::Isolate* isolate, T, compatibility_type_tag<v8::String>
                             , Args...args) ->
   decltype(compatibility_string<>::NewFromUtf8(isolate, args...)) 
 {
   return compatibility_string<>::NewFromUtf8(isolate, args...);
 }
 
-template <typename...Args>
-auto compatibility_new_impl(nullptr_t, std::true_type, compatibility_type_tag<v8::String>
+template <typename T, typename...Args>
+auto compatibility_new_impl(nullptr_t, T, compatibility_type_tag<v8::String>
                             , Args...args) ->
   decltype(compatibility_string<>::NewFromUtf8(v8::Isolate::GetCurrent(), args...)) 
 {
@@ -193,7 +201,7 @@ auto compatibility_new_impl(std::nullptr_t, std::false_type, compatibility_type_
 
 template <typename T, typename...Args>
 auto compatibility_new(v8::Isolate* isolate, Args...args) ->
-  decltype(js::compatibility_new_impl<T>
+  decltype(js::compatibility_new_impl<>
            (isolate, std::integral_constant<bool, v8_uses_isolate>()
             , compatibility_type_tag<T>()
             , args...))
@@ -205,19 +213,19 @@ auto compatibility_new(v8::Isolate* isolate, Args...args) ->
 
 template <typename T, typename...Args>
 auto compatibility_new(nullptr_t, Args...args) ->
-  decltype(js::compatibility_new_impl<T>(nullptr, std::integral_constant<bool, v8_uses_isolate>()
-                                         , compatibility_type_tag<T>()
-                                         , args...))
+  decltype(js::compatibility_new_impl<>(nullptr, std::integral_constant<bool, v8_uses_isolate>()
+                                        , compatibility_type_tag<T>()
+                                        , args...))
 {
-  return js::compatibility_new_impl<T>(nullptr, std::integral_constant<bool, v8_uses_isolate>()
-                                       , compatibility_type_tag<T>()
-                                       , args...);
+  return js::compatibility_new_impl<>(nullptr, std::integral_constant<bool, v8_uses_isolate>()
+                                      , compatibility_type_tag<T>()
+                                      , args...);
 }
 
 template <typename T, typename U>
 inline void compatibility_return_impl(T object, U const& info, std::true_type)
 {
-  info.ReturnValue().Set(object);
+  info.GetReturnValue().Set(object);
 }
 
 template <typename T>
@@ -274,9 +282,10 @@ struct _v8_isolate_throw_exception<std::true_type> : v8::Isolate
 template <>
 struct _v8_isolate_throw_exception<std::false_type> : v8::Isolate
 {
-  static v8::Handle<v8::Value> ThrowException(v8::Handle<v8::Value> v)
+  template <typename...Args>
+  static v8::Handle<v8::Value> ThrowException(v8::Handle<v8::Value> v, Args...args)
   {
-    return v8::ThrowException(v);
+    return ThrowException(v);
   }
 };
 
@@ -287,11 +296,11 @@ compatibility_throw_impl(v8::Isolate* isolate, v8::Local<v8::Value> exception, s
 }
 
 inline v8::Handle<v8::Value>
-compatibility_throw_impl(v8::Isolate*, v8::Local<v8::Value> exception, std::false_type)
+compatibility_throw_impl(v8::Isolate* isolate, v8::Local<v8::Value> exception, std::false_type)
 {
-  return v8::ThrowException(exception);
+  return static_cast<_v8_isolate_throw_exception<>*>(isolate)->ThrowException(exception);
 }
-      
+
 inline std::conditional<v8_uses_isolate, void, v8::Handle<v8::Value> >::type
 compatibility_throw(v8::Isolate* isolate, v8::Local<v8::Value> exception)
 {
@@ -307,7 +316,7 @@ compatibility_throw_impl(v8::Local<v8::Value> exception, std::true_type)
 inline v8::Handle<v8::Value>
 compatibility_throw_impl(v8::Local<v8::Value> exception, std::false_type)
 {
-  return v8::ThrowException(exception);
+  return static_cast<_v8_isolate_throw_exception<>*>(v8::Isolate::GetCurrent())->ThrowException(exception);
 }
       
 inline std::conditional<v8_uses_isolate, void, v8::Handle<v8::Value> >::type
@@ -323,18 +332,48 @@ template <typename T>
 struct compatibility_persistent<T, true> : v8::UniquePersistent<T>
 {
   typedef v8::UniquePersistent<T> _base;
-  using _base::_base;
+
+  compatibility_persistent(compatibility_persistent&& other)
+    : _base(other.Pass()), handle_(other.handle())
+  {
+  }
+  compatibility_persistent<T>& operator=(compatibility_persistent<T>&&) = default;
+  
+  compatibility_persistent() {}
+  compatibility_persistent(v8::Isolate* isolate, v8::Handle<T> v)
+    : _base(isolate, v), handle_(v)
+  {
+  }
+  
+  T* operator->() const
+  {
+    return *handle_;
+  }
+
+  v8::Handle<T>& handle() { return handle_; }
+  v8::Handle<T> const& handle() const { return handle_; }
+
+  v8::Handle<T> handle_;
 };
 
 template <typename T>
 struct compatibility_persistent<T, false> : v8::Persistent<T>
 {
   typedef v8::Persistent<T> _base;
+
+  compatibility_persistent(compatibility_persistent const&);
+  compatibility_persistent(compatibility_persistent&&);
+  compatibility_persistent& operator=(compatibility_persistent const&);
+  compatibility_persistent& operator=(compatibility_persistent&&);
+
   compatibility_persistent() {}
   compatibility_persistent(v8::Isolate*, v8::Handle<T> v)
     : _base(v)
   {
   }
+
+  v8::Handle<T>& handle() { return *this; }
+  v8::Handle<T> const& handle() const { return *this; }
 };
       
 template <typename T = std::integral_constant<bool, v8_uses_isolate> >
@@ -345,6 +384,9 @@ struct _v8_object_internal_field<std::true_type> : v8::Object
 {
 };
 
+inline void* GetPointerFromInternalField(int) { return nullptr; }
+inline void SetPointerInInternalField(int, void*) {}
+      
 template <>
 struct _v8_object_internal_field<std::false_type> : v8::Object
 {
@@ -369,7 +411,7 @@ template <typename T>
 inline void compatibility_set_pointer_internal_field(v8::Handle<v8::Object> object, std::size_t index
                                                      , T* pointer)
 {
-  static_cast<_v8_object_internal_field<>*>(*object)->SetAlignedPointerFromInternalField(index, pointer);
+  static_cast<_v8_object_internal_field<>*>(*object)->SetAlignedPointerInInternalField(index, pointer);
 }
       
 template <typename T = void, bool = v8_uses_isolate>
@@ -415,7 +457,17 @@ inline void compatibility_initialize()
   static_cast<_v8_initialize_icu<>*>(nullptr)->InitializeICU();
 }
 
+template <typename T, typename U>
+v8::Local<T> compatibility_cast(v8::Local<U> v)
+{
+  return *static_cast<v8::Local<T>*>(static_cast<void*>(&v));
+}
 
+template <typename T, typename U>
+v8::Local<T> compatibility_cast(U* v)
+{
+  return *static_cast<v8::Local<T>*>(static_cast<void*>(v));
+}
       
 } } }
 

@@ -1003,8 +1003,14 @@ AC_ARG_WITH([js],
    [AS_HELP_STRING([--with-js=@<:@nodejs/libv8/libuv/none@:>@],[enable JavaScript bindings using nodejs or libv8/libuv as build dependencies. The libuv option implies libv8. @<:@default=none@:>@])],
    [want_js="${withval}"], [want_js="none"])
 
+AM_CONDITIONAL([HAVE_NODEJS], [test "x${want_js}" = "xnodejs"])
 AC_DEFINE_IF([HAVE_NODEJS], [test "x${want_js}" = "xnodejs"],
   [1], [Using NodeJS])
+AC_SUBST([want_js])
+AC_SUBST([HAVE_NODEJS])
+
+#### Eina JS
+EFL_LIB_START([Eina_Js])
 
 AC_LANG_PUSH([C++])
 case "$want_js" in
@@ -1020,15 +1026,15 @@ case "$want_js" in
      libv8)
         AM_CONDITIONAL([HAVE_JS], [1])
         EFL_DEPEND_PKG([EINA_JS], [V8], [v8 >= 3.25.28])
-        EFL_DEPEND_PKG([EO_JS], [V8], [v8 >= 3.25.28])
+#        EFL_DEPEND_PKG([EO_JS], [V8], [v8 >= 3.25.28])
         AC_DEFINE_UNQUOTED([V8_INCLUDE_HEADER], ["v8.h"], [Include header for libv8])
         ;;
      libuv)
         AM_CONDITIONAL([HAVE_JS], [1])
         EFL_DEPEND_PKG([EINA_JS], [V8], [v8 >= 3.25.28])
         EFL_DEPEND_PKG([EINA_JS], [UV], [v8 >= 1.1.0])
-        EFL_DEPEND_PKG([EO_JS], [V8], [v8 >= 3.25.28])
-        EFL_DEPEND_PKG([EO_JS], [UV], [v8 >= 1.1.0])
+#        EFL_DEPEND_PKG([EO_JS], [V8], [v8 >= 3.25.28])
+#        EFL_DEPEND_PKG([EO_JS], [UV], [v8 >= 1.1.0])
         AC_DEFINE_UNQUOTED([V8_INCLUDE_HEADER], ["v8.h"], [Include header for libv8])
         AC_DEFINE_UNQUOTED([UV_INCLUDE_HEADER], ["uv.h"], [Include header for libuv])
         ;;
@@ -1038,9 +1044,6 @@ case "$want_js" in
      *) AC_MSG_ERROR([Invalid javascript dependency (${want_js}): must be none, nodejs, libv8 or libuv]) ;;
 esac
 AC_LANG_POP([C++])
-
-#### Eina JS
-EFL_LIB_START([Eina_Js])
 
 EFL_INTERNAL_DEPEND_PKG([EINA_JS], [eina])
 EFL_ADD_CFLAGS([EINA_JS], [${EFL_PTHREAD_CFLAGS}])
@@ -4782,6 +4785,7 @@ echo "  X11...........: ${with_x11}"
 echo "  OpenGL........: ${with_opengl}"
 echo "  C++11.........: ${have_cxx11}"
 echo "  JavaScript....: ${want_js}"
+echo "  JavaScript flg: $EINA_JS_LIBS"
 echo "  GUI libs......: ${build_gui}"
 echo "Evas............: ${efl_lib_optional_evas} (${features_evas})"
 echo "  Engines.......: ${features_evas_engine}"

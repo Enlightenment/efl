@@ -37,13 +37,14 @@ inline void constructor(v8::FunctionCallbackInfo<v8::Value> const& args)
     }
 }
 #else
-inline v8::Handle<v8::Value> constructor(v8::Arguments const& args)
+inline eina::js::compatibility_return_type constructor(eina::js::compatibility_callback_info_type args)
 {
   if(args.IsConstructCall())
     {
       void* data = v8::External::Cast(*args.Data())->Value();
-      std::function<v8::Handle<v8::Value>(v8::Arguments const&)>*
-        f = static_cast<std::function<v8::Handle<v8::Value>(v8::Arguments const&)>*>(data);
+      std::function<eina::js::compatibility_return_type(eina::js::compatibility_callback_info_type)>*
+        f = static_cast<std::function<eina::js::compatibility_return_type(eina::js::compatibility_callback_info_type)>*>
+        (data);
       return (*f)(args);
     }
   else
@@ -53,7 +54,7 @@ inline v8::Handle<v8::Value> constructor(v8::Arguments const& args)
       for(int i = 0; i != args.Length(); ++i)
         argv[i] = args[i];
       args.Callee()->NewInstance(argc, &argv[0]);
-      return v8::Handle<v8::Value>();
+      return eina::js::compatibility_return();
     }
 }
 #endif
@@ -75,14 +76,9 @@ struct constructor_caller
         }
       else
         {
-#if 0
-          args->GetIsolate()->
-#else
-            v8::
-#endif
-            ThrowException
+          eina::js::compatibility_throw
             (v8::Exception::TypeError
-             (v8::String::New/*FromUtf8*/(/*args->GetIsolate(), */"Expected more arguments for this call")));
+             (eina::js::compatibility_new<v8::String>(args->GetIsolate(), "Expected more arguments for this call")));
           throw std::logic_error("");
         }
     }
@@ -108,32 +104,10 @@ struct constructor_caller
     }
 
     int* current;
-#if 0
-    v8::FunctionCallbackInfo<v8::Value> const* args;
-#else
-    v8::Arguments const* args;
-#endif
+    eina::js::compatibility_callback_info_pointer args;
   };
 
-#if 0
-  void operator()(v8::FunctionCallbackInfo<v8::Value> const& args) const
-  {
-    int current_index = 0;
-    try
-      {
-        Eo* eo = eo_add
-          (klass
-           , NULL
-           // , eina::_mpl::for_each(constructors, call{&current_index, &args})
-           );
-        assert(eo != 0);
-        v8::Local<v8::Object> self = args.This();
-        self->SetInternalField(0, v8::External::New(args.GetIsolate(), eo));
-      }
-    catch(std::logic_error const&) {}
-  }
-#else
-  v8::Handle<v8::Value> operator()(v8::Arguments const& args) const
+  eina::js::compatibility_return_type operator()(eina::js::compatibility_callback_info_type args) const
   {
     int current_index = 1;
     if(args.Length() != 0)
@@ -149,60 +123,32 @@ struct constructor_caller
                );
             assert(eo != 0);
             v8::Local<v8::Object> self = args.This();
-            self->SetInternalField(0, v8::External::New(/*args.GetIsolate(),*/ eo));
+            self->SetInternalField(0, eina::js::compatibility_new<v8::External>(args.GetIsolate(), eo));
           }
         catch(std::logic_error const&) {}
       }
     else
       {
-#if 0
-        args->GetIsolate()->
-#else
-          v8::
-#endif
-          ThrowException
+        eina::js::compatibility_throw
           (v8::Exception::TypeError
-           (v8::String::New/*FromUtf8*/(/*args->GetIsolate(), */"Expected at least one argument for this call")));
+           (eina::js::compatibility_new<v8::String>(args.GetIsolate(), "Expected at least one argument for this call")));
       }
-    return v8::Handle<v8::Value>();
+    return eina::js::compatibility_return();
   }
-#endif
   
   Eo_Class const* klass;
   std::tuple<F...> constructors;
 };
 
-#if 0
 template <typename... F>
 v8::Handle<v8::Value> constructor_data(v8::Isolate* isolate, Eo_Class const* klass, F... f)
 {
-  return v8::External::New
-    (isolate
-     , new std::function<void(v8::FunctionCallbackInfo<v8::Value> const&)>
-     (constructor_caller<F...>{klass, std::tuple<F...>{f...}})
-     );
-}
-#else
-template <typename... F>
-v8::Handle<v8::Value> constructor_data(v8::Isolate* /*isolate*/, Eo_Class const* klass, F... f)
-{
   fprintf(stderr, "function called %s\n", __func__); fflush(stderr);
-  return v8::External::New
-    (new std::function<v8::Handle<v8::Value>(v8::Arguments const&)>
+  return eina::js::compatibility_new<v8::External>
+    (isolate
+     , new std::function<eina::js::compatibility_return_type(eina::js::compatibility_callback_info_type)>
      (constructor_caller<F...>{klass, std::tuple<F...>{f...}}));
 }
-// inline
-// /*v8::Handle<v8::Value>*/void constructor_data1(v8::Isolate* isolate, Eo_Class const* klass/*, F... f*/)
-// {
-//   fprintf(stderr, "function called %s\n", __func__); fflush(stderr);
-//   std::cerr << "function called " << __func__ << std::endl;
-//   return v8::External::New
-//    new std::function<v8::Handle<v8::Value>(v8::Arguments const&)>(
-//   std::function<v8::Handle<v8::Value>(v8::Arguments const&)>
-//     ((constructor_caller/*<F...>*/{klass, std::tuple<F...>{f...}}));
-//   return v8::Handle<v8::Value>();
-// }
-#endif
 
 } } }
 

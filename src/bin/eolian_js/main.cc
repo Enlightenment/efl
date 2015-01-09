@@ -270,8 +270,8 @@ int main(int argc, char** argv)
 
    EINA_CXX_DOM_LOG_WARN(eolian::js::domain) << "namespace";
 
-   os << "static v8::Persistent<v8::ObjectTemplate> persistent_instance;\n";
-   os << "static v8::Persistent<v8::Function> constructor_from_eo;\n";
+   os << "static ::efl::eina::js::compatibility_persistent<v8::ObjectTemplate> persistent_instance;\n";
+   os << "static ::efl::eina::js::compatibility_persistent<v8::Function> constructor_from_eo;\n";
    
    os << "EAPI v8::Local<v8::ObjectTemplate>\nregister_" << lower_case_class_name << "_from_constructor\n"
       << "(v8::Isolate* isolate, v8::Handle<v8::FunctionTemplate> constructor)\n";
@@ -287,9 +287,9 @@ int main(int argc, char** argv)
        auto output_begin = [&] (std::string name)
          {
            if(! ::eolian_function_is_constructor(function, klass))
-             os << "  prototype->Set( ::v8::String::New/*FromUtf8(isolate,*/( \""
+             os << "  prototype->Set( ::efl::eina::js::compatibility_new<v8::String>(isolate, \""
                 << name << "\")\n"
-                << "    , v8::FunctionTemplate::New(/*isolate,*/ &efl::eo::js::call_function\n"
+                << "    , ::efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, &efl::eo::js::call_function\n"
                 << "    , efl::eo::js::call_function_data<\n"
                 << "      ::efl::eina::_mpl::tuple_c<std::size_t";
          };
@@ -387,15 +387,15 @@ int main(int argc, char** argv)
 
            os << "  {\n";
            os << "    static efl::eo::js::event_information const event_information\n";
-           os << "     = {&constructor_from_eo, ";
+           os << "     = {&constructor_from_eo.handle(), ";
            os << eolian_event_c_name_get(&*first);
            os << "};\n\n";
            os << "    /* should include event " << ::eolian_event_name_get(&*first) << "*/" << std::endl;
-           os << "    prototype->Set(v8::String::New(/*FromUtf8(isolate,*/ \"event_";
+           os << "    prototype->Set( ::efl::eina::js::compatibility_new<v8::String>(isolate, \"event_";
            std::string event_name (::eolian_event_name_get(&*first));
            std::replace(event_name.begin(), event_name.end(), ',', '_');
-           os << event_name << "\")\n      , v8::FunctionTemplate::New(/*isolate,*/ &efl::eo::js::event_call\n"
-              << "        , v8::External::New(const_cast<efl::eo::js::event_information*>"
+           os << event_name << "\")\n      , ::efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, &efl::eo::js::event_call\n"
+              << "        , ::efl::eina::js::compatibility_new<v8::External>(isolate, const_cast<efl::eo::js::event_information*>"
               << "(&event_information)) ));\n";
            os << "  }\n\n";
            
@@ -412,8 +412,8 @@ int main(int argc, char** argv)
    os << "EAPI void register_" << lower_case_class_name
       << "(v8::Handle<v8::Object> global, v8::Isolate* isolate)\n";
    os << "{\n";
-   os << "  v8::Handle<v8::FunctionTemplate> constructor = v8::FunctionTemplate::New\n";
-   os << "    (/*isolate,*/ efl::eo::js::constructor\n"
+   os << "  v8::Handle<v8::FunctionTemplate> constructor = ::efl::eina::js::compatibility_new<v8::FunctionTemplate>\n";
+   os << "    (isolate, efl::eo::js::constructor\n"
       << "     , efl::eo::js::constructor_data(isolate\n"
          "         , ";
 
@@ -435,25 +435,25 @@ int main(int argc, char** argv)
 
    os << "  register_" << lower_case_class_name << "_from_constructor(isolate, constructor);\n";
 
-   os << "  constructor->SetClassName(v8::String::New/*FromUtf8(isolate,*/( \""
+   os << "  constructor->SetClassName( ::efl::eina::js::compatibility_new<v8::String>(isolate, \""
       << class_name
       << "\"));\n";
 
-   os << "  global->Set(v8::String::New/*FromUtf8(isolate,*/( \""
+   os << "  global->Set( ::efl::eina::js::compatibility_new<v8::String>(isolate, \""
       << class_name << "\")"
       << ", constructor->GetFunction());\n";
 
 
    os << "  {\n";
-   os << "    v8::Handle<v8::FunctionTemplate> constructor = v8::FunctionTemplate::New\n";
-   os << "      (/*isolate,*/ &efl::eo::js::construct_from_eo);\n";
-   os << "    constructor->SetClassName(v8::String::New/*FromUtf8(isolate,*/( \""
+   os << "    v8::Handle<v8::FunctionTemplate> constructor = ::efl::eina::js::compatibility_new<v8::FunctionTemplate>\n";
+   os << "      (isolate, &efl::eo::js::construct_from_eo);\n";
+   os << "    constructor->SetClassName( ::efl::eina::js::compatibility_new<v8::String>(isolate, \""
       << class_name
       << "\"));\n";
    os << "    v8::Local<v8::ObjectTemplate> instance = "
       << "register_" << lower_case_class_name << "_from_constructor(isolate, constructor);\n";
-   os << "    persistent_instance = v8::Persistent<v8::ObjectTemplate>::New(instance);\n";
-   os << "    constructor_from_eo = v8::Persistent<v8::Function>::New(constructor->GetFunction());\n";
+   os << "    persistent_instance = ::efl::eina::js::compatibility_persistent<v8::ObjectTemplate>(isolate, instance);\n";
+   os << "    constructor_from_eo = ::efl::eina::js::compatibility_persistent<v8::Function>(isolate, constructor->GetFunction());\n";
    os << "  }\n";
    
    os << "}\n\n";
