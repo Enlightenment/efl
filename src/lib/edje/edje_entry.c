@@ -3626,9 +3626,9 @@ _edje_entry_cursor_down(Edje_Real_Part *rp, Edje_Cursor cur)
    evas_textblock_cursor_char_geometry_get(c, &cx, &cy, &cw, &ch);
    if (!evas_textblock_cursor_char_coord_set(c, cx, ly + (lh / 2)))
      {
-        if (cx < (lx + (lw / 2)))
-          evas_textblock_cursor_line_char_last(c);
-        else
+        /* if (cx < (lx + (lw / 2))) */
+        /*   evas_textblock_cursor_line_char_last(c); */
+        /* else */
           evas_textblock_cursor_line_char_last(c);
      }
    _sel_update(en->ed, c, rp->object, rp->typedata.text->entry_data);
