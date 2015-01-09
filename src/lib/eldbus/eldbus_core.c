@@ -73,6 +73,7 @@ EAPI const Eldbus_Version * eldbus_version = &_version;
 
 static int _eldbus_init_count = 0;
 int _eldbus_log_dom = -1;
+int eldbus_model_log_dom = -1;
 
 /* We don't save ELDBUS_CONNECTION_TYPE_UNKNOWN in here so we need room for 
  * last - 1 elements */
@@ -100,6 +101,16 @@ eldbus_init(void)
    if (_eldbus_log_dom < 0)
      {
         EINA_LOG_ERR("Unable to create an 'eldbus' log domain");
+        eina_shutdown();
+        return 0;
+     }
+
+   eldbus_model_log_dom = eina_log_domain_register("eldbus_model", EINA_COLOR_CYAN);
+   if (eldbus_model_log_dom < 0)
+     {
+        EINA_LOG_ERR("Unable to create an 'eldbus_model' log domain");
+        eina_log_domain_unregister(_eldbus_log_dom);
+        _eldbus_log_dom = -1;
         eina_shutdown();
         return 0;
      }
@@ -144,6 +155,8 @@ signal_handler_failed:
    eldbus_message_shutdown();
 message_failed:
    ecore_shutdown();
+   eina_log_domain_unregister(eldbus_model_log_dom);
+   eldbus_model_log_dom = -1;
    eina_log_domain_unregister(_eldbus_log_dom);
    _eldbus_log_dom = -1;
    eina_shutdown();
@@ -245,6 +258,8 @@ eldbus_shutdown(void)
    eldbus_message_shutdown();
 
    ecore_shutdown();
+   eina_log_domain_unregister(eldbus_model_log_dom);
+   eldbus_model_log_dom = -1;
    eina_log_domain_unregister(_eldbus_log_dom);
    _eldbus_log_dom = -1;
    eina_shutdown();

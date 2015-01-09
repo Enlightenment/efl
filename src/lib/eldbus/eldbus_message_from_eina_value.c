@@ -1,6 +1,8 @@
 #include "eldbus_private.h"
 #include "eldbus_private_types.h"
 
+#include <dbus/dbus-protocol.h>
+
 static Eina_Bool
 _compatible_type(int dbus_type, const Eina_Value_Type *value_type)
 {
@@ -205,7 +207,7 @@ _array_append(const char *type, const Eina_Value *value_array, Eldbus_Message_It
 }
 
 static Eina_Bool
-_basic_append(char type, const Eina_Value *value, const Eina_Value_Struct_Desc *desc, unsigned idx, Eldbus_Message_Iter *iter)
+_basic_append_value_struct(char type, const Eina_Value *value, const Eina_Value_Struct_Desc *desc, unsigned idx, Eldbus_Message_Iter *iter)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(
             _compatible_type(type, desc->members[idx].type), EINA_FALSE);
@@ -305,7 +307,7 @@ _message_iter_from_eina_value_struct(const char *signature, Eldbus_Message_Iter 
      {
         DBG("type: %s", type);
         if (type[0] != 'v' && !type[1])
-          r = _basic_append(type[0], value, st.desc, i, iter);
+          r = _basic_append_value_struct(type[0], value, st.desc, i, iter);
         else if (type[0] == 'a')
           {
              Eina_Value value_array;
@@ -366,4 +368,122 @@ eldbus_message_from_eina_value(const char *signature, Eldbus_Message *msg, const
    EINA_SAFETY_ON_FALSE_RETURN_VAL(iter->writable, EINA_FALSE);
 
    return _message_iter_from_eina_value_struct(signature, iter, value);
+}
+
+static Eina_Bool
+_basic_append_value(char type, const Eina_Value *value, Eldbus_Message_Iter *iter)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(value, EINA_FALSE);
+   const Eina_Value_Type *value_type = eina_value_type_get(value);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(_compatible_type(type, value_type), EINA_FALSE);
+   switch (type)
+     {
+      case 'i'://int
+      case 'h'://fd
+        {
+           int32_t i;
+           eina_value_get(value, &i);
+           eldbus_message_iter_basic_append(iter, type, i);
+           break;
+        }
+      case 's':
+      case 'o'://object path
+      case 'g'://signature
+        {
+           const char *txt;
+           eina_value_get(value, &txt);
+           eldbus_message_iter_basic_append(iter, type, txt);
+           break;
+        }
+      case 'b'://boolean
+      case 'y'://byte
+        {
+           unsigned char byte;
+           eina_value_get(value, &byte);
+           eldbus_message_iter_basic_append(iter, type, byte);
+           break;
+        }
+      case 'n'://int16
+        {
+           int16_t i;
+           eina_value_get(value, &i);
+           eldbus_message_iter_basic_append(iter, type, i);
+           break;
+        }
+      case 'q'://uint16
+        {
+           uint16_t i;
+           eina_value_get(value, &i);
+           eldbus_message_iter_basic_append(iter, type, i);
+           break;
+        }
+      case 'u'://uint32
+        {
+           uint32_t i;
+           eina_value_get(value, &i);
+           eldbus_message_iter_basic_append(iter, type, i);
+           break;
+        }
+      case 'x'://int64
+        {
+           int64_t i;
+           eina_value_get(value, &i);
+           eldbus_message_iter_basic_append(iter, type, i);
+           break;
+        }
+      case 't'://uint64
+        {
+           uint64_t i;
+           eina_value_get(value, &i);
+           eldbus_message_iter_basic_append(iter, type, i);
+           break;
+        }
+      case 'd'://double
+        {
+           double d;
+           eina_value_get(value, &d);
+           eldbus_message_iter_basic_append(iter, type, d);
+           break;
+        }
+      default:
+        ERR("Unexpected type %c", type);
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+Eina_Bool
+_message_iter_from_eina_value(const char *signature, Eldbus_Message_Iter *iter, const Eina_Value *value)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(value, EINA_FALSE);
+
+   const Eina_Value_Type *value_type = eina_value_type_get(value);
+   if (EINA_VALUE_TYPE_STRUCT == value_type || EINA_VALUE_TYPE_ARRAY == value_type)
+     return _message_iter_from_eina_value_struct(signature, iter, value);
+
+   Eina_Bool result = EINA_TRUE;
+   DBusSignatureIter signature_iter;
+   dbus_signature_iter_init(&signature_iter, signature);
+   char *type;
+   while ((type = dbus_signature_iter_get_signature(&signature_iter)))
+     {
+        DBG("type: %s", type);
+        if (DBUS_TYPE_VARIANT != type[0] && DBUS_TYPE_INVALID == type[1])
+          result = _basic_append_value(type[0], value, iter);
+        else if (DBUS_TYPE_ARRAY == type[0] ||
+                 DBUS_STRUCT_BEGIN_CHAR == type[0] ||
+                 DBUS_TYPE_VARIANT == type[0])
+          {
+             ERR("Not a basic type");
+             result = EINA_FALSE;
+          }
+        else
+          {
+             ERR("Unknown type %c", type[0]);
+             result = EINA_FALSE;
+          }
+        dbus_free(type);
+        if (!result || !dbus_signature_iter_next(&signature_iter)) break;
+     }
+   return result;
 }

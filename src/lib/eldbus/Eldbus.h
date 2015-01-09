@@ -79,6 +79,8 @@
 #include <Eina.h>
 #include <stdarg.h>
 #include <Efl_Config.h>
+#include <Eo.h>
+#include <Efl.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -236,6 +238,18 @@ typedef void (*Eldbus_Signal_Cb)(void *data, const Eldbus_Message *msg);
 #include "eldbus_proxy.h"
 #include "eldbus_freedesktop.h"
 #include "eldbus_service.h"
+#include "eldbus_introspection.h"
+
+#ifdef EFL_BETA_API_SUPPORT
+
+#include "eldbus_model_arguments.eo.h"
+#include "eldbus_model_connection.eo.h"
+#include "eldbus_model_method.eo.h"
+#include "eldbus_model_object.eo.h"
+#include "eldbus_model_proxy.eo.h"
+#include "eldbus_model_signal.eo.h"
+
+#endif
 
 #ifdef __cplusplus
 }

@@ -76,10 +76,15 @@ Eldbus_Pending         *_eldbus_connection_send(Eldbus_Connection *conn, Eldbus_
 Eldbus_Message         *_eldbus_connection_send_and_block(Eldbus_Connection *conn, Eldbus_Message *msg, double timeout);
 
 Eldbus_Message_Iter    *eldbus_message_iter_sub_iter_get(Eldbus_Message_Iter *iter);
-Eina_Value            *_message_iter_struct_to_eina_value(Eldbus_Message_Iter *iter);
-Eina_Bool             _message_iter_from_eina_value_struct(const char *signature, Eldbus_Message_Iter *iter, const Eina_Value *value);
+Eina_Value             *_message_iter_struct_to_eina_value(Eldbus_Message_Iter *iter);
+Eina_Bool              _message_iter_from_eina_value(const char *signature, Eldbus_Message_Iter *iter, const Eina_Value *value);
+Eina_Bool              _message_iter_from_eina_value_struct(const char *signature, Eldbus_Message_Iter *iter, const Eina_Value *value);
 
 void                   eldbus_connection_name_ref(Eldbus_Connection_Name *cn);
 void                   eldbus_connection_name_unref(Eldbus_Connection *conn, Eldbus_Connection_Name *cn);
 Eldbus_Signal_Handler  *_eldbus_signal_handler_add(Eldbus_Connection *conn, const char *sender, const char *path, const char *interface, const char *member, Eldbus_Signal_Cb cb, const void *cb_data);
+Eldbus_Message         *eldbus_message_signal_new(const char *path, const char *interface, const char *name) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
+
+const Eina_Value_Type  *_dbus_type_to_eina_value_type(char type);
+
 #endif
