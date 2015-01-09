@@ -86,7 +86,6 @@ typedef struct _vec4
     float   w;
 } vec4;
 
-Ecore_Evas       *ecore_evas  = NULL;
 Evas             *evas        = NULL;
 Eo               *background  = NULL;
 Eo               *image       = NULL;
