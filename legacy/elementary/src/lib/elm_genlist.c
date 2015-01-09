@@ -5489,9 +5489,6 @@ _elm_genlist_evas_object_smart_del(Eo *obj, Elm_Genlist_Data *sd)
 {
    int i;
 
-   if (sd->decorate_all_mode)
-     elm_genlist_decorate_mode_set(sd->obj, EINA_FALSE);
-   sd->queue = eina_list_free(sd->queue);
    elm_genlist_clear(obj);
    for (i = 0; i < 2; i++)
      ELM_SAFE_FREE(sd->stack[i], evas_object_del);
@@ -5503,7 +5500,6 @@ _elm_genlist_evas_object_smart_del(Eo *obj, Elm_Genlist_Data *sd)
    ecore_idle_enterer_del(sd->queue_idle_enterer);
    ecore_idler_del(sd->must_recalc_idler);
    ecore_timer_del(sd->multi_timer);
-   ecore_timer_del(sd->scr_hold_timer);
    eina_stringshare_del(sd->decorate_it_type);
    ecore_animator_del(sd->tree_effect_animator);
 
