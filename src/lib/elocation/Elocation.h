@@ -59,6 +59,8 @@
 # endif
 #endif /* ! _WIN32 */
 
+#ifdef EFL_BETA_API_SUPPORT
+
 #include <stdio.h>
 
 #include <Ecore.h>
@@ -413,4 +415,7 @@ EAPI Eina_Bool elocation_init(void);
  * @since 1.13
  */
 EAPI void elocation_shutdown(void);
+
+#endif /* BETA API */
+
 #endif

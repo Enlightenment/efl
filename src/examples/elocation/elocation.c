@@ -4,6 +4,8 @@
 
 #include <stdio.h>
 
+#define EFL_BETA_API_SUPPORT
+
 #include <Ecore.h>
 #include <Elocation.h>
 
