@@ -512,7 +512,7 @@ _evas_box_layout_set(Eo *o, Evas_Object_Box_Data *priv, Evas_Object_Box_Layout c
 static void
 _fixed_point_divide_and_decompose_integer(int dividend, int divisor, int *int_part, int *frac_part)
 {
-   int quotient = (long long)(dividend << 16) / divisor;
+   int quotient = ((long long)dividend << 16) / divisor;
    *frac_part = quotient & 0xffff;
    *int_part = quotient >> 16;
 }
