@@ -728,6 +728,42 @@ eldbus_proxy_property_set(Eldbus_Proxy *proxy, const char *name, const char *sig
 }
 
 EAPI Eldbus_Pending *
+eldbus_proxy_property_value_set(Eldbus_Proxy *proxy, const char *name, const char *sig, const Eina_Value *value, Eldbus_Message_Cb cb, const void *data)
+{
+   Eldbus_Message *msg;
+   Eldbus_Message_Iter *iter, *variant;
+
+   ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sig, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(dbus_signature_validate_single(sig, NULL), NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((_type_is_number(sig[0]) || value), NULL);
+
+   msg = eldbus_proxy_method_call_new(proxy->obj->properties, "Set");
+   iter = eldbus_message_iter_get(msg);
+   eldbus_message_iter_basic_append(iter, 's', proxy->interface);
+   eldbus_message_iter_basic_append(iter, 's', name);
+   variant = eldbus_message_iter_container_new(iter, 'v', sig);
+   if (dbus_type_is_basic(sig[0]))
+     {
+        if (!_message_iter_from_eina_value(sig, variant, value))
+          goto error;
+     }
+   else
+     {
+        if (!_message_iter_from_eina_value_struct(sig, variant, value))
+          goto error;
+     }
+   eldbus_message_iter_container_close(iter, variant);
+
+   return eldbus_proxy_send(proxy->obj->properties, msg, cb, data, -1);
+
+error:
+   eldbus_message_unref(msg);
+   return NULL;
+}
+
+EAPI Eldbus_Pending *
 eldbus_proxy_property_get_all(Eldbus_Proxy *proxy, Eldbus_Message_Cb cb, const void *data)
 {
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);

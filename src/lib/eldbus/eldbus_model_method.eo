@@ -1,0 +1,35 @@
+class Eldbus.Model_Method (Eldbus.Model_Arguments) {
+    legacy_prefix: null;
+    methods {
+        constructor {
+            [[Custom Eldbus_Model_Method constructor.
+
+              @since 1.16]]
+            params {
+                @in proxy: Eldbus_Proxy*; [[Eldbus proxy]]
+                @in method: const(Eldbus_Introspection_Method)*; [[The introspected method]]
+            }
+        }
+        call {
+            [[Calls the method. The properties must have been set.
+
+              The event EMODEL_EVENT_PROPERTIES_CHANGED is raised for output arguments (properties).
+
+              The event ELDBUS_MODEL_METHOD_EVENT_METHOD_CALLED is raised for a successful call. Otherwise
+              the event EMODEL_EVENT_LOAD_STATUS with the status set to EMODEL_LOAD_STATUS_ERROR is raised.
+
+              @since 1.16]]
+            return: Efl.Model.Load_Status; [[#Emodel_Load_Status on success, #EMODEL_LOAD_STATUS_ERROR otherwise.]]
+        }
+    }
+    implements {
+        Eo.Base.constructor;
+    }
+    constructors {
+        .constructor;
+    }
+    events {
+      successful,call; [[Event dispatched for a successful method call.]]
+   }
+
+}

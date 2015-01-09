@@ -240,6 +240,19 @@ EAPI Eldbus_Pending        *eldbus_proxy_property_get(Eldbus_Proxy *proxy, const
 EAPI Eldbus_Pending        *eldbus_proxy_property_set(Eldbus_Proxy *proxy, const char *name, const char *sig, const void *value, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 3, 4);
 
 /**
+ * Set a property with a Eina_Value.
+ *
+ * @param proxy The proxy object on which to do the query.
+ * @param name The property name to get.
+ * @param sig
+ * @param value The value to set.
+ * @param cb The callback to be called when receiving an answer.
+ * @param data Data to be passed to the callback.
+ * @return Eldbus_Pending object corresponding to the message sent.
+ */
+EAPI Eldbus_Pending        *eldbus_proxy_property_value_set(Eldbus_Proxy *proxy, const char *name, const char *sig, const Eina_Value *value, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 3, 4);
+
+/**
  * Get all properties.
  *
  * @param proxy The proxy object on which to do the query.

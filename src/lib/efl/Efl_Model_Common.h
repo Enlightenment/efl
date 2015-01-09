@@ -95,3 +95,8 @@ EAPI Eina_Value_Struct_Desc *efl_model_value_struct_desc_new(unsigned int member
  * @param desc The struct description. If @c NULL, the function returns immediately.
  */
 EAPI void efl_model_value_struct_desc_free(Eina_Value_Struct_Desc *desc);
+
+EAPI void efl_model_property_changed_notify(Efl_Model_Base *model, const char *property);
+
+EAPI void efl_model_property_invalidated_notify(Efl_Model_Base *model, const char *property);
+

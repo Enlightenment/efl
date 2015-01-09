@@ -1,6 +1,31 @@
 
 ### Library
 
+eldbus_eolian_files = \
+	lib/eldbus/eldbus_model_connection.eo \
+	lib/eldbus/eldbus_model_object.eo \
+	lib/eldbus/eldbus_model_proxy.eo \
+	lib/eldbus/eldbus_model_method.eo \
+	lib/eldbus/eldbus_model_arguments.eo \
+	lib/eldbus/eldbus_model_signal.eo
+
+eldbus_eolian_c = $(eldbus_eolian_files:%.eo=%.eo.c)
+eldbus_eolian_h = $(eldbus_eolian_files:%.eo=%.eo.h)
+
+BUILT_SOURCES += \
+	$(eldbus_eolian_c) \
+	$(eldbus_eolian_h)
+
+CLEANFILES += \
+	$(eldbus_eolian_c) \
+	$(eldbus_eolian_h)
+
+eldbuseolianfilesdir = $(datadir)/eolian/include/eldbus-@VMAJ@
+eldbuseolianfiles_DATA = $(eldbus_eolian_files)
+
+EXTRA_DIST += \
+	${eldbuseolianfiles_DATA}
+
 lib_LTLIBRARIES += lib/eldbus/libeldbus.la
 
 installed_eldbusmainheadersdir = $(includedir)/eldbus-@VMAJ@
@@ -17,6 +42,8 @@ lib/eldbus/eldbus_signal_handler.h \
 lib/eldbus/eldbus_message_helper.h \
 lib/eldbus/eldbus_message_eina_value.h
 
+nodist_installed_eldbusmainheaders_DATA = $(eldbus_eolian_h)
+
 lib_eldbus_libeldbus_la_SOURCES = \
 lib/eldbus/eldbus_private.h \
 lib/eldbus/eldbus_private_types.h \
@@ -30,13 +57,20 @@ lib/eldbus/eldbus_service.c \
 lib/eldbus/eldbus_signal_handler.c \
 lib/eldbus/eldbus_message_helper.c \
 lib/eldbus/eldbus_message_to_eina_value.c \
-lib/eldbus/eldbus_message_from_eina_value.c
+lib/eldbus/eldbus_message_from_eina_value.c \
+lib/eldbus/eldbus_model_connection.c \
+lib/eldbus/eldbus_model_object.c \
+lib/eldbus/eldbus_model_proxy.c \
+lib/eldbus/eldbus_model_method.c \
+lib/eldbus/eldbus_model_arguments.c \
+lib/eldbus/eldbus_model_signal.c \
+lib/eldbus/eldbus_introspection.c
 
 lib_eldbus_libeldbus_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -include $(top_builddir)/config.h \
-@ELDBUS_CFLAGS@
-lib_eldbus_libeldbus_la_LIBADD = @ELDBUS_LIBS@
-lib_eldbus_libeldbus_la_DEPENDENCIES = @ELDBUS_INTERNAL_LIBS@
+@ELDBUS_CFLAGS@ @EFL_CFLAGS@
+lib_eldbus_libeldbus_la_LIBADD = @ELDBUS_LIBS@ @EFL_LIBS@
+lib_eldbus_libeldbus_la_DEPENDENCIES = @ELDBUS_INTERNAL_LIBS@ @EFL_INTERNAL_LIBS@
 lib_eldbus_libeldbus_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### Binary
@@ -74,12 +108,20 @@ TESTS += tests/eldbus/eldbus_suite
 tests_eldbus_eldbus_suite_SOURCES = \
 tests/eldbus/eldbus_suite.c \
 tests/eldbus/eldbus_test_eldbus_init.c \
+tests/eldbus/eldbus_test_eldbus_model.c \
+tests/eldbus/eldbus_test_eldbus_model_connection.c \
+tests/eldbus/eldbus_test_eldbus_model_object.c \
+tests/eldbus/eldbus_test_eldbus_model_proxy.c \
+tests/eldbus/eldbus_test_eldbus_model_method.c \
+tests/eldbus/eldbus_test_eldbus_model_signal.c \
+tests/eldbus/eldbus_test_fake_server_eldbus_model_proxy.c \
+tests/eldbus/eldbus_fake_server.c \
 tests/eldbus/eldbus_suite.h
 
 tests_eldbus_eldbus_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl @CHECK_CFLAGS@ @ELDBUS_CFLAGS@ \
--DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eldbus\"
+@EFL_CFLAGS@ -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eldbus\"
 
-tests_eldbus_eldbus_suite_LDADD = @CHECK_LIBS@ @USE_ELDBUS_LIBS@
+tests_eldbus_eldbus_suite_LDADD = @CHECK_LIBS@ @USE_ELDBUS_LIBS@ @USE_EFL_LIBS@
 tests_eldbus_eldbus_suite_DEPENDENCIES = @USE_ELDBUS_INTERNAL_LIBS@
 
 endif

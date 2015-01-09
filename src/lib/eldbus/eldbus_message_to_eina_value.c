@@ -3,7 +3,7 @@
 
 static void _message_iter_basic_array_to_eina_value(char type, Eina_Value *value, Eldbus_Message_Iter *iter);
 
-static const Eina_Value_Type *
+const Eina_Value_Type *
 _dbus_type_to_eina_value_type(char type)
 {
    switch (type)
