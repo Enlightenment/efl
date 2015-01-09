@@ -10346,6 +10346,24 @@ st_collections_group_programs_program_name(void)
         Signals may be globbed, but only one signal keyword per program
         may be used. ex: signal: "mouse,clicked,*"; (clicking any mouse button
         that matches source starts program).
+        A list of global signal, that edje provide:
+          - hold,on;
+          - hold,off;
+          - mounse,in;
+          - mounse,out;
+          - mouse,down,N: where N - mouse button number;
+          - mouse,down,N,double: where N - mouse button number;
+          - mouse,down,N,triple: where N - mouse button number;
+          - mouse,up,N: where N - mouse button number;
+          - mouse,clicked,N: where N - mouse button number;
+          - mouse,move;
+          - mouse,wheel,N,M: where N - the direction (by default is 0),
+            M - 1 if wheel scrolled up and -1 if down;
+          - drag,start;
+          - drag;
+          - drag,stop;
+          - focus,part,in;
+          - focus,part,out.
     @endproperty
 */
 static void
@@ -10372,7 +10390,7 @@ st_collections_group_programs_program_signal(void)
         [source name]
     @effect
         Source of accepted signal. Sources may be globbed, but only one source
-        keyword per program may be used. ex:source: "button-*"; (Signals from
+        keyword per program may be used. ex: source: "button-*"; (Signals from
         any part or program named "button-*" are accepted).
     @endproperty
 */
