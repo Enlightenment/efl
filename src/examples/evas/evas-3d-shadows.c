@@ -86,7 +86,7 @@ typedef struct _vec4
 } vec4;
 
 static void
-_set_ball(Eo *mesh, double r, double x, double y, double z, int p, Evas_3D_Material *material)
+_set_ball(Eo *ball_mesh, double r, double x, double y, double z, int p, Evas_3D_Material *ball_material)
 {
    int vcount, icount, vccount, i, j;
    double dtheta, dfi, sinth, costh, fi, theta, sinfi, cosfi;
@@ -137,7 +137,7 @@ _set_ball(Eo *mesh, double r, double x, double y, double z, int p, Evas_3D_Mater
           *index++ =  i + vccount * (j + 1) + 1;
        }
 
-   eo_do(mesh, evas_3d_mesh_vertex_count_set(vcount),
+   eo_do(ball_mesh, evas_3d_mesh_vertex_count_set(vcount),
             evas_3d_mesh_frame_add(0);
             evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_POSITION,
                                        sizeof(vec3), &vertices[0]);
@@ -147,7 +147,7 @@ _set_ball(Eo *mesh, double r, double x, double y, double z, int p, Evas_3D_Mater
                                 icount , &indices[0]);
             evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES);
             evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG);
-            evas_3d_mesh_frame_material_set(0, material));
+            evas_3d_mesh_frame_material_set(0, ball_material));
 
    free(vertices);
    free(normals);
