@@ -364,8 +364,7 @@ void register_class(v8::Isolate* isolate, container_type type, const char* class
 
   v8::Local<v8::ObjectTemplate> instance_t = efl::eina::js::register_template(isolate, constructor);
   
-  efl::eina::js::instance_persistents[type]
-    = compatibility_persistent<v8::ObjectTemplate> {isolate, instance_t};
+  efl::eina::js::instance_persistents[type] = {isolate, instance_t};
   efl::eina::js::instance_templates[type] = constructor->GetFunction();
 }
   

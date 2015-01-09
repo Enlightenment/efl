@@ -39,7 +39,7 @@ inline Eina_Bool event_callback(void* data, Eo* obj, Eo_Event_Description const*
   v8::Local<v8::Object> self = (*event->event_info->constructor)->NewInstance(1, a);
 
   v8::Handle<v8::Value> call_args[] = {self};
-  event->function->Call(v8::Isolate::GetCurrent()->GetCurrentContext()->Global(), 1, call_args);
+  event->function->Call(eina::js::compatibility_global(), 1, call_args);
   
   return EO_CALLBACK_CONTINUE;
 }

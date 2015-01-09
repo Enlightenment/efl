@@ -452,8 +452,8 @@ int main(int argc, char** argv)
       << "\"));\n";
    os << "    v8::Local<v8::ObjectTemplate> instance = "
       << "register_" << lower_case_class_name << "_from_constructor(isolate, constructor);\n";
-   os << "    persistent_instance = ::efl::eina::js::compatibility_persistent<v8::ObjectTemplate>(isolate, instance);\n";
-   os << "    constructor_from_eo = ::efl::eina::js::compatibility_persistent<v8::Function>(isolate, constructor->GetFunction());\n";
+   os << "    persistent_instance = {isolate, instance};\n";
+   os << "    constructor_from_eo = {isolate, constructor->GetFunction()};\n";
    os << "  }\n";
    
    os << "}\n\n";

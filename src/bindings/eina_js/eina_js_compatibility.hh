@@ -68,8 +68,7 @@ struct _libv8_callback_info_test
 
 template <typename T = v8::ObjectTemplate, typename Enable = void>
 struct _libv8_property_callback_info_test
-  : std::true_type
-{};
+  : std::true_type {};
 
 typedef v8::Handle<v8::Value>(*_libv8_getter_callback)(v8::Local<v8::String>, v8::AccessorInfo const&);
 typedef void(*_libv8_setter_callback)(v8::Local<v8::String>, v8::Local<v8::Value>, v8::AccessorInfo const&);
@@ -77,7 +76,7 @@ typedef void(*_libv8_setter_callback)(v8::Local<v8::String>, v8::Local<v8::Value
 template <typename T>
 struct _libv8_property_callback_info_test
 <T, typename std::enable_if
- <!std::is_same<decltype( & T::SetAccessor)
+ <std::is_same<decltype( & T::SetAccessor)
    , void (T::*)
      (v8::Handle<v8::String>
       , _libv8_getter_callback
@@ -91,23 +90,6 @@ struct _libv8_property_callback_info_test
 {
 };
 
-// template <typename T>
-// struct _libv8_property_callback_info_test
-// <T, typename std::enable_if
-//  <std::is_same<decltype( & T::SetAccessor)
-//    , void (T::*)
-//      (v8::Handle<v8::String>
-//       , _libv8_getter_callback
-//       , _libv8_setter_callback
-//       , v8::Handle<v8::Value>
-//       , v8::AccessControl
-//       , v8::PropertyAttribute
-//       , v8::Handle<v8::AccessorSignature>
-//       )>::value>::type>
-//   : std::false_type
-// {
-// };
-      
 static constexpr bool const v8_uses_isolate = _libv8_isolate_test<>::value;
 static constexpr bool const v8_uses_callback_info = _libv8_callback_info_test<>::value;
 static constexpr bool const v8_uses_property_callback_info = _libv8_property_callback_info_test<>::value;
@@ -129,38 +111,56 @@ using compatibility_accessor_callback_info_type
                     , v8::PropertyCallbackInfo<v8::Value> const&, v8::AccessorInfo const&>
   ::type;
       
-static_assert(v8_uses_callback_info, "");
-static_assert(v8_uses_isolate, "");
+static_assert(v8_uses_property_callback_info == v8_uses_callback_info
+              && v8_uses_callback_info == v8_uses_isolate, "");
 
 template <typename T>
 struct compatibility_type_tag {};
 
-template <typename T = std::integral_constant<bool, v8_uses_isolate> >
+template <bool = v8_uses_isolate>
 struct compatibility_string;
 
 template <>
-struct compatibility_string<std::true_type> : v8::String {};
-
-template <>
-struct compatibility_string<std::false_type> : v8::String
+struct compatibility_string<true> : v8::String
 {
   template <typename... Args>
-  static v8::Local<v8::String> NewFromUtf8(v8::Isolate*, const char* data, Args...args)
+  static v8::Local<v8::String> New(Args...args)
   {
-    return New(data, args...);
+    return NewFromUtf8(v8::Isolate::GetCurrent(), args...);
   }
 };
+
+template <>
+struct compatibility_string<false> : v8::String
+{
+};
       
-template <typename T, typename...Args>
-auto compatibility_new_impl(v8::Isolate* isolate, T, compatibility_type_tag<v8::String>
+template <typename...Args>
+auto compatibility_new_impl(v8::Isolate* isolate, std::true_type, compatibility_type_tag<v8::String>
                             , Args...args) ->
   decltype(compatibility_string<>::NewFromUtf8(isolate, args...)) 
 {
   return compatibility_string<>::NewFromUtf8(isolate, args...);
 }
 
-template <typename T, typename...Args>
-auto compatibility_new_impl(nullptr_t, T, compatibility_type_tag<v8::String>
+template <typename...Args>
+auto compatibility_new_impl(v8::Isolate* isolate, std::false_type, compatibility_type_tag<v8::String>
+                            , Args...args) ->
+  decltype(compatibility_string<>::NewFromUtf8(isolate, args...)) 
+{
+  return compatibility_string<>::NewFromUtf8(isolate, args...);
+}
+      
+template <typename...Args>
+auto compatibility_new_impl(nullptr_t, std::true_type, compatibility_type_tag<v8::String>
+                            , Args...args) ->
+  decltype(compatibility_string<>::NewFromUtf8(v8::Isolate::GetCurrent(), args...)) 
+{
+  return compatibility_string<>::NewFromUtf8(v8::Isolate::GetCurrent(), args...);
+}
+
+template <typename...Args>
+auto compatibility_new_impl(nullptr_t, std::false_type, compatibility_type_tag<v8::String>
                             , Args...args) ->
   decltype(compatibility_string<>::NewFromUtf8(v8::Isolate::GetCurrent(), args...)) 
 {
@@ -337,7 +337,12 @@ struct compatibility_persistent<T, true> : v8::UniquePersistent<T>
     : _base(other.Pass()), handle_(other.handle())
   {
   }
-  compatibility_persistent<T>& operator=(compatibility_persistent<T>&&) = default;
+  compatibility_persistent& operator=(compatibility_persistent&& other)
+  {
+    this->_base::operator=(other.Pass());
+    handle_ = other.handle();
+    return *this;
+  }
   
   compatibility_persistent() {}
   compatibility_persistent(v8::Isolate* isolate, v8::Handle<T> v)
@@ -360,11 +365,6 @@ template <typename T>
 struct compatibility_persistent<T, false> : v8::Persistent<T>
 {
   typedef v8::Persistent<T> _base;
-
-  compatibility_persistent(compatibility_persistent const&);
-  compatibility_persistent(compatibility_persistent&&);
-  compatibility_persistent& operator=(compatibility_persistent const&);
-  compatibility_persistent& operator=(compatibility_persistent&&);
 
   compatibility_persistent() {}
   compatibility_persistent(v8::Isolate*, v8::Handle<T> v)
@@ -394,7 +394,7 @@ struct _v8_object_internal_field<std::false_type> : v8::Object
   {
     return GetPointerFromInternalField(index);
   }
-  void SetAlignedPointerFromInternalField(int index, void* p)
+  void SetAlignedPointerInInternalField(int index, void* p)
   {
     SetPointerInInternalField(index, p);
   }
@@ -467,6 +467,28 @@ template <typename T, typename U>
 v8::Local<T> compatibility_cast(U* v)
 {
   return *static_cast<v8::Local<T>*>(static_cast<void*>(v));
+}
+
+template <typename T = v8::Context, bool = v8_uses_isolate>
+struct _v8_get_current_context;
+
+template <typename T>
+struct _v8_get_current_context<T, false> : v8::Context
+{
+};
+
+template <typename T>
+struct _v8_get_current_context<T, true> : T
+{
+  static v8::Local<v8::Context> GetCurrent()
+  {
+    return T::GetCurrent()->GetCurrentContext();
+  }
+};
+      
+inline v8::Local<v8::Object> compatibility_global()
+{
+  return v8::Isolate::GetCurrent()->GetCurrentContext()->Global();
 }
       
 } } }
