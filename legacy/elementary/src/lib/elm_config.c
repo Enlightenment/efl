@@ -3226,9 +3226,34 @@ void
 _elm_config_sub_init(void)
 {
 #ifdef HAVE_ELEMENTARY_X
+   Eina_Bool init_x;
    const char *ev = getenv("ELM_DISPLAY");
-   if (((ev) && (!strcmp(ev, "x11")) && (getenv("DISPLAY"))) ||
-       (getenv("DISPLAY")))
+   Eina_Bool have_display = !!getenv("DISPLAY");
+
+   if (ev) /* If ELM_DISPLAY is specified */
+     {
+        if (!strcmp(ev, "x11")) /* and it is X11 */
+          {
+             if (!have_display) /* if there is no $DISPLAY */
+               {
+                  ERR("$ELM_DISPLAY is set to x11 but $DISPLAY is not set");
+                  init_x = EINA_FALSE;
+               }
+             else /* if there is */
+               init_x = EINA_TRUE;
+          }
+        else /* not X11 */
+          init_x = EINA_FALSE;
+     }
+   else /* ELM_DISPLAY not specified */
+     {
+        if (have_display) /* If there is a $DISPLAY */
+          init_x = EINA_TRUE;
+        else /* No $DISPLAY */
+          init_x = EINA_FALSE;
+     }
+
+   if (init_x)
      {
         if (ecore_x_init(NULL))
           {
