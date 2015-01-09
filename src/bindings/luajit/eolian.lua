@@ -488,7 +488,7 @@ ffi.metatype("Eolian_Enum_Type_Field", {
 M.Type = ffi.metatype("Eolian_Type", {
     __index = {
         type_get = function(self)
-            return eolian.eolian_type_type_get(self)
+            return tonumber(eolian.eolian_type_type_get(self))
         end,
 
         arguments_get = function(self)
@@ -619,11 +619,11 @@ M.function_type = {
 M.Function = ffi.metatype("Eolian_Function", {
     __index = {
         type_get = function(self)
-            return eolian.eolian_function_type_get(self)
+            return tonumber(eolian.eolian_function_type_get(self))
         end,
 
         scope_get = function(self)
-            return eolian.eolian_function_scope_get(self)
+            return tonumber(eolian.eolian_function_scope_get(self))
         end,
 
         name_get = function(self)
@@ -733,7 +733,7 @@ M.parameter_dir = {
 ffi.metatype("Eolian_Function_Parameter", {
     __index = {
         direction_get = function(self)
-            return eolian.eolian_parameter_direction_get(self)
+            return tonumber(eolian.eolian_parameter_direction_get(self))
         end,
 
         type_get = function(self)
@@ -860,7 +860,7 @@ ffi.metatype("Eolian_Event", {
         end,
 
         scope_get = function(self)
-            return eolian.eolian_event_scope_get(self)
+            return tonumber(eolian.eolian_event_scope_get(self))
         end,
 
         c_name_get = function(self)
@@ -922,7 +922,7 @@ M.Class = ffi.metatype("Eolian_Class", {
         end,
 
         type_get = function(self)
-            return eolian.eolian_class_type_get(self)
+            return tonumber(eolian.eolian_class_type_get(self))
         end,
 
         description_get = function(self)
@@ -1097,7 +1097,7 @@ local value_con = {
 M.Value = ffi.metatype("Eolian_Value", {
     __index = {
         get_type = function(self)
-            return ffi.cast("Eolian_Value_t*", self).type
+            return tonumber(ffi.cast("Eolian_Value_t*", self).type)
         end,
 
         get_value = function(self)
@@ -1235,7 +1235,7 @@ end
 M.Variable = ffi.metatype("Eolian_Variable", {
     __index = {
         type_get = function(self)
-            return eolian.eolian_variable_type_get(self)
+            return tonumber(eolian.eolian_variable_type_get(self))
         end,
 
         description_get = function(self)
