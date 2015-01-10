@@ -135,38 +135,6 @@ struct compatibility_string<false> : v8::String
 {
 };
       
-template <typename...Args>
-auto compatibility_new_impl(v8::Isolate* isolate, std::true_type, compatibility_type_tag<v8::String>
-                            , Args...args) ->
-  decltype(compatibility_string<>::NewFromUtf8(isolate, args...)) 
-{
-  return compatibility_string<>::NewFromUtf8(isolate, args...);
-}
-
-template <typename...Args>
-auto compatibility_new_impl(v8::Isolate* isolate, std::false_type, compatibility_type_tag<v8::String>
-                            , Args...args) ->
-  decltype(compatibility_string<>::NewFromUtf8(isolate, args...)) 
-{
-  return compatibility_string<>::NewFromUtf8(isolate, args...);
-}
-      
-template <typename...Args>
-auto compatibility_new_impl(nullptr_t, std::true_type, compatibility_type_tag<v8::String>
-                            , Args...args) ->
-  decltype(compatibility_string<>::NewFromUtf8(v8::Isolate::GetCurrent(), args...)) 
-{
-  return compatibility_string<>::NewFromUtf8(v8::Isolate::GetCurrent(), args...);
-}
-
-template <typename...Args>
-auto compatibility_new_impl(nullptr_t, std::false_type, compatibility_type_tag<v8::String>
-                            , Args...args) ->
-  decltype(compatibility_string<>::NewFromUtf8(v8::Isolate::GetCurrent(), args...)) 
-{
-  return compatibility_string<>::NewFromUtf8(v8::Isolate::GetCurrent(), args...);
-}
-      
 template <typename T, typename...Args>
 auto compatibility_new_impl(v8::Isolate* isolate, std::true_type, compatibility_type_tag<T>
                             , Args...args) ->
@@ -469,7 +437,7 @@ v8::Local<T> compatibility_cast(U* v)
   return *static_cast<v8::Local<T>*>(static_cast<void*>(v));
 }
 
-template <typename T = v8::Context, bool = v8_uses_isolate>
+template <typename T = v8::Isolate, bool = v8_uses_isolate>
 struct _v8_get_current_context;
 
 template <typename T>
@@ -488,7 +456,7 @@ struct _v8_get_current_context<T, true> : T
       
 inline v8::Local<v8::Object> compatibility_global()
 {
-  return v8::Isolate::GetCurrent()->GetCurrentContext()->Global();
+  return _v8_get_current_context<>::GetCurrent()->Global();
 }
       
 } } }
