@@ -504,12 +504,9 @@ _view_clear(Evas_Object *view, Eina_List **texts, Eina_List **contents)
    Evas_Object *c;
    const Eina_List *l;
 
-   if (texts)
-     {
-        EINA_LIST_FOREACH(*texts, l, part)
-           edje_object_part_text_set(view, part, NULL);
-        ELM_SAFE_FREE(*texts, elm_widget_stringlist_free);
-     }
+   EINA_LIST_FOREACH(*texts, l, part)
+     edje_object_part_text_set(view, part, NULL);
+   ELM_SAFE_FREE(*texts, elm_widget_stringlist_free);
 
    EINA_LIST_FREE(*contents, c)
      evas_object_del(c);
