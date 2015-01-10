@@ -1208,12 +1208,13 @@ EFL_LIB_START([Eolian_Js])
 
 ### Additional options to configure
 #EFL_ADD_FEATURE([EOLIAN_JS], [cxx], [${have_cxx11}])
-EFL_DEPEND_PKG([EOLIAN_JS], [V8], [v8 >= 3.25.28])
+#EFL_DEPEND_PKG([EOLIAN_JS], [V8], [v8 >= 3.25.28])
 
 ### Checks for programs
 
 ### Checks for libraries
 EFL_INTERNAL_DEPEND_PKG([EOLIAN_JS], [eina])
+EFL_INTERNAL_DEPEND_PKG([EOLIAN_JS], [EINA_JS])
 
 ### Checks for header files
 
