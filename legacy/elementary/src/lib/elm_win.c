@@ -21,10 +21,11 @@ static const Elm_Win_Trap *trap = NULL;
 #define TRAP(sd, name, ...)                                             \
   do                                                                    \
     {                                                                   \
-       if ((!trap) || (!trap->name) ||                                  \
-           ((trap->name) &&                                             \
-            (trap->name(sd->trap_data, sd->obj, ## __VA_ARGS__)))) \
-         ecore_evas_##name(sd->ee, ##__VA_ARGS__);                      \
+       if (sd->type != ELM_WIN_FAKE)                                    \
+         if ((!trap) || (!trap->name) ||                                \
+             ((trap->name) &&                                           \
+              (trap->name(sd->trap_data, sd->obj, ## __VA_ARGS__))))    \
+           ecore_evas_##name(sd->ee, ##__VA_ARGS__);                    \
     }                                                                   \
   while (0)
 
@@ -1946,6 +1947,7 @@ _elm_win_xwin_update(Elm_Win_Data *sd)
 {
    const char *s;
 
+   if (sd->type == ELM_WIN_FAKE) return;
    _internal_elm_win_xwindow_get(sd);
    if (sd->parent)
      {
@@ -2908,8 +2910,14 @@ elm_win_add(Evas_Object *parent,
             const char *name,
             Elm_Win_Type type)
 {
-   Evas_Object *obj = eo_add(MY_CLASS, parent, elm_obj_win_constructor(name, type));
+   Evas_Object *obj = eo_add(MY_CLASS, parent, elm_obj_win_constructor(name, type, NULL));
    return obj;
+}
+
+EAPI Evas_Object *
+elm_win_fake(Ecore_Evas *ee)
+{
+   return eo_add(MY_CLASS, NULL, elm_obj_win_constructor(NULL, ELM_WIN_FAKE, ee));
 }
 
 static void
@@ -3008,7 +3016,7 @@ _accel_is_gl(void)
 }
 
 EOLIAN static void
-_elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type type)
+_elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type type, Ecore_Evas *oee)
 {
    sd->obj = obj; // in ctor
 
@@ -3027,6 +3035,9 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
 
    switch (type)
      {
+      case ELM_WIN_FAKE:
+        tmp_sd.ee = oee;
+        break;
       case ELM_WIN_INLINED_IMAGE:
         if (!parent) break;
           {
@@ -3366,7 +3377,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
    SD_CPY(shot.info);
 #undef SD_CPY
 
-   if ((trap) && (trap->add))
+   if ((type != ELM_WIN_FAKE) && (trap) && (trap->add))
      sd->trap_data = trap->add(obj);
 
    /* complementary actions, which depend on final smart data
@@ -3438,31 +3449,35 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
    /* use own version of ecore_evas_object_associate() that does TRAP() */
    ecore_evas_data_set(sd->ee, "elm_win", obj);
 
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-      _elm_win_obj_callback_changed_size_hints, obj);
-
-   evas_object_intercept_raise_callback_add
-     (obj, _elm_win_obj_intercept_raise, obj);
-   evas_object_intercept_lower_callback_add
-     (obj, _elm_win_obj_intercept_lower, obj);
-   evas_object_intercept_stack_above_callback_add
-     (obj, _elm_win_obj_intercept_stack_above, obj);
-   evas_object_intercept_stack_below_callback_add
-     (obj, _elm_win_obj_intercept_stack_below, obj);
-   evas_object_intercept_layer_set_callback_add
-     (obj, _elm_win_obj_intercept_layer_set, obj);
-   evas_object_intercept_show_callback_add
-     (obj, _elm_win_obj_intercept_show, obj);
+   if (type != ELM_WIN_FAKE)
+     {
+        evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+           _elm_win_obj_callback_changed_size_hints, obj);
+        evas_object_intercept_raise_callback_add
+          (obj, _elm_win_obj_intercept_raise, obj);
+        evas_object_intercept_lower_callback_add
+          (obj, _elm_win_obj_intercept_lower, obj);
+        evas_object_intercept_stack_above_callback_add
+          (obj, _elm_win_obj_intercept_stack_above, obj);
+        evas_object_intercept_stack_below_callback_add
+          (obj, _elm_win_obj_intercept_stack_below, obj);
+        evas_object_intercept_layer_set_callback_add
+          (obj, _elm_win_obj_intercept_layer_set, obj);
+        evas_object_intercept_show_callback_add
+          (obj, _elm_win_obj_intercept_show, obj);
+     }
 
    TRAP(sd, name_class_set, name, _elm_appname);
    ecore_evas_callback_delete_request_set(sd->ee, _elm_win_delete_request);
-   ecore_evas_callback_resize_set(sd->ee, _elm_win_resize);
-   ecore_evas_callback_mouse_in_set(sd->ee, _elm_win_mouse_in);
-   ecore_evas_callback_focus_in_set(sd->ee, _elm_win_focus_in);
-   ecore_evas_callback_focus_out_set(sd->ee, _elm_win_focus_out);
-   ecore_evas_callback_move_set(sd->ee, _elm_win_move);
    ecore_evas_callback_state_change_set(sd->ee, _elm_win_state_change);
+   if (type != ELM_WIN_FAKE)
+     {
+        ecore_evas_callback_resize_set(sd->ee, _elm_win_resize);
+        ecore_evas_callback_mouse_in_set(sd->ee, _elm_win_mouse_in);
+        ecore_evas_callback_focus_in_set(sd->ee, _elm_win_focus_in);
+        ecore_evas_callback_focus_out_set(sd->ee, _elm_win_focus_out);
+        ecore_evas_callback_move_set(sd->ee, _elm_win_move);
+     }
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _elm_win_cb_hide, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _elm_win_cb_show, NULL);
 
@@ -3483,6 +3498,8 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
    _elm_win_xwin_update(sd);
 #endif
 
+   /* do not append to list; all windows render as black rects */
+   if (type == ELM_WIN_FAKE) return;
    _elm_win_list = eina_list_append(_elm_win_list, obj);
    _elm_win_count++;
 

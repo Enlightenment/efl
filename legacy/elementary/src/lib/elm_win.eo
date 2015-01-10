@@ -1193,6 +1193,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
          params {
             @in const(char)* name;
             @in Elm_Win_Type type;
+            @in Ecore_Evas *oee;
          }
       }
       wm_manual_rotation_done_manual {

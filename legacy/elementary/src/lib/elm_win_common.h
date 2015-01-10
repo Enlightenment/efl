@@ -69,6 +69,10 @@ typedef enum
 			     instead the window and all of its contents will be
 			     rendered to an image buffer and can be shown
 			     other process's plug image object*/
+   ELM_WIN_FAKE /**< This window was created using a pre-existing canvas.
+                     The window widget can be deleted, but the canvas
+                     must be managed externally.
+                     @since 1.13 */
 } Elm_Win_Type;
 
 /**

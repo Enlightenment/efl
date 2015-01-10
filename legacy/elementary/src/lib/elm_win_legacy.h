@@ -17,6 +17,25 @@
 EAPI Evas_Object          *elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
 
 /**
+ * Creates a fake window object using a pre-existing canvas.
+ *
+ * @param ee The Ecore_Evas to use
+ *
+ * The returned window widget will not manage or modify the canvas;
+ * this canvas must continue to be managed externally.
+ *
+ * Do not use this function if you are not writing a window manager.
+ * @warning Exact behaviors of this function are not guaranteed.
+ *
+ * @return The created object, or @c NULL on failure
+ *
+ * @ingroup Win
+ *
+ * @since 1.13
+ */
+EAPI Evas_Object          *elm_win_fake(Ecore_Evas *ee);
+
+/**
  * Adds a window object with standard setup
  *
  * @param name The name of the window
