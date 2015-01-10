@@ -3470,12 +3470,12 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
    TRAP(sd, name_class_set, name, _elm_appname);
    ecore_evas_callback_delete_request_set(sd->ee, _elm_win_delete_request);
    ecore_evas_callback_state_change_set(sd->ee, _elm_win_state_change);
+   ecore_evas_callback_focus_in_set(sd->ee, _elm_win_focus_in);
+   ecore_evas_callback_focus_out_set(sd->ee, _elm_win_focus_out);
    if (type != ELM_WIN_FAKE)
      {
         ecore_evas_callback_resize_set(sd->ee, _elm_win_resize);
         ecore_evas_callback_mouse_in_set(sd->ee, _elm_win_mouse_in);
-        ecore_evas_callback_focus_in_set(sd->ee, _elm_win_focus_in);
-        ecore_evas_callback_focus_out_set(sd->ee, _elm_win_focus_out);
         ecore_evas_callback_move_set(sd->ee, _elm_win_move);
      }
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _elm_win_cb_hide, NULL);
