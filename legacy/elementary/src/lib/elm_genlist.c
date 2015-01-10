@@ -619,7 +619,7 @@ _item_block_unrealize(Item_Block *itb)
 
    EINA_LIST_FOREACH(itb->items, l, it)
      {
-        if (itb->must_recalc || (GL_IT(it)->type != ELM_GENLIST_ITEM_GROUP))
+        if (itb->must_recalc || !(GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP))
           {
              if (it->dragging)
                {
@@ -1705,10 +1705,10 @@ _item_realize(Elm_Gen_Item *it,
 
    /* homogeneous genlist shortcut */
    if ((calc) && (sd->homogeneous) && (!it->item->mincalcd) &&
-       (((GL_IT(it)->type == ELM_GENLIST_ITEM_GROUP) && sd->group_item_width) ||
-        ((GL_IT(it)->type != ELM_GENLIST_ITEM_GROUP) && sd->item_width)))
+       (((GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP) && sd->group_item_width) ||
+        (!(GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP) && sd->item_width)))
      {
-        if (GL_IT(it)->type == ELM_GENLIST_ITEM_GROUP)
+        if (GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP)
           {
              it->item->w = it->item->minw = sd->group_item_width;
              it->item->h = it->item->minh = sd->group_item_height;
@@ -1757,7 +1757,7 @@ _item_realize(Elm_Gen_Item *it,
              it->item->mincalcd = EINA_TRUE;
 
              if ((!sd->group_item_width) &&
-                 (GL_IT(it)->type == ELM_GENLIST_ITEM_GROUP))
+                 (GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP))
                {
                   sd->group_item_width = mw;
                   sd->group_item_height = mh;
@@ -2168,7 +2168,7 @@ _item_block_position(Item_Block *itb,
         vis = (ELM_RECTS_INTERSECT
                  (it->item->scrl_x, it->item->scrl_y, it->item->w, it->item->h,
                  cvx, cvy, cvw, cvh));
-        if (GL_IT(it)->type != ELM_GENLIST_ITEM_GROUP)
+        if (!(GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP))
           {
              if ((itb->realized) && (!it->realized))
                {
@@ -3566,7 +3566,7 @@ _elm_genlist_item_del_serious(Elm_Gen_Item *it)
    if (it->tooltip.del_cb)
      it->tooltip.del_cb((void *)it->tooltip.data, WIDGET(it), it);
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
-   if (GL_IT(it)->type == ELM_GENLIST_ITEM_GROUP)
+   if (GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP)
      sd->group_items = eina_list_remove(sd->group_items, it);
 
    ELM_SAFE_FREE(sd->state, eina_inlist_sorted_state_free);
@@ -3830,7 +3830,7 @@ _long_press_cb(void *data)
 
    sd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(WIDGET(it), SIG_LONGPRESSED, EO_OBJ(it));
-   if ((sd->reorder_mode) && (GL_IT(it)->type != ELM_GENLIST_ITEM_GROUP))
+   if ((sd->reorder_mode) && !(GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP))
      {
         sd->reorder_it = it;
         sd->reorder_start_y = 0;
@@ -4979,9 +4979,9 @@ _item_block_recalc(Item_Block *itb,
         if (!itb->realized)
           {
              if (qadd || (itb->sd->homogeneous &&
-                          (((GL_IT(it)->type == ELM_GENLIST_ITEM_GROUP) &&
+                          (((GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP) &&
                             (!itb->sd->group_item_height)) ||
-                           ((GL_IT(it)->type != ELM_GENLIST_ITEM_GROUP) &&
+                           (!(GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP) &&
                             (!itb->sd->item_height)))))
                {
                   if (!it->item->mincalcd) changed = EINA_TRUE;
@@ -4991,7 +4991,7 @@ _item_block_recalc(Item_Block *itb,
 
                        if (itb->sd->homogeneous)
                          {
-                            if ((GL_IT(it)->type == ELM_GENLIST_ITEM_GROUP) &&
+                            if ((GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP) &&
                                 (itb->sd->group_item_height == 0))
                               doit = EINA_TRUE;
                             else if (itb->sd->item_height == 0)
@@ -5006,7 +5006,7 @@ _item_block_recalc(Item_Block *itb,
                          }
                        else
                          {
-                            if (GL_IT(it)->type == ELM_GENLIST_ITEM_GROUP)
+                            if (GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP)
                               {
                                  it->item->w = it->item->minw =
                                    sd->group_item_width;
@@ -5029,7 +5029,7 @@ _item_block_recalc(Item_Block *itb,
                   if ((itb->sd->homogeneous) &&
                       (itb->sd->mode == ELM_LIST_COMPRESS))
                     {
-                       if (GL_IT(it)->type == ELM_GENLIST_ITEM_GROUP)
+                       if (GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP)
                          {
                             it->item->w = it->item->minw =
                                 sd->group_item_width;
@@ -5898,14 +5898,14 @@ _elm_genlist_item_new(Elm_Genlist_Data *sd,
 
    if (it->parent)
      {
-        if (GL_IT(it->parent)->type == ELM_GENLIST_ITEM_GROUP)
+        if (GL_IT(it->parent)->type & ELM_GENLIST_ITEM_GROUP)
           GL_IT(it)->group_item = parent;
         else if (GL_IT(it->parent)->group_item)
           GL_IT(it)->group_item = GL_IT(it->parent)->group_item;
      }
    for (it2 = it, depth = 0; it2->parent; it2 = it2->parent)
      {
-        if (!GL_IT(it2->parent)->type == ELM_GENLIST_ITEM_GROUP) depth += 1;
+        if (!(GL_IT(it2->parent)->type & ELM_GENLIST_ITEM_GROUP)) depth += 1;
      }
    GL_IT(it)->expanded_depth = depth;
    sd->item_count++;
@@ -5993,7 +5993,7 @@ _elm_genlist_item_append(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_Ge
 
    if (!it->parent)
      {
-        if (GL_IT(it)->type == ELM_GENLIST_ITEM_GROUP)
+        if (GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP)
           sd->group_items = eina_list_append(sd->group_items, it);
         sd->items = eina_inlist_append(sd->items, EINA_INLIST_GET(it));
         it->item->rel = NULL;
@@ -6037,7 +6037,7 @@ _elm_genlist_item_prepend(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const Elm_G
 
    if (!it->parent)
      {
-        if (GL_IT(it)->type == ELM_GENLIST_ITEM_GROUP)
+        if (GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP)
           sd->group_items = eina_list_prepend(sd->group_items, it);
         sd->items = eina_inlist_prepend(sd->items, EINA_INLIST_GET(it));
         it->item->rel = NULL;
@@ -6088,8 +6088,8 @@ _elm_genlist_item_insert_after(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, const 
 
    if (!it->parent)
      {
-        if ((GL_IT(it)->type == ELM_GENLIST_ITEM_GROUP) &&
-            (GL_IT(after)->type == ELM_GENLIST_ITEM_GROUP))
+        if ((GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP) &&
+            (GL_IT(after)->type & ELM_GENLIST_ITEM_GROUP))
           sd->group_items = eina_list_append_relative
              (sd->group_items, it, after);
      }
@@ -6134,8 +6134,8 @@ _elm_genlist_item_insert_before(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist
 
    if (!it->parent)
      {
-        if ((GL_IT(it)->type == ELM_GENLIST_ITEM_GROUP) &&
-            (GL_IT(before)->type == ELM_GENLIST_ITEM_GROUP))
+        if ((GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP) &&
+            (GL_IT(before)->type & ELM_GENLIST_ITEM_GROUP))
           sd->group_items =
             eina_list_prepend_relative(sd->group_items, it, before);
      }
@@ -7603,7 +7603,7 @@ _elm_genlist_item_select_mode_set(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it,
         // reset homogeneous item size
         if (sd->homogeneous)
           {
-             if (GL_IT(it)->type == ELM_GENLIST_ITEM_GROUP)
+             if (GL_IT(it)->type & ELM_GENLIST_ITEM_GROUP)
                sd->group_item_width = sd->group_item_height = 0;
              else
                sd->item_width = sd->item_height = 0;
