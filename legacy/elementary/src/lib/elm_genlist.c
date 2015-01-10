@@ -5252,31 +5252,31 @@ _decorate_item_realize(Elm_Gen_Item *it)
 {
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    Evas_Object *obj = sd->obj;
+   char buf[1024];
 
-   if (it->item->deco_it_view) return;
+   if (GL_IT(it)->deco_it_view) return;
 
    evas_event_freeze(evas_object_evas_get(obj));
    it->item->deco_it_view = _view_create(it, it->itc->decorate_item_style);
 
    /* signal callback add */
    evas_object_event_callback_add
-     (it->item->deco_it_view, EVAS_CALLBACK_MOUSE_DOWN, _item_mouse_down_cb,
+     (GL_IT(it)->deco_it_view, EVAS_CALLBACK_MOUSE_DOWN, _item_mouse_down_cb,
      it);
    evas_object_event_callback_add
-     (it->item->deco_it_view, EVAS_CALLBACK_MOUSE_UP, _item_mouse_up_cb, it);
+     (GL_IT(it)->deco_it_view, EVAS_CALLBACK_MOUSE_UP, _item_mouse_up_cb, it);
    evas_object_event_callback_add
-     (it->item->deco_it_view, EVAS_CALLBACK_MOUSE_MOVE, _item_mouse_move_cb,
+     (GL_IT(it)->deco_it_view, EVAS_CALLBACK_MOUSE_MOVE, _item_mouse_move_cb,
      it);
-
-   if (eina_list_count(it->item->deco_it_contents) != 0)
-     ERR_ABORT("If you see this error, please notify us and we"
-               "will fix it");
 
    _view_inflate(it->item->deco_it_view, it, NULL,
                  &GL_IT(it)->deco_it_contents);
    edje_object_part_swallow
      (it->item->deco_it_view,
      edje_object_data_get(it->item->deco_it_view, "mode_part"), VIEW(it));
+
+   snprintf(buf, sizeof(buf), "elm,state,%s,active", sd->decorate_it_type);
+   edje_object_signal_emit(GL_IT(it)->deco_it_view, buf, "elm");
 
    it->want_unrealize = EINA_FALSE;
    evas_event_thaw(evas_object_evas_get(obj));
@@ -5286,8 +5286,6 @@ _decorate_item_realize(Elm_Gen_Item *it)
 static void
 _decorate_item_set(Elm_Gen_Item *it)
 {
-   char buf[1024];
-
    if (!it) return;
 
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
@@ -5308,8 +5306,6 @@ _decorate_item_set(Elm_Gen_Item *it)
    evas_event_thaw(evas_object_evas_get(sd->obj));
    evas_event_thaw_eval(evas_object_evas_get(sd->obj));
 
-   snprintf(buf, sizeof(buf), "elm,state,%s,active", sd->decorate_it_type);
-   edje_object_signal_emit(it->item->deco_it_view, buf, "elm");
 }
 
 static void
