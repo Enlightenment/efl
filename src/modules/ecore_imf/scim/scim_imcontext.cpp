@@ -2675,8 +2675,8 @@ slot_start_helper(IMEngineInstanceBase *si,
    EINA_SAFETY_ON_NULL_RETURN(ic->impl);
 
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " helper= " << helper_uuid << " context="
-      << (ic ? ic->id : -1) << " ic=" << ic
-      << " ic-uuid=" << ((ic ) ? ic->impl->si->get_factory_uuid() : "") << "...\n";
+      << ic->id << " ic=" << ic
+      << " ic-uuid=" << ic->impl->si->get_factory_uuid() << "...\n";
 
    _panel_client.start_helper(ic->id, helper_uuid);
 }
@@ -2688,7 +2688,7 @@ slot_stop_helper(IMEngineInstanceBase *si,
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
    EINA_SAFETY_ON_NULL_RETURN(ic);
 
-   SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " helper= " << helper_uuid << " context=" << (ic ? ic->id : -1) << " ic=" << ic << "...\n";
+   SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " helper= " << helper_uuid << " context=" << ic->id << " ic=" << ic << "...\n";
 
    _panel_client.stop_helper(ic->id, helper_uuid);
 }
@@ -2703,8 +2703,8 @@ slot_send_helper_event(IMEngineInstanceBase *si,
    EINA_SAFETY_ON_NULL_RETURN(ic->impl);
 
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " helper= " << helper_uuid << " context="
-      << (ic ? ic->id : -1) << " ic=" << ic
-      << " ic-uuid=" << ((ic) ? ic->impl->si->get_factory_uuid() : "") << "...\n";
+      << ic->id << " ic=" << ic
+      << " ic-uuid=" << ic->impl->si->get_factory_uuid() << "...\n";
 
    _panel_client.send_helper_event(ic->id, helper_uuid, trans);
 }
