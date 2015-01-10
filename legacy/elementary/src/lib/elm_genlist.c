@@ -5277,6 +5277,7 @@ _decorate_item_realize(Elm_Gen_Item *it)
 
    snprintf(buf, sizeof(buf), "elm,state,%s,active", sd->decorate_it_type);
    edje_object_signal_emit(GL_IT(it)->deco_it_view, buf, "elm");
+   edje_object_signal_emit(VIEW(it), buf, "elm");
 
    it->want_unrealize = EINA_FALSE;
    evas_event_thaw(evas_object_evas_get(obj));
