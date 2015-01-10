@@ -211,8 +211,8 @@ struct Elm_Gen_Item_Type
    Evas_Coord              w, h, minw, minh;
    Elm_Gen_Item           *group_item;
    Elm_Genlist_Item_Type   type;
-   Eina_List              *deco_it_contents;
-   Eina_List              *deco_all_contents;
+   Eina_List              *deco_it_texts, *deco_it_contents;
+   Eina_List              *deco_all_texts, *deco_all_contents;
    Eina_List              *flip_contents;
    Ecore_Timer            *swipe_timer;
    Evas_Coord              scrl_x, scrl_y, old_scrl_y;
