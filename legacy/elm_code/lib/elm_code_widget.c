@@ -2,14 +2,7 @@
 # include "config.h"
 #endif
 
-#include <Eo.h>
-#include <Evas.h>
-#include <Elementary.h>
-#define ELM_INTERNAL_API_ARGESFSDFEFC
-#include <elm_widget.h>
-
 #include <Elm_Code.h>
-#include "elm_code_widget.eo.h"
 #include "elm_code_private.h"
 
 typedef struct
