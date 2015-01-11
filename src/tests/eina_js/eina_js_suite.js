@@ -1,15 +1,24 @@
 #!/usr/bin/env node
 
-console.log('path ', process.env.EINA_SUITE_PATH);
+var suite;
+var assert;
 
-console.log("teste1");
+if(typeof process !== 'undefined')
+{
+    console.log('running from nodejs');
+    console.log('path ', process.env.EINA_SUITE_PATH);
+    console.log("teste1");
 
-var suite = require(process.env.EINA_SUITE_PATH);
-assert = require('assert');
+    suite = require(process.env.EINA_SUITE_PATH);
+    assert = require('assert');
+}
+else
+{
+    assert = function(test, message) { if (test !== true) throw message; };
+    console.log('running from libv8')
+}
 
-process.argv.forEach(function (val, index, array) {
-  console.log(index + ': ' + val);
-});
+// container tests
 
 console.log("teste");
 var l1 = suite.raw_list;
@@ -51,3 +60,24 @@ assert (s2[0] == l1[1]);
 assert (s2[1] == l1[2]);
 
 console.log ("Test execution with success");
+
+// error tests
+
+var captured = false;
+try {
+  clear_eina_error();
+} catch(e) {
+  captured = true;
+}
+assert(captured === false, '#1');
+
+captured = false;
+try {
+  set_eina_error();
+} catch(e) {
+  assert(e.code === 'Eina_Error', '#2');
+  assert(e.value === 'foobar', '#3');
+  captured = true;
+}
+assert(captured === true, '#4');
+

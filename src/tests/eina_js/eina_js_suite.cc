@@ -7,6 +7,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <fstream>
 
 #include <Eina.h>
 #include <Eina.hh>
@@ -28,6 +29,7 @@ bool ExecuteString(v8::Isolate* isolate,
   v8::ScriptOrigin origin(name);
   v8::Handle<v8::Script> script = v8::Script::Compile(source, &origin);
   if (script.IsEmpty()) {
+    std::cerr << "Compilation failed" << std::endl;
     std::abort();
     // Print errors that happened during compilation.
     // if (report_exceptions)
@@ -36,14 +38,19 @@ bool ExecuteString(v8::Isolate* isolate,
   }
   else
   {
+    std::cerr << "Compilation succesful" << std::endl;
     v8::Handle<v8::Value> result = script->Run();
     if (result.IsEmpty()) {
       std::cout << "Failed with exception thrown" << std::endl;
-      assert(try_catch.HasCaught());
-      std::abort();
+      //assert(try_catch.HasCaught());
+      //std::abort();
       // Print errors that happened during execution.
       // if (report_exceptions)
       //   ReportException(isolate, &try_catch);
+      if(try_catch.HasCaught())
+        std::cerr << "Exception " << ToCString(v8::String::Utf8Value(try_catch.Message()->Get()))
+                  << std::endl;
+      std::abort();
       return false;
     } else {
       assert(!try_catch.HasCaught());
@@ -81,6 +88,31 @@ efl::eina::js::compatibility_return_type Print(efl::eina::js::compatibility_call
 EAPI void eina_container_register(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI v8::Handle<v8::FunctionTemplate> get_list_instance_template();
 
+efl::eina::ptr_list<int> list;
+efl::eina::js::range_eina_list<int> raw_list;
+
+void test_setup(v8::Handle<v8::Object> exports)
+{
+  std::cerr << __LINE__ << std::endl;
+  list.push_back(new int(5));
+  list.push_back(new int(10));
+  list.push_back(new int(15));
+  std::cerr << __LINE__ << std::endl;
+
+  raw_list = efl::eina::js::range_eina_list<int>(list.native_handle());
+
+  std::cerr << __LINE__ << std::endl;
+  eina_container_register(exports, v8::Isolate::GetCurrent());
+  std::cerr << __LINE__ << std::endl;
+  
+  v8::Handle<v8::Value> a[] = {efl::eina::js::compatibility_new<v8::External>(nullptr, &raw_list)};
+  std::cerr << __LINE__ << std::endl;
+  exports->Set(efl::eina::js::compatibility_new<v8::String>(nullptr, "raw_list")
+               , get_list_instance_template()->GetFunction()->NewInstance(1, a));
+  std::cerr << __LINE__ << std::endl;
+
+}
+
 #ifndef HAVE_NODEJS
 
 int main(int, char*[])
@@ -97,21 +129,10 @@ int main(int, char*[])
   efl::eina::js::compatibility_handle_scope handle_scope(isolate);
   v8::Handle<v8::Context> context;
 
-  efl::eina::ptr_list<int> list;
-  list.push_back(new int(5));
-  list.push_back(new int(10));
-  list.push_back(new int(15));
-
-  efl::eina::js::range_eina_list<int> raw_list(list.native_handle());
   {
     // Create a template for the global object.
     v8::Handle<v8::ObjectTemplate> global = efl::eina::js::compatibility_new<v8::ObjectTemplate>(isolate);
-    // Bind the global 'print' function to the C++ Print callback.
-    global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "print"),
-                efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, Print));
-
     context = efl::eina::js::compatibility_new<v8::Context>(isolate, nullptr, global);
-    eina_container_register(context->Global(), isolate);
   }
   if (context.IsEmpty()) {
     fprintf(stderr, "Error creating context\n");
@@ -119,19 +140,49 @@ int main(int, char*[])
   }
   context->Enter();
   {
+    std::vector<char> script;
+    {
+      std::ifstream script_file(TESTS_SRC_DIR "/eina_js_suite.js");
+      script_file.seekg(0, std::ios::end);
+      std::size_t script_size = script_file.tellg();
+      script_file.seekg(0, std::ios::beg);
+      script.resize(script_size+1);
+      script_file.rdbuf()->sgetn(&script[0], script_size);
+      auto line_break = std::find(script.begin(), script.end(), '\n');
+      assert(line_break != script.end());
+      ++line_break;
+      std::fill(script.begin(), line_break, ' ');
+
+      std::cerr << "program:" << std::endl;
+      std::copy(script.begin(), script.end(), std::ostream_iterator<char>(std::cerr));
+      std::cerr << "end of program" << std::endl;
+    }
+
+    
     // Enter the execution environment before evaluating any code.
     v8::Context::Scope context_scope(context);
     v8::Local<v8::String> name(efl::eina::js::compatibility_new<v8::String>
                                (nullptr, "(shell)"));
 
-    v8::Handle<v8::Value> a[] = {efl::eina::js::compatibility_new<v8::External>(isolate, &raw_list)};
-    context->Global()->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "raw_list")
-                , get_list_instance_template()->GetFunction()->NewInstance(1, a));     
+    std::cerr << __LINE__ << std::endl;
+    v8::Handle<v8::Object> exports = efl::eina::js::compatibility_new<v8::Object>(isolate);
+    context->Global()->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "suite"), exports);
+    test_setup(exports);
+    std::cerr << __LINE__ << std::endl;
+
+    v8::Handle<v8::Object> console = efl::eina::js::compatibility_new<v8::Object>(isolate);
+    context->Global()->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "console"), console);
+    console->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "log")
+                 , efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, & ::Print)
+                 ->GetFunction());
+
     
     efl::eina::js::compatibility_handle_scope handle_scope(v8::Isolate::GetCurrent());
+    std::cerr << __LINE__ << std::endl;
     ExecuteString(v8::Isolate::GetCurrent(),
-                  efl::eina::js::compatibility_new<v8::String>(v8::Isolate::GetCurrent(), script),
+                  efl::eina::js::compatibility_new<v8::String>(v8::Isolate::GetCurrent(), &script[0]),
                   name);
+  std::cerr << __LINE__ << std::endl;
   }
   context->Exit();
 }
@@ -141,38 +192,21 @@ int main(int, char*[])
 
 namespace {
 
-efl::eina::ptr_list<int> list;
-efl::eina::js::range_eina_list<int> raw_list;
-
 void init(v8::Handle<v8::Object> exports)
 {
   try
     {
       eina_init();
       eo_init();
+
+      test_setup(exports);
       
-      std::cerr << __LINE__ << std::endl;
-      list.push_back(new int(5));
-      list.push_back(new int(10));
-      list.push_back(new int(15));
-      std::cerr << __LINE__ << std::endl;
-
-      raw_list = efl::eina::js::range_eina_list<int>(list.native_handle());
-
-      std::cerr << __LINE__ << std::endl;
-      eina_container_register(exports, v8::Isolate::GetCurrent());
-      std::cerr << __LINE__ << std::endl;
-
-      v8::Handle<v8::Value> a[] = {efl::eina::js::compatibility_new<v8::External>(nullptr, &raw_list)};
-      std::cerr << __LINE__ << std::endl;
-      exports->Set(efl::eina::js::compatibility_new<v8::String>(nullptr, "raw_list")
-                   , get_list_instance_template()->GetFunction()->NewInstance(1, a));
-
       std::cerr << "registered" << std::endl;
     }
   catch(...)
     {
       std::cerr << "Error" << std::endl;
+      std::abort();
     }
 }
   
