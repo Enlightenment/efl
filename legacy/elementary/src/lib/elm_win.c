@@ -1012,13 +1012,16 @@ _elm_win_focus_in(Ecore_Evas *ee)
    obj = sd->obj;
 
    _elm_widget_top_win_focused_set(obj, EINA_TRUE);
-   if (!elm_widget_focus_order_get(obj)
-       || (obj == elm_widget_newest_focus_order_get(obj, &order, EINA_TRUE)))
+   if (sd->type != ELM_WIN_FAKE)
      {
-        elm_widget_focus_steal(obj);
+        if (!elm_widget_focus_order_get(obj)
+            || (obj == elm_widget_newest_focus_order_get(obj, &order, EINA_TRUE)))
+          {
+             elm_widget_focus_steal(obj);
+          }
+        else
+          elm_widget_focus_restore(obj);
      }
-   else
-     elm_widget_focus_restore(obj);
    evas_object_smart_callback_call(obj, SIG_FOCUS_IN, NULL);
    sd->focus_highlight.cur.visible = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
