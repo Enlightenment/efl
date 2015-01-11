@@ -74,6 +74,8 @@ bindings/eina_cxx/eina_value.hh
 if EFL_ENABLE_TESTS
 
 if HAVE_NODEJS
+AM_TESTS_ENVIRONMENT = EINA_SUITE_PATH='$(abs_builddir)/tests/eina_js/eina_js_suite'; export EINA_SUITE_PATH;
+
 TESTS += tests/eina_js/eina_js_suite.js
 
 lib_LTLIBRARIES += tests/eina_js/libeina_js_suite.la \
@@ -138,8 +140,7 @@ tests_eina_js_libeina_js_iterator_la_LIBADD = @CHECK_LIBS@ @USE_EINA_JS_LIBS@ @U
 tests_eina_js_libeina_js_iterator_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EINA_JS_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 
 else
-
-EINA_TESTS_PREFIX = 
+AM_TESTS_ENVIRONMENT = EINA_SUITE_PATH='$(abs_srcdir)/tests/eina_js/eina_js_suite.js'; export EINA_SUITE_PATH;
 
 check_PROGRAMS += tests/eina_js/eina_js_suite
 TESTS += tests/eina_js/eina_js_suite

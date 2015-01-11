@@ -14,53 +14,6 @@
 
 #include <eina_js_list.hh>
 
-static const char script[] =
-  "function assert(condition, message) {\n"
-  "  if (!condition) {\n"
-  "      print(\"Assertion failed \", message);\n"
-  "      throw message || \"Assertion failed\";\n"
-  "  }\n"
-  "}\n"
-  "print(\"teste\");\n"
-  "var l1 = raw_list;\n"
-  "print (\"l1 \", l1.toString());\n"
-  "assert (l1.length == 3)\n;\n"
-  "var l2 = raw_list;\n"
-  "print (\"l2 \", l2.toString());\n"
-  "assert (l2.length == 3)\n;\n"
-  "var c = l1.concat(l2);\n"
-  "print (\"c \", c.toString());\n"
-  "assert (c.length == (l1.length + l2.length));\n"
-  "assert (c[0] == l1[0]);\n"
-  "assert (c[1] == l1[1]);\n"
-  "assert (c[2] == l1[2]);\n"
-  "assert (c[3] == l2[0]);\n"
-  "assert (c[4] == l2[1]);\n"
-  "assert (c[5] == l2[2]);\n"
-  "assert (c.indexOf(c[0]) == 0);\n"
-  "assert (c.indexOf(c[1]) == 1);\n"
-  "assert (c.indexOf(c[2]) == 2);\n"
-  "assert (c.indexOf(c[3]) == 0);\n"
-  "assert (c.indexOf(c[4]) == 1);\n"
-  "assert (c.indexOf(c[5]) == 2);\n"
-  "assert (c.lastIndexOf(c[0]) == 3);\n"
-  "assert (c.lastIndexOf(c[1]) == 4);\n"
-  "assert (c.lastIndexOf(c[2]) == 5);\n"
-  "assert (c.lastIndexOf(c[3]) == 3);\n"
-  "assert (c.lastIndexOf(c[4]) == 4);\n"
-  "assert (c.lastIndexOf(c[5]) == 5);\n"
-  "var s1 = l1.slice(1, 3);\n"
-  "print (\"s1 \", s1.toString());\n"
-  "assert (s1.length == 2);\n"
-  "assert (s1[0] == l1[1]);\n"
-  "assert (s1[1] == l1[2]);\n"
-  "var s2 = c.slice(1, 3);\n"
-  "print (\"s2 \", s2.toString());\n"
-  "assert (s2.length == 2);\n"
-  "assert (s2[0] == l1[1]);\n"
-  "assert (s2[1] == l1[2]);\n"
-  ;
-
 const char* ToCString(const v8::String::Utf8Value& value) {
   return *value ? *value : "<string conversion failed>";
 }
@@ -128,6 +81,8 @@ efl::eina::js::compatibility_return_type Print(efl::eina::js::compatibility_call
 EAPI void eina_container_register(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI v8::Handle<v8::FunctionTemplate> get_list_instance_template();
 
+#ifndef HAVE_NODEJS
+
 int main(int, char*[])
 {
   efl::eina::eina_init eina_init;
@@ -154,18 +109,6 @@ int main(int, char*[])
     // Bind the global 'print' function to the C++ Print callback.
     global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "print"),
                 efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, Print));
-    // // Bind the global 'read' function to the C++ Read callback.
-    // global->Set(v8::String::NewFromUtf8(isolate, "read"),
-    //             v8::FunctionTemplate::New(isolate, Read));
-    // // Bind the global 'load' function to the C++ Load callback.
-    // global->Set(v8::String::NewFromUtf8(isolate, "load"),
-    //             v8::FunctionTemplate::New(isolate, Load));
-    // // Bind the 'quit' function
-    // global->Set(v8::String::NewFromUtf8(isolate, "quit"),
-    //             v8::FunctionTemplate::New(isolate, Quit));
-    // // Bind the 'version' function
-    // global->Set(v8::String::NewFromUtf8(isolate, "version"),
-    //             v8::FunctionTemplate::New(isolate, Version));
 
     context = efl::eina::js::compatibility_new<v8::Context>(isolate, nullptr, global);
     eina_container_register(context->Global(), isolate);
@@ -193,7 +136,7 @@ int main(int, char*[])
   context->Exit();
 }
 
-#ifdef HAVE_NODEJS
+#else
 #include <node/node.h>
 
 namespace {

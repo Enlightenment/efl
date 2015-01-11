@@ -1,16 +1,15 @@
 #!/usr/bin/env node
 
+console.log('path ', process.env.EINA_SUITE_PATH);
+
 console.log("teste1");
 
-var suite = require('../../../build/src/tests/eina_js/eina_js_suite');
+var suite = require(process.env.EINA_SUITE_PATH);
 assert = require('assert');
 
-// function assert(condition, message)
-// {
-//   if (!condition) {
-//     console.log(\"Assertion failed \", message);
-//     throw message || \"Assertion failed\";
-// }
+process.argv.forEach(function (val, index, array) {
+  console.log(index + ': ' + val);
+});
 
 console.log("teste");
 var l1 = suite.raw_list;

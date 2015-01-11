@@ -134,6 +134,38 @@ template <>
 struct compatibility_string<false> : v8::String
 {
 };
+
+template <typename...Args>
+auto compatibility_new_impl(v8::Isolate*, std::true_type, compatibility_type_tag<v8::String>
+                            , Args...args) ->
+  decltype(compatibility_string<>::New(args...)) 
+{
+  return compatibility_string<>::New(args...);
+}
+
+template <typename...Args>
+auto compatibility_new_impl(v8::Isolate*, std::false_type, compatibility_type_tag<v8::String>
+                            , Args...args) ->
+  decltype(compatibility_string<>::New(args...)) 
+{
+  return compatibility_string<>::New(args...);
+}
+
+template <typename...Args>
+auto compatibility_new_impl(std::nullptr_t, std::true_type, compatibility_type_tag<v8::String>
+                            , Args...args) ->
+  decltype(compatibility_string<>::New(args...))
+{
+  return compatibility_string<>::New(args...);
+}
+
+template <typename...Args>
+auto compatibility_new_impl(std::nullptr_t, std::false_type, compatibility_type_tag<v8::String>
+                            , Args...args) ->
+  decltype(compatibility_string<>::New(args...)) 
+{
+  return compatibility_string<>::New(args...);
+}
       
 template <typename T, typename...Args>
 auto compatibility_new_impl(v8::Isolate* isolate, std::true_type, compatibility_type_tag<T>
