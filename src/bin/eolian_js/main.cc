@@ -376,6 +376,10 @@ int main(int argc, char** argv)
          case EOLIAN_PROP_GET:
            output_end(eolian_function_full_c_name_get(function) + std::string("_get"));
            break;
+         case EOLIAN_UNRESOLVED:
+           EINA_CXX_DOM_LOG_ERROR(eolian::js::domain) << "Unresolved function";
+           return -1;
+           break;
          }
      }
 
