@@ -262,6 +262,24 @@ _elm_table_padding_get(Eo *obj, void *_pd EINA_UNUSED, Evas_Coord *horizontal, E
 }
 
 EOLIAN static void
+_elm_table_align_set(Eo *obj, void *_pd EINA_UNUSED, double horizontal, double vertical)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   evas_object_table_align_set
+     (wd->resize_obj, horizontal, vertical);
+}
+
+EOLIAN static void
+_elm_table_align_get(Eo *obj, void *_pd EINA_UNUSED, double *horizontal, double *vertical)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   evas_object_table_align_get
+     (wd->resize_obj, horizontal, vertical);
+}
+
+EOLIAN static void
 _elm_table_pack(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *subobj, int col, int row, int colspan, int rowspan)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);

@@ -44,6 +44,28 @@ class Elm_Table (Elm_Widget)
             Evas_Coord vertical; /*@ set the vertical padding. */
          }
       }
+      align {
+         set {
+            /*@
+            @brief Set alignment of table
+            @since 1.13
+
+            Default value is 0.5.
+
+            @ingroup Table */
+         }
+         get {
+            /*@
+            @brief Get alignment of table.
+            @since 1.13
+
+            @ingroup Table */
+         }
+         values {
+            double horizontal; /*@ the horizontal alignment. */
+            double vertical; /*@ the vertical alignment. */
+         }
+      }
    }
    methods {
       clear {
