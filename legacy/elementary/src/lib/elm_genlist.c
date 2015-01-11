@@ -4397,15 +4397,15 @@ newblock:
    return EINA_TRUE;
 }
 
-static Eina_Bool
+static int
 _item_process(Elm_Genlist_Data *sd,
               Elm_Gen_Item *it)
 {
-   if (!_item_block_add(sd, it)) return EINA_FALSE;
+   if (!_item_block_add(sd, it)) return 1;
    if (!sd->blocks)
      _item_block_realize(it->item->block);
 
-   return EINA_TRUE;
+   return 0;
 }
 
 static void
