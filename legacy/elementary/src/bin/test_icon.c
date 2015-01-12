@@ -159,8 +159,8 @@ _standard_list_populate(Evas_Object *list, Elm_Icon_Lookup_Order order)
      {
         // group = "/elm/icon/standard-name/style/maybe_another_style??"
          snprintf(name, sizeof(name), "%s", group + 9);
-         p = strrchr(name, '/');
-         *p = '\0';
+        if ((p = strrchr(name, '/')))
+          *p = '\0';
          printf("Found group:%s  Name:%s\n", group, name);
 
          // quick hack to show only standard-compliant icons
