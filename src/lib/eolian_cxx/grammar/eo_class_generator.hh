@@ -40,7 +40,8 @@ struct concrete_eo_ptr_getter
 inline std::ostream&
 operator<<(std::ostream& out, concrete_eo_ptr_getter const&)
 {
-   out << tab(1) << "Eo* _concrete_eo_ptr() const" << endl
+   out << comment("@internal", 1)
+       << tab(1) << "Eo* _concrete_eo_ptr() const" << endl
        << tab(1) << "{" << endl
        << tab(2) << "return static_cast<::efl::eo::concrete const*>(static_cast<void const*>(this))->_eo_ptr();" << endl
        << tab(1) << "}" << endl << endl;
@@ -123,6 +124,8 @@ struct abstract_address_of
 inline std::ostream&
 operator<<(std::ostream& out, abstract_address_of const& x)
 {
+   out << comment("@cond LOCAL", 1);
+
    out << tab(1) << "template <typename D>" << endl
        << tab(1) << "struct address_of" << endl
        << tab(1) << "{" << endl
@@ -134,7 +137,9 @@ operator<<(std::ostream& out, abstract_address_of const& x)
        << tab(1) << "struct address_const_of" << endl
        << tab(1) << "{" << endl
        << tab(2) << address_of_to_pointer(x._cls, true) << endl
-       << tab(1) << "};" << endl << endl;
+       << tab(1) << "};" << endl;
+
+   out << comment("@endcond", 1) << endl;
 
    return out;
 }
@@ -168,6 +173,7 @@ struct concrete_address_of
 inline std::ostream&
 operator<<(std::ostream& out, concrete_address_of const& x)
 {
+   out << comment("@cond LOCAL", 1);
    std::vector<std::string> names {"address_of", "address_const_of"};
    for (int is_const = 0; is_const != 2; ++is_const)
      {
@@ -189,16 +195,18 @@ operator<<(std::ostream& out, concrete_address_of const& x)
             << (is_const ? " const" : "")
             << " { return " << name << "(this); }" << endl << endl;
      }
+   out << comment("@endcond", 1) << endl;
 
    return out;
 }
 
 inline void
-eo_class_generator(std::ostream& out, eo_class const& cls)
+eo_class_declarations_generator(std::ostream& out, eo_class const& cls)
 {
    out << namespace_head(cls)
        << "struct " << cls.name << ";" << endl << endl
        << namespace_tail(cls)
+       << comment("@cond EO_CXX_ABSTRACT")
        << "namespace " << abstract_namespace << " {" << endl << endl
        << namespace_head(cls)
        << comment(cls.comment)
@@ -209,12 +217,14 @@ eo_class_generator(std::ostream& out, eo_class const& cls)
        << eo_class_getter(cls)
        << class_implicit_conversion_declaration(cls)
        << abstract_address_of(cls)
-       << "private:" << endl
+       << "private:" << endl << endl
        << concrete_eo_ptr_getter(cls)
        << "};" << endl << endl
        << namespace_tail(cls)
-       << "}" << endl << endl
+       << "}" << endl
+       << comment("@endcond") << endl
        << namespace_head(cls)
+       << comment(cls.comment, 0, "@brief Class " + cls.name)
        << "struct " << cls.name << endl
        << tab(2) << ": ::efl::eo::concrete" << endl
        << class_inheritance(cls)
@@ -229,15 +239,22 @@ eo_class_generator(std::ostream& out, eo_class const& cls)
        << events(cls, cls.concrete_events) << endl
        << eo_class_getter(cls)
        << concrete_address_of(cls)
-        << "private:" << endl
+       << "private:" << endl << endl
        << function_call_constructor_methods(cls)
-       << tab(2) << "Eo* _concrete_eo_ptr() const { return _eo_ptr(); }" << endl
+       << comment("@internal", 1)
+       << tab(1) << "Eo* _concrete_eo_ptr() const { return _eo_ptr(); }" << endl
        << "};" << endl << endl
        << "static_assert(sizeof(" << full_name(cls) << ") == sizeof(Eo*), \"\");" << endl
        << "static_assert(std::is_standard_layout<" << full_name(cls) << ">::value, \"\");" << endl
        << endl
        << namespace_tail(cls)
-       << constructor_method_function_definitions(cls)
+       << endl;
+}
+
+inline void
+eo_class_definitions_generator(std::ostream& out, eo_class const& cls)
+{
+   out << constructor_method_function_definitions(cls)
        << function_definitions(cls, true)
        << function_definitions(cls, false)
        << class_implicit_conversion_definition(cls);

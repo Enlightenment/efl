@@ -141,6 +141,7 @@ _convert_property_set_to_function(Eolian_Class const& klass,
    efl::eolian::eo_function set_ =
      {
        efl::eolian::eo_function::regular_,
+       function_scope(prop_),
        function_name(prop_) + "_set",
        function_impl(prop_) + "_set",
        function_return_type(prop_, eolian_cxx::setter),
@@ -168,6 +169,7 @@ _convert_property_get_to_function(Eolian_Class const& klass,
    efl::eolian::eo_function get_ =
      {
        efl::eolian::eo_function::regular_,
+       function_scope(prop_),
        function_name(prop_) + "_get",
        function_impl(prop_) + "_get",
        function_return_type(prop_, eolian_cxx::getter),
@@ -291,6 +293,7 @@ convert_eolian_functions(efl::eolian::eo_class& cls, Eolian_Class const& klass)
           {
              cls.functions.push_back({
                  function_type(func),
+                 function_scope(func),
                  function_name(func),
                  function_impl(func),
                  function_return_type(func),

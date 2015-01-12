@@ -16,6 +16,12 @@ class Callback (Eo.Base)
            @in Ecore_Cb cb2;
          }
       }
+      test_global_callbacks @class {
+         params {
+           @in Ecore_Cb cb;
+           @in void* data;
+         }
+      }
    }
    implements {
       Eo.Base.constructor;

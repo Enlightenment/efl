@@ -66,9 +66,11 @@ GENERATED = \
 	colourable.eo.c \
 	colourable.eo.h \
 	colourable.eo.hh \
+	colourable.eo.impl.hh \
 	colourablesquare.eo.c \
 	colourablesquare.eo.h \
-	colourablesquare.eo.hh
+	colourablesquare.eo.hh \
+	colourablesquare.eo.impl.hh
 
 BUILT_SOURCES = $(GENERATED)
 CLEANFILES += $(BUILT_SOURCES)
@@ -134,6 +136,9 @@ eolian_cxx_complex_types_01_SOURCES = eolian_cxx_complex_types_01.cc
 
 %.eo.hh: %.eo
 	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I${abs_srcdir} -o $@ $<
+
+%.eo.impl.hh: %.eo.hh
+	true $<
 
 %.eo.c: %.eo
 	$(AM_V_EOL)$(EOLIAN_GEN) --eo --legacy $(EOLIAN_FLAGS) --gc -o $@ $<

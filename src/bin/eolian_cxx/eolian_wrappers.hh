@@ -25,6 +25,15 @@ getter_t const getter = {};
 struct method_t { static constexpr ::Eolian_Function_Type value = ::EOLIAN_METHOD; };
 method_t const method = {};
 
+inline efl::eolian::eolian_scope
+eolian_scope_cxx(Eolian_Object_Scope s)
+{
+   using efl::eolian::eolian_scope;
+   return s == EOLIAN_SCOPE_PRIVATE ? eolian_scope::private_ :
+          s == EOLIAN_SCOPE_PROTECTED ? eolian_scope::protected_ :
+          eolian_scope::public_;
+}
+
 inline const Eolian_Class*
 class_from_file(std::string const& file)
 {
@@ -195,11 +204,18 @@ function_is_constructor(Eolian_Class const& cls, Eolian_Function const& func)
    return ::eolian_function_is_constructor(&func, &cls);
 }
 
+inline efl::eolian::eolian_scope
+function_scope(Eolian_Function const& func)
+{
+   return eolian_scope_cxx(::eolian_function_scope_get(&func));
+}
+
 inline bool
 function_is_visible(Eolian_Function const& func, Eolian_Function_Type func_type)
 {
-   return (::eolian_function_scope_get(&func) == EOLIAN_SCOPE_PUBLIC &&
-           ! ::eolian_function_is_legacy_only(&func, func_type));
+   Eolian_Object_Scope s = ::eolian_function_scope_get(&func);
+   return ((s == EOLIAN_SCOPE_PUBLIC || s == EOLIAN_SCOPE_PROTECTED) &&
+           !::eolian_function_is_legacy_only(&func, func_type));
 }
 
 inline bool
@@ -388,6 +404,7 @@ event_create(Eolian_Class const& klass, const Eolian_Event *event_)
         std::string name_ = safe_str(name);
         std::transform(name_.begin(), name_.end(), name_.begin(),
                        [](int c) { return c != ',' ? c : '_'; });
+        event.scope = eolian_scope_cxx(::eolian_event_scope_get(event_));
         event.name = normalize_spaces(name_);
         event.eo_name = safe_upper
           (find_replace(class_full_name(klass), ".", "_") + "_EVENT_" + event.name);

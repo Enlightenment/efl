@@ -46,7 +46,7 @@ operator<<(std::ostream& out, class_inheritance const& x)
      last = cls.ancestors.cend();
    for (it = first; it != last; ++it)
      {
-        out << tab(2) << ", ::" << abstract_namespace << "::" << *it << endl;
+        out << tab(2) << ", EO_CXX_INHERIT(" << *it << ")" << endl;
      }
    return out;
 }
@@ -115,6 +115,9 @@ operator<<(std::ostream& out, functors_constructor_methods const& x)
      {
         eo_constructor const& c = *it;
 
+        // Hide documentation condition
+        out << comment("@cond LOCAL", 1);
+
         // Struct declaration
         out << template_parameters_declaration(c.params, 1)
             << tab(1) << "struct " << constructor_functor_type_name(c) << endl
@@ -176,7 +179,10 @@ operator<<(std::ostream& out, functors_constructor_methods const& x)
                );
 
         // Close struct
-        out << tab(1) << "};" << endl << endl;
+        out << tab(1) << "};" << endl;
+
+        // End documentation condition
+        out << comment("@endcond", 1) << endl;
      }
 
    return out;
@@ -208,7 +214,7 @@ operator<<(std::ostream& out, constructor_method_function_declarations const& x)
              continue;
           }
 
-        out << comment(c.comment, 0)
+        out << comment(c.comment, 1)
             << template_parameters_declaration(c.params, 1)
             << tab(1) << constructor_functor_type_decl(c) << " " << c.name << "("
             << parameters_declaration(c.params) << ") const;" << endl << endl;
@@ -253,6 +259,51 @@ operator<<(std::ostream& out, constructor_method_function_definitions const& x)
    return out;
 }
 
+struct comment_constructor_with_constructor_methods
+{
+   eo_class const& _cls;
+   comment_constructor_with_constructor_methods(eo_class const& cls)
+     : _cls(cls)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, comment_constructor_with_constructor_methods const& x)
+{
+   out << tab(1) << "/**" << endl
+       << tab(2) << "@brief Constructs a new " << full_name(x._cls, false) << " object." << endl
+       << endl
+       << tab(2) << "Constructs a new " << full_name(x._cls, false) << " object. If you want this object to be a child" << endl
+       << tab(2) << "of another Eo object, use an @ref efl::eo::parent expression, like the example." << endl
+       << endl;
+
+   if (x._cls.constructors.size())
+     {
+        bool singular = (x._cls.constructors.size() == 1);
+        out << tab(2) << "Since this class have " << (singular ? "a " : "") << "constructor method" << (singular ? "" : "s")
+            <<  ", you must call " << (singular ? "it" : "each one of them") << endl
+            << tab(2) << "in the right place within this constructor parameters." << endl
+            << endl;
+     }
+
+   out << tab(2) << "Example:" << endl
+       << tab(2) << "@code" << endl
+       << tab(2) << full_name(x._cls, false) << " my_" << x._cls.name << "(" << endl;
+
+   for (eo_constructor const& c : x._cls.constructors)
+      out << tab(3) << "my_" << x._cls.name << "." << c.name << "(" << parameters_names(c.params) << ")," << endl;
+
+   out << tab(3) << "efl::eo::parent = parent_object);" << endl
+       << tab(2) << "@endcode" << endl
+       << endl;
+
+   for (eo_constructor const& c : x._cls.constructors)
+     out << tab(2) << "@see " << x._cls.name << "::" << c.name << endl;
+   out << tab(2) << "@see " << x._cls.name << "(Eo* eo)" << endl;
+
+   return out << tab(1) << "*/" << endl;
+}
+
 struct constructor_with_constructor_methods
 {
    eo_class const& _cls;
@@ -273,6 +324,8 @@ operator<<(std::ostream& out, constructor_with_constructor_methods const& x)
      {
         cb_count += parameters_count_callbacks((*it).params);
      }
+
+   out << comment_constructor_with_constructor_methods(x._cls);
 
    if (cb_count != 0)
      {
@@ -398,6 +451,8 @@ struct function_call_constructor_methods
 inline std::ostream&
 operator<<(std::ostream& out, function_call_constructor_methods const& x)
 {
+   out << comment("@internal", 1);
+
    unsigned cb_count = 0;
 
    constructors_container_type::const_iterator it,

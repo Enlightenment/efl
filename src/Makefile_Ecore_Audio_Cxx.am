@@ -20,6 +20,13 @@ lib/ecore_audio/Ecore_Audio.hh: $(generated_ecore_audio_cxx_bindings)
 
 generated_ecore_audio_cxx_all = \
 	$(generated_ecore_audio_cxx_bindings) \
+	lib/ecore_audio/ecore_audio.eo.impl.hh \
+	lib/ecore_audio/ecore_audio_in.eo.impl.hh \
+	lib/ecore_audio/ecore_audio_out.eo.impl.hh \
+	lib/ecore_audio/ecore_audio_in_sndfile.eo.impl.hh \
+	lib/ecore_audio/ecore_audio_out_sndfile.eo.impl.hh \
+	lib/ecore_audio/ecore_audio_out_pulse.eo.impl.hh \
+	lib/ecore_audio/ecore_audio_in_tone.eo.impl.hh \
 	lib/ecore_audio/Ecore_Audio.hh
 
 CLEANFILES += $(generated_ecore_audio_cxx_all)

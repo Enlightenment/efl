@@ -21,6 +21,12 @@ typedef std::vector<eo_function> functions_container_type;
 typedef std::vector<eo_parameter> parameters_container_type;
 typedef std::vector<eo_event> events_container_type;
 
+
+enum class eolian_scope
+  {
+     public_, protected_, private_
+  };
+
 struct eolian_type
 {
    enum category_type
@@ -34,6 +40,7 @@ struct eolian_type
      , is_const(false)
      , is_own(false)
      , is_class(false)
+     , binding_requires_optional(false)
      , binding()
      , includes()
    {}
@@ -43,6 +50,7 @@ struct eolian_type
                bool is_const_,
                bool is_own_,
                bool is_class_,
+               bool binding_requires_optional_,
                std::string binding_,
                includes_container_type includes_)
      : native(native_)
@@ -50,6 +58,7 @@ struct eolian_type
      , is_const(is_const_)
      , is_own(is_own_)
      , is_class(is_class_)
+     , binding_requires_optional(binding_requires_optional_)
      , binding(binding_)
      , includes(includes_)
    {
@@ -60,7 +69,7 @@ struct eolian_type
    eolian_type(std::string native_,
                category_type category_,
                includes_container_type const& includes_)
-     : eolian_type(native_, category_, false, false, false, "", includes_)
+     : eolian_type(native_, category_, false, false, false, false, "", includes_)
    {
       assert(category == callback_);
    }
@@ -70,6 +79,7 @@ struct eolian_type
    bool is_const;
    bool is_own;
    bool is_class;
+   bool binding_requires_optional;
    std::string binding;
    includes_container_type includes;
 };
@@ -110,7 +120,7 @@ struct eolian_type_instance
 };
 
 const efl::eolian::eolian_type
-void_type { "void", efl::eolian::eolian_type::simple_, false, false, false, "", {} };
+void_type { "void", efl::eolian::eolian_type::simple_, false, false, false, false, "", {} };
 
 inline bool
 type_is_void(eolian_type_instance const& type)
@@ -148,6 +158,19 @@ type_is_class(eolian_type_instance const& type)
 {
    assert(!type.empty());
    return type_is_class(type.front());
+}
+
+inline bool
+type_binding_requires_optional(eolian_type const& type)
+{
+   return type.binding_requires_optional;
+}
+
+inline bool
+type_binding_requires_optional(eolian_type_instance const& type)
+{
+   assert(!type.empty());
+   return type_binding_requires_optional(type.front());
 }
 
 inline bool
@@ -212,6 +235,8 @@ type_is_callback(eolian_type_instance const& type_ins)
 
 struct eo_generator_options
 {
+   std::string header_decl_file_name;
+   std::string header_impl_file_name;
    includes_container_type cxx_headers;
    includes_container_type c_headers;
 };
@@ -256,6 +281,7 @@ struct eo_function
        regular_, class_
      };
    eo_function_type type;
+   eolian_scope scope;
    std::string name;
    std::string impl;
    eolian_type_instance ret;
@@ -265,6 +291,7 @@ struct eo_function
 
 struct eo_event
 {
+   eolian_scope scope;
    std::string name;
    std::string eo_name;
    //parameters_container_type params; // XXX desirable.

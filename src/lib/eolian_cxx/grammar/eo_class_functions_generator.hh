@@ -10,6 +10,7 @@
 #include "parameters_generator.hh"
 #include "type_generator.hh"
 #include "namespace_generator.hh"
+#include "eo_class_scope_guard_generator.hh"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -52,7 +53,7 @@ operator<<(std::ostream& out, function_declaration const& x)
 
    out << reinterpret_type(func.ret) << " " << func.name << "("
        << parameters_declaration(func.params)
-       << (is_static ? ");" : ") const;") << endl << endl;
+       << (is_static ? ");" : ") const;") << endl;
 
    return out;
 }
@@ -91,10 +92,7 @@ operator<<(std::ostream& out, function_definition const& x)
      out << tab(1)
          << func.ret.front().native << " _tmp_ret;" << endl;
 
-   if (!is_static)
-      out << callbacks_heap_alloc("_concrete_eo_ptr()", func.params, 1);
-
-   // TODO : register free callback for static methods
+   out << callbacks_heap_alloc("_concrete_eo_ptr()", func.params, is_static, 1);
 
    out << tab(1) << "eo_do("
        << (is_static ? "_eo_class(), " : "_concrete_eo_ptr(), ")
@@ -103,7 +101,7 @@ operator<<(std::ostream& out, function_definition const& x)
    if (!function_is_void(func))
      out << tab(1) << "return " << to_cxx(func.ret, "_tmp_ret") << ";" << endl;
 
-   out << "}" << endl << endl;
+   out << "}" << endl;
    return out;
 }
 
@@ -120,7 +118,9 @@ operator<<(std::ostream& out, function_declarations const& x)
 {
    for (eo_function const& f : x._cls.functions)
      {
-        out << function_declaration(x._cls, f) << endl;
+        out << scope_guard_head(x._cls, f)
+            << function_declaration(x._cls, f)
+            << scope_guard_tail(x._cls, f) << endl;
      }
    return out;
 }
@@ -140,7 +140,9 @@ operator<<(std::ostream& out, function_definitions const& x)
 {
    for (eo_function const& f : x._cls.functions)
      {
-        out << function_definition(x._cls, f, x._concrete) << endl;
+        out << scope_guard_head(x._cls, f)
+            << function_definition(x._cls, f, x._concrete)
+            << scope_guard_tail(x._cls, f) << endl;
      }
    return out;
 }

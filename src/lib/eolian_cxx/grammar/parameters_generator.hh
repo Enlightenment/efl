@@ -106,30 +106,6 @@ operator<<(std::ostream& out, callback_tmp const& x)
 }
 
 struct
-callback_parameter_heap_alloc
-{
-   eolian_type_instance const& _type;
-   std::string const& _name;
-   int _tab;
-   callback_parameter_heap_alloc(eolian_type_instance const& type, std::string const& name, int tab)
-     : _type(type)
-     , _name(name)
-     , _tab(tab)
-   {}
-};
-
-inline std::ostream&
-operator<<(std::ostream& out, callback_parameter_heap_alloc const& x)
-{
-   out << tab(x._tab) << parameter_remove_reference_typedef(x._type, x._name) << endl
-       << tab(x._tab) << parameter_no_ref_type(x._type, x._name) << "* "
-       << callback_tmp(x._name) << " = new "
-       << parameter_no_ref_type(x._type, x._name) << "(std::forward<"
-       << template_parameter_type(x._type, x._name) << ">(" << x._name << "));" << endl;
-   return out;
-}
-
-struct
 callback_parameter_free_ev_add
 {
    std::string const& _eo_raw_expr;
@@ -157,10 +133,12 @@ callbacks_heap_alloc
 {
    std::string const& _eo_raw_expr;
    parameters_container_type const& _params;
+   bool _is_static_func;
    int _tab;
-   callbacks_heap_alloc(std::string const& eo_raw_expr, parameters_container_type const& params, int tab)
+   callbacks_heap_alloc(std::string const& eo_raw_expr, parameters_container_type const& params, bool is_static_func, int tab)
      : _eo_raw_expr(eo_raw_expr)
      , _params(params)
+     , _is_static_func(is_static_func)
      , _tab(tab)
    {}
 };
@@ -171,12 +149,30 @@ operator<<(std::ostream& out, callbacks_heap_alloc const& x)
    auto first = x._params.cbegin(), last = x._params.cend();
    for (auto it = first; it != last; ++it)
      {
-        if (type_is_callback((*it).type) && it+1 != last)
+        auto type = (*it).type;
+        auto name = (*it).name;
+        if (type_is_callback(type) && it+1 != last)
           {
-             out << callback_parameter_heap_alloc((*it).type, (*it).name, x._tab)
-                 << tab(x._tab)
-                 << callback_parameter_free_ev_add(x._eo_raw_expr, (*it).type, (*it).name)
-                 << endl << endl;
+
+             out << tab(x._tab) << parameter_remove_reference_typedef(type, name) << endl
+                 << tab(x._tab) << parameter_no_ref_type(type, name) << "* "
+                 << callback_tmp(name) << " = ";
+
+            if (!x._is_static_func)
+              {
+                 out << "new " << parameter_no_ref_type(type, name)
+                     << "(std::forward< "
+                     << template_parameter_type(type, name) << " >(" << name << "));" << endl
+                     << tab(x._tab)
+                     << callback_parameter_free_ev_add(x._eo_raw_expr, type, name)
+                     << endl << endl;
+              }
+            else
+              {
+                 out << "::efl::eolian::alloc_static_callback< "
+                     << parameter_no_ref_type(type, name) << " >(std::forward< "
+                     << template_parameter_type(type, name) << " >(" << name << "));" << endl;
+              }
              ++it; // skip next.
           }
      }
@@ -268,6 +264,56 @@ operator<<(std::ostream& out, parameters_c_declaration const& x)
         if (it != first)
           out << ", ";
         out << c_type(it->type) << " " << (*it).name;
+     }
+   return out;
+}
+
+struct
+parameters_names
+{
+   parameters_container_type const& _params;
+   parameters_names(parameters_container_type const& params)
+     : _params(params)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, parameters_names const& x)
+{
+   auto first = x._params.cbegin(),
+        last = x._params.cend();
+   for (auto it = first; it != last; ++it)
+     {
+        if (it != first)
+          out << ", ";
+
+        out << it->name;
+
+        if (type_is_callback(it->type) && it+1 != last)
+          ++it; // skip next.
+     }
+   return out;
+}
+
+struct
+parameters_c_names
+{
+   parameters_container_type const& _params;
+   parameters_c_names(parameters_container_type const& params)
+     : _params(params)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, parameters_c_names const& x)
+{
+   auto first = x._params.cbegin(),
+        last = x._params.cend();
+   for (auto it = first; it != last; ++it)
+     {
+        if (it != first)
+          out << ", ";
+        out << it->name;
      }
    return out;
 }

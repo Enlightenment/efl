@@ -32,6 +32,7 @@ tags
 *.eo.h
 *.eo.legacy.h
 *.eo.hh
+*.eo.impl.hh
 *.eo.lua
 *.luac
 .dir-locals.el

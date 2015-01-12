@@ -22,6 +22,12 @@ lib/ecore/Ecore.eo.hh: $(generated_ecore_cxx_bindings)
 
 generated_ecore_cxx_all = \
 	$(generated_ecore_cxx_bindings) \
+	lib/ecore/ecore_poller.eo.impl.hh \
+	lib/ecore/ecore_job.eo.impl.hh \
+	lib/ecore/ecore_idler.eo.impl.hh \
+	lib/ecore/ecore_idle_exiter.eo.impl.hh \
+	lib/ecore/ecore_animator.eo.impl.hh \
+	lib/ecore/ecore_parent.eo.impl.hh \
 	lib/ecore/Ecore.eo.hh
 
 CLEANFILES += $(generated_ecore_cxx_all)

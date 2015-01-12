@@ -4,6 +4,7 @@
 
 #include <string>
 #include <tuple>
+#include <utility>
 #include <type_traits>
 
 #include <Eina.hh>
@@ -25,6 +26,20 @@ to_c(eina::optional<std::string> const& x)
    if (!x)
      return nullptr;
    return x->c_str();
+}
+
+inline const char*
+to_c(eina::string_view const& x)
+{
+   return x.data();
+}
+
+inline const char*
+to_c(eina::optional<eina::string_view> const& x)
+{
+   if (!x)
+     return nullptr;
+   return x->data();
 }
 
 inline const char*
@@ -196,6 +211,20 @@ to_cxx(const char* x, std::tuple<std::false_type>, tag<eina::optional<std::strin
    return std::string(x);
 }
 
+inline eina::string_view
+to_cxx(const char* x, std::tuple<std::false_type>, tag<eina::string_view>)
+{
+   return eina::string_view(x);
+}
+
+inline eina::optional<eina::string_view>
+to_cxx(const char* x, std::tuple<std::false_type>, tag<eina::optional<eina::string_view> >)
+{
+   if (!x)
+     return nullptr;
+   return eina::string_view(x);
+}
+
 template <typename T, typename Enable = void>
 struct traits
 {
@@ -212,6 +241,13 @@ struct traits
 template <typename T>
 struct traits
  <T, typename std::enable_if<std::is_base_of<std::basic_string<char>, T>::value>::type>
+{
+   typedef const char* type;
+};
+
+template <typename T>
+struct traits
+ <T, typename std::enable_if<std::is_base_of<::efl::eina::basic_string_view<char>, T>::value>::type>
 {
    typedef const char* type;
 };
@@ -405,6 +441,22 @@ Eina_Bool free_callback_calback(void* data, Eo* obj EINA_UNUSED
 {
    delete (F*) data;
    return EO_CALLBACK_CONTINUE;
+}
+
+template <typename F>
+inline
+std::vector<F>& get_static_callback_vector()
+{
+   static std::vector<F> vec;
+   return vec;
+}
+
+template <typename F>
+inline
+F* alloc_static_callback(F&& f)
+{
+   get_static_callback_vector<F>().push_back(std::forward<F>(f));
+   return &(get_static_callback_vector<F>().back());
 }
 
 } } // namespace efl { namespace eolian {

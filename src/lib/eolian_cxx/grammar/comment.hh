@@ -19,15 +19,17 @@ struct comment
 {
    std::string _doc;
    int _tab;
-   comment(std::string const& doc, int tab = 0)
-     : _doc(doc), _tab(tab)
+   std::string _if_empty;
+   comment(std::string const& doc, int tab = 0, std::string const& if_empty = "")
+     : _doc(doc), _tab(tab), _if_empty(if_empty)
    {}
 };
 
 inline std::ostream&
 operator<<(std::ostream& out, comment const& x)
 {
-   std::istringstream ss(x._doc);
+   std::string const& doc = !x._doc.empty() ? x._doc : x._if_empty;
+   std::istringstream ss(doc);
    std::string line;
    while(std::getline(ss, line))
      {

@@ -30,9 +30,10 @@ _ns_as_prefix(eo_class const& cls)
 struct inheritance_operation
 {
    eo_class const& _cls;
+   eo_function const& _func;
    functions_container_type::size_type _idx;
-   inheritance_operation(eo_class const& cls, functions_container_type::size_type idx)
-     : _cls(cls), _idx(idx)
+   inheritance_operation(eo_class const& cls, eo_function const& func, functions_container_type::size_type idx)
+     : _cls(cls), _func(func), _idx(idx)
    {}
 };
 
@@ -40,7 +41,7 @@ inline std::ostream&
 operator<<(std::ostream& out, inheritance_operation const& x)
 {
    assert(x._idx < x._cls.functions.size());
-   eo_function const& func = x._cls.functions[x._idx];
+   eo_function const& func = x._func;
    out << tab(1)
        << "ops[" << x._idx << "].func = reinterpret_cast<void*>(& ::"
        << _ns_as_prefix(x._cls) << "_"
@@ -74,17 +75,30 @@ operator<<(std::ostream& out, inheritance_operations_description const& x)
        << ", Eo_Op_Description* ops)" << endl
        << "{" << endl
        << tab(1) << "(void)ops;" << endl;
-   functions_container_type::size_type n_ops = x._cls.functions.size();
-   for (functions_container_type::size_type i=0; i < n_ops; ++i)
+
+   auto funcs = x._cls.functions;
+   auto part = std::stable_partition(funcs.begin(), funcs.end(), [](eo_function const& f){ return f.scope == eolian_scope::public_; });
+
+   functions_container_type::size_type op_idx = 0;
+   for (auto it = funcs.begin(); it != part; ++it, ++op_idx)
      {
-        out << inheritance_operation(x._cls, i);
+        out << inheritance_operation(x._cls, *it, op_idx);
+     }
+
+   if (part != funcs.end())
+     {
+        out << scope_guard_head(x._cls, *part);
+        for (auto it = part; it != funcs.end(); ++it, ++op_idx)
+          out << inheritance_operation(x._cls, *it, op_idx);
+        out << scope_guard_tail(x._cls, *part);
      }
 
    for (std::string const& parent : x._cls.parents)
      {
         out << tab(1)
             << "initialize_operation_description<T>(::efl::eo::detail::tag<::"
-            << parent << ">(), &ops[" << x._cls.functions.size() << s << "]);" << endl;
+            << parent << ">(), &ops[operation_description_class_size< "
+            << full_name(x._cls) << " >::value" << s << "]);" << endl;
 
         s += " + operation_description_class_size<::" + parent + ">::value";
      }
@@ -110,6 +124,9 @@ operator<<(std::ostream& out, inheritance_wrappers const& x)
    for (it = first; it != last; ++it)
      {
         eo_function const& func = *it;
+
+        out << scope_guard_head(x._cls, func);
+
         out << "template <typename T>" << endl
             << reinterpret_type(func.ret) << " "
             << _ns_as_prefix(x._cls) << "_"
@@ -140,7 +157,9 @@ operator<<(std::ostream& out, inheritance_wrappers const& x)
         if (!function_is_void(func))
           out << tab(1) << "return _tmp_ret;" << endl;
 
-        out << "}" << endl << endl;
+        out << "}" << endl;
+
+        out << scope_guard_tail(x._cls, func) << endl;
      }
    return out;
 }
@@ -148,8 +167,9 @@ operator<<(std::ostream& out, inheritance_wrappers const& x)
 struct inheritance_base_operations_size
 {
    eo_class const& _cls;
-   inheritance_base_operations_size(eo_class const& cls)
-     : _cls(cls)
+   functions_container_type const& _funcs;
+   inheritance_base_operations_size(eo_class const& cls, functions_container_type const& funcs)
+     : _cls(cls), _funcs(funcs)
    {}
 };
 
@@ -160,8 +180,8 @@ operator<<(std::ostream& out, inheritance_base_operations_size const& x)
        << endl << "struct operation_description_class_size< "
        << full_name(x._cls) << " >" << endl
        << "{" << endl
-       << tab(1) << "static const int value = "
-       << x._cls.functions.size();
+       << tab(1) << "static constexpr int value = "
+       << x._funcs.size();
 
    for (std::string const& parent : x._cls.parents)
      {
@@ -175,6 +195,27 @@ operator<<(std::ostream& out, inheritance_base_operations_size const& x)
    return out;
 }
 
+struct inheritance_base_operations_size_scopes
+{
+   eo_class const& _cls;
+   inheritance_base_operations_size_scopes(eo_class const& cls)
+     : _cls(cls)
+   {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, inheritance_base_operations_size_scopes const& x)
+{
+   auto funcs = x._cls.functions;
+   auto part = std::stable_partition(funcs.begin(), funcs.end(), [](eo_function const& f){ return f.scope == eolian_scope::public_; });
+
+   out << "#ifdef " << name_upper(x._cls) << "_PROTECTED" << endl
+       << inheritance_base_operations_size(x._cls, funcs)
+       << "#else" << endl
+       << inheritance_base_operations_size(x._cls, {funcs.begin(), part})
+       << "#endif" << endl << endl;
+   return out;
+}
 
 struct inheritance_base_operations_extensions
 {
@@ -230,7 +271,7 @@ operator<<(std::ostream& out, inheritance_base_operations_function const& x)
    if (!is_void)
      out << tab(3) << func.ret.front().native << " _tmp_ret = {};"  << endl;
 
-   out << callbacks_heap_alloc("dynamic_cast<T*>(this)->_eo_ptr()", func.params, 3)
+   out << callbacks_heap_alloc("dynamic_cast<T*>(this)->_eo_ptr()", func.params, function_is_static(x._func), 3)
        << endl;
 
    out << tab(3)
@@ -241,7 +282,7 @@ operator<<(std::ostream& out, inheritance_base_operations_function const& x)
    if (!is_void)
      out << tab(4) << "return " << to_cxx(func.ret, "_tmp_ret") << ";" << endl;
 
-   return out << tab(2) << "}" << endl << endl;
+   return out << tab(2) << "}" << endl;
 }
 
 struct inheritance_base_operations
@@ -265,7 +306,9 @@ operator<<(std::ostream& out, inheritance_base_operations const& x)
      last = x._cls.functions.end();
    for (it = first; it != last; ++it)
      {
+        out << scope_guard_head(x._cls, *it);
         out << inheritance_base_operations_function(x._cls, *it);
+        out << scope_guard_tail(x._cls, *it) << endl;
      }
    out << tab(1) << "};" << endl
        << "};" << endl << endl;
@@ -365,7 +408,7 @@ eo_inheritance_detail_generator(std::ostream& out, eo_class const& cls)
      out << inheritance_wrappers(cls)
          << "namespace efl { namespace eo { namespace detail {" << endl << endl
          << inheritance_base_operations(cls) << endl
-         << inheritance_base_operations_size(cls)
+         << inheritance_base_operations_size_scopes(cls)
          << inheritance_operations_description(cls)
          << inheritance_call_constructors(cls)
          << inheritance_eo_class_getter(cls)

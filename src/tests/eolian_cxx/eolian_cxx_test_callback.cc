@@ -109,10 +109,23 @@ START_TEST(eolian_cxx_test_callback_event_del)
 }
 END_TEST
 
+START_TEST(eolian_cxx_test_global_callback)
+{
+  efl::eo::eo_init i;
+
+  bool called = false;
+
+  callback::test_global_callbacks(std::bind([&called] { called = true; }));
+
+  fail_if(!called);
+}
+END_TEST
+
 void
 eolian_cxx_test_callback(TCase* tc)
 {
    tcase_add_test(tc, eolian_cxx_test_callback_method);
    tcase_add_test(tc, eolian_cxx_test_callback_event_add);
    tcase_add_test(tc, eolian_cxx_test_callback_event_del);
+   tcase_add_test(tc, eolian_cxx_test_global_callback);
 }

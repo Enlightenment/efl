@@ -15,6 +15,8 @@ lib/edje/Edje.hh: $(generated_edje_cxx_bindings)
 
 generated_edje_cxx_all = \
 	$(generated_edje_cxx_bindings) \
+	lib/edje/edje_object.eo.impl.hh \
+	lib/edje/edje_edit.eo.impl.hh \
 	lib/edje/Edje.hh
 
 CLEANFILES += $(generated_edje_cxx_all)

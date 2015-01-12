@@ -46,6 +46,21 @@ operator<<(std::ostream& out, abstract_full_name const& x)
    return out << abstract_namespace << full_name(x._cls);
 }
 
+struct name_upper
+{
+   eo_class const& _cls;
+   name_upper(eo_class const& cls)
+     : _cls(cls) {}
+};
+
+inline std::ostream&
+operator<<(std::ostream& out, name_upper const& x)
+{
+   std::string key = x._cls.name;
+   std::transform(key.begin(), key.end(), key.begin(), ::toupper);
+   return out << key;
+}
+
 struct c_type
 {
    eolian_type_instance const& _list;
@@ -91,10 +106,13 @@ operator<<(std::ostream& out, efl::eolian::grammar::reinterpret_type const& x)
      }
    assert(!res.empty());
 
-   if (x._type.is_out && type_is_binding(x._type.front()))
-     res += "*";
-   else if (!x._type.is_nonull && x._type.front().is_class)
-     res = "::efl::eina::optional< " + res + " >";
+   if (type_is_binding(x._type.front()))
+     {
+        if (x._type.is_out)
+          res += "*";
+        else if (!x._type.is_nonull && x._type.front().binding_requires_optional)
+          res = "::efl::eina::optional< " + res + " >";
+     }
 
    return out << res;
 }

@@ -5,6 +5,7 @@
 #include <iosfwd>
 
 #include "type_generator.hh"
+#include "eo_class_scope_guard_generator.hh"
 #include "tab.hh"
 #include "comment.hh"
 
@@ -42,7 +43,8 @@ struct event_callback_add
 inline std::ostream&
 operator<<(std::ostream& out, event_callback_add const& x)
 {
-   out << tab(1) << "template <typename F>" << endl
+   out << comment(x._event.comment, 1)
+       << tab(1) << "template <typename F>" << endl
        << tab(1) << "::efl::eo::signal_connection" << endl
        << tab(1) << "callback_" << x._event.name << "_add(F && callback_," << endl
        << tab(8) << "::efl::eo::callback_priority priority_ =" << endl
@@ -75,7 +77,8 @@ struct event_callback_call
 inline std::ostream&
 operator<<(std::ostream& out, event_callback_call const& x)
 {
-   out << tab(1) << "template <typename T>" << endl
+   out << comment(x._event.comment, 1)
+       << tab(1) << "template <typename T>" << endl
        << tab(1) << "void" << endl
        << tab(1) << "callback_" << x._event.name << "_call(T* info)" << endl
        << tab(1) << "{" << endl
@@ -99,8 +102,12 @@ operator<<(std::ostream& out, events const& x)
 {
    for (eo_event const& e : x._events)
      {
+        out << scope_guard_head(x._cls, e);
+
         out << event_callback_add(e, x._cls, x._add_cast_to_t) << endl
            << event_callback_call(e, x._add_cast_to_t);
+
+        out << scope_guard_tail(x._cls, e) << endl;
      }
    out << endl;
    return out;

@@ -21,6 +21,12 @@
 #endif
 #endif
 
+#if !defined(EFL_DOXYGEN) && !defined(EO_CXX_INHERIT)
+# define EO_CXX_INHERIT(name)   ::eo_cxx::name
+#elif !defined(EO_CXX_INHERIT)
+# define EO_CXX_INHERIT(name)   ::name
+#endif
+
 namespace efl { namespace eo {
 
 /// @addtogroup Efl_Cxx_API

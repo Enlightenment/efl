@@ -48,5 +48,11 @@ static void _callback_twocallback(Eo *obj EINA_UNUSED, Callback_Data *pd EINA_UN
   cb(data);
 }
 
+static void _callback_test_global_callbacks(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED
+                                            , Ecore_Cb cb, void *data)
+{
+  cb(data);
+}
+
 #include "callback.eo.c"
 

@@ -119,30 +119,58 @@ generate(const Eolian_Class& klass, eolian_cxx::options_type const& opts)
 {
    efl::eolian::eo_class cls = eolian_cxx::convert_eolian_class(klass);
    efl::eolian::eo_generator_options gen_opts = generator_options(klass);
-   std::string outname = opts.out_file.empty() ? (class_base_file(klass) + ".hh") : opts.out_file;
+   std::string header_decl_file_name = opts.out_file.empty() ? (class_base_file(klass) + ".hh") : opts.out_file;
+
+   std::string header_impl_file_name = header_decl_file_name;
+   std::size_t dot_pos = header_impl_file_name.rfind(".hh");
+   if (dot_pos != std::string::npos)
+     header_impl_file_name.insert(dot_pos, ".impl");
+   else
+     header_impl_file_name.insert(header_impl_file_name.size(), ".impl");
+
+   std::size_t slash_pos = header_decl_file_name.rfind('/');
+   gen_opts.header_decl_file_name = (slash_pos == std::string::npos) ?
+                                    header_decl_file_name :
+                                    header_decl_file_name.substr(slash_pos+1);
+
+   slash_pos = header_impl_file_name.rfind('/');
+   gen_opts.header_impl_file_name = (slash_pos == std::string::npos) ?
+                                    header_impl_file_name :
+                                    header_impl_file_name.substr(slash_pos+1);
+
    if (!opts.out_dir.empty())
      {
-        outname = opts.out_dir + "/" + outname;
+        header_decl_file_name = opts.out_dir + "/" + header_decl_file_name;
+        header_impl_file_name = opts.out_dir + "/" + header_impl_file_name;
      }
    if(opts.out_file == "-")
      {
-        efl::eolian::generate(std::cout, cls, gen_opts);
+        efl::eolian::generate(std::cout, std::cout, cls, gen_opts);
      }
    else
      {
-        std::ofstream outfile;
-        outfile.open(outname);
-        if (outfile.good())
-          {
-             efl::eolian::generate(outfile, cls, gen_opts);
-             outfile.close();
-          }
-        else
+        std::ofstream header_decl;
+        header_decl.open(header_decl_file_name);
+        if (!header_decl.good())
           {
              EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
-               << "Can't open output file: " << outname << std::endl;
+               << "Can't open output file: " << header_decl_file_name << std::endl;
              return false;
           }
+
+        std::ofstream header_impl;
+        header_impl.open(header_impl_file_name);
+        if (!header_impl.good())
+          {
+             EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+               << "Can't open output file: " << header_impl_file_name << std::endl;
+             return false;
+          }
+
+        efl::eolian::generate(header_decl, header_impl, cls, gen_opts);
+
+        header_decl.close();
+        header_impl.close();
      }
    return true;
 }
