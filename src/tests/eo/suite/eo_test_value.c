@@ -33,11 +33,11 @@ START_TEST(eo_value)
    eina_value_get(&val2, &eo_val);
    eina_value_pget(&eo_val, &tmpp);
    fail_if(!tmpp);
-   eina_value_free(&val2);
+   eina_value_flush(&val2);
 
    eina_value_setup(&val2, EINA_VALUE_TYPE_INT);
    fail_if(eina_value_convert(&eo_dbg_info->value, &val2));
-   eina_value_free(&val2);
+   eina_value_flush(&val2);
 
    free(str);
    free(str2);
