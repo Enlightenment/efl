@@ -33,7 +33,7 @@ EAPI Evas_Object          *elm_win_add(Evas_Object *parent, const char *name, El
  *
  * @since 1.13
  */
-EAPI Evas_Object          *elm_win_fake(Ecore_Evas *ee);
+EAPI Evas_Object          *elm_win_fake_add(Ecore_Evas *ee);
 
 /**
  * Adds a window object with standard setup

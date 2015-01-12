@@ -2918,7 +2918,7 @@ elm_win_add(Evas_Object *parent,
 }
 
 EAPI Evas_Object *
-elm_win_fake(Ecore_Evas *ee)
+elm_win_fake_add(Ecore_Evas *ee)
 {
    return eo_add(MY_CLASS, NULL, elm_obj_win_constructor(NULL, ELM_WIN_FAKE, ee));
 }
