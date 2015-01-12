@@ -4,6 +4,7 @@
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
+#define ELM_WIN_PROTECTED
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -2913,14 +2914,16 @@ elm_win_add(Evas_Object *parent,
             const char *name,
             Elm_Win_Type type)
 {
-   Evas_Object *obj = eo_add(MY_CLASS, parent, elm_obj_win_constructor(name, type, NULL));
+   Evas_Object *obj = eo_add(MY_CLASS, parent, elm_obj_win_constructor(name, type));
    return obj;
 }
 
 EAPI Evas_Object *
 elm_win_fake_add(Ecore_Evas *ee)
 {
-   return eo_add(MY_CLASS, NULL, elm_obj_win_constructor(NULL, ELM_WIN_FAKE, ee));
+   return eo_add(MY_CLASS, NULL,
+         elm_obj_win_fake_canvas_set(ee),
+         elm_obj_win_constructor(NULL, ELM_WIN_FAKE));
 }
 
 static void
@@ -3019,7 +3022,7 @@ _accel_is_gl(void)
 }
 
 EOLIAN static void
-_elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type type, Ecore_Evas *oee)
+_elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type type)
 {
    sd->obj = obj; // in ctor
 
@@ -3039,7 +3042,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
    switch (type)
      {
       case ELM_WIN_FAKE:
-        tmp_sd.ee = oee;
+        tmp_sd.ee = sd->ee;
         break;
       case ELM_WIN_INLINED_IMAGE:
         if (!parent) break;
@@ -3585,6 +3588,12 @@ EOLIAN static void
 _elm_win_eo_base_constructor(Eo *obj EINA_UNUSED, Elm_Win_Data *_pd EINA_UNUSED)
 {
    /* Do nothing. */
+}
+
+EOLIAN static void
+_elm_win_fake_canvas_set(Eo *obj EINA_UNUSED, Elm_Win_Data *pd, Ecore_Evas *oee)
+{
+   pd->ee = oee;
 }
 
 EOLIAN static Elm_Win_Type

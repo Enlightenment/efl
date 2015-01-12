@@ -1185,6 +1185,14 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             void *trap_data; /*@ The trap data of the window */
          }
       }
+      fake_canvas @protected {
+           set {
+                /*@ Internal. Used to completent the fake window type. */
+           }
+           values {
+                Ecore_Evas *oee;
+           }
+      }
    }
    methods {
       constructor {
@@ -1193,7 +1201,6 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
          params {
             @in const(char)* name;
             @in Elm_Win_Type type;
-            @in Ecore_Evas *oee;
          }
       }
       wm_manual_rotation_done_manual {
