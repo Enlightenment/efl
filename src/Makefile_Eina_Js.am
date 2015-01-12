@@ -38,7 +38,7 @@ EINA_JS_TEST_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
 @EINA_JS_CFLAGS@
 
 installed_einajsheadersdir = $(includedir)/eina-js-@VMAJ@
-dist_installed_einacxxheaders_DATA = \
+dist_installed_einajsheaders_DATA = \
 bindings/eina_js/eina_js_accessor.hh \
 bindings/eina_js/eina_js_array.hh \
 bindings/eina_js/eina_js_compatibility.hh \
