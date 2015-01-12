@@ -61,7 +61,7 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-#if defined(HAVE_SYS_EPOLL_H) && !defined(USE_LIBUV)
+#if defined(HAVE_SYS_EPOLL_H) && !defined(HAVE_LIBUV)
 # define HAVE_EPOLL   1
 # include <sys/epoll.h>
 #else
@@ -157,8 +157,10 @@ timerfd_settime(int                      fd EINA_UNUSED,
 # include <glib.h>
 #endif
 
-#ifdef USE_LIBUV
-#include EINA_STRINGIZE(UV_INCLUDE_HEADER)
+#ifdef HAVE_LIBUV
+#define ECORE_STRINGIZE_IMPL(x) #x
+#define ECORE_STRINGIZE(x) ECORE_STRINGIZE_IMPL(x)
+#include ECORE_STRINGIZE(UV_INCLUDE_HEADER)
 #include <dlfcn.h>
 static uv_prepare_t _ecore_main_uv_prepare;
 static uv_check_t _ecore_main_uv_check;
@@ -222,7 +224,7 @@ struct _Ecore_Fd_Handler
 #if defined(USE_G_MAIN_LOOP)
    GPollFD                gfd;
 #endif
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
    uv_poll_t              uv_handle;
 #endif
 };
@@ -242,7 +244,7 @@ struct _Ecore_Win32_Handler
 GENERIC_ALLOC_SIZE_DECLARE(Ecore_Win32_Handler);
 #endif
 
-#if !defined(USE_G_MAIN_LOOP) && !defined(USE_LIBUV)
+#if !defined(USE_G_MAIN_LOOP) && !defined(HAVE_LIBUV)
 static int  _ecore_main_select(double timeout);
 #endif
 static void _ecore_main_prepare_handlers(void);
@@ -425,7 +427,7 @@ _gfd_events_from_fdh(Ecore_Fd_Handler *fdh)
 
 #endif
 
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
 static void
 _ecore_main_uv_poll_cb(uv_poll_t* handle, int status, int events)
 {
@@ -459,7 +461,7 @@ _ecore_main_fdh_poll_add(Ecore_Fd_Handler *fdh)
    DBG("_ecore_main_fdh_poll_add");
    int r = 0;
 
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
    if(!_dl_uv_run)
 #endif
      {
@@ -469,11 +471,11 @@ _ecore_main_fdh_poll_add(Ecore_Fd_Handler *fdh)
                                 _ecore_poll_events_from_fdh(fdh), fdh);
          }
      }
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
    else
 #endif
      {
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
        if(!fdh->file)
          {
            DBG("_ecore_main_fdh_poll_add libuv socket %p", fdh);
@@ -510,7 +512,7 @@ _ecore_main_fdh_poll_add(Ecore_Fd_Handler *fdh)
 static inline void
 _ecore_main_fdh_poll_del(Ecore_Fd_Handler *fdh)
 {
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
    if(!_dl_uv_run)
 #endif
      {
@@ -538,11 +540,11 @@ _ecore_main_fdh_poll_del(Ecore_Fd_Handler *fdh)
              }
          }
      }
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
    else
 #endif
      {
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
        DBG("_ecore_main_fdh_poll_del libuv %p", fdh);
        _dl_uv_close(&fdh->uv_handle, 0);
        DBG("_ecore_main_fdh_poll_del libuv DONE");
@@ -561,7 +563,7 @@ _ecore_main_fdh_poll_modify(Ecore_Fd_Handler *fdh)
 {
    DBG("_ecore_main_fdh_poll_modify %p", fdh);
    int r = 0;
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
    if(!_dl_uv_run)
 #endif
      {
@@ -577,11 +579,11 @@ _ecore_main_fdh_poll_modify(Ecore_Fd_Handler *fdh)
            r = epoll_ctl(efd, EPOLL_CTL_MOD, fdh->fd, &ev);
          }
      }
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
    else
 #endif
      {
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
         abort();
 #elif defined(USE_G_MAIN_LOOP)
         fdh->gfd.fd = fdh->fd;
@@ -963,9 +965,9 @@ detect_time_changes_stop(void)
 #endif
 }
 
-//static void _ecore_main_loop_idler_cb(uv_idle_t* handle EINA_UNUSED);
+static void _ecore_main_loop_idler_cb(uv_idle_t* handle EINA_UNUSED);
 
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
 static
 void _ecore_main_loop_timer_run(uv_timer_t* timer)
 {
@@ -1051,7 +1053,7 @@ void _ecore_main_loop_timer_run(uv_timer_t* timer)
     
   DBG("exit\n");
 }
-//static void _ecore_main_loop_uv_prepare(uv_prepare_t* handle);
+static void _ecore_main_loop_uv_prepare(uv_prepare_t* handle);
 
 static void
 _ecore_main_loop_idler_cb(uv_idle_t* handle EINA_UNUSED)
@@ -1169,11 +1171,11 @@ _ecore_main_loop_init(void)
                          _ecore_poll_events_from_fdh(fdh), fdh);
         _ecore_main_fdh_poll_add(fdh);
      }
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
    {
      fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
      DBG("loading lib uv");
-#ifdef USE_NODEJS
+#ifdef HAVE_NODEJS
      void* lib = dlopen(NULL, RTLD_LAZY);
      fprintf(stderr, "ecore_init %s() %s:%d\n", __func__, __FILE__, __LINE__); fflush(stderr);
 #else
@@ -1306,7 +1308,7 @@ _ecore_main_loop_shutdown(void)
         timer_fd = -1;
      }
 
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
    if(_dl_uv_run)
      {
        DBG("_ecore_main_loop_shutdown");
@@ -1340,7 +1342,7 @@ EAPI void
 ecore_main_loop_iterate(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
    if(!_dl_uv_run) {
 #endif
 #ifndef USE_G_MAIN_LOOP
@@ -1351,7 +1353,7 @@ ecore_main_loop_iterate(void)
 #else
    g_main_context_iteration(NULL, 0);
 #endif
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
    }
    else
      _dl_uv_run(_dl_uv_default_loop(), UV_RUN_ONCE | UV_RUN_NOWAIT);
@@ -1362,7 +1364,7 @@ EAPI int
 ecore_main_loop_iterate_may_block(int may_block)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
    if(!_dl_uv_run) {
 #endif
 #ifndef USE_G_MAIN_LOOP
@@ -1376,7 +1378,7 @@ in_main_loop--;
 #else
    return g_main_context_iteration(NULL, may_block);
 #endif
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
    }
    else
      _dl_uv_run(_dl_uv_default_loop(), may_block ? UV_RUN_ONCE | UV_RUN_NOWAIT : UV_RUN_ONCE);
@@ -1392,7 +1394,7 @@ ecore_main_loop_begin(void)
 #ifdef HAVE_SYSTEMD
    sd_notify(0, "READY=1");
 #endif
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
    if(!_dl_uv_run) {
 #endif
 #ifndef USE_G_MAIN_LOOP
@@ -1412,7 +1414,7 @@ ecore_main_loop_begin(void)
      }
    do_quit = 0;
 #endif
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
    }
    else
      {
@@ -1433,7 +1435,7 @@ ecore_main_loop_quit(void)
 #ifdef USE_G_MAIN_LOOP
    if (ecore_main_loop)
      g_main_loop_quit(ecore_main_loop);
-#elif defined(USE_LIBUV)
+#elif defined(HAVE_LIBUV)
    if(_dl_uv_run)
      _dl_uv_stop(_dl_uv_default_loop());
 #endif
@@ -2194,7 +2196,7 @@ _ecore_main_fd_handlers_buf_call(void)
    return ret;
 }
 
-#ifdef USE_LIBUV
+#ifdef HAVE_LIBUV
 static void
 _ecore_main_loop_uv_prepare(uv_prepare_t* handle EINA_UNUSED)
 {

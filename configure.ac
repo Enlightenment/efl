@@ -1014,6 +1014,11 @@ AC_DEFINE_IF([HAVE_JS], [test "x${want_js}" = "xnodejs" -o "x${want_js}" = "xlib
              [1], [Compiling bindings for JavaScript])
 AC_SUBST([HAVE_JS])
 
+AM_CONDITIONAL([HAVE_LIBUV], [test "x${want_js}" = "xnodejs" -o "x${want_js}" = "xlibuv"])
+AC_DEFINE_IF([HAVE_LIBUV], [test "x${want_js}" = "xnodejs" -o "x${want_js}" = "xlibuv"],
+             [1], [Compiling libuv event loop integration])
+AC_SUBST([HAVE_LIBUV])
+
 #### Eina JS
 EFL_LIB_START([Eina_Js])
 
@@ -2398,10 +2403,6 @@ fi
 
 if test "x${want_g_main_loop}" = "xyes" ; then
   AC_DEFINE([USE_G_MAIN_LOOP], [1], [Use g_main_loop in ecore])
-fi
-
-if test "x${want_libuv}" = "xyes" ; then
-  AC_DEFINE([USE_LIBUV], [1], [Use libuv in ecore])
 fi
 
 # not EFL_OPTIONAL_DEPEND_PKG() because it's only used for ecore examples
