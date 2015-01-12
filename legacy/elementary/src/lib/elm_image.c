@@ -1280,13 +1280,15 @@ _elm_image_orient_set(Eo *obj, Elm_Image_Data *sd, Elm_Image_Orient orient)
                 case ELM_IMAGE_ORIENT_0:
                   break;
                 case ELM_IMAGE_ORIENT_90:
-                  _elm_image_smart_rotate_270(sd);
+                  if (i == 0) _elm_image_smart_rotate_270(sd);
+                  else _elm_image_smart_rotate_90(sd);
                   break;
                 case ELM_IMAGE_ORIENT_180:
                   _elm_image_smart_rotate_180(sd);
                   break;
                 case ELM_IMAGE_ORIENT_270:
-                  _elm_image_smart_rotate_90(sd);
+                  if (i == 0) _elm_image_smart_rotate_90(sd);
+                  else _elm_image_smart_rotate_270(sd);
                   break;
                 case ELM_IMAGE_FLIP_HORIZONTAL:
                   _elm_image_flip_horizontal(sd);
