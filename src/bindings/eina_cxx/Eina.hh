@@ -13,6 +13,7 @@
 #include <eina_array.hh>
 #include <eina_list.hh>
 #include <eina_stringshare.hh>
+#include <eina_string_view.hh>
 #include <eina_error.hh>
 #include <eina_accessor.hh>
 #include <eina_thread.hh>

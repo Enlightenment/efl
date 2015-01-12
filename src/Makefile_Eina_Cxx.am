@@ -27,6 +27,7 @@ bindings/eina_cxx/eina_ptrlist.hh \
 bindings/eina_cxx/eina_range_types.hh \
 bindings/eina_cxx/eina_ref.hh \
 bindings/eina_cxx/eina_stringshare.hh \
+bindings/eina_cxx/eina_string_view.hh \
 bindings/eina_cxx/eina_thread.hh \
 bindings/eina_cxx/eina_throw.hh \
 bindings/eina_cxx/eina_tuple.hh \
