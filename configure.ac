@@ -1009,13 +1009,16 @@ AC_DEFINE_IF([HAVE_NODEJS], [test "x${want_js}" = "xnodejs"],
 AC_SUBST([want_js])
 AC_SUBST([HAVE_NODEJS])
 
+AM_CONDITIONAL([HAVE_JS], [test "x${want_js}" = "xnodejs" -o "x${want_js}" = "xlibv8" -o "x${want_js}" = "xlibuv"])
+AC_DEFINE([HAVE_JS], [test "x${want_js}" = "xnodejs" -o "x${want_js}" = "xlibv8" -o "x${want_js}" = "xlibuv"])
+AC_SUBST([HAVE_JS])
+
 #### Eina JS
 EFL_LIB_START([Eina_Js])
 
 AC_LANG_PUSH([C++])
 case "$want_js" in
      nodejs)
-        AM_CONDITIONAL([HAVE_JS], [1])
         AC_CHECK_HEADER([node/v8.h],
                         [
                           AC_DEFINE_UNQUOTED([V8_INCLUDE_HEADER], ["node/v8.h"], [Include header for libv8])
@@ -1024,22 +1027,16 @@ case "$want_js" in
                         [AC_MSG_ERROR([Could not find include headers from nodejs.])])
         ;;
      libv8)
-        AM_CONDITIONAL([HAVE_JS], [1])
         EFL_DEPEND_PKG([EINA_JS], [V8], [v8 >= 3.25.28])
-#        EFL_DEPEND_PKG([EO_JS], [V8], [v8 >= 3.25.28])
         AC_DEFINE_UNQUOTED([V8_INCLUDE_HEADER], ["v8.h"], [Include header for libv8])
         ;;
      libuv)
-        AM_CONDITIONAL([HAVE_JS], [1])
         EFL_DEPEND_PKG([EINA_JS], [V8], [v8 >= 3.25.28])
         EFL_DEPEND_PKG([EINA_JS], [UV], [v8 >= 1.1.0])
-#        EFL_DEPEND_PKG([EO_JS], [V8], [v8 >= 3.25.28])
-#        EFL_DEPEND_PKG([EO_JS], [UV], [v8 >= 1.1.0])
         AC_DEFINE_UNQUOTED([V8_INCLUDE_HEADER], ["v8.h"], [Include header for libv8])
         AC_DEFINE_UNQUOTED([UV_INCLUDE_HEADER], ["uv.h"], [Include header for libuv])
         ;;
      none)
-        AM_CONDITIONAL([HAVE_JS], [0])
         ;;
      *) AC_MSG_ERROR([Invalid javascript dependency (${want_js}): must be none, nodejs, libv8 or libuv]) ;;
 esac
