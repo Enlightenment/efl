@@ -324,96 +324,6 @@ _elm_image_resize_down_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
    return sd->resize_up;
 }
 
-static void
-_elm_image_flip_horizontal(Evas_Object *obj, Elm_Image_Data *sd)
-{
-   unsigned int *p1, *p2, tmp;
-   unsigned int *data;
-   int x, y, iw, ih;
-
-   evas_object_image_size_get(sd->img, &iw, &ih);
-   data = evas_object_image_data_get(sd->img, EINA_TRUE);
-
-   for (y = 0; y < ih; y++)
-     {
-        p1 = data + (y * iw);
-        p2 = data + ((y + 1) * iw) - 1;
-        for (x = 0; x < (iw >> 1); x++)
-          {
-             tmp = *p1;
-             *p1 = *p2;
-             *p2 = tmp;
-             p1++;
-             p2--;
-          }
-     }
-
-   evas_object_image_data_set(sd->img, data);
-   evas_object_image_data_update_add(sd->img, 0, 0, iw, ih);
-
-   _elm_image_internal_sizing_eval(obj, sd);
-}
-
-static void
-_elm_image_flip_vertical(Evas_Object *obj, Elm_Image_Data *sd)
-{
-   unsigned int *p1, *p2, tmp;
-   unsigned int *data;
-   int x, y, iw, ih;
-
-   evas_object_image_size_get(sd->img, &iw, &ih);
-   data = evas_object_image_data_get(sd->img, EINA_TRUE);
-
-   for (y = 0; y < (ih >> 1); y++)
-     {
-        p1 = data + (y * iw);
-        p2 = data + ((ih - 1 - y) * iw);
-        for (x = 0; x < iw; x++)
-          {
-             tmp = *p1;
-             *p1 = *p2;
-             *p2 = tmp;
-             p1++;
-             p2++;
-          }
-     }
-
-   evas_object_image_data_set(sd->img, data);
-   evas_object_image_data_update_add(sd->img, 0, 0, iw, ih);
-
-   _elm_image_internal_sizing_eval(obj, sd);
-}
-
-static void
-_elm_image_smart_rotate_180(Evas_Object *obj, Elm_Image_Data *sd)
-{
-   unsigned int *p1, *p2, tmp;
-   unsigned int *data;
-   int x, hw, iw, ih;
-
-   evas_object_image_size_get(sd->img, &iw, &ih);
-   data = evas_object_image_data_get(sd->img, 1);
-
-   hw = iw * ih;
-   x = (hw / 2);
-   p1 = data;
-   p2 = data + hw - 1;
-
-   for (; --x > 0; )
-     {
-        tmp = *p1;
-        *p1 = *p2;
-        *p2 = tmp;
-        p1++;
-        p2--;
-     }
-
-   evas_object_image_data_set(sd->img, data);
-   evas_object_image_data_update_add(sd->img, 0, 0, iw, ih);
-
-   _elm_image_internal_sizing_eval(obj, sd);
-}
-
 static Eina_Bool
 _elm_image_drag_n_drop_cb(void *elm_obj,
       Evas_Object *obj,
@@ -1090,116 +1000,316 @@ _elm_image_efl_image_load_size_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int 
    if (h) *h = sd->load_size;
 }
 
+static void
+_elm_image_flip_horizontal(Elm_Image_Data *sd)
+{
+   unsigned int *p1, *p2, tmp;
+   unsigned int *data;
+   int x, y, iw, ih;
+
+   evas_object_image_size_get(sd->img, &iw, &ih);
+   data = evas_object_image_data_get(sd->img, EINA_TRUE);
+
+   for (y = 0; y < ih; y++)
+     {
+        p1 = data + (y * iw);
+        p2 = data + ((y + 1) * iw) - 1;
+        for (x = 0; x < (iw >> 1); x++)
+          {
+             tmp = *p1;
+             *p1 = *p2;
+             *p2 = tmp;
+             p1++;
+             p2--;
+          }
+     }
+
+   evas_object_image_data_set(sd->img, data);
+}
+
+static void
+_elm_image_flip_vertical(Elm_Image_Data *sd)
+{
+   unsigned int *p1, *p2, tmp;
+   unsigned int *data;
+   int x, y, iw, ih;
+
+   evas_object_image_size_get(sd->img, &iw, &ih);
+   data = evas_object_image_data_get(sd->img, EINA_TRUE);
+
+   for (y = 0; y < (ih >> 1); y++)
+     {
+        p1 = data + (y * iw);
+        p2 = data + ((ih - 1 - y) * iw);
+        for (x = 0; x < iw; x++)
+          {
+             tmp = *p1;
+             *p1 = *p2;
+             *p2 = tmp;
+             p1++;
+             p2++;
+          }
+     }
+
+   evas_object_image_data_set(sd->img, data);
+}
+
+static void
+_elm_image_smart_rotate_180(Elm_Image_Data *sd)
+{
+   unsigned int *p1, *p2, tmp;
+   unsigned int *data;
+   int x, hw, iw, ih;
+
+   evas_object_image_size_get(sd->img, &iw, &ih);
+   data = evas_object_image_data_get(sd->img, 1);
+
+   hw = iw * ih;
+   x = (hw / 2);
+   p1 = data;
+   p2 = data + hw - 1;
+
+   for (; --x > 0; )
+     {
+        tmp = *p1;
+        *p1 = *p2;
+        *p2 = tmp;
+        p1++;
+        p2--;
+     }
+
+   evas_object_image_data_set(sd->img, data);
+}
+
+#define GETDAT(neww, newh) \
+   unsigned int *data, *data2; \
+   int iw, ih, w, h; \
+   evas_object_image_size_get(sd->img, &iw, &ih); \
+   data = evas_object_image_data_get(sd->img, EINA_FALSE); \
+   if (!data) return; \
+   data2 = malloc(iw * ih * sizeof(int)); \
+   if (!data2) { \
+      evas_object_image_data_set(sd->img, data); \
+      return; \
+   } \
+   memcpy(data2, data, iw * ih * sizeof(int)); \
+   evas_object_image_data_set(sd->img, data); \
+   w = neww; h = newh; \
+   evas_object_image_size_set(sd->img, w, h); \
+   data = evas_object_image_data_get(sd->img, EINA_TRUE); \
+   if (!data) return
+
+#define PUTDAT \
+   evas_object_image_data_set(sd->img, data); \
+   free(data2)
+
+#define TILE 32
+
+static void
+_elm_image_smart_rotate_90(Elm_Image_Data *sd)
+{
+   GETDAT(ih, iw);
+   int x, y, xx, yy, xx2, yy2;
+   unsigned int *src, *dst;
+
+   for (y = 0; y < ih; y += TILE)
+     {
+        yy2 = y + TILE;
+        if (yy2 > ih) yy2 = ih;
+        for (x = 0; x < iw; x += TILE)
+          {
+             xx2 = x + TILE;
+             if (xx2 > iw) xx2 = iw;
+             for (yy = y; yy < yy2; yy++)
+               {
+                  src = data2 + (yy * iw) + x;
+                  dst = data + (x * w) + (w - yy - 1);
+                  for (xx = x; xx < xx2; xx++)
+                    {
+                       *dst = *src;
+                       src++;
+                       dst += w;
+                    }
+               }
+          }
+     }
+   PUTDAT;
+}
+
+static void
+_elm_image_smart_rotate_270(Elm_Image_Data *sd)
+{
+   GETDAT(ih, iw);
+   int x, y, xx, yy, xx2, yy2;
+   unsigned int *src, *dst;
+
+   for (y = 0; y < ih; y += TILE)
+     {
+        yy2 = y + TILE;
+        if (yy2 > ih) yy2 = ih;
+        for (x = 0; x < iw; x += TILE)
+          {
+             xx2 = x + TILE;
+             if (xx2 > iw) xx2 = iw;
+             for (yy = y; yy < yy2; yy++)
+               {
+                  src = data2 + (yy * iw) + x;
+                  dst = data + ((h - x - 1) * w) + yy;
+                  for (xx = x; xx < xx2; xx++)
+                    {
+                       *dst = *src;
+                       src++;
+                       dst -= w;
+                    }
+               }
+          }
+     }
+   PUTDAT;
+}
+
+static void
+_elm_image_smart_flip_transverse(Elm_Image_Data *sd)
+{
+   GETDAT(ih, iw);
+   int x, y;
+   unsigned int *src, *dst;
+
+   src = data2;
+   for (y = 0; y < ih; y++)
+     {
+        dst = data + y;
+        for (x = 0; x < iw; x++)
+          {
+             *dst = *src;
+             src++;
+             dst += w;
+          }
+     }
+   PUTDAT;
+}
+
+static void
+_elm_image_smart_flip_transpose(Elm_Image_Data *sd)
+{
+   GETDAT(ih, iw);
+   int x, y;
+   unsigned int *src, *dst;
+
+   src = data2 + (iw * ih) - 1;
+   for (y = 0; y < ih; y++)
+     {
+        dst = data + y;
+        for (x = 0; x < iw; x++)
+          {
+             *dst = *src;
+             src--;
+             dst += w;
+          }
+     }
+   PUTDAT;
+}
+
 EOLIAN static void
 _elm_image_orient_set(Eo *obj, Elm_Image_Data *sd, Elm_Image_Orient orient)
 {
 
-   unsigned int *data, *data2 = NULL, *to, *from;
-   int x, y, w, hw, iw, ih;
+   int iw, ih;
 
-   if (sd->edje)
-     return;
+   if (sd->edje) return;
+   if (sd->orient == orient) return;
 
-   switch (orient)
+   evas_object_image_size_get(sd->img, &iw, &ih);
+   if ((sd->orient >= ELM_IMAGE_ORIENT_0) &&
+       (sd->orient <= ELM_IMAGE_ROTATE_270) &&
+       (orient >= ELM_IMAGE_ORIENT_0) &&
+       (orient <= ELM_IMAGE_ROTATE_270))
      {
-      case ELM_IMAGE_FLIP_HORIZONTAL:
-         _elm_image_flip_horizontal(obj, sd);
-         sd->orient = orient;
-         return;
-
-      case ELM_IMAGE_FLIP_VERTICAL:
-         _elm_image_flip_vertical(obj, sd);
-         sd->orient = orient;
-         return;
-
-      case ELM_IMAGE_ROTATE_180:
-         _elm_image_smart_rotate_180(obj, sd);
-         sd->orient = orient;
-         return;
-
-     case ELM_IMAGE_ORIENT_NONE:
+        // we are rotating from one anglee to another, so figure out delta
+        // and apply that delta
+        Elm_Image_Orient rot_delta = (4 + orient - sd->orient) % 4;
+        switch (rot_delta)
+          {
+           case ELM_IMAGE_ORIENT_0:
+             // this should never hppen
+             break;
+           case ELM_IMAGE_ORIENT_90:
+             _elm_image_smart_rotate_90(sd);
+             sd->orient = orient;
+             break;
+           case ELM_IMAGE_ORIENT_180:
+             _elm_image_smart_rotate_180(sd);
+             sd->orient = orient;
+             break;
+           case ELM_IMAGE_ORIENT_270:
+             _elm_image_smart_rotate_270(sd);
+             sd->orient = orient;
+             break;
+           default:
+             // this should never hppen
+             break;
+          }
+     }
+   else if (((sd->orient == ELM_IMAGE_ORIENT_NONE) &&
+             (orient == ELM_IMAGE_FLIP_HORIZONTAL)) ||
+            ((sd->orient == ELM_IMAGE_FLIP_HORIZONTAL) &&
+             (orient == ELM_IMAGE_ORIENT_NONE)))
+     {
+        // flip horizontally to get thew new orientation
+         _elm_image_flip_horizontal(sd);
         sd->orient = orient;
-        return;
+     }
+   else if (((sd->orient == ELM_IMAGE_ORIENT_NONE) &&
+             (orient == ELM_IMAGE_FLIP_VERTICAL)) ||
+            ((sd->orient == ELM_IMAGE_FLIP_VERTICAL) &&
+             (orient == ELM_IMAGE_ORIENT_NONE)))
+     {
+        // flipvertically to get thew new orientation
+         _elm_image_flip_vertical(sd);
+        sd->orient = orient;
+     }
+   else
+     {
+        // generic solution - undo the previous orientation and then apply the
+        // new one after that
+        int i;
 
-      default:
-        break;
+        for (i = 0; i < 2; i++)
+          {
+             switch (sd->orient)
+               {
+                case ELM_IMAGE_ORIENT_0:
+                  break;
+                case ELM_IMAGE_ORIENT_90:
+                  _elm_image_smart_rotate_270(sd);
+                  break;
+                case ELM_IMAGE_ORIENT_180:
+                  _elm_image_smart_rotate_180(sd);
+                  break;
+                case ELM_IMAGE_ORIENT_270:
+                  _elm_image_smart_rotate_90(sd);
+                  break;
+                case ELM_IMAGE_FLIP_HORIZONTAL:
+                  _elm_image_flip_horizontal(sd);
+                  break;
+                case ELM_IMAGE_FLIP_VERTICAL:
+                  _elm_image_flip_vertical(sd);
+                  break;
+                case ELM_IMAGE_FLIP_TRANSPOSE:
+                  _elm_image_smart_flip_transpose(sd);
+                  break;
+                case ELM_IMAGE_FLIP_TRANSVERSE:
+                  _elm_image_smart_flip_transverse(sd);
+                  break;
+                default:
+                  // this should never hppen
+                  break;
+               }
+             sd->orient = orient;
+          }
      }
 
    evas_object_image_size_get(sd->img, &iw, &ih);
-
-   /* we need separate destination memory if we want to rotate 90 or
-    * 270 degree */
-   data = evas_object_image_data_get(sd->img, EINA_FALSE);
-   if (!data) return;
-   data2 = malloc(sizeof(unsigned int) * (iw * ih));
-   if (!data2) return;
-   memcpy(data2, data, sizeof(unsigned int) * (iw * ih));
-
-   w = ih;
-   ih = iw;
-   iw = w;
-   hw = w * ih;
-
-   evas_object_image_size_set(sd->img, iw, ih);
-   data = evas_object_image_data_get(sd->img, EINA_TRUE);
-   if (!data)
-     {
-        free(data2);
-        return;
-     }
-
-   switch (orient)
-     {
-      case ELM_IMAGE_FLIP_TRANSPOSE:
-        to = data;
-        hw = -hw + 1;
-        sd->orient = orient;
-        break;
-
-      case ELM_IMAGE_FLIP_TRANSVERSE:
-        to = data + hw - 1;
-        w = -w;
-        hw = hw - 1;
-        sd->orient = orient;
-        break;
-
-      case ELM_IMAGE_ROTATE_90:
-        to = data + w - 1;
-        hw = -hw - 1;
-        sd->orient = orient;
-        break;
-
-      case ELM_IMAGE_ROTATE_270:
-        to = data + hw - w;
-        w = -w;
-        hw = hw + 1;
-        sd->orient = orient;
-        break;
-
-      default:
-        ERR("unknown orient %d", orient);
-        evas_object_image_data_set(sd->img, data);  // give it back
-        free(data2);
-
-        return;
-     }
-
-   from = data2;
-   for (x = iw; --x >= 0; )
-     {
-        for (y = ih; --y >= 0; )
-          {
-             *to = *from;
-             from++;
-             to += w;
-          }
-        to += hw;
-     }
-   free(data2);
-
-   evas_object_image_data_set(sd->img, data);
    evas_object_image_data_update_add(sd->img, 0, 0, iw, ih);
-
    _elm_image_internal_sizing_eval(obj, sd);
 }
 

@@ -15,8 +15,11 @@ typedef enum
    ELM_IMAGE_ORIENT_NONE = 0, /**< no orientation change */
    ELM_IMAGE_ORIENT_0 = 0, /**< no orientation change */
    ELM_IMAGE_ROTATE_90 = 1, /**< rotate 90 degrees clockwise */
+   ELM_IMAGE_ORIENT_90 = 1, /**< rotate 90 degrees clockwise @since 1.13 */
    ELM_IMAGE_ROTATE_180 = 2, /**< rotate 180 degrees clockwise */
+   ELM_IMAGE_ORIENT_180 = 2, /**< rotate 180 degrees clockwise @since 1.13 */
    ELM_IMAGE_ROTATE_270 = 3, /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise) */
+   ELM_IMAGE_ORIENT_270 = 3, /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise) @since 1.13 */
    ELM_IMAGE_FLIP_HORIZONTAL = 4, /**< flip image horizontally */
    ELM_IMAGE_FLIP_VERTICAL = 5, /**< flip image vertically */
    ELM_IMAGE_FLIP_TRANSPOSE = 6, /**< flip the image along the y = (width - x) line (bottom-left to top-right) */
