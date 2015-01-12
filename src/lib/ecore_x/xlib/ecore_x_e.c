@@ -2305,3 +2305,69 @@ ecore_x_e_window_rotation_change_done_send(Ecore_X_Window root,
               SubstructureRedirectMask | SubstructureNotifyMask,
               &xev);
 }
+
+EAPI void
+ecore_x_e_window_rotation_geometry_set(Ecore_X_Window win,
+                                       int rot,
+                                       int x,
+                                       int y,
+                                       int w,
+                                       int h)
+{
+   Ecore_X_Atom atom;
+   unsigned int geom[4];
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   geom[0] = x;
+   geom[1] = y;
+   geom[2] = w;
+   geom[3] = h;
+
+   switch (rot)
+     {
+      case   0: atom = ECORE_X_ATOM_E_WINDOW_ROTATION_0_GEOMETRY;   break;
+      case  90: atom = ECORE_X_ATOM_E_WINDOW_ROTATION_90_GEOMETRY;  break;
+      case 180: atom = ECORE_X_ATOM_E_WINDOW_ROTATION_180_GEOMETRY; break;
+      case 270: atom = ECORE_X_ATOM_E_WINDOW_ROTATION_270_GEOMETRY; break;
+      default:  atom = ECORE_X_ATOM_E_WINDOW_ROTATION_0_GEOMETRY;   break;
+     }
+
+   ecore_x_window_prop_card32_set(win, atom, geom, 4);
+}
+
+EAPI Eina_Bool
+ecore_x_e_window_rotation_geometry_get(Ecore_X_Window win,
+                                       int rot,
+                                       int *x,
+                                       int *y,
+                                       int *w,
+                                       int *h)
+{
+   int ret = 0;
+   Ecore_X_Atom atom;
+   unsigned int geom[4];
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   switch (rot)
+     {
+      case   0: atom = ECORE_X_ATOM_E_WINDOW_ROTATION_0_GEOMETRY;   break;
+      case  90: atom = ECORE_X_ATOM_E_WINDOW_ROTATION_90_GEOMETRY;  break;
+      case 180: atom = ECORE_X_ATOM_E_WINDOW_ROTATION_180_GEOMETRY; break;
+      case 270: atom = ECORE_X_ATOM_E_WINDOW_ROTATION_270_GEOMETRY; break;
+      default:  atom = ECORE_X_ATOM_E_WINDOW_ROTATION_0_GEOMETRY;   break;
+     }
+
+   ret = ecore_x_window_prop_card32_get(win, atom, geom, 4);
+
+   if (ret != 4)
+     return EINA_FALSE;
+
+   if (x) *x = geom[0];
+   if (y) *y = geom[1];
+   if (w) *w = geom[2];
+   if (h) *h = geom[3];
+
+   return EINA_TRUE;
+}

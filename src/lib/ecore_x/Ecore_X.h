@@ -2707,6 +2707,8 @@ EAPI void                                  ecore_x_e_window_rotation_change_prep
 EAPI void                                  ecore_x_e_window_rotation_change_prepare_done_send(Ecore_X_Window root, Ecore_X_Window win, int rot); /**< @since 1.9 */
 EAPI void                                  ecore_x_e_window_rotation_change_request_send(Ecore_X_Window win, int rot); /**< @since 1.9 */
 EAPI void                                  ecore_x_e_window_rotation_change_done_send(Ecore_X_Window root, Ecore_X_Window win, int rot, int w, int h); /**< @since 1.9 */
+EAPI void                                  ecore_x_e_window_rotation_geometry_set(Ecore_X_Window win, int rot, int x, int y, int w, int h);
+EAPI Eina_Bool                             ecore_x_e_window_rotation_geometry_get(Ecore_X_Window win, int rot, int *x, int *y, int *w, int *h);
 
 #ifdef __cplusplus
 }
