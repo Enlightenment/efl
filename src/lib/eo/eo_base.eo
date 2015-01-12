@@ -78,7 +78,7 @@ Prevents event callbacks from being called for the object. */
       wref_del {
          /*@ Delete the weak reference passed. */
          params {
-            @in Eo* wref;
+            @in Eo** wref;
          }
       }
       destructor {
