@@ -21,7 +21,7 @@ int _eo_log_dom = -1;
 
 static _Eo_Class **_eo_classes;
 static Eo_Id _eo_classes_last_id;
-static Eina_Bool _eo_init_count = 0;
+static int _eo_init_count = 0;
 static Eo_Op _eo_ops_last_id = 0;
 
 static size_t _eo_sz = 0;
