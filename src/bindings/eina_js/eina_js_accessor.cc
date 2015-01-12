@@ -4,7 +4,7 @@
 
 #include <Eina.hh>
 
-#include V8_INCLUDE_HEADER
+#include EINA_STRINGIZE(V8_INCLUDE_HEADER)
 #include <eina_js_accessor.hh>
 #include <eina_js_compatibility.hh>
 

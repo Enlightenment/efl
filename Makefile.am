@@ -166,7 +166,8 @@ endif
 if HAVE_JS
 pkgconfig_DATA += \
 pc/eolian-js.pc \
-pc/eo-js.pc
+pc/eo-js.pc \
+pc/eina-js.pc
 endif
 
 if BUILD_ENGINE_SOFTWARE_X11

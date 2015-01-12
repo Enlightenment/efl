@@ -1,7 +1,7 @@
 #ifndef EINA_JS_LOG_HH
 #define EINA_JS_LOG_HH
 
-#include V8_INCLUDE_HEADER
+#include EINA_STRINGIZE(V8_INCLUDE_HEADER)
 #include <Eina.hh>
 #include <type_traits>
 

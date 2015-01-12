@@ -1,8 +1,8 @@
 #ifndef EINA_JS_ACCESSOR_HH
 #define EINA_JS_ACCESSOR_HH
 
-#include V8_INCLUDE_HEADER
 #include <Eina.hh>
+#include EINA_STRINGIZE(V8_INCLUDE_HEADER)
 #include <memory>
 
 #include <eina_js_value.hh>

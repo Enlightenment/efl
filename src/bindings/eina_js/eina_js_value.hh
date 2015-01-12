@@ -1,8 +1,8 @@
 #ifndef EINA_JS_VALUE_HH
 #define EINA_JS_VALUE_HH
 
-#include V8_INCLUDE_HEADER
 #include <Eina.hh>
+#include EINA_STRINGIZE(V8_INCLUDE_HEADER)
 #include <type_traits>
 
 #include <eina_js_compatibility.hh>

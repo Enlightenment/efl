@@ -3,14 +3,14 @@
 #include <config.h>
 #endif
 
-#include V8_INCLUDE_HEADER
+#include <Eina.hh>
+#include EINA_STRINGIZE(V8_INCLUDE_HEADER)
 
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
 
 #include <Eina.h>
-#include <Eina.hh>
 #include <Eo.hh>
 
 #include <eina_js_list.hh>

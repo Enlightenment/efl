@@ -3,7 +3,7 @@
 
 #include <type_traits>
 
-#include V8_INCLUDE_HEADER
+#include EINA_STRINGIZE(V8_INCLUDE_HEADER)
 
 namespace v8 {
 

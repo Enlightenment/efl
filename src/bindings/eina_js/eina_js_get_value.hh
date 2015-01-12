@@ -3,7 +3,7 @@
 
 #include <eina_js_compatibility.hh>
 
-#include V8_INCLUDE_HEADER
+#include EINA_STRINGIZE(V8_INCLUDE_HEADER)
 
 #include <type_traits>
 #include <cstdlib>

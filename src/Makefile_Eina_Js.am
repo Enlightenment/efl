@@ -37,37 +37,19 @@ EINA_JS_TEST_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
 @EO_CFLAGS@ \
 @EINA_JS_CFLAGS@
 
-#installed_einacxxmainheadersdir = $(includedir)/eina-cxx-@VMAJ@
-#dist_installed_einacxxmainheaders_DATA = \
-bindings/eina_cxx/Eina.hh
-
-#installed_einacxxheadersdir = $(includedir)/eina-cxx-@VMAJ@/eina-cxx
-#dist_installed_einacxxheaders_DATA = \
+installed_einajsheadersdir = $(includedir)/eina-js-@VMAJ@
+dist_installed_einacxxheaders_DATA = \
+bindings/eina_js/eina_js_accessor.hh \
+bindings/eina_js/eina_js_array.hh \
 bindings/eina_js/eina_js_compatibility.hh \
-bindings/eina_cxx/eina_accessor.hh       \
-bindings/eina_cxx/eina_array.hh \
-bindings/eina_cxx/eina_clone_allocators.hh       \
-bindings/eina_cxx/eina_error.hh     \
-bindings/eina_cxx/eina_eo_base_fwd.hh     \
-bindings/eina_cxx/eina_fold.hh     \
-bindings/eina_cxx/eina_inarray.hh  \
-bindings/eina_cxx/eina_inlist.hh   \
-bindings/eina_cxx/eina_integer_sequence.hh \
-bindings/eina_cxx/eina_iterator.hh \
-bindings/eina_cxx/eina_lists_auxiliary.hh \
-bindings/eina_cxx/eina_list.hh \
-bindings/eina_cxx/eina_log.hh \
-bindings/eina_cxx/eina_optional.hh \
-bindings/eina_cxx/eina_ptrarray.hh \
-bindings/eina_cxx/eina_ptrlist.hh \
-bindings/eina_cxx/eina_range_types.hh \
-bindings/eina_cxx/eina_ref.hh \
-bindings/eina_cxx/eina_stringshare.hh \
-bindings/eina_cxx/eina_thread.hh \
-bindings/eina_cxx/eina_tuple.hh \
-bindings/eina_cxx/eina_tuple_unwrap.hh \
-bindings/eina_cxx/eina_type_traits.hh \
-bindings/eina_cxx/eina_value.hh
+bindings/eina_js/eina_js_container.hh \
+bindings/eina_js/eina_js_error.hh \
+bindings/eina_js/eina_js_get_value_from_c.hh \
+bindings/eina_js/eina_js_get_value.hh \
+bindings/eina_js/eina_js_iterator.hh \
+bindings/eina_js/eina_js_list.hh \
+bindings/eina_js/eina_js_log.hh \
+bindings/eina_js/eina_js_value.hh
 
 ### Unit tests
 

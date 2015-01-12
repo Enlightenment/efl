@@ -158,7 +158,7 @@ timerfd_settime(int                      fd EINA_UNUSED,
 #endif
 
 #ifdef USE_LIBUV
-#include UV_INCLUDE_HEADER
+#include EINA_STRINGIZE(UV_INCLUDE_HEADER)
 #include <dlfcn.h>
 static uv_prepare_t _ecore_main_uv_prepare;
 static uv_check_t _ecore_main_uv_check;

@@ -1010,7 +1010,8 @@ AC_SUBST([want_js])
 AC_SUBST([HAVE_NODEJS])
 
 AM_CONDITIONAL([HAVE_JS], [test "x${want_js}" = "xnodejs" -o "x${want_js}" = "xlibv8" -o "x${want_js}" = "xlibuv"])
-AC_DEFINE([HAVE_JS], [test "x${want_js}" = "xnodejs" -o "x${want_js}" = "xlibv8" -o "x${want_js}" = "xlibuv"])
+AC_DEFINE_IF([HAVE_JS], [test "x${want_js}" = "xnodejs" -o "x${want_js}" = "xlibv8" -o "x${want_js}" = "xlibuv"],
+             [1], [Compiling bindings for JavaScript])
 AC_SUBST([HAVE_JS])
 
 #### Eina JS
@@ -1021,20 +1022,32 @@ case "$want_js" in
      nodejs)
         AC_CHECK_HEADER([node/v8.h],
                         [
-                          AC_DEFINE_UNQUOTED([V8_INCLUDE_HEADER], ["node/v8.h"], [Include header for libv8])
-                          AC_DEFINE_UNQUOTED([UV_INCLUDE_HEADER], ["node/uv.h"], [Include header for libuv])
+                          AC_DEFINE_UNQUOTED([V8_INCLUDE_HEADER], [node/v8.h], [Include header for libv8])
+                          AC_DEFINE_UNQUOTED([UV_INCLUDE_HEADER], [node/uv.h], [Include header for libuv])
+                          V8_INCLUDE_HEADER=node/v8.h
+                          UV_INCLUDE_HEADER=node/uv.h
+                          AC_SUBST([V8_INCLUDE_HEADER])
+                          AC_SUBST([UV_INCLUDE_HEADER])
                         ],
                         [AC_MSG_ERROR([Could not find include headers from nodejs.])])
         ;;
      libv8)
         EFL_DEPEND_PKG([EINA_JS], [V8], [v8 >= 3.25.28])
-        AC_DEFINE_UNQUOTED([V8_INCLUDE_HEADER], ["v8.h"], [Include header for libv8])
+        AC_DEFINE_UNQUOTED([V8_INCLUDE_HEADER], [v8.h], [Include header for libv8])
+        V8_INCLUDE_HEADER=v8.h
+        UV_INCLUDE_HEADER=
+        AC_SUBST([V8_INCLUDE_HEADER])
+        AC_SUBST([UV_INCLUDE_HEADER])
         ;;
      libuv)
         EFL_DEPEND_PKG([EINA_JS], [V8], [v8 >= 3.25.28])
         EFL_DEPEND_PKG([EINA_JS], [UV], [v8 >= 1.1.0])
-        AC_DEFINE_UNQUOTED([V8_INCLUDE_HEADER], ["v8.h"], [Include header for libv8])
-        AC_DEFINE_UNQUOTED([UV_INCLUDE_HEADER], ["uv.h"], [Include header for libuv])
+        AC_DEFINE_UNQUOTED([V8_INCLUDE_HEADER], [v8.h], [Include header for libv8])
+        AC_DEFINE_UNQUOTED([UV_INCLUDE_HEADER], [uv.h], [Include header for libuv])
+        V8_INCLUDE_HEADER=v8.h
+        UV_INCLUDE_HEADER=uv.h
+        AC_SUBST([V8_INCLUDE_HEADER])
+        AC_SUBST([UV_INCLUDE_HEADER])
         ;;
      none)
         ;;
@@ -4613,6 +4626,7 @@ pc/eo.pc
 pc/eo-cxx.pc
 pc/eolian.pc
 pc/eolian-cxx.pc
+pc/eina-js.pc
 pc/eolian-js.pc
 pc/eo-js.pc
 pc/efl.pc

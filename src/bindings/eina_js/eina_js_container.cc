@@ -2,7 +2,8 @@
 #include <config.h>
 #endif
 
-#include V8_INCLUDE_HEADER
+#include <Eina.hh>
+#include EINA_STRINGIZE(V8_INCLUDE_HEADER)
 #include <Eina.h>
 #include <cstdlib>
 

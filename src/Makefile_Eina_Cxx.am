@@ -24,6 +24,7 @@ bindings/eina_cxx/eina_list.hh \
 bindings/eina_cxx/eina_log.hh \
 bindings/eina_cxx/eina_logical.hh \
 bindings/eina_cxx/eina_optional.hh \
+bindings/eina_cxx/eina_pp.hh \
 bindings/eina_cxx/eina_ptrarray.hh \
 bindings/eina_cxx/eina_ptrlist.hh \
 bindings/eina_cxx/eina_range_types.hh \

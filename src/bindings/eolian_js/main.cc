@@ -5,8 +5,9 @@
 
 #ifdef HAVE_NODEJS
 
+#include <Eina.hh>
 #include <node/node.h>
-#include UV_INCLUDE_HEADER
+#include EINA_STRINGIZE(UV_INCLUDE_HEADER)
 
 #include <iostream>
 

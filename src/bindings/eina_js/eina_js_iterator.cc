@@ -6,7 +6,7 @@
 #include <eina_js_iterator.hh>
 #include <eina_js_compatibility.hh>
 
-#include V8_INCLUDE_HEADER
+#include EINA_STRINGIZE(V8_INCLUDE_HEADER)
 
 namespace efl { namespace eina { namespace js {
 

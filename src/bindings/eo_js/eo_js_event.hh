@@ -1,7 +1,7 @@
 #ifndef EFL_EO_JS_EVENT_HH
 #define EFL_EO_JS_EVENT_HH
 
-#include V8_INCLUDE_HEADER
+#include EINA_STRINGIZE(V8_INCLUDE_HEADER)
 
 #include <eina_tuple.hh>
 #include <eina_tuple_c.hh>

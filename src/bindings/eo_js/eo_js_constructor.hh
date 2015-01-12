@@ -1,7 +1,8 @@
 #ifndef EFL_EO_JS_CONSTRUCTOR_HH
 #define EFL_EO_JS_CONSTRUCTOR_HH
 
-#include V8_INCLUDE_HEADER
+#include <Eina.hh>
+#include EINA_STRINGIZE(V8_INCLUDE_HEADER)
 
 #include <eina_tuple.hh>
 #include <eina_function.hh>
