@@ -1,6 +1,165 @@
 ==========
-EFL 1.12.0
+EFL 1.13.0
 ==========
+
+Changes since 1.12.0:
+---------------------
+
+Features:
+
+   * Edje: Set the min, max sizes of the image automatically.
+   * elocation: Add elocation libraray to EFL.
+   * Evas GL: Introduce concept of safe extensions
+   * edje: Edje_Edit - add generation of 'limits' parameter of group in EDC.
+   * eolian: add support for @optional ctor tag (T1804)
+   * Eet: add diffeet a tool for diffing eet files.
+   * edje entry: improve selection performance
+   * evas_object_main: Keep map effect after evas object move
+   * eet - add new  api to verify eet file against stored cert
+   * evas: Evas_3D - add bounding sphere, revision frustum culling
+   * evas: Evas_3D - add mesh blending mode.
+   * Evas GL: Add support for bind_wayland_display extension
+   * Evas: Evas_3D - Add check of visibilty node.
+   * ecore: Add a new API function ecore_main_loop_nested_get
+   * ecore: Add code for new API function 'ecore_main_loop_nested_get'
+   * eldbus: Add API function declaration for eldbus_proxy_send_and_block
+   * eldbus: Add actual API function code for eldbus_proxy_send_and_block
+   * eeze: Add API function declaration for find_by_subsystem_sysname
+   * eeze: Add API function for eeze_udev_find_by_subsystem_sysname
+   * ecore-drm: Port ecore_drm to use libinput
+   * ecore-drm: Merge port to libinput
+   * evil: add getpwnam() function
+   * ecore-drm: Handle various touch events
+   * edje: Edje_Edit - generate alias parameter for 'parts' block.
+   * edje: Edje_Edit - add API for program actions PLAY_SAMPLE and PLAY_TONE
+   * edje: Edje_Edit - add generation of 'filter' parameter of program
+   * +eina_memdup
+   * edje: support anti_alias option
+   * edje: Edje_Edit - add API for renaming of image.
+   * Evas masking: Use alpha mask in SW engine draw functions
+   * Evas masking: Add clip_image_[un]set functions to draw context
+   * Evas masking: Allow setting an image object as clipper
+   * Evas masking: Implement mask support in evas_render
+
+Fixes:
+
+   * edje_calc: fix image set bug.
+   * ecore_drm: Added internal function for drm output updates when device is hotplug
+   * ecore-wayland: Fix the issue of UnIconifying an xdg_surface
+   * Fix bug ecore_imf_context_cursor_position_set was not called when cursor was moved by ECORE_IMF_CALLBACK_SELECTION_SET
+   * edje_cc: fix log message for authors write procedure.
+   * Evas GL: Fix bug in evgl_eng_pbuffer_surface_create (EGL)
+   * ecore_anim: fix source_set bug.
+   * edje: fix wrong generation of 'minmul' and 'text.min' parameters in EDC.
+   * edje: add formating for floating point numbers in EDC.
+   * eldbus-codegen: Make generated code for property set work by setting the cb
+   * evas/3d: Fix dereferencing a pointer that might be null found by coverity
+   * Eo: protect against recursive object destruction calls, fixes T1741 (T1741)
+   * ecore-drm: fix error check of _device_flags_set function
+   * eldbus-codegen: Free msg on error path for generated code.
+   * eldbus-codegen: More memory leak fixes for generated code.
+   * textblock: correct text position for RTL text with margins
+   * evas/map: correct last 1 pixel handling in spans.
+   * ecore-drm: remove unnecessary setting file's flag of O_RDWR that are ignored.
+   * ecore-drm: close fd handle if _ecore_drm_tty_setup() is failed in ecore_drm_tty_open().
+   * ecore-drm: Sending Active to login1.Session
+   * ecore-drm: pass appropriate arguments to eldbus_message_arguments_get(), so that it can be return as success in _cb_device_resumed().
+   * evas_map: Remove unnecessary check for current map
+   * ecore_evas_x: Fixed strange condition.
+   * evas: Evas_3D - fix depth texture size.
+   * Evas textblock: Fix possibly null dereference.
+   * ecore-wayland: Fixed a request of start_drag with null value
+   * ecore-wayland: Check if system has mouse in ecore_wl_input
+   * evas-gl: Fix improper #ifdef check
+   * evas-gl: Fix evas-gl to compile for EGL
+   * ecore-wayland: If we fail to create a new opaque region, safely exit the function.
+   * ecore-wayland: Check return of input_region create and get our safely
+   * ecore-wayland: No need for setting the input here as it's done again directly below.
+   * ecore-wayland: Add safety check for window surface creation
+   * ecore-wayland: Add safety check for xdg_popup creation
+   * ecore-wayland: Check for xdg_surface before sending ack_configure
+   * Evas GL: Add preventive padding after Evas_GL_API
+   * evas: Evas_3D - fix typo.
+   * autotools: fix compiling/linking gl engines on OSX.
+   * ecore con: Fix GnuTLS build error.
+   * ecore-drm: Remove erroneous debug messages
+   * ecore/animator: fix the bezier cubic compuation.
+   * eldbus: Fix _eldbus_connection_send_and_block()
+   * eldbus: Add timeout parameter to eldbus_proxy_send_and_block()
+   * ecore-evas-wayland: Fix issue with ELM_PROFILE=mobile and windows not showing up correctly.
+   * eeze_scanner needs to hash on the address of the pointer and not use direct_add() (T1612)
+   * ecore/animator: fix the wrong computation of bezier cubic.
+   * evas_xcb_outbuf: fix memory leak
+   * ethumb: Fixing eina_init to eina_shutdown.
+   * ecore-drm: Fix error message typo
+   * ecore-drm: Fix formatting
+   * ecore-drm: Cleanup structures in private header
+   * ecore-drm: Fix ecore_drm_launcher_device_close to not cause segfaults
+   * ecore_audio: fix memory leak in ecore_audio_pulse.
+   * edge: fix memory leak and removed redundant return statement.
+   * ecore-drm: Added cleanup data code as a error handling of connect logind.
+   * ecore_drm: Removed unused variables in ecore_drm_evdev
+   * ecore-drm: cleanup data when failed to setup tty.
+   * ecore-drm: restore VT to text mode when close tty.
+   * ecore-drm: fix passing wrong argument to open().
+   * ecore-drm: Remove libinput log print callback
+   * ecore-drm: Fix usage of EINA_LIST_FREE
+   * ecore-drm: Add output size to device structure and add internal function for setting size
+   * ecore-drm: Add internal function to set the output size in the input device structure
+   * ecore-drm: Transform touch events into output coordinates
+   * ecore-drm: Update pointer motion event coordinates
+   * ecore-evas-drm: Create inputs before we create outputs
+   * ecore-evas-drm: Fix up error handling
+   * ecore-drm: Also update device calibration when output size changes
+   * ecore-drm: Finish implementing touch events
+   * ecore-drm: Don't declare sprite variable unless we need it, also fix some formatting.
+   * eldbus: Fix possible null dereference reported by Coverity (CID1256952)
+   * evas-gl-common: Fix issue with Coverity reporting null dereferences (CID1257607, CID1257606)
+   * ecore-drm: Free devices before we release the libinput reference
+   * edje: Removed redundant assignement of rest_args.
+   * ecore_con: Added NULL check in dns_so_reset() for dns_socket object.
+   * ecore-drm: add error handling, when fail to setup tty.
+   * eldbus: Fix crash when removing the last reference of the message container inside of the message callback (T1908)
+   * eet: fix memory leak in eet_cipher
+   * evas: fix memory leak in evas_swapper.
+   * eeze: add null check condition in eeze scanner module.
+   * evas: fix memory leak issues in evas_object_textgrid.
+   * efreet: pass the correct option from the user input.
+   * ecore: fix memory leak issues.
+   * eina: fix memory leak issue in Eina_Value.
+   * evil: fix memory leak issue in evil_dirent module.
+   * edje: add tween images into generated code for the group.
+   * edje: fix memory leak in edje_edit_source_generate.
+   * Edje_Edit: Add sound samples into generated code for the group.
+   * evas/gl_x11: set EGL_PLATFORM environment variable
+   * ecore_con: the timer callback is waiting for the Eo object not its private data. (T1962)
+   * edje: Edje_Edit - remake deletion and replacing of strings
+   * ecore-evas: Fix compiler warnings about inproper returns
+   * eina_cxx: Fix eina::accessor for C++ Eo wrappers
+   * eina_cxx: Fix eina::array cend method recursive calling itself
+   * edje: Edje_Edit - add Proxy to Edje_Part_Collection_Directory_Entry initializatoin.
+   * eet: Remove unused variable
+   * ecore-evas-drm: Perform shutdown in proper order
+   * ecore-drm: Fix incorrect launcher shutdown procedure
+   * ecore-drm: Fix issue with TakeControl and ReleaseControl functions
+   * edje - fix uninitialized coord sizes if swallow obj is invalid
+   * evas textgrid - fix drawing of codepoints that are 0
+   * ecore_evas_drm: Added support for initial rotation in ecore_evas_drm
+   * ecore-wayland: Simplify opaque and input region handling.
+   * ecore-evas-wayland: Fix min/max size calculations
+   * ecore: fix compilation, missing return value in ecore_thread_wait
+   * evas:fix markup text length issue
+   * ecore_imf: Add null check condition in ecore_imf module
+   * ecore_evas_x: Free XCounter values leak.
+   * eo: Fix bad addressing in _eo_classes array
+   * ecore-evas-wayland: Port fix of min/max size calculations to the configure event handler
+   * ecore_evas/wayland_egl: Set alpha of ecore_evas object if parent alpha is set
+   * evas: Fix unintentional integer overflow (CID1261436)
+   * edje: Fix Coverity CID1261437
+   * ecore_imf/scim: Fix logically dead code in scim module (CID1261449)
+   * edje - edje_cc - fix wrong state lists where default is not the first (T1926)
+   * efl - edje_cc - fix default state checks in previous commit
+   * Eo tests: Fix bad free in eo_test_value
 
 Changes since 1.11.0:
 ---------------------
