@@ -2371,3 +2371,89 @@ ecore_x_e_window_rotation_geometry_get(Ecore_X_Window win,
 
    return EINA_TRUE;
 }
+
+EAPI void
+ecore_x_e_virtual_keyboard_control_window_set(Ecore_X_Window root,
+                                              Ecore_X_Window win,
+                                              unsigned int   zone,
+                                              Eina_Bool      set)
+{
+   XEvent xev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!root)
+     root = DefaultRootWindow(_ecore_x_disp);
+
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_CONTROL_WINDOW;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = win;
+   xev.xclient.data.l[1] = zone;
+   xev.xclient.data.l[2] = set;
+   xev.xclient.data.l[3] = 0;
+   xev.xclient.data.l[4] = 0;
+
+   XSendEvent(_ecore_x_disp, root, False,
+              SubstructureRedirectMask | SubstructureNotifyMask,
+              &xev);
+}
+
+EAPI void
+ecore_x_e_virtual_keyboard_on_prepare_request_send(Ecore_X_Window win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   ecore_x_client_message32_send
+     (win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_ON_PREPARE_REQUEST,
+     ECORE_X_EVENT_MASK_NONE, win, 0, 0, 0, 0);
+}
+
+EAPI void
+ecore_x_e_virtual_keyboard_on_prepare_done_send(Ecore_X_Window root,
+                                                Ecore_X_Window win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!root)
+     root = DefaultRootWindow(_ecore_x_disp);
+   ecore_x_client_message32_send
+     (root, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_ON_PREPARE_DONE,
+     ECORE_X_EVENT_MASK_WINDOW_CHILD_CONFIGURE | ECORE_X_EVENT_MASK_WINDOW_MANAGE,
+     win, 0, 0, 0, 0);
+}
+
+EAPI void
+ecore_x_e_virtual_keyboard_off_prepare_request_send(Ecore_X_Window win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   ecore_x_client_message32_send
+     (win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_OFF_PREPARE_REQUEST,
+     ECORE_X_EVENT_MASK_NONE,
+     win, 0, 0, 0, 0);
+}
+
+EAPI void
+ecore_x_e_virtual_keyboard_off_prepare_done_send(Ecore_X_Window root,
+                                                 Ecore_X_Window win)
+{
+   XEvent xev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!root)
+     root = DefaultRootWindow(_ecore_x_disp);
+
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_OFF_PREPARE_DONE;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = win;
+   xev.xclient.data.l[1] = 0;
+   xev.xclient.data.l[2] = 0;
+   xev.xclient.data.l[3] = 0;
+   xev.xclient.data.l[4] = 0;
+
+   XSendEvent(_ecore_x_disp, root, False,
+              SubstructureRedirectMask | SubstructureNotifyMask,
+              &xev);
+}
