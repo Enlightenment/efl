@@ -501,18 +501,18 @@ _ecore_evas_drm_init(const char *device)
         goto sprite_err;
      }
 
-   /* try to create inputs */
-   if (!ecore_drm_inputs_create(dev))
-     {
-        ERR("Could not create inputs: %m");
-        goto input_err;
-     }
-
    /* try to create outputs */
    if (!ecore_drm_outputs_create(dev))
      {
         ERR("Could not create outputs: %m");
         goto output_err;
+     }
+
+   /* try to create inputs */
+   if (!ecore_drm_inputs_create(dev))
+     {
+        ERR("Could not create inputs: %m");
+        goto input_err;
      }
 
    ecore_event_evas_init();
@@ -539,8 +539,8 @@ _ecore_evas_drm_shutdown(void)
 {
    if (--_ecore_evas_init_count != 0) return _ecore_evas_init_count;
 
-   /* NB: No need to free outputs here. Is done in device free */
    ecore_drm_inputs_destroy(dev);
+   /* NB: No need to free outputs here. Is done in device free */
    ecore_drm_sprites_destroy(dev);
    ecore_drm_device_close(dev);
    ecore_drm_device_free(dev);
