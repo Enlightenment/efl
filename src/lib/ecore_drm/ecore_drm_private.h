@@ -159,10 +159,7 @@ struct _Ecore_Drm_Evdev
 
    int mt_slot;
 
-   struct 
-     {
-        int w, h;
-     } output;
+   Ecore_Drm_Output *output;
 
    /* struct  */
    /*   { */
@@ -236,8 +233,6 @@ int _ecore_drm_launcher_device_open_no_pending(const char *device, int flags);
 void _ecore_drm_launcher_device_close(const char *device, int fd);
 
 Eina_Bool _ecore_drm_tty_switch(Ecore_Drm_Device *dev, int activate_vt);
-
-void _ecore_drm_inputs_update_output(Ecore_Drm_Device *dev, int w, int h);
 
 Ecore_Drm_Evdev *_ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, struct libinput_device *device);
 void _ecore_drm_evdev_device_destroy(Ecore_Drm_Evdev *evdev);
