@@ -65,6 +65,7 @@ static Eina_Bool mmap_safe = EINA_FALSE;
 static int _eina_mmap_log_dom = -1;
 static int _eina_mmap_zero_fd = -1;
 static long _eina_mmap_pagesize = -1;
+static struct sigaction _eina_mmap_prev_sigaction;
 
 #ifdef ERR
 #undef ERR
@@ -77,9 +78,7 @@ static long _eina_mmap_pagesize = -1;
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_mmap_log_dom, __VA_ARGS__)
 
 static void
-_eina_mmap_safe_sigbus(int sig EINA_UNUSED,
-                       siginfo_t *siginfo,
-                       void *ptr EINA_UNUSED)
+_eina_mmap_safe_sigbus(int sig, siginfo_t *siginfo, void *ptr)
 {
    unsigned char *addr = (unsigned char *)(siginfo->si_addr);
    int perrno;
@@ -87,11 +86,41 @@ _eina_mmap_safe_sigbus(int sig EINA_UNUSED,
    /* save previous errno */
    perrno = errno;
    /* if problems was an unaligned access - complain accordingly and abort */
-   if (siginfo->si_code == BUS_ADRALN)
+   if (siginfo->si_code != BUS_ADRERR)
      {
-        ERR("Unaligned memory access. SIGBUS!!!");
+        if (siginfo->si_code == BUS_ADRALN)
+          ERR("Unaligned memory access - BUS_ADRALN. SIGBUS!!!");
+        else if (siginfo->si_code == BUS_OBJERR)
+          ERR("Invalid object - BUS_OBJERR. SIGBUS!!!");
+        else if (siginfo->si_code == BUS_MCEERR_AR)
+          ERR("Memory Fault - BUS_MCEERR_AR. SIGBUS!!!");
+        else if (siginfo->si_code == BUS_MCEERR_AO)
+          ERR("Memory Fault - BUS_MCEERR_AO. SIGBUS!!!");
         errno = perrno;
-        abort();
+        if (_eina_mmap_prev_sigaction.sa_flags & SA_SIGINFO)
+          {
+             if (_eina_mmap_prev_sigaction.sa_sigaction)
+               {
+                  _eina_mmap_prev_sigaction.sa_sigaction(sig, siginfo, ptr);
+                  if (_eina_mmap_prev_sigaction.sa_flags & SA_RESETHAND)
+                    _eina_mmap_prev_sigaction.sa_sigaction = NULL;
+                  if (_eina_mmap_prev_sigaction.sa_flags & SA_RESTART)
+                    return;
+               }
+             abort();
+          }
+        else
+          {
+             if (_eina_mmap_prev_sigaction.sa_handler == SIG_IGN)
+               return;
+             else if (_eina_mmap_prev_sigaction.sa_handler == SIG_DFL)
+               abort();
+             else if (_eina_mmap_prev_sigaction.sa_handler)
+               {
+                  _eina_mmap_prev_sigaction.sa_handler(sig);
+                  abort();
+               }
+          }
      }
    /* send this to stderr - not eina_log. Specifically want this on stderr */
    fprintf(stderr,
@@ -171,7 +200,7 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
         sa.sa_sigaction = _eina_mmap_safe_sigbus;
         sa.sa_flags = SA_RESTART | SA_SIGINFO;
         sigemptyset(&sa.sa_mask);
-        if (sigaction(SIGBUS, &sa, NULL) == 0) goto done;
+        if (sigaction(SIGBUS, &sa, &_eina_mmap_prev_sigaction) == 0) goto done;
         /* setup of SIGBUS handler failed, lets close zero page dev and fail */
         close(_eina_mmap_zero_fd);
         _eina_mmap_zero_fd = -1;
