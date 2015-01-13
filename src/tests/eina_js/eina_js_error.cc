@@ -25,19 +25,6 @@ efl::eina::js::compatibility_return_type print(efl::eina::js::compatibility_call
   return efl::eina::js::compatibility_return();
 }
 
-efl::eina::js::compatibility_return_type clear_eina_error(efl::eina::js::compatibility_callback_info_type args)
-{
-    eina_error_set(0);
-    efl::js::convert_error_to_javascript_exception(args.GetIsolate());
-    return efl::eina::js::compatibility_return();
-}
-
-efl::eina::js::compatibility_return_type set_eina_error(efl::eina::js::compatibility_callback_info_type args)
-{
-    eina_error_set(eina_error_msg_static_register("foobar"));
-    efl::js::convert_error_to_javascript_exception(args.GetIsolate());
-    return efl::eina::js::compatibility_return();
-}
 
 static const char script[] =
     "function assert(test, message) { if (test !== true) throw message; };"

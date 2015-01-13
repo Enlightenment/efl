@@ -8,12 +8,15 @@
 #include <eina_js_accessor.hh>
 #include <eina_js_compatibility.hh>
 
+#include <iostream>
+
 namespace efl { namespace eina { namespace js {
 
 EAPI void register_destroy_accessor(v8::Isolate *isolate,
                                     v8::Handle<v8::Object> global,
                                     v8::Handle<v8::String> name)
 {
+  std::cerr << "register_destroy_accessor" << std::endl;
     typedef void (*deleter_t)(void*);
 
     auto f = [](compatibility_callback_info_type info) -> compatibility_return_type

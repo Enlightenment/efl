@@ -8,7 +8,7 @@
 namespace efl { namespace eina {namespace js {
 
 EAPI
-void convert_error_to_javascript_exception(v8::Isolate *isolate)
+js::compatibility_return_type convert_error_to_javascript_exception(v8::Isolate *isolate)
 {
     using v8::Local;
     using v8::Object;
@@ -23,7 +23,7 @@ void convert_error_to_javascript_exception(v8::Isolate *isolate)
              compatibility_new<v8::String>(isolate, "Eina_Error"));
      je->Set(compatibility_new<v8::String>(isolate, "value"),
              compatibility_new<v8::String>(isolate, eina_error_msg_get(err)));
-     compatibility_throw(isolate, je);
+     return compatibility_throw(isolate, je);
 }
 
 } } } // namespace efl { namespace js {

@@ -59,25 +59,34 @@ assert (s2.length == 2);
 assert (s2[0] == l1[1]);
 assert (s2[1] == l1[2]);
 
-console.log ("Test execution with success");
-
 // error tests
 
 var captured = false;
 try {
-  clear_eina_error();
+  suite.clear_eina_error();
 } catch(e) {
+  console.log("Exception ", e.toString());
   captured = true;
 }
-assert(captured === false, '#1');
+assert(captured === false, 'error #1');
 
 captured = false;
 try {
-  set_eina_error();
+  suite.set_eina_error();
 } catch(e) {
-  assert(e.code === 'Eina_Error', '#2');
-  assert(e.value === 'foobar', '#3');
+  console.log("Exception ", e.toString());
+  assert(e.code === 'Eina_Error', 'error #2');
+  assert(e.value === 'foobar', 'error #3');
   captured = true;
 }
-assert(captured === true, '#4');
+assert(captured === true, 'error #4');
+
+// accessor tests
+
+assert(suite.acc.get(0) === 42, 'accessor #1');
+assert(suite.acc.get(1) === 24, 'accessor #2');
+
+// finished tests
+
+console.log ("Test execution with success");
 

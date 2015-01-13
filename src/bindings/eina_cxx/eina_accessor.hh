@@ -135,7 +135,10 @@ struct accessor
    * @warning It is important to take care when using it, since the
    * handle will be automatically release upon object destruction.
    */
-  Eina_Accessor* native_handle() const;
+  Eina_Accessor* native_handle() const
+  {
+    return _impl;
+  }
 
   /**
    * @brief Swap content between both objects.

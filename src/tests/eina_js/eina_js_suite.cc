@@ -13,7 +13,9 @@
 #include <Eina.h>
 #include <Eo.hh>
 
+#include <eina_js_accessor.hh>
 #include <eina_js_list.hh>
+#include <eina_js_error.hh>
 
 const char* ToCString(const v8::String::Utf8Value& value) {
   return *value ? *value : "<string conversion failed>";
@@ -85,14 +87,31 @@ efl::eina::js::compatibility_return_type Print(efl::eina::js::compatibility_call
   return efl::eina::js::compatibility_return();
 }
 
+efl::eina::js::compatibility_return_type clear_eina_error(efl::eina::js::compatibility_callback_info_type args)
+{
+    eina_error_set(0);
+    return efl::eina::js::convert_error_to_javascript_exception(args.GetIsolate());
+}
+
+efl::eina::js::compatibility_return_type set_eina_error(efl::eina::js::compatibility_callback_info_type args)
+{
+    eina_error_set(eina_error_msg_static_register("foobar"));
+    return efl::eina::js::convert_error_to_javascript_exception(args.GetIsolate());
+}
+
 EAPI void eina_container_register(v8::Handle<v8::Object> global, v8::Isolate* isolate);
 EAPI v8::Handle<v8::FunctionTemplate> get_list_instance_template();
 
 efl::eina::ptr_list<int> list;
 efl::eina::js::range_eina_list<int> raw_list;
 
+efl::eina::array<int> array;
+
 void test_setup(v8::Handle<v8::Object> exports)
 {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+
+  // container globals
   std::cerr << __LINE__ << std::endl;
   list.push_back(new int(5));
   list.push_back(new int(10));
@@ -111,10 +130,35 @@ void test_setup(v8::Handle<v8::Object> exports)
                , get_list_instance_template()->GetFunction()->NewInstance(1, a));
   std::cerr << __LINE__ << std::endl;
 
+  // error globals
+  exports->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "clear_eina_error"),
+              efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, clear_eina_error)
+              ->GetFunction());
+  exports->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "set_eina_error"),
+              efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, set_eina_error)
+              ->GetFunction());
+  std::cerr << __LINE__ << std::endl;
+
+  // accessor
+  Eina_Array* array = eina_array_new(2);
+  eina_array_push(array, new int(42));
+  eina_array_push(array, new int(24));
+
+  static efl::eina::accessor<int> acc(eina_array_accessor_new(array));
+  std::cerr << __LINE__ << std::endl;
+  
+  // efl::eina::js::register_destroy_accessor
+  //   (isolate, exports
+  //    , efl::eina::js::compatibility_new<v8::String>(isolate, "destroy_accessor"));
+  std::cerr << __LINE__ << std::endl;
+  
+  v8::Local<v8::Object> wrapped_acc = efl::eina::js::export_accessor( acc, isolate);
+  exports->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "acc"), wrapped_acc);
+
+  std::cerr << __LINE__ << std::endl;
 }
 
 #ifndef HAVE_NODEJS
-
 int main(int, char*[])
 {
   efl::eina::eina_init eina_init;
@@ -127,13 +171,10 @@ int main(int, char*[])
   v8::Isolate::Scope isolate_scope(isolate);
   
   efl::eina::js::compatibility_handle_scope handle_scope(isolate);
-  v8::Handle<v8::Context> context;
-
-  {
-    // Create a template for the global object.
-    v8::Handle<v8::ObjectTemplate> global = efl::eina::js::compatibility_new<v8::ObjectTemplate>(isolate);
-    context = efl::eina::js::compatibility_new<v8::Context>(isolate, nullptr, global);
-  }
+  v8::Handle<v8::Context> context
+    = efl::eina::js::compatibility_new<v8::Context>
+    (isolate, nullptr
+     , efl::eina::js::compatibility_new<v8::ObjectTemplate>(isolate));
   if (context.IsEmpty()) {
     fprintf(stderr, "Error creating context\n");
     return 1;
@@ -163,18 +204,19 @@ int main(int, char*[])
     v8::Context::Scope context_scope(context);
     v8::Local<v8::String> name(efl::eina::js::compatibility_new<v8::String>
                                (nullptr, "(shell)"));
+    v8::Local<v8::Object> global = context->Global();
+    v8::Handle<v8::Object> console = efl::eina::js::compatibility_new<v8::Object>(isolate);
+    global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "console"), console);
+    console->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "log")
+                 , efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, & ::Print)
+                 ->GetFunction()); 
 
     std::cerr << __LINE__ << std::endl;
     v8::Handle<v8::Object> exports = efl::eina::js::compatibility_new<v8::Object>(isolate);
-    context->Global()->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "suite"), exports);
+    global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "suite"), exports);
+
     test_setup(exports);
     std::cerr << __LINE__ << std::endl;
-
-    v8::Handle<v8::Object> console = efl::eina::js::compatibility_new<v8::Object>(isolate);
-    context->Global()->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "console"), console);
-    console->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "log")
-                 , efl::eina::js::compatibility_new<v8::FunctionTemplate>(isolate, & ::Print)
-                 ->GetFunction());
 
     
     efl::eina::js::compatibility_handle_scope handle_scope(v8::Isolate::GetCurrent());

@@ -7,84 +7,65 @@
 
 #include <eina_js_value.hh>
 #include <eina_js_compatibility.hh>
+#include <eina_js_get_value.hh>
+#include <eina_js_get_value_from_c.hh>
+
+#include <iostream>
 
 namespace efl { namespace eina { namespace js {
 
+template <typename T>
+js::compatibility_return_type accessor_get(js::compatibility_callback_info_type info)
+{
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
+  v8::Isolate* isolate = info.GetIsolate();
+  if (info.Length() != 1 || !info[0]->IsNumber())
+    return js::compatibility_return();
+
+  auto idx = js::get_value_from_javascript
+    (info[0], isolate, js::value_tag<std::size_t>());
+
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
+  void *ptr = compatibility_get_pointer_internal_field(info.Holder(), 0);
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
+  return compatibility_return
+    (js::get_value_from_c((*static_cast<T*>(ptr))[idx], isolate), info);
+};
+      
 /* Creates a copy from \p a accessor and exports it to be manipulated by the JS
    code */
 template<class T>
-v8::Local<v8::Object> export_accessor(::efl::eina::accessor<T> &a,
-                                      v8::Isolate *isolate)
-  ;
-// {
-//     using v8::Local;
-//     using v8::Value;
-//     using v8::String;
-//     using v8::FunctionCallbackInfo;
-//     using v8::FunctionTemplate;
-//     using v8::ObjectTemplate;
+v8::Local<v8::Object> export_accessor( ::efl::eina::accessor<T> &a, v8::Isolate *isolate)
+{
+  typedef ::efl::eina::accessor<T> accessor_type;
+    
+  static auto obj_tpl = [&]() -> compatibility_persistent<v8::ObjectTemplate>
+    {
+      auto obj_tpl = compatibility_new<v8::ObjectTemplate>(isolate);
+      obj_tpl->SetInternalFieldCount(1);
 
-//     typedef ::efl::eina::accessor<T> value_type;
-//     typedef value_type *ptr_type;
-//     typedef void (*deleter_t)(void*);
+      obj_tpl->Set(js::compatibility_new<v8::String>(isolate, "get")
+                   , js::compatibility_new<v8::FunctionTemplate>(isolate, &accessor_get<accessor_type>));
+  
+      return {isolate, obj_tpl};
+    }();
 
-//     auto obj_tpl = compatibility_new<ObjectTemplate>(isolate);
-//     obj_tpl->SetInternalFieldCount(2);
-
-//     auto ret = obj_tpl->NewInstance();
-
-//     auto get = [](const FunctionCallbackInfo<Value> &info) {
-//         if (info.Length() != 1 || !info[0]->IsNumber())
-//             return;
-
-//         auto idx = [&info]() -> std::size_t {
-//             auto idx = info[0];
-
-//             if (idx->IsInt32())
-//                 return idx->ToInt32()->Value();
-//             else if (idx->IsUint32())
-//                 return idx->ToUint32()->Value();
-//             else
-//                 return idx->ToNumber()->Value();
-//         }();
-
-//         void *ptr = info.Holder()->GetAlignedPointerFromInternalField(0);
-//         auto &value = *static_cast<ptr_type>(ptr);
-//         info.GetReturnValue().Set(value_cast<Local<Value>>(value[idx],
-//                                                            info.GetIsolate()));
-//     };
-
-//     ret->Set(String::NewFromUtf8(isolate, "get"),
-//              FunctionTemplate::New(isolate, get)->GetFunction());
-
-//     {
-//         deleter_t deleter = [](void *a) {
-//             delete static_cast<ptr_type>(a);
-//         };
-//         std::unique_ptr<value_type> ptr(new value_type(a));
-//         ret->SetAlignedPointerInInternalField(0, ptr.get());
-//         ret->SetAlignedPointerInInternalField(1,
-//                                               reinterpret_cast<void*>(deleter));
-//         ptr.release();
-//     }
-
-//     return ret;
-// }
+  auto instance = obj_tpl.handle()->NewInstance();
+  compatibility_set_pointer_internal_field(instance, 0, &a);
+  return instance;
+}
 
 /* Extracts and returns a copy from the internal accessor object from the JS
    object */
 template<class T>
 ::efl::eina::accessor<T> import_accessor(v8::Handle<v8::Object> o)
-  ;
-// {
-//     typedef ::efl::eina::accessor<T> value_type;
-//     typedef value_type *ptr_type;
+{
+  typedef ::efl::eina::accessor<T> accessor_type;
 
-//     ptr_type acc = reinterpret_cast<ptr_type>
-//         (o->GetAlignedPointerFromInternalField(0));
-
-//     return value_type(*acc);
-// }
+  void* ptr = compatibility_get_pointer_internal_field(o, 0);
+  
+  return *static_cast<accessor_type*>(ptr);
+}
 
 /* Registers the function to destroy the accessor objects to the JS code */
 void register_destroy_accessor(v8::Isolate *isolate,

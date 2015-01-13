@@ -4,7 +4,7 @@
 #include <Eina.hh>
 #include EINA_STRINGIZE(V8_INCLUDE_HEADER)
 
-namespace efl { namespace js {
+namespace efl { namespace eina { namespace js {
 
 /**
  * Converts the error value set through Eina's error tool to a JavaScript
@@ -21,6 +21,6 @@ namespace efl { namespace js {
  */
 void convert_error_to_javascript_exception(v8::Isolate *isolate);
 
-} } // namespace efl::js
+} } } // namespace efl::eina::js
 
 #endif /* EINA_JS_ERROR_HH */
