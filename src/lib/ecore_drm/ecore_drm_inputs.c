@@ -194,24 +194,6 @@ const struct libinput_interface _input_interface =
    _cb_close_restricted,
 };
 
-void 
-_ecore_drm_inputs_update_output(Ecore_Drm_Device *dev, int w, int h)
-{
-   Ecore_Drm_Seat *seat;
-   Ecore_Drm_Evdev *edev;
-   Eina_List *l, *ll;
-
-   EINA_LIST_FOREACH(dev->seats, l, seat)
-     {
-        EINA_LIST_FOREACH(seat->devices, ll, edev)
-          {
-             edev->output.w = w;
-             edev->output.h = h;
-             ecore_drm_inputs_device_axis_size_set(edev, w, h);
-          }
-     }
-}
-
 /* public functions */
 EAPI Eina_Bool 
 ecore_drm_inputs_create(Ecore_Drm_Device *dev)
