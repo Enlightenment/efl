@@ -51,13 +51,12 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
         return EINA_FALSE;
      }
 
-   /* NB: Don't set this. This Turns OFF keyboard on the VT */
-   /* if (ioctl(dev->tty.fd, KDSKBMUTE, 1) &&  */
-   /*     ioctl(dev->tty.fd, KDSKBMODE, K_OFF)) */
-   /*   { */
-   /*      ERR("Could not set K_OFF keyboard mode: %m"); */
-   /*      return EINA_FALSE; */
-   /*   } */
+   if (ioctl(dev->tty.fd, KDSKBMUTE, 1) && 
+       ioctl(dev->tty.fd, KDSKBMODE, K_OFF))
+     {
+        ERR("Could not set K_OFF keyboard mode: %m");
+        return EINA_FALSE;
+     }
 
    if (kmode != KD_GRAPHICS)
      {
