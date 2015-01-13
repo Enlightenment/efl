@@ -965,9 +965,10 @@ detect_time_changes_stop(void)
 #endif
 }
 
-static void _ecore_main_loop_idler_cb(uv_idle_t* handle EINA_UNUSED);
 
 #ifdef HAVE_LIBUV
+static void _ecore_main_loop_idler_cb(uv_idle_t* handle EINA_UNUSED);
+
 static
 void _ecore_main_loop_timer_run(uv_timer_t* timer)
 {
