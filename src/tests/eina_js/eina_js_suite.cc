@@ -188,7 +188,7 @@ int main(int, char*[])
 }
 
 #else
-#include <node/node.h>
+#include EINA_STRINGIZE(NODE_INCLUDE_HEADER)
 
 namespace {
 
