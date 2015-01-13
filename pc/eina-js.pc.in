@@ -4,6 +4,7 @@ libdir=@libdir@
 includedir=@includedir@
 datarootdir=@datarootdir@
 datadir=@datadir@
+want_js=@want_js@
 
 Name: Eina JavaScript
 Description: JavaScript C++ helpers for data structures
