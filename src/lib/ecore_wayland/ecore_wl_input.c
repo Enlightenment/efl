@@ -161,6 +161,10 @@ ecore_wl_input_ungrab(Ecore_Wl_Input *input)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!input) return;
+
+   _ecore_wl_input_mouse_up_send(input, input->grab,
+                                 0, input->grab_button, input->grab_timestamp);
+
    input->grab = NULL;
    input->grab_button = 0;
 }
@@ -180,9 +184,6 @@ _ecore_wl_input_grab_release(Ecore_Wl_Input *input, Ecore_Wl_Window *win)
 
    if (!input) return;
    if (input->grab != win) return;
-
-   _ecore_wl_input_mouse_up_send(input, input->grab,
-                                 0, input->grab_button, input->grab_timestamp);
 
    ecore_wl_input_ungrab(input);
 }
