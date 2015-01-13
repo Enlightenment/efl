@@ -15,6 +15,7 @@
 
 #include <eina_js_accessor.hh>
 #include <eina_js_list.hh>
+#include <eina_js_iterator.hh>
 #include <eina_js_error.hh>
 
 const char* ToCString(const v8::String::Utf8Value& value) {
@@ -140,21 +141,29 @@ void test_setup(v8::Handle<v8::Object> exports)
   std::cerr << __LINE__ << std::endl;
 
   // accessor
-  Eina_Array* array = eina_array_new(2);
+  Eina_Array* array = eina_array_new(3);
   eina_array_push(array, new int(42));
   eina_array_push(array, new int(24));
+  eina_array_push(array, new int(0));
 
   static efl::eina::accessor<int> acc(eina_array_accessor_new(array));
-  std::cerr << __LINE__ << std::endl;
-  
-  // efl::eina::js::register_destroy_accessor
-  //   (isolate, exports
-  //    , efl::eina::js::compatibility_new<v8::String>(isolate, "destroy_accessor"));
   std::cerr << __LINE__ << std::endl;
   
   v8::Local<v8::Object> wrapped_acc = efl::eina::js::export_accessor( acc, isolate);
   exports->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "acc"), wrapped_acc);
 
+  static efl::eina::iterator<int> it(eina_array_iterator_new(array));
+
+  v8::Local<v8::Object> wrapped_it = efl::eina::js::export_iterator(&it, isolate);
+
+  exports->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "it"), wrapped_it);
+  
+  std::cerr << __LINE__ << std::endl;
+
+  efl::eina::js::register_make_value
+    (isolate, exports
+     , efl::eina::js::compatibility_new<v8::String>(isolate, "make_value"));
+  
   std::cerr << __LINE__ << std::endl;
 }
 

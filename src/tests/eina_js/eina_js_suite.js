@@ -86,6 +86,82 @@ assert(captured === true, 'error #4');
 assert(suite.acc.get(0) === 42, 'accessor #1');
 assert(suite.acc.get(1) === 24, 'accessor #2');
 
+// iterator tests
+
+assert(suite.it.next().value === 42, 'iterator #1');
+assert(suite.it.next().value === 24, 'iterator #2');
+
+// value tests
+
+console.log("x");
+
+var my_value = new suite.make_value(1);
+console.log("x");
+var wrapped = my_value.get();
+console.log("x");
+assert(typeof(wrapped) === 'number', 'value #1');
+console.log("x");
+assert(wrapped === 1, 'value #2');
+console.log("x");
+
+my_value.set(2);
+console.log("x");
+assert(wrapped === 1, 'value #3');
+console.log("x");
+wrapped = my_value.get();
+console.log("x");
+assert(typeof(wrapped) === 'number', 'value #4');
+console.log("x");
+assert(wrapped === 2, 'value #5');
+console.log("x");
+
+my_value.set(true);
+console.log("x");
+assert(wrapped === 2, 'value #6');
+console.log("x");
+wrapped = my_value.get();
+console.log("x");
+// boolean is represented as integer in the efl::eina::value layer
+console.log("x");
+assert(typeof(wrapped) === 'number', 'value #7');
+console.log("x");
+assert(wrapped === 1, 'value #8');
+console.log("x");
+
+console.log("x");
+var captured = false;
+console.log("x");
+try {
+console.log("x");
+  my_value.set({type: 'complex object'});
+console.log("x");
+} catch(e) {
+console.log("x");
+  assert(e.code === 'std::bad_cast', 'value #9');
+console.log("x");
+  captured = true;
+console.log("x");
+}
+console.log("x");
+assert(captured === true, 'value #10');
+console.log("x");
+
+console.log("x");
+captured = false;
+console.log("x");
+try {
+console.log("x");
+    my_value = make_value({type: 'complex object'});
+console.log("x");
+} catch(e) {
+    console.log("e.code ", e.code, ' ', typeof e);
+  assert(e.code === 'std::bad_cast', 'value #11');
+console.log("x");
+  captured = true;
+console.log("x");
+}
+assert(captured === true, 'value #12');
+
 // finished tests
 
 console.log ("Test execution with success");
