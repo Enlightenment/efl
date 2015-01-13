@@ -1429,7 +1429,11 @@ _internal_file_set(Eo *obj, Elm_Photocam_Data *sd, const char *file, Eina_File *
    int w, h;
    double tz;
 
-   if (!eina_stringshare_replace(&sd->file, file)) return;
+   // It is actually to late, we have lost the reference to the previous
+   // file descriptor already, so we can't know if the file changed. To
+   // be safe we do for now just force a full reload on file_set and hope
+   // on evas to catch it, if there is no change.
+   eina_stringshare_replace(&sd->file, file);
    sd->f = eina_file_dup(f);
 
    evas_object_image_smooth_scale_set(sd->img, (sd->no_smooth == 0));
