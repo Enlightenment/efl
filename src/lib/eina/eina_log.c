@@ -1927,28 +1927,41 @@ eina_log_print_cb_journald(const Eina_Log_Domain *d,
 			   va_list args)
 {
 #ifdef HAVE_SYSTEMD
-   char buf[12];
-   char *tmp;
+   char *file_prefixed = NULL;
+   char *line_str = NULL;
+   char *message = NULL;
    Eina_Thread cur;
    int r;
 
-   r = vasprintf(&tmp, fmt, args);
+   r = asprintf(&file_prefixed, "CODE_FILE=%s", file);
    if (r == -1)
      {
-        fputs("ERR: eina_log_print_cb_journald() vasprintf failed\n", stderr);
-        return;
+       fputs("ERR: eina_log_print_cb_journald() asprintf failed\n", stderr);
+       goto finish;
      }
 
-   eina_convert_itoa(line, buf);
+   r = asprintf(&line_str, "CODE_LINE=%d", line);
+   if (r == -1)
+     {
+       fputs("ERR: eina_log_print_cb_journald() asprintf failed\n", stderr);
+       goto finish;
+     } 
+
+   r = vasprintf(&message, fmt, args);
+   if (r == -1)
+     {
+       fputs("ERR: eina_log_print_cb_journald() vasprintf failed\n", stderr);
+       goto finish;
+     }
 
    cur = SELF();
 
 #ifdef EINA_LOG_BACKTRACE
    if (EINA_LIKELY(level >= _backtrace_level))
 #endif
-     sd_journal_send_with_location(file, buf, fnc,
+     sd_journal_send_with_location(file_prefixed, line_str, fnc,
 				   "PRIORITY=%i", level,
-				   "MESSAGE=%s", tmp,
+				   "MESSAGE=%s", message,
 				   "EFL_DOMAIN=%s", d->domain_str,
 				   "THREAD=%lu", cur,
 				   NULL);
@@ -1971,9 +1984,9 @@ eina_log_print_cb_journald(const Eina_Log_Domain *d,
           else
             eina_strbuf_append_printf(bts, "[%s], ", strings[i]);
 
-        sd_journal_send_with_location(file, buf, fnc,
+        sd_journal_send_with_location(file_prefixed, line_str, fnc,
                                       "PRIORITY=%i", level,
-                                      "MESSAGE=%s", tmp,
+                                      "MESSAGE=%s", message,
                                       "EFL_DOMAIN=%s", d->domain_str,
                                       "THREAD=%lu", cur,
                                       "BACKTRACE=%s",
@@ -1984,7 +1997,10 @@ eina_log_print_cb_journald(const Eina_Log_Domain *d,
      }
 #endif
 
-   free(tmp);
+finish:
+   free(file_prefixed);
+   free(line_str);
+   free(message);
 
 #else
    eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, data, args);
