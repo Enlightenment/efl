@@ -247,10 +247,10 @@ ecore_wl_dnd_drag_start(Ecore_Wl_Input *input, Ecore_Wl_Window *win, Ecore_Wl_Wi
         wl_data_device_start_drag(input->data_device, input->data_source, 
                                   origin_surface, drag_surface, 
                                   input->display->serial);
-     }
 
-   /* set pointer image */
-   ecore_wl_input_cursor_from_name_set(input, "move");
+        /* set pointer image */
+        ecore_wl_input_cursor_from_name_set(input, "move");
+     }
 
    /* NB: Below code disabled for now
     * 
