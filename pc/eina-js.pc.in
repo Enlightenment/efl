@@ -10,4 +10,4 @@ Description: JavaScript C++ helpers for data structures
 Version: @PACKAGE_VERSION@
 Requires.private: @requirements_pc_eina@
 Libs.private: @requirements_libs_eina@
-Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eina-@VMAJ@ -I${includedir}/eina-js-@VMAJ@ -DV8_INCLUDE_HEADER='@V8_INCLUDE_HEADER@' -DUV_INCLUDE_HEADER='@UV_INCLUDE_HEADER@'
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eina-@VMAJ@ -I${includedir}/eina-js-@VMAJ@ -DV8_INCLUDE_HEADER='@V8_INCLUDE_HEADER@' -DUV_INCLUDE_HEADER='@UV_INCLUDE_HEADER@' -DNODE_INCLUDE_HEADER='@NODE_INCLUDE_HEADER@'
