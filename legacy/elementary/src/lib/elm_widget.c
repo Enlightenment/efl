@@ -4206,6 +4206,9 @@ _elm_widget_item_eo_base_constructor(Eo *eo_item, Elm_Widget_Item_Data *item)
      }
 
    eo_do_super(eo_item, ELM_WIDGET_ITEM_CLASS, eo_constructor());
+
+   EINA_MAGIC_SET(item, ELM_WIDGET_ITEM_MAGIC);
+
    item->widget = widget;
    item->eo_obj = eo_item;
    eo_do(eo_item, eo_event_callback_add(EO_BASE_EVENT_DEL, _eo_del_cb, NULL));
