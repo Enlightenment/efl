@@ -7383,7 +7383,7 @@ edje_edit_image_usage_list_get(Evas_Object *obj, const char *name, Eina_Bool fir
         { \
           ITEM_ADD(); \
           if (first_only) \
-             return result; \
+             goto end; \
           else \
              continue; \
         } \
@@ -7393,7 +7393,7 @@ edje_edit_image_usage_list_get(Evas_Object *obj, const char *name, Eina_Bool fir
              { \
                ITEM_ADD(); \
                if (first_only) \
-                  return result; \
+                  goto end; \
                else \
                   continue; \
              } \
@@ -7420,6 +7420,7 @@ edje_edit_image_usage_list_get(Evas_Object *obj, const char *name, Eina_Bool fir
     }
    #undef ITEM_ADD
    #undef FIND_IN_PART_DESCRIPTION
+end:
    eina_iterator_free(it);
 
    return result;
