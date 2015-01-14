@@ -446,6 +446,7 @@ struct _Evas_Engine_GL_Context
          Eina_Bool       active : 1;
       } clip;
       struct {
+         Evas_GL_Shader  id;
          Evas_GL_Image  *surface;
          GLuint          cur_prog;
          GLuint          cur_tex, cur_texu, cur_texv, cur_texa, cur_texm;
@@ -735,7 +736,7 @@ void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *g
                                                        int npoints,
                                                        RGBA_Map_Point *p,
                                                        int clip, int cx, int cy, int cw, int ch,
-                                                       Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                                       Evas_GL_Texture *mtex, int mx, int my, int mw, int mh, int mdx, int mdy, int mdw, int mdh,
                                                        int r, int g, int b, int a,
                                                        Eina_Bool smooth,
                                                        Eina_Bool tex_only,

@@ -920,6 +920,8 @@ void
 evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                               int npoints, RGBA_Map_Point *p, int smooth, int level EINA_UNUSED)
 {
+   int mmx = 0, mmy = 0, mmw = 0, mmh = 0, mdx = 0, mdy = 0, mdw = 0, mdh = 0;
+   Evas_GL_Texture *mtex = NULL;
    RGBA_Draw_Context *dc;
    int r, g, b, a;
    int c, cx, cy, cw, ch;
@@ -946,9 +948,27 @@ evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
    if (!im->tex) return;
    im->tex->im = im;
 
+   if (dc->clip.mask)
+     {
+        Evas_GL_Image *mask = dc->clip.mask;
+        double mx, my, mw, mh;
+
+        mdx = mx = dc->clip.mask_x;
+        mdy = my = dc->clip.mask_y;
+        mdw = mw = mask->w;
+        mdh = mh = mask->h;
+        if (c) RECTS_CLIP_TO_RECT(mx, my, mw, mh, cx, cy, cw, ch);
+        //RECTS_CLIP_TO_RECT(mx, my, mw, mh, dx, dy, dw, dh);
+        mmx = mx - dc->clip.mask_x;
+        mmy = my - dc->clip.mask_y;
+        mmw = mw;
+        mmh = mh;
+        mtex = mask->tex;
+     }
+
    evas_gl_common_context_image_map_push(gc, im->tex, npoints, p,
                                          c, cx, cy, cw, ch,
-                                         NULL, 0, 0, 0, 0,
+                                         mtex, mmx, mmy, mmw, mmh, mdx, mdy, mdw, mdh,
                                          r, g, b, a, smooth, im->tex_only,
                                          im->cs.space);
 }

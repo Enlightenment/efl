@@ -2701,6 +2701,206 @@ Evas_GL_Program_Source shader_rect_mask_vert_src =
    NULL, 0
 };
 
+/* Source: modules/evas/engines/gl_common/shader/map_mask_frag.shd */
+static const char const map_mask_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex, texm;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 mask_Position, col, mask_Absolute;\n"
+   "void main()\n"
+   "{\n"
+   "   // FIXME: Use mask coordinates within its texture\n"
+   "   // FIXME: Fix Mach band effect using proper 4-point color interpolation\n"
+   "   // FIXME: We're abusing varying where we should have uniforms\n"
+   "   vec2 mpos = vec2(mask_Position.xy - mask_Absolute.xy) * mask_Absolute.zw;\n"
+   "   gl_FragColor = texture2D(tex, tex_c.xy).bgra * texture2D(texm, mpos).a *  col;\n"
+   "}\n";
+Evas_GL_Program_Source shader_map_mask_frag_src =
+{
+   map_mask_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/map_mask_vert.shd */
+static const char const map_mask_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex, color;\n"
+   "attribute vec2 tex_coord, tex_coordm, tex_sample;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 mask_Position, col, mask_Absolute;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   col = color;\n"
+   "   // Assume Y-invert on mask, normalize (screen to texture mode coordinates)\n"
+   "   mask_Position = mvp * vertex * vec4(0.5, -0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   mask_Absolute = vec4(tex_coordm, tex_sample); // x, y, 1/w, 1/h on canvas in GL coords\n"
+   "}\n";
+Evas_GL_Program_Source shader_map_mask_vert_src =
+{
+   map_mask_vert_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/map_mask_nomul_frag.shd */
+static const char const map_mask_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex, texm;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 mask_Position, mask_Absolute;\n"
+   "void main()\n"
+   "{\n"
+   "   // FIXME: Use mask coordinates within its texture\n"
+   "   // FIXME: We're abusing varying where we should have uniforms\n"
+   "   vec2 mpos = vec2(mask_Position.xy - mask_Absolute.xy) * mask_Absolute.zw;\n"
+   "   gl_FragColor = texture2D(tex, tex_c.xy).bgra * texture2D(texm, mpos).a;\n"
+   "}\n";
+Evas_GL_Program_Source shader_map_mask_nomul_frag_src =
+{
+   map_mask_nomul_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/map_mask_nomul_vert.shd */
+static const char const map_mask_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec2 tex_coord, tex_coordm, tex_sample;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 mask_Position, mask_Absolute;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   // Assume Y-invert on mask, normalize (screen to texture mode coordinates)\n"
+   "   mask_Position = mvp * vertex * vec4(0.5, -0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   mask_Absolute = vec4(tex_coordm, tex_sample); // x, y, 1/w, 1/h on canvas in GL coords\n"
+   "}\n";
+Evas_GL_Program_Source shader_map_mask_nomul_vert_src =
+{
+   map_mask_nomul_vert_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/map_mask_bgra_frag.shd */
+static const char const map_mask_bgra_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex, texm;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 mask_Position, col, mask_Absolute;\n"
+   "void main()\n"
+   "{\n"
+   "   // FIXME: Use mask coordinates within its texture\n"
+   "   // FIXME: Fix Mach band effect using proper 4-point color interpolation\n"
+   "   // FIXME: We're abusing varying where we should have uniforms\n"
+   "   vec2 mpos = vec2(mask_Position.xy - mask_Absolute.xy) * mask_Absolute.zw;\n"
+   "   gl_FragColor = texture2D(tex, tex_c.xy) * texture2D(texm, mpos).a *  col;\n"
+   "}\n";
+Evas_GL_Program_Source shader_map_mask_bgra_frag_src =
+{
+   map_mask_bgra_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/map_mask_bgra_vert.shd */
+static const char const map_mask_bgra_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex, color;\n"
+   "attribute vec2 tex_coord, tex_coordm, tex_sample;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 mask_Position, col, mask_Absolute;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   col = color;\n"
+   "   // Assume Y-invert on mask, normalize (screen to texture mode coordinates)\n"
+   "   mask_Position = mvp * vertex * vec4(0.5, -0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   mask_Absolute = vec4(tex_coordm, tex_sample); // x, y, 1/w, 1/h on canvas in GL coords\n"
+   "}\n";
+Evas_GL_Program_Source shader_map_mask_bgra_vert_src =
+{
+   map_mask_bgra_vert_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/map_mask_bgra_nomul_frag.shd */
+static const char const map_mask_bgra_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "#endif\n"
+   "uniform sampler2D tex, texm;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 mask_Position, mask_Absolute;\n"
+   "void main()\n"
+   "{\n"
+   "   // FIXME: Use mask coordinates within its texture\n"
+   "   // FIXME: We're abusing varying where we should have uniforms\n"
+   "   vec2 mpos = vec2(mask_Position.xy - mask_Absolute.xy) * mask_Absolute.zw;\n"
+   "   gl_FragColor = texture2D(tex, tex_c.xy) * texture2D(texm, mpos).a;\n"
+   "}\n";
+Evas_GL_Program_Source shader_map_mask_bgra_nomul_frag_src =
+{
+   map_mask_bgra_nomul_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/map_mask_bgra_nomul_vert.shd */
+static const char const map_mask_bgra_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec2 tex_coord, tex_coordm, tex_sample;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec2 tex_c;\n"
+   "varying vec4 mask_Position, mask_Absolute;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "   // Assume Y-invert on mask, normalize (screen to texture mode coordinates)\n"
+   "   mask_Position = mvp * vertex * vec4(0.5, -0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   mask_Absolute = vec4(tex_coordm, tex_sample); // x, y, 1/w, 1/h on canvas in GL coords\n"
+   "}\n";
+Evas_GL_Program_Source shader_map_mask_bgra_nomul_vert_src =
+{
+   map_mask_bgra_nomul_vert_glsl,
+   NULL, 0
+};
+
 static const struct {
    Evas_GL_Shader id;
    Evas_GL_Program_Source *vert;
@@ -2759,5 +2959,9 @@ static const struct {
    { SHADER_YUY2_MASK, &(shader_yuy2_mask_vert_src), &(shader_yuy2_mask_frag_src), "yuy2_mask" },
    { SHADER_RGB_A_PAIR_MASK, &(shader_rgb_a_pair_mask_vert_src), &(shader_rgb_a_pair_mask_frag_src), "rgb_a_pair_mask" },
    { SHADER_RECT_MASK, &(shader_rect_mask_vert_src), &(shader_rect_mask_frag_src), "rect_mask" },
+   { SHADER_MAP_MASK, &(shader_map_mask_vert_src), &(shader_map_mask_frag_src), "map_mask" },
+   { SHADER_MAP_MASK_NOMUL, &(shader_map_mask_nomul_vert_src), &(shader_map_mask_nomul_frag_src), "map_mask_nomul" },
+   { SHADER_MAP_MASK_BGRA, &(shader_map_mask_bgra_vert_src), &(shader_map_mask_bgra_frag_src), "map_mask_bgra" },
+   { SHADER_MAP_MASK_BGRA_NOMUL, &(shader_map_mask_bgra_nomul_vert_src), &(shader_map_mask_bgra_nomul_frag_src), "map_mask_bgra_nomul" },
 };
 

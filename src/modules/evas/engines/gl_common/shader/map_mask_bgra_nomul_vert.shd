@@ -1,0 +1,17 @@
+#ifdef GL_ES
+precision highp float;
+#endif
+attribute vec4 vertex;
+attribute vec2 tex_coord, tex_coordm, tex_sample;
+uniform mat4 mvp;
+varying vec2 tex_c;
+varying vec4 mask_Position, mask_Absolute;
+void main()
+{
+   gl_Position = mvp * vertex;
+   tex_c = tex_coord;
+
+   // Assume Y-invert on mask, normalize (screen to texture mode coordinates)
+   mask_Position = mvp * vertex * vec4(0.5, -0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);
+   mask_Absolute = vec4(tex_coordm, tex_sample); // x, y, 1/w, 1/h on canvas in GL coords
+}

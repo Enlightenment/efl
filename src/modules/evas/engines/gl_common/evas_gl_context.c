@@ -880,6 +880,11 @@ evas_gl_common_context_new(void)
         SHADER_TEXTURE_ADD(shared, IMG_MASK_BGRA_NOMUL, tex);
         SHADER_TEXTURE_ADD(shared, IMG_MASK_BGRA_NOMUL, texm);
 
+        SHADER_TEXTURE_ADD(shared, MAP_MASK_BGRA, tex);
+        SHADER_TEXTURE_ADD(shared, MAP_MASK_BGRA, texm);
+        SHADER_TEXTURE_ADD(shared, MAP_MASK_BGRA_NOMUL, tex);
+        SHADER_TEXTURE_ADD(shared, MAP_MASK_BGRA_NOMUL, texm);
+
         SHADER_TEXTURE_ADD(shared, FONT_MASK, tex);
         SHADER_TEXTURE_ADD(shared, FONT_MASK, texm);
 
@@ -2481,6 +2486,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                                       RGBA_Map_Point *p,
                                       int clip, int cx, int cy, int cw, int ch,
                                       Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                      int mdx, int mdy, int mdw, int mdh,
                                       int r, int g, int b, int a,
                                       Eina_Bool smooth, Eina_Bool tex_only,
                                       Evas_Colorspace cspace)
@@ -2490,11 +2496,12 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    GLfloat tx[4], ty[4], t2x[4], t2y[4];
    Eina_Bool blend = EINA_FALSE;
    DATA32 cmul;
-   GLuint prog = gc->shared->shader[SHADER_IMG].prog;
+   Evas_GL_Shader shader = SHADER_IMG;
    Eina_Bool utexture = EINA_FALSE;
    Eina_Bool uvtexture = EINA_FALSE;
    int pn = 0, i;
    int flat = 0;
+   GLuint prog;
 
    if (!(gc->dc->render_op == EVAS_RENDER_COPY) &&
        ((a < 255) || (tex->alpha) || (!!mtex))) blend = EINA_TRUE;
@@ -2517,59 +2524,65 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
      {
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
-         prog = gc->shared->shader[evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
-                                                                SHADER_YUV_NOMUL, SHADER_YUV,
-                                                                SHADER_YUV_MASK, SHADER_YUV_MASK)].prog;
-         utexture = EINA_TRUE;
-         break;
+        shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
+                                              SHADER_YUV_NOMUL, SHADER_YUV,
+                                              SHADER_YUV_MASK, SHADER_YUV_MASK);
+        utexture = EINA_TRUE;
+        break;
       case EVAS_COLORSPACE_YCBCR422601_PL:
-         prog = gc->shared->shader[evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
-                                                                SHADER_YUY2_NOMUL, SHADER_YUY2,
-                                                                SHADER_YUY2_MASK, SHADER_YUY2_MASK)].prog;
-         uvtexture = EINA_TRUE;
-         break;
+        shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
+                                              SHADER_YUY2_NOMUL, SHADER_YUY2,
+                                              SHADER_YUY2_MASK, SHADER_YUY2_MASK);
+        uvtexture = EINA_TRUE;
+        break;
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
-         prog = gc->shared->shader[evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
-                                                                SHADER_NV12_NOMUL, SHADER_NV12,
-                                                                SHADER_NV12_MASK, SHADER_NV12_MASK)].prog;
-         uvtexture = EINA_TRUE;
-         break;
-
-      // FIXME: Add RGB+A support
+        shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
+                                              SHADER_NV12_NOMUL, SHADER_NV12,
+                                              SHADER_NV12_MASK, SHADER_NV12_MASK);
+        uvtexture = EINA_TRUE;
+        break;
 
       default:
-         if (tex_only)
-           {
-              if (tex->pt->dyn.img)
-                {
-                   prog = gc->shared->shader[evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
-                                                                          SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA,
-                                                                          SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA)].prog;
-                }
-              else
-                {
-                   prog = gc->shared->shader[evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
-                                                                          SHADER_TEX_NOMUL, SHADER_TEX,
-                                                                          SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA)].prog;
-                }
-           }
-         else
-           {
-              if (tex->gc->shared->info.bgra)
-                {
-                   prog = gc->shared->shader[evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
-                                                                          SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA,
-                                                                          SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA)].prog;
-                }
+        if (tex_only)
+          {
+             if (tex->pt->dyn.img)
+               {
+                  shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
+                                                        SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA,
+                                                        SHADER_MAP_MASK_BGRA_NOMUL, SHADER_MAP_MASK_BGRA);
+               }
              else
                {
-                  prog = gc->shared->shader[evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
-                                                                         SHADER_IMG_NOMUL, SHADER_IMG,
-                                                                         SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK)].prog;
+                  shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
+                                                        SHADER_TEX_NOMUL, SHADER_TEX,
+                                                        SHADER_MAP_MASK_BGRA_NOMUL, SHADER_MAP_MASK_BGRA);
+               }
+          }
+        else
+          {
+             if (tex->gc->shared->info.bgra)
+               {
+                  shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
+                                                        SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA,
+                                                        SHADER_MAP_MASK_BGRA_NOMUL, SHADER_MAP_MASK_BGRA);
+               }
+             else
+               {
+                  shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
+                                                        SHADER_IMG_NOMUL, SHADER_IMG,
+                                                        SHADER_MAP_MASK_NOMUL, SHADER_MAP_MASK);
                }
            }
      }
+   prog = gc->shared->shader[shader].prog;
+
+   /* FIXME: Add RGB+A support, as well as YUV map masking
+    * Print error messages for easier debugging... */
+   if (cspace == EVAS_COLORSPACE_ETC1_ALPHA)
+     ERR("Proper support for ETC1+Alpha maps is not implemented!");
+   else if (mtex && (utexture || uvtexture))
+     ERR("Support for YUV or ETC1+Alpha map masking is not implemented!");
 
    x = w = (p[0].x >> FP);
    y = h = (p[0].y >> FP);
@@ -2641,6 +2654,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                                      smooth,
                                      clip, cx, cy, cw, ch);
    gc->pipe[pn].region.type = RTYPE_MAP;
+   gc->pipe[pn].shader.id = shader;
    gc->pipe[pn].shader.cur_tex = tex->pt->texture;
    if (utexture)
      {
@@ -2671,7 +2685,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv2 = (utexture || uvtexture) ? 1 : 0;
    gc->pipe[pn].array.use_texuv3 = (utexture) ? 1 : 0;
    gc->pipe[pn].array.use_texm = !!mtex;
-   gc->pipe[pn].array.use_texsam = 0;
+   gc->pipe[pn].array.use_texsam = gc->pipe[pn].array.use_texm;
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2731,7 +2745,39 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                    A_VAL(&cl));
      }
 
-   PUSH_MASK(pn, mtex, mx, my, mw, mh);
+   if (mtex)
+     {
+        GLfloat glmdx = 0.f, glmdy = 0.f, glmdw = 1.f, glmdh = 1.f;
+
+        // Note: I couldn't write any test case where it was necessary
+        // to know the mask position in its texture. Thus these unused vars.
+        (void) mx; (void) my; (void) mw; (void) mh;
+
+        if (gc->w) glmdx = (GLfloat) mdx / (GLfloat) gc->w;
+        if (gc->h) glmdy = (GLfloat) mdy / (GLfloat) gc->h;
+        if (mdw) glmdw = (GLfloat) gc->w / (GLfloat) mdw;
+        if (mdh) glmdh = (GLfloat) gc->h / (GLfloat) mdh ;
+
+        // We seriously need uniforms here. Abusing tex_coordm for storage.
+        // Passing mask x,y (on canvas) to the fragment shader
+        PUSH_TEXM(pn, glmdx, glmdy);
+        PUSH_TEXM(pn, glmdx, glmdy);
+        PUSH_TEXM(pn, glmdx, glmdy);
+        PUSH_TEXM(pn, glmdx, glmdy);
+        PUSH_TEXM(pn, glmdx, glmdy);
+        PUSH_TEXM(pn, glmdx, glmdy);
+
+        // Abusing tex_sample to pass mask 1/w, 1/h as well
+        PUSH_TEXSAM(pn, glmdw, glmdh);
+        PUSH_TEXSAM(pn, glmdw, glmdh);
+        PUSH_TEXSAM(pn, glmdw, glmdh);
+        PUSH_TEXSAM(pn, glmdw, glmdh);
+        PUSH_TEXSAM(pn, glmdw, glmdh);
+        PUSH_TEXSAM(pn, glmdw, glmdh);
+
+        //DBG("Orig %d,%d - %dx%d --> %f,%f - %f x %f", mdx, mdy, mdw, mdh,
+        //    glmdx, glmdy, glmdw, glmdh);
+     }
 
    if (!flat)
      {
