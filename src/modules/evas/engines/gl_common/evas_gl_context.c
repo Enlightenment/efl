@@ -1759,11 +1759,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    if (!(gc->dc->render_op == EVAS_RENDER_COPY) &&
        ((a < 255) || (tex->alpha) || (!!mtex))) blend = EINA_TRUE;
 
-   if (gc->filter_prog)
-     {
-        prog = gc->filter_prog;
-     }
-   else if (tex_only)
+   if (tex_only)
      {
         if (tex->pt->dyn.img)
           {

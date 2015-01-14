@@ -495,9 +495,6 @@ struct _Evas_Engine_GL_Context
 
    Evas_GL_Image *def_surface;
 
-   /* If this is set: Force drawing with a particular filter */
-   GLuint filter_prog;
-
 #ifdef GL_GLES
    // FIXME: hack. expose egl display to gl core for egl image sec extn.
    void *egldisp;
