@@ -3584,10 +3584,11 @@ _item_del(Elm_Gen_Item *it)
 
    evas_event_freeze(evas_object_evas_get(obj));
 
-   // FIXME: relative will be better to be fixed. it is too harsh.
-   if (it->item->rel && it->item->rel->item)
-      it->item->rel->item->rel_revs =
-         eina_list_remove(it->item->rel->item->rel_revs, it);
+   if (it->item->rel)
+     {
+        it->item->rel->item->rel_revs =
+           eina_list_remove(it->item->rel->item->rel_revs, it);
+     }
    if (it->item->rel_revs)
      {
         Elm_Gen_Item *tmp;
@@ -5764,41 +5765,9 @@ _elm_genlist_item_elm_widget_item_disable(Eo *eo_it, Elm_Gen_Item *it)
 }
 
 EOLIAN static Eina_Bool
-_elm_genlist_item_elm_widget_item_del_pre(Eo *eo_it, Elm_Gen_Item *it)
+_elm_genlist_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED,
+                                          Elm_Gen_Item *it)
 {
-   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
-
-   // FIXME: relative will be better to be fixed. it is too harsh.
-   if (it->item->rel)
-     {
-        it->item->rel->item->rel_revs =
-           eina_list_remove(it->item->rel->item->rel_revs, it);
-        it->item->rel = NULL;
-     }
-   if (it->item->rel_revs)
-     {
-        Elm_Gen_Item *tmp;
-        EINA_LIST_FREE(it->item->rel_revs, tmp) tmp->item->rel = NULL;
-     }
-   elm_genlist_item_subitems_clear(eo_it);
-   if (sd->show_item == it)
-     sd->show_item = NULL;
-
-   _elm_genlist_item_del_not_serious(it);
-   if (it->item->block)
-     {
-        if (it->realized) _elm_genlist_item_unrealize(it, EINA_FALSE);
-        it->item->block->changed = EINA_TRUE;
-        ecore_job_del(sd->calc_job);
-        sd->calc_job = ecore_job_add(_calc_job, sd->obj);
-     }
-   if (it->parent)
-     {
-        it->parent->item->items =
-           eina_list_remove(it->parent->item->items, eo_it);
-        it->parent = NULL;
-     }
-
    _item_del(it);
    return EINA_TRUE;
 }
