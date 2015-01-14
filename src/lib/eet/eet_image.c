@@ -2382,7 +2382,7 @@ _eet_data_image_decode_inside(const void   *data,
                      default:
                          {
                             uLongf dlen = w * h * 4;
-                            
+
                             if (uncompress((Bytef *)d, &dlen, (Bytef *)body,
                                            (uLongf)(size - 32)) != Z_OK)
                               return 0;
@@ -2398,7 +2398,7 @@ _eet_data_image_decode_inside(const void   *data,
                      case EET_COMPRESSION_SUPERFAST:
                          {
                             char *dtmp;
-                            
+
                             dtmp = malloc(src_w * src_h * 4);
                             if (!dtmp) return 0;
                             if (LZ4_decompress_fast((const char *)body,
@@ -2418,12 +2418,12 @@ _eet_data_image_decode_inside(const void   *data,
                          {
                             Bytef *dtmp;
                             uLongf dlen = src_w * src_h * 4;
-                  
+
                             /* FIXME: This could create a huge alloc. So
                              compressed data and tile could not always work.*/
                             dtmp = malloc(dlen);
                             if (!dtmp) return 0;
-                  
+
                             if (uncompress(dtmp, &dlen, (Bytef *)body,
                                            (uLongf)(size - 32)) != Z_OK)
                               {
