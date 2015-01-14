@@ -332,9 +332,9 @@ eet_data_image_jpeg_alpha_convert(int         *size,
 #endif /* ifdef CONV64 */
 
 #define CONV8(x)
-#define CONV16(x) {if (_eet_image_words_bigendian) {SWAP16(x); }}
-#define CONV32(x) {if (_eet_image_words_bigendian) {SWAP32(x); }}
-#define CONV64(x) {if (_eet_image_words_bigendian) {SWAP64(x); }}
+#define CONV16(x) do {if (_eet_image_words_bigendian) {SWAP16(x); }} while(0)
+#define CONV32(x) do {if (_eet_image_words_bigendian) {SWAP32(x); }} while(0)
+#define CONV64(x) do {if (_eet_image_words_bigendian) {SWAP64(x); }} while(0)
 
 /*---*/
 
