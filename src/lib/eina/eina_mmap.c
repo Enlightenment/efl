@@ -92,10 +92,16 @@ _eina_mmap_safe_sigbus(int sig, siginfo_t *siginfo, void *ptr)
           ERR("Unaligned memory access - BUS_ADRALN. SIGBUS!!!");
         else if (siginfo->si_code == BUS_OBJERR)
           ERR("Invalid object - BUS_OBJERR. SIGBUS!!!");
+#ifdef BUS_MCEERR_AR
         else if (siginfo->si_code == BUS_MCEERR_AR)
           ERR("Memory Fault - BUS_MCEERR_AR. SIGBUS!!!");
+#endif
+#ifdef BUS_MCEERR_AO
         else if (siginfo->si_code == BUS_MCEERR_AO)
           ERR("Memory Fault - BUS_MCEERR_AO. SIGBUS!!!");
+#endif
+        else
+          ERR("Memory Fault - Unknown. SIGBUS!!!");
         errno = perrno;
         if (_eina_mmap_prev_sigaction.sa_flags & SA_SIGINFO)
           {
