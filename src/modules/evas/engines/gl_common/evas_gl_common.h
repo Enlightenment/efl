@@ -419,6 +419,7 @@ struct _Evas_Engine_GL_Context
    struct {
       int                top_pipe;
       struct {
+         Evas_GL_Shader  id; // debug info
          GLuint          cur_prog;
          GLuint          cur_tex, cur_texu, cur_texv, cur_texa, cur_texm;
          int             render_op;
@@ -446,7 +447,7 @@ struct _Evas_Engine_GL_Context
          Eina_Bool       active : 1;
       } clip;
       struct {
-         Evas_GL_Shader  id;
+         Evas_GL_Shader  id; // debug info
          Evas_GL_Image  *surface;
          GLuint          cur_prog;
          GLuint          cur_tex, cur_texu, cur_texv, cur_texa, cur_texm;
