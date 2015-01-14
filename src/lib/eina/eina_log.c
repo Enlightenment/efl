@@ -1202,7 +1202,8 @@ eina_log_print_unlocked(int domain,
        EINA_UNLIKELY(domain < 0))
      {
         if (file && fnc && fmt)
-           fprintf(
+          {
+             fprintf(
               stderr,
               "CRI: %s:%d %s() eina_log_print() unknown domain %d, original message format '%s'\n",
               file,
@@ -1210,12 +1211,15 @@ eina_log_print_unlocked(int domain,
               fnc,
               domain,
               fmt);
+          }
         else
-           fprintf(
+          {
+             fprintf(
               stderr,
               "CRI: eina_log_print() unknown domain %d, original message format '%s'\n",
               domain,
               fmt ? fmt : "");
+          }
 
         if (_abort_on_critical)
            abort();
@@ -1580,10 +1584,12 @@ eina_log_color_disable_set(Eina_Bool disabled)
 
    for (i = 0; i < _log_domains_count; i++)
      {
+        if (_log_domains[i].deleted)
+          continue;
+
         domain = &_log_domains[i];
 
-        if (domain->domain_str)
-          free((char *)domain->domain_str);
+        free((char *)domain->domain_str);
 
         if ((domain->color) && (!_disable_color))
           domain->domain_str = eina_log_domain_str_get(domain->name, domain->color);
