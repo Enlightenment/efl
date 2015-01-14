@@ -2148,11 +2148,16 @@ eet_data_image_header_decode_cipher(const void   *data,
      {
         unsigned int iw = 0, ih = 0;
         unsigned const char *dt;
-        int sz1;
+        int sz1, sz2;
         int ok;
 
         sz1 = header[1];
-/*  sz2 = header[2]; */
+        sz2 = header[2];
+        if ((sz1 <= 0) || (sz2 <= 0) || ((sz1 + sz2) > (size - 12)))
+          {
+             free(deciphered_d);
+             return 0;
+          }
         dt = data;
         dt += 12;
         ok = eet_data_image_jpeg_header_decode(dt, sz1, &iw, &ih);
@@ -2449,6 +2454,10 @@ _eet_data_image_decode_inside(const void   *data,
 
              sz1 = header[1];
              sz2 = header[2];
+             if ((sz1 <= 0) || (sz2 <= 0) || ((sz1 + sz2) > (size - 12)))
+               {
+                  return 0;
+               }
              dt = data;
              dt += 12;
 
