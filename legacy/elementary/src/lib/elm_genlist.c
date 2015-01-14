@@ -6145,6 +6145,7 @@ _elm_genlist_item_insert_before(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(before));
 
    it->item->rel = before;
+   GL_IT(before)->rel_revs = eina_list_append(GL_IT(before)->rel_revs, it);
    it->item->before = EINA_TRUE;
    _item_queue(sd, it, NULL);
 
