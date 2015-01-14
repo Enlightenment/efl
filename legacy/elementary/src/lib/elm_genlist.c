@@ -5585,9 +5585,8 @@ _elm_genlist_eo_base_constructor(Eo *obj, Elm_Genlist_Data *sd)
 static void
 _internal_elm_genlist_clear(Evas_Object *obj)
 {
-   Eina_Inlist *next, *l;
-
    ELM_GENLIST_DATA_GET(obj, sd);
+   Elm_Gen_Item *it;
 
    _elm_genlist_item_unfocused(sd->focused_item);
    if (sd->mode_item) sd->mode_item = NULL;
@@ -5597,11 +5596,9 @@ _internal_elm_genlist_clear(Evas_Object *obj)
    evas_event_freeze(evas_object_evas_get(sd->obj));
    // Do not use EINA_INLIST_FOREACH or EINA_INLIST_FOREACH_SAFE
    // because sd->items can be modified inside elm_widget_item_del()
-   for (l = sd->items, next = l ? l->next : NULL;
-        l;
-        l = next, next = next ? next->next : NULL)
+   while (sd->items)
      {
-        Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(l);
+        it = EINA_INLIST_CONTAINER_GET(sd->items->last, Elm_Gen_Item);
         eo_do(EO_OBJ(it), elm_wdg_item_del());
      }
    sd->pan_changed = EINA_TRUE;
