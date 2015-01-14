@@ -2372,6 +2372,7 @@ _layout_par(Ctxt *c)
                     }
                }
 
+             printf("%d\n", break_position);
              if (break_position > 0)
                {
                   /* Add all the items that don't need breaking. */

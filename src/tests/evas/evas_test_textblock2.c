@@ -302,9 +302,8 @@ START_TEST(evas_textblock2_cursor)
 
    /* Walk the textblock2 using cursor_char_next */
    eo_do(tb, efl_text_set(buf));
-   printf("%s\n", eo_do(tb, efl_text_get()));
    ck_assert_str_eq(eo_do(tb, efl_text_get()), buf);
-   len = eina_unicode_utf8_get_len(buf) - 12; /* 12 because len(\n) == 1 and len(" _PS ") == 1 */
+   len = eina_unicode_utf8_get_len(buf);
    for (i = 0 ; i < len ; i++)
      {
         _CHECK_CURSOR_COORDS();
@@ -610,11 +609,11 @@ START_TEST(evas_textblock2_cursor)
 
 #ifdef HAVE_FRIBIDI
    eo_do(tb, efl_text_set(
-         "testנסיוןtestנסיון" _PS ""
-         "נסיוןtestנסיוןtest" _PS ""
-         "testנסיוןtest" _PS ""
-         "נסיוןtestנסיון" _PS ""
-         "testנסיון\nנסיון" _PS ""
+         "testנסיוןtestנסיון" _PS
+         "נסיוןtestנסיוןtest" _PS
+         "testנסיוןtest" _PS
+         "נסיוןtestנסיון" _PS
+         "testנסיון\nנסיון" _PS
          "נסיוןtest\ntest"
          ));
 
@@ -647,10 +646,19 @@ START_TEST(evas_textblock2_cursor)
               evas_textblock2_cursor_pos_set(main_cur, 7);
               evas_textblock2_cursor_char_coord_set(main_cur, x - 50, y);
               fail_if(evas_textblock2_cursor_compare(main_cur, cur));
+              printf("TOM2 %d %d\n",
+                    evas_textblock2_cursor_pos_get(main_cur),
+                    evas_textblock2_cursor_pos_get(cur)
+                    );
 
               evas_textblock2_cursor_line_char_first(cur);
               evas_textblock2_cursor_pos_set(main_cur, 7);
               evas_textblock2_cursor_char_coord_set(main_cur, x + w + 50, y);
+              printf("TOM3 %d %d\n",
+                    evas_textblock2_cursor_pos_get(main_cur),
+                    evas_textblock2_cursor_pos_get(cur)
+                    );
+              printf("***\n");
               fail_if(evas_textblock2_cursor_compare(main_cur, cur));
               break;
           }
