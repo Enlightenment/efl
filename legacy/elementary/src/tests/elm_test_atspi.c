@@ -3,16 +3,11 @@
 #endif
 
 #define ELM_INTERNAL_API_ARGESFSDFEFC
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_suite.h"
-
-#include "elm_atspi_app_object.eo.h"
-
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#include "elm_interface_atspi_accessible.h"
-#include "elm_interface_atspi_accessible.eo.h"
 
 static Evas_Object *g_win, *g_btn, *g_bg;
 

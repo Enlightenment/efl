@@ -2,15 +2,10 @@
 # include "elementary_config.h"
 #endif
 
-#include <Elementary.h>
-#include "elm_suite.h"
-
 #define ELM_INTERFACE_ATSPI_TEXT_PROTECTED
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#include "elm_interface_atspi_text.h"
-#include "elm_interface_atspi_text.eo.h"
-#include "elm_interface_atspi_accessible.h"
-#include "elm_interface_atspi_accessible.eo.h"
+#include <Elementary.h>
+#include "elm_suite.h"
 
 START_TEST (elm_entry_del)
 {

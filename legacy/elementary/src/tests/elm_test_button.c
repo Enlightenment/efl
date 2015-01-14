@@ -2,19 +2,11 @@
 # include "elementary_config.h"
 #endif
 
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
+#define ELM_INTERFACE_ATSPI_ACTION_PROTECTED
 #include <Elementary.h>
 #include "elm_suite.h"
-
-#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
-#include "elm_interface_atspi_accessible.h"
-#include "elm_interface_atspi_accessible.eo.h"
-
-#define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
-#include "elm_interface_atspi_component.eo.h"
-
-#define ELM_INTERFACE_ATSPI_ACTION_PROTECTED
-#include "elm_interface_atspi_action.eo.h"
-
 
 START_TEST (elm_atspi_role_get)
 {
