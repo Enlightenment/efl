@@ -5669,6 +5669,9 @@ _item_select(Elm_Gen_Item *it)
           eina_list_append(sd->selected, eo_it);
      }
 
+   evas_object_ref(obj);
+   if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), eo_it);
+   evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, eo_it);
    elm_object_item_focus_set(eo_it, EINA_TRUE);
    _elm_genlist_item_content_focus_set(it, ELM_FOCUS_PREVIOUS);
 
@@ -5688,12 +5691,6 @@ _item_select(Elm_Gen_Item *it)
                }
           }
      }
-
-   evas_object_ref(obj);
-
-   if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), eo_it);
-   if (EINA_MAGIC_CHECK((Elm_Widget_Item_Data *)it, ELM_WIDGET_ITEM_MAGIC))
-     evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, eo_it);
 
    evas_object_unref(obj);
 }
