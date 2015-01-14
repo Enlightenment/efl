@@ -2359,6 +2359,8 @@ _eet_data_image_decode_inside(const void   *data,
                               Eet_Image_Encoding lossy,
                               Eet_Colorspace cspace)
 {
+   _eet_image_endian_check();
+
    if (lossy == EET_IMAGE_LOSSLESS && quality == 100)
      {
         unsigned int *body;
