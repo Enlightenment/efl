@@ -157,7 +157,6 @@ static void _access_activate_cb(void *data EINA_UNUSED,
                                 Elm_Object_Item *item);
 static void _decorate_item_set(Elm_Gen_Item *);
 static void _internal_elm_genlist_clear(Evas_Object *obj);
-static void _item_highlight(Elm_Gen_Item *it);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -2396,8 +2395,6 @@ _item_multi_select_up(Elm_Genlist_Data *sd)
    else
      {
         elm_genlist_item_selected_set(eo_prev, EINA_TRUE);
-        ELM_GENLIST_ITEM_DATA_GET(eo_prev, prev);
-        _item_highlight(prev);
      }
    return EINA_TRUE;
 }
@@ -2428,8 +2425,6 @@ _item_multi_select_down(Elm_Genlist_Data *sd)
    else
      {
         elm_genlist_item_selected_set(eo_next, EINA_TRUE);
-        ELM_GENLIST_ITEM_DATA_GET(eo_next, next);
-        _item_highlight(next);
      }
 
    return EINA_TRUE;
@@ -2479,7 +2474,6 @@ _item_single_select_up(Elm_Genlist_Data *sd)
    _all_items_deselect(sd);
 
    elm_genlist_item_selected_set(EO_OBJ(prev), EINA_TRUE);
-   _item_highlight(prev);
    return EINA_TRUE;
 }
 
@@ -2510,7 +2504,6 @@ _item_single_select_down(Elm_Genlist_Data *sd)
    _all_items_deselect(sd);
 
    elm_genlist_item_selected_set(EO_OBJ(next), EINA_TRUE);
-   _item_highlight(next);
 
    return EINA_TRUE;
 }
@@ -5700,6 +5693,7 @@ _item_select(Elm_Gen_Item *it)
    _elm_genlist_item_content_focus_set(it, ELM_FOCUS_PREVIOUS);
 
    sd->last_selected_item = eo_it;
+   _item_highlight(it);
 
    if (!(sd->focus_on_selection_enabled || _elm_config->item_select_on_focus_disable))
      {
