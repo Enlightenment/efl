@@ -39,11 +39,19 @@ EAPI extern int ECORE_COCOA_EVENT_LOST_FOCUS;
 EAPI extern int ECORE_COCOA_EVENT_RESIZE;
 EAPI extern int ECORE_COCOA_EVENT_EXPOSE;
 
+typedef void * Ecore_Cocoa_Window_Id;
 typedef struct _Ecore_Cocoa_Event_Video_Resize Ecore_Cocoa_Event_Video_Resize;
 struct _Ecore_Cocoa_Event_Video_Resize
 {
    int             w;
    int             h;
+   Ecore_Cocoa_Window_Id wid;
+};
+
+typedef struct _Ecore_Cocoa_Event_Window Ecore_Cocoa_Event_Window;
+struct _Ecore_Cocoa_Event_Window
+{
+   Ecore_Cocoa_Window_Id wid;
 };
 
 struct _Ecore_Cocoa_Screen
@@ -151,6 +159,8 @@ EAPI void ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
 				      void *view);
 
 EAPI int ecore_cocoa_titlebar_height_get(void);
+
+EAPI Ecore_Cocoa_Window_Id ecore_cocoa_window_get_window_id(Ecore_Cocoa_Window *window);
 
 
 #ifdef __cplusplus

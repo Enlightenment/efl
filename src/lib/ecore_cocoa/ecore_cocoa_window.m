@@ -65,6 +65,7 @@
    event->w = size.width;
    event->h = size.height -
       (([self isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
+   event->wid = [notif object];
    ecore_event_add(ECORE_COCOA_EVENT_RESIZE, event, NULL, NULL);
    ecore_main_loop_iterate();
 }
@@ -269,4 +270,11 @@ ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
   [v addTrackingArea:area];
 
   [area release];
+}
+
+Ecore_Cocoa_Window_Id ecore_cocoa_window_get_window_id(Ecore_Cocoa_Window *window)
+{
+  if (!window)
+    return 0;
+  return window->window;
 }
