@@ -4078,7 +4078,7 @@ _gl_del_sel(void *data, Evas_Object *obj, void *event_info)
    else if (num_category == 1)
      {
         elm_genlist_clear(obj);
-        _gl_del_item_append(elm_object_item_widget_get(it), itc);
+        _gl_del_item_append(obj, itc);
      }
    else if (num_category == 2)
      {
