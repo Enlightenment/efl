@@ -3567,7 +3567,9 @@ _elm_genlist_item_del_serious(Elm_Gen_Item *it)
 
    _elm_genlist_item_del_not_serious(it);
 
-   sd->items = eina_inlist_remove(sd->items, EINA_INLIST_GET(it));
+   //(it->walking == -1) means it's already removed from the list.
+   if (it->walking != -1)
+     sd->items = eina_inlist_remove(sd->items, EINA_INLIST_GET(it));
    if (it->tooltip.del_cb)
      it->tooltip.del_cb((void *)it->tooltip.data, WIDGET(it), it);
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
@@ -5687,17 +5689,12 @@ _item_select(Elm_Gen_Item *it)
    evas_object_ref(obj);
    it->walking++;
    if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), eo_it);
-   evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, eo_it);
-   it->walking--;
-
    // delete item if it's requested deletion in the above callbacks.
-   if ((it->base)->on_deletion)
-     {
-        _item_del(it);
-        eo_del(eo_it);
-        evas_object_unref(obj);
-        return EINA_TRUE;
-     }
+   if ((it->base)->on_deletion) goto item_deleted;
+   evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, eo_it);
+   // delete item if it's requested deletion in the above callbacks.
+   if ((it->base)->on_deletion) goto item_deleted;
+   it->walking--;
 
    elm_object_item_focus_set(eo_it, EINA_TRUE);
    _elm_genlist_item_content_focus_set(it, ELM_FOCUS_PREVIOUS);
@@ -5720,8 +5717,14 @@ _item_select(Elm_Gen_Item *it)
      }
 
    evas_object_unref(obj);
-
    return EINA_FALSE;
+
+item_deleted:
+   it->walking = -1; //This item was removed from it's item list.
+   _item_del(it);
+   eo_del(eo_it);
+   evas_object_unref(obj);
+   return EINA_TRUE;
 }
 
 EOLIAN static Evas_Object *
@@ -5797,7 +5800,17 @@ EOLIAN static Eina_Bool
 _elm_genlist_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED,
                                           Elm_Gen_Item *it)
 {
-   if (it->walking > 0) return EINA_FALSE;
+   /* This item is getting removed from a callback that triggered in the
+      _item_select(). Just pend removing. Because this will be removed right
+      after in the _item_select(). So pratically, this item won't be
+      dangled. */
+   if (it->walking > 0)
+     {
+        ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+        sd->items = eina_inlist_remove(sd->items, EINA_INLIST_GET(it));
+        return EINA_FALSE;
+     }
+
    _item_del(it);
    return EINA_TRUE;
 }
