@@ -17,6 +17,8 @@
 // FIXME: this engine has lots of problems. only 1 window at a time, drawRect looks wrong, doesnt handle resizes and more
 
 static int                      _ecore_evas_init_count = 0;
+// FIXME: In case we have a lot of windows per app, we should probably use another container
+// like a rbtree or a dictionnary-based container
 static Eina_List                *ecore_evases = NULL;
 static Ecore_Event_Handler      *ecore_evas_event_handlers[4] = {
   NULL, NULL, NULL, NULL
@@ -94,22 +96,36 @@ _ecore_evas_cocoa_render(Ecore_Evas *ee)
 
 
 static Ecore_Evas *
-_ecore_evas_cocoa_match(void)
+_ecore_evas_cocoa_match(Ecore_Cocoa_Window_Id wid)
 {
+  Eina_List *it;
+  Ecore_Evas *ee;
+
   DBG("Match");
-  return eina_list_nth(ecore_evases, 0);
+  EINA_LIST_FOREACH(ecore_evases, it, ee)
+  {
+    if (ecore_cocoa_window_get_window_id((Ecore_Cocoa_Window *)ee->prop.window) == wid)
+      return ee;
+  }
+  return NULL;
 }
 
+
 static Eina_Bool
-_ecore_evas_cocoa_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+_ecore_evas_cocoa_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
+  Ecore_Cocoa_Event_Window     *e = event;
   Ecore_Evas                   *ee;
 
   DBG("Got Focus");
 
-  ee = _ecore_evas_cocoa_match();
+  ee = _ecore_evas_cocoa_match(e->wid);
 
-  if (!ee) return ECORE_CALLBACK_PASS_ON;
+  if (!ee)
+  {
+    printf("%s: Unregistered Ecore_Evas for window Id %p\n", __func__, e->wid);
+    return ECORE_CALLBACK_PASS_ON;
+  }
   ee->prop.focused = EINA_TRUE;
   evas_focus_in(ee->evas);
   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
@@ -118,16 +134,20 @@ _ecore_evas_cocoa_event_got_focus(void *data EINA_UNUSED, int type EINA_UNUSED, 
 }
 
 static Eina_Bool
-_ecore_evas_cocoa_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+_ecore_evas_cocoa_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   // TODO
+  Ecore_Cocoa_Event_Window     *e = event;
   Ecore_Evas                   *ee;
 
   DBG("Lost Focus");
 
-  ee = _ecore_evas_cocoa_match();
+  ee = _ecore_evas_cocoa_match(e->wid);
 
-  if (!ee) return ECORE_CALLBACK_PASS_ON;
+  if (!ee)
+  {
+    printf("%s: Unregistered Ecore_Evas for window Id %p\n", __func__, e->wid);
+    return ECORE_CALLBACK_PASS_ON;
+  }
   evas_focus_out(ee->evas);
   ee->prop.focused = EINA_FALSE;
   if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
@@ -141,10 +161,11 @@ _ecore_evas_cocoa_event_video_resize(void *data EINA_UNUSED, int type EINA_UNUSE
    Ecore_Cocoa_Event_Video_Resize *e = event;
    Ecore_Evas                   *ee;
 
-   ee = _ecore_evas_cocoa_match();
+   DBG("Video resize");
+   ee = _ecore_evas_cocoa_match(e->wid);
    if (!ee)
      {
-        printf("Ecore_Evas %p was not registered\n", ee);
+        printf("%s: Unregistered Ecore_Evas for window Id %p\n", __func__, e->wid);
         return ECORE_CALLBACK_PASS_ON;
      }
 
@@ -161,17 +182,22 @@ _ecore_evas_cocoa_event_video_resize(void *data EINA_UNUSED, int type EINA_UNUSE
 }
 
 static Eina_Bool
-_ecore_evas_cocoa_event_video_expose(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+_ecore_evas_cocoa_event_video_expose(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
+  Ecore_Cocoa_Event_Window     *e = event;
   Ecore_Evas                   *ee;
   int                          w;
   int                          h;
 
   DBG("Video Expose");
 
-  ee = _ecore_evas_cocoa_match();
+  ee = _ecore_evas_cocoa_match(e->wid);
 
-  if (!ee) return ECORE_CALLBACK_PASS_ON;
+  if (!ee)
+  {
+    printf("%s: Unregistered Ecore_Evas for window Id %p\n", __func__, e->wid);
+    return ECORE_CALLBACK_PASS_ON;
+  }
   evas_output_size_get(ee->evas, &w, &h);
   evas_damage_rectangle_add(ee->evas, 0, 0, w, h);
 
@@ -220,7 +246,7 @@ static int
 _ecore_evas_cocoa_shutdown(void)
 {
     Ecore_Evas *ee;
-  DBG("Cocoa SHutodwn");
+  DBG("Cocoa Shutdown");
   _ecore_evas_init_count--;
   if (_ecore_evas_init_count == 0)
     {
