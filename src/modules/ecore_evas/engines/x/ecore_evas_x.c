@@ -2909,12 +2909,18 @@ _ecore_evas_x_title_set(Ecore_Evas *ee, const char *t)
 static void
 _ecore_evas_x_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
 {
-   if (ee->prop.name) free(ee->prop.name);
-   if (ee->prop.clas) free(ee->prop.clas);
-   ee->prop.name = NULL;
-   ee->prop.clas = NULL;
-   if (n) ee->prop.name = strdup(n);
-   if (c) ee->prop.clas = strdup(c);
+   if (!eina_streq(n, ee->prop.name))
+     {
+        free(ee->prop.name);
+        ee->prop.name = NULL;
+        if (n) ee->prop.name = strdup(n);
+     }
+   if (!eina_streq(c, ee->prop.clas))
+     {
+        free(ee->prop.clas);
+        ee->prop.clas = NULL;
+        if (c) ee->prop.clas = strdup(c);
+     }
    ecore_x_icccm_name_class_set(ee->prop.window, ee->prop.name, ee->prop.clas);
 }
 
