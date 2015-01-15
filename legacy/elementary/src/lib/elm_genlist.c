@@ -142,7 +142,7 @@ static const char SIGNAL_GROUP_LAST[] = "elm,state,group,last";
 static const char SIGNAL_GROUP_MIDDLE[] = "elm,state,group,middle";
 
 static void _item_unrealize(Elm_Gen_Item *it);
-static void _item_select(Elm_Gen_Item *it);
+static Eina_Bool _item_select(Elm_Gen_Item *it);
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
@@ -4781,6 +4781,8 @@ _item_mouse_up_cb(void *data,
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
+   evas_object_ref(sd->obj);
+
    if (sd->multi &&
        ((sd->multi_select_mode != ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL) ||
         (evas_key_modifier_is_set(ev->modifiers, "Control"))))
@@ -4788,7 +4790,7 @@ _item_mouse_up_cb(void *data,
         if (!it->selected)
           {
              _item_highlight(it);
-             _item_select(it);
+             if (_item_select(it)) goto deleted;
           }
         else
          _item_unselect(it);
@@ -4817,11 +4819,14 @@ _item_mouse_up_cb(void *data,
                }
           }
         _item_highlight(it);
-        _item_select(it);
+        if (_item_select(it)) goto deleted;
      }
 
    if (sd->focused_item != EO_OBJ(it))
      elm_object_item_focus_set(EO_OBJ(it), EINA_TRUE);
+
+deleted:
+   evas_object_unref(sd->obj);
 }
 
 static void
@@ -5602,6 +5607,7 @@ _internal_elm_genlist_clear(Evas_Object *obj)
    ELM_SAFE_FREE(sd->state, eina_inlist_sorted_state_free);
 
    evas_event_freeze(evas_object_evas_get(sd->obj));
+
    // Do not use EINA_INLIST_FOREACH or EINA_INLIST_FOREACH_SAFE
    // because sd->items can be modified inside elm_widget_item_del()
    while (sd->items)
@@ -5609,6 +5615,7 @@ _internal_elm_genlist_clear(Evas_Object *obj)
         it = EINA_INLIST_CONTAINER_GET(sd->items->last, Elm_Gen_Item);
         eo_do(EO_OBJ(it), elm_wdg_item_del());
      }
+
    sd->pan_changed = EINA_TRUE;
    if (!sd->queue)
      {
@@ -5645,18 +5652,19 @@ _internal_elm_genlist_clear(Evas_Object *obj)
    evas_event_thaw_eval(evas_object_evas_get(sd->obj));
 }
 
-static void
+/* Return EINA_TRUE if the item is deleted in this function */
+static Eina_Bool
 _item_select(Elm_Gen_Item *it)
 {
    Evas_Object *obj = WIDGET(it);
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    Elm_Object_Item *eo_it = EO_OBJ(it);
 
-   if (eo_do(eo_it, elm_wdg_item_disabled_get())) return;
-   if (_is_no_select(it) || (it->decorate_it_set)) return;
+   if (eo_do(eo_it, elm_wdg_item_disabled_get())) return EINA_FALSE;
+   if (_is_no_select(it) || (it->decorate_it_set)) return EINA_FALSE;
    if ((sd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS) &&
        (it->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS) && it->selected)
-     return;
+     return EINA_FALSE;
 
    if (!sd->multi)
      {
@@ -5677,8 +5685,20 @@ _item_select(Elm_Gen_Item *it)
      }
 
    evas_object_ref(obj);
+   it->walking++;
    if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), eo_it);
    evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, eo_it);
+   it->walking--;
+
+   // delete item if it's requested deletion in the above callbacks.
+   if ((it->base)->on_deletion)
+     {
+        _item_del(it);
+        eo_del(eo_it);
+        evas_object_unref(obj);
+        return EINA_TRUE;
+     }
+
    elm_object_item_focus_set(eo_it, EINA_TRUE);
    _elm_genlist_item_content_focus_set(it, ELM_FOCUS_PREVIOUS);
 
@@ -5700,6 +5720,8 @@ _item_select(Elm_Gen_Item *it)
      }
 
    evas_object_unref(obj);
+
+   return EINA_FALSE;
 }
 
 EOLIAN static Evas_Object *
@@ -5775,6 +5797,7 @@ EOLIAN static Eina_Bool
 _elm_genlist_item_elm_widget_item_del_pre(Eo *eo_it EINA_UNUSED,
                                           Elm_Gen_Item *it)
 {
+   if (it->walking > 0) return EINA_FALSE;
    _item_del(it);
    return EINA_TRUE;
 }
