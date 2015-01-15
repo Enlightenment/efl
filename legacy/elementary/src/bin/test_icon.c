@@ -149,7 +149,7 @@ static void
 _standard_list_populate(Evas_Object *list, Elm_Icon_Lookup_Order order)
 {
    Evas_Object *ic;
-   Eina_List* l;
+   Eina_List *l;
    const char *group;
    char name[128], *p;
 
@@ -170,13 +170,11 @@ _standard_list_populate(Evas_Object *list, Elm_Icon_Lookup_Order order)
                ic = elm_icon_add(list);
                elm_icon_order_lookup_set(ic, order);
                elm_icon_standard_set(ic, name);
-               evas_object_size_hint_min_set(ic, 32, 32);
                elm_list_item_append(list, name, ic, NULL, NULL, NULL);
            }
 
          eina_stringshare_del(group);
      }
-   eina_list_free(l);
    elm_list_go(list);
 }
 
@@ -192,13 +190,11 @@ test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 {
    Evas_Object *win, *li, *box, *hbox, *fr, *rd, *rdg;
 
-
    win = elm_win_util_standard_add("icon-test-std", "Icon Standard");
    elm_win_autodel_set(win, EINA_TRUE);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
