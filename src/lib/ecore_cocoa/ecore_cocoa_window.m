@@ -69,6 +69,34 @@
    ecore_main_loop_iterate();
 }
 
+- (void)windowDidBecomeKey:(NSNotification *)notification
+{
+  Ecore_Cocoa_Event_Window *e;
+
+  e = malloc(sizeof(Ecore_Cocoa_Event_Window));
+  if (!e)
+    {
+      printf("GOT_FOCUS: Failed to allocate Ecore_Cocoa_Event_Window\n");
+      return;
+    }
+  e->wid = [notification object];
+  ecore_event_add(ECORE_COCOA_EVENT_GOT_FOCUS, e, NULL, NULL);
+}
+
+- (void)windowDidResignKey:(NSNotification *)notification
+{
+  Ecore_Cocoa_Event_Window *e;
+
+  e = malloc(sizeof(Ecore_Cocoa_Event_Window));
+  if (!e)
+    {
+      printf("LOST_FOCUS: Failed to allocate Ecore_Cocoa_Event_Window\n");
+      return;
+    }
+  e->wid = [notification object];
+  ecore_event_add(ECORE_COCOA_EVENT_LOST_FOCUS, e, NULL, NULL);
+}
+
 @end
 
 
