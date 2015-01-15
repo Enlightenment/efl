@@ -66,6 +66,7 @@
    event->h = size.height -
       (([self isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
    ecore_event_add(ECORE_COCOA_EVENT_RESIZE, event, NULL, NULL);
+   ecore_main_loop_iterate();
 }
 
 @end
