@@ -706,7 +706,7 @@ ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char *cursor_na
 
    eina_stringshare_replace(&win->cursor_name, cursor_name);
 
-   if (strcmp(input->cursor_name, win->cursor_name))
+   if ((input->cursor_name) && (strcmp(input->cursor_name, win->cursor_name)))
      ecore_wl_input_cursor_from_name_set(input, cursor_name);
 }
 
