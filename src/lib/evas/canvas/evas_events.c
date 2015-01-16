@@ -63,7 +63,12 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
           {
              if (obj->is_smart)
                {
+                  Evas_Object_Protected_Data *clip = obj->cur->clipper;
                   int norep = 0;
+
+                  if (clip && clip->mask->is_mask && clip->precise_is_inside)
+                    if (!evas_object_is_inside(clip->object, clip, x, y))
+                      continue;
 
                   if ((obj->map->cur.usemap) && (obj->map->cur.map) &&
                       (obj->map->cur.map->count == 4))
