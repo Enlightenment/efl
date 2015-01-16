@@ -1,13 +1,13 @@
 # Italian translation for Elementary.
 # This file is put in the public domain.
 # Massimo Maiurana <maiurana@gmail.com>, 2011.
-#: src/lib/elm_config.c:3207
+#: src/lib/elm_config.c:3174
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-11-07 09:26+0900\n"
-"PO-Revision-Date: 2014-10-08 19:10+0200\n"
+"POT-Creation-Date: 2015-01-15 19:55+0100\n"
+"PO-Revision-Date: 2015-01-16 12:33+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -15,52 +15,56 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/elc_fileselector.c:1403
+#: src/lib/elc_fileselector.c:1449
 msgid "Up"
 msgstr "Su"
 
-#: src/lib/elc_fileselector.c:1418
+#: src/lib/elc_fileselector.c:1464
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1637 src/lib/elm_entry.c:1477
-#: src/lib/elm_entry.c:1502
+#: src/lib/elc_fileselector.c:1527
+msgid "Search"
+msgstr "Cerca"
+
+#: src/lib/elc_fileselector.c:1693 src/lib/elm_entry.c:1487
+#: src/lib/elm_entry.c:1512
 msgid "Cancel"
 msgstr "Annulla"
 
-#: src/lib/elc_fileselector.c:1646
+#: src/lib/elc_fileselector.c:1702
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elc_multibuttonentry.c:604
+#: src/lib/elc_multibuttonentry.c:611
 msgid "multi button entry label"
 msgstr "etichetta voce multibottone"
 
-#: src/lib/elc_multibuttonentry.c:625
+#: src/lib/elc_multibuttonentry.c:633
 msgid "multi button entry item"
 msgstr "oggetto voce multibottone"
 
-#: src/lib/elc_multibuttonentry.c:1490
+#: src/lib/elc_multibuttonentry.c:1507
 msgid "multi button entry"
 msgstr "voce multibottone"
 
-#: src/lib/elc_naviframe.c:430
+#: src/lib/elc_naviframe.c:431
 msgid "Title"
 msgstr "Titolo"
 
-#: src/lib/elc_naviframe.c:957 src/lib/elc_naviframe.c:1155
+#: src/lib/elc_naviframe.c:957 src/lib/elc_naviframe.c:1156
 msgid "Back"
 msgstr "Indietro"
 
-#: src/lib/elc_naviframe.c:1246
+#: src/lib/elc_naviframe.c:1249
 msgid "Next"
 msgstr "Avanti"
 
-#: src/lib/elc_popup.c:258 src/lib/elc_popup.c:880
+#: src/lib/elc_popup.c:261 src/lib/elc_popup.c:868
 msgid "Popup Title"
 msgstr "Titolo popup"
 
-#: src/lib/elc_popup.c:268 src/lib/elc_popup.c:946
+#: src/lib/elc_popup.c:271 src/lib/elc_popup.c:934
 msgid "Popup Body Text"
 msgstr "Testo corpo popup"
 
@@ -72,10 +76,10 @@ msgstr "Bolla"
 msgid "Clicked"
 msgstr "Cliccato"
 
-#: src/lib/elm_button.c:271 src/lib/elm_check.c:235 src/lib/elm_gengrid.c:770
-#: src/lib/elm_genlist.c:1518 src/lib/elm_list.c:2054 src/lib/elm_radio.c:256
-#: src/lib/elm_segment_control.c:521 src/lib/elm_spinner.c:578
-#: src/lib/elm_toolbar.c:2208
+#: src/lib/elm_button.c:271 src/lib/elm_check.c:235 src/lib/elm_gengrid.c:814
+#: src/lib/elm_genlist.c:1576 src/lib/elm_list.c:2172 src/lib/elm_radio.c:256
+#: src/lib/elm_segment_control.c:525 src/lib/elm_spinner.c:578
+#: src/lib/elm_toolbar.c:2220
 msgid "State: Disabled"
 msgstr "Stato: disabilitato"
 
@@ -156,51 +160,51 @@ msgstr "Stato: modificabile"
 msgid "Clock"
 msgstr "Orologio"
 
-#: src/lib/elm_colorselector.c:1367
+#: src/lib/elm_colorselector.c:1395
 msgid "color selector palette item"
 msgstr "oggetto palette selezione colore"
 
-#: src/lib/elm_config.c:3223
+#: src/lib/elm_config.c:3190
 msgid "default:LTR"
 msgstr "predefintito: LTR"
 
-#: src/lib/elm_dayselector.c:396
+#: src/lib/elm_dayselector.c:404
 msgid "day selector item"
 msgstr "oggetto selettore giorno"
 
-#: src/lib/elm_diskselector.c:675
+#: src/lib/elm_diskselector.c:693
 msgid "diskselector item"
 msgstr "selettore disco"
 
-#: src/lib/elm_entry.c:1464
+#: src/lib/elm_entry.c:1474
 msgid "Copy"
 msgstr "Copia"
 
-#: src/lib/elm_entry.c:1469
+#: src/lib/elm_entry.c:1479
 msgid "Cut"
 msgstr "Taglia"
 
-#: src/lib/elm_entry.c:1473 src/lib/elm_entry.c:1496
+#: src/lib/elm_entry.c:1483 src/lib/elm_entry.c:1506
 msgid "Paste"
 msgstr "Incolla"
 
-#: src/lib/elm_entry.c:1489
+#: src/lib/elm_entry.c:1499
 msgid "Select"
 msgstr "Seleziona"
 
-#: src/lib/elm_entry.c:3476
+#: src/lib/elm_entry.c:3488
 msgid "Entry"
 msgstr "Voce"
 
-#: src/lib/elm_gengrid.c:800
+#: src/lib/elm_gengrid.c:844
 msgid "Gengrid Item"
 msgstr "oggetto griglia generica"
 
-#: src/lib/elm_index.c:91
+#: src/lib/elm_index.c:93
 msgid "Index"
 msgstr "Indice"
 
-#: src/lib/elm_index.c:118
+#: src/lib/elm_index.c:121
 msgid "Index Item"
 msgstr "oggetto indice"
 
@@ -236,19 +240,19 @@ msgstr "barra avanzamento"
 msgid "Radio"
 msgstr "Opzione"
 
-#: src/lib/elm_segment_control.c:524 src/lib/elm_toolbar.c:2210
+#: src/lib/elm_segment_control.c:528 src/lib/elm_toolbar.c:2222
 msgid "State: Selected"
 msgstr "Stato: selezionato"
 
-#: src/lib/elm_segment_control.c:526
+#: src/lib/elm_segment_control.c:530
 msgid "State: Unselected"
 msgstr "Stato: non selezionato"
 
-#: src/lib/elm_segment_control.c:538
+#: src/lib/elm_segment_control.c:544
 msgid "Segment Control Item"
 msgstr "Oggetto controllo segmento"
 
-#: src/lib/elm_slider.c:874
+#: src/lib/elm_slider.c:887
 msgid "slider"
 msgstr "cursore"
 
@@ -264,22 +268,22 @@ msgstr "bottone diminuzione spinner"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1670 src/lib/elm_toolbar.c:2269
+#: src/lib/elm_toolbar.c:1682 src/lib/elm_toolbar.c:2278
 msgid "Selected"
 msgstr "Selezionato"
 
-#: src/lib/elm_toolbar.c:2206
+#: src/lib/elm_toolbar.c:2218
 msgid "Separator"
 msgstr "Separatore"
 
-#: src/lib/elm_toolbar.c:2212
+#: src/lib/elm_toolbar.c:2224
 msgid "Has menu"
 msgstr "Include menù"
 
-#: src/lib/elm_toolbar.c:2264
+#: src/lib/elm_toolbar.c:2273
 msgid "Unselected"
 msgstr "Non selezionato"
 
-#: src/lib/elm_toolbar.c:2281
+#: src/lib/elm_toolbar.c:2290
 msgid "Toolbar Item"
 msgstr "Oggetto della barra strumenti"
