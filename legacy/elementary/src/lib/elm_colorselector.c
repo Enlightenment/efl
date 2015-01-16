@@ -1170,12 +1170,10 @@ _item_sizing_eval(Elm_Color_Item_Data *item)
 
 /* fix size hints of color palette items, so that the box gets it */
 static void
-_palette_sizing_eval(Evas_Object *obj)
+_palette_sizing_eval(Elm_Colorselector_Data *sd)
 {
    Eina_List *elist;
    Elm_Object_Item *eo_item;
-
-   ELM_COLORSELECTOR_DATA_GET(obj, sd);
 
    EINA_LIST_FOREACH(sd->items, elist, eo_item)
      {
@@ -1185,12 +1183,10 @@ _palette_sizing_eval(Evas_Object *obj)
 }
 
 static void
-_component_sizing_eval(Evas_Object *obj)
+_component_sizing_eval(Elm_Colorselector_Data *sd)
 {
    Evas_Coord minw = -1, minh = -1;
    int i;
-
-   ELM_COLORSELECTOR_DATA_GET(obj, sd);
 
    for (i = 0; i < 4; i++)
      {
@@ -1212,10 +1208,10 @@ _component_sizing_eval(Evas_Object *obj)
 }
 
 static void
-_full_sizing_eval(Evas_Object *obj)
+_full_sizing_eval(Elm_Colorselector_Data *sd)
 {
-   _palette_sizing_eval(obj);
-   _component_sizing_eval(obj);
+   _palette_sizing_eval(sd);
+   _component_sizing_eval(sd);
 }
 
 static void
@@ -1241,15 +1237,15 @@ _elm_colorselector_elm_layout_sizing_eval(Eo *obj, Elm_Colorselector_Data *sd)
    switch (sd->mode)
      {
       case ELM_COLORSELECTOR_PALETTE:
-        _palette_sizing_eval(obj);
+        _palette_sizing_eval(sd);
         break;
 
       case ELM_COLORSELECTOR_COMPONENTS:
-        _component_sizing_eval(obj);
+        _component_sizing_eval(sd);
         break;
 
       case ELM_COLORSELECTOR_BOTH:
-        _full_sizing_eval(obj);
+        _full_sizing_eval(sd);
         break;
 
       case ELM_COLORSELECTOR_PICKER:
@@ -1257,7 +1253,7 @@ _elm_colorselector_elm_layout_sizing_eval(Eo *obj, Elm_Colorselector_Data *sd)
         break;
 
       case ELM_COLORSELECTOR_ALL:
-        _full_sizing_eval(obj);
+        _full_sizing_eval(sd);
         break;
 
       default:
