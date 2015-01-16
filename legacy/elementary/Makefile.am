@@ -54,9 +54,6 @@ po/Rules-quot
 
 endif
 
-
-
-
 EXTRA_DIST = \
 README \
 AUTHORS \
@@ -125,3 +122,34 @@ doc:
 screenshots: all
 	@echo "entering src/examples/"
 	$(MAKE) -C src/examples screenshots
+
+if ELEMENTARY_ENABLE_COVERAGE
+
+lcov-reset:
+	@rm -rf $(top_builddir)/coverage
+	@find $(top_builddir) -name "*.gcda" -delete
+	@lcov --zerocounters --directory $(top_builddir)
+
+lcov-report:
+	@mkdir $(top_builddir)/coverage
+	lcov --capture --compat-libtool --no-external --output-file $(top_builddir)/coverage/coverage.info --directory $(top_builddir) --base-directory $(top_srcdir)/src/lib/
+	lcov --remove $(top_builddir)/coverage/coverage.info '*.h' --output-file $(top_builddir)/coverage/coverage.cleaned.info
+	lcov --remove $(top_builddir)/coverage/coverage.cleaned.info '*/elm_test_*' --output-file $(top_builddir)/coverage/coverage.cleaned2.info
+	lcov --remove $(top_builddir)/coverage/coverage.cleaned2.info '*/elm_suite.c' --output-file $(top_builddir)/coverage/coverage.cleaned3.info
+	lcov --remove $(top_builddir)/coverage/coverage.cleaned3.info '*NONE*' --output-file $(top_builddir)/coverage/coverage.cleaned4.info
+	genhtml --branch-coverage -t "$(PACKAGE_STRING)" -o $(top_builddir)/coverage/html $(top_builddir)/coverage/coverage.cleaned4.info
+	@echo "Coverage Report at $(top_builddir)/coverage/html"
+
+endif
+
+if ELEMENTARY_ENABLE_TESTS
+
+lcov-check:
+if ELEMENTARY_ENABLE_COVERAGE
+	@$(MAKE) $(AM_MAKEFLAGS) lcov-reset
+endif
+	@$(MAKE) $(AM_MAKEFLAGS) check
+if ELEMENTARY_ENABLE_COVERAGE
+	@$(MAKE) $(AM_MAKEFLAGS) lcov-report
+endif
+endif

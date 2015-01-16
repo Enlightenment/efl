@@ -9,6 +9,6 @@ endif
 
 SUBDIRS += examples
 
-if ENABLE_ELEMENTARY_TESTS
+if ELEMENTARY_ENABLE_TESTS
 SUBDIRS += tests
 endif

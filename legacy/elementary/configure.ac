@@ -39,10 +39,32 @@ AC_ARG_ENABLE([cxx-bindings],
 # Tests
 
 AC_ARG_WITH([tests],
-   [AS_HELP_STRING([--with-tests=none|regular],
-                   [choose elementary testing method: regular or none.(coverage will be supported)@<:@default=none@:>@])],
+   [AS_HELP_STRING([--with-tests=none|regular|coverate],
+                   [choose elementary testing method: regular, coverage or none @<:@default=none@:>@])],
    [build_tests=${withval}],
-   [build_tests=none])
+   [build_tests=auto])
+
+want_coverage="no"
+want_tests="no"
+case "${build_tests}" in
+   auto)
+     if test "${build_profile}" = "dev"; then
+        want_tests="yes"
+     fi
+     ;;
+   regular)
+     want_tests="yes"
+     ;;
+   coverage)
+     want_tests="yes"
+     want_coverage="yes"
+     ;;
+   no*)
+     ;;
+   *)
+     AC_MSG_ERROR([Unknown build tests option: --with-tests=${build_tests}])
+     ;;
+esac
 
 # Elementary base dir
 
@@ -336,10 +358,28 @@ ELEMENTARY_PC_LIBS="${ELEMENTARY_PC_LIBS} ${requirement_elm_libs}"
 AC_SUBST([requirement_elm_pc])
 
 # check unit testing library
-if test "${build_tests}" = "regular"; then
+if test "${want_tests}" = "yes"; then
    PKG_CHECK_MODULES([CHECK], [check >= 0.9.5])
 fi
-AM_CONDITIONAL([ENABLE_ELEMENTARY_TESTS], [test "${build_tests}" = "regular"])
+AM_CONDITIONAL([ELEMENTARY_ENABLE_TESTS], [test "${want_tests}" = "yes"])
+
+# lcov
+if test "${want_coverage}" = "yes" ; then
+   AC_CHECK_PROG([have_lcov], [lcov], [yes], [no])
+   if test "x${have_lcov}" = "xyes" ; then
+      ELEMENTARY_CFLAGS="${ELEMENTARY_CFLAGS} -fprofile-arcs -ftest-coverage"
+      ELEMENTARY_LIBS="${ELEMENTARY_LIBS} -lgcov"
+      if test "x${prefer_assert}" = "xno"; then
+         ELEMENTARY_CFLAGS="${ELEMENTARY_CFLAGS} -DNDEBUG"
+      else
+         ELEMENTARY_CFLAGS="${ELEMENTARY_CFLAGS} -g -O0 -DDEBUG"
+      fi
+   else
+      AC_MSG_ERROR([lcov is not found])
+   fi
+fi
+
+AM_CONDITIONAL([ELEMENTARY_ENABLE_COVERAGE], [test "${want_coverage}" = "yes"])
 
 
 ### Checks for header files

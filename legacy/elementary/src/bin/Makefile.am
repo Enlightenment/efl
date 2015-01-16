@@ -171,6 +171,14 @@ elementary_quicklaunch_LDADD = $(top_builddir)/src/lib/libelementary.la \
 elementary_quicklaunch_LDFLAGS =
 
 if BUILD_RUN
+elementary_run_CPPFLAGS = -I$(top_srcdir) \
+-I$(top_srcdir)/src/lib \
+-I$(top_builddir)/src/lib \
+-I$(top_srcdir)/src/bin \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\"
+
 elementary_run_SOURCES = run.c
 elementary_run_LDADD =
 elementary_run_LDFLAGS =
