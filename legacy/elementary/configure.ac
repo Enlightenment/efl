@@ -39,7 +39,7 @@ AC_ARG_ENABLE([cxx-bindings],
 # Tests
 
 AC_ARG_WITH([tests],
-   [AS_HELP_STRING([--with-tests=none|regular|coverate],
+   [AS_HELP_STRING([--with-tests=none|regular|coverage],
                    [choose elementary testing method: regular, coverage or none @<:@default=none@:>@])],
    [build_tests=${withval}],
    [build_tests=auto])
