@@ -102,7 +102,7 @@ test_colorselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(fr);
 
    re = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_object_size_hint_min_set(re, 1, 100);
+   evas_object_size_hint_min_set(re, 1, ELM_SCALE_SIZE(100));
    evas_object_show(re);
    elm_object_content_set(fr, re);
 
@@ -149,7 +149,6 @@ test_colorselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                                   _color_item_selected_cb, re);
    evas_object_smart_callback_add(cs, "color,item,longpressed",
                                   _color_item_longpressed_cb, re);
-   evas_object_data_set(cs, "win", win);
 
    elm_colorselector_color_get(cs, &r, &g, &b, &a);
    /* Fix Alpha pre multiplication by edje */
