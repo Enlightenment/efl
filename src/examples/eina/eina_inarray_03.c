@@ -12,8 +12,7 @@ cmp(const void *a, const void *b)
 int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Eina_Inarray *iarr;
-   char ch, *ch2;
-   int a, *b, pos;
+   int a, *b;
 
    eina_init();
    iarr = eina_inarray_new(sizeof(int), 0);
