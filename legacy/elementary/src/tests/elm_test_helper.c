@@ -5,35 +5,41 @@
 #include <Ecore.h>
 #include "elm_suite.h"
 
-typedef struct _Callback_Data
-{
-   Ecore_Timer *timer;
-   Eina_Bool did_timeout;
-} Callback_Data;
-
 static Eina_Bool
 timer_expired_cb(void *user_data)
 {
-   Callback_Data *data = user_data;
-   data->did_timeout = EINA_TRUE;
-   data->timer = NULL;
+   Eina_Bool *did_timeout = user_data;
 
-   return ECORE_CALLBACK_CANCEL;
+   *did_timeout = EINA_TRUE;
+   ecore_main_loop_quit();
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+idler_done_cb(void *user_data)
+{
+   Eina_Bool *done = user_data;
+
+   if (*done) ecore_main_loop_quit();
+
+   return EINA_TRUE;
 }
 
 Eina_Bool
 elm_test_helper_wait_flag(double in, Eina_Bool *done)
 {
-   Callback_Data data;
+   Eina_Bool did_timeout = EINA_FALSE;
+   Ecore_Timer *tm;
+   Ecore_Idle_Enterer *idle;
 
-   data.did_timeout = EINA_FALSE;
-   data.timer = ecore_timer_add(in, timer_expired_cb, &data);
+   tm = ecore_timer_add(in, timer_expired_cb, &did_timeout);
+   idle = ecore_idle_enterer_add(idler_done_cb, done);
 
-   while (*done == EINA_FALSE && data.did_timeout == EINA_FALSE)
-     ecore_main_loop_iterate();
+   ecore_main_loop_begin();
 
-   if (data.timer)
-     ecore_timer_del(data.timer);
+   ecore_idle_enterer_del(idle);
+   ecore_timer_del(tm);
 
-   return !data.did_timeout;
+   return !did_timeout;
 }
