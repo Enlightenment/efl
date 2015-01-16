@@ -355,7 +355,7 @@ static Evas_Object *
 create_gengrid(Evas_Object *obj, int items)
 {
    Evas_Object *grid = NULL;
-   static Item_Data id[5000];
+   Item_Data *id = NULL;
    int i, n;
    char buf[PATH_MAX];
 
@@ -382,18 +382,19 @@ create_gengrid(Evas_Object *obj, int items)
    gic->func.text_get = grid_text_get;
    gic->func.content_get = grid_content_get;
    gic->func.state_get = grid_state_get;
-   gic->func.del = NULL;
+   gic->func.del = grid_del;
 
    n = 0;
    for (i = 0; i < items; i++)
      {
         snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[n]);
         n = (n + 1) % 9;
-        id[i].mode = i;
-        id[i].path = eina_stringshare_add(buf);
-        id[i].item = elm_gengrid_item_append(grid, gic, &(id[i]), grid_sel, NULL);
+        id = calloc(1, sizeof(Item_Data));
+        id->mode = i;
+        id->path = eina_stringshare_add(buf);
+        id->item = elm_gengrid_item_append(grid, gic, id, grid_sel, NULL);
         if (!(i % 5))
-          elm_gengrid_item_selected_set(id[i].item, EINA_TRUE);
+          elm_gengrid_item_selected_set(id->item, EINA_TRUE);
      }
    elm_gengrid_item_class_free(gic);
 
