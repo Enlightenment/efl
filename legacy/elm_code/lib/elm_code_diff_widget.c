@@ -2,11 +2,7 @@
 # include "config.h"
 #endif
 
-#include <Eo.h>
-#include <Elementary.h>
-
 #include "Elm_Code.h"
-#include "elm_code_diff_widget.h"
 
 #include "elm_code_private.h"
 

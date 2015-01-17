@@ -1,8 +1,7 @@
 #ifndef ELM_CODE_WIDGET_H_
 # define ELM_CODE_WIDGET_H_
 
-#include <Evas.h>
-#include "elm_code_common.h"
+EAPI extern const Eo_Event_Description ELM_CODE_WIDGET_EVENT_LINE_CLICKED;
 
 #ifdef __cplusplus
 extern "C" {

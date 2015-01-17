@@ -1,9 +1,6 @@
 #ifndef ELM_CODE_DIFF_WIDGET_H_
 # define ELM_CODE_DIFF_WIDGET_H_
 
-#include <Evas.h>
-#include "elm_code_common.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif

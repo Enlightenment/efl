@@ -31,6 +31,18 @@ static void _append_line(Elm_Code_File *file, const char *line)
    elm_code_file_line_append(file, line, length);
 }
 
+static Eina_Bool
+_elm_code_test_line_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED,
+                       const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+{
+   Elm_Code_Line *line;
+
+   line = (Elm_Code_Line *)event_info;
+
+   printf("CLICKED line %d\n", line->number);
+   return EINA_TRUE;
+}
+
 static Evas_Object *
 _elm_code_test_welcome_setup(Evas_Object *parent)
 {
@@ -41,6 +53,7 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    widget = elm_code_widget_add(parent, code);
    elm_code_widget_font_size_set(widget, 14);
    elm_code_widget_editable_set(widget, EINA_TRUE);
+   eo_do(widget,eo_event_callback_add(&ELM_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_cb, code));
 
    _append_line(code->file, "Hello World, Elm Code!");
    elm_code_file_line_token_add(code->file, 1, 14, 21, ELM_CODE_TOKEN_TYPE_COMMENT);
