@@ -411,8 +411,38 @@ _if_focused_revert(Evas_Object *obj,
            (top, &newest_focus_order, can_focus_only);
         if (newest)
           {
-             elm_object_focus_set(newest, EINA_FALSE);
-             elm_object_focus_set(newest, EINA_TRUE);
+             if (newest == top)
+               {
+                  ELM_WIDGET_DATA_GET(newest, sd2);
+                  if (!sd2) return;
+
+                  if (!elm_widget_focus_get(newest))
+                    elm_widget_focus_steal(newest);
+                  else
+                    {
+                       if (sd2->resize_obj && elm_widget_focus_get(sd2->resize_obj))
+                         elm_widget_focused_object_clear(sd2->resize_obj);
+                       else
+                         {
+                            const Eina_List *l;
+                            Evas_Object *child;
+                            EINA_LIST_FOREACH(sd2->subobjs, l, child)
+                              {
+                                 if (elm_widget_focus_get(child))
+                                   {
+                                      elm_widget_focused_object_clear(child);
+                                      break;
+                                   }
+                              }
+                         }
+                    }
+                  evas_object_focus_set(newest, EINA_TRUE);
+               }
+             else
+               {
+                  elm_object_focus_set(newest, EINA_FALSE);
+                  elm_object_focus_set(newest, EINA_TRUE);
+               }
           }
      }
 }
