@@ -1,6 +1,8 @@
 #ifndef ELM_CODE_WIDGET_H_
 # define ELM_CODE_WIDGET_H_
 
+EAPI extern const Eo_Event_Description ELM_CODE_WIDGET_EVENT_LINE_CLICKED;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

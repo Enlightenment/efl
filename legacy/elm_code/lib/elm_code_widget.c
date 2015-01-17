@@ -6,6 +6,9 @@
 
 #include "elm_code_private.h"
 
+EAPI const Eo_Event_Description ELM_CODE_WIDGET_EVENT_LINE_CLICKED =
+    EO_EVENT_DESCRIPTION("line,clicked", "");
+
 Eina_Unicode status_icons[] = {
  ' ',
  '!',
@@ -174,6 +177,29 @@ _elm_code_widget_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
    elm_code_widget_fill(obj, code);
 }
 
+static void
+_elm_code_widget_clicked_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
+                            void *event_info)
+{
+   Elm_Code *code;
+   Elm_Code_Line *line;
+   Evas_Event_Mouse_Up *event;
+   Evas_Coord y;
+   int ch;
+   unsigned int row;
+
+   code = (Elm_Code *)data;
+   event = (Evas_Event_Mouse_Up *)event_info;
+   y = event->canvas.y;
+
+   evas_object_textgrid_cell_size_get(obj, NULL, &ch);
+   row = ((double) y / ch) + 1;
+
+   line = elm_code_file_line_get(code->file, row);
+   if (line)
+     elm_code_callback_fire(code, &ELM_CODE_WIDGET_EVENT_LINE_CLICKED, line);
+}
+
 EAPI Evas_Object *elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
 {
    Evas_Object *o;
@@ -214,6 +240,7 @@ EAPI Evas_Object *elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
                                     54, 54, 255, 255);
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, code);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP, _elm_code_widget_clicked_cb, code);
 
    eo_do(o,eo_event_callback_add(&ELM_CODE_EVENT_LINE_SET_DONE, _elm_code_widget_line_cb, code));
    eo_do(o,eo_event_callback_add(&ELM_CODE_EVENT_FILE_LOAD_DONE, _elm_code_widget_file_cb, code));
