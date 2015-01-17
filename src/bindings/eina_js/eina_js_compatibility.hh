@@ -271,20 +271,11 @@ compatibility_return()
   return compatibility_return_nil_impl(std::integral_constant<bool, v8_uses_callback_info>());
 }
 
-template <typename T = std::integral_constant<bool, v8_uses_isolate> >
-struct _v8_isolate_throw_exception;
-
-template <>
-struct _v8_isolate_throw_exception<std::true_type> : v8::Isolate
+struct _v8_isolate_throw_exception : v8::Isolate
 {
-};
-
-template <>
-struct _v8_isolate_throw_exception<std::false_type> : v8::Isolate
-{
-  template <typename...Args>
-  static v8::Handle<v8::Value> ThrowException(v8::Handle<v8::Value> v, Args...args)
+  v8::Handle<v8::Value> ThrowException_impl(v8::Handle<v8::Value> v)
   {
+    using namespace v8;
     return ThrowException(v);
   }
 };
@@ -292,13 +283,13 @@ struct _v8_isolate_throw_exception<std::false_type> : v8::Isolate
 inline void
 compatibility_throw_impl(v8::Isolate* isolate, v8::Local<v8::Value> exception, std::true_type)
 {
-  static_cast<_v8_isolate_throw_exception<>*>(isolate)->ThrowException(exception);
+  static_cast<_v8_isolate_throw_exception*>(isolate)->ThrowException_impl(exception);
 }
 
 inline v8::Handle<v8::Value>
 compatibility_throw_impl(v8::Isolate* isolate, v8::Local<v8::Value> exception, std::false_type)
 {
-  return static_cast<_v8_isolate_throw_exception<>*>(isolate)->ThrowException(exception);
+  return static_cast<_v8_isolate_throw_exception*>(isolate)->ThrowException_impl(exception);
 }
 
 inline std::conditional<v8_uses_isolate, void, v8::Handle<v8::Value> >::type
@@ -310,13 +301,13 @@ compatibility_throw(v8::Isolate* isolate, v8::Local<v8::Value> exception)
 inline void
 compatibility_throw_impl(v8::Local<v8::Value> exception, std::true_type)
 {
-  static_cast<_v8_isolate_throw_exception<>*>(v8::Isolate::GetCurrent())->ThrowException(exception);
+  static_cast<_v8_isolate_throw_exception*>(v8::Isolate::GetCurrent())->ThrowException_impl(exception);
 }
 
 inline v8::Handle<v8::Value>
 compatibility_throw_impl(v8::Local<v8::Value> exception, std::false_type)
 {
-  return static_cast<_v8_isolate_throw_exception<>*>(v8::Isolate::GetCurrent())->ThrowException(exception);
+  return static_cast<_v8_isolate_throw_exception*>(v8::Isolate::GetCurrent())->ThrowException_impl(exception);
 }
       
 inline std::conditional<v8_uses_isolate, void, v8::Handle<v8::Value> >::type

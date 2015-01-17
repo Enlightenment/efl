@@ -160,9 +160,9 @@ void test_setup(v8::Handle<v8::Object> exports)
   
   std::cerr << __LINE__ << std::endl;
 
-  efl::eina::js::register_make_value
+  efl::eina::js::register_value
     (isolate, exports
-     , efl::eina::js::compatibility_new<v8::String>(isolate, "make_value"));
+     , efl::eina::js::compatibility_new<v8::String>(isolate, "value"));
   
   std::cerr << __LINE__ << std::endl;
 }

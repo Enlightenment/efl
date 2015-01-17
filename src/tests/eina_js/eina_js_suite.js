@@ -59,43 +59,66 @@ assert (s2.length == 2);
 assert (s2[0] == l1[1]);
 assert (s2[1] == l1[2]);
 
+console.log("Finished containers");
+
 // error tests
 
 var captured = false;
+console.log("#1");
 try {
+console.log("#2");
   suite.clear_eina_error();
+console.log("#3");
 } catch(e) {
+console.log("#4");
   console.log("Exception ", e.toString());
+console.log("#5");
   captured = true;
 }
+console.log("#6");
 assert(captured === false, 'error #1');
+console.log("#7");
 
 captured = false;
 try {
+console.log("#1");
   suite.set_eina_error();
+console.log("#2");
 } catch(e) {
+console.log("#3");
   console.log("Exception ", e.toString());
+console.log("#4");
   assert(e.code === 'Eina_Error', 'error #2');
+console.log("#5");
   assert(e.value === 'foobar', 'error #3');
+console.log("#6");
   captured = true;
+console.log("#7");
 }
+console.log("#8");
 assert(captured === true, 'error #4');
+
+console.log("Finished errors");
 
 // accessor tests
 
 assert(suite.acc.get(0) === 42, 'accessor #1');
 assert(suite.acc.get(1) === 24, 'accessor #2');
 
+console.log("Finished accessors");
+
 // iterator tests
 
 assert(suite.it.next().value === 42, 'iterator #1');
 assert(suite.it.next().value === 24, 'iterator #2');
 
+console.log("Finished iterators");
+
 // value tests
 
 console.log("x");
 
-var my_value = new suite.make_value(1);
+var my_value = new suite.value(1);
 console.log("x");
 var wrapped = my_value.get();
 console.log("x");
@@ -151,14 +174,14 @@ captured = false;
 console.log("x");
 try {
 console.log("x");
-    my_value = make_value({type: 'complex object'});
+    my_value = new suite.value({type: 'complex object'});
 console.log("x");
 } catch(e) {
-    console.log("e.code ", e.code, ' ', typeof e);
+  console.log("e.code ", e.code, ' ', typeof e);
   assert(e.code === 'std::bad_cast', 'value #11');
-console.log("x");
+  console.log("x");
   captured = true;
-console.log("x");
+  console.log("x");
 }
 assert(captured === true, 'value #12');
 

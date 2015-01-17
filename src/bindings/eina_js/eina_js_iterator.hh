@@ -24,46 +24,39 @@ template<class T>
 v8::Local<v8::Object> export_iterator(::efl::eina::iterator<T> *i,
                                       v8::Isolate *isolate)
 {
-    using v8::Local;
-    using v8::Value;
-    using v8::Object;
-    using v8::String;
-    using v8::FunctionCallbackInfo;
-    using v8::FunctionTemplate;
-    using v8::ObjectTemplate;
-
     typedef ::efl::eina::iterator<T> value_type;
     typedef value_type *ptr_type;
     typedef void (*deleter_t)(void*);
 
-    auto obj_tpl = ObjectTemplate::New(isolate);
+    auto obj_tpl = compatibility_new<v8::ObjectTemplate>(isolate);
     obj_tpl->SetInternalFieldCount(2);
 
     auto ret = obj_tpl->NewInstance();
 
-    auto next = [](const FunctionCallbackInfo<Value> &info) {
+    auto next = [](js::compatibility_callback_info_type info) -> compatibility_return_type
+      {
         if (info.Length() != 0)
-            return;
+          return compatibility_return();
 
-        void *ptr = info.This()->GetAlignedPointerFromInternalField(0);
+        void *ptr = compatibility_get_pointer_internal_field(info.This(), 0);
         auto &value = *static_cast<ptr_type>(ptr);
-        Local<Object> o = v8::Object::New(info.GetIsolate());
-        o->Set(String::NewFromUtf8(info.GetIsolate(), "value"),
-               value_cast<Local<Value>>(*value, info.GetIsolate()));
-        info.GetReturnValue().Set(o);
+        v8::Local<v8::Object> o = compatibility_new<v8::Object>(info.GetIsolate());
+        o->Set(compatibility_new<v8::String>(info.GetIsolate(), "value"),
+               value_cast<v8::Local<v8::Value>>(*value, info.GetIsolate()));
         ++value;
-    };
+        return compatibility_return(o, info);
+      };
 
-    ret->Set(String::NewFromUtf8(isolate, "next"),
-             FunctionTemplate::New(isolate, next)->GetFunction());
+    ret->Set(compatibility_new<v8::String>(isolate, "next"),
+             compatibility_new<v8::FunctionTemplate>(isolate, next)->GetFunction());
 
     {
         deleter_t deleter = [](void *i) {
             delete static_cast<ptr_type>(i);
         };
-        ret->SetAlignedPointerInInternalField(0, i);
-        ret->SetAlignedPointerInInternalField(1,
-                                              reinterpret_cast<void*>(deleter));
+        compatibility_set_pointer_internal_field(ret, 0, i);
+        compatibility_set_pointer_internal_field
+          (ret, 1, reinterpret_cast<void*>(deleter));
     }
 
     return ret;

@@ -4,6 +4,8 @@
 #include <Eina.hh>
 #include EINA_STRINGIZE(V8_INCLUDE_HEADER)
 
+#include <eina_js_compatibility.hh>
+
 namespace efl { namespace eina { namespace js {
 
 /**
@@ -19,7 +21,7 @@ namespace efl { namespace eina { namespace js {
  * exception will be generated for each call after some error is reached. We,
  * therefore, suggest you to call `eina_error_set(0)` afterwards.
  */
-void convert_error_to_javascript_exception(v8::Isolate *isolate);
+js::compatibility_return_type convert_error_to_javascript_exception(v8::Isolate *isolate);
 
 } } } // namespace efl::eina::js
 
