@@ -67,6 +67,10 @@ Fixes:
    * elm_widget: elm_object_disabled_set API fix
    * elm - elm image orientation api fix - major bug in implementation
    * DnD: fix callbacks deletion for inline windows.
+   * elementary: Fix dereference of null return value (CID1261370)
+   * elm image - fix image rotation in non-common cases
+   * elm_transit: Fix to support zoom rate zero.
+   * elm_transit: Fix crash issue caused by multiple transit effects.
 
 Changes since 1.11.0:
 ---------------------
