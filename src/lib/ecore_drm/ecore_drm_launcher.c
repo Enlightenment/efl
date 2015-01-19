@@ -123,15 +123,10 @@ ecore_drm_launcher_connect(Ecore_Drm_Device *dev)
           }
      }
 
-   /* NB: Hmmm, appears we don't need to open a tty if we are running 
-    * with systemd support */
-   if (!logind)
+   if (!ecore_drm_tty_open(dev, NULL))
      {
-        if (!ecore_drm_tty_open(dev, NULL))
-          {
-             ERR("Launcher: failed to open tty\n");
-             return EINA_FALSE;
-          }
+        ERR("Launcher: failed to open tty\n");
+        return EINA_FALSE;
      }
 
    /* setup handler for signals */
@@ -158,13 +153,8 @@ ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev)
    if (dev->tty.switch_hdlr) ecore_event_handler_del(dev->tty.switch_hdlr);
    dev->tty.switch_hdlr = NULL;
 
-   /* NB: Hmmm, appears we don't need to open a tty if we are running 
-    * with systemd support */
-   if (!logind)
-     {
-        if (!ecore_drm_tty_close(dev))
-          ERR("Launcher: failed to close tty\n");
-     }
+   if (!ecore_drm_tty_close(dev))
+     ERR("Launcher: failed to close tty\n");
 
    if (logind)
      {
