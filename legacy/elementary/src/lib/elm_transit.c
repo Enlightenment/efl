@@ -88,6 +88,7 @@ struct _Elm_Transit_Obj_Data
 {
    struct _Elm_Transit_Obj_State *state;
    Eina_Bool freeze_events : 1;
+   int ref;
 };
 
 typedef struct _Elm_Transit_Effect_Module Elm_Transit_Effect_Module;
@@ -127,6 +128,7 @@ _transit_obj_data_update(Elm_Transit *transit, Evas_Object *obj)
      {
        _transit_obj_states_save(obj, obj_data);
      }
+   obj_data->ref++;
 
    evas_object_data_set(obj, _transit_key, obj_data);
 }
@@ -172,10 +174,14 @@ _transit_obj_remove_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *
    Elm_Transit_Obj_Data *obj_data = evas_object_data_get(obj, _transit_key);
    if (obj_data)
      {
-        free(obj_data->state);
-        free(obj_data);
+        obj_data->ref--;
+        if (obj_data->ref == 0)
+          {
+             free(obj_data->state);
+             free(obj_data);
+             evas_object_data_del(obj, _transit_key);
+          }
      }
-   evas_object_data_del(obj, _transit_key);
    _remove_obj_from_list(transit, obj);
    if (!transit->objs && !transit->deleted) elm_transit_del(transit);
 }
@@ -188,7 +194,11 @@ _transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
 
    obj_data = evas_object_data_get(obj, _transit_key);
    if (!obj_data) return;
-   evas_object_data_del(obj, _transit_key);
+
+   obj_data->ref--;
+   if (obj_data->ref == 0)
+     evas_object_data_del(obj, _transit_key);
+
    evas_object_freeze_events_set(obj, obj_data->freeze_events);
    state = obj_data->state;
    if (state)
@@ -204,9 +214,11 @@ _transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
              evas_object_map_enable_set(obj, state->map_enabled);
              evas_object_map_set(obj, state->map);
           }
-        free(state);
+        if (obj_data->ref == 0)
+          free(state);
      }
-   free(obj_data);
+   if (obj_data->ref == 0)
+     free(obj_data);
 }
 
 static void
