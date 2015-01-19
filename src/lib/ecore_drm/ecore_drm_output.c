@@ -406,6 +406,15 @@ _ecore_drm_output_free(Ecore_Drm_Output *output)
    if (output->backlight) 
      _ecore_drm_output_backlight_shutdown(output->backlight);
 
+   /* turn off hardware cursor */
+   drmModeSetCursor(output->drm_fd, output->crtc_id, 0, 0, 0);
+
+   /* restore crtc state */
+   if (output->crtc)
+     drmModeSetCrtc(output->drm_fd, output->crtc->crtc_id, 
+                    output->crtc->buffer_id, output->crtc->x, output->crtc->y, 
+                    &output->conn_id, 1, &output->crtc->mode);
+
    /* free modes */
    EINA_LIST_FREE(output->modes, mode)
      free(mode);
@@ -809,6 +818,8 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
                              &mode->info);
         if (ret) goto err;
      }
+
+   /* TODO: set dpms to on */
 
    if (drmModePageFlip(output->dev->drm.fd, output->crtc_id, output->next->id,
                        DRM_MODE_PAGE_FLIP_EVENT, output) < 0)
