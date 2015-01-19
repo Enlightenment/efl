@@ -12,6 +12,8 @@
 # define KDSKBMUTE 0x4B51
 #endif
 
+static int kbd_mode = 0;
+
 Eina_Bool
 _ecore_drm_tty_switch(Ecore_Drm_Device *dev, int activate_vt)
 {
@@ -48,6 +50,12 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
    if (ioctl(dev->tty.fd, VT_WAITACTIVE, minor(st.st_rdev)) < 0)
      {
         ERR("Failed to wait active: %m");
+        return EINA_FALSE;
+     }
+
+   if (ioctl(dev->tty.fd, KDGKBMODE, &kbd_mode))
+     {
+        ERR("Could not get curent kbd mode: %m");
         return EINA_FALSE;
      }
 
@@ -170,6 +178,12 @@ _ecore_drm_tty_restore(Ecore_Drm_Device *dev)
 
    if (ioctl(fd, KDSETMODE, KD_TEXT))
      ERR("Could not set KD_TEXT mode on tty: %m\n");
+
+   if (ioctl(dev->tty.fd, KDSKBMUTE, 0) && 
+       ioctl(dev->tty.fd, KDSKBMODE, kbd_mode))
+     {
+        ERR("Could not restore keyboard mode: %m");
+     }
 
    ecore_drm_device_master_drop(dev);
 
