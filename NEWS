@@ -160,6 +160,20 @@ Fixes:
    * edje - edje_cc - fix wrong state lists where default is not the first (T1926)
    * efl - edje_cc - fix default state checks in previous commit
    * Eo tests: Fix bad free in eo_test_value
+   * edje: Remove dead code
+   * eina - mmap safety handler - fix to only handle sigbus's from io
+   * ecore-drm: Add actual Outut to the Input device structure
+   * ecore-drm: Remove unused function
+   * ecore-drm: Remove call to unused function
+   * ecore-drm: Limit mouse movement to within the output size
+   * ecore-evas-drm: Init outputs before inputs so that input devices can have a pointer to outputs
+   * ecore-wayland: Don't set move cursor unless we actually start a drag
+   * ecore-wayland: Fix issue with Elementary DnD test not releasing mouse
+   * ecore-drm: Re-enable setting K_OFF keyboard mode
+   * Eee image: fix macros to be surrounded with do while().
+   * eet - image decode - fix robustness of image decode from eet file
+   * edje: Edje_Edit - fix memory leak in edje_edit_image_usage_list_get
+   * ecore-wayland: Don't crash if we have no input->cursor_name
 
 Changes since 1.11.0:
 ---------------------
