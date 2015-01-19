@@ -907,6 +907,7 @@ evas_gl_common_context_new(void)
         shared->native_pm_hash  = eina_hash_int32_new(NULL);
         shared->native_tex_hash = eina_hash_int32_new(NULL);
         shared->native_wl_hash = eina_hash_pointer_new(NULL);
+        shared->native_tbm_hash = eina_hash_pointer_new(NULL);
      }
    gc->shared = shared;
    gc->shared->references++;
@@ -981,6 +982,7 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
         eina_hash_free(gc->shared->native_pm_hash);
         eina_hash_free(gc->shared->native_tex_hash);
         eina_hash_free(gc->shared->native_wl_hash);
+        eina_hash_free(gc->shared->native_tbm_hash);
         free(gc->shared);
         shared = NULL;
      }
@@ -1885,6 +1887,19 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                                         SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA);
                }
           }
+#ifdef GL_GLES
+        else if (tex->im && tex->im->native.target == GL_TEXTURE_EXTERNAL_OES)
+          {
+             if ((!tex->alpha) && (tex->pt->native))
+               shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
+                                                     SHADER_TEX_EXTERNAL_NOMUL_AFILL, SHADER_TEX_EXTERNAL_AFILL,
+                                                     SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK);
+             else
+               shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
+                                                     SHADER_TEX_EXTERNAL_NOMUL, SHADER_TEX_EXTERNAL,
+                                                     SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK);
+          }
+#endif
         else
           {
              if ((smooth) && ((sw >= (w * 2)) && (sh >= (h * 2))))

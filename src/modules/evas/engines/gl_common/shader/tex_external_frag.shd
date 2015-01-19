@@ -1,0 +1,17 @@
+#ifdef GL_ES
+#extension GL_OES_EGL_image_external : require
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+uniform samplerExternalOES tex;
+#else
+uniform sampler2D tex;
+#endif
+varying vec4 col;
+varying vec2 tex_c;
+void main()
+{
+   gl_FragColor = texture2D(tex, tex_c.xy) * col;
+}

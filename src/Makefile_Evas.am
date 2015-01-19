@@ -709,6 +709,14 @@ modules/evas/engines/gl_common/shader/map_mask_bgra_frag.shd \
 modules/evas/engines/gl_common/shader/map_mask_bgra_vert.shd \
 modules/evas/engines/gl_common/shader/map_mask_bgra_nomul_frag.shd \
 modules/evas/engines/gl_common/shader/map_mask_bgra_nomul_vert.shd \
+modules/evas/engines/gl_common/shader/tex_external_frag.shd \
+modules/evas/engines/gl_common/shader/tex_external_vert.shd \
+modules/evas/engines/gl_common/shader/tex_external_nomul_frag.shd \
+modules/evas/engines/gl_common/shader/tex_external_nomul_vert.shd \
+modules/evas/engines/gl_common/shader/tex_external_afill_frag.shd \
+modules/evas/engines/gl_common/shader/tex_external_afill_vert.shd \
+modules/evas/engines/gl_common/shader/tex_external_nomul_afill_frag.shd \
+modules/evas/engines/gl_common/shader/tex_external_nomul_afill_vert.shd \
 $(NULL)
 
 EXTRA_DIST += \

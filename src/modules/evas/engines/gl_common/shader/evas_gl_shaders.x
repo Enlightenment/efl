@@ -2899,6 +2899,192 @@ Evas_GL_Program_Source shader_map_mask_bgra_nomul_vert_src =
    NULL, 0
 };
 
+/* Source: modules/evas/engines/gl_common/shader/tex_external_frag.shd */
+static const char const tex_external_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#extension GL_OES_EGL_image_external : require\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "uniform samplerExternalOES tex;\n"
+   "#else\n"
+   "uniform sampler2D tex;\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_FragColor = texture2D(tex, tex_c.xy) * col;\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_external_frag_src =
+{
+   tex_external_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_external_vert.shd */
+static const char const tex_external_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec4 color;\n"
+   "attribute vec2 tex_coord;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec4 col;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_external_vert_src =
+{
+   tex_external_vert_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_external_nomul_frag.shd */
+static const char const tex_external_nomul_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#extension GL_OES_EGL_image_external : require\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "uniform samplerExternalOES tex;\n"
+   "#else\n"
+   "uniform sampler2D tex;\n"
+   "#endif\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_FragColor = texture2D(tex, tex_c.xy);\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_external_nomul_frag_src =
+{
+   tex_external_nomul_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_external_nomul_vert.shd */
+static const char const tex_external_nomul_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec2 tex_coord;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_external_nomul_vert_src =
+{
+   tex_external_nomul_vert_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_external_afill_frag.shd */
+static const char const tex_external_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#extension GL_OES_EGL_image_external : require\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "uniform samplerExternalOES tex;\n"
+   "#else\n"
+   "uniform sampler2D tex;\n"
+   "#endif\n"
+   "varying vec4 col;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c = texture2D(tex, tex_c.xy);\n"
+   "   gl_FragColor = vec4(c.r, c.g, c.b, 1) * col;\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_external_afill_frag_src =
+{
+   tex_external_afill_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_external_afill_vert.shd */
+static const char const tex_external_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec4 color;\n"
+   "attribute vec2 tex_coord;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec4 col;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   col = color;\n"
+   "   tex_c = tex_coord;\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_external_afill_vert_src =
+{
+   tex_external_afill_vert_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_external_nomul_afill_frag.shd */
+static const char const tex_external_nomul_afill_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "#extension GL_OES_EGL_image_external : require\n"
+   "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+   "precision highp float;\n"
+   "#else\n"
+   "precision mediump float;\n"
+   "#endif\n"
+   "uniform samplerExternalOES tex;\n"
+   "#else\n"
+   "uniform sampler2D tex;\n"
+   "#endif\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   vec4 c = texture2D(tex, tex_c.xy);\n"
+   "   gl_FragColor = vec4(c.r, c.g, c.b, 1);\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_external_nomul_afill_frag_src =
+{
+   tex_external_nomul_afill_frag_glsl,
+   NULL, 0
+};
+
+/* Source: modules/evas/engines/gl_common/shader/tex_external_nomul_afill_vert.shd */
+static const char const tex_external_nomul_afill_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision highp float;\n"
+   "#endif\n"
+   "attribute vec4 vertex;\n"
+   "attribute vec2 tex_coord;\n"
+   "uniform mat4 mvp;\n"
+   "varying vec2 tex_c;\n"
+   "void main()\n"
+   "{\n"
+   "   gl_Position = mvp * vertex;\n"
+   "   tex_c = tex_coord;\n"
+   "}\n";
+Evas_GL_Program_Source shader_tex_external_nomul_afill_vert_src =
+{
+   tex_external_nomul_afill_vert_glsl,
+   NULL, 0
+};
+
 static const struct {
    Evas_GL_Shader id;
    Evas_GL_Program_Source *vert;
@@ -2961,5 +3147,9 @@ static const struct {
    { SHADER_MAP_MASK_NOMUL, &(shader_map_mask_nomul_vert_src), &(shader_map_mask_nomul_frag_src), "map_mask_nomul" },
    { SHADER_MAP_MASK_BGRA, &(shader_map_mask_bgra_vert_src), &(shader_map_mask_bgra_frag_src), "map_mask_bgra" },
    { SHADER_MAP_MASK_BGRA_NOMUL, &(shader_map_mask_bgra_nomul_vert_src), &(shader_map_mask_bgra_nomul_frag_src), "map_mask_bgra_nomul" },
+   { SHADER_TEX_EXTERNAL, &(shader_tex_external_vert_src), &(shader_tex_external_frag_src), "tex_external" },
+   { SHADER_TEX_EXTERNAL_NOMUL, &(shader_tex_external_nomul_vert_src), &(shader_tex_external_nomul_frag_src), "tex_external_nomul" },
+   { SHADER_TEX_EXTERNAL_AFILL, &(shader_tex_external_afill_vert_src), &(shader_tex_external_afill_frag_src), "tex_external_afill" },
+   { SHADER_TEX_EXTERNAL_NOMUL_AFILL, &(shader_tex_external_nomul_afill_vert_src), &(shader_tex_external_nomul_afill_frag_src), "tex_external_nomul_afill" },
 };
 

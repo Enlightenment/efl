@@ -474,7 +474,8 @@ typedef enum _Evas_Native_Surface_Type
    EVAS_NATIVE_SURFACE_NONE, /**< No surface type */
    EVAS_NATIVE_SURFACE_X11,  /**< X Window system based type. pixmap id or visual of the pixmap */
    EVAS_NATIVE_SURFACE_OPENGL, /**< OpenGL system based type. texture or framebuffer id*/
-   EVAS_NATIVE_SURFACE_WL /**< Wayland system based type. buffer of surface */
+   EVAS_NATIVE_SURFACE_WL, /**< Wayland system based type. buffer of surface */
+   EVAS_NATIVE_SURFACE_TBM, /**< Tizen system based type. tbm surface  */
 } Evas_Native_Surface_Type;
 
 /**
@@ -487,7 +488,9 @@ typedef enum _Evas_Native_Surface_Type
  * EVAS_NATIVE_SURFACE_OPENGL, on the other hand, you need to set union data
  * with opengl.texture_id or opengl.framebuffer_id and so on.
  * If you need to set the native surface as EVAS_NATIVE_SURFACE_WL,
- * you need to set union data with wl.legacy_buffer. The version field
+ * you need to set union data with wl.legacy_buffer.
+ * If you need to set the native surface as EVAS_NATIVE_SURFACE_TBM,
+ * you need to set union data with tbm surface. The version field
  * should be set with EVAS_NATIVE_SURFACE_VERSION in order to check abi
  * break in your application on the different efl library versions.
  *
@@ -525,6 +528,10 @@ struct _Evas_Native_Surface
       {
          void *legacy_buffer; /**< wayland client buffer to use */
       } wl; /**< Set this struct fields if surface data is Wayland based. */
+      struct
+      {
+         void *buffer; /**< tbm surface buffer to use */
+      } tbm; /**< Set this struct fields if surface data is Tizen based. */
    } data; /**< Choose one union data according to your surface. */
 };
 

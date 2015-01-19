@@ -132,6 +132,10 @@
 #ifndef GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
 # define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT 0x83F3
 #endif
+#ifndef GL_TEXTURE_EXTERNAL_OES
+# define GL_TEXTURE_EXTERNAL_OES 0x8D65
+#endif
+
 
 #ifndef GL_UNPACK_ROW_LENGTH
 # define GL_UNPACK_ROW_LENGTH 0x0cf2
@@ -185,6 +189,9 @@
 #endif
 #ifndef EGL_MAP_GL_TEXTURE_STRIDE_IN_BYTES_SEC
 # define EGL_MAP_GL_TEXTURE_STRIDE_IN_BYTES_SEC 0x320c
+#endif
+#ifndef EGL_NATIVE_SURFACE_TIZEN
+#define EGL_NATIVE_SURFACE_TIZEN 0x32A1
 #endif
 #ifndef GL_PROGRAM_BINARY_LENGTH
 # define GL_PROGRAM_BINARY_LENGTH 0x8741
@@ -378,6 +385,7 @@ struct _Evas_GL_Shared
    Eina_Hash          *native_pm_hash;
    Eina_Hash          *native_tex_hash;
    Eina_Hash          *native_wl_hash;
+   Eina_Hash          *native_tbm_hash;
 
 #ifdef GL_GLES
    // FIXME: hack.
