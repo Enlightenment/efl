@@ -1096,13 +1096,10 @@ _transit_effect_zoom_op(Elm_Transit_Effect *effect, Elm_Transit *transit , doubl
    Elm_Transit_Obj_Data *obj_data;
    Evas_Map *map, *base_map;
    Evas_Coord x, y, w, h;
-   Evas_Coord mx, my, mz;
-   int i, point_cnt;
+   double zoom_rate = (zoom->from * (1.0 - progress)) + (zoom->to * progress);
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
-        mz = zoom->from + (progress * zoom->to);
-
         obj_data = evas_object_data_get(obj, _transit_key);
         if (obj_data->state->map_enabled)
           {
@@ -1110,25 +1107,18 @@ _transit_effect_zoom_op(Elm_Transit_Effect *effect, Elm_Transit *transit , doubl
              if (!base_map) return;
              map = evas_map_dup(base_map);
              if (!map) return;
-             point_cnt = evas_map_count_get(map);
-             for (i = 0; i < point_cnt; i++)
-               {
-                  evas_map_point_coord_get(base_map, i, &mx, &my, NULL);
-                  evas_map_point_coord_set(map, i, mx, my, mz);
-               }
           }
         else
           {
              map = evas_map_new(4);
              if (!map) return;
-             evas_map_util_points_populate_from_object_full(map, obj, mz);
+             evas_map_util_points_populate_from_object_full(map, obj, 0);
           }
         evas_map_util_object_move_sync_set(map, EINA_TRUE);
 
         evas_object_geometry_get(obj, &x, &y, &w, &h);
         _recover_image_uv(obj, map, EINA_FALSE, EINA_FALSE);
-        evas_map_util_3d_perspective(map, x + (w / 2), y + (h / 2), 0,
-                                     _TRANSIT_FOCAL);
+        evas_map_util_zoom(map, zoom_rate, zoom_rate, x + (w / 2), y + (h / 2));
         if (!transit->smooth) evas_map_smooth_set(map, EINA_FALSE);
         evas_object_map_set(obj, map);
         evas_object_map_enable_set(obj, EINA_TRUE);
@@ -1145,8 +1135,8 @@ _transit_effect_zoom_context_new(float from_rate, float to_rate)
    zoom = ELM_NEW(Elm_Transit_Effect_Zoom);
    if (!zoom) return NULL;
 
-   zoom->from = (_TRANSIT_FOCAL - (from_rate * _TRANSIT_FOCAL)) * (1 / from_rate);
-   zoom->to = ((_TRANSIT_FOCAL - (to_rate * _TRANSIT_FOCAL)) * (1 / to_rate)) - zoom->from;
+   zoom->from = from_rate;
+   zoom->to = to_rate;
 
    return zoom;
 }
