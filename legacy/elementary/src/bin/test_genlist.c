@@ -5,8 +5,6 @@
 #endif
 #include <Elementary.h>
 
-static int tween_mode_val;
-
 Evas_Object * _elm_min_set(Evas_Object *obj, Evas_Object *parent,
                            Evas_Coord w, Evas_Coord h);
 
@@ -2096,44 +2094,6 @@ _reorder_tg_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSE
    elm_genlist_reorder_mode_set(data, elm_check_state_get(obj));
 }
 
-static void
-_focus_highlight_ck_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
-{
-   elm_win_focus_highlight_enabled_set(data, elm_check_state_get(obj));
-}
-
-static void
-_tween_mode_changed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   switch (tween_mode_val)
-     {
-        case 1:
-           elm_genlist_reorder_mode_start(data, ECORE_POS_MAP_LINEAR);
-           break;
-        case 2:
-           elm_genlist_reorder_mode_start(data, ECORE_POS_MAP_ACCELERATE);
-           break;
-        case 3:
-           elm_genlist_reorder_mode_start(data, ECORE_POS_MAP_DECELERATE);
-           break;
-        case 4:
-           elm_genlist_reorder_mode_start(data, ECORE_POS_MAP_SINUSOIDAL);
-           break;
-        case 5:
-           elm_genlist_reorder_mode_start(data, ECORE_POS_MAP_DIVISOR_INTERP);
-           break;
-        case 6:
-           elm_genlist_reorder_mode_start(data, ECORE_POS_MAP_BOUNCE);
-           break;
-        case 7:
-           elm_genlist_reorder_mode_start(data, ECORE_POS_MAP_SPRING);
-           break;
-        default:
-           elm_genlist_reorder_mode_start(data, ECORE_POS_MAP_LINEAR);
-           break;
-     }
-}
-
 /**
  * gl_moved is called after an item was reordered.
  * This is only called when reorder mode is enabled.
@@ -2191,12 +2151,11 @@ static void gl_moved_before(Evas_Object *data EINA_UNUSED, Evas_Object *obj EINA
 void
 test_genlist11(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *fr, *lb, *bx, *tg, *gl, *hbx, *ck, *grp, *rd;
+   Evas_Object *win, *fr, *lb, *bx, *tg, *gl;
    int i;
 
    api_data *api = calloc(1, sizeof(api_data));
    win = elm_win_util_standard_add("genlist-reorder-mode", "Genlist Reorder Mode");
-   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
 
@@ -2224,108 +2183,13 @@ test_genlist11(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    api->gl = gl;
    evas_object_show(gl);
 
-   hbx = elm_box_add(win);
-   elm_box_horizontal_set(hbx, EINA_TRUE);
-   evas_object_size_hint_weight_set(hbx, EVAS_HINT_EXPAND, 0);
-   elm_box_padding_set(hbx, 20, 0);
-   elm_box_pack_end(bx, hbx);
-   evas_object_show(hbx);
-
    tg = elm_check_add(win);
    elm_object_style_set(tg, "toggle");
    elm_object_text_set(tg, "Reorder Mode:");
    elm_check_state_set(tg, elm_config_mirrored_get());
    evas_object_smart_callback_add(tg, "changed", _reorder_tg_changed_cb, gl);
-   elm_box_pack_end(hbx, tg);
+   elm_box_pack_end(bx, tg);
    evas_object_show(tg);
-
-   ck = elm_check_add(win);
-   elm_object_text_set(ck, "Focus Highlight");
-   elm_check_state_set(ck, elm_win_focus_highlight_enabled_get(win));
-   evas_object_smart_callback_add(ck, "changed", _focus_highlight_ck_changed_cb, win);
-   elm_box_pack_end(hbx, ck);
-   evas_object_show(ck);
-
-   lb = elm_label_add(win);
-   elm_object_text_set(lb, "Select reorder tween mode:");
-   elm_box_pack_end(bx, lb);
-   evas_object_show(lb);
-
-   hbx = elm_box_add(win);
-   elm_box_horizontal_set(hbx, EINA_TRUE);
-   evas_object_size_hint_weight_set(hbx, EVAS_HINT_EXPAND, 0);
-   elm_box_pack_end(bx, hbx);
-   evas_object_show(hbx);
-
-   grp = rd = elm_radio_add(win);
-   elm_object_text_set(rd, "Linear");
-   elm_radio_state_value_set(rd, 1);
-   elm_radio_value_pointer_set(rd, &tween_mode_val);
-   evas_object_smart_callback_add(rd, "changed", _tween_mode_changed_cb, gl);
-   elm_box_pack_end(hbx, rd);
-   evas_object_show(rd);
-
-   rd = elm_radio_add(win);
-   elm_object_text_set(rd, "Accelerate");
-   elm_radio_state_value_set(rd, 2);
-   elm_radio_value_pointer_set(rd, &tween_mode_val);
-   elm_radio_group_add(rd, grp);
-   evas_object_smart_callback_add(rd, "changed", _tween_mode_changed_cb, gl);
-   elm_box_pack_end(hbx, rd);
-   evas_object_show(rd);
-
-   rd = elm_radio_add(win);
-   elm_object_text_set(rd, "Decelerate");
-   elm_radio_state_value_set(rd, 3);
-   elm_radio_value_pointer_set(rd, &tween_mode_val);
-   elm_radio_group_add(rd, grp);
-   evas_object_smart_callback_add(rd, "changed", _tween_mode_changed_cb, gl);
-   elm_box_pack_end(hbx, rd);
-   evas_object_show(rd);
-
-   rd = elm_radio_add(win);
-   elm_object_text_set(rd, "Sinusoidal");
-   elm_radio_state_value_set(rd, 4);
-   elm_radio_value_pointer_set(rd, &tween_mode_val);
-   elm_radio_group_add(rd, grp);
-   evas_object_smart_callback_add(rd, "changed", _tween_mode_changed_cb, gl);
-   elm_box_pack_end(hbx, rd);
-   evas_object_show(rd);
-
-   hbx = elm_box_add(win);
-   elm_box_horizontal_set(hbx, EINA_TRUE);
-   evas_object_size_hint_weight_set(hbx, EVAS_HINT_EXPAND, 0);
-   elm_box_pack_end(bx, hbx);
-   evas_object_show(hbx);
-
-   rd = elm_radio_add(win);
-   elm_object_text_set(rd, "Divisor Interpolation");
-   elm_radio_state_value_set(rd, 5);
-   elm_radio_value_pointer_set(rd, &tween_mode_val);
-   elm_radio_group_add(rd, grp);
-   evas_object_smart_callback_add(rd, "changed", _tween_mode_changed_cb, gl);
-   elm_box_pack_end(hbx, rd);
-   evas_object_show(rd);
-
-   rd = elm_radio_add(win);
-   elm_object_text_set(rd, "Bounce");
-   elm_radio_state_value_set(rd, 6);
-   elm_radio_value_pointer_set(rd, &tween_mode_val);
-   elm_radio_group_add(rd, grp);
-   evas_object_smart_callback_add(rd, "changed", _tween_mode_changed_cb, gl);
-   elm_box_pack_end(hbx, rd);
-   evas_object_show(rd);
-
-   rd = elm_radio_add(win);
-   elm_object_text_set(rd, "Spring");
-   elm_radio_state_value_set(rd, 7);
-   elm_radio_value_pointer_set(rd, &tween_mode_val);
-   elm_radio_group_add(rd, grp);
-   evas_object_smart_callback_add(rd, "changed", _tween_mode_changed_cb, gl);
-   elm_box_pack_end(hbx, rd);
-   evas_object_show(rd);
-
-   elm_radio_value_set(grp, 1);
 
    api->itc1 = elm_genlist_item_class_new();
    api->itc1->item_style = "default";
@@ -2333,7 +2197,6 @@ test_genlist11(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    api->itc1->func.content_get = gl_content_get;
    api->itc1->func.state_get = gl_state_get;
    api->itc1->func.del = NULL;
-
    evas_object_smart_callback_add(gl, "moved", (Evas_Smart_Cb)gl_moved, gl);
    evas_object_smart_callback_add(gl, "moved,after", (Evas_Smart_Cb)gl_moved_after, gl);
    evas_object_smart_callback_add(gl, "moved,before", (Evas_Smart_Cb)gl_moved_before, gl);

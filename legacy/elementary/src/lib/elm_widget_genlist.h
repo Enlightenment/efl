@@ -137,15 +137,6 @@ struct _Elm_Genlist_Data
    Elm_Genlist_Item_Move_Effect_Mode     move_effect_mode;
    int                                   reorder_fast;
 
-   struct
-   {
-      Elm_Gen_Item                          *it1, *it2; /**< The items which are getting swapped */
-      Elm_Focus_Direction                   dir; /**< focus key direction */
-      Ecore_Pos_Map                         tween_mode; /**< Position mappings for animation */
-      Evas_Coord                            x1, y1, x2, y2; /**< Coordinates of it1 and it2 */
-      Eina_Bool                             running : 1; /**< animation is happening */
-   } reorder;
-
    Eina_Bool                             focus_on_selection_enabled : 1;
    Eina_Bool                             tree_effect_enabled : 1;
    Eina_Bool                             auto_scroll_enabled : 1;

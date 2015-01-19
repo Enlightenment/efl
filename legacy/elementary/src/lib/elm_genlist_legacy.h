@@ -31,33 +31,5 @@ EAPI Evas_Object                  *elm_genlist_add(Evas_Object *parent);
 EAPI Elm_Object_Item *
 elm_genlist_nth_item_get(const Evas_Object *obj, unsigned int nth);
 
-/**
- * Enable item reorder mode with keys for genlist widget
- *
- * @param obj The genlist object
- * @param tween_mode Position mappings for animation
- * @see _Ecore_Pos_Map
- *
- * @see elm_genlist_reorder_mode_stop()
- * @since 1.13
- *
- * @ingroup Genlist
- */
-EAPI void
-elm_genlist_reorder_mode_start(Evas_Object *obj, Ecore_Pos_Map tween_mode);
-
-/**
- * Stop item reorder mode with keys for genlist widget
- *
- * @param obj The genlist object
- *
- * @see elm_genlist_reorder_mode_start()
- * @since 1.13
- *
- * @ingroup Genlist
- */
-EAPI void
-elm_genlist_reorder_mode_stop(Evas_Object *obj);
-
-#include "elm_genlist.eo.legacy.h"
 #include "elm_genlist_item.eo.legacy.h"
+#include "elm_genlist.eo.legacy.h"

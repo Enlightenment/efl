@@ -382,12 +382,7 @@
  * - @c "unfocused" - When the genlist has lost focus. (since 1.8)
  * - @c "item,focused" - When the genlist item has recieved focus. (since 1.10)
  * - @c "item,unfocused" - When the genlist item has lost focus. (since 1.10)
- * - @c "item,reorder,anim,start" - This is called when a genglist item's movement
-     has just started by keys in reorder mode. The %c event_info parameter
- *   is the item that is going to move. (since 1.13)
- * - @c "item,reorder,anim,stop" - This is called when a genlist item's movement just
-     stopped in reorder mode. The %c event_info parameter is the item
-     that was moved. (since 1.13)
+ *
  *
  * Supported elm_object_item common APIs
  * @li @ref elm_object_item_part_content_get
