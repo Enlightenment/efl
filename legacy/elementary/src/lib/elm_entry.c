@@ -3499,10 +3499,11 @@ static void
 _create_selection_handlers(Evas_Object *obj, Elm_Entry_Data *sd)
 {
    Evas_Object *handle;
+   const char *style = elm_widget_style_get(obj);
 
    handle = edje_object_add(evas_object_evas_get(obj));
    sd->start_handler = handle;
-   _elm_theme_object_set(obj, handle, "entry", "handler/start", "default");
+   _elm_theme_object_set(obj, handle, "entry", "handler/start", style);
    evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_DOWN,
                                   _start_handler_mouse_down_cb, obj);
    evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_MOVE,
@@ -3513,7 +3514,7 @@ _create_selection_handlers(Evas_Object *obj, Elm_Entry_Data *sd)
 
    handle = edje_object_add(evas_object_evas_get(obj));
    sd->end_handler = handle;
-   _elm_theme_object_set(obj, handle, "entry", "handler/end", "default");
+   _elm_theme_object_set(obj, handle, "entry", "handler/end", style);
    evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_DOWN,
                                   _end_handler_mouse_down_cb, obj);
    evas_object_event_callback_add(handle, EVAS_CALLBACK_MOUSE_MOVE,
