@@ -619,8 +619,8 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
              ce = eina_hash_find(out_file->collection, ce_cor->entry);
              ce_cor = eina_hash_find(out_file->collection, name1);
              ce_cor->id = ce->id;
+             eina_iterator_free(i);
           }
-        eina_iterator_free(i);
         EINA_LIST_FREE(alist, name1)
           eina_stringshare_del(name1);
      }
