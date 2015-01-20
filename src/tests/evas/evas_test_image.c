@@ -356,8 +356,9 @@ START_TEST(evas_object_image_all_loader_data)
    for (i = 0; i < sizeof (exts) / sizeof (exts[0]); i++)
      {
         struct stat st;
-        int w, h, r_w, r_h;
+        int w, h, s, r_w, r_h, r_s;
         const uint32_t *d, *r_d;
+        Evas_Colorspace c, r_c;
 
         eina_strbuf_reset(str);
 
@@ -368,6 +369,8 @@ START_TEST(evas_object_image_all_loader_data)
         evas_object_image_file_set(obj, eina_strbuf_string_get(str), NULL);
         fail_if(evas_object_image_load_error_get(obj) != EVAS_LOAD_ERROR_NONE);
         evas_object_image_size_get(obj, &w, &h);
+        s = evas_object_image_stride_get(obj);
+        c = evas_object_image_colorspace_get(obj);
         d = evas_object_image_data_get(obj, EINA_FALSE);
 
         eina_strbuf_reset(str);
@@ -376,10 +379,26 @@ START_TEST(evas_object_image_all_loader_data)
         evas_object_image_file_set(ref, eina_strbuf_string_get(str), NULL);
         fail_if(evas_object_image_load_error_get(ref) != EVAS_LOAD_ERROR_NONE);
         evas_object_image_size_get(ref, &r_w, &r_h);
+        r_s = evas_object_image_stride_get(ref);
+        r_c = evas_object_image_colorspace_get(ref);
         r_d = evas_object_image_data_get(ref, EINA_FALSE);
 
         fail_if(w != r_w || h != r_h);
-        fail_if(memcmp(d, r_d, w * h * 4));
+        fail_if(s != r_s);
+        fail_if(c != r_c);
+        fail_if(w*4 != s);
+        if (strcmp(exts[i], "jpeg") == 0 || strcmp(exts[i], "jpg") == 0)
+          {
+             //jpeg norm allows a variation of 1 bit per component
+             for (int j = 0; j < s * h; j++)
+               {
+                  fail_if(abs(((char*)d)[j] - ((char*)r_d)[j]) > 1);
+               }
+          }
+        else
+          {
+             fail_if(memcmp(d, r_d, w * h * 4));
+          }
      }
 
    evas_object_del(obj);
