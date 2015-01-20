@@ -78,6 +78,8 @@ struct _Evas_Object_Image_State
       unsigned char fill;
    } border;
 
+   const Evas_Object_Filter_Data *filter;
+
    Evas_Object   *source;
    Evas_Map      *defmap;
    Evas_3D_Scene *scene;
@@ -91,8 +93,6 @@ struct _Evas_Object_Image_State
    int            spread;
 
    Evas_Colorspace cspace;
-
-   const Evas_Object_Filter_Data *filter;
 
    Eina_Bool      smooth_scale : 1;
    Eina_Bool      has_alpha :1;
@@ -230,13 +230,13 @@ static const Evas_Object_Image_State default_state = {
   { 0, 0, 0, 0 }, // fill
   { 0, 0, 0 }, // image
   { 1.0, 0, 0, 0, 0, 1 }, // border
+  NULL, // filter
   NULL, NULL, NULL,  //source, defmap, scene
   { NULL }, //u
   NULL, //key
   0, //frame
   EVAS_TEXTURE_REPEAT,
   EVAS_COLORSPACE_ARGB8888,
-  NULL, // filter
 
   // flags
   EINA_TRUE, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE
