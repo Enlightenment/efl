@@ -28,7 +28,7 @@ static const Evas_Object_Map_Data default_map = {
 };
 static const Evas_Object_Protected_State default_state = {
   NULL, { 0, 0, 0, 0 },
-  { { 0, 0, 0, 0,  0, 0, 0, 0, NULL, EINA_FALSE, EINA_FALSE } },
+  { { NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0, EINA_FALSE, EINA_FALSE } },
   { 255, 255, 255, 255 },
   1.0, 0, EVAS_RENDER_BLEND, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE
 };

@@ -908,9 +908,10 @@ struct _Evas_Object_Protected_State
    Evas_Coord_Rectangle  geometry;
    struct {
       struct {
+         const Evas_Object_Protected_Data *mask, *prev_mask;
+
          Evas_Coord      x, y, w, h;
          unsigned char   r, g, b, a;
-         const Evas_Object_Protected_Data *mask, *prev_mask;
          Eina_Bool       visible : 1;
          Eina_Bool       dirty : 1;
       } clip;
