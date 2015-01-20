@@ -624,7 +624,7 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
      ready = TRUE;
 
    in_main_loop--;
-   INF("leave, timeout = %d", *next_time);
+   DBG("leave, timeout = %d", *next_time);
    _ecore_unlock();
 
    /* ready if we're not running (about to quit) */
@@ -700,7 +700,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
    idlers_ready = _ecore_idler_exist();
 
    in_main_loop++;
-   INF("enter idling=%d fds=%d events=%d timers=%d (next=%.2f) idlers=%d",
+   DBG("enter idling=%d fds=%d events=%d timers=%d (next=%.2f) idlers=%d",
        ecore_idling, ecore_fds_ready, events_ready,
        timers_ready, next_time, idlers_ready);
 
