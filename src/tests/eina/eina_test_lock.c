@@ -23,6 +23,24 @@
 #include "eina_suite.h"
 #include "Eina.h"
 
+#ifdef __MACH__
+# include <mach/clock.h>
+# include <mach/mach.h>
+
+#define CLOCK_REALTIME 0
+
+void clock_gettime(int mode, struct timespec* ts)
+{
+   clock_serv_t cclock;
+   mach_timespec_t mts;
+   host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+   clock_get_time(cclock, &mts);
+   mach_port_deallocate(mach_task_self(), cclock);
+   ts->tv_sec = mts.tv_sec;
+   ts->tv_nsec = mts.tv_nsec;
+}
+#endif
+
 static Eina_Spinlock spin;
 static Eina_Thread thread;
 static unsigned int counter;
