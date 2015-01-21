@@ -1398,8 +1398,13 @@ _elm_image_animated_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool anim)
    anim = !!anim;
    if (sd->anim == anim) return;
 
-   if (sd->edje) return;
+   sd->anim = anim;
 
+   if (sd->edje)
+     {
+        edje_object_animation_set(sd->img, anim);
+        return;
+     }
    sd->img = elm_image_object_get(obj);
    if (!evas_object_image_animated_get(sd->img)) return;
 
@@ -1418,7 +1423,6 @@ _elm_image_animated_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool anim)
         sd->cur_frame = -1;
         sd->frame_duration = -1;
      }
-   sd->anim = anim;
 
    return;
 }
@@ -1426,6 +1430,8 @@ _elm_image_animated_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool anim)
 EOLIAN static Eina_Bool
 _elm_image_animated_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
+   if (sd->edje)
+     return edje_object_animation_get(sd->img);
    return sd->anim;
 }
 
@@ -1434,9 +1440,12 @@ _elm_image_animated_play_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool play)
 {
    if (!sd->anim) return;
    if (sd->play == play) return;
-
-   if (sd->edje) return;
-
+   sd->play = play;
+   if (sd->edje)
+     {
+        edje_object_play_set(sd->img, play);
+        return;
+     }
    if (play)
      {
         sd->anim_timer = ecore_timer_add
@@ -1446,12 +1455,13 @@ _elm_image_animated_play_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool play)
      {
         ELM_SAFE_FREE(sd->anim_timer, ecore_timer_del);
      }
-   sd->play = play;
 }
 
 EOLIAN static Eina_Bool
 _elm_image_animated_play_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
+   if (sd->edje)
+     return edje_object_play_get(sd->img);
    return sd->play;
 }
 
