@@ -1750,6 +1750,17 @@ eng_context_clip_image_get(void *data EINA_UNUSED, void *context, void **ie, int
 }
 
 static void
+eng_context_free(void *data, void *context)
+{
+   RGBA_Draw_Context *ctx = context;
+
+   if (!ctx) return;
+   if (ctx->clip.mask)
+     eng_context_clip_image_unset(data, context);
+   evas_common_draw_context_free(context);
+}
+
+static void
 eng_context_3d_use(void *data)
 {
    Render_Engine_GL_Generic *re = data;
@@ -1942,6 +1953,7 @@ module_open(Evas_Module *em)
    ORD(context_clip_image_set);
    ORD(context_clip_image_unset);
    ORD(context_clip_image_get);
+   ORD(context_free);
 
    ORD(rectangle_draw);
    ORD(line_draw);

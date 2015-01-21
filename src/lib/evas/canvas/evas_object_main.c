@@ -179,6 +179,21 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
           map_write->surface = NULL;
         EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
      }
+   if (obj->mask->is_mask)
+     {
+        EINA_COW_WRITE_BEGIN(evas_object_mask_cow, obj->mask, Evas_Object_Mask_Data, mask)
+          mask->is_mask = EINA_FALSE;
+          mask->redraw = EINA_FALSE;
+          mask->is_alpha = EINA_FALSE;
+          mask->x = mask->y = mask->w = mask->h = 0;
+          if (mask->surface)
+            {
+               obj->layer->evas->engine.func->image_map_surface_free
+                     (obj->layer->evas->engine.data.output, mask->surface);
+               mask->surface = NULL;
+            }
+        EINA_COW_WRITE_END(evas_object_mask_cow, obj->mask, mask);
+     }
    evas_object_grabs_cleanup(eo_obj, obj);
    evas_object_intercept_cleanup(eo_obj);
    if (obj->smart.parent) was_smart_child = 1;

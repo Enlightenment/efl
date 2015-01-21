@@ -1635,6 +1635,9 @@ _filter_target_render(Evas_Filter_Context *ctx)
                     ctx->target.x, ctx->target.y, src->w, src->h,
                     EINA_TRUE, EINA_FALSE);
 
+   if (ctx->target.mask)
+     ENFN->context_clip_image_unset(ENDT, drawctx);
+
    if (!ctx->gl_engine)
      ENFN->context_free(ENDT, drawctx);
    else if (use_clip)

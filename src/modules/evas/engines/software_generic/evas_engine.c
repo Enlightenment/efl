@@ -411,12 +411,6 @@ eng_context_new(void *data EINA_UNUSED)
 }
 
 static void
-eng_context_free(void *data EINA_UNUSED, void *context)
-{
-   evas_common_draw_context_free(context);
-}
-
-static void
 eng_context_clip_set(void *data EINA_UNUSED, void *context, int x, int y, int w, int h)
 {
    evas_common_draw_context_set_clip(context, x, y, w, h);
@@ -474,6 +468,17 @@ eng_context_clip_image_get(void *data EINA_UNUSED, void *context, void **ie, int
    if (ie) *ie = ctx->clip.mask;
    if (x) *x = ctx->clip.mask_x;
    if (y) *y = ctx->clip.mask_y;
+}
+
+static void
+eng_context_free(void *data, void *context)
+{
+   RGBA_Draw_Context *ctx = context;
+
+   if (!ctx) return;
+   if (ctx->clip.mask)
+     eng_context_clip_image_unset(data, context);
+   evas_common_draw_context_free(context);
 }
 
 static void

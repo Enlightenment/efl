@@ -1519,6 +1519,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                }
              else
                {
+                  Eina_Bool unset_image_clip = EINA_FALSE;
                   RDI(level);
 
                   if (obj->cur->clipper)
@@ -1540,6 +1541,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
                             if (mask->mask->surface)
                               {
+                                 unset_image_clip = EINA_TRUE;
                                  e->engine.func->context_clip_image_set
                                        (e->engine.data.output, ctx,
                                         mask->mask->surface,
@@ -1551,6 +1553,11 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                   obj->func->render(eo_obj, obj, obj->private_data,
 				    e->engine.data.output, ctx,
                                     surface, off_x, off_y, EINA_FALSE);
+                  if (unset_image_clip)
+                    {
+                       e->engine.func->context_clip_image_unset
+                             (e->engine.data.output, ctx);
+                    }
                }
              if (!use_mapped_ctx)
                e->engine.func->context_free(e->engine.data.output, ctx);
@@ -1807,6 +1814,8 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
           mdata->surface = alpha_surface;
           mdata->is_alpha = EINA_TRUE;
        }
+
+     mdata->surface = ENFN->image_dirty_region(ENDT, mdata->surface, 0, 0, w, h);
 
      /* END OF HACK */
 
