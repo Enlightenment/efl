@@ -749,7 +749,7 @@ eina_spinlock_free(Eina_Spinlock *spinlock)
 static inline Eina_Bool
 eina_semaphore_new(Eina_Semaphore *sem, int count_init)
 {
-   if (!sem || (count_init <= 0))
+   if (!sem || (count_init < 0))
      return EINA_FALSE;
 
 #if defined(EINA_HAVE_OSX_SEMAPHORE)
@@ -759,10 +759,11 @@ eina_semaphore_new(Eina_Semaphore *sem, int count_init)
    eina_spinlock_release(&_sem_ctr_lock);
 
    snprintf(sem->name, sizeof(sem->name), "/eina_sem_%u", _sem_ctr);
-   sem->sema = sem_open(sem->name, O_CREAT, 0644, 1);
+   sem_unlink(sem->name);
+   sem->sema = sem_open(sem->name, O_CREAT, 0644, count_init);
    return (sem->sema == SEM_FAILED) ? EINA_FALSE : EINA_TRUE;
 #else
-   return (sem_init(sem, count_init, 1) == 0) ? EINA_TRUE : EINA_FALSE;
+   return (sem_init(sem, 1, count_init) == 0) ? EINA_TRUE : EINA_FALSE;
 #endif
 }
 

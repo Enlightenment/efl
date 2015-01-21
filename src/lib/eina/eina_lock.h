@@ -456,17 +456,12 @@ static inline Eina_Bool eina_tls_set(Eina_TLS key, const void *data);
  * @brief Initializes a new #Eina_Semaphore
  *
  * @param[in] sem The #Eina_Semaphore to be initialized.
- * @param[in] count_init Behavior is platofrm specific. See above.
+ * @param[in] count_init Indicates the initial count of threads waiting on this semaphore.
  *
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @details This function initializes an unnamed #Eina_Semaphore with appropriate values.
  *          These values are platform dependent.
- *
- * @note Be aware that the behavior of the parameter @p count_init differs by
- *       platform. *
- * @li POSIX:  Indicates whether this semaphore can be shared by between processes. Greater than 0 == shared.
- * @li Win32:  Indicates the initial count of threads waiting on this semaphore.
  *
  * @note Semaphores are not avialable on the WinCE platform.
  *
