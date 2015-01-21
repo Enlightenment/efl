@@ -1534,8 +1534,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                        if (_evas_render_object_is_mask(obj->cur->clipper))
                          {
                             // This path can be hit when we're multiplying masks on top of each other...
-                            Evas_Object_Protected_Data *mask =
-                                  (Evas_Object_Protected_Data *) obj->cur->clipper;
+                            Evas_Object_Protected_Data *mask = obj->cur->clipper;
                             if (mask->mask->redraw || !mask->mask->surface)
                               evas_render_mask_subrender(obj->layer->evas, mask, NULL);
 
@@ -2287,10 +2286,10 @@ evas_render_updates_internal(Evas *eo_e,
 
                             /* Clipper masks */
                             if (_evas_render_object_is_mask(obj->cur->clipper))
-                              mask = (Evas_Object_Protected_Data *) obj->cur->clipper; // main object clipped by this mask
-                            else if (obj->cur->cache.clip.mask)
-                              mask = (Evas_Object_Protected_Data *) obj->cur->cache.clip.mask; // propagated clip
-                            prev_mask = (Evas_Object_Protected_Data *) obj->cur->cache.clip.prev_mask;
+                              mask = obj->cur->clipper; // main object clipped by this mask
+                            else if (obj->clip.mask)
+                              mask = obj->clip.mask; // propagated clip
+                            prev_mask = obj->clip.prev_mask;
 
                             if (mask)
                               {
