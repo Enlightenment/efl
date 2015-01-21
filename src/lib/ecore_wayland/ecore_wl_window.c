@@ -336,6 +336,10 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
                     xdg_shell_get_xdg_surface(_ecore_wl_disp->wl.xdg_shell,
                                               win->surface);
                   if (!win->xdg_surface) return;
+                  if (win->title)
+                    xdg_surface_set_title(win->xdg_surface, win->title);
+                  if (win->class_name)
+                    xdg_surface_set_app_id(win->xdg_surface, win->class_name);
                   xdg_surface_set_user_data(win->xdg_surface, win);
                   xdg_surface_add_listener(win->xdg_surface,
                                            &_ecore_xdg_surface_listener, win);
