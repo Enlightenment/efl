@@ -95,10 +95,10 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
                                 gc->dc->clip.w, gc->dc->clip.h);
              if ((nw < 1) || (nh < 1)) return;
 
-             ssx = (double)sx + ((double)(sw * (nx - x)) / (double)(tex->w));
-             ssy = (double)sy + ((double)(sh * (ny - y)) / (double)(tex->h));
-             ssw = ((double)sw * (double)(nw)) / (double)(tex->w);
-             ssh = ((double)sh * (double)(nh)) / (double)(tex->h);
+             //ssx = (double)sx + ((double)(sw * (nx - x)) / (double)(tex->w));
+             //ssy = (double)sy + ((double)(sh * (ny - y)) / (double)(tex->h));
+             //ssw = ((double)sw * (double)(nw)) / (double)(tex->w);
+             //ssh = ((double)sh * (double)(nh)) / (double)(tex->h);
 
              dx = x; dy = y; dw = sw; dh = sh;
              mx = gc->dc->clip.mask_x; my = gc->dc->clip.mask_y; mw = mask->w; mh = mask->h;
