@@ -2077,6 +2077,7 @@ eet_data_image_header_decode_cipher(const void   *data,
    int header[8];
    void *deciphered_d = NULL;
    unsigned int deciphered_sz = 0;
+   int r = 0;
 
    if (cipher_key)
      {
@@ -2095,11 +2096,7 @@ eet_data_image_header_decode_cipher(const void   *data,
 
    _eet_image_endian_check();
 
-   if (size < 32)
-     {
-        free(deciphered_d);
-        return 0;
-     }
+   if (size < 32) goto on_error;
 
    memcpy(header, data, 32);
    _eet_image_endian_swap(header, 8);
@@ -2113,16 +2110,10 @@ eet_data_image_header_decode_cipher(const void   *data,
         al = header[3];
         cp = header[4];
         if ((iw < 1) || (ih < 1) || (iw > 8192) || (ih > 8192))
-          {
-             free(deciphered_d);
-             return 0;
-          }
+          goto on_error;
 
         if ((cp == 0) && (size < ((iw * ih * 4) + 32)))
-          {
-             free(deciphered_d);
-             return 0;
-          }
+          goto on_error;
 
         if (w)
           *w = iw;
@@ -2142,7 +2133,7 @@ eet_data_image_header_decode_cipher(const void   *data,
         if (quality)
           *quality = 100;
 
-        return 1;
+        r = 1;
      }
    else if ((unsigned)header[0] == 0xbeeff00d)
      {
@@ -2154,10 +2145,7 @@ eet_data_image_header_decode_cipher(const void   *data,
         sz1 = header[1];
         sz2 = header[2];
         if ((sz1 <= 0) || (sz2 <= 0) || ((sz1 + sz2) > (size - 12)))
-          {
-             free(deciphered_d);
-             return 0;
-          }
+          goto on_error;
         dt = data;
         dt += 12;
         ok = eet_data_image_jpeg_header_decode(dt, sz1, &iw, &ih);
@@ -2181,7 +2169,7 @@ eet_data_image_header_decode_cipher(const void   *data,
              if (quality)
                *quality = 75;
 
-             return 1;
+             r = 1;
           }
      }
    else if (!strncmp(data, "TGV1", 4))
@@ -2210,11 +2198,11 @@ eet_data_image_header_decode_cipher(const void   *data,
              if (lossy) *lossy = EET_IMAGE_ETC1_ALPHA;
              break;
            default:
-             return 0;
+              goto on_error;
           }
         if (quality) *quality = 50;
 
-        return 1;
+        r = 1;
      }
    else
      {
@@ -2242,12 +2230,13 @@ eet_data_image_header_decode_cipher(const void   *data,
              if (quality)
                *quality = 75;
 
-             return 1;
+             r = 1;
           }
      }
 
+ on_error:
    free(deciphered_d);
-   return 0;
+   return r;
 }
 
 static const Eet_Colorspace _eet_etc1_colorspace[] = {
