@@ -509,6 +509,10 @@ START_TEST(ecore_test_ecore_thread_eina_thread_queue_t6)
              eina_spinlock_release(&msgnum_lock);
              break;
           }
+        else if (msgnum > 10000)
+          {
+             fail();
+          }
         eina_spinlock_release(&msgnum_lock);
      }
    printf("msg multi to 1 ok\n");
