@@ -543,6 +543,10 @@ class Elm_Image (Elm_Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
       Efl.Image.smooth_scale.set;
       Efl.Image.smooth_scale.get;
       Edje.Object.signal_emit;
+      Edje.Object.size_min.get;
+      Edje.Object.size_max.get;
+      Edje.Object.size_min_calc;
+      Edje.Object.calc_force;
       Evas.Object_Smart.hide;
       Evas.Object_Smart.clip.set;
       Evas.Object_Smart.clip_unset;

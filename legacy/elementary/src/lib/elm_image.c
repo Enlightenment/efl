@@ -841,6 +841,40 @@ _elm_image_edje_object_signal_emit(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, cons
      edje_object_signal_emit(sd->img, emission, source);
 }
 
+EOLIAN static void
+_elm_image_edje_object_size_min_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int *w, int *h)
+{
+   if (sd->edje)
+     edje_object_size_min_get(sd->img, w, h);
+   else
+     evas_object_size_hint_min_get(sd->img, w, h);
+}
+
+EOLIAN static void
+_elm_image_edje_object_size_max_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int *w, int *h)
+{
+   if (sd->edje)
+     edje_object_size_max_get(sd->img, w, h);
+   else
+     evas_object_size_hint_max_get(sd->img, w, h);
+}
+
+EOLIAN static void
+_elm_image_edje_object_calc_force(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
+{
+   if (sd->edje)
+     edje_object_calc_force(sd->img);
+}
+
+EOLIAN static void
+_elm_image_edje_object_size_min_calc(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int *w, int *h)
+{
+   if (sd->edje)
+     edje_object_size_min_calc(sd->img, w, h);
+   else
+     evas_object_size_hint_min_get(sd->img, w, h);
+}
+
 EOLIAN static Eina_Bool
 _elm_image_mmap_set(Eo *obj, Elm_Image_Data *sd, const Eina_File *f, const char *key)
 {
