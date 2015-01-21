@@ -334,7 +334,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 {
    int      x, y;
    int     *lin_ptr;
-   DATA32  *buf, *dptr;
+   DATA32  *buf = NULL, *dptr;
    DATA32 **row_ptr;
    DATA32  *ptr, *dst_ptr, *src_data, *dst_data;
    DATA8   *mask;
