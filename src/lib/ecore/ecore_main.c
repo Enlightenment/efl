@@ -373,7 +373,6 @@ _gfd_events_from_fdh(Ecore_Fd_Handler *fdh)
    if (fdh->flags & ECORE_FD_ERROR) events |= G_IO_ERR;
    return events;
 }
-
 #endif
 
 static inline int
@@ -476,7 +475,7 @@ _ecore_main_fdh_epoll_mark_active(void)
    if (ret < 0)
      {
         if (errno == EINTR) return -1;
-        ERR("epoll_wait failed %d", errno);
+        ERR("epoll_wait failed on fd: %d %s", efd, strerror(errno));
         return -1;
      }
 
