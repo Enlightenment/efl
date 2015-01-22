@@ -204,7 +204,7 @@ _ecore_drm_logind_connect(Ecore_Drm_Device *dev)
    if (!_ecore_drm_dbus_init(dev)) return EINA_FALSE;
 
    /* take control of session */
-   if (!_ecore_drm_dbus_session_take(dev->session))
+   if (!_ecore_drm_dbus_session_take())
      {
         ERR("Could not take control of session");
         goto take_err;
@@ -229,7 +229,7 @@ _ecore_drm_logind_connect(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 
 vt_err:
-   _ecore_drm_dbus_session_release(dev->session);
+   _ecore_drm_dbus_session_release();
 take_err:
    _ecore_drm_dbus_shutdown();
    return EINA_FALSE;
@@ -242,7 +242,7 @@ _ecore_drm_logind_disconnect(Ecore_Drm_Device *dev)
    active_hdlr = NULL;
 
    _ecore_drm_logind_vt_destroy(dev);
-   _ecore_drm_dbus_session_release(dev->session);
+   _ecore_drm_dbus_session_release();
    _ecore_drm_dbus_shutdown();
 }
 
