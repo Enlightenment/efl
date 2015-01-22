@@ -2,7 +2,6 @@
 
 static int _dbus_init_count = 0;
 
-static const char *dsession;
 static Eldbus_Connection *dconn;
 static Eldbus_Object *dobj;
 
@@ -30,10 +29,13 @@ _ecore_drm_dbus_device_pause_done(uint32_t major, uint32_t minor)
 }
 
 static void 
-_cb_session_removed(void *ctxt EINA_UNUSED, const Eldbus_Message *msg)
+_cb_session_removed(void *data, const Eldbus_Message *msg)
 {
+   Ecore_Drm_Device *dev;
    const char *errname, *errmsg;
    const char *sid;
+
+   if (!(dev = data)) return;
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
@@ -43,8 +45,11 @@ _cb_session_removed(void *ctxt EINA_UNUSED, const Eldbus_Message *msg)
 
    if (eldbus_message_arguments_get(msg, "s", &sid))
      {
-        if (!strcmp(sid, dsession))
-          ERR("\tCurrent Session Removed!!");
+        if (!strcmp(sid, dev->session))
+          {
+             WRN("\tCurrent Session Removed!!");
+             _ecore_drm_logind_restore(dev);
+          }
      }
 }
 
@@ -116,18 +121,12 @@ _cb_properties_changed(void *data EINA_UNUSED, Eldbus_Proxy *proxy EINA_UNUSED, 
      }
 }
 
-static Eina_Bool 
+Eina_Bool 
 _ecore_drm_dbus_session_take(const char *session)
 {
    Eldbus_Proxy *proxy;
    Eldbus_Message *msg, *reply;
    const char *errname, *errmsg;
-
-   if ((session) && (strcmp(session, dsession)))
-     {
-        ERR("Invalid session: %s", session);
-        return EINA_FALSE;
-     }
 
    /* try to get the Session proxy */
    if (!(proxy = eldbus_proxy_get(dobj, "org.freedesktop.login1.Session")))
@@ -155,18 +154,12 @@ _ecore_drm_dbus_session_take(const char *session)
    return EINA_TRUE;
 }
 
-static Eina_Bool 
+Eina_Bool 
 _ecore_drm_dbus_session_release(const char *session)
 {
    Eldbus_Proxy *proxy;
    Eldbus_Message *msg, *reply;
    const char *errname, *errmsg;
-
-   if ((session) && (strcmp(session, dsession)))
-     {
-        ERR("Invalid session: %s", session);
-        return EINA_FALSE;
-     }
 
    /* try to get the Session proxy */
    if (!(proxy = eldbus_proxy_get(dobj, "org.freedesktop.login1.Session")))
@@ -300,7 +293,7 @@ _ecore_drm_dbus_device_take_no_pending(uint32_t major, uint32_t minor, Eina_Bool
 }
 
 int 
-_ecore_drm_dbus_init(const char *session)
+_ecore_drm_dbus_init(Ecore_Drm_Device *dev)
 {
    Eldbus_Proxy *proxy;
    int ret = 0;
@@ -308,7 +301,7 @@ _ecore_drm_dbus_init(const char *session)
 
    if (++_dbus_init_count != 1) return _dbus_init_count;
 
-   if (!session) return --_dbus_init_count;
+   if (!dev->session) return --_dbus_init_count;
 
    /* try to init eldbus */
    if (!eldbus_init())
@@ -316,8 +309,6 @@ _ecore_drm_dbus_init(const char *session)
         ERR("Could not init eldbus library");
         return --_dbus_init_count;
      }
-
-   dsession = eina_stringshare_add(session);
 
    /* try to get the dbus connection */
    if (!(dconn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM)))
@@ -327,7 +318,7 @@ _ecore_drm_dbus_init(const char *session)
      }
 
    /* assemble dbus path */
-   ret = asprintf(&dpath, "/org/freedesktop/login1/session/%s", session);
+   ret = asprintf(&dpath, "/org/freedesktop/login1/session/%s", dev->session);
    if (ret < 0)
      {
         ERR("Could not assemble dbus path");
@@ -349,7 +340,7 @@ _ecore_drm_dbus_init(const char *session)
      }
 
    eldbus_proxy_signal_handler_add(proxy, "SessionRemoved", 
-                                   _cb_session_removed, NULL);
+                                   _cb_session_removed, dev);
 
    /* try to get the Session proxy */
    if (!(proxy = eldbus_proxy_get(dobj, "org.freedesktop.login1.Session")))
@@ -374,17 +365,8 @@ _ecore_drm_dbus_init(const char *session)
    eldbus_proxy_event_callback_add(proxy, ELDBUS_PROXY_EVENT_PROPERTY_CHANGED, 
                                    _cb_properties_changed, NULL);
 
-   if (!_ecore_drm_dbus_session_take(dsession))
-     {
-        ERR("Failed to take control of session");
-        goto session_err;
-     }
-
    return _dbus_init_count;
 
-session_err:
-   eldbus_proxy_event_callback_del(proxy, ELDBUS_PROXY_EVENT_PROPERTY_CHANGED, 
-                                   _cb_properties_changed, NULL);
 proxy_err:
    eldbus_object_unref(dobj);
 obj_err:
@@ -392,7 +374,6 @@ obj_err:
 path_err:
    eldbus_connection_unref(dconn);
 conn_err:
-   eina_stringshare_del(dsession);
    eldbus_shutdown();
    return --_dbus_init_count;
 }
@@ -402,16 +383,11 @@ _ecore_drm_dbus_shutdown(void)
 {
    if (--_dbus_init_count != 0) return _dbus_init_count;
 
-   /* release control of the session */
-   _ecore_drm_dbus_session_release(dsession);
-
    /* release dbus object */
    if (dobj) eldbus_object_unref(dobj);
 
    /* release the dbus connection */
    if (dconn) eldbus_connection_unref(dconn);
-
-   eina_stringshare_del(dsession);
 
    /* shutdown eldbus library */
    eldbus_shutdown();
