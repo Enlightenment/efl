@@ -385,16 +385,16 @@ _ecore_main_fdh_poll_add(Ecore_Fd_Handler *fdh)
         r = _ecore_epoll_add(_ecore_get_epoll_fd(), fdh->fd,
                              _ecore_poll_events_from_fdh(fdh), fdh);
      }
+#ifdef USE_G_MAIN_LOOP
    else
      {
-#ifdef USE_G_MAIN_LOOP
         fdh->gfd.fd = fdh->fd;
         fdh->gfd.events = _gfd_events_from_fdh(fdh);
         fdh->gfd.revents = 0;
         DBG("adding gpoll on %d %08x", fdh->fd, fdh->gfd.events);
         g_source_add_poll(ecore_glib_source, &fdh->gfd);
-#endif
      }
+#endif
    return r;
 }
 
@@ -424,16 +424,16 @@ _ecore_main_fdh_poll_del(Ecore_Fd_Handler *fdh)
                }
           }
      }
+#ifdef USE_G_MAIN_LOOP
    else
      {
-#ifdef USE_G_MAIN_LOOP
         fdh->gfd.fd = fdh->fd;
         fdh->gfd.events = _gfd_events_from_fdh(fdh);
         fdh->gfd.revents = 0;
         DBG("removing gpoll on %d %08x", fdh->fd, fdh->gfd.events);
         g_source_remove_poll(ecore_glib_source, &fdh->gfd);
-#endif
      }
+#endif
 }
 
 static inline int
@@ -451,15 +451,15 @@ _ecore_main_fdh_poll_modify(Ecore_Fd_Handler *fdh)
         DBG("modifing epoll on %d to %08x", fdh->fd, ev.events);
         r = epoll_ctl(efd, EPOLL_CTL_MOD, fdh->fd, &ev);
      }
+#ifdef USE_G_MAIN_LOOP
    else
      {
-#ifdef USE_G_MAIN_LOOP
         fdh->gfd.fd = fdh->fd;
         fdh->gfd.events = _gfd_events_from_fdh(fdh);
         fdh->gfd.revents = 0;
         DBG("modifing gpoll on %d to %08x", fdh->fd, fdh->gfd.events);
-#endif
      }
+#endif
    return r;
 }
 
