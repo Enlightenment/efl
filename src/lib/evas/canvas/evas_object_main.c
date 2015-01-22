@@ -1261,6 +1261,27 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      }
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
+   if (obj->mask->is_mask)
+     {
+        if (obj->mask->surface ||
+            obj->mask->x || obj->mask->y || obj->mask->w || obj->mask->h ||
+            obj->mask->is_alpha || obj->mask->redraw)
+          {
+             EINA_COW_WRITE_BEGIN(evas_object_mask_cow, obj->mask,
+                                  Evas_Object_Mask_Data, mask)
+               mask->redraw = EINA_FALSE;
+               mask->is_alpha = EINA_FALSE;
+               mask->x = mask->y = mask->w = mask->h = 0;
+               if (mask->surface)
+                 {
+                    obj->layer->evas->engine.func->image_map_surface_free
+                          (obj->layer->evas->engine.data.output, mask->surface);
+                    mask->surface = NULL;
+                 }
+             EINA_COW_WRITE_END(evas_object_mask_cow, obj->mask, mask);
+          }
+     }
+
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    if (obj->layer->evas && !(obj->layer->evas->is_frozen))
