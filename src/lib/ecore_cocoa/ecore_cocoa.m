@@ -291,26 +291,29 @@ ecore_cocoa_feed_events(void *anEvent)
               compose=EINA_FALSE;
            }
 
-         if ([keychar length] > 0){
-           for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_cocoa_keys_s); ++i)
+         if ([keychar length] > 0)
            {
-              if (keystable[i].code == [keychar characterAtIndex:0])
-              {
-                 DBG("Key pressed : %s\n", keystable[i].name);
-                 ev->keyname = keystable[i].name;
-                 ev->key = keystable[i].name;
-                 ev->string = keystable[i].compose;
-                 ev->window = (Ecore_Window)window.ecore_window_data;
-                 ev->event_window = ev->window;
-                 ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
-                 return pass;
-              }
+              for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_cocoa_keys_s); ++i)
+                {
+                   if (keystable[i].code == [keychar characterAtIndex:0])
+                     {
+                        DBG("Key pressed: %s %d\n", keystable[i].name, [keychar characterAtIndex:0]);
+                        ev->keyname = keystable[i].name;
+                        ev->key = keystable[i].name;
+                        ev->string = keystable[i].compose;
+                        ev->window = (Ecore_Window)window.ecore_window_data;
+                        ev->event_window = ev->window;
+                        ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
+                        return pass;
+                     }
+                }
            }
-         }else{
-            compose=EINA_TRUE;
-            edit = [[event window]  fieldEditor:YES forObject:nil];
-            [edit interpretKeyEvents:[NSArray arrayWithObject:event]];
-         }
+         else
+           {
+              compose=EINA_TRUE;
+              edit = [[event window]  fieldEditor:YES forObject:nil];
+              [edit interpretKeyEvents:[NSArray arrayWithObject:event]];
+           }
 
          break;
       }
@@ -328,21 +331,22 @@ ecore_cocoa_feed_events(void *anEvent)
          ev->timestamp = time;
          ev->modifiers = _ecore_cocoa_event_modifiers([event modifierFlags]);
 
-         if ([keychar length] > 0){
-           for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_cocoa_keys_s); ++i)
+         if ([keychar length] > 0)
            {
-              if (keystable[i].code == tolower([keychar characterAtIndex:0]))
-              {
-                 ev->keyname = keystable[i].name;
-                 ev->key = keystable[i].name;
-                 ev->string = keystable[i].compose;
-                 ev->window = (Ecore_Window)window.ecore_window_data;
-                 ev->event_window = ev->window;
-                 ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
-                 return pass;
-              }
+              for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_cocoa_keys_s); ++i)
+                {
+                   if (keystable[i].code == [keychar characterAtIndex:0])
+                     {
+                        ev->keyname = keystable[i].name;
+                        ev->key = keystable[i].name;
+                        ev->string = keystable[i].compose;
+                        ev->window = (Ecore_Window)window.ecore_window_data;
+                        ev->event_window = ev->window;
+                        ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
+                        return pass;
+                     }
+                }
            }
-         }
 
          break;
       }

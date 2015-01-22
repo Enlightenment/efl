@@ -242,6 +242,7 @@ static const struct _ecore_cocoa_keys_s keystable[] =
 { NSEndFunctionKey,          "End",          "" },
 { NSPageUpFunctionKey,       "Page_Up",      "" },
 { NSPageDownFunctionKey,     "Page_Down",    "" },
+{ NSDeleteFunctionKey,       "Delete",       "\010"},
 
 { NSF1FunctionKey,           "F1",           "" },
 { NSF2FunctionKey,           "F2",           "" },
