@@ -106,6 +106,8 @@ ecore_cocoa_feed_events(void *anEvent)
    NSEvent *event = anEvent;
    unsigned int time = (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff);
    Eina_Bool pass = EINA_FALSE;
+   static Eina_Bool compose = EINA_FALSE;
+   static NSText *edit;
 
    switch ([event type])
    {
@@ -243,25 +245,38 @@ ecore_cocoa_feed_events(void *anEvent)
          Ecore_Event_Key *ev;
          unsigned int     i;
          EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
+         NSString *keychar = [event characters];
 
          ev = calloc(1, sizeof (Ecore_Event_Key));
          if (!ev) return pass;
          ev->timestamp = time;
          ev->modifiers = _ecore_cocoa_event_modifiers([event modifierFlags]);
 
-         for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_cocoa_keys_s); ++i)
-         {
-            if (keystable[i].code == tolower([[event charactersIgnoringModifiers] characterAtIndex:0]))
-            {
-               printf("Key pressed : %s\n", keystable[i].name);
-               ev->keyname = keystable[i].name;
-               ev->key = keystable[i].name;
-               ev->string = keystable[i].compose;
-               ev->window = (Ecore_Window)window.ecore_window_data;
-               ev->event_window = ev->window;
-               ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
-               return pass;
-            }
+         if (compose)
+           {
+              [edit interpretKeyEvents:[NSArray arrayWithObject:event]];
+              compose=EINA_FALSE;
+           }
+
+         if ([keychar length] > 0){
+           for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_cocoa_keys_s); ++i)
+           {
+              if (keystable[i].code == [keychar characterAtIndex:0])
+              {
+                 printf("Key pressed : %s\n", keystable[i].name);
+                 ev->keyname = keystable[i].name;
+                 ev->key = keystable[i].name;
+                 ev->string = keystable[i].compose;
+                 ev->window = (Ecore_Window)window.ecore_window_data;
+                 ev->event_window = ev->window;
+                 ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
+                 return pass;
+              }
+           }
+         }else{
+            compose=EINA_TRUE;
+            edit = [[event window]  fieldEditor:YES forObject:nil];
+            [edit interpretKeyEvents:[NSArray arrayWithObject:event]];
          }
 
          break;
@@ -271,6 +286,7 @@ ecore_cocoa_feed_events(void *anEvent)
          Ecore_Event_Key *ev;
          unsigned int     i;
          EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
+         NSString *keychar = [event characters];
 
          printf("Key Up\n");
 
@@ -279,18 +295,20 @@ ecore_cocoa_feed_events(void *anEvent)
          ev->timestamp = time;
          ev->modifiers = _ecore_cocoa_event_modifiers([event modifierFlags]);
 
-         for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_cocoa_keys_s); ++i)
-         {
-            if (keystable[i].code == tolower([[event charactersIgnoringModifiers] characterAtIndex:0]))
-            {
-               ev->keyname = keystable[i].name;
-               ev->key = keystable[i].name;
-               ev->string = keystable[i].compose;
-               ev->window = (Ecore_Window)window.ecore_window_data;
-               ev->event_window = ev->window;
-               ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
-               return pass;
-            }
+         if ([keychar length] > 0){
+           for (i = 0; i < sizeof (keystable) / sizeof (struct _ecore_cocoa_keys_s); ++i)
+           {
+              if (keystable[i].code == tolower([keychar characterAtIndex:0]))
+              {
+                 ev->keyname = keystable[i].name;
+                 ev->key = keystable[i].name;
+                 ev->string = keystable[i].compose;
+                 ev->window = (Ecore_Window)window.ecore_window_data;
+                 ev->event_window = ev->window;
+                 ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
+                 return pass;
+              }
+           }
          }
 
          break;
