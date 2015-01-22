@@ -185,8 +185,10 @@ cont:
         dev->seat = eeze_udev_syspath_get_property(device, "ID_SEAT");
         if (!dev->seat) dev->seat = eina_stringshare_add("seat0");
 
+        dev->vt = 0;
         dev->format = 0;
         dev->use_hw_accel = EINA_FALSE;
+        dev->session = NULL;
 
         DBG("Using Drm Device: %s", dev->drm.name);
      }
@@ -231,6 +233,9 @@ ecore_drm_device_free(Ecore_Drm_Device *dev)
    /* free device seat */
    if (dev->seat) eina_stringshare_del(dev->seat);
 
+   /* free session */
+   free(dev->session);
+
    /* free structure */
    free(dev);
 }
@@ -255,7 +260,8 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
    if ((!dev) || (!dev->drm.name)) return EINA_FALSE;
 
    /* DRM device node is needed immediately to keep going. */
-   dev->drm.fd = _ecore_drm_launcher_device_open_no_pending(dev->drm.name, O_RDWR);
+   dev->drm.fd = 
+     _ecore_drm_launcher_device_open_no_pending(dev->drm.name, O_RDWR);
    if (dev->drm.fd < 0) return EINA_FALSE;
 
    DBG("Opened Device %s : %d", dev->drm.name, dev->drm.fd);
