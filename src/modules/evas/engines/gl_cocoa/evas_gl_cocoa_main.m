@@ -140,3 +140,15 @@ eng_window_resize(Evas_GL_Cocoa_Window *gw, int width, int height)
   [(EvasGLView*)gw->view setFrame:view_frame];
   [[(NSOpenGLView*)gw->view openGLContext] flushBuffer];
 }
+
+void
+eng_window_lock_focus(Evas_GL_Cocoa_Window *gw)
+{
+  [(NSOpenGLView*)gw->view lockFocus];
+}
+
+void
+eng_window_unlock_focus(Evas_GL_Cocoa_Window *gw)
+{
+  [(NSOpenGLView*)gw->view unlockFocus];
+}

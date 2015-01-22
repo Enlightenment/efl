@@ -173,6 +173,7 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 
    DBG("Redraw rect %d %d %d %d", x, y, w, h);
    re = (Render_Engine *)data;
+   eng_window_lock_focus(re->win);
    evas_gl_common_context_resize(re->win->gl_context, re->win->width, re->win->height, 0);
    /* simple bounding box */
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, re->win->width, re->win->height);
@@ -300,7 +301,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
 #endif
 
    eng_window_swap_buffers(re->win);
-
+   eng_window_unlock_focus(re->win);
 }
 
 static void
