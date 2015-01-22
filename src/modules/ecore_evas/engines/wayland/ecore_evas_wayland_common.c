@@ -1098,6 +1098,7 @@ _ecore_evas_wl_common_title_set(Ecore_Evas *ee, const char *title)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
+   if (eina_streq(ee->prop.title, title)) return;
    if (ee->prop.title) free(ee->prop.title);
    ee->prop.title = NULL;
    if (title) ee->prop.title = strdup(title);
@@ -1123,13 +1124,18 @@ _ecore_evas_wl_common_name_class_set(Ecore_Evas *ee, const char *n, const char *
 
    if (!ee) return;
    wdata = ee->engine.data;
-   if (ee->prop.name) free(ee->prop.name);
-   if (ee->prop.clas) free(ee->prop.clas);
-   ee->prop.name = NULL;
-   ee->prop.clas = NULL;
-   if (n) ee->prop.name = strdup(n);
-   if (c) ee->prop.clas = strdup(c);
-
+   if (!eina_streq(ee->prop.name, n))
+     {
+        if (ee->prop.name) free(ee->prop.name);
+        ee->prop.name = NULL;
+        if (n) ee->prop.name = strdup(n);
+     }
+   if (!eina_streq(ee->prop.clas, c))
+     {
+        if (ee->prop.clas) free(ee->prop.clas);
+        ee->prop.clas = NULL;
+        if (c) ee->prop.clas = strdup(c);
+     }
    if (ee->prop.clas)
      ecore_wl_window_class_name_set(wdata->win, ee->prop.clas);
 }

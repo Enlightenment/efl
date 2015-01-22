@@ -2898,6 +2898,7 @@ _ecore_evas_x_activate(Ecore_Evas *ee)
 static void
 _ecore_evas_x_title_set(Ecore_Evas *ee, const char *t)
 {
+   if (eina_streq(ee->prop.title, t)) return;
    if (ee->prop.title) free(ee->prop.title);
    ee->prop.title = NULL;
    if (!t) return;

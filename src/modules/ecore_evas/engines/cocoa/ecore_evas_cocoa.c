@@ -325,6 +325,7 @@ _ecore_evas_title_set(Ecore_Evas *ee, const char *title)
 {
    INF("ecore evas title set");
 
+   if (eina_streq(ee->prop.title, title)) return;
    if (ee->prop.title) free(ee->prop.title);
    ee->prop.title = NULL;
    if (title) ee->prop.title = strdup(title);
