@@ -1,6 +1,17 @@
 ==========
-EFL 1.12.2
+EFL 1.12.3
 ==========
+
+Changes since 1.12.2:
+---------------------
+
+Fixes:
+
+   * Edje_Edit: Add sound samples into generated code for the group.
+   * ecore_con: the timer callback is waiting for the Eo object not its private data. (T1962)
+   * evas textgrid - fix drawing of codepoints that are 0
+   * eo: Fix bad addressing in _eo_classes array
+   * Eo tests: Fix bad free in eo_test_value
 
 Changes since 1.12.1:
 ---------------------
