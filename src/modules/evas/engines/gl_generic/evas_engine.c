@@ -1696,12 +1696,12 @@ eng_context_flush(void *data)
 }
 
 static void
-eng_context_clip_image_unset(void *data EINA_UNUSED, void *context)
+eng_context_clip_image_unset(void *data, void *context)
 {
    RGBA_Draw_Context *ctx = context;
    Evas_GL_Image *im = ctx->clip.mask;
 
-   if (im && im->im)
+   if (EINA_UNLIKELY(im && im->im))
      {
 #ifdef EVAS_CSERVE2
         if (evas_cserve2_use_get())
@@ -1712,6 +1712,13 @@ eng_context_clip_image_unset(void *data EINA_UNUSED, void *context)
         // Is the above code safe? Hmmm...
         //evas_unref_queue_image_put(EVAS???, &ctx->clip.ie->cache_entry);
      }
+   else if (im)
+     {
+        im->references--;
+        if (!im->references)
+          eng_image_free(data, im);
+     }
+
    ctx->clip.mask = NULL;
 }
 
@@ -1728,14 +1735,23 @@ eng_context_clip_image_set(void *data EINA_UNUSED, void *context, void *surface,
    ctx->clip.mask_x = x;
    ctx->clip.mask_y = y;
 
-   if (im && im->im)
+   if (EINA_UNLIKELY(im && im->im))
      {
+        // Unlikely to happen because masks are render surfaces.
 #ifdef EVAS_CSERVE2
         if (evas_cserve2_use_get())
           evas_cache2_image_ref(&im->im->cache_entry);
         else
 #endif
           evas_cache_image_ref(&im->im->cache_entry);
+        RECTS_CLIP_TO_RECT(ctx->clip.x, ctx->clip.y, ctx->clip.w, ctx->clip.h,
+                           x, y, im->im->cache_entry.w, im->im->cache_entry.h);
+     }
+   else if (im)
+     {
+        im->references++;
+        RECTS_CLIP_TO_RECT(ctx->clip.x, ctx->clip.y, ctx->clip.w, ctx->clip.h,
+                           x, y, im->w, im->h);
      }
 }
 
