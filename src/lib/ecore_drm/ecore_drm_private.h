@@ -265,7 +265,7 @@ int _ecore_drm_dbus_shutdown(void);
 int _ecore_drm_dbus_device_take(uint32_t major, uint32_t minor, Ecore_Drm_Open_Cb callback, void *data);
 int _ecore_drm_dbus_device_take_no_pending(uint32_t major, uint32_t minor, Eina_Bool *paused_out, double timeout);
 void _ecore_drm_dbus_device_release(uint32_t major, uint32_t minor);
-Eina_Bool _ecore_drm_dbus_session_take(const char *session);
-Eina_Bool _ecore_drm_dbus_session_release(const char *session);
+Eina_Bool _ecore_drm_dbus_session_take(void);
+Eina_Bool _ecore_drm_dbus_session_release(void);
 
 #endif
