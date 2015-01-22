@@ -4,6 +4,7 @@
 #include "evas_engine.h"
 
 static Evas_GL_Cocoa_Window *_evas_gl_cocoa_window = NULL;
+static NSOpenGLContext *_evas_gl_cocoa_shared_context = NULL;
 
 @interface EvasGLView : NSOpenGLView
 {
@@ -43,6 +44,18 @@ static Evas_GL_Cocoa_Window *_evas_gl_cocoa_window = NULL;
 {
    NSOpenGLPixelFormat * pf = [EvasGLView basicPixelFormat];
    self = [super initWithFrame: frameRect pixelFormat: pf];
+
+
+   NSOpenGLContext *ctx;
+   if (!_evas_gl_cocoa_shared_context) {
+     _evas_gl_cocoa_shared_context = [[NSOpenGLContext alloc] initWithFormat: [EvasGLView basicPixelFormat] shareContext: nil];
+     ctx = _evas_gl_cocoa_shared_context;
+   } else {
+     ctx = [[NSOpenGLContext alloc] initWithFormat: [EvasGLView basicPixelFormat] shareContext: _evas_gl_cocoa_shared_context];
+   }
+   [self setOpenGLContext: ctx];
+   [ctx setView: self];
+
    return self;
 }
 
@@ -127,4 +140,3 @@ eng_window_resize(Evas_GL_Cocoa_Window *gw, int width, int height)
   [(EvasGLView*)gw->view setFrame:view_frame];
   [[(NSOpenGLView*)gw->view openGLContext] flushBuffer];
 }
-
