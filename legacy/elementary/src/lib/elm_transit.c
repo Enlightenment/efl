@@ -75,29 +75,24 @@ struct _Elm_Transit_Effect_Module
    Eina_Bool deleted : 1;
 };
 
-struct _Elm_Transit_Obj_State
-{
-   Evas_Coord x, y, w, h;
-   int r,g,b,a;
-   Evas_Map *map;
-   Eina_Bool map_enabled : 1;
-   Eina_Bool visible : 1;
-};
-
 struct _Elm_Transit_Obj_Data
 {
-   struct _Elm_Transit_Obj_State *state;
-   Eina_Bool freeze_events : 1;
+   struct {
+      Evas_Coord x, y, w, h;
+      int r,g,b,a;
+      Evas_Map *map;
+      Eina_Bool map_enabled : 1;
+      Eina_Bool visible : 1;
+      Eina_Bool freeze_events : 1;
+   } state;
    int ref;
 };
 
 typedef struct _Elm_Transit_Effect_Module Elm_Transit_Effect_Module;
 typedef struct _Elm_Transit_Obj_Data Elm_Transit_Obj_Data;
-typedef struct _Elm_Transit_Obj_State Elm_Transit_Obj_State;
 
-static void _transit_obj_data_update(Elm_Transit *transit, Evas_Object *obj);
+static void _transit_obj_data_save(Evas_Object *obj);
 static void _transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj);
-static void _transit_obj_states_save(Evas_Object *obj, Elm_Transit_Obj_Data *obj_data);
 static void _transit_obj_remove_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 static void _transit_obj_remove(Elm_Transit *transit, Evas_Object *obj);
 static void _transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Module *effect_module);
@@ -110,45 +105,34 @@ static Eina_Bool _transit_animate_cb(void *data);
 static char *_transit_key= "_elm_transit_key";
 
 static void
-_transit_obj_data_update(Elm_Transit *transit, Evas_Object *obj)
+_transit_obj_data_save(Evas_Object *obj)
 {
    Elm_Transit_Obj_Data *obj_data = evas_object_data_get(obj, _transit_key);
 
-   if (!obj_data)
-     obj_data = ELM_NEW(Elm_Transit_Obj_Data);
-
-   obj_data->freeze_events = evas_object_freeze_events_get(obj);
-
-   if (!transit->state_keep && obj_data->state)
+   if (obj_data)
      {
-        if (obj_data->state->map) evas_map_free(obj_data->state->map);
-        ELM_SAFE_FREE(obj_data->state, free);
+        obj_data->ref++;
+        return;
      }
-   else
-     {
-       _transit_obj_states_save(obj, obj_data);
-     }
+
+   obj_data = ELM_NEW(Elm_Transit_Obj_Data);
+
+   evas_object_geometry_get(obj, &obj_data->state.x, &obj_data->state.y,
+                            &obj_data->state.w, &obj_data->state.h);
+   evas_object_color_get(obj, &obj_data->state.r, &obj_data->state.g,
+                         &obj_data->state.b, &obj_data->state.a);
+   obj_data->state.visible = evas_object_visible_get(obj);
+   obj_data->state.freeze_events = evas_object_freeze_events_get(obj);
+   obj_data->state.map_enabled = evas_object_map_enable_get(obj);
+
+   ELM_SAFE_FREE(obj_data->state.map, evas_map_free);
+
+   if (evas_object_map_get(obj))
+     obj_data->state.map = evas_map_dup(evas_object_map_get(obj));
+
    obj_data->ref++;
 
    evas_object_data_set(obj, _transit_key, obj_data);
-}
-
-static void
-_transit_obj_states_save(Evas_Object *obj, Elm_Transit_Obj_Data *obj_data)
-{
-   Elm_Transit_Obj_State *state = obj_data->state;
-
-   if (!state)
-     state = calloc(1, sizeof(Elm_Transit_Obj_State));
-   if (!state) return;
-
-   evas_object_geometry_get(obj, &state->x, &state->y, &state->w, &state->h);
-   evas_object_color_get(obj, &state->r, &state->g, &state->b, &state->a);
-   state->visible = evas_object_visible_get(obj);
-   state->map_enabled = evas_object_map_enable_get(obj);
-   if (evas_object_map_get(obj))
-     state->map = evas_map_dup(evas_object_map_get(obj));
-   obj_data->state = state;
 }
 
 static void
@@ -177,7 +161,6 @@ _transit_obj_remove_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *
         obj_data->ref--;
         if (obj_data->ref == 0)
           {
-             free(obj_data->state);
              free(obj_data);
              evas_object_data_del(obj, _transit_key);
           }
@@ -190,35 +173,32 @@ static void
 _transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
 {
    Elm_Transit_Obj_Data *obj_data;
-   Elm_Transit_Obj_State *state;
 
    obj_data = evas_object_data_get(obj, _transit_key);
    if (!obj_data) return;
 
    obj_data->ref--;
-   if (obj_data->ref == 0)
-     evas_object_data_del(obj, _transit_key);
 
-   evas_object_freeze_events_set(obj, obj_data->freeze_events);
-   state = obj_data->state;
-   if (state)
+   //recover the states of the object.
+   if (!transit->state_keep)
      {
-        //recover the states of the object.
-        if (!transit->state_keep)
-          {
-             evas_object_move(obj, state->x, state->y);
-             evas_object_resize(obj, state->w, state->h);
-             evas_object_color_set(obj, state->r, state->g, state->b, state->a);
-             if (state->visible) evas_object_show(obj);
-             else evas_object_hide(obj);
-             evas_object_map_enable_set(obj, state->map_enabled);
-             evas_object_map_set(obj, state->map);
-          }
-        if (obj_data->ref == 0)
-          free(state);
+        evas_object_move(obj, obj_data->state.x, obj_data->state.y);
+        evas_object_resize(obj, obj_data->state.w, obj_data->state.h);
+        evas_object_color_set(obj, obj_data->state.r, obj_data->state.g,
+                              obj_data->state.b, obj_data->state.a);
+        if (obj_data->state.visible) evas_object_show(obj);
+        else evas_object_hide(obj);
+        evas_object_map_enable_set(obj, obj_data->state.map_enabled);
+        evas_object_map_set(obj, obj_data->state.map);
      }
+
    if (obj_data->ref == 0)
-     free(obj_data);
+     {
+        ELM_SAFE_FREE(obj_data->state.map, evas_map_free);
+        free(obj_data);
+        evas_object_data_del(obj, _transit_key);
+        evas_object_freeze_events_set(obj, obj_data->state.freeze_events);
+     }
 }
 
 static void
@@ -577,7 +557,7 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
      {
         if (!evas_object_data_get(obj, _transit_key))
           {
-             _transit_obj_data_update(transit, obj);
+             _transit_obj_data_save(obj);
              evas_object_freeze_events_set(obj, EINA_TRUE);
           }
      }
@@ -750,7 +730,7 @@ elm_transit_go(Elm_Transit *transit)
    ELM_SAFE_FREE(transit->animator, ecore_animator_del);
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
-     _transit_obj_data_update(transit, obj);
+     _transit_obj_data_save(obj);
 
    if (!transit->event_enabled)
      {
@@ -762,6 +742,7 @@ elm_transit_go(Elm_Transit *transit)
    transit->time.delayed = 0;
    transit->time.begin = ecore_loop_time_get();
    transit->animator = ecore_animator_add(_transit_animate_cb, transit);
+
    _transit_animate_cb(transit);
 }
 
@@ -1113,9 +1094,9 @@ _transit_effect_zoom_op(Elm_Transit_Effect *effect, Elm_Transit *transit , doubl
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
         obj_data = evas_object_data_get(obj, _transit_key);
-        if (obj_data->state->map_enabled)
+        if (obj_data->state.map_enabled)
           {
-             base_map = obj_data->state->map;
+             base_map = obj_data->state.map;
              if (!base_map) return;
              map = evas_map_dup(base_map);
              if (!map) return;
@@ -1157,8 +1138,8 @@ EAPI Elm_Transit_Effect *
 elm_transit_effect_zoom_add(Elm_Transit *transit, float from_rate, float to_rate)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   Elm_Transit_Effect *effect = _transit_effect_zoom_context_new(from_rate, to_rate);
-
+   Elm_Transit_Effect *effect = _transit_effect_zoom_context_new(from_rate,
+                                                                 to_rate);
    if (!effect)
      {
         ERR("Failed to allocate zoom effect! : transit=%p", transit);
@@ -2335,9 +2316,9 @@ _transit_effect_rotation_op(Elm_Transit_Effect *effect, Elm_Transit *transit, do
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
         obj_data = evas_object_data_get(obj, _transit_key);
-        if (obj_data->state->map_enabled)
+        if (obj_data->state.map_enabled)
           {
-             base_map = obj_data->state->map;
+             base_map = obj_data->state.map;
              if (!base_map) return;
              map = evas_map_dup(base_map);
              if (!map) return;
