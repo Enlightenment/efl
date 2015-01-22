@@ -457,6 +457,9 @@ eng_context_clip_image_set(void *data EINA_UNUSED, void *context, void *surface,
         else
 #endif
           evas_cache_image_ref(ie);
+
+        RECTS_CLIP_TO_RECT(ctx->clip.x, ctx->clip.y, ctx->clip.w, ctx->clip.h,
+                           x, y, ie->w, ie->h);
      }
 }
 
