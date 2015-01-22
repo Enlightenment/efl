@@ -1727,9 +1727,15 @@ eng_context_clip_image_set(void *data EINA_UNUSED, void *context, void *surface,
 {
    RGBA_Draw_Context *ctx = context;
    Evas_GL_Image *im = surface;
+   Eina_Bool noinc = EINA_FALSE;
 
-   if (ctx->clip.mask && ctx->clip.mask != surface)
-     eng_context_clip_image_unset(data, context);
+   if (ctx->clip.mask)
+     {
+        if (ctx->clip.mask != surface)
+          eng_context_clip_image_unset(data, context);
+        else
+          noinc = EINA_TRUE;
+     }
 
    ctx->clip.mask = surface;
    ctx->clip.mask_x = x;
@@ -1738,18 +1744,21 @@ eng_context_clip_image_set(void *data EINA_UNUSED, void *context, void *surface,
    if (EINA_UNLIKELY(im && im->im))
      {
         // Unlikely to happen because masks are render surfaces.
+        if (!noinc)
+          {
 #ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_ref(&im->im->cache_entry);
-        else
+             if (evas_cserve2_use_get())
+               evas_cache2_image_ref(&im->im->cache_entry);
+             else
 #endif
-          evas_cache_image_ref(&im->im->cache_entry);
+               evas_cache_image_ref(&im->im->cache_entry);
+          }
         RECTS_CLIP_TO_RECT(ctx->clip.x, ctx->clip.y, ctx->clip.w, ctx->clip.h,
                            x, y, im->im->cache_entry.w, im->im->cache_entry.h);
      }
    else if (im)
      {
-        im->references++;
+        if (!noinc) im->references++;
         RECTS_CLIP_TO_RECT(ctx->clip.x, ctx->clip.y, ctx->clip.w, ctx->clip.h,
                            x, y, im->w, im->h);
      }

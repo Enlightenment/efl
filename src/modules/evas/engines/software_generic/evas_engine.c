@@ -440,9 +440,15 @@ static void
 eng_context_clip_image_set(void *data EINA_UNUSED, void *context, void *surface, int x, int y)
 {
    RGBA_Draw_Context *ctx = context;
+   Eina_Bool noinc = EINA_FALSE;
 
-   if (ctx->clip.mask && ctx->clip.mask != surface)
-     eng_context_clip_image_unset(data, context);
+   if (ctx->clip.mask)
+     {
+        if (ctx->clip.mask != surface)
+          eng_context_clip_image_unset(data, context);
+        else
+          noinc = EINA_TRUE;
+     }
 
    ctx->clip.mask = surface;
    ctx->clip.mask_x = x;
@@ -451,13 +457,15 @@ eng_context_clip_image_set(void *data EINA_UNUSED, void *context, void *surface,
    if (surface)
      {
         Image_Entry *ie = surface;
+        if (!noinc)
+          {
 #ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_ref(ie);
-        else
+             if (evas_cserve2_use_get())
+               evas_cache2_image_ref(ie);
+             else
 #endif
-          evas_cache_image_ref(ie);
-
+               evas_cache_image_ref(ie);
+          }
         RECTS_CLIP_TO_RECT(ctx->clip.x, ctx->clip.y, ctx->clip.w, ctx->clip.h,
                            x, y, ie->w, ie->h);
      }
