@@ -526,8 +526,8 @@ input_err:
 sprite_err:
    ecore_drm_device_close(dev);
 dev_open_err:
-   ecore_drm_device_free(dev);
    ecore_drm_launcher_disconnect(dev);
+   ecore_drm_device_free(dev);
 launcher_err:
 dev_err:
    ecore_drm_shutdown();
@@ -543,8 +543,8 @@ _ecore_evas_drm_shutdown(void)
    /* NB: No need to free outputs here. Is done in device free */
    ecore_drm_sprites_destroy(dev);
    ecore_drm_device_close(dev);
-   ecore_drm_device_free(dev);
    ecore_drm_launcher_disconnect(dev);
+   ecore_drm_device_free(dev);
    ecore_drm_shutdown();
 
    ecore_event_evas_shutdown();
