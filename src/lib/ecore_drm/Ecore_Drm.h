@@ -66,7 +66,9 @@ typedef struct _Ecore_Drm_Fb
 struct _Ecore_Drm_Device
 {
    int id;
+   unsigned int vt;
    const char *seat;
+   char *session;
 
    struct
      {
@@ -94,6 +96,7 @@ struct _Ecore_Drm_Device
    struct
      {
         int fd;
+        int kbd_mode;
         const char *name;
         Ecore_Event_Handler *event_hdlr;
         Ecore_Event_Handler *switch_hdlr;
