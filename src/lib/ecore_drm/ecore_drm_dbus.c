@@ -122,7 +122,7 @@ _cb_properties_changed(void *data EINA_UNUSED, Eldbus_Proxy *proxy EINA_UNUSED, 
 }
 
 Eina_Bool 
-_ecore_drm_dbus_session_take(const char *session)
+_ecore_drm_dbus_session_take(void)
 {
    Eldbus_Proxy *proxy;
    Eldbus_Message *msg, *reply;
@@ -155,7 +155,7 @@ _ecore_drm_dbus_session_take(const char *session)
 }
 
 Eina_Bool 
-_ecore_drm_dbus_session_release(const char *session)
+_ecore_drm_dbus_session_release(void)
 {
    Eldbus_Proxy *proxy;
    Eldbus_Message *msg, *reply;
