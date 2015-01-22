@@ -688,6 +688,7 @@ _ecore_evas_drm_hide(Ecore_Evas *ee)
 static void
 _ecore_evas_drm_title_set(Ecore_Evas *ee, const char *title)
 {
+   if (eina_streq(ee->prop.title, title)) return;
    if (ee->prop.title) free(ee->prop.title);
    ee->prop.title = NULL;
    if (title) ee->prop.title = strdup(title);
@@ -696,12 +697,18 @@ _ecore_evas_drm_title_set(Ecore_Evas *ee, const char *title)
 static void
 _ecore_evas_drm_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
 {
-   if (ee->prop.name) free(ee->prop.name);
-   if (ee->prop.clas) free(ee->prop.clas);
-   ee->prop.name = NULL;
-   ee->prop.clas = NULL;
-   if (n) ee->prop.name = strdup(n);
-   if (c) ee->prop.clas = strdup(c);
+   if (!eina_streq(ee->prop.name, n))
+     {
+        if (ee->prop.name) free(ee->prop.name);
+        ee->prop.name = NULL;
+        if (n) ee->prop.name = strdup(n);
+     }
+   if (!eina_streq(ee->prop.clas, c))
+     {
+        if (ee->prop.clas) free(ee->prop.clas);
+        ee->prop.clas = NULL;
+        if (c) ee->prop.clas = strdup(c);
+     }
 }
 
 static void
