@@ -3331,6 +3331,7 @@ state_write:
                                  outw = iw - bsl - bsr; outh = ih - bst - bsb;
                                  if ((o->cur->border.fill == EVAS_BORDER_FILL_SOLID) &&
                                      (obj->cur->cache.clip.a == 255) &&
+                                     (!obj->clip.mask) &&
                                      (obj->cur->render_op == EVAS_RENDER_BLEND))
                                    {
                                       ENFN->context_render_op_set(output, context, EVAS_RENDER_COPY);
