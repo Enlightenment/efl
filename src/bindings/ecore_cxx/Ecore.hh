@@ -116,7 +116,7 @@ template <typename F>
 void main_loop_thread_safe_call_async(F&& f)
 {
   ::ecore_main_loop_thread_safe_call_async( &ecore::_ecore_main_loop_thread_safe_call_async_callback<F>
-                                            , new F(std::move(f)) );
+                                            , new F(std::forward<F>(f)) );
 }
 
 template <typename F>
