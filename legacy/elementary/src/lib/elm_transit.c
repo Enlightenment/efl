@@ -195,9 +195,9 @@ _transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
    if (obj_data->ref == 0)
      {
         ELM_SAFE_FREE(obj_data->state.map, evas_map_free);
-        free(obj_data);
         evas_object_data_del(obj, _transit_key);
         evas_object_freeze_events_set(obj, obj_data->state.freeze_events);
+        free(obj_data);
      }
 }
 
