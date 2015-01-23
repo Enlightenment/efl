@@ -109,7 +109,7 @@ void
 test_layout_disable(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *box, *ly, *bt;
-   Evas_Object *fr, *btn[3], *bx, *lb;
+   Evas_Object *fr, *btn[4], *bx, *lb;
    char buf[PATH_MAX];
 
    win = elm_win_util_standard_add("layout", "Layout");
