@@ -6,11 +6,12 @@ var assert;
 if(typeof process !== 'undefined')
 {
     console.log('running from nodejs');
-    console.log('path ', process.env.EINA_SUITE_PATH);
+    console.log('path', process.env.NODE_PATH);
     console.log("teste1");
 
-    suite = require(process.env.EINA_SUITE_PATH);
+    suite = require('eina_js_suite_mod');
     assert = require('assert');
+    assert(suite != null);
 }
 else
 {

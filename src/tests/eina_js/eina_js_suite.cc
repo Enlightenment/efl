@@ -243,10 +243,12 @@ int main(int, char*[])
 
 namespace {
 
-void init(v8::Handle<v8::Object> exports)
+void eina_js_module_init(v8::Handle<v8::Object> exports)
 {
+  fprintf(stderr, "teste\n"); fflush(stderr);
   try
     {
+      
       eina_init();
       eo_init();
 
@@ -263,6 +265,6 @@ void init(v8::Handle<v8::Object> exports)
   
 }
 
-NODE_MODULE(eina_js_suite, init)
+NODE_MODULE(eina_js_suite_mod, ::eina_js_module_init)
 
 #endif

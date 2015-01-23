@@ -56,13 +56,13 @@ bindings/eina_js/eina_js_value.hh
 if EFL_ENABLE_TESTS
 
 if HAVE_NODEJS
-AM_TESTS_ENVIRONMENT = EINA_SUITE_PATH='$(abs_builddir)/tests/eina_js/eina_js_suite'; export EINA_SUITE_PATH;
+AM_TESTS_ENVIRONMENT = NODE_PATH='$(abs_builddir)/tests/eina_js'; export NODE_PATH;
 
 TESTS += tests/eina_js/eina_js_suite.js
 
 lib_LTLIBRARIES += tests/eina_js/libeina_js_suite.la
 
-tests/eina_js/eina_js_suite.js: $(top_builddir)/src/tests/eina_js/eina_js_suite.node
+tests/eina_js/eina_js_suite.js: tests/eina_js/eina_js_suite_mod.node
 
 AM_V_CP = $(am__v_CP_@AM_V@)
 am__v_CP_ = $(am__v_CP_@AM_DEFAULT_V@)
@@ -70,8 +70,8 @@ am__v_CP_0 = @echo "  CP  " $@;
 
 CP = cp
 
-$(top_builddir)/src/tests/eina_js/eina_js_suite.node: $(top_builddir)/src/tests/eina_js/libeina_js_suite.la
-	$(AM_V_CP)$(CP) $(top_builddir)/src/tests/eina_js/.libs/libeina_js_suite.so $(top_builddir)/src/tests/eina_js/eina_js_suite.node
+tests/eina_js/eina_js_suite_mod.node: $(top_builddir)/src/tests/eina_js/libeina_js_suite.la
+	$(AM_V_CP)$(CP) $(top_builddir)/src/tests/eina_js/.libs/libeina_js_suite.so $(top_builddir)/src/tests/eina_js/eina_js_suite_mod.node
 
 tests_eina_js_libeina_js_suite_la_SOURCES = \
 tests/eina_js/eina_js_suite.cc
