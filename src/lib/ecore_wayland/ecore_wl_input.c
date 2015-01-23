@@ -162,8 +162,9 @@ ecore_wl_input_ungrab(Ecore_Wl_Input *input)
 
    if (!input) return;
 
-   _ecore_wl_input_mouse_up_send(input, input->grab,
-                                 0, input->grab_button, input->grab_timestamp);
+   if ((input->grab) && (input->grab_button))
+     _ecore_wl_input_mouse_up_send(input, input->grab, 0, input->grab_button, 
+                                   input->grab_timestamp);
 
    input->grab = NULL;
    input->grab_button = 0;
