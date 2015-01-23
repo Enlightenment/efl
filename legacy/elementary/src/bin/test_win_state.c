@@ -212,6 +212,14 @@ _bt_win_iconify_and_deiconify(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_bt_win_center_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
+{
+   printf("Center window.\n");
+   elm_win_center(data, EINA_TRUE, EINA_TRUE);
+}
+
+static void
 _win_state_print_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("WIN: %s\n", (char *)data);
@@ -352,12 +360,21 @@ test_win_state(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(bx2);
    elm_object_text_set(bt, "Iconify and Deiconify");
    evas_object_smart_callback_add(bt, "clicked",
                                   _bt_win_iconify_and_deiconify, win);
    evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Center");
+   evas_object_smart_callback_add(bt, "clicked",
+                                  _bt_win_center_cb, win);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_fill_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 
