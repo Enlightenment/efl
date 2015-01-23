@@ -41,6 +41,7 @@ IC("arrow-down-left",      "icon_arrow_down_left.png",  16, 0); /* */
 IC("arrow-down-right",     "icon_arrow_down_right.png", 16, 0); /* */
 
 IC("edit-delete",          "icon_delete.png",           16, 0);
+IC("edit-find",            "icon_search.png",           16, 0);
 
 IC("application-chat",     "icon_chat.png",             16, 0); /* */
 IC("application-clock",    "icon_clock.png",            16, 0); /* */
