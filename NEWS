@@ -12,6 +12,7 @@ Fixes:
    * evas textgrid - fix drawing of codepoints that are 0
    * eo: Fix bad addressing in _eo_classes array
    * Eo tests: Fix bad free in eo_test_value
+   * ee engines should not crash when re-setting the same title/name_class
 
 Changes since 1.12.1:
 ---------------------
