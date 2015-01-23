@@ -1138,7 +1138,7 @@ _elm_image_smart_rotate_180(Elm_Image_Data *sd)
 
 #define PUTDAT \
    evas_object_image_data_set(sd->img, data); \
-   free(data2)
+   free(data2);
 
 #define TILE 32
 
