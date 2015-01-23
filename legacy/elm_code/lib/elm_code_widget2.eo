@@ -1,0 +1,30 @@
+class Elm_Code_Widget2 (Elm_Layout, Elm_Interface_Scrollable,
+                        Elm_Interface_Atspi_Text)
+{
+   eo_prefix: elm_code_widget2;
+   properties {
+      font_size {
+         set {
+         }
+         get {
+         }
+         values {
+            Evas_Font_Size font_size;
+         }
+      }
+   }
+   methods {
+   }
+   implements {
+      class.constructor;
+      Eo.Base.constructor;
+      Evas.Object_Smart.add;
+      Evas.Object_Smart.resize;
+      Elm_Interface_Scrollable.content_pos_set;
+   }
+   events {
+      focused;
+      unfocused;
+   }
+
+}

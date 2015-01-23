@@ -12,6 +12,7 @@
 #include "gettext.h"
 
 #include <Elm_Code.h>
+#include "elm_code_widget2.eo.h"
 
 #include "elm_code_test_private.h"
 
@@ -50,6 +51,16 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    Evas_Object *widget;
 
    code = elm_code_create();
+
+   Elm_Code_Widget2 *obj = eo_add(ELM_CODE_WIDGET2_CLASS, parent);
+   eo_do(obj,
+         elm_code_widget2_font_size_set(14));
+
+   evas_object_size_hint_weight_set(obj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(obj);
+return obj;
+// TODO - add all this good stuff into the eo api
    widget = elm_code_widget_add(parent, code);
    elm_code_widget_font_size_set(widget, 14);
    elm_code_widget_editable_set(widget, EINA_TRUE);
