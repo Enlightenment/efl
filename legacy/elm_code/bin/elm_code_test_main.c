@@ -84,9 +84,11 @@ return obj;
 static Evas_Object *
 _elm_code_test_diff_setup(Evas_Object *parent)
 {
-   char *path = "elm_code/tests/testdiff.diff";
+   char path[PATH_MAX];
    Evas_Object *diff;
    Elm_Code *code;
+
+   snprintf(path, sizeof(path), "%s/../edi/data/testdiff.diff", elm_app_data_dir_get());
 
    code = elm_code_create();
    elm_code_file_open(code, path);

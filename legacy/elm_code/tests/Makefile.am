@@ -23,4 +23,7 @@ elm_code_suite_DEPENDENCIES = $(top_builddir)/elm_code/lib/libelm_code.la
 
 endif
 
-EXTRA_DIST = elm_code_suite.h
+testdir = $(datadir)/$(PACKAGE)/data
+test_DATA = testdiff.diff
+
+EXTRA_DIST = elm_code_suite.h $(test_DATA)
