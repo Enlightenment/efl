@@ -1131,7 +1131,10 @@ _elm_image_smart_rotate_180(Elm_Image_Data *sd)
    w = neww; h = newh; \
    evas_object_image_size_set(sd->img, w, h); \
    data = evas_object_image_data_get(sd->img, EINA_TRUE); \
-   if (!data) return
+   if (!data) { \
+      free(data2); \
+      return; \
+   } \
 
 #define PUTDAT \
    evas_object_image_data_set(sd->img, data); \
