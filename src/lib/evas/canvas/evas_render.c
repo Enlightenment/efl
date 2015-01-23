@@ -2155,7 +2155,7 @@ evas_render_updates_internal(Evas *eo_e,
         if (UNLIKELY((evas_object_is_opaque(eo_obj, obj) ||
                       ((obj->func->has_opaque_rect) &&
                        (obj->func->has_opaque_rect(eo_obj, obj, obj->private_data)))) &&
-                     (!obj->mask->is_mask) &&
+                     (!obj->mask->is_mask) && (!obj->clip.mask) &&
                      evas_object_is_visible(eo_obj, obj) &&
                      (!obj->clip.clipees) &&
                      (obj->cur->visible) &&
