@@ -933,7 +933,10 @@ _eo_add_internal_end(Eo *eo_id)
      }
 
    if (EINA_UNLIKELY(!fptr->o.obj))
-      return NULL;
+     {
+        ERR("Corrupt call stuck, shouldn't happen, please report!");
+        return NULL;
+     }
 
    if (!fptr->o.obj->condtor_done || fptr->o.obj->do_error)
      {
