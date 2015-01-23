@@ -12,23 +12,19 @@ AC_DEFUN([EFL_SELECT_WINDOWS_VERSION],
 dnl configure option
 
 AC_ARG_WITH([windows-version],
-   [AC_HELP_STRING([--with-windows-version], [select the target Windows version (xp, vista or win7) @<:@default=xp@:>@])],
+   [AC_HELP_STRING([--with-windows-version], [select the target Windows version (xp, vista or win7) @<:@default=win7@:>@])],
    [
     if test "x${with_windows_version}" = "xvista" ; then
        _winver="vista"
     else
-       if test "x${with_windows_version}" = "xwin7" ; then
-          _winver="win7"
+       if test "x${with_windows_version}" = "xxp" ; then
+          _winver="xp"
        else
-          if test "x${with_windows_version}" = "ce" ; then
-             _winver="ce"
-          else
-             _winver="xp"
-          fi
+          _winver="win7"
        fi
     fi
    ],
-   [_winver="xp"])
+   [_winver="win7"])
 
 AC_MSG_CHECKING([which Windows version to target])
 AC_MSG_RESULT([${_winver}])
