@@ -17,16 +17,12 @@ void _elm_code_widget2_eo_base_constructor(Eo *obj, Elm_Code_Widget2_Data *pd);
 void _elm_code_widget2_evas_object_smart_add(Eo *obj, Elm_Code_Widget2_Data *pd);
 
 
-void _elm_code_widget2_evas_object_smart_resize(Eo *obj, Elm_Code_Widget2_Data *pd, Evas_Coord w, Evas_Coord h);
-
-
 void _elm_code_widget2_elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Code_Widget2_Data *pd, Evas_Coord x, Evas_Coord y, Eina_Bool sig);
 
 
 static Eo_Op_Description _elm_code_widget2_op_desc[] = {
      EO_OP_FUNC_OVERRIDE(eo_constructor, _elm_code_widget2_eo_base_constructor),
      EO_OP_FUNC_OVERRIDE(evas_obj_smart_add, _elm_code_widget2_evas_object_smart_add),
-//     EO_OP_FUNC_OVERRIDE(evas_obj_smart_resize, _elm_code_widget2_evas_object_smart_resize),
      EO_OP_FUNC_OVERRIDE(elm_interface_scrollable_content_pos_set, _elm_code_widget2_elm_interface_scrollable_content_pos_set),
      EO_OP_FUNC(elm_code_widget2_font_size_set, _elm_code_widget2_font_size_set, ""),
      EO_OP_FUNC(elm_code_widget2_font_size_get, _elm_code_widget2_font_size_get, ""),

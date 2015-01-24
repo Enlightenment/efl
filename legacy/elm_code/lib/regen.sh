@@ -1,4 +1,5 @@
 #!/bin/sh
+cd `dirname $0`
 
 INCLUDE="-I /usr/local/share/eolian/include/eo-1 -I /usr/local/share/eolian/include/elementary-1 -I /usr/local/share/eolian/include/evas-1 -I /usr/local/share/eolian/include/efl-1"
 
