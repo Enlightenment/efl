@@ -56,6 +56,28 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
+static void
+_elm_scroller_proxy_set(Evas_Object *obj, Elm_Scroller_Data *sd, Evas_Object *proxy)
+{
+   Evas_Coord h_pagesize, v_pagesize;
+   Evas_Coord cw, ch;
+   Evas_Object *content = sd->content;
+
+   if (!content) return;
+
+   eo_do(obj, elm_interface_scrollable_paging_get(NULL, NULL, &h_pagesize, &v_pagesize));
+   eo_do(obj, elm_interface_scrollable_content_size_get(&cw, &ch));
+   /* Since Proxy has the texture size limitation problem, we set a key value
+      for evas works in some hackish way to avoid this problem. This hackish
+      code should be removed once evas supports a mechanism like a virtual
+      texture. */
+   evas_object_image_fill_set(proxy, 0, 0, cw, ch);
+   evas_object_size_hint_min_set(proxy, h_pagesize, v_pagesize);
+   evas_object_image_source_clip_set(proxy, EINA_FALSE);
+   evas_object_image_source_set(proxy, content);
+   evas_object_show(proxy);
+}
+
 static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
 {
@@ -289,7 +311,9 @@ _elm_scroller_elm_layout_sizing_eval(Eo *obj, Elm_Scroller_Data *sd)
 {
    Evas_Coord vw = 0, vh = 0, minw = 0, minh = 0, maxw = 0, maxh = 0, w, h,
               vmw, vmh;
+   Evas_Coord h_pagesize, v_pagesize;
    double xw = 0.0, yw = 0.0;
+   int i;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -323,6 +347,16 @@ _elm_scroller_elm_layout_sizing_eval(Eo *obj, Elm_Scroller_Data *sd)
      vh = minh;
 
    if (sd->content) evas_object_resize(sd->content, vw, vh);
+   if (sd->contents) evas_object_resize(sd->contents, vw, vh);
+
+   for (i = 0 ; i < 3 ; i++)
+     {
+        if (!sd->proxy_content[i]) continue;
+        eo_do((Eo *)obj, elm_interface_scrollable_paging_get(NULL, NULL, &h_pagesize, &v_pagesize));
+        evas_object_image_fill_set(sd->proxy_content[i], 0, 0, vw, vh);
+        evas_object_size_hint_min_set(sd->proxy_content[i],
+                                      h_pagesize, v_pagesize);
+     }
 
    w = -1;
    h = -1;
@@ -595,6 +629,54 @@ _page_change_cb(Evas_Object *obj,
    evas_object_smart_callback_call(obj, SIG_SCROLL_PAGE_CHANGE, NULL);
 }
 
+static void
+_loop_content_set(Evas_Object *obj, Elm_Scroller_Data *sd, Evas_Object *content)
+{
+   if (!sd->contents)
+     {
+        sd->contents = elm_layout_add(obj);
+        evas_object_smart_member_add(sd->contents, obj);
+        elm_layout_theme_set(sd->contents, "scroller", "contents", elm_widget_style_get(obj));
+        evas_object_size_hint_weight_set(sd->contents, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(sd->contents, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+        elm_widget_sub_object_add(obj, sd->contents);
+        elm_widget_on_show_region_hook_set(sd->contents, _show_region_hook, obj);
+     }
+   elm_object_part_content_set(sd->contents, "elm.swallow.content", content);
+   sd->content = content;
+
+   if (sd->loop_h)
+     {
+       if (!sd->proxy_content[0])
+          sd->proxy_content[0] =
+             evas_object_image_add(evas_object_evas_get(sd->contents));
+        _elm_scroller_proxy_set(obj, sd, sd->proxy_content[0]);
+        elm_object_part_content_set(sd->contents, "elm.swallow.content_r",
+                                    sd->proxy_content[0]);
+     }
+
+   if (sd->loop_v)
+     {
+        if (!sd->proxy_content[1])
+          sd->proxy_content[1] =
+             evas_object_image_add(evas_object_evas_get(sd->contents));
+        _elm_scroller_proxy_set(obj, sd, sd->proxy_content[1]);
+        elm_object_part_content_set(sd->contents, "elm.swallow.content_b",
+                                    sd->proxy_content[1]);
+     }
+
+   if (sd->loop_h && sd->loop_v)
+     {
+        if (!sd->proxy_content[2])
+          sd->proxy_content[2] =
+             evas_object_image_add(evas_object_evas_get(sd->contents));
+        _elm_scroller_proxy_set(obj, sd, sd->proxy_content[2]);
+        elm_object_part_content_set(sd->contents, "elm.swallow.content_rb",
+                                    sd->proxy_content[2]);
+     }
+}
+
 EOLIAN static Eina_Bool
 _elm_scroller_elm_container_content_set(Eo *obj, Elm_Scroller_Data *sd, const char *part, Evas_Object *content)
 {
@@ -616,7 +698,23 @@ _elm_scroller_elm_container_content_set(Eo *obj, Elm_Scroller_Data *sd, const ch
           elm_widget_on_show_region_hook_set(content, _show_region_hook, obj);
         elm_widget_sub_object_add(obj, content);
 
+        if (sd->loop_h || sd->loop_v)
+          {
+             _loop_content_set(obj, sd, content);
+             if(sd->contents)
+               content = sd->contents;
+          }
         eo_do(obj, elm_interface_scrollable_content_set(content));
+     }
+   else
+     {
+        int i;
+        for (i = 0; i < 3; i ++)
+          {
+             if (!sd->proxy_content[i]) continue;
+             evas_object_del(sd->proxy_content[i]);
+             sd->proxy_content[i] = NULL;
+          }
      }
 
    elm_layout_sizing_eval(obj);
@@ -650,7 +748,10 @@ _elm_scroller_elm_container_content_unset(Eo *obj, Elm_Scroller_Data *sd, const 
    if (!sd->content) return NULL;
 
    ret = sd->content;
-   elm_widget_sub_object_del(obj, sd->content);
+   if (sd->loop_h || sd->loop_v)
+     elm_widget_sub_object_del(obj, sd->contents);
+   else
+     elm_widget_sub_object_del(obj, sd->content);
    eo_do(obj, elm_interface_scrollable_content_set(NULL));
    sd->content = NULL;
 
@@ -1123,6 +1224,62 @@ elm_scroller_step_size_get(const Evas_Object *obj,
    ELM_SCROLLABLE_CHECK(obj);
 
    eo_do((Eo *) obj, elm_interface_scrollable_step_size_get(x, y));
+}
+
+EAPI void
+elm_scroller_loop_set(Evas_Object *obj,
+                      Eina_Bool loop_h,
+                      Eina_Bool loop_v)
+{
+   ELM_SCROLLABLE_CHECK(obj);
+   ELM_SCROLLER_DATA_GET(obj, sd);
+
+   int i;
+
+   if (sd->loop_h == loop_h && sd->loop_v == loop_v) return;
+
+   sd->loop_h = loop_h;
+   sd->loop_v = loop_v;
+
+   eo_do(obj, elm_interface_scrollable_loop_set(loop_h, loop_v));
+
+   if (sd->content)
+     {
+        if (sd->loop_h || sd->loop_v)
+          {
+             eo_do(obj, elm_interface_scrollable_content_set(NULL));
+             _loop_content_set(obj, sd, sd->content);
+
+             if (sd->contents)
+               {
+                  eo_do(obj, elm_interface_scrollable_content_set(sd->contents));
+                  elm_widget_sub_object_add(obj, sd->contents);
+                  elm_widget_on_show_region_hook_set(sd->contents, _show_region_hook, obj);
+               }
+          }
+        else
+          {
+             for (i = 0 ; i < 3 ; i++)
+               {
+                  if (sd->proxy_content[i])
+                    {
+                       evas_object_del(sd->proxy_content[i]);
+                       sd->proxy_content[i]= NULL;
+                    }
+               }
+          }
+     }
+   elm_layout_sizing_eval(obj);
+}
+
+EAPI void
+elm_scroller_loop_get(const Evas_Object *obj,
+                      Eina_Bool *loop_h,
+                      Eina_Bool *loop_v)
+{
+   ELM_SCROLLABLE_CHECK(obj);
+
+   eo_do(obj, elm_interface_scrollable_loop_get(loop_h, loop_v));
 }
 
 EOLIAN static void

@@ -1209,14 +1209,24 @@ _elm_scroll_wanted_coordinates_update(Elm_Scrollable_Smart_Interface_Data *sid,
    eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
          (NULL, NULL, &sid->ww, &sid->wh));
 
-   if (x < minx) sid->wx = minx;
-   else if (x > mx) sid->wx = mx;
+   if (x < minx)
+     {
+        if (!sid->loop_h) sid->wx = minx;
+        else sid->wx = mx;
+     }
+   else if (!sid->loop_h && (x > mx)) sid->wx = mx;
+   else if (sid->loop_h && x >= (sid->ww + mx)) sid->wx = 0;
    else if (sid->is_mirrored)
      sid->wx = _elm_scroll_x_mirrored_get(sid->obj, x);
    else sid->wx = x;
 
-   if (y < miny) sid->wy = miny;
-   else if (y > my) sid->wy = my;
+   if (y < miny)
+     {
+        if (!sid->loop_v) sid->wy = miny;
+        else sid->wy = my;
+     }
+   else if (!sid->loop_v && (y > my)) sid->wy = my;
+   else if (sid->loop_v && y >= (sid->wh + my)) sid->wy = 0;
    else sid->wy = y;
 }
 
@@ -1446,6 +1456,7 @@ EOLIAN static void
 _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid, Evas_Coord x, Evas_Coord y, Eina_Bool sig)
 {
    Evas_Coord mx = 0, my = 0, px = 0, py = 0, spx = 0, spy = 0, minx = 0, miny = 0;
+   Evas_Coord cw = 0, ch = 0, pw = 0, ph = 0;
    double vx, vy;
 
 
@@ -1454,7 +1465,9 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
    // FIXME: allow for bounce outside of range
    eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
    eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
+   eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
    eo_do(sid->pan_obj, elm_obj_pan_pos_get(&px, &py));
+   evas_object_geometry_get(sid->pan_obj, NULL, NULL, &pw, &ph);
 
    if (_paging_is_enabled(sid))
      {
@@ -1478,24 +1491,35 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
           }
      }
 
+   if (sid->loop_h && cw > 0)
+     {
+        if (x < 0) x = cw + (x % cw);
+        else if (x >= cw) x = (x % cw);
+     }
+   if (sid->loop_v && ch > 0)
+     {
+        if (y < 0) y = ch + (y % ch);
+        else if (y >= ch) y = (y % ch);
+     }
+
    if (!_elm_config->thumbscroll_bounce_enable)
      {
 
         if (x < minx) x = minx;
-        if ((x - minx) > mx) x = mx + minx;
+        if (!sid->loop_h && (x - minx) > mx) x = mx + minx;
         if (y < miny) y = miny;
-        if ((y - miny) > my) y = my + miny;
+        if (!sid->loop_v && (y - miny) > my) y = my + miny;
      }
 
    if (!sid->bounce_horiz)
      {
         if (x < minx) x = minx;
-        if ((x - minx) > mx) x = mx + minx;
+        if (!sid->loop_h && (x - minx) > mx) x = mx + minx;
      }
    if (!sid->bounce_vert)
      {
         if (y < miny) y = miny;
-        if (y - miny > my) y = my + miny;
+        if (!sid->loop_v && (y - miny) > my) y = my + miny;
      }
 
    eo_do(sid->pan_obj, elm_obj_pan_pos_set(x, y));
@@ -1520,7 +1544,7 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
    edje_object_part_drag_value_set
      (sid->edje_obj, "elm.dragable.hbar", vx, 0.0);
 
-   if (!sid->down.bounce_x_animator)
+   if (!sid->loop_h && !sid->down.bounce_x_animator)
      {
         if (((x < minx) && (0 <= sid->down.dx)) ||
             ((x > (mx + minx)) && (0 >= sid->down.dx)))
@@ -1531,7 +1555,7 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
         else
           sid->bouncemex = EINA_FALSE;
      }
-   if (!sid->down.bounce_y_animator)
+   if (!sid->loop_v && !sid->down.bounce_y_animator)
      {
         if (((y < miny) && (0 <= sid->down.dy)) ||
             ((y > (my + miny)) && (0 >= sid->down.dy)))
@@ -1717,10 +1741,16 @@ _elm_scroll_content_region_show_internal(Evas_Object *obj,
         x = nx;
         y = ny;
      }
-   if ((x + pw) > cw) x = cw - pw;
-   if (x < minx) x = minx;
-   if ((y + ph) > ch) y = ch - ph;
-   if (y < miny) y = miny;
+   if (!sid->loop_h)
+     {
+        if ((x + pw) > cw) x = cw - pw;
+        if (x < minx) x = minx;
+     }
+   if (!sid->loop_v)
+     {
+        if ((y + ph) > ch) y = ch - ph;
+        if (y < miny) y = miny;
+     }
 
    if ((x == px) && (y == py)) return EINA_FALSE;
    *_x = x;
@@ -2007,12 +2037,12 @@ _elm_scroll_momentum_animator(void *data)
         if (!_elm_config->thumbscroll_bounce_enable || !sid->bounce_horiz)
           {
              if (x <= minx) no_bounce_x_end = EINA_TRUE;
-             if ((x - minx) >= maxx) no_bounce_x_end = EINA_TRUE;
+             if (!sid->loop_h && (x - minx) >= maxx) no_bounce_x_end = EINA_TRUE;
           }
         if (!_elm_config->thumbscroll_bounce_enable || !sid->bounce_vert)
           {
              if (y <= miny) no_bounce_y_end = EINA_TRUE;
-             if ((y - miny) >= maxy) no_bounce_y_end = EINA_TRUE;
+             if (sid->loop_v && (y - miny) >= maxy) no_bounce_y_end = EINA_TRUE;
           }
         if ((dt >= 1.0) ||
             ((sid->down.bounce_x_hold) && (sid->down.bounce_y_hold)) ||
@@ -2072,8 +2102,11 @@ _elm_scroll_page_x_get(Elm_Scrollable_Smart_Interface_Data *sid,
         x = x / (sid->pagesize_h);
         x = x * (sid->pagesize_h);
      }
-   if ((x + w) > cw) x = cw - w;
-   if (x < minx) x = minx;
+   if (!sid->loop_h)
+     {
+        if ((x + w) > cw) x = cw - w;
+        if (x < minx) x = minx;
+     }
 
    return x;
 }
@@ -2113,8 +2146,11 @@ _elm_scroll_page_y_get(Elm_Scrollable_Smart_Interface_Data *sid,
         y = y / (sid->pagesize_v);
         y = y * (sid->pagesize_v);
      }
-   if ((y + h) > ch) y = ch - h;
-   if (y < miny) y = miny;
+   if (!sid->loop_v)
+     {
+        if ((y + h) > ch) y = ch - h;
+        if (y < miny) y = miny;
+     }
 
    return y;
 }
@@ -2803,19 +2839,19 @@ _elm_scroll_down_coord_eval(Elm_Scrollable_Smart_Interface_Data *sid,
 
    eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
 
-   if (*x < minx)
+   if (!sid->loop_h && *x < minx)
      *x += (minx - *x) * _elm_config->thumbscroll_border_friction;
-   else if (sid->content_info.w <= sid->w)
+   else if (!sid->loop_h && sid->content_info.w <= sid->w)
      *x += (sid->down.sx - *x) * _elm_config->thumbscroll_border_friction;
-   else if ((sid->content_info.w - sid->w + minx) < *x)
+   else if (!sid->loop_h && (sid->content_info.w - sid->w + minx) < *x)
      *x += (sid->content_info.w - sid->w + minx - *x) *
        _elm_config->thumbscroll_border_friction;
 
-   if (*y < miny)
+   if (!sid->loop_v && *y < miny)
      *y += (miny - *y) * _elm_config->thumbscroll_border_friction;
-   else if (sid->content_info.h <= sid->h)
+   else if (!sid->loop_v && sid->content_info.h <= sid->h)
      *y += (sid->down.sy - *y) * _elm_config->thumbscroll_border_friction;
-   else if ((sid->content_info.h - sid->h + miny) < *y)
+   else if (!sid->loop_v && (sid->content_info.h - sid->h + miny) < *y)
      *y += (sid->content_info.h - sid->h + miny - *y) *
        _elm_config->thumbscroll_border_friction;
 }
@@ -3222,22 +3258,22 @@ _elm_scroll_mouse_move_event_cb(void *data,
 
                 eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
                 eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
-                if (y < miny)
+                if (!sid->loop_v && y < miny)
                   y += (miny - y) *
                     _elm_config->thumbscroll_border_friction;
-                else if (my <= 0)
+                else if (!sid->loop_v && my <= 0)
                   y += (sid->down.sy - y) *
                     _elm_config->thumbscroll_border_friction;
-                else if ((my + miny) < y)
+                else if (!sid->loop_v && (my + miny) < y)
                   y += (my + miny - y) *
                     _elm_config->thumbscroll_border_friction;
-                if (x < minx)
+                if (!sid->loop_h && x < minx)
                   x += (minx - x) *
                     _elm_config->thumbscroll_border_friction;
-                else if (mx <= 0)
+                else if (!sid->loop_h && mx <= 0)
                   x += (sid->down.sx - x) *
                     _elm_config->thumbscroll_border_friction;
-                else if ((mx + minx) < x)
+                else if (!sid->loop_h && (mx + minx) < x)
                   x += (mx + minx - x) *
                     _elm_config->thumbscroll_border_friction;
              }
@@ -4305,6 +4341,22 @@ _elm_interface_scrollable_movement_block_get(Eo *obj EINA_UNUSED, Elm_Scrollable
 }
 
 EOLIAN static void
+_elm_interface_scrollable_loop_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool loop_h, Eina_Bool loop_v)
+{
+   if (sid->loop_h == loop_h && sid->loop_v == loop_v) return;
+
+   sid->loop_h = loop_h;
+   sid->loop_v = loop_v;
+}
+
+EOLIAN static void
+_elm_interface_scrollable_loop_get(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool *loop_h, Eina_Bool *loop_v)
+{
+   *loop_h = sid->loop_h;
+   *loop_v = sid->loop_v;
+}
+
+EOLIAN static void
 _elm_interface_scrollable_evas_object_smart_add(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid)
 {
    memset(sid, 0, sizeof(*sid));
@@ -4325,6 +4377,8 @@ _elm_interface_scrollable_evas_object_smart_add(Eo *obj, Elm_Scrollable_Smart_In
    sid->vbar_flags = ELM_SCROLLER_POLICY_AUTO;
    sid->hbar_visible = EINA_TRUE;
    sid->vbar_visible = EINA_TRUE;
+   sid->loop_h = EINA_FALSE;
+   sid->loop_v = EINA_FALSE;
 
    sid->bounce_horiz = EINA_TRUE;
    sid->bounce_vert = EINA_TRUE;

@@ -212,6 +212,8 @@ struct _Elm_Scrollable_Smart_Interface_Data
    Eina_Bool  go_right : 1;
    Eina_Bool  go_up : 1;
    Eina_Bool  go_down : 1;
+   Eina_Bool  loop_h : 1;
+   Eina_Bool  loop_v : 1;
 };
 
 #define ELM_SCROLLABLE_CHECK(obj, ...)                                       \

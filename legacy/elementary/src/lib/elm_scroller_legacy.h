@@ -494,4 +494,35 @@ EAPI void                          elm_scroller_step_size_set(Evas_Object *obj, 
  */
 EAPI void                          elm_scroller_step_size_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
 
+/**
+ * @brief Set an infinite loop_ for a scroller
+ *
+ * @param obj The scroller object
+ * @param loop_h The scrolling horizontal loop
+ * @param loop_v The scrolling vertical loop
+ *
+ * This function sets the infinite loop horizontally or vertically.
+ * If the content is set, it will be shown repeatedly.
+ *
+ * @since 1.14
+ *
+ * @ingroup Scroller
+ */
+EAPI void                          elm_scroller_loop_set(Evas_Object *obj, Eina_Bool loop_h, Eina_Bool loop_v);
+
+/**
+ * @brief Get an infinite loop_ for a scroller
+ *
+ * @param obj The scroller object
+ * @param loop_h The scrolling horizontal loop
+ * @param loop_v The scrolling vertical loop
+ *
+ * @since 1.14
+ *
+ * @see elm_scroller_loop_set() for more details
+ *
+ * @ingroup Scroller
+ */
+EAPI void                          elm_scroller_loop_get(const Evas_Object *obj, Eina_Bool *loop_h, Eina_Bool *loop_v);
+
 #include "elm_scroller.eo.legacy.h"

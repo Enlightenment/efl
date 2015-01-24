@@ -113,6 +113,28 @@ my_bt_block_movements_y_axis(void *data, Evas_Object *obj,
 }
 
 void
+my_bt_loop_x_axis(void *data, Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
+{
+   Eina_Bool loop_h, loop_v;
+   Evas_Object *scroller = (Evas_Object *)data;
+
+   elm_scroller_loop_get(scroller, &loop_h, &loop_v);
+   elm_scroller_loop_set(scroller, !loop_h, loop_v);
+}
+
+void
+my_bt_loop_y_axis(void *data, Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
+{
+   Eina_Bool loop_h, loop_v;
+   Evas_Object *scroller = (Evas_Object *)data;
+
+   elm_scroller_loop_get(scroller, &loop_h, &loop_v);
+   elm_scroller_loop_set(scroller, loop_h, !loop_v);
+}
+
+void
 page_change_cb(void *data EINA_UNUSED,
                Evas_Object *obj,
                void *event_info EINA_UNUSED)
@@ -152,7 +174,7 @@ void
 test_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg2, *tb, *tb2, *sc, *bt, *ck1, *ck2, *bx, *bx2, *fr,
-       *ck3, *ck4, *ck5;
+       *ck3, *ck4, *ck5, *ck6, *ck7;
    int i, j, n;
    char buf[PATH_MAX];
    Evas_Coord x = 0, y = 0, w = 0, h = 0;
@@ -214,6 +236,16 @@ test_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_box_pack_end(bx2, ck5);
    evas_object_show(ck5);
 
+   ck6 = elm_check_add(win);
+   elm_object_text_set(ck6, "Loop in X axis");
+   elm_box_pack_end(bx2, ck6);
+   evas_object_show(ck6);
+
+   ck7 = elm_check_add(win);
+   elm_object_text_set(ck7, "Loop in Y axis");
+   elm_box_pack_end(bx2, ck7);
+   evas_object_show(ck7);
+
    sc = elm_scroller_add(win);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -256,6 +288,8 @@ test_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_smart_callback_add(ck4, "changed", my_bt_block_movements_y_axis,
                                   sc);
    evas_object_smart_callback_add(ck5, "changed", my_bt_snap_to_pages, sc);
+   evas_object_smart_callback_add(ck6, "changed", my_bt_loop_x_axis, sc);
+   evas_object_smart_callback_add(ck7, "changed", my_bt_loop_y_axis, sc);
 
    bt = elm_spinner_add(win);
    elm_spinner_min_max_set(bt, 0, 500);

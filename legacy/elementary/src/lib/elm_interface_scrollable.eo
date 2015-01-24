@@ -297,6 +297,32 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             Evas_Coord y;
          }
       }
+      loop {
+         set {
+            /*@ Sets an infinite loop for a scroller.
+
+             This sets an infinite loop for a scroller.
+
+             @since 1.14
+
+             @ingroup Widget
+             */
+         }
+         get {
+            /*@ Gets an infinite loop for a scroller.
+
+             This gets an infinite loop for a scroller.
+
+             @since 1.14
+
+             @ingroup Widget
+             */
+         }
+         values {
+            Eina_Bool loop_h; /*@ The scrolling horizontal loop */
+            Eina_Bool loop_v; /*@ The scrolling vertical loop */
+         }
+      }
       scroll_up_cb {
          set {
             /*@ Set the callback to run when the content has been moved up.

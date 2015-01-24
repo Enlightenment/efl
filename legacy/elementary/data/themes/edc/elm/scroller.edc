@@ -1252,3 +1252,55 @@ group { name: "elm/scroller/base/noclip";
       }
    }
 }
+
+group { name: "elm/scroller/contents/default";
+   parts {
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+         }
+      }
+      part { name: "elm.swallow.content_r";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1 {
+                relative: 1.0 0.0;
+                to: "elm.swallow.content";
+            }
+            rel2 {
+                relative: 2.0 1.0;
+                to: "elm.swallow.content";
+            }
+         }
+      }
+      part { name: "elm.swallow.content_b";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1 {
+                relative: 0.0 1.0;
+                to: "elm.swallow.content";
+            }
+            rel2 {
+                relative: 1.0 2.0;
+                to: "elm.swallow.content";
+            }
+         }
+      }
+      part { name: "elm.swallow.content_rb";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1 {
+                relative: 1.0 1.0;
+                to: "elm.swallow.content";
+            }
+            rel2 {
+                relative: 2.0 2.0;
+                to: "elm.swallow.content";
+            }
+         }
+      }
+   }
+}
