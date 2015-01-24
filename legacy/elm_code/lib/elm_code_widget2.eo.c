@@ -26,7 +26,7 @@ void _elm_code_widget2_elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Cod
 static Eo_Op_Description _elm_code_widget2_op_desc[] = {
      EO_OP_FUNC_OVERRIDE(eo_constructor, _elm_code_widget2_eo_base_constructor),
      EO_OP_FUNC_OVERRIDE(evas_obj_smart_add, _elm_code_widget2_evas_object_smart_add),
-     EO_OP_FUNC_OVERRIDE(evas_obj_smart_resize, _elm_code_widget2_evas_object_smart_resize),
+//     EO_OP_FUNC_OVERRIDE(evas_obj_smart_resize, _elm_code_widget2_evas_object_smart_resize),
      EO_OP_FUNC_OVERRIDE(elm_interface_scrollable_content_pos_set, _elm_code_widget2_elm_interface_scrollable_content_pos_set),
      EO_OP_FUNC(elm_code_widget2_font_size_set, _elm_code_widget2_font_size_set, ""),
      EO_OP_FUNC(elm_code_widget2_font_size_get, _elm_code_widget2_font_size_get, ""),
@@ -50,4 +50,4 @@ static const Eo_Class_Description _elm_code_widget2_class_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(elm_code_widget2_class_get, &_elm_code_widget2_class_desc, ELM_LAYOUT_CLASS, ELM_INTERFACE_SCROLLABLE_MIXIN, ELM_INTERFACE_ATSPI_TEXT_INTERFACE, NULL);
+EO_DEFINE_CLASS(elm_code_widget2_class_get, &_elm_code_widget2_class_desc, ELM_BOX_CLASS, ELM_INTERFACE_SCROLLABLE_MIXIN, ELM_INTERFACE_ATSPI_TEXT_INTERFACE, NULL);

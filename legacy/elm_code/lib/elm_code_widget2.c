@@ -55,15 +55,12 @@ printf("add\n");
 
    text = elm_label_add(obj);
    elm_object_text_set(text, "HELLO");
-   elm_widget_sub_object_add(obj, text);
-
    evas_object_size_hint_weight_set(text, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(text, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(text);
+   elm_box_pack_end(obj, text);
 
    eo_do(obj, elm_obj_widget_theme_apply());
-
-   elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static void
