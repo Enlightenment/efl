@@ -48,23 +48,15 @@ static Evas_Object *
 _elm_code_test_welcome_setup(Evas_Object *parent)
 {
    Elm_Code *code;
-   Evas_Object *widget;
+   Elm_Code_Widget2 *widget;
 
    code = elm_code_create();
-
-   Elm_Code_Widget2 *obj = eo_add(ELM_CODE_WIDGET2_CLASS, parent);
-   eo_do(obj,
-         elm_code_widget2_font_size_set(14));
-
-   evas_object_size_hint_weight_set(obj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(obj);
-return obj;
-// TODO - add all this good stuff into the eo api
-   widget = elm_code_widget_add(parent, code);
-   elm_code_widget_font_size_set(widget, 14);
-   elm_code_widget_editable_set(widget, EINA_TRUE);
-   eo_do(widget,eo_event_callback_add(&ELM_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_cb, code));
+   widget = eo_add(ELM_CODE_WIDGET2_CLASS, parent);
+   eo_do(widget,
+         elm_code_widget2_code_set(code);
+         elm_code_widget2_font_size_set(14);
+         elm_code_widget2_editable_set(EINA_TRUE);
+         eo_event_callback_add(ELM_CODE_WIDGET2_EVENT_LINE_CLICKED, _elm_code_test_line_cb, code));
 
    _append_line(code->file, "Hello World, Elm Code!");
    elm_code_file_line_token_add(code->file, 1, 14, 21, ELM_CODE_TOKEN_TYPE_COMMENT);

@@ -105,7 +105,7 @@ EAPI void
 elm_code_callback_fire(Elm_Code *code, const Eo_Event_Description *signal, void *data)
 {
    Eina_List *item;
-   Evas_Object *widget;
+   Eo *widget;
 
    EINA_LIST_FOREACH(code->widgets, item, widget)
      {

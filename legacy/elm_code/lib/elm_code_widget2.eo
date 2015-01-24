@@ -3,6 +3,15 @@ class Elm_Code_Widget2 (Elm_Box, Elm_Interface_Scrollable,
 {
    eo_prefix: elm_code_widget2;
    properties {
+      code {
+         set {
+         }
+         get {
+         }
+         values {
+            Elm_Code *code;
+         }
+      }
       font_size {
          set {
          }
@@ -10,6 +19,15 @@ class Elm_Code_Widget2 (Elm_Box, Elm_Interface_Scrollable,
          }
          values {
             Evas_Font_Size font_size;
+         }
+      }
+      editable {
+         set {
+         }
+         get {
+         }
+         values {
+            Eina_Bool editable;
          }
       }
    }
@@ -22,8 +40,7 @@ class Elm_Code_Widget2 (Elm_Box, Elm_Interface_Scrollable,
       Elm_Interface_Scrollable.content_pos_set;
    }
    events {
-      focused;
-      unfocused;
+      line,clicked;
    }
 
 }
