@@ -213,11 +213,47 @@ _list_selected_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
    elm_icon_standard_set(icon, elm_object_item_text_get(list_it));
 }
 
+static void
+_std_btn_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                    void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *panes, *icon;
+
+   win = elm_win_util_standard_add("icon-test-std-auto", "Icon Standard");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   panes = elm_panes_add(win);
+   evas_object_size_hint_weight_set(panes, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_panes_content_left_min_size_set(panes, 16);
+   elm_panes_content_right_min_size_set(panes, 16);
+   elm_win_resize_object_add(win, panes);
+   evas_object_show(panes);
+
+   icon = elm_icon_add(panes);
+   evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+   elm_icon_standard_set(icon, "folder");
+   elm_object_part_content_set(panes, "left", icon);
+   evas_object_show(icon);
+
+   icon = elm_icon_add(panes);
+   evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+   elm_icon_standard_set(icon, "user-home");
+   elm_object_part_content_set(panes, "right", icon);
+   evas_object_show(icon);
+
+   evas_object_resize(win, 300, 200);
+   evas_object_show(win);
+}
+
 void
 test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                    void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *li, *box, *hbox, *fr, *rd, *rdg, *icon, *sl;
+   Evas_Object *win, *li, *box, *hbox, *fr, *rd, *rdg, *icon, *sl, *bt;
 
    win = elm_win_util_standard_add("icon-test-std", "Icon Standard");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -377,6 +413,7 @@ test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_data_set(li, "resize_icon", icon);
 
    sl = elm_slider_add(hbox);
+   elm_object_text_set(sl, "min_size");
    elm_slider_min_max_set(sl, 16, 256);
    elm_slider_value_set(sl, 16);
    elm_slider_unit_format_set(sl, "%.0f px");
@@ -385,6 +422,14 @@ test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_smart_callback_add(sl, "changed", _slider_changed_cb, icon);
    elm_box_pack_end(hbox, sl);
    evas_object_show(sl);
+
+   bt = elm_button_add(box);
+   elm_object_text_set(bt, "Another size test, without using min_size");
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.0);
+   evas_object_smart_callback_add(bt, "clicked", _std_btn_clicked_cb, NULL);
+   elm_box_pack_end(box, bt);
+   evas_object_show(bt);
 
    // show the win
    evas_object_resize(win, 300, 400);

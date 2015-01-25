@@ -50,11 +50,11 @@ _path_is_absolute(const char *path)
 static inline int
 _icon_size_min_get(Evas_Object *icon)
 {
-   int size;
+   int w, h;
 
-   elm_image_object_size_get(icon, &size, NULL);
+   evas_object_geometry_get(icon, NULL, NULL, &w, &h);
 
-   return (size < 16) ? 16 : size;
+   return MAX(16, MIN(w, h));
 }
 
 static void
