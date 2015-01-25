@@ -215,25 +215,44 @@ _elm_code_widget2_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
 }
 
 static void
-_elm_code_widget2_clicked_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
-                            void *event_info)
+_elm_code_widget2_clicked_editable_cb(Elm_Code_Widget2 *widget, Evas_Coord x, Evas_Coord y)
 {
-   Elm_Code_Widget2 *widget;
    Elm_Code_Widget2_Data *pd;
    Elm_Code_Line *line;
-   Evas_Event_Mouse_Up *event;
-   Evas_Coord y;
+   int cw, ch;
+   unsigned int row, col;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET2_CLASS);
+
+   evas_object_textgrid_cell_size_get(pd->grid, &cw, &ch);
+   col = ((double) x / cw) + 2;
+   row = ((double) y / ch) + 1;
+
+   line = elm_code_file_line_get(pd->code->file, row);
+   if (line)
+     {
+        pd->cursor_line = row;
+
+        if (col <= (unsigned int) line->length + 2)
+          pd->cursor_col = col - 2;
+        else
+          pd->cursor_col = line->length + 1;
+     }
+   if (pd->cursor_col == 0)
+     pd->cursor_col = 1;
+
+   _elm_code_widget_fill(pd);
+}
+
+static void
+_elm_code_widget2_clicked_readonly_cb(Elm_Code_Widget2 *widget, Evas_Coord y)
+{
+   Elm_Code_Widget2_Data *pd;
+   Elm_Code_Line *line;
    int ch;
    unsigned int row;
 
-   widget = (Elm_Code_Widget2 *)data;
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET2_CLASS);
-
-   if (pd->editable && !pd->focussed)
-     return;
-
-   event = (Evas_Event_Mouse_Up *)event_info;
-   y = event->canvas.y;
 
    evas_object_textgrid_cell_size_get(pd->grid, NULL, &ch);
    row = ((double) y / ch) + 1;
@@ -241,6 +260,71 @@ _elm_code_widget2_clicked_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
    line = elm_code_file_line_get(pd->code->file, row);
    if (line)
      eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET2_EVENT_LINE_CLICKED, line));
+}
+
+static void
+_elm_code_widget2_clicked_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                            void *event_info)
+{
+   Elm_Code_Widget2 *widget;
+   Elm_Code_Widget2_Data *pd;
+   Evas_Event_Mouse_Up *event;
+   Evas_Coord x, y;
+
+   widget = (Elm_Code_Widget2 *)data;
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET2_CLASS);
+   event = (Evas_Event_Mouse_Up *)event_info;
+
+   x = event->canvas.x;
+   y = event->canvas.y;
+
+   if (pd->editable)
+     _elm_code_widget2_clicked_editable_cb(widget, x, y);
+   else
+     _elm_code_widget2_clicked_readonly_cb(widget, y);
+}
+
+static void
+_elm_code_widget2_cursor_move_up(Elm_Code_Widget2 *widget)
+{
+   Elm_Code_Widget2_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET2_CLASS);
+
+   if (pd->cursor_line > 1)
+     pd->cursor_line--;
+
+   _elm_code_widget_fill(pd);
+}
+
+static void
+_elm_code_widget2_cursor_move_down(Elm_Code_Widget2 *widget)
+{
+   Elm_Code_Widget2_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET2_CLASS);
+
+   if (pd->cursor_line < elm_code_file_lines_get(pd->code->file))
+     pd->cursor_line++;
+
+   _elm_code_widget_fill(pd);
+}
+
+static void
+_elm_code_widget2_key_down_cb(void *data, Evas *evas EINA_UNUSED,
+                              Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Code_Widget2 *widget;
+
+   widget = (Elm_Code_Widget2 *)data;
+
+   Evas_Event_Key_Down *ev = event_info;
+
+   printf("KEY %s\n", ev->key);
+   if (!(strcmp(ev->key, "Up")))
+     _elm_code_widget2_cursor_move_up(widget);
+   if (!(strcmp(ev->key, "Down")))
+     _elm_code_widget2_cursor_move_down(widget);
 }
 
 EOLIAN static Eina_Bool
@@ -349,7 +433,7 @@ _elm_code_widget2_evas_object_smart_add(Eo *obj, Elm_Code_Widget2_Data *pd)
    Evas_Object *grid;
 
    eo_do_super(obj, ELM_CODE_WIDGET2_CLASS, evas_obj_smart_add());
-   elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_object_focus_allow_set(obj, EINA_TRUE);
 
    grid = evas_object_textgrid_add(obj);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -361,6 +445,8 @@ _elm_code_widget2_evas_object_smart_add(Eo *obj, Elm_Code_Widget2_Data *pd)
 
    evas_object_event_callback_add(grid, EVAS_CALLBACK_RESIZE, _elm_code_widget2_resize_cb, pd);
    evas_object_event_callback_add(grid, EVAS_CALLBACK_MOUSE_UP, _elm_code_widget2_clicked_cb, obj);
+// FIXME find why obj is not getting key_down events
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _elm_code_widget2_key_down_cb, obj);
 
    eo_do(obj,
          eo_event_callback_add(&ELM_CODE_EVENT_LINE_SET_DONE, _elm_code_widget2_line_cb, pd);
