@@ -146,7 +146,7 @@ test_icon_transparent(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 
 /* Test: Icon Standard */
 static void
-_standard_list_populate(Evas_Object *list, Elm_Icon_Lookup_Order order)
+_standard_list_populate(Evas_Object *list, Elm_Icon_Lookup_Order order, int size)
 {
    Evas_Object *ic;
    Eina_List *l;
@@ -161,7 +161,7 @@ _standard_list_populate(Evas_Object *list, Elm_Icon_Lookup_Order order)
          snprintf(name, sizeof(name), "%s", group + 9);
         if ((p = strrchr(name, '/')))
           *p = '\0';
-         printf("Found group:%s  Name:%s\n", group, name);
+         // printf("Found group:%s  Name:%s\n", group, name);
 
          // quick hack to show only standard-compliant icons
          // apart from the "folder" one, all the others have "-" in the name
@@ -170,6 +170,8 @@ _standard_list_populate(Evas_Object *list, Elm_Icon_Lookup_Order order)
                ic = elm_icon_add(list);
                elm_icon_order_lookup_set(ic, order);
                elm_icon_standard_set(ic, name);
+               if (size)
+                 evas_object_size_hint_min_set(ic, size, size);
                elm_list_item_append(list, name, ic, NULL, NULL, NULL);
            }
 
@@ -179,16 +181,43 @@ _standard_list_populate(Evas_Object *list, Elm_Icon_Lookup_Order order)
 }
 
 static void
-_rdg_changed_cb(void *data EINA_UNUSED, Evas_Object *obj,
+_rdg_changed_cb(void *data, Evas_Object *obj EINA_UNUSED,
                 void *event_info EINA_UNUSED)
 {
-   _standard_list_populate(data, elm_radio_value_get(obj));
+   Evas_Object *li = data;
+   Evas_Object *icon = evas_object_data_get(li, "resize_icon");
+   Evas_Object *order_rdg = evas_object_data_get(li, "order_rdg");
+   Evas_Object *size_rdg = evas_object_data_get(li, "size_rdg");
+
+   _standard_list_populate(li, elm_radio_value_get(order_rdg),
+                           elm_radio_value_get(size_rdg));
+
+   elm_icon_order_lookup_set(icon, elm_radio_value_get(order_rdg));
+}
+
+static void
+_slider_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *icon = data;
+   int size = (int)elm_slider_value_get(obj);
+
+   evas_object_size_hint_min_set(icon, size, size);
+}
+
+static void
+_list_selected_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
+{
+   Elm_Object_Item *list_it = event_info;
+   Evas_Object *icon = evas_object_data_get(obj, "resize_icon");
+
+   elm_icon_standard_set(icon, elm_object_item_text_get(list_it));
 }
 
 void
-test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                   void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *li, *box, *hbox, *fr, *rd, *rdg;
+   Evas_Object *win, *li, *box, *hbox, *fr, *rd, *rdg, *icon, *sl;
 
    win = elm_win_util_standard_add("icon-test-std", "Icon Standard");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -198,18 +227,19 @@ test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
+   li = elm_list_add(box);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(li, "selected", _list_selected_cb, NULL);
+   _standard_list_populate(li, ELM_ICON_LOOKUP_FDO_THEME, 0);
+   evas_object_show(li);
+
+   // lookup order
    fr = elm_frame_add(box);
    elm_object_text_set(fr, "standard icon order lookup");
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
    elm_box_pack_end(box, fr);
    evas_object_show(fr);
-
-   li = elm_list_add(box);
-   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(box, li);
-   evas_object_show(li);
-   _standard_list_populate(li, ELM_ICON_LOOKUP_FDO_THEME);
 
    hbox = elm_box_add(fr);
    elm_box_horizontal_set(hbox, EINA_TRUE);
@@ -222,6 +252,7 @@ test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    elm_box_pack_end(hbox, rdg);
    evas_object_show(rdg);
    evas_object_smart_callback_add(rdg, "changed", _rdg_changed_cb, li);
+   evas_object_data_set(li, "order_rdg", rdg);
 
    rd = elm_radio_add(hbox);
    elm_radio_state_value_set(rd, ELM_ICON_LOOKUP_THEME_FDO);
@@ -247,6 +278,115 @@ test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_show(rd);
    evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, li);
 
+   // size
+   fr = elm_frame_add(box);
+   elm_object_text_set(fr, "standard icon size");
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(box, fr);
+   evas_object_show(fr);
+   
+   hbox = elm_box_add(fr);
+   elm_box_horizontal_set(hbox, EINA_TRUE);
+   elm_object_content_set(fr, hbox);
+   evas_object_show(hbox);
+
+   rdg = elm_radio_add(hbox);
+   elm_radio_state_value_set(rdg, 0);
+   elm_object_text_set(rdg, "Free");
+   elm_box_pack_end(hbox, rdg);
+   evas_object_show(rdg);
+   evas_object_smart_callback_add(rdg, "changed", _rdg_changed_cb, li);
+   evas_object_data_set(li, "size_rdg", rdg);
+
+   rd = elm_radio_add(hbox);
+   elm_radio_state_value_set(rd, 16);
+   elm_radio_group_add(rd, rdg);
+   elm_object_text_set(rd, "16");
+   elm_box_pack_end(hbox, rd);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, li);
+
+   rd = elm_radio_add(hbox);
+   elm_radio_state_value_set(rd, 22);
+   elm_radio_group_add(rd, rdg);
+   elm_object_text_set(rd, "22");
+   elm_box_pack_end(hbox, rd);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, li);
+
+   rd = elm_radio_add(hbox);
+   elm_radio_state_value_set(rd, 24);
+   elm_radio_group_add(rd, rdg);
+   elm_object_text_set(rd, "24");
+   elm_box_pack_end(hbox, rd);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, li);
+
+   rd = elm_radio_add(hbox);
+   elm_radio_state_value_set(rd, 32);
+   elm_radio_group_add(rd, rdg);
+   elm_object_text_set(rd, "32");
+   elm_box_pack_end(hbox, rd);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, li);
+
+   rd = elm_radio_add(hbox);
+   elm_radio_state_value_set(rd, 48);
+   elm_radio_group_add(rd, rdg);
+   elm_object_text_set(rd, "48");
+   elm_box_pack_end(hbox, rd);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, li);
+
+   rd = elm_radio_add(hbox);
+   elm_radio_state_value_set(rd, 64);
+   elm_radio_group_add(rd, rdg);
+   elm_object_text_set(rd, "64");
+   elm_box_pack_end(hbox, rd);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, li);
+
+   rd = elm_radio_add(hbox);
+   elm_radio_state_value_set(rd, 128);
+   elm_radio_group_add(rd, rdg);
+   elm_object_text_set(rd, "128");
+   elm_box_pack_end(hbox, rd);
+   evas_object_show(rd);
+   evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, li);
+
+   // pack the list
+   elm_box_pack_end(box, li);
+
+   // live resize
+   fr = elm_frame_add(box);
+   elm_object_text_set(fr, "live resize");
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(box, fr);
+   evas_object_show(fr);
+   
+   hbox = elm_box_add(fr);
+   elm_object_content_set(fr, hbox);
+   evas_object_show(hbox);
+
+   icon = elm_icon_add(hbox);
+   elm_icon_order_lookup_set(icon, ELM_ICON_LOOKUP_FDO_THEME);
+   elm_icon_standard_set(icon, "folder");
+   evas_object_size_hint_min_set(icon, 16, 16);
+   elm_box_pack_end(hbox, icon);
+   evas_object_show(icon);
+   evas_object_data_set(li, "resize_icon", icon);
+
+   sl = elm_slider_add(hbox);
+   elm_slider_min_max_set(sl, 16, 256);
+   elm_slider_value_set(sl, 16);
+   elm_slider_unit_format_set(sl, "%.0f px");
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.0);
+   evas_object_smart_callback_add(sl, "changed", _slider_changed_cb, icon);
+   elm_box_pack_end(hbox, sl);
+   evas_object_show(sl);
+
+   // show the win
    evas_object_resize(win, 300, 400);
    evas_object_show(win);
 }
