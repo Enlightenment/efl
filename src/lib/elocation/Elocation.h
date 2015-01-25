@@ -178,7 +178,7 @@ typedef struct _Elocation_Address
  * Location information based on the GPS grid. Latitude, longitude and altitude.
  * A timestamp is available to calculate the age of the address data.
  */
-typedef struct _Elocation_Postion
+typedef struct _Elocation_Position
 {
    unsigned int timestamp; /**< Timestamp of data read out in seconds since epoch */
    double latitude;
