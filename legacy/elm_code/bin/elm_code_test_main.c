@@ -92,8 +92,7 @@ _elm_code_test_diff_setup(Evas_Object *parent)
 static Evas_Object *
 elm_code_test_win_setup(void)
 {
-   Evas_Object *win;
-   Evas_Object *vbox;
+   Evas_Object *win,*vbox;
 
    win = elm_win_util_standard_add("main", "Elm_Code Test");
    if (!win) return NULL;
@@ -104,15 +103,11 @@ elm_code_test_win_setup(void)
    elm_box_homogeneous_set(vbox, EINA_TRUE);
    evas_object_show(vbox);
 
-   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
-   evas_object_smart_callback_add(win, "delete,request", _elm_code_test_win_del, NULL);
-
    elm_box_pack_end(vbox, _elm_code_test_welcome_setup(vbox));
-
    elm_box_pack_end(vbox, _elm_code_test_diff_setup(vbox));
-
    elm_win_resize_object_add(win, vbox);
 
+   evas_object_smart_callback_add(win, "delete,request", _elm_code_test_win_del, NULL);
    evas_object_resize(win, 380 * elm_config_scale_get(), 240 * elm_config_scale_get());
    evas_object_show(win);
 

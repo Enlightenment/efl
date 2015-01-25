@@ -5,6 +5,9 @@
 #include <Eo.h>
 #include <Evas.h>
 #include <Elementary.h>
+#define ELM_INTERNAL_API_ARGESFSDFEFC
+#include <elm_widget.h>
+
 #include <Elm_Code.h>
 #include "elm_code_widget2.eo.h"
 
@@ -15,7 +18,7 @@ typedef struct
 
    Evas_Font_Size font_size;
    unsigned int cursor_line, cursor_col;
-   Eina_Bool editable;
+   Eina_Bool editable, focussed;
 } Elm_Code_Widget2_Data;
 
 Eina_Unicode status_icons2[] = {
@@ -133,7 +136,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget2_Data *pd, Evas_Textgrid_Cell *cells,
      }
 
    _elm_code_widget_fill_line_tokens(cells, w, line);
-   if (pd->editable && pd->cursor_line == line->number)
+   if (pd->editable && pd->focussed && pd->cursor_line == line->number)
      {
         if (pd->cursor_col < (unsigned int) w)
           cells[pd->cursor_col].bg = ELM_CODE_TOKEN_TYPE_CURSOR;
@@ -225,6 +228,10 @@ _elm_code_widget2_clicked_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
 
    widget = (Elm_Code_Widget2 *)data;
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET2_CLASS);
+
+   if (pd->editable && !pd->focussed)
+     return;
+
    event = (Evas_Event_Mouse_Up *)event_info;
    y = event->canvas.y;
 
@@ -234,6 +241,19 @@ _elm_code_widget2_clicked_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
    line = elm_code_file_line_get(pd->code->file, row);
    if (line)
      eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET2_EVENT_LINE_CLICKED, line));
+}
+
+EOLIAN static Eina_Bool
+_elm_code_widget2_elm_widget_on_focus(Eo *obj, Elm_Code_Widget2_Data *pd)
+{
+   Eina_Bool int_ret = EINA_FALSE;
+   eo_do_super(obj, ELM_CODE_WIDGET2_CLASS, int_ret = elm_obj_widget_on_focus());
+   if (!int_ret) return EINA_TRUE;
+
+   pd->focussed = elm_widget_focus_get(obj);
+
+   _elm_code_widget_fill(pd);
+   return EINA_TRUE;
 }
 
 EOLIAN static void
@@ -329,7 +349,7 @@ _elm_code_widget2_evas_object_smart_add(Eo *obj, Elm_Code_Widget2_Data *pd)
    Evas_Object *grid;
 
    eo_do_super(obj, ELM_CODE_WIDGET2_CLASS, evas_obj_smart_add());
-//   elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    grid = evas_object_textgrid_add(obj);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

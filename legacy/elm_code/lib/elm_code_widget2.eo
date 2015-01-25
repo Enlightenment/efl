@@ -37,6 +37,7 @@ class Elm_Code_Widget2 (Elm_Box, Elm_Interface_Scrollable,
       class.constructor;
       Eo.Base.constructor;
       Evas.Object_Smart.add;
+      Elm_Widget.on_focus;
       Elm_Interface_Scrollable.content_pos_set;
    }
    events {
