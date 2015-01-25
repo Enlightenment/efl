@@ -52,7 +52,7 @@ _icon_size_min_get(Evas_Object *icon)
 {
    int size;
 
-   evas_object_size_hint_min_get(icon, &size, NULL);
+   elm_image_object_size_get(icon, &size, NULL);
 
    return (size < 16) ? 16 : size;
 }
