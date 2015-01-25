@@ -379,8 +379,9 @@ efreet_dirs_get(const char *key, const char *fallback)
 {
     Eina_List *dirs = NULL;
     const char *path = NULL;
-    char *s, *p;
-    size_t len;
+    char *s, **split;
+    char sep[2] = {EFREET_PATH_SEP, '\0'};
+    size_t len, i;
 
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
     if (getuid() == geteuid())
@@ -390,13 +391,17 @@ efreet_dirs_get(const char *key, const char *fallback)
 
     if (!path) return dirs;
 
-    len = strlen(path) + 1;
-    s = alloca(len);
-    memcpy(s, path, len);
-    p = strchr(s, EFREET_PATH_SEP);
-    while (p)
+    split = eina_str_split(path, sep, 0);
+    for (i = 0; split[i]; i++)
     {
-        *p = '\0';
+        s = split[i];
+
+        // ensure the dir not end with '/'
+        len = strlen(s);
+        if ((len > 2) && (s[len-1] == '/'))
+            s[len-1] = '\0';
+
+        // add the dir to the list, if not yet there
         if (!eina_list_search_unsorted(dirs, EINA_COMPARE_CB(strcmp), s))
         {
             char *tmp = eina_file_path_sanitize(s);
@@ -406,20 +411,10 @@ efreet_dirs_get(const char *key, const char *fallback)
                 free(tmp);
             }
         }
-
-        s = ++p;
-        p = strchr(s, EFREET_PATH_SEP);
-    }
-    if (!eina_list_search_unsorted(dirs, EINA_COMPARE_CB(strcmp), s))
-    {
-        char *tmp = eina_file_path_sanitize(s);
-        if (tmp)
-        {
-            dirs = eina_list_append(dirs, eina_stringshare_add(tmp));
-            free(tmp);
-        }
     }
 
+    free(split[0]);
+    free(split);
     return dirs;
 }
 
