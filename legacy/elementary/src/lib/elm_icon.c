@@ -309,33 +309,6 @@ _icon_freedesktop_set(Evas_Object *obj,
    return EINA_FALSE;
 }
 
-EOLIAN static void
-_elm_icon_elm_image_sizing_eval(Eo *obj, Elm_Icon_Data *sd)
-{
-   int w, h;
-
-   if (sd->in_eval) return;
-
-   sd->in_eval++;
-   elm_image_object_size_get(obj, &w, &h);
-
-   if (sd->freedesktop.use && sd->stdicon)
-     {
-        int size;
-        /* This icon has been set to a freedesktop icon, and the requested
-           appears to have a different size than the requested size, so try to
-           request another, higher resolution, icon.
-           FIXME: Find a better heuristic to determine if there should be
-           an icon with a different resolution. */
-        size = ((w / 16) + 1) * 16;
-        _icon_freedesktop_set(obj, sd->stdicon, size);
-     }
-
-   eo_do_super(obj, MY_CLASS, elm_obj_image_sizing_eval());
-
-   sd->in_eval--;
-}
-
 static void
 _edje_signal_callback(void *data,
                       Evas_Object *obj EINA_UNUSED,
