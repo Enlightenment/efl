@@ -563,7 +563,11 @@ evas_image_load_file_data_bmp(void *loader_data,
         position = header.offset;
 
         if ((scale_ratio == 1) || (header.comp !=0))
-          buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
+          {
+             if (image_size < fsize - position)
+               image_size = fsize - position;
+             buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
+          }
         else
           {
              scale_surface = malloc(image_w * sizeof(DATA32)); //for one line decoding
