@@ -2182,8 +2182,9 @@ needtoken(int token)
         else
           {
              strncpy(s1, sc_tokens[token - tFIRST], 19); /* multi-character symbol */
+             s1[19] = 0;
           }
-        s1[19] = 0;
+
         if (!freading)
           {
              strncpy(s2, "-end of file-", 19);
