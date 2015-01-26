@@ -528,6 +528,8 @@ CFLAGS+=" -DMESA_EGL_NO_X11_HEADERS "
     --disable-scim \
     --disable-gesture \
     --with-tests=regular \
+    --enable-fb \
+    --disable-tslib \
 %if %{with wayland}
     --enable-wayland \
     --enable-drm \
@@ -747,6 +749,7 @@ grep --silent ECORE_IMF_MODULE "$f" \
 %{_libdir}/libecore_input.so.*
 %{_libdir}/libecore_input_evas.so.*
 %{_libdir}/libecore_ipc.so.*
+%{_libdir}/libecore_fb.so.*
 %if %{with wayland}
 %{_libdir}/libecore_wayland.so.*
 %{_libdir}/libecore_drm.so.*
@@ -784,6 +787,7 @@ grep --silent ECORE_IMF_MODULE "$f" \
 %{_libdir}/libecore_input.so
 %{_libdir}/libecore_input_evas.so
 %{_libdir}/libecore_ipc.so
+%{_libdir}/libecore_fb.so
 %if %{with wayland}
 %{_libdir}/libecore_wayland.so
 %{_libdir}/libecore_drm.so
