@@ -6478,7 +6478,7 @@ st_collections_group_parts_part_description_state(void)
    if (ep->other.desc_count) ed = ep->other.desc[ep->other.desc_count - 1];
 
    s = parse_str(0);
-   if ((!current_group_inherit) && (!strcmp(s, "default")))
+   if (!strcmp(s, "default"))
      {
         double v;
 
@@ -6500,7 +6500,7 @@ st_collections_group_parts_part_description_state(void)
             file_in, line - 1, s);
         exit(-1);
      }
-   if ((!current_group_inherit) && (ed == ep->default_desc))
+   if (ed == ep->default_desc)
      {
         if (strcmp(s, "default"))
           {
