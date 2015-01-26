@@ -2073,7 +2073,10 @@ eet_identity_print(Eet_Key *key,
  * checking will fail. The path to the certificate file must be a valid
  * file path to a 'pem' format file (the same used for siging with
  * eet_identity_open() as a certificate file).
- * 
+ *
+ * @note This function can not be used to provide any security mecanism. You
+ * need to check your x509 certificate against a chain of trust to have a proper
+ * security. This is just a convenience test function.
  * @warning You need to compile signature support in EET.
  * @since 1.13
  * @ingroup Eet_Cipher_Group
