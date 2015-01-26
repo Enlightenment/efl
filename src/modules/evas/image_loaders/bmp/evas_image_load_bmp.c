@@ -564,7 +564,7 @@ evas_image_load_file_data_bmp(void *loader_data,
 
         if ((scale_ratio == 1) || (header.comp !=0))
           {
-             if (image_size < fsize - position)
+             if (image_size < (int) fsize - position)
                image_size = fsize - position;
              buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
           }
