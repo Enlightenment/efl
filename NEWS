@@ -174,6 +174,15 @@ Fixes:
    * eet - image decode - fix robustness of image decode from eet file
    * edje: Edje_Edit - fix memory leak in edje_edit_image_usage_list_get
    * ecore-wayland: Don't crash if we have no input->cursor_name
+   * ecore-drm: Restore tty keyboard mode on restore of tty
+   * ecore-drm: Reset output cursor and crtc mode on shutdown
+   * ecore-drm: Don't init tty unless we are Not using systemd
+   * edje: edje_pick - fix double free eina hash iterator.
+   * ee engines should not crash when re-setting the same title/name_class
+   * ecore-wayland: Don't send a mouse_up on grab release unless we actually have a grabbed button
+   * Efreet: do not get confused by path ending with / in XDG_* vars
+   * evas: fix to load BMP file compressed with RLE.
+
 
 Changes since 1.11.0:
 ---------------------
