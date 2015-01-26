@@ -19,6 +19,9 @@
 # include <sys/stat.h>
 # include <sys/ioctl.h>
 
+# include <linux/vt.h>
+# include <linux/kd.h>
+# include <linux/major.h>
 # include <linux/input.h>
 # include <libinput.h>
 # include <xkbcommon/xkbcommon.h>
@@ -26,6 +29,10 @@
 # include <xf86drm.h>
 # include <xf86drmMode.h>
 # include <drm_fourcc.h>
+
+# ifdef HAVE_SYSTEMD_LOGIN
+#  include <systemd/sd-login.h>
+# endif
 
 # include <Eeze.h>
 # include <Eldbus.h>
@@ -231,6 +238,7 @@ void _ecore_drm_event_activate_send(Eina_Bool active);
 Eina_Bool _ecore_drm_launcher_device_open(const char *device, Ecore_Drm_Open_Cb callback, void *data, int flags);
 int _ecore_drm_launcher_device_open_no_pending(const char *device, int flags);
 void _ecore_drm_launcher_device_close(const char *device, int fd);
+int _ecore_drm_launcher_device_flags_set(int fd, int flags);
 
 Eina_Bool _ecore_drm_tty_switch(Ecore_Drm_Device *dev, int activate_vt);
 
@@ -244,5 +252,20 @@ void _ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
 void _ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb);
 void _ecore_drm_output_repaint_start(Ecore_Drm_Output *output);
 void _ecore_drm_output_frame_finish(Ecore_Drm_Output *output);
+
+Eina_Bool _ecore_drm_logind_connect(Ecore_Drm_Device *dev);
+void _ecore_drm_logind_disconnect(Ecore_Drm_Device *dev);
+void _ecore_drm_logind_restore(Ecore_Drm_Device *dev);
+Eina_Bool _ecore_drm_logind_device_open(const char *device, Ecore_Drm_Open_Cb callback, void *data);
+int _ecore_drm_logind_device_open_no_pending(const char *device);
+void _ecore_drm_logind_device_close(const char *device);
+
+int _ecore_drm_dbus_init(Ecore_Drm_Device *dev);
+int _ecore_drm_dbus_shutdown(void);
+int _ecore_drm_dbus_device_take(uint32_t major, uint32_t minor, Ecore_Drm_Open_Cb callback, void *data);
+int _ecore_drm_dbus_device_take_no_pending(uint32_t major, uint32_t minor, Eina_Bool *paused_out, double timeout);
+void _ecore_drm_dbus_device_release(uint32_t major, uint32_t minor);
+Eina_Bool _ecore_drm_dbus_session_take(void);
+Eina_Bool _ecore_drm_dbus_session_release(void);
 
 #endif

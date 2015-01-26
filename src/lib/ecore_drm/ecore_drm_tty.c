@@ -1,18 +1,39 @@
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
 #include "ecore_drm_private.h"
-#include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <linux/vt.h>
-#include <linux/kd.h>
 
 #ifndef KDSKBMUTE
 # define KDSKBMUTE 0x4B51
 #endif
 
 static int kbd_mode = 0;
+
+static Eina_Bool 
+_ecore_drm_tty_cb_vt_signal(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Drm_Device *dev;
+   Ecore_Event_Signal_User *ev;
+   siginfo_t sig;
+
+   ev = event;
+   sig = ev->data;
+   if (sig.si_code != SI_KERNEL) return ECORE_CALLBACK_RENEW;
+   if (!(dev = data)) return ECORE_CALLBACK_RENEW;
+
+   switch (ev->number)
+     {
+      case 1:
+        ecore_drm_device_master_drop(dev);
+        ioctl(dev->tty.fd, VT_RELDISP, 1);
+        break;
+      case 2:
+        ioctl(dev->tty.fd, VT_RELDISP, VT_ACKACQ);
+        ecore_drm_device_master_set(dev);
+        break;
+      default:
+        break;
+     }
+
+   return ECORE_CALLBACK_RENEW;
+}
 
 Eina_Bool
 _ecore_drm_tty_switch(Ecore_Drm_Device *dev, int activate_vt)
@@ -29,7 +50,8 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
    int kmode;
    struct vt_mode vtmode = { 0 };
 
-   if (fstat(dev->tty.fd, &st) == -1)
+   if ((fstat(dev->tty.fd, &st) == -1) || 
+       (major(st.st_rdev) != TTY_MAJOR) || (minor(st.st_rdev) == 0))
      {
         ERR("Failed to get stats for tty: %m");
         return EINA_FALSE;
@@ -38,6 +60,12 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
    if (ioctl(dev->tty.fd, KDGETMODE, &kmode))
      {
         ERR("Could not get tty mode: %m");
+        return EINA_FALSE;
+     }
+
+   if (kmode != KD_TEXT)
+     {
+        WRN("Virtual Terminal already in KD_GRAPHICS mode");
         return EINA_FALSE;
      }
 
@@ -66,13 +94,10 @@ _ecore_drm_tty_setup(Ecore_Drm_Device *dev)
         return EINA_FALSE;
      }
 
-   if (kmode != KD_GRAPHICS)
+   if (ioctl(dev->tty.fd, KDSETMODE, KD_GRAPHICS))
      {
-        if (ioctl(dev->tty.fd, KDSETMODE, KD_GRAPHICS))
-          {
-             ERR("Could not set graphics mode: %m");
-             goto err_kmode;
-          }
+        ERR("Could not set graphics mode: %m");
+        goto err_kmode;
      }
 
    vtmode.mode = VT_PROCESS;
@@ -136,7 +161,7 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
      {
         DBG("Trying to Open Tty: %s", tty);
 
-        dev->tty.fd = open(tty, O_RDWR | O_NOCTTY);
+        dev->tty.fd = open(tty, (O_RDWR | O_CLOEXEC)); //O_RDWR | O_NOCTTY);
         if (dev->tty.fd < 0)
           {
              DBG("Failed to Open Tty: %m");
@@ -149,7 +174,6 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
    /* save tty name */
    dev->tty.name = eina_stringshare_add(tty);
 
-   /* FIXME */
    if (!_ecore_drm_tty_setup(dev))
      {
         close(dev->tty.fd);
@@ -161,6 +185,10 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
           }
         return EINA_FALSE;
      }
+
+   dev->tty.event_hdlr = 
+     ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, 
+                             _ecore_drm_tty_cb_vt_signal, dev);
 
    /* set current tty into env */
    setenv("ECORE_DRM_TTY", tty, 1);
