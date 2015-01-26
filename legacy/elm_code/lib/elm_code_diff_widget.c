@@ -80,7 +80,7 @@ static void _elm_code_diff_widget_parse_diff(Elm_Code_File *diff, Elm_Code_File 
 EAPI Evas_Object *elm_code_diff_widget_add(Evas_Object *parent, Elm_Code *code)
 {
    Elm_Code *wcode1, *wcode2;
-   Elm_Code_Widget2 *widget_left, *widget_right;
+   Elm_Code_Widget *widget_left, *widget_right;
    Evas_Object *hbox;
 
    hbox = elm_panes_add(parent);
@@ -91,9 +91,9 @@ EAPI Evas_Object *elm_code_diff_widget_add(Evas_Object *parent, Elm_Code *code)
 
    // left side of diff
    wcode1 = elm_code_create();
-   widget_left = eo_add(ELM_CODE_WIDGET2_CLASS, parent);
+   widget_left = eo_add(ELM_CODE_WIDGET_CLASS, parent);
    eo_do(widget_left,
-         elm_code_widget2_code_set(wcode1));
+         elm_code_widget_code_set(wcode1));
 
    evas_object_size_hint_weight_set(widget_left, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget_left, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -103,9 +103,9 @@ EAPI Evas_Object *elm_code_diff_widget_add(Evas_Object *parent, Elm_Code *code)
 
    // right side of diff
    wcode2 = elm_code_create();
-   widget_right = eo_add(ELM_CODE_WIDGET2_CLASS, parent);
+   widget_right = eo_add(ELM_CODE_WIDGET_CLASS, parent);
    eo_do(widget_right,
-         elm_code_widget2_code_set(wcode2));
+         elm_code_widget_code_set(wcode2));
 
    evas_object_size_hint_weight_set(widget_right, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget_right, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -119,11 +119,11 @@ EAPI Evas_Object *elm_code_diff_widget_add(Evas_Object *parent, Elm_Code *code)
 
 EAPI void elm_code_diff_widget_font_size_set(Evas_Object *widget, int size)
 {
-   Elm_Code_Widget2 *child;
+   Elm_Code_Widget *child;
 
-   child = (Elm_Code_Widget2 *) evas_object_data_get(widget, ELM_CODE_DIFF_WIDGET_LEFT);
-   eo_do(child, elm_code_widget2_font_size_set(size));
-   child = (Elm_Code_Widget2 *) evas_object_data_get(widget, ELM_CODE_DIFF_WIDGET_RIGHT);
-   eo_do(child, elm_code_widget2_font_size_set(size));
+   child = (Elm_Code_Widget *) evas_object_data_get(widget, ELM_CODE_DIFF_WIDGET_LEFT);
+   eo_do(child, elm_code_widget_font_size_set(size));
+   child = (Elm_Code_Widget *) evas_object_data_get(widget, ELM_CODE_DIFF_WIDGET_RIGHT);
+   eo_do(child, elm_code_widget_font_size_set(size));
 }
 

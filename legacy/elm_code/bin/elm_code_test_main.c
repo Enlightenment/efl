@@ -12,7 +12,7 @@
 #include "gettext.h"
 
 #include <Elm_Code.h>
-#include "elm_code_widget2.eo.h"
+#include "elm_code_widget.eo.h"
 
 #include "elm_code_test_private.h"
 
@@ -48,15 +48,15 @@ static Evas_Object *
 _elm_code_test_welcome_setup(Evas_Object *parent)
 {
    Elm_Code *code;
-   Elm_Code_Widget2 *widget;
+   Elm_Code_Widget *widget;
 
    code = elm_code_create();
-   widget = eo_add(ELM_CODE_WIDGET2_CLASS, parent);
+   widget = eo_add(ELM_CODE_WIDGET_CLASS, parent);
    eo_do(widget,
-         elm_code_widget2_code_set(code);
-         elm_code_widget2_font_size_set(14);
-         elm_code_widget2_editable_set(EINA_TRUE);
-         eo_event_callback_add(ELM_CODE_WIDGET2_EVENT_LINE_CLICKED, _elm_code_test_line_cb, code));
+         elm_code_widget_code_set(code);
+         elm_code_widget_font_size_set(14);
+         elm_code_widget_editable_set(EINA_TRUE);
+         eo_event_callback_add(ELM_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_cb, code));
 
    _append_line(code->file, "Hello World, Elm Code!");
    elm_code_file_line_token_add(code->file, 1, 14, 21, ELM_CODE_TOKEN_TYPE_COMMENT);

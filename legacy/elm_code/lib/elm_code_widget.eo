@@ -1,7 +1,7 @@
-class Elm_Code_Widget2 (Elm_Box, Elm_Interface_Scrollable,
-                        Elm_Interface_Atspi_Text)
+class Elm_Code_Widget (Elm_Box, Elm_Interface_Scrollable,
+                       Elm_Interface_Atspi_Text)
 {
-   eo_prefix: elm_code_widget2;
+   eo_prefix: elm_code_widget;
    properties {
       code {
          set {
