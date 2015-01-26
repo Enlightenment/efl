@@ -10,6 +10,7 @@
 
 #include <Elm_Code.h>
 #include "elm_code_widget.eo.h"
+#include "elm_code_private.h"
 
 typedef struct
 {
@@ -288,11 +289,16 @@ static void
 _elm_code_widget_cursor_move_up(Elm_Code_Widget *widget)
 {
    Elm_Code_Widget_Data *pd;
+   Elm_Code_Line *line;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (pd->cursor_line > 1)
      pd->cursor_line--;
+
+   line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
+   if (pd->cursor_col > (unsigned int) line->length + 1)
+     pd->cursor_col = line->length + 1;
 
    _elm_code_widget_fill(pd);
 }
@@ -301,11 +307,44 @@ static void
 _elm_code_widget_cursor_move_down(Elm_Code_Widget *widget)
 {
    Elm_Code_Widget_Data *pd;
+   Elm_Code_Line *line;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (pd->cursor_line < elm_code_file_lines_get(pd->code->file))
      pd->cursor_line++;
+
+   line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
+   if (pd->cursor_col > (unsigned int) line->length + 1)
+     pd->cursor_col = line->length + 1;
+
+   _elm_code_widget_fill(pd);
+}
+
+static void
+_elm_code_widget_cursor_move_left(Elm_Code_Widget *widget)
+{
+   Elm_Code_Widget_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (pd->cursor_col > 1)
+     pd->cursor_col--;
+
+   _elm_code_widget_fill(pd);
+}
+
+static void
+_elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
+{
+   Elm_Code_Widget_Data *pd;
+   Elm_Code_Line *line;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
+   if (pd->cursor_col <= (unsigned int) line->length)
+     pd->cursor_col++;
 
    _elm_code_widget_fill(pd);
 }
@@ -320,11 +359,30 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
 
    Evas_Event_Key_Down *ev = event_info;
 
-   printf("KEY %s\n", ev->key);
-   if (!(strcmp(ev->key, "Up")))
+   if (!strcmp(ev->key, "Up"))
      _elm_code_widget_cursor_move_up(widget);
-   if (!(strcmp(ev->key, "Down")))
+   else if (!strcmp(ev->key, "Down"))
      _elm_code_widget_cursor_move_down(widget);
+   else if (!strcmp(ev->key, "Left"))
+     _elm_code_widget_cursor_move_left(widget);
+   else if (!strcmp(ev->key, "Right"))
+     _elm_code_widget_cursor_move_right(widget);
+   else
+     INF("Unhandled key %s", ev->key);
+}
+
+static Eina_Bool
+_elm_code_widget_event_veto_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                               Evas_Object *src EINA_UNUSED, Evas_Callback_Type type,
+                               void *event_info EINA_UNUSED)
+{
+   Eina_Bool veto = EINA_FALSE;
+
+// TODO determine if we should allow up/down to be sent to our focus manager
+   if (type == EVAS_CALLBACK_KEY_DOWN)
+     veto = EINA_TRUE;
+
+   return veto;
 }
 
 EOLIAN static Eina_Bool
@@ -451,8 +509,9 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
 
    evas_object_event_callback_add(grid, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, pd);
    evas_object_event_callback_add(grid, EVAS_CALLBACK_MOUSE_UP, _elm_code_widget_clicked_cb, obj);
-// FIXME find why obj is not getting key_down events
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _elm_code_widget_key_down_cb, obj);
+
+   elm_object_event_callback_add(obj, _elm_code_widget_event_veto_cb, obj);
 
    eo_do(obj,
          eo_event_callback_add(&ELM_CODE_EVENT_LINE_SET_DONE, _elm_code_widget_line_cb, pd);
