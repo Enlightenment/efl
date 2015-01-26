@@ -1497,6 +1497,31 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                ctx = e->engine.func->context_new(e->engine.data.output);
              if (obj->is_smart)
                {
+                  Eina_Bool unset_image_clip = EINA_FALSE;
+
+                  /* Clipper masks */
+                  if (obj->cur->clipper &&
+                      _evas_render_object_is_mask(obj->cur->clipper))
+                    {
+                       // This path can be hit when we're multiplying masks on top of each other...
+                       Evas_Object_Protected_Data *mask = obj->cur->clipper;
+
+                       evas_object_clip_recalc(obj);
+
+                       if (mask->mask->redraw || !mask->mask->surface)
+                         evas_render_mask_subrender(obj->layer->evas, mask, NULL);
+
+                       if (mask->mask->surface)
+                         {
+                            unset_image_clip = EINA_TRUE;
+                            e->engine.func->context_clip_image_set
+                                  (e->engine.data.output, ctx,
+                                   mask->mask->surface,
+                                   mask->mask->x + off_x,
+                                   mask->mask->y + off_y);
+                         }
+                    }
+
                   EINA_INLIST_FOREACH
                      (evas_object_smart_members_get_direct(eo_obj), obj2)
                        {
@@ -1506,7 +1531,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                            ecx, ecy, ecw, ech,
                                                            proxy_render_data,
                                                            level + 1,
-                                                           EINA_FALSE,
+                                                           unset_image_clip | use_mapped_ctx,
                                                            do_async);
                           /* We aren't sure this object will be rendered by
                              normal(not proxy) drawing after, we reset this
@@ -1516,6 +1541,12 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                           if (!proxy_render_data)
                             evas_object_change_reset(obj2->object);
                        }
+
+                  if (unset_image_clip)
+                    {
+                       e->engine.func->context_clip_image_unset
+                             (e->engine.data.output, ctx);
+                    }
                }
              else
                {
