@@ -1226,7 +1226,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
    if (mapped)
      {
-        if (_evas_render_object_is_mask(obj))
+        if (use_mapped_ctx && _evas_render_object_is_mask(obj))
           {
              // don't return;
           }
