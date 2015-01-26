@@ -6478,36 +6478,11 @@ st_collections_group_parts_part_description_state(void)
    if (ep->other.desc_count) ed = ep->other.desc[ep->other.desc_count - 1];
 
    s = parse_str(0);
-   if (!strcmp(s, "default"))
-     {
-        double v;
-
-        if (get_arg_count() == 1) v = 0.0;
-        else v = parse_float_range(1, 0.0, 1.0);
-        if (v == 0.0)
-          {
-             if (ed != ep->default_desc)
-               {
-                  ERR("parse error %s:%i. description state '%s' %1.2f is not the first state listed",
-                      file_in, line - 1, s, v);
-                  exit(-1);
-               }
-          }
-     }
-   if (!strcmp(s, "custom"))
+   if (!strcmp (s, "custom"))
      {
         ERR("parse error %s:%i. invalid state name: '%s'.",
             file_in, line - 1, s);
         exit(-1);
-     }
-   if (ed == ep->default_desc)
-     {
-        if (strcmp(s, "default"))
-          {
-             ERR("parse error %s:%i.  first state is not 'default'",
-                 file_in, line - 1);
-             exit(-1);
-          }
      }
 
    free((void *)ed->state.name);
