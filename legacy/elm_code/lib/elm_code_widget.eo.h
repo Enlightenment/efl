@@ -19,16 +19,20 @@ const Eo_Class *elm_code_widget_class_get(void) EINA_CONST;
 
 /**
  *
- * No description supplied.
+ * Set the underlying code object that this widget renders
  *
- * @param[in] code No description supplied.
+ * @ingroup Data
+ *
+ * @param[in] code Our underlying Elm_Code object
  *
  */
 EOAPI void  elm_code_widget_code_set(Elm_Code *code);
 
 /**
  *
- * No description supplied.
+ * Get the underlying code object we are rendering
+ *
+ * @ingroup Data
  *
  *
  */
@@ -36,16 +40,20 @@ EOAPI Elm_Code * elm_code_widget_code_get(void);
 
 /**
  *
- * No description supplied.
+ * Set the font size that this widget uses, the font will always be a system monospaced font
  *
- * @param[in] font_size No description supplied.
+ * @ingroup Style
+ *
+ * @param[in] font_size The font size of the widgget
  *
  */
 EOAPI void  elm_code_widget_font_size_set(Evas_Font_Size font_size);
 
 /**
  *
- * No description supplied.
+ * Get the font size currently in use
+ *
+ * @ingroup Style
  *
  *
  */
@@ -53,16 +61,29 @@ EOAPI Evas_Font_Size  elm_code_widget_font_size_get(void);
 
 /**
  *
- * No description supplied.
+ * Set whether this widget allows editing
  *
- * @param[in] editable No description supplied.
+ * If @a editable then the widget will allow user input to manipulate
+ * the underlying Elm_Code_File of this Elm_Code instance.
+ * Any other Elm_Code_Widget's connected to this Elm_Code will
+ * update to reflect the changes.
+ *
+ * @ingroup Features
+ *
+ * @param[in] editable The editable state of the widget
  *
  */
 EOAPI void  elm_code_widget_editable_set(Eina_Bool editable);
 
 /**
  *
- * No description supplied.
+ * Get the current editable state of this widget
+ *
+ * @return EINA_TRUE if the widget is editable, EINA_FALSE otherwise.
+ * If this widget is not editable the underlying Elm_Code_File could
+ * still be manipulated by a different widget or the filesystem.
+ *
+ * @ingroup Features
  *
  *
  */

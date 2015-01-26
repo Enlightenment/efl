@@ -42,12 +42,12 @@ static Eo_Op_Description _elm_code_widget_op_desc[] = {
      EO_OP_FUNC_OVERRIDE(evas_obj_smart_add, _elm_code_widget_evas_object_smart_add),
      EO_OP_FUNC_OVERRIDE(elm_obj_widget_on_focus, _elm_code_widget_elm_widget_on_focus),
      EO_OP_FUNC_OVERRIDE(elm_interface_scrollable_content_pos_set, _elm_code_widget_elm_interface_scrollable_content_pos_set),
-     EO_OP_FUNC(elm_code_widget_code_set, _elm_code_widget_code_set, ""),
-     EO_OP_FUNC(elm_code_widget_code_get, _elm_code_widget_code_get, ""),
-     EO_OP_FUNC(elm_code_widget_font_size_set, _elm_code_widget_font_size_set, ""),
-     EO_OP_FUNC(elm_code_widget_font_size_get, _elm_code_widget_font_size_get, ""),
-     EO_OP_FUNC(elm_code_widget_editable_set, _elm_code_widget_editable_set, ""),
-     EO_OP_FUNC(elm_code_widget_editable_get, _elm_code_widget_editable_get, ""),
+     EO_OP_FUNC(elm_code_widget_code_set, _elm_code_widget_code_set, "Set the underlying code object that this widget renders"),
+     EO_OP_FUNC(elm_code_widget_code_get, _elm_code_widget_code_get, "Get the underlying code object we are rendering"),
+     EO_OP_FUNC(elm_code_widget_font_size_set, _elm_code_widget_font_size_set, "Set the font size that this widget uses, the font will always be a system monospaced font"),
+     EO_OP_FUNC(elm_code_widget_font_size_get, _elm_code_widget_font_size_get, "Get the font size currently in use"),
+     EO_OP_FUNC(elm_code_widget_editable_set, _elm_code_widget_editable_set, "Set whether this widget allows editing"),
+     EO_OP_FUNC(elm_code_widget_editable_get, _elm_code_widget_editable_get, "Get the current editable state of this widget"),
      EO_OP_SENTINEL
 };
 
