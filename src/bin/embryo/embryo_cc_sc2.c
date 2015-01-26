@@ -1106,7 +1106,7 @@ command(void)
 			    while ((*lptr <= ' ') && (*lptr != '\0'))
 			       lptr++;
 			    for (i = 0; 
-                                 (i < (int)(sizeof(name))) && 
+                                 (i < (int)(sizeof(name)) - 1) && 
                                  (sc_isalpha(*lptr));
 				 i++, lptr++)
 			       name[i] = *lptr;
