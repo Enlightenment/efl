@@ -10,6 +10,11 @@
 
 #include <check.h>
 
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <functional>
+
 void foo(void*) {}
 
 START_TEST(eolian_cxx_test_callback_method)
@@ -121,6 +126,54 @@ START_TEST(eolian_cxx_test_global_callback)
 }
 END_TEST
 
+START_TEST(eolian_cxx_test_disconnect_inside_callback)
+{
+  efl::eo::eo_init i;
+  callback c;
+
+  std::vector<long> capture_me;
+  int times_called = 0;
+
+  ::efl::eo::signal_connection sig(nullptr);
+  sig = c.callback_callback_add_add(
+           std::bind([&sig, &capture_me, &times_called](void *info)
+             {
+               ++times_called;
+               std::cout << "times_called: " << times_called << std::endl;
+               std::cout << "&sig: " << &sig << std::endl;
+               if (times_called <= 1)
+                 return;
+
+               sig.disconnect();
+
+               long* info_l = static_cast<long*>(info);
+               std::cout << "info: " << info << std::endl;
+               std::cout << "*info_l: " << *info_l << std::endl;
+
+               fail_if(*info_l != 42);
+
+               capture_me = {9, 0, 8, 1, 7, 2, 6, 3, 5, 4};
+               std::sort(capture_me.begin(), capture_me.end());
+
+               capture_me[0] = capture_me[1] + +capture_me[2] + capture_me[9];
+
+               std::cout << "&capture_me: " << &capture_me << std::endl;
+               std::cout << "capture_me [0] [9]: [" << capture_me[0] << "] ["<< capture_me[9] << "]" << std::endl;
+
+               fail_if(capture_me.size() != 10);
+               fail_if(capture_me[0] != 12);
+               fail_if(times_called != 2);
+             }, std::placeholders::_3));
+
+  long n = 42;
+  c.callback_callback_add_call(&n);
+
+  fail_if(capture_me.size() != 10);
+  fail_if(capture_me[0] != 12);
+  fail_if(times_called != 2);
+}
+END_TEST
+
 void
 eolian_cxx_test_callback(TCase* tc)
 {
@@ -128,4 +181,5 @@ eolian_cxx_test_callback(TCase* tc)
    tcase_add_test(tc, eolian_cxx_test_callback_event_add);
    tcase_add_test(tc, eolian_cxx_test_callback_event_del);
    tcase_add_test(tc, eolian_cxx_test_global_callback);
+   tcase_add_test(tc, eolian_cxx_test_disconnect_inside_callback);
 }

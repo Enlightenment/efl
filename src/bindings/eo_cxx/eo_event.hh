@@ -7,6 +7,7 @@
 #define EFL_CXX_EO_EVENT_HH
 
 #include <Eo.h>
+#include <Ecore.h>
 
 #include <functional>
 #include <memory>
@@ -95,7 +96,13 @@ struct _event_deleter
   void operator()() const
   {
     eo_do(_eo, ::eo_event_callback_del(_description, _cb, _data));
-    delete _data;
+    ::ecore_main_loop_thread_safe_call_async(&_deleter_call, _data);
+  }
+
+private:
+  static void _deleter_call(void* data)
+  {
+    delete static_cast<F*>(data);
   }
 
   F* _data;
