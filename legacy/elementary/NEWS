@@ -72,7 +72,7 @@ Fixes:
    * elm_transit: Fix to support zoom rate zero.
    * elm_transit: Fix crash issue caused by multiple transit effects.
    * Elm_Entry: set handler style according to current widget style
-   * Icon: use size_hint_min instead of image_size to know the wanted size
+   * Icon: use evas_object_geometry_get instead of image_size to know the wanted size
 
 Changes since 1.11.0:
 ---------------------
