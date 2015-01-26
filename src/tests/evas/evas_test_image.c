@@ -392,6 +392,67 @@ START_TEST(evas_object_image_all_loader_data)
 }
 END_TEST
 
+const char *buggy[] = {
+  "BMP301K"
+};
+
+START_TEST(evas_object_image_buggy)
+{
+   Evas *e = _setup_evas();
+   Evas_Object *obj, *ref;
+   Eina_Strbuf *str;
+   unsigned int i, j;
+
+   obj = evas_object_image_add(e);
+   ref = evas_object_image_add(e);
+   str = eina_strbuf_new();
+
+   for (i = 0; i < sizeof (buggy) / sizeof (buggy[0]); i++)
+     {
+        for (j = 0; j < sizeof (exts) / sizeof (exts[0]); j++)
+          {
+             struct stat st;
+             int w, h, r_w, r_h;
+             const uint32_t *d, *r_d;
+
+             eina_strbuf_reset(str);
+
+             if (!strcmp(exts[j], "png")) continue ;
+
+             eina_strbuf_append_printf(str, "%s/%s.%s", TESTS_IMG_DIR,
+                                       buggy[i], exts[j]);
+
+             if (stat(eina_strbuf_string_get(str), &st) != 0) continue;
+
+             evas_object_image_file_set(obj, eina_strbuf_string_get(str), NULL);
+             fail_if(evas_object_image_load_error_get(obj) != EVAS_LOAD_ERROR_NONE);
+             evas_object_image_size_get(obj, &w, &h);
+             d = evas_object_image_data_get(obj, EINA_FALSE);
+
+             eina_strbuf_reset(str);
+
+             eina_strbuf_append_printf(str, "%s/%s.png", TESTS_IMG_DIR,
+                                       buggy[i]);
+             evas_object_image_file_set(ref, eina_strbuf_string_get(str), NULL);
+             fail_if(evas_object_image_load_error_get(ref) != EVAS_LOAD_ERROR_NONE);
+             evas_object_image_size_get(ref, &r_w, &r_h);
+             r_d = evas_object_image_data_get(ref, EINA_FALSE);
+
+             fail_if(w != r_w || h != r_h);
+             fail_if(memcmp(d, r_d, w * h * 4));
+          }
+     }
+
+   evas_object_del(obj);
+   evas_object_del(ref);
+
+   eina_strbuf_free(str);
+
+   evas_free(e);
+   evas_shutdown();
+}
+END_TEST
+
 void evas_test_image_object(TCase *tc)
 {
    tcase_add_test(tc, evas_object_image_loader);
@@ -401,5 +462,6 @@ void evas_test_image_object(TCase *tc)
 #endif
 #if BUILD_LOADER_PNG
    tcase_add_test(tc, evas_object_image_all_loader_data);
+   tcase_add_test(tc, evas_object_image_buggy);
 #endif
 }
