@@ -6469,13 +6469,11 @@ st_collections_group_parts_part_description_state(void)
    Edje_Part *ep;
    Edje_Part_Description_Common *ed;
    char *s;
+   double val;
 
    check_min_arg_count(1);
 
    ep = current_part;
-
-   ed = ep->default_desc;
-   if (ep->other.desc_count) ed = ep->other.desc[ep->other.desc_count - 1];
 
    s = parse_str(0);
    if (!strcmp (s, "custom"))
@@ -6484,13 +6482,25 @@ st_collections_group_parts_part_description_state(void)
             file_in, line - 1, s);
         exit(-1);
      }
+   if (get_arg_count() == 1)
+     val = 0.0;
+   else
+     val = parse_float_range(1, 0.0, 1.0);
+
+   /* if only default desc exists and current desc is not default, commence paddling */
+   if ((!ep->other.desc_count) && (val || (!eina_streq(s, "default"))))
+     {
+        ERR("parse error %s:%i. invalid state name: '%s'. \"default\" state must always be first.",
+            file_in, line - 1, s);
+        exit(-1);
+     }
+   ed = ep->default_desc;
+   if (ep->other.desc_count) ed = ep->other.desc[ep->other.desc_count - 1];
 
    free((void *)ed->state.name);
    ed->state.name = s;
-   if (get_arg_count() == 1)
-     ed->state.value = 0.0;
-   else
-     ed->state.value = parse_float_range(1, 0.0, 1.0);
+   ed->state.value = val;
+
    _part_description_state_update(ed);
 }
 
