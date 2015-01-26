@@ -430,16 +430,22 @@ _elm_code_widget_setup_palette(Evas_Object *o)
 EOLIAN static void
 _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
 {
-   Evas_Object *grid;
+   Evas_Object *grid, *scroller;
 
    eo_do_super(obj, ELM_CODE_WIDGET_CLASS, evas_obj_smart_add());
    elm_object_focus_allow_set(obj, EINA_TRUE);
 
-   grid = evas_object_textgrid_add(obj);
+   scroller = elm_scroller_add(obj);
+   evas_object_size_hint_weight_set(scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(scroller);
+   elm_box_pack_end(obj, scroller);
+
+   grid = evas_object_textgrid_add(obj); 
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(grid);
-   elm_box_pack_end(obj, grid);
+   elm_object_content_set(scroller, grid);
    pd->grid = grid;
    _elm_code_widget_setup_palette(grid);
 
