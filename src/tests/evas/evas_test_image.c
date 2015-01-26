@@ -359,7 +359,7 @@ START_TEST(evas_object_image_all_loader_data)
         int w, h, r_w, r_h;
         const uint32_t *d, *r_d;
 
-        fprintf(stderr, "testing '%s'\n", exts[i]);
+        eina_strbuf_reset(str);
 
         eina_strbuf_append_printf(str, "%s/Pic4-%s.png", TESTS_IMG_DIR, exts[i]);
 
@@ -378,14 +378,14 @@ START_TEST(evas_object_image_all_loader_data)
         evas_object_image_size_get(ref, &r_w, &r_h);
         r_d = evas_object_image_data_get(ref, EINA_FALSE);
 
-        eina_strbuf_reset(str);
-
         fail_if(w != r_w || h != r_h);
         fail_if(memcmp(d, r_d, w * h * 4));
      }
 
    evas_object_del(obj);
    evas_object_del(ref);
+
+   eina_strbuf_free(str);
 
    evas_free(e);
    evas_shutdown();
