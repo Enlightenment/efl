@@ -12,6 +12,8 @@ elm_code_test_widget.c \
 elm_code_suite.c
 
 elm_code_suite_CPPFLAGS = -I$(top_builddir)/elm_code/lib/ \
+-DEFL_BETA_API_SUPPORT \
+-DEFL_EO_API_SUPPORT \
 -DPACKAGE_TESTS_DIR=\"$(top_srcdir)/elm_code/tests/\" \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/elm_code/tests/\" \
 -DEFL_BETA_API_SUPPORT \
