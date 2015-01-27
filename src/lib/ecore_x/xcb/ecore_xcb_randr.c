@@ -2900,7 +2900,6 @@ EAPI Eina_Bool
 ecore_x_randr_output_backlight_available(void) 
 {
 #ifdef ECORE_XCB_RANDR
-   Ecore_X_Atom _backlight;
    xcb_intern_atom_cookie_t acookie;
    xcb_intern_atom_reply_t *areply;
 #endif
@@ -2923,7 +2922,6 @@ ecore_x_randr_output_backlight_available(void)
      }
    else
      {
-        _backlight = areply->atom;
         free(areply);
         return EINA_TRUE;
      }
