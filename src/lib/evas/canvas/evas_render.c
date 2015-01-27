@@ -302,11 +302,7 @@ _evas_mask_redraw_set(Evas_Public_Data *e EINA_UNUSED,
    Evas_Object_Protected_Data *clippee;
    Eina_List *l;
 
-   if (!(obj->mask->redraw &&
-         obj->mask->x == obj->cur->geometry.x &&
-         obj->mask->y == obj->cur->geometry.y &&
-         obj->mask->w == obj->cur->geometry.w &&
-         obj->mask->h == obj->cur->geometry.h))
+   if (!(obj->mask->redraw))
      {
         EINA_COW_WRITE_BEGIN(evas_object_mask_cow, obj->mask,
                              Evas_Object_Mask_Data, mask)
