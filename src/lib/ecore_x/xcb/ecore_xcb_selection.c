@@ -624,10 +624,10 @@ _ecore_xcb_selection_set(Ecore_X_Window win,
    else
      return EINA_FALSE;
 
-   if (selections[in].data)
+   if (_selections[in].data)
      {
-        free(selections[in].data);
-        memset(&selections[in], 0, sizeof(Ecore_X_Selection_Intern));
+        free(_selections[in].data);
+        memset(&_selections[in], 0, sizeof(Ecore_X_Selection_Intern));
      }
 
    if (data)
