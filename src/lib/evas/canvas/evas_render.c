@@ -1432,24 +1432,11 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
                   if (obj->is_smart)
                     {
-                       Evas_Object *tobj;
-
                        EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
                          {
                             state_write->cache.clip.dirty = EINA_TRUE;
                          }
                        EINA_COW_STATE_WRITE_END(obj, state_write, cur);
-
-                       EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map,
-                                            Evas_Object_Map_Data, map_write)
-                         {
-                            tobj = map_write->cur.map_parent;
-                            map_write->cur.map_parent =
-                               obj->cur->clipper->map->cur.map_parent;
-                            map_write->cur.map_parent = tobj;
-                         }
-                       EINA_COW_WRITE_END(evas_object_map_cow, obj->map,
-                                          map_write);
                     }
                   _evas_render_mapped_context_clip_set(e, eo_obj, obj, context,
                                                        proxy_render_data, off_x,
