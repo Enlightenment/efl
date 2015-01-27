@@ -151,7 +151,7 @@ _elm_code_widget_fill(Elm_Code_Widget_Data *pd)
 {
    Elm_Code_Line *line;
    Evas_Textgrid_Cell *cells;
-   int w, h;
+   int w, h, cw, ch;
    unsigned int y;
 
    if (!_elm_code_widget_resize(pd->grid))
@@ -165,6 +165,8 @@ _elm_code_widget_fill(Elm_Code_Widget_Data *pd)
         cells = evas_object_textgrid_cellrow_get(pd->grid, y - 1);
         _elm_code_widget_fill_line(pd, cells, line);
      }
+   evas_object_textgrid_cell_size_get(pd->grid, &cw, &ch);
+   evas_object_size_hint_min_set(pd->grid, w*cw, y*ch);
 }
 
 static Eina_Bool
