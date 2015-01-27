@@ -1,6 +1,8 @@
 #ifndef _ELOCATION_PRIVATE_H
 #define _ELOCATION_PRIVATE_H
 
+#ifdef EFL_BETA_API_SUPPORT
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -178,4 +180,7 @@ typedef struct _Elocation_Provider
    char *path;
    GeoclueStatus status;
 } Elocation_Provider;
+
+#endif /* BETA API */
+
 #endif

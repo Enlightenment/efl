@@ -1,6 +1,8 @@
 #ifndef ELDBUS_GEO_CLUE2_MANAGER_H
 #define ELDBUS_GEO_CLUE2_MANAGER_H
 
+#ifdef EFL_BETA_API_SUPPORT
+
 #include <Eina.h>
 #include <Ecore.h>
 #include <Eldbus.h>
@@ -15,5 +17,7 @@ typedef void (*Geo_Clue2_Manager_Add_Agent_Cb)(Eldbus_Proxy *proxy, void *data, 
 Eldbus_Pending *geo_clue2_manager_add_agent_call(Eldbus_Proxy *proxy, Geo_Clue2_Manager_Add_Agent_Cb cb, const void *data, const char *id);
 Eldbus_Pending *geo_clue2_manager_in_use_propget(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Bool_Get_Cb cb, const void *data);
 Eldbus_Pending *geo_clue2_manager_available_accuracy_level_propget(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Uint32_Get_Cb cb, const void *data);
+
+#endif /* BETA API */
 
 #endif

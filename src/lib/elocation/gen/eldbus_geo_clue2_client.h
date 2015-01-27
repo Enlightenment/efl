@@ -1,6 +1,8 @@
 #ifndef ELDBUS_GEO_CLUE2_CLIENT_H
 #define ELDBUS_GEO_CLUE2_CLIENT_H
 
+#ifdef EFL_BETA_API_SUPPORT
+
 #include <Eina.h>
 #include <Ecore.h>
 #include <Eldbus.h>
@@ -28,5 +30,7 @@ Eldbus_Pending *geo_clue2_client_desktop_id_propset(Eldbus_Proxy *proxy, Eldbus_
 Eldbus_Pending *geo_clue2_client_requested_accuracy_level_propget(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Uint32_Get_Cb cb, const void *data);
 Eldbus_Pending *geo_clue2_client_requested_accuracy_level_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb, const void *data, const void *value);
 Eldbus_Pending *geo_clue2_client_active_propget(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Bool_Get_Cb cb, const void *data);
+
+#endif /* BETA API */
 
 #endif

@@ -1,3 +1,5 @@
+#define EFL_BETA_API_SUPPORT
+
 #include "eldbus_geo_clue2_location.h"
 
 static int _log_main = -1;

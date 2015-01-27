@@ -1,6 +1,8 @@
 #ifndef ELDBUS_GEO_CLUE2_LOCATION_H
 #define ELDBUS_GEO_CLUE2_LOCATION_H
 
+#ifdef EFL_BETA_API_SUPPORT
+
 #include <Eina.h>
 #include <Ecore.h>
 #include <Eldbus.h>
@@ -14,5 +16,7 @@ Eldbus_Pending *geo_clue2_location_longitude_propget(Eldbus_Proxy *proxy, Eldbus
 Eldbus_Pending *geo_clue2_location_accuracy_propget(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Double_Get_Cb cb, const void *data);
 Eldbus_Pending *geo_clue2_location_altitude_propget(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Double_Get_Cb cb, const void *data);
 Eldbus_Pending *geo_clue2_location_description_propget(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_String_Get_Cb cb, const void *data);
+
+#endif /* BETA API */
 
 #endif
