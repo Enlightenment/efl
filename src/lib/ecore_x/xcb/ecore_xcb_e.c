@@ -2131,7 +2131,7 @@ ecore_x_e_window_rotation_available_rotations_get(Ecore_X_Window  win,
         val = calloc(num, sizeof(int));
         if (!val)
           {
-             *counter = 0;
+             *count = 0;
              if (data) free(data);
              return EINA_FALSE;
           }
