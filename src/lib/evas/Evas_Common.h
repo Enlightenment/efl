@@ -4024,6 +4024,7 @@ EAPI Eina_List                               *evas_textblock_cursor_range_geomet
  * Get the simple geometry of a range.
  * The simple geometry is the geomtry in which rectangles in middle
  * lines of range are merged into one big rectangle.
+ * @since 1.13
  *
  * @param cur1 one side of the range.
  * @param cur2 other side of the range.
