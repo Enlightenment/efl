@@ -90,7 +90,7 @@ ecore_x_window_full_new(Ecore_X_Window parent, int x, int y, int w, int h, Ecore
                    XCB_EVENT_MASK_PROPERTY_CHANGE |
                    XCB_EVENT_MASK_COLOR_MAP_CHANGE);
    mask_list[8] = XCB_EVENT_MASK_NO_EVENT;
-   value_list[9]  = colormap;
+   mask_list[9] = colormap;
 
    win = xcb_generate_id(_ecore_xcb_conn);
    xcb_create_window(_ecore_xcb_conn, XCB_COPY_FROM_PARENT,
