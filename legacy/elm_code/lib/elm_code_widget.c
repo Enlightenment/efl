@@ -55,15 +55,24 @@ _elm_code_widget_class_constructor(Eo_Class *klass EINA_UNUSED)
 }
 
 static Eina_Bool
-_elm_code_widget_resize(Evas_Object *o)
+_elm_code_widget_resize(Elm_Code_Widget_Data *pd)
 {
+   Elm_Code_Line *line;
+   Eina_List *item;
    int w, h, cw, ch;
 
-   evas_object_geometry_get(o, NULL, NULL, &w, &h);
-   evas_object_textgrid_cell_size_get(o, &cw, &ch);
+   if (!pd->code)
+     return EINA_FALSE;
+   evas_object_textgrid_cell_size_get(pd->grid, &cw, &ch);
 
-   evas_object_textgrid_size_set(o, ceil(((double) w) / cw),
-         ceil(((double) h) / ch));
+   w = 0;
+   h = elm_code_file_lines_get(pd->code->file);
+   EINA_LIST_FOREACH(pd->code->file->lines, item, line)
+     if (line->length + 2 > w)
+        w = line->length + 2;
+
+   evas_object_textgrid_size_set(pd->grid, w, h);
+   evas_object_size_hint_min_set(pd->grid, w*cw, h*ch);
 
    return h > 0 && w > 0;
 }
@@ -110,7 +119,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget_Data *pd, Evas_Textgrid_Cell *cells, 
    unsigned int length, x;
    int w;
 
-   if (!_elm_code_widget_resize(pd->grid))
+   if (!_elm_code_widget_resize(pd))
      return;
 
    length = line->length;
@@ -153,10 +162,10 @@ _elm_code_widget_fill(Elm_Code_Widget_Data *pd)
 {
    Elm_Code_Line *line;
    Evas_Textgrid_Cell *cells;
-   int w, h, cw, ch;
+   int w, h;
    unsigned int y;
 
-   if (!_elm_code_widget_resize(pd->grid))
+   if (!_elm_code_widget_resize(pd))
      return;
    evas_object_textgrid_size_get(pd->grid, &w, &h);
 
@@ -167,8 +176,6 @@ _elm_code_widget_fill(Elm_Code_Widget_Data *pd)
         cells = evas_object_textgrid_cellrow_get(pd->grid, y - 1);
         _elm_code_widget_fill_line(pd, cells, line);
      }
-   evas_object_textgrid_cell_size_get(pd->grid, &cw, &ch);
-   evas_object_size_hint_min_set(pd->grid, w*cw, y*ch);
 }
 
 static Eina_Bool
