@@ -1833,6 +1833,7 @@ EAPI Eina_Bool ecore_thread_cancel(Ecore_Thread *thread);
 
 /**
  * @brief Block the main loop until the thread execution is over.
+ * @since 1.13.0
  *
  * @param thread The thread to wait on.
  * @param wait Maximum time to wait before exiting anyway.
