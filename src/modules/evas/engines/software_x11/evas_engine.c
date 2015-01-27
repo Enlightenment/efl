@@ -262,7 +262,7 @@ _output_xcb_setup(int w, int h, int rot, xcb_connection_t *conn,
 
    evas_software_xcb_outbuf_debug_set(ob, debug);
 
-   if (!evas_render_engine_software_generic_init(re, ob, NULL,
+   if (!evas_render_engine_software_generic_init(&re->generic, ob, NULL,
                                                  evas_software_xcb_outbuf_rotation_get,
                                                  evas_software_xcb_outbuf_reconfigure,
                                                  NULL,
@@ -550,7 +550,6 @@ eng_setup(Evas *eo_e, void *in)
 #ifdef BUILD_ENGINE_SOFTWARE_XCB
         if (info->info.backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XCB)
           {
-             evas_software_xcb_outbuf_free(re->ob);
              ob =
                evas_software_xcb_outbuf_setup(e->output.w, e->output.h,
                                               info->info.rotation,
@@ -566,7 +565,7 @@ eng_setup(Evas *eo_e, void *in)
                                               info->info.mask,
                                               info->info.shape_dither,
                                               info->info.destination_alpha);
-             evas_software_xcb_outbuf_debug_set(re->ob, info->info.debug);
+             evas_software_xcb_outbuf_debug_set(ob, info->info.debug);
           }
 #endif
 
