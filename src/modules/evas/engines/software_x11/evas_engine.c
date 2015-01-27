@@ -243,7 +243,8 @@ _output_xcb_setup(int w, int h, int rot, xcb_connection_t *conn,
    evas_software_xcb_color_init();
    evas_software_xcb_outbuf_init();
 
-   ob = evas_software_xcb_outbuf_setup(w, h, rot, OUTBUF_DEPTH_INHERIT, conn
+   ob = 
+     evas_software_xcb_outbuf_setup(w, h, rot, OUTBUF_DEPTH_INHERIT, conn,
                                     screen, draw, vis, cmap, depth,
                                     grayscale, max_colors, mask,
                                     shape_dither, destination_alpha);
