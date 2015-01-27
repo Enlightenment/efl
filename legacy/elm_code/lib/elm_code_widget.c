@@ -19,6 +19,7 @@ typedef struct
 
    Evas_Font_Size font_size;
    unsigned int cursor_line, cursor_col;
+   Eina_Bool cursor_move_vetoed;
    Eina_Bool editable, focussed;
 } Elm_Code_Widget_Data;
 
@@ -44,6 +45,7 @@ _elm_code_widget_eo_base_constructor(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUS
 
    pd->cursor_line = 1;
    pd->cursor_col = 1;
+   pd->cursor_move_vetoed = EINA_TRUE;
 }
 
 EOLIAN static void
@@ -351,15 +353,63 @@ _elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
    _elm_code_widget_fill(pd);
 }
 
+static Eina_Bool
+_elm_code_widget_cursor_key_can_control(Evas_Event_Key_Down *event)
+{
+   if (!strcmp(event->key, "Up"))
+     return EINA_TRUE;
+   else if (!strcmp(event->key, "Down"))
+     return EINA_TRUE;
+   else if (!strcmp(event->key, "Left"))
+     return EINA_TRUE;
+   else if (!strcmp(event->key, "Right"))
+     return EINA_TRUE;
+   else
+     return EINA_FALSE;
+}
+
+static Eina_Bool
+_elm_code_widget_cursor_key_will_move(Elm_Code_Widget *widget, Evas_Event_Key_Down *event)
+{
+   Elm_Code_Widget_Data *pd;
+   Elm_Code_Line *line;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
+
+   if (!strcmp(event->key, "Up"))
+     return pd->cursor_line > 1;
+   else if (!strcmp(event->key, "Down"))
+     return pd->cursor_line < elm_code_file_lines_get(pd->code->file);
+   else if (!strcmp(event->key, "Left"))
+     return pd->cursor_col > 1;
+   else if (!strcmp(event->key, "Right"))
+     return pd->cursor_col < (unsigned int) line->length + 1;
+   else
+     return EINA_FALSE;
+}
+
 static void
 _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
                               Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Code_Widget *widget;
+   Elm_Code_Widget_Data *pd;
 
    widget = (Elm_Code_Widget *)data;
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    Evas_Event_Key_Down *ev = event_info;
+
+   if (!pd->editable)
+     return;
+
+   pd->cursor_move_vetoed = EINA_TRUE;
+   if (_elm_code_widget_cursor_key_can_control(ev) && !_elm_code_widget_cursor_key_will_move(widget, ev))
+     {
+        pd->cursor_move_vetoed = EINA_FALSE;
+        return;
+     }
 
    if (!strcmp(ev->key, "Up"))
      _elm_code_widget_cursor_move_up(widget);
@@ -374,17 +424,28 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
 }
 
 static Eina_Bool
-_elm_code_widget_event_veto_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+_elm_code_widget_event_veto_cb(void *data, Evas_Object *obj EINA_UNUSED,
                                Evas_Object *src EINA_UNUSED, Evas_Callback_Type type,
                                void *event_info EINA_UNUSED)
 {
-   Eina_Bool veto = EINA_FALSE;
+   Elm_Code_Widget *widget;
+   Elm_Code_Widget_Data *pd;
+   Eina_Bool vetoed;
 
-// TODO determine if we should allow up/down to be sent to our focus manager
+   widget = (Elm_Code_Widget *)data;
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (!pd->editable)
+     return EINA_FALSE;
+
+   vetoed = EINA_TRUE;
    if (type == EVAS_CALLBACK_KEY_DOWN)
-     veto = EINA_TRUE;
+     {
+        vetoed = pd->cursor_move_vetoed;
+        pd->cursor_move_vetoed = EINA_TRUE;
+     }
 
-   return veto;
+   return vetoed;
 }
 
 EOLIAN static Eina_Bool
@@ -437,9 +498,10 @@ _elm_code_widget_code_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 }
 
 EOLIAN static void
-_elm_code_widget_editable_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, Eina_Bool editable)
+_elm_code_widget_editable_set(Eo *obj, Elm_Code_Widget_Data *pd, Eina_Bool editable)
 {
    pd->editable = editable;
+   elm_object_focus_allow_set(obj, editable);
 }
 
 EOLIAN static Eina_Bool
