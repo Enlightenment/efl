@@ -266,10 +266,11 @@ ecore_x_input_multi_select(Ecore_X_Window win)
         xcb_input_device_info_next(&diter);
      }
    free(dreply);
+#else
+   (void)win;
 #endif
 
    return find;
-   win = 0;
 }
 
 EAPI Eina_Bool 
