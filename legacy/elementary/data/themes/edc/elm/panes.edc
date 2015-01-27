@@ -1,3 +1,16 @@
+/* panes widget style information
+
+   [SIGNAL]
+      elm,panes,fixed: Used for elm_panes_fixed_set()
+      elm,panes,unfixed: Used for elm_panes_fixed_set()
+
+   [SIGNAL EMIT]
+      elm,action,click: Used for "clicked" smart callback.
+      elm,action,click,double: Used for "clicked,double" smart callback.
+      elm,action,press: Used for "press" smart callback.
+      elm,action,unpress: Used for "unpress" smart callback.
+*/
+
 #define PANEMIN  10
 #define PANEMIN2 16
 #define PANEWID  32
@@ -105,6 +118,10 @@ group { name: "elm/panes/vertical/default";
             rel2.to_x: "elm.swallow.event";
             color: 0 0 0 0;
          }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
       }
    }
    programs {
@@ -119,6 +136,16 @@ group { name: "elm/panes/vertical/default";
       }
       program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
          action: SIGNAL_EMIT "elm,action,click,double" "elm";
+      }
+      program { // for elm_panes_fixed_set()
+         signal: "elm,panes,fixed"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "bar";
+      }
+      program { // for elm_panes_fixed_set()
+         signal: "elm,panes,unfixed"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "bar";
       }
    }
 }
@@ -226,6 +253,10 @@ group { name: "elm/panes/horizontal/default";
             rel2.to_y: "elm.swallow.event";
             color: 0 0 0 0;
          }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
       }
    }
    programs {
@@ -240,6 +271,16 @@ group { name: "elm/panes/horizontal/default";
       }
       program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
          action: SIGNAL_EMIT "elm,action,click,double" "elm";
+      }
+      program { // for elm_panes_fixed_set()
+         signal: "elm,panes,fixed"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "bar";
+      }
+      program { // for elm_panes_fixed_set()
+         signal: "elm,panes,unfixed"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "bar";
       }
    }
 }
@@ -343,6 +384,10 @@ group { name: "elm/panes/vertical/flush";
             rel2.relative: 1.0 0.75;
             color: 0 0 0 0;
          }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
       }
       part { name: "glow1a"; mouse_events: 0;
          description { state: "default" 0.0;
@@ -429,6 +474,16 @@ group { name: "elm/panes/vertical/flush";
       }
       program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
          action: SIGNAL_EMIT "elm,action,click,double" "elm";
+      }
+      program { // for elm_panes_fixed_set()
+         signal: "elm,panes,fixed"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "bar";
+      }
+      program { // for elm_panes_fixed_set()
+         signal: "elm,panes,unfixed"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "bar";
       }
       program {
          signal: "mouse,in"; source: "bar1";
@@ -557,6 +612,10 @@ group { name: "elm/panes/horizontal/flush";
             rel2.relative: 0.75 1.0;
             color: 0 0 0 0;
          }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
       }
       part { name: "glow1a"; mouse_events: 0;
          description { state: "default" 0.0;
@@ -671,6 +730,16 @@ group { name: "elm/panes/horizontal/flush";
       }
       program { signal: "mouse,down,1,double"; source: "bar"; // for "clicked,double" smart callback
          action: SIGNAL_EMIT "elm,action,click,double" "elm";
+      }
+      program { // for elm_panes_fixed_set()
+         signal: "elm,panes,fixed"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "bar";
+      }
+      program { // for elm_panes_fixed_set()
+         signal: "elm,panes,unfixed"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "bar";
       }
    }
 }
