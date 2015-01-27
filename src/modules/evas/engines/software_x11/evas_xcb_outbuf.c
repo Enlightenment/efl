@@ -65,8 +65,10 @@ evas_software_xcb_outbuf_free(Outbuf *buf)
         if (obr->mask) _unfind_xcbob(obr->mask, EINA_FALSE);
         free(obr);
      }
+
    evas_software_xcb_outbuf_idle_flush(buf);
-   evas_software_xcb_outbuf_flush(buf);
+   evas_software_xcb_outbuf_flush(buf, NULL, MODE_FULL);
+
    if (buf->priv.x11.xcb.gc)
      xcb_free_gc(buf->priv.x11.xcb.conn, buf->priv.x11.xcb.gc);
    if (buf->priv.x11.xcb.gcm)
@@ -582,7 +584,7 @@ evas_software_xcb_outbuf_free_region_for_update(Outbuf *buf EINA_UNUSED, RGBA_Im
 }
 
 void 
-evas_software_xcb_outbuf_flush(Outbuf *buf, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
+evas_software_xcb_outbuf_flush(Outbuf *buf, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode render_mode)
 {
    Eina_List *l = NULL;
    RGBA_Image *im = NULL;
