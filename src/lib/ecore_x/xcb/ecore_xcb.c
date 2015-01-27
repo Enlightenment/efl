@@ -1411,7 +1411,7 @@ ecore_x_default_depth_get(Ecore_X_Display *disp EINA_UNUSED, Ecore_X_Screen *scr
 }
 
 EAPI void
-ecore_x_xkb_select_group(int group)
+ecore_x_xkb_select_group(int group EINA_UNUSED)
 {
    // XXX: implement me */
 }
