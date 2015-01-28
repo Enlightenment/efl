@@ -526,6 +526,14 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
      {
         RDI(level);
         RD("      obj mapped\n");
+        if (!hmap && obj->cur->clipper)
+          {
+             // Fix some bad clipping issues before an evas map animation starts
+             evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
+             evas_object_clip_dirty(obj->cur->clipper->object, obj->cur->clipper);
+             evas_object_clip_recalc(obj->cur->clipper);
+             evas_object_update_bounding_box(eo_obj, obj);
+          }
         if (obj->changed)
           {
              if (map != hmap) *redraw_all = 1;
@@ -576,6 +584,14 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
                {
                   *redraw_all = 1;
                }
+          }
+        if (obj->cur->clipper)
+          {
+             // Fix some bad clipping issues after an evas_map animation finishes
+             evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
+             evas_object_clip_dirty(obj->cur->clipper->object, obj->cur->clipper);
+             evas_object_clip_recalc(obj->cur->clipper);
+             evas_object_update_bounding_box(eo_obj, obj);
           }
      }
 
