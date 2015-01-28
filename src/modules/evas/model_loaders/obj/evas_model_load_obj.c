@@ -286,6 +286,7 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, Eina_File *file)
                          &ARRAY_2D(_triangles, counts.current_triangles_counter, 7, 9),
                          &ARRAY_2D(_triangles, counts.current_triangles_counter, 8, 9));
 
+                       current++;
                        while (*current != ' ')
                          {
                             current++;
