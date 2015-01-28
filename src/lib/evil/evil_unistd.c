@@ -120,8 +120,22 @@ int
 evil_sockets_init(void)
 {
    WSADATA wsa_data;
+   WORD version;
 
-   return (WSAStartup(MAKEWORD(2, 2), &wsa_data) == 0) ? 1 : 0;
+   version = MAKEWORD(2, 2);
+   if (WSAStartup(version, &wsa_data) == 0)
+     {
+        if ((LOBYTE(wsa_data.wVersion) == 2) &&
+            (HIBYTE(wsa_data.wVersion) == 2))
+          return 1;
+        else
+          {
+             WSACleanup();
+             return 0;
+          }
+     }
+
+   return 0;
 }
 
 void
