@@ -365,17 +365,17 @@ ecore_cocoa_feed_events(void *anEvent)
 
          // Turn special key flags on
          if (flags & NSShiftKeyMask)
-            evDown->keyname = "Shift_L";
+            evDown->key = "Shift_L";
          else if (flags & NSControlKeyMask)
-            evDown->keyname = "Control_L";
+            evDown->key = "Control_L";
          else if (flags & NSAlternateKeyMask)
-            evDown->keyname = "Alt_L";
+            evDown->key = "Alt_L";
          else if (flags & NSCommandKeyMask)
-            evDown->keyname = "Super_L";
+            evDown->key = "Super_L";
          else if (flags & NSAlphaShiftKeyMask)
-            evDown->keyname = "Caps_Lock";
+            evDown->key = "Caps_Lock";
 
-         if (evDown->keyname)
+         if (evDown->key)
          {
             evDown->timestamp = time;
             evDown->string = "";
@@ -388,17 +388,17 @@ ecore_cocoa_feed_events(void *anEvent)
 
          // Turn special key flags off
          if (changed_flags & NSShiftKeyMask)
-            evUp->keyname = "Shift_L";
+            evUp->key = "Shift_L";
          else if (changed_flags & NSControlKeyMask)
-            evUp->keyname = "Control_L";
+            evUp->key = "Control_L";
          else if (changed_flags & NSAlternateKeyMask)
-            evUp->keyname = "Alt_L";
+            evUp->key = "Alt_L";
          else if (changed_flags & NSCommandKeyMask)
-            evUp->keyname = "Super_L";
+            evUp->key = "Super_L";
          else if (changed_flags & NSAlphaShiftKeyMask)
-            evUp->keyname = "Caps_Lock";
+            evUp->key = "Caps_Lock";
 
-         if (evUp->keyname)
+         if (evUp->key)
          {
             evUp->timestamp = time;
             evUp->string = "";
