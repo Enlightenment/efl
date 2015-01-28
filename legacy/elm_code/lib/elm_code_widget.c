@@ -184,16 +184,13 @@ _elm_code_widget_line_cb(void *data, Eo *obj EINA_UNUSED,
 {
    Elm_Code_Widget_Data *widget;
    Elm_Code_Line *line;
-   int h;
 
    Evas_Textgrid_Cell *cells;
 
    widget = (Elm_Code_Widget_Data *)data;
    line = (Elm_Code_Line *)event_info;
 
-   evas_object_textgrid_size_get(widget->grid, NULL, &h);
-
-   if (line->number > (unsigned int) h)
+   if (!_elm_code_widget_resize(widget))
      return EINA_TRUE;
 
    cells = evas_object_textgrid_cellrow_get(widget->grid, line->number - 1);
