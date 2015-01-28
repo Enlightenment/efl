@@ -8,9 +8,11 @@
 typedef struct
 {
    Elm_Code *code;
-   Evas_Object *grid;
+   Evas_Object *grid, *scroller;
 
    Evas_Font_Size font_size;
+   double gravity_x, gravity_y;
+
    unsigned int cursor_line, cursor_col;
    Eina_Bool cursor_move_vetoed;
    Eina_Bool editable, focussed;
@@ -47,12 +49,26 @@ _elm_code_widget_class_constructor(Eo_Class *klass EINA_UNUSED)
 
 }
 
+static void
+_elm_code_widget_scroll_by(Elm_Code_Widget *widget, int by_x, int by_y)
+{
+   Elm_Code_Widget_Data *pd;
+   Evas_Coord x, y, w, h;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   elm_scroller_region_get(pd->scroller, &x, &y, &w, &h);
+   x += by_x;
+   y += by_y;
+   elm_scroller_region_show(pd->scroller, x, y, w, h);
+}
+
 static Eina_Bool
 _elm_code_widget_resize(Elm_Code_Widget *widget)
 {
    Elm_Code_Line *line;
    Eina_List *item;
-   Evas_Coord ww, wh;
+   Evas_Coord ww, wh, old_width, old_height;
    int w, h, cw, ch;
    Elm_Code_Widget_Data *pd;
 
@@ -63,6 +79,8 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
 
    evas_object_geometry_get(widget, NULL, NULL, &ww, &wh);
    evas_object_textgrid_cell_size_get(pd->grid, &cw, &ch);
+   old_width = ww;
+   old_height = wh;
 
    w = 0;
    h = elm_code_file_lines_get(pd->code->file);
@@ -77,6 +95,11 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
 
    evas_object_textgrid_size_set(pd->grid, ww/cw+1, wh/ch+1);
    evas_object_size_hint_min_set(pd->grid, w*cw, h*ch);
+
+   if (pd->gravity_x == 1.0 || pd->gravity_y == 1.0)
+     _elm_code_widget_scroll_by(widget, 
+        (pd->gravity_x == 1.0 && ww > old_width) ? ww - old_width : 0,
+        (pd->gravity_y == 1.0 && wh > old_height) ? wh - old_height : 0);
 
    return h > 0 && w > 0;
 }
@@ -520,6 +543,20 @@ _elm_code_widget_code_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 }
 
 EOLIAN static void
+_elm_code_widget_gravity_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, double x, double y)
+{
+   pd->gravity_x = x;
+   pd->gravity_y = y;
+}
+
+EOLIAN static void
+_elm_code_widget_gravity_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, double *x, double *y)
+{
+   *x = pd->gravity_x;
+   *y = pd->gravity_y;
+}
+
+EOLIAN static void
 _elm_code_widget_editable_set(Eo *obj, Elm_Code_Widget_Data *pd, Eina_Bool editable)
 {
    pd->editable = editable;
@@ -584,6 +621,7 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_size_hint_align_set(scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(scroller);
    elm_box_pack_end(obj, scroller);
+   pd->scroller = scroller;
 
    grid = evas_object_textgrid_add(obj); 
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

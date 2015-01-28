@@ -17,6 +17,14 @@ Evas_Font_Size _elm_code_widget_font_size_get(Eo *obj, Elm_Code_Widget_Data *pd)
 
 EOAPI EO_FUNC_BODY(elm_code_widget_font_size_get, Evas_Font_Size, 0);
 
+void _elm_code_widget_gravity_set(Eo *obj, Elm_Code_Widget_Data *pd, double x, double y);
+
+EOAPI EO_VOID_FUNC_BODYV(elm_code_widget_gravity_set, EO_FUNC_CALL(x, y), double x, double y);
+
+void _elm_code_widget_gravity_get(Eo *obj, Elm_Code_Widget_Data *pd, double *x, double *y);
+
+EOAPI EO_VOID_FUNC_BODYV(elm_code_widget_gravity_get, EO_FUNC_CALL(x, y), double *x, double *y);
+
 void _elm_code_widget_editable_set(Eo *obj, Elm_Code_Widget_Data *pd, Eina_Bool editable);
 
 EOAPI EO_VOID_FUNC_BODYV(elm_code_widget_editable_set, EO_FUNC_CALL(editable), Eina_Bool editable);
@@ -46,6 +54,8 @@ static Eo_Op_Description _elm_code_widget_op_desc[] = {
      EO_OP_FUNC(elm_code_widget_code_get, _elm_code_widget_code_get, "Get the underlying code object we are rendering"),
      EO_OP_FUNC(elm_code_widget_font_size_set, _elm_code_widget_font_size_set, "Set the font size that this widget uses, the font will always be a system monospaced font"),
      EO_OP_FUNC(elm_code_widget_font_size_get, _elm_code_widget_font_size_get, "Get the font size currently in use"),
+     EO_OP_FUNC(elm_code_widget_gravity_set, _elm_code_widget_gravity_set, "Set how this widget's scroller should respond to new lines being added."),
+     EO_OP_FUNC(elm_code_widget_gravity_get, _elm_code_widget_gravity_get, "Get the current x and y gravity of the widget's scroller"),
      EO_OP_FUNC(elm_code_widget_editable_set, _elm_code_widget_editable_set, "Set whether this widget allows editing"),
      EO_OP_FUNC(elm_code_widget_editable_get, _elm_code_widget_editable_get, "Get the current editable state of this widget"),
      EO_OP_SENTINEL

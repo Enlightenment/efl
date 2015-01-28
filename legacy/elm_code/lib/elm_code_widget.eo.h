@@ -61,6 +61,34 @@ EOAPI Evas_Font_Size  elm_code_widget_font_size_get(void);
 
 /**
  *
+ * Set how this widget's scroller should respond to new lines being added.
+ *
+ * An x value of 0.0 will maintain the distance from the left edge, 1.0
+ will ensure the rightmost edge (of the longest line) is respected
+ * With 0.0 for y the view will keep it's position relative to the top whereas 1.0 will scroll downward as lines are added.
+ *
+ * @ingroup Layout
+ *
+ * @param[in] x The horizontal value of the scroller gravity - valid values are 0.0 and 1.0
+ * @param[in] y The vertical gravity of the widget's scroller - valid values are 0.0 and 1.0
+ *
+ */
+EOAPI void  elm_code_widget_gravity_set(double x, double y);
+
+/**
+ *
+ * Get the current x and y gravity of the widget's scroller
+ *
+ * @ingroup Layout
+ *
+ * @param[out] x The horizontal value of the scroller gravity, currently ignored
+ * @param[out] y The vertical gravity of the widget's scroller - valid values are 0.0 and 1.0
+ *
+ */
+EOAPI void  elm_code_widget_gravity_get(double *x, double *y);
+
+/**
+ *
  * Set whether this widget allows editing
  *
  * If @a editable then the widget will allow user input to manipulate

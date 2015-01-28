@@ -37,6 +37,27 @@ class Elm_Code_Widget (Elm_Box, Elm_Interface_Scrollable,
             Evas_Font_Size font_size; /*@ The font size of the widgget */
          }
       }
+      gravity {
+         set {
+            /*@
+            Set how this widget's scroller should respond to new lines being added.
+
+            An x value of 0.0 will maintain the distance from the left edge, 1.0 will ensure the rightmost edge (of the longest line) is respected
+            With 0.0 for y the view will keep it's position relative to the top whereas 1.0 will scroll downward as lines are added.
+
+            @ingroup Layout */
+         }
+         get {
+            /*@
+            Get the current x and y gravity of the widget's scroller
+
+            @ingroup Layout */
+         }
+         values {
+            double x; /*@ The horizontal value of the scroller gravity - valid values are 0.0 and 1.0 */
+            double y; /*@ The vertical gravity of the widget's scroller - valid values are 0.0 and 1.0 */
+         }
+      }
       editable {
          set {
             /*@
