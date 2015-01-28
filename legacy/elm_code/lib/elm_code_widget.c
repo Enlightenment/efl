@@ -2,14 +2,7 @@
 # include "config.h"
 #endif
 
-#include <Eo.h>
-#include <Evas.h>
-#include <Elementary.h>
-#define ELM_INTERNAL_API_ARGESFSDFEFC
-#include <elm_widget.h>
-
 #include <Elm_Code.h>
-#include "elm_code_widget.eo.h"
 #include "elm_code_private.h"
 
 typedef struct
@@ -454,6 +447,12 @@ _elm_code_widget_event_veto_cb(void *data, Evas_Object *obj EINA_UNUSED,
    Elm_Code_Widget *widget;
    Elm_Code_Widget_Data *pd;
    Eina_Bool vetoed;
+
+   widget = (Elm_Code_Widget *)data;
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (!pd->editable)
+     return EINA_FALSE;
 
    widget = (Elm_Code_Widget *)data;
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);

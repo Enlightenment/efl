@@ -4,6 +4,8 @@
 #include <Eina.h>
 #include <Eo.h>
 #include <Elementary.h>
+#define ELM_INTERNAL_API_ARGESFSDFEFC
+#include <elm_widget.h>
 
 #ifdef EAPI
 # undef EAPI
