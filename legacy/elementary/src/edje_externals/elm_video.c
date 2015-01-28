@@ -235,7 +235,7 @@ static void * external_video_params_parse(void *data EINA_UNUSED,
         else if (!strcmp(param->name, "remember position"))
           {
              mem->remember_position = param->i;
-             mem->remember_position = EINA_TRUE;
+             mem->remember_position_exists = EINA_TRUE;
           }
      }
    return mem;
