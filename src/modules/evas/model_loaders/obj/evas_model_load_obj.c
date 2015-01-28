@@ -19,6 +19,14 @@
         &ARRAY_2D(_##array_name##_obj, counts.current_##name##_counter, 2, 3));  \
      counts.current_##name##_counter++;
 
+#define AFTER_NEXT_SPACE(pointer)\
+        do\
+          {\
+             pointer++;\
+             i++;\
+          }\
+        while (*pointer != ' ');
+
 /* Structures for reading data from file. */
 typedef struct _OBJ_Counts    OBJ_Counts;
 
@@ -178,6 +186,19 @@ _count_elements(char *map)//count elements of mesh in .obj
 }
 
 void
+_read_point(int *triangles,
+            int num,
+            OBJ_Counts counts EINA_UNUSED,
+            int num_cur,
+            char *pointer)
+{
+   sscanf(pointer, "%i/%i/%i",
+          &ARRAY_2D(triangles, num_cur, (num - 1) * 3, 9),
+          &ARRAY_2D(triangles, num_cur, (num - 1) * 3 + 1, 9),
+          &ARRAY_2D(triangles, num_cur, (num - 1) * 3 + 2, 9));
+}
+
+void
 evas_model_load_file_obj(Evas_3D_Mesh *mesh, Eina_File *file)
 {
    long i;
@@ -249,49 +270,41 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, Eina_File *file)
                }
              else if (first_char_is_f)
                {
-                  char * auxiliary_pointer = current;
+                  char *auxiliary_pointer = current;
                   int count_of_triangles_in_line;
+                  int the_first_point = counts.current_triangles_counter;
 
                   _analyze_face_line(auxiliary_pointer,
                                    &count_of_triangles_in_line);
                   current++;
                   i++;
-                  int first_pos, first_tex, first_norm;
-                  sscanf (current,"%i/%i/%i",
-                            &first_pos,
-                            &first_tex,
-                            &first_norm);
+                  _read_point(_triangles, 1, counts,
+                              the_first_point,
+                              current);
 
-                  do
-                    {
-                       current++;
-                       i++;
-                    }
-                  while (*current != ' ');
-
-                  current++;
-                  i++;
+                  AFTER_NEXT_SPACE(current)
 
                   for (j = 0; j < count_of_triangles_in_line; j++)
                     {
                        auxiliary_pointer = current;
-                       ARRAY_2D(_triangles, counts.current_triangles_counter, 0, 9) = first_pos;
-                       ARRAY_2D(_triangles, counts.current_triangles_counter, 1, 9) = first_tex;
-                       ARRAY_2D(_triangles, counts.current_triangles_counter, 2, 9) = first_norm;
-                       sscanf (auxiliary_pointer,"%i/%i/%i %i/%i/%i",
-                         &ARRAY_2D(_triangles, counts.current_triangles_counter, 3, 9),
-                         &ARRAY_2D(_triangles, counts.current_triangles_counter, 4, 9),
-                         &ARRAY_2D(_triangles, counts.current_triangles_counter, 5, 9),
-                         &ARRAY_2D(_triangles, counts.current_triangles_counter, 6, 9),
-                         &ARRAY_2D(_triangles, counts.current_triangles_counter, 7, 9),
-                         &ARRAY_2D(_triangles, counts.current_triangles_counter, 8, 9));
-
-                       current++;
-                       while (*current != ' ')
+                       if (counts.current_triangles_counter != the_first_point)
                          {
-                            current++;
-                            i++;
+                            ARRAY_2D(_triangles, counts.current_triangles_counter, 0, 9) = \
+                            ARRAY_2D(_triangles, the_first_point, 0, 9);
+                            ARRAY_2D(_triangles, counts.current_triangles_counter, 1, 9) = \
+                            ARRAY_2D(_triangles, the_first_point, 1, 9);
+                            ARRAY_2D(_triangles, counts.current_triangles_counter, 2, 9) = \
+                            ARRAY_2D(_triangles, the_first_point, 2, 9);
                          }
+
+                       _read_point(_triangles, 2, counts,
+                                   counts.current_triangles_counter,
+                                   auxiliary_pointer);
+                       AFTER_NEXT_SPACE(auxiliary_pointer);
+                       _read_point(_triangles, 3, counts,
+                                   counts.current_triangles_counter,
+                                   auxiliary_pointer);
+                       AFTER_NEXT_SPACE(current);
 
                        counts.current_triangles_counter++;
                     }
@@ -389,4 +402,3 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, Eina_File *file)
         map = NULL;
      }
 }
-
