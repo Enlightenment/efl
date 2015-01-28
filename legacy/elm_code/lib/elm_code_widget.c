@@ -313,14 +313,16 @@ _elm_code_widget_clicked_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EI
    Elm_Code_Widget *widget;
    Elm_Code_Widget_Data *pd;
    Evas_Event_Mouse_Up *event;
-   Evas_Coord x, y;
+   Evas_Coord x, y, ox, oy, sx, sy;
 
    widget = (Elm_Code_Widget *)data;
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    event = (Evas_Event_Mouse_Up *)event_info;
 
-   x = event->canvas.x;
-   y = event->canvas.y;
+   evas_object_geometry_get(widget, &ox, &oy, NULL, NULL);
+   elm_scroller_region_get(pd->scroller, &sx, &sy, NULL, NULL);
+   x = event->canvas.x + sx - ox;
+   y = event->canvas.y + sy - oy;
 
    if (pd->editable)
      _elm_code_widget_clicked_editable_cb(widget, x, y);
