@@ -17,6 +17,21 @@
 #define  WIDTH 1900
 #define  HEIGHT 1080
 
+#define ADD_OBJ_MESH(mesh_name, Y, Z)                                                      \
+   mesh_name = eo_add(EVAS_3D_MESH_CLASS, evas);                                     \
+   eo_do(mesh_name,                                                                  \
+         efl_file_set("sweet_"#mesh_name".obj", NULL),                                  \
+         evas_3d_mesh_frame_material_set(0, material),                          \
+         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));                \
+   eo_do(mesh_name, efl_file_save("saved_"#mesh_name".obj", NULL, NULL));                    \
+   mesh_name##_node = eo_add(EVAS_3D_NODE_CLASS, evas,                                 \
+                             evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH)); \
+   eo_do(root_node,                                                             \
+         evas_3d_node_member_add(mesh_name##_node));                                   \
+   eo_do(mesh_name##_node,                                                             \
+         evas_3d_node_mesh_add(mesh_name), \
+         evas_3d_node_position_set(0, Y, Z));
+
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
 Eo *background = NULL;
@@ -27,8 +42,14 @@ Eo *root_node = NULL;
 Eo *camera_node = NULL;
 Eo *light_node = NULL;
 Eo *camera = NULL;
-Eo *mesh_node = NULL;
-Eo *mesh = NULL;
+Eo *home_node = NULL;
+Eo *home = NULL;
+Eo *home_without_normals_node = NULL;
+Eo *home_without_normals = NULL;;
+Eo *home_without_tex_coords_node = NULL;
+Eo *home_without_tex_coords = NULL;
+Eo *home_only_vertex_coords_node = NULL;
+Eo *home_only_vertex_coords = NULL;
 Eo *material = NULL;
 Eo *texture = NULL;
 Eo *light = NULL;
@@ -38,7 +59,7 @@ static float angle = 0;
 static Eina_Bool
 _animate_scene(void *data)
 {
-   angle += 0.5;
+   angle += 0.2;
 
    eo_do((Evas_3D_Node *)data, evas_3d_node_orientation_angle_axis_set(angle, 1.0, 1.0, -1.0));
 
@@ -92,7 +113,7 @@ main(void)
    /* Add the camera. */
    camera = eo_add(EVAS_3D_CAMERA_CLASS, evas);
    eo_do(camera,
-         evas_3d_camera_projection_perspective_set(60.0, 1.0, 1.0, 500.0));
+         evas_3d_camera_projection_perspective_set(100.0, 1.0, 1.0, 500.0));
 
    camera_node =
       eo_add(EVAS_3D_NODE_CLASS, evas,
@@ -102,8 +123,8 @@ main(void)
    eo_do(root_node,
          evas_3d_node_member_add(camera_node));
    eo_do(camera_node,
-         evas_3d_node_position_set(10.0, 0.0, 2.0),
-         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 2.0,
+         evas_3d_node_position_set(10.0, 0.0, 0.0),
+         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0,
                                   EVAS_3D_SPACE_PARENT, 0.0, 0.0, 1.0));
    /* Add the light. */
    light = eo_add(EVAS_3D_LIGHT_CLASS, evas);
@@ -124,16 +145,14 @@ main(void)
    eo_do(root_node,
          evas_3d_node_member_add(light_node));
 
-   /* Add the mesh. */
-   mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
+   texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
    material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
 
-   eo_do(mesh,
-         efl_file_set("sweet_home.obj", NULL),
-         evas_3d_mesh_frame_material_set(0, material),
-         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
+   ADD_OBJ_MESH(home, -3, -3)
+   ADD_OBJ_MESH(home_without_normals, -3, 3)
+   ADD_OBJ_MESH(home_without_tex_coords, 3, -3)
+   ADD_OBJ_MESH(home_only_vertex_coords, 3, 3)
 
-   texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
    eo_do(texture,
          evas_3d_texture_file_set("sweet_home_temp.png", NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
@@ -153,15 +172,6 @@ main(void)
          evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR,
                                     1.0, 1.0, 1.0, 1.0),
          evas_3d_material_shininess_set(50.0));
-
-   eo_do(mesh, efl_file_save("saved_home.obj", NULL, NULL));
-
-   mesh_node = eo_add(EVAS_3D_NODE_CLASS, evas,
-                             evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
-   eo_do(root_node,
-         evas_3d_node_member_add(mesh_node));
-   eo_do(mesh_node,
-         evas_3d_node_mesh_add(mesh));
 
    /* Set up scene. */
    eo_do(scene,
@@ -185,7 +195,10 @@ main(void)
    /* Set the image object as render target for 3D scene. */
    eo_do(image, evas_obj_image_scene_set(scene));
 
-   ecore_timer_add(0.01, _animate_scene, mesh_node);
+   ecore_timer_add(0.01, _animate_scene, home_node);
+   ecore_timer_add(0.01, _animate_scene, home_without_normals_node);
+   ecore_timer_add(0.01, _animate_scene, home_without_tex_coords_node);
+   ecore_timer_add(0.01, _animate_scene, home_only_vertex_coords_node);
 
    /* Enter main loop. */
    ecore_main_loop_begin();
