@@ -207,18 +207,18 @@ _utf8_markup_save(const char *file,
    if ((!text) || (!text[0]))
      {
         ecore_file_unlink(file);
-
         return;
      }
 
    f = fopen(file, "wb");
    if (!f)
      {
-        // FIXME: report a write error
+        ERR("Failed to open %s for writing", file);
         return;
      }
 
-   fputs(text, f); // FIXME: catch error
+   if (fputs(text, f) == EOF)
+     ERR("Failed to write text to file %s", file);
    fclose(f);
 }
 
