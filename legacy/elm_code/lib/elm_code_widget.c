@@ -5,6 +5,14 @@
 #include <Elm_Code.h>
 #include "elm_code_private.h"
 
+typedef enum {
+   ELM_CODE_WIDGET_COLOR_GUTTER_BG = ELM_CODE_TOKEN_TYPE_COUNT,
+   ELM_CODE_WIDGET_COLOR_GUTTER_FG,
+   ELM_CODE_WIDGET_COLOR_CURSOR,
+
+   ELM_CODE_WIDGET_COLOR_COUNT
+} Elm_Code_Widget_Colors;
+
 Eina_Unicode status_icons[] = {
  ' ',
  '!',
@@ -146,22 +154,21 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells, E
    length = line->length;
    evas_object_textgrid_size_get(pd->grid, &w, NULL);
 
-   cells[0].codepoint = status_icons[line->status];
-   cells[0].bold = 1;
-   cells[0].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
-   cells[0].bg = line->status;
+   cells[gutter-1].codepoint = status_icons[line->status];
+   cells[gutter-1].bold = 1;
+   cells[gutter-1].fg = ELM_CODE_WIDGET_COLOR_GUTTER_FG;
+   cells[gutter-1].bg = (line->status == ELM_CODE_STATUS_TYPE_DEFAULT) ? ELM_CODE_WIDGET_COLOR_GUTTER_BG : line->status;
 
    if (pd->show_line_numbers)
      {
         number = malloc(sizeof(char) * gutter);
-        snprintf(number, gutter, "%d", line->number);
+        snprintf(number, gutter, "%*d", gutter - 1, line->number);
 
-        for (g = 1; g < gutter; g++)
+        for (g = 0; g < gutter - 1; g++)
           {
-// TODO style this properly
-             cells[g].codepoint = (g == gutter - 1) ? '|' : *(number + g - 1);
-             cells[g].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
-             cells[g].bg = ELM_CODE_STATUS_TYPE_DEFAULT;
+             cells[g].codepoint = *(number + g);
+             cells[g].fg = ELM_CODE_WIDGET_COLOR_GUTTER_FG;
+             cells[g].bg = ELM_CODE_WIDGET_COLOR_GUTTER_BG;
           }
         free(number);
      }
@@ -187,7 +194,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells, E
    if (pd->editable && pd->focussed && pd->cursor_line == line->number)
      {
         if (pd->cursor_col + gutter - 1 < (unsigned int) w)
-          cells[pd->cursor_col + gutter - 1].bg = ELM_CODE_TOKEN_TYPE_CURSOR;
+          cells[pd->cursor_col + gutter - 1].bg = ELM_CODE_WIDGET_COLOR_CURSOR;
      }
 
    evas_object_textgrid_update_add(pd->grid, 0, line->number - 1, w, 1);
@@ -623,9 +630,13 @@ _elm_code_widget_setup_palette(Evas_Object *o)
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_CHANGED,
                                     54, 54, 255, 255);
 
-   // the style for a cursor - this is a special token and will be applied to the background
-   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_CURSOR,
+   // other styles that the widget uses
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_CURSOR,
                                     205, 205, 54, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_BG,
+                                    75, 75, 75, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_FG,
+                                    139, 139, 139, 255);
 }
 
 EOLIAN static void

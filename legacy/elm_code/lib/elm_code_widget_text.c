@@ -29,7 +29,7 @@ elm_code_widget_text_left_gutter_width_get(Elm_Code_Widget *widget)
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (pd->show_line_numbers)
-     width += elm_code_widget_text_line_number_width_get(widget) + 1;
+     width += elm_code_widget_text_line_number_width_get(widget);
 
    return width;
 }

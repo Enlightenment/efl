@@ -63,7 +63,6 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    elm_code_file_line_token_add(code->file, 1, 14, 21, ELM_CODE_TOKEN_TYPE_COMMENT);
    _append_line(code->file, "");
    _append_line(code->file, "This is a demo of elm_code's capabilities.");
-
    _append_line(code->file, "*** Currently experimental ***");
    elm_code_file_line_status_set(code->file, 4, ELM_CODE_STATUS_TYPE_ERROR);
 
