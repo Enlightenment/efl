@@ -443,6 +443,22 @@ ecore_cocoa_feed_events(void *anEvent)
       case NSScrollWheel:
       {
          DBG("Scroll Wheel\n");
+
+         EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
+         Ecore_Event_Mouse_Wheel *ev;
+
+         ev = malloc(sizeof(Ecore_Event_Mouse_Wheel));
+         if (!ev) return pass;
+
+         ev->window = (Ecore_Window)window.ecore_window_data;
+         ev->event_window = ev->window;
+         ev->modifiers = 0; /* FIXME: keep modifier around. */
+         ev->timestamp = time;
+         ev->z = [event deltaX] != 0 ? [event deltaX] : -([event deltaY]);
+         ev->direction = [event deltaX] != 0 ? 0 : 1;
+
+         ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
+
          break;
       }
       default:
