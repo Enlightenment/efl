@@ -7,72 +7,76 @@ Changes since 1.12.0:
 
 Features:
 
-   * config font hinting api added
-   * Scroller: Add step size set API
+   * config: Add font hinting api
+   * config: Add key bindings for elm_actionslider
+   * fileselector: Add a search icon
+   * genlist: Add the clicked,right event on items
+   * genlist: Add "scroll" smart callback
+   * gengrid: Add "clicked,right" smart callback with proper test
+   * icon theme: Add standard freedesktop names.
+   * image Inherits edje signal emit
+   * list: Focus highlight when loop is enable
+   * list: Add "clicked,right" smart callback with simple test
+   * scroller: Add step size set API
    * theme/e/shelf: Add a translucent style.
-   * elm config: add key bindings for elm_actionslider
-   * List: Focus highlight when loop is enable
+   * transit: Support BEZIER CURVE
    * win: Support elm_win style change and runtime theme change.
    * win: Support runtime alpha window switch on theme change.
-   * Transit: Support BEZIER CURVE
-   * Genlist: added the clicked,right event on items
-   * genlist: add "scroll" smart call
-   * Gengrid: new signal: clicked,right with proper test
-   * List: new signal: clicked,right with simple test
-   * Icon theme: added standard freedesktop names.
-   * Added the elm_win_util_dialog_add() API function
-   * elm_image now inherits edje signal emit
-   * fileselector: added a search icon
-   * +elm_win_fake(), ELM_WIN_FAKE type
+   * win: Add the elm_win_util_dialog_add() API function
+   * win: Add elm_win_fake(), ELM_WIN_FAKE type
 
 Fixes:
 
-   * elm_box: inappropriate size_hint_align value usage fix
-   * transit: free the map resource.
-   * DBUS Menu: fixing SIGSEV and SIGBUS when trying to use dbus.
+   * box: Fix inappropriate size_hint_align value usage
+   * box: Layout should not silently fail when size is less than min size hint
+   * cnp: Fix issue with event data causing an invalid free
+   * cnp: Fix return values to use Eina_Bool
+   * colorselector: Fix not intended duplication
+   * colorselector: Fix layout broken in ELM_COLORSELECTOR_ALL mode
+   * colorselector: Fix to get proper min size with picker only mode
+   * colorselector: Fix memory leak in _color_bars_add
    * datetime: Fix edc sizing issue by putting fixed: 1 1.
-   * win: set config engine on higher priority than DISPLAY env var
+   * DBUS Menu: Fix SIGSEV and SIGBUS when trying to use dbus.
+   * diskselector: Change idle enterer add condition
+   * DnD: Fix callbacks deletion for inline windows.
+   * DnD: Fix to work again in wayland
+   * entry: Fix dropped text data insertion
+   * entry: Set handler style according to current widget style
+   * fileselector: Fix eio access of widget data after de in eio threads
    * genlist: Fix genlist crash issue when clearing genlist on item focus callback.
-   * test_external.edc: pulse value have to be true for put in pulsing mode.
-   * win: Fix wrong return value of window theme apply.
-   * elm_label: Add "slide,end" signal emission
-   * elm_widget: Pass Elm_Object_Item *item as *event_info in item->del_func.
-   * modules: Make sure we have all linker flags setup for our modules. (T1920)
-   * elm/image: Fix an unclipped issue about image bigger than object size
-   * elm_colorselector: fix not intended duplication
-   * elm_colorselector: Fix layout broken in ELM_COLORSELECTOR_ALL mode
-   * add clipper for gadget popup shine
-   * genlist should ignore no-select items when moving with the keyboard
-   * elm_toolbar: fix memory leak in _elm_toolbar_nearest_visible_item_get
-   * elm_genlist: add missing callback call
+   * genlist: Ignore no-select items when moving with the keyboard
+   * genlist: Add missing callback call
+   * genlist: Unselect item if the select mode is display only or none.
+   * genilst: Unselect items if the genlist select mode is display only or none.
+   * genlist: Cancel multi selected items.
    * gengrid: Add missing "moved" callback call on item reorder by key.
    * gengrid, genlist, list, toolbar: Fix memory leak and enhance performance.
-   * elm_colorselector: Fixed to get proper min size with picker only mode
-   * test_gengrid.c: Fixed Item_Data array size for prevent buffer overflow.
-   * box layout should not silently fail when size is less than min size hint
-   * Elm_Entry: Fix dropped text data insertion
-   * genlist: unselect item if the select mode is display only or none.
-   * genilst: unselect items if the genlist select mode is display only or none.
-   * elementary: Fix DnD to work again in wayland
-   * elementary: Fix return values to use Eina_Bool
-   * elementary: Fix issue with event data causing an invalid free
-   * elm_diskselector.c: idle enterer add condition changed.
-   * elm_segment_control: Fix elm_object_item_text_set bug.
-   * colorselector: memory leak fix  in _color_bars_add
-   * genlist: cancel multi selected items.
-   * elm progressbar - fix invalid access to freed units string
-   * elm filesel - fix eio access of widget data after de in eio threads
-   * theme: fix misprint in popup style alias name
-   * elm_image: Fixed to have exact size using elm_image_fill_outside_set()
-   * elm_widget: elm_object_disabled_set API fix
-   * elm - elm image orientation api fix - major bug in implementation
-   * DnD: fix callbacks deletion for inline windows.
-   * elementary: Fix dereference of null return value (CID1261370)
-   * elm image - fix image rotation in non-common cases
-   * elm_transit: Fix to support zoom rate zero.
-   * elm_transit: Fix crash issue caused by multiple transit effects.
-   * Elm_Entry: set handler style according to current widget style
-   * Icon: use evas_object_geometry_get instead of image_size to know the wanted size
+   * icon: Use evas_object_geometry_get instead of image_size to know the wanted size
+   * image: Fix an unclipped issue about image bigger than object size
+   * image: Fix to have exact size using elm_image_fill_outside_set()
+   * image: Fix image rotation in non-common cases
+   * image: Fix orientation api - major bug in implementation
+   * label: Add "slide,end" signal emission
+   * modules: Make sure we have all linker flags setup for our modules. (T1920)
+   * popup: Fix misprint in popup style alias name
+   * progressbar: Fix invalid access to freed units string
+   * segment_control: Fix elm_object_item_text_set bug.
+   * toolbar: Fix memory leak in _elm_toolbar_nearest_visible_item_get
+   * transit: Free the map resource.
+   * transit: Fix to support zoom rate zero.
+   * transit: Fix crash issue caused by multiple transit effects.
+   * widget: Fix elm_object_disabled_set API
+   * widget: Pass Elm_Object_Item *item as *event_info in item->del_func.
+   * win: Set config engine on higher priority than DISPLAY env var
+   * win: Fix wrong return value of window theme apply.
+
+   [Samples]
+   * test_external.edc: pulse value have to be true for put in pulsing mode.
+   * test_gengrid: Fixed Item_Data array size for prevent buffer overflow.
+   * test_icon: Fix dereference of null return value (CID1261370)
+
+   [E Theme]
+   * e/gadman: Add clipper for gadget popup shine
 
 Changes since 1.11.0:
 ---------------------
