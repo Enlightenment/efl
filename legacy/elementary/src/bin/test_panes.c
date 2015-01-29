@@ -69,16 +69,12 @@ test_panes(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    // add left button
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Left");
-   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(bt);
    elm_object_part_content_set(panes, "left", bt);
 
    // add panes
    panes_h = elm_panes_add(win);
    elm_panes_horizontal_set(panes_h, EINA_TRUE);
-   evas_object_size_hint_weight_set(panes_h, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(panes_h, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(panes_h);
 
    evas_object_smart_callback_add(panes_h, "clicked", _clicked, panes_h);
@@ -91,16 +87,12 @@ test_panes(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    // add up button
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Up");
-   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(bt);
    elm_object_part_content_set(panes_h, "top", bt);
 
    // add down button
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Down");
-   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(bt);
    elm_object_part_content_set(panes_h, "bottom", bt);
 
