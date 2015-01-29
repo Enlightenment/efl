@@ -369,6 +369,51 @@ check_image_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
     }
 }
 
+/* This function check loops between groups.
+   For example:
+   > part in group A. It's source is B.
+   > part in group B. It's source is C.
+   > part in group C. It's source is A <- here is error.
+   It's loop that we need to avoid! */
+static void
+check_source_links(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef, Eina_List *group_path)
+{
+   unsigned int i;
+   char *data;
+   Edje_Part_Collection *pc_source;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(edje_collections, l, pc_source)
+     {
+        /* Find sourced group */
+        if (strcmp(ep->source, pc_source->part) == 0)
+          {
+             /* Go through every part to find parts with type GROUP */
+             for (i = 0; i < pc_source->parts_count; ++i)
+               {
+                  if ((pc_source->parts[i]->type == EDJE_PART_TYPE_GROUP) &&
+                      (pc_source->parts[i]->source))
+                    {
+                       /* Make sure that this group isn't already in the tree of parents */
+                       EINA_LIST_FOREACH(group_path, l, data)
+                         {
+                            if (data == pc_source->parts[i]->source)
+                              {
+                                 error_and_abort(ef,"Recursive loop group '%s' "
+                                                 "already included inside "
+                                                 "part '%s' of group '%s'",
+                                                 data, pc_source->parts[i]->name,
+                                                 pc->part);
+                              }
+                         }
+                       group_path = eina_list_append(group_path, ep->source);
+                       check_source_links(pc, pc_source->parts[i], ef, group_path);
+                    }
+               }
+          }
+     }
+}
+
 static void
 check_packed_items(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 {
@@ -410,6 +455,7 @@ static void
 check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 {
    unsigned int i;
+   Eina_List *group_path = NULL;
    /* FIXME: check image set and sort them. */
    if (!ep->default_desc)
      error_and_abort(ef, "Collection %i: default description missing "
@@ -428,6 +474,8 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
    else if ((ep->type == EDJE_PART_TYPE_BOX) ||
 	    (ep->type == EDJE_PART_TYPE_TABLE))
      check_packed_items(pc, ep, ef);
+   else if (ep->type == EDJE_PART_TYPE_GROUP)
+     check_source_links(pc, ep, ef, group_path);
 
    /* FIXME: When mask are supported remove this check */
    if (ep->clip_to_id != -1 &&
