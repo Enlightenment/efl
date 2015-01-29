@@ -55,14 +55,10 @@ eng_window_new(void *window,
 	       int      h)
 {
    Evas_GL_Cocoa_Window *gw;
-   int context_attrs[3];
-   int config_attrs[20];
-   int major_version, minor_version;
-   int num_config;
 
    gw = calloc(1, sizeof(Evas_GL_Cocoa_Window));
    if (!gw) return NULL;
- 
+
    _evas_gl_cocoa_window = gw;
    gw->window = window;
    gw->view = [[EvasGLView alloc] initWithFrame:NSMakeRect(0,0,w,h)];
@@ -110,7 +106,7 @@ eng_window_swap_buffers(Evas_GL_Cocoa_Window *gw)
 }
 
 void
-eng_window_vsync_set(int on)
+eng_window_vsync_set(int on EINA_UNUSED)
 {
 
 }
