@@ -17,19 +17,19 @@
 #define  WIDTH 1900
 #define  HEIGHT 1080
 
-#define ADD_OBJ_MESH(mesh_name, Y, Z)                                                      \
-   mesh_name = eo_add(EVAS_3D_MESH_CLASS, evas);                                     \
-   eo_do(mesh_name,                                                                  \
-         efl_file_set("sweet_"#mesh_name".obj", NULL),                                  \
+#define ADD_OBJ_MESH(mesh_name, Y, Z)                                           \
+   mesh_name = eo_add(EVAS_3D_MESH_CLASS, evas);                                \
+   eo_do(mesh_name,                                                             \
+         efl_file_set("sweet_"#mesh_name".obj", NULL),                          \
          evas_3d_mesh_frame_material_set(0, material),                          \
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));                \
-   eo_do(mesh_name, efl_file_save("saved_"#mesh_name".obj", NULL, NULL));                    \
-   mesh_name##_node = eo_add(EVAS_3D_NODE_CLASS, evas,                                 \
+   eo_do(mesh_name, efl_file_save("saved_"#mesh_name".obj", NULL, NULL));       \
+   mesh_name##_node = eo_add(EVAS_3D_NODE_CLASS, evas,                          \
                              evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH)); \
    eo_do(root_node,                                                             \
-         evas_3d_node_member_add(mesh_name##_node));                                   \
-   eo_do(mesh_name##_node,                                                             \
-         evas_3d_node_mesh_add(mesh_name), \
+         evas_3d_node_member_add(mesh_name##_node));                            \
+   eo_do(mesh_name##_node,                                                      \
+         evas_3d_node_mesh_add(mesh_name),                                      \
          evas_3d_node_position_set(0, Y, Z));
 
 Ecore_Evas *ecore_evas = NULL;
@@ -108,7 +108,7 @@ main(void)
 
    /* Add the root node for the scene. */
    root_node = eo_add(EVAS_3D_NODE_CLASS, evas,
-                             evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
+                      evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
 
    /* Add the camera. */
    camera = eo_add(EVAS_3D_CAMERA_CLASS, evas);
@@ -117,7 +117,7 @@ main(void)
 
    camera_node =
       eo_add(EVAS_3D_NODE_CLASS, evas,
-                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_CAMERA));
+             evas_3d_node_constructor(EVAS_3D_NODE_TYPE_CAMERA));
    eo_do(camera_node,
          evas_3d_node_camera_set(camera));
    eo_do(root_node,
@@ -136,7 +136,7 @@ main(void)
 
    light_node =
       eo_add(EVAS_3D_NODE_CLASS, evas,
-                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_LIGHT));
+             evas_3d_node_constructor(EVAS_3D_NODE_TYPE_LIGHT));
    eo_do(light_node,
          evas_3d_node_light_set(light),
          evas_3d_node_position_set(10.0, 0.0, 2.0),
