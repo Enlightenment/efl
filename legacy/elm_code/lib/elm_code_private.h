@@ -25,3 +25,17 @@ extern int _elm_code_lib_log_dom;
 #define DBG(...) EINA_LOG_DOM_DBG(_elm_code_lib_log_dom, __VA_ARGS__)
 
 #endif
+
+typedef struct
+{
+   Elm_Code *code;
+   Evas_Object *grid, *scroller;
+
+   Evas_Font_Size font_size;
+   double gravity_x, gravity_y;
+
+   unsigned int cursor_line, cursor_col;
+   Eina_Bool cursor_move_vetoed;
+   Eina_Bool editable, focussed;
+   Eina_Bool show_line_numbers;
+} Elm_Code_Widget_Data;

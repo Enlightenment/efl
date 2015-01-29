@@ -53,9 +53,10 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    code = elm_code_create();
    widget = eo_add(ELM_CODE_WIDGET_CLASS, parent);
    eo_do(widget,
-         elm_code_widget_code_set(code);
-         elm_code_widget_font_size_set(14);
-         elm_code_widget_editable_set(EINA_TRUE);
+         elm_code_widget_code_set(code),
+         elm_code_widget_font_size_set(14),
+         elm_code_widget_editable_set(EINA_TRUE),
+         elm_code_widget_line_numbers_set(EINA_TRUE),
          eo_event_callback_add(ELM_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_cb, code));
 
    _append_line(code->file, "Hello World, Elm Code!");

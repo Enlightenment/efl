@@ -5,19 +5,6 @@
 #include <Elm_Code.h>
 #include "elm_code_private.h"
 
-typedef struct
-{
-   Elm_Code *code;
-   Evas_Object *grid, *scroller;
-
-   Evas_Font_Size font_size;
-   double gravity_x, gravity_y;
-
-   unsigned int cursor_line, cursor_col;
-   Eina_Bool cursor_move_vetoed;
-   Eina_Bool editable, focussed;
-} Elm_Code_Widget_Data;
-
 Eina_Unicode status_icons[] = {
  ' ',
  '!',
@@ -69,10 +56,11 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
    Elm_Code_Line *line;
    Eina_List *item;
    Evas_Coord ww, wh, old_width, old_height;
-   int w, h, cw, ch;
+   int w, h, cw, ch, gutter;
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   gutter = elm_code_widget_text_left_gutter_width_get(widget);
 
    if (!pd->code)
      return EINA_FALSE;
@@ -85,8 +73,8 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
    w = 0;
    h = elm_code_file_lines_get(pd->code->file);
    EINA_LIST_FOREACH(pd->code->file->lines, item, line)
-     if (line->length + 2 > w)
-        w = line->length + 2;
+     if (line->length + gutter + 1 > w)
+        w = line->length + gutter + 1;
 
    if (w*cw > ww)
      ww = w*cw;
@@ -116,24 +104,26 @@ _elm_code_widget_fill_line_token(Evas_Textgrid_Cell *cells, int count, int start
 }
 
 static void
-_elm_code_widget_fill_line_tokens(Evas_Textgrid_Cell *cells, unsigned int count, Elm_Code_Line *line)
+_elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
+                                  unsigned int count, Elm_Code_Line *line)
 {
    Eina_List *item;
    Elm_Code_Token *token;
-   int start, length;
+   int start, length, offset;
 
-   start = 1;
-   length = line->length;
+   offset = elm_code_widget_text_left_gutter_width_get(widget) - 1;
+   start = offset + 1;
+   length = line->length + offset;
 
    EINA_LIST_FOREACH(line->tokens, item, token)
      {
 
-        _elm_code_widget_fill_line_token(cells, count, start, token->start, ELM_CODE_TOKEN_TYPE_DEFAULT);
+        _elm_code_widget_fill_line_token(cells, count, start, token->start + offset, ELM_CODE_TOKEN_TYPE_DEFAULT);
 
         // TODO handle a token starting before the previous finishes
-        _elm_code_widget_fill_line_token(cells, count, token->start, token->end, token->type);
+        _elm_code_widget_fill_line_token(cells, count, token->start + offset, token->end + offset, token->type);
 
-        start = token->end + 1;
+        start = token->end + offset + 1;
      }
 
    _elm_code_widget_fill_line_token(cells, count, start, length, ELM_CODE_TOKEN_TYPE_DEFAULT);
@@ -144,10 +134,11 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells, E
 {
    char *chr;
    unsigned int length, x;
-   int w;
+   int w, gutter, g;
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   gutter = elm_code_widget_text_left_gutter_width_get(widget);
 
    if (!_elm_code_widget_resize(widget))
      return;
@@ -160,11 +151,19 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells, E
    cells[0].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
    cells[0].bg = line->status;
 
+   for (g = 1; g < gutter; g++)
+     {
+// TODO figure what our actual line number is as a string! (of length g)
+        cells[g].codepoint = (g == gutter - 1) ? '|' : '_';
+        cells[g].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
+        cells[g].bg = ELM_CODE_STATUS_TYPE_DEFAULT;
+     }
+
    if (line->modified)
       chr = line->modified;
    else
       chr = (char *)line->content;
-   for (x = 1; x < (unsigned int) w && x <= length; x++)
+   for (x = gutter; x < (unsigned int) w && x < length + gutter; x++)
      {
         cells[x].codepoint = *chr;
         cells[x].bg = line->status;
@@ -177,11 +176,11 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells, E
         cells[x].bg = line->status;
      }
 
-   _elm_code_widget_fill_line_tokens(cells, w, line);
+   _elm_code_widget_fill_line_tokens(widget, cells, w, line);
    if (pd->editable && pd->focussed && pd->cursor_line == line->number)
      {
-        if (pd->cursor_col < (unsigned int) w)
-          cells[pd->cursor_col].bg = ELM_CODE_TOKEN_TYPE_CURSOR;
+        if (pd->cursor_col + gutter - 1 < (unsigned int) w)
+          cells[pd->cursor_col + gutter - 1].bg = ELM_CODE_TOKEN_TYPE_CURSOR;
      }
 
    evas_object_textgrid_update_add(pd->grid, 0, line->number - 1, w, 1);
@@ -269,7 +268,7 @@ _elm_code_widget_clicked_editable_cb(Elm_Code_Widget *widget, Evas_Coord x, Evas
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    evas_object_textgrid_cell_size_get(pd->grid, &cw, &ch);
-   col = ((double) x / cw) + 2;
+   col = ((double) x / cw) - elm_code_widget_text_left_gutter_width_get(widget) + 1;
    row = ((double) y / ch) + 1;
 
    line = elm_code_file_line_get(pd->code->file, row);
@@ -277,8 +276,8 @@ _elm_code_widget_clicked_editable_cb(Elm_Code_Widget *widget, Evas_Coord x, Evas
      {
         pd->cursor_line = row;
 
-        if (col <= (unsigned int) line->length + 2)
-          pd->cursor_col = col - 2;
+        if (col <= (unsigned int) line->length + 1)
+          pd->cursor_col = col;
         else
           pd->cursor_col = line->length + 1;
      }
@@ -569,6 +568,18 @@ EOLIAN static Eina_Bool
 _elm_code_widget_editable_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->editable;
+}
+
+EOLIAN static void
+_elm_code_widget_line_numbers_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, Eina_Bool line_numbers)
+{
+   pd->show_line_numbers = line_numbers;
+}
+
+EOLIAN static Eina_Bool
+_elm_code_widget_line_numbers_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+{
+   return pd->show_line_numbers;
 }
 
 static void

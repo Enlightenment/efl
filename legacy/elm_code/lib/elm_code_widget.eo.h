@@ -63,8 +63,7 @@ EOAPI Evas_Font_Size  elm_code_widget_font_size_get(void);
  *
  * Set how this widget's scroller should respond to new lines being added.
  *
- * An x value of 0.0 will maintain the distance from the left edge, 1.0
- will ensure the rightmost edge (of the longest line) is respected
+ * An x value of 0.0 will maintain the distance from the left edge, 1.0 will ensure the rightmost edge (of the longest line) is respected
  * With 0.0 for y the view will keep it's position relative to the top whereas 1.0 will scroll downward as lines are added.
  *
  * @ingroup Layout
@@ -81,7 +80,7 @@ EOAPI void  elm_code_widget_gravity_set(double x, double y);
  *
  * @ingroup Layout
  *
- * @param[out] x The horizontal value of the scroller gravity, currently ignored
+ * @param[out] x The horizontal value of the scroller gravity - valid values are 0.0 and 1.0
  * @param[out] y The vertical gravity of the widget's scroller - valid values are 0.0 and 1.0
  *
  */
@@ -116,6 +115,30 @@ EOAPI void  elm_code_widget_editable_set(Eina_Bool editable);
  *
  */
 EOAPI Eina_Bool  elm_code_widget_editable_get(void);
+
+/**
+ *
+ * Set whether line numbers should be displayed in the left gutter.
+ *
+ * Passing EINA_TRUE will reserve a space for showing line numbers,
+ * EINA_FALSE will turn this off.
+ *
+ * @ingroup Features
+ *
+ * @param[in] line_numbers Whether or not line numbers (or their placeholder) should be shown
+ *
+ */
+EOAPI void  elm_code_widget_line_numbers_set(Eina_Bool line_numbers);
+
+/**
+ *
+ * Get the status of line number display for this widget.
+ *
+ * @ingroup Features
+ *
+ *
+ */
+EOAPI Eina_Bool  elm_code_widget_line_numbers_get(void);
 
 EOAPI extern const Eo_Event_Description _ELM_CODE_WIDGET_EVENT_LINE_CLICKED;
 
