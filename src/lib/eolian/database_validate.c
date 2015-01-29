@@ -128,8 +128,15 @@ _validate_expr(const Eolian_Expression *expr, const Eolian_Type *tp,
                Eolian_Expression_Mask msk)
 {
    Eolian_Value val;
+   /* TODO: enable later, for now we can't (unfinished interfaces */
    if (tp)
-      val = eolian_expression_eval_type(expr, tp);
+     {
+#if 0
+        val = eolian_expression_eval_type(expr, tp);
+#else
+        return EINA_TRUE;
+#endif
+     }
    else
       val = eolian_expression_eval(expr, msk);
    return (val.type != EOLIAN_EXPR_UNKNOWN);

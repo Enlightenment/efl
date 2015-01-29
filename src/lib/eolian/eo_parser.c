@@ -316,6 +316,7 @@ parse_expr_simple(Eo_Lexer *ls)
    if (unop >= 0)
      {
         int line = ls->line_number, col = ls->column;
+        eo_lexer_get(ls);
         Eolian_Expression *exp = parse_expr_bin(ls, UNARY_PRECEDENCE);
         pop_expr(ls);
         expr = push_expr(ls);
