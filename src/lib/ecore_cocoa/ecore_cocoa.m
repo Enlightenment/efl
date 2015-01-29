@@ -150,15 +150,26 @@ ecore_cocoa_feed_events(void *anEvent)
       {
          if (_has_ecore_cocoa_window(event))
            {
-              Ecore_Event_Mouse_Button * ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
-              if (!ev) return pass;
-
               EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
               NSView *view = [window contentView];
               NSPoint pt = [event locationInWindow];
 
+              int w = [view frame].size.width;
+              int h = [view frame].size.height;
+              int x = pt.x;
+              int y = h - pt.y;
+
+              if (y <= 0 || x <= 0 || y > h || x > w)
+                {
+                   pass = EINA_TRUE;
+                   break;
+                }
+
+              Ecore_Event_Mouse_Button * ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
+              if (!ev) return pass;
+
               ev->x = pt.x;
-              ev->y = [view frame].size.height - pt.y;
+              ev->y = y;
               ev->root.x = ev->x;
               ev->root.y = ev->y;
               ev->timestamp = time;
@@ -196,8 +207,6 @@ ecore_cocoa_feed_events(void *anEvent)
       case NSRightMouseUp:
       case NSOtherMouseUp:
       {
-         Ecore_Event_Mouse_Button * ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
-         if (!ev) return pass;
 
          if (_has_ecore_cocoa_window(event))
            {
@@ -205,8 +214,22 @@ ecore_cocoa_feed_events(void *anEvent)
               NSView *view = [window contentView];
               NSPoint pt = [event locationInWindow];
 
+              int w = [view frame].size.width;
+              int h = [view frame].size.height;
+              int x = pt.x;
+              int y = h - pt.y;
+              
+              if (y <= 0 || x <= 0 || y > h || x > w)
+                {
+                   pass = EINA_TRUE;
+                   break;
+                }
+
+              Ecore_Event_Mouse_Button * ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
+              if (!ev) return pass;
+
               ev->x = pt.x;
-              ev->y = [view frame].size.height - pt.y;
+              ev->y = y;
               ev->root.x = ev->x;
               ev->root.y = ev->y;
               ev->timestamp = time;
