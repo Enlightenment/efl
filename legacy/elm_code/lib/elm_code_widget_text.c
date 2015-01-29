@@ -17,7 +17,7 @@ elm_code_widget_text_line_number_width_get(Elm_Code_Widget *widget)
    if (max < 1)
      max = 1;
 
-   return ceil(log10(max));
+   return floor(log10(max)) + 1;
 }
 
 EAPI int

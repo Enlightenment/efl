@@ -132,7 +132,7 @@ _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
 static void
 _elm_code_widget_fill_line(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells, Elm_Code_Line *line)
 {
-   char *chr;
+   char *chr, *number;
    unsigned int length, x;
    int w, gutter, g;
    Elm_Code_Widget_Data *pd;
@@ -151,12 +151,19 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells, E
    cells[0].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
    cells[0].bg = line->status;
 
-   for (g = 1; g < gutter; g++)
+   if (pd->show_line_numbers)
      {
-// TODO figure what our actual line number is as a string! (of length g)
-        cells[g].codepoint = (g == gutter - 1) ? '|' : '_';
-        cells[g].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
-        cells[g].bg = ELM_CODE_STATUS_TYPE_DEFAULT;
+        number = malloc(sizeof(char) * gutter);
+        snprintf(number, gutter, "%d", line->number);
+
+        for (g = 1; g < gutter; g++)
+          {
+// TODO style this properly
+             cells[g].codepoint = (g == gutter - 1) ? '|' : *(number + g - 1);
+             cells[g].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
+             cells[g].bg = ELM_CODE_STATUS_TYPE_DEFAULT;
+          }
+        free(number);
      }
 
    if (line->modified)
