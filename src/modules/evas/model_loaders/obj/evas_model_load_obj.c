@@ -12,19 +12,19 @@
 #define ARRAY_2D(name, x, y, count_y) (*(name + x * count_y + y))
 
 /* read 3 float values in string and put it in array */
-#define PUT_DATA_TO_ARRAY(array_name, name)                         \
-        sscanf (current,"%f %f %f",                         \
+#define PUT_DATA_TO_ARRAY(array_name, name)                                      \
+        sscanf (current,"%f %f %f",                                              \
         &ARRAY_2D(_##array_name##_obj, counts.current_##name##_counter, 0, 3),   \
         &ARRAY_2D(_##array_name##_obj, counts.current_##name##_counter, 1, 3),   \
         &ARRAY_2D(_##array_name##_obj, counts.current_##name##_counter, 2, 3));  \
      counts.current_##name##_counter++;
 
 #define AFTER_NEXT_SPACE(pointer)\
-        do\
-          {\
-             pointer++;\
-             i++;\
-          }\
+        do                       \
+          {                      \
+             pointer++;          \
+             i++;                \
+          }                      \
         while (*pointer != ' ');
 
 /* Structures for reading data from file. */
@@ -188,14 +188,44 @@ _count_elements(char *map)//count elements of mesh in .obj
 void
 _read_point(int *triangles,
             int num,
-            OBJ_Counts counts EINA_UNUSED,
+            OBJ_Counts counts,
             int num_cur,
             char *pointer)
 {
-   sscanf(pointer, "%i/%i/%i",
-          &ARRAY_2D(triangles, num_cur, (num - 1) * 3, 9),
-          &ARRAY_2D(triangles, num_cur, (num - 1) * 3 + 1, 9),
-          &ARRAY_2D(triangles, num_cur, (num - 1) * 3 + 2, 9));
+   if (counts.existence_of_normal)
+     {
+        if (counts.existence_of_tex_point)
+          {
+             sscanf(pointer, "%i/%i/%i",
+                    &ARRAY_2D(triangles, num_cur, (num - 1) * 3, 9),
+                    &ARRAY_2D(triangles, num_cur, (num - 1) * 3 + 1, 9),
+                    &ARRAY_2D(triangles, num_cur, (num - 1) * 3 + 2, 9));
+          }
+        else
+          {
+             sscanf(pointer, "%i//%i",
+                    &ARRAY_2D(triangles, num_cur, (num - 1) * 3, 9),
+                    &ARRAY_2D(triangles, num_cur, (num - 1) * 3 + 2, 9));
+             ARRAY_2D(triangles, num_cur, (num - 1) * 3 + 1, 9) = 1;
+          }
+     }
+   else
+     {
+        if (counts.existence_of_tex_point)
+          {
+             sscanf(pointer, "%i/%i",
+                    &ARRAY_2D(triangles, num_cur, (num - 1) * 3, 9),
+                    &ARRAY_2D(triangles, num_cur, (num - 1) * 3 + 1, 9));
+             ARRAY_2D(triangles, num_cur, (num - 1) * 3 + 2, 9) = 1;
+          }
+        else
+          {
+             sscanf(pointer, "%i",
+                    &ARRAY_2D(triangles, num_cur, (num - 1) * 3, 9));
+             ARRAY_2D(triangles, num_cur, (num - 1) * 3 + 1, 9) = 1;
+             ARRAY_2D(triangles, num_cur, (num - 1) * 3 + 2, 9) = 1;
+          }
+     }
 }
 
 void
@@ -240,7 +270,12 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, Eina_File *file)
 
    current = map;
    i = 0;
-
+   ARRAY_2D(_tex_coords_obj, 0, 0, 3) = 0.0;
+   ARRAY_2D(_tex_coords_obj, 0, 1, 3) = 0.0;
+   ARRAY_2D(_tex_coords_obj, 0, 2, 3) = 0.0;
+   ARRAY_2D(_normales_obj, 0, 0, 3) = 1.0;
+   ARRAY_2D(_normales_obj, 0, 1, 3) = 0.0;
+   ARRAY_2D(_normales_obj, 0, 2, 3) = 0.0;
    /* put data to arrays */
    for (; *current != '\00'; i++)
      {
