@@ -25,6 +25,8 @@ static int _ecore_cocoa_init_count = 0;
 
 static int old_flags;
 
+static int _ecore_cocoa_log_domain = -1;
+
 EAPI int
 ecore_cocoa_init(void)
 {
@@ -36,6 +38,13 @@ ecore_cocoa_init(void)
 
    if (!ecore_event_init())
      return --_ecore_cocoa_init_count;
+
+   _ecore_cocoa_log_domain = eina_log_domain_register("ecore_cocoa", ECORE_DEFAULT_LOG_COLOR);
+   if(_ecore_cocoa_log_domain < 0)
+     {
+        EINA_LOG_ERR("Unable to create a log domain for ecore_cocoa.");
+        return 0;
+     }
 
    ECORE_COCOA_EVENT_GOT_FOCUS  = ecore_event_type_new();
    ECORE_COCOA_EVENT_LOST_FOCUS = ecore_event_type_new();
@@ -64,6 +73,7 @@ ecore_cocoa_shutdown(void)
    if (--_ecore_cocoa_init_count != 0)
      return _ecore_cocoa_init_count;
 
+   eina_log_domain_unregister(_ecore_cocoa_log_domain);
    ecore_event_shutdown();
 
    return _ecore_cocoa_init_count;
@@ -80,7 +90,7 @@ _ecore_cocoa_event_modifiers(unsigned int mod)
    if(mod & NSCommandKeyMask) modifiers |= ECORE_EVENT_MODIFIER_WIN;
    if(mod & NSNumericPadKeyMask) modifiers |= ECORE_EVENT_LOCK_NUM;
 
-   printf("key modifiers: %d, %d\n", mod, modifiers);
+   DBG("key modifiers: %d, %d\n", mod, modifiers);
    return modifiers;
 }
 
@@ -286,7 +296,7 @@ ecore_cocoa_feed_events(void *anEvent)
            {
               if (keystable[i].code == [keychar characterAtIndex:0])
               {
-                 printf("Key pressed : %s\n", keystable[i].name);
+                 DBG("Key pressed : %s\n", keystable[i].name);
                  ev->keyname = keystable[i].name;
                  ev->key = keystable[i].name;
                  ev->string = keystable[i].compose;
@@ -311,7 +321,7 @@ ecore_cocoa_feed_events(void *anEvent)
          EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
          NSString *keychar = [event characters];
 
-         printf("Key Up\n");
+         DBG("Key Up\n");
 
          ev = calloc(1, sizeof (Ecore_Event_Key));
          if (!ev) return pass;
@@ -432,7 +442,7 @@ ecore_cocoa_feed_events(void *anEvent)
       }
       case NSScrollWheel:
       {
-         printf("Scroll Wheel\n");
+         DBG("Scroll Wheel\n");
          break;
       }
       default:

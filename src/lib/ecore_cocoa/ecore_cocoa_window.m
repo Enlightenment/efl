@@ -4,6 +4,7 @@
 
 #include <Ecore.h>
 #include <Ecore_Cocoa.h>
+#include "ecore_cocoa_private.h"
 #import "ecore_cocoa_window.h"
 
 @implementation EcoreCocoaWindow
@@ -58,8 +59,7 @@
    event = malloc(sizeof(Ecore_Cocoa_Event_Video_Resize));
    if (event == NULL)
      {
-        // FIXME Use Eina_Log
-        printf("Failed to allocate Ecore_Cocoa_Event_Video_Resize\n");
+        DBG("Failed to allocate Ecore_Cocoa_Event_Video_Resize\n");
         return;
      }
    event->w = size.width;
@@ -77,7 +77,7 @@
   e = malloc(sizeof(Ecore_Cocoa_Event_Window));
   if (!e)
     {
-      printf("GOT_FOCUS: Failed to allocate Ecore_Cocoa_Event_Window\n");
+      DBG("GOT_FOCUS: Failed to allocate Ecore_Cocoa_Event_Window\n");
       return;
     }
   e->wid = [notification object];
@@ -91,7 +91,7 @@
   e = malloc(sizeof(Ecore_Cocoa_Event_Window));
   if (!e)
     {
-      printf("LOST_FOCUS: Failed to allocate Ecore_Cocoa_Event_Window\n");
+      DBG("LOST_FOCUS: Failed to allocate Ecore_Cocoa_Event_Window\n");
       return;
     }
   e->wid = [notification object];
@@ -222,7 +222,7 @@ ecore_cocoa_window_show(Ecore_Cocoa_Window *window)
 {
   if (!window || [window->window isVisible])
     {
-      printf("Window(%p) is not visible\n", window->window);
+      DBG("Window(%p) is not visible\n", window->window);
       return;
     }
 
@@ -276,5 +276,8 @@ Ecore_Cocoa_Window_Id ecore_cocoa_window_get_window_id(Ecore_Cocoa_Window *windo
 {
   if (!window)
     return 0;
+
+  DBG("Return : %p", window->window);
+
   return window->window;
 }
