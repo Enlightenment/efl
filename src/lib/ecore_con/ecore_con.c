@@ -2147,7 +2147,11 @@ _ecore_con_cl_read(Ecore_Con_Server *obj)
         num = recv(svr->fd, (char *)buf, sizeof(buf), 0);
 
         /* 0 is not a valid return value for a tcp socket */
+#ifdef _WIN32
+        if ((num > 0) || ((num < 0) && (WSAGetLastError() == WSAEWOULDBLOCK)))
+#else
         if ((num > 0) || ((num < 0) && (errno == EAGAIN)))
+#endif
           lost_server = EINA_FALSE;
         else if (num < 0)
           ecore_con_event_server_error(obj, strerror(errno));
