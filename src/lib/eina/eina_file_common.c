@@ -88,7 +88,7 @@ _eina_file_escape(char *path, size_t len)
 		    char tmp;
 
 		    len -= p + 3 - q;
-		    memmove(q, p + 3, len - (q - result));
+		    memmove(q, p + 3, len - (q - result) - 1);
 		    result[len] = '\0';
 		    p = q;
 
