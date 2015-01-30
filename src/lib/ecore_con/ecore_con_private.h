@@ -96,7 +96,11 @@ typedef enum Ecore_Con_Proxy_State
 
 struct _Ecore_Con_Client_Data
 {
+#ifdef _WIN32
+   SOCKET fd;
+#else
    int fd;
+#endif
    Ecore_Con_Server *host_server;
    void *data;
    Ecore_Fd_Handler *fd_handler;
@@ -126,7 +130,11 @@ typedef struct _Ecore_Con_Client_Data Ecore_Con_Client_Data;
 
 struct _Ecore_Con_Server_Data
 {
+#ifdef _WIN32
+   SOCKET fd;
+#else
    int fd;
+#endif
    Ecore_Con_Type type;
    char *name;
    int port;
