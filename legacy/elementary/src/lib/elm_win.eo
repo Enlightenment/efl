@@ -1139,7 +1139,7 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             @return The type of a window object. If the object is not window object, return #ELM_WIN_UNKNOWN.
 
             @ingroup Win */
-            return: Elm_Win_Type;
+            return: Elm_Win_Type(-1);
          }
       }
       noblank {
