@@ -1610,10 +1610,10 @@ _ecore_con_cb_tcp_listen(void *data,
           }
      }
 
-   if (bind(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) < 0)
+   if (bind(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) != 0)
      goto error;
 
-   if (listen(svr->fd, 4096) < 0) goto error;
+   if (listen(svr->fd, 4096) != 0) goto error;
 
 #ifdef HAVE_SYSTEMD
 fd_ready:
