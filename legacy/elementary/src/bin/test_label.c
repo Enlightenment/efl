@@ -137,11 +137,11 @@ _label_resize_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj,
 }
 
 void
-test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *gd, *rect, *lb, *lb1, *lb2, *rd, *rdg, *sl;
 
-   win = elm_win_util_standard_add("label2", "Label 2");
+   win = elm_win_util_standard_add("label-slide", "Label Slide");
    elm_win_autodel_set(win, EINA_TRUE);
 
    gd = elm_grid_add(win);
@@ -290,11 +290,11 @@ test_label2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 }
 
 void
-test_label3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_label_wrap(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bx, *lb;
 
-   win = elm_win_util_standard_add("label", "Label");
+   win = elm_win_util_standard_add("label-wrap", "Label wrap");
    elm_win_autodel_set(win, EINA_TRUE);
    bx = elm_box_add(win);
 
