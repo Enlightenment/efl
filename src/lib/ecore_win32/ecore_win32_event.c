@@ -1334,6 +1334,9 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
         }
      }
 
+   if (!keyname || !key)
+     return NULL;
+
    e = (Ecore_Event_Key *)calloc(1, sizeof(Ecore_Event_Key) +
                                  strlen(keyname) + 1 +
                                  strlen(key) + 1 +
