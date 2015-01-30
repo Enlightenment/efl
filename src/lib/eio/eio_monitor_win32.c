@@ -72,7 +72,7 @@ _eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh EINA_UNUSED)
 
    w = (Eio_Monitor_Win32_Watcher *)data;
 
-   if (!GetOverlappedResult(w->handle, &w->overlapped, &buf_length, TRUE))
+   if (!GetOverlappedResult(w->handle, &w->overlapped, &buf_length, FALSE))
      return ECORE_CALLBACK_RENEW;
 
    fni = (PFILE_NOTIFY_INFORMATION)w->buffer;
