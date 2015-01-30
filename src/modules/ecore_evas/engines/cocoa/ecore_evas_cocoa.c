@@ -27,7 +27,19 @@ static Ecore_Idle_Enterer       *ecore_evas_idle_enterer = NULL;
 
 //static const char               *ecore_evas_cocoa_default = "EFL Cocoa";
 
+static int
+_ecore_evas_render(Ecore_Evas *ee)
+{
+   Eina_List *updates;
 
+   updates = evas_render_updates(ee->evas);
+   if (updates)
+     {
+        evas_render_updates_free(updates);
+        _ecore_evas_idle_timeout_update(ee);
+     }
+  return updates ? 1 : 0;
+}
 
 static int
 _ecore_evas_cocoa_render(Ecore_Evas *ee)
@@ -48,29 +60,20 @@ _ecore_evas_cocoa_render(Ecore_Evas *ee)
      }
 
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
-   updates = evas_render_updates(ee->evas);
+
    if (ee->prop.avoid_damage)
      {
-        updates = evas_render_updates(ee->evas);
-        if (updates) evas_render_updates_free(updates);
+        rend = _ecore_evas_render(ee);
      }
    else if ((ee->visible) ||
             ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
             ((ee->should_be_visible) && (ee->prop.override)))
      {
-        if (ee->shaped)
-          {
-             updates = evas_render_updates(ee->evas);
-             if (updates) evas_render_updates_free(updates);
-          }
-        else
-          {
-             updates = evas_render_updates(ee->evas);
-             if (updates) evas_render_updates_free(updates);
-          }
+        rend |= _ecore_evas_render(ee);
      }
    else
      evas_norender(ee->evas);
+
    if (updates) rend = 1;
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 
@@ -85,7 +88,7 @@ _ecore_evas_cocoa_render(Ecore_Evas *ee)
         if ((t - t0) > 1.0)
           {
              td = t - t0;
-             printf("FPS: %3.3f\n", (double)frames / td);
+             DBG("FPS: %3.3f\n", (double)frames / td);
              frames = 0;
              t0 = t;
           }
@@ -278,7 +281,7 @@ _ecore_evas_cocoa_shutdown(void)
          _ecore_evas_free(ee);
 
       for (i = 0; i < sizeof (ecore_evas_event_handlers) / sizeof (Ecore_Event_Handler*); i++)
-	ecore_event_handler_del(ecore_evas_event_handlers[i]);
+        ecore_event_handler_del(ecore_evas_event_handlers[i]);
       ecore_event_evas_shutdown();
       ecore_idle_enterer_del(ecore_evas_idle_enterer);
       ecore_evas_idle_enterer = NULL;
@@ -423,8 +426,8 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
   evas_pointer_output_xy_get(ee->evas, &x, &y);
   evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
   evas_object_move(ee->prop.cursor.object,
-		   x - ee->prop.cursor.hot.x,
-		   y - ee->prop.cursor.hot.y);
+                   x - ee->prop.cursor.hot.x,
+                   y - ee->prop.cursor.hot.y);
 
   evas_object_pass_events_set(ee->prop.cursor.object, 1);
 
@@ -464,7 +467,7 @@ _ecore_evas_engine_cocoa_init(Ecore_Evas *ee)
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
              return 0;
           }
-	ecore_cocoa_window_view_set(einfo->window, einfo->view);
+        ecore_cocoa_window_view_set(einfo->window, einfo->view);
      }
    else
      {
