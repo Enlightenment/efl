@@ -2254,9 +2254,9 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
 
         WSAEnumNetworkEvents(sockets[result], objects[result], &network_event);
 
-        if ((network_event.lNetworkEvents & FD_READ) && readfds)
+        if ((network_event.lNetworkEvents & (FD_READ | FD_CONNECT | FD_ACCEPT)) && readfds)
           FD_SET(sockets[result], readfds);
-        if ((network_event.lNetworkEvents & FD_WRITE) && writefds)
+        if ((network_event.lNetworkEvents & (FD_WRITE | FD_CLOSE)) && writefds)
           FD_SET(sockets[result], writefds);
         if ((network_event.lNetworkEvents & FD_OOB) && exceptfds)
           FD_SET(sockets[result], exceptfds);
