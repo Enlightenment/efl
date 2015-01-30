@@ -23,6 +23,8 @@
 #include "eina_types.h"
 #include "eina_error.h"
 
+#include <stdint.h>
+
 /**
  * @addtogroup Eina_Tools_Group Tools
  *
@@ -46,7 +48,7 @@
  * @typedef Eina_Thread
  * Type for a generic thread.
  */
-typedef unsigned long int Eina_Thread;
+typedef uintptr_t Eina_Thread;
 
 /**
  * @typedef Eina_Thread_Cb
