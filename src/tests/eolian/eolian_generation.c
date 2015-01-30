@@ -72,9 +72,15 @@ _eolian_gen_execute(const char *eo_filename, const char *options, const char *ou
 
    if (getenv("EFL_RUN_IN_TREE"))
      {
+#ifdef _WIN32
+        snprintf(eolian_gen_path, sizeof(eolian_gen_path),
+              "%s/src/bin/eolian/eolian_gen.exe",
+              PACKAGE_BUILD_DIR);
+#else
         snprintf(eolian_gen_path, sizeof(eolian_gen_path),
               "%s/src/bin/eolian/eolian_gen",
               PACKAGE_BUILD_DIR);
+#endif
      }
    if (eolian_gen_path[0] == '\0')
       return -1;
