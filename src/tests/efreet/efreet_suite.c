@@ -65,7 +65,9 @@ efreet_suite_build(int argc, const char **argv)
 	etc[i].build(tc);
 
 	suite_add_tcase(s, tc);
+#ifndef _WIN32
 	tcase_set_timeout(tc, 0);
+#endif
      }
 
    return s;

@@ -60,7 +60,9 @@ ecore_build_suite(int argc, const char **argv)
            continue;
 
         tc = tcase_create(etc[i].test_case);
+#ifndef _WIN32
         tcase_set_timeout(tc, 0);
+#endif
 
         etc[i].build(tc);
         suite_add_tcase(s, tc);
