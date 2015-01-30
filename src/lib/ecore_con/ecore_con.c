@@ -2271,9 +2271,9 @@ _ecore_con_svr_udp_handler(void *data,
    int num;
    Ecore_Con_Server *svr_obj = data;
    Ecore_Con_Client *obj = NULL;
-+#ifdef _WIN32
-+   u_long mode = 1;
-+#endif
+#ifdef _WIN32
+   u_long mode = 1;
+#endif
 
    Ecore_Con_Server_Data *svr = eo_data_scope_get(svr_obj, ECORE_CON_SERVER_CLASS);
    if (svr->delete_me)
@@ -2484,9 +2484,9 @@ _ecore_con_server_flush(Ecore_Con_Server *obj)
                               FORMAT_MESSAGE_FROM_SYSTEM     |
                               FORMAT_MESSAGE_FROM_STRING,
                               NULL, WSAGetLastError(), (DWORD)NULL, s, 0, NULL);
-                ecore_con_event_server_error(svr, (char *)s);
+                ecore_con_event_server_error(obj, (char *)s);
                 free(s);
-                _ecore_con_server_kill(svr);
+                _ecore_con_server_kill(obj);
              }
           }
      }
@@ -2495,8 +2495,8 @@ _ecore_con_server_flush(Ecore_Con_Server *obj)
      {
          if ((errno != EAGAIN) && (errno != EINTR))
            {
-              ecore_con_event_server_error(svr, strerror(errno));
-              _ecore_con_server_kill(svr);
+              ecore_con_event_server_error(obj, strerror(errno));
+              _ecore_con_server_kill(obj);
            }
          return;
      }
@@ -2577,7 +2577,7 @@ _ecore_con_client_flush(Ecore_Con_Client *obj)
         if (num <= 0) return;
         Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
         if (!(host_server->type & ECORE_CON_SSL) && (!cl->upgrade))
-          count = send(cl->fd, eina_binbuf_string_get(cl->buf) + cl->buf_offset, num, 0);
+          count = send(cl->fd, (char *)eina_binbuf_string_get(cl->buf) + cl->buf_offset, num, 0);
         else
           count = ecore_con_ssl_client_write(obj, eina_binbuf_string_get(cl->buf) + cl->buf_offset, num);
      }
