@@ -146,6 +146,9 @@ _string_check_idle_enterer_cb(void *data)
    Evas_Coord ox, ow;
    char buf[1024];
 
+   if (!sd)
+     return ECORE_CALLBACK_CANCEL;
+
    evas_object_geometry_get(obj, &ox, NULL, &ow, NULL);
 
    if (ow <= 0)
