@@ -2137,7 +2137,8 @@ _ecore_con_cl_read(Ecore_Con_Server *obj)
    if (svr->ecs_state || !(svr->type & ECORE_CON_SSL))
      {
         errno = 0;
-        num = read(svr->fd, buf, sizeof(buf));
+        num = recv(svr->fd, (char *)buf, sizeof(buf), 0);
+
         /* 0 is not a valid return value for a tcp socket */
         if ((num > 0) || ((num < 0) && (errno == EAGAIN)))
           lost_server = EINA_FALSE;
@@ -2189,7 +2190,7 @@ _ecore_con_cl_handler(void *data,
           {
              char buf[READBUFSIZ];
              ssize_t len;
-             len = recv(svr->fd, buf, sizeof(buf), MSG_DONTWAIT | MSG_PEEK);
+             len = recv(svr->fd, (char *)buf, sizeof(buf), MSG_DONTWAIT | MSG_PEEK);
              DBG("%zu bytes in buffer", len);
           }
 #endif
@@ -2246,7 +2247,7 @@ _ecore_con_cl_udp_handler(void *data,
         return ECORE_CALLBACK_RENEW;
      }
 
-   num = read(svr->fd, buf, READBUFSIZ);
+   num = recv(svr->fd, (char *)buf, READBUFSIZ, 0);
 
    if ((!svr->delete_me) && (num > 0))
      ecore_con_event_server_data(obj, buf, num, EINA_TRUE);
@@ -2353,7 +2354,8 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *obj)
    Ecore_Con_Server_Data *host_server = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
    if (!(host_server->type & ECORE_CON_SSL) && (!cl->upgrade))
      {
-        num = read(cl->fd, buf, sizeof(buf));
+        num = recv(cl->fd, (char *)buf, sizeof(buf), 0);
+
         /* 0 is not a valid return value for a tcp socket */
         if ((num > 0) || ((num < 0) && ((errno == EAGAIN) || (errno == EINTR))))
           lost_client = EINA_FALSE;
