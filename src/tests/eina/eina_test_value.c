@@ -2300,6 +2300,7 @@ START_TEST(eina_value_test_timeval)
 {
    Eina_Value *value, other;
    struct timeval itv, otv;
+   time_t t;
    char c;
    char *str;
    char buf[64];
@@ -2335,7 +2336,8 @@ START_TEST(eina_value_test_timeval)
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
 
-   strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", localtime(&(itv.tv_sec)));
+   t = itv.tv_sec;
+   strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", localtime(&(t)));
    ck_assert_str_eq(str, buf);
    free(str);
 

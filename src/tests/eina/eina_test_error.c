@@ -94,17 +94,21 @@ START_TEST(eina_error_test_find)
 
    eina_init();
 
-   test = eina_error_msg_register(TEST_TEXT);
+   /* Make sure the value isn't already there. */
+   r = eina_error_find(TEST_TEXT TEST_TEXT);
+   ck_assert_int_eq(r, 0);
+
+   test = eina_error_msg_register(TEST_TEXT TEST_TEXT);
    ck_assert_int_ne(test, 0);
 
    str = eina_error_msg_get(test);
    fail_unless(str != NULL);
-   ck_assert_str_eq(str, TEST_TEXT);
+   ck_assert_str_eq(str, TEST_TEXT TEST_TEXT);
 
    eina_error_set(test);
    fail_if(eina_error_get() != test);
 
-   r = eina_error_find(TEST_TEXT);
+   r = eina_error_find(TEST_TEXT TEST_TEXT);
    ck_assert_int_eq(r, test);
 
    eina_shutdown();

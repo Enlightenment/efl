@@ -110,6 +110,8 @@ END_TEST
 void
 eina_test_barrier(TCase *tc)
 {
+#ifndef _WIN32
    tcase_set_timeout(tc, 6);
+#endif
    tcase_add_test(tc, eina_barrier_test_simple);
 }
