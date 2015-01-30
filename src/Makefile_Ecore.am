@@ -171,7 +171,6 @@ tests/ecore/ecore_suite.c \
 tests/ecore/ecore_test_ecore.c \
 tests/ecore/ecore_test_ecore_con.c \
 tests/ecore/ecore_test_ecore_con_url.c \
-tests/ecore/ecore_test_ecore_x.c \
 tests/ecore/ecore_test_ecore_imf.c \
 tests/ecore/ecore_test_timer.c \
 tests/ecore/ecore_test_ecore_evas.c \
@@ -180,6 +179,10 @@ tests/ecore/ecore_test_ecore_thread_eina_thread_queue.c \
 tests/ecore/ecore_test_ecore_input.c \
 tests/ecore/ecore_test_ecore_file.c \
 tests/ecore/ecore_suite.h
+
+if HAVE_ECORE_X
+tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_x.c
+endif
 
 tests_ecore_ecore_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore\" \

@@ -21,7 +21,9 @@ static const Ecore_Test_Case etc[] = {
   { "Ecore", ecore_test_ecore },
   { "Ecore_Con", ecore_test_ecore_con },
   { "Ecore_Con_Url", ecore_test_ecore_con_url },
+#if HAVE_ECORE_X
   { "Ecore_X", ecore_test_ecore_x },
+#endif
   { "Ecore_Imf", ecore_test_ecore_imf },
 #if HAVE_ECORE_AUDIO
   { "Ecore Audio", ecore_test_ecore_audio},
