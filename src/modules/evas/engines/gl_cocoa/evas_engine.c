@@ -78,8 +78,6 @@ eng_info_free(Evas *e EINA_UNUSED, void *info)
 {
    Evas_Engine_Info_GL_Cocoa *in;
 
-   DBG("Info %p", info);
-   eina_log_domain_unregister(_evas_engine_gl_cocoa_log_dom);
    in = (Evas_Engine_Info_GL_Cocoa *)info;
    free(in);
 }

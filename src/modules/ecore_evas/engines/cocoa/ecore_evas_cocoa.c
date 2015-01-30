@@ -20,7 +20,7 @@ static int                      _ecore_evas_init_count = 0;
 // FIXME: In case we have a lot of windows per app, we should probably use another container
 // like a rbtree or a dictionnary-based container
 static Eina_List                *ecore_evases = NULL;
-static Ecore_Event_Handler      *ecore_evas_event_handlers[4] = {
+static Ecore_Event_Handler      *ecore_evas_event_handlers[5] = {
   NULL, NULL, NULL, NULL
 };
 static Ecore_Idle_Enterer       *ecore_evas_idle_enterer = NULL;
@@ -204,6 +204,27 @@ _ecore_evas_cocoa_event_video_expose(void *data EINA_UNUSED, int type EINA_UNUSE
   return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_Bool
+_ecore_evas_cocoa_event_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Cocoa_Event_Window     *e = event;
+   Ecore_Evas                   *ee;
+
+   DBG("Window destroy");
+
+   ee = _ecore_evas_cocoa_match(e->wid);
+   if (!ee)
+     {
+        WRN("%s: Unregistered Ecore_Evas for window Id %p\n", __func__, e->wid);
+        return ECORE_CALLBACK_PASS_ON;
+     }
+
+   if (ee->func.fn_delete_request) ee->func.fn_delete_request(ee);
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+
 //static int
 //_ecore_evas_idle_enter(void *data EINA_UNUSED)
 //{
@@ -238,6 +259,7 @@ _ecore_evas_cocoa_init(void)
   ecore_evas_event_handlers[1] = ecore_event_handler_add(ECORE_COCOA_EVENT_LOST_FOCUS, _ecore_evas_cocoa_event_lost_focus, NULL);
   ecore_evas_event_handlers[2] = ecore_event_handler_add(ECORE_COCOA_EVENT_RESIZE, _ecore_evas_cocoa_event_video_resize, NULL);
   ecore_evas_event_handlers[3] = ecore_event_handler_add(ECORE_COCOA_EVENT_EXPOSE, _ecore_evas_cocoa_event_video_expose, NULL);
+  ecore_evas_event_handlers[4] = ecore_event_handler_add(ECORE_COCOA_EVENT_WINDOW_DESTROY, _ecore_evas_cocoa_event_window_destroy, NULL);
 
   return _ecore_evas_init_count;
 }
@@ -462,13 +484,20 @@ _ecore_evas_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y
    printf("screen geometry_get  %dx%d\n", *w, *h);
 }
 
+
+static void
+_ecore_evas_callback_delete_request_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
+{
+   ee->func.fn_delete_request = func;
+}
+
 static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
   {
     _ecore_evas_cocoa_free,
     NULL,
     NULL,
     NULL,
-    NULL,
+    _ecore_evas_callback_delete_request_set,
     NULL,
     NULL,
     NULL,

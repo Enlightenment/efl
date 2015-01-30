@@ -50,6 +50,17 @@
 - (void)windowWillClose:(NSNotification *) EINA_UNUSED notification
 {
    NSLog(@"window is going to be closed");
+   Ecore_Cocoa_Event_Window *event;
+
+   event = malloc(sizeof(Ecore_Cocoa_Event_Window));
+   if (event == NULL)
+     {
+	   // FIXME Use Eina_Log
+	   printf("Failed to allocate Ecore_Cocoa_Event_Window_destroy\n");
+	   return;
+     }
+   event->wid = [notification object];
+   ecore_event_add(ECORE_COCOA_EVENT_WINDOW_DESTROY, event, NULL, NULL);
 }
 
 - (void)windowDidResize:(NSNotification *) EINA_UNUSED notif
