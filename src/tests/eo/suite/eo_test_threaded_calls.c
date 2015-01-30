@@ -8,6 +8,7 @@
 #include "eo_suite.h"
 
 static Eina_Barrier barrier;
+static Eina_Barrier barrier0;
 static Eina_Spinlock locks[2];
 
 typedef struct
@@ -37,14 +38,14 @@ _try_swap_stack(Eo *obj EINA_UNUSED, void *class_data)
 
    if (pd->v == 0 )
      {
-        eina_spinlock_release(&locks[0]);
-        eina_spinlock_take(&locks[1]);
+        fail_if(EINA_LOCK_SUCCEED != eina_spinlock_release(&locks[0]));
+        fail_if(EINA_LOCK_SUCCEED != eina_spinlock_take(&locks[1]));
         eina_barrier_wait(&barrier);
      }
    else if (pd->v == 1 )
      {
         eina_barrier_wait(&barrier);
-        eina_spinlock_take(&locks[1]);
+        fail_if(EINA_LOCK_SUCCEED != eina_spinlock_take(&locks[1]));
      }
 }
 
@@ -82,14 +83,20 @@ _thread_job(void *data, Eina_Thread t EINA_UNUSED)
    Eo *obj;
    int v = (int) (uintptr_t) data;
 
-   if (v == 1)
-     eina_spinlock_take(&locks[0]);
+   if (v == 0) {
+     fail_if(EINA_LOCK_SUCCEED != eina_spinlock_take(&locks[0]));
+     eina_barrier_wait(&barrier0);
+   }
+   else {
+     eina_barrier_wait(&barrier0);
+     fail_if(EINA_LOCK_SUCCEED != eina_spinlock_take(&locks[0]));
+   }
 
    obj = eo_add(THREAD_TEST_CLASS, NULL, thread_test_constructor(v));
 
    eo_do(obj, thread_test_try_swap_stack(), v = thread_test_v_get());
 
-   eina_spinlock_release(&locks[1]);
+   fail_if(EINA_LOCK_SUCCEED != eina_spinlock_release(&locks[1]));
 
    eo_unref(obj);
 
@@ -105,8 +112,7 @@ START_TEST(eo_threaded_calls_test)
    fail_if(!eina_spinlock_new(&locks[0]));
    fail_if(!eina_spinlock_new(&locks[1]));
    fail_if(!eina_barrier_new(&barrier, 2));
-
-   eina_spinlock_take(&locks[0]);
+   fail_if(!eina_barrier_new(&barrier0, 2));
 
    fail_if(!eina_thread_create(&threads[0], EINA_THREAD_NORMAL, 0, _thread_job, (void *) (uintptr_t)0));
    fail_if(!eina_thread_create(&threads[1], EINA_THREAD_NORMAL, 0, _thread_job, (void *) (uintptr_t)1));
@@ -117,6 +123,7 @@ START_TEST(eo_threaded_calls_test)
    eina_spinlock_free(&locks[0]);
    eina_spinlock_free(&locks[1]);
    eina_barrier_free(&barrier);
+   eina_barrier_free(&barrier0);
 
    eo_shutdown();
 }
