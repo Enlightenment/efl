@@ -572,6 +572,9 @@ ecore_con_server_del(Ecore_Con_Server *obj)
    if (!svr || svr->delete_me)
      return NULL;
 
+#ifdef _WIN32
+   WSASendDisconnect(svr->fd, NULL);
+#endif
    _ecore_con_server_kill(obj);
    return svr->data;
 }
@@ -884,6 +887,10 @@ ecore_con_client_del(Ecore_Con_Client *obj)
    if (!obj) return NULL;
    Ecore_Con_Client_Data *cl = eo_data_scope_get(obj, ECORE_CON_CLIENT_CLASS);
    if (!cl) return NULL;
+
+#ifdef _WIN32
+   WSASendDisconnect(cl->fd, NULL);
+#endif
 
    _ecore_con_client_kill(obj);
    return cl->data;
