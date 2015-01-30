@@ -2173,6 +2173,8 @@ _ecore_main_win32_select(int             nfds EINA_UNUSED,
                network_event |= FD_OOB;
           }
 
+        network_event |= FD_CLOSE | FD_CONNECT | FD_ACCEPT;
+
         if (network_event)
           {
              event = WSACreateEvent();
