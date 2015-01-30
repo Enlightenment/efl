@@ -43,6 +43,26 @@ nl_langinfo(nl_item index)
         {
            return localeconv()->decimal_point;
         }
+      case D_T_FMT:
+        {
+           return "%a %d %b %Y %T %Z";
+        }
+      case D_FMT:
+        {
+           return "%m/%d/%Y";
+        }
+      case T_FMT:
+        {
+           return "%T";
+        }
+      case T_FMT_AMPM:
+        {
+           return "%r";
+        }
+      default:
+        {
+           return "%a %d %b %Y %T %Z";
+        }
      }
 
    return nothing;
