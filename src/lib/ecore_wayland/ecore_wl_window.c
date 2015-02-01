@@ -130,7 +130,11 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
         if ((input->pointer_focus) && (input->pointer_focus == win))
           input->pointer_focus = NULL;
         if ((input->keyboard_focus) && (input->keyboard_focus == win))
-          input->keyboard_focus = NULL;
+          {
+             input->keyboard_focus = NULL;
+             ecore_timer_del(input->repeat.tmr);
+             input->repeat.tmr = NULL;
+          }
      }
 
    if (win->anim_callback) wl_callback_destroy(win->anim_callback);
