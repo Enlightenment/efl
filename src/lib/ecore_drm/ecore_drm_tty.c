@@ -152,7 +152,14 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
         if ((env = getenv("ECORE_DRM_TTY")))
           snprintf(tty, sizeof(tty), "%s", env);
         else
-          dev->tty.fd = dup(STDIN_FILENO);
+          {
+             dev->tty.fd = dup(STDIN_FILENO);
+             if (dev->tty.fd < 0)
+               {
+                  ERR("Could not dup stdin: %m");
+                  return EINA_FALSE;
+               }
+          }
      }
    else
      snprintf(tty, sizeof(tty), "%s", name);
