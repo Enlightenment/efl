@@ -76,7 +76,7 @@ _ecore_drm_logind_vt_setup(Ecore_Drm_Device *dev)
      }
 
    vtmode.mode = VT_PROCESS;
-   vtmode.waitv =0 ;
+   vtmode.waitv = 0;
    vtmode.relsig = SIGUSR1;
    vtmode.acqsig = SIGUSR2;
 
