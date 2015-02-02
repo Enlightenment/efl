@@ -3893,17 +3893,58 @@ edje_edit_part_source_get(Evas_Object *obj, const char *part)
    return eina_stringshare_add(rp->part->source);
 }
 
+static Eina_Bool
+_check_recursive_reference(Edje *ed, const char *source, Eina_List *group_path, Edje_Part *part)
+{
+   unsigned int i;
+   char *data;
+   Edje_Part_Collection_Directory_Entry *e;
+   Eina_List *l;
+   Eina_Bool no_ref = EINA_TRUE;
+
+   if (!source) return EINA_TRUE;
+
+   e = eina_hash_find(ed->file->collection, source);
+
+   /* Go through every part to find parts with type GROUP */
+   for (i = 0; i < e->ref->parts_count; ++i)
+     {
+        if ((e->ref->parts[i]->type == EDJE_PART_TYPE_GROUP) &&
+            (e->ref->parts[i]->source))
+          {
+             /* Make sure that this group isn't already in the tree of parents */
+             EINA_LIST_FOREACH(group_path, l, data)
+               {
+                  if (data == e->ref->parts[i]->source)
+                    return EINA_FALSE;
+               }
+             group_path = eina_list_append(group_path, source);
+             no_ref &= _check_recursive_reference(ed, e->ref->parts[i]->source, group_path, part);
+          }
+
+        /* We did a loop here... this part doesn't have source yet,
+           but if it will set, it'll be a recursive reference. */
+        if (e->ref->parts[i] == part) return EINA_FALSE;
+     }
+   return no_ref;
+}
+
 EAPI Eina_Bool
 edje_edit_part_source_set(Evas_Object *obj, const char *part, const char *source)
 {
    GET_RP_OR_RETURN(EINA_FALSE);
 
    Evas_Object *child_obj;
+   Eina_List *group_path = NULL;
    //printf("Set source for part: %s [source: %s]\n", part, source);
 
    switch (rp->part->type)
      {
       case EDJE_PART_TYPE_GROUP:
+        /* find source group */
+        if (!_check_recursive_reference(ed, source, group_path, rp->part))
+           return EINA_FALSE;
+
         if ((rp->typedata.swallow) && (rp->typedata.swallow->swallowed_object))
           {
              _edje_real_part_swallow_clear(ed, rp);

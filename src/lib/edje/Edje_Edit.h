@@ -1234,6 +1234,10 @@ EAPI const char * edje_edit_part_source_get(Evas_Object *obj, const char *part);
 
 /** Set the source of part.
  *
+ * If setting source of the part will lead to recursive reference
+ * (when A source to B, and B is going to be source to A because of this funciton),
+ * then it will return EINA_FALSE.
+ *
  * @param obj Object being edited.
  * @param part Part to set the source of.
  * @param source Value for the source parameter.
