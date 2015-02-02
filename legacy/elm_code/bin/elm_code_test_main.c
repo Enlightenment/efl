@@ -166,6 +166,10 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 	goto end;
      }
 
+   /* tell elm about our app so it can figure out where to get files */
+   elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
+   elm_app_compile_lib_dir_set(PACKAGE_LIB_DIR);
+   elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
    elm_app_info_set(elm_main, "elm_code_test", "images/elm_code.png");
 
    if (!(win = elm_code_test_win_setup()))
