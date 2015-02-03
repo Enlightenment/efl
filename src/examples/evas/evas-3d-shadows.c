@@ -6,7 +6,6 @@
  * Compile with "gcc -o evas-3d-shadows evas-3d-shadows.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm"
  */
 
-
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 
@@ -15,36 +14,52 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <math.h>
+#include "primitives.c"
 
 #define  WIDTH 1024
 #define  HEIGHT 1024
+
+#define BG_COLOR 0.2, 0.2, 0.2
+#define AMBIENT_LIGHT 0.2, 0.2, 0.2
+#define DIFFUSE_LIGHT 1.0, 1.0, 1.0
+#define SPECULAR_LIGHT 1.0, 1.0, 1.0
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
 Eo *background = NULL;
 Eo *image = NULL;
 
-Eo *scene = NULL;
-Eo *root_node = NULL;
-Eo *camera_node = NULL;
-Eo *light_node = NULL;
-Eo *camera = NULL;
-Eo *mesh_node = NULL;
-Eo *mesh_node1 = NULL;
-Eo *mesh = NULL;
-Eo *mesh1 = NULL;
-Eo *material = NULL;
-Eo *material1 = NULL;
-Eo *texture = NULL;
-Eo *light = NULL;
-Ecore_Animator *anim = NULL;
+typedef struct _Body_3D
+{
+   Eo     *material;
+   Eo     *mesh;
+   Eo     *node;
+} Body_3D;
+
+typedef struct _Scene_Data
+{
+   Eo     *scene;
+   Eo     *root_node;
+   Eo     *camera_node;
+   Eo     *camera;
+   Eo     *light_node;
+   Eo     *light;
+
+   Body_3D     sphere;
+   Body_3D     cube;
+   Body_3D     square;
+   Body_3D     cylinder;
+   Body_3D     model;
+   Body_3D     cone;
+} Scene_Data;
 
 static Eina_Bool
 _animate_scene(void *data)
 {
    static int frame = 0;
+   Body_3D *body = (Body_3D *)data;
 
-   eo_do((Evas_3D_Node *)data, evas_3d_node_mesh_frame_set(mesh, frame));
+   eo_do(body->node, evas_3d_node_mesh_frame_set(body->mesh, frame));
 
    frame += 32;
 
@@ -69,101 +84,226 @@ _on_canvas_resize(Ecore_Evas *ee)
    eo_do(image, evas_obj_size_set(w, h));
 }
 
-static double pi = 3.14159265359;
-typedef struct _vec3
+static void
+_body_material_set(Body_3D *body, float r, float g, float b)
 {
-    float   x;
-    float   y;
-    float   z;
-} vec3;
+   body->material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
 
-typedef struct _vec4
-{
-    float   x;
-    float   y;
-    float   z;
-    float   w;
-} vec4;
+   eo_do(body->material,
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_AMBIENT, EINA_TRUE),
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE),
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE),
+
+         evas_3d_material_color_set(EVAS_3D_MATERIAL_AMBIENT, r, g, b, 1.0),
+         evas_3d_material_color_set(EVAS_3D_MATERIAL_DIFFUSE, r, g, b, 1.0),
+         evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
+         evas_3d_material_shininess_set(100.0));
+
+   eo_do(body->mesh,
+          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG),
+          evas_3d_mesh_frame_material_set(0, body->material));
+}
 
 static void
-_set_ball(Eo *ball_mesh, double r, double x, double y, double z, int p, Evas_3D_Material *ball_material)
+_sphere_setup(Body_3D *sphere)
 {
-   int vcount, icount, vccount, i, j;
-   double dtheta, dfi, sinth, costh, fi, theta, sinfi, cosfi;
-   unsigned short *indices, *index;
+   sphere->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
+   _set_ball(sphere->mesh, 50);
+   _body_material_set(sphere, 1, 0.0, 0.0);
 
-   icount = p * p * 6;
-   vccount = p + 1;
-   vcount = vccount * vccount;
+   sphere->node =
+      eo_add(EVAS_3D_NODE_CLASS, evas,
+                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH),
+                    evas_3d_node_position_set(2.0, 3.0, 1.0));
+   eo_do(sphere->node, evas_3d_node_mesh_add(sphere->mesh));
+}
 
-   dtheta = pi / p;
-   dfi = 2 * pi / p;
+static void
+_cone_setup(Body_3D *cone)
+{
+   cone->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
+   _set_cone(cone->mesh, 100);
+   _body_material_set(cone, 0.8, 0.5, 0.5);
 
-   vec3 *vertices = malloc(sizeof(vec3) * vcount);
-   vec3 *normals = malloc(sizeof(vec3) * vcount);
+   cone->node =
+      eo_add(EVAS_3D_NODE_CLASS, evas,
+                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
+   eo_do(cone->node, evas_3d_node_mesh_add(cone->mesh),
+         evas_3d_node_position_set(-5.0, -1.0, -3.0),
+         evas_3d_node_scale_set(1.0, 2.0, 1.0));
+}
 
-  for (j = 0; j < vccount; j++)
-     {
-        theta = j * dtheta;
-        sinth = sin(theta);
-        costh = cos(theta);
-        for (i = 0; i < vccount; i++)
-          {
-             fi = i * dfi;
-             sinfi = sin(fi);
-             cosfi = cos(fi);
-             vertices[i + j * vccount].x = r * sinth * cosfi + x;
-             vertices[i + j * vccount].y = r * sinth * sinfi + y;
-             vertices[i + j * vccount].z = r * costh + z;
+static void
+_cylinder_setup(Body_3D *cylinder)
+{
+   cylinder->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
+   _set_cylinder(cylinder->mesh, 50);
+   _body_material_set(cylinder, 0.0, 0.0, 1.0);
 
-             normals[i + j * vccount].x = sinth * cosfi;
-             normals[i + j * vccount].y = sinth * sinfi;
-             normals[i + j * vccount].z = costh;
-          }
-     }
+   cylinder->node =
+      eo_add(EVAS_3D_NODE_CLASS, evas,
+                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
+   eo_do(cylinder->node, evas_3d_node_mesh_add(cylinder->mesh),
+         evas_3d_node_position_set(-2.0, 3.0, 1.0));
+}
 
-   indices = malloc(sizeof(short) * icount);
-   index = &indices[0];
+static void
+_square_setup(Body_3D *square)
+{
+   square->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
+   _set_square(square->mesh);
 
-   for(j = 0; j < p; j++)
-     for(i = 0; i < p; i++)
-       {
-          *index++ = (unsigned short)(i + vccount * j);
-          *index++ = i + vccount * (j + 1);
-          *index++ = i + 1 + vccount * (j + 1);
+   _body_material_set(square, 0.9, 1, 1);
 
-          *index++ =  i + vccount * j;
-          *index++ =  i + 1 +  vccount * j;
-          *index++ =  i + vccount * (j + 1) + 1;
-       }
+   square->node =
+      eo_add(EVAS_3D_NODE_CLASS, evas,
+                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
+   eo_do(square->node, evas_3d_node_mesh_add(square->mesh),
+         evas_3d_node_position_set(0.0, -1.0, 0.0),
+         evas_3d_node_scale_set(30.0, 30.0, 30.0),
+         evas_3d_node_orientation_angle_axis_set(90.0, 1.0, 0.0, 0.0));
+}
 
-   eo_do(ball_mesh, evas_3d_mesh_vertex_count_set(vcount),
-            evas_3d_mesh_frame_add(0);
-            evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_POSITION,
-                                       sizeof(vec3), &vertices[0]);
-            evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_NORMAL,
-                                       sizeof(vec3), &normals[0]);
-            evas_3d_mesh_index_data_copy_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT,
-                                icount , &indices[0]);
-            evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES);
-            evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG);
-            evas_3d_mesh_frame_material_set(0, ball_material));
+static void
+_box_setup(Body_3D *box)
+{
+   box->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
+   _set_cube(box->mesh);
 
-   free(vertices);
-   free(normals);
-   free(indices);
+   _body_material_set(box, 0, 1, 0);
+
+   box->node = eo_add(EVAS_3D_NODE_CLASS, evas,
+                      evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
+   eo_do(box->node, evas_3d_node_mesh_add(box->mesh),
+         evas_3d_node_position_set(5.0, 0.0, -3.0));
+}
+
+static void
+_model_setup(Body_3D *model)
+{
+   Eo *texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
+   eo_do(texture,
+         evas_3d_texture_file_set("sonic.png", NULL),
+         evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
+                                    EVAS_3D_TEXTURE_FILTER_NEAREST),
+         evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
+                                  EVAS_3D_WRAP_MODE_REPEAT));
+   model->material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
+
+   eo_do(model->material,
+         evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE, texture),
+         evas_3d_material_texture_set(EVAS_3D_MATERIAL_AMBIENT, texture),
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_AMBIENT, EINA_TRUE),
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE),
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE),
+         evas_3d_material_shininess_set(100.0));
+
+
+   model->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
+
+   eo_do(model->mesh,
+         efl_file_set("sonic.md2", NULL),
+         evas_3d_mesh_frame_material_set(0, model->material),
+         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
+
+   model->node =
+      eo_add(EVAS_3D_NODE_CLASS, evas,
+                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
+   eo_do(model->node, evas_3d_node_mesh_add(model->mesh),
+         evas_3d_node_scale_set(0.1, 0.1, 0.1),
+         evas_3d_node_orientation_angle_axis_set(120.0, -0.577, -0.577, -0.577));
+}
+
+static void
+_camera_setup(Scene_Data *data)
+{
+   data->camera = eo_add(EVAS_3D_CAMERA_CLASS, evas);
+
+   eo_do(data->camera,
+         evas_3d_camera_projection_perspective_set(50.0, 1.0, 2.0, 50.0));
+
+  data->camera_node =
+      eo_add(EVAS_3D_NODE_CLASS, evas,
+                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_CAMERA));
+
+  eo_do(data->camera_node,
+        evas_3d_node_camera_set(data->camera),
+        evas_3d_node_position_set(0.0, 6.0, 12.0),
+        evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 3.0, 0.0,
+                                  EVAS_3D_SPACE_PARENT, 0.0, 5.0, 0.0));
+
+  eo_do(data->root_node, evas_3d_node_member_add(data->camera_node));
+}
+
+static void
+_light_setup(Scene_Data *data)
+{
+   data->light = eo_add(EVAS_3D_LIGHT_CLASS, evas);
+   eo_do(data->light,
+         evas_3d_light_ambient_set(AMBIENT_LIGHT, 1.0),
+         evas_3d_light_diffuse_set(DIFFUSE_LIGHT, 1.0),
+         evas_3d_light_specular_set(SPECULAR_LIGHT, 1.0),
+         evas_3d_light_projection_perspective_set(45.0, 1.0, 2.0, 1000.0));
+
+   data->light_node =
+      eo_add(EVAS_3D_NODE_CLASS, evas,
+                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_LIGHT));
+   eo_do(data->light_node,
+         evas_3d_node_light_set(data->light),
+         evas_3d_node_position_set(50.0, 50.0, 20.0),
+         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 20.0,
+                                  EVAS_3D_SPACE_PARENT, 0.0, 0.0, 1.0));
+   eo_do(data->root_node, evas_3d_node_member_add(data->light_node));
+}
+
+static void
+_scene_setup(Scene_Data *data)
+{
+   data->scene = eo_add(EVAS_3D_SCENE_CLASS, evas);
+
+   eo_do(data->scene,
+         evas_3d_scene_size_set(WIDTH, HEIGHT);
+         evas_3d_scene_background_color_set(BG_COLOR, 1));
+
+   data->root_node =
+      eo_add(EVAS_3D_NODE_CLASS, evas,
+                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
+
+
+   _camera_setup(data);
+   _light_setup(data);
+
+   _box_setup(&data->cube);
+   _sphere_setup(&data->sphere);
+   _cylinder_setup(&data->cylinder);
+   _square_setup(&data->square);
+   _model_setup(&data->model);
+   _cone_setup(&data->cone);
+
+   eo_do(data->root_node, evas_3d_node_member_add(data->sphere.node));
+   eo_do(data->root_node, evas_3d_node_member_add(data->cube.node));
+   eo_do(data->root_node, evas_3d_node_member_add(data->cylinder.node));
+   eo_do(data->root_node, evas_3d_node_member_add(data->square.node));
+   eo_do(data->root_node, evas_3d_node_member_add(data->model.node));
+   eo_do(data->root_node, evas_3d_node_member_add(data->cone.node));
+
+   eo_do(data->scene,
+         evas_3d_scene_root_node_set(data->root_node),
+         evas_3d_scene_camera_node_set(data->camera_node),
+         evas_3d_scene_shadows_enable_set(EINA_TRUE));
 }
 
 int
 main(void)
 {
+   Scene_Data data;
+   Ecore_Animator *anim;
+
    //Unless Evas 3D supports Software renderer, we set gl backened forcely.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
-
    if (!ecore_evas_init()) return 0;
 
    ecore_evas = ecore_evas_new(NULL, 10, 10, WIDTH, HEIGHT, NULL);
-
    if (!ecore_evas) return 0;
 
    ecore_evas_callback_delete_request_set(ecore_evas, _on_delete);
@@ -172,115 +312,7 @@ main(void)
 
    evas = ecore_evas_get(ecore_evas);
 
-   /* Add a scene object .*/
-   scene = eo_add(EVAS_3D_SCENE_CLASS, evas);
-
-   /* Add the root node for the scene. */
-   root_node = eo_add(EVAS_3D_NODE_CLASS, evas,
-                             evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
-
-   /* Add the camera. */
-   camera = eo_add(EVAS_3D_CAMERA_CLASS, evas);
-   eo_do(camera,
-         evas_3d_camera_projection_perspective_set(60.0, 1.0, 1.0, 1000.0));
-
-   camera_node =
-      eo_add(EVAS_3D_NODE_CLASS, evas,
-                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_CAMERA));
-   eo_do(camera_node,
-         evas_3d_node_camera_set(camera));
-   eo_do(root_node,
-         evas_3d_node_member_add(camera_node));
-   eo_do(camera_node,
-         evas_3d_node_position_set(100.0, 0.0, 20.0),
-         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 20.0,
-                                  EVAS_3D_SPACE_PARENT, 0.0, 0.0, 1.0));
-   /* Add the light. */
-   light = eo_add(EVAS_3D_LIGHT_CLASS, evas);
-   eo_do(light,
-         evas_3d_light_ambient_set(0.2, 0.2, 0.2, 1.0),
-         evas_3d_light_diffuse_set(1.0, 1.0, 1.0, 1.0),
-         evas_3d_light_specular_set(1.0, 1.0, 1.0, 1.0),
-         evas_3d_light_projection_perspective_set(60.0, 1.0, 2.0, 1000.0));
-
-   light_node =
-      eo_add(EVAS_3D_NODE_CLASS, evas,
-                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_LIGHT));
-   eo_do(light_node,
-         evas_3d_node_light_set(light),
-         evas_3d_node_position_set(100.0, 30.0, 20.0),
-         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 20.0,
-                                  EVAS_3D_SPACE_PARENT, 0.0, 0.0, 1.0));
-   eo_do(root_node,
-         evas_3d_node_member_add(light_node));
-
-   /* Add the mesh. */
-   mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
-
-   eo_do(mesh,
-         efl_file_set("sonic.md2", NULL),
-         evas_3d_mesh_frame_material_set(0, material),
-         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
-
-   texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
-   eo_do(texture,
-         evas_3d_texture_file_set("sonic.png", NULL),
-         evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
-                                    EVAS_3D_TEXTURE_FILTER_NEAREST),
-         evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
-                                  EVAS_3D_WRAP_MODE_REPEAT));
-
-   eo_do(material,
-         evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE, texture),
-         evas_3d_material_texture_set(EVAS_3D_MATERIAL_AMBIENT, texture),
-         evas_3d_material_enable_set(EVAS_3D_MATERIAL_AMBIENT, EINA_TRUE),
-         evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE),
-         evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE),
-         evas_3d_material_enable_set(EVAS_3D_MATERIAL_NORMAL, EINA_TRUE),
-         evas_3d_material_color_set(EVAS_3D_MATERIAL_AMBIENT,
-                                    1.0, 1.0, 1.0, 1.0),
-         evas_3d_material_color_set(EVAS_3D_MATERIAL_DIFFUSE,
-                                    1.0, 1.0, 1.0, 1.0),
-         evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR,
-                                    1.0, 1.0, 1.0, 1.0),
-         evas_3d_material_shininess_set(50.0));
-
-   mesh_node = eo_add(EVAS_3D_NODE_CLASS, evas,
-                             evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
-   eo_do(root_node,
-         evas_3d_node_member_add(mesh_node));
-   eo_do(mesh_node,
-         evas_3d_node_mesh_add(mesh));
-
-   material1 = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
-
-   eo_do(material1,
-         evas_3d_material_enable_set(EVAS_3D_MATERIAL_AMBIENT, EINA_TRUE),
-         evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE),
-         evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE),
-
-         evas_3d_material_color_set(EVAS_3D_MATERIAL_AMBIENT, 1.0, 1.0, 1.0, 1.0),
-         evas_3d_material_color_set(EVAS_3D_MATERIAL_DIFFUSE, 0.8, 0.8, 0.8, 1.0),
-         evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
-         evas_3d_material_shininess_set(100.0));
-
-   mesh1 = eo_add(EVAS_3D_MESH_CLASS, evas);
-   _set_ball(mesh1, 100, -200, 0, 0, 100, material1);
-
-
-   mesh_node1 =
-      eo_add(EVAS_3D_NODE_CLASS, evas,
-                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
-   eo_do(root_node, evas_3d_node_member_add(mesh_node1));
-   eo_do(mesh_node1, evas_3d_node_mesh_add(mesh1));
-
-   /* Set up scene. */
-   eo_do(scene,
-         evas_3d_scene_root_node_set(root_node),
-         evas_3d_scene_camera_node_set(camera_node),
-         evas_3d_scene_size_set(WIDTH, HEIGHT),
-         evas_3d_scene_shadows_enable_set(EINA_TRUE));
+   _scene_setup(&data);
 
    /* Add a background rectangle objects. */
    background = eo_add(EVAS_RECTANGLE_CLASS, evas);
@@ -296,14 +328,15 @@ main(void)
          evas_obj_visibility_set(EINA_TRUE));
 
    /* Set the image object as render target for 3D scene. */
-   eo_do(image, evas_obj_image_scene_set(scene));
+   eo_do(image, evas_obj_image_scene_set(data.scene));
 
    /* Add animator. */
    ecore_animator_frametime_set(0.008);
-   anim = ecore_animator_add(_animate_scene, mesh_node);
+   anim = ecore_animator_add(_animate_scene, &data.model);
 
    /* Enter main loop. */
    ecore_main_loop_begin();
+   ecore_animator_del(anim);
 
    ecore_evas_free(ecore_evas);
    ecore_evas_shutdown();
