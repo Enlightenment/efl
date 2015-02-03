@@ -609,11 +609,8 @@ _elm_image_memfile_set(Eo *obj, Elm_Image_Data *sd, const void *img, size_t size
    evas_object_image_memfile_set
      (sd->img, (void *)img, size, (char *)format, (char *)key);
 
-   if (evas_object_visible_get(obj))
-     {
-        sd->preloading = EINA_TRUE;
-        evas_object_image_preload(sd->img, EINA_FALSE);
-     }
+   sd->preloading = EINA_TRUE;
+   evas_object_image_preload(sd->img, EINA_FALSE);
 
    if (evas_object_image_load_error_get(sd->img) != EVAS_LOAD_ERROR_NONE)
      {
