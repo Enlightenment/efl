@@ -881,21 +881,11 @@ _elm_multibuttonentry_elm_layout_sizing_eval(Eo *obj, Elm_Multibuttonentry_Data 
 }
 
 static void
-_mouse_clicked_signal_cb(void *data,
+_mouse_clicked_signal_cb(void *data EINA_UNUSED,
                          Evas_Object *obj,
                          const char *emission EINA_UNUSED,
                          const char *source EINA_UNUSED)
 {
-   Elm_Multibuttonentry_Data *sd = data;
-
-   _view_update(sd);
-
-   if (elm_widget_focus_get(obj) && sd->editable)
-     {
-        elm_entry_input_panel_show(sd->entry);
-        elm_object_focus_set(sd->entry, EINA_TRUE);
-     }
-
    evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
 }
 
@@ -1071,7 +1061,7 @@ _callbacks_register(Evas_Object *obj)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    elm_layout_signal_callback_add
-     (obj, "mouse,clicked,1", "*", _mouse_clicked_signal_cb, sd);
+     (obj, "mouse,clicked,1", "*", _mouse_clicked_signal_cb, NULL);
 
    evas_object_event_callback_add
      (wd->resize_obj, EVAS_CALLBACK_KEY_DOWN,
