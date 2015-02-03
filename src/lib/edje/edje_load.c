@@ -1141,6 +1141,11 @@ _edje_file_add(Edje *ed, const Eina_File *f)
              ed->file = NULL;
           }
      }
+   else
+     {
+        // FIXME: it will be actually better to remove ed->path.
+        ed->path = eina_stringshare_add(eina_file_filename_get(f));
+     }
 }
 
 static int
