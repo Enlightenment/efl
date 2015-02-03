@@ -85,6 +85,9 @@ _eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh EINA_UNUSED)
       if (!wname)
         return 0;
 
+      if (fni->FileName[0] == 0)
+        return ECORE_CALLBACK_CANCEL;
+
       memcpy(wname, fni->FileName, fni->FileNameLength);
       wname[fni->FileNameLength / sizeof(wchar_t)] = 0;
       name = evil_wchar_to_char(wname);
