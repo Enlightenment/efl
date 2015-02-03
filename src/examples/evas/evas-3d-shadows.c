@@ -14,7 +14,7 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <math.h>
-#include "primitives.c"
+#include "evas-3d-primitives.c"
 
 #define  WIDTH 1024
 #define  HEIGHT 1024
