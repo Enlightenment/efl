@@ -3411,6 +3411,9 @@ _elm_gengrid_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bo
         if (!elm_object_focus_get(obj))
           elm_object_focus_set(obj, EINA_TRUE);
 
+        if (!elm_widget_focus_get(obj))
+          return;
+
         if (eo_it != sd->focused_item)
           {
              if (sd->focused_item)
@@ -3423,7 +3426,11 @@ _elm_gengrid_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bo
           }
      }
    else
-     _elm_gengrid_item_unfocused(eo_it);
+     {
+        if (!elm_widget_focus_get(obj))
+          return;
+        _elm_gengrid_item_unfocused(eo_it);
+     }
 }
 
 EOLIAN static Eina_Bool

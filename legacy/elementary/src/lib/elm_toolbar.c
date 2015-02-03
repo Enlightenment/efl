@@ -827,6 +827,10 @@ _elm_toolbar_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Toolbar_Item_Data *it
         sd->last_focused_item = eo_it;
         if (!elm_object_focus_get(obj))
           elm_object_focus_set(obj, EINA_TRUE);
+
+        if (!elm_widget_focus_get(obj))
+          return;
+
         if (eo_it != sd->focused_item)
           {
              if (sd->focused_item)
@@ -836,6 +840,8 @@ _elm_toolbar_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Toolbar_Item_Data *it
      }
    else
      {
+        if (!elm_widget_focus_get(obj))
+          return;
         if (eo_it)
           _elm_toolbar_item_unfocused(eo_it);
      }
