@@ -223,6 +223,7 @@ esac
 AC_SUBST([MODULE_ARCH])
 AC_DEFINE_UNQUOTED([MODULE_ARCH], ["${MODULE_ARCH}"], ["Module architecture"])
 AC_DEFINE_UNQUOTED([SHARED_LIB_SUFFIX], ["${MODULE_EXT}"], [Suffix for shared objects])
+AC_DEFINE_UNQUOTED([EXEEXT], ["${EXEEXT}"], [Suffix for binary objects])
 
 # TODO: move me to m4 file that setups the windows related variables
 AM_CONDITIONAL([HAVE_WIN32], [test "x${have_win32}" = "xyes"])
