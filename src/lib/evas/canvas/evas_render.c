@@ -1238,9 +1238,15 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
    if (mapped)
      {
-        if (use_mapped_ctx && _evas_render_object_is_mask(obj))
+        if (_evas_render_object_is_mask(obj))
           {
-             // don't return;
+             if (!use_mapped_ctx || (surface != obj->mask->surface))
+               {
+                  RDI(level);
+                  RD("      }\n");
+                  return clean_them;
+               }
+             // else don't return: draw mask in its surface
           }
         else if (proxy_src_clip)
           {

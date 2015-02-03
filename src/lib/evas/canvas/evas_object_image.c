@@ -2880,6 +2880,13 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
         return;
      }
 
+   /* Mask sanity */
+   if (obj->mask->is_mask && (surface != obj->mask->surface))
+     {
+        ERR("Drawing a mask to another surface? Something's wrong...");
+        return;
+     }
+
    /* We are displaying the overlay */
    if (o->video_visible)
      {
