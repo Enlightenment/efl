@@ -3538,7 +3538,11 @@ do_include(cpp_reader * pfile, struct directive *keyword,
 	if (angle_brackets)
 	   pfile->system_include_depth--;
      }
-   free(fname);
+
+   // We are leaking fname here. This is intended as it may still be used later
+   // on. It would be better on to track that correctly and fix it, but as it
+   // only affect recursive include this leak is not important and time will be
+   // better spent somewhere else.
    return 0;
 }
 
