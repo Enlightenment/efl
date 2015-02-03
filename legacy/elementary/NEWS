@@ -56,8 +56,11 @@ Fixes:
    * image: Fix to have exact size using elm_image_fill_outside_set()
    * image: Fix image rotation in non-common cases
    * image: Fix orientation api - major bug in implementation
+   * image: fix elm_image_memfile_set API fail when elm_image widget is not visible.
    * label: Add "slide,end" signal emission
    * modules: Make sure we have all linker flags setup for our modules. (T1920)
+   * multibuttonentry: Delete duplicate running code.
+   * panes: Fix elm_panes_fixed_set.
    * popup: Fix misprint in popup style alias name
    * progressbar: Fix invalid access to freed units string
    * segment_control: Fix elm_object_item_text_set bug.
