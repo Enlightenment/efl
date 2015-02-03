@@ -1449,6 +1449,8 @@ eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image
 
    if (!image) return EINA_FALSE;
    im = image;
+   if (im->native.func.bind)
+      im->native.func.bind(data, image, src_x, src_y, src_w, src_h);
 
    if (do_async)
      {

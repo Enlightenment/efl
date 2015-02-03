@@ -984,6 +984,7 @@ modules/evas/engines/software_x11/evas_x_egl.h
 SOFTWARE_X11_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
+@ECORE_X_CFLAGS@ \
 @EVAS_CFLAGS@
 SOFTWARE_X11_LIBADD =
 if BUILD_ENGINE_SOFTWARE_XLIB
@@ -994,11 +995,13 @@ modules/evas/engines/software_x11/evas_xlib_buffer.c \
 modules/evas/engines/software_x11/evas_xlib_color.c \
 modules/evas/engines/software_x11/evas_xlib_main.c \
 modules/evas/engines/software_x11/evas_xlib_swapper.c \
+modules/evas/engines/software_x11/evas_xlib_image.c \
 modules/evas/engines/software_x11/evas_xlib_outbuf.h \
 modules/evas/engines/software_x11/evas_xlib_swapbuf.h \
 modules/evas/engines/software_x11/evas_xlib_buffer.h \
 modules/evas/engines/software_x11/evas_xlib_color.h \
-modules/evas/engines/software_x11/evas_xlib_swapper.h
+modules/evas/engines/software_x11/evas_xlib_swapper.h \
+modules/evas/engines/software_x11/evas_xlib_image.h
 SOFTWARE_X11_CPPFLAGS += @evas_engine_software_xlib_cflags@
 SOFTWARE_X11_LIBADD += @evas_engine_software_xlib_libs@
 endif
@@ -1025,8 +1028,8 @@ enginesoftwarex11pkgdir = $(libdir)/evas/modules/engines/software_x11/$(MODULE_A
 enginesoftwarex11pkg_LTLIBRARIES = modules/evas/engines/software_x11/module.la
 modules_evas_engines_software_x11_module_la_SOURCES = $(SOFTWARE_X11_SOURCES)
 modules_evas_engines_software_x11_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(SOFTWARE_X11_CPPFLAGS)
-modules_evas_engines_software_x11_module_la_LIBADD = @USE_EVAS_LIBS@ $(SOFTWARE_X11_LIBADD)
-modules_evas_engines_software_x11_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
+modules_evas_engines_software_x11_module_la_LIBADD = @USE_ECORE_X_LIBS@ @USE_EVAS_LIBS@ $(SOFTWARE_X11_LIBADD)
+modules_evas_engines_software_x11_module_la_DEPENDENCIES = @USE_ECORE_X_INTERNAL_LIBS@ @USE_EVAS_INTERNAL_LIBS@
 modules_evas_engines_software_x11_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_evas_engines_software_x11_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
