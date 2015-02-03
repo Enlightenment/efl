@@ -834,7 +834,7 @@ EAPI void     *evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Ty
  * object. In errors, @c NULL will be returned.
  *
  * @note For deletion of Evas object events callbacks filtering by
- * just type and function pointer, user
+ * just type and function pointer, use
  * evas_object_event_callback_del().
  *
  * Example:
