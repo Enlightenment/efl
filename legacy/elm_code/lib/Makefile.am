@@ -20,6 +20,7 @@ includesdir = $(includedir)/edi-@VMAJ@
 libelm_code_la_SOURCES = \
 elm_code_file.c \
 elm_code_parse.c \
+elm_code_widget_text.c \
 elm_code_widget.c \
 elm_code_diff_widget.c \
 elm_code.c \

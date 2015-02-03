@@ -84,6 +84,26 @@ class Elm_Code_Widget (Elm_Box, Elm_Interface_Scrollable,
             Eina_Bool editable; /*@ The editable state of the widget */
          }
       }
+      line_numbers {
+         set {
+            /*@
+            Set whether line numbers should be displayed in the left gutter.
+
+            Passing EINA_TRUE will reserve a space for showing line numbers,
+            EINA_FALSE will turn this off.
+
+            @ingroup Features */
+         }
+         get {
+            /*@
+            Get the status of line number display for this widget.
+
+            @ingroup Features */
+         }
+         values {
+            Eina_Bool line_numbers; /*@ Whether or not line numbers (or their placeholder) should be shown */
+         }
+      }
    }
    methods {
    }
