@@ -4109,11 +4109,11 @@ _elm_gengrid_realized_items_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *sd)
 EOLIAN static void
 _elm_gengrid_realized_items_update(Eo *obj, Elm_Gengrid_Data *_pd EINA_UNUSED)
 {
-   Eina_List *list, *l;
+   Eina_List *list;
    Elm_Object_Item *it;
 
    list = elm_gengrid_realized_items_get(obj);
-   EINA_LIST_FOREACH(list, l, it)
+   EINA_LIST_FREE(list, it)
      elm_gengrid_item_update(it);
 }
 
