@@ -6,12 +6,6 @@
 #include <Ecore.h>
 #include <Ecore_Con.h>
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#else
-# define EINA_UNUSED
-#endif
-
 #define COOKIEJAR "cookies.jar"
 
 static Eina_Bool

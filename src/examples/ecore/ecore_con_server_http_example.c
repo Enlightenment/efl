@@ -6,12 +6,6 @@
 #include <Ecore.h>
 #include <Ecore_Con.h>
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#else
-# define EINA_UNUSED
-#endif
-
 static const char response_template[] =
   "HTTP/1.0 200 OK\r\n"
   "Server: Ecore_Con custom server\r\n"
