@@ -66,7 +66,7 @@ interface Emodel ()
                 return: Emodel_Load_Status;
          }
          values {
-               const(list<const(char*)>*) properties_list; /*@ list of current properties */
+               const(array<const(char*)>*) properties_list; /*@ list of current properties */
             }
         }
          property {
