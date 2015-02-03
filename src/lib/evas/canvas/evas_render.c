@@ -1514,7 +1514,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                        evas_object_clip_recalc(obj);
 
                        if (mask->mask->redraw || !mask->mask->surface)
-                         evas_render_mask_subrender(obj->layer->evas, mask, NULL);
+                         evas_render_mask_subrender(obj->layer->evas, mask, obj->clip.prev_mask);
 
                        if (mask->mask->surface)
                          {
@@ -1573,7 +1573,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                             // This path can be hit when we're multiplying masks on top of each other...
                             Evas_Object_Protected_Data *mask = obj->cur->clipper;
                             if (mask->mask->redraw || !mask->mask->surface)
-                              evas_render_mask_subrender(obj->layer->evas, mask, NULL);
+                              evas_render_mask_subrender(obj->layer->evas, mask, obj->clip.prev_mask);
 
                             if (mask->mask->surface)
                               {
@@ -1768,9 +1768,9 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
           }
         else if (!prev_mask->mask->surface)
           {
-             // FIXME?
+             // Note: This is preventive code. Never seen it happen.
              WRN("Mask render order may be invalid");
-             evas_render_mask_subrender(evas, prev_mask, NULL);
+             evas_render_mask_subrender(evas, prev_mask, prev_mask->clip.prev_mask);
           }
      }
 
