@@ -1494,6 +1494,10 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
         if (mapped)
           {
+             Eina_Bool restore_image_clip = EINA_FALSE;
+             void *oldm_sfc = NULL;
+             int oldm_x = 0, oldm_y = 0;
+
              RDI(level);
              RD("        draw child of mapped obj\n");
              if (use_mapped_ctx)
@@ -1502,8 +1506,6 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                ctx = e->engine.func->context_new(e->engine.data.output);
              if (obj->is_smart)
                {
-                  Eina_Bool unset_image_clip = EINA_FALSE;
-
                   /* Clipper masks */
                   if (obj->cur->clipper &&
                       _evas_render_object_is_mask(obj->cur->clipper))
@@ -1518,7 +1520,10 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
                        if (mask->mask->surface)
                          {
-                            unset_image_clip = EINA_TRUE;
+                            restore_image_clip = EINA_TRUE;
+                            e->engine.func->context_clip_image_get
+                                  (e->engine.data.output, ctx,
+                                   &oldm_sfc, &oldm_x, &oldm_y);
                             e->engine.func->context_clip_image_set
                                   (e->engine.data.output, ctx,
                                    mask->mask->surface,
@@ -1536,7 +1541,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                            ecx, ecy, ecw, ech,
                                                            proxy_render_data,
                                                            level + 1,
-                                                           unset_image_clip | use_mapped_ctx,
+                                                           restore_image_clip | use_mapped_ctx,
                                                            do_async);
                           /* We aren't sure this object will be rendered by
                              normal(not proxy) drawing after, we reset this
@@ -1546,16 +1551,9 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                           if (!proxy_render_data)
                             evas_object_change_reset(obj2->object);
                        }
-
-                  if (unset_image_clip)
-                    {
-                       e->engine.func->context_clip_image_unset
-                             (e->engine.data.output, ctx);
-                    }
                }
              else
                {
-                  Eina_Bool unset_image_clip = EINA_FALSE;
                   RDI(level);
 
                   if (obj->cur->clipper)
@@ -1577,7 +1575,10 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
                             if (mask->mask->surface)
                               {
-                                 unset_image_clip = EINA_TRUE;
+                                 restore_image_clip = EINA_TRUE;
+                                 e->engine.func->context_clip_image_get
+                                       (e->engine.data.output, ctx,
+                                        &oldm_sfc, &oldm_x, &oldm_y);
                                  e->engine.func->context_clip_image_set
                                        (e->engine.data.output, ctx,
                                         mask->mask->surface,
@@ -1589,11 +1590,11 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                   obj->func->render(eo_obj, obj, obj->private_data,
 				    e->engine.data.output, ctx,
                                     surface, off_x, off_y, EINA_FALSE);
-                  if (unset_image_clip)
-                    {
-                       e->engine.func->context_clip_image_unset
-                             (e->engine.data.output, ctx);
-                    }
+               }
+             if (restore_image_clip)
+               {
+                  e->engine.func->context_clip_image_set
+                    (e->engine.data.output, ctx, oldm_sfc, oldm_x, oldm_y);
                }
              if (!use_mapped_ctx)
                e->engine.func->context_free(e->engine.data.output, ctx);
