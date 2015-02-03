@@ -182,6 +182,53 @@ Fixes:
    * ecore-wayland: Don't send a mouse_up on grab release unless we actually have a grabbed button
    * Efreet: do not get confused by path ending with / in XDG_* vars
    * evas: fix to load BMP file compressed with RLE.
+   * ecore: Remove potentially useless 'else' branches
+   * ecore-drm: Store session name inside dev structure and don't take/release session control inside dbus functions
+   * ecore-drm: Default device->session to NULL
+   * ecore-drm: Cleanup tty code and handle vt signal trapping
+   * ecore-drm: Fix various issues with logind code
+   * ecore-drm: Cleanup launcher code
+   * ecore-drm: Cleanup private header file
+   * ecore-drm: Move session and vt fields to store inside the Ecore_Drm_Device
+   * ecore-drm: Remove logind header file from build order
+   * ecore-drm: Remove logind header file
+   * ecore-evas-drm: Fix improper shutdown sequence
+   * ecore-drm: Remove session parameter for internal function
+   * ecore-drm: Remove unused function parameter
+   * ecore-drm: Remove session parameter for session take/release functions
+   * Merge branch 'devs/devilhorns/ecore_drm'
+   * edje_cc must error when first provided state description is not "default" 0.0 (T1926)
+   * ecore-x: Fix calls to disable dpms in xcb
+   * ecore-x: Add missing EINA_UNUSED for function paramater
+   * ecore-x: Remove unused variable in backlight_available code
+   * ecore-x: Use proper XCB_ATOM_CARDINAL in call to window_property_get
+   * ecore-x: Fix build error in xcb
+   * ecore-xcb: Fix unused paramater compiler warning
+   * ecore-xcb: Fix compiler build break
+   * ecore-xcb: Fix ecore_x_window_full_new function to compile again
+   * ecore-xcb: Add missing EINA_UNUSED for function paramater
+   * evas-software: Fix call to evas_software_xcb_outbuf_setup function
+   * evas-software: Fix software engine to compile using xcb
+   * evas-software: Fix compile errors when using xcb
+   * evas-image-loaders: Fix compiler warning of comparison between signed and unsigned values
+   * edje: Edje_Edit - fix setting NULL into string pointer
+   * embryo_cc_sc2.c: prevent memory corruption.
+   * Set the name for table, box items
+   * evil: fix initialisation of the socket library.
+   * eolian: fix unary expression parsing (correctly consume tokens) (T2064)
+   * evil: fix SEGFAULT in strcasestr
+   * Edje: edje_cc - abort recursive Reference that is made by GROUP parts
+   * evil: get right Windows environment variables for home path.
+   * eio: Win32 make GetOverlappedResult function non-blocking
+   * autotools: fix make check build error on Windows
+   * eo: fix to pass make check on windows
+   * eolian: fix to pass make check on windows
+   * check: fix tests suites on Windows
+   * eina: use uintptr_t for Eina_Thread storage to be the same size for the different architectures.
+   * ecore_win32: don't allocate Ecore_Event_Key events with NULL keys
+   * eina: fix tests suites for Windows to have a predictable result.
+   * Edje: edje_edit - abort Recursive Reference in edje_edit_part_source_set
+   * ecore-drm: Trap for failure to dup stdin
 
 
 Changes since 1.11.0:
