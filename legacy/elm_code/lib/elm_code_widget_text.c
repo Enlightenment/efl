@@ -26,6 +26,9 @@ elm_code_widget_text_left_gutter_width_get(Elm_Code_Widget *widget)
    Elm_Code_Widget_Data *pd;
    int width = 1; // the status icon, for now
 
+   if (!widget)
+     return width;
+
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (pd->show_line_numbers)
