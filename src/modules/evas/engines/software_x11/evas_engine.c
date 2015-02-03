@@ -630,28 +630,31 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 
    if (!im || !ns) return im;
 
-   if (ns)
+   if (ns->type == EVAS_NATIVE_SURFACE_X11)
      {
-        if (ns->type == EVAS_NATIVE_SURFACE_X11)
+        if (im->native.data)
           {
-             if (im->native.data)
-               {
-                  //image have native surface already
-                  Evas_Native_Surface *ens = im->native.data;
+             //image have native surface already
+             Evas_Native_Surface *ens = im->native.data;
 
-                  if ((ens->type == ns->type) &&
-                      (ens->data.x11.visual == ns->data.x11.visual) &&
-                      (ens->data.x11.pixmap == ns->data.x11.pixmap))
-                     return im;
-                }
-           }
-      }
-    else
-      {
-         return im;
-      }
+             if ((ens->type == ns->type) &&
+                 (ens->data.x11.visual == ns->data.x11.visual) &&
+                 (ens->data.x11.pixmap == ns->data.x11.pixmap))
+               return im;
+          }
+     }
+   else if (ns->type == EVAS_NATIVE_SURFACE_TBM)
+     {
+        if (im->native.data)
+          {
+             //image have native surface already
+             Evas_Native_Surface *ens = im->native.data;
 
-    if ((!ns) && (!im->native.data)) return im;
+             if ((ens->type == ns->type) &&
+                 (ens->data.tbm.buffer == ns->data.tbm.buffer))
+               return im;
+          }
+     }
 
    //create new im and clean already existed im even though ns = NULL
    im2 = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
@@ -664,14 +667,12 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
      }
 
 #ifdef EVAS_CSERVE2
-      if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
-        evas_cache2_image_close(&im->cache_entry);
-      else
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
+     evas_cache2_image_close(&im->cache_entry);
+   else
 #endif
-      evas_cache_image_drop(&im->cache_entry);
+     evas_cache_image_drop(&im->cache_entry);
    im = im2;
-
-   if (!ns) return im;
 
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
    if (ns->type == EVAS_NATIVE_SURFACE_X11)
@@ -679,6 +680,10 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
         return evas_xlib_image_native_set(re->generic.ob, im, ns);
      }
 #endif
+   if (ns->type == EVAS_NATIVE_SURFACE_TBM)
+     {
+        return evas_native_tbm_image_set(re->generic.ob, im, ns);
+     }
 
    return im;
 }
@@ -693,8 +698,9 @@ eng_image_native_get(void *data EINA_UNUSED, void *image)
    n = im->native.data;
    if (!n) return NULL;
    return &(n->ns);
-#endif
+#else
    return NULL;
+#endif
 }
 
 

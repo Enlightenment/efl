@@ -839,6 +839,7 @@ struct _RGBA_Image
       void   *data; //Evas_Native_Surface ns;
       struct {
         void (*bind) (void *data, void *image, int x, int y, int w, int h);
+        void (*unbind) (void *data, void *image);
         void (*free) (void *data, void *image);
         void *data;
       } func;

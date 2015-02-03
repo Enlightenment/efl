@@ -1508,6 +1508,8 @@ eng_image_draw(void *data EINA_UNUSED, void *context, void *surface, void *image
         evas_common_cpu_end_opt();
      }
 
+   if (im->native.func.unbind)
+      im->native.func.unbind(data, image);
    return EINA_FALSE;
 }
 

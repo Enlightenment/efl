@@ -980,7 +980,8 @@ SOFTWARE_X11_SOURCES = \
 modules/evas/engines/software_x11/evas_engine.c \
 modules/evas/engines/software_x11/evas_engine.h \
 modules/evas/engines/software_x11/evas_x_egl.c \
-modules/evas/engines/software_x11/evas_x_egl.h
+modules/evas/engines/software_x11/evas_x_egl.h \
+modules/evas/engines/software_x11/evas_native_tbm.c
 SOFTWARE_X11_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \

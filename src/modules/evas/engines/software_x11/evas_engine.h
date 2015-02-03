@@ -116,5 +116,6 @@ struct _Outbuf
 
 void evas_software_xlib_x_init(void);
 void evas_software_xcb_init(void);
+void *evas_native_tbm_image_set(void *data, void *image, void *native);
 
 #endif
