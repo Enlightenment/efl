@@ -202,8 +202,14 @@ ecore_x_screensaver_custom_blanking_disable(void)
 #endif /* ifdef ECORE_XSS */
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 ecore_x_screensaver_supend(void)
+{
+   ecore_x_screensaver_suspend();
+}
+
+EAPI void 
+ecore_x_screensaver_suspend(void)
 {
 #ifdef ECORE_XSS
    XScreenSaverSuspend(_ecore_x_disp, 1);
