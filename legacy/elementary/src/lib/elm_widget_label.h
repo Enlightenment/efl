@@ -28,6 +28,7 @@ struct _Elm_Label_Data
    Eina_Bool             ellipsis : 1;
    Eina_Bool             slide_ellipsis : 1;
    Eina_Bool             use_slide_speed : 1;
+   Eina_Bool             slide_state : 1; /**< This will be marked as EINA_TRUE after elm_label_slide_go() is called. */
 };
 
 #define ELM_LABEL_DATA_GET(o, sd) \

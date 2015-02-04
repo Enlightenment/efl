@@ -86,6 +86,8 @@ _label_slide_change(Evas_Object *obj)
    ELM_LABEL_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   if (!sd->slide_state) return;
+
    edje_object_signal_emit(wd->resize_obj, "elm,state,slide,stop", "elm");
 
    //doesn't support multiline slide effect
@@ -578,8 +580,10 @@ _elm_label_slide_speed_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 }
 
 EOLIAN static void
-_elm_label_slide_go(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
+_elm_label_slide_go(Eo *obj, Elm_Label_Data *sd)
 {
+   if (!sd->slide_state) sd->slide_state = EINA_TRUE;
+
    _label_slide_change(obj);
    elm_layout_sizing_eval(obj);
 }
