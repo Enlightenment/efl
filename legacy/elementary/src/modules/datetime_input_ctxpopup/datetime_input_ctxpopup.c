@@ -3,6 +3,7 @@
 #endif
 
 #include <Elementary.h>
+#include "elm_widget.h"
 #include "elm_widget_datetime.h"
 
 #define DATETIME_FIELD_COUNT    6
