@@ -21,7 +21,7 @@ _ns_as_prefix(eo_class const& cls)
    std::string::size_type found = s.find("::");
    while (found != std::string::npos)
      {
-        s.replace(found, 1, "_");
+        s.replace(found, 2, "_");
         found = s.find("::");
      }
    return s;
