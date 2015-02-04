@@ -1150,7 +1150,7 @@ ecore_main_win32_handler_add(void                 *h,
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!h || !func) return NULL;
 
-   wh = ecore_win32_handler_calloc(1);
+   wh = calloc(1, sizeof(Ecore_Win32_Handler));
    if (!wh) return NULL;
    ECORE_MAGIC_SET(wh, ECORE_MAGIC_WIN32_HANDLER);
    wh->h = (HANDLE)h;
@@ -1356,7 +1356,7 @@ _ecore_main_shutdown(void)
         win32_handlers = (Ecore_Win32_Handler *)eina_inlist_remove(EINA_INLIST_GET(win32_handlers),
                                                                    EINA_INLIST_GET(wh));
         ECORE_MAGIC_SET(wh, ECORE_MAGIC_NONE);
-        ecore_win32_handler_mp_free(wh);
+        free(wh);
      }
    win32_handlers_delete_me = EINA_FALSE;
    win32_handler_current = NULL;
@@ -1659,7 +1659,7 @@ _ecore_main_win32_handlers_cleanup(void)
                eina_inlist_remove(EINA_INLIST_GET(win32_handlers),
                                   EINA_INLIST_GET(wh));
              ECORE_MAGIC_SET(wh, ECORE_MAGIC_NONE);
-             ecore_win32_handler_mp_free(wh);
+             free(wh);
           }
      }
    if (!deleted_in_use) win32_handlers_delete_me = EINA_FALSE;
