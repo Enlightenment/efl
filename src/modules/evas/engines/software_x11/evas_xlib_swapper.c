@@ -50,14 +50,14 @@ _buf_new(X_Swapper *swp, Buffer *buf)
 {
    buf->w = swp->w;
    buf->h = swp->h;
-   
+
    // try shm first
    buf->xim = XShmCreateImage(swp->disp, swp->vis, swp->depth, ZPixmap,
                               NULL, &(buf->shm_info), buf->w, buf->h);
    if (buf->xim)
      {
         buf->bpl = buf->xim->bytes_per_line;
-        
+
         buf->shm_info.shmid = shmget(IPC_PRIVATE, buf->bpl * buf->h,
                                      IPC_CREAT | 0777);
         if (buf->shm_info.shmid >= 0)
@@ -68,7 +68,7 @@ _buf_new(X_Swapper *swp, Buffer *buf)
              if (buf->shm_info.shmaddr != ((void *)-1))
                {
                   XErrorHandler ph;
-                  
+
                   XSync(swp->disp, False);
                   _x_err = EINA_FALSE;
                   ph = XSetErrorHandler((XErrorHandler)_x_err_hand);
@@ -104,7 +104,7 @@ _buf_new(X_Swapper *swp, Buffer *buf)
 
    if (!buf->xim) // shm failed - try normal ximage
      {
-        buf->xim = XCreateImage(swp->disp, swp->vis, swp->depth, ZPixmap, 
+        buf->xim = XCreateImage(swp->disp, swp->vis, swp->depth, ZPixmap,
                                 0, NULL, buf->w, buf->h, 32, 0);
         if (!buf->xim) return EINA_FALSE;
         buf->bpl = buf->xim->bytes_per_line;
@@ -143,7 +143,7 @@ _buf_put(X_Swapper *swp, Buffer *buf, Eina_Rectangle *rects, int nrects)
 {
    Region tmpr;
    int i;
-   
+
    if (!buf->xim) return;
    tmpr = XCreateRegion();
    if ((rects)/* && 0*/) // set to 0 to test buffer stuff
@@ -151,7 +151,7 @@ _buf_put(X_Swapper *swp, Buffer *buf, Eina_Rectangle *rects, int nrects)
         for (i = 0; i < nrects; i++)
           {
              XRectangle xr;
-             
+
              xr.x = rects[i].x; xr.y = rects[i].y;
              xr.width = rects[i].w; xr.height = rects[i].h;
              XUnionRectWithRegion(&xr, tmpr, tmpr);
@@ -160,7 +160,7 @@ _buf_put(X_Swapper *swp, Buffer *buf, Eina_Rectangle *rects, int nrects)
    else
      {
         XRectangle xr;
-        
+
         xr.x = 0; xr.y = 0;
         xr.width = buf->w; xr.height = buf->h;
         XUnionRectWithRegion(&xr, tmpr, tmpr);
@@ -189,9 +189,9 @@ evas_xlib_swapper_new(Display *disp, Drawable draw, Visual *vis,
    X_Swapper *swp;
    XGCValues gcv;
    int i;
-   
+
    int nbuf = 3; // pretend we are triple buffered
-   
+
    swp = calloc(1, sizeof(X_Swapper));
    if (!swp) return NULL;
    swp->disp = disp;
@@ -246,7 +246,7 @@ void
 evas_xlib_swapper_swap(X_Swapper *swp, Eina_Rectangle *rects, int nrects)
 {
    int n;
-   
+
    n = swp->buf_cur;
    _buf_put(swp, &(swp->buf[n]), rects, nrects);
    swp->buf[n].valid = 1;
@@ -257,7 +257,7 @@ Render_Engine_Swap_Mode
 evas_xlib_swapper_buffer_state_get(X_Swapper *swp)
 {
    int i, n, count = 0;
-/*   
+/*
    for (i = 0; i < swp->buf_num; i++)
      {
         if ((rand() % 50) == 0)
@@ -390,6 +390,7 @@ static void (*sym_DRI2CreateDrawable) (Display *display, XID drawable) = NULL;
 static void (*sym_DRI2SwapBuffersWithRegion) (Display *display, XID drawable, XID region, CD64 *count) = NULL;
 static void (*sym_DRI2SwapBuffers) (Display *display, XID drawable, CD64 target_msc, CD64 divisor, CD64 remainder, CD64 *count) = NULL;
 static void (*sym_DRI2DestroyDrawable) (Display *display, XID handle) = NULL;
+static Bool (*sym_DRI2QeuryExtensionAndCheckVersion) (Display * dpy, int *eventBase, int *errorBase, int *major, int *minor, int check_major, int check_minor) = NULL;
 
 ////////////////////////////////////
 // libXfixes.so.3
@@ -429,6 +430,7 @@ static int xfixes_ev_base = 0, xfixes_err_base = 0;
 static int xfixes_major = 0, xfixes_minor = 0;
 static int dri2_ev_base = 0, dri2_err_base = 0;
 static int dri2_major = 0, dri2_minor = 0;
+static int dri2_check_major = 0, dri2_check_minor = 0;
 static int drm_fd = -1;
 static drm_slp_bufmgr bufmgr = NULL;
 static int swap_debug = -1;
@@ -438,13 +440,13 @@ _drm_init(Display *disp, int scr)
 {
    char *drv_name = NULL, *dev_name = NULL;
    drm_magic_t magic = 0;
-   
+
    if (swap_debug == -1)
      {
         if (getenv("EVAS_SWAPPER_DEBUG")) swap_debug = 1;
         else swap_debug = 0;
      }
-   
+
    if (xfixes_lib) return EINA_TRUE;
    if ((tried) && (!xfixes_lib)) return EINA_FALSE;
    tried = EINA_TRUE;
@@ -472,7 +474,7 @@ _drm_init(Display *disp, int scr)
         if (swap_debug) ERR("Can't load libXfixes.so.3");
         goto err;
      }
-   
+
 #define SYM(l, x) \
    do { sym_ ## x = dlsym(l, #x); \
       if (!sym_ ## x) { \
@@ -480,7 +482,7 @@ _drm_init(Display *disp, int scr)
          goto err; \
       } \
    } while (0)
-   
+
    SYM(drm_lib, drmGetMagic);
 
    SYM(drm_slp_lib, drm_slp_bo_import);
@@ -499,19 +501,28 @@ _drm_init(Display *disp, int scr)
    SYM(dri_lib, DRI2SwapBuffersWithRegion);
    SYM(dri_lib, DRI2SwapBuffers);
    SYM(dri_lib, DRI2DestroyDrawable);
+   SYM(dri_lib, DRI2QeuryExtensionAndCheckVersion);
 
    SYM(xfixes_lib, XFixesQueryExtension);
    SYM(xfixes_lib, XFixesQueryVersion);
    SYM(xfixes_lib, XFixesCreateRegion);
    SYM(xfixes_lib, XFixesDestroyRegion);
-   
+
    if (!sym_XFixesQueryExtension(disp, &xfixes_ev_base, &xfixes_err_base))
      {
         if (swap_debug) ERR("XFixes extension not in xserver");
         goto err;
      }
    sym_XFixesQueryVersion(disp, &xfixes_major, &xfixes_minor);
-   
+
+#if 1
+   if (!sym_DRI2QeuryExtensionAndCheckVersion(disp, &dri2_ev_base, &dri2_err_base, &dri2_major, &dri2_minor, dri2_check_major, dri2_check_minor))
+     {
+        if (swap_debug) ERR("Not supported by DRI2 version(%i.%i). DRI2 version in Xserver(%i, %i)",
+                            dri2_check_major, dri2_check_minor, dri2_major, dri2_minor);
+        goto err;
+     }
+#else
    if (!sym_DRI2QueryExtension(disp, &dri2_ev_base, &dri2_err_base))
      {
         if (swap_debug) ERR("DRI2 extension not in xserver");
@@ -528,6 +539,7 @@ _drm_init(Display *disp, int scr)
                             dri2_major, dri2_minor);
         goto err;
      }
+#endif
    if (!sym_DRI2Connect(disp, RootWindow(disp, scr), &drv_name, &dev_name))
      {
         if (swap_debug) ERR("DRI2 connect failed on screen %i", scr);
@@ -544,13 +556,13 @@ _drm_init(Display *disp, int scr)
         if (swap_debug) ERR("DRM get magic failed");
         goto err;
      }
-   if (!sym_DRI2Authenticate(disp, RootWindow(disp, scr), 
+   if (!sym_DRI2Authenticate(disp, RootWindow(disp, scr),
                              (unsigned int)magic))
      {
         if (swap_debug) ERR("DRI2 authenticate failed with magic 0x%x on screen %i", (unsigned int)magic, scr);
         goto err;
      }
-   
+
    if (!(bufmgr = sym_drm_slp_bufmgr_init(drm_fd, NULL)))
      {
         if (swap_debug) ERR("DRM bufmgr init failed");
@@ -598,7 +610,7 @@ _drm_shutdown(void)
    // though, as once shut down, we have to re-init and this could be
    // expensive especially if u have a single canvas that is changing config
    // and being shut down and re-initted a few times.
-/*   
+/*
    if (bufmgr)
      {
         sym_drm_slp_bufmgr_destroy(bufmgr);
@@ -640,7 +652,7 @@ evas_xlib_swapper_new(Display *disp, Drawable draw, Visual *vis,
         if (!_drm_init(disp, 0)) return NULL;
      }
    inits++;
-   
+
    swp = calloc(1, sizeof(X_Swapper));
    if (!swp) return NULL;
    swp->disp = disp;
@@ -669,7 +681,7 @@ void
 evas_xlib_swapper_free(X_Swapper *swp)
 {
    Buffer *b;
-   
+
    if (swap_debug) printf("Swapper free\n");
    if (swp->mapped) evas_xlib_swapper_buffer_unmap(swp);
    EINA_LIST_FREE(swp->buf_cache, b)
@@ -692,7 +704,7 @@ evas_xlib_swapper_buffer_map(X_Swapper *swp, int *bpl, int *w, int *h)
    Eina_List *l;
    Buffer *b;
    DRI2BufferFlags *flags;
-   
+
    if (swp->mapped)
      {
         if (bpl)
@@ -704,7 +716,7 @@ evas_xlib_swapper_buffer_map(X_Swapper *swp, int *bpl, int *w, int *h)
         if (h) *h = swp->h;
         return swp->buf_data;
      }
-   swp->buf = sym_DRI2GetBuffers(swp->disp, swp->draw, 
+   swp->buf = sym_DRI2GetBuffers(swp->disp, swp->draw,
                                  &(swp->buf_w), &(swp->buf_h),
                                  &attach, 1, &num);
    if (!swp->buf) return NULL;
@@ -806,7 +818,7 @@ evas_xlib_swapper_swap(X_Swapper *swp, Eina_Rectangle *rects, int nrects)
    XID region;
    int i;
    unsigned long long sbc_count = 0;
-   
+
    if (swap_debug) printf("Swap buffers\n");
    for (i = 0; i < nrects; i++)
      {
@@ -822,7 +834,7 @@ Render_Engine_Swap_Mode
 evas_xlib_swapper_buffer_state_get(X_Swapper *swp)
 {
    DRI2BufferFlags *flags;
-   
+
    if (!swp->mapped) evas_xlib_swapper_buffer_map(swp, NULL, NULL, NULL);
    if (!swp->mapped) return MODE_FULL;
    flags = (DRI2BufferFlags *)(&(swp->buf->flags));
