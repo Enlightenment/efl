@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-01-15 19:55+0100\n"
+"POT-Creation-Date: 2015-02-04 18:11+0900\n"
 "PO-Revision-Date: 2015-01-16 12:33+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
@@ -44,7 +44,7 @@ msgstr "etichetta voce multibottone"
 msgid "multi button entry item"
 msgstr "oggetto voce multibottone"
 
-#: src/lib/elc_multibuttonentry.c:1507
+#: src/lib/elc_multibuttonentry.c:1497
 msgid "multi button entry"
 msgstr "voce multibottone"
 
@@ -77,9 +77,9 @@ msgid "Clicked"
 msgstr "Cliccato"
 
 #: src/lib/elm_button.c:271 src/lib/elm_check.c:235 src/lib/elm_gengrid.c:814
-#: src/lib/elm_genlist.c:1576 src/lib/elm_list.c:2172 src/lib/elm_radio.c:256
+#: src/lib/elm_genlist.c:1572 src/lib/elm_list.c:2178 src/lib/elm_radio.c:256
 #: src/lib/elm_segment_control.c:525 src/lib/elm_spinner.c:578
-#: src/lib/elm_toolbar.c:2220
+#: src/lib/elm_toolbar.c:2226
 msgid "State: Disabled"
 msgstr "Stato: disabilitato"
 
@@ -160,7 +160,7 @@ msgstr "Stato: modificabile"
 msgid "Clock"
 msgstr "Orologio"
 
-#: src/lib/elm_colorselector.c:1395
+#: src/lib/elm_colorselector.c:1391
 msgid "color selector palette item"
 msgstr "oggetto palette selezione colore"
 
@@ -240,7 +240,7 @@ msgstr "barra avanzamento"
 msgid "Radio"
 msgstr "Opzione"
 
-#: src/lib/elm_segment_control.c:528 src/lib/elm_toolbar.c:2222
+#: src/lib/elm_segment_control.c:528 src/lib/elm_toolbar.c:2228
 msgid "State: Selected"
 msgstr "Stato: selezionato"
 
@@ -268,22 +268,22 @@ msgstr "bottone diminuzione spinner"
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1682 src/lib/elm_toolbar.c:2278
+#: src/lib/elm_toolbar.c:1688 src/lib/elm_toolbar.c:2284
 msgid "Selected"
 msgstr "Selezionato"
 
-#: src/lib/elm_toolbar.c:2218
+#: src/lib/elm_toolbar.c:2224
 msgid "Separator"
 msgstr "Separatore"
 
-#: src/lib/elm_toolbar.c:2224
+#: src/lib/elm_toolbar.c:2230
 msgid "Has menu"
 msgstr "Include menù"
 
-#: src/lib/elm_toolbar.c:2273
+#: src/lib/elm_toolbar.c:2279
 msgid "Unselected"
 msgstr "Non selezionato"
 
-#: src/lib/elm_toolbar.c:2290
+#: src/lib/elm_toolbar.c:2296
 msgid "Toolbar Item"
 msgstr "Oggetto della barra strumenti"

@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # FIRST AUTHOR <a.hillel@samsung.com>, 2010.
 #
-#: src/lib/elm_config.c:3207
+#: src/lib/elm_config.c:3174
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-11-07 09:26+0900\n"
+"POT-Creation-Date: 2015-02-04 18:11+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Aharon Hillel <a.hillel@samsung.com>\n"
 "Language-Team: General\n"
@@ -17,52 +17,56 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/lib/elc_fileselector.c:1403
+#: src/lib/elc_fileselector.c:1449
 msgid "Up"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1418
+#: src/lib/elc_fileselector.c:1464
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1637 src/lib/elm_entry.c:1477
-#: src/lib/elm_entry.c:1502
+#: src/lib/elc_fileselector.c:1527
+msgid "Search"
+msgstr ""
+
+#: src/lib/elc_fileselector.c:1693 src/lib/elm_entry.c:1487
+#: src/lib/elm_entry.c:1512
 msgid "Cancel"
 msgstr "בטל"
 
-#: src/lib/elc_fileselector.c:1646
+#: src/lib/elc_fileselector.c:1702
 msgid "OK"
 msgstr "אשר"
 
-#: src/lib/elc_multibuttonentry.c:604
+#: src/lib/elc_multibuttonentry.c:611
 msgid "multi button entry label"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:625
+#: src/lib/elc_multibuttonentry.c:633
 msgid "multi button entry item"
 msgstr ""
 
-#: src/lib/elc_multibuttonentry.c:1490
+#: src/lib/elc_multibuttonentry.c:1497
 msgid "multi button entry"
 msgstr ""
 
-#: src/lib/elc_naviframe.c:430
+#: src/lib/elc_naviframe.c:431
 msgid "Title"
 msgstr ""
 
-#: src/lib/elc_naviframe.c:957 src/lib/elc_naviframe.c:1155
+#: src/lib/elc_naviframe.c:957 src/lib/elc_naviframe.c:1156
 msgid "Back"
 msgstr ""
 
-#: src/lib/elc_naviframe.c:1246
+#: src/lib/elc_naviframe.c:1249
 msgid "Next"
 msgstr ""
 
-#: src/lib/elc_popup.c:258 src/lib/elc_popup.c:880
+#: src/lib/elc_popup.c:261 src/lib/elc_popup.c:868
 msgid "Popup Title"
 msgstr ""
 
-#: src/lib/elc_popup.c:268 src/lib/elc_popup.c:946
+#: src/lib/elc_popup.c:271 src/lib/elc_popup.c:934
 msgid "Popup Body Text"
 msgstr ""
 
@@ -74,10 +78,10 @@ msgstr ""
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:271 src/lib/elm_check.c:235 src/lib/elm_gengrid.c:770
-#: src/lib/elm_genlist.c:1518 src/lib/elm_list.c:2054 src/lib/elm_radio.c:256
-#: src/lib/elm_segment_control.c:521 src/lib/elm_spinner.c:578
-#: src/lib/elm_toolbar.c:2208
+#: src/lib/elm_button.c:271 src/lib/elm_check.c:235 src/lib/elm_gengrid.c:814
+#: src/lib/elm_genlist.c:1572 src/lib/elm_list.c:2178 src/lib/elm_radio.c:256
+#: src/lib/elm_segment_control.c:525 src/lib/elm_spinner.c:578
+#: src/lib/elm_toolbar.c:2226
 msgid "State: Disabled"
 msgstr ""
 
@@ -158,51 +162,51 @@ msgstr ""
 msgid "Clock"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:1367
+#: src/lib/elm_colorselector.c:1391
 msgid "color selector palette item"
 msgstr ""
 
-#: src/lib/elm_config.c:3223
+#: src/lib/elm_config.c:3190
 msgid "default:LTR"
 msgstr "default:RTL"
 
-#: src/lib/elm_dayselector.c:396
+#: src/lib/elm_dayselector.c:404
 msgid "day selector item"
 msgstr ""
 
-#: src/lib/elm_diskselector.c:675
+#: src/lib/elm_diskselector.c:693
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elm_entry.c:1464
+#: src/lib/elm_entry.c:1474
 msgid "Copy"
 msgstr "העתק"
 
-#: src/lib/elm_entry.c:1469
+#: src/lib/elm_entry.c:1479
 msgid "Cut"
 msgstr "גזור"
 
-#: src/lib/elm_entry.c:1473 src/lib/elm_entry.c:1496
+#: src/lib/elm_entry.c:1483 src/lib/elm_entry.c:1506
 msgid "Paste"
 msgstr "הדבק"
 
-#: src/lib/elm_entry.c:1489
+#: src/lib/elm_entry.c:1499
 msgid "Select"
 msgstr "התחל בחירה"
 
-#: src/lib/elm_entry.c:3476
+#: src/lib/elm_entry.c:3488
 msgid "Entry"
 msgstr ""
 
-#: src/lib/elm_gengrid.c:800
+#: src/lib/elm_gengrid.c:844
 msgid "Gengrid Item"
 msgstr ""
 
-#: src/lib/elm_index.c:91
+#: src/lib/elm_index.c:93
 msgid "Index"
 msgstr ""
 
-#: src/lib/elm_index.c:118
+#: src/lib/elm_index.c:121
 msgid "Index Item"
 msgstr ""
 
@@ -238,20 +242,20 @@ msgstr ""
 msgid "Radio"
 msgstr ""
 
-#: src/lib/elm_segment_control.c:524 src/lib/elm_toolbar.c:2210
+#: src/lib/elm_segment_control.c:528 src/lib/elm_toolbar.c:2228
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_segment_control.c:526
+#: src/lib/elm_segment_control.c:530
 #, fuzzy
 msgid "State: Unselected"
 msgstr "התחל בחירה"
 
-#: src/lib/elm_segment_control.c:538
+#: src/lib/elm_segment_control.c:544
 msgid "Segment Control Item"
 msgstr ""
 
-#: src/lib/elm_slider.c:874
+#: src/lib/elm_slider.c:887
 msgid "slider"
 msgstr ""
 
@@ -267,24 +271,24 @@ msgstr ""
 msgid "spinner"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1670 src/lib/elm_toolbar.c:2269
+#: src/lib/elm_toolbar.c:1688 src/lib/elm_toolbar.c:2284
 #, fuzzy
 msgid "Selected"
 msgstr "התחל בחירה"
 
-#: src/lib/elm_toolbar.c:2206
+#: src/lib/elm_toolbar.c:2224
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:2212
+#: src/lib/elm_toolbar.c:2230
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:2264
+#: src/lib/elm_toolbar.c:2279
 #, fuzzy
 msgid "Unselected"
 msgstr "התחל בחירה"
 
-#: src/lib/elm_toolbar.c:2281
+#: src/lib/elm_toolbar.c:2296
 msgid "Toolbar Item"
 msgstr ""

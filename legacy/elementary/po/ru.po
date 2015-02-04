@@ -5,12 +5,12 @@
 # Danny Moshnakov <dm@agent.co.il>, 2012.
 # Igor Murzov <garik@efl.so>, 2014.
 #
-#: src/lib/elm_config.c:3229
+#: src/lib/elm_config.c:3174
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.11\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-11-15 13:55+0300\n"
+"POT-Creation-Date: 2015-02-04 18:11+0900\n"
 "PO-Revision-Date: 2014-11-15 13:55+0300\n"
 "Last-Translator: Игорь Мурзов <garik@efl.so>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
@@ -21,20 +21,24 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: src/lib/elc_fileselector.c:1403
+#: src/lib/elc_fileselector.c:1449
 msgid "Up"
 msgstr "Вверх"
 
-#: src/lib/elc_fileselector.c:1418
+#: src/lib/elc_fileselector.c:1464
 msgid "Home"
 msgstr "Дом"
 
-#: src/lib/elc_fileselector.c:1637 src/lib/elm_entry.c:1477
-#: src/lib/elm_entry.c:1502
+#: src/lib/elc_fileselector.c:1527
+msgid "Search"
+msgstr ""
+
+#: src/lib/elc_fileselector.c:1693 src/lib/elm_entry.c:1487
+#: src/lib/elm_entry.c:1512
 msgid "Cancel"
 msgstr "Отмена"
 
-#: src/lib/elc_fileselector.c:1646
+#: src/lib/elc_fileselector.c:1702
 msgid "OK"
 msgstr "ОК"
 
@@ -46,7 +50,7 @@ msgstr "метка многокопочного элемента"
 msgid "multi button entry item"
 msgstr "кнопка многокопочного элемента"
 
-#: src/lib/elc_multibuttonentry.c:1507
+#: src/lib/elc_multibuttonentry.c:1497
 msgid "multi button entry"
 msgstr "многокнопочный элемент"
 
@@ -78,10 +82,10 @@ msgstr "Облачко"
 msgid "Clicked"
 msgstr "Нажато"
 
-#: src/lib/elm_button.c:271 src/lib/elm_check.c:235 src/lib/elm_gengrid.c:782
-#: src/lib/elm_genlist.c:1518 src/lib/elm_list.c:2064 src/lib/elm_radio.c:256
+#: src/lib/elm_button.c:271 src/lib/elm_check.c:235 src/lib/elm_gengrid.c:814
+#: src/lib/elm_genlist.c:1572 src/lib/elm_list.c:2178 src/lib/elm_radio.c:256
 #: src/lib/elm_segment_control.c:525 src/lib/elm_spinner.c:578
-#: src/lib/elm_toolbar.c:2213
+#: src/lib/elm_toolbar.c:2226
 msgid "State: Disabled"
 msgstr "Состояние: Отключено"
 
@@ -162,11 +166,11 @@ msgstr "Состояние: Редактируемо"
 msgid "Clock"
 msgstr "Часы"
 
-#: src/lib/elm_colorselector.c:1377
+#: src/lib/elm_colorselector.c:1391
 msgid "color selector palette item"
 msgstr "элемент выбора цвета палитры"
 
-#: src/lib/elm_config.c:3245
+#: src/lib/elm_config.c:3190
 msgid "default:LTR"
 msgstr "по умолчанию: ЛНП"
 
@@ -174,31 +178,31 @@ msgstr "по умолчанию: ЛНП"
 msgid "day selector item"
 msgstr "элемент выбора дня"
 
-#: src/lib/elm_diskselector.c:688
+#: src/lib/elm_diskselector.c:693
 msgid "diskselector item"
 msgstr "элемент диска выбора"
 
-#: src/lib/elm_entry.c:1464
+#: src/lib/elm_entry.c:1474
 msgid "Copy"
 msgstr "Копировать"
 
-#: src/lib/elm_entry.c:1469
+#: src/lib/elm_entry.c:1479
 msgid "Cut"
 msgstr "Вырезать"
 
-#: src/lib/elm_entry.c:1473 src/lib/elm_entry.c:1496
+#: src/lib/elm_entry.c:1483 src/lib/elm_entry.c:1506
 msgid "Paste"
 msgstr "Вставить"
 
-#: src/lib/elm_entry.c:1489
+#: src/lib/elm_entry.c:1499
 msgid "Select"
 msgstr "Выбрать"
 
-#: src/lib/elm_entry.c:3476
+#: src/lib/elm_entry.c:3488
 msgid "Entry"
 msgstr "Запись"
 
-#: src/lib/elm_gengrid.c:812
+#: src/lib/elm_gengrid.c:844
 msgid "Gengrid Item"
 msgstr "Элемент сетки"
 
@@ -242,7 +246,7 @@ msgstr "индикатор выполнения"
 msgid "Radio"
 msgstr "Радио флажок"
 
-#: src/lib/elm_segment_control.c:528 src/lib/elm_toolbar.c:2215
+#: src/lib/elm_segment_control.c:528 src/lib/elm_toolbar.c:2228
 msgid "State: Selected"
 msgstr "Состояние: Выбрано"
 
@@ -254,7 +258,7 @@ msgstr "Состояние: Невыбрано"
 msgid "Segment Control Item"
 msgstr "Элемент сегментного элемента управления"
 
-#: src/lib/elm_slider.c:874
+#: src/lib/elm_slider.c:887
 msgid "slider"
 msgstr "бегунок"
 
@@ -270,22 +274,22 @@ msgstr "кнопка уменьшения счётчика"
 msgid "spinner"
 msgstr "счётчик"
 
-#: src/lib/elm_toolbar.c:1675 src/lib/elm_toolbar.c:2271
+#: src/lib/elm_toolbar.c:1688 src/lib/elm_toolbar.c:2284
 msgid "Selected"
 msgstr "Выбрано"
 
-#: src/lib/elm_toolbar.c:2211
+#: src/lib/elm_toolbar.c:2224
 msgid "Separator"
 msgstr "Разделитель"
 
-#: src/lib/elm_toolbar.c:2217
+#: src/lib/elm_toolbar.c:2230
 msgid "Has menu"
 msgstr "С меню"
 
-#: src/lib/elm_toolbar.c:2266
+#: src/lib/elm_toolbar.c:2279
 msgid "Unselected"
 msgstr "Невыбрано"
 
-#: src/lib/elm_toolbar.c:2283
+#: src/lib/elm_toolbar.c:2296
 msgid "Toolbar Item"
 msgstr "Элемент панели инструментов"
