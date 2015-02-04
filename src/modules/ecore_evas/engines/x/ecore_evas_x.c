@@ -2531,7 +2531,7 @@ _alpha_do(Ecore_Evas *ee, int alpha)
      }
    evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
    ecore_x_window_shape_mask_set(ee->prop.window, 0);
-   ecore_x_input_select(ee->prop.window);
+   ecore_x_input_multi_select(ee->prop.window);
    ecore_event_window_register(ee->prop.window, ee, ee->evas,
                                (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
@@ -2685,7 +2685,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
           }
         evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
 //        ecore_x_window_shape_mask_set(ee->prop.window, 0);
-        ecore_x_input_select(ee->prop.window);
+        ecore_x_input_multi_select(ee->prop.window);
         ecore_event_window_register(ee->prop.window, ee, ee->evas,
                                     (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
                                     (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
@@ -3997,7 +3997,7 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
    _ecore_evas_register(ee);
-   ecore_x_input_select(ee->prop.window);
+   ecore_x_input_multi_select(ee->prop.window);
    ecore_event_window_register(ee->prop.window, ee, ee->evas,
                                (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
@@ -4221,7 +4221,7 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
 
    ee->draw_ok = 1;
 
-   /* ecore_x_input_select(ee->prop.window); */
+   /* ecore_x_input_multi_select(ee->prop.window); */
    /* ecore_event_window_register(ee->prop.window, ee, ee->evas, */
    /*                             (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process, */
    /*                             (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process, */
@@ -4314,7 +4314,7 @@ _ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window w
      {
         *winp = win;
         edata->win_extra = eina_list_append(edata->win_extra, winp);
-        ecore_x_input_select(win);
+        ecore_x_input_multi_select(win);
         ecore_event_window_register(win, ee, ee->evas,
                                     (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
                                     (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
@@ -4448,7 +4448,7 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
    _ecore_evas_register(ee);
-   ecore_x_input_select(ee->prop.window);
+   ecore_x_input_multi_select(ee->prop.window);
    ecore_event_window_register(ee->prop.window, ee, ee->evas,
                                (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
@@ -4646,7 +4646,7 @@ ecore_evas_gl_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Window pare
    ee->engine.func->fn_render = _ecore_evas_x_render;
    _ecore_evas_register(ee);
 
-   /* ecore_x_input_select(ee->prop.window); */
+   /* ecore_x_input_multi_select(ee->prop.window); */
    /* ecore_event_window_register(ee->prop.window, ee, ee->evas, */
    /*                             (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process, */
    /*                             (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process, */

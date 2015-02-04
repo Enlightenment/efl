@@ -638,7 +638,7 @@ _ecore_x_input_handler(XEvent *xevent)
 }
 
 EAPI Eina_Bool
-ecore_x_input_select(Ecore_X_Window win)
+ecore_x_input_multi_select(Ecore_X_Window win)
 {
 #ifdef ECORE_XI2
    int i;
