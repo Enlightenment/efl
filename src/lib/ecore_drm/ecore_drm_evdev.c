@@ -523,7 +523,7 @@ _device_handle_axis(struct libinput_device *device, struct libinput_event_pointe
    ev->root.y = ev->y;
 
    if (axis == LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL) ev->direction = 1;
-   ev->z = -libinput_event_pointer_get_axis_value(event);
+   ev->z = libinput_event_pointer_get_axis_value(event);
 
    ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
 }
