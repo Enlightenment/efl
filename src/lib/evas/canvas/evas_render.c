@@ -1494,9 +1494,9 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
         if (mapped)
           {
-             Eina_Bool restore_image_clip = EINA_FALSE;
+             Eina_Bool restore_image_clip = EINA_FALSE, old_use_clip = EINA_FALSE;
+             int oldm_x = 0, oldm_y = 0, ocx = 0, ocy = 0, ocw = 0, och = 0;
              void *oldm_sfc = NULL;
-             int oldm_x = 0, oldm_y = 0;
 
              RDI(level);
              RD("        draw child of mapped obj\n");
@@ -1524,11 +1524,14 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                             e->engine.func->context_clip_image_get
                                   (e->engine.data.output, ctx,
                                    &oldm_sfc, &oldm_x, &oldm_y);
+                            old_use_clip = e->engine.func->context_clip_get
+                                  (e->engine.data.output, ctx,
+                                   &ocx, &ocy, &ocw, &och);
                             e->engine.func->context_clip_image_set
                                   (e->engine.data.output, ctx,
                                    mask->mask->surface,
-                                   mask->mask->x + off_x,
-                                   mask->mask->y + off_y);
+                                   mask->cur->geometry.x + off_x,
+                                   mask->cur->geometry.y + off_y);
                          }
                     }
 
@@ -1579,11 +1582,14 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                                  e->engine.func->context_clip_image_get
                                        (e->engine.data.output, ctx,
                                         &oldm_sfc, &oldm_x, &oldm_y);
+                                 old_use_clip = e->engine.func->context_clip_get
+                                       (e->engine.data.output, ctx,
+                                        &ocx, &ocy, &ocw, &och);
                                  e->engine.func->context_clip_image_set
                                        (e->engine.data.output, ctx,
                                         mask->mask->surface,
-                                        mask->mask->x + off_x,
-                                        mask->mask->y + off_y);
+                                        mask->cur->geometry.x + off_x,
+                                        mask->cur->geometry.y + off_y);
                               }
                          }
                     }
@@ -1593,6 +1599,10 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                }
              if (restore_image_clip)
                {
+                  if (old_use_clip)
+                    e->engine.func->context_clip_set(e->engine.data.output, ctx, ocx, ocy, ocw, och);
+                  else
+                    e->engine.func->context_clip_unset(e->engine.data.output, ctx);
                   e->engine.func->context_clip_image_set
                     (e->engine.data.output, ctx, oldm_sfc, oldm_x, oldm_y);
                }
@@ -1791,13 +1801,10 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
        {
           mdata->surface = ENFN->image_map_surface_new(ENDT, w, h, EINA_TRUE);
           if (!mdata->surface) goto end;
+          mdata->is_alpha = EINA_FALSE;
           mdata->w = w;
           mdata->h = h;
        }
-
-     mdata->x = x;
-     mdata->y = y;
-     mdata->is_alpha = EINA_FALSE;
 
      /* Clear surface with transparency */
      ctx = ENFN->context_new(ENDT);
@@ -1812,8 +1819,8 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
        {
           ENFN->context_clip_image_set(ENDT, ctx,
                                        prev_mask->mask->surface,
-                                       prev_mask->mask->x - x,
-                                       prev_mask->mask->y - y);
+                                       prev_mask->cur->geometry.x - x,
+                                       prev_mask->cur->geometry.y - y);
        }
      evas_render_mapped(evas, mask->object, mask, ctx, mdata->surface,
                         -x, -y, 1, 0, 0, evas->output.w, evas->output.h,
@@ -2348,8 +2355,8 @@ evas_render_updates_internal(Evas *eo_e,
                                             (e->engine.data.output,
                                              e->engine.data.context,
                                              mask->mask->surface,
-                                             mask->mask->x + off_x,
-                                             mask->mask->y + off_y);
+                                             mask->cur->geometry.x + off_x,
+                                             mask->cur->geometry.y + off_y);
                                    }
                               }
 

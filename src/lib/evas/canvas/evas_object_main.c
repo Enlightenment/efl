@@ -185,7 +185,7 @@ evas_object_free(Evas_Object *eo_obj, int clean_layer)
           mask->is_mask = EINA_FALSE;
           mask->redraw = EINA_FALSE;
           mask->is_alpha = EINA_FALSE;
-          mask->x = mask->y = mask->w = mask->h = 0;
+          mask->w = mask->h = 0;
           if (mask->surface)
             {
                obj->layer->evas->engine.func->image_map_surface_free
@@ -1264,14 +1264,14 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    if (obj->mask->is_mask)
      {
         if (obj->mask->surface ||
-            obj->mask->x || obj->mask->y || obj->mask->w || obj->mask->h ||
+            obj->mask->w || obj->mask->h ||
             obj->mask->is_alpha || obj->mask->redraw)
           {
              EINA_COW_WRITE_BEGIN(evas_object_mask_cow, obj->mask,
                                   Evas_Object_Mask_Data, mask)
                mask->redraw = EINA_FALSE;
                mask->is_alpha = EINA_FALSE;
-               mask->x = mask->y = mask->w = mask->h = 0;
+               mask->w = mask->h = 0;
                if (mask->surface)
                  {
                     obj->layer->evas->engine.func->image_map_surface_free

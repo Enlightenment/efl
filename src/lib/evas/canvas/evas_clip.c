@@ -205,8 +205,6 @@ _evas_object_clip_mask_unset(Evas_Object_Protected_Data *obj)
                 (obj->layer->evas->engine.data.output, mask->surface);
           mask->surface = NULL;
        }
-     mask->x = 0;
-     mask->y = 0;
      mask->w = 0;
      mask->h = 0;
    EINA_COW_WRITE_END(evas_object_mask_cow, obj->mask, mask);
