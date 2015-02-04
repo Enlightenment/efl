@@ -353,7 +353,7 @@ eina_file_path_sanitize(const char *path)
    if (eina_file_path_relative(path))
      {
        result = eina_file_current_directory_get(path, len);
-       len = eina_tmpstr_strlen(result);
+       len = eina_tmpstr_strlen(result) - 1; /* tmpstr lengths include '/0' */
      }
    else
      result = path;
