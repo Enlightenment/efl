@@ -314,9 +314,9 @@ eet_data_image_jpeg_alpha_convert(int         *size,
 
 /*---*/
 
-#define SWAP64(x) eina_swap64(x)
-#define SWAP32(x) eina_swap32(x)
-#define SWAP16(x) eina_swap16(x)
+#define SWAP64(x) x = eina_swap64(x)
+#define SWAP32(x) x = eina_swap32(x)
+#define SWAP16(x) x = eina_swap16(x)
 
 #ifdef CONV8
 # undef CONV8
