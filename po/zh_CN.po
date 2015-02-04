@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-09 11:26+0200\n"
+"POT-Creation-Date: 2015-02-04 18:08+0900\n"
 "PO-Revision-Date: 2012-12-22 03:45+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified)\n"
@@ -207,34 +207,34 @@ msgstr "错误：不正确的形状 %s\n"
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "错误：不正确的大小 %s\n"
 
-#: src/lib/efreet/efreet_base.c:120
+#: src/lib/efreet/efreet_base.c:123
 msgid "Desktop"
 msgstr "桌面"
 
-#: src/lib/efreet/efreet_base.c:128
+#: src/lib/efreet/efreet_base.c:131
 msgid "Downloads"
 msgstr "下载"
 
-#: src/lib/efreet/efreet_base.c:137
+#: src/lib/efreet/efreet_base.c:140
 msgid "Templates"
 msgstr "模板"
 
-#: src/lib/efreet/efreet_base.c:146
+#: src/lib/efreet/efreet_base.c:149
 msgid "Public"
 msgstr "公共"
 
-#: src/lib/efreet/efreet_base.c:155
+#: src/lib/efreet/efreet_base.c:158
 msgid "Documents"
 msgstr "文档"
 
-#: src/lib/efreet/efreet_base.c:163
+#: src/lib/efreet/efreet_base.c:166
 msgid "Music"
 msgstr "音乐"
 
-#: src/lib/efreet/efreet_base.c:171
+#: src/lib/efreet/efreet_base.c:174
 msgid "Pictures"
 msgstr "图片"
 
-#: src/lib/efreet/efreet_base.c:179
+#: src/lib/efreet/efreet_base.c:182
 msgid "Videos"
 msgstr "视频"

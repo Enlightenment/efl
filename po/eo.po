@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-09 11:26+0200\n"
+"POT-Creation-Date: 2015-02-04 18:08+0900\n"
 "PO-Revision-Date: 2014-02-13 06:52+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
@@ -206,34 +206,34 @@ msgstr "ERARO: nekorekta geometria valoro '%s'\n"
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "ERARO: nekorekta valoro de grando '%s'\n"
 
-#: src/lib/efreet/efreet_base.c:120
+#: src/lib/efreet/efreet_base.c:123
 msgid "Desktop"
 msgstr "Labortablo"
 
-#: src/lib/efreet/efreet_base.c:128
+#: src/lib/efreet/efreet_base.c:131
 msgid "Downloads"
 msgstr "Elŝutujo"
 
-#: src/lib/efreet/efreet_base.c:137
+#: src/lib/efreet/efreet_base.c:140
 msgid "Templates"
 msgstr "Ŝablonujo"
 
-#: src/lib/efreet/efreet_base.c:146
+#: src/lib/efreet/efreet_base.c:149
 msgid "Public"
 msgstr "Publikujo"
 
-#: src/lib/efreet/efreet_base.c:155
+#: src/lib/efreet/efreet_base.c:158
 msgid "Documents"
 msgstr "Dokumentujo"
 
-#: src/lib/efreet/efreet_base.c:163
+#: src/lib/efreet/efreet_base.c:166
 msgid "Music"
 msgstr "Muzikujo"
 
-#: src/lib/efreet/efreet_base.c:171
+#: src/lib/efreet/efreet_base.c:174
 msgid "Pictures"
 msgstr "Bildujo"
 
-#: src/lib/efreet/efreet_base.c:179
+#: src/lib/efreet/efreet_base.c:182
 msgid "Videos"
 msgstr "Videujo"

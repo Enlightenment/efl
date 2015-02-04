@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-09 11:26+0200\n"
+"POT-Creation-Date: 2015-02-04 18:08+0900\n"
 "PO-Revision-Date: 2014-04-16 13:32+0000\n"
 "Last-Translator: Ali E.İMREK <alierkanimrek@gmail.com>\n"
 "Language-Team: Turkish <tr@li.org>\n"
@@ -206,34 +206,34 @@ msgstr "HATA: yanlış geometri değeri '%s'\n"
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "HATA: yanlış boyut değeri '%s'\n"
 
-#: src/lib/efreet/efreet_base.c:120
+#: src/lib/efreet/efreet_base.c:123
 msgid "Desktop"
 msgstr "Masaüstü"
 
-#: src/lib/efreet/efreet_base.c:128
+#: src/lib/efreet/efreet_base.c:131
 msgid "Downloads"
 msgstr "İndirilenler"
 
-#: src/lib/efreet/efreet_base.c:137
+#: src/lib/efreet/efreet_base.c:140
 msgid "Templates"
 msgstr "Şablonlar"
 
-#: src/lib/efreet/efreet_base.c:146
+#: src/lib/efreet/efreet_base.c:149
 msgid "Public"
 msgstr "Genel"
 
-#: src/lib/efreet/efreet_base.c:155
+#: src/lib/efreet/efreet_base.c:158
 msgid "Documents"
 msgstr "Belgeler"
 
-#: src/lib/efreet/efreet_base.c:163
+#: src/lib/efreet/efreet_base.c:166
 msgid "Music"
 msgstr "Müzik"
 
-#: src/lib/efreet/efreet_base.c:171
+#: src/lib/efreet/efreet_base.c:174
 msgid "Pictures"
 msgstr "Resimler"
 
-#: src/lib/efreet/efreet_base.c:179
+#: src/lib/efreet/efreet_base.c:182
 msgid "Videos"
 msgstr "Videolar"
