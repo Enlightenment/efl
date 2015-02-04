@@ -470,6 +470,13 @@ ecore_con_ssl_init(void)
 Ecore_Con_Ssl_Error
 ecore_con_ssl_shutdown(void)
 {
+   /* _init_con_ssl_init_count should not go below zero. */
+   if (_init_con_ssl_init_count < 1)
+     {
+        ERR("ecore_con_ssl_shutdown called without calling ecore_con_ssl_init.\n");
+        return 0;
+     }
+
    if (!--_init_con_ssl_init_count)
      SSL_SUFFIX(_ecore_con_ssl_shutdown) ();
 
