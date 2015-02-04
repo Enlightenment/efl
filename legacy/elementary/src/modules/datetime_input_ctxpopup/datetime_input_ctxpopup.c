@@ -3,7 +3,7 @@
 #endif
 
 #include <Elementary.h>
-#include "elm_priv.h"
+#include "elm_widget_datetime.h"
 
 #define DATETIME_FIELD_COUNT    6
 #define FIELD_FORMAT_LEN        3
@@ -327,7 +327,7 @@ EAPI Elm_Datetime_Module_Data *
 obj_hook(Evas_Object *obj)
 {
    Ctxpopup_Module_Data *ctx_mod;
-   ctx_mod = ELM_NEW(Ctxpopup_Module_Data);
+   ctx_mod = calloc(1, sizeof(Ctxpopup_Module_Data));
    if (!ctx_mod) return NULL;
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,

@@ -23,14 +23,26 @@
 /**
  * Base layout smart data extended with datetime instance data.
  */
-typedef struct _Elm_Datetime_Data       Elm_Datetime_Data;
-typedef struct _Datetime_Field          Datetime_Field;
-typedef struct _Datetime_Mod_Api        Datetime_Mod_Api;
-typedef struct _Format_Map              Format_Map;
+typedef struct _Elm_Datetime_Module_Data Elm_Datetime_Module_Data;
+typedef struct _Elm_Datetime_Data        Elm_Datetime_Data;
+typedef struct _Datetime_Field           Datetime_Field;
+typedef struct _Datetime_Mod_Api         Datetime_Mod_Api;
+typedef struct _Format_Map               Format_Map;
 
 #define ELM_DATETIME_TYPE_COUNT           6
 #define ELM_DATETIME_MAX_FORMAT_LEN       64
 #define ELM_DATETIME_MAX_FIELD_FORMAT_LEN 3
+
+struct _Elm_Datetime_Module_Data
+{
+   Evas_Object *base;
+   void         (*field_limit_get)(Evas_Object *obj,
+                                   Elm_Datetime_Field_Type field_type,
+                                   int *range_min,
+                                   int *range_max);
+   const char  *(*field_format_get)(Evas_Object * obj,
+                                    Elm_Datetime_Field_Type field_type);
+};
 
 struct _Datetime_Field
 {
