@@ -2135,6 +2135,8 @@ evas_render_updates_internal(Evas *eo_e,
    for (i = 0; i < e->restack_objects.count; ++i)
      {
         obj = eina_array_data_get(&e->restack_objects, i);
+        if (_evas_render_object_is_mask(obj))
+          _evas_mask_redraw_set(e, obj);
         obj->func->render_pre(obj->object, obj, obj->private_data);
         _evas_render_prev_cur_clip_cache_add(e, obj);
      }
