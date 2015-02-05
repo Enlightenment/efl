@@ -190,6 +190,8 @@ _elm_label_elm_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 
+   elm_layout_sizing_eval(obj);
+
    return int_ret;
 }
 
