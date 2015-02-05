@@ -638,22 +638,25 @@ local gen_mixin = function(klass)
 end
 
 local gen_class = function(klass)
-    local inherits = klass:inherits_get()
+    local inherits = klass:inherits_get():to_array()
     local parent
-    local mixins   = {}
+    local mixins = {}
     local ct = eolian.class_type
-    for v in inherits do
-        local tp = eolian.class_get_by_name(v):type_get()
+    local n = 1
+    if inherits[n] then
+        local tp = eolian.class_get_by_name(inherits[n]):type_get()
         if tp == ct.REGULAR or tp == ct.ABSTRACT then
-            if parent then
-                error(klass:full_name_get() .. ": more than 1 parent!")
-            end
-            parent = v
-        elseif tp == ct.MIXIN or tp == ct.INTERFACE then
-            mixins[#mixins + 1] = v
-        else
+            parent = inherits[n]
+            n = n + 1
+        end
+    end
+    for i = n, #inherits do
+        local v = inherits[i]
+        local tp = eolian.class_get_by_name(v):type_get()
+        if tp == ct.UNKNOWN then
             error(klass:full_name_get() .. ": unknown inherit " .. v)
         end
+        mixins[#mixins + 1] = v
     end
     return Class(klass, parent, mixins, gen_contents(klass))
 end
