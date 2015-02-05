@@ -1881,9 +1881,7 @@ evas_is_sphere_in_frustum(Evas_Sphere *bsphere, Evas_Vec4 *planes)
    int intersected_planes_count = 0;
 
    for (i = 0; i < 6; i++)
-     {
-        distances[i] = evas_point_plane_distance(&bsphere->center, &planes[i]);
-     }
+     distances[i] = evas_point_plane_distance(&bsphere->center, &planes[i]);
 
    for (i = 0; i < 6; i++)
      {
@@ -1898,21 +1896,24 @@ evas_is_sphere_in_frustum(Evas_Sphere *bsphere, Evas_Vec4 *planes)
           }
       }
 
-   if ((intersected_planes_count == 0) || (intersected_planes_count == 1))
-     return EINA_TRUE;
-   else if (intersected_planes_count == 2)
+   switch (intersected_planes_count)
      {
-        evas_intersection_line_of_two_planes(&line, &planes[intersected_planes[0]], &planes[intersected_planes[1]]);
-        return (evas_point_line_distance(&bsphere->center, &line) < bsphere->radius) ? EINA_TRUE : EINA_FALSE;
-     }
-   else if (intersected_planes_count == 3)
-     {
-        evas_intersection_point_of_three_planes(&point, &planes[intersected_planes[0]], &planes[intersected_planes[1]], &planes[intersected_planes[2]]);
+      case 2:
+        evas_intersection_line_of_two_planes(&line,
+                                             &planes[intersected_planes[0]],
+                                             &planes[intersected_planes[1]]);
+        return (evas_point_line_distance(&bsphere->center, &line) <
+                bsphere->radius) ? EINA_TRUE : EINA_FALSE;
+      case 3:
+        evas_intersection_point_of_three_planes(&point,
+                                                &planes[intersected_planes[0]],
+                                                &planes[intersected_planes[1]],
+                                                &planes[intersected_planes[2]]);
         evas_vec3_subtract(&sub, &point, &bsphere->center);
         return (evas_vec3_length_get(&sub) < bsphere->radius) ? EINA_TRUE : EINA_FALSE;
+      default:
+        return EINA_TRUE;
      }
-
-   return EINA_FALSE;
 }
 
 static inline Eina_Bool
