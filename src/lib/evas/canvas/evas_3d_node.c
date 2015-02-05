@@ -345,11 +345,6 @@ _node_aabb_update(Evas_3D_Node *node, void *data EINA_UNUSED)
 
              if (frame_found)
                {
-                  if (is_change_orientation)
-                    {
-                       evas_vec3_quaternion_rotate(&pd->obb.p0, &pd->obb.p0, &orientation);
-                       evas_vec3_quaternion_rotate(&pd->obb.p1, &pd->obb.p1, &orientation);
-                    }
                   if ((pd->scale_world.x != 1 || pd->scale_world.y != 1 || pd->scale_world.z != 1))
                     {
                        Evas_Vec3 scale;
@@ -358,6 +353,11 @@ _node_aabb_update(Evas_3D_Node *node, void *data EINA_UNUSED)
                        evas_vec3_multiply(&pd->obb.p1, &scale, &pd->obb.p1);
                        evas_vec3_multiply(&pd->aabb.p0, &scale, &pd->aabb.p0);
                        evas_vec3_multiply(&pd->aabb.p1, &scale, &pd->aabb.p1);
+                    }
+                  if (is_change_orientation)
+                    {
+                       evas_vec3_quaternion_rotate(&pd->obb.p0, &pd->obb.p0, &orientation);
+                       evas_vec3_quaternion_rotate(&pd->obb.p1, &pd->obb.p1, &orientation);
                     }
                   if ((pd->position_world.x || pd->position_world.y || pd->position_world.z))
                     {
