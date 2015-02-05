@@ -119,6 +119,7 @@ _message_iter_array_to_eina_value(Eldbus_Message_Iter *iter)
              Eina_Value_Struct st;
              eina_value_get(data, &st);
              eina_value_array_append(array_value, st);
+             eina_value_free(data);
           }
      }
    else if (sig[0] == 'a')
@@ -130,6 +131,7 @@ _message_iter_array_to_eina_value(Eldbus_Message_Iter *iter)
              Eina_Value_Array inner_array;
              eina_value_get(data, &inner_array);
              eina_value_array_append(array_value, inner_array);
+             eina_value_free(data);
           }
      }
    else
