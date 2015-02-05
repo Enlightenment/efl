@@ -49,6 +49,7 @@ typedef enum _E3D_Uniform
    E3D_UNIFORM_MATERIAL_SHININESS,
    E3D_UNIFORM_FOG_FACTOR,
    E3D_UNIFORM_FOG_COLOR,
+   E3D_UNIFORM_COLOR_PICK,
 
    E3D_UNIFORM_COUNT,
 } E3D_Uniform;
@@ -525,6 +526,9 @@ _fragment_shader_string_variable_add(E3D_Shader_String *shader,
         ADD_LINE("varying vec4 lpos;");
         ADD_LINE("uniform sampler2D uShadowMap;");
      }
+
+	if (flags & E3D_SHADER_FLAG_COLOR_PICK_ENABLED)
+	  ADD_LINE("uniform float uColorPick;");
 
    /* Materials. */
    if (flags & E3D_SHADER_FLAG_DIFFUSE)
@@ -1151,6 +1155,11 @@ _fragment_shader_string_get(E3D_Shader_String *shader,
         ADD_LINE("gl_FragColor = mix(uFogColor, gl_FragColor, fogFactor );");
      }
 
+   if (mode == EVAS_3D_SHADE_MODE_COLOR_PICK)
+     {
+       ADD_LINE("gl_FragColor = vec4(uColorPick);");
+     }
+
    ADD_LINE("}");
 }
 
@@ -1321,7 +1330,8 @@ static const char *uniform_names[] =
    "uMaterialEmission",
    "uMaterialShininess",
    "uFogFactor",
-   "uFogColor"
+   "uFogColor",
+   "uColorPick"
 };
 
 static inline void
@@ -1497,6 +1507,9 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
          break;
       case E3D_UNIFORM_FOG_COLOR:
          glUniform4f(loc, data->fog_color.r, data->fog_color.g, data->fog_color.b, 1);
+         break;
+      case E3D_UNIFORM_COLOR_PICK:
+         glUniform1f(loc, data->color_pick_key);
          break;
       default:
          ERR("Invalid uniform ID.");

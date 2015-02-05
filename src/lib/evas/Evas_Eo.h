@@ -487,6 +487,7 @@ typedef enum _Evas_3D_State
    EVAS_3D_STATE_MESH_SHADE_MODE,
    EVAS_3D_STATE_MESH_FOG,
    EVAS_3D_STATE_MESH_BLENDING,
+   EVAS_3D_STATE_MESH_COLOR_PICK,
 
    EVAS_3D_STATE_CAMERA_PROJECTION = 1,
 
@@ -777,7 +778,8 @@ typedef enum _Evas_3D_Shade_Mode
    EVAS_3D_SHADE_MODE_NORMAL_MAP,
    /**< fragment color is defined by its z-coord*/
    EVAS_3D_SHADE_MODE_SHADOW_MAP_RENDER,
-
+   /**< rendering to additional frame bufer*/
+   EVAS_3D_SHADE_MODE_COLOR_PICK,
 } Evas_3D_Shade_Mode;
 
 /**
