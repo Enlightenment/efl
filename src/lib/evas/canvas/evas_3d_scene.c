@@ -352,7 +352,8 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
-                       _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i0, i1, i2);
+                       if (tex0.data)
+                         _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i0, i1, i2);
                        data->mesh = mesh;
                        data->node = node;
                     }
@@ -399,7 +400,8 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
                             i1 = ((unsigned char *)pdmesh->indices)[i + 1];
                          }
 
-                       _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i0, i1, i2);
+                       if (tex0.data)
+                         _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i0, i1, i2);
                        data->mesh = mesh;
                        data->node = node;
                     }
@@ -439,7 +441,8 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
                        else
                          i1 = ((unsigned char *)pdmesh->indices)[i];
 
-                       _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i0, i1, i2);
+                       if (tex0.data)
+                         _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i0, i1, i2);
                        data->mesh = mesh;
                        data->node = node;
                     }
@@ -458,7 +461,8 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
-                       _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i, i + 1, i + 2);
+                       if (tex0.data)
+                         _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i, i + 1, i + 2);
                        data->mesh = mesh;
                        data->node = node;
                     }
@@ -478,7 +482,8 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
-                       _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i, i + 1, i + 2);
+                       if (tex0.data)
+                         _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i, i + 1, i + 2);
                        data->mesh = mesh;
                        data->node = node;
                     }
@@ -497,7 +502,8 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
-                       _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, 0, i, i + 1);
+                      if (tex0.data)
+                        _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, 0, i, i + 1);
                        data->mesh = mesh;
                        data->node = node;
                     }
@@ -516,7 +522,8 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
-                       _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i, i + 1, i + 2);
+                       if (tex0.data)
+                         _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i, i + 1, i + 2);
                        data->mesh = mesh;
                        data->node = node;
                     }
@@ -536,7 +543,8 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
-                       _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i, i + 1, i + 2);
+                      if (tex0.data)
+                        _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, i, i + 1, i + 2);
                        data->mesh = mesh;
                        data->node = node;
                     }
@@ -555,7 +563,8 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
-                       _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, 0, i, i + 1);
+                       if (tex0.data)
+                         _pick_data_texcoord_update(data, &tex0, &tex1, tex_weight, 0, i, i + 1);
                        data->mesh = mesh;
                        data->node = node;
                     }
