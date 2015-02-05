@@ -194,16 +194,12 @@ ecore_con_init(void)
 #endif
 
    if (!ecore_init())
-     return --_ecore_con_init_count;
+     goto ecore_err;
 
    _ecore_con_log_dom = eina_log_domain_register
        ("ecore_con", ECORE_CON_DEFAULT_LOG_COLOR);
    if (_ecore_con_log_dom < 0)
-     {
-        EINA_LOG_ERR("Impossible to create a log domain for Ecore Con.");
-        ecore_shutdown();
-        return --_ecore_con_init_count;
-     }
+     goto ecore_con_log_error;
 
    ecore_con_mempool_init();
 
@@ -237,6 +233,16 @@ ecore_con_init(void)
                    EINA_LOG_STATE_INIT);
 
    return _ecore_con_init_count;
+
+ecore_con_log_error:
+   EINA_LOG_ERR("Failed to create a log domain for Ecore Con.");
+   ecore_shutdown();
+
+ecore_err:
+#ifdef HAVE_EVIL
+   evil_shutdown();
+#endif
+   return --_ecore_con_init_count;
 }
 
 EAPI int
