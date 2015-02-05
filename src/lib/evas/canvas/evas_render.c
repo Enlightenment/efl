@@ -1213,9 +1213,12 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                    Eina_Bool use_mapped_ctx, Eina_Bool do_async)
 {
    void *ctx;
+   Eina_Bool restore_image_clip = EINA_FALSE, old_use_clip = EINA_FALSE;
+   int oldm_x = 0, oldm_y = 0, ocx = 0, ocy = 0, ocw = 0, och = 0;
    Evas_Object_Protected_Data *obj2;
    Eina_Bool clean_them = EINA_FALSE;
    Eina_Bool proxy_src_clip = EINA_TRUE;
+   void *oldm_sfc = NULL;
 
    //Don't Render if the source is invisible.
    if (!proxy_render_data)
@@ -1459,6 +1462,31 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                   _evas_render_mapped_context_clip_set(e, eo_obj, obj, context,
                                                        proxy_render_data, off_x,
                                                        off_y);
+
+                  /* Clipper masks */
+                  if (_evas_render_object_is_mask(obj->cur->clipper))
+                    {
+                       // This path can be hit when we're multiplying masks on top of each other...
+                       Evas_Object_Protected_Data *mask = obj->cur->clipper;
+                       if (mask->mask->redraw || !mask->mask->surface)
+                         evas_render_mask_subrender(obj->layer->evas, mask, obj->clip.prev_mask);
+
+                       if (mask->mask->surface)
+                         {
+                            restore_image_clip = EINA_TRUE;
+                            e->engine.func->context_clip_image_get
+                                  (e->engine.data.output, context,
+                                   &oldm_sfc, &oldm_x, &oldm_y);
+                            old_use_clip = e->engine.func->context_clip_get
+                                  (e->engine.data.output, context,
+                                   &ocx, &ocy, &ocw, &och);
+                            e->engine.func->context_clip_image_set
+                                  (e->engine.data.output, context,
+                                   mask->mask->surface,
+                                   mask->cur->geometry.x + off_x,
+                                   mask->cur->geometry.y + off_y);
+                         }
+                    }
                }
           }
 //        if (surface == e->engine.data.output)
@@ -1476,6 +1504,17 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                 obj->map->surface, obj->map->spans,
                 obj->map->cur.map->smooth, 0, do_async);
           }
+
+        if (restore_image_clip)
+          {
+             if (old_use_clip)
+               e->engine.func->context_clip_set(e->engine.data.output, context, ocx, ocy, ocw, och);
+             else
+               e->engine.func->context_clip_unset(e->engine.data.output, context);
+             e->engine.func->context_clip_image_set
+               (e->engine.data.output, context, oldm_sfc, oldm_x, oldm_y);
+          }
+
         // FIXME: needs to cache these maps and
         // keep them only rendering updates
         //        obj->layer->evas->engine.func->image_map_surface_free
@@ -1494,10 +1533,6 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
 
         if (mapped)
           {
-             Eina_Bool restore_image_clip = EINA_FALSE, old_use_clip = EINA_FALSE;
-             int oldm_x = 0, oldm_y = 0, ocx = 0, ocy = 0, ocw = 0, och = 0;
-             void *oldm_sfc = NULL;
-
              RDI(level);
              RD("        draw child of mapped obj\n");
              if (use_mapped_ctx)
