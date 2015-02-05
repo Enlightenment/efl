@@ -93,9 +93,12 @@ eng_window_new(void *window,
 void
 eng_window_free(Evas_GL_Cocoa_Window *gw)
 {
-   if (gw == _evas_gl_cocoa_window) _evas_gl_cocoa_window = NULL;
+   if (gw == _evas_gl_cocoa_window)
+       _evas_gl_cocoa_window = NULL;
+
    evas_gl_common_context_free(gw->gl_context);
-   free(gw);
+   [(EvasGLView*)gw->view release];
+    free(gw);
 }
 
 void
