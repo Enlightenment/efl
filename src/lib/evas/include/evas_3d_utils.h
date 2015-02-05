@@ -1443,6 +1443,8 @@ evas_mat4_build(Evas_Mat4 *out,
    out->m[13] = position->y;
    out->m[14] = position->z;
    out->m[15] = 1.0;
+
+   out->flags = 0;
 }
 
 static inline void
@@ -1488,6 +1490,8 @@ evas_mat4_inverse_build(Evas_Mat4 *out, const Evas_Vec3 *position,
    out->m[13] = inv_translate.y;
    out->m[14] = inv_translate.z;
    out->m[15] = 1.0;
+
+   out->flags = 0;
 }
 
 static inline void
