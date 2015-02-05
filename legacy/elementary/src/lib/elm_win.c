@@ -335,7 +335,7 @@ _win_noblank_eval(void)
 
    if (!change) return;
 
-   if (noblanks > 0) ecore_x_screensaver_supend();
+   if (noblanks > 0) ecore_x_screensaver_suspend();
    else ecore_x_screensaver_resume();
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
