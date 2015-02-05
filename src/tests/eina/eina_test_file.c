@@ -474,6 +474,30 @@ START_TEST(eina_test_file_thread)
 }
 END_TEST
 
+static const struct {
+   const char *test;
+   const char *result;
+} sanitize[] = {
+  { "/home/mydir/../myfile", "/home/myfile" }
+};
+
+START_TEST(eina_test_file_path)
+{
+   unsigned int i;
+   char *path;
+
+   fail_if(!eina_init());
+
+   for (i = 0; i < sizeof (sanitize) / sizeof (sanitize[0]); i++)
+     {
+        path = eina_file_path_sanitize(sanitize[i].test);
+        fail_if(strcmp(path, sanitize[i].result));
+     }
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_file(TCase *tc)
 {
@@ -483,5 +507,5 @@ eina_test_file(TCase *tc)
    tcase_add_test(tc, eina_file_map_new_test);
    tcase_add_test(tc, eina_test_file_virtualize);
    tcase_add_test(tc, eina_test_file_thread);
+   tcase_add_test(tc, eina_test_file_path);
 }
-
