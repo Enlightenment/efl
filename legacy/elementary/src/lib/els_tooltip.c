@@ -368,7 +368,6 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
              return;
           }
         evas_object_show(tt->content);
-        evas_object_layer_set(tt->content, ELM_OBJECT_LAYER_TOOLTIP);
         evas_object_pass_events_set(tt->content, EINA_TRUE);
         edje_object_part_swallow
           (tt->tooltip, "elm.swallow.content", tt->content);
@@ -377,6 +376,8 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         evas_object_event_callback_add(tt->content, EVAS_CALLBACK_DEL,
            _elm_tooltip_content_del_cb, tt);
 
+        /* tooltip has to use layer tooltip */
+        evas_object_layer_set(tt->tooltip, ELM_OBJECT_LAYER_TOOLTIP);
      }
    TTDBG("*******RECALC\n");
    evas_object_size_hint_min_get(tt->content, &ominw, &ominh);

@@ -191,6 +191,7 @@ void test_launcher3(void *data, Evas_Object *obj, void *event_info);
 void test_anim(void *data, Evas_Object *obj, void *event_info);
 void test_tooltip(void *data, Evas_Object *obj, void *event_info);
 void test_tooltip2(void *data, Evas_Object *obj, void *event_info);
+void test_tooltip3(void *data, Evas_Object *obj, void *event_info);
 void test_cursor(void *data, Evas_Object *obj, void *event_info);
 void test_cursor2(void *data, Evas_Object *obj, void *event_info);
 void test_cursor3(void *data, Evas_Object *obj, void *event_info);
@@ -761,6 +762,7 @@ add_tests:
    ADD_TEST(NULL, "Popups", "Notify", test_notify);
    ADD_TEST(NULL, "Popups", "Tooltip", test_tooltip);
    ADD_TEST(NULL, "Popups", "Tooltip 2", test_tooltip2);
+   ADD_TEST(NULL, "Popups", "Tooltip 3", test_tooltip3);
    ADD_TEST(NULL, "Popups", "Popup", test_popup);
 
    //------------------------------//

@@ -715,3 +715,31 @@ test_tooltip2(void *data       EINA_UNUSED,
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
+
+void
+test_tooltip3(void *data       EINA_UNUSED,
+              Evas_Object *obj EINA_UNUSED,
+              void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bt, *rect;
+
+   win = elm_win_util_standard_add("tooltip3", "Tooltip 3");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "I have layer 200, below rect has layer 100.");
+   elm_object_tooltip_text_set(bt, "Can you see me?");
+   evas_object_resize(bt, 250, 30);
+   evas_object_move(bt, 25, 135);
+   evas_object_layer_set(bt, 200);
+   evas_object_show(bt);
+
+   rect = evas_object_rectangle_add(evas_object_evas_get(bt));
+   evas_object_resize(rect, 150, 300);
+   evas_object_move(rect, 0, 0);
+   evas_object_show(rect);
+   evas_object_layer_set(rect, 100);
+
+   evas_object_resize(win, 300, 300);
+   evas_object_show(win);
+}
