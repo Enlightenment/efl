@@ -2706,6 +2706,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv2 = (utexture || uvtexture) ? 1 : 0;
    gc->pipe[pn].array.use_texuv3 = (utexture) ? 1 : 0;
    gc->pipe[pn].array.use_texm = !!mtex;
+   gc->pipe[pn].array.use_texa = !!mtex;
    gc->pipe[pn].array.use_texsam = gc->pipe[pn].array.use_texm;
 
    pipe_region_expand(gc, pn, x, y, w, h);
@@ -2768,17 +2769,27 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
 
    if (mtex)
      {
-        GLfloat glmdx = 0.f, glmdy = 0.f, glmdw = 1.f, glmdh = 1.f;
+        GLfloat glmdx = 0.f, glmdy = 0.f, glmdw = 1.f, glmdh = 1.f, yinv = -1.f;
+        GLfloat gw = gc->w, gh = gc->h;
 
         // Note: I couldn't write any test case where it was necessary
         // to know the mask position in its texture. Thus these unused vars.
         (void) mx; (void) my; (void) mw; (void) mh;
 
-        if (gc->w) glmdx = (GLfloat) mdx / (GLfloat) gc->w;
-        if (gc->h) glmdy = (GLfloat) mdy / (GLfloat) gc->h;
-        if (mdw) glmdw = (GLfloat) gc->w / (GLfloat) mdw;
-        if (mdh) glmdh = (GLfloat) gc->h / (GLfloat) mdh ;
+        if (!((gc->pipe[0].shader.surface == gc->def_surface) ||
+              (!gc->pipe[0].shader.surface)))
+          {
+             gw = gc->pipe[0].shader.surface->w;
+             gh = gc->pipe[0].shader.surface->h;
+             yinv = 1.f;
+          }
 
+        if (gw) glmdx = (GLfloat) mdx / (GLfloat) gw;
+        if (gh) glmdy = (GLfloat) mdy / (GLfloat) gh;
+        if (mdw) glmdw = (GLfloat) gw / (GLfloat) mdw;
+        if (mdh) glmdh = (GLfloat) gh / (GLfloat) mdh;
+
+        // FIXME!!!
         // We seriously need uniforms here. Abusing tex_coordm for storage.
         // Passing mask x,y (on canvas) to the fragment shader
         PUSH_TEXM(pn, glmdx, glmdy);
@@ -2795,6 +2806,14 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
         PUSH_TEXSAM(pn, glmdw, glmdh);
         PUSH_TEXSAM(pn, glmdw, glmdh);
         PUSH_TEXSAM(pn, glmdw, glmdh);
+
+        // Abusing tex_coorda to pass Y-invert flag
+        PUSH_TEXA(pn, 1.f, yinv);
+        PUSH_TEXA(pn, 1.f, yinv);
+        PUSH_TEXA(pn, 1.f, yinv);
+        PUSH_TEXA(pn, 1.f, yinv);
+        PUSH_TEXA(pn, 1.f, yinv);
+        PUSH_TEXA(pn, 1.f, yinv);
 
         //DBG("Orig %d,%d - %dx%d --> %f,%f - %f x %f", mdx, mdy, mdw, mdh,
         //    glmdx, glmdy, glmdw, glmdh);
@@ -3284,7 +3303,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                }
 
              /* Alpha plane */
-             if (gc->pipe[i].array.use_texa)
+             if (gc->pipe[i].array.use_texa && (gc->pipe[i].region.type != RTYPE_MAP))
                 {
                    glEnableVertexAttribArray(SHAD_TEXA);
                    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -3323,6 +3342,18 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
                    MASK_TEXTURE += 1;
+               }
+             else if (gc->pipe[i].region.type == RTYPE_MAP)
+               {
+                  /* FIXME:
+                   * This is a workaround as we hijack some tex ids
+                   * (namely tex_coordm, tex_coorda and tex_sample) for map masking.
+                   * These masking shaders should definitely use uniforms.
+                   */
+                  glEnableVertexAttribArray(SHAD_TEXA);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glVertexAttribPointer(SHAD_TEXA, 2, GL_FLOAT, GL_FALSE, 0, (void *)texa_ptr);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                }
              else
                {
