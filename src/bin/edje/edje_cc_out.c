@@ -213,6 +213,7 @@ static Eina_List *program_lookups = NULL;
 static Eina_List *group_lookups = NULL;
 static Eina_List *face_group_lookups = NULL;
 static Eina_List *image_lookups = NULL;
+static Eina_List *model_lookups = NULL;
 
 static Eina_Hash *part_dest_lookup = NULL;
 static Eina_Hash *part_pc_dest_lookup = NULL;
@@ -2571,6 +2572,36 @@ data_queue_image_remove(int *dest, Eina_Bool *set)
  }
 
 void
+data_queue_model_lookup(char *name, int *dest, Eina_Bool *set)
+{
+   Image_Lookup *il;
+
+   il = mem_alloc(SZ(Image_Lookup));
+   model_lookups = eina_list_append(model_lookups, il);
+   il->name = mem_strdup(name);
+   il->dest = dest;
+   il->set = set;
+}
+
+void
+data_queue_model_remove(int *dest, Eina_Bool *set)
+{
+   Eina_List *l;
+   Image_Lookup *il;
+
+   EINA_LIST_FOREACH(model_lookups, l, il)
+     {
+        if (il->dest == dest && il->set == set)
+          {
+             model_lookups = eina_list_remove_list(model_lookups, l);
+             free(il->name);
+             free(il);
+             return;
+          }
+     }
+}
+
+void
 data_queue_copied_image_lookup(int *src, int *dest, Eina_Bool *set)
 {
    Eina_List *l;
@@ -2731,6 +2762,7 @@ _data_image_id_update(Eina_List *images_unused_list)
    Edje_Part_Collection *pc;
    Edje_Part *part;
    Edje_Part_Description_Image *part_desc_image;
+   Edje_Part_Description_Mesh_Node *part_desc_mesh_node;
    Edje_Part_Image_Id *tween_id;
    unsigned int i, j, desc_it;
    Eina_List *l, *l2, *l3;
@@ -2757,6 +2789,15 @@ _data_image_id_update(Eina_List *images_unused_list)
           } \
      }
 
+#define PART_DESC_PROXY_ID_UPDATE \
+   EINA_LIST_FOREACH(images_unused_list, l3, iui) \
+     { \
+        if (part_desc_mesh_node->mesh_node.texture.id == iui->old_id) \
+          { \
+             part_desc_mesh_node->mesh_node.texture.id = iui->new_id; \
+             break; \
+          } \
+     }
    EINA_LIST_FOREACH_SAFE(edje_collections, l, l2, pc)
      {
         for(i = 0; i < pc->parts_count; i++)
@@ -2771,6 +2812,17 @@ _data_image_id_update(Eina_List *images_unused_list)
                      {
                         part_desc_image = (Edje_Part_Description_Image *)part->other.desc[j];
                         PART_DESC_IMAGE_ID_UPDATE
+                     }
+               }
+             else if (part->type == EDJE_PART_TYPE_MESH_NODE)
+               {
+                  part_desc_mesh_node = (Edje_Part_Description_Mesh_Node *)part->default_desc;
+                  if (!part_desc_mesh_node) continue;
+                  PART_DESC_PROXY_ID_UPDATE
+                  for (j = 0; j < part->other.desc_count; j++)
+                     {
+                        part_desc_mesh_node = (Edje_Part_Description_Mesh_Node *)part->other.desc[j];
+                        PART_DESC_PROXY_ID_UPDATE
                      }
                }
           }
@@ -2796,6 +2848,46 @@ _data_image_id_update(Eina_List *images_unused_list)
      }
 }
 
+static void
+_data_model_id_update(Eina_List *models_unused_list)
+{
+   Image_Unused_Ids *iui;
+   Edje_Part_Collection *pc;
+   Edje_Part *part;
+   Edje_Part_Description_Mesh_Node *part_desc_mesh_node;
+   unsigned int i, j;
+   Eina_List *l, *l2, *l3;
+
+#define PART_DESC_MODEL_ID_UPDATE \
+   EINA_LIST_FOREACH(models_unused_list, l3, iui) \
+     { \
+        if (part_desc_mesh_node->mesh_node.mesh.id == iui->old_id) \
+          { \
+             part_desc_mesh_node->mesh_node.mesh.id = iui->new_id; \
+             break; \
+          } \
+     } \
+
+   EINA_LIST_FOREACH_SAFE(edje_collections, l, l2, pc)
+     {
+        for(i = 0; i < pc->parts_count; i++)
+          {
+             part = pc->parts[i];
+             if (part->type == EDJE_PART_TYPE_MESH_NODE)
+               {
+                  part_desc_mesh_node = (Edje_Part_Description_Mesh_Node *)part->default_desc;
+                  if (!part_desc_mesh_node) continue;
+                  PART_DESC_MODEL_ID_UPDATE
+                  for (j = 0; j < part->other.desc_count; j++)
+                     {
+                        part_desc_mesh_node = (Edje_Part_Description_Mesh_Node *)part->other.desc[j];
+                        PART_DESC_MODEL_ID_UPDATE
+                     }
+               }
+          }
+     }
+}
+
 void
 data_process_lookups(void)
 {
@@ -2805,9 +2897,11 @@ data_process_lookups(void)
    Program_Lookup *program;
    Group_Lookup *group;
    Image_Lookup *image;
+   Image_Lookup *model;
    Eina_List *l2;
    Eina_List *l;
    Eina_Hash *images_in_use;
+   Eina_Hash *models_in_use;
    char *group_name;
    Eina_Bool is_lua = EINA_FALSE;
    Image_Unused_Ids *iui;
@@ -3178,6 +3272,86 @@ free_group:
      }
 
    eina_hash_free(images_in_use);
+
+   models_in_use = eina_hash_string_superfast_new(NULL);
+
+   EINA_LIST_FREE(model_lookups, model)
+     {
+        Eina_Bool find = EINA_FALSE;
+
+        if (edje_file->model_dir)
+          {
+             Edje_Model_Directory_Entry *de;
+             unsigned int i;
+
+             for (i = 0; i < edje_file->model_dir->entries_count; ++i)
+               {
+                  de = edje_file->model_dir->entries + i;
+
+                  if ((de->entry) && (!strcmp(de->entry, model->name)))
+                    {
+                       *(model->dest) = de->id;
+                       *(model->set) = EINA_FALSE;
+                       find = EINA_TRUE;
+
+                       if (!eina_hash_find(models_in_use, model->name))
+                         eina_hash_direct_add(models_in_use, de->entry, de);
+                       break;
+                    }
+               }
+          }
+
+        if (!find)
+          {
+             ERR("Unable to find model name \"%s\".", model->name);
+             exit(-1);
+          }
+
+        free(model->name);
+        free(model);
+     }
+
+   if (edje_file->model_dir && !is_lua)
+     {
+        Edje_Model_Directory_Entry *de, *de_last, *mdl;
+        Eina_List *models_unused_list = NULL;
+        unsigned int i;
+
+        for (i = 0; i < edje_file->model_dir->entries_count; ++i)
+          {
+             de = edje_file->model_dir->entries + i;
+
+             if (de->entry && eina_hash_find(models_in_use, de->entry))
+               continue ;
+
+             INF("Model '%s' in resource 'edje/model/%i' will not be included as it is unused.",
+                 de->entry, de->id);
+
+             /* so as not to write the unused models, moved last model in the
+                list to unused model position and check it */
+             free((void *)de->entry);
+             de->entry = NULL;
+             de_last = edje_file->model_dir->entries + edje_file->model_dir->entries_count - 1;
+             iui = mem_alloc(SZ(Image_Unused_Ids));
+             iui->old_id = de_last->id;
+             models_unused_list = eina_list_append(models_unused_list, iui);
+             iui->new_id = i;
+             de_last->id = i;
+             memcpy(de, de_last, sizeof (Edje_Model_Directory_Entry));
+             --i; /* need to check a moved model on this index */
+             edje_file->model_dir->entries_count--;
+             mdl = realloc(edje_file->model_dir->entries,
+                           sizeof (Edje_Model_Directory_Entry) * edje_file->model_dir->entries_count);
+             edje_file->model_dir->entries = mdl;
+          }
+
+        /* update model id in parts */
+        if (models_unused_list) _data_model_id_update(models_unused_list);
+        EINA_LIST_FREE(models_unused_list, iui)
+           free(iui);
+     }
+
+   eina_hash_free(models_in_use);
 }
 
 static void

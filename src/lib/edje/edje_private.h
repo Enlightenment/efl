@@ -633,7 +633,6 @@ struct _Edje_Model_Directory
 struct _Edje_Model_Directory_Entry
 {
    const char *entry; /* the nominal name of the model - if any */
-   int   source_type; /* alternate source mode. 0 = none */
    int   id; /* the id no. of the image */
 };
 
