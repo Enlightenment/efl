@@ -1105,7 +1105,7 @@ typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, c
 EAPI void edje_password_show_last_set(Eina_Bool password_show_last);
 
 /**
- * @brief Set's the timeout value in last show password mode.
+ * @brief Set the timeout value in last show password mode.
  *
  * @param password_show_last_timeout The timeout value.
  *
