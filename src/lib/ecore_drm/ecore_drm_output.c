@@ -68,7 +68,6 @@ _ecore_drm_output_crtc_find(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConne
    drmModeEncoder *enc;
    unsigned int p;
    int i, j;
-   int crtc = -1;
 
    /* We did not find an existing encoder + crtc combination. Loop through all of them until we
     * find the first working combination */
