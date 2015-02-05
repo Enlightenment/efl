@@ -5017,7 +5017,7 @@ eina_value_new(const Eina_Value_Type *type)
    if (!value) return NULL;
    if (!eina_value_setup(value, type))
      {
-        free(value);
+        eina_mempool_free(_eina_value_mp, value);
         return NULL;
      }
    return value;
