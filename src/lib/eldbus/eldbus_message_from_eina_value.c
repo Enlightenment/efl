@@ -45,9 +45,8 @@ static Eina_Bool
 _array_append(const char *type, const Eina_Value *value_array, Eldbus_Message_Iter *iter)
 {
    Eldbus_Message_Iter *array;
-
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(
-            eldbus_message_iter_arguments_append(iter, type, &array), EINA_FALSE);
+   Eina_Bool ok = eldbus_message_iter_arguments_append(iter, type, &array);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ok, EINA_FALSE);
    DBG("array of type %c", type[1]);
    switch (type[1])
      {
