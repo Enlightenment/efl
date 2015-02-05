@@ -70,22 +70,6 @@ _ecore_drm_output_crtc_find(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConne
    int i, j;
    int crtc = -1;
 
-   /* Trying to first use the currently active encoder and crtc combination to avoid a
-    * full modeset */
-   if (conn->encoder_id)
-     enc = drmModeGetEncoder(dev->drm.fd, conn->encoder_id);
-   else
-     enc = NULL;
-
-   if ((enc) && (enc->crtc_id))
-     {
-        crtc = enc->crtc_id;
-        drmModeFreeEncoder(enc);
-        /* Check if this CRTC is already allocated */
-        if (!(dev->crtc_allocator & (1 << crtc)))
-          return crtc;
-     }
-
    /* We did not find an existing encoder + crtc combination. Loop through all of them until we
     * find the first working combination */
    for (j = 0; j < conn->count_encoders; j++)
