@@ -65,6 +65,13 @@ evil_init(void)
 int
 evil_shutdown(void)
 {
+   /* _evil_init_count should not go below zero. */
+   if (_evil_init_count < 1)
+     {
+        ERR("Evil shutdown called without calling evil init.\n");
+        return 0;
+     }
+
    if (--_evil_init_count != 0)
      return _evil_init_count;
 
