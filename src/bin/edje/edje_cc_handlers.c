@@ -188,6 +188,8 @@ static void st_images_set_image_size(void);
 static void st_images_set_image_border(void);
 static void st_images_set_image_border_scale_by(void);
 
+static void st_models_model(void);
+
 static void st_fonts_font(void);
 
 static void st_data_item(void);
@@ -209,6 +211,7 @@ static void st_collections_base_scale(void);
 
 static void ob_collections_group(void);
 static void st_collections_group_name(void);
+static void st_collections_group_scene_size(void);
 static void st_collections_group_inherit_only(void);
 static void st_collections_group_inherit(void);
 static void st_collections_group_program_source(void);
@@ -535,6 +538,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.vibrations.sample.name", st_collections_group_vibration_sample_name}, /* dup */
      {"collections.group.vibrations.sample.source", st_collections_group_vibration_sample_source}, /* dup */
      {"collections.group.name", st_collections_group_name},
+     {"collections.group.scene_size", st_collections_group_scene_size},
      {"collections.group.program_source", st_collections_group_program_source},
      {"collections.group.inherit", st_collections_group_inherit},
      {"collections.group.inherit_only", st_collections_group_inherit_only},
@@ -556,6 +560,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.programs.target_group", st_collections_group_target_group}, /* dup */
      IMAGE_SET_STATEMENTS("collections.group")
      IMAGE_STATEMENTS("collections.group.")
+     {"collections.group.models.model", st_models_model},
      {"collections.group.font", st_fonts_font}, /* dup */
      FONT_STYLE_CC_STATEMENTS("collections.group.")
      {"collections.group.parts.alias", st_collections_group_parts_alias },
@@ -978,6 +983,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.set", ob_images_set}, /* dup */
      {"collections.group.set.image", ob_images_set_image}, /* dup */
      {"collections.group.images", NULL}, /* dup */
+     {"collections.group.models", NULL}, /* dup */
      {"collections.group.images.set", ob_images_set}, /* dup */
      {"collections.group.images.set.image", ob_images_set_image}, /* dup */
      {"collections.group.fonts", NULL}, /* dup */
@@ -1682,6 +1688,74 @@ st_images_image(void)
 	img->source_param = parse_int_range(2, 0, 100);
 	check_arg_count(3);
      }
+}
+
+/**
+   @edcsubsection{toplevel_models,model}
+ */
+
+/**
+    @page edcref
+
+    @block
+        models
+    @context
+        models {
+            model: "filename1.ext";
+            model: "filename2.ext";
+            model: "filename2.ext" 50;
+            ..
+        }
+    @description
+        The "models" block is used to list each model file that will be used in
+        the theme.
+    @endblock
+
+    @property
+        model
+    @parameters
+        [model file]
+    @effect
+        Used to include each model file.
+    @endproperty
+ */
+static void
+st_models_model(void)
+{
+   Edje_Model_Directory_Entry *mdl;
+   const char *tmp;
+   unsigned int i;
+
+   check_min_arg_count(1);
+
+   if (!edje_file->model_dir)
+     edje_file->model_dir = mem_alloc(SZ(Edje_Model_Directory));
+
+   tmp = parse_str(0);
+
+   for (i = 0; i < edje_file->model_dir->entries_count; ++i)
+     if (!strcmp(edje_file->model_dir->entries[i].entry, tmp))
+       {
+          free((char*) tmp);
+          return;
+       }
+
+   edje_file->model_dir->entries_count++;
+   mdl = realloc(edje_file->model_dir->entries,
+                 sizeof (Edje_Model_Directory_Entry) * edje_file->model_dir->entries_count);
+   if (!mdl)
+     {
+        ERR("No enough memory.");
+        exit(-1);
+     }
+   edje_file->model_dir->entries = mdl;
+   memset(edje_file->model_dir->entries + edje_file->model_dir->entries_count - 1,
+          0, sizeof (Edje_Model_Directory_Entry));
+
+   mdl = edje_file->model_dir->entries + edje_file->model_dir->entries_count - 1;
+
+   mdl->entry = tmp;
+   mdl->id = edje_file->model_dir->entries_count - 1;
 }
 
 /** @edcsubsection{toplevel_images_set,
@@ -3007,6 +3081,28 @@ st_collections_group_name(void)
 {
    check_arg_count(1);
    _group_name(parse_str(0));
+}
+
+/**
+    @page edcref
+    @property
+        scene_size
+    @parameters
+        [scene size]
+    @effect
+        Height and width of scene
+    @endproperty
+*/
+static void
+st_collections_group_scene_size(void)
+{
+   Edje_Part_Collection *current_pc;
+
+   check_arg_count(2);
+
+   current_pc = eina_list_data_get(eina_list_last(edje_collections));
+   current_pc->scene_size.width = parse_float(0);
+   current_pc->scene_size.height = parse_float(1);
 }
 
 typedef struct _Edje_List_Foreach_Data Edje_List_Foreach_Data;
