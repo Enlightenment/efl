@@ -1194,8 +1194,11 @@ _elm_win_state_change(Ecore_Evas *ee)
         ch_maximized = EINA_TRUE;
      }
 
-   profile = ecore_evas_window_profile_get(sd->ee);
-   ch_profile = _internal_elm_win_profile_set(sd, profile);
+   if (ecore_evas_window_profile_supported_get(sd->ee))
+     {
+        profile = ecore_evas_window_profile_get(sd->ee);
+        ch_profile = _internal_elm_win_profile_set(sd, profile);
+     }
 
    if (sd->wm_rot.use)
      {
