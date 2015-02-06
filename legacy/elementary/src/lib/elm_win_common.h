@@ -163,7 +163,7 @@ struct _Elm_Win_Trap
    Eina_Bool (*show)(void *data, Evas_Object *o);
    Eina_Bool (*move)(void *data, Evas_Object *o, int x, int y);
    Eina_Bool (*resize)(void *data, Evas_Object *o, int w, int h);
-   Eina_Bool (*center)(void *data, Evas_Object *o); /* not in ecore_evas, but nice to trap */
+   Eina_Bool (*center)(void *data, Evas_Object *o, Eina_Bool h, Eina_Bool v); /* not in ecore_evas, but nice to trap */
    Eina_Bool (*lower)(void *data, Evas_Object *o);
    Eina_Bool (*raise)(void *data, Evas_Object *o);
    Eina_Bool (*activate)(void *data, Evas_Object *o);

@@ -3791,7 +3791,7 @@ _elm_win_center(Eo *obj, Elm_Win_Data *sd, Eina_Bool h, Eina_Bool v)
 {
    int win_w, win_h, screen_w, screen_h, nx, ny;
 
-   if ((trap) && (trap->center) && (!trap->center(sd->trap_data, obj)))
+   if ((trap) && (trap->center) && (!trap->center(sd->trap_data, obj, h, v)))
      return;
 
    ecore_evas_screen_geometry_get(sd->ee, NULL, NULL, &screen_w, &screen_h);
