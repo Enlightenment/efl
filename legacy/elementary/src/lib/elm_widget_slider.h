@@ -39,6 +39,10 @@ struct _Elm_Slider_Data
    void                  (*units_format_free)(char *str);
 
    double                val, val_min, val_max, val2, step;
+
+   Elm_Slider_Indicator_Visible_Mode indicator_visible_mode; /**< indicator_visible_mode of the slider.
+                                                                This indicates when to show an indicator */
+
    Evas_Coord            size;
    Evas_Coord            downx, downy;
 
