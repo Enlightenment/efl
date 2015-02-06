@@ -2733,7 +2733,7 @@ static const char const map_mask_vert_glsl[] =
    "precision highp float;\n"
    "#endif\n"
    "attribute vec4 vertex, color;\n"
-   "attribute vec2 tex_coord, tex_coordm, tex_sample;\n"
+   "attribute vec2 tex_coord, tex_coordm, tex_sample, tex_coorda;\n"
    "uniform mat4 mvp;\n"
    "varying vec2 tex_c;\n"
    "varying vec4 mask_Position, col, mask_Absolute;\n"
@@ -2743,7 +2743,7 @@ static const char const map_mask_vert_glsl[] =
    "   tex_c = tex_coord;\n"
    "   col = color;\n"
    "   // Assume Y-invert on mask, normalize (screen to texture mode coordinates)\n"
-   "   mask_Position = mvp * vertex * vec4(0.5, -0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   mask_Position = mvp * vertex * vec4(0.5, tex_coorda.y * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
    "   mask_Absolute = vec4(tex_coordm, tex_sample); // x, y, 1/w, 1/h on canvas in GL coords\n"
    "}\n";
 Evas_GL_Program_Source shader_map_mask_vert_src =
