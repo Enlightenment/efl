@@ -1787,8 +1787,10 @@ ecore_evas_cursor_unset(Ecore_Evas *ee)
         return NULL;
      }
    obj = ee->prop.cursor.object;
+   IFC(ee, fn_object_cursor_unset) (ee);
    evas_object_hide(obj);
    ee->prop.cursor.object = NULL;
+   }
 
    return obj;
 }
