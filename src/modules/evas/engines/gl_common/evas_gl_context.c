@@ -1318,6 +1318,100 @@ array_alloc(Evas_Engine_GL_Context *gc, int n)
    RALOC(texm,   GLfloat, 2);
 }
 
+
+/* Very basic uniform upload support.
+ * TODO: Optimize out call to glGetUniformLocation(). */
+
+typedef enum _Evas_GL_Uniform_Type Evas_GL_Uniform_Type;
+typedef struct _Evas_GL_Uniform Evas_GL_Uniform;
+
+enum _Evas_GL_Uniform_Type {
+   EVAS_GL_UNIFORM_FLOAT,
+   EVAS_GL_UNIFORM_VEC2,
+   EVAS_GL_UNIFORM_VEC4,
+   // Add more types if needed.
+};
+
+struct _Evas_GL_Uniform {
+   Eina_Stringshare *name;
+   Evas_GL_Uniform_Type type;
+   union {
+      GLfloat f;
+      GLfloat vec2[2];
+      GLfloat vec4[4];
+   } value;
+};
+
+static inline void
+push_uniform(Evas_Engine_GL_Context *gc, int n, Evas_GL_Uniform_Type type, const char *name, ...)
+{
+   Evas_GL_Uniform *u = calloc(1, sizeof(Evas_GL_Uniform));
+   va_list args;
+   va_start(args, name);
+
+   if (!gc || !u) return;
+   u->name = eina_stringshare_add(name);
+   u->type = type;
+
+   switch (type)
+     {
+      case EVAS_GL_UNIFORM_FLOAT:
+        u->value.f = (GLfloat) va_arg(args, double);
+        break;
+      case EVAS_GL_UNIFORM_VEC2:
+        u->value.vec2[0] = (GLfloat) va_arg(args, double);
+        u->value.vec2[1] = (GLfloat) va_arg(args, double);
+        break;
+      case EVAS_GL_UNIFORM_VEC4:
+        u->value.vec4[0] = (GLfloat) va_arg(args, double);
+        u->value.vec4[1] = (GLfloat) va_arg(args, double);
+        u->value.vec4[2] = (GLfloat) va_arg(args, double);
+        u->value.vec4[3] = (GLfloat) va_arg(args, double);
+        break;
+      default:
+        free(u);
+        va_end(args);
+        return;
+     }
+
+   va_end(args);
+   gc->pipe[n].array.uniforms = eina_list_append(gc->pipe[n].array.uniforms, u);
+}
+
+static inline void
+shader_array_uniforms_set(Evas_Engine_GL_Context *gc, int n)
+{
+   Evas_GL_Uniform *u;
+
+   if (!gc || !gc->pipe[n].array.uniforms) return;
+   EINA_LIST_FREE(gc->pipe[n].array.uniforms, u)
+     {
+        GLint loc = glGetUniformLocation(gc->pipe[n].shader.cur_prog, u->name);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "glUniform");
+        if (loc >= 0)
+          {
+             switch (u->type)
+               {
+                case EVAS_GL_UNIFORM_FLOAT:
+                  glUniform1f(loc, u->value.f);
+                  break;
+                case EVAS_GL_UNIFORM_VEC2:
+                  glUniform2fv(loc, 1, u->value.vec2);
+                  break;
+                case EVAS_GL_UNIFORM_VEC4:
+                  glUniform4fv(loc, 1, u->value.vec4);
+                  break;
+                default: ERR("Unhandled uniform type"); break;
+               }
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "glUniform");
+          }
+        eina_stringshare_del(u->name);
+        free(u);
+     }
+}
+
+#define PUSH_UNIFORM(pn, type, name, ...) push_uniform(gc, pn, type, name, __VA_ARGS__)
+
 #ifdef GLPIPES
 static int
 pipe_region_intersects(Evas_Engine_GL_Context *gc, int n,
@@ -2706,8 +2800,8 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv2 = (utexture || uvtexture) ? 1 : 0;
    gc->pipe[pn].array.use_texuv3 = (utexture) ? 1 : 0;
    gc->pipe[pn].array.use_texm = !!mtex;
-   gc->pipe[pn].array.use_texa = !!mtex;
-   gc->pipe[pn].array.use_texsam = gc->pipe[pn].array.use_texm;
+   gc->pipe[pn].array.use_texa = 0;
+   gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2769,8 +2863,8 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
 
    if (mtex)
      {
-        GLfloat glmdx = 0.f, glmdy = 0.f, glmdw = 1.f, glmdh = 1.f, yinv = -1.f;
-        GLfloat gw = gc->w, gh = gc->h;
+        double glmdx = 0.f, glmdy = 0.f, glmdw = 1.f, glmdh = 1.f, yinv = -1.f;
+        double gw = gc->w, gh = gc->h;
 
         // Note: I couldn't write any test case where it was necessary
         // to know the mask position in its texture. Thus these unused vars.
@@ -2784,36 +2878,13 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
              yinv = 1.f;
           }
 
-        if (gw) glmdx = (GLfloat) mdx / (GLfloat) gw;
-        if (gh) glmdy = (GLfloat) mdy / (GLfloat) gh;
-        if (mdw) glmdw = (GLfloat) gw / (GLfloat) mdw;
-        if (mdh) glmdh = (GLfloat) gh / (GLfloat) mdh;
+        if (gw) glmdx = (double) mdx / (double) gw;
+        if (gh) glmdy = (double) mdy / (double) gh;
+        if (mdw) glmdw = (double) gw / (double) mdw;
+        if (mdh) glmdh = (double) gh / (double) mdh;
 
-        // FIXME!!!
-        // We seriously need uniforms here. Abusing tex_coordm for storage.
-        // Passing mask x,y (on canvas) to the fragment shader
-        PUSH_TEXM(pn, glmdx, glmdy);
-        PUSH_TEXM(pn, glmdx, glmdy);
-        PUSH_TEXM(pn, glmdx, glmdy);
-        PUSH_TEXM(pn, glmdx, glmdy);
-        PUSH_TEXM(pn, glmdx, glmdy);
-        PUSH_TEXM(pn, glmdx, glmdy);
-
-        // Abusing tex_sample to pass mask 1/w, 1/h as well
-        PUSH_TEXSAM(pn, glmdw, glmdh);
-        PUSH_TEXSAM(pn, glmdw, glmdh);
-        PUSH_TEXSAM(pn, glmdw, glmdh);
-        PUSH_TEXSAM(pn, glmdw, glmdh);
-        PUSH_TEXSAM(pn, glmdw, glmdh);
-        PUSH_TEXSAM(pn, glmdw, glmdh);
-
-        // Abusing tex_coorda to pass Y-invert flag
-        PUSH_TEXA(pn, 1.f, yinv);
-        PUSH_TEXA(pn, 1.f, yinv);
-        PUSH_TEXA(pn, 1.f, yinv);
-        PUSH_TEXA(pn, 1.f, yinv);
-        PUSH_TEXA(pn, 1.f, yinv);
-        PUSH_TEXA(pn, 1.f, yinv);
+        PUSH_UNIFORM(pn, EVAS_GL_UNIFORM_VEC4, "mask_Absolute", glmdx, glmdy, glmdw, glmdh);
+        PUSH_UNIFORM(pn, EVAS_GL_UNIFORM_FLOAT, "yinvert", yinv);
 
         //DBG("Orig %d,%d - %dx%d --> %f,%f - %f x %f", mdx, mdy, mdw, mdh,
         //    glmdx, glmdy, glmdw, glmdh);
@@ -3347,18 +3418,6 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 
                    MASK_TEXTURE += 1;
                }
-             else if (gc->pipe[i].array.use_texa && (gc->pipe[i].region.type == RTYPE_MAP))
-               {
-                  /* FIXME:
-                   * This is a workaround as we hijack some tex ids
-                   * (namely tex_coordm, tex_coorda and tex_sample) for map masking.
-                   * These masking shaders should definitely use uniforms.
-                   */
-                  glEnableVertexAttribArray(SHAD_TEXA);
-                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-                  glVertexAttribPointer(SHAD_TEXA, 2, GL_FLOAT, GL_FALSE, 0, (void *)texa_ptr);
-                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-               }
              else
                {
                   glDisableVertexAttribArray(SHAD_TEXA);
@@ -3519,6 +3578,10 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   glDisableVertexAttribArray(SHAD_TEXM);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                }
+
+             // Push all uniforms
+             if (gc->pipe[i].array.uniforms)
+               shader_array_uniforms_set(gc, i);
 
              if (dbgflushnum == 1)
                {
