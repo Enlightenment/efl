@@ -119,7 +119,7 @@ class Elm_Gengrid_Item(Elm_Widget_Item)
                      /*@
                       Get the gengrid item's select mode.
 
-                      (If getting mode is failed, it returns ELM_OBJECT_SELECT_MODE_MAX)
+                      (If getting mode fails, it returns ELM_OBJECT_SELECT_MODE_MAX)
 
                       @see elm_gengrid_item_select_mode_set()
 

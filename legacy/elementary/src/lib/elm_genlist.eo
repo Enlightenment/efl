@@ -64,7 +64,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             Get the genlist select mode.
 
             @return The select mode
-            (If getting mode is failed, it returns #ELM_OBJECT_SELECT_MODE_MAX)
+            (If getting mode fails, it returns #ELM_OBJECT_SELECT_MODE_MAX)
 
             @see elm_genlist_select_mode_set()
 
@@ -230,7 +230,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             Get the genlist multi select mode.
 
             @return The multi select mode
-            (If getting mode is failed, it returns #ELM_OBJECT_MULTI_SELECT_MODE_MAX)
+            (If getting mode fails, it returns #ELM_OBJECT_MULTI_SELECT_MODE_MAX)
 
             @see elm_genlist_multi_select_set()
             @see elm_genlist_multi_select_mode_set()

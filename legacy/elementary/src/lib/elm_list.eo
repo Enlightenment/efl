@@ -60,7 +60,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             Get the list select mode.
 
             @return The select mode
-            (If getting mode is failed, it returns #ELM_OBJECT_SELECT_MODE_MAX)
+            (If getting mode fails, it returns #ELM_OBJECT_SELECT_MODE_MAX)
 
             @see elm_list_select_mode_set()
 
@@ -150,7 +150,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             Get the list multi select mode.
 
             @return The multi select mode
-            (If getting mode is failed, it returns #ELM_OBJECT_MULTI_SELECT_MODE_MAX)
+            (If getting mode fails, it returns #ELM_OBJECT_MULTI_SELECT_MODE_MAX)
 
             @see elm_list_multi_select_set()
             @see elm_list_multi_select_mode_set()

@@ -84,7 +84,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
             Get the toolbar select mode.
 
             @return The select mode
-            (If getting mode is failed, it returns #ELM_OBJECT_SELECT_MODE_MAX)
+            (If getting mode fails, it returns #ELM_OBJECT_SELECT_MODE_MAX)
 
             @see elm_toolbar_select_mode_set()
 

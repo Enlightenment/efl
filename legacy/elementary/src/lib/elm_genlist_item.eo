@@ -232,7 +232,7 @@ class Elm_Genlist_Item(Elm_Widget_Item)
                       Get the genlist item's select mode.
 
                       @return The select mode
-                      (If getting mode is failed, it returns ELM_OBJECT_SELECT_MODE_MAX)
+                      (If getting mode fails, it returns ELM_OBJECT_SELECT_MODE_MAX)
 
                       @see elm_genlist_item_select_mode_set()
 
