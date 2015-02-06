@@ -174,6 +174,8 @@ static Eina_Bool
 key_down()
 {
    elm_win_fullscreen_set(win2, 0);
+
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 EAPI_MAIN int
@@ -181,7 +183,6 @@ elm_main(int argc, char *argv[])
 {
    Evas_Object *win, *bigbox, *box, *btn, *o;
    char buf[256];
-   Ecore_Event_Handler *h;
 
    elm_app_info_set(elm_main, "elementary", "images/logo.png");
 
@@ -193,7 +194,7 @@ elm_main(int argc, char *argv[])
    evas_object_smart_callback_add(win, "delete,request", _main_win_del_cb,
                                   NULL);
 
-   h = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, key_down, NULL);
+   ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, key_down, NULL);
 
    bigbox = elm_box_add(win);
    elm_box_horizontal_set(bigbox, EINA_TRUE);
