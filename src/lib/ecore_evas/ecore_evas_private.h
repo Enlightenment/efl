@@ -87,6 +87,7 @@ struct _Ecore_Evas_Engine_Func
    void (*fn_size_base_set) (Ecore_Evas *ee, int w, int h);
    void (*fn_size_step_set) (Ecore_Evas *ee, int w, int h);
    void (*fn_object_cursor_set) (Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
+   void (*fn_object_cursor_unset) (Ecore_Evas *ee);
    void (*fn_layer_set) (Ecore_Evas *ee, int layer);
    void (*fn_focus_set) (Ecore_Evas *ee, Eina_Bool on);
    void (*fn_iconified_set) (Ecore_Evas *ee, Eina_Bool on);

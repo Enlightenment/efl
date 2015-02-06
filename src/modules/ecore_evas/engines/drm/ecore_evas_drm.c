@@ -53,6 +53,7 @@ static void _ecore_evas_drm_size_max_set(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_drm_size_base_set(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_drm_size_step_set(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_drm_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
+static void _ecore_evas_drm_object_cursor_unset(Ecore_Evas *ee);
 static void _ecore_evas_drm_layer_set(Ecore_Evas *ee, int layer);
 static void _ecore_evas_drm_iconified_set(Ecore_Evas *ee, Eina_Bool on);
 static void _ecore_evas_drm_borderless_set(Ecore_Evas *ee, Eina_Bool on);
@@ -110,6 +111,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    _ecore_evas_drm_size_base_set,
    _ecore_evas_drm_size_step_set,
    _ecore_evas_drm_object_cursor_set,
+   _ecore_evas_drm_object_cursor_unset,
    _ecore_evas_drm_layer_set,
    NULL, //void (*fn_focus_set) (Ecore_Evas *ee, Eina_Bool on);
    _ecore_evas_drm_iconified_set,
@@ -761,6 +763,12 @@ _ecore_evas_drm_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *
    Ecore_Evas *ee;
 
    if ((ee = data)) ee->prop.cursor.object = NULL;
+}
+
+static void
+_ecore_evas_drm_object_cursor_unset(Ecore_Evas *ee)
+{
+   evas_object_event_callback_del_full(ee->prop.cursor.object, EVAS_CALLBACK_DEL, _ecore_evas_drm_object_cursor_del, ee);
 }
 
 static void

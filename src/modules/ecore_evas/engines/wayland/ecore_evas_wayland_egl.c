@@ -51,6 +51,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    _ecore_evas_wl_common_size_base_set,
    _ecore_evas_wl_common_size_step_set,
    _ecore_evas_wl_common_object_cursor_set,
+   _ecore_evas_wl_common_object_cursor_unset,
    _ecore_evas_wl_common_layer_set,
    NULL, // focus set
    _ecore_evas_wl_common_iconified_set,

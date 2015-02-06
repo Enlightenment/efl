@@ -850,6 +850,7 @@ static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
    NULL,
    NULL,
    NULL,
+   NULL,
    NULL, //transparent
    NULL, // profiles_set
    _ecore_evas_extn_plug_profile_set,
@@ -1961,6 +1962,7 @@ static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
    NULL,
    _ecore_evas_socket_resize,
    _ecore_evas_socket_move_resize,
+   NULL,
    NULL,
    NULL,
    NULL,

@@ -63,6 +63,7 @@ void _ecore_evas_wl_common_size_base_set(Ecore_Evas *ee, int w, int h);
 void _ecore_evas_wl_common_size_step_set(Ecore_Evas *ee, int w, int h);
 void _ecore_evas_wl_common_aspect_set(Ecore_Evas *ee, double aspect);
 void _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
+void _ecore_evas_wl_common_object_cursor_unset(Ecore_Evas *ee);
 void _ecore_evas_wl_common_layer_set(Ecore_Evas *ee, int layer);
 void _ecore_evas_wl_common_iconified_set(Ecore_Evas *ee, Eina_Bool on);
 void _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, Eina_Bool on);

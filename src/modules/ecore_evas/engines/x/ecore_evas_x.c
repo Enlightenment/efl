@@ -2979,6 +2979,12 @@ _ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
 }
 
 static void
+_ecore_evas_x_object_cursor_unset(Ecore_Evas *ee)
+{
+   evas_object_event_callback_del_full(ee->prop.cursor.object, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
+}
+
+static void
 _ecore_evas_x_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
 {
    int x = 0, y = 0;
@@ -3552,6 +3558,7 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
    _ecore_evas_x_size_base_set,
    _ecore_evas_x_size_step_set,
    _ecore_evas_x_object_cursor_set,
+   _ecore_evas_x_object_cursor_unset,
    _ecore_evas_x_layer_set,
    _ecore_evas_x_focus_set,
    _ecore_evas_x_iconified_set,

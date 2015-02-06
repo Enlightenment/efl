@@ -1212,6 +1212,12 @@ _ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
 }
 
 void
+_ecore_evas_wl_common_object_cursor_unset(Ecore_Evas *ee)
+{
+   evas_object_event_callback_del_full(ee->prop.cursor.object, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
+}
+
+void
 _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y)
 {
    int x, y, fx, fy;
