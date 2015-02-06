@@ -6,7 +6,7 @@
 
 START_TEST (elm_code_file_load)
 {
-   char *path = "elm_code/tests/testfile.txt";
+   char *path = TESTS_DIR "testfile.txt";
    char real[EINA_PATH_MAX];
    Elm_Code_File *file;
    Elm_Code *code;
@@ -24,7 +24,7 @@ END_TEST
 
 START_TEST (elm_code_file_load_lines)
 {
-   char *path = "elm_code/tests/testfile.txt";
+   char *path = TESTS_DIR "testfile.txt";
    Elm_Code_File *file;
    Elm_Code *code;
 
@@ -39,7 +39,7 @@ END_TEST
 
 START_TEST (elm_code_file_load_blank_lines)
 {
-   char *path = "elm_code/tests/testfile-withblanks.txt";
+   char *path = TESTS_DIR "testfile-withblanks.txt";
    Elm_Code_File *file;
    Elm_Code *code;
 
@@ -66,7 +66,7 @@ static void _assert_line_content_eq(const char *content, Elm_Code_Line *line)
 
 START_TEST (elm_code_file_load_content)
 {
-   char *path = "elm_code/tests/testfile.txt";
+   char *path = TESTS_DIR "testfile.txt";
    Elm_Code_File *file;
    Elm_Code *code;
 

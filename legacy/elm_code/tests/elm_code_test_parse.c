@@ -42,7 +42,7 @@ START_TEST (elm_code_parse_hook_file_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
-   char *path = "elm_code/tests/testfile.txt";
+   char *path = TESTS_DIR "testfile.txt";
 
    line_calls = 0;
    file_calls = 0;

@@ -14,8 +14,10 @@ elm_code_suite.c
 elm_code_suite_CPPFLAGS = -I$(top_builddir)/elm_code/lib/ \
 -DEFL_BETA_API_SUPPORT \
 -DEFL_EO_API_SUPPORT \
+-I$(top_srcdir)/elm_code/lib \
 -DPACKAGE_TESTS_DIR=\"$(top_srcdir)/elm_code/tests/\" \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/elm_code/tests/\" \
+-DTESTS_DIR=\"$(abspath $(srcdir))/\" \
 -DEFL_BETA_API_SUPPORT \
 @EFL_CFLAGS@ \
 @CHECK_CFLAGS@
@@ -23,9 +25,12 @@ elm_code_suite_CPPFLAGS = -I$(top_builddir)/elm_code/lib/ \
 elm_code_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/elm_code/lib/libelm_code.la
 elm_code_suite_DEPENDENCIES = $(top_builddir)/elm_code/lib/libelm_code.la
 
-endif
-
-testdir = $(datadir)/$(PACKAGE)/data
-test_DATA = testdiff.diff
+testdir = $(PACKAGE_TESTS_DIR)
+test_DATA = \
+testfile.txt \
+testfile-withblanks.txt \
+testdiff.diff
 
 EXTRA_DIST = elm_code_suite.h $(test_DATA)
+
+endif
