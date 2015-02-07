@@ -1,3 +1,5 @@
+MAINTAINERCLEANFILES = Makefile.in
+CLEANFILES = check-results.xml
 
 if EFL_HAVE_TESTS
 
