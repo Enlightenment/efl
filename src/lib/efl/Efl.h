@@ -34,6 +34,8 @@ extern "C"
 # endif
 #endif /* ! _WIN32 */
 
+#ifdef EFL_BETA_API_SUPPORT
+
 /* Interfaces */
 #include "interfaces/efl_control.eo.h"
 #include "interfaces/efl_file.eo.h"
@@ -41,6 +43,8 @@ extern "C"
 #include "interfaces/efl_player.eo.h"
 #include "interfaces/efl_text.eo.h"
 #include "interfaces/efl_text_properties.eo.h"
+
+#endif
 
 #if defined ( __cplusplus )
 }
