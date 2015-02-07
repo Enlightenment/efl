@@ -1,14 +1,15 @@
 # Russian translation for Efl.
 # Copyright (C) 2012 Enlightenment development team
 # This file is put in the public domain.
+# Igor Murzov <garik@efl.so>, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-02-04 18:08+0900\n"
-"PO-Revision-Date: 2012-06-24 17:10+0900\n"
-"Last-Translator: Jerome Pinot <ngc891@gmail.com>\n"
+"POT-Creation-Date: 2015-02-06 01:25+0300\n"
+"PO-Revision-Date: 2015-02-06 01:25+0300\n"
+"Last-Translator: Игорь Мурзов <garik@efl.so>\n"
 "Language-Team: Enlightenment Team\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -209,28 +210,28 @@ msgstr "Рабочий стол"
 
 #: src/lib/efreet/efreet_base.c:131
 msgid "Downloads"
-msgstr ""
+msgstr "Загрузки"
 
 #: src/lib/efreet/efreet_base.c:140
 msgid "Templates"
-msgstr ""
+msgstr "Шаблоны"
 
 #: src/lib/efreet/efreet_base.c:149
 msgid "Public"
-msgstr ""
+msgstr "Общий каталог"
 
 #: src/lib/efreet/efreet_base.c:158
 msgid "Documents"
-msgstr ""
+msgstr "Документы"
 
 #: src/lib/efreet/efreet_base.c:166
 msgid "Music"
-msgstr ""
+msgstr "Музыка"
 
 #: src/lib/efreet/efreet_base.c:174
 msgid "Pictures"
-msgstr ""
+msgstr "Изображения"
 
 #: src/lib/efreet/efreet_base.c:182
 msgid "Videos"
-msgstr ""
+msgstr "Видео"
