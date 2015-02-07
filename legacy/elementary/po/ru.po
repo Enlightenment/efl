@@ -3,15 +3,15 @@
 # Copyright (C) 2012 Enlightenment development team
 # This file is distributed under the same license as the elementary package.
 # Danny Moshnakov <dm@agent.co.il>, 2012.
-# Igor Murzov <garik@efl.so>, 2014.
+# Igor Murzov <garik@efl.so>, 2014-2015.
 #
 #: src/lib/elm_config.c:3174
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.11\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-02-04 18:11+0900\n"
-"PO-Revision-Date: 2014-11-15 13:55+0300\n"
+"POT-Creation-Date: 2015-02-07 15:16+0300\n"
+"PO-Revision-Date: 2015-02-07 15:16+0300\n"
 "Last-Translator: Игорь Мурзов <garik@efl.so>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
 "Language: ru\n"
@@ -31,7 +31,7 @@ msgstr "Дом"
 
 #: src/lib/elc_fileselector.c:1527
 msgid "Search"
-msgstr ""
+msgstr "Поиск"
 
 #: src/lib/elc_fileselector.c:1693 src/lib/elm_entry.c:1487
 #: src/lib/elm_entry.c:1512
@@ -214,7 +214,7 @@ msgstr "Алфавитный указатель"
 msgid "Index Item"
 msgstr "Элемент алфавитного указателя"
 
-#: src/lib/elm_label.c:389
+#: src/lib/elm_label.c:393
 msgid "Label"
 msgstr "Метка"
 
@@ -258,7 +258,7 @@ msgstr "Состояние: Невыбрано"
 msgid "Segment Control Item"
 msgstr "Элемент сегментного элемента управления"
 
-#: src/lib/elm_slider.c:887
+#: src/lib/elm_slider.c:889
 msgid "slider"
 msgstr "бегунок"
 
