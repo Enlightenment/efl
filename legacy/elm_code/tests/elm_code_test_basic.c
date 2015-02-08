@@ -12,7 +12,7 @@ START_TEST (elm_code_create_test)
    code = elm_code_create();
    elm_code_file_open(code, path);
 
-   ck_assert(code);
+   ck_assert(!!code);
    elm_code_free(code);
 }
 END_TEST

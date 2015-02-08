@@ -24,7 +24,7 @@ elm_code_suite_CPPFLAGS = -I$(top_builddir)/elm_code/lib/ \
 @EFL_CFLAGS@ \
 @CHECK_CFLAGS@
 
-elm_code_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/elm_code/lib/libelm_code.la
+elm_code_suite_LDADD = @EFL_LIBS@ @CHECK_LIBS@ $(top_builddir)/elm_code/lib/libelm_code.la
 elm_code_suite_DEPENDENCIES = $(top_builddir)/elm_code/lib/libelm_code.la
 
 testdir = $(PACKAGE_TESTS_DIR)
