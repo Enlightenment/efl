@@ -302,7 +302,10 @@ _on_sub_obj_del(void *data,
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
 {
-   /* FIXME: complete later */
+   {SIG_WIDGET_FOCUSED, ""},
+   {SIG_WIDGET_UNFOCUSED, ""},
+   {SIG_WIDGET_LANG_CHANGED, ""},
+   {SIG_WIDGET_ACCESS_CHANGED, ""},
    {NULL, NULL}
 };
 
@@ -5360,6 +5363,7 @@ _elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd)
    eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
+         evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
          parent = eo_parent_get());
    eo_do(obj, elm_obj_widget_parent_set(parent));
    sd->on_create = EINA_FALSE;
