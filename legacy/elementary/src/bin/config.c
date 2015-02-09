@@ -2025,6 +2025,7 @@ _font_classes_list_sel(void *data   EINA_UNUSED,
         const char *s;
 
         s = elm_object_item_text_get(list_it);
+        if (!s) continue;
 
         if (tc_data->font && !strcmp(s, tc_data->font))
           {
