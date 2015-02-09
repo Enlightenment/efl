@@ -32,9 +32,9 @@
 
 #define MY_CLASS ECORE_CON_URL_CLASS
 
-// all the types, defines, enums etc. from curl that we actuall USE.
+// all the types, defines, enums etc. from curl that we actually USE.
 // we have to add to this if we use more things from curl not already
-// defined here. see culr headers to get them from
+// defined here. see curl headers to get them from
 typedef enum
 {
    CURLM_CALL_MULTI_PERFORM = -1,
@@ -68,6 +68,7 @@ typedef enum
    CINIT(CUSTOMREQUEST, OBJECTPOINT, 36),
    CINIT(VERBOSE, LONG, 41),
    CINIT(NOPROGRESS, LONG, 43),
+   CINIT(NOBODY, LONG, 44),
    CINIT(UPLOAD, LONG, 46),
    CINIT(POST, LONG, 47),
    CINIT(FOLLOWLOCATION, LONG, 52),
@@ -188,6 +189,7 @@ typedef enum _Ecore_Con_Url_Mode
    ECORE_CON_URL_MODE_AUTO = 0,
    ECORE_CON_URL_MODE_GET = 1,
    ECORE_CON_URL_MODE_POST = 2,
+   ECORE_CON_URL_MODE_HEAD = 3,
 } Ecore_Con_Url_Mode;
 
 typedef struct _Ecore_Con_Curl Ecore_Con_Curl;
@@ -846,6 +848,8 @@ _ecore_con_url_send(Ecore_Con_Url *url_obj, Ecore_Con_Url_Mode mode,
         if (mode == ECORE_CON_URL_MODE_POST)
           _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_POST, 1);
      }
+   else if (mode == ECORE_CON_URL_MODE_HEAD)
+     _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_NOBODY, 1L);
 
    switch (url_con->time_condition)
      {
@@ -882,6 +886,12 @@ EAPI Eina_Bool
 ecore_con_url_get(Ecore_Con_Url *url_con)
 {
    return _ecore_con_url_send(url_con, ECORE_CON_URL_MODE_GET, NULL, 0, NULL);
+}
+
+EAPI Eina_Bool
+ecore_con_url_head(Ecore_Con_Url *url_con)
+{
+   return _ecore_con_url_send(url_con, ECORE_CON_URL_MODE_HEAD, NULL, 0, NULL);
 }
 
 EAPI Eina_Bool

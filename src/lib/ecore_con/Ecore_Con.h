@@ -1555,6 +1555,26 @@ EAPI Eina_Bool         ecore_con_url_httpauth_set(Ecore_Con_Url *url_con,
  */
 EAPI Eina_Bool         ecore_con_url_get(Ecore_Con_Url *url_con);
 /**
+ * Sends a HEAD request.
+ *
+ * @param url_con Connection object to perform a request on, previously created
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on error.
+ *
+ * The request is performed immediately, but you need to setup event handlers
+ * for #ECORE_CON_EVENT_URL_COMPLETE or #ECORE_CON_EVENT_URL_PROGRESS to get
+ * more information about its result.
+ *
+ * @see ecore_con_url_custom_new()
+ * @see ecore_con_url_additional_headers_clear()
+ * @see ecore_con_url_additional_header_add()
+ * @see ecore_con_url_response_headers_get()
+ * @see ecore_con_url_time()
+ * @see ecore_con_url_post()
+ * @since 1.14
+ */
+EAPI Eina_Bool         ecore_con_url_head(Ecore_Con_Url *url_con);
+/**
  * Sends a post request.
  *
  * @param url_con Connection object to perform a request on, previously created
