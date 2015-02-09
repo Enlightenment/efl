@@ -3088,11 +3088,18 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
         rp->typedata.text = calloc(1, sizeof(Edje_Real_Part_Text));
         rp->object = evas_object_textblock_add(ed->base->evas);
      }
-   else if (ep->type == EDJE_PART_TYPE_BOX ||
-            ep->type == EDJE_PART_TYPE_TABLE)
+   else if (ep->type == EDJE_PART_TYPE_BOX)
      {
         rp->type = EDJE_RP_TYPE_CONTAINER;
         rp->typedata.container = calloc(1, sizeof(Edje_Real_Part_Container));
+        rp->object = evas_object_box_add(ed->base->evas);
+        rp->typedata.container->anim = _edje_box_layout_anim_new(rp->object);
+     }
+   else if (ep->type == EDJE_PART_TYPE_TABLE)
+     {
+        rp->type = EDJE_RP_TYPE_CONTAINER;
+        rp->typedata.container = calloc(1, sizeof(Edje_Real_Part_Container));
+        rp->object = evas_object_table_add(ed->base->evas);
      }
    else if (ep->type != EDJE_PART_TYPE_SPACER)
      ERR("wrong part type %i!", ep->type);
