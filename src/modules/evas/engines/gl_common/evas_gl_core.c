@@ -2304,6 +2304,12 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
    rsc->current_ctx = ctx;
    rsc->current_eng = eng_data;
 
+   // Update GLESv1 extension functions after GLESv1 context is bound
+   if (ctx->version == EVAS_GL_GLES_1_X)
+     {
+        evgl_api_gles1_ext_get(gles1_funcs);
+     }
+
    _surface_context_list_print();
 
    return 1;

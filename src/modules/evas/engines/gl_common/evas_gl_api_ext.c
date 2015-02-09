@@ -505,13 +505,37 @@ _evgl_api_gles1_ext_init(void)
    int _curext_supported = 0;
    Evas_GL_API *gles1_funcs;
    const char *gles1_exts;
+   EVGL_Resource *rsc;
+   EGLint context_version;
+   EGLDisplay dpy = EGLDISPLAY_GET();
 
-   /* Note from the EGL documentation:
-    *   Function pointers returned by eglGetProcAddress are independent of the
-    *   display and the currently bound context and may be used by any context
-    *   which supports the extension.
-    * So, we don't need to check that GLESv1 is current.
+   /* glGetString returns the information for the currently bound context
+    * So, update gles1_exts only if GLES1 context is currently bound.
+    * Check here if GLESv1 is current
     */
+   if (!(rsc=_evgl_tls_resource_get()))
+     {
+        ERR("Unable to initialize GLES1 extensions. Error retrieving tls");
+        return EINA_FALSE;
+     }
+
+   if ((dpy == EGL_NO_DISPLAY) || !rsc->current_ctx)
+     {
+        DBG("Unable to initialize GLES1 extensions. Engine not initialised");
+        return EINA_FALSE;
+     }
+
+   if (!eglQueryContext(dpy, rsc->current_ctx->context, EGL_CONTEXT_CLIENT_VERSION, &context_version))
+     {
+        ERR("Unable to initialize GLES1 extensions. eglQueryContext failed 0x%x", eglGetError());
+        return EINA_FALSE;
+     }
+
+   if (context_version != EVAS_GL_GLES_1_X)
+     {
+        DBG("GLESv1 context not bound");
+        return EINA_FALSE;
+     }
 
    gles1_funcs = _evgl_api_gles1_internal_get();
    if (!gles1_funcs || !gles1_funcs->glGetString)
