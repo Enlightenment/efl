@@ -60,8 +60,31 @@ START_TEST(tmpstr_simple)
 }
 END_TEST
 
+START_TEST(tmpstr_len)
+{
+   eina_init();
+
+   const char *str1 = "12345";
+   const char *str2 = "123456789";
+   Eina_Tmpstr *tstr1 = eina_tmpstr_add(str1);
+   Eina_Tmpstr *tstr2 = eina_tmpstr_add(str2);
+   Eina_Tmpstr *tstr_empty = eina_tmpstr_add("");
+
+   ck_assert_int_eq(eina_tmpstr_len(tstr1), strlen(str1));
+   ck_assert_int_eq(eina_tmpstr_len(tstr2), strlen(str2));
+
+   ck_assert_int_eq(eina_tmpstr_len(tstr_empty), 0);
+
+   eina_tmpstr_del(tstr1);
+   eina_tmpstr_del(tstr2);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_tmpstr(TCase *tc)
 {
    tcase_add_test(tc, tmpstr_simple);
+   tcase_add_test(tc, tmpstr_len);
 }

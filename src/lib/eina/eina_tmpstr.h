@@ -187,7 +187,7 @@ EAPI Eina_Tmpstr *eina_tmpstr_add(const char *str) EINA_WARN_UNUSED_RESULT;
  *
  * @note If the length is greater than the actual string, but still '\0'
  *       terminateed. Their won't be any crash and the string will be correct,
- *       but eina_tmpstr_strlen will return an erroneous length. So if you
+ *       but eina_tmpstr_len will return an erroneous length. So if you
  *       want to have the correct length always call eina_tmpstr_add_length
  *       with length == strlen(str).
  * @see eina_tmpstr_del()
@@ -198,15 +198,28 @@ EAPI Eina_Tmpstr *eina_tmpstr_add(const char *str) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Tmpstr *eina_tmpstr_add_length(const char *str, size_t length);
 
 /**
- * @brief Return the length of a temporary string including the '\0'.
+ * @brief **Deprecated** Return the length of a temporary string including the '\0'.
  *
  * @param tmpstr This is any C string pointer, but if it is a tmp string
  * it will return the length faster.
  * @return The length of the string including the '\0';
  *
+ * @deprecated
+ * @see eina_tmpstr_len()
  * @since 1.8.0
  */
-EAPI size_t eina_tmpstr_strlen(Eina_Tmpstr *tmpstr);
+EINA_DEPRECATED EAPI size_t eina_tmpstr_strlen(Eina_Tmpstr *tmpstr);
+
+/**
+ * @brief Return the length of a temporary string.
+ *
+ * @param tmpstr This is any C string pointer, but if it is a tmp string
+ * it will return the length faster.
+ * @return The length of the string.
+ *
+ * @since 1.14.0
+ */
+EAPI size_t eina_tmpstr_len(Eina_Tmpstr *tmpstr);
 
 /**
  * @brief Delete the temporary string if it is one, or ignore it if it is not.
