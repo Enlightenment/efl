@@ -3343,7 +3343,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 
                    MASK_TEXTURE += 1;
                }
-             else if (gc->pipe[i].region.type == RTYPE_MAP)
+             else if (gc->pipe[i].array.use_texa && (gc->pipe[i].region.type == RTYPE_MAP))
                {
                   /* FIXME:
                    * This is a workaround as we hijack some tex ids
