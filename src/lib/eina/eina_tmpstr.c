@@ -133,8 +133,9 @@ eina_tmpstr_len(Eina_Tmpstr *tmpstr)
      {
         if (s->str == tmpstr)
 	  {
+             size_t ret = s->length;
              eina_lock_release(&_mutex);
-             return s->length;
+             return ret;
 	  }
      }
    eina_lock_release(&_mutex);
