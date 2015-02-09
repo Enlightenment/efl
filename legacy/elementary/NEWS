@@ -35,6 +35,7 @@ Fixes:
    * colorselector: Fix layout broken in ELM_COLORSELECTOR_ALL mode
    * colorselector: Fix to get proper min size with picker only mode
    * colorselector: Fix memory leak in _color_bars_add
+   * config/font selector: Avoid accessing invalid data on deld items
    * datetime: Fix edc sizing issue by putting fixed: 1 1.
    * DBUS Menu: Fix SIGSEV and SIGBUS when trying to use dbus.
    * diskselector: Change idle enterer add condition
@@ -51,6 +52,7 @@ Fixes:
    * genlist: Cancel multi selected items.
    * gengrid: Add missing "moved" callback call on item reorder by key.
    * gengrid, genlist, list, toolbar: Fix memory leak and enhance performance.
+   * gengrid: Fix memory leak in elm_gengrid_realized_items_update
    * icon: Use evas_object_geometry_get instead of image_size to know the wanted size
    * image: Fix an unclipped issue about image bigger than object size
    * image: Fix to have exact size using elm_image_fill_outside_set()
@@ -58,6 +60,10 @@ Fixes:
    * image: Fix orientation api - major bug in implementation
    * image: Fix elm_image_memfile_set API fail when elm_image widget is not visible.
    * label: Add "slide,end" signal emission
+   * label: Fixed to prevent slide's autostart before calling elm_label_slide_go()
+   * label: Fixed label disappearing after theme changed
+   * list: fix access of deleted items in list when recursing
+   * list: Fix invalid item data scope get
    * modules: Make sure we have all linker flags setup for our modules. (T1920)
    * multibuttonentry: Delete duplicate running code.
    * panes: Fix elm_panes_fixed_set.
@@ -65,13 +71,16 @@ Fixes:
    * progressbar: Fix invalid access to freed units string
    * segment_control: Fix elm_object_item_text_set bug.
    * toolbar: Fix memory leak in _elm_toolbar_nearest_visible_item_get
+   * tooltip: Use proper object to set tooltip layer
    * transit: Free the map resource.
    * transit: Fix to support zoom rate zero.
    * transit: Fix crash issue caused by multiple transit effects.
    * widget: Fix elm_object_disabled_set API
    * widget: Pass Elm_Object_Item *item as *event_info in item->del_func.
+   * widget: Apply default return value according to description in .eo or add description too.
    * win: Set config engine on higher priority than DISPLAY env var
    * win: Fix wrong return value of window theme apply.
+   * win: fix an issue that profile is erased and set to NULL.
 
    [Samples]
    * test_external.edc: pulse value have to be true for put in pulsing mode.
@@ -80,6 +89,7 @@ Fixes:
 
    [E Theme]
    * e/gadman: Add clipper for gadget popup shine
+
 
 Changes since 1.11.0:
 ---------------------
