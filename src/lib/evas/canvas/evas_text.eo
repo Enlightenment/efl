@@ -58,12 +58,12 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             /*@
             @brief Gets the ellipsis currently set on the text object.
 
-            @return The ellipsis set on the text object.
+            @return The ellipsis set on the text object. The ellipsis is -1.0.
             @see evas_object_text_ellipsis_set.
             @since 1.8 */
          }
          values {
-            double ellipsis; /*@ the ellipsis. */
+            double ellipsis(-1); /*@ the ellipsis. */
          }
       }
       bidi_delimiters {

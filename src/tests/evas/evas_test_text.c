@@ -224,6 +224,10 @@ START_TEST(evas_text_ellipsis)
    /* Ligatures */
    buf = "Fffffffffffffffffffffffffffffffffff";
    _test_ellipsis(to, buf, font, size, 0.0);
+
+   /* Check ellipsis value with NULL */
+   fail_if(evas_object_text_ellipsis_get(NULL) != -1.0);
+
    END_TEXT_TEST();
 }
 END_TEST
