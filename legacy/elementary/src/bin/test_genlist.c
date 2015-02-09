@@ -2098,58 +2098,88 @@ _reorder_tg_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSE
  * gl_moved is called after an item was reordered.
  * This is only called when reorder mode is enabled.
  *
- * @param data         :  the genlist object passed as data.
  * @param obj          :  the genlist object.
- * @param item         :  the moved item.
+ * @param event_info   :  the moved item.
  *
- *  the item(*item) had been moved
+ * the item(event_info) had been moved
  *
  */
-static void gl_moved(Evas_Object *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+static void
+_gl_reorder_moved_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
-   // if needed, add application logic.
+   printf("\"moved\" it: %p\n", event_info);
 }
 
 /**
- * gl_moved_after is called after an item was reordered.
+ * _gl_reorder_moved_after_cb is called after an item was reordered.
  * This is only called when reorder mode is enabled.
  *
- * @param data         :  the genlist object passed as data.
  * @param obj          :  the genlist object.
- * @param item         :  the moved item.
+ * @param event_info   :  the moved item.
  *
- *  the item(*item) had been moved after the given relative item(*rel_item) in list.
+ *  the item(event_info) had been moved after the given relative item(*rel_item) in list.
  *
  */
-static void gl_moved_after(Evas_Object *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+static void
+_gl_reorder_moved_after_cb(void *data EINA_UNUSED,
+                           Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    // if needed, add application logic.
-   Elm_Object_Item *it;
-   it = elm_genlist_item_prev_get(item);
-   printf("it=%p, prev_it=%p\n",item,it);
+   Elm_Object_Item *it = elm_genlist_item_prev_get((Elm_Object_Item *)event_info);
+   printf("it = %p, prev_it = %p\n", event_info, it);
 }
 
 /**
- * gl_moved_before is called after an item was reordered.
+ * _gl_reorder_moved_before_cb is called after an item was reordered.
  * This is only called when reorder mode is enabled.
  *
- * @param data         :  the genlist object passed as data.
  * @param obj          :  the genlist object.
- * @param item         :  the moved item.
+ * @param event_info   :  the moved item.
  *
- *  the item(*item) had been moved before the given relative item(*rel_item) in list.
+ *  the item(event_info) had been moved before the given relative item(*rel_item) in list.
  *
  */
-static void gl_moved_before(Evas_Object *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+static void
+_gl_reorder_moved_before_cb(void *data EINA_UNUSED,
+                            Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    // if needed, add application logic.
-   Elm_Object_Item *it;
-   it = elm_genlist_item_next_get(item);
-   printf("it=%p, next_it=%p\n",item,it);
+   Elm_Object_Item *it = elm_genlist_item_next_get((Elm_Object_Item *)event_info);
+   printf("it = %p, next_it = %p\n", event_info, it);
+}
+
+static void
+_gl_reorder_item_focused_cb(void *data EINA_UNUSED,
+                            Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   printf("\"item,focused\" it: %p\n", event_info);
+}
+
+static void
+_gl_reorder_item_unfocused_cb(void *data EINA_UNUSED,
+                              Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   printf("\"item,unfocused\" it: %p\n", event_info);
+}
+
+static void
+_gl_reorder_item_selected_cb(void *data EINA_UNUSED,
+                             Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   printf("\"selected\" it: %p\n", event_info);
+}
+
+static void
+_gl_reorder_item_unselected_cb(void *data EINA_UNUSED,
+                               Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   printf("\"unselected\" it: %p\n", event_info);
 }
 
 void
-test_genlist11(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_genlist_reorder(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *fr, *lb, *bx, *tg, *gl;
    int i;
@@ -2197,9 +2227,13 @@ test_genlist11(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    api->itc1->func.content_get = gl_content_get;
    api->itc1->func.state_get = gl_state_get;
    api->itc1->func.del = NULL;
-   evas_object_smart_callback_add(gl, "moved", (Evas_Smart_Cb)gl_moved, gl);
-   evas_object_smart_callback_add(gl, "moved,after", (Evas_Smart_Cb)gl_moved_after, gl);
-   evas_object_smart_callback_add(gl, "moved,before", (Evas_Smart_Cb)gl_moved_before, gl);
+   evas_object_smart_callback_add(gl, "moved", _gl_reorder_moved_cb, NULL);
+   evas_object_smart_callback_add(gl, "moved,after", _gl_reorder_moved_after_cb, NULL);
+   evas_object_smart_callback_add(gl, "moved,before", _gl_reorder_moved_before_cb, NULL);
+   evas_object_smart_callback_add(gl, "item,focused", _gl_reorder_item_focused_cb, NULL);
+   evas_object_smart_callback_add(gl, "item,unfocused", _gl_reorder_item_unfocused_cb, NULL);
+   evas_object_smart_callback_add(gl, "selected", _gl_reorder_item_selected_cb, NULL);
+   evas_object_smart_callback_add(gl, "unselected", _gl_reorder_item_unselected_cb, NULL);
 
    for (i = 0; i < 50; i++)
      elm_genlist_item_append(gl,

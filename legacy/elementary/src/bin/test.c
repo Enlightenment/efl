@@ -107,7 +107,7 @@ void test_genlist7(void *data, Evas_Object *obj, void *event_info);
 void test_genlist8(void *data, Evas_Object *obj, void *event_info);
 void test_genlist9(void *data, Evas_Object *obj, void *event_info);
 void test_genlist10(void *data, Evas_Object *obj, void *event_info);
-void test_genlist11(void *data, Evas_Object *obj, void *event_info);
+void test_genlist_reorder(void *data, Evas_Object *obj, void *event_info);
 void test_genlist12(void *data, Evas_Object *obj, void *event_info);
 void test_genlist13(void *data, Evas_Object *obj, void *event_info);
 void test_genlist14(void *data, Evas_Object *obj, void *event_info);
@@ -659,7 +659,7 @@ add_tests:
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Group Tree", test_genlist9);
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Decorate Item Mode", test_genlist10);
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Decorate All Mode", test_genlist15);
-   ADD_TEST(NULL, "Lists - Genlist", "Genlist Reorder Mode", test_genlist11);
+   ADD_TEST(NULL, "Lists - Genlist", "Genlist Reorder Mode", test_genlist_reorder);
 #ifdef HAVE_EIO
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Eio", test_eio);
 #endif
