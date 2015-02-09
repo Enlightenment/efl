@@ -569,7 +569,7 @@ CFLAGS+=" -DMESA_EGL_NO_X11_HEADERS "
 %endif
 
 %reconfigure \
-    --enable-g-main-loop \
+    --with-glib=always \
     --disable-xim \
     --disable-scim \
     --disable-gesture \
