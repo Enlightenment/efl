@@ -1057,10 +1057,10 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          tag for which no provider finds anything, and no text is displayed, this
          function still returns EINA_FALSE.
 
-         @return EINA_TRUE if the entry is empty, EINA_FALSE otherwise.
+         @return @c EINA_TRUE if the entry text is empty or @p entry is NULL, @c EINA_FALSE otherwise.
 
          @ingroup Entry */
-         return: bool;
+         return: bool(true);
       }
       markup_filter_remove {
          /*@

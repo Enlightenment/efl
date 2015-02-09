@@ -123,13 +123,14 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
             Get the minimum zoom of the source.
 
             @return Returns the minimum zoom of the source.
+            (If getting the minimum zoom fails, it returns -1)
 
             @see elm_map_zoom_min_set() for details.
 
             @ingroup Map */
          }
          values {
-            int zoom; /*@ New minimum zoom value to be used. */
+            int zoom(-1); /*@ New minimum zoom value to be used. */
          }
       }
       rotate {
@@ -198,13 +199,14 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
             Get the maximum zoom of the source.
 
             @return Returns the maximum zoom of the source.
+            (If getting the maximum zoom fails, it returns -1)
 
             @see elm_map_zoom_max_set() for details.
 
             @ingroup Map */
          }
          values {
-            int zoom; /*@ New maximum zoom value to be used. */
+            int zoom(-1); /*@ New maximum zoom value to be used. */
          }
       }
       zoom_mode {

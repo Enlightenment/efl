@@ -152,7 +152,7 @@ class Elm_Gengrid_Item(Elm_Widget_Item)
                       */
                 }
                 values {
-                     Elm_Object_Select_Mode mode; /*@ The selected mode */
+                     Elm_Object_Select_Mode mode(4); /*@ The selected mode */
                 }
            }
       }

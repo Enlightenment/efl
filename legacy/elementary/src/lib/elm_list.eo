@@ -67,7 +67,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             @ingroup List */
          }
          values {
-            Elm_Object_Select_Mode mode; /*@ The select mode */
+            Elm_Object_Select_Mode mode(4); /*@ The select mode */
          }
       }
       focus_on_selection {

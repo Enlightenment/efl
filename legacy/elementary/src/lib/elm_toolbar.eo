@@ -91,7 +91,7 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
             @ingroup Toolbar */
          }
          values {
-            Elm_Object_Select_Mode mode; /*@ The select mode */
+            Elm_Object_Select_Mode mode(4); /*@ The select mode */
          }
       }
       icon_size {
@@ -154,13 +154,14 @@ class Elm_Toolbar (Elm_Widget, Elm_Interface_Scrollable,
             Get the icon lookup order.
 
             @return The icon lookup order.
+            (If getting the icon order loopup fails, it returns #ELM_ICON_LOOKUP_THEME_FDO)
 
             @see elm_toolbar_icon_order_lookup_set() for details.
 
             @ingroup Toolbar */
          }
          values {
-            Elm_Icon_Lookup_Order order; /*@ The icon lookup order. */
+            Elm_Icon_Lookup_Order order(1); /*@ The icon lookup order. */
          }
       }
       shrink_mode {

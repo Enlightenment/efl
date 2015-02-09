@@ -17,6 +17,7 @@ class Elm_Icon (Elm_Image)
             Get the icon lookup order.
 
             @return The icon lookup order
+            (If getting the icon order loopup is failed, it returns #ELM_ICON_LOOKUP_THEME_FDO)
 
             @see elm_icon_order_lookup_set()
             @see Elm_Icon_Lookup_Order
@@ -24,7 +25,7 @@ class Elm_Icon (Elm_Image)
             @ingroup Icon */
          }
          values {
-            Elm_Icon_Lookup_Order order; /*@ The icon lookup order (can be one of
+            Elm_Icon_Lookup_Order order(1); /*@ The icon lookup order (can be one of
             #ELM_ICON_LOOKUP_FDO_THEME, #ELM_ICON_LOOKUP_THEME_FDO, #ELM_ICON_LOOKUP_FDO
             or #ELM_ICON_LOOKUP_THEME) */
          }

@@ -552,12 +552,12 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             /*@
             Get the minor priority of a quickpanel window
 
-            @return The minor priority of this quickpanel
+            @return The minor priority of this quickpanel. If the object is not window object, return -1.
 
             @ingroup Win */
          }
          values {
-            int priority; /*@ The minor priority for this quickpanel */
+            int priority(-1); /*@ The minor priority for this quickpanel */
          }
       }
       sticky {
@@ -656,12 +656,12 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
             /*@
             Get the major priority of a quickpanel window
 
-            @return The major priority of this quickpanel
+            @return The major priority of this quickpanel. If the object is not window object, return -1.
 
             @ingroup Win */
          }
          values {
-            int priority; /*@ The major priority for this quickpanel */
+            int priority(-1); /*@ The major priority for this quickpanel */
          }
       }
       indicator_opacity {

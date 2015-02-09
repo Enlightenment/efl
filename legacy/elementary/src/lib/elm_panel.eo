@@ -21,7 +21,7 @@ class Elm_Panel (Elm_Layout, Elm_Interface_Scrollable,
             @ingroup Panel */
          }
          values {
-            Elm_Panel_Orient orient; /*@ The panel orientation. Can be one of the following:
+            Elm_Panel_Orient orient(2); /*@ The panel orientation. Can be one of the following:
             @li #ELM_PANEL_ORIENT_TOP
             @li #ELM_PANEL_ORIENT_LEFT
             @li #ELM_PANEL_ORIENT_RIGHT */
