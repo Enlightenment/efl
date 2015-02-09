@@ -68,6 +68,10 @@ static void _mempool_shutdown(void)
    eina_module_list_free(_modules);
    if (_modules)
      {
+        Eina_Array_Iterator it;
+        char* module;
+        unsigned int i;
+
         EINA_ARRAY_ITER_NEXT(_modules, i, module, it)
           free(module);
         eina_array_free(_modules);
