@@ -1045,6 +1045,7 @@ _font_overlay_set_all(void            *data,
    list_it = elm_list_selected_item_get(fclasses);
    if (!list_it) return;
    tc_data = elm_object_item_data_get(list_it);
+   if (!tc_data) return;
 
    EINA_LIST_FOREACH(fndata.text_classes, l, tc)
      {
@@ -1072,6 +1073,7 @@ _font_overlay_reset(void            *data,
    list_it = elm_list_selected_item_get(fclasses);
    if (!list_it) return;
    tc_data = elm_object_item_data_get(list_it);
+   if (!tc_data) return;
 
    fnames = evas_object_data_get(win, "font_names_list");
    fstyles = evas_object_data_get(win, "font_styles_list");
@@ -1301,6 +1303,7 @@ _profile_use(void            *data,
 
    li = data;
    selection = elm_object_item_data_get(elm_list_selected_item_get(li));
+   if (!selection) return;
    profile = elm_config_profile_get();
 
    if (!profile)
@@ -1338,6 +1341,7 @@ _profile_reset(void            *data,
 
    li = data;
    selection = elm_object_item_data_get(elm_list_selected_item_get(li));
+   if (!selection) return;
 
    elm_config_all_flush();
    elm_config_save(); /* dump config into old profile's data dir */
@@ -1398,6 +1402,8 @@ _theme_sel(void            *data EINA_UNUSED,
    EINA_LIST_REVERSE_FOREACH((Eina_List*)tsel, l, list_it)
      {
         Theme *t = elm_object_item_data_get(list_it);
+        if (!t) continue;
+
         eina_strbuf_append_printf(newth, "%s:", t->name);
         if ((!l->prev) && strcmp(t->name, "default"))
           /* ensure default theme is always there for fallback */
@@ -2006,6 +2012,7 @@ _font_classes_list_sel(void *data   EINA_UNUSED,
    Elm_Object_Item *list_it;
 
    tc_data = elm_object_item_data_get(event_info);
+   if (!tc_data) return;
 
    f_names_list = evas_object_data_get(elm_object_top_widget_get(obj),
                                        "font_names_list");
@@ -2054,6 +2061,7 @@ _font_names_list_sel(void *data   EINA_UNUSED,
    eina_stringshare_replace(&fndata.cur_font, sel_font);
 
    tc_data = elm_object_item_data_get(fc_list_it);
+   if (!tc_data) return;
    if (tc_data->font) eina_stringshare_del(tc_data->font);
    if (fndata.cur_font) tc_data->font = eina_stringshare_ref(fndata.cur_font);
 
@@ -2113,6 +2121,7 @@ _font_styles_list_sel(void *data   EINA_UNUSED,
    ELM_LIST_ENABLE(fs_list);
 
    tc_data = elm_object_item_data_get(list_it);
+   if (!tc_data) return;
    eina_stringshare_del(tc_data->style);
    tc_data->style = eina_stringshare_ref(fndata.cur_style);
 
@@ -2124,6 +2133,7 @@ _font_styles_list_sel(void *data   EINA_UNUSED,
         Elm_Font_Size_Data *sdata;
 
         sdata = elm_object_item_data_get(list_it);
+        if (!sdata) continue;
         elm_list_item_selected_set(l->data, EINA_FALSE);
 
         if (tc_data->size == sdata->size)
@@ -2155,11 +2165,13 @@ _font_sizes_list_sel(void *data       EINA_UNUSED,
 
    list_it = elm_list_selected_item_get(fc_list);
    if (!list_it) return;  /* should not happen */
-
    sd = elm_object_item_data_get(event_info);
+   if (!sd) return;
+
    fndata.cur_size = sd->size;
 
    tc_data = elm_object_item_data_get(list_it);
+   if (!tc_data) return;
    tc_data->size = fndata.cur_size;
 
    _font_preview_update(win);
