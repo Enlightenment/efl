@@ -229,6 +229,25 @@ Fixes:
    * eina: fix tests suites for Windows to have a predictable result.
    * Edje: edje_edit - abort Recursive Reference in edje_edit_part_source_set
    * ecore-drm: Trap for failure to dup stdin
+   * ecore-wayland: Don't send key repeat events for keys which should not get them
+   * eet - fix endianess break added by cedric a year ago in image decoding (T1987)
+   * eina: fix valgrind invalid read of size in eina_file_path_sanitize.
+   * ecore-x: Deprecate misspelled screensaver API function
+   * ecore-x: Deprecate old misspelled API function and add new one
+   * ecore-x: Port deprecated API and new API function to xcb
+   * evas: Evas_3D - fix bug with uninit Evas_Mat4 flag.
+   * eldbus: production code inside Eina Safety Check assert.
+   * Ecore_con: fix initialisation clean up and avoid memory leak.
+   * eldbus: fix memory leak.
+   * elua: correct eo inheritance behavior
+   * eina: Eina_Value - use eina_mempool_free to cleanup the memory
+   * evas: Evas_3D - fix when bounding sphere is large, situation with incorrect frustum calculation was possible.
+   * eldbus: eina_value not allocated from mempool.
+   * evas: Evas_3D - fix evas_3d_scene_pick when trying to get empty texcoords from mesh.
+   * evas: Evas_3D - fix order of transformation while updating bounding object.
+   * eina: fix semaphore initialisation
+   * ecore-drm: Fix issue with ecore_drm_output_crtc_Find sending back an invalid id. Fix T2086
+   * evas - gl engine - pipe renderer - disabling of unused arrays for lines
 
 
 Changes since 1.11.0:
