@@ -837,6 +837,7 @@ _items_fix(Evas_Object *obj)
    EINA_LIST_FOREACH(sd->items, l, eo_it)
      {
         ELM_LIST_ITEM_DATA_GET(eo_it, it);
+        if (!it) continue;
         if (it->deleted) continue;
         if (it->icon)
           {
@@ -866,6 +867,7 @@ _items_fix(Evas_Object *obj)
    EINA_LIST_FOREACH(sd->items, l, eo_it)
      {
         ELM_LIST_ITEM_DATA_GET(eo_it, it);
+        if (!it) continue;
         if (it->deleted)
           continue;
 
