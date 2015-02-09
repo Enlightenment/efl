@@ -305,34 +305,43 @@ eldbus_proxy_data_del(Eldbus_Proxy *proxy, const char *key)
    return eldbus_data_del(&(((Eldbus_Proxy *)proxy)->data), key);
 }
 
-static void
-_property_changed_iter(void *data, const void *key, Eldbus_Message_Iter *var)
+static Eina_Value *
+_iter_hash_value_set(Eina_Hash *props, const char *key, Eldbus_Message_Iter *var) EINA_ARG_NONNULL(1, 2, 3)
 {
-   Eldbus_Proxy *proxy = data;
-   const char *skey = key;
-   Eina_Value *st_value, stack_value, *value;
-   Eldbus_Proxy_Event_Property_Changed event;
+   Eina_Value *st_value = _message_iter_struct_to_eina_value(var);
+   Eina_Value *value;
+   Eina_Value stack_value;
 
-   st_value = _message_iter_struct_to_eina_value(var);
    eina_value_struct_value_get(st_value, "arg0", &stack_value);
 
-   value = eina_hash_find(proxy->props, skey);
+   value = eina_hash_find(props, key);
    if (!value)
      {
         value = eina_value_new(eina_value_type_get(&stack_value));
-        eina_hash_add(proxy->props, skey, value);
+        eina_hash_add(props, key, value);
      }
 
    eina_value_flush(value);
    eina_value_copy(&stack_value, value);
 
-   event.name = skey;
-   event.value = value;
-   event.proxy = proxy;
+   eina_value_flush(&stack_value);
+   eina_value_free(st_value);
+   return value;
+}
+
+static void
+_property_changed_iter(void *data, const void *key, Eldbus_Message_Iter *var)
+{
+   Eldbus_Proxy *proxy = data;
+   const char *skey = key;
+
+   Eina_Value *value = _iter_hash_value_set(proxy->props, skey, var);
+
+   Eldbus_Proxy_Event_Property_Changed event = {.name = skey,
+                                                .value = value,
+                                                .proxy = proxy};
    _eldbus_proxy_event_callback_call(proxy, ELDBUS_PROXY_EVENT_PROPERTY_CHANGED,
                                      &event);
-   eina_value_free(st_value);
-   eina_value_flush(&stack_value);
 }
 
 static void
@@ -743,22 +752,8 @@ _property_iter(void *data, const void *key, Eldbus_Message_Iter *var)
 {
    Eldbus_Proxy *proxy = data;
    const char *skey = key;
-   Eina_Value *st_value, stack_value, *value;
 
-   st_value = _message_iter_struct_to_eina_value(var);
-   eina_value_struct_value_get(st_value, "arg0", &stack_value);
-
-   value = eina_hash_find(proxy->props, skey);
-   if (!value)
-     {
-        value = eina_value_new(eina_value_type_get(&stack_value));
-        eina_hash_add(proxy->props, skey, value);
-     }
-   eina_value_flush(value);
-   eina_value_copy(&stack_value, value);
-
-   eina_value_free(st_value);
-   eina_value_flush(&stack_value);
+   _iter_hash_value_set(proxy->props, skey, var);
 }
 
 static void

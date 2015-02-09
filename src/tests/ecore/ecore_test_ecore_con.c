@@ -162,7 +162,7 @@ _dns_err(void *data, int type EINA_UNUSED, void *ev EINA_UNUSED)
    return ECORE_CALLBACK_RENEW;
 }
 
-START_TEST(ecore_test_ecore_con_server)
+void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name)
 {
    Ecore_Con_Server *server;
    Ecore_Con_Server *client;
@@ -171,13 +171,13 @@ START_TEST(ecore_test_ecore_con_server)
    Ecore_Event_Handler *handlers[6];
    void *server_data = malloc (1);
    void *client_data = malloc (1);
-   int ret;
+   char sdata[] = "Server_info";
+   double timeout_val = 10, timeout_ret;
+   int ret, server_port = 1234;
    void *del_ret;
 
    ret = eina_init();
    fail_if(ret != 1);
-   ret = ecore_init();
-   fail_if(ret < 1);
    ret = ecore_con_init();
    fail_if(ret != 1);
 
@@ -201,14 +201,30 @@ START_TEST(ecore_test_ecore_con_server)
        _data, (void *) 2);
    fail_if(handlers[5] == NULL);
 
-   server = ecore_con_server_add(ECORE_CON_REMOTE_TCP, "127.0.0.1", 1234,
+   fail_if (ecore_con_server_connected_get(server));
+
+   server = ecore_con_server_add(compl_type, name, server_port,
        server_data);
    fail_if (server == NULL);
 
-   ecore_con_server_timeout_set(server, 10);
+   del_ret = ecore_con_server_data_get(server);
+   fail_if (del_ret != server_data);
+
+   del_ret = ecore_con_server_data_set(server, sdata);
+   fail_if (del_ret != server_data);
+
+   fail_if (!ecore_con_server_connected_get(server));
+
+   ecore_con_server_timeout_set(server, timeout_val);
+   timeout_ret = ecore_con_server_timeout_get(server);
+   fail_if (timeout_ret != timeout_val);
+
+   ret = ecore_con_server_port_get(server);
+   fail_if (ret != server_port);
+
    ecore_con_server_client_limit_set(server, 1, 0);
 
-   client = ecore_con_server_connect(ECORE_CON_REMOTE_TCP, "127.0.0.1", 1234,
+   client = ecore_con_server_connect(compl_type, name, server_port,
        client_data);
    fail_if (client == NULL);
 
@@ -226,7 +242,8 @@ START_TEST(ecore_test_ecore_con_server)
           ecore_con_server_uptime_get(server));
 
    del_ret = ecore_con_server_del(server);
-   fail_if (del_ret != server_data);
+   fail_if (strcmp((char *)del_ret, sdata));
+
    free (server_data);
    del_ret = ecore_con_server_del(client);
    fail_if (del_ret != client_data);
@@ -248,8 +265,36 @@ START_TEST(ecore_test_ecore_con_server)
 
    ret = ecore_con_shutdown();
    fail_if(ret != 0);
-   ret = ecore_shutdown();
    ret = eina_shutdown();
+}
+
+START_TEST(ecore_test_ecore_con_local_user)
+{
+   _ecore_con_server_client_tests(ECORE_CON_LOCAL_USER, "test_sock");
+}
+END_TEST
+
+START_TEST(ecore_test_ecore_con_local_system)
+{
+   _ecore_con_server_client_tests(ECORE_CON_LOCAL_SYSTEM, "test_sock");
+}
+END_TEST
+
+START_TEST(ecore_test_ecore_con_local_abstract)
+{
+   _ecore_con_server_client_tests(ECORE_CON_LOCAL_ABSTRACT, "test_sock");
+}
+END_TEST
+
+START_TEST(ecore_test_ecore_con_remote_tcp)
+{
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP, "127.0.0.1");
+}
+END_TEST
+
+START_TEST(ecore_test_ecore_con_remote_nodelay)
+{
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY, "127.0.0.1");
 }
 END_TEST
 
@@ -321,7 +366,11 @@ END_TEST
 void ecore_test_ecore_con(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_con_init);
-   tcase_add_test(tc, ecore_test_ecore_con_server);
+   tcase_add_test(tc, ecore_test_ecore_con_local_user);
+   tcase_add_test(tc, ecore_test_ecore_con_local_system);
+   tcase_add_test(tc, ecore_test_ecore_con_local_abstract);
+   tcase_add_test(tc,ecore_test_ecore_con_remote_tcp);
+   tcase_add_test(tc,ecore_test_ecore_con_remote_nodelay);
    tcase_add_test(tc, ecore_test_ecore_con_dns);
    tcase_add_test(tc, ecore_test_ecore_con_shutdown_bef_init);
 }
