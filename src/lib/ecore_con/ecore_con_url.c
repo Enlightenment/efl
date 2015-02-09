@@ -183,6 +183,13 @@ typedef struct
    } data;
 } CURLMsg;
 
+typedef enum _Ecore_Con_Url_Mode
+{
+   ECORE_CON_URL_MODE_AUTO = 0,
+   ECORE_CON_URL_MODE_GET = 1,
+   ECORE_CON_URL_MODE_POST = 2,
+} Ecore_Con_Url_Mode;
+
 typedef struct _Ecore_Con_Curl Ecore_Con_Curl;
 
 struct _Ecore_Con_Curl
@@ -783,12 +790,10 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_obj, const char *username, const c
    return EINA_FALSE;
 }
 
-#define MODE_AUTO 0
-#define MODE_GET  1
-#define MODE_POST 2
 
 static Eina_Bool
-_ecore_con_url_send(Ecore_Con_Url *url_obj, int mode, const void *data, long length, const char *content_type)
+_ecore_con_url_send(Ecore_Con_Url *url_obj, Ecore_Con_Url_Mode mode,
+                    const void *data, long length, const char *content_type)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
    if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
@@ -810,7 +815,7 @@ _ecore_con_url_send(Ecore_Con_Url *url_obj, int mode, const void *data, long len
 
    _c->curl_slist_free_all(url_con->headers);
    url_con->headers = NULL;
-   if ((mode == MODE_POST) || (mode == MODE_AUTO))
+   if ((mode == ECORE_CON_URL_MODE_POST) || (mode == ECORE_CON_URL_MODE_AUTO))
      {
         if (url_con->post_data) free(url_con->post_data);
         url_con->post_data = NULL;
@@ -838,7 +843,7 @@ _ecore_con_url_send(Ecore_Con_Url *url_obj, int mode, const void *data, long len
         else
           _c->curl_easy_setopt(url_con->curl_easy,
                                CURLOPT_POSTFIELDSIZE, 0);
-        if (mode == MODE_POST)
+        if (mode == ECORE_CON_URL_MODE_POST)
           _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_POST, 1);
      }
 
@@ -876,13 +881,13 @@ _ecore_con_url_send(Ecore_Con_Url *url_obj, int mode, const void *data, long len
 EAPI Eina_Bool
 ecore_con_url_get(Ecore_Con_Url *url_con)
 {
-   return _ecore_con_url_send(url_con, MODE_GET, NULL, 0, NULL);
+   return _ecore_con_url_send(url_con, ECORE_CON_URL_MODE_GET, NULL, 0, NULL);
 }
 
 EAPI Eina_Bool
 ecore_con_url_post(Ecore_Con_Url *url_con, const void *data, long length, const char *content_type)
 {
-   return _ecore_con_url_send(url_con, MODE_POST, data, length, content_type);
+   return _ecore_con_url_send(url_con, ECORE_CON_URL_MODE_POST, data, length, content_type);
 }
 
 EAPI Eina_Bool
