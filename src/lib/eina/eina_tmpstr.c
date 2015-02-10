@@ -118,7 +118,8 @@ eina_tmpstr_del(Eina_Tmpstr *tmpstr)
 EAPI size_t
 eina_tmpstr_strlen(Eina_Tmpstr *tmpstr)
 {
-   return (tmpstr) ? eina_tmpstr_len(tmpstr) : 0;
+   if (!tmpstr) return 0;
+   return eina_tmpstr_len(tmpstr) + 1;
 }
 
 EAPI size_t
