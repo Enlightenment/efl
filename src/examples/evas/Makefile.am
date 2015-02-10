@@ -269,6 +269,11 @@ evas_3d_mmap_SOURCES = evas-3d-mmap-set.c
 evas_3d_mmap_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_mmap_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_3d_colorpick
+evas_3d_colorpick_SOURCES = evas-3d-colorpick.c
+evas_3d_colorpick_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
+evas_3d_colorpick_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 EXTRA_PROGRAMS += evas_gl
 evas_gl_SOURCES = evas-gl.c
 evas_gl_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
