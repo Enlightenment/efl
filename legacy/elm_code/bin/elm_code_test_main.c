@@ -52,9 +52,7 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    widget = eo_add(ELM_CODE_WIDGET_CLASS, parent);
    eo_do(widget,
          elm_code_widget_code_set(code),
-         elm_code_widget_font_size_set(14),
-         elm_code_widget_editable_set(EINA_TRUE),
-         elm_code_widget_line_numbers_set(EINA_TRUE),
+         elm_code_widget_font_size_set(12),
          eo_event_callback_add(ELM_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_cb, code));
 
    _append_line(code->file, "Hello World, Elm Code!");
@@ -63,6 +61,32 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    _append_line(code->file, "This is a demo of elm_code's capabilities.");
    _append_line(code->file, "*** Currently experimental ***");
    elm_code_file_line_status_set(code->file, 4, ELM_CODE_STATUS_TYPE_ERROR);
+
+   evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(widget);
+
+   return widget;
+}
+
+static Evas_Object *
+_elm_code_test_editor_setup(Evas_Object *parent)
+{
+   Elm_Code *code;
+   Elm_Code_Widget *widget;
+
+   code = elm_code_create();
+   widget = eo_add(ELM_CODE_WIDGET_CLASS, parent);
+   eo_do(widget,
+         elm_code_widget_code_set(code),
+         elm_code_widget_font_size_set(14),
+         elm_code_widget_editable_set(EINA_TRUE),
+         elm_code_widget_line_numbers_set(EINA_TRUE));
+
+   _append_line(code->file, "Edit me :)");
+   _append_line(code->file, "");
+   _append_line(code->file, "");
+   _append_line(code->file, "...Please?");
 
    evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -87,26 +111,84 @@ _elm_code_test_diff_setup(Evas_Object *parent)
    return diff;
 }
 
+static void
+_elm_code_test_welcome_editor_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *naviframe, *screen;
+
+   naviframe = (Evas_Object *)data;
+   screen = elm_box_add(naviframe);
+   evas_object_size_hint_weight_set(screen, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(screen, _elm_code_test_editor_setup(screen));
+   evas_object_show(screen);
+
+   elm_naviframe_item_push(naviframe, "Editor",
+                           NULL, NULL, screen, NULL);
+}
+
+static void
+_elm_code_test_welcome_diff_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *naviframe, *screen;
+
+   naviframe = (Evas_Object *)data;
+   screen = elm_box_add(naviframe);
+   evas_object_size_hint_weight_set(screen, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(screen, _elm_code_test_diff_setup(screen));
+   evas_object_show(screen);
+
+   elm_naviframe_item_push(naviframe, "Diff widget (comparison)",
+                           NULL, NULL, screen, NULL);
+}
+
 static Evas_Object *
 elm_code_test_win_setup(void)
 {
-   Evas_Object *win,*vbox;
+   Evas_Object *win, *vbox, *text, *button, *naviframe;
+   Elm_Object_Item *item;
 
-   win = elm_win_util_standard_add("main", "Elm_Code Test");
+   win = elm_win_util_standard_add("main", "Elm_Code Demo");
    if (!win) return NULL;
+
+   naviframe = elm_naviframe_add(win);
+   evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, naviframe);
+   evas_object_show(naviframe);
 
    vbox = elm_box_add(win);
    evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(vbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_homogeneous_set(vbox, EINA_TRUE);
    evas_object_show(vbox);
 
-   elm_box_pack_end(vbox, _elm_code_test_welcome_setup(vbox));
-   elm_box_pack_end(vbox, _elm_code_test_diff_setup(vbox));
-   elm_win_resize_object_add(win, vbox);
+   text = _elm_code_test_welcome_setup(vbox);
+   evas_object_size_hint_weight_set(text, EVAS_HINT_EXPAND, 0.5);
+   elm_box_pack_end(vbox, text);
+
+   button = elm_button_add(vbox);
+   elm_object_text_set(button, "Editor");
+   evas_object_size_hint_weight_set(button, 0.5, 0.25);
+   evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0.9);
+   evas_object_smart_callback_add(button, "clicked",
+                                       _elm_code_test_welcome_editor_cb, naviframe);
+   elm_box_pack_end(vbox, button);
+   evas_object_show(button);
+
+   button = elm_button_add(vbox);
+   elm_object_text_set(button, "Diff (comparison)");
+   evas_object_size_hint_weight_set(button, 0.5, 0.25);
+   evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0.1);
+   evas_object_smart_callback_add(button, "clicked",
+                                       _elm_code_test_welcome_diff_cb, naviframe);
+   elm_box_pack_end(vbox, button);
+   evas_object_show(button);
+
+   item = elm_naviframe_item_push(naviframe, "Choose Demo",
+                                  NULL, NULL,vbox, NULL);
+   elm_naviframe_item_title_enabled_set(item, EINA_FALSE, EINA_FALSE);
+   elm_win_resize_object_add(win, naviframe);
 
    evas_object_smart_callback_add(win, "delete,request", _elm_code_test_win_del, NULL);
-   evas_object_resize(win, 380 * elm_config_scale_get(), 240 * elm_config_scale_get());
+   evas_object_resize(win, 400 * elm_config_scale_get(), 320 * elm_config_scale_get());
    evas_object_show(win);
 
    return win;
