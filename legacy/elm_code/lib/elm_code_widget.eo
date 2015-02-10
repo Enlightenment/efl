@@ -1,5 +1,4 @@
-class Elm_Code_Widget (Elm_Box, Elm_Interface_Scrollable,
-                       Elm_Interface_Atspi_Text)
+class Elm_Code_Widget (Elm_Box, Elm_Interface_Atspi_Text)
 {
    eo_prefix: elm_code_widget;
    properties {
@@ -112,7 +111,8 @@ class Elm_Code_Widget (Elm_Box, Elm_Interface_Scrollable,
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Elm_Widget.on_focus;
-      Elm_Interface_Scrollable.content_pos_set;
+      Elm_Widget.focus_next_manager_is;
+      Elm_Widget.focus_direction_manager_is;
    }
    events {
       line,clicked;

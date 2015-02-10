@@ -50,14 +50,18 @@ void _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd);
 Eina_Bool _elm_code_widget_elm_widget_on_focus(Eo *obj, Elm_Code_Widget_Data *pd);
 
 
-void _elm_code_widget_elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Code_Widget_Data *pd, Evas_Coord x, Evas_Coord y, Eina_Bool sig);
+Eina_Bool _elm_code_widget_elm_widget_focus_next_manager_is(Eo *obj, Elm_Code_Widget_Data *pd);
+
+
+Eina_Bool _elm_code_widget_elm_widget_focus_direction_manager_is(Eo *obj, Elm_Code_Widget_Data *pd);
 
 
 static Eo_Op_Description _elm_code_widget_op_desc[] = {
      EO_OP_FUNC_OVERRIDE(eo_constructor, _elm_code_widget_eo_base_constructor),
      EO_OP_FUNC_OVERRIDE(evas_obj_smart_add, _elm_code_widget_evas_object_smart_add),
      EO_OP_FUNC_OVERRIDE(elm_obj_widget_on_focus, _elm_code_widget_elm_widget_on_focus),
-     EO_OP_FUNC_OVERRIDE(elm_interface_scrollable_content_pos_set, _elm_code_widget_elm_interface_scrollable_content_pos_set),
+     EO_OP_FUNC_OVERRIDE(elm_obj_widget_focus_next_manager_is, _elm_code_widget_elm_widget_focus_next_manager_is),
+     EO_OP_FUNC_OVERRIDE(elm_obj_widget_focus_direction_manager_is, _elm_code_widget_elm_widget_focus_direction_manager_is),
      EO_OP_FUNC(elm_code_widget_code_set, _elm_code_widget_code_set, "Set the underlying code object that this widget renders"),
      EO_OP_FUNC(elm_code_widget_code_get, _elm_code_widget_code_get, "Get the underlying code object we are rendering"),
      EO_OP_FUNC(elm_code_widget_font_size_set, _elm_code_widget_font_size_set, "Set the font size that this widget uses, the font will always be a system monospaced font"),
@@ -87,4 +91,4 @@ static const Eo_Class_Description _elm_code_widget_class_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(elm_code_widget_class_get, &_elm_code_widget_class_desc, ELM_BOX_CLASS, ELM_INTERFACE_SCROLLABLE_MIXIN, ELM_INTERFACE_ATSPI_TEXT_INTERFACE, NULL);
+EO_DEFINE_CLASS(elm_code_widget_class_get, &_elm_code_widget_class_desc, ELM_BOX_CLASS, ELM_INTERFACE_ATSPI_TEXT_INTERFACE, NULL);

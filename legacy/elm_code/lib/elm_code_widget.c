@@ -492,12 +492,6 @@ _elm_code_widget_event_veto_cb(void *data, Evas_Object *obj EINA_UNUSED,
    if (!pd->editable)
      return EINA_FALSE;
 
-   widget = (Elm_Code_Widget *)data;
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-
-   if (!pd->editable)
-     return EINA_FALSE;
-
    vetoed = EINA_TRUE;
    if (type == EVAS_CALLBACK_KEY_DOWN)
      {
@@ -511,9 +505,15 @@ _elm_code_widget_event_veto_cb(void *data, Evas_Object *obj EINA_UNUSED,
 EOLIAN static Eina_Bool
 _elm_code_widget_elm_widget_on_focus(Eo *obj, Elm_Code_Widget_Data *pd)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   Eina_Bool int_ret;
+
+   if (!pd->editable)
+     return EINA_FALSE;
+
    eo_do_super(obj, ELM_CODE_WIDGET_CLASS, int_ret = elm_obj_widget_on_focus());
-   if (!int_ret) return EINA_TRUE;
+
+   if (!int_ret)
+     return EINA_TRUE;
 
    pd->focussed = elm_widget_focus_get(obj);
 
@@ -521,13 +521,18 @@ _elm_code_widget_elm_widget_on_focus(Eo *obj, Elm_Code_Widget_Data *pd)
    return EINA_TRUE;
 }
 
-EOLIAN static void
-_elm_code_widget_elm_interface_scrollable_content_pos_set(Eo *obj EINA_UNUSED,
-                                                           Elm_Code_Widget_Data *pd EINA_UNUSED,
-                                                           Evas_Coord x, Evas_Coord y,
-                                                           Eina_Bool sig EINA_UNUSED)
+EOLIAN static Eina_Bool
+_elm_code_widget_elm_widget_focus_next_manager_is(Elm_Widget *obj EINA_UNUSED,
+                                                  Elm_Code_Widget_Data *pd EINA_UNUSED)
 {
-   printf("scroll to %d, %d\n", x, y);
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_code_widget_elm_widget_focus_direction_manager_is(Elm_Widget *obj EINA_UNUSED,
+                                                       Elm_Code_Widget_Data *pd EINA_UNUSED)
+{
+   return EINA_FALSE;
 }
 
 EOLIAN static void
