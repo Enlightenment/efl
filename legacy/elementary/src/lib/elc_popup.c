@@ -359,8 +359,7 @@ _elm_popup_elm_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
      elm_layout_signal_emit(sd->main_layout, "elm,state,title,icon,visible", "elm");
 
    _visuals_set(obj);
-   edje_object_message_signal_process(elm_layout_edje_get(sd->main_layout));
-   elm_layout_sizing_eval(sd->main_layout);
+   elm_layout_sizing_eval(obj);
 
    /* access */
    if (_elm_config->access_mode) _access_obj_process(obj, EINA_TRUE);
@@ -422,7 +421,6 @@ _elm_popup_elm_widget_sub_object_del(Eo *obj, Elm_Popup_Data *sd, Evas_Object *s
    if (sobj == sd->title_icon)
      {
         elm_layout_signal_emit(sd->main_layout, "elm,state,title,icon,hidden", "elm");
-        edje_object_message_signal_process(elm_layout_edje_get(sd->main_layout));
         sd->title_icon = NULL;
      }
    else if ((it =
@@ -449,7 +447,7 @@ _on_content_del(void *data,
    ELM_POPUP_DATA_GET(data, sd);
 
    sd->content = NULL;
-   elm_layout_sizing_eval(sd->main_layout);
+   elm_layout_sizing_eval(data);
 }
 
 static void
@@ -461,7 +459,7 @@ _on_text_content_del(void *data,
    ELM_POPUP_DATA_GET(data, sd);
 
    sd->text_content_obj = NULL;
-   elm_layout_sizing_eval(sd->main_layout);
+   elm_layout_sizing_eval(data);
 }
 
 static void
@@ -476,7 +474,7 @@ _on_table_del(void *data,
    sd->spacer = NULL;
    sd->scr = NULL;
    sd->box = NULL;
-   elm_layout_sizing_eval(sd->main_layout);
+   elm_layout_sizing_eval(data);
 }
 
 static void
@@ -541,7 +539,6 @@ _button_remove(Evas_Object *obj,
      {
         _visuals_set(obj);
         ELM_SAFE_FREE(sd->action_area, evas_object_del);
-        edje_object_message_signal_process(elm_layout_edje_get(sd->main_layout));
      }
    else
      {
@@ -880,8 +877,7 @@ _title_text_set(Evas_Object *obj,
    if (title_visibility_old != title_visibility_current)
      _visuals_set(obj);
 
-   edje_object_message_signal_process(elm_layout_edje_get(sd->main_layout));
-   elm_layout_sizing_eval(sd->main_layout);
+   elm_layout_sizing_eval(obj);
 
    return EINA_TRUE;
 }
@@ -937,7 +933,7 @@ _content_text_set(Evas_Object *obj,
      }
 
 end:
-   elm_layout_sizing_eval(sd->main_layout);
+   elm_layout_sizing_eval(obj);
 
    return EINA_TRUE;
 }
@@ -1011,8 +1007,7 @@ _title_icon_set(Evas_Object *obj,
      elm_layout_signal_emit(sd->main_layout, "elm,state,title,icon,visible", "elm");
    if (title_visibility_old != title_visibility_current) _visuals_set(obj);
 
-   edje_object_message_signal_process(elm_layout_edje_get(sd->main_layout));
-   elm_layout_sizing_eval(sd->main_layout);
+   elm_layout_sizing_eval(obj);
 
    return EINA_TRUE;
 }
@@ -1043,7 +1038,7 @@ _content_set(Evas_Object *obj,
         evas_object_event_callback_add
           (content, EVAS_CALLBACK_DEL, _on_content_del, obj);
      }
-   elm_layout_sizing_eval(sd->main_layout);
+   elm_layout_sizing_eval(obj);
 
    return EINA_TRUE;
 }
@@ -1108,10 +1103,9 @@ _action_button_set(Evas_Object *obj,
    elm_object_part_content_set
      (sd->action_area, buf, sd->buttons[idx]->btn);
 
-   edje_object_message_signal_process(elm_layout_edje_get(sd->main_layout));
    if (sd->items) _scroller_size_calc(obj);
 
-   elm_layout_sizing_eval(sd->main_layout);
+   elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -1215,7 +1209,7 @@ _content_unset(Evas_Object *obj)
    content = eo_do(sd->content_area, elm_obj_container_content_unset(CONTENT_PART));
    sd->content = NULL;
 
-   elm_layout_sizing_eval(sd->main_layout);
+   elm_layout_sizing_eval(obj);
 
    return content;
 }
@@ -1438,7 +1432,6 @@ _elm_popup_evas_object_smart_add(Eo *obj, Elm_Popup_Data *priv)
    elm_widget_can_focus_set(priv->main_layout, EINA_TRUE);
 
    _visuals_set(obj);
-   edje_object_message_signal_process(elm_layout_edje_get(priv->main_layout));
 }
 
 EOLIAN static void
