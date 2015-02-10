@@ -1,4 +1,5 @@
 #include "ecore_drm_private.h"
+#include <ctype.h>
 
 #ifndef KDSKBMUTE
 # define KDSKBMUTE 0x4B51
@@ -11,7 +12,7 @@ static inline Eina_Bool
 _ecore_drm_logind_vt_get(Ecore_Drm_Device *dev)
 {
    int ret;
-   char *tty;
+   char *tty, *p;
 
    ret = sd_session_get_tty(dev->session, &tty);
    if (ret < 0)
@@ -20,12 +21,18 @@ _ecore_drm_logind_vt_get(Ecore_Drm_Device *dev)
         return EINA_FALSE;
      }
 
-   ret = sscanf(tty, "tty%u", &dev->vt);
+   p = strchr(tty, 't');
+   dev->vt = UINT_MAX;
+   if (p)
+     {
+        while (p[0] && (!isdigit(p[0])))
+          p++;
+        if (p[0])
+          dev->vt = strtoul(p, NULL, 10);
+     }
    free(tty);
 
-   if (ret != 1) return EINA_FALSE;
-
-   return EINA_TRUE;
+   return dev->vt != UINT_MAX;
 }
 #endif
 
