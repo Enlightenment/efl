@@ -260,7 +260,7 @@ _elm_panel_elm_widget_theme_apply(Eo *obj, Elm_Panel_Data *sd)
 
         if (edje_object_part_exists
             (wd->resize_obj, "elm.swallow.event"))
-          elm_layout_content_set(obj, "elm.swallow.event", sd->event);
+          eo_do_super(obj, MY_CLASS, elm_obj_container_content_set("elm.swallow.event", sd->event));
      }
 
    elm_layout_sizing_eval(obj);
@@ -986,7 +986,7 @@ _elm_panel_evas_object_smart_add(Eo *obj, Elm_Panel_Data *priv)
 
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
              evas_object_size_hint_min_set(priv->event, minw, minh);
-             elm_layout_content_set(obj, "elm.swallow.event", priv->event);
+             eo_do_super(obj, MY_CLASS, elm_obj_container_content_set("elm.swallow.event", priv->event));
           }
      }
 
