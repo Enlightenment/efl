@@ -625,8 +625,8 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 {
    Render_Engine *re = (Render_Engine *)data;
    Evas_Native_Surface *ns = native;
-   RGBA_Image *im = image, *im2 = NULL;
-   Image_Entry *ie = image;
+   Image_Entry *ie = image, *ie2 = NULL;
+   RGBA_Image *im = image;
 
    if (!im || !ns) return im;
 
@@ -656,10 +656,17 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
           }
      }
 
-   //create new im and clean already existed im even though ns = NULL
-   im2 = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
-                                             ie->w, ie->h, NULL, ie->flags.alpha,
-                                             EVAS_COLORSPACE_ARGB8888);
+   // Code from software_generic
+   if ((ns->type == EVAS_NATIVE_SURFACE_OPENGL) &&
+            (ns->version == EVAS_NATIVE_SURFACE_VERSION))
+     ie2 = evas_cache_image_data(evas_common_image_cache_get(),
+                                 ie->w, ie->h, ns->data.x11.visual, 1,
+                                 EVAS_COLORSPACE_ARGB8888);
+   else
+     ie2 = evas_cache_image_data(evas_common_image_cache_get(),
+                                 ie->w, ie->h, NULL, ie->flags.alpha,
+                                 EVAS_COLORSPACE_ARGB8888);
+
    if (im->native.data)
      {
         if (im->native.func.free)
@@ -667,25 +674,25 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
      }
 
 #ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
-     evas_cache2_image_close(&im->cache_entry);
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(ie))
+     evas_cache2_image_close(ie);
    else
 #endif
-     evas_cache_image_drop(&im->cache_entry);
-   im = im2;
+     evas_cache_image_drop(ie);
+   ie = ie2;
 
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
    if (ns->type == EVAS_NATIVE_SURFACE_X11)
      {
-        return evas_xlib_image_native_set(re->generic.ob, im, ns);
+        return evas_xlib_image_native_set(re->generic.ob, ie, ns);
      }
 #endif
    if (ns->type == EVAS_NATIVE_SURFACE_TBM)
      {
-        return evas_native_tbm_image_set(re->generic.ob, im, ns);
+        return evas_native_tbm_image_set(re->generic.ob, ie, ns);
      }
 
-   return im;
+   return ie;
 }
 
 static void *
