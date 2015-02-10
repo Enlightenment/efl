@@ -226,6 +226,31 @@ group { name: "e/comp/screen/overlay/noeffects";
 group { name: "e/comp/frame/default";
    images.image: "win_glow.png" COMP;
    images.image: "win_shadow.png" COMP;
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+            if (st == 1)
+              set_state(PART:"gspacer", "custom", 0.0);
+            else
+              set_state(PART:"gspacer", "default", 0.0);
+         } else if ((type == MSG_INT_SET) && (id == 1)) {
+            new l, r, t, b;
+
+            l = getarg(2);
+            r = getarg(3);
+            t = getarg(3);
+            b = getarg(3);
+
+            custom_state(PART:"gspacer", "default", 0.0);
+            set_state_val(PART:"gspacer", STATE_REL1_OFFSET, l - 10, t - 10);
+            set_state_val(PART:"gspacer", STATE_REL2_OFFSET, -r + 10, -b + 10);
+         }
+      }
+   }
    parts {
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
@@ -265,10 +290,8 @@ group { name: "e/comp/frame/default";
             image.normal: "win_glow.png";
             image.border: 9 9 9 9;
             image.middle: 0;
-            rel1.to: "e.swallow.content";
-            rel1.offset: -5  -5;
-            rel2.to: "e.swallow.content";
-            rel2.offset: 4 4;
+            rel1.to: "gspacer";
+            rel2.to: "gspacer";
             fill.smooth: 0;
             color: 255 255 255 0;
             visible: 0;
@@ -309,6 +332,14 @@ group { name: "e/comp/frame/default";
          description { state: "default" 0.0;
             rel1.to: "shower";
             rel2.to: "shower";
+         }
+      }
+      spacer { "gspacer";
+         desc {
+            rel1.to: "e.swallow.content";
+            rel1.offset: -5  -5;
+            rel2.to: "e.swallow.content";
+            rel2.offset: 4 4;
          }
       }
    }
