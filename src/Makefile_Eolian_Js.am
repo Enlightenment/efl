@@ -1,6 +1,6 @@
 
 ### Binary
-if HAVE_CXX11
+if HAVE_JS
 
 bin_PROGRAMS += bin/eolian_js/eolian_js
 

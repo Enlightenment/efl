@@ -1,7 +1,7 @@
 
 ### Library
 
-if HAVE_CXX11
+if HAVE_JS
 lib_LTLIBRARIES += lib/eina_js/libeina_js.la
 
 lib_eina_js_libeina_js_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \

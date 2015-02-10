@@ -1,7 +1,7 @@
 
 ### Library
 
-if HAVE_CXX11
+if HAVE_JS
 installed_eojsmainheadersdir = $(includedir)/eo-js-@VMAJ@
 dist_installed_eojsmainheaders_DATA = \
 bindings/eo_js/eo_js_call_function.hh \
