@@ -211,7 +211,7 @@
  * Next we have setting, this however requires not one but rather two functions,
  * the reason for this is because to be able to receive arguments of any type
  * eina value uses <a href="https://wikipedia.org/wiki/Variadic_functions">
- * variadic functions</a>, so we need a function to get the argument from a 
+ * variadic functions</a>, so we need a function to get the argument from a
  * va_list and another to actually to the setting.
  *
  * Lets first look at the pset function which sets the received value to a
@@ -285,7 +285,7 @@
  * It is meant for simple data types, providing uniform access and
  * release functions, useful to exchange data preserving their
  * types. For more complex hierarchical data, with properties and
- * children, reference counting, inheritance and interfaces, 
+ * children, reference counting, inheritance and interfaces,
  *
  * Examples of usage of the Eina_Value API:
  * @li @ref eina_value_example_01_page
@@ -586,6 +586,35 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_BLOB;
  * @since 1.2
  */
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_STRUCT;
+
+/**
+ * @var EINA_VALUE_TYPE_OPTIONAL_INT
+ * manages optional int type.
+ *
+ * @since 1.3
+ */
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_UCHAR;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_USHORT;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_UINT;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_ULONG;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_TIMESTAMP;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_UINT64;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_CHAR;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_SHORT;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_INT;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_LONG;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_INT64;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_FLOAT;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_DOUBLE;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_STRINGSHARE;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_STRING;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_ARRAY;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_LIST;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_HASH;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_TIMEVAL;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_BLOB;
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OPTIONAL_STRUCT;
+
 
 EAPI extern Eina_Error EINA_ERROR_VALUE_FAILED;
 
@@ -3477,6 +3506,63 @@ static inline Eina_Bool eina_value_type_pset(const Eina_Value_Type *type, void *
  * @since 1.2
  */
 static inline Eina_Bool eina_value_type_pget(const Eina_Value_Type *type, const void *mem, void *ptr);
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Eina_Value_Hash_Group Generic Value Hash management
+ *
+ * @{
+ */
+typedef struct _Eina_Value_Optional_Type Eina_Value_Optional_Type;
+
+struct _Eina_Value_Optional_Type
+{
+   Eina_Value_Type base;
+   const Eina_Value_Type *subtype;
+   unsigned int offset;
+   char name[];
+};
+
+
+typedef struct _Eina_Value_Optional
+{
+   Eina_Bool valid;
+} Eina_Value_Optional;
+
+/**
+ * @brief
+ * @param subtype
+ * @return
+ */
+EAPI const Eina_Value_Type *eina_value_optional_type_new(const Eina_Value_Type *subtype) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief
+ * @param value
+ * @param is_empty
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @since 1.3
+ */
+static inline Eina_Bool eina_value_optional_empty_is(const Eina_Value *value,
+                                                     Eina_Bool *is_empty) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief
+ * @param value
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @since 1.3
+ */
+static inline Eina_Bool eina_value_optional_reset(Eina_Value *value) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief
+ * @param value
+ * @return The optional sub-type.
+ * @since 1.3
+ */
+static inline const Eina_Value_Type *eina_value_optional_type_get(Eina_Value *value) EINA_ARG_NONNULL(1);
 
 /**
  * @}

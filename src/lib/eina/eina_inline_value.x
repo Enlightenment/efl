@@ -1652,6 +1652,54 @@ eina_value_struct_member_value_set(Eina_Value *dst, const Eina_Value_Struct_Memb
 
 #undef EINA_VALUE_TYPE_STRUCT_CHECK_RETURN_VAL
 
+#define EINA_VALUE_TYPE_OPTIONAL_CHECK_RETURN_VAL(value, retval)          \
+  EINA_SAFETY_ON_NULL_RETURN_VAL(value, retval);                        \
+  EINA_SAFETY_ON_FALSE_RETURN_VAL(value->type->setup == EINA_VALUE_TYPE_OPTIONAL_INT->setup, retval)
+
+static inline Eina_Bool
+eina_value_optional_empty_is(const Eina_Value *value, Eina_Bool *is_empty)
+{
+   EINA_VALUE_TYPE_OPTIONAL_CHECK_RETURN_VAL(value, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(is_empty, EINA_FALSE);
+
+   void *mem = eina_value_memory_get(value);
+   if (!mem)
+     return EINA_FALSE;
+
+   Eina_Value_Optional_Type *this_type = (Eina_Value_Optional_Type*)value->type;
+   Eina_Value_Optional *optional = (Eina_Value_Optional*)(((unsigned char*)mem) + this_type->offset);
+   *is_empty = !optional->valid;
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+eina_value_optional_reset(Eina_Value *value)
+{
+   EINA_VALUE_TYPE_OPTIONAL_CHECK_RETURN_VAL(value, EINA_FALSE);
+   void *mem = eina_value_memory_get(value);
+   if (!mem)
+     return EINA_FALSE;
+
+   Eina_Value_Optional_Type *this_type = (Eina_Value_Optional_Type*)value->type;
+   Eina_Value_Optional *optional = (Eina_Value_Optional*)(((unsigned char*)mem) + this_type->offset);
+   if (!optional->valid)
+     return EINA_TRUE;
+
+   if (!eina_value_type_flush(this_type->subtype, mem))
+     return EINA_FALSE;
+
+   optional->valid = EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static inline const Eina_Value_Type *
+eina_value_optional_type_get(Eina_Value *value)
+{
+   EINA_VALUE_TYPE_OPTIONAL_CHECK_RETURN_VAL(value, (const Eina_Value_Type *)NULL);
+   Eina_Value_Optional_Type *this_type = (Eina_Value_Optional_Type*)value->type;
+   return this_type->subtype;
+}
+#undef EINA_VALUE_TYPE_OPTIONAL_CHECK_RETURN_VAL
 
 static inline Eina_Bool
 eina_value_type_setup(const Eina_Value_Type *type, void *mem)
