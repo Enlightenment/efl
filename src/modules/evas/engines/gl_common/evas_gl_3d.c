@@ -1492,9 +1492,16 @@ e3d_drawable_texture_pixel_color_get(GLuint tex EINA_UNUSED, int x, int y,
 
    glBindFramebuffer(GL_FRAMEBUFFER, d->color_pick_fb_id);
    /*TODO Bottle neck - get more effective getting pixels from openGL*/
+#ifndef GL_GLES
    glReadPixels(x, y, 1, 1, GL_RED, GL_UNSIGNED_SHORT, &pixel);
    glBindFramebuffer(GL_FRAMEBUFFER, d->fbo);
    return (double)pixel / USHRT_MAX;
+#else
+   // FIXME: Verify this logic. UNTESTED! (build fix was required)
+   glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
+   glBindFramebuffer(GL_FRAMEBUFFER, d->fbo);
+   return ((double)R_VAL(&pixel)) / 255.0;
+#endif
 }
 
 #undef RENDER_MESH_NODE_ITERATE_BEGIN
