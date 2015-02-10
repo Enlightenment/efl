@@ -2970,6 +2970,7 @@ _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
      {
         eo_it = elm_object_focused_item_get(obj);
         ELM_GENGRID_ITEM_DATA_GET(eo_it, it);
+        evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, eo_it);
         evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, eo_it);
         return EINA_TRUE;
      }
