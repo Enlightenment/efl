@@ -1326,6 +1326,7 @@ evas_object_text_font_string_parse(char *buffer, char dest[14][256])
 EOLIAN void
 _evas_canvas_font_path_clear(Eo *eo_e EINA_UNUSED, Evas_Public_Data *evas)
 {
+   evas_canvas_async_block(evas);
    while (evas->font_path)
      {
 	eina_stringshare_del(evas->font_path->data);
@@ -1337,6 +1338,7 @@ EOLIAN void
 _evas_canvas_font_path_append(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *path)
 {
    if (!path) return;
+   evas_canvas_async_block(e);
    e->font_path = eina_list_append(e->font_path, eina_stringshare_add(path));
 
    evas_font_init();
@@ -1346,6 +1348,7 @@ EOLIAN void
 _evas_canvas_font_path_prepend(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *path)
 {
    if (!path) return;
+   evas_canvas_async_block(e);
    e->font_path = eina_list_prepend(e->font_path, eina_stringshare_add(path));
 
    evas_font_init();
@@ -1422,6 +1425,7 @@ _evas_canvas_font_hinting_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas_Fo
 {
    Evas_Layer *lay;
 
+   evas_canvas_async_block(e);
    if (e->hinting == hinting) return;
    e->hinting = hinting;
 
@@ -1452,6 +1456,7 @@ _evas_canvas_font_hinting_can_hint(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Ev
 EOLIAN void
 _evas_canvas_font_cache_flush(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
+   evas_canvas_async_block(e);
    evas_render_rendering_wait(e);
    e->engine.func->font_cache_flush(e->engine.data.output);
 }
@@ -1460,6 +1465,7 @@ EOLIAN void
 _evas_canvas_font_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size)
 {
    if (size < 0) size = 0;
+   evas_canvas_async_block(e);
    evas_render_rendering_wait(e);
    e->engine.func->font_cache_set(e->engine.data.output, size);
 }

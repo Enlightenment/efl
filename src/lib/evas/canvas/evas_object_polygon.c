@@ -124,7 +124,7 @@ _evas_polygon_point_add(Eo *eo_obj, Evas_Polygon_Data *_pd, Evas_Coord x, Evas_C
    Evas_Coord min_x, max_x, min_y, max_y;
    int is, was = 0;
 
-
+   evas_object_async_block(obj);
    if (!obj->layer->evas->is_frozen)
      {
         if (!evas_event_passes_through(eo_obj, obj) &&
@@ -230,6 +230,7 @@ _evas_polygon_points_clear(Eo *eo_obj, Evas_Polygon_Data *_pd)
    void *list_data;
    int is, was;
 
+   evas_object_async_block(obj);
    was = evas_object_is_in_output_rect(eo_obj, obj,
                                        obj->layer->evas->pointer.x,
                                        obj->layer->evas->pointer.y, 1, 1);

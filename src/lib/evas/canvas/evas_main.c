@@ -184,6 +184,7 @@ _evas_canvas_eo_base_constructor(Eo *eo_obj, Evas_Public_Data *e)
    EVAS_ARRAY_SET(e, texts_unref_queue);
 
 #undef EVAS_ARRAY_SET
+   eina_lock_new(&(e->lock_objects));
 }
 
 EAPI void
@@ -206,9 +207,11 @@ _evas_canvas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
    int i;
    Eina_Bool del;
 
+   evas_canvas_async_block(e);
    if (e->walking_list == 0) evas_render_idle_flush(eo_e);
 
    if (e->walking_list > 0) return;
+
    evas_render_idle_flush(eo_e);
 
    _evas_post_event_callback_free(eo_e);
@@ -299,6 +302,8 @@ _evas_canvas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
 
    _evas_device_cleanup(eo_e);
 
+   eina_lock_free(&(e->lock_objects));
+
    e->magic = 0;
    eo_do_super(eo_e, MY_CLASS, eo_destructor());
 }
@@ -318,6 +323,7 @@ _evas_canvas_output_method_set(Eo *eo_e, Evas_Public_Data *e, int render_method)
    if (em->id_engine != render_method) return;
    if (!evas_module_load(em)) return;
 
+   evas_canvas_async_block(e);
    /* set the correct render */
    e->output.render_method = render_method;
    e->engine.func = (em->functions);
@@ -352,11 +358,15 @@ _evas_canvas_engine_info_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 EOLIAN static Eina_Bool
 _evas_canvas_engine_info_set(Eo *eo_e, Evas_Public_Data *e, Evas_Engine_Info *info)
 {
+   Eina_Bool res;
+
    if (!info) return EINA_FALSE;
    if (info != e->engine.info) return EINA_FALSE;
    if (info->magic != e->engine.info_magic) return EINA_FALSE;
 
-   return (Eina_Bool)e->engine.func->setup(eo_e, info);
+   evas_canvas_async_block(e);
+   res = e->engine.func->setup(eo_e, info);
+   return res;
 }
 
 EOLIAN static void
@@ -366,6 +376,7 @@ _evas_canvas_output_size_set(Eo *eo_e, Evas_Public_Data *e, int w, int h)
    if (w < 1) w = 1;
    if (h < 1) h = 1;
 
+   evas_canvas_async_block(e);
    e->output.w = w;
    e->output.h = h;
    e->output.changed = 1;
@@ -394,6 +405,7 @@ _evas_canvas_output_viewport_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas
 	x = 0;
 	y = 0;
      }
+   evas_canvas_async_block(e);
    e->viewport.x = x;
    e->viewport.y = y;
    e->viewport.w = w;
@@ -417,6 +429,7 @@ _evas_canvas_output_framespace_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Ev
 {
    if ((x == e->framespace.x) && (y == e->framespace.y) &&
        (w == e->framespace.w) && (h == e->framespace.h)) return;
+   evas_canvas_async_block(e);
    e->framespace.x = x;
    e->framespace.y = y;
    e->framespace.w = w;

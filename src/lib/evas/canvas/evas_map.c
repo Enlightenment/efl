@@ -472,6 +472,7 @@ _evas_object_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bo
    if (obj->map->cur.usemap == enabled) return;
    pchange = obj->changed;
 
+   evas_object_async_block(obj);
    EINA_COW_WRITE_BEGIN(evas_object_map_cow, obj->map, Evas_Object_Map_Data, map_write)
      map_write->cur.usemap = enabled;
    EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
@@ -540,6 +541,7 @@ _evas_object_map_enable_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *
 EOLIAN void
 _evas_object_map_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, const Evas_Map *map)
 {
+   evas_object_async_block(obj);
    if ((!map) || (map->count < 4))
      {
         if (obj->map->surface)
@@ -631,6 +633,7 @@ _evas_object_map_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, const Evas_Map
 EOLIAN Evas_Map *
 _evas_object_map_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
+   evas_object_async_block(obj);
    return obj->map->cur.map;
 }
 

@@ -159,6 +159,7 @@ _evas_canvas_damage_rectangle_add(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int
 {
    Eina_Rectangle *r;
 
+   evas_canvas_async_block(e);
    NEW_RECT(r, x, y, w, h);
    if (!r) return;
    e->damages = eina_list_append(e->damages, r);
@@ -170,6 +171,7 @@ _evas_canvas_obscured_rectangle_add(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, i
 {
    Eina_Rectangle *r;
 
+   evas_canvas_async_block(e);
    NEW_RECT(r, x, y, w, h);
    if (!r) return;
    e->obscures = eina_list_append(e->obscures, r);
@@ -180,6 +182,7 @@ _evas_canvas_obscured_clear(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    Eina_Rectangle *r;
 
+   evas_canvas_async_block(e);
    EINA_LIST_FREE(e->obscures, r)
      {
         eina_rectangle_free(r);
@@ -2716,6 +2719,7 @@ _evas_canvas_render_async(Eo *eo_e, Evas_Public_Data *e)
 {
    static int render_2 = -1;
 
+   evas_canvas_async_block(e);
    if (render_2 == -1)
      {
         if (getenv("EVAS_RENDER2")) render_2 = 1;
@@ -2759,10 +2763,12 @@ evas_render_updates_internal_wait(Evas *eo_e,
 
    return ret;
 }
+
 EOLIAN Eina_List*
 _evas_canvas_render_updates(Eo *eo_e, Evas_Public_Data *e)
 {
    if (!e->changed) return NULL;
+   evas_canvas_async_block(e);
    return evas_render_updates_internal_wait(eo_e, 1, 1);
 }
 
@@ -2770,12 +2776,14 @@ EOLIAN void
 _evas_canvas_render(Eo *eo_e, Evas_Public_Data *e)
 {
    if (!e->changed) return;
+   evas_canvas_async_block(e);
    evas_render_updates_internal_wait(eo_e, 0, 1);
 }
 
 EOLIAN void
-_evas_canvas_norender(Eo *eo_e, Evas_Public_Data *_pd EINA_UNUSED)
+_evas_canvas_norender(Eo *eo_e, Evas_Public_Data *e)
 {
+   evas_canvas_async_block(e);
    //   if (!e->changed) return;
    evas_render_updates_internal_wait(eo_e, 0, 0);
 }
@@ -2785,6 +2793,7 @@ _evas_canvas_render_idle_flush(Eo *eo_e, Evas_Public_Data *e)
 {
    static int render_2 = -1;
 
+   evas_canvas_async_block(e);
    if (render_2 == -1)
      {
         if (getenv("EVAS_RENDER2")) render_2 = 1;
@@ -2823,6 +2832,7 @@ _evas_canvas_sync(Eo *eo_e, Evas_Public_Data *e)
 {
    static int render_2 = -1;
 
+   evas_canvas_async_block(e);
    if (render_2 == -1)
      {
         if (getenv("EVAS_RENDER2")) render_2 = 1;
@@ -2861,6 +2871,7 @@ _evas_canvas_render_dump(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    static int render_2 = -1;
 
+   evas_canvas_async_block(e);
    if (render_2 == -1)
      {
         if (getenv("EVAS_RENDER2")) render_2 = 1;

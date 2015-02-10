@@ -5842,6 +5842,8 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
    EINA_LIST_FOREACH(ts->objects, l, eo_obj)
      {
         Evas_Textblock_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
+        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+        evas_object_async_block(obj);
         _evas_textblock_invalidate_all(o);
         _evas_textblock_changed(o, eo_obj);
      }
@@ -6060,6 +6062,8 @@ _textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts,
 EOLIAN static void
 _evas_textblock_style_set(Eo *eo_obj, Evas_Textblock_Data *o, const Evas_Textblock_Style *ts)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    _textblock_style_generic_set(eo_obj, (Evas_Textblock_Style *) ts, &(o->style));
 }
 
@@ -6072,6 +6076,8 @@ _evas_textblock_style_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o)
 EOLIAN static void
 _evas_textblock_style_user_push(Eo *eo_obj, Evas_Textblock_Data *o, Evas_Textblock_Style *ts)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    _textblock_style_generic_set(eo_obj, ts, &(o->style_user));
 }
 
@@ -6084,12 +6090,16 @@ _evas_textblock_style_user_peek(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o)
 EOLIAN static void
 _evas_textblock_style_user_pop(Eo *eo_obj, Evas_Textblock_Data *o)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    _textblock_style_generic_set(eo_obj, NULL,  &(o->style_user));
 }
 
 EOLIAN static void
 _evas_textblock_replace_char_set(Eo *eo_obj, Evas_Textblock_Data *o, const char *ch)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if (o->repch) eina_stringshare_del(o->repch);
    if (ch) o->repch = eina_stringshare_add(ch);
    else o->repch = NULL;
@@ -6100,6 +6110,8 @@ _evas_textblock_replace_char_set(Eo *eo_obj, Evas_Textblock_Data *o, const char 
 EOLIAN static void
 _evas_textblock_legacy_newline_set(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o, Eina_Bool mode)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if (o->legacy_newline == mode)
       return;
 
@@ -6117,6 +6129,8 @@ _evas_textblock_legacy_newline_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *
 EOLIAN static void
 _evas_textblock_valign_set(Eo *eo_obj, Evas_Textblock_Data *o, double align)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if (align < 0.0) align = 0.0;
    else if (align > 1.0) align = 1.0;
    if (o->valign == align) return;
@@ -6133,6 +6147,8 @@ _evas_textblock_valign_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o)
 EOLIAN static void
 _evas_textblock_bidi_delimiters_set(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o, const char *delim)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    eina_stringshare_replace(&o->bidi_delimiters, delim);
 }
 
@@ -6350,6 +6366,8 @@ _prepend_escaped_char(Evas_Textblock_Cursor *cur, const char *s,
 EOLIAN static void
 _evas_textblock_text_markup_set(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o, const char *text)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if ((text != o->markup_text) && (o->markup_text))
      {
         free(o->markup_text);
@@ -6391,6 +6409,8 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
 {
    if (!cur) return;
    Evas_Object *eo_obj = cur->obj;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_HEAD();
    if (text)
      {
@@ -6595,6 +6615,8 @@ _evas_textblock_text_markup_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o)
    Evas_Object_Textblock_Node_Text *n;
    Eina_Strbuf *txt = NULL;
 
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    const char *markup;
    if (o->markup_text)
      {
@@ -7112,14 +7134,15 @@ EOLIAN static Evas_Textblock_Cursor*
 _evas_textblock_cursor_new(Eo *eo_obj, Evas_Textblock_Data *o)
 {
    Evas_Textblock_Cursor *cur;
-   {
-        cur = calloc(1, sizeof(Evas_Textblock_Cursor));
-        (cur)->obj = (Evas_Object *) eo_obj;
-        (cur)->node = o->text_nodes;
-        (cur)->pos = 0;
-        o->cursors = eina_list_append(o->cursors, cur);
-     }
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
 
+   cur = calloc(1, sizeof(Evas_Textblock_Cursor));
+   if (!cur) return NULL;
+   cur->obj = (Evas_Object *) eo_obj;
+   cur->node = o->text_nodes;
+   cur->pos = 0;
+   o->cursors = eina_list_append(o->cursors, cur);
    return cur;
 }
 
@@ -7127,6 +7150,8 @@ EAPI void
 evas_textblock_cursor_free(Evas_Textblock_Cursor *cur)
 {
    if (!cur) return;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
    if (cur == o->cursor) return;
    o->cursors = eina_list_remove(o->cursors, cur);
@@ -7136,14 +7161,18 @@ evas_textblock_cursor_free(Evas_Textblock_Cursor *cur)
 EAPI Eina_Bool
 evas_textblock_cursor_is_format(const Evas_Textblock_Cursor *cur)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if (!cur || !cur->node) return EINA_FALSE;
    return (_evas_textblock_cursor_node_format_at_pos_get(cur)) ?
       EINA_TRUE : EINA_FALSE;
 }
 
 EOLIAN static const Eina_List *
-_evas_textblock_node_format_list_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o, const char *anchor)
+_evas_textblock_node_format_list_get(Eo *eo_obj, Evas_Textblock_Data *o, const char *anchor)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if (!strcmp(anchor, "a"))
      return o->anchors_a;
    else if (!strcmp(anchor, "item"))
@@ -7152,14 +7181,18 @@ _evas_textblock_node_format_list_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data
 }
 
 EOLIAN static const Evas_Object_Textblock_Node_Format*
-_evas_textblock_node_format_first_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o)
+_evas_textblock_node_format_first_get(Eo *eo_obj, Evas_Textblock_Data *o)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    return o->format_nodes;
 }
 
 EOLIAN static const Evas_Object_Textblock_Node_Format*
-_evas_textblock_node_format_last_get(Eo *eo_obj EINA_UNUSED, Evas_Textblock_Data *o)
+_evas_textblock_node_format_last_get(Eo *eo_obj, Evas_Textblock_Data *o)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    return o->format_nodes ? _NODE_FORMAT(EINA_INLIST_GET(o->format_nodes)->last) : NULL;
 }
 
@@ -7188,6 +7221,8 @@ _evas_textblock_node_format_remove_pair(Eo *eo_obj, Evas_Textblock_Data *o, Evas
 
    fmt = n;
 
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    do
      {
         const char *fstr = fmt->orig_format;
@@ -7287,6 +7322,8 @@ EAPI void
 evas_textblock_cursor_paragraph_first(Evas_Textblock_Cursor *cur)
 {
    if (!cur) return;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
    cur->node = o->text_nodes;
    cur->pos = 0;
@@ -7299,6 +7336,8 @@ evas_textblock_cursor_paragraph_last(Evas_Textblock_Cursor *cur)
    Evas_Object_Textblock_Node_Text *node;
 
    if (!cur) return;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
    node = o->text_nodes;
    if (node)
@@ -7321,6 +7360,8 @@ EAPI Eina_Bool
 evas_textblock_cursor_paragraph_next(Evas_Textblock_Cursor *cur)
 {
    if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, EINA_FALSE);
    /* If there is a current text node, return the next text node (if exists)
     * otherwise, just return False. */
@@ -7344,6 +7385,8 @@ evas_textblock_cursor_paragraph_prev(Evas_Textblock_Cursor *cur)
 {
    Evas_Object_Textblock_Node_Text *node;
    if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, EINA_FALSE);
    /* If the current node is a text node, just get the prev if any,
     * if it's a format, get the current text node out of the format and return
@@ -7377,6 +7420,8 @@ evas_textblock_cursor_format_next(Evas_Textblock_Cursor *cur)
    Evas_Object_Textblock_Node_Format *node;
 
    if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, EINA_FALSE);
    /* If the current node is a format node, just get the next if any,
     * if it's a text, get the current format node out of the text and return
@@ -7413,6 +7458,8 @@ evas_textblock_cursor_format_prev(Evas_Textblock_Cursor *cur)
 {
    const Evas_Object_Textblock_Node_Format *node;
    if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, EINA_FALSE);
    node = evas_textblock_cursor_format_get(cur);
    if (!node)
@@ -7456,6 +7503,8 @@ evas_textblock_cursor_word_start(Evas_Textblock_Cursor *cur)
    char *breaks;
 
    if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, EINA_FALSE);
 
    size_t len = eina_ustrbuf_length_get(cur->node->unicode);
@@ -7514,6 +7563,8 @@ evas_textblock_cursor_word_end(Evas_Textblock_Cursor *cur)
    char *breaks;
 
    if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, EINA_FALSE);
 
    size_t len = eina_ustrbuf_length_get(cur->node->unicode);
@@ -7565,6 +7616,8 @@ evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
    const Eina_Unicode *text;
 
    if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, EINA_FALSE);
 
    ind = cur->pos;
@@ -7600,6 +7653,8 @@ EAPI Eina_Bool
 evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur)
 {
    if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, EINA_FALSE);
 
    if (cur->pos != 0)
@@ -7614,6 +7669,8 @@ EAPI void
 evas_textblock_cursor_paragraph_char_first(Evas_Textblock_Cursor *cur)
 {
    if (!cur) return;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    cur->pos = 0;
 
 }
@@ -7624,6 +7681,8 @@ evas_textblock_cursor_paragraph_char_last(Evas_Textblock_Cursor *cur)
    int ind;
 
    if (!cur) return;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node);
    ind = eina_ustrbuf_length_get(cur->node->unicode);
    /* If it's not the last paragraph, go back one, because we want to point
@@ -7645,6 +7704,8 @@ evas_textblock_cursor_line_char_first(Evas_Textblock_Cursor *cur)
    Evas_Object_Textblock_Item *it = NULL;
 
    if (!cur) return;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node);
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
 
@@ -7679,6 +7740,8 @@ evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur)
    Evas_Object_Textblock_Item *it = NULL;
 
    if (!cur) return;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node);
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
 
@@ -8150,6 +8213,8 @@ evas_textblock_cursor_pos_get(const Evas_Textblock_Cursor *cur)
    size_t npos = 0;
 
    if (!cur) return -1;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, 0);
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
    n = o->text_nodes;
@@ -8168,6 +8233,8 @@ evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int _pos)
    size_t pos;
 
    if (!cur) return;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
 
    if (_pos < 0)
@@ -8213,6 +8280,8 @@ evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
    Evas_Object_Textblock_Item *it;
 
    if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
 
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
 
@@ -8242,6 +8311,8 @@ evas_textblock_cursor_compare(const Evas_Textblock_Cursor *cur1, const Evas_Text
 
    if (!cur1) return 0;
    if (!cur2) return 0;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur1->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if (cur1->obj != cur2->obj) return 0;
    if ((!cur1->node) || (!cur2->node)) return 0;
    if (cur1->node == cur2->node)
@@ -8269,6 +8340,8 @@ evas_textblock_cursor_copy(const Evas_Textblock_Cursor *cur, Evas_Textblock_Curs
    if (!cur) return;
    if (!cur_dest) return;
    if (cur->obj != cur_dest->obj) return;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    cur_dest->pos = cur->pos;
    cur_dest->node = cur->node;
 
@@ -8521,6 +8594,8 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    int len = 0;
 
    if (!cur) return 0;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    text = eina_unicode_utf8_to_unicode(_text, &len);
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
 
@@ -8589,6 +8664,9 @@ evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *_text
 {
    int len;
    /*append is essentially prepend without advancing */
+   if (!cur) return 0;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    len = evas_textblock_cursor_text_append(cur, _text);
    if (len == 0) return 0;
    cur->pos += len; /*Advance */
@@ -8768,6 +8846,8 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
    Eina_Bool is_visible;
 
    if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if ((!format) || (format[0] == 0)) return EINA_FALSE;
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
    /* We should always have at least one text node */
@@ -8898,6 +8978,10 @@ EAPI Eina_Bool
 evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *format)
 {
    Eina_Bool is_visible;
+
+   if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    /* append is essentially prepend without advancing */
    is_visible = evas_textblock_cursor_format_append(cur, format);
    if (is_visible)
@@ -8917,6 +9001,8 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
    int chr, ind, ppos;
 
    if (!cur || !cur->node) return;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
    n = cur->node;
 
@@ -8994,6 +9080,8 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
    if (!cur1 || !cur1->node) return;
    if (!cur2 || !cur2->node) return;
    if (cur1->obj != cur2->obj) return;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur1->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    Evas_Textblock_Data *o = eo_data_scope_get(cur1->obj, MY_CLASS);
    if (evas_textblock_cursor_compare(cur1, cur2) > 0)
      {
@@ -9092,6 +9180,8 @@ EAPI char *
 evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur)
 {
    if (!cur || !cur->node) return NULL;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if (evas_textblock_cursor_format_is_visible_get(cur))
      {
         Eina_Strbuf *buf;
@@ -9304,6 +9394,8 @@ evas_textblock_cursor_range_formats_get(const Evas_Textblock_Cursor *cur1, const
    if (!cur2 || !cur2->node) return NULL;
    if (cur1->obj != cur2->obj) return NULL;
 
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur1->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    eo_obj = cur1->obj;
    TB_HEAD_RETURN(NULL);
 
@@ -9365,6 +9457,8 @@ evas_textblock_cursor_range_formats_get(const Evas_Textblock_Cursor *cur1, const
 EAPI char *
 evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2, Evas_Textblock_Text_Type format)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur1->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if (format == EVAS_TEXTBLOCK_TEXT_MARKUP)
       return _evas_textblock_cursor_range_text_markup_get(cur1, cur2);
    else if (format == EVAS_TEXTBLOCK_TEXT_PLAIN)
@@ -9378,6 +9472,8 @@ evas_textblock_cursor_paragraph_text_get(const Evas_Textblock_Cursor *cur)
 {
    Evas_Textblock_Cursor cur1, cur2;
    if (!cur) return NULL;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, NULL);
    if (cur->node->utf8)
      {
@@ -9398,6 +9494,8 @@ evas_textblock_cursor_paragraph_text_length_get(const Evas_Textblock_Cursor *cur
 {
    int len;
    if (!cur) return -1;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, -1);
    len = eina_ustrbuf_length_get(cur->node->unicode);
 
@@ -9411,6 +9509,8 @@ EAPI const Evas_Object_Textblock_Node_Format *
 evas_textblock_cursor_format_get(const Evas_Textblock_Cursor *cur)
 {
    if (!cur) return NULL;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, NULL);
    return _evas_textblock_cursor_node_format_at_pos_get(cur);
 }
@@ -9459,6 +9559,8 @@ EAPI void
 evas_textblock_cursor_at_format_set(Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Format *fmt)
 {
    if (!fmt || !cur) return;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    cur->node = fmt->text_node;
    cur->pos = _evas_textblock_node_format_pos_get(fmt);
 }
@@ -9469,6 +9571,8 @@ evas_textblock_cursor_format_is_visible_get(const Evas_Textblock_Cursor *cur)
    const Eina_Unicode *text;
 
    if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, EINA_FALSE);
    if (!evas_textblock_cursor_is_format(cur)) return EINA_FALSE;
    text = eina_ustrbuf_string_get(cur->node->unicode);
@@ -9499,6 +9603,8 @@ EAPI Eina_Bool
 evas_textblock_cursor_geometry_bidi_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_Coord *cx2, Evas_Coord *cy2, Evas_Coord *cw2, Evas_Coord *ch2, Evas_Textblock_Cursor_Type ctype)
 {
    if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
 
    _relayout_if_needed(cur->obj, o);
@@ -9681,6 +9787,8 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
 {
    int ret = -1;
    if (!cur) return -1;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
 
    _relayout_if_needed(cur->obj, o);
@@ -9869,6 +9977,7 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
 {
    if (!cur) return -1;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    return _evas_textblock_cursor_char_pen_geometry_common_get(
          ENFN->font_char_coords_get, cur, cx, cy, cw, ch);
 }
@@ -9878,6 +9987,7 @@ evas_textblock_cursor_pen_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Co
 {
    if (!cur) return -1;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    return _evas_textblock_cursor_char_pen_geometry_common_get(
          ENFN->font_pen_coords_get, cur, cx, cy, cw, ch);
 }
@@ -9890,6 +10000,8 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
    int x, y, w, h;
 
    if (!cur) return -1;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
 
    _relayout_if_needed(cur->obj, o);
@@ -9921,6 +10033,7 @@ evas_textblock_cursor_visible_range_get(Evas_Textblock_Cursor *start, Evas_Textb
    Evas_Coord cy, ch;
    Evas_Object *eo_obj = start->obj;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_HEAD_RETURN(EINA_FALSE);
    eo_e = evas_object_evas_get(eo_obj);
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
@@ -9941,6 +10054,8 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
    Evas_Object_Textblock_Item *it = NULL;
 
    if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
 
    _relayout_if_needed(cur->obj, o);
@@ -10055,6 +10170,8 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
    Evas_Object_Textblock_Line *ln;
 
    if (!cur) return -1;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
 
    _relayout_if_needed(cur->obj, o);
@@ -10446,6 +10563,8 @@ evas_textblock_cursor_range_simple_geometry_get(const Evas_Textblock_Cursor *cur
    if (!cur1 || !cur1->node) return NULL;
    if (!cur2 || !cur2->node) return NULL;
    if (cur1->obj != cur2->obj) return NULL;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur1->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    Evas_Textblock_Data *o = eo_data_scope_get(cur1->obj, MY_CLASS);
 
    _relayout_if_needed(cur1->obj, o);
@@ -10539,6 +10658,8 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
    if (!cur1 || !cur1->node) return NULL;
    if (!cur2 || !cur2->node) return NULL;
    if (cur1->obj != cur2->obj) return NULL;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur1->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    Evas_Textblock_Data *o = eo_data_scope_get(cur1->obj, MY_CLASS);
 
    _relayout_if_needed(cur1->obj, o);
@@ -10611,6 +10732,8 @@ evas_textblock_cursor_format_item_geometry_get(const Evas_Textblock_Cursor *cur,
    Evas_Coord x, y, w, h;
 
    if (!cur || !evas_textblock_cursor_format_is_visible_get(cur)) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    Evas_Textblock_Data *o = eo_data_scope_get(cur->obj, MY_CLASS);
 
    _relayout_if_needed(cur->obj, o);
@@ -10637,6 +10760,8 @@ evas_textblock_cursor_eol_get(const Evas_Textblock_Cursor *cur)
    Eina_Bool ret = EINA_FALSE;
    Evas_Textblock_Cursor cur2;
    if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
 
    cur2.obj = cur->obj;
    evas_textblock_cursor_copy(cur, &cur2);
@@ -10655,6 +10780,8 @@ _evas_textblock_line_number_geometry_get(Eo *eo_obj, Evas_Textblock_Data *o, int
 
    Evas_Object_Textblock_Line *ln;
 
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    _relayout_if_needed(eo_obj, o);
 
    ln = _find_layout_line_num(eo_obj, line);
@@ -10678,6 +10805,8 @@ _evas_textblock_clear(Eo *eo_obj, Evas_Textblock_Data *o)
    Eina_List *l;
    Evas_Textblock_Cursor *cur;
 
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if (o->paragraphs)
      {
 	_paragraphs_free(eo_obj, o->paragraphs);
@@ -10712,6 +10841,8 @@ evas_object_textblock_clear(Evas_Object *eo_obj)
 EOLIAN static void
 _evas_textblock_size_formatted_get(Eo *eo_obj, Evas_Textblock_Data *o, Evas_Coord *w, Evas_Coord *h)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    _relayout_if_needed(eo_obj, o);
 
    if (w) *w = o->formatted.w;
@@ -10949,6 +11080,8 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
 EOLIAN static void
 _evas_textblock_size_native_get(Eo *eo_obj, Evas_Textblock_Data *o, Evas_Coord *w, Evas_Coord *h)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if (!o->native.valid)
      {
         Evas_Coord wmax = 0, hmax = 0;
@@ -10981,6 +11114,8 @@ _evas_textblock_size_native_get(Eo *eo_obj, Evas_Textblock_Data *o, Evas_Coord *
 EOLIAN static void
 _evas_textblock_style_insets_get(Eo *eo_obj, Evas_Textblock_Data *o, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    _relayout_if_needed(eo_obj, o);
 
    if (l) *l = o->style_pad.l;

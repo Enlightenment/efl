@@ -719,6 +719,9 @@ struct _Evas_Public_Data
 
    Eina_Hash        *name_hash;
 
+   // locking so we can implement async rendering threads
+   Eina_Lock         lock_objects;
+
    int               output_validity;
 
    int               walking_list;

@@ -645,6 +645,7 @@ evas_object_del(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, MY_CLASS);
 
    if (!obj) return;
+   evas_object_async_block(obj);
    if (obj->delete_me || obj->eo_del_called) return;
    if (obj->ref > 0)
      {
@@ -764,6 +765,7 @@ _evas_object_position_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coor
    if (obj->delete_me) return;
    if (!obj->layer) return;
 
+   evas_object_async_block(obj);
    if (evas_object_intercept_call_move(eo_obj, obj, x, y)) return;
 
    if (obj->doing.in_move > 0)
@@ -846,6 +848,7 @@ _evas_object_size_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w,
    if (!obj->layer) return;
    if (w < 0) w = 0; if (h < 0) h = 0;
 
+   evas_object_async_block(obj);
    if (evas_object_intercept_call_resize(eo_obj, obj, w, h)) return;
 
    if (obj->doing.in_resize > 0)
@@ -978,6 +981,7 @@ _evas_object_size_hint_display_mode_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Prot
 {
    if (!obj) return;
    if (obj->delete_me) return;
+   evas_object_async_block(obj);
    _evas_object_size_hint_alloc(eo_obj, obj);
    if (obj->size_hints->dispmode == dispmode) return;
    obj->size_hints->dispmode = dispmode;
@@ -1002,6 +1006,7 @@ _evas_object_size_hint_min_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas
 {
    if (obj->delete_me)
      return;
+   evas_object_async_block(obj);
    _evas_object_size_hint_alloc(eo_obj, obj);
    if ((obj->size_hints->min.w == w) && (obj->size_hints->min.h == h)) return;
    obj->size_hints->min.w = w;
@@ -1027,6 +1032,7 @@ _evas_object_size_hint_max_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas
 {
    if (obj->delete_me)
      return;
+   evas_object_async_block(obj);
    _evas_object_size_hint_alloc(eo_obj, obj);
    if ((obj->size_hints->max.w == w) && (obj->size_hints->max.h == h)) return;
    obj->size_hints->max.w = w;
@@ -1052,6 +1058,7 @@ _evas_object_size_hint_request_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, 
 {
    if (obj->delete_me)
      return;
+   evas_object_async_block(obj);
    _evas_object_size_hint_alloc(eo_obj, obj);
    if ((obj->size_hints->request.w == w) && (obj->size_hints->request.h == h)) return;
    obj->size_hints->request.w = w;
@@ -1079,6 +1086,7 @@ _evas_object_size_hint_aspect_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, E
 {
    if (obj->delete_me)
      return;
+   evas_object_async_block(obj);
    _evas_object_size_hint_alloc(eo_obj, obj);
    if ((obj->size_hints->aspect.mode == aspect) && (obj->size_hints->aspect.size.w == w) && (obj->size_hints->aspect.size.h == h)) return;
    obj->size_hints->aspect.mode = aspect;
@@ -1105,6 +1113,7 @@ _evas_object_size_hint_align_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, do
 {
    if (obj->delete_me)
      return;
+   evas_object_async_block(obj);
    _evas_object_size_hint_alloc(eo_obj, obj);
    if ((obj->size_hints->align.x == x) && (obj->size_hints->align.y == y)) return;
    obj->size_hints->align.x = x;
@@ -1130,6 +1139,7 @@ _evas_object_size_hint_weight_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, d
 {
    if (obj->delete_me)
      return;
+   evas_object_async_block(obj);
    _evas_object_size_hint_alloc(eo_obj, obj);
    if ((obj->size_hints->weight.x == x) && (obj->size_hints->weight.y == y)) return;
    obj->size_hints->weight.x = x;
@@ -1158,6 +1168,7 @@ _evas_object_size_hint_padding_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, 
 {
    if (obj->delete_me)
      return;
+   evas_object_async_block(obj);
    _evas_object_size_hint_alloc(eo_obj, obj);
    if ((obj->size_hints->padding.l == l) && (obj->size_hints->padding.r == r) && (obj->size_hints->padding.t == t) && (obj->size_hints->padding.b == b)) return;
    obj->size_hints->padding.l = l;
@@ -1187,6 +1198,7 @@ evas_object_hide(Evas_Object *eo_obj)
 static void
 _evas_object_visibility_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool visible)
 {
+   evas_object_async_block(obj);
    if (visible) _show(eo_obj, obj);
    else _hide(eo_obj, obj);
 }
@@ -1390,6 +1402,7 @@ _evas_object_color_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, int r, int g
         ERR("Evas only handles pre multiplied colors!");
      }
 
+   evas_object_async_block(obj);
    if (evas_object_intercept_call_color_set(eo_obj, obj, r, g, b, a)) return;
    if (obj->is_smart)
      {
@@ -1442,6 +1455,7 @@ _evas_object_anti_alias_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bo
    anti_alias = !!anti_alias;
    if (obj->cur->anti_alias == anti_alias)return;
 
+   evas_object_async_block(obj);
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
         state_write->anti_alias = anti_alias;
@@ -1464,6 +1478,7 @@ _evas_object_scale_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, double scale
    if (obj->delete_me) return;
    if (obj->cur->scale == scale) return;
 
+   evas_object_async_block(obj);
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
         state_write->scale = scale;
@@ -1487,6 +1502,7 @@ _evas_object_render_op_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Ren
    if (obj->delete_me) return;
    if (obj->cur->render_op == render_op) return;
 
+   evas_object_async_block(obj);
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      {
         state_write->render_op = render_op;
@@ -1841,6 +1857,7 @@ _evas_object_type_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, c
 EOLIAN static void
 _evas_object_precise_is_inside_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Bool precise)
 {
+   evas_object_async_block(obj);
    obj->precise_is_inside = precise;
 }
 
@@ -1853,6 +1870,7 @@ _evas_object_precise_is_inside_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected
 EOLIAN static void
 _evas_object_static_clip_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Bool is_static_clip)
 {
+   evas_object_async_block(obj);
    obj->is_static_clip = is_static_clip;
 }
 
@@ -1881,6 +1899,7 @@ _evas_object_is_frame_object_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Ei
 {
    Evas_Coord x, y;
 
+   evas_object_async_block(obj);
    evas_object_geometry_get(eo_obj, &x, &y, NULL, NULL);
 
    _is_frame_flag_set(obj, is_frame);

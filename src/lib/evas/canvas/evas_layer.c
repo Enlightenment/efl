@@ -7,10 +7,14 @@ void
 evas_object_inject(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas *e)
 {
    Evas_Layer *lay;
+   Evas_Public_Data *evas;
 
    if (!obj) return;
    if (!e) return;
    if (obj->in_layer) return;
+   evas = eo_data_scope_get(e, EVAS_CANVAS_CLASS);
+   if (!evas) return;
+   evas_canvas_async_block(evas);
    lay = evas_layer_find(e, obj->cur->layer);
    if (!lay)
      {
@@ -180,6 +184,7 @@ _evas_object_layer_set(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, 
    Evas *eo_e;
 
    if (obj->delete_me) return;
+   evas_object_async_block(obj);
    if (evas_object_intercept_call_layer_set(eo_obj, obj, l)) return;
    if (obj->smart.parent) return;
    if (obj->cur->layer == l)

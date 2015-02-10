@@ -40,6 +40,7 @@ evas_object_below_get_internal(const Evas_Object_Protected_Data *obj)
 EOLIAN void
 _evas_object_raise(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
+   evas_object_async_block(obj);
    if (evas_object_intercept_call_raise(eo_obj, obj)) return;
 
    if (!((EINA_INLIST_GET(obj))->next))
@@ -86,6 +87,7 @@ _evas_object_raise(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 EOLIAN void
 _evas_object_lower(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
+   evas_object_async_block(obj);
    if (evas_object_intercept_call_lower(eo_obj, obj)) return;
 
    if (!((EINA_INLIST_GET(obj))->prev))
@@ -133,6 +135,7 @@ _evas_object_lower(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 EOLIAN void
 _evas_object_stack_above(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_above)
 {
+   evas_object_async_block(obj);
    if (!eo_above)
      {
         evas_object_raise(eo_obj);
@@ -208,6 +211,7 @@ _evas_object_stack_above(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Objec
 EOLIAN void
 _evas_object_stack_below(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_below)
 {
+   evas_object_async_block(obj);
    if (!eo_below)
      {
         evas_object_lower(eo_obj);

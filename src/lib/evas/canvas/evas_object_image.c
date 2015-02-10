@@ -557,7 +557,7 @@ _evas_image_mmap_set(Eo *eo_obj, Evas_Image_Data *o, const Eina_File *f, const c
         if ((o->cur->key) && (key) && (!strcmp(o->cur->key, key)))
           return;
      }
-
+   evas_object_async_block(obj);
    _image_init_set(f, NULL, key, eo_obj, obj, o, &lo);
    o->engine_data = ENFN->image_mmap(ENDT, o->cur->u.f, o->cur->key, &o->load_error, &lo);
    _image_done_set(eo_obj, obj, o);
@@ -590,6 +590,7 @@ _evas_image_efl_file_file_set(Eo *eo_obj, Evas_Image_Data *o, const char *file, 
     if (!o->engine_data)
      ENFN->image_data_preload_cancel(ENDT, o->engine_data, eo_obj);
  */
+   evas_object_async_block(obj);
    _image_init_set(NULL, file, key, eo_obj, obj, o, &lo);
    o->engine_data = ENFN->image_load(ENDT, o->cur->u.file, o->cur->key, &o->load_error, &lo);
    _image_done_set(eo_obj, obj, o);
@@ -645,7 +646,7 @@ _evas_image_source_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Object *eo_src)
           }
      }
    if (o->cur->source == eo_src) return EINA_TRUE;
-
+   evas_object_async_block(obj);
    _evas_object_image_cleanup(eo_obj, obj, o);
    /* Kill the image if any */
    if (o->cur->u.file || o->cur->key)
@@ -730,9 +731,11 @@ EOLIAN static void
 _evas_image_source_clip_set(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, Eina_Bool source_clip)
 {
    Evas_Object_Protected_Data *src_obj;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    source_clip = !!source_clip;
    if (o->proxy_src_clip == source_clip) return;
+   evas_object_async_block(obj);
    o->proxy_src_clip = source_clip;
 
    if (!o->cur->source) return;
@@ -802,6 +805,7 @@ EOLIAN static void
 _evas_image_source_visible_set(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, Eina_Bool visible)
 {
    Evas_Object_Protected_Data *src_obj;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    if (!o->cur->source) return;
 
@@ -809,6 +813,7 @@ _evas_image_source_visible_set(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, Eina_
    src_obj = eo_data_scope_get(o->cur->source, EVAS_OBJECT_CLASS);
    if (src_obj->proxy->src_invisible == !visible) return;
 
+   evas_object_async_block(obj);
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src_obj->proxy, Evas_Object_Proxy_Data, proxy_write)
      proxy_write->src_invisible = !visible;
    EINA_COW_WRITE_END(evas_object_proxy_cow, src_obj->proxy, proxy_write);
@@ -844,6 +849,7 @@ _evas_image_scene_set(Eo *eo_obj, Evas_Image_Data *o, Evas_3D_Scene *scene)
 
    if (o->cur->scene == scene) return;
 
+   evas_object_async_block(obj);
    _image_init_set(NULL, NULL, NULL, eo_obj, obj, o, &lo);
    o->engine_data = ENFN->image_load(ENDT, o->cur->u.file, o->cur->key, &o->load_error, &lo);
    _image_done_set(eo_obj, obj, o);
@@ -872,6 +878,7 @@ _evas_image_border_set(Eo *eo_obj, Evas_Image_Data *o, int l, int r, int t, int 
        (o->cur->border.t == t) &&
        (o->cur->border.b == b)) return;
 
+   evas_object_async_block(obj);
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
      {
         state_write->border.l = l;
@@ -896,13 +903,14 @@ _evas_image_border_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *l, int *
 EOLIAN static void
 _evas_image_border_center_fill_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Border_Fill_Mode fill)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if (fill == o->cur->border.fill) return;
+   evas_object_async_block(obj);
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
      state_write->border.fill = fill;
    EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
 
    o->changed = EINA_TRUE;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -915,9 +923,11 @@ _evas_image_border_center_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 static void
 _evas_image_filled_set(Eo *eo_obj, Evas_Image_Data* o, Eina_Bool setting)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    setting = !!setting;
    if (o->filled == setting) return;
 
+   evas_object_async_block(obj);
    o->filled = setting;
    if (!o->filled)
      evas_object_event_callback_del(eo_obj, EVAS_CALLBACK_RESIZE,
@@ -944,15 +954,15 @@ _evas_image_filled_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 EOLIAN static void
 _evas_image_border_scale_set(Eo *eo_obj, Evas_Image_Data *o, double scale)
 {
-   Evas_Object_Protected_Data *obj;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    if (scale == o->cur->border.scale) return;
+   evas_object_async_block(obj);
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
      state_write->border.scale = scale;
    EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
 
    o->changed = EINA_TRUE;
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -965,7 +975,7 @@ _evas_image_border_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 EOLIAN static void
 _evas_image_fill_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
-   Evas_Object_Protected_Data *obj;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    if (w == 0) return;
    if (h == 0) return;
@@ -977,6 +987,7 @@ _evas_image_fill_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Coord x, Evas_Coord y,
        (o->cur->fill.w == w) &&
        (o->cur->fill.h == h)) return;
 
+   evas_object_async_block(obj);
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
      {
         state_write->fill.x = x;
@@ -988,7 +999,6 @@ _evas_image_fill_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Coord x, Evas_Coord y,
    EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
 
    o->changed = EINA_TRUE;
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1004,16 +1014,16 @@ _evas_image_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, Evas_Coord *x, 
 EOLIAN static void
 _evas_image_fill_spread_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Fill_Spread spread)
 {
-   Evas_Object_Protected_Data *obj;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    if (spread == (Evas_Fill_Spread)o->cur->spread) return;
 
+   evas_object_async_block(obj);
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
      state_write->spread = spread;
    EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
 
    o->changed = EINA_TRUE;
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1032,6 +1042,7 @@ _evas_image_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
 
    if (o->cur->scene) return;
 
+   evas_object_async_block(obj);
    _evas_object_image_cleanup(eo_obj, obj, o);
    if (w < 1) w = 1;
    if (h < 1) h = 1;
@@ -1112,6 +1123,7 @@ _evas_image_data_convert(Eo *eo_obj, Evas_Image_Data *o, Evas_Colorspace to_cspa
    DATA32 *data;
    void* result = NULL;
 
+   evas_object_async_block(obj);
    if ((o->preloading) && (o->engine_data))
      {
         o->preloading = EINA_FALSE;
@@ -1140,6 +1152,7 @@ _evas_image_data_set(Eo *eo_obj, Evas_Image_Data *o, void *data)
    Eina_Bool resize_call = EINA_FALSE;
 
 
+   evas_object_async_block(obj);
    evas_render_rendering_wait(obj->layer->evas);
 
    _evas_object_image_cleanup(eo_obj, obj, o);
@@ -1224,6 +1237,7 @@ _evas_image_data_get(Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED, Eina_Bool for
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
+   if (for_writing) evas_object_async_block(obj);
    if (for_writing) evas_render_rendering_wait(obj->layer->evas);
 
    data = NULL;
@@ -1309,12 +1323,16 @@ _image_preload_internal(Eo *eo_obj, void *_pd, Eina_Bool cancel)
 EOLIAN static void
 _evas_image_preload_begin(Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    _image_preload_internal(eo_obj, _pd, EINA_FALSE);
 }
 
 EOLIAN static void
 _evas_image_preload_cancel(Eo *eo_obj, Evas_Image_Data *_pd EINA_UNUSED)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    _image_preload_internal(eo_obj, _pd, EINA_TRUE);
 }
 
@@ -1324,6 +1342,7 @@ _evas_image_data_copy_set(Eo *eo_obj, Evas_Image_Data *o, void *data)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    if (!data) return;
+   evas_object_async_block(obj);
    _evas_object_image_cleanup(eo_obj, obj, o);
    if ((o->cur->image.w <= 0) ||
        (o->cur->image.h <= 0)) return;
@@ -1365,12 +1384,14 @@ _evas_image_data_copy_set(Eo *eo_obj, Evas_Image_Data *o, void *data)
 EOLIAN static void
 _evas_image_data_update_add(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Eina_Rectangle *r;
    int cnt;
 
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, o->cur->image.w, o->cur->image.h);
    if ((w <= 0)  || (h <= 0)) return;
    if (!o->written) return;
+   evas_object_async_block(obj);
    cnt = eina_list_count(o->pixels->pixel_updates);
    if (cnt == 1)
      { // detect single blob case already there to do a nop
@@ -1399,7 +1420,6 @@ _evas_image_data_update_add(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w,
      }
 
    o->changed = EINA_TRUE;
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1408,6 +1428,7 @@ _evas_image_alpha_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool has_alpha)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
+   evas_object_async_block(obj);
    if ((o->preloading) && (o->engine_data))
      {
         o->preloading = EINA_FALSE;
@@ -1457,8 +1478,9 @@ _evas_image_alpha_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 EOLIAN static void
 _evas_image_efl_image_smooth_scale_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool smooth_scale)
 {
-   Evas_Object_Protected_Data *obj;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
+   evas_object_async_block(obj);
    if (((smooth_scale) && (o->cur->smooth_scale)) ||
        ((!smooth_scale) && (!o->cur->smooth_scale)))
      return;
@@ -1467,7 +1489,6 @@ _evas_image_efl_image_smooth_scale_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool
    EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
 
    o->changed = EINA_TRUE;
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1482,6 +1503,7 @@ _evas_image_reload(Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
+   evas_object_async_block(obj);
    if ((o->preloading) && (o->engine_data))
      {
         o->preloading = EINA_FALSE;
@@ -1516,6 +1538,7 @@ _evas_image_efl_file_save(Eo *eo_obj, Evas_Image_Data *o, const char *file, cons
    RGBA_Image *im;
    if (!o->engine_data) return 0;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    o->engine_data = ENFN->image_data_get(ENDT, o->engine_data, 0, &data, &o->load_error);
    if (flags)
      {
@@ -1571,6 +1594,7 @@ _evas_image_pixels_import(Eo *eo_obj, Evas_Image_Data *o, Evas_Pixel_Import_Sour
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
+   evas_object_async_block(obj);
    _evas_object_image_cleanup(eo_obj, obj, o);
    if ((pixels->w != o->cur->image.w) || (pixels->h != o->cur->image.h)) return EINA_FALSE;
 
@@ -1631,6 +1655,8 @@ _evas_image_pixels_import(Eo *eo_obj, Evas_Image_Data *o, Evas_Pixel_Import_Sour
 EOLIAN static void
 _evas_image_pixels_get_callback_set(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, Evas_Object_Image_Pixels_Get_Cb func, void *data)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    EINA_COW_PIXEL_WRITE_BEGIN(o, pixi_write)
      {
         pixi_write->func.get_pixels = func;
@@ -1643,7 +1669,7 @@ EOLIAN static void
 _evas_image_pixels_dirty_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool dirty)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-
+   evas_object_async_block(obj);
    if (dirty) o->dirty_pixels = EINA_TRUE;
    else o->dirty_pixels = EINA_FALSE;
    o->changed = EINA_TRUE;
@@ -1659,15 +1685,15 @@ _evas_image_pixels_dirty_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 EOLIAN static void
 _evas_image_load_dpi_set(Eo *eo_obj, Evas_Image_Data *o, double dpi)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if (dpi == o->load_opts->dpi) return;
-
+   evas_object_async_block(obj);
    EINA_COW_LOAD_OPTS_WRITE_BEGIN(o, low)
      low->dpi = dpi;
    EINA_COW_LOAD_OPTS_WRITE_END(o, low);
 
    if (o->cur->u.file)
      {
-        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
         evas_object_image_unload(eo_obj, 0);
         evas_object_inform_call_image_unloaded(eo_obj);
         evas_object_image_load(eo_obj, obj, o);
@@ -1685,8 +1711,9 @@ _evas_image_load_dpi_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 EOLIAN static void
 _evas_image_efl_image_load_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if ((o->load_opts->w == w) && (o->load_opts->h == h)) return;
-
+   evas_object_async_block(obj);
    EINA_COW_LOAD_OPTS_WRITE_BEGIN(o, low)
      {
         low->w = w;
@@ -1696,7 +1723,6 @@ _evas_image_efl_image_load_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h
 
    if (o->cur->u.file)
      {
-        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
         evas_object_image_unload(eo_obj, 0);
         evas_object_inform_call_image_unloaded(eo_obj);
         evas_object_image_load(eo_obj, obj, o);
@@ -1716,14 +1742,15 @@ _evas_image_efl_image_load_size_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, 
 EOLIAN static void
 _evas_image_load_scale_down_set(Eo *eo_obj, Evas_Image_Data *o, int scale_down)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if (o->load_opts->scale_down_by == scale_down) return;
+   evas_object_async_block(obj);
    EINA_COW_LOAD_OPTS_WRITE_BEGIN(o, low)
      low->scale_down_by = scale_down;
    EINA_COW_LOAD_OPTS_WRITE_END(o, low);
 
    if (o->cur->u.file)
      {
-        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
         evas_object_image_unload(eo_obj, 0);
         evas_object_inform_call_image_unloaded(eo_obj);
         evas_object_image_load(eo_obj, obj, o);
@@ -1741,9 +1768,10 @@ _evas_image_load_scale_down_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 EOLIAN static void
 _evas_image_load_region_set(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if ((o->load_opts->region.x == x) && (o->load_opts->region.y == y) &&
        (o->load_opts->region.w == w) && (o->load_opts->region.h == h)) return;
-
+   evas_object_async_block(obj);
    EINA_COW_LOAD_OPTS_WRITE_BEGIN(o, low)
      {
         low->region.x = x;
@@ -1755,7 +1783,6 @@ _evas_image_load_region_set(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w,
 
    if (o->cur->u.file)
      {
-        Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
         evas_object_image_unload(eo_obj, 0);
         evas_object_inform_call_image_unloaded(eo_obj);
         evas_object_image_load(eo_obj, obj, o);
@@ -1776,7 +1803,9 @@ _evas_image_load_region_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *x, 
 EOLIAN static void
 _evas_image_load_orientation_set(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, Eina_Bool enable)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    if (o->load_opts->orientation == !!enable) return;
+   evas_object_async_block(obj);
 
    EINA_COW_LOAD_OPTS_WRITE_BEGIN(o, low)
      low->orientation = !!enable;
@@ -1793,6 +1822,7 @@ EOLIAN static void
 _evas_image_colorspace_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Colorspace cspace)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
 
    _evas_object_image_cleanup(eo_obj, obj, o);
 
@@ -1814,6 +1844,7 @@ EOLIAN static void
 _evas_image_video_surface_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Video_Surface *surf)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
 
    _evas_object_image_cleanup(eo_obj, obj, o);
    if (o->video_surface)
@@ -1877,6 +1908,7 @@ EOLIAN static void
 _evas_image_video_surface_caps_set(Eo *eo_obj, Evas_Image_Data *o, unsigned int caps)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
 
    _evas_object_image_cleanup(eo_obj, obj, o);
 
@@ -1906,6 +1938,8 @@ evas_object_image_native_surface_set(Evas_Object *eo_obj, Evas_Native_Surface *s
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    evas_object_event_callback_del_full
      (eo_obj, EVAS_CALLBACK_DEL, _on_image_native_surface_del, NULL);
    if (surf) // We need to unset native surf on del to remove shared hash refs
@@ -1918,7 +1952,7 @@ EOLIAN static void
 _evas_image_native_surface_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Native_Surface *surf)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-
+   evas_object_async_block(obj);
    evas_render_rendering_wait(obj->layer->evas);
 
    _evas_object_image_cleanup(eo_obj, obj, o);
@@ -1945,6 +1979,7 @@ EOLIAN static void
 _evas_image_scale_hint_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Scale_Hint hint)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if (o->scale_hint == hint) return;
    o->scale_hint = hint;
    if (o->engine_data)
@@ -1977,6 +2012,7 @@ EOLIAN static void
 _evas_image_content_hint_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Content_Hint hint)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if (o->content_hint == hint) return;
    o->content_hint = hint;
    if (o->engine_data)
@@ -2005,6 +2041,8 @@ evas_object_image_alpha_mask_set(Evas_Object *eo_obj, Eina_Bool ismask)
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if (!ismask) return;
    /* Convert to A8 if not already */
 
@@ -2122,7 +2160,7 @@ _evas_image_animated_frame_set(Eo *eo_obj, Evas_Image_Data *o, int frame_index)
    if (o->cur->frame == frame_index) return;
 
    if (!evas_object_image_animated_get(eo_obj)) return;
-
+   evas_object_async_block(obj);
    frame_count = evas_object_image_animated_frame_count_get(eo_obj);
 
    /* limit the size of frame to FRAME_MAX */
@@ -2149,6 +2187,7 @@ _evas_image_animated_frame_set(Eo *eo_obj, Evas_Image_Data *o, int frame_index)
 EOLIAN void
 _evas_canvas_image_cache_flush(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
+   evas_canvas_async_block(e);
    evas_render_rendering_wait(e);
    e->engine.func->image_cache_flush(e->engine.data.output);
 }
@@ -2158,6 +2197,7 @@ _evas_canvas_image_cache_reload(Eo *eo_e, Evas_Public_Data *e)
 {
    Evas_Layer *layer;
 
+   evas_canvas_async_block(e);
    evas_image_cache_flush(eo_e);
    EINA_INLIST_FOREACH(e->layers, layer)
      {
@@ -2195,6 +2235,7 @@ EOLIAN void
 _evas_canvas_image_cache_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, int size)
 {
    if (size < 0) size = 0;
+   evas_canvas_async_block(e);
    evas_render_rendering_wait(e);
    e->engine.func->image_cache_set(e->engine.data.output, size);
 }
@@ -2513,6 +2554,7 @@ evas_object_image_unload(Evas_Object *eo_obj, Eina_Bool dirty)
        (o->pixels_checked_out > 0)) return;
 
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if (dirty)
      {
         if (o->engine_data)
@@ -4660,13 +4702,14 @@ _evas_object_image_video_overlay_do(Evas_Object *eo_obj)
 EOLIAN static void
 _evas_image_filter_program_set(Eo *eo_obj, Evas_Image_Data *o, const char *arg)
 {
-   Evas_Object_Protected_Data *obj;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Filter_Program *pgm = NULL;
 
    if (!o) return;
    if (o->cur->filter->code == arg) return;
    if (o->cur->filter->code && arg && !strcmp(arg, o->cur->filter->code)) return;
 
+   evas_object_async_block(obj);
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
    EINA_COW_IMAGE_FILTER_WRITE_BEGIN(state_write, fcow)
      {
@@ -4693,7 +4736,6 @@ _evas_image_filter_program_set(Eo *eo_obj, Evas_Image_Data *o, const char *arg)
    EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
 
    // Update object
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    o->changed = EINA_TRUE;
    evas_object_change(eo_obj, obj);
 }
@@ -4745,6 +4787,7 @@ _evas_image_filter_source_set(Eo *eo_obj, Evas_Image_Data *o, const char *name,
    Eina_Hash *sources = o->cur->filter->sources;
 
    obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    if (eo_source) source = eo_data_scope_get(eo_source, EVAS_OBJECT_CLASS);
 
    if (!name)

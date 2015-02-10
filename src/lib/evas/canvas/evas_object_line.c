@@ -118,6 +118,7 @@ _evas_line_xy_set(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord x1, Evas_Coord y1,
        (y1 == (obj->cur->geometry.y + o->cur.y1)) &&
        (x2 == (obj->cur->geometry.x + o->cur.x2)) &&
        (y2 == (obj->cur->geometry.y + o->cur.y2))) return;
+   evas_object_async_block(obj);
 
    if (!(obj->layer->evas->is_frozen))
      {

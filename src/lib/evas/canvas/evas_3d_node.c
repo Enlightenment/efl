@@ -85,6 +85,7 @@ _evas_3d_node_evas_3d_object_change_notify(Eo *obj, Evas_3D_Node_Data *pd, Evas_
    Eina_Bool scale;
    Eina_Bool parent_change;
 
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    /* Notify all scenes using this node that it has changed. */
    if (pd->scenes_root)
      eina_hash_foreach(pd->scenes_root, _node_scene_root_change_notify, obj);
@@ -457,6 +458,7 @@ _node_update_done(Evas_3D_Node *obj, void *data EINA_UNUSED)
 EOLIAN static void
 _evas_3d_node_evas_3d_object_update_notify(Eo *obj, Evas_3D_Node_Data *pd EINA_UNUSED)
 {
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    /* Update transform. */
    evas_3d_node_tree_traverse(obj, EVAS_3D_TREE_TRAVERSE_LEVEL_ORDER, EINA_FALSE,
                               _node_transform_update, NULL);
@@ -933,6 +935,7 @@ _evas_3d_node_member_add(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Node *member)
         ERR("Failed to add a member node (adding to itself).");
         return;
      }
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    Evas_3D_Node_Data *pdmember = eo_data_scope_get(member, MY_CLASS);
    if (pdmember->parent == obj)
      return;
@@ -973,6 +976,7 @@ _evas_3d_node_member_del(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Node *member)
         return;
      }
 
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    /* Delete the member node. */
    pd->members = eina_list_remove(pd->members, member);
    pdmember->parent = NULL;
@@ -996,12 +1000,14 @@ _evas_3d_node_parent_get(Eo *obj EINA_UNUSED, Evas_3D_Node_Data *pd)
 EOLIAN static const Eina_List *
 _evas_3d_node_member_list_get(Eo *obj EINA_UNUSED, Evas_3D_Node_Data *pd)
 {
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    return pd->members;
 }
 
 EOLIAN static void
 _evas_3d_node_position_set(Eo *obj, Evas_3D_Node_Data *pd, Evas_Real x, Evas_Real y, Evas_Real z)
 {
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->position.x = x;
    pd->position.y = y;
    pd->position.z = z;
@@ -1012,6 +1018,7 @@ _evas_3d_node_position_set(Eo *obj, Evas_3D_Node_Data *pd, Evas_Real x, Evas_Rea
 EOLIAN static void
 _evas_3d_node_orientation_set(Eo *obj, Evas_3D_Node_Data *pd, Evas_Real x, Evas_Real y, Evas_Real z, Evas_Real w)
 {
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->orientation.x = x;
    pd->orientation.y = y;
    pd->orientation.z = z;
@@ -1028,6 +1035,7 @@ _evas_3d_node_orientation_angle_axis_set(Eo *obj, Evas_3D_Node_Data *pd,
    Evas_Real s = sin(half_angle);
    Evas_Vec3 axis;
 
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    evas_vec3_set(&axis, x, y, z);
    evas_vec3_normalize(&axis, &axis);
 
@@ -1042,6 +1050,7 @@ _evas_3d_node_orientation_angle_axis_set(Eo *obj, Evas_3D_Node_Data *pd,
 EOLIAN static void
 _evas_3d_node_scale_set(Eo *obj, Evas_3D_Node_Data *pd, Evas_Real x, Evas_Real y, Evas_Real z)
 {
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->scale.x = x;
    pd->scale.y = y;
    pd->scale.z = z;
@@ -1134,6 +1143,7 @@ _evas_3d_node_scale_get(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Space space,
 EOLIAN static void
 _evas_3d_node_position_inherit_set(Eo *obj, Evas_3D_Node_Data *pd, Eina_Bool inherit)
 {
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->position_inherit = inherit;
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_NODE_TRANSFORM_POSITION, NULL));
 }
@@ -1141,6 +1151,7 @@ _evas_3d_node_position_inherit_set(Eo *obj, Evas_3D_Node_Data *pd, Eina_Bool inh
 EOLIAN static void
 _evas_3d_node_orientation_inherit_set(Eo *obj, Evas_3D_Node_Data *pd, Eina_Bool inherit)
 {
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->orientation_inherit = inherit;
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_NODE_TRANSFORM_ORIENTATION, NULL));
 }
@@ -1148,6 +1159,7 @@ _evas_3d_node_orientation_inherit_set(Eo *obj, Evas_3D_Node_Data *pd, Eina_Bool 
 EOLIAN static void
 _evas_3d_node_scale_inherit_set(Eo *obj, Evas_3D_Node_Data *pd, Eina_Bool inherit)
 {
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->scale_inherit = inherit;
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_NODE_TRANSFORM_SCALE, NULL));
 }
@@ -1179,6 +1191,7 @@ _evas_3d_node_look_at_set(Eo *obj, Evas_3D_Node_Data *pd,
    Evas_Vec3   up;
    Evas_Vec3   x, y, z;
 
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    /* Target position in parent space. */
    if (target_space == EVAS_3D_SPACE_LOCAL)
      {
@@ -1292,6 +1305,7 @@ _evas_3d_node_camera_set(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Camera *camera)
    if (pd->data.camera.camera == camera)
      return;
 
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if (pd->data.camera.camera)
      {
         /* Detach previous camera object. */
@@ -1327,6 +1341,7 @@ _evas_3d_node_light_set(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Light *light)
    if (pd->data.light.light == light)
      return;
 
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if (pd->data.light.light)
      {
         /* Detach previous light object. */
@@ -1367,6 +1382,7 @@ _evas_3d_node_mesh_add(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Mesh *mesh)
         return;
      }
 
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if ((nm = _node_mesh_new(obj, mesh)) == NULL)
      {
         ERR("Failed to create node mesh.");
@@ -1401,6 +1417,7 @@ _evas_3d_node_mesh_del(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Mesh *mesh)
         return;
      }
 
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if (!eina_hash_del(pd->data.mesh.node_meshes, &mesh, NULL))
      {
         ERR("The given mesh doesn't belong to this node.");
@@ -1418,6 +1435,7 @@ _evas_3d_node_mesh_del(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Mesh *mesh)
 EOLIAN static const Eina_List *
 _evas_3d_node_mesh_list_get(Eo *obj EINA_UNUSED, Evas_3D_Node_Data *pd)
 {
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    return pd->data.mesh.meshes;
 }
 
@@ -1432,6 +1450,7 @@ _evas_3d_node_mesh_frame_set(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Mesh *mesh,
         return;
      }
 
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if ((nm = eina_hash_find(pd->data.mesh.node_meshes, &mesh)) == NULL)
      {
         ERR("The given mesh doesn't belongs to this node.");
@@ -1453,6 +1472,7 @@ _evas_3d_node_mesh_frame_get(Eo *obj EINA_UNUSED, Evas_3D_Node_Data *pd, Evas_3D
         return 0;
      }
 
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if ((nm = eina_hash_find(pd->data.mesh.node_meshes, &mesh)) == NULL)
      {
         ERR("The given mesh doesn't belongs to this node.");

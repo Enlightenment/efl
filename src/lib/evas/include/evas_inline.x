@@ -367,4 +367,24 @@ evas_object_clip_recalc(Evas_Object_Protected_Data *obj)
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 }
 
+static inline void
+evas_object_async_block(Evas_Object_Protected_Data *obj)
+{
+   if ((obj) && (obj->layer))
+     {
+        eina_lock_take(&(obj->layer->evas->lock_objects));
+        eina_lock_release(&(obj->layer->evas->lock_objects));
+     }
+}
+
+static inline void
+evas_canvas_async_block(Evas_Public_Data *e)
+{
+   if (e)
+     {
+        eina_lock_take(&(e->lock_objects));
+        eina_lock_release(&(e->lock_objects));
+     }
+}
+
 #endif

@@ -237,6 +237,7 @@ _evas_object_smart_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Object *eo
 
    if (obj->smart.parent == smart_obj) return;
 
+   evas_object_async_block(obj);
    if (obj->smart.parent) evas_object_smart_member_del(eo_obj);
 
    o->member_count++;
@@ -283,6 +284,7 @@ _evas_object_smart_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUSED, E
 
    if (!obj->smart.parent) return;
 
+   evas_object_async_block(obj);
    Evas_Object_Protected_Data *smart = eo_data_scope_get(smart_obj, EVAS_OBJECT_CLASS);
    if (smart->smart.smart && smart->smart.smart->smart_class->member_del)
      smart->smart.smart->smart_class->member_del(smart_obj, eo_obj);
@@ -403,17 +405,19 @@ _evas_object_smart_iterator_free(Evas_Object_Smart_Iterator *it)
 
 // Should we have an eo_children_iterator_new API and just inherit from it ?
 EOLIAN static Eina_Iterator*
-_evas_object_smart_iterator_new(Eo *o, Evas_Smart_Data *priv)
+_evas_object_smart_iterator_new(Eo *eo_obj, Evas_Smart_Data *priv)
 {
    Evas_Object_Smart_Iterator *it;
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
    if (!priv->contained) return NULL;
 
+   evas_object_async_block(obj);
    it = calloc(1, sizeof(Evas_Object_Smart_Iterator));
    if (!it) return NULL;
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
-   it->parent = eo_ref(o);
+   it->parent = eo_ref(eo_obj);
    it->current = priv->contained;
 
    it->iterator.next = FUNC_ITERATOR_NEXT(_evas_object_smart_iterator_next);
@@ -424,13 +428,13 @@ _evas_object_smart_iterator_new(Eo *o, Evas_Smart_Data *priv)
 }
 
 EOLIAN static Eina_List*
-_evas_object_smart_members_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
+_evas_object_smart_members_get(Eo *eo_obj, Evas_Smart_Data *o)
 {
-   Eina_List *members;
-
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Eina_List *members = NULL;
    Eina_Inlist *member;
 
-   members = NULL;
+   evas_object_async_block(obj);
    for (member = o->contained; member; member = member->next)
      members = eina_list_append(members, ((Evas_Object_Protected_Data *)member)->object);
 
@@ -440,9 +444,11 @@ _evas_object_smart_members_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 const Eina_Inlist *
 evas_object_smart_members_get_direct(const Evas_Object *eo_obj)
 {
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   evas_object_async_block(obj);
    if (!eo_isa(eo_obj, MY_CLASS)) return NULL;
    Evas_Smart_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    return o->contained;
@@ -858,6 +864,7 @@ _evas_object_smart_need_recalculate_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Boo
    // XXX: do i need this?
    if (!obj || !obj->layer || obj->delete_me) return;
 
+   evas_object_async_block(obj);
    /* remove this entry from calc_list or processed list */
    if (eina_clist_element_is_linked(&o->calc_entry))
      eina_clist_remove(&o->calc_entry);
@@ -893,6 +900,7 @@ _evas_object_smart_calculate(Eo *eo_obj, Evas_Smart_Data *o)
    if (!obj->smart.smart || !obj->smart.smart->smart_class->calculate)
      return;
 
+   evas_object_async_block(obj);
    o->need_recalculate = 0;
    obj->smart.smart->smart_class->calculate(eo_obj);
 }
@@ -921,6 +929,7 @@ evas_call_smarts_calculate(Evas *eo_e)
    Eina_Clist *elem;
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
 
+   evas_canvas_async_block(e);
    evas_event_freeze(eo_e);
    e->in_smart_calc++;
 
@@ -963,6 +972,7 @@ EOLIAN static void
 _evas_object_smart_changed(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    evas_object_change(eo_obj, obj);
    eo_do(eo_obj, evas_obj_smart_need_recalculate_set(1));
 }
@@ -1297,6 +1307,7 @@ evas_object_smart_need_bounding_box_update(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Smart_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
 
+   evas_object_async_block(obj);
    if (o->update_boundingbox_needed) return;
    o->update_boundingbox_needed = EINA_TRUE;
 
@@ -1318,6 +1329,7 @@ evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected
    return;
    MAGIC_CHECK_END();
 
+   evas_object_async_block(obj);
    os = eo_data_scope_get(eo_obj, MY_CLASS);
 
    if (!os->update_boundingbox_needed) return;

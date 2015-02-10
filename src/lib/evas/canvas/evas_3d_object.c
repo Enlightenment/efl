@@ -22,8 +22,9 @@ EOLIAN static Evas *
 }
 
 EOLIAN static void
-_evas_3d_object_type_set(Eo *obj EINA_UNUSED, Evas_3D_Object_Data *pd, Evas_3D_Object_Type type)
+_evas_3d_object_type_set(Eo *obj, Evas_3D_Object_Data *pd, Evas_3D_Object_Type type)
 {
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->type = type;
 }
 
@@ -46,6 +47,7 @@ _evas_3d_object_change(Eo *obj, Evas_3D_Object_Data *pd, Evas_3D_State state, Ev
    if (pd->dirty[state])
      return;
 
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->dirty[state] = EINA_TRUE;
    pd->dirty[EVAS_3D_STATE_ANY] = EINA_TRUE;
 
@@ -58,6 +60,7 @@ _evas_3d_object_update(Eo *obj, Evas_3D_Object_Data *pd)
    if (!pd->dirty[EVAS_3D_STATE_ANY])
      return;
 
+   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    eo_do(obj, evas_3d_object_update_notify());
 
    memset(&pd->dirty[0], 0x00, sizeof(Eina_Bool) * EVAS_3D_STATE_MAX);

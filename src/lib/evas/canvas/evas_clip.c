@@ -230,6 +230,8 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
    return;
    MAGIC_CHECK_END();
 
+   evas_object_async_block(obj);
+
    clip = eo_data_scope_get(eo_clip, EVAS_OBJECT_CLASS);
    if (obj->cur->clipper && obj->cur->clipper->object == eo_clip) return;
    if (eo_obj == eo_clip)
@@ -264,7 +266,10 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
         return;
      }
 
-   if (evas_object_intercept_call_clip_set(eo_obj, obj, eo_clip)) return;
+   if (evas_object_intercept_call_clip_set(eo_obj, obj, eo_clip))
+     {
+        return;
+     }
    // illegal to set anything but a rect or an image as a clip
    if (clip->type != o_rect_type && clip->type != o_image_type)
      {
@@ -391,6 +396,7 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    if (!obj->cur->clipper) return;
 
+   evas_object_async_block(obj);
    obj->clip.cache_clipees_answer = eina_list_free(obj->clip.cache_clipees_answer);
 
    /* unclip */
