@@ -3171,8 +3171,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
           }
 #endif
 #ifdef HAVE_ELEMENTARY_X
-        else if (!elm_config_engine_get() &&
-                 !elm_config_preferred_engine_get() &&
+        else if (!_elm_preferred_engine &&
                  getenv("DISPLAY") && !getenv("ELM_ENGINE"))
           {
              if (_accel_is_gl())
@@ -3188,8 +3187,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
           }
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-        else if (!elm_config_engine_get() &&
-                 !elm_config_preferred_engine_get() &&
+        else if (!_elm_preferred_engine &&
                  getenv("WAYLAND_DISPLAY") && !getenv("ELM_ENGINE"))
           {
              if (_accel_is_gl())
@@ -3208,6 +3206,8 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
           {
              if (_accel_is_gl())
                {
+// add all engines with selected engine first - if any
+                  enginelist[p++] = ENGINE_GET();
 
 // add all engines with gl/accelerated ones first - only engines compiled
 #ifdef HAVE_ELEMENTARY_X

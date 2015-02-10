@@ -1909,6 +1909,8 @@ _env_get(void)
           eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_DDRAW);
         else
           ERR("Unknown engine '%s'.", s);
+        if (_elm_config->engine)
+          eina_stringshare_replace(&_elm_preferred_engine, _elm_config->engine);
      }
 
    s = getenv("ELM_VSYNC");
@@ -3202,7 +3204,6 @@ _elm_config_init(void)
    _profile_fetch_from_conf();
    _config_load();
    _env_get();
-   ELM_SAFE_FREE(_elm_preferred_engine, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
    _translation_init();
    _config_apply();
