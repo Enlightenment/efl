@@ -1754,10 +1754,16 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    Eina_Bool blend = EINA_FALSE;
    Evas_GL_Shader shader = SHADER_IMG;
    GLuint prog = gc->shared->shader[shader].prog;
-   int pn = 0, sam = 0;
+   int pn = 0, sam = 0, render_op = gc->dc->render_op;
 
-   if (!(gc->dc->render_op == EVAS_RENDER_COPY) &&
-       ((a < 255) || (tex->alpha) || (!!mtex))) blend = EINA_TRUE;
+   if (!!mtex)
+     {
+        // masking forces BLEND mode (mask with COPY does not make sense)
+        blend = EINA_TRUE;
+        render_op = EVAS_RENDER_BLEND;
+     }
+   else if (!(render_op == EVAS_RENDER_COPY) && ((a < 255) || (tex->alpha)))
+     blend = EINA_TRUE;
 
    if (tex_only)
      {
@@ -1941,7 +1947,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].shader.cur_prog = prog;
    gc->pipe[pn].shader.smooth = smooth;
    gc->pipe[pn].shader.blend = blend;
-   gc->pipe[pn].shader.render_op = gc->dc->render_op;
+   gc->pipe[pn].shader.render_op = render_op;
    gc->pipe[pn].shader.clip = 0;
    gc->pipe[pn].shader.cx = 0;
    gc->pipe[pn].shader.cy = 0;
