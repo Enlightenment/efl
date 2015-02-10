@@ -102,7 +102,7 @@ struct _Elm_Multibuttonentry_Data
    Elm_Multibuttonentry_Item_Filter_Cb add_callback;
    void                               *add_callback_data;
 
-   Eina_Bool                           last_btn_select : 1;
+   Eina_Bool                           last_it_select : 1;
    Eina_Bool                           editable : 1;
    Eina_Bool                           focused : 1;
 };
