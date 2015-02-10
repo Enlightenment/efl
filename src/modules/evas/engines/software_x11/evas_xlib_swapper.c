@@ -306,19 +306,6 @@ evas_xlib_swapper_bit_order_get(X_Swapper *swp)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // DRM/DRI buffer swapping+access (driver specific) /////////////////////
 
 static Eina_Bool tried = EINA_FALSE;
@@ -330,23 +317,30 @@ typedef unsigned int drm_magic_t;
 static int (*sym_drmGetMagic) (int fd, drm_magic_t *magic) = NULL;
 
 ////////////////////////////////////
-// libdrm_slp.so.1
-#define DRM_SLP_DEVICE_CPU 1
-#define DRM_SLP_OPTION_READ     (1 << 0)
-#define DRM_SLP_OPTION_WRITE    (1 << 1)
-static void *drm_slp_lib = NULL;
+// libtbm.so.1
+#define TBM_DEVICE_CPU 1
+#define TBM_OPTION_READ     (1 << 0)
+#define TBM_OPTION_WRITE    (1 << 1)
+static void *tbm_lib = NULL;
 
-typedef struct _drm_slp_bufmgr *drm_slp_bufmgr;
-typedef struct _drm_slp_bo *drm_slp_bo;
-static drm_slp_bo (*sym_drm_slp_bo_import) (drm_slp_bufmgr bufmgr, unsigned int key) = NULL;
-// XXXX: sym_drm_slp_bo_map() is incorrectly defined - it SHOULD return a
-// void * at least
-static void *(*sym_drm_slp_bo_map) (drm_slp_bo bo, int device, int opt) = NULL;
-static int (*sym_drm_slp_bo_unmap)  (drm_slp_bo bo, int device) = NULL;
-static void (*sym_drm_slp_bo_unref) (drm_slp_bo bo) = NULL;
-static drm_slp_bufmgr (*sym_drm_slp_bufmgr_init) (int fd, void *arg) = NULL;
-static void (*sym_drm_slp_bufmgr_destroy) (drm_slp_bufmgr bufmgr) = NULL;
+typedef struct _tbm_bufmgr *tbm_bufmgr;
+typedef struct _tbm_bo *tbm_bo;
 
+typedef union _tbm_bo_handle
+{
+   void     *ptr;
+   int32_t  s32;
+   uint32_t u32;
+   int64_t  s64;
+   uint64_t u64;
+} tbm_bo_handle;
+
+static tbm_bo (*sym_tbm_bo_import) (tbm_bufmgr bufmgr, unsigned int key) = NULL;
+static tbm_bo_handle (*sym_tbm_bo_map) (tbm_bo bo, int device, int opt) = NULL;
+static int (*sym_tbm_bo_unmap)  (tbm_bo bo) = NULL;
+static void (*sym_tbm_bo_unref) (tbm_bo bo) = NULL;
+static tbm_bufmgr (*sym_tbm_bufmgr_init) (int fd) = NULL;
+static void (*sym_tbm_bufmgr_deinit) (tbm_bufmgr bufmgr) = NULL;
 ////////////////////////////////////
 // libdri2.so.0
 #define DRI2BufferBackLeft 1
@@ -406,7 +400,7 @@ static void (*sym_XFixesDestroyRegion) (Display *dpy, XID region) = NULL;
 typedef struct
 {
    unsigned int name;
-   drm_slp_bo   buf_bo;
+   tbm_bo   buf_bo;
 } Buffer;
 
 struct _X_Swapper
@@ -415,7 +409,7 @@ struct _X_Swapper
    Drawable    draw;
    Visual     *vis;
    int         w, h, depth;
-   drm_slp_bo  buf_bo;
+   tbm_bo  buf_bo;
    DRI2Buffer *buf;
    void       *buf_data;
    int         buf_w, buf_h;
@@ -430,7 +424,7 @@ static int xfixes_major = 0, xfixes_minor = 0;
 static int dri2_ev_base = 0, dri2_err_base = 0;
 static int dri2_major = 0, dri2_minor = 0;
 static int drm_fd = -1;
-static drm_slp_bufmgr bufmgr = NULL;
+static tbm_bufmgr bufmgr = NULL;
 static int swap_debug = -1;
 
 static Eina_Bool
@@ -454,10 +448,10 @@ _drm_init(Display *disp, int scr)
         if (swap_debug) ERR("Can't load libdrm.so.2");
         goto err;
      }
-   drm_slp_lib = dlopen("libdrm_slp.so.1", RTLD_NOW | RTLD_LOCAL);
-   if (!drm_slp_lib)
+   tbm_lib = dlopen("libtbm.so.1", RTLD_NOW | RTLD_LOCAL);
+   if (!tbm_lib)
      {
-        if (swap_debug) ERR("Can't load libdrm_slp.so.1");
+        if (swap_debug) ERR("Can't load libtbm.so.1");
         goto err;
      }
    dri_lib = dlopen("libdri2.so.0", RTLD_NOW | RTLD_LOCAL);
@@ -483,12 +477,12 @@ _drm_init(Display *disp, int scr)
    
    SYM(drm_lib, drmGetMagic);
 
-   SYM(drm_slp_lib, drm_slp_bo_import);
-   SYM(drm_slp_lib, drm_slp_bo_map);
-   SYM(drm_slp_lib, drm_slp_bo_unmap);
-   SYM(drm_slp_lib, drm_slp_bo_unref);
-   SYM(drm_slp_lib, drm_slp_bufmgr_init);
-   SYM(drm_slp_lib, drm_slp_bufmgr_destroy);
+   SYM(tbm_lib, tbm_bo_import);
+   SYM(tbm_lib, tbm_bo_map);
+   SYM(tbm_lib, tbm_bo_unmap);
+   SYM(tbm_lib, tbm_bo_unref);
+   SYM(tbm_lib, tbm_bufmgr_init);
+   SYM(tbm_lib, tbm_bufmgr_deinit);
 
    SYM(dri_lib, DRI2GetBuffers);
    SYM(dri_lib, DRI2QueryExtension);
@@ -551,7 +545,7 @@ _drm_init(Display *disp, int scr)
         goto err;
      }
    
-   if (!(bufmgr = sym_drm_slp_bufmgr_init(drm_fd, NULL)))
+   if (!(bufmgr = sym_tbm_bufmgr_init(drm_fd)))
      {
         if (swap_debug) ERR("DRM bufmgr init failed");
         goto err;
@@ -570,10 +564,10 @@ err:
         dlclose(drm_lib);
         drm_lib = NULL;
      }
-   if (drm_slp_lib)
+   if (tbm_lib)
      {
-        dlclose(drm_slp_lib);
-        drm_slp_lib = NULL;
+        dlclose(tbm_lib);
+        tbm_lib = NULL;
      }
    if (dri_lib)
      {
@@ -601,13 +595,13 @@ _drm_shutdown(void)
 /*   
    if (bufmgr)
      {
-        sym_drm_slp_bufmgr_destroy(bufmgr);
+        sym_tbm_bufmgr_deinit(bufmgr);
         bufmgr = NULL;
      }
    if (drm_fd >= 0) close(drm_fd);
    drm_fd = -1;
-   dlclose(drm_slp_lib);
-   drm_slp_lib = NULL;
+   dlclose(tbm_lib);
+   tbm_lib = NULL;
    dlclose(dri_lib);
    dri_lib = NULL;
    dlclose(xfixes_lib);
@@ -675,7 +669,7 @@ evas_xlib_swapper_free(X_Swapper *swp)
    EINA_LIST_FREE(swp->buf_cache, b)
      {
         if (swap_debug) printf("Cached buf name %i freed\n", b->name);
-        sym_drm_slp_bo_unref(b->buf_bo);
+        sym_tbm_bo_unref(b->buf_bo);
         free(b);
      }
    _drm_cleanup(swp);
@@ -717,7 +711,7 @@ evas_xlib_swapper_buffer_map(X_Swapper *swp, int *bpl, int *w, int *h)
         EINA_LIST_FREE(swp->buf_cache, b)
           {
              if (swap_debug) printf("Cached buf name %i freed\n", b->name);
-             sym_drm_slp_bo_unref(b->buf_bo);
+             sym_tbm_bo_unref(b->buf_bo);
              free(b);
           }
      }
@@ -738,7 +732,7 @@ evas_xlib_swapper_buffer_map(X_Swapper *swp, int *bpl, int *w, int *h)
      }
    if (!swp->buf_bo)
      {
-        swp->buf_bo = sym_drm_slp_bo_import(bufmgr, swp->buf->name);
+        swp->buf_bo = sym_tbm_bo_import(bufmgr, swp->buf->name);
         if (!swp->buf_bo) return NULL;
         // cache the buf entry
         b = calloc(1, sizeof(Buffer));
@@ -750,23 +744,25 @@ evas_xlib_swapper_buffer_map(X_Swapper *swp, int *bpl, int *w, int *h)
         // keep bo cache no more than its max size
         while (eina_list_count(swp->buf_cache) > MAX_BO_CACHE)
           {
-             if (swap_debug) printf("Buffer cache count %i more than max %i\n", eina_list_count(swp->buf_cache) , MAX_BO_CACHE);
+             if (swap_debug) printf("Buffer cache count %i more than max %i\n", eina_list_count(swp->buf_cache), MAX_BO_CACHE);
              l = eina_list_last(swp->buf_cache);
              if (l)
                {
                   b = l->data;
                   if (swap_debug) printf("Buffer cache overfull - free name %i\n", b->name);
                   swp->buf_cache = eina_list_remove_list(swp->buf_cache, l);
-                  sym_drm_slp_bo_unref(b->buf_bo);
+                  sym_tbm_bo_unref(b->buf_bo);
                   free(b);
                }
           }
      }
-   // XXXX: sym_drm_slp_bo_map() is incorrectly defined - it SHOULD return a
-   // void * at least
-   swp->buf_data = sym_drm_slp_bo_map(swp->buf_bo, DRM_SLP_DEVICE_CPU,
-                                              DRM_SLP_OPTION_READ |
-                                              DRM_SLP_OPTION_WRITE);
+
+   tbm_bo_handle bo_handle;
+
+   bo_handle = sym_tbm_bo_map (swp->buf_bo, TBM_DEVICE_CPU, TBM_OPTION_READ | TBM_OPTION_WRITE);
+   /* If device is DEFAULT, 2D, 3D, MM,then swp->buf_data = bo_handle.u32 */
+   swp->buf_data = bo_handle.ptr;
+
    if (!swp->buf_data)
      {
         ERR("Buffer map name %i failed", swp->buf->name);
@@ -790,7 +786,7 @@ void
 evas_xlib_swapper_buffer_unmap(X_Swapper *swp)
 {
    if (!swp->mapped) return;
-   sym_drm_slp_bo_unmap(swp->buf_bo, DRM_SLP_DEVICE_CPU);
+   sym_tbm_bo_unmap(swp->buf_bo);
    if (swap_debug) printf("Unmap buffer name %i\n", swp->buf->name);
    free(swp->buf);
    swp->buf = NULL;
