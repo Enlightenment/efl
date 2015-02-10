@@ -30,7 +30,7 @@ struct _DiskItem_Data
 static void
 _diskselector_item_free_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   if (data) free(data);
+   free(data);
 }
 
 static void
@@ -69,7 +69,7 @@ _datetime_move_cb(void *data, Evas *e EINA_UNUSED,Evas_Object *obj EINA_UNUSED,
 static void
 _field_value_set(struct tm *tim, Elm_Datetime_Field_Type  field_type, int val)
 {
-   if (field_type >= DATETIME_FIELD_COUNT - 1) return;
+   if (field_type >= (DATETIME_FIELD_COUNT - 1)) return;
 
    int *timearr[]= { &tim->tm_year, &tim->tm_mon, &tim->tm_mday, &tim->tm_hour, &tim->tm_min };
    *timearr[field_type] = val;
@@ -78,7 +78,7 @@ _field_value_set(struct tm *tim, Elm_Datetime_Field_Type  field_type, int val)
 static int
 _field_value_get(struct tm *tim, Elm_Datetime_Field_Type  field_type)
 {
-   if (field_type >= DATETIME_FIELD_COUNT - 1) return -1;
+   if (field_type >= (DATETIME_FIELD_COUNT - 1)) return -1;
 
    int *timearr[]= { &tim->tm_year, &tim->tm_mon, &tim->tm_mday, &tim->tm_hour, &tim->tm_min };
    return (*timearr[field_type]);
@@ -216,11 +216,11 @@ _field_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    evas_object_move(ctx_mod->ctxpopup, (x+w/2), (y+h));
 
    // if the direction of Ctxpopup is upwards, move it to the top of datetime
-   if (elm_ctxpopup_direction_get (ctx_mod->ctxpopup) == ELM_CTXPOPUP_DIRECTION_UP)
+   if (elm_ctxpopup_direction_get(ctx_mod->ctxpopup) == ELM_CTXPOPUP_DIRECTION_UP)
      {
         elm_ctxpopup_direction_priority_set(ctx_mod->ctxpopup, ELM_CTXPOPUP_DIRECTION_UP,
                                             ELM_CTXPOPUP_DIRECTION_DOWN, -1, -1);
-        evas_object_move(ctx_mod->ctxpopup, (x+w/2), y);
+        evas_object_move(ctx_mod->ctxpopup, (x + w / 2), y);
      }
    evas_object_show(ctx_mod->ctxpopup);
 }
@@ -232,32 +232,32 @@ _access_set(Evas_Object *obj, Elm_Datetime_Field_Type field_type)
 
    switch (field_type)
      {
-		 case ELM_DATETIME_YEAR:
-        type = "datetime field, year";
-        break;
+      case ELM_DATETIME_YEAR:
+         type = "datetime field, year";
+         break;
 
       case ELM_DATETIME_MONTH:
-        type = "datetime field, month";
-        break;
+         type = "datetime field, month";
+         break;
 
-	  case ELM_DATETIME_DATE:
-        type = "datetime field, date";
-        break;
+      case ELM_DATETIME_DATE:
+         type = "datetime field, date";
+         break;
 
       case ELM_DATETIME_HOUR:
-        type = "datetime field, hour";
-        break;
+         type = "datetime field, hour";
+         break;
 
       case ELM_DATETIME_MINUTE:
-        type = "datetime field, minute";
-        break;
+         type = "datetime field, minute";
+         break;
 
       case ELM_DATETIME_AMPM:
-        type = "datetime field, AM PM";
-        break;
+         type = "datetime field, AM PM";
+         break;
 
       default:
-        break;
+         break;
      }
 
    _elm_access_text_set
@@ -266,7 +266,7 @@ _access_set(Evas_Object *obj, Elm_Datetime_Field_Type field_type)
      (_elm_access_info_get(obj), ELM_ACCESS_STATE, NULL, NULL);
 }
 
-// module fucns for the specific module type
+// module funcs for the specific module type
 EAPI void
 field_value_display(Elm_Datetime_Module_Data *module_data, Evas_Object *obj)
 {
@@ -350,11 +350,8 @@ obj_unhook(Elm_Datetime_Module_Data *module_data)
    if (ctx_mod->ctxpopup)
      evas_object_del(ctx_mod->ctxpopup);
 
-   if (ctx_mod)
-     {
-          free(ctx_mod);
-          ctx_mod = NULL;
-      }
+   free(ctx_mod);
+   ctx_mod = NULL;
 }
 
 EAPI void
