@@ -265,6 +265,7 @@ _ecore_drm_dbus_device_take_no_pending(uint32_t major, uint32_t minor, Eina_Bool
    Eldbus_Proxy *proxy;
    Eldbus_Message *msg, *reply;
    Eina_Bool b;
+   const char *errname, *errmsg;
    int fd;
 
    /* try to get the Session proxy */
@@ -284,6 +285,11 @@ _ecore_drm_dbus_device_take_no_pending(uint32_t major, uint32_t minor, Eina_Bool
      return -1;
 
    reply = eldbus_proxy_send_and_block(proxy, msg, timeout);
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
+     {
+        ERR("Eldbus Message Error: %s %s", errname, errmsg);
+        return -1;
+     }
 
    if (!eldbus_message_arguments_get(reply, "hb", &fd, &b))
      return -1;
