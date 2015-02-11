@@ -228,7 +228,9 @@ eolian_eo_file_parse(const char *filepath)
    Eina_Bool failed_dep = EINA_FALSE;
    if (!class)
      {
-        if (!eo_parser_database_fill(filepath, EINA_FALSE))
+        const char *full_filepath = eina_hash_find(_filenames, bfilename);
+        if (!full_filepath) full_filepath = filepath;
+        if (!eo_parser_database_fill(full_filepath, EINA_FALSE))
           {
              free(bfiledup);
              goto error;
