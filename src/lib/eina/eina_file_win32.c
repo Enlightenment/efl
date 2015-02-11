@@ -730,8 +730,8 @@ eina_file_open(const char *path, Eina_Bool shared)
    else
 #endif
      handle = CreateFile(filename,
-                         GENERIC_READ, FILE_SHARE_READ,
-                         NULL, OPEN_EXISTING, FILE_ATTRIBUTE_READONLY,
+                         GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
+                         NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,
                          NULL);
 
    if (handle == INVALID_HANDLE_VALUE)
