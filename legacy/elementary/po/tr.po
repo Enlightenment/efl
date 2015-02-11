@@ -3,12 +3,12 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
 #
-#: src/lib/elm_config.c:3174
+#: src/lib/elm_config.c:3176
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-02-04 18:11+0900\n"
+"POT-Creation-Date: 2015-02-11 10:42+0900\n"
 "PO-Revision-Date: 2014-04-18 13:35+0000\n"
 "Last-Translator: Ali E.İMREK <alierkanimrek@gmail.com>\n"
 "Language-Team: Turkish <tr@li.org>\n"
@@ -40,15 +40,15 @@ msgstr "İptal"
 msgid "OK"
 msgstr "Tamam"
 
-#: src/lib/elc_multibuttonentry.c:611
+#: src/lib/elc_multibuttonentry.c:615
 msgid "multi button entry label"
 msgstr "çoklu düğme giriş etiketi"
 
-#: src/lib/elc_multibuttonentry.c:633
+#: src/lib/elc_multibuttonentry.c:637
 msgid "multi button entry item"
 msgstr "çoklu düğme giriş öğesi"
 
-#: src/lib/elc_multibuttonentry.c:1497
+#: src/lib/elc_multibuttonentry.c:1496
 msgid "multi button entry"
 msgstr "çoklu düğme girişi"
 
@@ -64,11 +64,11 @@ msgstr "Geri"
 msgid "Next"
 msgstr "Sonraki"
 
-#: src/lib/elc_popup.c:261 src/lib/elc_popup.c:868
+#: src/lib/elc_popup.c:261 src/lib/elc_popup.c:865
 msgid "Popup Title"
 msgstr "Pencere başlığı"
 
-#: src/lib/elc_popup.c:271 src/lib/elc_popup.c:934
+#: src/lib/elc_popup.c:271 src/lib/elc_popup.c:930
 msgid "Popup Body Text"
 msgstr "Pencere gövde metni"
 
@@ -81,7 +81,7 @@ msgid "Clicked"
 msgstr "Tıklanmış"
 
 #: src/lib/elm_button.c:271 src/lib/elm_check.c:235 src/lib/elm_gengrid.c:814
-#: src/lib/elm_genlist.c:1572 src/lib/elm_list.c:2178 src/lib/elm_radio.c:256
+#: src/lib/elm_genlist.c:1572 src/lib/elm_list.c:2182 src/lib/elm_radio.c:256
 #: src/lib/elm_segment_control.c:525 src/lib/elm_spinner.c:578
 #: src/lib/elm_toolbar.c:2226
 msgid "State: Disabled"
@@ -168,7 +168,7 @@ msgstr "Saat"
 msgid "color selector palette item"
 msgstr "renk seçici paleti öğesi"
 
-#: src/lib/elm_config.c:3190
+#: src/lib/elm_config.c:3192
 msgid "default:LTR"
 msgstr "varsayılan:LTR"
 
@@ -212,7 +212,7 @@ msgstr "Dizin"
 msgid "Index Item"
 msgstr "fihrist öğesi"
 
-#: src/lib/elm_label.c:389
+#: src/lib/elm_label.c:393
 msgid "Label"
 msgstr "Etiket"
 
@@ -256,7 +256,7 @@ msgstr "Bölge: Seçilmedi"
 msgid "Segment Control Item"
 msgstr "Bölüm Kontrol Öğesi"
 
-#: src/lib/elm_slider.c:887
+#: src/lib/elm_slider.c:889
 msgid "slider"
 msgstr "kaydırıcı"
 

@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # Konrad Makowski <poczta@konradmakowski.pl>, 2013.
 #
-#: src/lib/elm_config.c:3174
+#: src/lib/elm_config.c:3176
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-02-04 18:11+0900\n"
+"POT-Creation-Date: 2015-02-11 10:42+0900\n"
 "PO-Revision-Date: 2013-11-23 14:48+0100\n"
 "Last-Translator: Konrad Makowski <poczta@konradmakowski.pl>\n"
 "Language-Team: General\n"
@@ -37,15 +37,15 @@ msgstr "Anuluj"
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elc_multibuttonentry.c:611
+#: src/lib/elc_multibuttonentry.c:615
 msgid "multi button entry label"
 msgstr "etykietka przycisku wyboru"
 
-#: src/lib/elc_multibuttonentry.c:633
+#: src/lib/elc_multibuttonentry.c:637
 msgid "multi button entry item"
 msgstr "wartość pozycji przycisku wyboru"
 
-#: src/lib/elc_multibuttonentry.c:1497
+#: src/lib/elc_multibuttonentry.c:1496
 msgid "multi button entry"
 msgstr "przycisk wyboru"
 
@@ -61,11 +61,11 @@ msgstr "Cofnij"
 msgid "Next"
 msgstr "Następny"
 
-#: src/lib/elc_popup.c:261 src/lib/elc_popup.c:868
+#: src/lib/elc_popup.c:261 src/lib/elc_popup.c:865
 msgid "Popup Title"
 msgstr "Tytuł okienka"
 
-#: src/lib/elc_popup.c:271 src/lib/elc_popup.c:934
+#: src/lib/elc_popup.c:271 src/lib/elc_popup.c:930
 msgid "Popup Body Text"
 msgstr "Treść główna okienka"
 
@@ -78,7 +78,7 @@ msgid "Clicked"
 msgstr "Kliknięty"
 
 #: src/lib/elm_button.c:271 src/lib/elm_check.c:235 src/lib/elm_gengrid.c:814
-#: src/lib/elm_genlist.c:1572 src/lib/elm_list.c:2178 src/lib/elm_radio.c:256
+#: src/lib/elm_genlist.c:1572 src/lib/elm_list.c:2182 src/lib/elm_radio.c:256
 #: src/lib/elm_segment_control.c:525 src/lib/elm_spinner.c:578
 #: src/lib/elm_toolbar.c:2226
 msgid "State: Disabled"
@@ -165,7 +165,7 @@ msgstr "Zegar"
 msgid "color selector palette item"
 msgstr "paleta wyboru kolorów"
 
-#: src/lib/elm_config.c:3190
+#: src/lib/elm_config.c:3192
 msgid "default:LTR"
 msgstr "default:RTL"
 
@@ -209,7 +209,7 @@ msgstr "Indeks"
 msgid "Index Item"
 msgstr "Indeks"
 
-#: src/lib/elm_label.c:389
+#: src/lib/elm_label.c:393
 msgid "Label"
 msgstr "Etykieta"
 
@@ -253,7 +253,7 @@ msgstr "Stan: nie wybrany"
 msgid "Segment Control Item"
 msgstr "Kontrola Segmentami"
 
-#: src/lib/elm_slider.c:887
+#: src/lib/elm_slider.c:889
 msgid "slider"
 msgstr "slajder"
 

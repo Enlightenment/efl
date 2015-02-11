@@ -2,12 +2,12 @@
 #
 # Vít Pelčák <vit@pelcak.org>, 2011.
 # Tomáš Čech <sleep_walker@suse.cz>, 2012.
-#: src/lib/elm_config.c:3174
+#: src/lib/elm_config.c:3176
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-02-04 18:11+0900\n"
+"POT-Creation-Date: 2015-02-11 10:42+0900\n"
 "PO-Revision-Date: 2014-05-22 22:44+0200\n"
 "Last-Translator: Tomáš Čech <sleep_walker@suse.cz>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -39,15 +39,15 @@ msgstr "Zrušit"
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elc_multibuttonentry.c:611
+#: src/lib/elc_multibuttonentry.c:615
 msgid "multi button entry label"
 msgstr "popisek vícetlačítkového vstupu"
 
-#: src/lib/elc_multibuttonentry.c:633
+#: src/lib/elc_multibuttonentry.c:637
 msgid "multi button entry item"
 msgstr "položka vícetlačítkového vstupu"
 
-#: src/lib/elc_multibuttonentry.c:1497
+#: src/lib/elc_multibuttonentry.c:1496
 msgid "multi button entry"
 msgstr "vícetlačítkový vstup"
 
@@ -63,11 +63,11 @@ msgstr "Zpět"
 msgid "Next"
 msgstr "Další"
 
-#: src/lib/elc_popup.c:261 src/lib/elc_popup.c:868
+#: src/lib/elc_popup.c:261 src/lib/elc_popup.c:865
 msgid "Popup Title"
 msgstr "Titulek vyskakujícího okna"
 
-#: src/lib/elc_popup.c:271 src/lib/elc_popup.c:934
+#: src/lib/elc_popup.c:271 src/lib/elc_popup.c:930
 msgid "Popup Body Text"
 msgstr "Text vyskakovacího okna"
 
@@ -80,7 +80,7 @@ msgid "Clicked"
 msgstr "Kliknuto"
 
 #: src/lib/elm_button.c:271 src/lib/elm_check.c:235 src/lib/elm_gengrid.c:814
-#: src/lib/elm_genlist.c:1572 src/lib/elm_list.c:2178 src/lib/elm_radio.c:256
+#: src/lib/elm_genlist.c:1572 src/lib/elm_list.c:2182 src/lib/elm_radio.c:256
 #: src/lib/elm_segment_control.c:525 src/lib/elm_spinner.c:578
 #: src/lib/elm_toolbar.c:2226
 msgid "State: Disabled"
@@ -167,7 +167,7 @@ msgstr "Hodiny"
 msgid "color selector palette item"
 msgstr "položka výběru barvy z palety"
 
-#: src/lib/elm_config.c:3190
+#: src/lib/elm_config.c:3192
 msgid "default:LTR"
 msgstr "výchozí:LTR"
 
@@ -211,7 +211,7 @@ msgstr "Index"
 msgid "Index Item"
 msgstr "Položka indexu"
 
-#: src/lib/elm_label.c:389
+#: src/lib/elm_label.c:393
 msgid "Label"
 msgstr "Popisek"
 
@@ -255,7 +255,7 @@ msgstr "Stav: Nevybráno"
 msgid "Segment Control Item"
 msgstr "položka ovládání segmentu"
 
-#: src/lib/elm_slider.c:887
+#: src/lib/elm_slider.c:889
 msgid "slider"
 msgstr "šoupátko"
 

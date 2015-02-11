@@ -2,12 +2,12 @@
 # This file is put in the public domain.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012-2013.
 #
-#: src/lib/elm_config.c:3174
+#: src/lib/elm_config.c:3176
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-02-04 18:11+0900\n"
+"POT-Creation-Date: 2015-02-11 10:42+0900\n"
 "PO-Revision-Date: 2014-05-24 08:39+0000\n"
 "Last-Translator: Kaptan <khanyux@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
@@ -39,15 +39,15 @@ msgstr "Cancelar"
 msgid "OK"
 msgstr "Aceptar"
 
-#: src/lib/elc_multibuttonentry.c:611
+#: src/lib/elc_multibuttonentry.c:615
 msgid "multi button entry label"
 msgstr "etiqueta de entrada de botón múltiplo"
 
-#: src/lib/elc_multibuttonentry.c:633
+#: src/lib/elc_multibuttonentry.c:637
 msgid "multi button entry item"
 msgstr "elemento de entrada de botón múltiplo"
 
-#: src/lib/elc_multibuttonentry.c:1497
+#: src/lib/elc_multibuttonentry.c:1496
 msgid "multi button entry"
 msgstr "entrada de botón múltiplo"
 
@@ -63,11 +63,11 @@ msgstr "Atrás"
 msgid "Next"
 msgstr "Seguinte"
 
-#: src/lib/elc_popup.c:261 src/lib/elc_popup.c:868
+#: src/lib/elc_popup.c:261 src/lib/elc_popup.c:865
 msgid "Popup Title"
 msgstr "Título da emerxente"
 
-#: src/lib/elc_popup.c:271 src/lib/elc_popup.c:934
+#: src/lib/elc_popup.c:271 src/lib/elc_popup.c:930
 msgid "Popup Body Text"
 msgstr "Corpo de texto emerxente"
 
@@ -80,7 +80,7 @@ msgid "Clicked"
 msgstr "Premido"
 
 #: src/lib/elm_button.c:271 src/lib/elm_check.c:235 src/lib/elm_gengrid.c:814
-#: src/lib/elm_genlist.c:1572 src/lib/elm_list.c:2178 src/lib/elm_radio.c:256
+#: src/lib/elm_genlist.c:1572 src/lib/elm_list.c:2182 src/lib/elm_radio.c:256
 #: src/lib/elm_segment_control.c:525 src/lib/elm_spinner.c:578
 #: src/lib/elm_toolbar.c:2226
 msgid "State: Disabled"
@@ -167,7 +167,7 @@ msgstr "Reloxo"
 msgid "color selector palette item"
 msgstr "Paleta de selección de cor"
 
-#: src/lib/elm_config.c:3190
+#: src/lib/elm_config.c:3192
 msgid "default:LTR"
 msgstr "Predeterminado: LTR"
 
@@ -211,7 +211,7 @@ msgstr "Índice"
 msgid "Index Item"
 msgstr "Elemento do índice"
 
-#: src/lib/elm_label.c:389
+#: src/lib/elm_label.c:393
 msgid "Label"
 msgstr "Etiqueta"
 
@@ -255,7 +255,7 @@ msgstr "Estado: Sen seleccionar"
 msgid "Segment Control Item"
 msgstr "Segmento de control"
 
-#: src/lib/elm_slider.c:887
+#: src/lib/elm_slider.c:889
 msgid "slider"
 msgstr "Barra de desprazamento"
 

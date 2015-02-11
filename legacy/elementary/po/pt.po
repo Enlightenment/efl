@@ -1,12 +1,12 @@
 # Portuguese translation for Elementary.
 # This file is put in the public domain.
 # Sérgio Marques <smarquespt@gmail.com>, 2011.
-#: src/lib/elm_config.c:3174
+#: src/lib/elm_config.c:3176
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-02-04 18:11+0900\n"
+"POT-Creation-Date: 2015-02-11 10:42+0900\n"
 "PO-Revision-Date: 2013-11-05 14:11-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: General\n"
@@ -38,15 +38,15 @@ msgstr "Cancelar"
 msgid "OK"
 msgstr "Aceitar"
 
-#: src/lib/elc_multibuttonentry.c:611
+#: src/lib/elc_multibuttonentry.c:615
 msgid "multi button entry label"
 msgstr "texto da entrada de botão múltiplo"
 
-#: src/lib/elc_multibuttonentry.c:633
+#: src/lib/elc_multibuttonentry.c:637
 msgid "multi button entry item"
 msgstr "item da entrada de botão múltiplo"
 
-#: src/lib/elc_multibuttonentry.c:1497
+#: src/lib/elc_multibuttonentry.c:1496
 msgid "multi button entry"
 msgstr "entrada do botão múltiplo"
 
@@ -62,11 +62,11 @@ msgstr "Recuar"
 msgid "Next"
 msgstr "Avançar"
 
-#: src/lib/elc_popup.c:261 src/lib/elc_popup.c:868
+#: src/lib/elc_popup.c:261 src/lib/elc_popup.c:865
 msgid "Popup Title"
 msgstr "Título do alerta"
 
-#: src/lib/elc_popup.c:271 src/lib/elc_popup.c:934
+#: src/lib/elc_popup.c:271 src/lib/elc_popup.c:930
 msgid "Popup Body Text"
 msgstr "Texto do alerta"
 
@@ -79,7 +79,7 @@ msgid "Clicked"
 msgstr "Clicado"
 
 #: src/lib/elm_button.c:271 src/lib/elm_check.c:235 src/lib/elm_gengrid.c:814
-#: src/lib/elm_genlist.c:1572 src/lib/elm_list.c:2178 src/lib/elm_radio.c:256
+#: src/lib/elm_genlist.c:1572 src/lib/elm_list.c:2182 src/lib/elm_radio.c:256
 #: src/lib/elm_segment_control.c:525 src/lib/elm_spinner.c:578
 #: src/lib/elm_toolbar.c:2226
 msgid "State: Disabled"
@@ -166,7 +166,7 @@ msgstr "Relógio"
 msgid "color selector palette item"
 msgstr "item do seletor de cor"
 
-#: src/lib/elm_config.c:3190
+#: src/lib/elm_config.c:3192
 msgid "default:LTR"
 msgstr "padrão: LTR"
 
@@ -210,7 +210,7 @@ msgstr "Índice"
 msgid "Index Item"
 msgstr "Item do índice"
 
-#: src/lib/elm_label.c:389
+#: src/lib/elm_label.c:393
 msgid "Label"
 msgstr "Texto"
 
@@ -254,7 +254,7 @@ msgstr "Estado: não selecionado"
 msgid "Segment Control Item"
 msgstr "Item do controlo de segmento"
 
-#: src/lib/elm_slider.c:887
+#: src/lib/elm_slider.c:889
 msgid "slider"
 msgstr "barra deslizante"
 
