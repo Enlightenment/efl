@@ -57,6 +57,9 @@
 #define OSMESA_MAX_WIDTH	0x24  /* new in 4.0 */
 #define OSMESA_MAX_HEIGHT	0x25  /* new in 4.0 */
 
+/* Required for orient */
+#define TILE 32
+
 
 typedef void (*OSMESAproc)();
 typedef struct osmesa_context *OSMesaContext;
@@ -1289,6 +1292,342 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 	break;
      }
    return im;
+}
+
+static void *
+_image_flip_horizontal(void *data, Image_Entry *im)
+{
+   unsigned int *p1, *p2, tmp;
+   DATA32 *image_data;
+   int x, y, iw, ih;
+   Image_Entry *im2;
+
+   iw = im->w;
+   ih = im->h;
+   image_data = evas_cache_image_pixels(im);
+   for (y = 0; y < ih; y++)
+     {
+        p1 = image_data + (y * iw);
+        p2 = image_data + ((y + 1) * iw) - 1;
+        for (x = 0; x < (iw >> 1); x++)
+          {
+             tmp = *p1;
+             *p1 = *p2;
+             *p2 = tmp;
+             p1++;
+             p2--;
+          }
+     }
+   im2 = eng_image_new_from_data(data, iw, ih, image_data,
+                                           eng_image_alpha_get(data, im),
+                                           eng_image_colorspace_get(data, im));
+   return im2;
+}
+
+static void *
+_image_flip_vertical(void *data, Image_Entry *im)
+{
+   unsigned int *p1, *p2, tmp;
+   DATA32 *image_data;
+   int x, y, iw, ih;
+   Image_Entry *im2;
+
+   iw = im->w;
+   ih = im->h;
+   image_data = evas_cache_image_pixels(im);
+   for (y = 0; y < (ih >> 1); y++)
+     {
+        p1 = image_data + (y * iw);
+        p2 = image_data + ((ih - 1 - y) * iw);
+        for (x = 0; x < iw; x++)
+          {
+             tmp = *p1;
+             *p1 = *p2;
+             *p2 = tmp;
+             p1++;
+             p2++;
+          }
+     }
+   im2 = eng_image_new_from_data(data, iw, ih, image_data,
+                                           eng_image_alpha_get(data, im),
+                                           eng_image_colorspace_get(data, im));
+   return im2;
+}
+
+static void *
+_image_rotate_180(void *data, Image_Entry *im)
+{
+   unsigned int *p1, *p2, tmp;
+   DATA32 *image_data;
+   int x, hw, iw, ih;
+   Image_Entry *im2;
+
+   iw = im->w;
+   ih = im->h;
+   image_data = evas_cache_image_pixels(im);
+   if(!image_data) return im;
+   hw = iw * ih;
+   x = (hw / 2);
+   p1 = image_data;
+   p2 = image_data + hw - 1;
+   for (; --x > 0; )
+     {
+        tmp = *p1;
+        *p1 = *p2;
+        *p2 = tmp;
+        p1++;
+        p2--;
+     }
+   im2 = eng_image_new_from_data(data, iw, ih, image_data,
+                                           eng_image_alpha_get(data, im),
+                                           eng_image_colorspace_get(data, im));
+   return im2;
+}
+
+# define GETDAT(neww, newh) \
+   DATA32 *image_data, *image_data2; \
+   int iw, ih, w, h; \
+   Image_Entry *im2; \
+   iw = im->w; \
+   ih = im->h; \
+   image_data = evas_cache_image_pixels(im); \
+   if (!image_data) return im; \
+   image_data2 = malloc(iw * ih * sizeof(int)); \
+   if (!image_data2) { \
+      return im; \
+   } \
+   memcpy(image_data2, image_data, iw * ih * sizeof(int)); \
+   im = eng_image_new_from_data(data, iw, ih, image_data, \
+                                           eng_image_alpha_get(data, im), \
+                                           eng_image_colorspace_get(data, im)); \
+   w = neww; h = newh; \
+   image_data = evas_cache_image_pixels(im); \
+
+# define PUTDAT \
+   im2 = eng_image_new_from_data(data, w, h, image_data, \
+                                           eng_image_alpha_get(data, im), \
+                                           eng_image_colorspace_get(data, im)); \
+   im2 = eng_image_size_set(data, im2, w, h); \
+   free(image_data2); \
+   return im2; \
+
+static void *
+_image_rotate_90(void *data, Image_Entry *im)
+{
+   GETDAT(ih, iw);
+   int x, y, xx, yy, xx2, yy2;
+   unsigned int *src, *dst;
+
+   for (y = 0; y < ih; y += TILE)
+     {
+        yy2 = y + TILE;
+        if (yy2 > ih) yy2 = ih;
+        for (x = 0; x < iw; x += TILE)
+          {
+             xx2 = x + TILE;
+             if (xx2 > iw) xx2 = iw;
+             for (yy = y; yy < yy2; yy++)
+               {
+                  src = image_data2 + (yy * iw) + x;
+                  dst = image_data + (x * w) + (w - yy - 1);
+                  for (xx = x; xx < xx2; xx++)
+                    {
+                       *dst = *src;
+                       src++;
+                       dst += w;
+                    }
+               }
+          }
+     }
+   PUTDAT;
+}
+
+static void *
+_image_rotate_270(void *data, Image_Entry *im)
+{
+   GETDAT(ih, iw);
+   int x, y, xx, yy, xx2, yy2;
+   unsigned int *src, *dst;
+
+   for (y = 0; y < ih; y += TILE)
+     {
+        yy2 = y + TILE;
+        if (yy2 > ih) yy2 = ih;
+        for (x = 0; x < iw; x += TILE)
+          {
+             xx2 = x + TILE;
+             if (xx2 > iw) xx2 = iw;
+             for (yy = y; yy < yy2; yy++)
+               {
+                  src = image_data2 + (yy * iw) + x;
+                  dst = image_data + ((h - x - 1) * w) + yy;
+                  for (xx = x; xx < xx2; xx++)
+                    {
+                       *dst = *src;
+                       src++;
+                       dst -= w;
+                    }
+               }
+          }
+     }
+   PUTDAT;
+}
+
+static void *
+_image_flip_transverse(void *data, Image_Entry *im)
+{
+   GETDAT(ih, iw);
+   int x, y;
+   unsigned int *src, *dst;
+
+   src = image_data2;
+   for (y = 0; y < ih; y++)
+     {
+        dst = image_data + y;
+        for (x = 0; x < iw; x++)
+          {
+             *dst = *src;
+             src++;
+             dst += w;
+          }
+     }
+   PUTDAT;
+}
+
+static void *
+_image_flip_transpose(void *data, Image_Entry *im)
+{
+   GETDAT(ih, iw);
+   int x, y;
+   unsigned int *src, *dst;
+
+   src = image_data2 + (iw * ih) - 1;
+   for (y = 0; y < ih; y++)
+     {
+        dst = image_data + y;
+        for (x = 0; x < iw; x++)
+          {
+             *dst = *src;
+             src--;
+             dst += w;
+          }
+     }
+   PUTDAT;
+}
+
+#undef GETDAT
+#undef PUTDAT
+
+static void *
+eng_image_orient_set(void *data, void *image, Evas_Image_Orient orient)
+{
+   Image_Entry *im;
+
+   if (!image) return NULL;
+   im = image;
+   if (im->orient == orient) return im;
+
+   if ((im->orient >= EVAS_IMAGE_ORIENT_0) &&
+       (im->orient <= EVAS_IMAGE_ORIENT_270) &&
+       (orient >= EVAS_IMAGE_ORIENT_0) &&
+       (orient <= EVAS_IMAGE_ORIENT_270))
+     {
+        // we are rotating from one anglee to another, so figure out delta
+        // and apply that delta
+        Evas_Image_Orient rot_delta = (4 + orient - im->orient) % 4;
+        switch (rot_delta)
+          {
+           case EVAS_IMAGE_ORIENT_0:
+             ERR("You shouldn't get this message, wrong orient value");
+             break;
+           case EVAS_IMAGE_ORIENT_90:
+             im = _image_rotate_90(data, im);
+             im->orient = orient;
+             break;
+           case EVAS_IMAGE_ORIENT_180:
+             im = _image_rotate_180(data, im);
+             im->orient = orient;
+             break;
+           case EVAS_IMAGE_ORIENT_270:
+             im = _image_rotate_270(data, im);
+             im->orient = orient;
+             break;
+           default:
+             ERR("Wrong orient value");
+             break;
+          }
+     }
+   else if (((im->orient == EVAS_IMAGE_ORIENT_NONE) &&
+             (orient == EVAS_IMAGE_FLIP_HORIZONTAL)) ||
+            ((im->orient == EVAS_IMAGE_FLIP_HORIZONTAL) &&
+             (orient == EVAS_IMAGE_ORIENT_NONE)))
+     {
+        // flip horizontally to get the new orientation
+        im = _image_flip_horizontal(data, im);
+        im->orient = orient;
+     }
+   else if (((im->orient == EVAS_IMAGE_ORIENT_NONE) &&
+             (orient == EVAS_IMAGE_FLIP_VERTICAL)) ||
+            ((im->orient == EVAS_IMAGE_FLIP_VERTICAL) &&
+             (orient == EVAS_IMAGE_ORIENT_NONE)))
+     {
+        // flip vertically to get the new orientation
+        im = _image_flip_vertical(data, im);
+        im->orient = orient;
+     }
+   else
+     {
+        // generic solution - undo the previous orientation and then apply the
+        // new one after that
+        int i;
+
+        for (i = 0; i < 2; i++)
+          {
+             switch (im->orient)
+               {
+                case EVAS_IMAGE_ORIENT_0:
+                  break;
+                case EVAS_IMAGE_ORIENT_90:
+                  if(i == 1) im = _image_rotate_90(data, im);
+                  else im = _image_rotate_270(data, im);
+                  break;
+                case EVAS_IMAGE_ORIENT_180:
+                  im = _image_rotate_180(data, im);
+                  break;
+                case EVAS_IMAGE_ORIENT_270:
+                  if(i == 1) im = _image_rotate_270(data, im);
+                  else im = _image_rotate_90(data, im);
+                  break;
+                case EVAS_IMAGE_FLIP_HORIZONTAL:
+                  im = _image_flip_horizontal(data, im);
+                  break;
+                case EVAS_IMAGE_FLIP_VERTICAL:
+                  im = _image_flip_vertical(data, im);
+                  break;
+                case EVAS_IMAGE_FLIP_TRANSPOSE:
+                  im = _image_flip_transpose(data, im);
+                  break;
+                case EVAS_IMAGE_FLIP_TRANSVERSE:
+                  im = _image_flip_transverse(data, im);
+                  break;
+                default:
+                  ERR("Wrong orient value");
+                  break;
+               }
+             im->orient = orient;
+          }
+     }
+   return im;
+}
+
+static Evas_Image_Orient
+eng_image_orient_get(void *data EINA_UNUSED, void *image)
+{
+   Image_Entry *im;
+
+   if (!image) return EVAS_IMAGE_ORIENT_NONE;
+   im = image;
+   return im->orient;
 }
 
 static void
@@ -3158,6 +3497,8 @@ static Evas_Func func =
      eng_image_data_preload_cancel,
      eng_image_alpha_set,
      eng_image_alpha_get,
+     eng_image_orient_set,
+     eng_image_orient_get,
      eng_image_border_set,
      eng_image_border_get,
      eng_image_draw,

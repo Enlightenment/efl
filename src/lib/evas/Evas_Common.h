@@ -631,6 +631,24 @@ typedef enum _Evas_Image_Content_Hint
    EVAS_IMAGE_CONTENT_HINT_STATIC = 2 /**< The contents won't change over time */
 } Evas_Image_Content_Hint; /**< How an image's data is to be treated by Evas, for optimization */
 
+/**
+ * Possible orientation options for evas_object_image_orient_set().
+ * @brief Types of orientation available
+ * @since 1.14
+ */
+typedef enum _Evas_Image_Orient
+{
+   EVAS_IMAGE_ORIENT_NONE = 0, /**< no orientation change */
+   EVAS_IMAGE_ORIENT_0 = 0, /**< no orientation change */
+   EVAS_IMAGE_ORIENT_90 = 1, /**< orient 90 degrees clockwise*/
+   EVAS_IMAGE_ORIENT_180 = 2, /**< orient 180 degrees clockwise */
+   EVAS_IMAGE_ORIENT_270 = 3, /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise)*/
+   EVAS_IMAGE_FLIP_HORIZONTAL = 4, /**< flip image horizontally */
+   EVAS_IMAGE_FLIP_VERTICAL = 5, /**< flip image vertically */
+   EVAS_IMAGE_FLIP_TRANSPOSE = 6, /**< flip image along the y = (width - x) line (bottom-left to top-right) */
+   EVAS_IMAGE_FLIP_TRANSVERSE = 7 /**< flip image along the y = x line (top-left to bottom-right) */
+} Evas_Image_Orient;
+
 typedef enum _Evas_Device_Class
 {
    EVAS_DEVICE_CLASS_NONE, /**< Not a device @since 1.8 */

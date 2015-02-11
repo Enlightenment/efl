@@ -14,6 +14,7 @@ EXAMPLES= evas-aspect-hints \
           evas-images \
           evas-images2 \
           evas-images3 \
+          evas-images4 \
           evas-init-shutdown \
           evas-map-utils \
           evas-object-manipulation \

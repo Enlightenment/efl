@@ -92,7 +92,8 @@ struct _Evas_Object_Image_State
    int            frame;
    int            spread;
 
-   Evas_Colorspace cspace;
+   Evas_Colorspace    cspace;
+   Evas_Image_Orient  orient;
 
    Eina_Bool      smooth_scale : 1;
    Eina_Bool      has_alpha :1;
@@ -237,6 +238,7 @@ static const Evas_Object_Image_State default_state = {
   0, //frame
   EVAS_TEXTURE_REPEAT,
   EVAS_COLORSPACE_ARGB8888,
+  EVAS_IMAGE_ORIENT_NONE,
 
   // flags
   EINA_TRUE, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE
@@ -659,6 +661,61 @@ EOLIAN static Evas_Object*
 _evas_image_source_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->cur->source;
+}
+
+EOLIAN static void
+_evas_image_orient_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orient orient)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   int iw, ih;
+
+   if (o->cur->orient == orient) return;
+
+   if ((o->preloading) && (o->engine_data))
+     {
+        o->preloading = EINA_FALSE;
+        ENFN->image_data_preload_cancel(ENDT, o->engine_data, eo_obj);
+     }
+
+   if(o->engine_data)
+     {
+        int stride = 0;
+
+        o->engine_data = ENFN->image_orient_set(ENDT, o->engine_data, orient);
+        if(o->engine_data)
+          {
+             EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+              state_write->orient = orient;
+             EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+
+             if (ENFN->image_stride_get)
+               ENFN->image_stride_get(ENDT, o->engine_data, &stride);
+             else
+               stride = o->cur->image.w * 4;
+             if (o->cur->image.stride != stride)
+               {
+                  EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+                   state_write->image.stride = stride;
+                  EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+               }
+             o->written = EINA_TRUE;
+          }
+        ENFN->image_size_get(ENDT, o->engine_data, &iw, &ih);
+        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+          {
+             state_write->image.w = iw;
+             state_write->image.h = ih;
+          }
+        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+     }
+   o->changed = EINA_TRUE;
+   evas_object_change(eo_obj, obj);
+}
+
+EOLIAN static Evas_Image_Orient
+_evas_image_orient_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+{
+   return o->cur->orient;
 }
 
 EAPI Eina_Bool
@@ -3584,6 +3641,11 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
              if (!o->pixels->pixel_updates) goto done;
           }
         if (o->cur->frame != o->prev->frame)
+          {
+             evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
+             if (!o->pixels->pixel_updates) goto done;
+          }
+        if (o->cur->orient != o->prev->orient)
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
              if (!o->pixels->pixel_updates) goto done;

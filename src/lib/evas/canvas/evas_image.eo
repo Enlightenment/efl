@@ -925,6 +925,34 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image)
             int b; /*@ Bottom padding in pixels */
          }
       }
+      orient {
+         set {
+            /*@
+            Set the image orientation.
+
+            This function allows to rotate or flip the image.
+
+            @see evas_object_image_orient_get()
+            @see @ref Evas_Image_Orient
+
+            @since 1.14*/
+         }
+         get {
+            /*@
+            Get the image orientation.
+
+            @return The image orientation @ref Evas_Image_Orient
+
+            @see evas_object_image_orient_set()
+            @see @ref Evas_Image_Orient
+
+            @since 1.14*/
+         }
+         values {
+            Evas_Image_Orient orient; /*@ The image orientation @ref Evas_Image_Orient
+            Default is #EVAS_IMAGE_ORIENT_NONE. */
+         }
+      }
    }
    methods {
       preload_begin {
