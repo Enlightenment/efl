@@ -1176,7 +1176,7 @@ _item_theme_hook(Evas_Object *obj,
                  double scale,
                  int icon_size)
 {
-   Evas_Coord mw, mh, minw, minh;
+   Evas_Coord mw = -1, mh = -1;
    Evas_Object *view = VIEW(it);
    const char *style;
 
@@ -1258,16 +1258,13 @@ _item_theme_hook(Evas_Object *obj,
           }
      }
 
-   mw = mh = minw = minh = -1;
-   if (!it->separator && !it->object)
-     elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-
    // If the min size is changed by edje signal in edc,
    //the below function should be called before the calculation.
    edje_object_message_signal_process(view);
-   edje_object_size_min_restricted_calc(view, &mw, &mh, mw, mh);
+
    if (!it->separator && !it->object)
      elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+   edje_object_size_min_restricted_calc(view, &mw, &mh, mw, mh);
    evas_object_size_hint_min_set(view, mw, mh);
 }
 
