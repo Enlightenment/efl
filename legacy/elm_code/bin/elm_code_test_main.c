@@ -6,6 +6,10 @@
  * Always put system first, then EFL, then your public header,
  * and finally your private one. */
 
+#if ENABLE_NLS
+# include <libintl.h>
+#endif
+
 #include <Ecore_Getopt.h>
 #include <Elementary.h>
 
