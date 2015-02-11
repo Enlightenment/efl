@@ -649,8 +649,9 @@ EAPI void         evas_gl_common_context_free(Evas_Engine_GL_Context *gc);
 EAPI void         evas_gl_common_context_use(Evas_Engine_GL_Context *gc);
 EAPI void         evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc);
 EAPI void         evas_gl_common_context_done(Evas_Engine_GL_Context *gc);
-
-EAPI void         evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot);
+//Tizen Only : when multi window are shown, latest window does not show. so force call glviewport when window resizing occur
+//EAPI void         evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot);
+EAPI void         evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot, int force_update);
 EAPI int          evas_gl_common_buffer_dump(Evas_Engine_GL_Context *gc, const char* dname, const char* fname, int frame, const char* suffix);
 
 EAPI void         evas_gl_preload_render_lock(evas_gl_make_current_cb make_current, void *engine_data);
@@ -668,7 +669,9 @@ typedef void (*Evas_GL_Common_Context_Call)(Evas_Engine_GL_Context *gc);
 typedef Evas_GL_Image *(*Evas_GL_Common_Image_New_From_Data)(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, Evas_Colorspace cspace);
 typedef void (*Evas_GL_Preload_Render_Call)(evas_gl_make_current_cb make_current, void *engine_data);
 typedef Evas_Engine_GL_Context *(*Evas_GL_Common_Context_New)(void);
-typedef void (*Evas_GL_Common_Context_Resize_Call)(Evas_Engine_GL_Context *gc, int w, int h, int rot);
+//Tizen Only : when multi window are shown, latest window does not show. so force call glviewport when window resizing occur
+//typedef void (*Evas_GL_Common_Context_Resize_Call)(Evas_Engine_GL_Context *gc, int w, int h, int rot);
+typedef void (*Evas_GL_Common_Context_Resize_Call)(Evas_Engine_GL_Context *gc, int w, int h, int rot,int force_update);
 typedef int (*Evas_GL_Common_Buffer_Dump_Call)(Evas_Engine_GL_Context *gc,const char* dname, const char* fname, int frame, const char* suffix);
 typedef void (*Evas_Gl_Symbols)(void *(*GetProcAddress)(const char *sym));
 

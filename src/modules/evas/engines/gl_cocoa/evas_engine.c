@@ -167,9 +167,9 @@ eng_output_resize(void *data, int w, int h)
    re = (Render_Engine *)data;
    re->win->width = w;
    re->win->height = h;
-   
+
    eng_window_resize(re->win, w, h);
-   evas_gl_common_context_resize(re->win->gl_context, w, h, 0);
+   evas_gl_common_context_resize(re->win->gl_context, w, h, 0,1);
 }
 
 static void

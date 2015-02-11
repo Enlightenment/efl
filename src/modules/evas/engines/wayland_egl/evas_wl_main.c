@@ -177,14 +177,14 @@ eng_window_new(Evas *evas, Evas_Engine_Info_Wayland_Egl *einfo, int w, int h, Re
    gw->gl_context->eglctxt = gw->egl_context[0];
 
    eng_window_use(gw);
-   glsym_evas_gl_common_context_resize(gw->gl_context, w, h, gw->rot);
+   glsym_evas_gl_common_context_resize(gw->gl_context, w, h, gw->rot,1);
 
    gw->surf = EINA_TRUE;
 
    return gw;
 }
 
-void 
+void
 eng_window_free(Outbuf *gw)
 {
    int ref = 0;
@@ -222,7 +222,7 @@ eng_window_free(Outbuf *gw)
    free(gw);
 }
 
-void 
+void
 eng_window_use(Outbuf *gw)
 {
    Eina_Bool force = EINA_FALSE;
@@ -260,7 +260,7 @@ eng_window_use(Outbuf *gw)
    if (gw)
      {
         glsym_evas_gl_common_context_use(gw->gl_context);
-        glsym_evas_gl_common_context_resize(gw->gl_context, gw->w, gw->h, gw->rot);
+        glsym_evas_gl_common_context_resize(gw->gl_context, gw->w, gw->h, gw->rot,0);
      }
 }
 
@@ -319,7 +319,7 @@ eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth EIN
    ob->h = h;
    ob->rot = rot;
    eng_window_use(ob);
-   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot);
+   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot,1);
 
    if (ob->win)
      {

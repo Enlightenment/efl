@@ -197,7 +197,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
         eng_window_free(gw);
         return NULL;
      }
-   
+
    context = _tls_context_get();
    gw->egl_context[0] = eglCreateContext
      (gw->egl_disp, gw->egl_config, context, context_attrs);
@@ -207,9 +207,10 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
         eng_window_free(gw);
         return NULL;
      }
+
    if (context == EGL_NO_CONTEXT)
      _tls_context_set(gw->egl_context[0]);
-   
+
    if (eglMakeCurrent(gw->egl_disp,
                       gw->egl_surface[0],
                       gw->egl_surface[0],
@@ -440,7 +441,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    gw->gl_context->eglctxt = gw->egl_context[0];
 #endif
    eng_window_use(gw);
-   glsym_evas_gl_common_context_resize(gw->gl_context, w, h, rot);
+   glsym_evas_gl_common_context_resize(gw->gl_context, w, h, rot,1);
    gw->surf = 1;
    return gw;
 }
@@ -1077,7 +1078,7 @@ eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth EIN
    ob->h = h;
    ob->rot = rot;
    eng_window_use(ob);
-   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot);
+   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot,1);
 }
 
 int
@@ -1135,7 +1136,7 @@ eng_outbuf_region_first_rect(Outbuf *ob)
 
    glsym_evas_gl_common_context_resize(ob->gl_context,
                                  ob->w, ob->h,
-                                 ob->rot);
+                                 ob->rot,0);
 
    glsym_evas_gl_common_context_flush(ob->gl_context);
    glsym_evas_gl_common_context_newframe(ob->gl_context);
@@ -1285,7 +1286,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode)
           }
      }
    else
-      eglSwapBuffers(ob->egl_disp, ob->egl_surface[0]);
+     eglSwapBuffers(ob->egl_disp, ob->egl_surface[0]);
 
 //xx   if (!safe_native) eglWaitGL();
    if (ob->info->callback.post_swap)

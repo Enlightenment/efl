@@ -490,7 +490,7 @@ _sdl_output_setup(int w, int h, int fullscreen EINA_UNUSED, int noframe EINA_UNU
    if (!ob->gl_context) goto on_error;
 
    glsym_evas_gl_common_context_use(ob->gl_context);
-   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, ob->gl_context->rot);
+   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, ob->gl_context->rot,1);
 
    /* End GL Initialization */
    return ob;

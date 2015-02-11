@@ -225,7 +225,7 @@ eng_window_new(Evas_Engine_Info_GL_Drm *info, Evas *e, struct gbm_device *gbm, s
    gw->gl_context->eglctxt = gw->egl_context[0];
 
    eng_window_use(gw);
-   glsym_evas_gl_common_context_resize(gw->gl_context, w, h, rot);
+   glsym_evas_gl_common_context_resize(gw->gl_context, w, h, rot,1);
 
    gw->surf = EINA_TRUE;
 
@@ -435,7 +435,7 @@ eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth EIN
    ob->h = h;
    ob->rot = rot;
    eng_window_use(ob);
-   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot);
+   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot,1);
 
    //TODO: need drm gbm surface destroy & re-create.?
 }
@@ -482,7 +482,7 @@ eng_outbuf_region_first_rect(Outbuf *ob)
    eng_window_use(ob);
    if (!_re_wincheck(ob)) return EINA_TRUE;
 
-   glsym_evas_gl_common_context_resize(ob->gl_context, ob->w, ob->h, ob->rot);
+   glsym_evas_gl_common_context_resize(ob->gl_context, ob->w, ob->h, ob->rot,0);
    glsym_evas_gl_common_context_flush(ob->gl_context);
    glsym_evas_gl_common_context_newframe(ob->gl_context);
 

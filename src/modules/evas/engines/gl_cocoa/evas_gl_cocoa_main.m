@@ -76,7 +76,7 @@ eng_window_new(void *window,
 	return NULL;
      }
    evas_gl_common_context_use(gw->gl_context);
-   evas_gl_common_context_resize(gw->gl_context, w, h, 0);
+   evas_gl_common_context_resize(gw->gl_context, w, h, 0,1);
 
    return gw;
 }
