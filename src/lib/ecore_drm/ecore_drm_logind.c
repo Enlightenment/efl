@@ -148,6 +148,7 @@ _ecore_drm_logind_cb_activate(void *data, int type EINA_UNUSED, void *event)
    Ecore_Drm_Event_Activate *ev;
    Ecore_Drm_Device *dev;
    Ecore_Drm_Output *output;
+   Ecore_Drm_Input *input;
    Eina_List *l;
 
    if ((!event) || (!data)) return ECORE_CALLBACK_RENEW;
@@ -160,10 +161,18 @@ _ecore_drm_logind_cb_activate(void *data, int type EINA_UNUSED, void *event)
         /* set output mode */
         EINA_LIST_FOREACH(dev->outputs, l, output)
            ecore_drm_output_enable(output);
+
+        /* enable inputs */
+        EINA_LIST_FOREACH(dev->inputs, l, input)
+          ecore_drm_inputs_enable(input);
      }
    else
      {
         Ecore_Drm_Sprite *sprite;
+
+        /* disable inputs */
+        EINA_LIST_FOREACH(dev->inputs, l, input)
+          ecore_drm_inputs_disable(input);
 
         /* disable hardware cursor */
         EINA_LIST_FOREACH(dev->outputs, l, output)
