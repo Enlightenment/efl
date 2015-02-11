@@ -125,13 +125,9 @@ pop_str(Eo_Lexer *ls)
 }
 
 static Eina_Bool
-compare_class_file(const char *fn_ext, const char *fn_noext)
+compare_class_file(const char *fn1, const char *fn2)
 {
-   int fnlen = strlen(fn_ext);
-   int cnlen = strlen(fn_noext);
-   if (cnlen != (fnlen - 3))
-     return EINA_FALSE;
-   return !strncmp(fn_noext, fn_ext, cnlen);
+   return !strcmp(fn1, fn2);
 }
 
 static void

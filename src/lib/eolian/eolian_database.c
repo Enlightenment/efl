@@ -120,12 +120,10 @@ join_path(const char *path, const char *file)
 static void
 _scan_cb(const char *name, const char *path, void *data EINA_UNUSED)
 {
-   size_t len;
    Eina_Bool is_eo = eina_str_has_suffix(name, EO_SUFFIX);
    if (!is_eo && !eina_str_has_suffix(name, EOT_SUFFIX)) return;
-   len = strlen(name) - (is_eo ? sizeof(EO_SUFFIX) : sizeof(EOT_SUFFIX)) + 1;
    eina_hash_add(is_eo ? _filenames : _tfilenames,
-                 eina_stringshare_add_length(name, len), join_path(path, name));
+                 eina_stringshare_add(name), join_path(path, name));
 }
 
 EAPI Eina_Bool
@@ -155,6 +153,7 @@ database_class_to_filename(const char *cname)
    Eina_Strbuf *strbuf = eina_strbuf_new();
    eina_strbuf_append(strbuf, cname);
    eina_strbuf_replace_all(strbuf, ".", "_");
+   eina_strbuf_append(strbuf, ".eo");
 
    ret = eina_strbuf_string_steal(strbuf);
    eina_strbuf_free(strbuf);
