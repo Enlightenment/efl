@@ -20,14 +20,12 @@
 # include "config.h"
 #endif
 
-#ifdef EFL_HAVE_POSIX_THREADS
-# include <pthread.h>
-# ifdef __linux__
-#  include <sched.h>
-#  include <sys/time.h>
-#  include <sys/resource.h>
-#  include <errno.h>
-# endif
+#include <pthread.h>
+#ifdef __linux__
+# include <sched.h>
+# include <sys/time.h>
+# include <sys/resource.h>
+# include <errno.h>
 #endif
 
 #ifdef EFL_HAVE_WIN32_THREADS
@@ -47,7 +45,6 @@
 EAPI void
 eina_sched_prio_drop(void)
 {
-#ifdef EFL_HAVE_POSIX_THREADS
    struct sched_param param;
    int pol, ret;
    pthread_t pthread_id;
@@ -92,11 +89,4 @@ eina_sched_prio_drop(void)
           }
      }
 # endif
-#elif defined EFL_HAVE_WIN32_THREADS
-   if (!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL))
-     EINA_LOG_ERR("Can not set thread priority");
-#else
-   EINA_LOG_ERR("Eina does not have support for threads enabled"
-                "or it doesn't support setting scheduler priorities");
-#endif
 }

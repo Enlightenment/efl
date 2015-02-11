@@ -35,9 +35,7 @@
 # elif defined (__linux__) || defined(__GLIBC__)
 #  include <sched.h>
 # endif
-# ifdef EFL_HAVE_POSIX_THREADS
-#  include <pthread.h>
-# endif
+# include <pthread.h>
 
 # define TH_MAX 8
 #endif

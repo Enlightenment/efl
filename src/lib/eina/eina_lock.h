@@ -97,11 +97,7 @@ typedef enum
  */
 typedef void (*Eina_TLS_Delete_Cb)(void *ptr);
 
-#ifdef _WIN32
-# include "eina_inline_lock_win32.x"
-#else
 # include "eina_inline_lock_posix.x"
-#endif
 
 /**
  * @brief A type definition for warning that a function was called from
