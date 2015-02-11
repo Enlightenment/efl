@@ -3,15 +3,6 @@
 
 static Evas_Object *slideshow, *bt_start, *bt_stop;
 static Elm_Slideshow_Item_Class itc;
-static const char *img1 = PACKAGE_DATA_DIR"/images/logo.png";
-static const char *img2 = PACKAGE_DATA_DIR"/images/plant_01.jpg";
-static const char *img3 = PACKAGE_DATA_DIR"/images/rock_01.jpg";
-static const char *img4 = PACKAGE_DATA_DIR"/images/rock_02.jpg";
-static const char *img5 = PACKAGE_DATA_DIR"/images/sky_01.jpg";
-static const char *img6 = PACKAGE_DATA_DIR"/images/sky_04.jpg";
-static const char *img7 = PACKAGE_DATA_DIR"/images/wood_01.jpg";
-static const char *img8 = PACKAGE_DATA_DIR"/images/mystrale.jpg";
-static const char *img9 = PACKAGE_DATA_DIR"/images/mystrale_2.jpg";
 
 static void
 _notify_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -111,6 +102,26 @@ test_slideshow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    const Eina_List *l;
    const char *transition, *layout;
    Elm_Object_Item *slide_last_it;
+
+   char img1[PATH_MAX];
+   char img2[PATH_MAX];
+   char img3[PATH_MAX];
+   char img4[PATH_MAX];
+   char img5[PATH_MAX];
+   char img6[PATH_MAX];
+   char img7[PATH_MAX];
+   char img8[PATH_MAX];
+   char img9[PATH_MAX];
+
+   snprintf(img1, sizeof(img1), "%s/images/logo.png", elm_app_data_dir_get());
+   snprintf(img2, sizeof(img2), "%s/images/plant_01.jpg", elm_app_data_dir_get());
+   snprintf(img3, sizeof(img3), "%s/images/rock_01.jpg", elm_app_data_dir_get());
+   snprintf(img4, sizeof(img4), "%s/images/rock_02.png", elm_app_data_dir_get());
+   snprintf(img5, sizeof(img5), "%s/images/sky_01.png", elm_app_data_dir_get());
+   snprintf(img6, sizeof(img6), "%s/images/sky_04.png", elm_app_data_dir_get());
+   snprintf(img7, sizeof(img7), "%s/images/wood_01.png", elm_app_data_dir_get());
+   snprintf(img8, sizeof(img8), "%s/images/mystrale.png", elm_app_data_dir_get());
+   snprintf(img9, sizeof(img9), "%s/images/mystrale_2.png", elm_app_data_dir_get());
 
    win = elm_win_util_standard_add("slideshow", "Slideshow");
    elm_win_autodel_set(win, EINA_TRUE);
