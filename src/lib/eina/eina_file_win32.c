@@ -372,7 +372,7 @@ eina_file_real_close(Eina_File *file)
         free(map);
      }
 
-   if (file->global_map != MAP_FAILED)
+   if (file->global_map != MAP_FAILED && file->handle != NULL)
      UnmapViewOfFile(file->global_map);
 
    if (file->fm) CloseHandle(file->fm);
@@ -728,6 +728,17 @@ eina_file_open(const char *path, Eina_Bool shared)
 
    if (handle == INVALID_HANDLE_VALUE)
      {
+        LPVOID lpMsgBuf;
+
+        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                      FORMAT_MESSAGE_FROM_SYSTEM |
+                      FORMAT_MESSAGE_IGNORE_INSERTS,
+                      NULL,
+                      GetLastError(),
+                      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                      (LPTSTR) &lpMsgBuf,
+                      0, NULL);
+
         switch (GetLastError())
           {
            case ERROR_FILE_NOT_FOUND:
