@@ -34,6 +34,10 @@ gl_compile_link_error(GLuint target, const char *action)
      }
 }
 
+#define ATTACH_UNIFORM(p, name) do { \
+   p->uniforms.loc_##name = glGetUniformLocation(p->prog, #name); \
+   } while (0)
+
 static int
 _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
                                            const char *pname,
@@ -87,6 +91,10 @@ _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
         ERR("Abort load of program (%s)", pname);
         goto finish;
      }
+
+   ATTACH_UNIFORM(p, sample);
+   ATTACH_UNIFORM(p, yinvert);
+   ATTACH_UNIFORM(p, mask_Absolute);
 
    res = 1;
 
@@ -216,6 +224,11 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
         ERR("Abort compile of shader vert (%s): %s", name, vert->src);
         return 0;
      }
+
+   ATTACH_UNIFORM(p, sample);
+   ATTACH_UNIFORM(p, yinvert);
+   ATTACH_UNIFORM(p, mask_Absolute);
+
    return 1;
 }
 

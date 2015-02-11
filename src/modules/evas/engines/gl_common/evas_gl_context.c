@@ -1329,8 +1329,9 @@ enum _Evas_GL_Uniform_Type {
 };
 
 struct _Evas_GL_Uniform {
-   Eina_Stringshare *name;
    Evas_GL_Uniform_Type type;
+   Eina_Stringshare *name; // May be NULL if location was found at link time
+   GLint location;
    union {
       GLfloat f;
       GLfloat vec2[2];
@@ -1339,15 +1340,17 @@ struct _Evas_GL_Uniform {
 };
 
 static inline void
-push_uniform(Evas_Engine_GL_Context *gc, int n, Evas_GL_Uniform_Type type, const char *name, ...)
+push_uniform(Evas_Engine_GL_Context *gc, int n, Evas_GL_Uniform_Type type,
+             const char *name, GLint loc, ...)
 {
    Evas_GL_Uniform *u = calloc(1, sizeof(Evas_GL_Uniform));
    va_list args;
-   va_start(args, name);
+   va_start(args, loc);
 
    if (!gc || !u) return;
-   u->name = eina_stringshare_add(name);
    u->type = type;
+   u->location = loc;
+   if (loc < 0) u->name = eina_stringshare_add(name);
 
    switch (type)
      {
@@ -1365,6 +1368,7 @@ push_uniform(Evas_Engine_GL_Context *gc, int n, Evas_GL_Uniform_Type type, const
         u->value.vec4[3] = (GLfloat) va_arg(args, double);
         break;
       default:
+        eina_stringshare_del(u->name);
         free(u);
         va_end(args);
         return;
@@ -1378,12 +1382,18 @@ static inline void
 shader_array_uniforms_set(Evas_Engine_GL_Context *gc, int n)
 {
    Evas_GL_Uniform *u;
+   GLint loc;
 
    if (!gc || !gc->pipe[n].array.uniforms) return;
    EINA_LIST_FREE(gc->pipe[n].array.uniforms, u)
      {
-        GLint loc = glGetUniformLocation(gc->pipe[n].shader.cur_prog, u->name);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "glUniform");
+        if (u->location >= 0)
+          loc = u->location;
+        else
+          {
+             loc = glGetUniformLocation(gc->pipe[n].shader.cur_prog, u->name);
+             GLERR(__FUNCTION__, __FILE__, __LINE__, "glGetUniformLocation");
+          }
         if (loc >= 0)
           {
              switch (u->type)
@@ -1406,7 +1416,8 @@ shader_array_uniforms_set(Evas_Engine_GL_Context *gc, int n)
      }
 }
 
-#define PUSH_UNIFORM(pn, type, name, ...) push_uniform(gc, pn, type, name, __VA_ARGS__)
+#define PUSH_UNIFORM(pn, shader, type, name, ...) \
+   push_uniform(gc, pn, type, #name, gc->shared->shader[shader].uniforms.loc_##name, __VA_ARGS__)
 
 #ifdef GLPIPES
 static int
@@ -2098,7 +2109,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
      {
         double samx = (double)(sw) / (double)(tex->pt->w * w * 4);
         double samy = (double)(sh) / (double)(tex->pt->h * h * 4);
-        PUSH_UNIFORM(pn, EVAS_GL_UNIFORM_VEC2, "sample", samx, samy);
+        PUSH_UNIFORM(pn, shader, EVAS_GL_UNIFORM_VEC2, sample, samx, samy);
      }
 
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
@@ -2879,8 +2890,8 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
         if (mdw) glmdw = (double) gw / (double) mdw;
         if (mdh) glmdh = (double) gh / (double) mdh;
 
-        PUSH_UNIFORM(pn, EVAS_GL_UNIFORM_VEC4, "mask_Absolute", glmdx, glmdy, glmdw, glmdh);
-        PUSH_UNIFORM(pn, EVAS_GL_UNIFORM_FLOAT, "yinvert", yinv);
+        PUSH_UNIFORM(pn, shader, EVAS_GL_UNIFORM_VEC4, mask_Absolute, glmdx, glmdy, glmdw, glmdh);
+        PUSH_UNIFORM(pn, shader, EVAS_GL_UNIFORM_FLOAT, yinvert, yinv);
 
         //DBG("Orig %d,%d - %dx%d --> %f,%f - %f x %f", mdx, mdy, mdw, mdh,
         //    glmdx, glmdy, glmdw, glmdh);

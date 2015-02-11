@@ -301,6 +301,11 @@ struct _Evas_GL_Program
    GLuint vert, frag, prog;
 
    int tex_count;
+   struct {
+      GLint loc_sample;
+      GLint loc_yinvert;
+      GLint loc_mask_Absolute;
+   } uniforms;
 };
 
 struct _Evas_GL_Program_Source
