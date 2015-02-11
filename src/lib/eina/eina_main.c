@@ -60,7 +60,6 @@
 #include "eina_list.h"
 #include "eina_matrixsparse.h"
 #include "eina_array.h"
-#include "eina_counter.h"
 #include "eina_benchmark.h"
 #include "eina_magic.h"
 #include "eina_rectangle.h"
@@ -138,7 +137,6 @@ EAPI Eina_Inlist *_eina_tracking = NULL;
    S(ustringshare);
    S(matrixsparse);
    S(convert);
-   S(counter);
    S(benchmark);
    S(rectangle);
    S(strbuf);
@@ -183,7 +181,6 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(ustringshare),
    S(matrixsparse),
    S(convert),
-   S(counter),
    S(benchmark),
    S(rectangle),
    S(strbuf),
