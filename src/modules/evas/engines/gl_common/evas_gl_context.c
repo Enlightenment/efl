@@ -1251,6 +1251,27 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
    gc->pipe[n].array.texm[nm++] = u; \
    gc->pipe[n].array.texm[nm++] = v; } while(0)
 
+#define PUSH_6_VERTICES(pn, x, y, w, h) do { \
+   PUSH_VERTEX(pn, x    , y    , 0); PUSH_VERTEX(pn, x + w, y    , 0); \
+   PUSH_VERTEX(pn, x    , y + h, 0); PUSH_VERTEX(pn, x + w, y    , 0); \
+   PUSH_VERTEX(pn, x + w, y + h, 0); PUSH_VERTEX(pn, x    , y + h, 0); \
+   } while (0)
+#define PUSH_6_TEXUV(pn, x1, y1, x2, y2) do { \
+   PUSH_TEXUV(pn, x1, y1); PUSH_TEXUV(pn, x2, y1); PUSH_TEXUV(pn, x1, y2); \
+   PUSH_TEXUV(pn, x2, y1); PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x1, y2); \
+   } while (0)
+#define PUSH_6_TEXUV2(pn, x1, y1, x2, y2) do { \
+   PUSH_TEXUV2(pn, x1, y1); PUSH_TEXUV2(pn, x2, y1); PUSH_TEXUV2(pn, x1, y2); \
+   PUSH_TEXUV2(pn, x2, y1); PUSH_TEXUV2(pn, x2, y2); PUSH_TEXUV2(pn, x1, y2); \
+   } while (0)
+#define PUSH_6_TEXUV3(pn, x1, y1, x2, y2) do { \
+   PUSH_TEXUV3(pn, x1, y1); PUSH_TEXUV3(pn, x2, y1); PUSH_TEXUV3(pn, x1, y2); \
+   PUSH_TEXUV3(pn, x2, y1); PUSH_TEXUV3(pn, x2, y2); PUSH_TEXUV3(pn, x1, y2); \
+   } while (0)
+#define PUSH_6_TEXA(pn, x1, y1, x2, y2) do { \
+   PUSH_TEXA(pn, x1, y1); PUSH_TEXA(pn, x2, y1); PUSH_TEXA(pn, x1, y2); \
+   PUSH_TEXA(pn, x2, y1); PUSH_TEXA(pn, x2, y2); PUSH_TEXA(pn, x1, y2); \
+   } while (0)
 #define PUSH_6_COLORS(pn, r, g, b, a) \
    do { int i; for (i = 0; i < 6; i++) PUSH_COLOR(pn, r, g, b, a); } while(0)
 
@@ -1821,17 +1842,8 @@ again:
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
-
-   PUSH_VERTEX(pn, x    , y    , 0);
-   PUSH_VERTEX(pn, x + w, y    , 0);
-   PUSH_VERTEX(pn, x    , y + h, 0);
-
-   PUSH_VERTEX(pn, x + w, y    , 0);
-   PUSH_VERTEX(pn, x + w, y + h, 0);
-   PUSH_VERTEX(pn, x    , y + h, 0);
-
+   PUSH_6_VERTICES(pn, x, y, w, h);
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
-
    PUSH_6_COLORS(pn, r, g, b, a);
 }
 
@@ -2089,21 +2101,8 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
         ty2 = ((double)(offsety) + sy + sh) / (double)pt->h;
      }
 
-   PUSH_VERTEX(pn, x    , y    , 0);
-   PUSH_VERTEX(pn, x + w, y    , 0);
-   PUSH_VERTEX(pn, x    , y + h, 0);
-
-   PUSH_TEXUV(pn, tx1, ty1);
-   PUSH_TEXUV(pn, tx2, ty1);
-   PUSH_TEXUV(pn, tx1, ty2);
-
-   PUSH_VERTEX(pn, x + w, y    , 0);
-   PUSH_VERTEX(pn, x + w, y + h, 0);
-   PUSH_VERTEX(pn, x    , y + h, 0);
-
-   PUSH_TEXUV(pn, tx2, ty1);
-   PUSH_TEXUV(pn, tx2, ty2);
-   PUSH_TEXUV(pn, tx1, ty2);
+   PUSH_6_VERTICES(pn, x, y, w, h);
+   PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
 
    if (sam)
      {
@@ -2181,24 +2180,9 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
         ty2 = ((double)(tex->y) + sy + sh) / (double)tex->pt->h;
      }
 
-   PUSH_VERTEX(pn, x    , y    , 0);
-   PUSH_VERTEX(pn, x + w, y    , 0);
-   PUSH_VERTEX(pn, x    , y + h, 0);
-
-   PUSH_TEXUV(pn, tx1, ty1);
-   PUSH_TEXUV(pn, tx2, ty1);
-   PUSH_TEXUV(pn, tx1, ty2);
-
-   PUSH_VERTEX(pn, x + w, y    , 0);
-   PUSH_VERTEX(pn, x + w, y + h, 0);
-   PUSH_VERTEX(pn, x    , y + h, 0);
-
-   PUSH_TEXUV(pn, tx2, ty1);
-   PUSH_TEXUV(pn, tx2, ty2);
-   PUSH_TEXUV(pn, tx1, ty2);
-
+   PUSH_6_VERTICES(pn, x, y, w, h);
+   PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
-
    PUSH_6_COLORS(pn, r, g, b, a);
 }
 
@@ -2269,40 +2253,11 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
    t2x2 = ((sx + sw) / 2) / (double)tex->ptu->w;
    t2y2 = ((sy + sh) / 2) / (double)tex->ptu->h;
 
-   PUSH_VERTEX(pn, x    , y    , 0);
-   PUSH_VERTEX(pn, x + w, y    , 0);
-   PUSH_VERTEX(pn, x    , y + h, 0);
-
-   PUSH_TEXUV(pn, tx1, ty1);
-   PUSH_TEXUV(pn, tx2, ty1);
-   PUSH_TEXUV(pn, tx1, ty2);
-
-   PUSH_TEXUV2(pn, t2x1, t2y1);
-   PUSH_TEXUV2(pn, t2x2, t2y1);
-   PUSH_TEXUV2(pn, t2x1, t2y2);
-
-   PUSH_TEXUV3(pn, t2x1, t2y1);
-   PUSH_TEXUV3(pn, t2x2, t2y1);
-   PUSH_TEXUV3(pn, t2x1, t2y2);
-
-   PUSH_VERTEX(pn, x + w, y    , 0);
-   PUSH_VERTEX(pn, x + w, y + h, 0);
-   PUSH_VERTEX(pn, x    , y + h, 0);
-
-   PUSH_TEXUV(pn, tx2, ty1);
-   PUSH_TEXUV(pn, tx2, ty2);
-   PUSH_TEXUV(pn, tx1, ty2);
-
-   PUSH_TEXUV2(pn, t2x2, t2y1);
-   PUSH_TEXUV2(pn, t2x2, t2y2);
-   PUSH_TEXUV2(pn, t2x1, t2y2);
-
-   PUSH_TEXUV3(pn, t2x2, t2y1);
-   PUSH_TEXUV3(pn, t2x2, t2y2);
-   PUSH_TEXUV3(pn, t2x1, t2y2);
-
+   PUSH_6_VERTICES(pn, x, y, w, h);
+   PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
+   PUSH_6_TEXUV2(pn, t2x1, t2y1, t2x2, t2y2);
+   PUSH_6_TEXUV3(pn, t2x1, t2y1, t2x2, t2y2);
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
-
    PUSH_6_COLORS(pn, r, g, b, a);
 }
 
@@ -2372,32 +2327,10 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
    t2x2 = (sx + sw) / (double)tex->ptuv->w;
    t2y2 = (sy + sh) / (double)tex->ptuv->h;
 
-   PUSH_VERTEX(pn, x    , y    , 0);
-   PUSH_VERTEX(pn, x + w, y    , 0);
-   PUSH_VERTEX(pn, x    , y + h, 0);
-
-   PUSH_TEXUV(pn, tx1, ty1);
-   PUSH_TEXUV(pn, tx2, ty1);
-   PUSH_TEXUV(pn, tx1, ty2);
-
-   PUSH_TEXUV2(pn, t2x1, t2y1);
-   PUSH_TEXUV2(pn, t2x2, t2y1);
-   PUSH_TEXUV2(pn, t2x1, t2y2);
-
-   PUSH_VERTEX(pn, x + w, y    , 0);
-   PUSH_VERTEX(pn, x + w, y + h, 0);
-   PUSH_VERTEX(pn, x    , y + h, 0);
-
-   PUSH_TEXUV(pn, tx2, ty1);
-   PUSH_TEXUV(pn, tx2, ty2);
-   PUSH_TEXUV(pn, tx1, ty2);
-
-   PUSH_TEXUV2(pn, t2x2, t2y1);
-   PUSH_TEXUV2(pn, t2x2, t2y2);
-   PUSH_TEXUV2(pn, t2x1, t2y2);
-
+   PUSH_6_VERTICES(pn, x, y, w, h);
+   PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
+   PUSH_6_TEXUV2(pn, t2x1, t2y1, t2x2, t2y2);
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
-
    PUSH_6_COLORS(pn, r, g, b, a);
 }
 
@@ -2469,32 +2402,10 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
    t2x2 = (sx + sw) / (double)tex->ptuv->w;
    t2y2 = (sy + sh) / (double)tex->ptuv->h;
 
-   PUSH_VERTEX(pn, x    , y    , 0);
-   PUSH_VERTEX(pn, x + w, y    , 0);
-   PUSH_VERTEX(pn, x    , y + h, 0);
-
-   PUSH_TEXUV(pn, tx1, ty1);
-   PUSH_TEXUV(pn, tx2, ty1);
-   PUSH_TEXUV(pn, tx1, ty2);
-
-   PUSH_TEXUV2(pn, t2x1, t2y1);
-   PUSH_TEXUV2(pn, t2x2, t2y1);
-   PUSH_TEXUV2(pn, t2x1, t2y2);
-
-   PUSH_VERTEX(pn, x + w, y    , 0);
-   PUSH_VERTEX(pn, x + w, y + h, 0);
-   PUSH_VERTEX(pn, x    , y + h, 0);
-
-   PUSH_TEXUV(pn, tx2, ty1);
-   PUSH_TEXUV(pn, tx2, ty2);
-   PUSH_TEXUV(pn, tx1, ty2);
-
-   PUSH_TEXUV2(pn, t2x2, t2y1);
-   PUSH_TEXUV2(pn, t2x2, t2y2);
-   PUSH_TEXUV2(pn, t2x1, t2y2);
-
+   PUSH_6_VERTICES(pn, x, y, w, h);
+   PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
+   PUSH_6_TEXUV2(pn, t2x1, t2y1, t2x2, t2y2);
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
-
    PUSH_6_COLORS(pn, r, g, b, a);
 }
 
@@ -2573,32 +2484,10 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
    t2x2 = (tex->x + sx + sw) / (double)tex->pta->w;
    t2y2 = (tex->y + sy + sh) / (double)tex->pta->h;
 
-   PUSH_VERTEX(pn, x    , y    , 0);
-   PUSH_VERTEX(pn, x + w, y    , 0);
-   PUSH_VERTEX(pn, x    , y + h, 0);
-
-   PUSH_TEXUV(pn, tx1, ty1);
-   PUSH_TEXUV(pn, tx2, ty1);
-   PUSH_TEXUV(pn, tx1, ty2);
-
-   PUSH_TEXA(pn, t2x1, t2y1);
-   PUSH_TEXA(pn, t2x2, t2y1);
-   PUSH_TEXA(pn, t2x1, t2y2);
-
-   PUSH_VERTEX(pn, x + w, y    , 0);
-   PUSH_VERTEX(pn, x + w, y + h, 0);
-   PUSH_VERTEX(pn, x    , y + h, 0);
-
-   PUSH_TEXUV(pn, tx2, ty1);
-   PUSH_TEXUV(pn, tx2, ty2);
-   PUSH_TEXUV(pn, tx1, ty2);
-
-   PUSH_TEXA(pn, t2x2, t2y1);
-   PUSH_TEXA(pn, t2x2, t2y2);
-   PUSH_TEXA(pn, t2x1, t2y2);
-
+   PUSH_6_VERTICES(pn, x, y, w, h);
+   PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
+   PUSH_6_TEXA(pn, t2x1, t2y1, t2x2, t2y2);
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
-
    PUSH_6_COLORS(pn, r, g, b, a);
 }
 
