@@ -10,6 +10,8 @@ static Eina_Bool
 _ecore_drm_tty_cb_vt_signal(void *data, int type EINA_UNUSED, void *event)
 {
    Ecore_Drm_Device *dev;
+   Ecore_Drm_Input *input;
+   Eina_List *l;
    Ecore_Event_Signal_User *ev;
    siginfo_t sig;
 
@@ -21,12 +23,16 @@ _ecore_drm_tty_cb_vt_signal(void *data, int type EINA_UNUSED, void *event)
    switch (ev->number)
      {
       case 1:
+        EINA_LIST_FOREACH(dev->inputs, l, input)
+          ecore_drm_inputs_disable(input);
         ecore_drm_device_master_drop(dev);
         ioctl(dev->tty.fd, VT_RELDISP, 1);
         break;
       case 2:
         ioctl(dev->tty.fd, VT_RELDISP, VT_ACKACQ);
         ecore_drm_device_master_set(dev);
+        EINA_LIST_FOREACH(dev->inputs, l, input)
+          ecore_drm_inputs_enable(input);
         break;
       default:
         break;
