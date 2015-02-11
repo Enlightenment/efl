@@ -352,6 +352,27 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
          params {
          }
       }
+      color_pick_enable_get @const {
+         /*
+           Get status of color picking of the mesh.
+
+           @ingroup Evas_3D_Mesh
+          */
+         return: bool;
+         params {
+         }
+      }
+      color_pick_enable_set {
+         /*
+           Set posibility color picking.
+
+           @ingroup Evas_3D_Mesh
+          */
+         return: bool;
+         params {
+            @in bool _enabled;  /*@ Posibility flag */
+         }
+      }
    }
    properties {
       shade_mode {

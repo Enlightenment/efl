@@ -9,6 +9,8 @@ evas_3d_scene_data_init(Evas_3D_Scene_Public_Data *data)
    data->camera_node = NULL;
    data->light_nodes = NULL;
    data->mesh_nodes = NULL;
+   data->node_mesh_colors = NULL;
+   data->colors_node_mesh = NULL;
 }
 
 void
@@ -46,6 +48,8 @@ _evas_3d_scene_evas_3d_object_update_notify(Eo *obj EINA_UNUSED, Evas_3D_Scene_D
      {
         eo_do(pd->camera_node, evas_3d_object_update());
      }
+
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_SCENE_UPDATED, NULL));
 }
 
 EAPI Evas_3D_Scene *
@@ -65,6 +69,9 @@ _evas_3d_scene_eo_base_constructor(Eo *obj, Evas_3D_Scene_Data *pd)
    eo_do(obj, evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_SCENE));
    evas_color_set(&pd->bg_color, 0.0, 0.0, 0.0, 0.0);
    pd->shadows_enabled = EINA_FALSE;
+   pd->color_pick_enabled = EINA_FALSE;
+   pd->node_mesh_colors = NULL;
+   pd->colors_node_mesh = NULL;
 }
 
 EOLIAN static void
@@ -608,17 +615,32 @@ _node_pick(Evas_3D_Node *node, void *data)
    return EINA_TRUE;
 }
 
+static void _node_mesh_colors_free_cb(void *data)
+{
+   if (data) free(data);
+}
+
 EOLIAN static Eina_Bool
 _evas_3d_scene_pick(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
                     Evas_3D_Node **node, Evas_3D_Mesh **mesh,
                     Evas_Real *s, Evas_Real *t)
 {
-   /* TODO: Use H/W picking if availabe. */
    Evas_3D_Pick_Data data;
+   Evas_3D_Node_Data *pd_camera_node;
+   Evas_3D_Camera_Data *pd_camera;
+   Evas_3D_Object_Data *pd_parent;
+   Evas_Public_Data *e;
+   int tex, px, py;;
+   double redcomponent;
+   Eina_Stringshare *tmp;
+   Eina_Array *arr = NULL;
+   Eina_Bool update_scene = EINA_FALSE;
+
+   pd_parent = eo_data_scope_get(obj, EVAS_3D_OBJECT_CLASS);
+   e = eo_data_scope_get(pd_parent->evas, EVAS_CANVAS_CLASS);
 
    data.x      = ((x * 2.0) / (Evas_Real)pd->w) - 1.0;
    data.y      = (((pd->h - y - 1) * 2.0) / ((Evas_Real)pd->h)) - 1.0;
-
    data.picked = EINA_FALSE;
    data.z      = 1.0;
    data.node   = NULL;
@@ -626,16 +648,77 @@ _evas_3d_scene_pick(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
    data.s      = 0.0;
    data.t      = 0.0;
 
+   px = round(x * pd->w / e->viewport.w);
+   py = round((pd->h - (y * pd->h / e->viewport.h) - 1));
+
+   /*Use color pick mechanism finding node and mesh*/
+   if (pd->color_pick_enabled)
+     {
+        Evas_3D_Scene_Public_Data scene_data;
+
+        scene_data.bg_color = pd->bg_color;
+        scene_data.shadows_enabled = pd->shadows_enabled;
+        scene_data.camera_node = pd->camera_node;
+        scene_data.color_pick_enabled = pd->color_pick_enabled;
+        update_scene = eo_do(obj, evas_3d_object_dirty_get(EVAS_3D_STATE_SCENE_UPDATED));
+        if (update_scene)
+          {
+             if (pd->node_mesh_colors)
+               {
+                  eina_hash_free(pd->node_mesh_colors);
+                  eina_hash_free(pd->colors_node_mesh);
+                  pd->node_mesh_colors = NULL;
+                  pd->colors_node_mesh = NULL;
+               }
+             pd->node_mesh_colors = eina_hash_stringshared_new(_node_mesh_colors_free_cb);
+             pd->colors_node_mesh = eina_hash_stringshared_new(_node_mesh_colors_free_cb);
+          }
+        scene_data.node_mesh_colors = pd->node_mesh_colors;
+        scene_data.colors_node_mesh = pd->colors_node_mesh;
+        evas_3d_node_tree_traverse(pd->root_node,
+                                   EVAS_3D_TREE_TRAVERSE_LEVEL_ORDER, EINA_TRUE,
+                                   evas_3d_node_color_node_mesh_collect, &scene_data);
+
+        if (e->engine.func->drawable_scene_render_to_texture)
+          {
+             if (e->engine.func->drawable_scene_render_to_texture(e->engine.data.output,
+                                                         pd->surface, &scene_data))
+               {
+                  if (e->engine.func->drawable_texture_color_pick_id_get)
+                    tex = e->engine.func->drawable_texture_color_pick_id_get(pd->surface);
+                  if (e->engine.func->drawable_texture_pixel_color_get)
+                    {
+                       redcomponent = e->engine.func->drawable_texture_pixel_color_get(tex, px, py, pd->surface);
+                       tmp = eina_stringshare_printf("%f %f %f", redcomponent, 0.0, 0.0);
+                       arr = (Eina_Array *)eina_hash_find(pd->colors_node_mesh, tmp);
+                       if (arr)
+                         {
+                            if (mesh) *mesh = (Evas_3D_Mesh *)eina_array_data_get(arr, 1);
+                            if (node) *node = (Evas_3D_Node *)eina_array_data_get(arr, 0);
+                            eina_stringshare_del(tmp);
+
+                            return EINA_TRUE;
+                         }
+                       else
+                         {
+                            eina_stringshare_del(tmp);
+                            if (mesh) *mesh = NULL;
+                            if (node) *node = NULL;
+                         }
+                    }
+               }
+          }
+        return EINA_FALSE;
+     }
    /* Update the scene graph. */
    eo_do(obj, evas_3d_object_update());
-   Evas_3D_Node_Data *pd_camera_node = eo_data_scope_get(pd->camera_node, EVAS_3D_NODE_CLASS);
-   Evas_3D_Camera_Data *pd_camera = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_3D_CAMERA_CLASS);
+   pd_camera_node = eo_data_scope_get(pd->camera_node, EVAS_3D_NODE_CLASS);
+   pd_camera = eo_data_scope_get(pd_camera_node->data.camera.camera, EVAS_3D_CAMERA_CLASS);
    evas_mat4_multiply(&data.matrix_vp,
                       &pd_camera->projection,
                       &pd_camera_node->data.camera.matrix_world_to_eye);
 
    evas_ray3_init(&data.ray_world, data.x, data.y, &data.matrix_vp);
-
 
    /* Traverse tree while adding meshes into pick data structure. */
    evas_3d_node_tree_traverse(pd->root_node, EVAS_3D_TREE_TRAVERSE_LEVEL_ORDER, EINA_TRUE,
@@ -724,6 +807,22 @@ _evas_3d_scene_shadows_enable_set(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd, E
 {
    pd->shadows_enabled = _shadows_enabled;
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_SCENE_SHADOWS_ENABLED, NULL));
+}
+
+EOLIAN static Eina_Bool
+_evas_3d_scene_color_pick_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd)
+{
+   return pd->color_pick_enabled;
+}
+
+EOLIAN static Eina_Bool
+_evas_3d_scene_color_pick_enable_set(Eo *obj EINA_UNUSED, Evas_3D_Scene_Data *pd, Eina_Bool _enabled)
+{
+   if (pd->color_pick_enabled != _enabled)
+     pd->color_pick_enabled = _enabled;
+
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_SCENE_UPDATED, NULL));
+   return EINA_TRUE;
 }
 
 #include "canvas/evas_3d_scene.eo.c"

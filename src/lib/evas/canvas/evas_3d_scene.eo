@@ -136,6 +136,27 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          params {
          }
       }
+      color_pick_enable_get @const {
+         /*
+           Get status of color picking of the scene.
+
+           @ingroup Evas_3D_Scene
+          */
+         return: bool;
+         params {
+         }
+      }
+      color_pick_enable_set {
+         /*
+           Set posibility color picking.
+
+           @ingroup Evas_3D_Scene
+          */
+         return: bool;
+         params {
+            @in bool color_pick;  /*@ Posibility flag */
+         }
+      }
    }
    properties {
 

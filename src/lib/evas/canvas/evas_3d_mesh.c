@@ -120,6 +120,9 @@ _mesh_init(Evas_3D_Mesh_Data *pd)
    pd->blend_sfactor = EVAS_3D_BLEND_ONE;
    pd->blend_dfactor = EVAS_3D_BLEND_ZERO;
    pd->blending = EINA_FALSE;
+
+   pd->color_pick_key = -1.0;
+   pd->color_pick_enabled = EINA_FALSE;
 }
 
 static inline void
@@ -961,6 +964,20 @@ evas_3d_mesh_interpolate_vertex_buffer_get(Evas_3D_Mesh *mesh, int frame,
 
         *weight = 1.0;
      }
+}
+
+EOLIAN static Eina_Bool
+_evas_3d_mesh_color_pick_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
+{
+   return pd->color_pick_enabled;
+}
+EOLIAN static Eina_Bool
+_evas_3d_mesh_color_pick_enable_set(Eo *obj, Evas_3D_Mesh_Data *pd, Eina_Bool _enabled)
+{
+   if (pd->color_pick_enabled != _enabled)
+     pd->color_pick_enabled = _enabled;
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_COLOR_PICK, NULL));
+   return EINA_TRUE;
 }
 
 #include "canvas/evas_3d_mesh.eo.c"

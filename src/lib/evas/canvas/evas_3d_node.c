@@ -6,6 +6,27 @@
 
 Evas_3D_Mesh_Frame *evas_3d_mesh_frame_find(Evas_3D_Mesh_Data *pd, int frame);
 
+static Eina_Stringshare *
+_generate_unic_color_key(Evas_Color *color, Evas_Color *bg_color, Evas_3D_Node *node, Evas_3D_Mesh *mesh,
+                         Eina_Bool init)
+{
+   static unsigned short red = USHRT_MAX;
+
+   if (init) red = USHRT_MAX;
+
+   if (fabs(bg_color->r - (double)red) <= DBL_EPSILON) red--;
+
+   color->r = (double)red / USHRT_MAX;
+   color->g = 0.0;
+   color->b = 0.0;
+
+   red--;
+
+   if (red < 1) red = USHRT_MAX;
+
+   return eina_stringshare_printf("%p %p", node, mesh);
+}
+
 static inline Evas_3D_Node_Mesh *
 _node_mesh_new(Evas_3D_Node *node, Evas_3D_Mesh *mesh)
 {
@@ -791,6 +812,56 @@ evas_3d_node_mesh_collect(Evas_3D_Node *node, void *data)
    if (pd->type == EVAS_3D_NODE_TYPE_MESH)
      scene_data->mesh_nodes = eina_list_append(scene_data->mesh_nodes, node);
 
+   return EINA_TRUE;
+}
+
+Eina_Bool
+evas_3d_node_color_node_mesh_collect(Evas_3D_Node *node, void *data)
+{
+   Evas_3D_Scene_Public_Data *scene_data = (Evas_3D_Scene_Public_Data *)data;
+   Evas_3D_Node_Data *pd = eo_data_scope_get(node, MY_CLASS);
+   Evas_3D_Node_Data *pd_camera = eo_data_scope_get(scene_data->camera_node, MY_CLASS);
+   Evas_3D_Camera *camera = (Evas_3D_Camera*)pd_camera->data.camera.camera;
+
+   Eina_List *list_meshes, *l;
+   Evas_3D_Mesh *mesh;
+   Eina_Stringshare *key, *datakey;
+   Evas_Color *color;
+   Eina_Bool visible = EINA_FALSE;
+   Eina_Array *arr;
+   if (pd->type == EVAS_3D_NODE_TYPE_MESH)
+     {
+        eo_do(camera,
+              visible = evas_3d_camera_node_visible_get(scene_data->camera_node,
+                                                        node, EVAS_3D_FRUSTUM_MODE_BSPHERE));
+        if (visible)
+          {
+             eo_do (node, list_meshes = (Eina_List *)evas_3d_node_mesh_list_get());
+             EINA_LIST_FOREACH(list_meshes, l, mesh)
+               {
+                 if (eo_do(mesh, evas_3d_mesh_color_pick_enable_get()))
+                   {
+                      color = calloc(1, sizeof(Evas_Color));
+
+                      if (!eina_hash_population(scene_data->node_mesh_colors))
+                        key = _generate_unic_color_key(color, &scene_data->bg_color,
+                                                       node, mesh, EINA_TRUE);
+                      else
+                        key = _generate_unic_color_key(color, &scene_data->bg_color,
+                                                       node, mesh, EINA_FALSE);
+
+                      datakey = eina_stringshare_printf("%f %f %f", color->r, color->g, color->b);
+                      eina_hash_add(scene_data->node_mesh_colors, key, color);
+                      arr = eina_array_new(2);
+                      eina_array_push(arr, (void *)node);
+                      eina_array_push(arr, (void *)mesh);
+                      eina_hash_add(scene_data->colors_node_mesh, datakey, arr);
+                   }
+               }
+           }
+        else
+          return EINA_FALSE;
+     }
    return EINA_TRUE;
 }
 

@@ -191,11 +191,15 @@ struct _Evas_3D_Scene
    Evas_3D_Node     *root_node;
    Evas_3D_Node     *camera_node;
    Evas_Color       bg_color;
+   Eina_Bool        shadows_enabled :1;
+   Eina_Bool        color_pick_enabled :1;
 
    void             *surface;
    int               w, h;
    Eina_List        *images;
-   Eina_Bool        shadows_enabled :1;
+
+   Eina_Hash        *node_mesh_colors;
+   Eina_Hash        *colors_node_mesh;
 };
 
 struct _Evas_3D_Node_Mesh
@@ -380,6 +384,7 @@ struct _Evas_3D_Scene_Public_Data
    Eina_List        *mesh_nodes;
    Eina_Bool        shadows_enabled :1;
    Eina_Bool        color_pick_enabled :1;
+
    Eina_Hash        *node_mesh_colors;
    Eina_Hash        *colors_node_mesh;
 };
@@ -1628,6 +1633,7 @@ void _canvas_smart_objects_calculate_count_get(Eo *e, void *_pd, va_list *list);
 void evas_3d_node_traverse(Evas_3D_Node *from, Evas_3D_Node *to, Evas_3D_Node_Traverse_Type type, Eina_Bool skip, Evas_3D_Node_Func func, void *data);
 void evas_3d_node_tree_traverse(Evas_3D_Node *root, Evas_3D_Tree_Traverse_Type type, Eina_Bool skip, Evas_3D_Node_Func func, void *data);
 Eina_Bool evas_3d_node_mesh_collect(Evas_3D_Node *node, void *data);
+Eina_Bool evas_3d_node_color_node_mesh_collect(Evas_3D_Node *node, void *data);
 Eina_Bool evas_3d_node_light_collect(Evas_3D_Node *node, void *data);
 void evas_3d_node_scene_root_add(Evas_3D_Node *node, Evas_3D_Scene *scene);
 void evas_3d_node_scene_root_del(Evas_3D_Node *node, Evas_3D_Scene *scene);
