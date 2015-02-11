@@ -518,7 +518,7 @@ _elm_code_widget_elm_widget_on_focus(Eo *obj, Elm_Code_Widget_Data *pd)
    pd->focussed = elm_widget_focus_get(obj);
 
    _elm_code_widget_fill(obj);
-   return EINA_TRUE;
+   return pd->focussed;
 }
 
 EOLIAN static Eina_Bool
@@ -532,7 +532,7 @@ EOLIAN static Eina_Bool
 _elm_code_widget_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED,
                                                        Elm_Code_Widget_Data *pd EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 EOLIAN static void
