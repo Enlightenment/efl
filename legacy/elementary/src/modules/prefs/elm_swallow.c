@@ -1,10 +1,5 @@
 #include "private.h"
 
-static const char LAYOUT_EDJ[] = PACKAGE_LIB_DIR\
-                                 "/elementary/modules/prefs/"\
-                                 MODULE_ARCH\
-                                 "/elm_prefs_swallow.edj";
-
 static Elm_Prefs_Item_Type supported_types[] =
 {
    ELM_PREFS_TYPE_SWALLOW,
@@ -19,8 +14,11 @@ elm_prefs_swallow_add(const Elm_Prefs_Item_Iface *iface EINA_UNUSED,
                       Elm_Prefs_Item_Changed_Cb cb EINA_UNUSED)
 {
    Evas_Object *obj = elm_layout_add(prefs);
+   char layout_edj[PATH_MAX];
 
-   elm_layout_file_set(obj, LAYOUT_EDJ, "elm_prefs_swallow");
+   snprintf(layout_edj, sizeof(layout_edj), "%s/elementary/modules/prefs/%s/elm_prefs_swallow.edj", elm_app_lib_dir_get(), MODULE_ARCH);
+
+   elm_layout_file_set(obj, layout_edj, "elm_prefs_swallow");
 
    return obj;
 }
