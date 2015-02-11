@@ -8,9 +8,15 @@
 #include <Ecore.h>
 #include <Ecore_Con.h>
 
+char sdata[] = "Server_info";
+char cdata[] = "Client_info";
+
 Eina_Bool
 _add(void *data, int type EINA_UNUSED, void *ev)
 {
+   double timeout_val = 10, ret;
+   void *del_data;
+
    fail_if (type != ECORE_CON_EVENT_CLIENT_ADD &&
        type != ECORE_CON_EVENT_SERVER_ADD);
 
@@ -27,8 +33,13 @@ _add(void *data, int type EINA_UNUSED, void *ev)
            ecore_con_client_port_get(event->client),
            ecore_con_client_connected_get(event->client));
 
-       ecore_con_client_timeout_set(event->client, 10);
+       ecore_con_client_timeout_set(event->client, timeout_val);
+       ret = ecore_con_client_timeout_get(event->client);
+       fail_if (ret != timeout_val);
 
+       ecore_con_client_data_set(event->client, cdata);
+       del_data = ecore_con_client_data_get(event->client);
+       fail_if (strcmp((char *)del_data, cdata));
      }
    else if (type == ECORE_CON_EVENT_SERVER_ADD)
      {
@@ -54,6 +65,8 @@ _add(void *data, int type EINA_UNUSED, void *ev)
 Eina_Bool
 _del(void *data , int type EINA_UNUSED, void *ev)
 {
+   void *del_data;
+
    fail_if (type != ECORE_CON_EVENT_CLIENT_DEL &&
        type != ECORE_CON_EVENT_SERVER_DEL);
 
@@ -69,7 +82,8 @@ _del(void *data , int type EINA_UNUSED, void *ev)
        printf("Client was connected for %0.3f seconds.\n",
            ecore_con_client_uptime_get(event->client));
 
-       ecore_con_client_del(event->client);
+       del_data = ecore_con_client_del(event->client);
+       fail_if (strcmp((char *)del_data, cdata));
      }
    else if (type == ECORE_CON_EVENT_SERVER_DEL)
      {
@@ -171,7 +185,6 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name)
    Ecore_Event_Handler *handlers[6];
    void *server_data = malloc (1);
    void *client_data = malloc (1);
-   char sdata[] = "Server_info";
    double timeout_val = 10, timeout_ret;
    int ret, server_port = 1234;
    void *del_ret;
@@ -243,11 +256,13 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name)
 
    del_ret = ecore_con_server_del(server);
    fail_if (strcmp((char *)del_ret, sdata));
-
    free (server_data);
+   server_data = NULL;
+
    del_ret = ecore_con_server_del(client);
    fail_if (del_ret != client_data);
    free (client_data);
+   client_data = NULL;
 
    del_ret = ecore_event_handler_del (handlers[0]);
    fail_if (del_ret != (void *) 1);
@@ -320,8 +335,6 @@ START_TEST(ecore_test_ecore_con_dns)
 
    ret = eina_init();
    fail_if(ret != 1);
-   ret = ecore_init();
-   fail_if(ret < 1);
    ret = ecore_con_init();
    fail_if(ret != 1);
 
@@ -342,7 +355,6 @@ START_TEST(ecore_test_ecore_con_dns)
 
    ret = ecore_con_shutdown();
    fail_if(ret != 0);
-   ret = ecore_shutdown();
    ret = eina_shutdown();
 }
 END_TEST
@@ -361,7 +373,6 @@ START_TEST(ecore_test_ecore_con_shutdown_bef_init)
    fail_if(ret != 0);
 }
 END_TEST
-
 
 void ecore_test_ecore_con(TCase *tc)
 {
