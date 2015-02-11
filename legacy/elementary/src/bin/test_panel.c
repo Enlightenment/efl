@@ -92,11 +92,19 @@ _fill_list(Evas_Object *obj, Elm_Genlist_Item_Class *itc)
    Eina_List *l;
    char *real;
    char *home_env = NULL;
+   char win_home_env[PATH_MAX];
    unsigned int x = 0;
 
    if (!dirs)
      {
         home_env = getenv("HOME");
+#ifdef _WIN32
+        if(!home_env)
+          {
+             snprintf(win_home_env, sizeof(win_home_env), "%s%s", getenv("HOMEDRIVE"), getenv("HOMEPATH"));
+             home_env = strdup(win_home_env);
+          }
+#endif
         if (!home_env) return;
         if (!(d = opendir(home_env))) return;
         while ((de = readdir(d)) && (x < LIST_ITEM_MAX))
@@ -104,7 +112,8 @@ _fill_list(Evas_Object *obj, Elm_Genlist_Item_Class *itc)
              char buff[PATH_MAX];
 
              if (de->d_name[0] == '.') continue;
-             snprintf(buff, sizeof(buff), "%s/%s", getenv("HOME"), de->d_name);
+             snprintf(buff, sizeof(buff), "%s/%s", home_env, de->d_name);
+
              if (!ecore_file_is_dir(buff)) continue;
              x++;
              real = ecore_file_realpath(buff);
