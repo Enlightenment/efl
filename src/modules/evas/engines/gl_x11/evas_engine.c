@@ -1743,7 +1743,7 @@ eng_preload_make_current(void *data, void *doit)
           {
              ERR("glXMakeContextCurrent(%p, %p, %p) failed",
                  ob->info->info.display, (void *)ob->win, (void *)ob->context);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+             GLERRV("__glXMakeContextCurrent");
              return EINA_FALSE;
           }
 #endif
@@ -1758,7 +1758,7 @@ eng_preload_make_current(void *data, void *doit)
           {
              ERR("glXMakeContextCurrent(%p, None, NULL) failed",
                  ob->info->info.display);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+             GLERRV("__glXMakeContextCurrent");
              return EINA_FALSE;
           }
 #endif
@@ -1888,7 +1888,7 @@ _native_bind_cb(void *data EINA_UNUSED, void *image)
         {
           glsym_glXBindTexImage(eng_get_ob(re)->disp, n->glx_pixmap,
                                 GLX_FRONT_LEFT_EXT, NULL);
-          GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+          GLERRV("glsym_glXBindTexImage");
         }
       else
         ERR("Try glXBindTexImage on GLX with no support");
@@ -1898,7 +1898,6 @@ _native_bind_cb(void *data EINA_UNUSED, void *image)
   else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
     {
       glBindTexture(GL_TEXTURE_2D, n->ns.data.opengl.texture_id);
-      GLERR(__FUNCTION__, __FILE__, __LINE__, "");
     }
   else if (n->ns.type == EVAS_NATIVE_SURFACE_TBM)
     {
@@ -1936,7 +1935,6 @@ _native_unbind_cb(void *data EINA_UNUSED, void *image)
         {
           glsym_glXReleaseTexImage(eng_get_ob(re)->disp, n->glx_pixmap,
                                    GLX_FRONT_LEFT_EXT);
-          GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         }
       else
         ERR("Try glXReleaseTexImage on GLX with no support");
@@ -1946,7 +1944,6 @@ _native_unbind_cb(void *data EINA_UNUSED, void *image)
   else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
     {
       glBindTexture(GL_TEXTURE_2D, 0);
-      GLERR(__FUNCTION__, __FILE__, __LINE__, "");
     }
   else if (n->ns.type == EVAS_NATIVE_SURFACE_TBM)
     {
@@ -1993,7 +1990,6 @@ _native_free_cb(void *data, void *image)
                 {
                   glsym_glXReleaseTexImage(eng_get_ob(re)->disp, n->glx_pixmap,
                                            GLX_FRONT_LEFT_EXT);
-                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                 }
               else
                 ERR("Try glXReleaseTexImage on GLX with no support");
@@ -2001,7 +1997,7 @@ _native_free_cb(void *data, void *image)
           if (glsym_glXDestroyPixmap)
             {
               glsym_glXDestroyPixmap(eng_get_ob(re)->disp, n->glx_pixmap);
-              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+              GLERRV("glsym_glXDestroyPixmap");
             }
           else
             ERR("Try glXDestroyPixmap on GLX with no support");

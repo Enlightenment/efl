@@ -74,6 +74,7 @@ _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
    glAttachShader(p->prog, p->frag);
 #endif
    glsym_glProgramBinary(p->prog, formats[0], data, length);
+   GLERRV("glsym_glProgramBinary");
 
    glBindAttribLocation(p->prog, SHAD_VERTEX, "vertex");
    glBindAttribLocation(p->prog, SHAD_COLOR,  "color");
@@ -84,7 +85,6 @@ _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
    glBindAttribLocation(p->prog, SHAD_TEXM,   "tex_coordm");
 
    glGetProgramiv(p->prog, GL_LINK_STATUS, &ok);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (!ok)
      {
         gl_compile_link_error(p->prog, "load a program object");
@@ -121,14 +121,13 @@ _evas_gl_common_shader_program_binary_save(Evas_GL_Program *p,
    if (!glsym_glGetProgramBinary) return 0;
 
    glGetProgramiv(p->prog, GL_PROGRAM_BINARY_LENGTH, &length);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (length <= 0) return 0;
 
    data = malloc(length);
    if (!data) return 0;
 
    glsym_glGetProgramBinary(p->prog, length, &size, &format, data);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   GLERRV("glsym_glGetProgramBinary");
 
    if (length != size)
      {
@@ -158,12 +157,9 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
 
    glShaderSource(p->vert, 1,
                   (const char **)&(vert->src), NULL);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glCompileShader(p->vert);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    ok = 0;
    glGetShaderiv(p->vert, GL_COMPILE_STATUS, &ok);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (!ok)
      {
         gl_compile_link_error(p->vert, "compile vertex shader");
@@ -172,12 +168,9 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
      }
    glShaderSource(p->frag, 1,
                   (const char **)&(frag->src), NULL);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glCompileShader(p->frag);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    ok = 0;
    glGetShaderiv(p->frag, GL_COMPILE_STATUS, &ok);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (!ok)
      {
         gl_compile_link_error(p->frag, "compile fragment shader");
@@ -189,34 +182,26 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
 #ifdef GL_GLES
 #else
    if ((glsym_glGetProgramBinary) && (glsym_glProgramParameteri))
-      glsym_glProgramParameteri(p->prog, GL_PROGRAM_BINARY_RETRIEVABLE_HINT,
-                                GL_TRUE);
+     {
+        glsym_glProgramParameteri(p->prog, GL_PROGRAM_BINARY_RETRIEVABLE_HINT,
+                                  GL_TRUE);
+        GLERRV("glsym_glProgramParameteri");
+     }
 #endif
    glAttachShader(p->prog, p->vert);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glAttachShader(p->prog, p->frag);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    glBindAttribLocation(p->prog, SHAD_VERTEX, "vertex");
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_COLOR,  "color");
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_TEXUV,  "tex_coord");
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_TEXUV2, "tex_coord2");
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_TEXUV3, "tex_coord3");
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_TEXA, "tex_coorda");
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_TEXM, "tex_coordm");
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    glLinkProgram(p->prog);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    ok = 0;
    glGetProgramiv(p->prog, GL_LINK_STATUS, &ok);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (!ok)
      {
         gl_compile_link_error(p->prog, "link fragment and vertex shaders");
@@ -364,7 +349,11 @@ evas_gl_common_shader_program_init_done(void)
 #ifdef GL_GLES
    glReleaseShaderCompiler();
 #else
-   if (glsym_glReleaseShaderCompiler) glsym_glReleaseShaderCompiler();
+   if (glsym_glReleaseShaderCompiler)
+     {
+        glsym_glReleaseShaderCompiler();
+        GLERRV("glsym_glReleaseShaderCompiler");
+     }
 #endif
 }
 

@@ -2259,10 +2259,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
 
         // Bind to the previously bound buffer (may be 0)
         if (ctx->current_fbo)
-          {
-             glBindFramebuffer(GL_FRAMEBUFFER, ctx->current_fbo);
-             GLERRLOG();
-          }
+          glBindFramebuffer(GL_FRAMEBUFFER, ctx->current_fbo);
 
         rsc->direct.rendered = 0;
      }
@@ -2295,7 +2292,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
 
              // Bind to the previously bound buffer
              if (ctx->current_fbo)
-                glBindFramebuffer(GL_FRAMEBUFFER, ctx->current_fbo);
+               glBindFramebuffer(GL_FRAMEBUFFER, ctx->current_fbo);
           }
         rsc->direct.rendered = 0;
      }

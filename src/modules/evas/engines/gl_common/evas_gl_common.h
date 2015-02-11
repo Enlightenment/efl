@@ -682,7 +682,7 @@ typedef void (*Evas_GL_Common_Context_Resize_Call)(Evas_Engine_GL_Context *gc, i
 typedef int (*Evas_GL_Common_Buffer_Dump_Call)(Evas_Engine_GL_Context *gc,const char* dname, const char* fname, int frame, const char* suffix);
 typedef void (*Evas_Gl_Symbols)(void *(*GetProcAddress)(const char *sym));
 
-void glerr(int err, const char *file, const char *func, int line, const char *op);
+EAPI void __evas_gl_err(int err, const char *file, const char *func, int line, const char *op);
 
 void              evas_gl_common_tiling_start(Evas_Engine_GL_Context *gc,
                                               int rot, int gw, int gh,
@@ -842,15 +842,76 @@ void pt_unref(Evas_GL_Texture_Pool *pt);
 //#define GL_ERRORS 1
 
 #ifdef GL_ERRORS
-# define GLERR(fn, fl, ln, op) \
-   { \
+#include <dlfcn.h>
+static inline void
+__evas_gl_errdyn(int err, const char *file, const char *func, int line, const char *op)
+{
+   static void (*sym)(int,const char*,const char*,int,const char*) = NULL;
+   if (!sym) sym = dlsym(RTLD_DEFAULT, "__evas_gl_err");
+   sym(err, file, func, line, op);
+}
+# define GLERRV(op) \
+  { \
       int __gl_err = glGetError(); \
-      if (__gl_err != GL_NO_ERROR) glerr(__gl_err, fl, fn, ln, op); \
+      if (__gl_err != GL_NO_ERROR) \
+        __evas_gl_errdyn(__gl_err, __FILE__, __FUNCTION__, __LINE__, op); \
    }
+/* Redefine common gl funcs */
+# ifndef GL_ERRORS_NODEF
+#  define glActiveTexture(...) do { glActiveTexture(__VA_ARGS__); GLERRV("glActiveTexture"); } while(0)
+#  define glBindAttribLocation(...) do { glBindAttribLocation(__VA_ARGS__); GLERRV("glBindAttribLocation"); } while(0)
+#  define glBindBuffer(...) do { glBindBuffer(__VA_ARGS__); GLERRV("glBindBuffer"); } while(0)
+#  define glBindTexture(...) do { glBindTexture(__VA_ARGS__); GLERRV("glBindTexture"); } while(0)
+#  define glBlendFunc(...) do { glBlendFunc(__VA_ARGS__); GLERRV("glBlendFunc"); } while(0)
+#  define glBufferData(...) do { glBufferData(__VA_ARGS__); GLERRV("glBufferData"); } while(0)
+#  define glCompressedTexSubImage2D(...) do { glCompressedTexSubImage2D(__VA_ARGS__); GLERRV("glCompressedTexSubImage2D"); } while(0)
+#  define glDeleteBuffers(...) do { glDeleteBuffers(__VA_ARGS__); GLERRV("glDeleteBuffers"); } while(0)
+#  define glDepthMask(...) do { glDepthMask(__VA_ARGS__); GLERRV("glDepthMask"); } while(0)
+#  define glDisable(...) do { glDisable(__VA_ARGS__); GLERRV("glDisable"); } while(0)
+#  define glDisableVertexAttribArray(...) do { glDisableVertexAttribArray(__VA_ARGS__); GLERRV("glDisableVertexAttribArray"); } while(0)
+#  define glDrawArrays(...) do { glDrawArrays(__VA_ARGS__); GLERRV("glDrawArrays"); } while(0)
+#  define glEnable(...) do { glEnable(__VA_ARGS__); GLERRV("glEnable"); } while(0)
+#  define glEnableVertexAttribArray(...) do { glEnableVertexAttribArray(__VA_ARGS__); GLERRV("glEnableVertexAttribArray"); } while(0)
+#  define glGenBuffers(...) do { glGenBuffers(__VA_ARGS__); GLERRV("glGenBuffers"); } while(0)
+#  define glGetFloatv(...) do { glGetFloatv(__VA_ARGS__); GLERRV("glGetFloatv"); } while(0)
+#  define glGetIntegerv(...) do { glGetIntegerv(__VA_ARGS__); GLERRV("glGetIntegerv"); } while(0)
+#  define glGetUniformLocation(...) ({ GLint _x = glGetUniformLocation(__VA_ARGS__); GLERRV("glGetUniformLocation"); _x; })
+#  define glHint(...) do { glHint(__VA_ARGS__); GLERRV("glHint"); } while(0)
+#  define glReadPixels(...) do { glReadPixels(__VA_ARGS__); GLERRV("glReadPixels"); } while(0)
+#  define glScissor(...) do { glScissor(__VA_ARGS__); GLERRV("glScissor"); } while(0)
+#  define glGenFramebuffers(...) do { glGenFramebuffers(__VA_ARGS__); GLERRV("glGenFramebuffers"); } while(0)
+#  define glBindFramebuffer(...) do { glBindFramebuffer(__VA_ARGS__); GLERRV("glBindFramebuffer"); } while(0)
+#  define glEndTiling(...) do { glEndTiling(__VA_ARGS__); GLERRV("glEndTiling"); } while(0)
+#  define glGetProgramBinary(...) do { glGetProgramBinary(__VA_ARGS__); GLERRV("glGetProgramBinary"); } while(0)
+#  define glMapBuffer(...) ({ void *_x = glMapBuffer(__VA_ARGS__); GLERRV("glMapBuffer"); _x; })
+#  define glStartTiling(...) do { glStartTiling(__VA_ARGS__); GLERRV("glStartTiling"); } while(0)
+#  define glUnmapBuffer(...) do { glUnmapBuffer(__VA_ARGS__); GLERRV("glUnmapBuffer"); } while(0)
+#  define glTexParameterf(...) do { glTexParameterf(__VA_ARGS__); GLERRV("glTexParameterf"); } while(0)
+#  define glTexParameteri(...) do { glTexParameteri(__VA_ARGS__); GLERRV("glTexParameteri"); } while(0)
+#  define glTexSubImage2D(...) do { glTexSubImage2D(__VA_ARGS__); GLERRV("glTexSubImage2D"); } while(0)
+#  define glUniform1f(...) do { glUniform1f(__VA_ARGS__); GLERRV("glUniform1f"); } while(0)
+#  define glUniform1i(...) do { glUniform1i(__VA_ARGS__); GLERRV("glUniform1i"); } while(0)
+#  define glUniform2fv(...) do { glUniform2fv(__VA_ARGS__); GLERRV("glUniform2fv"); } while(0)
+#  define glUniform4fv(...) do { glUniform4fv(__VA_ARGS__); GLERRV("glUniform4fv"); } while(0)
+#  define glUniformMatrix4fv(...) do { glUniformMatrix4fv(__VA_ARGS__); GLERRV("glUniformMatrix4fv"); } while(0)
+#  define glUseProgram(...) do { glUseProgram(__VA_ARGS__); GLERRV("glUseProgram"); } while(0)
+#  define glVertexAttribPointer(...) do { glVertexAttribPointer(__VA_ARGS__); GLERRV("glVertexAttribPointer"); } while(0)
+#  define glViewport(...) do { glViewport(__VA_ARGS__); GLERRV("glViewport"); } while(0)
+#  define glPixelStorei(...) do { glPixelStorei(__VA_ARGS__); GLERRV("glPixelStorei"); } while(0)
+#  define glCompressedTexImage2D(...) do { glCompressedTexImage2D(__VA_ARGS__); GLERRV("glCompressedTexImage2D"); } while(0)
+#  define glCreateShader(...) ({ GLuint _x = glCreateShader(__VA_ARGS__); GLERRV("glCreateShader"); _x; })
+#  define glCreateProgram(...) ({ GLuint _x = glCreateProgram(__VA_ARGS__); GLERRV("glCreateProgram"); _x; })
+#  define glAttachShader(...) do { glAttachShader(__VA_ARGS__); GLERRV("glAttachShader"); } while(0)
+#  define glLinkProgram(...) do { glLinkProgram(__VA_ARGS__); GLERRV("glLinkProgram"); } while(0)
+#  define glGetProgramiv(...) do { glGetProgramiv(__VA_ARGS__); GLERRV("glGetProgramiv"); } while(0)
+#  define glGetProgramInfoLog(...) do { glGetProgramInfoLog(__VA_ARGS__); GLERRV("glGetProgramInfoLog"); } while(0)
+#  define glGetShaderiv(...) do { glGetShaderiv(__VA_ARGS__); GLERRV("glGetShaderiv"); } while(0)
+#  define glShaderSource(...) do { glShaderSource(__VA_ARGS__); GLERRV("glShaderSource"); } while(0)
+#  define glCompileShader(...) do { glCompileShader(__VA_ARGS__); GLERRV("glCompileShader"); } while(0)
+# endif
 #else
-# define GLERR(fn, fl, ln, op)
+# define GLERRV(op)
 #endif
-#define GLERRLOG() GLERR(__FUNCTION__, __FILE__, __LINE__, "")
 
 Eina_Bool evas_gl_common_module_open(void);
 void      evas_gl_common_module_close(void);
@@ -861,7 +922,6 @@ _tex_sub_2d(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt, int
    if ((w > gc->shared->info.max_texture_size) ||
        (h > gc->shared->info.max_texture_size)) return;
    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, fmt, type, pix);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 }
 
 static inline void
@@ -870,7 +930,6 @@ _comp_tex_sub_2d(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt
    if ((w > gc->shared->info.max_texture_size) ||
        (h > gc->shared->info.max_texture_size)) return;
    glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, fmt, imgsize, pix);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "glCompressedTexSubImage2D");
 }
 
 #include "evas_gl_3d_common.h"

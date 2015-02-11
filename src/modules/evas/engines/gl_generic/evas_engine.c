@@ -237,10 +237,7 @@ _native_bind_cb(void *data EINA_UNUSED, void *image)
    Evas_Native_Surface *n = im->native.data;
 
    if (n->type == EVAS_NATIVE_SURFACE_OPENGL)
-    {
-      glBindTexture(GL_TEXTURE_2D, n->data.opengl.texture_id);
-      GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-    }
+     glBindTexture(GL_TEXTURE_2D, n->data.opengl.texture_id);
 }
 
 static void
@@ -250,10 +247,7 @@ _native_unbind_cb(void *data EINA_UNUSED, void *image)
   Evas_Native_Surface *n = im->native.data;
 
   if (n->type == EVAS_NATIVE_SURFACE_OPENGL)
-    {
-      glBindTexture(GL_TEXTURE_2D, 0);
-      GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-    }
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 static void
@@ -583,7 +577,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
         if (!im->tex->pt->dyn.data)
           {
              if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+             GLERRV("secsym_eglMapImageSEC");
              return im;
           }
         im->tex->pt->dyn.checked_out++;
@@ -1343,6 +1337,7 @@ eng_gl_surface_read_pixels(void *data, void *surface,
     */
 
    glsym_glBindFramebuffer(GL_FRAMEBUFFER, im->tex->pt->fb);
+   GLERRV("glsym_glBindFramebuffer");
    if (im->tex->pt->format == GL_BGRA)
      glReadPixels(x, y, w, h, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
    else
@@ -1360,6 +1355,7 @@ eng_gl_surface_read_pixels(void *data, void *surface,
           }
      }
    glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
+   GLERRV("glsym_glBindFramebuffer");
 
    return EINA_TRUE;
 }

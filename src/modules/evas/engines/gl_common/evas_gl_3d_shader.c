@@ -1169,13 +1169,8 @@ _shader_compile(GLuint shader, const char *src)
    GLint ok;
 
    glShaderSource(shader, 1, &src, NULL);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-
    glCompileShader(shader);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-
    glGetShaderiv(shader, GL_COMPILE_STATUS, &ok);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    if (!ok)
      {
@@ -1223,18 +1218,13 @@ _program_build(E3D_Program *program, const char *vert_src, const char *frag_src)
 
    /* Attach shaders. */
    glAttachShader(program->prog, program->vert);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-
    glAttachShader(program->prog, program->frag);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    /* Link program. */
    glLinkProgram(program->prog);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    /* Check link status. */
    glGetProgramiv(program->prog, GL_LINK_STATUS, &ok);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    if (!ok)
      {

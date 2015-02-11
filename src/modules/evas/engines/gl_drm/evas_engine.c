@@ -891,7 +891,6 @@ _native_cb_bind(void *data EINA_UNUSED, void *image)
    else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
      {
         glBindTexture(GL_TEXTURE_2D, n->ns.data.opengl.texture_id);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
 }
 
@@ -907,12 +906,10 @@ _native_cb_unbind(void *data EINA_UNUSED, void *image)
    if (n->ns.type == EVAS_NATIVE_SURFACE_WL)
      {
         //glBindTexture(GL_TEXTURE_2D, 0); //really need?
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
    else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
      {
         glBindTexture(GL_TEXTURE_2D, 0);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
 }
 
