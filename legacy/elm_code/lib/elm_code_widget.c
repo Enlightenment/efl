@@ -522,14 +522,14 @@ _elm_code_widget_elm_widget_on_focus(Eo *obj, Elm_Code_Widget_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_elm_widget_focus_next_manager_is(Elm_Widget *obj EINA_UNUSED,
+_elm_code_widget_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED,
                                                   Elm_Code_Widget_Data *pd EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_elm_widget_focus_direction_manager_is(Elm_Widget *obj EINA_UNUSED,
+_elm_code_widget_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED,
                                                        Elm_Code_Widget_Data *pd EINA_UNUSED)
 {
    return EINA_FALSE;
