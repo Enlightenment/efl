@@ -1146,7 +1146,7 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
         eo_lexer_get(ls);
         break;
       case KW_at_nullable:
-        if (has_nullable)
+        if (has_nonull)
           eo_lexer_syntax_error(ls, "both nullable and nonull specified");
         CASE_LOCK(ls, nullable, "c_only qualifier");
         eo_lexer_get(ls);
