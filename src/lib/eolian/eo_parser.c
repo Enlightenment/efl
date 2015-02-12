@@ -1157,11 +1157,6 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
         goto end;
      }
 end:
-   if (ls->t.kw == KW_at_nonull)
-     {
-        par->nonull = EINA_TRUE;
-        eo_lexer_get(ls);
-     }
    check_next(ls, ';');
    if (ls->t.token == TOK_COMMENT)
      {
