@@ -18,6 +18,22 @@
  * bit related functions
  *
  */
+/**
+ * @brief Duplicate a string
+ *
+ * @param str String to be duplicated
+ * @param n size of new duplicated string
+ * @return The strndup() function returns a pointer to the duplicated string, or NULL if insufficient memory was available.
+ *
+ * This function returns a pointer to a new string which is a duplicate of the string str, 
+ * but only copies at most n bytes. If str is longer than n, only n bytes are copied,
+ * and a terminating null byte ('\0') is added.
+ *
+ * Conformity: BSD
+ *
+ * Supported OS: Windows XP.
+ */
+EAPI char *strndup(const char *str, size_t n);
 
 /**
  * @brief Return the position of the first (least significant) bit set in a word

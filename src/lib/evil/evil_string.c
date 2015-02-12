@@ -11,6 +11,21 @@
  *
  */
 
+char *
+strndup(const char *str, size_t n)
+{
+   size_t slen = strlen(str);
+   char *ret;
+
+   if (slen > n) slen = n;
+   ret = malloc (slen + 1);
+   if (!ret) return NULL;
+
+   if (slen > 0) memcpy(ret, str, slen);
+   ret[slen] = '\0';
+   return ret;
+}
+
 int ffs(int i)
 {
    int size;
