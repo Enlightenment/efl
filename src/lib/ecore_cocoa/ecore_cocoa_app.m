@@ -3,7 +3,6 @@
 static Eina_Bool
 _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
 {
-   @autoreleasepool {
         @try {
              NSEvent *e;
              do {
@@ -30,7 +29,6 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
              [NSApp reportException:except];
              // XXX Maybe use Eina_Log to report the error instead
         }
-   }
 
    return ECORE_CALLBACK_RENEW;
 }
