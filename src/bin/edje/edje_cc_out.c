@@ -386,7 +386,7 @@ check_source_links(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef, Eina_L
    EINA_LIST_FOREACH(edje_collections, l, pc_source)
      {
         /* Find sourced group */
-        if (strcmp(ep->source, pc_source->part) == 0)
+        if (ep->source && pc_source->part && strcmp(ep->source, pc_source->part) == 0)
           {
              /* Go through every part to find parts with type GROUP */
              for (i = 0; i < pc_source->parts_count; ++i)
