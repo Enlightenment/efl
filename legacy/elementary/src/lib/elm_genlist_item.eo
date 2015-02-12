@@ -169,6 +169,8 @@ class Elm_Genlist_Item(Elm_Widget_Item)
                      /*@
                       Get the index of the item. It is only valid once displayed.
 
+                      The index start from 1.
+
                       @ingroup Genlist
                       */
                 }

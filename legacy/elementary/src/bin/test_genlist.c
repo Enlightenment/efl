@@ -211,7 +211,8 @@ Eina_Bool gl_state_get(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, con
 static void
 gl_sel(void *data, Evas_Object *obj, void *event_info)
 {
-   printf("sel item data [%p] on genlist obj [%p], item pointer [%p]\n", data, obj, event_info);
+   printf("sel item data [%p] on genlist obj [%p], item pointer [%p], index [%d]\n",
+          data, obj, event_info, elm_genlist_item_index_get(event_info));
 }
 
 static void
