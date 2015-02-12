@@ -523,15 +523,15 @@ _device_handle_axis(struct libinput_device *device, struct libinput_event_pointe
 
 #ifdef LIBINPUT_HIGHER_08
    axis = LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL;
-   if (libinput_event_pointer_has_axis(event, axis)) {
+   if (libinput_event_pointer_has_axis(event, axis))
      ev->z = libinput_event_pointer_get_axis_value(event, axis);
-   }
 
    axis = LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL;
-   if (libinput_event_pointer_has_axis(event, axis)) {
-     ev->direction = 1;
-     ev->z = libinput_event_pointer_get_axis_value(event, axis);
-   }
+   if (libinput_event_pointer_has_axis(event, axis)) 
+     {
+        ev->direction = 1;
+        ev->z = libinput_event_pointer_get_axis_value(event, axis);
+     }
 #else
    axis = libinput_event_pointer_get_axis(event);
    if (axis == LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL) ev->direction = 1;
