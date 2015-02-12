@@ -823,7 +823,7 @@ _ecore_evas_object_cursor_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
 }
 
 static void
-_ecore_evas_win32_object_cursor_unset(Ecore_Evas *ee)
+_ecore_evas_win32_cursor_unset(Ecore_Evas *ee)
 {
    evas_object_event_callback_del_full(ee->prop.cursor.object, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
 }
