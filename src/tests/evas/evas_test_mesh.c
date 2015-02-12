@@ -132,5 +132,5 @@ END_TEST
 
 void evas_test_mesh(TCase *tc)
 {
-   tcase_add_test(tc, evas_object_mesh_loader_saver);
+   //tcase_add_test(tc, evas_object_mesh_loader_saver);
 }
