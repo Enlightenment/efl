@@ -200,6 +200,7 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 	if ((y + h - 1) > re->win->draw.y2) re->win->draw.y2 = y + h - 1;
      }
    re->win->draw.redraw = 1;
+   eng_window_unlock_focus(re->win);
 }
 
 static void
@@ -299,7 +300,7 @@ eng_output_flush(void *data, Evas_Render_Mode render_mode)
 #ifdef VSYNC_TO_SCREEN
    eng_window_vsync_set(1);
 #endif
-
+   eng_window_lock_focus(re->win);
    eng_window_swap_buffers(re->win);
    eng_window_unlock_focus(re->win);
 }
