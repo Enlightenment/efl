@@ -3058,6 +3058,7 @@ AM_CONDITIONAL([HAVE_EEZE_TIZEN], [test "x${want_tizen}" = "xyes"])
 
 
 #### Ecore_Drm
+have_libinput_new="no"
 EFL_LIB_START_OPTIONAL([Ecore_Drm], [test "${want_drm}" = "yes"])
 
 ### Additional options to configure
@@ -3080,6 +3081,20 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_DRM], [eina])
 
 EFL_DEPEND_PKG([ECORE_DRM], [DRM], [libdrm >= 2.4 xkbcommon >= 0.3.0 gbm])
 EFL_DEPEND_PKG([ECORE_DRM], [LIBINPUT], [libinput >= 0.6.0])
+
+# API change from 0.7 to 0.8. So we define this to support both for now.
+PKG_CHECK_EXISTS([libinput >= 0.8.0],
+                 [have_libinput_new="yes"],
+                 [have_libinput_new="no"])
+AC_MSG_CHECKING([Use new libinput API (newer than 0.8.0)])
+AC_MSG_RESULT([${have_libinput_new}])
+if test "x${have_libinput_new}" = "xyes";then
+  AC_DEFINE_UNQUOTED([LIBINPUT_HIGHER_08], [1], [libinput version >= 0.8])
+fi
+if test "x${have_libinput_new}" = "xno";then
+  AC_DEFINE_UNQUOTED([LIBINPUT_HIGHER_08], [0], [libinput version >= 0.8])
+fi
+
 
 EFL_EVAL_PKGS([ECORE_DRM])
 
