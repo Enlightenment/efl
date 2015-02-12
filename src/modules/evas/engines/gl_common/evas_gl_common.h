@@ -481,7 +481,6 @@ struct _Evas_Engine_GL_Context
          GLfloat *texa;
          GLfloat *texsam;
          GLfloat *texm;
-         Eina_List *uniforms; /* Evas_GL_Uniform */
          Eina_Bool line: 1;
          Eina_Bool use_vertex : 1;
          Eina_Bool use_color : 1;

@@ -2,16 +2,20 @@
 precision highp float;
 #endif
 attribute vec4 vertex, color;
-attribute vec2 tex_coord;
-uniform float yinvert;
+attribute vec2 tex_coord, tex_coordm, tex_sample, tex_coorda;
 uniform mat4 mvp;
 varying vec2 tex_c;
-varying vec4 mask_Position, col;
+varying vec4 mask_Position, col, mask_Absolute;
 void main()
 {
    gl_Position = mvp * vertex;
    tex_c = tex_coord;
    col = color;
 
-   mask_Position = mvp * vertex * vec4(0.5, yinvert * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);
+   // tex_coorda contains the Y-invert flag
+   // tex_coordm contains the X,Y position of the mask
+   // tex_sample contains the W,H size of the mask (inverted)
+
+   mask_Position = mvp * vertex * vec4(tex_coorda.x * 0.5, tex_coorda.y * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);
+   mask_Absolute = vec4(tex_coordm, tex_sample); // x, y, 1/w, 1/h on canvas in GL coords
 }

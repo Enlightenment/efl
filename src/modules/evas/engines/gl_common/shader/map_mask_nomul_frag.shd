@@ -11,7 +11,6 @@ varying vec4 mask_Position, mask_Absolute;
 void main()
 {
    // FIXME: Use mask coordinates within its texture
-   // FIXME: We're abusing varying where we should have uniforms
    vec2 mpos = vec2(mask_Position.xy - mask_Absolute.xy) * mask_Absolute.zw;
    gl_FragColor = texture2D(tex, tex_c.xy).bgra * texture2D(texm, mpos).a;
 }

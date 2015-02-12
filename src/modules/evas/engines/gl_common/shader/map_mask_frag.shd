@@ -6,9 +6,8 @@ precision mediump float;
 #endif
 #endif
 uniform sampler2D tex, texm;
-uniform vec4 mask_Absolute;
 varying vec2 tex_c;
-varying vec4 mask_Position, col;
+varying vec4 mask_Position, col, mask_Absolute;
 void main()
 {
    // FIXME: Use mask coordinates within its texture
