@@ -133,7 +133,9 @@ struct _Eolian_Function_Parameter
    Eolian_Parameter_Dir param_dir;
    Eina_Bool is_const_on_get :1; /* True if const in this the get property */
    Eina_Bool is_const_on_set :1; /* True if const in this the set property */
-   Eina_Bool nonull :1; /* True if this argument cannot be NULL */
+   Eina_Bool nonull :1; /* True if this argument cannot be NULL - deprecated */
+   Eina_Bool nullable :1; /* True if this argument is nullable */
+   Eina_Bool optional :1; /* True if this argument is optional */
 };
 
 struct _Eolian_Type
