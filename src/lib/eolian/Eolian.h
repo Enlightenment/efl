@@ -1010,6 +1010,26 @@ EAPI Eina_Bool eolian_parameter_const_attribute_get(const Eolian_Function_Parame
 EAPI Eina_Bool eolian_parameter_is_nonull(const Eolian_Function_Parameter *param_desc);
 
 /*
+ * @brief Indicates if a parameter is nullable.
+ *
+ * @param[in] param_desc parameter handle
+ * @return EINA_TRUE if nullable, EINA_FALSE otherwise
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_parameter_is_nullable(const Eolian_Function_Parameter *param_desc);
+
+/*
+ * @brief Indicates if a parameter is optional.
+ *
+ * @param[in] param_desc parameter handle
+ * @return EINA_TRUE if optional, EINA_FALSE otherwise
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_parameter_is_optional(const Eolian_Function_Parameter *param_desc);
+
+/*
  * @brief Get the return type of a function.
  *
  * @param[in] function_id id of the function
