@@ -1,0 +1,12 @@
+class Null {
+   methods {
+      foo {
+         params {
+            char *x;
+            char *y @nullable;
+            char *z @optional;
+            char *w @optional @nullable;
+         }
+      }
+   }
+}

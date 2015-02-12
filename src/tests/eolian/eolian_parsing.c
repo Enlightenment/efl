@@ -986,6 +986,44 @@ START_TEST(eolian_free_func)
 }
 END_TEST
 
+START_TEST(eolian_null)
+{
+   const Eolian_Class *class;
+   const Eolian_Function *func;
+   const Eolian_Function_Parameter *param;
+
+   eolian_init();
+
+   /* Parsing */
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/null.eo"));
+
+   fail_if(!(class = eolian_class_get_by_name("Null")));
+   fail_if(!(func = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
+
+   /* no qualifiers */
+   fail_if(!(param = eolian_function_parameter_get_by_name(func, "x")));
+   fail_if(eolian_parameter_is_nullable(param));
+   fail_if(eolian_parameter_is_optional(param));
+
+   /* nullable */
+   fail_if(!(param = eolian_function_parameter_get_by_name(func, "y")));
+   fail_if(!eolian_parameter_is_nullable(param));
+   fail_if(eolian_parameter_is_optional(param));
+
+   /* optional */
+   fail_if(!(param = eolian_function_parameter_get_by_name(func, "z")));
+   fail_if(eolian_parameter_is_nullable(param));
+   fail_if(!eolian_parameter_is_optional(param));
+
+   /* both */
+   fail_if(!(param = eolian_function_parameter_get_by_name(func, "w")));
+   fail_if(!eolian_parameter_is_nullable(param));
+   fail_if(!eolian_parameter_is_optional(param));
+
+   eolian_shutdown();
+}
+END_TEST
+
 void eolian_parsing_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_simple_parsing);
@@ -1003,5 +1041,6 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_enum);
    tcase_add_test(tc, eolian_class_funcs);
    tcase_add_test(tc, eolian_free_func);
+   tcase_add_test(tc, eolian_null);
 }
 
