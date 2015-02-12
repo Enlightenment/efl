@@ -15,7 +15,6 @@ _camera_node_change_notify(const Eina_Hash *hash EINA_UNUSED, const void *key,
 EOLIAN static void
 _evas_3d_camera_evas_3d_object_change_notify(Eo *obj,Evas_3D_Camera_Data *pd, Evas_3D_State state EINA_UNUSED, Evas_3D_Object *ref EINA_UNUSED)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if (pd->nodes) eina_hash_foreach(pd->nodes, _camera_node_change_notify, obj);
 }
 
@@ -75,7 +74,6 @@ EOLIAN static void
 _evas_3d_camera_eo_base_destructor(Eo *obj,
                                       Evas_3D_Camera_Data *pd)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    //evas_3d_object_unreference(&pd->base);
    if (pd->nodes) eina_hash_free(pd->nodes);
    eo_do_super(obj, MY_CLASS, eo_destructor());
@@ -95,7 +93,6 @@ EOLIAN static void
 _evas_3d_camera_projection_matrix_set(Eo *obj, Evas_3D_Camera_Data *pd,
                                          const Evas_Real *matrix)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    evas_mat4_array_set(&pd->projection, matrix);
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_CAMERA_PROJECTION, NULL));
 }
@@ -119,7 +116,6 @@ _evas_3d_camera_projection_perspective_set(Eo *obj, Evas_3D_Camera_Data *pd,
    ymax = dnear * (Evas_Real)tan((double)fovy * M_PI / 360.0);
    xmax = ymax * aspect;
 
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    evas_mat4_frustum_set(&pd->projection, -xmax, xmax, -ymax, ymax, dnear, dfar);
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_CAMERA_PROJECTION, NULL));
 }
@@ -130,7 +126,6 @@ _evas_3d_camera_projection_frustum_set(Eo *obj, Evas_3D_Camera_Data *pd,
                                           Evas_Real bottom, Evas_Real top,
                                           Evas_Real dnear, Evas_Real dfar)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    evas_mat4_frustum_set(&pd->projection, left, right, bottom, top, dnear, dfar);
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_CAMERA_PROJECTION, NULL));
 }
@@ -141,7 +136,6 @@ _evas_3d_camera_projection_ortho_set(Eo *obj, Evas_3D_Camera_Data *pd,
                                         Evas_Real bottom, Evas_Real top,
                                         Evas_Real dnear, Evas_Real dfar)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    evas_mat4_ortho_set(&pd->projection, left, right, bottom, top, dnear, dfar);
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_CAMERA_PROJECTION, NULL));
 }

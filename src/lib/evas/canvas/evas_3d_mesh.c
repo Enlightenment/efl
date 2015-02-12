@@ -182,12 +182,11 @@ _evas_3d_mesh_evas_3d_object_change_notify(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_
 }
 
 EOLIAN static void
-_evas_3d_mesh_evas_3d_object_update_notify(Eo *obj, Evas_3D_Mesh_Data *pd)
+_evas_3d_mesh_evas_3d_object_update_notify(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 {
    Eina_List *l;
    Evas_3D_Mesh_Frame *f;
 
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    EINA_LIST_FOREACH(pd->frames, l, f)
      {
         if (f->material)
@@ -260,16 +259,14 @@ _evas_3d_mesh_eo_base_constructor(Eo *obj, Evas_3D_Mesh_Data *pd)
 EOLIAN static void
 _evas_3d_mesh_eo_base_destructor(Eo *obj, Evas_3D_Mesh_Data *pd)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    //evas_3d_object_unreference(&pd->base);
    _mesh_fini(pd);
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 EOLIAN static void
-_evas_3d_mesh_shade_mode_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Shade_Mode mode)
+_evas_3d_mesh_shade_mode_set(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, Evas_3D_Shade_Mode mode)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if (pd->shade_mode != mode)
      {
         pd->shade_mode = mode;
@@ -286,7 +283,6 @@ _evas_3d_mesh_shade_mode_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 EOLIAN static void
 _evas_3d_mesh_vertex_count_set(Eo *obj, Evas_3D_Mesh_Data *pd, unsigned int count)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->vertex_count = count;
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_VERTEX_COUNT, NULL));
 }
@@ -308,7 +304,6 @@ _evas_3d_mesh_frame_add(Eo *obj, Evas_3D_Mesh_Data *pd, int frame)
         return;
      }
 
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    f = evas_3d_mesh_frame_new(obj);
 
    if (f == NULL)
@@ -330,7 +325,6 @@ _evas_3d_mesh_frame_del(Eo *obj, Evas_3D_Mesh_Data *pd, int frame)
         return;
      }
 
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->frames = eina_list_remove(pd->frames, f);
    evas_3d_mesh_frame_free(f);
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_FRAME, NULL));
@@ -350,7 +344,6 @@ _evas_3d_mesh_frame_material_set(Eo *obj, Evas_3D_Mesh_Data *pd, int frame, Evas
    if (f->material == material)
      return;
 
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if (f->material)
      {
         evas_3d_material_mesh_del(f->material, obj);
@@ -395,7 +388,6 @@ _evas_3d_mesh_frame_vertex_data_set(Eo *obj, Evas_3D_Mesh_Data *pd, int frame, E
         return;
      }
 
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if (attrib == EVAS_3D_VERTEX_POSITION)
      {
         int i = 0, j = 0, size = stride/sizeof(float);
@@ -479,7 +471,6 @@ _evas_3d_mesh_frame_vertex_data_copy_set(Eo *obj, Evas_3D_Mesh_Data *pd, int fra
         return;
      }
 
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if (attrib == EVAS_3D_VERTEX_POSITION)
      {
         element_count = 3;
@@ -608,7 +599,6 @@ _evas_3d_mesh_frame_vertex_data_map(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, 
         return NULL;
      }
 
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    f->vertices[attrib].mapped = EINA_TRUE;
    return f->vertices[attrib].data;
 }
@@ -630,7 +620,6 @@ _evas_3d_mesh_frame_vertex_data_unmap(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd
         return;
      }
 
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    f->vertices[attrib].mapped = EINA_FALSE;
 }
 
@@ -651,7 +640,6 @@ _evas_3d_mesh_frame_vertex_stride_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd
 EOLIAN static void
 _evas_3d_mesh_index_data_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Index_Format format, int count, const void *indices)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if (pd->owns_indices && pd->indices)
      free(pd->indices);
 
@@ -683,7 +671,6 @@ _evas_3d_mesh_index_data_copy_set(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, Ev
         return;
      }
 
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if (!pd->owns_indices || pd->index_size < size)
      {
         if (pd->owns_indices && pd->indices)
@@ -729,7 +716,6 @@ _evas_3d_mesh_index_data_map(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
         return NULL;
      }
 
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->index_mapped = EINA_TRUE;
    return pd->indices;
 }
@@ -743,14 +729,12 @@ _evas_3d_mesh_index_data_unmap(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
         return;
      }
 
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->index_mapped = EINA_FALSE;
 }
 
 EOLIAN static void
 _evas_3d_mesh_vertex_assembly_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Vertex_Assembly assembly)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->assembly = assembly;
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_VERTEX_ASSEMBLY, NULL));
 }
@@ -758,14 +742,12 @@ _evas_3d_mesh_vertex_assembly_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Vertex
 EOLIAN static Evas_3D_Vertex_Assembly
 _evas_3d_mesh_vertex_assembly_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    return pd->assembly;
 }
 
 EOLIAN static void
 _evas_3d_mesh_fog_color_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_Real r, Evas_Real g, Evas_Real b, Evas_Real a)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    evas_color_set(&pd->fog_color, r, g, b, a);
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_FOG, NULL));
 }
@@ -783,7 +765,6 @@ _evas_3d_mesh_fog_color_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd,
 EOLIAN static void
 _evas_3d_mesh_fog_enable_set(Eo *obj, Evas_3D_Mesh_Data *pd, Eina_Bool enabled)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->fog_enabled = enabled;
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_FOG, NULL));
 }
@@ -797,7 +778,6 @@ _evas_3d_mesh_fog_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 EOLIAN static void
 _evas_3d_mesh_blending_enable_set(Eo *obj, Evas_3D_Mesh_Data *pd, Eina_Bool blending)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->blending = blending;
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_BLENDING, NULL));
 }
@@ -811,7 +791,6 @@ _evas_3d_mesh_blending_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 EOLIAN static void
 _evas_3d_mesh_blending_func_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Blend_Func sfactor, Evas_3D_Blend_Func dfactor)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->blend_sfactor = sfactor;
    pd->blend_dfactor = dfactor;
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_BLENDING, NULL));
@@ -829,7 +808,6 @@ EOLIAN static void
 _evas_3d_mesh_mmap_set(Eo *obj, Evas_3D_Mesh_Data *pd,
                        Eina_File *file, const char *key EINA_UNUSED)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    _mesh_fini(pd);
    _mesh_init(pd);
 
@@ -843,7 +821,6 @@ _evas_3d_mesh_efl_file_file_set(Eo *obj, Evas_3D_Mesh_Data *pd,
                                 const char *file,
                                 const char *key EINA_UNUSED)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    _mesh_fini(pd);
    _mesh_init(pd);
 
@@ -861,7 +838,6 @@ _evas_3d_mesh_efl_file_save(Eo *obj, Evas_3D_Mesh_Data *pd,
 {
    if ((file == NULL) || (obj == NULL) || (pd == NULL)) return EINA_FALSE;
 
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, 0);
 
    if (f == NULL)
@@ -998,7 +974,6 @@ _evas_3d_mesh_color_pick_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 EOLIAN static Eina_Bool
 _evas_3d_mesh_color_pick_enable_set(Eo *obj, Evas_3D_Mesh_Data *pd, Eina_Bool _enabled)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if (pd->color_pick_enabled != _enabled)
      pd->color_pick_enabled = _enabled;
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_COLOR_PICK, NULL));

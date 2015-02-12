@@ -15,7 +15,6 @@ _light_node_change_notify(const Eina_Hash *hash EINA_UNUSED, const void *key,
 EOLIAN static void
 _evas_3d_light_evas_3d_object_change_notify(Eo *obj, Evas_3D_Light_Data *pd, Evas_3D_State state EINA_UNUSED, Evas_3D_Object *ref EINA_UNUSED)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if (pd->nodes)
      eina_hash_foreach(pd->nodes, _light_node_change_notify, obj);
 }
@@ -98,7 +97,6 @@ _evas_3d_light_eo_base_constructor(Eo *obj, Evas_3D_Light_Data *pd)
 EOLIAN static void
 _evas_3d_light_eo_base_destructor(Eo *obj, Evas_3D_Light_Data *pd)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if (pd->nodes)
      eina_hash_free(pd->nodes);
    eo_do_super(obj, MY_CLASS, eo_destructor());
@@ -108,7 +106,6 @@ _evas_3d_light_eo_base_destructor(Eo *obj, Evas_3D_Light_Data *pd)
 EOLIAN static void
 _evas_3d_light_directional_set(Eo *obj, Evas_3D_Light_Data *pd, Eina_Bool directional)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if (pd->directional != directional)
      {
         pd->directional = directional;
@@ -125,7 +122,6 @@ _evas_3d_light_directional_get(Eo *obj EINA_UNUSED, Evas_3D_Light_Data *pd)
 EOLIAN static void
 _evas_3d_light_ambient_set(Eo *obj, Evas_3D_Light_Data *pd, Evas_Real r, Evas_Real g, Evas_Real b, Evas_Real a)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->ambient.r = r;
    pd->ambient.g = g;
    pd->ambient.b = b;
@@ -146,7 +142,6 @@ _evas_3d_light_ambient_get(Eo *obj EINA_UNUSED, Evas_3D_Light_Data *pd, Evas_Rea
 EOLIAN static void
 _evas_3d_light_diffuse_set(Eo *obj, Evas_3D_Light_Data *pd, Evas_Real r, Evas_Real g, Evas_Real b, Evas_Real a)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->diffuse.r = r;
    pd->diffuse.g = g;
    pd->diffuse.b = b;
@@ -167,7 +162,6 @@ _evas_3d_light_diffuse_get(Eo *obj EINA_UNUSED, Evas_3D_Light_Data *pd, Evas_Rea
 EOLIAN static void
 _evas_3d_light_specular_set(Eo *obj, Evas_3D_Light_Data *pd, Evas_Real r, Evas_Real g, Evas_Real b, Evas_Real a)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->specular.r = r;
    pd->specular.g = g;
    pd->specular.b = b;
@@ -188,7 +182,6 @@ _evas_3d_light_specular_get(Eo *obj EINA_UNUSED, Evas_3D_Light_Data *pd, Evas_Re
 EOLIAN static void
 _evas_3d_light_spot_exponent_set(Eo *obj, Evas_3D_Light_Data *pd, Evas_Real exponent)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->spot_exp = exponent;
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_LIGHT_SPOT_EXP, NULL));
 }
@@ -202,7 +195,6 @@ _evas_3d_light_spot_exponent_get(Eo *obj EINA_UNUSED, Evas_3D_Light_Data *pd)
 EOLIAN static void
 _evas_3d_light_spot_cutoff_set(Eo *obj, Evas_3D_Light_Data *pd, Evas_Real cutoff)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->spot_cutoff = cutoff;
    pd->spot_cutoff_cos = cos(cutoff * M_PI / 180.0);
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_LIGHT_SPOT_CUTOFF, NULL));
@@ -217,7 +209,6 @@ _evas_3d_light_spot_cutoff_get(Eo *obj EINA_UNUSED, Evas_3D_Light_Data *pd)
 EOLIAN static void
 _evas_3d_light_attenuation_set(Eo *obj, Evas_3D_Light_Data *pd, Evas_Real constant, Evas_Real linear, Evas_Real quadratic)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    pd->atten_const = constant;
    pd->atten_linear = linear;
    pd->atten_quad = quadratic;
@@ -235,7 +226,6 @@ _evas_3d_light_attenuation_get(Eo *obj EINA_UNUSED, Evas_3D_Light_Data *pd, Evas
 EOLIAN static void
 _evas_3d_light_attenuation_enable_set(Eo *obj, Evas_3D_Light_Data *pd, Eina_Bool enable)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    if (pd->enable_attenuation != enable)
      {
         pd->enable_attenuation = enable;
@@ -253,7 +243,6 @@ EOLIAN static void
 _evas_3d_light_projection_matrix_set(Eo *obj, Evas_3D_Light_Data *pd,
                                          const Evas_Real *matrix)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    evas_mat4_array_set(&pd->projection, matrix);
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_LIGHT_PROJECTION, NULL));
 }
@@ -277,7 +266,6 @@ _evas_3d_light_projection_perspective_set(Eo *obj, Evas_3D_Light_Data *pd,
    ymax = dnear * (Evas_Real)tan((double)fovy * M_PI / 360.0);
    xmax = ymax * aspect;
 
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    evas_mat4_frustum_set(&pd->projection, -xmax, xmax, -ymax, ymax, dnear, dfar);
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_LIGHT_PROJECTION, NULL));
 }
@@ -288,7 +276,6 @@ _evas_3d_light_projection_frustum_set(Eo *obj, Evas_3D_Light_Data *pd,
                                           Evas_Real bottom, Evas_Real top,
                                           Evas_Real dnear, Evas_Real dfar)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    evas_mat4_frustum_set(&pd->projection, left, right, bottom, top, dnear, dfar);
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_LIGHT_PROJECTION, NULL));
 }
@@ -299,7 +286,6 @@ _evas_3d_light_projection_ortho_set(Eo *obj, Evas_3D_Light_Data *pd,
                                         Evas_Real bottom, Evas_Real top,
                                         Evas_Real dnear, Evas_Real dfar)
 {
-   evas_object_async_block(eo_data_scope_get(obj, EVAS_OBJECT_CLASS));
    evas_mat4_ortho_set(&pd->projection, left, right, bottom, top, dnear, dfar);
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_LIGHT_PROJECTION, NULL));
 }
