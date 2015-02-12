@@ -521,7 +521,7 @@ _device_handle_axis(struct libinput_device *device, struct libinput_event_pointe
    ev->root.x = ev->x;
    ev->root.y = ev->y;
 
-#ifdef LIBINPUT_HIGHER_08
+#if LIBINPUT_HIGHER_08
    axis = LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL;
    if (libinput_event_pointer_has_axis(event, axis))
      ev->z = libinput_event_pointer_get_axis_value(event, axis);
