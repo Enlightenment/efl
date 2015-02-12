@@ -1244,18 +1244,72 @@ group "Elm_Config" struct {
               value "key" string: "Return";
               value "action" string: "select";
               value "params" string: "";
+              group "modifiers" list {
+                 group "Elm_Config_Binding_Modifier" struct {
+                    value "mod" string: "Control";
+                    value "flag" uchar: 0;
+                 }
+              }
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
               value "key" string: "KP_Enter";
               value "action" string: "select";
               value "params" string: "";
+              group "modifiers" list {
+                 group "Elm_Config_Binding_Modifier" struct {
+                    value "mod" string: "Control";
+                    value "flag" uchar: 0;
+                 }
+              }
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;
               value "key" string: "space";
               value "action" string: "select";
               value "params" string: "";
+              group "modifiers" list {
+                 group "Elm_Config_Binding_Modifier" struct {
+                    value "mod" string: "Control";
+                    value "flag" uchar: 0;
+                 }
+              }
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Return";
+              value "action" string: "select";
+              value "params" string: "multi";
+              group "modifiers" list {
+                 group "Elm_Config_Binding_Modifier" struct {
+                    value "mod" string: "Control";
+                    value "flag" uchar: 1;
+                 }
+              }
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "KP_Enter";
+              value "action" string: "select";
+              value "params" string: "multi";
+              group "modifiers" list {
+                 group "Elm_Config_Binding_Modifier" struct {
+                    value "mod" string: "Control";
+                    value "flag" uchar: 1;
+                 }
+              }
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "space";
+              value "action" string: "select";
+              value "params" string: "multi";
+              group "modifiers" list {
+                 group "Elm_Config_Binding_Modifier" struct {
+                    value "mod" string: "Control";
+                    value "flag" uchar: 1;
+                 }
+              }
            }
            group "Elm_Config_Binding_Key" struct {
               value "context" int: 0;

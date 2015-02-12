@@ -141,6 +141,8 @@ static const char SIGNAL_GROUP_MIDDLE[] = "elm,state,group,middle";
 
 static void _item_unrealize(Elm_Gen_Item *it);
 static Eina_Bool _item_select(Elm_Gen_Item *it);
+static void _item_unselect(Elm_Gen_Item *it);
+static void _item_highlight(Elm_Gen_Item *it);
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
@@ -2863,7 +2865,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 }
 
 static Eina_Bool
-_key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
+_key_action_select(Evas_Object *obj, const char *params)
 {
    Elm_Object_Item *eo_it = NULL;
 
@@ -2871,9 +2873,53 @@ _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
    if (!eo_it) return EINA_TRUE;
    elm_genlist_item_expanded_set(eo_it, !elm_genlist_item_expanded_get(eo_it));
    ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+
+   if (sd->multi &&
+       ((sd->multi_select_mode != ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL) ||
+        (!strcmp(params, "multi"))))
+     {
+        if (!it->selected)
+          {
+             _item_highlight(it);
+             if (_item_select(it)) goto deleted;
+          }
+        else
+         _item_unselect(it);
+     }
+   else
+     {
+        if (!it->selected)
+          {
+             while (sd->selected)
+               {
+                  Elm_Object_Item *eo_sel = sd->selected->data;
+                  Elm_Gen_Item *sel = eo_data_scope_get(eo_sel, ELM_GENLIST_ITEM_CLASS);
+                  _item_unselect(sel);
+               }
+          }
+        else
+          {
+             const Eina_List *l, *l_next;
+             Elm_Object_Item *eo_it2;
+
+             EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, eo_it2)
+               {
+                  ELM_GENLIST_ITEM_DATA_GET(eo_it2, it2);
+                  if (it2 != it)
+                    _item_unselect(it2);
+               }
+          }
+        _item_highlight(it);
+        if (_item_select(it)) goto deleted;
+     }
+
    evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, EO_OBJ(it));
 
    return EINA_TRUE;
+
+deleted:
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -7670,6 +7716,7 @@ _elm_genlist_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUS
           { "move,first", "move", "first", _key_action_move},
           { "move,last", "move", "last", _key_action_move},
           { "select", "select", NULL, _key_action_select},
+          { "select,multi", "select", "multi", _key_action_select},
           { "escape", "escape", NULL, _key_action_escape},
           { NULL, NULL, NULL, NULL }
    };
