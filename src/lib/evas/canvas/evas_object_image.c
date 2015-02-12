@@ -3561,12 +3561,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
    /* if so what and where and add the appropriate redraw rectangles */
    Evas_Public_Data *e = obj->layer->evas;
 
-   if ((o->cur->fill.w < 1) || (o->cur->fill.h < 1))
-     {
-        ERR("%p has invalid fill size: %dx%d. Ignored",
-            eo_obj, o->cur->fill.w, o->cur->fill.h);
-        return;
-     }
+   if ((o->cur->fill.w < 1) || (o->cur->fill.h < 1)) return;
 
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur->clipper)
@@ -4572,6 +4567,8 @@ evas_object_image_filled_resize_listener(void *data EINA_UNUSED, Evas *e EINA_UN
    Evas_Coord w, h;
 
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
    evas_object_image_fill_set(obj, 0, 0, w, h);
 }
 
