@@ -928,6 +928,7 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
              if (gc->pipe[i].array.texa) free(gc->pipe[i].array.texa);
              if (gc->pipe[i].array.texuv2) free(gc->pipe[i].array.texuv2);
              if (gc->pipe[i].array.texuv3) free(gc->pipe[i].array.texuv3);
+             if (gc->pipe[i].array.texsam) free(gc->pipe[i].array.texsam);
              if (gc->pipe[i].array.texm) free(gc->pipe[i].array.texm);
           }
      }
@@ -1216,6 +1217,9 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
 #define PUSH_TEXM(n, u, v) do { \
    gc->pipe[n].array.texm[nm++] = u; \
    gc->pipe[n].array.texm[nm++] = v; } while(0)
+#define PUSH_TEXSAM(n, x, y) do { \
+   gc->pipe[n].array.texsam[ns++] = x; \
+   gc->pipe[n].array.texsam[ns++] = y; } while(0)
 
 #define PUSH_6_VERTICES(pn, x, y, w, h) do { \
    PUSH_VERTEX(pn, x    , y    , 0); PUSH_VERTEX(pn, x + w, y    , 0); \
@@ -1237,6 +1241,10 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
 #define PUSH_6_TEXA(pn, x1, y1, x2, y2) do { \
    PUSH_TEXA(pn, x1, y1); PUSH_TEXA(pn, x2, y1); PUSH_TEXA(pn, x1, y2); \
    PUSH_TEXA(pn, x2, y1); PUSH_TEXA(pn, x2, y2); PUSH_TEXA(pn, x1, y2); \
+   } while (0)
+#define PUSH_SAMPLES(pn, dx, dy) do { \
+   PUSH_TEXSAM(pn, dx, dy); PUSH_TEXSAM(pn, dx, dy); PUSH_TEXSAM(pn, dx, dy); \
+   PUSH_TEXSAM(pn, dx, dy); PUSH_TEXSAM(pn, dx, dy); PUSH_TEXSAM(pn, dx, dy); \
    } while (0)
 #define PUSH_6_COLORS(pn, r, g, b, a) \
    do { int i; for (i = 0; i < 6; i++) PUSH_COLOR(pn, r, g, b, a); } while(0)
@@ -1283,6 +1291,7 @@ array_alloc(Evas_Engine_GL_Context *gc, int n)
         ALOC(texa,   GLfloat, 2);
         ALOC(texuv2, GLfloat, 2);
         ALOC(texuv3, GLfloat, 2);
+        ALOC(texsam, GLfloat, 2);
         ALOC(texm,   GLfloat, 2);
         return;
      }
@@ -1298,6 +1307,7 @@ array_alloc(Evas_Engine_GL_Context *gc, int n)
    RALOC(texa,   GLfloat, 2);
    RALOC(texuv2, GLfloat, 2);
    RALOC(texuv3, GLfloat, 2);
+   RALOC(texsam, GLfloat, 2);
    RALOC(texm,   GLfloat, 2);
 }
 
@@ -1641,6 +1651,7 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_texa = 0;
+   gc->pipe[pn].array.use_texsam = 0;
    gc->pipe[pn].array.use_texm = 0;
 
    PIPE_GROW(gc, pn, 2);
@@ -1661,6 +1672,7 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_texa = 0;
+   gc->pipe[pn].array.use_texsam = 0;
    gc->pipe[pn].array.use_texm = 0;
 }
 
@@ -1713,6 +1725,7 @@ again:
         gc->pipe[pn].array.use_texuv2 = 0;
         gc->pipe[pn].array.use_texuv3 = 0;
         gc->pipe[pn].array.use_texa = 0;
+        gc->pipe[pn].array.use_texsam = 0;
         gc->pipe[pn].array.use_texm = !!mtex;
      }
    else
@@ -1764,6 +1777,7 @@ again:
              gc->pipe[pn].array.use_texuv2 = 0;
              gc->pipe[pn].array.use_texuv3 = 0;
              gc->pipe[pn].array.use_texa = 0;
+             gc->pipe[pn].array.use_texsam = 0;
              gc->pipe[pn].array.use_texm = !!mtex;
          }
      }
@@ -1799,6 +1813,7 @@ again:
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_texa = 0;
+   gc->pipe[pn].array.use_texsam = 0;
    gc->pipe[pn].array.use_texm = !!mtex;
 #endif
 
@@ -2044,6 +2059,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_texm = !!mtex;
+   gc->pipe[pn].array.use_texsam = sam;
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2068,9 +2084,17 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
 
    if (sam)
      {
+        /* Note: Although these values look like constants (did anyone say
+         * uniforms?), they are passed to the GLSL program as attributes so
+         * that we can nicely pipe multiple glDrawArrays together by pushing
+         * more vertices. Setting uniforms would break the whole concept of
+         * piping commands into a single call to glDrawArrays.
+         * Don't be as dumb as me and keep these vertices as is.
+         * -- jpeg
+         */
         double samx = (double)(sw) / (double)(tex->pt->w * w * 4);
         double samy = (double)(sh) / (double)(tex->pt->h * h * 4);
-        PUSH_UNIFORM(pn, shader, EVAS_GL_UNIFORM_VEC2, sample, samx, samy);
+        PUSH_SAMPLES(pn, samx, samy);
      }
 
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
@@ -2123,6 +2147,7 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_texm = !!mtex;
+   gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2201,6 +2226,7 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv2 = 1;
    gc->pipe[pn].array.use_texuv3 = 1;
    gc->pipe[pn].array.use_texm = !!mtex;
+   gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2275,6 +2301,7 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv2 = 1;
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_texm = !!mtex;
+   gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2350,6 +2377,7 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv2 = 1;
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_texm = !!mtex;
+   gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2430,6 +2458,7 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_texa = EINA_TRUE;
+   gc->pipe[pn].array.use_texsam = 0;
    gc->pipe[pn].array.use_texm = !!mtex;
 
    pipe_region_expand(gc, pn, x, y, w, h);
@@ -2660,6 +2689,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv3 = (utexture) ? 1 : 0;
    gc->pipe[pn].array.use_texm = !!mtex;
    gc->pipe[pn].array.use_texa = 0;
+   gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -3078,6 +3108,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         unsigned char *texuv2_ptr = NULL;
         unsigned char *texuv3_ptr = NULL;
         unsigned char *texa_ptr = NULL;
+        unsigned char *texsam_ptr = NULL;
         unsigned char *texm_ptr = NULL;
 
         if (glsym_glMapBuffer && glsym_glUnmapBuffer)
@@ -3093,7 +3124,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              texuv2_ptr = texuv_ptr + TEX_SIZE;
              texuv3_ptr = texuv2_ptr + TEX_SIZE;
              texa_ptr = texuv3_ptr + TEX_SIZE;
-             texm_ptr = texa_ptr + TEX_SIZE;
+             texsam_ptr = texa_ptr + TEX_SIZE;
+             texm_ptr = texsam_ptr + TEX_SIZE;
 # define END_POINTER (texm_ptr + TEX_SIZE)
 
              glBindBuffer(GL_ARRAY_BUFFER, gc->pipe[i].array.buffer);
@@ -3122,10 +3154,12 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                     memcpy(x + (unsigned long)texuv3_ptr, gc->pipe[i].array.texuv3, TEX_SIZE);
                   if (gc->pipe[i].array.use_texa)
                     memcpy(x + (unsigned long)texa_ptr, gc->pipe[i].array.texa, TEX_SIZE);
+                  if (gc->pipe[i].array.use_texsam)
+                    memcpy(x + (unsigned long)texsam_ptr, gc->pipe[i].array.texsam, TEX_SIZE);
                   if (gc->pipe[i].array.use_texm)
                     memcpy(x + (unsigned long)texm_ptr, gc->pipe[i].array.texm, TEX_SIZE);
 /*                  
-                  fprintf(stderr, "copy %i bytes [%i/%i slots] [%i + %i + %i + %i + %i + %i + %i] <%i %i %i %i %i %i>\n",
+                  fprintf(stderr, "copy %i bytes [%i/%i slots] [%i + %i + %i + %i + %i + %i + %i] <%i %i %i %i %i %i %i>\n",
                           (int)((unsigned char *)END_POINTER),
                           gc->pipe[i].array.num,
                           gc->pipe[i].array.alloc,
@@ -3136,6 +3170,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                           gc->pipe[i].array.use_texuv2,
                           gc->pipe[i].array.use_texuv3,
                           gc->pipe[i].array.use_texa,
+                          gc->pipe[i].array.use_texsam,
                           gc->pipe[i].array.use_texm);
  */
                   glsym_glUnmapBuffer(GL_ARRAY_BUFFER);
@@ -3150,6 +3185,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              texuv2_ptr = (unsigned char *)gc->pipe[i].array.texuv2;
              texuv3_ptr = (unsigned char *)gc->pipe[i].array.texuv3;
              texa_ptr = (unsigned char *)gc->pipe[i].array.texa;
+             texsam_ptr = (unsigned char *)gc->pipe[i].array.texsam;
              texm_ptr = (unsigned char *)gc->pipe[i].array.texm;
           }
         glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, (void *)vertex_ptr);
@@ -3173,6 +3209,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              glDisableVertexAttribArray(SHAD_TEXUV2);
              glDisableVertexAttribArray(SHAD_TEXUV3);
              glDisableVertexAttribArray(SHAD_TEXA);
+             glDisableVertexAttribArray(SHAD_TEXSAM);
              glDisableVertexAttribArray(SHAD_TEXM);
              glDrawArrays(GL_LINES, 0, gc->pipe[i].array.num);
           }
@@ -3223,6 +3260,16 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              else
                {
                   glDisableVertexAttribArray(SHAD_TEXA);
+               }
+
+             if (gc->pipe[i].array.use_texsam)
+               {
+                  glEnableVertexAttribArray(SHAD_TEXSAM);
+                  glVertexAttribPointer(SHAD_TEXSAM, 2, GL_FLOAT, GL_FALSE, 0, (void *)texsam_ptr);
+               }
+             else
+               {
+                  glDisableVertexAttribArray(SHAD_TEXSAM);
                }
 
              if ((gc->pipe[i].array.use_texuv2) && (gc->pipe[i].array.use_texuv3))
@@ -3374,6 +3421,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         if (gc->pipe[i].array.texa) free(gc->pipe[i].array.texa);
         if (gc->pipe[i].array.texuv2) free(gc->pipe[i].array.texuv2);
         if (gc->pipe[i].array.texuv3) free(gc->pipe[i].array.texuv3);
+        if (gc->pipe[i].array.texsam) free(gc->pipe[i].array.texsam);
         if (gc->pipe[i].array.texm) free(gc->pipe[i].array.texm);
 
         gc->pipe[i].array.line = 0;
@@ -3383,6 +3431,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->pipe[i].array.use_texuv2 = 0;
         gc->pipe[i].array.use_texuv3 = 0;
         gc->pipe[i].array.use_texa = 0;
+        gc->pipe[i].array.use_texsam = 0;
         gc->pipe[i].array.use_texm = 0;
         
         gc->pipe[i].array.vertex = NULL;
@@ -3391,6 +3440,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->pipe[i].array.texa = NULL;
         gc->pipe[i].array.texuv2 = NULL;
         gc->pipe[i].array.texuv3 = NULL;
+        gc->pipe[i].array.texsam = NULL;
         gc->pipe[i].array.texm = NULL;
 
         gc->pipe[i].array.num = 0;

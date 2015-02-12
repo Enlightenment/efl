@@ -276,7 +276,8 @@
 #define SHAD_TEXUV2 3
 #define SHAD_TEXUV3 4
 #define SHAD_TEXA   5
-#define SHAD_TEXM   6
+#define SHAD_TEXSAM 6
+#define SHAD_TEXM   7
 
 typedef struct _Evas_GL_Program               Evas_GL_Program;
 typedef struct _Evas_GL_Program_Source        Evas_GL_Program_Source;
@@ -478,6 +479,7 @@ struct _Evas_Engine_GL_Context
          GLfloat *texuv2;
          GLfloat *texuv3;
          GLfloat *texa;
+         GLfloat *texsam;
          GLfloat *texm;
          Eina_List *uniforms; /* Evas_GL_Uniform */
          Eina_Bool line: 1;
@@ -487,6 +489,7 @@ struct _Evas_Engine_GL_Context
          Eina_Bool use_texuv2 : 1;
          Eina_Bool use_texuv3 : 1;
          Eina_Bool use_texa : 1;
+         Eina_Bool use_texsam : 1;
          Eina_Bool use_texm : 1;
          Eina_Bool anti_alias : 1;
          Evas_GL_Image *im;
