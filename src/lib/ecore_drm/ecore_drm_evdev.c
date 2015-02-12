@@ -503,7 +503,6 @@ _device_handle_axis(struct libinput_device *device, struct libinput_event_pointe
 
    if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Wheel)))) return;
 
-   axis = libinput_event_pointer_get_axis(event);
    timestamp = libinput_event_pointer_get_time(event);
 
    ev->window = (Ecore_Window)input->dev->window;
@@ -522,8 +521,22 @@ _device_handle_axis(struct libinput_device *device, struct libinput_event_pointe
    ev->root.x = ev->x;
    ev->root.y = ev->y;
 
+#ifdef LIBINPUT_HIGHER_08
+   axis = LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL;
+   if (libinput_event_pointer_has_axis(event, axis)) {
+     ev->z = libinput_event_pointer_get_axis_value(event, axis);
+   }
+
+   axis = LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL;
+   if (libinput_event_pointer_has_axis(event, axis)) {
+     ev->direction = 1;
+     ev->z = libinput_event_pointer_get_axis_value(event, axis);
+   }
+#else
+   axis = libinput_event_pointer_get_axis(event);
    if (axis == LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL) ev->direction = 1;
    ev->z = libinput_event_pointer_get_axis_value(event);
+#endif
 
    ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
 }
