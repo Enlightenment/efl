@@ -46,8 +46,8 @@ custom_layout(Evas_Object *o, Evas_Object_Box_Data *p, void *data EINA_UNUSED)
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
    count = eina_list_count(p->children);
-   ww = w / (count?:1);
-   hh = h / (count?:1);
+   ww = w / (count ? count : 1);
+   hh = h / (count ? count : 1);
    if (ww < 1) ww = 1;
    if (hh < 1) hh = 1;
 

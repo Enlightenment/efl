@@ -10187,6 +10187,7 @@ ob_collections_group_parts_part_description_link(void)
    Edje_Part_Collection_Parser *pcp;
    Edje_Part_Parser *epp;
    Edje_Part_Description_Link *el;
+   const char *nm;
 
    pcp = eina_list_last_data_get(edje_collections);
    epp = (Edje_Part_Parser*)current_part;
@@ -10199,7 +10200,8 @@ ob_collections_group_parts_part_description_link(void)
    el->epp = epp;
    pcp->links = eina_list_append(pcp->links, el);
    current_program->action = EDJE_ACTION_TYPE_STATE_SET;
-   current_program->state = strdup(current_desc->state.name ?: "default");
+   nm = current_desc->state.name;
+   current_program->state = strdup(nm ? nm : "default");
    current_program->value = current_desc->state.value;
 }
 
@@ -10238,7 +10240,8 @@ st_collections_group_parts_part_description_link_base(void)
    name = parse_str(0);
    if (current_program->signal && pcp->link_hash)
      {
-        snprintf(buf, sizeof(buf), "%s\"\"\"%s", current_program->signal, current_program->source ?: "");
+        snprintf(buf, sizeof(buf), "%s\"\"\"%s", current_program->signal,
+                 current_program->source ? current_program->source: "");
         eina_hash_list_remove(pcp->link_hash, buf, el);
      }
    if (!pcp->link_hash)
@@ -10251,7 +10254,8 @@ st_collections_group_parts_part_description_link_base(void)
         free((void*)current_program->source);
         current_program->source = name;
      }
-   snprintf(buf, sizeof(buf), "%s\"\"\"%s", current_program->signal, current_program->source ?: "");
+   snprintf(buf, sizeof(buf), "%s\"\"\"%s", current_program->signal,
+            current_program->source ? current_program->source : "");
    EINA_LIST_FOREACH(eina_hash_find(pcp->link_hash, buf), l, ell)
      {
         if (ell->epp == el->epp)

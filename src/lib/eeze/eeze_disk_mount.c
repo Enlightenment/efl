@@ -297,9 +297,9 @@ eeze_disk_mount(Eeze_Disk *disk)
         if (disk->mount_wrapper)
           eina_strbuf_append_printf(disk->mount_cmd, "%s ", disk->mount_wrapper);
         if (disk->mount_opts == EEZE_DISK_MOUNTOPT_DEFAULTS)
-          eina_strbuf_append_printf(disk->mount_cmd, EEZE_MOUNT_BIN" -o "EEZE_MOUNT_DEFAULT_OPTS" %s%s %s", str ?: "", dev, disk->mount_point);
+          eina_strbuf_append_printf(disk->mount_cmd, EEZE_MOUNT_BIN" -o "EEZE_MOUNT_DEFAULT_OPTS" %s%s %s", str ? str : "", dev, disk->mount_point);
         else if (!disk->mount_opts)
-          eina_strbuf_append_printf(disk->mount_cmd, EEZE_MOUNT_BIN" %s%s %s", str ?: "", dev, disk->mount_point);
+          eina_strbuf_append_printf(disk->mount_cmd, EEZE_MOUNT_BIN" %s%s %s", str ? str : "", dev, disk->mount_point);
         else
           {
              eina_strbuf_append(disk->mount_cmd, EEZE_MOUNT_BIN" -o ");
@@ -324,7 +324,7 @@ eeze_disk_mount(Eeze_Disk *disk)
                eina_strbuf_append(disk->mount_cmd, "remount,");
              if (disk->mount_opts & EEZE_DISK_MOUNTOPT_UID)
                eina_strbuf_append_printf(disk->mount_cmd, "uid=%i,", (int)disk->uid);
-             eina_strbuf_append_printf(disk->mount_cmd, " %s%s %s", str ?: "", dev, disk->mount_point);
+             eina_strbuf_append_printf(disk->mount_cmd, " %s%s %s", str ? str : "", dev, disk->mount_point);
           }
         disk->mount_cmd_changed = EINA_FALSE;
      }
