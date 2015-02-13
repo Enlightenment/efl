@@ -76,6 +76,7 @@ tests/eolian_cxx/simple.c \
 tests/eolian_cxx/eolian_cxx_test_inheritance.cc \
 tests/eolian_cxx/eolian_cxx_test_generate.cc
 
+tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-eolian_cxx_test_wrapper.$(OBJEXT): tests/eolian_cxx/callback.eo.hh
 tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-eolian_cxx_test_callback.$(OBJEXT): tests/eolian_cxx/callback.eo.hh
 tests/eolian_cxx/tests_eolian_cxx_eolian_cxx_suite-eolian_cxx_test_address_of.$(OBJEXT): tests/eolian_cxx/a.eo.hh tests/eolian_cxx/b.eo.hh tests/eolian_cxx/c.eo.hh tests/eolian_cxx/d.eo.hh
 
