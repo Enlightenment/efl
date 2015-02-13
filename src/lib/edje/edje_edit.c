@@ -10436,6 +10436,42 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 		      txt->text.color3.r, txt->text.color3.g, txt->text.color3.b, txt->text.color3.a);
      }
 
+   if (rp->part->type == EDJE_PART_TYPE_BOX)
+     {
+        Edje_Part_Description_Box *box;
+
+        box = (Edje_Part_Description_Box *) pd;
+
+        if ((box->box.layout && box->box.alt_layout) ||
+            box->box.align.x != 0.5 || box->box.align.y != 0.5 ||
+            box->box.padding.x != 0 || box->box.padding.y != 0 ||
+            !box->box.min.h || !box->box.min.v)
+          {
+             BUF_APPEND(I5"box {\n");
+
+             if (box->box.layout && box->box.alt_layout)
+               BUF_APPENDF(I6"layout: \"%s\" \"%s\";\n", box->box.layout, box->box.alt_layout);
+             else if (!box->box.layout && box->box.alt_layout)
+               BUF_APPENDF(I6"layout: \"horizontal\" \"%s\";\n", box->box.alt_layout);
+             else if (box->box.layout && !box->box.alt_layout)
+               BUF_APPENDF(I6"layout: \"%s\";\n", box->box.layout);
+
+             if (box->box.align.x != 0.5 || box->box.align.y != 0.5)
+               _edje_source_with_double_values_append(I6"align", 2,
+                                                      TO_DOUBLE(box->box.align.x),
+                                                      TO_DOUBLE(box->box.align.y),
+                                                      buf, &ret);
+
+             if (box->box.padding.x != 0 || box->box.padding.y != 0)
+               BUF_APPENDF(I6"padding: %d %d;\n", box->box.padding.y, box->box.padding.y);
+
+             if (box->box.min.h || box->box.min.v)
+               BUF_APPENDF(I6"min: %d %d;\n", box->box.min.h, box->box.min.v);
+
+             BUF_APPEND(I5"}\n");
+          }
+     }
+
    //Rel1
    if (pd->rel1.relative_x || pd->rel1.relative_y || pd->rel1.offset_x ||
        pd->rel1.offset_y || pd->rel1.id_x != -1 || pd->rel1.id_y != -1)
