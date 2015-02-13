@@ -162,7 +162,7 @@ _long_press_cb(void *obj)
      {
         char buf[4096 + 7];
 
-        /* FIXME: Deal with relative paths; use PATH_MAX */
+        file = eina_file_path_sanitize(file);
         snprintf(buf, sizeof(buf), "file://%s", file);
         if (elm_drag_start
               (obj, ELM_SEL_FORMAT_IMAGE, buf, ELM_XDND_ACTION_MOVE,
