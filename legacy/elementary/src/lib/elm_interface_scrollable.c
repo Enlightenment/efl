@@ -1817,6 +1817,7 @@ _elm_scroll_wheel_event_cb(void *data,
    Evas_Coord x = 0, y = 0, vw = 0, vh = 0, cw = 0, ch = 0;
    int direction = 0;
    int pagenumber_h = 0, pagenumber_v = 0;
+   int mx = 0, my = 0, minx = 0, miny = 0;
 
    sid = data;
    ev = event_info;
@@ -1835,6 +1836,15 @@ _elm_scroll_wheel_event_cb(void *data,
    else if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
      direction = !direction;
    eo_do(sid->obj, elm_interface_scrollable_content_pos_get(&x, &y));
+   if (sid->scrollto.x.animator) x = sid->scrollto.x.end;
+   if (sid->scrollto.y.animator) y = sid->scrollto.y.end;
+   eo_do(sid->pan_obj, elm_obj_pan_pos_max_get(&mx, &my));
+   eo_do(sid->pan_obj, elm_obj_pan_pos_min_get(&minx, &miny));
+   if (x < minx) x = minx;
+   if (x > mx) x = mx;
+   if (y < miny) y = miny;
+   if (y > my) y = my;
+
    if ((sid->down.bounce_x_animator) || (sid->down.bounce_y_animator) ||
        (sid->scrollto.x.animator) || (sid->scrollto.y.animator))
      {
@@ -1862,25 +1872,29 @@ _elm_scroll_wheel_event_cb(void *data,
      eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&cw, &ch));
    if (!_paging_is_enabled(sid))
      {
+        int d = ev->z;
+        double delta_t = (double)(ev->timestamp - sid->last_wheel) / 1000.0;
+        double mul;
+
+        mul = 1.0 + (7.0 * ((0.2 - delta_t) / 0.2));
+        if (delta_t < 0.2) d *= mul;
+        sid->last_wheel = ev->timestamp;
         if (!direction)
           {
-             if (ch > vh || cw <= vw)
-               y += ev->z * sid->step.y;
-             else
-               x += ev->z * sid->step.x;
+             if ((ch > vh) || (cw <= vw)) y += d * sid->step.y;
+             else x += d * sid->step.x;
           }
         else if (direction == 1)
           {
-             if (cw > vw || ch <= vh)
-               x += ev->z * sid->step.x;
-             else
-               y += ev->z * sid->step.y;
+             if ((cw > vw) || (ch <= vh)) x += d * sid->step.x;
+             else y += d * sid->step.y;
           }
 
         if ((!sid->hold) && (!sid->freeze))
           {
              _elm_scroll_wanted_coordinates_update(sid, x, y);
-             eo_do(sid->obj, elm_interface_scrollable_content_pos_set(x, y, EINA_TRUE));
+             _elm_scroll_scroll_to_x(sid, _elm_config->bring_in_scroll_friction, x);
+             _elm_scroll_scroll_to_y(sid, _elm_config->bring_in_scroll_friction, y);
           }
      }
    else
@@ -1903,6 +1917,7 @@ _elm_scroll_wheel_event_cb(void *data,
 
         if ((!sid->hold) && (!sid->freeze))
           {
+             _elm_scroll_wanted_coordinates_update(sid, x, y);
              _elm_scroll_scroll_to_x(sid, _elm_config->bring_in_scroll_friction, x);
              _elm_scroll_scroll_to_y(sid, _elm_config->bring_in_scroll_friction, y);
           }

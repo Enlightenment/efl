@@ -185,6 +185,8 @@ struct _Elm_Scrollable_Smart_Interface_Data
    int        page_limit_h, page_limit_v;
    int        current_calc;
 
+   unsigned int last_wheel;
+
    unsigned char size_adjust_recurse;
    unsigned char size_count;
    Eina_Bool  size_adjust_recurse_abort : 1;
