@@ -86,15 +86,16 @@ evas_xlib_image_native_set(void *data, void *image, void *native)
         w = im->cache_entry.w;
         h = im->cache_entry.h;
 
+        n = calloc(1, sizeof(Native));
+        if (!n) return NULL;
+
         exim = ecore_x_image_new(w, h, vis, depth);
         if (!exim)
           {
              ERR("ecore_x_image_new failed.");
+             free(n);
              return NULL;
           }
-
-        n = calloc(1, sizeof(Native));
-        if (!n) return NULL;
 
         memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
         n->pixmap = pm;
