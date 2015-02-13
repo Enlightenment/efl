@@ -4135,6 +4135,44 @@ FUNC_PART_DRAG_ID(event);
 FUNC_PART_DRAG_ID(threshold);
 
 /***************************/
+/*     BOX & TABLE API     */
+/***************************/
+
+#define FUNC_STATE_BOX_LAYOUT(Layout) \
+  EAPI Eina_Stringshare * \
+  edje_edit_state_box_##Layout##_get(Evas_Object *obj, const char *part, \
+                                     const char *state, double value) \
+    { \
+       GET_PD_OR_RETURN(0) \
+       if (rp->part->type == EDJE_PART_TYPE_BOX) \
+         { \
+            Edje_Part_Description_Box *box; \
+            box = (Edje_Part_Description_Box *) pd; \
+            return eina_stringshare_add(box->box.Layout); \
+         } \
+       return NULL; \
+    } \
+  EAPI Eina_Bool \
+  edje_edit_state_box_##Layout##_set(Evas_Object *obj, const char *part, \
+                                     const char *state, double value, \
+                                     char *layout) \
+  { \
+     GET_PD_OR_RETURN(EINA_FALSE) \
+     if (rp->part->type == EDJE_PART_TYPE_BOX) \
+       { \
+          Edje_Part_Description_Box *box; \
+          box = (Edje_Part_Description_Box *) pd; \
+          box->box.Layout = layout; \
+       } \
+     else \
+       return EINA_FALSE; \
+     return EINA_TRUE; \
+  }
+
+FUNC_STATE_BOX_LAYOUT(layout);
+FUNC_STATE_BOX_LAYOUT(alt_layout);
+
+/***************************/
 /*  BOX & TABLE ITEMS API  */
 /***************************/
 

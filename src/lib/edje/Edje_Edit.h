@@ -1833,6 +1833,106 @@ EAPI Eina_Bool edje_edit_part_drag_threshold_set(Evas_Object *obj, const char *p
 
 //@}
 /******************************************************************************/
+/**************************      BOX & TABLE API      *************************/
+/******************************************************************************/
+/** @name Box and Table API
+ *  Functions to deal with table and box (see @ref edcref).
+ */ //@{
+
+/** Get primary layout of the box.
+ *
+ * @note The returned string should be freed with @c eina_stringshare_del().
+ * @param obj Object being edited.
+ * @param part Part that have BOX type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ *
+ * @return Primary layout of a BOX part in given state.
+ * @since 1.14
+ */
+EAPI Eina_Stringshare *
+edje_edit_state_box_layout_get(Evas_Object *obj, const char *part,
+                               const char *state, double value);
+
+/** Set primary layout of the box.
+ *
+ * When trying to set primary layout to NULL, function will use
+ * alternative layout instead.
+ *
+ * @param obj Object being edited.
+ * @param part Part that have BOX type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ * @param layout New primary layout to set name.
+ *
+ * Possible layouts:
+ *     @li horizontal (default)
+ *     @li vertical
+ *     @li horizontal_homogeneous
+ *     @li vertical_homogeneous
+ *     @li horizontal_max (homogeneous to the max sized child)
+ *     @li vertical_max
+ *     @li horizontal_flow
+ *     @li vertical_flow
+ *     @li stack
+ *     @li some_other_custom_layout_set_by_the_application
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.14
+ */
+EAPI Eina_Bool
+edje_edit_state_box_layout_set(Evas_Object *obj, const char *part,
+                               const char *state, double value,
+                               char *layout);
+
+/** Get fallback layout of the box.
+ *
+ * @note The returned string should be freed with @c eina_stringshare_del().
+ * @param obj Object being edited.
+ * @param part Part that have BOX type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ *
+ * @return Fallback layout of a BOX part in given state.
+ * @since 1.14
+ */
+EAPI Eina_Stringshare *
+edje_edit_state_box_alt_layout_get(Evas_Object *obj, const char *part,
+                                   const char *state, double value);
+
+/** Set fallback layout of the box.
+ *
+ * When trying to set fallback layout to NULL, function will use
+ * default layout ("horizontal") instead.
+ *
+ * @param obj Object being edited.
+ * @param part Part that have BOX type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ * @param layout New fallback layout to set name.
+ *
+ * Possible layouts:
+ *     @li horizontal (default)
+ *     @li vertical
+ *     @li horizontal_homogeneous
+ *     @li vertical_homogeneous
+ *     @li horizontal_max (homogeneous to the max sized child)
+ *     @li vertical_max
+ *     @li horizontal_flow
+ *     @li vertical_flow
+ *     @li stack
+ *     @li some_other_custom_layout_set_by_the_application
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.14
+ */
+EAPI Eina_Bool
+edje_edit_state_box_alt_layout_set(Evas_Object *obj, const char *part,
+                                   const char *state, double value,
+                                   char *layout);
+
+//@}
+/******************************************************************************/
 /**************************   BOX & TABLE ITEMS API   *************************/
 /******************************************************************************/
 /** @name Items API
