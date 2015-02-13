@@ -873,7 +873,10 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule EINA_UNUSED)
         file->fm = CreateFileMapping(file->handle, NULL, PAGE_READONLY,
                                      max_size_high, max_size_low, NULL);
         if (!file->fm)
-          return NULL;
+          {
+             eina_lock_release(&file->lock);
+             return NULL;
+          }
 
         data = MapViewOfFile(file->fm, FILE_MAP_READ,
                              0, 0, file->length);
