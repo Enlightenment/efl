@@ -214,7 +214,7 @@ _elm_tooltip_hide(Elm_Tooltip *tt)
    evas_object_event_callback_del_full
      (tt->eventarea, EVAS_CALLBACK_MOUSE_MOVE, (Evas_Object_Event_Cb)_elm_tooltip_obj_mouse_move_cb, tt);
 
-   del = tt->tt_win ?: tt->tooltip;
+   del = tt->tt_win ? tt->tt_win : tt->tooltip;
 
    tt->tt_win = NULL;
    tt->tt_evas = NULL;
@@ -412,7 +412,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
           elm_win_screen_size_get(elm_widget_top_get(tt->owner), NULL, NULL, &cw, &ch);
      }
    if (!cw)
-     evas_output_size_get(tt->tt_evas ?: tt->evas, &cw, &ch);
+     evas_output_size_get(tt->tt_evas ? tt->tt_evas : tt->evas, &cw, &ch);
    TTDBG("SCREEN:  cw=%d,ch=%d\n", cw, ch);
 
    evas_object_geometry_get(tt->eventarea, &ox, &oy, &ow, &oh);
@@ -541,8 +541,8 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
           {
              int ax, ay;
 
-             ax = tt->pad.x ?: 1;
-             ay = tt->pad.y ?: 1;
+             ax = tt->pad.x ? tt->pad.x : 1;
+             ay = tt->pad.y ? tt->pad.y : 1;
              if (!INSIDE(px, py, tx, ty + (py - ty) + ay, tw, th))
                ty += py - ty + ay;
              else if (!INSIDE(px, py, tx + (px - tx) + ax, ty, tw, th))
