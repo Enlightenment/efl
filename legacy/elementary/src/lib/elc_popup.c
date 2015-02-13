@@ -311,11 +311,6 @@ _elm_popup_elm_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
         snprintf(buf, sizeof(buf), "buttons%i", sd->last_button_number);
         if (!elm_layout_theme_set(sd->action_area, "popup", buf, style))
           CRI("Failed to set layout!");
-        for (i = 0; i < ELM_POPUP_ACTION_BUTTON_MAX; i++)
-          {
-             if (!sd->buttons[i]) continue;
-             elm_object_style_set(sd->buttons[i]->btn, style);
-          }
      }
    if (!elm_layout_theme_set(sd->content_area, "popup", "content", style))
      CRI("Failed to set layout!");
