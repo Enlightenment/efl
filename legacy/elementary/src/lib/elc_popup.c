@@ -293,7 +293,6 @@ EOLIAN static Eina_Bool
 _elm_popup_elm_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
 {
    Elm_Popup_Item_Data *it;
-   unsigned int i = 0;
    Eina_List *elist;
    char buf[1024], style[1024];
 
