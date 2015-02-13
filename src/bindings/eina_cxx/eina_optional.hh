@@ -66,15 +66,15 @@ struct optional
     * @brief Create a disengaged object.
     *
     * This constructor creates a disengaged <tt>eina::optional</tt>
-    * object, since null pointer is meant to be a valid object type.
+    * object.
     */
-   optional(std::nullptr_t) : engaged(false)
+   constexpr optional(std::nullptr_t) : engaged(false)
    {}
 
    /**
     * @brief Default constructor. Create a disengaged object.
     */
-   optional() : engaged(false)
+   constexpr optional() : engaged(false)
    {}
 
    /**
@@ -158,8 +158,41 @@ struct optional
    optional(optional<T>&& other)
      : engaged(false)
    {
-      _construct(std::move(*other));
+      if(other.engaged) _construct(std::move(*other));
       other._destroy();
+   }
+
+   /**
+    * @brief Move constructor. Create an object containing the same value as @p other and in the same state.
+    * @param other R-value reference to another <tt>eina::optional</tt> object that holds a different, but convertible, value type.
+    *
+    * This constructor creates an <tt>eina::optional</tt> object with
+    * the same engagement state of @p other. If @p other is engaged then
+    * the contained value of the newly created object is initialized by
+    * moving the contained value of @p other.
+    */
+   template <typename U>
+   optional(optional<U>&& other, typename std::enable_if<std::is_convertible<U, T>::value>::type* = 0)
+     : engaged(false)
+   {
+      if (other.is_engaged()) _construct(std::move(*other));
+      other.disengage();
+   }
+
+   /**
+    * @brief Copy constructor. Create an object containing the same value as @p other and in the same state.
+    * @param other Constant reference to another <tt>eina::optional</tt> object that holds a different, but convertible, value type.
+    *
+    * This constructor creates an <tt>eina::optional</tt> object with
+    * the same engagement state of @p other. If @p other is engaged then
+    * the contained value of the newly created object is initialized by
+    * converting and copying the contained value of @p other.
+    */
+   template <typename U>
+   optional(optional<U> const& other, typename std::enable_if<std::is_convertible<U, T>::value>::type* = 0)
+     : engaged(false)
+   {
+      if (other.is_engaged()) _construct(*other);
    }
 
    /**
@@ -175,8 +208,7 @@ struct optional
    _self_type& operator=(optional<T>&& other)
    {
       _destroy();
-      engaged = other.engaged;
-      if(engaged)
+      if (other.engaged)
         _construct(std::move(*other));
       other._destroy();
       return *this;
@@ -197,6 +229,53 @@ struct optional
       optional<T> tmp(other);
       tmp.swap(*this);
       return *this;
+   }
+
+   /**
+    * @brief Assign new content to the object.
+    * @param other R-value reference to another <tt>eina::optional</tt> object that holds a different, but convertible, value type.
+    *
+    * This operator replaces the current content of the object. If
+    * @p other is engaged its contained value is moved to this object,
+    * making <tt>*this</tt> be considered engaged too. If @p other is
+    * disengaged <tt>*this</tt> is also made disengaged and its
+    * contained value, if any, is simple destroyed.
+    */
+   template <typename U>
+   typename std::enable_if<std::is_convertible<U, T>::value, _self_type>::type& operator=(optional<U>&& other)
+   {
+      _destroy();
+      if (other.is_engaged())
+        _construct(std::move(*other));
+      other.disengage();
+      return *this;
+   }
+
+   /**
+    * @brief Assign new content to the object.
+    * @param other Constant reference to another <tt>eina::optional</tt> object that holds a different, but convertible, value type.
+    *
+    * This operator replaces the current content of the object. If
+    * @p other is engaged its contained value is converted and copied to this
+    * object, making <tt>*this</tt> be considered engaged too. If @p other is
+    * disengaged <tt>*this</tt> is also made disengaged and its
+    * contained value, if any, is simple destroyed.
+    */
+   template <typename U>
+   typename std::enable_if<std::is_convertible<U, T>::value, _self_type>::type& operator=(optional<U>const& other)
+   {
+      _destroy();
+      if (other.is_engaged())
+        _construct(*other);
+      return *this;
+   }
+
+   /**
+    * @brief Disengage the object, destroying the current contained value, if any.
+    */
+   void disengage()
+   {
+      _destroy();
    }
 
    /**
@@ -308,7 +387,7 @@ private:
    void _construct(U&& object)
    {
       assert(!is_engaged());
-      new (&buffer) T(std::move(object));
+      new (&buffer) T(std::forward<U>(object));
       engaged = true;
    }
 
@@ -337,6 +416,13 @@ private:
     */
    bool engaged;
 };
+
+template <typename T>
+constexpr optional<typename std::decay<T>::type>
+make_optional(T&& value)
+{
+   return optional<typename std::decay<T>::type>(std::forward<T>(value));
+}
 
 /**
  * @brief Swap content with another <tt>eina::optional</tt> object.

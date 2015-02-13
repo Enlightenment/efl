@@ -137,10 +137,64 @@ START_TEST(eina_cxx_optional_assignment)
 }
 END_TEST
 
+START_TEST(eina_cxx_optional_convertible_types)
+{
+  namespace eina = efl::eina;
+
+  eina::eina_init init;
+
+  eina::optional<int> a(1.0);
+  eina::optional<eina::string_view> b("2");
+  eina::optional<std::string> c(eina::string_view("3"));
+
+  ck_assert(!!a && !!b && !!c);
+
+  eina::optional<double> a_s(a);
+  eina::optional<std::string> b_s(b);
+  eina::optional<eina::string_view> c_s(c);
+
+  ck_assert(!!a_s && !!b_s && !!c_s);
+
+  fail_if(1.0 != *a_s);
+  fail_if(std::string("2") != *b_s);
+  fail_if(eina::string_view("3") != *c_s);
+
+  fail_if(1 != *a);
+  fail_if("2" != *b);
+  fail_if("3" != *c);
+
+  fail_if(*a != *a_s);
+  fail_if(*b != *b_s);
+  fail_if(*c != *c_s);
+
+  a_s = 4;
+  b_s = "5";
+  c_s = "6";
+
+  a = a_s;
+  b = b_s;
+  c = c_s;
+
+  fail_if(*a != *a_s);
+  fail_if(*b != *b_s);
+  fail_if(*c != *c_s);
+
+  a = *a_s;
+  b = *b_s;
+  c = *c_s;
+
+  fail_if(*a != *a_s);
+  fail_if(*b != *b_s);
+  fail_if(*c != *c_s);
+}
+END_TEST
+
+
 void
 eina_test_optional(TCase* tc)
 {
   tcase_add_test(tc, eina_cxx_optional_constructors);
   tcase_add_test(tc, eina_cxx_optional_rel_ops);
   tcase_add_test(tc, eina_cxx_optional_assignment);
+  tcase_add_test(tc, eina_cxx_optional_convertible_types);
 }
