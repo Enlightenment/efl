@@ -10944,7 +10944,11 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
                     BUF_APPENDF(I7"padding: %d %d %d %d;\n",
                                 item->padding.l, item->padding.r,
                                 item->padding.t, item->padding.b);
-
+                  if ((item->weight.x != 0) || (item->weight.y != 0))
+                    _edje_source_with_double_values_append(I7"weight", 2,
+                                                           TO_DOUBLE(item->weight.x),
+                                                           TO_DOUBLE(item->weight.y),
+                                                           buf, &ret);
                   if (TO_DOUBLE(item->align.x) != 0.5 || TO_DOUBLE(item->align.y) != 0.5)
                     _edje_source_with_double_values_append(I7"align", 2,
                                                            TO_DOUBLE(item->align.x),
