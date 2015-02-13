@@ -10103,7 +10103,6 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
                        return EINA_TRUE;
                     }
 
-                  Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
                   EINA_INLIST_FOREACH(ln->items, it)
                     {
                        if (((it->x + ln->x) <= x) && (((it->x + ln->x) + it->adv) > x))
