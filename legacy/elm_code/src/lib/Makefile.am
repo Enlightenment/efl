@@ -3,12 +3,13 @@ MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES=
 
 EOLIAN_FLAGS = @DEPS_EOLIAN_FLAGS@ \
-               -I$(top_srcdir)/elm_code/lib
+               -I$(top_srcdir)/elm_code/src/lib
 
 include $(top_srcdir)/Makefile_Eolian_Helper.am
 
 AM_CPPFLAGS = \
--I$(top_srcdir)/elm_code/lib \
+-I$(top_srcdir)/elm_code/src/lib \
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 -DEFL_BETA_API_SUPPORT \
 -DEFL_EO_API_SUPPORT \
 @EFL_CFLAGS@ \

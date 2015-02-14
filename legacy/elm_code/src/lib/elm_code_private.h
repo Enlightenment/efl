@@ -35,7 +35,6 @@ typedef struct
    double gravity_x, gravity_y;
 
    unsigned int cursor_line, cursor_col;
-   Eina_Bool cursor_move_vetoed;
    Eina_Bool editable, focussed;
    Eina_Bool show_line_numbers;
 } Elm_Code_Widget_Data;

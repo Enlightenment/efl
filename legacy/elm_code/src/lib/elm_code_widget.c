@@ -35,7 +35,6 @@ _elm_code_widget_eo_base_constructor(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUS
 
    pd->cursor_line = 1;
    pd->cursor_col = 1;
-   pd->cursor_move_vetoed = EINA_TRUE;
 }
 
 EOLIAN static void
@@ -271,6 +270,57 @@ _elm_code_widget_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    _elm_code_widget_fill(widget);
 }
 
+static Eina_Bool
+_elm_code_widget_cursor_key_will_move(Elm_Code_Widget *widget, const char *key)
+{
+   Elm_Code_Widget_Data *pd;
+   Elm_Code_Line *line;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
+
+   if (!line)
+     return EINA_FALSE;
+
+   if (!strcmp(key, "Up"))
+     return pd->cursor_line > 1;
+   else if (!strcmp(key, "Down"))
+     return pd->cursor_line < elm_code_file_lines_get(pd->code->file);
+   else if (!strcmp(key, "Left"))
+     return pd->cursor_col > 1;
+   else if (!strcmp(key, "Right"))
+     return pd->cursor_col < (unsigned int) line->length + 1;
+   else
+     return EINA_FALSE;
+}
+
+static void
+_elm_code_widget_update_focus_directions(Elm_Code_Widget *obj)
+{
+   if (_elm_code_widget_cursor_key_will_move(obj, "Up"))
+     elm_widget_focus_next_object_set(obj, obj, ELM_FOCUS_UP);
+   else
+     elm_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_UP);
+
+   if (_elm_code_widget_cursor_key_will_move(obj, "Down"))
+     elm_widget_focus_next_object_set(obj, obj, ELM_FOCUS_DOWN);
+   else
+     elm_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_DOWN);
+
+   if (_elm_code_widget_cursor_key_will_move(obj, "Left"))
+     elm_widget_focus_next_object_set(obj, obj, ELM_FOCUS_LEFT);
+   else
+     elm_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_LEFT);
+
+   if (_elm_code_widget_cursor_key_will_move(obj, "Right"))
+     elm_widget_focus_next_object_set(obj, obj, ELM_FOCUS_RIGHT);
+   else
+     elm_widget_focus_next_object_set(obj, NULL, ELM_FOCUS_RIGHT);
+
+   elm_widget_focus_next_object_set(obj, obj, ELM_FOCUS_PREVIOUS);
+   elm_widget_focus_next_object_set(obj, obj, ELM_FOCUS_NEXT);
+}
+
 static void
 _elm_code_widget_clicked_editable_cb(Elm_Code_Widget *widget, Evas_Coord x, Evas_Coord y)
 {
@@ -298,6 +348,7 @@ _elm_code_widget_clicked_editable_cb(Elm_Code_Widget *widget, Evas_Coord x, Evas
    if (pd->cursor_col == 0)
      pd->cursor_col = 1;
 
+   _elm_code_widget_update_focus_directions(widget);
    _elm_code_widget_fill(widget);
 }
 
@@ -407,42 +458,6 @@ _elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
    _elm_code_widget_fill(widget);
 }
 
-static Eina_Bool
-_elm_code_widget_cursor_key_can_control(Evas_Event_Key_Down *event)
-{
-   if (!strcmp(event->key, "Up"))
-     return EINA_TRUE;
-   else if (!strcmp(event->key, "Down"))
-     return EINA_TRUE;
-   else if (!strcmp(event->key, "Left"))
-     return EINA_TRUE;
-   else if (!strcmp(event->key, "Right"))
-     return EINA_TRUE;
-   else
-     return EINA_FALSE;
-}
-
-static Eina_Bool
-_elm_code_widget_cursor_key_will_move(Elm_Code_Widget *widget, Evas_Event_Key_Down *event)
-{
-   Elm_Code_Widget_Data *pd;
-   Elm_Code_Line *line;
-
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
-
-   if (!strcmp(event->key, "Up"))
-     return pd->cursor_line > 1;
-   else if (!strcmp(event->key, "Down"))
-     return pd->cursor_line < elm_code_file_lines_get(pd->code->file);
-   else if (!strcmp(event->key, "Left"))
-     return pd->cursor_col > 1;
-   else if (!strcmp(event->key, "Right"))
-     return pd->cursor_col < (unsigned int) line->length + 1;
-   else
-     return EINA_FALSE;
-}
-
 static void
 _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
                               Evas_Object *obj EINA_UNUSED, void *event_info)
@@ -458,12 +473,7 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
    if (!pd->editable)
      return;
 
-   pd->cursor_move_vetoed = EINA_TRUE;
-   if (_elm_code_widget_cursor_key_can_control(ev) && !_elm_code_widget_cursor_key_will_move(widget, ev))
-     {
-        pd->cursor_move_vetoed = EINA_FALSE;
-        return;
-     }
+   _elm_code_widget_update_focus_directions(widget);
 
    if (!strcmp(ev->key, "Up"))
      _elm_code_widget_cursor_move_up(widget);
@@ -477,48 +487,34 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
      INF("Unhandled key %s", ev->key);
 }
 
-static Eina_Bool
-_elm_code_widget_event_veto_cb(void *data, Evas_Object *obj EINA_UNUSED,
-                               Evas_Object *src EINA_UNUSED, Evas_Callback_Type type,
-                               void *event_info EINA_UNUSED)
+static void
+_elm_code_widget_focused_event_cb(void *data, Evas_Object *obj,
+                                  void *event_info EINA_UNUSED)
 {
    Elm_Code_Widget *widget;
    Elm_Code_Widget_Data *pd;
-   Eina_Bool vetoed;
 
    widget = (Elm_Code_Widget *)data;
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   if (!pd->editable)
-     return EINA_FALSE;
+   pd->focussed = EINA_TRUE;
 
-   vetoed = EINA_TRUE;
-   if (type == EVAS_CALLBACK_KEY_DOWN)
-     {
-        vetoed = pd->cursor_move_vetoed;
-        pd->cursor_move_vetoed = EINA_TRUE;
-     }
-
-   return vetoed;
+   _elm_code_widget_update_focus_directions(widget);
+   _elm_code_widget_fill(obj);
 }
 
-EOLIAN static Eina_Bool
-_elm_code_widget_elm_widget_on_focus(Eo *obj, Elm_Code_Widget_Data *pd)
+static void
+_elm_code_widget_unfocused_event_cb(void *data, Evas_Object *obj,
+                                    void *event_info EINA_UNUSED)
 {
-   Eina_Bool int_ret;
+   Elm_Code_Widget *widget;
+   Elm_Code_Widget_Data *pd;
 
-   if (!pd->editable)
-     return EINA_FALSE;
+   widget = (Elm_Code_Widget *)data;
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   eo_do_super(obj, ELM_CODE_WIDGET_CLASS, int_ret = elm_obj_widget_on_focus());
-
-   if (!int_ret)
-     return EINA_TRUE;
-
-   pd->focussed = elm_widget_focus_get(obj);
-
+   pd->focussed = EINA_FALSE;
    _elm_code_widget_fill(obj);
-   return pd->focussed;
 }
 
 EOLIAN static Eina_Bool
@@ -652,11 +648,14 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
    eo_do_super(obj, ELM_CODE_WIDGET_CLASS, evas_obj_smart_add());
    elm_object_focus_allow_set(obj, EINA_TRUE);
 
+   elm_layout_file_set(obj, PACKAGE_DATA_DIR "/themes/elm_code.edj", "elm_code/layout/default");
+
    scroller = elm_scroller_add(obj);
    evas_object_size_hint_weight_set(scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(scroller);
-   elm_box_pack_end(obj, scroller);
+   elm_layout_content_set(obj, "elm.swallow.content", scroller);
+   elm_object_focus_allow_set(scroller, EINA_FALSE);
    pd->scroller = scroller;
 
    grid = evas_object_textgrid_add(obj); 
@@ -667,11 +666,12 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
    pd->grid = grid;
    _elm_code_widget_setup_palette(grid);
 
-   evas_object_event_callback_add(grid, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, obj);
    evas_object_event_callback_add(grid, EVAS_CALLBACK_MOUSE_UP, _elm_code_widget_clicked_cb, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _elm_code_widget_key_down_cb, obj);
 
-   elm_object_event_callback_add(obj, _elm_code_widget_event_veto_cb, obj);
+   evas_object_smart_callback_add(obj, "focused", _elm_code_widget_focused_event_cb, obj);
+   evas_object_smart_callback_add(obj, "unfocused", _elm_code_widget_unfocused_event_cb, obj);
 
    eo_do(obj,
          eo_event_callback_add(&ELM_CODE_EVENT_LINE_SET_DONE, _elm_code_widget_line_cb, obj);
