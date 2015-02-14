@@ -22,12 +22,12 @@ START_TEST (elm_code_widget_token_render_simple_test)
 
    code = elm_code_create();
    file = code->file;
-   elm_code_file_line_append(file, "some \"test content\", 45", 23);
+   elm_code_file_line_append(file, "some \"test content\", 45", 23, NULL);
    line = elm_code_file_line_get(file, 1);
    length = line->length;
 
-   elm_code_file_line_token_add(file, 1, 6+1, 17+1, ELM_CODE_TOKEN_TYPE_COMMENT);
-   elm_code_file_line_token_add(file, 1, 21+1, 22+1, ELM_CODE_TOKEN_TYPE_COMMENT);
+   elm_code_line_token_add(line, 6+1, 17+1, ELM_CODE_TOKEN_TYPE_COMMENT);
+   elm_code_line_token_add(line, 21+1, 22+1, ELM_CODE_TOKEN_TYPE_COMMENT);
 
    _elm_code_widget_fill_line_tokens(NULL, cells, length+1, line);
    _assert_cell_type(cells[1], ELM_CODE_TOKEN_TYPE_DEFAULT, 1);

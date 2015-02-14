@@ -29,7 +29,7 @@ START_TEST (elm_code_parse_hook_memory_test)
    file = elm_code_file_new(code);
 
    elm_code_parser_add(code, _parser_line_callback, _parser_file_callback);
-   elm_code_file_line_append(file, "some \"test content\" for parsing", 31);
+   elm_code_file_line_append(file, "some \"test content\" for parsing", 31, NULL);
 
    ck_assert_int_eq(1, line_calls);
    ck_assert_int_eq(0, file_calls);

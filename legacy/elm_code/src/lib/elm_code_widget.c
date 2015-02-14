@@ -243,7 +243,7 @@ _elm_code_widget_line_cb(void *data, Eo *obj EINA_UNUSED,
    cells = evas_object_textgrid_cellrow_get(pd->grid, line->number - 1);
    _elm_code_widget_fill_line(widget, cells, line);
 
-   return EINA_TRUE;
+   return EO_CALLBACK_CONTINUE;
 }
 
 
@@ -256,7 +256,7 @@ _elm_code_widget_file_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Descrip
    widget = (Elm_Code_Widget *)data;
 
    _elm_code_widget_fill(widget);
-   return EINA_TRUE;
+   return EO_CALLBACK_CONTINUE;
 }
 
 static void
@@ -674,7 +674,7 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_smart_callback_add(obj, "unfocused", _elm_code_widget_unfocused_event_cb, obj);
 
    eo_do(obj,
-         eo_event_callback_add(&ELM_CODE_EVENT_LINE_SET_DONE, _elm_code_widget_line_cb, obj);
+         eo_event_callback_add(&ELM_CODE_EVENT_LINE_STYLE_SET, _elm_code_widget_line_cb, obj);
          eo_event_callback_add(&ELM_CODE_EVENT_FILE_LOAD_DONE, _elm_code_widget_file_cb, obj));
 
    _elm_code_widget_font_size_set(obj, pd, 10);

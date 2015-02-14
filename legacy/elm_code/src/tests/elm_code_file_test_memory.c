@@ -11,7 +11,7 @@ START_TEST (elm_code_file_memory_lines)
    code = elm_code_create();
    ck_assert_uint_eq(0, elm_code_file_lines_get(code->file));
 
-   elm_code_file_line_append(code->file, "a line", 6);
+   elm_code_file_line_append(code->file, "a line", 6, NULL);
 
    ck_assert_uint_eq(1, elm_code_file_lines_get(code->file));
    elm_code_free(code);
@@ -26,10 +26,10 @@ START_TEST (elm_code_file_memory_tokens)
 
    code = elm_code_create();
    file = code->file;
-   elm_code_file_line_append(file, "a line", 6);
-   elm_code_file_line_token_add(file, 1, 2, 5, ELM_CODE_TOKEN_TYPE_COMMENT);
+   elm_code_file_line_append(file, "a line", 6, NULL);
 
    line = elm_code_file_line_get(file, 1);
+   elm_code_line_token_add(line, 2, 5, ELM_CODE_TOKEN_TYPE_COMMENT);
    ck_assert_uint_eq(1, eina_list_count(line->tokens));
    elm_code_free(code);
 }

@@ -17,6 +17,7 @@ elm_code_suite_CPPFLAGS = -I$(top_builddir)/elm_code/src/lib/ \
 -DEFL_BETA_API_SUPPORT \
 -DEFL_EO_API_SUPPORT \
 -I$(top_srcdir)/elm_code/src/lib \
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 -DPACKAGE_TESTS_DIR=\"$(top_srcdir)/elm_code/src/tests/\" \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)/elm_code/src/tests/\" \
 -DTESTS_DIR=\"$(abspath $(srcdir))/\" \

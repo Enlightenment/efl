@@ -6,7 +6,7 @@
 
 #include "elm_code_private.h"
 
-static Elm_Code_Line *_elm_code_blank_create(int line)
+static Elm_Code_Line *_elm_code_blank_create(int line, void *data)
 {
    Elm_Code_Line *ecl;
 
@@ -15,14 +15,16 @@ static Elm_Code_Line *_elm_code_blank_create(int line)
 
    ecl->number = line;
    ecl->status = ELM_CODE_STATUS_TYPE_DEFAULT;
+   ecl->data = data;
+
    return ecl;
 }
 
-static void _elm_code_file_line_append_data(Elm_Code_File *file, const char *content, int length, int row, Eina_Bool mapped)
+static void _elm_code_file_line_append_data(Elm_Code_File *file, const char *content, int length, int row, Eina_Bool mapped, void *data)
 {
    Elm_Code_Line *line;
 
-   line = _elm_code_blank_create(row);
+   line = _elm_code_blank_create(row, data);
    if (!line) return;
 
    if (mapped)
@@ -43,7 +45,10 @@ static void _elm_code_file_line_append_data(Elm_Code_File *file, const char *con
    if (file->parent)
      {
         elm_code_parse_line(file->parent, line);
-        elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_SET_DONE, line);
+        elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
+
+        // this is called so we can refresh after any styling changes from LOAD_DONE
+        elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_STYLE_SET, line);
      }
 }
 
@@ -83,13 +88,13 @@ EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path)
         /* Working around the issue that eina_file_map_lines does not trigger an item for empty lines */
         while (lastindex < line->index - 1)
           {
-             ecl = _elm_code_blank_create(++lastindex);
+             ecl = _elm_code_blank_create(++lastindex, NULL);
              if (!ecl) continue;
 
              ret->lines = eina_list_append(ret->lines, ecl);
           }
 
-        _elm_code_file_line_append_data(ret, line->start, line->length, lastindex = line->index, EINA_TRUE);
+        _elm_code_file_line_append_data(ret, line->start, line->length, lastindex = line->index, EINA_TRUE, NULL);
      }
    eina_iterator_free(it);
 
@@ -159,66 +164,16 @@ EAPI unsigned int elm_code_file_lines_get(Elm_Code_File *file)
 }
 
 
-EAPI void elm_code_file_line_append(Elm_Code_File *file, const char *line, int length)
+EAPI void elm_code_file_line_append(Elm_Code_File *file, const char *line, int length, void *data)
 {
    int row;
 
    row = elm_code_file_lines_get(file);
-   _elm_code_file_line_append_data(file, line, length, row+1, EINA_FALSE);
+   return _elm_code_file_line_append_data(file, line, length, row+1, EINA_FALSE, data);
 }
 
 EAPI Elm_Code_Line *elm_code_file_line_get(Elm_Code_File *file, unsigned int number)
 {
    return eina_list_nth(file->lines, number - 1);
-}
-
-EAPI const char *elm_code_file_line_content_get(Elm_Code_File *file, unsigned int number, int *length)
-{
-   Elm_Code_Line *line;
-
-   line = elm_code_file_line_get(file, number);
-
-   if (!line)
-     return NULL;
-
-   *length = line->length;
-
-   if (line->modified)
-     return line->modified;
-   return line->content;
-}
-
-EAPI void elm_code_file_line_status_set(Elm_Code_File *file, unsigned int number, Elm_Code_Status_Type status)
-{
-   Elm_Code_Line *line;
-
-   line = elm_code_file_line_get(file, number);
-
-   if (!line)
-     return;
-
-   line->status = status;
-
-   if (file->parent)
-     elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_SET_DONE, line);
-}
-
-EAPI void elm_code_file_line_token_add(Elm_Code_File *file, unsigned int number, int start, int end,
-                                       Elm_Code_Token_Type type)
-{
-   Elm_Code_Line *line;
-   Elm_Code_Token *tok;
-
-   line = elm_code_file_line_get(file, number);
-   tok = calloc(1, sizeof(Elm_Code_Token));
-
-   tok->start = start;
-   tok->end = end;
-   tok->type = type;
-
-   line->tokens = eina_list_append(line->tokens, tok);
-
-   if (file->parent)
-     elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_SET_DONE, line);
 }
 

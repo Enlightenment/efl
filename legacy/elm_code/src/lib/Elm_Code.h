@@ -34,6 +34,7 @@
 #endif /* ! _WIN32 */
 
 #include "elm_code_common.h"
+#include "elm_code_line.h"
 #include "elm_code_file.h"
 #include "elm_code_parse.h"
 #include "elm_code_widget.eo.h"

@@ -4,7 +4,11 @@
 typedef struct _Elm_Code Elm_Code;
 typedef struct _Elm_Code_File Elm_Code_File;
 
-EAPI extern const Eo_Event_Description ELM_CODE_EVENT_LINE_SET_DONE;
+/** Event used to notify that a line's style callbacks have completed */
+EAPI extern const Eo_Event_Description ELM_CODE_EVENT_LINE_STYLE_SET;
+/** Event marking that a single line has loaded and ready to be styled */
+EAPI extern const Eo_Event_Description ELM_CODE_EVENT_LINE_LOAD_DONE;
+/** Event that marks a file load has been completed */
 EAPI extern const Eo_Event_Description ELM_CODE_EVENT_FILE_LOAD_DONE;
 
 typedef enum {
