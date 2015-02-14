@@ -149,6 +149,9 @@ class Elm_Panes (Elm_Layout)
              @param size double value between 0.0 and 1.0 representing size
              proportion of minimum size of left side.
 
+             @note If displayed vertically, left content is displayed at top.
+
+
              @see elm_panes_content_left_min_size_relative_get()
 
              @ingroup Panes */
@@ -179,6 +182,8 @@ class Elm_Panes (Elm_Layout)
              @param size double value between 0.0 and 1.0 representing size proportion
              of minimum size of right side.
 
+             @note If displayed vertically, right content is displayed at bottom.
+
              @see elm_panes_content_right_min_relative_size_get()
 
              @ingroup Panes */
@@ -208,6 +213,8 @@ class Elm_Panes (Elm_Layout)
             @param obj The panes object.
             @param size int value representing minimum size of left side in pixels.
 
+            @note If displayed vertically, left content is displayed at top.
+
             @see elm_panes_content_left_min_size_get()
 
             @ingroup Panes */
@@ -235,6 +242,8 @@ class Elm_Panes (Elm_Layout)
 
             @param obj The panes object.
             @param size int value representing minimum size of right side in pixels.
+
+            @note If displayed vertically, right content is displayed at bottom.
 
             @see elm_panes_content_right_min_size_get()
 
