@@ -481,16 +481,10 @@ _on_item_clicked(void *data,
    if (sd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK)
      return;
 
-   _current_item_change(WIDGET(it), eo_it);
+   _item_select(WIDGET(it), it);
 
    if (sd->selected_it)
-     {
-        if ((it = sd->selected_it) != NULL)
-          {
-             evas_object_smart_callback_call(VIEW(it), SIG_ITEM_CLICKED, eo_it);
-             _item_select(WIDGET(it), it);
-          }
-     }
+     evas_object_smart_callback_call(VIEW(it), SIG_ITEM_CLICKED, eo_it);
 }
 
 static void
