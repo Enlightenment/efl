@@ -23,6 +23,7 @@ elm_code_suite_CPPFLAGS = -I$(top_builddir)/elm_code/src/lib/ \
 -DTESTS_DIR=\"$(abspath $(srcdir))/\" \
 -DEFL_BETA_API_SUPPORT \
 @EFL_CFLAGS@ \
+-DEFL_ELM_CODE_BUILD \
 @CHECK_CFLAGS@
 
 elm_code_suite_LDADD = @EFL_LIBS@ @CHECK_LIBS@ $(top_builddir)/elm_code/src/lib/libelm_code.la
