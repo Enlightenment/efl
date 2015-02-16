@@ -340,9 +340,13 @@ _fbo_surface_cap_test(GLint color_ifmt, GLenum color_fmt,
 
    // Return the result
    if (fb_status != GL_FRAMEBUFFER_COMPLETE)
-   {
-       // Put Error Log...
-      return 0;
+     {
+        int err = glGetError();
+
+        if (err != GL_NO_ERROR)
+           DBG("glGetError() returns %x ", err);
+
+        return 0;
    }
    else
       return 1;
