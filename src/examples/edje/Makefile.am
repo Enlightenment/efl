@@ -43,7 +43,8 @@ sigtest.edc \
 swallow.edc \
 table.edc \
 text.edc \
-toggle_using_filter.edc
+toggle_using_filter.edc \
+box_example.edc
 
 DIST_EDCS = $(EDCS)
 
@@ -99,7 +100,8 @@ animations2.c \
 edje-basic2.c \
 signals2.c \
 edje-swallow2.c \
-edje-multisense.c
+edje-multisense.c \
+edje-edit-part-box.c
 
 EXTRA_DIST = $(DIST_EDCS) $(DATA_FILES)
 
@@ -167,7 +169,8 @@ sigtest \
 animations2 \
 edje-basic2 \
 signals2 \
-edje-swallow2
+edje-swallow2 \
+edje-edit-part-box
 
 if ENABLE_MULTISENSE
 EXTRA_PROGRAMS += edje-multisense
