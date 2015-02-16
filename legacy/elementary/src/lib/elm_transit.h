@@ -579,6 +579,19 @@ EAPI double                 elm_transit_duration_get(const Elm_Transit *transit)
 EAPI void                   elm_transit_go(Elm_Transit *transit);
 
 /**
+ * Starts the transition in given seconds.
+ *
+ * @note @p transit can not be NULL
+ *
+ * @param transit The transit object.
+ * @param in The interval value in seconds
+ *
+ * @since 1.14
+ * @ingroup Transit
+ */
+EAPI void                   elm_transit_go_in(Elm_Transit *transit, double in);
+
+/**
  * Pause/Resume the transition.
  *
  * If you call elm_transit_go again, the transit will be started from the
