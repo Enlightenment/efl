@@ -388,9 +388,9 @@ _evas_render2_begin(Eo *eo_e, Eina_Bool make_updates,
         // send off rendering to primary thread renderer
         if (do_async)
           {
-             // ref the canvas so it stays while threads wortk
+             // ref the canvas so it stays while threads work
              eo_ref(eo_e);
-             // track hanvas in list of things going in the background
+             // track canvas in list of things going in the background
              e->rendering = EINA_TRUE;
              _rendering = eina_list_append(_rendering, eo_e);
              // queue the render thread command
