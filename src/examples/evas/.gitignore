@@ -21,6 +21,7 @@
 /evas_3d_cube2
 /evas_3d_md2
 /evas_3d_pick
+/evas_3d_colorpick
 /evas_3d_proxy
 /evas_cxx_rectangle
 /evas_3d_aabb
