@@ -73,6 +73,9 @@
  * @defgroup Ecore_Con_Events_Group Ecore Connection Events Functions
  * @ingroup Ecore_Con_Group
  *
+ * The Ecore Con events can be catagorized into Server side events
+ * and Client side events.
+ * Server side events:
  * @li ECORE_CON_CLIENT_ADD: Whenever a client connection is made to an
  * @c Ecore_Con_Server, an event of this type is emitted, allowing the
  * retrieval of the client's ip with @ref ecore_con_client_ip_get and
@@ -81,6 +84,15 @@
  * @c Ecore_Con_Server, an event of this type is emitted.  The contents of
  * the data with this event are variable, but if the client object in the data
  * is non-null, it must be freed with @ref ecore_con_client_del.
+ * @li ECORE_CON_EVENT_CLIENT_DATA: Whenever a server object receives
+ * data, then an event of this type is emitted. The data will contain
+ * the size and contents of the message sent by the client.  It should be noted that
+ * data within this object is transient, so it must be duplicated in order to be
+ * retained.  This event will continue to occur until the client has stopped sending its
+ * message, so a good option for storing this data is an Eina_Strbuf.  Once the message has
+ * been received in full, the client object must be freed with ecore_con_client_free.
+ *
+ * Client side events:
  * @li ECORE_CON_EVENT_SERVER_ADD: Whenever a server object is created
  * with @ref ecore_con_server_connect, an event of this type is emitted,
  * allowing for data to be serialized and sent to the server using
@@ -91,15 +103,8 @@
  * type is emitted.  The contents of the data with this event are variable,
  * but if the server object in the data is non-null, it must be freed
  * with @ref ecore_con_server_del.
- * @li ECORE_CON_EVENT_CLIENT_DATA: Whenever a client connects to your server
- * object and sends data, an event of this type is emitted.  The data will contain both
- * the size and contents of the message sent by the client.  It should be noted that
- * data within this object is transient, so it must be duplicated in order to be
- * retained.  This event will continue to occur until the client has stopped sending its
- * message, so a good option for storing this data is an Eina_Strbuf.  Once the message has
- * been received in full, the client object must be freed with ecore_con_client_free.
- * @li ECORE_CON_EVENT_SERVER_DATA: Whenever your server object connects to its destination
- * and receives data, an event of this type is emitted.  The data will contain both
+ * @li ECORE_CON_EVENT_SERVER_DATA: Whenever client object receives
+ * data from the server, an event of this type is emitted. The data will contain both
  * the size and contents of the message sent by the server.  It should be noted that
  * data within this object is transient, so it must be duplicated in order to be
  * retained.  This event will continue to occur until the server has stopped sending its
