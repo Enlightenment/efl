@@ -501,6 +501,7 @@ src/modules/test_map/Makefile
 src/edje_externals/Makefile
 src/examples/Makefile
 src/examples/sphere_hunter/Makefile
+src/examples/perfomance/Makefile
 src/tests/Makefile
 src/imported/Makefile
 src/imported/atspi/Makefile

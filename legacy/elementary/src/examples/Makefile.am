@@ -1,6 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 SUBDIRS = sphere_hunter
+SUBDIRS += perfomance
 
 include ../../Makefile_Elm_Helpers.am
 
