@@ -363,6 +363,8 @@ static void st_collections_group_parts_part_description_table_padding(void);
 static void st_collections_group_parts_part_description_table_min(void);
 static void st_collections_group_parts_part_description_proxy_source_visible(void);
 static void st_collections_group_parts_part_description_proxy_source_clip(void);
+static void st_collections_group_parts_part_description_position_point(void);
+static void st_collections_group_parts_part_description_position_space(void);
 
 #ifdef HAVE_EPHYSICS
 static void st_collections_group_parts_part_description_physics_mass(void);
@@ -713,6 +715,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.table.min", st_collections_group_parts_part_description_table_min},
      {"collections.group.parts.part.description.proxy.source_visible", st_collections_group_parts_part_description_proxy_source_visible},
      {"collections.group.parts.part.description.proxy.source_clip", st_collections_group_parts_part_description_proxy_source_clip},
+     {"collections.group.parts.part.description.position.point", st_collections_group_parts_part_description_position_point},
+     {"collections.group.parts.part.description.position.space", st_collections_group_parts_part_description_position_space},
 
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
@@ -8927,6 +8931,154 @@ st_collections_group_parts_part_description_proxy_source_clip(void)
 
    ed = (Edje_Part_Description_Proxy*) current_desc;
    ed->proxy.source_clip = parse_bool(0);
+}
+
+/**
+   @edcsubsection{collections_group_parts_description_positon,Position}
+ */
+
+/**
+    @page edcref
+
+    @block
+        position
+    @context
+        part {
+            description {
+                ..
+                position {
+                    point:        x y z;
+                    space:        LOCAL/PARENT/WORLD;
+                }
+                ..
+            }
+        }
+    @description
+        A position block defines position of CAMERA,
+        LIGHT or MESH_NODE at the scene.
+    @endblock
+
+    @property
+        point
+    @parameters
+        [x] [y] [z]
+    @effect
+        Sets the point of CAMERA, LIGHT or MESH_NODE centre.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_position_point(void)
+{
+   check_arg_count(3);
+
+   switch (current_part->type)
+     {
+      case EDJE_PART_TYPE_CAMERA:
+        {
+           Edje_Part_Description_Camera *ed;
+
+           ed = (Edje_Part_Description_Camera*) current_desc;
+
+           ed->camera.position.point.x = FROM_DOUBLE(parse_float(0));
+           ed->camera.position.point.y = FROM_DOUBLE(parse_float(1));
+           ed->camera.position.point.z = FROM_DOUBLE(parse_float(2));
+           break;
+        }
+      case EDJE_PART_TYPE_LIGHT:
+        {
+           Edje_Part_Description_Light *ed;
+
+           ed = (Edje_Part_Description_Light*) current_desc;
+
+           ed->light.position.point.x = FROM_DOUBLE(parse_float(0));
+           ed->light.position.point.y = FROM_DOUBLE(parse_float(1));
+           ed->light.position.point.z = FROM_DOUBLE(parse_float(2));
+           break;
+        }
+      case EDJE_PART_TYPE_MESH_NODE:
+        {
+           Edje_Part_Description_Mesh_Node *ed;
+
+           ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+           ed->mesh_node.position.point.x = FROM_DOUBLE(parse_float(0));
+           ed->mesh_node.position.point.y = FROM_DOUBLE(parse_float(1));
+           ed->mesh_node.position.point.z = FROM_DOUBLE(parse_float(2));
+           break;
+        }
+      default:
+        {
+           ERR("parse error %s:%i. camera and light attributes in non-CAMERA, non-LIGHT, and non-MESH_NODE part.",
+               file_in, line - 1);
+           exit(-1);
+        }
+     }
+}
+
+/**
+    @page edcref
+
+    @property
+        space
+    @parameters
+        [SPACE]
+    @effect
+        Explains in which relative coordinates the location of LIGHT
+        or CAMERA considers. Valid space types:
+            @li LOCAL
+            @li PARENT
+            @li WORLD
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_position_space(void)
+{
+   unsigned int space;
+
+   check_arg_count(1);
+
+   space = parse_enum(0,
+                     "LOCAL", EVAS_3D_SPACE_LOCAL,
+                     "PARENT", EVAS_3D_SPACE_PARENT,
+                     "WORLD", EVAS_3D_SPACE_WORLD,
+                     NULL);
+
+   switch (current_part->type)
+     {
+      case EDJE_PART_TYPE_CAMERA:
+        {
+           Edje_Part_Description_Camera *ed;
+
+           ed = (Edje_Part_Description_Camera*) current_desc;
+
+           ed->camera.position.space = space;
+           break;
+        }
+      case EDJE_PART_TYPE_LIGHT:
+        {
+           Edje_Part_Description_Light *ed;
+
+           ed = (Edje_Part_Description_Light*) current_desc;
+
+           ed->light.position.space = space;
+           break;
+        }
+      case EDJE_PART_TYPE_MESH_NODE:
+        {
+           Edje_Part_Description_Mesh_Node *ed;
+
+           ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+           ed->mesh_node.position.space = space;
+           break;
+        }
+      default:
+        {
+           ERR("parse error %s:%i. camera and light attributes in non-CAMERA, non-LIGHT, and non-MESH_NODE part.",
+               file_in, line - 1);
+           exit(-1);
+        }
+     }
 }
 
 static void
