@@ -30,7 +30,7 @@ struct _Elm_Transit
    EINA_MAGIC;
 
    Ecore_Animator *animator;
-   Ecore_Timer *timer; /**< Timer used by elm_transit_go_in() */
+   Ecore_Timer *go_in_timer; /**< Timer used by elm_transit_go_in() */
    Eina_Inlist *effect_list;
    Eina_List *objs;
    Elm_Transit *prev_chain_transit;
@@ -267,7 +267,7 @@ _transit_del(Elm_Transit *transit)
    if (transit->del_data.func)
      transit->del_data.func(transit->del_data.arg, transit);
 
-   ecore_timer_del(transit->timer);
+   ecore_timer_del(transit->go_in_timer);
 
    //cut off the chain transit relationship
    EINA_LIST_FOREACH_SAFE(transit->next_chain_transits, elist, elist_next, chain_transit)
@@ -464,11 +464,11 @@ _recover_image_uv(Evas_Object *obj, Evas_Map *map, Eina_Bool revert, Eina_Bool b
 }
 
 static Eina_Bool
-_transit_go_in_cb(void *data)
+_go_in_timer_cb(void *data)
 {
    Elm_Transit *transit = data;
 
-   transit->timer = NULL;
+   transit->go_in_timer = NULL;
    elm_transit_go(transit);
 
    return ECORE_CALLBACK_CANCEL;
@@ -738,7 +738,7 @@ elm_transit_go(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
 
-   ELM_SAFE_FREE(transit->timer, ecore_timer_del);
+   ELM_SAFE_FREE(transit->go_in_timer, ecore_timer_del);
 
    Eina_List *elist;
    Evas_Object *obj;
@@ -767,8 +767,8 @@ elm_transit_go_in(Elm_Transit *transit, double in)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
 
-   if (transit->timer) ecore_timer_del(transit->timer);
-   transit->timer = ecore_timer_add(in, _transit_go_in_cb, transit);
+   ecore_timer_del(transit->go_in_timer);
+   transit->go_in_timer = ecore_timer_add(in, _go_in_timer_cb, transit);
 }
 
 EAPI void
