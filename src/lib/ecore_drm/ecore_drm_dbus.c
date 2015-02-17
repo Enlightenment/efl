@@ -285,7 +285,7 @@ _ecore_drm_dbus_device_take_no_pending(uint32_t major, uint32_t minor, Eina_Bool
      return -1;
 
    reply = eldbus_proxy_send_and_block(proxy, msg, timeout);
-   if (eldbus_message_error_get(msg, &errname, &errmsg))
+   if (eldbus_message_error_get(reply, &errname, &errmsg))
      {
         ERR("Eldbus Message Error: %s %s", errname, errmsg);
         return -1;
