@@ -1764,6 +1764,15 @@ evas_build_sphere(const Evas_Box3 *box, Evas_Sphere *sphere)
 }
 
 static inline void
+evas_sphere_empty_set(Evas_Sphere *dst)
+{
+    dst->radius = 0;
+    dst->center.x = 0;
+    dst->center.y = 0;
+    dst->center.z = 0;
+}
+
+static inline void
 evas_plane_normalize(Evas_Vec4 *plane)
 {
    Evas_Vec3 tmp;
