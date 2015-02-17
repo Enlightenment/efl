@@ -122,6 +122,9 @@ _device_removed(Ecore_Drm_Input *input EINA_UNUSED, struct libinput_device *devi
    /* remove this evdev from the seat's list of devices */
    edev->seat->devices = eina_list_remove(edev->seat->devices, edev);
 
+   /* tell launcher to release device */
+   _ecore_drm_launcher_device_close(edev->path, edev->fd);
+
    /* destroy this evdev */
    _ecore_drm_evdev_device_destroy(edev);
 }
@@ -280,7 +283,10 @@ ecore_drm_inputs_destroy(Ecore_Drm_Device *dev)
    EINA_LIST_FREE(dev->seats, seat)
      {
         EINA_LIST_FREE(seat->devices, edev)
-          _ecore_drm_evdev_device_destroy(edev);
+          {
+             _ecore_drm_launcher_device_close(edev->path, edev->fd);
+             _ecore_drm_evdev_device_destroy(edev);
+          }
 
         if (seat->name) eina_stringshare_del(seat->name);
         free(seat);
