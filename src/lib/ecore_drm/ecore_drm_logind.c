@@ -234,13 +234,19 @@ _ecore_drm_logind_connect(Ecore_Drm_Device *dev)
      }
 
    /* setup handler for vt signals */
-   dev->tty.event_hdlr = 
-     ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, 
-                             _ecore_drm_logind_cb_vt_signal, dev);
+   if (!dev->tty.event_hdlr)
+     {
+        dev->tty.event_hdlr = 
+          ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, 
+                                  _ecore_drm_logind_cb_vt_signal, dev);
+     }
 
-   active_hdlr = 
-     ecore_event_handler_add(ECORE_DRM_EVENT_ACTIVATE, 
-                             _ecore_drm_logind_cb_activate, dev);
+   if (!active_hdlr)
+     {
+        active_hdlr = 
+          ecore_event_handler_add(ECORE_DRM_EVENT_ACTIVATE, 
+                                  _ecore_drm_logind_cb_activate, dev);
+     }
 
    return EINA_TRUE;
 
