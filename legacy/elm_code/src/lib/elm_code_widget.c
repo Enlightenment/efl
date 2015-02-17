@@ -240,8 +240,10 @@ _elm_code_widget_line_cb(void *data, Eo *obj EINA_UNUSED,
    if (!_elm_code_widget_resize(widget))
      return EINA_TRUE;
 
-   cells = evas_object_textgrid_cellrow_get(pd->grid, line->number - 1);
-   _elm_code_widget_fill_line(widget, cells, line);
+// FIXME refresh just the row - but this resulted in undrawn areas
+//   cells = evas_object_textgrid_cellrow_get(pd->grid, line->number - 1);
+//   _elm_code_widget_fill_line(widget, cells, line);
+   _elm_code_widget_fill(widget);
 
    return EO_CALLBACK_CONTINUE;
 }
