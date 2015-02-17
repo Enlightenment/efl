@@ -545,6 +545,7 @@ Ecore_Drm_Evdev *
 _ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, struct libinput_device *device)
 {
    Ecore_Drm_Evdev *edev;
+   Eina_List *devices;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
 
@@ -554,6 +555,26 @@ _ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, struct libinput_device *dev
    edev->seat = seat;
    edev->device = device;
    edev->path = eina_stringshare_add(libinput_device_get_sysname(device));
+
+   devices = eeze_udev_find_by_filter("input", NULL, edev->path);
+   if (eina_list_count(devices) >= 1)
+     {
+        Eina_List *l;
+        const char *dev, *name;
+
+        EINA_LIST_FOREACH(devices, l, dev)
+          {
+             name = eeze_udev_syspath_get_devname(dev);
+             if (strstr(name, edev->path))
+               {
+                  eina_stringshare_replace(&edev->path, eeze_udev_syspath_get_devpath(dev));
+                  break;
+               }
+          }
+
+        EINA_LIST_FREE(devices, dev)
+          eina_stringshare_del(dev);
+     }
 
    if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_KEYBOARD))
      {
