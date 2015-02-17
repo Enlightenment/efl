@@ -175,8 +175,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
         eng_window_free(gw);
         return NULL;
      }
-   eglBindAPI(EGL_OPENGL_ES_API);
-   if (eglGetError() != EGL_SUCCESS)
+   if (!eglBindAPI(EGL_OPENGL_ES_API))
      {
         ERR("eglBindAPI() fail. code=%#x", eglGetError());
         eng_window_free(gw);
