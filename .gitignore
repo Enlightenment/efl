@@ -67,4 +67,5 @@ tags
 /config.rpath
 /coverage
 /src/lib/ecore_x/ecore_x_vsync
+/src/modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x
 Session.vim

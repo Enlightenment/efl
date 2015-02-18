@@ -586,6 +586,7 @@ modules/evas/engines/gl_common/evas_gl_api.c \
 modules/evas/engines/gl_common/evas_gl_api_gles1.c \
 modules/evas/engines/gl_common/evas_gl_api_ext.c \
 modules/evas/engines/gl_common/shader/evas_gl_shaders.x \
+modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x \
 modules/evas/engines/gl_common/shader/evas_gl_enum.x
 
 # 3D
@@ -728,6 +729,35 @@ modules/evas/engines/gl_common/shader/evas_gl_shaders.x: modules/evas/engines/gl
 	@modules/evas/engines/gl_common/shader/gen_shaders.sh $(GL_SHADERS_GEN)
 
 modules/evas/engines/gl_common/shader/evas_gl_enum.x: modules/evas/engines/gl_common/shader/evas_gl_shaders.x
+
+# NOTE: order here should be equal with modes in file Evas_Eo.h
+GL_SHADERS_3D_GEN = \
+modules/evas/engines/gl_common/shader_3d/vertex_color_vert.shd \
+modules/evas/engines/gl_common/shader_3d/vertex_color_frag.shd \
+modules/evas/engines/gl_common/shader_3d/diffuse_vert.shd \
+modules/evas/engines/gl_common/shader_3d/diffuse_frag.shd \
+modules/evas/engines/gl_common/shader_3d/flat_vert.shd \
+modules/evas/engines/gl_common/shader_3d/flat_frag.shd \
+modules/evas/engines/gl_common/shader_3d/phong_vert.shd \
+modules/evas/engines/gl_common/shader_3d/phong_frag.shd \
+modules/evas/engines/gl_common/shader_3d/normal_map_vert.shd \
+modules/evas/engines/gl_common/shader_3d/normal_map_frag.shd \
+modules/evas/engines/gl_common/shader_3d/shadow_map_vert.shd \
+modules/evas/engines/gl_common/shader_3d/shadow_map_frag.shd \
+modules/evas/engines/gl_common/shader_3d/color_pick_vert.shd \
+modules/evas/engines/gl_common/shader_3d/color_pick_frag.shd \
+$(NULL)
+
+EXTRA_DIST += \
+modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh
+
+BUILT_SOURCES += \
+modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x
+
+modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x: modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN)
+	@echo "  SHADERS_3D  $@"
+	@modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN)
+
 
 GL_GENERIC_SOURCES = \
 modules/evas/engines/gl_generic/evas_engine.c \

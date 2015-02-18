@@ -1,0 +1,7 @@
+uniform float uColorPick;
+
+void main()
+{
+   gl_FragColor = vec4(uColorPick);
+}
+

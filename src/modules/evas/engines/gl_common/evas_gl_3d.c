@@ -1144,13 +1144,10 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
      }
 
    if (pdmesh->shadowed)
-        data->flags |= E3D_SHADER_FLAG_SHADOWED;
+     data->flags |= E3D_SHADER_FLAG_SHADOWED;
 
    if (pdmesh->color_pick_enabled)
-     {
-        data->flags |= E3D_SHADER_FLAG_COLOR_PICK_ENABLED;
-        data->color_pick_key = pdmesh->color_pick_key;
-     }
+     data->color_pick_key = pdmesh->color_pick_key;
 
    data->blending = pdmesh->blending;
    data->blend_sfactor = pdmesh->blend_sfactor;

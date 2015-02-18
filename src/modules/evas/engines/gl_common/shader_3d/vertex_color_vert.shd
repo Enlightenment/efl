@@ -1,0 +1,50 @@
+uniform     mat4  uMatrixMvp;
+varying     vec4  vColor;
+
+#ifdef VERTEX_POSITION
+attribute   vec4  aPosition0;
+#endif //VERTEX_POSITION
+
+#ifdef VERTEX_POSITION_BLEND
+attribute   vec4  aPosition1;
+uniform     float uPositionWeight;
+#endif //VERTEX_POSITION_BLEND
+
+#ifdef VERTEX_COLOR
+attribute   vec4  aColor0;
+#endif //VERTEX_COLOR
+
+#ifdef VERTEX_COLOR_BLEND
+attribute   vec4  aColor1;
+uniform     float uColorWeight;
+#endif //VERTEX_COLOR_BLEND
+
+void main()
+{
+
+#ifdef VERTEX_POSITION_BLEND
+   vec4 position = aPosition0 * uPositionWeight +
+   aPosition1 * (1.0 - uPositionWeight);
+   position = vec4(position.xyz, 1.0);
+#else
+
+#ifdef VERTEX_POSITION
+   vec4 position = vec4(aPosition0.xyz, 1.0);
+#endif // VERTEX_POSITION
+
+#endif //VERTEX_POSITION_BLEND
+
+#ifdef VERTEX_COLOR_BLEND
+   vec4 color = aColor0 * uColorWeight + aColor1 * (1.0 - uColorWeight);
+#else
+
+#ifdef VERTEX_COLOR
+   vec4 color = aColor0;
+#endif //VERTEX_COLOR
+
+#endif //VERTEX_COLOR_BLEND
+
+   vColor = color;
+   gl_Position = uMatrixMvp * position;
+}
+

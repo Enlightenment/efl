@@ -1,0 +1,20 @@
+varying  vec4        vColor;
+
+#ifdef FOG_ENABLED
+uniform float uFogFactor;
+uniform vec4  uFogColor;
+#endif //FOG_ENABLED
+
+void main()
+{
+   gl_FragColor = vColor;
+
+#ifdef FOG_ENABLED
+   float z = gl_FragCoord.z / gl_FragCoord.w;
+   float fogFactor = exp2( -uFogFactor * uFogFactor * z * z * 1.44);
+   fogFactor = clamp(fogFactor, 0.0, 1.0);
+   gl_FragColor = mix(uFogColor, gl_FragColor, fogFactor);
+#endif //FOG_ENABLED
+
+}
+

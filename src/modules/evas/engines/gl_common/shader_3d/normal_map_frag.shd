@@ -1,0 +1,283 @@
+varying  vec3        vLightVector;
+varying  vec3        vLightHalfVector;
+uniform  sampler2D   uTextureNormal0;
+varying  vec3        vEyeVector;
+
+#ifdef NEED_TEX_COORD
+varying vec2   vTexCoord;
+#endif //TEX_COORD
+
+#ifdef FOG_ENABLED
+uniform float uFogFactor;
+uniform vec4  uFogColor;
+#endif //FOG_ENABLED
+
+#ifdef  SHADOWED
+varying vec4 vLightPosition;
+uniform sampler2D uShadowMap;
+float shadow;
+#endif //SHADOWED
+
+#ifdef NORMAL_TEXTURE_BLEND
+uniform  sampler2D  uTextureNormal1;
+uniform  float      uTextureNormalWeight;
+#endif //NORMAL_TEXTURE_BLEND
+
+#ifndef VERTEX_TANGENT
+varying  vec3        vNormal;
+#endif //VERTEX_TANGENT
+
+#ifdef DIFFUSE
+uniform   vec4        uMaterialDiffuse;
+uniform   vec4        uLightDiffuse;
+
+#ifdef DIFFUSE_TEXTURE
+uniform sampler2D  uTextureDiffuse0;
+#endif //DIFFUSE_TEXTURE
+
+#ifdef DIFFUSE_TEXTURE_BLEND
+uniform sampler2D  uTextureDiffuse1;
+uniform float      uTextureDiffuseWeight;
+#endif //DIFFUSE_TEXTURE_BLEND
+
+#endif //DIFFUSE
+
+#ifdef SPECULAR
+uniform   vec4     uLightSpecular;
+uniform   float    uMaterialShininess;
+uniform   vec4     uMaterialSpecular;
+
+#ifdef SPECULAR_TEXTURE
+uniform sampler2D  uTextureSpecular0;
+#endif //SPECULAR_TEXTURE
+
+#ifdef SPECULAR_TEXTURE_BLEND
+uniform sampler2D  uTextureSpecular1;
+uniform float      uTextureSpecularWeight;
+#endif //SPECULAR_TEXTURE_BLEND
+
+#endif //SPECULAR
+
+#ifdef AMBIENT
+uniform  vec4       uMaterialAmbient;
+uniform  vec4       uLightAmbient;
+
+#ifdef AMBIENT_TEXTURE
+uniform sampler2D  uTextureAmbient0;
+#endif //AMBIENT_TEXTURE
+
+#ifdef AMBIENT_TEXTURE_BLEND
+uniform sampler2D  uTextureAmbient1;
+uniform float      uTextureAmbientWeight;
+#endif //AMBIENT_TEXTURE_BLEND
+
+#endif //AMBIENT
+
+#ifdef EMISSION
+uniform vec4       uMaterialEmission;
+
+#ifdef EMISSION_TEXTURE
+uniform sampler2D  uTextureEmission0;
+#endif //EMISSION_TEXTURE
+
+#ifdef EMISSION_TEXTURE_BLEND
+uniform sampler2D  uTextureEmission1;
+uniform float      uTextureEmissionWeight;
+#endif //EMISSION_TEXTURE_BLEND
+
+#endif //EMISSION
+
+#ifdef LIGHT_SPOT
+uniform   vec3  uLightSpotDir;
+uniform   float uLightSpotExp;
+uniform   float uLightSpotCutoffCos;
+#endif //LIGHT_SPOT
+
+#ifdef LIGHT_ATTENUATION
+varying   float    vLightDist;
+#endif //LIGHT_ATTENUATION
+
+#ifndef VERTEX_TANGENT
+
+mat3 cotangent_frame(vec3 n, vec3 p, vec2 uv)
+{
+   vec3 dp1 = dFdx(p);
+   vec3 dp2 = dFdy(p);
+   vec2 duv1 = dFdx(uv);
+   vec2 duv2 = dFdy(uv);
+   vec3 dp2perp = cross(dp2, n);
+   vec3 dp1perp = cross(n, dp1);
+   vec3 t = dp2perp * duv1.x + dp1perp * duv2.x;
+   vec3 b = dp2perp * duv1.y + dp1perp * duv2.y;
+   float invmax = inversesqrt(max(dot(t, t), dot(b, b)));
+   return mat3(t * invmax, b * invmax, n);
+}
+
+vec3 perturb_normal(vec3 normal)
+{
+   mat3 tbn = cotangent_frame(vNormal, -vEyeVector, vTexCoord);
+   return normalize(tbn * normal);
+}
+#endif //VERTEX_TANGENT
+
+void fragmentNormalMap()
+{
+   float factor;
+   vec3  normal;
+   vec4  color;
+
+#ifdef NORMAL_TEXTURE_BLEND
+   normal = texture2D(uTextureNormal0, vTexCoord).rgb * uTextureNormalWeight;
+   normal += texture2D(uTextureNormal1, vTexCoord).rgb *
+   (1.0 - uTextureNormalWeight);
+#else
+   normal = texture2D(uTextureNormal0, vTexCoord).rgb;
+#endif //NORMAL_TEXTURE_BLEND
+
+   normal = 2.0 * normal - 1.0;
+
+#ifndef VERTEX_TANGENT
+   normal = perturb_normal(normal);
+#endif //VERTEX_TANGENT
+
+   vec3  lv = normalize(vLightVector);
+   normal = normalize(normal);
+
+   factor = dot(lv, normal);
+
+#ifdef LIGHT_SPOT
+   float f = dot(-lv, normalize(uLightSpotDir));
+
+   if (f > uLightSpotCutoffCos)
+     factor *= pow(f, uLightSpotExp);
+   else
+     factor = 0.0;
+#endif //LIGHT_SPOT
+
+   if (factor > 0.0)
+     {
+
+#ifdef DIFFUSE
+
+#ifdef DIFFUSE_TEXTURE_BLEND
+        color = texture2D(uTextureDiffuse0, vTexCoord) * uTextureDiffuseWeight +
+        texture2D(uTextureDiffuse1, vTexCoord) * (1.0 - uTextureDiffuseWeight);
+#else
+
+#ifdef DIFFUSE_TEXTURE
+        color = texture2D(uTextureDiffuse0, vTexCoord);
+#else
+        color = uMaterialDiffuse;
+#endif //DIFFUSE_TEXTURE
+
+#endif //DIFFUSE_TEXTURE_BLEND
+
+        gl_FragColor = uLightDiffuse * color * factor;
+
+#else
+        gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+#endif //DIFFUSE
+
+#ifdef SPECULAR
+
+        factor = dot(normalize(vLightHalfVector), normal);
+        if (factor > 0.0)
+          {
+             factor = pow(factor, uMaterialShininess);
+
+#ifdef SPECULAR_TEXTURE_BLEND
+             color = texture2D(uTextureSpecular0, vTexCoord) * uTextureSpecularWeight +
+             texture2D(uTextureSpecular1, vTexCoord) * (1.0 - uTextureSpecularWeight);
+#else
+#ifdef SPECULAR_TEXTURE
+             color = texture2D(uTextureSpecular0, vTexCoord);
+#else
+             color = uMaterialSpecular;
+#endif //SPECULAR_TEXTURE
+
+#endif //SPECULAR_TEXTURE_BLEND
+
+             gl_FragColor += uLightSpecular * color * factor;
+          }
+
+#endif //SPECULAR
+
+#ifdef SHADOWED
+        gl_FragColor *= shadow;
+#endif //SHADOWED
+
+     }
+   else
+     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+
+#ifdef AMBIENT
+#ifdef AMBIENT_TEXTURE_BLEND
+   color = texture2D(uTextureAmbient0, vTexCoord) * uTextureAmbientWeight +
+   texture2D(uTextureAmbient1, vTexCoord) * (1.0 - uTextureAmbientWeight);
+#else
+
+#ifdef AMBIENT_TEXTURE
+   color = texture2D(uTextureAmbient0, vTexCoord);
+#else
+   color = uMaterialAmbient;
+#endif //AMBIENT_TEXTURE
+
+#endif //AMBIENT_TEXTURE_BLEND
+
+     gl_FragColor += uLightAmbient * color;
+#endif //AMBIENT
+
+#ifdef LIGHT_ATTENUATION
+   gl_FragColor /= dot(uLightAtten, vec3(1.0, vLightDist, vLightDist * vLightDist));
+#endif //LIGHT_ATTENUATION
+
+#ifdef EMISSION
+
+#ifdef EMISSION_TEXTURE_BLEND
+   color = texture2D(uTextureEmission0, vTexCoord) * uTextureEmissionWeight +
+   texture2D(uTextureEmission1, vTexCoord) * (1.0 - uTextureEmissionWeight);
+#else
+
+#ifdef EMISSION_TEXTURE
+   color = texture2D(uTextureEmission0, vTexCoord);
+#else
+   color = uMaterialEmission;
+#endif //EMISSION_TEXTURE
+
+#endif //EMISSION_TEXTURE_BLEND
+
+   gl_FragColor += color;
+#endif //EMISSION
+
+}
+
+#ifdef SHADOWED
+float pcf(vec4 lpos, float size)
+{
+   vec3 smcoord = lpos.xyz / lpos.w * 0.5 + 0.5;
+   float i, j, randx, randy, shadow;
+   shadow = 0.0;
+   for (i = -4.0; i < 4.0; i++)
+     for (j = -4.0; j < 4.0; j++)
+        shadow += float(smcoord.z <= texture2D(uShadowMap, smcoord.xy +vec2(i / 8.0, j / 8.0)*size).x);
+   return shadow / 64.0;
+}
+#endif //SHADOWED
+
+void main() {
+
+#ifdef SHADOWED
+   shadow = pcf(vLightPosition, 1.0 / 200.0);
+#endif //SHADOWED
+
+   fragmentNormalMap();
+
+#ifdef FOG_ENABLED
+   float z = gl_FragCoord.z / gl_FragCoord.w;
+   float fogFactor = exp2( -uFogFactor * uFogFactor * z * z * 1.44);
+   fogFactor = clamp(fogFactor, 0.0, 1.0);
+   gl_FragColor = mix(uFogColor, gl_FragColor, fogFactor);
+#endif //FOG_ENABLED
+
+}
+

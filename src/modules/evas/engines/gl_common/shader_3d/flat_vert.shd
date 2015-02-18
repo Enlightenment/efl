@@ -1,0 +1,154 @@
+uniform   mat4  uMatrixMvp;
+uniform   mat3  uMatrixNormal;
+uniform   mat4  uMatrixModelview;
+uniform   vec4  uLightPosition;
+varying   vec2  vFactor;
+
+#ifdef SHADOWED
+uniform mat4 uMatrixLight;
+varying vec4 vLightPosition;
+#endif //SHADOWED
+
+#ifdef VERTEX_POSITION
+attribute   vec4  aPosition0;
+#endif //VERTEX_POSITION
+
+#ifdef VERTEX_POSITION_BLEND
+attribute   vec4  aPosition1;
+uniform     float uPositionWeight;
+#endif //VERTEX_POSITION_BLEND
+
+#ifdef VERTEX_NORMAL
+attribute   vec4  aNormal0;
+#endif //VERTEX_NORMAL
+
+#ifdef VERTEX_NORMAL_BLEND
+attribute   vec4  aNormal1;
+uniform     float uNormalWeight;
+#endif //VERTEX_NORMAL_BLEND
+
+#ifdef VERTEX_TEXCOORD
+attribute   vec4  aTexCoord0;
+#endif //VERTEX_TEXCOORD
+
+#ifdef VERTEX_TEXCOORD_BLEND
+attribute   vec4  aTexCoord1;
+uniform     float uTexCoordWeight;
+#endif //VERTEX_TEXCOORD_BLEND
+
+#ifdef NEED_TEX_COORD
+varying vec2 vTexCoord;
+#endif //NEED_TEX_COORD
+
+#ifdef LIGHT_SPOT
+uniform   vec3  uLightSpotDir;
+uniform   float uLightSpotExp;
+uniform   float uLightSpotCutoffCos;
+#endif //LIGHT_SPOT
+
+#ifdef SPECULAR
+uniform float   uMaterialShininess;
+#endif //SPECULAR
+
+#ifdef LIGHT_ATTENUATION
+uniform   vec3  uLightAtten;
+#endif //LIGHT_ATTENUATION
+
+void vertexFlat(vec4 position, vec3 normal)
+{
+   vec3  lv;
+   float factor;
+   normal = uMatrixNormal * normal;
+   position = uMatrixModelview * position;
+
+#ifdef NORMALIZE_NORMALS
+   normal = normalize(normal);
+#endif //NORMALIZE_NORMALS
+
+#ifdef LIGHT_DIRECTIONAL
+   lv = uLightPosition.xyz;
+#else
+   lv = uLightPosition.xyz - position.xyz;
+   lv = normalize(lv);
+#endif //LIGHT_DIRECTIONAL
+
+   factor = max(dot(lv, normal), 0.0);
+
+#ifdef LIGHT_SPOT
+   float f = dot(-lv, uLightSpotDir);
+   if (f > uLightSpotCutoffCos)
+     factor *= pow(f, uLightSpotExp);
+   else
+      factor = 0.0;
+#endif //LIGHT_SPOT
+
+   if (factor > 0.0)
+     {
+
+#ifdef DIFFUSE
+        vFactor.x = factor;
+#else
+        vFactor.x = 0.0;
+#endif //DIFFUSE
+
+#ifdef SPECULAR
+        vec3  hv = normalize(normalize(-position.xyz) + lv);
+        factor = pow(max(dot(hv, normal), 0.0), uMaterialShininess);
+        vFactor.y = factor;
+#endif //SPECULAR
+
+     }
+   else
+     vFactor = vec2(0.0, 0.0);
+
+   /* Light attenuation. */
+#ifdef LIGHT_ATTENUATION
+   float dist = length(lv);
+   vFactor /= dot(uLightAtten, vec3(1.0, dist, dist * dist));
+#endif //LIGHT_ATTENUATION
+}
+
+void main()
+{
+
+#ifdef VERTEX_POSITION_BLEND
+   vec4 position = aPosition0 * uPositionWeight +
+   aPosition1 * (1.0 - uPositionWeight);
+   position = vec4(position.xyz, 1.0);
+#else
+
+#ifdef VERTEX_POSITION
+   vec4 position = vec4(aPosition0.xyz, 1.0);
+#endif // VERTEX_POSITION
+
+#endif //VERTEX_POSITION_BLEND
+
+#ifdef VERTEX_NORMAL_BLEND
+   vec3 normal = aNormal0.xyz * uNormalWeight +
+   aNormal1.xyz * (1.0 - uNormalWeight);
+#else
+
+#ifdef VERTEX_NORMAL
+   vec3 normal = aNormal0.xyz;
+#endif //VERTEX_NORMAL
+
+#endif //VERTEX_NORMAL_BLEND
+
+#ifdef VERTEX_TEXCOORD_BLEND
+   vTexCoord = aTexCoord0.st * uTexCoordWeight +
+   aTexCoord1.st * (1.0 - uTexCoordWeight);
+#else
+
+#ifdef VERTEX_TEXCOORD
+   vTexCoord = aTexCoord0.st;
+#endif //VERTEX_TEXCOORD
+
+#endif //VERTEX_TEXCOORD_BLEND
+
+   gl_Position = uMatrixMvp * position;
+   vertexFlat(position, normal);
+
+#ifdef SHADOWED
+   vLightPosition = uMatrixLight * position;
+#endif
+}

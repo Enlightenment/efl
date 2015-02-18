@@ -7,6 +7,7 @@ typedef struct _E3D_Program   E3D_Program;
 typedef struct _E3D_Draw_Data E3D_Draw_Data;
 typedef unsigned long         E3D_Shader_Flag;
 
+// NOTE: order here should be equal with flag names in file evas_gl_3d_shader.c
 #define E3D_SHADER_FLAG_NORMALIZE_NORMALS       (1 << 0)
 #define E3D_SHADER_FLAG_VERTEX_POSITION         (1 << 1)
 #define E3D_SHADER_FLAG_VERTEX_POSITION_BLEND   (1 << 2)
@@ -25,19 +26,19 @@ typedef unsigned long         E3D_Shader_Flag;
 #define E3D_SHADER_FLAG_DIFFUSE                 (1 << 15)
 #define E3D_SHADER_FLAG_SPECULAR                (1 << 16)
 #define E3D_SHADER_FLAG_EMISSION                (1 << 17)
-#define E3D_SHADER_FLAG_DIFFUSE_TEXTURE         (1 << 19)
-#define E3D_SHADER_FLAG_AMBIENT_TEXTURE         (1 << 20)
-#define E3D_SHADER_FLAG_SPECULAR_TEXTURE        (1 << 21)
-#define E3D_SHADER_FLAG_EMISSION_TEXTURE        (1 << 22)
-#define E3D_SHADER_FLAG_NORMAL_TEXTURE          (1 << 23)
-#define E3D_SHADER_FLAG_DIFFUSE_TEXTURE_BLEND   (1 << 24)
-#define E3D_SHADER_FLAG_AMBIENT_TEXTURE_BLEND   (1 << 25)
-#define E3D_SHADER_FLAG_SPECULAR_TEXTURE_BLEND  (1 << 26)
-#define E3D_SHADER_FLAG_EMISSION_TEXTURE_BLEND  (1 << 27)
-#define E3D_SHADER_FLAG_NORMAL_TEXTURE_BLEND    (1 << 28)
-#define E3D_SHADER_FLAG_FOG_ENABLED             (1 << 29)
-#define E3D_SHADER_FLAG_SHADOWED                (1 << 30)
-#define E3D_SHADER_FLAG_COLOR_PICK_ENABLED      (1 << 31)
+#define E3D_SHADER_FLAG_DIFFUSE_TEXTURE         (1 << 18)
+#define E3D_SHADER_FLAG_AMBIENT_TEXTURE         (1 << 19)
+#define E3D_SHADER_FLAG_SPECULAR_TEXTURE        (1 << 20)
+#define E3D_SHADER_FLAG_EMISSION_TEXTURE        (1 << 21)
+#define E3D_SHADER_FLAG_NORMAL_TEXTURE          (1 << 22)
+#define E3D_SHADER_FLAG_DIFFUSE_TEXTURE_BLEND   (1 << 23)
+#define E3D_SHADER_FLAG_AMBIENT_TEXTURE_BLEND   (1 << 24)
+#define E3D_SHADER_FLAG_SPECULAR_TEXTURE_BLEND  (1 << 25)
+#define E3D_SHADER_FLAG_EMISSION_TEXTURE_BLEND  (1 << 26)
+#define E3D_SHADER_FLAG_NORMAL_TEXTURE_BLEND    (1 << 27)
+#define E3D_SHADER_FLAG_FOG_ENABLED             (1 << 28)
+#define E3D_SHADER_FLAG_SHADOWED                (1 << 29)
+#define E3D_SHADER_FLAG_COUNT                    30
 
 static inline Eina_Bool
 _flags_need_tex_coord(E3D_Shader_Flag flags)

@@ -1,0 +1,189 @@
+uniform  mat4  uMatrixMvp;
+uniform  mat3  uMatrixNormal;
+uniform  mat4  uMatrixModelview;
+uniform  vec4  uLightPosition;
+varying  vec3  vLightVector;
+varying  vec3  vLightHalfVector;
+varying  vec3  vEyeVector;
+
+#ifndef VERTEX_TANGENT
+varying  vec3  vNormal;
+#endif //VERTEX_TANGENT
+
+#ifdef SHADOWED
+uniform mat4 uMatrixLight;
+varying vec4 vLightPosition;
+#endif //SHADOWED
+
+#ifdef VERTEX_POSITION
+attribute   vec4  aPosition0;
+#endif //VERTEX_POSITION
+
+#ifdef VERTEX_POSITION_BLEND
+attribute   vec4  aPosition1;
+uniform     float uPositionWeight;
+#endif //VERTEX_POSITION_BLEND
+
+#ifdef VERTEX_NORMAL
+attribute   vec4  aNormal0;
+#endif //VERTEX_NORMAL
+
+#ifdef VERTEX_NORMAL_BLEND
+attribute   vec4  aNormal1;
+uniform     float uNormalWeight;
+#endif //VERTEX_NORMAL_BLEND
+
+#ifdef VERTEX_TANGENT
+attribute   vec4  aTangent0;
+#endif //VERTEX_TANGENT
+
+#ifdef VERTEX_TANGENT_BLEND
+attribute   vec4  aTangent1;
+uniform     float uTangentWeight;
+#endif //VERTEX_TANGENT_BLEND
+
+#ifdef VERTEX_TEXCOORD
+attribute   vec4  aTexCoord0;
+#endif //VERTEX_TEXCOORD
+
+#ifdef VERTEX_TEXCOORD_BLEND
+attribute   vec4  aTexCoord1;
+uniform     float uTexCoordWeight;
+#endif //VERTEX_TEXCOORD_BLEND
+
+#ifdef NEED_TEX_COORD
+varying vec2 vTexCoord;
+#endif //NEED_TEX_COORD
+
+#ifdef LIGHT_ATTENUATION
+varying  float vLightDist;
+#endif //LIGHT_ATTENUATION
+
+#ifndef VERTEX_TANGENT
+void vertexNormalMap(vec4 position, vec3 normal)
+{
+   normal = uMatrixNormal * normal;
+   position = uMatrixModelview * position;
+   vEyeVector = normalize(-position.xyz);
+
+#ifdef NORMALIZE_NORMALS
+   normal = normalize(normal);
+#endif //NORMALIZE_NORMALS
+
+#ifdef LIGHT_DIRECTIONAL
+   vLightVector = uLightPosition.xyz;
+#else
+   vLightVector = uLightPosition.xyz - position.xyz;
+
+#ifdef LIGHT_ATTENUATION
+   vLightDist = length(vLightVector);
+#endif //LIGHT_ATTENUATION
+
+   vLightVector = normalize(vLightVector);
+#endif //LIGHT_DIRECTIONAL
+
+   vLightHalfVector = normalize(vEyeVector + vLightVector);
+   vNormal = normal;
+}
+
+#else
+
+void vertexNormalMap(vec4 position, vec3 normal, vec3 tangent)
+{
+   vec3 n = normalize(uMatrixNormal * normal);
+   vec3 t = normalize(uMatrixNormal * tangent);
+   vec3 b = cross(n, t);
+   vec3 tmp;
+
+   position = uMatrixModelview * position;
+
+#ifdef LIGHT_DIRECTIONAL
+   vec3 lightDir = uLightPosition.xyz;
+#else
+   vec3 lightDir = uLightPosition.xyz - position.xyz;
+
+#ifdef LIGHT_ATTENUATION
+   vLightDist = length(lightDir);
+#endif //LIGHT_ATTENUATION
+
+   lightDir = normalize(lightDir);
+#endif //LIGHT_DIRECTIONAL
+
+   tmp.x = dot(lightDir, t);
+   tmp.y = dot(lightDir, b);
+   tmp.z = dot(lightDir, n);
+   vLightVector = tmp;
+
+   tmp.x = dot(position.xyz, t);
+   tmp.y = dot(position.xyz, b);
+   tmp.z = dot(position.xyz, n);
+   vEyeVector = normalize(tmp);
+
+   vec3 hv = normalize(normalize(-position.xyz) + lightDir);
+   tmp.x = dot(hv, t);
+   tmp.y = dot(hv, b);
+   tmp.z = dot(hv, n);
+   vLightHalfVector = tmp;
+}
+#endif //VERTEX_TANGENT
+
+void main()
+{
+
+#ifdef VERTEX_POSITION_BLEND
+   vec4 position = aPosition0 * uPositionWeight +
+   aPosition1 * (1.0 - uPositionWeight);
+   position = vec4(position.xyz, 1.0);
+#else
+
+#ifdef VERTEX_POSITION
+   vec4 position = vec4(aPosition0.xyz, 1.0);
+#endif // VERTEX_POSITION
+
+#endif //VERTEX_POSITION_BLEND
+
+#ifdef VERTEX_NORMAL_BLEND
+   vec3 normal = aNormal0.xyz * uNormalWeight +
+   aNormal1.xyz * (1.0 - uNormalWeight);
+#else
+
+#ifdef VERTEX_NORMAL
+   vec3 normal = aNormal0.xyz;
+#endif //VERTEX_NORMAL
+
+#endif //VERTEX_NORMAL_BLEND
+
+#ifdef VERTEX_TANGENT_BLEND
+   vec3 tangent = aTangent0.xyz * uTangentWeight +
+   aTangent1.xyz * (1.0 - uTangentWeight);
+#else
+
+#ifdef VERTEX_TANGENT
+   vec3 tangent = aTangent0.xyz;
+#endif //VERTEX_TANGENT
+
+#endif //VERTEX_TANGENT_BLEND
+
+#ifdef VERTEX_TEXCOORD_BLEND
+   vTexCoord = aTexCoord0.st * uTexCoordWeight +
+   aTexCoord1.st * (1.0 - uTexCoordWeight);
+#else
+
+#ifdef VERTEX_TEXCOORD
+   vTexCoord = aTexCoord0.st;
+#endif //VERTEX_TEXCOORD
+
+#endif //VERTEX_TEXCOORD_BLEND
+
+   gl_Position = uMatrixMvp * position;
+
+#ifdef  VERTEX_TANGENT
+   vertexNormalMap(position, normal, tangent);
+#else
+   vertexNormalMap(position, normal);
+#endif //VERTEX_TANGENT
+
+#ifdef SHADOWED
+   vLightPosition = uMatrixLight * position;
+#endif
+}
