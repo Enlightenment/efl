@@ -59,7 +59,7 @@ typedef struct _Scene_Data
 } Scene_Data;
 
 Eina_Bool
-_cb_clicked(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+_cb_clicked(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Eina_List *meshes = NULL, *l;
    Evas_3D_Mesh *m;
@@ -78,10 +78,11 @@ _cb_clicked(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_i
         choosed_node = (Evas_3D_Node *)event_info;
      }
 
+   return EINA_TRUE;
 }
 
 Eina_Bool
-_cb_collision(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+_cb_collision(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Eina_List *meshes = NULL, *l;
    Evas_3D_Mesh *m;
@@ -90,6 +91,8 @@ _cb_collision(void *data, Eo *obj, const Eo_Event_Description *desc, void *event
      {
         eo_do(m, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE));
      }
+
+   return EINA_TRUE;
 }
 
 static void
@@ -344,9 +347,8 @@ _scene_setup(Scene_Data *data)
 }
 
 static void
-_on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void *event_info)
+_on_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void *event_info)
 {
-   Scene_Data *scene = (Scene_Data *)data;
    Evas_Event_Key_Down *ev = event_info;
    if (!strcmp("w", ev->key))
      {

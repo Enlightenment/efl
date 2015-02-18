@@ -224,11 +224,11 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, Eina_File *file)
    Eina_Bool will_check_next_char = EINA_FALSE;
    Eina_Bool first_char_is_v = EINA_FALSE;
    Eina_Bool first_char_is_f = EINA_FALSE;
-   float *pos, *nor, *tex;
-   int stride_pos, stride_nor, stride_tex;
+   float *pos = NULL, *nor = NULL, *tex = NULL;
+   int stride_pos = 0, stride_nor = 0, stride_tex = 0;
    int j, k, data_for_one_point;
    char *current, *map;
-   float *_vertices_obj, *_normales_obj, *_tex_coords_obj;
+   float *_vertices_obj = NULL, *_normales_obj = NULL, *_tex_coords_obj = NULL;
    int *_triangles;
 
    map = eina_file_map_all(file, EINA_FILE_SEQUENTIAL);

@@ -303,7 +303,7 @@ _key_down(void *data,
 }
 
 static void
-_key_up(void *data,
+_key_up(void *data EINA_UNUSED,
         Evas *e EINA_UNUSED,
         Evas_Object *eo EINA_UNUSED,
         void *event_info)
@@ -1151,7 +1151,7 @@ _mesh_setup_grass(Scene_Data *data)
 }
 
 void
-_mesh_setup(Scene_Data *data, float h, float w, float d, float *isource, int index)
+_mesh_setup(Scene_Data *data, float h EINA_UNUSED, float w EINA_UNUSED, float d EINA_UNUSED, float *isource, int index)
 {
    /* Setup mesh. */
 
