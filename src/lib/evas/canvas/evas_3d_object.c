@@ -14,7 +14,6 @@ _evas_3d_object_eo_base_constructor(Eo *obj, Evas_3D_Object_Data *pd)
    memset(&pd->dirty[0], 0x00, sizeof(Eina_Bool) * EVAS_3D_STATE_MAX);
 }
 
-
 EOLIAN static Evas *
  _evas_3d_object_evas_common_interface_evas_get(Eo *obj EINA_UNUSED, Evas_3D_Object_Data *pd)
 {
@@ -61,6 +60,28 @@ _evas_3d_object_update(Eo *obj, Evas_3D_Object_Data *pd)
    eo_do(obj, evas_3d_object_update_notify());
 
    memset(&pd->dirty[0], 0x00, sizeof(Eina_Bool) * EVAS_3D_STATE_MAX);
+}
+
+EOLIAN static void
+_evas_3d_object_eo_base_event_callback_priority_add(Eo *obj,
+                                                    Evas_3D_Object_Data *pd EINA_UNUSED,
+                                                    const Eo_Event_Description *desc,
+                                                    Eo_Callback_Priority priority,
+                                                    Eo_Event_Cb func,
+                                                    const void *user_data)
+{
+   eo_do_super(obj, MY_CLASS, eo_event_callback_priority_add(desc, priority, func, user_data));
+   eo_do(obj, evas_3d_object_callback_register(desc->name, user_data));
+}
+
+EOLIAN static void
+_evas_3d_object_eo_base_event_callback_del(Eo *obj, Evas_3D_Object_Data *pd EINA_UNUSED,
+                                           const Eo_Event_Description *desc,
+                                           Eo_Event_Cb func,
+                                           const void *user_data)
+{
+   eo_do_super(obj, MY_CLASS, eo_event_callback_del(desc, func, user_data));
+   eo_do(obj, evas_3d_object_callback_unregister(desc->name));
 }
 
 #include "canvas/evas_3d_object.eo.c"

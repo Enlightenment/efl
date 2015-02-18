@@ -2000,3 +2000,15 @@ evas_frustum_calculate(Evas_Vec4 *planes, Evas_Mat4 *matrix_vp)
        evas_plane_normalize(&planes[i]);
      }
 }
+
+static inline Eina_Bool
+box_intersection_box(Evas_Box3 *v1, Evas_Box3 *v2)
+{
+   if ((v1->p1.x < v2->p0.x) || (v1->p0.x > v2->p1.x)
+       || (v1->p1.y < v2->p0.y) || (v1->p0.y > v2->p1.y)
+       || (v1->p1.z < v2->p0.z) || (v1->p0.z > v2->p1.z))
+     return EINA_FALSE;
+   else
+     return EINA_TRUE;
+}
+

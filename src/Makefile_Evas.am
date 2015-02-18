@@ -188,7 +188,7 @@ lib/evas/canvas/evas_3d_camera.c \
 lib/evas/canvas/evas_3d_light.c \
 lib/evas/canvas/evas_3d_mesh.c \
 lib/evas/canvas/evas_3d_texture.c \
-lib/evas/canvas/evas_3d_material.c 
+lib/evas/canvas/evas_3d_material.c
 
 # Model savers/loaders (will be replaced to modules in next commits)
 lib_evas_libevas_la_SOURCES += \

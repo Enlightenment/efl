@@ -24,7 +24,9 @@ evas_3d_scene_data_fini(Evas_3D_Scene_Public_Data *data)
 }
 
 EOLIAN static void
-_evas_3d_scene_evas_3d_object_change_notify(Eo *eo_obj EINA_UNUSED, Evas_3D_Scene_Data *pd, Evas_3D_State state EINA_UNUSED, Evas_3D_Object *ref EINA_UNUSED)
+_evas_3d_scene_evas_3d_object_change_notify(Eo *eo_obj EINA_UNUSED, Evas_3D_Scene_Data *pd,
+                                            Evas_3D_State state EINA_UNUSED,
+                                            Evas_3D_Object *ref EINA_UNUSED)
 {
    Eina_List *l;
    Evas_Object *eo;
@@ -635,6 +637,8 @@ _evas_3d_scene_pick(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
    Eina_Stringshare *tmp;
    Eina_Array *arr = NULL;
    Eina_Bool update_scene = EINA_FALSE;
+   Evas_3D_Node *picked_node = NULL;
+   const Eo_Event_Description *eo_desc = NULL;
 
    pd_parent = eo_data_scope_get(obj, EVAS_3D_OBJECT_CLASS);
    e = eo_data_scope_get(pd_parent->evas, EVAS_CANVAS_CLASS);
@@ -693,9 +697,14 @@ _evas_3d_scene_pick(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
                        arr = (Eina_Array *)eina_hash_find(pd->colors_node_mesh, tmp);
                        if (arr)
                          {
+                            picked_node = (Evas_3D_Node *)eina_array_data_get(arr, 0);
                             if (mesh) *mesh = (Evas_3D_Mesh *)eina_array_data_get(arr, 1);
-                            if (node) *node = (Evas_3D_Node *)eina_array_data_get(arr, 0);
+                            if (node) *node = picked_node;
                             eina_stringshare_del(tmp);
+
+                            /*Calling callback clicked*/
+                            eo_desc = eo_base_legacy_only_event_description_get("clicked,private");
+                            eo_do(picked_node, eo_event_callback_call(eo_desc, picked_node));
 
                             return EINA_TRUE;
                          }
@@ -731,6 +740,10 @@ _evas_3d_scene_pick(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
    if (t)     *t     = data.t;
    if (node)  *node  = data.node;
    if (mesh)  *mesh  = data.mesh;
+
+   /*Calling callback clicked*/
+   eo_desc = eo_base_legacy_only_event_description_get("clicked,private");
+   eo_do(data.node, eo_event_callback_call(eo_desc, data.node));
 
    return EINA_TRUE;
 }

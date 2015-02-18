@@ -580,6 +580,8 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
    implements {
       Evas_3D_Object.update_notify;
       Evas_3D_Object.change_notify;
+      Evas_3D_Object.callback_register;
+      Evas_3D_Object.callback_unregister;
    }
    constructors {
       .constructor;

@@ -60,13 +60,37 @@ class Evas_3D_Object (Eo.Base, Evas.Common_Interface)
            @in Evas_3D_Object *ref; /*@ The Object that caused the change */
          }
       }
+      callback_register {
+         /*@
+           Pure virtual register samrt callback function.
+          */
+         params {
+           @in const(char)* event; /*@ Event type */
+           @in const(void)* data; /*@ User data*/
+         }
+      }
+      callback_unregister {
+         /*@
+           Pure virtual unregister smart callback function.
+          */
+         params {
+           @in const(char)* event; /*@ Event type */
+         }
+      }
    }
 
    implements {
       Eo.Base.constructor;
+      Eo.Base.event_callback_priority_add;
+      Eo.Base.event_callback_del;
       Evas.Common_Interface.evas.get;
       @virtual .update_notify;
       @virtual .change_notify;
+      @virtual .callback_register;
+      @virtual .callback_unregister;
    }
-
+   events {
+      clicked; /*@ Clicked Event */
+      collision; /*@ Collision Event */
+   }
 }

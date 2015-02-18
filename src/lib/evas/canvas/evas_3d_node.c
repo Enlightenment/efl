@@ -1,5 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
+#include "evas_3d_node_callback.h"
 
 #define MY_CLASS EVAS_3D_NODE_CLASS
 #define MY_CLASS_NAME "Evas_3D_Node"
@@ -25,6 +26,46 @@ _generate_unic_color_key(Evas_Color *color, Evas_Color *bg_color, Evas_3D_Node *
    if (red < 1) red = USHRT_MAX;
 
    return eina_stringshare_printf("%p %p", node, mesh);
+}
+
+static Eina_Bool
+_evas_3d_node_private_callback_collision(void *data, Eo *obj EINA_UNUSED,
+                                            const Eo_Event_Description *desc EINA_UNUSED,
+                                            void *event_info)
+{
+   Eina_List *collision_list = NULL, *l = NULL;
+   Evas_3D_Node *target_node = NULL, *n = NULL;
+   Evas_3D_Node_Data *pd_target = NULL, *pd = NULL;
+   const Eo_Event_Description *eo_desc = NULL;
+   Eina_Bool ret = EINA_FALSE;
+
+   target_node = (Evas_3D_Node *)event_info;
+   pd_target = eo_data_scope_get(target_node, EVAS_3D_NODE_CLASS);
+   collision_list = (Eina_List *)data;
+   eo_desc = eo_base_legacy_only_event_description_get("collision");
+
+   if (collision_list)
+     {
+        EINA_LIST_FOREACH(collision_list, l, n)
+          {
+             pd = eo_data_scope_get(n, EVAS_3D_NODE_CLASS);
+             if (box_intersection_box(&pd_target->aabb, &pd->aabb))
+               eo_do(target_node, ret = eo_event_callback_call(eo_desc, n));
+          }
+        return ret;
+     }
+   return ret;
+}
+static Eina_Bool
+_evas_3d_node_private_callback_clicked(void *data EINA_UNUSED, Eo *obj EINA_UNUSED,
+                                          const Eo_Event_Description *desc EINA_UNUSED,
+                                          void *event_info)
+{
+   Eina_Bool ret = EINA_FALSE;
+   const Eo_Event_Description *eo_desc = eo_base_legacy_only_event_description_get("clicked");
+   eo_do((Eo *)event_info, ret = eo_event_callback_call(eo_desc, event_info));
+
+   return ret;
 }
 
 static inline Evas_3D_Node_Mesh *
@@ -125,6 +166,33 @@ _evas_3d_node_evas_3d_object_change_notify(Eo *obj, Evas_3D_Node_Data *pd, Evas_
        {
           eo_do(n, evas_3d_object_change(EVAS_3D_STATE_NODE_PARENT_POSITION, obj));
        }
+}
+
+EOLIAN static void
+_evas_3d_node_evas_3d_object_callback_register(Eo *obj, Evas_3D_Node_Data *pd EINA_UNUSED,
+                                               const char *event, const void *data)
+{
+   Evas_3D_Node_Private_Callback_Type tcb;
+
+   GET_CALLBACK_TYPE(tcb, event)
+
+   if (tcb != PRIVATE_CALLBACK_NONE)
+     eo_do(obj, eo_event_callback_add(&evas_3d_node_private_event_desc[tcb],
+                                      evas_3d_node_private_callback_functions[tcb], data));
+
+}
+
+EOLIAN static void
+_evas_3d_node_evas_3d_object_callback_unregister(Eo *obj, Evas_3D_Node_Data *pd EINA_UNUSED,
+                                                 const char *event)
+{
+   Evas_3D_Node_Private_Callback_Type tcb;
+
+   GET_CALLBACK_TYPE(tcb, event)
+
+   if (tcb != PRIVATE_CALLBACK_NONE)
+     eo_do(obj, eo_event_callback_del(&evas_3d_node_private_event_desc[tcb],
+                                      evas_3d_node_private_callback_functions[tcb], NULL));
 }
 
 static Eina_Bool
@@ -256,6 +324,7 @@ _rotate_vertices(Evas_Vec4* orientation, int vertex_count, Evas_Vec3* vertex_pos
      for (i = 0; i < vertex_count; i++)
         evas_vec3_quaternion_rotate(&vertex_position[i], &vertex_position[i], orientation);
 }
+
 
 static void
 _scale_vertices(Evas_Vec3* scale, int vertex_count, Evas_Vec3* vertex_position)
@@ -471,6 +540,7 @@ _node_aabb_update(Evas_3D_Node *node, void *data EINA_UNUSED)
    Eina_Bool need_recalc;
    Eina_List *current;
    Evas_3D_Node *datanode;
+   const Eo_Event_Description *eo_desc = NULL;
 
   eo_do(node,
         need_recalc = evas_3d_object_dirty_get(EVAS_3D_STATE_NODE_TRANSFORM_ORIENTATION),
@@ -494,6 +564,9 @@ _node_aabb_update(Evas_3D_Node *node, void *data EINA_UNUSED)
         evas_box3_union(&pd->aabb, &pd->aabb, &datapd->aabb);
         evas_build_sphere(&pd->aabb, &pd->bsphere);
      }
+
+   eo_desc = eo_base_legacy_only_event_description_get("collision,private");
+   eo_do(node, eo_event_callback_call(eo_desc, (void *)node));
 
    return EINA_TRUE;
 }

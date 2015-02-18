@@ -180,7 +180,6 @@ typedef enum _Evas_3D_Tree_Traverse_Type
 struct _Evas_3D_Object
 {
    Evas                *evas;
-
    Evas_3D_Object_Type  type;
 
    Eina_Bool            dirty[EVAS_3D_STATE_MAX];

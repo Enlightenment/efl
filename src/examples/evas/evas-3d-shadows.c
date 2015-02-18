@@ -1,9 +1,11 @@
-﻿/*
- * This example illustrating use of shadows in the scene.
- *
+/*
+ * This example illustrating use of shadows in the scene and callbacks(clicked, collision).
+ * Model and cube are clickable. Model detects collision with sphere.
+ * Cube detects collision with sphere, model and cone.
  * @see evas_3d_scene_shadows_enable_set(Eina_Bool _shadows_enabled)
+ * @see evas_3d_object_callback_register
  *
- * Compile with "gcc -o evas-3d-shadows evas-3d-shadows.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm"
+ * Compile with gcc -o evas-3d-shadows evas-3d-shadows.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo eina` -lm
  */
 
 #define EFL_EO_API_SUPPORT
@@ -13,12 +15,14 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include <Eina.h>
 #include <math.h>
 #include "evas-3d-primitives.c"
 
 #define  WIDTH 1024
 #define  HEIGHT 1024
 
+#define STEP 0.1
 #define BG_COLOR 0.2, 0.2, 0.2
 #define AMBIENT_LIGHT 0.2, 0.2, 0.2
 #define DIFFUSE_LIGHT 1.0, 1.0, 1.0
@@ -28,6 +32,7 @@ Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
 Eo *background = NULL;
 Eo *image = NULL;
+Evas_3D_Node *choosed_node = NULL;
 
 typedef struct _Body_3D
 {
@@ -53,6 +58,51 @@ typedef struct _Scene_Data
    Body_3D     cone;
 } Scene_Data;
 
+Eina_Bool
+_cb_clicked(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+{
+   Eina_List *meshes = NULL, *l;
+   Evas_3D_Mesh *m;
+   eo_do((Evas_3D_Node *)event_info, meshes = (Eina_List *)evas_3d_node_mesh_list_get());
+   EINA_LIST_FOREACH(meshes, l, m)
+     {
+        eo_do(m, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE));
+     }
+   if (choosed_node != (Evas_3D_Node *)event_info)
+     {
+        eo_do(choosed_node, meshes = (Eina_List *)evas_3d_node_mesh_list_get());
+        EINA_LIST_FOREACH(meshes, l, m)
+          {
+             eo_do(m, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
+          }
+        choosed_node = (Evas_3D_Node *)event_info;
+     }
+
+}
+
+Eina_Bool
+_cb_collision(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+{
+   Eina_List *meshes = NULL, *l;
+   Evas_3D_Mesh *m;
+   eo_do((Evas_3D_Node *)event_info, meshes = (Eina_List *)evas_3d_node_mesh_list_get());
+   EINA_LIST_FOREACH(meshes, l, m)
+     {
+        eo_do(m, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE));
+     }
+}
+
+static void
+_show_help()
+{
+   fprintf(stdout, "Press 'w'/'s' key to move up/down object\n");
+   fprintf(stdout, "Press 'a'/'d' key to move left/right object\n");
+   fprintf(stdout, "Press 'q'/'e' key to to move near/far object\n");
+   fprintf(stdout, "Cude and model can be moved.\n");
+   fprintf(stdout, "Cube detects intersection with model, sphere, cone\n");
+   fprintf(stdout, "Model detects intersection with sphere\n");
+}
+
 static Eina_Bool
 _animate_scene(void *data)
 {
@@ -61,9 +111,9 @@ _animate_scene(void *data)
 
    eo_do(body->node, evas_3d_node_mesh_frame_set(body->mesh, frame));
 
-   frame += 32;
+   /*frame += 32;*/
 
-   if (frame > 256 * 50) frame = 0;
+   if (frame > 256 * 20) frame = 0;
 
    return EINA_TRUE;
 }
@@ -114,7 +164,7 @@ _sphere_setup(Body_3D *sphere)
    sphere->node =
       eo_add(EVAS_3D_NODE_CLASS, evas,
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH),
-                    evas_3d_node_position_set(2.0, 3.0, 1.0));
+                    evas_3d_node_position_set(3.0, 3.0, 0.0));
    eo_do(sphere->node, evas_3d_node_mesh_add(sphere->mesh));
 }
 
@@ -293,12 +343,106 @@ _scene_setup(Scene_Data *data)
          evas_3d_scene_shadows_enable_set(EINA_TRUE));
 }
 
+static void
+_on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void *event_info)
+{
+   Scene_Data *scene = (Scene_Data *)data;
+   Evas_Event_Key_Down *ev = event_info;
+   if (!strcmp("w", ev->key))
+     {
+        Evas_Real x, y, z;
+        eo_do(choosed_node, evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
+        eo_do(choosed_node, evas_3d_node_position_set(x, y + STEP, z));
+     }
+   else if(!strcmp("s", ev->key))
+     {
+        Evas_Real x, y, z;
+        eo_do(choosed_node, evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
+        eo_do(choosed_node, evas_3d_node_position_set(x, y - STEP, z));
+     }
+   else if(!strcmp("a", ev->key))
+     {
+        Evas_Real x, y, z;
+        eo_do(choosed_node, evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
+        eo_do(choosed_node, evas_3d_node_position_set(x - STEP, y, z));
+     }
+   else if(!strcmp("d", ev->key))
+     {
+        Evas_Real x, y, z;
+        eo_do(choosed_node, evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
+        eo_do(choosed_node, evas_3d_node_position_set(x + STEP, y, z));
+     }
+   else if(!strcmp("q", ev->key))
+     {
+        Evas_Real x, y, z;
+        eo_do(choosed_node, evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
+        eo_do(choosed_node, evas_3d_node_position_set(x, y, z - STEP));
+     }
+   else if(!strcmp("e", ev->key))
+     {
+        Evas_Real x, y, z;
+        eo_do(choosed_node, evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
+        eo_do(choosed_node, evas_3d_node_position_set(x, y, z + STEP));
+     }
+   else
+     {
+        _show_help();
+     }
+}
+
+static void _init(Scene_Data *data)
+{
+   Eina_List *meshes = NULL, *l;
+   Evas_3D_Mesh *m;
+   eo_do(data->sphere.node, meshes = (Eina_List *)evas_3d_node_mesh_list_get());
+   EINA_LIST_FOREACH(meshes, l, m)
+     {
+        eo_do(m, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
+     }
+   eo_do(data->cube.node, meshes = (Eina_List *)evas_3d_node_mesh_list_get());
+   EINA_LIST_FOREACH(meshes, l, m)
+     {
+        eo_do(m, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
+     }
+   eo_do(data->cylinder.node, meshes = (Eina_List *)evas_3d_node_mesh_list_get());
+   EINA_LIST_FOREACH(meshes, l, m)
+     {
+        eo_do(m, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
+     }
+   eo_do(data->model.node, meshes = (Eina_List *)evas_3d_node_mesh_list_get());
+   EINA_LIST_FOREACH(meshes, l, m)
+     {
+        eo_do(m, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
+     }
+   eo_do(data->cone.node, meshes = (Eina_List *)evas_3d_node_mesh_list_get());
+   EINA_LIST_FOREACH(meshes, l, m)
+     {
+        eo_do(m, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
+     }
+}
+
+static void
+_on_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void *event_info)
+{
+   Scene_Data *d = (Scene_Data *)data;
+   Evas_Event_Mouse_Down *ev = event_info;
+   Evas_3D_Node *n = NULL;
+   Evas_3D_Mesh *m = NULL;
+   Evas_Real s, t;
+   if (ev->button == 3)
+     {
+        _init(d);
+        return;
+     }
+   eo_do(d->scene, evas_3d_scene_pick(ev->canvas.x, ev->canvas.y, &n, &m, &s, &t));
+
+}
 int
 main(void)
 {
    Scene_Data data;
    Ecore_Animator *anim;
-
+   Eina_List *nodes1 = NULL, *nodes2 = NULL;
    //Unless Evas 3D supports Software renderer, we set gl backened forcely.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
    if (!ecore_evas_init()) return 0;
@@ -327,8 +471,24 @@ main(void)
          evas_obj_size_set(WIDTH, HEIGHT),
          evas_obj_visibility_set(EINA_TRUE));
 
+   evas_object_focus_set(image, EINA_TRUE);
    /* Set the image object as render target for 3D scene. */
    eo_do(image, evas_obj_image_scene_set(data.scene));
+
+   nodes1 = eina_list_append(nodes1, data.sphere.node);
+   nodes2 = eina_list_append(nodes2, data.sphere.node);
+   nodes2 = eina_list_append(nodes2, data.model.node);
+   nodes2 = eina_list_append(nodes2, data.cone.node);
+
+   /*Set callbacks*/
+   eo_do(data.cube.node, eo_event_callback_add(EVAS_3D_OBJECT_EVENT_CLICKED, _cb_clicked, NULL));
+   eo_do(data.cube.node, eo_event_callback_add(EVAS_3D_OBJECT_EVENT_COLLISION, _cb_collision, nodes2));
+
+   eo_do(data.model.node, eo_event_callback_add(EVAS_3D_OBJECT_EVENT_CLICKED, _cb_clicked, NULL));
+   eo_do(data.model.node, eo_event_callback_add(EVAS_3D_OBJECT_EVENT_COLLISION, _cb_collision, nodes1));
+
+   evas_object_event_callback_add(image, EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down, &data);
+   evas_object_event_callback_add(image, EVAS_CALLBACK_KEY_DOWN, _on_key_down, &data);
 
    /* Add animator. */
    ecore_animator_frametime_set(0.008);
@@ -337,7 +497,8 @@ main(void)
    /* Enter main loop. */
    ecore_main_loop_begin();
    ecore_animator_del(anim);
-
+   eina_list_free(nodes1);
+   eina_list_free(nodes2);
    ecore_evas_free(ecore_evas);
    ecore_evas_shutdown();
 
