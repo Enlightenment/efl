@@ -632,7 +632,7 @@ _evas_3d_scene_pick(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
    Evas_3D_Camera_Data *pd_camera;
    Evas_3D_Object_Data *pd_parent;
    Evas_Public_Data *e;
-   int tex, px, py;;
+   int tex = 0, px, py;;
    double redcomponent;
    Eina_Stringshare *tmp;
    Eina_Array *arr = NULL;
