@@ -6,64 +6,125 @@
 #include <math.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include <Ecore_Getopt.h>
 #include <Evas.h>
 #include "Eo.h"
-
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#include "evas-3d-shooter-macros.h"
 
 typedef struct _Scene_Data
 {
    Eo      *texture_diffuse_eagle;
    Eo      *texture_diffuse_world;
    Eo      *texture_diffuse_grass;
+   Eo      *texture_diffuse_soldier;
+   Eo      *texture_diffuse_soldier_jump;
+   Eo      *texture_diffuse_head;
+   Eo      *texture_diffuse_wall;
+   Eo      *texture_diffuse_gazebo;
+   Eo      *texture_diffuse_carpet;
+   Eo      *texture_diffuse_column;
+   Eo      *texture_diffuse_column_c;
+   Eo      *texture_diffuse_level[2];
+   Eo      *texture_diffuse_warrior;
+   Eo      *texture_diffuse_snake;
+   Eo      *texture_normal_grass;
+   Eo      *texture_normal_wall;
+   Eo      *texture_normal_gazebo;
+   Eo      *texture_normal_carpet;
+   Eo      *texture_normal_column;
+   Eo      *texture_normal_column_c;
+   Eo      *texture_normal_level[2];
+   Eo      *texture_normal_snake;
    Eo      *root_node;
    Eo      *camera_node;
    Eo      *mesh_node_world;
-   Eo      *mesh_node_grass[30];
+   Eo      *mesh_node_grass;
    Eo      *light_node;
    Eo      *mediator_node;
+   Eo      *carp_mediator_node;
    Eo      *mesh_node_cube;
    Eo      *mesh_node_eagle;
-   Eo      *mesh_node_gun;
-   Eo      *mesh_node_gun_butt;
-   Eo      *mesh_node_gun_cage;
-   Eo      *mesh_node_gun_bling[3];
-   Eo      *mesh_node_rocket;
-   Eo      *mesh_node_level[11];
+   Eo      *mesh_node_soldier;
+   Eo      *mesh_node_head;
+   Eo      *mesh_node_tommy;
+   Eo      *mesh_node_wall[4];
+   Eo      *mesh_node_gazebo;
+   Eo      *mesh_node_carpet;
+   Eo      *mesh_node_column[4];
+   Eo      *mesh_node_column_c;
+   Eo      *mesh_node_rocket[10];
+   Eo      *mesh_node_level[10];
    Eo      *mesh_node_snake;
+   Eo      *mesh_node_warrior;
+   Eo      *mesh_node_ball;
 
    Eo      *camera;
    Eo      *light;
    Eo      *mesh_world;
-   Eo      *mesh_grass[30];
+   Eo      *mesh_grass;
    Eo      *mesh_cube;
    Eo      *mesh_eagle;
-   Eo      *mesh_gun;
-   Eo      *mesh_gun_cage;
-   Eo      *mesh_gun_butt;
-   Eo      *mesh_gun_bling[3];
-   Eo      *mesh_rocket;
-   Eo      *mesh_level[4];
+   Eo      *mesh_soldier;
+   Eo      *mesh_soldier_jump;
+   Eo      *mesh_head;
+   Eo      *mesh_tommy;
+   Eo      *mesh_wall[4];
+   Eo      *mesh_gazebo;
+   Eo      *mesh_carpet;
+   Eo      *mesh_column[4];
+   Eo      *mesh_column_c;
+   Eo      *mesh_rocket[10];
+   Eo      *mesh_level[10];
    Eo      *mesh_snake;
+   Eo      *mesh_warrior;
+   Eo      *mesh_ball;
    Eo      *material_world;
    Eo      *material_grass;
    Eo      *material_eagle;
+   Eo      *material_soldier;
+   Eo      *material_soldier_jump;
+   Eo      *material_head;
+   Eo      *material_tommy;
+   Eo      *material_wall;
+   Eo      *material_gazebo;
+   Eo      *material_carpet;
+   Eo      *material_column;
+   Eo      *material_column_c;
    Eo      *material_cube;
-   Eo      *material_level;
+   Eo      *material_level[2];
    Eo      *material_snake;
-   Eo      *material_gun_butt;
-   Eo      *material_gun_bling;
-   Eo      *material_gun_cage;
-   Eo      *gun;
-   Eo      *rocket;
-   Eo      *texture;
-   Eo      *texture_snake;
+   Eo      *material_warrior;
+   Eo      *material_rocket[10];
+   Eo      *material_ball;
+
+   Eina_Bool   shadow;
+   Eina_Bool   colorpick;
+   Eina_Bool   fog;
+   Eina_Bool   blending;
+   Eina_Bool   normal;
 } Scene_Data;
 
 static Evas             *evas              = NULL;
 static Eo               *background        = NULL;
 static Eo               *image             = NULL;
+
+static const Ecore_Getopt optdesc = {
+   "ecore_thread_example",
+   NULL,
+   "0.0",
+   "(C) 2011 Enlightenment",
+   "Public domain?",
+   "Example program for Ecore_Thread",
+   0,
+   {
+      ECORE_GETOPT_STORE_BOOL('s', "shadow", "If shadow is enable"),
+      ECORE_GETOPT_STORE_BOOL('c', "colopick", "If colorpick is enable"),
+      ECORE_GETOPT_STORE_BOOL('f', "fog", "If fog is enable"),
+      ECORE_GETOPT_STORE_BOOL('b', "blending", "If blending is enable"),
+      ECORE_GETOPT_HELP('h', "help"),
+      ECORE_GETOPT_SENTINEL
+   }
+};
 
 typedef struct _vec4
 {
@@ -101,29 +162,19 @@ typedef struct _vertex
    vec3    texcoord;
 } vertex;
 
-void evas_vec3_set(vec3 *dst, Evas_Real x, Evas_Real y, Evas_Real z);
-
 void evas_box3_empty_set(Box3 *box);
 
 void evas_box3_set(Box3 *box, Evas_Real x0, Evas_Real y0, Evas_Real z0, Evas_Real x1, Evas_Real y1, Evas_Real z1);
 
-void evas_box3_union(Box3 *out, const Box3 *a, const Box3 *b);
-
-/* fill vector by indices which are on one rotation ring */
-void _add_annulus(float * current_r1, int size, float r1, float r2, float z1, float z2);
-
-/* fill vector by vertices which are arranged between two rotation rings */
-void _add_annulus_vertices(unsigned short * current_r1, int size, int first);
-
 void       _scale(Evas_3D_Node *node, Evas_Real scale);
 
-void       _add_solid_of_revolution(float * start, int size, float * vertic, unsigned short * indic);
+float      _distance(float x1, float z1, float x2, float z2);
 
 void       _camera_setup(Scene_Data *data);
 
 void       _light_setup(Scene_Data *data);
 
-Eina_Bool  _mesh_aabb(Evas_3D_Mesh **mesh, Scene_Data *scene);
+Eina_Bool  _mesh_aabb(Evas_3D_Mesh **mesh, Scene_Data *scene, int index);
 
 void       _on_delete(Ecore_Evas *ee EINA_UNUSED);
 
@@ -131,4 +182,17 @@ void       _on_canvas_resize(Ecore_Evas *ee);
 
 Eina_Bool _horizontal_circle_resolution(Evas_3D_Node *node, Evas_Real x, Evas_Real z, Evas_Real r);
 
+Eina_Bool _horizontal_circle_position_resolution(Evas_3D_Node *node, Evas_Real x, Evas_Real z, Evas_Real r);
+
+Eina_Bool _horizontal_circle_object_resolution(Evas_3D_Node *node, Evas_3D_Node *node2, Evas_Real r);
+
 Eina_Bool _horizontal_position_resolution(Evas_3D_Node *node, Evas_Real x, Evas_Real z);
+
+Eina_Bool _horizontal_object_resolution(Evas_3D_Node *node, Evas_Real x1, Evas_Real z1, Evas_Real x2,
+                                        Evas_Real z2, Evas_Real x_move, Evas_Real z_move);
+
+Eina_Bool _horizontal_frame_resolution(Evas_3D_Node *node, Evas_Real x1, Evas_Real z1, Evas_Real x2,
+                                        Evas_Real z2, Evas_Real *x_move, Evas_Real *z_move);
+
+void _set_ball(Eo *mesh, int p);
+
