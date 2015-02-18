@@ -6,6 +6,7 @@
 #include <Ecore_Cocoa.h>
 #include "ecore_cocoa_private.h"
 #import "ecore_cocoa_window.h"
+#include <Ecore_Input.h>
 
 @implementation EcoreCocoaWindow
 
@@ -67,7 +68,6 @@
       (([self isFullScreen] == YES) ? 0 : ecore_cocoa_titlebar_height_get());
    event->wid = [notif object];
    ecore_event_add(ECORE_COCOA_EVENT_RESIZE, event, NULL, NULL);
-   ecore_main_loop_iterate();
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)notification
@@ -96,6 +96,126 @@
     }
   e->wid = [notification object];
   ecore_event_add(ECORE_COCOA_EVENT_LOST_FOCUS, e, NULL, NULL);
+}
+
+- (void) mouseDown:(NSEvent*) event
+{
+   unsigned int time = (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff);
+
+   NSView *view = [self contentView];
+   NSPoint event_location = [event locationInWindow];
+   NSPoint pt = [view convertPoint:event_location fromView:nil];
+
+   int w = [view frame].size.width;
+   int h = [view frame].size.height;
+   int x = pt.x;
+   int y = h - pt.y;
+
+   if (y <= 0 || x <= 0 || y > h || x > w)
+     return;
+
+   Ecore_Event_Mouse_Button * ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
+   if (!ev) return;
+
+   ev->x = pt.x;
+   ev->y = y;
+   ev->root.x = ev->x;
+   ev->root.y = ev->y;
+   ev->timestamp = time;
+   switch ([event buttonNumber])
+     {
+      case 0: ev->buttons = 1; break;
+      case 1: ev->buttons = 3; break;
+      case 2: ev->buttons = 2; break;
+      default: ev->buttons = 0; break;
+     }
+   ev->window = (Ecore_Window)self.ecore_window_data;
+   ev->event_window = ev->window;
+
+   if ([event clickCount] == 2)
+     ev->double_click = 1;
+   else
+     ev->double_click = 0;
+
+   if ([event clickCount] >= 3)
+     ev->triple_click = 1;
+   else
+     ev->triple_click = 0;
+
+   ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
+}
+
+- (void) mouseUp:(NSEvent*) event
+{
+   unsigned int time = (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff);
+
+   NSView *view = [self contentView];
+   NSPoint event_location = [event locationInWindow];
+   NSPoint pt = [view convertPoint:event_location fromView:nil];
+
+   int w = [view frame].size.width;
+   int h = [view frame].size.height;
+   int x = pt.x;
+   int y = h - pt.y;
+
+   if (y <= 0 || x <= 0 || y > h || x > w)
+     return;
+
+   Ecore_Event_Mouse_Button * ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
+   if (!ev) return;
+
+   ev->x = pt.x;
+   ev->y = y;
+   ev->root.x = ev->x;
+   ev->root.y = ev->y;
+   ev->timestamp = time;
+   switch ([event buttonNumber])
+     {
+      case 0: ev->buttons = 1; break;
+      case 1: ev->buttons = 3; break;
+      case 2: ev->buttons = 2; break;
+      default: ev->buttons = 0; break;
+     }
+   ev->window = (Ecore_Window)self.ecore_window_data;
+   ev->event_window = ev->window;
+
+   if ([event clickCount] == 2)
+     ev->double_click = 1;
+   else
+     ev->double_click = 0;
+
+   if ([event clickCount] >= 3)
+     ev->triple_click = 1;
+   else
+     ev->triple_click = 0;
+
+   ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
+}
+
+- (void) mouseMoved:(NSEvent*) event
+{
+   Ecore_Event_Mouse_Move * ev = calloc(1, sizeof(Ecore_Event_Mouse_Move));
+   if (!ev) return;
+
+   NSView *view = [self contentView];
+   NSPoint event_location = [event locationInWindow];
+   NSPoint pt = [view convertPoint:event_location fromView:nil];
+
+   ev->x = pt.x;
+   ev->y = [view frame].size.height - pt.y;
+   ev->root.x = ev->x;
+   ev->root.y = ev->y;
+   ev->timestamp = time;
+   ev->window = (Ecore_Window)self.ecore_window_data;
+   ev->event_window = ev->window;
+   ev->modifiers = 0; /* FIXME: keep modifier around. */
+
+   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+}
+
+- (void) mouseDragged: (NSEvent*) event
+{
+   [self mouseMoved:event];
 }
 
 @end
