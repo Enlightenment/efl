@@ -7,8 +7,9 @@
  * Use key LEFT/RIGHT for scale each node
  * Use shortcut parameters of commanline: r - rows of objects, c - columns of objects, m - path for model name,
  * f - path for first texture, s - path for second texture.
- * Compile with "gcc -o evas-3d-colorpick evas-3d-colorpick.c `pkg-config --libs --cflags evas ecore ecore-evas eo eina efl`
+ * Compile with "gcc -o evas-3d-colorpick evas-3d-colorpick.c `pkg-config --libs --cflags evas ecore ecore-evas eo eina efl`"
  */
+//TODO new resources
 
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
@@ -18,6 +19,7 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_Getopt.h>
+#include "evas-3d-common.h"
 
 #define  WIDTH 800
 #define  HEIGHT 600
@@ -442,9 +444,9 @@ int main(int argc, char **argv)
 
    if (!row) row = 2;
    if (!col) col = 5;
-   if (!model) model = "M15.obj";
-   if (!texture1) texture1 = "M15.png";
-   if (!texture2) texture2 = "M15_1.png";
+   if (!model) model = EVAS_3D_MODEL_FOLDER"M15.obj";
+   if (!texture1) texture1 = EVAS_3D_IMAGE_FOLDER"M15.png";
+   if (!texture2) texture2 = EVAS_3D_IMAGE_FOLDER"M15_1.png";
 
    fprintf(stdout, "row - %d, col - %d, model - %s, texture1 - %s, texture2 - %s\n",
            row, col, model, texture1, texture2);

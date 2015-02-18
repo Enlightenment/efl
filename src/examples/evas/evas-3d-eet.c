@@ -20,6 +20,7 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include "evas-3d-common.h"
 
 #define  WIDTH 1024
 #define  HEIGHT 1024
@@ -151,7 +152,7 @@ main(void)
    material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
 
    eo_do(mesh,
-         efl_file_set("sonic.md2", NULL),
+         efl_file_set(EVAS_3D_MODEL_FOLDER"sonic.md2", NULL),
          evas_3d_mesh_frame_material_set(0, material),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 
@@ -168,10 +169,10 @@ main(void)
                                     0.50, 0.00, 0.50, 0.30),
          evas_3d_material_shininess_set(50.0));
 
-   eo_do(mesh, efl_file_save("saved_Sonic_EET.eet", NULL, NULL));
+   eo_do(mesh, efl_file_save(EVAS_3D_SAVED_FILES"saved_Sonic_EET.eet", NULL, NULL));
 
    eo_do(mesh2,
-         efl_file_set("saved_Sonic_EET.eet", NULL),
+         efl_file_set(EVAS_3D_SAVED_FILES"saved_Sonic_EET.eet", NULL),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 
    mesh_node = eo_add(EVAS_3D_NODE_CLASS, evas,

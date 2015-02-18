@@ -19,6 +19,7 @@
 #include <Evas.h>
 #include <Eo.h>
 #include <math.h>
+#include "evas-3d-common.h"
 
 #define  WIDTH          800
 #define  HEIGHT         600
@@ -452,7 +453,7 @@ _mesh_setup_model(Scene_Data *data)
    data->texture_model = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
 
    eo_do(data->texture_model,
-         evas_3d_texture_file_set("eagle.png", NULL),
+         evas_3d_texture_file_set(EVAS_3D_IMAGE_FOLDER"eagle.png", NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST, EVAS_3D_TEXTURE_FILTER_NEAREST),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT, EVAS_3D_WRAP_MODE_REPEAT));
 
@@ -469,7 +470,7 @@ _mesh_setup_model(Scene_Data *data)
          evas_3d_material_shininess_set(100.0));
 
    eo_do(data->mesh_model,
-         efl_file_set("eagle.md2", NULL),
+         efl_file_set(EVAS_3D_MODEL_FOLDER"eagle.md2", NULL),
          evas_3d_mesh_frame_material_set(0, data->material_model),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE));
 }

@@ -18,6 +18,7 @@
 #include <Eina.h>
 #include <math.h>
 #include "evas-3d-primitives.c"
+#include "evas-3d-common.h"
 
 #define  WIDTH 1024
 #define  HEIGHT 1024
@@ -236,7 +237,7 @@ _model_setup(Body_3D *model)
 {
    Eo *texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
    eo_do(texture,
-         evas_3d_texture_file_set("sonic.png", NULL),
+         evas_3d_texture_file_set(EVAS_3D_IMAGE_FOLDER"sonic.png", NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
                                     EVAS_3D_TEXTURE_FILTER_NEAREST),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
@@ -255,7 +256,7 @@ _model_setup(Body_3D *model)
    model->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
 
    eo_do(model->mesh,
-         efl_file_set("sonic.md2", NULL),
+         efl_file_set(EVAS_3D_MODEL_FOLDER"sonic.md2", NULL),
          evas_3d_mesh_frame_material_set(0, model->material),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 

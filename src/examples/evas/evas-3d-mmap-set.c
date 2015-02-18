@@ -17,6 +17,7 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include "evas-3d-common.h"
 
 #include <math.h>
 
@@ -24,7 +25,8 @@
 #define  HEIGHT 1000
 
 #define LOAD_AND_ADD_MESH(extention, number)                                          \
-   extention##_file = eina_file_open("mesh_mmap_set/mesh."#extention, 0);             \
+   extention##_file =                                                                 \
+      eina_file_open(EVAS_3D_MODEL_FOLDER"mesh_for_mmap."#extention, 0);              \
    mesh_##extention = eo_add(EVAS_3D_MESH_CLASS, evas);                               \
    eo_do(mesh_##extention,                                                            \
          evas_3d_mesh_mmap_set(extention##_file, NULL),                               \

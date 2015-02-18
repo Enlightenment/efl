@@ -4,8 +4,8 @@
 *
 * Read mesh from "sweet_home(parameters).obj".
 * After that cheange some properties of material.
-* After that save material to "saved_home(parameters).mtl"
-* and geometry to "saved_home(parameters).obj".
+* After that save material to "saved_files/saved_home(parameters).mtl"
+* and geometry to "saved_files/saved_home(parameters).obj".
 * If material was not set it will be not saved.
 *
 * @verbatim
@@ -20,6 +20,7 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include "evas-3d-common.h"
 
 #define  WIDTH 1900
 #define  HEIGHT 1080
@@ -36,12 +37,10 @@
 #define GRID_SIZE 6
 #define NUMBER_OF_MESHES 8
 
-#define RESOURCE_FOLDER "obj_files/"
-
 #define ADD_OBJ_MESH(path, Y, Z, num, shade_mode, name_of_material)                 \
    mesh[num] = eo_add(EVAS_3D_MESH_CLASS, evas);                                    \
    eo_do(mesh[num],                                                                 \
-         efl_file_set(RESOURCE_FOLDER#path".obj", NULL),                            \
+         efl_file_set(path".obj", NULL),                                            \
          evas_3d_mesh_frame_material_set(0, name_of_material),                      \
          evas_3d_mesh_shade_mode_set(shade_mode));                                  \
    mesh_node[num] = eo_add(EVAS_3D_NODE_CLASS, evas,                                \
@@ -52,10 +51,13 @@
          evas_3d_node_mesh_add(mesh[num]),                                          \
          evas_3d_node_position_set(0, Y, Z));                                       \
 
-#define ADD_OBJ_MESH_AND_SAVED_COPY(path, Y, Z, num, shade_mode, name_of_material)      \
-   ADD_OBJ_MESH(sweet_##path, Y, Z, num, shade_mode, name_of_material)                  \
-   eo_do(mesh[num], efl_file_save(RESOURCE_FOLDER"saved_"#path".obj", NULL, NULL));     \
-   ADD_OBJ_MESH(saved_##path, Y + COPY_OFFSET, Z, num + 4, shade_mode, name_of_material)
+#define ADD_OBJ_MESH_AND_SAVED_COPY(path, Y, Z, num, shade_mode, name_of_material)  \
+   ADD_OBJ_MESH(EVAS_3D_MODEL_FOLDER"sweet_"#path,                                  \
+                Y, Z, num, shade_mode, name_of_material)                            \
+   eo_do(mesh[num], efl_file_save(EVAS_3D_SAVED_FILES"saved_"#path".obj",           \
+                                  NULL, NULL));                                     \
+   ADD_OBJ_MESH(EVAS_3D_SAVED_FILES"saved_"#path,                                   \
+                Y + COPY_OFFSET, Z, num + 4, shade_mode, name_of_material)
 
 #define ADD_TEXTURE(name, path)                                       \
    name = eo_add(EVAS_3D_TEXTURE_CLASS, evas);                        \
@@ -191,7 +193,7 @@ main(void)
    eo_do(root_node,
          evas_3d_node_member_add(light_node));
 
-   ADD_TEXTURE(texture, "sweet_home_reversed.png")
+   ADD_TEXTURE(texture, EVAS_3D_IMAGE_FOLDER"sweet_home_reversed.png")
 
    ADD_MATERIAL(material)
 

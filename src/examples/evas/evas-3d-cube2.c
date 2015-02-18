@@ -5,6 +5,7 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include "evas-3d-common.h"
 
 #define  WIDTH          400
 #define  HEIGHT         400
@@ -229,7 +230,8 @@ _mesh_setup(Scene_Data *data)
    eo_do(data->texture1,
          evas_3d_texture_data_set(EVAS_3D_COLOR_FORMAT_RGBA,
                                   EVAS_3D_PIXEL_FORMAT_8888, 4, 4, &pixels1[0]));
-   eo_do(data->texture_normal, evas_3d_texture_file_set("normal_lego.png", NULL));
+   eo_do(data->texture_normal,
+         evas_3d_texture_file_set(EVAS_3D_IMAGE_FOLDER"normal_lego.png", NULL));
 
    eo_do(data->material0,
          evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE, data->texture0));

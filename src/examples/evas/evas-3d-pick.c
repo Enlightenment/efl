@@ -6,6 +6,7 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include "evas-3d-common.h"
 
 #define  WIDTH          400
 #define  HEIGHT         400
@@ -343,7 +344,7 @@ main(void)
 
    texture_diffuse = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
    eo_do(texture_diffuse,
-         evas_3d_texture_file_set("EarthDiffuse.png", NULL),
+         evas_3d_texture_file_set(EVAS_3D_IMAGE_FOLDER"EarthDiffuse.png", NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_LINEAR,
                                     EVAS_3D_TEXTURE_FILTER_LINEAR));
    eo_do(material,

@@ -13,6 +13,7 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include "evas-3d-common.h"
 
 #define  WIDTH 400
 #define  HEIGHT 400
@@ -227,13 +228,13 @@ main(void)
    material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
 
    eo_do(mesh,
-         efl_file_set("sonic.md2", NULL),
+         efl_file_set(EVAS_3D_MODEL_FOLDER"sonic.md2", NULL),
          evas_3d_mesh_frame_material_set(0, material),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 
    texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
    eo_do(texture,
-         evas_3d_texture_file_set("sonic.png", NULL),
+         evas_3d_texture_file_set(EVAS_3D_IMAGE_FOLDER"sonic.png", NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
                                     EVAS_3D_TEXTURE_FILTER_NEAREST),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,

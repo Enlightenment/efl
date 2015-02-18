@@ -10,6 +10,7 @@
 * gcc -o evas-3d-ply evas-3d-ply.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`
 * @endverbatim
 */
+//TODO new resources
 
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
@@ -18,6 +19,7 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include "evas-3d-common.h"
 
 #define  WIDTH 1024
 #define  HEIGHT 1024
@@ -45,15 +47,6 @@ Eo *texture = NULL;
 Eo *light = NULL;
 Ecore_Animator *anim = NULL;
 
-char *folder = "ply_files";
-char *path_file[8] = {"ply_files/Normal_UVs_Colors.ply",
-                      "ply_files/Normal_UVs_NoColors.ply",
-                      "ply_files/Normal_NoUVs_Colors.ply",
-                      "ply_files/Normal_NoUVs_NoColors.ply",
-                      "ply_files/NoNormal_UVs_Colors.ply",
-                      "ply_files/NoNormal_UVs_NoColors.ply",
-                      "ply_files/NoNormal_NoUVs_Colors.ply",
-                      "ply_files/NoNormal_NoUVs_NoColors.ply"};
 char *file_name[8] = {"Normal_UVs_Colors.ply",
                       "Normal_UVs_NoColors.ply",
                       "Normal_NoUVs_Colors.ply",
@@ -164,7 +157,7 @@ main(void)
    material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
    texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
    eo_do(texture,
-         evas_3d_texture_file_set("indian_DIFF3.png", NULL),
+         evas_3d_texture_file_set(EVAS_3D_IMAGE_FOLDER"normal_lego.png", NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
                                     EVAS_3D_TEXTURE_FILTER_NEAREST),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
@@ -188,18 +181,19 @@ main(void)
      {
         mesh[i] = eo_add(EVAS_3D_MESH_CLASS, evas);
 
+        snprintf(buffer, PATH_MAX, "%s%s", EVAS_3D_MODEL_FOLDER, file_name[i % 8]);
         eo_do(mesh[i],
-              efl_file_set(path_file[i % 8], NULL),
+              efl_file_set(buffer, NULL),
               evas_3d_mesh_frame_material_set(0, material),
               evas_3d_mesh_shade_mode_set(draw_mode[(i % 16) / 8]));
 
-        snprintf(buffer, PATH_MAX, "%s/Saved_%s", folder, file_name[i % 8]);
+        snprintf(buffer, PATH_MAX, "%s%s", EVAS_3D_SAVED_FILES, file_name[i % 8]);
         eo_do(mesh[i], efl_file_save(buffer, NULL, NULL));
 
         if (i > 15)
           {
              eo_do(mesh[i],
-                   efl_file_set(path_file[i % 8], NULL),
+                   efl_file_set(buffer, NULL),
                    evas_3d_mesh_frame_material_set(0, material),
                    evas_3d_mesh_shade_mode_set(draw_mode[(i % 16) / 8]));
           }
