@@ -1833,10 +1833,10 @@ EAPI Eina_Bool edje_edit_part_drag_threshold_set(Evas_Object *obj, const char *p
 
 //@}
 /******************************************************************************/
-/**************************      BOX & TABLE API      *************************/
+/*******************************      BOX API      ****************************/
 /******************************************************************************/
-/** @name Box and Table API
- *  Functions to deal with table and box (see @ref edcref).
+/** @name Box Description API
+ *  Functions to deal with box (see @ref edcref).
  */ //@{
 
 /** Get primary layout of the box.
@@ -1930,6 +1930,132 @@ EAPI Eina_Bool
 edje_edit_state_box_alt_layout_set(Evas_Object *obj, const char *part,
                                    const char *state, double value,
                                    char *layout);
+
+//@}
+/******************************************************************************/
+/**************************   TABLE API   *************************************/
+/******************************************************************************/
+/** @name Table Description API
+ *  Functions to deal with table (see @ref edcref).
+ */ //@{
+
+/** Set homogeneous mode for TABLE part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that have TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ * @param homogeneous Homogeneous mode for table.
+ *
+ * Possible modes:
+ *     @li EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE,
+ *     @li EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE,
+ *     @li EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.14
+ */
+EAPI Eina_Bool
+edje_edit_state_table_homogeneous_set(Evas_Object *obj, const char *part,
+                                      const char *state, double value,
+                                      unsigned char homogeneous);
+
+/** Get homogeneous mode for TABLE part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that have TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ *
+ * Possible modes:
+ *     @li EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE,
+ *     @li EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE,
+ *     @li EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM
+ *
+ * @return Table homogeneous mode on success or 0 on any error.
+ * @since 1.14
+ */
+EAPI unsigned char
+edje_edit_state_table_homogeneous_get(Evas_Object *obj, const char *part,
+                                      const char *state, double value);
+
+//@}
+/******************************************************************************/
+/***********************   TABLE & BOX API   **********************************/
+/******************************************************************************/
+/** @name "Container" Description API
+ * Functions to deal both with box and table (see @ref edcref).
+ * Those functions called edje_edit_state_container_<something> because they
+ * are working both for TABLE and BOX at same time.
+ */ //@{
+
+/** Get x and y paddings for BOX or TABLE part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that have BOX/TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ * @param x Variable to store x padding.
+ * @param y Variable to store y padding.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.14
+ */
+EAPI Eina_Bool
+edje_edit_state_container_padding_get(Evas_Object *obj, const char *part,
+                                      const char *state, double value,
+                                      int *x, int *y);
+
+/** Set x and y paddings for BOX or TABLE part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that have BOX/TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ * @param x Value for setting x padding.
+ * @param y Value for setting y padding.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.14
+ */
+EAPI Eina_Bool
+edje_edit_state_container_padding_set(Evas_Object *obj, const char *part,
+                                      const char *state, double value,
+                                      int x, int y);
+
+/** Set x and y align for BOX or TABLE part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that have BOX/TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ * @param x Variable to store x value.
+ * @param y Variable to store y value.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.14
+ */
+EAPI Eina_Bool
+edje_edit_state_container_align_set(Evas_Object *obj, const char *part,
+                                    const char *state, double value,
+                                    double x, double y);
+
+/** Get x and y align for BOX or TABLE part.
+ *
+ * @param obj Object being edited.
+ * @param part Part that have BOX/TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ * @param x Value for setting x align.
+ * @param y Value for setting y align.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.14
+ */
+EAPI Eina_Bool
+edje_edit_state_container_align_get(Evas_Object *obj, const char *part,
+                                    const char *state, double value,
+                                    double *x, double *y);
 
 //@}
 /******************************************************************************/

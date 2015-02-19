@@ -4135,7 +4135,7 @@ FUNC_PART_DRAG_ID(event);
 FUNC_PART_DRAG_ID(threshold);
 
 /***************************/
-/*     BOX & TABLE API     */
+/*         BOX API         */
 /***************************/
 
 #define FUNC_STATE_BOX_LAYOUT(Layout) \
@@ -4172,6 +4172,180 @@ FUNC_PART_DRAG_ID(threshold);
 FUNC_STATE_BOX_LAYOUT(layout);
 FUNC_STATE_BOX_LAYOUT(alt_layout);
 
+/***************************/
+/*        TABLE API        */
+/***************************/
+
+EAPI unsigned char
+edje_edit_state_table_homogeneous_get(Evas_Object *obj, const char *part,
+                                      const char *state, double value)
+{
+   GET_PD_OR_RETURN(0)
+
+   switch (rp->part->type)
+     {
+      case EDJE_PART_TYPE_TABLE:
+        {
+           Edje_Part_Description_Table *table;
+           table = (Edje_Part_Description_Table*) pd;
+           return table->table.homogeneous;
+        }
+      default:
+        return 0;
+     }
+   return 0;
+}
+
+EAPI Eina_Bool
+edje_edit_state_table_homogeneous_set(Evas_Object *obj, const char *part,
+                                      const char *state, double value,
+                                      unsigned char homogeneous)
+{
+   GET_PD_OR_RETURN(EINA_FALSE)
+
+   switch (rp->part->type)
+     {
+      case EDJE_PART_TYPE_TABLE:
+        {
+           Edje_Part_Description_Table *table;
+           table = (Edje_Part_Description_Table*) pd;
+           table->table.homogeneous = homogeneous;
+           break;
+        }
+      default:
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+/***************************/
+/*     BOX & TABLE API     */
+/***************************/
+
+EAPI Eina_Bool
+edje_edit_state_container_align_get(Evas_Object *obj, const char *part,
+                                 const char *state, double value,
+                                 double *x, double *y)
+{
+   GET_PD_OR_RETURN(EINA_FALSE)
+
+   switch (rp->part->type)
+     {
+      case EDJE_PART_TYPE_TABLE:
+        {
+           Edje_Part_Description_Table *table;
+           table = (Edje_Part_Description_Table*) pd;
+           if (x) *x = FROM_DOUBLE(table->table.align.x);
+           if (y) *y = FROM_DOUBLE(table->table.align.y);
+           break;
+        }
+      case EDJE_PART_TYPE_BOX:
+        {
+           Edje_Part_Description_Box *box;
+           box = (Edje_Part_Description_Box*) pd;
+           if (x) *x = FROM_DOUBLE(box->box.align.x);
+           if (y) *y = FROM_DOUBLE(box->box.align.y);
+           break;
+        }
+      default:
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_container_align_set(Evas_Object *obj, const char *part,
+                                    const char *state, double value,
+                                    double x, double y)
+{
+   GET_PD_OR_RETURN(EINA_FALSE)
+
+   switch (rp->part->type)
+     {
+      case EDJE_PART_TYPE_TABLE:
+        {
+           Edje_Part_Description_Table *table;
+           table = (Edje_Part_Description_Table*) pd;
+           table->table.align.x = TO_DOUBLE(x);
+           table->table.align.y = TO_DOUBLE(y);
+           break;
+        }
+      case EDJE_PART_TYPE_BOX:
+        {
+           Edje_Part_Description_Box *box;
+           box = (Edje_Part_Description_Box*) pd;
+           box->box.align.x = x;
+           box->box.align.y = y;
+           break;
+        }
+      default:
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool 
+edje_edit_state_container_padding_get(Evas_Object *obj, const char *part,
+                                      const char *state, double value,
+                                      int *x, int *y)
+{
+   GET_PD_OR_RETURN(EINA_FALSE)
+
+   switch (rp->part->type)
+     {
+      case EDJE_PART_TYPE_TABLE:
+        {
+           Edje_Part_Description_Table *table;
+           table = (Edje_Part_Description_Table*) pd;
+           if (x) *x = table->table.padding.x;
+           if (y) *y = table->table.padding.y;
+           break;
+        }
+      case EDJE_PART_TYPE_BOX:
+        {
+           Edje_Part_Description_Box *box;
+           box = (Edje_Part_Description_Box*) pd;
+           if (x) *x = box->box.padding.x;
+           if (y) *y = box->box.padding.y;
+           break;
+        }
+      default:
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_container_padding_set(Evas_Object *obj, const char *part,
+                                    const char *state, double value,
+                                    int x, int y)
+{
+   GET_PD_OR_RETURN(EINA_FALSE)
+
+   switch (rp->part->type)
+     {
+      case EDJE_PART_TYPE_TABLE:
+        {
+           Edje_Part_Description_Table *table;
+           table = (Edje_Part_Description_Table*) pd;
+           table->table.padding.x = x;
+           table->table.padding.y = y;
+           break;
+        }
+      case EDJE_PART_TYPE_BOX:
+        {
+           Edje_Part_Description_Box *box;
+           box = (Edje_Part_Description_Box*) pd;
+           box->box.padding.x = x;
+           box->box.padding.y = y;
+           break;
+        }
+      default:
+       return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
 /***************************/
 /*  BOX & TABLE ITEMS API  */
 /***************************/
