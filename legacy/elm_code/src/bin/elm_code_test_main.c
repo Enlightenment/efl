@@ -257,8 +257,8 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    args = ecore_getopt_parse(&optdesc, values, argc, argv);
    if (args < 0)
      {
-	EINA_LOG_CRIT("Could not parse arguments.");
-	goto end;
+        EINA_LOG_CRIT("Could not parse arguments.");
+        goto end;
      }
    else if (quit_option)
      {
