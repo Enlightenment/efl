@@ -225,24 +225,16 @@ _elm_code_widget_fill(Elm_Code_Widget *widget)
 
 static Eina_Bool
 _elm_code_widget_line_cb(void *data, Eo *obj EINA_UNUSED,
-                         const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+                         const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Code_Widget *widget;
-   Elm_Code_Line *line;
-
-   Evas_Textgrid_Cell *cells;
-   Elm_Code_Widget_Data *pd;
 
    widget = (Elm_Code_Widget *)data;
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   line = (Elm_Code_Line *)event_info;
 
    if (!_elm_code_widget_resize(widget))
      return EINA_TRUE;
 
-// FIXME refresh just the row - but this resulted in undrawn areas
-//   cells = evas_object_textgrid_cellrow_get(pd->grid, line->number - 1);
-//   _elm_code_widget_fill_line(widget, cells, line);
+   // FIXME refresh just the row unless we have resized (by being the result of a row append)
    _elm_code_widget_fill(widget);
 
    return EO_CALLBACK_CONTINUE;
