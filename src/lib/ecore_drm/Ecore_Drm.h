@@ -116,6 +116,19 @@ struct _Ecore_Drm_Event_Activate
    Eina_Bool active;
 };
 
+struct _Ecore_Drm_Event_Output
+{
+   int x, y;
+   int w, h;
+   int phys_width, phys_height;
+   unsigned int refresh;
+   int subpixel_order;
+   int transform;
+   const char *make;
+   const char *model;
+   Eina_Bool plug : 1;
+};
+
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm_Device Ecore_Drm_Device;
 
@@ -140,7 +153,13 @@ typedef struct _Ecore_Drm_Sprite Ecore_Drm_Sprite;
 /* structure to inform drm activation state */
 typedef struct _Ecore_Drm_Event_Activate Ecore_Drm_Event_Activate;
 
+/* structure to inform drm output plug events */
+/** @since 1.14 */
+typedef struct _Ecore_Drm_Event_Output Ecore_Drm_Event_Output;
+
 EAPI extern int ECORE_DRM_EVENT_ACTIVATE;
+
+EAPI extern int ECORE_DRM_EVENT_OUTPUT; /**< @since 1.14 */
 
 /**
  * @file

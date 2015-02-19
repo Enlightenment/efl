@@ -89,6 +89,7 @@ ecore_drm_init(void)
    if (!eeze_init()) goto eeze_err;
 
    ECORE_DRM_EVENT_ACTIVATE = ecore_event_type_new();
+   ECORE_DRM_EVENT_OUTPUT = ecore_event_type_new();
 
    /* return init count */
    return _ecore_drm_init_count;
