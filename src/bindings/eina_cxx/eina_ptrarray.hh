@@ -6,6 +6,7 @@
 #include <eina_type_traits.hh>
 #include <eina_range_types.hh>
 #include <eina_throw.hh>
+#include <eina_accessor.hh>
 
 #include <memory>
 #include <iterator>
@@ -1236,6 +1237,27 @@ public:
   Eina_Array const* native_handle() const
   {
     return this->_impl._array;
+  }
+
+  /**
+   * @brief Get a constant @ref eina::accessor for the array.
+   * @return Constant <tt>eina::accessor</tt> to the array.
+   *
+   * Version of @ref accessor() to const-qualified <tt>ptrarray</tt>s. Returns
+   * a const-qualified <tt>eina::accessor</tt> instead.
+   */
+  eina::accessor<T const> accessor() const
+  {
+    return eina::accessor<T const>(eina_array_accessor_new(this->_impl._array));
+  }
+
+  /**
+   * @brief Get a @ref eina::accessor for the array.
+   * @return <tt>eina::accessor</tt> to the array.
+   */
+  eina::accessor<T> accessor()
+  {
+    return eina::accessor<T>(eina_array_accessor_new(this->_impl._array));
   }
 };
 
