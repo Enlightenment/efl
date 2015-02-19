@@ -240,8 +240,8 @@ static const struct _ecore_cocoa_keys_s keystable[] =
 { NSInsertFunctionKey,       "Insert",       "" },
 { NSHomeFunctionKey,         "Home",         "" },
 { NSEndFunctionKey,          "End",          "" },
-{ NSPageUpFunctionKey,       "Page_Up",      "" },
-{ NSPageDownFunctionKey,     "Page_Down",    "" },
+{ NSPageUpFunctionKey,       "Prior",      "" },
+{ NSPageDownFunctionKey,     "Next",    "" },
 { NSDeleteFunctionKey,       "Delete",       "\010"},
 
 { NSF1FunctionKey,           "F1",           "" },
