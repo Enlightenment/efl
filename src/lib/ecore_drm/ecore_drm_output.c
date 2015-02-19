@@ -979,3 +979,56 @@ ecore_drm_output_dpms_set(Ecore_Drm_Output *output, int level)
    drmModeConnectorSetProperty(output->dev->drm.fd, output->conn_id,
                                output->dpms->prop_id, level);
 }
+
+EAPI void
+ecore_drm_output_position_get(Ecore_Drm_Output *output, int *x, int *y)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   if (x) *x = output->x;
+   if (y) *y = output->y;
+}
+
+EAPI void
+ecore_drm_output_current_resolution_get(Ecore_Drm_Output *output, int *w, int *h, unsigned int *refresh)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   if (w) *w = output->current_mode->width;
+   if (h) *h = output->current_mode->height;
+   if (refresh) *refresh = output->current_mode->refresh;
+}
+
+EAPI void
+ecore_drm_output_physical_size_get(Ecore_Drm_Output *output, int *w, int *h)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   //FIXME: This needs to be set when EDID parsing works
+   if (w) *w = 0;
+   if (h) *h = 0;
+}
+
+EAPI unsigned int
+ecore_drm_output_subpixel_order_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);
+
+   return output->subpixel;
+}
+
+EAPI Eina_Stringshare *
+ecore_drm_output_model_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+
+   return output->model;
+}
+
+EAPI Eina_Stringshare *
+ecore_drm_output_make_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+
+   return output->make;
+}

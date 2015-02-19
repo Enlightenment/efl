@@ -270,4 +270,86 @@ EAPI void ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev);
  */
 EAPI void ecore_drm_output_dpms_set(Ecore_Drm_Output *output, int level);
 
+/**
+ * Get the output position of Ecore_Drm_Output
+ *
+ * This function will give the output position of Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to get position for
+ * @param *x The parameter in which output x co-ordinate is stored
+ * @param *y The parameter in which output y co-ordinate is stored
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.14
+ */
+EAPI void ecore_drm_output_position_get(Ecore_Drm_Output *output, int *x, int *y);
+
+/**
+ * Get the current resolution of Ecore_Drm_Output
+ *
+ * This function will give the current resolution of Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to get resolution for
+ * @param *w The parameter in which output width is stored
+ * @param *h The parameter in which output height is stored
+ * @param *refresh The parameter in which output refresh rate is stored
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.14
+ */
+EAPI void ecore_drm_output_current_resolution_get(Ecore_Drm_Output *output, int *w, int *h, unsigned int *refresh);
+
+/**
+ * Get the physical size of Ecore_Drm_Output
+ *
+ * This function will give the physical size (in mm) of Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to get physical size for
+ * @param *w The parameter in which output physical width is stored
+ * @param *h The parameter in which output physical height is stored
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.14
+ */
+EAPI void ecore_drm_output_physical_size_get(Ecore_Drm_Output *output, int *w, int *h);
+
+/**
+ * Get the subpixel order of Ecore_Drm_Output
+ *
+ * This function will give the subpixel order of Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to get subpixel order for
+ * @return The output subpixel order
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.14
+ */
+EAPI unsigned int ecore_drm_output_subpixel_order_get(Ecore_Drm_Output *output);
+
+/**
+ * Get the model of Ecore_Drm_Output
+ *
+ * This function will give the model of Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to get model for
+ * @return The model (do NOT eina_stringshare_del this return!)
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.14
+ */
+EAPI Eina_Stringshare *ecore_drm_output_model_get(Ecore_Drm_Output *output);
+
+/**
+ * Get the make of Ecore_Drm_Output
+ *
+ * This function will give the make of Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to get model for
+ * @return The make (do NOT eina_stringshare_del this return!)
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.14
+ */
+EAPI Eina_Stringshare *ecore_drm_output_make_get(Ecore_Drm_Output *output);
+
 #endif
