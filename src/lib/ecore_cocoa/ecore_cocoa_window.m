@@ -145,6 +145,16 @@
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
 }
 
+- (void) rightMouseDown:(NSEvent*) event
+{
+	[self mouseDown: event];
+}
+
+- (void) otherMouseDown:(NSEvent*) event
+{
+	[self mouseDown: event];
+}
+
 - (void) mouseUp:(NSEvent*) event
 {
    unsigned int time = (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff);
@@ -190,6 +200,16 @@
      ev->triple_click = 0;
 
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
+}
+
+- (void) rightMouseUp:(NSEvent*) event
+{
+	[self mouseUp: event];
+}
+
+- (void) otherMouseUp:(NSEvent*) event
+{
+	[self mouseUp: event];
 }
 
 - (void) mouseMoved:(NSEvent*) event
