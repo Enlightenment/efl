@@ -134,6 +134,19 @@ struct _Ecore_Drm_Event_Vblank
    void        *data;
 };
 
+struct _Ecore_Drm_Event_Output
+{
+   int x, y;
+   int w, h;
+   int phys_width, phys_height;
+   unsigned int refresh;
+   int subpixel_order;
+   int transform;
+   const char *make;
+   const char *model;
+   Eina_Bool plug : 1;
+};
+
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm_Device Ecore_Drm_Device;
 
@@ -164,9 +177,15 @@ typedef struct _Ecore_Drm_Event_Page_Flip Ecore_Drm_Event_Page_Flip;
 /* sturcture to inform drm vblank */
 typedef struct _Ecore_Drm_Event_Vblank Ecore_Drm_Event_Vblank;
 
+/* structure to inform drm output plug events */
+/** @since 1.14 */
+typedef struct _Ecore_Drm_Event_Output Ecore_Drm_Event_Output;
+
 EAPI extern int ECORE_DRM_EVENT_ACTIVATE;
 EAPI extern int ECORE_DRM_EVENT_PAGE_FLIP;
 EAPI extern int ECORE_DRM_EVENT_VBLANK;
+
+EAPI extern int ECORE_DRM_EVENT_OUTPUT; /**< @since 1.14 */
 
 /**
  * @file

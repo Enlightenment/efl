@@ -13,6 +13,8 @@ static const char *conn_types[] =
    "DP", "HDMI", "HDMI", "TV", "eDP",
 };
 
+EAPI int ECORE_DRM_EVENT_OUTPUT = 0;
+
 /* local functions */
 
 static Eina_Bool 
@@ -360,6 +362,8 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    output->backlight = 
      _ecore_drm_output_backlight_init(output, conn->connector_type);
 
+   _ecore_drm_event_output_send(output, EINA_TRUE);
+
    return output;
 
 mode_err:
@@ -579,6 +583,41 @@ _ecore_drm_output_event(const char *device EINA_UNUSED, Eeze_Udev_Event event EI
 
    if (_ecore_drm_output_device_is_hotplug(output))
      _ecore_drm_update_outputs(output);
+}
+
+static void
+_ecore_drm_event_output_free(void *data EINA_UNUSED, void *event)
+{
+   Ecore_Drm_Event_Output *e = event;
+
+   eina_stringshare_del(e->make);
+   eina_stringshare_del(e->model);
+   free(event);
+}
+
+void
+_ecore_drm_event_output_send(const Ecore_Drm_Output *output, Eina_Bool plug)
+{
+   Ecore_Drm_Event_Output *e;
+
+   if (!(e = calloc(1, sizeof(Ecore_Drm_Event_Output)))) return;
+   e->plug = plug;
+   if (plug)
+     {
+        e->w = output->current_mode->width;
+        e->h = output->current_mode->height;
+        e->x = output->x;
+        e->y = output->y;
+        e->phys_width = 0;
+        e->phys_height = 0;
+        e->refresh = output->current_mode->refresh;
+        e->subpixel_order = output->subpixel;
+        e->make = eina_stringshare_ref(output->make);
+        e->model = eina_stringshare_ref(output->model);
+        e->transform = 0;
+     }
+   ecore_event_add(ECORE_DRM_EVENT_OUTPUT, e,
+                   _ecore_drm_event_output_free, NULL);
 }
 
 /* public functions */
