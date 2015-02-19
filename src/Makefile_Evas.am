@@ -188,7 +188,8 @@ lib/evas/canvas/evas_3d_camera.c \
 lib/evas/canvas/evas_3d_light.c \
 lib/evas/canvas/evas_3d_mesh.c \
 lib/evas/canvas/evas_3d_texture.c \
-lib/evas/canvas/evas_3d_material.c
+lib/evas/canvas/evas_3d_material.c \
+lib/evas/canvas/evas_3d_node_callback.h
 
 # Model savers/loaders (will be replaced to modules in next commits)
 lib_evas_libevas_la_SOURCES += \
@@ -749,7 +750,8 @@ modules/evas/engines/gl_common/shader_3d/color_pick_frag.shd \
 $(NULL)
 
 EXTRA_DIST += \
-modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh
+modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh \
+$(GL_SHADERS_3D_GEN)
 
 BUILT_SOURCES += \
 modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x
