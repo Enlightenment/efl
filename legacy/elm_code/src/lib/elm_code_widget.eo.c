@@ -1,5 +1,7 @@
 EOAPI const Eo_Event_Description _ELM_CODE_WIDGET_EVENT_LINE_CLICKED =
    EO_EVENT_DESCRIPTION("line,clicked", "");
+EOAPI const Eo_Event_Description _ELM_CODE_WIDGET_EVENT_CURSOR_CHANGED =
+   EO_EVENT_DESCRIPTION("cursor,changed", "");
 
 void _elm_code_widget_code_set(Eo *obj, Elm_Code_Widget_Data *pd, Elm_Code *code);
 
@@ -41,6 +43,14 @@ Eina_Bool _elm_code_widget_line_numbers_get(Eo *obj, Elm_Code_Widget_Data *pd);
 
 EOAPI EO_FUNC_BODY(elm_code_widget_line_numbers_get, Eina_Bool, 0);
 
+void _elm_code_widget_cursor_position_set(Eo *obj, Elm_Code_Widget_Data *pd, unsigned int col, unsigned int line);
+
+EOAPI EO_VOID_FUNC_BODYV(elm_code_widget_cursor_position_set, EO_FUNC_CALL(col, line), unsigned int col, unsigned int line);
+
+void _elm_code_widget_cursor_position_get(Eo *obj, Elm_Code_Widget_Data *pd, unsigned int *col, unsigned int *line);
+
+EOAPI EO_VOID_FUNC_BODYV(elm_code_widget_cursor_position_get, EO_FUNC_CALL(col, line), unsigned int *col, unsigned int *line);
+
 void _elm_code_widget_eo_base_constructor(Eo *obj, Elm_Code_Widget_Data *pd);
 
 
@@ -68,11 +78,14 @@ static Eo_Op_Description _elm_code_widget_op_desc[] = {
      EO_OP_FUNC(elm_code_widget_editable_get, _elm_code_widget_editable_get, "Get the current editable state of this widget"),
      EO_OP_FUNC(elm_code_widget_line_numbers_set, _elm_code_widget_line_numbers_set, "Set whether line numbers should be displayed in the left gutter."),
      EO_OP_FUNC(elm_code_widget_line_numbers_get, _elm_code_widget_line_numbers_get, "Get the status of line number display for this widget."),
+     EO_OP_FUNC(elm_code_widget_cursor_position_set, _elm_code_widget_cursor_position_set, "Set the current location of the text cursor."),
+     EO_OP_FUNC(elm_code_widget_cursor_position_get, _elm_code_widget_cursor_position_get, "Get the current x and y position of the widget's cursor"),
      EO_OP_SENTINEL
 };
 
 static const Eo_Event_Description *_elm_code_widget_event_desc[] = {
      ELM_CODE_WIDGET_EVENT_LINE_CLICKED,
+     ELM_CODE_WIDGET_EVENT_CURSOR_CHANGED,
      NULL
 };
 

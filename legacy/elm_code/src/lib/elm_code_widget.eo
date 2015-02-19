@@ -103,6 +103,24 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
             Eina_Bool line_numbers; /*@ Whether or not line numbers (or their placeholder) should be shown */
          }
       }
+      cursor_position {
+         set {
+            /*@
+            Set the current location of the text cursor.
+
+            @ingroup Editing */
+         }
+         get {
+            /*@
+            Get the current x and y position of the widget's cursor
+
+            @ingroup Editing */
+         }
+         values {
+            uint col; /*@ The horizontal position of the cursor, starting from column 1 */
+            uint line; /*@ The vertical position of the cursor - the top row is 1 an */
+         }
+      }
    }
    methods {
    }
@@ -115,6 +133,7 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
    }
    events {
       line,clicked;
+      cursor,changed;
    }
 
 }

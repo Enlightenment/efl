@@ -140,11 +140,41 @@ EOAPI void  elm_code_widget_line_numbers_set(Eina_Bool line_numbers);
  */
 EOAPI Eina_Bool  elm_code_widget_line_numbers_get(void);
 
+/**
+ *
+ * Set the current location of the text cursor.
+ *
+ * @ingroup Editing
+ *
+ * @param[in] col The horizontal position of the cursor, starting from column 1
+ * @param[in] line The vertical position of the cursor - the top row is 1 an
+ *
+ */
+EOAPI void  elm_code_widget_cursor_position_set(unsigned int col, unsigned int line);
+
+/**
+ *
+ * Get the current x and y position of the widget's cursor
+ *
+ * @ingroup Editing
+ *
+ * @param[out] col The horizontal position of the cursor, starting from column 1
+ * @param[out] line The vertical position of the cursor - the top row is 1 an
+ *
+ */
+EOAPI void  elm_code_widget_cursor_position_get(unsigned int *col, unsigned int *line);
+
 EOAPI extern const Eo_Event_Description _ELM_CODE_WIDGET_EVENT_LINE_CLICKED;
+EOAPI extern const Eo_Event_Description _ELM_CODE_WIDGET_EVENT_CURSOR_CHANGED;
 
 /**
  * No description
  */
 #define ELM_CODE_WIDGET_EVENT_LINE_CLICKED (&(_ELM_CODE_WIDGET_EVENT_LINE_CLICKED))
+
+/**
+ * No description
+ */
+#define ELM_CODE_WIDGET_EVENT_CURSOR_CHANGED (&(_ELM_CODE_WIDGET_EVENT_CURSOR_CHANGED))
 
 #endif
