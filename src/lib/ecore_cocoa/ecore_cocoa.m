@@ -39,7 +39,7 @@ ecore_cocoa_init(void)
    if (!ecore_event_init())
      return --_ecore_cocoa_init_count;
 
-   _ecore_cocoa_log_domain = eina_log_domain_register("ecore_cocoa", ECORE_DEFAULT_LOG_COLOR);
+   _ecore_cocoa_log_domain = eina_log_domain_register("ecore_cocoa", EINA_COLOR_BLUE);
    if(_ecore_cocoa_log_domain < 0)
      {
         EINA_LOG_ERR("Unable to create a log domain for ecore_cocoa.");
