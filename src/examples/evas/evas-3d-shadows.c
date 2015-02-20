@@ -5,7 +5,7 @@
  * @see evas_3d_scene_shadows_enable_set(Eina_Bool _shadows_enabled)
  * @see evas_3d_object_callback_register
  *
- * Compile with gcc -o evas-3d-shadows evas-3d-shadows.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo eina` -lm
+ * Compile with gcc -o gcc -o evas-3d-shadows evas-3d-shadows.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo eina` -lm
  */
 
 #ifdef HAVE_CONFIG_H
@@ -23,8 +23,8 @@
 #include <Ecore_Evas.h>
 #include <Eina.h>
 #include <math.h>
-#include "evas-3d-primitives.c"
-#include "evas-3d-common.h"
+#include "evas-3d-primitives.h"
+#include "evas-common.h"
 
 #define  WIDTH 1024
 #define  HEIGHT 1024
@@ -37,6 +37,7 @@
 
 static const char *model_path = PACKAGE_EXAMPLES_DIR EVAS_3D_MODEL_FOLDER "/sonic.md2";
 static const char *image_path = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/sonic.png";
+static const vec2 tex_scale = {1, 1};
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
@@ -171,7 +172,7 @@ static void
 _sphere_setup(Body_3D *sphere)
 {
    sphere->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   _set_ball(sphere->mesh, 50);
+   evas_3d_add_sphere_frame(sphere->mesh, 0, 50, tex_scale);
    _body_material_set(sphere, 1, 0.0, 0.0);
 
    sphere->node =
@@ -185,7 +186,7 @@ static void
 _cone_setup(Body_3D *cone)
 {
    cone->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   _set_cone(cone->mesh, 100);
+   evas_3d_add_cone_frame(cone->mesh, 0, 100, tex_scale);
    _body_material_set(cone, 0.8, 0.5, 0.5);
 
    cone->node =
@@ -200,7 +201,7 @@ static void
 _cylinder_setup(Body_3D *cylinder)
 {
    cylinder->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   _set_cylinder(cylinder->mesh, 50);
+   evas_3d_add_cylinder_frame(cylinder->mesh, 0, 50, tex_scale);
    _body_material_set(cylinder, 0.0, 0.0, 1.0);
 
    cylinder->node =
@@ -214,9 +215,9 @@ static void
 _square_setup(Body_3D *square)
 {
    square->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   _set_square(square->mesh);
+   evas_3d_add_square_frame(square->mesh, 0);
 
-   _body_material_set(square, 0.9, 1, 1);
+   _body_material_set(square, 0.4, 0.4, 0.4);
 
    square->node =
       eo_add(EVAS_3D_NODE_CLASS, evas,
@@ -231,7 +232,7 @@ static void
 _box_setup(Body_3D *box)
 {
    box->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   _set_cube(box->mesh);
+   evas_3d_add_cube_frame(box->mesh, 0);
 
    _body_material_set(box, 0, 1, 0);
 

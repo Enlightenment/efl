@@ -248,7 +248,7 @@ evas_3d_cube_rotate_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_cube_rotate_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_3d_shadows
-evas_3d_shadows_SOURCES = evas-3d-shadows.c
+evas_3d_shadows_SOURCES = evas-3d-shadows.c evas-3d-primitives.c evas-3d-primitives.h
 evas_3d_shadows_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_shadows_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
