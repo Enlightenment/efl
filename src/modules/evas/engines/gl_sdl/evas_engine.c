@@ -327,17 +327,7 @@ eng_setup(Evas *eo_e, void *in)
    e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
 
    /* if we haven't initialized - init (automatic abort if already done) */
-   evas_common_cpu_init();
-   evas_common_blend_init();
-   evas_common_image_init();
-   evas_common_convert_init();
-   evas_common_scale_init();
-   evas_common_rectangle_init();
-   evas_common_polygon_init();
-   evas_common_line_init();
-   evas_common_font_init();
-   evas_common_draw_init();
-   evas_common_tilebuf_init();
+   evas_common_init();
 
    return 1;
 

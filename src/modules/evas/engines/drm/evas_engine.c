@@ -104,17 +104,7 @@ eng_setup(Evas *evas, void *einfo)
      {
         /* NB: If we have no valid output then assume we have not been
          * initialized yet and call any needed common init routines */
-        evas_common_cpu_init();
-        evas_common_blend_init();
-        evas_common_image_init();
-        evas_common_convert_init();
-        evas_common_scale_init();
-        evas_common_rectangle_init();
-        evas_common_polygon_init();
-        evas_common_line_init();
-        evas_common_font_init();
-        evas_common_draw_init();
-        evas_common_tilebuf_init();
+        evas_common_init();
 
         /* try to create a new render_engine */
         if (!(re = _output_setup(info, epd->output.w, epd->output.h)))

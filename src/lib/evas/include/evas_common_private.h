@@ -1207,8 +1207,8 @@ extern "C" {
 #endif
 
 /****/
-void evas_common_init                                   (void);
-void evas_common_shutdown                               (void);
+EAPI void evas_common_init                                   (void);
+EAPI void evas_common_shutdown                               (void);
 
 EAPI void evas_common_cpu_init                          (void);
 

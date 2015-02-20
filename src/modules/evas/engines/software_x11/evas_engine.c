@@ -435,17 +435,7 @@ eng_setup(Evas *eo_e, void *in)
    if (!e->engine.data.output)
      {
         /* if we haven't initialized - init (automatic abort if already done) */
-        evas_common_cpu_init();
-        evas_common_blend_init();
-        evas_common_image_init();
-        evas_common_convert_init();
-        evas_common_scale_init();
-        evas_common_rectangle_init();
-        evas_common_polygon_init();
-        evas_common_line_init();
-        evas_common_font_init();
-        evas_common_draw_init();
-        evas_common_tilebuf_init();
+        evas_common_init();
 
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
         if (info->info.backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)

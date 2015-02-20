@@ -32,7 +32,7 @@ evas_common_draw_context_cutouts_del(Cutout_Rects* rects, int idx)
      }
 }
 
-void
+EAPI void
 evas_common_init(void)
 {
    evas_common_cpu_init();
@@ -49,7 +49,7 @@ evas_common_init(void)
    evas_common_tilebuf_init();
 }
 
-void
+EAPI void
 evas_common_shutdown(void)
 {
    evas_font_dir_cache_free();
