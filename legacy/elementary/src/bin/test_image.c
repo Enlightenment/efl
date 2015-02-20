@@ -4,17 +4,17 @@
 #include <Elementary.h>
 
 static const struct {
-   Elm_Image_Orient orient;
+   Evas_Image_Orient orient;
    const char *name;
 } images_orient[] = {
-  { ELM_IMAGE_ORIENT_NONE, "None" },
-  { ELM_IMAGE_ROTATE_90, "Rotate 90" },
-  { ELM_IMAGE_ROTATE_180, "Rotate 180" },
-  { ELM_IMAGE_ROTATE_270, "Rotate 270" },
-  { ELM_IMAGE_FLIP_HORIZONTAL, "Horizontal Flip" },
-  { ELM_IMAGE_FLIP_VERTICAL, "Vertical Flip" },
-  { ELM_IMAGE_FLIP_TRANSPOSE, "Transpose" },
-  { ELM_IMAGE_FLIP_TRANSVERSE, "Transverse" },
+  { EVAS_IMAGE_ORIENT_NONE, "None" },
+  { EVAS_IMAGE_ORIENT_90, "Rotate 90" },
+  { EVAS_IMAGE_ORIENT_180, "Rotate 180" },
+  { EVAS_IMAGE_ORIENT_270, "Rotate 270" },
+  { EVAS_IMAGE_FLIP_HORIZONTAL, "Horizontal Flip" },
+  { EVAS_IMAGE_FLIP_VERTICAL, "Vertical Flip" },
+  { EVAS_IMAGE_FLIP_TRANSPOSE, "Transpose" },
+  { EVAS_IMAGE_FLIP_TRANSVERSE, "Transverse" },
   { 0, NULL }
 };
 
@@ -24,7 +24,7 @@ my_im_ch(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    Evas_Object *win = data;
    Evas_Object *im = evas_object_data_get(win, "im");
    Evas_Object *rdg = evas_object_data_get(win, "rdg");
-   Elm_Image_Orient v = elm_radio_value_get(rdg);
+   Evas_Image_Orient v = elm_radio_value_get(rdg);
 
    elm_image_orient_set(im, v);
    fprintf(stderr, "Set %i and got %i\n",

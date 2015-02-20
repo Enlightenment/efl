@@ -5,26 +5,23 @@
  */
 
 /**
- * Possible orientation options for elm_image_orient_set().
- *
- * @image html elm_image_orient_set.png
- * @image latex elm_image_orient_set.eps width=\textwidth
+ * Using Evas_Image_Orient enums
+ * @since 1.14
  */
-typedef enum
-{
-   ELM_IMAGE_ORIENT_NONE = 0, /**< no orientation change */
-   ELM_IMAGE_ORIENT_0 = 0, /**< no orientation change */
-   ELM_IMAGE_ROTATE_90 = 1, /**< rotate 90 degrees clockwise */
-   ELM_IMAGE_ORIENT_90 = 1, /**< rotate 90 degrees clockwise @since 1.13 */
-   ELM_IMAGE_ROTATE_180 = 2, /**< rotate 180 degrees clockwise */
-   ELM_IMAGE_ORIENT_180 = 2, /**< rotate 180 degrees clockwise @since 1.13 */
-   ELM_IMAGE_ROTATE_270 = 3, /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise) */
-   ELM_IMAGE_ORIENT_270 = 3, /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise) @since 1.13 */
-   ELM_IMAGE_FLIP_HORIZONTAL = 4, /**< flip image horizontally */
-   ELM_IMAGE_FLIP_VERTICAL = 5, /**< flip image vertically */
-   ELM_IMAGE_FLIP_TRANSPOSE = 6, /**< flip the image along the y = (width - x) line (bottom-left to top-right) */
-   ELM_IMAGE_FLIP_TRANSVERSE = 7 /**< flip the image along the y = x line (top-left to bottom-right) */
-} Elm_Image_Orient;
+typedef Evas_Image_Orient Elm_Image_Orient;
+
+#define ELM_IMAGE_ORIENT_NONE     EVAS_IMAGE_ORIENT_NONE
+#define ELM_IMAGE_ORIENT_0        EVAS_IMAGE_ORIENT_0
+#define ELM_IMAGE_ROTATE_90       EVAS_IMAGE_ORIENT_90
+#define ELM_IMAGE_ORIENT_90       EVAS_IMAGE_ORIENT_90
+#define ELM_IMAGE_ROTATE_180      EVAS_IMAGE_ORIENT_180
+#define ELM_IMAGE_ORIENT_180      EVAS_IMAGE_ORIENT_180
+#define ELM_IMAGE_ROTATE_270      EVAS_IMAGE_ORIENT_270
+#define ELM_IMAGE_ORIENT_270      EVAS_IMAGE_ORIENT_270
+#define ELM_IMAGE_FLIP_HORIZONTAL EVAS_IMAGE_FLIP_HORIZONTAL
+#define ELM_IMAGE_FLIP_VERTICAL   EVAS_IMAGE_FLIP_VERTICAL
+#define ELM_IMAGE_FLIP_TRANSPOSE  EVAS_IMAGE_FLIP_TRANSPOSE
+#define ELM_IMAGE_FLIP_TRANSVERSE EVAS_IMAGE_FLIP_TRANSVERSE
 
 /**
  * Structure associated with smart callback 'download,progress'.
