@@ -566,33 +566,12 @@ ecore_con_ssl_client_write(Ecore_Con_Client *cl,
    return SSL_SUFFIX(_ecore_con_ssl_client_write) (cl, buf, size);
 }
 
-/**
- * Returns if SSL support is available
- * @return 1 if SSL is available and provided by gnutls, 2 if provided by openssl,
- * 0 if it is not available.
- * @ingroup Ecore_Con_Client_Group
- */
 EAPI int
 ecore_con_ssl_available_get(void)
 {
    return _ECORE_CON_SSL_AVAILABLE;
 }
 
-/**
- * @addtogroup Ecore_Con_SSL_Group Ecore Connection SSL Functions
- *
- * Functions that operate on Ecore connection objects pertaining to SSL.
- *
- * @{
- */
-
-/**
- * @brief Enable certificate verification on a server object
- *
- * Call this function on a server object before main loop has started
- * to enable verification of certificates against loaded certificates.
- * @param svr The server object
- */
 EAPI void
 ecore_con_ssl_server_verify(Ecore_Con_Server *obj)
 {
@@ -602,16 +581,6 @@ ecore_con_ssl_server_verify(Ecore_Con_Server *obj)
    svr->verify = EINA_TRUE;
 }
 
-/**
- * @brief Enable hostname-based certificate verification on a server object
- *
- * Call this function on a server object before main loop has started
- * to enable verification of certificates using ONLY their hostnames.
- * @param svr The server object
- * @note This function has no effect when used on a listening server created by
- * ecore_con_server_add
- * @since 1.1
- */
 EAPI void
 ecore_con_ssl_server_verify_basic(Ecore_Con_Server *obj)
 {
@@ -621,19 +590,6 @@ ecore_con_ssl_server_verify_basic(Ecore_Con_Server *obj)
    svr->verify_basic = EINA_TRUE;
 }
 
-/**
- * @brief Set the hostname to verify against in certificate verification
- *
- * Sometimes the certificate hostname will not match the hostname that you are
- * connecting to, and will instead match a different name. An example of this is
- * that if you connect to talk.google.com to use Google Talk, you receive Google's
- * certificate for gmail.com. This certificate should be trusted, and so you must call
- * this function with "gmail.com" as @p name.
- * See RFC2818 for more details.
- * @param svr The server object
- * @param name The hostname to verify against
- * @since 1.2
- */
 EAPI void
 ecore_con_ssl_server_verify_name_set(Ecore_Con_Server *obj, const char *name)
 {
@@ -643,16 +599,6 @@ ecore_con_ssl_server_verify_name_set(Ecore_Con_Server *obj, const char *name)
    eina_stringshare_replace(&svr->verify_name, name);
 }
 
-/**
- * @brief Get the hostname to verify against in certificate verification
- *
- * This function returns the name which will be used to validate the SSL certificate
- * common name (CN) or alt name (subjectAltName). It will default to the @p name
- * param in ecore_con_server_connect(), but can be changed with ecore_con_ssl_server_verify_name_set().
- * @param svr The server object
- * @return The hostname which will be used
- * @since 1.2
- */
 EAPI const char *
 ecore_con_ssl_server_verify_name_get(Ecore_Con_Server *obj)
 {
@@ -661,17 +607,6 @@ ecore_con_ssl_server_verify_name_get(Ecore_Con_Server *obj)
 
    return svr->verify_name ? : svr->name;
 }
-
-/**
- * @brief Add an ssl certificate for use in ecore_con functions.
- *
- * Use this function to add a SSL PEM certificate.
- * Simply specify the cert here to use it in the server object for connecting or listening.
- * If there is an error loading the certificate, an error will automatically be logged.
- * @param svr The server object
- * @param cert The path to the certificate.
- * @return @c EINA_FALSE if the file cannot be loaded, otherwise @c EINA_TRUE.
- */
 
 EAPI Eina_Bool
 ecore_con_ssl_server_cert_add(Ecore_Con_Server *obj,
@@ -691,18 +626,6 @@ ecore_con_ssl_server_cert_add(Ecore_Con_Server *obj,
    return SSL_SUFFIX(_ecore_con_ssl_server_cert_add) (obj, cert);
 }
 
-/**
- * @brief Add an ssl CA file for use in ecore_con functions.
- *
- * Use this function to add a SSL PEM CA file.
- * Simply specify the file here to use it in the server object for connecting or listening.
- * If there is an error loading the CAs, an error will automatically be logged.
- * @param svr The server object
- * @param ca_file The path to the CA file.
- * @return @c EINA_FALSE if the file cannot be loaded, otherwise @c EINA_TRUE.
- * @note since 1.2, this function can load directores
- */
-
 EAPI Eina_Bool
 ecore_con_ssl_server_cafile_add(Ecore_Con_Server *obj,
                                 const char *ca_file)
@@ -720,17 +643,6 @@ ecore_con_ssl_server_cafile_add(Ecore_Con_Server *obj,
 
    return SSL_SUFFIX(_ecore_con_ssl_server_cafile_add) (obj, ca_file);
 }
-
-/**
- * @brief Add an ssl private key for use in ecore_con functions.
- *
- * Use this function to add a SSL PEM private key
- * Simply specify the key file here to use it in the server object for connecting or listening.
- * If there is an error loading the key, an error will automatically be logged.
- * @param svr The server object
- * @param key_file The path to the key file.
- * @return @c EINA_FALSE if the file cannot be loaded, otherwise @c EINA_TRUE.
- */
 
 EAPI Eina_Bool
 ecore_con_ssl_server_privkey_add(Ecore_Con_Server *obj,
@@ -750,17 +662,6 @@ ecore_con_ssl_server_privkey_add(Ecore_Con_Server *obj,
    return SSL_SUFFIX(_ecore_con_ssl_server_privkey_add) (obj, key_file);
 }
 
-/**
- * @brief Add an ssl CRL for use in ecore_con functions.
- *
- * Use this function to add a SSL PEM CRL file
- * Simply specify the CRL file here to use it in the server object for connecting or listening.
- * If there is an error loading the CRL, an error will automatically be logged.
- * @param svr The server object
- * @param crl_file The path to the CRL file.
- * @return @c EINA_FALSE if the file cannot be loaded, otherwise @c EINA_TRUE.
- */
-
 EAPI Eina_Bool
 ecore_con_ssl_server_crl_add(Ecore_Con_Server *obj,
                              const char *crl_file)
@@ -778,20 +679,6 @@ ecore_con_ssl_server_crl_add(Ecore_Con_Server *obj,
 
    return SSL_SUFFIX(_ecore_con_ssl_server_crl_add) (obj, crl_file);
 }
-
-/**
- * @brief Upgrade a connection to a specified level of encryption
- *
- * Use this function to begin an SSL handshake on a connection (STARTTLS or similar).
- * Once the upgrade has been completed, an ECORE_CON_EVENT_SERVER_UPGRADE event will be emitted.
- * The connection should be treated as disconnected until the next event.
- * @param svr The server object
- * @param ssl_type The SSL connection type (ONLY).
- * @return @c EINA_FALSE if the connection cannot be upgraded, otherwise @c EINA_TRUE.
- * @note This function is NEVER to be used on a server object created with ecore_con_server_add
- * @warning Setting a wrong value for @p compl_type WILL mess up your program.
- * @since 1.1
- */
 
 EAPI Eina_Bool
 ecore_con_ssl_server_upgrade(Ecore_Con_Server *obj, Ecore_Con_Type ssl_type)
@@ -814,19 +701,6 @@ ecore_con_ssl_server_upgrade(Ecore_Con_Server *obj, Ecore_Con_Type ssl_type)
    svr->ssl_state = ECORE_CON_SSL_STATE_INIT;
    return !SSL_SUFFIX(_ecore_con_ssl_server_init) (obj);
 }
-
-/**
- * @brief Upgrade a connection to a specified level of encryption
- *
- * Use this function to begin an SSL handshake on a connection (STARTTLS or similar).
- * Once the upgrade has been completed, an ECORE_CON_EVENT_CLIENT_UPGRADE event will be emitted.
- * The connection should be treated as disconnected until the next event.
- * @param cl The client object
- * @param ssl_type The SSL connection type (ONLY).
- * @return @c EINA_FALSE if the connection cannot be upgraded, otherwise @c EINA_TRUE.
- * @warning Setting a wrong value for @p compl_type WILL mess up your program.
- * @since 1.1
- */
 
 EAPI Eina_Bool
 ecore_con_ssl_client_upgrade(Ecore_Con_Client *obj, Ecore_Con_Type ssl_type)
