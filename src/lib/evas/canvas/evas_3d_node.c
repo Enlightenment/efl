@@ -432,7 +432,9 @@ _pack_meshes_vertex_data(Evas_3D_Node *node, Evas_Vec3 **vertices, int *count)
         eo_do(node, frame = evas_3d_node_mesh_frame_get(mesh));
         mpd = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
         f = evas_3d_mesh_frame_find(mpd, frame);
-        if (f) *count += mpd->vertex_count;
+        if (f)
+          if (f->vertices[EVAS_3D_VERTEX_POSITION].data)
+            *count += mpd->vertex_count;
      }
 
    *vertices = (Evas_Vec3*)malloc(*count * sizeof(Evas_Vec3));
@@ -451,6 +453,7 @@ _pack_meshes_vertex_data(Evas_3D_Node *node, Evas_Vec3 **vertices, int *count)
         if (f)
           {
              float *src = (float *)f->vertices[EVAS_3D_VERTEX_POSITION].data;
+             if (!src) continue;
              int stride = f->vertices[EVAS_3D_VERTEX_POSITION].stride;
              if (!stride) stride = sizeof(float) * 3;
              for (j = 0; j < mpd->vertex_count; j++)
