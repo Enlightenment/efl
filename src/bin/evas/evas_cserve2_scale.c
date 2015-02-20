@@ -9,6 +9,7 @@ cserve2_scale_init(void)
    evas_common_image_init();
    evas_common_convert_init();
    evas_common_scale_init();
+   evas_common_scale_sample_init();
 }
 
 void

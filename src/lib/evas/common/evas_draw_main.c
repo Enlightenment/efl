@@ -45,6 +45,7 @@ evas_common_init(void)
    evas_common_image_init();
    evas_common_convert_init();
    evas_common_scale_init();
+   evas_common_scale_sample_init();
    evas_common_rectangle_init();
    evas_common_polygon_init();
    evas_common_line_init();
@@ -60,6 +61,7 @@ evas_common_shutdown(void)
 
    evas_font_dir_cache_free();
    evas_common_image_cache_free();
+   evas_common_scale_sample_shutdown();
 }
 
 EAPI void

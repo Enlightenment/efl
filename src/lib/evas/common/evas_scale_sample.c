@@ -3,6 +3,42 @@
 
 static Eina_Bool scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
 
+typedef struct _Evas_Scale_Thread Evas_Scale_Thread;
+typedef struct _Evas_Scale_Msg Evas_Scale_Msg;
+
+struct _Evas_Scale_Msg
+{
+   Eina_Thread_Queue_Msg head;
+   Evas_Scale_Thread *task;
+};
+
+struct _Evas_Scale_Thread
+{
+   RGBA_Image *mask8;
+   DATA32 **row_ptr;
+   DATA32 *dptr;
+   int *lin_ptr;
+
+   RGBA_Gfx_Func func;
+   RGBA_Gfx_Func func2;
+
+   int dst_clip_x;
+   int dst_clip_y;
+   int dst_clip_h;
+   int dst_clip_w;
+   int dst_w;
+
+   int mask_x;
+   int mask_y;
+
+   unsigned int mul_col;
+};
+
+static Eina_Bool use_thread = EINA_FALSE;
+static Eina_Thread scaling_thread;
+static Eina_Thread_Queue *thread_queue = NULL;
+static Eina_Thread_Queue *main_queue = NULL;
+
 EAPI Eina_Bool
 evas_common_scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst,
                                              RGBA_Draw_Context *dc,
@@ -55,6 +91,80 @@ evas_common_scale_rgba_in_to_out_clip_sample_do(const Cutout_Rects *reuse,
                                                   src_region_w, src_region_h,
                                                   dst_region_x, dst_region_y,
                                                   dst_region_w, dst_region_h);
+     }
+}
+
+static void
+_evas_common_scale_rgba_sample_scale_nomask(int y,
+                                            int dst_clip_w, int dst_clip_h, int dst_w,
+                                            DATA32 **row_ptr, int *lin_ptr,
+                                            DATA32 *dptr, RGBA_Gfx_Func func, unsigned int mul_col)
+{
+   DATA32 *buf, *dst_ptr;
+   int x;
+
+   /* a scanline buffer */
+   buf = alloca(dst_clip_w * sizeof(DATA32));
+
+   dptr = dptr + dst_w * y;
+   for (; y < dst_clip_h; y++)
+     {
+        dst_ptr = buf;
+        for (x = 0; x < dst_clip_w; x++)
+          {
+             DATA32 *ptr;
+
+             ptr = row_ptr[y] + lin_ptr[x];
+             *dst_ptr = *ptr;
+             dst_ptr++;
+          }
+
+        /* * blend here [clip_w *] buf -> dptr * */
+        func(buf, NULL, mul_col, dptr, dst_clip_w);
+
+        dptr += dst_w;
+     }
+}
+
+static void
+_evas_common_scale_rgba_sample_scale_mask(int y,
+                                          int dst_clip_x, int dst_clip_y,
+                                          int dst_clip_w, int dst_clip_h, int dst_w,
+                                          int mask_x, int mask_y,
+                                          DATA32 **row_ptr, int *lin_ptr, RGBA_Image *im,
+                                          DATA32 *dptr, RGBA_Gfx_Func func, RGBA_Gfx_Func func2,
+                                          unsigned int mul_col)
+{
+   DATA32 *buf, *dst_ptr;
+   int x;
+
+   /* a scanline buffer */
+   buf = alloca(dst_clip_w * sizeof(DATA32));
+
+   dptr = dptr + dst_w * y;
+   for (; y < dst_clip_h; y++)
+     {
+        DATA8 *mask;
+
+        dst_ptr = buf;
+        mask = im->image.data8
+          + ((dst_clip_y - mask_y + y) * im->cache_entry.w)
+          + (dst_clip_x - mask_x);
+
+        for (x = 0; x < dst_clip_w; x++)
+          {
+             DATA32 *ptr;
+
+             ptr = row_ptr[y] + lin_ptr[x];
+             *dst_ptr = *ptr;
+             dst_ptr++;
+          }
+
+        /* * blend here [clip_w *] buf -> dptr * */
+        if (mul_col != 0xFFFFFFFF) func2(buf, NULL, mul_col, buf, dst_clip_w);
+        func(buf, mask, 0, dptr, dst_clip_w);
+
+        dptr += dst_w;
      }
 }
 
@@ -587,55 +697,179 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
         else
 #endif
           {
+             unsigned int mul_col;
+
              /* a scanline buffer */
              buf = alloca(dst_clip_w * sizeof(DATA32));
 
-             /* image masking */
-             if (dc->clip.mask)
+             mul_col = dc->mul.use ? dc->mul.col : 0xFFFFFFFF;
+
+             /* do we have enough data to start some additional thread ? */
+             if (use_thread && dst_clip_h > 32 && dst_clip_w * dst_clip_h > 4096)
                {
-                  RGBA_Image *im = dc->clip.mask;
+                  /* Yes, we do ! */
+                  Evas_Scale_Msg *msg;
+                  void *ref;
+                  Evas_Scale_Thread local;
 
-                  for (y = 0; y < dst_clip_h; y++)
+                  local.mask8 = dc->clip.mask;
+                  local.row_ptr = row_ptr;
+                  local.dptr = dptr;
+                  local.lin_ptr = lin_ptr;
+                  local.func = func;
+                  local.func2 = func2;
+                  local.dst_clip_x = dst_clip_x;
+                  local.dst_clip_y = dst_clip_y;
+                  local.dst_clip_h = dst_clip_h;
+                  local.dst_clip_w = dst_clip_w;
+                  local.dst_w = dst_w;
+                  local.mask_x = dc->clip.mask_x;
+                  local.mask_y = dc->clip.mask_y;
+                  local.mul_col = mul_col;
+
+                  msg = eina_thread_queue_send(thread_queue, sizeof (Evas_Scale_Msg), &ref);
+                  msg->task = &local;
+                  eina_thread_queue_send_done(thread_queue, ref);
+
+                  /* image masking */
+                  if (dc->clip.mask)
                     {
-                       dst_ptr = buf;
-                       mask = im->image.data8
-                          + ((dst_clip_y - dc->clip.mask_y + y) * im->cache_entry.w)
-                          + (dst_clip_x - dc->clip.mask_x);
+                       _evas_common_scale_rgba_sample_scale_mask(0,
+                                                                 dst_clip_x, dst_clip_y,
+                                                                 dst_clip_w, dst_clip_h >> 1, dst_w,
+                                                                 dc->clip.mask_x, dc->clip.mask_y,
+                                                                 row_ptr, lin_ptr, dc->clip.mask,
+                                                                 dptr, func, func2, mul_col);
 
-                       for (x = 0; x < dst_clip_w; x++)
-                         {
-                            ptr = row_ptr[y] + lin_ptr[x];
-                            *dst_ptr = *ptr;
-                            dst_ptr++;
-                         }
-
-                       /* * blend here [clip_w *] buf -> dptr * */
-                       if (dc->mul.use) func2(buf, NULL, dc->mul.col, buf, dst_clip_w);
-                       func(buf, mask, 0, dptr, dst_clip_w);
-
-                       dptr += dst_w;
                     }
+                  else
+                    {
+                       _evas_common_scale_rgba_sample_scale_nomask(0,
+                                                                   dst_clip_w, dst_clip_h >> 1, dst_w,
+                                                                   row_ptr, lin_ptr,
+                                                                   dptr, func, mul_col);
+                    }
+
+                  msg = eina_thread_queue_wait(main_queue, &ref);
+                  if (msg) eina_thread_queue_wait_done(main_queue, ref);
                }
              else
                {
-                  for (y = 0; y < dst_clip_h; y++)
+                  /* No we don't ! */
+
+                  /* image masking */
+                  if (dc->clip.mask)
                     {
-                       dst_ptr = buf;
-                       for (x = 0; x < dst_clip_w; x++)
-                         {
-                            ptr = row_ptr[y] + lin_ptr[x];
-                            *dst_ptr = *ptr;
-                            dst_ptr++;
-                         }
+                       _evas_common_scale_rgba_sample_scale_mask(0,
+                                                                 dst_clip_x, dst_clip_y,
+                                                                 dst_clip_w, dst_clip_h, dst_w,
+                                                                 dc->clip.mask_x, dc->clip.mask_y,
+                                                                 row_ptr, lin_ptr, dc->clip.mask,
+                                                                 dptr, func, func2, mul_col);
 
-                       /* * blend here [clip_w *] buf -> dptr * */
-                       func(buf, NULL, dc->mul.col, dptr, dst_clip_w);
-
-                       dptr += dst_w;
+                    }
+                  else
+                    {
+                       _evas_common_scale_rgba_sample_scale_nomask(0,
+                                                                   dst_clip_w, dst_clip_h, dst_w,
+                                                                   row_ptr, lin_ptr,
+                                                                   dptr, func, mul_col);
                     }
                }
           }
      }
 
    return EINA_TRUE;
+}
+
+static void *
+_evas_common_scale_sample_thread(void *data EINA_UNUSED,
+                                 Eina_Thread t EINA_UNUSED)
+{
+   Evas_Scale_Msg *msg;
+   Evas_Scale_Thread *todo = NULL;
+
+   do
+     {
+        void *ref;
+
+        todo = NULL;
+
+        msg = eina_thread_queue_wait(thread_queue, &ref);
+        if (msg)
+          {
+             int h;
+
+             todo = msg->task;
+             eina_thread_queue_wait_done(thread_queue, &ref);
+
+             if (!todo) goto end;
+
+             h = todo->dst_clip_h >> 1;
+
+             if (todo->mask8)
+               _evas_common_scale_rgba_sample_scale_mask(h,
+                                                         todo->dst_clip_x, todo->dst_clip_y,
+                                                         todo->dst_clip_w, todo->dst_clip_h,
+                                                         todo->dst_w,
+                                                         todo->mask_x, todo->mask_y,
+                                                         todo->row_ptr, todo->lin_ptr, todo->mask8,
+                                                         todo->dptr, todo->func, todo->func2,
+                                                         todo->mul_col);
+             else
+               _evas_common_scale_rgba_sample_scale_nomask(h,
+                                                           todo->dst_clip_w, todo->dst_clip_h,
+                                                           todo->dst_w,
+                                                           todo->row_ptr, todo->lin_ptr,
+                                                           todo->dptr, todo->func, todo->mul_col);
+          }
+
+     end:
+        msg = eina_thread_queue_send(main_queue, sizeof (Evas_Scale_Msg), &ref);
+        msg->task = NULL;
+        eina_thread_queue_send_done(main_queue, ref);
+     }
+   while (todo);
+
+   return NULL;
+}
+
+EAPI void
+evas_common_scale_sample_init(void)
+{
+   if (eina_cpu_count() <= 2) return ;
+
+   thread_queue = eina_thread_queue_new();
+   main_queue = eina_thread_queue_new();
+
+   if (!eina_thread_create(&scaling_thread, EINA_THREAD_NORMAL, -1,
+                           _evas_common_scale_sample_thread, NULL))
+     {
+        return;
+     }
+
+   use_thread = EINA_TRUE;
+}
+
+EAPI void
+evas_common_scale_sample_shutdown(void)
+{
+   Evas_Scale_Msg *msg;
+   void *ref;
+
+   if (!use_thread) return ;
+
+   msg = eina_thread_queue_send(thread_queue, sizeof (Evas_Scale_Msg), &ref);
+   msg->task = NULL;
+   eina_thread_queue_send_done(thread_queue, ref);
+
+   /* Here is the thread commiting succide*/
+
+   msg = eina_thread_queue_wait(main_queue, &ref);
+   if (msg) eina_thread_queue_wait_done(main_queue, ref);
+
+   eina_thread_join(scaling_thread);
+
+   eina_thread_queue_free(thread_queue);
+   eina_thread_queue_free(main_queue);
 }
