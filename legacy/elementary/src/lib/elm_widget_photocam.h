@@ -120,6 +120,7 @@ struct _Elm_Photocam_Data
    int          preload_num;
 
    Eina_List   *grids;
+   Evas_Image_Orient      orient; /**< This stores the current orientation of Photocam. By default this is set to EVAS_IMAGE_ORIENT_NONE */
 
    Eina_Bool    main_load_pending : 1;
    Eina_Bool    longpressed : 1;

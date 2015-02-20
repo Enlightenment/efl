@@ -3,10 +3,36 @@
 #endif
 #include <Elementary.h>
 
+static const struct {
+ Evas_Image_Orient orient;
+ const char *name;
+} photocam_orient[] = {
+ { EVAS_IMAGE_ORIENT_NONE, "None" },
+ { EVAS_IMAGE_ORIENT_90, "Rotate 90" },
+ { EVAS_IMAGE_ORIENT_180, "Rotate 180" },
+ { EVAS_IMAGE_ORIENT_270, "Rotate 270" },
+ { EVAS_IMAGE_FLIP_HORIZONTAL, "Horizontal Flip" },
+ { EVAS_IMAGE_FLIP_VERTICAL, "Vertical Flip" },
+ { EVAS_IMAGE_FLIP_TRANSPOSE, "Transpose" },
+ { EVAS_IMAGE_FLIP_TRANSVERSE, "Transverse" },
+ { 0, NULL }
+};
+
 static void
 my_ph_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("clicked\n");
+}
+
+static void
+my_ph_ch(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+    Evas_Object *photocam = data;
+    Evas_Image_Orient orient = elm_radio_value_get(obj);
+
+    elm_photocam_image_orient_set(photocam, orient);
+    fprintf(stderr, "Set %i and got %i\n",
+            orient, elm_photocam_image_orient_get(photocam));
 }
 
 static void
@@ -254,9 +280,9 @@ _photocam_move_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void
 void
 test_photocam(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *ph, *tb2, *bt, *box;
+   Evas_Object *win, *ph, *tb2, *bt, *box, *rd, *rdg = NULL;
+   int i;
    Evas_Object *rect = NULL;
-
    win = elm_win_util_standard_add("photocam", "PhotoCam");
    elm_win_autodel_set(win, EINA_TRUE);
 
@@ -387,6 +413,27 @@ test_photocam(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_box_pack_end(box, bt);
    evas_object_show(bt);
 
+   box = elm_box_add(tb2);
+   elm_box_horizontal_set(box, EINA_TRUE);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(box, 0.9, 0.9);
+   elm_table_pack(tb2, box, 1, 2, 1, 1);
+   evas_object_show(box);
+
+   for (i = 0; photocam_orient[i].name; ++i)
+     {
+        rd = elm_radio_add(win);
+        evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_radio_state_value_set(rd, photocam_orient[i].orient);
+        elm_object_text_set(rd, photocam_orient[i].name);
+        elm_box_pack_end(box, rd);
+        evas_object_show(rd);
+        evas_object_smart_callback_add(rd, "changed", my_ph_ch, ph);
+        if (!rdg)
+          rdg = rd;
+        else
+          elm_radio_group_add(rd, rdg);
+     }
    evas_object_show(box);
    evas_object_show(tb2);
 
@@ -397,10 +444,12 @@ test_photocam(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 void
 test_photocam_remote(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *ph, *tb2, *bt, *box, *pb;
+   Evas_Object *win, *ph, *tb2, *bt, *box, *pb, *rd;
+   Evas_Object *rdg = NULL;
    Evas_Object *rect = NULL;
    // these were just testing - use the "select photo" browser to select one
    static const char *url = "http://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73751/world.topo.bathy.200407.3x21600x10800.jpg";
+   int i;
 
    win = elm_win_util_standard_add("photocam", "PhotoCam");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -535,6 +584,27 @@ test_photocam_remote(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    elm_box_pack_end(box, bt);
    evas_object_show(bt);
 
+   box = elm_box_add(tb2);
+   elm_box_horizontal_set(box, EINA_TRUE);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(box, 0.9, 0.9);
+   elm_table_pack(tb2, box, 1, 2, 1, 1);
+   evas_object_show(box);
+
+   for (i = 0; photocam_orient[i].name; ++i)
+     {
+        rd = elm_radio_add(win);
+        evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_radio_state_value_set(rd, photocam_orient[i].orient);
+        elm_object_text_set(rd, photocam_orient[i].name);
+        elm_box_pack_end(box, rd);
+        evas_object_show(rd);
+        evas_object_smart_callback_add(rd, "changed", my_ph_ch, ph);
+        if (!rdg)
+          rdg = rd;
+        else
+          elm_radio_group_add(rd, rdg);
+     }
    evas_object_show(box);
    evas_object_show(tb2);
 

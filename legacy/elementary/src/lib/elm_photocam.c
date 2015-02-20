@@ -580,6 +580,7 @@ _grid_create(Evas_Object *obj)
              g->grid[tn].img =
                evas_object_image_add(evas_object_evas_get(obj));
              evas_object_image_load_orientation_set(g->grid[tn].img, EINA_TRUE);
+             evas_object_image_orient_set(g->grid[tn].img, sd->orient);
              evas_object_image_scale_hint_set
                (g->grid[tn].img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
              evas_object_pass_events_set(g->grid[tn].img, EINA_TRUE);
@@ -1275,6 +1276,67 @@ _g_layer_zoom_end_cb(void *data,
    return EVAS_EVENT_FLAG_NONE;
 }
 
+static void
+_orient_do(Evas_Object *obj, Elm_Photocam_Data *sd)
+{
+   evas_object_smart_member_del(sd->img);
+   elm_widget_sub_object_del(obj, sd->img);
+   evas_object_smart_member_add(sd->img, sd->pan_obj);
+   elm_widget_sub_object_add(obj, sd->img);
+   ecore_job_del(sd->calc_job);
+   sd->calc_job = ecore_job_add(_calc_job_cb, obj);
+}
+
+EOLIAN static void
+_elm_photocam_image_orient_set(Eo *obj, Elm_Photocam_Data *sd, Evas_Image_Orient orient)
+{
+   int iw, ih;
+   Eina_List *l;
+   Elm_Phocam_Grid *g, *g_orient = NULL;
+
+   if (sd->orient == orient) return;
+
+   sd->orient = orient;
+   g = _grid_create(obj);
+   if (g)
+     {
+        if (eina_list_count(sd->grids) > 1)
+          {
+             g_orient = eina_list_last(sd->grids)->data;
+             sd->grids = eina_list_remove(sd->grids, g_orient);
+             _grid_clear(obj, g_orient);
+             free(g_orient);
+             EINA_LIST_FOREACH(sd->grids, l, g_orient)
+               {
+                  g_orient->dead = 1;
+               }
+          }
+        sd->grids = eina_list_prepend(sd->grids, g);
+     }
+   else
+     {
+        EINA_LIST_FREE(sd->grids, g)
+          {
+             _grid_clear(obj, g);
+             free(g);
+          }
+     }
+
+   evas_object_image_orient_set(sd->img, orient);
+   evas_object_image_size_get(sd->img, &iw, &ih);
+   sd->size.imw = iw;
+   sd->size.imh = ih;
+   sd->size.w = iw / sd->zoom;
+   sd->size.h = ih / sd->zoom;
+   _orient_do(obj, sd);
+}
+
+EOLIAN static Evas_Image_Orient
+_elm_photocam_image_orient_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
+{
+   return sd->orient;
+}
+
 EOLIAN static void
 _elm_photocam_evas_object_smart_add(Eo *obj, Elm_Photocam_Data *priv)
 {
@@ -1455,7 +1517,6 @@ _internal_file_set(Eo *obj, Elm_Photocam_Data *sd, const char *file, Eina_File *
    sd->size.w = sd->size.imw / sd->zoom;
    sd->size.h = sd->size.imh / sd->zoom;
    evas_object_image_file_set(sd->img, NULL, NULL);
-   evas_object_image_load_scale_down_set(sd->img, 8);
    _photocam_image_file_set(sd->img, sd);
    err = evas_object_image_load_error_get(sd->img);
    if (err != EVAS_LOAD_ERROR_NONE)
@@ -1481,6 +1542,7 @@ _internal_file_set(Eo *obj, Elm_Photocam_Data *sd, const char *file, Eina_File *
    tz = sd->zoom;
    sd->zoom = 0.0;
    elm_photocam_zoom_set(obj, tz);
+   sd->orient = EVAS_IMAGE_ORIENT_NONE;
 
    if (ret) *ret = evas_object_image_load_error_get(sd->img);
 }
@@ -1831,7 +1893,6 @@ EOLIAN static void
 _elm_photocam_zoom_mode_set(Eo *obj, Elm_Photocam_Data *sd, Elm_Photocam_Zoom_Mode mode)
 {
    double tz;
-
    if (sd->mode == mode) return;
    sd->mode = mode;
 

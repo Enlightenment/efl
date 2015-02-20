@@ -205,6 +205,36 @@ class Elm_Photocam (Elm_Widget, Elm_Interface_Scrollable,
             int h; /*@ A pointer to the height return */
          }
       }
+      image_orient {
+         set {
+            /*@
+            Set the photocam image orientation.
+
+            This function allows to rotate or flip the photocam image.
+
+            @see elm_photocam_image_orient_get()
+            @see @ref Evas_Image_Orient
+
+            @since 1.14
+            @ingroup Photocam */
+         }
+         get {
+            /*@
+            Get the photocam image orientation.
+
+            @return The photocam image orientation @ref Evas_Image_Orient
+
+            @see elm_photocam_image_orient_set()
+            @see @ref Evas_Image_Orient
+
+            @since 1.14
+            @ingroup Photocam */
+         }
+         values {
+            Evas_Image_Orient orient; /*@ The photocam image orientation @ref Evas_Image_Orient
+            Default is #EVAS_IMAGE_ORIENT_NONE. */
+         }
+      }
    }
    methods {
       image_region_show {

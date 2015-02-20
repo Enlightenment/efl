@@ -80,7 +80,6 @@ struct _Elm_Photocam_Progress
    double total;
 };
 
-
 /**
  * Structre associated with smart callback 'download,error'
  * @since 1.8
