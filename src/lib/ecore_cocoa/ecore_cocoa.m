@@ -139,6 +139,11 @@ _ecore_cocoa_event_key(NSEvent *event, int keyType)
                   break;
                }
           }
+        if (ev->keyname == NULL)
+          {
+             ev->keyname = "";
+             ev->key = "";
+          }
      }
 
    if ([keycharRaw length] == 0  && keyType == NSKeyDown)
