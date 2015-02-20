@@ -15,17 +15,16 @@
 #include "config.h"
 #else
 #define PACKAGE_EXAMPLES_DIR "."
-#endif
-
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Eo.h>
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_Getopt.h>
-#include "evas-3d-common.h"
+#include "evas-common.h"
 
 #define  WIDTH 800
 #define  HEIGHT 600
@@ -33,9 +32,9 @@
 #define ANIMATION_COUNT 3
 #define MAX_PATH 128
 
-static const char *model_path = PACKAGE_EXAMPLES_DIR EVAS_3D_MODEL_FOLDER "/M15.obj";
-static const char *image1_path = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/M15.png";
-static const char *image2_path = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/M15_1.png";
+static const char *model_path = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/M15.obj";
+static const char *image1_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/M15.png";
+static const char *image2_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/M15_1.png";
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;

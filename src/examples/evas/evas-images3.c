@@ -9,6 +9,7 @@
  * gcc -o evas-images3 evas-images3.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
+//TODO: Fix warnings.
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -20,11 +21,12 @@
 #include <Ecore_Evas.h>
 #include <stdio.h>
 #include <errno.h>
+#include "evas-common.h"
 
 #define WIDTH  (320)
 #define HEIGHT (240)
 
-static const char *img_path = PACKAGE_EXAMPLES_DIR "/enlightenment.png";
+static const char *img_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/enlightenment.png";
 static const char *commands = \
   "commands are:\n"
   "\tw - write new pixel data to image\n"

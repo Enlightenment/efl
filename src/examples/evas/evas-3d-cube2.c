@@ -2,21 +2,20 @@
 #include "config.h"
 #else
 #define PACKAGE_EXAMPLES_DIR "."
-#endif
-
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Eo.h>
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
-#include "evas-3d-common.h"
+#include "evas-common.h"
 
 #define  WIDTH          400
 #define  HEIGHT         400
 
-static const char *normal_map_path = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/normal_lego.png";
+static const char *normal_map_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/normal_lego.png";
 
 typedef struct _Scene_Data
 {

@@ -327,10 +327,10 @@ evas-multi-touch.c \
 evas-text.c
 
 DATA_FILES = \
-enlightenment.png \
-red.png \
-im1.png \
-cube1.png \
+resources/images/enlightenment.png \
+resources/images/red.png \
+resources/images/im1.png \
+resources/images/cube1.png \
 resources/images/bg_space.jpg \
 resources/images/eagle.png \
 resources/images/EarthDiffuse.png \

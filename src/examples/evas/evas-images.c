@@ -9,6 +9,7 @@
  * gcc -o evas-images evas-images.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
+//TODO: Fix warnings.
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -20,12 +21,13 @@
 #include <Ecore_Evas.h>
 #include <stdio.h>
 #include <errno.h>
+#include "evas-common.h"
 
 #define WIDTH  (320)
 #define HEIGHT (240)
 
-static const char *border_img_path = PACKAGE_EXAMPLES_DIR "/red.png";
-static const char *valid_path = PACKAGE_EXAMPLES_DIR "/enlightenment.png";
+static const char *border_img_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/red.png";
+static const char *valid_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/enlightenment.png";
 static const char *bogus_path = "/tmp/non-existent-220986.png";
 static const char *commands = \
   "commands are:\n"

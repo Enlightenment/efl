@@ -20,10 +20,9 @@
 #include "config.h"
 #else
 #define PACKAGE_EXAMPLES_DIR "."
-#endif
-
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Ecore_Evas.h>
 #include <Ecore.h>
@@ -31,14 +30,14 @@
 #include <stdio.h>
 #include <math.h>
 #include <Eo.h>
-#include "evas-3d-common.h"
+#include "evas-common.h"
 
 #define  WIDTH          1024
 #define  HEIGHT         1024
 
-static const char *bg_image = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/bg_space.jpg";
-static const char *moon_image = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/moon.png";
-static const char *earth_image = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/EarthDiffuse.png";
+static const char *bg_image = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/bg_space.jpg";
+static const char *moon_image = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/moon.png";
+static const char *earth_image = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/EarthDiffuse.png";
 
 typedef struct _Scene_Data
 {

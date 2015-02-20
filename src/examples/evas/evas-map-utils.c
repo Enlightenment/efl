@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include "evas-common.h"
 
 #define WIDTH  480
 #define HEIGHT 480
@@ -41,6 +42,10 @@ typedef struct
    Eina_Bool   apply_perspective : 1;
    Eina_Bool   apply_lighting : 1;
 } App_Data;
+
+static const char *img1_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/cube1.png";
+static const char *img2_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/enlightenment.png";
+static const char *img3_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/im1.png";
 
 static const char *help_string =
         "Valid commands:\n"
@@ -271,7 +276,7 @@ main(void)
    d.canvas = ecore_evas_get(d.ee);
 
    bg = evas_object_image_filled_add(d.canvas);
-   evas_object_image_file_set(bg, "cube1.png", NULL);
+   evas_object_image_file_set(bg, img1_path, NULL);
    ecore_evas_object_associate(d.ee, bg, 0);
    evas_object_focus_set(bg, EINA_TRUE);
    evas_object_move(bg, 0, 0);
@@ -285,16 +290,16 @@ main(void)
 
    o = evas_object_image_filled_add(d.canvas);
    evas_object_name_set(o, "obj2");
-   evas_object_image_file_set(o, "enlightenment.png", NULL);
+   evas_object_image_file_set(o, img2_path, NULL);
    evas_object_show(o);
 
    o = evas_object_image_filled_add(d.canvas);
    evas_object_name_set(o, "obj3");
-   evas_object_image_file_set(o, "enlightenment.png", NULL);
+   evas_object_image_file_set(o, img2_path, NULL);
    evas_object_show(o);
 
    osrc = evas_object_image_filled_add(d.canvas);
-   evas_object_image_file_set(osrc, "im1.png", NULL);
+   evas_object_image_file_set(osrc, img3_path, NULL);
    evas_object_name_set(osrc, "obj4_source");
    evas_object_show(osrc);
 

@@ -17,16 +17,15 @@
 #include "config.h"
 #else
 #define PACKAGE_EXAMPLES_DIR "."
-#endif
-
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Eo.h>
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
-#include "evas-3d-common.h"
+#include "evas-common.h"
 
 #define  WIDTH 1900
 #define  HEIGHT 1080
@@ -90,9 +89,9 @@
                                     COL_BLUE, 0.5),                        \
          evas_3d_material_shininess_set(100.0));
 
-static const char *texture_path = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/sweet_home_reversed.png";
-static const char *output_template = PACKAGE_EXAMPLES_DIR EVAS_3D_SAVED_FILES "/saved_";
-static const char *input_template = PACKAGE_EXAMPLES_DIR EVAS_3D_MODEL_FOLDER "/sweet_";
+static const char *texture_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/sweet_home_reversed.png";
+static const char *output_template = PACKAGE_EXAMPLES_DIR EVAS_SAVED_FILES "/saved_";
+static const char *input_template = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/sweet_";
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
@@ -213,9 +212,9 @@ main(void)
    eo_do(material_with_tex,
          evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE, texture));
 
-   if (!ecore_file_mkpath(PACKAGE_EXAMPLES_DIR EVAS_3D_SAVED_FILES))
+   if (!ecore_file_mkpath(PACKAGE_EXAMPLES_DIR EVAS_SAVED_FILES))
      fprintf(stderr, "Failed to create folder %s\n\n",
-             PACKAGE_EXAMPLES_DIR EVAS_3D_SAVED_FILES);
+             PACKAGE_EXAMPLES_DIR EVAS_SAVED_FILES);
 
    ADD_OBJ_MESH_AND_SAVED_COPY(home, -GRID_SIZE, -GRID_SIZE, 0,
                                EVAS_3D_SHADE_MODE_PHONG, material_with_tex)

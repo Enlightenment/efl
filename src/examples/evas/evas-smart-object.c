@@ -8,9 +8,9 @@
  * gcc -o evas-smart-object evas-smart-object.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
+//TODO: Fix warnings.
 
 #ifdef HAVE_CONFIG_H
-
 #include "config.h"
 #else
 #define PACKAGE_EXAMPLES_DIR "."
@@ -20,6 +20,7 @@
 #include <Ecore_Evas.h>
 #include <stdio.h>
 #include <errno.h>
+#include "evas-common.h"
 
 #define WIDTH  (320)
 #define HEIGHT (240)
@@ -84,7 +85,7 @@ _index_to_color(int i)
 }
 
 static struct test_data d = {0};
-static const char *border_img_path = PACKAGE_EXAMPLES_DIR "/red.png";
+static const char *border_img_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/red.png";
 
 #define _evas_smart_example_type "Evas_Smart_Example"
 #define EVT_CHILDREN_NUMBER_CHANGED "children,changed"

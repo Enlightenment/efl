@@ -22,10 +22,10 @@
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "evas-common.h"
 
 #define WIDTH  320
 #define HEIGHT 480
@@ -45,7 +45,7 @@ static const char commands[] = \
   "\ts - print current hints information\n"
   "\th - print help\n";
 
-static const char *border_img_path = PACKAGE_EXAMPLES_DIR "/red.png";
+static const char *border_img_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/red.png";
 
 struct coord_tuple
 {

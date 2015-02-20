@@ -14,16 +14,15 @@
 #include "config.h"
 #else
 #define PACKAGE_EXAMPLES_DIR "."
-#endif
-
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Eo.h>
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
-#include "evas-3d-common.h"
+#include "evas-common.h"
 
 #include <math.h>
 
@@ -54,7 +53,7 @@
                                                  initial_node_data[number * 10 + 9]));\
    ecore_timer_add(0.01, _animate_##extention, node_##extention);
 
-static const char *template_path = PACKAGE_EXAMPLES_DIR EVAS_3D_MODEL_FOLDER "/mesh_for_mmap.";
+static const char *template_path = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/mesh_for_mmap.";
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;

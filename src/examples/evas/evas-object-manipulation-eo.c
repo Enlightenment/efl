@@ -12,6 +12,7 @@
  * gcc -o evas-object-manipulation-eo evas-object-manipulation-eo.c `pkg-config --libs --cflags ecore evas ecore-evas eo`
  * @endverbatim
  */
+//TODO: Fix error and warning.
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

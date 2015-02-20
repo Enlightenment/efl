@@ -15,10 +15,10 @@
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "evas-common.h"
 
 #define WIDTH  (800)
 #define HEIGHT (400)
@@ -43,6 +43,8 @@ struct exemple_data
    Eina_Bool r4_down;
    Eina_Bool image;
 };
+
+static const char *img_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/cube1.png";
 
 static struct exemple_data d =
 { NULL, NULL, NULL, NULL, NULL, 62, 62, 262, 62, 262, 262, 62, 262,
@@ -225,14 +227,14 @@ _on_keydown(void *data EINA_UNUSED, Evas *e, Evas_Object *obj EINA_UNUSED,
           {
              evas_object_del(d.target1);
              d.target1 = evas_object_image_filled_add(e);
-             evas_object_image_file_set(d.target1, "cube1.png", NULL);
+             evas_object_image_file_set(d.target1, img_path, NULL);
              evas_object_image_smooth_scale_set(d.target1, 0);
              evas_object_resize(d.target1, 200, 200);
              evas_object_show(d.target1);
 
              evas_object_del(d.target2);
              d.target2 = evas_object_image_filled_add(e);
-             evas_object_image_file_set(d.target2, "cube1.png", NULL);
+             evas_object_image_file_set(d.target2, img_path, NULL);
              evas_object_image_smooth_scale_set(d.target2, 0);
              evas_object_anti_alias_set(d.target2, EINA_TRUE);
              evas_object_resize(d.target2, 200, 200);

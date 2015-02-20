@@ -9,6 +9,7 @@
  * gcc -o evas-images4 evas-images4.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
+//TODO: Fix warnings.
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -20,11 +21,12 @@
 #include <Ecore_Evas.h>
 #include <stdio.h>
 #include <errno.h>
+#include "evas-common.h"
 
 #define WIDTH  (320)
 #define HEIGHT (240)
 
-static const char *img_path = PACKAGE_EXAMPLES_DIR "/im1.png";
+static const char *img_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/im1.png";
 static const char *commands = \
   "commands are:\n"
   "\tp - print image fill property\n"

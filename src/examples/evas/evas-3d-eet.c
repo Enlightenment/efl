@@ -17,22 +17,22 @@
 #include "config.h"
 #else
 #define PACKAGE_EXAMPLES_DIR "."
-#endif
-
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Eo.h>
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
-#include "evas-3d-common.h"
+#include <Ecore_File.h>
+#include "evas-common.h"
 
 #define  WIDTH 1024
 #define  HEIGHT 1024
 
-static const char *input_model_path = PACKAGE_EXAMPLES_DIR EVAS_3D_MODEL_FOLDER "/sonic.md2";
-static const char *output_model_path = PACKAGE_EXAMPLES_DIR EVAS_3D_SAVED_FILES "/saved_Sonic_EET.eet";
+static const char *input_model_path = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/sonic.md2";
+static const char *output_model_path = PACKAGE_EXAMPLES_DIR EVAS_SAVED_FILES "/saved_Sonic_EET.eet";
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
@@ -178,9 +178,9 @@ main(void)
                                     0.50, 0.00, 0.50, 0.30),
          evas_3d_material_shininess_set(50.0));
 
-   if (!ecore_file_mkpath(PACKAGE_EXAMPLES_DIR EVAS_3D_SAVED_FILES))
+   if (!ecore_file_mkpath(PACKAGE_EXAMPLES_DIR EVAS_SAVED_FILES))
      fprintf(stderr, "Failed to create folder %s\n\n",
-             PACKAGE_EXAMPLES_DIR EVAS_3D_SAVED_FILES);
+             PACKAGE_EXAMPLES_DIR EVAS_SAVED_FILES);
 
    eo_do(mesh, efl_file_save(output_model_path, NULL, NULL));
 

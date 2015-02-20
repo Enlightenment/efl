@@ -16,25 +16,25 @@
 #include "config.h"
 #else
 #define PACKAGE_EXAMPLES_DIR "."
-#endif
-
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Eo.h>
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
-#include "evas-3d-common.h"
+#include <Ecore_File.h>
+#include "evas-common.h"
 
 #define  WIDTH 1024
 #define  HEIGHT 1024
 
 #define NUMBER_OF_MESHES 32
 
-static const char *image_path = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/normal_lego.png";
-static const char *input_template = PACKAGE_EXAMPLES_DIR EVAS_3D_MODEL_FOLDER "/";
-static const char *output_template = PACKAGE_EXAMPLES_DIR EVAS_3D_SAVED_FILES "/";
+static const char *image_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/normal_lego.png";
+static const char *input_template = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/";
+static const char *output_template = PACKAGE_EXAMPLES_DIR EVAS_SAVED_FILES "/";
 static const char *file_name[8] = {"Normal_UVs_Colors.ply",
                                    "Normal_UVs_NoColors.ply",
                                    "Normal_NoUVs_Colors.ply",
@@ -185,9 +185,9 @@ main(void)
                                     1.0, 1.0, 1.0, 1.0),
          evas_3d_material_shininess_set(50.0));
 
-   if (!ecore_file_mkpath(PACKAGE_EXAMPLES_DIR EVAS_3D_SAVED_FILES))
+   if (!ecore_file_mkpath(PACKAGE_EXAMPLES_DIR EVAS_SAVED_FILES))
      fprintf(stderr, "Failed to create folder %s\n\n",
-             PACKAGE_EXAMPLES_DIR EVAS_3D_SAVED_FILES);
+             PACKAGE_EXAMPLES_DIR EVAS_SAVED_FILES);
 
    /* Add the meshes. */
    for (i = 0; i < NUMBER_OF_MESHES; i++)

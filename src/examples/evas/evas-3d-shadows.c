@@ -12,10 +12,9 @@
 #include "config.h"
 #else
 #define PACKAGE_EXAMPLES_DIR "."
-#endif
-
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Eo.h>
 #include <Evas.h>
@@ -35,8 +34,8 @@
 #define DIFFUSE_LIGHT 1.0, 1.0, 1.0
 #define SPECULAR_LIGHT 1.0, 1.0, 1.0
 
-static const char *model_path = PACKAGE_EXAMPLES_DIR EVAS_3D_MODEL_FOLDER "/sonic.md2";
-static const char *image_path = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/sonic.png";
+static const char *model_path = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/sonic.md2";
+static const char *image_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/sonic.png";
 static const vec2 tex_scale = {1, 1};
 
 Ecore_Evas *ecore_evas = NULL;
