@@ -366,6 +366,13 @@ static void st_collections_group_parts_part_description_proxy_source_clip(void);
 static void st_collections_group_parts_part_description_position_point(void);
 static void st_collections_group_parts_part_description_position_space(void);
 static void st_collections_group_parts_part_description_camera_properties(void);
+static void st_collections_group_parts_part_description_properties_ambient(void);
+static void st_collections_group_parts_part_description_properties_diffuse(void);
+static void st_collections_group_parts_part_description_properties_specular(void);
+static void st_collections_group_parts_part_description_properties_material(void);
+static void st_collections_group_parts_part_description_properties_normal(void);
+static void st_collections_group_parts_part_description_properties_shininess(void);
+static void st_collections_group_parts_part_description_properties_shade(void);
 
 #ifdef HAVE_EPHYSICS
 static void st_collections_group_parts_part_description_physics_mass(void);
@@ -719,6 +726,13 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.position.point", st_collections_group_parts_part_description_position_point},
      {"collections.group.parts.part.description.position.space", st_collections_group_parts_part_description_position_space},
      {"collections.group.parts.part.description.properties.perspective", st_collections_group_parts_part_description_camera_properties},
+     {"collections.group.parts.part.description.properties.ambient", st_collections_group_parts_part_description_properties_ambient},
+     {"collections.group.parts.part.description.properties.diffuse", st_collections_group_parts_part_description_properties_diffuse},
+     {"collections.group.parts.part.description.properties.specular", st_collections_group_parts_part_description_properties_specular},
+     {"collections.group.parts.part.description.properties.material", st_collections_group_parts_part_description_properties_material},
+     {"collections.group.parts.part.description.properties.normal", st_collections_group_parts_part_description_properties_normal},
+     {"collections.group.parts.part.description.properties.shininess", st_collections_group_parts_part_description_properties_shininess},
+     {"collections.group.parts.part.description.properties.shade", st_collections_group_parts_part_description_properties_shade},
 
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
@@ -9135,6 +9149,338 @@ st_collections_group_parts_part_description_camera_properties(void)
    ed->camera.camera.far = FROM_DOUBLE(parse_float(3));
 }
 
+/**
+   @edcsubsection{collections_group_parts_description_properties,Properties}
+ */
+
+/**
+    @page edcref
+
+    @block
+        properties
+    @context
+        part {
+            description {
+                ..
+                properties {
+                   ambient:     red green blue alpha;
+                   diffuse:     red green blue alpha;
+                   specular:    red green blue alpha;
+                   shade:       PHONG;
+                   material:    AMBIENT;
+                   normal:      1;
+                   shininess:   50.0;
+                }
+                ..
+            }
+        }
+    @description
+        A properties block defines main lighting atributes of LIGHT and MESH_NODE.
+    @endblock
+
+    @property
+        ambient
+    @parameters
+        [red] [green] [blue] [alpha]
+    @effect
+        Sets the components of the ambient color.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_properties_ambient(void)
+{
+   check_arg_count(4);
+
+   switch (current_part->type)
+     {
+      case EDJE_PART_TYPE_LIGHT:
+        {
+           Edje_Part_Description_Light *ed;
+
+           ed = (Edje_Part_Description_Light*) current_desc;
+
+           ed->light.properties.ambient.r = parse_float_range(0, 0.0, 1.0);
+           ed->light.properties.ambient.g = parse_float_range(1, 0.0, 1.0);
+           ed->light.properties.ambient.b = parse_float_range(2, 0.0, 1.0);
+           ed->light.properties.ambient.a = parse_float_range(3, 0.0, 1.0);
+           break;
+        }
+      case EDJE_PART_TYPE_MESH_NODE:
+        {
+           Edje_Part_Description_Mesh_Node *ed;
+
+           ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+           ed->mesh_node.properties.ambient.r = parse_float_range(0, 0.0, 1.0);
+           ed->mesh_node.properties.ambient.g = parse_float_range(1, 0.0, 1.0);
+           ed->mesh_node.properties.ambient.b = parse_float_range(2, 0.0, 1.0);
+           ed->mesh_node.properties.ambient.a = parse_float_range(3, 0.0, 1.0);
+           break;
+        }
+      default:
+        {
+           ERR("parse error %s:%i. light and mesh_node attributes in non-LIGHT and non-MESH_NODE part.",
+               file_in, line - 1);
+           exit(-1);
+        }
+     }
+}
+
+/**
+    @page edcref
+    @property
+        diffuse
+    @parameters
+        [red] [green] [blue] [alpha]
+    @effect
+        Sets the components of the ambient color.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_properties_diffuse(void)
+{
+   check_arg_count(4);
+
+   switch (current_part->type)
+     {
+      case EDJE_PART_TYPE_LIGHT:
+        {
+           Edje_Part_Description_Light *ed;
+
+           ed = (Edje_Part_Description_Light*) current_desc;
+
+           ed->light.properties.diffuse.r = parse_float_range(0, 0.0, 1.0);
+           ed->light.properties.diffuse.g = parse_float_range(1, 0.0, 1.0);
+           ed->light.properties.diffuse.b = parse_float_range(2, 0.0, 1.0);
+           ed->light.properties.diffuse.a = parse_float_range(3, 0.0, 1.0);
+           break;
+        }
+      case EDJE_PART_TYPE_MESH_NODE:
+        {
+           Edje_Part_Description_Mesh_Node *ed;
+
+           ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+           ed->mesh_node.properties.diffuse.r = parse_float_range(0, 0.0, 1.0);
+           ed->mesh_node.properties.diffuse.g = parse_float_range(1, 0.0, 1.0);
+           ed->mesh_node.properties.diffuse.b = parse_float_range(2, 0.0, 1.0);
+           ed->mesh_node.properties.diffuse.a = parse_float_range(3, 0.0, 1.0);
+           break;
+        }
+      default:
+        {
+           ERR("parse error %s:%i. light and mesh_node attributes in non-LIGHT and non-MESH_NODE part.",
+               file_in, line - 1);
+           exit(-1);
+        }
+     }
+}
+
+/**
+    @page edcref
+    @property
+        specular
+    @parameters
+        [red] [green] [blue] [alpha]
+    @effect
+        Sets the components of the ambient color.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_properties_specular(void)
+{
+   check_arg_count(4);
+
+   switch (current_part->type)
+     {
+      case EDJE_PART_TYPE_LIGHT:
+        {
+           Edje_Part_Description_Light *ed;
+
+           ed = (Edje_Part_Description_Light*) current_desc;
+
+           ed->light.properties.specular.r = parse_float_range(0, 0.0, 1.0);
+           ed->light.properties.specular.g = parse_float_range(1, 0.0, 1.0);
+           ed->light.properties.specular.b = parse_float_range(2, 0.0, 1.0);
+           ed->light.properties.specular.a = parse_float_range(3, 0.0, 1.0);
+        }
+      case EDJE_PART_TYPE_MESH_NODE:
+        {
+           Edje_Part_Description_Mesh_Node *ed;
+
+           ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+           ed->mesh_node.properties.specular.r = parse_float_range(0, 0.0, 1.0);
+           ed->mesh_node.properties.specular.g = parse_float_range(1, 0.0, 1.0);
+           ed->mesh_node.properties.specular.b = parse_float_range(2, 0.0, 1.0);
+           ed->mesh_node.properties.specular.a = parse_float_range(3, 0.0, 1.0);
+           break;
+        }
+      default:
+        {
+           ERR("parse error %s:%i. light and mesh_node attributes in non-LIGHT and non-MESH_NODE part.",
+               file_in, line - 1);
+           exit(-1);
+        }
+     }
+}
+
+/**
+    @page edcref
+    @property
+        material
+    @parameters
+        [MATERIAL]
+    @effect
+        Sets the color mode for the lighting. Valid color modes:
+            @li AMBIENT
+            @li DIFFUSE
+            @li SPECULAR
+            @li EMISSION
+            @li NORMAL
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_properties_material(void)
+{
+   unsigned int material_attrib;
+
+   check_arg_count(1);
+
+   material_attrib = parse_enum(0,
+                     "AMBIENT", EVAS_3D_MATERIAL_AMBIENT,
+                     "DIFFUSE", EVAS_3D_MATERIAL_DIFFUSE,
+                     "SPECULAR", EVAS_3D_MATERIAL_SPECULAR,
+                     "EMISSION", EVAS_3D_MATERIAL_EMISSION,
+                     "NORMAL", EVAS_3D_MATERIAL_NORMAL,
+                     NULL);
+
+   if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        Edje_Part_Description_Mesh_Node *ed;
+
+        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+        ed->mesh_node.properties.material_attrib = material_attrib;
+     }
+   else
+     {
+        ERR("parse error %s:%i. mesh_node attributes in non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+/**
+    @page edcref
+    @property
+        normal
+    @parameters
+        [0 or 1]
+    @effect
+        Sets the material attribute enable flag of the given material.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_properties_normal(void)
+{
+   check_arg_count(1);
+
+   if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        Edje_Part_Description_Mesh_Node *ed;
+
+        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+        ed->mesh_node.properties.normal = parse_bool(0);
+     }
+   else
+     {
+        ERR("parse error %s:%i. mesh_node attributes in non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+/**
+    @page edcref
+    @property
+        shininess
+    @parameters
+        [shininess]
+    @effect
+        Sets the shininess of the given material.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_properties_shininess(void)
+{
+   check_arg_count(1);
+
+   if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        Edje_Part_Description_Mesh_Node *ed;
+
+        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+        ed->mesh_node.properties.shininess = FROM_DOUBLE(parse_float(0));
+     }
+   else
+     {
+        ERR("parse error %s:%i. mesh_node attributes in non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+/**
+    @page edcref
+    @property
+        shade
+    @parameters
+        [SHADE]
+    @effect
+        Sets the shade mode for MESH_NODE. Valid shade modes:
+            @li COLOR
+            @li DIFFUSE
+            @li FLAT
+            @li PHONG
+            @li MAP
+            @li RENDER
+    @endproperty
+*/
+
+static void
+st_collections_group_parts_part_description_properties_shade(void)
+{
+   unsigned int shade;
+
+   check_arg_count(1);
+
+   shade = parse_enum(0,
+                     "VERTEX_COLOR", EVAS_3D_SHADE_MODE_VERTEX_COLOR,
+                     "PARENT", EVAS_3D_SHADE_MODE_DIFFUSE,
+                     "WORLD", EVAS_3D_SHADE_MODE_FLAT,
+                     "PHONG", EVAS_3D_SHADE_MODE_PHONG,
+                     "NORMAL_MAP", EVAS_3D_SHADE_MODE_NORMAL_MAP,
+                     "RENDER", EVAS_3D_SHADE_MODE_SHADOW_MAP_RENDER,
+                     NULL);
+
+   if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        Edje_Part_Description_Mesh_Node *ed;
+
+        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+        ed->mesh_node.properties.shade = shade;
+     }
+   else
+     {
+        ERR("parse error %s:%i. mesh_node attributes in non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
 
 static void
 st_collections_group_parts_part_description_proxy_source_visible(void)

@@ -1325,7 +1325,6 @@ struct _Edje_Part_Description_Spec_Mesh_Node
 
       Eina_Bool              set;
 
-      Evas_3D_Shade_Mode shade;
       Evas_3D_Wrap_Mode wrap1;
       Evas_3D_Wrap_Mode wrap2;
       Evas_3D_Texture_Filter filter1;
@@ -1338,6 +1337,7 @@ struct _Edje_Part_Description_Spec_Mesh_Node
       Edje_Float_Color      specular;
       Eina_Bool             normal;
       FLOAT_T               shininess;
+      Evas_3D_Shade_Mode    shade;
 
       Evas_3D_Material_Attrib material_attrib;
    } properties;
