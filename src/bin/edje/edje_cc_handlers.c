@@ -365,6 +365,7 @@ static void st_collections_group_parts_part_description_proxy_source_visible(voi
 static void st_collections_group_parts_part_description_proxy_source_clip(void);
 static void st_collections_group_parts_part_description_position_point(void);
 static void st_collections_group_parts_part_description_position_space(void);
+static void st_collections_group_parts_part_description_camera_properties(void);
 
 #ifdef HAVE_EPHYSICS
 static void st_collections_group_parts_part_description_physics_mass(void);
@@ -717,6 +718,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.proxy.source_clip", st_collections_group_parts_part_description_proxy_source_clip},
      {"collections.group.parts.part.description.position.point", st_collections_group_parts_part_description_position_point},
      {"collections.group.parts.part.description.position.space", st_collections_group_parts_part_description_position_space},
+     {"collections.group.parts.part.description.properties.perspective", st_collections_group_parts_part_description_camera_properties},
 
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
@@ -9080,6 +9082,59 @@ st_collections_group_parts_part_description_position_space(void)
         }
      }
 }
+
+/**
+   @edcsubsection{collections_group_parts_description_camera,Properties}
+ */
+
+/**
+    @page edcref
+
+    @block
+        properties
+    @context
+        part {
+            description {
+                ..
+                properties {
+                   perspective: fovy aspect near far;
+                }
+                ..
+            }
+        }
+    @description
+    @endblock
+
+    @property
+        properties
+    @parameters
+        [fovy] [aspect] [near] [far]
+    @effect
+        Specifies the basic attributes of the camera.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_camera_properties(void)
+{
+   Edje_Part_Description_Camera *ed;
+
+   check_arg_count(4);
+
+   if (current_part->type != EDJE_PART_TYPE_CAMERA)
+     {
+        ERR("parse error %s:%i. camera attributes in non-CAMERA part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   ed = (Edje_Part_Description_Camera*) current_desc;
+
+   ed->camera.camera.fovy = FROM_DOUBLE(parse_float(0));
+   ed->camera.camera.aspect = FROM_DOUBLE(parse_float(1));
+   ed->camera.camera.near = FROM_DOUBLE(parse_float(2));
+   ed->camera.camera.far = FROM_DOUBLE(parse_float(3));
+}
+
 
 static void
 st_collections_group_parts_part_description_proxy_source_visible(void)
