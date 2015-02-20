@@ -336,6 +336,32 @@ START_TEST(eina_unicode_strstr_test)
 }
 END_TEST
 
+START_TEST(eina_unicode_escape_test)
+{
+   Eina_Unicode str[][10] = {{'P', 'a', ' ', 'O', 'n', 0},
+                             {'P', 'a', ' ', '\\', '\'',0},
+                             {'n',  0}, {0}};
+   Eina_Unicode result_str[][10] = {{'P', 'a', '\\',' ', 'O', 'n', 0},
+                                    {'P', 'a', '\\',' ', '\\','\\', '\\','\'',0},
+                                    {'n',  0}, {0}};
+   Eina_Unicode *buf;
+   size_t i;
+
+   eina_init();
+
+   for (i = 0; i < sizeof(str)/sizeof(str[0]); ++i)
+     {
+        buf = eina_unicode_escape(str[i]);
+        fail_if(!buf);
+        fail_if(eina_unicode_strlen(buf) != eina_unicode_strlen(result_str[i]));
+        fail_if(eina_unicode_strcmp(buf, result_str[i]) != 0);
+        free(buf);
+     }
+
+   eina_shutdown();
+}
+END_TEST
+
 START_TEST(eina_unicode_utf8)
 {
    int ind;
@@ -586,6 +612,7 @@ eina_test_ustr(TCase *tc)
    tcase_add_test(tc,eina_unicode_strnlen_test);
    tcase_add_test(tc,eina_unicode_strdup_test);
    tcase_add_test(tc,eina_unicode_strstr_test);
+   tcase_add_test(tc, eina_unicode_escape_test);
    tcase_add_test(tc,eina_unicode_utf8);
    tcase_add_test(tc,eina_unicode_utf8_conversion);
 
