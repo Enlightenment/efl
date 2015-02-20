@@ -9,7 +9,7 @@
 #include <Eina.h>
 
 #include <Ecore.h>
-#include <ecore_private.h>
+#include <ecore_cocoa_private.h>
 #include <Ecore_Input.h>
 
 #include "Ecore_Cocoa.h"
@@ -25,7 +25,7 @@ static int _ecore_cocoa_init_count = 0;
 
 static int old_flags;
 
-static int _ecore_cocoa_log_domain = -1;
+int _ecore_cocoa_log_domain = -1;
 
 EAPI int
 ecore_cocoa_init(void)
