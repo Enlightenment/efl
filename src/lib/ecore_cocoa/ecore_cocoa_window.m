@@ -100,10 +100,6 @@
 
 @end
 
-
-#include "Ecore_Cocoa.h"
-#include "ecore_cocoa_private.h"
-
 Ecore_Cocoa_Window *
 ecore_cocoa_window_new(int x,
 		       int y,
