@@ -668,8 +668,12 @@ eina_memdup(unsigned char *mem, size_t size, Eina_Bool terminate)
 {
    unsigned char *ret;
 
+   if (!mem) return NULL;
+
    terminate = !!terminate;
    ret = malloc(size + terminate);
+   if (!ret) return NULL;
+
    memcpy(ret, mem, size);
    if (terminate)
      ret[size] = 0;
