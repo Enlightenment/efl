@@ -10,6 +10,12 @@
 * @endverbatim
 */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#define PACKAGE_EXAMPLES_DIR "."
+#endif
+
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 
@@ -25,8 +31,8 @@
 #define  HEIGHT 1000
 
 #define LOAD_AND_ADD_MESH(extention, number)                                          \
-   extention##_file =                                                                 \
-      eina_file_open(EVAS_3D_MODEL_FOLDER"mesh_for_mmap."#extention, 0);              \
+   snprintf(buffer, PATH_MAX, "%s%s", template_path, #extention);                     \
+   extention##_file = eina_file_open(buffer , 0);                                     \
    mesh_##extention = eo_add(EVAS_3D_MESH_CLASS, evas);                               \
    eo_do(mesh_##extention,                                                            \
          evas_3d_mesh_mmap_set(extention##_file, NULL),                               \
@@ -47,6 +53,8 @@
                                                  initial_node_data[number * 10 + 8],  \
                                                  initial_node_data[number * 10 + 9]));\
    ecore_timer_add(0.01, _animate_##extention, node_##extention);
+
+static const char *template_path = PACKAGE_EXAMPLES_DIR EVAS_3D_MODEL_FOLDER "/mesh_for_mmap.";
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
@@ -160,6 +168,7 @@ _on_canvas_resize(Ecore_Evas *ee)
 int
 main(void)
 {
+   char buffer[PATH_MAX];
    Eina_File *obj_file, *ply_file, *eet_file, *md2_file;
 
    //Unless Evas 3D supports Software renderer, we set gl backened forcely.

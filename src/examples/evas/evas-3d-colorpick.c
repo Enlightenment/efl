@@ -11,6 +11,12 @@
  */
 //TODO new resources
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#define PACKAGE_EXAMPLES_DIR "."
+#endif
+
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 
@@ -26,6 +32,10 @@
 
 #define ANIMATION_COUNT 3
 #define MAX_PATH 128
+
+static const char *model_path = PACKAGE_EXAMPLES_DIR EVAS_3D_MODEL_FOLDER "/M15.obj";
+static const char *image1_path = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/M15.png";
+static const char *image2_path = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/M15_1.png";
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
@@ -444,9 +454,9 @@ int main(int argc, char **argv)
 
    if (!row) row = 2;
    if (!col) col = 5;
-   if (!model) model = EVAS_3D_MODEL_FOLDER"M15.obj";
-   if (!texture1) texture1 = EVAS_3D_IMAGE_FOLDER"M15.png";
-   if (!texture2) texture2 = EVAS_3D_IMAGE_FOLDER"M15_1.png";
+   if (!model) model = (char *)model_path;
+   if (!texture1) texture1 = (char *)image1_path;
+   if (!texture2) texture2 = (char *)image2_path;
 
    fprintf(stdout, "row - %d, col - %d, model - %s, texture1 - %s, texture2 - %s\n",
            row, col, model, texture1, texture2);

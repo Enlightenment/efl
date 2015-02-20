@@ -1,3 +1,9 @@
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#define PACKAGE_EXAMPLES_DIR "."
+#endif
+
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 
@@ -9,6 +15,9 @@
 
 #define  WIDTH 400
 #define  HEIGHT 400
+
+static const char *model_path = PACKAGE_EXAMPLES_DIR EVAS_3D_MODEL_FOLDER "/sonic.md2";
+static const char *image_path = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/sonic.png";
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
@@ -121,13 +130,13 @@ main(void)
    material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
 
    eo_do(mesh,
-         efl_file_set(EVAS_3D_MODEL_FOLDER"sonic.md2", NULL),
+         efl_file_set(model_path, NULL),
          evas_3d_mesh_frame_material_set(0, material),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 
    texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
    eo_do(texture,
-         evas_3d_texture_file_set(EVAS_3D_IMAGE_FOLDER"sonic.png", NULL),
+         evas_3d_texture_file_set(image_path, NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
                                     EVAS_3D_TEXTURE_FILTER_NEAREST),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,

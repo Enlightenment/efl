@@ -8,6 +8,12 @@
  * Compile with gcc -o evas-3d-shadows evas-3d-shadows.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo eina` -lm
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#define PACKAGE_EXAMPLES_DIR "."
+#endif
+
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 
@@ -28,6 +34,9 @@
 #define AMBIENT_LIGHT 0.2, 0.2, 0.2
 #define DIFFUSE_LIGHT 1.0, 1.0, 1.0
 #define SPECULAR_LIGHT 1.0, 1.0, 1.0
+
+static const char *model_path = PACKAGE_EXAMPLES_DIR EVAS_3D_MODEL_FOLDER "/sonic.md2";
+static const char *image_path = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/sonic.png";
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
@@ -237,7 +246,7 @@ _model_setup(Body_3D *model)
 {
    Eo *texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
    eo_do(texture,
-         evas_3d_texture_file_set(EVAS_3D_IMAGE_FOLDER"sonic.png", NULL),
+         evas_3d_texture_file_set(image_path, NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
                                     EVAS_3D_TEXTURE_FILTER_NEAREST),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
@@ -256,7 +265,7 @@ _model_setup(Body_3D *model)
    model->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
 
    eo_do(model->mesh,
-         efl_file_set(EVAS_3D_MODEL_FOLDER"sonic.md2", NULL),
+         efl_file_set(model_path, NULL),
          evas_3d_mesh_frame_material_set(0, model->material),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 

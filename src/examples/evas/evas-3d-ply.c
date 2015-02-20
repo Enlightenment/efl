@@ -7,10 +7,16 @@
 * and geometry to "saved_man_all_with_mods.ply", "saved_man_only_geometry.ply" and "saved_man_without_UVs.ply".
 *
 * @verbatim
-* gcc -o evas-3d-ply evas-3d-ply.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`
+* gcc -o evas-3d-ply evas-3d-ply.c `pkg-config --libs --cflags efl evas ecore ecore-evas ecore-file eo`
 * @endverbatim
 */
 //TODO new resources
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#define PACKAGE_EXAMPLES_DIR "."
+#endif
 
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
@@ -25,6 +31,18 @@
 #define  HEIGHT 1024
 
 #define NUMBER_OF_MESHES 32
+
+static const char *image_path = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/normal_lego.png";
+static const char *input_template = PACKAGE_EXAMPLES_DIR EVAS_3D_MODEL_FOLDER "/";
+static const char *output_template = PACKAGE_EXAMPLES_DIR EVAS_3D_SAVED_FILES "/";
+static const char *file_name[8] = {"Normal_UVs_Colors.ply",
+                                   "Normal_UVs_NoColors.ply",
+                                   "Normal_NoUVs_Colors.ply",
+                                   "Normal_NoUVs_NoColors.ply",
+                                   "NoNormal_UVs_Colors.ply",
+                                   "NoNormal_UVs_NoColors.ply",
+                                   "NoNormal_NoUVs_Colors.ply",
+                                   "NoNormal_NoUVs_NoColors.ply"};
 
 int draw_mode[2] = {EVAS_3D_SHADE_MODE_PHONG, EVAS_3D_SHADE_MODE_VERTEX_COLOR};
 
@@ -46,15 +64,6 @@ Eo *material = NULL;
 Eo *texture = NULL;
 Eo *light = NULL;
 Ecore_Animator *anim = NULL;
-
-char *file_name[8] = {"Normal_UVs_Colors.ply",
-                      "Normal_UVs_NoColors.ply",
-                      "Normal_NoUVs_Colors.ply",
-                      "Normal_NoUVs_NoColors.ply",
-                      "NoNormal_UVs_Colors.ply",
-                      "NoNormal_UVs_NoColors.ply",
-                      "NoNormal_NoUVs_Colors.ply",
-                      "NoNormal_NoUVs_NoColors.ply"};
 
 static float angle = 0;
 
@@ -157,7 +166,7 @@ main(void)
    material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
    texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
    eo_do(texture,
-         evas_3d_texture_file_set(EVAS_3D_IMAGE_FOLDER"normal_lego.png", NULL),
+         evas_3d_texture_file_set(image_path, NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
                                     EVAS_3D_TEXTURE_FILTER_NEAREST),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
@@ -176,18 +185,22 @@ main(void)
                                     1.0, 1.0, 1.0, 1.0),
          evas_3d_material_shininess_set(50.0));
 
+   if (!ecore_file_mkpath(PACKAGE_EXAMPLES_DIR EVAS_3D_SAVED_FILES))
+     fprintf(stderr, "Failed to create folder %s\n\n",
+             PACKAGE_EXAMPLES_DIR EVAS_3D_SAVED_FILES);
+
    /* Add the meshes. */
    for (i = 0; i < NUMBER_OF_MESHES; i++)
      {
         mesh[i] = eo_add(EVAS_3D_MESH_CLASS, evas);
 
-        snprintf(buffer, PATH_MAX, "%s%s", EVAS_3D_MODEL_FOLDER, file_name[i % 8]);
+        snprintf(buffer, PATH_MAX, "%s%s", input_template, file_name[i % 8]);
         eo_do(mesh[i],
               efl_file_set(buffer, NULL),
               evas_3d_mesh_frame_material_set(0, material),
               evas_3d_mesh_shade_mode_set(draw_mode[(i % 16) / 8]));
 
-        snprintf(buffer, PATH_MAX, "%s%s", EVAS_3D_SAVED_FILES, file_name[i % 8]);
+        snprintf(buffer, PATH_MAX, "%s%s", output_template, file_name[i % 8]);
         eo_do(mesh[i], efl_file_save(buffer, NULL, NULL));
 
         if (i > 15)

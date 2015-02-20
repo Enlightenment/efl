@@ -1,3 +1,9 @@
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#define PACKAGE_EXAMPLES_DIR "."
+#endif
+
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 
@@ -9,6 +15,8 @@
 
 #define  WIDTH          400
 #define  HEIGHT         400
+
+static const char *normal_map_path = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/normal_lego.png";
 
 typedef struct _Scene_Data
 {
@@ -231,7 +239,7 @@ _mesh_setup(Scene_Data *data)
          evas_3d_texture_data_set(EVAS_3D_COLOR_FORMAT_RGBA,
                                   EVAS_3D_PIXEL_FORMAT_8888, 4, 4, &pixels1[0]));
    eo_do(data->texture_normal,
-         evas_3d_texture_file_set(EVAS_3D_IMAGE_FOLDER"normal_lego.png", NULL));
+         evas_3d_texture_file_set(normal_map_path, NULL));
 
    eo_do(data->material0,
          evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE, data->texture0));

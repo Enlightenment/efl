@@ -9,9 +9,15 @@
 * If material was not set it will be not saved.
 *
 * @verbatim
-* gcc -o evas-3d-obj evas-3d-obj.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`
+* gcc -o evas-3d-obj evas-3d-obj.c `pkg-config --libs --cflags efl evas ecore ecore-evas ecore-file eo`
 * @endverbatim
 */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#define PACKAGE_EXAMPLES_DIR "."
+#endif
 
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
@@ -37,27 +43,28 @@
 #define GRID_SIZE 6
 #define NUMBER_OF_MESHES 8
 
-#define ADD_OBJ_MESH(path, Y, Z, num, shade_mode, name_of_material)                 \
-   mesh[num] = eo_add(EVAS_3D_MESH_CLASS, evas);                                    \
-   eo_do(mesh[num],                                                                 \
-         efl_file_set(path".obj", NULL),                                            \
-         evas_3d_mesh_frame_material_set(0, name_of_material),                      \
-         evas_3d_mesh_shade_mode_set(shade_mode));                                  \
-   mesh_node[num] = eo_add(EVAS_3D_NODE_CLASS, evas,                                \
-                             evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));     \
-   eo_do(root_node,                                                                 \
-         evas_3d_node_member_add(mesh_node[num]));                                  \
-   eo_do(mesh_node[num],                                                            \
-         evas_3d_node_mesh_add(mesh[num]),                                          \
-         evas_3d_node_position_set(0, Y, Z));                                       \
+#define ADD_OBJ_MESH(path, Y, Z, num, shade_mode, name_of_material)               \
+   mesh[num] = eo_add(EVAS_3D_MESH_CLASS, evas);                                  \
+   snprintf(full_file_path, PATH_MAX, "%s%s", path, ".obj");                      \
+   eo_do(mesh[num],                                                               \
+         efl_file_set(full_file_path, NULL),                                      \
+         evas_3d_mesh_frame_material_set(0, name_of_material),                    \
+         evas_3d_mesh_shade_mode_set(shade_mode));                                \
+   mesh_node[num] = eo_add(EVAS_3D_NODE_CLASS, evas,                              \
+                             evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));   \
+   eo_do(root_node,                                                               \
+         evas_3d_node_member_add(mesh_node[num]));                                \
+   eo_do(mesh_node[num],                                                          \
+         evas_3d_node_mesh_add(mesh[num]),                                        \
+         evas_3d_node_position_set(0, Y, Z));                                     \
 
-#define ADD_OBJ_MESH_AND_SAVED_COPY(path, Y, Z, num, shade_mode, name_of_material)  \
-   ADD_OBJ_MESH(EVAS_3D_MODEL_FOLDER"sweet_"#path,                                  \
-                Y, Z, num, shade_mode, name_of_material)                            \
-   eo_do(mesh[num], efl_file_save(EVAS_3D_SAVED_FILES"saved_"#path".obj",           \
-                                  NULL, NULL));                                     \
-   ADD_OBJ_MESH(EVAS_3D_SAVED_FILES"saved_"#path,                                   \
-                Y + COPY_OFFSET, Z, num + 4, shade_mode, name_of_material)
+#define ADD_OBJ_MESH_AND_SAVED_COPY(path, Y, Z, num, shade_mode, name_of_material)\
+   snprintf(buffer, PATH_MAX, "%s%s", input_template, #path);                     \
+   ADD_OBJ_MESH(buffer, Y, Z, num, shade_mode, name_of_material)                  \
+   snprintf(buffer, PATH_MAX, "%s%s%s", output_template, #path, ".obj");          \
+   eo_do(mesh[num], efl_file_save(buffer, NULL, NULL));                           \
+   snprintf(buffer, PATH_MAX, "%s%s", output_template, #path);                    \
+   ADD_OBJ_MESH(buffer, Y + COPY_OFFSET, Z, num + 4, shade_mode, name_of_material)
 
 #define ADD_TEXTURE(name, path)                                       \
    name = eo_add(EVAS_3D_TEXTURE_CLASS, evas);                        \
@@ -82,6 +89,10 @@
          evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR,             \
                                     COL_BLUE, 0.5),                        \
          evas_3d_material_shininess_set(100.0));
+
+static const char *texture_path = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/sweet_home_reversed.png";
+static const char *output_template = PACKAGE_EXAMPLES_DIR EVAS_3D_SAVED_FILES "/saved_";
+static const char *input_template = PACKAGE_EXAMPLES_DIR EVAS_3D_MODEL_FOLDER "/sweet_";
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
@@ -136,6 +147,7 @@ int
 main(void)
 {
    int i;
+   char buffer[PATH_MAX], full_file_path[PATH_MAX];
    //Unless Evas 3D supports Software renderer, we set gl backened forcely.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
 
@@ -193,13 +205,17 @@ main(void)
    eo_do(root_node,
          evas_3d_node_member_add(light_node));
 
-   ADD_TEXTURE(texture, EVAS_3D_IMAGE_FOLDER"sweet_home_reversed.png")
+   ADD_TEXTURE(texture, texture_path)
 
    ADD_MATERIAL(material)
 
    ADD_MATERIAL(material_with_tex)
    eo_do(material_with_tex,
          evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE, texture));
+
+   if (!ecore_file_mkpath(PACKAGE_EXAMPLES_DIR EVAS_3D_SAVED_FILES))
+     fprintf(stderr, "Failed to create folder %s\n\n",
+             PACKAGE_EXAMPLES_DIR EVAS_3D_SAVED_FILES);
 
    ADD_OBJ_MESH_AND_SAVED_COPY(home, -GRID_SIZE, -GRID_SIZE, 0,
                                EVAS_3D_SHADE_MODE_PHONG, material_with_tex)

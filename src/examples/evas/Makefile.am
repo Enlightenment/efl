@@ -32,6 +32,7 @@ ECORE_EVAS_COMMON_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/evas \
 -I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_file \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_builddir)/src/lib/efl \
@@ -39,6 +40,7 @@ ECORE_EVAS_COMMON_CPPFLAGS = \
 -I$(top_builddir)/src/lib/eo \
 -I$(top_builddir)/src/lib/evas \
 -I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_file \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_builddir)/src/lib/ecore_evas \
 -DPACKAGE_EXAMPLES_DIR=\".\" \
@@ -49,6 +51,7 @@ $(top_builddir)/src/lib/efl/libefl.la \
 $(top_builddir)/src/lib/eina/libeina.la \
 $(top_builddir)/src/lib/eo/libeo.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
+$(top_builddir)/src/lib/ecore_file/libecore_file.la \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 $(top_builddir)/src/lib/ecore_evas/libecore_evas.la \
 $(top_builddir)/src/lib/evas/libevas.la \

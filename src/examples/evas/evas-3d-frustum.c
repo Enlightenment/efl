@@ -11,6 +11,12 @@
  * Compile with "gcc -o evas-3d-frustum evas-3d-frustum.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm"
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#define PACKAGE_EXAMPLES_DIR "."
+#endif
+
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 
@@ -23,6 +29,9 @@
 
 #define  WIDTH          800
 #define  HEIGHT         600
+
+static const char *image_eagle_path = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/eagle.png";
+static const char *eagle_path = PACKAGE_EXAMPLES_DIR EVAS_3D_MODEL_FOLDER "/eagle.md2";
 
 typedef struct _Scene_Data
 {
@@ -453,7 +462,7 @@ _mesh_setup_model(Scene_Data *data)
    data->texture_model = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
 
    eo_do(data->texture_model,
-         evas_3d_texture_file_set(EVAS_3D_IMAGE_FOLDER"eagle.png", NULL),
+         evas_3d_texture_file_set(image_eagle_path, NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST, EVAS_3D_TEXTURE_FILTER_NEAREST),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT, EVAS_3D_WRAP_MODE_REPEAT));
 
@@ -470,7 +479,7 @@ _mesh_setup_model(Scene_Data *data)
          evas_3d_material_shininess_set(100.0));
 
    eo_do(data->mesh_model,
-         efl_file_set(EVAS_3D_MODEL_FOLDER"eagle.md2", NULL),
+         efl_file_set(eagle_path, NULL),
          evas_3d_mesh_frame_material_set(0, data->material_model),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE));
 }

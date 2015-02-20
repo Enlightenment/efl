@@ -16,6 +16,12 @@
 * gcc -o evas-3d-moon-space evas-3d-moon-space.c -g `pkg-config --libs --cflags evas ecore ecore-evas eo` -lm
 */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#define PACKAGE_EXAMPLES_DIR "."
+#endif
+
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 
@@ -29,6 +35,10 @@
 
 #define  WIDTH          1024
 #define  HEIGHT         1024
+
+static const char *bg_image = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/bg_space.jpg";
+static const char *moon_image = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/moon.png";
+static const char *earth_image = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/EarthDiffuse.png";
 
 typedef struct _Scene_Data
 {
@@ -448,7 +458,7 @@ _mesh_setup(Scene_Data *data)
 
    /* Setup material and texture for planet. */
    eo_do(data->texture_diffuse_planet,
-         evas_3d_texture_file_set(EVAS_3D_IMAGE_FOLDER"EarthDiffuse.png", NULL),
+         evas_3d_texture_file_set(earth_image, NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_LINEAR, EVAS_3D_TEXTURE_FILTER_LINEAR));
 
    eo_do(data->material_planet,
@@ -463,7 +473,7 @@ _mesh_setup(Scene_Data *data)
 
    /* Setup material and texture for moon. */
    eo_do(data->texture_diffuse_moon,
-         evas_3d_texture_file_set(EVAS_3D_IMAGE_FOLDER"moon.png", NULL),
+         evas_3d_texture_file_set(moon_image, NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_LINEAR, EVAS_3D_TEXTURE_FILTER_LINEAR));
 
    eo_do(data->material_moon,
@@ -733,7 +743,7 @@ main(void)
 
    /* Add evas objects. */
    background = evas_object_image_filled_add(evas);
-   evas_object_image_file_set(background, EVAS_3D_IMAGE_FOLDER"bg_space.jpg", NULL),
+   evas_object_image_file_set(background, bg_image, NULL),
    evas_object_resize(background, WIDTH, HEIGHT),
    evas_object_show(background);
 

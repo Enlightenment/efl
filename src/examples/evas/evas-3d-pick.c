@@ -1,3 +1,9 @@
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#define PACKAGE_EXAMPLES_DIR "."
+#endif
+
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 
@@ -10,6 +16,8 @@
 
 #define  WIDTH          400
 #define  HEIGHT         400
+
+static const char *earth_image = PACKAGE_EXAMPLES_DIR EVAS_3D_IMAGE_FOLDER "/EarthDiffuse.png";
 
 typedef struct _vec4
 {
@@ -344,7 +352,7 @@ main(void)
 
    texture_diffuse = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
    eo_do(texture_diffuse,
-         evas_3d_texture_file_set(EVAS_3D_IMAGE_FOLDER"EarthDiffuse.png", NULL),
+         evas_3d_texture_file_set(earth_image, NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_LINEAR,
                                     EVAS_3D_TEXTURE_FILTER_LINEAR));
    eo_do(material,
