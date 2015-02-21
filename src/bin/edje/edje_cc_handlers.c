@@ -11639,12 +11639,12 @@ st_collections_group_programs_program_target(void)
 /**
     @page edcref
     @property
-        target
+        targets
     @parameters
         [target1] [target2] [target3] ...
     @effect
-        Programs or parts upon which the specified action will act. Multiple target
-        or targets keywords may be specified. SIGNAL_EMITs can have
+        Programs or parts upon which the specified action will act. Multiple
+        target or targets keywords may be specified. SIGNAL_EMITs can have
         targets.
     @since 1.10
     @endproperty
