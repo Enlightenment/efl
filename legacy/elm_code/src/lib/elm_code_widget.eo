@@ -123,6 +123,11 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
       }
    }
    methods {
+      line_refresh {
+         params {
+            Elm_Code_Line *line; /*@ @in The line to refresh. */
+         }
+      }
    }
    implements {
       class.constructor;
