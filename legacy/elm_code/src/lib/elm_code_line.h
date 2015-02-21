@@ -13,6 +13,7 @@ extern "C" {
 typedef struct _Elm_Code_Token
 {
    int start, end;
+   unsigned int end_line;
 
    Elm_Code_Token_Type type;
 
@@ -20,6 +21,8 @@ typedef struct _Elm_Code_Token
 
 typedef struct _Elm_Code_Line
 {
+   Elm_Code_File *file;
+
    const char *content;
    int length;
    unsigned int number;
@@ -45,7 +48,7 @@ EAPI const char *elm_code_line_content_get(Elm_Code_Line *line, int *length);
 
 EAPI void elm_code_line_status_set(Elm_Code_Line *line, Elm_Code_Status_Type status);
 
-EAPI void elm_code_line_token_add(Elm_Code_Line *line, int start, int end, Elm_Code_Token_Type type);
+EAPI void elm_code_line_token_add(Elm_Code_Line *line, int start, int end, int lines, Elm_Code_Token_Type type);
 
 /**
  * @}

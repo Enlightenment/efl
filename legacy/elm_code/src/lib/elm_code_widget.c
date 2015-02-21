@@ -116,7 +116,7 @@ _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
 {
    Eina_List *item;
    Elm_Code_Token *token;
-   int start, length, offset;
+   int start, end, length, offset;
 
    offset = elm_code_widget_text_left_gutter_width_get(widget) - 1;
    start = offset + 1;
@@ -124,13 +124,16 @@ _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
 
    EINA_LIST_FOREACH(line->tokens, item, token)
      {
-
-        _elm_code_widget_fill_line_token(cells, count, start, token->start + offset, ELM_CODE_TOKEN_TYPE_DEFAULT);
+        if (token->start > start)
+          _elm_code_widget_fill_line_token(cells, count, start, token->start + offset, ELM_CODE_TOKEN_TYPE_DEFAULT);
 
         // TODO handle a token starting before the previous finishes
-        _elm_code_widget_fill_line_token(cells, count, token->start + offset, token->end + offset, token->type);
+        end = token->end;
+        if (token->end_line > line->number)
+          end = count;
+        _elm_code_widget_fill_line_token(cells, count, token->start + offset, end + offset, token->type);
 
-        start = token->end + offset + 1;
+        start = end + offset + 1;
      }
 
    _elm_code_widget_fill_line_token(cells, count, start, length, ELM_CODE_TOKEN_TYPE_DEFAULT);

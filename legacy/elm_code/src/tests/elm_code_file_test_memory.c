@@ -29,7 +29,7 @@ START_TEST (elm_code_file_memory_tokens)
    elm_code_file_line_append(file, "a line", 6, NULL);
 
    line = elm_code_file_line_get(file, 1);
-   elm_code_line_token_add(line, 2, 5, ELM_CODE_TOKEN_TYPE_COMMENT);
+   elm_code_line_token_add(line, 2, 5, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
    ck_assert_uint_eq(1, eina_list_count(line->tokens));
    elm_code_free(code);
 }

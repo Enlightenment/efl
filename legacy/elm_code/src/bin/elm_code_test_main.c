@@ -55,7 +55,7 @@ _elm_code_test_line_done_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED,
    line = (Elm_Code_Line *)event_info;
 
    if (line->number == 1)
-     elm_code_line_token_add(line, 14, 21, ELM_CODE_TOKEN_TYPE_COMMENT);
+     elm_code_line_token_add(line, 14, 21, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
    else if (line->number == 4)
      line->status = ELM_CODE_STATUS_TYPE_ERROR;
 

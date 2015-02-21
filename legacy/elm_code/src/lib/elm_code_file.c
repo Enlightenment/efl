@@ -6,13 +6,14 @@
 
 #include "elm_code_private.h"
 
-static Elm_Code_Line *_elm_code_blank_create(int line, void *data)
+static Elm_Code_Line *_elm_code_file_line_blank_create(Elm_Code_File *file, int line, void *data)
 {
    Elm_Code_Line *ecl;
 
    ecl = calloc(1, sizeof(Elm_Code_Line));
    if (!ecl) return NULL;
 
+   ecl->file = file;
    ecl->number = line;
    ecl->status = ELM_CODE_STATUS_TYPE_DEFAULT;
    ecl->data = data;
@@ -24,7 +25,7 @@ static void _elm_code_file_line_append_data(Elm_Code_File *file, const char *con
 {
    Elm_Code_Line *line;
 
-   line = _elm_code_blank_create(row, data);
+   line = _elm_code_file_line_blank_create(file, row, data);
    if (!line) return;
 
    if (mapped)
@@ -88,7 +89,7 @@ EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path)
         /* Working around the issue that eina_file_map_lines does not trigger an item for empty lines */
         while (lastindex < line->index - 1)
           {
-             ecl = _elm_code_blank_create(++lastindex, NULL);
+             ecl = _elm_code_file_line_blank_create(ret, ++lastindex, NULL);
              if (!ecl) continue;
 
              ret->lines = eina_list_append(ret->lines, ecl);
