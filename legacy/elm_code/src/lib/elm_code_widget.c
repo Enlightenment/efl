@@ -57,7 +57,7 @@ _elm_code_widget_scroll_by(Elm_Code_Widget *widget, int by_x, int by_y)
    elm_scroller_region_show(pd->scroller, x, y, w, h);
 }
 
-static Eina_Bool
+static void
 _elm_code_widget_resize(Elm_Code_Widget *widget)
 {
    Elm_Code_Line *line;
@@ -70,7 +70,7 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
    gutter = elm_code_widget_text_left_gutter_width_get(widget);
 
    if (!pd->code)
-     return EINA_FALSE;
+     return;
 
    evas_object_geometry_get(widget, NULL, NULL, &ww, &wh);
    evas_object_textgrid_cell_size_get(pd->grid, &cw, &ch);
@@ -95,8 +95,6 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
      _elm_code_widget_scroll_by(widget, 
         (pd->gravity_x == 1.0 && ww > old_width) ? ww - old_width : 0,
         (pd->gravity_y == 1.0 && wh > old_height) ? wh - old_height : 0);
-
-   return h > 0 && w > 0;
 }
 
 static void
@@ -146,9 +144,6 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells, E
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    gutter = elm_code_widget_text_left_gutter_width_get(widget);
-
-   if (!_elm_code_widget_resize(widget))
-     return;
 
    length = line->length;
    evas_object_textgrid_size_get(pd->grid, &w, NULL);
@@ -210,8 +205,7 @@ _elm_code_widget_fill(Elm_Code_Widget *widget)
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   if (!_elm_code_widget_resize(widget))
-     return;
+   _elm_code_widget_resize(widget);
    evas_object_textgrid_size_get(pd->grid, &w, &h);
 
    for (y = 1; y <= (unsigned int) h && y <= elm_code_file_lines_get(pd->code->file); y++)
@@ -230,9 +224,6 @@ _elm_code_widget_line_cb(void *data, Eo *obj EINA_UNUSED,
    Elm_Code_Widget *widget;
 
    widget = (Elm_Code_Widget *)data;
-
-   if (!_elm_code_widget_resize(widget))
-     return EINA_TRUE;
 
    // FIXME refresh just the row unless we have resized (by being the result of a row append)
    _elm_code_widget_fill(widget);
