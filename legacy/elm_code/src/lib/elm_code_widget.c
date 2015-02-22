@@ -135,11 +135,52 @@ _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
 }
 
 static void
+_elm_code_widget_fill_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
+                             Elm_Code_Status_Type status, int line)
+{
+   char *number = NULL;
+   int w, gutter, g;
+   Elm_Code_Widget_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   gutter = elm_code_widget_text_left_gutter_width_get(widget);
+
+   evas_object_textgrid_size_get(pd->grid, &w, NULL);
+
+   cells[gutter-1].codepoint = status_icons[status];
+   cells[gutter-1].bold = 1;
+   cells[gutter-1].fg = ELM_CODE_WIDGET_COLOR_GUTTER_FG;
+   cells[gutter-1].bg = (status == ELM_CODE_STATUS_TYPE_DEFAULT) ? ELM_CODE_WIDGET_COLOR_GUTTER_BG : status;
+
+   if (pd->show_line_numbers)
+     {
+        if (line > 0)
+          {
+             number = malloc(sizeof(char) * gutter);
+             snprintf(number, gutter, "%*d", gutter - 1, line);
+          }
+        for (g = 0; g < gutter - 1; g++)
+          {
+             if (number)
+               cells[g].codepoint = *(number + g);
+             else
+               cells[g].codepoint = 0;
+
+             cells[g].fg = ELM_CODE_WIDGET_COLOR_GUTTER_FG;
+             cells[g].bg = ELM_CODE_WIDGET_COLOR_GUTTER_BG;
+          }
+
+        if (number)
+          free(number);
+     }
+}
+
+static void
 _elm_code_widget_fill_line(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells, Elm_Code_Line *line)
 {
-   char *chr, *number;
+   char *chr;
    unsigned int length, x;
-   int w, gutter, g;
+   int w, gutter;
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
@@ -148,24 +189,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells, E
    length = line->length;
    evas_object_textgrid_size_get(pd->grid, &w, NULL);
 
-   cells[gutter-1].codepoint = status_icons[line->status];
-   cells[gutter-1].bold = 1;
-   cells[gutter-1].fg = ELM_CODE_WIDGET_COLOR_GUTTER_FG;
-   cells[gutter-1].bg = (line->status == ELM_CODE_STATUS_TYPE_DEFAULT) ? ELM_CODE_WIDGET_COLOR_GUTTER_BG : line->status;
-
-   if (pd->show_line_numbers)
-     {
-        number = malloc(sizeof(char) * gutter);
-        snprintf(number, gutter, "%*d", gutter - 1, line->number);
-
-        for (g = 0; g < gutter - 1; g++)
-          {
-             cells[g].codepoint = *(number + g);
-             cells[g].fg = ELM_CODE_WIDGET_COLOR_GUTTER_FG;
-             cells[g].bg = ELM_CODE_WIDGET_COLOR_GUTTER_BG;
-          }
-        free(number);
-     }
+   _elm_code_widget_fill_gutter(widget, cells, line->status, line->number);
 
    if (line->modified)
       chr = line->modified;
@@ -195,6 +219,28 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells, E
 }
 
 static void
+_elm_code_widget_empty_line(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells, unsigned int number)
+{
+   unsigned int x;
+   int w, gutter;
+   Elm_Code_Widget_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   gutter = elm_code_widget_text_left_gutter_width_get(widget);
+
+   evas_object_textgrid_size_get(pd->grid, &w, NULL);
+   _elm_code_widget_fill_gutter(widget, cells, ELM_CODE_STATUS_TYPE_DEFAULT, 0);
+
+   for (x = gutter; x < (unsigned int) w; x++)
+     {
+        cells[x].codepoint = 0;
+        cells[x].bg = ELM_CODE_STATUS_TYPE_DEFAULT;
+     }
+
+   evas_object_textgrid_update_add(pd->grid, 0, number - 1, w, 1);
+}
+
+static void
 _elm_code_widget_fill(Elm_Code_Widget *widget)
 {
    Elm_Code_Line *line;
@@ -214,6 +260,12 @@ _elm_code_widget_fill(Elm_Code_Widget *widget)
 
         cells = evas_object_textgrid_cellrow_get(pd->grid, y - 1);
         _elm_code_widget_fill_line(widget, cells, line);
+     }
+   for (; y <= (unsigned int) h; y++)
+     {
+        cells = evas_object_textgrid_cellrow_get(pd->grid, y - 1);
+
+        _elm_code_widget_empty_line(widget, cells, y);
      }
 }
 
