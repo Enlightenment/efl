@@ -51,7 +51,6 @@ _elm_segment_control_elm_layout_sizing_eval(Eo *obj, Elm_Segment_Control_Data *s
    elm_coords_finger_size_adjust(item_count, &minw, 1, &minh);
    edje_object_size_min_restricted_calc
      (wd->resize_obj, &minw, &minh, minw, minh);
-   elm_coords_finger_size_adjust(item_count, &minw, 1, &minh);
 
    evas_object_size_hint_min_get(obj, &w, &h);
 

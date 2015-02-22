@@ -451,7 +451,6 @@ _elm_spinner_elm_layout_sizing_eval(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc
      (wd->resize_obj, &minw, &minh, minw, minh);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
 }

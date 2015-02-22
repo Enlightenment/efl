@@ -265,15 +265,12 @@ _items_size_fit(Evas_Object *obj, Evas_Coord *bl, Evas_Coord view)
              if (!it->separator && !it->object)
                elm_coords_finger_size_adjust(1, &mw, 1, &mh);
              edje_object_size_min_restricted_calc(VIEW(it), &mw, &mh, mw, mh);
-             if (!it->separator && !it->object)
-               elm_coords_finger_size_adjust(1, &mw, 1, &mh);
           }
         else if (!more)
           {
              more = EINA_TRUE;
              elm_coords_finger_size_adjust(1, &mw, 1, &mh);
              edje_object_size_min_restricted_calc(sd->VIEW(more_item), &mw, &mh, mw, mh);
-             elm_coords_finger_size_adjust(1, &mw, 1, &mh);
           }
 
         if (mw != -1 || mh != -1)
@@ -1449,7 +1446,6 @@ _elm_toolbar_item_label_update(Elm_Toolbar_Item_Data *item)
    //the below function should be called before the calculation.
    edje_object_message_signal_process(VIEW(item));
    edje_object_size_min_restricted_calc(VIEW(item), &mw, &mh, mw, mh);
-   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
      {
         if (sd->vertical)
@@ -2395,8 +2391,6 @@ _item_new(Evas_Object *obj,
    //the below function should be called before the calculation.
    edje_object_message_signal_process(VIEW(it));
    edje_object_size_min_restricted_calc(VIEW(it), &mw, &mh, mw, mh);
-   if (!it->separator && !it->object)
-     elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
      {
         if (sd->vertical)
@@ -2453,7 +2447,6 @@ _elm_toolbar_item_icon_update(Elm_Toolbar_Item_Data *item)
    //the below function should be called before the calculation.
    edje_object_message_signal_process(VIEW(item));
    edje_object_size_min_restricted_calc(VIEW(item), &mw, &mh, mw, mh);
-   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
      {
         if (sd->vertical)

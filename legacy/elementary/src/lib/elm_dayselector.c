@@ -40,7 +40,6 @@ _elm_dayselector_elm_layout_sizing_eval(Eo *obj, Elm_Dayselector_Data *sd EINA_U
    elm_coords_finger_size_adjust(ELM_DAYSELECTOR_MAX, &min_w, 1, &min_h);
    edje_object_size_min_restricted_calc
      (wd->resize_obj, &min_w, &min_h, min_w, min_h);
-   elm_coords_finger_size_adjust(ELM_DAYSELECTOR_MAX, &min_w, 1, &min_h);
    evas_object_size_hint_min_set(obj, min_w, min_h);
 }
 

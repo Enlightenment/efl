@@ -984,8 +984,6 @@ _items_fix(Evas_Object *obj)
                   mw = mw > ew ? mw : ew;
                   mh = mh > eh ? mh : eh;
                   */
-                  if (!it->is_separator)
-                    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
                   evas_object_size_hint_min_set(VIEW(it), mw, mh);
                   evas_object_show(VIEW(it));
                }
