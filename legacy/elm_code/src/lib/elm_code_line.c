@@ -6,18 +6,6 @@
 
 #include "elm_code_private.h"
 
-EAPI const char *elm_code_line_content_get(Elm_Code_Line *line, int *length)
-{
-   if (!line)
-     return NULL;
-
-   *length = line->length;
-
-   if (line->modified)
-     return line->modified;
-   return line->content;
-}
-
 EAPI void elm_code_line_status_set(Elm_Code_Line *line, Elm_Code_Status_Type status)
 {
    if (!line)

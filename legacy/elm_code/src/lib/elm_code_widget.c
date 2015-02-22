@@ -501,6 +501,23 @@ _elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
 }
 
 static void
+_elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text, int length)
+{
+   Elm_Code *code;
+   Elm_Code_Line *line;
+   unsigned int row, col;
+
+   eo_do(widget,
+         code = elm_code_widget_code_get(),
+         elm_code_widget_cursor_position_get(&col, &row));
+   line = elm_code_file_line_get(code->file, row);
+
+   elm_code_line_text_insert(line, col, text, length);
+   eo_do(widget,
+         elm_code_widget_cursor_position_set(col + length, row));
+}
+
+static void
 _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
                               Evas_Object *obj EINA_UNUSED, void *event_info)
 {
@@ -525,6 +542,10 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
      _elm_code_widget_cursor_move_left(widget);
    else if (!strcmp(ev->key, "Right"))
      _elm_code_widget_cursor_move_right(widget);
+   else if (strlen(ev->key) == 1)
+     _elm_code_widget_text_at_cursor_insert(widget, ev->key, 1);
+   else if (!strcmp(ev->key, "space"))
+     _elm_code_widget_text_at_cursor_insert(widget, " ", 1);
    else
      INF("Unhandled key %s", ev->key);
 }

@@ -20,6 +20,7 @@ lib_LTLIBRARIES = libelm_code.la
 includes_HEADERS = \
 elm_code_common.h \
 elm_code_line.h \
+elm_code_text.h \
 elm_code_file.h \
 elm_code_parse.h \
 elm_code_widget.eo.h \
@@ -30,6 +31,7 @@ includesdir = $(includedir)/edi-@VMAJ@
 
 libelm_code_la_SOURCES = \
 elm_code_line.c \
+elm_code_text.c \
 elm_code_file.c \
 elm_code_parse.c \
 elm_code_widget_text.c \

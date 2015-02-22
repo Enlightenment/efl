@@ -16,6 +16,7 @@ static const struct {
   { "file_load", elm_code_file_test_load },
   { "file_memory", elm_code_file_test_memory },
   { "parse", elm_code_test_parse },
+  { "text", elm_code_test_text },
   { "basic", elm_code_test_basic },
   { "widget", elm_code_test_widget },
 };

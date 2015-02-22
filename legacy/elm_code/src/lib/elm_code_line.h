@@ -35,16 +35,14 @@ typedef struct _Elm_Code_Line
 } Elm_Code_Line;
 
 /**
- * @brief Line handling functions.
- * @defgroup Line and content manipulation 
+ * @brief Line markup functions.
+ * @defgroup Line highlighting and status manipulation
  *
  * @{
  *
- * Functions for handling content and styling of lines within elm code.
+ * Functions for handling styling and marking up lines within elm code.
  *
  */
-
-EAPI const char *elm_code_line_content_get(Elm_Code_Line *line, int *length);
 
 EAPI void elm_code_line_status_set(Elm_Code_Line *line, Elm_Code_Status_Type status);
 
