@@ -603,6 +603,7 @@ _ecore_drm_event_output_send(const Ecore_Drm_Output *output, Eina_Bool plug)
    e->plug = plug;
    if (plug)
      {
+        e->id = output->crtc_id;
         e->w = output->current_mode->width;
         e->h = output->current_mode->height;
         e->x = output->x;
