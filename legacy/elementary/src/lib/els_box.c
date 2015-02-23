@@ -199,7 +199,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
 
              if (homogeneous)
                {
-                  ww = (w / (Evas_Coord)count);
+                  ww = ((w - (count - 1) * priv->pad.h) / (Evas_Coord)count);
                }
              else
                {
@@ -231,7 +231,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, Eina_Bool horizontal
 
              if (homogeneous)
                {
-                  hh = (h / (Evas_Coord)count);
+                  hh = ((h - (count - 1) * priv->pad.v) / (Evas_Coord)count);
                }
              else
                {
