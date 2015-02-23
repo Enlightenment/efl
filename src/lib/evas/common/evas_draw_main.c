@@ -54,6 +54,8 @@ EAPI void
 evas_common_shutdown(void)
 {
    evas_font_dir_cache_free();
+   evas_common_font_shutdown();
+   evas_common_image_shutdown();
    evas_common_image_cache_free();
    evas_common_scale_sample_shutdown();
 }

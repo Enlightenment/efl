@@ -173,8 +173,7 @@ eng_output_free(void *data)
    evas_render_engine_software_generic_clean(&re->generic);
    free(re);
 
-   evas_common_font_shutdown();
-   evas_common_image_shutdown();
+   evas_common_shutdown();
 }
 
 static Eina_Bool

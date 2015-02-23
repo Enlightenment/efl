@@ -202,8 +202,7 @@ eng_output_free(void *data)
 
    free(re);
 
-   evas_common_font_shutdown();
-   evas_common_image_shutdown();
+   evas_common_shutdown();
 }
 
 static void
