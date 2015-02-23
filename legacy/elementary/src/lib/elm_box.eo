@@ -68,7 +68,9 @@ class Elm_Box (Elm_Widget)
             /*@
             Get the horizontal orientation
 
-            @return @c EINA_TRUE if the box is set to horizontal mode, @c EINA_FALSE otherwise */
+            @return @c EINA_TRUE if the box is set to horizontal mode, @c EINA_FALSE otherwise
+
+            @ingroup Box */
          }
          values {
             bool horizontal; /*@ The horizontal flag (@c EINA_TRUE = horizontal,
