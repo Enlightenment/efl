@@ -441,10 +441,10 @@ operator<<(std::ostream& out, function_call_constructor_methods const& x)
 
    out << "::efl::eo::parent_type _p)" << endl
        << tab(1) << "{" << endl
-       << tab(2) << "Eo* _ret_eo = eo_add_ref(" << x._cls.eo_name << ", _p._eo_raw, ";
+       << tab(2) << "Eo* _ret_eo = eo_add_ref(" << x._cls.eo_name << ", _p._eo_raw";
    for (it = first; it != last; ++it)
      {
-        out << "_c" << (it-first) << "(); ";
+        out << ", _c" << (it-first) << "()";
      }
    out << ");" << endl << endl;
 
