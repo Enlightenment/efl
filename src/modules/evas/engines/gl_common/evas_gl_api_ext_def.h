@@ -29,6 +29,12 @@
 // End of the extension function block
 #define _EVASGL_EXT_FUNCTION_PRIVATE_END()
 
+// These functions will not be considered for export for GLESv1
+// Begin of the glesv1 bypass function block
+#define _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_BEGIN()
+// End of the glesv1 bypass function block
+#define _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_END()
+
 // Driver extension functions to wrap (name : SPEC extension function name)
 #define _EVASGL_EXT_FUNCTION_DRVFUNC(name)
 
@@ -1020,14 +1026,16 @@ _EVASGL_EXT_BEGIN(robustness)
                 _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("glReadnPixels")
                 _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("glReadnPixelsEXT")
         _EVASGL_EXT_FUNCTION_END()
-        _EVASGL_EXT_FUNCTION_BEGIN(void, glGetnUniformfvEXT, (GLuint program, GLint location, GLsizei bufSize, float *params))
+        _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_BEGIN()
+           _EVASGL_EXT_FUNCTION_BEGIN(void, glGetnUniformfvEXT, (GLuint program, GLint location, GLsizei bufSize, float *params))
                 _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("glGetnUniformfv")
                 _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("glGetnUniformfvEXT")
-        _EVASGL_EXT_FUNCTION_END()
-        _EVASGL_EXT_FUNCTION_BEGIN(void, glGetnUniformivEXT, (GLuint program, GLint location, GLsizei bufSize, GLint *params))
+           _EVASGL_EXT_FUNCTION_END()
+           _EVASGL_EXT_FUNCTION_BEGIN(void, glGetnUniformivEXT, (GLuint program, GLint location, GLsizei bufSize, GLint *params))
                 _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("glGetnUniformiv")
                 _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("glGetnUniformivEXT")
-        _EVASGL_EXT_FUNCTION_END()
+           _EVASGL_EXT_FUNCTION_END()
+        _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_END()
 _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(sRGB)
