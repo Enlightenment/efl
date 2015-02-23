@@ -1,3 +1,10 @@
+/* genlist widget item style information
+
+   [SIGNAL]
+      elm,state,focused: Emitted when an item is focused only when an item's "focus_highlight" is "on".
+      elm,state,unfocused: Emitted when an item is unfocused only when an item's "focus_highlight" is "on".
+*/
+
 #define ODD(_NAME, _SRC) \
    group { _NAME; \
       inherit: _SRC; \
