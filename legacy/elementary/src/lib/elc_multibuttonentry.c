@@ -683,8 +683,9 @@ _item_new(Elm_Multibuttonentry_Data *sd,
    ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_item, item);
    VIEW(item) = elm_layout_add(obj);
 
-   elm_layout_theme_set
-      (VIEW(item), "multibuttonentry", "btn", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set
+       (VIEW(item), "multibuttonentry", "btn", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
 
    elm_object_part_text_set(VIEW(item), "elm.btn.text", str);
 
