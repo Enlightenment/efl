@@ -2,8 +2,8 @@ MAINTAINERCLEANFILES = Makefile.in
 
 include ../../../Makefile_Elm_Helpers.am
 
-examplesdir = $(pkgdatadir)/examples/perfomance
-filesdir = $(pkgdatadir)/examples/perfomance
+examplesdir = $(pkgdatadir)/examples/performance
+filesdir = $(pkgdatadir)/examples/performance
 files_DATA =
 
 AM_CPPFLAGS = \
@@ -20,7 +20,7 @@ LDADD = \
 @ELEMENTARY_LIBS@ \
 $(top_builddir)/src/lib/libelementary.la
 
-SRCS = perfomance.c camera_light.c graphical.c
+SRCS = performance.c camera_light.c graphical.c
 
 .edc.edj:
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
@@ -28,8 +28,8 @@ SRCS = perfomance.c camera_light.c graphical.c
 if EFL_BUILD_EXAMPLES
 files_DATA += $(SRCS) layout.edc layout.edj
 
-perfomance_SOURCES = \
-	perfomance.c \
+performance_SOURCES = \
+	performance.c \
 	camera_light.c \
 	graphical.c
 
@@ -37,7 +37,7 @@ clean-local:
 	rm -f *.edj
 
 examples_PROGRAMS = \
-	perfomance
+	performance
 
 endif
 

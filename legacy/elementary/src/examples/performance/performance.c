@@ -1,5 +1,5 @@
 ﻿/**
- * Example for testing perfomance of Evas 3D library
+ * Example for testing performance of Evas 3D library
  *
  * Program should be runned with 4 parameters:
  * 1 - count parameter (NP)
