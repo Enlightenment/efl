@@ -22,14 +22,15 @@ _a_get(Eo *obj, void *class_data EINA_UNUSED)
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
+   Eina_Bool tmp;
    eo_do_super(obj, MY_CLASS, eo_constructor());
 
    Eo *simple = eo_add(SIMPLE_CLASS, obj);
    eo_do(obj, eo_composite_attach(simple));
    eo_do(simple, eo_event_callback_forwarder_add(EV_A_CHANGED, obj));
 
-   fail_if(eo_do(obj, eo_composite_part_is()));
-   fail_if(!eo_do(simple, eo_composite_part_is()));
+   fail_if(eo_do_ret(obj, tmp, eo_composite_part_is()));
+   fail_if(!eo_do_ret(simple, tmp, eo_composite_part_is()));
 
    eo_do(obj, eo_key_data_set("simple-obj", simple, NULL));
 }

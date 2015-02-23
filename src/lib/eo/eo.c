@@ -533,7 +533,7 @@ _eo_do_start(const Eo *eo_id, const Eo_Class *cur_klass_id, Eina_Bool is_super, 
 }
 
 EAPI void
-_eo_do_end(const Eo **eo_id EINA_UNUSED)
+_eo_do_end(void)
 {
    Eo_Stack_Frame *fptr;
    Eo_Call_Stack *stack = _eo_call_stack_get(eina_main_loop_is()); // Is it possible to extract information from the scope ?
@@ -910,9 +910,12 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
 
    /* If there's a parent. Unref. Eo_add should return an object with either a
     * parent ref, or with the lack of, just a ref. */
-   if (!ref && eo_do(eo_id, eo_parent_get()))
      {
-        _eo_unref(obj);
+        Eo *parent_tmp;
+        if (!ref && eo_do_ret(eo_id, parent_tmp, eo_parent_get()))
+          {
+             _eo_unref(obj);
+          }
      }
 
    return eo_id;
@@ -955,6 +958,14 @@ _eo_add_internal_end(Eo *eo_id)
    _eo_unref(fptr->o.obj);
 
    return (Eo *)eo_id;
+}
+
+EAPI Eo *
+_eo_add_end(void)
+{
+   Eo *ret = eo_finalize();
+   _eo_do_end();
+   return ret;
 }
 
 /*****************************************************************************/
@@ -1544,7 +1555,8 @@ eo_unref(const Eo *obj_id)
 EAPI void
 eo_del(const Eo *obj)
 {
-   if (eo_do(obj, eo_parent_get()))
+   Eo *parent_tmp;
+   if (eo_do_ret(obj, parent_tmp, eo_parent_get()))
      {
         eo_do(obj, eo_parent_set(NULL));
      }

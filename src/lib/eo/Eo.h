@@ -576,23 +576,34 @@ EAPI Eina_Bool _eo_call_resolve(const char *func_name, const Eo_Op op, Eo_Op_Cal
   EAPI Eina_Bool _eo_do_start(const Eo *obj, const Eo_Class *cur_klass, Eina_Bool is_super, const char *file, const char *func, int line);
 
 // end of the eo_do barrier, unref the obj, move the stack pointer
-EAPI void _eo_do_end(const Eo **ojb);
+EAPI void _eo_do_end(void);
 
-#define EO_DO_CLEANUP __attribute__((cleanup(_eo_do_end)))
+// end of the eo_add. Calls finalize among others
+EAPI Eo * _eo_add_end(void);
 
 // eo object method calls batch,
 
 #define _eo_do_common(eoid, clsid, is_super, ...)                       \
-  ({                                                                    \
-       const Eo *_eoid_ EO_DO_CLEANUP = eoid;                           \
-       _eo_do_start(_eoid_, clsid, is_super, __FILE__, __FUNCTION__, __LINE__); \
+  do {                                                                  \
+       _eo_do_start(eoid, clsid, is_super, __FILE__, __FUNCTION__, __LINE__); \
        __VA_ARGS__;                                                     \
-    })
+       _eo_do_end();                                                    \
+  } while (0)
+
+#define _eo_do_common_ret(eoid, clsid, is_super, ret_tmp, func)      \
+  (                                                                     \
+       _eo_do_start(eoid, clsid, is_super, __FILE__, __FUNCTION__, __LINE__), \
+       ret_tmp = func,                                                  \
+       _eo_do_end(),                                                    \
+       ret_tmp                                                          \
+  )
 
 
 #define eo_do(eoid, ...) _eo_do_common(eoid, NULL, EINA_FALSE, __VA_ARGS__)
 
 #define eo_do_super(eoid, clsid, func) _eo_do_common(eoid, clsid, EINA_TRUE, func)
+
+#define eo_do_ret(eoid, ret_tmp, func) _eo_do_common_ret(eoid, NULL, EINA_FALSE, ret_tmp, func)
 
 /*****************************************************************************/
 
@@ -618,6 +629,14 @@ EAPI const Eo_Class *eo_class_get(const Eo *obj);
 EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
 /* @endcond */
 
+#define _eo_add_common(klass, parent, is_ref, ...) \
+   ( \
+     _eo_do_start(_eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref), \
+        klass, EINA_FALSE, __FILE__, __FUNCTION__, __LINE__), \
+     eo_constructor(), ##__VA_ARGS__, \
+     (Eo *) _eo_add_end() \
+   )
+
 /**
  * @def eo_add
  * @brief Create a new object with the default constructor.
@@ -633,17 +652,7 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
  * @param ... The ops to run.
  * @return An handle to the new object on success, NULL otherwise.
  */
-#define eo_add(klass, parent, ...) \
-   ({ \
-    const Eo_Class *_tmp_klass = klass; \
-    Eo *_tmp_obj = _eo_add_internal_start(__FILE__, __LINE__, _tmp_klass, parent, EINA_FALSE); \
-    eo_do(_tmp_obj, \
-           eo_constructor(); \
-           __VA_ARGS__; \
-           _tmp_obj = eo_finalize(); \
-          ); \
-    _tmp_obj; \
-    })
+#define eo_add(klass, parent, ...) _eo_add_common(klass, parent, EINA_FALSE, ##__VA_ARGS__)
 
 /**
  * @def eo_add_ref
@@ -657,17 +666,7 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
  * @param ... The ops to run.
  * @return An handle to the new object on success, NULL otherwise.
  */
-#define eo_add_ref(klass, parent, ...) \
-   ({ \
-    const Eo_Class *_tmp_klass = klass; \
-    Eo *_tmp_obj = _eo_add_internal_start(__FILE__, __LINE__, _tmp_klass, parent, EINA_TRUE); \
-    eo_do(_tmp_obj, \
-           eo_constructor(); \
-           __VA_ARGS__; \
-           _tmp_obj = eo_finalize(); \
-          ); \
-    _tmp_obj; \
-    })
+#define eo_add_ref(klass, parent, ...) _eo_add_common(klass, parent, EINA_TRUE, ##__VA_ARGS__)
 
 EAPI Eo * _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo *parent, Eina_Bool ref);
 

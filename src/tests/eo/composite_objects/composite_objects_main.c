@@ -26,6 +26,7 @@ _a_changed_cb(void *data, Eo *obj, const Eo_Event_Description *desc, void *event
 int
 main(int argc, char *argv[])
 {
+   Eina_Bool tmp;
    (void) argc;
    (void) argv;
    eo_init();
@@ -65,15 +66,15 @@ main(int argc, char *argv[])
    eo_do(obj, simple_a_set(2));
    fail_if(cb_called);
 
-   fail_if(!eo_do(simple, eo_composite_part_is()));
-   fail_if(!eo_do(obj, eo_composite_detach(simple)));
-   fail_if(eo_do(obj, eo_composite_detach(simple)));
-   fail_if(eo_do(simple, eo_composite_part_is()));
-   fail_if(!eo_do(obj, eo_composite_attach(simple)));
-   fail_if(!eo_do(simple, eo_composite_part_is()));
-   fail_if(eo_do(obj, eo_composite_attach(simple)));
+   fail_if(!eo_do_ret(simple, tmp,eo_composite_part_is()));
+   fail_if(!eo_do_ret(obj, tmp,eo_composite_detach(simple)));
+   fail_if(eo_do_ret(obj, tmp,eo_composite_detach(simple)));
+   fail_if(eo_do_ret(simple, tmp,eo_composite_part_is()));
+   fail_if(!eo_do_ret(obj, tmp,eo_composite_attach(simple)));
+   fail_if(!eo_do_ret(simple, tmp,eo_composite_part_is()));
+   fail_if(eo_do_ret(obj, tmp,eo_composite_attach(simple)));
 
-   fail_if(eo_do(simple, eo_composite_attach(obj)));
+   fail_if(eo_do_ret(simple, tmp,eo_composite_attach(obj)));
 
    eo_unref(simple);
    eo_unref(obj);

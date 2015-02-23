@@ -50,11 +50,14 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
 static Eo*
 _finalize(Eo *obj, void *class_data EINA_UNUSED)
 {
+   Eo *ret;
    Private_Data *pd = class_data;
 
    if (pd->a < 0) eo_error_set(obj);
 
-   return eo_do_super(obj, MY_CLASS, eo_finalize());
+   eo_do_super(obj, MY_CLASS, ret = eo_finalize());
+
+   return ret;
 }
 
 static void

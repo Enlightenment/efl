@@ -271,6 +271,7 @@ END_TEST
 
 START_TEST(eo_composite_tests)
 {
+   Eina_Bool tmp;
    eo_init();
 
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
@@ -280,7 +281,7 @@ START_TEST(eo_composite_tests)
 
    eo_do(obj, eo_composite_attach(obj2));
    eo_do(obj2, eo_parent_set(NULL));
-   fail_if(eo_do(obj2, eo_composite_part_is()));
+   fail_if(eo_do_ret(obj2, tmp, eo_composite_part_is()));
 
    eo_unref(obj2);
    eo_unref(obj);
@@ -803,7 +804,7 @@ START_TEST(eo_add_do_and_custom)
    obj = eo_add(SIMPLE_CLASS, NULL, finalized = eo_finalized_get());
    fail_if(finalized);
 
-   finalized = eo_do(obj, eo_finalized_get());
+   eo_do(obj, finalized = eo_finalized_get());
    fail_if(!finalized);
    eo_unref(obj);
 
