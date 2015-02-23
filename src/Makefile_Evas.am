@@ -727,7 +727,7 @@ $(GL_SHADERS_GEN)
 
 modules/evas/engines/gl_common/shader/evas_gl_shaders.x: modules/evas/engines/gl_common/shader/gen_shaders.sh $(GL_SHADERS_GEN)
 	@echo "  SHADERS  $@"
-	@modules/evas/engines/gl_common/shader/gen_shaders.sh $(GL_SHADERS_GEN)
+	@$^
 
 modules/evas/engines/gl_common/shader/evas_gl_enum.x: modules/evas/engines/gl_common/shader/evas_gl_shaders.x
 
@@ -760,7 +760,7 @@ modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x
 
 modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x: modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN)
 	@echo "  SHADERS_3D  $@"
-	@modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN)
+	@$^
 
 
 GL_GENERIC_SOURCES = \
