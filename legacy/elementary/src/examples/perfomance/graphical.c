@@ -573,7 +573,7 @@ _xml_attr_data(void *data, const char *key, const char *value)
              tmp = strdup(globalGraphical.model_path);
              a = strrchr(tmp,'.');
              format = malloc(sizeof (char) * (strlen(a) - 1));
-             for (i = 0; i <= strlen(a) - 1; i++)
+             for (i = 0; i <= (int)strlen(a) - 1; i++)
                format[i] = a[i + 1];
              if (strcmp(format, "md2") || strcmp(format, "obj") || !strcmp(format, "ply"))
                {

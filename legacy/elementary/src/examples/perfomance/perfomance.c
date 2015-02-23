@@ -530,7 +530,7 @@ _load_mesh(void *data, Evas_Object *obj, void *event_info)
         tmp = strdup(event_info);
         a = strrchr(tmp,'.');
         format = malloc(sizeof (char) * (strlen(a) - 1));
-        for (i = 0; i <= strlen(a) - 1; i++)
+        for (i = 0; i <= (int)strlen(a) - 1; i++)
           format[i] = a[i + 1];
         if (!strcmp(format, "md2"))
           {
