@@ -1302,9 +1302,8 @@ _image_flip_horizontal(void *data, Image_Entry *im)
    int x, y, iw, ih;
    Image_Entry *im2;
 
-   iw = im->w;
-   ih = im->h;
-   image_data = evas_cache_image_pixels(im);
+   eng_image_size_get(data, im, &iw, &ih);
+   im = eng_image_data_get(data, im , 1, &image_data, NULL);
    for (y = 0; y < ih; y++)
      {
         p1 = image_data + (y * iw);
@@ -1321,7 +1320,8 @@ _image_flip_horizontal(void *data, Image_Entry *im)
    im2 = eng_image_new_from_data(data, iw, ih, image_data,
                                            eng_image_alpha_get(data, im),
                                            eng_image_colorspace_get(data, im));
-   return im2;
+   im = im2;
+   return im;
 }
 
 static void *
@@ -1332,9 +1332,8 @@ _image_flip_vertical(void *data, Image_Entry *im)
    int x, y, iw, ih;
    Image_Entry *im2;
 
-   iw = im->w;
-   ih = im->h;
-   image_data = evas_cache_image_pixels(im);
+   eng_image_size_get(data, im, &iw, &ih);
+   im = eng_image_data_get(data, im , 1, &image_data, NULL);
    for (y = 0; y < (ih >> 1); y++)
      {
         p1 = image_data + (y * iw);
@@ -1351,7 +1350,8 @@ _image_flip_vertical(void *data, Image_Entry *im)
    im2 = eng_image_new_from_data(data, iw, ih, image_data,
                                            eng_image_alpha_get(data, im),
                                            eng_image_colorspace_get(data, im));
-   return im2;
+   im = im2;
+   return im;
 }
 
 static void *
@@ -1362,9 +1362,8 @@ _image_rotate_180(void *data, Image_Entry *im)
    int x, hw, iw, ih;
    Image_Entry *im2;
 
-   iw = im->w;
-   ih = im->h;
-   image_data = evas_cache_image_pixels(im);
+   eng_image_size_get(data, im, &iw, &ih);
+   im = eng_image_data_get(data, im , 1, &image_data, NULL);
    if(!image_data) return im;
    hw = iw * ih;
    x = (hw / 2);
@@ -1381,35 +1380,36 @@ _image_rotate_180(void *data, Image_Entry *im)
    im2 = eng_image_new_from_data(data, iw, ih, image_data,
                                            eng_image_alpha_get(data, im),
                                            eng_image_colorspace_get(data, im));
-   return im2;
+   im = im2;
+   return im;
 }
 
 # define GETDAT(neww, newh) \
    DATA32 *image_data, *image_data2; \
    int iw, ih, w, h; \
    Image_Entry *im2; \
-   iw = im->w; \
-   ih = im->h; \
-   image_data = evas_cache_image_pixels(im); \
+   eng_image_size_get(data, im, &iw, &ih); \
+   im = eng_image_data_get(data, im , 0, &image_data, NULL); \
    if (!image_data) return im; \
-   image_data2 = malloc(iw * ih * sizeof(int)); \
+   image_data2 = malloc(iw * ih * sizeof(DATA32) + 1); \
    if (!image_data2) { \
       return im; \
    } \
-   memcpy(image_data2, image_data, iw * ih * sizeof(int)); \
+   memcpy(image_data2, image_data, iw * ih * sizeof(DATA32)); \
    im = eng_image_new_from_data(data, iw, ih, image_data, \
                                            eng_image_alpha_get(data, im), \
                                            eng_image_colorspace_get(data, im)); \
    w = neww; h = newh; \
-   image_data = evas_cache_image_pixels(im); \
+   im = eng_image_data_get(data, im , 1, &image_data, NULL); \
 
 # define PUTDAT \
    im2 = eng_image_new_from_data(data, w, h, image_data, \
                                            eng_image_alpha_get(data, im), \
                                            eng_image_colorspace_get(data, im)); \
    im2 = eng_image_size_set(data, im2, w, h); \
+   im = im2; \
    free(image_data2); \
-   return im2; \
+   return im; \
 
 static void *
 _image_rotate_90(void *data, Image_Entry *im)
