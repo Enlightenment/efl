@@ -259,7 +259,6 @@ _evas_3d_mesh_eo_base_constructor(Eo *obj, Evas_3D_Mesh_Data *pd)
 EOLIAN static void
 _evas_3d_mesh_eo_base_destructor(Eo *obj, Evas_3D_Mesh_Data *pd)
 {
-   //evas_3d_object_unreference(&pd->base);
    _mesh_fini(pd);
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }

@@ -628,7 +628,6 @@ _node_free(Evas_3D_Object *obj)
 
         EINA_LIST_FOREACH(pd->data.mesh.meshes, l, m)
           {
-             //evas_3d_mesh_node_del(m, node);
              eo_unref(m);
           }
 
@@ -643,8 +642,6 @@ _node_free(Evas_3D_Object *obj)
 
    if (pd->scenes_camera)
      eina_hash_free(pd->scenes_camera);
-
-   //free(node);
 }
 
 void
@@ -1046,6 +1043,14 @@ _evas_3d_node_constructor(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Node_Type type
              _node_free(obj);
           }
      }
+}
+
+EOLIAN static void
+_evas_3d_node_eo_base_destructor(Eo *obj, Evas_3D_Node_Data *pd EINA_UNUSED)
+{
+   _node_free(obj);
+
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 EOLIAN static Evas_3D_Node_Type

@@ -74,8 +74,22 @@ EOLIAN static void
 _evas_3d_camera_eo_base_destructor(Eo *obj,
                                       Evas_3D_Camera_Data *pd)
 {
-   //evas_3d_object_unreference(&pd->base);
-   if (pd->nodes) eina_hash_free(pd->nodes);
+   Eina_Iterator *it = NULL;
+   void *data = NULL;
+   Evas_3D_Node_Data *node = NULL;
+
+   if (pd->nodes)
+     {
+        it = eina_hash_iterator_key_new(pd->nodes);
+        while (eina_iterator_next(it, &data))
+          {
+             node = eo_data_scope_get(data, EVAS_3D_NODE_CLASS);
+             node->data.camera.camera = NULL;
+          }
+
+        eina_hash_free(pd->nodes);
+     }
+
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 

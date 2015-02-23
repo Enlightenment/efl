@@ -161,8 +161,14 @@ static void
 _texture_fini(Evas_3D_Texture *obj)
 {
    Eo *evas = NULL;
+   int i = 0;
+   Eina_Iterator *it = NULL;
+   void *data = NULL;
+   Evas_3D_Material_Data *material = NULL;
+
    eo_do(obj, evas = evas_common_evas_get());
    Evas_3D_Texture_Data *pd = eo_data_scope_get(obj, MY_CLASS);
+
    if (pd->engine_data)
      {
         Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
@@ -173,6 +179,19 @@ _texture_fini(Evas_3D_Texture *obj)
 
    if (pd->materials)
      {
+        it = eina_hash_iterator_key_new(pd->materials);
+        EINA_ITERATOR_FOREACH(it, data)
+          {
+             material = eo_data_scope_get(data, EVAS_3D_MATERIAL_CLASS);
+             if (!material) continue;
+             for (i = 0; i < EVAS_3D_MATERIAL_ATTRIB_COUNT; i++)
+               {
+                  if (material->attribs[i].texture)
+                       evas_3d_texture_material_del(material->attribs[i].texture, data);
+               }
+          }
+        eina_iterator_free(it);
+
         eina_hash_free(pd->materials);
         pd->materials = NULL;
      }
@@ -311,7 +330,6 @@ _evas_3d_texture_eo_base_constructor(Eo *obj, Evas_3D_Texture_Data *pd EINA_UNUS
 EOLIAN static void
 _evas_3d_texture_eo_base_destructor(Eo *obj, Evas_3D_Texture_Data *pd  EINA_UNUSED)
 {
-   //evas_3d_object_unreference(&pd->base);
    _texture_fini(obj);
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }

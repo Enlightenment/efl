@@ -104,17 +104,34 @@ _evas_3d_material_eo_base_constructor(Eo *obj EINA_UNUSED, Evas_3D_Material_Data
 EOLIAN static void
 _evas_3d_material_eo_base_destructor(Eo *obj, Evas_3D_Material_Data *pd)
 {
-   int i;
+   int i = 0;
+   Eina_Iterator *it = NULL;
+   void *data = NULL;
+   Evas_3D_Mesh_Data *mesh = NULL;
+   Eina_List *l = NULL;
+   Evas_3D_Mesh_Frame *f = NULL;
 
    if (pd->meshes)
-     eina_hash_free(pd->meshes);
+     {
+        it = eina_hash_iterator_key_new(pd->meshes);
+        while (eina_iterator_next(it, &data))
+          {
+             mesh = eo_data_scope_get(data, EVAS_3D_MESH_CLASS);
+             if (mesh->frames)
+               {
+                  EINA_LIST_FOREACH(mesh->frames, l, f)
+                     f->material = NULL;
+               }
+          }
+        eina_iterator_free(it);
+        eina_hash_free(pd->meshes);
+     }
 
    for (i = 0; i < EVAS_3D_MATERIAL_ATTRIB_COUNT; i++)
      {
         if (pd->attribs[i].texture)
           {
              evas_3d_texture_material_del(pd->attribs[i].texture, obj);
-             //eo_unref(pd->attribs[i].texture);
           }
      }
    eo_do_super(obj, MY_CLASS, eo_destructor());
