@@ -781,6 +781,8 @@ typedef enum _Evas_3D_Shade_Mode
    EVAS_3D_SHADE_MODE_SHADOW_MAP_RENDER,
    /**< rendering to additional frame bufer*/
    EVAS_3D_SHADE_MODE_COLOR_PICK,
+   /**< Per-pixel parallax occlusion map shading */
+   EVAS_3D_SHADE_MODE_PARALLAX_OCCLUSION,
 } Evas_3D_Shade_Mode;
 
 /**

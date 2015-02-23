@@ -1240,13 +1240,19 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
         if (_flags_need_tex_coord(data->flags))
           BUILD(vertex_attrib,     VERTEX_TEXCOORD,     EINA_FALSE);
      }
-   else if (pdmesh->shade_mode == EVAS_3D_SHADE_MODE_NORMAL_MAP)
+   else if ((pdmesh->shade_mode == EVAS_3D_SHADE_MODE_NORMAL_MAP) ||
+            (pdmesh->shade_mode == EVAS_3D_SHADE_MODE_PARALLAX_OCCLUSION))
      {
         BUILD(vertex_attrib,     VERTEX_POSITION,     EINA_TRUE);
         BUILD(vertex_attrib,     VERTEX_NORMAL,       EINA_TRUE);
         BUILD(vertex_attrib,     VERTEX_TEXCOORD,     EINA_TRUE);
         BUILD(material_texture,  MATERIAL_NORMAL,     EINA_TRUE);
         BUILD(vertex_attrib,     VERTEX_TANGENT,      EINA_FALSE);
+
+
+        if (pdmesh->shade_mode == EVAS_3D_SHADE_MODE_NORMAL_MAP)
+          BUILD(vertex_attrib,     VERTEX_TANGENT,      EINA_FALSE);
+        else BUILD(vertex_attrib,     VERTEX_TANGENT,      EINA_TRUE);
 
         BUILD(material_color,    MATERIAL_AMBIENT,    EINA_FALSE);
         BUILD(material_color,    MATERIAL_DIFFUSE,    EINA_FALSE);

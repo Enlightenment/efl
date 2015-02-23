@@ -747,6 +747,8 @@ modules/evas/engines/gl_common/shader_3d/shadow_map_vert.shd \
 modules/evas/engines/gl_common/shader_3d/shadow_map_frag.shd \
 modules/evas/engines/gl_common/shader_3d/color_pick_vert.shd \
 modules/evas/engines/gl_common/shader_3d/color_pick_frag.shd \
+modules/evas/engines/gl_common/shader_3d/parallax_occlusion_vert.shd \
+modules/evas/engines/gl_common/shader_3d/parallax_occlusion_frag.shd \
 $(NULL)
 
 EXTRA_DIST += \
