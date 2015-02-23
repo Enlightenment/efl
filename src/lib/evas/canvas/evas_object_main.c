@@ -776,7 +776,8 @@ _evas_object_position_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coor
 
    if ((obj->cur->geometry.x == x) && (obj->cur->geometry.y == y)) return;
 
-   Evas_Map *map = (Evas_Map *)eo_do(eo_obj, evas_obj_map_get());
+   Evas_Map *map;
+   eo_do(eo_obj, map = (Evas_Map *) evas_obj_map_get());
    if (map && map->move_sync.enabled)
      {
         Evas_Coord diff_x = x - obj->cur->geometry.x;

@@ -965,7 +965,8 @@ evas_3d_node_color_node_mesh_collect(Evas_3D_Node *node, void *data)
              eo_do (node, list_meshes = (Eina_List *)evas_3d_node_mesh_list_get());
              EINA_LIST_FOREACH(list_meshes, l, mesh)
                {
-                 if (eo_do(mesh, evas_3d_mesh_color_pick_enable_get()))
+                 Eina_Bool tmp;
+                 if (eo_do_ret(mesh, tmp, evas_3d_mesh_color_pick_enable_get()))
                    {
                       color = calloc(1, sizeof(Evas_Color));
 

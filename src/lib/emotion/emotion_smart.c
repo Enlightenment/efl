@@ -370,7 +370,8 @@ _emotion_object_engine_set(Eo *obj, Emotion_Object_Data *pd, const char *engine)
 EAPI Eina_Bool
 emotion_object_file_set(Evas_Object *obj, const char *file)
 {
-   return eo_do(obj, efl_file_set(file, NULL));
+   Eina_Bool ret;
+   return eo_do_ret(obj, ret, efl_file_set(file, NULL));
 }
 
 EOLIAN static Eina_Bool
@@ -668,7 +669,8 @@ _emotion_object_efl_player_play_set(Eo *obj, Emotion_Object_Data *sd, Eina_Bool 
 EAPI Eina_Bool
 emotion_object_play_get(const Evas_Object *obj)
 {
-   return eo_do(obj, efl_player_play_get());
+   Eina_Bool ret;
+   return eo_do_ret(obj, ret, efl_player_play_get());
 }
 
 EOLIAN static Eina_Bool
@@ -706,7 +708,8 @@ _emotion_object_efl_player_position_set(Eo *obj, Emotion_Object_Data *sd, double
 EAPI double
 emotion_object_position_get(const Evas_Object *obj)
 {
-   return eo_do(obj, efl_player_position_get());
+   double ret;
+   return eo_do_ret(obj, ret, efl_player_position_get());
 }
 
 EOLIAN static double
@@ -799,7 +802,8 @@ _emotion_object_efl_image_smooth_scale_set(Eo *obj EINA_UNUSED, Emotion_Object_D
 EAPI Eina_Bool
 emotion_object_smooth_scale_get(const Evas_Object *obj)
 {
-   return eo_do(obj, efl_image_smooth_scale_get());
+   Eina_Bool ret;
+   return eo_do_ret(obj, ret, efl_image_smooth_scale_get());
 }
 
 EOLIAN static Eina_Bool
@@ -811,7 +815,8 @@ _emotion_object_efl_image_smooth_scale_get(Eo *obj EINA_UNUSED, Emotion_Object_D
 EAPI double
 emotion_object_ratio_get(const Evas_Object *obj)
 {
-   return eo_do(obj, efl_image_ratio_get());
+   double ret;
+   return eo_do_ret(obj, ret, efl_image_ratio_get());
 }
 
 EOLIAN static double
@@ -851,7 +856,8 @@ _emotion_object_efl_player_audio_volume_set(Eo *obj EINA_UNUSED, Emotion_Object_
 EAPI double
 emotion_object_audio_volume_get(const Evas_Object *obj)
 {
-   return eo_do(obj, efl_player_audio_volume_get());
+   double ret;
+   return eo_do_ret(obj, ret, efl_player_audio_volume_get());
 }
 
 EOLIAN static double
@@ -878,7 +884,8 @@ _emotion_object_efl_player_audio_mute_set(Eo *obj EINA_UNUSED, Emotion_Object_Da
 EAPI Eina_Bool
 emotion_object_audio_mute_get(const Evas_Object *obj)
 {
-   return eo_do(obj, efl_player_audio_mute_get());
+   Eina_Bool ret;
+   return eo_do_ret(obj, ret, efl_player_audio_mute_get());
 }
 
 EOLIAN static Eina_Bool
@@ -1168,7 +1175,8 @@ emotion_object_progress_info_get(const Evas_Object *obj)
 EAPI double
 emotion_object_progress_status_get(const Evas_Object *obj)
 {
-   return eo_do(obj, efl_player_progress_get());
+   double ret;
+   return eo_do_ret(obj, ret, efl_player_progress_get());
 }
 
 EOLIAN static double

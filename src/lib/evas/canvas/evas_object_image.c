@@ -4894,13 +4894,15 @@ evas_object_image_file_get(const Eo *obj, const char **file, const char **key)
 EAPI Eina_Bool
 evas_object_image_save(const Eo *obj, const char *file, const char *key, const char *flags)
 {
-   return eo_do((Eo *) obj, efl_file_save(file, key, flags));
+   Eina_Bool ret;
+   return eo_do_ret((Eo *) obj, ret, efl_file_save(file, key, flags));
 }
 
 EAPI Eina_Bool
 evas_object_image_animated_get(const Eo *obj)
 {
-   return eo_do((Eo *) obj, efl_image_animated_get());
+   Eina_Bool ret;
+   return eo_do_ret((Eo *) obj, ret, efl_image_animated_get());
 }
 
 EAPI void
@@ -4924,7 +4926,8 @@ evas_object_image_smooth_scale_set(Eo *obj, Eina_Bool smooth_scale)
 EAPI Eina_Bool
 evas_object_image_smooth_scale_get(const Eo *obj)
 {
-   return eo_do((Eo *) obj, efl_image_smooth_scale_get());
+   Eina_Bool ret;
+   return eo_do_ret((Eo *) obj, ret, efl_image_smooth_scale_get());
 }
 
 #include "canvas/evas_image.eo.c"

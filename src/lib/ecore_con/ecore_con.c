@@ -108,7 +108,8 @@ static void        _ecore_con_lookup_done(void *data,
 static const char *_ecore_con_pretty_ip(struct sockaddr *client_addr);
 
 #define EO_CONSTRUCTOR_CHECK_RETURN(obj) do { \
-     if (eo_do(obj, eo_finalized_get())) \
+     Eina_Bool finalized; \
+     if (eo_do_ret(obj, finalized, eo_finalized_get())) \
        { \
           ERR("This function is only allowed during construction."); \
           return; \
@@ -554,7 +555,8 @@ _ecore_con_server_ecore_con_base_timeout_set(Eo *obj, Ecore_Con_Server_Data *svr
 EAPI double
 ecore_con_server_timeout_get(const Ecore_Con *obj)
 {
-   return eo_do((Ecore_Con *)obj, ecore_con_obj_timeout_get());
+   double ret;
+   return eo_do_ret((Ecore_Con *)obj, ret, ecore_con_obj_timeout_get());
 }
 
 EOLIAN static double
@@ -607,7 +609,8 @@ ecore_con_server_data_set(Ecore_Con_Server *obj,
 EAPI Eina_Bool
 ecore_con_server_connected_get(const Ecore_Con *obj)
 {
-   return eo_do((Ecore_Con *)obj, ecore_con_obj_connected_get());
+   Eina_Bool ret;
+   return eo_do_ret((Ecore_Con *)obj, ret, ecore_con_obj_connected_get());
 }
 
 EOLIAN static Eina_Bool
@@ -656,7 +659,8 @@ _ecore_con_server_name_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *svr)
 EAPI int
 ecore_con_server_port_get(const Ecore_Con *obj)
 {
-   return eo_do((Ecore_Con *)obj, ecore_con_obj_port_get());
+   int ret;
+   return eo_do_ret((Ecore_Con *)obj, ret, ecore_con_obj_port_get());
 }
 
 EOLIAN static void
@@ -676,7 +680,8 @@ _ecore_con_server_ecore_con_base_port_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_
 EAPI int
 ecore_con_server_send(Ecore_Con *obj, const void *data, int size)
 {
-   return eo_do((Ecore_Con *)obj, ecore_con_obj_send(data, size));
+   int ret;
+   return eo_do_ret((Ecore_Con *)obj, ret, ecore_con_obj_send(data, size));
 }
 
 EOLIAN static int
@@ -732,7 +737,8 @@ _ecore_con_server_client_limit_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Data *s
 EAPI const char *
 ecore_con_server_ip_get(const Ecore_Con *obj)
 {
-   return eo_do(obj, ecore_con_obj_ip_get());
+   const char *ret;
+   return eo_do_ret(obj, ret, ecore_con_obj_ip_get());
 }
 
 EOLIAN static const char *
@@ -744,7 +750,8 @@ _ecore_con_server_ecore_con_base_ip_get(Eo *obj EINA_UNUSED, Ecore_Con_Server_Da
 EAPI double
 ecore_con_server_uptime_get(const Ecore_Con *obj)
 {
-   return eo_do(obj, ecore_con_obj_uptime_get());
+   double ret;
+   return eo_do_ret(obj, ret, ecore_con_obj_uptime_get());
 }
 
 EOLIAN static double
@@ -785,7 +792,8 @@ _ecore_con_server_ecore_con_base_flush(Eo *obj, Ecore_Con_Server_Data *svr EINA_
 EAPI int
 ecore_con_client_send(Ecore_Con *obj, const void *data, int size)
 {
-   return eo_do((Ecore_Con *)obj, ecore_con_obj_send(data, size));
+   int ret;
+   return eo_do_ret((Ecore_Con *)obj, ret, ecore_con_obj_send(data, size));
 }
 
 EOLIAN static int
@@ -852,7 +860,8 @@ _ecore_con_client_ecore_con_base_connected_get(Eo *obj EINA_UNUSED, Ecore_Con_Cl
 EAPI Eina_Bool
 ecore_con_client_connected_get(const Ecore_Con *obj)
 {
-   return eo_do((Ecore_Con *)obj, ecore_con_obj_connected_get());
+   Eina_Bool ret;
+   return eo_do_ret((Ecore_Con *)obj, ret, ecore_con_obj_connected_get());
 }
 
 EOLIAN static void
@@ -878,7 +887,8 @@ _ecore_con_client_ecore_con_base_timeout_get(Eo *obj EINA_UNUSED, Ecore_Con_Clie
 EAPI double
 ecore_con_client_timeout_get(const Ecore_Con *obj)
 {
-   return eo_do((Ecore_Con *)obj, ecore_con_obj_timeout_get());
+   double ret;
+   return eo_do_ret((Ecore_Con *)obj, ret, ecore_con_obj_timeout_get());
 }
 
 EAPI void *
@@ -929,7 +939,8 @@ _ecore_con_client_ecore_con_base_ip_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Da
 EAPI const char *
 ecore_con_client_ip_get(const Ecore_Con *obj)
 {
-   return eo_do(obj, ecore_con_obj_ip_get());
+   const char *ret;
+   return eo_do_ret(obj, ret, ecore_con_obj_ip_get());
 }
 
 EOLIAN static int
@@ -947,7 +958,8 @@ _ecore_con_client_ecore_con_base_port_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_
 EAPI int
 ecore_con_client_port_get(const Ecore_Con *obj)
 {
-   return eo_do((Ecore_Con *)obj, ecore_con_obj_port_get());
+   int ret;
+   return eo_do_ret((Ecore_Con *)obj, ret, ecore_con_obj_port_get());
 }
 
 EOLIAN static double
@@ -959,7 +971,8 @@ _ecore_con_client_ecore_con_base_uptime_get(Eo *obj EINA_UNUSED, Ecore_Con_Clien
 EAPI double
 ecore_con_client_uptime_get(const Ecore_Con *obj)
 {
-   return eo_do(obj, ecore_con_obj_uptime_get());
+   double ret;
+   return eo_do_ret(obj, ret, ecore_con_obj_uptime_get());
 }
 
 EOLIAN static void
@@ -977,7 +990,8 @@ ecore_con_client_flush(Ecore_Con *obj)
 EAPI int
 ecore_con_server_fd_get(const Ecore_Con *obj)
 {
-   return eo_do((Ecore_Con *)obj, ecore_con_obj_fd_get());
+   int ret;
+   return eo_do_ret((Ecore_Con *)obj, ret, ecore_con_obj_fd_get());
 }
 
 EOLIAN static int
@@ -997,7 +1011,8 @@ _ecore_con_client_ecore_con_base_fd_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Da
 EAPI int
 ecore_con_client_fd_get(const Ecore_Con *obj)
 {
-   return eo_do((Ecore_Con *)obj, ecore_con_obj_fd_get());
+   int ret;
+   return eo_do_ret((Ecore_Con *)obj, ret, ecore_con_obj_fd_get());
 }
 
 /**

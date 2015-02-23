@@ -2573,7 +2573,8 @@ evas_object_text_text_set(Eo *obj, const char *text)
 EAPI const char *
 evas_object_text_text_get(const Eo *obj)
 {
-   return eo_do((Eo *) obj, efl_text_get());
+   const char *ret;
+   return eo_do_ret((Eo *) obj, ret, efl_text_get());
 }
 
 #include "canvas/evas_text.eo.c"

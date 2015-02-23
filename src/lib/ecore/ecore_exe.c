@@ -95,7 +95,7 @@ EOLIAN static Eo *
 _ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   obj = eo_do_super(obj, MY_CLASS, eo_finalize());
+   eo_do_super(obj, MY_CLASS, obj = eo_finalize());
 
    if (!obj)
       return obj;

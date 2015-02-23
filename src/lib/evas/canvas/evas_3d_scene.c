@@ -664,7 +664,7 @@ _evas_3d_scene_pick(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
         scene_data.shadows_enabled = pd->shadows_enabled;
         scene_data.camera_node = pd->camera_node;
         scene_data.color_pick_enabled = pd->color_pick_enabled;
-        update_scene = eo_do(obj, evas_3d_object_dirty_get(EVAS_3D_STATE_SCENE_UPDATED));
+        eo_do(obj, update_scene = evas_3d_object_dirty_get(EVAS_3D_STATE_SCENE_UPDATED));
         if (update_scene)
           {
              if (pd->node_mesh_colors)
@@ -792,17 +792,18 @@ _evas_3d_scene_pick_member_list_get(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x
    Eina_Bool pick = EINA_FALSE;
 
    /* Check pick for given scene. */
-   pick = eo_do(obj, evas_3d_scene_pick(x, y, NULL, NULL, NULL, NULL));
+   eo_do(obj, pick = evas_3d_scene_pick(x, y, NULL, NULL, NULL, NULL));
 
    if (!pick)
      return NULL;
 
    /* Get all members from root node. */
-   list = eo_do(pd->root_node, evas_3d_node_member_list_get());
+   eo_do(pd->root_node, list = evas_3d_node_member_list_get());
 
    EINA_LIST_FOREACH(list, l, node)
      {
-        if (eo_do(obj, evas_3d_scene_exist(x, y, node)))
+        Evas_3D_Node *exists;
+        if (eo_do_ret(obj, exists, evas_3d_scene_exist(x, y, node)))
           picked_nodes = eina_list_append(picked_nodes, l);
      }
 
