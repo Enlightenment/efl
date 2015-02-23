@@ -984,11 +984,13 @@ EOLIAN static void
 _elm_datetime_field_limit_set(Eo *obj, Elm_Datetime_Data *sd, Elm_Datetime_Field_Type fieldtype, int min, int max)
 {
    Datetime_Field *field;
+   struct tm old_time;
 
    if (fieldtype >= ELM_DATETIME_AMPM) return;
 
    if (min > max) return;
 
+   old_time = sd->curr_time;
    field = sd->field_list + fieldtype;
    if (((min >= mapping[fieldtype].def_min) &&
         (min <= mapping[fieldtype].def_max)) ||
@@ -1000,6 +1002,9 @@ _elm_datetime_field_limit_set(Eo *obj, Elm_Datetime_Data *sd, Elm_Datetime_Field
      field->max = max;
 
    _apply_field_limits(obj);
+
+   if (!_date_cmp(&old_time, &sd->curr_time))
+     evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
 }
 
 EOLIAN static Eina_Bool
