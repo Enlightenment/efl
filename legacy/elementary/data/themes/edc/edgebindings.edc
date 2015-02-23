@@ -38,6 +38,7 @@ group { name: "e/modules/conf_edgebindings/selection";
          type: SWALLOW;
          description { state: "default" 0.0;
             min: 160 120;
+            align: 0 0.5;
             rel1.offset: 4 4;
             rel2.relative: 0.5 1.0;
             rel2.offset: -2 -5;
@@ -201,6 +202,7 @@ group { name: "e/modules/conf_edgebindings/selection";
       }
       part { name: "e.swallow.slider"; type: SWALLOW;
          description { state: "default" 0.0;
+            align: 0 0.0;
             rel1 {
                relative: 1 1;
                offset: 5 1;
