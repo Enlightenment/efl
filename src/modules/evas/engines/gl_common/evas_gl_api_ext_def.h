@@ -14,6 +14,7 @@
 
 // Driver extensions to wrap (name : SPEC extension name)
 #define _EVASGL_EXT_DRVNAME(name)
+#define _EVASGL_EXT_DRVNAME_PRIVATE(name)
 #define _EVASGL_EXT_DRVNAME_DESKTOP(deskname)
 
 // These functions will be exported to 'EVAS extension function'.
@@ -43,6 +44,11 @@
 
 #endif
 //////////////////////////////////////////////////////////////////////////////////////////////////
+
+#ifndef _EVASGL_EXT_DRVNAME_PRIVATE
+#define _EVASGL_EXT_DRVNAME_PRIVATE(name) _EVASGL_EXT_DRVNAME(name)
+#define _EVASGL_EXT_DRVNAME_PRIVATE_DEFINED
+#endif
 
 #ifndef _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN
 #define _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(ret, name, param) _EVASGL_EXT_FUNCTION_BEGIN(ret, name, param)
@@ -301,8 +307,8 @@ _EVASGL_EXT_BEGIN(EXT_multisampled_render_to_texture)
 _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(multisampled_render_to_texture)
-	_EVASGL_EXT_DRVNAME(GL_IMG_multisampled_render_to_texture)
-	_EVASGL_EXT_DRVNAME(GL_EXT_multisampled_render_to_texture)
+	_EVASGL_EXT_DRVNAME_PRIVATE(GL_IMG_multisampled_render_to_texture)
+	_EVASGL_EXT_DRVNAME_PRIVATE(GL_EXT_multisampled_render_to_texture)
 
 	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(void, glRenderbufferStorageMultisample, (GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height))
                 _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("glRenderbufferStorageMultisample")
@@ -1354,8 +1360,8 @@ _EVASGL_EXT_END()
 
 // ----------------------------------------------------------
 _EVASGL_EXT_BEGIN(framebuffer_blit)
-_EVASGL_EXT_DRVNAME(GL_NV_framebuffer_blit)
-_EVASGL_EXT_DRVNAME(GL_ANGLE_framebuffer_blit)
+_EVASGL_EXT_DRVNAME_PRIVATE(GL_NV_framebuffer_blit)
+_EVASGL_EXT_DRVNAME_PRIVATE(GL_ANGLE_framebuffer_blit)
 
 _EVASGL_EXT_FUNCTION_WHITELIST("glBlitFramebuffer")
 _EVASGL_EXT_FUNCTION_WHITELIST("glBlitFramebufferNV")
@@ -1548,9 +1554,9 @@ _EVASGL_EXT_END()
 _EVASGL_EXT_BEGIN(EGL_KHR_fence_sync)
 
         /* 3 aliasses for EGL_KHR_fence_sync */
-	_EVASGL_EXT_DRVNAME(EGL_KHR_fence_sync)
-        _EVASGL_EXT_DRVNAME(GL_OES_EGL_sync)
-        _EVASGL_EXT_DRVNAME(VG_KHR_EGL_sync)
+	_EVASGL_EXT_DRVNAME_PRIVATE(EGL_KHR_fence_sync)
+        _EVASGL_EXT_DRVNAME_PRIVATE(GL_OES_EGL_sync)
+        _EVASGL_EXT_DRVNAME_PRIVATE(VG_KHR_EGL_sync)
 
 	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(void *, eglCreateSyncKHR, (EGLDisplay dpy, EGLenum type, const EGLint *attrib_list))
                 _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglCreateSyncKHR")
@@ -1715,12 +1721,18 @@ _EVASGL_EXT_END()
 #undef _EVASGL_EXT_FUNCTION_PRIVATE_END_DEFINED
 #endif
 
+#ifdef _EVASGL_EXT_DRVNAME_PRIVATE_DEFINED
+#undef _EVASGL_EXT_DRVNAME_PRIVATE
+#undef _EVASGL_EXT_DRVNAME_PRIVATE_DEFINED
+#endif
+
 #ifdef _EVASGL_EXT_USE_DEFAULT_DEFINE
 #undef _EVASGL_EXT_CHECK_SUPPORT
 #undef _EVASGL_EXT_DISCARD_SUPPORT
 #undef _EVASGL_EXT_BEGIN
 #undef _EVASGL_EXT_END
 #undef _EVASGL_EXT_DRVNAME
+#undef _EVASGL_EXT_DRVNAME_PRIVATE
 #undef _EVASGL_EXT_FUNCTION_BEGIN
 #undef _EVASGL_EXT_FUNCTION_END
 #undef _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN
