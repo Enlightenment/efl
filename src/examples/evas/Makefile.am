@@ -277,6 +277,11 @@ evas_3d_colorpick_SOURCES = evas-3d-colorpick.c
 evas_3d_colorpick_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_colorpick_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_3d_parallax_occlusion
+evas_3d_parallax_occlusion_SOURCES = evas-3d-parallax-occlusion.c evas-3d-primitives.c
+evas_3d_parallax_occlusion_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
+evas_3d_parallax_occlusion_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 EXTRA_PROGRAMS += evas_gl
 evas_gl_SOURCES = evas-gl.c
 evas_gl_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
