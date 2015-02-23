@@ -373,6 +373,9 @@ static void st_collections_group_parts_part_description_properties_material(void
 static void st_collections_group_parts_part_description_properties_normal(void);
 static void st_collections_group_parts_part_description_properties_shininess(void);
 static void st_collections_group_parts_part_description_properties_shade(void);
+static void st_collections_group_parts_part_description_orientation_look1(void);
+static void st_collections_group_parts_part_description_orientation_look2(void);
+static void st_collections_group_parts_part_description_orientation_look_to(void);
 
 #ifdef HAVE_EPHYSICS
 static void st_collections_group_parts_part_description_physics_mass(void);
@@ -522,6 +525,43 @@ static void st_collections_group_nobroadcast(void);
      PROGRAM_BASE(PREFIX) \
      PROGRAM_BASE(PREFIX".programs")
 
+#define SET_LOOK1(Type, type_node)                                              \
+    Edje_Part_Description_##Type *ed;                                           \
+   ed = (Edje_Part_Description_##Type*) current_desc;                           \
+                                                                                \
+   if (ed->type_node.orientation.type <= EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_AT) \
+     {                                                                          \
+        ed->type_node.orientation.data[0] = FROM_DOUBLE(parse_float(0));        \
+        ed->type_node.orientation.data[1] = FROM_DOUBLE(parse_float(1));        \
+        ed->type_node.orientation.data[2] = FROM_DOUBLE(parse_float(2));        \
+        ed->type_node.orientation.type = EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_AT; \
+     }
+
+#define SET_LOOK2(Type, type_node)                                              \
+    Edje_Part_Description_##Type *ed;                                           \
+   ed = (Edje_Part_Description_##Type*) current_desc;                           \
+                                                                                \
+   if (ed->type_node.orientation.type <= EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_AT) \
+     {                                                                          \
+        ed->type_node.orientation.data[3] = FROM_DOUBLE(parse_float(0));        \
+        ed->type_node.orientation.data[4] = FROM_DOUBLE(parse_float(1));        \
+        ed->type_node.orientation.data[5] = FROM_DOUBLE(parse_float(2));        \
+        ed->type_node.orientation.type = EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_AT; \
+     }
+
+#define SET_LOOK_TO(list, Type, type_node)                                           \
+   Edje_Part_Description_##Type *ed;                                                 \
+   char *name;                                                                       \
+                                                                                     \
+   ed = (Edje_Part_Description_##Type*) current_desc;                                \
+                                                                                     \
+   if (ed->type_node.orientation.type <= EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_TO)      \
+     {                                                                               \
+        name = parse_str(0);                                                         \
+        data_queue_part_lookup(list, name, &(ed->type_node.orientation.look_to));    \
+        free(name);                                                                  \
+        ed->type_node.orientation.type = EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_TO;      \
+     }
 
 New_Statement_Handler statement_handlers[] =
 {
@@ -733,6 +773,9 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.properties.normal", st_collections_group_parts_part_description_properties_normal},
      {"collections.group.parts.part.description.properties.shininess", st_collections_group_parts_part_description_properties_shininess},
      {"collections.group.parts.part.description.properties.shade", st_collections_group_parts_part_description_properties_shade},
+     {"collections.group.parts.part.description.orientation.look1", st_collections_group_parts_part_description_orientation_look1},
+     {"collections.group.parts.part.description.orientation.look2", st_collections_group_parts_part_description_orientation_look2},
+     {"collections.group.parts.part.description.orientation.look_to", st_collections_group_parts_part_description_orientation_look_to},
 
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
@@ -9481,6 +9524,161 @@ st_collections_group_parts_part_description_properties_shade(void)
         exit(-1);
      }
 }
+
+/**
+   @edcsubsection{collections_group_parts_description_orientation,Orientation}
+ */
+
+/**
+    @page edcref
+
+    @block
+        orientation
+    @context
+        part {
+            description {
+                ..
+                orientation {
+                   look1:        [x] [y] [z];
+                   look2:        [x] [y] [z];
+                   look_to:      [another part's name];
+                   angle_axis:   [w] [x] [y] [z];
+                   quaternion:   [x] [y] [z] [w];
+                }
+                ..
+            }
+        }
+    @description
+        The orientation block defines an orientation of CAMERA, LIGHT or MESH_NODE in the scene.
+    @endblock
+
+    @property
+        look1
+    @parameters
+        [x] [y] [z]
+    @effect
+        Indicates a target point for CAMERA and MESH_NODE or for LIGHt to see or
+        to illuminate.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_orientation_look1(void)
+{
+   check_arg_count(3);
+
+   switch (current_part->type)
+     {
+      case EDJE_PART_TYPE_CAMERA:
+        {
+           SET_LOOK1(Camera, camera);
+           break;
+        }
+      case EDJE_PART_TYPE_LIGHT:
+        {
+           SET_LOOK1(Light, light);
+           break;
+        }
+      case EDJE_PART_TYPE_MESH_NODE:
+        {
+           SET_LOOK1(Mesh_Node, mesh_node);
+           break;
+        }
+      default:
+        {
+           ERR("parse error %s:%i. camera, light and mesh_node  attributes in non-CAMERA, non-LIGHT and non-MESH_NODE part.",
+               file_in, line - 1);
+           exit(-1);
+        }
+     }
+}
+
+/**
+    @page edcref
+    @property
+        look2
+    @parameters
+        [x] [y] [z]
+    @effect
+        Specifies the angle at which the target point will be caught.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_orientation_look2(void)
+{
+   check_arg_count(3);
+
+   switch (current_part->type)
+     {
+      case EDJE_PART_TYPE_CAMERA:
+        {
+           SET_LOOK2(Camera, camera);
+           break;
+        }
+      case EDJE_PART_TYPE_LIGHT:
+        {
+           SET_LOOK2(Light, light);
+           break;
+        }
+      case EDJE_PART_TYPE_MESH_NODE:
+        {
+           SET_LOOK2(Mesh_Node, mesh_node);
+           break;
+        }
+      default:
+        {
+           ERR("parse error %s:%i. camera, light and mesh_node  attributes in non-CAMERA, non-LIGHT and non-MESH_NODE part.",
+               file_in, line - 1);
+           exit(-1);
+        }
+     }
+}
+
+/**
+    @page edcref
+    @property
+        look_to
+    @parameters
+        [another part's name]
+    @effect
+        Indicates another part to make target of CAMERA, LIGHT or MESH_NODE
+        or LIGHT.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_orientation_look_to(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+
+   switch (current_part->type)
+     {
+      case EDJE_PART_TYPE_CAMERA:
+        {
+           SET_LOOK_TO(pc, Camera, camera);
+           break;
+        }
+      case EDJE_PART_TYPE_LIGHT:
+        {
+           SET_LOOK_TO(pc, Light, light);
+           break;
+        }
+      case EDJE_PART_TYPE_MESH_NODE:
+        {
+           SET_LOOK_TO(pc, Mesh_Node, mesh_node);
+           break;
+        }
+      default:
+        {
+           ERR("parse error %s:%i. camera, light and mesh_node  attributes in non-CAMERA, non-LIGHT and non-MESH_NODE part.",
+               file_in, line - 1);
+           exit(-1);
+        }
+     }
+}
+
 
 static void
 st_collections_group_parts_part_description_proxy_source_visible(void)
