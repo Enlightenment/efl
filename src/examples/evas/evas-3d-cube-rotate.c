@@ -1,14 +1,16 @@
-/*
-* This example shows how the work of events with callback of the mouse could be useful in node rotation.
-*
-* After clicking the mouse on cube callbacks began to emit autmatically,
-* depending on mouse's position change the cube rotates with a certain
-* speed while mouse is still on the cube, also rotation slows down when
-* leaving the boundaries of the cube, all this goes on while the mouse
-* is pressed. Note, that rotation is taking place around one axis only.
-*
-* Compile with "gcc -o evas-3d-cube-rotate evas-3d-cube-rotate.c -g `pkg-config --libs --cflags evas ecore ecore-evas eo` -lm"
-*/
+/**
+ * This example shows how the work of events with callback of the mouse could be useful in node rotation.
+ *
+ * After clicking the mouse on cube callbacks began to emit autmatically,
+ * depending on mouse's position change the cube rotates with a certain
+ * speed while mouse is still on the cube, also rotation slows down when
+ * leaving the boundaries of the cube, all this goes on while the mouse
+ * is pressed. Note, that rotation is taking place around one axis only.
+ *
+ * @verbatim
+ * gcc -o evas-3d-cube-rotate evas-3d-cube-rotate.c -g `pkg-config --libs --cflags evas ecore ecore-evas eo` -lm
+ * @endverbatim
+ */
 
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT

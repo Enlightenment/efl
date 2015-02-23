@@ -17,17 +17,6 @@
 #include <stdio.h>
 #include <errno.h>
 
-/*
- * Simple example illustrating usage of evas_init() and
- * evas_shutdown().  Usually one would instantiate a canvas to have
- * something useful out of Evas. For an example of this kind, see the
- * evas-buffer-simple.c, which requires the buffer engine module
- * compiled in Evas.
- *
- * Here, we are just listing the engine Evas was compiled with support
- * to.
- */
-
 int
 main(void)
 {

@@ -1,9 +1,12 @@
-﻿/*
+﻿/**
  * This example shows how to get and draw axis-aligned bounding box.
-
+ * 
  * @see _mesh_aabb(Evas_3D_Mesh **mesh_b, const Evas_3D_Node *node);
  * Rotate axises (keys 1-4) for model and bounding box view from another angle.
- * Compile with "gcc -o evas-3d-aabb evas-3d-aabb.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`"
+ *
+ * @verbatim
+ * gcc -o evas-3d-aabb evas-3d-aabb.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`
+ * @endverbatim
  */
 
 #ifdef HAVE_CONFIG_H

@@ -1,11 +1,13 @@
-/*
+/**
  * This example illustrating use of shadows in the scene and callbacks(clicked, collision).
  * Model and cube are clickable. Model detects collision with sphere.
  * Cube detects collision with sphere, model and cone.
  * @see evas_3d_scene_shadows_enable_set(Eina_Bool _shadows_enabled)
  * @see evas_3d_object_callback_register
  *
- * Compile with gcc -o gcc -o evas-3d-shadows evas-3d-shadows.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo eina` -lm
+ * @verbatim
+ * gcc -o gcc -o evas-3d-shadows evas-3d-shadows.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo eina` -lm
+ * @endverbatim
  */
 
 #ifdef HAVE_CONFIG_H

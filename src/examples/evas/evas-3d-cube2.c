@@ -1,3 +1,12 @@
+/**
+ * Simple Evas-3D example illustrating usage of normal mapping and animation created
+ * by interpolation between frames.
+ *
+ * @verbatim
+ * gcc -o evas-3d-cube2 evas-3d-cube2.c `pkg-config --libs --cflags evas ecore ecore-evas eo`
+ * @endverbatim
+ */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else

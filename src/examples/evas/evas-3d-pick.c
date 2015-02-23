@@ -1,3 +1,15 @@
+/**
+ * This example shows how to attach mechanism of pick. 
+ *
+ * Here shown which transformation should be applied to event_info of 
+ * _on_mouse_down to make them usable in evas_3d_scene_pick()
+ * and parameters which can be got from this function.
+ *
+ * @verbatim
+ * gcc -o evas-3d-pick evas-3d-pick.c `pkg-config --libs --cflags evas ecore ecore-evas eo` -lm
+ * @endverbatim
+ */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else

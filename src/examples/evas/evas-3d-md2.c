@@ -1,3 +1,11 @@
+/**
+ * Simple Evas-3D example illustrating import from .md2 format.
+ *
+ * @verbatim
+ * gcc -o evas-3d-md2 evas-3d-md2.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`
+ * @endverbatim
+ */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else

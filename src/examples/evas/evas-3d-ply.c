@@ -1,15 +1,15 @@
 /**
-* Simple Evas example illustrating import/export of .ply format.
-*
-* Read meshes from "tested_man_all_with_mods.ply", "tested_man_only_geometry.ply" and "tested_man_without_UVs.ply".
-* After that cheange some properties of material.
-* After that save material to "saved_man.mtl"
-* and geometry to "saved_man_all_with_mods.ply", "saved_man_only_geometry.ply" and "saved_man_without_UVs.ply".
-*
-* @verbatim
-* gcc -o evas-3d-ply evas-3d-ply.c `pkg-config --libs --cflags efl evas ecore ecore-evas ecore-file eo`
-* @endverbatim
-*/
+ * Simple Evas example illustrating import/export of .ply format.
+ *
+ * Read meshes from "tested_man_all_with_mods.ply", "tested_man_only_geometry.ply" and "tested_man_without_UVs.ply".
+ * After that cheange some properties of material.
+ * After that save material to "saved_man.mtl"
+ * and geometry to "saved_man_all_with_mods.ply", "saved_man_only_geometry.ply" and "saved_man_without_UVs.ply".
+ *
+ * @verbatim
+ * gcc -o evas-3d-ply evas-3d-ply.c `pkg-config --libs --cflags efl evas ecore ecore-evas ecore-file eo`
+ * @endverbatim
+ */
 //TODO new resources
 
 #ifdef HAVE_CONFIG_H

@@ -1,3 +1,14 @@
+/**
+ * Simple Evas example illustrating usage of multi touch.
+ *
+ * You'll need at least one engine built for it (excluding the buffer
+ * one) and the png image loader also built.
+ *
+ * @verbatim
+ * gcc -o evas-multi-touch evas-multi-touch.c `pkg-config --libs --cflags evas ecore ecore-evas eina` -lm
+ * @endverbatim
+ */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif

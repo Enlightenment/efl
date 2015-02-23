@@ -1,4 +1,4 @@
-﻿/*
+﻿/**
  * This example shows how to use color pick algorithm for finding node at scene.
  * Enable color pick mode of meshes and scene objects.
  * Click (left for color pick, right for geometry pick) on 3D object and see
@@ -7,7 +7,10 @@
  * Use key LEFT/RIGHT for scale each node
  * Use shortcut parameters of commanline: r - rows of objects, c - columns of objects, m - path for model name,
  * f - path for first texture, s - path for second texture.
- * Compile with "gcc -o evas-3d-colorpick evas-3d-colorpick.c `pkg-config --libs --cflags evas ecore ecore-evas eo eina efl`"
+ * 
+ * @verbatim
+ * gcc -o evas-3d-colorpick evas-3d-colorpick.c `pkg-config --libs --cflags evas ecore ecore-evas eo eina efl`
+ * @endverbatim
  */
 //TODO new resources
 

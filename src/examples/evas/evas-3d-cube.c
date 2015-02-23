@@ -1,3 +1,13 @@
+/**
+ * Simple Evas-3D example illustrating how to create simple mesh without any loading.
+ *
+ * This example is the best to start introduction to usage of Evas-3D.
+ *
+ * @verbatim
+ * gcc -o evas-3d-cube evas-3d-cube.c `pkg-config --libs --cflags evas ecore ecore-evas eo`
+ * @endverbatim
+ */
+
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 

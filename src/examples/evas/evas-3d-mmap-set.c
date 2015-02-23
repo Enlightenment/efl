@@ -1,14 +1,14 @@
 /**
-* Simple Evas example illustrating import from mmap.
-*
-* Open files to Eina_Files.
-* Read meshes from Eina_Files.
-* Show the results.
-*
-* @verbatim
-* gcc -o evas-3d-mmap-set evas-3d-mmap-set.c `pkg-config --libs --cflags evas ecore ecore-evas eina eo` -lm
-* @endverbatim
-*/
+ * Simple Evas example illustrating import from mmap.
+ *
+ * Open files to Eina_Files.
+ * Read meshes from Eina_Files.
+ * Show the results.
+ *
+ * @verbatim
+ * gcc -o evas-3d-mmap-set evas-3d-mmap-set.c `pkg-config --libs --cflags evas ecore ecore-evas eina eo` -lm
+ * @endverbatim
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

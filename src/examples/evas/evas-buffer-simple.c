@@ -4,13 +4,11 @@
  * You must have Evas compiled with the buffer engine, and have the
  * evas-software-buffer pkg-config files installed.
  *
- * Compile with:
- *
  * @verbatim
  * gcc -o evas-buffer-simple evas-buffer-simple.c `pkg-config --libs --cflags evas evas-software-buffer`
  * @endverbatim
- *
  */
+
 #include <Evas.h>
 #include <Evas_Engine_Buffer.h>
 #include <stdio.h>
@@ -28,6 +26,7 @@
  * automatic render of updates (draw_scene()) when system goes back to
  * main loop.
  */
+
 static Evas *create_canvas(int width, int height);
 static void destroy_canvas(Evas *canvas);
 static void draw_scene(Evas *canvas);

@@ -1,17 +1,17 @@
 /**
-* Simple Evas example illustrating import/export of .obj format.
-* Example demonstrate possibility to load and save mesh without tex_coords or/and normals.
-*
-* Read mesh from "sweet_home(parameters).obj".
-* After that cheange some properties of material.
-* After that save material to "saved_files/saved_home(parameters).mtl"
-* and geometry to "saved_files/saved_home(parameters).obj".
-* If material was not set it will be not saved.
-*
-* @verbatim
-* gcc -o evas-3d-obj evas-3d-obj.c `pkg-config --libs --cflags efl evas ecore ecore-evas ecore-file eo`
-* @endverbatim
-*/
+ * Simple Evas example illustrating import/export of .obj format.
+ * Example demonstrate possibility to load and save mesh without tex_coords or/and normals.
+ *
+ * Read mesh from "sweet_home(parameters).obj".
+ * After that cheange some properties of material.
+ * After that save material to "saved_files/saved_home(parameters).mtl"
+ * and geometry to "saved_files/saved_home(parameters).obj".
+ * If material was not set it will be not saved.
+ *
+ * @verbatim
+ * gcc -o evas-3d-obj evas-3d-obj.c `pkg-config --libs --cflags efl evas ecore ecore-evas ecore-file eo`
+ * @endverbatim
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

@@ -1,3 +1,13 @@
+/**
+ * Evas-3D example illustrating usage of evas_3d_texture_source_set()
+ *
+ * Data which will be used as texture can be generated directly in application.
+ *
+ * @verbatim
+ * gcc -o evas-3d-proxy evas-3d-proxy.c `pkg-config --libs --cflags evas ecore ecore-evas eo`
+ * @endverbatim
+ */
+
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 

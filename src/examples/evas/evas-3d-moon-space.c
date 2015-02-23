@@ -1,20 +1,21 @@
-/*
-* This example illustrates the work of different callbacks of events from mouse
-* and keyboard.
-*
-* Next tests are available:
-* 1. All animations of scene will stop on mouse click on the background.
-* 2. Clicking of any object on scene causes stop of its movement, but if click on
-* the moon while it is in front of a planet will stop them both.
-* 3. Camera position can be changed by pressing 'down' or 'up' key. Position of
-* the camera changes in the respective direction.
-* 4. The 'n' key pressing returns camera to its default position.
-* 5. One of four types of vertex assembly of planet could be chosen by clicking on
-* a number from 1 to 4 on keyboard.
-
-* Compile with:
-* gcc -o evas-3d-moon-space evas-3d-moon-space.c -g `pkg-config --libs --cflags evas ecore ecore-evas eo` -lm
-*/
+/**
+ * This example illustrates the work of different callbacks of events from mouse
+ * and keyboard.
+ *
+ * Next tests are available:
+ * 1. All animations of scene will stop on mouse click on the background.
+ * 2. Clicking of any object on scene causes stop of its movement, but if click on
+ * the moon while it is in front of a planet will stop them both.
+ * 3. Camera position can be changed by pressing 'down' or 'up' key. Position of
+ * the camera changes in the respective direction.
+ * 4. The 'n' key pressing returns camera to its default position.
+ * 5. One of four types of vertex assembly of planet could be chosen by clicking on
+ * a number from 1 to 4 on keyboard.
+ *
+ * @verbatim
+ * gcc -o evas-3d-moon-space evas-3d-moon-space.c -g `pkg-config --libs --cflags evas ecore ecore-evas eo` -lm
+ * @endverbatim
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

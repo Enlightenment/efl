@@ -1,4 +1,13 @@
-//Add Evas_GL.h for Evas GL APIs access.
+/**
+ * Evas example illustrating work with GL APIs.
+ *
+ * Evas_GL.h should be added for Evas GL APIs access.
+ *
+ * @verbatim
+ * gcc -o evas-gl evas-gl.c `pkg-config --libs --cflags evas ecore ecore-evas` -lm
+ * @endverbatim
+ */
+
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Evas_GL.h>

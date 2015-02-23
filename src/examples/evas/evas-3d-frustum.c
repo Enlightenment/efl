@@ -1,4 +1,4 @@
-/*
+/**
  * This example shows how to work frustum culling.
  * Use 'w'/'s' key to move far frustum plane from/to the camera.
  * Use 't'/'g' key to move near frustum plane from/to the camera.
@@ -8,7 +8,10 @@
  * Use 'z', 'x', 'c', 'Z', 'X' and 'C' keys to change scaling constants of mesh.
  * See in terminal output value distance to far plane of frustum and value of visibility of node
  * @see evas_3d_camera_node_visible_get.
- * Compile with "gcc -o evas-3d-frustum evas-3d-frustum.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm"
+ * 
+ * @verbatim
+ * gcc -o evas-3d-frustum evas-3d-frustum.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
+ * @endverbatim
  */
 
 #ifdef HAVE_CONFIG_H

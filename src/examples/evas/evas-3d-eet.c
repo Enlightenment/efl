@@ -1,17 +1,17 @@
 /**
-* Simple Evas example illustrating .eet import/export
-*
-* Take mesh from md2.
-* Set material to it.
-* Show it in left side.
-* Save the first frame of this mesh to eet. (static only)
-* Take result to another mesh from eet.
-* Show it in right side.
-*
-* @verbatim
-* gcc -o evas-3d-eet evas-3d-eet.c `pkg-config --libs --cflags efl eina evas ecore ecore-evas ecore-file eo`
-* @endverbatim
-*/
+ * Simple Evas example illustrating .eet import/export
+ *
+ * Take mesh from md2.
+ * Set material to it.
+ * Show it in left side.
+ * Save the first frame of this mesh to eet. (static only)
+ * Take result to another mesh from eet.
+ * Show it in right side.
+ *
+ * @verbatim
+ * gcc -o evas-3d-eet evas-3d-eet.c `pkg-config --libs --cflags efl eina evas ecore ecore-evas ecore-file eo`
+ * @endverbatim
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
