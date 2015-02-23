@@ -108,6 +108,22 @@ _elm_code_widget_fill_line_token(Evas_Textgrid_Cell *cells, int count, int start
      }
 }
 
+static unsigned int
+_elm_code_widget_status_type_get(Elm_Code_Widget *widget, Elm_Code_Status_Type set_type, unsigned int col)
+{
+   Elm_Code_Widget_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (set_type != ELM_CODE_STATUS_TYPE_DEFAULT)
+     return set_type;
+
+   if (pd->line_width_marker == col)
+     return ELM_CODE_WIDGET_COLOR_GUTTER_BG;
+
+   return ELM_CODE_STATUS_TYPE_DEFAULT;
+}
+
 static void
 _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
                                   unsigned int count, Elm_Code_Line *line)
@@ -203,14 +219,14 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    for (x = gutter; x < (unsigned int) w && x < length + gutter; x++)
      {
         cells[x].codepoint = *chr;
-        cells[x].bg = line->status;
+        cells[x].bg = _elm_code_widget_status_type_get(widget, line->status, x - gutter + 1);
 
         chr++;
      }
    for (; x < (unsigned int) w; x++)
      {
         cells[x].codepoint = 0;
-        cells[x].bg = line->status;
+        cells[x].bg = _elm_code_widget_status_type_get(widget, line->status, x - gutter + 1);
      }
 
    _elm_code_widget_fill_line_tokens(widget, cells, w, line);
@@ -241,7 +257,7 @@ _elm_code_widget_empty_line(Elm_Code_Widget *widget, unsigned int number)
    for (x = gutter; x < (unsigned int) w; x++)
      {
         cells[x].codepoint = 0;
-        cells[x].bg = ELM_CODE_STATUS_TYPE_DEFAULT;
+        cells[x].bg = _elm_code_widget_status_type_get(widget, ELM_CODE_STATUS_TYPE_DEFAULT, x - gutter + 1);
      }
 
    evas_object_textgrid_update_add(pd->grid, 0, number - 1, w, 1);
@@ -707,6 +723,19 @@ EOLIAN static Eina_Bool
 _elm_code_widget_line_numbers_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->show_line_numbers;
+}
+
+EOLIAN static void
+_elm_code_widget_line_width_marker_set(Eo *obj, Elm_Code_Widget_Data *pd, unsigned int col)
+{
+   pd->line_width_marker = col;
+   _elm_code_widget_fill(obj);
+}
+
+EOLIAN static unsigned int
+_elm_code_widget_line_width_marker_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+{
+   return pd->line_width_marker;
 }
 
 EOLIAN static void

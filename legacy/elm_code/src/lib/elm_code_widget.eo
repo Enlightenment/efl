@@ -103,6 +103,26 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
             Eina_Bool line_numbers; /*@ Whether or not line numbers (or their placeholder) should be shown */
          }
       }
+      line_width_marker {
+         set {
+            /*@
+            Set where the line width market should be shown.
+
+            Passing a non-zero value will set which line width to mark with a vertical line.
+            Passing 0 will hide this marker.
+
+            @ingroup Features */
+         }
+         get {
+            /*@
+            Get the position of the line width marker, any positive return indicates where the marker appears.
+
+            @ingroup Features */
+         }
+         values {
+            uint line_width_marker; /*@ Where to display a line width marker, if at all */
+         }
+      }
       cursor_position {
          set {
             /*@
