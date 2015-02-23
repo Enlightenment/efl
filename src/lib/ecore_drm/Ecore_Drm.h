@@ -136,6 +136,7 @@ struct _Ecore_Drm_Event_Vblank
 
 struct _Ecore_Drm_Event_Output
 {
+   unsigned int id;
    int x, y;
    int w, h;
    int phys_width, phys_height;
