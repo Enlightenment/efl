@@ -30,7 +30,9 @@ tmpl_eapi_body[] ="\
 EAPI @#ret_type\n\
 @#eapi_func(@#full_params)\n\
 {\n\
-   return eo_do(@#eo_obj, @#eo_func(@#eo_params));\n\
+   @#ret_type ret;\n\
+   eo_do(@#eo_obj, ret = @#eo_func(@#eo_params));\n\
+   return ret;\n\
 }\n\
 ";
 static const char
