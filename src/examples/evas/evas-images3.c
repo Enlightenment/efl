@@ -9,7 +9,6 @@
  * gcc -o evas-images3 evas-images3.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
-//TODO: Fix warnings.
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -77,7 +76,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
-        fprintf(stdout, commands);
+        puts(commands);
         return;
      }
 
@@ -138,9 +137,6 @@ _on_keydown(void        *data EINA_UNUSED,
 int
 main(void)
 {
-   // unsigned int i;
-   // unsigned int pixels[(WIDTH / 4) * (HEIGHT / 4)];
-
    if (!ecore_evas_init())
      return EXIT_FAILURE;
 
@@ -179,7 +175,7 @@ main(void)
    evas_object_move(d.logo1, WIDTH / 2, 0);
    evas_object_show(d.logo1);
 
-   fprintf(stdout, commands);
+   puts(commands);
    ecore_main_loop_begin();
 
    ecore_evas_free(d.ee);

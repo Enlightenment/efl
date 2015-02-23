@@ -12,12 +12,13 @@
  * gcc -o evas-object-manipulation-eo evas-object-manipulation-eo.c `pkg-config --libs --cflags ecore evas ecore-evas eo`
  * @endverbatim
  */
-//TODO: Fix error and warning.
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
 #define PACKAGE_EXAMPLES_DIR "."
+#define EFL_EO_API_SUPPORT
+#define EFL_BETA_API_SUPPORT
 #endif
 
 #include <Efl.h>
@@ -25,12 +26,13 @@
 #include <Ecore_Evas.h>
 #include <stdio.h>
 #include <errno.h>
+#include "evas-common.h"
 
 #define WIDTH  (320)
 #define HEIGHT (240)
 
-static const char *img_path = PACKAGE_EXAMPLES_DIR "/enlightenment.png";
-static const char *border_img_path = PACKAGE_EXAMPLES_DIR "/red.png";
+static const char *img_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/enlightenment.png";
+static const char *border_img_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/red.png";
 
 static const char *commands = \
   "commands are:\n"
@@ -191,7 +193,6 @@ main(void)
     * 'canvas' keeps reference to 'image'.
     * So it's possible to decrement refcount, and 'image' object
     * will be deleted automatically by parent.*/
-   eo_unref(d.img);
 
    eo_do(d.img, evas_obj_image_filled_set(EINA_TRUE),
                 efl_file_set(img_path, NULL),
@@ -235,7 +236,6 @@ main(void)
     * rectangle) - it won't change clippees' colors, then (multiplying
     * by 255) */
    d.clipper = eo_add(EVAS_RECTANGLE_CLASS, d.canvas);
-   eo_unref(d.clipper);
 
    eo_do(d.clipper,
          evas_obj_position_set( WIDTH / 4, HEIGHT / 4),

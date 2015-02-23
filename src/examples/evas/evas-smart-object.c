@@ -8,7 +8,6 @@
  * gcc -o evas-smart-object evas-smart-object.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
-//TODO: Fix warnings.
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -452,7 +451,7 @@ _on_keydown(void *data EINA_UNUSED,
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
-        fprintf(stdout, commands);
+        puts(commands);
         return;
      }
 
@@ -717,7 +716,7 @@ main(void)
    evas_object_event_callback_add(
      d.bg, EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
 
-   fprintf(stdout, commands);
+   puts(commands);
    ecore_main_loop_begin();
 
    ecore_evas_free(d.ee);

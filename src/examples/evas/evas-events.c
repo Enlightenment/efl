@@ -10,7 +10,6 @@
  * gcc -o evas-events evas-events.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
-//TODO: Fix warning.
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -148,7 +147,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
-        fprintf(stdout, commands);
+        puts(commands);
         return;
      }
 
@@ -396,7 +395,7 @@ main(void)
 
    d.resize_timer = ecore_timer_add(2, _resize_cb, NULL);
 
-   fprintf(stdout, commands);
+   puts(commands);
    ecore_main_loop_begin();
 
    ecore_evas_free(d.ee);

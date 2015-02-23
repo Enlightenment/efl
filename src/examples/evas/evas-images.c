@@ -9,7 +9,6 @@
  * gcc -o evas-images evas-images.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
-//TODO: Fix warnings.
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -99,7 +98,7 @@ _on_keydown(void        *data EINA_UNUSED,
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
-        fprintf(stdout, commands);
+        puts(commands);
         return;
      }
 
@@ -336,7 +335,7 @@ main(void)
         evas_object_show(d.img2);
      }
 
-   fprintf(stdout, commands);
+   puts(commands);
    ecore_main_loop_begin();
 
    ecore_evas_free(d.ee);
