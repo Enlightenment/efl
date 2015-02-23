@@ -409,7 +409,8 @@ _elm_photo_class_constructor(Eo_Class *klass)
 EAPI Eina_Bool
 elm_photo_file_set(Eo *obj, const char *file)
 {
-   return eo_do((Eo *) obj, efl_file_set(file, NULL));
+   Eina_Bool ret;
+   return eo_do_ret((Eo *) obj, ret, efl_file_set(file, NULL));
 }
 
 #include "elm_photo.eo.c"

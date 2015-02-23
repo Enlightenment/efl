@@ -1872,7 +1872,8 @@ _elm_prefs_class_constructor(Eo_Class *klass)
 EAPI Eina_Bool
 elm_prefs_file_set(Eo *obj, const char *file, const char *page)
 {
-   return eo_do((Eo *) obj, efl_file_set(file, page));
+   Eina_Bool ret;
+   return eo_do_ret((Eo *) obj, ret, efl_file_set(file, page));
 }
 
 EAPI Eina_Bool

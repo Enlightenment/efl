@@ -2161,7 +2161,8 @@ _elm_color_item_selected_set(Eo *eo_item,
 EAPI Eina_Bool
 elm_colorselector_palette_item_selected_get(const Elm_Object_Item *it)
 {
-   return eo_do( it, elm_obj_color_item_selected_get());
+   Eina_Bool ret;
+   return eo_do_ret(it, ret, elm_obj_color_item_selected_get());
 }
 
 EOLIAN static Eina_Bool

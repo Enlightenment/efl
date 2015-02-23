@@ -651,7 +651,7 @@ _accessible_get_relation_set(const Eldbus_Service_Interface *iface EINA_UNUSED, 
    iter_array = eldbus_message_iter_container_new(iter, 'a', "(ua(so))");
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
-   rels = eo_do(obj, elm_interface_atspi_accessible_relation_set_get());
+   eo_do(obj, rels = elm_interface_atspi_accessible_relation_set_get());
 
    EINA_LIST_FREE(rels, rel)
      {

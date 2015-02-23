@@ -913,9 +913,9 @@ EOLIAN static void
 _elm_ctxpopup_item_elm_widget_item_disable(Eo *eo_ctxpopup_it,
                                            Elm_Ctxpopup_Item_Data *ctxpopup_it)
 {
-
+   Eina_Bool tmp;
    elm_object_item_disabled_set
-     (ctxpopup_it->list_item, eo_do(eo_ctxpopup_it, elm_wdg_item_disabled_get()));
+     (ctxpopup_it->list_item, eo_do_ret(eo_ctxpopup_it, tmp, elm_wdg_item_disabled_get()));
 }
 
 EOLIAN static void
@@ -1401,7 +1401,8 @@ _elm_ctxpopup_item_init(Eo *eo_item,
           Evas_Smart_Cb func,
           const void *data)
 {
-   Eo *obj = eo_do(eo_item, eo_parent_get());
+   Eo *obj;
+   eo_do(eo_item, obj = eo_parent_get());
    Elm_Ctxpopup_Data *sd = eo_data_scope_get(obj, ELM_CTXPOPUP_CLASS);
    if (!sd->list)
      {

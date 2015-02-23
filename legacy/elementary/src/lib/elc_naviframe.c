@@ -1431,7 +1431,7 @@ static Eina_Bool
 _key_action_top_item_get(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    Elm_Object_Item *eo_item = NULL;
-   eo_item = eo_do(obj, elm_obj_naviframe_top_item_get());
+   eo_do(obj, eo_item = elm_obj_naviframe_top_item_get());
    if (!eo_item) return EINA_FALSE;
 
    //FIXME: Replace this below code to elm_naviframe_item_pop() at elm 2.0.

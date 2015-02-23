@@ -518,8 +518,9 @@ _block_menu(void *_sd, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSE
    Eina_List *items = sd->items;
    EINA_LIST_FOREACH(items, l, eo_current)
      {
+        Eina_Bool tmp;
         ELM_MENU_ITEM_DATA_GET(eo_current, current);
-        if (!current->blocked) current->was_enabled = !eo_do(eo_current, elm_wdg_item_disabled_get());
+        if (!current->blocked) current->was_enabled = !eo_do_ret(eo_current, tmp, elm_wdg_item_disabled_get());
         current->blocked = EINA_TRUE;
         elm_object_item_disabled_set(eo_current, EINA_TRUE);
      }
@@ -908,7 +909,8 @@ _item_clone(Evas_Object *obj,
                                   item->func,
                                   WIDGET_ITEM_DATA_GET(EO_OBJ(item)));
 
-   Eina_Bool disabled = eo_do(eo_item, elm_wdg_item_disabled_get());
+   Eina_Bool disabled;
+   eo_do(eo_item, disabled = elm_wdg_item_disabled_get());
    eo_do(new_item, elm_wdg_item_disabled_set(disabled));
 
    EINA_LIST_FOREACH(item->submenu.items, iter, subitem)

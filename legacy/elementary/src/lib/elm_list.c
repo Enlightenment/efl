@@ -2060,8 +2060,9 @@ EOLIAN static const char *
 _elm_list_item_elm_widget_item_part_text_get(Eo *eo_it, Elm_List_Item_Data *it,
                     const char *part)
 {
+   const char *ret;
    if (part && strcmp(part, "default"))
-     return eo_do(eo_it, elm_wdg_item_part_text_custom_get(part));
+     return eo_do_ret(eo_it, ret, elm_wdg_item_part_text_custom_get(part));
    return it->label;
 }
 

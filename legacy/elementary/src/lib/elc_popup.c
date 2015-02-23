@@ -749,9 +749,10 @@ _elm_popup_item_elm_widget_item_part_content_unset(Eo *eo_it EINA_UNUSED, Elm_Po
 EOLIAN static void
 _elm_popup_item_elm_widget_item_disable(Eo *eo_it, Elm_Popup_Item_Data *it)
 {
+   Eina_Bool tmp;
    ELM_POPUP_ITEM_CHECK_OR_RETURN(it);
 
-   if (eo_do(eo_it, elm_wdg_item_disabled_get()))
+   if (eo_do_ret(eo_it, tmp, elm_wdg_item_disabled_get()))
      elm_layout_signal_emit(VIEW(it), "elm,state,item,disabled", "elm");
    else
      elm_layout_signal_emit(VIEW(it), "elm,state,item,enabled", "elm");
@@ -1105,6 +1106,7 @@ _action_button_set(Evas_Object *obj,
 EOLIAN static Eina_Bool
 _elm_popup_elm_container_content_set(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, const char *part, Evas_Object *content)
 {
+   Eina_Bool tmp;
    unsigned int i;
 
    if (!part || !strcmp(part, "default"))
@@ -1124,7 +1126,7 @@ _elm_popup_elm_container_content_set(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, c
         _action_button_set(obj, content, i);
      }
    else
-     return eo_do(_pd->main_layout, elm_obj_container_content_set(part, content));
+     return eo_do_ret(_pd->main_layout, tmp, elm_obj_container_content_set(part, content));
 
    return EINA_TRUE;
 }
@@ -1176,7 +1178,7 @@ _elm_popup_elm_container_content_get(Eo *obj, Elm_Popup_Data *_pd, const char *p
         content = _action_button_get(obj, i);
      }
    else
-     content = eo_do(_pd->main_layout, elm_obj_container_content_get(part));
+      eo_do(_pd->main_layout, content = elm_obj_container_content_get(part));
 
    if (!content)
      goto err;
@@ -1200,7 +1202,7 @@ _content_unset(Evas_Object *obj)
    evas_object_event_callback_del
      (sd->content, EVAS_CALLBACK_DEL, _on_content_del);
 
-   content = eo_do(sd->content_area, elm_obj_container_content_unset(CONTENT_PART));
+   eo_do(sd->content_area, content = elm_obj_container_content_unset(CONTENT_PART));
    sd->content = NULL;
 
    elm_layout_sizing_eval(obj);
@@ -1635,7 +1637,7 @@ _elm_popup_item_append(Eo *obj, Elm_Popup_Data *sd, const char *label, Evas_Obje
    ELM_POPUP_ITEM_DATA_GET(eo_it, it);
    if (sd->content || sd->text_content_obj)
      {
-        prev_content = eo_do(sd->content_area,
+        eo_do(sd->content_area, prev_content =
                              elm_obj_container_content_get(CONTENT_PART));
         evas_object_del(prev_content);
      }

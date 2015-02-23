@@ -274,7 +274,8 @@ _elm_bg_class_constructor(Eo_Class *klass)
 EAPI Eina_Bool
 elm_bg_file_set(Eo *obj, const char *file, const char *group)
 {
-   return eo_do((Eo *) obj, efl_file_set(file, group));
+   Eina_Bool ret;
+   return eo_do_ret((Eo *) obj, ret, efl_file_set(file, group));
 }
 
 EAPI void
