@@ -126,7 +126,7 @@ _on_keydown(void        *data EINA_UNUSED,
         fprintf(stdout, "Toggling clipping ");
 
         Evas_Object *clip = NULL;
-        clip = eo_do(d.img, evas_obj_clip_get());
+        eo_do(d.img, clip = evas_obj_clip_get());
         if (clip == d.clipper)
           {
              eo_do(d.img, evas_obj_clip_unset());
@@ -145,7 +145,7 @@ _on_keydown(void        *data EINA_UNUSED,
         Eina_Bool visibility;
         /* Don't use "get"-"set" expressions in one eo_do call,
          * if you pass parameter to "set" by value. */
-        visibility = eo_do(d.clipper, evas_obj_visibility_get());
+        eo_do(d.clipper, visibility = evas_obj_visibility_get());
         eo_do(d.clipper, evas_obj_visibility_set(!visibility));
         fprintf(stdout, "Clipper is now %s\n", visibility ? "hidden" : "visible");
         return;

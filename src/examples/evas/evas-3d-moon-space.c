@@ -624,13 +624,13 @@ _stop_scene(void *data,
         d_i = 0;
      }
 
-   pick = eo_do(d->scene,
-                evas_3d_scene_exist(ev->canvas.x,  ev->canvas.y, d->mesh_node_planet));
+   eo_do(d->scene,
+         pick = evas_3d_scene_exist(ev->canvas.x,  ev->canvas.y, d->mesh_node_planet));
 
    if (pick) d_angle_planet = 0;
 
-   nodes = eo_do(d->root_node, evas_3d_node_member_list_get());
-   picked_nodes = eo_do(d->scene, evas_3d_scene_pick_member_list_get(ev->canvas.x, ev->canvas.y));
+   eo_do(d->root_node, nodes = evas_3d_node_member_list_get());
+   eo_do(d->scene, picked_nodes = evas_3d_scene_pick_member_list_get(ev->canvas.x, ev->canvas.y));
 
    root_count = eina_list_count(nodes);
    picked_count = eina_list_count(picked_nodes);

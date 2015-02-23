@@ -536,13 +536,13 @@ _animate_scene_gun(void *data)
    /* rocket and gun movement */
    angle_eagle += d_angle_eagle;
 
-   frame_eagle = eo_do(scene->mesh_node_eagle,
-                       evas_3d_node_mesh_frame_get(scene->mesh_eagle));
+   eo_do(scene->mesh_node_eagle,
+         frame_eagle = evas_3d_node_mesh_frame_get(scene->mesh_eagle));
    if (frame_eagle > 19500) frame_eagle = 0;
    frame_eagle += 150;
 
-   frame_snake = eo_do(scene->mesh_node_snake,
-                       evas_3d_node_mesh_frame_get(scene->mesh_snake));
+   eo_do(scene->mesh_node_snake,
+         frame_snake = evas_3d_node_mesh_frame_get(scene->mesh_snake));
    if (frame_snake > 16000) frame_snake = 0;
    frame_snake += 64;
 
@@ -671,8 +671,8 @@ _animate_scene_gun(void *data)
      }
    else if (soldier_mode == 1)
      {
-        frame_soldier = eo_do(scene->mesh_node_soldier,
-                              evas_3d_node_mesh_frame_get(scene->mesh_soldier_jump));
+        eo_do(scene->mesh_node_soldier,
+              frame_soldier = evas_3d_node_mesh_frame_get(scene->mesh_soldier_jump));
         frame_soldier += 124;
         eo_do(scene->mesh_node_soldier,
               evas_3d_node_mesh_frame_set(scene->mesh_soldier_jump, frame_soldier));
@@ -698,8 +698,8 @@ _animate_scene_gun(void *data)
      }
    else if (camera_move)
      {
-        frame_soldier = eo_do(scene->mesh_node_soldier,
-                              evas_3d_node_mesh_frame_get(scene->mesh_soldier));
+        eo_do(scene->mesh_node_soldier,
+              frame_soldier = evas_3d_node_mesh_frame_get(scene->mesh_soldier));
         frame_soldier += 124;
         if (frame_soldier > 6200) frame_soldier = 0;
         eo_do(scene->mesh_node_soldier,
