@@ -32,9 +32,13 @@ evas_common_draw_context_cutouts_del(Cutout_Rects* rects, int idx)
      }
 }
 
+static int _init_count = 0;
+
 EAPI void
 evas_common_init(void)
 {
+   if (_init_count++) return ;
+
    evas_common_cpu_init();
 
    evas_common_blend_init();
@@ -53,6 +57,8 @@ evas_common_init(void)
 EAPI void
 evas_common_shutdown(void)
 {
+   if (--_init_count) return ;
+
    evas_font_dir_cache_free();
    evas_common_font_shutdown();
    evas_common_image_shutdown();
