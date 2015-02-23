@@ -15,6 +15,7 @@ struct _E3D_Renderer
    Eina_Bool      vertex_attrib_enable[E3D_MAX_VERTEX_ATTRIB_COUNT];
    Eina_Bool      depth_test_enable;
    GLuint         texDepth;
+   GLint         smap_sampler;
 };
 
 static inline GLenum
@@ -173,8 +174,12 @@ _renderer_texture_bind(E3D_Renderer *renderer, E3D_Draw_Data *data)
                }
           }
      }
-     glActiveTexture(GL_TEXTURE0 + data->smap_sampler);
-     glBindTexture(GL_TEXTURE_2D, renderer->texDepth);
+   if ((data->flags & E3D_SHADER_FLAG_SHADOWED) && (renderer->smap_sampler != data->smap_sampler))
+     {
+        glActiveTexture(GL_TEXTURE0 + data->smap_sampler);
+        glBindTexture(GL_TEXTURE_2D, renderer->texDepth);
+        renderer->smap_sampler = data->smap_sampler;
+     }
 }
 
 static inline void

@@ -1262,10 +1262,17 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
         evas_normal_matrix_get(&data->matrix_normal, matrix_mv);
      }
 
-   // TODO Add correct numbering
    int num;
    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &num);
    data->smap_sampler = num - 1;
+
+   if (data->texture_count >= num)
+     if ((data->flags & E3D_SHADER_FLAG_SHADOWED) || (data->texture_count > num))
+       {
+          ERR("Too many textures for your graphics configuration.");
+          return EINA_FALSE;
+       }
+
    return EINA_TRUE;
 }
 
