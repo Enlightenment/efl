@@ -1016,11 +1016,62 @@ _evgl_gles1_glGetPointerv(GLenum pname, GLvoid **params)
 static const GLubyte *
 _evgl_gles1_glGetString(GLenum name)
 {
-   const GLubyte * ret;
+   static char _version[128] = {0};
+   EVGL_Resource *rsc;
+   const GLubyte *ret;
+
    if (!_gles1_api.glGetString)
      return NULL;
-   ret = _gles1_api.glGetString(name);
-   return ret;
+
+   if ((!(rsc = _evgl_tls_resource_get())) || !rsc->current_ctx)
+     {
+        ERR("Current context is NULL, not calling glGetString");
+        // This sets evas_gl_error_get instead of glGetError...
+        evas_gl_common_error_set(NULL, EVAS_GL_BAD_CONTEXT);
+        return NULL;
+     }
+
+   if (rsc->current_ctx->version != EVAS_GL_GLES_1_X)
+     {
+        ERR("Invalid context version %d", (int) rsc->current_ctx->version);
+        evas_gl_common_error_set(NULL, EVAS_GL_BAD_MATCH);
+        return NULL;
+     }
+
+   switch (name)
+     {
+      case GL_VENDOR:
+      case GL_RENDERER:
+      case GL_SHADING_LANGUAGE_VERSION:
+        break;
+      case GL_VERSION:
+        ret = glGetString(GL_VERSION);
+        if (!ret) return NULL;
+#ifdef GL_GLES
+        if (ret[13] != (GLubyte) '1')
+          {
+             // We try not to remove the vendor fluff
+             snprintf(_version, sizeof(_version), "OpenGL ES-CM 1.1 Evas GL (%s)", ((char *) ret) + 10);
+             _version[sizeof(_version) - 1] = '\0';
+             return (const GLubyte *) _version;
+          }
+        return ret;
+#else
+        // Desktop GL, we still keep the official name
+        snprintf(_version, sizeof(_version), "OpenGL ES-CM 1.1 Evas GL (%s)", (char *) ret);
+        _version[sizeof(_version) - 1] = '\0';
+        return (const GLubyte *) _version;
+#endif
+
+      case GL_EXTENSIONS:
+        return (GLubyte *) evgl_api_ext_string_get(EINA_TRUE, EINA_TRUE);
+
+      default:
+        WRN("Unknown string requested: %x", (unsigned int) name);
+        break;
+     }
+
+   return _gles1_api.glGetString(name);
 }
 
 static void
