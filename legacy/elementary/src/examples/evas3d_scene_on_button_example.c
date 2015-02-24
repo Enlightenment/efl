@@ -242,10 +242,12 @@ _stop_scene(void *data,
 
    if (ev->button == 1)
      {
-        if (eo_do(d->scene,
-                  evas_3d_scene_exist((ev->canvas.x - (d_w / 2)),
-                                      (ev->canvas.y - (d_h / 2)),
-                                      d->mesh_node)))
+        Eina_Bool ret;
+
+        if (eo_do_ret(d->scene, ret,
+                      evas_3d_scene_exist((ev->canvas.x - (d_w / 2)),
+                                          (ev->canvas.y - (d_h / 2)),
+                                          d->mesh_node)))
           {
              d_angle = 0;
           }

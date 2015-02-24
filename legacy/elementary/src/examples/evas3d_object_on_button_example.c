@@ -113,8 +113,10 @@ _stop_scene(void *data,
 
    if (ev->button == 1)
      {
-        if (eo_do(d->scene,
-                  evas_3d_scene_pick(ev->canvas.x, ev->canvas.y, &n, &m, &s, &t)))
+        Eina_Bool ret;
+
+        if (eo_do_ret(d->scene, ret,
+                      evas_3d_scene_pick(ev->canvas.x, ev->canvas.y, &n, &m, &s, &t)))
           {
              d_angle = 0.0;
              elm_object_signal_emit(btn, "mouse,down,1", "event");
