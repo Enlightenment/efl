@@ -1,4 +1,3 @@
-
 #include <Cocoa/Cocoa.h>
 
 #include "evas_engine.h"
@@ -59,12 +58,16 @@ static NSOpenGLContext *_evas_gl_cocoa_shared_context = NULL;
    return self;
 }
 
+- (void)unlockFocus
+{
+   //[super unlockFocus];
+}
+
 - (void)lockFocus
 {
    NSOpenGLContext* context = [self openGLContext];
 
-   [super lockFocus];
-
+   //[super lockFocus];
    if ([context view] != self) {
       [context setView:self];
    }
