@@ -605,6 +605,8 @@ EAPI Eo * _eo_add_end(void);
 
 #define eo_do_ret(eoid, ret_tmp, func) _eo_do_common_ret(eoid, NULL, EINA_FALSE, ret_tmp, func)
 
+#define eo_do_super_ret(eoid, clsid, ret_tmp, func) _eo_do_common_ret(eoid, clsid, EINA_TRUE, ret_tmp, func)
+
 /*****************************************************************************/
 
 /**
