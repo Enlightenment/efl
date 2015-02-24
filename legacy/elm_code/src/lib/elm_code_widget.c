@@ -859,7 +859,7 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_smart_callback_add(obj, "unfocused", _elm_code_widget_unfocused_event_cb, obj);
 
    eo_do(obj,
-         eo_event_callback_add(&ELM_CODE_EVENT_LINE_STYLE_SET, _elm_code_widget_line_cb, obj);
+         eo_event_callback_add(&ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_widget_line_cb, obj);
          eo_event_callback_add(&ELM_CODE_EVENT_FILE_LOAD_DONE, _elm_code_widget_file_cb, obj));
 
    _elm_code_widget_font_size_set(obj, pd, 10);

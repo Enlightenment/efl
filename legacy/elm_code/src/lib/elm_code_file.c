@@ -47,9 +47,6 @@ static void _elm_code_file_line_append_data(Elm_Code_File *file, const char *con
      {
         elm_code_parse_line(file->parent, line);
         elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
-
-        // this is called so we can refresh after any styling changes from LOAD_DONE
-        elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_STYLE_SET, line);
      }
 }
 

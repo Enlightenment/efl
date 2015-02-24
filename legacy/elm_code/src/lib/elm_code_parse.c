@@ -13,7 +13,8 @@ EAPI void elm_code_parse_line(Elm_Code *code, Elm_Code_Line *line)
 
    EINA_LIST_FOREACH(code->parsers, item, parser)
      {
-        parser->parse_line(line);
+        if (parser->parse_line)
+          parser->parse_line(line, parser->data);
      }
 }
 
@@ -24,13 +25,14 @@ EAPI void elm_code_parse_file(Elm_Code *code, Elm_Code_File *file)
 
    EINA_LIST_FOREACH(code->parsers, item, parser)
      {
-        parser->parse_file(file);
+        if (parser->parse_file)
+          parser->parse_file(file, parser->data);
      }
 }
 
 EAPI void elm_code_parser_add(Elm_Code *code,
-                              void (*parse_line)(Elm_Code_Line *),
-                              void (*parse_file)(Elm_Code_File *))
+                              void (*parse_line)(Elm_Code_Line *, void *),
+                              void (*parse_file)(Elm_Code_File *, void *), void *data)
 {
    Elm_Code_Parser *parser;
 
@@ -40,6 +42,7 @@ EAPI void elm_code_parser_add(Elm_Code *code,
 
    parser->parse_line = parse_line;
    parser->parse_file = parse_file;
+   parser->data = data;
 
    code->parsers = eina_list_append(code->parsers, parser);
 }

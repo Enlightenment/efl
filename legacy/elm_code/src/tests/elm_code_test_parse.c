@@ -7,12 +7,12 @@
 
 static int line_calls, file_calls;
 
-static void _parser_line_callback(Elm_Code_Line *line EINA_UNUSED)
+static void _parser_line_callback(Elm_Code_Line *line EINA_UNUSED, void *data EINA_UNUSED)
 {
    line_calls++;
 }
 
-static void _parser_file_callback(Elm_Code_File *file EINA_UNUSED)
+static void _parser_file_callback(Elm_Code_File *file EINA_UNUSED, void *data EINA_UNUSED)
 {
    file_calls++;
 }
@@ -28,7 +28,7 @@ START_TEST (elm_code_parse_hook_memory_test)
    code = elm_code_create();
    file = elm_code_file_new(code);
 
-   elm_code_parser_add(code, _parser_line_callback, _parser_file_callback);
+   elm_code_parser_add(code, _parser_line_callback, _parser_file_callback, NULL);
    elm_code_file_line_append(file, "some \"test content\" for parsing", 31, NULL);
 
    ck_assert_int_eq(1, line_calls);
@@ -49,7 +49,7 @@ START_TEST (elm_code_parse_hook_file_test)
 
    code = elm_code_create();
 
-   elm_code_parser_add(code, _parser_line_callback, _parser_file_callback);
+   elm_code_parser_add(code, _parser_line_callback, _parser_file_callback, NULL);
    file = elm_code_file_open(code, path);
 
    ck_assert_int_eq(4, line_calls);
