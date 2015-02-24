@@ -14,6 +14,9 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             Values @c -1 will be treated as unset hint components, when queried
             by managers.
 
+            @note Smart objects(such as elementary) can have their own size hint
+            policy. So calling this API may or may not affect the size of smart objects.
+
             Example:
             @dontinclude evas-hints.c
             @skip evas_object_size_hint_max_set
@@ -53,6 +56,9 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
 
             Values @c 0 will be treated as unset hint components, when queried
             by managers.
+
+            @note Smart objects(such as elementary) can have their own size hint
+            policy. So calling this API may or may not affect the size of smart objects.
 
             @see evas_object_size_hint_request_get() */
          }
@@ -134,6 +140,9 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
 
             Values @c 0 will be treated as unset hint components, when queried
             by managers.
+
+            @note Smart objects(such as elementary) can have their own size hint
+            policy. So calling this API may or may not affect the size of smart objects.
 
             Example:
             @dontinclude evas-hints.c
@@ -327,6 +336,9 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             the object's container will ignore the aspect and scale @p obj to
             occupy the whole available area, for any given policy.
 
+            @note Smart objects(such as elementary) can have their own size hint
+            policy. So calling this API may or may not affect the size of smart objects.
+
             @see evas_object_size_hint_aspect_get() for more information. */
          }
          get {
@@ -498,6 +510,9 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
 
             This is not a size enforcement in any way, it's just a hint that
             should be used whenever appropriate.
+
+            @note Smart objects(such as elementary) can have their own size hint
+            policy. So calling this API may or may not affect the size of smart objects.
 
             @see evas_object_size_hint_padding_get() for more information */
          }
