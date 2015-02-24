@@ -268,44 +268,130 @@ _edje_textblock_style_all_update(Edje *ed)
 }
 
 void
-_edje_textblock_styles_add(Edje *ed)
+_edje_textblock_styles_add(Edje *ed, Edje_Real_Part *ep)
 {
-   Eina_List *l, *ll;
-   Edje_Style *stl;
+   Edje_Part *pt = ep->part;
+   Edje_Part_Description_Text *desc;
+   Edje_Style *stl = NULL;
+   const char *style;
+   unsigned int i;
 
-   if (!ed->file) return;
+   if (pt->type != EDJE_PART_TYPE_TEXTBLOCK) return;
 
-   EINA_LIST_FOREACH(ed->file->styles, l, stl)
+   /* if text class exists in the textblock styles for this part,
+      add the edje to the tc member list */
+   desc = (Edje_Part_Description_Text *)pt->default_desc;
+   style = edje_string_get(&desc->text.style);
+   if (style)
      {
-	Edje_Style_Tag *tag;
+        Eina_List *l;
 
-	/* Make sure the style contains the text_class */
-	EINA_LIST_FOREACH(stl->tags, ll, tag)
-	  {
-	    if (!tag->text_class) continue;
-	    _edje_text_class_member_add(ed, tag->text_class);
-	  }
+        EINA_LIST_FOREACH(ed->file->styles, l, stl)
+          {
+             if ((stl->name) && (!strcmp(stl->name, style))) break;
+             stl = NULL;
+          }
+     }
+   if (stl)
+     {
+        Edje_Style_Tag *tag;
+        Eina_List *l;
+
+        EINA_LIST_FOREACH(stl->tags, l, tag)
+          {
+             if (tag->text_class)
+               _edje_text_class_member_add(ed, tag->text_class);
+          }
+     }
+
+   /* If any other classes exist add them */
+   for (i = 0; i < pt->other.desc_count; ++i)
+     {
+        desc = (Edje_Part_Description_Text *)pt->other.desc[i];
+        style = edje_string_get(&desc->text.style);
+        if (style)
+          {
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(ed->file->styles, l, stl)
+               {
+                  if ((stl->name) && (!strcmp(stl->name, style))) break;
+                  stl = NULL;
+               }
+          }
+        if (stl)
+          {
+             Edje_Style_Tag *tag;
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(stl->tags, l, tag)
+               {
+                  if (tag->text_class)
+                    _edje_text_class_member_add(ed, tag->text_class);
+               }
+          }
      }
 }
 
 void
-_edje_textblock_styles_del(Edje *ed)
+_edje_textblock_styles_del(Edje *ed, Edje_Part *pt)
 {
-   Eina_List *l, *ll;
-   Edje_Style *stl;
+   Edje_Part_Description_Text *desc;
+   Edje_Style *stl = NULL;
+   const char *style;
+   unsigned int i;
 
-   if (!ed->file) return;
+   if (pt->type != EDJE_PART_TYPE_TEXTBLOCK) return;
 
-   EINA_LIST_FOREACH(ed->file->styles, l, stl)
+   desc = (Edje_Part_Description_Text *)pt->default_desc;
+   style = edje_string_get(&desc->text.style);
+   if (style)
      {
-	Edje_Style_Tag *tag;
+        Eina_List *l;
 
-	/* Make sure the style contains the text_class */
-	EINA_LIST_FOREACH(stl->tags, ll, tag)
-	  {
-	     if (!tag->text_class) continue;
-	     _edje_text_class_member_del(ed, tag->text_class);
-	  }
+        EINA_LIST_FOREACH(ed->file->styles, l, stl)
+          {
+             if ((stl->name) && (!strcmp(stl->name, style))) break;
+             stl = NULL;
+          }
+     }
+   if (stl)
+     {
+        Edje_Style_Tag *tag;
+        Eina_List *l;
+
+        EINA_LIST_FOREACH(stl->tags, l, tag)
+          {
+             if (tag->text_class)
+               _edje_text_class_member_del(ed, tag->text_class);
+          }
+     }
+
+   for (i = 0; i < pt->other.desc_count; ++i)
+     {
+        desc = (Edje_Part_Description_Text *)pt->other.desc[i];
+        style = edje_string_get(&desc->text.style);
+        if (style)
+          {
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(ed->file->styles, l, stl)
+               {
+                  if ((stl->name) && (!strcmp(stl->name, style))) break;
+                  stl = NULL;
+               }
+          }
+        if (stl)
+          {
+             Edje_Style_Tag *tag;
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(stl->tags, l, tag)
+               {
+                  if (tag->text_class)
+                    _edje_text_class_member_del(ed, tag->text_class);
+               }
+          }
      }
 }
 

@@ -382,7 +382,6 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
           edje_module_load(ed->file->external_dir->entries[i].entry);
      }
 
-   _edje_textblock_styles_add(ed);
    _edje_textblock_style_all_update(ed);
 
    ed->has_entries = EINA_FALSE;
@@ -571,6 +570,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                           _edje_callbacks_focus_add(rp->object, ed, rp);
                           break;
                        case EDJE_PART_TYPE_TEXTBLOCK:
+                          _edje_textblock_styles_add(ed, rp);
                           textblocks = eina_list_append(textblocks, rp);
                           rp->object = evas_object_textblock_add(ed->base->evas);
                           break;
@@ -1407,11 +1407,11 @@ _edje_file_del(Edje *ed)
         Edje_Part *ep;
         unsigned int i;
 
-        _edje_textblock_styles_del(ed);
         for (i = 0; i < ed->collection->parts_count; ++i)
           {
              ep = ed->collection->parts[i];
 
+             _edje_textblock_styles_del(ed, ep);
              _edje_text_part_on_del(ed, ep);
              _edje_color_class_on_del(ed, ep);
           }
