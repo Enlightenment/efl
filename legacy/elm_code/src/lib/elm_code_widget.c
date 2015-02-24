@@ -15,6 +15,10 @@ typedef enum {
 
 Eina_Unicode status_icons[] = {
  ' ',
+ ' ',
+ ' ',
+ ' ',
+ '!',
  '!',
 
  '+',
