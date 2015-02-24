@@ -2235,8 +2235,6 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
         if (_evgl_direct_renderable(rsc, sfc))
           {
              // Transition from pixmap surface rendering to direct rendering
-             /*
-              * TODO:
              if (!rsc->direct.rendered)
                {
                   // Restore viewport and scissor test to direct rendering mode
@@ -2244,7 +2242,6 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
                   if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
                     glEnable(GL_SCISSOR_TEST);
                }
-              */
              if (dbg) DBG("sfc %p is direct renderable.", sfc);
              rsc->direct.rendered = 1;
           }

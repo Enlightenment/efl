@@ -172,6 +172,7 @@ struct _EVGL_Context
 
    int          scissor_coord[4];
    int          viewport_coord[4];
+   int          viewport_direct[4];
 
    // For GLES1 with indirect rendering
    EVGLNative_Context gles1_context;

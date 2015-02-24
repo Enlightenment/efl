@@ -1744,6 +1744,11 @@ _evgl_gles1_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
                   _gles1_api.glViewport(nc[0], nc[1], nc[2], nc[3]);
                }
 
+             ctx->viewport_direct[0] = nc[0];
+             ctx->viewport_direct[1] = nc[1];
+             ctx->viewport_direct[2] = nc[2];
+             ctx->viewport_direct[3] = nc[3];
+
              // Keep a copy of the original coordinates
              ctx->viewport_coord[0] = x;
              ctx->viewport_coord[1] = y;
