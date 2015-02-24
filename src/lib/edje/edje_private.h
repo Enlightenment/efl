@@ -1384,8 +1384,8 @@ struct _Edje_Part_Description_Spec_Camera
    struct {
       Evas_Real       fovy;
       Evas_Real       aspect;
-      Evas_Real       near;
-      Evas_Real       far;
+      Evas_Real       frustum_near;
+      Evas_Real       frustum_far;
    } camera;
 
    struct {

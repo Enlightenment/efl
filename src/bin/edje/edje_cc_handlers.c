@@ -9188,8 +9188,8 @@ st_collections_group_parts_part_description_camera_properties(void)
 
    ed->camera.camera.fovy = FROM_DOUBLE(parse_float(0));
    ed->camera.camera.aspect = FROM_DOUBLE(parse_float(1));
-   ed->camera.camera.near = FROM_DOUBLE(parse_float(2));
-   ed->camera.camera.far = FROM_DOUBLE(parse_float(3));
+   ed->camera.camera.frustum_near = FROM_DOUBLE(parse_float(2));
+   ed->camera.camera.frustum_far = FROM_DOUBLE(parse_float(3));
 }
 
 /**
