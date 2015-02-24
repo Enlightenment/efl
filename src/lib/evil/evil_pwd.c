@@ -10,18 +10,22 @@
 #include "pwd.h"
 
 
-static struct passwd pw;
+static struct passwd pw = { NULL, NULL, 0, 0, 0, NULL, NULL, NULL, NULL, 0, 0 };
 
 struct passwd *
 getpwnam(const char *n)
 {
    static char user_name[UNLEN + 1];
+   static char user_gecos[UNLEN + 4];
    TCHAR       name[UNLEN + 1];
    DWORD       length;
    BOOLEAN     res;
 #ifdef UNICODE
    char       *a_name;
 # endif /* UNICODE */
+
+   if (!n)
+     return NULL;
 
    length = UNLEN + 1;
    res = GetUserName(name, &length);
@@ -50,19 +54,13 @@ getpwnam(const char *n)
    if (strcmp(n, user_name) != 0)
      return NULL;
 
-   pw.pw_name = (res ? user_name : NULL);
-   pw.pw_passwd = NULL;
-   pw.pw_uid = 0;
-   pw.pw_gid = 0;
-   pw.pw_change = 0;
-   pw.pw_class = NULL;
-   pw.pw_gecos = (res ? user_name : NULL);
+   pw.pw_name = user_name;
+   snprintf(user_gecos, sizeof(user_gecos), "%s,,,", user_name);
+   pw.pw_gecos = user_gecos;
    pw.pw_dir = (char *)evil_homedir_get();
    pw.pw_shell = getenv("SHELL");
    if (!pw.pw_shell)
      pw.pw_shell = "sh";
-   pw.pw_expire = 0;
-   pw.pw_fields = 0;
 
    return &pw;
 }
