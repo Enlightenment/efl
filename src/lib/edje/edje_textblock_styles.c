@@ -267,6 +267,39 @@ _edje_textblock_style_all_update(Edje *ed)
      eina_strbuf_free(txt);
 }
 
+static inline Edje_Style *
+_edje_textblock_style_search(Edje *ed, const char *style)
+{
+   Edje_Style *stl = NULL;
+   Eina_List *l;
+
+   if (!style) return NULL;
+
+   EINA_LIST_FOREACH(ed->file->styles, l, stl)
+     {
+        if ((stl->name) &&
+            (!strcmp(stl->name, style))) break;
+        stl = NULL;
+     }
+
+   return stl;
+}
+
+static inline void
+_edje_textblock_style_member_add(Edje *ed, Edje_Style *stl)
+{
+   Edje_Style_Tag *tag;
+   Eina_List *l;
+
+   if (!stl) return ;
+
+   EINA_LIST_FOREACH(stl->tags, l, tag)
+     {
+        if (tag->text_class)
+          _edje_text_class_member_add(ed, tag->text_class);
+     }
+}
+
 void
 _edje_textblock_styles_add(Edje *ed, Edje_Real_Part *ep)
 {
@@ -282,54 +315,16 @@ _edje_textblock_styles_add(Edje *ed, Edje_Real_Part *ep)
       add the edje to the tc member list */
    desc = (Edje_Part_Description_Text *)pt->default_desc;
    style = edje_string_get(&desc->text.style);
-   if (style)
-     {
-        Eina_List *l;
-
-        EINA_LIST_FOREACH(ed->file->styles, l, stl)
-          {
-             if ((stl->name) && (!strcmp(stl->name, style))) break;
-             stl = NULL;
-          }
-     }
-   if (stl)
-     {
-        Edje_Style_Tag *tag;
-        Eina_List *l;
-
-        EINA_LIST_FOREACH(stl->tags, l, tag)
-          {
-             if (tag->text_class)
-               _edje_text_class_member_add(ed, tag->text_class);
-          }
-     }
+   stl = _edje_textblock_style_search(ed, style);
+   _edje_textblock_style_member_add(ed, stl);
 
    /* If any other classes exist add them */
    for (i = 0; i < pt->other.desc_count; ++i)
      {
         desc = (Edje_Part_Description_Text *)pt->other.desc[i];
         style = edje_string_get(&desc->text.style);
-        if (style)
-          {
-             Eina_List *l;
-
-             EINA_LIST_FOREACH(ed->file->styles, l, stl)
-               {
-                  if ((stl->name) && (!strcmp(stl->name, style))) break;
-                  stl = NULL;
-               }
-          }
-        if (stl)
-          {
-             Edje_Style_Tag *tag;
-             Eina_List *l;
-
-             EINA_LIST_FOREACH(stl->tags, l, tag)
-               {
-                  if (tag->text_class)
-                    _edje_text_class_member_add(ed, tag->text_class);
-               }
-          }
+        stl = _edje_textblock_style_search(ed, style);
+        _edje_textblock_style_member_add(ed, stl);
      }
 }
 
