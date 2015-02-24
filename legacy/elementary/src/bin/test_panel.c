@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
+#include <dirent.h>
 
 #define LIST_ITEM_MAX 20
 
