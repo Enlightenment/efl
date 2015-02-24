@@ -1989,6 +1989,40 @@ edje_edit_state_table_homogeneous_get(Evas_Object *obj, const char *part,
  * are working both for TABLE and BOX at same time.
  */ //@{
 
+/** Get whether vertical or horizontal minimum size's of the box are equal
+ * to the minimum vertical or horizontal size of items
+ * (function for BOX or TABLE part.
+ * If EINA_TRUE - is equal, if EINA_FALSE - is not)
+ *
+ * @param obj Object being edited.
+ * @param part Part that have BOX/TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ * @param h Variable to store horizontal min value.
+ * @param v Variable to store vertical min value.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.14
+ */
+EAPI Eina_Bool edje_edit_state_container_min_get(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool *h, Eina_Bool *v);
+
+/** Set whether vertical or horizontal minimum size's of the box are equal
+ * to the minimum vertical or horizontal size of items
+ * (function for BOX or TABLE part.
+ * If EINA_TRUE - is equal, if EINA_FALSE - is not)
+ *
+ * @param obj Object being edited.
+ * @param part Part that have BOX/TABLE type.
+ * @param state Name of the state.
+ * @param value Value of the state.
+ * @param h horizontal min value.
+ * @param v vertical min value.
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.14
+ */
+EAPI Eina_Bool edje_edit_state_container_min_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool h, Eina_Bool v);
+
 /** Get x and y paddings for BOX or TABLE part.
  *
  * @param obj Object being edited.

@@ -4346,6 +4346,66 @@ edje_edit_state_container_padding_set(Evas_Object *obj, const char *part,
      }
    return EINA_TRUE;
 }
+
+EAPI Eina_Bool
+edje_edit_state_container_min_get(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool *h, Eina_Bool *v)
+{
+   GET_PD_OR_RETURN(EINA_FALSE)
+
+   switch (rp->part->type)
+     {
+      case EDJE_PART_TYPE_TABLE:
+        {
+           Edje_Part_Description_Table *table;
+           table = (Edje_Part_Description_Table*) pd;
+           if (h) *h = table->table.min.h;
+           if (v) *v = table->table.min.v;
+           break;
+        }
+      case EDJE_PART_TYPE_BOX:
+        {
+           Edje_Part_Description_Box *box;
+           box = (Edje_Part_Description_Box*) pd;
+           if (h) *h = box->box.min.h;
+           if (v) *v = box->box.min.v;
+           break;
+        }
+      default:
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+edje_edit_state_container_min_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool h, Eina_Bool v)
+{
+   GET_PD_OR_RETURN(EINA_FALSE)
+
+   switch (rp->part->type)
+     {
+      case EDJE_PART_TYPE_TABLE:
+        {
+           Edje_Part_Description_Table *table;
+           table = (Edje_Part_Description_Table*) pd;
+           table->table.min.h = h;
+           table->table.min.v = v;
+           break;
+        }
+      case EDJE_PART_TYPE_BOX:
+        {
+           Edje_Part_Description_Box *box;
+           box = (Edje_Part_Description_Box*) pd;
+           box->box.min.h = h;
+           box->box.min.v = v;
+           break;
+        }
+      default:
+       return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
 /***************************/
 /*  BOX & TABLE ITEMS API  */
 /***************************/
