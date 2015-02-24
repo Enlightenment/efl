@@ -2074,6 +2074,14 @@ evgl_context_destroy(void *eng_data, EVGL_Context *ctx)
         return 0;
      }
 
+   // Destroy GLES1 indirect rendering context
+   if (ctx->gles1_context &&
+       !evgl_engine->funcs->context_destroy(eng_data, ctx->context))
+     {
+        ERR("Error destroying the GLES1 context.");
+        return 0;
+     }
+
    // Destroy engine context
    if (!evgl_engine->funcs->context_destroy(eng_data, ctx->context))
      {
@@ -2226,21 +2234,58 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
         if (dbg) DBG("ctx %p is GLES 1", ctx);
         if (_evgl_direct_renderable(rsc, sfc))
           {
+             // Transition from pixmap surface rendering to direct rendering
+             /*
+              * TODO:
+             if (!rsc->direct.rendered)
+               {
+                  // Restore viewport and scissor test to direct rendering mode
+                  glViewport(ctx->viewport_direct[0], ctx->viewport_direct[1], ctx->viewport_direct[2], ctx->viewport_direct[3]);
+                  if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+                    glEnable(GL_SCISSOR_TEST);
+               }
+              */
              if (dbg) DBG("sfc %p is direct renderable.", sfc);
              rsc->direct.rendered = 1;
           }
         else
           {
+             if (!ctx->gles1_context)
+               {
+                  ctx->gles1_context =
+                    evgl_engine->funcs->gles1_context_create(eng_data, ctx, sfc);
+               }
              if (dbg) DBG("Calling make_current(%p, %p)", sfc->gles1_sfc, ctx->context);
-             evgl_engine->funcs->make_current(eng_data, sfc->gles1_sfc,
-                                              ctx->context, EINA_TRUE);
+             if (!evgl_engine->funcs->make_current(eng_data, sfc->gles1_sfc,
+                                                   ctx->gles1_context, EINA_TRUE))
+               {
+                  ERR("Failed to make current with GLES1 indirect surface.");
+                  return 0;
+               }
+
+             // Transition from direct rendering to pixmap surface rendering
+             if (rsc->direct.rendered)
+               {
+                  glViewport(ctx->viewport_coord[0], ctx->viewport_coord[1], ctx->viewport_coord[2], ctx->viewport_coord[3]);
+                  if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+                    glDisable(GL_SCISSOR_TEST);
+             }
+
+             ctx->current_fbo = 0;
+             rsc->direct.rendered = 0;
           }
 
         ctx->current_sfc = sfc;
         rsc->current_ctx = ctx;
         rsc->current_eng = eng_data;
+
+        // Update extensions after GLESv1 context is bound
+        evgl_api_gles1_ext_get(gles1_funcs);
+
         return 1;
      }
+
+   // GLES 2+ below
 
    // Normal FBO Rendering
    // Create FBO if it hasn't been created
@@ -2342,12 +2387,6 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
    ctx->current_sfc = sfc;
    rsc->current_ctx = ctx;
    rsc->current_eng = eng_data;
-
-   // Update GLESv1 extension functions after GLESv1 context is bound
-   if (ctx->version == EVAS_GL_GLES_1_X)
-     {
-        evgl_api_gles1_ext_get(gles1_funcs);
-     }
 
    _surface_context_list_print();
 
