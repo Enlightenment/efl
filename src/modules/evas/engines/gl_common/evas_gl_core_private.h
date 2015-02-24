@@ -112,6 +112,10 @@ struct _EVGL_Surface
    unsigned gles1_indirect : 1;
    unsigned xpixmap : 1;
 
+   // Moved from evgl_engine
+   unsigned direct_override : 1;
+   unsigned direct_mem_opt : 1;
+
    // Init Flag
    unsigned buffers_allocated : 1;
 
@@ -292,14 +296,15 @@ struct _EVGL_Engine
    int                resource_count;
    int                main_tid;
 
-   int                direct_override;
-   int                direct_mem_opt;
-
    // Add more debug logs (DBG levels 4 and 6)
    int                api_debug_mode;
 
    // Force Off for Debug purposes
    int                direct_force_off;
+
+   // Other DR flags for debugging purposes
+   int                direct_override;
+   int                direct_mem_opt;
 
    // Force Direct Scissoring off for Debug purposes
    int                direct_scissor_off;

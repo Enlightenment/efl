@@ -24,6 +24,12 @@ static void _surface_cap_print(int error);
 static void _surface_context_list_print();
 static void _internal_resources_destroy(void *eng_data, EVGL_Resource *rsc);
 
+// NOTE: These constants are "hidden", kinda non public API. They should not
+// be used unless you know exactly what you are doing.
+// These vars replace environment variables.
+#define EVAS_GL_OPTIONS_DIRECT_MEMORY_OPTIMIZE 0x1000
+#define EVAS_GL_OPTIONS_DIRECT_OVERRIDE        0x2000
+
 
 //---------------------------------------------------------------//
 // Internal Resources:
@@ -1112,11 +1118,19 @@ _internal_config_set(EVGL_Surface *sfc, Evas_GL_Config *cfg)
              sfc->depth_stencil_fmt = evgl_engine->caps.fbo_fmts[i].depth_stencil_fmt;
              sfc->msaa_samples      = evgl_engine->caps.fbo_fmts[i].samples;
 
-             // TODO: Implement surface reconfigure and add depth+stencil support
+             /*
+             // TODO:
+             if (((depth_bit > 0)  ||(stencil_bit > 0) ||(msaa_samples > 0))
+                  && (evgl_engine->funcs->native_win_surface_config_check))
+               {
+                  DBG("request to check wid cfg with depth %d, stencil %d, msaa %d",depth_bit,stencil_bit,msaa_samples);
+                  support_win_cfg = evgl_engine->funcs->native_win_surface_config_check(eng_data,depth_bit,stencil_bit,msaa_samples);
+               }
+             */
 
              // Direct Rendering Option
-             if ((!depth_bit && !stencil_bit && !msaa_samples) || evgl_engine->direct_override)
-               sfc->direct_fb_opt = cfg->options_bits & EVAS_GL_OPTIONS_DIRECT;
+             if ((!depth_bit && !stencil_bit && !msaa_samples) || sfc->direct_override)
+               sfc->direct_fb_opt = !!(cfg->options_bits & EVAS_GL_OPTIONS_DIRECT);
 
              // Extra flags for direct rendering
              sfc->client_side_rotation = !!(cfg->options_bits & EVAS_GL_OPTIONS_CLIENT_SIDE_ROTATION);
@@ -1141,7 +1155,7 @@ _internal_config_set(EVGL_Surface *sfc, Evas_GL_Config *cfg)
         DBG("  Stencil Format   : %s", _glenum_string_get(sfc->stencil_fmt));
         DBG("  D-Stencil Format : %s", _glenum_string_get(sfc->depth_stencil_fmt));
         DBG("  MSAA Samples     : %d", sfc->msaa_samples);
-        DBG("  Direct Option    : %d", sfc->direct_fb_opt);
+        DBG("  Direct Option    : %d%s", sfc->direct_fb_opt, sfc->direct_override ? " (override)" : "");
         DBG("  Client-side Rot. : %d", sfc->client_side_rotation);
         sfc->cfg_index = cfg_index;
         return 1;
@@ -1379,8 +1393,7 @@ _evgl_native_context_get(Evas_GL_Context *ctx)
 EVGL_Engine *
 evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
 {
-   int direct_mem_opt = 0, direct_off = 0, direct_soff = 0, debug_mode = 0;
-   int direct_override = 0;
+   int direct_off = 0, direct_soff = 0, debug_mode = 0;
    char *s = NULL;
 
    if (evgl_engine) return evgl_engine;
@@ -1456,18 +1469,25 @@ evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
         goto error;
      }
 
+   // NOTE: Should we finally remove these variables?
+   // Check for Direct rendering override env var.
+   if ((s = getenv("EVAS_GL_DIRECT_OVERRIDE")))
+     {
+        WRN("EVAS_GL_DIRECT_OVERRIDE is set to '%s' for the whole application. "
+            "This should never be done except for debugging purposes.", s);
+        if (atoi(s) == 1)
+          evgl_engine->direct_override = 1;
+     }
+
    // Check if Direct Rendering Memory Optimzation flag is on
    // Creates resources on demand when it fallsback to fbo rendering
-   s = getenv("EVAS_GL_DIRECT_MEM_OPT");
-   if (s) direct_mem_opt = atoi(s);
-   if (direct_mem_opt == 1)
-      evgl_engine->direct_mem_opt = 1;
-
-   // Check for Direct rendering override env var.
-   s = getenv("EVAS_GL_DIRECT_OVERRIDE");
-   if (s) direct_override = atoi(s);
-   if (direct_override == 1)
-     evgl_engine->direct_override = 1;
+   if ((s = getenv("EVAS_GL_DIRECT_MEM_OPT")))
+     {
+        WRN("EVAS_GL_DIRECT_MEM_OPT is set to '%s' for the whole application. "
+            "This should never be done except for debugging purposes.", s);
+        if (atoi(s) == 1)
+          evgl_engine->direct_mem_opt = 1;
+     }
 
    // Check if Direct Rendering Override Force Off flag is on
    s = getenv("EVAS_GL_DIRECT_OVERRIDE_FORCE_OFF");
@@ -1590,6 +1610,23 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    sfc->w = w;
    sfc->h = h;
 
+   // Extra options for DR
+   if (cfg->options_bits & EVAS_GL_OPTIONS_DIRECT_MEMORY_OPTIMIZE)
+     {
+        DBG("Setting DIRECT_MEMORY_OPTIMIZE bit");
+        sfc->direct_mem_opt = EINA_TRUE;
+     }
+   else if (evgl_engine->direct_mem_opt == 1)
+     sfc->direct_mem_opt = EINA_TRUE;
+
+   if (cfg->options_bits & EVAS_GL_OPTIONS_DIRECT_OVERRIDE)
+     {
+        DBG("Setting DIRECT_OVERRIDE bit");
+        sfc->direct_override = EINA_TRUE;
+     }
+   else if (evgl_engine->direct_override == 1)
+     sfc->direct_override = EINA_TRUE;
+
    // Set the internal config value
    if (!_internal_config_set(sfc, cfg))
      {
@@ -1628,7 +1665,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
      };
 
    // Allocate resources for fallback unless the flag is on
-   if (!evgl_engine->direct_mem_opt)
+   if (!sfc->direct_mem_opt)
      {
         if (!_surface_buffers_allocate(eng_data, sfc, sfc->w, sfc->h, 0))
           {
@@ -1752,6 +1789,7 @@ evgl_pbuffer_surface_create(void *eng_data, Evas_GL_Config *cfg,
           };
 
         // Allocate resources for fallback unless the flag is on
+        // Note: we don't care about sfc->direct_mem_opt, as DR makes no sense with PBuffer.
         if (!evgl_engine->direct_mem_opt)
           {
              if (!_surface_buffers_allocate(eng_data, sfc, sfc->w, sfc->h, 0))
@@ -2418,10 +2456,12 @@ evgl_direct_rendered()
 Eina_Bool
 evgl_native_surface_direct_opts_get(Evas_Native_Surface *ns,
                                     Eina_Bool *direct_render,
-                                    Eina_Bool *client_side_rotation)
+                                    Eina_Bool *client_side_rotation,
+                                    Eina_Bool *override)
 {
    EVGL_Surface *sfc;
 
+   if (override) *override = EINA_FALSE;
    if (direct_render) *direct_render = EINA_FALSE;
    if (client_side_rotation) *client_side_rotation = EINA_FALSE;
 
@@ -2446,6 +2486,7 @@ evgl_native_surface_direct_opts_get(Evas_Native_Surface *ns,
      }
 
    if (direct_render) *direct_render = sfc->direct_fb_opt;
+   if (override) *override |= sfc->direct_override;
    if (client_side_rotation) *client_side_rotation = sfc->client_side_rotation;
    return EINA_TRUE;
 }
@@ -2474,9 +2515,8 @@ evgl_direct_info_set(int win_w, int win_h, int rot,
 
    sfc = eina_hash_find(evgl_engine->direct_surfaces, &texid);
 
-   if ((rot == 0) ||
-       evgl_engine->direct_override ||
-       (sfc && sfc->client_side_rotation))
+   if (sfc &&
+       ((rot == 0) || sfc->client_side_rotation || sfc->direct_override))
      {
         if (evgl_engine->api_debug_mode)
           DBG("Direct rendering is enabled.");
@@ -2555,7 +2595,7 @@ evgl_direct_partial_info_clear()
 }
 
 void
-evgl_direct_override_get(int *override, int *force_off)
+evgl_direct_override_get(Eina_Bool *override, Eina_Bool *force_off)
 {
    if (override)  *override  = evgl_engine->direct_override;
    if (force_off) *force_off = evgl_engine->direct_force_off;

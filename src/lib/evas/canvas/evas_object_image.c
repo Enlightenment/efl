@@ -2842,8 +2842,7 @@ static void *
 evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o,
 			  void *output, void *pixels)
 {
-   int direct_override = 0;
-   int direct_force_off = 0;
+   Eina_Bool direct_override = EINA_FALSE, direct_force_off = EINA_FALSE;
 
    if (o->dirty_pixels)
      {
@@ -2866,7 +2865,7 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
                        if (ENFN->gl_direct_override_get)
                          ENFN->gl_direct_override_get(output, &direct_override, &direct_force_off);
                        if (ENFN->gl_surface_direct_renderable_get)
-                         direct_renderable = ENFN->gl_surface_direct_renderable_get(output, ns);
+                         direct_renderable = ENFN->gl_surface_direct_renderable_get(output, ns, &direct_override);
 
                        if ( ((direct_override) ||
                              ((direct_renderable) &&
@@ -2885,7 +2884,6 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
                          }
                        else
                          o->direct_render = EINA_FALSE;
-
                     }
 
                   if ( (ns) &&

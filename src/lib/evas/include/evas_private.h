@@ -1297,7 +1297,7 @@ struct _Evas_Func
    void *(*gl_proc_address_get)          (void *data, const char *name);
    int  (*gl_native_surface_get)         (void *data, void *surface, void *native_surface);
    void *(*gl_api_get)                   (void *data, int version);
-   void (*gl_direct_override_get)        (void *data, int *override, int *force_off);
+   void (*gl_direct_override_get)        (void *data, Eina_Bool *override, Eina_Bool *force_off);
    void (*gl_get_pixels_set)             (void *data, void *get_pixels, void *get_pixels_data, void *obj);
    Eina_Bool (*gl_surface_lock)          (void *data, void *surface);
    Eina_Bool (*gl_surface_read_pixels)   (void *data, void *surface, int x, int y, int w, int h, Evas_Colorspace cspace, void *pixels);
@@ -1307,7 +1307,7 @@ struct _Evas_Func
    void *(*gl_current_surface_get)       (void *data);
    int  (*gl_rotation_angle_get)         (void *data);
    Eina_Bool (*gl_surface_query)         (void *data, void *surface, int attr, void *value);
-   Eina_Bool (*gl_surface_direct_renderable_get) (void *data, Evas_Native_Surface *ns);
+   Eina_Bool (*gl_surface_direct_renderable_get) (void *data, Evas_Native_Surface *ns, Eina_Bool *override);
 
    int  (*image_load_error_get)          (void *data, void *image);
    int  (*font_run_end_get)              (void *data, Evas_Font_Set *font, Evas_Font_Instance **script_fi, Evas_Font_Instance **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len);
