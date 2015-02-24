@@ -4140,8 +4140,7 @@ FUNC_PART_DRAG_ID(threshold);
 
 #define FUNC_STATE_BOX_LAYOUT(Layout) \
   EAPI Eina_Stringshare * \
-  edje_edit_state_box_##Layout##_get(Evas_Object *obj, const char *part, \
-                                     const char *state, double value) \
+  edje_edit_state_box_##Layout##_get(Evas_Object *obj, const char *part, const char *state, double value) \
     { \
        GET_PD_OR_RETURN(0) \
        if (rp->part->type == EDJE_PART_TYPE_BOX) \
@@ -4153,9 +4152,7 @@ FUNC_PART_DRAG_ID(threshold);
        return NULL; \
     } \
   EAPI Eina_Bool \
-  edje_edit_state_box_##Layout##_set(Evas_Object *obj, const char *part, \
-                                     const char *state, double value, \
-                                     char *layout) \
+  edje_edit_state_box_##Layout##_set(Evas_Object *obj, const char *part, const char *state, double value, char *layout) \
   { \
      GET_PD_OR_RETURN(EINA_FALSE) \
      if (rp->part->type == EDJE_PART_TYPE_BOX) \
@@ -4177,8 +4174,7 @@ FUNC_STATE_BOX_LAYOUT(alt_layout);
 /***************************/
 
 EAPI unsigned char
-edje_edit_state_table_homogeneous_get(Evas_Object *obj, const char *part,
-                                      const char *state, double value)
+edje_edit_state_table_homogeneous_get(Evas_Object *obj, const char *part, const char *state, double value)
 {
    GET_PD_OR_RETURN(0)
 
@@ -4197,9 +4193,7 @@ edje_edit_state_table_homogeneous_get(Evas_Object *obj, const char *part,
 }
 
 EAPI Eina_Bool
-edje_edit_state_table_homogeneous_set(Evas_Object *obj, const char *part,
-                                      const char *state, double value,
-                                      unsigned char homogeneous)
+edje_edit_state_table_homogeneous_set(Evas_Object *obj, const char *part, const char *state, double value, unsigned char homogeneous)
 {
    GET_PD_OR_RETURN(EINA_FALSE)
 
@@ -4223,9 +4217,7 @@ edje_edit_state_table_homogeneous_set(Evas_Object *obj, const char *part,
 /***************************/
 
 EAPI Eina_Bool
-edje_edit_state_container_align_get(Evas_Object *obj, const char *part,
-                                 const char *state, double value,
-                                 double *x, double *y)
+edje_edit_state_container_align_get(Evas_Object *obj, const char *part, const char *state, double value, double *x, double *y)
 {
    GET_PD_OR_RETURN(EINA_FALSE)
 
@@ -4254,9 +4246,7 @@ edje_edit_state_container_align_get(Evas_Object *obj, const char *part,
 }
 
 EAPI Eina_Bool
-edje_edit_state_container_align_set(Evas_Object *obj, const char *part,
-                                    const char *state, double value,
-                                    double x, double y)
+edje_edit_state_container_align_set(Evas_Object *obj, const char *part, const char *state, double value, double x, double y)
 {
    GET_PD_OR_RETURN(EINA_FALSE)
 
@@ -4285,9 +4275,7 @@ edje_edit_state_container_align_set(Evas_Object *obj, const char *part,
 }
 
 EAPI Eina_Bool 
-edje_edit_state_container_padding_get(Evas_Object *obj, const char *part,
-                                      const char *state, double value,
-                                      int *x, int *y)
+edje_edit_state_container_padding_get(Evas_Object *obj, const char *part, const char *state, double value, int *x, int *y)
 {
    GET_PD_OR_RETURN(EINA_FALSE)
 
@@ -4317,9 +4305,7 @@ edje_edit_state_container_padding_get(Evas_Object *obj, const char *part,
 }
 
 EAPI Eina_Bool
-edje_edit_state_container_padding_set(Evas_Object *obj, const char *part,
-                                    const char *state, double value,
-                                    int x, int y)
+edje_edit_state_container_padding_set(Evas_Object *obj, const char *part, const char *state, double value, int x, int y)
 {
    GET_PD_OR_RETURN(EINA_FALSE)
 
@@ -4864,10 +4850,7 @@ FUNC_PART_ITEM_DOUBLE(weight_y, weight.y, 0.0, 99999.990);
 #undef FUNC_PART_ITEM_DOUBLE
 
 EAPI Eina_Bool
-edje_edit_part_item_position_get(Evas_Object *obj, const char *part,
-                                 const char *item_name,
-                                 unsigned short *col,
-                                 unsigned short *row)
+edje_edit_part_item_position_get(Evas_Object *obj, const char *part, const char *item_name, unsigned short *col, unsigned short *row)
   {
      Edje_Part *ep;
      unsigned int i;
@@ -4890,10 +4873,7 @@ edje_edit_part_item_position_get(Evas_Object *obj, const char *part,
      return EINA_TRUE;
   }
 EAPI Eina_Bool
-edje_edit_part_item_position_set(Evas_Object *obj, const char *part,
-                                 const char *item_name,
-                                 unsigned short col,
-                                 unsigned short row)
+edje_edit_part_item_position_set(Evas_Object *obj, const char *part, const char *item_name, unsigned short col, unsigned short row)
   {
      Edje_Part *ep;
      unsigned int i;
@@ -4919,9 +4899,7 @@ edje_edit_part_item_position_set(Evas_Object *obj, const char *part,
   }
 
 EAPI void
-edje_edit_part_item_span_get(Evas_Object *obj, const char *part,
-                             const char *item_name, unsigned char *col,
-                             unsigned char *row)
+edje_edit_part_item_span_get(Evas_Object *obj, const char *part, const char *item_name, unsigned char *col, unsigned char *row)
 {
    Edje_Part *ep;
    unsigned int i;
@@ -4945,9 +4923,7 @@ edje_edit_part_item_span_get(Evas_Object *obj, const char *part,
 }
 
 EAPI Eina_Bool
-edje_edit_part_item_span_set(Evas_Object *obj, const char *part,
-                             const char *item_name, unsigned char col,
-                             unsigned char row)
+edje_edit_part_item_span_set(Evas_Object *obj, const char *part, const char *item_name, unsigned char col, unsigned char row)
 {
    Edje_Part *ep;
    unsigned int i;
