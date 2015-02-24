@@ -278,7 +278,7 @@ _edje_textblock_style_search(Edje *ed, const char *style)
    EINA_LIST_FOREACH(ed->file->styles, l, stl)
      {
         if ((stl->name) &&
-            (!strcmp(stl->name, style))) break;
+            (stl->name == style || !strcmp(stl->name, style))) break;
         stl = NULL;
      }
 
