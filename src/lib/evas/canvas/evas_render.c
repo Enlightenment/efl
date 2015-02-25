@@ -368,7 +368,10 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
           {
              /* is image clipper */
              if (_evas_render_object_changed_get(obj))
-               _evas_mask_redraw_set(e, obj);
+               {
+                  obj->func->render_pre(obj->object, obj, obj->private_data);
+                  _evas_mask_redraw_set(e, obj);
+               }
           }
      }
    for (i = 0; i < render_objects->count; i++)
@@ -1768,6 +1771,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
                            int level)
 {
    int x, y, w, h, r, g, b, a;
+   Eina_Bool is_image, done = EINA_FALSE;
    void *ctx;
 
    if (!mask) return;
@@ -1778,6 +1782,8 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
      }
 
    RD(level, "evas_render_mask_subrender(%p, prev: %p)\n", mask, prev_mask);
+
+   is_image = eo_isa(mask->object, EVAS_IMAGE_CLASS);
 
    x = mask->cur->geometry.x;
    y = mask->cur->geometry.y;
@@ -1821,80 +1827,101 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
    EINA_COW_WRITE_BEGIN(evas_object_mask_cow, mask->mask, Evas_Object_Mask_Data, mdata)
      mdata->redraw = EINA_FALSE;
 
-     /* delete render surface if changed or if already alpha
-      * (we don't know how to render objects to alpha) */
-     if (mdata->surface && ((w != mdata->w) || (h != mdata->h) || mdata->is_alpha))
+     if (is_image && !prev_mask && mdata->image && ENFN->image_scaled_update)
        {
-          ENFN->image_map_surface_free(ENDT, mdata->surface);
-          mdata->surface = NULL;
+          /* Fast path (for GL) that avoids creating a map surface, render the
+           * scaled image in it, when the shaders can just scale on the fly. */
+          void *scaled = ENFN->image_scaled_update
+                (ENDT, mdata->surface, mdata->image, w, h,
+                 mdata->smooth_scale, EINA_TRUE, EVAS_COLORSPACE_GRY8);
+          if (scaled)
+            {
+               done = EINA_TRUE;
+               if (mdata->surface && (mdata->surface != scaled))
+                 ENFN->image_map_surface_free(ENDT, mdata->surface);
+               mdata->surface = scaled;
+               mdata->w = w;
+               mdata->h = h;
+               mdata->is_alpha = (ENFN->image_colorspace_get(ENDT, scaled) == EVAS_COLORSPACE_GRY8);
+            }
        }
 
-     /* create new RGBA render surface if needed */
-     if (!mdata->surface)
+     if (!done)
        {
-          mdata->surface = ENFN->image_map_surface_new(ENDT, w, h, EINA_TRUE);
-          if (!mdata->surface) goto end;
-          mdata->is_alpha = EINA_FALSE;
-          mdata->w = w;
-          mdata->h = h;
-       }
+          /* delete render surface if changed or if already alpha
+           * (we don't know how to render objects to alpha) */
+          if (mdata->surface && ((w != mdata->w) || (h != mdata->h) || mdata->is_alpha))
+            {
+               ENFN->image_map_surface_free(ENDT, mdata->surface);
+               mdata->surface = NULL;
+            }
 
-     /* Clear surface with transparency */
-     ctx = ENFN->context_new(ENDT);
-     ENFN->context_color_set(ENDT, ctx, 0, 0, 0, 0);
-     ENFN->context_render_op_set(ENDT, ctx, EVAS_RENDER_COPY);
-     ENFN->rectangle_draw(ENDT, ctx, mdata->surface, 0, 0, w, h, EINA_FALSE);
-     ENFN->context_free(ENDT, ctx);
+          /* create new RGBA render surface if needed */
+          if (!mdata->surface)
+            {
+               mdata->surface = ENFN->image_map_surface_new(ENDT, w, h, EINA_TRUE);
+               if (!mdata->surface) goto end;
+               mdata->is_alpha = EINA_FALSE;
+               mdata->w = w;
+               mdata->h = h;
+            }
 
-     /* Render mask to RGBA surface */
-     ctx = ENFN->context_new(ENDT);
-     if (prev_mask)
-       {
-          ENFN->context_clip_image_set(ENDT, ctx,
-                                       prev_mask->mask->surface,
-                                       prev_mask->cur->geometry.x - x,
-                                       prev_mask->cur->geometry.y - y);
-       }
-     evas_render_mapped(evas, mask->object, mask, ctx, mdata->surface,
-                        -x, -y, 1, 0, 0, evas->output.w, evas->output.h,
-                        NULL, level, EINA_TRUE, EINA_FALSE);
-     ENFN->context_free(ENDT, ctx);
+          /* Clear surface with transparency */
+          ctx = ENFN->context_new(ENDT);
+          ENFN->context_color_set(ENDT, ctx, 0, 0, 0, 0);
+          ENFN->context_render_op_set(ENDT, ctx, EVAS_RENDER_COPY);
+          ENFN->rectangle_draw(ENDT, ctx, mdata->surface, 0, 0, w, h, EINA_FALSE);
+          ENFN->context_free(ENDT, ctx);
 
-     /* BEGIN HACK */
+          /* Render mask to RGBA surface */
+          ctx = ENFN->context_new(ENDT);
+          if (prev_mask)
+            {
+               ENFN->context_clip_image_set(ENDT, ctx,
+                                            prev_mask->mask->surface,
+                                            prev_mask->cur->geometry.x - x,
+                                            prev_mask->cur->geometry.y - y);
+            }
+          evas_render_mapped(evas, mask->object, mask, ctx, mdata->surface,
+                             -x, -y, 1, 0, 0, evas->output.w, evas->output.h,
+                             NULL, level, EINA_TRUE, EINA_FALSE);
+          ENFN->context_free(ENDT, ctx);
 
-     /* Now we want to convert this RGBA surface to Alpha.
-      * NOTE: So, this is not going to work with the GL engine but only with
-      *       the SW engine. Here's the detection hack:
-      * FIXME: If you know of a way to support rendering to GL_ALPHA in GL,
-      *        then we should render directly to an ALPHA surface. A priori,
-      *        GLES FBO does not support this.
-      */
-     if (!ENFN->gl_surface_read_pixels)
-       {
-          RGBA_Image *alpha_surface;
-          DATA32 *rgba;
-          DATA8* alpha;
+          /* BEGIN HACK */
 
-          alpha_surface = ENFN->image_new_from_copied_data
-                (ENDT, w, h, NULL, EINA_TRUE, EVAS_COLORSPACE_GRY8);
-          if (!alpha_surface) goto end;
+          /* Now we want to convert this RGBA surface to Alpha.
+           * NOTE: So, this is not going to work with the GL engine but only with
+           *       the SW engine. Here's the detection hack:
+           * FIXME: If you know of a way to support rendering to GL_ALPHA in GL,
+           *        then we should render directly to an ALPHA surface. A priori,
+           *        GLES FBO does not support this.
+           */
+          if (!ENFN->gl_surface_read_pixels)
+            {
+               RGBA_Image *alpha_surface;
+               DATA32 *rgba;
+               DATA8* alpha;
 
-          /* Copy alpha channel */
-          rgba = ((RGBA_Image *) mdata->surface)->image.data;
-          alpha = alpha_surface->image.data8;
-          for (y = h; y; --y)
-            for (x = w; x; --x, alpha++, rgba++)
-              *alpha = (DATA8) A_VAL(rgba);
+               alpha_surface = ENFN->image_new_from_copied_data
+                     (ENDT, w, h, NULL, EINA_TRUE, EVAS_COLORSPACE_GRY8);
+               if (!alpha_surface) goto end;
 
-          /* Now we can drop the original surface */
-          ENFN->image_map_surface_free(ENDT, mdata->surface);
-          mdata->surface = alpha_surface;
-          mdata->is_alpha = EINA_TRUE;
+               /* Copy alpha channel */
+               rgba = ((RGBA_Image *) mdata->surface)->image.data;
+               alpha = alpha_surface->image.data8;
+               for (y = h; y; --y)
+                 for (x = w; x; --x, alpha++, rgba++)
+                   *alpha = (DATA8) A_VAL(rgba);
+
+               /* Now we can drop the original surface */
+               ENFN->image_map_surface_free(ENDT, mdata->surface);
+               mdata->surface = alpha_surface;
+               mdata->is_alpha = EINA_TRUE;
+            }
+          /* END OF HACK */
        }
 
      mdata->surface = ENFN->image_dirty_region(ENDT, mdata->surface, 0, 0, w, h);
-
-     /* END OF HACK */
 
 end:
    EINA_COW_WRITE_END(evas_object_mask_cow, mask->mask, mdata);

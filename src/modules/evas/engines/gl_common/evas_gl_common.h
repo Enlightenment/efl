@@ -491,6 +491,7 @@ struct _Evas_Engine_GL_Context
          Eina_Bool use_texsam : 1;
          Eina_Bool use_texm : 1;
          Eina_Bool anti_alias : 1;
+         Eina_Bool mask_smooth : 1;
          Evas_GL_Image *im;
          GLuint buffer;
          int buffer_alloc;
@@ -605,6 +606,12 @@ struct _Evas_GL_Image
       unsigned char loose : 1;
    } native;
 
+   struct {
+      Evas_GL_Image *origin;
+      int            w, h;
+      Eina_Bool      smooth : 1;
+   } scaled;
+
    int scale_hint, content_hint;
    int csize;
 
@@ -700,46 +707,46 @@ void              evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
 void              evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
                                                         int x, int y, int w, int h,
                                                         int r, int g, int b, int a,
-                                                        Evas_GL_Texture *mtex, int mx, int my, int mw, int mh);
+                                                        Evas_GL_Texture *mtex, double mx, double my, double mw, double mh, Eina_Bool mask_smooth);
 void              evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                                     Evas_GL_Texture *tex,
                                                     double sx, double sy, double sw, double sh,
                                                     int x, int y, int w, int h,
-                                                    Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                                    Evas_GL_Texture *mtex, double mx, double my, double mw, double mh, Eina_Bool mask_smooth,
                                                     int r, int g, int b, int a,
                                                     Eina_Bool smooth, Eina_Bool tex_only);
 void              evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
                                                    Evas_GL_Texture *tex,
                                                    double sx, double sy, double sw, double sh,
                                                    int x, int y, int w, int h,
-                                                   Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                                   Evas_GL_Texture *mtex, double mx, double my, double mw, double mh, Eina_Bool mask_smooth,
                                                    int r, int g, int b, int a);
 void             evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
                                                  Evas_GL_Texture *tex,
                                                  double sx, double sy, double sw, double sh,
                                                  int x, int y, int w, int h,
-                                                 Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                                 Evas_GL_Texture *mtex, double mx, double my, double mw, double mh, Eina_Bool mask_smooth,
                                                  int r, int g, int b, int a,
                                                  Eina_Bool smooth);
 void             evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
                                                   Evas_GL_Texture *tex,
                                                   double sx, double sy, double sw, double sh,
                                                   int x, int y, int w, int h,
-                                                  Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                                  Evas_GL_Texture *mtex, double mx, double my, double mw, double mh, Eina_Bool mask_smooth,
                                                   int r, int g, int b, int a,
                                                   Eina_Bool smooth);
 void             evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
                                                   Evas_GL_Texture *tex,
                                                   double sx, double sy, double sw, double sh,
                                                   int x, int y, int w, int h,
-                                                  Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                                  Evas_GL_Texture *mtex, double mx, double my, double mw, double mh, Eina_Bool mask_smooth,
                                                   int r, int g, int b, int a,
                                                   Eina_Bool smooth);
 void             evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
                                                         Evas_GL_Texture *tex,
                                                         double sx, double sy, double sw, double sh,
                                                         int x, int y, int w, int h,
-                                                        Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
+                                                        Evas_GL_Texture *mtex, double mx, double my, double mw, double mh, Eina_Bool mask_smooth,
                                                         int r, int g, int b, int a,
                                                         Eina_Bool smooth);
 void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,

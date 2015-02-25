@@ -911,10 +911,12 @@ struct _Evas_Object_3D_Data
 struct _Evas_Object_Mask_Data
 {
    void          *surface;
+   void          *image; // original image
    int            w, h;
    Eina_Bool      is_mask : 1;
    Eina_Bool      redraw : 1;
    Eina_Bool      is_alpha : 1;
+   Eina_Bool      smooth_scale : 1;
 };
 
 struct _Evas_Object_Protected_State
@@ -1279,6 +1281,7 @@ struct _Evas_Func
    void *(*image_map_surface_new)          (void *data, int w, int h, int alpha);
    void (*image_map_surface_free)          (void *data, void *surface);
    void (*image_map_clean)                 (void *data, RGBA_Map *m);
+   void *(*image_scaled_update)            (void *data, void *scaled, void *image, int dst_w, int dst_h, Eina_Bool smooth, Eina_Bool alpha, Evas_Colorspace cspace);
 
    void (*image_content_hint_set)          (void *data, void *surface, int hint);
    int  (*image_content_hint_get)          (void *data, void *surface);

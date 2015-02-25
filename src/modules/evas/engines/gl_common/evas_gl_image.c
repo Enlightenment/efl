@@ -690,6 +690,9 @@ evas_gl_common_image_free(Evas_GL_Image *im)
    im->references--;
    if (im->references > 0) return;
 
+   if (im->scaled.origin)
+     evas_gl_common_image_free(im->scaled.origin);
+
    if (im->native.func.free)
      im->native.func.free(im->native.func.data, im);
 
@@ -964,6 +967,9 @@ evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
         mmw = mw;
         mmh = mh;
         mtex = mask->tex;
+        // TODO: implement support for scaled masks
+        //if (mask->scaled.origin)
+          //mask_smooth = mask->scaled.smooth;
      }
 
    evas_gl_common_context_image_map_push(gc, im->tex, npoints, p,
@@ -984,9 +990,10 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                            Eina_Bool yuv, Eina_Bool yuy2, Eina_Bool nv12,
                            Eina_Bool rgb_a_pair)
 {
-   double mmx = 0, mmy = 0, mmw = 0, mmh = 0;
+   double mx = 0, my = 0, mw = 0, mh = 0;
    double ssx, ssy, ssw, ssh;
-   Evas_GL_Texture *mtex = NULL;
+   Evas_GL_Texture *mtex = mask ? mask->tex : NULL;
+   Eina_Bool mask_smooth = EINA_FALSE;
    int nx, ny, nw, nh;
 
    nx = dx; ny = dy; nw = dw; nh = dh;
@@ -995,18 +1002,36 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
    if ((nw < 1) || (nh < 1)) return;
    if (!im->tex) return;
 
-   if (mask && mask->tex)
+   if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
      {
-        double mx, my, mw, mh;
+        const double tmw = mtex->pt->w;
+        const double tmh = mtex->pt->h;
+        double scalex = 1.0;
+        double scaley = 1.0;
 
-        mx = mask_x; my = mask_y; mw = mask->w; mh = mask->h;
+        // canvas coords
+        mx = mask_x; my = mask_y;
+        if (mask->scaled.origin)
+          {
+             mw = mask->scaled.w;
+             mh = mask->scaled.h;
+             scalex = mask->w / (double)mask->scaled.w;
+             scaley = mask->h / (double)mask->scaled.h;
+             mask_smooth = mask->scaled.smooth;
+          }
+        else
+          {
+             mw = mask->w;
+             mh = mask->h;
+          }
         RECTS_CLIP_TO_RECT(mx, my, mw, mh, cx, cy, cw, ch);
         RECTS_CLIP_TO_RECT(mx, my, mw, mh, dx, dy, dw, dh);
-        mmx = mx - mask_x;
-        mmy = my - mask_y;
-        mmw = mw;
-        mmh = mh;
-        mtex = mask->tex;
+
+        // convert to tex coords
+        mx = (mtex->x / tmw) + ((mx - mask_x) * scalex / tmw);
+        my = (mtex->y / tmh) + ((my - mask_y) * scaley / tmh);
+        mw = mw * scalex / tmw;
+        mh = mh * scaley / tmh;
      }
 
    if ((nx == dx) && (ny == dy) && (nw == dw) && (nh == dh))
@@ -1016,7 +1041,7 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                                           im->tex,
                                           sx, sy, sw, sh,
                                           dx, dy, dw, dh,
-                                          mtex, mmx, mmy, mmw, mmh,
+                                          mtex, mx, my, mw, mh, mask_smooth,
                                           r, g, b, a,
                                           smooth);
         else if (yuy2)
@@ -1024,7 +1049,7 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                                            im->tex,
                                            sx, sy, sw, sh,
                                            dx, dy, dw, dh,
-                                           mtex, mmx, mmy, mmw, mmh,
+                                           mtex, mx, my, mw, mh, mask_smooth,
                                            r, g, b, a,
                                            smooth);
         else if (nv12)
@@ -1032,7 +1057,7 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                                            im->tex,
                                            sx, sy, sw, sh,
                                            dx, dy, dw, dh,
-                                           mtex, mmx, mmy, mmw, mmh,
+                                           mtex, mx, my, mw, mh, mask_smooth,
                                            r, g, b, a,
                                            smooth);
         else if (rgb_a_pair)
@@ -1040,7 +1065,7 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                                                  im->tex,
                                                  sx, sy, sw, sh,
                                                  dx, dy, dw, dh,
-                                                 mtex, mmx, mmy, mmw, mmh,
+                                                 mtex, mx, my, mw, mh, mask_smooth,
                                                  r, g, b, a,
                                                  smooth);
         else
@@ -1048,7 +1073,7 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                                             im->tex,
                                             sx, sy, sw, sh,
                                             dx, dy, dw, dh,
-                                            mtex, mmx, mmy, mmw, mmh,
+                                            mtex, mx, my, mw, mh, mask_smooth,
                                             r, g, b, a,
                                             smooth, im->tex_only);
         return;
@@ -1064,7 +1089,7 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                                      im->tex,
                                      ssx, ssy, ssw, ssh,
                                      nx, ny, nw, nh,
-                                     mtex, mmx, mmy, mmw, mmh,
+                                     mtex, mx, my, mw, mh, mask_smooth,
                                      r, g, b, a,
                                      smooth);
    else if (yuy2)
@@ -1072,7 +1097,7 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                                       im->tex,
                                       ssx, ssy, ssw, ssh,
                                       nx, ny, nw, nh,
-                                      mtex, mmx, mmy, mmw, mmh,
+                                      mtex, mx, my, mw, mh, mask_smooth,
                                       r, g, b, a,
                                       smooth);
    else if (nv12)
@@ -1080,7 +1105,7 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                                       im->tex,
                                       ssx, ssy, ssw, ssh,
                                       nx, ny, nw, nh,
-                                      mtex, mmx, mmy, mmw, mmh,
+                                      mtex, mx, my, mw, mh, mask_smooth,
                                       r, g, b, a,
                                       smooth);
    else if (rgb_a_pair)
@@ -1088,7 +1113,7 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                                             im->tex,
                                             ssx, ssy, ssw, ssh,
                                             nx, ny, nw, nh,
-                                            mtex, mmx, mmy, mmw, mmh,
+                                            mtex, mx, my, mw, mh, mask_smooth,
                                             r, g, b, a,
                                             smooth);
    else
@@ -1096,7 +1121,7 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                                        im->tex,
                                        ssx, ssy, ssw, ssh,
                                        nx, ny, nw, nh,
-                                       mtex, mmx, mmy, mmw, mmh,
+                                       mtex, mx, my, mw, mh, mask_smooth,
                                        r, g, b, a,
                                        smooth, im->tex_only);
 }

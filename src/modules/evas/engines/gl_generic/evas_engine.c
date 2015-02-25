@@ -950,6 +950,57 @@ eng_image_map_surface_free(void *data, void *surface)
    evas_gl_common_image_free(surface);
 }
 
+static void *
+eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
+                        int dst_w, int dst_h,
+                        Eina_Bool smooth, Eina_Bool alpha,
+                        Evas_Colorspace cspace EINA_UNUSED)
+{
+   Evas_GL_Image *dst = scaled;
+   Evas_GL_Image *src = image;
+   Evas_Engine_GL_Context *gc;
+
+   if (!src) return NULL;
+
+   gc = src->gc;
+   if ((dst_w > gc->shared->info.max_texture_size) ||
+       (dst_h > gc->shared->info.max_texture_size))
+     return NULL;
+
+   if (dst && (dst->scaled.origin == src) &&
+       (dst->scaled.w == dst_w) && (dst->scaled.h == dst_h))
+     return dst;
+
+   if (dst) evas_gl_common_image_free(dst);
+   evas_gl_common_image_update(gc, src);
+   if (!src->tex)
+     {
+        ERR("No source texture.");
+        return NULL;
+     }
+
+   dst = calloc(1, sizeof(Evas_GL_Image));
+   if (!dst) return NULL;
+
+   dst->references = 1;
+   dst->gc = gc;
+   dst->cs.space = src->cs.space;
+   dst->alpha = alpha;
+   dst->w = src->w;
+   dst->h = src->h;
+   dst->tex = src->tex;
+   dst->tex->references++;
+   dst->tex_only = 1;
+
+   src->references++;
+   dst->scaled.origin = src;
+   dst->scaled.w = dst_w;
+   dst->scaled.h = dst_h;
+   dst->scaled.smooth = smooth;
+
+   return dst;
+}
+
 static void
 eng_image_content_hint_set(void *data, void *image, int hint)
 {
@@ -2016,6 +2067,7 @@ module_open(Evas_Module *em)
    ORD(image_map_surface_new);
    ORD(image_map_surface_free);
    ORD(image_map_clean);
+   ORD(image_scaled_update);
 
    ORD(image_content_hint_set);
    ORD(image_content_hint_get);
