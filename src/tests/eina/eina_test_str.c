@@ -309,6 +309,36 @@ START_TEST(str_join_len)
 }
 END_TEST
 
+START_TEST(str_memdup)
+{
+   struct temp {
+      int i;
+      char *s;
+      double d;
+   } t1,*t2;
+   unsigned char buf[7], *temp_buf;
+
+   eina_init();
+
+   t1.i = 1234;
+   t1.s = "hello";
+   t1.d = 123.456;
+
+   t2 = (struct temp *)eina_memdup((unsigned char *)&t1, sizeof(struct temp), EINA_TRUE);
+   fail_if(t2->i != t1.i);
+   fail_if(strcmp(t2->s,t1.s) != 0);
+   fail_if(t2->d != t1.d);
+   free(t2);
+
+   memcpy(buf, "aaabbb", 6);
+   temp_buf = eina_memdup(buf, 6, EINA_TRUE);
+   fail_if(strcmp(temp_buf, "aaabbb") != 0);
+   free(temp_buf);
+
+   eina_shutdown();
+}
+END_TEST
+
 #ifdef HAVE_ICONV
 START_TEST(str_convert)
 {
@@ -346,6 +376,7 @@ eina_test_str(TCase *tc)
    tcase_add_test(tc, str_split);
    tcase_add_test(tc, str_lcat_lcpy);
    tcase_add_test(tc, str_join_len);
+   tcase_add_test(tc, str_memdup);
 #ifdef HAVE_ICONV
    tcase_add_test(tc, str_convert);
 #endif
