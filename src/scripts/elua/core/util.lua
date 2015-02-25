@@ -14,14 +14,20 @@ local M = {}
 local getmetatable, setmetatable = getmetatable, setmetatable
 
 -- multiple inheritance index with depth-first search
-local multi_index = function(self, name)
-    local protos = self.__protos
+local proto_lookup = function(protos, name)
     for i = 1, #protos do
         local proto = protos[i]
         local v = proto[name]
         if v ~= nil then
             return v
         end
+    end
+end
+
+local multi_index = function(self, name)
+    local v = proto_lookup(self.__mixins, name)
+    if v == nil then
+        return proto_lookup(self.__protos, name)
     end
 end
 
@@ -65,8 +71,13 @@ M.Object = {
         end
     end,
 
-    mixin = function(self, obj)
-        for k, v in pairs(obj) do self[k] = v end
+    add_mixin = function(self, mixin)
+        local mixins = self.__mixins
+        if  mixins then
+            mixins[#mixins + 1] = mixin
+        else
+            self.__mixins = { mixin }
+        end
     end,
 
     __tostring = function(self)
