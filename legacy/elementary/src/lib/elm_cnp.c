@@ -149,6 +149,9 @@ static int _elm_cnp_init_count = 0;
 /* Stringshared, so I can just compare pointers later */
 static const char *text_uri;
 
+/* Hash table type->Elm_Sel_Format */
+static Eina_Hash *_types_hash = NULL;
+
 /* Data for DND in progress */
 static Saved_Type savedtypes =  { NULL, NULL, 0, 0, 0, EINA_FALSE };
 
@@ -182,6 +185,7 @@ static Eina_List *cont_drag_tg = NULL; /* List of Item_Container_Drag_Info */
 static void _cont_obj_mouse_up( void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _cont_obj_mouse_move( void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _all_drop_targets_cbs_del(void *data, Evas *e, Evas_Object *obj, void *info);
+static Eina_Bool _elm_cnp_shutdown(void);
 #ifdef HAVE_ELEMENTARY_X
 static Ecore_X_Window _x11_elm_widget_xwin_get(const Evas_Object *obj);
 #endif
@@ -1501,26 +1505,17 @@ _x11_dnd_action_rev_map(Elm_Xdnd_Action action)
    return act;
 }
 
-static int
-_x11_dnd_types_get(Elm_Sel_Format format, const char **types)
+static Elm_Sel_Format
+_x11_types_to_format(const char **types, int ntypes)
 {
+   Elm_Sel_Format ret_type = 0;
    int i;
-   int types_no = 0;
-   for (i = 0; i < CNP_N_ATOMS; i++)
+   for (i = 0; i < ntypes; i++)
      {
-        if (_x11_atoms[i].formats == ELM_SEL_FORMAT_TARGETS)
-          {
-             if (format == ELM_SEL_FORMAT_TARGETS)
-               if (types)
-                 types[types_no++] = _x11_atoms[i].name;
-          }
-        else if (_x11_atoms[i].formats & format)
-          {
-             if (types)
-               types[types_no++] = _x11_atoms[i].name;
-          }
+        X11_Cnp_Atom *atom = eina_hash_find(_types_hash, types[i]);
+        if (atom) ret_type |= atom->formats;
      }
-   return types_no;
+   return ret_type;
 }
 
 static Eina_Bool
@@ -1548,9 +1543,9 @@ _x11_dnd_position(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
         /* check if there is dropable (obj) can accept this drop */
         if (dropable_list)
           {
+             Elm_Sel_Format saved_format = _x11_types_to_format(savedtypes.types, savedtypes.ntypes);
              Eina_List *l;
              Eina_Bool found = EINA_FALSE;
-             int i, j;
 
              EINA_LIST_FOREACH(dropable_list, l, dropable)
                {
@@ -1558,24 +1553,31 @@ _x11_dnd_position(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
                   Eina_Inlist *itr;
                   EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
                     {
-                       int types_no;
-                       const char *types[CNP_N_ATOMS];
-                       types_no = _x11_dnd_types_get(cbs->types, types);
-                       for (j = 0; j < types_no; j++)
+                       Elm_Sel_Format common_fmt = saved_format & cbs->types;
+                       if (common_fmt)
                          {
+                            /* We found a target that can accept this type of data */
+                            int i, min_index = CNP_N_ATOMS;
+                            /* We have to find the first atom that corresponds to one
+                             * of the supported data types. */
                             for (i = 0; i < savedtypes.ntypes; i++)
                               {
-                                 if (!strcmp(types[j], savedtypes.types[i]))
+                                 X11_Cnp_Atom *atom = eina_hash_find(_types_hash, savedtypes.types[i]);
+                                 if (atom && (atom->formats & common_fmt))
                                    {
-                                      found = EINA_TRUE;
-                                      dropable->last.type = savedtypes.types[i];
-                                      dropable->last.format = cbs->types;
-                                      break;
+                                      int atom_idx = (atom - _x11_atoms);
+                                      if (min_index > atom_idx) min_index = atom_idx;
                                    }
                               }
-                            if (found) break;
+                            if (min_index != CNP_N_ATOMS)
+                              {
+                                 cnp_debug("Found atom %s\n", _x11_atoms[min_index].name);
+                                 found = EINA_TRUE;
+                                 dropable->last.type = _x11_atoms[min_index].name;
+                                 dropable->last.format = common_fmt;
+                                 break;
+                              }
                          }
-                       if (found) break;
                     }
                   if (found) break;
                }
@@ -1693,6 +1695,7 @@ found:
    act = _x11_dnd_action_map(drop->action);
 
    dropable->last.in = EINA_FALSE;
+   cnp_debug("Last type: %s - Last format: %X\n", dropable->last.type, dropable->last.format);
    if ((!strcmp(dropable->last.type, text_uri)))
      {
         cnp_debug("We found a URI... (%scached) %s\n",
@@ -1935,11 +1938,13 @@ _x11_elm_cnp_init(void)
 
    if (_init_count > 0) return EINA_TRUE;
    _init_count++;
+   _types_hash = eina_hash_string_small_new(NULL);
    for (i = 0; i < CNP_N_ATOMS; i++)
      {
         _x11_atoms[i].atom = ecore_x_atom_get(_x11_atoms[i].name);
         ecore_x_selection_converter_atom_add
           (_x11_atoms[i].atom, _x11_atoms[i].converter);
+        eina_hash_add(_types_hash, _x11_atoms[i].name, &_x11_atoms[i]);
      }
    //XXX delete handlers?
    ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR, _x11_selection_clear, NULL);
@@ -3773,6 +3778,10 @@ _local_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
              evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
                    _all_drop_targets_cbs_del);
           }
+        if (!drops)
+          {
+             _elm_cnp_shutdown();
+          }
         return EINA_TRUE;
      }
 
@@ -3824,6 +3833,16 @@ _elm_cnp_init(void)
    if (_elm_cnp_init_count > 0) return EINA_TRUE;
    _elm_cnp_init_count++;
    text_uri = eina_stringshare_add("text/uri-list");
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_elm_cnp_shutdown(void)
+{
+   if (!_elm_cnp_init_count) return EINA_TRUE;
+   if (--_elm_cnp_init_count > 0) return EINA_TRUE;
+   eina_stringshare_del(text_uri);
+   text_uri = NULL;
    return EINA_TRUE;
 }
 
