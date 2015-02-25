@@ -25,12 +25,26 @@ local proto_lookup = function(protos, name)
     end
 end
 
-local multi_index = function(self, name)
-    local v = proto_lookup(self.__mixins, name)
-    if v == nil then
-        return proto_lookup(self.__protos, name)
+local Object_MT = {
+    __index = function(self, name)
+        local v = proto_lookup(self.__mixins, name)
+        if v == nil then
+            return proto_lookup(self.__protos, name)
+        end
+    end,
+
+    __tostring = function(self)
+        local  f = self["__tostring"]
+        if not f then
+            return ("Object: %s"):format(self.name or "unnamed")
+        end
+        return f(self)
+    end,
+
+    __call = function(self, ...)
+        return self["__call"](self, ...)
     end
-end
+}
 
 M.Object = {
     __call = function(self, ...)
@@ -41,12 +55,8 @@ M.Object = {
 
     clone = function(self, o)
         o = o or {}
-        o.__index, o.__protos, o.__mixins, o.__call =
-            multi_index, { self }, {}, self.__call
-        if not o.__tostring then
-            o.__tostring = self.__tostring
-        end
-        setmetatable(o, o)
+        o.__protos, o.__mixins = { self }, {}
+        setmetatable(o, Object_MT)
         return o
     end,
 
@@ -69,10 +79,6 @@ M.Object = {
     add_mixin = function(self, mixin)
         local mixins = self.__mixins
         mixins[#mixins + 1] = mixin
-    end,
-
-    __tostring = function(self)
-        return ("Object: %s"):format(self.name or "unnamed")
     end
 }
 
