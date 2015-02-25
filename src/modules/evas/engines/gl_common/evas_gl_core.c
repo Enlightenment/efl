@@ -1607,6 +1607,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
      {
         if (!evgl_engine->funcs->gles1_surface_create)
           {
+             ERR("Can't create GLES 1.1 surfaces");
              evas_gl_common_error_set(eng_data, EVAS_GL_NOT_INITIALIZED);
              goto error;
           }
@@ -1668,6 +1669,8 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
      }
 
    if (dbg) DBG("Created surface sfc %p (eng %p)", sfc, eng_data);
+
+   _surface_context_list_print();
 
    return sfc;
 
@@ -1860,8 +1863,11 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
         DBG("Destroying special surface used for GLES 1.x rendering");
         ret = evgl_engine->funcs->gles1_surface_destroy(eng_data, sfc);
 
-        if (!ret) ERR("Engine failed to destroy a GLES1.x Surface.");
-        return ret;
+        if (!ret)
+          {
+             ERR("Engine failed to destroy a GLES1.x Surface.");
+             return ret;
+          }
      }
 
 
@@ -1925,6 +1931,8 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
 
    free(sfc);
    sfc = NULL;
+
+   _surface_context_list_print();
 
    return 1;
 
@@ -2197,6 +2205,12 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
         ctx->current_sfc = sfc;
         rsc->current_ctx = ctx;
         rsc->current_eng = eng_data;
+
+        // Update extensions after GLESv1 context is bound
+        //evgl_api_gles1_ext_get(gles1_funcs);
+
+        _surface_context_list_print();
+
         return 1;
      }
 
