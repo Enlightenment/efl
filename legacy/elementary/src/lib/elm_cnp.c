@@ -4538,23 +4538,25 @@ elm_drag_cancel(Evas_Object *obj)
         ELM_SAFE_FREE(handler_up, ecore_event_handler_del);
         ELM_SAFE_FREE(handler_status, ecore_event_handler_del);
         ecore_x_dnd_abort(xwin);
-     }
-   if (dragwidget)
-     {
-        if (elm_widget_is(dragwidget))
+        if (dragwidget)
           {
-             Evas_Object *win = elm_widget_top_get(dragwidget);
-             if (win && eo_isa(win, ELM_WIN_CLASS))
-               evas_object_smart_callback_del_full(win, "rotation,changed",
-                                              _x11_win_rotation_changed_cb, dragwin);
+             if (elm_widget_is(dragwidget))
+               {
+                  Evas_Object *win = elm_widget_top_get(dragwidget);
+                  if (win && eo_isa(win, ELM_WIN_CLASS))
+                     evas_object_smart_callback_del_full(win, "rotation,changed",
+                           _x11_win_rotation_changed_cb, dragwin);
+               }
           }
+        goto end;
      }
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-/* Have to complete here.
- * if (elm_win_wl_window_get(obj)) ... */
+   if (_wl_elm_widget_window_get(obj))
+      ecore_wl_dnd_drag_end(ecore_wl_input_get());
 #endif
 
+end:
    ELM_SAFE_FREE(dragwin, evas_object_del);
    dragdonecb = NULL;
    dragacceptcb = NULL;
