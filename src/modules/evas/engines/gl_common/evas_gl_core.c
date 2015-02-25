@@ -1581,6 +1581,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
      {
         if (!evgl_engine->funcs->gles1_surface_create)
           {
+             ERR("Can't create GLES 1.1 surfaces");
              evas_gl_common_error_set(eng_data, EVAS_GL_NOT_INITIALIZED);
              goto error;
           }
@@ -1811,9 +1812,11 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
         INF("Destroying special surface used for GLES 1.x rendering");
         ret = evgl_engine->funcs->gles1_surface_destroy(eng_data, sfc);
 
-        if (!ret) ERR("Engine failed to destroy a GLES1.x Surface.");
-        return ret;
-
+        if (!ret)
+          {
+             ERR("Engine failed to destroy a GLES1.x Surface.");
+             return ret;
+          }
      }
 
 
