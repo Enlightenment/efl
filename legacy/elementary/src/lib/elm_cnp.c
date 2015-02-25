@@ -1224,25 +1224,22 @@ _x11_dropable_find(Ecore_X_Window win)
    return NULL;
 }
 
+static Evas *
+_x11_evas_get_from_xwin(Ecore_X_Window win)
+{
+   /* Find the Evas connected to the window */
+   Dropable *dropable = _x11_dropable_find(win);
+   return dropable ? evas_object_evas_get(dropable->obj) : NULL;
+}
+
 static Eina_List *
-_x11_dropable_list_geom_find(Ecore_X_Window win, Evas_Coord px, Evas_Coord py)
+_dropable_list_geom_find(Evas *evas, Evas_Coord px, Evas_Coord py)
 {
    Eina_List *itr, *top_objects_list = NULL, *dropable_list = NULL;
-   Evas *evas = NULL;
    Evas_Object *top_obj;
    Dropable *dropable = NULL;
 
    if (!drops) return NULL;
-   /* Find the Evas connected to the window */
-   EINA_LIST_FOREACH(drops, itr, dropable)
-     {
-        if (_x11_elm_widget_xwin_get(dropable->obj) == win)
-          {
-             evas = evas_object_evas_get(dropable->obj);
-             break;
-          }
-     }
-   if (!evas) return NULL;
 
    /* We retrieve the (non-smart) objects pointed by (px, py) */
    top_objects_list = evas_tree_objects_at_xy_get(evas, NULL, px, py);
@@ -1292,7 +1289,7 @@ _x11_dropable_list_geom_find(Ecore_X_Window win, Evas_Coord px, Evas_Coord py)
 }
 
 static void
-_x11_dropable_coords_adjust(Dropable *dropable, Evas_Coord *x, Evas_Coord *y)
+_dropable_coords_adjust(Dropable *dropable, Evas_Coord *x, Evas_Coord *y)
 {
    Ecore_Evas *ee;
    int ex = 0, ey = 0, ew = 0, eh = 0;
@@ -1532,14 +1529,14 @@ _x11_dnd_position(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
    dropable = _x11_dropable_find(pos->win);
    if (dropable)
      {
-        Eina_List *dropable_list;
         Evas_Coord x, y, ox = 0, oy = 0;
 
         act = _x11_dnd_action_map(pos->action);
         x = pos->position.x;
         y = pos->position.y;
-        _x11_dropable_coords_adjust(dropable, &x, &y);
-        dropable_list = _x11_dropable_list_geom_find(pos->win, x, y);
+        _dropable_coords_adjust(dropable, &x, &y);
+        Evas *evas = _x11_evas_get_from_xwin(pos->win);
+        Eina_List *dropable_list = evas ? _dropable_list_geom_find(evas, x, y) : NULL;
         /* check if there is dropable (obj) can accept this drop */
         if (dropable_list)
           {
@@ -1664,7 +1661,7 @@ _x11_dnd_drop(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
    // - widget position
    savedtypes.x = drop->position.x;
    savedtypes.y = drop->position.y;
-   _x11_dropable_coords_adjust(dropable, &savedtypes.x, &savedtypes.y);
+   _dropable_coords_adjust(dropable, &savedtypes.x, &savedtypes.y);
 
    cnp_debug("Drop position is %d,%d\n", savedtypes.x, savedtypes.y);
 
