@@ -52,13 +52,13 @@ M.Object = {
 
     is_a = function(self, base)
         if self == base then return true end
-        local pt = self.__proto
-        local is = (pt == base)
-        while not is and pt do
-            pt = pt.__proto
-            is = (pt == base)
+        local protos = self.__protos
+        for i = 1, #protos do
+            if protos[i]:is_a(base) then
+                return true
+            end
         end
-        return is
+        return false
     end,
 
     add_parent = function(self, parent)
