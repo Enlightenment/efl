@@ -839,7 +839,7 @@ _x11_notify_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify 
              ddata.len = data->length;
              ddata.action = sel->action;
              EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-                if (cbs->dropcb)
+                if ((cbs->types & dropable->last.format) && cbs->dropcb)
                   cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
              goto end;
           }
@@ -1046,7 +1046,7 @@ _x11_vcard_receive(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
         ddata.len = data->length;
         ddata.action = sel->action;
         EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-           if (cbs->dropcb)
+           if ((cbs->types & dropable->last.format) && cbs->dropcb)
              cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
         ecore_x_dnd_send_finished();
      }
@@ -1410,7 +1410,7 @@ _x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Elm_Xdn
           {
              cnp_debug("same obj dropable %p\n", dropable->obj);
              EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-                if (cbs->poscb)
+                if ((cbs->types & dropable->last.format) && cbs->poscb)
                   cbs->poscb(cbs->posdata, dropable->obj, x, y, action);
           }
         else
@@ -1423,10 +1423,10 @@ _x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Elm_Xdn
                   last_dropable->last.type = NULL;
                   dropable->last.in = EINA_TRUE;
                   EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-                     if (cbs->entercb)
+                     if ((cbs->types & dropable->last.format) && cbs->entercb)
                        cbs->entercb(cbs->enterdata, dropable->obj);
                   EINA_INLIST_FOREACH_SAFE(last_dropable->cbs_list, itr, cbs)
-                     if (cbs->leavecb)
+                     if ((cbs->types & last_dropable->last.format) && cbs->leavecb)
                        cbs->leavecb(cbs->leavedata, last_dropable->obj);
                }
              else // leave last obj
@@ -1435,7 +1435,7 @@ _x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Elm_Xdn
                   last_dropable->last.in = EINA_FALSE;
                   last_dropable->last.type = NULL;
                   EINA_INLIST_FOREACH_SAFE(last_dropable->cbs_list, itr, cbs)
-                     if (cbs->leavecb)
+                     if ((cbs->types & last_dropable->last.format) && cbs->leavecb)
                        cbs->leavecb(cbs->leavedata, last_dropable->obj);
                }
           }
@@ -1448,10 +1448,13 @@ _x11_dnd_dropable_handle(Dropable *dropable, Evas_Coord x, Evas_Coord y, Elm_Xdn
              dropable->last.in = EINA_TRUE;
              EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
                {
-                if (cbs->entercb)
-                  cbs->entercb(cbs->enterdata, dropable->obj);
-                if (cbs->poscb)
-                  cbs->poscb(cbs->posdata, dropable->obj, x, y, action);
+                  if (cbs->types & dropable->last.format)
+                    {
+                       if (cbs->entercb)
+                          cbs->entercb(cbs->enterdata, dropable->obj);
+                       if (cbs->poscb)
+                          cbs->poscb(cbs->posdata, dropable->obj, x, y, action);
+                    }
                }
           }
         else
@@ -1724,7 +1727,7 @@ found:
                        snprintf(entrytag, len + 1, tagstring, savedtypes.imgfile);
                        ddata.data = entrytag;
                        cnp_debug("Insert %s\n", (char *)ddata.data);
-                       if (cbs->dropcb)
+                       if ((cbs->types & dropable->last.format) && cbs->dropcb)
                          cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
                     }
                   else if (cbs->types & ELM_SEL_FORMAT_IMAGE)
@@ -1732,7 +1735,7 @@ found:
                        cnp_debug("Doing image insert (%s)\n", savedtypes.imgfile);
                        ddata.format = ELM_SEL_FORMAT_IMAGE;
                        ddata.data = (char *)savedtypes.imgfile;
-                       if (cbs->dropcb)
+                       if ((cbs->types & dropable->last.format) && cbs->dropcb)
                          cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
                     }
                   else
