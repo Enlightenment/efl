@@ -212,9 +212,16 @@ end
 
 M.class_mixin = function(name, mixin)
     local cl = classes[name]
+    local mi = classes[mixin]
+    local ck = "__mixin_" .. mixin
+    -- do not mixin if it already has been mixed in previously
+    -- but only do it for mixins, not for ifaces, for proper lookup order
+    if mi[ck] and cl[ck] then
+        return
+    end
     -- mixin properties/events
-    mixin_tbl(cl, mixin, "__properties")
-    mixin_tbl(cl, mixin, "__events")
+    mixin_tbl(cl, mi, "__properties")
+    mixin_tbl(cl, mi, "__events")
     -- mixin the rest
     cl:mixin(classes[mixin])
 end
