@@ -146,6 +146,7 @@ clean-local:
 	find . -type f -name check-results.xml -delete
 
 install-exec-hook:
+	$(MKDIR_P) $(DESTDIR)$(libdir)
 	for i in $(lib_LTLIBRARIES); do \
 	   FNAME="$(DESTDIR)$(libdir)/`echo $$i | sed "s#lib/.*/##"`"; \
 	   FNAMEEXT="$$FNAME.$$$$"; \
