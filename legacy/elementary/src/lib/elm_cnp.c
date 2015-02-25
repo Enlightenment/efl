@@ -2455,9 +2455,8 @@ static Eina_Bool _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void 
 static void _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data);
 
 static Dropable *_wl_dropable_find(unsigned int win);
-static Dropable *_wl_dropable_find_geom(unsigned int win, Evas_Coord x, Evas_Coord y);
-static void _wl_dropable_handle(Dropable *drop, Evas_Coord x, Evas_Coord y, Eina_Bool have_obj);
-static void _wl_dropable_all_set(unsigned int win, Evas_Coord x, Evas_Coord y, Eina_Bool set);
+static void _wl_dropable_handle(Dropable *drop, Evas_Coord x, Evas_Coord y);
+static void _wl_dropable_all_clean(unsigned int win);
 static Eina_Bool _wl_drops_accept(const char *type);
 static unsigned int _wl_elm_widget_window_get(Evas_Object *obj);
 static Evas * _wl_evas_get_from_win(unsigned int win);
@@ -3040,9 +3039,6 @@ _wl_dnd_enter(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    ev = event;
 
-   if (_wl_dropable_find(ev->win))
-     _wl_dropable_all_set(ev->win, 0, 0, EINA_FALSE);
-
    if ((!ev->num_types) || (!ev->types)) return ECORE_CALLBACK_PASS_ON;
 
    savedtypes.ntypes = ev->num_types;
@@ -3080,11 +3076,10 @@ _wl_dnd_leave(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    Dropable *drop;
 
    ev = event;
-
    if ((drop = _wl_dropable_find(ev->win)))
      {
-        _wl_dropable_handle(drop, 0, 0, EINA_FALSE);
-        _wl_dropable_all_set(ev->win, 0, 0, EINA_FALSE);
+        _wl_dropable_handle(NULL, 0, 0);
+        _wl_dropable_all_clean(ev->win);
      }
 
    return ECORE_CALLBACK_PASS_ON;
@@ -3094,7 +3089,7 @@ static Eina_Bool
 _wl_dnd_position(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Wl_Event_Dnd_Position *ev;
-   Dropable *drop, *dropable_old;
+   Dropable *drop;
    Eina_Bool will_accept = EINA_FALSE;
 
    ev = event;
@@ -3104,7 +3099,7 @@ _wl_dnd_position(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    dragwin_x_end = ev->position.x - _dragx;
    dragwin_y_end = ev->position.y - _dragy;
 
-   dropable_old = drop = _wl_dropable_find(ev->win);
+   drop = _wl_dropable_find(ev->win);
 
    if (drop)
      {
@@ -3164,7 +3159,7 @@ FIXME: add types support
                   evas_object_geometry_get(dropable->obj, &ox, &oy, NULL, NULL);
 
                   cnp_debug("Candidate on %i %i: %p\n", x - ox, y - oy, dropable);
-                  _wl_dropable_handle(dropable, x - ox, y - oy, EINA_TRUE);
+                  _wl_dropable_handle(dropable, x - ox, y - oy);
                   // CCCCCCC: call dnd exit on last obj if obj != last
                   // CCCCCCC: call drop position on obj
 
@@ -3195,12 +3190,10 @@ FIXME: add types support
                {
                   //if not: send false status
                   cnp_debug("dnd position (%d, %d) not in obj\n", x, y);
-                  _wl_dropable_handle(dropable_old, 0, 0, EINA_FALSE);
+                  _wl_dropable_handle(NULL, 0, 0);
                   // CCCCCCC: call dnd exit on last obj
                }
           }
-
-        _wl_dropable_all_set(ev->win, x, y, EINA_TRUE);
      }
 
    doaccept = will_accept;
@@ -3439,76 +3432,54 @@ _wl_evas_get_from_win(unsigned int win)
    return dropable ? evas_object_evas_get(dropable->obj) : NULL;
 }
 
-static Dropable *
-_wl_dropable_find_geom(unsigned int win, Evas_Coord x, Evas_Coord y)
-{
-   Eina_List *l;
-   Dropable *drop;
-
-   EINA_LIST_FOREACH(drops, l, drop)
-     {
-        if (_wl_elm_widget_window_get(drop->obj) == win)
-          {
-             Evas_Coord ox, oy, ow, oh;
-
-             evas_object_geometry_get(drop->obj, &ox, &oy, &ow, &oh);
-             if ((x >= ox) && (y >= oy) && (x < (ox + ow)) && (y < (oy + oh)))
-               return drop;
-          }
-     }
-
-   return NULL;
-}
-
 static void
-_wl_dropable_handle(Dropable *drop, Evas_Coord x, Evas_Coord y, Eina_Bool have_obj)
+_wl_dropable_handle(Dropable *drop, Evas_Coord x, Evas_Coord y)
 {
-   Dropable *last = NULL;
+   Dropable *d, *last_dropable = NULL;
    Dropable_Cbs *cbs;
    Eina_Inlist *itr;
+   Eina_List *l;
 
-   if (drop->last.in)
-     last = _wl_dropable_find_geom(_wl_elm_widget_window_get(drop->obj),
-                                   drop->last.x, drop->last.y);
-
-   if ((have_obj) && (last == drop))
+   EINA_LIST_FOREACH(drops, l, d)
      {
-        EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
-           if (cbs->poscb)
-              cbs->poscb(cbs->posdata, drop->obj, x, y, dragaction);
-     }
-   else if ((have_obj) && (!last))
-     {
-        EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
-           if (cbs->entercb)
-              cbs->entercb(cbs->enterdata, drop->obj);
-        EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
-           if (cbs->poscb)
-              cbs->poscb(cbs->posdata, drop->obj, x, y, dragaction);
-     }
-   else if ((!have_obj) && (last))
-     {
-        EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
-           if (cbs->leavecb)
-              cbs->leavecb(cbs->leavedata, drop->obj);
-     }
-   else if (have_obj)
-     {
-        EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
-           if (cbs->entercb)
-              cbs->entercb(cbs->enterdata, drop->obj);
-        if (last)
+        if (d->last.in)
           {
-             drop = last;
-             EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
-                if (cbs->leavecb)
-                   cbs->leavecb(cbs->leavedata, drop->obj);
+             last_dropable = d;
+             break;
           }
+     }
+
+   /* If we are on the same object, just update the position */
+   if ((drop) && (last_dropable == drop))
+     {
+        EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
+           if (cbs->poscb)
+              cbs->poscb(cbs->posdata, drop->obj, x, y, dragaction);
+        return;
+     }
+   /* We leave the last dropable */
+   if (last_dropable)
+     {
+        EINA_INLIST_FOREACH_SAFE(last_dropable->cbs_list, itr, cbs)
+           if (cbs->leavecb)
+              cbs->leavecb(cbs->leavedata, last_dropable->obj);
+        last_dropable->last.in = EINA_FALSE;
+     }
+   /* We enter the new dropable */
+   if (drop)
+     {
+        EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
+           if (cbs->entercb)
+              cbs->entercb(cbs->enterdata, drop->obj);
+        EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
+           if (cbs->poscb)
+              cbs->poscb(cbs->posdata, drop->obj, x, y, dragaction);
+        drop->last.in = EINA_TRUE;
      }
 }
 
 static void
-_wl_dropable_all_set(unsigned int win, Evas_Coord x, Evas_Coord y, Eina_Bool set)
+_wl_dropable_all_clean(unsigned int win)
 {
    Eina_List *l;
    Dropable *dropable;
@@ -3517,9 +3488,9 @@ _wl_dropable_all_set(unsigned int win, Evas_Coord x, Evas_Coord y, Eina_Bool set
      {
         if (_wl_elm_widget_window_get(dropable->obj) == win)
           {
-             dropable->last.x = x;
-             dropable->last.y = y;
-             dropable->last.in = set;
+             dropable->last.x = 0;
+             dropable->last.y = 0;
+             dropable->last.in = EINA_FALSE;
           }
      }
 }
