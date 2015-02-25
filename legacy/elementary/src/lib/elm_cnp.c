@@ -10,7 +10,7 @@
 
 //#define DEBUGON 1
 #ifdef DEBUGON
-# define cnp_debug(fmt, args...) fprintf(stderr, __FILE__":%s : " fmt , __FUNCTION__, ##args)
+# define cnp_debug(fmt, args...) fprintf(stderr, __FILE__":%s/%d : " fmt , __FUNCTION__, __LINE__, ##args)
 #else
 # define cnp_debug(x...) do { } while (0)
 #endif
