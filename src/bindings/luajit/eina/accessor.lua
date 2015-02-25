@@ -102,7 +102,7 @@ M.Accessor = util.Readonly_Object:clone {
     clone = function(self)
         self = dgetmt(self)
         if not self.__accessor then return nil end
-        return self.__proto(self.__accessor:clone())
+        return self.__protos[1](self.__accessor:clone())
     end,
 
     data_get = function(self, pos)

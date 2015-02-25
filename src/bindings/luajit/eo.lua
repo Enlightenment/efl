@@ -203,7 +203,7 @@ local mixin_tbl = function(cl, mixin, field)
         local clt = rawget(cl, field)
         if not clt then
             -- will always succeed, even if it means deep lookups
-            clt = cl.__proto[field]:clone()
+            clt = cl.__protos[1][field]:clone()
             rawset(cl, field, clt)
         end
         for k, v in pairs(mxt) do clt[k] = v end

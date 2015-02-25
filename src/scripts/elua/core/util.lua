@@ -15,6 +15,7 @@ local getmetatable, setmetatable = getmetatable, setmetatable
 
 -- multiple inheritance index with depth-first search
 local proto_lookup = function(protos, name)
+    if not protos then return nil end
     for i = 1, #protos do
         local proto = protos[i]
         local v = proto[name]
@@ -40,7 +41,8 @@ M.Object = {
 
     clone = function(self, o)
         o = o or {}
-        o.__index, o.__proto, o.__call = self, self, self.__call
+        o.__index, o.__protos, o.__mixins, o.__call =
+            multi_index, { self }, {}, self.__call
         if not o.__tostring then
             o.__tostring = self.__tostring
         end
@@ -61,23 +63,12 @@ M.Object = {
 
     add_parent = function(self, parent)
         local protos = self.__protos
-        if protos then
-            -- we have multiple inheritance set up
-            protos[#protos + 1] = parent
-        else
-            self.__protos = { self.__proto, parent }
-            self.__proto  = nil
-            self.__index  = multi_index
-        end
+        protos[#protos + 1] = parent
     end,
 
     add_mixin = function(self, mixin)
         local mixins = self.__mixins
-        if  mixins then
-            mixins[#mixins + 1] = mixin
-        else
-            self.__mixins = { mixin }
-        end
+        mixins[#mixins + 1] = mixin
     end,
 
     __tostring = function(self)
