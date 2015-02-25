@@ -44,8 +44,8 @@ PREVIEWS = blend blur bump curve grow mask transform \
 example_1 padding
 
 previews-data: preview_text_filter
-	$(mkdir_p) $(DATADIR)
-	$(mkdir_p) $(HTMLDIR)
+	$(MKDIR_P) $(DATADIR)
+	$(MKDIR_P) $(HTMLDIR)
 	@for a in $(PREVIEWS) ; do \
 		echo "  GEN      filter_$${a}.png" ; \
 		FONT="Sans" ; \

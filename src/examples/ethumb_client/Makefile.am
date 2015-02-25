@@ -50,7 +50,7 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	mkdir -p $(datadir)/ethumb_client/examples
+	$(MKDIR_P) $(datadir)/ethumb_client/examples
 	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/ethumb_client/examples
 
 uninstall-local:

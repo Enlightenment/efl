@@ -378,7 +378,7 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS) $(EDJS)
 
 install-examples:
-	mkdir -p $(datadir)/evas/examples
+	$(MKDIR_P) $(datadir)/evas/examples
 	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(EDCS) $(DATA_FILES) $(datadir)/evas/examples
 
 uninstall-local:

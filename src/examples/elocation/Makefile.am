@@ -38,7 +38,7 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	mkdir -p $(datadir)/elocation/examples
+	$(MKDIR_P) $(datadir)/elocation/examples
 	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/elocation/examples
 
 uninstall-local:

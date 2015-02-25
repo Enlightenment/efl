@@ -399,7 +399,7 @@ lcov-reset:
 	@lcov --zerocounters --directory $(top_builddir)
 
 lcov-report:
-	@mkdir $(top_builddir)/coverage
+	$(MKDIR_P) $(top_builddir)/coverage
 	lcov --capture --compat-libtool --no-external --output-file $(top_builddir)/coverage/coverage.info --directory $(top_builddir) --base-directory $(top_srcdir)/src/
 	lcov --remove $(top_builddir)/coverage/coverage.info '*.h' --output-file $(top_builddir)/coverage/coverage.cleaned.info
 	lcov --remove $(top_builddir)/coverage/coverage.cleaned.info '*/tests/*' --output-file $(top_builddir)/coverage/coverage.cleaned2.info
@@ -425,7 +425,7 @@ endif
 
 benchmark:
 	@$(MAKE) $(AM_MAKEFLAGS) -C src benchmark
-	@mkdir benchmark || true
+	$(MKDIR_P) benchmark
 	@cd benchmark && ../src/benchmarks/eo/eo_bench$(EXEEXT) `date +%F_%s`
 
 # examples

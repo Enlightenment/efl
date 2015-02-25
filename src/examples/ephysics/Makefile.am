@@ -81,7 +81,7 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	mkdir -p $(datadir)/ephysics/examples
+	$(MKDIR_P) $(datadir)/ephysics/examples
 	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(datadir)/ephysics/examples
 
 uninstall-local:

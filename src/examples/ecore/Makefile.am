@@ -288,7 +288,7 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	mkdir -p $(datadir)/ecore/examples
+	$(MKDIR_P) $(datadir)/ecore/examples
 	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/ecore/examples
 
 uninstall-local:

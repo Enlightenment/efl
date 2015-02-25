@@ -36,7 +36,7 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	mkdir -p $(datadir)/ecore_avahi/examples
+	$(MKDIR_P) $(datadir)/ecore_avahi/examples
 	$(install_sh_DATA) -c $(srcdir)/ecore_avahi_browse_example.c $(datadir)/ecore_avahi/examples
 	$(install_sh_DATA) -c $(srcdir)/ecore_avahi_example.c $(datadir)/ecore_avahi/examples
 

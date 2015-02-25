@@ -49,7 +49,7 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	mkdir -p $(datadir)/emotion/examples
+	$(MKDIR_P) $(datadir)/emotion/examples
 	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/emotion/examples
 
 uninstall-local:

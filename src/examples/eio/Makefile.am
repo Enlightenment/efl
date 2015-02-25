@@ -49,7 +49,7 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	mkdir -p $(datadir)/eio/examples
+	$(MKDIR_P) $(datadir)/eio/examples
 	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eio/examples
 
 uninstall-local:

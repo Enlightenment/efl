@@ -143,7 +143,7 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS) $(GENERATED)
 
 install-examples:
-	mkdir -p $(datadir)/eolian_cxx/examples
+	$(MKDIR_P) $(datadir)/eolian_cxx/examples
 	cd $(abs_srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eolian_cxx/examples
 
 uninstall-local:

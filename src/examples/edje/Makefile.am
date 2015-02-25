@@ -201,7 +201,7 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS) $(EDJS) $(CODEGEN_GENERATED)
 
 install-examples: $(EDJS)
-	mkdir -p $(datadir)/edje/examples
+	$(MKDIR_P) $(datadir)/edje/examples
 	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DIST_EDCS) $(DATA_FILES) $(datadir)/edje/examples
 	cd $(builddir) && $(install_sh_DATA) -c $(EDJS) $(datadir)/edje/examples
 

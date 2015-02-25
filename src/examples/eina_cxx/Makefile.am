@@ -29,7 +29,7 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	mkdir -p $(datadir)/eina_cxx/examples
+	$(MKDIR_P) $(datadir)/eina_cxx/examples
 	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eina_cxx/examples
 
 uninstall-local:

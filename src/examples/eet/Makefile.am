@@ -50,7 +50,7 @@ clean-local:
 	rm -f $(EXTRA_PROGRAMS)
 
 install-examples:
-	mkdir -p $(datadir)/eet/examples
+	$(MKDIR_P) $(datadir)/eet/examples
 	cd $(srcdir) && $(install_sh_DATA) -c $(SRCS) $(DATA_FILES) $(datadir)/eet/examples
 
 uninstall-local:
