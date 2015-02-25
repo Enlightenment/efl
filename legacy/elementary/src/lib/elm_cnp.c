@@ -1292,20 +1292,28 @@ static void
 _dropable_coords_adjust(Dropable *dropable, Evas_Coord *x, Evas_Coord *y)
 {
    Ecore_Evas *ee;
+   Evas *evas = evas_object_evas_get(dropable->obj);
    int ex = 0, ey = 0, ew = 0, eh = 0;
    Evas_Object *win;
-   Evas_Coord x2, y2;
 
-   ee = ecore_evas_ecore_evas_get(evas_object_evas_get(dropable->obj));
+   ee = ecore_evas_ecore_evas_get(evas);
    ecore_evas_geometry_get(ee, &ex, &ey, &ew, &eh);
    *x = *x - ex;
    *y = *y - ey;
+
+   /* For Wayland, frame coords have to be subtracted. */
+   Evas_Coord fx, fy;
+   evas_output_framespace_get(evas, &fx, &fy, NULL, NULL);
+   if (fx || fy) cnp_debug("evas frame fx %d fy %d\n", fx, fy);
+   *x = *x - fx;
+   *y = *y - fy;
 
    if (elm_widget_is(dropable->obj))
      {
         win = elm_widget_top_get(dropable->obj);
         if (win && !strcmp(evas_object_type_get(win), "elm_win"))
           {
+             Evas_Coord x2, y2;
              int rot = elm_win_rotation_get(win);
              switch (rot)
                {
@@ -2452,6 +2460,7 @@ static void _wl_dropable_handle(Dropable *drop, Evas_Coord x, Evas_Coord y, Eina
 static void _wl_dropable_all_set(unsigned int win, Evas_Coord x, Evas_Coord y, Eina_Bool set);
 static Eina_Bool _wl_drops_accept(const char *type);
 static unsigned int _wl_elm_widget_window_get(Evas_Object *obj);
+static Evas * _wl_evas_get_from_win(unsigned int win);
 
 static void
 _wl_sel_obj_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
@@ -3090,6 +3099,8 @@ _wl_dnd_position(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    ev = event;
 
+   cnp_debug("mouse pos %i %i\n", ev->position.x, ev->position.y);
+
    dragwin_x_end = ev->position.x - _dragx;
    dragwin_y_end = ev->position.y - _dragy;
 
@@ -3097,51 +3108,97 @@ _wl_dnd_position(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    if (drop)
      {
-        Ecore_Evas *ee;
-        Evas_Coord ex = 0, ey = 0;
         Evas_Coord x = 0, y = 0;
 
         x = ev->position.x;
         y = ev->position.y;
-        ee = ecore_evas_ecore_evas_get(evas_object_evas_get(drop->obj));
-        ecore_evas_geometry_get(ee, &ex, &ey, NULL, NULL);
-        x -= ex;
-        y -= ey;
+        _dropable_coords_adjust(drop, &x, &y);
+        Evas *evas = _wl_evas_get_from_win(ev->win);
 
-        if ((drop = _wl_dropable_find_geom(ev->win, x, y)))
+        Eina_List *dropable_list = evas ? _dropable_list_geom_find(evas, x, y) : NULL;
+
+        /* check if there is dropable (obj) can accept this drop */
+        if (dropable_list)
           {
-             Evas_Coord ox = 0, oy = 0;
-             int i = 0;
+             Eina_List *l;
+             Eina_Bool found = EINA_FALSE;
+             Dropable *dropable = NULL;
 
-             evas_object_geometry_get(drop->obj, &ox, &oy, NULL, NULL);
-
-             _wl_dropable_handle(drop, x - ox, y - oy, EINA_TRUE);
-
-             for (i = 0; i < savedtypes.ntypes; i++)
+             EINA_LIST_FOREACH(dropable_list, l, dropable)
                {
+#if 0
+FIXME: add types support
+                  int i, j;
+                  Eina_Inlist *itr;
                   Dropable_Cbs *cbs;
-                  EINA_INLIST_FOREACH(drop->cbs_list, cbs)
+                  EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
                     {
-                       switch (cbs->types)
+                       const char *types[CNP_N_ATOMS];
+                       int types_no = _x11_dnd_types_get(cbs->types, types);
+                       for (j = 0; j < types_no; j++)
                          {
-                          case ELM_SEL_FORMAT_TARGETS:
-                          case ELM_SEL_FORMAT_IMAGE:
-                             if ((!strncmp(savedtypes.types[i], "text/uri", 8)) ||
-                                   (!strncmp(savedtypes.types[i], "image/", 6)))
-                               {
-                                  wl_cnp_selection.requestwidget = drop->obj;
-                                  will_accept = EINA_TRUE;
-                               }
-                             break;
-                          default:
-                             break;
+                            for (i = 0; i < savedtypes.ntypes; i++)
+                              {
+                                 if (!strcmp(types[j], savedtypes.types[i]))
+                                   {
+                                      found = EINA_TRUE;
+                                      dropable->last.type = savedtypes.types[i];
+                                      dropable->last.format = cbs->types;
+                                      break;
+                                   }
+                              }
+                            if (found) break;
                          }
+                       if (found) break;
                     }
-                  if (will_accept) break;
+#else
+                  found = EINA_TRUE;
+#endif
+                  if (found) break;
+               }
+             if (found)
+               {
+                  Evas_Coord ox = 0, oy = 0;
+                  int i = 0;
+
+                  evas_object_geometry_get(dropable->obj, &ox, &oy, NULL, NULL);
+
+                  cnp_debug("Candidate on %i %i: %p\n", x - ox, y - oy, dropable);
+                  _wl_dropable_handle(dropable, x - ox, y - oy, EINA_TRUE);
+                  // CCCCCCC: call dnd exit on last obj if obj != last
+                  // CCCCCCC: call drop position on obj
+
+                  for (i = 0; i < savedtypes.ntypes; i++)
+                    {
+                       Dropable_Cbs *cbs;
+                       EINA_INLIST_FOREACH(drop->cbs_list, cbs)
+                         {
+                            switch (cbs->types)
+                              {
+                               case ELM_SEL_FORMAT_TARGETS:
+                               case ELM_SEL_FORMAT_IMAGE:
+                                  if ((!strncmp(savedtypes.types[i], "text/uri", 8)) ||
+                                        (!strncmp(savedtypes.types[i], "image/", 6)))
+                                    {
+                                       wl_cnp_selection.requestwidget = drop->obj;
+                                       will_accept = EINA_TRUE;
+                                    }
+                                  break;
+                               default:
+                                  break;
+                              }
+                         }
+                       if (will_accept) break;
+                    }
+               }
+             else
+               {
+                  //if not: send false status
+                  cnp_debug("dnd position (%d, %d) not in obj\n", x, y);
+                  _wl_dropable_handle(dropable_old, 0, 0, EINA_FALSE);
+                  // CCCCCCC: call dnd exit on last obj
                }
           }
-        else
-          _wl_dropable_handle(dropable_old, 0, 0, EINA_FALSE);
 
         _wl_dropable_all_set(ev->win, x, y, EINA_TRUE);
      }
@@ -3159,8 +3216,6 @@ _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Wl_Event_Dnd_Drop *ev;
    Dropable *drop;
-   Ecore_Evas *ee;
-   Evas_Coord ex = 0, ey = 0;
    int i = 0;
 
    ev = event;
@@ -3170,13 +3225,27 @@ _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    savedtypes.x = ev->position.x;
    savedtypes.y = ev->position.y;
-   ee = ecore_evas_ecore_evas_get(evas_object_evas_get(drop->obj));
-   ecore_evas_geometry_get(ee, &ex, &ey, NULL, NULL);
-   savedtypes.x -= ex;
-   savedtypes.y -= ey;
+   _dropable_coords_adjust(drop, &savedtypes.x, &savedtypes.y);
+   Evas *evas = _wl_evas_get_from_win(ev->win);
 
-   if (!(drop = _wl_dropable_find_geom(ev->win, savedtypes.x, savedtypes.y)))
-     return ECORE_CALLBACK_PASS_ON;
+   Eina_List *dropable_list = evas ? _dropable_list_geom_find(evas, savedtypes.x, savedtypes.y) : NULL;
+
+   /* check if there is dropable (obj) can accept this drop */
+   if (dropable_list)
+     {
+        Eina_List *l;
+        Eina_Bool found = EINA_FALSE;
+
+        EINA_LIST_FOREACH(dropable_list, l, drop)
+          {
+             if (drop->last.in)
+               {
+                  found = EINA_TRUE;
+                  break;
+               }
+          }
+        if (!found) return ECORE_CALLBACK_PASS_ON;
+     }
 
    for (i = 0; i < savedtypes.ntypes; i++)
      {
@@ -3295,13 +3364,13 @@ static void
 _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
 {
    Dropable *drop;
-   unsigned int win = 0;
    Elm_Selection_Data sdata;
    int len = 0;
    char *s = NULL;
 
-   win = _wl_elm_widget_window_get(sel->requestwidget);
-   drop = _wl_dropable_find_geom(win, savedtypes.x, savedtypes.y);
+   Evas *evas = evas_object_evas_get(sel->requestwidget);
+   Eina_List *dropable_list = evas ? _dropable_list_geom_find(evas, savedtypes.x, savedtypes.y) : NULL, *l;
+   Eina_Bool drop_found = EINA_FALSE;
 
    len = strlen(data);
    if (!(s = malloc(len + 1))) return;
@@ -3320,25 +3389,31 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
 
    if (!savedtypes.imgfile) return;
 
-   Dropable_Cbs *cbs;
-   Eina_Inlist *itr;
-   EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
+   EINA_LIST_FOREACH(dropable_list, l, drop)
      {
-        /* If it's markup that also supports images */
-        if ((cbs->types & ELM_SEL_FORMAT_MARKUP) &&
-              (cbs->types & ELM_SEL_FORMAT_IMAGE))
+        Eina_Inlist *itr;
+        Dropable_Cbs *cbs;
+        if (drop_found) continue;
+        EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
           {
-             sdata.format = ELM_SEL_FORMAT_MARKUP;
-             sdata.data = (char *)savedtypes.imgfile;
-             if (cbs->dropcb) cbs->dropcb(cbs->dropdata, drop->obj, &sdata);
-             ecore_wl_dnd_drag_end(ecore_wl_input_get());
-          }
-        else if (cbs->types & ELM_SEL_FORMAT_IMAGE)
-          {
-             sdata.format = ELM_SEL_FORMAT_IMAGE;
-             sdata.data = (char *)savedtypes.imgfile;
-             if (cbs->dropcb) cbs->dropcb(cbs->dropdata, drop->obj, &sdata);
-             ecore_wl_dnd_drag_end(ecore_wl_input_get());
+             /* If it's markup that also supports images */
+             if ((cbs->types & ELM_SEL_FORMAT_MARKUP) &&
+                   (cbs->types & ELM_SEL_FORMAT_IMAGE))
+               {
+                  sdata.format = ELM_SEL_FORMAT_MARKUP;
+                  sdata.data = (char *)savedtypes.imgfile;
+                  if (cbs->dropcb) cbs->dropcb(cbs->dropdata, drop->obj, &sdata);
+                  ecore_wl_dnd_drag_end(ecore_wl_input_get());
+                  drop_found = EINA_TRUE;
+               }
+             else if (cbs->types & ELM_SEL_FORMAT_IMAGE)
+               {
+                  sdata.format = ELM_SEL_FORMAT_IMAGE;
+                  sdata.data = (char *)savedtypes.imgfile;
+                  if (cbs->dropcb) cbs->dropcb(cbs->dropdata, drop->obj, &sdata);
+                  ecore_wl_dnd_drag_end(ecore_wl_input_get());
+                  drop_found = EINA_TRUE;
+               }
           }
      }
    ELM_SAFE_FREE(savedtypes.imgfile, free);
@@ -3355,6 +3430,13 @@ _wl_dropable_find(unsigned int win)
      if (_wl_elm_widget_window_get(dropable->obj) == win)
        return dropable;
    return NULL;
+}
+
+static Evas *
+_wl_evas_get_from_win(unsigned int win)
+{
+   Dropable *dropable = _wl_dropable_find(win);
+   return dropable ? evas_object_evas_get(dropable->obj) : NULL;
 }
 
 static Dropable *
