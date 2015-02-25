@@ -433,9 +433,9 @@ local build_pn = function(fn, pn)
 end
 
 local Class = Node:clone {
-    __ctor = function(self, klass, parent, mixins, ch, evs)
+    __ctor = function(self, klass, parents, mixins, ch, evs)
         self.klass      = klass
-        self.parent     = parent
+        self.parents    = parents
         self.interfaces = interfaces
         self.mixins     = mixins
         self.children   = ch
@@ -549,13 +549,22 @@ local File = Node:clone {
         local ckls = self.children[1]
 
         local kn  = kls:full_name_get()
-        local par = ckls.parent
 
         dom:log(log.level.INFO, "Generating for file: " .. self.fname)
         dom:log(log.level.INFO, "  Class            : " .. kn)
 
         local knu = kn:gsub("%.", "_")
-        local paru = par and ('"' .. par:gsub("%.", "_") .. '"') or "nil"
+
+        local pars = ckls.parents or {}
+        local mins = ckls.mixins  or {}
+
+        -- serialize both
+        local pv = {}
+        local mv = {}
+        for i = 1, #pars do pv[i] = '"' .. pars[i]:gsub("%.", "_") .. '"' end
+        for i = 1, #mins do mv[i] = '"' .. mins[i]:gsub("%.", "_") .. '"' end
+        pars = (#pars > 0) and ("{" .. table.concat(pv, ", ") .. "}") or "nil"
+        mins = (#mins > 0) and ("{" .. table.concat(mv, ", ") .. "}") or "nil"
 
         s:write(([[
 -- EFL LuaJIT bindings: %s (class %s)
@@ -573,20 +582,12 @@ local __body
 
 local init = function()
     __class = __lib.%s()
-    eo.class_register("%s", %s, __body, __class)
-]]):format(self.fname, kn, kls:c_get_function_name_get(), knu, paru))
-
-        if ckls.mixins then for i, v in ipairs(ckls.mixins) do
-            s:write(("    eo.class_mixin(\"%s\", \"%s\")\n"):format(knu,
-                v:gsub("%.", "_")))
-        end end
-
-        s:write([[
+    eo.class_register("%s", %s, %s, __body, __class)
 end
 
 cutil.init_module(init, function() end)
 
-]])
+]]):format(self.fname, kn, kls:c_get_function_name_get(), knu, pars, mins))
 
         self:gen_children(s)
 
@@ -647,26 +648,22 @@ end
 
 local gen_class = function(klass)
     local inherits = klass:inherits_get():to_array()
-    local parent
-    local mixins = {}
     local ct = eolian.class_type
-    local n = 1
-    if inherits[n] then
-        local tp = eolian.class_get_by_name(inherits[n]):type_get()
-        if tp == ct.REGULAR or tp == ct.ABSTRACT then
-            parent = inherits[n]
-            n = n + 1
-        end
-    end
-    for i = n, #inherits do
+    -- figure out the correct lookup order
+    local parents = {}
+    local mixins  = {} -- also includes ifaces, they're separated later
+    for i = 1, #inherits do
         local v = inherits[i]
         local tp = eolian.class_get_by_name(v):type_get()
-        if tp == ct.UNKNOWN then
+        if tp == ct.REGULAR or tp == ct.ABSTRACT then
+            parents[#parents + 1] = v
+        elseif tp == ct.INTERFACE or tp == ct.MIXIN then
+            mixins[#mixins + 1] = v
+        else
             error(klass:full_name_get() .. ": unknown inherit " .. v)
         end
-        mixins[#mixins + 1] = v
     end
-    return Class(klass, parent, mixins, gen_contents(klass))
+    return Class(klass, parents, mixins, gen_contents(klass))
 end
 
 M.include_dir = function(dir)
