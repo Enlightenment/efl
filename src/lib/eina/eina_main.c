@@ -108,7 +108,6 @@ EAPI DWORD _eina_main_loop;
 # else
 EAPI pthread_t _eina_main_loop;
 # endif
-static pid_t _eina_pid;
 #endif
 
 #ifdef MT
@@ -285,7 +284,6 @@ eina_init(void)
 # else
    _eina_main_loop = pthread_self();
 # endif
-   _eina_pid = getpid();
 #endif
 
 #ifdef EINA_HAVE_DEBUG_THREADS
@@ -425,35 +423,9 @@ EAPI Eina_Bool
 eina_main_loop_is(void)
 {
 #ifdef EFL_HAVE_THREADS
-  pid_t pid;
-
-# ifdef _WIN32
-   if (_eina_main_loop == GetCurrentThreadId())
+  if (pthread_equal(_eina_main_loop, pthread_self()))
      return EINA_TRUE;
-# else
-   if (pthread_equal(_eina_main_loop, pthread_self()))
-     return EINA_TRUE;
-# endif
-
-   pid = getpid();
-# ifdef _WIN32
-   if (pid != _eina_pid)
-     {
-        _eina_pid = pid;
-        _eina_main_loop = GetCurrentThreadId();
-        return EINA_TRUE;
-     }
-#else
-   if (pid != _eina_pid)
-     {
-        /* This is in case of a fork, but don't like the solution */
-        _eina_pid = pid;
-        _eina_main_loop = pthread_self();
-        return EINA_TRUE;
-     }
 #endif
-#endif
-
    return EINA_FALSE;
 }
 
@@ -462,7 +434,6 @@ EAPI void
 eina_main_loop_define(void)
 {
 #ifdef EFL_HAVE_THREADS
-   _eina_pid = getpid();
 # ifdef _WIN32
    _eina_main_loop = GetCurrentThreadId();
 # else

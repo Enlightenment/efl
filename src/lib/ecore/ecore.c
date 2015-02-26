@@ -486,6 +486,7 @@ ecore_fork_reset(void)
    Eina_List *l, *ln;
    Ecore_Fork_Cb *fcb;
    
+   eina_main_loop_define();
    eina_lock_take(&_thread_safety);
 
    ecore_pipe_del(_thread_call);
