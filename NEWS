@@ -1,6 +1,20 @@
 ==========
-EFL 1.13.0
+EFL 1.13.1
 ==========
+
+Changes since 1.13.0:
+---------------------
+
+Fixes:
+
+   * Evas masking: Fix some garbage pixels with the SW engine
+   * Evas masking: Fix potential issues with map & masking
+   * Evas masking: Force BLEND mode in case of image masking (GL)
+   * ecore-drm should not use sscanf when getting logind vt
+   * ecore/drm: Fix libinput >= 0.8 check
+   * ee-win32 probably might compile now
+   * Evas GL: Fix leak of surfaces with GLES 1.1
+   * eina + ecore - fix main loop thread id tracking on fork
 
 Changes since 1.12.0:
 ---------------------
