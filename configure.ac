@@ -417,18 +417,7 @@ sys/mman.h \
 netinet/in.h \
 ])
 
-have_inotify="${ac_cv_header_sys_inotify_h}"
-AM_CONDITIONAL([HAVE_INOTIFY], [test "x${have_inotify}" = "xyes"])
-
-have_notify_win32="${have_win32}"
-AC_DEFINE_IF([HAVE_NOTIFY_WIN32],
-   [test "x${have_notify_win32}" = "xyes"], [1],
-   [File monitoring with Windows notification])
-AM_CONDITIONAL([HAVE_NOTIFY_WIN32], [test "x${have_notify_win32}" = "xyes"])
-
-
 EFL_CHECK_PATH_MAX
-
 
 #### Checks for types
 
@@ -1329,11 +1318,11 @@ AC_ARG_ENABLE([cocoa],
     ],
     [want_cocoa="no"])
 
- if test "${want_cocoa}" = "yes"; then
-    #test cocoa requirements (objc and Cocoa/Cocoa.h)
- 	cocoa_ldflags=""
-   have_cocoa="no"
-   m4_ifdef([AC_PROG_OBJC],
+if test "${want_cocoa}" = "yes"; then
+   #test cocoa requirements (objc and Cocoa/Cocoa.h)
+    cocoa_ldflags=""
+    have_cocoa="no"
+    m4_ifdef([AC_PROG_OBJC],
       [
        if test "x${have_gnu_objc}" = "xyes" ; then
           AC_LANG_PUSH([Objective C])
@@ -1367,6 +1356,38 @@ window = [[NSWindow alloc]
    ])
 fi
 AC_SUBST(cocoa_ldflags)
+
+if test "x${want_cocoa}" = "xyes"; then
+    #test cocoa requirements (objc and Cocoa/Cocoa.h)
+    cocoa_coreservices_ldflags=""
+    have_cocoa_coreservices="no"
+    m4_ifdef([AC_PROG_OBJC],
+      [
+       if test "x${have_gnu_objc}" = "xyes" ; then
+          AC_LANG_PUSH([Objective C])
+          LIBS_save="$LIBS"
+          LIBS="$LIBS -framework CoreServices"
+          AC_LINK_IFELSE(
+             [AC_LANG_PROGRAM(
+                 [[
+#include <CoreServices/CoreServices.h>
+                 ]],
+                 [[
+//test function here
+                 ]])],
+             [
+              have_cocoa_coreservices="yes"
+              cocoa_coreservices_ldflags="-framework CoreServices"
+             ],
+             [have_cocoa_coreservices="no"])
+          LIBS="$LIBS_save"
+          AC_MSG_CHECKING([whether Cocoa CoreServices framework is supported])
+          AC_MSG_RESULT([${have_cocoa_coreservices}])
+          AC_LANG_POP([Objective C])
+       fi
+   ])
+fi
+AC_SUBST(cocoa_coreservices_ldflags)
 
 # Drm
 AC_ARG_ENABLE([drm],
@@ -3969,6 +3990,20 @@ EFL_ADD_LIBS([EIO], [-lm])
 ### Checks for linker characteristics
 
 ### Checks for library functions
+have_inotify="${ac_cv_header_sys_inotify_h}"
+AM_CONDITIONAL([HAVE_INOTIFY], [test "x${have_inotify}" = "xyes"])
+
+have_notify_win32="${have_win32}"
+AC_DEFINE_IF([HAVE_NOTIFY_WIN32],
+   [test "x${have_notify_win32}" = "xyes"], [1],
+   [File monitoring with Windows notification])
+AM_CONDITIONAL([HAVE_NOTIFY_WIN32], [test "x${have_notify_win32}" = "xyes"])
+
+AC_DEFINE_IF([HAVE_NOTIFY_COCOA],
+   [test "x${have_darwin}" = "xyes"], [1],
+   [File monitoring with fsevent notification])
+AM_CONDITIONAL([HAVE_NOTIFY_COCOA], [test "x${have_darwin}" = "xyes"])
+
 
 EFL_LIB_END([Eio])
 dnl TODO: remove these ifdefs from code!

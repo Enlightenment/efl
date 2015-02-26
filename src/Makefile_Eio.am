@@ -23,6 +23,10 @@ lib_eio_libeio_la_SOURCES += lib/eio/eio_monitor_inotify.c
 else
 if HAVE_NOTIFY_WIN32
 lib_eio_libeio_la_SOURCES += lib/eio/eio_monitor_win32.c
+else
+if HAVE_NOTIFY_COCOA
+lib_eio_libeio_la_SOURCES += lib/eio/eio_monitor_cocoa.c
+endif
 endif
 endif
 
@@ -30,6 +34,9 @@ lib_eio_libeio_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EIO_CFLAGS@
 lib_eio_libeio_la_LIBADD = @EIO_LIBS@
 lib_eio_libeio_la_DEPENDENCIES = @EIO_INTERNAL_LIBS@
 lib_eio_libeio_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+if HAVE_NOTIFY_COCOA
+lib_eio_libeio_la_LDFLAGS += -framework CoreServices
+endif
 
 if EFL_ENABLE_TESTS
 
