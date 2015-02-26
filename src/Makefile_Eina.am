@@ -166,6 +166,11 @@ else
 einampchainedpooldir = $(libdir)/eina/modules/mp/chained_pool/$(MODULE_ARCH)
 einampchainedpool_LTLIBRARIES = modules/eina/mp/chained_pool/chained_pool_module.la
 
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_einampchainedpoolLTLIBRARIES = install-einampchainedpoolLTLIBRARIES
+$(install_einampchainedpoolLTLIBRARIES): install-libLTLIBRARIES
+
 modules_eina_mp_chained_pool_chained_pool_module_la_CFLAGS = $(EINA_MODULE_COMMON_CFLAGS)
 modules_eina_mp_chained_pool_chained_pool_module_la_LIBADD = @USE_EINA_LIBS@
 modules_eina_mp_chained_pool_chained_pool_module_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
@@ -180,6 +185,11 @@ else
 einamponebigdir = $(libdir)/eina/modules/mp/one_big/$(MODULE_ARCH)
 einamponebig_LTLIBRARIES = modules/eina/mp/one_big/one_big_module.la
 
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_einamponebigLTLIBRARIES = install-einamponebigLTLIBRARIES
+$(install_einamponebigLTLIBRARIES): install-libLTLIBRARIES
+
 modules_eina_mp_one_big_one_big_module_la_CFLAGS = $(EINA_MODULE_COMMON_CFLAGS)
 modules_eina_mp_one_big_one_big_module_la_LIBADD = @USE_EINA_LIBS@
 modules_eina_mp_one_big_one_big_module_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
@@ -193,6 +203,11 @@ lib_eina_libeina_la_SOURCES += modules/eina/mp/pass_through/eina_pass_through.c
 else
 einamppassthroughdir = $(libdir)/eina/modules/mp/pass_through/$(MODULE_ARCH)
 einamppassthrough_LTLIBRARIES = modules/eina/mp/pass_through/pass_through_module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_einamppassthroughLTLIBRARIES = install-einamppassthroughLTLIBRARIES
+$(install_einamppassthroughLTLIBRARIES): install-libLTLIBRARIES
 
 modules_eina_mp_pass_through_pass_through_module_la_CFLAGS = $(EINA_MODULE_COMMON_CFLAGS)
 modules_eina_mp_pass_through_pass_through_module_la_LIBADD = @USE_EINA_LIBS@

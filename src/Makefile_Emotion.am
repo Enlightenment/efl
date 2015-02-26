@@ -66,6 +66,12 @@ else
 if EMOTION_BUILD_XINE
 emotionmodulexinedir = $(libdir)/emotion/modules/xine/$(MODULE_ARCH)
 emotionmodulexine_LTLIBRARIES = modules/emotion/xine/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_emotionmodulexineLTLIBRARIES = install-emotionmodulexineLTLIBRARIES
+$(install_emotionmodulexineLTLIBRARIES): install-libLTLIBRARIES
+
 modules_emotion_xine_module_la_SOURCES = $(EMOTION_XINE_SOURCES)
 modules_emotion_xine_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EMOTION_CFLAGS@ \
@@ -94,6 +100,12 @@ else
 if EMOTION_BUILD_GSTREAMER
 emotionmodulegstreamerdir = $(libdir)/emotion/modules/gstreamer/$(MODULE_ARCH)
 emotionmodulegstreamer_LTLIBRARIES = modules/emotion/gstreamer/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_emotionmodulegstreamerLTLIBRARIES = install-emotionmodulegstreamerLTLIBRARIES
+$(install_emotionmodulegstreamerLTLIBRARIES): install-libLTLIBRARIES
+
 modules_emotion_gstreamer_module_la_SOURCES = $(EMOTION_GSTREAMER_SOURCES)
 modules_emotion_gstreamer_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EMOTION_CFLAGS@ \
@@ -126,6 +138,12 @@ else
 if EMOTION_BUILD_GSTREAMER1
 emotionmodulegstreamer1dir = $(libdir)/emotion/modules/gstreamer1/$(MODULE_ARCH)
 emotionmodulegstreamer1_LTLIBRARIES = modules/emotion/gstreamer1/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_emotionmodulegstreamer1LTLIBRARIES = install-emotionmodulegstreamer1LTLIBRARIES
+$(install_emotionmodulegstreamer1LTLIBRARIES): install-libLTLIBRARIES
+
 modules_emotion_gstreamer1_module_la_SOURCES = $(EMOTION_GSTREAMER1_SOURCES)
 modules_emotion_gstreamer1_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EMOTION_CFLAGS@ \
@@ -150,6 +168,12 @@ else
 if EMOTION_BUILD_GENERIC
 emotionmodulegenericdir = $(libdir)/emotion/modules/generic/$(MODULE_ARCH)
 emotionmodulegeneric_LTLIBRARIES = modules/emotion/generic/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_emotionmodulegenericLTLIBRARIES = install-emotionmodulegenericLTLIBRARIES
+$(install_emotionmodulegenericLTLIBRARIES): install-libLTLIBRARIES
+
 modules_emotion_generic_module_la_SOURCES = $(EMOTION_GENERIC_SOURCES)
 modules_emotion_generic_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EMOTION_CFLAGS@ \
@@ -175,6 +199,11 @@ endif
 # Edje_External
 emotionedjeexternaldir = $(libdir)/edje/modules/emotion/$(MODULE_ARCH)
 emotionedjeexternal_LTLIBRARIES = edje_external/emotion/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_emotionedjeexternalLTLIBRARIES = install-emotionedjeexternalLTLIBRARIES
+$(install_emotionedjeexternalLTLIBRARIES): install-libLTLIBRARIES
 
 edje_external_emotion_module_la_SOURCES = \
 edje_external/emotion/emotion.c

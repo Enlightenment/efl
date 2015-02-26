@@ -58,6 +58,12 @@ lib_eeze_libeeze_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 if HAVE_EEZE_TIZEN
 eezemodulesensortizendir = $(libdir)/eeze/modules/sensor/tizen/$(MODULE_ARCH)
 eezemodulesensortizen_LTLIBRARIES = modules/eeze/sensor/tizen/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_eezemodulesensortizenLTLIBRARIES = install-eezemodulesensortizenLTLIBRARIES
+$(install_eezemodulesensortizenLTLIBRARIES): install-libLTLIBRARIES
+
 modules_eeze_sensor_tizen_module_la_SOURCES = \
 modules/eeze/sensor/tizen/tizen.c
 modules_eeze_sensor_tizen_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
@@ -72,6 +78,12 @@ modules_eeze_sensor_tizen_module_la_LIBTOOLFLAGS = --tag=disable-static
 else
 eezemodulesensorfakedir = $(libdir)/eeze/modules/sensor/fake/$(MODULE_ARCH)
 eezemodulesensorfake_LTLIBRARIES = modules/eeze/sensor/fake/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_eezemodulesensorfakeLTLIBRARIES = install-eezemodulesensorfakeLTLIBRARIES
+$(install_eezemodulesensorfakeLTLIBRARIES): install-libLTLIBRARIES
+
 modules_eeze_sensor_fake_module_la_SOURCES = modules/eeze/sensor/fake/fake.c
 modules_eeze_sensor_fake_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
 modules_eeze_sensor_fake_module_la_LIBADD = @USE_EEZE_LIBS@
@@ -81,6 +93,12 @@ modules_eeze_sensor_fake_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 eezemodulesensorudevdir = $(libdir)/eeze/modules/sensor/udev/$(MODULE_ARCH)
 eezemodulesensorudev_LTLIBRARIES = modules/eeze/sensor/udev/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_eezemodulesensorudevLTLIBRARIES = install-eezemodulesensorudevLTLIBRARIES
+$(install_eezemodulesensorudevLTLIBRARIES): install-libLTLIBRARIES
+
 modules_eeze_sensor_udev_module_la_SOURCES = modules/eeze/sensor/udev/udev.c
 modules_eeze_sensor_udev_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EEZE_CFLAGS@
 modules_eeze_sensor_udev_module_la_LIBADD = @USE_EEZE_LIBS@

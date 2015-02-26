@@ -30,6 +30,12 @@ lib_ethumb_libethumb_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 if BUILD_LOADER_PNG
 ethumbmoduleemotiondir = $(libdir)/ethumb/modules/emotion/$(MODULE_ARCH)
 ethumbmoduleemotion_LTLIBRARIES = modules/ethumb/emotion/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ethumbmoduleemotionLTLIBRARIES = install-ethumbmoduleemotionLTLIBRARIES
+$(install_ethumbmoduleemotionLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ethumb_emotion_module_la_SOURCES = \
 modules/ethumb/emotion/emotion.c
 modules_ethumb_emotion_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \

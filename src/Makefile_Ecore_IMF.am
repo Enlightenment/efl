@@ -31,6 +31,12 @@ lib_ecore_imf_libecore_imf_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 if BUILD_ECORE_IMF_IBUS
 ecoreimfibuspkgdir = $(libdir)/ecore_imf/modules/ibus/$(MODULE_ARCH)
 ecoreimfibuspkg_LTLIBRARIES = modules/ecore_imf/ibus/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoreimfibuspkgLTLIBRARIES = install-ecoreimfibuspkgLTLIBRARIES
+$(install_ecoreimfibuspkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_imf_ibus_module_la_SOURCES = \
 modules/ecore_imf/ibus/ibus_module.c \
 modules/ecore_imf/ibus/ibus_imcontext.c \
@@ -58,6 +64,12 @@ endif
 if BUILD_ECORE_IMF_SCIM
 ecoreimfscimpkgdir = $(libdir)/ecore_imf/modules/scim/$(MODULE_ARCH)
 ecoreimfscimpkg_LTLIBRARIES = modules/ecore_imf/scim/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoreimfscimpkgLTLIBRARIES = install-ecoreimfscimpkgLTLIBRARIES
+$(install_ecoreimfscimpkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_imf_scim_module_la_SOURCES = \
 modules/ecore_imf/scim/scim_module.cpp \
 modules/ecore_imf/scim/scim_imcontext.cpp \
@@ -85,6 +97,12 @@ endif
 if BUILD_ECORE_IMF_XIM
 ecoreimfximpkgdir = $(libdir)/ecore_imf/modules/xim/$(MODULE_ARCH)
 ecoreimfximpkg_LTLIBRARIES = modules/ecore_imf/xim/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoreimfximpkgLTLIBRARIES = install-ecoreimfximpkgLTLIBRARIES
+$(install_ecoreimfximpkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_imf_xim_module_la_SOURCES = \
 modules/ecore_imf/xim/ecore_imf_xim.c
 modules_ecore_imf_xim_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
@@ -106,6 +124,12 @@ endif
 if BUILD_ECORE_IMF_WAYLAND
 ecoreimfwaylandpkgdir = $(libdir)/ecore_imf/modules/wayland/$(MODULE_ARCH)
 ecoreimfwaylandpkg_LTLIBRARIES = modules/ecore_imf/wayland/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoreimfwaylandpkgLTLIBRARIES = install-ecoreimfwaylandpkgLTLIBRARIES
+$(install_ecoreimfwaylandpkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_imf_wayland_module_la_SOURCES = \
 modules/ecore_imf/wayland/wayland_module.c \
 modules/ecore_imf/wayland/wayland_imcontext.c \

@@ -44,6 +44,12 @@ modules/ecore_evas/engines/extn/ecore_evas_extn_engine.h \
 modules/ecore_evas/engines/extn/ecore_evas_extn_buf.c
 ecoreevasengineextnpkgdir = $(libdir)/ecore_evas/engines/extn/$(MODULE_ARCH)
 ecoreevasengineextnpkg_LTLIBRARIES = modules/ecore_evas/engines/extn/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoreevasengineextnpkgLTLIBRARIES = install-ecoreevasengineextnpkgLTLIBRARIES
+$(install_ecoreevasengineextnpkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_evas_engines_extn_module_la_SOURCES = $(EXTNSOURCES)
 modules_ecore_evas_engines_extn_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_EVAS_CFLAGS@ \
@@ -65,6 +71,12 @@ if BUILD_ECORE_EVAS_X11
 XSOURCES = modules/ecore_evas/engines/x/ecore_evas_x.c
 ecoreevasenginexpkgdir = $(libdir)/ecore_evas/engines/x/$(MODULE_ARCH)
 ecoreevasenginexpkg_LTLIBRARIES = modules/ecore_evas/engines/x/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoreevasenginexpkgLTLIBRARIES = install-ecoreevasenginexpkgLTLIBRARIES
+$(install_ecoreevasenginexpkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_evas_engines_x_module_la_SOURCES = $(XSOURCES)
 modules_ecore_evas_engines_x_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_EVAS_CFLAGS@ \
@@ -85,6 +97,12 @@ if BUILD_ECORE_EVAS_OPENGL_COCOA
 COCOASOURCES = modules/ecore_evas/engines/cocoa/ecore_evas_cocoa.c
 ecoreevasenginecocoapkgdir = $(libdir)/ecore_evas/engines/cocoa/$(MODULE_ARCH)
 ecoreevasenginecocoapkg_LTLIBRARIES = modules/ecore_evas/engines/cocoa/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoreevasenginecocoapkgLTLIBRARIES = install-ecoreevasenginecocoapkgLTLIBRARIES
+$(install_ecoreevasenginecocoapkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_evas_engines_cocoa_module_la_SOURCES = $(COCOASOURCES)
 modules_ecore_evas_engines_cocoa_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_EVAS_CFLAGS@ \
@@ -104,6 +122,12 @@ if BUILD_ECORE_EVAS_FB
 FBSOURCES = modules/ecore_evas/engines/fb/ecore_evas_fb.c
 ecoreevasenginefbpkgdir = $(libdir)/ecore_evas/engines/fb/$(MODULE_ARCH)
 ecoreevasenginefbpkg_LTLIBRARIES = modules/ecore_evas/engines/fb/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoreevasenginefbpkgLTLIBRARIES = install-ecoreevasenginefbpkgLTLIBRARIES
+$(install_ecoreevasenginefbpkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_evas_engines_fb_module_la_SOURCES = $(FBSOURCES)
 modules_ecore_evas_engines_fb_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_EVAS_CFLAGS@ \
@@ -123,6 +147,12 @@ if BUILD_ECORE_EVAS_PSL1GHT
 PSL1GHTSOURCES = modules/ecore_evas/engines/psl1ght/ecore_evas_psl1ght.c
 ecoreevasenginepsl1ghtpkgdir = $(libdir)/ecore_evas/engines/psl1ght/$(MODULE_ARCH)
 ecoreevasenginepsl1ghtpkg_LTLIBRARIES = modules/ecore_evas/engines/psl1ght/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoreevasenginepsl1ghtpkgLTLIBRARIES = install-ecoreevasenginepsl1ghtpkgLTLIBRARIES
+$(install_ecoreevasenginepsl1ghtpkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_evas_engines_psl1ght_module_la_SOURCES = $(PSL1GHTSOURCES)
 modules_ecore_evas_engines_psl1ght_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_EVAS_CFLAGS@ \
@@ -146,6 +176,12 @@ modules/ecore_evas/engines/wayland/ecore_evas_wayland_egl.c \
 modules/ecore_evas/engines/wayland/ecore_evas_wayland_private.h
 ecoreevasenginewaylandpkgdir = $(libdir)/ecore_evas/engines/wayland/$(MODULE_ARCH)
 ecoreevasenginewaylandpkg_LTLIBRARIES = modules/ecore_evas/engines/wayland/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoreevasenginewaylandpkgLTLIBRARIES = install-ecoreevasenginewaylandpkgLTLIBRARIES
+$(install_ecoreevasenginewaylandpkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_evas_engines_wayland_module_la_SOURCES = $(WAYLANDSOURCES)
 modules_ecore_evas_engines_wayland_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_EVAS_CFLAGS@ \
@@ -168,6 +204,12 @@ SDLSOURCES = \
 modules/ecore_evas/engines/sdl/ecore_evas_sdl.c
 ecoreevasenginesdlpkgdir = $(libdir)/ecore_evas/engines/sdl/$(MODULE_ARCH)
 ecoreevasenginesdlpkg_LTLIBRARIES = modules/ecore_evas/engines/sdl/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoreevasenginesdlpkgLTLIBRARIES = install-ecoreevasenginesdlpkgLTLIBRARIES
+$(install_ecoreevasenginesdlpkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_evas_engines_sdl_module_la_SOURCES = $(SDLSOURCES)
 modules_ecore_evas_engines_sdl_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_EVAS_CFLAGS@ \
@@ -189,6 +231,12 @@ WIN32SOURCES = \
 modules/ecore_evas/engines/win32/ecore_evas_win32.c
 ecoreevasengineswin32pkgdir = $(libdir)/ecore_evas/engines/win32/$(MODULE_ARCH)
 ecoreevasengineswin32pkg_LTLIBRARIES = modules/ecore_evas/engines/win32/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoreevasengineswin32pkgLTLIBRARIES = install-ecoreevasengineswin32pkgLTLIBRARIES
+$(install_ecoreevasengineswin32pkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_evas_engines_win32_module_la_SOURCES = $(WIN32SOURCES)
 modules_ecore_evas_engines_win32_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_EVAS_CFLAGS@ \
@@ -210,6 +258,12 @@ DRMSOURCES = \
 modules/ecore_evas/engines/drm/ecore_evas_drm.c
 ecoreevasenginedrmpkgdir = $(libdir)/ecore_evas/engines/drm/$(MODULE_ARCH)
 ecoreevasenginedrmpkg_LTLIBRARIES = modules/ecore_evas/engines/drm/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoreevasenginedrmpkgLTLIBRARIES = install-ecoreevasenginedrmpkgLTLIBRARIES
+$(install_ecoreevasenginedrmpkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_evas_engines_drm_module_la_SOURCES = $(DRMSOURCES)
 modules_ecore_evas_engines_drm_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_EVAS_CFLAGS@ \

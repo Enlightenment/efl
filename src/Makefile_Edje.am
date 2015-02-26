@@ -89,6 +89,11 @@ if ENABLE_MULTISENSE
 # edjemoduleXXXdir = $(libdir)/edje/modules/
 # edjemoduleXXX_LTLIBRARIES = modules/edje/XXX/module.la
 #
+# # Workaround for broken parallel install support in automake (relink issue)
+# # http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+# install_edjemoduleXXXLTLIBRARIES = install-edjemoduleXXXLTLIBRARIES
+# $(install_edjemoduleXXXLTLIBRARIES): install-libLTLIBRARIES
+#
 # modules_edje_XXX_module_la_SOURCES = modules/edje/XXX/XXX.c
 # modules_edje_XXX_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS) @XXX_LIBS@
 # modules_edje_XXX_module_la_LIBADD = $(EDJE_COMMON_USER_LIBADD)
@@ -97,6 +102,11 @@ if ENABLE_MULTISENSE
 
 # edjemodulemultisensefactorydir = $(libdir)/edje/modules/multisense_factory/$(MODULE_ARCH)
 # edjemodulemultisensefactory_LTLIBRARIES = modules/edje/multisense_factory/module.la
+#
+# # Workaround for broken parallel install support in automake (relink issue)
+# # http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+# install_edjemodulemultisensefactoryLTLIBRARIES = install-edjemodulemultisensefactoryLTLIBRARIES
+# $(install_edjemodulemultisensefactoryLTLIBRARIES): install-libLTLIBRARIES
 #
 # modules_edje_multisense_factory_module_la_SOURCES = \
 # modules/edje/multisense_factory/multisense_factory.c

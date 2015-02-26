@@ -103,6 +103,12 @@ lib_ecore_libecore_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 if WANT_SYSTEMD
 ecoresystemdpkgdir = $(libdir)/ecore/system/systemd/$(MODULE_ARCH)
 ecoresystemdpkg_LTLIBRARIES = modules/ecore/system/systemd/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoresystemdpkgLTLIBRARIES = install-ecoresystemdpkgLTLIBRARIES
+$(install_ecoresystemdpkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_system_systemd_module_la_SOURCES = \
 modules/ecore/system/systemd/ecore_system_systemd.c
 modules_ecore_system_systemd_module_la_CPPFLAGS = \
@@ -123,6 +129,12 @@ endif
 if ! HAVE_WIN32
 ecoreupowerpkgdir = $(libdir)/ecore/system/upower/$(MODULE_ARCH)
 ecoreupowerpkg_LTLIBRARIES = modules/ecore/system/upower/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoreupowerpkgLTLIBRARIES = install-ecoreupowerpkgLTLIBRARIES
+$(install_ecoreupowerpkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_system_upower_module_la_SOURCES = \
 modules/ecore/system/upower/ecore_system_upower.c
 modules_ecore_system_upower_module_la_CPPFLAGS = \
@@ -144,6 +156,12 @@ endif
 if HAVE_TIZEN_CONFIGURATION_MANAGER
 ecoretizenpkgdir = $(libdir)/ecore/system/tizen/$(MODULE_ARCH)
 ecoretizenpkg_LTLIBRARIES = modules/ecore/system/tizen/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ecoretizenpkgLTLIBRARIES = install-ecoretizenpkgLTLIBRARIES
+$(install_ecoretizenpkgLTLIBRARIES): install-libLTLIBRARIES
+
 modules_ecore_system_tizen_module_la_SOURCES = \
 modules/ecore/system/tizen/ecore_system_tizen.c
 modules_ecore_system_tizen_module_la_CPPFLAGS = \
