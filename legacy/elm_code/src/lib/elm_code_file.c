@@ -44,7 +44,7 @@ static void _elm_code_file_line_append_data(Elm_Code_File *file, const char *con
 
    if (file->parent)
      {
-        elm_code_parse_line(file->parent, line);
+        _elm_code_parse_line(file->parent, line);
         elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
 
         // this is called so we can refresh after any styling changes from LOAD_DONE
@@ -100,7 +100,7 @@ EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path)
 
    if (ret->parent)
      {
-        elm_code_parse_file(ret->parent, ret);
+        _elm_code_parse_file(ret->parent, ret);
         elm_code_callback_fire(ret->parent, &ELM_CODE_EVENT_FILE_LOAD_DONE, ret);
      }
    return ret;
