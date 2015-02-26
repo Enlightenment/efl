@@ -3541,18 +3541,6 @@ state_write:
      }
 }
 
-static inline void
-_image_mask_image_set(Evas_Object_Protected_Data *obj, Eina_Bool smooth, void *image)
-{
-   if ((obj->mask->image != image) || (obj->mask->smooth_scale != smooth))
-     {
-        EINA_COW_WRITE_BEGIN(evas_object_mask_cow, obj->mask, Evas_Object_Mask_Data, mask)
-          mask->image = image;
-          mask->smooth_scale = smooth;
-        EINA_COW_WRITE_END(evas_object_mask_cow, obj->mask, mask);
-     }
-}
-
 static void
 evas_object_image_render_pre(Evas_Object *eo_obj,
 			     Evas_Object_Protected_Data *obj,
@@ -3572,15 +3560,6 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
    Evas_Public_Data *e = obj->layer->evas;
 
    if ((o->cur->fill.w < 1) || (o->cur->fill.h < 1)) return;
-
-   /* plain mask images */
-   if (obj->mask->is_mask && !o->cur->scene && !o->cur->source)
-     {
-        DBG("Setting image pointer in mask data.");
-        _image_mask_image_set(obj, o->cur->smooth_scale, o->engine_data);
-     }
-   else
-     _image_mask_image_set(obj, EINA_FALSE, NULL);
 
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur->clipper)

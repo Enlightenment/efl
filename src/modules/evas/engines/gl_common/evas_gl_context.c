@@ -1586,7 +1586,8 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
                                       int x, int y, int w, int h,
                                       int r, int g, int b, int a,
                                       Evas_GL_Texture *mtex,
-                                      double mx, double my, double mw, double mh, Eina_Bool mask_smooth)
+                                      double mx, double my, double mw, double mh,
+                                      Eina_Bool mask_smooth)
 {
    Eina_Bool blend = EINA_FALSE;
    Evas_GL_Shader shader = SHADER_RECT;
@@ -1632,6 +1633,7 @@ again:
         gc->pipe[pn].array.use_texa = 0;
         gc->pipe[pn].array.use_texsam = 0;
         gc->pipe[pn].array.use_texm = !!mtex;
+        gc->pipe[pn].array.mask_smooth = mask_smooth;
      }
    else
      {
@@ -1646,6 +1648,7 @@ again:
                  && (gc->pipe[i].shader.blend == blend)
                  && (gc->pipe[i].shader.render_op == gc->dc->render_op)
                  && (gc->pipe[i].shader.clip == 0)
+                 // todo: save & compare mask_smooth
                 )
                {
                   found = 1;
@@ -1684,6 +1687,7 @@ again:
              gc->pipe[pn].array.use_texa = 0;
              gc->pipe[pn].array.use_texsam = 0;
              gc->pipe[pn].array.use_texm = !!mtex;
+             gc->pipe[pn].array.mask_smooth = mask_smooth;
          }
      }
 #else
@@ -1720,6 +1724,7 @@ again:
    gc->pipe[pn].array.use_texa = 0;
    gc->pipe[pn].array.use_texsam = 0;
    gc->pipe[pn].array.use_texm = !!mtex;
+   gc->pipe[pn].array.mask_smooth = mask_smooth;
 #endif
 
    pipe_region_expand(gc, pn, x, y, w, h);
@@ -3192,11 +3197,9 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                }
              else if (gc->pipe[i].array.use_texa && (gc->pipe[i].region.type == RTYPE_MAP))
                {
-                  /* FIXME:
-                   * This is a workaround as we hijack some tex ids
-                   * (namely tex_coordm, tex_coorda and tex_sample) for map masking.
-                   * These masking shaders should definitely use uniforms.
-                   */
+                  /* For map masking, we (ab)use 3 texture vertex pointers
+                   * (namely tex_coordm, tex_coorda and tex_sample).
+                   * We could probably pack them into an array or something. */
                   glEnableVertexAttribArray(SHAD_TEXA);
                   glVertexAttribPointer(SHAD_TEXA, 2, GL_FLOAT, GL_FALSE, 0, (void *)texa_ptr);
                }

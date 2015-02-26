@@ -368,10 +368,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
           {
              /* is image clipper */
              if (_evas_render_object_changed_get(obj))
-               {
-                  obj->func->render_pre(obj->object, obj, obj->private_data);
-                  _evas_mask_redraw_set(e, obj);
-               }
+               _evas_mask_redraw_set(e, obj);
           }
      }
    for (i = 0; i < render_objects->count; i++)
@@ -1827,13 +1824,15 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
    EINA_COW_WRITE_BEGIN(evas_object_mask_cow, mask->mask, Evas_Object_Mask_Data, mdata)
      mdata->redraw = EINA_FALSE;
 
-     if (is_image && !prev_mask && mdata->image && ENFN->image_scaled_update)
+     if (is_image && !prev_mask && mask->func->engine_data_get &&
+         ENFN->image_scaled_update)
        {
           /* Fast path (for GL) that avoids creating a map surface, render the
            * scaled image in it, when the shaders can just scale on the fly. */
+          Eina_Bool smooth = evas_object_image_smooth_scale_get(mask->object);
+          void *original = mask->func->engine_data_get(mask->object);
           void *scaled = ENFN->image_scaled_update
-                (ENDT, mdata->surface, mdata->image, w, h,
-                 mdata->smooth_scale, EINA_TRUE, EVAS_COLORSPACE_GRY8);
+            (ENDT, mdata->surface, original, w, h, smooth, EINA_TRUE, EVAS_COLORSPACE_GRY8);
           if (scaled)
             {
                done = EINA_TRUE;

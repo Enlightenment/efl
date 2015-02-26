@@ -911,12 +911,10 @@ struct _Evas_Object_3D_Data
 struct _Evas_Object_Mask_Data
 {
    void          *surface;
-   void          *image; // original image
    int            w, h;
    Eina_Bool      is_mask : 1;
    Eina_Bool      redraw : 1;
    Eina_Bool      is_alpha : 1;
-   Eina_Bool      smooth_scale : 1;
 };
 
 struct _Evas_Object_Protected_State
