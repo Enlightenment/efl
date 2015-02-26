@@ -605,12 +605,10 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
      _elm_code_widget_cursor_move_left(widget);
    else if (!strcmp(ev->key, "Right"))
      _elm_code_widget_cursor_move_right(widget);
-   else if (strlen(ev->key) == 1)
-     _elm_code_widget_text_at_cursor_insert(widget, ev->key, 1);
-   else if (!strcmp(ev->key, "space"))
-     _elm_code_widget_text_at_cursor_insert(widget, " ", 1);
+   else if (ev->string && strlen(ev->string) == 1)
+     _elm_code_widget_text_at_cursor_insert(widget, ev->string, 1);
    else
-     INF("Unhandled key %s", ev->key);
+     INF("Unhandled key %s (%s) (%s)", ev->key, ev->keyname, ev->string);
 }
 
 static void
