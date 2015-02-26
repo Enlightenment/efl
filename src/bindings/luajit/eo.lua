@@ -125,27 +125,28 @@ local eo
 local classes = {}
 local eo_classes = {}
 
+local connect = function(self, ename, func)
+    local ev = self.__events[ename]
+    if not ev then
+        error("invalid event '" .. ename .. "'", 2)
+    end
+    local cl = eo_classes["Eo_Base"]
+    M.__do_start(self, cl)
+    eo.eo_event_callback_priority_add(ev, 0,
+        function(data, obj, desc, einfo)
+            return func(obj, einfo) ~= false
+        end,
+    nil)
+    M.__do_end()
+end
+
 local init = function()
     eo = util.lib_load("eo")
     eo.eo_init()
     local eocl = eo.eo_base_class_get()
     local addr = eo_class_addr_get(eocl)
     classes["Eo_Base"] = util.Object:clone {
-        connect = function(self, ename, func)
-            local ev = self.__events[ename]
-            if not ev then
-                error("invalid event '" .. ename .. "'", 2)
-            end
-            local cl = eo_classes["Eo_Base"]
-            M.__do_start(self, cl)
-            eo.eo_event_callback_priority_add(ev, 0,
-                function(data, obj, desc, einfo)
-                    return func(obj, einfo) ~= false
-                end,
-            nil)
-            M.__do_end()
-        end,
-
+        connect = connect,
         __events = util.Object:clone {},
         __properties = util.Object:clone {}
     }
@@ -224,10 +225,8 @@ end
 
 M.class_unregister = function(name)
     local addr = eo_class_addr_get(eo_classes[name])
-    classes[name] = nil
-    classes[addr] = nil
-    eo_classes[name] = nil
-    eo_classes[addr] = nil
+    classes   [name], classes   [addr] = nil
+    eo_classes[name], eo_classes[addr] = nil
 end
 
 local obj_gccb = function(obj)
