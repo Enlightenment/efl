@@ -174,19 +174,52 @@ M.eo_class_get = function(name)
     return eo_classes[name]
 end
 
-M.class_register = function(name, parent, body, eocl)
-    parent = classes[parent]
-    if body.__events then
-        body.__events = parent.__events:clone(body.__events)
+local inherit_meta = function(body, field, parents, mixins)
+    local o = body[field]
+    if o then
+        o = parents[1][field]:clone(o)
+        for i = 2, #parents do o:add_parent(parents[i][field]) end
+        for i = 1, #mixins  do o:add_mixin (mixins [i][field]) end
+        body[field] = o
     end
-    if body.__properties then
-        body.__properties = parent.__properties:clone(body.__properties)
+end
+
+M.class_register = function(name, parents, mixins, body, eocl)
+    -- map given names to objects
+    local pars = {}
+    for i = 1, #parents do pars[i] = classes[parents[i]] end
+    -- for mixins, we need to check if it hasn't already been mixed in
+    -- in some parent (doesn't matter how deep down the tree), because
+    -- if it has, we need to skip it (for proper inheritance lookup order)
+    local mins = {}
+    local midx = 1
+    for i = 1, #mixins do
+        local mixin = mixins[i]
+        local ck, hasmi = "__mixin_" .. mixin, false
+        if mixin[ck] then
+            for i = 1, #pars do
+                if pars[i][ck] then
+                    hasmi = true
+                    break
+                end
+            end
+        end
+        if not hasmi then
+            mins[midx] = mixin
+            midx       = midx + 1
+        end
     end
+
+    inherit_meta(body, "__events"    , pars, mins)
+    inherit_meta(body, "__properties", pars, mins)
+
+    local lcl = pars[1]:clone(body)
+    for i = 2, #pars do lcl:add_parent(pars[i]) end
+    for i = 1, #mins do lcl:add_mixin (mins[i]) end
+
     local addr = eo_class_addr_get(eocl)
-    classes[name] = parent:clone(body)
-    classes[addr] = classes[name]
-    eo_classes[name] = eocl
-    eo_classes[addr] = eocl
+    classes   [name], classes   [addr] = lcl , lcl
+    eo_classes[name], eo_classes[addr] = eocl, eocl
 end
 
 M.class_unregister = function(name)
@@ -195,35 +228,6 @@ M.class_unregister = function(name)
     classes[addr] = nil
     eo_classes[name] = nil
     eo_classes[addr] = nil
-end
-
-local mixin_tbl = function(cl, mixin, field)
-    local mxt = mixin[field]
-    if mxt then
-        local clt = rawget(cl, field)
-        if not clt then
-            -- will always succeed, even if it means deep lookups
-            clt = cl.__protos[1][field]:clone()
-            rawset(cl, field, clt)
-        end
-        for k, v in pairs(mxt) do clt[k] = v end
-    end
-end
-
-M.class_mixin = function(name, mixin)
-    local cl = classes[name]
-    local mi = classes[mixin]
-    local ck = "__mixin_" .. mixin
-    -- do not mixin if it already has been mixed in previously
-    -- but only do it for mixins, not for ifaces, for proper lookup order
-    if mi[ck] and cl[ck] then
-        return
-    end
-    -- mixin properties/events
-    mixin_tbl(cl, mi, "__properties")
-    mixin_tbl(cl, mi, "__events")
-    -- mixin the rest
-    cl:mixin(classes[mixin])
 end
 
 local obj_gccb = function(obj)
