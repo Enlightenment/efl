@@ -120,7 +120,7 @@ const unsigned short square_indices[] = {0, 1, 2, 2, 1, 3};
          evas_3d_mesh_frame_vertex_data_copy_set(frame, EVAS_3D_VERTEX_TANGENT, \
                                        sizeof(vec3), &tangents[0]), \
          evas_3d_mesh_index_data_copy_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT, \
-                                       icount , &indices[0])); \
+                                       icount, &indices[0])); \
    free(vertices); \
    free(normals); \
    free(tangents); \
@@ -132,11 +132,11 @@ const unsigned short square_indices[] = {0, 1, 2, 2, 1, 3};
          evas_3d_mesh_vertex_count_set(v_count), \
          evas_3d_mesh_frame_add(frame), \
          evas_3d_mesh_frame_vertex_data_set(frame, EVAS_3D_VERTEX_POSITION, \
-                                       15 * sizeof(float), &v_array[ 0]), \
+                                       15 * sizeof(float), &v_array[0]), \
          evas_3d_mesh_frame_vertex_data_set(frame, EVAS_3D_VERTEX_NORMAL, \
-                                       15 * sizeof(float), &v_array[ 3]), \
+                                       15 * sizeof(float), &v_array[3]), \
          evas_3d_mesh_frame_vertex_data_set(frame, EVAS_3D_VERTEX_COLOR, \
-                                       15 * sizeof(float), &v_array[ 6]), \
+                                       15 * sizeof(float), &v_array[6]), \
          evas_3d_mesh_frame_vertex_data_set(frame, EVAS_3D_VERTEX_TEXCOORD, \
                                        15 * sizeof(float), &v_array[10]), \
          evas_3d_mesh_frame_vertex_data_set(frame, EVAS_3D_VERTEX_TANGENT, \
@@ -169,8 +169,8 @@ _generate_grid_indices(unsigned short *indices, int count)
    unsigned short *index = &indices[0];
    int vccount = count + 1;
 
-   for(j = 0; j < count; j++)
-     for(i = 0; i < count; i++)
+   for (j = 0; j < count; j++)
+     for (i = 0; i < count; i++)
        {
           *index++ = (unsigned short)(i + vccount * j);
           *index++ = i + vccount * (j + 1);
@@ -188,7 +188,7 @@ _generate_tape_indices(unsigned short *indices, int count)
    int i, vccount = count + 1;
    unsigned short *index = &indices[0];
 
-   for(i = 0; i < count; i++)
+   for (i = 0; i < count; i++)
      {
         *index++ = i;
         *index++ = i + 1;
@@ -234,8 +234,8 @@ evas_3d_add_sphere_frame(Eo *mesh, int frame, int p, vec2 tex_scale)
              tangents[i + j * vccount].y = vertices[i + j * vccount].y;
              tangents[i + j * vccount].z = -vertices[i + j * vccount].x;
 
-             tex_coord[i+ j * vccount].x = i / (float)(vccount-1) * tex_scale.x;
-             tex_coord[i+ j *vccount].y = tex_scale.y - j / (float)(vccount-1) * tex_scale.y;
+             tex_coord[i + j * vccount].x = i / (float)(vccount - 1) * tex_scale.x;
+             tex_coord[i + j *vccount].y = tex_scale.y - j / (float)(vccount - 1) * tex_scale.y;
           }
      }
 
@@ -265,8 +265,8 @@ evas_3d_add_func_surface_frame(Eo *mesh, int frame, Surface func, int p, vec2 te
              vertices[i + j * vccount] = func(v, u);
              normals[i + j * vccount] = _get_func_normal(func, v, u);
 
-             tex_coord[i+ j * vccount].x = i / (float)(vccount-1) * tex_scale.x;
-             tex_coord[i+ j *vccount].y = tex_scale.y - j / (float)(vccount-1) * tex_scale.y;
+             tex_coord[i + j * vccount].x = i / (float)(vccount - 1) * tex_scale.x;
+             tex_coord[i + j *vccount].y = tex_scale.y - j / (float)(vccount - 1) * tex_scale.y;
           }
      }
 
@@ -312,8 +312,8 @@ evas_3d_add_torus_frame(Eo *mesh, int frame, float rratio, int p, vec2 tex_scale
 
              _vec3_normalize(&normals[i + j * vccount]);
 
-             tex_coord[i+ j * vccount].x = i / (float)(vccount-1) * tex_scale.x;
-             tex_coord[i+ j *vccount].y = tex_scale.y - j / (float)(vccount-1) * tex_scale.y;
+             tex_coord[i + j * vccount].x = i / (float)(vccount - 1) * tex_scale.x;
+             tex_coord[i + j *vccount].y = tex_scale.y - j / (float)(vccount - 1) * tex_scale.y;
           }
      }
 
@@ -353,10 +353,10 @@ evas_3d_add_cylinder_frame(Eo *mesh, int frame, int p, vec2 tex_scale)
         tangents[i + vccount].y = tangents[i].y = 0;
         tangents[i + vccount].z = tangents[i].z = -sinfi;
 
-        tex_coord[i].x = i / (float)(vccount-1) * tex_scale.x;
+        tex_coord[i].x = i / (float)(vccount - 1) * tex_scale.x;
         tex_coord[i].y = 0;
-        tex_coord[i+ vccount].x = i / (float)(vccount-1) * tex_scale.x;
-        tex_coord[i+ vccount].y = tex_scale.y;
+        tex_coord[i + vccount].x = i / (float)(vccount - 1) * tex_scale.x;
+        tex_coord[i + vccount].y = tex_scale.y;
      }
 
    _generate_tape_indices(indices, p);
@@ -398,10 +398,10 @@ evas_3d_add_cone_frame(Eo *mesh, int frame, int p, vec2 tex_scale)
         tangents[i + vccount].y = tangents[i].y = 0;
         tangents[i + vccount].z = tangents[i].z = -sinfi;
 
-        tex_coord[i].x = i / (float)(vccount-1) * tex_scale.x;
+        tex_coord[i].x = i / (float)(vccount - 1) * tex_scale.x;
         tex_coord[i].y = 0;
-        tex_coord[i+ vccount].x = tex_coord[i].x;
-        tex_coord[i+ vccount].y = tex_scale.y;
+        tex_coord[i + vccount].x = tex_coord[i].x;
+        tex_coord[i + vccount].y = tex_scale.y;
      }
 
    _generate_tape_indices(indices, p);
