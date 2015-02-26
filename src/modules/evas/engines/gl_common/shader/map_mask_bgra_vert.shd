@@ -13,9 +13,7 @@ void main()
    col = color;
 
    // tex_coorda contains the Y-invert flag
-   // tex_coordm contains the X,Y position of the mask
-   // tex_sample contains the W,H size of the mask (inverted)
-
-   vec4 mask_Position = mvp * vertex * vec4(tex_coorda.x * 0.5, tex_coorda.y * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);
-   tex_m = vec2(mask_Position.xy - tex_coordm) * tex_sample;
+   // position on screen in [0..1] range of current pixel
+   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(tex_coorda.y) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);
+   tex_m = mask_Position.xy * tex_sample + tex_coordm;
 }

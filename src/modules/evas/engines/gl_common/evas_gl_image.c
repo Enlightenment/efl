@@ -923,9 +923,11 @@ void
 evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
                               int npoints, RGBA_Map_Point *p, int smooth, int level EINA_UNUSED)
 {
-   int mmx = 0, mmy = 0, mmw = 0, mmh = 0, mdx = 0, mdy = 0, mdw = 0, mdh = 0;
-   Evas_GL_Texture *mtex = NULL;
-   RGBA_Draw_Context *dc;
+   int mx = 0, my = 0, mw = 0, mh = 0;
+   RGBA_Draw_Context *dc = gc->dc;
+   Eina_Bool mask_smooth = EINA_FALSE;
+   Evas_GL_Image *mask = dc->clip.mask;
+   Evas_GL_Texture *mtex = mask ? mask->tex : NULL;
    int r, g, b, a;
    int c, cx, cy, cw, ch;
 
@@ -951,30 +953,32 @@ evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
    if (!im->tex) return;
    im->tex->im = im;
 
-   if (dc->clip.mask)
+   if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
      {
-        Evas_GL_Image *mask = dc->clip.mask;
-        double mx, my, mw, mh;
-
-        mdx = mx = dc->clip.mask_x;
-        mdy = my = dc->clip.mask_y;
-        mdw = mw = mask->w;
-        mdh = mh = mask->h;
-        if (c) RECTS_CLIP_TO_RECT(mx, my, mw, mh, cx, cy, cw, ch);
-        //RECTS_CLIP_TO_RECT(mx, my, mw, mh, dx, dy, dw, dh);
-        mmx = mx - dc->clip.mask_x;
-        mmy = my - dc->clip.mask_y;
-        mmw = mw;
-        mmh = mh;
-        mtex = mask->tex;
-        // TODO: implement support for scaled masks
-        //if (mask->scaled.origin)
-          //mask_smooth = mask->scaled.smooth;
+        // canvas coords
+        mx = dc->clip.mask_x;
+        my = dc->clip.mask_y;
+        if (mask->scaled.origin)
+          {
+             mw = mask->scaled.w;
+             mh = mask->scaled.h;
+             //scalex = mask->w / (double)mask->scaled.w;
+             //scaley = mask->h / (double)mask->scaled.h;
+             mask_smooth = mask->scaled.smooth;
+          }
+        else
+          {
+             mw = mask->w;
+             mh = mask->h;
+          }
+        //if (c) RECTS_CLIP_TO_RECT(mx, my, mw, mh, cx, cy, cw, ch);
+        //mx = mx - dc->clip.mask_x;
+        //my = my - dc->clip.mask_y;
      }
 
    evas_gl_common_context_image_map_push(gc, im->tex, npoints, p,
                                          c, cx, cy, cw, ch,
-                                         mtex, mmx, mmy, mmw, mmh, mdx, mdy, mdw, mdh,
+                                         mtex, mx, my, mw, mh, mask_smooth,
                                          r, g, b, a, smooth, im->tex_only,
                                          im->cs.space);
 }

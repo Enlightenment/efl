@@ -2404,8 +2404,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                                       int npoints,
                                       RGBA_Map_Point *p,
                                       int clip, int cx, int cy, int cw, int ch,
-                                      Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
-                                      int mdx, int mdy, int mdw, int mdh,
+                                      Evas_GL_Texture *mtex, int mx, int my, int mw, int mh, Eina_Bool mask_smooth,
                                       int r, int g, int b, int a,
                                       Eina_Bool smooth, Eina_Bool tex_only,
                                       Evas_Colorspace cspace)
@@ -2606,7 +2605,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texm = !!mtex;
    gc->pipe[pn].array.use_texa = !!mtex;
    gc->pipe[pn].array.use_texsam = gc->pipe[pn].array.use_texm;
-   gc->pipe[pn].array.mask_smooth = EINA_FALSE;
+   gc->pipe[pn].array.mask_smooth = mask_smooth;
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2668,12 +2667,8 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
 
    if (mtex)
      {
-        GLfloat glmdx = 0.f, glmdy = 0.f, glmdw = 1.f, glmdh = 1.f, yinv = -1.f;
-        GLfloat gw = gc->w, gh = gc->h;
-
-        // Note: I couldn't write any test case where it was necessary
-        // to know the mask position in its texture. Thus these unused vars.
-        (void) mx; (void) my; (void) mw; (void) mh;
+        double glmx, glmy, glmw, glmh, yinv = -1.f;
+        double gw = gc->w, gh = gc->h;
 
         if (!((gc->pipe[0].shader.surface == gc->def_surface) ||
               (!gc->pipe[0].shader.surface)))
@@ -2682,40 +2677,47 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
              gh = gc->pipe[0].shader.surface->h;
              yinv = 1.f;
           }
+        if (!gw || !gh || !mw || !mh || !mtex->pt->w || !mtex->pt->h)
+          goto mask_error;
 
-        if (gw) glmdx = (GLfloat) mdx / (GLfloat) gw;
-        if (gh) glmdy = (GLfloat) mdy / (GLfloat) gh;
-        if (mdw) glmdw = (GLfloat) gw / (GLfloat) mdw;
-        if (mdh) glmdh = (GLfloat) gh / (GLfloat) mdh;
+        // vertex shader: tex_m = (X,Y) * tex_coordm + tex_sample
+        // tex_coordm
+        glmx = (double)((mtex->x * mw) - (mtex->w * mx)) / (double)(mw * mtex->pt->w);
+        glmy = (double)((mtex->y * mh) - (mtex->h * my)) / (double)(mh * mtex->pt->h);
+        PUSH_TEXM(pn, glmx, glmy);
+        PUSH_TEXM(pn, glmx, glmy);
+        PUSH_TEXM(pn, glmx, glmy);
+        PUSH_TEXM(pn, glmx, glmy);
+        PUSH_TEXM(pn, glmx, glmy);
+        PUSH_TEXM(pn, glmx, glmy);
 
-        // tex_coordm: mask x,y (on canvas)
-        PUSH_TEXM(pn, glmdx, glmdy);
-        PUSH_TEXM(pn, glmdx, glmdy);
-        PUSH_TEXM(pn, glmdx, glmdy);
-        PUSH_TEXM(pn, glmdx, glmdy);
-        PUSH_TEXM(pn, glmdx, glmdy);
-        PUSH_TEXM(pn, glmdx, glmdy);
+        // tex_sample
+        glmw = (double)(gw * mtex->w) / (double)(mw * mtex->pt->w);
+        glmh = (double)(gh * mtex->h) / (double)(mh * mtex->pt->h);
+        PUSH_TEXSAM(pn, glmw, glmh);
+        PUSH_TEXSAM(pn, glmw, glmh);
+        PUSH_TEXSAM(pn, glmw, glmh);
+        PUSH_TEXSAM(pn, glmw, glmh);
+        PUSH_TEXSAM(pn, glmw, glmh);
+        PUSH_TEXSAM(pn, glmw, glmh);
 
-        // tex_sample: mask 1/w, 1/h
-        PUSH_TEXSAM(pn, glmdw, glmdh);
-        PUSH_TEXSAM(pn, glmdw, glmdh);
-        PUSH_TEXSAM(pn, glmdw, glmdh);
-        PUSH_TEXSAM(pn, glmdw, glmdh);
-        PUSH_TEXSAM(pn, glmdw, glmdh);
-        PUSH_TEXSAM(pn, glmdw, glmdh);
+        // tex_coorda: Y-invert flag
+        PUSH_TEXA(pn, 1.0, yinv);
+        PUSH_TEXA(pn, 1.0, yinv);
+        PUSH_TEXA(pn, 1.0, yinv);
+        PUSH_TEXA(pn, 1.0, yinv);
+        PUSH_TEXA(pn, 1.0, yinv);
+        PUSH_TEXA(pn, 1.0, yinv);
 
-        // tex_coorda: mask Y-invert flag
-        PUSH_TEXA(pn, 1.f, yinv);
-        PUSH_TEXA(pn, 1.f, yinv);
-        PUSH_TEXA(pn, 1.f, yinv);
-        PUSH_TEXA(pn, 1.f, yinv);
-        PUSH_TEXA(pn, 1.f, yinv);
-        PUSH_TEXA(pn, 1.f, yinv);
-
-        //DBG("Orig %d,%d - %dx%d --> %f,%f - %f x %f", mdx, mdy, mdw, mdh,
-        //    glmdx, glmdy, glmdw, glmdh);
+        /*
+        DBG("Map mask: %d,%d %dx%d --> %f , %f - %f x %f @ %f %f [gc %dx%d, tex %d,%d %dx%d, pt %dx%d]",
+            mx, my, mw, mh,
+            glmx, glmy, glmw, glmh, 1.0, yinv,
+            gc->w, gc->h, mtex->x, mtex->y, mtex->w, mtex->h, mtex->pt->w, mtex->pt->h);
+        */
      }
 
+mask_error:
    if (!flat)
      {
         shader_array_flush(gc);

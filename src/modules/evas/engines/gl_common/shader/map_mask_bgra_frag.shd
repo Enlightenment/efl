@@ -10,7 +10,6 @@ varying vec2 tex_c, tex_m;
 varying vec4 col;
 void main()
 {
-   // FIXME: Use mask coordinates within its texture
    // FIXME: Fix Mach band effect using proper 4-point color interpolation
    gl_FragColor = texture2D(tex, tex_c) * texture2D(texm, tex_m).a *  col;
 }
