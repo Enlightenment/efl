@@ -6,11 +6,8 @@ precision mediump float;
 #endif
 #endif
 uniform sampler2D tex, texm;
-varying vec2 tex_c;
-varying vec4 mask_Position, mask_Absolute;
+varying vec2 tex_c, tex_m;
 void main()
 {
-   // FIXME: Use mask coordinates within its texture
-   vec2 mpos = vec2(mask_Position.xy - mask_Absolute.xy) * mask_Absolute.zw;
-   gl_FragColor = texture2D(tex, tex_c.xy) * texture2D(texm, mpos).a;
+   gl_FragColor = texture2D(tex, tex_c) * texture2D(texm, tex_m).a;
 }

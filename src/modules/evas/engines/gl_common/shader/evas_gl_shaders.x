@@ -2711,14 +2711,13 @@ static const char const map_mask_frag_glsl[] =
    "#endif\n"
    "#endif\n"
    "uniform sampler2D tex, texm;\n"
-   "varying vec2 tex_c;\n"
-   "varying vec4 mask_Position, col, mask_Absolute;\n"
+   "varying vec2 tex_c, tex_m;\n"
+   "varying vec4 col;\n"
    "void main()\n"
    "{\n"
    "   // FIXME: Use mask coordinates within its texture\n"
    "   // FIXME: Fix Mach band effect using proper 4-point color interpolation\n"
-   "   vec2 mpos = vec2(mask_Position.xy - mask_Absolute.xy) * mask_Absolute.zw;\n"
-   "   gl_FragColor = texture2D(tex, tex_c.xy).bgra * texture2D(texm, mpos).a *  col;\n"
+   "   gl_FragColor = texture2D(tex, tex_c).bgra * texture2D(texm, tex_m).a *  col;\n"
    "}\n";
 Evas_GL_Program_Source shader_map_mask_frag_src =
 {
@@ -2734,8 +2733,8 @@ static const char const map_mask_vert_glsl[] =
    "attribute vec4 vertex, color;\n"
    "attribute vec2 tex_coord, tex_coordm, tex_sample, tex_coorda;\n"
    "uniform mat4 mvp;\n"
-   "varying vec2 tex_c;\n"
-   "varying vec4 mask_Position, col, mask_Absolute;\n"
+   "varying vec2 tex_c, tex_m;\n"
+   "varying vec4 col;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
@@ -2744,8 +2743,8 @@ static const char const map_mask_vert_glsl[] =
    "   // tex_coorda contains the Y-invert flag\n"
    "   // tex_coordm contains the X,Y position of the mask\n"
    "   // tex_sample contains the W,H size of the mask (inverted)\n"
-   "   mask_Position = mvp * vertex * vec4(tex_coorda.x * 0.5, tex_coorda.y * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
-   "   mask_Absolute = vec4(tex_coordm, tex_sample); // x, y, 1/w, 1/h on canvas in GL coords\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(tex_coorda.x * 0.5, tex_coorda.y * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = vec2(mask_Position.xy - tex_coordm) * tex_sample;\n"
    "}\n";
 Evas_GL_Program_Source shader_map_mask_vert_src =
 {
@@ -2763,13 +2762,10 @@ static const char const map_mask_nomul_frag_glsl[] =
    "#endif\n"
    "#endif\n"
    "uniform sampler2D tex, texm;\n"
-   "varying vec2 tex_c;\n"
-   "varying vec4 mask_Position, mask_Absolute;\n"
+   "varying vec2 tex_c, tex_m;\n"
    "void main()\n"
    "{\n"
-   "   // FIXME: Use mask coordinates within its texture\n"
-   "   vec2 mpos = vec2(mask_Position.xy - mask_Absolute.xy) * mask_Absolute.zw;\n"
-   "   gl_FragColor = texture2D(tex, tex_c.xy).bgra * texture2D(texm, mpos).a;\n"
+   "   gl_FragColor = texture2D(tex, tex_c).bgra * texture2D(texm, tex_m).a;\n"
    "}\n";
 Evas_GL_Program_Source shader_map_mask_nomul_frag_src =
 {
@@ -2783,17 +2779,18 @@ static const char const map_mask_nomul_vert_glsl[] =
    "precision highp float;\n"
    "#endif\n"
    "attribute vec4 vertex;\n"
-   "attribute vec2 tex_coord, tex_coordm, tex_sample;\n"
+   "attribute vec2 tex_coord, tex_coordm, tex_sample, tex_coorda;\n"
    "uniform mat4 mvp;\n"
-   "varying vec2 tex_c;\n"
-   "varying vec4 mask_Position, mask_Absolute;\n"
+   "varying vec2 tex_c, tex_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
-   "   // Assume Y-invert on mask, normalize (screen to texture mode coordinates)\n"
-   "   mask_Position = mvp * vertex * vec4(0.5, -0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
-   "   mask_Absolute = vec4(tex_coordm, tex_sample); // x, y, 1/w, 1/h on canvas in GL coords\n"
+   "   // tex_coorda contains the Y-invert flag\n"
+   "   // tex_coordm contains the X,Y position of the mask\n"
+   "   // tex_sample contains the W,H size of the mask (inverted)\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(tex_coorda.x * 0.5, tex_coorda.y * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = vec2(mask_Position.xy - tex_coordm) * tex_sample;\n"
    "}\n";
 Evas_GL_Program_Source shader_map_mask_nomul_vert_src =
 {
@@ -2811,14 +2808,13 @@ static const char const map_mask_bgra_frag_glsl[] =
    "#endif\n"
    "#endif\n"
    "uniform sampler2D tex, texm;\n"
-   "varying vec2 tex_c;\n"
-   "varying vec4 mask_Position, col, mask_Absolute;\n"
+   "varying vec2 tex_c, tex_m;\n"
+   "varying vec4 col;\n"
    "void main()\n"
    "{\n"
    "   // FIXME: Use mask coordinates within its texture\n"
    "   // FIXME: Fix Mach band effect using proper 4-point color interpolation\n"
-   "   vec2 mpos = vec2(mask_Position.xy - mask_Absolute.xy) * mask_Absolute.zw;\n"
-   "   gl_FragColor = texture2D(tex, tex_c.xy) * texture2D(texm, mpos).a *  col;\n"
+   "   gl_FragColor = texture2D(tex, tex_c) * texture2D(texm, tex_m).a *  col;\n"
    "}\n";
 Evas_GL_Program_Source shader_map_mask_bgra_frag_src =
 {
@@ -2834,8 +2830,8 @@ static const char const map_mask_bgra_vert_glsl[] =
    "attribute vec4 vertex, color;\n"
    "attribute vec2 tex_coord, tex_coordm, tex_sample, tex_coorda;\n"
    "uniform mat4 mvp;\n"
-   "varying vec2 tex_c;\n"
-   "varying vec4 mask_Position, col, mask_Absolute;\n"
+   "varying vec2 tex_c, tex_m;\n"
+   "varying vec4 col;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
@@ -2844,8 +2840,8 @@ static const char const map_mask_bgra_vert_glsl[] =
    "   // tex_coorda contains the Y-invert flag\n"
    "   // tex_coordm contains the X,Y position of the mask\n"
    "   // tex_sample contains the W,H size of the mask (inverted)\n"
-   "   mask_Position = mvp * vertex * vec4(tex_coorda.x * 0.5, tex_coorda.y * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
-   "   mask_Absolute = vec4(tex_coordm, tex_sample); // x, y, 1/w, 1/h on canvas in GL coords\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(tex_coorda.x * 0.5, tex_coorda.y * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = vec2(mask_Position.xy - tex_coordm) * tex_sample;\n"
    "}\n";
 Evas_GL_Program_Source shader_map_mask_bgra_vert_src =
 {
@@ -2863,13 +2859,10 @@ static const char const map_mask_bgra_nomul_frag_glsl[] =
    "#endif\n"
    "#endif\n"
    "uniform sampler2D tex, texm;\n"
-   "varying vec2 tex_c;\n"
-   "varying vec4 mask_Position, mask_Absolute;\n"
+   "varying vec2 tex_c, tex_m;\n"
    "void main()\n"
    "{\n"
-   "   // FIXME: Use mask coordinates within its texture\n"
-   "   vec2 mpos = vec2(mask_Position.xy - mask_Absolute.xy) * mask_Absolute.zw;\n"
-   "   gl_FragColor = texture2D(tex, tex_c.xy) * texture2D(texm, mpos).a;\n"
+   "   gl_FragColor = texture2D(tex, tex_c) * texture2D(texm, tex_m).a;\n"
    "}\n";
 Evas_GL_Program_Source shader_map_mask_bgra_nomul_frag_src =
 {
@@ -2883,17 +2876,18 @@ static const char const map_mask_bgra_nomul_vert_glsl[] =
    "precision highp float;\n"
    "#endif\n"
    "attribute vec4 vertex;\n"
-   "attribute vec2 tex_coord, tex_coordm, tex_sample;\n"
+   "attribute vec2 tex_coord, tex_coordm, tex_sample, tex_coorda;\n"
    "uniform mat4 mvp;\n"
-   "varying vec2 tex_c;\n"
-   "varying vec4 mask_Position, mask_Absolute;\n"
+   "varying vec2 tex_c, tex_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
-   "   // Assume Y-invert on mask, normalize (screen to texture mode coordinates)\n"
-   "   mask_Position = mvp * vertex * vec4(0.5, -0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
-   "   mask_Absolute = vec4(tex_coordm, tex_sample); // x, y, 1/w, 1/h on canvas in GL coords\n"
+   "   // tex_coorda contains the Y-invert flag\n"
+   "   // tex_coordm contains the X,Y position of the mask\n"
+   "   // tex_sample contains the W,H size of the mask (inverted)\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(tex_coorda.x * 0.5, tex_coorda.y * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = vec2(mask_Position.xy - tex_coordm) * tex_sample;\n"
    "}\n";
 Evas_GL_Program_Source shader_map_mask_bgra_nomul_vert_src =
 {
