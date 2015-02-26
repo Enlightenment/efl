@@ -162,6 +162,80 @@ vec3 _get_func_normal(Surface *func, float x, float y)
    return normal;
 }
 
+static float
+_random(int x, int y)
+{
+   int k = x + y * 57;
+   k = (k << 13) ^ k;
+   return (1.0f - ((k * (k * k * 15731 + 789221) + 1376312589) & 0x7fffffff) /
+      1073741824.0f);
+}
+
+static float
+_smooth(float x, float y)
+{
+   float res;
+   res = (_random(x - 1, y - 1) + _random(x + 1, y - 1) +
+        _random(x - 1, y + 1) + _random(x + 1, y + 1) ) / 16;
+   res += (_random(x - 1, y) + _random(x + 1, y) +
+        _random(x, y - 1) + _random(x, y + 1)) / 8;
+   res += _random(x, y) / 4;
+   return res;
+}
+
+static float
+_interpolate(float a, float b, float x)
+{
+   float ft = x * M_PI;
+   float f = (1 - cosf(ft)) * 0.5;
+   return a * (1 - f) + b * f;
+}
+
+static float _noise(float x, float y)
+{
+   float ix = (int)(x);
+   float fx = x - ix;
+   float iy = (int)(y);
+   float fy = y - iy;
+
+   float v1 = _smooth(ix, iy);
+   float v2 = _smooth(ix + 1, iy);
+   float v3 = _smooth(ix, iy + 1);
+   float v4 = _smooth(ix + 1, iy + 1);
+
+   float i1 = _interpolate(v1, v2, fx);
+   float i2 = _interpolate(v3, v4, fx);
+
+   return _interpolate(i1, i2, fy);
+}
+
+static vec3
+_perlin_terrain(float x,float y)
+{
+   vec3 out;
+   float persistence = 0.5f;
+   float frequency = 5;
+   float amplitude = 1;
+   int i = 0;
+   int octaves = 5;
+
+   out.x = x;
+   x += 0.5;
+   out.y = y;
+   y += 0.5;
+   out.z = 0;
+
+   for(i = 0;i < octaves; i++)
+     {
+        out.z += _noise(x * frequency, y * frequency) * amplitude;
+
+        amplitude *= persistence;
+        frequency *= 2;
+     }
+
+   return out;
+}
+
 void
 _generate_grid_indices(unsigned short *indices, int count)
 {
@@ -265,6 +339,11 @@ evas_3d_add_func_surface_frame(Eo *mesh, int frame, Surface func, int p, vec2 te
              vertices[i + j * vccount] = func(v, u);
              normals[i + j * vccount] = _get_func_normal(func, v, u);
 
+             // TODO Add tangent calculation
+             tangents[i + j * vccount].x = 0;
+             tangents[i + j * vccount].y = 0;
+             tangents[i + j * vccount].z = 0;
+
              tex_coord[i + j * vccount].x = i / (float)(vccount - 1) * tex_scale.x;
              tex_coord[i + j *vccount].y = tex_scale.y - j / (float)(vccount - 1) * tex_scale.y;
           }
@@ -272,6 +351,12 @@ evas_3d_add_func_surface_frame(Eo *mesh, int frame, Surface func, int p, vec2 te
 
    _generate_grid_indices(indices, p);
    SET_VERTEX_DATA(frame)
+}
+
+void
+evas_3d_add_terrain_frame(Eo *mesh, int frame, int p, vec2 tex_scale)
+{
+   evas_3d_add_func_surface_frame(mesh, frame, _perlin_terrain, p, tex_scale);
 }
 
 void
