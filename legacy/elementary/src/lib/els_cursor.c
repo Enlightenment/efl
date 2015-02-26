@@ -365,6 +365,14 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
         cur->use_engine = EINA_TRUE;
      }
 
+#ifdef HAVE_ELEMENTARY_DRM
+   const char *engine_name;
+
+   engine_name = ecore_evas_engine_name_get(cur->ee);
+   if ((engine_name) && (!strcmp(engine_name, ELM_DRM)))
+     cur->use_engine = EINA_FALSE;
+#endif
+
    if (cur->use_engine)
      {
         Evas_Object *top;
