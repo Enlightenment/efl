@@ -103,7 +103,6 @@ EAPI unsigned int eina_seed = 0;
 
 #ifdef EFL_HAVE_THREADS
 EAPI pthread_t _eina_main_loop;
-static pid_t _eina_pid;
 #endif
 
 #ifdef MT
@@ -272,7 +271,6 @@ eina_init(void)
 
 #ifdef EFL_HAVE_THREADS
    _eina_main_loop = pthread_self();
-   _eina_pid = getpid();
 #endif
 
 #ifdef EINA_HAVE_DEBUG_THREADS
@@ -412,20 +410,9 @@ EAPI Eina_Bool
 eina_main_loop_is(void)
 {
 #ifdef EFL_HAVE_THREADS
-  pid_t pid;
   if (pthread_equal(_eina_main_loop, pthread_self()))
      return EINA_TRUE;
-
-   pid = getpid();
-   if (pid != _eina_pid)
-     {
-        /* This is in case of a fork, but don't like the solution */
-        _eina_pid = pid;
-        _eina_main_loop = pthread_self();
-        return EINA_TRUE;
-     }
 #endif
-
    return EINA_FALSE;
 }
 
@@ -434,7 +421,6 @@ EAPI void
 eina_main_loop_define(void)
 {
 #ifdef EFL_HAVE_THREADS
-   _eina_pid = getpid();
    _eina_main_loop = pthread_self();
 #endif
 }
