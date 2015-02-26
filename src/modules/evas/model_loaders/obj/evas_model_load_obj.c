@@ -176,7 +176,7 @@ _count_elements(char *map)//count elements of mesh in .obj
                     }
                }
           }
-        else if (*current == '\n')
+        if (*current == '\n')
           {
              will_check_next_char = EINA_TRUE;
           }
@@ -364,7 +364,7 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, Eina_File *file)
                     }
                }
           }
-        else if (*current == '\n')
+        if (*current == '\n')
           {
              will_check_next_char = EINA_TRUE;
           }
