@@ -16,26 +16,30 @@
 static void
 _elm_code_diff_widget_parse_diff_line(Elm_Code_Line *line, Elm_Code_File *left, Elm_Code_File *right)
 {
+   const char *content;
+   int length;
+
    if (line->length < 1)
      {
         elm_code_file_line_append(left, "", 0, NULL);
         elm_code_file_line_append(right, "", 0, NULL);
      }
 
-   if (line->content[0] == '+')
+   content = elm_code_line_text_get(line, &length);
+   if (content[0] == '+')
      {
         elm_code_file_line_append(left, "", 0, NULL);
-        elm_code_file_line_append(right, line->content+1, line->length-1, _ELM_CODE_DIFF_WIDGET_TYPE_ADDED);
+        elm_code_file_line_append(right, content, length, NULL);
      }
-   else if (line->content[0] == '-')
+   else if (content[0] == '-')
      {
-        elm_code_file_line_append(left, line->content+1, line->length-1, _ELM_CODE_DIFF_WIDGET_TYPE_REMOVED);
+        elm_code_file_line_append(left, content, length, NULL);
         elm_code_file_line_append(right, "", 0, NULL);
      }
    else
      {
-        elm_code_file_line_append(left, line->content+1, line->length-1, NULL);
-        elm_code_file_line_append(right, line->content+1, line->length-1, NULL);
+        elm_code_file_line_append(left, content, length, NULL);
+        elm_code_file_line_append(right, content, length, NULL);
      }
 }
 
@@ -44,47 +48,35 @@ _elm_code_diff_widget_parse_diff(Elm_Code_File *diff, Elm_Code_File *left, Elm_C
 {
    Eina_List *item;
    Elm_Code_Line *line;
-   int offset;
+   const char *content;
+   int offset, length;
 
    offset = 0;
    EINA_LIST_FOREACH(diff->lines, item, line)
      {
-        if (line->length > 0 && (line->content[0] == 'd' || line->content[0] == 'i' || line->content[0] == 'n'))
+        content = elm_code_line_text_get(line, &length);
+
+        if (length > 0 && (content[0] == 'd' || content[0] == 'i' || content[0] == 'n'))
           {
              offset = 0;
+             elm_code_file_line_append(left, content, length, NULL);
+             elm_code_file_line_append(right, content, length, NULL);
+
              continue;
           }
 
         if (offset == 0)
-          elm_code_file_line_append(left, line->content+4, line->length-4, _ELM_CODE_DIFF_WIDGET_TYPE_CHANGED);
+          elm_code_file_line_append(left, content, length, NULL);
         else if (offset == 1)
-          elm_code_file_line_append(right, line->content+4, line->length-4, _ELM_CODE_DIFF_WIDGET_TYPE_CHANGED);
+          elm_code_file_line_append(right, content, length, NULL);
         else
           _elm_code_diff_widget_parse_diff_line(line, left, right);
 
         offset++;
      }
-}
 
-static Eina_Bool
-_elm_code_diff_widget_line_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED,
-                              const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
-{
-   Elm_Code_Line *line;
-
-   line = (Elm_Code_Line *)event_info;
-
-   if (!line->data)
-     return EO_CALLBACK_CONTINUE;
-
-   if (!strcmp(_ELM_CODE_DIFF_WIDGET_TYPE_ADDED, (char *)line->data))
-     line->status = ELM_CODE_STATUS_TYPE_ADDED;
-   else if (!strcmp(_ELM_CODE_DIFF_WIDGET_TYPE_REMOVED, (char *)line->data))
-     line->status = ELM_CODE_STATUS_TYPE_REMOVED;
-   else if (!strcmp(_ELM_CODE_DIFF_WIDGET_TYPE_CHANGED, (char *)line->data))
-     line->status = ELM_CODE_STATUS_TYPE_CHANGED;
-
-   return EO_CALLBACK_CONTINUE;
+   _elm_code_parse_file(left->parent, left);
+   _elm_code_parse_file(right->parent, right);
 }
 
 EAPI Evas_Object *
@@ -104,8 +96,8 @@ elm_code_diff_widget_add(Evas_Object *parent, Elm_Code *code)
    wcode1 = elm_code_create();
    widget_left = eo_add(ELM_CODE_WIDGET_CLASS, parent);
    eo_do(widget_left,
-         elm_code_widget_code_set(wcode1),
-         eo_event_callback_add(&ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_diff_widget_line_cb, NULL));
+         elm_code_widget_code_set(wcode1));
+   elm_code_parser_standard_add(wcode1, ELM_CODE_PARSER_STANDARD_DIFF);
 
    evas_object_size_hint_weight_set(widget_left, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget_left, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -117,8 +109,8 @@ elm_code_diff_widget_add(Evas_Object *parent, Elm_Code *code)
    wcode2 = elm_code_create();
    widget_right = eo_add(ELM_CODE_WIDGET_CLASS, parent);
    eo_do(widget_right,
-         elm_code_widget_code_set(wcode2),
-         eo_event_callback_add(&ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_diff_widget_line_cb, NULL));
+         elm_code_widget_code_set(wcode2));
+   elm_code_parser_standard_add(wcode2, ELM_CODE_PARSER_STANDARD_DIFF);
 
    evas_object_size_hint_weight_set(widget_right, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget_right, EVAS_HINT_FILL, EVAS_HINT_FILL);

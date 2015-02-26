@@ -42,6 +42,8 @@ typedef struct
 
 /* Private parser callbacks */
 
+void _elm_code_parse_setup();
+
 void _elm_code_parse_line(Elm_Code *code, Elm_Code_Line *line);
 
 void _elm_code_parse_file(Elm_Code *code, Elm_Code_File *file);

@@ -115,6 +115,32 @@ _elm_code_test_editor_setup(Evas_Object *parent)
 }
 
 static Evas_Object *
+_elm_code_test_diff_inline_setup(Evas_Object *parent)
+{
+   char path[PATH_MAX];
+   Evas_Object *diff;
+   Elm_Code *code;
+
+   snprintf(path, sizeof(path), "%s/../edi/data/testdiff.diff", elm_app_data_dir_get());
+
+   code = elm_code_create();
+   elm_code_file_open(code, path);
+
+   diff = eo_add(ELM_CODE_WIDGET_CLASS, parent);
+   eo_do(diff,
+         elm_code_widget_code_set(code));
+
+   evas_object_size_hint_weight_set(diff, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(diff, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(diff);
+
+   elm_code_parser_standard_add(code, ELM_CODE_PARSER_STANDARD_DIFF);
+   elm_code_file_open(code, path);
+
+   return diff;
+}
+
+static Evas_Object *
 _elm_code_test_diff_setup(Evas_Object *parent)
 {
    char path[PATH_MAX];
@@ -142,6 +168,21 @@ _elm_code_test_welcome_editor_cb(void *data, Evas_Object *obj EINA_UNUSED, void 
    evas_object_show(screen);
 
    elm_naviframe_item_push(naviframe, "Editor",
+                           NULL, NULL, screen, NULL);
+}
+
+static void
+_elm_code_test_welcome_diff_inline_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *naviframe, *screen;
+
+   naviframe = (Evas_Object *)data;
+   screen = elm_box_add(naviframe);
+   evas_object_size_hint_weight_set(screen, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(screen, _elm_code_test_diff_inline_setup(screen));
+   evas_object_show(screen);
+
+   elm_naviframe_item_push(naviframe, "Diff widget (inline)",
                            NULL, NULL, screen, NULL);
 }
 
@@ -189,6 +230,15 @@ elm_code_test_win_setup(void)
    evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0.9);
    evas_object_smart_callback_add(button, "clicked",
                                        _elm_code_test_welcome_editor_cb, naviframe);
+   elm_box_pack_end(vbox, button);
+   evas_object_show(button);
+
+   button = elm_button_add(vbox);
+   elm_object_text_set(button, "Diff (inline)");
+   evas_object_size_hint_weight_set(button, 0.5, 0.0);
+   evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0.5);
+   evas_object_smart_callback_add(button, "clicked",
+                                       _elm_code_test_welcome_diff_inline_cb, naviframe);
    elm_box_pack_end(vbox, button);
    evas_object_show(button);
 

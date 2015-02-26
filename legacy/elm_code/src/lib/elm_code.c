@@ -33,7 +33,7 @@ elm_code_init(void)
         goto shutdown_eina;
      }
 
-   // Put here your initialization logic of your library
+   _elm_code_parse_setup();
 
    eina_log_timing(_elm_code_lib_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
 

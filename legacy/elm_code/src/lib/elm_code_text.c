@@ -6,8 +6,8 @@
 
 #include "elm_code_private.h"
 
-EAPI const char
-*elm_code_line_text_get(Elm_Code_Line *line, int *length)
+EAPI const char *
+elm_code_line_text_get(Elm_Code_Line *line, int *length)
 {
    if (!line)
      return NULL;
