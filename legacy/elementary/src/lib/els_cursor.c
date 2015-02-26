@@ -503,6 +503,10 @@ elm_object_cursor_unset(Evas_Object *obj)
         else if (cur->x.win)
           ecore_x_window_cursor_set(cur->x.win, ECORE_X_CURSOR_X);
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        else if (cur->wl.win)
+          ecore_wl_window_cursor_default_restore(cur->wl.win);
+#endif
      }
 
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOUSE_IN,
