@@ -39,3 +39,9 @@ typedef struct
    Eina_Bool show_line_numbers;
    unsigned int line_width_marker;
 } Elm_Code_Widget_Data;
+
+/* Private parser callbacks */
+
+void _elm_code_parse_line(Elm_Code *code, Elm_Code_Line *line);
+
+void _elm_code_parse_file(Elm_Code *code, Elm_Code_File *file);

@@ -32,10 +32,6 @@ typedef struct _Elm_Code_Parser
 EAPI void elm_code_parser_add(Elm_Code *code, void (*parse_line)(Elm_Code_Line *, void *),
                               void (*parse_file)(Elm_Code_File *, void *), void *data);
 
-EAPI void elm_code_parse_line(Elm_Code *code, Elm_Code_Line *line);
-
-EAPI void elm_code_parse_file(Elm_Code *code, Elm_Code_File *file);
-
 /**
  * @}
  */
