@@ -116,6 +116,24 @@ _elm_code_test_editor_setup(Evas_Object *parent)
 }
 
 static Evas_Object *
+_elm_code_test_mirror_setup(Elm_Code *code, Evas_Object *parent)
+{
+   Elm_Code_Widget *widget;
+
+   widget = eo_add(ELM_CODE_WIDGET_CLASS, parent,
+                   elm_code_widget_code_set(code));
+   eo_do(widget,
+         elm_code_widget_font_size_set(11),
+         elm_code_widget_line_numbers_set(EINA_TRUE));
+
+   evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(widget);
+
+   return widget;
+}
+
+static Evas_Object *
 _elm_code_test_diff_inline_setup(Evas_Object *parent)
 {
    char path[PATH_MAX];
@@ -168,6 +186,30 @@ _elm_code_test_welcome_editor_cb(void *data, Evas_Object *obj EINA_UNUSED, void 
    evas_object_show(screen);
 
    elm_naviframe_item_push(naviframe, "Editor",
+                           NULL, NULL, screen, NULL);
+}
+
+static void
+_elm_code_test_welcome_mirror_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Elm_Code *code;
+   Evas_Object *naviframe, *screen, *widget;
+
+   naviframe = (Evas_Object *)data;
+   screen = elm_box_add(naviframe);
+   elm_box_homogeneous_set(screen, EINA_TRUE);
+   evas_object_size_hint_weight_set(screen, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+   widget = _elm_code_test_editor_setup(screen);
+   eo_do(widget,
+         code = elm_code_widget_code_get());
+   elm_box_pack_end(screen, widget);
+
+   elm_box_pack_end(screen, _elm_code_test_mirror_setup(code, screen));
+   elm_box_pack_end(screen, _elm_code_test_mirror_setup(code, screen));
+
+   evas_object_show(screen);
+   elm_naviframe_item_push(naviframe, "Mirrored editor",
                            NULL, NULL, screen, NULL);
 }
 
@@ -227,9 +269,18 @@ elm_code_test_win_setup(void)
    button = elm_button_add(vbox);
    elm_object_text_set(button, "Editor");
    evas_object_size_hint_weight_set(button, 0.5, 0.25);
-   evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0.9);
+   evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 1.0);
    evas_object_smart_callback_add(button, "clicked",
                                        _elm_code_test_welcome_editor_cb, naviframe);
+   elm_box_pack_end(vbox, button);
+   evas_object_show(button);
+
+   button = elm_button_add(vbox);
+   elm_object_text_set(button, "Mirrored editor");
+   evas_object_size_hint_weight_set(button, 0.5, 0.0);
+   evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0.5);
+   evas_object_smart_callback_add(button, "clicked",
+                                       _elm_code_test_welcome_mirror_cb, naviframe);
    elm_box_pack_end(vbox, button);
    evas_object_show(button);
 
@@ -245,7 +296,7 @@ elm_code_test_win_setup(void)
    button = elm_button_add(vbox);
    elm_object_text_set(button, "Diff (comparison)");
    evas_object_size_hint_weight_set(button, 0.5, 0.25);
-   evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0.1);
+   evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0.0);
    evas_object_smart_callback_add(button, "clicked",
                                        _elm_code_test_welcome_diff_cb, naviframe);
    elm_box_pack_end(vbox, button);
