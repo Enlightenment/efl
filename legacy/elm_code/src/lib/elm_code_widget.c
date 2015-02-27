@@ -27,12 +27,14 @@ Eina_Unicode status_icons[] = {
  0
 };
 
-#define EO_CONSTRUCTOR_CHECK_RETURN(obj) \
-   if (eo_do(obj, eo_finalized_get())) \
+#define EO_CONSTRUCTOR_CHECK_RETURN(obj) do { \
+   Eina_Bool finalized; \
+   if (eo_do_ret(obj, finalized, eo_finalized_get())) \
      { \
         ERR("This function is only allowed during construction."); \
         return; \
-     }
+     } \
+} while (0)
 
 EOLIAN static void
 _elm_code_widget_eo_base_constructor(Eo *obj, Elm_Code_Widget_Data *pd)
