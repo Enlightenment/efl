@@ -18,6 +18,7 @@
 # include "evas_xcb_outbuf.h"
 # include "evas_xcb_color.h"
 # include "evas_xcb_xdefaults.h"
+# include "evas_xcb_image.h"
 #endif
 
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
@@ -670,12 +671,15 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
      evas_cache_image_drop(ie);
    ie = ie2;
 
-#ifdef BUILD_ENGINE_SOFTWARE_XLIB
    if (ns->type == EVAS_NATIVE_SURFACE_X11)
      {
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
         return evas_xlib_image_native_set(re->generic.ob, ie, ns);
-     }
 #endif
+#ifdef BUILD_ENGINE_SOFTWARE_XCB
+        return evas_xcb_image_native_set(re->generic.ob, ie, ns);
+#endif
+     }
    if (ns->type == EVAS_NATIVE_SURFACE_TBM)
      {
         return evas_native_tbm_image_set(re->generic.ob, ie, ns);
@@ -687,16 +691,12 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 static void *
 eng_image_native_get(void *data EINA_UNUSED, void *image)
 {
-#ifdef BUILD_ENGINE_SOFTWARE_XLIB
    RGBA_Image *im = image;
    Native *n;
    if (!im) return NULL;
    n = im->native.data;
    if (!n) return NULL;
    return &(n->ns);
-#else
-   return NULL;
-#endif
 }
 
 

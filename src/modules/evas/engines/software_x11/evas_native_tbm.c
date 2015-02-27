@@ -1,5 +1,10 @@
 #include "evas_common_private.h"
-#include "evas_xlib_image.h"
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
+# include "evas_xlib_image.h"
+#endif
+#ifdef BUILD_ENGINE_SOFTWARE_XCB
+# include "evas_xcb_image.h"
+#endif
 #include "evas_private.h"
 
 #include "Evas_Engine_Software_X11.h"

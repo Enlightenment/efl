@@ -1107,10 +1107,12 @@ modules/evas/engines/software_x11/evas_xcb_outbuf.c \
 modules/evas/engines/software_x11/evas_xcb_buffer.c \
 modules/evas/engines/software_x11/evas_xcb_color.c \
 modules/evas/engines/software_x11/evas_xcb_main.c \
+modules/evas/engines/software_x11/evas_xcb_image.c \
 modules/evas/engines/software_x11/evas_xcb_outbuf.h \
 modules/evas/engines/software_x11/evas_xcb_buffer.h \
 modules/evas/engines/software_x11/evas_xcb_color.h \
-modules/evas/engines/software_x11/evas_xcb_xdefaults.h
+modules/evas/engines/software_x11/evas_xcb_xdefaults.h \
+modules/evas/engines/software_x11/evas_xcb_image.h
 SOFTWARE_X11_CPPFLAGS += @evas_engine_software_xcb_cflags@
 SOFTWARE_X11_LIBADD += @evas_engine_software_xcb_libs@
 endif
