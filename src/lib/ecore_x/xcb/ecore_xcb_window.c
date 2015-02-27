@@ -5,9 +5,6 @@
 #ifdef ECORE_XCB_SHAPE
 # include <xcb/shape.h>
 #endif
-#ifdef ECORE_XCB_XPRINT
-#include <xcb/xprint.h>
-#endif
 
 /* local function prototypes */
 static Ecore_X_Window _ecore_xcb_window_argb_internal_new(Ecore_X_Window parent,
@@ -26,9 +23,6 @@ static Ecore_X_Window _ecore_xcb_window_at_xy_get(Ecore_X_Window  base,
                                                   int             skip_num);
 static int               _ecore_xcb_window_modifiers_get(unsigned int state);
 static xcb_visualtype_t *_ecore_xcb_window_find_visual_by_id(xcb_visualid_t id);
-#ifdef ECORE_XCB_XPRINT
-static xcb_screen_t     *_ecore_xcb_window_screen_of_display(int screen);
-#endif
 
 /* local variables */
 static int ignore_num = 0;
@@ -1511,9 +1505,6 @@ ecore_x_window_root_list(int *num_ret)
    xcb_screen_iterator_t iter;
    uint8_t i, num;
    Ecore_X_Window *roots = NULL;
-#ifdef ECORE_XCB_XPRINT
-   const xcb_query_extension_reply_t *ext_reply;
-#endif
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
@@ -1529,98 +1520,11 @@ ecore_x_window_root_list(int *num_ret)
 
    num = ecore_x_screen_count_get();
 
-#ifdef ECORE_XCB_XPRINT
-   ext_reply = xcb_get_extension_data(_ecore_xcb_conn, &xcb_x_print_id);
-   if ((ext_reply) && (ext_reply->present))
-     {
-        xcb_x_print_print_query_screens_cookie_t cookie;
-        xcb_x_print_print_query_screens_reply_t *reply;
-
-        cookie = xcb_x_print_print_query_screens_unchecked(_ecore_xcb_conn);
-        reply =
-          xcb_x_print_print_query_screens_reply(_ecore_xcb_conn, cookie, NULL);
-        if (reply)
-          {
-             xcb_window_t *screens;
-             int psnum = 0, overlap = 0, j = 0, k = 0;
-
-             psnum = xcb_x_print_print_query_screens_roots_length(reply);
-             screens = xcb_x_print_print_query_screens_roots(reply);
-             for (i = 0; i < num; i++)
-               {
-                  for (j = 0; j < psnum; j++)
-                    {
-                       xcb_screen_t *s;
-
-                       if ((s = _ecore_xcb_window_screen_of_display(i)))
-                         {
-                            if (s->root == screens[j])
-                              overlap++;
-                         }
-                    }
-               }
-             if (!(roots = malloc((num - overlap)
-                                  * sizeof(Ecore_X_Window)))) return NULL;
-             for (i = 0; i < num; i++)
-               {
-                  Eina_Bool is_print = EINA_FALSE;
-
-                  for (j = 0; j < psnum; j++)
-                    {
-                       xcb_screen_t *s;
-
-                       if ((s = _ecore_xcb_window_screen_of_display(i)))
-                         {
-                            if (s->root == screens[j])
-                              {
-                                 is_print = EINA_TRUE;
-                                 break;
-                              }
-                         }
-                    }
-                  if (!is_print)
-                    {
-                       xcb_screen_t *s;
-
-                       if ((s = _ecore_xcb_window_screen_of_display(i)))
-                         {
-                            roots[k] = s->root;
-                            k++;
-                         }
-                    }
-               }
-             if (num_ret) *num_ret = k;
-             free(reply);
-          }
-        else
-          {
-             /* Fallback to default method */
-              iter =
-                xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn));
-              if (!(roots = malloc(num * sizeof(Ecore_X_Window)))) return NULL;
-              if (num_ret) *num_ret = num;
-              for (i = 0; iter.rem; xcb_screen_next(&iter), i++)
-                roots[i] = iter.data->root;
-          }
-     }
-   else
-     {
-        /* Fallback to default method */
-         iter =
-           xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn));
-         if (!(roots = malloc(num * sizeof(Ecore_X_Window)))) return NULL;
-         if (num_ret) *num_ret = num;
-         for (i = 0; iter.rem; xcb_screen_next(&iter), i++)
-           roots[i] = iter.data->root;
-     }
-#else
-   iter =
-     xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn));
+   iter = xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn));
    if (!(roots = malloc(num * sizeof(Ecore_X_Window)))) return NULL;
    if (num_ret) *num_ret = num;
    for (i = 0; iter.rem; xcb_screen_next(&iter), i++)
      roots[i] = iter.data->root;
-#endif
 
    return roots;
 }
@@ -2342,20 +2246,3 @@ _ecore_xcb_window_find_visual_by_id(xcb_visualid_t id)
      }
    return 0;
 }
-
-#ifdef ECORE_XCB_XPRINT
-static xcb_screen_t *
-_ecore_xcb_window_screen_of_display(int screen)
-{
-   xcb_screen_iterator_t iter;
-
-   CHECK_XCB_CONN;
-   iter = xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn));
-   for (; iter.rem; --screen, xcb_screen_next(&iter))
-     if (screen == 0)
-       return iter.data;
-
-   return NULL;
-}
-
-#endif

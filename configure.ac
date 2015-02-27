@@ -3543,7 +3543,6 @@ dnl TODO: remove these ifdefs from code!
    AC_DEFINE([ECORE_XCB_SYNC], [1], [Build support for XCB sync])
    AC_DEFINE([ECORE_XCB_XFIXES], [1], [Build support for XCB xfixes])
    AC_DEFINE([ECORE_XCB_XINERAMA], [1], [Build support for XCB xinerama])
-   AC_DEFINE([ECORE_XCB_XPRINT], [1], [Build support for XCB xprint])
    AC_DEFINE([ECORE_XCB_XTEST], [1], [Build support for XCB xtest])
    AC_DEFINE([ECORE_XCB_CURSOR], [1], [Build support for XCB cursor])
 
