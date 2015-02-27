@@ -801,7 +801,7 @@ _evas_common_scale_sample_thread(void *data EINA_UNUSED,
              int h;
 
              todo = msg->task;
-             eina_thread_queue_wait_done(thread_queue, &ref);
+             eina_thread_queue_wait_done(thread_queue, ref);
 
              if (!todo) goto end;
 
