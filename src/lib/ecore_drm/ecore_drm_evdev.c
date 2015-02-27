@@ -181,43 +181,62 @@ _device_keysym_translate(xkb_keysym_t keysym, unsigned int modifiers, char *buff
    return 1;
 }
 
-static void 
-_device_modifiers_update(Ecore_Drm_Evdev *edev)
+static void
+_device_modifiers_update_device(Ecore_Drm_Evdev *edev, Ecore_Drm_Evdev *from)
 {
    xkb_mod_mask_t mask;
 
-   edev->xkb.modifiers = 0;
-
    edev->xkb.depressed = 
-     xkb_state_serialize_mods(edev->xkb.state, XKB_STATE_DEPRESSED);
+     xkb_state_serialize_mods(from->xkb.state, XKB_STATE_DEPRESSED);
    edev->xkb.latched = 
-     xkb_state_serialize_mods(edev->xkb.state, XKB_STATE_LATCHED);
+     xkb_state_serialize_mods(from->xkb.state, XKB_STATE_LATCHED);
    edev->xkb.locked = 
-     xkb_state_serialize_mods(edev->xkb.state, XKB_STATE_LOCKED);
+     xkb_state_serialize_mods(from->xkb.state, XKB_STATE_LOCKED);
    edev->xkb.group = 
-     xkb_state_serialize_mods(edev->xkb.state, XKB_STATE_EFFECTIVE);
+     xkb_state_serialize_mods(from->xkb.state, XKB_STATE_EFFECTIVE);
 
    mask = (edev->xkb.depressed | edev->xkb.latched);
 
-   if (mask & edev->xkb.ctrl_mask)
+   if (mask & from->xkb.ctrl_mask)
      edev->xkb.modifiers |= ECORE_EVENT_MODIFIER_CTRL;
-   if (mask & edev->xkb.alt_mask)
+   if (mask & from->xkb.alt_mask)
      edev->xkb.modifiers |= ECORE_EVENT_MODIFIER_ALT;
-   if (mask & edev->xkb.shift_mask)
+   if (mask & from->xkb.shift_mask)
      edev->xkb.modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
-   if (mask & edev->xkb.win_mask)
+   if (mask & from->xkb.win_mask)
      edev->xkb.modifiers |= ECORE_EVENT_MODIFIER_WIN;
-   if (mask & edev->xkb.scroll_mask)
+   if (mask & from->xkb.scroll_mask)
      edev->xkb.modifiers |= ECORE_EVENT_LOCK_SCROLL;
-   if (mask & edev->xkb.num_mask)
+   if (mask & from->xkb.num_mask)
      edev->xkb.modifiers |= ECORE_EVENT_LOCK_NUM;
-   if (mask & edev->xkb.caps_mask)
+   if (mask & from->xkb.caps_mask)
      edev->xkb.modifiers |= ECORE_EVENT_LOCK_CAPS;
-   if (mask & edev->xkb.altgr_mask)
+   if (mask & from->xkb.altgr_mask)
      edev->xkb.modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
 }
 
 static void 
+_device_modifiers_update(Ecore_Drm_Evdev *edev)
+{
+   edev->xkb.modifiers = 0;
+
+   if (edev->seat_caps & EVDEV_SEAT_KEYBOARD)
+     _device_modifiers_update_device(edev, edev);
+   else
+     {
+        Eina_List *l;
+        Ecore_Drm_Evdev *ed;
+
+        EINA_LIST_FOREACH(edev->seat->devices, l, ed)
+          {
+             if (!(ed->seat_caps & EVDEV_SEAT_KEYBOARD)) continue;
+             _device_modifiers_update_device(edev, ed);
+          }
+     }
+
+}
+
+static void
 _device_handle_key(struct libinput_device *device, struct libinput_event_keyboard *event)
 {
    Ecore_Drm_Evdev *edev;
@@ -345,9 +364,7 @@ _device_pointer_motion(Ecore_Drm_Evdev *edev, struct libinput_event_pointer *eve
    ev->timestamp = libinput_event_pointer_get_time(event);
    ev->same_screen = 1;
 
-   /* NB: Commented out. This borks mouse movement if no key has been 
-    * pressed yet due to 'state' not being set */
-//   _device_modifiers_update(dev);
+   _device_modifiers_update(edev);
    ev->modifiers = edev->xkb.modifiers;
 
    ev->x = edev->mouse.x;
@@ -427,9 +444,7 @@ _device_handle_button(struct libinput_device *device, struct libinput_event_poin
    ev->timestamp = timestamp;
    ev->same_screen = 1;
 
-   /* NB: Commented out. This borks mouse button if no key has been 
-    * pressed yet due to 'state' not being set */
-//   _device_modifiers_update(dev);
+   _device_modifiers_update(edev);
    ev->modifiers = edev->xkb.modifiers;
 
    ev->x = edev->mouse.x;
@@ -511,9 +526,7 @@ _device_handle_axis(struct libinput_device *device, struct libinput_event_pointe
    ev->timestamp = timestamp;
    ev->same_screen = 1;
 
-   /* NB: Commented out. This borks mouse wheel if no key has been 
-    * pressed yet due to 'state' not being set */
-//   _device_modifiers_update(dev);
+   _device_modifiers_update(edev);
    ev->modifiers = edev->xkb.modifiers;
 
    ev->x = edev->mouse.x;
@@ -624,9 +637,7 @@ _device_handle_touch_event(Ecore_Drm_Evdev *edev, struct libinput_event_touch *e
    ev->timestamp = timestamp;
    ev->same_screen = 1;
 
-   /* NB: Commented out. This borks mouse button if no key has been 
-    * pressed yet due to 'state' not being set */
-//   _device_modifiers_update(dev);
+   _device_modifiers_update(edev);
    ev->modifiers = edev->xkb.modifiers;
 
    ev->x = edev->mouse.x;
@@ -725,10 +736,8 @@ _device_handle_touch_motion(struct libinput_device *device, struct libinput_even
    ev->timestamp = libinput_event_touch_get_time(event);
    ev->same_screen = 1;
 
-   /* NB: Commented out. This borks mouse movement if no key has been 
-    * pressed yet due to 'state' not being set */
-//   _device_modifiers_update(dev);
-//   ev->modifiers = edev->xkb.modifiers;
+   _device_modifiers_update(edev);
+   ev->modifiers = edev->xkb.modifiers;
    ev->modifiers = 0;
 
    ev->x = edev->mouse.x;
