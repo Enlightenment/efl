@@ -1262,12 +1262,6 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
    PUSH_TEXM(pn, tmx2, tmy2); \
    PUSH_TEXM(pn, tmx1, tmy2); \
   } while(0)
-/* was:
-   tmx1 = (mtex->x + mx) / (double)mtex->pt->w; \
-   tmy1 = (mtex->y + my) / (double)mtex->pt->h; \
-   tmx2 = (mtex->x + mx + mw) / (double)mtex->pt->w; \
-   tmy2 = (mtex->y + my + mh) / (double)mtex->pt->h; \
-   */
 
 #define PIPE_GROW(gc, pn, inc) \
    int nv = gc->pipe[pn].array.num * 3; (void) nv; \
