@@ -183,7 +183,8 @@ struct _Ecore_Drm_Evdev
 
    struct 
      {
-        int x, y;
+        int ix, iy;
+        double dx, dy;
         unsigned int last, prev;
         double threshold;
         Eina_Bool did_double : 1;

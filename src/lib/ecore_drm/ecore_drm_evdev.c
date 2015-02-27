@@ -347,15 +347,16 @@ _device_pointer_motion(Ecore_Drm_Evdev *edev, struct libinput_event_pointer *eve
 
    if ((output = edev->output))
      {
-        if (edev->mouse.x < output->x)
-          edev->mouse.x = output->x;
-        else if (edev->mouse.x >= (output->x + output->current_mode->width))
-          edev->mouse.x = (output->x + output->current_mode->width - 1);
+        if (edev->mouse.ix < output->x)
+          edev->mouse.dx = edev->mouse.ix = output->x;
+        else if (edev->mouse.ix >= (output->x + output->current_mode->width))
+          edev->mouse.dx =
+          edev->mouse.ix = (output->x + output->current_mode->width - 1);
 
-        if (edev->mouse.y < output->y)
-          edev->mouse.y = output->y;
-        else if (edev->mouse.y >= (output->y + output->current_mode->height))
-          edev->mouse.y = (output->y + output->current_mode->height - 1);
+        if (edev->mouse.iy < output->y)
+          edev->mouse.dy = edev->mouse.iy = output->y;
+        else if (edev->mouse.iy >= (output->y + output->current_mode->height))
+          edev->mouse.dy = edev->mouse.iy = (output->y + output->current_mode->height - 1);
      }
 
    ev->window = (Ecore_Window)input->dev->window;
@@ -367,8 +368,8 @@ _device_pointer_motion(Ecore_Drm_Evdev *edev, struct libinput_event_pointer *eve
    _device_modifiers_update(edev);
    ev->modifiers = edev->xkb.modifiers;
 
-   ev->x = edev->mouse.x;
-   ev->y = edev->mouse.y;
+   ev->x = edev->mouse.ix;
+   ev->y = edev->mouse.iy;
    ev->root.x = ev->x;
    ev->root.y = ev->y;
 
@@ -393,10 +394,15 @@ _device_handle_pointer_motion(struct libinput_device *device, struct libinput_ev
 
    if (!(edev = libinput_device_get_user_data(device))) return;
 
-   edev->mouse.x += libinput_event_pointer_get_dx(event);
-   edev->mouse.y += libinput_event_pointer_get_dy(event);
+   edev->mouse.dx += libinput_event_pointer_get_dx(event);
+   edev->mouse.dy += libinput_event_pointer_get_dy(event);
 
-   _device_pointer_motion(edev, event);
+   if (floor(edev->mouse.dx) == edev->mouse.ix &&
+       floor(edev->mouse.dy) == edev->mouse.iy) return;
+
+   edev->mouse.ix = edev->mouse.dx;
+   edev->mouse.iy = edev->mouse.dy;
+  _device_pointer_motion(edev, event);
 }
 
 static void 
@@ -406,12 +412,15 @@ _device_handle_pointer_motion_absolute(struct libinput_device *device, struct li
 
    if (!(edev = libinput_device_get_user_data(device))) return;
 
-   edev->mouse.x = 
-     libinput_event_pointer_get_absolute_x_transformed(event, 
+   edev->mouse.dx =
+     libinput_event_pointer_get_absolute_x_transformed(event,
                                                        edev->output->current_mode->width);
-   edev->mouse.y = 
-     libinput_event_pointer_get_absolute_y_transformed(event, 
+   edev->mouse.dy =
+     libinput_event_pointer_get_absolute_y_transformed(event,
                                                        edev->output->current_mode->height);
+
+   if (floor(edev->mouse.dx) == edev->mouse.ix &&
+       floor(edev->mouse.dy) == edev->mouse.iy) return;
 
    _device_pointer_motion(edev, event);
 }
@@ -447,8 +456,8 @@ _device_handle_button(struct libinput_device *device, struct libinput_event_poin
    _device_modifiers_update(edev);
    ev->modifiers = edev->xkb.modifiers;
 
-   ev->x = edev->mouse.x;
-   ev->y = edev->mouse.y;
+   ev->x = edev->mouse.ix;
+   ev->y = edev->mouse.iy;
    ev->root.x = ev->x;
    ev->root.y = ev->y;
 
@@ -529,8 +538,8 @@ _device_handle_axis(struct libinput_device *device, struct libinput_event_pointe
    _device_modifiers_update(edev);
    ev->modifiers = edev->xkb.modifiers;
 
-   ev->x = edev->mouse.x;
-   ev->y = edev->mouse.y;
+   ev->x = edev->mouse.ix;
+   ev->y = edev->mouse.iy;
    ev->root.x = ev->x;
    ev->root.y = ev->y;
 
@@ -640,8 +649,8 @@ _device_handle_touch_event(Ecore_Drm_Evdev *edev, struct libinput_event_touch *e
    _device_modifiers_update(edev);
    ev->modifiers = edev->xkb.modifiers;
 
-   ev->x = edev->mouse.x;
-   ev->y = edev->mouse.y;
+   ev->x = edev->mouse.ix;
+   ev->y = edev->mouse.iy;
    ev->root.x = ev->x;
    ev->root.y = ev->y;
 
@@ -701,9 +710,9 @@ _device_handle_touch_down(struct libinput_device *device, struct libinput_event_
 
    if (!(edev = libinput_device_get_user_data(device))) return;
 
-   edev->mouse.x = 
+   edev->mouse.ix = edev->mouse.dx =
      libinput_event_touch_get_x_transformed(event, edev->output->current_mode->width);
-   edev->mouse.y = 
+   edev->mouse.iy = edev->mouse.dy =
      libinput_event_touch_get_y_transformed(event, edev->output->current_mode->height);
 
    edev->mt_slot = libinput_event_touch_get_seat_slot(event);
@@ -723,10 +732,16 @@ _device_handle_touch_motion(struct libinput_device *device, struct libinput_even
 
    if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Move)))) return;
 
-   edev->mouse.x = 
+   edev->mouse.dx =
      libinput_event_touch_get_x_transformed(event, edev->output->current_mode->width);
-   edev->mouse.y = 
+   edev->mouse.dy =
      libinput_event_touch_get_y_transformed(event, edev->output->current_mode->height);
+
+   if (floor(edev->mouse.dx) == edev->mouse.ix &&
+       floor(edev->mouse.dy) == edev->mouse.iy) return;
+
+   edev->mouse.ix = edev->mouse.dx;
+   edev->mouse.iy = edev->mouse.dy;
 
    edev->mt_slot = libinput_event_touch_get_seat_slot(event);
 
@@ -740,8 +755,8 @@ _device_handle_touch_motion(struct libinput_device *device, struct libinput_even
    ev->modifiers = edev->xkb.modifiers;
    ev->modifiers = 0;
 
-   ev->x = edev->mouse.x;
-   ev->y = edev->mouse.y;
+   ev->x = edev->mouse.ix;
+   ev->y = edev->mouse.iy;
    ev->root.x = ev->x;
    ev->root.y = ev->y;
 
