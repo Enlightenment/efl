@@ -41,4 +41,4 @@ examples_PROGRAMS = \
 
 endif
 
-EXTRA_DIST = layout.edc backgroud.png target_texture.png
+EXTRA_DIST = layout.edc background.png target_texture.png
