@@ -2521,7 +2521,6 @@ _ecore_xcb_event_mouse_move(uint16_t     timestamp,
                             int16_t      mry)
 {
    Ecore_Event_Mouse_Move *e;
-   Ecore_Event *event;
 
    if (!(e = malloc(sizeof(Ecore_Event_Mouse_Move)))) return;
 
@@ -2546,14 +2545,13 @@ _ecore_xcb_event_mouse_move(uint16_t     timestamp,
    e->multi.root.x = mrx;
    e->multi.root.y = mry;
 
-   event = ecore_event_add(ECORE_EVENT_MOUSE_MOVE, e,
-                           _ecore_xcb_event_mouse_move_free, NULL);
+   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, e,
+                   _ecore_xcb_event_mouse_move_free, NULL);
 
    _ecore_xcb_event_last_time = e->timestamp;
    _ecore_xcb_event_last_window = e->window;
    _ecore_xcb_event_last_root_x = root_x;
    _ecore_xcb_event_last_root_y = root_y;
-//   _ecore_xcb_event_last_mouse_move_event = event;
 }
 
 static void
