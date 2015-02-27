@@ -1850,8 +1850,6 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
                if (scaled)
                  {
                     done = EINA_TRUE;
-                    if (mdata->surface && (mdata->surface != scaled))
-                      ENFN->image_map_surface_free(ENDT, mdata->surface);
                     mdata->surface = scaled;
                     mdata->w = w;
                     mdata->h = h;

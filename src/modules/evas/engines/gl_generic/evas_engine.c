@@ -959,6 +959,7 @@ eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
    Evas_GL_Image *dst = scaled;
    Evas_GL_Image *src = image;
    Evas_Engine_GL_Context *gc;
+   Eina_Bool reffed = EINA_FALSE;
 
    if (!src) return NULL;
 
@@ -971,7 +972,15 @@ eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
        (dst->scaled.w == dst_w) && (dst->scaled.h == dst_h))
      return dst;
 
-   if (dst) evas_gl_common_image_free(dst);
+   if (dst)
+     {
+        if (dst->scaled.origin == src)
+          {
+             src->references++;
+             reffed = EINA_TRUE;
+          }
+        evas_gl_common_image_free(dst);
+     }
    evas_gl_common_image_update(gc, src);
    if (!src->tex)
      {
@@ -992,7 +1001,7 @@ eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
    dst->tex->references++;
    dst->tex_only = 1;
 
-   src->references++;
+   if (!reffed) src->references++;
    dst->scaled.origin = src;
    dst->scaled.w = dst_w;
    dst->scaled.h = dst_h;
