@@ -1825,7 +1825,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
      mdata->redraw = EINA_FALSE;
 
      if (is_image && !prev_mask && mask->func->engine_data_get &&
-         ENFN->image_scaled_update)
+         ENFN->image_scaled_update && evas_object_image_filled_get(mask->object))
        {
           /* Fast path (for GL) that avoids creating a map surface, render the
            * scaled image in it, when the shaders can just scale on the fly. */
