@@ -274,36 +274,6 @@ _parts_cursors_apply(Elm_Layout_Smart_Data *sd)
 }
 
 static void
-_visuals_refresh(Evas_Object *obj,
-                 Elm_Layout_Smart_Data *sd)
-{
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   _parts_swallow_fix(sd, wd);
-   _parts_text_fix(sd);
-   _parts_signals_emit(sd);
-   _parts_cursors_apply(sd);
-
-   eo_do(obj, elm_obj_layout_sizing_eval());
-}
-
-EOLIAN static Eina_Bool
-_elm_layout_elm_widget_disable(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-
-   if (elm_object_disabled_get(obj))
-     edje_object_signal_emit
-       (wd->resize_obj, "elm,state,disabled", "elm");
-   else
-     edje_object_signal_emit
-       (wd->resize_obj, "elm,state,enabled", "elm");
-
-   return EINA_TRUE;
-}
-
-static void
 _elm_layout_highlight_in_theme(Evas_Object *obj)
 {
    const char *fh;
@@ -326,6 +296,50 @@ _elm_layout_highlight_in_theme(Evas_Object *obj)
 }
 
 static Eina_Bool
+_visuals_refresh(Evas_Object *obj,
+                 Elm_Layout_Smart_Data *sd)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   _parts_swallow_fix(sd, wd);
+   _parts_text_fix(sd);
+   _parts_signals_emit(sd);
+   _parts_cursors_apply(sd);
+
+   edje_object_mirrored_set
+     (wd->resize_obj, elm_widget_mirrored_get(obj));
+
+   edje_object_scale_set
+     (wd->resize_obj,
+     elm_widget_scale_get(obj) * elm_config_scale_get());
+
+   _elm_layout_highlight_in_theme(obj);
+
+   eo_do(obj, ret = elm_obj_widget_disable());
+
+   eo_do(obj, elm_obj_layout_sizing_eval());
+
+   return ret;
+}
+
+EOLIAN static Eina_Bool
+_elm_layout_elm_widget_disable(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   if (elm_object_disabled_get(obj))
+     edje_object_signal_emit
+       (wd->resize_obj, "elm,state,disabled", "elm");
+   else
+     edje_object_signal_emit
+       (wd->resize_obj, "elm,state,enabled", "elm");
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _elm_layout_theme_internal(Eo *obj, Elm_Layout_Smart_Data *sd)
 {
    Eina_Bool ret = EINA_FALSE;
@@ -337,20 +351,9 @@ _elm_layout_theme_internal(Eo *obj, Elm_Layout_Smart_Data *sd)
                                     elm_widget_style_get(obj)))
      return EINA_FALSE;
 
-   edje_object_mirrored_set
-     (wd->resize_obj, elm_widget_mirrored_get(obj));
-
-   edje_object_scale_set
-     (wd->resize_obj,
-     elm_widget_scale_get(obj) * elm_config_scale_get());
-
-   _elm_layout_highlight_in_theme(obj);
+   ret = _visuals_refresh(obj, sd);
 
    evas_object_smart_callback_call(obj, SIG_THEME_CHANGED, NULL);
-
-   _visuals_refresh(obj, sd);
-
-   eo_do(obj, ret = elm_obj_widget_disable());
 
    return ret;
 }
