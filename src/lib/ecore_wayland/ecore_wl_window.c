@@ -558,10 +558,7 @@ ecore_wl_window_fullscreen_get(Ecore_Wl_Window *win)
 
    if (!win) return EINA_FALSE;
 
-   if (win->type == ECORE_WL_WINDOW_TYPE_FULLSCREEN)
-     return EINA_TRUE;
-
-   return EINA_FALSE;
+   return win->fullscreen || (win->type == ECORE_WL_WINDOW_TYPE_FULLSCREEN);
 }
 
 EAPI void 
