@@ -3530,7 +3530,7 @@ fi
 if test "${want_x11_xcb}" = "yes"; then
 dnl note: added pixman-1 as ecore_xcb_region uses that
    EFL_DEPEND_PKG([ECORE_X], [ECORE_X_XCB],
-      [x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8 xcb-composite xcb-present xcb-damage xcb-dpms xcb-randr xcb-render xcb-screensaver xcb-shape xcb-sync xcb-xfixes xcb-xinerama xcb-xprint xcb-xtest xcb-renderutil pixman-1])
+      [x11-xcb xcb xcb-shm xcb-event xcb-icccm >= 0.3.8 xcb-util >= 0.3.8 xcb-image xcb-keysyms >= 0.3.8 xcb-composite xcb-present xcb-damage xcb-dpms xcb-randr xcb-render xcb-screensaver xcb-shape xcb-sync xcb-xfixes xcb-xinerama xcb-xtest xcb-renderutil pixman-1])
 
 dnl TODO: remove these ifdefs from code!
    AC_DEFINE([ECORE_XCB_COMPOSITE], [1], [Build support for XCB composite])
