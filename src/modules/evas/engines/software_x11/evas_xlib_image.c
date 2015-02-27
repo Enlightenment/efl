@@ -33,7 +33,7 @@ evas_xlib_image_update(void *data EINA_UNUSED, void *image, int x, int y, int w,
 }
 
 static void
-_native_bind_cb(void *data EINA_UNUSED, void *image, int x, int y, int w, int h)
+_native_bind_cb(void *data, void *image, int x, int y, int w, int h)
 {
    RGBA_Image *im = image;
    Native *n = im->native.data;
