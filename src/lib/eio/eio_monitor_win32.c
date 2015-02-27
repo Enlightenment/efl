@@ -158,8 +158,11 @@ _eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh EINA_UNUSED)
           break;
         }
 
-      if (event >= 0)
-        _eio_monitor_send(w->monitor, name, event);
+      if (w->monitor)
+        {
+           if ((event >= 0) && (event != EIO_MONITOR_ERROR))
+             _eio_monitor_send(w->monitor, name, event);
+        }
 
       free(name);
 
@@ -178,14 +181,25 @@ _eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh EINA_UNUSED)
    else
      filter |= FILE_NOTIFY_CHANGE_DIR_NAME;
 
-    ReadDirectoryChangesW(w->handle,
-                          (LPVOID)w->buffer,
-                          EIO_MONITOR_WIN32_BUFFER_SIZE,
-                          FALSE,
-                          filter,
-                          &w->buf_length,
-                          &w->overlapped,
-                          NULL);
+   if (!ReadDirectoryChangesW(w->handle,
+                              (LPVOID)w->buffer,
+                              EIO_MONITOR_WIN32_BUFFER_SIZE,
+                              FALSE,
+                              filter,
+                              &w->buf_length,
+                              &w->overlapped,
+                              NULL))
+     {
+        char *msg;
+
+        msg = evil_last_error_get();
+        if (msg)
+          {
+             ERR("%s", msg);
+             free(msg);
+          }
+        return ECORE_CALLBACK_CANCEL;
+     }
 
    return ECORE_CALLBACK_RENEW;
 }
