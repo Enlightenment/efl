@@ -3293,7 +3293,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   if (shared->info.anisotropic > 0.0)
                     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
 #endif
-                   if (gc->pipe[i].array.mask_smooth) // (gc->pipe[i].shader.smooth)
+                   if (gc->pipe[i].array.mask_smooth)
                       {
                          glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
                          glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

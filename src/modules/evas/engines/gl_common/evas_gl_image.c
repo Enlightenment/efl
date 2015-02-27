@@ -691,7 +691,10 @@ evas_gl_common_image_free(Evas_GL_Image *im)
    if (im->references > 0) return;
 
    if (im->scaled.origin)
-     evas_gl_common_image_free(im->scaled.origin);
+     {
+        evas_gl_common_image_free(im->scaled.origin);
+        im->scaled.origin = NULL;
+     }
 
    if (im->native.func.free)
      im->native.func.free(im->native.func.data, im);
@@ -930,8 +933,6 @@ evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
    Evas_GL_Texture *mtex = mask ? mask->tex : NULL;
    int r, g, b, a;
    int c, cx, cy, cw, ch;
-
-   dc = gc->dc;
 
    if (dc->mul.use)
      {
