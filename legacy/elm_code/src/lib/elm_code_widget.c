@@ -837,6 +837,8 @@ _elm_code_widget_cursor_position_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *
 static void
 _elm_code_widget_setup_palette(Evas_Object *o)
 {
+   double feint = 0.5;
+
    // setup status colors
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_DEFAULT,
                                     36, 36, 36, 255);
@@ -903,7 +905,7 @@ _elm_code_widget_setup_palette(Evas_Object *o)
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_FG,
                                     139, 139, 139, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_WHITESPACE,
-                                    101, 101, 101, 125);
+                                    101 * feint, 101 * feint, 101 * feint, 255 * feint);
 }
 
 EOLIAN static void
