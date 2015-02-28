@@ -38,6 +38,7 @@ typedef struct
    Eina_Bool editable, focussed;
    Eina_Bool show_line_numbers;
    unsigned int line_width_marker;
+   Eina_Bool show_whitespace;
 } Elm_Code_Widget_Data;
 
 /* Private parser callbacks */

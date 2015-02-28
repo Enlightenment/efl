@@ -100,6 +100,7 @@ _elm_code_test_editor_setup(Evas_Object *parent)
          elm_code_widget_code_set(code),
          elm_code_widget_font_size_set(14),
          elm_code_widget_editable_set(EINA_TRUE),
+         elm_code_widget_show_whitespace_set(EINA_TRUE),
          elm_code_widget_line_numbers_set(EINA_TRUE));
 
    _append_line(code->file, "Edit me :)");

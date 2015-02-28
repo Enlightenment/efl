@@ -123,6 +123,23 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
             uint line_width_marker; /*@ Where to display a line width marker, if at all */
          }
       }
+      show_whitespace {
+         set {
+            /*@
+            Set where white space should be shown.
+
+            @ingroup Features */
+         }
+         get {
+            /*@
+            Get whether or not white space will be visible.
+
+            @ingroup Features */
+         }
+         values {
+            Eina_Bool show_whitespace; /*@ Whether or not we show whitespace characters */
+         }
+      }
       cursor_position {
          set {
             /*@

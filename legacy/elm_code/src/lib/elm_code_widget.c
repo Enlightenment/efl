@@ -8,6 +8,7 @@
 typedef enum {
    ELM_CODE_WIDGET_COLOR_GUTTER_BG = ELM_CODE_TOKEN_TYPE_COUNT,
    ELM_CODE_WIDGET_COLOR_GUTTER_FG,
+   ELM_CODE_WIDGET_COLOR_WHITESPACE,
    ELM_CODE_WIDGET_COLOR_CURSOR,
 
    ELM_CODE_WIDGET_COLOR_COUNT
@@ -199,6 +200,27 @@ _elm_code_widget_fill_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
 }
 
 static void
+_elm_code_widget_fill_whitespace(Elm_Code_Widget *widget EINA_UNUSED, char character, Evas_Textgrid_Cell *cell)
+{
+   switch (character)
+     {
+        case ' ':
+          cell->codepoint = 0x00b7;
+          break;
+        case '\t':
+          cell->codepoint = 0x2192;
+          break;
+        case '\n':
+          cell->codepoint = 0x23ce;
+          break;
+        default:
+          return;
+     }
+
+   cell->fg = ELM_CODE_WIDGET_COLOR_WHITESPACE;
+}
+
+static void
 _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
 {
    char *chr;
@@ -215,6 +237,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    cells = evas_object_textgrid_cellrow_get(pd->grid, line->number - 1);
 
    _elm_code_widget_fill_gutter(widget, cells, line->status, line->number);
+   _elm_code_widget_fill_line_tokens(widget, cells, w, line);
 
    if (line->modified)
       chr = line->modified;
@@ -225,6 +248,8 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         cells[x].codepoint = *chr;
         cells[x].bg = _elm_code_widget_status_type_get(widget, line->status, x - gutter + 1);
 
+        if (pd->show_whitespace)
+          _elm_code_widget_fill_whitespace(widget, *chr, &cells[x]);
         chr++;
      }
    for (; x < (unsigned int) w; x++)
@@ -233,12 +258,13 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         cells[x].bg = _elm_code_widget_status_type_get(widget, line->status, x - gutter + 1);
      }
 
-   _elm_code_widget_fill_line_tokens(widget, cells, w, line);
    if (pd->editable && pd->focussed && pd->cursor_line == line->number)
      {
         if (pd->cursor_col + gutter - 1 < (unsigned int) w)
           cells[pd->cursor_col + gutter - 1].bg = ELM_CODE_WIDGET_COLOR_CURSOR;
      }
+   if (pd->show_whitespace)
+     _elm_code_widget_fill_whitespace(widget, '\n', &cells[length + gutter]);
 
    evas_object_textgrid_update_add(pd->grid, 0, line->number - 1, w, 1);
 }
@@ -763,6 +789,19 @@ _elm_code_widget_line_width_marker_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data
 }
 
 EOLIAN static void
+_elm_code_widget_show_whitespace_set(Eo *obj, Elm_Code_Widget_Data *pd, Eina_Bool show)
+{
+   pd->show_whitespace = show;
+   _elm_code_widget_fill(obj);
+}
+
+EOLIAN static Eina_Bool
+_elm_code_widget_show_whitespace_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+{
+   return pd->show_whitespace;
+}
+
+EOLIAN static void
 _elm_code_widget_cursor_position_set(Eo *obj, Elm_Code_Widget_Data *pd, unsigned int col, unsigned int line)
 {
    _elm_code_widget_cursor_move(obj, pd, col, line, EINA_FALSE);
@@ -843,6 +882,8 @@ _elm_code_widget_setup_palette(Evas_Object *o)
                                     75, 75, 75, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_FG,
                                     139, 139, 139, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_WHITESPACE,
+                                    101, 101, 101, 125);
 }
 
 EOLIAN static void
