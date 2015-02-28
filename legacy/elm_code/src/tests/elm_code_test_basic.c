@@ -6,7 +6,7 @@
 
 START_TEST (elm_code_create_test)
 {
-   char *path = "elm_code/tests/testfile.txt";
+   char *path = "elm_code/src/tests/testfile.txt";
    Elm_Code *code;
 
    code = elm_code_create();
