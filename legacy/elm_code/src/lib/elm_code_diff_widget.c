@@ -94,10 +94,9 @@ elm_code_diff_widget_add(Evas_Object *parent, Elm_Code *code)
 
    // left side of diff
    wcode1 = elm_code_create();
-   widget_left = eo_add(ELM_CODE_WIDGET_CLASS, parent);
-   eo_do(widget_left,
-         elm_code_widget_code_set(wcode1));
    elm_code_parser_standard_add(wcode1, ELM_CODE_PARSER_STANDARD_DIFF);
+   widget_left = eo_add(ELM_CODE_WIDGET_CLASS, parent,
+                        elm_code_widget_code_set(wcode1));
 
    evas_object_size_hint_weight_set(widget_left, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget_left, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -107,10 +106,9 @@ elm_code_diff_widget_add(Evas_Object *parent, Elm_Code *code)
 
    // right side of diff
    wcode2 = elm_code_create();
-   widget_right = eo_add(ELM_CODE_WIDGET_CLASS, parent);
-   eo_do(widget_right,
-         elm_code_widget_code_set(wcode2));
    elm_code_parser_standard_add(wcode2, ELM_CODE_PARSER_STANDARD_DIFF);
+   widget_right = eo_add(ELM_CODE_WIDGET_CLASS, parent,
+                         elm_code_widget_code_set(wcode2));
 
    evas_object_size_hint_weight_set(widget_right, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget_right, EVAS_HINT_FILL, EVAS_HINT_FILL);

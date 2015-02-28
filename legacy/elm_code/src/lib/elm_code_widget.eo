@@ -5,7 +5,9 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
       code {
          set {
             /*@
-            Set the underlying code object that this widget renders
+            Set the underlying code object that this widget renders.
+            This can only be set during construction, once the widget is created the
+            backing code object cannot be changed.
 
             @ingroup Data */
          }
@@ -169,6 +171,7 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
    implements {
       class.constructor;
       Eo.Base.constructor;
+      Eo.Base.finalize;
       Evas.Object_Smart.add;
       Elm_Widget.focus_next_manager_is;
       Elm_Widget.focus_direction_manager_is;
