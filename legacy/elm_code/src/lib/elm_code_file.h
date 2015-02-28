@@ -60,6 +60,8 @@ EAPI unsigned int elm_code_file_lines_get(Elm_Code_File *file);
 
 EAPI void elm_code_file_line_append(Elm_Code_File *file, const char *line, int length, void *data);
 
+EAPI void elm_code_file_line_insert(Elm_Code_File *file, unsigned int row, const char *line, int length, void *data);
+
 EAPI Elm_Code_Line *elm_code_file_line_get(Elm_Code_File *file, unsigned int line);
 
 /**

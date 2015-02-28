@@ -21,9 +21,10 @@ static Elm_Code_Line *_elm_code_file_line_blank_create(Elm_Code_File *file, int 
    return ecl;
 }
 
-static void _elm_code_file_line_append_data(Elm_Code_File *file, const char *content, int length, int row, Eina_Bool mapped, void *data)
+static void _elm_code_file_line_insert_data(Elm_Code_File *file, const char *content, int length,
+                                            unsigned int row, Eina_Bool mapped, void *data)
 {
-   Elm_Code_Line *line;
+   Elm_Code_Line *line, *after;
 
    line = _elm_code_file_line_blank_create(file, row, data);
    if (!line) return;
@@ -41,7 +42,15 @@ static void _elm_code_file_line_append_data(Elm_Code_File *file, const char *con
         line->length = length;
      }
 
-   file->lines = eina_list_append(file->lines, line);
+   if (row == 1)
+     file->lines = eina_list_prepend(file->lines, line);
+   else if (row == eina_list_count(file->lines) + 1)
+     file->lines = eina_list_append(file->lines, line);
+   else
+     {
+        after = eina_list_nth(file->lines, row - 2);
+        file->lines = eina_list_append_relative(file->lines, line, after);
+     }
 
    if (file->parent)
      {
@@ -92,7 +101,7 @@ EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path)
              ret->lines = eina_list_append(ret->lines, ecl);
           }
 
-        _elm_code_file_line_append_data(ret, line->start, line->length, lastindex = line->index, EINA_TRUE, NULL);
+        _elm_code_file_line_insert_data(ret, line->start, line->length, lastindex = line->index, EINA_TRUE, NULL);
      }
    eina_iterator_free(it);
 
@@ -166,8 +175,29 @@ EAPI void elm_code_file_line_append(Elm_Code_File *file, const char *line, int l
 {
    int row;
 
-   row = elm_code_file_lines_get(file);
-   return _elm_code_file_line_append_data(file, line, length, row+1, EINA_FALSE, data);
+   row = elm_code_file_lines_get(file) + 1;
+   _elm_code_file_line_insert_data(file, line, length, row, EINA_FALSE, data);
+}
+
+EAPI void elm_code_file_line_insert(Elm_Code_File *file, unsigned int row, const char *line, int length, void *data)
+{
+   Eina_List *item;
+   Elm_Code_Line *line_item;
+   unsigned int r;
+
+   _elm_code_file_line_insert_data(file, line, length, row, EINA_FALSE, data);
+
+   r = row;
+   EINA_LIST_FOREACH(file->lines, item, line_item)
+     {
+        if (line_item->number < row)
+          continue;
+
+        line_item->number = r++;
+
+        if (file->parent)
+          elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line_item);
+     }
 }
 
 EAPI Elm_Code_Line *elm_code_file_line_get(Elm_Code_File *file, unsigned int number)

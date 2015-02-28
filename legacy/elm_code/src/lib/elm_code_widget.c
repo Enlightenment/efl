@@ -581,6 +581,24 @@ _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text
 }
 
 static void
+_elm_code_widget_newline(Elm_Code_Widget *widget)
+{
+   Elm_Code *code;
+   Elm_Code_Line *line;
+   unsigned int row, col;
+
+   eo_do(widget,
+         code = elm_code_widget_code_get(),
+         elm_code_widget_cursor_position_get(&col, &row));
+   line = elm_code_file_line_get(code->file, row);
+
+   elm_code_file_line_insert(code->file, line->number + 1, "", 0, NULL);
+
+   eo_do(widget,
+         elm_code_widget_cursor_position_set(1, row + 1));
+}
+
+static void
 _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
                               Evas_Object *obj EINA_UNUSED, void *event_info)
 {
@@ -605,6 +623,10 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
      _elm_code_widget_cursor_move_left(widget);
    else if (!strcmp(ev->key, "Right"))
      _elm_code_widget_cursor_move_right(widget);
+
+   else if (!strcmp(ev->key, "KP_Enter") || !strcmp(ev->key, "Return"))
+     _elm_code_widget_newline(widget);
+
    else if (ev->string && strlen(ev->string) == 1)
      _elm_code_widget_text_at_cursor_insert(widget, ev->string, 1);
    else
