@@ -20,6 +20,22 @@ elm_code_line_text_get(Elm_Code_Line *line, int *length)
    return line->content;
 }
 
+static void
+_elm_code_line_tokens_move_right(Elm_Code_Line *line, int position, int move)
+{
+   Eina_List *item;
+   Elm_Code_Token *token;
+
+   EINA_LIST_FOREACH(line->tokens, item, token)
+     {
+        if (token->end >= position)
+          token->end += move;
+
+        if (token->start > position)
+          token->start += move;
+     }
+}
+
 EAPI void
 elm_code_line_text_insert(Elm_Code_Line *line, int position, const char *string, int length)
 {
@@ -35,6 +51,8 @@ elm_code_line_text_insert(Elm_Code_Line *line, int position, const char *string,
      position = line->length;
    if (position < 0)
      position = 0;
+
+   _elm_code_line_tokens_move_right(line, position + 1, length);
 
    if (line->modified)
      {
