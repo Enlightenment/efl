@@ -69,9 +69,9 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    Elm_Code_Widget *widget;
 
    code = elm_code_create();
-   widget = eo_add(ELM_CODE_WIDGET_CLASS, parent);
+   widget = eo_add(ELM_CODE_WIDGET_CLASS, parent,
+                   elm_code_widget_code_set(code));
    eo_do(widget,
-         elm_code_widget_code_set(code),
          elm_code_widget_font_size_set(12),
          eo_event_callback_add(&ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_test_line_done_cb, NULL);
          eo_event_callback_add(ELM_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_clicked_cb, code));
@@ -95,9 +95,9 @@ _elm_code_test_editor_setup(Evas_Object *parent)
    Elm_Code_Widget *widget;
 
    code = elm_code_create();
-   widget = eo_add(ELM_CODE_WIDGET_CLASS, parent);
+   widget = eo_add(ELM_CODE_WIDGET_CLASS, parent,
+                   elm_code_widget_code_set(code));
    eo_do(widget,
-         elm_code_widget_code_set(code),
          elm_code_widget_font_size_set(14),
          elm_code_widget_editable_set(EINA_TRUE),
          elm_code_widget_line_numbers_set(EINA_TRUE));

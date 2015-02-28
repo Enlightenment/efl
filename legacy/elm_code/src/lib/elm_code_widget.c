@@ -27,14 +27,32 @@ Eina_Unicode status_icons[] = {
  0
 };
 
+#define EO_CONSTRUCTOR_CHECK_RETURN(obj) \
+   if (eo_do(obj, eo_finalized_get())) \
+     { \
+        ERR("This function is only allowed during construction."); \
+        return; \
+     }
 
 EOLIAN static void
-_elm_code_widget_eo_base_constructor(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSED)
+_elm_code_widget_eo_base_constructor(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    eo_do_super(obj, ELM_CODE_WIDGET_CLASS, eo_constructor());
 
    pd->cursor_line = 1;
    pd->cursor_col = 1;
+}
+
+EOLIAN static Eo *
+_elm_code_widget_eo_base_finalize(Eo *obj, Elm_Code_Widget_Data *pd)
+{
+   eo_do_super(obj, ELM_CODE_WIDGET_CLASS, eo_finalize());
+
+   if (pd->code)
+     return obj;
+
+   ERR("Elm_Code_Widget cannot finalize without calling elm_code_widget_code_set.");
+   return NULL;
 }
 
 EOLIAN static void
@@ -582,8 +600,10 @@ _elm_code_widget_font_size_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 }
 
 EOLIAN static void
-_elm_code_widget_code_set(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSED, Elm_Code *code)
+_elm_code_widget_code_set(Eo *obj, Elm_Code_Widget_Data *pd, Elm_Code *code)
 {
+   EO_CONSTRUCTOR_CHECK_RETURN(obj);
+
    pd->code = code;
 
    code->widgets = eina_list_append(code->widgets, obj);

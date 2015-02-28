@@ -41,8 +41,42 @@ START_TEST (elm_code_widget_token_render_simple_test)
 }
 END_TEST
 
+START_TEST (elm_code_widget_construct)
+{
+   Elm_Code *code;
+   Elm_Code_Widget *widget, *win;
+
+   elm_init(1, NULL);
+   code = elm_code_create();
+
+   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   widget = eo_add(ELM_CODE_WIDGET_CLASS, win,
+                   elm_code_widget_code_set(code));
+
+   ck_assert(!!widget);
+   elm_code_free(code);
+   elm_shutdown();
+}
+END_TEST
+
+START_TEST (elm_code_widget_construct_nocode)
+{
+   Elm_Code_Widget *widget, *win;
+
+   elm_init(1, NULL);
+
+   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   widget = eo_add(ELM_CODE_WIDGET_CLASS, win);
+   ck_assert(!widget);
+
+   elm_shutdown();
+}
+END_TEST
+
 void elm_code_test_widget(TCase *tc)
 {
    tcase_add_test(tc, elm_code_widget_token_render_simple_test);
+   tcase_add_test(tc, elm_code_widget_construct);
+   tcase_add_test(tc, elm_code_widget_construct_nocode);
 }
 
