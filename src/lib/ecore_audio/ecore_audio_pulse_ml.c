@@ -129,7 +129,7 @@ _ecore_time_wrapper(void *data)
    pa_time_event *event = (pa_time_event *)data;
 
    event->callback(event->mainloop, event, &event->tv, event->userdata);
-
+   event->timer = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -182,7 +182,7 @@ _ecore_pa_time_restart(pa_time_event *event, const struct timeval *tv)
      }
 
    interval = (tv->tv_sec - now.tv_sec) + (tv->tv_usec - now.tv_usec) / 1000;
-   if (event->timer)
+   if (!event->timer)
      {
         event->timer = ecore_timer_add(interval, _ecore_time_wrapper, event);
      }
