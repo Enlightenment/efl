@@ -224,8 +224,10 @@ eng_window_new(Evas_Engine_Info_GL_Drm *info, Evas *e, struct gbm_device *gbm, s
         return NULL;
      }
 
+#ifdef GL_GLES
    gw->gl_context->egldisp = gw->egl_disp;
    gw->gl_context->eglctxt = gw->egl_context[0];
+#endif
 
    eng_window_use(gw);
    glsym_evas_gl_common_context_resize(gw->gl_context, w, h, rot);
