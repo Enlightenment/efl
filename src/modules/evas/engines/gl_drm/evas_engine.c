@@ -600,9 +600,11 @@ eng_setup(Evas *eo_e, void *in)
         if (!(info->info.gbm) || !(info->info.surface))
           return 0;
 
+#ifdef GL_DRM_DBG
         DBG("FD: %d, GBM_DEVICE: 0x%x, GBM_SURFACE: 0x%x",
             info->info.fd, (unsigned int)info->info.gbm,
             (unsigned int)info->info.surface);
+#endif
 
         re = calloc(1, sizeof(Render_Engine));
         if (!re) return 0;
@@ -724,9 +726,11 @@ eng_setup(Evas *eo_e, void *in)
                   if (!evas_drm_gbm_init(info, epd->output.w, epd->output.h))
                     return 0;
 
+#ifdef GL_DRM_DBG
                   DBG("FD: %d, GBM_DEVICE: 0x%x, GBM_SURFACE: 0x%x",
                       info->info.fd, (unsigned int)info->info.gbm,
                       (unsigned int)info->info.surface);
+#endif
 
                   ob = eng_window_new(info, eo_e, info->info.gbm,
                                       info->info.surface, info->info.screen,
@@ -1107,7 +1111,7 @@ eng_image_native_set(void *data, void *image, void *native)
 
                   if (!n->egl_surface)
                     {
-                       ERR("eglCreatePixmapSurface() for 0x%x failed", (unsigned int)wl_buf);
+                       ERR("eglCreatePixmapSurface() for %p failed", wl_buf);
                        eina_hash_del(ob->gl_context->shared->native_wl_hash, &wlid, img);
                        glsym_evas_gl_common_image_free(img);
                        free(n);

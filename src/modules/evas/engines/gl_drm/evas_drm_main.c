@@ -118,7 +118,10 @@ eng_window_new(Evas_Engine_Info_GL_Drm *info, Evas *e, struct gbm_device *gbm, s
    config_attrs[n++] = EGL_OPENGL_ES2_BIT;
    config_attrs[n++] = EGL_NONE;
 
+#ifdef GL_DRM_DBG
    DBG("GBM DEVICE: %x", (unsigned int)gbm);
+#endif
+
    gw->egl_disp = eglGetDisplay((EGLNativeDisplayType)(gw->gbm));
    if (gw->egl_disp  == EGL_NO_DISPLAY)
      {

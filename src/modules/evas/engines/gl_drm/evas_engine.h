@@ -38,6 +38,9 @@ extern Evas_GL_Common_Buffer_Dump_Call glsym_evas_gl_common_buffer_dump;
 extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock;
 extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock;
 
+/* define this to enable debug for the gl_drm engine */
+/* #define GL_DRM_DBG 0 */
+
 # ifdef ERR
 #  undef ERR
 # endif
