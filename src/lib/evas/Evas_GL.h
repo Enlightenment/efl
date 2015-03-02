@@ -2226,9 +2226,16 @@ typedef signed int       GLfixed;      // Changed khronos_int32_t
 #define GL_COVERAGE_COMPONENT4_NV         0x8ED1
 #define GL_COVERAGE_ATTACHMENT_NV         0x8ED2
 #define GL_COVERAGE_BUFFERS_NV            0x8ED3
-#ifndef GL_COVERAGE_SAMPLES_NV
-#define GL_COVERAGE_SAMPLES_NV            0x8ED4
+#ifdef GL_COVERAGE_SAMPLES_NV
+# undef GL_COVERAGE_SAMPLES_NV
+/* Extract from the multisample_coverage spec:
+ * (Note:  Earlier versions of this extension included a token
+ *   COVERAGE_SAMPLES_NV that was an alias for SAMPLES/SAMPLES_ARB.  This was
+ *   removed to avoid a name collision with a similar COVERAGE_SAMPLES_NV
+ *   token from the NV_coverage_sample extension to OpenGL ES.)
+ */
 #endif
+#define GL_COVERAGE_SAMPLES_NV            0x8ED4
 #define GL_COVERAGE_ALL_FRAGMENTS_NV      0x8ED5
 #define GL_COVERAGE_EDGE_FRAGMENTS_NV     0x8ED6
 #define GL_COVERAGE_AUTOMATIC_NV          0x8ED7
