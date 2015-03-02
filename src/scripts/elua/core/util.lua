@@ -12,6 +12,7 @@ local C = ffi.C
 local M = {}
 
 local getmetatable, setmetatable = getmetatable, setmetatable
+local dgetmt = debug.getmetatable
 
 -- multiple inheritance index with depth-first search
 local proto_lookup = function(protos, name)
@@ -46,9 +47,24 @@ local Object_MT = {
     end
 }
 
+local obj_gc = function(px)
+    local obj = dgetmt(px).__obj
+    local dtor = obj and obj.__dtor or nil
+    if dtor then dtor(obj) end
+end
+
 M.Object = {
+    __enable_dtor = false,
+
     __call = function(self, ...)
         local r = self:clone()
+        if self.__enable_dtor then
+            local px = newproxy(true)
+            local pxmt = dgetmt(px)
+            r.__gcproxy = px
+            pxmt.__gc = obj_gc
+            pxmt.__obj = r
+        end
         if self.__ctor then return r, self.__ctor(r, ...) end
         return r
     end,
