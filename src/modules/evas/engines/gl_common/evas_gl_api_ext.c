@@ -3,13 +3,10 @@
 
 #include <dlfcn.h>
 
-
-#define MAX_EXTENSION_STRING_BUFFER 10240
-
 // list of exts like "discard_framebuffer GL_EXT_discard_framebuffer multi_draw_arrays GL_EXT_multi_draw_arrays"
-char _gl_ext_string[MAX_EXTENSION_STRING_BUFFER] = { 0 };
+static char *_gl_ext_string = NULL;
 // list of exts by official name only like "GL_EXT_discard_framebuffer GL_EXT_multi_draw_arrays"
-char _gl_ext_string_official[MAX_EXTENSION_STRING_BUFFER] = { 0 };
+static char *_gl_ext_string_official = NULL;
 // list of gles 1.1 exts by official name
 static char *_gles1_ext_string = NULL;
 
@@ -306,9 +303,8 @@ evgl_api_ext_init(void *getproc, const char *glueexts)
    const char *glexts;
    fp_getproc gp = (fp_getproc)getproc;
    int _curext_supported = 0;
-
-   memset(_gl_ext_string, 0, MAX_EXTENSION_STRING_BUFFER);
-   memset(_gl_ext_string_official, 0, MAX_EXTENSION_STRING_BUFFER);
+   Eina_Strbuf *sb = eina_strbuf_new();
+   Eina_Strbuf *sboff = eina_strbuf_new();
 
 #ifndef GL_GLES
    /* Add some extension strings that are always working on desktop GL */
@@ -316,8 +312,8 @@ evgl_api_ext_init(void *getproc, const char *glueexts)
          "GL_EXT_read_format_bgra "
          "GL_EXT_texture_format_BGRA8888 "
          "GL_EXT_texture_type_2_10_10_10_REV ";
-   strncpy(_gl_ext_string, desktop_exts, MAX_EXTENSION_STRING_BUFFER);
-   strncpy(_gl_ext_string_official, desktop_exts, MAX_EXTENSION_STRING_BUFFER);
+   eina_strbuf_append(sb, desktop_exts);
+   eina_strbuf_append(sboff, desktop_exts);
 #endif
 
    // GLES Extensions
@@ -327,18 +323,6 @@ evgl_api_ext_init(void *getproc, const char *glueexts)
         ERR("glGetString returned NULL! Something is very wrong...");
         return EINA_FALSE;
      }
-
-   /*
-   // GLUE Extensions
-#ifdef GL_GLES
-getproc = &eglGetProcAddress;
-glueexts = eglQueryString(re->win->egl_disp, EGL_EXTENSIONS);
-#else
-getproc = &glXGetProcAddress;
-glueexts = glXQueryExtensionsString(re->info->info.display,
-re->info->info.screen);
-#endif
-    */
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    // Extension HEADER
@@ -419,16 +403,13 @@ re->info->info.screen);
 #undef GETPROCADDR
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	_gl_ext_string[0] = 0x00; //NULL;
-	_gl_ext_string_official[0] = 0x00;
-
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    // Extension HEADER
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 #define _EVASGL_EXT_BEGIN(name) \
      if (_gl_ext_support_##name != 0) \
        { \
-          strncat(_gl_ext_string, #name" ", MAX_EXTENSION_STRING_BUFFER); \
+          eina_strbuf_append(sb, #name" "); \
           _curext_supported = 1; \
        } \
      else _curext_supported = 0;
@@ -438,9 +419,9 @@ re->info->info.screen);
 #define _EVASGL_EXT_DISCARD_SUPPORT()
 #define _EVASGL_EXT_DRVNAME_PRINT(name) \
        { \
-          strncat(_gl_ext_string, name" ", MAX_EXTENSION_STRING_BUFFER); \
-          if ((strncmp(name, "GL", 2) == 0) && (strstr(_gl_ext_string_official, name) == NULL)) \
-            strncat(_gl_ext_string_official, name" ", MAX_EXTENSION_STRING_BUFFER); \
+          eina_strbuf_append(sb, name" "); \
+          if ((strncmp(name, "GL_", 3) == 0) && (strstr(eina_strbuf_string_get(sboff), name) == NULL)) \
+            eina_strbuf_append(sboff, name" "); \
        }
 #define _EVASGL_EXT_DRVNAME(name) \
      if (_curext_supported) \
@@ -474,8 +455,12 @@ re->info->info.screen);
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   _gl_ext_string[MAX_EXTENSION_STRING_BUFFER - 1] = '\0';
-   _gl_ext_string_official[MAX_EXTENSION_STRING_BUFFER - 1] = '\0';
+   if (_gl_ext_string) free(_gl_ext_string);
+   if (_gl_ext_string_official) free(_gl_ext_string_official);
+   _gl_ext_string = eina_strbuf_string_steal(sb);
+   _gl_ext_string_official = eina_strbuf_string_steal(sboff);
+   eina_strbuf_free(sb);
+   eina_strbuf_free(sboff);
 
   _evgl_api_ext_status = 1;
    return EINA_TRUE;
@@ -554,6 +539,7 @@ _evgl_api_gles1_ext_init(void)
    EVGL_Resource *rsc;
    EGLint context_version;
    EGLDisplay dpy = EGLDISPLAY_GET();
+   Eina_Strbuf *sb = eina_strbuf_new();
 
    /* glGetString returns the information for the currently bound context
     * So, update gles1_exts only if GLES1 context is currently bound.
@@ -596,14 +582,6 @@ _evgl_api_gles1_ext_init(void)
         ERR("GLESv1:glGetString(GL_EXTENSIONS) returned NULL!");
         return EINA_FALSE;
      }
-
-   if (!_gles1_ext_string)
-     {
-        _gles1_ext_string = calloc(MAX_EXTENSION_STRING_BUFFER, 1);
-        if (!_gles1_ext_string) return EINA_FALSE;
-     }
-
-   _gles1_ext_string[0] = '\0';
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    // Scanning supported extensions, sets the variables
@@ -701,8 +679,8 @@ _evgl_api_gles1_ext_init(void)
 #define _EVASGL_EXT_DISCARD_SUPPORT()
 #define _EVASGL_EXT_DRVNAME_PRINT(name) \
      { \
-        if ((strncmp(name, "GL", 2) == 0) && (strstr(_gles1_ext_string, name) == NULL)) \
-          strcat(_gles1_ext_string, name" "); \
+        if ((strncmp(name, "GL_", 3) == 0) && (strstr(eina_strbuf_string_get(sb), name) == NULL)) \
+          eina_strbuf_append(sb, name" "); \
      }
 #define _EVASGL_EXT_DRVNAME(name) \
    if (_curext_supported) \
@@ -734,6 +712,10 @@ _evgl_api_gles1_ext_init(void)
 #undef _EVASGL_EXT_FUNCTION_DISABLE_FOR_GLES1_END
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
+
+   if (_gles1_ext_string) free(_gles1_ext_string);
+   _gles1_ext_string = eina_strbuf_string_steal(sb);
+   eina_strbuf_free(sb);
 
    if (evgl_engine->api_debug_mode)
      DBG("GLES1: List of supported extensions:\n%s", _gles1_ext_string);
