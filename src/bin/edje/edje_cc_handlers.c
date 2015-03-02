@@ -409,6 +409,8 @@ static void st_collections_group_parts_part_description_map_alpha(void);
 static void st_collections_group_parts_part_description_map_backface_cull(void);
 static void st_collections_group_parts_part_description_map_perspective_on(void);
 static void st_collections_group_parts_part_description_map_color(void);
+static void st_collections_group_parts_part_description_map_zoom_x(void);
+static void st_collections_group_parts_part_description_map_zoom_y(void);
 static void st_collections_group_parts_part_description_perspective_zplane(void);
 static void st_collections_group_parts_part_description_perspective_focal(void);
 static void st_collections_group_parts_part_api(void);
@@ -808,6 +810,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.map.backface_cull", st_collections_group_parts_part_description_map_backface_cull},
      {"collections.group.parts.part.description.map.perspective_on", st_collections_group_parts_part_description_map_perspective_on},
      {"collections.group.parts.part.description.map.color", st_collections_group_parts_part_description_map_color},
+     {"collections.group.parts.part.description.map.zoom.x", st_collections_group_parts_part_description_map_zoom_x},
+     {"collections.group.parts.part.description.map.zoom.y", st_collections_group_parts_part_description_map_zoom_y},
      {"collections.group.parts.part.description.perspective.zplane", st_collections_group_parts_part_description_perspective_zplane},
      {"collections.group.parts.part.description.perspective.focal", st_collections_group_parts_part_description_perspective_focal},
      {"collections.group.parts.part.description.params.int", st_collections_group_parts_part_description_params_int},
@@ -1114,6 +1118,7 @@ New_Object_Handler object_handlers[] =
 #endif
      {"collections.group.parts.part.description.map", NULL},
      {"collections.group.parts.part.description.map.rotation", NULL},
+     {"collections.group.parts.part.description.map.zoom", NULL},
      {"collections.group.parts.part.description.perspective", NULL},
      {"collections.group.parts.part.description.params", NULL},
      {"collections.group.parts.part.description.color_classes", NULL}, /* dup */
@@ -6279,6 +6284,8 @@ ob_collections_group_parts_part_description(void)
    ed->map.backcull = 0;
    ed->map.persp_on = 0;
    ed->map.colors = NULL;
+   ed->map.zoom.x = FROM_DOUBLE(1.0);
+   ed->map.zoom.y = FROM_DOUBLE(1.0);
    ed->persp.zplane = 0;
    ed->persp.focal = 1000;
    ed->minmul.have = 1;
@@ -10564,6 +10571,41 @@ st_collections_group_parts_part_description_map_color(void)
    current_desc->map.colors[current_desc->map.colors_count - 1] = color;
 }
 
+/**
+    @page edcref
+    @property
+        x
+    @parameters
+        [X horizontal zoom to use]
+    @effect
+        This sets the zoom rate of the horizontal
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_map_zoom_x(void)
+{
+   check_arg_count(1);
+
+   current_desc->map.zoom.x = FROM_DOUBLE(parse_float(0));
+}
+
+/**
+    @page edcref
+    @property
+        y
+    @parameters
+        [Y vertical zoom to use]
+    @effect
+        This sets the zoom rate of vertical
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_map_zoom_y(void)
+{
+   check_arg_count(1);
+
+   current_desc->map.zoom.y = FROM_DOUBLE(parse_float(0));
+}
 
 /** @edcsubsection{collections_group_parts_description_map_rotation,
  *                 Group.Parts.Part.Description.Map.Rotation} */

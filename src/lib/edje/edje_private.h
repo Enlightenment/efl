@@ -1148,6 +1148,9 @@ struct _Edje_Part_Description_Common
          int id_center;
          FLOAT_T x, y, z;
       } rot;
+      struct {
+         FLOAT_T x, y;
+      } zoom;
       Edje_Map_Color **colors;    /* List of the Edje_Map_Color */
       unsigned int colors_count;
       Eina_Bool backcull;
@@ -1588,6 +1591,9 @@ struct _Edje_Calc_Params_Map
       int x, y, z;
       int focal;
    } persp; // 16
+   struct {
+      FLOAT_T x, y;
+   } zoom; //16
    Edje_Map_Color **colors;
    unsigned int colors_count;
 };

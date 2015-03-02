@@ -2189,6 +2189,8 @@ _edje_part_recalc_single_map(Edje *ed,
         params_write->rotation.x = desc->map.rot.x;
         params_write->rotation.y = desc->map.rot.y;
         params_write->rotation.z = desc->map.rot.z;
+        params_write->zoom.x = desc->map.zoom.x;
+        params_write->zoom.y = desc->map.zoom.y;
 
         if (light)
           {
@@ -3110,6 +3112,9 @@ _edje_map_prop_set(Evas_Map *map, const  Edje_Calc_Params *pf,
    // handle alpha
    if (chosen_desc->map.alpha) evas_map_alpha_set(map, EINA_TRUE);
    else evas_map_alpha_set(map, EINA_FALSE);
+   evas_map_util_zoom(map,
+                      pf->map->zoom.x, pf->map->zoom.y,
+                      pf->map->center.x, pf->map->center.y);
 }
 
 #define Rel1X 0
@@ -3674,6 +3679,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   p3_write->rotation.x = FFP(p1->map->rotation.x, p2->map->rotation.x, pos);
                   p3_write->rotation.y = FFP(p1->map->rotation.y, p2->map->rotation.y, pos);
                   p3_write->rotation.z = FFP(p1->map->rotation.z, p2->map->rotation.z, pos);
+                  p3_write->zoom.x = FFP(p1->map->zoom.x, p2->map->zoom.x, pos);
+                  p3_write->zoom.y = FFP(p1->map->zoom.y, p2->map->zoom.y, pos);
 
 #define MIX(P1, P2, P3, pos, info)                                      \
                   P3->info = P1->map->info + TO_INT(SCALE(pos, P2->map->info - P1->map->info));

@@ -592,6 +592,8 @@ _edje_edd_init(void)
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.persp_on", map.persp_on, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.backcull", map.backcull, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(Edd, Type, "map.color", map.colors, _edje_edd_edje_map_colors_pointer); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.x", map.zoom.x, EDJE_T_FLOAT); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.y", map.zoom.y, EDJE_T_FLOAT); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.zplane", persp.zplane, EET_T_INT); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.focal", persp.focal, EET_T_INT);
 
@@ -679,6 +681,8 @@ _edje_edd_init(void)
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.persp_on", Dec.map.persp_on, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.backcull", Dec.map.backcull, EET_T_UCHAR); \
       EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(Edd, Type, "map.color", Dec.map.colors, _edje_edd_edje_map_colors_pointer); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.x", Dec.map.zoom.x, EDJE_T_FLOAT); \
+      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.y", Dec.map.zoom.y, EDJE_T_FLOAT); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.zplane", Dec.persp.zplane, EET_T_INT); \
       EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.focal", Dec.persp.focal, EET_T_INT); \
 
