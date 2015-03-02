@@ -10,6 +10,7 @@
 #define GLPIPES 1
 
 static int sym_done = 0;
+static int tbm_sym_done = 0;
 int _evas_engine_GL_common_log_dom = -1;
 Cutout_Rects *_evas_gl_common_cutout_rects = NULL;
 
@@ -41,6 +42,7 @@ void       (*glsym_glEndTiling)            (GLuint a) = NULL;
 typedef void (*_eng_fn) (void);
 
 typedef _eng_fn (*glsym_func_eng_fn) ();
+typedef int  (*secsym_func_int) ();
 typedef unsigned int  (*secsym_func_uint) ();
 typedef void         *(*secsym_func_void_ptr) ();
 
@@ -50,6 +52,17 @@ void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b) = NULL;
 void          *(*secsym_eglMapImageSEC)               (void *a, void *b, int c, int d) = NULL;
 unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b, int c) = NULL;
 unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d) = NULL;
+
+////////////////////////////////////
+//libtbm.so.1
+static void *tbm_lib_handle;
+
+void *(*secsym_tbm_surface_create) (int width, int height, unsigned int format) = NULL;
+int  (*secsym_tbm_surface_destroy) (void *surface) = NULL;
+int  (*secsym_tbm_surface_map) (void *surface, int opt, void *info) = NULL;
+int  (*secsym_tbm_surface_unmap) (void *surface) = NULL;
+int  (*secsym_tbm_surface_get_info) (void *surface, void *info) = NULL;
+////////////////////////////////////
 #else
 typedef void (*_eng_fn) (void);
 
@@ -193,6 +206,42 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name))
    FINDSYM(secsym_eglUnmapImageSEC, "eglUnmapImageSEC", secsym_func_uint);
 
    FINDSYM(secsym_eglGetImageAttribSEC, "eglGetImageAttribSEC", secsym_func_uint);
+#endif
+
+#undef FINDSYM
+#undef FINDSYM2
+#undef FALLBAK
+}
+
+static void
+tbm_symbols(void)
+{
+   if (tbm_sym_done) return;
+   tbm_sym_done = 1;
+
+#ifdef GL_GLES
+   tbm_lib_handle = dlopen("libtbm.so.1", RTLD_NOW);
+   if (!tbm_lib_handle)
+     {
+        DBG("Unable to open libtbm:  %s", dlerror());
+        return;
+     }
+
+#define FINDSYM(dst, sym, typ) \
+   if (!dst) dst = (typ)dlsym(tbm_lib_handle, sym); \
+   if (!dst)  \
+     { \
+        ERR("Symbol not found %s\n", sym); \
+        return; \
+     }
+
+   FINDSYM(secsym_tbm_surface_create, "tbm_surface_create", secsym_func_void_ptr);
+   FINDSYM(secsym_tbm_surface_destroy, "tbm_surface_destroy", secsym_func_int);
+   FINDSYM(secsym_tbm_surface_map, "tbm_surface_map", secsym_func_int);
+   FINDSYM(secsym_tbm_surface_unmap, "tbm_surface_unmap", secsym_func_int);
+   FINDSYM(secsym_tbm_surface_get_info, "tbm_surface_get_info", secsym_func_int);
+
+#undef FINDSYM
 #endif
 }
 
@@ -544,6 +593,8 @@ evas_gl_common_context_new(void)
    gc = calloc(1, sizeof(Evas_Engine_GL_Context));
    if (!gc) return NULL;
 
+   tbm_symbols();
+
    gc->references = 1;
 
    _evas_gl_common_context = gc;
@@ -623,6 +674,14 @@ evas_gl_common_context_new(void)
                       (secsym_eglGetImageAttribSEC))
                      shared->info.sec_image_map = 1;
                }
+             i = 0;
+
+             if ((secsym_tbm_surface_create) &&
+                  (secsym_tbm_surface_destroy) &&
+                  (secsym_tbm_surface_map) &&
+                  (secsym_tbm_surface_unmap) &&
+                  (secsym_tbm_surface_get_info))
+                  shared->info.sec_tbm_surface = 1;
 #endif
              if (!strstr(ext, "GL_QCOM_tiled_rendering"))
                {

@@ -599,7 +599,8 @@ evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
    if (im->content_hint == hint) return;
    im->content_hint = hint;
    if (!im->gc) return;
-   if (!im->gc->shared->info.sec_image_map) return;
+   if ((!im->gc->shared->info.sec_image_map)
+       && (!im->gc->shared->info.sec_tbm_surface)) return;
    if (!im->gc->shared->info.bgra) return;
    // does not handle yuv yet.
    // TODO: Check this list of cspaces

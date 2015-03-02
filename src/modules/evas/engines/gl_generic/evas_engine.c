@@ -558,8 +558,6 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
    if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.img) && 
        (im->cs.space == EVAS_COLORSPACE_ARGB8888))
      {
-        void *disp;
-
         if (im->tex->pt->dyn.checked_out > 0)
           {
              im->tex->pt->dyn.checked_out++;
@@ -567,12 +565,22 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
              if (err) *err = EVAS_LOAD_ERROR_NONE;
              return im;
           }
-        disp = re->window_egl_display_get(re->software.ob);
-        *image_data = im->tex->pt->dyn.data = 
-          secsym_eglMapImageSEC(disp,
-                                im->tex->pt->dyn.img, 
-                                EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC, 
-                                EGL_MAP_GL_TEXTURE_OPTION_WRITE_SEC);
+        if (im->gc->shared->info.sec_tbm_surface)
+          {
+             tbm_surface_info_s info;
+             secsym_tbm_surface_map(im->tex->pt->dyn.buffer,
+                                    TBM_SURF_OPTION_READ|TBM_SURF_OPTION_WRITE,
+                                    &info);
+             *image_data = im->tex->pt->dyn.data = (DATA32 *) info.planes[0].ptr;
+          }
+        else if (im->gc->shared->info.sec_image_map)
+          {
+             void *disp = re->window_egl_display_get(re->software.ob);
+             *image_data = im->tex->pt->dyn.data = secsym_eglMapImageSEC(disp,
+                                                                         im->tex->pt->dyn.img,
+                                                                         EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC,
+                                                                         EGL_MAP_GL_TEXTURE_OPTION_WRITE_SEC);
+          }
 
         if (!im->tex->pt->dyn.data)
           {
@@ -689,12 +697,13 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 #ifdef GL_GLES
                  if (im->tex->pt->dyn.checked_out == 0)
                    {
-                      void *disp;
-
-                      disp = re->window_egl_display_get(re->software.ob);
-                      secsym_eglUnmapImageSEC(disp,
-                                              im->tex->pt->dyn.img,
-                                              EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC);
+                      if (im->gc->shared->info.sec_tbm_surface)
+                        secsym_tbm_surface_unmap(im->tex->pt->dyn.buffer);
+                      else if (im->gc->shared->info.sec_image_map)
+                        {
+                           void *disp = disp = re->window_egl_display_get(re->software.ob);
+                           secsym_eglUnmapImageSEC(disp, im->tex->pt->dyn.img, EGL_MAP_GL_TEXTURE_DEVICE_CPU_SEC);
+                        }
                    }
 #endif
                }

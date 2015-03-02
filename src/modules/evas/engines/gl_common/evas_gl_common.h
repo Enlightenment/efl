@@ -190,6 +190,9 @@
 #ifndef EGL_MAP_GL_TEXTURE_STRIDE_IN_BYTES_SEC
 # define EGL_MAP_GL_TEXTURE_STRIDE_IN_BYTES_SEC 0x320c
 #endif
+#ifndef EGL_IMAGE_PRESERVED_KHR
+# define EGL_IMAGE_PRESERVED_KHR 0x30D2
+#endif
 #ifndef EGL_NATIVE_SURFACE_TIZEN
 #define EGL_NATIVE_SURFACE_TIZEN 0x32A1
 #endif
@@ -327,6 +330,7 @@ struct _Evas_GL_Shared
       Eina_Bool tex_npo2 : 1;
       Eina_Bool tex_rect : 1;
       Eina_Bool sec_image_map : 1;
+      Eina_Bool sec_tbm_surface : 1;
       Eina_Bool bin_program : 1;
       Eina_Bool unpack_row_length : 1;
       Eina_Bool etc1 : 1;
@@ -523,6 +527,7 @@ struct _Evas_GL_Texture_Pool
    int              slot, fslot;
    struct {
       void         *img;
+      void         *buffer;
       unsigned int *data;
       int           w, h;
       int           stride;
@@ -834,6 +839,58 @@ extern void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b);
 extern void          *(*secsym_eglMapImageSEC)               (void *a, void *b, int c, int d);
 extern unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b, int c);
 extern unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d);
+
+// TBM Surface stuff
+#define TBM_SURF_PLANE_MAX 4 /**< maximum number of planes  */
+
+/* option to map the tbm_surface */
+#define TBM_SURF_OPTION_READ      (1 << 0) /**< access option to read  */
+#define TBM_SURF_OPTION_WRITE     (1 << 1) /**< access option to write */
+
+#define __tbm_fourcc_code(a,b,c,d) ((uint32_t)(a) | ((uint32_t)(b) << 8) | \
+			      ((uint32_t)(c) << 16) | ((uint32_t)(d) << 24))
+
+#define TBM_FORMAT_C8       __tbm_fourcc_code('C', '8', ' ', ' ')
+#define TBM_FORMAT_RGBA8888 __tbm_fourcc_code('R', 'A', '2', '4')
+#define TBM_FORMAT_BGRA8888 __tbm_fourcc_code('B', 'A', '2', '4')
+#define TBM_FORMAT_RGB888   __tbm_fourcc_code('R', 'G', '2', '4')
+
+typedef struct _tbm_surface * tbm_surface_h;
+typedef uint32_t tbm_format;
+typedef struct _tbm_surface_plane
+{
+   unsigned char *ptr;   /**< Plane pointer */
+   uint32_t size;        /**< Plane size */
+   uint32_t offset;      /**< Plane offset */
+   uint32_t stride;      /**< Plane stride */
+
+   void *reserved1;      /**< Reserved pointer1 */
+   void *reserved2;      /**< Reserved pointer2 */
+   void *reserved3;      /**< Reserved pointer3 */
+} tbm_surface_plane_s;
+
+typedef struct _tbm_surface_info
+{
+   uint32_t width;      /**< TBM surface width */
+   uint32_t height;     /**< TBM surface height */
+   tbm_format format;   /**< TBM surface format*/
+   uint32_t bpp;        /**< TBM surface bbp */
+   uint32_t size;       /**< TBM surface size */
+
+   uint32_t num_planes;                            /**< The number of planes */
+   tbm_surface_plane_s planes[TBM_SURF_PLANE_MAX]; /**< Array of planes */
+
+   void *reserved4;   /**< Reserved pointer4 */
+   void *reserved5;   /**< Reserved pointer5 */
+   void *reserved6;   /**< Reserved pointer6 */
+} tbm_surface_info_s;
+
+
+extern void *(*secsym_tbm_surface_create) (int width, int height, unsigned int format);
+extern int   (*secsym_tbm_surface_destroy) (void *surface);
+extern int   (*secsym_tbm_surface_map) (void *surface, int opt, void *info);
+extern int   (*secsym_tbm_surface_unmap) (void *surface);
+extern int   (*secsym_tbm_surface_get_info) (void *surface, void *info);
 #endif
 
 Eina_Bool evas_gl_preload_push(Evas_GL_Texture_Async_Preload *async);
