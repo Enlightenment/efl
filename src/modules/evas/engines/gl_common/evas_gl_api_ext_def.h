@@ -133,7 +133,7 @@ _EVASGL_EXT_END()
 
 
 _EVASGL_EXT_BEGIN(AMD_performance_monitor)
-	_EVASGL_EXT_DRVNAME(AMD_performance_monitor)
+	_EVASGL_EXT_DRVNAME(GL_AMD_performance_monitor)
 
 	_EVASGL_EXT_FUNCTION_BEGIN(void, glGetPerfMonitorGroupsAMD, (GLint* numGroups, GLsizei groupsSize, GLuint* groups))
                 _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("glGetPerfMonitorGroupsAMD")
