@@ -468,6 +468,7 @@ struct _Evas_Engine_GL_Context
          int             cx, cy, cw, ch;
          int             smooth;
          int             blend;
+         int             mask_smooth;
          int             clip;
       } shader;
       struct {
@@ -490,7 +491,6 @@ struct _Evas_Engine_GL_Context
          Eina_Bool use_texsam : 1;
          Eina_Bool use_texm : 1;
          Eina_Bool anti_alias : 1;
-         Eina_Bool mask_smooth : 1;
          Evas_GL_Image *im;
          GLuint buffer;
          int buffer_alloc;
