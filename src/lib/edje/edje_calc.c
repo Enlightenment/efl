@@ -3069,6 +3069,11 @@ _edje_map_prop_set(Evas_Map *map, const  Edje_Calc_Params *pf,
           }
      }
 
+   //zoom
+   evas_map_util_zoom(map,
+                      pf->map->zoom.x, pf->map->zoom.y,
+                      pf->map->center.x, pf->map->center.y);
+
    //rotate
    evas_map_util_3d_rotate(map,
                            TO_DOUBLE(pf->map->rotation.x),
@@ -3112,9 +3117,6 @@ _edje_map_prop_set(Evas_Map *map, const  Edje_Calc_Params *pf,
    // handle alpha
    if (chosen_desc->map.alpha) evas_map_alpha_set(map, EINA_TRUE);
    else evas_map_alpha_set(map, EINA_FALSE);
-   evas_map_util_zoom(map,
-                      pf->map->zoom.x, pf->map->zoom.y,
-                      pf->map->center.x, pf->map->center.y);
 }
 
 #define Rel1X 0
