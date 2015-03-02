@@ -1332,7 +1332,6 @@ eng_gl_get_pixels_set(void *data, void *get_pixels, void *get_pixels_data, void 
 {
    Render_Engine_GL_Generic *re = data;
 
-   EVGLINIT(data, );
    re->func.get_pixels = get_pixels;
    re->func.get_pixels_data = get_pixels_data;
    re->func.obj = (Evas_Object*)obj;
