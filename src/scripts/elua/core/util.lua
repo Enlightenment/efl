@@ -100,6 +100,11 @@ M.Object = {
 
 local newproxy = newproxy
 
+local robj_gc = function(px)
+    local dtor = px.__dtor
+    if dtor then dtor(px) end
+end
+
 M.Readonly_Object = M.Object:clone {}
 M.Readonly_Object.__call = function(self, ...)
     local r = newproxy(true)
@@ -107,6 +112,9 @@ M.Readonly_Object.__call = function(self, ...)
     rmt.__index = self
     rmt.__tostring = self.__tostring
     rmt.__metatable = false
+    if self.__enable_dtor then
+        rmt.__gc = robj_gc
+    end
     if self.__ctor then return r, self.__ctor(r, rmt, ...) end
     return r
 end
