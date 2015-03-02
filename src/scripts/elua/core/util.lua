@@ -110,7 +110,7 @@ M.Readonly_Object.__call = function(self, ...)
     local r = newproxy(true)
     local rmt = getmetatable(r)
     rmt.__index = self
-    rmt.__tostring = self.__tostring
+    rmt.__tostring = Object_MT.__tostring
     rmt.__metatable = false
     if self.__enable_dtor then
         rmt.__gc = robj_gc
