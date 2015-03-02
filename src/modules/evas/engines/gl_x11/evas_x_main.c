@@ -190,9 +190,10 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
                                                NULL);
    if (gw->egl_surface[0] == EGL_NO_SURFACE)
      {
-        printf("surf creat fail! %x\n", eglGetError());
+        int err = eglGetError();
+        printf("surf creat fail! %x\n", err);
         ERR("eglCreateWindowSurface() fail for %#x. code=%#x",
-            (unsigned int)gw->win, eglGetError());
+            (unsigned int)gw->win, err);
         eng_window_free(gw);
         return NULL;
      }
