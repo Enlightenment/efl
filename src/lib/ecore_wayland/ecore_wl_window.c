@@ -617,6 +617,10 @@ ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h)
    if (!win) return;
    win->allocation.w = w;
    win->allocation.h = h;
+   if (win->xdg_surface)
+     xdg_surface_set_window_geometry(win->xdg_surface, 
+                                     win->allocation.x, win->allocation.y, 
+                                     win->allocation.w, win->allocation.h);
 }
 
 EAPI void 
@@ -627,6 +631,10 @@ ecore_wl_window_update_location(Ecore_Wl_Window *win, int x, int y)
    if (!win) return;
    win->allocation.x = x;
    win->allocation.y = y;
+   if (win->xdg_surface)
+     xdg_surface_set_window_geometry(win->xdg_surface, 
+                                     win->allocation.x, win->allocation.y, 
+                                     win->allocation.w, win->allocation.h);
 }
 
 EAPI struct wl_surface *
