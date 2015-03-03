@@ -147,6 +147,13 @@ eo_event_del = ffi.cast("Eo_Event_Cb", function(data, obj, desc, einfo)
 end)
 
 eo_event_cb = ffi.cast("Eo_Event_Cb", function(data, obj, desc, einfo)
+    local  addr = eo_obj_addr_get(obj)
+    local  cbs  = callbacks[addr]
+    assert(cbs)
+    local cidx = tonumber(ffi.cast("intptr_t", cbs))
+    local fun  = cbs[cidx]
+    assert(fun)
+    return fun() ~= false
 end)
 
 local connect = function(self, ename, func, priority)
@@ -156,11 +163,17 @@ local connect = function(self, ename, func, priority)
     end
     local cl = eo_classes["Eo_Base"]
     M.__do_start(self, cl)
+    -- add the callback to the respective array
+    local addr = eo_obj_addr_get(self)
+    local  cbs = callbacks[addr]
+    if not cbs then
+        cbs = {}
+        callbacks[addr] = cbs
+    end
+    local cidx = #cbs + 1
+    cbs[cidx] = func
     eo.eo_event_callback_priority_add(ev, priority or 0,
-        function(data, obj, desc, einfo)
-            return func(obj, einfo) ~= false
-        end,
-    nil)
+        eo_event_cb, ffi.cast("void *", cidx))
     M.__do_end()
 end
 
