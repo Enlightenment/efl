@@ -156,7 +156,7 @@ local init = function()
 end
 
 local shutdown = function()
-    M.class_unregister("Eo_Base")
+    classes, eo_classes = {}, {}
     eo.eo_shutdown()
     util.lib_unload("eo")
 end
