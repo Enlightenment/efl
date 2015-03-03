@@ -2,7 +2,7 @@
 %bcond_with x
 
 Name:           efl
-Version:        1.12.2
+Version:        1.13.1
 Release:        0
 License:        LGPL-2.1
 Summary:        Enlightenment Foundation Libraries - set of libraries used (not only) by E17
@@ -484,7 +484,7 @@ Requires: ethumb = %{version}-%{release}
 %description -n ethumb-devel
 Development files for emotion
 
-
+############ Eolian
 %package -n eolian
 Summary: EO object parser and C code generator
 Group:    Graphics & UI Framework/Development
@@ -509,6 +509,51 @@ Requires: eolian = %{version}-%{release}
 
 %description -n eolian-examples
 Example files for eolian
+
+############ Elocation
+%package -n elocation
+Summary: EFL location library
+Requires: %{name}-data = %{version}-%{release}
+
+%description -n elocation
+Elocation is meant as a convenience library to ease application developers
+the usage of geo information in their apps. Adding a geo tag to a picture or
+translating an address to a GPS position and show it on a map widget are just
+some of the use cases.
+
+%package -n elocation-examples
+Summary:  Examples for the elocation package
+Group:    Graphics & UI Framework/Testing
+Requires: elocation = %{version}-%{release}
+
+%description -n elocation-examples
+Example files for elocation
+
+%package -n elocation-devel
+Summary: Development components for the elocation package
+Group:    Graphics & UI Framework/Development
+Requires: elocation = %{version}-%{release}
+
+%description -n elocation-devel
+Development files for elocation
+
+############ Elua
+%package -n elua
+Summary: EFL lua binding library
+Requires: %{name}-data = %{version}-%{release}
+
+%description -n elua
+The Elua library was created to ease integration of EFL Lua into other EFL
+libraries or applications. Using the Elua library you can easily create a
+Lua state that is fully set up for running EFL Lua bindings.
+
+%package -n elua-devel
+Summary: Development components for the elua package
+Group:    Graphics & UI Framework/Development
+Requires: elua = %{version}-%{release}
+
+%description -n elua-devel
+Development files for elua
 
 
 %prep
@@ -618,6 +663,12 @@ grep --silent ECORE_IMF_MODULE "$f" \
 %post -n ephysics -p /sbin/ldconfig
 %postun -n ephysics -p /sbin/ldconfig
 
+%post -n eolian -p /sbin/ldconfig
+%postun -n eolian -p /sbin/ldconfig
+
+%post -n elocation -p /sbin/ldconfig
+%postun -n elocation -p /sbin/ldconfig
+
 
 %files -n %{name}
 %manifest %{name}.manifest
@@ -667,6 +718,7 @@ grep --silent ECORE_IMF_MODULE "$f" \
 %manifest %{name}.manifest
 %{_bindir}/eet
 %{_bindir}/vieet
+%{_bindir}/diffeet
 
 %files -n eet-examples
 %manifest %{name}.manifest
@@ -985,22 +1037,32 @@ grep --silent ECORE_IMF_MODULE "$f" \
 %{_libdir}/cmake/EthumbClient/*.cmake
 
 %files -n ephysics
+%manifest %{name}.manifest
+%defattr(-,root,root,-)
 %{_libdir}/libephysics.so.*
 
 %files -n ephysics-devel
+%manifest %{name}.manifest
+%defattr(-,root,root,-)
 %{_libdir}/libephysics.so
 %{_libdir}/pkgconfig/ephysics.pc
 %{_includedir}/ephysics-1/EPhysics.h
 
 %files -n ephysics-examples
+%manifest %{name}.manifest
+%defattr(-,root,root,-)
 %{_datadir}/ephysics/examples/*
 
 
 %files -n eolian
+%manifest %{name}.manifest
+%defattr(-,root,root,-)
 %{_bindir}/eolian*
 %{_libdir}/libeolian.so.*
 
 %files -n eolian-devel
+%manifest %{name}.manifest
+%defattr(-,root,root,-)
 %{_includedir}/eolian-*1/*.h*
 %{_includedir}/eolian-*1/*/*.h*
 %{_datadir}/eolian/include/*/*.eo
@@ -1008,5 +1070,34 @@ grep --silent ECORE_IMF_MODULE "$f" \
 %{_libdir}/cmake/Eolian*/*.cmake
 
 %files -n eolian-examples
+%manifest %{name}.manifest
+%defattr(-,root,root,-)
 %{_datadir}/eolian_*/examples/*
+
+%files -n elocation
+%manifest %{name}.manifest
+%defattr(-,root,root,-)
+%{_libdir}/libelocation.so.*
+
+%files -n elocation-examples
+%manifest %{name}.manifest
+%defattr(-,root,root,-)
+%{_datadir}/elocation/examples/*
+
+%files -n elocation-devel
+%manifest %{name}.manifest
+%defattr(-,root,root,-)
+%{_includedir}/elocation-*1/*.h*
+%{_libdir}/pkgconfig/elocation.pc
+%{_libdir}/libelocation.so*
+
+%files -n elua
+%manifest %{name}.manifest
+%defattr(-,root,root,-)
+%{_datadir}/elua/checkme
+
+%files -n elua-devel
+%manifest %{name}.manifest
+%defattr(-,root,root,-)
+%{_libdir}/cmake/Elua*/*.cmake
 
