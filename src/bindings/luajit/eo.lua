@@ -131,22 +131,26 @@ local eo_classes = {}
 
 -- event system
 
-local callbacks = {}
+local eo_callbacks = {}
 
 local eo_event_del, eo_event_cb
 
-eo_event_del = ffi.cast("Eo_Event_Cb", function(data, obj, desc, einfo)
-end)
+local eo_event_del_fun = function(data, obj, desc, einfo)
+    local addr = eo_obj_addr_get(obj)
+    if  eo_callbacks[addr] then
+        eo_callbacks[addr] = nil
+    end
+end
 
-eo_event_cb = ffi.cast("Eo_Event_Cb", function(data, obj, desc, einfo)
+local eo_event_cb_fun = function(data, obj, desc, einfo)
     local  addr = eo_obj_addr_get(obj)
-    local  cbs  = callbacks[addr]
+    local  cbs  = eo_callbacks[addr]
     assert(cbs)
     local cidx = tonumber(ffi.cast("intptr_t", cbs))
     local fun  = cbs[cidx]
     assert(fun)
     return fun() ~= false
-end)
+end
 
 local connect = function(self, ename, func, priority)
     local ev = self.__events[ename]
@@ -156,10 +160,10 @@ local connect = function(self, ename, func, priority)
     local cl = eo_classes["Eo_Base"]
     -- add the callback to the respective array
     local addr = eo_obj_addr_get(self)
-    local  cbs = callbacks[addr]
+    local  cbs = eo_callbacks[addr]
     if not cbs then
         cbs = {}
-        callbacks[addr] = cbs
+        eo_callbacks[addr] = cbs
     end
     local cidx = #cbs + 1
     cbs[cidx] = func
@@ -178,7 +182,7 @@ local disconnect = function(self, ename, func)
     local cl = eo_classes["Eo_Base"]
     -- like connect, but the other way around
     local addr = eo_obj_addr_get(self)
-    local  cbs = callbacks[addr]
+    local  cbs = eo_callbacks[addr]
     if not cbs then
         return false
     end
@@ -214,11 +218,18 @@ local init = function()
     classes[addr] = classes["Eo_Base"]
     eo_classes["Eo_Base"] = eocl
     eo_classes[addr] = eocl
+    eo_event_del = ffi.cast("Eo_Event_Cb", eo_event_del_fun)
+    eo_event_cb  = ffi.cast("Eo_Event_Cb", eo_event_cb_fun)
 end
 
 local shutdown = function()
     classes, eo_classes = {}, {}
     eo.eo_shutdown()
+    eo_event_del:free()
+    eo_event_cb:free()
+    eo_event_del = nil
+    eo_event_cb  = nil
+    eo_callbacks = {}
     util.lib_unload("eo")
 end
 
