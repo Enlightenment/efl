@@ -1255,9 +1255,25 @@ _elm_win_state_change(Ecore_Evas *ee)
    if (ch_fullscreen)
      {
         if (sd->fullscreen)
-          evas_object_smart_callback_call(obj, SIG_FULLSCREEN, NULL);
+          {
+             int w, h;
+
+             evas_object_smart_callback_call(obj, SIG_FULLSCREEN, NULL);
+             if (sd->frame_obj)
+               evas_object_hide(sd->frame_obj);
+             evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
+             ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
+             ecore_evas_resize(sd->ee, w, h);
+          }
         else
-          evas_object_smart_callback_call(obj, SIG_UNFULLSCREEN, NULL);
+          {
+             evas_object_smart_callback_call(obj, SIG_UNFULLSCREEN, NULL);
+             if (sd->frame_obj)
+               {
+                  evas_object_show(sd->frame_obj);
+                  _elm_win_frame_obj_update(sd);
+               }
+          }
      }
    if (ch_maximized)
      {
