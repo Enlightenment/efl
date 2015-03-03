@@ -133,15 +133,7 @@ local eo_classes = {}
 
 local callbacks = {}
 
-local eo_event_cb_add, eo_event_cb_del, eo_event_del, eo_event_cb
-
-eo_event_cb_add = ffi.cast("Eo_Event_Cb", function(data, obj, desc, einfo)
-    local acb = ffi.cast("Eo_Callback_Array_Item *", data)
-end)
-
-eo_event_cb_del = ffi.cast("Eo_Event_Cb", function(data, obj, desc, einfo)
-    local dcb = ffi.cast("Eo_Callback_Array_Item *", data)
-end)
+local eo_event_del, eo_event_cb
 
 eo_event_del = ffi.cast("Eo_Event_Cb", function(data, obj, desc, einfo)
 end)
@@ -159,10 +151,9 @@ end)
 local connect = function(self, ename, func, priority)
     local ev = self.__events[ename]
     if not ev then
-        error("invalid event '" .. ename .. "'", 2)
+        return false, "attempt to connect an invalid event '" .. ename .. "'"
     end
     local cl = eo_classes["Eo_Base"]
-    M.__do_start(self, cl)
     -- add the callback to the respective array
     local addr = eo_obj_addr_get(self)
     local  cbs = callbacks[addr]
@@ -172,13 +163,41 @@ local connect = function(self, ename, func, priority)
     end
     local cidx = #cbs + 1
     cbs[cidx] = func
+    M.__do_start(self, cl)
     eo.eo_event_callback_priority_add(ev, priority or 0,
         eo_event_cb, ffi.cast("void *", cidx))
     M.__do_end()
+    return true
 end
 
 local disconnect = function(self, ename, func)
-    -- TODO: implement
+    local ev = self.__events[ename]
+    if not ev then
+        return false, "attempt to disconnect an invalid event '" .. ename .. "'"
+    end
+    local cl = eo_classes["Eo_Base"]
+    -- like connect, but the other way around
+    local addr = eo_obj_addr_get(self)
+    local  cbs = callbacks[addr]
+    if not cbs then
+        return false
+    end
+    -- TODO: make a hash table for func-to-index conversions
+    local cidx = -1
+    for i = 1, #cbs do
+        if cbs[i] == func then
+            cidx = i
+            break
+        end
+    end
+    if cidx < 0 then
+        return false
+    end
+    cbs[cidx] = nil
+    M.__do_start(self, cl)
+    eo.eo_event_callback_del(ev, eo_event_cb, ffi.cast("void *", cidx))
+    M.__do_end()
+    return true
 end
 
 local init = function()
