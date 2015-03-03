@@ -261,34 +261,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
          }
       }
 
-      vertex_count_set {
-         /*@
-           Set the vertex count of the given mesh.
-
-           Each key frame should have same vertex count to be properly interpolated.
-           Key frames have their own vertex data and the data should have more vertices
-           than the mesh's vertex count.
-
-           Default vertex count is 0.
-
-           @ingroup Evas_3D_Mesh
-          */
-         params {
-            @in uint count; /*@ Vertex count.*/
-         }
-      }
-
-      vertex_count_get @const {
-         /*@
-           Get the vertex count of the given mesh.
-
-           @see evas_3d_mesh_vertex_count_set()
-
-           @ingroup Evas_3D_Mesh
-          */
-          return: int;
-      }
-
       fog_color_set {
          /*
            Set the fog color and density for the given mesh.
@@ -334,45 +306,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
             @out Evas_3D_Blend_Func dfactor; /*@ Pointer to receive destination blendin factors key.*/
          }
       }
-      fog_enable_set {
-         /*
-           Enable or disable fog effect for given mesh.
-           @ingroup Evas_3D_Mesh
-          */
-         params {
-            @in bool enabled; /*@ The red component of the fog color.*/
-         }
-      }
-      fog_enable_get {
-         /*
-           Get fog effect status for the given mesh.
-           @ingroup Evas_3D_Mesh
-          */
-         return: bool;
-         params {
-         }
-      }
-      color_pick_enable_get @const {
-         /*
-           Get status of color picking of the mesh.
-
-           @ingroup Evas_3D_Mesh
-          */
-         return: bool;
-         params {
-         }
-      }
-      color_pick_enable_set {
-         /*
-           Set posibility color picking.
-
-           @ingroup Evas_3D_Mesh
-          */
-         return: bool;
-         params {
-            @in bool _enabled;  /*@ Posibility flag */
-         }
-      }
    }
    properties {
       shade_mode {
@@ -396,6 +329,77 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
          }
          values {
             Evas_3D_Shade_Mode mode; /*@ The shade mode.*/
+         }
+      }
+      color_pick_enable {
+        set {
+            /**
+             * Set posibility color picking.
+             *
+             * @ingroup Evas_3D_Mesh
+             */
+         }
+         get {
+             /**
+              * Get status of color picking of the mesh.
+              *
+              * @see color_pick_enable_set()
+              *
+              * @ingroup Evas_3D_Mesh
+              */
+         }
+         values {
+            Eina_Bool enabled; /*@ Posibility flag */
+         }
+      }
+      vertex_count {
+        set {
+              /**
+               * Set the vertex count of the given mesh.
+               *
+               * Each key frame should have same vertex count to be properly interpolated.
+               * Key frames have their own vertex data and the data should have more vertices
+               * than the mesh's vertex count.
+
+               * Default vertex count is 0.
+
+               * @ingroup Evas_3D_Mesh
+               */
+         }
+         get {
+               /**
+               * Get the vertex count of the given mesh.
+               *
+               * @see evas_3d_mesh_vertex_count_set()
+               *
+               * @ingroup Evas_3D_Mesh
+               */
+         }
+         values {
+            uint count; /*@ Vertex count.*/
+         }
+      }
+      fog_enable {
+        set {
+            /**
+             * Enable or disable fog effect for given mesh.
+             *
+             * Default fog is disabled.
+             *
+             * @ingroup Evas_3D_Mesh
+             */
+         }
+         get {
+             /**
+              * Get the enable status of fog effect for given mesh
+              *
+              * @see fog_enable_set()
+              *
+              * @ingroup Evas_3D_Mesh
+              */
+         }
+         values {
+            Eina_Bool enabled; /*@ Fog enabled status.*/
          }
       }
       blending_enable {

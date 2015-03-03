@@ -286,7 +286,7 @@ _evas_3d_mesh_vertex_count_set(Eo *obj, Evas_3D_Mesh_Data *pd, unsigned int coun
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_VERTEX_COUNT, NULL));
 }
 
-EOLIAN static int
+EOLIAN static unsigned int
 _evas_3d_mesh_vertex_count_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 {
    return pd->vertex_count;
@@ -970,13 +970,12 @@ _evas_3d_mesh_color_pick_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 {
    return pd->color_pick_enabled;
 }
-EOLIAN static Eina_Bool
-_evas_3d_mesh_color_pick_enable_set(Eo *obj, Evas_3D_Mesh_Data *pd, Eina_Bool _enabled)
+EOLIAN static void
+_evas_3d_mesh_color_pick_enable_set(Eo *obj, Evas_3D_Mesh_Data *pd, Eina_Bool enabled)
 {
-   if (pd->color_pick_enabled != _enabled)
-     pd->color_pick_enabled = _enabled;
+   if (pd->color_pick_enabled != enabled)
+     pd->color_pick_enabled = enabled;
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_COLOR_PICK, NULL));
-   return EINA_TRUE;
 }
 
 #include "canvas/evas_3d_mesh.eo.c"
