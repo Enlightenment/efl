@@ -318,6 +318,8 @@ M.__ctor_common = function(klass, parent, ctor, loff, ...)
         ret = eo.eo_finalize()
         eo._eo_do_end(nil)
     end
+    eo.eo_event_callback_priority_add(eo._EO_BASE_EVENT_DEL, 0, eo_event_del,
+        nil)
     ffi.gc(ret, obj_gccb)
     return ret
 end
