@@ -117,18 +117,14 @@
    NSPoint event_location = [event locationInWindow];
    NSPoint pt = [view convertPoint:event_location fromView:nil];
 
-   int w = [view frame].size.width;
    int h = [view frame].size.height;
    int x = pt.x;
    int y = h - pt.y;
 
-   if (y <= 0 || x <= 0 || y > h || x > w)
-     return;
-
    Ecore_Event_Mouse_Button * ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
    if (!ev) return;
 
-   ev->x = pt.x;
+   ev->x = x;
    ev->y = y;
    ev->root.x = ev->x;
    ev->root.y = ev->y;
@@ -174,18 +170,14 @@
    NSPoint event_location = [event locationInWindow];
    NSPoint pt = [view convertPoint:event_location fromView:nil];
 
-   int w = [view frame].size.width;
    int h = [view frame].size.height;
    int x = pt.x;
    int y = h - pt.y;
 
-   if (y <= 0 || x <= 0 || y > h || x > w)
-     return;
-
    Ecore_Event_Mouse_Button * ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
    if (!ev) return;
 
-   ev->x = pt.x;
+   ev->x = x;
    ev->y = y;
    ev->root.x = ev->x;
    ev->root.y = ev->y;
