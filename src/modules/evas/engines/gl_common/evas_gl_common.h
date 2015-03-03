@@ -623,6 +623,7 @@ struct _Evas_GL_Image
    unsigned char    alpha : 1;
    unsigned char    tex_only : 1;
    unsigned char    locked : 1; // gl_surface_lock/unlock
+   unsigned char    direct : 1; // evas gl direct renderable
 };
 
 struct _Evas_GL_Font_Texture

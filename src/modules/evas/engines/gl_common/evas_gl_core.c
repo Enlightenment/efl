@@ -1690,8 +1690,16 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
 
    if (sfc->direct_fb_opt)
      {
-        eina_hash_add(evgl_engine->direct_surfaces, &sfc->color_buf, sfc);
-        DBG("Added tex %d as direct surface: %p", sfc->color_buf, sfc);
+        if (!sfc->gles1_indirect)
+          {
+             eina_hash_add(evgl_engine->direct_surfaces, &sfc->color_buf, sfc);
+             DBG("Added tex %d as direct surface: %p", sfc->color_buf, sfc);
+          }
+        else
+          {
+             eina_hash_add(evgl_engine->direct_surfaces, &sfc->gles1_sfc_native, sfc);
+             DBG("Added tex %d as direct surface: %p", sfc->gles1_sfc_native, sfc);
+          }
      }
 
    if (sfc->direct_fb_opt &&
@@ -2362,7 +2370,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
         if (dbg) DBG("Surface sfc %p is a normal surface.", sfc);
 
         // Attach fbo and the buffers
-        if ((ctx->current_sfc != sfc) || (ctx != sfc->current_ctx))
+        if ((rsc->current_ctx != ctx) || (ctx->current_sfc != sfc) || (rsc->direct.rendered))
           {
              sfc->current_ctx = ctx;
              if ((evgl_engine->direct_mem_opt) && (evgl_engine->direct_override))
@@ -2469,17 +2477,24 @@ evgl_native_surface_get(EVGL_Surface *sfc, Evas_Native_Surface *ns)
         return 0;
      }
 
-   ns->type = EVAS_NATIVE_SURFACE_OPENGL;
-   ns->version = EVAS_NATIVE_SURFACE_VERSION;
-   ns->data.opengl.texture_id = sfc->color_buf;
-   ns->data.opengl.framebuffer_id = sfc->color_buf;
-   ns->data.opengl.x = 0;
-   ns->data.opengl.y = 0;
-   ns->data.opengl.w = sfc->w;
-   ns->data.opengl.h = sfc->h;
-
-   if (sfc->direct_fb_opt)
-      ns->data.opengl.framebuffer_id = 0;
+   if (!sfc->gles1_indirect)
+     {
+        ns->type = EVAS_NATIVE_SURFACE_OPENGL;
+        ns->version = EVAS_NATIVE_SURFACE_VERSION;
+        ns->data.opengl.texture_id = sfc->color_buf;
+        ns->data.opengl.framebuffer_id = sfc->color_buf;
+        ns->data.opengl.x = 0;
+        ns->data.opengl.y = 0;
+        ns->data.opengl.w = sfc->w;
+        ns->data.opengl.h = sfc->h;
+     }
+   else
+     {
+        ns->type = EVAS_NATIVE_SURFACE_X11;
+        ns->version = EVAS_NATIVE_SURFACE_VERSION;
+        ns->data.x11.pixmap = (unsigned long)(intptr_t)sfc->gles1_sfc_native;
+        ns->data.x11.visual = sfc->gles1_sfc_visual;
+     }
 
    return 1;
 }
@@ -2503,24 +2518,42 @@ Eina_Bool
 evgl_native_surface_direct_opts_get(Evas_Native_Surface *ns,
                                     Eina_Bool *direct_render,
                                     Eina_Bool *client_side_rotation,
-                                    Eina_Bool *override)
+                                    Eina_Bool *direct_override)
 {
    EVGL_Surface *sfc;
 
-   if (override) *override = EINA_FALSE;
    if (direct_render) *direct_render = EINA_FALSE;
+   if (direct_override) *direct_override = EINA_FALSE;
    if (client_side_rotation) *client_side_rotation = EINA_FALSE;
 
    if (!evgl_engine) return EINA_FALSE;
-   if (!ns || (ns->type != EVAS_NATIVE_SURFACE_OPENGL)) return EINA_FALSE;
-   if (ns->data.opengl.framebuffer_id != 0) return EINA_FALSE;
-   if (ns->data.opengl.texture_id == 0) return EINA_FALSE;
+   if (!ns) return EINA_FALSE;
 
-   sfc = eina_hash_find(evgl_engine->direct_surfaces, &ns->data.opengl.texture_id);
-   if (!sfc)
+   if (ns->type == EVAS_NATIVE_SURFACE_OPENGL &&
+       ns->data.opengl.texture_id)
      {
-        DBG("Native surface %p (color_buf %d) was not found.",
-            ns, ns->data.opengl.texture_id);
+        sfc = eina_hash_find(evgl_engine->direct_surfaces, &ns->data.opengl.texture_id);
+        if (!sfc)
+          {
+             DBG("Native surface %p (color_buf %d) was not found.",
+                 ns, ns->data.opengl.texture_id);
+             return EINA_FALSE;
+          }
+     }
+   else if (ns->type == EVAS_NATIVE_SURFACE_X11 &&
+            ns->data.x11.pixmap)
+     {
+        sfc = eina_hash_find(evgl_engine->direct_surfaces, &ns->data.x11.pixmap);
+        if (!sfc)
+          {
+             DBG("Native surface %p (pixmap %x) was not found.",
+                 ns, ns->data.x11.pixmap);
+             return EINA_FALSE;
+          }
+     }
+   else
+     {
+        ERR("Only EVAS_NATIVE_SURFACE_OPENGL or EVAS_NATIVE_SURFACE_X11 can be used for direct rendering");
         return EINA_FALSE;
      }
 
@@ -2532,7 +2565,7 @@ evgl_native_surface_direct_opts_get(Evas_Native_Surface *ns,
      }
 
    if (direct_render) *direct_render = sfc->direct_fb_opt;
-   if (override) *override |= sfc->direct_override;
+   if (direct_override) *direct_override |= sfc->direct_override;
    if (client_side_rotation) *client_side_rotation = sfc->client_side_rotation;
    return EINA_TRUE;
 }

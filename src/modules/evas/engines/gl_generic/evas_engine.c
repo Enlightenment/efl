@@ -28,6 +28,8 @@
 
 static int _evas_engine_GL_log_dom = -1;
 
+static int eng_gl_image_direct_get(void *data EINA_UNUSED, void *image);
+
 static void
 eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h, Eina_Bool do_async EINA_UNUSED)
 {
@@ -817,10 +819,10 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
    gl_context = re->window_gl_context_get(re->software.ob);
    re->window_use(re->software.ob);
 
-   if ((n) && (n->type == EVAS_NATIVE_SURFACE_OPENGL) &&
-       (n->data.opengl.framebuffer_id == 0) &&
-       re->func.get_pixels)
+   if (eng_gl_image_direct_get(data, image))
      {
+        unsigned int texid;
+
         gl_context->dc = context;
         if ((gl_context->master_clip.enabled) &&
             (gl_context->master_clip.w > 0) &&
@@ -828,6 +830,16 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
           {
              // Pass the preserve flag info the evas_gl
              evgl_direct_partial_info_set(gl_context->preserve_bit);
+          }
+
+        if (n->type == EVAS_NATIVE_SURFACE_OPENGL)
+          texid = n->data.opengl.texture_id;
+        else if (n->type == EVAS_NATIVE_SURFACE_X11)
+          texid = n->data.x11.pixmap;
+        else
+          {
+             ERR("This native surface type is not supported for direct rendering");
+             return EINA_FALSE;
           }
 
         // Set necessary info for direct rendering
@@ -839,7 +851,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
                              gl_context->dc->clip.y,
                              gl_context->dc->clip.w,
                              gl_context->dc->clip.h,
-                             n->data.opengl.texture_id);
+                             texid);
 
         // Call pixel get function
         re->func.get_pixels(re->func.get_pixels_data, re->func.obj);
@@ -1533,6 +1545,27 @@ eng_gl_surface_query(void *data, void *surface, int attr, void *value)
 #endif
 }
 
+static int
+eng_gl_image_direct_get(void *data EINA_UNUSED, void *image)
+{
+   Evas_GL_Image *im = image;
+   if (!im) return EINA_FALSE;
+   return im->direct;
+}
+
+static void
+eng_gl_image_direct_set(void *data, void *image, Eina_Bool direct)
+{
+   Render_Engine_GL_Generic *re = data;
+   Evas_GL_Image *im = image;
+
+   if (!im) return;
+   if (im->native.data && direct && re && re->func.get_pixels)
+     im->direct = EINA_TRUE;
+   else
+     im->direct = EINA_FALSE;
+}
+
 //--------------------------------//
 
 static int
@@ -2114,6 +2147,8 @@ module_open(Evas_Module *em)
    // gl_current_context_get is in engine
    ORD(gl_current_surface_get);
    ORD(gl_rotation_angle_get);
+   ORD(gl_image_direct_get);
+   ORD(gl_image_direct_set);
 
    ORD(image_load_error_get);
 
