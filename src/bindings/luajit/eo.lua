@@ -109,6 +109,7 @@ ffi.cdef [[
 
     extern const Eo_Event_Description _EO_BASE_EVENT_CALLBACK_ADD;
     extern const Eo_Event_Description _EO_BASE_EVENT_CALLBACK_DEL;
+    extern const Eo_Event_Description _EO_BASE_EVENT_DEL;
 ]]
 
 local addr_d = ffi.typeof("union { double d; const Eo_Class *p; }")
@@ -127,6 +128,26 @@ local eo
 
 local classes = {}
 local eo_classes = {}
+
+-- event system
+
+local callbacks = {}
+
+local eo_event_cb_add, eo_event_cb_del, eo_event_del, eo_event_cb
+
+eo_event_cb_add = ffi.cast("Eo_Event_Cb", function(data, obj, desc, einfo)
+    local acb = ffi.cast("Eo_Callback_Array_Item *", data)
+end)
+
+eo_event_cb_del = ffi.cast("Eo_Event_Cb", function(data, obj, desc, einfo)
+    local dcb = ffi.cast("Eo_Callback_Array_Item *", data)
+end)
+
+eo_event_del = ffi.cast("Eo_Event_Cb", function(data, obj, desc, einfo)
+end)
+
+eo_event_cb = ffi.cast("Eo_Event_Cb", function(data, obj, desc, einfo)
+end)
 
 local connect = function(self, ename, func, priority)
     local ev = self.__events[ename]
