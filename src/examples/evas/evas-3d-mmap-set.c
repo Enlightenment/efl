@@ -79,7 +79,7 @@ static float md2_animation_parameter = 0.0;
 static float obj_animation_velocity = 1.0;
 static float ply_animation_velocity = 1.0;
 static float eet_animation_velocity = 1.0;
-static float md2_animation_velocity = 32.0;
+static float md2_animation_velocity = 1.0;
 
 static const float initial_node_data[] =
  /*position              scale                 rotation*/
@@ -101,7 +101,7 @@ _animate_obj(void *data)
    float oap = obj_animation_parameter/200;
 
    eo_do((Evas_3D_Node *)data,
-         evas_3d_node_scale_set(oap, oap, pow(obj_animation_parameter, 2) / 2000),
+         evas_3d_node_scale_set(oap, oap, oap),
          evas_3d_node_orientation_angle_axis_set(obj_animation_parameter, 0.0, 1.0, 0.0));
 
    if (obj_animation_parameter >= 360.0 || obj_animation_parameter <= 0.0)
@@ -143,7 +143,8 @@ _animate_md2(void *data)
    eo_do((Evas_3D_Node *)data,
          evas_3d_node_mesh_frame_set(mesh_md2, md2_animation_parameter));
 
-   if (md2_animation_parameter > 256 * 100) md2_animation_parameter = 0;
+   if (md2_animation_parameter >= 360.0 || md2_animation_parameter <= 0.0)
+     md2_animation_velocity *= -1.0;
 
    return EINA_TRUE;
 }
