@@ -300,6 +300,8 @@ _app_open(const char *package)
         const char *app_package = NULL;
 
         eo_do(app, app_package = elm_app_client_package_get());
+        if (!app_package)
+          return;
         if (!strcmp(package, app_package))
           return;
      }
