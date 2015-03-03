@@ -840,10 +840,20 @@ _elm_genlist_elm_layout_sizing_eval(Eo *obj, Elm_Genlist_Data *sd)
         minw = vmw;
         minh = vmh;
      }
-   else if (sd->mode == ELM_LIST_LIMIT)
+
+   if (sd->scr_minw)
      {
         maxw = -1;
         minw = vmw + sd->realminw;
+     }
+   else
+     {
+         minw = vmw;
+     }
+   if (sd->scr_minh)
+     {
+        maxh = -1;
+        minh = vmh + sd->minh;
      }
    else
      {
@@ -851,8 +861,28 @@ _elm_genlist_elm_layout_sizing_eval(Eo *obj, Elm_Genlist_Data *sd)
         minh = vmh;
      }
 
+   if ((maxw > 0) && (minw > maxw))
+     minw = maxw;
+   if ((maxh > 0) && (minh > maxh))
+     minh = maxh;
+
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
+}
+
+static void
+_content_min_limit_cb(Evas_Object *obj,
+                      Eina_Bool w,
+                      Eina_Bool h)
+{
+   ELM_GENLIST_DATA_GET(obj, sd);
+
+   if ((sd->mode == ELM_LIST_LIMIT) ||
+       (sd->mode == ELM_LIST_EXPAND)) return;
+   sd->scr_minw = !!w;
+   sd->scr_minh = !!h;
+
+   elm_layout_sizing_eval(obj);
 }
 
 static void
@@ -5387,7 +5417,8 @@ _elm_genlist_evas_object_smart_add(Eo *obj, Elm_Genlist_Data *priv)
          elm_interface_scrollable_vbar_unpress_cb_set(_vbar_unpress_cb),
          elm_interface_scrollable_hbar_drag_cb_set(_hbar_drag_cb),
          elm_interface_scrollable_hbar_press_cb_set(_hbar_press_cb),
-         elm_interface_scrollable_hbar_unpress_cb_set(_hbar_unpress_cb));
+         elm_interface_scrollable_hbar_unpress_cb_set(_hbar_unpress_cb),
+         elm_interface_scrollable_content_min_limit_cb_set(_content_min_limit_cb));
 
    priv->mode = ELM_LIST_SCROLL;
    priv->max_items_per_block = MAX_ITEMS_PER_BLOCK;
@@ -7076,6 +7107,23 @@ _elm_genlist_mode_set(Eo *obj, Elm_Genlist_Data *sd, Elm_List_Mode mode)
 {
    if (sd->mode == mode) return;
    sd->mode = mode;
+
+   if (sd->mode == ELM_LIST_LIMIT)
+     {
+        sd->scr_minw = EINA_TRUE;
+        sd->scr_minh = EINA_FALSE;
+     }
+   else if (sd->mode == ELM_LIST_EXPAND)
+     {
+        sd->scr_minw = EINA_TRUE;
+        sd->scr_minh = EINA_TRUE;
+     }
+   else
+     {
+        sd->scr_minw = EINA_FALSE;
+        sd->scr_minh = EINA_FALSE;
+     }
+
    elm_layout_sizing_eval(obj);
 }
 

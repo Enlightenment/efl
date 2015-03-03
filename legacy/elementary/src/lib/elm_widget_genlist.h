@@ -60,6 +60,12 @@ struct _Elm_Genlist_Data
    int                                   item_width, item_height;
    int                                   group_item_width, group_item_height;
    int                                   minw, minh;
+   Eina_Bool                             scr_minw : 1; /* a flag for determining
+                                                        * minimum width to limit
+                                                        * as their content size */
+   Eina_Bool                             scr_minh : 1; /* a flag for determining
+                                                        * minimum height to limit
+                                                        * as their content size */
    unsigned int                          item_count;
    Evas_Coord                            pan_x, pan_y;
    Elm_Object_Select_Mode                select_mode;
