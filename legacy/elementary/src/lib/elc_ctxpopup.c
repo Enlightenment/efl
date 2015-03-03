@@ -670,6 +670,8 @@ _elm_ctxpopup_elm_layout_sizing_eval(Eo *obj, Elm_Ctxpopup_Data *sd)
    evas_object_move(wd->resize_obj, rect.x, rect.y);
    evas_object_resize(wd->resize_obj, rect.w, rect.h);
 
+   evas_object_resize(obj, rect.w, rect.h);
+
    _show_signals_emit(obj, sd->dir);
 }
 
