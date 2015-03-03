@@ -2986,10 +2986,10 @@ _edje_object_parts_extends_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *x, Ev
 EOLIAN void
 _edje_object_size_min_restricted_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh)
 {
-   Evas_Coord pw, ph;
-   int maxw, maxh;
-   int okw, okh;
-   int reset_maxwh;
+   Evas_Coord orig_w, orig_h; //original edje size
+   int max_over_w, max_over_h;  //maximum over-calculated size.
+   Eina_Bool repeat_w, repeat_h;
+   Eina_Bool reset_max = EINA_TRUE;
    Edje_Real_Part *pep = NULL;
    Eina_Bool has_non_fixed_tb = EINA_FALSE;
 
@@ -2999,100 +2999,111 @@ _edje_object_size_min_restricted_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord 
         if (minh) *minh = restrictedh;
         return;
      }
-   reset_maxwh = 1;
-   ed->calc_only = EINA_TRUE;
-   pw = ed->w;
-   ph = ed->h;
 
-   again:
+   //Simulate object minimum size.
+   ed->calc_only = EINA_TRUE;
+
+   orig_w = ed->w;
+   orig_h = ed->h;
+
+again:
+   //restrict minimum size to
    ed->w = restrictedw;
    ed->h = restrictedh;
 
-   maxw = 0;
-   maxh = 0;
+   max_over_w = 0;
+   max_over_h = 0;
 
    do
      {
         unsigned int i;
 
-        okw = okh = 0;
+        repeat_w = EINA_FALSE;
+        repeat_h = EINA_FALSE;
         ed->dirty = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
         ed->all_part_change = EINA_TRUE;
 #endif
         _edje_recalc_do(ed);
-        if (reset_maxwh)
+
+        if (reset_max)
           {
-             maxw = 0;
-             maxh = 0;
+             max_over_w = 0;
+             max_over_h = 0;
           }
+
         pep = NULL;
         has_non_fixed_tb = EINA_FALSE;
+
+        //for parts
         for (i = 0; i < ed->table_parts_size; i++)
           {
-             Edje_Real_Part *ep;
-             int w, h;
-             int didw;
+             Edje_Real_Part *ep = ed->table_parts[i];
 
-             ep = ed->table_parts[i];
-             w = ep->w - ep->req.w;
-             h = ep->h - ep->req.h;
-             didw = 0;
-             if (ep->chosen_description)
+             if (!ep->chosen_description) continue;
+
+             //diff, how much it's over-sized.
+             int over_w = (ep->w - ep->req.w);
+             int over_h = (ep->h - ep->req.h);
+
+             Eina_Bool skip_h = EINA_FALSE;
+
+             //width
+             if (!ep->chosen_description->fixed.w)
                {
-                  if (!ep->chosen_description->fixed.w)
+                  //We care textblock width size specially.
+                  if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
                     {
-                       if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
-                         {
-                            Evas_Coord tb_mw;
-                            evas_object_textblock_size_formatted_get(ep->object,
-                                                                     &tb_mw, NULL);
-                            tb_mw -= ep->req.w;
-                            if (tb_mw > w)
-                              {
-                                 w = tb_mw;
-                              }
-                            has_non_fixed_tb = EINA_TRUE;
-                         }
-                       if (w > maxw)
-                         {
-                            maxw = w;
-                            okw = 1;
-                            pep = ep;
-                            didw = 1;
-                         }
+                       Evas_Coord tb_mw;
+                       evas_object_textblock_size_formatted_get(ep->object,
+                                                                &tb_mw, NULL);
+                       tb_mw -= ep->req.w;
+                       if (tb_mw > over_w) over_w = tb_mw;
+                       has_non_fixed_tb = EINA_TRUE;
                     }
-                  if (!ep->chosen_description->fixed.h)
-                    {
-                       if (!((ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) &&
-                             (!((Edje_Part_Description_Text *)ep->chosen_description)->text.min_x) &&
-                             (didw)))
-                         {
-                            if (h > maxh)
-                              {
-                                 maxh = h;
-                                 okh = 1;
-                                 pep = ep;
-                              }
-                         }
 
-                       if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
-                         {
-                            has_non_fixed_tb = EINA_TRUE;
-                         }
+                  if (over_w > max_over_w)
+                    {
+                       max_over_w = over_w;
+                       repeat_w = EINA_TRUE;
+                       pep = ep;
+                       skip_h = EINA_TRUE;
                     }
                }
+             //height
+             if (!ep->chosen_description->fixed.h)
+               {
+                  if ((ep->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
+                     ((Edje_Part_Description_Text *)ep->chosen_description)->text.min_x ||
+                     !skip_h)
+                    {
+                       if (over_h > max_over_h)
+                         {
+                            max_over_h = over_h;
+                            repeat_h = EINA_TRUE;
+                            pep = ep;
+                         }
+                    }
+
+                  if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+                    has_non_fixed_tb = EINA_TRUE;
+               }
           }
-        if (okw)
+        if (repeat_w)
           {
-             ed->w += maxw;
+             ed->w += max_over_w;
+
+             //exceptional handling.
              if (ed->w < restrictedw) ed->w = restrictedw;
           }
-        if (okh)
+        if (repeat_h)
           {
-             ed->h += maxh;
+             ed->h += max_over_h;
+
+             //exceptional handling.
              if (ed->h < restrictedh) ed->h = restrictedh;
           }
+
         if ((ed->w > 4000) || (ed->h > 4000))
           {
              /* Only print it if we have a non-fixed textblock.
@@ -3108,22 +3119,23 @@ _edje_object_size_min_restricted_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord 
                         ed->path, ed->group, ed->w, ed->h);
                }
 
-             if (reset_maxwh)
+             if (reset_max)
                {
-                  reset_maxwh = 0;
+                  reset_max = EINA_FALSE;
                   goto again;
                }
           }
      }
-   while (okw || okh);
+   while (repeat_w || repeat_h);
+
    ed->min.w = ed->w;
    ed->min.h = ed->h;
 
    if (minw) *minw = ed->min.w;
    if (minh) *minh = ed->min.h;
 
-   ed->w = pw;
-   ed->h = ph;
+   ed->w = orig_w;
+   ed->h = orig_h;
    ed->dirty = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
    ed->all_part_change = EINA_TRUE;
