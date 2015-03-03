@@ -28,7 +28,7 @@
 #define  WIDTH          400
 #define  HEIGHT         400
 
-static const char *earth_image = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/EarthDiffuse.png";
+static const char *earth_image = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/wood.jpg";
 
 typedef struct _vec4
 {

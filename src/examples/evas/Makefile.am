@@ -232,11 +232,6 @@ evas_3d_frustum_SOURCES = evas-3d-frustum.c
 evas_3d_frustum_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_frustum_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
-EXTRA_PROGRAMS += evas_3d_moon_space
-evas_3d_moon_space_SOURCES = evas-3d-moon-space.c
-evas_3d_moon_space_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
-evas_3d_moon_space_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
-
 EXTRA_PROGRAMS += evas_3d_aabb
 evas_3d_aabb_SOURCES = evas-3d-aabb.c
 evas_3d_aabb_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
@@ -336,12 +331,9 @@ resources/images/enlightenment.png \
 resources/images/red.png \
 resources/images/im1.png \
 resources/images/cube1.png \
-resources/images/bg_space.jpg \
 resources/images/eagle.png \
-resources/images/EarthDiffuse.png \
 resources/images/M15.png \
 resources/images/M15_1.png \
-resources/images/moon.png \
 resources/images/normal_lego.png \
 resources/images/sonic.png \
 resources/images/sweet_home_reversed.png \
