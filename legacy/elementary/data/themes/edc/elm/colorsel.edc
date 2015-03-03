@@ -127,6 +127,133 @@ group { name: "elm/colorselector/palette/default";
    }
 }
 
+group { name: "elm/colorselector/picker/base/default";
+   parts {
+      part { name: "elm.swallow.picker"; type: SWALLOW;
+         description { state: "default" 0.0;
+            min: 90 90;
+            rel2 {
+               relative: 0.0 1.0;
+               to_x: "elm.label.red";
+            }
+         }
+      }
+      part { name: "elm.label.red"; type: TEXT;
+         description { state: "default" 0.0;
+            align: 1.0 0.0;
+            min: 15 0;
+            max: 15 -1;
+            rel2 {
+               relative: 0.0 1.0;
+               to: "elm.swallow.red";
+            }
+            text {
+               font: "Sans";
+               size: 10;
+               ellipsis: -1;
+            }
+         }
+      }
+      part { name: "elm.swallow.red"; type: SWALLOW;
+         description { state: "default" 0.0;
+            align: 1.0 0.0;
+            min: 60 20;
+            max: 60 20;
+         }
+      }
+      part { name: "elm.label.green"; type: TEXT;
+         description { state: "default" 0.0;
+            min: 15 0;
+            max: 15 -1;
+            rel1 {
+               relative: 0.0 1.0;
+               to: "elm.label.red";
+            }
+            rel2 {
+               relative: 0.0 1.0;
+               to: "elm.swallow.green";
+            }
+            text {
+               font: "Sans";
+               size: 10;
+               ellipsis: -1;
+            }
+         }
+      }
+      part { name: "elm.swallow.green"; type: SWALLOW;
+         description { state: "default" 0.0;
+            align: 1.0 0.0;
+            min: 60 20;
+            max: 60 20;
+            rel1 {
+               relative: 0.0 1.0;
+               to: "elm.swallow.red";
+            }
+         }
+      }
+      part { name: "elm.label.blue"; type: TEXT;
+         description { state: "default" 0.0;
+            min: 15 0;
+            max: 15 -1;
+            rel1 {
+               relative: 0.0 1.0;
+               to: "elm.label.green";
+            }
+            rel2 {
+               relative: 0.0 1.0;
+               to: "elm.swallow.blue";
+            }
+            text {
+               font: "Sans";
+               size: 10;
+               ellipsis: -1;
+            }
+         }
+      }
+      part { name: "elm.swallow.blue"; type: SWALLOW;
+         description { state: "default" 0.0;
+            align: 1.0 0.0;
+            min: 60 20;
+            max: 60 20;
+            rel1 {
+               relative: 0.0 1.0;
+               to: "elm.swallow.green";
+            }
+         }
+      }
+      part { name: "elm.label.alpha"; type: TEXT;
+         description { state: "default" 0.0;
+            min: 15 0;
+            max: 15 -1;
+            rel1 {
+               relative: 0.0 1.0;
+               to: "elm.label.blue";
+            }
+            rel2 {
+               relative: 0.0 1.0;
+               to: "elm.swallow.alpha";
+            }
+            text {
+               font: "Sans";
+               size: 10;
+               ellipsis: -1;
+            }
+         }
+      }
+      part { name: "elm.swallow.alpha"; type: SWALLOW;
+         description { state: "default" 0.0;
+            align: 1.0 0.0;
+            min: 60 20;
+            max: 60 20;
+            rel1 {
+               relative: 0.0 1.0;
+               to: "elm.swallow.blue";
+            }
+         }
+      }
+   }
+}
+
 group { name: "elm/colorselector/picker/default";
    images.image: "inset_shadow.png" COMP;
    images.image: "bevel_in.png" COMP;

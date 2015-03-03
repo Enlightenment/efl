@@ -111,31 +111,26 @@ _color_with_lightness(Elm_Colorselector_Data *sd, int *lr, int *lg, int *lb)
 static void
 _color_picker_init(Elm_Colorselector_Data *sd)
 {
-   char buf[12];
    unsigned int *pixels;
    unsigned int *copy;
    int color;
    int x, y, w, h;
 
-   if (!evas_object_data_get(sd->entries[0], "_changed"))
+   if (!evas_object_data_get(sd->spinners[0], "_changed"))
      {
-        snprintf(buf, 12, "%i", sd->r);
-        elm_object_text_set(sd->entries[0], buf);
+        elm_spinner_value_set(sd->spinners[0], sd->r);
      }
-   if (!evas_object_data_get(sd->entries[1], "_changed"))
+   if (!evas_object_data_get(sd->spinners[1], "_changed"))
      {
-        snprintf(buf, 12, "%i", sd->g);
-        elm_object_text_set(sd->entries[1], buf);
+        elm_spinner_value_set(sd->spinners[1], sd->g);
      }
-   if (!evas_object_data_get(sd->entries[2], "_changed"))
+   if (!evas_object_data_get(sd->spinners[2], "_changed"))
      {
-        snprintf(buf, 12, "%i", sd->b);
-        elm_object_text_set(sd->entries[2], buf);
+        elm_spinner_value_set(sd->spinners[2], sd->b);
      }
-   if (!evas_object_data_get(sd->entries[3], "_changed"))
+   if (!evas_object_data_get(sd->spinners[3], "_changed"))
      {
-        snprintf(buf, 12, "%i", sd->a);
-        elm_object_text_set(sd->entries[3], buf);
+        elm_spinner_value_set(sd->spinners[3], sd->a);
      }
 
    color = (sd->a << 24) |
@@ -460,22 +455,18 @@ _colors_set(Evas_Object *obj,
 }
 
 static void
-_entry_changed_cb(void *data,
-                  Evas_Object *obj,
-                  void *event_info EINA_UNUSED)
+_spinner_changed_cb(void *data,
+                    Evas_Object *obj,
+                    void *event_info EINA_UNUSED)
 {
    Elm_Colorselector_Data *sd = data;
    Evas_Object *parent;
-   const char *text;
    int i, v;
 
-   for (i = 0; i < 4 && sd->entries[i] != obj; i++);
+   for (i = 0; i < 4 && sd->spinners[i] != obj; i++);
 
    parent = evas_object_data_get(obj, "parent");
-   text = elm_object_text_get(obj);
-   v = atoi(text);
-   if (v > 255) v = 255;
-   else if (v < 0) v = 0;
+   v = elm_spinner_value_get(obj);
    evas_object_data_set(obj, "_changed", obj);
 
    switch (i)
@@ -668,11 +659,9 @@ _color_picker_add(Evas_Object *obj, Elm_Colorselector_Data *sd)
 {
    Evas_Object *ed;
    Evas_Object *im;
-   Evas_Object *label;
-   Evas_Object *entry;
-   Evas_Object *table;
+   Evas_Object *spinner;
    Evas_Object *bx;
-   static const char *labels[4] = { "R:", "G:", "B:", "A:" };
+   Eina_Stringshare *style;
    int i;
 #ifdef HAVE_ELEMENTARY_X
    Ecore_X_Window xwin;
@@ -688,7 +677,7 @@ _color_picker_add(Evas_Object *obj, Elm_Colorselector_Data *sd)
    bx = elm_box_add(sd->picker);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(sd->picker, bx);
+   elm_layout_content_set(sd->picker, "elm.swallow.picker", bx);
    evas_object_show(bx);
 
    ed = edje_object_add(evas_object_evas_get(sd->picker));
@@ -698,11 +687,13 @@ _color_picker_add(Evas_Object *obj, Elm_Colorselector_Data *sd)
    elm_box_pack_end(bx, ed);
    evas_object_show(ed);
 
+   style = eina_stringshare_printf("colorselector/%s", elm_widget_style_get(obj));
 #ifdef HAVE_ELEMENTARY_X
    if (xwin)
      {
         sd->button = elm_button_add(sd->picker);
-        elm_object_text_set(sd->button, "Pick a color");
+        elm_object_style_set(sd->button, style);
+        elm_object_text_set(sd->button, E_("Pick a color"));
         evas_object_smart_callback_add(sd->button, "clicked", _start_grab_pick_cb, obj);
         elm_box_pack_end(bx, sd->button);
         evas_object_show(sd->button);
@@ -721,42 +712,36 @@ _color_picker_add(Evas_Object *obj, Elm_Colorselector_Data *sd)
 
    sd->picker_display = im;
 
-   table = elm_table_add(sd->picker);
-   evas_object_size_hint_weight_set(table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(table, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(sd->picker, table);
-   evas_object_show(table);
-
    for (i = 0; i < 4; i++)
      {
-        static Elm_Entry_Filter_Accept_Set accept_set = {
-          .accepted = "0123456789",
-          .rejected = NULL
-        };
+        spinner = elm_spinner_add(sd->picker);
+        elm_object_style_set(spinner, style);
+        evas_object_data_set(spinner, "parent", obj);
+        evas_object_smart_callback_add(spinner, "changed", _spinner_changed_cb, sd);
+        elm_spinner_editable_set(spinner, EINA_TRUE);
+        elm_spinner_interval_set(spinner, 0.1);
+        elm_spinner_min_max_set(spinner, 0, 255);
+        evas_object_size_hint_weight_set(spinner, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(spinner, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_show(spinner);
 
-        label = elm_label_add(table);
-        elm_object_text_set(label, labels[i]);
-        evas_object_size_hint_weight_set(label, 0.0, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(label, 0.0, EVAS_HINT_FILL);
-        elm_table_pack(table, label, 0, i, 1, 1);
-        evas_object_show(label);
-
-        entry = elm_entry_add(table);
-        elm_entry_markup_filter_append(entry, elm_entry_filter_accept_set, &accept_set);
-        elm_entry_single_line_set(entry, EINA_TRUE);
-        elm_entry_scrollable_set(entry, EINA_TRUE);
-        evas_object_data_set(entry, "parent", obj);
-        evas_object_smart_callback_add(entry, "changed", _entry_changed_cb, sd);
-        evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_table_pack(table, entry, 1, i, 1, 1);
-        evas_object_show(entry);
-
-        sd->entries[i] = entry;
+        sd->spinners[i] = spinner;
      }
+     
+   elm_layout_content_set(sd->picker, "elm.swallow.red", sd->spinners[0]);
+   elm_layout_text_set(sd->picker, "elm.label.red", E_("R:"));
+   elm_layout_content_set(sd->picker, "elm.swallow.green", sd->spinners[1]);
+   elm_layout_text_set(sd->picker, "elm.label.green", E_("G:"));
+   elm_layout_content_set(sd->picker, "elm.swallow.blue", sd->spinners[2]);
+   elm_layout_text_set(sd->picker, "elm.label.blue", E_("B:"));
+   elm_layout_content_set(sd->picker, "elm.swallow.alpha", sd->spinners[3]);
+   elm_layout_text_set(sd->picker, "elm.label.alpha", E_("A:"));
+
 
    evas_event_callback_add(evas_object_evas_get(obj), EVAS_CALLBACK_CANVAS_FOCUS_IN, _mouse_in_canvas, obj);
    evas_event_callback_add(evas_object_evas_get(obj), EVAS_CALLBACK_CANVAS_FOCUS_OUT, _mouse_out_canvas, obj);
+
+   eina_stringshare_del(style);
 
    _color_picker_init(sd);
 }
@@ -1078,6 +1063,7 @@ _elm_colorselector_elm_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd)
    Eina_List *elist;
    Elm_Object_Item *eo_item;
    const char *hpadstr, *vpadstr;
+   Eina_Stringshare *style;
    unsigned int h_pad = DEFAULT_HOR_PAD;
    unsigned int v_pad = DEFAULT_VER_PAD;
 
@@ -1131,10 +1117,20 @@ _elm_colorselector_elm_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd)
           }
      }
 
+   elm_layout_theme_set(sd->picker, "colorselector", "picker/base", elm_widget_style_get(obj));
+   style = eina_stringshare_printf("colorselector/%s", elm_widget_style_get(obj));
+#ifdef HAVE_ELEMENTARY_X
+   elm_object_style_set(sd->button, style);
+#endif
+   for (i = 0; i < 4; i++)
+     elm_object_style_set(sd->spinners[i], style);
+
    _color_bars_add(obj);
    elm_colorselector_color_set(obj, sd->r, sd->g, sd->b, sd->a);
 
    elm_layout_sizing_eval(obj);
+
+   eina_stringshare_del(style);
 
    return EINA_TRUE;
 }
@@ -1561,7 +1557,7 @@ _elm_colorselector_evas_object_smart_add(Eo *obj, Elm_Colorselector_Data *priv)
      (h_pad * elm_widget_scale_get(obj) * elm_config_scale_get()),
      (v_pad * elm_widget_scale_get(obj) * elm_config_scale_get()));
 
-   elm_box_align_set(priv->palette_box, 0.5, 0.5);
+   elm_box_align_set(priv->palette_box, 0.0, 0.0);
    if (!elm_layout_content_set(obj, "elm.palette", priv->palette_box))
      elm_layout_content_set(obj, "palette", priv->palette_box);
    priv->palette_name = eina_stringshare_add("default");
@@ -1580,15 +1576,11 @@ _elm_colorselector_evas_object_smart_add(Eo *obj, Elm_Colorselector_Data *priv)
    elm_layout_signal_emit(obj, "elm,state,both", "elm");
 
    /* setup the color picker */
-   priv->picker = elm_box_add(obj);
-   elm_box_horizontal_set(priv->picker, EINA_TRUE);
+   priv->picker = elm_layout_add(obj);
+   elm_layout_theme_set(priv->picker, "colorselector", "picker/base", elm_widget_style_get(obj));
    evas_object_size_hint_weight_set(priv->picker, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(priv->picker, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-   elm_box_padding_set(priv->picker,
-                       (h_pad * elm_widget_scale_get(obj) * elm_config_scale_get()),
-                       (v_pad * elm_widget_scale_get(obj) * elm_config_scale_get()));
-   elm_box_align_set(priv->picker, 0.5, 0.5);
+   elm_widget_sub_object_add(obj, priv->picker);
 
    priv->mode = ELM_COLORSELECTOR_BOTH;
    priv->focused = ELM_COLORSELECTOR_PALETTE;

@@ -35,7 +35,7 @@ struct _Elm_Colorselector_Data
    Evas_Object           *palette_box;
    Evas_Object           *picker;
    Evas_Object           *picker_display;
-   Evas_Object           *entries[4];
+   Evas_Object           *spinners[4];
    Evas_Object           *button;
 
    struct {
