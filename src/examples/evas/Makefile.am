@@ -337,6 +337,7 @@ resources/images/M15_1.png \
 resources/images/normal_lego.png \
 resources/images/sonic.png \
 resources/images/sweet_home_reversed.png \
+resources/images/star.jpg \
 resources/models/eagle.md2 \
 resources/models/M15.mtl \
 resources/models/M15.obj \

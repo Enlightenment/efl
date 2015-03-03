@@ -10,7 +10,6 @@
  * gcc -o evas-3d-ply evas-3d-ply.c `pkg-config --libs --cflags efl evas ecore ecore-evas ecore-file eo`
  * @endverbatim
  */
-//TODO new resources
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -32,7 +31,7 @@
 
 #define NUMBER_OF_MESHES 32
 
-static const char *image_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/normal_lego.png";
+static const char *image_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/star.jpg";
 static const char *input_template = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/";
 static const char *output_template = PACKAGE_EXAMPLES_DIR EVAS_SAVED_FILES "/";
 static const char *file_name[8] = {"Normal_UVs_Colors.ply",
@@ -70,7 +69,7 @@ static float angle = 0;
 static Eina_Bool
 _animate_scene(void *data)
 {
-   angle += 0.5;
+   angle += 0.2;
 
    eo_do((Evas_3D_Node *)data, evas_3d_node_orientation_angle_axis_set(angle, 1.0, 1.0, 1.0));
 
@@ -142,7 +141,7 @@ main(void)
    eo_do(root_node,
          evas_3d_node_member_add(camera_node));
    eo_do(camera_node,
-         evas_3d_node_position_set(200.0, 0.0, 0.0),
+         evas_3d_node_position_set(15.0, 0.0, 0.0),
          evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0,
                                   EVAS_3D_SPACE_PARENT, 0.0, 0.0, 1.0));
    /* Add the light. */
@@ -216,15 +215,13 @@ main(void)
         eo_do(root_node, evas_3d_node_member_add(mesh_node[i]));
         eo_do(mesh_node[i],
               evas_3d_node_mesh_add(mesh[i]),
-              evas_3d_node_position_set(0, ((i % 4) * 40) + ((i / 16) * 10) - 80, (((i % 16) / 4) * 10) - 40),
-              evas_3d_node_scale_set(0.3, 0.3, 0.3));
+              evas_3d_node_position_set(0, ((i % 4) * 4) + ((i / 16) * 1) - 6.5, (((i % 16) / 4) * 4) - 6));
      }
 
    /* Set up scene. */
    eo_do(scene,
          evas_3d_scene_root_node_set(root_node),
          evas_3d_scene_camera_node_set(camera_node),
-         evas_3d_scene_background_color_set(0.7, 0.7, 0.7, 1.0),
          evas_3d_scene_size_set(WIDTH, HEIGHT));
 
    /* Add a background rectangle objects. */
