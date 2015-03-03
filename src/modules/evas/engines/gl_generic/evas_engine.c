@@ -854,7 +854,9 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
                              texid);
 
         // Call pixel get function
+        evgl_get_pixels_pre();
         re->func.get_pixels(re->func.get_pixels_data, re->func.obj);
+        evgl_get_pixels_post();
 
         // Call end tile if it's being used
         if ((gl_context->master_clip.enabled) &&
@@ -1347,6 +1349,18 @@ eng_gl_get_pixels_set(void *data, void *get_pixels, void *get_pixels_data, void 
    re->func.get_pixels = get_pixels;
    re->func.get_pixels_data = get_pixels_data;
    re->func.obj = (Evas_Object*)obj;
+}
+
+static void
+eng_gl_get_pixels_pre(void *data EINA_UNUSED)
+{
+   evgl_get_pixels_pre();
+}
+
+static void
+eng_gl_get_pixels_post(void *data EINA_UNUSED)
+{
+   evgl_get_pixels_post();
 }
 
 static Eina_Bool
@@ -2139,6 +2153,8 @@ module_open(Evas_Module *em)
    ORD(gl_direct_override_get);
    ORD(gl_surface_direct_renderable_get);
    ORD(gl_get_pixels_set);
+   ORD(gl_get_pixels_pre);
+   ORD(gl_get_pixels_post);
    ORD(gl_surface_lock);
    ORD(gl_surface_read_pixels);
    ORD(gl_surface_unlock);

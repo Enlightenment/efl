@@ -2900,7 +2900,13 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
              h = obj->cur->geometry.h;
 
              if (!o->direct_render)
-               o->pixels->func.get_pixels(o->pixels->func.get_pixels_data, eo_obj);
+               {
+                  if (ENFN->gl_get_pixels_pre)
+                    ENFN->gl_get_pixels_pre(output);
+                  o->pixels->func.get_pixels(o->pixels->func.get_pixels_data, eo_obj);
+                  if (ENFN->gl_get_pixels_post)
+                    ENFN->gl_get_pixels_post(output);
+               }
 
              if (!(obj->cur->geometry.x == x &&
                    obj->cur->geometry.y == y &&
@@ -2936,9 +2942,11 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
              else
                {
                   // Auto-fallback to FBO rendering (for perf & power consumption)
+                  if (ENFN->gl_get_pixels_pre)
+                    ENFN->gl_get_pixels_pre(output);
                   o->pixels->func.get_pixels(o->pixels->func.get_pixels_data, obj->object);
-                  //if (ENFN->get_pixels_render_post)
-                    //ENFN->get_pixels_render_post(output);
+                  if (ENFN->gl_get_pixels_post)
+                    ENFN->gl_get_pixels_post(output);
                   o->direct_render = EINA_FALSE;
                }
           }

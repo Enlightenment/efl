@@ -1311,6 +1311,8 @@ struct _Evas_Func
    Eina_Bool (*gl_surface_direct_renderable_get) (void *data, Evas_Native_Surface *ns, Eina_Bool *override);
    void (*gl_image_direct_set)           (void *data, void *image, Eina_Bool direct);
    int  (*gl_image_direct_get)           (void *data, void *image);
+   void (*gl_get_pixels_pre)             (void *data);
+   void (*gl_get_pixels_post)            (void *data);
 
    int  (*image_load_error_get)          (void *data, void *image);
    int  (*font_run_end_get)              (void *data, Evas_Font_Set *font, Evas_Font_Instance **script_fi, Evas_Font_Instance **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len);

@@ -1284,42 +1284,19 @@ int
 _evgl_not_in_pixel_get(void)
 {
    EVGL_Resource *rsc;
+   EVGL_Context *ctx;
 
-   if (!(rsc=_evgl_tls_resource_get())) return 1;
-
-   EVGL_Context *ctx = rsc->current_ctx;
-
-   if (evgl_engine->direct_force_off)
-     return 0;
+   if (!(rsc=_evgl_tls_resource_get()))
+     return 1;
 
    if (rsc->id != evgl_engine->main_tid)
      return 0;
 
+   ctx = rsc->current_ctx;
    if (!ctx || !ctx->current_sfc)
      return 0;
 
-   if (!ctx->current_sfc->direct_fb_opt)
-     return 0;
-
-   if (rsc->direct.rot == 0)
-     return !rsc->direct.enabled;
-
-   if (!ctx->current_sfc->client_side_rotation)
-     return 0;
-
-   return !rsc->direct.enabled;
-
-   /* was:
-   if ((!evgl_engine->direct_force_off) &&
-       (rsc->id == evgl_engine->main_tid) &&
-       (ctx) &&
-       (ctx->current_sfc) &&
-       (ctx->current_sfc->direct_fb_opt) &&
-       (!rsc->direct.enabled))
-      return 1;
-   else
-      return 0;
-   */
+   return !rsc->direct.in_get_pixels;
 }
 
 int
@@ -1698,7 +1675,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
         else
           {
              eina_hash_add(evgl_engine->direct_surfaces, &sfc->gles1_sfc_native, sfc);
-             DBG("Added tex %d as direct surface: %p", sfc->gles1_sfc_native, sfc);
+             DBG("Added native %p as direct surface: %p", sfc->gles1_sfc_native, sfc);
           }
      }
 
@@ -2500,7 +2477,7 @@ evgl_native_surface_get(EVGL_Surface *sfc, Evas_Native_Surface *ns)
 }
 
 int
-evgl_direct_rendered()
+evgl_direct_rendered(void)
 {
    EVGL_Resource *rsc;
 
@@ -2546,7 +2523,7 @@ evgl_native_surface_direct_opts_get(Evas_Native_Surface *ns,
         sfc = eina_hash_find(evgl_engine->direct_surfaces, &ns->data.x11.pixmap);
         if (!sfc)
           {
-             DBG("Native surface %p (pixmap %x) was not found.",
+             DBG("Native surface %p (pixmap %lx) was not found.",
                  ns, ns->data.x11.pixmap);
              return EINA_FALSE;
           }
@@ -2626,13 +2603,33 @@ evgl_direct_info_set(int win_w, int win_h, int rot,
 }
 
 void
-evgl_direct_info_clear()
+evgl_direct_info_clear(void)
 {
    EVGL_Resource *rsc;
 
    if (!(rsc=_evgl_tls_resource_get())) return;
 
    rsc->direct.enabled = EINA_FALSE;
+}
+
+void
+evgl_get_pixels_pre(void)
+{
+   EVGL_Resource *rsc;
+
+   if (!(rsc=_evgl_tls_resource_get())) return;
+
+   rsc->direct.in_get_pixels = EINA_TRUE;
+}
+
+void
+evgl_get_pixels_post(void)
+{
+   EVGL_Resource *rsc;
+
+   if (!(rsc=_evgl_tls_resource_get())) return;
+
+   rsc->direct.in_get_pixels = EINA_FALSE;
 }
 
 Evas_GL_API *
