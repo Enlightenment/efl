@@ -106,6 +106,9 @@ ffi.cdef [[
     Eina_Iterator *eo_children_iterator_new(void);
 
     const Eo_Class *eo_base_class_get(void);
+
+    extern const Eo_Event_Description _EO_BASE_EVENT_CALLBACK_ADD;
+    extern const Eo_Event_Description _EO_BASE_EVENT_CALLBACK_DEL;
 ]]
 
 local addr_d = ffi.typeof("union { double d; const Eo_Class *p; }")
@@ -125,19 +128,23 @@ local eo
 local classes = {}
 local eo_classes = {}
 
-local connect = function(self, ename, func)
+local connect = function(self, ename, func, priority)
     local ev = self.__events[ename]
     if not ev then
         error("invalid event '" .. ename .. "'", 2)
     end
     local cl = eo_classes["Eo_Base"]
     M.__do_start(self, cl)
-    eo.eo_event_callback_priority_add(ev, 0,
+    eo.eo_event_callback_priority_add(ev, priority or 0,
         function(data, obj, desc, einfo)
             return func(obj, einfo) ~= false
         end,
     nil)
     M.__do_end()
+end
+
+local disconnect = function(self, ename, func)
+    -- TODO: implement
 end
 
 local init = function()
@@ -147,6 +154,7 @@ local init = function()
     local addr = eo_class_addr_get(eocl)
     classes["Eo_Base"] = util.Object:clone {
         connect = connect,
+        disconnect = disconnect,
         __events = util.Object:clone {},
         __properties = util.Object:clone {}
     }
