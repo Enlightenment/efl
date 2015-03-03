@@ -1151,6 +1151,31 @@ _elm_win_profile_update(Elm_Win_Data *sd)
 }
 
 static void
+_elm_win_frame_obj_update(Elm_Win_Data *sd)
+{
+   int fx, fy, fw, fh;
+   int ox, oy, ow, oh;
+   int sx, sy, sw, sh;
+   int x, y, w, h;
+   evas_object_geometry_get(sd->frame_obj, &fx, &fy, &fw, &fh);
+   evas_object_geometry_get(sd->client_obj, &ox, &oy, &ow, &oh);
+   evas_object_geometry_get(sd->spacer_obj, &sx, &sy, &sw, &sh);
+
+   evas_output_framespace_get(sd->evas, &x, &y, &w, &h);
+
+   if ((x != (ox - fx)) || (y != (oy - fy)) ||
+       (w != (fw - ow)) || (h != (fh - oh)))
+     {
+        evas_output_framespace_set(sd->evas, (ox - fx), (oy - fy),
+                                   (fw - ow), (fh - oh));
+     }
+
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   ecore_wl_window_opaque_region_set(sd->wl.win, -fx, -(fy - sy), sw, sh);
+#endif
+}
+
+static void
 _elm_win_state_change(Ecore_Evas *ee)
 {
    Elm_Win_Data *sd = _elm_win_associate_get(ee);
@@ -2471,31 +2496,6 @@ static struct _resize_info _border_corner[4] =
      { ELM_CURSOR_TOP_RIGHT_CORNER, 9 },
 };
 #endif
-
-static void
-_elm_win_frame_obj_update(Elm_Win_Data *sd)
-{
-   int fx, fy, fw, fh;
-   int ox, oy, ow, oh;
-   int sx, sy, sw, sh;
-   int x, y, w, h;
-   evas_object_geometry_get(sd->frame_obj, &fx, &fy, &fw, &fh);
-   evas_object_geometry_get(sd->client_obj, &ox, &oy, &ow, &oh);
-   evas_object_geometry_get(sd->spacer_obj, &sx, &sy, &sw, &sh);
-
-   evas_output_framespace_get(sd->evas, &x, &y, &w, &h);
-
-   if ((x != (ox - fx)) || (y != (oy - fy)) ||
-       (w != (fw - ow)) || (h != (fh - oh)))
-     {
-        evas_output_framespace_set(sd->evas, (ox - fx), (oy - fy),
-                                   (fw - ow), (fh - oh));
-     }
-
-#ifdef HAVE_ELEMENTARY_WAYLAND
-   ecore_wl_window_opaque_region_set(sd->wl.win, -fx, -(fy - sy), sw, sh);
-#endif
-}
 
 static void
 _elm_win_frame_obj_move(void *data,
