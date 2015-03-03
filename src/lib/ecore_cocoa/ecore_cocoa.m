@@ -333,7 +333,7 @@ ecore_cocoa_feed_events(void *anEvent)
          ev->modifiers = 0; /* FIXME: keep modifier around. */
          ev->timestamp = time;
          ev->z = [event deltaX] != 0 ? [event deltaX] : -([event deltaY]);
-         ev->direction = [event deltaX] != 0 ? 0 : 1;
+         ev->direction = [event deltaX] != 0 ? 1 : 0;
 
          ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
 
