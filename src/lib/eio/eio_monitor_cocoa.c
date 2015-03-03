@@ -195,7 +195,6 @@ _eio_get_monitor_path(const char *path, char **monpath, char **fullpath)
    char realPath[PATH_MAX];
    char *realPathOk;
    char *dname = NULL;
-   char *fname = NULL;
    struct stat sb;
 
    realPathOk = realpath(path, realPath);
@@ -383,15 +382,18 @@ void eio_monitor_backend_del(Eio_Monitor *monitor)
         CFArrayRemoveValueAtIndex(_paths_to_watch, idx);
      }
 
-   _stream = FSEventStreamCreate(NULL,
-                                 _eio_fsevent_cb,
-                                 NULL,
-                                 _paths_to_watch,
-                                 eventid,
-                                 _latency,
-                                 kFSEventStreamCreateFlagFileEvents
-                                 | kFSEventStreamCreateFlagNoDefer
-                                );
+   if (CFArrayGetCount(_paths_to_watch) > 0)
+     {
+        _stream = FSEventStreamCreate(NULL,
+                                      _eio_fsevent_cb,
+                                      NULL,
+                                      _paths_to_watch,
+                                      eventid,
+                                      _latency,
+                                      kFSEventStreamCreateFlagFileEvents
+                                      | kFSEventStreamCreateFlagNoDefer
+                                      );
+     }
    backend = monitor->backend;
    monitor->backend = NULL;
    if (!backend) return;
