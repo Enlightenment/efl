@@ -112,8 +112,8 @@ ffi.cdef [[
     extern const Eo_Event_Description _EO_BASE_EVENT_DEL;
 ]]
 
-local addr_d = ffi.typeof("union { double d; const Eo_Class *p; }")
-local eo_class_addr_get = function(x)
+local addr_d = ffi.typeof("union { double d; const Eo *p; }")
+local eo_obj_addr_get = function(x)
     local v = addr_d()
     v.p = x
     return tonumber(v.d)
@@ -172,7 +172,7 @@ local init = function()
     eo = util.lib_load("eo")
     eo.eo_init()
     local eocl = eo.eo_base_class_get()
-    local addr = eo_class_addr_get(eocl)
+    local addr = eo_obj_addr_get(eocl)
     classes["Eo_Base"] = util.Object:clone {
         connect = connect,
         disconnect = disconnect,
@@ -247,13 +247,13 @@ M.class_register = function(name, parents, mixins, body, eocl)
     for i = 2, #pars do lcl:add_parent(pars[i]) end
     for i = 1, #mins do lcl:add_mixin (mins[i]) end
 
-    local addr = eo_class_addr_get(eocl)
+    local addr = eo_obj_addr_get(eocl)
     classes   [name], classes   [addr] = lcl , lcl
     eo_classes[name], eo_classes[addr] = eocl, eocl
 end
 
 M.class_unregister = function(name)
-    local addr = eo_class_addr_get(eo_classes[name])
+    local addr = eo_obj_addr_get(eo_classes[name])
     classes   [name], classes   [addr] = nil
     eo_classes[name], eo_classes[addr] = nil
 end
@@ -296,7 +296,7 @@ end
 local get_obj_mt = function(obj)
     local cl = eo.eo_class_get(obj)
     if cl == nil then return nil end
-    return classes[eo_class_addr_get(cl)]
+    return classes[eo_obj_addr_get(cl)]
 end
 
 local prop_proxy_meta = {
