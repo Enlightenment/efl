@@ -166,6 +166,8 @@ struct _Elm_Win_Data
       Eina_Bool    animate : 1; /* set true when the focus highlight animate is enabled */
       Eina_Bool    animate_supported : 1; /* set true when the focus highlight animate is supported by theme */
       Eina_Bool    geometry_changed : 1;
+      Eina_Bool    auto_enabled : 1;
+      Eina_Bool    auto_animate : 1;
    } focus_highlight;
 
    Evas_Object *icon;
@@ -967,7 +969,7 @@ _elm_win_focus_highlight_reconfigure_job(void *data)
           (sd->obj, fobj, "focus_highlight", "top", str);
         sd->focus_highlight.theme_changed = EINA_FALSE;
 
-        if (sd->focus_highlight.animate)
+        if ((sd->focus_highlight.animate) || (sd->focus_highlight.auto_animate))
           {
              str = edje_object_data_get(sd->focus_highlight.fobj, "animate");
              sd->focus_highlight.animate_supported = ((str) && (!strcmp(str, "on")));
@@ -1386,7 +1388,10 @@ static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
 {
    const char *dir = params;
+   Evas_Object *top;
 
+   top = elm_widget_top_get(obj);
+   if (top && eo_isa(top, ELM_WIN_CLASS)) _elm_win_focus_auto_show(top);
    if (!strcmp(dir, "previous"))
      elm_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS);
    else if (!strcmp(dir, "next"))
@@ -4864,7 +4869,7 @@ _elm_win_focus_highlight_enabled_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina
 
    sd->focus_highlight.enabled = enabled;
 
-   if (sd->focus_highlight.enabled)
+   if ((sd->focus_highlight.enabled) || (sd->focus_highlight.auto_enabled))
      _elm_win_focus_highlight_init(sd);
    else
      _elm_win_focus_highlight_shutdown(sd);
@@ -5109,7 +5114,7 @@ void
 _elm_win_focus_highlight_signal_emit(Evas_Object *obj, const char *emission, const char *source)
 {
    ELM_WIN_DATA_GET(obj, sd);
-   if (sd->focus_highlight.enabled)
+   if ((sd->focus_highlight.enabled) || (sd->focus_highlight.auto_enabled))
      edje_object_signal_emit(sd->focus_highlight.fobj, emission, source);
 }
 
@@ -5119,7 +5124,8 @@ _elm_win_focus_highlight_signal_callback_add(Evas_Object *obj, const char *emiss
                                              void *data)
 {
    ELM_WIN_DATA_GET(obj, sd);
-   if (sd->focus_highlight.enabled && sd->focus_highlight.fobj)
+   if (((sd->focus_highlight.enabled) || (sd->focus_highlight.auto_enabled))
+       && (sd->focus_highlight.fobj))
      edje_object_signal_callback_add(sd->focus_highlight.fobj, emission, source, _focus_highlight_signal_cb, data);
 }
 
@@ -5128,7 +5134,8 @@ _elm_win_focus_highlight_signal_callback_del(Evas_Object *obj, const char *emiss
                                              const char *source, Edje_Signal_Cb _focus_highlight_signal_cb)
 {
    ELM_WIN_DATA_GET(obj, sd);
-   if (sd->focus_highlight.enabled && sd->focus_highlight.fobj)
+   if (((sd->focus_highlight.enabled) || (sd->focus_highlight.auto_enabled))
+       && (sd->focus_highlight.fobj))
      edje_object_signal_callback_del(sd->focus_highlight.fobj, emission, source, _focus_highlight_signal_cb);
 }
 
@@ -5141,6 +5148,34 @@ _elm_win_focus_highlight_start(Evas_Object *obj)
    sd->focus_highlight.cur.visible = EINA_TRUE;
    sd->focus_highlight.geometry_changed = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job(obj);
+}
+
+void
+_elm_win_focus_auto_show(Evas_Object *obj)
+{
+   ELM_WIN_DATA_GET(obj, sd);
+   Eina_Bool pfocus = (sd->focus_highlight.enabled) || (sd->focus_highlight.auto_enabled);
+   sd->focus_highlight.auto_enabled = _elm_config->win_auto_focus_enable;
+   sd->focus_highlight.auto_animate = _elm_config->win_auto_focus_animate;
+   if (pfocus != ((sd->focus_highlight.enabled) || (sd->focus_highlight.auto_enabled)))
+     {
+        if ((sd->focus_highlight.enabled) || (sd->focus_highlight.auto_enabled))
+          _elm_win_focus_highlight_init(sd);
+     }
+}
+
+void
+_elm_win_focus_auto_hide(Evas_Object *obj)
+{
+   ELM_WIN_DATA_GET(obj, sd);
+   Eina_Bool pfocus = (sd->focus_highlight.enabled) || (sd->focus_highlight.auto_enabled);
+   sd->focus_highlight.auto_enabled = EINA_FALSE;
+   sd->focus_highlight.auto_animate = EINA_FALSE;
+   if (pfocus != ((sd->focus_highlight.enabled) || (sd->focus_highlight.auto_enabled)))
+     {
+        if (!((sd->focus_highlight.enabled) || (sd->focus_highlight.auto_enabled)))
+          _elm_win_focus_highlight_shutdown(sd);
+     }
 }
 
 EAPI Ecore_Window

@@ -1724,6 +1724,54 @@ EAPI Eina_Bool elm_config_audio_mute_get(Edje_Channel channel);
 EAPI void      elm_config_audio_mute_set(Edje_Channel channel, Eina_Bool mute);
 
 /**
+ * Get the auto focus enable flag
+ *
+ * This determines if elementary will show a focus box indicating the focused
+ * widget automatically if keyboard controls like "Tab" are used to switch
+ * focus between widgets. Mouse or touch control will hide this auto shown
+ * focus, unless focus display has been expliccitly forced on for the window.
+ * 
+ * @return The enabled state for auto focus display
+ * @since 1.14
+ */
+EAPI Eina_Bool elm_config_window_auto_focus_enable_get(void);
+
+/**
+ * Set the auto focus enabled state
+ *
+ * This determines if elementary will show a focus box indicating the focused
+ * widget automatically if keyboard controls like "Tab" are used to switch
+ * focus between widgets. Mouse or touch control will hide this auto shown
+ * focus, unless focus display has been expliccitly forced on for the window.
+ * 
+ * @param enable the auto focus display enabled state
+ * @since 1.14
+ */
+EAPI void      elm_config_window_auto_focus_enable_set(Eina_Bool enable);
+
+/**
+ * Get the auto focus animate flag
+ *
+ * If auto focus - see elm_config_window_auto_focus_enable_set() , is enabled
+ * then this will determine if the focus display will be animated or not.
+ *
+ * @return The enabled state for auto focus animation
+ * @since 1.14
+ */
+EAPI Eina_Bool elm_config_window_auto_focus_animate_get(void);
+
+/**
+ * Set the auto focus animation flag
+ *
+ * If auto focus - see elm_config_window_auto_focus_enable_set() , is enabled
+ * then this will determine if the focus display will be animated or not.
+ *
+ * @param enable the auto focus animation state
+ * @since 1.14
+ */
+EAPI void      elm_config_window_auto_focus_animate_set(Eina_Bool enable);
+
+/**
  * @defgroup ATSPI AT-SPI2 Accessibility
  * @ingroup Elementary
  *

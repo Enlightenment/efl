@@ -1585,6 +1585,30 @@ _status_config_focus_autoscroll_changed_cb(void *data EINA_UNUSED,
 }
 
 static void
+_config_focus_auto_show_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                           void *event_info EINA_UNUSED)
+{
+   Eina_Bool cf = elm_config_window_auto_focus_enable_get();
+   Eina_Bool val = elm_check_state_get(obj);
+
+   if (cf == val) return;
+   elm_config_window_auto_focus_enable_set(val);
+   elm_config_all_flush();
+}
+
+static void
+_config_focus_auto_animate_cb(void *data EINA_UNUSED, Evas_Object *obj,
+                           void *event_info EINA_UNUSED)
+{
+   Eina_Bool cf = elm_config_window_auto_focus_animate_get();
+   Eina_Bool val = elm_check_state_get(obj);
+
+   if (cf == val) return;
+   elm_config_window_auto_focus_animate_set(val);
+   elm_config_all_flush();
+}
+
+static void
 _status_config_focus(Evas_Object *win,
                      Evas_Object *naviframe)
 {
@@ -1617,6 +1641,16 @@ _status_config_focus(Evas_Object *win,
              "This is enabled by default.",
              _config_focus_item_select_on_focus_cb, NULL);
    elm_check_state_set(ck, elm_config_item_select_on_focus_disabled_get());
+
+   CHECK_ADD("Enable Automatic focus display",
+             "Set whether enable/disable focus highlight automatically.",
+             _config_focus_auto_show_cb, NULL);
+   elm_check_state_set(ck, elm_config_window_auto_focus_enable_get());
+   CHECK_ADD("Enable Automatic focus animation",
+             "Set whether enable/disable focus highlight animation<br/>"
+             "automatically when automatic focus shows.",
+             _config_focus_auto_animate_cb, NULL);
+   elm_check_state_set(ck, elm_config_window_auto_focus_enable_get());
 
    fr = elm_frame_add(bx);
    elm_object_text_set(fr, "Focus Autoscroll Mode");

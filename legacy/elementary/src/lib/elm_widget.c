@@ -3822,8 +3822,12 @@ elm_widget_focus_mouse_up_handle(Evas_Object *obj)
 EOLIAN static void
 _elm_widget_focus_mouse_up_handle(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
+   Evas_Object *top;
+
    if (!obj) return;
    if (!_is_focusable(obj)) return;
+   top = elm_widget_top_get(obj);
+   if (top && eo_isa(top, ELM_WIN_CLASS)) _elm_win_focus_auto_hide(top);
    elm_widget_focus_steal(obj);
 }
 

@@ -589,6 +589,8 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, audio_mute_all, T_UCHAR);
    ELM_CONFIG_LIST(D, T, bindings, _config_bindings_widget_edd);
    ELM_CONFIG_VAL(D, T, atspi_mode, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, win_auto_focus_enable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, win_auto_focus_animate, T_UCHAR);
 #undef T
 #undef D
 #undef T_INT
@@ -1610,6 +1612,8 @@ _config_load(void)
    _elm_config->audio_mute_input = 0;
    _elm_config->audio_mute_alert = 0;
    _elm_config->audio_mute_all = 0;
+   _elm_config->win_auto_focus_enable = 1;
+   _elm_config->win_auto_focus_animate = 1;
    _elm_config->atspi_mode = ELM_ATSPI_MODE_OFF;
 }
 
@@ -1830,6 +1834,10 @@ _config_update(void)
    /* we also need to update for property changes in the root window
     * if needed, but that will be dependent on new properties added
     * with each version */
+   IFCFG(0x0002)
+   _elm_config->win_auto_focus_enable = tcfg->win_auto_focus_enable;;
+   _elm_config->win_auto_focus_animate = tcfg->win_auto_focus_animate;
+   IFCFGEND
 
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
@@ -3153,6 +3161,30 @@ elm_config_audio_mute_set(Edje_Channel channel, Eina_Bool mute)
         break;
      }
    edje_audio_channel_mute_set(channel, mute);
+}
+
+EAPI Eina_Bool
+elm_config_window_auto_focus_enable_get(void)
+{
+   return _elm_config->win_auto_focus_enable;
+}
+
+EAPI void
+elm_config_window_auto_focus_enable_set(Eina_Bool enable)
+{
+   _elm_config->win_auto_focus_enable = enable;
+}
+
+EAPI Eina_Bool
+elm_config_window_auto_focus_animate_get(void)
+{
+   return _elm_config->win_auto_focus_animate;
+}
+
+EAPI void
+elm_config_window_auto_focus_animate_set(Eina_Bool enable)
+{
+   _elm_config->win_auto_focus_animate = enable;
 }
 
 EAPI void

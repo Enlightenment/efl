@@ -1,5 +1,5 @@
 group "Elm_Config" struct {
-  value "config_version" int: 131073;
+  value "config_version" int: 131074;
   value "engine" string: "";
   value "vsync" uchar: 0;
   value "thumbscroll_enable" uchar: 0;
@@ -95,6 +95,8 @@ group "Elm_Config" struct {
   value "audio_mute_input" uchar: 0;
   value "audio_mute_alert" uchar: 0;
   value "audio_mute_all" uchar: 0;
+  value "win_auto_focus_enable" uchar: 1;
+  value "win_auto_focus_animate" uchar: 1;
   group "color_palette" list {
      group "Elm_Custom_Palette" struct {
         value "palette_name" string: "default";
