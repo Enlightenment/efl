@@ -474,9 +474,6 @@ ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized)
 
    if (win->type == ECORE_WL_WINDOW_TYPE_TOPLEVEL)
      {
-        win->saved.w = win->allocation.w;
-        win->saved.h = win->allocation.h;
-
         if (win->xdg_surface)
           {
              xdg_surface_set_maximized(win->xdg_surface);
@@ -528,8 +525,6 @@ ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen)
    if (fullscreen)
      {
         win->type = ECORE_WL_WINDOW_TYPE_FULLSCREEN;
-        win->saved.w = win->allocation.w;
-        win->saved.h = win->allocation.h;
 
 	if (win->xdg_surface)
           xdg_surface_set_fullscreen(win->xdg_surface, NULL);
@@ -617,6 +612,11 @@ ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h)
    if (!win) return;
    win->allocation.w = w;
    win->allocation.h = h;
+   if ((!ecore_wl_window_maximized_get(win)) && (!win->fullscreen))
+     {
+        win->saved.w = w;
+        win->saved.h = h;
+     }
    if (win->xdg_surface)
      xdg_surface_set_window_geometry(win->xdg_surface, 
                                      win->allocation.x, win->allocation.y, 
