@@ -792,7 +792,7 @@ _ecore_evas_drm_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, i
    ee->prop.cursor.hot.x = hot_x;
    ee->prop.cursor.hot.y = hot_y;
 
-   evas_pointer_output_xy_get(ee->evas, &x, &y);
+   ecore_evas_pointer_xy_get(ee, &x, &y);
 
    if (obj != old)
      {
@@ -1033,9 +1033,8 @@ _ecore_evas_drm_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, in
 }
 
 static void 
-_ecore_evas_drm_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
+_ecore_evas_drm_pointer_xy_get(const Ecore_Evas *ee EINA_UNUSED, Evas_Coord *x, Evas_Coord *y)
 {
-   /* FIXME: This should probably be using an ecore_drm_input function to 
-    * return the current mouse position */
-   evas_pointer_output_xy_get(ee->evas, x, y);
+   /* get pointer position from input */
+   ecore_drm_device_pointer_xy_get(dev, x, y);
 }
