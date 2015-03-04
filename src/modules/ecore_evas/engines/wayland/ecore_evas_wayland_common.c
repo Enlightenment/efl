@@ -208,7 +208,12 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    if (nw < 1) nw = 1;
    if (nh < 1) nh = 1;
 
-   if (!ee->prop.fullscreen)
+   if (ee->prop.fullscreen)
+     {
+        if ((nw <= 1) || (nh <= 1))
+          evas_output_size_get(ee->evas, &nw, &nh);
+     }
+   else
      {
         int fw = 0, fh = 0;
         int maxw = 0, maxh = 0;
