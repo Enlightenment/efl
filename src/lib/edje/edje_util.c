@@ -2986,6 +2986,8 @@ _edje_object_parts_extends_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *x, Ev
 EOLIAN void
 _edje_object_size_min_restricted_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh)
 {
+   const int MIN_LIMIT = 4000;
+
    Evas_Coord orig_w, orig_h; //original edje size
    int max_over_w, max_over_h;  //maximum over-calculated size.
    Eina_Bool repeat_w, repeat_h;
@@ -3104,7 +3106,7 @@ again:
              if (ed->h < restrictedh) ed->h = restrictedh;
           }
 
-        if ((ed->w > 4000) || (ed->h > 4000))
+        if ((ed->w > MIN_LIMIT) || (ed->h > MIN_LIMIT))
           {
              /* Only print it if we have a non-fixed textblock.
               * We should possibly avoid all of this if in this case, but in
@@ -3115,8 +3117,9 @@ again:
                     ERR("file %s, group %s has a non-fixed part '%s'. Adding 'fixed: 1 1;' to source EDC may help. Continuing discarding faulty part.",
                         ed->path, ed->group, pep->part->name);
                   else
-                    ERR("file %s, group %s overflowed 4000x4000 with minimum size of %dx%d. Continuing discarding faulty parts.",
-                        ed->path, ed->group, ed->w, ed->h);
+                    ERR("file %s, group %s overflowed %dx%d with minimum size of %dx%d. Continuing discarding faulty parts.",
+                        ed->path, ed->group, MIN_LIMIT, MIN_LIMIT,
+                        ed->w, ed->h);
                }
 
              if (reset_max)
