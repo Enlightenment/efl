@@ -4588,6 +4588,8 @@ cmakeconfig/EflConfig.cmake
 cmakeconfig/EflConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EinaConfig.cmake
 cmakeconfig/EinaConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EioConfig.cmake
+cmakeconfig/EioConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EezeConfig.cmake
 cmakeconfig/EezeConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
 cmakeconfig/EoConfig.cmake
