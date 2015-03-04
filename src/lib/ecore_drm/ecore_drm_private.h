@@ -116,7 +116,7 @@ struct _Ecore_Drm_Output
    drmModeCrtcPtr crtc;
    Eeze_Udev_Watch *watch;
 
-   int x, y;
+   int x, y, phys_width, phys_height;
    int drm_fd;
 
    Eina_Bool need_repaint : 1;
@@ -130,6 +130,14 @@ struct _Ecore_Drm_Output
 
    Ecore_Drm_Output_Mode *current_mode;
    Eina_List *modes;
+
+   struct
+     {
+        char eisa[13];
+        char monitor[13];
+        char pnp[5];
+        char serial[13];
+     } edid;
 
    Ecore_Drm_Fb *current, *next;
    Ecore_Drm_Fb *dumb[NUM_FRAME_BUFFERS];
