@@ -1983,6 +1983,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
         pt = tex->ptt;
         offsetx = tex->tx;
         offsety = tex->ty;
+        smooth = EINA_TRUE;
 
         // Adjusting sx, sy, sw and sh to real size of tiny texture
         sx = sx * (EVAS_GL_TILE_SIZE - 2) / tex->w;
