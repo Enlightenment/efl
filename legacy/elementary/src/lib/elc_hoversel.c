@@ -152,7 +152,6 @@ _activate(Evas_Object *obj)
 
    sd->hover = elm_hover_add(sd->hover_parent);
    elm_widget_sub_object_add(obj, sd->hover);
-   elm_widget_mirrored_automatic_set(sd->hover, EINA_FALSE);
 
    if (sd->horizontal)
      snprintf(buf, sizeof(buf), "hoversel_horizontal/%s",
@@ -169,7 +168,6 @@ _activate(Evas_Object *obj)
 
    /* hover's content */
    bx = elm_box_add(sd->hover);
-   elm_widget_mirrored_automatic_set(bx, EINA_FALSE);
    elm_box_homogeneous_set(bx, EINA_TRUE);
    elm_box_horizontal_set(bx, sd->horizontal);
 
@@ -184,7 +182,6 @@ _activate(Evas_Object *obj)
      {
         ELM_HOVERSEL_ITEM_DATA_GET(eo_item, item);
         VIEW(item) = bt = elm_button_add(bx);
-        elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
         elm_widget_mirrored_set(bt, elm_widget_mirrored_get(obj));
         elm_object_style_set(bt, buf);
         elm_object_text_set(bt, item->label);
@@ -289,8 +286,6 @@ _elm_hoversel_evas_object_smart_add(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
-
-   elm_widget_mirrored_automatic_set(obj, EINA_FALSE);
 
    evas_object_smart_callback_add(obj, "clicked", _on_clicked, obj);
 

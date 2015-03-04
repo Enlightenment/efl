@@ -14,6 +14,26 @@ _clear_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info)
    elm_hoversel_clear((Evas_Object *)data);
 }
 
+static void
+_reverse_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   if (!data) return;
+   elm_object_mirrored_set(data, !elm_object_mirrored_get (data));
+   printf("\nMirrored mode is now %s", elm_object_mirrored_get(data) ? "ON" : "OFF" );
+   fflush(stdout);
+}
+
+Eina_Bool is_eng = EINA_TRUE;
+static void
+_arabic_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   if (!data) return;
+   is_eng = !is_eng;
+   elm_object_text_set(data, is_eng ?
+                       "Enable Arabic for new items" :
+                       "Enable English for new items");
+}
+
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
@@ -50,6 +70,20 @@ elm_main(int argc, char **argv)
    evas_object_move(btn, 10, 50);
    evas_object_show(btn);
 
+   btn = elm_button_add(win);
+   elm_object_text_set(btn, "Change Mirror Mode");
+   evas_object_smart_callback_add(btn, "clicked", _reverse_btn_clicked_cb, hoversel);
+   evas_object_resize(btn, 180, 30);
+   evas_object_move(btn, 10, 90);
+   evas_object_show(btn);
+
+   btn = elm_button_add(win);
+   elm_object_text_set(btn, "Enable Arabic for new items");
+   evas_object_smart_callback_add(btn, "clicked", _arabic_btn_clicked_cb, btn);
+   evas_object_resize(btn, 180, 30);
+   evas_object_move(btn, 10, 130);
+   evas_object_show(btn);
+
    evas_object_resize(win, 200, 300);
    evas_object_show(win);
 
@@ -74,10 +108,13 @@ static void
 _add_item(void *data, Evas_Object *obj, void *event_info)
 {
    static int num = 0;
-   char *str = malloc(sizeof(char) * 10);
+   char *str = malloc(sizeof(char) * 11);
    Elm_Object_Item *hoversel_it;
 
-   snprintf(str, 10, "item %d", ++num);
+   if(is_eng)
+     snprintf(str, 11, "item %d", ++num);
+   else
+     snprintf(str, 11, "بند %d", ++num);
 
    hoversel_it = elm_hoversel_item_add(obj, str, NULL, ELM_ICON_NONE, NULL,
                                        str);
