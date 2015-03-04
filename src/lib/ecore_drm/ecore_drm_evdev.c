@@ -350,13 +350,18 @@ _device_pointer_motion(Ecore_Drm_Evdev *edev, struct libinput_event_pointer *eve
         if (edev->mouse.ix < output->x)
           edev->mouse.dx = edev->mouse.ix = output->x;
         else if (edev->mouse.ix >= (output->x + output->current_mode->width))
-          edev->mouse.dx =
-          edev->mouse.ix = (output->x + output->current_mode->width - 1);
+          {
+             edev->mouse.dx =
+               edev->mouse.ix = (output->x + output->current_mode->width - 1);
+          }
 
         if (edev->mouse.iy < output->y)
           edev->mouse.dy = edev->mouse.iy = output->y;
         else if (edev->mouse.iy >= (output->y + output->current_mode->height))
-          edev->mouse.dy = edev->mouse.iy = (output->y + output->current_mode->height - 1);
+          {
+             edev->mouse.dy = 
+               edev->mouse.iy = (output->y + output->current_mode->height - 1);
+          }
      }
 
    ev->window = (Ecore_Window)input->dev->window;
