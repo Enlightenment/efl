@@ -659,8 +659,9 @@ EAPI void         evas_gl_common_image_native_disable(Evas_GL_Image *im);
 EAPI void         evas_gl_common_image_free(Evas_GL_Image *im);
 EAPI void         evas_gl_common_image_native_enable(Evas_GL_Image *im);
 
-EAPI int evas_gl_preload_init(void);
-EAPI int evas_gl_preload_shutdown(void);
+EAPI int          evas_gl_preload_init(void);
+EAPI int          evas_gl_preload_shutdown(void);
+EAPI Eina_Bool    evas_gl_preload_enabled(void);
 
 EAPI Evas_Engine_GL_Context  *evas_gl_common_context_new(void);
 

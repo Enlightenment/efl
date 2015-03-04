@@ -1267,7 +1267,10 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
      }
 
    // if preloaded, then async push it in after uploading a miniature of it
-   if (im->cache_entry.flags.preload_done && tex->w > 2 * EVAS_GL_TILE_SIZE && tex->h > 2 * EVAS_GL_TILE_SIZE)
+   if (im->cache_entry.flags.preload_done
+       && (tex->w > (2 * EVAS_GL_TILE_SIZE))
+       && (tex->h > (2 * EVAS_GL_TILE_SIZE))
+       && evas_gl_preload_enabled())
      {
         Evas_GL_Texture_Async_Preload *async;
         unsigned char *in;
