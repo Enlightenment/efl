@@ -159,17 +159,21 @@ local connect = function(self, ename, func, priority)
     end
     local cl = eo_classes["Eo_Base"]
     -- add the callback to the respective array
+    local cdel = false
     local addr = eo_obj_addr_get(self)
     local  cbs = eo_callbacks[addr]
     if not cbs then
         cbs = {}
         eo_callbacks[addr] = cbs
+        cdel = true
     end
     local cidx = #cbs + 1
     cbs[cidx] = func
     M.__do_start(self, cl)
     eo.eo_event_callback_priority_add(ev, priority or 0,
         eo_event_cb, ffi.cast("void *", cidx))
+    eo.eo_event_callback_priority_add(eo._EO_BASE_EVENT_DEL, 0, eo_event_del,
+        nil)
     M.__do_end()
     return true
 end
@@ -318,8 +322,6 @@ M.__ctor_common = function(klass, parent, ctor, loff, ...)
         ret = eo.eo_finalize()
         eo._eo_do_end(nil)
     end
-    eo.eo_event_callback_priority_add(eo._EO_BASE_EVENT_DEL, 0, eo_event_del,
-        nil)
     ffi.gc(ret, obj_gccb)
     return ret
 end
