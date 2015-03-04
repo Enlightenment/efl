@@ -3,8 +3,17 @@
 #endif
 
 #include "ecore_drm_private.h"
+#include <ctype.h>
 
 #define ALEN(array) (sizeof(array) / sizeof(array)[0])
+
+#define EDID_DESCRIPTOR_ALPHANUMERIC_DATA_STRING 0xfe
+#define EDID_DESCRIPTOR_DISPLAY_PRODUCT_NAME 0xfc
+#define EDID_DESCRIPTOR_DISPLAY_PRODUCT_SERIAL_NUMBER 0xff
+#define EDID_OFFSET_DATA_BLOCKS 0x36
+#define EDID_OFFSET_LAST_BLOCK 0x6c
+#define EDID_OFFSET_PNPID 0x08
+#define EDID_OFFSET_SERIAL 0x0c
 
 static const char *conn_types[] = 
 {
@@ -16,6 +25,109 @@ static const char *conn_types[] =
 EAPI int ECORE_DRM_EVENT_OUTPUT = 0;
 
 /* local functions */
+
+static void 
+_ecore_drm_output_edid_parse_string(const uint8_t *data, char text[])
+{
+   int i = 0, rep = 0;
+
+   strncpy(text, (const char *)data, 12);
+
+   for (; text[i] != '\0'; i++)
+     {
+        if ((text[i] == '\n') || (text[i] == '\r'))
+          {
+             text[i] = '\0';
+             break;
+          }
+     }
+
+   for (i = 0; text[i] != '\0'; i++)
+     {
+        if (!isprint(text[i]))
+          {
+             text[i] = '-';
+             rep++;
+          }
+     }
+
+   if (rep > 0) text[i] = '\0';
+}
+
+static int 
+_ecore_drm_output_edid_parse(Ecore_Drm_Output *output, const uint8_t *data, size_t len)
+{
+   int i = 0;
+   uint32_t serial;
+
+   if (len < 128) return -1;
+   if ((data[0] != 0x00) || (data[1] != 0xff)) return -1;
+
+   output->edid.pnp[0] = 'A' + ((data[EDID_OFFSET_PNPID + 0] & 0x7c) / 4) - 1;
+   output->edid.pnp[1] = 
+     'A' + ((data[EDID_OFFSET_PNPID + 0] & 0x3) * 8) + 
+     ((data[EDID_OFFSET_PNPID + 1] & 0xe0) / 32) - 1;
+   output->edid.pnp[2] = 'A' + (data[EDID_OFFSET_PNPID + 1] & 0x1f) - 1;
+   output->edid.pnp[3] = '\0';
+
+   serial = (uint32_t) data[EDID_OFFSET_SERIAL + 0];
+   serial += (uint32_t) data[EDID_OFFSET_SERIAL + 1] * 0x100;
+   serial += (uint32_t) data[EDID_OFFSET_SERIAL + 2] * 0x10000;
+   serial += (uint32_t) data[EDID_OFFSET_SERIAL + 3] * 0x1000000;
+   if (serial > 0)
+     sprintf(output->edid.serial, "%lu", (unsigned long)serial);
+
+   for (i = EDID_OFFSET_DATA_BLOCKS; i <= EDID_OFFSET_LAST_BLOCK; i += 18)
+     {
+        if (data[i] != 0) continue;
+        if (data[i + 2] != 0) continue;
+
+        if (data[i + 3] == EDID_DESCRIPTOR_DISPLAY_PRODUCT_NAME)
+          _ecore_drm_output_edid_parse_string(&data[i+5], output->edid.monitor);
+        else if (data[i + 3] == EDID_DESCRIPTOR_DISPLAY_PRODUCT_SERIAL_NUMBER)
+          _ecore_drm_output_edid_parse_string(&data[i+5], output->edid.serial);
+        else if (data[i + 3] == EDID_DESCRIPTOR_ALPHANUMERIC_DATA_STRING)
+          _ecore_drm_output_edid_parse_string(&data[i+5], output->edid.eisa);
+     }
+
+   return 0;
+}
+
+static void 
+_ecore_drm_output_edid_find(Ecore_Drm_Output *output, drmModeConnector *conn)
+{
+   drmModePropertyBlobPtr blob = NULL;
+   drmModePropertyPtr prop;
+   int i = 0, ret = 0;
+
+   for (; i < conn->count_props && !blob; i++)
+     {
+        if (!(prop = drmModeGetProperty(output->dev->drm.fd, conn->props[i])))
+          continue;
+        if ((prop->flags & DRM_MODE_PROP_BLOB) && 
+            (!strcmp(prop->name, "EDID")))
+          {
+             blob = drmModeGetPropertyBlob(output->dev->drm.fd, 
+                                           conn->prop_values[i]);
+          }
+        drmModeFreeProperty(prop);
+     }
+
+   if (!blob) return;
+
+   ret = _ecore_drm_output_edid_parse(output, blob->data, blob->length);
+   if (!ret)
+     {
+        if (output->edid.pnp[0] != '\0')
+          eina_stringshare_replace(&output->make, output->edid.pnp);
+        if (output->edid.monitor[0] != '\0')
+          eina_stringshare_replace(&output->model, output->edid.monitor);
+        /* if (output->edid.serial[0] != '\0') */
+        /*   eina_stringshare_replace(&output->serial, output->edid.serial); */
+     }
+
+   drmModeFreePropertyBlob(blob);
+}
 
 static Eina_Bool 
 _ecore_drm_output_software_setup(Ecore_Drm_Device *dev, Ecore_Drm_Output *output)
@@ -299,6 +411,8 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    output->dev = dev;
    output->x = x;
    output->y = y;
+   output->phys_width = conn->mmWidth;
+   output->phys_height = conn->mmHeight;
 
    output->subpixel = conn->subpixel;
    output->make = eina_stringshare_add("unknown");
@@ -351,6 +465,8 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
         output->current_mode = _ecore_drm_output_mode_add(output, &crtc_mode);
         if (!output->current_mode) goto mode_err;
      }
+
+   _ecore_drm_output_edid_find(output, conn);
 
    dev->use_hw_accel = EINA_FALSE;
    if (!_ecore_drm_output_software_setup(dev, output))
@@ -967,9 +1083,8 @@ ecore_drm_output_physical_size_get(Ecore_Drm_Output *output, int *w, int *h)
 {
    EINA_SAFETY_ON_NULL_RETURN(output);
 
-   //FIXME: This needs to be set when EDID parsing works
-   if (w) *w = 0;
-   if (h) *h = 0;
+   if (w) *w = output->phys_width;
+   if (h) *h = output->phys_height;
 }
 
 EAPI unsigned int
