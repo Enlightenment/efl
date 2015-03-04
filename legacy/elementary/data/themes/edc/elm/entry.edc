@@ -768,6 +768,11 @@ group { name: "elm/entry/base-single/default";
    }
 }
 
+group { name: "elm/entry/base-single/spinner/default";
+   alias: "elm/entry/base-single/spinner/vertical";
+   inherit: "elm/entry/base-single/default";
+}
+
 group { name: "elm/entry/base-single-noedit/default";
    inherit: "elm/entry/base/default";
    parts {

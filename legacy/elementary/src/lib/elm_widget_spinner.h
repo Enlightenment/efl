@@ -28,7 +28,7 @@
 typedef struct _Elm_Spinner_Data    Elm_Spinner_Data;
 struct _Elm_Spinner_Data
 {
-   Evas_Object          *ent;
+   Evas_Object          *ent, *inc_button, *dec_button, *text_button;
    const char           *label;
    double                val, val_min, val_max, val_base;
    double                step; /**< step for the value change. 1 by default. */

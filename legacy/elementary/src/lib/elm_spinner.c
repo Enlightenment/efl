@@ -38,14 +38,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-static Eina_Bool _key_action_spin(Evas_Object *obj, const char *params);
-static Eina_Bool _key_action_toggle(Evas_Object *obj, const char *params);
-
-static const Elm_Action key_actions[] = {
-   {"spin", _key_action_spin},
-   {"toggle", _key_action_toggle},
-   {NULL, NULL}
-};
+static void _access_increment_decrement_info_say(Evas_Object *obj,
+                                                 Eina_Bool is_incremented);
 
 static void
 _entry_show(Elm_Spinner_Data *sd)
@@ -108,13 +102,14 @@ _label_write(Evas_Object *obj)
              goto apply;
           }
      }
+
    if (sd->label)
      snprintf(buf, sizeof(buf), sd->label, sd->val);
    else
      snprintf(buf, sizeof(buf), "%.0f", sd->val);
 
 apply:
-   elm_layout_text_set(obj, "elm.text", buf);
+   elm_layout_text_set(sd->text_button, "elm.text", buf);
    elm_interface_atspi_accessible_name_changed_signal_emit(obj);
    if (sd->entry_visible) _entry_show(sd);
 }
@@ -197,8 +192,13 @@ _drag_cb(void *data,
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->entry_visible) return;
-   eo_do((Eo *)wd->resize_obj,
-         edje_obj_part_drag_value_get("elm.dragable.slider", &pos, NULL));
+
+   if (!strncmp(elm_widget_style_get(obj), "vertical", 8))
+     eo_do((Eo *)wd->resize_obj,
+          edje_obj_part_drag_value_get("elm.dragable.slider", NULL, &pos));
+   else
+     eo_do((Eo *)wd->resize_obj,
+          edje_obj_part_drag_value_get("elm.dragable.slider", &pos, NULL));
 
    delta = pos * sd->step * _elm_config->scale;
    /* If we are on rtl mode, change the delta to be negative on such changes */
@@ -241,7 +241,8 @@ _entry_hide(Evas_Object *obj)
 {
    ELM_SPINNER_DATA_GET(obj, sd);
 
-   elm_layout_signal_emit(obj, "elm,state,inactive", "elm");
+   elm_layout_signal_emit(obj, "elm,state,entry,inactive", "elm");
+   elm_layout_signal_emit(obj, "elm,state,button,active", "elm");
    sd->entry_visible = EINA_FALSE;
 }
 
@@ -279,10 +280,21 @@ _entry_activated_cb(void *data,
 }
 
 static void
-_entry_toggle_cb(void *data EINA_UNUSED,
-                 Evas_Object *obj,
-                 const char *emission EINA_UNUSED,
-                 const char *source EINA_UNUSED)
+_entry_show_cb(void *data,
+               Evas *e EINA_UNUSED,
+               Evas_Object *obj,
+               void *event_info EINA_UNUSED)
+{
+   ELM_SPINNER_DATA_GET(data, sd);
+   _entry_show(sd);
+   elm_object_focus_set(obj, EINA_TRUE);
+   elm_entry_select_all(obj);
+   sd->entry_visible = EINA_TRUE;
+   elm_layout_signal_emit(data, "elm,state,button,inactive", "elm");
+}
+
+static void
+_toggle_entry(Evas_Object *obj)
 {
    ELM_SPINNER_DATA_GET(obj, sd);
 
@@ -299,18 +311,28 @@ _entry_toggle_cb(void *data EINA_UNUSED,
         if (!sd->ent)
           {
              sd->ent = elm_entry_add(obj);
+             Eina_Strbuf *buf = eina_strbuf_new();
+             eina_strbuf_append_printf(buf, "spinner/%s", elm_widget_style_get(obj));
+             elm_widget_style_set(sd->ent, eina_strbuf_string_get(buf));
+             eina_strbuf_free(buf);
              elm_entry_single_line_set(sd->ent, EINA_TRUE);
              evas_object_smart_callback_add
                 (sd->ent, "activated", _entry_activated_cb, obj);
+             evas_object_event_callback_add
+               (sd->ent, EVAS_CALLBACK_SHOW, _entry_show_cb, obj);
              elm_layout_content_set(obj, "elm.swallow.entry", sd->ent);
           }
-
-        elm_layout_signal_emit(obj, "elm,state,active", "elm");
-        _entry_show(sd);
-        elm_entry_select_all(sd->ent);
-        elm_widget_focus_set(sd->ent, EINA_TRUE);
-        sd->entry_visible = EINA_TRUE;
+        elm_layout_signal_emit(obj, "elm,state,entry,active", "elm");
      }
+}
+
+static void
+_entry_toggle_cb(void *data EINA_UNUSED,
+                 Evas_Object *obj,
+                 const char *emission EINA_UNUSED,
+                 const char *source EINA_UNUSED)
+{
+   _toggle_entry(obj);
 }
 
 static Eina_Bool
@@ -375,69 +397,102 @@ _spin_stop(Evas_Object *obj)
 }
 
 static void
-_button_inc_start_cb(void *data,
-                     Evas_Object *obj,
-                     const char *emission EINA_UNUSED,
-                     const char *source EINA_UNUSED)
+_inc_button_clicked_cb(void *data,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
-   if (sd->entry_visible)
-     {
-        _entry_value_apply(obj);
-        if ((sd->val_updated) && (sd->val == sd->val_min)) return;
-     }
-   ecore_timer_del(sd->longpress_timer);
-   sd->longpress_timer = ecore_timer_add
-            (_elm_config->longpress_timeout, _val_inc_start, data);
+   _spin_stop(data);
+   sd->spin_speed = sd->step;
+   _spin_value(data);
+
+   if (sd->entry_visible) _entry_value_apply(data);
+   if (_elm_config->access_mode)
+     _access_increment_decrement_info_say(data, EINA_TRUE);
 }
 
 static void
-_button_inc_stop_cb(void *data,
-                    Evas_Object *obj EINA_UNUSED,
-                    const char *emission EINA_UNUSED,
-                    const char *source EINA_UNUSED)
+_inc_button_pressed_cb(void *data,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
-    ELM_SPINNER_DATA_GET(data, sd);
-    if (sd->longpress_timer)
-      {
-         ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
-         sd->spin_speed = sd->step;
-         _spin_value(data);
-      }
+   ELM_SPINNER_DATA_GET(data, sd);
+
+   if (sd->longpress_timer) ecore_timer_del(sd->longpress_timer);
+   sd->longpress_timer = ecore_timer_add
+                           (_elm_config->longpress_timeout,
+                            _val_inc_start, data);
+
+   if (sd->entry_visible) _entry_value_apply(data);
+}
+
+static void
+_inc_button_unpressed_cb(void *data,
+                         Evas_Object *obj EINA_UNUSED,
+                         void *event_info EINA_UNUSED)
+{
+   ELM_SPINNER_DATA_GET(data, sd);
+
+   if (sd->longpress_timer)
+     {
+        ecore_timer_del(sd->longpress_timer);
+        sd->longpress_timer = NULL;
+     }
    _spin_stop(data);
 }
 
 static void
-_button_dec_start_cb(void *data,
-                     Evas_Object *obj EINA_UNUSED,
-                     const char *emission EINA_UNUSED,
-                     const char *source EINA_UNUSED)
+_text_button_clicked_cb(void *data,
+                        Evas_Object *obj EINA_UNUSED,
+                        void *event_info EINA_UNUSED)
 {
-   ELM_SPINNER_DATA_GET(data, sd);
-
-   if (sd->entry_visible)
-     {
-        _entry_value_apply(obj);
-        if ((sd->val_updated) && (sd->val == sd->val_max)) return;
-     }
-   ecore_timer_del(sd->longpress_timer);
-   sd->longpress_timer = ecore_timer_add
-             (_elm_config->longpress_timeout, _val_dec_start, data);
+   _toggle_entry(data);
 }
 
 static void
-_button_dec_stop_cb(void *data,
-                    Evas_Object *obj EINA_UNUSED,
-                    const char *emission EINA_UNUSED,
-                    const char *source EINA_UNUSED)
+_dec_button_clicked_cb(void *data,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(data, sd);
+
+   _spin_stop(data);
+   sd->spin_speed = -sd->step;
+   _spin_value(data);
+
+   if (sd->entry_visible) _entry_value_apply(data);
+
+   if (_elm_config->access_mode)
+     _access_increment_decrement_info_say(data, EINA_FALSE);
+}
+
+static void
+_dec_button_pressed_cb(void *data,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
+{
+   ELM_SPINNER_DATA_GET(data, sd);
+
+   if (sd->longpress_timer) ecore_timer_del(sd->longpress_timer);
+   sd->longpress_timer = ecore_timer_add
+                           (_elm_config->longpress_timeout,
+                            _val_dec_start, data);
+
+   if (sd->entry_visible) _entry_value_apply(data);
+}
+
+static void
+_dec_button_unpressed_cb(void *data,
+                         Evas_Object *obj EINA_UNUSED,
+                         void *event_info EINA_UNUSED)
+{
+   ELM_SPINNER_DATA_GET(data, sd);
+
    if (sd->longpress_timer)
      {
-        ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
-        sd->spin_speed = -sd->step;
-        _spin_value(data);
+        ecore_timer_del(sd->longpress_timer);
+        sd->longpress_timer = NULL;
      }
    _spin_stop(data);
 }
@@ -451,92 +506,9 @@ _elm_spinner_elm_layout_sizing_eval(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc
      (wd->resize_obj, &minw, &minh, minw, minh);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
-}
-
-static Eina_Bool
-_key_action_spin(Evas_Object *obj, const char *params)
-{
-   const char *dir = params;
-   Eina_Bool horz = !!strncmp(elm_widget_style_get(obj), "vertical", 8);
-
-   if (((!strcmp(dir, "left")) && horz) ||
-       ((!strcmp(dir, "down")) && !horz))
-     {
-        _val_dec_start(obj);
-        elm_layout_signal_emit(obj, "elm,left,anim,activate", "elm");
-     }
-   else if (((!strcmp(dir, "right")) && horz) ||
-            ((!strcmp(dir, "up")) && !horz))
-     {
-        _val_inc_start(obj);
-        elm_layout_signal_emit(obj, "elm,right,anim,activate", "elm");
-     }
-   else return EINA_FALSE;
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
-{
-   ELM_SPINNER_DATA_GET(obj, sd);
-
-   if (sd->spin_timer) _spin_stop(obj);
-   else _entry_toggle_cb(NULL, obj, NULL, NULL);
-
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_elm_spinner_elm_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, Evas_Object *src, Evas_Callback_Type type, void *event_info)
-{
-   Evas_Event_Key_Down *ev = event_info;
-   Evas_Event_Mouse_Wheel *mev;
-   (void) src;
-
-   if (type == EVAS_CALLBACK_KEY_DOWN)
-     {
-        Eina_Bool ret;
-        
-        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-        ret = _elm_config_key_binding_call(obj, ev, key_actions);
-        if (!ret)
-          {
-             if (sd->spin_timer) _spin_stop(obj);
-             else return EINA_FALSE;
-          }
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-     }
-   else if (type == EVAS_CALLBACK_KEY_UP)
-     {
-        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-        if (sd->spin_timer) _spin_stop(obj);
-        else return EINA_FALSE;
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-     }
-   else if (type == EVAS_CALLBACK_MOUSE_WHEEL)
-     {
-        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-        mev = event_info;
-        sd->interval = sd->first_interval;
-        if (mev->z < 0)
-          {
-             sd->spin_speed = sd->step;
-             elm_layout_signal_emit(obj, "elm,right,anim,activate", "elm");
-          }
-        else
-          {
-             sd->spin_speed = -sd->step;
-             elm_layout_signal_emit(obj, "elm,left,anim,activate", "elm");
-          }
-        _spin_value(obj);
-        mev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-     }
-   else return EINA_FALSE;
-
-   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
@@ -558,13 +530,18 @@ _elm_spinner_elm_widget_on_focus(Eo *obj, Elm_Spinner_Data *sd)
 }
 
 static char *
-_access_info_cb(void *data, Evas_Object *obj)
+_access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
    Evas_Object *spinner;
-   const char *txt = elm_widget_access_info_get(obj);
+   const char *txt = NULL;
 
-   spinner = data;
-   if (!txt) txt = elm_layout_text_get(spinner, "elm.text");
+   spinner = (Evas_Object *)(data);
+   ELM_SPINNER_DATA_GET(spinner, sd);
+
+   if (sd->entry_visible)
+     txt = elm_object_text_get(sd->ent);
+   else
+     txt = elm_object_text_get(sd->text_button);
    if (txt) return strdup(txt);
 
    return NULL;
@@ -580,46 +557,45 @@ _access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 }
 
 static void
-_access_activate_cb(void *data,
-                    Evas_Object *part_obj,
-                    Elm_Object_Item *item EINA_UNUSED)
+_access_activate_spinner_cb(void *data,
+                            Evas_Object *part_obj EINA_UNUSED,
+                            Elm_Object_Item *item EINA_UNUSED)
+{
+   ELM_SPINNER_DATA_GET(data, sd);
+
+   if (elm_widget_disabled_get(data)) return;
+   if (!sd->entry_visible)
+     _toggle_entry(data);
+}
+
+static void
+_access_increment_decrement_info_say(Evas_Object *obj,
+                                     Eina_Bool is_incremented)
 {
    char *text;
    Eina_Strbuf *buf;
-   Evas_Object *eo, *inc_btn;
-   const char* increment_part;
 
-   if (!strncmp(elm_widget_style_get(data), "vertical", 8))
-     increment_part = "up_bt";
-   else
-     increment_part = "right_bt";
+   ELM_SPINNER_DATA_GET(obj, sd);
 
-   eo = elm_layout_edje_get(data);
-   inc_btn = (Evas_Object *)edje_object_part_object_get(eo, increment_part);
+    buf = eina_strbuf_new();
+    if (is_incremented)
+      {
+         elm_object_signal_emit
+            (sd->inc_button, "elm,action,anim,activate", "elm");
+         eina_strbuf_append(buf, E_("incremented"));
+      }
+    else
+      {
+         elm_object_signal_emit
+            (sd->dec_button, "elm,action,anim,activate", "elm");
+         eina_strbuf_append(buf, E_("decremented"));
+      }
 
-   if (part_obj != inc_btn)
-     {
-        _val_dec_start(data);
-        elm_layout_signal_emit(data, "elm,left,anim,activate", "elm");
-        _spin_stop(data);
-        text = "decremented";
-     }
-   else
-     {
-        _val_inc_start(data);
-        elm_layout_signal_emit(data, "elm,right,anim,activate", "elm");
-        _spin_stop(data);
-        text = "incremented";
-     }
-
-   buf = eina_strbuf_new();
-
-   eina_strbuf_append_printf(buf, "%s, %s", text,
-            elm_layout_text_get(data, "elm.text"));
+   eina_strbuf_append_printf
+      (buf, "%s", elm_object_text_get(sd->text_button));
 
    text = eina_strbuf_string_steal(buf);
    eina_strbuf_free(buf);
-
    _elm_access_say(text);
 }
 
@@ -628,61 +604,41 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
 {
    Evas_Object *ao;
    Elm_Access_Info *ai;
-   const char* increment_part;
-   const char* decrement_part;
 
-   if (!strncmp(elm_widget_style_get(obj), "vertical", 8))
-     {
-        increment_part = "up_bt";
-        decrement_part = "down_bt";
-     }
-   else
-     {
-        increment_part = "right_bt";
-        decrement_part = "left_bt";
-     }
+   ELM_SPINNER_DATA_GET(obj, sd);
 
    if (!is_access)
      {
-        /* unregister increment button, decrement button and spinner label */
-        _elm_access_edje_object_part_object_unregister
-          (obj, elm_layout_edje_get(obj), increment_part);
-
-        _elm_access_edje_object_part_object_unregister
-          (obj, elm_layout_edje_get(obj), decrement_part);
-
-        _elm_access_edje_object_part_object_unregister
-          (obj, elm_layout_edje_get(obj), "access.text");
-
+        /* unregister access */
+       _elm_access_edje_object_part_object_unregister
+         (obj, elm_layout_edje_get(obj), "access");
+        elm_layout_signal_emit(obj, "elm,state,access,inactive", "elm");
         return;
      }
-
-   /* register increment button */
+   elm_layout_signal_emit(obj, "elm,state,access,active", "elm");
    ao = _elm_access_edje_object_part_object_register
-          (obj, elm_layout_edje_get(obj), increment_part);
-
-   ai = _elm_access_info_get(ao);
-   _elm_access_text_set(ai, ELM_ACCESS_TYPE,
-                        E_("spinner increment button"));
-   _elm_access_activate_callback_set(ai, _access_activate_cb, obj);
-
-   /* register decrement button */
-   ao = _elm_access_edje_object_part_object_register
-          (obj, elm_layout_edje_get(obj), decrement_part);
-
-   ai = _elm_access_info_get(ao);
-   _elm_access_text_set(ai, ELM_ACCESS_TYPE,
-                        E_("spinner decrement button"));
-   _elm_access_activate_callback_set(ai, _access_activate_cb, obj);
-
-   /* register spinner label */
-   ao = _elm_access_edje_object_part_object_register
-          (obj, elm_layout_edje_get(obj), "access.text");
+          (obj, elm_layout_edje_get(obj), "access");
 
    ai = _elm_access_info_get(ao);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("spinner"));
-   _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, obj);
    _elm_access_callback_set(ai, ELM_ACCESS_STATE, _access_state_cb, obj);
+   _elm_access_activate_callback_set(ai, _access_activate_spinner_cb, obj);
+
+   /*Do not register spinner buttons if widget is disabled*/
+   if (!elm_widget_disabled_get(obj))
+     {
+        ai = _elm_access_info_get(sd->inc_button);
+        _elm_access_text_set(ai, ELM_ACCESS_TYPE,
+                             E_("spinner increment button"));
+
+        ai = _elm_access_info_get(sd->dec_button);
+        _elm_access_text_set(ai, ELM_ACCESS_TYPE,
+                             E_("spinner decrement button"));
+
+        ai = _elm_access_info_get(sd->text_button);
+        _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("spinner text"));
+        _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, obj);
+     }
 }
 
 EOLIAN static void
@@ -707,14 +663,42 @@ _elm_spinner_evas_object_smart_add(Eo *obj, Elm_Spinner_Data *priv)
    elm_layout_signal_callback_add(obj, "drag,step", "*", _drag_stop_cb, obj);
    elm_layout_signal_callback_add(obj, "drag,page", "*", _drag_stop_cb, obj);
 
-   elm_layout_signal_callback_add
-     (obj, "elm,action,increment,start", "*", _button_inc_start_cb, obj);
-   elm_layout_signal_callback_add
-     (obj, "elm,action,increment,stop", "*", _button_inc_stop_cb, obj);
-   elm_layout_signal_callback_add
-     (obj, "elm,action,decrement,start", "*", _button_dec_start_cb, obj);
-   elm_layout_signal_callback_add
-     (obj, "elm,action,decrement,stop", "*", _button_dec_stop_cb, obj);
+   priv->inc_button = elm_button_add(obj);
+   elm_object_style_set(priv->inc_button, "spinner/increase/default");
+
+   evas_object_smart_callback_add
+     (priv->inc_button, "clicked", _inc_button_clicked_cb, obj);
+   evas_object_smart_callback_add
+     (priv->inc_button, "pressed", _inc_button_pressed_cb, obj);
+   evas_object_smart_callback_add
+     (priv->inc_button, "unpressed", _inc_button_unpressed_cb, obj);
+
+   elm_layout_content_set(obj, "elm.swallow.inc_button", priv->inc_button);
+   elm_widget_sub_object_add(obj, priv->inc_button);
+
+   priv->text_button = elm_button_add(obj);
+   elm_object_style_set(priv->text_button, "spinner/default");
+
+   evas_object_smart_callback_add
+     (priv->text_button, "clicked", _text_button_clicked_cb, obj);
+
+   elm_layout_content_set(obj, "elm.swallow.text_button", priv->text_button);
+   elm_widget_sub_object_add(obj, priv->text_button);
+
+
+   priv->dec_button = elm_button_add(obj);
+   elm_object_style_set(priv->dec_button, "spinner/decrease/default");
+
+   evas_object_smart_callback_add
+     (priv->dec_button, "clicked", _dec_button_clicked_cb, obj);
+   evas_object_smart_callback_add
+     (priv->dec_button, "pressed", _dec_button_pressed_cb, obj);
+   evas_object_smart_callback_add
+     (priv->dec_button, "unpressed", _dec_button_unpressed_cb, obj);
+
+   elm_layout_content_set(obj, "elm.swallow.dec_button", priv->dec_button);
+   elm_widget_sub_object_add(obj, priv->dec_button);
+
 
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.dragable.slider", 0.0, 0.0);
@@ -755,22 +739,53 @@ _elm_spinner_evas_object_smart_del(Eo *obj, Elm_Spinner_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_elm_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED)
+_elm_spinner_elm_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
 {
    Eina_Bool int_ret = elm_layout_theme_set(obj, "spinner", "base",
                               elm_widget_style_get(obj));
 
    if (!int_ret) CRI("Failed to set layout!");
 
+   if (sd->ent)
+     {
+        Eina_Strbuf *buf = eina_strbuf_new();
+        eina_strbuf_append_printf(buf, "spinner/%s", elm_widget_style_get(obj));
+        elm_widget_style_set(sd->ent, eina_strbuf_string_get(buf));
+        eina_strbuf_free(buf);
+     }
+
+   if (sd->inc_button)
+     {
+        Eina_Strbuf *buf = eina_strbuf_new();
+        eina_strbuf_append_printf(buf, "spinner/increase/%s", elm_widget_style_get(obj));
+        elm_widget_style_set(sd->inc_button, eina_strbuf_string_get(buf));
+        eina_strbuf_free(buf);
+     }
+
+   if (sd->text_button)
+     {
+        Eina_Strbuf *buf = eina_strbuf_new();
+        eina_strbuf_append_printf(buf, "spinner/%s", elm_widget_style_get(obj));
+        elm_widget_style_set(sd->text_button, eina_strbuf_string_get(buf));
+        eina_strbuf_free(buf);
+     }
+
+   if (sd->dec_button)
+     {
+        Eina_Strbuf *buf = eina_strbuf_new();
+        eina_strbuf_append_printf(buf, "spinner/decrease/%s", elm_widget_style_get(obj));
+        elm_widget_style_set(sd->dec_button, eina_strbuf_string_get(buf));
+        eina_strbuf_free(buf);
+     }
+
    if (_elm_config->access_mode)
      _access_spinner_register(obj, EINA_TRUE);
 
    elm_layout_sizing_eval(obj);
-
    return int_ret;
 }
 
-static Eina_Bool _elm_spinner_smart_focus_next_enable = EINA_FALSE;
+static Eina_Bool _elm_spinner_smart_focus_next_enable = EINA_TRUE;
 
 EOLIAN static Eina_Bool
 _elm_spinner_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Spinner_Data *_pd EINA_UNUSED)
@@ -781,7 +796,34 @@ _elm_spinner_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Spinner_D
 EOLIAN static Eina_Bool
 _elm_spinner_elm_widget_focus_direction_manager_is(Eo *obj EINA_UNUSED, Elm_Spinner_Data *_pd EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_elm_spinner_elm_widget_focus_direction(Eo *obj, Elm_Spinner_Data *_pd, const Evas_Object *base, double degree, Evas_Object **direction, double *weight)
+{
+   Eina_Bool ret;
+   Eina_List *items = NULL;
+   void *(*list_data_get)(const Eina_List *list);
+
+   ELM_SPINNER_CHECK(obj) EINA_FALSE;
+
+   if (!_pd)
+     return EINA_FALSE;
+
+   list_data_get = eina_list_data_get;
+   items = eina_list_append(items, _pd->inc_button);
+   if (_pd->entry_visible)
+     items = eina_list_append(items, _pd->ent);
+   else
+     items = eina_list_append(items, _pd->text_button);
+   items = eina_list_append(items, _pd->dec_button);
+
+   ret = elm_widget_focus_list_direction_get
+        (obj, base, items, list_data_get, degree, direction, weight);
+   eina_list_free(items);
+
+   return ret;
 }
 
 static Evas_Object *
@@ -798,34 +840,28 @@ _access_object_get(const Evas_Object *obj, const char* part)
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_elm_widget_focus_next(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_spinner_elm_widget_focus_next(Eo *obj, Elm_Spinner_Data *_pd, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Evas_Object *ao;
-
    Eina_List *items = NULL;
-   const char* increment_part;
-   const char* decrement_part;
 
-   if (!strncmp(elm_widget_style_get(obj), "vertical", 8))
+   ELM_SPINNER_CHECK(obj) EINA_FALSE;
+
+   if (_elm_config->access_mode)
      {
-        increment_part = "up_bt";
-        decrement_part = "down_bt";
+        ao = _access_object_get(obj, "access");
+        items = eina_list_append(items, ao);
      }
-   else
+   if (!elm_widget_disabled_get(obj))
      {
-        increment_part = "right_bt";
-        decrement_part = "left_bt";
+       items = eina_list_append(items, _pd->dec_button);
+        items = eina_list_append(items, _pd->inc_button);
+        if (_pd->entry_visible)
+          items = eina_list_append(items, _pd->ent);
+        else
+          items = eina_list_append(items, _pd->text_button);
+
      }
-
-   ao = _access_object_get(obj, "access.text");
-   items = eina_list_append(items, ao);
-
-   ao = _access_object_get(obj, decrement_part);
-   items = eina_list_append(items, ao);
-
-   ao = _access_object_get(obj, increment_part);
-   items = eina_list_append(items, ao);
-
    return elm_widget_focus_list_next_get
             (obj, items, eina_list_data_get, dir, next);
 }
@@ -1103,19 +1139,6 @@ _elm_spinner_elm_interface_atspi_accessible_name_get(Eo *obj, Elm_Spinner_Data *
    return elm_layout_text_get(obj, "elm.text");
 }
 
-EOLIAN static const Elm_Atspi_Action*
-_elm_spinner_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd EINA_UNUSED)
-{
-   static Elm_Atspi_Action atspi_actions[] = {
-          { "spin,left", "spin", "left", _key_action_spin},
-          { "spin,right", "spin", "right", _key_action_spin},
-          { "spin,up", "spin", "up", _key_action_spin},
-          { "spin,down", "spin", "down", _key_action_spin},
-          { "toggle", "toggle", NULL, _key_action_toggle},
-          { NULL, NULL, NULL, NULL }
-   };
-   return &atspi_actions[0];
-}
 // A11Y Accessibility - END
 
 #include "elm_spinner.eo.c"

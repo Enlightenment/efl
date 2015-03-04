@@ -371,15 +371,14 @@ class Elm_Spinner (Elm_Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
       Elm_Widget.focus_direction_manager_is;
       Elm_Widget.access;
       Elm_Widget.focus_next;
+      Elm_Widget.focus_direction;
       Elm_Widget.on_focus;
-      Elm_Widget.event;
       Elm_Layout.sizing_eval;
       Elm_Interface_Atspi_Accessible.name.get;
       Elm_Interface_Atspi_Value.value_and_text.get;
       Elm_Interface_Atspi_Value.value_and_text.set;
       Elm_Interface_Atspi_Value.range.get;
       Elm_Interface_Atspi_Value.increment.get;
-      Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
       changed;
