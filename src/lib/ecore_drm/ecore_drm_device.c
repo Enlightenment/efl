@@ -470,3 +470,32 @@ ecore_drm_device_name_get(Ecore_Drm_Device *dev)
 
    return dev->drm.name;
 }
+
+EAPI void
+ecore_drm_device_pointer_xy_get(Ecore_Drm_Device *dev, int *x, int *y)
+{
+   Ecore_Drm_Seat *seat;
+   Ecore_Drm_Evdev *edev;
+   Eina_List *l, *ll;
+
+   if (x) *x = 0;
+   if (y) *y = 0;
+
+   /* check for valid device */
+   if ((!dev) || (dev->drm.fd < 0)) return;
+
+   EINA_LIST_FOREACH(dev->seats, l, seat)
+     {
+        EINA_LIST_FOREACH(seat->devices, ll, edev)
+          {
+             if (!libinput_device_has_capability(edev->device, 
+                                                 LIBINPUT_DEVICE_CAP_POINTER))
+               continue;
+
+             if (x) *x = edev->mouse.dx;
+             if (y) *y = edev->mouse.dy;
+
+             return;
+          }
+     }
+}

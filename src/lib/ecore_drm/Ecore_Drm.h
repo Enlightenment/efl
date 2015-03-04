@@ -312,4 +312,18 @@ EAPI Eina_Stringshare *ecore_drm_output_model_get(Ecore_Drm_Output *output);
  */
 EAPI Eina_Stringshare *ecore_drm_output_make_get(Ecore_Drm_Output *output);
 
+/**
+ * Get the pointer position of Ecore_Drm_Device
+ *
+ * This function will give the pointer position of Ecore_Drm_Device
+ *
+ * @param dev The Ecore_Drm_Device to get pointer position for
+ * @param *x The parameter in which output x co-ordinate is stored
+ * @param *y The parameter in which output y co-ordinate is stored
+ *
+ * @ingroup Ecore_Drm_Device_Group
+ * @since 1.14
+ */
+EAPI void ecore_drm_device_pointer_xy_get(Ecore_Drm_Device *dev, int *x, int *y);
+
 #endif
