@@ -351,7 +351,8 @@ evas_gl_preload_target_unregister(Evas_GL_Texture *tex, Eo *target)
 EAPI int
 evas_gl_preload_init(void)
 {
-   if (getenv("EVAS_GL_NOPRELOAD")) return 0;
+   const char *s = getenv("EVAS_GL_PRELOAD");
+   if (!s || (atoi(s) != 1)) return 0;
    if (async_loader_init++) return async_loader_init;
 
    eina_lock_new(&async_loader_lock);
@@ -368,7 +369,8 @@ evas_gl_preload_init(void)
 EAPI int
 evas_gl_preload_shutdown(void)
 {
-   if (getenv("EVAS_GL_NOPRELOAD")) return 0;
+   const char *s = getenv("EVAS_GL_PRELOAD");
+   if (!s || (atoi(s) != 1)) return 0;
    if (--async_loader_init) return async_loader_init;
 
    async_loader_exit = EINA_TRUE;
@@ -380,4 +382,10 @@ evas_gl_preload_shutdown(void)
    eina_lock_free(&async_loader_lock);
 
    return async_loader_init;
+}
+
+EAPI Eina_Bool
+evas_gl_preload_enabled(void)
+{
+   return (async_loader_init >= 1);
 }
