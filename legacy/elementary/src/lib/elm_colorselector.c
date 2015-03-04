@@ -1117,7 +1117,10 @@ _elm_colorselector_elm_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd)
           }
      }
 
-   elm_layout_theme_set(sd->picker, "colorselector", "picker/base", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set(sd->picker, "colorselector", "picker/base",
+                             elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
+
    style = eina_stringshare_printf("colorselector/%s", elm_widget_style_get(obj));
 #ifdef HAVE_ELEMENTARY_X
    elm_object_style_set(sd->button, style);
