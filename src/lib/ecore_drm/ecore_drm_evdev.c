@@ -78,6 +78,13 @@ _device_output_set(Ecore_Drm_Evdev *edev)
         if (!(output = eina_list_nth(input->dev->outputs, 0))) return;
         edev->output = output;
      }
+
+   if (libinput_device_has_capability(edev->device, 
+                                      LIBINPUT_DEVICE_CAP_POINTER))
+     {
+        edev->mouse.dx = edev->output->current_mode->width / 2;
+        edev->mouse.dy = edev->output->current_mode->height / 2;
+     }
 }
 
 static void 
