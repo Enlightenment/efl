@@ -2991,7 +2991,7 @@ _edje_object_size_min_restricted_calc(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord 
    Eina_Bool repeat_w, repeat_h;
    Eina_Bool reset_max = EINA_TRUE;
    Edje_Real_Part *pep = NULL;
-   Eina_Bool has_non_fixed_tb = EINA_FALSE;
+   Eina_Bool has_fixed_tb;
 
    if ((!ed) || (!ed->collection))
      {
@@ -3033,7 +3033,7 @@ again:
           }
 
         pep = NULL;
-        has_non_fixed_tb = EINA_FALSE;
+        has_fixed_tb = EINA_TRUE;
 
         //for parts
         for (i = 0; i < ed->table_parts_size; i++)
@@ -3059,7 +3059,7 @@ again:
                                                                 &tb_mw, NULL);
                        tb_mw -= ep->req.w;
                        if (tb_mw > over_w) over_w = tb_mw;
-                       has_non_fixed_tb = EINA_TRUE;
+                       has_fixed_tb = EINA_FALSE;
                     }
 
                   if (over_w > max_over_w)
@@ -3086,7 +3086,7 @@ again:
                     }
 
                   if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
-                    has_non_fixed_tb = EINA_TRUE;
+                    has_fixed_tb = EINA_FALSE;
                }
           }
         if (repeat_w)
@@ -3109,7 +3109,7 @@ again:
              /* Only print it if we have a non-fixed textblock.
               * We should possibly avoid all of this if in this case, but in
               * the meanwhile, just doing this. */
-             if (!has_non_fixed_tb)
+             if (!has_fixed_tb)
                {
                   if (pep)
                     ERR("file %s, group %s has a non-fixed part '%s'. Adding 'fixed: 1 1;' to source EDC may help. Continuing discarding faulty part.",
