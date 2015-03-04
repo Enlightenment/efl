@@ -1159,6 +1159,16 @@ _elm_win_frame_obj_update(Elm_Win_Data *sd)
    int ox, oy, ow, oh;
    int sx, sy, sw, sh;
    int x, y, w, h;
+
+   if (sd->fullscreen)
+     {
+        evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        ecore_evas_geometry_get(sd->ee, NULL, NULL, &ow, &oh);
+        ecore_wl_window_opaque_region_set(sd->wl.win, 0, 0, ow, oh);
+        return;
+#endif
+     }
    evas_object_geometry_get(sd->frame_obj, &fx, &fy, &fw, &fh);
    evas_object_geometry_get(sd->client_obj, &ox, &oy, &ow, &oh);
    evas_object_geometry_get(sd->spacer_obj, &sx, &sy, &sw, &sh);
@@ -1256,6 +1266,7 @@ _elm_win_state_change(Ecore_Evas *ee)
      }
    if (ch_fullscreen)
      {
+        _elm_win_frame_obj_update(sd);
         if (sd->fullscreen)
           {
              int w, h;
@@ -1263,7 +1274,6 @@ _elm_win_state_change(Ecore_Evas *ee)
              evas_object_smart_callback_call(obj, SIG_FULLSCREEN, NULL);
              if (sd->frame_obj)
                evas_object_hide(sd->frame_obj);
-             evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
              ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
              ecore_evas_resize(sd->ee, w, h);
           }
@@ -1271,10 +1281,7 @@ _elm_win_state_change(Ecore_Evas *ee)
           {
              evas_object_smart_callback_call(obj, SIG_UNFULLSCREEN, NULL);
              if (sd->frame_obj)
-               {
-                  evas_object_show(sd->frame_obj);
-                  _elm_win_frame_obj_update(sd);
-               }
+               evas_object_show(sd->frame_obj);
           }
      }
    if (ch_maximized)
