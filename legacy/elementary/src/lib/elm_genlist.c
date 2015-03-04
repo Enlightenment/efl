@@ -4717,8 +4717,6 @@ _item_mouse_up_cb(void *data,
    if (sd->longpressed)
      {
         sd->longpressed = EINA_FALSE;
-        if ((!sd->wasselected) && (!it->flipped))
-          _item_unselect(it);
         sd->wasselected = EINA_FALSE;
         return;
      }
