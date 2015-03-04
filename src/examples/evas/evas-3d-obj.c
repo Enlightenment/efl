@@ -25,6 +25,7 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include <Ecore_File.h>
 #include "evas-common.h"
 
 #define  WIDTH 1900
