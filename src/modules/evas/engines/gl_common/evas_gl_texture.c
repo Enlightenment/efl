@@ -1283,26 +1283,61 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 
         out = alloca(bytes_count *  EVAS_GL_TILE_SIZE * EVAS_GL_TILE_SIZE);
         xstep = (float)tex->w / (EVAS_GL_TILE_SIZE - 2);
-        ystep = (float)tex->h / (EVAS_GL_TILE_SIZE - 1);
+        ystep = (float)tex->h / (EVAS_GL_TILE_SIZE - 2);
         in = im->image.data8;
 
-        for (y = 0, j = 0; j < EVAS_GL_TILE_SIZE - 1; y += ystep, j++)
+        // top-left
+        memcpy(&out[0],
+               &in[0],
+               bytes_count);
+
+        // top
+        for (x = xstep * 0.5f, i = 1; i < EVAS_GL_TILE_SIZE - 1; x += xstep, i++)
           {
-             memcpy(&out[j * EVAS_GL_TILE_SIZE * bytes_count],
-                    &in[(int)y * im->cache_entry.w * bytes_count],
-                    bytes_count);
-             for (x = 0, i = 1; i < EVAS_GL_TILE_SIZE - 1; x += xstep, i++)
-               memcpy(&out[(j * EVAS_GL_TILE_SIZE + i) * bytes_count],
-                      &in[((int)y * im->cache_entry.w + (int)x) * bytes_count],
-                      bytes_count);
-             memcpy(&out[(j * EVAS_GL_TILE_SIZE + i) * bytes_count],
-                    &in[((int)y * im->cache_entry.w + (int)(x - xstep)) * bytes_count],
+             memcpy(&out[i * bytes_count],
+                    &in[(int)x * bytes_count],
                     bytes_count);
           }
 
+        // top-right
+        memcpy(&out[((EVAS_GL_TILE_SIZE - 1) * bytes_count)],
+               &in[(im->cache_entry.w  - 1) * bytes_count],
+               bytes_count);
+
+        for (y = ystep * 0.5f, j = 1; j < EVAS_GL_TILE_SIZE - 1; y += ystep, j++)
+          {
+             // left
+             memcpy(&out[j * EVAS_GL_TILE_SIZE * bytes_count],
+                    &in[((int)y * im->cache_entry.w) * bytes_count],
+                    bytes_count);
+             // middle
+             for (x = xstep * 0.5f, i = 1; i < EVAS_GL_TILE_SIZE - 1; x += xstep, i++)
+               memcpy(&out[(j * EVAS_GL_TILE_SIZE + i) * bytes_count],
+                      &in[(((int)y * im->cache_entry.w) + (int)x) * bytes_count],
+                      bytes_count);
+             // right
+             memcpy(&out[(j * EVAS_GL_TILE_SIZE + i) * bytes_count],
+                    &in[(((int)y * im->cache_entry.w) + (im->cache_entry.w - 1)) * bytes_count],
+                    bytes_count);
+          }
+
+        // bottom-left
         memcpy(&out[(j * EVAS_GL_TILE_SIZE) * bytes_count],
-               &out[((j - 1) * EVAS_GL_TILE_SIZE) * bytes_count],
-               EVAS_GL_TILE_SIZE * bytes_count);
+               &in[((im->cache_entry.w * (im->cache_entry.h - 1)) + 1) * bytes_count],
+               bytes_count);
+
+        // bottom
+        for (x = xstep * 0.5f, i = 1; i < EVAS_GL_TILE_SIZE - 1; x += xstep, i++)
+          {
+             memcpy(&out[((EVAS_GL_TILE_SIZE * j) + i) * bytes_count],
+                    &in[((int)x + im->cache_entry.w * (im->cache_entry.h - 1)) * bytes_count],
+                    bytes_count);
+          }
+
+        // bottom-right
+        memcpy(&out[((EVAS_GL_TILE_SIZE * EVAS_GL_TILE_SIZE) - 1) * bytes_count],
+               &in[((im->cache_entry.w * im->cache_entry.h) - 1) * bytes_count],
+               bytes_count);
 
         // out is a miniature of the texture, upload that now and schedule the data for later.
 
