@@ -179,7 +179,7 @@ _shrink_mode_set(Evas_Object *obj,
 
         EINA_LIST_FOREACH(sd->items, l, eo_item)
           {
-             Evas_Coord w_label_count = 0, h = 0;
+             Evas_Coord item_w, w_label_count = 0, h = 0;
              char *buf;
 
              ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_item, item);
@@ -187,7 +187,9 @@ _shrink_mode_set(Evas_Object *obj,
              evas_object_show(VIEW(item));
              item->visible = EINA_TRUE;
 
-             w -= item->vw;
+             evas_object_size_hint_min_get(VIEW(item), &item_w, NULL);
+
+             w -= item_w;
              w -= box_inner_item_width_padding;
              count--;
 
@@ -511,38 +513,6 @@ _on_item_deleted(void *data,
      }
 }
 
-static void
-_item_resize(Evas_Object *obj,
-               Evas_Object *btn,
-               Evas_Coord *realw,
-               Evas_Coord *vieww)
-{
-   Evas_Coord rw, vw;
-   const char *size_str;
-   Evas_Coord w_btn = 0, h_btn = 0, button_max_width = 0;
-
-   size_str = edje_object_data_get(elm_layout_edje_get(btn), "button_max_size");
-   if (size_str) button_max_width = atoi(size_str);
-
-   button_max_width *= elm_widget_scale_get(obj) * elm_config_scale_get();
-
-   // decide the size of button
-   edje_object_size_min_calc(elm_layout_edje_get(btn), &w_btn, &h_btn);
-
-   rw = w_btn;
-
-   if (button_max_width < w_btn) vw = button_max_width;
-   else vw = w_btn;
-
-   //resize item
-   elm_coords_finger_size_adjust(1, &vw, 1, &h_btn);
-   evas_object_resize(btn, vw, h_btn);
-   evas_object_size_hint_min_set(btn, vw, h_btn);
-
-   if (realw) *realw = rw;
-   if (vieww) *vieww = vw;
-}
-
 EOLIAN static void
 _elm_multibuttonentry_item_elm_widget_item_signal_emit(Eo *eo_item EINA_UNUSED,
                                                        Elm_Multibuttonentry_Item_Data *item,
@@ -566,7 +536,6 @@ _elm_multibuttonentry_item_elm_widget_item_part_text_set(Eo *eo_item EINA_UNUSED
      dest_part = part;
 
    edje_object_part_text_escaped_set(elm_layout_edje_get(VIEW(item)), dest_part, label);
-   _item_resize(item->base->widget, VIEW(item), &item->rw, &item->vw);
 }
 
 EOLIAN static const char *
@@ -656,14 +625,13 @@ _item_new(Elm_Multibuttonentry_Data *sd,
                  void *data)
 {
    Eina_List *l;
-   Evas_Coord rw, vw;
    Eo *eo_item;
-   Evas_Coord width = -1, height = -1;
    Elm_Multibuttonentry_Item_Filter *item_filter;
    Elm_Multibuttonentry_Item_Data *reference = eo_reference?
       eo_data_scope_get(eo_reference, ELM_MULTIBUTTONENTRY_ITEM_CLASS):
       NULL;
    Evas_Object *obj;
+   int minw, minh, boxw;
 
    obj = sd->parent;
 
@@ -692,23 +660,25 @@ _item_new(Elm_Multibuttonentry_Data *sd,
    //entry is cleared when text is made to button
    elm_object_text_set(sd->entry, "");
 
-   evas_object_smart_calculate(VIEW(item));
-   edje_object_part_geometry_get
-     (elm_layout_edje_get(VIEW(item)), "elm.btn.text", NULL, NULL, &width, &height);
-   evas_object_size_hint_min_set(VIEW(item), width, height);
    edje_object_signal_callback_add
      (elm_layout_edje_get(VIEW(item)), "mouse,clicked,1", "*", _on_item_clicked, EO_OBJ(item));
    edje_object_signal_callback_add
      (elm_layout_edje_get(VIEW(item)), "elm,deleted", "elm", _on_item_deleted, EO_OBJ(item));
-   evas_object_size_hint_weight_set(VIEW(item), 0.0, 0.0);
    evas_object_show(VIEW(item));
 
-   _item_resize(obj, VIEW(item), &rw, &vw);
+   evas_object_smart_calculate(VIEW(item));
+   evas_object_size_hint_min_get(VIEW(item), &minw, &minh);
+   evas_object_geometry_get(sd->box, NULL, NULL, &boxw, NULL);
+
+   if (sd->w_box && minw > boxw)
+     {
+        elm_coords_finger_size_adjust(1, &boxw, 1, &minh);
+        evas_object_size_hint_min_set(VIEW(item), boxw, minh);
+        evas_object_resize(VIEW(item), boxw, minh);
+     }
 
    elm_object_focus_allow_set(VIEW(item), EINA_TRUE);
 
-   item->rw = rw;
-   item->vw = vw;
    item->visible = EINA_TRUE;
 
    // ACCESS
@@ -854,24 +824,18 @@ _elm_multibuttonentry_elm_widget_event(Eo *obj EINA_UNUSED, Elm_Multibuttonentry
 }
 
 EOLIAN static void
-_elm_multibuttonentry_elm_layout_sizing_eval(Eo *obj, Elm_Multibuttonentry_Data *sd)
+_elm_multibuttonentry_elm_layout_sizing_eval(Eo *obj, Elm_Multibuttonentry_Data *sd EINA_UNUSED)
 {
-   Evas_Coord minw = -1, minh = -1;
-   Evas_Coord left, right, top, bottom;
+   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   evas_object_size_hint_min_get(sd->box, &minw, &minh);
-   edje_object_part_geometry_get
-     (wd->resize_obj, "top.left.pad", NULL, NULL, &left, &top);
-   edje_object_part_geometry_get
-     (wd->resize_obj, "bottom.right.pad", NULL, NULL, &right,
-     &bottom);
-
-   minw += (left + right);
-   minh += (top + bottom);
-
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   edje_object_size_min_restricted_calc
+	      (wd->resize_obj, &minw, &minh, minw, minh);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
 static void
@@ -889,8 +853,11 @@ _box_resize_cb(void *data,
                Evas_Object *obj EINA_UNUSED,
                void *event EINA_UNUSED)
 {
+   Evas_Coord w, h, mnw, mnh;
+   Eina_List *l;
+   Elm_Object_Item *eo_it;
+
    ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
-   Evas_Coord w, h;
 
    evas_object_geometry_get(sd->box, NULL, NULL, &w, &h);
 
@@ -899,10 +866,36 @@ _box_resize_cb(void *data,
    else if (sd->h_box > h)
      evas_object_smart_callback_call(sd->parent, SIG_CONTRACTED, NULL);
 
+   if (sd->w_box && sd->w_box != w)
+     {
+        if (sd->items)
+          {
+
+             EINA_LIST_FOREACH (sd->items, l, eo_it)
+               {
+                  ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_it, it);
+
+                  elm_layout_sizing_eval(VIEW(it));
+                  evas_object_smart_calculate(VIEW(it));
+
+                  evas_object_size_hint_min_get(VIEW(it), &mnw, &mnh);
+
+				  if (mnw > w)
+                    {
+                       mnw = w;
+                       evas_object_size_hint_min_set(VIEW(it), mnw, mnh);
+                       evas_object_resize(VIEW(it), mnw, mnh);
+                    }
+               }
+          }
+     }
+   if (!elm_object_focus_get(data) && !evas_object_visible_get(sd->entry))
+     {
+        _shrink_mode_set(data, EINA_TRUE);
+     }
+
    sd->w_box = w;
    sd->h_box = h;
-
-   _view_update(sd);
 }
 
 static void
@@ -1158,109 +1151,66 @@ _filter_free(Elm_Multibuttonentry_Item_Filter *item_filter)
    free(item_filter);
 }
 
-static void
+static Eina_Bool
 _box_min_size_calculate(Evas_Object *box,
-                        Evas_Object_Box_Data *priv)
+                        Evas_Object_Box_Data *priv,
+                        int *line_height,
+                        void *data EINA_UNUSED)
 {
-   Evas_Coord minw, minh, mnw, mnh, ww;
-   Evas_Coord w, cw = 0, cmaxh = 0;
+   Evas_Coord mnw, mnh, w, minw, minh = 0, linew = 0, lineh = 0;
+   int line_num;
+   Eina_List *l, *l_next;
    Evas_Object_Box_Option *opt;
-   const Eina_List *l;
-   double wx;
-
-   /* FIXME: need to calc max */
-   minw = 0;
-   minh = 0;
 
    evas_object_geometry_get(box, NULL, NULL, &w, NULL);
    evas_object_size_hint_min_get(box, &minw, NULL);
 
+   if (!w) return EINA_FALSE;
+
+   line_num = 1;
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
         evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
-        evas_object_size_hint_weight_get(opt->obj, &wx, NULL);
 
-        if (wx)
-          {
-             if (mnw != -1 && (w - cw) >= mnw)
-               ww = w - cw;
-             else
-               ww = w;
-          }
-        else
-          ww = mnw;
+        linew += mnw;
+        if (lineh < mnh) lineh = mnh;
 
-        if ((cw + mnw) > w)
+        if (linew > w)
           {
-             minh += cmaxh;
-             cw = 0;
+             linew = mnw;
+             line_num++;
+
+             l_next = eina_list_next(l);
+             opt = eina_list_data_get(l_next);
+             if (l_next && opt && opt->obj &&
+                 !strcmp(elm_widget_type_get(opt->obj), "elm_entry"))
+               {
+                  linew = 0;
+                  line_num++;
+               }
           }
-        cw += ww;
-        if (cmaxh < mnh) cmaxh = mnh;
      }
-
-   minh += cmaxh;
+   minh = lineh * line_num;
 
    evas_object_size_hint_min_set(box, minw, minh);
-}
+   *line_height = lineh;
 
-static Evas_Coord
-_item_max_height_calculate(Evas_Object *box,
-                           Evas_Object_Box_Data *priv,
-                           int obj_index)
-{
-   Evas_Coord mnw, mnh, cw = 0, cmaxh = 0, w, ww;
-   Evas_Object_Box_Option *opt;
-   int local_index = 0;
-   const Eina_List *l;
-   double wx;
-
-   evas_object_geometry_get(box, NULL, NULL, &w, NULL);
-
-   EINA_LIST_FOREACH(priv->children, l, opt)
-     {
-        evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
-        evas_object_size_hint_weight_get(opt->obj, &wx, NULL);
-
-        if (wx)
-          {
-             if (mnw != -1 && (w - cw) >= mnw)
-               ww = w - cw;
-             else
-               ww = w;
-          }
-        else
-          ww = mnw;
-
-        if ((cw + ww) > w)
-          {
-             if (local_index > obj_index) return cmaxh;
-             cw = 0;
-          }
-
-        cw += ww;
-        if (cmaxh < mnh) cmaxh = mnh;
-
-        local_index++;
-     }
-
-   return cmaxh;
+   return EINA_TRUE;
 }
 
 static void
 _box_layout_cb(Evas_Object *o,
                Evas_Object_Box_Data *priv,
-               void *data EINA_UNUSED)
+               void *data)
 {
-   Evas_Coord cw = 0, ch = 0, cmaxh = 0, obj_index = 0;
    Evas_Coord x, y, w, h, xx, yy;
+   Evas_Coord minw, minh, linew = 0, lineh = 0;
    Evas_Object_Box_Option *opt;
-   Evas_Coord minw, minh;
    const Eina_List *l, *l_next;
    Evas_Object *obj;
    double ax, ay;
 
-   _box_min_size_calculate(o, priv);
+   if (!_box_min_size_calculate(o, priv, &lineh, data)) return;
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
 
@@ -1282,7 +1232,7 @@ _box_layout_cb(Evas_Object *o,
 
    EINA_LIST_FOREACH_SAFE(priv->children, l, l_next, opt)
      {
-        Evas_Coord mnw, mnh, mxw, mxh;
+        Evas_Coord mnw, mnh;
         Evas_Coord ww, hh, ow, oh;
         double wx, wy;
         int fw, fh;
@@ -1291,44 +1241,49 @@ _box_layout_cb(Evas_Object *o,
         evas_object_size_hint_align_get(obj, &ax, &ay);
         evas_object_size_hint_weight_get(obj, &wx, &wy);
         evas_object_size_hint_min_get(obj, &mnw, &mnh);
-        evas_object_size_hint_max_get(obj, &mxw, &mxh);
-        fw = fh = 0;
+
+        fw = fh = EINA_FALSE;
         if (ax == -1.0) {fw = 1; ax = 0.5; }
         if (ay == -1.0) {fh = 1; ay = 0.5; }
 
+        ww = mnw;
         if (wx)
           {
-             if (mnw != -1 && (w - cw) >= mnw)
-               ww = w - cw;
-             else
-               ww = w;
+             if (ww <= w - linew) ww = w - linew;
+             else ww = w;
           }
-        else
-          ww = mnw;
-        hh = _item_max_height_calculate(o, priv, obj_index);
+        hh = lineh;
 
         ow = mnw;
         if (fw) ow = ww;
-        if ((mxw >= 0) && (mxw < ow)) ow = mxw;
         oh = mnh;
         if (fh) oh = hh;
-        if ((mxh >= 0) && (mxh < oh)) oh = mxh;
 
-        if ((cw + ww) > w)
+        linew += ww;
+        if (linew > w && l != priv->children)
           {
-             ch += cmaxh;
-             cw = 0;
+             xx = x;
+             yy += hh;
+             linew = ww;
           }
 
-        evas_object_move
-          (obj, xx + cw + (Evas_Coord)(((double)(ww - ow)) * ax),
-          yy + ch + (Evas_Coord)(((double)(hh - oh)) * ay));
+        evas_object_move(obj,
+                         xx + (Evas_Coord)(((double)(ww - ow)) * ax),
+                         yy + (Evas_Coord)(((double)(hh - oh)) * ay));
         evas_object_resize(obj, ow, oh);
 
-        cw += ww;
-        if (cmaxh < hh) cmaxh = hh;
+        xx += ww;
 
-        obj_index++;
+        if (linew > w)
+          {
+             opt = eina_list_data_get(l_next);
+             if (opt && opt->obj && !strcmp(elm_widget_type_get(opt->obj), "elm_entry"))
+               {
+                  xx = x;
+                  yy += hh;
+                  linew = 0;
+               }
+          }
      }
 }
 
@@ -1338,7 +1293,7 @@ _view_init(Evas_Object *obj, Elm_Multibuttonentry_Data *sd)
    sd->box = elm_box_add(obj);
 
    if (!sd->box) return;
-   elm_box_layout_set(sd->box, _box_layout_cb, NULL, NULL);
+   elm_box_layout_set(sd->box, _box_layout_cb, obj, NULL);
    elm_box_homogeneous_set(sd->box, EINA_FALSE);
    elm_layout_content_set(obj, "box.swallow", sd->box);
 
