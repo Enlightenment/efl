@@ -1171,6 +1171,19 @@ _elm_slider_indicator_show_on_focus_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd
    return (sd->indicator_visible_mode == ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS);
 }
 
+EOLIAN static void
+_elm_slider_indicator_visible_mode_set(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd, Elm_Slider_Indicator_Visible_Mode indicator_visible_mode)
+{
+   if (sd->indicator_visible_mode == indicator_visible_mode) return;
+   sd->indicator_visible_mode = indicator_visible_mode;
+}
+
+EOLIAN static Elm_Slider_Indicator_Visible_Mode
+_elm_slider_indicator_visible_mode_get(Eo *obj EINA_UNUSED, Elm_Slider_Data *sd)
+{
+   return sd->indicator_visible_mode;
+}
+
 EOLIAN static Eina_Bool
 _elm_slider_elm_widget_focus_next_manager_is(Eo *obj EINA_UNUSED, Elm_Slider_Data *_pd EINA_UNUSED)
 {

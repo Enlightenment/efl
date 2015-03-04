@@ -330,6 +330,31 @@ class Elm_Slider (Elm_Layout, Elm_Interface_Atspi_Value,
             double step; /*@ The step value. */
          }
       }
+      indicator_visible_mode {
+         set {
+            /*@
+            Set the visible mode of indicator.
+
+            @see elm_slider_indicator_visible_mode_get() for more details.
+
+            @ingroup Slider
+            */
+         }
+         get {
+            /*@
+            Get the visible mode of indicator.
+
+            @return The indicator visible mode.
+
+            @see elm_slider_indicator_visible_mode_set() for more details.
+
+            @ingroup Slider
+            */
+         }
+         values {
+            Elm_Slider_Indicator_Visible_Mode indicator_visible_mode; /*@ The indicator visible mode. */
+         }
+      }
       indicator_format_function {
          set {
             /*@
