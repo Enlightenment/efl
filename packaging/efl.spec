@@ -12,6 +12,7 @@ Source:         %{name}-%{version}.tar.bz2
 Source1001:     efl.manifest
 
 BuildRequires:  pkgconfig(check)
+BuildRequires:  pkgconfig(libinput)
 BuildRequires:  zlib-devel
 BuildRequires:  gettext-tools
 
