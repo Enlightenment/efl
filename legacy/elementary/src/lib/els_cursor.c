@@ -239,17 +239,19 @@ _elm_cursor_set(Elm_Cursor *cur)
    if (cur->visible) return;
 
    evas_event_freeze(cur->evas);
-   cur->visible = EINA_TRUE;
    if (!cur->use_engine)
      {
         if (!cur->obj)
           _elm_cursor_obj_add(cur->eventarea, cur);
-        ecore_evas_object_cursor_set(cur->ee, cur->obj,
-                                     ELM_OBJECT_LAYER_CURSOR, cur->hot_x,
-                                     cur->hot_y);
+        if (cur->obj)
+          ecore_evas_object_cursor_set(cur->ee, cur->obj,
+                                       ELM_OBJECT_LAYER_CURSOR, cur->hot_x,
+                                       cur->hot_y);
+        cur->visible = !!cur->obj;
      }
    else
      {
+        cur->visible = EINA_TRUE;
         if (cur->obj)
           {
              evas_object_del(cur->obj);
