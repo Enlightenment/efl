@@ -1497,6 +1497,7 @@ evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
    return evgl_engine;
 
 error:
+   ERR("Failed to initialize EvasGL!");
    if (evgl_engine)
      {
         eina_hash_free(evgl_engine->safe_extensions);
@@ -1518,7 +1519,7 @@ evgl_engine_shutdown(void *eng_data)
    // Check if engine is valid
    if (!evgl_engine)
      {
-        ERR("EVGL Engine not valid!");
+        EINA_LOG_INFO("EvasGL Engine is not initialized.");
         return;
      }
 
