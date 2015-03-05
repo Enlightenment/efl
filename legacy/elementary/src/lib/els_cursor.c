@@ -242,7 +242,7 @@ _elm_cursor_set(Elm_Cursor *cur)
    if (!cur->use_engine)
      {
         if (!cur->obj)
-          _elm_cursor_obj_add(cur->eventarea, cur);
+          _elm_cursor_obj_add(cur->owner, cur);
         if (cur->obj)
           ecore_evas_object_cursor_set(cur->ee, cur->obj,
                                        ELM_OBJECT_LAYER_CURSOR, cur->hot_x,
@@ -355,7 +355,7 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
         INF("Using only engine cursors");
         cur->use_engine = EINA_TRUE;
      }
-   else if (_elm_cursor_obj_add(cur->eventarea, cur))
+   else if (_elm_cursor_obj_add(cur->owner, cur))
      {
         _elm_cursor_set_hot_spots(cur);
         cur->use_engine = EINA_FALSE;
@@ -541,7 +541,7 @@ elm_object_cursor_style_set(Evas_Object *obj, const char *style)
 
    if (!cur->obj)
      {
-        if (!_elm_cursor_obj_add(obj, cur))
+        if (!_elm_cursor_obj_add(cur->owner, cur))
           ERR("Could not create cursor object");
         else
           _elm_cursor_set_hot_spots(cur);
