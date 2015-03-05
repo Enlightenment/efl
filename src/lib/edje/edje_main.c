@@ -63,7 +63,7 @@ edje_init(void)
 
    if (!evas_init())
      {
-	ERR("Eet init failed");
+	ERR("Evas init failed");
 	goto shutdown_embryo;
      }
 
