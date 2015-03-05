@@ -544,7 +544,7 @@ Eina_Bool
 _evgl_api_gles1_ext_init(void)
 {
    // Return if GLESv1 ext is already intiialised
-   if (_evgl_api_ext_status & 2)
+   if (_evgl_api_ext_status & 0x2)
      return EINA_TRUE;
 
 #ifdef GL_GLES
@@ -743,7 +743,7 @@ _evgl_api_gles1_ext_init(void)
      DBG("GLES1: List of supported extensions:\n%s", _gles1_ext_string);
 
    // GLESv1 version has been initialized!
-   _evgl_api_ext_status |= 2;
+   _evgl_api_ext_status |= 0x2;
    return EINA_TRUE;
 #else
    ERR("GLESv1 support is not implemented for GLX");
@@ -760,7 +760,7 @@ evgl_api_gles1_ext_get(Evas_GL_API *gl_funcs)
         return;
      }
 
-   if (!(_evgl_api_ext_status&2))
+   if (!(_evgl_api_ext_status & 0x2))
      {
         DBG("Initializing GLESv1 extensions...");
         if (!_evgl_api_gles1_ext_init())
@@ -823,12 +823,14 @@ evgl_api_gles1_ext_get(Evas_GL_API *gl_funcs)
 Eina_Bool
 _evgl_api_gles3_ext_init(void)
 {
-   if (_evgl_api_ext_status & 4)
+   if (_evgl_api_ext_status & 0x4)
      return EINA_TRUE;
 
+   Eina_Strbuf *sb = eina_strbuf_new();
    int _curext_supported = 0;
    Evas_GL_API *gles3_funcs;
    const char *gles3_exts;
+
 #ifdef GL_GLES
    EVGL_Resource *rsc;
    EGLint context_version;
@@ -876,14 +878,6 @@ _evgl_api_gles3_ext_init(void)
         ERR("GLESv3:glGetString(GL_EXTENSIONS) returned NULL!");
         return EINA_FALSE;
      }
-
-   if (!_gles3_ext_string)
-     {
-        _gles3_ext_string = calloc(MAX_EXTENSION_STRING_BUFFER, 1);
-        if (!_gles3_ext_string) return EINA_FALSE;
-     }
-
-   _gles3_ext_string[0] = '\0';
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    // Scanning supported extensions, sets the variables
@@ -975,8 +969,8 @@ _evgl_api_gles3_ext_init(void)
 #define _EVASGL_EXT_DISCARD_SUPPORT()
 #define _EVASGL_EXT_DRVNAME_PRINT(name) \
      { \
-        if ((strncmp(name, "GL", 2) == 0) && (strstr(_gles3_ext_string, name) == NULL)) \
-          strcat(_gles3_ext_string, name" "); \
+        if ((strncmp(name, "GL", 2) == 0) && (strstr(eina_strbuf_string_get(sb), name) == NULL)) \
+          eina_strbuf_append(sb, name" "); \
      }
 #define _EVASGL_EXT_DRVNAME(name) \
    if (_curext_supported) \
@@ -1009,11 +1003,15 @@ _evgl_api_gles3_ext_init(void)
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
 
+   if (_gles3_ext_string) free(_gles3_ext_string);
+   _gles3_ext_string = eina_strbuf_string_steal(sb);
+   eina_strbuf_free(sb);
+
    if (evgl_engine->api_debug_mode)
      DBG("GLES3: List of supported extensions:\n%s", _gles3_ext_string);
 
    // GLESv3 version has been initialized!
-   _evgl_api_ext_status |=4;
+   _evgl_api_ext_status |= 0x4;
    return EINA_TRUE;
 }
 
@@ -1026,7 +1024,7 @@ evgl_api_gles3_ext_get(Evas_GL_API *gl_funcs)
         return;
      }
 
-   if (!(_evgl_api_ext_status&4))
+   if (!(_evgl_api_ext_status & 0x4))
      {
         DBG("Initializing GLESv3 extensions...");
         if (!_evgl_api_gles3_ext_init())

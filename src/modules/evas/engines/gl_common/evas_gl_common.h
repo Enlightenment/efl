@@ -138,7 +138,7 @@
 
 
 #ifndef GL_UNPACK_ROW_LENGTH
-# define GL_UNPACK_ROW_LENGTH 0x0cf2
+# define GL_UNPACK_ROW_LENGTH 0x0CF2
 #endif
 
 #ifndef EGL_NO_CONTEXT
