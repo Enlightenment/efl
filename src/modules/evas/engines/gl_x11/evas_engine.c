@@ -479,6 +479,9 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
    EGLContext context = EGL_NO_CONTEXT;
    int context_attrs[3];
 
+   if (eng_get_ob(re)->gles3 && (version >= EVAS_GL_GLES_2_X))
+     version = 3;
+
    context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
    context_attrs[1] = version;
    context_attrs[2] = EGL_NONE;
@@ -698,7 +701,10 @@ evgl_eng_pbuffer_surface_create(void *data, EVGL_Surface *sfc,
      }
 
    config_attrs[i++] = EGL_RENDERABLE_TYPE;
-   config_attrs[i++] = EGL_OPENGL_ES2_BIT;
+   if (eng_get_ob(re)->gles3)
+     config_attrs[i++] = EGL_OPENGL_ES3_BIT_KHR;
+   else
+     config_attrs[i++] = EGL_OPENGL_ES2_BIT;
    config_attrs[i++] = EGL_SURFACE_TYPE;
    config_attrs[i++] = EGL_PBUFFER_BIT;
    config_attrs[i++] = EGL_NONE;
@@ -2239,7 +2245,10 @@ eng_image_native_set(void *data, void *image, void *native)
               config_attrs[i++] = EGL_STENCIL_SIZE;
               config_attrs[i++] = 0;
               config_attrs[i++] = EGL_RENDERABLE_TYPE;
-              config_attrs[i++] = EGL_OPENGL_ES2_BIT;
+              if (eng_get_ob(re)->gles3)
+                config_attrs[i++] = EGL_OPENGL_ES3_BIT_KHR;
+              else
+                config_attrs[i++] = EGL_OPENGL_ES2_BIT;
               config_attrs[i++] = EGL_SURFACE_TYPE;
               config_attrs[i++] = EGL_PIXMAP_BIT;
               config_attrs[i++] = EGL_NONE;

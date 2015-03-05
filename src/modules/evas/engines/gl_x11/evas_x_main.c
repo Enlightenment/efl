@@ -7,6 +7,7 @@ static Eina_TLS _context_key = 0;
 typedef EGLContext GLContext;
 static EGLConfig fbconf = 0;
 static EGLConfig rgba_fbconf = 0;
+static Eina_Bool gles3_supported = EINA_FALSE;
 #else
 // FIXME: this will only work for 1 display connection (glx land can have > 1)
 typedef GLXContext GLContext;
@@ -158,10 +159,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
 
 // EGL / GLES
 #ifdef GL_GLES
-   context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
-   context_attrs[1] = 2;
-   context_attrs[2] = EGL_NONE;
-
+   gw->gles3 = gles3_supported;
    gw->egl_disp = eglGetDisplay((EGLNativeDisplayType)(gw->disp));
    if (!gw->egl_disp)
      {
@@ -197,13 +195,25 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
         eng_window_free(gw);
         return NULL;
      }
-   
+
+try_gles2:
+   context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
+   context_attrs[1] = gw->gles3 ? 3 : 2;
+   context_attrs[2] = EGL_NONE;
+
    context = _tls_context_get();
    gw->egl_context[0] = eglCreateContext
      (gw->egl_disp, gw->egl_config, context, context_attrs);
    if (gw->egl_context[0] == EGL_NO_CONTEXT)
      {
         ERR("eglCreateContext() fail. code=%#x", eglGetError());
+        if (gw->gles3)
+          {
+             /* Note: this shouldn't happen */
+             ERR("Trying again with an Open GL ES 2 context (fallback).");
+             gw->gles3 = EINA_FALSE;
+             goto try_gles2;
+          }
         eng_window_free(gw);
         return NULL;
      }
@@ -687,10 +697,45 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
         EGLDisplay *egl_disp;
         EGLConfig configs[200];
         int major_version, minor_version;
+        const char *eglexts, *s;
 
         egl_disp = eglGetDisplay((EGLNativeDisplayType)(einfo->info.display));
         if (!egl_disp) return NULL;
         if (!eglInitialize(egl_disp, &major_version, &minor_version)) return NULL;
+
+        eglexts = eglQueryString(egl_disp, EGL_EXTENSIONS);
+        if (eglexts && strstr(eglexts, "EGL_KHR_create_context"))
+          {
+             int k, numconfigs = 0, value;
+             EGLConfig *eglconfigs;
+
+             if (eglGetConfigs(egl_disp, NULL, 0, &numconfigs) &&
+                 (numconfigs > 0))
+               {
+                  eglconfigs = alloca(numconfigs * sizeof(EGLConfig));
+                  eglGetConfigs(egl_disp, eglconfigs, numconfigs, &numconfigs);
+                  for (k = 0; k < numconfigs; k++)
+                    {
+                       value = 0;
+                       if (eglGetConfigAttrib(egl_disp, eglconfigs[k], EGL_RENDERABLE_TYPE, &value) &&
+                           ((value & EGL_OPENGL_ES3_BIT_KHR) != 0) &&
+                           eglGetConfigAttrib(egl_disp, eglconfigs[k], EGL_SURFACE_TYPE, &value) &&
+                           ((value & EGL_WINDOW_BIT) != 0))
+                         {
+                            INF("OpenGL ES 3.x is supported!");
+                            gles3_supported = EINA_TRUE;
+                            break;
+                         }
+                    }
+               }
+          }
+
+        if (gles3_supported &&
+            (!(s = getenv("EVAS_GL_DISABLE_GLES3")) || (atoi(s) != 1)))
+          {
+             INF("Disabling OpenGL ES 3.x support.");
+             gles3_supported = EINA_FALSE;
+          }
 
         for (alpha = 0; alpha < 2; alpha++)
           {
@@ -703,7 +748,10 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
              config_attrs[n++] = EGL_SURFACE_TYPE;
              config_attrs[n++] = EGL_WINDOW_BIT;
              config_attrs[n++] = EGL_RENDERABLE_TYPE;
-             config_attrs[n++] = EGL_OPENGL_ES2_BIT;
+             if (gles3_supported)
+               config_attrs[n++] = EGL_OPENGL_ES3_BIT_KHR;
+             else
+               config_attrs[n++] = EGL_OPENGL_ES2_BIT;
 # if 0
              // FIXME: n900 - omap3 sgx libs break here
              config_attrs[n++] = EGL_RED_SIZE;
@@ -1007,6 +1055,8 @@ eng_gl_context_new(Outbuf *win)
    if (!ctx) return NULL;
 
 #if GL_GLES
+   if (win->gles3)
+     context_attrs[1] = 3;
    ctx->context = eglCreateContext(win->egl_disp, win->egl_config,
                                    win->egl_context[0], context_attrs);
 

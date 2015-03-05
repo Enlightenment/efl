@@ -515,6 +515,7 @@ struct _Evas_Engine_GL_Context
 #endif
 
    GLuint preserve_bit;
+   int gles_version;
 };
 
 struct _Evas_GL_Texture_Pool

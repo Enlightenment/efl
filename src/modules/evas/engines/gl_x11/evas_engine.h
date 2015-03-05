@@ -65,6 +65,7 @@ struct _Outbuf
    EGLSurface       egl_surface[2];
    EGLConfig        egl_config;
    EGLDisplay       egl_disp;
+   Eina_Bool        gles3 : 1;
 #else
    GLXContext       context;
    GLXWindow        glxwin;
