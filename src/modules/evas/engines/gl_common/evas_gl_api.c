@@ -24,7 +24,7 @@ void _make_current_check(const char* api)
 
    if (!ctx)
      CRI("\e[1;33m%s\e[m: Current Context NOT SET: GL Call Should NOT Be Called without MakeCurrent!!!", api);
-   else if ((ctx->version != EVAS_GL_GLES_2_X) || (ctx->version != EVAS_GL_GLES_3_X))
+   else if ((ctx->version != EVAS_GL_GLES_2_X) && (ctx->version != EVAS_GL_GLES_3_X))
      CRI("\e[1;33m%s\e[m: This API is being called with the wrong context (invalid version).", api);
 }
 
