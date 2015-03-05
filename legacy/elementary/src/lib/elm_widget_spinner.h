@@ -47,6 +47,7 @@ struct _Elm_Spinner_Data
    Eina_Bool             editable : 1;
    Eina_Bool             wrap : 1;
    Eina_Bool             val_updated : 1;
+   Eina_Bool             button_layout : 1;
 };
 
 typedef struct _Elm_Spinner_Special_Value Elm_Spinner_Special_Value;
