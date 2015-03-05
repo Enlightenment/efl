@@ -435,7 +435,7 @@ _evas_gl_common_version_check(int *gles_ver)
    if (((major == 1) && (minor >= 4)) || (major >= 2))
      {
         /* Map GL to GLES version: Refer http://en.wikipedia.org/wiki/OpenGL_ES */
-        if ((major >=4 ) && (minor >= 3))
+        if ((major >= 4) && (minor >= 3))
           *gles_ver = 3;
         else
           *gles_ver = 2;

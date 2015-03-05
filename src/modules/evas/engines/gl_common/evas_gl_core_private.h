@@ -69,18 +69,17 @@ struct _EVGL_Interface
    void       *(*pbuffer_surface_create)(void *data, EVGL_Surface *evgl_sfc, const int *attrib_list);
    int         (*pbuffer_surface_destroy)(void *data, void *surface);
 
-   // Create a surface for 1.x rendering (could be pbuffer or xpixmap for instance)
-   void       *(*gles1_surface_create)(EVGL_Engine *evgl, void *data, EVGL_Surface *evgl_sfc, Evas_GL_Config *cfg, int w, int h);
+   // Create a surface for 1.x & 3.x rendering (could be pbuffer or xpixmap for instance)
+   void       *(*gles_pixmap_surface_create)(EVGL_Engine *evgl, void *data, EVGL_Surface *evgl_sfc, Evas_GL_Config *cfg, int w, int h);
 
-   // Destroy 1.x surface (could be pbuffer or xpixmap for instance)
-   int        (*gles1_surface_destroy)(void *data, EVGL_Surface *evgl_sfc);
+   // Destroy 1.x & 3.x surface (could be pbuffer or xpixmap for instance)
+   int         (*gles_pixmap_surface_destroy)(void *data, EVGL_Surface *evgl_sfc);
 
    // Create an indirect rendering context for GLES 1.x
-   void      *(*gles1_context_create)(void *data, EVGL_Context *share_ctx, EVGL_Surface *evgl_sfc);
+   void       *(*gles_context_create)(void *data, EVGL_Context *share_ctx, EVGL_Surface *evgl_sfc);
 
    // Check native window surface config for Evas GL Direct Rendering
-   Eina_Bool  (*native_win_surface_config_check)(void *data, int evgl_depth, int evgl_stencil, int evgl_msaa);
-
+   Eina_Bool   (*native_win_surface_config_check)(void *data, int evgl_depth, int evgl_stencil, int evgl_msaa);
 };
 
 struct _EVGL_Surface
@@ -178,8 +177,8 @@ struct _EVGL_Context
    int          viewport_coord[4];
    int          viewport_direct[4];
 
-   // For GLES1 with indirect rendering
-   EVGLNative_Context gles1_context;
+   // For GLES1/GLES3 with indirect rendering
+   EVGLNative_Context gles_ir_context;
 
    // Partial Rendering
    int          partial_render;
@@ -338,6 +337,7 @@ extern EVGL_Engine   *evgl_engine;
 // Internally used functions
 extern void           _evgl_api_get(Evas_GL_API *api, int debug);
 extern void           _evgl_api_gles1_get(Evas_GL_API *api, Eina_Bool debug);
+extern Eina_Bool      _evgl_api_gles3_get(Evas_GL_API *api, Eina_Bool debug);
 extern EVGL_Resource *_evgl_tls_resource_get(void);
 extern EVGL_Resource *_evgl_tls_resource_create(void *data);
 extern void           _evgl_tls_resource_destroy(void *data);
@@ -347,5 +347,6 @@ extern int            _evgl_direct_enabled(void);
 extern EVGLNative_Context _evgl_native_context_get(Evas_GL_Context *ctx);
 Eina_Bool             _evgl_api_gles1_ext_init(void);
 Evas_GL_API*          _evgl_api_gles1_internal_get(void);
+Evas_GL_API*          _evgl_api_gles3_internal_get(void);
 
 #endif //_EVAS_GL_CORE_PRIVATE_H

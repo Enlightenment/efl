@@ -12,6 +12,7 @@ typedef struct _GL_Format
 #define EVAS_GL_API_STRUCT_SIZE (sizeof(Evas_GL_API) + 300 * sizeof(void*))
 static Evas_GL_API *gl_funcs = NULL;
 static Evas_GL_API *gles1_funcs = NULL;
+static Evas_GL_API *gles3_funcs = NULL;
 
 EVGL_Engine *evgl_engine = NULL;
 int _evas_gl_log_dom   = -1;
@@ -1493,7 +1494,6 @@ evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
 
    // Clear Function Pointers
    if (!gl_funcs) gl_funcs = calloc(1, EVAS_GL_API_STRUCT_SIZE);
-   if (!gles1_funcs) gles1_funcs = calloc(1, EVAS_GL_API_STRUCT_SIZE);
 
    // Direct surfaces map texid->Evas_GL_Surface
    evgl_engine->direct_surfaces = eina_hash_int32_new(NULL);
@@ -1624,18 +1624,19 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
         goto error;
      }
 
-   // Allocate a special surface for 1.1
-   if (cfg->gles_version == EVAS_GL_GLES_1_X)
+   // Allocate a special surface for 1.1 and 3.x
+   if ((cfg->gles_version == EVAS_GL_GLES_1_X) ||
+       (cfg->gles_version == EVAS_GL_GLES_3_X))
      {
-        if (!evgl_engine->funcs->gles1_surface_create)
+        if (!evgl_engine->funcs->gles_pixmap_surface_create)
           {
-             ERR("Can't create GLES 1.1 surfaces");
+             ERR("Can't create %s surfaces",(cfg->gles_version == EVAS_GL_GLES_1_X)?"GLES 1.1":"GLES 3");
              evas_gl_common_error_set(eng_data, EVAS_GL_NOT_INITIALIZED);
              goto error;
           }
 
-        INF("Creating special surface for GLES 1.x rendering");
-        evgl_engine->funcs->gles1_surface_create(evgl_engine, eng_data, sfc, cfg, w, h);
+        INF("Creating special surface for GLES 1.x/3.x rendering");
+        evgl_engine->funcs->gles_pixmap_surface_create(evgl_engine, eng_data, sfc, cfg, w, h);
      }
 
    // Create internal buffers
@@ -1870,18 +1871,18 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
         int ret;
         if (dbg) DBG("sfc %p is used for GLES 1.x indirect rendering", sfc);
 
-        if (!evgl_engine->funcs->gles1_surface_destroy)
+        if (!evgl_engine->funcs->gles_pixmap_surface_destroy)
           {
-             ERR("Error destroying GLES 1.x surface");
+             ERR("Error destroying GLES 1.x/3.x surface");
              return 0;
           }
 
-        DBG("Destroying special surface used for GLES 1.x rendering");
-        ret = evgl_engine->funcs->gles1_surface_destroy(eng_data, sfc);
+        DBG("Destroying special surface used for GLES 1.x/3.x rendering");
+        ret = evgl_engine->funcs->gles_pixmap_surface_destroy(eng_data, sfc);
 
         if (!ret)
           {
-             ERR("Engine failed to destroy a GLES1.x Surface.");
+             ERR("Engine failed to destroy a GLES1.x/3.x Surface.");
              return ret;
           }
      }
@@ -2040,8 +2041,8 @@ evgl_context_destroy(void *eng_data, EVGL_Context *ctx)
         return 0;
      }
 
-   // Destroy GLES1 indirect rendering context
-   if (ctx->gles1_context &&
+   // Destroy GLES1/GLES3 indirect rendering context
+   if (ctx->gles_ir_context &&
        !evgl_engine->funcs->context_destroy(eng_data, ctx->context))
      {
         ERR("Error destroying the GLES1 context.");
@@ -2195,7 +2196,8 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
         return 0;
      }
 
-   if (ctx->version == EVAS_GL_GLES_1_X)
+   // GLES 1.x and 3.x
+   if ((ctx->version == EVAS_GL_GLES_1_X) || (ctx->version == EVAS_GL_GLES_3_X))
      {
         if (dbg) DBG("ctx %p is GLES 1", ctx);
         if (_evgl_direct_renderable(rsc, sfc))
@@ -2213,14 +2215,14 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
           }
         else
           {
-             if (!ctx->gles1_context)
+             if (!ctx->gles_ir_context)
                {
-                  ctx->gles1_context =
-                    evgl_engine->funcs->gles1_context_create(eng_data, ctx, sfc);
+                  ctx->gles_ir_context =
+                        evgl_engine->funcs->gles_context_create(eng_data, ctx, sfc);
                }
              if (dbg) DBG("Calling make_current(%p, %p)", sfc->gles1_sfc, ctx->context);
              if (!evgl_engine->funcs->make_current(eng_data, sfc->gles1_sfc,
-                                                   ctx->gles1_context, EINA_TRUE))
+                                                   ctx->gles_ir_context, EINA_TRUE))
                {
                   ERR("Failed to make current with GLES1 indirect surface.");
                   return 0;
@@ -2242,8 +2244,15 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
         rsc->current_ctx = ctx;
         rsc->current_eng = eng_data;
 
-        // Update extensions after GLESv1 context is bound
-        evgl_api_gles1_ext_get(gles1_funcs);
+      // Update GLESv1 extension functions after GLESv1 context is bound
+      if (ctx->version == EVAS_GL_GLES_1_X)
+        {
+           evgl_api_gles1_ext_get(gles1_funcs);
+        }
+      else if (ctx->version == EVAS_GL_GLES_3_X)
+        {
+           evgl_api_gles3_ext_get(gles3_funcs);
+        }
 
         _surface_context_list_print();
 
@@ -2361,10 +2370,17 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
 const char *
 evgl_string_query(int name)
 {
+   EVGL_Resource *rsc;
+   int ctx_version = EVAS_GL_GLES_2_X;
+
    switch(name)
      {
       case EVAS_GL_EXTENSIONS:
-         return evgl_api_ext_string_get(EINA_FALSE, EINA_FALSE);
+         rsc = _evgl_tls_resource_get();
+         if ((rsc) && (rsc->current_ctx))
+           ctx_version = rsc->current_ctx->version;
+         return evgl_api_ext_string_get(EINA_FALSE, ctx_version);
+
       default:
          return "";
      };
@@ -2617,8 +2633,22 @@ evgl_api_get(Evas_GL_Context_Version version)
      }
    else if (version == EVAS_GL_GLES_1_X)
      {
+        if (!gles1_funcs) gles1_funcs = calloc(1, EVAS_GL_API_STRUCT_SIZE);
+
         _evgl_api_gles1_get(gles1_funcs, evgl_engine->api_debug_mode);
         return gles1_funcs;
+     }
+   else if (version == EVAS_GL_GLES_3_X)
+     {
+        // Allocate gles3 funcs here, as this is called only if GLES_3 is supported
+        if (!gles3_funcs) gles3_funcs = calloc(1, EVAS_GL_API_STRUCT_SIZE);
+
+        if (!_evgl_api_gles3_get(gles3_funcs, evgl_engine->api_debug_mode))
+          {
+             free(gles3_funcs);
+             gles3_funcs = NULL;
+          }
+        return gles3_funcs;
      }
    else return NULL;
 }

@@ -1064,7 +1064,7 @@ _evgl_gles1_glGetString(GLenum name)
 #endif
 
       case GL_EXTENSIONS:
-        return (GLubyte *) evgl_api_ext_string_get(EINA_TRUE, EINA_TRUE);
+        return (GLubyte *) evgl_api_ext_string_get(EINA_TRUE, EVAS_GL_GLES_1_X);
 
       default:
         WRN("Unknown string requested: %x", (unsigned int) name);

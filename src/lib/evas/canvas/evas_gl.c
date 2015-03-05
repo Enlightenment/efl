@@ -337,7 +337,7 @@ evas_gl_context_version_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx,
    return NULL;
    MAGIC_CHECK_END();
 
-   if ((version != EVAS_GL_GLES_1_X) && (version != EVAS_GL_GLES_2_X))
+   if ((version < EVAS_GL_GLES_1_X) || (version > EVAS_GL_GLES_3_X))
      {
         ERR("Can not create an OpenGL-ES %d.x context (not supported).",
             (int) version);

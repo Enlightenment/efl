@@ -86,6 +86,9 @@ glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
 # define EGL_Y_INVERTED_NOK 0x307F
 #endif
 
+#ifndef EGL_OPENGL_ES3_BIT
+# define EGL_OPENGL_ES3_BIT 0x00000040
+#endif
 _eng_fn  (*glsym_eglGetProcAddress)            (const char *a) = NULL;
 void    *(*glsym_eglCreateImage)               (EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const int *e) = NULL;
 void     (*glsym_eglDestroyImage)              (EGLDisplay a, void *b) = NULL;
@@ -476,6 +479,13 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
      }
 
 #ifdef GL_GLES
+   if ((version == EVAS_GL_GLES_3_X) &&
+       ((!eng_get_ob(re)->gl_context) || (eng_get_ob(re)->gl_context->gles_version != EVAS_GL_GLES_3_X)))
+     {
+        ERR("GLES 3 version not supported!");
+        glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_ATTRIBUTE);
+        return NULL;
+     }
    EGLContext context = EGL_NO_CONTEXT;
    int context_attrs[3];
 
@@ -494,7 +504,7 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
                                    (EGLContext)share_ctx,
                                    context_attrs);
      }
-   else if (version == EVAS_GL_GLES_1_X)
+   else if ((version == EVAS_GL_GLES_1_X) || (version == EVAS_GL_GLES_3_X))
      {
         context = eglCreateContext(eng_get_ob(re)->egl_disp,
                                    eng_get_ob(re)->egl_config,
@@ -529,7 +539,7 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
                                    (GLXContext)share_ctx,
                                    1);
      }
-   else if (version == EVAS_GL_GLES_1_X)
+   else if ((version == EVAS_GL_GLES_1_X) || (version == EVAS_GL_GLES_3_X))
      {
         context = glXCreateContext(eng_get_ob(re)->info->info.display,
                                    eng_get_ob(re)->visualinfo,
@@ -866,13 +876,13 @@ evgl_eng_pbuffer_surface_destroy(void *data, void *surface)
 }
 
 // This function should create a surface that can be used for offscreen rendering
-// with GLES 1.x, and still be bindable to a texture in Evas main GL context.
+// with GLES 1.x, and GLES 3.x nd still be bindable to a texture in Evas main GL context.
 // For now, this will create an X pixmap... Ideally it should be able to create
 // a bindable pbuffer surface or just an FBO if that is supported and it can
 // be shared with Evas.
 // FIXME: Avoid passing evgl_engine around like that.
 static void *
-evgl_eng_gles1_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
+evgl_eng_gles_pixmap_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
                               EVGL_Surface *evgl_sfc,
                               Evas_GL_Config *cfg, int w, int h)
 {
@@ -889,7 +899,8 @@ evgl_eng_gles1_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
         return NULL;
      }
 
-   if ((cfg->gles_version != EVAS_GL_GLES_1_X) || (w < 1) || (h < 1))
+   if (((cfg->gles_version != EVAS_GL_GLES_3_X) && (cfg->gles_version != EVAS_GL_GLES_1_X))
+       || (w < 1) || (h < 1))
      {
         ERR("Inconsistent parameters, not creating any surface!");
         glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_PARAMETER);
@@ -948,7 +959,10 @@ try_again:
    config_attrs[i++] = EGL_SURFACE_TYPE;
    config_attrs[i++] = EGL_PIXMAP_BIT;
    config_attrs[i++] = EGL_RENDERABLE_TYPE;
-   config_attrs[i++] = EGL_OPENGL_ES_BIT;
+   if(cfg->gles_version == EVAS_GL_GLES_3_X)
+     config_attrs[i++] = EGL_OPENGL_ES3_BIT;
+   else
+     config_attrs[i++] = EGL_OPENGL_ES_BIT;
    if (alpha)
      {
         config_attrs[i++] = EGL_ALPHA_SIZE;
@@ -1099,9 +1113,9 @@ try_again:
 }
 
 // This function should destroy the surface used for offscreen rendering
-// with GLES 1.x.This will also destroy the X pixmap...
+// with GLES 1.x and GLES 3.x .This will also destroy the X pixmap...
 static int
-evgl_eng_gles1_surface_destroy(void *data, EVGL_Surface *evgl_sfc)
+evgl_eng_gles_pixmap_surface_destroy(void *data, EVGL_Surface *evgl_sfc)
 {
    Render_Engine *re = (Render_Engine *)data;
 
@@ -1136,7 +1150,7 @@ evgl_eng_gles1_surface_destroy(void *data, EVGL_Surface *evgl_sfc)
 }
 
 static void *
-evgl_eng_gles1_context_create(void *data,
+evgl_eng_gles_context_create(void *data,
                               EVGL_Context *share_ctx, EVGL_Surface *sfc)
 {
    Render_Engine *re = data;
@@ -1147,8 +1161,14 @@ evgl_eng_gles1_context_create(void *data,
    int context_attrs[3];
    EGLConfig config;
 
+   if (!share_ctx)
+     {
+        ERR("Share context not set, Unable to retrieve GLES version");
+        return NULL;
+     }
+
    context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
-   context_attrs[1] = 1;
+   context_attrs[1] = share_ctx->version;
    context_attrs[2] = EGL_NONE;
 
    if (!sfc || !sfc->gles1_sfc_config)
@@ -1173,7 +1193,7 @@ evgl_eng_gles1_context_create(void *data,
    DBG("Successfully created context for GLES1 indirect rendering.");
    return context;
 #else
-   CRI("Support for GLES1 indirect rendering contexts is not implemented for GLX");
+   CRI("Support for GLES1/GLES3 indirect rendering contexts is not implemented for GLX");
    (void) share_ctx; (void) sfc;
    return NULL;
 #endif

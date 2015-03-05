@@ -1309,8 +1309,29 @@ eng_gl_native_surface_get(void *data EINA_UNUSED, void *surface, void *native_su
 static void *
 eng_gl_api_get(void *data, int version)
 {
-   EVGLINIT(data, NULL);
-   return evgl_api_get(version);
+   Render_Engine_GL_Generic *re = data;
+   void *ret;
+   Evas_Engine_GL_Context *gl_context;
+   EVGLINIT(re, NULL);
+
+   gl_context = re->window_gl_context_get(re->software.ob);
+   if (!gl_context)
+     {
+        ERR("Invalid context!");
+        return NULL;
+     }
+   if ((version == EVAS_GL_GLES_3_X) && (gl_context->gles_version != EVAS_GL_GLES_3_X))
+     {
+        ERR("Version not supported!");
+        return NULL;
+     }
+   ret = evgl_api_get(version);
+
+   //Disable GLES3 support if symbols not present
+   if ((!ret) && (version == EVAS_GL_GLES_3_X))
+     gl_context->gles_version--;
+
+   return ret;
 }
 
 
