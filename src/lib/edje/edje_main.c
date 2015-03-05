@@ -61,6 +61,12 @@ edje_init(void)
 	goto shutdown_embryo;
      }
 
+   if (!evas_init())
+     {
+	ERR("Eet init failed");
+	goto shutdown_embryo;
+     }
+
    _edje_scale = FROM_DOUBLE(1.0);
 
    _edje_edd_init();
@@ -164,6 +170,7 @@ _edje_shutdown_core(void)
      ecore_imf_shutdown();
 #endif
 
+   evas_shutdown();
    eet_shutdown();
    embryo_shutdown();
    ecore_shutdown();
