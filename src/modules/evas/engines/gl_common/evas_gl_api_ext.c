@@ -550,7 +550,7 @@ _evgl_api_gles1_ext_init(void)
 #ifdef GL_GLES
    int _curext_supported = 0;
    Evas_GL_API *gles1_funcs;
-   const char *gles1_exts;
+   const char *gles1_exts, *eglexts;
    EVGL_Resource *rsc;
    EGLint context_version;
    EGLDisplay dpy = EGLDISPLAY_GET();
@@ -605,6 +605,13 @@ _evgl_api_gles1_ext_init(void)
 
    _gles1_ext_string[0] = '\0';
 
+   eglexts = eglQueryString(dpy, EGL_EXTENSIONS);
+   if (!eglexts)
+     {
+        ERR("eglQueryString(EGL_EXTENSIONS) returned NULL!");
+        eglexts = "";
+     }
+
    /////////////////////////////////////////////////////////////////////////////////////////////////////
    // Scanning supported extensions, sets the variables
    /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -622,7 +629,7 @@ _evgl_api_gles1_ext_init(void)
    }
 
 #define _EVASGL_EXT_CHECK_SUPPORT(name) \
-   (strstr(gles1_exts, name) != NULL)
+   ((strstr(gles1_exts, name) != NULL) || (strstr(eglexts, name) != NULL))
 
 #define _EVASGL_EXT_DISCARD_SUPPORT() \
    *ext_support = 0;
