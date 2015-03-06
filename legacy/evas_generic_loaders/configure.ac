@@ -73,10 +73,20 @@ if test "x${want_poppler}" = "xyes" ; then
       [have_poppler="no"])
 
    if test "x${have_poppler}" = "xno" ; then
-      PKG_CHECK_EXISTS([poppler >= 0.20],
+      PKG_CHECK_EXISTS([poppler >= 0.20 poppler < 0.31],
          [
-          poppler_pc="poppler >= 0.20"
+          poppler_pc="poppler >= 0.20 poppler < 0.31"
           AC_DEFINE(HAVE_POPPLER_020, 1, [Have poppler 0.20])
+          have_poppler="yes"
+         ],
+         [have_poppler="no"])
+   fi
+
+   if test "x${have_poppler}" = "xno" ; then
+      PKG_CHECK_EXISTS([poppler >= 0.31],
+         [
+          poppler_pc="poppler >= 0.31"
+          AC_DEFINE(HAVE_POPPLER_031, 1, [Have poppler 0.31])
           have_poppler="yes"
          ],
          [have_poppler="no"])

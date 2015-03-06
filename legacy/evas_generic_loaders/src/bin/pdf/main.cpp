@@ -62,10 +62,12 @@ Eina_Bool poppler_init(const char *file, int page_nbr, int size_w, int size_h)
    if (!eina_init())
      goto del_global_param;
 
+#ifndef HAVE_POPPLER_031
    if (globalParams->getAntialias())
      globalParams->setAntialias((char *)"yes");
    if (globalParams->getVectorAntialias())
      globalParams->setVectorAntialias((char *)"yes");
+#endif
 
    pdfdoc = new PDFDoc(new GooString(file), NULL);
    if (!pdfdoc)
@@ -161,7 +163,7 @@ void poppler_load_image(int size_w, int size_h)
    if (!output_dev)
      return;
 
-#ifdef HAVE_POPPLER_020
+#if defined(HAVE_POPPLER_020) || defined(HAVE_POPPLER_031)
    output_dev->startDoc(pdfdoc);
 #else
    output_dev->startDoc(pdfdoc->getXRef());
@@ -169,8 +171,12 @@ void poppler_load_image(int size_w, int size_h)
 
    if (dpi <= 0.0) dpi = DEF_DPI;
 
+#ifdef HAVE_POPPLER_031
+   output_dev->setFontAntialias(EINA_TRUE);
+   output_dev->setVectorAntialias(EINA_TRUE);
+#endif
 
-#ifdef HAVE_POPPLER_020
+#if defined(HAVE_POPPLER_020) || defined(HAVE_POPPLER_031)
    page->displaySlice(output_dev, dpi, dpi, 
                       0, false, false,
                       0, 0, width, height,
