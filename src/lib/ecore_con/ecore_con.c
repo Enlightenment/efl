@@ -224,6 +224,7 @@ ecore_con_init(void)
    ecore_con_socks_init();
    ecore_con_ssl_init();
    ecore_con_info_init();
+   ecore_con_local_init();
 
 #ifdef HAVE_SYSTEMD
    sd_fd_max = sd_listen_fds(0);
@@ -281,6 +282,7 @@ ecore_con_shutdown(void)
    ecore_con_socks_shutdown();
    if (!_ecore_con_event_count) ecore_con_mempool_shutdown();
 
+   ecore_con_local_shutdown();
    ecore_con_info_shutdown();
    ecore_con_ssl_shutdown();
    eina_log_domain_unregister(_ecore_con_log_dom);
