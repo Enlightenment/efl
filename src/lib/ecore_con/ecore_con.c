@@ -398,8 +398,15 @@ _ecore_con_server_eo_base_finalize(Ecore_Con_Server *obj, Ecore_Con_Server_Data 
 
    servers = eina_list_append(servers, obj);
 
-   if (!svr->name || (svr->port < 0))
+   if (!svr->name)
      goto error;
+
+   EINA_SAFETY_ON_TRUE_GOTO(((type == ECORE_CON_REMOTE_TCP) ||
+                             (type == ECORE_CON_REMOTE_NODELAY) ||
+                             (type == ECORE_CON_REMOTE_CORK) ||
+                             (type == ECORE_CON_REMOTE_UDP) ||
+                             (type == ECORE_CON_REMOTE_BROADCAST)) &&
+                             (svr->port < 0), error);
 
    if (ecore_con_ssl_server_prepare(obj, compl_type & ECORE_CON_SSL))
      goto error;
@@ -506,7 +513,7 @@ _ecore_con_connector_eo_base_finalize(Ecore_Con_Server *obj, void *pd EINA_UNUSE
                              (type == ECORE_CON_REMOTE_CORK) ||
                              (type == ECORE_CON_REMOTE_UDP) ||
                              (type == ECORE_CON_REMOTE_BROADCAST)) &&
-                            (svr->port < 0), error);
+                             (svr->port < 0), error);
 
    if ((type == ECORE_CON_LOCAL_USER) ||
        (type == ECORE_CON_LOCAL_SYSTEM) ||
