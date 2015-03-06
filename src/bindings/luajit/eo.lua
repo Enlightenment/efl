@@ -191,7 +191,6 @@ local disconnect = function(self, ename, func)
     if not cbs then
         return false
     end
-    -- TODO: make a hash table for func-to-index conversions
     local  cbi = eo_cbidcache[addr]
     assert(cbi)
     local cidx = cbi[func]
