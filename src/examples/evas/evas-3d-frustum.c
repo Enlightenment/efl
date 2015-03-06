@@ -8,7 +8,7 @@
  * Use 'z', 'x', 'c', 'Z', 'X' and 'C' keys to change scaling constants of mesh.
  * See in terminal output value distance to far plane of frustum and value of visibility of node
  * @see evas_3d_camera_node_visible_get.
- * 
+ *
  * @verbatim
  * gcc -o evas-3d-frustum evas-3d-frustum.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
  * @endverbatim
@@ -32,8 +32,8 @@
 #define  WIDTH          800
 #define  HEIGHT         600
 
-static const char *image_eagle_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/eagle.png";
-static const char *eagle_path = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/eagle.md2";
+static const char *texture_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/sweet_home_reversed.png";
+static const char *mesh_path = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/sweet_home.obj";
 
 typedef struct _Scene_Data
 {
@@ -54,7 +54,7 @@ typedef struct _Scene_Data
 
 Evas *evas;
 Evas_Object *background,*image;
-Evas_Real obj_x = 0.0, obj_y = 0.0, obj_z = 0.0, obj_sc_x = 1.0, obj_sc_y = 1.0, obj_sc_z = 1.0;
+Evas_Real obj_x = 0.0, obj_y = 0.0, obj_z = 0.0, obj_sc_x = 10.0, obj_sc_y = 10.0, obj_sc_z = 10.0;
 Evas_Real fleft = -5, fright = 5, fbottom = -5, fup = 5, fnear = 20, ffar = 1000;
 Evas_Real radius = 0;
 Evas_3D_Frustum_Mode key = EVAS_3D_FRUSTUM_MODE_AABB;
@@ -448,10 +448,7 @@ _mesh_setup(Scene_Data *data)
 
 
    data->mesh_node =
-      eo_add(EVAS_3D_NODE_CLASS, evas,
-                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH),
-                    evas_3d_node_position_set(obj_x, obj_y, obj_z),
-                    evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z));
+      eo_add(EVAS_3D_NODE_CLASS, evas, evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(data->root_node, evas_3d_node_member_add(data->mesh_node));
    eo_do(data->mesh_node, evas_3d_node_mesh_add(data->mesh));
 }
@@ -464,7 +461,7 @@ _mesh_setup_model(Scene_Data *data)
    data->texture_model = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
 
    eo_do(data->texture_model,
-         evas_3d_texture_file_set(image_eagle_path, NULL),
+         evas_3d_texture_file_set(texture_path, NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST, EVAS_3D_TEXTURE_FILTER_NEAREST),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT, EVAS_3D_WRAP_MODE_REPEAT));
 
@@ -481,7 +478,7 @@ _mesh_setup_model(Scene_Data *data)
          evas_3d_material_shininess_set(100.0));
 
    eo_do(data->mesh_model,
-         efl_file_set(eagle_path, NULL),
+         efl_file_set(mesh_path, NULL),
          evas_3d_mesh_frame_material_set(0, data->material_model),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE));
 }
@@ -502,6 +499,7 @@ _scene_setup(Scene_Data *data)
                                       evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(data->mesh_node_model,
          evas_3d_node_position_set(obj_x, obj_y, obj_z),
+         evas_3d_node_orientation_angle_axis_set(-90, 1.0, 0.0, 0.0),
          evas_3d_node_scale_set(obj_sc_x, obj_sc_y, obj_sc_z));
    eo_do(data->root_node, evas_3d_node_member_add(data->mesh_node_model));
    eo_do(data->mesh_node_model, evas_3d_node_mesh_add(data->mesh_model));

@@ -5,14 +5,13 @@
  * in terminal time response of the found node.
  * Use key UP/DOWN for changing z coordinate of camera
  * Use key LEFT/RIGHT for scale each node
- * Use shortcut parameters of commanline: r - rows of objects, c - columns of objects, m - path for model name,
- * f - path for first texture, s - path for second texture.
- * 
+ * Use shortcut parameters of commanline: r - rows of objects, c - columns of objects,
+ * p - precision of the spheres, f - path for first texture, s - path for second texture.
+ *
  * @verbatim
- * gcc -o evas-3d-colorpick evas-3d-colorpick.c `pkg-config --libs --cflags evas ecore ecore-evas eo eina efl`
+ * gcc -o evas-3d-colorpick evas-3d-colorpick.c evas-3d-primitives.c `pkg-config --libs --cflags evas ecore ecore-evas eo eina efl` -lm
  * @endverbatim
  */
-//TODO new resources
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -27,6 +26,8 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_Getopt.h>
+#include <math.h>
+#include "evas-3d-primitives.h"
 #include "evas-common.h"
 
 #define  WIDTH 800
@@ -34,10 +35,15 @@
 
 #define ANIMATION_COUNT 3
 #define MAX_PATH 128
+#define INIT_SCALE 7.5
+#define BIG_SCALE 10.0
+#define SMALL_SCALE 5.0
+#define SCALE_UNIT 0.5
+#define VEC_3(value) value, value, value
 
-static const char *model_path = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/M15.obj";
-static const char *image1_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/M15.png";
-static const char *image2_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/M15_1.png";
+static const vec2 tex_scale = {1, 1};
+static const char *image1_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/wood.jpg";
+static const char *image2_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/rocks.jpg";
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
@@ -55,16 +61,17 @@ Ecore_Getopt optdesc = {
    "Example mesh color pick mechanism",
    0,
    {
-      ECORE_GETOPT_STORE_INT('r', "row", "Rows of models"),
-      ECORE_GETOPT_STORE_INT('c', "column", "Columns of models"),
-      ECORE_GETOPT_STORE_STR('m', "name model", "Name of model"),
+      ECORE_GETOPT_STORE_INT('r', "row", "Rows of spheres"),
+      ECORE_GETOPT_STORE_INT('c', "column", "Columns of spheres"),
+      ECORE_GETOPT_STORE_INT('p', "precision", "Precision of spheres"),
       ECORE_GETOPT_STORE_STR('f', "texture1", "Name1 of texture"),
       ECORE_GETOPT_STORE_STR('s', "texture2", "Name2 of texture"),
       ECORE_GETOPT_HELP('h', "help"),
       ECORE_GETOPT_SENTINEL
     }
 };
- typedef struct _Mine
+
+ typedef struct _Object
  {
    Eo *node;
    Eo *mesh1;
@@ -76,11 +83,10 @@ Ecore_Getopt optdesc = {
 
    Evas_Real speed;
    Ecore_Timer *animate;
-   Eina_Bool (*m15_init)(void *m15, const char *model,
-                         const char *texture1, const char *texture2);
-   Eina_Bool (*m15_animate)(void *data);
+   Eina_Bool (*sphere_init)(void *sphere, const char *texture1, const char *texture2);
+   Eina_Bool (*sphere_animate)(void *data);
 
- } MineM15;
+ } Test_object;
 
 typedef struct _Scene
 {
@@ -93,11 +99,11 @@ typedef struct _Scene
 
    int row;
    int col;
+   int precision;
 
-   Eina_List *mines;
+   Eina_List *spheres;
 
-   Eina_Bool (*scene_init)(const char *model,
-                           const char *texture1, const char *texture2);
+   Eina_Bool (*scene_init)(const char *texture1, const char *texture2);
 
 } Scene_Data;
 
@@ -107,12 +113,12 @@ static void
 _on_delete(Ecore_Evas *ee EINA_UNUSED)
 {
    Eina_List *l;
-   MineM15 * item;
-   EINA_LIST_FOREACH(globalscene.mines, l, item)
+   Test_object * item;
+   EINA_LIST_FOREACH(globalscene.spheres, l, item)
      {
         free(item);
      }
-   eina_list_free(globalscene.mines);
+   eina_list_free(globalscene.spheres);
 
 
    ecore_main_loop_quit();
@@ -128,30 +134,30 @@ _on_canvas_resize(Ecore_Evas *ee)
 }
 
 static Eina_Bool
-_animate_mine1(void *data)
+_animate_sphere1(void *data)
 {
    static int angle = 0.0;
-   Eo *n = (Eo*)(((MineM15 *)data)->node);
+   Eo *n = (Eo*)(((Test_object *)data)->node);
    eo_do(n, evas_3d_node_orientation_angle_axis_set(angle, 1.0, 0.0, 1.0));
    angle++;
    if (angle > 360) angle = 0.0;
    return EINA_TRUE;
 }
 static Eina_Bool
-_animate_mine2(void *data)
+_animate_sphere2(void *data)
 {
    static int angle = 0.0;
-   Eo *n = (Eo*)(((MineM15 *)data)->node);
+   Eo *n = (Eo*)(((Test_object *)data)->node);
    eo_do(n, evas_3d_node_orientation_angle_axis_set(angle, 0.0, 1.0, 1.0));
    angle++;
    if (angle > 360) angle = 0.0;
    return EINA_TRUE;
 }
 static Eina_Bool
-_animate_mine3(void *data)
+_animate_sphere3(void *data)
 {
    static int angle = 0.0;
-   Eo *n = (Eo*)(((MineM15 *)data)->node);
+   Eo *n = (Eo*)(((Test_object *)data)->node);
    eo_do(n, evas_3d_node_orientation_angle_axis_set(angle, 1.0, 1.0, 0.0));
    angle++;
    if (angle > 360) angle = 0.0;
@@ -162,10 +168,10 @@ void _recalculate_position()
 {
    int i = 0, j = 0, count = 0;
    Evas_Real x0, y0, z0, x1, y1, z1, shiftx = 0, shifty = 0;
-   MineM15 *m;
+   Test_object *m;
 
-   eo_do(((MineM15 *)eina_list_nth(globalscene.mines, 0))->node, evas_3d_object_update());
-   eo_do(((MineM15 *)eina_list_nth(globalscene.mines, 0))->node,
+   eo_do(((Test_object *)eina_list_nth(globalscene.spheres, 0))->node, evas_3d_object_update());
+   eo_do(((Test_object *)eina_list_nth(globalscene.spheres, 0))->node,
          evas_3d_node_bounding_box_get(&x0, &y0, &z0, &x1, &y1, &z1));
 
    for (i = 0; i < globalscene.row; ++i)
@@ -174,7 +180,7 @@ void _recalculate_position()
         for(j = 0; j < globalscene.col; ++j)
           {
               shifty = j * 2 * y1;
-              m = (MineM15 *)eina_list_nth(globalscene.mines, count);
+              m = (Test_object *)eina_list_nth(globalscene.spheres, count);
               eo_do(m->node, evas_3d_node_position_set(shifty, 0.0, shiftx));
               count++;
           }
@@ -187,7 +193,7 @@ _on_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
    Evas_Event_Key_Down *ev = event_info;
    Evas_Real x, y, z;
    Eina_List *l;
-   MineM15 * item;
+   Test_object * item;
    if (!strcmp(ev->key, "Down"))
      {
         eo_do(globalscene.camera_node, evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
@@ -200,21 +206,21 @@ _on_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
      }
    else if (!strcmp(ev->key, "Left"))
      {
-        eo_do(((MineM15 *)eina_list_nth(globalscene.mines, 0))->node,
+        eo_do(((Test_object *)eina_list_nth(globalscene.spheres, 0))->node,
               evas_3d_node_scale_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
-        EINA_LIST_FOREACH(globalscene.mines, l, item)
+        EINA_LIST_FOREACH(globalscene.spheres, l, item)
           {
-             eo_do(item->node, evas_3d_node_scale_set((x - 0.1), (y - 0.1), (z - 0.1)));
+             eo_do(item->node, evas_3d_node_scale_set((x - SCALE_UNIT), (y - SCALE_UNIT), (z - SCALE_UNIT)));
           }
         _recalculate_position();
      }
    else if (!strcmp(ev->key, "Right"))
      {
-        eo_do(((MineM15 *)eina_list_nth(globalscene.mines, 0))->node,
+        eo_do(((Test_object *)eina_list_nth(globalscene.spheres, 0))->node,
               evas_3d_node_scale_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
-        EINA_LIST_FOREACH(globalscene.mines, l, item)
+        EINA_LIST_FOREACH(globalscene.spheres, l, item)
           {
-             eo_do(item->node, evas_3d_node_scale_set((x + 0.1), (y + 0.1), (z + 0.1)));
+             eo_do(item->node, evas_3d_node_scale_set((x + SCALE_UNIT), (y + SCALE_UNIT), (z + SCALE_UNIT)));
           }
         _recalculate_position();
      }
@@ -243,7 +249,7 @@ _on_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *eo EINA
         if (flag)
           {
              fprintf(stdout, "Boom! Time expended for color pick: %2.7f .\n", diff_sec);
-             eo_do(n, evas_3d_node_scale_set(0.5, 0.5, 0.5));
+             eo_do(n, evas_3d_node_scale_set(VEC_3(SMALL_SCALE)));
           }
      }
    else
@@ -255,49 +261,50 @@ _on_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *eo EINA
         if (flag)
           {
              fprintf(stdout, "Boom! Time expended for geometry pick: %2.7f .\n", diff_sec);
-             eo_do(n, evas_3d_node_scale_set(1.0, 1.0, 1.0));
+             eo_do(n, evas_3d_node_scale_set(VEC_3(BIG_SCALE)));
           }
       }
 }
 
 Eina_Bool
-_init_m15(void *this, const char *model, const char *texture1,
-          const char *texture2)
+_init_sphere(void *this, const char *texture1, const char *texture2)
 {
-   MineM15 *m15  = (MineM15 *)this;
-   m15->mesh1 = eo_add(EVAS_3D_MESH_CLASS, evas);
-   m15->mesh2 = eo_add(EVAS_3D_MESH_CLASS, evas);
-   m15->material1 = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
-   m15->material2 = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
-   eo_do(m15->mesh1,
-         efl_file_set(model, NULL),
-         evas_3d_mesh_frame_material_set(0, m15->material1),
-         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
-   eo_do(m15->mesh2,
-         efl_file_set(model, NULL),
-         evas_3d_mesh_frame_material_set(0, m15->material2),
+   Test_object *sphere  = (Test_object *)this;
+   sphere->mesh1 = eo_add(EVAS_3D_MESH_CLASS, evas);
+   sphere->mesh2 = eo_add(EVAS_3D_MESH_CLASS, evas);
+   sphere->material1 = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
+   sphere->material2 = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
+
+   evas_3d_add_sphere_frame(sphere->mesh1, 0, globalscene.precision, tex_scale);
+   eo_do(sphere->mesh1,
+         evas_3d_mesh_frame_material_set(0, sphere->material1),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 
+   evas_3d_add_sphere_frame(sphere->mesh2, 0, globalscene.precision, tex_scale);
+   eo_do(sphere->mesh2,
+         evas_3d_mesh_frame_material_set(0, sphere->material2),
+         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 
-   eo_do(m15->mesh1,  evas_3d_mesh_color_pick_enable_set(EINA_TRUE));
-   eo_do(m15->mesh2,  evas_3d_mesh_color_pick_enable_set(EINA_TRUE));
 
-   m15->texture1 = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
-   eo_do(m15->texture1,
+   eo_do(sphere->mesh1,  evas_3d_mesh_color_pick_enable_set(EINA_TRUE));
+   eo_do(sphere->mesh2,  evas_3d_mesh_color_pick_enable_set(EINA_TRUE));
+
+   sphere->texture1 = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
+   eo_do(sphere->texture1,
          evas_3d_texture_file_set(texture1, NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
                                     EVAS_3D_TEXTURE_FILTER_NEAREST),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
                                   EVAS_3D_WRAP_MODE_REPEAT));
-   m15->texture2 = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
-   eo_do(m15->texture2,
+   sphere->texture2 = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
+   eo_do(sphere->texture2,
          evas_3d_texture_file_set(texture2, NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
                                     EVAS_3D_TEXTURE_FILTER_NEAREST),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
                                   EVAS_3D_WRAP_MODE_REPEAT));
-   eo_do(m15->material1,
-         evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE, m15->texture1),
+   eo_do(sphere->material1,
+         evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE, sphere->texture1),
          evas_3d_material_enable_set(EVAS_3D_MATERIAL_AMBIENT, EINA_TRUE),
          evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE),
          evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE),
@@ -309,8 +316,8 @@ _init_m15(void *this, const char *model, const char *texture1,
          evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR,
                                     1.0, 1.0, 1.0, 1.0),
          evas_3d_material_shininess_set(50.0));
-   eo_do(m15->material2,
-         evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE, m15->texture2),
+   eo_do(sphere->material2,
+         evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE, sphere->texture2),
          evas_3d_material_enable_set(EVAS_3D_MATERIAL_AMBIENT, EINA_TRUE),
          evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE),
          evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE),
@@ -327,16 +334,15 @@ _init_m15(void *this, const char *model, const char *texture1,
 
 
 Eina_Bool
-_init_scene(const char *model, const char *texture1,
-            const char *texture2)
+_init_scene(const char *texture1, const char *texture2)
 {
    int i = 0, j = 0, count = 0;
    Evas_Real x0, y0, z0, x1, y1, z1, tmp, shiftx = 0, shifty = 0;
-   MineM15 *m;
+   Test_object *m;
 
-   animate_func[0] = _animate_mine1;
-   animate_func[1] = _animate_mine2;
-   animate_func[2] = _animate_mine3;
+   animate_func[0] = _animate_sphere1;
+   animate_func[1] = _animate_sphere2;
+   animate_func[2] = _animate_sphere3;
 
    globalscene.scene = eo_add(EVAS_3D_SCENE_CLASS, evas);
 
@@ -379,35 +385,36 @@ _init_scene(const char *model, const char *texture1,
    tmp = 0.01;
    for (i = 0; i < globalscene.col * globalscene.row; i++, j++)
      {
-        MineM15 *m15tmp;
-        m = malloc(sizeof(MineM15));
-        m->m15_init = _init_m15;
+        Test_object *spheretmp;
+        m = malloc(sizeof(Test_object));
+        m->sphere_init = _init_sphere;
         if (!i)
-          m->m15_init(m, model, texture1, texture2);
+          m->sphere_init(m, texture1, texture2);
         else
           {
-             m15tmp = (MineM15 *)eina_list_nth(globalscene.mines, 0);
-             m->mesh1 = m15tmp->mesh1;
-             m->mesh2 = m15tmp->mesh2;
-             m->material1 = m15tmp->material1;
-             m->material2 = m15tmp->material2;
-             m->texture1 = m15tmp->texture1;
-             m->texture2 = m15tmp->texture2;
+             spheretmp = (Test_object *)eina_list_nth(globalscene.spheres, 0);
+             m->mesh1 = spheretmp->mesh1;
+             m->mesh2 = spheretmp->mesh2;
+             m->material1 = spheretmp->material1;
+             m->material2 = spheretmp->material2;
+             m->texture1 = spheretmp->texture1;
+             m->texture2 = spheretmp->texture2;
           }
         m->node = eo_add(EVAS_3D_NODE_CLASS, evas,
                          evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
         m->speed = tmp;
         if (j >= ANIMATION_COUNT) j = 0;
-        m->m15_animate = animate_func[j];
-        m->animate = ecore_timer_add(m->speed, m->m15_animate, m);
+        m->sphere_animate = animate_func[j];
+        m->animate = ecore_timer_add(m->speed, m->sphere_animate, m);
         eo_do(globalscene.root_node, evas_3d_node_member_add(m->node));
-        eo_do(m->node, evas_3d_node_mesh_add(m->mesh1));
-        globalscene.mines = eina_list_append(globalscene.mines, m);
+        eo_do(m->node, evas_3d_node_mesh_add(m->mesh1),
+                       evas_3d_node_scale_set(VEC_3(INIT_SCALE)));
+        globalscene.spheres = eina_list_append(globalscene.spheres, m);
         tmp += 0.01;
      }
 
-   eo_do(((MineM15 *)eina_list_nth(globalscene.mines, 0))->node, evas_3d_object_update());
-   eo_do(((MineM15 *)eina_list_nth(globalscene.mines, 0))->node,
+   eo_do(((Test_object *)eina_list_nth(globalscene.spheres, 0))->node, evas_3d_object_update());
+   eo_do(((Test_object *)eina_list_nth(globalscene.spheres, 0))->node,
          evas_3d_node_bounding_box_get(&x0, &y0, &z0, &x1, &y1, &z1));
 
    for (i = 0; i < globalscene.row; ++i)
@@ -416,7 +423,7 @@ _init_scene(const char *model, const char *texture1,
         for(j = 0; j < globalscene.col; ++j)
           {
               shifty = j * 2 * y1;
-              m = (MineM15 *)eina_list_nth(globalscene.mines, count);
+              m = (Test_object *)eina_list_nth(globalscene.spheres, count);
               eo_do(m->node, evas_3d_node_position_set(shifty, 0.0, shiftx));
               if (!(i % 2))
               {
@@ -436,14 +443,14 @@ _init_scene(const char *model, const char *texture1,
 
 int main(int argc, char **argv)
 {
-   int row = 0, col = 0;
-   char *model = NULL, *texture1 = NULL, *texture2 = NULL;
+   int row = 0, col = 0, precision = 0;
+   char *texture1 = NULL, *texture2 = NULL;
    Eina_Bool r;
 
    Ecore_Getopt_Value values[] = {
       ECORE_GETOPT_VALUE_INT(row),
       ECORE_GETOPT_VALUE_INT(col),
-      ECORE_GETOPT_VALUE_STR(model),
+      ECORE_GETOPT_VALUE_INT(precision),
       ECORE_GETOPT_VALUE_STR(texture1),
       ECORE_GETOPT_VALUE_STR(texture2),
       ECORE_GETOPT_VALUE_NONE
@@ -456,12 +463,12 @@ int main(int argc, char **argv)
 
    if (!row) row = 2;
    if (!col) col = 5;
-   if (!model) model = (char *)model_path;
+   if (!precision) precision = 30;
    if (!texture1) texture1 = (char *)image1_path;
    if (!texture2) texture2 = (char *)image2_path;
 
-   fprintf(stdout, "row - %d, col - %d, model - %s, texture1 - %s, texture2 - %s\n",
-           row, col, model, texture1, texture2);
+   fprintf(stdout, "row - %d, col - %d, precision of spheres - %d, texture1 - %s, texture2 - %s\n",
+           row, col, precision, texture1, texture2);
 
    ecore_evas = ecore_evas_new("opengl_x11", 10, 10, WIDTH, HEIGHT, NULL);
 
@@ -482,7 +489,8 @@ int main(int argc, char **argv)
    globalscene.scene_init = _init_scene;
    globalscene.row = row;
    globalscene.col = col;
-   globalscene.scene_init(model, texture1, texture2);
+   globalscene.precision = precision;
+   globalscene.scene_init(texture1, texture2);
 
    image = evas_object_image_filled_add(evas);
 
