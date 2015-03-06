@@ -431,6 +431,31 @@ group { name: "e/modules/ibox/icon_overlay";
    images.image: "darken_rounded_square.png" COMP;
    script {
       public urgent;
+      public origin;
+
+      public refresh_origin(){
+         new partid;
+
+         partid = get_part_id("e.text.label");
+         custom_state(partid, "default", 0.0);
+
+         if (get_int(origin) == 2){
+           //top
+           set_state_val(partid, STATE_ALIGNMENT, 0.5, 0.5);
+         }else if (get_int(origin) == 3){
+           //right
+           set_state_val(partid, STATE_ALIGNMENT, 0.0, 0.5);
+         }else if (get_int(origin) == 4){
+           //left
+           set_state_val(partid, STATE_ALIGNMENT, 1.0, 0.5);
+         }else{
+           //bottom
+           set_state_val(partid, STATE_ALIGNMENT, 0.5, 0.5);
+         }
+
+         /* apply the custom state */
+         set_state(partid, "custom", 0.0);
+      }
    }
    parts {
       part { name: "item_clip"; type: RECT;
@@ -495,7 +520,19 @@ group { name: "e/modules/ibox/icon_overlay";
             rel2.to: "background";
          }
       }
+      part { name: "clipper"; type: RECT;
+         description{ state: "default" 0.0;
+            rel1.to: "bevel";
+            rel2.to: "bevel";
+            color: 255 255 255 0;
+         }
+         description{ state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
       part { name: "bevel"; mouse_events: 0;
+         clip_to: "clipper";
          description { state: "default" 0.0;
             rel1.offset: -10 -6;
             rel1.to: "e.text.label";
@@ -505,22 +542,29 @@ group { name: "e/modules/ibox/icon_overlay";
             image.border: 15 15 15 15;
             fill.smooth: 0;
             fixed: 1 1;
-            color: 255 255 255 0;
-            visible: 0;
          }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-            visible: 1;
+      }
+      part { name: "spacer"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 1.0;
          }
+         description { state:  "visible" 0.0;
+            rel1.relative: 0.0 0.5;
+            rel2.relative: 1.0 0.5;
+         }
+
       }
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
          effect: SHADOW BOTTOM;
          scale: 1;
+         clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.relative: 0.0 1.0;
+            rel1.to: "spacer";
+            rel1.relative: 0.0 0.0;
+            rel2.to: "spacer";
             rel2.relative: 1.0 1.0;
-            color_class: "module_label_invisible";
+            color_class: "module_label";
             color3: 255 255 255 255;
             text { font: FN; size: 10;
                min: 1 1;
@@ -528,13 +572,7 @@ group { name: "e/modules/ibox/icon_overlay";
                align: 0.5 0.5;
                text_class: "module_normal";
             }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.relative: 0.0 0.5;
-            rel2.relative: 1.0 0.5;
-            color_class: "module_label";
-            color3: 255 255 255 255;
+            align: 0.5 0.5;
          }
       }
    }
@@ -574,14 +612,39 @@ group { name: "e/modules/ibox/icon_overlay";
          signal: "e,action,show,label"; source: "e";
          action: STATE_SET "visible" 0.0;
          transition: SINUSOIDAL 0.5;
-         target: "e.text.label";
-         target: "bevel";
+         target: "spacer";
+         target: "clipper";
       }
       program {
          signal: "e,action,hide,label"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 1.0;
-         target: "e.text.label";
+         target: "spacer";
+         target: "clipper";
+      }
+#define ORIGIN_PRO(_NAME,_ID) \
+      program { \
+         signal: "e,origin,"_NAME; source: "e"; \
+         script { \
+            set_int(origin, _ID); \
+            refresh_origin(); \
+         } \
+      }
+
+      ORIGIN_PRO("bottom", 1)
+      ORIGIN_PRO("top", 2);
+      ORIGIN_PRO("right", 3);
+      ORIGIN_PRO("left", 4);
+
+#undef ORIGIN_PRO
+      program { name: "show_bevel";
+         action: STATE_SET visible 0.0;
+         transition: SINUSOIDAL 1.0;
+         target: "bevel";
+      }
+      program { name: "hide_bevel";
+         action: STATE_SET default 0.0;
+         transition: SINUSOIDAL 1.0;
          target: "bevel";
       }
       program { name: "go_passive2";
