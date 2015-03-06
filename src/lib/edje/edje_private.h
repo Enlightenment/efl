@@ -2255,6 +2255,7 @@ void              _edje_color_class_on_del(Edje *ed, Edje_Part *ep);
 void              _edje_color_class_members_free(void);
 void              _edje_color_class_hash_free(void);
 
+const char       * _edje_find_alias(Eina_Hash *aliased, char *src, int *length);
 Edje_Text_Class  *_edje_text_class_find(Edje *ed, const char *text_class);
 void              _edje_text_class_member_add(Edje *ed, const char *text_class);
 void              _edje_text_class_member_del(Edje *ed, const char *text_class);
