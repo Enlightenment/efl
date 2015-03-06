@@ -376,6 +376,8 @@ static void st_collections_group_parts_part_description_properties_shade(void);
 static void st_collections_group_parts_part_description_orientation_look1(void);
 static void st_collections_group_parts_part_description_orientation_look2(void);
 static void st_collections_group_parts_part_description_orientation_look_to(void);
+static void st_collections_group_parts_part_description_orientation_angle_axis(void);
+static void st_collections_group_parts_part_description_orientation_quaternion(void);
 
 #ifdef HAVE_EPHYSICS
 static void st_collections_group_parts_part_description_physics_mass(void);
@@ -563,6 +565,32 @@ static void st_collections_group_nobroadcast(void);
         data_queue_part_lookup(list, name, &(ed->type_node.orientation.look_to));    \
         free(name);                                                                  \
         ed->type_node.orientation.type = EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_TO;      \
+     }
+
+#define SET_ANGLE_AXIS(Type, type_node)                                            \
+    Edje_Part_Description_##Type *ed;                                              \
+   ed = (Edje_Part_Description_##Type*) current_desc;                              \
+                                                                                   \
+   if (ed->type_node.orientation.type <= EVAS_3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS) \
+     {                                                                             \
+        ed->type_node.orientation.data[0] = FROM_DOUBLE(parse_float(0));           \
+        ed->type_node.orientation.data[1] = FROM_DOUBLE(parse_float(1));           \
+        ed->type_node.orientation.data[2] = FROM_DOUBLE(parse_float(2));           \
+        ed->type_node.orientation.data[3] = FROM_DOUBLE(parse_float(3));           \
+        ed->type_node.orientation.type = EVAS_3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS; \
+     }
+
+#define SET_QUATERNION(Type, type_node)                                            \
+    Edje_Part_Description_##Type *ed;                                              \
+   ed = (Edje_Part_Description_##Type*) current_desc;                              \
+                                                                                   \
+   if (ed->type_node.orientation.type <= EVAS_3D_NODE_ORIENTATION_TYPE_QUATERNION) \
+     {                                                                             \
+        ed->type_node.orientation.data[1] = FROM_DOUBLE(parse_float(0));           \
+        ed->type_node.orientation.data[2] = FROM_DOUBLE(parse_float(1));           \
+        ed->type_node.orientation.data[3] = FROM_DOUBLE(parse_float(2));           \
+        ed->type_node.orientation.data[0] = FROM_DOUBLE(parse_float(3));           \
+        ed->type_node.orientation.type = EVAS_3D_NODE_ORIENTATION_TYPE_QUATERNION; \
      }
 
 New_Statement_Handler statement_handlers[] =
@@ -778,6 +806,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.orientation.look1", st_collections_group_parts_part_description_orientation_look1},
      {"collections.group.parts.part.description.orientation.look2", st_collections_group_parts_part_description_orientation_look2},
      {"collections.group.parts.part.description.orientation.look_to", st_collections_group_parts_part_description_orientation_look_to},
+     {"collections.group.parts.part.description.orientation.angle_axis", st_collections_group_parts_part_description_orientation_angle_axis},
+     {"collections.group.parts.part.description.orientation.quaternion", st_collections_group_parts_part_description_orientation_quaternion},
 
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
@@ -9686,6 +9716,76 @@ st_collections_group_parts_part_description_orientation_look_to(void)
      }
 }
 
+/**
+    @page edcref
+    @property
+        angle_axis
+    @parameters
+        [x] [y] [z] [w]
+    @effect
+        Specifies the angle and indicates what proportions the MESH_NODE rotates in.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_orientation_angle_axis(void)
+{
+   check_arg_count(4);
+
+   if (current_part->type == EDJE_PART_TYPE_CAMERA)
+     {
+        SET_ANGLE_AXIS(Camera, camera)
+     }
+   else if (current_part->type == EDJE_PART_TYPE_LIGHT)
+     {
+        SET_ANGLE_AXIS(Light, light)
+     }
+   else if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        SET_ANGLE_AXIS(Mesh_Node, mesh_node)
+     }
+   else
+     {
+        ERR("parse error %s:%i. camera, light and mesh_node  attributes in non-CAMERA, non-LIGHT and non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+
+/**
+    @page edcref
+    @property
+        quaternion
+    @parameters
+        [x] [y] [z] [w]
+    @effect
+        Specifies the axis and arccosinus of half angle to rotate on the MESH_NODE, CAMERA or LIGHT.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_orientation_quaternion(void)
+{
+   check_arg_count(4);
+
+   if (current_part->type == EDJE_PART_TYPE_CAMERA)
+     {
+        SET_QUATERNION(Camera, camera)
+     }
+   else if (current_part->type == EDJE_PART_TYPE_LIGHT)
+     {
+        SET_QUATERNION(Light, light)
+     }
+   else if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        SET_QUATERNION(Mesh_Node, mesh_node)
+     }
+   else
+     {
+        ERR("parse error %s:%i. camera, light and mesh_node  attributes in non-CAMERA, non-LIGHT and non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
 
 static void
 st_collections_group_parts_part_description_proxy_source_visible(void)
