@@ -641,11 +641,15 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
 
 /**
  * @def eo_add
- * @brief Create a new object with the default constructor.
+ * @brief Create a new object and call its constructor(If it exits).
  *
- * The object returned by this function always has at least 1 ref. If the object
- * has a parent, it returns with 1 ref, and even if it doesn't have a parent
- * it's returned with 1 ref. This is convenient in C.
+ * The object returned by this function will always have 1 ref
+ * (reference count) irrespective of whether the parent is NULL or
+ * not.
+ * If the object is created using this function, then it would
+ * automatically gets deleted when the parent object is deleted.
+ * There is no need to call eo_unref on the child. This is convenient
+ * in C.
  *
  * If you want a more "consistent" behaviour, take a look at #eo_add_ref.
  *
@@ -658,10 +662,13 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
 
 /**
  * @def eo_add_ref
- * @brief Create a new object with the default constructor.
+ * @brief Create a new object and call its constructor(If it exists).
  *
  * The object returned by this function has 1 ref for itself, 1 ref from the
  * parent (if exists) and possible other refs if were added during construction.
+ * If a child object is created using this, then it won't get deleted
+ * when the parent object is deleted until you manually remove the ref
+ * by calling eo_unref().
  *
  * @param klass the class of the object to create.
  * @param parent the parent to set to the object.
