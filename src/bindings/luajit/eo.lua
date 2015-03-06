@@ -131,14 +131,14 @@ local eo_classes = {}
 
 -- event system
 
-local eo_callbacks = {}
+local eo_callbacks, eo_cbidcache = {}, {}
 
 local eo_event_del, eo_event_cb
 
 local eo_event_del_fun = function(data, obj, desc, einfo)
     local addr = eo_obj_addr_get(obj)
     if  eo_callbacks[addr] then
-        eo_callbacks[addr] = nil
+        eo_callbacks[addr], eo_cbidcache[addr] = nil, nil
     end
 end
 
@@ -162,13 +162,14 @@ local connect = function(self, ename, func, priority)
     local cdel = false
     local addr = eo_obj_addr_get(self)
     local  cbs = eo_callbacks[addr]
+    local  cbi = eo_cbidcache[addr]
     if not cbs then
-        cbs = {}
-        eo_callbacks[addr] = cbs
+        cbs, cbi = {}, {}
+        eo_callbacks[addr], eo_cbidcache[addr] = cbs, cbi
         cdel = true
     end
     local cidx = #cbs + 1
-    cbs[cidx] = func
+    cbs[cidx], cbi[func] = func, cidx
     M.__do_start(self, cl)
     eo.eo_event_callback_priority_add(ev, priority or 0,
         eo_event_cb, ffi.cast("void *", cidx))
@@ -191,17 +192,14 @@ local disconnect = function(self, ename, func)
         return false
     end
     -- TODO: make a hash table for func-to-index conversions
-    local cidx = -1
-    for i = 1, #cbs do
-        if cbs[i] == func then
-            cidx = i
-            break
-        end
-    end
-    if cidx < 0 then
+    local  cbi = eo_cbidcache[addr]
+    assert(cbi)
+    local cidx = cbi[func]
+    if not cidx then
         return false
     end
     cbs[cidx] = nil
+    cbi[func] = nil
     M.__do_start(self, cl)
     eo.eo_event_callback_del(ev, eo_event_cb, ffi.cast("void *", cidx))
     M.__do_end()
@@ -234,6 +232,7 @@ local shutdown = function()
     eo_event_del = nil
     eo_event_cb  = nil
     eo_callbacks = {}
+    eo_cbidcache = {}
     util.lib_unload("eo")
 end
 
