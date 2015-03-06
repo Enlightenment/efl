@@ -65,7 +65,6 @@ _event_handler_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED) // 
         ecore_idle_enterer_del(ctxt->enterer);
         ecore_idle_exiter_del(ctxt->exiter);
 //        ecore_idler_del(ctxt->idler);
-        eo_unref(ctxt->idler);
 
         ctxt->enterer = NULL;
         ctxt->exiter = NULL;
