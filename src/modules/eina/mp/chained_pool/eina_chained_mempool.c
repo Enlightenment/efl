@@ -68,26 +68,6 @@ static int _eina_chained_mp_log_dom = -1;
 static int aligned_chained_pool = 0;
 static int page_size = 0;
 
-typedef struct _Chained_Mempool Chained_Mempool;
-struct _Chained_Mempool
-{
-   Eina_Inlist *first;
-   Eina_Rbtree *root;
-   const char *name;
-   int item_alloc;
-   int pool_size;
-   int alloc_size;
-   int group_size;
-   int usage;
-#ifdef EINA_DEBUG_MALLOC
-   int minimal_size;
-#endif
-#ifdef EINA_HAVE_DEBUG_THREADS
-   Eina_Thread self;
-#endif
-   Eina_Spinlock mutex;
-};
-
 typedef struct _Chained_Pool Chained_Pool;
 struct _Chained_Pool
 {
@@ -99,6 +79,28 @@ struct _Chained_Pool
    unsigned char *last;
    unsigned char *limit;
 };
+
+typedef struct _Chained_Mempool Chained_Mempool;
+struct _Chained_Mempool
+{
+   Eina_Inlist *first;
+   Eina_Rbtree *root;
+   const char *name;
+   int item_alloc;
+   int pool_size;
+   int alloc_size;
+   int group_size;
+   int usage;
+   Chained_Pool* first_fill; //All allocation will happen in this chain,unless it is filled
+#ifdef EINA_DEBUG_MALLOC
+   int minimal_size;
+#endif
+#ifdef EINA_HAVE_DEBUG_THREADS
+   Eina_Thread self;
+#endif
+   Eina_Spinlock mutex;
+};
+
 
 static inline Eina_Rbtree_Direction
 _eina_chained_mp_pool_cmp(const Eina_Rbtree *left, const Eina_Rbtree *right, EINA_UNUSED void *data)
@@ -183,7 +185,7 @@ _eina_chained_mempool_alloc_in(Chained_Mempool *pool, Chained_Pool *p)
       mem = p->last;
       p->last += pool->item_alloc;
       if (p->last >= p->limit)
-	p->last = NULL;
+      p->last = NULL;
     }
   else
     {
@@ -244,9 +246,14 @@ _eina_chained_mempool_free_in(Chained_Mempool *pool, Chained_Pool *p, void *ptr)
         pool->first = eina_inlist_remove(pool->first, EINA_INLIST_GET(p));
         pool->root = eina_rbtree_inline_remove(pool->root, EINA_RBTREE_GET(p),
                                                _eina_chained_mp_pool_cmp, NULL);
+        if (pool->first_fill == p)
+          {
+             pool->first_fill = NULL;
+             pool->first_fill = EINA_INLIST_CONTAINER_GET(pool->first, Chained_Pool);
+          }
         _eina_chained_mp_pool_free(p);
 
-	return EINA_TRUE;
+       return EINA_TRUE;
      }
    else
      {
@@ -271,12 +278,21 @@ eina_chained_mempool_malloc(void *data, EINA_UNUSED unsigned int size)
 #endif
      }
 
-   // Either we have some free space in the first one, or there is no free space.
-   if (pool->first) p = EINA_INLIST_CONTAINER_GET(pool->first, Chained_Pool);
+   //we have some free space in first fill chain
+   if (pool->first_fill) p = pool->first_fill;
 
    // base is not NULL - has a free slot
    if (p && !p->base && !p->last)
-     p = NULL;
+     {
+       //Current pointed chain is filled , so point it to first one
+       pool->first_fill = EINA_INLIST_CONTAINER_GET(pool->first, Chained_Pool);
+       //Either first one has some free space or every chain is filled
+       if (pool->first_fill && !pool->first_fill->base && !pool->first_fill->last)
+        {
+           p = NULL;
+           pool->first_fill = NULL;
+        }
+     }
 
 #ifdef DEBUG
    if (p == NULL)
@@ -287,19 +303,20 @@ eina_chained_mempool_malloc(void *data, EINA_UNUSED unsigned int size)
    // we have reached the end of the list - no free pools
    if (!p)
      {
-        p = _eina_chained_mp_pool_new(pool);
-        if (!p)
+       //new chain created ,point it to be the first_fill chain
+        pool->first_fill = _eina_chained_mp_pool_new(pool);
+        if (!pool->first_fill)
           {
              eina_spinlock_release(&pool->mutex);
              return NULL;
           }
 
-        pool->first = eina_inlist_prepend(pool->first, EINA_INLIST_GET(p));
-        pool->root = eina_rbtree_inline_insert(pool->root, EINA_RBTREE_GET(p),
+        pool->first = eina_inlist_prepend(pool->first, EINA_INLIST_GET(pool->first_fill));
+        pool->root = eina_rbtree_inline_insert(pool->root, EINA_RBTREE_GET(pool->first_fill),
                                                _eina_chained_mp_pool_cmp, NULL);
      }
 
-   mem = _eina_chained_mempool_alloc_in(pool, p);
+   mem = _eina_chained_mempool_alloc_in(pool, pool->first_fill);
 
    eina_spinlock_release(&pool->mutex);
 
@@ -487,7 +504,7 @@ eina_chained_mempool_init(const char *context,
 #ifdef EINA_HAVE_DEBUG_THREADS
    mp->self = eina_thread_self();
 #endif
-
+   mp->first_fill = NULL;
    eina_spinlock_new(&mp->mutex);
 
    return mp;
