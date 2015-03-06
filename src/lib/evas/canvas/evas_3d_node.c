@@ -621,7 +621,12 @@ _node_free(Evas_3D_Object *obj)
         eina_list_free(pd->members);
      }
 
-   if (pd->data.mesh.meshes)
+   if (pd->parent)
+     {
+        eo_do(pd->parent, evas_3d_node_member_del(obj));
+     }
+
+   if (pd->type == EVAS_3D_NODE_TYPE_MESH && pd->data.mesh.meshes)
      {
         Eina_List *l;
         Evas_3D_Mesh *m;
@@ -632,10 +637,10 @@ _node_free(Evas_3D_Object *obj)
           }
 
         eina_list_free(pd->data.mesh.meshes);
-     }
 
-   if (pd->data.mesh.node_meshes)
-     eina_hash_free(pd->data.mesh.node_meshes);
+        if (pd->data.mesh.node_meshes)
+          eina_hash_free(pd->data.mesh.node_meshes);
+     }
 
    if (pd->scenes_root)
      eina_hash_free(pd->scenes_root);
