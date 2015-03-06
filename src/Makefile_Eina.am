@@ -282,8 +282,10 @@ tests/eina/eina_test_cow.c \
 tests/eina/eina_test_barrier.c \
 tests/eina/eina_test_tmpstr.c \
 tests/eina/eina_test_trash.c \
-tests/eina/eina_test_lock.c
+tests/eina/eina_test_lock.c \
+tests/eina/eina_test_xattr.c
 # tests/eina/eina_test_model.c
+
 
 tests_eina_eina_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \

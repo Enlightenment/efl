@@ -854,6 +854,9 @@ AC_ARG_ENABLE([magic-debug],
 
 EINA_CONFIG([MAGIC_DEBUG], [test "x${have_magic_debug}" = "xyes"])
 
+AC_ARG_WITH([xattr-tests-path],
+   [AS_HELP_STRING([--with-xattr-tests-path=DIR],[path of xattr enabled directory to create test files])],[XATTR_TEST_DIR=${withval}][AC_DEFINE_UNQUOTED([XATTR_TEST_DIR],["$withval"], [xattr enabled directory])])
+
 ### Checks for programs
 
 ### Checks for libraries
