@@ -107,8 +107,6 @@ ffi.cdef [[
 
     const Eo_Class *eo_base_class_get(void);
 
-    extern const Eo_Event_Description _EO_BASE_EVENT_CALLBACK_ADD;
-    extern const Eo_Event_Description _EO_BASE_EVENT_CALLBACK_DEL;
     extern const Eo_Event_Description _EO_BASE_EVENT_DEL;
 ]]
 
