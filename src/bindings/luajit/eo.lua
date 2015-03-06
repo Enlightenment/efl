@@ -112,11 +112,8 @@ ffi.cdef [[
     extern const Eo_Event_Description _EO_BASE_EVENT_DEL;
 ]]
 
-local addr_d = ffi.typeof("union { double d; const Eo *p; }")
 local eo_obj_addr_get = function(x)
-    local v = addr_d()
-    v.p = x
-    return tonumber(v.d)
+    return tonumber(ffi.cast("intptr_t", x))
 end
 
 local cutil = require("cutil")
