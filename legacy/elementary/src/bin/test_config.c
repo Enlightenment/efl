@@ -416,7 +416,7 @@ _plug_add(Evas_Object *win, Evas_Object *bx, const char *name)
    } while(0)
 
 void
-test_config(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_config(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    App_Data *ad;
    Prof_Data *pd = (Prof_Data *)data;
@@ -514,7 +514,7 @@ test_config(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
    evas_object_smart_callback_add(win, "profile,changed", _win_profile_changed_cb, NULL);
    evas_object_smart_callback_add(win, "delete,request", _win_del_cb, NULL);
 
-   if (pd)
+   if (pd && !obj) //obj is NULL when called by _bt_win_add but not when user clicks this test
      {
         if (pd->available_profiles[0])
           elm_win_available_profiles_set(win,
