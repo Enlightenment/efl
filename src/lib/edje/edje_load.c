@@ -1545,6 +1545,7 @@ _edje_file_free(Edje_File *edf)
    EINA_LIST_FREE(edf->color_classes, ecc)
      {
         if (edf->free_strings && ecc->name) eina_stringshare_del(ecc->name);
+        if (edf->free_strings) eina_stringshare_del(ecc->desc);
         free(ecc);
      }
 

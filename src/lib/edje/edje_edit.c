@@ -2519,6 +2519,43 @@ edje_edit_color_class_colors_set(Evas_Object *obj, const char *class_name, int r
    return EINA_FALSE;
 }
 
+EAPI Eina_Stringshare *
+edje_edit_color_class_description_get(Evas_Object *obj, const char *class_name)
+{
+   Eina_List *l;
+   Edje_Color_Class *cc;
+
+   GET_ED_OR_RETURN(NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(class_name, NULL);
+
+   if (!ed->file || !ed->file->color_classes)
+     return NULL;
+   EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
+     if (eina_streq(cc->name, class_name))
+       return cc->desc;
+   return NULL;
+}
+
+EAPI Eina_Bool
+edje_edit_color_class_description_set(Evas_Object *obj, const char *class_name, const char *desc)
+{
+   Eina_List *l;
+   Edje_Color_Class *cc;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(class_name, EINA_FALSE);
+
+   if (!ed->file || !ed->file->color_classes)
+     return EINA_FALSE;
+   EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
+     if (eina_streq(cc->name, class_name))
+       {
+          eina_stringshare_replace(&cc->desc, desc);
+          return EINA_TRUE;
+       }
+   return EINA_FALSE;
+}
+
 EAPI Eina_Bool
 edje_edit_color_class_add(Evas_Object *obj, const char *name)
 {

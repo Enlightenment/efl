@@ -813,6 +813,26 @@ EAPI Eina_Bool edje_edit_color_class_colors_set(Evas_Object *obj, const char *cl
  */
 EAPI Eina_Bool edje_edit_color_class_name_set(Evas_Object *obj, const char *name, const char *newname);
 
+/** Get the description of a color class.
+ *
+ * @param obj Object being edited.
+ * @param name Color class to get the description of.
+ *
+ * @return The description of the color class or @c NULL if not found
+ * @since 1.14
+ */
+EAPI Eina_Stringshare *edje_edit_color_class_description_get(Evas_Object *obj, const char *class_name);
+
+/** Change the description of a color class.
+ *
+ * @param obj Object being edited.
+ * @param name Color class to edit.
+ * @param desc New description for the color class
+ *
+ * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
+ * @since 1.14
+ */
+EAPI Eina_Bool edje_edit_color_class_description_set(Evas_Object *obj, const char *class_name, const char *desc);
 //@}
 
 

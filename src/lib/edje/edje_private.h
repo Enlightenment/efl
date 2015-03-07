@@ -1867,6 +1867,7 @@ struct _Edje_Color_Class
    unsigned char  r, g, b, a;
    unsigned char  r2, g2, b2, a2;
    unsigned char  r3, g3, b3, a3;
+   Eina_Stringshare *desc;
 };
 
 struct _Edje_Text_Class

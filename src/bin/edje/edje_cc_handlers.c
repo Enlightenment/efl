@@ -205,6 +205,7 @@ static void st_color_class_name(void);
 static void st_color_class_color(void);
 static void st_color_class_color2(void);
 static void st_color_class_color3(void);
+static void st_color_class_desc(void);
 
 static void ob_collections(void);
 static void st_collections_base_scale(void);
@@ -498,7 +499,8 @@ static void st_collections_group_nobroadcast(void);
      {PREFIX"color_classes.color_class.name", st_color_class_name}, /* dup */ \
      {PREFIX"color_classes.color_class.color", st_color_class_color}, /* dup */ \
      {PREFIX"color_classes.color_class.color2", st_color_class_color2}, /* dup */ \
-     {PREFIX"color_classes.color_class.color3", st_color_class_color3}, /* dup */
+     {PREFIX"color_classes.color_class.color3", st_color_class_color3}, /* dup */ \
+     {PREFIX"color_classes.color_class.description", st_color_class_desc}, /* dup */
 
 #define PROGRAM_SEQUENCE(PREFIX, NAME, FN) \
      {PREFIX".program."NAME, FN}, /* dup */ \
@@ -2458,6 +2460,28 @@ st_color_class_color3(void)
    cc->g3 = parse_int_range(1, 0, 255);
    cc->b3 = parse_int_range(2, 0, 255);
    cc->a3 = parse_int_range(3, 0, 255);
+}
+
+/**
+    @page edcref
+    @property
+        description
+    @parameters
+        [color class description]
+    @effect
+        Provides a descriptive name for the effect of the color class
+        @since 1.14
+    @endproperty
+*/
+static void
+st_color_class_desc(void)
+{
+   Edje_Color_Class *cc;
+
+   check_arg_count(1);
+
+   cc = eina_list_data_get(eina_list_last(edje_file->color_classes));
+   cc->desc = parse_str(0);
 }
 
 /** @edcsubsection{toplevel_styles,
