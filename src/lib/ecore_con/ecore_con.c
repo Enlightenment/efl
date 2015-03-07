@@ -401,6 +401,8 @@ _ecore_con_server_eo_base_finalize(Ecore_Con_Server *obj, Ecore_Con_Server_Data 
    if (!svr->name)
      goto error;
 
+   type = compl_type & ECORE_CON_TYPE;
+
    EINA_SAFETY_ON_TRUE_GOTO(((type == ECORE_CON_REMOTE_TCP) ||
                              (type == ECORE_CON_REMOTE_NODELAY) ||
                              (type == ECORE_CON_REMOTE_CORK) ||
@@ -410,8 +412,6 @@ _ecore_con_server_eo_base_finalize(Ecore_Con_Server *obj, Ecore_Con_Server_Data 
 
    if (ecore_con_ssl_server_prepare(obj, compl_type & ECORE_CON_SSL))
      goto error;
-
-   type = compl_type & ECORE_CON_TYPE;
 
    if ((type == ECORE_CON_LOCAL_USER) ||
        (type == ECORE_CON_LOCAL_SYSTEM) ||
