@@ -4,9 +4,11 @@ color_classes {
 // comp
    color_class { name: "comp_focus-out_color";
       color: 255 255 255 255;
+      description: "Objects which do not have focus";
    }
    color_class { name: "comp_focus_color";
       color: 255 255 255 255;
+      description: "Objects which have focus";
    }
 
 // wm
