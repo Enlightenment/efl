@@ -69,7 +69,10 @@ elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, const char
      }
 
    line->modified = inserted;
-   line->length = line->length + length;
+   line->length += length;
+
+// TODO update calculation
+   line->unicode_length += length;
 
    file = line->file;
    elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
