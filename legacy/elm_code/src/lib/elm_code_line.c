@@ -6,6 +6,12 @@
 
 #include "elm_code_private.h"
 
+EAPI unsigned int
+elm_code_line_utf8_length_get(Elm_Code_Line *line)
+{
+   return line->unicode_length;
+}
+
 EAPI void elm_code_line_status_set(Elm_Code_Line *line, Elm_Code_Status_Type status)
 {
    if (!line)

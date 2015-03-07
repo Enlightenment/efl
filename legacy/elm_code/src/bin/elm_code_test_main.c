@@ -76,10 +76,10 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
          eo_event_callback_add(&ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_test_line_done_cb, NULL);
          eo_event_callback_add(ELM_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_clicked_cb, code));
 
-   _append_line(code->file, "Hello World, Elm Code!");
+   _append_line(code->file, "Hello World, Elm Code! ❤");
    _append_line(code->file, "");
    _append_line(code->file, "This is a demo of elm_code's capabilities.");
-   _append_line(code->file, "*** Currently experimental ***");
+   _append_line(code->file, "⚑ *** Currently experimental ***");
 
    evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);

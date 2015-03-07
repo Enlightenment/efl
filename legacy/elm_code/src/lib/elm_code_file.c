@@ -21,7 +21,23 @@ static Elm_Code_Line *_elm_code_file_line_blank_create(Elm_Code_File *file, int 
    return ecl;
 }
 
-static void _elm_code_file_line_insert_data(Elm_Code_File *file, const char *content, int length,
+static unsigned int
+_elm_code_file_line_unicode_strlen(const char *chars, unsigned int length)
+{
+   unsigned int count = 0;
+   int index = 0;
+
+   while ((unsigned int) index < length)
+     {
+        eina_unicode_utf8_next_get(chars, &index);
+
+        count++;
+     }
+
+   return count;
+}
+
+static void _elm_code_file_line_insert_data(Elm_Code_File *file, const char *content, unsigned int length,
                                             unsigned int row, Eina_Bool mapped, void *data)
 {
    Elm_Code_Line *line, *after;
@@ -41,6 +57,7 @@ static void _elm_code_file_line_insert_data(Elm_Code_File *file, const char *con
         line->modified[length] = 0;
         line->length = length;
      }
+   line->unicode_length = _elm_code_file_line_unicode_strlen(content, length);
 
    if (row == 1)
      file->lines = eina_list_prepend(file->lines, line);

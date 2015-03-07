@@ -22,7 +22,7 @@ extern "C" {
 
 EAPI const char *elm_code_line_text_get(Elm_Code_Line *line, int *length);
 
-EAPI void elm_code_line_text_insert(Elm_Code_Line *line, int position, const char *string, int length);
+EAPI void elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, const char *string, int length);
 
 /**
  * @}

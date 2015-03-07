@@ -37,7 +37,7 @@ _elm_code_line_tokens_move_right(Elm_Code_Line *line, int position, int move)
 }
 
 EAPI void
-elm_code_line_text_insert(Elm_Code_Line *line, int position, const char *string, int length)
+elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, const char *string, int length)
 {
    Elm_Code_File *file;
    char *inserted;
@@ -46,11 +46,10 @@ elm_code_line_text_insert(Elm_Code_Line *line, int position, const char *string,
      return;
 
    inserted = malloc(sizeof(char) * line->length + length + 1);
-   position--;
+   if (position > 0)
+     position--;
    if (position > line->length)
      position = line->length;
-   if (position < 0)
-     position = 0;
 
    _elm_code_line_tokens_move_right(line, position + 1, length);
 

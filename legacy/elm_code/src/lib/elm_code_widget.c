@@ -105,8 +105,8 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
    w = 0;
    h = elm_code_file_lines_get(pd->code->file);
    EINA_LIST_FOREACH(pd->code->file->lines, item, line)
-     if (line->length + gutter + 1 > w)
-        w = line->length + gutter + 1;
+     if ((int) line->unicode_length + gutter + 1 > w)
+        w = (int) line->unicode_length + gutter + 1;
 
    if (w*cw > ww)
      ww = w*cw;
@@ -159,7 +159,7 @@ _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
 
    offset = elm_code_widget_text_left_gutter_width_get(widget) - 1;
    start = offset + 1;
-   length = line->length + offset;
+   length = line->unicode_length + offset;
 
    EINA_LIST_FOREACH(line->tokens, item, token)
      {
@@ -220,7 +220,7 @@ _elm_code_widget_fill_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
 }
 
 static void
-_elm_code_widget_fill_whitespace(Elm_Code_Widget *widget EINA_UNUSED, char character, Evas_Textgrid_Cell *cell)
+_elm_code_widget_fill_whitespace(Elm_Code_Widget *widget EINA_UNUSED, Eina_Unicode character, Evas_Textgrid_Cell *cell)
 {
    switch (character)
      {
@@ -244,33 +244,37 @@ static void
 _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
 {
    char *chr;
+   Eina_Unicode unichr;
    unsigned int length, x;
-   int w, gutter;
+   int w, chrpos, gutter;
    Evas_Textgrid_Cell *cells;
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    gutter = elm_code_widget_text_left_gutter_width_get(widget);
 
-   length = line->length;
    evas_object_textgrid_size_get(pd->grid, &w, NULL);
    cells = evas_object_textgrid_cellrow_get(pd->grid, line->number - 1);
 
    _elm_code_widget_fill_gutter(widget, cells, line->status, line->number);
    _elm_code_widget_fill_line_tokens(widget, cells, w, line);
 
+   length = elm_code_line_utf8_length_get(line);
+   chrpos = 0;
    if (line->modified)
       chr = line->modified;
    else
       chr = (char *)line->content;
+
    for (x = gutter; x < (unsigned int) w && x < length + gutter; x++)
      {
-        cells[x].codepoint = *chr;
+        unichr = eina_unicode_utf8_next_get(chr, &chrpos);
+
+        cells[x].codepoint = unichr;
         cells[x].bg = _elm_code_widget_status_type_get(widget, line->status, x - gutter + 1);
 
         if (pd->show_whitespace)
-          _elm_code_widget_fill_whitespace(widget, *chr, &cells[x]);
-        chr++;
+          _elm_code_widget_fill_whitespace(widget, unichr, &cells[x]);
      }
    for (; x < (unsigned int) w; x++)
      {
@@ -395,7 +399,7 @@ _elm_code_widget_cursor_key_will_move(Elm_Code_Widget *widget, const char *key)
    else if (!strcmp(key, "Left"))
      return pd->cursor_col > 1;
    else if (!strcmp(key, "Right"))
-     return pd->cursor_col < (unsigned int) line->length + 1;
+     return pd->cursor_col < (unsigned int) line->unicode_length + 1;
    else
      return EINA_FALSE;
 }
@@ -487,8 +491,8 @@ _elm_code_widget_clicked_editable_cb(Elm_Code_Widget *widget, Evas_Coord x, Evas
    if (!line)
      return;
 
-   if (col > (unsigned int) line->length + 1)
-     col = line->length + 1;
+   if (col > (unsigned int) line->unicode_length + 1)
+     col = line->unicode_length + 1;
    else if (col == 0)
      col = 1;
 
@@ -553,8 +557,8 @@ _elm_code_widget_cursor_move_up(Elm_Code_Widget *widget)
 
    row--;
    line = elm_code_file_line_get(pd->code->file, row);
-   if (col > (unsigned int) line->length + 1)
-     col = line->length + 1;
+   if (col > (unsigned int) line->unicode_length + 1)
+     col = line->unicode_length + 1;
 
    _elm_code_widget_cursor_move(widget, pd, col, row, EINA_TRUE);
 }
@@ -575,8 +579,8 @@ _elm_code_widget_cursor_move_down(Elm_Code_Widget *widget)
 
    row++;
    line = elm_code_file_line_get(pd->code->file, row);
-   if (col > (unsigned int) line->length + 1)
-     col = line->length + 1;
+   if (col > (unsigned int) line->unicode_length + 1)
+     col = line->unicode_length + 1;
 
    _elm_code_widget_cursor_move(widget, pd, col, row, EINA_TRUE);
 }
@@ -603,7 +607,7 @@ _elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
-   if (pd->cursor_col > (unsigned int) line->length)
+   if (pd->cursor_col > (unsigned int) line->unicode_length)
      return;
 
    _elm_code_widget_cursor_move(widget, pd, pd->cursor_col+1, pd->cursor_line, EINA_TRUE);
