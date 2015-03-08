@@ -456,6 +456,7 @@ static void
 _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, unsigned int col, unsigned int line,
                              Eina_Bool was_key)
 {
+   Elm_Code *code;
    unsigned int oldrow;
 
    oldrow = pd->cursor_line;
@@ -469,7 +470,13 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
    _elm_code_widget_cursor_ensure_visible(widget);
 
    if (oldrow != pd->cursor_line)
-     _elm_code_widget_fill_line(widget, elm_code_file_line_get(pd->code->file, oldrow));
+     {
+        code = pd->code;
+        if (oldrow <= elm_code_file_lines_get(code->file))
+          _elm_code_widget_fill_line(widget, elm_code_file_line_get(pd->code->file, oldrow));
+        else
+          _elm_code_widget_empty_line(widget, oldrow);
+     }
    _elm_code_widget_fill_line(widget, elm_code_file_line_get(pd->code->file, pd->cursor_line));
 }
 
