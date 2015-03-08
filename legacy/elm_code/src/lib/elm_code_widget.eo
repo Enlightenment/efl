@@ -173,6 +173,7 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
       Eo.Base.constructor;
       Eo.Base.finalize;
       Evas.Object_Smart.add;
+      Elm_Widget.event;
       Elm_Widget.focus_next_manager_is;
       Elm_Widget.focus_direction_manager_is;
    }

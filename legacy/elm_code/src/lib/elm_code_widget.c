@@ -649,6 +649,45 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
 }
 
 static void
+_elm_code_widget_backspace(Elm_Code_Widget *widget)
+{
+   Elm_Code *code;
+   Elm_Code_Line *line;
+   unsigned int row, col;
+
+   eo_do(widget,
+         code = elm_code_widget_code_get(),
+         elm_code_widget_cursor_position_get(&col, &row));
+
+   if (col <= 1)
+     return;
+   line = elm_code_file_line_get(code->file, row);
+
+   elm_code_line_text_remove(line, col - 1, 1);
+   eo_do(widget,
+         elm_code_widget_cursor_position_set(col - 1, row));
+}
+
+static void
+_elm_code_widget_delete(Elm_Code_Widget *widget)
+{
+   Elm_Code *code;
+   Elm_Code_Line *line;
+   unsigned int row, col;
+
+   eo_do(widget,
+         code = elm_code_widget_code_get(),
+         elm_code_widget_cursor_position_get(&col, &row));
+   line = elm_code_file_line_get(code->file, row);
+   if (col > line->unicode_length)
+     return;
+
+   elm_code_line_text_remove(line, col, 1);
+   eo_do(widget,
+         elm_code_widget_cursor_position_set(col, row));
+}
+
+static void
 _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
                               Evas_Object *obj EINA_UNUSED, void *event_info)
 {
@@ -676,6 +715,10 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
 
    else if (!strcmp(ev->key, "KP_Enter") || !strcmp(ev->key, "Return"))
      _elm_code_widget_newline(widget);
+   else if (!strcmp(ev->key, "BackSpace"))
+     _elm_code_widget_backspace(widget);
+   else if (!strcmp(ev->key, "Delete"))
+     _elm_code_widget_delete(widget);
 
    else if (ev->string && strlen(ev->string) == 1)
      _elm_code_widget_text_at_cursor_insert(widget, ev->string, 1);
@@ -711,6 +754,23 @@ _elm_code_widget_unfocused_event_cb(void *data, Evas_Object *obj,
 
    pd->focussed = EINA_FALSE;
    _elm_code_widget_fill(obj);
+}
+
+EOLIAN static Eina_Bool
+_elm_code_widget_elm_widget_event(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd EINA_UNUSED,
+                                  Evas_Object *src EINA_UNUSED, Evas_Callback_Type type, void *event_info)
+{
+   Evas_Event_Key_Down *ev = event_info;
+
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+
+   if (!strcmp(ev->key, "BackSpace"))
+     {
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
