@@ -20,6 +20,29 @@ elm_code_line_text_get(Elm_Code_Line *line, unsigned int *length)
    return line->content;
 }
 
+EAPI void
+elm_code_line_text_set(Elm_Code_Line *line, const char *chars, unsigned int length)
+{
+   Elm_Code_File *file;
+   char *newtext;
+
+   if (!line)
+     return;
+
+   if (line->modified)
+     free(line->modified);
+
+   newtext = malloc(sizeof(char) * length + 1);
+   strncpy(newtext, chars, length);
+   line->modified = newtext;
+   line->length = length;
+// TODO update calculation
+   line->unicode_length = length;
+
+   file = line->file;
+   elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
+}
+
 static void
 _elm_code_line_tokens_move_right(Elm_Code_Line *line, int position, int move)
 {

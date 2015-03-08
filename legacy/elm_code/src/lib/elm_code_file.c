@@ -212,6 +212,34 @@ EAPI void elm_code_file_line_insert(Elm_Code_File *file, unsigned int row, const
      }
 }
 
+EAPI void elm_code_file_line_remove(Elm_Code_File *file, unsigned int row)
+{
+   Eina_List *item, *next;
+   Elm_Code_Line *line_item, *tofree = NULL;
+   unsigned int r;
+
+   r = row;
+   EINA_LIST_FOREACH_SAFE(file->lines, item, next, line_item)
+     {
+        if (line_item->number < row)
+          continue;
+        else if (line_item->number == row)
+          {
+             tofree = line_item;
+             file->lines = eina_list_remove_list(file->lines, item);
+             continue;
+          }
+
+        line_item->number = r++;
+
+        if (file->parent)
+          elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line_item);
+     }
+
+   if (tofree)
+     elm_code_line_free(tofree);
+}
+
 EAPI Elm_Code_Line *elm_code_file_line_get(Elm_Code_File *file, unsigned int number)
 {
    return eina_list_nth(file->lines, number - 1);

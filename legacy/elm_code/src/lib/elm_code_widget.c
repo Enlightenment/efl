@@ -649,6 +649,49 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
 }
 
 static void
+_elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
+{
+   Elm_Code *code;
+   Elm_Code_Line *line, *otherline;
+   unsigned int row, col;
+
+   const char *text1, *text2;
+   char *newtext;
+   unsigned int length1, length2;
+
+   eo_do(widget,
+         code = elm_code_widget_code_get(),
+         elm_code_widget_cursor_position_get(&col, &row));
+   line = elm_code_file_line_get(code->file, row);
+
+   if (nextline)
+     {
+        otherline = elm_code_file_line_get(code->file, row + 1);
+        text1 = elm_code_line_text_get(line, &length1);
+        text2 = elm_code_line_text_get(otherline, &length2);
+     }
+   else
+     {
+        otherline = elm_code_file_line_get(code->file, row - 1);
+        text1 = elm_code_line_text_get(otherline, &length1);
+        text2 = elm_code_line_text_get(line, &length2);
+     }
+
+   newtext = malloc(sizeof(char) * (length1 + length2 + 1));
+   snprintf(newtext, length1 + 1, "%s", text1);
+   snprintf(newtext + length1, length2 + 1, "%s", text2);
+
+// TODO we need to merge tokens from these lines (move this to elm_code_text)
+   elm_code_file_line_remove(code->file, otherline->number);
+   elm_code_line_text_set(line, newtext, length1 + length2);
+
+   free(newtext);
+   if (!nextline)
+     eo_do(widget,
+           elm_code_widget_cursor_position_set(length1 + 1, row - 1));
+}
+
+static void
 _elm_code_widget_backspace(Elm_Code_Widget *widget)
 {
    Elm_Code *code;
@@ -660,7 +703,16 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
          elm_code_widget_cursor_position_get(&col, &row));
 
    if (col <= 1)
-     return;
+     {
+        if (row == 1)
+          return;
+
+        _elm_code_widget_backspaceline(widget, EINA_FALSE);
+        line = elm_code_file_line_get(code->file, row - 1);
+
+        return;
+     }
+
    line = elm_code_file_line_get(code->file, row);
 
    elm_code_line_text_remove(line, col - 1, 1);
@@ -680,7 +732,13 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
          elm_code_widget_cursor_position_get(&col, &row));
    line = elm_code_file_line_get(code->file, row);
    if (col > line->unicode_length)
-     return;
+     {
+        if (row == elm_code_file_lines_get(code->file))
+          return;
+
+        _elm_code_widget_backspaceline(widget, EINA_TRUE);
+        return;
+     }
 
    elm_code_line_text_remove(line, col, 1);
    eo_do(widget,
