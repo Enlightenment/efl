@@ -17,7 +17,7 @@ static void
 _elm_code_diff_widget_parse_diff_line(Elm_Code_Line *line, Elm_Code_File *left, Elm_Code_File *right)
 {
    const char *content;
-   int length;
+   unsigned int length;
 
    if (line->length < 1)
      {
@@ -49,7 +49,7 @@ _elm_code_diff_widget_parse_diff(Elm_Code_File *diff, Elm_Code_File *left, Elm_C
    Eina_List *item;
    Elm_Code_Line *line;
    const char *content;
-   int offset, length;
+   unsigned int offset, length;
 
    offset = 0;
    EINA_LIST_FOREACH(diff->lines, item, line)

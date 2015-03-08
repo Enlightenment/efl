@@ -113,7 +113,7 @@ static void
 _elm_code_parser_diff_parse_line(Elm_Code_Line *line, void *data EINA_UNUSED)
 {
    const char *content;
-   int length;
+   unsigned int length;
 
    content = elm_code_line_text_get(line, &length);
    if (length < 1)
@@ -139,7 +139,7 @@ _elm_code_parser_diff_parse_file(Elm_Code_File *file, void *data EINA_UNUSED)
    Eina_List *item;
    Elm_Code_Line *line;
    const char *content;
-   int length, offset;
+   unsigned int length, offset;
 
    offset = 0;
    EINA_LIST_FOREACH(file->lines, item, line)
