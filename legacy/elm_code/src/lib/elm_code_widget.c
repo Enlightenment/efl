@@ -634,16 +634,24 @@ static void
 _elm_code_widget_newline(Elm_Code_Widget *widget)
 {
    Elm_Code *code;
-   Elm_Code_Line *line;
-   unsigned int row, col;
+   Elm_Code_Line *line, *newline;
+   unsigned int row, col, length;
+   char *content;
 
    eo_do(widget,
          code = elm_code_widget_code_get(),
          elm_code_widget_cursor_position_get(&col, &row));
    line = elm_code_file_line_get(code->file, row);
 
+   content = (char *) elm_code_line_text_get(line, &length);
+   content = strndup(content, length);
    elm_code_file_line_insert(code->file, line->number + 1, "", 0, NULL);
+   newline = elm_code_file_line_get(code->file, line->number + 1);
+// TODO we need to split tokens from these lines (move this to elm_code_line?)
+   elm_code_line_text_set(newline, content + col - 1, length - col + 1);
+   elm_code_line_text_set(line, content, col - 1);
 
+   free(content);
    eo_do(widget,
          elm_code_widget_cursor_position_set(1, row + 1));
 }
@@ -681,7 +689,7 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
    snprintf(newtext, length1 + 1, "%s", text1);
    snprintf(newtext + length1, length2 + 1, "%s", text2);
 
-// TODO we need to merge tokens from these lines (move this to elm_code_text)
+// TODO we need to merge tokens from these lines (move this to elm_code_line?)
    elm_code_file_line_remove(code->file, otherline->number);
    elm_code_line_text_set(line, newtext, length1 + length2);
 
