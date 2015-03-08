@@ -6,6 +6,18 @@
 
 #include "elm_code_private.h"
 
+EAPI void
+elm_code_line_free(Elm_Code_Line *line)
+{
+   if (!line)
+     return;
+
+   if (line->modified)
+     free(line->modified);
+
+   free(line);
+}
+
 EAPI unsigned int
 elm_code_line_utf8_length_get(Elm_Code_Line *line)
 {

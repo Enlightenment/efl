@@ -136,9 +136,7 @@ EAPI void elm_code_file_free(Elm_Code_File *file)
 
    EINA_LIST_FREE(file->lines, l)
      {
-        if (l->modified)
-          free(l->modified);
-        free(l);
+        elm_code_line_free(l);
      }
 
    if (file->file)
@@ -172,10 +170,7 @@ EAPI void elm_code_file_clear(Elm_Code_File *file)
 
    EINA_LIST_FREE(file->lines, l)
      {
-        if (l->modified)
-          free(l->modified);
-
-        free(l);
+        elm_code_line_free(l);
      }
 
    if (file->parent)

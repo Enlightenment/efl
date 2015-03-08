@@ -34,6 +34,8 @@ typedef struct _Elm_Code_Line
    void *data;
 } Elm_Code_Line;
 
+EAPI void elm_code_line_free(Elm_Code_Line *line);
+
 EAPI unsigned int elm_code_line_utf8_length_get(Elm_Code_Line *line);
 
 /**
