@@ -50,14 +50,18 @@
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 #define EXT_FUNC(fname) gl_ext_sym_##fname
-
+#define EXT_FUNC_GLES1(fname) gles1_ext_sym_##fname
+#define EXT_FUNC_GLES3(fname) gles3_ext_sym_##fname
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Extension HEADER
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 #define _EVASGL_EXT_CHECK_SUPPORT(name)
 #define _EVASGL_EXT_DISCARD_SUPPORT()
-#define _EVASGL_EXT_BEGIN(name) extern int _gl_ext_support_##name;
+#define _EVASGL_EXT_BEGIN(name) \
+   extern int _gl_ext_support_##name; \
+   extern int _gles1_ext_support_##name; \
+   extern int _gles3_ext_support_##name;
 #define _EVASGL_EXT_END()
 #define _EVASGL_EXT_DRVNAME(name)
 #define _EVASGL_EXT_DRVNAME_PRIVATE(name)
@@ -86,6 +90,8 @@
 #undef _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 #define EXTENSION_SUPPORT(name) (_gl_ext_support_##name == 1)
+#define EXTENSION_SUPPORT_GLES1(name) (_gles1_ext_support_##name == 1)
+#define EXTENSION_SUPPORT_GLES3(name) (_gles3_ext_support_##name == 1)
 
 extern Eina_Bool evgl_api_ext_init(void *getproc, const char *glueexts);
 extern void evgl_api_ext_get(Evas_GL_API *gl_funcs);

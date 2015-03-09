@@ -137,6 +137,7 @@ struct _EVGL_Surface
    void              *indirect_sfc_native;
    void              *indirect_sfc_visual;
    void              *indirect_sfc_config;
+   void              *egl_image;
 
    //-------------------------//
    // Related to PBuffer Surface
@@ -171,6 +172,8 @@ struct _EVGL_Context
    int          scissor_updated : 1;
    int          direct_scissor : 1;
    int          viewport_updated : 1;
+   int          extension_checked : 1;
+   int          extension_supported : 1;
 
    int          scissor_coord[4];
    int          viewport_coord[4];

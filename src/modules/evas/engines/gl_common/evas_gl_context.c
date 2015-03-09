@@ -965,6 +965,7 @@ evas_gl_common_context_new(void)
         shared->native_tex_hash = eina_hash_int32_new(NULL);
         shared->native_wl_hash = eina_hash_pointer_new(NULL);
         shared->native_tbm_hash = eina_hash_pointer_new(NULL);
+        shared->native_evasgl_hash = eina_hash_pointer_new(NULL);
      }
    gc->shared = shared;
    gc->shared->references++;
@@ -1040,6 +1041,7 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
         eina_hash_free(gc->shared->native_tex_hash);
         eina_hash_free(gc->shared->native_wl_hash);
         eina_hash_free(gc->shared->native_tbm_hash);
+        eina_hash_free(gc->shared->native_evasgl_hash);
         free(gc->shared);
         shared = NULL;
      }

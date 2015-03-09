@@ -461,7 +461,7 @@ struct _Evas_Pixel_Import_Source
  * Magic version number to know what the native surface struct looks like
  */
 
-#define EVAS_NATIVE_SURFACE_VERSION 3
+#define EVAS_NATIVE_SURFACE_VERSION 4
 
 /**
  * Native surface types that image object supports
@@ -476,6 +476,7 @@ typedef enum _Evas_Native_Surface_Type
    EVAS_NATIVE_SURFACE_OPENGL, /**< OpenGL system based type. texture or framebuffer id*/
    EVAS_NATIVE_SURFACE_WL, /**< Wayland system based type. buffer of surface */
    EVAS_NATIVE_SURFACE_TBM, /**< Tizen system based type. tbm surface  */
+   EVAS_NATIVE_SURFACE_EVASGL, /**< Evas GL based type. evas gl surface */
 } Evas_Native_Surface_Type;
 
 /**
@@ -532,6 +533,10 @@ struct _Evas_Native_Surface
       {
          void *buffer; /**< tbm surface buffer to use */
       } tbm; /**< Set this struct fields if surface data is Tizen based. */
+      struct
+      {
+         void *surface; /**< evas gl surface to use */
+      } evasgl; /**< Set this struct fields if surface data is Evas GL based. */
    } data; /**< Choose one union data according to your surface. */
 };
 

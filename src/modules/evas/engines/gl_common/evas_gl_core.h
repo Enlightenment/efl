@@ -21,6 +21,11 @@ EAPI void         evgl_engine_shutdown(void *eng_data);
 
 typedef void (*EVGL_Engine_Call)(void *eng_data);
 
+EAPI void        *evgl_native_surface_egl_image_get(EVGL_Surface *sfc);
+
+typedef void *(*EVGL_Native_Surface_Call)(void *sfc);
+
+
 EVGL_Engine *evgl_engine_init(void *eng_data, const EVGL_Interface *efunc);
 
 void        *evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h);
@@ -41,7 +46,7 @@ void         evgl_direct_override_get(Eina_Bool *override, Eina_Bool *force_off)
 void         evgl_direct_info_set(int win_w, int win_h, int rot,
                                   int img_x, int img_y, int img_w, int img_h,
                                   int clip_x, int clip_y, int clip_w, int clip_h,
-                                  unsigned int texid);
+                                  void *hash_key);
 void         evgl_direct_info_clear(void);
 void         evgl_get_pixels_pre(void);
 void         evgl_get_pixels_post(void);

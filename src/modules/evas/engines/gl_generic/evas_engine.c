@@ -821,7 +821,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 
    if (eng_gl_image_direct_get(data, image))
      {
-        unsigned int texid;
+        void *surface;
 
         gl_context->dc = context;
         if ((gl_context->master_clip.enabled) &&
@@ -833,9 +833,11 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
           }
 
         if (n->type == EVAS_NATIVE_SURFACE_OPENGL)
-          texid = n->data.opengl.texture_id;
+          surface = eina_hash_find(evgl_engine->direct_surfaces, &n->data.opengl.texture_id);
         else if (n->type == EVAS_NATIVE_SURFACE_X11)
-          texid = n->data.x11.pixmap;
+          surface = eina_hash_find(evgl_engine->direct_surfaces, &n->data.x11.pixmap);
+        else if (n->type == EVAS_NATIVE_SURFACE_EVASGL)
+          surface = n->data.evasgl.surface;
         else
           {
              ERR("This native surface type is not supported for direct rendering");
@@ -851,7 +853,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
                              gl_context->dc->clip.y,
                              gl_context->dc->clip.w,
                              gl_context->dc->clip.h,
-                             texid);
+                             surface);
 
         // Call pixel get function
         evgl_get_pixels_pre();
