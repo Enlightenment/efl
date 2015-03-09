@@ -2656,7 +2656,7 @@ Evas_Object *gl15_content_get(void *data, Evas_Object *obj, const char *part)
    if (!strcmp(part, "elm.swallow.end"))
      {
         Evas_Object *ic = elm_icon_add(obj);
-        snprintf(buf, sizeof(buf), "%s/images/bubble.png", PACKAGE_DATA_DIR);
+        snprintf(buf, sizeof(buf), "%s/images/bubble.png", elm_app_data_dir_get());
         elm_image_file_set(ic, buf, NULL);
         evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
         return ic;
@@ -2673,7 +2673,7 @@ Evas_Object *gl15_content_get(void *data, Evas_Object *obj, const char *part)
    else if (!strcmp(part, "elm.edit.icon.2"))
      {
         Evas_Object *icn = elm_icon_add(obj);
-        snprintf(buf, sizeof(buf), "%s/images/icon_06.png", PACKAGE_DATA_DIR);
+        snprintf(buf, sizeof(buf), "%s/images/icon_06.png", elm_app_data_dir_get());
         elm_image_file_set(icn, buf, NULL);
         evas_object_propagate_events_set(icn, EINA_FALSE);
         evas_object_size_hint_aspect_set(icn, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
@@ -2827,7 +2827,7 @@ Evas_Object *gl16_content_get(void *data, Evas_Object *obj, const char *part)
    else if (!strcmp(part, "elm.edit.icon.1"))
      {
         Evas_Object *icn = elm_icon_add(obj);
-        snprintf(buf, sizeof(buf), "%s/images/icon_04.png", PACKAGE_DATA_DIR);
+        snprintf(buf, sizeof(buf), "%s/images/icon_04.png", elm_app_data_dir_get());
         elm_image_file_set(icn, buf, NULL);
         evas_object_propagate_events_set(icn, EINA_FALSE);
         evas_object_size_hint_aspect_set(icn, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
@@ -2836,7 +2836,7 @@ Evas_Object *gl16_content_get(void *data, Evas_Object *obj, const char *part)
    else if (!strcmp(part, "elm.edit.icon.2"))
      {
         Evas_Object *icn = elm_icon_add(obj);
-        snprintf(buf, sizeof(buf), "%s/images/icon_09.png", PACKAGE_DATA_DIR);
+        snprintf(buf, sizeof(buf), "%s/images/icon_09.png", elm_app_data_dir_get());
         elm_image_file_set(icn, buf, NULL);
         evas_object_propagate_events_set(icn, EINA_FALSE);
         evas_object_size_hint_aspect_set(icn, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
