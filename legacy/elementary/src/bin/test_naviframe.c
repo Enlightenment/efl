@@ -8,13 +8,13 @@
    elm_object_tooltip_text_set((BT), (TEXT)); \
    elm_object_tooltip_window_mode_set((BT), EINA_TRUE)
 
-static const char *img1 = PACKAGE_DATA_DIR "/images/logo.png";
-static const char *img2 = PACKAGE_DATA_DIR "/images/plant_01.jpg";
-static const char *img3 = PACKAGE_DATA_DIR "/images/rock_01.jpg";
-static const char *img4 = PACKAGE_DATA_DIR "/images/rock_02.jpg";
-static const char *img5 = PACKAGE_DATA_DIR "/images/sky_01.jpg";
-static const char *img6 = PACKAGE_DATA_DIR "/images/sky_02.jpg";
-static const char *img7 = PACKAGE_DATA_DIR "/images/sky_03.jpg";
+static const char img1[PATH_MAX];
+static const char img2[PATH_MAX];
+static const char img3[PATH_MAX];
+static const char img4[PATH_MAX];
+static const char img5[PATH_MAX];
+static const char img6[PATH_MAX];
+static const char img7[PATH_MAX];
 
 Evas_Object *
 _content_new(Evas_Object *parent, const char *img)
@@ -64,6 +64,7 @@ _page8(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    Evas_Object *bt, *bt2, *content, *nf = data;
    Elm_Object_Item *it;
 
+   snprintf(img6, sizeof(img6), "%s/images/sky_02.png", elm_app_data_dir_get());
    bt = elm_button_add(nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    BUTTON_TEXT_SET(bt, "Page 7");
@@ -138,6 +139,7 @@ _page6(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    Evas_Object *bt, *bt2, *content, *nf = data;
    Elm_Object_Item *it;
 
+   snprintf(img7, sizeof(img7), "%s/images/sky_03.png", elm_app_data_dir_get());
    bt = elm_button_add(nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    BUTTON_TEXT_SET(bt, "Page 5");
@@ -160,6 +162,7 @@ _page5(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    Evas_Object *bt, *bt2, *content, *nf = data;
    Elm_Object_Item *it;
 
+   snprintf(img5, sizeof(img5), "%s/images/sky_01.png", elm_app_data_dir_get());
    bt = elm_button_add(nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    BUTTON_TEXT_SET(bt, "Page 4");
@@ -188,6 +191,7 @@ _page4(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    char buf[PATH_MAX];
    Elm_Object_Item *it;
 
+   snprintf(img4, sizeof(img4), "%s/images/rock_02.png", elm_app_data_dir_get());
    ic = elm_icon_add(nf);
    elm_icon_standard_set(ic, "arrow_right");
 
@@ -221,6 +225,7 @@ _page3(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *bt2, *content, *nf = data;
 
+   snprintf(img3, sizeof(img3), "%s/images/rock_01.jpg", elm_app_data_dir_get());
    bt2 = elm_button_add(nf);
    evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, EVAS_HINT_FILL);
    BUTTON_TEXT_SET(bt2, "Next");
@@ -242,6 +247,7 @@ _page2(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    Evas_Object *bt, *content, *ic, *nf = data;
    Elm_Object_Item *it;
 
+   snprintf(img2, sizeof(img2), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    bt = elm_button_add(nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(bt, "clicked", _page3, nf);
@@ -264,6 +270,7 @@ test_naviframe(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    Evas_Object *win, *nf, *btn, *content;
    Elm_Object_Item *it;
 
+   snprintf(img1, sizeof(img1), "%s/images/logo.png", elm_app_data_dir_get());
    win = elm_win_util_standard_add("naviframe", "Naviframe");
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_autodel_set(win, EINA_TRUE);
@@ -294,6 +301,7 @@ test_naviframe2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    Evas_Object *win, *nf, *sc, *btn, *ico, *content;
    Elm_Object_Item *it;
 
+   snprintf(img1, sizeof(img1), "%s/images/logo.png", elm_app_data_dir_get());
    win = elm_win_util_standard_add("naviframe", "Naviframe");
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_autodel_set(win, EINA_TRUE);
