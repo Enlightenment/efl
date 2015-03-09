@@ -135,12 +135,12 @@
 #ifndef GL_TEXTURE_EXTERNAL_OES
 # define GL_TEXTURE_EXTERNAL_OES 0x8D65
 #endif
-
-
 #ifndef GL_UNPACK_ROW_LENGTH
 # define GL_UNPACK_ROW_LENGTH 0x0CF2
 #endif
-
+#ifndef EGL_NO_DISPLAY
+# define EGL_NO_DISPLAY 0
+#endif
 #ifndef EGL_NO_CONTEXT
 # define EGL_NO_CONTEXT 0
 #endif

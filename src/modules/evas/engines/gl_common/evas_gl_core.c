@@ -236,9 +236,11 @@ _texture_attach_2d(GLuint tex, GLenum attach, GLenum attach2, int samples, Eina_
 void
 _egl_image_attach_texture(EVGL_Context *context, EvasGLImage *image, GLuint tex)
 {
+#ifdef GL_GLES
    EVGLNative_Display dpy = EGL_NO_DISPLAY;
    EVGLNative_Context ctx = EGL_NO_CONTEXT;
    EVGL_Resource *rsc = NULL;
+
    int attribs[] = {
       EVAS_GL_TEXTURE_LEVEL, 0,
       EVAS_GL_IMAGE_PRESERVED, 0,
@@ -256,6 +258,9 @@ _egl_image_attach_texture(EVGL_Context *context, EvasGLImage *image, GLuint tex)
    ctx = context->context;
 
    *image = EXT_FUNC(eglCreateImage)(dpy, ctx, EVAS_GL_TEXTURE_2D, (EGLClientBuffer)tex, attribs);
+#else
+   (void) context; (void) image; (void) tex;
+#endif
 }
 
 // Gen Renderbuffer
@@ -783,6 +788,7 @@ _context_ext_check(EVGL_Context *ctx)
    if (ctx->extension_checked)
       return 1;
 
+#ifdef GL_GLES
    switch (ctx->version)
      {
       case EVAS_GL_GLES_1_X:
@@ -798,6 +804,7 @@ _context_ext_check(EVGL_Context *ctx)
    if (EXTENSION_SUPPORT(EGL_KHR_image_base)
        && EXTENSION_SUPPORT(EGL_KHR_gl_texture_2D_image))
      egl_image_supported = 1;
+#endif
 
    if (fbo_supported && egl_image_supported)
       ctx->extension_supported = 1;
@@ -1094,6 +1101,7 @@ _surface_buffers_allocate(void *eng_data, EVGL_Surface *sfc, int w, int h, int m
                              GL_UNSIGNED_BYTE, w, h);
         if ((sfc->current_ctx) && (sfc->current_ctx->extension_supported))
           _egl_image_attach_texture(sfc->current_ctx, &sfc->egl_image, sfc->color_buf);
+
         sfc->buffer_mem[0] = w * h * 4;
      }
 
@@ -2211,6 +2219,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
              evas_gl_common_error_set(eng_data, EVAS_GL_NOT_INITIALIZED);
              return 0;
           }
+
         if (!_context_ext_check(ctx))
           {
              ERR("Unable to check required extension for the current context");
