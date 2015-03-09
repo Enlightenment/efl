@@ -70,10 +70,10 @@ struct _EVGL_Interface
    int         (*pbuffer_surface_destroy)(void *data, void *surface);
 
    // Create a surface for 1.x & 3.x rendering (could be pbuffer or xpixmap for instance)
-   void       *(*gles_pixmap_surface_create)(EVGL_Engine *evgl, void *data, EVGL_Surface *evgl_sfc, Evas_GL_Config *cfg, int w, int h);
+   void       *(*indirect_surface_create)(EVGL_Engine *evgl, void *data, EVGL_Surface *evgl_sfc, Evas_GL_Config *cfg, int w, int h);
 
    // Destroy 1.x & 3.x surface (could be pbuffer or xpixmap for instance)
-   int         (*gles_pixmap_surface_destroy)(void *data, EVGL_Surface *evgl_sfc);
+   int         (*indirect_surface_destroy)(void *data, EVGL_Surface *evgl_sfc);
 
    // Create an indirect rendering context for GLES 1.x
    void       *(*gles_context_create)(void *data, EVGL_Context *share_ctx, EVGL_Surface *evgl_sfc);
@@ -114,9 +114,8 @@ struct _EVGL_Surface
    unsigned client_side_rotation : 1;
    unsigned alpha : 1;
 
-   // Flag indicating this surface is used for GLES 1 indirect rendering
-   unsigned gles1_indirect : 1;
-   unsigned xpixmap : 1;
+   // Flag indicating this surface is used for indirect rendering
+   unsigned indirect : 1;
 
    // Moved from evgl_engine
    unsigned direct_override : 1;
@@ -133,11 +132,11 @@ struct _EVGL_Surface
    int     buffer_mem[4];
 
    //-------------------------//
-   // Used if gles1_indirect == 1
-   EVGLNative_Surface gles1_sfc;
-   void              *gles1_sfc_native;
-   void              *gles1_sfc_visual;
-   void              *gles1_sfc_config;
+   // Used if indirect == 1
+   EVGLNative_Surface indirect_sfc;
+   void              *indirect_sfc_native;
+   void              *indirect_sfc_visual;
+   void              *indirect_sfc_config;
 
    //-------------------------//
    // Related to PBuffer Surface
@@ -178,7 +177,7 @@ struct _EVGL_Context
    int          viewport_direct[4];
 
    // For GLES1/GLES3 with indirect rendering
-   EVGLNative_Context gles_ir_context;
+   EVGLNative_Context indirect_context;
 
    // Partial Rendering
    int          partial_render;

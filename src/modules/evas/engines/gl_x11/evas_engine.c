@@ -876,13 +876,13 @@ evgl_eng_pbuffer_surface_destroy(void *data, void *surface)
 }
 
 // This function should create a surface that can be used for offscreen rendering
-// with GLES 1.x, and GLES 3.x nd still be bindable to a texture in Evas main GL context.
+// and still be bindable to a texture in Evas main GL context.
 // For now, this will create an X pixmap... Ideally it should be able to create
 // a bindable pbuffer surface or just an FBO if that is supported and it can
 // be shared with Evas.
 // FIXME: Avoid passing evgl_engine around like that.
 static void *
-evgl_eng_gles_pixmap_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
+evgl_eng_indirect_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
                               EVGL_Surface *evgl_sfc,
                               Evas_GL_Config *cfg, int w, int h)
 {
@@ -959,7 +959,7 @@ try_again:
    config_attrs[i++] = EGL_SURFACE_TYPE;
    config_attrs[i++] = EGL_PIXMAP_BIT;
    config_attrs[i++] = EGL_RENDERABLE_TYPE;
-   if(cfg->gles_version == EVAS_GL_GLES_3_X)
+   if (cfg->gles_version == EVAS_GL_GLES_3_X)
      config_attrs[i++] = EGL_OPENGL_ES3_BIT;
    else
      config_attrs[i++] = EGL_OPENGL_ES_BIT;
@@ -1090,32 +1090,29 @@ try_again:
         return NULL;
      }
 
-   evgl_sfc->gles1_indirect = EINA_TRUE;
-   evgl_sfc->xpixmap = EINA_TRUE;
-   evgl_sfc->gles1_sfc = egl_sfc;
-   evgl_sfc->gles1_sfc_native = (void *)(intptr_t) px;
-   evgl_sfc->gles1_sfc_visual = visual;
-   evgl_sfc->gles1_sfc_config = egl_cfg;
-   DBG("Successfully created GLES1 surface: Pixmap %lu EGLSurface %p", px, egl_sfc);
+   evgl_sfc->indirect = EINA_TRUE;
+   evgl_sfc->indirect_sfc = egl_sfc;
+   evgl_sfc->indirect_sfc_native = (void *)(intptr_t) px;
+   evgl_sfc->indirect_sfc_visual = visual;
+   evgl_sfc->indirect_sfc_config = egl_cfg;
+   DBG("Successfully created indirect surface: Pixmap %lu EGLSurface %p", px, egl_sfc);
    return evgl_sfc;
 
 #else
    // TODO/FIXME: do the same as with EGL above...
-   ERR("GLX support is not fully implemented for GLES 1.x");
+   ERR("GLX support is not fully implemented for indirect surface");
 
-   evgl_sfc->gles1_indirect = EINA_TRUE;
-   evgl_sfc->xpixmap = EINA_TRUE;
-   evgl_sfc->gles1_sfc_native = (void *)(intptr_t) px;
-   evgl_sfc->gles1_sfc = (void *)(intptr_t) px;
-   evgl_sfc->gles1_sfc_visual = eng_get_ob(re)->info->info.visual; // FIXME: Check this!
+   evgl_sfc->indirect = EINA_TRUE;
+   evgl_sfc->indirect_sfc_native = (void *)(intptr_t) px;
+   evgl_sfc->indirect_sfc = (void *)(intptr_t) px;
+   evgl_sfc->indirect_sfc_visual = eng_get_ob(re)->info->info.visual; // FIXME: Check this!
    return evgl_sfc;
 #endif
 }
 
-// This function should destroy the surface used for offscreen rendering
-// with GLES 1.x and GLES 3.x .This will also destroy the X pixmap...
+// This function should destroy the indirect surface as well as the X pixmap
 static int
-evgl_eng_gles_pixmap_surface_destroy(void *data, EVGL_Surface *evgl_sfc)
+evgl_eng_indirect_surface_destroy(void *data, EVGL_Surface *evgl_sfc)
 {
    Render_Engine *re = (Render_Engine *)data;
 
@@ -1127,24 +1124,24 @@ evgl_eng_gles_pixmap_surface_destroy(void *data, EVGL_Surface *evgl_sfc)
      }
 
 #ifdef GL_GLES
-   if ((!evgl_sfc) || (!evgl_sfc->gles1_sfc))
+   if ((!evgl_sfc) || (!evgl_sfc->indirect_sfc))
      {
-        ERR("Invalid surface.");
+        ERR("Invalid surface");
         glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_SURFACE);
         return 0;
      }
 
-   eglDestroySurface(eng_get_ob(re)->egl_disp, (EGLSurface)evgl_sfc->gles1_sfc);
+   eglDestroySurface(eng_get_ob(re)->egl_disp, (EGLSurface)evgl_sfc->indirect_sfc);
 #endif
 
-   if (!evgl_sfc->gles1_sfc_native)
+   if (!evgl_sfc->indirect_sfc_native)
      {
-        ERR("Inconsistent parameters, not freeing XPixmap for gles1 surface!");
+        ERR("Inconsistent parameters, not freeing XPixmap for indirect surface!");
         glsym_evas_gl_common_error_set(data, EVAS_GL_BAD_PARAMETER);
         return 0;
      }
 
-   XFreePixmap(eng_get_ob(re)->disp, (Pixmap)evgl_sfc->gles1_sfc_native);
+   XFreePixmap(eng_get_ob(re)->disp, (Pixmap)evgl_sfc->indirect_sfc_native);
 
    return 1;
 }
@@ -1171,13 +1168,13 @@ evgl_eng_gles_context_create(void *data,
    context_attrs[1] = share_ctx->version;
    context_attrs[2] = EGL_NONE;
 
-   if (!sfc || !sfc->gles1_sfc_config)
+   if (!sfc || !sfc->indirect_sfc_config)
      {
         ERR("Surface is not set! Creating context anyways but eglMakeCurrent "
             "might very well fail with EGL_BAD_MATCH (0x3009)");
         config = eng_get_ob(re)->egl_config;
      }
-   else config = sfc->gles1_sfc_config;
+   else config = sfc->indirect_sfc_config;
 
    context = eglCreateContext(eng_get_ob(re)->egl_disp, config,
                               share_ctx ? share_ctx->context : NULL,
@@ -1190,10 +1187,10 @@ evgl_eng_gles_context_create(void *data,
         return NULL;
      }
 
-   DBG("Successfully created context for GLES1 indirect rendering.");
+   DBG("Successfully created context for indirect rendering.");
    return context;
 #else
-   CRI("Support for GLES1/GLES3 indirect rendering contexts is not implemented for GLX");
+   CRI("Support for indirect rendering contexts is not implemented for GLX");
    (void) share_ctx; (void) sfc;
    return NULL;
 #endif
@@ -1236,9 +1233,9 @@ static const EVGL_Interface evgl_funcs =
    evgl_eng_rotation_angle_get,
    evgl_eng_pbuffer_surface_create,
    evgl_eng_pbuffer_surface_destroy,
-   evgl_eng_gles1_surface_create,
-   evgl_eng_gles1_surface_destroy,
-   evgl_eng_gles1_context_create,
+   evgl_eng_indirect_surface_create,
+   evgl_eng_indirect_surface_destroy,
+   evgl_eng_gles_context_create,
    evgl_eng_native_win_surface_config_check,
 };
 
