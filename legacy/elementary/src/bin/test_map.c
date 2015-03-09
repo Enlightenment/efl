@@ -9,7 +9,7 @@
 
 typedef struct Overlay_Data
 {
-   const char *file;
+   const char file[PATH_MAX];
 } Overlay_Data;
 
 typedef struct Map_Source
@@ -19,19 +19,6 @@ typedef struct Map_Source
    char *source_name;
 } Map_Source;
 
-Overlay_Data data1 = {PACKAGE_DATA_DIR"/images/logo.png"};
-Overlay_Data data2 = {PACKAGE_DATA_DIR"/images/logo_small.png"};
-Overlay_Data data3 = {PACKAGE_DATA_DIR"/images/panel_01.jpg"};
-Overlay_Data data4 = {PACKAGE_DATA_DIR"/images/plant_01.jpg"};
-Overlay_Data data5 = {PACKAGE_DATA_DIR"/images/rock_01.jpg"};
-Overlay_Data data6 = {PACKAGE_DATA_DIR"/images/rock_02.jpg"};
-Overlay_Data data7 = {PACKAGE_DATA_DIR"/images/sky_01.jpg"};
-Overlay_Data data8 = {PACKAGE_DATA_DIR"/images/sky_02.jpg"};
-Overlay_Data data9 = {PACKAGE_DATA_DIR"/images/sky_03.jpg"};
-Overlay_Data data10 = {PACKAGE_DATA_DIR"/images/sky_03.jpg"};
-Overlay_Data data11= {PACKAGE_DATA_DIR"/images/wood_01.jpg"};
-Overlay_Data parking= {PACKAGE_DATA_DIR"/images/parking.png"};
-Overlay_Data icon_data = {PACKAGE_DATA_DIR"/images/icon_14.png"};
 
 static Elm_Map_Overlay *route_start, *route_end, *route_clas;
 static Elm_Map_Overlay *bubble_img;
@@ -1046,6 +1033,33 @@ test_map(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
    const char **tile_srcs;
    const char **route_srcs;
    const char **name_srcs;
+   Overlay_Data data1;
+   Overlay_Data data2;
+   Overlay_Data data3;
+   Overlay_Data data4;
+   Overlay_Data data5;
+   Overlay_Data data6;
+   Overlay_Data data7;
+   Overlay_Data data8;
+   Overlay_Data data9;
+   Overlay_Data data10;
+   Overlay_Data data11;
+   Overlay_Data parking;
+   Overlay_Data icon_data;
+
+   snprintf(data1.file, PATH_MAX, "%s/images/logo.png", elm_app_data_dir_get());
+   snprintf(data2.file, PATH_MAX, "%s/images/logo_small.png", elm_app_data_dir_get());
+   snprintf(data3.file, PATH_MAX, "%s/images/panel_01.png", elm_app_data_dir_get());
+   snprintf(data4.file, PATH_MAX, "%s/images/plant_01.png", elm_app_data_dir_get());
+   snprintf(data5.file, PATH_MAX, "%s/images/rock_01.png", elm_app_data_dir_get());
+   snprintf(data6.file, PATH_MAX, "%s/images/rock_02.png", elm_app_data_dir_get());
+   snprintf(data7.file, PATH_MAX, "%s/images/sky_01.png", elm_app_data_dir_get());
+   snprintf(data8.file, PATH_MAX, "%s/images/sky_02.png", elm_app_data_dir_get());
+   snprintf(data9.file, PATH_MAX, "%s/images/sky_03.png", elm_app_data_dir_get());
+   snprintf(data10.file, PATH_MAX, "%s/images/sky_03.png", elm_app_data_dir_get());
+   snprintf(data11.file, PATH_MAX, "%s/images/wood_01.png", elm_app_data_dir_get());
+   snprintf(parking.file, PATH_MAX, "%s/images/parking.png", elm_app_data_dir_get());
+   snprintf(icon_data.file, PATH_MAX, "%s/images/icon_14.png", elm_app_data_dir_get());
 
    win = elm_win_util_standard_add("map", "Map");
    elm_win_autodel_set(win, EINA_TRUE);
