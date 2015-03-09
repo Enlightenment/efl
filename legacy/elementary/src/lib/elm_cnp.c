@@ -15,6 +15,8 @@
 # define cnp_debug(x...) do { } while (0)
 #endif
 
+#define ARRAYINIT(foo)  [foo] =
+
 // common stuff
 enum
 {
@@ -244,20 +246,35 @@ _all_drop_targets_cbs_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obje
 static Tmp_Info  *_tempfile_new      (int size);
 static int        _tmpinfo_free      (Tmp_Info *tmp);
 static Eina_Bool  _pasteimage_append (char *file, Evas_Object *entry);
+
+typedef struct _X11_Cnp_Selection X11_Cnp_Selection;
+
+typedef Eina_Bool (*X11_Converter_Fn_Cb)     (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+typedef int       (*X11_Response_Handler_Cb) (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
+typedef int       (*X11_Notify_Handler_Cb)   (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
 #endif
+
+typedef struct _Cnp_Atom      Cnp_Atom;
+
+struct _Cnp_Atom
+{
+   const char              *name;
+   Elm_Sel_Format           formats;
+#ifdef HAVE_ELEMENTARY_X
+   /* Called by ecore to do conversion */
+   X11_Converter_Fn_Cb      x_converter;
+   X11_Response_Handler_Cb  x_response;
+   X11_Notify_Handler_Cb    x_notify;
+   /* Atom */
+   Ecore_X_Atom             x_atom;
+#endif
+   void                    *_term;
+};
 
 // x11 specific stuff
 ////////////////////////////////////////////////////////////////////////////
 #ifdef HAVE_ELEMENTARY_X
 #define ARRAYINIT(foo)  [foo] =
-
-typedef struct _X11_Cnp_Selection X11_Cnp_Selection;
-typedef struct _X11_Cnp_Atom      X11_Cnp_Atom;
-
-typedef Eina_Bool (*X11_Converter_Fn_Cb)     (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-typedef int       (*X11_Response_Handler_Cb) (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
-typedef int       (*X11_Notify_Handler_Cb)   (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
-
 struct _X11_Cnp_Selection
 {
    const char        *debug;
@@ -279,18 +296,6 @@ struct _X11_Cnp_Selection
    Elm_Xdnd_Action    action;
 
    Eina_Bool          active : 1;
-};
-
-struct _X11_Cnp_Atom
-{
-   const char              *name;
-   Elm_Sel_Format           formats;
-   /* Called by ecore to do conversion */
-   X11_Converter_Fn_Cb      converter;
-   X11_Response_Handler_Cb  response;
-   X11_Notify_Handler_Cb    notify;
-   /* Atom */
-   Ecore_X_Atom             atom;
 };
 
 static void           _x11_sel_obj_del              (void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
@@ -335,193 +340,199 @@ static Eina_Bool _x11_elm_drop_target_del                (Evas_Object *obj, Elm_
                                                           Elm_Drop_Cb dropcb, void *dropdata);
 static Eina_Bool _x11_elm_selection_selection_has_owner  (Evas_Object *obj EINA_UNUSED);
 
-static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
-   [CNP_ATOM_TARGETS] = {
-      "TARGETS",
-      ELM_SEL_FORMAT_TARGETS,
-      _x11_targets_converter,
-      _x11_response_handler_targets,
-      _x11_notify_handler_targets,
-      0
+#endif
+
+static Cnp_Atom _atoms[CNP_N_ATOMS] = {
+   ARRAYINIT(CNP_ATOM_TARGETS) {
+        .name = "TARGETS",
+        .formats = ELM_SEL_FORMAT_TARGETS,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_targets_converter,
+        .x_response = _x11_response_handler_targets,
+        .x_notify = _x11_notify_handler_targets,
+#endif
    },
-   [CNP_ATOM_ATOM] = {
-      "ATOM", // for opera browser
-      ELM_SEL_FORMAT_TARGETS,
-      _x11_targets_converter,
-      _x11_response_handler_targets,
-      _x11_notify_handler_targets,
-      0
+   ARRAYINIT(CNP_ATOM_ATOM) {
+        .name = "ATOM", // for opera browser
+        .formats = ELM_SEL_FORMAT_TARGETS,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_targets_converter,
+        .x_response = _x11_response_handler_targets,
+        .x_notify = _x11_notify_handler_targets,
+#endif
    },
-   [CNP_ATOM_XELM] =  {
-      "application/x-elementary-markup",
-      ELM_SEL_FORMAT_MARKUP,
-      _x11_general_converter,
-      NULL,
-      NULL,
-      0
+   ARRAYINIT(CNP_ATOM_XELM)  {
+        .name = "application/x-elementary-markup",
+        .formats = ELM_SEL_FORMAT_MARKUP,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_general_converter,
+#endif
    },
-   [CNP_ATOM_text_uri] = {
-      "text/uri",
-      ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE, /* Either images or entries */
-      _x11_general_converter,
-      NULL,
-      _x11_notify_handler_uri,
-      0
+   ARRAYINIT(CNP_ATOM_text_uri) {
+        .name = "text/uri",
+        .formats = ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE, /* Either images or entries */
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_general_converter,
+        .x_notify = _x11_notify_handler_uri,
+#endif
    },
-   [CNP_ATOM_text_urilist] = {
-      "text/uri-list",
-      ELM_SEL_FORMAT_IMAGE,
-      _x11_general_converter,
-      NULL,
-      _x11_notify_handler_uri,
-      0
+   ARRAYINIT(CNP_ATOM_text_urilist) {
+        .name = "text/uri-list",
+        .formats = ELM_SEL_FORMAT_IMAGE,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_general_converter,
+        .x_notify = _x11_notify_handler_uri,
+#endif
    },
-   [CNP_ATOM_text_x_vcard] = {
-      "text/x-vcard",
-      ELM_SEL_FORMAT_VCARD,
-      _x11_vcard_send, NULL,
-      _x11_vcard_receive, 0
+   ARRAYINIT(CNP_ATOM_text_x_vcard) {
+        .name = "text/x-vcard",
+        .formats = ELM_SEL_FORMAT_VCARD,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_vcard_send,
+        .x_notify = _x11_vcard_receive,
+#endif
    },
-   [CNP_ATOM_image_png] = {
-      "image/png",
-      ELM_SEL_FORMAT_IMAGE,
-      _x11_image_converter,
-      NULL,
-      _x11_notify_handler_image,
-      0
+   ARRAYINIT(CNP_ATOM_image_png) {
+        .name = "image/png",
+        .formats = ELM_SEL_FORMAT_IMAGE,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_image_converter,
+        .x_notify = _x11_notify_handler_image,
+#endif
    },
-   [CNP_ATOM_image_jpeg] = {
-      "image/jpeg",
-      ELM_SEL_FORMAT_IMAGE,
-      _x11_image_converter,
-      NULL,
-      _x11_notify_handler_image,/* Raw image data is the same */
-      0
+   ARRAYINIT(CNP_ATOM_image_jpeg) {
+        .name = "image/jpeg",
+        .formats = ELM_SEL_FORMAT_IMAGE,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_image_converter,
+        .x_notify = _x11_notify_handler_image,
+#endif
    },
-   [CNP_ATOM_image_bmp] = {
-      "image/x-ms-bmp",
-      ELM_SEL_FORMAT_IMAGE,
-      _x11_image_converter,
-      NULL,
-      _x11_notify_handler_image,/* Raw image data is the same */
-      0
+   ARRAYINIT(CNP_ATOM_image_bmp) {
+        .name = "image/x-ms-bmp",
+        .formats = ELM_SEL_FORMAT_IMAGE,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_image_converter,
+        .x_notify = _x11_notify_handler_image,
+#endif
    },
-   [CNP_ATOM_image_gif] = {
-      "image/gif",
-      ELM_SEL_FORMAT_IMAGE,
-      _x11_image_converter,
-      NULL,
-      _x11_notify_handler_image,/* Raw image data is the same */
-      0
+   ARRAYINIT(CNP_ATOM_image_gif) {
+        .name = "image/gif",
+        .formats = ELM_SEL_FORMAT_IMAGE,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_image_converter,
+        .x_notify = _x11_notify_handler_image,
+#endif
    },
-   [CNP_ATOM_image_tiff] = {
-      "image/tiff",
-      ELM_SEL_FORMAT_IMAGE,
-      _x11_image_converter,
-      NULL,
-      _x11_notify_handler_image,/* Raw image data is the same */
-      0
+   ARRAYINIT(CNP_ATOM_image_tiff) {
+        .name = "image/tiff",
+        .formats = ELM_SEL_FORMAT_IMAGE,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_image_converter,
+        .x_notify = _x11_notify_handler_image,
+#endif
    },
-   [CNP_ATOM_image_svg] = {
-      "image/svg+xml",
-      ELM_SEL_FORMAT_IMAGE,
-      _x11_image_converter,
-      NULL,
-      _x11_notify_handler_image,/* Raw image data is the same */
-      0
+   ARRAYINIT(CNP_ATOM_image_svg) {
+        .name = "image/svg+xml",
+        .formats = ELM_SEL_FORMAT_IMAGE,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_image_converter,
+        .x_notify = _x11_notify_handler_image,
+#endif
    },
-   [CNP_ATOM_image_xpm] = {
-      "image/x-xpixmap",
-      ELM_SEL_FORMAT_IMAGE,
-      _x11_image_converter,
-      NULL,
-      _x11_notify_handler_image,/* Raw image data is the same */
-      0
+   ARRAYINIT(CNP_ATOM_image_xpm) {
+        .name = "image/x-xpixmap",
+        .formats = ELM_SEL_FORMAT_IMAGE,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_image_converter,
+        .x_notify = _x11_notify_handler_image,
+#endif
    },
-   [CNP_ATOM_image_tga] = {
-      "image/x-tga",
-      ELM_SEL_FORMAT_IMAGE,
-      _x11_image_converter,
-      NULL,
-      _x11_notify_handler_image,/* Raw image data is the same */
-      0
+   ARRAYINIT(CNP_ATOM_image_tga) {
+        .name = "image/x-tga",
+        .formats = ELM_SEL_FORMAT_IMAGE,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_image_converter,
+        .x_notify = _x11_notify_handler_image,
+#endif
    },
-   [CNP_ATOM_image_ppm] = {
-      "image/x-portable-pixmap",
-      ELM_SEL_FORMAT_IMAGE,
-      _x11_image_converter,
-      NULL,
-      _x11_notify_handler_image,/* Raw image data is the same */
-      0
+   ARRAYINIT(CNP_ATOM_image_ppm) {
+        .name = "image/x-portable-pixmap",
+        .formats = ELM_SEL_FORMAT_IMAGE,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_image_converter,
+        .x_notify = _x11_notify_handler_image,
+#endif
    },
 /*
-   [CNP_ATOM_text_html_utf8] = {
-      "text/html;charset=utf-8",
-      ELM_SEL_FORMAT_HTML,
-      _x11_general_converter,
-      NULL,
-      _x11_notify_handler_html,
-      0
+   ARRAYINIT(CNP_ATOM_text_html_utf8) {
+      .name = "text/html;charset=utf-8",
+      .formats = ELM_SEL_FORMAT_HTML,
+#ifdef HAVE_ELEMENTARY_X
+      .x_converter = _x11_general_converter,
+      .x_notify = _x11_notify_handler_html,
+#endif
    },
-   [CNP_ATOM_text_html] = {
-      "text/html",
-      ELM_SEL_FORMAT_HTML,
-      _x11_general_converter,
-      NULL,
-      _x11_notify_handler_html, // No encoding: Webkit only
-      0
+   ARRAYINIT(CNP_ATOM_text_html) {
+      .name = "text/html",
+      .formats = ELM_SEL_FORMAT_HTML,
+#ifdef HAVE_ELEMENTARY_X
+      .x_converter = _x11_general_converter,
+      .x_notify = _x11_notify_handler_html,
+#endif
    },
  */
-   [CNP_ATOM_UTF8STRING] = {
-      "UTF8_STRING",
-      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-      _x11_text_converter,
-      NULL,
-      _x11_notify_handler_text,
-      0
+   ARRAYINIT(CNP_ATOM_UTF8STRING) {
+        .name = "UTF8_STRING",
+        .formats = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_text_converter,
+        .x_notify = _x11_notify_handler_text,
+#endif
    },
-   [CNP_ATOM_STRING] = {
-      "STRING",
-      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-      _x11_text_converter,
-      NULL,
-      _x11_notify_handler_text,
-      0
+   ARRAYINIT(CNP_ATOM_STRING) {
+        .name = "STRING",
+        .formats = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_text_converter,
+        .x_notify = _x11_notify_handler_text,
+#endif
    },
-   [CNP_ATOM_COMPOUND_TEXT] = {
-      "COMPOUND_TEXT",
-      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-      _x11_text_converter,
-      NULL,
-      _x11_notify_handler_text,
-      0
+   ARRAYINIT(CNP_ATOM_COMPOUND_TEXT) {
+        .name = "COMPOUND_TEXT",
+        .formats = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_text_converter,
+        .x_notify = _x11_notify_handler_text,
+#endif
    },
-   [CNP_ATOM_TEXT] = {
-      "TEXT",
-      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-      _x11_text_converter,
-      NULL,
-      _x11_notify_handler_text,
-      0
+   ARRAYINIT(CNP_ATOM_TEXT) {
+        .name = "TEXT",
+        .formats = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_text_converter,
+        .x_notify = _x11_notify_handler_text,
+#endif
    },
-   [CNP_ATOM_text_plain_utf8] = {
-      "text/plain;charset=utf-8",
-      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-      _x11_text_converter,
-      NULL,
-      _x11_notify_handler_text,
-      0
+   ARRAYINIT(CNP_ATOM_text_plain_utf8) {
+        .name = "text/plain;charset=utf-8",
+        .formats = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_text_converter,
+        .x_notify = _x11_notify_handler_text,
+#endif
    },
-   [CNP_ATOM_text_plain] = {
-      "text/plain",
-      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-      _x11_text_converter,
-      NULL,
-      _x11_notify_handler_text,
-      0
+   ARRAYINIT(CNP_ATOM_text_plain) {
+        .name = "text/plain",
+        .formats = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+#ifdef HAVE_ELEMENTARY_X
+        .x_converter = _x11_text_converter,
+        .x_notify = _x11_notify_handler_text,
+#endif
    },
 };
 
+#ifdef HAVE_ELEMENTARY_X
 static X11_Cnp_Selection _x11_selections[ELM_SEL_TYPE_CLIPBOARD + 1] = {
    ARRAYINIT(ELM_SEL_TYPE_PRIMARY) {
       .debug = "Primary",
@@ -634,12 +645,12 @@ _x11_selection_notify(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event
 
    for (i = 0; i < CNP_N_ATOMS; i++)
      {
-        if (!strcmp(ev->target, _x11_atoms[i].name))
+        if (!strcmp(ev->target, _atoms[i].name))
           {
-             if (_x11_atoms[i].notify)
+             if (_atoms[i].x_notify)
                {
-                  cnp_debug("Found something: %s\n", _x11_atoms[i].name);
-                  _x11_atoms[i].notify(sel, ev);
+                  cnp_debug("Found something: %s\n", _atoms[i].name);
+                  _atoms[i].x_notify(sel, ev);
                }
              else cnp_debug("Ignored: No handler!\n");
              break;
@@ -687,14 +698,14 @@ _x11_targets_converter(char *target EINA_UNUSED, void *data, int size, void **da
 
    for (i = 0, count = 0; i < CNP_N_ATOMS ; i++)
      {
-        if (seltype & _x11_atoms[i].formats) count++;
+        if (seltype & _atoms[i].formats) count++;
      }
    aret = malloc(sizeof(Ecore_X_Atom) * count);
    if (!aret) return EINA_FALSE;
    for (i = 0, count = 0; i < CNP_N_ATOMS; i++)
      {
-        if (seltype & _x11_atoms[i].formats)
-          aret[count ++] = _x11_atoms[i].atom;
+        if (seltype & _atoms[i].formats)
+          aret[count ++] = _atoms[i].x_atom;
      }
 
    *data_ret = aret;
@@ -757,18 +768,18 @@ _x11_notify_handler_targets(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Noti
    atomlist = (Ecore_X_Atom *)(targets->data.data);
    for (j = (CNP_ATOM_LISTING_ATOMS + 1); j < CNP_N_ATOMS; j++)
      {
-        cnp_debug("\t%s %d\n", _x11_atoms[j].name, _x11_atoms[j].atom);
-        if (!(_x11_atoms[j].formats & sel->requestformat)) continue;
+        cnp_debug("\t%s %d\n", _atoms[j].name, _atoms[j].x_atom);
+        if (!(_atoms[j].formats & sel->requestformat)) continue;
         for (i = 0; i < targets->data.length; i++)
           {
-             if ((_x11_atoms[j].atom == atomlist[i]) && (_x11_atoms[j].notify))
+             if ((_atoms[j].x_atom == atomlist[i]) && (_atoms[j].x_notify))
                {
                   if ((j == CNP_ATOM_text_uri) ||
                       (j == CNP_ATOM_text_urilist))
                     {
                        if (!_x11_is_uri_type_data(sel, notify)) continue;
                     }
-                  cnp_debug("Atom %s matches\n", _x11_atoms[j].name);
+                  cnp_debug("Atom %s matches\n", _atoms[j].name);
                   goto done;
                }
           }
@@ -777,8 +788,8 @@ _x11_notify_handler_targets(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Noti
    return ECORE_CALLBACK_PASS_ON;
 done:
    cnp_debug("Sending request for %s, xwin=%#llx\n",
-             _x11_atoms[j].name, (unsigned long long)sel->xwin);
-   sel->request(sel->xwin, _x11_atoms[j].name);
+             _atoms[j].name, (unsigned long long)sel->xwin);
+   sel->request(sel->xwin, _atoms[j].name);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -794,18 +805,18 @@ _x11_response_handler_targets(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_No
 
    for (j = (CNP_ATOM_LISTING_ATOMS + 1); j < CNP_N_ATOMS; j++)
      {
-        if (!(_x11_atoms[j].formats & sel->requestformat)) continue;
+        if (!(_atoms[j].formats & sel->requestformat)) continue;
         for (i = 0; i < targets->data.length; i++)
           {
-             if ((_x11_atoms[j].atom == atomlist[i]) &&
-                 (_x11_atoms[j].response))
+             if ((_atoms[j].x_atom == atomlist[i]) &&
+                 (_atoms[j].x_response))
                goto found;
           }
      }
    cnp_debug("No matching type found\n");
    return 0;
 found:
-   sel->request(sel->xwin, _x11_atoms[j].name);
+   sel->request(sel->xwin, _atoms[j].name);
    return 0;
 }
 
@@ -1515,7 +1526,7 @@ _x11_types_to_format(const char **types, int ntypes)
    int i;
    for (i = 0; i < ntypes; i++)
      {
-        X11_Cnp_Atom *atom = eina_hash_find(_types_hash, types[i]);
+        Cnp_Atom *atom = eina_hash_find(_types_hash, types[i]);
         if (atom) ret_type |= atom->formats;
      }
    return ret_type;
@@ -1565,18 +1576,18 @@ _x11_dnd_position(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
                              * of the supported data types. */
                             for (i = 0; i < savedtypes.ntypes; i++)
                               {
-                                 X11_Cnp_Atom *atom = eina_hash_find(_types_hash, savedtypes.types[i]);
+                                 Cnp_Atom *atom = eina_hash_find(_types_hash, savedtypes.types[i]);
                                  if (atom && (atom->formats & common_fmt))
                                    {
-                                      int atom_idx = (atom - _x11_atoms);
+                                      int atom_idx = (atom - _atoms);
                                       if (min_index > atom_idx) min_index = atom_idx;
                                    }
                               }
                             if (min_index != CNP_N_ATOMS)
                               {
-                                 cnp_debug("Found atom %s\n", _x11_atoms[min_index].name);
+                                 cnp_debug("Found atom %s\n", _atoms[min_index].name);
                                  found = EINA_TRUE;
-                                 dropable->last.type = _x11_atoms[min_index].name;
+                                 dropable->last.type = _atoms[min_index].name;
                                  dropable->last.format = common_fmt;
                                  break;
                               }
@@ -1944,10 +1955,10 @@ _x11_elm_cnp_init(void)
    _types_hash = eina_hash_string_small_new(NULL);
    for (i = 0; i < CNP_N_ATOMS; i++)
      {
-        _x11_atoms[i].atom = ecore_x_atom_get(_x11_atoms[i].name);
+        _atoms[i].x_atom = ecore_x_atom_get(_atoms[i].name);
         ecore_x_selection_converter_atom_add
-          (_x11_atoms[i].atom, _x11_atoms[i].converter);
-        eina_hash_add(_types_hash, _x11_atoms[i].name, &_x11_atoms[i]);
+          (_atoms[i].x_atom, _atoms[i].x_converter);
+        eina_hash_add(_types_hash, _atoms[i].name, &_atoms[i]);
      }
    //XXX delete handlers?
    ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR, _x11_selection_clear, NULL);
@@ -2249,18 +2260,18 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    ecore_x_dnd_types_set(xwin, NULL, 0);
    for (i = 0; i < CNP_N_ATOMS; i++)
      {
-        if (_x11_atoms[i].formats == ELM_SEL_FORMAT_TARGETS)
+        if (_atoms[i].formats == ELM_SEL_FORMAT_TARGETS)
           {
              if (format == ELM_SEL_FORMAT_TARGETS)
                {
-                  ecore_x_dnd_type_set(xwin, _x11_atoms[i].name, EINA_TRUE);
-                  cnp_debug("set dnd type: %s\n", _x11_atoms[i].name);
+                  ecore_x_dnd_type_set(xwin, _atoms[i].name, EINA_TRUE);
+                  cnp_debug("set dnd type: %s\n", _atoms[i].name);
                }
           }
-        else if (_x11_atoms[i].formats & format)
+        else if (_atoms[i].formats & format)
           {
-             ecore_x_dnd_type_set(xwin, _x11_atoms[i].name, EINA_TRUE);
-             cnp_debug("set dnd type: %s\n", _x11_atoms[i].name);
+             ecore_x_dnd_type_set(xwin, _atoms[i].name, EINA_TRUE);
+             cnp_debug("set dnd type: %s\n", _atoms[i].name);
           }
      }
 
