@@ -1060,21 +1060,21 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
    _tex_sub_2d(tex->gc, tex->x, tex->y + im->cache_entry.h,
                im->cache_entry.w, 1,
                fmt, tex->pt->dataformat,
-               (unsigned char *) im->image.data + (((im->cache_entry.h - 1) * im->cache_entry.w)) * bytes_count);
+               im->image.data8 + (((im->cache_entry.h - 1) * im->cache_entry.w)) * bytes_count);
    //  xxx
    //  xxx
    // o
    _tex_sub_2d(tex->gc, tex->x - 1, tex->y + im->cache_entry.h,
                1, 1,
                fmt, tex->pt->dataformat,
-               (unsigned char *) im->image.data + (((im->cache_entry.h - 1) * im->cache_entry.w)) * bytes_count);
+               im->image.data8 + (((im->cache_entry.h - 1) * im->cache_entry.w)) * bytes_count);
    //  xxx
    //  xxx
    //     o
    _tex_sub_2d(tex->gc, tex->x + im->cache_entry.w, tex->y + im->cache_entry.h,
                1, 1,
                fmt, tex->pt->dataformat,
-               (unsigned char *) im->image.data + (((im->cache_entry.h - 1) * im->cache_entry.w) + (im->cache_entry.w - 1)) * bytes_count);
+               im->image.data8 + (im->cache_entry.h * im->cache_entry.w - 1) * bytes_count);
    //2D packing
    // ---
    // xxx
@@ -1096,7 +1096,7 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
    _tex_sub_2d(tex->gc, tex->x + im->cache_entry.w, tex->y - 1,
                1, 1,
                fmt, tex->pt->dataformat,
-               im->image.data + (im->cache_entry.w - 1) * bytes_count);
+               im->image.data8 + (im->cache_entry.w - 1) * bytes_count);
    if (tex->gc->shared->info.unpack_row_length)
      {
         glPixelStorei(GL_UNPACK_ROW_LENGTH, im->cache_entry.w);
@@ -1113,7 +1113,7 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
         _tex_sub_2d(tex->gc, tex->x + im->cache_entry.w, tex->y,
                     1, im->cache_entry.h,
                     fmt, tex->pt->dataformat,
-                    (unsigned char *) im->image.data + (im->cache_entry.w - 1) * bytes_count);
+                    im->image.data8 + (im->cache_entry.w - 1) * bytes_count);
      }
    else
      {
