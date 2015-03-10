@@ -1425,13 +1425,14 @@ _parent_geom_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_i
    Evas_Coord x, y, w, h;
    Evas_Object *popup = data;
 
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+
    if (eo_isa(obj, ELM_WIN_CLASS))
      {
         x = 0;
         y = 0;
      }
 
-   evas_object_geometry_get(obj, &x, &y, &w, &h);
    evas_object_move(popup, x, y);
    evas_object_resize(popup, w, h);
 }
