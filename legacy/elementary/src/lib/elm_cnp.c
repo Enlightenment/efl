@@ -147,6 +147,8 @@ struct _Item_Container_Drag_Info
 };
 typedef struct _Item_Container_Drag_Info Item_Container_Drag_Info;
 
+typedef struct _Cnp_Atom      Cnp_Atom;
+
 static int _elm_cnp_init_count = 0;
 /* Stringshared, so I can just compare pointers later */
 static const char *text_uri;
@@ -188,14 +190,205 @@ static void _cont_obj_mouse_up( void *data, Evas *e, Evas_Object *obj, void *eve
 static void _cont_obj_mouse_move( void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _all_drop_targets_cbs_del(void *data, Evas *e, Evas_Object *obj, void *info);
 static Eina_Bool _elm_cnp_shutdown(void);
-#ifdef HAVE_ELEMENTARY_X
-static Ecore_X_Window _x11_elm_widget_xwin_get(const Evas_Object *obj);
-#endif
 static  Eina_Bool _local_elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
                          Elm_Drag_State entercb, void *enterdata,
                          Elm_Drag_State leavecb, void *leavedata,
                          Elm_Drag_Pos poscb, void *posdata,
                          Elm_Drop_Cb dropcb, void *dropdata);
+
+#ifdef HAVE_ELEMENTARY_X
+static Ecore_X_Window _x11_elm_widget_xwin_get(const Evas_Object *obj);
+static Tmp_Info  *_tempfile_new      (int size);
+static int        _tmpinfo_free      (Tmp_Info *tmp);
+static Eina_Bool  _pasteimage_append (char *file, Evas_Object *entry);
+
+typedef struct _X11_Cnp_Selection X11_Cnp_Selection;
+
+typedef Eina_Bool (*X11_Converter_Fn_Cb)     (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+typedef int       (*X11_Response_Handler_Cb) (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
+typedef int       (*X11_Notify_Handler_Cb)   (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
+
+static void           _x11_sel_obj_del              (void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
+static void           _x11_sel_obj_del2             (void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
+static Eina_Bool      _x11_selection_clear          (void *udata EINA_UNUSED, int type, void *event);
+static Eina_Bool      _x11_selection_notify         (void *udata EINA_UNUSED, int type, void *event);
+static Eina_Bool      _x11_targets_converter        (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+static Eina_Bool      _x11_text_converter           (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+static Eina_Bool      _x11_general_converter        (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+static Eina_Bool      _x11_image_converter          (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+static Eina_Bool      _x11_vcard_send               (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+static Eina_Bool      _x11_is_uri_type_data         (X11_Cnp_Selection *sel EINA_UNUSED, Ecore_X_Event_Selection_Notify *notify);
+static int            _x11_response_handler_targets (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
+static int            _x11_notify_handler_targets   (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
+static int            _x11_notify_handler_text      (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
+static int            _x11_notify_handler_image     (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
+static int            _x11_notify_handler_uri       (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
+//static int            _x11_notify_handler_html      (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
+static int            _x11_vcard_receive            (X11_Cnp_Selection *sed, Ecore_X_Event_Selection_Notify *notify);
+static Eina_Bool      _x11_dnd_enter                (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
+static Eina_Bool      _x11_dnd_drop                 (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
+static Eina_Bool      _x11_dnd_position             (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
+static Eina_Bool      _x11_dnd_status               (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
+static Eina_Bool      _x11_dnd_leave                (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
+static Eina_Bool      _x11_drag_mouse_up            (void *data, int etype EINA_UNUSED, void *event);
+static void           _x11_drag_move                (void *data EINA_UNUSED, Ecore_X_Xdnd_Position *pos);
+
+static Eina_Bool _x11_elm_cnp_init                       (void);
+static Eina_Bool _x11_elm_cnp_selection_set              (Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, const void *selbuf, size_t buflen);
+static void      _x11_elm_cnp_selection_loss_callback_set(Evas_Object *obj EINA_UNUSED, Elm_Sel_Type selection, Elm_Selection_Loss_Cb func, const void *data);
+static Eina_Bool _x11_elm_object_cnp_selection_clear     (Evas_Object *obj, Elm_Sel_Type selection);
+static Eina_Bool _x11_elm_cnp_selection_get              (Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata);
+static Eina_Bool _x11_elm_drop_target_add                (Evas_Object *obj, Elm_Sel_Format format,
+                                                          Elm_Drag_State entercb, void *enterdata,
+                                                          Elm_Drag_State leavecb, void *leavedata,
+                                                          Elm_Drag_Pos poscb, void *posdata,
+                                                          Elm_Drop_Cb dropcb, void *dropdata);
+static Eina_Bool _x11_elm_drop_target_del                (Evas_Object *obj, Elm_Sel_Format format,
+                                                          Elm_Drag_State entercb, void *enterdata,
+                                                          Elm_Drag_State leavecb, void *leavedata,
+                                                          Elm_Drag_Pos poscb, void *posdata,
+                                                          Elm_Drop_Cb dropcb, void *dropdata);
+static Eina_Bool _x11_elm_selection_selection_has_owner  (Evas_Object *obj EINA_UNUSED);
+
+#endif
+
+struct _Cnp_Atom
+{
+   const char              *name;
+   Elm_Sel_Format           formats;
+#ifdef HAVE_ELEMENTARY_X
+   /* Called by ecore to do conversion */
+   X11_Converter_Fn_Cb      x_converter;
+   X11_Response_Handler_Cb  x_response;
+   X11_Notify_Handler_Cb    x_notify;
+   /* Atom */
+   Ecore_X_Atom             x_atom;
+#endif
+   void                    *_term;
+};
+
+static Eina_List *
+_dropable_list_geom_find(Evas *evas, Evas_Coord px, Evas_Coord py)
+{
+   Eina_List *itr, *top_objects_list = NULL, *dropable_list = NULL;
+   Evas_Object *top_obj;
+   Dropable *dropable = NULL;
+
+   if (!drops) return NULL;
+
+   /* We retrieve the (non-smart) objects pointed by (px, py) */
+   top_objects_list = evas_tree_objects_at_xy_get(evas, NULL, px, py);
+   /* We walk on this list from the last because if the list contains more than one
+    * element, all but the last will repeat events. The last one can repeat events
+    * or not. Anyway, this last one is the first that has to be taken into account
+    * for the determination of the drop target.
+    */
+   EINA_LIST_REVERSE_FOREACH(top_objects_list, itr, top_obj)
+     {
+        Evas_Object *object = top_obj;
+        /* We search for the dropable data into the object. If not found, we search into its parent.
+         * For example, if a button is a drop target, the first object will be an (internal) image.
+         * The drop target is attached to the button, i.e to image's parent. That's why we need to
+         * walk on the parents until NULL.
+         * If we find this dropable data, we found our drop target.
+         */
+        while (object)
+          {
+             eo_do(object, dropable = eo_key_data_get("__elm_dropable"));
+             if (dropable)
+               {
+                  Eina_Bool exist = EINA_FALSE;
+                  Eina_List *l;
+                  Dropable *d = NULL;
+                  EINA_LIST_FOREACH(dropable_list, l, d)
+                    {
+                       if (d == dropable)
+                         {
+                            exist = EINA_TRUE;
+                            break;
+                         }
+                    }
+                  if (!exist)
+                    dropable_list = eina_list_append(dropable_list, dropable);
+                  object = evas_object_smart_parent_get(object);
+                  if (dropable)
+                    cnp_debug("Drop target %p of type %s found\n",
+                              dropable->obj, eo_class_name_get(eo_class_get(dropable->obj)));
+               }
+             else
+                object = evas_object_smart_parent_get(object);
+          }
+     }
+   eina_list_free(top_objects_list);
+   return dropable_list;
+}
+
+static void
+_dropable_coords_adjust(Dropable *dropable, Evas_Coord *x, Evas_Coord *y)
+{
+   Ecore_Evas *ee;
+   Evas *evas = evas_object_evas_get(dropable->obj);
+   int ex = 0, ey = 0, ew = 0, eh = 0;
+   Evas_Object *win;
+
+   ee = ecore_evas_ecore_evas_get(evas);
+   ecore_evas_geometry_get(ee, &ex, &ey, &ew, &eh);
+   *x = *x - ex;
+   *y = *y - ey;
+
+   /* For Wayland, frame coords have to be subtracted. */
+   Evas_Coord fx, fy;
+   evas_output_framespace_get(evas, &fx, &fy, NULL, NULL);
+   if (fx || fy) cnp_debug("evas frame fx %d fy %d\n", fx, fy);
+   *x = *x - fx;
+   *y = *y - fy;
+
+   if (elm_widget_is(dropable->obj))
+     {
+        win = elm_widget_top_get(dropable->obj);
+        if (win && eo_isa(win, ELM_WIN_CLASS))
+          {
+             Evas_Coord x2, y2;
+             int rot = elm_win_rotation_get(win);
+             switch (rot)
+               {
+                case 90:
+                   x2 = ew - *y;
+                   y2 = *x;
+                   break;
+                case 180:
+                   x2 = ew - *x;
+                   y2 = eh - *y;
+                   break;
+                case 270:
+                   x2 = *y;
+                   y2 = eh - *x;
+                   break;
+                default:
+                   x2 = *x;
+                   y2 = *y;
+                   break;
+               }
+             cnp_debug("rotation %d, w %d, h %d - x:%d->%d, y:%d->%d\n",
+                       rot, ew, eh, *x, x2, *y, y2);
+             *x = x2;
+             *y = y2;
+          }
+     }
+}
+
+static Elm_Sel_Format
+_dnd_types_to_format(const char **types, int ntypes)
+{
+   Elm_Sel_Format ret_type = 0;
+   int i;
+   for (i = 0; i < ntypes; i++)
+     {
+        Cnp_Atom *atom = eina_hash_find(_types_hash, types[i]);
+        if (atom) ret_type |= atom->formats;
+     }
+   return ret_type;
+}
 
 static Eina_Bool
 _drag_cancel_animate(void *data EINA_UNUSED, double pos)
@@ -241,119 +434,6 @@ _all_drop_targets_cbs_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Obje
           }
      }
 }
-
-#ifdef HAVE_ELEMENTARY_X
-static Tmp_Info  *_tempfile_new      (int size);
-static int        _tmpinfo_free      (Tmp_Info *tmp);
-static Eina_Bool  _pasteimage_append (char *file, Evas_Object *entry);
-
-typedef struct _X11_Cnp_Selection X11_Cnp_Selection;
-
-typedef Eina_Bool (*X11_Converter_Fn_Cb)     (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-typedef int       (*X11_Response_Handler_Cb) (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
-typedef int       (*X11_Notify_Handler_Cb)   (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
-#endif
-
-typedef struct _Cnp_Atom      Cnp_Atom;
-
-struct _Cnp_Atom
-{
-   const char              *name;
-   Elm_Sel_Format           formats;
-#ifdef HAVE_ELEMENTARY_X
-   /* Called by ecore to do conversion */
-   X11_Converter_Fn_Cb      x_converter;
-   X11_Response_Handler_Cb  x_response;
-   X11_Notify_Handler_Cb    x_notify;
-   /* Atom */
-   Ecore_X_Atom             x_atom;
-#endif
-   void                    *_term;
-};
-
-static Elm_Sel_Format
-_dnd_types_to_format(const char **types, int ntypes)
-{
-   Elm_Sel_Format ret_type = 0;
-   int i;
-   for (i = 0; i < ntypes; i++)
-     {
-        Cnp_Atom *atom = eina_hash_find(_types_hash, types[i]);
-        if (atom) ret_type |= atom->formats;
-     }
-   return ret_type;
-}
-
-// x11 specific stuff
-////////////////////////////////////////////////////////////////////////////
-#ifdef HAVE_ELEMENTARY_X
-#define ARRAYINIT(foo)  [foo] =
-struct _X11_Cnp_Selection
-{
-   const char        *debug;
-   Evas_Object       *widget;
-   char              *selbuf;
-   Evas_Object       *requestwidget;
-   void              *udata;
-   Elm_Sel_Format     requestformat;
-   Elm_Drop_Cb        datacb;
-   Eina_Bool        (*set)     (Ecore_X_Window, const void *data, int size);
-   Eina_Bool        (*clear)   (void);
-   void             (*request) (Ecore_X_Window, const char *target);
-   Elm_Selection_Loss_Cb  loss_cb;
-   void                  *loss_data;
-
-   Elm_Sel_Format     format;
-   Ecore_X_Selection  ecore_sel;
-   Ecore_X_Window     xwin;
-   Elm_Xdnd_Action    action;
-
-   Eina_Bool          active : 1;
-};
-
-static void           _x11_sel_obj_del              (void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
-static void           _x11_sel_obj_del2             (void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
-static Eina_Bool      _x11_selection_clear          (void *udata EINA_UNUSED, int type, void *event);
-static Eina_Bool      _x11_selection_notify         (void *udata EINA_UNUSED, int type, void *event);
-static Eina_Bool      _x11_targets_converter        (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-static Eina_Bool      _x11_text_converter           (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-static Eina_Bool      _x11_general_converter        (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-static Eina_Bool      _x11_image_converter          (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-static Eina_Bool      _x11_vcard_send               (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-static Eina_Bool      _x11_is_uri_type_data         (X11_Cnp_Selection *sel EINA_UNUSED, Ecore_X_Event_Selection_Notify *notify);
-static int            _x11_response_handler_targets (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
-static int            _x11_notify_handler_targets   (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
-static int            _x11_notify_handler_text      (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
-static int            _x11_notify_handler_image     (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
-static int            _x11_notify_handler_uri       (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
-//static int            _x11_notify_handler_html      (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
-static int            _x11_vcard_receive            (X11_Cnp_Selection *sed, Ecore_X_Event_Selection_Notify *notify);
-static Eina_Bool      _x11_dnd_enter                (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
-static Eina_Bool      _x11_dnd_drop                 (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
-static Eina_Bool      _x11_dnd_position             (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
-static Eina_Bool      _x11_dnd_status               (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
-static Eina_Bool      _x11_dnd_leave                (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
-static Eina_Bool      _x11_drag_mouse_up            (void *data, int etype EINA_UNUSED, void *event);
-static void           _x11_drag_move                (void *data EINA_UNUSED, Ecore_X_Xdnd_Position *pos);
-
-static Eina_Bool _x11_elm_cnp_init                       (void);
-static Eina_Bool _x11_elm_cnp_selection_set              (Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, const void *selbuf, size_t buflen);
-static void      _x11_elm_cnp_selection_loss_callback_set(Evas_Object *obj EINA_UNUSED, Elm_Sel_Type selection, Elm_Selection_Loss_Cb func, const void *data);
-static Eina_Bool _x11_elm_object_cnp_selection_clear     (Evas_Object *obj, Elm_Sel_Type selection);
-static Eina_Bool _x11_elm_cnp_selection_get              (Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata);
-static Eina_Bool _x11_elm_drop_target_add                (Evas_Object *obj, Elm_Sel_Format format,
-                                                          Elm_Drag_State entercb, void *enterdata,
-                                                          Elm_Drag_State leavecb, void *leavedata,
-                                                          Elm_Drag_Pos poscb, void *posdata,
-                                                          Elm_Drop_Cb dropcb, void *dropdata);
-static Eina_Bool _x11_elm_drop_target_del                (Evas_Object *obj, Elm_Sel_Format format,
-                                                          Elm_Drag_State entercb, void *enterdata,
-                                                          Elm_Drag_State leavecb, void *leavedata,
-                                                          Elm_Drag_Pos poscb, void *posdata,
-                                                          Elm_Drop_Cb dropcb, void *dropdata);
-static Eina_Bool _x11_elm_selection_selection_has_owner  (Evas_Object *obj EINA_UNUSED);
-
-#endif
 
 static Cnp_Atom _atoms[CNP_N_ATOMS] = {
    ARRAYINIT(CNP_ATOM_TARGETS) {
@@ -545,7 +625,33 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
    },
 };
 
+// x11 specific stuff
+////////////////////////////////////////////////////////////////////////////
 #ifdef HAVE_ELEMENTARY_X
+#define ARRAYINIT(foo)  [foo] =
+struct _X11_Cnp_Selection
+{
+   const char        *debug;
+   Evas_Object       *widget;
+   char              *selbuf;
+   Evas_Object       *requestwidget;
+   void              *udata;
+   Elm_Sel_Format     requestformat;
+   Elm_Drop_Cb        datacb;
+   Eina_Bool        (*set)     (Ecore_X_Window, const void *data, int size);
+   Eina_Bool        (*clear)   (void);
+   void             (*request) (Ecore_X_Window, const char *target);
+   Elm_Selection_Loss_Cb  loss_cb;
+   void                  *loss_data;
+
+   Elm_Sel_Format     format;
+   Ecore_X_Selection  ecore_sel;
+   Ecore_X_Window     xwin;
+   Elm_Xdnd_Action    action;
+
+   Eina_Bool          active : 1;
+};
+
 static X11_Cnp_Selection _x11_selections[ELM_SEL_TYPE_CLIPBOARD + 1] = {
    ARRAYINIT(ELM_SEL_TYPE_PRIMARY) {
       .debug = "Primary",
@@ -1258,116 +1364,6 @@ _x11_evas_get_from_xwin(Ecore_X_Window win)
    /* Find the Evas connected to the window */
    Dropable *dropable = _x11_dropable_find(win);
    return dropable ? evas_object_evas_get(dropable->obj) : NULL;
-}
-
-static Eina_List *
-_dropable_list_geom_find(Evas *evas, Evas_Coord px, Evas_Coord py)
-{
-   Eina_List *itr, *top_objects_list = NULL, *dropable_list = NULL;
-   Evas_Object *top_obj;
-   Dropable *dropable = NULL;
-
-   if (!drops) return NULL;
-
-   /* We retrieve the (non-smart) objects pointed by (px, py) */
-   top_objects_list = evas_tree_objects_at_xy_get(evas, NULL, px, py);
-   /* We walk on this list from the last because if the list contains more than one
-    * element, all but the last will repeat events. The last one can repeat events
-    * or not. Anyway, this last one is the first that has to be taken into account
-    * for the determination of the drop target.
-    */
-   EINA_LIST_REVERSE_FOREACH(top_objects_list, itr, top_obj)
-     {
-        Evas_Object *object = top_obj;
-        /* We search for the dropable data into the object. If not found, we search into its parent.
-         * For example, if a button is a drop target, the first object will be an (internal) image.
-         * The drop target is attached to the button, i.e to image's parent. That's why we need to
-         * walk on the parents until NULL.
-         * If we find this dropable data, we found our drop target.
-         */
-        while (object)
-          {
-             eo_do(object, dropable = eo_key_data_get("__elm_dropable"));
-             if (dropable)
-               {
-                  Eina_Bool exist = EINA_FALSE;
-                  Eina_List *l;
-                  Dropable *d = NULL;
-                  EINA_LIST_FOREACH(dropable_list, l, d)
-                    {
-                       if (d == dropable)
-                         {
-                            exist = EINA_TRUE;
-                            break;
-                         }
-                    }
-                  if (!exist)
-                    dropable_list = eina_list_append(dropable_list, dropable);
-                  object = evas_object_smart_parent_get(object);
-                  if (dropable)
-                    cnp_debug("Drop target %p of type %s found\n",
-                              dropable->obj, eo_class_name_get(eo_class_get(dropable->obj)));
-               }
-             else
-                object = evas_object_smart_parent_get(object);
-          }
-     }
-   eina_list_free(top_objects_list);
-   return dropable_list;
-}
-
-static void
-_dropable_coords_adjust(Dropable *dropable, Evas_Coord *x, Evas_Coord *y)
-{
-   Ecore_Evas *ee;
-   Evas *evas = evas_object_evas_get(dropable->obj);
-   int ex = 0, ey = 0, ew = 0, eh = 0;
-   Evas_Object *win;
-
-   ee = ecore_evas_ecore_evas_get(evas);
-   ecore_evas_geometry_get(ee, &ex, &ey, &ew, &eh);
-   *x = *x - ex;
-   *y = *y - ey;
-
-   /* For Wayland, frame coords have to be subtracted. */
-   Evas_Coord fx, fy;
-   evas_output_framespace_get(evas, &fx, &fy, NULL, NULL);
-   if (fx || fy) cnp_debug("evas frame fx %d fy %d\n", fx, fy);
-   *x = *x - fx;
-   *y = *y - fy;
-
-   if (elm_widget_is(dropable->obj))
-     {
-        win = elm_widget_top_get(dropable->obj);
-        if (win && eo_isa(win, ELM_WIN_CLASS))
-          {
-             Evas_Coord x2, y2;
-             int rot = elm_win_rotation_get(win);
-             switch (rot)
-               {
-                case 90:
-                   x2 = ew - *y;
-                   y2 = *x;
-                   break;
-                case 180:
-                   x2 = ew - *x;
-                   y2 = eh - *y;
-                   break;
-                case 270:
-                   x2 = *y;
-                   y2 = eh - *x;
-                   break;
-                default:
-                   x2 = *x;
-                   y2 = *y;
-                   break;
-               }
-             cnp_debug("rotation %d, w %d, h %d - x:%d->%d, y:%d->%d\n",
-                       rot, ew, eh, *x, x2, *y, y2);
-             *x = x2;
-             *y = y2;
-          }
-     }
 }
 
 static Eina_Bool
