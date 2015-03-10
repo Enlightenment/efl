@@ -505,7 +505,7 @@ _on_item_deleted(void *data,
    EINA_LIST_FOREACH(sd->items, l, eo_temp_it)
      {
         ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_temp_it, temp_it);
-        if (elm_layout_edje_get(VIEW(temp_it)) == obj)
+        if (VIEW(temp_it) == obj)
           {
              eo_do(eo_temp_it, elm_wdg_item_del());
              break;
@@ -660,10 +660,10 @@ _item_new(Elm_Multibuttonentry_Data *sd,
    //entry is cleared when text is made to button
    elm_object_text_set(sd->entry, "");
 
-   edje_object_signal_callback_add
-     (elm_layout_edje_get(VIEW(item)), "mouse,clicked,1", "*", _on_item_clicked, EO_OBJ(item));
-   edje_object_signal_callback_add
-     (elm_layout_edje_get(VIEW(item)), "elm,deleted", "elm", _on_item_deleted, EO_OBJ(item));
+   elm_layout_signal_callback_add
+     (VIEW(item), "mouse,clicked,1", "*", _on_item_clicked, EO_OBJ(item));
+   elm_layout_signal_callback_add
+     (VIEW(item), "elm,deleted", "elm", _on_item_deleted, EO_OBJ(item));
    evas_object_show(VIEW(item));
 
    evas_object_smart_calculate(VIEW(item));
