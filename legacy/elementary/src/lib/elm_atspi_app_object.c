@@ -33,7 +33,6 @@ _elm_atspi_app_object_elm_interface_atspi_accessible_children_get(Eo *obj EINA_U
 
    EINA_LIST_FOREACH(_elm_win_list, l, win)
      {
-        if (!win) continue;
         if (eo_isa(win, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
           accs = eina_list_append(accs, win);
      }
