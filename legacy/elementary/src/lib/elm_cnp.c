@@ -1315,7 +1315,7 @@ _dropable_coords_adjust(Dropable *dropable, Evas_Coord *x, Evas_Coord *y)
    if (elm_widget_is(dropable->obj))
      {
         win = elm_widget_top_get(dropable->obj);
-        if (win && !strcmp(evas_object_type_get(win), "elm_win"))
+        if (win && eo_isa(win, ELM_WIN_CLASS))
           {
              Evas_Coord x2, y2;
              int rot = elm_win_rotation_get(win);

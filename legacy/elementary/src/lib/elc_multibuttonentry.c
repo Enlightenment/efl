@@ -1183,7 +1183,7 @@ _box_min_size_calculate(Evas_Object *box,
              l_next = eina_list_next(l);
              opt = eina_list_data_get(l_next);
              if (l_next && opt && opt->obj &&
-                 !strcmp(elm_widget_type_get(opt->obj), "elm_entry"))
+                 eo_isa(opt->obj, ELM_ENTRY_CLASS))
                {
                   linew = 0;
                   line_num++;
@@ -1277,7 +1277,7 @@ _box_layout_cb(Evas_Object *o,
         if (linew > w)
           {
              opt = eina_list_data_get(l_next);
-             if (opt && opt->obj && !strcmp(elm_widget_type_get(opt->obj), "elm_entry"))
+             if (opt && opt->obj && eo_isa(opt->obj, ELM_ENTRY_CLASS))
                {
                   xx = x;
                   yy += hh;
