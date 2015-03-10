@@ -1346,13 +1346,10 @@ elm_object_focus_set(Evas_Object *obj,
 
    if (elm_widget_is(obj))
      {
-        const char *type;
-
         if (focus == elm_widget_focus_get(obj)) return;
 
         // ugly, but, special case for inlined windows
-        type = evas_object_type_get(obj);
-        if ((type) && (!strcmp(type, "elm_win")))
+        if (eo_isa(obj, ELM_WIN_CLASS))
           {
              Evas_Object *inlined = elm_win_inlined_image_object_get(obj);
 
