@@ -555,17 +555,6 @@ _layout_change_cb(void *data EINA_UNUSED,
 }
 
 static void
-_restack_cb(void *data EINA_UNUSED,
-            Evas *e EINA_UNUSED,
-            Evas_Object *obj,
-            void *event_info EINA_UNUSED)
-{
-   ELM_POPUP_DATA_GET(obj, sd);
-
-   evas_object_raise(sd->notify);
-}
-
-static void
 _list_add(Evas_Object *obj)
 {
    char style[1024];
@@ -1397,9 +1386,6 @@ _elm_popup_evas_object_smart_add(Eo *obj, Elm_Popup_Data *priv)
    elm_object_content_set(priv->notify, priv->main_layout);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _on_show, NULL);
-
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_RESTACK, _restack_cb, NULL);
 
    elm_layout_signal_callback_add
      (priv->main_layout, "elm,state,title_area,visible", "elm", _layout_change_cb, NULL);
