@@ -1041,8 +1041,6 @@ _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface 
      _ecore_wl_window_configure_send(win, width, height, 0);
    else if (win->fullscreen || win->maximized)
      _ecore_wl_window_configure_send(win, 0, 0, 0);
-   else
-     _ecore_wl_window_configure_send(win, win->saved.w, win->saved.h, 0);
 
    if (win->xdg_surface)
      xdg_surface_ack_configure(win->xdg_surface, serial);
