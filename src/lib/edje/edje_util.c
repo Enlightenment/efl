@@ -1240,6 +1240,7 @@ EOLIAN Eina_Bool
 _edje_object_part_text_set(Eo *obj, Edje *ed, const char *part, const char *text)
 {
    Edje_Real_Part *rp;
+   Eina_Bool int_ret;
 
    if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
@@ -1251,8 +1252,9 @@ _edje_object_part_text_set(Eo *obj, Edje *ed, const char *part, const char *text
      {
         return EINA_TRUE;
      }
+   int_ret = _edje_object_part_text_raw_set(ed, obj, rp, part, text);
    _edje_user_define_string(ed, part, rp->typedata.text->text);
-   return _edje_object_part_text_raw_set(ed, obj, rp, part, text);
+   return int_ret;
 }
 
 EOLIAN const char*
