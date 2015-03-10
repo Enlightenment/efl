@@ -3085,6 +3085,7 @@ _wl_dnd_leave(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Wl_Event_Dnd_Leave *ev;
    Dropable *drop;
+   cnp_debug("In\n");
 
    ev = event;
    if ((drop = _wl_dropable_find(ev->win)))
@@ -3171,7 +3172,8 @@ _wl_dnd_position(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
                   evas_object_geometry_get(dropable->obj, &ox, &oy, NULL, NULL);
 
-                  cnp_debug("Candidate on %i %i: %p\n", x - ox, y - oy, dropable);
+                  cnp_debug("Candidate %p (%s)\n",
+                        dropable->obj, eo_class_name_get(eo_class_get(dropable->obj)));
                   _wl_dropable_handle(dropable, x - ox, y - oy);
                   wl_cnp_selection.requestwidget = dropable->obj;
                   will_accept = EINA_TRUE;
@@ -3199,39 +3201,29 @@ _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Wl_Event_Dnd_Drop *ev;
    Dropable *drop;
+   Eina_List *l;
 
    cnp_debug("In\n");
    ev = event;
-
-   if (!(drop = _wl_dropable_find(ev->win)))
-     return ECORE_CALLBACK_PASS_ON;
-
    savedtypes.x = ev->position.x;
    savedtypes.y = ev->position.y;
-   _dropable_coords_adjust(drop, &savedtypes.x, &savedtypes.y);
-   Evas *evas = _wl_evas_get_from_win(ev->win);
 
-   Eina_List *dropable_list = evas ? _dropable_list_geom_find(evas, savedtypes.x, savedtypes.y) : NULL;
-
-   /* check if there is dropable (obj) can accept this drop */
-   if (dropable_list)
+   EINA_LIST_FOREACH(drops, l, drop)
      {
-        Eina_List *l;
-        EINA_LIST_FOREACH(dropable_list, l, drop)
+        if (drop->last.in)
           {
-             if (drop->last.in)
-               {
-                  wl_cnp_selection.requestwidget = drop->obj;
-                  evas_object_event_callback_add(wl_cnp_selection.requestwidget,
-                        EVAS_CALLBACK_DEL,
-                        _wl_sel_obj_del2,
-                        &wl_cnp_selection);
-                  ecore_wl_dnd_drag_get(ecore_wl_input_get(), drop->last.type);
-                  break;
-               }
+             cnp_debug("Request data of type %s\n", drop->last.type);
+             wl_cnp_selection.requestwidget = drop->obj;
+             evas_object_event_callback_add(wl_cnp_selection.requestwidget,
+                   EVAS_CALLBACK_DEL,
+                   _wl_sel_obj_del2,
+                   &wl_cnp_selection);
+             ecore_wl_dnd_drag_get(ecore_wl_input_get(), drop->last.type);
+             return ECORE_CALLBACK_PASS_ON;
           }
      }
 
+   ecore_wl_dnd_drag_end(ecore_wl_input_get());
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -3269,6 +3261,7 @@ _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event)
 {
    Wl_Cnp_Selection *sel;
    Ecore_Wl_Event_Selection_Data_Ready *ev;
+   cnp_debug("In\n");
 
    ev = event;
    sel = data;
