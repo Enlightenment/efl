@@ -42,6 +42,7 @@ struct _Elm_Popup_Data
    Evas_Object          *spacer;
    Evas_Object          *scr;
    Evas_Object          *content;
+   Evas_Object          *parent; /**< Pointer to remove _parent_resize_cb when popup is deleted. */
    Eina_List            *items;
    const char           *title_text;
    Action_Area_Data     *buttons[ELM_POPUP_ACTION_BUTTON_MAX];

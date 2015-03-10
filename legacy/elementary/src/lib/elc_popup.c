@@ -43,6 +43,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+static void _parent_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -194,6 +195,7 @@ _elm_popup_evas_object_smart_del(Eo *obj, Elm_Popup_Data *sd)
 {
    unsigned int i;
 
+   evas_object_event_callback_del_full(sd->parent, EVAS_CALLBACK_RESIZE, _parent_resize_cb, obj);
 
    evas_object_smart_callback_del
      (sd->notify, "block,clicked", _block_clicked_cb);
@@ -1416,8 +1418,18 @@ _elm_popup_evas_object_smart_add(Eo *obj, Elm_Popup_Data *priv)
    _visuals_set(obj);
 }
 
+static void
+_parent_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Coord w, h;
+   Evas_Object *popup = data;
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_resize(popup, w, h);
+}
+
 EOLIAN static void
-_elm_popup_elm_widget_parent_set(Eo *obj, Elm_Popup_Data *sd EINA_UNUSED, Evas_Object *parent)
+_elm_popup_elm_widget_parent_set(Eo *obj, Elm_Popup_Data *sd, Evas_Object *parent)
 {
    Evas_Coord x, y, w, h;
    evas_object_geometry_get(parent, &x, &y, &w, &h);
@@ -1429,6 +1441,9 @@ _elm_popup_elm_widget_parent_set(Eo *obj, Elm_Popup_Data *sd EINA_UNUSED, Evas_O
      }
    evas_object_move(obj, x, y);
    evas_object_resize(obj, w, h);
+
+   sd->parent = parent;
+   evas_object_event_callback_add(parent, EVAS_CALLBACK_RESIZE, _parent_resize_cb, obj);
 }
 
 EOLIAN static void
