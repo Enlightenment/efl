@@ -271,6 +271,19 @@ struct _Cnp_Atom
    void                    *_term;
 };
 
+static Elm_Sel_Format
+_dnd_types_to_format(const char **types, int ntypes)
+{
+   Elm_Sel_Format ret_type = 0;
+   int i;
+   for (i = 0; i < ntypes; i++)
+     {
+        Cnp_Atom *atom = eina_hash_find(_types_hash, types[i]);
+        if (atom) ret_type |= atom->formats;
+     }
+   return ret_type;
+}
+
 // x11 specific stuff
 ////////////////////////////////////////////////////////////////////////////
 #ifdef HAVE_ELEMENTARY_X
@@ -1519,19 +1532,6 @@ _x11_dnd_action_rev_map(Elm_Xdnd_Action action)
    return act;
 }
 
-static Elm_Sel_Format
-_x11_types_to_format(const char **types, int ntypes)
-{
-   Elm_Sel_Format ret_type = 0;
-   int i;
-   for (i = 0; i < ntypes; i++)
-     {
-        Cnp_Atom *atom = eina_hash_find(_types_hash, types[i]);
-        if (atom) ret_type |= atom->formats;
-     }
-   return ret_type;
-}
-
 static Eina_Bool
 _x11_dnd_position(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
 {
@@ -1557,7 +1557,7 @@ _x11_dnd_position(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
         /* check if there is dropable (obj) can accept this drop */
         if (dropable_list)
           {
-             Elm_Sel_Format saved_format = _x11_types_to_format(savedtypes.types, savedtypes.ntypes);
+             Elm_Sel_Format saved_format = _dnd_types_to_format(savedtypes.types, savedtypes.ntypes);
              Eina_List *l;
              Eina_Bool found = EINA_FALSE;
 
@@ -1952,13 +1952,11 @@ _x11_elm_cnp_init(void)
 
    if (_init_count > 0) return EINA_TRUE;
    _init_count++;
-   _types_hash = eina_hash_string_small_new(NULL);
    for (i = 0; i < CNP_N_ATOMS; i++)
      {
         _atoms[i].x_atom = ecore_x_atom_get(_atoms[i].name);
         ecore_x_selection_converter_atom_add
           (_atoms[i].x_atom, _atoms[i].x_converter);
-        eina_hash_add(_types_hash, _atoms[i].name, &_atoms[i]);
      }
    //XXX delete handlers?
    ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR, _x11_selection_clear, NULL);
@@ -3840,9 +3838,15 @@ _local_elm_selection_selection_has_owner(Evas_Object *obj EINA_UNUSED)
 static Eina_Bool
 _elm_cnp_init(void)
 {
+   int i;
    if (_elm_cnp_init_count > 0) return EINA_TRUE;
    _elm_cnp_init_count++;
    text_uri = eina_stringshare_add("text/uri-list");
+   _types_hash = eina_hash_string_small_new(NULL);
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        eina_hash_add(_types_hash, _atoms[i].name, &_atoms[i]);
+     }
    return EINA_TRUE;
 }
 
@@ -3853,6 +3857,8 @@ _elm_cnp_shutdown(void)
    if (--_elm_cnp_init_count > 0) return EINA_TRUE;
    eina_stringshare_del(text_uri);
    text_uri = NULL;
+   eina_hash_free(_types_hash);
+   _types_hash = NULL;
    return EINA_TRUE;
 }
 
