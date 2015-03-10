@@ -28,6 +28,12 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static const Elm_Layout_Part_Alias_Description _text_aliases[] =
+{
+   {"default", "elm.text"},
+   {NULL, NULL}
+};
+
 /* these are data operated by layout's class functions internally, and
  * should not be messed up by inhering classes */
 typedef struct _Elm_Layout_Sub_Object_Data   Elm_Layout_Sub_Object_Data;
@@ -576,7 +582,7 @@ _edje_signal_callback(void *data,
 EOLIAN static const Elm_Layout_Part_Alias_Description*
 _elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
 {
-   return NULL;
+   return _text_aliases;
 }
 
 EOLIAN static const Elm_Layout_Part_Alias_Description*
@@ -1635,12 +1641,6 @@ _elm_layout_part_cursor_engine_only_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Da
 
    return !elm_object_cursor_theme_search_enabled_get(pc->obj);
 }
-
-static const Elm_Layout_Part_Alias_Description _text_aliases[] =
-{
-   {"default", "elm.text"},
-   {NULL, NULL}
-};
 
 EOLIAN static Eina_Bool
 _elm_layout_edje_object_can_access_set(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *sd, Eina_Bool can_access)
