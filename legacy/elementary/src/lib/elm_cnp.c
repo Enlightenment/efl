@@ -3126,76 +3126,55 @@ _wl_dnd_position(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         /* check if there is dropable (obj) can accept this drop */
         if (dropable_list)
           {
+             Elm_Sel_Format saved_format = _dnd_types_to_format(savedtypes.types, savedtypes.ntypes);
              Eina_List *l;
              Eina_Bool found = EINA_FALSE;
              Dropable *dropable = NULL;
 
              EINA_LIST_FOREACH(dropable_list, l, dropable)
                {
-#if 0
-FIXME: add types support
-                  int i, j;
-                  Eina_Inlist *itr;
                   Dropable_Cbs *cbs;
+                  Eina_Inlist *itr;
                   EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
                     {
-                       const char *types[CNP_N_ATOMS];
-                       int types_no = _x11_dnd_types_get(cbs->types, types);
-                       for (j = 0; j < types_no; j++)
+                       Elm_Sel_Format common_fmt = saved_format & cbs->types;
+                       if (common_fmt)
                          {
+                            /* We found a target that can accept this type of data */
+                            int i, min_index = CNP_N_ATOMS;
+                            /* We have to find the first atom that corresponds to one
+                             * of the supported data types. */
                             for (i = 0; i < savedtypes.ntypes; i++)
                               {
-                                 if (!strcmp(types[j], savedtypes.types[i]))
+                                 Cnp_Atom *atom = eina_hash_find(_types_hash, savedtypes.types[i]);
+                                 if (atom && (atom->formats & common_fmt))
                                    {
-                                      found = EINA_TRUE;
-                                      dropable->last.type = savedtypes.types[i];
-                                      dropable->last.format = cbs->types;
-                                      break;
+                                      int atom_idx = (atom - _atoms);
+                                      if (min_index > atom_idx) min_index = atom_idx;
                                    }
                               }
-                            if (found) break;
+                            if (min_index != CNP_N_ATOMS)
+                              {
+                                 cnp_debug("Found atom %s\n", _atoms[min_index].name);
+                                 found = EINA_TRUE;
+                                 dropable->last.type = _atoms[min_index].name;
+                                 dropable->last.format = common_fmt;
+                                 break;
+                              }
                          }
-                       if (found) break;
                     }
-#else
-                  found = EINA_TRUE;
-#endif
                   if (found) break;
                }
              if (found)
                {
                   Evas_Coord ox = 0, oy = 0;
-                  int i = 0;
 
                   evas_object_geometry_get(dropable->obj, &ox, &oy, NULL, NULL);
 
                   cnp_debug("Candidate on %i %i: %p\n", x - ox, y - oy, dropable);
                   _wl_dropable_handle(dropable, x - ox, y - oy);
-                  // CCCCCCC: call dnd exit on last obj if obj != last
-                  // CCCCCCC: call drop position on obj
-
-                  for (i = 0; i < savedtypes.ntypes; i++)
-                    {
-                       Dropable_Cbs *cbs;
-                       EINA_INLIST_FOREACH(drop->cbs_list, cbs)
-                         {
-                            switch (cbs->types)
-                              {
-                               case ELM_SEL_FORMAT_TARGETS:
-                               case ELM_SEL_FORMAT_IMAGE:
-                                  if ((!strncmp(savedtypes.types[i], "text/uri", 8)) ||
-                                        (!strncmp(savedtypes.types[i], "image/", 6)))
-                                    {
-                                       wl_cnp_selection.requestwidget = drop->obj;
-                                       will_accept = EINA_TRUE;
-                                    }
-                                  break;
-                               default:
-                                  break;
-                              }
-                         }
-                       if (will_accept) break;
-                    }
+                  wl_cnp_selection.requestwidget = dropable->obj;
+                  will_accept = EINA_TRUE;
                }
              else
                {
@@ -3220,8 +3199,8 @@ _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Wl_Event_Dnd_Drop *ev;
    Dropable *drop;
-   int i = 0;
 
+   cnp_debug("In\n");
    ev = event;
 
    if (!(drop = _wl_dropable_find(ev->win)))
@@ -3238,35 +3217,17 @@ _wl_dnd_drop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (dropable_list)
      {
         Eina_List *l;
-        Eina_Bool found = EINA_FALSE;
-
         EINA_LIST_FOREACH(dropable_list, l, drop)
           {
              if (drop->last.in)
-               {
-                  found = EINA_TRUE;
-                  break;
-               }
-          }
-        if (!found) return ECORE_CALLBACK_PASS_ON;
-     }
-
-   for (i = 0; i < savedtypes.ntypes; i++)
-     {
-        Dropable_Cbs *cbs;
-        EINA_INLIST_FOREACH(drop->cbs_list, cbs)
-          {
-             if ((savedtypes.types[i] == text_uri) &&
-                   (cbs->types & ELM_SEL_FORMAT_MARKUP) &&
-                   (cbs->types & ELM_SEL_FORMAT_IMAGE))
                {
                   wl_cnp_selection.requestwidget = drop->obj;
                   evas_object_event_callback_add(wl_cnp_selection.requestwidget,
                         EVAS_CALLBACK_DEL,
                         _wl_sel_obj_del2,
                         &wl_cnp_selection);
-                  ecore_wl_dnd_drag_get(ecore_wl_input_get(), text_uri);
-                  return ECORE_CALLBACK_PASS_ON;
+                  ecore_wl_dnd_drag_get(ecore_wl_input_get(), drop->last.type);
+                  break;
                }
           }
      }
@@ -3283,6 +3244,7 @@ _wl_dnd_send(void *data, int type EINA_UNUSED, void *event)
    Wl_Cnp_Selection *sel;
    Ecore_Wl_Event_Data_Source_Send *ev;
 
+   cnp_debug("In\n");
    ev = event;
    sel = data;
 
@@ -3330,6 +3292,7 @@ _wl_dnd_receive(void *data, int type EINA_UNUSED, void *event)
 static Eina_Bool
 _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
+   cnp_debug("In\n");
    /* Ecore_Wl_Event_Dnd_End *ev; */
 
    /* ev = event; */
