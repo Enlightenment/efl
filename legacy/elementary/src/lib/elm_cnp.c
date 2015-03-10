@@ -2329,7 +2329,6 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
      {
         icon = elm_icon_add(dragwin);
         evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
         // need to resize
      }
    elm_win_resize_object_add(dragwin, icon);
@@ -2982,7 +2981,6 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format EINA_UNUSED, const ch
         icon = elm_icon_add(dragwin);
         evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND,
                                          EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
      }
 
    elm_win_resize_object_add(dragwin, icon);

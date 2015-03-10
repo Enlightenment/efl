@@ -148,7 +148,6 @@ _elm_tooltip_show(Elm_Tooltip *tt)
         tt->tt_evas = evas_object_evas_get(tt->tt_win);
         tt->tooltip = edje_object_add(tt->tt_evas);
         evas_object_size_hint_weight_set(tt->tooltip, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(tt->tooltip, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_win_resize_object_add(tt->tt_win, tt->tooltip);
      }
    else
