@@ -34,6 +34,12 @@ static const Elm_Layout_Part_Alias_Description _text_aliases[] =
    {NULL, NULL}
 };
 
+static const Elm_Layout_Part_Alias_Description _content_aliases[] =
+{
+   {"default", "elm.swallow.content"},
+   {NULL, NULL}
+};
+
 /* these are data operated by layout's class functions internally, and
  * should not be messed up by inhering classes */
 typedef struct _Elm_Layout_Sub_Object_Data   Elm_Layout_Sub_Object_Data;
@@ -588,7 +594,7 @@ _elm_layout_text_aliases_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *_pd EIN
 EOLIAN static const Elm_Layout_Part_Alias_Description*
 _elm_layout_content_aliases_get(Eo *obj EINA_UNUSED, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
 {
-   return NULL;
+   return _content_aliases;
 }
 
 EOLIAN static Eina_Bool
