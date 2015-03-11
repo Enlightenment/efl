@@ -331,13 +331,9 @@ resources/images/enlightenment.png \
 resources/images/red.png \
 resources/images/im1.png \
 resources/images/cube1.png \
-resources/images/bg_space.jpg \
-resources/images/EarthDiffuse.png \
-resources/images/moon.png \
 resources/images/normal_lego.png \
 resources/images/sonic.png \
 resources/images/sweet_home_reversed.png \
-resources/models/M15.mtl \
 resources/models/mesh_for_mmap.eet \
 resources/models/mesh_for_mmap.md2 \
 resources/models/mesh_for_mmap.obj \
