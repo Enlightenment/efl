@@ -2923,7 +2923,7 @@ _wl_elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action)
 }
 
 static Eina_Bool
-_wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format EINA_UNUSED, const char *data,
+_wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
                    Elm_Xdnd_Action action,
                    Elm_Drag_Icon_Create_Cb createicon, void *createdata,
                    Elm_Drag_Pos dragpos, void *dragdata,
@@ -2933,7 +2933,8 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format EINA_UNUSED, const ch
    Ecore_Evas *ee;
    Evas_Object *icon = NULL;
    int x, y, x2 = 0, y2 = 0, x3, y3, w = 0, h = 0;
-   const char *types[2] = { "text/uri-list", NULL };
+   const char *types[CNP_N_ATOMS + 1];
+   int i, nb_types = 0;
    Ecore_Wl_Window *parent = NULL;
 
    _wl_elm_dnd_init();
@@ -2941,6 +2942,23 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format EINA_UNUSED, const ch
    /* if we already have a drag, get out */
    if (dragwin) return EINA_FALSE;
 
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        if (_atoms[i].formats == ELM_SEL_FORMAT_TARGETS)
+          {
+             if (format == ELM_SEL_FORMAT_TARGETS)
+               {
+                  types[nb_types++] = _atoms[i].name;
+                  cnp_debug("set dnd type: %s\n", _atoms[i].name);
+               }
+          }
+        else if (_atoms[i].formats & format)
+          {
+             types[nb_types++] = _atoms[i].name;
+             cnp_debug("set dnd type: %s\n", _atoms[i].name);
+          }
+     }
+   types[nb_types] = NULL;
    ecore_wl_dnd_drag_types_set(ecore_wl_input_get(), types);
 
    /* set the drag data used when a drop occurs */
@@ -3323,14 +3341,11 @@ _wl_dnd_end(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSE
 static void
 _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
 {
+   cnp_debug("In\n");
    Dropable *drop;
    Elm_Selection_Data sdata;
    int len = 0;
    char *s = NULL;
-
-   Evas *evas = evas_object_evas_get(sel->requestwidget);
-   Eina_List *dropable_list = evas ? _dropable_list_geom_find(evas, savedtypes.x, savedtypes.y) : NULL, *l;
-   Eina_Bool drop_found = EINA_FALSE;
 
    len = strlen(data);
    if (!(s = malloc(len + 1))) return;
@@ -3347,35 +3362,36 @@ _wl_dropable_data_handle(Wl_Cnp_Selection *sel, char *data)
    sdata.x = savedtypes.x;
    sdata.y = savedtypes.y;
 
-   if (!savedtypes.imgfile) return;
-
-   EINA_LIST_FOREACH(dropable_list, l, drop)
+   eo_do(sel->requestwidget, drop = eo_key_data_get("__elm_dropable"));
+   if (drop)
      {
         Eina_Inlist *itr;
         Dropable_Cbs *cbs;
-        if (drop_found) continue;
         EINA_INLIST_FOREACH_SAFE(drop->cbs_list, itr, cbs)
           {
-             /* If it's markup that also supports images */
-             if ((cbs->types & ELM_SEL_FORMAT_MARKUP) &&
-                   (cbs->types & ELM_SEL_FORMAT_IMAGE))
+             if (cbs->types && drop->last.format)
                {
-                  sdata.format = ELM_SEL_FORMAT_MARKUP;
-                  sdata.data = (char *)savedtypes.imgfile;
+                  /* If it's markup that also supports images */
+                  if (cbs->types & (ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE))
+                    {
+                       sdata.format = ELM_SEL_FORMAT_MARKUP;
+                       sdata.data = (char *)savedtypes.imgfile;
+                    }
+                  else if (cbs->types & ELM_SEL_FORMAT_IMAGE)
+                    {
+                       sdata.format = ELM_SEL_FORMAT_IMAGE;
+                       sdata.data = (char *)savedtypes.imgfile;
+                    }
+                  else
+                    {
+                       sdata.format = drop->last.format;
+                       sdata.data = s;
+                    }
                   if (cbs->dropcb) cbs->dropcb(cbs->dropdata, drop->obj, &sdata);
-                  ecore_wl_dnd_drag_end(ecore_wl_input_get());
-                  drop_found = EINA_TRUE;
-               }
-             else if (cbs->types & ELM_SEL_FORMAT_IMAGE)
-               {
-                  sdata.format = ELM_SEL_FORMAT_IMAGE;
-                  sdata.data = (char *)savedtypes.imgfile;
-                  if (cbs->dropcb) cbs->dropcb(cbs->dropdata, drop->obj, &sdata);
-                  ecore_wl_dnd_drag_end(ecore_wl_input_get());
-                  drop_found = EINA_TRUE;
                }
           }
      }
+   ecore_wl_dnd_drag_end(ecore_wl_input_get());
    ELM_SAFE_FREE(savedtypes.imgfile, free);
 }
 
