@@ -266,7 +266,9 @@ endif
 
 EXTRA_DIST += \
 tests/ecore/modem.wav \
-tests/ecore/sms.ogg
+tests/ecore/sms.ogg \
+tests/ecore/server.key \
+tests/ecore/server.pem
 
 if HAVE_ELUA
 
