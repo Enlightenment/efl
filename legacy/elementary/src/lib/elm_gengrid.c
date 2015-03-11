@@ -1014,6 +1014,13 @@ _item_realize(Elm_Gen_Item *it)
    if (it->mouse_cursor)
      eo_do(eo_it, elm_wdg_item_cursor_set(it->mouse_cursor));
 
+   if (eo_it == sd->focused_item)
+     {
+        _elm_widget_item_highlight_in_theme(WIDGET(it), EO_OBJ(it));
+        _elm_widget_highlight_in_theme_update(WIDGET(it));
+        _elm_widget_focus_highlight_start(WIDGET(it));
+     }
+
    it->realized = EINA_TRUE;
    it->want_unrealize = EINA_FALSE;
 }
@@ -1617,15 +1624,18 @@ _elm_gengrid_item_focused(Elm_Object_Item *eo_it)
 
    sd->focused_item = eo_it;
 
-   if (elm_widget_focus_highlight_enabled_get(obj))
+   if (it->realized)
      {
-        edje_object_signal_emit
-           (VIEW(it), "elm,state,focused", "elm");
-     }
+        if (elm_widget_focus_highlight_enabled_get(obj))
+          {
+             edje_object_signal_emit
+                (VIEW(it), "elm,state,focused", "elm");
+          }
 
-   focus_raise = edje_object_data_get(VIEW(it), "focusraise");
-   if ((focus_raise) && (!strcmp(focus_raise, "on")))
-     evas_object_raise(VIEW(it));
+        focus_raise = edje_object_data_get(VIEW(it), "focusraise");
+        if ((focus_raise) && (!strcmp(focus_raise, "on")))
+          evas_object_raise(VIEW(it));
+     }
    evas_object_smart_callback_call(obj, SIG_ITEM_FOCUSED, eo_it);
 }
 
@@ -3460,9 +3470,24 @@ _elm_gengrid_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bo
                _elm_gengrid_item_unfocused(sd->focused_item);
              _elm_gengrid_item_focused(eo_it);
 
-             _elm_widget_item_highlight_in_theme(obj, eo_it);
-             _elm_widget_highlight_in_theme_update(obj);
-             _elm_widget_focus_highlight_start(obj);
+             /* If item is not realized state, widget couldn't get focus_highlight data. */
+             if (it->realized)
+               {
+                  const char *focus_raise;
+                  if (elm_widget_focus_highlight_enabled_get(obj))
+                    {
+                       edje_object_signal_emit
+                          (VIEW(it), "elm,state,focused", "elm");
+                    }
+
+                  focus_raise = edje_object_data_get(VIEW(it), "focusraise");
+                  if ((focus_raise) && (!strcmp(focus_raise, "on")))
+                    evas_object_raise(VIEW(it));
+
+                  _elm_widget_item_highlight_in_theme(obj, eo_it);
+                  _elm_widget_highlight_in_theme_update(obj);
+                  _elm_widget_focus_highlight_start(obj);
+               }
           }
      }
    else

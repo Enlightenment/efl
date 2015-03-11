@@ -1731,6 +1731,21 @@ _item_realize(Elm_Gen_Item *it,
 
         _elm_genlist_item_state_update(it, itc);
         _elm_genlist_item_index_update(it);
+
+        if (EO_OBJ(it) == sd->focused_item)
+          {
+             const char *focus_raise;
+             if (elm_widget_focus_highlight_enabled_get(WIDGET(it)))
+               edje_object_signal_emit(VIEW(it), SIGNAL_FOCUSED, "elm");
+
+             focus_raise = edje_object_data_get(VIEW(it), "focusraise");
+             if ((focus_raise) && (!strcmp(focus_raise, "on")))
+               evas_object_raise(VIEW(it));
+
+             _elm_widget_item_highlight_in_theme(WIDGET(it), EO_OBJ(it));
+             _elm_widget_highlight_in_theme_update(WIDGET(it));
+             _elm_widget_focus_highlight_start(WIDGET(it));
+          }
      }
 
    /* homogeneous genlist shortcut */
@@ -2569,12 +2584,15 @@ _elm_genlist_item_focused(Elm_Object_Item *eo_it)
 
    sd->focused_item = eo_it;
 
-   if (elm_widget_focus_highlight_enabled_get(obj))
-     edje_object_signal_emit(VIEW(it), SIGNAL_FOCUSED, "elm");
+   if (it->realized)
+     {
+        if (elm_widget_focus_highlight_enabled_get(obj))
+          edje_object_signal_emit(VIEW(it), SIGNAL_FOCUSED, "elm");
 
-   focus_raise = edje_object_data_get(VIEW(it), "focusraise");
-   if ((focus_raise) && (!strcmp(focus_raise, "on")))
-     evas_object_raise(VIEW(it));
+        focus_raise = edje_object_data_get(VIEW(it), "focusraise");
+        if ((focus_raise) && (!strcmp(focus_raise, "on")))
+          evas_object_raise(VIEW(it));
+     }
    evas_object_smart_callback_call(obj, SIG_ITEM_FOCUSED, eo_it);
 }
 
@@ -5806,9 +5824,13 @@ _elm_genlist_item_elm_widget_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Eina_Bo
                _elm_genlist_item_unfocused(sd->focused_item);
              _elm_genlist_item_focused(eo_it);
 
-             _elm_widget_item_highlight_in_theme(obj, EO_OBJ(it));
-             _elm_widget_highlight_in_theme_update(obj);
-             _elm_widget_focus_highlight_start(obj);
+             /* If item is not realized state, widget couldn't get focus_highlight data. */
+             if (it->realized)
+               {
+                  _elm_widget_item_highlight_in_theme(obj, EO_OBJ(it));
+                  _elm_widget_highlight_in_theme_update(obj);
+                  _elm_widget_focus_highlight_start(obj);
+               }
           }
      }
    else
