@@ -204,7 +204,7 @@ _ecore_drm_output_crtc_find(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConne
              if ((p & (1 << i)) &&
                  (!(dev->crtc_allocator & (1 << res->crtcs[i]))))
                {
-                  return res->crtcs[i];
+                  return i;
                }
           }
      }
