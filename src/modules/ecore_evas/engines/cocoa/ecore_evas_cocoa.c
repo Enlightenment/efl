@@ -303,6 +303,24 @@ _ecore_evas_cocoa_free(Ecore_Evas *ee)
 }
 
 static void
+_ecore_evas_size_min_set(Ecore_Evas *ee, int w, int h)
+{
+   ecore_cocoa_window_size_min_set((Ecore_Cocoa_Window *)ee->prop.window, w, h);
+}
+
+static void
+_ecore_evas_size_max_set(Ecore_Evas *ee, int w, int h)
+{
+   ecore_cocoa_window_size_max_set((Ecore_Cocoa_Window *)ee->prop.window, w, h);
+}
+
+static void
+_ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h)
+{
+   ecore_cocoa_window_size_step_set((Ecore_Cocoa_Window *)ee->prop.window, w, h);
+}
+  
+static void
 _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 {
   DBG("Resize");
@@ -524,10 +542,10 @@ static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
     NULL, //activate
     _ecore_evas_title_set,
     NULL,
+    _ecore_evas_size_min_set,
+    _ecore_evas_size_max_set,
     NULL,
-    NULL,
-    NULL,
-    NULL,
+    _ecore_evas_size_step_set,
     _ecore_evas_object_cursor_set,
     _ecore_evas_object_cursor_unset,
     NULL,

@@ -293,6 +293,39 @@ ecore_cocoa_window_free(Ecore_Cocoa_Window *window)
 }
 
 void
+ecore_cocoa_window_size_min_set(Ecore_Cocoa_Window *window,
+                                unsigned int w,
+                                unsigned int h)
+{
+  if (!window)
+    return;
+  NSSize size = {w,h};
+  window->window.contentMinSize = size;
+}
+
+void
+ecore_cocoa_window_size_max_set(Ecore_Cocoa_Window *window,
+                                unsigned int w,
+                                unsigned int h)
+{
+  if (!window)
+    return;
+  NSSize size = {w,h};
+  window->window.contentMaxSize = size;
+}
+
+void
+ecore_cocoa_window_size_step_set(Ecore_Cocoa_Window *window,
+                                 unsigned int w,
+                                 unsigned int h)
+{
+  if (!window)
+    return;
+  NSSize size = {w,h};
+  window->window.contentResizeIncrements = size;
+}
+
+void
 ecore_cocoa_window_move(Ecore_Cocoa_Window *window,
 			int                 x,
 			int                 y)
