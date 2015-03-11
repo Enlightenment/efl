@@ -31,7 +31,7 @@ typedef Evas_Object                  *(*Elm_Gen_Item_Content_Get_Cb)(void *data,
  * @param data The data passed in the item creation function
  * @param obj The base widget object
  * @param part The part name of the swallow
- * @return The hell if I know
+ * @return The boolean state of this element (resulting in the edje object being emitted a signal of "elm,state,partname,active" or "elm.state,partname,passve"
  */
 typedef Eina_Bool                     (*Elm_Gen_Item_State_Get_Cb)(void *data, Evas_Object *obj, const char *part); /**< State fetching class function for gen item classes. */
 
