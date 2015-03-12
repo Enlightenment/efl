@@ -233,7 +233,7 @@ ecore_wl_input_cursor_theme_name_set(Ecore_Wl_Input *input, const char *cursor_t
 
    if (!input) return;
 
-   input->cursor_theme_name = cursor_theme_name;
+   eina_stringshare_replace(&input->cursor_theme_name, cursor_theme_name);
 
    EINA_SAFETY_ON_NULL_RETURN(input->display->wl.shm);
 
@@ -421,6 +421,7 @@ _ecore_wl_input_del(Ecore_Wl_Input *input)
 
    if (input->cursor_name) eina_stringshare_del(input->cursor_name);
    input->cursor_name = NULL;
+   eina_stringshare_replace(&input->cursor_theme_name, NULL);
 
    if (input->touch_focus)
      {
