@@ -178,7 +178,7 @@ _dns_err(void *data, int type EINA_UNUSED, void *ev EINA_UNUSED)
 
 void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name, Eina_Bool is_ssl)
 {
-   Ecore_Con_Server *server;
+   Ecore_Con_Server *server = NULL;
    Ecore_Con_Server *client;
    Ecore_Con_Client *cl;
    const Eina_List *clients, *l;
