@@ -381,9 +381,7 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!(input = malloc(sizeof(Ecore_Wl_Input)))) return;
-
-   memset(input, 0, sizeof(Ecore_Wl_Input));
+   if (!(input = calloc(1, sizeof(Ecore_Wl_Input)))) return;
 
    input->display = ewd;
    input->pointer_focus = NULL;
