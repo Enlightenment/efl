@@ -7560,9 +7560,12 @@ _elm_genlist_select_mode_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, Elm_Obje
        (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
      {
         Eina_List *l, *ll;
-        Elm_Gen_Item *it;
-        EINA_LIST_FOREACH_SAFE(sd->selected, l, ll, it)
+        Elm_Object_Item *eo_it;
+        EINA_LIST_FOREACH_SAFE(sd->selected, l, ll, eo_it)
+        {
+           ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
            _item_unselect(it);
+        }
      }
 }
 
