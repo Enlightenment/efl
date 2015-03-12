@@ -552,6 +552,7 @@ err:
         _ecore_wl_fatal_error = EINA_TRUE;
 
         /* raise exit signal */
+        ERR("Wayland socket error: %s", strerror(errno));
         _ecore_wl_signal_exit();
 
         return ECORE_CALLBACK_CANCEL;
