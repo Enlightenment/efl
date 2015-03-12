@@ -915,6 +915,7 @@ struct _Evas_Object_Mask_Data
    Eina_Bool      is_mask : 1;
    Eina_Bool      redraw : 1;
    Eina_Bool      is_alpha : 1;
+   Eina_Bool      is_scaled : 1;
 };
 
 struct _Evas_Object_Protected_State

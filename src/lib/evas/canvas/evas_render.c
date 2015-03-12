@@ -1854,6 +1854,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
                     mdata->w = w;
                     mdata->h = h;
                     mdata->is_alpha = (ENFN->image_colorspace_get(ENDT, scaled) == EVAS_COLORSPACE_GRY8);
+                    mdata->is_scaled = EINA_TRUE;
                  }
             }
        }
@@ -1862,7 +1863,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
        {
           /* delete render surface if changed or if already alpha
            * (we don't know how to render objects to alpha) */
-          if (mdata->surface && ((w != mdata->w) || (h != mdata->h) || mdata->is_alpha))
+          if (mdata->surface && ((w != mdata->w) || (h != mdata->h) || mdata->is_alpha || mdata->is_scaled))
             {
                ENFN->image_map_surface_free(ENDT, mdata->surface);
                mdata->surface = NULL;
@@ -1874,6 +1875,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
                mdata->surface = ENFN->image_map_surface_new(ENDT, w, h, EINA_TRUE);
                if (!mdata->surface) goto end;
                mdata->is_alpha = EINA_FALSE;
+               mdata->is_scaled = EINA_FALSE;
                mdata->w = w;
                mdata->h = h;
             }
