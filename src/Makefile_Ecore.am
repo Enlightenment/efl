@@ -198,10 +198,6 @@ tests/ecore/ecore_test_ecore_input.c \
 tests/ecore/ecore_test_ecore_file.c \
 tests/ecore/ecore_suite.h
 
-if HAVE_ECORE_X
-tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_x.c
-endif
-
 tests_ecore_ecore_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore\" \
@@ -245,6 +241,10 @@ tests_ecore_ecore_suite_DEPENDENCIES = \
 @USE_ECORE_DRM_INTERNAL_LIBS@ \
 @USE_ECORE_FB_INTERNAL_LIBS@ \
 @USE_ECORE_INPUT_INTERNAL_LIBS@
+
+if HAVE_ECORE_X
+tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_x.c
+endif
 
 if HAVE_ECORE_AUDIO
 tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_audio.c
