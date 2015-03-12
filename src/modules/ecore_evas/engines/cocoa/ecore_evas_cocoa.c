@@ -319,7 +319,14 @@ _ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h)
 {
    ecore_cocoa_window_size_step_set((Ecore_Cocoa_Window *)ee->prop.window, w, h);
 }
-  
+
+static void
+_ecore_evas_move(Ecore_Evas *ee, int x, int y)
+{
+   DBG("Move");
+   ecore_cocoa_window_move((Ecore_Cocoa_Window *)ee->prop.window, x, y);
+}
+
 static void
 _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 {
@@ -390,6 +397,38 @@ _ecore_evas_hide(Ecore_Evas *ee)
 }
 
 static void
+_ecore_evas_raise(Ecore_Evas *ee)
+{
+   DBG("Raise");
+   
+   ecore_cocoa_window_raise((Ecore_Cocoa_Window *)ee->prop.window);
+}
+
+static void
+_ecore_evas_lower(Ecore_Evas *ee)
+{
+   DBG("Lower");
+
+   ecore_cocoa_window_lower((Ecore_Cocoa_Window *)ee->prop.window);
+}
+
+static void
+_ecore_evas_activate(Ecore_Evas *ee)
+{
+   DBG("Activate");
+
+   ecore_cocoa_window_activate((Ecore_Cocoa_Window *)ee->prop.window);
+}
+
+static void
+_ecore_evas_iconified_set(Ecore_Evas *ee, Eina_Bool on)
+{
+   DBG("IconifiedSet");
+
+   ecore_cocoa_window_iconified_set((Ecore_Cocoa_Window *)ee->prop.window, on);
+}
+
+static void
 _ecore_evas_title_set(Ecore_Evas *ee, const char *title)
 {
    INF("ecore evas title set");
@@ -455,6 +494,15 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _ecore_evas_object_cursor_del, ee);
 }
 
+static void
+_ecore_evas_withdrawn_set(Ecore_Evas *ee, Eina_Bool on)
+{
+  if (on)
+	_ecore_evas_hide(ee);
+  else
+	_ecore_evas_show(ee);
+}
+
 static int
 _ecore_evas_engine_cocoa_init(Ecore_Evas *ee)
 {
@@ -518,6 +566,7 @@ static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
     NULL,
     NULL,
     NULL,
+    NULL,
     _ecore_evas_callback_delete_request_set,
     NULL,
     NULL,
@@ -528,8 +577,7 @@ static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
     NULL,
     NULL,
     NULL,
-    NULL,
-    NULL, //move
+    _ecore_evas_move, //move
     NULL,
     _ecore_evas_resize,
     _ecore_evas_move_resize,
@@ -537,9 +585,9 @@ static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
     NULL, //shaped
     _ecore_evas_show,
     _ecore_evas_hide,
-    NULL, //raise
-    NULL, //lower
-    NULL, //activate
+    _ecore_evas_raise,
+    _ecore_evas_lower,
+    _ecore_evas_activate,
     _ecore_evas_title_set,
     NULL,
     _ecore_evas_size_min_set,
@@ -550,13 +598,13 @@ static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
     _ecore_evas_object_cursor_unset,
     NULL,
     NULL,
+    _ecore_evas_iconified_set,
     NULL,
     NULL,
     NULL,
     NULL,
     NULL,
-    NULL,
-    NULL,
+    _ecore_evas_withdrawn_set,
     NULL,
     NULL,
     NULL,

@@ -410,6 +410,46 @@ ecore_cocoa_window_hide(Ecore_Cocoa_Window *window)
   [window->window orderOut:NSApp];
 }
 
+void ecore_cocoa_window_raise(Ecore_Cocoa_Window *window)
+{
+  if (!window)
+    return;
+
+  [window->window orderFront:nil];
+}
+
+void ecore_cocoa_window_lower(Ecore_Cocoa_Window *window)
+{
+   if (!window)
+     return;
+
+   [window->window orderBack:nil];
+}
+
+void ecore_cocoa_window_activate(Ecore_Cocoa_Window *window)
+{
+   if (!window)
+     return;
+
+   [window->window makeKeyAndOrderFront:nil];
+}
+
+void ecore_cocoa_window_iconified_set(Ecore_Cocoa_Window *window,
+                                      int                 on)
+{
+   if (!window)
+     return;
+
+   if (on)
+     {
+        [window->window miniaturize:nil];
+     }
+   else
+     {
+        [window->window deminiaturize:nil];
+     }
+}
+
 void
 ecore_cocoa_window_borderless_set(Ecore_Cocoa_Window *window,
                                   int                 on)

@@ -145,6 +145,8 @@ EAPI void ecore_cocoa_window_raise(Ecore_Cocoa_Window *window);
 
 EAPI void ecore_cocoa_window_lower(Ecore_Cocoa_Window *window);
 
+EAPI void ecore_cocoa_window_activate(Ecore_Cocoa_Window *window);
+
 EAPI void ecore_cocoa_window_title_set(Ecore_Cocoa_Window *window,
                                        const char         *title);
 
