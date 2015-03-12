@@ -3460,7 +3460,7 @@ _elm_entry_evas_object_smart_add(Eo *obj, Elm_Entry_Data *priv)
 
 #ifdef HAVE_ELEMENTARY_X
    top = elm_widget_top_get(obj);
-   if (top && (!eina_streq(evas_object_type_get(top), "elm_win")))
+   if (!eo_isa(top, ELM_WIN_CLASS))
      top = ecore_evas_data_get(ecore_evas_ecore_evas_get(evas_object_evas_get(obj)), "elm_win");
    if ((top) && (elm_win_xwindow_get(top)))
      {
