@@ -356,13 +356,28 @@ ecore_wl_input_seat_get(Ecore_Wl_Input *input)
 }
 
 /* local functions */
-void 
-_ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
+void
+_ecore_wl_input_setup(Ecore_Wl_Input *input)
 {
-   Ecore_Wl_Input *input;
    char *temp;
    unsigned int cursor_size;
    char *cursor_theme_name;
+
+   temp = getenv("ECORE_WL_CURSOR_SIZE");
+   if (temp)
+     cursor_size = atoi(temp);
+   else
+     cursor_size = ECORE_WL_DEFAULT_CURSOR_SIZE;
+   ecore_wl_input_cursor_size_set(input, cursor_size);
+
+   cursor_theme_name = getenv("ECORE_WL_CURSOR_THEME_NAME");
+   ecore_wl_input_cursor_theme_name_set(input, cursor_theme_name);
+}
+
+void
+_ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
+{
+   Ecore_Wl_Input *input;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -375,16 +390,8 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
    input->keyboard_focus = NULL;
    input->touch_focus = NULL;
 
-   temp = getenv("ECORE_WL_CURSOR_SIZE");
-   if (temp)
-     cursor_size = atoi(temp);
-   else
-     cursor_size = ECORE_WL_DEFAULT_CURSOR_SIZE;
-   ecore_wl_input_cursor_size_set(input, cursor_size);
-
-   cursor_theme_name = getenv("ECORE_WL_CURSOR_THEME_NAME");
-   ecore_wl_input_cursor_theme_name_set(input, cursor_theme_name);
-
+   if (ewd->wl.shm)
+     _ecore_wl_input_setup(input);
    input->seat = 
      wl_registry_bind(ewd->wl.registry, id, &wl_seat_interface, 1);
    ewd->inputs = eina_inlist_append(ewd->inputs, EINA_INLIST_GET(input));
