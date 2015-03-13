@@ -293,9 +293,10 @@ EAPI char           *eina_str_convert_len(const char *enc_from, const char *enc_
  * @param str The string to escape.
  * @return The escaped string.
  *
- * Escaping is done by adding a slash "\" before any occurrence of slashes "\",
- * spaces " " or apostrophes "'". This function returns a newly allocated
- * escaped string on success, @c NULL on failure. When not used anymore, the
+ * Escaping is done by adding a slash "\" before any occurrence of slashes "\"
+ * include '\n' and '\t', spaces " ", apostrophes "'" or quotes """. This
+ * function returns a newly allocated escaped string on success, @c NULL on
+ * failure. When not used anymore, the
  * returned value must be freed.
  */
 EAPI char           *eina_str_escape(const char *str) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_ARG_NONNULL(1);

@@ -629,12 +629,32 @@ eina_str_escape(const char *str)
 
    for (s = str, d = s2; *s != 0; s++, d++)
      {
-        if ((*s == ' ') || (*s == '\\') || (*s == '\''))
-          {
+        switch (*s)
+        {
+         case ' ':
+         case '\\':
+         case '\'':
+         case '\"':
+           {
              *d = '\\';
              d++;
-          }
-
+             break;
+           }
+         case '\n':
+           {
+             *d = '\\'; d++;
+             *d = 'n'; d++;
+             s++;
+             break;
+           }
+         case '\t':
+           {
+             *d = '\\'; d++;
+             *d = 't'; d++;
+             s++;
+             break;
+           }
+        }
         *d = *s;
      }
    *d = 0;
