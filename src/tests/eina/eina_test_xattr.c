@@ -74,9 +74,6 @@ START_TEST(eina_test_xattr_set)
    fail_if(strcmp(ret_str, data2) != 0);
    free(ret_str);
 
-   ret = eina_xattr_set(test_file_path, attribute2, data2, strlen(data2), EINA_XATTR_REPLACE);
-   fail_if(ret != EINA_FALSE);
-
    ret = eina_xattr_del(test_file_path, attribute1);
    fail_if(ret != EINA_TRUE);
 
@@ -100,6 +97,122 @@ START_TEST(eina_test_xattr_set)
    eina_shutdown();
 }
 END_TEST
+
+START_TEST(eina_test_xattr_list)
+{
+   char *filename = "tmpfile";
+   char *filename_cp = "tmpfile_cp";
+   const char *attribute[] =
+     {
+        "user.comment1",
+        "user.comment2",
+        "user.comment3"
+     };
+   const char *data[] =
+     {
+        "This is a test file",
+        "This line is a comment",
+        "This file has extra attributes"
+     };
+   char *ret_str;
+   int fd, fd1, attr_len, i;
+   Eina_Bool ret;
+   Eina_Tmpstr *test_file_path, *cp_file_path;
+   Eina_Iterator *it;
+   Eina_Xattr *xattr;
+
+   eina_init();
+
+   test_file_path = get_file_path(XATTR_TEST_DIR, filename);
+   cp_file_path = get_file_path(XATTR_TEST_DIR, filename_cp);
+
+   fd = open(test_file_path, O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
+   fail_if(fd == 0);
+   fd1 = open(cp_file_path, O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
+   fail_if(fd1 == 0);
+
+   attr_len = sizeof(attribute) / sizeof(const char *);
+   for (i = 0; i < attr_len; ++i)
+     {
+        ret = eina_xattr_set(test_file_path, attribute[i], data[i], strlen(data[i]), EINA_XATTR_INSERT);
+        fail_if(ret != EINA_TRUE);
+     }
+   it = eina_xattr_ls(test_file_path);
+   i = 0;
+   EINA_ITERATOR_FOREACH(it, ret_str)
+     {
+         fail_if(strcmp(attribute[i], ret_str) != 0);
+         i++;
+     }
+   eina_iterator_free(it);
+
+   i = 0;
+   it = eina_xattr_value_ls(test_file_path);
+   EINA_ITERATOR_FOREACH(it, xattr)
+     {
+         fail_if(strcmp(data[i], xattr->value) != 0);
+         i++;
+     }
+   eina_iterator_free(it);
+
+   i = 0;
+   it = eina_xattr_fd_ls(fd);
+   EINA_ITERATOR_FOREACH(it, ret_str)
+     {
+         fail_if(strcmp(attribute[i], ret_str) != 0);
+         i++;
+     }
+   eina_iterator_free(it);
+
+   i = 0;
+   it = eina_xattr_value_fd_ls(fd);
+   EINA_ITERATOR_FOREACH(it, xattr)
+     {
+         fail_if(strcmp(data[i], xattr->value) != 0);
+         i++;
+     }
+   eina_iterator_free(it);
+
+   /* Test case for eina_xattr_copy and eina_xattr_fd_copy */
+   i = 0;
+   ret = eina_xattr_copy(test_file_path, cp_file_path);
+   fail_if(ret != EINA_TRUE);
+   it = eina_xattr_value_ls(cp_file_path);
+   EINA_ITERATOR_FOREACH(it, xattr)
+     {
+        fail_if(strcmp(xattr->name, attribute[i]) != 0);
+        fail_if(strcmp(xattr->value, data[i]) != 0);
+        i++;
+     }
+   eina_iterator_free(it);
+
+   for (i = 0; i < attr_len; ++i)
+     {
+        ret = eina_xattr_del(cp_file_path, attribute[i]);
+        fail_if(ret != EINA_TRUE);
+     }
+
+   i = 0;
+   ret = eina_xattr_fd_copy(fd, fd1);
+   fail_if(ret != EINA_TRUE);
+   it = eina_xattr_value_fd_ls(fd1);
+   EINA_ITERATOR_FOREACH(it, xattr)
+     {
+        fail_if(strcmp(xattr->name, attribute[i]) != 0);
+        fail_if(strcmp(xattr->value, data[i]) != 0);
+        i++;
+     }
+   eina_iterator_free(it);
+
+   close(fd);
+   close(fd1);
+   unlink(test_file_path);
+   unlink(cp_file_path);
+   eina_tmpstr_del(test_file_path);
+   eina_tmpstr_del(cp_file_path);
+   eina_shutdown();
+}
+END_TEST
 #endif
 
 void
@@ -107,5 +220,6 @@ eina_test_xattr(TCase *tc)
 {
 #ifdef XATTR_TEST_DIR
    tcase_add_test(tc, eina_test_xattr_set);
+   tcase_add_test(tc, eina_test_xattr_list);
 #endif
 }
