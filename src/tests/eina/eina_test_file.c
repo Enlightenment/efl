@@ -374,15 +374,18 @@ START_TEST(eina_file_map_new_test)
    fail_if(!file2_map);
    correct_map_check = strcmp((char*)file2_map, big_buffer + memory_page_size); 
    fail_if(correct_map_check != 0);  
-  
+
+   eina_file_map_free(e_file, file_map);
+   eina_file_map_free(e_file2, file2_map);
+   eina_file_close(e_file);
+   eina_file_close(e_file2);
+
    unlink(test_file_path);
    unlink(test_file2_path);
+   rmdir(test_dirname);
+
    free(test_file_path);
    free(test_file2_path);
-   eina_file_map_free(e_file, file_map);
-   eina_file_map_free(e_file2, file2_map);   
-   eina_file_close(e_file); 
-   eina_file_close(e_file2);
    eina_tmpstr_del(test_dirname);
 
    eina_shutdown();
