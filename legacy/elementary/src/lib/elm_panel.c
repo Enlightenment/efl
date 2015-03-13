@@ -886,6 +886,8 @@ _elm_panel_elm_container_content_set(Eo *obj, Elm_Panel_Data *sd, const char *pa
      {
         evas_object_box_append(sd->bx, sd->content);
         evas_object_show(sd->content);
+        if (sd->scrollable)
+          elm_widget_sub_object_add(sd->scr_ly, sd->content);
      }
 
    elm_layout_sizing_eval(obj);
@@ -940,6 +942,8 @@ _elm_panel_elm_container_content_unset(Eo *obj, Elm_Panel_Data *sd, const char *
    ret = sd->content;
 
    evas_object_box_remove_all(sd->bx, EINA_FALSE);
+   if (sd->scrollable)
+     elm_widget_sub_object_del(sd->scr_ly, sd->content);
    sd->content = NULL;
 
    return ret;
@@ -1384,6 +1388,7 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
               elm_interface_scrollable_content_set(sd->scr_ly));
         sd->freeze = EINA_TRUE;
         elm_layout_content_set(sd->scr_ly, "elm.swallow.content", sd->bx);
+        if (sd->content) elm_widget_sub_object_add(sd->scr_ly, sd->content);
 
         switch (sd->orient)
           {
@@ -1432,6 +1437,7 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
 
         elm_layout_content_unset(sd->scr_ly, "elm.swallow.content");
         elm_layout_content_set(obj, "elm.swallow.content", sd->bx);
+        if (sd->content) elm_widget_sub_object_add(sd->bx, sd->content);
      }
 }
 
