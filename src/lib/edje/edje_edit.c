@@ -10544,10 +10544,9 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
    if( db && (tweenmode >= EDJE_TWEEN_MODE_LINEAR) && (tweenmode < EDJE_TWEEN_MODE_LAST))
      {
         if(epr->tween.mode & EDJE_TWEEN_MODE_OPT_FROM_CURRENT)
-          BUF_APPENDF(" CURRENT;\n");
-        else
-          BUF_APPENDF(";\n");
+          BUF_APPENDF(" CURRENT");
      }
+   BUF_APPENDF(";\n");
    /* In */
    db = epr->in.from;
    db2 = epr->in.range;
