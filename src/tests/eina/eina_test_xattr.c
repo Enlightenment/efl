@@ -45,7 +45,8 @@ START_TEST(eina_test_xattr_set)
    char *attribute2 = "user.comment2";
    char *data2 = "This is comment 2";
    char *ret_str;
-   int fd, len;
+   int fd;
+   ssize_t len;
    Eina_Bool ret;
    Eina_Tmpstr *test_file_path;
 
@@ -115,7 +116,8 @@ START_TEST(eina_test_xattr_list)
         "This file has extra attributes"
      };
    char *ret_str;
-   int fd, fd1, attr_len, i;
+   int fd, fd1;
+   unsigned int i;
    Eina_Bool ret;
    Eina_Tmpstr *test_file_path, *cp_file_path;
    Eina_Iterator *it;
@@ -131,8 +133,7 @@ START_TEST(eina_test_xattr_list)
    fd1 = open(cp_file_path, O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
    fail_if(fd1 == 0);
 
-   attr_len = sizeof(attribute) / sizeof(const char *);
-   for (i = 0; i < attr_len; ++i)
+   for (i = 0; i < sizeof(attribute) / sizeof(attribute[0]); ++i)
      {
         ret = eina_xattr_set(test_file_path, attribute[i], data[i], strlen(data[i]), EINA_XATTR_INSERT);
         fail_if(ret != EINA_TRUE);
@@ -194,7 +195,7 @@ START_TEST(eina_test_xattr_list)
      }
    eina_iterator_free(it);
 
-   for (i = 0; i < attr_len; ++i)
+   for (i = 0; i < sizeof(attribute) / sizeof(attribute[0]); ++i)
      {
         ret = eina_xattr_del(cp_file_path, attribute[i]);
         fail_if(ret != EINA_TRUE);
