@@ -6442,6 +6442,21 @@ EAPI const Eina_List *edje_edit_script_error_list_get(Evas_Object *obj);
 
 EAPI const char *edje_edit_source_generate(Evas_Object *obj);
 
+/**
+ * Return source code of all collections.
+ *
+ * Remember to free the string with free()
+ *
+ * This function will generate and return source code of all collections and
+ * other top level blocks.
+ *
+ * @param obj The object being edited
+ *
+ * @return Source code as char *.
+ */
+
+EAPI char *edje_edit_full_source_generate(Evas_Object *obj);
+
 //@}
 /******************************************************************************/
 /**************************   ERROR API   ***********************************/

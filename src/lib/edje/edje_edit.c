@@ -11773,6 +11773,15 @@ _edje_generate_source(Evas_Object *obj)
    return buf;
 }
 
+EAPI char *
+edje_edit_full_source_generate(Evas_Object *obj)
+{
+   Eina_Strbuf *code = _edje_generate_source(obj);
+   /* return resulted source code */
+   char *ret = eina_strbuf_string_steal(code);
+   eina_strbuf_free(code);
+   return ret;
+}
 
 
 /*********************/
