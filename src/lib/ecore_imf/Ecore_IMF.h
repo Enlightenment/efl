@@ -474,7 +474,7 @@ struct _Ecore_IMF_Event_Mouse_Down
  */
 struct _Ecore_IMF_Event_Mouse_Up
 {
-   int button;                             /**< The button which has been pressed */
+   int button;                             /**< The button which has been released */
    struct {
       int x, y;
    } output;
@@ -583,7 +583,7 @@ struct _Ecore_IMF_Event_Key_Down
  */
 struct _Ecore_IMF_Event_Key_Up
 {
-   const char                   *keyname;   /**< The string name of the key pressed */
+   const char                   *keyname;   /**< The string name of the key released */
    Ecore_IMF_Keyboard_Modifiers  modifiers; /**< The keyboard modifiers active when the event has been emitted */
    Ecore_IMF_Keyboard_Locks      locks;     /**< The keyboard locks active when the event has been emitted */
    const char                   *key;       /**< The logical key : (eg shift+1 == exclamation) */
