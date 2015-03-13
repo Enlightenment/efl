@@ -164,14 +164,14 @@ _internal_resource_make_current(void *eng_data, EVGL_Context *ctx)
 //  - Internal config choose function
 //---------------------------------------------------------------//
 // Gen Texture
-void
+static void
 _texture_create(GLuint *tex)
 {
    glGenTextures(1, tex);
 }
 
 // Create and allocate 2D texture
-void
+static void
 _texture_allocate_2d(GLuint tex, GLint ifmt, GLenum fmt, GLenum type, int w, int h)
 {
    //if (!(*tex))
@@ -186,7 +186,7 @@ _texture_allocate_2d(GLuint tex, GLint ifmt, GLenum fmt, GLenum type, int w, int
 }
 
 // Destroy Texture
-void
+static void
 _texture_destroy(GLuint *tex)
 {
    if (*tex)
@@ -198,12 +198,9 @@ _texture_destroy(GLuint *tex)
 
 // Attach 2D texture with the given format to already bound FBO
 // *NOTE: attach2 here is used for depth_stencil attachment in GLES env.
-void
-_texture_attach_2d(GLuint tex, GLenum attach, GLenum attach2, int samples, Eina_Bool use_ext)
+static void
+_texture_attach_2d(GLuint tex, GLenum attach, GLenum attach2, int samples, Eina_Bool use_extension)
 {
-#define FBO_FUNC(name, param)     \
-      (use_ext)?(gles1_funcs->name##OES param):((name) param)
-
    if (samples)
      {
 #ifdef GL_GLES
@@ -222,49 +219,102 @@ _texture_attach_2d(GLuint tex, GLenum attach, GLenum attach2, int samples, Eina_
         ERR("MSAA not supported.  Should not have come in here...!");
 #endif
      }
-   else
+   else if (use_extension)
      {
-        FBO_FUNC(glFramebufferTexture2D, (GL_FRAMEBUFFER, attach, GL_TEXTURE_2D, tex, 0));
+        if (gles1_funcs->glFramebufferTexture2DOES)
+          gles1_funcs->glFramebufferTexture2DOES(GL_FRAMEBUFFER, attach, GL_TEXTURE_2D, tex, 0);
 
         if (attach2)
-           FBO_FUNC(glFramebufferTexture2D, (GL_FRAMEBUFFER, attach2, GL_TEXTURE_2D, tex, 0));
+          if (gles1_funcs->glFramebufferTexture2DOES)
+            gles1_funcs->glFramebufferTexture2DOES(GL_FRAMEBUFFER, attach2, GL_TEXTURE_2D, tex, 0);
+     }
+   else
+     {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attach, GL_TEXTURE_2D, tex, 0);
+
+        if (attach2)
+           glFramebufferTexture2D(GL_FRAMEBUFFER, attach2, GL_TEXTURE_2D, tex, 0);
 
      }
-#undef FBO_FUNC
 }
 
-void
-_egl_image_attach_texture(EVGL_Context *context, EvasGLImage *image, GLuint tex)
+static void *
+_egl_image_create(EVGL_Context *context, GLuint tex)
 {
 #ifdef GL_GLES
-   EVGLNative_Display dpy = EGL_NO_DISPLAY;
-   EVGLNative_Context ctx = EGL_NO_CONTEXT;
+   EGLDisplay dpy = EGL_NO_DISPLAY;
+   EGLContext ctx = EGL_NO_CONTEXT;
    EVGL_Resource *rsc = NULL;
 
    int attribs[] = {
-      EVAS_GL_TEXTURE_LEVEL, 0,
-      EVAS_GL_IMAGE_PRESERVED, 0,
-      EVAS_GL_NONE
+      EGL_GL_TEXTURE_LEVEL_KHR, 0,
+      EGL_IMAGE_PRESERVED_KHR, 0,
+      EGL_NONE
    };
    
    // Retrieve the resource object
    if (!(rsc = _evgl_tls_resource_get()))
      {
         ERR("Error creating resources in tls.");
-        return;
+        return NULL;
      }
    
-   dpy = (EVGLNative_Display)rsc->display;
-   ctx = context->context;
+   dpy = (EGLDisplay)rsc->display;
+   ctx = (EGLContext)context->context;
 
-   *image = EXT_FUNC(eglCreateImage)(dpy, ctx, EVAS_GL_TEXTURE_2D, (EGLClientBuffer)tex, attribs);
+   return EXT_FUNC(eglCreateImage)(dpy, ctx, EGL_GL_TEXTURE_2D_KHR, (EGLClientBuffer)(uintptr_t)tex, attribs);
 #else
-   (void) context; (void) image; (void) tex;
+   (void) context; (void) tex;
+   return NULL;
 #endif
 }
 
+static void
+_framebuffer_create(GLuint *buf, Eina_Bool use_extension)
+{
+   if (use_extension)
+     {
+        if (gles1_funcs && gles1_funcs->glGenFramebuffersOES)
+          gles1_funcs->glGenFramebuffersOES(1, buf);
+     }
+   else
+     {
+        glGenFramebuffers(1, buf);
+     }
+}
+
+static void
+_framebuffer_bind(GLuint buf, Eina_Bool use_extension)
+{
+   if (use_extension)
+     {
+        if (gles1_funcs && gles1_funcs->glBindFramebufferOES)
+          gles1_funcs->glBindFramebufferOES(GL_FRAMEBUFFER, buf);
+     }
+   else
+     {
+        glBindFramebuffer(GL_FRAMEBUFFER, buf);
+     }
+}
+
+static GLenum
+_framebuffer_check(Eina_Bool use_extension)
+{
+   GLenum ret = 0;
+   if (use_extension)
+     {
+        if (gles1_funcs && gles1_funcs->glCheckFramebufferStatusOES)
+          ret = gles1_funcs->glCheckFramebufferStatusOES(GL_FRAMEBUFFER);
+     }
+   else
+     {
+        ret = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+     }
+   return ret;
+}
+
 // Gen Renderbuffer
-void
+static void
 _renderbuffer_create(GLuint *buf)
 {
    glGenRenderbuffers(1, buf);
@@ -272,7 +322,7 @@ _renderbuffer_create(GLuint *buf)
 
 
 // Attach a renderbuffer with the given format to already bound FBO
-void
+static void
 _renderbuffer_allocate(GLuint buf, GLenum fmt, int w, int h, int samples)
 {
    glBindRenderbuffer(GL_RENDERBUFFER, buf);
@@ -290,7 +340,7 @@ _renderbuffer_allocate(GLuint buf, GLenum fmt, int w, int h, int samples)
    samples = 0;
 }
 
-void
+static void
 _renderbuffer_destroy(GLuint *buf)
 {
    if (*buf)
@@ -301,14 +351,18 @@ _renderbuffer_destroy(GLuint *buf)
 }
 
 // Attach a renderbuffer with the given format to already bound FBO
-void
-_renderbuffer_attach(GLuint buf, GLenum attach, Eina_Bool use_ext)
+static void
+_renderbuffer_attach(GLuint buf, GLenum attach, Eina_Bool use_extension)
 {
-#define FBO_FUNC(name, param)     \
-      (use_ext)?(gles1_funcs->name##OES param):((name) param)
-
-   FBO_FUNC(glFramebufferRenderbuffer, (GL_FRAMEBUFFER, attach, GL_RENDERBUFFER, buf));
-#undef FBO_FUNC
+   if (use_extension)
+     {
+        if (gles1_funcs->glFramebufferRenderbufferOES)
+          gles1_funcs->glFramebufferRenderbufferOES(GL_FRAMEBUFFER, attach, GL_RENDERBUFFER, buf);
+     }
+   else
+     {
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, attach, GL_RENDERBUFFER, buf);
+     }
 }
 
 // Check whether the given FBO surface config is supported by the driver
@@ -405,7 +459,7 @@ _fbo_surface_cap_test(GLint color_ifmt, GLenum color_fmt,
       return 1;
 }
 
-int
+static int
 _surface_cap_test(EVGL_Surface_Format *fmt, GL_Format *color,
                   GL_Format *depth, GL_Format *stencil, int samples)
 {
@@ -448,7 +502,7 @@ _surface_cap_test(EVGL_Surface_Format *fmt, GL_Format *color,
 }
 
 
-int
+static int
 _surface_cap_check()
 {
    int num_fmts = 0;
@@ -793,10 +847,10 @@ _context_ext_check(EVGL_Context *ctx)
      {
       case EVAS_GL_GLES_1_X:
          if (EXTENSION_SUPPORT_GLES1(framebuffer_object))
-            fbo_supported = 1;
+           fbo_supported = 1;
          break;
-      case EVAS_GL_GLES_3_X:
       case EVAS_GL_GLES_2_X:
+      case EVAS_GL_GLES_3_X:
       default:
          fbo_supported = 1;
      }
@@ -804,10 +858,13 @@ _context_ext_check(EVGL_Context *ctx)
    if (EXTENSION_SUPPORT(EGL_KHR_image_base)
        && EXTENSION_SUPPORT(EGL_KHR_gl_texture_2D_image))
      egl_image_supported = 1;
+#else
+   fbo_supported = 1;
+   egl_image_supported = 0;
 #endif
 
    if (fbo_supported && egl_image_supported)
-      ctx->extension_supported = 1;
+     ctx->fbo_image_supported = 1;
 
    ctx->extension_checked = 1;
 
@@ -993,58 +1050,53 @@ _surface_context_list_print()
 // Start from here.....
 //--------------------------------------------------------//
 static int
-_surface_buffers_fbo_set(EVGL_Surface *sfc, GLuint fbo, Eina_Bool use_ext)
+_surface_buffers_fbo_set(EVGL_Surface *sfc, GLuint fbo, Eina_Bool use_extension)
 {
    int status;
 
-#define FBO_FUNC(name, param)     \
-   (use_ext)?(gles1_funcs->name##OES param):((name) param)
-
-   FBO_FUNC(glBindFramebuffer, (GL_FRAMEBUFFER, fbo));
+   _framebuffer_bind(fbo, use_extension);
 
    // Detach any previously attached buffers
-   FBO_FUNC(glFramebufferTexture2D, (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0));
-   FBO_FUNC(glFramebufferRenderbuffer, (GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0));
-   FBO_FUNC(glFramebufferRenderbuffer, (GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0));
+   _texture_attach_2d(0, GL_COLOR_ATTACHMENT0, 0, 0, use_extension);
+   _renderbuffer_attach(0, GL_DEPTH_ATTACHMENT, use_extension);
+   _renderbuffer_attach(0, GL_STENCIL_ATTACHMENT, use_extension);
 #ifdef GL_GLES
-   FBO_FUNC(glFramebufferTexture2D, (GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0));
-   FBO_FUNC(glFramebufferTexture2D, (GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0, 0));
+   _texture_attach_2d(0, GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT, 0, use_extension);
 #else
-   FBO_FUNC(glFramebufferRenderbuffer, (GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0));
+    _renderbuffer_attach(0, GL_DEPTH_STENCIL_ATTACHMENT, use_extension);
 #endif
 
    // Render Target Texture
    if (sfc->color_buf)
-     _texture_attach_2d(sfc->color_buf, GL_COLOR_ATTACHMENT0, 0, sfc->msaa_samples, use_ext);
+     _texture_attach_2d(sfc->color_buf, GL_COLOR_ATTACHMENT0, 0, sfc->msaa_samples, use_extension);
 
    // Depth Stencil RenderBuffer - Attach it to FBO
    if (sfc->depth_stencil_buf)
      {
 #ifdef GL_GLES
         _texture_attach_2d(sfc->depth_stencil_buf, GL_DEPTH_ATTACHMENT,
-                           GL_STENCIL_ATTACHMENT, sfc->msaa_samples, use_ext);
+                           GL_STENCIL_ATTACHMENT, sfc->msaa_samples, use_extension);
 #else
-        _renderbuffer_attach(sfc->depth_stencil_buf, GL_DEPTH_STENCIL_ATTACHMENT, use_ext);
+        _renderbuffer_attach(sfc->depth_stencil_buf, GL_DEPTH_STENCIL_ATTACHMENT, use_extension);
 #endif
      }
 
    // Depth RenderBuffer - Attach it to FBO
    if (sfc->depth_buf)
-     _renderbuffer_attach(sfc->depth_buf, GL_DEPTH_ATTACHMENT, use_ext);
+     _renderbuffer_attach(sfc->depth_buf, GL_DEPTH_ATTACHMENT, use_extension);
 
    // Stencil RenderBuffer - Attach it to FBO
    if (sfc->stencil_buf)
-     _renderbuffer_attach(sfc->stencil_buf, GL_STENCIL_ATTACHMENT, use_ext);
+     _renderbuffer_attach(sfc->stencil_buf, GL_STENCIL_ATTACHMENT, use_extension);
 
    // Check FBO for completeness
-   status = FBO_FUNC(glCheckFramebufferStatus, (GL_FRAMEBUFFER));
+   status = _framebuffer_check(use_extension);
    if (status != GL_FRAMEBUFFER_COMPLETE)
      {
         ERR("FBO not complete. Error Code: %x!", status);
         return 0;
      }
 
-#undef FBO_FUNC
    return 1;
 }
 
@@ -1099,8 +1151,8 @@ _surface_buffers_allocate(void *eng_data, EVGL_Surface *sfc, int w, int h, int m
      {
         _texture_allocate_2d(sfc->color_buf, sfc->color_ifmt, sfc->color_fmt,
                              GL_UNSIGNED_BYTE, w, h);
-        if ((sfc->current_ctx) && (sfc->current_ctx->extension_supported))
-          _egl_image_attach_texture(sfc->current_ctx, &sfc->egl_image, sfc->color_buf);
+        if ((sfc->current_ctx) && (sfc->current_ctx->fbo_image_supported))
+          sfc->egl_image = _egl_image_create(sfc->current_ctx, sfc->color_buf);
 
         sfc->buffer_mem[0] = w * h * 4;
      }
@@ -2150,7 +2202,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
 
    if (!rsc)
      {
-        DBG("Creating new TLS for this thread: %x", eina_thread_self());
+        DBG("Creating new TLS for this thread: %lu", (unsigned long)eina_thread_self());
         rsc = _evgl_tls_resource_create(eng_data);
         if (!rsc) return 0;
      }
@@ -2292,7 +2344,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
           }
      }
 
-   if (!ctx->extension_supported)
+   if (!ctx->fbo_image_supported)
      {
         if (dbg) DBG("ctx %p is GLES %d", ctx, ctx->version);
         if (_evgl_direct_renderable(rsc, sfc))
@@ -2337,13 +2389,14 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
      }
    else
      {
-#define FBO_FUNC(name, param)     \
-   ((ctx->version == EVAS_GL_GLES_1_X) && (ctx->extension_supported))?(gles1_funcs->name##OES param):((name) param)
+        Eina_Bool use_extension = EINA_FALSE;
+        if ((ctx->version == EVAS_GL_GLES_1_X) && (gles1_funcs))
+          use_extension = EINA_TRUE;
 
         // Normal FBO Rendering
         // Create FBO if it hasn't been created
         if (!ctx->surface_fbo)
-          FBO_FUNC(glGenFramebuffers, (1, &ctx->surface_fbo));
+          _framebuffer_create(&ctx->surface_fbo, use_extension);
 
         // Direct Rendering
         if (_evgl_direct_renderable(rsc, sfc))
@@ -2354,13 +2407,13 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
              glGetIntegerv(GL_FRAMEBUFFER_BINDING, &curr_fbo);
              if (ctx->surface_fbo == (GLuint)curr_fbo)
                {
-                  FBO_FUNC(glBindFramebuffer, (GL_FRAMEBUFFER, 0));
+                  _framebuffer_bind(0, use_extension);
                   ctx->current_fbo = 0;
                }
              else if (ctx->current_sfc && (ctx->current_sfc->pbuffer.is_pbuffer))
                {
                   // Using the same context, we were rendering on a pbuffer
-                  FBO_FUNC(glBindFramebuffer, (GL_FRAMEBUFFER, 0));
+                  _framebuffer_bind(0, use_extension);
                   ctx->current_fbo = 0;
                }
 
@@ -2389,7 +2442,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
 
              if (sfc->color_buf)
                {
-                  if (!_surface_buffers_fbo_set(sfc, sfc->color_buf, EINA_FALSE))
+                  if (!_surface_buffers_fbo_set(sfc, sfc->color_buf, use_extension))
                     ERR("Could not detach current FBO");
                }
 
@@ -2399,7 +2452,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
 
              // Bind to the previously bound buffer (may be 0)
              if (ctx->current_fbo)
-               FBO_FUNC(glBindFramebuffer, (GL_FRAMEBUFFER, ctx->current_fbo));
+               _framebuffer_bind(ctx->current_fbo, use_extension);
 
              rsc->direct.rendered = 0;
           }
@@ -2422,7 +2475,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
                        if (rsc->direct.partial.enabled)
                           evgl_direct_partial_render_end();
 
-                       if (!_surface_buffers_fbo_set(sfc, ctx->surface_fbo, EINA_FALSE))
+                       if (!_surface_buffers_fbo_set(sfc, ctx->surface_fbo, use_extension))
                          {
                             ERR("Attaching buffers to context fbo failed. Engine: %p  Surface: %p Context FBO: %u", evgl_engine, sfc, ctx->surface_fbo);
                             evas_gl_common_error_set(eng_data, EVAS_GL_BAD_CONTEXT);
@@ -2432,11 +2485,10 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
 
                   // Bind to the previously bound buffer
                   if (ctx->current_fbo)
-                    FBO_FUNC(glBindFramebuffer, (GL_FRAMEBUFFER, ctx->current_fbo));
+                     _framebuffer_bind(ctx->current_fbo, use_extension);
                }
              rsc->direct.rendered = 0;
           }
-#undef FBO_FUNC
      }
 
    ctx->current_sfc = sfc;

@@ -461,7 +461,7 @@ struct _Evas_Pixel_Import_Source
  * Magic version number to know what the native surface struct looks like
  */
 
-#define EVAS_NATIVE_SURFACE_VERSION 4
+#define EVAS_NATIVE_SURFACE_VERSION 3
 
 /**
  * Native surface types that image object supports

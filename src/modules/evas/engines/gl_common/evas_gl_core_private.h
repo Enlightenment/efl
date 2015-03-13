@@ -168,12 +168,12 @@ struct _EVGL_Context
    GLuint       current_fbo;
 
    // Direct Rendering Related
-   int          scissor_enabled : 1;
-   int          scissor_updated : 1;
-   int          direct_scissor : 1;
-   int          viewport_updated : 1;
-   int          extension_checked : 1;
-   int          extension_supported : 1;
+   unsigned     scissor_enabled : 1;
+   unsigned     scissor_updated : 1;
+   unsigned     direct_scissor : 1;
+   unsigned     viewport_updated : 1;
+   unsigned     extension_checked : 1;
+   unsigned     fbo_image_supported : 1;
 
    int          scissor_coord[4];
    int          viewport_coord[4];

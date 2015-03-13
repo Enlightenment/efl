@@ -229,6 +229,15 @@
 #ifndef EGL_MAP_GL_TEXTURE_OPTION_WRITE_SEC
 #define EGL_MAP_GL_TEXTURE_OPTION_WRITE_SEC (1<<1)
 #endif
+#ifndef EGL_GL_TEXTURE_2D_KHR
+#define EGL_GL_TEXTURE_2D_KHR 0x30B1
+#endif
+#ifndef EGL_GL_TEXTURE_LEVEL_KHR
+#define EGL_GL_TEXTURE_LEVEL_KHR 0x30BC
+#endif
+#ifndef EGL_IMAGE_PRESERVED_KHR
+#define EGL_IMAGE_PRESERVED_KHR 0x30D2
+#endif
 
 // Evas_3d require GL_BGR, but that's an extention and will not be necessary once we move to Evas_GL_Image
 #ifndef GL_BGR
