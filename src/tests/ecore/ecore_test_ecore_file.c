@@ -329,6 +329,9 @@ START_TEST(ecore_test_ecore_file_download)
    res = ecore_file_exists(dest_name);
    fail_if(res != EINA_TRUE);
 
+   res = ecore_file_recursive_rm(download_dir);
+   fail_if(res != EINA_TRUE);
+
    ret = ecore_file_shutdown();
    fail_if(ret != 0);
 }
