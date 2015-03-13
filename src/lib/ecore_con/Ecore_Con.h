@@ -837,20 +837,204 @@ EAPI Eina_Bool         ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_
  * @}
  */
 
+/**
+ * @defgroup Ecore_Con_Socks_Group Ecore Connection SOCKS functions
+ * @ingroup Ecore_Con_Group
+ * @{
+ */
+
+/**
+ * Add a SOCKS v4 proxy to the proxy list
+ *
+ * Use this to create (or return, if previously added) a SOCKS proxy
+ * object which can be used by any ecore_con servers.
+ * @param ip The ip address of the proxy (NOT DOMAIN NAME. IP ADDRESS.)
+ * @param port The port to connect to on the proxy
+ * @param username The username to use for the proxy (OPTIONAL)
+ * @return An allocated proxy object, or NULL on failure
+ * @note This object NEVER needs to be explicitly freed.
+ * @since 1.2
+ */
 EAPI Ecore_Con_Socks *ecore_con_socks4_remote_add(const char *ip, int port, const char *username);
+
+/**
+ * Find a SOCKS v4 proxy in the proxy list
+ *
+ * Use this to determine if a SOCKS proxy was previously added by checking
+ * the proxy list against the parameters given.
+ * @param ip The ip address of the proxy (NOT DOMAIN NAME. IP ADDRESS.)
+ * @param port The port to connect to on the proxy, or -1 to match the first proxy with @p ip
+ * @param username The username used for the proxy (OPTIONAL)
+ * @return true only if a proxy exists matching the given params
+ * @note This function matches slightly more loosely than ecore_con_socks4_remote_add(), and
+ * ecore_con_socks4_remote_add() should be used to return the actual object.
+ * @since 1.2
+ */
 EAPI Eina_Bool        ecore_con_socks4_remote_exists(const char *ip, int port, const char *username);
+
+/**
+ * Remove a SOCKS v4 proxy from the proxy list and delete it
+ *
+ * Use this to remove a SOCKS proxy from the proxy list by checking
+ * the list against the parameters given. The proxy will then be deleted.
+ * @param ip The ip address of the proxy (NOT DOMAIN NAME. IP ADDRESS.)
+ * @param port The port to connect to on the proxy, or -1 to match the first proxy with @p ip
+ * @param username The username used for the proxy (OPTIONAL)
+ * @note This function matches in the same way as ecore_con_socks4_remote_exists().
+ * @warning Be aware that deleting a proxy which is being used WILL ruin your life.
+ * @since 1.2
+ */
 EAPI void             ecore_con_socks4_remote_del(const char *ip, int port, const char *username);
+
+/**
+ * Add a SOCKS v5 proxy to the proxy list
+ *
+ * Use this to create (or return, if previously added) a SOCKS proxy
+ * object which can be used by any ecore_con servers.
+ * @param ip The ip address of the proxy (NOT DOMAIN NAME. IP ADDRESS.)
+ * @param port The port to connect to on the proxy
+ * @param username The username to use for the proxy (OPTIONAL)
+ * @param password The password to use for the proxy (OPTIONAL)
+ * @return An allocated proxy object, or NULL on failure
+ * @note This object NEVER needs to be explicitly freed.
+ * @since 1.2
+ */
 EAPI Ecore_Con_Socks *ecore_con_socks5_remote_add(const char *ip, int port, const char *username, const char *password);
+
+/**
+ * Find a SOCKS v5 proxy in the proxy list
+ *
+ * Use this to determine if a SOCKS proxy was previously added by checking
+ * the proxy list against the parameters given.
+ * @param ip The ip address of the proxy (NOT DOMAIN NAME. IP ADDRESS.)
+ * @param port The port to connect to on the proxy, or -1 to match the first proxy with @p ip
+ * @param username The username used for the proxy (OPTIONAL)
+ * @param password The password used for the proxy (OPTIONAL)
+ * @return true only if a proxy exists matching the given params
+ * @note This function matches slightly more loosely than ecore_con_socks5_remote_add(), and
+ * ecore_con_socks5_remote_add() should be used to return the actual object.
+ * @since 1.2
+ */
 EAPI Eina_Bool        ecore_con_socks5_remote_exists(const char *ip, int port, const char *username, const char *password);
+
+/**
+ * Remove a SOCKS v5 proxy from the proxy list and delete it
+ *
+ * Use this to remove a SOCKS proxy from the proxy list by checking
+ * the list against the parameters given. The proxy will then be deleted.
+ * @param ip The ip address of the proxy (NOT DOMAIN NAME. IP ADDRESS.)
+ * @param port The port to connect to on the proxy, or -1 to match the first proxy with @p ip
+ * @param username The username used for the proxy (OPTIONAL)
+ * @param password The password used for the proxy (OPTIONAL)
+ * @note This function matches in the same way as ecore_con_socks4_remote_exists().
+ * @warning Be aware that deleting a proxy which is being used WILL ruin your life.
+ * @since 1.2
+ */
 EAPI void             ecore_con_socks5_remote_del(const char *ip, int port, const char *username, const char *password);
+
+/**
+ * Set DNS lookup mode on an existing SOCKS proxy
+ *
+ * According to RFC, SOCKS v4 does not require that a proxy perform
+ * its own DNS lookups for addresses. SOCKS v4a specifies the protocol
+ * for this. SOCKS v5 allows DNS lookups.
+ * If you want to enable remote DNS lookup and are sure that your
+ * proxy supports it, use this function.
+ * @param ecs The proxy object
+ * @param enable If true, the proxy will perform the dns lookup
+ * @note By default, this setting is DISABLED.
+ * @since 1.2
+ */
 EAPI void             ecore_con_socks_lookup_set(Ecore_Con_Socks *ecs, Eina_Bool enable);
+
+/**
+ * Get DNS lookup mode on an existing SOCKS proxy
+ *
+ * According to RFC, SOCKS v4 does not require that a proxy perform
+ * its own DNS lookups for addresses. SOCKS v4a specifies the protocol
+ * for this. SOCKS v5 allows DNS lookups.
+ * This function returns whether lookups are enabled on a proxy object.
+ * @param ecs The proxy object
+ * @return If true, the proxy will perform the dns lookup
+ * @note By default, this setting is DISABLED.
+ * @since 1.2
+ */
 EAPI Eina_Bool        ecore_con_socks_lookup_get(Ecore_Con_Socks *ecs);
+
+/**
+ * Enable bind mode on a SOCKS proxy
+ *
+ * Use this function to enable binding a remote port for use with a remote server.
+ * For more information, see http://ufasoft.com/doc/socks4_protocol.htm
+ * @param ecs The proxy object
+ * @param is_bind If true, the connection established will be a port binding
+ * @warning Be aware that changing the operation mode of an active proxy may result in undefined behavior
+ * @since 1.2
+ */
 EAPI void             ecore_con_socks_bind_set(Ecore_Con_Socks *ecs, Eina_Bool is_bind);
+
+/**
+ * Return bind mode of a SOCKS proxy
+ *
+ * Use this function to return bind mode of a proxy (binding a remote port for use with a remote server).
+ * For more information, see http://ufasoft.com/doc/socks4_protocol.htm
+ * @param ecs The proxy object
+ * @return If true, the connection established will be a port binding
+ * @since 1.2
+ */
 EAPI Eina_Bool        ecore_con_socks_bind_get(Ecore_Con_Socks *ecs);
+
+/**
+ * Return SOCKS version of a SOCKS proxy
+ *
+ * Use this function to return the SOCKS protocol version of a proxy
+ * @param ecs The proxy object
+ * @return 0 on error, else 4/5
+ * @since 1.2
+ */
 EAPI unsigned int     ecore_con_socks_version_get(Ecore_Con_Socks *ecs);
+
+/**
+ * Remove a SOCKS v4 proxy from the proxy list and delete it
+ *
+ * Use this to remove a SOCKS proxy from the proxy list by directly deleting the object given.
+ * @param ecs The proxy object to delete
+ * @warning Be aware that deleting a proxy which is being used WILL ruin your life.
+ * @since 1.2
+ */
 EAPI void             ecore_con_socks_remote_del(Ecore_Con_Socks *ecs);
+
+/**
+ * Set a proxy object to be used with the next server created with ecore_con_server_connect()
+ *
+ * This function sets a proxy for the next ecore_con connection. After the next server is created,
+ * the proxy will NEVER be applied again unless explicitly enabled.
+ * @param ecs The proxy object
+ * @see ecore_con_socks_apply_always()
+ * @since 1.2
+ */
 EAPI void             ecore_con_socks_apply_once(Ecore_Con_Socks *ecs);
+
+/**
+ * Set a proxy object to be used with all servers created with ecore_con_server_connect()
+ *
+ * This function sets a proxy for all ecore_con connections. It will always be used.
+ * @param ecs The proxy object
+ * @see ecore_con_socks_apply_once()
+ * @since 1.2
+ * @note ecore-con supports setting this through environment variables like so:
+ *   ECORE_CON_SOCKS_V4=[user@]server-port:lookup
+ *   ECORE_CON_SOCKS_V5=[user@]server-port:lookup
+ * user is the OPTIONAL string that would be passed to the proxy as the username
+ * server is the IP_ADDRESS of the proxy server
+ * port is the port to connect to on the proxy server
+ * lookup is 1 if the proxy should perform all DNS lookups, otherwise 0 or omitted
+ */
 EAPI void             ecore_con_socks_apply_always(Ecore_Con_Socks *ecs);
+
+/**
+ * @}
+ */
 
 /**
  * @defgroup Ecore_Con_Server_Group Ecore Connection Server Functions
