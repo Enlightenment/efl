@@ -737,7 +737,8 @@ _ecore_wl_dnd_source_cb_target(void *data, struct wl_data_source *source EINA_UN
 
    if (!(event = calloc(1, sizeof(Ecore_Wl_Event_Data_Source_Target)))) return;
 
-   event->type = strdup(mime_type);
+   if (mime_type)
+     event->type = strdup(mime_type);
 
    ecore_event_add(ECORE_WL_EVENT_DATA_SOURCE_TARGET, event,
                    _ecore_wl_dnd_source_cb_target_free, NULL);
