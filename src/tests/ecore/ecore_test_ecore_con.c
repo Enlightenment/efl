@@ -188,6 +188,7 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
    double timeout_val = 10, timeout_ret;
    int ret, server_port = 1234;
    void *del_ret;
+   const char *server_name;
 
    ret = eina_init();
    fail_if(ret != 1);
@@ -250,6 +251,9 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
    if (is_ssl)
      {
         fail_unless(ecore_con_ssl_server_cafile_add(server, TESTS_SRC_DIR"/server.pem"));
+        server_name = ecore_con_ssl_server_verify_name_get(server);
+        ecore_con_ssl_server_verify_name_set(server,server_name);
+        ecore_con_ssl_server_verify_basic(server);
         ecore_con_ssl_server_verify(server);
      }
 
@@ -397,6 +401,19 @@ START_TEST(ecore_test_ecore_con_remote_nodelay_mixed_load_cert)
 }
 END_TEST
 
+START_TEST(ecore_test_ecore_con_ssl_available)
+{
+   int ret = ecore_con_ssl_available_get();
+#ifdef HAVE_GNUTLS
+   fail_if(ret != 1);
+#elif HAVE_OPENSSL
+   fail_if(ret != 2);
+#else
+   fail_if(!ret);
+#endif
+}
+END_TEST
+
 START_TEST(ecore_test_ecore_con_init)
 {
    int ret;
@@ -478,6 +495,7 @@ void ecore_test_ecore_con(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_con_remote_nodelay_tls_load_cert);
    tcase_add_test(tc, ecore_test_ecore_con_remote_nodelay_mixed);
    tcase_add_test(tc, ecore_test_ecore_con_remote_nodelay_mixed_load_cert);
+   tcase_add_test(tc, ecore_test_ecore_con_ssl_available);
    tcase_add_test(tc, ecore_test_ecore_con_dns);
    tcase_add_test(tc, ecore_test_ecore_con_shutdown_bef_init);
 }
