@@ -1474,7 +1474,7 @@ _image_rotate_270(void *data, Image_Entry *im)
 }
 
 static void *
-_image_flip_transverse(void *data, Image_Entry *im)
+_image_flip_transpose(void *data, Image_Entry *im)
 {
    GETDAT(ih, iw);
    int x, y;
@@ -1495,7 +1495,7 @@ _image_flip_transverse(void *data, Image_Entry *im)
 }
 
 static void *
-_image_flip_transpose(void *data, Image_Entry *im)
+_image_flip_transverse(void *data, Image_Entry *im)
 {
    GETDAT(ih, iw);
    int x, y;
