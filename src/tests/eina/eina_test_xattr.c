@@ -138,51 +138,59 @@ START_TEST(eina_test_xattr_list)
         fail_if(ret != EINA_TRUE);
      }
    it = eina_xattr_ls(test_file_path);
-   i = 0;
    EINA_ITERATOR_FOREACH(it, ret_str)
      {
-         fail_if(strcmp(attribute[i], ret_str) != 0);
-         i++;
+        for (i = 0; i < sizeof (attribute) / sizeof (attribute[0]); i++)
+          if (strcmp(attribute[i], ret_str) == 0)
+            break ;
+        fail_if(i == sizeof (attribute) / sizeof (attribute[0]));
      }
    eina_iterator_free(it);
 
-   i = 0;
    it = eina_xattr_value_ls(test_file_path);
    EINA_ITERATOR_FOREACH(it, xattr)
      {
-         fail_if(strcmp(data[i], xattr->value) != 0);
-         i++;
+        for (i = 0; i < sizeof (data) / sizeof (data[0]); i++)
+          if (strcmp(attribute[i], xattr->name) == 0 &&
+              strcmp(data[i], xattr->value) == 0)
+            break ;
+        fail_if(i == sizeof (data) / sizeof (data[0]));
      }
    eina_iterator_free(it);
 
-   i = 0;
    it = eina_xattr_fd_ls(fd);
    EINA_ITERATOR_FOREACH(it, ret_str)
      {
-         fail_if(strcmp(attribute[i], ret_str) != 0);
-         i++;
+        for (i = 0; i < sizeof (attribute) / sizeof (attribute[0]); i++)
+          if (strcmp(attribute[i], ret_str) == 0)
+            break ;
+        fail_if(i == sizeof (attribute) / sizeof (attribute[0]));
      }
    eina_iterator_free(it);
 
-   i = 0;
    it = eina_xattr_value_fd_ls(fd);
    EINA_ITERATOR_FOREACH(it, xattr)
      {
-         fail_if(strcmp(data[i], xattr->value) != 0);
-         i++;
+        for (i = 0; i < sizeof (data) / sizeof (data[0]); i++)
+          if (strcmp(attribute[i], xattr->name) == 0 &&
+              strcmp(data[i], xattr->value) == 0)
+            break ;
+        fail_if(i == sizeof (data) / sizeof (data[0]));
      }
    eina_iterator_free(it);
 
    /* Test case for eina_xattr_copy and eina_xattr_fd_copy */
-   i = 0;
    ret = eina_xattr_copy(test_file_path, cp_file_path);
    fail_if(ret != EINA_TRUE);
+
    it = eina_xattr_value_ls(cp_file_path);
    EINA_ITERATOR_FOREACH(it, xattr)
      {
-        fail_if(strcmp(xattr->name, attribute[i]) != 0);
-        fail_if(strcmp(xattr->value, data[i]) != 0);
-        i++;
+        for (i = 0; i < sizeof (data) / sizeof (data[0]); i++)
+          if (strcmp(attribute[i], xattr->name) == 0 &&
+              strcmp(data[i], xattr->value) == 0)
+            break ;
+        fail_if(i == sizeof (data) / sizeof (data[0]));
      }
    eina_iterator_free(it);
 
@@ -192,15 +200,16 @@ START_TEST(eina_test_xattr_list)
         fail_if(ret != EINA_TRUE);
      }
 
-   i = 0;
    ret = eina_xattr_fd_copy(fd, fd1);
    fail_if(ret != EINA_TRUE);
    it = eina_xattr_value_fd_ls(fd1);
    EINA_ITERATOR_FOREACH(it, xattr)
      {
-        fail_if(strcmp(xattr->name, attribute[i]) != 0);
-        fail_if(strcmp(xattr->value, data[i]) != 0);
-        i++;
+        for (i = 0; i < sizeof (data) / sizeof (data[0]); i++)
+          if (strcmp(attribute[i], xattr->name) == 0 &&
+              strcmp(data[i], xattr->value) == 0)
+            break ;
+        fail_if(i == sizeof (data) / sizeof (data[0]));
      }
    eina_iterator_free(it);
 
