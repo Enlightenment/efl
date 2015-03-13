@@ -10154,6 +10154,35 @@ edje_edit_source_generate(Evas_Object *obj)
 
    buf = eina_strbuf_new();
 
+
+   /* If data items exist, print them */
+   if (ed->file->data)
+     {
+        Edje_String *es;
+        size_t data_len = 0;
+        char *escaped_entry = NULL;
+        char *escaped_string = NULL;
+        BUF_APPEND(I0 "data {\n");
+        Eina_Iterator *it = eina_hash_iterator_key_new(ed->file->data);
+        EINA_ITERATOR_FOREACH(it, entry)
+          {
+              es = eina_hash_find(ed->file->data, entry);
+              str = edje_string_get(es);
+              data_len = strlen(str);
+              /* In case when data ends with '\n' character, this item recognize
+               * as data.file. This data will not generated into the source code
+               * of group. */
+              if (str[data_len - 1] == '\n') continue;
+              escaped_entry = eina_str_escape(entry);
+              escaped_string = eina_str_escape(str);
+              BUF_APPENDF(I1"item: \"%s\" \"%s\";\n", escaped_entry, escaped_string);
+              free(escaped_entry);
+              free(escaped_string);
+          }
+        eina_iterator_free(it);
+        BUF_APPEND(I0 "}\n\n");
+     }
+
    /* if images were found, print them */
    if (images)
      {
