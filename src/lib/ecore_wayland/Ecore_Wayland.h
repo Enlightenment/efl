@@ -100,7 +100,7 @@ struct _Ecore_Wl_Event_Mouse_In
 {
    int modifiers;
    int x, y;
-   struct 
+   struct
      {
         int x, y;
      } root;
@@ -114,7 +114,7 @@ struct _Ecore_Wl_Event_Mouse_Out
 {
    int modifiers;
    int x, y;
-   struct 
+   struct
      {
         int x, y;
      } root;
@@ -151,7 +151,7 @@ struct _Ecore_Wl_Event_Dnd_Enter
    int num_types;
    unsigned int serial;
    struct wl_data_offer *offer;
-   struct 
+   struct
      {
         int x, y;
      } position;
@@ -160,7 +160,7 @@ struct _Ecore_Wl_Event_Dnd_Enter
 struct _Ecore_Wl_Event_Dnd_Position
 {
    unsigned int win, source;
-   struct 
+   struct
      {
         int x, y;
      } position;
@@ -174,7 +174,7 @@ struct _Ecore_Wl_Event_Dnd_Leave
 struct _Ecore_Wl_Event_Dnd_Drop
 {
    unsigned int win, source;
-   struct 
+   struct
      {
         int x, y;
      } position;
@@ -230,10 +230,10 @@ struct _Ecore_Wl_Event_Interfaces_Bound
  * @defgroup Ecore_Wl_Group Ecore_Wayland - Wayland integration
  * @ingroup Ecore
 
- * Ecore_Wl provides a wrapper and convenience functions for using the 
- * Wayland window system. Function groups for this part of the library 
+ * Ecore_Wl provides a wrapper and convenience functions for using the
+ * Wayland window system. Function groups for this part of the library
  * include the following:
- * 
+ *
  * @li @ref Ecore_Wl_Init_Group
  * @li @ref Ecore_Wl_Display_Group
  * @li @ref Ecore_Wl_Flush_Group
@@ -462,17 +462,17 @@ EAPI struct wl_registry *ecore_wl_registry_get(void);
 
 /**
  * Creates a new window
- * 
- * @param parent The parent window to use. If @p parent is @c 0, the root window 
+ *
+ * @param parent The parent window to use. If @p parent is @c 0, the root window
  *               of the default display is used.
  * @param x      X Position
  * @param y      Y position
  * @param w      Width
  * @param h      Height
  * @param buffer_type The type of the buffer to be used to create a new Ecore_Wl_Window.
- * 
+ *
  * @return The new window
- * 
+ *
  * @ingroup Ecore_Wl_Window_Group
  * @since 1.2
  */
@@ -480,9 +480,9 @@ EAPI Ecore_Wl_Window *ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y,
 
 /**
  * Deletes the given window
- * 
+ *
  * @param win The given window
- * 
+ *
  * @ingroup Ecore_Wl_Window_Group
  * @since 1.2
  */
@@ -490,14 +490,14 @@ EAPI void ecore_wl_window_free(Ecore_Wl_Window *win);
 
 /**
  * Signals for Wayland to initiate a window move.
- * 
- * The position requested (@p x, @p y) is not honored by Wayland because 
+ *
+ * The position requested (@p x, @p y) is not honored by Wayland because
  * Wayland does not allow specific window placement to be set.
- * 
+ *
  * @param win The window to move.
  * @param x   X Position
  * @param y   Y Position
- * 
+ *
  * @ingroup Ecore_Wl_Window_Group
  * @since 1.2
  */
@@ -505,15 +505,15 @@ EAPI void ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y);
 
 /**
  * Signals for Wayland to initiate a window resize.
- * 
- * The size requested (@p w, @p h) is not honored by Wayland because 
+ *
+ * The size requested (@p w, @p h) is not honored by Wayland because
  * Wayland does not allow specific window sizes to be set.
- * 
+ *
  * @param win      The window to resize.
  * @param w        Width
  * @param h        Height
  * @param location The edge of the window from where the resize should start.
- * 
+ *
  * @ingroup Ecore_Wl_Window_Group
  * @since 1.2
  */
@@ -526,11 +526,11 @@ EAPI void ecore_wl_window_commit(Ecore_Wl_Window *win);
 
 /**
  * Shows a window
- * 
+ *
  * Synonymous to "mapping" a window in Wayland System terminology.
- * 
+ *
  * @param win The window to show.
- * 
+ *
  * @ingroup Ecore_Wl_Window_Group
  * @since 1.2
  */
@@ -538,11 +538,11 @@ EAPI void ecore_wl_window_show(Ecore_Wl_Window *win);
 
 /**
  * Hides a window
- * 
+ *
  * Synonymous to "unmapping" a window in Wayland System terminology.
- * 
+ *
  * @param win The window to hide.
- * 
+ *
  * @ingroup Ecore_Wl_Window_Group
  * @since 1.2
  */
@@ -550,9 +550,9 @@ EAPI void ecore_wl_window_hide(Ecore_Wl_Window *win);
 
 /**
  * Raises a window
- * 
+ *
  * @param win The window to raise.
- * 
+ *
  * @ingroup Ecore_Wl_Window_Group
  * @since 1.2
  */
@@ -577,9 +577,9 @@ EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *pare
 
 /**
  * Iconify a window
- * 
+ *
  * @param win The window to iconifiy
- * 
+ *
  * @ingroup Ecore_Wl_Window_Group
  * @since 1.12
  */
@@ -591,7 +591,7 @@ EAPI int ecore_wl_window_id_get(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_title_set(Ecore_Wl_Window *win, const char *title);
 EAPI void ecore_wl_window_class_name_set(Ecore_Wl_Window *win, const char *class_name);
 EAPI int ecore_wl_window_surface_id_get(Ecore_Wl_Window *win);
-       
+
 EAPI Ecore_Wl_Input *ecore_wl_window_keyboard_get(Ecore_Wl_Window *win);
 
 /**
@@ -609,10 +609,10 @@ EAPI Eina_Bool ecore_wl_window_alpha_get(Ecore_Wl_Window *win);
 
 /**
  * Returns the Ecore_Wl_Window from a wl_surface
- * 
+ *
  * @param surface The surface for which to find the Ecore_Wl_Window from
  * @return the Ecore_Wl_Window associated with this surface
- * 
+ *
  * @ingroup Ecore_Wl_Window_Group
  * @since 1.8
  */
@@ -620,17 +620,17 @@ EAPI Ecore_Wl_Window *ecore_wl_window_surface_find(struct wl_surface *surface);
 
 /**
  * Set the input region of the Ecore_Wl_Window.
- * 
+ *
  * To set an empty region, pass width and height as 0.
- * 
+ *
  * An empty input region means the entire window surface will accept input.
- * 
+ *
  * @param win The window
  * @param x The left point of the region.
  * @param y The top point of the region.
  * @param w The width of the region.
  * @param h The height of the region.
- * 
+ *
  * @ingroup Ecore_Wl_Window_Group
  * @since 1.8
  */
@@ -638,13 +638,13 @@ EAPI void ecore_wl_window_input_region_set(Ecore_Wl_Window *win, int x, int y, i
 
 /**
  * Set the opaque region of the Ecore_Wl_Window
- * 
+ *
  * @param win The window
  * @param x The left point of the region.
  * @param y The top point of the region.
  * @param w The width of the region.
  * @param h The height of the region.
- * 
+ *
  * @ingroup Ecore_Wl_Window_Group
  * @since 1.8
  */
@@ -652,10 +652,10 @@ EAPI void ecore_wl_window_opaque_region_set(Ecore_Wl_Window *win, int x, int y, 
 
 /**
  * Set the rotation of the Ecore_Wl_Window
- * 
+ *
  * @param win The window
  * @param rotation The degree of rotation for this window
- * 
+ *
  * @ingroup Ecore_Wl_Window_Group
  * @since 1.8
  */
@@ -663,10 +663,10 @@ EAPI void ecore_wl_window_rotation_set(Ecore_Wl_Window *win, int rotation);
 
 /**
  * Get the rotation of the Ecore_Wl_Window
- * 
+ *
  * @param win The window
  * @return The degree of rotation for this window
- * 
+ *
  * @ingroup Ecore_Wl_Window_Group
  * @since 1.8
  */
@@ -681,13 +681,13 @@ EAPI int ecore_wl_window_rotation_get(Ecore_Wl_Window *win);
 
 /**
  * @deprecated use ecore_wl_dnd_selection_set
- * @since 1.7 
+ * @since 1.7
 */
 EINA_DEPRECATED EAPI Eina_Bool ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered);
 
 /**
  * @deprecated use ecore_wl_dnd_selection_get
- * @since 1.7 
+ * @since 1.7
 */
 EINA_DEPRECATED EAPI Eina_Bool ecore_wl_dnd_get_selection(Ecore_Wl_Dnd *dnd, const char *type);
 
