@@ -11,8 +11,8 @@ extern "C" {
  */
 
 /**
- * @brief Text handling functions.
- * @defgroup Text access and manipulation
+ * @brief Line text handling functions.
+ * @defgroup Text access and manipulation within lines
  *
  * @{
  *
@@ -27,6 +27,20 @@ EAPI void elm_code_line_text_set(Elm_Code_Line *line, const char *chars, unsigne
 EAPI void elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, const char *string, int length);
 
 EAPI void elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length);
+
+/**
+ * @}
+ *
+ * @brief Generic text handling functions.
+ * @defgroup Text helper functions
+ *
+ * @{
+ *
+ * Functions for managing unicode text.
+ *
+ */
+
+EAPI unsigned int elm_code_text_unicode_strlen(const char *chars, unsigned int length);
 
 /**
  * @}

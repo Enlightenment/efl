@@ -55,7 +55,7 @@ _elm_code_test_line_done_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED,
    line = (Elm_Code_Line *)event_info;
 
    if (line->number == 1)
-     elm_code_line_token_add(line, 14, 21, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
+     elm_code_line_token_add(line, 18, 25, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
    else if (line->number == 4)
      line->status = ELM_CODE_STATUS_TYPE_ERROR;
 
@@ -76,7 +76,7 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
          eo_event_callback_add(&ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_test_line_done_cb, NULL);
          eo_event_callback_add(ELM_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_clicked_cb, code));
 
-   _append_line(code->file, "Hello World, Elm Code! ❤");
+   _append_line(code->file, "❤ Hello World, Elm Code! ❤");
    _append_line(code->file, "");
    _append_line(code->file, "This is a demo of elm_code's capabilities.");
    _append_line(code->file, "⚑ *** Currently experimental ***");

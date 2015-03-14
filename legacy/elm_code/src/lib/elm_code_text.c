@@ -36,8 +36,7 @@ elm_code_line_text_set(Elm_Code_Line *line, const char *chars, unsigned int leng
    strncpy(newtext, chars, length);
    line->modified = newtext;
    line->length = length;
-// TODO update calculation
-   line->unicode_length = length;
+   line->unicode_length = elm_code_text_unicode_strlen(line->modified, line->length);
 
    file = line->file;
    elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
@@ -112,9 +111,7 @@ elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, const char
 
    line->modified = inserted;
    line->length += length;
-
-// TODO update calculation
-   line->unicode_length += length;
+   line->unicode_length = elm_code_text_unicode_strlen(line->modified, line->length);
 
    file = line->file;
    elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
@@ -152,10 +149,32 @@ elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length
 
    line->modified = removed;
    line->length -= length;
-
-// TODO update calculation
-   line->unicode_length -= length;
+   line->unicode_length = elm_code_text_unicode_strlen(line->modified, line->length);
 
    file = line->file;
    elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
+}
+
+/* generic text functions */
+
+EAPI unsigned int
+elm_code_text_unicode_strlen(const char *chars, unsigned int length)
+{
+   Eina_Unicode unicode;
+   unsigned int count = 0;
+   int index = 0;
+
+   if (chars == NULL)
+     return 0;
+
+   while ((unsigned int) index < length)
+     {
+        unicode = eina_unicode_utf8_next_get(chars, &index);
+        if (unicode == 0)
+          break;
+
+        count++;
+     }
+
+   return count;
 }

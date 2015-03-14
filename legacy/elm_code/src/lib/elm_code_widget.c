@@ -155,24 +155,30 @@ _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
 {
    Eina_List *item;
    Elm_Code_Token *token;
-   int start, end, length, offset;
+   const char *content;
+   unsigned int start, end, length, offset;
+   unsigned int token_start_col, token_end_col;
 
-   offset = elm_code_widget_text_left_gutter_width_get(widget) - 1;
-   start = offset + 1;
+   offset = elm_code_widget_text_left_gutter_width_get(widget);
+   start = offset;
+   content = elm_code_line_text_get(line, NULL);
    length = line->unicode_length + offset;
 
    EINA_LIST_FOREACH(line->tokens, item, token)
      {
-        if (token->start > start)
-          _elm_code_widget_fill_line_token(cells, count, start, token->start + offset, ELM_CODE_TOKEN_TYPE_DEFAULT);
+        token_start_col = elm_code_text_unicode_strlen(content, token->start - 1) + offset;
+        token_end_col = elm_code_text_unicode_strlen(content, token->end - 1) + offset;
+
+        if (token_start_col > start)
+          _elm_code_widget_fill_line_token(cells, count, start, token_start_col, ELM_CODE_TOKEN_TYPE_DEFAULT);
 
         // TODO handle a token starting before the previous finishes
-        end = token->end;
+        end = token_end_col;
         if (token->end_line > line->number)
-          end = count;
-        _elm_code_widget_fill_line_token(cells, count, token->start + offset, end + offset, token->type);
+          end = length + offset;
+        _elm_code_widget_fill_line_token(cells, count, token_start_col, end, token->type);
 
-        start = end + offset + 1;
+        start = end + 1;
      }
 
    _elm_code_widget_fill_line_token(cells, count, start, length, ELM_CODE_TOKEN_TYPE_DEFAULT);
@@ -261,10 +267,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
 
    length = elm_code_line_utf8_length_get(line);
    chrpos = 0;
-   if (line->modified)
-      chr = line->modified;
-   else
-      chr = (char *)line->content;
+   chr = (char *)elm_code_line_text_get(line, NULL);
 
    for (x = gutter; x < (unsigned int) w && x < length + gutter; x++)
      {
