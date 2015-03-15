@@ -21,6 +21,17 @@ static Elm_Code_Line *_elm_code_file_line_blank_create(Elm_Code_File *file, int 
    return ecl;
 }
 
+static Elm_Code_File_Line_Ending _elm_code_line_ending_get(const char *ending)
+{
+   switch (*ending)
+     {
+        case '\r':
+          return ELM_CODE_FILE_LINE_ENDING_WINDOWS;
+        default:
+          return ELM_CODE_FILE_LINE_ENDING_UNIX;
+     }
+}
+
 static void _elm_code_file_line_insert_data(Elm_Code_File *file, const char *content, unsigned int length,
                                             unsigned int row, Eina_Bool mapped, void *data)
 {
@@ -93,6 +104,9 @@ EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path)
      {
         Elm_Code_Line *ecl;
 
+        if (lastindex == 1)
+          ret->line_ending = _elm_code_line_ending_get(line->start + line->length);
+
         /* Working around the issue that eina_file_map_lines does not trigger an item for empty lines */
         while (lastindex < line->index - 1)
           {
@@ -146,6 +160,11 @@ EAPI const char *elm_code_file_filename_get(Elm_Code_File *file)
 EAPI const char *elm_code_file_path_get(Elm_Code_File *file)
 {
    return eina_file_filename_get(file->file);
+}
+
+EAPI Elm_Code_File_Line_Ending elm_code_file_line_ending_get(Elm_Code_File *file)
+{
+   return file->line_ending;
 }
 
 EAPI void elm_code_file_clear(Elm_Code_File *file)

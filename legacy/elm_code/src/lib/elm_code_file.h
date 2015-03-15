@@ -10,6 +10,11 @@ extern "C" {
  * @brief These routines are used for interacting with files using Elm Code.
  */
 
+typedef enum {
+   ELM_CODE_FILE_LINE_ENDING_UNIX = 0,
+   ELM_CODE_FILE_LINE_ENDING_WINDOWS
+} Elm_Code_File_Line_Ending;
+
 struct _Elm_Code_File
 {
    void *parent;
@@ -18,6 +23,7 @@ struct _Elm_Code_File
    Eina_File *file;
    void *map;
 
+   Elm_Code_File_Line_Ending line_ending;
 };
 
 /**
@@ -41,6 +47,8 @@ EAPI void elm_code_file_close(Elm_Code_File *file);
 EAPI const char *elm_code_file_filename_get(Elm_Code_File *file);
 
 EAPI const char *elm_code_file_path_get(Elm_Code_File *file);
+
+EAPI Elm_Code_File_Line_Ending elm_code_file_line_ending_get(Elm_Code_File *file);
 
 /**
  * @}
