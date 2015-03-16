@@ -326,7 +326,6 @@ struct _EVGL_Engine
    Eina_List         *surfaces;
    Eina_List         *contexts;
    Eina_Hash         *direct_surfaces; // unsigned (texid) --> EVGL_Surface*
-   Eina_List         *direct_depth_stencil_surfaces;
 
    //void              *engine_data;  
    Eina_Hash         *safe_extensions;

@@ -1551,7 +1551,6 @@ void *
 evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
 {
    EVGL_Surface *sfc = NULL;
-   Eina_Bool need_reconfigure = EINA_FALSE;
    Eina_Bool dbg;
 
    // Check if engine is valid
@@ -1683,21 +1682,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
              DBG("Added native %p as direct surface: %p", sfc->gles1_sfc_native, sfc);
           }
      }
-
-   if (sfc->direct_fb_opt &&
-       (sfc->depth_fmt || sfc->stencil_fmt || sfc->depth_stencil_fmt))
-     {
-        need_reconfigure = !evgl_engine->direct_depth_stencil_surfaces;
-        evgl_engine->direct_depth_stencil_surfaces =
-          eina_list_prepend(evgl_engine->direct_depth_stencil_surfaces, sfc);
-     }
    LKU(evgl_engine->resource_lock);
-
-   if (need_reconfigure)
-     {
-        // See FIXME notice above in _internal_config_set
-        ERR("Surface reconfigure is not implemented yet");
-     }
 
    if (dbg) DBG("Created surface sfc %p (eng %p)", sfc, eng_data);
 
@@ -1832,7 +1817,6 @@ int
 evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
 {
    EVGL_Resource *rsc;
-   Eina_Bool need_reconfigure = EINA_FALSE;
    Eina_Bool dbg;
    GLuint texid;
 
@@ -1943,23 +1927,7 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
         eina_hash_del(evgl_engine->direct_surfaces, &texid, sfc);
         DBG("Removed tex %d from the direct surface: %p", texid, sfc);
      }
-
-   if (sfc->direct_fb_opt &&
-       (sfc->depth_fmt || sfc->stencil_fmt || sfc->depth_stencil_fmt))
-     {
-        Eina_List *found;
-        found = eina_list_data_find_list(evgl_engine->direct_depth_stencil_surfaces, sfc);
-        need_reconfigure = !!found;
-        evgl_engine->direct_depth_stencil_surfaces =
-          eina_list_remove_list(evgl_engine->direct_depth_stencil_surfaces, found);
-     }
    LKU(evgl_engine->resource_lock);
-
-   if (need_reconfigure)
-     {
-        // See FIXME notice above in _internal_config_set
-        WRN("Surface reconfigure is not implemented yet");
-     }
 
    free(sfc);
    sfc = NULL;
@@ -2517,8 +2485,9 @@ evgl_native_surface_direct_opts_get(Evas_Native_Surface *ns,
         sfc = eina_hash_find(evgl_engine->direct_surfaces, &ns->data.opengl.texture_id);
         if (!sfc)
           {
-             DBG("Native surface %p (color_buf %d) was not found.",
-                 ns, ns->data.opengl.texture_id);
+             if (evgl_engine->api_debug_mode)
+               DBG("Native surface %p (color_buf %d) was not found.",
+                   ns, ns->data.opengl.texture_id);
              return EINA_FALSE;
           }
      }
@@ -2528,8 +2497,9 @@ evgl_native_surface_direct_opts_get(Evas_Native_Surface *ns,
         sfc = eina_hash_find(evgl_engine->direct_surfaces, &ns->data.x11.pixmap);
         if (!sfc)
           {
-             DBG("Native surface %p (pixmap %lx) was not found.",
-                 ns, ns->data.x11.pixmap);
+             if (evgl_engine->api_debug_mode)
+               DBG("Native surface %p (pixmap %lx) was not found.",
+                   ns, ns->data.x11.pixmap);
              return EINA_FALSE;
           }
      }
