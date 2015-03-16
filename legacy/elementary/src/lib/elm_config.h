@@ -908,13 +908,32 @@ EAPI const char *elm_config_accel_preference_get(void);
  * Note that it will take effect only to Elementary windows created after
  * this is called. The @p pref string is a freeform C string that indicates
  * what kind of acceleration is preferred. Here "acceleration" majorly
- * means to rendering and which hardware unit application renders guis with.
+ * means to rendering and which hardware unit application renders GUIs with.
  * This may or may not be honored, but a best attempt will
  * be made. Known strings are as follows:
  * 
- * "gl", "opengl" - try use opengl.
+ * "gl", "opengl" - try use OpenGL.
  * "3d" - try and use a 3d acceleration unit.
  * "hw", "hardware", "accel" - try any acceleration unit (best possible)
+ *
+ * Since 1.14, it is also possible to specify some GL properties for the GL
+ * window surface. This allows applications to use GLView with depth, stencil
+ * and MSAA buffers with direct rendering. The new accel preference string
+ * format is thus "{HW Accel}[:depth{value}[:stencil{value}[:msaa{str}]]]".
+ *
+ * Accepted values for depth are for instance "depth", "depth16", "depth24".
+ * Accepted values for stencil are "stencil", "stencil1", "stencil8".
+ * For MSAA, only predefined strings are accepted: "msaa", "msaa_low",
+ * "msaa_mid" and "msaa_high". The selected configuration is not garanteed
+ * and is only valid in case of GL acceleration. Only the base acceleration
+ * string will be saved (e.g. "gl" or "hw").
+ *
+ * Full examples include:
+ *
+ * "gl", - try to use OpenGL
+ * "hw:depth:stencil", - use HW acceleration with default depth and stencil buffers
+ * "opengl:depth24:stencil8:msaa_mid" - use OpenGL with 24-bit depth,
+ *      8-bit stencil and a medium number of MSAA samples in the backbuffer.
  * 
  * This takes precedence over engine preferences set with
  * elm_config_preferred_engine_set().
