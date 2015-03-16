@@ -66,6 +66,7 @@ _edje_color_class_free(void *data)
    Edje_Color_Class *cc = data;
 
    if (cc->name) eina_stringshare_del(cc->name);
+   eina_stringshare_del(cc->desc);
    free(cc);
 }
 

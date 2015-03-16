@@ -65,7 +65,6 @@ _event_handler_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED) // 
         ecore_idle_enterer_del(ctxt->enterer);
         ecore_idle_exiter_del(ctxt->exiter);
 //        ecore_idler_del(ctxt->idler);
-        eo_unref(ctxt->idler);
 
         ctxt->enterer = NULL;
         ctxt->exiter = NULL;
@@ -118,7 +117,7 @@ main(void)
    ctxt.timer = ecore_timer_add(0.0005, _timer_cb, &ctxt);
 
    ecore_main_loop_begin();
-   ecore_shutdown();
+ //  ecore_shutdown();
 
    return 0;
 }

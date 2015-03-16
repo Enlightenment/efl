@@ -34,6 +34,18 @@ static inline void _eo_data_xunref_internal(_Eo_Object *obj, void *data, const _
 static const _Eo_Class *_eo_op_class_get(Eo_Op op);
 static const char * _eo_op_id_name_get(Eo_Op op);
 
+
+//avi dbg start
+static unsigned int eo_data_scope_get_counter=0;
+
+static clock_t   eo_data_scope_get_clocks =0;
+static unsigned int eo_op_class_counter=0;
+
+static clock_t  eo_op_class_get_clocks =0;
+static unsigned int   eo_call_resolve_counter=0;
+
+static clock_t eo_call_resolve_clocks =0;
+//avi dbg end
 /* Start of Dich */
 
 /* How we search and store the implementations in classes. */
@@ -168,10 +180,12 @@ _eo_class_pointer_get(const Eo_Class *klass_id)
 static const _Eo_Class *
 _eo_op_class_get(Eo_Op op)
 {
+eo_op_class_counter++;
+
    /* FIXME: Make it fast. */
    _Eo_Class **itr = _eo_classes;
    int mid, max, min;
-
+clock_t start_time=clock();
    min = 0;
    max = _eo_classes_last_id - 1;
    while (min <= max)
@@ -182,10 +196,13 @@ _eo_op_class_get(Eo_Op op)
            min = mid + 1;
         else if (itr[mid]->base_id  > op)
            max = mid - 1;
-        else
-           return itr[mid];
-     }
+        else{
+eo_op_class_get_clocks+=clock()-start_time;
 
+           return itr[mid];
+        }
+     }
+eo_op_class_get_clocks+=clock()-start_time;
    return NULL;
 }
 
@@ -565,7 +582,11 @@ EAPI Eina_Bool
    const op_type_funcs *func;
    Eina_Bool is_obj;
 
-   if (op == EO_NOOP) return EINA_FALSE;
+eo_call_resolve_counter++;
+clock_t start_time=clock();
+
+
+if (op == EO_NOOP) return EINA_FALSE;
 
    fptr = _eo_call_stack_get(is_main_loop)->frame_ptr;
 
@@ -617,7 +638,7 @@ EAPI Eina_Bool
              call->obj = call->klass;
              call->data = NULL;
           }
-
+eo_call_resolve_clocks+=clock()-start_time;
         return EINA_TRUE;
      }
 
@@ -653,6 +674,8 @@ end:
                   call->func = func->func;
                   call->data = _eo_data_scope_get(emb_obj, func->src);
 
+
+eo_call_resolve_clocks+=clock()-start_time;
                   return EINA_TRUE;
                }
           }
@@ -676,6 +699,9 @@ end:
                  file, line, func_name, op, main_klass->desc->name);
           }
      }
+
+eo_call_resolve_clocks+=clock()-start_time;
+
    return EINA_FALSE;
 }
 
@@ -1600,6 +1626,9 @@ _eo_condtor_done(Eo *obj_id)
 static inline void *
 _eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass)
 {
+eo_data_scope_get_counter++;
+clock_t start_time = clock();
+
    if (EINA_LIKELY((klass->desc->data_size > 0) && (klass->desc->type != EO_CLASS_TYPE_MIXIN)))
      return ((char *) obj) + _eo_sz + klass->data_offset;
 
@@ -1610,17 +1639,23 @@ _eo_data_scope_get(const _Eo_Object *obj, const _Eo_Class *klass)
      {
         Eo_Extension_Data_Offset *doff_itr = obj->klass->extn_data_off;
 
-        if (!doff_itr)
+        if (!doff_itr){
+  eo_data_scope_get_clocks+=clock()-start_time; 
+
           return NULL;
+        }
 
         while (doff_itr->klass)
           {
-             if (doff_itr->klass == klass)
+             if (doff_itr->klass == klass){
+  eo_data_scope_get_clocks+=clock()-start_time; 
+
                return ((char *) obj) + _eo_sz + doff_itr->offset;
+             }
              doff_itr++;
           }
      }
-
+  eo_data_scope_get_clocks+=clock()-start_time; 
    return NULL;
 }
 
@@ -1901,4 +1936,16 @@ eo_manual_free(Eo *obj_id)
 
    return EINA_TRUE;
 }
+static __attribute__((destructor)) void finish(void)
+{
+
+printf("eo.c: _eo_data_scope_get= %u time=%f , eo_op_class_get=%u time=%f, eo_call_resolve=%u time=%f\n",
+      eo_data_scope_get_counter,  (double) eo_data_scope_get_clocks /CLOCKS_PER_SEC,
+       eo_op_class_counter,   (double)eo_op_class_get_clocks /CLOCKS_PER_SEC,
+eo_call_resolve_counter,  (double)eo_call_resolve_clocks /CLOCKS_PER_SEC
+
+      );//avi debug
+
+      }
+
 

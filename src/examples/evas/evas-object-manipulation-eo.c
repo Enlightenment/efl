@@ -248,10 +248,6 @@ main(void)
 
    ecore_main_loop_begin();
 
-   /* Decrementing object's reference count.*/
-   eo_unref(d.bg);
-   eo_unref(d.clipper_border);
-
    ecore_evas_free(d.ee);
    ecore_evas_shutdown();
    return 0;

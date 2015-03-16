@@ -401,12 +401,9 @@ evas_gl_exam(Evas_Object *win)
    Evas_Native_Surface ns;
 
    //Config for the surface for evas gl
-   Evas_GL_Config config =
-     {
-        EVAS_GL_RGBA_8888,
-        EVAS_GL_DEPTH_BIT_32,
-        EVAS_GL_STENCIL_NONE
-     };
+   Evas_GL_Config *config = evas_gl_config_new();
+   config->color_format = EVAS_GL_RGBA_8888;
+   config->depth_bits = EVAS_GL_DEPTH_BIT_24;
 
    //Get the window size
    Evas_Coord w,h;
@@ -417,8 +414,9 @@ evas_gl_exam(Evas_Object *win)
    gldata.glapi = evas_gl_api_get(gldata.evasgl);
 
    //Create a surface and context
-   gldata.sfc = evas_gl_surface_create(gldata.evasgl, &config, w, h);
+   gldata.sfc = evas_gl_surface_create(gldata.evasgl, config, w, h);
    gldata.ctx = evas_gl_context_create(gldata.evasgl, NULL);
+   evas_gl_config_free(config);
 
    //Set rotation variables
    gldata.xangle = 45.0f;

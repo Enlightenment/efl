@@ -774,6 +774,13 @@ _edje_object_color_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_cl
    return EINA_FALSE;
 }
 
+EOLIAN Eina_Stringshare *
+_edje_object_color_class_description_get(Eo *obj EINA_UNUSED, Edje *ed, const char *color_class)
+{
+   Edje_Color_Class *cc = _edje_color_class_find(ed, color_class);
+   return cc ? cc->desc : NULL;
+}
+
 void
 edje_object_color_class_del(Evas_Object *obj, const char *color_class)
 {

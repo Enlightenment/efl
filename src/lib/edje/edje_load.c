@@ -1545,6 +1545,7 @@ _edje_file_free(Edje_File *edf)
    EINA_LIST_FREE(edf->color_classes, ecc)
      {
         if (edf->free_strings && ecc->name) eina_stringshare_del(ecc->name);
+        if (edf->free_strings) eina_stringshare_del(ecc->desc);
         free(ecc);
      }
 
@@ -1809,7 +1810,7 @@ _edje_object_pack_item_hints_set(Evas_Object *obj, Edje_Pack_Element *it)
    evas_object_resize(obj, w, h);
 }
 
-static const char *
+const char *
 _edje_find_alias(Eina_Hash *aliased, char *src, int *length)
 {
    const char *alias;

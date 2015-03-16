@@ -3,9 +3,8 @@
 
 #include <Eina.h>
 
-int
-main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
-{
+   Eina_Inarray *iarr;
+int add_array(){
    const char* strings[] = {
       "helo", "hera", "starbuck", "kat", "boomer",
       "hotdog", "longshot", "jammer", "crashdown", "hardball",
@@ -13,7 +12,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
       "skulls", "bulldog", "flat top", "hammerhead", "gonzo"
    };
    char **str, **str2;
-   Eina_Inarray *iarr;
+
    int i;
 
    eina_init();
@@ -23,6 +22,21 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
      str = (char **)(&strings[i]);
       eina_inarray_push(iarr, str);
    }
+
+
+}
+int
+main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
+{
+
+   char **str, **str2;
+
+   int i;
+
+   eina_init();
+   iarr = eina_inarray_new(sizeof(char *), 0);
+
+ add_array(); 
 
    printf("Inline array of strings:\n");
    EINA_INARRAY_FOREACH(iarr, str2)

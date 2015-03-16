@@ -1867,6 +1867,7 @@ struct _Edje_Color_Class
    unsigned char  r, g, b, a;
    unsigned char  r2, g2, b2, a2;
    unsigned char  r3, g3, b3, a3;
+   Eina_Stringshare *desc;
 };
 
 struct _Edje_Text_Class
@@ -2255,6 +2256,7 @@ void              _edje_color_class_on_del(Edje *ed, Edje_Part *ep);
 void              _edje_color_class_members_free(void);
 void              _edje_color_class_hash_free(void);
 
+const char       * _edje_find_alias(Eina_Hash *aliased, char *src, int *length);
 Edje_Text_Class  *_edje_text_class_find(Edje *ed, const char *text_class);
 void              _edje_text_class_member_add(Edje *ed, const char *text_class);
 void              _edje_text_class_member_del(Edje *ed, const char *text_class);

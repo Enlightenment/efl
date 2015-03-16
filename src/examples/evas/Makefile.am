@@ -268,7 +268,7 @@ evas_3d_mmap_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_mmap_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_3d_colorpick
-evas_3d_colorpick_SOURCES = evas-3d-colorpick.c
+evas_3d_colorpick_SOURCES = evas-3d-colorpick.c evas-3d-primitives.c
 evas_3d_colorpick_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_colorpick_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
@@ -331,19 +331,15 @@ resources/images/enlightenment.png \
 resources/images/red.png \
 resources/images/im1.png \
 resources/images/cube1.png \
-resources/images/eagle.png \
-resources/images/M15.png \
-resources/images/M15_1.png \
+resources/images/bg_space.jpg \
+resources/images/EarthDiffuse.png \
+resources/images/moon.png \
 resources/images/normal_lego.png \
 resources/images/sonic.png \
 resources/images/sweet_home_reversed.png \
-resources/images/star.jpg \
-resources/models/eagle.md2 \
 resources/models/M15.mtl \
-resources/models/M15.obj \
 resources/models/mesh_for_mmap.eet \
 resources/models/mesh_for_mmap.md2 \
-resources/models/mesh_for_mmap.mtl \
 resources/models/mesh_for_mmap.obj \
 resources/models/mesh_for_mmap.ply \
 resources/models/Normal_UVs_Colors.ply \
@@ -355,13 +351,9 @@ resources/models/NoNormal_UVs_NoColors.ply \
 resources/models/NoNormal_NoUVs_Colors.ply \
 resources/models/NoNormal_NoUVs_NoColors.ply \
 resources/models/sonic.md2 \
-resources/models/sweet_home.mtl \
 resources/models/sweet_home.obj \
-resources/models/sweet_home_only_vertex_coords.mtl \
 resources/models/sweet_home_only_vertex_coords.obj \
-resources/models/sweet_home_without_normals.mtl \
 resources/models/sweet_home_without_normals.obj \
-resources/models/sweet_home_without_tex_coords.mtl \
 resources/models/sweet_home_without_tex_coords.obj \
 Makefile.examples
 

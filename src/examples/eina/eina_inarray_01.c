@@ -2,50 +2,64 @@
 //gcc -g eina_inarray_01.c -o eina_inarray_01 `pkg-config --cflags --libs eina`
 
 #include <Eina.h>
+struct _Eo_Callback_Description
+{
+   //Eo_Callback_Description *next;
 
+
+   void *func_data;
+   int priority;
+
+
+};
+int
+_eo_base_callback_priority_cmp(const void *a, const void *b)
+{
+   return ((struct _Eo_Callback_Description*)a)->priority > ((struct _Eo_Callback_Description*)b)->priority;
+}
 int
 cmp(const void *a, const void *b)
 {
    return *(int*)a > *(int*)b;
 }
+Eina_Bool
+check( const void *iarr,  void *a,  void *b)
+{
+   return ((struct _Eo_Callback_Description*)a)->priority==2;
+}
 
+void insert( Eina_Inarray *iarr, int pr){
+  struct _Eo_Callback_Description cb;
+
+   cb.priority = pr;
+   // _eo_callbacks_sorted_insert(pd, cb);
+   eina_inarray_insert_sorted(iarr, &cb , _eo_base_callback_priority_cmp);
+
+}
 int main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Eina_Inarray *iarr;
    char ch, *ch2;
-   int a, *b;
+   struct _Eo_Callback_Description a, *b;
 
    eina_init();
-   iarr = eina_inarray_new(sizeof(char), 0);
+   iarr = eina_inarray_new(sizeof(struct _Eo_Callback_Description), 0);
 
-   ch = 'a';
-   eina_inarray_push(iarr, &ch);
-   ch = 'b';
-   eina_inarray_push(iarr, &ch);
-   ch = 'c';
-   eina_inarray_push(iarr, &ch);
-   ch = 'd';
-   eina_inarray_push(iarr, &ch);
+//  struct _Eo_Callback_Description cb;
 
-   printf("Inline array of chars:\n");
-   EINA_INARRAY_FOREACH(iarr, ch2)
-     printf("char: %c(pointer: %p)\n", *ch2, ch2);
+   //  cb = calloc(1, sizeof(*cb));
+   //   if (!cb) return;
 
-   eina_inarray_flush(iarr);
-   eina_inarray_step_set(iarr, sizeof(Eina_Inarray), sizeof(int), 4);
-
-   a = 97;
-   eina_inarray_push(iarr, &a);
-   a = 98;
-   eina_inarray_push(iarr, &a);
-   a = 100;
-   eina_inarray_push(iarr, &a);
-   a = 99;
-   eina_inarray_insert_sorted(iarr, &a, cmp);
-
+ //  cb.priority = 2;
+   // _eo_callbacks_sorted_insert(pd, cb);
+//   eina_inarray_insert_sorted(iarr, &cb , _eo_base_callback_priority_cmp);
+insert(iarr, 2);
+insert(iarr,  4);
+insert(iarr, -1 );
+  eina_inarray_foreach_remove( iarr, check, NULL);
    printf("Inline array of integers with %d elements:\n", eina_inarray_count(iarr));
    EINA_INARRAY_FOREACH(iarr, b)
-     printf("int: %d(pointer: %p)\n", *b, b);
+     printf("int: %d(pointer: %p)\n", b->priority, b);
 
    eina_inarray_free(iarr);
    eina_shutdown();

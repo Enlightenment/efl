@@ -2146,6 +2146,18 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             @out int a3; /*@ Shadow Alpha value */
          }
       }
+      color_class_description_get @const {
+         /*@
+         @brief Gets the description of an object color class.
+
+         @return The description of the target color class or @c NULL if not found
+
+         This function gets the description of a color class in use by an object. */
+         return: const(char)*;
+         params {
+            @in const(char)* color_class;
+         }
+      }
       part_drag_step {
          /*@
          @brief Steps the dragable x,y steps.

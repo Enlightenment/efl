@@ -1,6 +1,6 @@
 ﻿/**
  * This example shows how to get and draw axis-aligned bounding box.
- * 
+ *
  * @see _mesh_aabb(Evas_3D_Mesh **mesh_b, const Evas_3D_Node *node);
  * Rotate axises (keys 1-4) for model and bounding box view from another angle.
  *

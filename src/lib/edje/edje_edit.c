@@ -2519,6 +2519,43 @@ edje_edit_color_class_colors_set(Evas_Object *obj, const char *class_name, int r
    return EINA_FALSE;
 }
 
+EAPI Eina_Stringshare *
+edje_edit_color_class_description_get(Evas_Object *obj, const char *class_name)
+{
+   Eina_List *l;
+   Edje_Color_Class *cc;
+
+   GET_ED_OR_RETURN(NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(class_name, NULL);
+
+   if (!ed->file || !ed->file->color_classes)
+     return NULL;
+   EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
+     if (eina_streq(cc->name, class_name))
+       return cc->desc;
+   return NULL;
+}
+
+EAPI Eina_Bool
+edje_edit_color_class_description_set(Evas_Object *obj, const char *class_name, const char *desc)
+{
+   Eina_List *l;
+   Edje_Color_Class *cc;
+
+   GET_ED_OR_RETURN(EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(class_name, EINA_FALSE);
+
+   if (!ed->file || !ed->file->color_classes)
+     return EINA_FALSE;
+   EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
+     if (eina_streq(cc->name, class_name))
+       {
+          eina_stringshare_replace(&cc->desc, desc);
+          return EINA_TRUE;
+       }
+   return EINA_FALSE;
+}
+
 EAPI Eina_Bool
 edje_edit_color_class_add(Evas_Object *obj, const char *name)
 {
@@ -11426,6 +11463,9 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
    Eina_List *alias_list = NULL;
    const char *alias;
    Eina_Iterator *it;
+   int len;
+   char *tmp_alias;
+   const char* aliased;
 
    obj = edje_edit_object_add(ed->base->evas);
    if (!edje_object_file_set(obj, ed->file->path, group)) return EINA_FALSE;
@@ -11507,13 +11547,14 @@ _edje_generate_source_of_group(Edje *ed, Edje_Part_Collection_Directory_Entry *p
    BUF_APPEND(I2"parts {\n");
    if ((pc->aliased) && (pc->alias))
      {
-        it = eina_hash_iterator_data_new(pc->aliased);
-        EINA_ITERATOR_FOREACH(it, alias)
-           BUF_APPENDF(I3"alias: \"%s\" ", alias);
-        eina_iterator_free(it);
         it = eina_hash_iterator_data_new(pc->alias);
         EINA_ITERATOR_FOREACH(it, alias)
-           BUF_APPENDF("\"%s\";\n", alias);
+          {
+             tmp_alias = strdup(alias);
+             aliased = _edje_find_alias(pc->aliased, tmp_alias, &len);
+             BUF_APPENDF(I3"alias: \"%s\" \"%s\";\n", aliased, alias);
+             free(tmp_alias);
+          }
         eina_iterator_free(it);
      }
    for (i = 0; i < pc->parts_count; i++)
