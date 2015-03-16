@@ -290,6 +290,9 @@ struct _Elm_Config
    unsigned char win_auto_focus_animate;
    Eina_List    *bindings;
    Eina_Bool     atspi_mode;
+   int           gl_depth;
+   int           gl_stencil;
+   int           gl_msaa;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;

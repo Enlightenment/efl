@@ -3326,14 +3326,29 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
                tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
              else if (!strcmp(enginelist[i], ELM_OPENGL_X11))
                {
-                  int opt[10], opt_i = 0;
+                  int opt[20], opt_i = 0;
 
                   if (_elm_config->vsync)
                     {
                        opt[opt_i++] = ECORE_EVAS_GL_X11_OPT_VSYNC;
                        opt[opt_i++] = 1;
-                       opt[opt_i++] = 0;
                     }
+                  if (_elm_config->gl_depth)
+                    {
+                       opt[opt_i++] = ECORE_EVAS_GL_X11_OPT_GL_DEPTH;
+                       opt[opt_i++] = _elm_config->gl_depth;
+                    }
+                  if (_elm_config->gl_stencil)
+                    {
+                       opt[opt_i++] = ECORE_EVAS_GL_X11_OPT_GL_STENCIL;
+                       opt[opt_i++] = _elm_config->gl_stencil;
+                    }
+                  if (_elm_config->gl_msaa)
+                    {
+                       opt[opt_i++] = ECORE_EVAS_GL_X11_OPT_GL_MSAA;
+                       opt[opt_i++] = _elm_config->gl_msaa;
+                    }
+                  opt[opt_i] = 0;
                   if (opt_i > 0)
                     tmp_sd.ee = ecore_evas_gl_x11_options_new(NULL, 0, 0, 0, 1, 1, opt);
                   else
