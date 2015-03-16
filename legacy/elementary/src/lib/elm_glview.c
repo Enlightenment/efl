@@ -387,7 +387,11 @@ _elm_glview_mode_set(Eo *obj, Elm_Glview_Data *sd, Elm_GLView_Mode mode)
    sd->mode = mode;
 
    _glview_update_surface(obj);
-   elm_glview_changed_set(obj);
+   if (!sd->surface)
+     {
+        ERR("Failed to create a surface with the requested configuration.");
+        return EINA_FALSE;
+     }
 
    return EINA_TRUE;
 }
