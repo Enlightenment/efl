@@ -1278,6 +1278,17 @@ _internal_config_set(void *eng_data, EVGL_Surface *sfc, Evas_GL_Config *cfg)
 
              if ((sfc->direct_override) || support_win_cfg)
                sfc->direct_fb_opt = !!(cfg->options_bits & EVAS_GL_OPTIONS_DIRECT);
+             else if (cfg->options_bits & EVAS_GL_OPTIONS_DIRECT)
+               {
+                  const char *s1[] = { "", ":depth8", ":depth16", ":depth24", ":depth32" };
+                  const char *s2[] = { "", ":stencil1", ":stencil2", ":stencil4", ":stencil8", ":stencil16" };
+                  const char *s3[] = { "", ":msaa_low", ":msaa_mid", ":msaa_high" };
+                  INF("Can not enable direct rendering with depth %d, stencil %d "
+                      "and MSAA %d. When using Elementary GLView, try to set "
+                      "the accel_preference to \"opengl%s%s%s\".",
+                      depth_size, stencil_bit, msaa_samples,
+                      s1[cfg->depth_bits], s2[cfg->stencil_bits], s3[cfg->multisample_bits]);
+               }
 
              // Extra flags for direct rendering
              sfc->client_side_rotation = !!(cfg->options_bits & EVAS_GL_OPTIONS_CLIENT_SIDE_ROTATION);
@@ -1290,7 +1301,13 @@ _internal_config_set(void *eng_data, EVGL_Surface *sfc, Evas_GL_Config *cfg)
 
    if (cfg_index < 0)
      {
-        ERR("Unable to find the matching config format.");
+        ERR("Unable to find a matching config format.");
+        if ((stencil_bit >= 16) || (depth_size >= 32))
+          {
+             INF("Please note that Evas GL might not support 32-bit depth or "
+                 "16-bit stencil buffers, so depth24, stencil8 are the maximum "
+                 "recommended values.");
+          }
         return 0;
      }
    else
