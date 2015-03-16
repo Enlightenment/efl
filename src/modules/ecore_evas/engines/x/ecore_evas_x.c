@@ -432,6 +432,21 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
                        einfo->swap_mode = opt[op];
                     }
 #endif
+                  else if (opt[op] == ECORE_EVAS_GL_X11_OPT_GL_DEPTH)
+                    {
+                       op++;
+                       einfo->depth_bits = opt[op];
+                    }
+                  else if (opt[op] == ECORE_EVAS_GL_X11_OPT_GL_STENCIL)
+                    {
+                       op++;
+                       einfo->stencil_bits = opt[op];
+                    }
+                  else if (opt[op] == ECORE_EVAS_GL_X11_OPT_GL_MSAA)
+                    {
+                       op++;
+                       einfo->msaa_bits = opt[op];
+                    }
                }
           }
 

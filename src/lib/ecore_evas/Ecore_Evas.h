@@ -1113,7 +1113,10 @@ EAPI Ecore_X_Pixmap ecore_evas_software_x11_pixmap_get(const Ecore_Evas *ee);
 #define ECORE_EVAS_GL_X11_OPT_INDIRECT     1
 #define ECORE_EVAS_GL_X11_OPT_VSYNC        2
 #define ECORE_EVAS_GL_X11_OPT_SWAP_MODE    3
-#define ECORE_EVAS_GL_X11_OPT_LAST         4
+#define ECORE_EVAS_GL_X11_OPT_GL_DEPTH     4
+#define ECORE_EVAS_GL_X11_OPT_GL_STENCIL   5
+#define ECORE_EVAS_GL_X11_OPT_GL_MSAA      6
+#define ECORE_EVAS_GL_X11_OPT_LAST         7
 
 #define ECORE_EVAS_GL_X11_SWAP_MODE_AUTO   0
 #define ECORE_EVAS_GL_X11_SWAP_MODE_FULL   1

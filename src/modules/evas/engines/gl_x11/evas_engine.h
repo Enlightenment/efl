@@ -69,15 +69,24 @@ struct _Outbuf
 #else
    GLXContext       context;
    GLXWindow        glxwin;
-   struct {
-      Eina_Bool     loose_binding : 1;
-   } detected;
 #endif
+   struct {
+      unsigned char depth_buffer_size;
+      unsigned char stencil_buffer_size;
+      unsigned char msaa;
+#ifndef GL_GLES
+      Eina_Bool     loose_binding : 1;
+#endif
+   } detected;
+
 
    Evas            *evas;
    Display         *disp;
    XVisualInfo     *visualinfo;
    Visual          *visual;
+   int              depth_bits;
+   int              stencil_bits;
+   int              msaa_bits;
    Evas_Engine_GL_Context *gl_context;
    Evas_Engine_Info_GL_X11 *info;
 
@@ -159,7 +168,8 @@ Outbuf *eng_window_new(Evas_Engine_Info_GL_X11 *info, Evas *e,
                        Visual *vis, Colormap cmap,
                        int depth, int w, int h, int indirect,
                        int alpha, int rot,
-                       Render_Engine_Swap_Mode swap_mode);
+                       Render_Engine_Swap_Mode swap_mode,
+                       int depth_bits, int stencil_bits, int msaa_bits);
 void      eng_window_free(Outbuf *gw);
 void      eng_window_use(Outbuf *gw);
 void      eng_window_unsurf(Outbuf *gw);

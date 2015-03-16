@@ -1067,10 +1067,12 @@ _surface_buffers_destroy(EVGL_Surface *sfc)
 }
 
 static int
-_internal_config_set(EVGL_Surface *sfc, Evas_GL_Config *cfg)
+_internal_config_set(void *eng_data, EVGL_Surface *sfc, Evas_GL_Config *cfg)
 {
    int i = 0, cfg_index = -1;
    int color_bit = 0, depth_bit = 0, stencil_bit = 0, msaa_samples = 0;
+   int depth_size = 0;
+   Eina_Bool support_win_cfg = 1;
 
    // Check if engine is valid
    if (!evgl_engine)
@@ -1081,7 +1083,11 @@ _internal_config_set(EVGL_Surface *sfc, Evas_GL_Config *cfg)
 
    // Convert Config Format to bitmask friendly format
    color_bit = (1 << cfg->color_format);
-   if (cfg->depth_bits) depth_bit = (1 << (cfg->depth_bits-1));
+   if (cfg->depth_bits)
+     {
+        depth_bit = (1 << (cfg->depth_bits-1));
+        depth_size = 8 * cfg->depth_bits;
+     }
    if (cfg->stencil_bits) stencil_bit = (1 << (cfg->stencil_bits-1));
    if (cfg->multisample_bits)
       msaa_samples = evgl_engine->caps.msaa_samples[cfg->multisample_bits-1];
@@ -1118,18 +1124,15 @@ _internal_config_set(EVGL_Surface *sfc, Evas_GL_Config *cfg)
              sfc->depth_stencil_fmt = evgl_engine->caps.fbo_fmts[i].depth_stencil_fmt;
              sfc->msaa_samples      = evgl_engine->caps.fbo_fmts[i].samples;
 
-             /*
-             // TODO:
-             if (((depth_bit > 0)  ||(stencil_bit > 0) ||(msaa_samples > 0))
+             // Direct Rendering Option
+             if (((depth_bit > 0) || (stencil_bit > 0) || (msaa_samples > 0))
                   && (evgl_engine->funcs->native_win_surface_config_check))
                {
-                  DBG("request to check wid cfg with depth %d, stencil %d, msaa %d",depth_bit,stencil_bit,msaa_samples);
-                  support_win_cfg = evgl_engine->funcs->native_win_surface_config_check(eng_data,depth_bit,stencil_bit,msaa_samples);
+                  DBG("request to check win cfg with depth %d, stencil %d, msaa %d", depth_size, stencil_bit, msaa_samples);
+                  support_win_cfg = evgl_engine->funcs->native_win_surface_config_check(eng_data, depth_size, stencil_bit, msaa_samples);
                }
-             */
 
-             // Direct Rendering Option
-             if ((!depth_bit && !stencil_bit && !msaa_samples) || sfc->direct_override)
+             if ((sfc->direct_override) || support_win_cfg)
                sfc->direct_fb_opt = !!(cfg->options_bits & EVAS_GL_OPTIONS_DIRECT);
 
              // Extra flags for direct rendering
@@ -1148,7 +1151,7 @@ _internal_config_set(EVGL_Surface *sfc, Evas_GL_Config *cfg)
      }
    else
      {
-        DBG("-------------Surface Config---------------");
+        DBG("-------------Evas GL Surface Config---------------");
         DBG("Selected Config Index: %d", cfg_index);
         DBG("  Color Format     : %s", _glenum_string_get(sfc->color_fmt));
         DBG("  Depth Format     : %s", _glenum_string_get(sfc->depth_fmt));
@@ -1157,6 +1160,7 @@ _internal_config_set(EVGL_Surface *sfc, Evas_GL_Config *cfg)
         DBG("  MSAA Samples     : %d", sfc->msaa_samples);
         DBG("  Direct Option    : %d%s", sfc->direct_fb_opt, sfc->direct_override ? " (override)" : "");
         DBG("  Client-side Rot. : %d", sfc->client_side_rotation);
+        DBG("--------------------------------------------------");
         sfc->cfg_index = cfg_index;
         return 1;
      }
@@ -1606,7 +1610,7 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
      sfc->direct_override = EINA_TRUE;
 
    // Set the internal config value
-   if (!_internal_config_set(sfc, cfg))
+   if (!_internal_config_set(eng_data, sfc, cfg))
      {
         ERR("Unsupported Format!");
         evas_gl_common_error_set(eng_data, EVAS_GL_BAD_CONFIG);
@@ -1762,7 +1766,7 @@ evgl_pbuffer_surface_create(void *eng_data, Evas_GL_Config *cfg,
    if (sfc->pbuffer.color_fmt != EVAS_GL_NO_FBO)
      {
         // Set the internal config value
-        if (!_internal_config_set(sfc, cfg))
+        if (!_internal_config_set(eng_data, sfc, cfg))
           {
              ERR("Unsupported Format!");
              evas_gl_common_error_set(eng_data, EVAS_GL_BAD_CONFIG);

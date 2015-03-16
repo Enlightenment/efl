@@ -476,6 +476,8 @@ static const EVGL_Interface evgl_funcs =
    NULL, // PBuffer
    NULL, // OpenGL-ES 1
    NULL, // OpenGL-ES 1
+   NULL, // OpenGL-ES 1
+   NULL, // native_win_surface_config_check
 };
 
 /* engine functions */

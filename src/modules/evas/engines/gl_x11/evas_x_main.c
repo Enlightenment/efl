@@ -118,7 +118,10 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
                int      indirect EINA_UNUSED,
                int      alpha,
                int      rot,
-               Render_Engine_Swap_Mode swap_mode)
+               Render_Engine_Swap_Mode swap_mode,
+               int depth_bits,
+               int stencil_bits,
+               int msaa_bits)
 {
    Outbuf *gw;
    GLContext context;
@@ -130,6 +133,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
 #endif
    const GLubyte *vendor, *renderer, *version, *glslversion;
    int blacklist = 0;
+   int val = 0;
 
    if (!fbconf) eng_best_visual_get(info);
    if (!_evas_gl_x11_vi) return NULL;
@@ -151,6 +155,9 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    gw->swap_mode = swap_mode;
    gw->info = info;
    gw->evas = e;
+   gw->depth_bits = depth_bits;
+   gw->stencil_bits = stencil_bits;
+   gw->msaa_bits = msaa_bits;
 
    if (gw->alpha && _evas_gl_x11_rgba_vi)
      gw->visualinfo = _evas_gl_x11_rgba_vi;
@@ -264,6 +271,17 @@ try_gles2:
         eng_window_free(gw);
         return NULL;
      }
+
+   eglGetConfigAttrib(gw->egl_disp, gw->egl_config, EGL_DEPTH_SIZE, &val);
+   gw->detected.depth_buffer_size = val;
+   DBG("Detected depth size %d", val);
+   eglGetConfigAttrib(gw->egl_disp, gw->egl_config, EGL_STENCIL_SIZE, &val);
+   gw->detected.stencil_buffer_size = val;
+   DBG("Detected stencil size %d", val);
+   eglGetConfigAttrib(gw->egl_disp, gw->egl_config, EGL_SAMPLES, &val);
+   gw->detected.msaa = val;
+   DBG("Detected msaa %d", val);
+
 // GLX
 #else
    context = _tls_context_get();
@@ -436,6 +454,13 @@ try_gles2:
      {
         // noothing yet. add more cases and options over time
      }
+
+   glXGetConfig(gw->disp, gw->visualinfo, GLX_DEPTH_SIZE, &val);
+   gw->detected.depth_buffer_size = val;
+   glXGetConfig(gw->disp, gw->visualinfo, GLX_STENCIL_SIZE, &val);
+   gw->detected.stencil_buffer_size = val;
+   glXGetConfig(gw->disp, gw->visualinfo, GLX_SAMPLES, &val);
+   gw->detected.msaa = val;
 #endif
 
    gw->gl_context = glsym_evas_gl_common_context_new();
@@ -772,10 +797,26 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
                   config_attrs[n++] = EGL_ALPHA_SIZE;
                   config_attrs[n++] = 0;
                }
-             config_attrs[n++] = EGL_DEPTH_SIZE;
-             config_attrs[n++] = 0;
-             config_attrs[n++] = EGL_STENCIL_SIZE;
-             config_attrs[n++] = 0;
+
+             if (einfo->depth_bits)
+               {
+                  config_attrs[n++] = EGL_DEPTH_SIZE;
+                  config_attrs[n++] = einfo->depth_bits;
+               }
+
+             if (einfo->stencil_bits)
+               {
+                  config_attrs[n++] = EGL_STENCIL_SIZE;
+                  config_attrs[n++] = einfo->stencil_bits;
+               }
+
+             if (einfo->msaa_bits)
+               {
+                  config_attrs[n++] = EGL_SAMPLE_BUFFERS;
+                  config_attrs[n++] = 1;
+                  config_attrs[n++] = EGL_SAMPLES;
+                  config_attrs[n++] = einfo->msaa_bits;
+               }
              config_attrs[n++] = EGL_NONE;
              num = 0;
              if ((!eglChooseConfig(egl_disp, config_attrs, configs, 200, &num))

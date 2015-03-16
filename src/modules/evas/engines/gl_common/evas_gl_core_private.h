@@ -77,6 +77,10 @@ struct _EVGL_Interface
 
    // Create an indirect rendering context for GLES 1.x
    void      *(*gles1_context_create)(void *data, EVGL_Context *share_ctx, EVGL_Surface *evgl_sfc);
+
+   // Check native window surface config for Evas GL Direct Rendering
+   Eina_Bool  (*native_win_surface_config_check)(void *data, int evgl_depth, int evgl_stencil, int evgl_msaa);
+
 };
 
 struct _EVGL_Surface
