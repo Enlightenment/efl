@@ -558,6 +558,7 @@ START_TEST(eolian_simple_parsing)
    fail_if(strcmp(string, "comment a.set"));
    string = eolian_function_description_get(fid, EOLIAN_PROP_GET);
    fail_if(string);
+   fail_if(eolian_function_class_get(fid) != class);
    /* Set return */
    tp = eolian_function_return_type_get(fid, EOLIAN_PROP_SET);
    fail_if(!tp);

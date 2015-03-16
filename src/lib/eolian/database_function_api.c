@@ -250,6 +250,13 @@ eolian_function_object_is_const(const Eolian_Function *fid)
    return fid->obj_is_const;
 }
 
+EAPI const Eolian_Class *
+eolian_function_class_get(const Eolian_Function *fid)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
+   return fid->klass;
+}
+
 EAPI Eina_Bool
 eolian_function_is_c_only(const Eolian_Function *fid)
 {

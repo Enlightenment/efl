@@ -1098,6 +1098,16 @@ EAPI Eina_Bool eolian_function_return_is_warn_unused(const Eolian_Function *foo_
 EAPI Eina_Bool eolian_function_object_is_const(const Eolian_Function *function_id);
 
 /*
+ * @brief Return the Eolian class associated to the function.
+ *
+ * @param[in] function_id id of the function
+ * @return the class, NULL otherwise
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Class *eolian_function_class_get(const Eolian_Function *function_id);
+
+/*
  * @brief Get full string of an overriding function (implement).
  *
  * @param[in] impl the handle of the implement
