@@ -826,12 +826,11 @@ _evgl_api_gles3_ext_init(void)
    if (_evgl_api_ext_status & 0x4)
      return EINA_TRUE;
 
+#ifdef GL_GLES
    Eina_Strbuf *sb = eina_strbuf_new();
    int _curext_supported = 0;
    Evas_GL_API *gles3_funcs;
    const char *gles3_exts;
-
-#ifdef GL_GLES
    EVGL_Resource *rsc;
    EGLint context_version;
    EGLDisplay dpy = EGLDISPLAY_GET();
@@ -863,7 +862,6 @@ _evgl_api_gles3_ext_init(void)
         DBG("GLESv3 context not bound");
         return EINA_FALSE;
      }
-#endif
 
    gles3_funcs = _evgl_api_gles3_internal_get();
    if (!gles3_funcs || !gles3_funcs->glGetString)
@@ -1013,6 +1011,11 @@ _evgl_api_gles3_ext_init(void)
    // GLESv3 version has been initialized!
    _evgl_api_ext_status |= 0x4;
    return EINA_TRUE;
+
+#else
+   ERR("GLES3 is not supported with GLX (yet)!");
+   return EINA_FALSE;
+#endif
 }
 
 void
