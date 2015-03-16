@@ -1236,6 +1236,7 @@ _internal_config_set(void *eng_data, EVGL_Surface *sfc, Evas_GL_Config *cfg)
    if (cfg->multisample_bits)
       msaa_samples = evgl_engine->caps.msaa_samples[cfg->multisample_bits-1];
 
+try_again:
    // Run through all the available formats and choose the first match
    for (i = 0; i < evgl_engine->caps.num_fbo_fmts; ++i)
      {
@@ -1302,11 +1303,19 @@ _internal_config_set(void *eng_data, EVGL_Surface *sfc, Evas_GL_Config *cfg)
    if (cfg_index < 0)
      {
         ERR("Unable to find a matching config format.");
-        if ((stencil_bit >= 16) || (depth_size >= 32))
+        if ((stencil_bit > 8) || (depth_size > 24))
           {
              INF("Please note that Evas GL might not support 32-bit depth or "
                  "16-bit stencil buffers, so depth24, stencil8 are the maximum "
                  "recommended values.");
+             if (depth_size > 24)
+               {
+                  depth_bit = 4; // see DEPTH_BIT_24
+                  depth_size = 24;
+               }
+             if (stencil_bit > 8) stencil_bit = 8; // see STENCIL_BIT_8
+             DBG("Fallback to depth:%d, stencil:%d", depth_size, stencil_bit);
+             goto try_again;
           }
         return 0;
      }
