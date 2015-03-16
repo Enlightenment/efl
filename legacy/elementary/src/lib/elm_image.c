@@ -917,6 +917,9 @@ _elm_image_object_size_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, int *w, int 
    int cw = 0, ch = 0;
    const char *type;
 
+   if (w) *w = 0;
+   if (h) *h = 0;
+
    type = evas_object_type_get(sd->img);
    if (!type) return;
 
