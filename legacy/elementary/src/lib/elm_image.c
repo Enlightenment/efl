@@ -517,7 +517,7 @@ EOLIAN static void
 _elm_image_sizing_eval(Eo *obj, Elm_Image_Data *sd)
 {
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-   int w, h;
+   int w = 0, h = 0;
    double ts;
 
    _elm_image_internal_sizing_eval(obj, sd);
