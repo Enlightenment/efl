@@ -1179,10 +1179,8 @@ WAYLAND_SHM_SOURCES = \
 modules/evas/engines/wayland_shm/Evas_Engine_Wayland_Shm.h \
 modules/evas/engines/wayland_shm/evas_engine.c \
 modules/evas/engines/wayland_shm/evas_engine.h \
-modules/evas/engines/wayland_shm/evas_swapbuf.c \
-modules/evas/engines/wayland_shm/evas_swapbuf.h \
-modules/evas/engines/wayland_shm/evas_swapper.c \
-modules/evas/engines/wayland_shm/evas_swapper.h
+modules/evas/engines/wayland_shm/evas_shm.c \
+modules/evas/engines/wayland_shm/evas_outbuf.c
 if EVAS_STATIC_BUILD_WAYLAND_SHM
 lib_evas_libevas_la_SOURCES += $(WAYLAND_SHM_SOURCES)
 lib_evas_libevas_la_CPPFLAGS += @evas_engine_wayland_shm_cflags@

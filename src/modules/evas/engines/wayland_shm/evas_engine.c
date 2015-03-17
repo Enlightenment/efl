@@ -1,171 +1,156 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
-#include "Evas_Engine_Wayland_Shm.h"
+#ifdef EVAS_CSERVE2
+# include "evas_cs2_private.h"
+#endif
+
 #include "evas_engine.h"
-#include "evas_swapbuf.h"
 
-/* local structures */
+/* logging domain variable */
+int _evas_engine_way_shm_log_dom = -1;
+
+/* evas function tables - filled in later (func and parent func) */
+static Evas_Func func, pfunc;
+
+/* engine structure data */
 typedef struct _Render_Engine Render_Engine;
-
 struct _Render_Engine
 {
    Render_Engine_Software_Generic generic;
 
-   void (*outbuf_reconfigure)(Outbuf *ob, int x, int y, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha);
+   void (*outbuf_reconfigure)(Outbuf *ob, int x, int y, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize);
 };
 
-/* engine function prototypes */
-static void *eng_info(Evas *eo_evas EINA_UNUSED);
-static void eng_info_free(Evas *eo_evas EINA_UNUSED, void *einfo);
-static int eng_setup(Evas *eo_evas, void *einfo);
-static void eng_output_free(void *data);
-
-/* local variables */
-static Evas_Func func, pfunc;
-
-/* external variables */
-int _evas_engine_way_shm_log_dom = -1;
-
-/* local functions */
-static void *
-_output_engine_setup(Evas_Engine_Info_Wayland_Shm *info,
-                     int w, int h,
-                     unsigned int rotation, unsigned int depth,
-                     Eina_Bool destination_alpha,
-                     struct wl_shm *wl_shm,
-                     struct wl_surface *wl_surface)
+/* LOCAL FUNCTIONS */
+Render_Engine *
+_render_engine_swapbuf_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface)
 {
-   Render_Engine *re = NULL;
+   Render_Engine *re;
    Outbuf *ob;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   /* try to allocate a new render engine */
-   if (!(re = calloc(1, sizeof(Render_Engine))))
-     return NULL;
+   /* try to allocate space for new render engine */
+   if (!(re = calloc(1, sizeof(Render_Engine)))) return NULL;
 
+   ob = _evas_outbuf_setup(w, h, rotation, depth, alpha, shm, surface);
+   if (!ob) goto err;
 
-   ob = evas_swapbuf_setup(info, w, h, rotation, depth,
-                           destination_alpha, wl_shm,
-                           wl_surface);
-   if (!ob) goto on_error;
-
-   if (!evas_render_engine_software_generic_init(&re->generic, ob,
-                                                 evas_swapbuf_state_get,
-                                                 evas_swapbuf_rotation_get,
+   if (!evas_render_engine_software_generic_init(&re->generic, ob, 
+                                                 _evas_outbuf_swapmode_get,
+                                                 _evas_outbuf_rotation_get,
                                                  NULL,
-                                                 NULL,
-                                                 evas_swapbuf_update_region_new,
-                                                 evas_swapbuf_update_region_push,
-                                                 evas_swapbuf_update_region_free,
-                                                 evas_swapbuf_idle_flush,
-                                                 evas_swapbuf_flush,
-                                                 evas_swapbuf_free,
+                                                 NULL, 
+                                                 _evas_outbuf_update_region_new,
+                                                 _evas_outbuf_update_region_push,
+                                                 _evas_outbuf_update_region_free,
+                                                 _evas_outbuf_idle_flush,
+                                                 _evas_outbuf_flush,
+                                                 _evas_outbuf_free,
                                                  w, h))
-     goto on_error;
+     goto err;
 
-   re->outbuf_reconfigure = evas_swapbuf_reconfigure;
+   re->outbuf_reconfigure = _evas_outbuf_reconfigure;
 
    /* return allocated render engine */
    return re;
 
- on_error:
-   if (ob) evas_swapbuf_free(ob);
+err:
+   if (ob) _evas_outbuf_free(ob);
    free(re);
    return NULL;
 }
 
-/* engine functions */
+/* ENGINE API FUNCTIONS WE PROVIDE */
 static void *
 eng_info(Evas *eo_evas EINA_UNUSED)
 {
-   Evas_Engine_Info_Wayland_Shm *info;
+   Evas_Engine_Info_Wayland_Shm *einfo;
 
-   /* try to allocate space for engine info */
-   if (!(info = calloc(1, sizeof(Evas_Engine_Info_Wayland_Shm))))
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   /* try to allocate space for new engine info */
+   if (!(einfo = calloc(1, sizeof(Evas_Engine_Info_Wayland_Shm))))
      return NULL;
 
-   /* fill in default engine info fields */
-   info->magic.magic = rand();
-   info->render_mode = EVAS_RENDER_MODE_BLOCKING;
+   /* fill in engine info */
+   einfo->magic.magic = rand();
+   einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
 
    /* return allocated engine info */
-   return info;
+   return einfo;
 }
 
 static void 
-eng_info_free(Evas *eo_evas EINA_UNUSED, void *einfo)
+eng_info_free(Evas *eo_evas EINA_UNUSED, void *info)
 {
-   Evas_Engine_Info_Wayland_Shm *info;
+   Evas_Engine_Info_Wayland_Shm *einfo;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* try to free previously allocated engine info */
-   if ((info = (Evas_Engine_Info_Wayland_Shm *)einfo))
-     free(info);
+   if ((einfo = (Evas_Engine_Info_Wayland_Shm *)info))
+     free(einfo);
 }
 
 static int 
-eng_setup(Evas *eo_evas, void *einfo)
+eng_setup(Evas *eo_evas, void *info)
 {
-   Evas_Engine_Info_Wayland_Shm *info;
+   Evas_Engine_Info_Wayland_Shm *einfo;
    Evas_Public_Data *epd;
    Render_Engine *re = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   /* try to cast the engine info to our engine info */
-   if (!(info = (Evas_Engine_Info_Wayland_Shm *)einfo))
+   /* try to cast to our engine info */
+   if (!(einfo = (Evas_Engine_Info_Wayland_Shm *)info))
      return 0;
 
-   /* try to get evas public data from the canvas */
+   /* try to get evas public data */
    if (!(epd = eo_data_scope_get(eo_evas, EVAS_CANVAS_CLASS)))
      return 0;
 
    /* test for valid engine output */
    if (!(re = epd->engine.data.output))
      {
-        static int try_swap = -1;
-
-        /* NB: If we have no valid output then assume we have not been 
-         * initialized yet and call any needed common init routines */
+        /* if we have no engine data, assume we have not initialized yet */
         evas_common_init();
 
-        if (try_swap == -1)
-          {
-             /* check for env var to see if we should try swapping */
-             if (getenv("EVAS_NO_WAYLAND_SWAPBUF")) try_swap = 0;
-             else try_swap = 1;
-          }
+        re = _render_engine_swapbuf_setup(epd->output.w, epd->output.h,
+                                          einfo->info.rotation, 
+                                          einfo->info.depth, 
+                                          einfo->info.destination_alpha,
+                                          einfo->info.wl_shm, 
+                                          einfo->info.wl_surface);
 
-        if (!(re =
-              _output_engine_setup(info, epd->output.w, epd->output.h,
-                                   info->info.rotation, info->info.depth,
-                                   info->info.destination_alpha,
-                                   info->info.wl_shm, info->info.wl_surface)))
-          return 0;
-      }
+        if (re) 
+          re->generic.ob->info = einfo;
+        else
+          goto err;
+     }
    else
      {
         Outbuf *ob;
-        int ponebuf = 0;
 
-        if ((re) && (re->generic.ob)) ponebuf = re->generic.ob->onebuf;
-
-        ob = evas_swapbuf_setup(info, epd->output.w, epd->output.h,
-                                info->info.rotation,
-                                info->info.depth,
-                                info->info.destination_alpha,
-                                info->info.wl_shm,
-                                info->info.wl_surface);
-        if (!ob) return 0;
-
-        evas_render_engine_software_generic_update(&re->generic, ob, epd->output.w, epd->output.h);
-
-        if ((re) && (re->generic.ob)) re->generic.ob->onebuf = ponebuf;
+        ob = _evas_outbuf_setup(epd->output.w, epd->output.h, 
+                                einfo->info.rotation, einfo->info.depth, 
+                                einfo->info.destination_alpha, 
+                                einfo->info.wl_shm, einfo->info.wl_surface);
+        if (ob)
+          {
+             ob->info = einfo;
+             evas_render_engine_software_generic_update(&re->generic, ob, 
+                                                        epd->output.w, 
+                                                        epd->output.h);
+          }
      }
 
-   /* reassign render engine to output */
    epd->engine.data.output = re;
-   if (!epd->engine.data.output) return 0;
+   if (!epd->engine.data.output)
+     {
+        ERR("Failed to create Render Engine");
+        goto err;
+     }
 
    if (!epd->engine.data.context)
      {
@@ -173,86 +158,92 @@ eng_setup(Evas *eo_evas, void *einfo)
           epd->engine.func->context_new(epd->engine.data.output);
      }
 
-   /* return success */
    return 1;
+
+err:
+   evas_common_shutdown();
+   return 0;
 }
 
-static void
+static void 
 eng_output_free(void *data)
 {
-   Render_Engine *re = data;
+   Render_Engine *re;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   evas_render_engine_software_generic_clean(&re->generic);
-   free(re);
+   if ((re = (Render_Engine *)data))
+     {
+        evas_render_engine_software_generic_clean(&re->generic);
+        free(re);
+     }
 
    evas_common_shutdown();
 }
 
-static void
+static void 
 eng_output_resize(void *data, int w, int h)
 {
    Render_Engine *re;
-   Evas_Engine_Info_Wayland_Shm *info;
+   Evas_Engine_Info_Wayland_Shm *einfo;
    int dx = 0, dy = 0;
+   Eina_Bool resize = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!(re = (Render_Engine *)data)) return;
+   if (!(einfo = re->generic.ob->info)) return;
 
-   if (!(info = re->generic.ob->info)) return;
-
-   if (info->info.edges & 4)
+   if (einfo->info.edges & 4) // resize from left
      {
-        if ((info->info.rotation == 90) || (info->info.rotation == 270))
+        if ((einfo->info.rotation == 90) || (einfo->info.rotation == 270))
           dx = re->generic.ob->h - h;
         else
           dx = re->generic.ob->w - w;
      }
 
-   if (info->info.edges & 1)
+   if (einfo->info.edges & 1) // resize from top
      {
-        if ((info->info.rotation == 90) || (info->info.rotation == 270))
+        if ((einfo->info.rotation == 90) || (einfo->info.rotation == 270))
           dy = re->generic.ob->w - w;
         else
           dy = re->generic.ob->h - h;
      }
 
-   re->outbuf_reconfigure(re->generic.ob, dx, dy, w, h,
-                          info->info.rotation, info->info.depth,
-                          info->info.destination_alpha);
+   if (einfo->info.edges) resize = EINA_TRUE;
+
+   re->outbuf_reconfigure(re->generic.ob, dx, dy, w, h, 
+                          einfo->info.rotation, einfo->info.depth, 
+                          einfo->info.destination_alpha, resize);
 
    evas_common_tilebuf_free(re->generic.tb);
    if ((re->generic.tb = evas_common_tilebuf_new(w, h)))
      evas_common_tilebuf_set_tile_size(re->generic.tb, TILESIZE, TILESIZE);
 }
 
-/* module functions */
+/* EVAS MODULE FUNCTIONS */
 static int 
 module_open(Evas_Module *em)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* check for valid evas module */
    if (!em) return 0;
+
+   /* try to get functions from whatever engine module we inherit from */
+   if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
 
    /* try to create our logging domain */
    _evas_engine_way_shm_log_dom = 
      eina_log_domain_register("evas-wayland_shm", EVAS_DEFAULT_LOG_COLOR);
    if (_evas_engine_way_shm_log_dom < 0)
      {
-        /* creating the logging domain failed. notify user */
-        EINA_LOG_ERR("Could not create a module log domain.");
-
-        /* return failure */
+        EINA_LOG_ERR("Cannot create a module logging domain");
         return 0;
      }
 
-   /* try to inherit base functions from the software generic engine */
-   if (!_evas_module_engine_inherit(&pfunc, "software_generic"))
-     return 0;
-
-   /* copy base functions from the software_generic engine */
+   /* copy parent functions */
    func = pfunc;
 
-   /* override any engine specific functions that we provide */
+   /* override engine specific functions */
 #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
    ORD(info);
    ORD(info_free);
@@ -260,19 +251,23 @@ module_open(Evas_Module *em)
    ORD(output_free);
    ORD(output_resize);
 
-   /* advertise out our own api */
+   /* advertise our own engine functions */
    em->functions = (void *)(&func);
 
-   /* return success */
    return 1;
 }
 
 static void 
 module_close(Evas_Module *em EINA_UNUSED)
 {
-   /* if we have the log domain, unregister it */
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   /* unregister logging domain */
    if (_evas_engine_way_shm_log_dom > -1)
      eina_log_domain_unregister(_evas_engine_way_shm_log_dom);
+
+   /* reset logging domain variable */
+   _evas_engine_way_shm_log_dom = -1;
 }
 
 static Evas_Module_Api evas_modapi = 
