@@ -197,6 +197,9 @@ struct _Emile_Image_Load_Opts
       int src_x, src_y, src_w, src_h;
       int dst_w, dst_h;
       int smooth;
+
+      /* This should have never been part of this structure, but we keep it
+         for ABI/API compability with Evas_Loader */
       Emile_Image_Scale_Hint scale_hint;
    } scale_load;
    double dpi;
