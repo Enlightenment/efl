@@ -201,7 +201,7 @@ static const Emile_Colorspace cspaces_etc1_alpha[2] = {
   EMILE_COLORSPACE_ARGB8888
 };
 
-static const Emile_Colorspace cspaces_agry[2] = {
+static const Emile_Colorspace cspaces_agry[3] = {
   EMILE_COLORSPACE_GRY8,
   EMILE_COLORSPACE_AGRY88,
   EMILE_COLORSPACE_ARGB8888
