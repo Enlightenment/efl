@@ -1,18 +1,76 @@
 #ifndef EMILE_CIPHER_H_
 #define EMILE_CIPHER_H_
 
-typedef enum
+/**
+ * @defgroup Emile_Cipher_Group Top level functions
+ * @ingroup Emile
+ * Function that allow ciphering content.
+ *
+ * @{
+ */
+
+/**
+ * @typedef Emile_Cipher_Algorithm
+ *
+ * Flags describing known cipher algorithm.
+ *
+ * @since 1.14
+ */
+typedef enum _Emile_Cipher_Algorithm
 {
   EMILE_AES256_CBC
 } Emile_Cipher_Algorithm;
 
+/**
+ * Force the initialization of the underlying cipher library.
+ *
+ * This call force the initialisation of GNUTLS or OpenSSL, so
+ * that you get the same setup for everyone.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @see emile_cipher_module_get
+ *
+ * @since 1.14.0
+ */
 EAPI Eina_Bool emile_cipher_init(void);
+/**
+ * Get the name of the current used backend.
+ *
+ * @return the name of the current cipher backend.
+ * @since 1.14.0
+ */
 EAPI const char *emile_cipher_module_get(void);
 
+/**
+ * Cipher a buffer with a defined algorithm and key.
+ *
+ * @param algo The algorithm to use to cipher the buffer.
+ * @param in The buffer to cipher.
+ * @param key The symetric key to use for ciphering.
+ * @param length The length of the symetric key to be used.
+ * @return the ciphered buffer or NULL on error.
+ *
+ * @since 1.14.0
+ */
 EAPI Eina_Binbuf *emile_binbuf_cipher(Emile_Cipher_Algorithm algo,
                                       const Eina_Binbuf *in,
                                       const char *key, unsigned int length);
 
+/**
+ * Decipher a buffer with a defined algorithm and key.
+ *
+ * @param algo The algorithm to use to decipher the buffer.
+ * @param in The ciphered buffer to decipher.
+ * @param key The symetric key used to cipher the buffer.
+ * @param length The length of the symetric key used to cipher the buffer.
+ * @return the clear buffer or NULL on error.
+ *
+ * @note This won't detect if the given key is the correct one or not. You
+ * have to check that the returned data make sense. You should also not treat
+ * them as safe.
+ *
+ * @since 1.14.0
+ */
 EAPI Eina_Binbuf *emile_binbuf_decipher(Emile_Cipher_Algorithm algo,
                                         const Eina_Binbuf *in,
                                         const char *key, unsigned int length);
@@ -61,5 +119,9 @@ EAPI Eina_Bool emile_cipher_verify_get(const Emile_SSL *emile);
 EAPI Eina_Bool emile_cipher_verify_basic_get(const Emile_SSL *emile);
 
 #endif
+
+/**
+ * @}
+ */
 
 #endif
