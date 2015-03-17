@@ -1,11 +1,8 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif /* ifdef HAVE_CONFIG_H */
+#endif
 
 #include <zlib.h>
-
-#include <Eina.h>
-#include "Emile.h"
 
 #ifdef ENABLE_LIBLZ4
 # include <lz4.h>
@@ -15,8 +12,12 @@
 # include "lz4hc.h"
 #endif
 
+#include <Eina.h>
+
+#include "Emile.h"
+
 static int
-emile_compress_buffer_size(const Eina_Binbuf *data, Emile_Compressor_Type t)
+_emile_compress_buffer_size(const Eina_Binbuf *data, Emile_Compressor_Type t)
 {
    switch (t)
      {
@@ -40,7 +41,7 @@ emile_binbuf_compress(const Eina_Binbuf *data,
    int level = l;
    Eina_Bool ok = EINA_FALSE;
 
-   length = emile_compress_buffer_size(data, t);
+   length = _emile_compress_buffer_size(data, t);
 
    compact = malloc(length);
    if (!compact) return NULL;
@@ -50,7 +51,7 @@ emile_binbuf_compress(const Eina_Binbuf *data,
       case EMILE_LZ4:
          length = LZ4_compress((const char *) eina_binbuf_string_get(data), compact, eina_binbuf_length_get(data));
          if (length > 0) ok = EINA_TRUE;
-         compact = realloc(compact, length); // It is going to be smaller and should never fail, if it does you are in deep poo.
+         compact = realloc(compact, length); /* It is going to be smaller and should never fail, if it does you are in deep poo. */
          break;
       case EMILE_LZ4HC:
          length = LZ4_compressHC((const char *) eina_binbuf_string_get(data), compact, eina_binbuf_length_get(data));

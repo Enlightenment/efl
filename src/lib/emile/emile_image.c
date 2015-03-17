@@ -1,18 +1,14 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif /* ifdef HAVE_CONFIG_H */
+#endif
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
 #endif
 
-#ifdef HAVE_EVIL
-# include <Evil.h>
-#endif
-
 #ifdef _WIN32
 # include <winsock2.h>
-#endif /* ifdef _WIN32 */
+#endif
 
 #ifdef ENABLE_LIBLZ4
 # include <lz4.h>
@@ -27,6 +23,10 @@
 #include <stdio.h>
 #include <setjmp.h>
 #include <jpeglib.h>
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
 
 #include "rg_etc1.h"
 #include "Emile.h"
@@ -172,7 +172,7 @@ _emile_image_file_source_unmap(Emile_Image *image)
 }
 
 static int
-roundup(int val, int rup)
+_roundup(int val, int rup)
 {
    if (val >= 0 && rup > 0)
      return (val + rup - 1) - ((val + rup - 1) % rup);
@@ -280,7 +280,7 @@ _emile_tgv_head(Emile_Image *image,
    m = _emile_image_file_source_map(image, &length);
    if (!m) return EINA_FALSE;
 
-   // This can be used for later ABI change of the structure.
+   /* This can be used for later ABI change of the structure. */
    if (sizeof (Emile_Image_Property) != property_size) return EINA_FALSE;
 
    switch (m[OFFSET_ALGORITHM] & 0xFF)
@@ -319,8 +319,8 @@ _emile_tgv_head(Emile_Image *image,
 
    if (image->blockless)
      {
-        image->block.width = roundup(image->size.width + 2, 4);
-        image->block.height = roundup(image->size.height + 2, 4);
+        image->block.width = _roundup(image->size.width + 2, 4);
+        image->block.height = _roundup(image->size.height + 2, 4);
      }
    else
      {
@@ -333,7 +333,7 @@ _emile_tgv_head(Emile_Image *image,
    if (image->load_opts &&
        (image->opts.region.w > 0 && image->opts.region.h > 0))
      {
-        // ETC colorspace doesn't work with region for now
+        /* ETC colorspace doesn't work with region for now */
         prop->cspaces = NULL;
 
         if (!eina_rectangle_intersection(&image->region,
@@ -348,8 +348,8 @@ _emile_tgv_head(Emile_Image *image,
    prop->h = image->size.height;
    prop->borders.l = 1;
    prop->borders.t = 1;
-   prop->borders.r = roundup(prop->w + 2, 4) - prop->w - 1;
-   prop->borders.b = roundup(prop->h + 2, 4) - prop->h - 1;
+   prop->borders.r = _roundup(prop->w + 2, 4) - prop->w - 1;
+   prop->borders.b = _roundup(prop->h + 2, 4) - prop->h - 1;
 
    return EINA_TRUE;
 }
@@ -412,7 +412,7 @@ _emile_tgv_data(Emile_Image *image,
 
    *error = EMILE_IMAGE_LOAD_ERROR_CORRUPT_FILE;
 
-   // By definition, prop{.w, .h} == region{.w, .h}
+   /* By definition, prop{.w, .h} == region{.w, .h} */
    EINA_RECTANGLE_SET(&master,
                       image->region.x, image->region.y,
                       prop->w, prop->h);
@@ -446,7 +446,7 @@ _emile_tgv_data(Emile_Image *image,
           abort();
         break;
       case EMILE_COLORSPACE_ARGB8888:
-        // Offset to take duplicated pixels into account
+         /* Offset to take duplicated pixels into account */
         master.x += 1;
         master.y += 1;
         break;
@@ -462,10 +462,10 @@ _emile_tgv_data(Emile_Image *image,
              *error = EMILE_IMAGE_LOAD_ERROR_GENERIC;
              return EINA_FALSE;
           }
-        // else: ETC2 is compatible with ETC1 and is preferred
+        /* else: ETC2 is compatible with ETC1 and is preferred */
      }
 
-   // Allocate space for each ETC block (8 or 16 bytes per 4 * 4 pixels group)
+   /* Allocate space for each ETC block (8 or 16 bytes per 4 * 4 pixels group) */
    block_count = image->block.width * image->block.height / (4 * 4);
    if (image->compress)
      buffer = eina_binbuf_manage_read_only_new_length(alloca(etc_block_size * block_count), etc_block_size * block_count);
@@ -610,12 +610,12 @@ _emile_tgv_data(Emile_Image *image,
                       default:
                         abort();
                      }
-                } // bx,by inside blocks
-         } // x,y macroblocks
+                } /* bx,by inside blocks */
+         } /* x,y macroblocks */
 
    // TODO: Add support for more unpremultiplied modes (ETC2)
    if (prop->cspace == EMILE_COLORSPACE_ARGB8888)
-     prop->premul = image->unpremul; // call premul if unpremul data
+     prop->premul = image->unpremul; /* call premul if unpremul data */
 
    r = EINA_TRUE;
 
@@ -626,7 +626,7 @@ _emile_tgv_data(Emile_Image *image,
 static void
 _emile_tgv_close(Emile_Image *image EINA_UNUSED)
 {
-   // TGV file loader doesn't keep any data allocated around
+   /* TGV file loader doesn't keep any data allocated around */
 }
 
 /* JPEG Handling */
@@ -1307,14 +1307,14 @@ _emile_jpeg_head(Emile_Image *image,
    jpeg_read_header(&cinfo, TRUE);
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
-   cinfo.dct_method = JDCT_ISLOW; // JDCT_FLOAT JDCT_IFAST(quality loss)
+   cinfo.dct_method = JDCT_ISLOW; /* JDCT_FLOAT JDCT_IFAST(quality loss) */
    cinfo.dither_mode = JDITHER_ORDERED;
-   cinfo.buffered_image = TRUE; // buffered mode in case jpg is progressive
+   cinfo.buffered_image = TRUE; /* buffered mode in case jpg is progressive */
    jpeg_start_decompress(&cinfo);
 
    if (cinfo.jpeg_color_space == JCS_GRAYSCALE)
      {
-        // We do handle GRY8 and AGRY88 (with FF for alpha) colorspace as an output for JPEG
+        /* We do handle GRY8 and AGRY88 (with FF for alpha) colorspace as an output for JPEG */
         prop->cspaces = cspaces_agry;
      }
 
@@ -1435,7 +1435,7 @@ _emile_jpeg_head(Emile_Image *image,
         cinfo.do_block_smoothing = FALSE;
         cinfo.scale_num = 1;
         cinfo.scale_denom = prop->scale;
-        cinfo.buffered_image = TRUE; // buffered mode in case jpg is progressive
+        cinfo.buffered_image = TRUE; /* buffered mode in case jpg is progressive */
         jpeg_calc_output_dimensions(&(cinfo));
         jpeg_start_decompress(&cinfo);
      }
@@ -1443,7 +1443,7 @@ _emile_jpeg_head(Emile_Image *image,
    prop->w = cinfo.output_width;
    prop->h = cinfo.output_height;
 
-   // be nice and clip region to image. if its totally outside, fail load
+   /* be nice and clip region to image. if its totally outside, fail load */
    if ((opts->region.w > 0) && (opts->region.h > 0))
      {
         unsigned int load_region_x = opts->region.x, load_region_y = opts->region.y;
@@ -1467,7 +1467,7 @@ _emile_jpeg_head(Emile_Image *image,
         prop->w = load_region_w;
         prop->h = load_region_h;
      }
-/* end head decoding */
+   /* end head decoding */
 
    if (change_wh)
      {
@@ -1489,7 +1489,7 @@ _emile_jpeg_data(Emile_Image *image,
                  void *pixels,
                  Emile_Image_Load_Error *error)
 {
-   // Handle RGB, ARGB, GRY and AGRY
+   /* Handle RGB, ARGB, GRY and AGRY */
    Emile_Image_Load_Opts *opts = NULL;
    unsigned int w, h;
    struct jpeg_decompress_struct cinfo;
@@ -1548,7 +1548,7 @@ _emile_jpeg_data(Emile_Image *image,
    jpeg_read_header(&cinfo, TRUE);
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
-   cinfo.dct_method = JDCT_ISLOW; // JDCT_FLOAT JDCT_IFAST(quality loss)
+   cinfo.dct_method = JDCT_ISLOW; /* JDCT_FLOAT JDCT_IFAST(quality loss) */
    cinfo.dither_mode = JDITHER_ORDERED;
 
    if (prop->scale > 1)
@@ -1634,8 +1634,6 @@ _emile_jpeg_data(Emile_Image *image,
      }
    if ((!region) && ((w != ie_w) || (h != ie_h)))
      {
-        // race condition, the file could have change from when we call header
-        // this test will not solve the problem with region code.
         *error = EMILE_IMAGE_LOAD_ERROR_GENERIC;
         goto on_error;
      }
@@ -1644,18 +1642,6 @@ _emile_jpeg_data(Emile_Image *image,
      {
         *error = EMILE_IMAGE_LOAD_ERROR_GENERIC;
         goto on_error;
-        /* ie_w = opts_region.w; */
-        /* ie_h = opts_region.h; */
-        /* if (change_wh) */
-        /*   { */
-        /*      ie->w = ie_h; */
-        /*      ie->h = ie_w; */
-        /*   } */
-        /* else */
-        /*   { */
-        /*      ie->w = ie_w; */
-        /*      ie->h = ie_h; */
-        /*   } */
      }
 
    switch (prop->cspace)
@@ -1682,8 +1668,8 @@ _emile_jpeg_data(Emile_Image *image,
          goto on_error;
      }
 
-/* end head decoding */
-/* data decoding */
+   /* end head decoding */
+   /* data decoding */
    if (cinfo.rec_outbuf_height > 16)
      {
         *error = EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
@@ -1781,7 +1767,7 @@ _emile_jpeg_data(Emile_Image *image,
                }
              else
                {
-                  // if line # > region last line, break
+                  /* if line # > region last line, break */
                   if (l >= (opts_region.y + opts_region.h))
                     {
                        line_done = EINA_TRUE;
@@ -1792,7 +1778,7 @@ _emile_jpeg_data(Emile_Image *image,
                         *error = EMILE_IMAGE_LOAD_ERROR_NONE;
                         return EINA_FALSE;*/
                     }
-                  // els if scan block intersects region start or later
+                  /* else if scan block intersects region start or later */
                   else if ((l + scans) >
                            (opts_region.y))
                     {
@@ -1893,15 +1879,15 @@ _emile_jpeg_data(Emile_Image *image,
                }
              else
                {
-                  // if line # > region last line, break
-                  // but not return immediately for rotation job
+                  /* if line # > region last line, break
+                     but not return immediately for rotation job */
                   if (l >= (opts_region.y + opts_region.h))
                     {
                        line_done = EINA_TRUE;
                        /* if rotation flag is set , we have to rotate image */
                        goto done;
                     }
-                  // else if scan block intersects region start or later
+                  /* else if scan block intersects region start or later */
                   else if ((l + scans) >
                            (opts_region.y))
                     {
@@ -1968,7 +1954,7 @@ _emile_jpeg_data(Emile_Image *image,
                }
              else
                {
-                  // if line # > region last line, break
+                  /* if line # > region last line, break */
                   if (l >= (opts_region.y + opts_region.h))
                     {
                        line_done = EINA_TRUE;
@@ -1979,7 +1965,7 @@ _emile_jpeg_data(Emile_Image *image,
                         *error = EMILE_IMAGE_LOAD_ERROR_NONE;
                         return EINA_TRUE;*/
                     }
-                  // els if scan block intersects region start or later
+                  /* else if scan block intersects region start or later */
                   else if ((l + scans) >
                            (opts_region.y))
                     {
@@ -2143,7 +2129,7 @@ done:
 static void
 _emile_jpeg_close(Emile_Image *image EINA_UNUSED)
 {
-   // JPEG file loader doesn't keep any data allocated around (for now)
+   /* JPEG file loader doesn't keep any data allocated around (for now) */
 }
 
 /* Generic helper to instantiate a new Emile_Image */

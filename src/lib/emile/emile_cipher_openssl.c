@@ -1,6 +1,6 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif /* ifdef HAVE_CONFIG_H */
+#endif
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>

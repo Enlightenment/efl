@@ -1,6 +1,6 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif /* ifdef HAVE_CONFIG_H */
+#endif
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
@@ -113,16 +113,17 @@ _emile_cipher_init(void)
         /* Disable warning messages about problems with the secure memory subsystem.
            This command should be run right after gcry_check_version. */
         if (gcry_control(GCRYCTL_DISABLE_SECMEM_WARN))
-          return EINA_FALSE;  /* This command is used to allocate a pool of secure memory and thus
-                                 enabling the use of secure memory. It also drops all extra privileges the
-                                 process has (i.e. if it is run as setuid (root)). If the argument nbytes
-                                 is 0, secure memory will be disabled. The minimum amount of secure memory
-                                 allocated is currently 16384 bytes; you may thus use a value of 1 to
-                                 request that default size. */
+          return EINA_FALSE;
 
+        /* This command is used to allocate a pool of secure memory and thus
+           enabling the use of secure memory. It also drops all extra privileges the
+           process has (i.e. if it is run as setuid (root)). If the argument nbytes
+           is 0, secure memory will be disabled. The minimum amount of secure memory
+           allocated is currently 16384 bytes; you may thus use a value of 1 to
+           request that default size. */
         if (gcry_control(GCRYCTL_INIT_SECMEM, 16384, 0))
-          WRN(
-            "BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, Cryptographic operation are at risk !");
+          WRN("BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, "
+              "Cryptographic operation are at risk !");
      }
 
    if (gnutls_global_init())
