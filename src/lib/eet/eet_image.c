@@ -1039,7 +1039,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
                     {
                        Eina_Binbuf *out;
 
-                       out = emile_binbuf_compress(in, EMILE_LZ4HC, EMILE_BEST_COMPRESSION);
+                       out = emile_binbuf_compress(in, EMILE_LZ4HC, EMILE_COMPRESSOR_BEST);
                        eina_binbuf_free(in);
                        in = out;
                     }

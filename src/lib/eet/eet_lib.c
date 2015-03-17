@@ -2209,7 +2209,7 @@ eet_alias(Eet_File   *ef,
 
         out = emile_binbuf_compress(in,
                                     eet_2_emile_compressor(comp),
-                                    EMILE_BEST_COMPRESSION);
+                                    EMILE_COMPRESSOR_BEST);
         eina_binbuf_free(in);
         if (!out) goto on_error;
 
@@ -2327,7 +2327,7 @@ eet_write_cipher(Eet_File   *ef,
      {
         Eina_Binbuf *out;
 
-        out = emile_binbuf_compress(in, eet_2_emile_compressor(comp), EMILE_BEST_COMPRESSION);
+        out = emile_binbuf_compress(in, eet_2_emile_compressor(comp), EMILE_COMPRESSOR_BEST);
         if (out)
           {
              if (eina_binbuf_length_get(out) < eina_binbuf_length_get(in))
