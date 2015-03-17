@@ -702,7 +702,6 @@ eet_data_image_lossless_compressed_convert(int         *size,
       unsigned char *result;
       int *bigend_data = NULL;
       int header[8];
-      unsigned int i;
 
       if (_eet_image_words_bigendian)
         {
