@@ -748,7 +748,7 @@ ecore_con_ssl_client_upgrade(Ecore_Con_Client *obj, Ecore_Con_Type ssl_type)
  */
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr,
+_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *obj,
                                      int ssl_type)
 {
    Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
