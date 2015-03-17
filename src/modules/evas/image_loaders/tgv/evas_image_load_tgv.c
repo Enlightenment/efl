@@ -12,21 +12,6 @@ struct _Evas_Loader_Internal
    Emile_Image *image;
 
    Eina_Rectangle region;
-
-   struct {
-      unsigned int width;
-      unsigned int height;
-   } block;
-   struct {
-      unsigned int width;
-      unsigned int height;
-   } size;
-
-   Evas_Colorspace cspace;
-
-   Eina_Bool compress : 1;
-   Eina_Bool blockless : 1; // Special mode used when copying data directly
-   Eina_Bool unpremul : 1;
 };
 
 static void *
