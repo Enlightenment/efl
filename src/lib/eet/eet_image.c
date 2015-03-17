@@ -177,7 +177,8 @@ static int
 eet_data_image_jpeg_header_decode(const void   *data,
                                   int           size,
                                   unsigned int *w,
-                                  unsigned int *h);
+                                  unsigned int *h,
+                                  const Eet_Colorspace **cspaces);
 static int
 eet_data_image_jpeg_rgb_decode(const void   *data,
                                int           size,
@@ -186,16 +187,16 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
                                unsigned int *d,
                                unsigned int  w,
                                unsigned int  h,
-                               unsigned int  row_stride);
+                               Eet_Colorspace cspace);
 static int
 eet_data_image_jpeg_alpha_decode(const void   *data,
                                  int           size,
                                  unsigned int  src_x,
                                  unsigned int  src_y,
-                                 unsigned int *d,
+                                 void *d,
                                  unsigned int  w,
                                  unsigned int  h,
-                                 unsigned int  row_stride);
+                                 Eet_Colorspace cspace);
 static void *
 eet_data_image_lossless_convert(int         *size,
                                 const void  *data,
@@ -343,7 +344,8 @@ static int
 eet_data_image_jpeg_header_decode(const void   *data,
                                   int           size,
                                   unsigned int *w,
-                                  unsigned int *h)
+                                  unsigned int *h,
+                                  const Eet_Colorspace **cspaces)
 {
    Emile_Image_Load_Opts opts;
    Emile_Image_Property prop;
@@ -368,13 +370,13 @@ eet_data_image_jpeg_header_decode(const void   *data,
    *w = prop.w;
    *h = prop.h;
 
+   if (cspaces) *cspaces = prop.cspaces;
+
    if (*w > 0 && *w <= 8192 &&
        *h > 0 && *h <= 8192)
      r = 1;
 
  on_error:
-   fprintf(stderr, "eet_data_image_jpeg_header_decode: %i [%i, %i]\n", r, *w, *h);
-
    emile_image_close(image);
    eina_binbuf_free(bin);
 
@@ -389,7 +391,7 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
                                unsigned int *d,
                                unsigned int  w,
                                unsigned int  h,
-                               unsigned int  row_stride)
+                               Eet_Colorspace cspace)
 {
    Emile_Image_Load_Opts opts;
    Emile_Image_Property prop;
@@ -398,12 +400,12 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
    Emile_Image_Load_Error error;
    int r = 0;
 
-   /* FIXME: handle src_x, src_y and row_stride correctly */
+   /* FIXME: handle src_x, src_y correctly */
    if (!d)
      return 0;
 
    // Fix for ABI incompatibility between 1.10 and 1.11
-   /* if (cspace == 8) cspace = 9; */
+   if (cspace == 8) cspace = 9;
 
    bin = eina_binbuf_manage_read_only_new_length(data, size);
    if (!bin) return 0;
@@ -422,7 +424,8 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
    if (!emile_image_head(image, &prop, sizeof (Emile_Image_Property), &error))
      goto on_error;
 
-   // FIXME: Change prototype to handle color space and destination region (w, h)
+   prop.cspace = cspace;
+
    if (!emile_image_data(image, &prop, sizeof (Emile_Image_Property), d, &error))
      goto on_error;
 
@@ -440,10 +443,10 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
                                  int           size,
                                  unsigned int  src_x,
                                  unsigned int  src_y,
-                                 unsigned int *d,
+                                 void         *pixels,
                                  unsigned int  w,
                                  unsigned int  h,
-                                 unsigned int  row_stride)
+                                 Eet_Colorspace cspace)
 {
    Emile_Image_Load_Opts opts;
    Emile_Image_Property prop;
@@ -455,7 +458,7 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
    unsigned int i;
 
    /* FIXME: handle src_x, src_y and row_stride correctly */
-   if (!d)
+   if (!pixels)
      return 0;
 
    bin = eina_binbuf_manage_read_only_new_length(data, size);
@@ -484,12 +487,29 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
    if (!emile_image_data(image, &prop, sizeof (Emile_Image_Property), tmp, &error))
      goto on_error;
 
-   for (i = 0; i < w * h; i++)
+   if (cspace == EMILE_COLORSPACE_AGRY88)
      {
-        *d = ((*d) & 0x00ffffff) |
-          ((*tmp) << 24);
-        tmp++;
-        d++;
+        unsigned short *d = pixels;
+
+        for (i = 0; i < w * h; i++)
+          {
+             *d = ((*d) & 0x00ff) |
+               ((*tmp) << 8);
+             tmp++;
+             d++;
+          }
+     }
+   else if (cspace == EMILE_COLORSPACE_ARGB8888)
+     {
+        unsigned int *d = pixels;
+
+        for (i = 0; i < w * h; i++)
+          {
+             *d = ((*d) & 0x00ffffff) |
+               ((*tmp) << 24);
+             tmp++;
+             d++;
+          }
      }
 
    r = 1;
@@ -768,7 +788,6 @@ eet_data_image_etc1_compressed_convert(int         *size,
                                        Eet_Image_Encoding lossy)
 {
    rg_etc1_pack_params param;
-   uint8_t *comp = NULL;
    uint8_t *buffer;
    uint32_t *data;
    uint32_t nl_width, nl_height;
@@ -890,7 +909,6 @@ eet_data_image_etc1_compressed_convert(int         *size,
           {
              uint32_t *input, *last_col, *last_row, *last_pix;
              int real_y;
-             int wlen;
 
              if (y == 0) real_y = 0;
              else if (y < image_height + 1) real_y = y - 1;
@@ -1587,16 +1605,42 @@ eet_data_image_encode(const void  *data,
                                        comp, quality, lossy, size_ret);
 }
 
-EAPI int
-eet_data_image_header_decode_cipher(const void   *data,
-                                    const char   *cipher_key,
-                                    int           size,
-                                    unsigned int *w,
-                                    unsigned int *h,
-                                    int          *alpha,
-                                    int          *comp,
-                                    int          *quality,
-                                    Eet_Image_Encoding *lossy)
+static const Eet_Colorspace _eet_etc1_colorspace[] = {
+  EET_COLORSPACE_ETC1,
+  EET_COLORSPACE_ARGB8888
+};
+
+static const Eet_Colorspace _eet_etc1_alpha_colorspace[] = {
+  EET_COLORSPACE_ETC1_ALPHA,
+  EET_COLORSPACE_ARGB8888
+};
+
+static const Eet_Colorspace _eet_etc2_rgb_colorspace[] = {
+  EET_COLORSPACE_RGB8_ETC2,
+  EET_COLORSPACE_ARGB8888
+};
+
+static const Eet_Colorspace _eet_etc2_rgba_colorspace[] = {
+  EET_COLORSPACE_RGBA8_ETC2_EAC,
+  EET_COLORSPACE_ARGB8888
+};
+
+static const Eet_Colorspace _eet_gry8_alpha_colorspace[] = {
+  EET_COLORSPACE_AGRY88,
+  EET_COLORSPACE_ARGB8888
+};
+
+static int
+eet_data_image_header_advance_decode_cipher(const void   *data,
+                                            const char   *cipher_key,
+                                            int           size,
+                                            unsigned int *w,
+                                            unsigned int *h,
+                                            int          *alpha,
+                                            int          *comp,
+                                            int          *quality,
+                                            Eet_Image_Encoding *lossy,
+                                            const Eet_Colorspace **cspaces)
 {
    int header[8];
    void *deciphered_d = NULL;
@@ -1672,7 +1716,7 @@ eet_data_image_header_decode_cipher(const void   *data,
           goto on_error;
         dt = data;
         dt += 12;
-        ok = eet_data_image_jpeg_header_decode(dt, sz1, &iw, &ih);
+        ok = eet_data_image_jpeg_header_decode(dt, sz1, &iw, &ih, cspaces);
         if (ok)
           {
              if (w)
@@ -1709,18 +1753,22 @@ eet_data_image_header_decode_cipher(const void   *data,
            case 0:
              if (lossy) *lossy = EET_IMAGE_ETC1;
              if (alpha) *alpha = EINA_FALSE;
+             if (cspaces) *cspaces = _eet_etc1_colorspace;
              break;
            case 1:
              if (lossy) *lossy = EET_IMAGE_ETC2_RGB;
              if (alpha) *alpha = EINA_FALSE;
+             if (cspaces) *cspaces = _eet_etc2_rgb_colorspace;
              break;
            case 2:
              if (alpha) *alpha = EINA_TRUE;
              if (lossy) *lossy = EET_IMAGE_ETC2_RGBA;
+             if (cspaces) *cspaces = _eet_etc2_rgba_colorspace;
              break;
            case 3:
              if (alpha) *alpha = EINA_TRUE;
              if (lossy) *lossy = EET_IMAGE_ETC1_ALPHA;
+             if (cspaces) *cspaces = _eet_etc1_alpha_colorspace;
              break;
            default:
               goto on_error;
@@ -1734,7 +1782,7 @@ eet_data_image_header_decode_cipher(const void   *data,
         unsigned int iw = 0, ih = 0;
         int ok;
 
-        ok = eet_data_image_jpeg_header_decode(data, size, &iw, &ih);
+        ok = eet_data_image_jpeg_header_decode(data, size, &iw, &ih, cspaces);
         if (ok)
           {
              if (w)
@@ -1755,6 +1803,12 @@ eet_data_image_header_decode_cipher(const void   *data,
              if (quality)
                *quality = 75;
 
+             if (cspaces)
+               {
+                  if ((*cspaces)[0] == EMILE_COLORSPACE_GRY8)
+                    *cspaces = _eet_gry8_alpha_colorspace;
+               }
+
              r = 1;
           }
      }
@@ -1764,25 +1818,22 @@ eet_data_image_header_decode_cipher(const void   *data,
    return r;
 }
 
-static const Eet_Colorspace _eet_etc1_colorspace[] = {
-  EET_COLORSPACE_ETC1,
-  EET_COLORSPACE_ARGB8888
-};
-
-static const Eet_Colorspace _eet_etc1_alpha_colorspace[] = {
-  EET_COLORSPACE_ETC1_ALPHA,
-  EET_COLORSPACE_ARGB8888
-};
-
-static const Eet_Colorspace _eet_etc2_rgb_colorspace[] = {
-  EET_COLORSPACE_RGB8_ETC2,
-  EET_COLORSPACE_ARGB8888
-};
-
-static const Eet_Colorspace _eet_etc2_rgba_colorspace[] = {
-  EET_COLORSPACE_RGBA8_ETC2_EAC,
-  EET_COLORSPACE_ARGB8888
-};
+EAPI int
+eet_data_image_header_decode_cipher(const void   *data,
+                                    const char   *cipher_key,
+                                    int           size,
+                                    unsigned int *w,
+                                    unsigned int *h,
+                                    int          *alpha,
+                                    int          *comp,
+                                    int          *quality,
+                                    Eet_Image_Encoding *lossy)
+{
+   return eet_data_image_header_advance_decode_cipher(data, cipher_key, size,
+                                                      w, h,
+                                                      alpha, comp, quality, lossy,
+                                                      NULL);
+}
 
 EAPI int
 eet_data_image_colorspace_get(Eet_File *ef,
@@ -1790,25 +1841,29 @@ eet_data_image_colorspace_get(Eet_File *ef,
                               const char *cipher_key,
                               const Eet_Colorspace **cspaces)
 {
-   Eet_Image_Encoding lossy;
-   int r;
+   void *data = NULL;
+   int size = 0;
+   int free_data = 0;
+   int d;
 
-   r = eet_data_image_header_read_cipher(ef, name, cipher_key, NULL, NULL, NULL, NULL, NULL, &lossy);
-   if (!r) return r;
+   if (!cipher_key)
+     data = (void *)eet_read_direct(ef, name, &size);
 
-   if (cspaces)
+   if (!data)
      {
-        if (lossy == EET_IMAGE_ETC1)
-          *cspaces = _eet_etc1_colorspace;
-        else if (lossy == EET_IMAGE_ETC2_RGB)
-          *cspaces = _eet_etc2_rgb_colorspace;
-        else if (lossy == EET_IMAGE_ETC2_RGBA)
-          *cspaces = _eet_etc2_rgba_colorspace;
-        else if (lossy == EET_IMAGE_ETC1_ALPHA)
-          *cspaces = _eet_etc1_alpha_colorspace;
+        data = eet_read_cipher(ef, name, &size, cipher_key);
+        free_data = 1;
+        if (!data)
+          return 0;
      }
 
-   return r;
+   d = eet_data_image_header_advance_decode_cipher(data, NULL, size, NULL, NULL,
+                                                   NULL, NULL, NULL, NULL,
+                                                   cspaces);
+   if (free_data)
+     free(data);
+
+   return d;
 }
 
 EAPI int
@@ -1945,16 +2000,16 @@ _eet_data_image_decode_inside(const void   *data,
              dt += 12;
 
              if (eet_data_image_jpeg_rgb_decode(dt, sz1, src_x, src_y, d, w, h,
-                                                row_stride))
+                                                cspace))
                {
                   dt += sz1;
                   if (!eet_data_image_jpeg_alpha_decode(dt, sz2, src_x, src_y,
-                                                        d, w, h, row_stride))
+                                                        d, w, h, cspace))
                     return 0;
                }
           }
         else if (!eet_data_image_jpeg_rgb_decode(data, size, src_x, src_y, d, w,
-                                                 h, row_stride))
+                                                 h, cspace))
           return 0;
      }
    else if ((lossy == EET_IMAGE_ETC1) ||
@@ -2074,6 +2129,7 @@ eet_data_image_decode_to_cspace_surface_cipher(const void   *data,
    unsigned int iw, ih;
    int ialpha, icompress, iquality;
    Eet_Image_Encoding ilossy;
+   const Eet_Colorspace *cspaces = NULL;
    void *deciphered_d = NULL;
    unsigned int deciphered_sz = 0;
 
@@ -2091,32 +2147,34 @@ eet_data_image_decode_to_cspace_surface_cipher(const void   *data,
      }
 
    /* All check are done during header decode, this simplify the code a lot. */
-   if (!eet_data_image_header_decode(data, size, &iw, &ih, &ialpha, &icompress,
-                                     &iquality, &ilossy))
+   if (!eet_data_image_header_advance_decode_cipher(data, NULL, size,
+                                                    &iw, &ih,
+                                                    &ialpha, &icompress, &iquality,
+                                                    &ilossy,
+                                                    &cspaces))
      return 0;
 
    if (!d)
      return 0;
 
-   if (cspace == EET_COLORSPACE_ETC1 &&
-       ilossy != EET_IMAGE_ETC1)
-     return 0;
+   if (cspaces)
+     {
+        unsigned int i;
 
-   if (cspace == EET_COLORSPACE_RGB8_ETC2 &&
-       ilossy != EET_IMAGE_ETC2_RGB)
-     return 0;
+        for (i = 0; cspaces[i] != EET_COLORSPACE_ARGB8888; i++)
+          if (cspaces[i] == cspace)
+            break ;
 
-   if (cspace == EET_COLORSPACE_RGBA8_ETC2_EAC &&
-       ilossy != EET_IMAGE_ETC2_RGBA)
-     return 0;
-
-   if (cspace == EET_COLORSPACE_ETC1_ALPHA &&
-       ilossy != EET_IMAGE_ETC1_ALPHA)
-     return 0;
-
-   if (cspace == EET_COLORSPACE_ARGB8888 &&
-       w * 4 > row_stride)
-     return 0;
+        if (cspaces[i] != cspace)
+          return 0;
+     }
+   else
+     {
+        if ((cspaces != EET_COLORSPACE_ARGB8888) ||
+            (cspace == EET_COLORSPACE_ARGB8888 &&
+             w * 4 > row_stride))
+          return 0;
+     }
 
    if (w > iw || h > ih)
      return 0;
