@@ -714,8 +714,6 @@ _on_content_resize(void *data,
 static void
 _autoscroll_objects_update(void *data)
 {
-   int i;
-   const char *type;
    Evas_Object *sub, *top_scroller = NULL;
 
    ELM_CONFORMANT_DATA_GET(data, sd);
