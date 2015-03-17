@@ -279,9 +279,7 @@ struct _Emile_Image_Animated
 
 struct _Emile_Image_Load_Opts
 {
-   struct {
-      int x, y, w, h;
-   } region;
+   Eina_Rectangle region;
    struct {
       int src_x, src_y, src_w, src_h;
       int dst_w, dst_h;
@@ -298,6 +296,7 @@ struct _Emile_Image_Load_Opts
 
 // FIXME: Add enum for error code
 // FIXME: should set region at load time, not head time
+// FIXME: add a sizeof for all load opts and animated structure ?
 
 EAPI Emile_Image *emile_image_tgv_memory_open(Eina_Binbuf *source,
                                               Emile_Image_Load_Opts *opts,

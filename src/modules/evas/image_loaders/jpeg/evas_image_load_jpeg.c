@@ -593,38 +593,26 @@ evas_image_load_file_head_jpeg_internal(unsigned int *w, unsigned int *h,
    // be nice and clip region to image. if its totally outside, fail load
    if ((opts->region.w > 0) && (opts->region.h > 0))
      {
-        unsigned int load_region_x = 0, load_region_y = 0;
-        unsigned int load_region_w = 0, load_region_h = 0;
+        unsigned int load_region_x = opts->region.x, load_region_y = opts->region.y;
+        unsigned int load_region_w = opts->region.w, load_region_h = opts->region.h;
         if (*rotated)
           {
-             load_region_x = opts->region.x;
-             load_region_y = opts->region.y;
-             load_region_w = opts->region.w;
-             load_region_h = opts->region.h;
-
-             _rotate_region(&opts->region.x, &opts->region.y, &opts->region.w, &opts->region.h,
-                            load_region_x, load_region_y, load_region_w, load_region_h,
+             _rotate_region(&load_region_x, &load_region_y, &load_region_w, &load_region_h,
+                            opts->region.x, opts->region.y, opts->region.w, opts->region.h,
                             *w, *h, degree, *flipped);
           }
-        RECTS_CLIP_TO_RECT(opts->region.x, opts->region.y,
-                           opts->region.w, opts->region.h,
+        RECTS_CLIP_TO_RECT(load_region_x, load_region_y,
+                           load_region_w, load_region_h,
                            0, 0, *w, *h);
-        if ((opts->region.w <= 0) || (opts->region.h <= 0))
+        if ((load_region_w <= 0) || (load_region_h <= 0))
           {
              jpeg_destroy_decompress(&cinfo);
              _evas_jpeg_membuf_src_term(&cinfo);
 	     *error = EVAS_LOAD_ERROR_GENERIC;
 	     return EINA_FALSE;
           }
-        *w = opts->region.w;
-        *h = opts->region.h;
-        if (*rotated)
-          {
-             opts->region.x = load_region_x;
-             opts->region.y = load_region_y;
-             opts->region.w = load_region_w;
-             opts->region.h = load_region_h;
-          }
+        *w = load_region_w;
+        *h = load_region_h;
      }
 /* end head decoding */
 
@@ -750,8 +738,9 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
    int region = 0;
    /* rotation setting */
    unsigned int ie_w = 0, ie_h = 0;
-   unsigned int load_region_x = 0, load_region_y = 0;
-   unsigned int load_region_w = 0, load_region_h = 0;
+   struct {
+      unsigned int x, y, w, h;
+   } opts_region;
    volatile int degree = 0;
    volatile Eina_Bool change_wh = EINA_FALSE;
    Eina_Bool line_done = EINA_FALSE;
@@ -840,22 +829,30 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
      {
         region = 1;
 
+        opts_region.x = opts->region.x;
+        opts_region.y = opts->region.y;
+        opts_region.w = opts->region.w;
+        opts_region.h = opts->region.h;
+
         if (prop->rotated)
           {
+             unsigned int load_region_x = 0, load_region_y = 0;
+             unsigned int load_region_w = 0, load_region_h = 0;
+
              load_region_x = opts->region.x;
              load_region_y = opts->region.y;
              load_region_w = opts->region.w;
              load_region_h = opts->region.h;
 
-             _rotate_region(&opts->region.x, &opts->region.y, &opts->region.w, &opts->region.h,
+             _rotate_region(&opts_region.x, &opts_region.y, &opts_region.w, &opts_region.h,
                             load_region_x, load_region_y, load_region_w, load_region_h,
                             w, h, degree, prop->flipped);
           }
 #ifdef BUILD_LOADER_JPEG_REGION
-        cinfo.region_x = opts->region.x;
-        cinfo.region_y = opts->region.y;
-        cinfo.region_w = opts->region.w;
-        cinfo.region_h = opts->region.h;
+        cinfo.region_x = opts_region.x;
+        cinfo.region_y = opts_region.y;
+        cinfo.region_w = opts_region.w;
+        cinfo.region_h = opts_region.h;
 #endif
      }
    if ((!region) && ((w != ie_w) || (h != ie_h)))
@@ -868,14 +865,14 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
         return EINA_FALSE;
      }
    if ((region) &&
-       ((ie_w != opts->region.w) || (ie_h != opts->region.h)))
+       ((ie_w != opts_region.w) || (ie_h != opts_region.h)))
      {
         jpeg_destroy_decompress(&cinfo);
         _evas_jpeg_membuf_src_term(&cinfo);
         *error = EVAS_LOAD_ERROR_GENERIC;
         return EINA_FALSE;
-        /* ie_w = opts->region.w; */
-        /* ie_h = opts->region.h; */
+        /* ie_w = opts_region.w; */
+        /* ie_h = opts_region.h; */
         /* if (change_wh) */
         /*   { */
         /*      ie->w = ie_h; */
@@ -984,7 +981,7 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
              else
                {
                   // if line # > region last line, break
-                  if (l >= (opts->region.y + opts->region.h))
+                  if (l >= (opts_region.y + opts_region.h))
                     {
                        line_done = EINA_TRUE;
                        /* if rotation flag is set , we have to rotate image */
@@ -996,17 +993,17 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
                     }
                   // els if scan block intersects region start or later
                   else if ((l + scans) >
-                           (opts->region.y))
+                           (opts_region.y))
                     {
                        for (y = 0; y < scans; y++)
                          {
-                            if (((y + l) >= opts->region.y) &&
-                                ((y + l) < (opts->region.y + opts->region.h)))
+                            if (((y + l) >= opts_region.y) &&
+                                ((y + l) < (opts_region.y + opts_region.h)))
                               {
-                                 ptr += opts->region.x;
+                                 ptr += opts_region.x;
                                  if (cinfo.saw_Adobe_marker)
                                    {
-                                      for (x = 0; x < opts->region.w; x++)
+                                      for (x = 0; x < opts_region.w; x++)
                                         {
                                            /* According to libjpeg doc, Photoshop inverse the values of C, M, Y and K, */
                                            /* that is C is replaces by 255 - C, etc...*/
@@ -1022,7 +1019,7 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
                                    }
                                  else
                                    {
-                                      for (x = 0; x < opts->region.w; x++)
+                                      for (x = 0; x < opts_region.w; x++)
                                         {
                                            /* Conversion from CMYK to RGB is done in 2 steps: */
                                            /* CMYK => CMY => RGB (see http://www.easyrgb.com/index.php?X=MATH) */
@@ -1045,7 +1042,7 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
                                            ptr2++;
                                         }
                                    }
-                                 ptr += (4 * (w - (opts->region.x + opts->region.w)));
+                                 ptr += (4 * (w - (opts_region.x + opts_region.w)));
                               }
                             else
                               ptr += (4 * w);
@@ -1066,10 +1063,10 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
                     ie,
                     ie->w, ie->h,
                     ie->file,
-                    opts->region.x,
-                    opts->region.y,
-                    opts->region.w,
-                    opts->region.h);
+                    opts_region.x,
+                    opts_region.y,
+                    opts_region.w,
+                    opts_region.h);
           }
         t = get_time();
  */
@@ -1097,7 +1094,7 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
                {
                   // if line # > region last line, break
                   // but not return immediately for rotation job
-                  if (l >= (opts->region.y + opts->region.h))
+                  if (l >= (opts_region.y + opts_region.h))
                     {
                        line_done = EINA_TRUE;
                        /* if rotation flag is set , we have to rotate image */
@@ -1105,21 +1102,21 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
                     }
                   // else if scan block intersects region start or later
                   else if ((l + scans) >
-                           (opts->region.y))
+                           (opts_region.y))
                     {
                        for (y = 0; y < scans; y++)
                          {
-                            if (((y + l) >= opts->region.y) &&
-                                ((y + l) < (opts->region.y + opts->region.h)))
+                            if (((y + l) >= opts_region.y) &&
+                                ((y + l) < (opts_region.y + opts_region.h)))
                               {
-                                 ptr += (3 * opts->region.x);
-                                 for (x = 0; x < opts->region.w; x++)
+                                 ptr += (3 * opts_region.x);
+                                 for (x = 0; x < opts_region.w; x++)
                                    {
                                       *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[1], ptr[2]);
                                       ptr += 3;
                                       ptr2++;
                                    }
-                                 ptr += (3 * (w - (opts->region.x + opts->region.w)));
+                                 ptr += (3 * (w - (opts_region.x + opts_region.w)));
                               }
                             else
                               ptr += (3 * w);
@@ -1158,7 +1155,7 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
              else
                {
                   // if line # > region last line, break
-                  if (l >= (opts->region.y + opts->region.h))
+                  if (l >= (opts_region.y + opts_region.h))
                     {
                        line_done = EINA_TRUE;
                        /* if rotation flag is set , we have to rotate image */
@@ -1170,21 +1167,21 @@ evas_image_load_file_data_jpeg_internal(Evas_Image_Load_Opts *opts,
                     }
                   // els if scan block intersects region start or later
                   else if ((l + scans) >
-                           (opts->region.y))
+                           (opts_region.y))
                     {
                        for (y = 0; y < scans; y++)
                          {
-                            if (((y + l) >= opts->region.y) &&
-                                ((y + l) < (opts->region.y + opts->region.h)))
+                            if (((y + l) >= opts_region.y) &&
+                                ((y + l) < (opts_region.y + opts_region.h)))
                               {
-                                 ptr += opts->region.x;
-                                 for (x = 0; x < opts->region.w; x++)
+                                 ptr += opts_region.x;
+                                 for (x = 0; x < opts_region.w; x++)
                                    {
                                       *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[0], ptr[0]);
                                       ptr++;
                                       ptr2++;
                                    }
-                                 ptr += w - (opts->region.x + opts->region.w);
+                                 ptr += w - (opts_region.x + opts_region.w);
                               }
                             else
                               ptr += w;
@@ -1233,13 +1230,6 @@ done:
           {
              free(ptr_rotate);
              ptr_rotate = NULL;
-          }
-        if (region)
-          {
-             opts->region.x = load_region_x;
-             opts->region.y = load_region_y;
-             opts->region.w = load_region_w;
-             opts->region.h = load_region_h;
           }
      }
 
