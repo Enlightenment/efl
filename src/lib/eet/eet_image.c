@@ -72,80 +72,6 @@ struct _JPEG_error_mgr
    jmp_buf               setjmp_buffer;
 };
 
-struct jpeg_membuf_src
-{
-   struct jpeg_source_mgr  pub;
-
-   const unsigned char    *buf;
-   size_t                  len;
-   struct jpeg_membuf_src *self;
-};
-
-static void
-_eet_jpeg_membuf_src_init(j_decompress_ptr cinfo)
-{
-   /* FIXME: Use attribute unused */
-    (void)cinfo;
-}
-
-static boolean
-_eet_jpeg_membuf_src_fill(j_decompress_ptr cinfo)
-{
-   static const JOCTET jpeg_eoi[2] = { 0xFF, JPEG_EOI };
-   struct jpeg_membuf_src *src = (struct jpeg_membuf_src *)cinfo->src;
-
-   src->pub.bytes_in_buffer = sizeof(jpeg_eoi);
-   src->pub.next_input_byte = jpeg_eoi;
-
-   return TRUE;
-}
-
-static void
-_eet_jpeg_membuf_src_skip(j_decompress_ptr cinfo,
-                          long             num_bytes)
-{
-   struct jpeg_membuf_src *src = (struct jpeg_membuf_src *)cinfo->src;
-
-   src->pub.bytes_in_buffer -= num_bytes;
-   src->pub.next_input_byte += num_bytes;
-}
-
-static void
-_eet_jpeg_membuf_src_term(j_decompress_ptr cinfo)
-{
-   struct jpeg_membuf_src *src = ((struct jpeg_membuf_src *)cinfo->src)->self;
-
-   free(src);
-   cinfo->src = NULL;
-}
-
-static int
-eet_jpeg_membuf_src(j_decompress_ptr cinfo,
-                    const void      *buf,
-                    size_t           len)
-{
-   struct jpeg_membuf_src *src;
-
-   src = calloc(1, sizeof(*src));
-   if (!src)
-     return -1;
-
-   src->self = src;
-
-   cinfo->src = &src->pub;
-   src->buf = buf;
-   src->len = len;
-   src->pub.init_source = _eet_jpeg_membuf_src_init;
-   src->pub.fill_input_buffer = _eet_jpeg_membuf_src_fill;
-   src->pub.skip_input_data = _eet_jpeg_membuf_src_skip;
-   src->pub.resync_to_restart = jpeg_resync_to_restart;
-   src->pub.term_source = _eet_jpeg_membuf_src_term;
-   src->pub.bytes_in_buffer = src->len;
-   src->pub.next_input_byte = src->buf;
-
-   return 0;
-}
-
 struct jpeg_membuf_dst
 {
    struct jpeg_destination_mgr pub;
@@ -163,7 +89,7 @@ static void
 _eet_jpeg_membuf_dst_init(j_compress_ptr cinfo)
 {
    /* FIXME: Use eina attribute */
-    (void)cinfo;
+   (void)cinfo;
 }
 
 static boolean
@@ -181,13 +107,13 @@ _eet_jpeg_membuf_dst_flush(j_compress_ptr cinfo)
         return TRUE;
      }
 
-   dst->pub.next_output_byte =
-     buf + ((unsigned char *)dst->pub.next_output_byte - dst->buf);
-   dst->buf = buf;
-   dst->pub.free_in_buffer += dst->len;
-   dst->len *= 2;
+      dst->pub.next_output_byte =
+        buf + ((unsigned char *)dst->pub.next_output_byte - dst->buf);
+      dst->buf = buf;
+      dst->pub.free_in_buffer += dst->len;
+      dst->len *= 2;
 
-   return FALSE;
+      return FALSE;
 }
 
 static void
@@ -246,11 +172,6 @@ eet_jpeg_membuf_dst(j_compress_ptr cinfo,
 }
 
 /*---*/
-
-static void _eet_image_jpeg_error_exit_cb(j_common_ptr cinfo);
-static void _eet_image_jpeg_output_message_cb(j_common_ptr cinfo);
-static void _eet_image_jpeg_emit_message_cb(j_common_ptr cinfo,
-                                            int          msg_level);
 
 static int
 eet_data_image_jpeg_header_decode(const void   *data,
@@ -424,44 +345,40 @@ eet_data_image_jpeg_header_decode(const void   *data,
                                   unsigned int *w,
                                   unsigned int *h)
 {
-   struct jpeg_decompress_struct cinfo;
-   struct _JPEG_error_mgr jerr;
+   Emile_Image_Load_Opts opts;
+   Emile_Image_Property prop;
+   Eina_Binbuf *bin;
+   Emile_Image *image;
+   Emile_Image_Load_Error error;
+   int r = 0;
 
-   memset(&cinfo, 0, sizeof (struct jpeg_decompress_struct));
+   bin = eina_binbuf_manage_read_only_new_length(data, size);
+   if (!bin) return 0;
 
-   cinfo.err = jpeg_std_error(&(jerr.pub));
-   jerr.pub.error_exit = _eet_image_jpeg_error_exit_cb;
-   jerr.pub.emit_message = _eet_image_jpeg_emit_message_cb;
-   jerr.pub.output_message = _eet_image_jpeg_output_message_cb;
-   if (setjmp(jerr.setjmp_buffer))
-     return 0;
+   memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
 
-   jpeg_create_decompress(&cinfo);
+   image = emile_image_jpeg_memory_open(bin, &opts, NULL, &error);
+   if (!image) goto on_error;
 
-   if (eet_jpeg_membuf_src(&cinfo, data, (size_t)size))
-     {
-        jpeg_destroy_decompress(&cinfo);
-        return 0;
-     }
+   memset(&prop, 0, sizeof (prop));
 
-   jpeg_read_header(&cinfo, TRUE);
-   cinfo.do_fancy_upsampling = FALSE;
-   cinfo.do_block_smoothing = FALSE;
-   jpeg_start_decompress(&cinfo);
+   if (!emile_image_head(image, &prop, sizeof (Emile_Image_Property), &error))
+     goto on_error;
 
-   /* head decoding */
-   *w = cinfo.output_width;
-   *h = cinfo.output_height;
+   *w = prop.w;
+   *h = prop.h;
 
-   free(cinfo.src);
-   cinfo.src = NULL;
+   if (*w > 0 && *w <= 8192 &&
+       *h > 0 && *h <= 8192)
+     r = 1;
 
-   jpeg_destroy_decompress(&cinfo);
+ on_error:
+   fprintf(stderr, "eet_data_image_jpeg_header_decode: %i [%i, %i]\n", r, *w, *h);
 
-   if ((*w < 1) || (*h < 1) || (*w > 8192) || (*h > 8192))
-     return 0;
+   emile_image_close(image);
+   eina_binbuf_free(bin);
 
-   return 1;
+   return r;
 }
 
 static int
@@ -474,147 +391,48 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
                                unsigned int  h,
                                unsigned int  row_stride)
 {
-   struct jpeg_decompress_struct cinfo;
-   struct _JPEG_error_mgr jerr;
-   unsigned char *ptr, *line[16], *tdata = NULL;
-   unsigned int *ptr2, *tmp;
-   unsigned int iw, ih;
-   unsigned int x, y, l, scans;
-   unsigned int i;
+   Emile_Image_Load_Opts opts;
+   Emile_Image_Property prop;
+   Emile_Image *image;
+   Eina_Binbuf *bin;
+   Emile_Image_Load_Error error;
+   int r = 0;
 
    /* FIXME: handle src_x, src_y and row_stride correctly */
    if (!d)
      return 0;
 
-   memset(&cinfo, 0, sizeof (struct jpeg_decompress_struct));
+   // Fix for ABI incompatibility between 1.10 and 1.11
+   /* if (cspace == 8) cspace = 9; */
 
-   cinfo.err = jpeg_std_error(&(jerr.pub));
-   jerr.pub.error_exit = _eet_image_jpeg_error_exit_cb;
-   jerr.pub.emit_message = _eet_image_jpeg_emit_message_cb;
-   jerr.pub.output_message = _eet_image_jpeg_output_message_cb;
-   if (setjmp(jerr.setjmp_buffer))
-     return 0;
+   bin = eina_binbuf_manage_read_only_new_length(data, size);
+   if (!bin) return 0;
 
-   jpeg_create_decompress(&cinfo);
+   memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
+   opts.region.x = src_x;
+   opts.region.y = src_y;
+   opts.region.w = w;
+   opts.region.h = h;
 
-   if (eet_jpeg_membuf_src(&cinfo, data, (size_t)size))
-     {
-        jpeg_destroy_decompress(&cinfo);
-        return 0;
-     }
+   image = emile_image_jpeg_memory_open(bin, &opts, NULL, &error);
+   if (!image) goto on_error;
 
-   jpeg_read_header(&cinfo, TRUE);
-   cinfo.dct_method = JDCT_ISLOW; // JDCT_FLOAT JDCT_IFAST(quality loss)
-   cinfo.do_fancy_upsampling = FALSE;
-   cinfo.do_block_smoothing = FALSE;
-   jpeg_start_decompress(&cinfo);
+   memset(&prop, 0, sizeof (prop));
 
-   /* head decoding */
-   iw = cinfo.output_width;
-   ih = cinfo.output_height;
-   if ((iw != w) || (ih != h))
-     {
-        free(cinfo.src);
-        cinfo.src = NULL;
+   if (!emile_image_head(image, &prop, sizeof (Emile_Image_Property), &error))
+     goto on_error;
 
-        jpeg_destroy_decompress(&cinfo);
-        return 0;
-     }
+   // FIXME: Change prototype to handle color space and destination region (w, h)
+   if (!emile_image_data(image, &prop, sizeof (Emile_Image_Property), d, &error))
+     goto on_error;
 
-   /* end head decoding */
-   /* data decoding */
-   if (cinfo.rec_outbuf_height > 16)
-     {
-        free(cinfo.src);
-        cinfo.src = NULL;
+   r = 1;
 
-        jpeg_destroy_decompress(&cinfo);
-        return 0;
-     }
+ on_error:
+   emile_image_close(image);
+   eina_binbuf_free(bin);
 
-   tdata = alloca((iw) * 16 * 3);
-   ptr2 = d;
-
-   if (cinfo.output_components == 3)
-     {
-        for (i = 0; i < (unsigned int)cinfo.rec_outbuf_height; i++)
-          line[i] = tdata + (i * (iw) * 3);
-        for (l = 0; l < ih; l += cinfo.rec_outbuf_height)
-          {
-             jpeg_read_scanlines(&cinfo, line, cinfo.rec_outbuf_height);
-             scans = cinfo.rec_outbuf_height;
-             if ((ih - l) < scans)
-               scans = ih - l;
-
-             ptr = tdata;
-
-             if (l + scans >= src_y && l < src_y + h)
-               {
-                  y = src_y - l;
-                  if (src_y < l)
-                    y = 0;
-
-                  for (ptr += 3 * iw * y; y < scans && (y + l) < (src_y + h);
-                       y++)
-                    {
-                       tmp = ptr2;
-                       ptr += 3 * src_x;
-                       for (x = 0; x < w; x++)
-                         {
-                            *ptr2 =
-                              (0xff000000) |
-                              ((ptr[0]) << 16) | ((ptr[1]) << 8) | (ptr[2]);
-                            ptr += 3;
-                            ptr2++;
-                         }
-                       ptr += 3 * (iw - w);
-                       ptr2 = tmp + row_stride / 4;
-                    }
-               }
-          }
-     }
-   else if (cinfo.output_components == 1)
-     {
-        for (i = 0; i < (unsigned int)cinfo.rec_outbuf_height; i++)
-          line[i] = tdata + (i * (iw));
-        for (l = 0; l < (ih); l += cinfo.rec_outbuf_height)
-          {
-             jpeg_read_scanlines(&cinfo, line, cinfo.rec_outbuf_height);
-             scans = cinfo.rec_outbuf_height;
-             if (((ih) - l) < scans)
-               scans = (ih) - l;
-
-             ptr = tdata;
-
-             if (l >= src_y && l < src_y + h)
-               {
-                  y = src_y - l;
-                  if (src_y < l)
-                    y = 0;
-
-                  for (ptr += iw * y; y < scans && (y + l) < (src_y + h); y++)
-                    {
-                       tmp = ptr2;
-                       ptr += src_x;
-                       for (x = 0; x < w; x++)
-                         {
-                            *ptr2 =
-                              (0xff000000) |
-                              ((ptr[0]) << 16) | ((ptr[0]) << 8) | (ptr[0]);
-                            ptr++;
-                            ptr2++;
-                         }
-                       ptr += iw - w;
-                       ptr2 = tmp + row_stride / 4;
-                    }
-               }
-          }
-     }
-
-   /* end data decoding */
-   jpeg_finish_decompress(&cinfo);
-   jpeg_destroy_decompress(&cinfo);
-   return 1;
+   return r;
 }
 
 static int
@@ -627,108 +445,62 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
                                  unsigned int  h,
                                  unsigned int  row_stride)
 {
-   struct jpeg_decompress_struct cinfo;
-   struct _JPEG_error_mgr jerr;
-   unsigned char *ptr, *line[16], *tdata = NULL;
-   unsigned int *ptr2, *tmp;
-   unsigned int x, y, l, scans;
-   unsigned int i, iw;
+   Emile_Image_Load_Opts opts;
+   Emile_Image_Property prop;
+   Emile_Image *image;
+   Eina_Binbuf *bin;
+   unsigned char *remember = NULL, *tmp;
+   Emile_Image_Load_Error error;
+   int r = 0;
+   unsigned int i;
 
    /* FIXME: handle src_x, src_y and row_stride correctly */
    if (!d)
      return 0;
 
-   memset(&cinfo, 0, sizeof (struct jpeg_decompress_struct));
+   bin = eina_binbuf_manage_read_only_new_length(data, size);
+   if (!bin) return 0;
 
-   cinfo.err = jpeg_std_error(&(jerr.pub));
-   jerr.pub.error_exit = _eet_image_jpeg_error_exit_cb;
-   jerr.pub.emit_message = _eet_image_jpeg_emit_message_cb;
-   jerr.pub.output_message = _eet_image_jpeg_output_message_cb;
-   if (setjmp(jerr.setjmp_buffer))
-     return 0;
+   memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
+   opts.region.x = src_x;
+   opts.region.y = src_y;
+   opts.region.w = w;
+   opts.region.h = h;
 
-   jpeg_create_decompress(&cinfo);
+   image = emile_image_jpeg_memory_open(bin, &opts, NULL, &error);
+   if (!image) goto on_error;
 
-   if (eet_jpeg_membuf_src(&cinfo, data, (size_t)size))
+   memset(&prop, 0, sizeof (prop));
+
+   if (!emile_image_head(image, &prop, sizeof (Emile_Image_Property), &error))
+     goto on_error;
+
+   remember = tmp = malloc(sizeof (unsigned char) * w * h);
+   if (!tmp) goto on_error;
+
+   // Alpha should always be encoded as GRY8
+   prop.cspace = EMILE_COLORSPACE_GRY8;
+
+   if (!emile_image_data(image, &prop, sizeof (Emile_Image_Property), tmp, &error))
+     goto on_error;
+
+   for (i = 0; i < w * h; i++)
      {
-        jpeg_destroy_decompress(&cinfo);
-        return 0;
+        *d = ((*d) & 0x00ffffff) |
+          ((*tmp) << 24);
+        tmp++;
+        d++;
      }
 
-   jpeg_read_header(&cinfo, TRUE);
-   cinfo.dct_method = JDCT_ISLOW; // JDCT_FLOAT JDCT_IFAST(quality loss)
-   cinfo.do_fancy_upsampling = FALSE;
-   cinfo.do_block_smoothing = FALSE;
-   jpeg_start_decompress(&cinfo);
+   r = 1;
 
-   /* head decoding */
-   iw = cinfo.output_width;
-   if (w != cinfo.output_width
-       || h != cinfo.output_height)
-     {
-        free(cinfo.src);
-        cinfo.src = NULL;
+ on_error:
+   free(remember);
 
-        jpeg_destroy_decompress(&cinfo);
-        return 0;
-     }
+   emile_image_close(image);
+   eina_binbuf_free(bin);
 
-   /* end head decoding */
-   /* data decoding */
-   if (cinfo.rec_outbuf_height > 16)
-     {
-        free(cinfo.src);
-        cinfo.src = NULL;
-
-        jpeg_destroy_decompress(&cinfo);
-        return 0;
-     }
-
-   tdata = alloca(w * 16 * 3);
-   ptr2 = d;
-
-   if (cinfo.output_components == 1)
-     {
-        for (i = 0; i < (unsigned int)cinfo.rec_outbuf_height; i++)
-          line[i] = tdata + (i * w);
-        for (l = 0; l < h; l += cinfo.rec_outbuf_height)
-          {
-             jpeg_read_scanlines(&cinfo, line, cinfo.rec_outbuf_height);
-             scans = cinfo.rec_outbuf_height;
-             if ((h - l) < scans)
-               scans = h - l;
-
-             ptr = tdata;
-
-             if (l >= src_y && l < src_y + h)
-               {
-                  y = src_y - l;
-                  if (src_y < l)
-                    y = 0;
-
-                  for (ptr += iw * y; y < scans && (y + l) < (src_y + h); y++)
-                    {
-                       tmp = ptr2;
-                       ptr += src_x;
-                       for (x = 0; x < w; x++)
-                         {
-                            *ptr2 =
-                              ((*ptr2) & 0x00ffffff) |
-                              ((ptr[0]) << 24);
-                            ptr++;
-                            ptr2++;
-                         }
-                       ptr += iw - w;
-                       ptr2 = tmp + row_stride / 4;
-                    }
-               }
-          }
-     }
-
-   /* end data decoding */
-   jpeg_finish_decompress(&cinfo);
-   jpeg_destroy_decompress(&cinfo);
-   return 1;
+   return r;
 }
 
 // FIXME: Importing two functions from evas here: premul & unpremul
