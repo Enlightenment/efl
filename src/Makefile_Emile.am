@@ -7,7 +7,9 @@ installed_emilemainheadersdir = $(includedir)/emile-@VMAJ@
 dist_installed_emilemainheaders_DATA = lib/emile/Emile.h
 
 lib_emile_libemile_la_SOURCES = \
-lib/emile/emile_main.c
+lib/emile/emile_private.h \
+lib/emile/emile_main.c \
+lib/emile/emile_cipher.c
 
 lib_emile_libemile_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/static_libs/lz4 \

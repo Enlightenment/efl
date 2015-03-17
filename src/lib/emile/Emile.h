@@ -27,6 +27,8 @@
 #ifndef EMILE_H_
 #define EMILE_H_
 
+#include <Eina.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif /* ifdef EAPI */
@@ -103,6 +105,12 @@ EAPI int emile_shutdown(void);
 /**
  * @}
  */
+
+EAPI Eina_Binbuf *emile_binbuf_cipher(const Eina_Binbuf *in,
+                                      const char *key, unsigned int length);
+
+EAPI Eina_Binbuf *emile_binbuf_decipher(const Eina_Binbuf *in,
+                                        const char *key, unsigned int length);
 
 #ifdef __cplusplus
 }
