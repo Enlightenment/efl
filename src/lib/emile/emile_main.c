@@ -73,7 +73,7 @@ emile_shutdown(void)
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
 
-   if (_emile_cipher_init)
+   if (_emile_cipher_inited)
      {
 #ifdef HAVE_GNUTLS
         /* Note that gnutls has a leak where it doesnt free stuff it alloced

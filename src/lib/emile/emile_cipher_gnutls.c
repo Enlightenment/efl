@@ -19,6 +19,37 @@
 #define MAX_KEY_LEN   32
 #define MAX_IV_LEN    16
 
+struct _Emile_SSL
+{
+   const char *last_error;
+   const char *cert_file;
+   const char *name;
+
+   gnutls_certificate_credentials_t cert;
+   gnutls_session_t session;
+
+   union {
+      struct {
+         gnutls_datum_t session_ticket;
+      } client;
+      struct {
+         gnutls_anon_client_credentials_t anoncred_c;
+         gnutls_anon_server_credentials_t anoncred_s;
+         gnutls_psk_client_credentials_t pskcred_c;
+         gnutls_psk_server_credentials_t pskcred_s;
+         char *cert_file;
+         gnutls_dh_params_t dh_params;
+      } server;
+   } u;
+
+   Emile_Cipher_Type t;
+   Emile_SSL_State ssl_state;
+
+   Eina_Bool server : 1;
+   Eina_Bool verify : 1;
+   Eina_Bool verify_basic : 1;
+};
+
 static int
 _emile_thread_mutex_init(void **priv)
 {
@@ -383,3 +414,284 @@ on_error:
 
    return NULL;
 }
+
+
+EAPI Eina_Bool
+emile_cipher_cafile_add(Emile_SSL *emile, const char *file)
+{
+   struct stat st;
+   int count = 0;
+
+   if (stat(file, &st)) return EINA_FALSE;
+   if (S_ISDIR(st.st_mode))
+     {
+        Eina_File_Direct_Info *info;
+        Eina_Iterator *it;
+        int err;
+
+        it = eina_file_direct_ls(file);
+        EINA_ITERATOR_FOREACH(it, info)
+          {
+             if (info->type != EINA_FILE_REG &&
+                 info->type != EINA_FILE_LNK)
+               continue;
+
+             err = gnutls_certificate_set_x509_trust_file(emile->cert,
+                                                          info->path,
+                                                          GNUTLS_X509_FMT_PEM);
+             if (err > 0) count += err;
+             else DBG("File '%s' could not be loaded.", info->path);
+          }
+        eina_iterator_free(it);
+     }
+   else
+     {
+        count = gnutls_certificate_set_x509_trust_file(emile->cert,
+                                                       file,
+                                                       GNUTLS_X509_FMT_PEM);
+        if (count <= 0) DBG("File '%s' could not be loaded.", file);
+     }
+
+   return count > 0 ? EINA_TRUE : EINA_FALSE;
+}
+
+EAPI Eina_Bool
+emile_cipher_privkey_add(Emile_SSL *emile, const char *file)
+{
+   int err;
+
+   err = gnutls_certificate_set_x509_key_file(emile->cert,
+                                              emile->cert_file,
+                                              file,
+                                              GNUTLS_X509_FMT_PEM);
+
+   if (err <= 0) DBG("Could not load certificate/key '%s'.", file);
+   return err > 0 ? EINA_TRUE : EINA_FALSE;
+}
+
+EAPI Eina_Bool
+emile_cipher_crl_add(Emile_SSL *emile, const char *file)
+{
+   int err;
+
+   err = gnutls_certificate_set_x509_crl_file(emile->cert,
+                                              file,
+                                              GNUTLS_X509_FMT_PEM);
+   if (err <= 0) DBG("Could not load CRL '%s'.", file);
+   return err > 0 ? EINA_TRUE : EINA_FALSE;
+}
+
+EAPI Emile_SSL *
+emile_cipher_server_listen(Emile_Cipher_Type t)
+{
+   Emile_SSL *r;
+   int ret;
+
+   if (t != EMILE_SSLv23 &&
+       t != EMILE_SSLv3 &&
+       t != EMILE_TLSv1)
+     return NULL;
+
+   r = calloc(1, sizeof (Emile_SSL));
+   if (!r) return NULL;
+
+   ret = gnutls_certificate_allocate_credentials(&r->cert);
+   if (ret) goto on_error;
+
+   r->t = t;
+   r->server = EINA_TRUE;
+
+   return r;
+
+ on_error:
+   ERR("GNUTLS error: %s - %s.",
+       gnutls_strerror_name(ret),
+       gnutls_strerror(ret));
+   emile_cipher_free(r);
+   return NULL;
+}
+
+EAPI Emile_SSL *
+emile_cipher_client_connect(Emile_SSL *server, int fd)
+{
+}
+
+EAPI Emile_SSL *
+emile_cipher_server_connect(Emile_Cipher_Type t)
+{
+   const char *priority = "NORMAL:%VERIFY_ALLOW_X509_V1_CA_CRT";
+   Emile_SSL *r;
+   int ret;
+
+   switch (t)
+     {
+      case EMILE_SSLv23:
+         break;
+      case EMILE_SSLv3:
+         priority = "NORMAL:%VERIFY_ALLOW_X509_V1_CA_CRT:!VERS-TLS1.0:!VERS-TLS1.1:!VERS-TLS1.2";
+         break;
+      case EMILE_TLSv1:
+         priority = "NORMAL:%VERIFY_ALLOW_X509_V1_CA_CRT:!VERS-SSL3.0";
+         break;
+      default:
+         return NULL;
+     }
+
+   r = calloc(1, sizeof (Emile_SSL));
+   if (!r) return NULL;
+
+   r->server = EINA_FALSE;
+
+   ret = gnutls_certificate_allocate_credentials(&r->cert);
+   if (ret) goto on_error;
+
+   ret = gnutls_init(&r->session, GNUTLS_CLIENT);
+   if (ret) goto on_error;
+
+   ret = gnutls_session_ticket_enable_client(r->session);
+   if (ret) goto on_error;
+
+   // FIXME: Delay that until later access
+
+   ret = gnutls_server_name_set(r->session, GNUTLS_NAME_DNS,
+                                r->name, strlen(r->name));
+   if (ret) goto on_error;
+
+   ret = gnutls_priority_set_direct(r->session, priority, NULL);
+   if (ret) goto on_error;
+
+   gnutls_handshake_set_private_extensions(r->session, 1);
+   ret = gnutls_credentials_set(r->session, GNUTLS_CRD_CERTIFICATE, r->cert));
+
+   return r;
+}
+
+EAPI Eina_Bool
+emile_cipher_free(Emile_SSL *emile)
+{
+}
+
+EAPI Eina_Bool
+emile_cipher_cafile_add(Emile_SSL *emile, const char *file)
+{
+   Eina_File_Direct_Info *info;
+   Eina_Iterator *it;
+   struct stat st;
+   int count = 0;
+   int ret;
+
+   if (stat(file, &st)) return EINA_FALSE;
+   if (S_ISDIR(st.st_mode))
+     {
+        it = eina_file_direct_ls(file);
+        EINA_ITERATOR_FOREACH(it, info)
+          {
+             if (!(info->type == EINA_FILE_UNKNOWN ||
+                   info->type == EINA_FILE_REG ||
+                   info->type == EINA_FILE_LNK))
+               continue ;
+
+             ret = gnutls_certificate_set_x509_trust_file(emile->cert,
+                                                          file,
+                                                          GNUTLS_X509_FMT_PEM);
+             if (ret > 0) count += ret;
+          }
+        eina_iterator_free(it);
+     }
+   else
+     {
+        ret = gnutls_certificate_set_x509_trust_file(emile->cert,
+                                                     file,
+                                                     GNUTLS_X509_FMT_PEM);
+        if (ret > 0) count += ret;
+     }
+
+   if (!count) ERR("Could not load CA file from '%s'.", file);
+   return !count ? EINA_FALSE : EINA_TRUE;
+}
+
+EAPI Eina_Bool
+emile_cipher_cert_add(Emile_SSL *emile, const char *file)
+{
+   return eina_stringshare_replace(&emile->cert_file, file);
+}
+
+EAPI Eina_Bool
+emile_cipher_privkey_add(Emile_SSL *emile, const char *file)
+{
+   int ret;
+
+   ret = gnutls_certificate_set_x509_key_file(emile->cert,
+                                              emile->cert_file,
+                                              file,
+                                              GNUTLS_X509_FMT_PEM);
+   if (ret)
+     ERR("Could not load certificate/key file ('%s'/'%s').",
+         emile->cert_file, file);
+   return ret ? EINA_FALSE : EINA_TRUE;
+}
+
+EAPI Eina_Bool
+emile_cipher_crl_add(Emile_SSL *emile, const char *file)
+{
+   int ret;
+
+   ret = gnutls_certificate_set_x509_crl_file(emile->cert, file,
+                                              GNUTLS_X509_FMT_PEM);
+   if (ret)
+     ERR("Could not load CRL file from '%s'.", file);
+   return ret ? EINA_FALSE : EINA_TRUE;
+}
+
+EAPI int
+emile_cipher_read(Emile_SSL *emile, Eina_Binbuf *buffer)
+{
+}
+
+EAPI int
+emile_cipher_write(Emile_SSL *emile, const Eina_Binbuf *buffer)
+{
+}
+
+EAPI const char *
+emile_cipher_error_get(const Emile_SSL *emile)
+{
+   return emile->last_error;
+}
+
+EAPI Eina_Bool
+emile_cipher_verify_name_set(Emile_SSL *emile, const char *name)
+{
+   return eina_stringshare_replace(&emile->name, name);
+}
+
+EAPI const char *
+emile_cipher_verify_name_get(const Emile_SSL *emile)
+{
+   return emile->name;
+}
+
+EAPI void
+emile_cipher_verify_set(Emile_SSL *emile, Eina_Bool verify)
+{
+   emile->verify = verify;
+}
+
+EAPI void
+emile_cipher_verify_basic_set(Emile_SSL *emile, Eina_Bool verify_basic)
+{
+   emile->verify_basic = verify_basic;
+}
+
+EAPI Eina_Bool
+emile_cipher_verify_get(const Emile_SSL *emile)
+{
+   return emile->verify;
+}
+
+EAPI Eina_Bool
+emile_cipher_verify_basic_get(const Emile_SSL *emile)
+{
+   return emile->verify_basic;
+}
+

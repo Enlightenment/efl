@@ -1372,8 +1372,6 @@ _ecore_con_ssl_client_write_gnutls(Ecore_Con_Client *obj,
  */
 
 static Ecore_Con_Ssl_Error
-
-static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *obj,
                                       int ssl_type)
 {
