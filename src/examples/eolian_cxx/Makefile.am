@@ -21,6 +21,8 @@ AM_CXXFLAGS = \
 	-I$(top_builddir)/src/lib/efl/interfaces \
 	-I$(top_srcdir)/src/lib/eina \
 	-I$(top_builddir)/src/lib/eina \
+	-I$(top_srcdir)/src/lib/emile \
+	-I$(top_builddir)/src/lib/emile \
 	-I$(top_srcdir)/src/lib/eo \
 	-I$(top_builddir)/src/lib/eo \
 	-I$(top_srcdir)/src/bindings/eo_cxx \
@@ -45,6 +47,7 @@ AM_CFLAGS = $(AM_CXXFLAGS)
 AM_LDFLAGS = \
 	-L$(top_builddir)/src/lib/efl \
 	-L$(top_builddir)/src/lib/eina \
+	-L$(top_builddir)/src/lib/emile \
 	-L$(top_builddir)/src/lib/eo \
   -L$(top_builddir)/src/lib/evas \
 	-L$(top_builddir)/src/lib/ecore \
@@ -55,6 +58,7 @@ LDADD = \
 	$(top_builddir)/src/lib/efl/libefl.la \
 	$(top_builddir)/src/lib/eo/libeo.la \
 	$(top_builddir)/src/lib/eina/libeina.la \
+	$(top_builddir)/src/lib/emile/libemile.la \
 	$(top_builddir)/src/lib/evas/libevas.la \
 	$(top_builddir)/src/lib/ecore_evas/libecore_evas.la
 

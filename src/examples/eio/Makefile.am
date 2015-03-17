@@ -3,11 +3,13 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/emile \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/eet \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/eio \
 -I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/emile \
 -I$(top_builddir)/src/lib/eo \
 -I$(top_builddir)/src/lib/eet \
 -I$(top_builddir)/src/lib/ecore \
@@ -23,6 +25,7 @@ $(top_builddir)/src/lib/eio/libeio.la \
 $(top_builddir)/src/lib/eo/libeo.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/eet/libeet.la \
+$(top_builddir)/src/lib/emile/libemile.la \
 $(top_builddir)/src/lib/eina/libeina.la \
 @EIO_LDFLAGS@
 
@@ -32,6 +35,7 @@ $(top_builddir)/src/lib/eio/libeio.la \
 $(top_builddir)/src/lib/eo/libeo.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/eet/libeet.la \
+$(top_builddir)/src/lib/emile/libemile.la \
 $(top_builddir)/src/lib/eina/libeina.la \
 @EIO_LDFLAGS@
 

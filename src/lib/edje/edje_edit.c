@@ -1506,7 +1506,7 @@ edje_edit_sound_samplebuffer_get(Evas_Object *obj, const char *sample_name)
                   return NULL;
                }
              eet_close(ef);
-             return eina_binbuf_manage_read_only_new_length(data, len);
+             return eina_binbuf_manage_new(data, len, EINA_TRUE);
           }
      }
    return NULL;

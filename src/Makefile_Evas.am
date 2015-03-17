@@ -1343,7 +1343,7 @@ bin/evas/evas_cserve2_client.c
 bin_evas_evas_cserve2_client_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
-@EINA_CFLAGS@
+@EVAS_CFLAGS@
 bin_evas_evas_cserve2_client_LDADD = @USE_EINA_LIBS@
 bin_evas_evas_cserve2_client_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
@@ -1352,7 +1352,7 @@ bin/evas/evas_cserve2_usage.c
 bin_evas_evas_cserve2_usage_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
-@EINA_CFLAGS@
+@EVAS_CFLAGS@
 bin_evas_evas_cserve2_usage_LDADD = @USE_EINA_LIBS@
 bin_evas_evas_cserve2_usage_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
@@ -1361,7 +1361,7 @@ bin/evas/evas_cserve2_debug.c
 bin_evas_evas_cserve2_debug_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
-@EINA_CFLAGS@
+@EVAS_CFLAGS@
 bin_evas_evas_cserve2_debug_LDADD = @USE_EINA_LIBS@
 bin_evas_evas_cserve2_debug_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
@@ -1370,7 +1370,7 @@ bin/evas/evas_cserve2_shm_debug.c
 bin_evas_evas_cserve2_shm_debug_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
-@EINA_CFLAGS@
+@EVAS_CFLAGS@
 bin_evas_evas_cserve2_shm_debug_LDADD = @USE_EINA_LIBS@
 bin_evas_evas_cserve2_shm_debug_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 

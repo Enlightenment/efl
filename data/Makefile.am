@@ -63,8 +63,6 @@ CLEANFILES += libeo.so.@VMAJ@.@VMIN@.@VMIC@-gdb.py
 
 EXTRA_DIST += $(eogdb_SCRIPTS) eo/libeo-gdb.py.in
 
-if BUILD_GUI
-
 ########################################################################
 # Edje
 edjefilesdir = $(datadir)/edje/include
@@ -111,7 +109,6 @@ ethumb/frames/border-0.jpg
 ethumb_clientfilesdir = $(datadir)/ethumb_client
 ethumb_clientfiles_DATA = ethumb_client/checkme
 EXTRA_DIST += $(ethumb_clientfiles_DATA)
-endif
 
 ########################################################################
 # Elua

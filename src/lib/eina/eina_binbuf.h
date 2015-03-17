@@ -62,7 +62,32 @@ EAPI Eina_Binbuf *eina_binbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
  * @see eina_binbuf_manage_new()
  * @since 1.2.0
  */
-EAPI Eina_Binbuf *eina_binbuf_manage_new_length(unsigned char *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Binbuf *eina_binbuf_manage_new_length(unsigned char *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_DEPRECATED;
+
+/**
+ * @brief Create a new string buffer using the passed string. The passed
+ * string is used directly as the buffer, it's somehow the opposite function of
+ * @ref eina_binbuf_string_steal .
+ *
+ * @param str the string to start from
+ * @param length the length of the string.
+ * @param ro the passed string will not be touched if set to EINA_TRUE.
+ * @return Newly allocated string buffer instance.
+ *
+ * This function creates a new string buffer. On error, @c NULL is
+ * returned. To free the resources, use eina_binbuf_free(). It will
+ * not touch the buffer if ro is set to @c EINA_TRUE, but it will also not
+ * copy it. If ro is set to @c EINA_TRUE any change operation will
+ * create a fresh new memory, copy old data there and starting modifying
+ * that one.
+ *
+ * @see eina_binbuf_manage_new()
+ * @see eina_binbuf_manage_new_length()
+ * @see eina_binbuf_manage_read_only_new_length()
+ *
+ * @since 1.14.0
+ */
+EAPI Eina_Binbuf *eina_binbuf_manage_new(const unsigned char *str, size_t length, Eina_Bool ro) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Create a new string buffer using the passed string. The passed
@@ -82,7 +107,7 @@ EAPI Eina_Binbuf *eina_binbuf_manage_new_length(unsigned char *str, size_t lengt
  * @see eina_binbuf_manage_new()
  * @since 1.9.0
  */
-EAPI Eina_Binbuf *eina_binbuf_manage_read_only_new_length(const unsigned char *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Binbuf *eina_binbuf_manage_read_only_new_length(const unsigned char *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_DEPRECATED;
 
 /**
  * @brief Free a string buffer.

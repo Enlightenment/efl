@@ -128,6 +128,7 @@ pc/eo.pc \
 pc/eolian.pc \
 pc/efl.pc \
 pc/efl-cxx.pc \
+pc/emile.pc \
 pc/eet.pc \
 pc/evas.pc \
 pc/ecore.pc \

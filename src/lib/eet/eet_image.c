@@ -19,19 +19,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <setjmp.h>
-#include <zlib.h>
 #include <jpeglib.h>
 
 #include "Eet.h"
 #include "Eet_private.h"
-
-#ifdef ENABLE_LIBLZ4
-# include <lz4.h>
-# include <lz4hc.h>
-#else
-# include "lz4.h"
-# include "lz4hc.h"
-#endif
 
 #include "rg_etc1.h"
 
@@ -81,80 +72,6 @@ struct _JPEG_error_mgr
    jmp_buf               setjmp_buffer;
 };
 
-struct jpeg_membuf_src
-{
-   struct jpeg_source_mgr  pub;
-
-   const unsigned char    *buf;
-   size_t                  len;
-   struct jpeg_membuf_src *self;
-};
-
-static void
-_eet_jpeg_membuf_src_init(j_decompress_ptr cinfo)
-{
-   /* FIXME: Use attribute unused */
-    (void)cinfo;
-}
-
-static boolean
-_eet_jpeg_membuf_src_fill(j_decompress_ptr cinfo)
-{
-   static const JOCTET jpeg_eoi[2] = { 0xFF, JPEG_EOI };
-   struct jpeg_membuf_src *src = (struct jpeg_membuf_src *)cinfo->src;
-
-   src->pub.bytes_in_buffer = sizeof(jpeg_eoi);
-   src->pub.next_input_byte = jpeg_eoi;
-
-   return TRUE;
-}
-
-static void
-_eet_jpeg_membuf_src_skip(j_decompress_ptr cinfo,
-                          long             num_bytes)
-{
-   struct jpeg_membuf_src *src = (struct jpeg_membuf_src *)cinfo->src;
-
-   src->pub.bytes_in_buffer -= num_bytes;
-   src->pub.next_input_byte += num_bytes;
-}
-
-static void
-_eet_jpeg_membuf_src_term(j_decompress_ptr cinfo)
-{
-   struct jpeg_membuf_src *src = ((struct jpeg_membuf_src *)cinfo->src)->self;
-
-   free(src);
-   cinfo->src = NULL;
-}
-
-static int
-eet_jpeg_membuf_src(j_decompress_ptr cinfo,
-                    const void      *buf,
-                    size_t           len)
-{
-   struct jpeg_membuf_src *src;
-
-   src = calloc(1, sizeof(*src));
-   if (!src)
-     return -1;
-
-   src->self = src;
-
-   cinfo->src = &src->pub;
-   src->buf = buf;
-   src->len = len;
-   src->pub.init_source = _eet_jpeg_membuf_src_init;
-   src->pub.fill_input_buffer = _eet_jpeg_membuf_src_fill;
-   src->pub.skip_input_data = _eet_jpeg_membuf_src_skip;
-   src->pub.resync_to_restart = jpeg_resync_to_restart;
-   src->pub.term_source = _eet_jpeg_membuf_src_term;
-   src->pub.bytes_in_buffer = src->len;
-   src->pub.next_input_byte = src->buf;
-
-   return 0;
-}
-
 struct jpeg_membuf_dst
 {
    struct jpeg_destination_mgr pub;
@@ -172,7 +89,7 @@ static void
 _eet_jpeg_membuf_dst_init(j_compress_ptr cinfo)
 {
    /* FIXME: Use eina attribute */
-    (void)cinfo;
+   (void)cinfo;
 }
 
 static boolean
@@ -190,13 +107,13 @@ _eet_jpeg_membuf_dst_flush(j_compress_ptr cinfo)
         return TRUE;
      }
 
-   dst->pub.next_output_byte =
-     buf + ((unsigned char *)dst->pub.next_output_byte - dst->buf);
-   dst->buf = buf;
-   dst->pub.free_in_buffer += dst->len;
-   dst->len *= 2;
+      dst->pub.next_output_byte =
+        buf + ((unsigned char *)dst->pub.next_output_byte - dst->buf);
+      dst->buf = buf;
+      dst->pub.free_in_buffer += dst->len;
+      dst->len *= 2;
 
-   return FALSE;
+      return FALSE;
 }
 
 static void
@@ -256,16 +173,12 @@ eet_jpeg_membuf_dst(j_compress_ptr cinfo,
 
 /*---*/
 
-static void _eet_image_jpeg_error_exit_cb(j_common_ptr cinfo);
-static void _eet_image_jpeg_output_message_cb(j_common_ptr cinfo);
-static void _eet_image_jpeg_emit_message_cb(j_common_ptr cinfo,
-                                            int          msg_level);
-
 static int
 eet_data_image_jpeg_header_decode(const void   *data,
                                   int           size,
                                   unsigned int *w,
-                                  unsigned int *h);
+                                  unsigned int *h,
+                                  const Eet_Colorspace **cspaces);
 static int
 eet_data_image_jpeg_rgb_decode(const void   *data,
                                int           size,
@@ -274,16 +187,16 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
                                unsigned int *d,
                                unsigned int  w,
                                unsigned int  h,
-                               unsigned int  row_stride);
+                               Eet_Colorspace cspace);
 static int
 eet_data_image_jpeg_alpha_decode(const void   *data,
                                  int           size,
                                  unsigned int  src_x,
                                  unsigned int  src_y,
-                                 unsigned int *d,
+                                 void *d,
                                  unsigned int  w,
                                  unsigned int  h,
-                                 unsigned int  row_stride);
+                                 Eet_Colorspace cspace);
 static void *
 eet_data_image_lossless_convert(int         *size,
                                 const void  *data,
@@ -431,46 +344,43 @@ static int
 eet_data_image_jpeg_header_decode(const void   *data,
                                   int           size,
                                   unsigned int *w,
-                                  unsigned int *h)
+                                  unsigned int *h,
+                                  const Eet_Colorspace **cspaces)
 {
-   struct jpeg_decompress_struct cinfo;
-   struct _JPEG_error_mgr jerr;
+   Emile_Image_Load_Opts opts;
+   Emile_Image_Property prop;
+   Eina_Binbuf *bin;
+   Emile_Image *image;
+   Emile_Image_Load_Error error;
+   int r = 0;
 
-   memset(&cinfo, 0, sizeof (struct jpeg_decompress_struct));
+   bin = eina_binbuf_manage_new(data, size, EINA_TRUE);
+   if (!bin) return 0;
 
-   cinfo.err = jpeg_std_error(&(jerr.pub));
-   jerr.pub.error_exit = _eet_image_jpeg_error_exit_cb;
-   jerr.pub.emit_message = _eet_image_jpeg_emit_message_cb;
-   jerr.pub.output_message = _eet_image_jpeg_output_message_cb;
-   if (setjmp(jerr.setjmp_buffer))
-     return 0;
+   memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
 
-   jpeg_create_decompress(&cinfo);
+   image = emile_image_jpeg_memory_open(bin, &opts, NULL, &error);
+   if (!image) goto on_error;
 
-   if (eet_jpeg_membuf_src(&cinfo, data, (size_t)size))
-     {
-        jpeg_destroy_decompress(&cinfo);
-        return 0;
-     }
+   memset(&prop, 0, sizeof (prop));
 
-   jpeg_read_header(&cinfo, TRUE);
-   cinfo.do_fancy_upsampling = FALSE;
-   cinfo.do_block_smoothing = FALSE;
-   jpeg_start_decompress(&cinfo);
+   if (!emile_image_head(image, &prop, sizeof (Emile_Image_Property), &error))
+     goto on_error;
 
-   /* head decoding */
-   *w = cinfo.output_width;
-   *h = cinfo.output_height;
+   *w = prop.w;
+   *h = prop.h;
 
-   free(cinfo.src);
-   cinfo.src = NULL;
+   if (cspaces) *cspaces = prop.cspaces;
 
-   jpeg_destroy_decompress(&cinfo);
+   if (*w > 0 && *w <= 8192 &&
+       *h > 0 && *h <= 8192)
+     r = 1;
 
-   if ((*w < 1) || (*h < 1) || (*w > 8192) || (*h > 8192))
-     return 0;
+ on_error:
+   emile_image_close(image);
+   eina_binbuf_free(bin);
 
-   return 1;
+   return r;
 }
 
 static int
@@ -481,149 +391,51 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
                                unsigned int *d,
                                unsigned int  w,
                                unsigned int  h,
-                               unsigned int  row_stride)
+                               Eet_Colorspace cspace)
 {
-   struct jpeg_decompress_struct cinfo;
-   struct _JPEG_error_mgr jerr;
-   unsigned char *ptr, *line[16], *tdata = NULL;
-   unsigned int *ptr2, *tmp;
-   unsigned int iw, ih;
-   unsigned int x, y, l, scans;
-   unsigned int i;
+   Emile_Image_Load_Opts opts;
+   Emile_Image_Property prop;
+   Emile_Image *image;
+   Eina_Binbuf *bin;
+   Emile_Image_Load_Error error;
+   int r = 0;
 
-   /* FIXME: handle src_x, src_y and row_stride correctly */
+   /* FIXME: handle src_x, src_y correctly */
    if (!d)
      return 0;
 
-   memset(&cinfo, 0, sizeof (struct jpeg_decompress_struct));
+   // Fix for ABI incompatibility between 1.10 and 1.11
+   if (cspace == 8) cspace = 9;
 
-   cinfo.err = jpeg_std_error(&(jerr.pub));
-   jerr.pub.error_exit = _eet_image_jpeg_error_exit_cb;
-   jerr.pub.emit_message = _eet_image_jpeg_emit_message_cb;
-   jerr.pub.output_message = _eet_image_jpeg_output_message_cb;
-   if (setjmp(jerr.setjmp_buffer))
-     return 0;
+   bin = eina_binbuf_manage_new(data, size, EINA_TRUE);
+   if (!bin) return 0;
 
-   jpeg_create_decompress(&cinfo);
+   memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
+   opts.region.x = src_x;
+   opts.region.y = src_y;
+   opts.region.w = w;
+   opts.region.h = h;
 
-   if (eet_jpeg_membuf_src(&cinfo, data, (size_t)size))
-     {
-        jpeg_destroy_decompress(&cinfo);
-        return 0;
-     }
+   image = emile_image_jpeg_memory_open(bin, &opts, NULL, &error);
+   if (!image) goto on_error;
 
-   jpeg_read_header(&cinfo, TRUE);
-   cinfo.dct_method = JDCT_ISLOW; // JDCT_FLOAT JDCT_IFAST(quality loss)
-   cinfo.do_fancy_upsampling = FALSE;
-   cinfo.do_block_smoothing = FALSE;
-   jpeg_start_decompress(&cinfo);
+   memset(&prop, 0, sizeof (prop));
 
-   /* head decoding */
-   iw = cinfo.output_width;
-   ih = cinfo.output_height;
-   if ((iw != w) || (ih != h))
-     {
-        free(cinfo.src);
-        cinfo.src = NULL;
+   if (!emile_image_head(image, &prop, sizeof (Emile_Image_Property), &error))
+     goto on_error;
 
-        jpeg_destroy_decompress(&cinfo);
-        return 0;
-     }
+   prop.cspace = cspace;
 
-   /* end head decoding */
-   /* data decoding */
-   if (cinfo.rec_outbuf_height > 16)
-     {
-        free(cinfo.src);
-        cinfo.src = NULL;
+   if (!emile_image_data(image, &prop, sizeof (Emile_Image_Property), d, &error))
+     goto on_error;
 
-        jpeg_destroy_decompress(&cinfo);
-        return 0;
-     }
+   r = 1;
 
-   tdata = alloca((iw) * 16 * 3);
-   ptr2 = d;
+ on_error:
+   emile_image_close(image);
+   eina_binbuf_free(bin);
 
-   if (cinfo.output_components == 3)
-     {
-        for (i = 0; i < (unsigned int)cinfo.rec_outbuf_height; i++)
-          line[i] = tdata + (i * (iw) * 3);
-        for (l = 0; l < ih; l += cinfo.rec_outbuf_height)
-          {
-             jpeg_read_scanlines(&cinfo, line, cinfo.rec_outbuf_height);
-             scans = cinfo.rec_outbuf_height;
-             if ((ih - l) < scans)
-               scans = ih - l;
-
-             ptr = tdata;
-
-             if (l + scans >= src_y && l < src_y + h)
-               {
-                  y = src_y - l;
-                  if (src_y < l)
-                    y = 0;
-
-                  for (ptr += 3 * iw * y; y < scans && (y + l) < (src_y + h);
-                       y++)
-                    {
-                       tmp = ptr2;
-                       ptr += 3 * src_x;
-                       for (x = 0; x < w; x++)
-                         {
-                            *ptr2 =
-                              (0xff000000) |
-                              ((ptr[0]) << 16) | ((ptr[1]) << 8) | (ptr[2]);
-                            ptr += 3;
-                            ptr2++;
-                         }
-                       ptr += 3 * (iw - w);
-                       ptr2 = tmp + row_stride / 4;
-                    }
-               }
-          }
-     }
-   else if (cinfo.output_components == 1)
-     {
-        for (i = 0; i < (unsigned int)cinfo.rec_outbuf_height; i++)
-          line[i] = tdata + (i * (iw));
-        for (l = 0; l < (ih); l += cinfo.rec_outbuf_height)
-          {
-             jpeg_read_scanlines(&cinfo, line, cinfo.rec_outbuf_height);
-             scans = cinfo.rec_outbuf_height;
-             if (((ih) - l) < scans)
-               scans = (ih) - l;
-
-             ptr = tdata;
-
-             if (l >= src_y && l < src_y + h)
-               {
-                  y = src_y - l;
-                  if (src_y < l)
-                    y = 0;
-
-                  for (ptr += iw * y; y < scans && (y + l) < (src_y + h); y++)
-                    {
-                       tmp = ptr2;
-                       ptr += src_x;
-                       for (x = 0; x < w; x++)
-                         {
-                            *ptr2 =
-                              (0xff000000) |
-                              ((ptr[0]) << 16) | ((ptr[0]) << 8) | (ptr[0]);
-                            ptr++;
-                            ptr2++;
-                         }
-                       ptr += iw - w;
-                       ptr2 = tmp + row_stride / 4;
-                    }
-               }
-          }
-     }
-
-   /* end data decoding */
-   jpeg_finish_decompress(&cinfo);
-   jpeg_destroy_decompress(&cinfo);
-   return 1;
+   return r;
 }
 
 static int
@@ -631,113 +443,84 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
                                  int           size,
                                  unsigned int  src_x,
                                  unsigned int  src_y,
-                                 unsigned int *d,
+                                 void         *pixels,
                                  unsigned int  w,
                                  unsigned int  h,
-                                 unsigned int  row_stride)
+                                 Eet_Colorspace cspace)
 {
-   struct jpeg_decompress_struct cinfo;
-   struct _JPEG_error_mgr jerr;
-   unsigned char *ptr, *line[16], *tdata = NULL;
-   unsigned int *ptr2, *tmp;
-   unsigned int x, y, l, scans;
-   unsigned int i, iw;
+   Emile_Image_Load_Opts opts;
+   Emile_Image_Property prop;
+   Emile_Image *image;
+   Eina_Binbuf *bin;
+   unsigned char *remember = NULL, *tmp;
+   Emile_Image_Load_Error error;
+   int r = 0;
+   unsigned int i;
 
    /* FIXME: handle src_x, src_y and row_stride correctly */
-   if (!d)
+   if (!pixels)
      return 0;
 
-   memset(&cinfo, 0, sizeof (struct jpeg_decompress_struct));
+   bin = eina_binbuf_manage_new(data, size, EINA_TRUE);
+   if (!bin) return 0;
 
-   cinfo.err = jpeg_std_error(&(jerr.pub));
-   jerr.pub.error_exit = _eet_image_jpeg_error_exit_cb;
-   jerr.pub.emit_message = _eet_image_jpeg_emit_message_cb;
-   jerr.pub.output_message = _eet_image_jpeg_output_message_cb;
-   if (setjmp(jerr.setjmp_buffer))
-     return 0;
+   memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
+   opts.region.x = src_x;
+   opts.region.y = src_y;
+   opts.region.w = w;
+   opts.region.h = h;
 
-   jpeg_create_decompress(&cinfo);
+   image = emile_image_jpeg_memory_open(bin, &opts, NULL, &error);
+   if (!image) goto on_error;
 
-   if (eet_jpeg_membuf_src(&cinfo, data, (size_t)size))
+   memset(&prop, 0, sizeof (prop));
+
+   if (!emile_image_head(image, &prop, sizeof (Emile_Image_Property), &error))
+     goto on_error;
+
+   remember = tmp = malloc(sizeof (unsigned char) * w * h);
+   if (!tmp) goto on_error;
+
+   // Alpha should always be encoded as GRY8
+   prop.cspace = EMILE_COLORSPACE_GRY8;
+
+   if (!emile_image_data(image, &prop, sizeof (Emile_Image_Property), tmp, &error))
+     goto on_error;
+
+   if (cspace == EMILE_COLORSPACE_AGRY88)
      {
-        jpeg_destroy_decompress(&cinfo);
-        return 0;
-     }
+        unsigned short *d = pixels;
 
-   jpeg_read_header(&cinfo, TRUE);
-   cinfo.dct_method = JDCT_ISLOW; // JDCT_FLOAT JDCT_IFAST(quality loss)
-   cinfo.do_fancy_upsampling = FALSE;
-   cinfo.do_block_smoothing = FALSE;
-   jpeg_start_decompress(&cinfo);
-
-   /* head decoding */
-   iw = cinfo.output_width;
-   if (w != cinfo.output_width
-       || h != cinfo.output_height)
-     {
-        free(cinfo.src);
-        cinfo.src = NULL;
-
-        jpeg_destroy_decompress(&cinfo);
-        return 0;
-     }
-
-   /* end head decoding */
-   /* data decoding */
-   if (cinfo.rec_outbuf_height > 16)
-     {
-        free(cinfo.src);
-        cinfo.src = NULL;
-
-        jpeg_destroy_decompress(&cinfo);
-        return 0;
-     }
-
-   tdata = alloca(w * 16 * 3);
-   ptr2 = d;
-
-   if (cinfo.output_components == 1)
-     {
-        for (i = 0; i < (unsigned int)cinfo.rec_outbuf_height; i++)
-          line[i] = tdata + (i * w);
-        for (l = 0; l < h; l += cinfo.rec_outbuf_height)
+        for (i = 0; i < w * h; i++)
           {
-             jpeg_read_scanlines(&cinfo, line, cinfo.rec_outbuf_height);
-             scans = cinfo.rec_outbuf_height;
-             if ((h - l) < scans)
-               scans = h - l;
+             *d = ((*d) & 0x00ff) |
+               ((*tmp) << 8);
+             tmp++;
+             d++;
+          }
+     }
+   else if (cspace == EMILE_COLORSPACE_ARGB8888)
+     {
+        unsigned int *d = pixels;
 
-             ptr = tdata;
-
-             if (l >= src_y && l < src_y + h)
-               {
-                  y = src_y - l;
-                  if (src_y < l)
-                    y = 0;
-
-                  for (ptr += iw * y; y < scans && (y + l) < (src_y + h); y++)
-                    {
-                       tmp = ptr2;
-                       ptr += src_x;
-                       for (x = 0; x < w; x++)
-                         {
-                            *ptr2 =
-                              ((*ptr2) & 0x00ffffff) |
-                              ((ptr[0]) << 24);
-                            ptr++;
-                            ptr2++;
-                         }
-                       ptr += iw - w;
-                       ptr2 = tmp + row_stride / 4;
-                    }
-               }
+        for (i = 0; i < w * h; i++)
+          {
+             *d = ((*d) & 0x00ffffff) |
+               ((*tmp) << 24);
+             tmp++;
+             d++;
           }
      }
 
-   /* end data decoding */
-   jpeg_finish_decompress(&cinfo);
-   jpeg_destroy_decompress(&cinfo);
-   return 1;
+   r = 1;
+
+ on_error:
+   free(remember);
+
+   emile_image_close(image);
+   eina_binbuf_free(bin);
+
+   return r;
 }
 
 // FIXME: Importing two functions from evas here: premul & unpremul
@@ -784,36 +567,6 @@ _eet_argb_unpremul(unsigned int *data, unsigned int len)
      }
 }
 
-static inline unsigned int
-_tgv_length_get(const char *m, unsigned int length, unsigned int *offset)
-{
-   unsigned int r = 0;
-   unsigned int shift = 0;
-
-   while (*offset < length && ((*m) & 0x80))
-     {
-        r = r | (((*m) & 0x7F) << shift);
-        shift += 7;
-        m++;
-        (*offset)++;
-     }
-   if (*offset < length)
-     {
-        r = r | (((*m) & 0x7F) << shift);
-        (*offset)++;
-     }
-
-   return r;
-}
-
-static int
-roundup(int val, int rup)
-{
-   if (val >= 0 && rup > 0)
-     return (val + rup - 1) - ((val + rup - 1) % rup);
-   return 0;
-}
-
 static int
 eet_data_image_etc2_decode(const void *data,
                            unsigned int length,
@@ -826,265 +579,79 @@ eet_data_image_etc2_decode(const void *data,
                            Eet_Colorspace cspace,
                            Eet_Image_Encoding lossy)
 {
-   const char *m = NULL;
-   unsigned int bwidth, bheight;
-   unsigned char *p_etc;
-   char *buffer = NULL;
-   Eina_Rectangle master;
-   unsigned int block_length;
-   unsigned int offset;
-   unsigned int x, y, w, h;
-   unsigned int block_count;
-   unsigned int etc_width = 0;
-   unsigned int etc_block_size;
-   unsigned int num_planes = 1, plane, alpha_offset = 0;
-   Eet_Colorspace file_cspace;
-   Eina_Bool compress, blockless, unpremul;
-
-   m = data;
+   Emile_Image_Load_Opts opts;
+   Emile_Image_Property prop;
+   Emile_Image *image;
+   Eina_Binbuf *bin;
+   Emile_Image_Load_Error error;
+   int i;
+   int r = 0;
 
    // Fix for ABI incompatibility between 1.10 and 1.11
    if (cspace == 8) cspace = 9;
 
-   if (strncmp(m, "TGV1", 4) != 0)
-     return 0;
+   bin = eina_binbuf_manage_new(data, length, EINA_TRUE);
+   if (!bin) return 0;
 
-   compress = m[OFFSET_OPTIONS] & 0x1;
-   blockless = (m[OFFSET_OPTIONS] & 0x2) != 0;
-   unpremul = (m[OFFSET_OPTIONS] & 0x4) != 0;
-   w = ntohl(*((unsigned int*) &(m[OFFSET_WIDTH])));
-   h = ntohl(*((unsigned int*) &(m[OFFSET_HEIGHT])));
+   memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
+   opts.region.x = dst_x;
+   opts.region.y = dst_y;
+   opts.region.w = dst_w;
+   opts.region.h = dst_h;
 
-   switch (m[OFFSET_ALGORITHM] & 0xFF)
+   image = emile_image_tgv_memory_open(bin, &opts, NULL, &error);
+   if (!image) goto on_error;
+
+   memset(&prop, 0, sizeof (prop));
+
+   if (!emile_image_head(image, &prop, sizeof (Emile_Image_Property), &error))
+     goto on_error;
+
+   for (i = 0; prop.cspaces[i] != EMILE_COLORSPACE_ARGB8888; i++)
      {
-      case 0:
-        if (lossy != EET_IMAGE_ETC1) return 0;
-        file_cspace = EET_COLORSPACE_ETC1;
-        if (alpha != EINA_FALSE) return 0;
-        etc_block_size = 8;
-        break;
-      case 1:
-        if (lossy != EET_IMAGE_ETC2_RGB) return 0;
-        file_cspace = EET_COLORSPACE_RGB8_ETC2;
-        if (alpha != EINA_FALSE) return 0;
-        etc_block_size = 8;
-        break;
-      case 2:
-        if (lossy != EET_IMAGE_ETC2_RGBA) return 0;
-        file_cspace = EET_COLORSPACE_RGBA8_ETC2_EAC;
-        if (alpha != EINA_TRUE) return 0;
-        etc_block_size = 16;
-        break;
-      case 3:
-        if (lossy != EET_IMAGE_ETC1_ALPHA) return 0;
-        file_cspace = EET_COLORSPACE_ETC1_ALPHA;
-        if (alpha != EINA_TRUE) return 0;
-        etc_block_size = 8;
-        num_planes = 2;
-        alpha_offset = ((w + 2 + 3) / 4) * ((h + 2 + 3) / 4) * 8 / sizeof(*p_etc);
-        break;
-      default:
-        return 0;
+        if (prop.cspaces[i] == cspace) break;
      }
-   etc_width = ((w + 2 + 3) / 4) * etc_block_size;
-
-   if (cspace != EET_COLORSPACE_ARGB8888 && cspace != file_cspace)
-     {
-        if (!((cspace == EET_COLORSPACE_RGB8_ETC2) && (file_cspace == EET_COLORSPACE_ETC1)))
-          return 0;
-        // else: ETC2 is compatible with ETC1 and is preferred
-     }
-
-   if (blockless)
-     {
-        bwidth = roundup(w + 2, 4);
-        bheight = roundup(h + 2, 4);
-     }
-   else
-     {
-        bwidth = 4 << (m[OFFSET_BLOCK_SIZE] & 0x0f);
-        bheight = 4 << ((m[OFFSET_BLOCK_SIZE] & 0xf0) >> 4);
-     }
-
-   EINA_RECTANGLE_SET(&master, dst_x, dst_y, dst_w, dst_h);
 
    switch (cspace)
      {
-      case EET_COLORSPACE_ETC1:
-      case EET_COLORSPACE_RGB8_ETC2:
-      case EET_COLORSPACE_RGBA8_ETC2_EAC:
-      case EET_COLORSPACE_ETC1_ALPHA:
-        if (master.x % 4 || master.y % 4)
-          abort();
-        break;
+      case EMILE_COLORSPACE_ETC1:
+         if (lossy != EET_IMAGE_ETC1) goto on_error;
+         if (alpha != EINA_FALSE) goto on_error;
+         break;
+      case EMILE_COLORSPACE_RGB8_ETC2:
+         if (lossy != EET_IMAGE_ETC2_RGB) goto on_error;
+         if (alpha != EINA_FALSE) goto on_error;
+         break;
+      case EMILE_COLORSPACE_RGBA8_ETC2_EAC:
+         if (lossy != EET_IMAGE_ETC2_RGBA) goto on_error;
+         if (alpha != EINA_TRUE) goto on_error;
+         break;
+      case EMILE_COLORSPACE_ETC1_ALPHA:
+         if (lossy != EET_IMAGE_ETC1_ALPHA) goto on_error;
+         if (alpha != EINA_TRUE) goto on_error;
+         break;
       case EET_COLORSPACE_ARGB8888:
-        // Offset to take duplicated pixels into account
-        master.x += 1;
-        master.y += 1;
-        break;
-      default: abort();
+         break;
+      default:
+         goto on_error;
      }
 
-   p_etc = (unsigned char*) p;
-   offset = OFFSET_BLOCKS;
+   prop.cspace = cspace;
 
-   // Allocate space for each ETC block (8 or 16 bytes per 4 * 4 pixels group)
-   block_count = bwidth * bheight / (4 * 4);
-   if (compress)
-     buffer = alloca(etc_block_size * block_count);
-
-   for (plane = 0; plane < num_planes; plane++)
-     for (y = 0; y < h + 2; y += bheight)
-       for (x = 0; x < w + 2; x += bwidth)
-         {
-            Eina_Rectangle current;
-            const char *data_start;
-            const char *it;
-            unsigned int expand_length;
-            unsigned int i, j;
-
-            block_length = _tgv_length_get(m + offset, length, &offset);
-
-            if (block_length == 0) goto on_error;
-
-            data_start = m + offset;
-            offset += block_length;
-
-            EINA_RECTANGLE_SET(&current, x, y,
-                               bwidth, bheight);
-
-            if (!eina_rectangle_intersection(&current, &master))
-              continue;
-
-            if (compress)
-              {
-                 expand_length = LZ4_decompress_fast(data_start, buffer,
-                                                     block_count * etc_block_size);
-                 // That's an overhead for now, need to be fixed
-                 if (expand_length != block_length)
-                   goto on_error;
-              }
-            else
-              {
-                 buffer = (void*) data_start;
-                 if (block_count * etc_block_size != block_length)
-                   goto on_error;
-              }
-            it = buffer;
-
-            for (i = 0; i < bheight; i += 4)
-              for (j = 0; j < bwidth; j += 4, it += etc_block_size)
-                {
-                   Eina_Rectangle current_etc;
-                   unsigned int temporary[4 * 4];
-                   unsigned int offset_x, offset_y;
-                   int k, l;
-
-                   EINA_RECTANGLE_SET(&current_etc, x + j, y + i, 4, 4);
-
-                   if (!eina_rectangle_intersection(&current_etc, &current))
-                     continue;
-
-                   switch (cspace)
-                     {
-                      case EET_COLORSPACE_ARGB8888:
-                        switch (file_cspace)
-                          {
-                           case EET_COLORSPACE_ETC1:
-                           case EET_COLORSPACE_ETC1_ALPHA:
-                             if (!rg_etc1_unpack_block(it, temporary, 0))
-                               {
-                                  // TODO: Should we decode as RGB8_ETC2?
-                                  fprintf(stderr, "ETC1: Block starting at {%i, %i} is corrupted!\n", x + j, y + i);
-                                  continue;
-                               }
-                             break;
-                           case EET_COLORSPACE_RGB8_ETC2:
-                             rg_etc2_rgb8_decode_block((uint8_t *) it, temporary);
-                             break;
-                           case EET_COLORSPACE_RGBA8_ETC2_EAC:
-                             rg_etc2_rgba8_decode_block((uint8_t *) it, temporary);
-                             break;
-                           default: abort();
-                          }
-
-                        offset_x = current_etc.x - x - j;
-                        offset_y = current_etc.y - y - i;
-
-                        if (!plane)
-                          {
-#ifdef BUILD_NEON
-                             if (eina_cpu_features_get() & EINA_CPU_NEON)
-                               {
-                                  uint32_t *dst = &p[current_etc.x - 1 + (current_etc.y - 1) * master.w];
-                                  uint32_t *src = &temporary[offset_x + offset_y * 4];
-                                  for (k = 0; k < current_etc.h; k++)
-                                    {
-                                       if (current_etc.w == 4)
-                                         vst1q_u32(dst, vld1q_u32(src));
-                                       else if (current_etc.w == 3)
-                                         {
-                                            vst1_u32(dst, vld1_u32(src));
-                                            *(dst + 2) = *(src + 2);
-                                         }
-                                       else if (current_etc.w == 2)
-                                         vst1_u32(dst, vld1_u32(src));
-                                       else
-                                          *dst = *src;
-                                       dst += master.w;
-                                       src += 4;
-                                    }
-                               }
-                             else
-#endif
-                             for (k = 0; k < current_etc.h; k++)
-                               {
-                                  memcpy(&p[current_etc.x - 1 + (current_etc.y - 1 + k) * master.w],
-                                         &temporary[offset_x + (offset_y + k) * 4],
-                                         current_etc.w * sizeof (unsigned int));
-                               }
-                          }
-                        else
-                          {
-                             for (k = 0; k < current_etc.h; k++)
-                               for (l = 0; l < current_etc.w; l++)
-                                 {
-                                    unsigned int *rgbdata =
-                                      &p[current_etc.x - 1 + (current_etc.y - 1 + k) * master.w + l];
-                                    unsigned int *adata =
-                                      &temporary[offset_x + (offset_y + k) * 4 + l];
-                                    A_VAL(rgbdata) = G_VAL(adata);
-                                 }
-                          }
-                        break;
-                      case EET_COLORSPACE_ETC1:
-                      case EET_COLORSPACE_RGB8_ETC2:
-                      case EET_COLORSPACE_RGBA8_ETC2_EAC:
-                        memcpy(&p_etc[(current_etc.x / 4) * etc_block_size +
-                                      (current_etc.y / 4) * etc_width],
-                               it, etc_block_size);
-                        break;
-                      case EET_COLORSPACE_ETC1_ALPHA:
-                        memcpy(&p_etc[(current_etc.x / 4) * etc_block_size +
-                                      (current_etc.y / 4) * etc_width +
-                                      plane * alpha_offset],
-                               it, etc_block_size);
-                        break;
-                      default:
-                        abort();
-                     }
-                } // bx,by inside blocks
-         } // x,y macroblocks
+   if (!emile_image_data(image, &prop, sizeof (Emile_Image_Load_Opts), p, &error))
+     goto on_error;
 
    // TODO: Add support for more unpremultiplied modes (ETC2)
-   if ((cspace == EET_COLORSPACE_ARGB8888) && unpremul)
-     _eet_argb_premul(p, w * h);
+   if ((cspace == EET_COLORSPACE_ARGB8888) && !prop.premul)
+     _eet_argb_premul(p, prop.w * prop.h);
 
-   return 1;
+   r = 1;
 
-on_error:
-   ERR("ETC image data is corrupted in this EET file");
-   return 0;
+ on_error:
+   emile_image_close(image);
+   eina_binbuf_free(bin);
+
+   return r;
 }
 
 static void *
@@ -1130,13 +697,11 @@ eet_data_image_lossless_compressed_convert(int         *size,
    _eet_image_endian_check();
 
    {
-      unsigned char *d, *comp;
-      int *header, *bigend_data = NULL, ret, ok = 1;
-      uLongf buflen = 0;
-
-      buflen = (((w * h * 101) / 100) + 3) * 4;
-      ret = LZ4_compressBound((w * h * 4));
-      if ((ret > 0) && ((uLongf)ret > buflen)) buflen = ret;
+      Eina_Binbuf *in;
+      Eina_Binbuf *out;
+      unsigned char *result;
+      int *bigend_data = NULL;
+      int header[8];
 
       if (_eet_image_words_bigendian)
         {
@@ -1149,51 +714,27 @@ eet_data_image_lossless_compressed_convert(int         *size,
            data = (const char *) bigend_data;
         }
 
-      comp = malloc(buflen);
-      if (!comp)
+      in = eina_binbuf_manage_new(data, w * h * 4, EINA_TRUE);
+      if (!in)
         {
-         free(bigend_data);
-         return NULL;
+           free(bigend_data);
+           return NULL;
         }
 
-      switch (compression)
+      out = emile_compress(in, eet_2_emile_compressor(compression), compression);
+
+      if (!out || (eina_binbuf_length_get(out) > eina_binbuf_length_get(in)))
         {
-         case EET_COMPRESSION_VERYFAST:
-           ret = LZ4_compressHC((const char *)data, (char *)comp,
-                                (w * h * 4));
-           if (ret <= 0) ok = 0;
-           buflen = ret;
-           break;
-         case EET_COMPRESSION_SUPERFAST:
-           ret = LZ4_compress((const char *)data, (char *)comp,
-                              (w * h * 4));
-           if (ret <= 0) ok = 0;
-           buflen = ret;
-           break;
-         default: /* zlib etc. */
-           ret = compress2((Bytef *)comp, &buflen, (Bytef *)(data),
-                           (uLong)(w * h * 4), compression);
-           if (ret != Z_OK) ok = 0;
-           break;
-        }
-      if ((!ok) || (buflen > (w * h * 4)))
-        {
-           free(comp);
+           eina_binbuf_free(in);
+           eina_binbuf_free(out);
            free(bigend_data);
            *size = -1;
            return NULL;
         }
 
-      d = malloc((8 * sizeof(int)) + buflen);
-      if (!d)
-        {
-           free(comp);
-           free(bigend_data);
-           return NULL;
-        }
+      eina_binbuf_free(in);
 
-      header = (int *)d;
-      memset(d, 0, 8 * sizeof(int));
+      memset(header, 0, 8 * sizeof(int));
       header[0] = 0xac1dfeed;
       header[1] = w;
       header[2] = h;
@@ -1203,10 +744,14 @@ eet_data_image_lossless_compressed_convert(int         *size,
       _eet_image_endian_swap(header, 8);
       free(bigend_data);
 
-      memcpy(d + (8 * sizeof(int)), comp, buflen);
-      *size = (8 * sizeof(int)) + buflen;
-      free(comp);
-      return d;
+      eina_binbuf_insert_length(out, (const unsigned char*) header, sizeof (header), 0);
+
+      *size = eina_binbuf_length_get(out);
+      result = eina_binbuf_string_steal(out);
+
+      eina_binbuf_free(out);
+
+      return result;
    }
 }
 
@@ -1242,7 +787,6 @@ eet_data_image_etc1_compressed_convert(int         *size,
                                        Eet_Image_Encoding lossy)
 {
    rg_etc1_pack_params param;
-   uint8_t *comp = NULL;
    uint8_t *buffer;
    uint32_t *data;
    uint32_t nl_width, nl_height;
@@ -1336,9 +880,6 @@ eet_data_image_etc1_compressed_convert(int         *size,
    block_count = (macro_block_width * macro_block_height) / (4 * 4);
    buffer = alloca(block_count * etc_block_size);
 
-   if (compress)
-     comp = alloca(LZ4_compressBound(block_count * etc_block_size));
-
    // Write a whole plane (RGB or Alpha)
    for (int plane = 0; plane < num_planes; plane++)
      {
@@ -1367,7 +908,6 @@ eet_data_image_etc1_compressed_convert(int         *size,
           {
              uint32_t *input, *last_col, *last_row, *last_pix;
              int real_y;
-             int wlen;
 
              if (y == 0) real_y = 0;
              else if (y < image_height + 1) real_y = y - 1;
@@ -1375,6 +915,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
 
              for (int x = 0; x < image_stride + 2; x += macro_block_width)
                {
+                  Eina_Binbuf *in;
                   uint8_t *offset = buffer;
                   int real_x = x;
 
@@ -1493,20 +1034,19 @@ eet_data_image_etc1_compressed_convert(int         *size,
                          }
                     }
 
+                  in = eina_binbuf_manage_new(buffer, block_count * etc_block_size, EINA_TRUE);
                   if (compress)
                     {
-                       wlen = LZ4_compressHC((char *) buffer, (char *) comp,
-                                             block_count * etc_block_size);
-                    }
-                  else
-                    {
-                       comp = buffer;
-                       wlen = block_count * etc_block_size;
+                       Eina_Binbuf *out;
+
+                       out = emile_compress(in, EMILE_LZ4HC, EMILE_COMPRESSOR_BEST);
+                       eina_binbuf_free(in);
+                       in = out;
                     }
 
-                  if (wlen > 0)
+                  if (eina_binbuf_length_get(in) > 0)
                     {
-                       unsigned int blen = wlen;
+                       unsigned int blen = eina_binbuf_length_get(in);
 
                        while (blen)
                          {
@@ -1518,8 +1058,9 @@ eet_data_image_etc1_compressed_convert(int         *size,
                             if (blen) plen = 0x80 | plen;
                             eina_binbuf_append_length(r, &plen, 1);
                          }
-                       eina_binbuf_append_length(r, (unsigned char *) comp, wlen);
+                       eina_binbuf_append_buffer(r, in);
                     }
+                  eina_binbuf_free(in);
                } // 4 rows
           } // macroblocks
      } // planes
@@ -1619,7 +1160,42 @@ _eet_data_image_rgb_encode(const void *data,
    void *d = NULL;
    size_t sz = 0;
    JSAMPROW *jbuf;
+   unsigned int *grey;
    unsigned char *buf;
+
+   /* Try to encode this buffer as GRY8 or AGRY88.
+      It is difficult to know if a different approach
+      would have payed of, but for now I do walk and
+      copy the pixels as long as they are grey. If I
+      manage to copy them up to the end, I will be
+      able to encode them as a GRY8 texture.
+    */
+   grey = malloc(sizeof (int) * w * h);
+   if (grey)
+     {
+        const unsigned int *pixels = data;
+        unsigned int i;
+
+        for (i = 0; i < w * h; i++)
+          {
+             uint8_t r, g, b;
+
+             r = R_VAL(&pixels[i]);
+             g = G_VAL(&pixels[i]);
+             b = B_VAL(&pixels[i]);
+             if (!(r == g && g == b))
+               break ;
+             grey[i] = r << 24;
+          }
+
+        if (i == w * h)
+          {
+             d = _eet_data_image_grey_encode(grey, w, h, quality, size);
+             free(grey);
+             return d;
+          }
+        free(grey);
+     }
 
    buf = alloca(3 * w);
 
@@ -2063,16 +1639,42 @@ eet_data_image_encode(const void  *data,
                                        comp, quality, lossy, size_ret);
 }
 
-EAPI int
-eet_data_image_header_decode_cipher(const void   *data,
-                                    const char   *cipher_key,
-                                    int           size,
-                                    unsigned int *w,
-                                    unsigned int *h,
-                                    int          *alpha,
-                                    int          *comp,
-                                    int          *quality,
-                                    Eet_Image_Encoding *lossy)
+static const Eet_Colorspace _eet_etc1_colorspace[] = {
+  EET_COLORSPACE_ETC1,
+  EET_COLORSPACE_ARGB8888
+};
+
+static const Eet_Colorspace _eet_etc1_alpha_colorspace[] = {
+  EET_COLORSPACE_ETC1_ALPHA,
+  EET_COLORSPACE_ARGB8888
+};
+
+static const Eet_Colorspace _eet_etc2_rgb_colorspace[] = {
+  EET_COLORSPACE_RGB8_ETC2,
+  EET_COLORSPACE_ARGB8888
+};
+
+static const Eet_Colorspace _eet_etc2_rgba_colorspace[] = {
+  EET_COLORSPACE_RGBA8_ETC2_EAC,
+  EET_COLORSPACE_ARGB8888
+};
+
+static const Eet_Colorspace _eet_gry8_alpha_colorspace[] = {
+  EET_COLORSPACE_AGRY88,
+  EET_COLORSPACE_ARGB8888
+};
+
+static int
+eet_data_image_header_advance_decode_cipher(const void   *data,
+                                            const char   *cipher_key,
+                                            int           size,
+                                            unsigned int *w,
+                                            unsigned int *h,
+                                            int          *alpha,
+                                            int          *comp,
+                                            int          *quality,
+                                            Eet_Image_Encoding *lossy,
+                                            const Eet_Colorspace **cspaces)
 {
    int header[8];
    void *deciphered_d = NULL;
@@ -2148,7 +1750,7 @@ eet_data_image_header_decode_cipher(const void   *data,
           goto on_error;
         dt = data;
         dt += 12;
-        ok = eet_data_image_jpeg_header_decode(dt, sz1, &iw, &ih);
+        ok = eet_data_image_jpeg_header_decode(dt, sz1, &iw, &ih, cspaces);
         if (ok)
           {
              if (w)
@@ -2176,6 +1778,7 @@ eet_data_image_header_decode_cipher(const void   *data,
      {
         const char *m = data;
 
+        // We only use Emile for decoding the actual data, seems simpler this way.
         if (w) *w = ntohl(*((unsigned int*) &(m[OFFSET_WIDTH])));
         if (h) *h = ntohl(*((unsigned int*) &(m[OFFSET_HEIGHT])));
         if (comp) *comp = m[OFFSET_OPTIONS] & 0x1;
@@ -2184,18 +1787,22 @@ eet_data_image_header_decode_cipher(const void   *data,
            case 0:
              if (lossy) *lossy = EET_IMAGE_ETC1;
              if (alpha) *alpha = EINA_FALSE;
+             if (cspaces) *cspaces = _eet_etc1_colorspace;
              break;
            case 1:
              if (lossy) *lossy = EET_IMAGE_ETC2_RGB;
              if (alpha) *alpha = EINA_FALSE;
+             if (cspaces) *cspaces = _eet_etc2_rgb_colorspace;
              break;
            case 2:
              if (alpha) *alpha = EINA_TRUE;
              if (lossy) *lossy = EET_IMAGE_ETC2_RGBA;
+             if (cspaces) *cspaces = _eet_etc2_rgba_colorspace;
              break;
            case 3:
              if (alpha) *alpha = EINA_TRUE;
              if (lossy) *lossy = EET_IMAGE_ETC1_ALPHA;
+             if (cspaces) *cspaces = _eet_etc1_alpha_colorspace;
              break;
            default:
               goto on_error;
@@ -2209,7 +1816,7 @@ eet_data_image_header_decode_cipher(const void   *data,
         unsigned int iw = 0, ih = 0;
         int ok;
 
-        ok = eet_data_image_jpeg_header_decode(data, size, &iw, &ih);
+        ok = eet_data_image_jpeg_header_decode(data, size, &iw, &ih, cspaces);
         if (ok)
           {
              if (w)
@@ -2230,6 +1837,12 @@ eet_data_image_header_decode_cipher(const void   *data,
              if (quality)
                *quality = 75;
 
+             if (cspaces && *cspaces)
+               {
+                  if ((*cspaces)[0] == EMILE_COLORSPACE_GRY8)
+                    *cspaces = _eet_gry8_alpha_colorspace;
+               }
+
              r = 1;
           }
      }
@@ -2239,25 +1852,22 @@ eet_data_image_header_decode_cipher(const void   *data,
    return r;
 }
 
-static const Eet_Colorspace _eet_etc1_colorspace[] = {
-  EET_COLORSPACE_ETC1,
-  EET_COLORSPACE_ARGB8888
-};
-
-static const Eet_Colorspace _eet_etc1_alpha_colorspace[] = {
-  EET_COLORSPACE_ETC1_ALPHA,
-  EET_COLORSPACE_ARGB8888
-};
-
-static const Eet_Colorspace _eet_etc2_rgb_colorspace[] = {
-  EET_COLORSPACE_RGB8_ETC2,
-  EET_COLORSPACE_ARGB8888
-};
-
-static const Eet_Colorspace _eet_etc2_rgba_colorspace[] = {
-  EET_COLORSPACE_RGBA8_ETC2_EAC,
-  EET_COLORSPACE_ARGB8888
-};
+EAPI int
+eet_data_image_header_decode_cipher(const void   *data,
+                                    const char   *cipher_key,
+                                    int           size,
+                                    unsigned int *w,
+                                    unsigned int *h,
+                                    int          *alpha,
+                                    int          *comp,
+                                    int          *quality,
+                                    Eet_Image_Encoding *lossy)
+{
+   return eet_data_image_header_advance_decode_cipher(data, cipher_key, size,
+                                                      w, h,
+                                                      alpha, comp, quality, lossy,
+                                                      NULL);
+}
 
 EAPI int
 eet_data_image_colorspace_get(Eet_File *ef,
@@ -2265,25 +1875,29 @@ eet_data_image_colorspace_get(Eet_File *ef,
                               const char *cipher_key,
                               const Eet_Colorspace **cspaces)
 {
-   Eet_Image_Encoding lossy;
-   int r;
+   void *data = NULL;
+   int size = 0;
+   int free_data = 0;
+   int d;
 
-   r = eet_data_image_header_read_cipher(ef, name, cipher_key, NULL, NULL, NULL, NULL, NULL, &lossy);
-   if (!r) return r;
+   if (!cipher_key)
+     data = (void *)eet_read_direct(ef, name, &size);
 
-   if (cspaces)
+   if (!data)
      {
-        if (lossy == EET_IMAGE_ETC1)
-          *cspaces = _eet_etc1_colorspace;
-        else if (lossy == EET_IMAGE_ETC2_RGB)
-          *cspaces = _eet_etc2_rgb_colorspace;
-        else if (lossy == EET_IMAGE_ETC2_RGBA)
-          *cspaces = _eet_etc2_rgba_colorspace;
-        else if (lossy == EET_IMAGE_ETC1_ALPHA)
-          *cspaces = _eet_etc1_alpha_colorspace;
+        data = eet_read_cipher(ef, name, &size, cipher_key);
+        free_data = 1;
+        if (!data)
+          return 0;
      }
 
-   return r;
+   d = eet_data_image_header_advance_decode_cipher(data, NULL, size, NULL, NULL,
+                                                   NULL, NULL, NULL, NULL,
+                                                   cspaces);
+   if (free_data)
+     free(data);
+
+   return d;
 }
 
 EAPI int
@@ -2337,7 +1951,7 @@ _eet_data_image_decode_inside(const void   *data,
                               unsigned int  src_x,
                               unsigned int  src_y,
                               unsigned int  src_w,
-                              unsigned int  src_h,
+                              unsigned int  src_h, /* useful for fast path detection */
                               unsigned int *d,
                               unsigned int  w,
                               unsigned int  h,
@@ -2360,75 +1974,41 @@ _eet_data_image_decode_inside(const void   *data,
                                       w, h, row_stride);
         else
           {
+             Eina_Binbuf *in;
+             Eina_Binbuf *out;
+
+             in = eina_binbuf_manage_new((const unsigned char *) body, size - 8 * sizeof (int), EINA_TRUE);
+             if (!in) return 0;
+
              if ((src_h == h) && (src_w == w) && (row_stride == src_w * 4))
                {
-                  switch (comp)
+                  out = eina_binbuf_manage_new((void*) d, w * h * 4, EINA_TRUE);
+                  if (!emile_expand(in, out,
+                                           eet_2_emile_compressor(comp)))
                     {
-                     case EET_COMPRESSION_VERYFAST:
-                     case EET_COMPRESSION_SUPERFAST:
-                       if (LZ4_decompress_fast((const char *)body,
-                                               (char *)d, w * h * 4)
-                           != (size - 32)) return 0;
-                       break;
-                     default:
-                         {
-                            uLongf dlen = w * h * 4;
-
-                            if (uncompress((Bytef *)d, &dlen, (Bytef *)body,
-                                           (uLongf)(size - 32)) != Z_OK)
-                              return 0;
-                         }
-                       break;
+                       eina_binbuf_free(in);
+                       eina_binbuf_free(out);
+                       return 0;
                     }
                }
              else
                {
-                  switch (comp)
-                    {
-                     case EET_COMPRESSION_VERYFAST:
-                     case EET_COMPRESSION_SUPERFAST:
-                         {
-                            char *dtmp;
+                  /* FIXME: This could create a huge alloc. So
+                     compressed data and tile could not always work.*/
+                  out = emile_decompress(in,
+                                         eet_2_emile_compressor(comp),
+                                         w * h * 4);
+                  eina_binbuf_free(in);
+                  if (!out) return 0;
 
-                            dtmp = malloc(src_w * src_h * 4);
-                            if (!dtmp) return 0;
-                            if (LZ4_decompress_fast((const char *)body,
-                                                    dtmp, w * h * 4)
-                                != (size - 32))
-                              {
-                                 free(dtmp);
-                                 return 0;
-                              }
-                            _eet_data_image_copy_buffer((unsigned int *)dtmp,
-                                                        src_x, src_y, src_w, d,
-                                                        w, h, row_stride);
-                            free(dtmp);
-                         }
-                       break;
-                     default:
-                         {
-                            Bytef *dtmp;
-                            uLongf dlen = src_w * src_h * 4;
+                  _eet_data_image_copy_buffer((const unsigned int *) eina_binbuf_string_get(out),
+                                              src_x, src_y, src_w, d,
+                                              w, h, row_stride);
 
-                            /* FIXME: This could create a huge alloc. So
-                             compressed data and tile could not always work.*/
-                            dtmp = malloc(dlen);
-                            if (!dtmp) return 0;
-
-                            if (uncompress(dtmp, &dlen, (Bytef *)body,
-                                           (uLongf)(size - 32)) != Z_OK)
-                              {
-                                 free(dtmp);
-                                 return 0;
-                              }
-                            _eet_data_image_copy_buffer((unsigned int *)dtmp,
-                                                        src_x, src_y, src_w, d,
-                                                        w, h, row_stride);
-                            free(dtmp);
-                         }
-                    }
+                  eina_binbuf_free(out);
                }
           }
+
         /* Fix swapiness. */
         _eet_image_endian_swap(d, w * h);
      }
@@ -2453,16 +2033,16 @@ _eet_data_image_decode_inside(const void   *data,
              dt += 12;
 
              if (eet_data_image_jpeg_rgb_decode(dt, sz1, src_x, src_y, d, w, h,
-                                                row_stride))
+                                                cspace))
                {
                   dt += sz1;
                   if (!eet_data_image_jpeg_alpha_decode(dt, sz2, src_x, src_y,
-                                                        d, w, h, row_stride))
+                                                        d, w, h, cspace))
                     return 0;
                }
           }
         else if (!eet_data_image_jpeg_rgb_decode(data, size, src_x, src_y, d, w,
-                                                 h, row_stride))
+                                                 h, cspace))
           return 0;
      }
    else if ((lossy == EET_IMAGE_ETC1) ||
@@ -2582,6 +2162,7 @@ eet_data_image_decode_to_cspace_surface_cipher(const void   *data,
    unsigned int iw, ih;
    int ialpha, icompress, iquality;
    Eet_Image_Encoding ilossy;
+   const Eet_Colorspace *cspaces = NULL;
    void *deciphered_d = NULL;
    unsigned int deciphered_sz = 0;
 
@@ -2599,32 +2180,34 @@ eet_data_image_decode_to_cspace_surface_cipher(const void   *data,
      }
 
    /* All check are done during header decode, this simplify the code a lot. */
-   if (!eet_data_image_header_decode(data, size, &iw, &ih, &ialpha, &icompress,
-                                     &iquality, &ilossy))
+   if (!eet_data_image_header_advance_decode_cipher(data, NULL, size,
+                                                    &iw, &ih,
+                                                    &ialpha, &icompress, &iquality,
+                                                    &ilossy,
+                                                    &cspaces))
      return 0;
 
    if (!d)
      return 0;
 
-   if (cspace == EET_COLORSPACE_ETC1 &&
-       ilossy != EET_IMAGE_ETC1)
-     return 0;
+   if (cspaces)
+     {
+        unsigned int i;
 
-   if (cspace == EET_COLORSPACE_RGB8_ETC2 &&
-       ilossy != EET_IMAGE_ETC2_RGB)
-     return 0;
+        for (i = 0; cspaces[i] != EET_COLORSPACE_ARGB8888; i++)
+          if (cspaces[i] == cspace)
+            break ;
 
-   if (cspace == EET_COLORSPACE_RGBA8_ETC2_EAC &&
-       ilossy != EET_IMAGE_ETC2_RGBA)
-     return 0;
-
-   if (cspace == EET_COLORSPACE_ETC1_ALPHA &&
-       ilossy != EET_IMAGE_ETC1_ALPHA)
-     return 0;
-
-   if (cspace == EET_COLORSPACE_ARGB8888 &&
-       w * 4 > row_stride)
-     return 0;
+        if (cspaces[i] != cspace)
+          return 0;
+     }
+   else
+     {
+        if ((cspaces != EET_COLORSPACE_ARGB8888) ||
+            (cspace == EET_COLORSPACE_ARGB8888 &&
+             w * 4 > row_stride))
+          return 0;
+     }
 
    if (w > iw || h > ih)
      return 0;

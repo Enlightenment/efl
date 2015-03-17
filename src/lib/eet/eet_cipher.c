@@ -46,6 +46,8 @@
 # endif /* ifdef HAVE_GNUTLS */
 #endif /* ifdef HAVE_CIPHER */
 
+#include <Emile.h>
+
 #include "Eet.h"
 #include "Eet_private.h"
 
@@ -58,25 +60,6 @@
 # define MAX_KEY_LEN   EVP_MAX_KEY_LENGTH
 # define MAX_IV_LEN    EVP_MAX_IV_LENGTH
 #endif /* ifdef HAVE_GNUTLS */
-
-#ifdef HAVE_CIPHER
-# ifdef HAVE_GNUTLS
-static Eet_Error
-eet_hmac_sha1(const void    *key,
-              size_t         key_len,
-              const void    *data,
-              size_t         data_len,
-              unsigned char *res);
-# endif /* ifdef HAVE_GNUTLS */
-static Eet_Error
-eet_pbkdf2_sha1(const char          *key,
-                int                  key_len,
-                const unsigned char *salt,
-                unsigned int         salt_len,
-                int                  iter,
-                unsigned char       *res,
-                int                  res_len);
-#endif /* ifdef HAVE_CIPHER */
 
 struct _Eet_Key
 {
@@ -106,6 +89,8 @@ eet_identity_open(const char               *certificate_file,
    void *data = NULL;
    gnutls_datum_t load_file = { NULL, 0 };
    char pass[1024];
+
+   if (!emile_cipher_init()) return NULL;
 
    /* Init */
    if (!(key = malloc(sizeof(Eet_Key))))
@@ -206,6 +191,8 @@ on_error:
    EVP_PKEY *pkey = NULL;
    X509 *cert = NULL;
 
+   if (!emile_cipher_init()) return NULL;
+
    /* Load the X509 certificate in memory. */
    fp = fopen(certificate_file, "r");
    if (!fp)
@@ -261,6 +248,8 @@ on_error:
 EAPI void
 eet_identity_close(Eet_Key *key)
 {
+   if (!emile_cipher_init()) return ;
+
 #ifdef HAVE_SIGNATURE
    if (!key || (key->references > 0))
      return;
@@ -302,6 +291,8 @@ eet_identity_print(Eet_Key *key,
 
    if (!key)
      return;
+
+   if (!emile_cipher_init()) return ;
 
    if (key->private_key)
      {
@@ -370,6 +361,8 @@ on_error:
 
    if (!key)
      return;
+
+   if (!emile_cipher_init()) return ;
 
    rsa = EVP_PKEY_get1_RSA(key->private_key);
    if (rsa)
@@ -489,6 +482,8 @@ eet_identity_sign(FILE    *fp,
    /* A few check and flush pending write. */
    if (!fp || !key || !key->certificate || !key->private_key)
      return EET_ERROR_BAD_OBJECT;
+
+   if (!emile_cipher_init()) return EET_ERROR_NOT_IMPLEMENTED;
 
    /* Get the file size. */
    fd = fileno(fp);
@@ -656,6 +651,8 @@ eet_identity_check(const void   *data_base,
    if (signature_length < sizeof(int) * 3)
      return NULL;
 
+   if (!emile_cipher_init()) return NULL;
+
    /* Get the header */
    memcpy(&magic,    header, sizeof(int));
    memcpy(&sign_len, header+1, sizeof(int));
@@ -818,6 +815,8 @@ eet_identity_certificate_print(const unsigned char *certificate,
         return;
      }
 
+   if (!emile_cipher_init()) return ;
+
 # ifdef HAVE_GNUTLS
    gnutls_datum_t datum;
    gnutls_x509_crt_t cert;
@@ -880,177 +879,17 @@ eet_cipher(const void   *data,
            void        **result,
            unsigned int *result_length)
 {
-#ifdef HAVE_CIPHER
-   /* Cipher declarations */
-   unsigned int *ret = NULL;
-   unsigned char iv[MAX_IV_LEN];
-   unsigned char ik[MAX_KEY_LEN];
-   unsigned char key_material[MAX_IV_LEN + MAX_KEY_LEN];
-   unsigned int salt;
-   unsigned int tmp = 0;
-   int crypted_length;
-   int opened = 0;
-# ifdef HAVE_GNUTLS
-   /* Gcrypt declarations */
-   gcry_error_t err = 0;
-   gcry_cipher_hd_t cipher;
-# else /* ifdef HAVE_GNUTLS */
-   /* Openssl declarations*/
-   EVP_CIPHER_CTX ctx;
-   unsigned int *buffer = NULL;
-   int tmp_len;
-# endif /* ifdef HAVE_GNUTLS */
+   Eina_Binbuf *out;
+   Eina_Binbuf *in;
 
-# ifdef HAVE_GNUTLS
-   /* Gcrypt salt generation */
-   gcry_create_nonce((unsigned char *)&salt, sizeof(salt));
-# else /* ifdef HAVE_GNUTLS */
-   /* Openssl salt generation */
-   if (!RAND_bytes((unsigned char *)&salt, sizeof (unsigned int)))
-     return EET_ERROR_PRNG_NOT_SEEDED;
+   in = eina_binbuf_manage_new(data, size, EINA_TRUE);
+   out = emile_binbuf_cipher(EMILE_AES256_CBC, in, key, length);
 
-# endif /* ifdef HAVE_GNUTLS */
+   if (result_length) *result_length = out ? eina_binbuf_length_get(out) : 0;
+   if (result) *result = out ? eina_binbuf_string_steal(out) : NULL;
 
-   eet_pbkdf2_sha1(key,
-                   length,
-                   (unsigned char *)&salt,
-                   sizeof(unsigned int),
-                   2048,
-                   key_material,
-                   MAX_KEY_LEN + MAX_IV_LEN);
-
-   memcpy(iv, key_material, MAX_IV_LEN);
-   memcpy(ik, key_material + MAX_IV_LEN, MAX_KEY_LEN);
-
-   memset(key_material, 0, sizeof (key_material));
-
-   crypted_length = ((((size + sizeof (unsigned int)) >> 5) + 1) << 5);
-   ret = malloc(crypted_length + sizeof(unsigned int));
-   if (!ret)
-     {
-        memset(iv, 0, sizeof (iv));
-        memset(ik, 0, sizeof (ik));
-        memset(&salt, 0, sizeof (salt));
-        return EET_ERROR_OUT_OF_MEMORY;
-     }
-
-   *ret = salt;
-   memset(&salt, 0, sizeof (salt));
-   tmp = htonl(size);
-
-# ifdef HAVE_GNUTLS
-   *(ret + 1) = tmp;
-   memcpy(ret + 2, data, size);
-
-   /* Gcrypt create the corresponding cipher
-      AES with a 256 bit key, Cipher Block Chaining mode */
-   err = gcry_cipher_open(&cipher, GCRY_CIPHER_AES256, GCRY_CIPHER_MODE_CBC, 0);
-   if (err)
-     goto on_error;
-
-   opened = 1;
-   err = gcry_cipher_setiv(cipher, iv, MAX_IV_LEN);
-   if (err)
-     goto on_error;
-
-   err = gcry_cipher_setkey(cipher, ik, MAX_KEY_LEN);
-   if (err)
-     goto on_error;
-
-   memset(iv, 0, sizeof (iv));
-   memset(ik, 0, sizeof (ik));
-
-   /* Gcrypt encrypt */
-   err = gcry_cipher_encrypt(cipher,
-                             (unsigned char *)(ret + 1),
-                             crypted_length,
-                             NULL,
-                             0);
-   if (err)
-     goto on_error;
-
-   /* Gcrypt close the cipher */
-   gcry_cipher_close(cipher);
-# else /* ifdef HAVE_GNUTLS */
-   buffer = malloc(crypted_length);
-   if (!buffer) goto on_error;
-   *buffer = tmp;
-
-   memcpy(buffer + 1, data, size);
-
-   /* Openssl create the corresponding cipher
-      AES with a 256 bit key, Cipher Block Chaining mode */
-   EVP_CIPHER_CTX_init(&ctx);
-   if (!EVP_EncryptInit_ex(&ctx, EVP_aes_256_cbc(), NULL, ik, iv))
-     goto on_error;
-
-   opened = 1;
-
-   memset(iv, 0, sizeof (iv));
-   memset(ik, 0, sizeof (ik));
-
-   /* Openssl encrypt */
-   if (!EVP_EncryptUpdate(&ctx, (unsigned char *)(ret + 1), &tmp_len,
-                          (unsigned char *)buffer,
-                          size + sizeof(unsigned int)))
-     goto on_error;
-
-   /* Openssl close the cipher */
-   if (!EVP_EncryptFinal_ex(&ctx, ((unsigned char *)(ret + 1)) + tmp_len,
-                            &tmp_len))
-     goto on_error;
-
-   EVP_CIPHER_CTX_cleanup(&ctx);
-   free(buffer);
-# endif /* ifdef HAVE_GNUTLS */
-
-   /* Set return values */
-   if (result_length)
-     *result_length = crypted_length + sizeof(unsigned int);
-
-   if (result)
-     *result = ret;
-   else
-     free(ret);
-
-   return EET_ERROR_NONE;
-
-on_error:
-   memset(iv, 0, sizeof (iv));
-   memset(ik, 0, sizeof (ik));
-
-# ifdef HAVE_GNUTLS
-   /* Gcrypt error */
-   if (opened)
-     gcry_cipher_close(cipher);
-
-# else /* ifdef HAVE_GNUTLS */
-   /* Openssl error */
-   if (opened)
-     EVP_CIPHER_CTX_cleanup(&ctx);
-
-   free(buffer);
-   
-# endif /* ifdef HAVE_GNUTLS */
-   /* General error */
-   free(ret);
-   if (result)
-     *result = NULL;
-
-   if (result_length)
-     *result_length = 0;
-
-   return EET_ERROR_ENCRYPT_FAILED;
-#else /* ifdef HAVE_CIPHER */
-      /* Cipher not supported */
-   (void)data;
-   (void)size;
-   (void)key;
-   (void)length;
-   (void)result;
-   (void)result_length;
-   return EET_ERROR_NOT_IMPLEMENTED;
-#endif /* ifdef HAVE_CIPHER */
+   eina_binbuf_free(out);
+   return out ? EET_ERROR_NONE : EET_ERROR_ENCRYPT_FAILED;
 }
 
 Eet_Error
@@ -1061,261 +900,15 @@ eet_decipher(const void   *data,
              void        **result,
              unsigned int *result_length)
 {
-#ifdef HAVE_CIPHER
-   const unsigned int *over = data;
-   unsigned int *ret = NULL;
-   unsigned char ik[MAX_KEY_LEN];
-   unsigned char iv[MAX_IV_LEN];
-   unsigned char key_material[MAX_KEY_LEN + MAX_IV_LEN];
-   unsigned int salt;
-   int tmp_len;
-   int tmp = 0;
-   int opened = 0;
+   Eina_Binbuf *out;
+   Eina_Binbuf *in;
 
-   /* At least the salt and an AES block */
-   if (size < sizeof(unsigned int) + 16)
-     return EET_ERROR_BAD_OBJECT;
+   in = eina_binbuf_manage_new(data, size, EINA_TRUE);
+   out = emile_binbuf_decipher(EMILE_AES256_CBC, in, key, length);
 
-   /* Get the salt */
-   salt = *over;
+   if (result_length) *result_length = out ? eina_binbuf_length_get(out) : 0;
+   if (result) *result = out ? eina_binbuf_string_steal(out) : NULL;
 
-   /* Generate the iv and the key with the salt */
-   eet_pbkdf2_sha1(key, length, (unsigned char *)&salt,
-                   sizeof(unsigned int), 2048, key_material,
-                   MAX_KEY_LEN + MAX_IV_LEN);
-
-   memcpy(iv, key_material, MAX_IV_LEN);
-   memcpy(ik, key_material + MAX_IV_LEN, MAX_KEY_LEN);
-
-   memset(key_material, 0, sizeof (key_material));
-   memset(&salt, 0, sizeof (salt));
-
-   /* Align to AES block size if size is not align */
-   tmp_len = size - sizeof (unsigned int);
-   if ((tmp_len & 0x1F) != 0)
-     goto on_error;
-
-   ret = malloc(tmp_len);
-   if (!ret)
-     goto on_error;
-
-# ifdef HAVE_GNUTLS
-   gcry_error_t err = 0;
-   gcry_cipher_hd_t cipher;
-
-   /* Gcrypt create the corresponding cipher */
-   err = gcry_cipher_open(&cipher, GCRY_CIPHER_AES256, GCRY_CIPHER_MODE_CBC, 0);
-   if (err)
-     return EET_ERROR_DECRYPT_FAILED;
-
-   err = gcry_cipher_setiv(cipher, iv, MAX_IV_LEN);
-   if (err)
-     goto on_error;
-
-   err = gcry_cipher_setkey(cipher, ik, MAX_KEY_LEN);
-   if (err)
-     goto on_error;
-
-   memset(iv, 0, sizeof (iv));
-   memset(ik, 0, sizeof (ik));
-
-   /* Gcrypt decrypt */
-   err = gcry_cipher_decrypt(cipher, ret, tmp_len,
-                             ((unsigned int *)data) + 1, tmp_len);
-   if (err)
-     goto on_error;
-
-   /* Gcrypt close the cipher */
-   gcry_cipher_close(cipher);
-
-# else /* ifdef HAVE_GNUTLS */
-   EVP_CIPHER_CTX ctx;
-
-   /* Openssl create the corresponding cipher */
-   EVP_CIPHER_CTX_init(&ctx);
-   opened = 1;
-
-   if (!EVP_DecryptInit_ex(&ctx, EVP_aes_256_cbc(), NULL, ik, iv))
-     goto on_error;
-
-   memset(iv, 0, sizeof (iv));
-   memset(ik, 0, sizeof (ik));
-
-   /* Openssl decrypt */
-   if (!EVP_DecryptUpdate(&ctx, (unsigned char *)ret, &tmp,
-                          (unsigned char *)(over + 1), tmp_len))
-     goto on_error;
-
-   /* Openssl close the cipher*/
-   EVP_CIPHER_CTX_cleanup(&ctx);
-# endif /* ifdef HAVE_GNUTLS */
-   /* Get the decrypted data size */
-   tmp = *ret;
-   tmp = ntohl(tmp);
-   if (tmp > tmp_len || tmp <= 0)
-     goto on_error;
-
-   /* Update the return values */
-   if (result_length)
-     *result_length = tmp;
-
-   if (result)
-     {
-        *result = NULL;
-        *result = malloc(tmp);
-        if (!*result)
-          goto on_error;
-
-        memcpy(*result, ret + 1, tmp);
-     }
-
-   free(ret);
-
-   return EET_ERROR_NONE;
-
-on_error:
-   memset(iv, 0, sizeof (iv));
-   memset(ik, 0, sizeof (ik));
-
-# ifdef HAVE_GNUTLS
-   (void)opened;
-# else
-   if (opened)
-     EVP_CIPHER_CTX_cleanup(&ctx);
-
-# endif /* ifdef HAVE_GNUTLS */
-   if (result)
-     *result = NULL;
-
-   if (result_length)
-     *result_length = 0;
-
-   if (ret)
-     free(ret);
-
-   return EET_ERROR_DECRYPT_FAILED;
-#else /* ifdef HAVE_CIPHER */
-   (void)data;
-   (void)size;
-   (void)key;
-   (void)length;
-   (void)result;
-   (void)result_length;
-   return EET_ERROR_NOT_IMPLEMENTED;
-#endif /* ifdef HAVE_CIPHER */
+   eina_binbuf_free(out);
+   return out ? EET_ERROR_NONE : EET_ERROR_DECRYPT_FAILED;
 }
-
-#ifdef HAVE_CIPHER
-# ifdef HAVE_GNUTLS
-static Eet_Error
-eet_hmac_sha1(const void    *key,
-              size_t         key_len,
-              const void    *data,
-              size_t         data_len,
-              unsigned char *res)
-{
-   size_t hlen = gcry_md_get_algo_dlen (GCRY_MD_SHA1);
-   gcry_md_hd_t mdh;
-   unsigned char *hash;
-   gpg_error_t err;
-
-   err = gcry_md_open(&mdh, GCRY_MD_SHA1, GCRY_MD_FLAG_HMAC);
-   if (err != GPG_ERR_NO_ERROR)
-     return 1;
-
-   err = gcry_md_setkey(mdh, key, key_len);
-   if (err != GPG_ERR_NO_ERROR)
-     {
-        gcry_md_close(mdh);
-        return 1;
-     }
-
-   gcry_md_write(mdh, data, data_len);
-
-   hash = gcry_md_read(mdh, GCRY_MD_SHA1);
-   if (!hash)
-     {
-        gcry_md_close(mdh);
-        return 1;
-     }
-
-   memcpy(res, hash, hlen);
-
-   gcry_md_close(mdh);
-
-   return 0;
-}
-
-# endif /* ifdef HAVE_GNUTLS */
-
-static Eet_Error
-eet_pbkdf2_sha1(const char          *key,
-                int                  key_len,
-                const unsigned char *salt,
-                unsigned int         salt_len,
-                int                  iter,
-                unsigned char       *res,
-                int                  res_len)
-{
-   unsigned char digest[20];
-   unsigned char tab[4];
-   unsigned char *p = res;
-   unsigned char *buf;
-   unsigned long i;
-   int digest_len = 20;
-   int len = res_len;
-   int tmp_len;
-   int j, k;
-# ifdef HAVE_GNUTLS
-# else
-   HMAC_CTX hctx;
-# endif /* ifdef HAVE_GNUTLS */
-
-   buf = alloca(salt_len + 4);
-   if (!buf)
-     return 1;
-
-   for (i = 1; len; len -= tmp_len, p += tmp_len, i++)
-     {
-        if (len > digest_len)
-          tmp_len = digest_len;
-        else
-          tmp_len = len;
-
-        tab[0] = (unsigned char)(i & 0xff000000) >> 24;
-        tab[1] = (unsigned char)(i & 0x00ff0000) >> 16;
-        tab[2] = (unsigned char)(i & 0x0000ff00) >> 8;
-        tab[3] = (unsigned char)(i & 0x000000ff) >> 0;
-
-# ifdef HAVE_GNUTLS
-        memcpy(buf, salt, salt_len);
-        memcpy(buf + salt_len, tab, 4);
-        eet_hmac_sha1(key, key_len, buf, salt_len + 4, digest);
-# else /* ifdef HAVE_GNUTLS */
-        HMAC_Init(&hctx, key, key_len, EVP_sha1());
-        HMAC_Update(&hctx, salt, salt_len);
-        HMAC_Update(&hctx, tab, 4);
-        HMAC_Final(&hctx, digest, NULL);
-# endif /* ifdef HAVE_GNUTLS */
-        memcpy(p, digest, tmp_len);
-
-        for (j = 1; j < iter; j++)
-          {
-# ifdef HAVE_GNUTLS
-             eet_hmac_sha1(key, key_len, digest, 20, digest);
-# else /* ifdef HAVE_GNUTLS */
-             HMAC(EVP_sha1(), key, key_len, digest, 20, digest, NULL);
-# endif /* ifdef HAVE_GNUTLS */
-             for (k = 0; k < tmp_len; k++)
-               p[k] ^= digest[k];
-          }
-# ifdef HAVE_GNUTLS
-# else
-	HMAC_cleanup(&hctx);
-# endif /* ifdef HAVE_GNUTLS */
-     }
-
-   return 0;
-}
-
-#endif /* ifdef HAVE_CIPHER */

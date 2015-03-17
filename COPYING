@@ -14,6 +14,7 @@ use them and is not more restrictive).
 evil:            licenses/COPYING.BSD
 escape:          licenses/COPYING.GPL (used in PlayStation native)
 eina:            licenses/COPYING.LGPL
+emile:           licenses/COPYING.LGPL
 eet:             licenses/COPYING.BSD
 eo:              licenses/COPYING.BSD
 evas:            licenses/COPYING.BSD

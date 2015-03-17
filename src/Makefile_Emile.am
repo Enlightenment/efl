@@ -1,0 +1,91 @@
+
+### Library
+lib_LTLIBRARIES += lib/emile/libemile.la
+
+installed_emilemainheadersdir = $(includedir)/emile-@VMAJ@
+dist_installed_emilemainheaders_DATA = \
+lib/emile/Emile.h \
+lib/emile/emile_cipher.h \
+lib/emile/emile_compress.h \
+lib/emile/emile_image.h
+
+lib_emile_libemile_la_SOURCES = \
+lib/emile/emile_private.h \
+lib/emile/emile_main.c \
+lib/emile/emile_compress.c \
+lib/emile/emile_image.c \
+static_libs/rg_etc/rg_etc1.c \
+static_libs/rg_etc/rg_etc2.c \
+static_libs/rg_etc/rg_etc1.h \
+static_libs/rg_etc/etc2_encoder.c
+
+if ! ENABLE_LIBLZ4
+lib_emile_libemile_la_SOURCES += \
+static_libs/lz4/lz4.c \
+static_libs/lz4/lz4.h \
+static_libs/lz4/lz4hc.c \
+static_libs/lz4/lz4hc.h
+endif
+
+if HAVE_CRYPTO_GNUTLS
+lib_emile_libemile_la_SOURCES += lib/emile/emile_cipher_gnutls.c
+else
+if HAVE_CRYPTO_OPENSSL
+lib_emile_libemile_la_SOURCES += lib/emile/emile_cipher_openssl.c
+else
+lib_emile_libemile_la_SOURCES += lib/emile/emile_cipher.c
+endif
+endif
+
+lib_emile_libemile_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/static_libs/rg_etc \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/emile\" \
+@EMILE_CFLAGS@
+
+if ! ENABLE_LIBLZ4
+lib_emile_libemile_la_CPPFLAGS += \
+-I$(top_srcdir)/src/static_libs/lz4
+endif
+
+lib_emile_libemile_la_LIBADD = @EMILE_LIBS@
+lib_emile_libemile_la_DEPENDENCIES = @EMILE_INTERNAL_LIBS@
+lib_emile_libemile_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+if ! ENABLE_LIBLZ4
+lib_emile_libemile_la_LIBADD += @LIBLZ4_LIBS@
+endif
+
+EXTRA_DIST += static_libs/lz4/README \
+static_libs/lz4/lz4.c \
+static_libs/lz4/lz4.h \
+static_libs/lz4/lz4hc.c \
+static_libs/lz4/lz4hc.h \
+static_libs/rg_etc/README
+
+### Binary
+
+# None yet, maybe a tool to manually use cypher/compression ?
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/emile/emile_suite
+TESTS += tests/emile/emile_suite
+
+tests_emile_emile_suite_SOURCES = \
+tests/emile/emile_suite.c
+
+tests_emile_emile_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_WD=\"`pwd`\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/emile\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/emile\" \
+@CHECK_CFLAGS@ \
+@EMILE_CFLAGS@
+
+tests_emile_emile_suite_LDADD = @CHECK_LIBS@ @USE_EMILE_LIBS@
+tests_emile_emile_suite_DEPENDENCIES = @USE_EMILE_INTERNAL_LIBS@
+
+endif

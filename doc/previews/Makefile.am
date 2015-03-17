@@ -1,4 +1,3 @@
-if BUILD_GUI
 if EFL_BUILD_DOC
 
 .PHONY: doc
@@ -24,7 +23,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_evas \
 -DEFL_BETA_API_SUPPORT=1 \
 -DEFL_EO_API_SUPPORT=1 \
-@ECORE_EVAS_LDFLAGS@
+@ECORE_EVAS_CFLAGS@
 
 LDADD = \
 $(top_builddir)/src/lib/eina/libeina.la \
@@ -65,9 +64,9 @@ endif
 
 
 endif
-endif
 
 EXTRA_DIST = preview_text_filter.c
 
 clean-local:
 	rm -rf $(DATADIR)
+
