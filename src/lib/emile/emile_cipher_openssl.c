@@ -22,6 +22,19 @@
 #define MAX_KEY_LEN   EVP_MAX_KEY_LENGTH
 #define MAX_IV_LEN    EVP_MAX_IV_LENGTH
 
+Eina_Bool
+_emile_cipher_init(void)
+{
+#ifdef HAVE_OPENSSL
+   ERR_load_crypto_strings();
+   SSL_library_init();
+   SSL_load_error_strings();
+   OpenSSL_add_all_algorithms();
+#endif /* ifdef HAVE_OPENSSL */
+
+   return EINA_TRUE;
+}
+
 static Eina_Bool
 emile_pbkdf2_sha1(const char          *key,
                   int                  key_len,

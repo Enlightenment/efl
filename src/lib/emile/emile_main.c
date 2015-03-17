@@ -19,102 +19,18 @@
 #include "Emile.h"
 #include "emile_private.h"
 
-static Eina_Bool _emile_cipher_init = EINA_FALSE;
+static Eina_Bool _emile_cipher_inited = EINA_FALSE;
 static unsigned int _emile_init_count = 0;
 int _emile_log_dom_global = -1;
-
-#ifdef HAVE_GNUTLS
-static int
-_emile_thread_mutex_init(void **priv)
-{
-   Eina_Lock *lock;
-
-   lock = malloc(sizeof (Eina_Lock));
-   if (!lock) return ENOMEM;
-
-   if (!eina_lock_new(lock))
-     {
-        free(lock);
-        return ENOMEM;
-     }
-
-   *priv = lock;
-   return 0;
-}
-
-static int
-_emile_thread_mutex_destroy(void **priv)
-{
-   eina_lock_free(*priv);
-   free(*priv);
-   return 0;
-}
-
-static int
-_emile_thread_mutex_lock(void **priv)
-{
-   if (eina_lock_take(*priv) == EINA_LOCK_FAIL)
-     return EINVAL;
-   return 0;
-}
-
-static int
-_emile_thread_mutex_unlock(void **priv)
-{
-   if (eina_lock_release(*priv) == EINA_LOCK_FAIL)
-     return EINVAL;
-   return 0;
-}
-
-static struct gcry_thread_cbs _emile_threads = {
-  (GCRY_THREAD_OPTION_PTHREAD | (GCRY_THREAD_OPTION_VERSION << 8)),
-  NULL, _emile_thread_mutex_init, _emile_thread_mutex_destroy,
-  _emile_thread_mutex_lock, _emile_thread_mutex_unlock,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
-};
-#endif /* ifdef HAVE_GNUTLS */
 
 EAPI Eina_Bool
 emile_cipher_init(void)
 {
-   if (_emile_cipher_init) return EINA_TRUE;
+   if (_emile_cipher_inited) return EINA_TRUE;
 
-#ifdef HAVE_GNUTLS
-   if (gcry_control(GCRYCTL_SET_THREAD_CBS, &_emile_threads))
-     WRN(
-       "YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
+   if (!_emile_cipher_init()) return EINA_FALSE;
 
-   /* Before the library can be used, it must initialize itself if needed. */
-   if (gcry_control(GCRYCTL_ANY_INITIALIZATION_P) == 0)
-     {
-        gcry_check_version(NULL);
-        /* Disable warning messages about problems with the secure memory subsystem.
-           This command should be run right after gcry_check_version. */
-        if (gcry_control(GCRYCTL_DISABLE_SECMEM_WARN))
-          return EINA_FALSE;  /* This command is used to allocate a pool of secure memory and thus
-                                 enabling the use of secure memory. It also drops all extra privileges the
-                                 process has (i.e. if it is run as setuid (root)). If the argument nbytes
-                                 is 0, secure memory will be disabled. The minimum amount of secure memory
-                                 allocated is currently 16384 bytes; you may thus use a value of 1 to
-                                 request that default size. */
-
-        if (gcry_control(GCRYCTL_INIT_SECMEM, 16384, 0))
-          WRN(
-            "BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, Cryptographic operation are at risk !");
-     }
-
-   if (gnutls_global_init())
-     return EINA_FALSE;
-
-#endif /* ifdef HAVE_GNUTLS */
-#ifdef HAVE_OPENSSL
-   ERR_load_crypto_strings();
-   SSL_library_init();
-   SSL_load_error_strings();
-   OpenSSL_add_all_algorithms();
-#endif /* ifdef HAVE_OPENSSL */
-
-   _emile_cipher_init = EINA_TRUE;
+   _emile_cipher_inited = EINA_TRUE;
 
    return EINA_TRUE;
 }

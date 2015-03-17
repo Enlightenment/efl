@@ -8,6 +8,11 @@
 
 #include "emile_private.h"
 
+Eina_Bool _emile_cipher_init(void)
+{
+   return EINA_FALSE;
+}
+
 EAPI Eina_Binbuf *
 emile_binbuf_cipher(const Eina_Binbuf *data EINA_UNUSED,
                     const char *key EINA_UNUSED,

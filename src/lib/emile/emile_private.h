@@ -24,4 +24,6 @@ extern int _emile_log_dom_global;
 #endif /* ifdef CRI */
 #define CRI(...) EINA_LOG_DOM_CRIT(_emile_log_dom_global, __VA_ARGS__)
 
+Eina_Bool _emile_cipher_init(void);
+
 #endif /* EMILE_PRIVATE_H_ */

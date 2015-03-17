@@ -21,6 +21,91 @@
 #define MAX_KEY_LEN   32
 #define MAX_IV_LEN    16
 
+#ifdef HAVE_GNUTLS
+static int
+_emile_thread_mutex_init(void **priv)
+{
+   Eina_Lock *lock;
+
+   lock = malloc(sizeof (Eina_Lock));
+   if (!lock) return ENOMEM;
+
+   if (!eina_lock_new(lock))
+     {
+        free(lock);
+        return ENOMEM;
+     }
+
+   *priv = lock;
+   return 0;
+}
+
+static int
+_emile_thread_mutex_destroy(void **priv)
+{
+   eina_lock_free(*priv);
+   free(*priv);
+   return 0;
+}
+
+static int
+_emile_thread_mutex_lock(void **priv)
+{
+   if (eina_lock_take(*priv) == EINA_LOCK_FAIL)
+     return EINVAL;
+   return 0;
+}
+
+static int
+_emile_thread_mutex_unlock(void **priv)
+{
+   if (eina_lock_release(*priv) == EINA_LOCK_FAIL)
+     return EINVAL;
+   return 0;
+}
+
+static struct gcry_thread_cbs _emile_threads = {
+  (GCRY_THREAD_OPTION_PTHREAD | (GCRY_THREAD_OPTION_VERSION << 8)),
+  NULL, _emile_thread_mutex_init, _emile_thread_mutex_destroy,
+  _emile_thread_mutex_lock, _emile_thread_mutex_unlock,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+};
+#endif /* ifdef HAVE_GNUTLS */
+
+Eina_Bool
+_emile_cipher_init(void)
+{
+#ifdef HAVE_GNUTLS
+   if (gcry_control(GCRYCTL_SET_THREAD_CBS, &_emile_threads))
+     WRN(
+       "YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
+
+   /* Before the library can be used, it must initialize itself if needed. */
+   if (gcry_control(GCRYCTL_ANY_INITIALIZATION_P) == 0)
+     {
+        gcry_check_version(NULL);
+        /* Disable warning messages about problems with the secure memory subsystem.
+           This command should be run right after gcry_check_version. */
+        if (gcry_control(GCRYCTL_DISABLE_SECMEM_WARN))
+          return EINA_FALSE;  /* This command is used to allocate a pool of secure memory and thus
+                                 enabling the use of secure memory. It also drops all extra privileges the
+                                 process has (i.e. if it is run as setuid (root)). If the argument nbytes
+                                 is 0, secure memory will be disabled. The minimum amount of secure memory
+                                 allocated is currently 16384 bytes; you may thus use a value of 1 to
+                                 request that default size. */
+
+        if (gcry_control(GCRYCTL_INIT_SECMEM, 16384, 0))
+          WRN(
+            "BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, Cryptographic operation are at risk !");
+     }
+
+   if (gnutls_global_init())
+     return EINA_FALSE;
+#endif /* ifdef HAVE_GNUTLS */
+
+   return EINA_TRUE;
+}
+
 # ifdef HAVE_GNUTLS
 static inline Eina_Bool
 emile_hmac_sha1(const void    *key,
