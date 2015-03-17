@@ -784,7 +784,11 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
              int config_attrs[40], i, n, num;
              int depth = DefaultDepth(einfo->info.display,
                                       einfo->info.screen);
+             int depth_bits = einfo->depth_bits;
+             int stencil_bits = einfo->stencil_bits;
+             int msaa_samples = einfo->msaa_bits;
 
+try_again:
              n = 0;
              config_attrs[n++] = EGL_SURFACE_TYPE;
              config_attrs[n++] = EGL_WINDOW_BIT;
@@ -814,31 +818,55 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
                   config_attrs[n++] = 0;
                }
 
-             if (einfo->depth_bits)
+             if (depth_bits)
                {
                   config_attrs[n++] = EGL_DEPTH_SIZE;
-                  config_attrs[n++] = einfo->depth_bits;
+                  config_attrs[n++] = depth_bits;
                }
 
-             if (einfo->stencil_bits)
+             if (stencil_bits)
                {
                   config_attrs[n++] = EGL_STENCIL_SIZE;
-                  config_attrs[n++] = einfo->stencil_bits;
+                  config_attrs[n++] = stencil_bits;
                }
 
-             if (einfo->msaa_bits)
+             if (msaa_samples)
                {
                   config_attrs[n++] = EGL_SAMPLE_BUFFERS;
                   config_attrs[n++] = 1;
                   config_attrs[n++] = EGL_SAMPLES;
-                  config_attrs[n++] = einfo->msaa_bits;
+                  config_attrs[n++] = msaa_samples;
                }
              config_attrs[n++] = EGL_NONE;
              num = 0;
              if ((!eglChooseConfig(egl_disp, config_attrs, configs, 200, &num))
                  || (num < 1))
                {
-                  ERR("eglChooseConfig() can't find any configs");
+                  ERR("eglChooseConfig() can't find any configs (gles%d, alpha: %d, depth: %d, stencil: %d, msaa: %d)",
+                      gles3_supported ? 3 : 2, alpha, depth_bits, stencil_bits, msaa_samples);
+                  if ((depth_bits > 24) || (stencil_bits > 8))
+                    {
+                       WRN("Please note that GLES might not support 32-bit depth or "
+                           "16-bit stencil buffers, so depth24, stencil8 are the maximum "
+                           "recommended values.");
+                       if (depth_bits > 24) depth_bits = 24;
+                       if (stencil_bits > 8) stencil_bits = 8;
+                       DBG("Trying again with depth:%d, stencil:%d", depth_bits, stencil_bits);
+                       goto try_again;
+                    }
+                  else if (msaa_samples)
+                    {
+                       msaa_samples /= 2;
+                       DBG("Trying again with msaa_samples: %d", msaa_samples);
+                       goto try_again;
+                    }
+                  else if (depth_bits || stencil_bits)
+                    {
+                       depth_bits = 0;
+                       stencil_bits = 0;
+                       DBG("Trying again without any depth or stencil buffer");
+                       goto try_again;
+                    }
                   return NULL;
                }
              found = EINA_FALSE;
@@ -973,6 +1001,7 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
                   config_attrs[i++] = GLX_ALPHA_SIZE;
                   config_attrs[i++] = 0;
                }
+             // TODO: Implement support for depth, stencil & msaa
              config_attrs[i++] = GLX_DEPTH_SIZE;
              config_attrs[i++] = 0;
              config_attrs[i++] = GLX_STENCIL_SIZE;
