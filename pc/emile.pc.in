@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: emile
+Description: Library for simplified serialization, compression and ciphering.
+Version: @VERSION@
+Requires.private: @requirements_pc_emile@
+Libs: -L${libdir} -lemile
+Libs.private: @requirements_libs_emile@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/emile-@VMAJ@

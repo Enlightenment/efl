@@ -1034,6 +1034,54 @@ EFL_EVAL_PKGS([EET_CXX])
 EFL_LIB_END([Eet_Cxx])
 #### End of Eet CXX
 
+#### Emile
+
+EFL_LIB_START([Emile])
+
+### Default values
+
+### Additional options to configure
+
+### Checks for programs
+
+### Checks for libraries
+
+## Compatibility layers
+EFL_PLATFORM_DEPEND([EMILE], [evil])
+
+EFL_ADD_LIBS([EMILE], [-lm])
+
+# Cryptography support
+if test "$build_crypto" != "none" ; then
+   AC_DEFINE([HAVE_CIPHER], [1], [Have cipher support built in emile])
+   AC_DEFINE([HAVE_SIGNATURE], [1], [Have signature support in emile])
+   EFL_CRYPTO_DEPEND([EMILE])
+fi
+
+EFL_CHECK_LIBS([EMILE], [zlib])
+
+EFL_INTERNAL_DEPEND_PKG([EMILE], [eina])
+
+EFL_EVAL_PKGS([EMILE])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Check availability
+
+EFL_LIB_END([Emile])
+#### End of Emile
+
+
 #### Eet
 
 EFL_LIB_START([Eet])
@@ -1061,6 +1109,7 @@ fi
 EFL_CHECK_LIBS([EET], [libjpeg zlib])
 
 EFL_INTERNAL_DEPEND_PKG([EET], [eina])
+EFL_INTERNAL_DEPEND_PKG([EET], [emile])
 
 EFL_EVAL_PKGS([EET])
 
@@ -4413,6 +4462,7 @@ pc/evil.pc
 pc/escape.pc
 pc/eina.pc
 pc/eina-cxx.pc
+pc/emile.pc
 pc/eet.pc
 pc/eet-cxx.pc
 pc/eo.pc
@@ -4591,15 +4641,17 @@ echo "  Cryptography..: ${build_crypto}"
 echo "  X11...........: ${with_x11}"
 echo "  OpenGL........: ${with_opengl}"
 echo "  C++11.........: ${have_cxx11}"
+echo "Eina............: yes (${features_eina})"
+echo "Eo..............: yes (${features_eo})"
+echo "Eolian..........: yes (${features_eolian})"
+echo "Emile...........: yes"
+echo "Eet.............: yes"
 echo "Evas............: yes (${features_evas})"
 echo "  Engines.......: ${features_evas_engine}"
 echo "  Image Loaders.: ${features_evas_loader}"
 if test "x${have_pixman}" = "xyes" ; then
 echo "  Pixman........: ${features_evas_pixman}"
 fi
-echo "Eo..............: yes (${features_eo})"
-echo "Eolian..........: yes (${features_eolian})"
-echo "Eina............: yes (${features_eina})"
 echo "Ecore...........: yes (${features_ecore})"
 echo "Ecore_Con.......: yes (${features_ecore_con})"
 echo "Ecore_File......: yes"
