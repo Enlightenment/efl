@@ -565,6 +565,7 @@ eet_data_image_etc2_decode(const void *data,
    Eina_Binbuf *bin;
    Emile_Image_Load_Error error;
    int i;
+   int r = 0;
 
    // Fix for ABI incompatibility between 1.10 and 1.11
    if (cspace == 8) cspace = 9;
@@ -572,18 +573,19 @@ eet_data_image_etc2_decode(const void *data,
    bin = eina_binbuf_manage_read_only_new_length(data, length);
    if (!bin) return 0;
 
+   memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
    opts.region.x = dst_x;
    opts.region.y = dst_y;
    opts.region.w = dst_w;
    opts.region.h = dst_h;
 
    image = emile_image_tgv_memory_open(bin, &opts, NULL, &error);
-   if (!image) return 0;
+   if (!image) goto on_error;
 
-   memset(&prop, sizeof (prop), 0);
+   memset(&prop, 0, sizeof (prop));
 
-   if (!emile_image_head(image, &prop, sizeof (Emile_Image_Load_Opts), &error))
-     return 0;
+   if (!emile_image_head(image, &prop, sizeof (Emile_Image_Property), &error))
+     goto on_error;
 
    for (i = 0; prop.cspaces[i] != EMILE_COLORSPACE_ARGB8888; i++)
      {
@@ -593,37 +595,43 @@ eet_data_image_etc2_decode(const void *data,
    switch (cspace)
      {
       case EMILE_COLORSPACE_ETC1:
-         if (lossy != EET_IMAGE_ETC1) return 0;
-         if (alpha != EINA_FALSE) return 0;
+         if (lossy != EET_IMAGE_ETC1) goto on_error;
+         if (alpha != EINA_FALSE) goto on_error;
          break;
       case EMILE_COLORSPACE_RGB8_ETC2:
-         if (lossy != EET_IMAGE_ETC2_RGB) return 0;
-         if (alpha != EINA_FALSE) return 0;
+         if (lossy != EET_IMAGE_ETC2_RGB) goto on_error;
+         if (alpha != EINA_FALSE) goto on_error;
          break;
       case EMILE_COLORSPACE_RGBA8_ETC2_EAC:
-         if (lossy != EET_IMAGE_ETC2_RGBA) return 0;
-         if (alpha != EINA_TRUE) return 0;
+         if (lossy != EET_IMAGE_ETC2_RGBA) goto on_error;
+         if (alpha != EINA_TRUE) goto on_error;
          break;
       case EMILE_COLORSPACE_ETC1_ALPHA:
-         if (lossy != EET_IMAGE_ETC1_ALPHA) return 0;
-         if (alpha != EINA_TRUE) return 0;
+         if (lossy != EET_IMAGE_ETC1_ALPHA) goto on_error;
+         if (alpha != EINA_TRUE) goto on_error;
          break;
       case EET_COLORSPACE_ARGB8888:
          break;
       default:
-         return 0;
+         goto on_error;
      }
 
    prop.cspace = cspace;
 
    if (!emile_image_data(image, &prop, sizeof (Emile_Image_Load_Opts), p, &error))
-     return 0;
+     goto on_error;
 
    // TODO: Add support for more unpremultiplied modes (ETC2)
    if ((cspace == EET_COLORSPACE_ARGB8888) && !prop.premul)
      _eet_argb_premul(p, prop.w * prop.h);
 
-   return 1;
+   r = 1;
+
+ on_error:
+   emile_image_close(image);
+   eina_binbuf_free(bin);
+
+   return r;
 }
 
 static void *
