@@ -343,7 +343,6 @@ AM_CONDITIONAL([EFL_ENABLE_TESTS], [test "${want_tests}" = "yes"])
 # check for crypto/tls library to use
 case "$build_crypto" in
    gnutls)
-      CFOPT_WARNING="xyes"
       EFL_DEPEND_PKG([crypto], [GNUTLS], [gnutls >= 2.12.16])
 
       AM_PATH_LIBGCRYPT([], [:],
@@ -4741,7 +4740,6 @@ if test "x${have_systemd_pkg}" = "xyes" -a "x${want_systemd}" = "xno"; then
    echo "                ||     ||"
 fi
 
-
 if test -n "$CFOPT_WARNING"; then
   echo "_____________________________________________________________________"
   echo ""
@@ -4767,17 +4765,6 @@ if test -n "$CFOPT_WARNING"; then
     echo "tested code, and possibly unimplemented features in ecore_x. To"
     echo "remove the XCB setup, remove the --with-x11=xcb option to"
     echo "configure."
-    echo "_____________________________________________________________________"
-  fi
-  if test "x${build_crypto}" = "xgnutls"; then
-    echo "_____________________________________________________________________"
-    echo "You have chosen gnutls as the crypto back-end. This will have some"
-    echo "side-effects that can break set-uid root binaries that happen to"
-    echo "link to and/or use EFL. These do actually exist. Gnutls will drop"
-    echo "root privs if it detects being setuid, thus breaking these tools"
-    echo "and their functionality. Only enable gnutls if you REALLY know"
-    echo "what you are doing and are willing to live with broken "
-    echo "functionality."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_physics}" = "xno"; then
