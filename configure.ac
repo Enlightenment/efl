@@ -961,7 +961,6 @@ EFL_ADD_FEATURE([EINA], [systemd-journal], [${want_systemd}])
 EFL_LIB_END([Eina])
 #### End of Eina
 
-
 #### Eina CXX
 EFL_LIB_START([Eina_Cxx])
 
@@ -984,6 +983,56 @@ EFL_EVAL_PKGS([EINA_CXX])
 
 EFL_LIB_END([Eina_Cxx])
 #### End of Eina CXX
+
+#### Eo
+
+EFL_LIB_START([Eo])
+
+### Default values
+
+### Additional options to configure
+
+### Checks for programs
+
+## Compatibility layers
+EFL_PLATFORM_DEPEND([EO], [evil])
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([EO], [eina])
+
+# Example (evas one)
+
+# TODO: add once elementary is merged
+#PKG_CHECK_MODULES([ELM], [elementary >= 1.7.0], [have_elm="yes"], [have_elm="no"])
+AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [test "x${have_elm}" = "xyes"])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Check availability
+
+EFL_LIB_END([Eo])
+#### End of Eo
+
+#### Eet CXX
+EFL_LIB_START([Eet_Cxx])
+
+EFL_INTERNAL_DEPEND_PKG([EET_CXX], [Eina_Cxx])
+EFL_INTERNAL_DEPEND_PKG([EET_CXX], [Eet])
+
+EFL_EVAL_PKGS([EET_CXX])
+
+EFL_LIB_END([Eet_Cxx])
+#### End of Eet CXX
 
 #### Eet
 
@@ -1026,62 +1075,12 @@ EFL_EVAL_PKGS([EET])
 ### Checks for linker characteristics
 
 ### Checks for library functions
+EFL_CHECK_FUNCS([EO], [dladdr])
 
 ### Check availability
 
 EFL_LIB_END([Eet])
 #### End of Eet
-
-#### Eet CXX
-EFL_LIB_START([Eet_Cxx])
-
-EFL_INTERNAL_DEPEND_PKG([EET_CXX], [Eina_Cxx])
-EFL_INTERNAL_DEPEND_PKG([EET_CXX], [Eet])
-
-EFL_EVAL_PKGS([EET_CXX])
-
-EFL_LIB_END([Eet_Cxx])
-#### End of Eet CXX
-
-#### Eo
-
-EFL_LIB_START([Eo])
-
-### Default values
-
-### Additional options to configure
-
-### Checks for programs
-
-## Compatibility layers
-EFL_PLATFORM_DEPEND([EO], [evil])
-
-### Checks for libraries
-EFL_INTERNAL_DEPEND_PKG([EO], [eina])
-
-# Example (evas one)
-
-# TODO: add once elementary is merged
-#PKG_CHECK_MODULES([ELM], [elementary >= 1.7.0], [have_elm="yes"], [have_elm="no"])
-AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [test "x${have_elm}" = "xyes"])
-
-### Checks for header files
-
-### Checks for types
-
-### Checks for structures
-
-### Checks for compiler characteristics
-
-### Checks for linker characteristics
-
-### Checks for library functions
-EFL_CHECK_FUNCS([EO], [dladdr])
-
-### Check availability
-
-EFL_LIB_END([Eo])
-#### End of Eo
 
 #### Eo CXX
 EFL_LIB_START([Eo_Cxx])
