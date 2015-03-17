@@ -3,6 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/emile \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/evas \
 -I$(top_srcdir)/src/lib/ecore \
@@ -15,6 +16,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_srcdir)/src/lib/ecore_audio \
 -I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/emile \
 -I$(top_builddir)/src/lib/eo \
 -I$(top_builddir)/src/lib/evas \
 -I$(top_builddir)/src/lib/ecore \
@@ -71,6 +73,7 @@ ECORE_COMMON_LDADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/eo/libeo.la \
 $(top_builddir)/src/lib/eina/libeina.la \
+$(top_builddir)/src/lib/emile/libemile.la \
 @ECORE_LDFLAGS@
 
 if HAVE_ECORE_AUDIO
