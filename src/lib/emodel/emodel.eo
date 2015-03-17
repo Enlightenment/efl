@@ -14,16 +14,11 @@
  *    EMODEL_LOAD_STATUS_UNLOADED =  (1 << 5)  /*@ Model Unloaded *
  * }
  *
- * type Emodel_Property_Pair: struct _Emodel_Property_Pair
- * {
- *  value: Eina_Value; /*@ the new property value *
- *  property: const(char)*; /*@ the property name that has been changed *
- * }
  *
  * type Emodel_Property_Event: struct _Emodel_Property_Event
  * {
- *  changed_properties: Eina_List* <Emodel_Property_Pair*>; /*@ List of changed properties *
- *  invalidated_properties: Eina_List* <const(char)*>; /*@ Removed properties identified by name *
+ *  changed_properties: Eina_Array* <const(char)*>; /*@ List of changed properties *
+ *  invalidated_properties: Eina_Array* <const(char)*>; /*@ Removed properties identified by name *
  * }
  */
 
@@ -48,17 +43,17 @@ interface Emodel ()
              return: Emodel_Load_Status;
             }
          }
-         properties_list {
+         properties {
             get {
                 /*@
-                Get properties list from model.
+                Get properties from model.
 
               @return: @c Emodel_Load_Status
 
-                properties_list_get is due to provide callers a way the fetch the current
+                properties_get is due to provide callers a way the fetch the current
                 properties implemented/used by the model.
                 The event EMODEL_EVENT_PROPERTIES_CHANGE will be raised to notify listeners
-                of any modifications in the properties list.
+                of any modifications in the properties.
 
                 @see EMODEL_EVENT_PROPERTIES_CHANGE
                 @since 1.11 */
@@ -66,7 +61,7 @@ interface Emodel ()
                 return: Emodel_Load_Status;
          }
          values {
-               const(array<const(char*)>*) properties_list; /*@ list of current properties */
+               const(array<const(char*)>*) properties; /*@ array of current properties */
             }
         }
          property {
@@ -105,18 +100,18 @@ interface Emodel ()
                 The event EMODEL_EVENT_PROPERTIES_CHANGE may be raised to notify
                 listeners of the property/value.
 
-                @see emodel_properties_list_get
+                @see emodel_properties_get
                 @see EMODEL_EVENT_PROPERTIES_CHANGE
 
                 @since 1.11 */
                 return: Emodel_Load_Status;
-             }
-             keys {
+            }
+            keys {
                const(char)* property; /*@ Property name */
-             }
-             values {
-               Eina_Value value; /*@ New value */
-             }
+            }
+            values {
+               const(Eina_Value)* value; /*@ New value */
+            }
          }
          children_slice {
             get {

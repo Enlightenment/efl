@@ -33,7 +33,7 @@ class Eio.Model (Eo.Base, Emodel)
     implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Emodel.properties_list.get;
+      Emodel.properties.get;
       Emodel.properties_load;
       Emodel.property.set;
       Emodel.property.get;

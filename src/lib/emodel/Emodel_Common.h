@@ -50,8 +50,8 @@ typedef struct _Emodel_Load Emodel_Load;
  */
 struct _Emodel_Property_Event
 {
-   const Eina_Value *changed_properties; /**< Eina_Value_Struct or Eina_Value_Hash with changed properties values */
-   Eina_Array *invalidated_properties; /**< array of name */
+   const Eina_Array *changed_properties; /**< array of property name */
+   const Eina_Array *invalidated_properties; /**< array of property name */
 };
 
 /**

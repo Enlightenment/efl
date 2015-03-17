@@ -18,24 +18,44 @@
 Eina_Bool children_added = EINA_FALSE;
 
 static Eina_Bool
-_children_added_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_load_monitor_status_cb(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
-  Emodel_Children_Event* evt = event_info;
-  Eo* child = evt->child;
-  Eina_Value value_prop;
-  const char* str;
+  Emodel_Load* st = event_info;
+  Eo* parent = data;
+  const Eina_Value* value_prop = NULL;
+  const char* str = NULL;
 
-  eo_do(child, emodel_property_get("filename", &value_prop));
-  str = eina_value_to_string(&value_prop);
+  if (!(st->status & EMODEL_LOAD_STATUS_LOADED_PROPERTIES))
+    return EINA_TRUE;
+
+  eo_do(obj, emodel_property_get("filename", &value_prop));
+  fail_if(!value_prop, "ERROR: Cannot get property!\n");
+
+  str = eina_value_to_string(value_prop);
+  fail_if(!str, "ERROR: Cannot convert value to string!\n");
   fprintf(stderr, "new children filename %s\n", str);
   if(strcmp(str, "test_file_monitor_add") == 0)
     {
       fprintf(stderr, "is child that we want\n");
+      eo_do(obj, eo_event_callback_del(EMODEL_EVENT_LOAD_STATUS, _load_monitor_status_cb, data));
       children_added = EINA_TRUE;
-      eo_do(obj, emodel_child_del(child));
+      eo_do(parent, emodel_child_del(obj));
       ecore_main_loop_quit();
     }
-  eina_value_flush(&value_prop);
+
+    return EINA_FALSE;
+}
+
+static Eina_Bool
+_children_added_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+{
+  Emodel_Children_Event* evt = event_info;
+  if (evt == NULL)
+    return EINA_TRUE;
+
+  eo_do(evt->child, eo_event_callback_add(EMODEL_EVENT_LOAD_STATUS, _load_monitor_status_cb, obj));
+  eo_do(evt->child, emodel_load());
+
   return EINA_TRUE;
 }
 
@@ -76,8 +96,8 @@ START_TEST(emodel_test_test_monitor_add)
    filemodel = eo_add(EIO_MODEL_CLASS, NULL, eio_model_path_set(EMODEL_TEST_FILENAME_PATH));
    fail_if(!filemodel, "ERROR: Cannot init model!\n");
 
-   eo_do(filemodel, eo_event_callback_add(EMODEL_EVENT_CHILDREN_COUNT_CHANGED, _children_count_cb, NULL));
    eo_do(filemodel, eo_event_callback_add(EMODEL_EVENT_CHILD_ADDED, _children_added_cb, NULL));
+   eo_do(filemodel, eo_event_callback_add(EMODEL_EVENT_CHILDREN_COUNT_CHANGED, _children_count_cb, NULL));
 
    eo_do(filemodel, emodel_load());
 
