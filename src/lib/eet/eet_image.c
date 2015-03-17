@@ -19,19 +19,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <setjmp.h>
-#include <zlib.h>
 #include <jpeglib.h>
 
 #include "Eet.h"
 #include "Eet_private.h"
-
-#ifdef ENABLE_LIBLZ4
-# include <lz4.h>
-# include <lz4hc.h>
-#else
-# include "lz4.h"
-# include "lz4hc.h"
-#endif
 
 #include "rg_etc1.h"
 
@@ -1130,13 +1121,12 @@ eet_data_image_lossless_compressed_convert(int         *size,
    _eet_image_endian_check();
 
    {
-      unsigned char *d, *comp;
-      int *header, *bigend_data = NULL, ret, ok = 1;
-      uLongf buflen = 0;
-
-      buflen = (((w * h * 101) / 100) + 3) * 4;
-      ret = LZ4_compressBound((w * h * 4));
-      if ((ret > 0) && ((uLongf)ret > buflen)) buflen = ret;
+      Eina_Binbuf *in;
+      Eina_Binbuf *out;
+      unsigned char *result;
+      int *bigend_data = NULL;
+      int header[8];
+      unsigned int i;
 
       if (_eet_image_words_bigendian)
         {
@@ -1149,51 +1139,27 @@ eet_data_image_lossless_compressed_convert(int         *size,
            data = (const char *) bigend_data;
         }
 
-      comp = malloc(buflen);
-      if (!comp)
+      in = eina_binbuf_manage_read_only_new_length(data, w * h * 4);
+      if (!in)
         {
-         free(bigend_data);
-         return NULL;
+           free(bigend_data);
+           return NULL;
         }
 
-      switch (compression)
+      out = emile_binbuf_compress(in, eet_2_emile_compressor(compression), compression);
+
+      if (!out || (eina_binbuf_length_get(out) > eina_binbuf_length_get(in)))
         {
-         case EET_COMPRESSION_VERYFAST:
-           ret = LZ4_compressHC((const char *)data, (char *)comp,
-                                (w * h * 4));
-           if (ret <= 0) ok = 0;
-           buflen = ret;
-           break;
-         case EET_COMPRESSION_SUPERFAST:
-           ret = LZ4_compress((const char *)data, (char *)comp,
-                              (w * h * 4));
-           if (ret <= 0) ok = 0;
-           buflen = ret;
-           break;
-         default: /* zlib etc. */
-           ret = compress2((Bytef *)comp, &buflen, (Bytef *)(data),
-                           (uLong)(w * h * 4), compression);
-           if (ret != Z_OK) ok = 0;
-           break;
-        }
-      if ((!ok) || (buflen > (w * h * 4)))
-        {
-           free(comp);
+           eina_binbuf_free(in);
+           eina_binbuf_free(out);
            free(bigend_data);
            *size = -1;
            return NULL;
         }
 
-      d = malloc((8 * sizeof(int)) + buflen);
-      if (!d)
-        {
-           free(comp);
-           free(bigend_data);
-           return NULL;
-        }
+      eina_binbuf_free(in);
 
-      header = (int *)d;
-      memset(d, 0, 8 * sizeof(int));
+      memset(header, 0, 8 * sizeof(int));
       header[0] = 0xac1dfeed;
       header[1] = w;
       header[2] = h;
@@ -1203,10 +1169,14 @@ eet_data_image_lossless_compressed_convert(int         *size,
       _eet_image_endian_swap(header, 8);
       free(bigend_data);
 
-      memcpy(d + (8 * sizeof(int)), comp, buflen);
-      *size = (8 * sizeof(int)) + buflen;
-      free(comp);
-      return d;
+      eina_binbuf_insert_length(out, (const unsigned char*) header, sizeof (header), 0);
+
+      *size = eina_binbuf_length_get(out);
+      result = eina_binbuf_string_steal(out);
+
+      eina_binbuf_free(out);
+
+      return result;
    }
 }
 
@@ -2337,7 +2307,7 @@ _eet_data_image_decode_inside(const void   *data,
                               unsigned int  src_x,
                               unsigned int  src_y,
                               unsigned int  src_w,
-                              unsigned int  src_h,
+                              EINA_UNUSED unsigned int  src_h, /* useful for fast path detection */
                               unsigned int *d,
                               unsigned int  w,
                               unsigned int  h,
@@ -2360,75 +2330,42 @@ _eet_data_image_decode_inside(const void   *data,
                                       w, h, row_stride);
         else
           {
+             Eina_Binbuf *in;
+             Eina_Binbuf *out;
+
+             in = eina_binbuf_manage_read_only_new_length((const unsigned char *) body, size - 8 * sizeof (int));
+             if (!in) return 0;
+
              if ((src_h == h) && (src_w == w) && (row_stride == src_w * 4))
                {
-                  switch (comp)
+                  out = eina_binbuf_manage_read_only_new_length((void*) d,
+                                                                w * h * 4);
+                  if (!emile_binbuf_expand(in, out,
+                                           eet_2_emile_compressor(comp)))
                     {
-                     case EET_COMPRESSION_VERYFAST:
-                     case EET_COMPRESSION_SUPERFAST:
-                       if (LZ4_decompress_fast((const char *)body,
-                                               (char *)d, w * h * 4)
-                           != (size - 32)) return 0;
-                       break;
-                     default:
-                         {
-                            uLongf dlen = w * h * 4;
-
-                            if (uncompress((Bytef *)d, &dlen, (Bytef *)body,
-                                           (uLongf)(size - 32)) != Z_OK)
-                              return 0;
-                         }
-                       break;
+                       eina_binbuf_free(in);
+                       eina_binbuf_free(out);
+                       return 0;
                     }
                }
              else
                {
-                  switch (comp)
-                    {
-                     case EET_COMPRESSION_VERYFAST:
-                     case EET_COMPRESSION_SUPERFAST:
-                         {
-                            char *dtmp;
+                  /* FIXME: This could create a huge alloc. So
+                     compressed data and tile could not always work.*/
+                  out = emile_binbuf_uncompress(in,
+                                                eet_2_emile_compressor(comp),
+                                                w * h * 4);
+                  eina_binbuf_free(in);
+                  if (!out) return 0;
 
-                            dtmp = malloc(src_w * src_h * 4);
-                            if (!dtmp) return 0;
-                            if (LZ4_decompress_fast((const char *)body,
-                                                    dtmp, w * h * 4)
-                                != (size - 32))
-                              {
-                                 free(dtmp);
-                                 return 0;
-                              }
-                            _eet_data_image_copy_buffer((unsigned int *)dtmp,
-                                                        src_x, src_y, src_w, d,
-                                                        w, h, row_stride);
-                            free(dtmp);
-                         }
-                       break;
-                     default:
-                         {
-                            Bytef *dtmp;
-                            uLongf dlen = src_w * src_h * 4;
+                  _eet_data_image_copy_buffer((const unsigned int *) eina_binbuf_string_get(out),
+                                              src_x, src_y, src_w, d,
+                                              w, h, row_stride);
 
-                            /* FIXME: This could create a huge alloc. So
-                             compressed data and tile could not always work.*/
-                            dtmp = malloc(dlen);
-                            if (!dtmp) return 0;
-
-                            if (uncompress(dtmp, &dlen, (Bytef *)body,
-                                           (uLongf)(size - 32)) != Z_OK)
-                              {
-                                 free(dtmp);
-                                 return 0;
-                              }
-                            _eet_data_image_copy_buffer((unsigned int *)dtmp,
-                                                        src_x, src_y, src_w, d,
-                                                        w, h, row_stride);
-                            free(dtmp);
-                         }
-                    }
+                  eina_binbuf_free(out);
                }
           }
+
         /* Fix swapiness. */
         _eet_image_endian_swap(d, w * h);
      }

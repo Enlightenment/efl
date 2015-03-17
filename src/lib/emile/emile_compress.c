@@ -88,9 +88,9 @@ emile_binbuf_expand(const Eina_Binbuf *in,
         {
            int ret;
 
-           ret = LZ4_uncompress((const char*) eina_binbuf_string_get(in),
-                                (char*) eina_binbuf_string_get(out),
-                                eina_binbuf_length_get(out));
+           ret = LZ4_decompress_fast((const char*) eina_binbuf_string_get(in),
+                                     (char*) eina_binbuf_string_get(out),
+                                     eina_binbuf_length_get(out));
            if ((unsigned int) ret != eina_binbuf_length_get(in))
              return EINA_FALSE;
            break;

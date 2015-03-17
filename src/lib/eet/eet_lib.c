@@ -15,7 +15,6 @@
 #include <unistd.h>
 #include <fnmatch.h>
 #include <fcntl.h>
-#include <zlib.h>
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
@@ -30,14 +29,6 @@
 
 #include "Eet.h"
 #include "Eet_private.h"
-
-#ifdef ENABLE_LIBLZ4
-# include <lz4.h>
-# include <lz4hc.h>
-#else
-# include "lz4.h"
-# include "lz4hc.h"
-#endif
 
 #ifndef O_BINARY
 # define O_BINARY 0
@@ -93,11 +84,9 @@ static Eet_Error
 static Eet_File_Node *
  find_node_by_name(Eet_File  *ef,
                   const char *name);
-static int
-read_data_from_disk(Eet_File      *ef,
-                    Eet_File_Node *efn,
-                    void          *buf,
-                    int            len);
+static Eina_Binbuf *
+read_binbuf_from_disk(Eet_File      *ef,
+                      Eet_File_Node *efn);
 
 static Eet_Error
 eet_internal_close(Eet_File *ef,
@@ -1847,8 +1836,8 @@ eet_read_cipher(Eet_File   *ef,
                 const char *cipher_key)
 {
    Eet_File_Node *efn;
-   char *data = NULL;
-   unsigned long int size = 0;
+   Eina_Binbuf *in = NULL;
+   unsigned char *data = NULL;
 
    if (size_ret)
      *size_ret = 0;
@@ -1875,148 +1864,58 @@ eet_read_cipher(Eet_File   *ef,
    if (!efn)
      goto on_error;
 
-   /* get size (uncompressed, if compressed at all) */
-   size = efn->data_size;
+   /* Get a binbuf attached to this efn */
+   in = read_binbuf_from_disk(ef, efn);
+   if (!in) goto on_error;
 
-   /* allocate data */
-   data = malloc(size);
-   if (!data)
-     goto on_error;
-
-   /* uncompressed data */
-   if (efn->compression == 0)
+   /* First uncipher data */
+   if (efn->ciphered && cipher_key)
      {
-        void *data_deciphered = NULL;
-        unsigned int data_deciphered_sz = 0;
-        /* if we already have the data in ram... copy that */
+        Eina_Binbuf *out;
 
-        if (efn->ciphered && efn->size > size)
-          {
-             size = efn->size;
-             data = realloc(data, efn->size);
-          }
+        out = emile_binbuf_decipher(in, cipher_key, strlen(cipher_key));
 
-        if (efn->data)
-          memcpy(data, efn->data, size);
-        else
-        if (!read_data_from_disk(ef, efn, data, size))
-          goto on_error;
+        eina_binbuf_free(in);
+        if (!out) goto on_error;
 
-        if (efn->ciphered && cipher_key)
-          {
-             if (eet_decipher(data, efn->size, cipher_key, strlen(cipher_key),
-                              &data_deciphered, &data_deciphered_sz))
-               {
-                  if (data_deciphered)
-                    free(data_deciphered);
-
-                  goto on_error;
-               }
-
-             free(data);
-             data = data_deciphered;
-             size = data_deciphered_sz;
-          }
+        in = out;
      }
-   /* compressed data */
-   else
+
+   if (efn->compression)
      {
-        void *tmp_data = NULL;
-        void *data_deciphered = NULL;
-        unsigned int data_deciphered_sz = 0;
-        int free_tmp = 0, ret;
-        int compr_size = efn->size;
-        uLongf dlen;
+        Eina_Binbuf *out;
 
-        /* if we already have the data in ram... copy that */
-        if (efn->data)
-          tmp_data = efn->data;
-        else
-          {
-             tmp_data = malloc(compr_size);
-             if (!tmp_data)
-               goto on_error;
+        out = emile_binbuf_uncompress(in,
+                                      eet_2_emile_compressor(efn->compression_type),
+                                      efn->data_size);
 
-             free_tmp = 1;
+        eina_binbuf_free(in);
+        if (!out) goto on_error;
 
-             if (!read_data_from_disk(ef, efn, tmp_data, compr_size))
-               {
-                  free(tmp_data);
-                  goto on_error;
-               }
-          }
-
-        if (efn->ciphered && cipher_key)
-          {
-             if (eet_decipher(tmp_data, compr_size, cipher_key,
-                              strlen(cipher_key), &data_deciphered,
-                              &data_deciphered_sz))
-               {
-                  if (free_tmp)
-                    free(tmp_data);
-
-                  if (data_deciphered)
-                    free(data_deciphered);
-
-                  goto on_error;
-               }
-
-             if (free_tmp)
-               free(tmp_data);
-             free_tmp = 1;
-             tmp_data = data_deciphered;
-             compr_size = data_deciphered_sz;
-          }
-
-        /* decompress it */
-        dlen = size;
-        switch (efn->compression_type)
-          {
-           case EET_COMPRESSION_VERYFAST:
-           case EET_COMPRESSION_SUPERFAST:
-             ret = LZ4_decompress_fast(tmp_data, data, dlen);
-             if (ret != compr_size)
-               {
-                  if (free_tmp)
-                    free(tmp_data);
-                  goto on_error;
-               }
-             break;
-           default:
-             if (uncompress((Bytef *)data, &dlen,
-                            tmp_data, (uLongf)compr_size) != Z_OK)
-               {
-                  if (free_tmp)
-                    free(tmp_data);
-                  goto on_error;
-               }
-             break;
-          }
-
-        if (free_tmp)
-          free(tmp_data);
+        in = out;
      }
 
    UNLOCK_FILE(ef);
+
+   if (size_ret)
+     *size_ret = eina_binbuf_length_get(in);
+   data = eina_binbuf_string_steal(in);
+   eina_binbuf_free(in);
 
    /* handle alias */
    if (efn->alias)
      {
         void *tmp;
 
-        if (data[size - 1] != '\0')
+        if (data[efn->data_size - 1] != '\0')
           goto on_error;
 
-        tmp = eet_read_cipher(ef, data, size_ret, cipher_key);
+        tmp = eet_read_cipher(ef, (char*) data, size_ret, cipher_key);
 
         free(data);
 
         data = tmp;
      }
-   else
-   /* fill in return values */
-   if (size_ret)
-     *size_ret = size;
 
    return data;
 
@@ -2041,7 +1940,7 @@ eet_read_direct(Eet_File   *ef,
 {
    Eet_File_Node *efn;
    const char *data = NULL;
-   int size = 0, ret;
+   int size = 0;
 
    if (size_ret)
      *size_ret = 0;
@@ -2065,8 +1964,7 @@ eet_read_direct(Eet_File   *ef,
 
    /* hunt hash bucket */
    efn = find_node_by_name(ef, name);
-   if (!efn)
-     goto on_error;
+   if (!efn) goto on_error;
 
    /* trick to detect data in memory instead of mmaped from disk */
    if (efn->offset > ef->data_size && !efn->data)
@@ -2075,57 +1973,42 @@ eet_read_direct(Eet_File   *ef,
    /* get size (uncompressed, if compressed at all) */
    size = efn->data_size;
 
+   /* handle alias case */
    if (efn->alias)
      {
-        data = efn->data ? efn->data : ef->data + efn->offset;
-
-        /* handle alias case */
         if (efn->compression)
           {
-             const void *retptr;
-             char *tmp;
-             int compr_size = efn->size;
-             uLongf dlen;
-             
-             tmp = malloc(compr_size);
-             if (!tmp) goto on_error;
-             switch (efn->compression_type)
+             Eina_Binbuf *in;
+             Eina_Binbuf *out;
+             const unsigned char *tmp;
+             const char *retptr;
+
+             in = read_binbuf_from_disk(ef, efn);
+             if (!in) goto on_error;
+
+             out = emile_binbuf_uncompress(in,
+                                           eet_2_emile_compressor(efn->compression_type),
+                                           efn->data_size);
+             eina_binbuf_free(in);
+             if (!out) goto on_error;
+
+             tmp = eina_binbuf_string_get(out);
+             if (tmp[eina_binbuf_length_get(out) - 1] != '\0')
                {
-                case EET_COMPRESSION_VERYFAST:
-                case EET_COMPRESSION_SUPERFAST:
-                  ret = LZ4_decompress_fast(data, tmp, size);
-                  if (ret != compr_size)
-                    {
-                       free(tmp);
-                       goto on_error;
-                    }
-                  break;
-                default:
-                  dlen = size;
-                  
-                  if (uncompress((Bytef *)tmp, &dlen, (Bytef *)data,
-                                 (uLongf)compr_size))
-                    {
-                       free(tmp);
-                       goto on_error;
-                    }
-               }
-             
-             if (tmp[compr_size - 1] != '\0')
-               {
-                  free(tmp);
+                  eina_binbuf_free(out);
                   goto on_error;
                }
-             
+
              UNLOCK_FILE(ef);
-             
-             retptr = eet_read_direct(ef, tmp, size_ret);
-             free(tmp);
+
+             retptr = eet_read_direct(ef, (const char *) tmp, size_ret);
+
+             eina_binbuf_free(out);
              return retptr;
           }
 
-        if (!data)
-          goto on_error;
+        data = efn->data ? efn->data : ef->data + efn->offset;
+        if (!data) goto on_error;
 
         if (data[size - 1] != '\0')
           goto on_error;
@@ -2160,7 +2043,7 @@ eet_alias_get(Eet_File   *ef,
 {
    Eet_File_Node *efn;
    const char *data = NULL;
-   int size = 0, ret;
+   int size = 0;
 
    /* check to see its' an eet file pointer */
    if (eet_check_pointer(ef))
@@ -2197,45 +2080,32 @@ eet_alias_get(Eet_File   *ef,
    /* handle alias case */
    if (efn->compression)
      {
+        Eina_Binbuf *in;
+        Eina_Binbuf *out;
+        const unsigned char *tmp;
         const char *retptr;
-        char *tmp;
-        int compr_size = efn->size;
-        uLongf dlen;
-                  
-        tmp = malloc(compr_size);
-        if (!tmp) goto on_error;
-        switch (efn->compression_type)
+
+        in = read_binbuf_from_disk(ef, efn);
+        if (!in) goto on_error;
+
+        out = emile_binbuf_uncompress(in,
+                                      eet_2_emile_compressor(efn->compression_type),
+                                      efn->data_size);
+        eina_binbuf_free(in);
+        if (!out) goto on_error;
+
+        tmp = eina_binbuf_string_get(out);
+        if (tmp[eina_binbuf_length_get(out) - 1] != '\0')
           {
-           case EET_COMPRESSION_VERYFAST:
-           case EET_COMPRESSION_SUPERFAST:
-             ret = LZ4_decompress_fast(data, tmp, size);
-             if (ret != compr_size)
-               {
-                  free(tmp);
-                  goto on_error;
-               }
-             break;
-           default:
-             dlen = size;
-             
-             if (uncompress((Bytef *)tmp, &dlen, (Bytef *)data,
-                            (uLongf)compr_size))
-               {
-                  free(tmp);
-                  goto on_error;
-               }
-          }
-        
-        if (tmp[compr_size - 1] != '\0')
-          {
-             free(tmp);
+             eina_binbuf_free(out);
              goto on_error;
           }
 
         UNLOCK_FILE(ef);
 
-        retptr = eina_stringshare_add(tmp);
-        free(tmp);
+        retptr = eina_stringshare_add((const char *) tmp);
+
+        eina_binbuf_free(out);
         return retptr;
      }
 
@@ -2254,6 +2124,21 @@ on_error:
    return NULL;
 }
 
+static void
+eet_define_data(Eet_File *ef, Eet_File_Node *efn, Eina_Binbuf *data, int original_size, int comp, Eina_Bool ciphered)
+{
+   free(efn->data);
+   efn->alias = 0;
+   efn->ciphered = ciphered;
+   efn->compression = !!comp;
+   efn->compression_type = comp;
+   efn->size = eina_binbuf_length_get(data);
+   efn->data_size = original_size;
+   efn->data = efn->size ? eina_binbuf_string_steal(data) : NULL;
+   /* Put the offset above the limit to avoid direct access */
+   efn->offset = ef->data_size + 1;
+}
+
 EAPI Eina_Bool
 eet_alias(Eet_File   *ef,
           const char *name,
@@ -2261,9 +2146,10 @@ eet_alias(Eet_File   *ef,
           int         comp)
 {
    Eet_File_Node *efn;
-   void *data2;
+   Eina_Binbuf *in;
    Eina_Bool exists_already = EINA_FALSE;
-   int data_size, ret, hash, slen;
+   int hash;
+   Eina_Bool success = EINA_FALSE;
 
    /* check to see its' an eet file pointer */
    if (eet_check_pointer(ef))
@@ -2312,78 +2198,22 @@ eet_alias(Eet_File   *ef,
    /* figure hash bucket */
    hash = _eet_hash_gen(name, ef->header->directory->size);
 
-   slen = strlen(destination) + 1;
-   data_size = comp ?
-     12 + ((slen * 101) / 100)
-     : slen;
-   if (comp)
-     {
-        ret = LZ4_compressBound(slen);
-        if ((ret > 0) && (ret > data_size)) data_size = ret;
-     }
-   
-   data2 = malloc(data_size);
-   if (!data2) goto on_error;
+   in = eina_binbuf_manage_read_only_new_length((unsigned char*) destination, strlen(destination) + 1);
+   if (!in) goto on_error;
 
    /* if we want to compress */
    if (comp)
      {
-        switch (comp)
-          {
-           case EET_COMPRESSION_VERYFAST:
-             ret = LZ4_compressHC((const char *)destination, (char *)data2,
-                                  slen);
-             if (ret <= 0)
-               {
-                  free(data2);
-                  goto on_error;
-               }
-             data_size = ret;
-             break;
-           case EET_COMPRESSION_SUPERFAST:
-             ret = LZ4_compress((const char *)destination, (char *)data2,
-                                slen);
-             if (ret <= 0)
-               {
-                  free(data2);
-                  goto on_error;
-               }
-             data_size = ret;
-             break;
-           default:
-               {
-                  uLongf buflen;
-                  
-                  /* compress the data with max compression */
-                  buflen = (uLongf)data_size;
-                  if (compress2((Bytef *)data2, &buflen, 
-                                (const Bytef *)destination,
-                                (uLong)slen, Z_BEST_COMPRESSION) != Z_OK)
-                    {
-                       free(data2);
-                       goto on_error;
-                    }
-                  /* record compressed chunk size */
-                  data_size = (int)buflen;
-               }
-             break;
-          }
-        if ((data_size < 0) || 
-            (data_size >= (int)(strlen(destination) + 1)))
-          {
-             comp = 0;
-             data_size = strlen(destination) + 1;
-          }
-        else
-          {
-             void *data3;
+        Eina_Binbuf *out;
 
-             data3 = realloc(data2, data_size);
-             if (data3) data2 = data3;
-          }
+        out = emile_binbuf_compress(in,
+                                    eet_2_emile_compressor(comp),
+                                    EMILE_BEST_COMPRESSION);
+        eina_binbuf_free(in);
+        if (!out) goto on_error;
+
+        in = out;
      }
-   
-   if (!comp) memcpy(data2, destination, data_size);
 
    /* Does this node already exist? */
    for (efn = ef->header->directory->nodes[hash]; efn; efn = efn->next)
@@ -2391,16 +2221,7 @@ eet_alias(Eet_File   *ef,
         /* if it matches */
          if ((efn->name) && (eet_string_match(efn->name, name)))
            {
-              free(efn->data);
-              efn->alias = 1;
-              efn->ciphered = 0;
-              efn->compression = !!comp;
-              efn->compression_type = comp;
-              efn->size = data_size;
-              efn->data_size = strlen(destination) + 1;
-              efn->data = data2;
-              /* Put the offset above the limit to avoid direct access */
-              efn->offset = ef->data_size + 1;
+              eet_define_data(ef, efn, in, strlen(destination) + 1, comp, 0);
               exists_already = EINA_TRUE;
               break;
            }
@@ -2410,36 +2231,32 @@ eet_alias(Eet_File   *ef,
         efn = eet_file_node_malloc(1);
         if (!efn)
           {
-             free(data2);
+             eina_binbuf_free(in);
              goto on_error;
           }
 
         efn->name = strdup(name);
         efn->name_size = strlen(efn->name) + 1;
         efn->free_name = 1;
+        efn->data = NULL;
 
         efn->next = ef->header->directory->nodes[hash];
         ef->header->directory->nodes[hash] = efn;
-        /* Put the offset above the limit to avoid direct access */
-        efn->offset = ef->data_size + 1;
-        efn->alias = 1;
-        efn->ciphered = 0;
-        efn->compression = !!comp;
-        efn->compression_type = comp;
-        efn->size = data_size;
-        efn->data_size = strlen(destination) + 1;
-        efn->data = data2;
+
+        eet_define_data(ef, efn, in, strlen(destination) + 1, comp, 0);
      }
+
+   efn->alias = 1;
+   eina_binbuf_free(in);
 
    /* flags that writes are pending */
    ef->writes_pending = 1;
 
-   UNLOCK_FILE(ef);
-   return EINA_TRUE;
-
+   success = EINA_TRUE;
 on_error:
+
    UNLOCK_FILE(ef);
-   return EINA_FALSE;
+   return success;
 }
 
 EAPI int
@@ -2450,9 +2267,10 @@ eet_write_cipher(Eet_File   *ef,
                  int         comp,
                  const char *cipher_key)
 {
+   Eina_Binbuf *in;
    Eet_File_Node *efn;
-   void *data2 = NULL;
-   int exists_already = 0, data_size, hash, ret;
+   int exists_already = 0;
+   int hash;
 
    /* check to see its' an eet file pointer */
    if (eet_check_pointer(ef))
@@ -2502,157 +2320,86 @@ eet_write_cipher(Eet_File   *ef,
    hash = _eet_hash_gen(name, ef->header->directory->size);
 
    UNLOCK_FILE(ef);
-   
-   data_size = comp ? 12 + ((size * 101) / 100) : size;
+
+   in = eina_binbuf_manage_read_only_new_length(data, size);
    if (comp)
      {
-        ret = LZ4_compressBound(size);
-        if ((ret > 0) && (ret > data_size)) data_size = ret;
-     }
-   
-   if (comp || !cipher_key)
-     {
-        data2 = malloc(data_size);
-        if (!data2)
-          goto on_error;
-     }
+        Eina_Binbuf *out;
 
-   /* if we want to compress */
-   if (comp)
-     {
-        switch (comp)
+        out = emile_binbuf_compress(in, eet_2_emile_compressor(comp), EMILE_BEST_COMPRESSION);
+        if (out)
           {
-           case EET_COMPRESSION_VERYFAST:
-             ret = LZ4_compressHC((const char *)data, (char *)data2, size);
-             if (ret <= 0)
+             if (eina_binbuf_length_get(out) < eina_binbuf_length_get(in))
                {
-                  free(data2);
-                  LOCK_FILE(ef);
-                  goto on_error;
+                  eina_binbuf_free(in);
+                  in = out;
                }
-             data_size = ret;
-             break;
-           case EET_COMPRESSION_SUPERFAST:
-             ret = LZ4_compress((const char *)data, (char *)data2, size);
-             if (ret <= 0)
+             else
                {
-                  free(data2);
-                  LOCK_FILE(ef);
-                  goto on_error;
+                  eina_binbuf_free(out);
+                  comp = 0;
                }
-             data_size = ret;
-             break;
-           default:
-               {
-                  uLongf buflen;
-
-                  /* compress the data with max compression */
-                  buflen = (uLongf)data_size;
-                  if (compress2((Bytef *)data2, &buflen, (Bytef *)data,
-                                (uLong)size, Z_BEST_COMPRESSION) != Z_OK)
-                    {
-                       free(data2);
-                       LOCK_FILE(ef);
-                       goto on_error;
-                    }
-                  /* record compressed chunk size */
-                  data_size = (int)buflen;
-               }
-          }
-        if ((data_size < 0) || (data_size >= size))
-          {
-             comp = 0;
-             data_size = size;
           }
         else
           {
-             void *data3;
-
-             data3 = realloc(data2, data_size);
-             if (data3)
-               data2 = data3;
+             // There is a change of behavior here, in case of memory pressure,
+             // we will try to keep the uncompressed buffer.
+             comp = 0;
           }
      }
 
    if (cipher_key)
      {
-        void *data_ciphered = NULL;
-        unsigned int data_ciphered_sz = 0;
-        const void *tmp;
+        Eina_Binbuf *out;
 
-        tmp = comp ? data2 : data;
-        if (!eet_cipher(tmp, data_size, cipher_key, strlen(cipher_key),
-                        &data_ciphered, &data_ciphered_sz))
+        out = emile_binbuf_cipher(in, cipher_key, strlen(cipher_key));
+        // Old behaviour was to not fail if the cipher where not built in
+        if (out)
           {
-             if (data2)
-               free(data2);
-
-             data2 = data_ciphered;
-             data_size = data_ciphered_sz;
-          }
-        else
-          {
-             if (data_ciphered)
-               free(data_ciphered);
-
-             cipher_key = NULL;
+             eina_binbuf_free(in);
+             in = out;
           }
      }
-   else
-   if (!comp)
-     memcpy(data2, data, size);
 
    LOCK_FILE(ef);
    /* Does this node already exist? */
    for (efn = ef->header->directory->nodes[hash]; efn; efn = efn->next)
      {
         /* if it matches */
-         if ((efn->name) && (eet_string_match(efn->name, name)))
-           {
-              free(efn->data);
-              efn->alias = 0;
-              efn->ciphered = cipher_key ? 1 : 0;
-              efn->compression = !!comp;
-              efn->compression_type = comp;
-              efn->size = data_size;
-              efn->data_size = size;
-              efn->data = data2;
-              /* Put the offset above the limit to avoid direct access */
-              efn->offset = ef->data_size + 1;
-              exists_already = 1;
-              break;
-           }
+        if ((efn->name) && (eet_string_match(efn->name, name)))
+          {
+             eet_define_data(ef, efn, in, size, comp, !!cipher_key);
+             exists_already = 1;
+             break;
+          }
      }
    if (!exists_already)
      {
         efn = eet_file_node_malloc(1);
         if (!efn)
           {
-             free(data2);
+             eina_binbuf_free(in);
              goto on_error;
           }
 
         efn->name = strdup(name);
         efn->name_size = strlen(efn->name) + 1;
         efn->free_name = 1;
+        efn->data = NULL;
 
         efn->next = ef->header->directory->nodes[hash];
         ef->header->directory->nodes[hash] = efn;
-        /* Put the offset above the limit to avoid direct access */
-        efn->offset = ef->data_size + 1;
-        efn->alias = 0;
-        efn->ciphered = cipher_key ? 1 : 0;
-        efn->compression = !!comp;
-        efn->compression_type = comp;
-        efn->size = data_size;
-        efn->data_size = size;
-        efn->data = data2;
+
+        eet_define_data(ef, efn, in, size, comp, !!cipher_key);
      }
 
    /* flags that writes are pending */
    ef->writes_pending = 1;
    UNLOCK_FILE(ef);
-   return data_size;
+
+   eina_binbuf_free(in);
+
+   return efn->size;
 
 on_error:
    UNLOCK_FILE(ef);
@@ -2986,23 +2733,21 @@ find_node_by_name(Eet_File   *ef,
    return NULL;
 }
 
-static int
-read_data_from_disk(Eet_File      *ef,
-                    Eet_File_Node *efn,
-                    void          *buf,
-                    int            len)
+static Eina_Binbuf *
+read_binbuf_from_disk(Eet_File      *ef,
+                      Eet_File_Node *efn)
 {
+   if (efn->data)
+     return eina_binbuf_manage_read_only_new_length(efn->data, efn->size);
+
    if (efn->offset > ef->data_size)
      return 0;
 
    if (!ef->data)
      return 0;
 
-   if ((efn->offset + len) > ef->data_size)
+   if ((efn->offset + efn->size) > ef->data_size)
      return 0;
 
-   memcpy(buf, ef->data + efn->offset, len);
-
-   return len;
+   return eina_binbuf_manage_read_only_new_length(ef->data + efn->offset, efn->size);
 }
-
