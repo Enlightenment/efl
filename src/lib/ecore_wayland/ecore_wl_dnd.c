@@ -398,6 +398,7 @@ ecore_wl_dnd_drag_types_get(Ecore_Wl_Input *input)
 
    /* check for valid input. if not, get the default one */
    if (!input) input = _ecore_wl_disp->input;
+   if (!input) return NULL;
 
    return &input->data_types;
 }

@@ -787,6 +787,8 @@ EAPI Eina_Bool ecore_wl_dnd_drag_get(Ecore_Wl_Input *input, const char *type);
 EAPI void ecore_wl_dnd_drag_types_set(Ecore_Wl_Input *input, const char **types_offered);
 
 /**
+ * @return the data types being offered for drag-and-drop, or NULL on error
+ *
  * @ingroup Ecore_Wl_Dnd_Group
  * @since 1.8
  */
