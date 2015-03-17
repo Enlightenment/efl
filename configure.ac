@@ -1077,6 +1077,8 @@ EFL_EVAL_PKGS([EMILE])
 
 ### Check availability
 
+EFL_ADD_FEATURE([EMILE], [crypto], [${build_crypto}])
+
 EFL_LIB_END([Emile])
 #### End of Emile
 
@@ -4644,7 +4646,7 @@ echo "  C++11.........: ${have_cxx11}"
 echo "Eina............: yes (${features_eina})"
 echo "Eo..............: yes (${features_eo})"
 echo "Eolian..........: yes (${features_eolian})"
-echo "Emile...........: yes"
+echo "Emile...........: yes (${features_emile})"
 echo "Eet.............: yes"
 echo "Evas............: yes (${features_evas})"
 echo "  Engines.......: ${features_evas_engine}"
