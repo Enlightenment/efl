@@ -415,71 +415,8 @@ on_error:
    return NULL;
 }
 
+// FIXME: handshaking and fun
 
-EAPI Eina_Bool
-emile_cipher_cafile_add(Emile_SSL *emile, const char *file)
-{
-   struct stat st;
-   int count = 0;
-
-   if (stat(file, &st)) return EINA_FALSE;
-   if (S_ISDIR(st.st_mode))
-     {
-        Eina_File_Direct_Info *info;
-        Eina_Iterator *it;
-        int err;
-
-        it = eina_file_direct_ls(file);
-        EINA_ITERATOR_FOREACH(it, info)
-          {
-             if (info->type != EINA_FILE_REG &&
-                 info->type != EINA_FILE_LNK)
-               continue;
-
-             err = gnutls_certificate_set_x509_trust_file(emile->cert,
-                                                          info->path,
-                                                          GNUTLS_X509_FMT_PEM);
-             if (err > 0) count += err;
-             else DBG("File '%s' could not be loaded.", info->path);
-          }
-        eina_iterator_free(it);
-     }
-   else
-     {
-        count = gnutls_certificate_set_x509_trust_file(emile->cert,
-                                                       file,
-                                                       GNUTLS_X509_FMT_PEM);
-        if (count <= 0) DBG("File '%s' could not be loaded.", file);
-     }
-
-   return count > 0 ? EINA_TRUE : EINA_FALSE;
-}
-
-EAPI Eina_Bool
-emile_cipher_privkey_add(Emile_SSL *emile, const char *file)
-{
-   int err;
-
-   err = gnutls_certificate_set_x509_key_file(emile->cert,
-                                              emile->cert_file,
-                                              file,
-                                              GNUTLS_X509_FMT_PEM);
-
-   if (err <= 0) DBG("Could not load certificate/key '%s'.", file);
-   return err > 0 ? EINA_TRUE : EINA_FALSE;
-}
-
-EAPI Eina_Bool
-emile_cipher_crl_add(Emile_SSL *emile, const char *file)
-{
-   int err;
-
-   err = gnutls_certificate_set_x509_crl_file(emile->cert,
-                                              file,
-                                              GNUTLS_X509_FMT_PEM);
-   if (err <= 0) DBG("Could not load CRL '%s'.", file);
-   return err > 0 ? EINA_TRUE : EINA_FALSE;
-}
 
 EAPI Emile_SSL *
 emile_cipher_server_listen(Emile_Cipher_Type t)
@@ -646,6 +583,21 @@ emile_cipher_crl_add(Emile_SSL *emile, const char *file)
 EAPI int
 emile_cipher_read(Emile_SSL *emile, Eina_Binbuf *buffer)
 {
+   int num;
+
+   if (!buffer || eina_binbuf_length_get(buffer) <= 0) return 0;
+   if (emile->ssl_state == EMILE_SSL_STATE_HANDSHAKING)
+     {
+        DBG("Ongoing GNUTLS handshaking.");
+        _emile_cipher_handshaking(emile);
+        if (emile->ssl_state == EMILE_SSL_STATE_ERROR)
+          return -1;
+        return 0;
+     }
+
+   num = gnutls_record_recv(emile->session,
+                            (void*) eina_binbuf_string_get(buffer),
+                            eina_binbuf_length_get(buffer));
 }
 
 EAPI int

@@ -1010,6 +1010,13 @@ emile_cipher_read(Emile_SSL *emile, Eina_Binbuf *buffer)
    if (!emile->ssl) return -1;
    if (eina_binbuf_length_get(buffer) <= 0) return 0;
 
+   if (emile->ssl_state == EMILE_SSL_STATE_HANDSHAKING)
+     _emile_cipher_client_handshake(emile);
+   if (emile->ssl_state == EMILE_SSL_STATE_ERROR)
+     return -1;
+   else if (emile->ssl_state == EMILE_SSL_STATE_HANDSHAKING)
+     return 0;
+
    num = SSL_read(emile->ssl,
                   (void*) eina_binbuf_string_get(buffer),
                   eina_binbuf_length_get(buffer));
@@ -1034,11 +1041,6 @@ emile_cipher_read(Emile_SSL *emile, Eina_Binbuf *buffer)
          break;
      }
 
-   if (emile->ssl_state == EMILE_SSL_STATE_HANDSHAKING)
-     _emile_cipher_client_handshake(emile);
-   if (emile->ssl_state == EMILE_SSL_STATE_ERROR)
-     return -1;
-
    return num < 0 ? 0 : num;
 }
 
@@ -1049,7 +1051,14 @@ emile_cipher_write(Emile_SSL *emile, const Eina_Binbuf *buffer)
    int err;
 
    if (!emile->ssl) return -1;
-   if (eina_binbuf_length_get(buffer) <= 0) return 0;
+   if (!buffer || eina_binbuf_length_get(buffer) <= 0) return 0;
+
+   if (emile->ssl_state == EMILE_SSL_STATE_HANDSHAKING)
+     _emile_cipher_client_handshake(emile);
+   if (emile->ssl_state == EMILE_SSL_STATE_ERROR)
+     return -1;
+   else if (emile->ssl_state == EMILE_SSL_STATE_HANDSHAKING)
+     return 0;
 
    num = SSL_write(emile->ssl,
                    (void*) eina_binbuf_string_get(buffer),
@@ -1074,11 +1083,6 @@ emile_cipher_write(Emile_SSL *emile, const Eina_Binbuf *buffer)
          emile->ssl_want = EMILE_WANT_NOTHING;
          break;
      }
-
-   if (emile->ssl_state == EMILE_SSL_STATE_HANDSHAKING)
-     _emile_cipher_client_handshake(emile);
-   if (emile->ssl_state == EMILE_SSL_STATE_ERROR)
-     return -1;
 
    return num < 0 ? 0 : num;
 }
