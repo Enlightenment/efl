@@ -1,6 +1,8 @@
 #ifndef EMILE_CIPHER_H_
 #define EMILE_CIPHER_H_
 
+#ifdef EFL_BETA_API_SUPPORT
+
 typedef struct _Emile_SSL Emile_SSL;
 
 typedef enum
@@ -50,5 +52,7 @@ EAPI void emile_cipher_verify_set(Emile_SSL *emile, Eina_Bool verify);
 EAPI void emile_cipher_verify_basic_set(Emile_SSL *emile, Eina_Bool verify_basic);
 EAPI Eina_Bool emile_cipher_verify_get(const Emile_SSL *emile);
 EAPI Eina_Bool emile_cipher_verify_basic_get(const Emile_SSL *emile);
+
+#endif
 
 #endif
