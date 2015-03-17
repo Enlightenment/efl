@@ -775,36 +775,6 @@ _eet_argb_unpremul(unsigned int *data, unsigned int len)
      }
 }
 
-static inline unsigned int
-_tgv_length_get(const char *m, unsigned int length, unsigned int *offset)
-{
-   unsigned int r = 0;
-   unsigned int shift = 0;
-
-   while (*offset < length && ((*m) & 0x80))
-     {
-        r = r | (((*m) & 0x7F) << shift);
-        shift += 7;
-        m++;
-        (*offset)++;
-     }
-   if (*offset < length)
-     {
-        r = r | (((*m) & 0x7F) << shift);
-        (*offset)++;
-     }
-
-   return r;
-}
-
-static int
-roundup(int val, int rup)
-{
-   if (val >= 0 && rup > 0)
-     return (val + rup - 1) - ((val + rup - 1) % rup);
-   return 0;
-}
-
 static int
 eet_data_image_etc2_decode(const void *data,
                            unsigned int length,
@@ -817,266 +787,71 @@ eet_data_image_etc2_decode(const void *data,
                            Eet_Colorspace cspace,
                            Eet_Image_Encoding lossy)
 {
-   const char *m = NULL;
-   unsigned int bwidth, bheight;
-   unsigned char *p_etc;
-   Eina_Binbuf *buffer = NULL;
-   Eina_Rectangle master;
-   unsigned int block_length;
-   unsigned int offset;
-   unsigned int x, y, w, h;
-   unsigned int block_count;
-   unsigned int etc_width = 0;
-   unsigned int etc_block_size;
-   unsigned int num_planes = 1, plane, alpha_offset = 0;
-   Eet_Colorspace file_cspace;
-   Eina_Bool compress, blockless, unpremul;
-
-   m = data;
+   Emile_Image_Load_Opts opts;
+   Emile_Image_Property prop;
+   Emile_Image *image;
+   Eina_Binbuf *bin;
+   Emile_Image_Load_Error error;
+   int i;
 
    // Fix for ABI incompatibility between 1.10 and 1.11
    if (cspace == 8) cspace = 9;
 
-   if (strncmp(m, "TGV1", 4) != 0)
+   bin = eina_binbuf_manage_read_only_new_length(data, length);
+   if (!bin) return 0;
+
+   opts.region.x = dst_x;
+   opts.region.y = dst_y;
+   opts.region.w = dst_w;
+   opts.region.h = dst_h;
+
+   image = emile_image_tgv_memory_open(bin, &opts, NULL, &error);
+   if (!image) return 0;
+
+   memset(&prop, sizeof (prop), 0);
+
+   if (!emile_image_head(image, &prop, sizeof (Emile_Image_Load_Opts), &error))
      return 0;
 
-   compress = m[OFFSET_OPTIONS] & 0x1;
-   blockless = (m[OFFSET_OPTIONS] & 0x2) != 0;
-   unpremul = (m[OFFSET_OPTIONS] & 0x4) != 0;
-   w = ntohl(*((unsigned int*) &(m[OFFSET_WIDTH])));
-   h = ntohl(*((unsigned int*) &(m[OFFSET_HEIGHT])));
-
-   switch (m[OFFSET_ALGORITHM] & 0xFF)
+   for (i = 0; prop.cspaces[i] != EMILE_COLORSPACE_ARGB8888; i++)
      {
-      case 0:
-        if (lossy != EET_IMAGE_ETC1) return 0;
-        file_cspace = EET_COLORSPACE_ETC1;
-        if (alpha != EINA_FALSE) return 0;
-        etc_block_size = 8;
-        break;
-      case 1:
-        if (lossy != EET_IMAGE_ETC2_RGB) return 0;
-        file_cspace = EET_COLORSPACE_RGB8_ETC2;
-        if (alpha != EINA_FALSE) return 0;
-        etc_block_size = 8;
-        break;
-      case 2:
-        if (lossy != EET_IMAGE_ETC2_RGBA) return 0;
-        file_cspace = EET_COLORSPACE_RGBA8_ETC2_EAC;
-        if (alpha != EINA_TRUE) return 0;
-        etc_block_size = 16;
-        break;
-      case 3:
-        if (lossy != EET_IMAGE_ETC1_ALPHA) return 0;
-        file_cspace = EET_COLORSPACE_ETC1_ALPHA;
-        if (alpha != EINA_TRUE) return 0;
-        etc_block_size = 8;
-        num_planes = 2;
-        alpha_offset = ((w + 2 + 3) / 4) * ((h + 2 + 3) / 4) * 8 / sizeof(*p_etc);
-        break;
-      default:
-        return 0;
+        if (prop.cspaces[i] == cspace) break;
      }
-   etc_width = ((w + 2 + 3) / 4) * etc_block_size;
-
-   if (cspace != EET_COLORSPACE_ARGB8888 && cspace != file_cspace)
-     {
-        if (!((cspace == EET_COLORSPACE_RGB8_ETC2) && (file_cspace == EET_COLORSPACE_ETC1)))
-          return 0;
-        // else: ETC2 is compatible with ETC1 and is preferred
-     }
-
-   if (blockless)
-     {
-        bwidth = roundup(w + 2, 4);
-        bheight = roundup(h + 2, 4);
-     }
-   else
-     {
-        bwidth = 4 << (m[OFFSET_BLOCK_SIZE] & 0x0f);
-        bheight = 4 << ((m[OFFSET_BLOCK_SIZE] & 0xf0) >> 4);
-     }
-
-   EINA_RECTANGLE_SET(&master, dst_x, dst_y, dst_w, dst_h);
 
    switch (cspace)
      {
-      case EET_COLORSPACE_ETC1:
-      case EET_COLORSPACE_RGB8_ETC2:
-      case EET_COLORSPACE_RGBA8_ETC2_EAC:
-      case EET_COLORSPACE_ETC1_ALPHA:
-        if (master.x % 4 || master.y % 4)
-          abort();
-        break;
+      case EMILE_COLORSPACE_ETC1:
+         if (lossy != EET_IMAGE_ETC1) return 0;
+         if (alpha != EINA_FALSE) return 0;
+         break;
+      case EMILE_COLORSPACE_RGB8_ETC2:
+         if (lossy != EET_IMAGE_ETC2_RGB) return 0;
+         if (alpha != EINA_FALSE) return 0;
+         break;
+      case EMILE_COLORSPACE_RGBA8_ETC2_EAC:
+         if (lossy != EET_IMAGE_ETC2_RGBA) return 0;
+         if (alpha != EINA_TRUE) return 0;
+         break;
+      case EMILE_COLORSPACE_ETC1_ALPHA:
+         if (lossy != EET_IMAGE_ETC1_ALPHA) return 0;
+         if (alpha != EINA_TRUE) return 0;
+         break;
       case EET_COLORSPACE_ARGB8888:
-        // Offset to take duplicated pixels into account
-        master.x += 1;
-        master.y += 1;
-        break;
-      default: abort();
+         break;
+      default:
+         return 0;
      }
 
-   p_etc = (unsigned char*) p;
-   offset = OFFSET_BLOCKS;
+   prop.cspace = cspace;
 
-   // Allocate space for each ETC block (8 or 16 bytes per 4 * 4 pixels group)
-   block_count = bwidth * bheight / (4 * 4);
-   if (compress)
-     buffer = eina_binbuf_manage_read_only_new_length(alloca(etc_block_size * block_count), etc_block_size * block_count);
-
-   for (plane = 0; plane < num_planes; plane++)
-     for (y = 0; y < h + 2; y += bheight)
-       for (x = 0; x < w + 2; x += bwidth)
-         {
-            Eina_Rectangle current;
-            Eina_Binbuf *data_start;
-            const char *it;
-            unsigned int expand_length;
-            unsigned int i, j;
-
-            block_length = _tgv_length_get(m + offset, length, &offset);
-
-            if (block_length == 0) goto on_error;
-
-            data_start = eina_binbuf_manage_read_only_new_length(m + offset, block_length);
-            offset += block_length;
-
-            EINA_RECTANGLE_SET(&current, x, y,
-                               bwidth, bheight);
-
-            if (!eina_rectangle_intersection(&current, &master))
-              continue;
-
-            if (compress)
-              {
-                 if (!emile_binbuf_expand(data_start, buffer, EMILE_LZ4HC))
-                   goto on_error;
-              }
-            else
-              {
-                 buffer = data_start;
-                 if (block_count * etc_block_size != block_length)
-                   goto on_error;
-              }
-            it = eina_binbuf_string_get(buffer);
-
-            for (i = 0; i < bheight; i += 4)
-              for (j = 0; j < bwidth; j += 4, it += etc_block_size)
-                {
-                   Eina_Rectangle current_etc;
-                   unsigned int temporary[4 * 4];
-                   unsigned int offset_x, offset_y;
-                   int k, l;
-
-                   EINA_RECTANGLE_SET(&current_etc, x + j, y + i, 4, 4);
-
-                   if (!eina_rectangle_intersection(&current_etc, &current))
-                     continue;
-
-                   switch (cspace)
-                     {
-                      case EET_COLORSPACE_ARGB8888:
-                        switch (file_cspace)
-                          {
-                           case EET_COLORSPACE_ETC1:
-                           case EET_COLORSPACE_ETC1_ALPHA:
-                             if (!rg_etc1_unpack_block(it, temporary, 0))
-                               {
-                                  // TODO: Should we decode as RGB8_ETC2?
-                                  fprintf(stderr, "ETC1: Block starting at {%i, %i} is corrupted!\n", x + j, y + i);
-                                  continue;
-                               }
-                             break;
-                           case EET_COLORSPACE_RGB8_ETC2:
-                             rg_etc2_rgb8_decode_block((uint8_t *) it, temporary);
-                             break;
-                           case EET_COLORSPACE_RGBA8_ETC2_EAC:
-                             rg_etc2_rgba8_decode_block((uint8_t *) it, temporary);
-                             break;
-                           default: abort();
-                          }
-
-                        offset_x = current_etc.x - x - j;
-                        offset_y = current_etc.y - y - i;
-
-                        if (!plane)
-                          {
-#ifdef BUILD_NEON
-                             if (eina_cpu_features_get() & EINA_CPU_NEON)
-                               {
-                                  uint32_t *dst = &p[current_etc.x - 1 + (current_etc.y - 1) * master.w];
-                                  uint32_t *src = &temporary[offset_x + offset_y * 4];
-                                  for (k = 0; k < current_etc.h; k++)
-                                    {
-                                       if (current_etc.w == 4)
-                                         vst1q_u32(dst, vld1q_u32(src));
-                                       else if (current_etc.w == 3)
-                                         {
-                                            vst1_u32(dst, vld1_u32(src));
-                                            *(dst + 2) = *(src + 2);
-                                         }
-                                       else if (current_etc.w == 2)
-                                         vst1_u32(dst, vld1_u32(src));
-                                       else
-                                          *dst = *src;
-                                       dst += master.w;
-                                       src += 4;
-                                    }
-                               }
-                             else
-#endif
-                             for (k = 0; k < current_etc.h; k++)
-                               {
-                                  memcpy(&p[current_etc.x - 1 + (current_etc.y - 1 + k) * master.w],
-                                         &temporary[offset_x + (offset_y + k) * 4],
-                                         current_etc.w * sizeof (unsigned int));
-                               }
-                          }
-                        else
-                          {
-                             for (k = 0; k < current_etc.h; k++)
-                               for (l = 0; l < current_etc.w; l++)
-                                 {
-                                    unsigned int *rgbdata =
-                                      &p[current_etc.x - 1 + (current_etc.y - 1 + k) * master.w + l];
-                                    unsigned int *adata =
-                                      &temporary[offset_x + (offset_y + k) * 4 + l];
-                                    A_VAL(rgbdata) = G_VAL(adata);
-                                 }
-                          }
-                        break;
-                      case EET_COLORSPACE_ETC1:
-                      case EET_COLORSPACE_RGB8_ETC2:
-                      case EET_COLORSPACE_RGBA8_ETC2_EAC:
-                        memcpy(&p_etc[(current_etc.x / 4) * etc_block_size +
-                                      (current_etc.y / 4) * etc_width],
-                               it, etc_block_size);
-                        break;
-                      case EET_COLORSPACE_ETC1_ALPHA:
-                        memcpy(&p_etc[(current_etc.x / 4) * etc_block_size +
-                                      (current_etc.y / 4) * etc_width +
-                                      plane * alpha_offset],
-                               it, etc_block_size);
-                        break;
-                      default:
-                        abort();
-                     }
-                } // bx,by inside blocks
-
-            eina_binbuf_free(data_start);
-         } // x,y macroblocks
-
-   if (compress) eina_binbuf_free(buffer);
+   if (!emile_image_data(image, &prop, sizeof (Emile_Image_Load_Opts), p, &error))
+     return 0;
 
    // TODO: Add support for more unpremultiplied modes (ETC2)
-   if ((cspace == EET_COLORSPACE_ARGB8888) && unpremul)
-     _eet_argb_premul(p, w * h);
+   if ((cspace == EET_COLORSPACE_ARGB8888) && !prop.premul)
+     _eet_argb_premul(p, prop.w * prop.h);
 
    return 1;
-
-on_error:
-   ERR("ETC image data is corrupted in this EET file");
-   return 0;
 }
 
 static void *
@@ -2145,6 +1920,7 @@ eet_data_image_header_decode_cipher(const void   *data,
      {
         const char *m = data;
 
+        // We only use Emile for decoding the actual data, seems simpler this way.
         if (w) *w = ntohl(*((unsigned int*) &(m[OFFSET_WIDTH])));
         if (h) *h = ntohl(*((unsigned int*) &(m[OFFSET_HEIGHT])));
         if (comp) *comp = m[OFFSET_OPTIONS] & 0x1;
@@ -2306,7 +2082,7 @@ _eet_data_image_decode_inside(const void   *data,
                               unsigned int  src_x,
                               unsigned int  src_y,
                               unsigned int  src_w,
-                              EINA_UNUSED unsigned int  src_h, /* useful for fast path detection */
+                              unsigned int  src_h, /* useful for fast path detection */
                               unsigned int *d,
                               unsigned int  w,
                               unsigned int  h,

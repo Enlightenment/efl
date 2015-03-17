@@ -96,8 +96,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <Eina.h>
 #include <Efl_Config.h>
+#include <Eina.h>
+#include <Emile.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -491,15 +492,13 @@ typedef enum _Eet_Image_Encoding
    EET_IMAGE_ETC1_ALPHA = 5,
 } Eet_Image_Encoding;
 
-typedef enum _Eet_Colorspace
-{
-   EET_COLORSPACE_ARGB8888 = 0,
-   /* The number between are reserved to preserve compatibility with evas */
-   EET_COLORSPACE_ETC1 = 9,
-   EET_COLORSPACE_RGB8_ETC2 = 10,
-   EET_COLORSPACE_RGBA8_ETC2_EAC = 11,
-   EET_COLORSPACE_ETC1_ALPHA = 12
-} Eet_Colorspace;
+typedef Emile_Colorspace Eet_Colorspace;
+
+#define EET_COLORSPACE_ARGB8888 EMILE_COLORSPACE_ARGB8888
+#define EET_COLORSPACE_ETC1 EMILE_COLORSPACE_ETC1
+#define EET_COLORSPACE_RGB8_ETC2 EMILE_COLORSPACE_RGB8_ETC2
+#define EET_COLORSPACE_RGBA8_ETC2_EAC EMILE_COLORSPACE_RGBA8_ETC2_EAC
+#define EET_COLORSPACE_ETC1_ALPHA EMILE_COLORSPACE_ETC1_ALPHA
 
 /**
  * @typedef Eet_File
