@@ -1279,6 +1279,13 @@ gl_extn_veto(Render_Engine *re)
      {
         if (getenv("EVAS_GL_INFO"))
           printf("EGL EXTN:\n%s\n", str);
+        //Tizen Only(20150317): Disable Partial Rendering default
+        if (!getenv("EVAS_GL_PARTIAL_ENABLE"))
+          {
+             extn_have_buffer_age = 0;
+             glsym_eglSwapBuffersWithDamage = NULL;
+          }
+        //Tizen Only end
         if (!strstr(str, "EGL_EXT_buffer_age"))
           {
              extn_have_buffer_age = 0;
