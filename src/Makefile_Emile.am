@@ -1,6 +1,5 @@
 
 ### Library
-
 lib_LTLIBRARIES += lib/emile/libemile.la
 
 installed_emilemainheadersdir = $(includedir)/emile-@VMAJ@
@@ -9,7 +8,12 @@ dist_installed_emilemainheaders_DATA = lib/emile/Emile.h
 lib_emile_libemile_la_SOURCES = \
 lib/emile/emile_private.h \
 lib/emile/emile_main.c \
-lib/emile/emile_compress.c
+lib/emile/emile_compress.c \
+lib/emile/emile_image.c \
+static_libs/rg_etc/rg_etc1.c \
+static_libs/rg_etc/rg_etc2.c \
+static_libs/rg_etc/rg_etc1.h \
+static_libs/rg_etc/etc2_encoder.c
 
 if ! ENABLE_LIBLZ4
 lib_emile_libemile_la_SOURCES += \
@@ -30,6 +34,7 @@ endif
 endif
 
 lib_emile_libemile_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/static_libs/rg_etc \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/emile\" \
@@ -52,7 +57,8 @@ EXTRA_DIST += static_libs/lz4/README \
 static_libs/lz4/lz4.c \
 static_libs/lz4/lz4.h \
 static_libs/lz4/lz4hc.c \
-static_libs/lz4/lz4hc.h
+static_libs/lz4/lz4hc.h \
+static_libs/rg_etc/README
 
 ### Binary
 
