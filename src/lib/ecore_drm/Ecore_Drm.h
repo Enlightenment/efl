@@ -326,4 +326,14 @@ EAPI Eina_Stringshare *ecore_drm_output_make_get(Ecore_Drm_Output *output);
  */
 EAPI void ecore_drm_device_pointer_xy_get(Ecore_Drm_Device *dev, int *x, int *y);
 
+/**
+ * Get the list of drm devices which are allocated.
+ *
+ * @return Eina_List of drm devices, NULL otherwise
+ *
+ * @ingroup Ecore_Drm_Device_Group
+ * @since 1.14
+ */
+EAPI Eina_List *ecore_drm_devices_get(void);
+
 #endif

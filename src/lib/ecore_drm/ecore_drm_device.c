@@ -5,6 +5,8 @@
 #include "ecore_drm_private.h"
 #include <dlfcn.h>
 
+static Eina_List *drm_devices;
+
 static void 
 _ecore_drm_device_cb_page_flip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
 {
@@ -191,6 +193,8 @@ cont:
         dev->session = NULL;
 
         DBG("Using Drm Device: %s", dev->drm.name);
+
+        drm_devices = eina_list_append(drm_devices, dev);
      }
 
 out:
@@ -235,6 +239,8 @@ ecore_drm_device_free(Ecore_Drm_Device *dev)
 
    /* free session */
    free(dev->session);
+
+   drm_devices = eina_list_remove(drm_devices, dev);
 
    /* free structure */
    free(dev);
@@ -332,6 +338,12 @@ ecore_drm_device_close(Ecore_Drm_Device *dev)
    dev->drm.fd = -1;
 
    return EINA_TRUE;
+}
+
+EAPI Eina_List *
+ecore_drm_devices_get(void)
+{
+   return drm_devices;
 }
 
 /**
