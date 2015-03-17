@@ -72,6 +72,8 @@ emile_init(void)
 #endif /* ifdef HAVE_GNUTLS */
 #ifdef HAVE_OPENSSL
    ERR_load_crypto_strings();
+   SSL_library_init();
+   SSL_load_error_strings();
    OpenSSL_add_all_algorithms();
 #endif /* ifdef HAVE_OPENSSL */
 

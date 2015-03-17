@@ -26,6 +26,9 @@
 #endif
 
 #include <sys/stat.h>
+
+#include <Emile.h>
+
 #include "Ecore.h"
 #include "ecore_con_private.h"
 
@@ -35,8 +38,6 @@ EAPI int ECORE_CON_EVENT_SERVER_UPGRADE = 0;
 static int _init_con_ssl_init_count = 0;
 
 #ifdef HAVE_GNUTLS
-GCRY_THREAD_OPTION_PTHREAD_IMPL;
-
 static int _client_connected = 0;
 
 # define SSL_SUFFIX(ssl_func) ssl_func ## _gnutls
@@ -425,11 +426,6 @@ _openssl_print_session(SSL *ssl)
     }                                                                           \
   while (0)
 
-static Ecore_Con_Ssl_Error
-                           SSL_SUFFIX(_ecore_con_ssl_init) (void);
-static Ecore_Con_Ssl_Error
-                           SSL_SUFFIX(_ecore_con_ssl_shutdown) (void);
-
 static Eina_Bool           SSL_SUFFIX(_ecore_con_ssl_server_cafile_add) (Ecore_Con_Server *svr, const char *ca_file);
 static Eina_Bool           SSL_SUFFIX(_ecore_con_ssl_server_crl_add) (Ecore_Con_Server *svr, const char *crl_file);
 static Eina_Bool           SSL_SUFFIX(_ecore_con_ssl_server_cert_add) (Ecore_Con_Server *svr, const char *cert);
@@ -457,7 +453,16 @@ ecore_con_ssl_init(void)
 {
    if (!_init_con_ssl_init_count++)
      {
-        SSL_SUFFIX(_ecore_con_ssl_init) ();
+#ifdef ISCOMFITOR
+        if (eina_log_domain_level_check(_ecore_con_log_dom,
+                                        EINA_LOG_LEVEL_DBG))
+          {
+             gnutls_global_set_log_level(9);
+             gnutls_global_set_log_function(_gnutls_log_func);
+          }
+#endif
+        emile_init();
+
 #if _ECORE_CON_SSL_AVAILABLE != 0
         ECORE_CON_EVENT_CLIENT_UPGRADE = ecore_event_type_new();
         ECORE_CON_EVENT_SERVER_UPGRADE = ecore_event_type_new();
@@ -478,7 +483,7 @@ ecore_con_ssl_shutdown(void)
      }
 
    if (!--_init_con_ssl_init_count)
-     SSL_SUFFIX(_ecore_con_ssl_shutdown) ();
+     emile_shutdown();
 
    return _init_con_ssl_init_count;
 }
@@ -740,33 +745,7 @@ ecore_con_ssl_client_upgrade(Ecore_Con_Client *obj, Ecore_Con_Type ssl_type)
  */
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_init_gnutls(void)
-{
-   if (gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread))
-     WRN("YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
-   if (gnutls_global_init())
-     return ECORE_CON_SSL_ERROR_INIT_FAILED;
-
-#ifdef ISCOMFITOR
-   if (eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG))
-     {
-        gnutls_global_set_log_level(9);
-        gnutls_global_set_log_function(_gnutls_log_func);
-     }
-#endif
-   return ECORE_CON_SSL_ERROR_NONE;
-}
-
-static Ecore_Con_Ssl_Error
-_ecore_con_ssl_shutdown_gnutls(void)
-{
-   gnutls_global_deinit();
-
-   return ECORE_CON_SSL_ERROR_NONE;
-}
-
-static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *obj,
+_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr,
                                      int ssl_type)
 {
    Ecore_Con_Server_Data *svr = eo_data_scope_get(obj, ECORE_CON_SERVER_CLASS);
@@ -1390,22 +1369,6 @@ _ecore_con_ssl_client_write_gnutls(Ecore_Con_Client *obj,
  */
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_init_openssl(void)
-{
-   SSL_library_init();
-   SSL_load_error_strings();
-   OpenSSL_add_all_algorithms();
-
-   return ECORE_CON_SSL_ERROR_NONE;
-}
-
-static Ecore_Con_Ssl_Error
-_ecore_con_ssl_shutdown_openssl(void)
-{
-   ERR_free_strings();
-   EVP_cleanup();
-   return ECORE_CON_SSL_ERROR_NONE;
-}
 
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *obj,
@@ -1911,19 +1874,6 @@ _ecore_con_ssl_client_write_openssl(Ecore_Con_Client *obj,
 /*
  * No Ssl
  */
-
-static Ecore_Con_Ssl_Error
-_ecore_con_ssl_init_none(void)
-{
-   return ECORE_CON_SSL_ERROR_NONE;
-}
-
-static Ecore_Con_Ssl_Error
-_ecore_con_ssl_shutdown_none(void)
-{
-   return ECORE_CON_SSL_ERROR_NONE;
-}
-
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_prepare_none(Ecore_Con_Server *svr EINA_UNUSED,
                                    int ssl_type EINA_UNUSED)
