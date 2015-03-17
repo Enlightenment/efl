@@ -90,6 +90,8 @@ eet_identity_open(const char               *certificate_file,
    gnutls_datum_t load_file = { NULL, 0 };
    char pass[1024];
 
+   if (!emile_cipher_init()) return NULL;
+
    /* Init */
    if (!(key = malloc(sizeof(Eet_Key))))
      goto on_error;
@@ -189,6 +191,8 @@ on_error:
    EVP_PKEY *pkey = NULL;
    X509 *cert = NULL;
 
+   if (!emile_cipher_init()) return NULL;
+
    /* Load the X509 certificate in memory. */
    fp = fopen(certificate_file, "r");
    if (!fp)
@@ -244,6 +248,8 @@ on_error:
 EAPI void
 eet_identity_close(Eet_Key *key)
 {
+   if (!emile_cipher_init()) return ;
+
 #ifdef HAVE_SIGNATURE
    if (!key || (key->references > 0))
      return;
@@ -285,6 +291,8 @@ eet_identity_print(Eet_Key *key,
 
    if (!key)
      return;
+
+   if (!emile_cipher_init()) return ;
 
    if (key->private_key)
      {
@@ -353,6 +361,8 @@ on_error:
 
    if (!key)
      return;
+
+   if (!emile_cipher_init()) return ;
 
    rsa = EVP_PKEY_get1_RSA(key->private_key);
    if (rsa)
@@ -472,6 +482,8 @@ eet_identity_sign(FILE    *fp,
    /* A few check and flush pending write. */
    if (!fp || !key || !key->certificate || !key->private_key)
      return EET_ERROR_BAD_OBJECT;
+
+   if (!emile_cipher_init()) return EET_ERROR_NOT_IMPLEMENTED;
 
    /* Get the file size. */
    fd = fileno(fp);
@@ -639,6 +651,8 @@ eet_identity_check(const void   *data_base,
    if (signature_length < sizeof(int) * 3)
      return NULL;
 
+   if (!emile_cipher_init()) return NULL;
+
    /* Get the header */
    memcpy(&magic,    header, sizeof(int));
    memcpy(&sign_len, header+1, sizeof(int));
@@ -800,6 +814,8 @@ eet_identity_certificate_print(const unsigned char *certificate,
         ERR("No certificate provided.");
         return;
      }
+
+   if (!emile_cipher_init()) return ;
 
 # ifdef HAVE_GNUTLS
    gnutls_datum_t datum;
