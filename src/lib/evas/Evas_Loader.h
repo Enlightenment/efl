@@ -37,6 +37,7 @@
 #define _EVAS_LOADER_H
 
 #include "Eina.h"
+#include "Emile.h"
 
 #ifdef EAPI
 # undef EAPI
@@ -116,119 +117,61 @@ struct _Evas_Module
    unsigned char	loaded : 1;
 };
 
-typedef struct _Evas_Image_Load_Opts Evas_Image_Load_Opts;
-typedef struct _Evas_Image_Animated  Evas_Image_Animated;
-typedef struct _Evas_Image_Property  Evas_Image_Property;
+typedef Emile_Image_Load_Opts Evas_Image_Load_Opts;
+typedef Emile_Image_Animated  Evas_Image_Animated;
+typedef Emile_Image_Property  Evas_Image_Property;
+
 typedef struct _Evas_Image_Load_Func Evas_Image_Load_Func;
 
-typedef enum _Evas_Load_Error
-{
-   EVAS_LOAD_ERROR_NONE = 0, /**< No error on load */
-   EVAS_LOAD_ERROR_GENERIC = 1, /**< A non-specific error occurred */
-   EVAS_LOAD_ERROR_DOES_NOT_EXIST = 2, /**< File (or file path) does not exist */
-   EVAS_LOAD_ERROR_PERMISSION_DENIED = 3, /**< Permission denied to an existing file (or path) */
-   EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4, /**< Allocation of resources failure prevented load */
-   EVAS_LOAD_ERROR_CORRUPT_FILE = 5, /**< File corrupt (but was detected as a known format) */
-   EVAS_LOAD_ERROR_UNKNOWN_FORMAT = 6 /**< File is not a known format */
-} Evas_Load_Error; /**< Evas image load error codes one can get - see evas_load_error_str() too. */
+typedef Emile_Image_Load_Error Evas_Load_Error;
 
-typedef enum _Evas_Image_Animated_Loop_Hint
-{
-   EVAS_IMAGE_ANIMATED_HINT_NONE = 0,
-   EVAS_IMAGE_ANIMATED_HINT_LOOP = 1, /**< Image's animation mode is loop like 1->2->3->1->2->3 */
-   EVAS_IMAGE_ANIMATED_HINT_PINGPONG = 2 /**< Image's animation mode is pingpong like 1->2->3->2->1-> ... */
-} Evas_Image_Animated_Loop_Hint;
+#define EVAS_LOAD_ERROR_NONE EMILE_IMAGE_LOAD_ERROR_NONE
+#define EVAS_LOAD_ERROR_GENERIC EMILE_IMAGE_LOAD_ERROR_GENERIC
+#define EVAS_LOAD_ERROR_DOES_NOT_EXIST EMILE_IMAGE_LOAD_ERROR_DOES_NOT_EXIST
+#define EVAS_LOAD_ERROR_PERMISSION_DENIED EMILE_IMAGE_LOAD_ERROR_PERMISSION_DENIED
+#define EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED EMILE_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED
+#define EVAS_LOAD_ERROR_CORRUPT_FILE EMILE_IMAGE_LOAD_ERROR_CORRUPT_FILE
+#define EVAS_LOAD_ERROR_UNKNOWN_FORMAT EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT
 
-typedef enum _Evas_Image_Scale_Hint
-{
-   EVAS_IMAGE_SCALE_HINT_NONE = 0, /**< No scale hint at all */
-   EVAS_IMAGE_SCALE_HINT_DYNAMIC = 1, /**< Image is being re-scaled over time, thus turning scaling cache @b off for its data */
-   EVAS_IMAGE_SCALE_HINT_STATIC = 2 /**< Image is not being re-scaled over time, thus turning scaling cache @b on for its data */
-} Evas_Image_Scale_Hint; /**< How an image's data is to be treated by Evas, with regard to scaling cache */
+typedef Emile_Image_Animated_Loop_Hint Evas_Image_Animated_Loop_Hint;
+
+#define EVAS_IMAGE_ANIMATED_HINT_NONE EMILE_IMAGE_ANIMATED_HINT_NONE
+#define EVAS_IMAGE_ANIMATED_HINT_LOOP EMILE_IMAGE_ANIMATED_HINT_LOOP
+#define EVAS_IMAGE_ANIMATED_HINT_PINGPONG EMILE_IMAGE_ANIMATED_HINT_PINGPONG
+
+typedef Emile_Image_Scale_Hint Evas_Image_Scale_Hint; /**< How an image's data is to be treated by Evas, with regard to scaling cache */
+
+#define EVAS_IMAGE_SCALE_HINT_NONE EMILE_IMAGE_SCALE_HINT_NONE
+#define EVAS_IMAGE_SCALE_HINT_DYNAMIC EMILE_IMAGE_SCALE_HINT_DYNAMIC
+#define EVAS_IMAGE_SCALE_HINT_STATIC EMILE_IMAGE_SCALE_HINT_STATIC
 
 /**
  * Colorspaces for pixel data supported by Evas
  * @ingroup Evas_Object_Image
  */
-typedef enum _Evas_Colorspace
-{
-   EVAS_COLORSPACE_ARGB8888, /**< ARGB 32 bits per pixel, high-byte is Alpha, accessed 1 32bit word at a time */
-   /* these are not currently supported - but planned for the future */
-   EVAS_COLORSPACE_YCBCR422P601_PL, /**< YCbCr 4:2:2 Planar, ITU.BT-601 specifications. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows */
-   EVAS_COLORSPACE_YCBCR422P709_PL, /**< YCbCr 4:2:2 Planar, ITU.BT-709 specifications. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows */
-   EVAS_COLORSPACE_RGB565_A5P, /**< 16bit rgb565 + Alpha plane at end - 5 bits of the 8 being used per alpha byte */
-   EVAS_COLORSPACE_GRY8, /**< 8bit grayscale */
-   EVAS_COLORSPACE_YCBCR422601_PL, /**<  YCbCr 4:2:2, ITU.BT-601 specifications. The data pointed to is just an array of row pointer, pointing to line of Y,Cb,Y,Cr bytes */
-   EVAS_COLORSPACE_YCBCR420NV12601_PL, /**< YCbCr 4:2:0, ITU.BT-601 specification. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb,Cr rows. */
-   EVAS_COLORSPACE_YCBCR420TM12601_PL, /**< YCbCr 4:2:0, ITU.BT-601 specification. The data pointed to is just an array of tiled row pointer, pointing to the Y rows, then the Cb,Cr rows. */
-   EVAS_COLORSPACE_AGRY88, /**< AY 8bits Alpha and 8bits Grey, accessed 1 16bits at a time */
+typedef Emile_Colorspace Evas_Colorspace; /**< Colorspaces for pixel data supported by Evas */
+
+#define EVAS_COLORSPACE_ARGB8888 EMILE_COLORSPACE_ARGB8888
+#define EVAS_COLORSPACE_YCBCR422P601_PL EMILE_COLORSPACE_YCBCR422P601_PL
+#define EVAS_COLORSPACE_YCBCR422P709_PL EMILE_COLORSPACE_YCBCR422P709_PL
+#define EVAS_COLORSPACE_RGB565_A5P EMILE_COLORSPACE_RGB565_A5P
+#define EVAS_COLORSPACE_GRY8 EMILE_COLORSPACE_GRY8
+#define EVAS_COLORSPACE_YCBCR422601_PL EMILE_COLORSPACE_YCBCR422601_PL
+#define EVAS_COLORSPACE_YCBCR420NV12601_PL EMILE_COLORSPACE_YCBCR420NV12601_PL
+#define EVAS_COLORSPACE_YCBCR420TM12601_PL EMILE_COLORSPACE_YCBCR420TM12601_PL
+#define EVAS_COLORSPACE_AGRY88 EMILE_COLORSPACE_AGRY88
    // ETC1/2 support
-   EVAS_COLORSPACE_ETC1, /**< OpenGL ETC1 encoding of RGB texture (4 bit per pixel) @since 1.10 */
-   EVAS_COLORSPACE_RGB8_ETC2, /**< OpenGL GL_COMPRESSED_RGB8_ETC2 texture compression format (4 bit per pixel) @since 1.10 */
-   EVAS_COLORSPACE_RGBA8_ETC2_EAC, /**< OpenGL GL_COMPRESSED_RGBA8_ETC2_EAC texture compression format, supports alpha (8 bit per pixel) @since 1.10 */
-   EVAS_COLORSPACE_ETC1_ALPHA,     /**< ETC1 with alpha support using two planes: ETC1 RGB and ETC1 grey for alpha @since 1.11 */
+#define EVAS_COLORSPACE_ETC1 EMILE_COLORSPACE_ETC1
+#define EVAS_COLORSPACE_RGB8_ETC2 EMILE_COLORSPACE_RGB8_ETC2
+#define EVAS_COLORSPACE_RGBA8_ETC2_EAC EMILE_COLORSPACE_RGBA8_ETC2_EAC
+#define EVAS_COLORSPACE_ETC1_ALPHA EMILE_COLORSPACE_ETC1_ALPHA
    // S3TC support
-   EVAS_COLORSPACE_RGB_S3TC_DXT1,  /**< OpenGL COMPRESSED_RGB_S3TC_DXT1_EXT format with RGB only. @since 1.11 */
-   EVAS_COLORSPACE_RGBA_S3TC_DXT1, /**< OpenGL COMPRESSED_RGBA_S3TC_DXT1_EXT format with RGBA punchthrough. @since 1.11 */
-   EVAS_COLORSPACE_RGBA_S3TC_DXT2, /**< DirectDraw DXT2 format with premultiplied RGBA. Not supported by OpenGL itself. @since 1.11 */
-   EVAS_COLORSPACE_RGBA_S3TC_DXT3, /**< OpenGL COMPRESSED_RGBA_S3TC_DXT3_EXT format with RGBA. @since 1.11 */
-   EVAS_COLORSPACE_RGBA_S3TC_DXT4, /**< DirectDraw DXT4 format with premultiplied RGBA. Not supported by OpenGL itself. @since 1.11 */
-   EVAS_COLORSPACE_RGBA_S3TC_DXT5, /**< OpenGL COMPRESSED_RGBA_S3TC_DXT5_EXT format with RGBA. @since 1.11 */
-} Evas_Colorspace; /**< Colorspaces for pixel data supported by Evas */
-
-struct _Evas_Image_Property
-{
-   unsigned int  w;
-   unsigned int  h;
-
-   unsigned char scale;
-
-   Eina_Bool     rotated;
-   Eina_Bool     alpha;
-   Eina_Bool     premul;
-   Eina_Bool     alpha_sparse;
-
-   const Evas_Colorspace *cspaces; /**< Specify the color space handled by the loader @since 1.10 */
-   Evas_Colorspace cspace; /**< Specify the color space handle by the engine @since 1.10 */
-
-   struct {
-      unsigned char l, r, t, b; /**< Specify the dimensions of duplicated pixels borders for OpenGL compressed textures, set by the loader. @since 1.11 */
-   } borders;
-
-   Eina_Bool     flipped;
-};
-
-struct _Evas_Image_Animated
-{
-   Eina_List *frames;
-
-   Evas_Image_Animated_Loop_Hint loop_hint;
-
-   int        frame_count;
-   int        loop_count;
-   int        cur_frame;
-
-   Eina_Bool  animated;
-};
-
-struct _Evas_Image_Load_Opts
-{
-   struct {
-      unsigned int      x, y, w, h;
-   } region;
-   struct {
-      int src_x, src_y, src_w, src_h;
-      int dst_w, dst_h;
-      int smooth;
-      Evas_Image_Scale_Hint scale_hint;
-   } scale_load;
-   double               dpi; // if > 0.0 use this
-   unsigned int         w, h; // if > 0 use this
-   unsigned int         degree;//if>0 there is some info related with rotation
-   int                  scale_down_by; // if > 1 then use this
-
-   Eina_Bool            orientation; // if EINA_TRUE => should honor orientation information provided by file (like jpeg exif info)
-};
+#define EVAS_COLORSPACE_RGB_S3TC_DXT1 EMILE_COLORSPACE_RGB_S3TC_DXT1
+#define EVAS_COLORSPACE_RGBA_S3TC_DXT1 EMILE_COLORSPACE_RGBA_S3TC_DXT1
+#define EVAS_COLORSPACE_RGBA_S3TC_DXT2 EMILE_COLORSPACE_RGBA_S3TC_DXT2
+#define EVAS_COLORSPACE_RGBA_S3TC_DXT3 EMILE_COLORSPACE_RGBA_S3TC_DXT3
+#define EVAS_COLORSPACE_RGBA_S3TC_DXT4 EMILE_COLORSPACE_RGBA_S3TC_DXT4
+#define EVAS_COLORSPACE_RGBA_S3TC_DXT5 EMILE_COLORSPACE_RGBA_S3TC_DXT5
 
 struct _Evas_Image_Load_Func
 {
