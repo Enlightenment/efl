@@ -14,6 +14,7 @@ typedef Evas_Engine_GL_Context *(*Window_GL_Context_Get)(Outbuf *ob);
 typedef void *(*Window_EGL_Display_Get)(Outbuf *ob);
 typedef Context_3D *(*Window_GL_Context_New)(Outbuf *ob);
 typedef void (*Window_GL_Context_Use)(Context_3D *ctx);
+typedef void (*Window_Context_Is_Current_Set)(Outbuf *ob, Eina_Bool context_current);
 
 struct _Render_Engine_GL_Generic
 {
@@ -24,6 +25,7 @@ struct _Render_Engine_GL_Generic
    Window_EGL_Display_Get window_egl_display_get;
    Window_GL_Context_New window_gl_context_new;
    Window_GL_Context_Use window_gl_context_use;
+   Window_Context_Is_Current_Set window_context_is_current_set;
 
    struct {
       Evas_Object_Image_Pixels_Get_Cb  get_pixels;
@@ -56,6 +58,7 @@ evas_render_engine_gl_generic_init(Render_Engine_GL_Generic *re,
                                    Window_EGL_Display_Get window_egl_display_get,
                                    Window_GL_Context_New window_gl_context_new,
                                    Window_GL_Context_Use window_gl_context_use,
+                                   Window_Context_Is_Current_Set window_context_is_current_set,
                                    const EVGL_Interface *evgl_funcs,
                                    int w, int h)
 {
@@ -78,6 +81,7 @@ evas_render_engine_gl_generic_init(Render_Engine_GL_Generic *re,
    re->window_egl_display_get = window_egl_display_get;
    re->window_gl_context_new = window_gl_context_new;
    re->window_gl_context_use = window_gl_context_use;
+   re->window_context_is_current_set = window_context_is_current_set;
 
    re->func.get_pixels = NULL;
    re->func.get_pixels_data = NULL;

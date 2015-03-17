@@ -641,6 +641,7 @@ eng_setup(Evas *eo_e, void *in)
                                                 eng_outbuf_egl_display_get,
                                                 eng_gl_context_new,
                                                 eng_gl_context_use,
+                                                NULL,//eng_outbuf_context_is_current_set
                                                 &evgl_funcs,
                                                 epd->output.w, epd->output.h))
           {

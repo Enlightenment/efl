@@ -108,6 +108,9 @@ struct _Outbuf
    struct {
       unsigned char drew : 1;
    } draw;
+
+   Eina_Bool        context_switch_optimize : 1;
+   Eina_Bool        context_current : 1;
 };
 
 struct _Context_3D
@@ -196,6 +199,7 @@ void eng_outbuf_push_updated_region(Outbuf *ob, RGBA_Image *update,
 void eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
 Evas_Engine_GL_Context *eng_outbuf_gl_context_get(Outbuf *ob);
 void *eng_outbuf_egl_display_get(Outbuf *ob);
+void eng_outbuf_context_is_current_set(Outbuf *ob, Eina_Bool context_current);
 
 Eina_Bool eng_preload_make_current(void *data, void *doit);
 

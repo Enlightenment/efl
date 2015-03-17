@@ -318,6 +318,7 @@ eng_setup(Evas *eo_e, void *in)
                                            _window_egl_display_get,
                                            _window_gl_context_new,
                                            _window_gl_context_use,
+                                           NULL,//eng_outbuf_context_is_current_set
                                            &evgl_funcs,
                                            e->output.w, e->output.h))
      goto on_error;
