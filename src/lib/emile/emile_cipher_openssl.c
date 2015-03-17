@@ -6,12 +6,10 @@
 # include <netinet/in.h>
 #endif
 
-#ifdef HAVE_OPENSSL
-# include <openssl/sha.h>
-# include <openssl/evp.h>
-# include <openssl/hmac.h>
-# include <openssl/rand.h>
-#endif /* ifdef HAVE_GNUTLS */
+#include <openssl/sha.h>
+#include <openssl/evp.h>
+#include <openssl/hmac.h>
+#include <openssl/rand.h>
 
 #include <Eina.h>
 
@@ -25,12 +23,10 @@
 Eina_Bool
 _emile_cipher_init(void)
 {
-#ifdef HAVE_OPENSSL
    ERR_load_crypto_strings();
    SSL_library_init();
    SSL_load_error_strings();
    OpenSSL_add_all_algorithms();
-#endif /* ifdef HAVE_OPENSSL */
 
    return EINA_TRUE;
 }

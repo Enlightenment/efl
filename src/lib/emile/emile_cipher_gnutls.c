@@ -6,11 +6,9 @@
 # include <netinet/in.h>
 #endif
 
-#ifdef HAVE_GNUTLS
-# include <gnutls/abstract.h>
-# include <gnutls/x509.h>
-# include <gcrypt.h>
-#endif /* ifdef HAVE_CIPHER */
+#include <gnutls/abstract.h>
+#include <gnutls/x509.h>
+#include <gcrypt.h>
 
 #include <Eina.h>
 
@@ -21,7 +19,6 @@
 #define MAX_KEY_LEN   32
 #define MAX_IV_LEN    16
 
-#ifdef HAVE_GNUTLS
 static int
 _emile_thread_mutex_init(void **priv)
 {
@@ -70,12 +67,10 @@ static struct gcry_thread_cbs _emile_threads = {
   _emile_thread_mutex_lock, _emile_thread_mutex_unlock,
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
-#endif /* ifdef HAVE_GNUTLS */
 
 Eina_Bool
 _emile_cipher_init(void)
 {
-#ifdef HAVE_GNUTLS
    if (gcry_control(GCRYCTL_SET_THREAD_CBS, &_emile_threads))
      WRN(
        "YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
@@ -101,12 +96,10 @@ _emile_cipher_init(void)
 
    if (gnutls_global_init())
      return EINA_FALSE;
-#endif /* ifdef HAVE_GNUTLS */
 
    return EINA_TRUE;
 }
 
-# ifdef HAVE_GNUTLS
 static inline Eina_Bool
 emile_hmac_sha1(const void    *key,
                 size_t         key_len,
@@ -145,8 +138,6 @@ emile_hmac_sha1(const void    *key,
 
    return EINA_TRUE;
 }
-# endif /* ifdef HAVE_GNUTLS */
-
 
 static Eina_Bool
 emile_pbkdf2_sha1(const char          *key,
@@ -199,7 +190,6 @@ emile_pbkdf2_sha1(const char          *key,
 
    return EINA_TRUE;
 }
-
 
 EAPI Eina_Binbuf *
 emile_binbuf_cipher(const Eina_Binbuf *data,
