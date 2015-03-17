@@ -218,7 +218,7 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
    Eo_Lexer *ls = eo_lexer_new(filename);
    if (!ls)
      {
-        ERR("unable to create lexer");
+        ERR("unable to create lexer for file %s", filename);
         return EINA_FALSE;
      }
 
