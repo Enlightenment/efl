@@ -14,9 +14,6 @@ char cdata[] = "Client_info";
 Eina_Bool
 _add(void *data, int type EINA_UNUSED, void *ev)
 {
-   double timeout_val = 10, ret;
-   void *del_data;
-
    fail_if (type != ECORE_CON_EVENT_CLIENT_ADD &&
        type != ECORE_CON_EVENT_SERVER_ADD);
 
@@ -24,6 +21,8 @@ _add(void *data, int type EINA_UNUSED, void *ev)
    if (type == ECORE_CON_EVENT_CLIENT_ADD)
      {
        Ecore_Con_Event_Client_Add *event = ev;
+       double timeout_val = 10, ret;
+       void *del_data;
 
        fail_if (data != (void *) 1);
        fail_if (!event->client);

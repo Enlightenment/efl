@@ -231,5 +231,7 @@ eina_test_xattr(TCase *tc)
 #ifdef XATTR_TEST_DIR
    tcase_add_test(tc, eina_test_xattr_set);
    tcase_add_test(tc, eina_test_xattr_list);
+#else
+   (void)tc;
 #endif
 }

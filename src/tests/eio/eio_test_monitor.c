@@ -106,8 +106,6 @@ static Eina_Bool _modify_attrib_file(void *data)
 
 static Eina_Bool _check_event_path(void *data, void *event)
 {
-   const char *expected_path = (const char*)data;
-   const char *actual_path = ((Eio_Monitor_Event*)event)->filename;
    ck_assert_str_eq((const char*)data, ((Eio_Monitor_Event*)event)->filename);
    return EINA_TRUE;
 }
@@ -626,7 +624,7 @@ START_TEST(eio_test_monitor_two_monitors_one_removed_one_event)
 }
 END_TEST
 
-static void _unexpected_event_cb(void *data, int type, void *event)
+static void _unexpected_event_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    ck_abort_msg("unexpected event");
 }
