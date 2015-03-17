@@ -2199,7 +2199,7 @@ eet_alias(Eet_File   *ef,
    /* figure hash bucket */
    hash = _eet_hash_gen(name, ef->header->directory->size);
 
-   in = eina_binbuf_manage_read_only_new_length((unsigned char*) destination, strlen(destination) + 1);
+   in = eina_binbuf_manage_new((unsigned char*) destination, strlen(destination) + 1, EINA_TRUE);
    if (!in) goto on_error;
 
    /* if we want to compress */
@@ -2322,7 +2322,7 @@ eet_write_cipher(Eet_File   *ef,
 
    UNLOCK_FILE(ef);
 
-   in = eina_binbuf_manage_read_only_new_length(data, size);
+   in = eina_binbuf_manage_new(data, size, EINA_TRUE);
    if (comp)
      {
         Eina_Binbuf *out;
@@ -2740,7 +2740,7 @@ read_binbuf_from_disk(Eet_File      *ef,
                       Eet_File_Node *efn)
 {
    if (efn->data)
-     return eina_binbuf_manage_read_only_new_length(efn->data, efn->size);
+     return eina_binbuf_manage_new(efn->data, efn->size, EINA_TRUE);
 
    if (efn->offset > ef->data_size)
      return 0;
@@ -2751,5 +2751,5 @@ read_binbuf_from_disk(Eet_File      *ef,
    if ((efn->offset + efn->size) > ef->data_size)
      return 0;
 
-   return eina_binbuf_manage_read_only_new_length(ef->data + efn->offset, efn->size);
+   return eina_binbuf_manage_new(ef->data + efn->offset, efn->size, EINA_TRUE);
 }

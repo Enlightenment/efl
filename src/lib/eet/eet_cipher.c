@@ -882,7 +882,7 @@ eet_cipher(const void   *data,
    Eina_Binbuf *out;
    Eina_Binbuf *in;
 
-   in = eina_binbuf_manage_read_only_new_length(data, size);
+   in = eina_binbuf_manage_new(data, size, EINA_TRUE);
    out = emile_binbuf_cipher(EMILE_AES256_CBC, in, key, length);
 
    if (result_length) *result_length = out ? eina_binbuf_length_get(out) : 0;
@@ -903,7 +903,7 @@ eet_decipher(const void   *data,
    Eina_Binbuf *out;
    Eina_Binbuf *in;
 
-   in = eina_binbuf_manage_read_only_new_length(data, size);
+   in = eina_binbuf_manage_new(data, size, EINA_TRUE);
    out = emile_binbuf_decipher(EMILE_AES256_CBC, in, key, length);
 
    if (result_length) *result_length = out ? eina_binbuf_length_get(out) : 0;

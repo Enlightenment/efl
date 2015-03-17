@@ -354,7 +354,7 @@ eet_data_image_jpeg_header_decode(const void   *data,
    Emile_Image_Load_Error error;
    int r = 0;
 
-   bin = eina_binbuf_manage_read_only_new_length(data, size);
+   bin = eina_binbuf_manage_new(data, size, EINA_TRUE);
    if (!bin) return 0;
 
    memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
@@ -407,7 +407,7 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
    // Fix for ABI incompatibility between 1.10 and 1.11
    if (cspace == 8) cspace = 9;
 
-   bin = eina_binbuf_manage_read_only_new_length(data, size);
+   bin = eina_binbuf_manage_new(data, size, EINA_TRUE);
    if (!bin) return 0;
 
    memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
@@ -461,7 +461,7 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
    if (!pixels)
      return 0;
 
-   bin = eina_binbuf_manage_read_only_new_length(data, size);
+   bin = eina_binbuf_manage_new(data, size, EINA_TRUE);
    if (!bin) return 0;
 
    memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
@@ -590,7 +590,7 @@ eet_data_image_etc2_decode(const void *data,
    // Fix for ABI incompatibility between 1.10 and 1.11
    if (cspace == 8) cspace = 9;
 
-   bin = eina_binbuf_manage_read_only_new_length(data, length);
+   bin = eina_binbuf_manage_new(data, length, EINA_TRUE);
    if (!bin) return 0;
 
    memset(&opts, 0, sizeof (Emile_Image_Load_Opts));
@@ -714,7 +714,7 @@ eet_data_image_lossless_compressed_convert(int         *size,
            data = (const char *) bigend_data;
         }
 
-      in = eina_binbuf_manage_read_only_new_length(data, w * h * 4);
+      in = eina_binbuf_manage_new(data, w * h * 4, EINA_TRUE);
       if (!in)
         {
            free(bigend_data);
@@ -1034,7 +1034,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
                          }
                     }
 
-                  in = eina_binbuf_manage_read_only_new_length(buffer, block_count * etc_block_size);
+                  in = eina_binbuf_manage_new(buffer, block_count * etc_block_size, EINA_TRUE);
                   if (compress)
                     {
                        Eina_Binbuf *out;
@@ -1977,13 +1977,12 @@ _eet_data_image_decode_inside(const void   *data,
              Eina_Binbuf *in;
              Eina_Binbuf *out;
 
-             in = eina_binbuf_manage_read_only_new_length((const unsigned char *) body, size - 8 * sizeof (int));
+             in = eina_binbuf_manage_new((const unsigned char *) body, size - 8 * sizeof (int), EINA_TRUE);
              if (!in) return 0;
 
              if ((src_h == h) && (src_w == w) && (row_stride == src_w * 4))
                {
-                  out = eina_binbuf_manage_read_only_new_length((void*) d,
-                                                                w * h * 4);
+                  out = eina_binbuf_manage_new((void*) d, w * h * 4, EINA_TRUE);
                   if (!emile_expand(in, out,
                                            eet_2_emile_compressor(comp)))
                     {
