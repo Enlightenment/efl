@@ -19,13 +19,60 @@
 #include "Emile.h"
 #include "emile_private.h"
 
-#ifdef HAVE_GNUTLS
-GCRY_THREAD_OPTION_PTHREAD_IMPL;
-#endif /* ifdef HAVE_GNUTLS */
-
 static Eina_Bool _emile_cipher_init = EINA_FALSE;
 static unsigned int _emile_init_count = 0;
 int _emile_log_dom_global = -1;
+
+#ifdef HAVE_GNUTLS
+static int
+_emile_thread_mutex_init(void **priv)
+{
+   Eina_Lock *lock;
+
+   lock = malloc(sizeof (Eina_Lock));
+   if (!lock) return ENOMEM;
+
+   if (!eina_lock_new(lock))
+     {
+        free(lock);
+        return ENOMEM;
+     }
+
+   *priv = lock;
+   return 0;
+}
+
+static int
+_emile_thread_mutex_destroy(void **priv)
+{
+   eina_lock_free(*priv);
+   free(*priv);
+   return 0;
+}
+
+static int
+_emile_thread_mutex_lock(void **priv)
+{
+   if (eina_lock_take(*priv) == EINA_LOCK_FAIL)
+     return EINVAL;
+   return 0;
+}
+
+static int
+_emile_thread_mutex_unlock(void **priv)
+{
+   if (eina_lock_release(*priv) == EINA_LOCK_FAIL)
+     return EINVAL;
+   return 0;
+}
+
+static struct gcry_thread_cbs _emile_threads = {
+  (GCRY_THREAD_OPTION_PTHREAD | (GCRY_THREAD_OPTION_VERSION << 8)),
+  NULL, _emile_thread_mutex_init, _emile_thread_mutex_destroy,
+  _emile_thread_mutex_lock, _emile_thread_mutex_unlock,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+};
+#endif /* ifdef HAVE_GNUTLS */
 
 EAPI Eina_Bool
 emile_cipher_init(void)
@@ -33,6 +80,10 @@ emile_cipher_init(void)
    if (_emile_cipher_init) return EINA_TRUE;
 
 #ifdef HAVE_GNUTLS
+   if (gcry_control(GCRYCTL_SET_THREAD_CBS, &_emile_threads))
+     WRN(
+       "YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
+
    /* Before the library can be used, it must initialize itself if needed. */
    if (gcry_control(GCRYCTL_ANY_INITIALIZATION_P) == 0)
      {
@@ -51,10 +102,6 @@ emile_cipher_init(void)
           WRN(
             "BIG FAT WARNING: I AM UNABLE TO REQUEST SECMEM, Cryptographic operation are at risk !");
      }
-
-   if (gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread))
-     WRN(
-       "YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
 
    if (gnutls_global_init())
      return EINA_FALSE;
