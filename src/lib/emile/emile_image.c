@@ -469,7 +469,7 @@ _emile_tgv_data(Emile_Image *image,
    /* Allocate space for each ETC block (8 or 16 bytes per 4 * 4 pixels group) */
    block_count = image->block.width * image->block.height / (4 * 4);
    if (image->compress)
-     buffer = eina_binbuf_manage_read_only_new_length(alloca(etc_block_size * block_count), etc_block_size * block_count);
+     buffer = eina_binbuf_manage_new(alloca(etc_block_size * block_count), etc_block_size * block_count, EINA_TRUE);
 
    for (plane = 0; plane < num_planes; plane++)
      for (y = 0; y < image->size.height + 2; y += image->block.height)
@@ -488,7 +488,7 @@ _emile_tgv_data(Emile_Image *image,
                  return EINA_FALSE;
               }
 
-            data_start = eina_binbuf_manage_read_only_new_length(m + offset, block_length);
+            data_start = eina_binbuf_manage_new(m + offset, block_length, EINA_TRUE);
             offset += block_length;
 
             EINA_RECTANGLE_SET(&current, x, y,

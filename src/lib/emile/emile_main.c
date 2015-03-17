@@ -142,9 +142,9 @@ emile_pbkdf2_sha1(const char *key,
    buf = alloca(salt_len + 4);
    if (!buf) return EINA_FALSE;
 
-   step1 = eina_binbuf_manage_read_only_new_length(buf, salt_len + 4);
+   step1 = eina_binbuf_manage_new(buf, salt_len + 4, EINA_TRUE);
    if (!step1) return EINA_FALSE;
-   step2 = eina_binbuf_manage_read_only_new_length(digest, 20);
+   step2 = eina_binbuf_manage_new(digest, 20, EINA_TRUE);
    if (!step2) return EINA_FALSE;
 
    for (i = 1; len; len -= tmp_len, p += tmp_len, i++)

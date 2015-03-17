@@ -75,7 +75,7 @@ emile_compress(const Eina_Binbuf *data,
         return NULL;
      }
 
-   return eina_binbuf_manage_new_length(compact, length);
+   return eina_binbuf_manage_new(compact, length, EINA_FALSE);
 }
 
 EAPI Eina_Bool
@@ -125,7 +125,7 @@ emile_decompress(const Eina_Binbuf *data, Emile_Compressor_Type t, unsigned int 
    expanded = malloc(dest_length);
    if (!expanded) return NULL;
 
-   out = eina_binbuf_manage_new_length(expanded, dest_length);
+   out = eina_binbuf_manage_new(expanded, dest_length, EINA_FALSE);
    if (!out) goto on_error;
 
    if (!emile_expand(data, out, t))
