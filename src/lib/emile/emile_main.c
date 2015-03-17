@@ -23,24 +23,14 @@
 GCRY_THREAD_OPTION_PTHREAD_IMPL;
 #endif /* ifdef HAVE_GNUTLS */
 
+static Eina_Bool _emile_cipher_init = EINA_FALSE;
 static unsigned int _emile_init_count = 0;
 int _emile_log_dom_global = -1;
 
-EAPI int
-emile_init(void)
+EAPI Eina_Bool
+emile_cipher_init(void)
 {
-   if (++_emile_init_count != 1)
-     return _emile_init_count;
-
-   if (!eina_init())
-     return --_emile_init_count;
-
-   _emile_log_dom_global = eina_log_domain_register("emile", EINA_COLOR_CYAN);
-   if (_emile_log_dom_global < 0)
-     {
-        EINA_LOG_ERR("Emile can not create a general log domain.");
-        goto shutdown_eina;
-     }
+   if (_emile_cipher_init) return EINA_TRUE;
 
 #ifdef HAVE_GNUTLS
    /* Before the library can be used, it must initialize itself if needed. */
@@ -50,7 +40,7 @@ emile_init(void)
         /* Disable warning messages about problems with the secure memory subsystem.
            This command should be run right after gcry_check_version. */
         if (gcry_control(GCRYCTL_DISABLE_SECMEM_WARN))
-          goto shutdown_eet;  /* This command is used to allocate a pool of secure memory and thus
+          return EINA_FALSE;  /* This command is used to allocate a pool of secure memory and thus
                                  enabling the use of secure memory. It also drops all extra privileges the
                                  process has (i.e. if it is run as setuid (root)). If the argument nbytes
                                  is 0, secure memory will be disabled. The minimum amount of secure memory
@@ -67,7 +57,7 @@ emile_init(void)
        "YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
 
    if (gnutls_global_init())
-     goto shutdown_eet;
+     return EINA_FALSE;
 
 #endif /* ifdef HAVE_GNUTLS */
 #ifdef HAVE_OPENSSL
@@ -76,6 +66,27 @@ emile_init(void)
    SSL_load_error_strings();
    OpenSSL_add_all_algorithms();
 #endif /* ifdef HAVE_OPENSSL */
+
+   _emile_cipher_init = EINA_TRUE;
+
+   return EINA_TRUE;
+}
+
+EAPI int
+emile_init(void)
+{
+   if (++_emile_init_count != 1)
+     return _emile_init_count;
+
+   if (!eina_init())
+     return --_emile_init_count;
+
+   _emile_log_dom_global = eina_log_domain_register("emile", EINA_COLOR_CYAN);
+   if (_emile_log_dom_global < 0)
+     {
+        EINA_LOG_ERR("Emile can not create a general log domain.");
+        goto shutdown_eina;
+     }
 
    eina_log_timing(_emile_log_dom_global,
                    EINA_LOG_STATE_STOP,
@@ -99,26 +110,29 @@ emile_shutdown(void)
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
 
+   if (_emile_cipher_init)
+     {
 #ifdef HAVE_GNUTLS
-   /* Note that gnutls has a leak where it doesnt free stuff it alloced
-    * on init. valgrind trace here:
-    * 21 bytes in 1 blocks are definitely lost in loss record 24 of 194
-    *    at 0x4C2B6CD: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
-    *    by 0x68AC801: strdup (strdup.c:43)
-    *    by 0xD215B6A: p11_kit_registered_module_to_name (in /usr/lib/x86_64-linux-gnu/libp11-kit.so.0.0.0)
-    *    by 0x9571574: gnutls_pkcs11_init (in /usr/lib/x86_64-linux-gnu/libgnutls.so.26.21.8)
-    *    by 0x955B031: gnutls_global_init (in /usr/lib/x86_64-linux-gnu/libgnutls.so.26.21.8)
-    *    by 0x6DFD6D0: eet_init (eet_lib.c:608)
-    *
-    * yes - i've tried calling gnutls_pkcs11_deinit() by hand but no luck.
-    * the leak is in there.
-    */
-   gnutls_global_deinit();
+        /* Note that gnutls has a leak where it doesnt free stuff it alloced
+         * on init. valgrind trace here:
+         * 21 bytes in 1 blocks are definitely lost in loss record 24 of 194
+         *    at 0x4C2B6CD: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+         *    by 0x68AC801: strdup (strdup.c:43)
+         *    by 0xD215B6A: p11_kit_registered_module_to_name (in /usr/lib/x86_64-linux-gnu/libp11-kit.so.0.0.0)
+         *    by 0x9571574: gnutls_pkcs11_init (in /usr/lib/x86_64-linux-gnu/libgnutls.so.26.21.8)
+         *    by 0x955B031: gnutls_global_init (in /usr/lib/x86_64-linux-gnu/libgnutls.so.26.21.8)
+         *    by 0x6DFD6D0: eet_init (eet_lib.c:608)
+         *
+         * yes - i've tried calling gnutls_pkcs11_deinit() by hand but no luck.
+         * the leak is in there.
+         */
+        gnutls_global_deinit();
 #endif /* ifdef HAVE_GNUTLS */
 #ifdef HAVE_OPENSSL
-   EVP_cleanup();
-   ERR_free_strings();
+        EVP_cleanup();
+        ERR_free_strings();
 #endif /* ifdef HAVE_OPENSSL */
+     }
 
    eina_log_domain_unregister(_emile_log_dom_global);
    _emile_log_dom_global = -1;

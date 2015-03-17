@@ -106,6 +106,8 @@ EAPI int emile_shutdown(void);
  * @}
  */
 
+EAPI Eina_Bool emile_cipher_init(void);
+
 EAPI Eina_Binbuf *emile_binbuf_cipher(const Eina_Binbuf *in,
                                       const char *key, unsigned int length);
 

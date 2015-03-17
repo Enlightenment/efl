@@ -175,6 +175,8 @@ emile_binbuf_cipher(const Eina_Binbuf *data,
    int tmp_len;
 # endif /* ifdef HAVE_GNUTLS */
 
+   if (!emile_cipher_init()) return NULL;
+
 # ifdef HAVE_GNUTLS
    /* Gcrypt salt generation */
    gcry_create_nonce((unsigned char *)&salt, sizeof(salt));
@@ -337,6 +339,8 @@ emile_binbuf_decipher(const Eina_Binbuf *data,
    int tmp_len;
    int tmp = 0;
    int opened = 0;
+
+   if (!emile_cipher_init()) return NULL;
 
    over = (unsigned int*) eina_binbuf_string_get(data);
    size = eina_binbuf_length_get(data);
