@@ -1873,7 +1873,8 @@ eet_read_cipher(Eet_File   *ef,
      {
         Eina_Binbuf *out;
 
-        out = emile_binbuf_decipher(in, cipher_key, strlen(cipher_key));
+        out = emile_binbuf_decipher(EMILE_AES256_CBC, in,
+                                    cipher_key, strlen(cipher_key));
 
         eina_binbuf_free(in);
         if (!out) goto on_error;
@@ -2352,7 +2353,8 @@ eet_write_cipher(Eet_File   *ef,
      {
         Eina_Binbuf *out;
 
-        out = emile_binbuf_cipher(in, cipher_key, strlen(cipher_key));
+        out = emile_binbuf_cipher(EMILE_AES256_CBC, in,
+                                  cipher_key, strlen(cipher_key));
         // Old behaviour was to not fail if the cipher where not built in
         if (out)
           {

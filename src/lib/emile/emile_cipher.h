@@ -19,13 +19,20 @@ typedef enum
   EMILE_WANT_WRITE = 3
 } Emile_Want_Type;
 
+typedef enum
+{
+  EMILE_AES256_CBC
+} Emile_Cipher_Algorithm;
+
 EAPI Eina_Bool emile_cipher_init(void);
 EAPI const char *emile_cipher_module_get(void);
 
-EAPI Eina_Binbuf *emile_binbuf_cipher(const Eina_Binbuf *in,
+EAPI Eina_Binbuf *emile_binbuf_cipher(Emile_Cipher_Algorithm algo,
+                                      const Eina_Binbuf *in,
                                       const char *key, unsigned int length);
 
-EAPI Eina_Binbuf *emile_binbuf_decipher(const Eina_Binbuf *in,
+EAPI Eina_Binbuf *emile_binbuf_decipher(Emile_Cipher_Algorithm algo,
+                                        const Eina_Binbuf *in,
                                         const char *key, unsigned int length);
 
 EAPI Eina_Bool emile_binbuf_sha1(const char *key,

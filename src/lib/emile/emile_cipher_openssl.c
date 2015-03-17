@@ -71,7 +71,8 @@ emile_binbuf_sha1(const char *key,
 }
 
 EAPI Eina_Binbuf *
-emile_binbuf_cipher(const Eina_Binbuf *data,
+emile_binbuf_cipher(Emile_Cipher_Algorithm algo,
+                    const Eina_Binbuf *data,
                     const char *key,
                     unsigned int length)
 {
@@ -90,6 +91,7 @@ emile_binbuf_cipher(const Eina_Binbuf *data,
    unsigned int *buffer = NULL;
    int tmp_len;
 
+   if (algo != EMILE_AES256_CBC) return NULL;
    if (!emile_cipher_init()) return NULL;
 
    /* Openssl salt generation */
@@ -177,7 +179,8 @@ on_error:
 
 
 EAPI Eina_Binbuf *
-emile_binbuf_decipher(const Eina_Binbuf *data,
+emile_binbuf_decipher(Emile_Cipher_Algorithm algo,
+                      const Eina_Binbuf *data,
                       const char *key,
                       unsigned int length)
 {
@@ -193,6 +196,7 @@ emile_binbuf_decipher(const Eina_Binbuf *data,
    int tmp = 0;
    int opened = 0;
 
+   if (algo != EMILE_AES256_CBC) return NULL;
    if (!emile_cipher_init()) return NULL;
 
    over = (unsigned int*) eina_binbuf_string_get(data);

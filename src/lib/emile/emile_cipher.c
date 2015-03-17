@@ -23,7 +23,8 @@ emile_binbuf_sha1(const char *key EINA_UNUSED,
 }
 
 EAPI Eina_Binbuf *
-emile_binbuf_cipher(const Eina_Binbuf *data EINA_UNUSED,
+emile_binbuf_cipher(Emile_Cipher_Algorithm algo EINA_UNUSED,
+                    const Eina_Binbuf *data EINA_UNUSED,
                     const char *key EINA_UNUSED,
                     unsigned int length EINA_UNUSED)
 {
@@ -31,7 +32,8 @@ emile_binbuf_cipher(const Eina_Binbuf *data EINA_UNUSED,
 }
 
 EAPI Eina_Binbuf *
-emile_binbuf_decipher(const Eina_Binbuf *data EINA_UNUSED,
+emile_binbuf_decipher(Emile_Cipher_Algorithm algo EINA_UNUSED,
+                      const Eina_Binbuf *data EINA_UNUSED,
                       const char *key EINA_UNUSED,
                       unsigned int length EINA_UNUSED)
 {

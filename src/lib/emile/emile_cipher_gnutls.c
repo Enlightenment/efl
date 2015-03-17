@@ -182,7 +182,8 @@ emile_binbuf_sha1(const char *key,
 }
 
 EAPI Eina_Binbuf *
-emile_binbuf_cipher(const Eina_Binbuf *data,
+emile_binbuf_cipher(Emile_Cipher_Algorithm algo,
+                    const Eina_Binbuf *data,
                     const char *key,
                     unsigned int length)
 {
@@ -200,6 +201,7 @@ emile_binbuf_cipher(const Eina_Binbuf *data,
    gcry_error_t err = 0;
    gcry_cipher_hd_t cipher;
 
+   if (algo != EMILE_AES256_CBC) return NULL;
    if (!emile_cipher_init()) return NULL;
 
    /* Gcrypt salt generation */
@@ -283,7 +285,8 @@ on_error:
 }
 
 EAPI Eina_Binbuf *
-emile_binbuf_decipher(const Eina_Binbuf *data,
+emile_binbuf_decipher(Emile_Cipher_Algorithm algo,
+                      const Eina_Binbuf *data,
                       const char *key,
                       unsigned int length)
 {
@@ -299,6 +302,7 @@ emile_binbuf_decipher(const Eina_Binbuf *data,
    int tmp_len;
    int tmp = 0;
 
+   if (algo != EMILE_AES256_CBC) return NULL;
    if (!emile_cipher_init()) return NULL;
 
    over = (unsigned int*) eina_binbuf_string_get(data);
