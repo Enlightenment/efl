@@ -30,6 +30,7 @@
 
 #include "rg_etc1.h"
 #include "Emile.h"
+#include "emile_private.h"
 
 #ifdef BUILD_NEON
 #include <arm_neon.h>
@@ -648,25 +649,51 @@ struct jpeg_membuf_src
 };
 
 static void
-_JPEGFatalErrorHandler(j_common_ptr cinfo)
+_emile_image_jpeg_error_exit_cb(j_common_ptr cinfo)
 {
+   char buffer[JMSG_LENGTH_MAX];
    emptr errmgr;
 
-   errmgr = (emptr) cinfo->err;
+   (*cinfo->err->format_message)(cinfo, buffer);
+   ERR("%s", buffer);
+   errmgr = (emptr)cinfo->err;
    longjmp(errmgr->setjmp_buffer, 1);
-   return;
 }
 
 static void
-_JPEGErrorHandler(j_common_ptr cinfo EINA_UNUSED)
+_emile_image_jpeg_emit_message_cb(j_common_ptr cinfo,
+                                  int          msg_level)
 {
-   return;
+   char buffer[JMSG_LENGTH_MAX];
+   struct jpeg_error_mgr *err;
+
+   err = cinfo->err;
+   if (msg_level < 0)
+     {
+        if ((err->num_warnings == 0) || (err->trace_level >= 3))
+          {
+             (*cinfo->err->format_message)(cinfo, buffer);
+             WRN("%s", buffer);
+          }
+        err->num_warnings++;
+     }
+   else
+     {
+        if (err->trace_level >= msg_level)
+          {
+             (*cinfo->err->format_message)(cinfo, buffer);
+             INF("%s", buffer);
+          }
+     }
 }
 
 static void
-_JPEGErrorHandler2(j_common_ptr cinfo EINA_UNUSED, int msg_level EINA_UNUSED)
+_emile_image_jpeg_output_message_cb(j_common_ptr cinfo)
 {
-   return;
+   char buffer[JMSG_LENGTH_MAX];
+
+   (*cinfo->err->format_message)(cinfo, buffer);
+   ERR("%s", buffer);
 }
 
 static void
@@ -1281,9 +1308,9 @@ _emile_jpeg_head(Emile_Image *image,
 
    memset(&cinfo, 0, sizeof(cinfo));
    cinfo.err = jpeg_std_error(&(jerr.pub));
-   jerr.pub.error_exit = _JPEGFatalErrorHandler;
-   jerr.pub.emit_message = _JPEGErrorHandler2;
-   jerr.pub.output_message = _JPEGErrorHandler;
+   jerr.pub.error_exit = _emile_image_jpeg_error_exit_cb;
+   jerr.pub.emit_message = _emile_image_jpeg_emit_message_cb;
+   jerr.pub.output_message = _emile_image_jpeg_output_message_cb;
    if (setjmp(jerr.setjmp_buffer))
      {
         jpeg_destroy_decompress(&cinfo);
@@ -1529,9 +1556,9 @@ _emile_jpeg_data(Emile_Image *image,
      }
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
-   jerr.pub.error_exit = _JPEGFatalErrorHandler;
-   jerr.pub.emit_message = _JPEGErrorHandler2;
-   jerr.pub.output_message = _JPEGErrorHandler;
+   jerr.pub.error_exit = _emile_image_jpeg_error_exit_cb;
+   jerr.pub.emit_message = _emile_image_jpeg_emit_message_cb;
+   jerr.pub.output_message = _emile_image_jpeg_output_message_cb;
    if (setjmp(jerr.setjmp_buffer))
      {
         *error = EMILE_IMAGE_LOAD_ERROR_CORRUPT_FILE;
