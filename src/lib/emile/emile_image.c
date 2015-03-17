@@ -1077,6 +1077,88 @@ _rotate_change_wh(uint32_t *to, uint32_t *from,
      }
 }
 
+static void
+_rotate8_180(uint8_t *data, int w, int h)
+{
+   uint8_t *p1, *p2;
+   uint8_t pt;
+   int x;
+
+   p1 = data;
+   p2 = data + (h * w) - 1;
+   for (x = (w * h) / 2; --x >= 0;)
+     {
+        pt = *p1;
+        *p1 = *p2;
+        *p2 = pt;
+        p1++;
+        p2--;
+     }
+}
+
+static void
+_flip_horizontal8(uint8_t *data, int w, int h)
+{
+   uint8_t *p1, *p2;
+   uint8_t pt;
+   int x, y;
+
+   for (y = 0; y < h; y++)
+     {
+        p1 = data + (y * w);
+        p2 = data + ((y + 1) * w) - 1;
+        for (x = 0; x < (w >> 1); x++)
+          {
+             pt = *p1;
+             *p1 = *p2;
+             *p2 = pt;
+             p1++;
+             p2--;
+          }
+     }
+}
+
+static void
+_flip_vertical8(uint8_t *data, int w, int h)
+{
+   uint8_t *p1, *p2;
+   uint8_t pt;
+   int x, y;
+
+   for (y = 0; y < (h >> 1); y++)
+     {
+        p1 = data + (y * w);
+        p2 = data + ((h - 1 - y) * w);
+        for (x = 0; x < w; x++)
+          {
+             pt = *p1;
+             *p1 = *p2;
+             *p2 = pt;
+             p1++;
+             p2++;
+          }
+     }
+}
+
+static void
+_rotate_change_wh8(uint8_t *to, uint8_t *from,
+                   int w, int h,
+                   int dx, int dy)
+{
+   int x, y;
+
+   for (x = h; --x >= 0;)
+     {
+        for (y = w; --y >= 0;)
+          {
+             *to = *from;
+             from++;
+             to += dy;
+          }
+        to += dx;
+     }
+}
+
 static Eina_Bool
 _emile_jpeg_bind(Emile_Image *image EINA_UNUSED,
                  Emile_Image_Load_Opts *opts EINA_UNUSED,
@@ -1139,12 +1221,6 @@ _emile_jpeg_head(Emile_Image *image,
         return EINA_FALSE;
      }
 
-   if (cinfo.output_components == 1)
-     {
-        // We do handle GRY8 colorspace as an output for JPEG
-        prop->cspaces = cspaces_gry;
-     }
-
    jpeg_read_header(&cinfo, TRUE);
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
@@ -1152,6 +1228,12 @@ _emile_jpeg_head(Emile_Image *image,
    cinfo.dither_mode = JDITHER_ORDERED;
    cinfo.buffered_image = TRUE; // buffered mode in case jpg is progressive
    jpeg_start_decompress(&cinfo);
+
+   if (cinfo.jpeg_color_space == JCS_GRAYSCALE)
+     {
+        // We do handle GRY8 colorspace as an output for JPEG
+        prop->cspaces = cspaces_gry;
+     }
 
    /* rotation decoding */
    if (opts->orientation)
@@ -1332,6 +1414,7 @@ _emile_jpeg_data(Emile_Image *image,
    const unsigned char *m = NULL;
    uint8_t *ptr, *line[16], *data;
    uint32_t *ptr2, *ptr_rotate = NULL;
+   uint8_t *ptrg, *ptrg_rotate = NULL;
    unsigned int x, y, l, i, scans;
    int region = 0;
    /* rotation setting */
@@ -1398,6 +1481,11 @@ _emile_jpeg_data(Emile_Image *image,
       case JCS_UNKNOWN:
         break;
       case JCS_GRAYSCALE:
+        if (prop->cspace == EMILE_COLORSPACE_GRY8)
+          {
+             cinfo.out_color_space = JCS_GRAYSCALE;
+             break;
+          }
       case JCS_RGB:
       case JCS_YCbCr:
         cinfo.out_color_space = JCS_RGB;
@@ -1485,12 +1573,27 @@ _emile_jpeg_data(Emile_Image *image,
         /*   } */
      }
 
-   if (!(((cinfo.out_color_space == JCS_RGB) &&
-          ((cinfo.output_components == 3) || (cinfo.output_components == 1))) ||
-         ((cinfo.out_color_space == JCS_CMYK) && (cinfo.output_components == 4))))
+   switch (prop->cspace)
      {
-        *error = EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
-        goto on_error;
+      case EMILE_COLORSPACE_GRY8:
+         if (!(cinfo.out_color_space == JCS_GRAYSCALE &&
+               cinfo.output_components == 1))
+           {
+              *error = EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
+              goto on_error;
+           }
+         break;
+      case EMILE_COLORSPACE_ARGB8888:
+         if (!((cinfo.out_color_space == JCS_RGB && cinfo.output_components == 3) ||
+               (cinfo.out_color_space == JCS_CMYK && cinfo.output_components == 4)))
+           {
+              *error = EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
+              goto on_error;
+           }
+         break;
+      default:
+         *error = EMILE_IMAGE_LOAD_ERROR_GENERIC;
+         goto on_error;
      }
 
 /* end head decoding */
@@ -1503,13 +1606,24 @@ _emile_jpeg_data(Emile_Image *image,
    data = alloca(w * 16 * cinfo.output_components);
    if ((prop->rotated) && change_wh)
      {
-        ptr2 = malloc(w * h * sizeof(uint32_t));
-        ptr_rotate = ptr2;
+        if (prop->cspace == EMILE_COLORSPACE_GRY8)
+          {
+             ptrg = malloc(w * h * sizeof(uint8_t));
+             ptrg_rotate = ptrg;
+          }
+        else
+          {
+             ptr2 = malloc(w * h * sizeof(uint32_t));
+             ptr_rotate = ptr2;
+          }
      }
    else
-     ptr2 = pixels;
+     {
+        ptr2 = pixels;
+        ptrg = pixels;
+     }
 
-   if (!ptr2)
+   if (!ptr2 && !ptrg)
      {
         *error = EMILE_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         goto on_error;
@@ -1742,9 +1856,17 @@ _emile_jpeg_data(Emile_Image *image,
                     {
                        for (x = 0; x < w; x++)
                          {
-                            *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[0], ptr[0]);
+                            if (prop->cspace == EMILE_COLORSPACE_GRY8)
+                              {
+                                 *ptrg = ptr[0];
+                                 ptrg++;
+                              }
+                            else
+                              {
+                                 *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[0], ptr[0]);
+                                 ptr2++;
+                              }
                             ptr++;
-                            ptr2++;
                          }
                     }
                }
@@ -1773,9 +1895,17 @@ _emile_jpeg_data(Emile_Image *image,
                                  ptr += opts_region.x;
                                  for (x = 0; x < opts_region.w; x++)
                                    {
-                                      *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[0], ptr[0]);
+                                      if (prop->cspace == EMILE_COLORSPACE_GRY8)
+                                        {
+                                           *ptrg = ptr[0];
+                                           ptrg++;
+                                        }
+                                      else
+                                        {
+                                           *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[0], ptr[0]);
+                                           ptr2++;
+                                        }
                                       ptr++;
-                                      ptr2++;
                                    }
                                  ptr += w - (opts_region.x + opts_region.w);
                               }
@@ -1792,34 +1922,71 @@ done:
    if (prop->rotated)
      {
         uint32_t *to;
+        uint8_t *to8;
         int hw;
 
         hw = w * h;
         to = pixels;
+        to8 = pixels;
 
         switch (degree)
           {
            case 90:
-             if (prop->flipped)
-               _rotate_change_wh(to + hw - 1, ptr_rotate, w, h, hw - 1, -h);
+             if (prop->cspace == EMILE_COLORSPACE_GRY8)
+               {
+                  if (prop->flipped)
+                    _rotate_change_wh8(to8 + hw - 1, ptrg_rotate, w, h, hw - 1, -h);
+                  else
+                    _rotate_change_wh8(to8 + h - 1, ptrg_rotate, w, h, -hw - 1, h);
+               }
              else
-               _rotate_change_wh(to + h - 1, ptr_rotate, w, h, -hw - 1, h);
+               {
+                  if (prop->flipped)
+                    _rotate_change_wh(to + hw - 1, ptr_rotate, w, h, hw - 1, -h);
+                  else
+                    _rotate_change_wh(to + h - 1, ptr_rotate, w, h, -hw - 1, h);
+               }
              break;
            case 180:
-             if (prop->flipped)
-               _flip_vertical(to, w, h);
+             if (prop->cspace == EMILE_COLORSPACE_GRY8)
+               {
+                  if (prop->flipped)
+                    _flip_vertical8(to8, w, h);
+                  else
+                    _rotate8_180(to8, w, h);
+               }
              else
-               _rotate_180(to, w, h);
+               {
+                  if (prop->flipped)
+                    _flip_vertical(to, w, h);
+                  else
+                    _rotate_180(to, w, h);
+               }
              break;
            case 270:
-             if (prop->flipped)
-               _rotate_change_wh(to, ptr_rotate, w, h, -hw + 1, h);
+             if (prop->cspace == EMILE_COLORSPACE_GRY8)
+               {
+                  if (prop->flipped)
+                    _rotate_change_wh8(to8, ptrg_rotate, w, h, -hw + 1, h);
+                  else
+                    _rotate_change_wh8(to8 + hw - h, ptrg_rotate, w, h, hw + 1, -h);
+               }
              else
-               _rotate_change_wh(to + hw - h, ptr_rotate, w, h, hw + 1, -h);
+               {
+                  if (prop->flipped)
+                    _rotate_change_wh(to, ptr_rotate, w, h, -hw + 1, h);
+                  else
+                    _rotate_change_wh(to + hw - h, ptr_rotate, w, h, hw + 1, -h);
+               }
              break;
            default:
              if (prop->flipped)
-               _flip_horizontal(to, w, h);
+               {
+                  if (prop->cspace == EMILE_COLORSPACE_GRY8)
+                    _flip_horizontal8(to8, w, h);
+                  else
+                    _flip_horizontal(to, w, h);
+               }
              break;
           }
         if (ptr_rotate)
