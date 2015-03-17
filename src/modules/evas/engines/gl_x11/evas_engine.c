@@ -59,7 +59,7 @@ Evas_GL_Common_Context_Call glsym_evas_gl_common_image_all_unload = NULL;
 Evas_GL_Preload glsym_evas_gl_preload_init = NULL;
 Evas_GL_Preload glsym_evas_gl_preload_shutdown = NULL;
 EVGL_Engine_Call glsym_evgl_engine_shutdown = NULL;
-EVGL_Native_Surface_Call glsym_evgl_native_surface_egl_image_get = NULL;
+EVGL_Native_Surface_Call glsym_evgl_native_surface_buffer_get = NULL;
 Evas_Gl_Symbols glsym_evas_gl_symbols = NULL;
 
 Evas_GL_Common_Context_New glsym_evas_gl_common_context_new = NULL;
@@ -1275,7 +1275,7 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_preload_init);
    LINK2GENERIC(evas_gl_preload_shutdown);
    LINK2GENERIC(evgl_engine_shutdown);
-   LINK2GENERIC(evgl_native_surface_egl_image_get);
+   LINK2GENERIC(evgl_native_surface_buffer_get);
    LINK2GENERIC(evas_gl_symbols);
    LINK2GENERIC(evas_gl_common_error_get);
    LINK2GENERIC(evas_gl_common_error_set);
@@ -1936,9 +1936,9 @@ struct _Native
    Visual    *visual;
    void      *buffer;
 
-#ifdef GL_GLES
    void      *egl_surface;
-#else
+
+#ifndef GL_GLES
    void  *fbc;
    XID    glx_pixmap;
 #endif
@@ -2010,10 +2010,10 @@ _native_bind_cb(void *data EINA_UNUSED, void *image)
     }
   else if (n->ns.type == EVAS_NATIVE_SURFACE_EVASGL)
     {
-#ifdef GL_GLES
       if (n->egl_surface)
         {
-          void *surface = glsym_evgl_native_surface_egl_image_get(n->egl_surface);
+#ifdef GL_GLES
+          void *surface = glsym_evgl_native_surface_buffer_get(n->egl_surface);
           if (glsym_glEGLImageTargetTexture2DOES)
             {
               glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, surface);
@@ -2022,10 +2022,11 @@ _native_bind_cb(void *data EINA_UNUSED, void *image)
             }
           else
             ERR("Try glEGLImageTargetTexture2DOES on EGL with no support");
-        }
 #else
-// TODO
+          GLuint tex = (GLuint)(uintptr_t)glsym_evgl_native_surface_buffer_get(n->egl_surface);
+          glBindTexture(GL_TEXTURE_2D, tex);
 #endif
+        }
     }
 }
 
@@ -2063,7 +2064,11 @@ _native_unbind_cb(void *data EINA_UNUSED, void *image)
     }
   else if (n->ns.type == EVAS_NATIVE_SURFACE_EVASGL)
     {
+#ifdef GL_GLES
       // nothing
+#else
+      glBindTexture(GL_TEXTURE_2D, 0);
+#endif
     }
 }
 
@@ -2694,12 +2699,8 @@ eng_image_native_set(void *data, void *image, void *native)
 
               n->pixmap = 0;
               n->visual = 0;
-#ifdef GL_GLES
+
               n->egl_surface = ns->data.evasgl.surface;
-#else
-              n->fbc = 0;
-              n->glx_pixmap = 0;
-#endif
 
               im->native.yinvert     = 0;
               im->native.loose       = 0;

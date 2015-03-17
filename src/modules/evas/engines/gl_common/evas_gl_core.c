@@ -833,9 +833,6 @@ _surface_cap_init(void *eng_data)
 static int
 _context_ext_check(EVGL_Context *ctx)
 {
-   int fbo_supported = 0;
-   int egl_image_supported = 0;
-
    if (!ctx)
       return 0;
 
@@ -843,6 +840,9 @@ _context_ext_check(EVGL_Context *ctx)
       return 1;
 
 #ifdef GL_GLES
+   int fbo_supported = 0;
+   int egl_image_supported = 0;
+
    switch (ctx->version)
      {
       case EVAS_GL_GLES_1_X:
@@ -858,13 +858,12 @@ _context_ext_check(EVGL_Context *ctx)
    if (EXTENSION_SUPPORT(EGL_KHR_image_base)
        && EXTENSION_SUPPORT(EGL_KHR_gl_texture_2D_image))
      egl_image_supported = 1;
-#else
-   fbo_supported = 1;
-   egl_image_supported = 0;
-#endif
 
    if (fbo_supported && egl_image_supported)
      ctx->fbo_image_supported = 1;
+#else
+   ctx->fbo_image_supported = 1;
+#endif
 
    ctx->extension_checked = 1;
 
@@ -2593,15 +2592,18 @@ evgl_safe_extension_get(const char *name, void **pfuncptr)
 }
 
 void *
-evgl_native_surface_egl_image_get(EVGL_Surface *sfc)
+evgl_native_surface_buffer_get(EVGL_Surface *sfc)
 {
    if (!evgl_engine)
      {
         ERR("Invalid input data.  Engine: %p", evgl_engine);
         return NULL;
      }
-
+#ifdef GL_GLES
    return sfc->egl_image;
+#else
+   return (void *)(uintptr_t)sfc->color_buf;
+#endif
 }
 
 int

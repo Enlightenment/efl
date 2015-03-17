@@ -21,7 +21,7 @@ EAPI void         evgl_engine_shutdown(void *eng_data);
 
 typedef void (*EVGL_Engine_Call)(void *eng_data);
 
-EAPI void        *evgl_native_surface_egl_image_get(EVGL_Surface *sfc);
+EAPI void        *evgl_native_surface_buffer_get(EVGL_Surface *sfc);
 
 typedef void *(*EVGL_Native_Surface_Call)(void *sfc);
 
