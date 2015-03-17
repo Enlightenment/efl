@@ -6,7 +6,7 @@ installed_emilemainheadersdir = $(includedir)/emile-@VMAJ@
 dist_installed_emilemainheaders_DATA = \
 lib/emile/Emile.h \
 lib/emile/emile_cipher.h \
-lib/emile/emile_compression.h \
+lib/emile/emile_compress.h \
 lib/emile/emile_image.h
 
 lib_emile_libemile_la_SOURCES = \
