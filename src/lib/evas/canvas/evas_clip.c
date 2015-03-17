@@ -289,8 +289,13 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
              EINA_COW_STATE_WRITE_END(obj->cur->clipper, state_write, cur);
 /* i know this was to handle a case where a clip stops having children and
  * becomes a solid colored box - no one ever does that... they hide the clip
- * so dont add damages
-             if ((obj->cur->clipper->cur) && (obj->cur->clipper->cur->visible))
+ * so dont add damages.
+ * But, if the clipper could affect color to its clipees,
+ * the clipped area should be redrawn. */
+             if (((obj->cur->clipper->cur) && (obj->cur->clipper->cur->visible)) &&
+                 (((obj->cur->clipper->cur->color.r != 255) || (obj->cur->clipper->cur->color.g != 255) ||
+                   (obj->cur->clipper->cur->color.b != 255) || (obj->cur->clipper->cur->color.a != 255)) ||
+                  (obj->cur->clipper->mask->is_mask)))
                {
                   if (obj->cur->clipper->layer)
                     {
@@ -302,7 +307,7 @@ _evas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *
                                                  obj->cur->clipper->cur->geometry.h);
                     }
                }
- */
+
              _evas_object_clip_mask_unset(obj->cur->clipper);
           }
         evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
@@ -411,8 +416,13 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
              EINA_COW_STATE_WRITE_END(obj->cur->clipper, state_write, cur);
 /* i know this was to handle a case where a clip stops having children and
  * becomes a solid colored box - no one ever does that... they hide the clip
- * so dont add damages
-             if ((obj->cur->clipper->cur) && (obj->cur->clipper->cur->visible))
+ * so dont add damages.
+ * But, if the clipper could affect color to its clipees,
+ * the clipped area should be redrawn. */
+             if (((obj->cur->clipper->cur) && (obj->cur->clipper->cur->visible)) &&
+                 (((obj->cur->clipper->cur->color.r != 255) || (obj->cur->clipper->cur->color.g != 255) ||
+                   (obj->cur->clipper->cur->color.b != 255) || (obj->cur->clipper->cur->color.a != 255)) ||
+                  (obj->cur->clipper->mask->is_mask)))
                {
                   if (obj->cur->clipper->layer)
                     {
@@ -424,7 +434,7 @@ _evas_object_clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
                                                  obj->cur->clipper->cur->geometry.h);
                     }
                }
- */
+
              _evas_object_clip_mask_unset(obj->cur->clipper);
           }
 	evas_object_change(obj->cur->clipper->object, obj->cur->clipper);
