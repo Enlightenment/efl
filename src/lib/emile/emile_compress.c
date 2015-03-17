@@ -32,9 +32,9 @@ _emile_compress_buffer_size(const Eina_Binbuf *data, Emile_Compressor_Type t)
 }
 
 EAPI Eina_Binbuf *
-emile_binbuf_compress(const Eina_Binbuf *data,
-                      Emile_Compressor_Type t,
-                      Emile_Compressor_Level l)
+emile_compress(const Eina_Binbuf *data,
+               Emile_Compressor_Type t,
+               Emile_Compressor_Level l)
 {
    void *compact;
    int length;
@@ -79,9 +79,9 @@ emile_binbuf_compress(const Eina_Binbuf *data,
 }
 
 EAPI Eina_Bool
-emile_binbuf_expand(const Eina_Binbuf *in,
-                    Eina_Binbuf *out,
-                    Emile_Compressor_Type t)
+emile_expand(const Eina_Binbuf *in,
+             Eina_Binbuf *out,
+             Emile_Compressor_Type t)
 {
    if (!in || !out) return EINA_FALSE;
 
@@ -117,7 +117,7 @@ emile_binbuf_expand(const Eina_Binbuf *in,
 }
 
 EAPI Eina_Binbuf *
-emile_binbuf_uncompress(const Eina_Binbuf *data, Emile_Compressor_Type t, unsigned int dest_length)
+emile_decompress(const Eina_Binbuf *data, Emile_Compressor_Type t, unsigned int dest_length)
 {
    Eina_Binbuf *out;
    void *expanded;
@@ -128,7 +128,7 @@ emile_binbuf_uncompress(const Eina_Binbuf *data, Emile_Compressor_Type t, unsign
    out = eina_binbuf_manage_new_length(expanded, dest_length);
    if (!out) goto on_error;
 
-   if (!emile_binbuf_expand(data, out, t))
+   if (!emile_expand(data, out, t))
      goto on_error;
 
    return out;

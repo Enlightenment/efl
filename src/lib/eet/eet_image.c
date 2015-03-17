@@ -721,7 +721,7 @@ eet_data_image_lossless_compressed_convert(int         *size,
            return NULL;
         }
 
-      out = emile_binbuf_compress(in, eet_2_emile_compressor(compression), compression);
+      out = emile_compress(in, eet_2_emile_compressor(compression), compression);
 
       if (!out || (eina_binbuf_length_get(out) > eina_binbuf_length_get(in)))
         {
@@ -1039,7 +1039,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
                     {
                        Eina_Binbuf *out;
 
-                       out = emile_binbuf_compress(in, EMILE_LZ4HC, EMILE_COMPRESSOR_BEST);
+                       out = emile_compress(in, EMILE_LZ4HC, EMILE_COMPRESSOR_BEST);
                        eina_binbuf_free(in);
                        in = out;
                     }
@@ -1984,7 +1984,7 @@ _eet_data_image_decode_inside(const void   *data,
                {
                   out = eina_binbuf_manage_read_only_new_length((void*) d,
                                                                 w * h * 4);
-                  if (!emile_binbuf_expand(in, out,
+                  if (!emile_expand(in, out,
                                            eet_2_emile_compressor(comp)))
                     {
                        eina_binbuf_free(in);
@@ -1996,9 +1996,9 @@ _eet_data_image_decode_inside(const void   *data,
                {
                   /* FIXME: This could create a huge alloc. So
                      compressed data and tile could not always work.*/
-                  out = emile_binbuf_uncompress(in,
-                                                eet_2_emile_compressor(comp),
-                                                w * h * 4);
+                  out = emile_decompress(in,
+                                         eet_2_emile_compressor(comp),
+                                         w * h * 4);
                   eina_binbuf_free(in);
                   if (!out) return 0;
 

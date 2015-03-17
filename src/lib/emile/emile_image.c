@@ -499,7 +499,7 @@ _emile_tgv_data(Emile_Image *image,
 
             if (image->compress)
               {
-                 if (!emile_binbuf_expand(data_start, buffer, EMILE_LZ4HC))
+                 if (!emile_expand(data_start, buffer, EMILE_LZ4HC))
                    goto on_error;
               }
             else

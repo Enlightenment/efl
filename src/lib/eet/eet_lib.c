@@ -1886,9 +1886,9 @@ eet_read_cipher(Eet_File   *ef,
      {
         Eina_Binbuf *out;
 
-        out = emile_binbuf_uncompress(in,
-                                      eet_2_emile_compressor(efn->compression_type),
-                                      efn->data_size);
+        out = emile_decompress(in,
+                               eet_2_emile_compressor(efn->compression_type),
+                               efn->data_size);
 
         eina_binbuf_free(in);
         if (!out) goto on_error;
@@ -1987,9 +1987,9 @@ eet_read_direct(Eet_File   *ef,
              in = read_binbuf_from_disk(ef, efn);
              if (!in) goto on_error;
 
-             out = emile_binbuf_uncompress(in,
-                                           eet_2_emile_compressor(efn->compression_type),
-                                           efn->data_size);
+             out = emile_decompress(in,
+                                    eet_2_emile_compressor(efn->compression_type),
+                                    efn->data_size);
              eina_binbuf_free(in);
              if (!out) goto on_error;
 
@@ -2089,9 +2089,9 @@ eet_alias_get(Eet_File   *ef,
         in = read_binbuf_from_disk(ef, efn);
         if (!in) goto on_error;
 
-        out = emile_binbuf_uncompress(in,
-                                      eet_2_emile_compressor(efn->compression_type),
-                                      efn->data_size);
+        out = emile_decompress(in,
+                               eet_2_emile_compressor(efn->compression_type),
+                               efn->data_size);
         eina_binbuf_free(in);
         if (!out) goto on_error;
 
@@ -2207,9 +2207,9 @@ eet_alias(Eet_File   *ef,
      {
         Eina_Binbuf *out;
 
-        out = emile_binbuf_compress(in,
-                                    eet_2_emile_compressor(comp),
-                                    EMILE_COMPRESSOR_BEST);
+        out = emile_compress(in,
+                             eet_2_emile_compressor(comp),
+                             EMILE_COMPRESSOR_BEST);
         eina_binbuf_free(in);
         if (!out) goto on_error;
 
@@ -2327,7 +2327,7 @@ eet_write_cipher(Eet_File   *ef,
      {
         Eina_Binbuf *out;
 
-        out = emile_binbuf_compress(in, eet_2_emile_compressor(comp), EMILE_COMPRESSOR_BEST);
+        out = emile_compress(in, eet_2_emile_compressor(comp), EMILE_COMPRESSOR_BEST);
         if (out)
           {
              if (eina_binbuf_length_get(out) < eina_binbuf_length_get(in))
