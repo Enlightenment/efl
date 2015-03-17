@@ -155,15 +155,27 @@ START_TEST(eolian_override)
    /* Base ctor */
    fail_if(!(fid = eolian_class_function_get_by_name(base, "constructor", EOLIAN_UNRESOLVED)));
    fail_if(!eolian_function_is_virtual_pure(fid, EOLIAN_UNRESOLVED));
+   fail_if(!eolian_function_is_implemented(fid, EOLIAN_UNRESOLVED, class));
+   fail_if(!eolian_function_is_implemented(fid, EOLIAN_METHOD, class));
+   fail_if(eolian_function_is_implemented(fid, EOLIAN_PROP_GET, class));
 
    /* Property */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "a", EOLIAN_PROPERTY)));
    fail_if(!eolian_function_is_virtual_pure(fid, EOLIAN_PROP_SET));
    fail_if(eolian_function_is_virtual_pure(fid, EOLIAN_PROP_GET));
+   fail_if(eolian_function_is_implemented(fid, EOLIAN_PROP_SET, class));
+   fail_if(!eolian_function_is_implemented(fid, EOLIAN_PROP_GET, class));
+   fail_if(eolian_function_is_implemented(fid, EOLIAN_PROPERTY, class));
 
    /* Method */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
    fail_if(!eolian_function_is_virtual_pure(fid, EOLIAN_METHOD));
+   fail_if(eolian_function_is_implemented(fid, EOLIAN_UNRESOLVED, class));
+   fail_if(eolian_function_is_implemented(fid, EOLIAN_UNRESOLVED, base));
+
+   fail_if(!(fid = eolian_class_function_get_by_name(base, "z", EOLIAN_PROPERTY)));
+   fail_if(!eolian_function_is_implemented(fid, EOLIAN_PROPERTY, class));
+   fail_if(!eolian_function_is_implemented(fid, EOLIAN_PROP_SET, class));
 
    /* Implements */
    fail_if(!(iter = eolian_class_implements_get(class)));

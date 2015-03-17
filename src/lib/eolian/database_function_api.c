@@ -263,3 +263,66 @@ eolian_function_is_c_only(const Eolian_Function *fid)
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
    return fid->is_c_only;
 }
+
+EAPI Eina_Bool eolian_function_is_implemented(
+      const Eolian_Function *function_id, Eolian_Function_Type func_type,
+      const Eolian_Class *klass)
+{
+   Eina_Iterator *impl_itr = NULL;
+   Eolian_Function_Type found_type = EOLIAN_UNRESOLVED;
+   Eina_Bool found = EINA_TRUE;
+   if (!function_id || !klass) return EINA_FALSE;
+   Eina_List *list = eina_list_append(NULL, klass), *list2, *itr;
+   EINA_LIST_FOREACH(list, itr, klass)
+     {
+        const char *inherit_name;
+        const Eolian_Implement *impl;
+        if (eolian_class_type_get(klass) == EOLIAN_CLASS_INTERFACE) continue;
+        impl_itr = eolian_class_implements_get(klass);
+        EINA_ITERATOR_FOREACH(impl_itr, impl)
+          {
+             if (eolian_implement_is_virtual(impl)) continue;
+             Eolian_Function_Type impl_type = EOLIAN_UNRESOLVED;
+             const Eolian_Function *impl_func = eolian_implement_function_get(impl, &impl_type);
+             if (impl_func == function_id)
+               {
+                  /* The type matches the requested or is not important for the caller */
+                  if (func_type == EOLIAN_UNRESOLVED || impl_type == func_type) goto end;
+                  if (impl_type == EOLIAN_METHOD) continue;
+                  /* In case we search for a property type */
+                  if (impl_type == EOLIAN_PROPERTY &&
+                        (func_type == EOLIAN_PROP_GET || func_type == EOLIAN_PROP_SET))
+                     goto end;
+                  /* Property may be splitted on multiple implements */
+                  if (func_type == EOLIAN_PROPERTY)
+                    {
+                       if (found_type == EOLIAN_UNRESOLVED) found_type = impl_type;
+                       if ((found_type == EOLIAN_PROP_SET && impl_type == EOLIAN_PROP_GET) ||
+                             (found_type == EOLIAN_PROP_GET && impl_type == EOLIAN_PROP_SET))
+                          goto end;
+                    }
+               }
+          }
+        eina_iterator_free(impl_itr);
+        impl_itr = NULL;
+
+        Eina_Iterator *inherits_itr = eolian_class_inherits_get(klass);
+        EINA_ITERATOR_FOREACH(inherits_itr, inherit_name)
+          {
+             const Eolian_Class *inherit = eolian_class_get_by_name(inherit_name);
+             /* Avoid duplicates. */
+             if (!eina_list_data_find(list, inherit))
+               {
+                  list2 = eina_list_append(list, inherit);
+               }
+          }
+        eina_iterator_free(inherits_itr);
+     }
+   (void) list2;
+   found = EINA_FALSE;
+end:
+   if (impl_itr) eina_iterator_free(impl_itr);
+   eina_list_free(list);
+   return found;
+}
+

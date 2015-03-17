@@ -1108,6 +1108,19 @@ EAPI Eina_Bool eolian_function_object_is_const(const Eolian_Function *function_i
 EAPI const Eolian_Class *eolian_function_class_get(const Eolian_Function *function_id);
 
 /*
+ * @brief Determine if a function is implemented in the inheritance of the given class
+ *
+ * @param[in] function_id id of the function
+ * @param[in] func_type type requested
+ * @param[in] klass the top class to begin with
+ * @return EINA_TRUE if found, EINA_FALSE otherwise
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_function_is_implemented(const Eolian_Function *function_id,
+      Eolian_Function_Type func_type, const Eolian_Class *klass);
+
+/*
  * @brief Get full string of an overriding function (implement).
  *
  * @param[in] impl the handle of the implement
