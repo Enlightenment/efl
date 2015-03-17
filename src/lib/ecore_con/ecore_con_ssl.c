@@ -494,6 +494,9 @@ ecore_con_ssl_server_prepare(Ecore_Con_Server *svr,
 {
    if (!ssl_type)
      return ECORE_CON_SSL_ERROR_NONE;
+   if (!emile_cipher_init())
+     return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
+
    return SSL_SUFFIX(_ecore_con_ssl_server_prepare) (svr, ssl_type);
 }
 
