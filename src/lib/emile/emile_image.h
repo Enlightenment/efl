@@ -1,7 +1,25 @@
 #ifndef EMILE_IMAGE_H
 #define EMILE_IMAGE_H
 
-/* All the value from below enum should be the same as in Evas_Loader.h */
+/**
+ * @defgroup Emile_Image_Group Top level functions
+ * @ingroup Emile
+ * Function that allow reading/saving image.
+ *
+ * @{
+ */
+
+/**
+ * @typedef Emile_Colorspace
+ *
+ * Flags that describe all colorspace known by EFL. Some routine may not know all of them.
+ * All the value from below enum should be the same as in Evas_Loader.h
+ *
+ * @see Evas_Colorspace
+ * @see Eet_Colorspace
+ *
+ * @since 1.14
+ */
 typedef enum _Emile_Colorspace
 {
   EMILE_COLORSPACE_ARGB8888,/**< ARGB 32 bits per pixel, high-byte is Alpha, accessed 1 32bit word at a time */
@@ -25,6 +43,16 @@ typedef enum _Emile_Colorspace
   EMILE_COLORSPACE_RGBA_S3TC_DXT5 = 18  /**< OpenGL COMPRESSED_RGBA_S3TC_DXT5_EXT format with RGBA. @since 1.11 */
 } Emile_Colorspace;
 
+/**
+ * @typedef Emile_Image_Encoding
+ *
+ * Flags that describe the supported encoding. Some routine may not know all of them.
+ * The value are the same as the one provided before in Eet.h
+ *
+ * @see Eet_Image_Encoding
+ *
+ * @since 1.14
+ */
 typedef enum _Emile_Image_Encoding
 {
   EMILE_IMAGE_LOSSLESS = 0,
@@ -35,6 +63,15 @@ typedef enum _Emile_Image_Encoding
   EMILE_IMAGE_ETC1_ALPHA = 5
 } Emile_Image_Encoding;
 
+/**
+ * @typedef Emile_Image_Scale_Hint
+ *
+ * Flags that describe the scale hint used by the loader infrastructure.
+ *
+ * @see Evas_Image_Scale_Hint
+ *
+ * @since 1.14
+ */
 typedef enum _Emile_Image_Scale_Hint
 {
   EMILE_IMAGE_SCALE_HINT_NONE = 0, /**< No scale hint at all */
@@ -42,6 +79,15 @@ typedef enum _Emile_Image_Scale_Hint
   EMILE_IMAGE_SCALE_HINT_STATIC = 2 /**< Image is not being re-scaled over time, thus turning scaling cache @b on for its data */
 } Emile_Image_Scale_Hint;
 
+/**
+ * @typedef Emile_Image_Animated_Loop_Hint
+ *
+ * Flags describing the behavior of animation from a loaded image.
+ *
+ * @see Evas_Image_Animated_Loop_Hint
+ *
+ * @since 1.14
+ */
 typedef enum _Emile_Image_Animated_Loop_Hint
 {
   EMILE_IMAGE_ANIMATED_HINT_NONE = 0,
@@ -49,6 +95,15 @@ typedef enum _Emile_Image_Animated_Loop_Hint
   EMILE_IMAGE_ANIMATED_HINT_PINGPONG = 2
 } Emile_Image_Animated_Loop_Hint;
 
+/**
+ * @typedef Emile_Image_Load_Error
+ *
+ * Flags describing error state as discovered by an image loader.
+ *
+ * @see Evas_Load_Error
+ *
+ * @since 1.14
+ */
 typedef enum _Emile_Image_Load_Error
 {
    EMILE_IMAGE_LOAD_ERROR_NONE = 0, /**< No error on load */
@@ -60,10 +115,41 @@ typedef enum _Emile_Image_Load_Error
    EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT = 6 /**< File is not a known format */
 } Emile_Image_Load_Error; /**< Emile image load error codes one can get - see emile_load_error_str() too. */
 
+/**
+ * @typedef Emile_Image
+ *
+ * Internal type representing an opened image.
+ *
+ * @since 1.14
+ */
 typedef struct _Emile_Image Emile_Image;
-typedef struct _Emile_Image_Property Emile_Image_Property;
+
+/**
+ * @typedef Emile_Image_Load_Opts
+ *
+ * Description of the possible load option.
+ *
+ * @since 1.14
+ */
 typedef struct _Emile_Image_Load_Opts Emile_Image_Load_Opts;
+
+/**
+ * @typedef Emile_Image_Animated
+ *
+ * Description animation.
+ *
+ * @since 1.14
+ */
 typedef struct _Emile_Image_Animated Emile_Image_Animated;
+
+/**
+ * @typedef Emile_Image_Property
+ *
+ * Description of a loaded image property.
+ *
+ * @since 1.14
+ */
+typedef struct _Emile_Image_Property Emile_Image_Property;
 
 struct _Emile_Image_Property
 {
@@ -122,38 +208,138 @@ struct _Emile_Image_Load_Opts
 };
 
 // FIXME: should we set region at load time, instead of head time
+// FIXME: should we regive the animated structure for head and data ?
 
-EAPI Emile_Image *emile_image_tgv_memory_open(Eina_Binbuf *source,
-                                              Emile_Image_Load_Opts *opts,
-                                              Emile_Image_Animated *animated,
-                                              Emile_Image_Load_Error *error);
-EAPI Emile_Image *emile_image_tgv_file_open(Eina_File *source,
-                                            Emile_Image_Load_Opts *opts,
-                                            Emile_Image_Animated *animated,
-                                            Emile_Image_Load_Error *error);
+/**
+ * Open a TGV image from memory.
+ *
+ * @param source The Eina_Binbuf with TGV image in it.
+ * @param opts Load option for the image to open (it can be @c NULL).
+ * @param animated Description of the image animation property, set during head reading and updated for each frame read by data (can be @c NULL)
+ * @param error Contain a valid error code if the function return @c NULL.
+ * @return a handler of the image if successfully opened, otherwise @c NULL.
+ *
+ * @since 1.14
+ */
+EAPI Emile_Image *
+emile_image_tgv_memory_open(Eina_Binbuf *source,
+                            Emile_Image_Load_Opts *opts,
+                            Emile_Image_Animated *animated,
+                            Emile_Image_Load_Error *error);
 
-EAPI Emile_Image *emile_image_jpeg_memory_open(Eina_Binbuf *source,
-                                               Emile_Image_Load_Opts *opts,
-                                               Emile_Image_Animated *animated,
-                                               Emile_Image_Load_Error *error);
-EAPI Emile_Image *emile_image_jpeg_file_open(Eina_File *source,
-                                             Emile_Image_Load_Opts *opts,
-                                             Emile_Image_Animated *animated,
-                                             Emile_Image_Load_Error *error);
+/**
+ * Open a TGV image from a file.
+ *
+ * @param source The Eina_File with TGV image in it.
+ * @param opts Load option for the image to open (it can be @c NULL).
+ * @param animated Description of the image animation property, set during head reading and updated for each frame read by data (can be @c NULL)
+ * @param error Contain a valid error code if the function return @c NULL.
+ * @return a handler of the image if successfully opened, otherwise @c NULL.
+ *
+ * @since 1.14
+ */
+EAPI Emile_Image *
+emile_image_tgv_file_open(Eina_File *source,
+                          Emile_Image_Load_Opts *opts,
+                          Emile_Image_Animated *animated,
+                          Emile_Image_Load_Error *error);
 
-EAPI Eina_Bool emile_image_head(Emile_Image *image,
-                                Emile_Image_Property *prop,
-                                unsigned int property_size,
-                                Emile_Image_Load_Error *error);
-EAPI Eina_Bool emile_image_data(Emile_Image *image,
-                                Emile_Image_Property *prop,
-                                unsigned int property_size,
-                                void *pixels,
-                                Emile_Image_Load_Error *error);
 
-EAPI void emile_image_close(Emile_Image *source);
+/**
+ * Open a JPEG image from memory.
+ *
+ * @param source The Eina_Binbuf with JPEG image in it.
+ * @param opts Load option for the image to open (it can be @c NULL).
+ * @param animated Description of the image animation property, set during head reading and updated for each frame read by data (can be @c NULL)
+ * @param error Contain a valid error code if the function return @c NULL.
+ * @return a handler of the image if successfully opened, otherwise @c NULL.
+ *
+ * @since 1.14
+ */
+EAPI Emile_Image *
+emile_image_jpeg_memory_open(Eina_Binbuf *source,
+                             Emile_Image_Load_Opts *opts,
+                             Emile_Image_Animated *animated,
+                             Emile_Image_Load_Error *error);
 
-EAPI const char *emile_load_error_str(Emile_Image *source,
-                                      Emile_Image_Load_Error error);
+/**
+ * Open a JPEG image from file.
+ *
+ * @param source The Eina_File with JPEG image in it.
+ * @param opts Load option for the image to open (it can be @c NULL).
+ * @param animated Description of the image animation property, set during head reading and updated for each frame read by data (can be @c NULL)
+ * @param error Contain a valid error code if the function return @c NULL.
+ * @return a handler of the image if successfully opened, otherwise @c NULL.
+ *
+ * @since 1.14
+ */
+EAPI Emile_Image *
+emile_image_jpeg_file_open(Eina_File *source,
+                           Emile_Image_Load_Opts *opts,
+                           Emile_Image_Animated *animated,
+                           Emile_Image_Load_Error *error);
+
+/**
+ * Read the header of an image to fill Emile_Image_Property.
+ *
+ * @param image The Emile_Image handler.
+ * @param prop The Emile_Image_Property to be filled.
+ * @param property_size The size of the Emile_Image_Property as known during compilation.
+ * @param error Contain a valid error code if the function return @c NULL.
+ * @return @c EINA_TRUE if the header was successfully readed and prop properly filled.
+ *
+ * @since 1.14
+ */
+EAPI Eina_Bool
+emile_image_head(Emile_Image *image,
+                 Emile_Image_Property *prop,
+                 unsigned int property_size,
+                 Emile_Image_Load_Error *error);
+
+/**
+ * Read the pixels from an image file.
+ *
+ * @param image The Emile_Image handler.
+ * @param prop The property to respect while reading this pixels.
+ * @param property_size The size of the Emile_Image_Property as known during compilation.
+ * @param pixels The actual pointer to the already allocated pixels buffer to fill.
+ * @param error Contain a valid error code if the function return @c NULL.
+ * @return @c EINA_TRUE if the data was successfully read and the pixels correctly filled.
+ *
+ * @since 1.14
+ */
+EAPI Eina_Bool
+emile_image_data(Emile_Image *image,
+                 Emile_Image_Property *prop,
+                 unsigned int property_size,
+                 void *pixels,
+                 Emile_Image_Load_Error *error);
+
+/**
+ * Close an opened image handler.
+ *
+ * @param source The handler to close.
+ *
+ * @since 1.14
+ */
+EAPI void
+emile_image_close(Emile_Image *source);
+
+/**
+ * Convert an error code related to an image handler into a meaningful string.
+ *
+ * @param source The handler related to the error (can be @c NULL).
+ * @param error The error code to get a message from.
+ * @return a string that will be owned by Emile, either by the handler if it is not @c NULL or by the library directly if it is.
+ *
+ * @since 1.14
+ */
+EAPI const char *
+emile_load_error_str(Emile_Image *source,
+                     Emile_Image_Load_Error error);
+
+/**
+ * @}
+ */
 
 #endif
