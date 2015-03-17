@@ -1045,6 +1045,8 @@ EFL_LIB_START([Emile])
 
 ### Checks for libraries
 
+EFL_CHECK_LIBS([EMILE], [libjpeg])
+
 ## Compatibility layers
 EFL_PLATFORM_DEPEND([EMILE], [evil])
 
