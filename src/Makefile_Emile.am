@@ -19,6 +19,16 @@ static_libs/lz4/lz4hc.c \
 static_libs/lz4/lz4hc.h
 endif
 
+if HAVE_CRYPTO_GNUTLS
+lib_emile_libemile_la_SOURCES += lib/emile/emile_cipher_gnutls.c
+else
+if HAVE_CRYPTO_OPENSSL
+lib_emile_libemile_la_SOURCES += lib/emile/emile_cipher_openssl.c
+else
+lib_emile_libemile_la_SOURCES += lib/emile/emile_cipher.c
+endif
+endif
+
 lib_emile_libemile_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
