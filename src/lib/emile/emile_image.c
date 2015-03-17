@@ -1367,19 +1367,15 @@ _emile_jpeg_data(Emile_Image *image,
    jerr.pub.output_message = _JPEGErrorHandler;
    if (setjmp(jerr.setjmp_buffer))
      {
-        jpeg_destroy_decompress(&cinfo);
-        _emile_jpeg_membuf_src_term(&cinfo);
         *error = EMILE_IMAGE_LOAD_ERROR_CORRUPT_FILE;
-        return EINA_FALSE;
+        goto on_error;
      }
    jpeg_create_decompress(&cinfo);
 
    if (_emile_jpeg_membuf_src(&cinfo, m, length))
      {
-        jpeg_destroy_decompress(&cinfo);
-        _emile_jpeg_membuf_src_term(&cinfo);
         *error = EMILE_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-        return 0;
+        goto on_error;
      }
 
    jpeg_read_header(&cinfo, TRUE);
@@ -1467,18 +1463,14 @@ _emile_jpeg_data(Emile_Image *image,
      {
         // race condition, the file could have change from when we call header
         // this test will not solve the problem with region code.
-        jpeg_destroy_decompress(&cinfo);
-        _emile_jpeg_membuf_src_term(&cinfo);
         *error = EMILE_IMAGE_LOAD_ERROR_GENERIC;
-        return EINA_FALSE;
+        goto on_error;
      }
    if ((region) &&
        ((ie_w != opts_region.w) || (ie_h != opts_region.h)))
      {
-        jpeg_destroy_decompress(&cinfo);
-        _emile_jpeg_membuf_src_term(&cinfo);
         *error = EMILE_IMAGE_LOAD_ERROR_GENERIC;
-        return EINA_FALSE;
+        goto on_error;
         /* ie_w = opts_region.w; */
         /* ie_h = opts_region.h; */
         /* if (change_wh) */
@@ -1497,20 +1489,16 @@ _emile_jpeg_data(Emile_Image *image,
           ((cinfo.output_components == 3) || (cinfo.output_components == 1))) ||
          ((cinfo.out_color_space == JCS_CMYK) && (cinfo.output_components == 4))))
      {
-        jpeg_destroy_decompress(&cinfo);
-        _emile_jpeg_membuf_src_term(&cinfo);
         *error = EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
-        return EINA_FALSE;
+        goto on_error;
      }
 
 /* end head decoding */
 /* data decoding */
    if (cinfo.rec_outbuf_height > 16)
      {
-        jpeg_destroy_decompress(&cinfo);
-        _emile_jpeg_membuf_src_term(&cinfo);
         *error = EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
-        return EINA_FALSE;
+        goto on_error;
      }
    data = alloca(w * 16 * cinfo.output_components);
    if ((prop->rotated) && change_wh)
@@ -1524,7 +1512,7 @@ _emile_jpeg_data(Emile_Image *image,
    if (!ptr2)
      {
         *error = EMILE_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-        return EINA_FALSE;
+        goto on_error;
      }
 
    /* We handle first CMYK (4 components) */
@@ -1843,10 +1831,8 @@ done:
 
    if (line_done)
      {
-        jpeg_destroy_decompress(&cinfo);
-        _emile_jpeg_membuf_src_term(&cinfo);
         *error = EMILE_IMAGE_LOAD_ERROR_NONE;
-        return EINA_FALSE;
+        goto on_error;
      }
    /* end data decoding */
    jpeg_finish_decompress(&cinfo);
@@ -1854,6 +1840,11 @@ done:
    _emile_jpeg_membuf_src_term(&cinfo);
    *error = EMILE_IMAGE_LOAD_ERROR_NONE;
    return EINA_TRUE;
+
+ on_error:
+   jpeg_destroy_decompress(&cinfo);
+   _emile_jpeg_membuf_src_term(&cinfo);
+   return EINA_FALSE;
 }
 
 static void
