@@ -57,56 +57,16 @@ _emile_cipher_init(void)
    return EINA_TRUE;
 }
 
-static Eina_Bool
-emile_pbkdf2_sha1(const char          *key,
-                  int                  key_len,
-                  const unsigned char *salt,
-                  unsigned int         salt_len,
-                  int                  iter,
-                  unsigned char       *res,
-                  int                  res_len)
+EAPI Eina_Bool
+emile_binbuf_sha1(const char *key,
+                  unsigned int key_len,
+                  const Eina_Binbuf *data,
+                  unsigned char digest[20])
 {
-   unsigned char digest[20];
-   unsigned char tab[4];
-   unsigned char *p = res;
-   unsigned char *buf;
-   unsigned int i;
-   int digest_len = 20;
-   int len = res_len;
-   int tmp_len;
-   int j, k;
-   HMAC_CTX hctx;
-
-   buf = alloca(salt_len + 4);
-   if (!buf) return EINA_FALSE;
-
-   for (i = 1; len; len -= tmp_len, p += tmp_len, i++)
-     {
-        if (len > digest_len)
-          tmp_len = digest_len;
-        else
-          tmp_len = len;
-
-        tab[0] = (unsigned char)(i & 0xff000000) >> 24;
-        tab[1] = (unsigned char)(i & 0x00ff0000) >> 16;
-        tab[2] = (unsigned char)(i & 0x0000ff00) >> 8;
-        tab[3] = (unsigned char)(i & 0x000000ff) >> 0;
-
-        HMAC_Init(&hctx, key, key_len, EVP_sha1());
-        HMAC_Update(&hctx, salt, salt_len);
-        HMAC_Update(&hctx, tab, 4);
-        HMAC_Final(&hctx, digest, NULL);
-        memcpy(p, digest, tmp_len);
-
-        for (j = 1; j < iter; j++)
-          {
-             HMAC(EVP_sha1(), key, key_len, digest, 20, digest, NULL);
-             for (k = 0; k < tmp_len; k++)
-               p[k] ^= digest[k];
-          }
-        HMAC_cleanup(&hctx);
-     }
-
+   HMAC(EVP_sha1(),
+        key, key_len,
+        eina_binbuf_string_get(data), eina_binbuf_length_get(data),
+        digest, NULL);
    return EINA_TRUE;
 }
 

@@ -34,4 +34,13 @@ typedef enum
 
 Eina_Bool _emile_cipher_init(void);
 
+Eina_Bool
+emile_pbkdf2_sha1(const char *key,
+                  unsigned int key_len,
+                  const unsigned char *salt,
+                  unsigned int salt_len,
+                  unsigned int iter,
+                  unsigned char *res,
+                  unsigned int res_len);
+
 #endif /* EMILE_PRIVATE_H_ */

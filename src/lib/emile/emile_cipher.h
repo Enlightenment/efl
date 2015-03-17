@@ -26,6 +26,12 @@ EAPI Eina_Binbuf *emile_binbuf_cipher(const Eina_Binbuf *in,
 EAPI Eina_Binbuf *emile_binbuf_decipher(const Eina_Binbuf *in,
                                         const char *key, unsigned int length);
 
+EAPI Eina_Bool emile_binbuf_sha1(const char *key,
+                                 unsigned int key_len,
+                                 const Eina_Binbuf *data,
+                                 unsigned char digest[20]);
+
+
 EAPI Emile_SSL *emile_cipher_server_listen(Emile_Cipher_Type t);
 EAPI Emile_SSL *emile_cipher_client_connect(Emile_SSL *server, int fd);
 EAPI Emile_SSL *emile_cipher_server_connect(Emile_Cipher_Type t);

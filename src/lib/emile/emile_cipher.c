@@ -13,6 +13,15 @@ Eina_Bool _emile_cipher_init(void)
    return EINA_FALSE;
 }
 
+EAPI Eina_Bool
+emile_binbuf_sha1(const char *key EINA_UNUSED,
+                  int key_len EINA_UNUSED,
+                  const Eina_Binbuf *data EINA_UNUSED,
+                  unsigned char digest[20])
+{
+   return EINA_FALSE;
+}
+
 EAPI Eina_Binbuf *
 emile_binbuf_cipher(const Eina_Binbuf *data EINA_UNUSED,
                     const char *key EINA_UNUSED,
