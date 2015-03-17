@@ -482,15 +482,14 @@ typedef enum _Eet_File_Mode
  * Specify lossy encoding for image
  * @since 1.10
  */
-typedef enum _Eet_Image_Encoding
-{
-   EET_IMAGE_LOSSLESS = 0,
-   EET_IMAGE_JPEG = 1,
-   EET_IMAGE_ETC1 = 2,
-   EET_IMAGE_ETC2_RGB = 3,
-   EET_IMAGE_ETC2_RGBA = 4,
-   EET_IMAGE_ETC1_ALPHA = 5,
-} Eet_Image_Encoding;
+typedef Emile_Image_Encoding Eet_Image_Encoding;
+
+#define EET_IMAGE_LOSSLESS   EMILE_IMAGE_LOSSLESS
+#define EET_IMAGE_JPEG       EMILE_IMAGE_JPEG
+#define EET_IMAGE_ETC1       EMILE_IMAGE_ETC1
+#define EET_IMAGE_ETC2_RGB   EMILE_IMAGE_ETC2_RGB
+#define EET_IMAGE_ETC2_RGBA  EMILE_IMAGE_ETC2_RGBA
+#define EET_IMAGE_ETC1_ALPHA EMILE_IMAGE_ETC1_ALPHA
 
 typedef Emile_Colorspace Eet_Colorspace;
 
