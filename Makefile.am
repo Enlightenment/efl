@@ -371,6 +371,11 @@ elua_cmakeconfig_DATA = \
 cmakeconfig/EluaConfig.cmake \
 cmakeconfig/EluaConfigVersion.cmake
 
+emile_cmakeconfigdir = $(libdir)/cmake/Emile
+emile_cmakeconfig_DATA = \
+cmakeconfig/EmileConfig.cmake \
+cmakeconfig/EmileConfigVersion.cmake
+
 # D-Bus services:
 
 servicedir = @dbusservicedir@
