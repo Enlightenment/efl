@@ -820,7 +820,7 @@ eet_data_image_etc2_decode(const void *data,
    const char *m = NULL;
    unsigned int bwidth, bheight;
    unsigned char *p_etc;
-   char *buffer = NULL;
+   Eina_Binbuf *buffer = NULL;
    Eina_Rectangle master;
    unsigned int block_length;
    unsigned int offset;
@@ -922,14 +922,14 @@ eet_data_image_etc2_decode(const void *data,
    // Allocate space for each ETC block (8 or 16 bytes per 4 * 4 pixels group)
    block_count = bwidth * bheight / (4 * 4);
    if (compress)
-     buffer = alloca(etc_block_size * block_count);
+     buffer = eina_binbuf_manage_read_only_new_length(alloca(etc_block_size * block_count), etc_block_size * block_count);
 
    for (plane = 0; plane < num_planes; plane++)
      for (y = 0; y < h + 2; y += bheight)
        for (x = 0; x < w + 2; x += bwidth)
          {
             Eina_Rectangle current;
-            const char *data_start;
+            Eina_Binbuf *data_start;
             const char *it;
             unsigned int expand_length;
             unsigned int i, j;
@@ -938,7 +938,7 @@ eet_data_image_etc2_decode(const void *data,
 
             if (block_length == 0) goto on_error;
 
-            data_start = m + offset;
+            data_start = eina_binbuf_manage_read_only_new_length(m + offset, block_length);
             offset += block_length;
 
             EINA_RECTANGLE_SET(&current, x, y,
@@ -949,19 +949,16 @@ eet_data_image_etc2_decode(const void *data,
 
             if (compress)
               {
-                 expand_length = LZ4_decompress_fast(data_start, buffer,
-                                                     block_count * etc_block_size);
-                 // That's an overhead for now, need to be fixed
-                 if (expand_length != block_length)
+                 if (!emile_binbuf_expand(data_start, buffer, EMILE_LZ4HC))
                    goto on_error;
               }
             else
               {
-                 buffer = (void*) data_start;
+                 buffer = data_start;
                  if (block_count * etc_block_size != block_length)
                    goto on_error;
               }
-            it = buffer;
+            it = eina_binbuf_string_get(buffer);
 
             for (i = 0; i < bheight; i += 4)
               for (j = 0; j < bwidth; j += 4, it += etc_block_size)
@@ -1065,7 +1062,11 @@ eet_data_image_etc2_decode(const void *data,
                         abort();
                      }
                 } // bx,by inside blocks
+
+            eina_binbuf_free(data_start);
          } // x,y macroblocks
+
+   if (compress) eina_binbuf_free(buffer);
 
    // TODO: Add support for more unpremultiplied modes (ETC2)
    if ((cspace == EET_COLORSPACE_ARGB8888) && unpremul)
@@ -1306,9 +1307,6 @@ eet_data_image_etc1_compressed_convert(int         *size,
    block_count = (macro_block_width * macro_block_height) / (4 * 4);
    buffer = alloca(block_count * etc_block_size);
 
-   if (compress)
-     comp = alloca(LZ4_compressBound(block_count * etc_block_size));
-
    // Write a whole plane (RGB or Alpha)
    for (int plane = 0; plane < num_planes; plane++)
      {
@@ -1345,6 +1343,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
 
              for (int x = 0; x < image_stride + 2; x += macro_block_width)
                {
+                  Eina_Binbuf *in;
                   uint8_t *offset = buffer;
                   int real_x = x;
 
@@ -1463,20 +1462,19 @@ eet_data_image_etc1_compressed_convert(int         *size,
                          }
                     }
 
+                  in = eina_binbuf_manage_read_only_new_length(buffer, block_count * etc_block_size);
                   if (compress)
                     {
-                       wlen = LZ4_compressHC((char *) buffer, (char *) comp,
-                                             block_count * etc_block_size);
-                    }
-                  else
-                    {
-                       comp = buffer;
-                       wlen = block_count * etc_block_size;
+                       Eina_Binbuf *out;
+
+                       out = emile_binbuf_compress(in, EMILE_LZ4HC, EMILE_BEST_COMPRESSION);
+                       eina_binbuf_free(in);
+                       in = out;
                     }
 
-                  if (wlen > 0)
+                  if (eina_binbuf_length_get(in) > 0)
                     {
-                       unsigned int blen = wlen;
+                       unsigned int blen = eina_binbuf_length_get(in);
 
                        while (blen)
                          {
@@ -1488,8 +1486,9 @@ eet_data_image_etc1_compressed_convert(int         *size,
                             if (blen) plen = 0x80 | plen;
                             eina_binbuf_append_length(r, &plen, 1);
                          }
-                       eina_binbuf_append_length(r, (unsigned char *) comp, wlen);
+                       eina_binbuf_append_buffer(r, in);
                     }
+                  eina_binbuf_free(in);
                } // 4 rows
           } // macroblocks
      } // planes
