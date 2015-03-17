@@ -9,6 +9,7 @@ Paul Vixie (ISC) (inet_pton and inet_ntop functions)
 Daniel Stenberg (inet_pton and inet_ntop functions)
 The MinGW and MinGW-w64 teams (POSIX printf family functions)
 Keith Marshall (realpath on Windows XP). See http://sourceforge.net/tracker/?func=detail&atid=302435&aid=1294010&group_id=2435
+Michelle Legrand <legrand.michelle@outlook.com>
 
 Escape
 ------
@@ -51,6 +52,7 @@ Vladislav Brovko <v.brovko@samsung.com>
 ChunEon Park (Hermet) <hermet@hermet.pe.kr>
 Rajeev Ranjan (Rajeev) <rajeev.r@samsung.com> <rajeev.jnnce@gmail.com>
 Subodh Kumar <s7158.kumar@samsung.com>
+Michelle Legrand <legrand.michelle@outlook.com>
 
 Eet
 ---
@@ -141,6 +143,9 @@ Yury Usischev <y.usishchev@samsung.com>
 Youngbok Shin <youngb.shin@samsung.com>
 Rajeev Ranjan (Rajeev) <rajeev.r@samsung.com> <rajeev.jnnce@gmail.com>
 MinKyoung Kim <mer.kim@samsung.com>
+Pierre Lamot <pierre.lamot@yahoo.fr>
+Michelle Legrand <legrand.michelle@outlook.com>
+Romain Perier <romain.perier@openwide.fr>
 
 Ecore
 -----
@@ -212,6 +217,9 @@ Gwanglim Lee <gl77.lee@samsung.com> <gwanglim@gmail.com>
 Sung-Jin Park <sj76.park@samsung.com>
 Guillaume Friloux <guillaume.friloux@gmail.com>
 Boris Faure <billiob@gmail.com>
+Pierre Lamot <pierre.lamot@yahoo.fr>
+Michelle Legrand <legrand.michelle@outlook.com>
+Romain Perier <romain.perier@openwide.fr>
 
 Embryo
 ------
@@ -231,7 +239,8 @@ Mike Blumenkrantz (zmike/discomfitor) <michael.blumenkrantz@gmail.com>
 Jérôme Pinot <ngc891@gmail.com>
 Daniel Willmann <d.willmann@samsung.com>
 Jérémy Zurcher <jeremy@asynk.ch>
-
+Pierre Lamot <pierre.lamot@yahoo.fr>
+Michelle Legrand <legrand.michelle@outlook.com>
 
 Eldbus
 -----
