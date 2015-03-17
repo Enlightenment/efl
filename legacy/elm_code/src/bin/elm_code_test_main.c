@@ -85,6 +85,9 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(widget);
 
+   elm_code_widget_selection_start(widget, 1, 3);
+   elm_code_widget_selection_end(widget, 1, 13);
+
    return widget;
 }
 

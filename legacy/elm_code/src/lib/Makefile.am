@@ -25,6 +25,7 @@ elm_code_file.h \
 elm_code_parse.h \
 elm_code_widget.eo.h \
 elm_code_widget_text.h \
+elm_code_widget_selection.h \
 elm_code_diff_widget.h \
 Elm_Code.h
 includesdir = $(includedir)/edi-@VMAJ@
@@ -35,6 +36,7 @@ elm_code_text.c \
 elm_code_file.c \
 elm_code_parse.c \
 elm_code_widget_text.c \
+elm_code_widget_selection.c \
 elm_code_widget.c \
 elm_code_diff_widget.c \
 elm_code.c \

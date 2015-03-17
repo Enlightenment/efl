@@ -10,6 +10,7 @@ typedef enum {
    ELM_CODE_WIDGET_COLOR_GUTTER_FG,
    ELM_CODE_WIDGET_COLOR_WHITESPACE,
    ELM_CODE_WIDGET_COLOR_CURSOR,
+   ELM_CODE_WIDGET_COLOR_SELECTION,
 
    ELM_CODE_WIDGET_COLOR_COUNT
 } Elm_Code_Widget_Colors;
@@ -226,8 +227,14 @@ _elm_code_widget_fill_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
 }
 
 static void
-_elm_code_widget_fill_whitespace(Elm_Code_Widget *widget EINA_UNUSED, Eina_Unicode character, Evas_Textgrid_Cell *cell)
+_elm_code_widget_fill_whitespace(Elm_Code_Widget *widget, Eina_Unicode character, Evas_Textgrid_Cell *cell)
 {
+   Elm_Code_Widget_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   if (!pd->show_whitespace)
+     return;
+
    switch (character)
      {
         case ' ':
@@ -244,6 +251,47 @@ _elm_code_widget_fill_whitespace(Elm_Code_Widget *widget EINA_UNUSED, Eina_Unico
      }
 
    cell->fg = ELM_CODE_WIDGET_COLOR_WHITESPACE;
+}
+
+static void
+_elm_code_widget_fill_cursor(Elm_Code_Widget *widget, Elm_Code_Line *line, Evas_Textgrid_Cell *cells,
+                             int gutter, int w)
+{
+   Elm_Code_Widget_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (pd->editable && pd->focussed && pd->cursor_line == line->number)
+     {
+        if (pd->cursor_col + gutter - 1 < (unsigned int) w)
+          cells[pd->cursor_col + gutter - 1].bg = ELM_CODE_WIDGET_COLOR_CURSOR;
+     }
+}
+
+static void
+_elm_code_widget_fill_selection(Elm_Code_Widget *widget, Elm_Code_Line *line, Evas_Textgrid_Cell *cells,
+                                int gutter, int w)
+{
+   Elm_Code_Widget_Data *pd;
+   unsigned int x, start, end;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (!pd->selection)
+     return;
+
+   if (pd->selection->start_line > line->number || pd->selection->end_line < line->number)
+     return;
+
+   start = pd->selection->start_col;
+   if (pd->selection->start_line < line->number)
+     start = 1;
+   end = pd->selection->end_col;
+   if (pd->selection->end_line > line->number)
+     end = w;
+
+   for (x = gutter + start - 1; x < gutter + end && x < (unsigned int) w; x++)
+     cells[x].bg = ELM_CODE_WIDGET_COLOR_SELECTION;
 }
 
 static void
@@ -276,8 +324,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         cells[x].codepoint = unichr;
         cells[x].bg = _elm_code_widget_status_type_get(widget, line->status, x - gutter + 1);
 
-        if (pd->show_whitespace)
-          _elm_code_widget_fill_whitespace(widget, unichr, &cells[x]);
+        _elm_code_widget_fill_whitespace(widget, unichr, &cells[x]);
      }
    for (; x < (unsigned int) w; x++)
      {
@@ -285,13 +332,9 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         cells[x].bg = _elm_code_widget_status_type_get(widget, line->status, x - gutter + 1);
      }
 
-   if (pd->editable && pd->focussed && pd->cursor_line == line->number)
-     {
-        if (pd->cursor_col + gutter - 1 < (unsigned int) w)
-          cells[pd->cursor_col + gutter - 1].bg = ELM_CODE_WIDGET_COLOR_CURSOR;
-     }
-   if (pd->show_whitespace)
-     _elm_code_widget_fill_whitespace(widget, '\n', &cells[length + gutter]);
+   _elm_code_widget_fill_cursor(widget, line, cells, gutter, w);
+   _elm_code_widget_fill_selection(widget, line, cells, gutter, w);
+   _elm_code_widget_fill_whitespace(widget, '\n', &cells[length + gutter]);
 
    evas_object_textgrid_update_add(pd->grid, 0, line->number - 1, w, 1);
 }
@@ -1042,6 +1085,8 @@ _elm_code_widget_setup_palette(Evas_Object *o)
    // other styles that the widget uses
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_CURSOR,
                                     205, 205, 54, 255);
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_SELECTION,
+                                    51, 153, 255, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_BG,
                                     75, 75, 75, 255);
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_WIDGET_COLOR_GUTTER_FG,
