@@ -2213,6 +2213,7 @@ _emile_image_bind(Emile_Image *ei,
    if (opts)
      {
         ei->opts = *opts;
+        ei->opts.orientation = !!ei->opts.orientation;
         ei->load_opts = 1;
      }
 
