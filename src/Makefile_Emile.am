@@ -9,19 +9,40 @@ dist_installed_emilemainheaders_DATA = lib/emile/Emile.h
 lib_emile_libemile_la_SOURCES = \
 lib/emile/emile_private.h \
 lib/emile/emile_main.c \
-lib/emile/emile_cipher.c
+lib/emile/emile_compress.c
+
+if ! ENABLE_LIBLZ4
+lib_emile_libemile_la_SOURCES += \
+static_libs/lz4/lz4.c \
+static_libs/lz4/lz4.h \
+static_libs/lz4/lz4hc.c \
+static_libs/lz4/lz4hc.h
+endif
 
 lib_emile_libemile_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/static_libs/lz4 \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/emile\" \
 @EMILE_CFLAGS@
+
+if ! ENABLE_LIBLZ4
+lib_emile_libemile_la_CPPFLAGS += \
+-I$(top_srcdir)/src/static_libs/lz4
+endif
+
 lib_emile_libemile_la_LIBADD = @EMILE_LIBS@
 lib_emile_libemile_la_DEPENDENCIES = @EMILE_INTERNAL_LIBS@
 lib_emile_libemile_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
-EXTRA_DIST += static_libs/lz4/README
+if ! ENABLE_LIBLZ4
+lib_emile_libemile_la_LIBADD += @LIBLZ4_LIBS@
+endif
+
+EXTRA_DIST += static_libs/lz4/README \
+static_libs/lz4/lz4.c \
+static_libs/lz4/lz4.h \
+static_libs/lz4/lz4hc.c \
+static_libs/lz4/lz4hc.h
 
 ### Binary
 
