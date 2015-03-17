@@ -46,15 +46,6 @@ static void _ecore_evas_wayland_alpha_do(Ecore_Evas *ee, int alpha);
 static void _ecore_evas_wayland_transparent_do(Ecore_Evas *ee, int transparent);
 static void _ecore_evas_wl_common_border_update(Ecore_Evas *ee);
 
-/* Frame listener */
-static void _ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback, uint32_t tm);
-
-/* Frame listener */
-static const struct wl_callback_listener frame_listener =
-{
-   _ecore_evas_wl_frame_complete,
-};
-
 /* local functions */
 static void 
 _ecore_evas_wl_common_state_update(Ecore_Evas *ee)
@@ -592,8 +583,6 @@ _ecore_evas_wl_common_free(Ecore_Evas *ee)
 
    if (!ee) return;
    wdata = ee->engine.data;
-   if (wdata->frame_callback) wl_callback_destroy(wdata->frame_callback);
-   wdata->frame_callback = NULL;
    if (wdata->win) ecore_wl_window_free(wdata->win);
    wdata->win = NULL;
    free(wdata);
@@ -1441,42 +1430,6 @@ _ecore_evas_wl_common_post_render(Ecore_Evas *ee)
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 }
 
-void
-_ecore_evas_wl_common_frame_callback_clean(Ecore_Evas *ee)
-{
-   Ecore_Evas_Engine_Wl_Data *wdata;
-
-   wdata = ee->engine.data;
-
-   if (!wdata->frame_pending)
-     return;
-   wl_callback_destroy(wdata->frame_callback);
-   wdata->frame_callback = NULL;
-   wdata->frame_pending = EINA_FALSE;
-}
-
-static void
-_ecore_evas_wl_frame_complete(void *data, struct wl_callback *callback EINA_UNUSED, uint32_t tm EINA_UNUSED)
-{
-   Ecore_Evas *ee = data;
-   Ecore_Wl_Window *win = NULL;
-   Ecore_Evas_Engine_Wl_Data *wdata;
-
-   if (!ee) return;
-
-   _ecore_evas_wl_common_frame_callback_clean(ee);
-
-   wdata = ee->engine.data;
-   if (!(win = wdata->win)) return;
-
-   if (ecore_wl_window_surface_get(win))
-     {
-        wdata->frame_callback = 
-          wl_surface_frame(ecore_wl_window_surface_get(win));
-        wl_callback_add_listener(wdata->frame_callback, &frame_listener, ee);
-     }
-}
-
 int
 _ecore_evas_wl_common_render(Ecore_Evas *ee)
 {
@@ -1516,20 +1469,6 @@ _ecore_evas_wl_common_render(Ecore_Evas *ee)
         updates = evas_render_updates(ee->evas);
         rend = _ecore_evas_wl_common_render_updates_process(ee, updates);
         evas_render_updates_free(updates);
-
-        if (!wdata->frame_pending)
-          {
-             if (!wdata->frame_callback)
-               {
-                  wdata->frame_callback = 
-                    wl_surface_frame(ecore_wl_window_surface_get(win));
-                  wl_callback_add_listener(wdata->frame_callback, 
-                                           &frame_listener, ee);
-               }
-
-             if (rend) 
-               wdata->frame_pending = EINA_TRUE;
-          }
      }
    else if (evas_render_async(ee->evas))
      {
