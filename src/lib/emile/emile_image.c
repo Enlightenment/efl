@@ -1,23 +1,23 @@
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+#include <config.h>
 #endif
 
 #ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
+#include <netinet/in.h>
 #endif
 
 #ifdef _WIN32
-# include <winsock2.h>
+#include <winsock2.h>
 #endif
 
 #ifdef ENABLE_LIBLZ4
-# include <lz4.h>
+#include <lz4.h>
 #else
-# include "lz4.h"
+#include "lz4.h"
 #endif
 
 #ifdef _WIN32
-# define XMD_H /* This prevents libjpeg to redefine INT32 */
+#define XMD_H /* This prevents libjpeg to redefine INT32 */
 #endif
 
 #include <stdio.h>
@@ -25,7 +25,7 @@
 #include <jpeglib.h>
 
 #ifdef HAVE_EVIL
-# include <Evil.h>
+#include <Evil.h>
 #endif
 
 #include "rg_etc1.h"
@@ -38,41 +38,41 @@
 
 #define IMG_MAX_SIZE 65000
 
-#define IMG_TOO_BIG(w, h) \
-   ((((unsigned long long)w) * ((unsigned long long)h)) >= \
-       ((1ULL << (29 * (sizeof(void *) / 4))) - 2048))
+#define IMG_TOO_BIG(w, h)                                 \
+  ((((unsigned long long)w) * ((unsigned long long)h)) >= \
+   ((1ULL << (29 * (sizeof(void *) / 4))) - 2048))
 
 #define SPANS_COMMON(x1, w1, x2, w2) \
-  (!(( (int)((x2) + (int)(w2)) <= (int)(x1)) || (int)((x2) >= (int)((x1) + (int)(w1)))))
+  (!(((int)((x2) + (int)(w2)) <= (int)(x1)) || (int)((x2) >= (int)((x1) + (int)(w1)))))
 
 #define RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) \
   ((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
 
-#define RECTS_CLIP_TO_RECT(_x, _y, _w, _h, _cx, _cy, _cw, _ch) \
-  {                                                            \
-    if (RECTS_INTERSECT(_x, _y, _w, _h, _cx, _cy, _cw, _ch))          \
-      {                                                               \
-         if ((int)_x < (int)(_cx))                                    \
-           {                                                          \
-              if ((int)_w +  ((int)_x - (int)(_cx)) < 0) _w = 0;      \
-              else     _w += ((int)_x - (int)(_cx));                  \
-              _x = (_cx);                                             \
-           }                                                          \
-         if ((int)(_x + _w) > (int)((_cx) + (_cw)))                   \
-           _w = (_cx) + (_cw) - _x;                                   \
-         if ((int)_y < (int)(_cy))                                    \
-           {                                                          \
-              if ((int)_h +  ((int)_y - (int)(_cy)) < 0) _h = 0;      \
-              else     _h += ((int)_y - (int)(_cy));                  \
-              _y = (_cy);                                             \
-           }                                                          \
-         if ((int)(_y + _h) > (int)((_cy) + (_ch)))                   \
-           _h = (_cy) + (_ch) - _y;                                   \
-      }                                                               \
-    else                                                              \
-      {                                                               \
-         _w = 0; _h = 0;                                              \
-      }                                                               \
+#define RECTS_CLIP_TO_RECT(_x, _y, _w, _h, _cx, _cy, _cw, _ch)    \
+  {                                                               \
+     if (RECTS_INTERSECT(_x, _y, _w, _h, _cx, _cy, _cw, _ch))     \
+       {                                                          \
+          if ((int)_x < (int)(_cx))                               \
+            {                                                     \
+               if ((int)_w + ((int)_x - (int)(_cx)) < 0) _w = 0;  \
+               else _w += ((int)_x - (int)(_cx));                 \
+               _x = (_cx);                                        \
+            }                                                     \
+          if ((int)(_x + _w) > (int)((_cx) + (_cw)))              \
+            _w = (_cx) + (_cw) - _x;                              \
+          if ((int)_y < (int)(_cy))                               \
+            {                                                     \
+               if ((int)_h + ((int)_y - (int)(_cy)) < 0) _h = 0;  \
+               else _h += ((int)_y - (int)(_cy));                 \
+               _y = (_cy);                                        \
+            }                                                     \
+          if ((int)(_y + _h) > (int)((_cy) + (_ch)))              \
+            _h = (_cy) + (_ch) - _y;                              \
+       }                                                          \
+     else                                                         \
+       {                                                          \
+          _w = 0; _h = 0;                                         \
+       }                                                          \
   }
 
 #ifndef WORDS_BIGENDIAN
@@ -89,76 +89,70 @@
 #define B_VAL(p) (((uint8_t *)(p))[3])
 #endif
 
-#define ARGB_JOIN(a,r,g,b) \
-        (((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
+#define ARGB_JOIN(a, r, g, b) \
+  (((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
 
 #define OFFSET_BLOCK_SIZE 4
-#define OFFSET_ALGORITHM 5
-#define OFFSET_OPTIONS 6
-#define OFFSET_WIDTH 8
-#define OFFSET_HEIGHT 12
-#define OFFSET_BLOCKS 16
+#define OFFSET_ALGORITHM  5
+#define OFFSET_OPTIONS    6
+#define OFFSET_WIDTH      8
+#define OFFSET_HEIGHT     12
+#define OFFSET_BLOCKS     16
 
 struct _Emile_Image
 {
    Emile_Image_Load_Opts opts;
 
-   struct {
+   struct
+   {
       unsigned int width;
       unsigned int height;
    } size, block;
 
-   Eina_Rectangle region;
+   Eina_Rectangle        region;
 
-   union {
+   union
+   {
       Eina_Binbuf *bin;
-      Eina_File *f;
+      Eina_File   *f;
    } source;
 
-   const unsigned char *source_data;
+   const unsigned char  *source_data;
 
-   Eina_Bool (*bind)(Emile_Image *image,
-                     Emile_Image_Load_Opts *opts,
-                     Emile_Image_Animated *animated,
-                     Emile_Image_Load_Error *error);
-   Eina_Bool (*head)(Emile_Image *image,
-                     Emile_Image_Property *prop,
-                     unsigned int property_size,
-                     Emile_Image_Load_Error *error);
-   Eina_Bool (*data)(Emile_Image *image,
-                     Emile_Image_Property *prop,
-                     unsigned int property_size,
-                     void *pixels,
-                     Emile_Image_Load_Error *error);
-   void (*close)(Emile_Image *image);
+   Eina_Bool             (*bind)(Emile_Image *image, Emile_Image_Load_Opts *opts, Emile_Image_Animated *animated, Emile_Image_Load_Error *error);
+   Eina_Bool             (*head)(Emile_Image *image, Emile_Image_Property *prop, unsigned int property_size, Emile_Image_Load_Error *error);
+   Eina_Bool             (*data)(Emile_Image *image, Emile_Image_Property *prop, unsigned int property_size, void *pixels, Emile_Image_Load_Error *error);
+   void                  (*close)(Emile_Image *image);
 
-   Emile_Colorspace cspace;
+   Emile_Colorspace      cspace;
 
-   Eina_Bool bin_source : 1;
+   Eina_Bool             bin_source : 1;
 
    /* TGV option */
-   Eina_Bool unpremul : 1;
-   Eina_Bool compress : 1;
-   Eina_Bool blockless : 1;
-   Eina_Bool load_opts : 1;
+   Eina_Bool             unpremul : 1;
+   Eina_Bool             compress : 1;
+   Eina_Bool             blockless : 1;
+   Eina_Bool             load_opts : 1;
 };
 
 static const unsigned char *
 _emile_image_file_source_map(Emile_Image *image, unsigned int *length)
 {
-   if (!image) return NULL;
+   if (!image)
+     return NULL;
 
    if (image->bin_source)
      {
-        if (length) *length = eina_binbuf_length_get(image->source.bin);
+        if (length)
+          *length = eina_binbuf_length_get(image->source.bin);
         return eina_binbuf_string_get(image->source.bin);
      }
 
-   if (length) *length = eina_file_size_get(image->source.f);
+   if (length)
+     *length = eina_file_size_get(image->source.f);
    if (!image->source_data)
      {
-        image->source_data = eina_file_map_all(image->source.f,
-                                               EINA_FILE_SEQUENTIAL);
+        image->source_data = eina_file_map_all(image->source.f, EINA_FILE_SEQUENTIAL);
      }
    return image->source_data;
 }
@@ -166,9 +160,9 @@ _emile_image_file_source_map(Emile_Image *image, unsigned int *length)
 static void
 _emile_image_file_source_unmap(Emile_Image *image)
 {
-   if (!(image && image->source_data)) return ;
-   eina_file_map_free(image->source.f,
-                      (void*) image->source_data);
+   if (!(image && image->source_data))
+     return;
+   eina_file_map_free(image->source.f, (void *)image->source_data);
    image->source_data = NULL;
 }
 
@@ -183,59 +177,59 @@ _roundup(int val, int rup)
 /* TGV Handling */
 
 static const Emile_Colorspace cspaces_etc1[2] = {
-  EMILE_COLORSPACE_ETC1,
-  EMILE_COLORSPACE_ARGB8888
+   EMILE_COLORSPACE_ETC1,
+   EMILE_COLORSPACE_ARGB8888
 };
 
 static const Emile_Colorspace cspaces_rgb8_etc2[2] = {
-  EMILE_COLORSPACE_RGB8_ETC2,
-  EMILE_COLORSPACE_ARGB8888
+   EMILE_COLORSPACE_RGB8_ETC2,
+   EMILE_COLORSPACE_ARGB8888
 };
 
 static const Emile_Colorspace cspaces_rgba8_etc2_eac[2] = {
-  EMILE_COLORSPACE_RGBA8_ETC2_EAC,
-  EMILE_COLORSPACE_ARGB8888
+   EMILE_COLORSPACE_RGBA8_ETC2_EAC,
+   EMILE_COLORSPACE_ARGB8888
 };
 
 static const Emile_Colorspace cspaces_etc1_alpha[2] = {
-  EMILE_COLORSPACE_ETC1_ALPHA,
-  EMILE_COLORSPACE_ARGB8888
+   EMILE_COLORSPACE_ETC1_ALPHA,
+   EMILE_COLORSPACE_ARGB8888
 };
 
 static const Emile_Colorspace cspaces_agry[3] = {
-  EMILE_COLORSPACE_GRY8,
-  EMILE_COLORSPACE_AGRY88,
-  EMILE_COLORSPACE_ARGB8888
+   EMILE_COLORSPACE_GRY8,
+   EMILE_COLORSPACE_AGRY88,
+   EMILE_COLORSPACE_ARGB8888
 };
 
 /**************************************************************
- * The TGV file format is oriented around compression mecanism
- * that hardware are good at decompressing. We do still provide
- * a fully software implementation in case your hardware doesn't
- * handle it. As OpenGL is pretty bad at handling border of
- * texture, we do duplicate the first pixels of every border.
- *
- * This file format is designed to compress/decompress things
- * in block area. Giving opportunity to store really huge file
- * and only decompress/compress them as we need. Note that region
- * only work with software decompression as we don't have a sane
- * way to duplicate border to avoid artifact when scaling texture.
- *
- * The file format is as follow :
- * - char     magic[4]: "TGV1"
- * - uint8_t  block_size (real block size = (4 << bits[0-3], 4 << bits[4-7])
- * - uint8_t  algorithm (0 -> ETC1, 1 -> ETC2 RGB, 2 -> ETC2 RGBA, 3 -> ETC1+Alpha)
- * - uint8_t  options[2] (bitmask: 1 -> lz4, 2 for block-less, 4 -> unpremultiplied)
- * - uint32_t width
- * - uint32_t height
- * - blocks[]
- *   - 0 length encoded compress size (if length == 64 * block_size => no compression)
- *   - lzma encoded etc1 block
- *
- * If the format is ETC1+Alpha (algo = 3), then a second image is encoded
- * in ETC1 right after the first one, and it contains grey-scale alpha
- * values.
- **************************************************************/
+* The TGV file format is oriented around compression mecanism
+* that hardware are good at decompressing. We do still provide
+* a fully software implementation in case your hardware doesn't
+* handle it. As OpenGL is pretty bad at handling border of
+* texture, we do duplicate the first pixels of every border.
+*
+* This file format is designed to compress/decompress things
+* in block area. Giving opportunity to store really huge file
+* and only decompress/compress them as we need. Note that region
+* only work with software decompression as we don't have a sane
+* way to duplicate border to avoid artifact when scaling texture.
+*
+* The file format is as follow :
+* - char     magic[4]: "TGV1"
+* - uint8_t  block_size (real block size = (4 << bits[0-3], 4 << bits[4-7])
+* - uint8_t  algorithm (0 -> ETC1, 1 -> ETC2 RGB, 2 -> ETC2 RGBA, 3 -> ETC1+Alpha)
+* - uint8_t  options[2] (bitmask: 1 -> lz4, 2 for block-less, 4 -> unpremultiplied)
+* - uint32_t width
+* - uint32_t height
+* - blocks[]
+*   - 0 length encoded compress size (if length == 64 * block_size => no compression)
+*   - lzma encoded etc1 block
+*
+* If the format is ETC1+Alpha (algo = 3), then a second image is encoded
+* in ETC1 right after the first one, and it contains grey-scale alpha
+* values.
+**************************************************************/
 
 // FIXME: wondering if we should support mipmap
 // TODO: support ETC1+ETC2 images (RGB only)
@@ -250,12 +244,12 @@ _emile_tgv_bind(Emile_Image *image,
    unsigned int length;
 
    m = _emile_image_file_source_map(image, &length);
-   if (!m) return EINA_FALSE;
+   if (!m)
+     return EINA_FALSE;
 
    /* Fast check for file characteristic (useful when trying to guess
-    a file format without extention). */
-   if (length < 16 ||
-       strncmp((const char*) m, "TGV1", 4) != 0)
+      a file format without extention). */
+   if (length < 16 || strncmp((const char *)m, "TGV1", 4) != 0)
      goto on_error;
 
    if ((m[OFFSET_ALGORITHM] & 0xFF) > 3)
@@ -263,7 +257,7 @@ _emile_tgv_bind(Emile_Image *image,
 
    return EINA_TRUE;
 
- on_error:
+on_error:
    *error = EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
    _emile_image_file_source_unmap(image);
    return EINA_FALSE;
@@ -279,44 +273,50 @@ _emile_tgv_head(Emile_Image *image,
    unsigned int length;
 
    m = _emile_image_file_source_map(image, &length);
-   if (!m) return EINA_FALSE;
+   if (!m)
+     return EINA_FALSE;
 
    /* This can be used for later ABI change of the structure. */
-   if (sizeof (Emile_Image_Property) != property_size) return EINA_FALSE;
+   if (sizeof(Emile_Image_Property) != property_size)
+     return EINA_FALSE;
 
    switch (m[OFFSET_ALGORITHM] & 0xFF)
      {
       case 0:
-         prop->cspaces = cspaces_etc1;
-         prop->alpha = EINA_FALSE;
-         image->cspace = EMILE_COLORSPACE_ETC1;
-         break;
+        prop->cspaces = cspaces_etc1;
+        prop->alpha = EINA_FALSE;
+        image->cspace = EMILE_COLORSPACE_ETC1;
+        break;
+
       case 1:
-         prop->cspaces = cspaces_rgb8_etc2;
-         prop->alpha = EINA_FALSE;
-         image->cspace = EMILE_COLORSPACE_RGB8_ETC2;
-         break;
+        prop->cspaces = cspaces_rgb8_etc2;
+        prop->alpha = EINA_FALSE;
+        image->cspace = EMILE_COLORSPACE_RGB8_ETC2;
+        break;
+
       case 2:
-         prop->cspaces = cspaces_rgba8_etc2_eac;
-         prop->alpha = EINA_TRUE;
-         image->cspace = EMILE_COLORSPACE_RGBA8_ETC2_EAC;
-         break;
+        prop->cspaces = cspaces_rgba8_etc2_eac;
+        prop->alpha = EINA_TRUE;
+        image->cspace = EMILE_COLORSPACE_RGBA8_ETC2_EAC;
+        break;
+
       case 3:
-         prop->cspaces = cspaces_etc1_alpha;
-         prop->alpha = EINA_TRUE;
-         prop->premul = !!(m[OFFSET_OPTIONS] & 0x4);
-         image->unpremul = prop->premul;
-         break;
+        prop->cspaces = cspaces_etc1_alpha;
+        prop->alpha = EINA_TRUE;
+        prop->premul = !!(m[OFFSET_OPTIONS] & 0x4);
+        image->unpremul = prop->premul;
+        break;
+
       default:
-         *error = EMILE_IMAGE_LOAD_ERROR_CORRUPT_FILE;
-         return EINA_FALSE;
+        *error = EMILE_IMAGE_LOAD_ERROR_CORRUPT_FILE;
+        return EINA_FALSE;
      }
 
    image->compress = m[OFFSET_OPTIONS] & 0x1;
    image->blockless = (m[OFFSET_OPTIONS] & 0x2) != 0;
 
-   image->size.width = ntohl(*((unsigned int*) &(m[OFFSET_WIDTH])));
-   image->size.height = ntohl(*((unsigned int*) &(m[OFFSET_HEIGHT])));
+   image->size.width = ntohl(*((unsigned int *)&(m[OFFSET_WIDTH])));
+   image->size.height = ntohl(*((unsigned int *)&(m[OFFSET_HEIGHT])));
 
    if (image->blockless)
      {
@@ -329,7 +329,8 @@ _emile_tgv_head(Emile_Image *image,
         image->block.height = 4 << ((m[OFFSET_BLOCK_SIZE] & 0xf0) >> 4);
      }
 
-   EINA_RECTANGLE_SET(&image->region, 0, 0,
+   EINA_RECTANGLE_SET(&image->region,
+                      0, 0,
                       image->size.width, image->size.height);
    if (image->load_opts &&
        (image->opts.region.w > 0 && image->opts.region.h > 0))
@@ -337,8 +338,7 @@ _emile_tgv_head(Emile_Image *image,
         /* ETC colorspace doesn't work with region for now */
         prop->cspaces = NULL;
 
-        if (!eina_rectangle_intersection(&image->region,
-                                         &image->opts.region))
+        if (!eina_rectangle_intersection(&image->region, &image->opts.region))
           {
              *error = EMILE_IMAGE_LOAD_ERROR_GENERIC;
              return EINA_FALSE;
@@ -407,7 +407,8 @@ _emile_tgv_data(Emile_Image *image,
         return EINA_FALSE;
      }
 
-   if (sizeof (Emile_Image_Property) != property_size) return EINA_FALSE;
+   if (sizeof(Emile_Image_Property) != property_size)
+     return EINA_FALSE;
 
    offset = OFFSET_BLOCKS;
 
@@ -424,15 +425,19 @@ _emile_tgv_data(Emile_Image *image,
       case EMILE_COLORSPACE_RGB8_ETC2:
         etc_block_size = 8;
         break;
+
       case EMILE_COLORSPACE_RGBA8_ETC2_EAC:
         etc_block_size = 16;
         break;
+
       case EMILE_COLORSPACE_ETC1_ALPHA:
         etc_block_size = 8;
         num_planes = 2;
         alpha_offset = ((prop->w + 2 + 3) / 4) * ((prop->h + 2 + 3) / 4) * 8 / sizeof(*p_etc);
         break;
-      default: abort();
+
+      default:
+        abort();
      }
    etc_width = ((prop->w + 2 + 3) / 4) * etc_block_size;
 
@@ -446,16 +451,19 @@ _emile_tgv_data(Emile_Image *image,
           // FIXME: Should we really abort here ? Seems like a late check for me
           abort();
         break;
+
       case EMILE_COLORSPACE_ARGB8888:
-         /* Offset to take duplicated pixels into account */
+        /* Offset to take duplicated pixels into account */
         master.x += 1;
         master.y += 1;
         break;
-      default: abort();
+
+      default:
+        abort();
      }
 
-
-   if (prop->cspace != EMILE_COLORSPACE_ARGB8888 && prop->cspace != image->cspace)
+   if (prop->cspace != EMILE_COLORSPACE_ARGB8888 &&
+       prop->cspace != image->cspace)
      {
         if (!((prop->cspace == EMILE_COLORSPACE_RGB8_ETC2) &&
               (image->cspace == EMILE_COLORSPACE_ETC1)))
@@ -469,7 +477,9 @@ _emile_tgv_data(Emile_Image *image,
    /* Allocate space for each ETC block (8 or 16 bytes per 4 * 4 pixels group) */
    block_count = image->block.width * image->block.height / (4 * 4);
    if (image->compress)
-     buffer = eina_binbuf_manage_new(alloca(etc_block_size * block_count), etc_block_size * block_count, EINA_TRUE);
+     buffer = eina_binbuf_manage_new(alloca(etc_block_size * block_count),
+                                     etc_block_size * block_count,
+                                     EINA_TRUE);
 
    for (plane = 0; plane < num_planes; plane++)
      for (y = 0; y < image->size.height + 2; y += image->block.height)
@@ -488,10 +498,13 @@ _emile_tgv_data(Emile_Image *image,
                  return EINA_FALSE;
               }
 
-            data_start = eina_binbuf_manage_new(m + offset, block_length, EINA_TRUE);
+            data_start = eina_binbuf_manage_new(m + offset,
+                                                block_length,
+                                                EINA_TRUE);
             offset += block_length;
 
-            EINA_RECTANGLE_SET(&current, x, y,
+            EINA_RECTANGLE_SET(&current,
+                               x, y,
                                image->block.width, image->block.height);
 
             if (!eina_rectangle_intersection(&current, &master))
@@ -537,13 +550,17 @@ _emile_tgv_data(Emile_Image *image,
                                   continue;
                                }
                              break;
+
                            case EMILE_COLORSPACE_RGB8_ETC2:
-                             rg_etc2_rgb8_decode_block((uint8_t *) it, temporary);
+                             rg_etc2_rgb8_decode_block((uint8_t *)it, temporary);
                              break;
+
                            case EMILE_COLORSPACE_RGBA8_ETC2_EAC:
-                             rg_etc2_rgba8_decode_block((uint8_t *) it, temporary);
+                             rg_etc2_rgba8_decode_block((uint8_t *)it, temporary);
                              break;
-                           default: abort();
+
+                           default:
+                             abort();
                           }
 
                         offset_x = current_etc.x - x - j;
@@ -568,7 +585,7 @@ _emile_tgv_data(Emile_Image *image,
                                        else if (current_etc.w == 2)
                                          vst1_u32(dst, vld1_u32(src));
                                        else
-                                          *dst = *src;
+                                         *dst = *src;
                                        dst += master.w;
                                        src += 4;
                                     }
@@ -579,7 +596,7 @@ _emile_tgv_data(Emile_Image *image,
                                {
                                   memcpy(&p[current_etc.x - 1 + (current_etc.y - 1 + k) * master.w],
                                          &temporary[offset_x + (offset_y + k) * 4],
-                                         current_etc.w * sizeof (unsigned int));
+                                         current_etc.w * sizeof(unsigned int));
                                }
                           }
                         else
@@ -587,27 +604,27 @@ _emile_tgv_data(Emile_Image *image,
                              for (k = 0; k < current_etc.h; k++)
                                for (l = 0; l < current_etc.w; l++)
                                  {
-                                    unsigned int *rgbdata =
-                                      &p[current_etc.x - 1 + (current_etc.y - 1 + k) * master.w + l];
-                                    unsigned int *adata =
-                                      &temporary[offset_x + (offset_y + k) * 4 + l];
+                                    unsigned int *rgbdata = &p[current_etc.x - 1 + (current_etc.y - 1 + k) * master.w + l];
+                                    unsigned int *adata = &temporary[offset_x + (offset_y + k) * 4 + l];
                                     A_VAL(rgbdata) = G_VAL(adata);
                                  }
                           }
                         break;
+
                       case EMILE_COLORSPACE_ETC1:
                       case EMILE_COLORSPACE_RGB8_ETC2:
                       case EMILE_COLORSPACE_RGBA8_ETC2_EAC:
-                        memcpy(&p_etc[(current_etc.x / 4) * etc_block_size +
-                                      (current_etc.y / 4) * etc_width],
-                               it, etc_block_size);
+                        memcpy(&p_etc[(current_etc.x / 4) * etc_block_size + (current_etc.y / 4) * etc_width],
+                               it,
+                               etc_block_size);
                         break;
+
                       case EMILE_COLORSPACE_ETC1_ALPHA:
-                        memcpy(&p_etc[(current_etc.x / 4) * etc_block_size +
-                                      (current_etc.y / 4) * etc_width +
-                                      plane * alpha_offset],
-                               it, etc_block_size);
+                        memcpy(&p_etc[(current_etc.x / 4) * etc_block_size + (current_etc.y / 4) * etc_width + plane * alpha_offset],
+                               it,
+                               etc_block_size);
                         break;
+
                       default:
                         abort();
                      }
@@ -616,11 +633,11 @@ _emile_tgv_data(Emile_Image *image,
 
    // TODO: Add support for more unpremultiplied modes (ETC2)
    if (prop->cspace == EMILE_COLORSPACE_ARGB8888)
-     prop->premul = image->unpremul; /* call premul if unpremul data */
+     prop->premul = image->unpremul;  /* call premul if unpremul data */
 
    r = EINA_TRUE;
 
- on_error:
+on_error:
    return r;
 }
 
@@ -635,13 +652,13 @@ _emile_tgv_close(Emile_Image *image EINA_UNUSED)
 typedef struct _JPEG_error_mgr *emptr;
 struct _JPEG_error_mgr
 {
-   struct     jpeg_error_mgr pub;
-   jmp_buf    setjmp_buffer;
+   struct jpeg_error_mgr pub;
+   jmp_buf               setjmp_buffer;
 };
 
 struct jpeg_membuf_src
 {
-   struct jpeg_source_mgr pub;
+   struct jpeg_source_mgr  pub;
 
    const unsigned char    *buf;
    size_t                  len;
@@ -661,8 +678,7 @@ _emile_image_jpeg_error_exit_cb(j_common_ptr cinfo)
 }
 
 static void
-_emile_image_jpeg_emit_message_cb(j_common_ptr cinfo,
-                                  int          msg_level)
+_emile_image_jpeg_emit_message_cb(j_common_ptr cinfo, int msg_level)
 {
    char buffer[JMSG_LENGTH_MAX];
    struct jpeg_error_mgr *err;
@@ -714,15 +730,14 @@ _emile_jpeg_membuf_src_fill(j_decompress_ptr cinfo)
 }
 
 static void
-_emile_jpeg_membuf_src_skip(j_decompress_ptr cinfo,
-                           long              num_bytes)
+_emile_jpeg_membuf_src_skip(j_decompress_ptr cinfo, long num_bytes)
 {
    struct jpeg_membuf_src *src = (struct jpeg_membuf_src *)cinfo->src;
 
    if ((((long)src->pub.bytes_in_buffer - (long)src->len) > num_bytes) ||
        ((long)src->pub.bytes_in_buffer < num_bytes))
      {
-        (*(cinfo)->err->error_exit) ((j_common_ptr) (cinfo));
+        (*(cinfo)->err->error_exit)((j_common_ptr)(cinfo));
         return;
      }
    src->pub.bytes_in_buffer -= num_bytes;
@@ -733,20 +748,20 @@ static void
 _emile_jpeg_membuf_src_term(j_decompress_ptr cinfo)
 {
    struct jpeg_membuf_src *src = (struct jpeg_membuf_src *)cinfo->src;
-   if (!src) return;
+   if (!src)
+     return;
    free(src);
    cinfo->src = NULL;
 }
 
 static int
-_emile_jpeg_membuf_src(j_decompress_ptr cinfo,
-                       const void *map, size_t length)
+_emile_jpeg_membuf_src(j_decompress_ptr cinfo, const void *map, size_t length)
 {
    struct jpeg_membuf_src *src;
 
    src = calloc(1, sizeof(*src));
    if (!src)
-      return -1;
+     return -1;
 
    src->self = src;
 
@@ -765,16 +780,18 @@ _emile_jpeg_membuf_src(j_decompress_ptr cinfo,
 }
 
 /*! Magic number for EXIF header, App0, App1*/
-static const unsigned char ExifHeader[] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
-static const unsigned char JfifHeader[] = {0x4A, 0x46, 0x49, 0x46, 0x00};
-static const unsigned char JfxxHeader[] = {0x4A, 0x46, 0x58, 0x58, 0x00};
-static const unsigned char App0[] = {0xff, 0xe0};
-static const unsigned char App1[] = {0xff, 0xe1};
-static const unsigned char II[] = {0x49, 0x49};
-static const unsigned char MM[] = {0x4d, 0x4d};
-typedef enum {
-     EXIF_BYTE_ALIGN_II,
-     EXIF_BYTE_ALIGN_MM
+static const unsigned char ExifHeader[] = { 0x45, 0x78, 0x69, 0x66, 0x00, 0x00 };
+static const unsigned char JfifHeader[] = { 0x4A, 0x46, 0x49, 0x46, 0x00 };
+static const unsigned char JfxxHeader[] = { 0x4A, 0x46, 0x58, 0x58, 0x00 };
+static const unsigned char App0[] = { 0xff, 0xe0 };
+static const unsigned char App1[] = { 0xff, 0xe1 };
+static const unsigned char II[] = { 0x49, 0x49 };
+static const unsigned char MM[] = { 0x4d, 0x4d };
+
+typedef enum
+{
+   EXIF_BYTE_ALIGN_II,
+   EXIF_BYTE_ALIGN_MM
 } ExifByteAlign;
 
 static Eina_Bool
@@ -787,7 +804,8 @@ _get_next_app0(const unsigned char *map, size_t fsize, size_t *position)
    const unsigned char *app0_head, *p;
 
    /* header_mark:2, length:2, identifier:5 version:2, unit:1, den=4 thum=2 */
-   if ((*position + 16) >= fsize) return EINA_FALSE;
+   if ((*position + 16) >= fsize)
+     return EINA_FALSE;
    app0_head = map + *position;
 
    /* p is appn's start pointer excluding app0 marker */
@@ -796,13 +814,13 @@ _get_next_app0(const unsigned char *map, size_t fsize, size_t *position)
    length = ((*p << 8) + *(p + 1));
 
    /* JFIF segment format */
-   if (!memcmp(p + 2, JfifHeader, sizeof (JfifHeader)))
+   if (!memcmp(p + 2, JfifHeader, sizeof(JfifHeader)))
      {
         format = 3;
         w = *(p + 14);
         h = *(p + 15);
      }
-   else if (!memcmp(p + 2, JfxxHeader, sizeof (JfxxHeader)))
+   else if (!memcmp(p + 2, JfxxHeader, sizeof(JfxxHeader)))
      {
         if (*(p + 7) == 0x11)
           format = 1;
@@ -812,14 +830,14 @@ _get_next_app0(const unsigned char *map, size_t fsize, size_t *position)
         h = *(p + 9);
      }
 
-     data_size = format * w * h;
+   data_size = format * w * h;
 
-     if ((*position + 2+ length + data_size) > fsize)
-       return EINA_FALSE;
+   if ((*position + 2 + length + data_size) > fsize)
+     return EINA_FALSE;
 
-     *position = *position + 2 + length + data_size;
+   *position = *position + 2 + length + data_size;
 
-     return EINA_TRUE;
+   return EINA_TRUE;
 }
 
 /* If app1 data is abnormal, returns EINA_FALSE.
@@ -828,8 +846,11 @@ _get_next_app0(const unsigned char *map, size_t fsize, size_t *position)
  */
 
 static Eina_Bool
-_get_orientation_app1(const unsigned char *map, size_t fsize, size_t *position,
-                      int *orientation_res, Eina_Bool *flipped)
+_get_orientation_app1(const unsigned char *map,
+                      size_t fsize,
+                      size_t *position,
+                      int *orientation_res,
+                      Eina_Bool *flipped)
 {
    const unsigned char *app1_head, *buf;
    unsigned char orientation[2];
@@ -840,14 +861,16 @@ _get_orientation_app1(const unsigned char *map, size_t fsize, size_t *position,
    unsigned int data_size = 0;
 
    /* app1 mark:2, data_size:2, exif:6 tiff:8 */
-   if ((*position + 18) >= fsize) return EINA_FALSE;
-   app1_head  = map + *position;
+   if ((*position + 18) >= fsize)
+     return EINA_FALSE;
+   app1_head = map + *position;
    buf = app1_head;
 
    data_size = ((*(buf + 2) << 8) + *(buf + 3));
-   if ((*position + 2 + data_size) > fsize) return EINA_FALSE;
+   if ((*position + 2 + data_size) > fsize)
+     return EINA_FALSE;
 
-   if (memcmp(buf + 4, ExifHeader, sizeof (ExifHeader)))
+   if (memcmp(buf + 4, ExifHeader, sizeof(ExifHeader)))
      {
         *position = *position + 2 + data_size;
         *orientation_res = -1;
@@ -856,67 +879,77 @@ _get_orientation_app1(const unsigned char *map, size_t fsize, size_t *position,
 
    /* 2. get 10&11 byte  get info of "II(0x4949)" or "MM(0x4d4d)" */
    /* 3. get [18]&[19] get directory entry # */
-   if (!memcmp(buf + 10, MM, sizeof (MM)))
+   if (!memcmp(buf + 10, MM, sizeof(MM)))
      {
         byte_align = EXIF_BYTE_ALIGN_MM;
         num_directory = ((*(buf + 18) << 8) + *(buf + 19));
         orientation[0] = 0x01;
         orientation[1] = 0x12;
      }
-   else if (!memcmp(buf + 10, II, sizeof (II)))
+   else if (!memcmp(buf + 10, II, sizeof(II)))
      {
         byte_align = EXIF_BYTE_ALIGN_II;
         num_directory = ((*(buf + 19) << 8) + *(buf + 18));
         orientation[0] = 0x12;
         orientation[1] = 0x01;
      }
-   else return EINA_FALSE;
+   else
+     return EINA_FALSE;
 
    /* check num_directory data */
-   if ((*position + (12 * num_directory + 20)) > fsize) return EINA_FALSE;
+   if ((*position + (12 * num_directory + 20)) > fsize)
+     return EINA_FALSE;
 
    buf = app1_head + 20;
 
    j = 0;
 
-   for (i = 0; i < num_directory; i++ )
+   for (i = 0; i < num_directory; i++)
      {
         if (!memcmp(buf + j, orientation, 2))
           {
              /*get orientation tag */
              if (byte_align == EXIF_BYTE_ALIGN_MM)
-               direction = *(buf+ j + 9);
-             else direction = *(buf+ j + 8);
+               direction = *(buf + j + 9);
+             else
+               direction = *(buf + j + 8);
              switch (direction)
                {
                 case 3:
                   *orientation_res = 180;
                   *flipped = EINA_FALSE;
                   return EINA_TRUE;
+
                 case 4:
                   *orientation_res = 180;
                   *flipped = EINA_TRUE;
                   return EINA_TRUE;
+
                 case 6:
                   *orientation_res = 90;
                   *flipped = EINA_FALSE;
                   return EINA_TRUE;
+
                 case 7:
                   *orientation_res = 90;
                   *flipped = EINA_TRUE;
                   return EINA_TRUE;
+
                 case 5:
                   *orientation_res = 270;
                   *flipped = EINA_TRUE;
                   return EINA_TRUE;
+
                 case 8:
                   *orientation_res = 270;
                   *flipped = EINA_FALSE;
                   return EINA_TRUE;
+
                 case 2:
                   *orientation_res = 0;
                   *flipped = EINA_TRUE;
                   return EINA_TRUE;
+
                 default:
                   *orientation_res = 0;
                   *flipped = EINA_FALSE;
@@ -940,34 +973,46 @@ _get_orientation(const void *map, size_t length, Eina_Bool *flipped)
    *flipped = EINA_FALSE;
 
    /* open file and get 22 byte frome file */
-   if (!map) return 0;
+   if (!map)
+     return 0;
    /* 1. read 22byte */
-   if (length < 22) return 0;
+   if (length < 22)
+     return 0;
    buf = (unsigned char *)map;
 
    position = 2;
    /* 2. check 2,3 bypte with APP0(0xFFE0) or APP1(0xFFE1) */
-   while((length - position) > 0)
+   while ((length - position) > 0)
      {
-        if (!memcmp(buf + position, App0, sizeof (App0)))
+        if (!memcmp(buf + position, App0, sizeof(App0)))
           {
              res = _get_next_app0(map, length, &position);
-             if (!res) break;
+             if (!res)
+               break;
           }
-        else if (!memcmp(buf + position, App1, sizeof (App1)))
+        else if (!memcmp(buf + position, App1, sizeof(App1)))
           {
-             res = _get_orientation_app1(map, length, &position, &orientation, flipped);
-             if (!res) break;
-             if (orientation != -1) return orientation;
+             res = _get_orientation_app1(map,
+                                         length,
+                                         &position,
+                                         &orientation,
+                                         flipped);
+             if (!res)
+               break;
+             if (orientation != -1)
+               return orientation;
           }
-        else break;
+        else
+          break;
      }
    return 0;
 }
 
 static void
-_rotate_region(unsigned int *r_x, unsigned int *r_y, unsigned int *r_w, unsigned int *r_h,
-               unsigned int x, unsigned int y, unsigned int w, unsigned int h,
+_rotate_region(unsigned int *r_x, unsigned int *r_y,
+               unsigned int *r_w, unsigned int *r_h,
+               unsigned int x, unsigned int y,
+               unsigned int w, unsigned int h,
                unsigned int output_w, unsigned int output_h,
                int degree, Eina_Bool flipped)
 {
@@ -989,6 +1034,7 @@ _rotate_region(unsigned int *r_x, unsigned int *r_y, unsigned int *r_w, unsigned
              *r_h = w;
           }
         break;
+
       case 180:
         if (flipped)
           {
@@ -1000,6 +1046,7 @@ _rotate_region(unsigned int *r_x, unsigned int *r_y, unsigned int *r_w, unsigned
              *r_y = output_h - (y + h);
           }
         break;
+
       case 270:
         if (flipped)
           {
@@ -1016,9 +1063,10 @@ _rotate_region(unsigned int *r_x, unsigned int *r_y, unsigned int *r_w, unsigned
              *r_h = w;
           }
         break;
+
       default:
         if (flipped)
-           *r_x = output_w - (x + w);
+          *r_x = output_w - (x + w);
         break;
      }
 }
@@ -1032,7 +1080,7 @@ _rotate_180(uint32_t *data, int w, int h)
 
    p1 = data;
    p2 = data + (h * w) - 1;
-   for (x = (w * h) / 2; --x >= 0;)
+   for (x = (w * h) / 2; --x >= 0; )
      {
         pt = *p1;
         *p1 = *p2;
@@ -1087,15 +1135,13 @@ _flip_vertical(uint32_t *data, int w, int h)
 }
 
 static void
-_rotate_change_wh(uint32_t *to, uint32_t *from,
-                  int w, int h,
-                  int dx, int dy)
+_rotate_change_wh(uint32_t *to, uint32_t *from, int w, int h, int dx, int dy)
 {
    int x, y;
 
-   for (x = h; --x >= 0;)
+   for (x = h; --x >= 0; )
      {
-        for (y = w; --y >= 0;)
+        for (y = w; --y >= 0; )
           {
              *to = *from;
              from++;
@@ -1114,7 +1160,7 @@ _rotate8_180(uint8_t *data, int w, int h)
 
    p1 = data;
    p2 = data + (h * w) - 1;
-   for (x = (w * h) / 2; --x >= 0;)
+   for (x = (w * h) / 2; --x >= 0; )
      {
         pt = *p1;
         *p1 = *p2;
@@ -1169,15 +1215,13 @@ _flip_vertical8(uint8_t *data, int w, int h)
 }
 
 static void
-_rotate_change_wh8(uint8_t *to, uint8_t *from,
-                   int w, int h,
-                   int dx, int dy)
+_rotate_change_wh8(uint8_t *to, uint8_t *from, int w, int h, int dx, int dy)
 {
    int x, y;
 
-   for (x = h; --x >= 0;)
+   for (x = h; --x >= 0; )
      {
-        for (y = w; --y >= 0;)
+        for (y = w; --y >= 0; )
           {
              *to = *from;
              from++;
@@ -1196,7 +1240,7 @@ _rotate16_180(uint16_t *data, int w, int h)
 
    p1 = data;
    p2 = data + (h * w) - 1;
-   for (x = (w * h) / 2; --x >= 0;)
+   for (x = (w * h) / 2; --x >= 0; )
      {
         pt = *p1;
         *p1 = *p2;
@@ -1251,15 +1295,13 @@ _flip_vertical16(uint16_t *data, int w, int h)
 }
 
 static void
-_rotate_change_wh16(uint16_t *to, uint16_t *from,
-                   int w, int h,
-                   int dx, int dy)
+_rotate_change_wh16(uint16_t *to, uint16_t *from, int w, int h, int dx, int dy)
 {
    int x, y;
 
-   for (x = h; --x >= 0;)
+   for (x = h; --x >= 0; )
      {
-        for (y = w; --y >= 0;)
+        for (y = w; --y >= 0; )
           {
              *to = *from;
              from++;
@@ -1296,12 +1338,12 @@ _emile_jpeg_head(Emile_Image *image,
    Eina_Bool change_wh = EINA_FALSE;
    unsigned int load_opts_w = 0, load_opts_h = 0;
 
-
-   if (sizeof (Emile_Image_Property) != property_size)
+   if (sizeof(Emile_Image_Property) != property_size)
      return EINA_FALSE;
 
    m = _emile_image_file_source_map(image, &length);
-   if (!m) return EINA_FALSE;
+   if (!m)
+     return EINA_FALSE;
 
    if (image->load_opts)
      opts = &image->opts;
@@ -1357,13 +1399,15 @@ _emile_jpeg_head(Emile_Image *image,
              if (degree == 90 || degree == 270)
                change_wh = EINA_TRUE;
           }
-
      }
 
    /* head decoding */
    prop->w = cinfo.output_width;
    prop->h = cinfo.output_height;
-   if ((prop->w < 1) || (prop->h < 1) || (prop->w > IMG_MAX_SIZE) || (prop->h > IMG_MAX_SIZE) ||
+   if ((prop->w < 1) ||
+       (prop->h < 1) ||
+       (prop->w > IMG_MAX_SIZE) ||
+       (prop->h > IMG_MAX_SIZE) ||
        (IMG_TOO_BIG(prop->w, prop->h)))
      {
         jpeg_destroy_decompress(&cinfo);
@@ -1423,8 +1467,10 @@ _emile_jpeg_head(Emile_Image *image,
              opts->h = load_opts_h;
           }
      }
-   if (prop->w < 1) prop->w = 1;
-   if (prop->h < 1) prop->h = 1;
+   if (prop->w < 1)
+     prop->w = 1;
+   if (prop->h < 1)
+     prop->h = 1;
 
    if ((prop->w != cinfo.output_width) || (prop->h != cinfo.output_height))
      {
@@ -1432,15 +1478,22 @@ _emile_jpeg_head(Emile_Image *image,
         scaleh = cinfo.output_height / prop->h;
 
         prop->scale = scalew;
-        if (scaleh < scalew) prop->scale = scaleh;
+        if (scaleh < scalew)
+          prop->scale = scaleh;
 
-        if      (prop->scale > 8) prop->scale = 8;
-        else if (prop->scale < 1) prop->scale = 1;
+        if (prop->scale > 8)
+          prop->scale = 8;
+        else if (prop->scale < 1)
+          prop->scale = 1;
 
-        if      (prop->scale == 3) prop->scale = 2;
-        else if (prop->scale == 5) prop->scale = 4;
-        else if (prop->scale == 6) prop->scale = 4;
-        else if (prop->scale == 7) prop->scale = 4;
+        if (prop->scale == 3)
+          prop->scale = 2;
+        else if (prop->scale == 5)
+          prop->scale = 4;
+        else if (prop->scale == 6)
+          prop->scale = 4;
+        else if (prop->scale == 7)
+          prop->scale = 4;
      }
 
    if (prop->scale > 1)
@@ -1473,13 +1526,18 @@ _emile_jpeg_head(Emile_Image *image,
    /* be nice and clip region to image. if its totally outside, fail load */
    if ((opts->region.w > 0) && (opts->region.h > 0))
      {
-        unsigned int load_region_x = opts->region.x, load_region_y = opts->region.y;
-        unsigned int load_region_w = opts->region.w, load_region_h = opts->region.h;
+        unsigned int load_region_x = opts->region.x;
+        unsigned int load_region_y = opts->region.y;
+        unsigned int load_region_w = opts->region.w;
+        unsigned int load_region_h = opts->region.h;
         if (prop->rotated)
           {
-             _rotate_region(&load_region_x, &load_region_y, &load_region_w, &load_region_h,
-                            opts->region.x, opts->region.y, opts->region.w, opts->region.h,
-                            prop->w, prop->h, degree, prop->flipped);
+             _rotate_region(&load_region_x, &load_region_y,
+                            &load_region_w, &load_region_h,
+                            opts->region.x, opts->region.y,
+                            opts->region.w, opts->region.h,
+                            prop->w, prop->h,
+                            degree, prop->flipped);
           }
         RECTS_CLIP_TO_RECT(load_region_x, load_region_y,
                            load_region_w, load_region_h,
@@ -1530,7 +1588,8 @@ _emile_jpeg_data(Emile_Image *image,
    int region = 0;
    /* rotation setting */
    unsigned int ie_w = 0, ie_h = 0;
-   struct {
+   struct
+   {
       unsigned int x, y, w, h;
    } opts_region;
    volatile int degree = 0;
@@ -1538,11 +1597,12 @@ _emile_jpeg_data(Emile_Image *image,
    Eina_Bool line_done = EINA_FALSE;
    unsigned int length;
 
-   if (sizeof (Emile_Image_Property) != property_size)
+   if (sizeof(Emile_Image_Property) != property_size)
      return EINA_FALSE;
 
    m = _emile_image_file_source_map(image, &length);
-   if (!m) return EINA_FALSE;
+   if (!m)
+     return EINA_FALSE;
 
    if (image->load_opts)
      opts = &image->opts;
@@ -1591,6 +1651,7 @@ _emile_jpeg_data(Emile_Image *image,
      {
       case JCS_UNKNOWN:
         break;
+
       case JCS_GRAYSCALE:
         if (prop->cspace == EMILE_COLORSPACE_GRY8 ||
             prop->cspace == EMILE_COLORSPACE_AGRY88)
@@ -1598,14 +1659,17 @@ _emile_jpeg_data(Emile_Image *image,
              cinfo.out_color_space = JCS_GRAYSCALE;
              break;
           }
+
       case JCS_RGB:
       case JCS_YCbCr:
         cinfo.out_color_space = JCS_RGB;
         break;
+
       case JCS_CMYK:
       case JCS_YCCK:
         cinfo.out_color_space = JCS_CMYK;
         break;
+
       default:
         cinfo.out_color_space = JCS_RGB;
         break;
@@ -1648,8 +1712,10 @@ _emile_jpeg_data(Emile_Image *image,
              load_region_w = opts->region.w;
              load_region_h = opts->region.h;
 
-             _rotate_region(&opts_region.x, &opts_region.y, &opts_region.w, &opts_region.h,
-                            load_region_x, load_region_y, load_region_w, load_region_h,
+             _rotate_region(&opts_region.x, &opts_region.y,
+                            &opts_region.w, &opts_region.h,
+                            load_region_x, load_region_y,
+                            load_region_w, load_region_h,
                             w, h, degree, prop->flipped);
           }
 #ifdef BUILD_LOADER_JPEG_REGION
@@ -1664,8 +1730,7 @@ _emile_jpeg_data(Emile_Image *image,
         *error = EMILE_IMAGE_LOAD_ERROR_GENERIC;
         goto on_error;
      }
-   if ((region) &&
-       ((ie_w != opts_region.w) || (ie_h != opts_region.h)))
+   if ((region) && ((ie_w != opts_region.w) || (ie_h != opts_region.h)))
      {
         *error = EMILE_IMAGE_LOAD_ERROR_GENERIC;
         goto on_error;
@@ -1675,24 +1740,26 @@ _emile_jpeg_data(Emile_Image *image,
      {
       case EMILE_COLORSPACE_GRY8:
       case EMILE_COLORSPACE_AGRY88:
-         if (!(cinfo.out_color_space == JCS_GRAYSCALE &&
-               cinfo.output_components == 1))
-           {
-              *error = EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
-              goto on_error;
-           }
-         break;
+        if (!(cinfo.out_color_space == JCS_GRAYSCALE &&
+              cinfo.output_components == 1))
+          {
+             *error = EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
+             goto on_error;
+          }
+        break;
+
       case EMILE_COLORSPACE_ARGB8888:
-         if (!((cinfo.out_color_space == JCS_RGB && cinfo.output_components == 3) ||
-               (cinfo.out_color_space == JCS_CMYK && cinfo.output_components == 4)))
-           {
-              *error = EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
-              goto on_error;
-           }
-         break;
+        if (!((cinfo.out_color_space == JCS_RGB && cinfo.output_components == 3) ||
+              (cinfo.out_color_space == JCS_CMYK && cinfo.output_components == 4)))
+          {
+             *error = EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
+             goto on_error;
+          }
+        break;
+
       default:
-         *error = EMILE_IMAGE_LOAD_ERROR_GENERIC;
-         goto on_error;
+        *error = EMILE_IMAGE_LOAD_ERROR_GENERIC;
+        goto on_error;
      }
 
    /* end head decoding */
@@ -1743,7 +1810,8 @@ _emile_jpeg_data(Emile_Image *image,
           {
              jpeg_read_scanlines(&cinfo, line, cinfo.rec_outbuf_height);
              scans = cinfo.rec_outbuf_height;
-             if ((h - l) < scans) scans = h - l;
+             if ((h - l) < scans)
+               scans = h - l;
              ptr = data;
              if (!region)
                {
@@ -1754,7 +1822,7 @@ _emile_jpeg_data(Emile_Image *image,
                             for (x = 0; x < w; x++)
                               {
                                  /* According to libjpeg doc, Photoshop inverse the values of C, M, Y and K, */
-                                 /* that is C is replaces by 255 - C, etc...*/
+                                 /* that is C is replaces by 255 - C, etc... */
                                  /* See the comment below for the computation of RGB values from CMYK ones. */
                                  *ptr2 =
                                    (0xff000000) |
@@ -1801,18 +1869,16 @@ _emile_jpeg_data(Emile_Image *image,
                        /* if rotation flag is set , we have to rotate image */
                        goto done;
                        /*jpeg_destroy_decompress(&cinfo);
-                         _emile_jpeg_membuf_src_term(&cinfo);
-                        *error = EMILE_IMAGE_LOAD_ERROR_NONE;
-                        return EINA_FALSE;*/
+                          _emile_jpeg_membuf_src_term(&cinfo);
+                        * error = EMILE_IMAGE_LOAD_ERROR_NONE;
+                          return EINA_FALSE; */
                     }
                   /* else if scan block intersects region start or later */
-                  else if ((l + scans) >
-                           (opts_region.y))
+                  else if ((l + scans) > (opts_region.y))
                     {
                        for (y = 0; y < scans; y++)
                          {
-                            if (((y + l) >= opts_region.y) &&
-                                ((y + l) < (opts_region.y + opts_region.h)))
+                            if (((y + l) >= opts_region.y) && ((y + l) < (opts_region.y + opts_region.h)))
                               {
                                  ptr += opts_region.x;
                                  if (cinfo.saw_Adobe_marker)
@@ -1820,7 +1886,7 @@ _emile_jpeg_data(Emile_Image *image,
                                       for (x = 0; x < opts_region.w; x++)
                                         {
                                            /* According to libjpeg doc, Photoshop inverse the values of C, M, Y and K, */
-                                           /* that is C is replaces by 255 - C, etc...*/
+                                           /* that is C is replaces by 255 - C, etc... */
                                            /* See the comment below for the computation of RGB values from CMYK ones. */
                                            *ptr2 =
                                              (0xff000000) |
@@ -1890,7 +1956,8 @@ _emile_jpeg_data(Emile_Image *image,
           {
              jpeg_read_scanlines(&cinfo, line, cinfo.rec_outbuf_height);
              scans = cinfo.rec_outbuf_height;
-             if ((h - l) < scans) scans = h - l;
+             if ((h - l) < scans)
+               scans = h - l;
              ptr = data;
              if (!region)
                {
@@ -1915,8 +1982,7 @@ _emile_jpeg_data(Emile_Image *image,
                        goto done;
                     }
                   /* else if scan block intersects region start or later */
-                  else if ((l + scans) >
-                           (opts_region.y))
+                  else if ((l + scans) > (opts_region.y))
                     {
                        for (y = 0; y < scans; y++)
                          {
@@ -1952,7 +2018,8 @@ _emile_jpeg_data(Emile_Image *image,
           {
              jpeg_read_scanlines(&cinfo, line, cinfo.rec_outbuf_height);
              scans = cinfo.rec_outbuf_height;
-             if ((h - l) < scans) scans = h - l;
+             if ((h - l) < scans)
+               scans = h - l;
              ptr = data;
              if (!region)
                {
@@ -1988,13 +2055,12 @@ _emile_jpeg_data(Emile_Image *image,
                        /* if rotation flag is set , we have to rotate image */
                        goto done;
                        /*jpeg_destroy_decompress(&cinfo);
-                         _emile_jpeg_membuf_src_term(&cinfo);
-                        *error = EMILE_IMAGE_LOAD_ERROR_NONE;
-                        return EINA_TRUE;*/
+                          _emile_jpeg_membuf_src_term(&cinfo);
+                        * error = EMILE_IMAGE_LOAD_ERROR_NONE;
+                          return EINA_TRUE; */
                     }
                   /* else if scan block intersects region start or later */
-                  else if ((l + scans) >
-                           (opts_region.y))
+                  else if ((l + scans) > (opts_region.y))
                     {
                        for (y = 0; y < scans; y++)
                          {
@@ -2070,6 +2136,7 @@ done:
                     _rotate_change_wh(to + h - 1, ptr_rotate, w, h, -hw - 1, h);
                }
              break;
+
            case 180:
              if (prop->cspace == EMILE_COLORSPACE_GRY8)
                {
@@ -2093,6 +2160,7 @@ done:
                     _rotate_180(to, w, h);
                }
              break;
+
            case 270:
              if (prop->cspace == EMILE_COLORSPACE_GRY8)
                {
@@ -2116,6 +2184,7 @@ done:
                     _rotate_change_wh(to + hw - h, ptr_rotate, w, h, hw + 1, -h);
                }
              break;
+
            default:
              if (prop->flipped)
                {
@@ -2147,7 +2216,7 @@ done:
    *error = EMILE_IMAGE_LOAD_ERROR_NONE;
    return EINA_TRUE;
 
- on_error:
+on_error:
    jpeg_destroy_decompress(&cinfo);
    _emile_jpeg_membuf_src_term(&cinfo);
    return EINA_FALSE;
@@ -2162,25 +2231,16 @@ _emile_jpeg_close(Emile_Image *image EINA_UNUSED)
 /* Generic helper to instantiate a new Emile_Image */
 
 static Emile_Image *
-_emile_image_new(Eina_Bool (*bind) (Emile_Image *image,
-                                    Emile_Image_Load_Opts *opts,
-                                    Emile_Image_Animated *animated,
-                                    Emile_Image_Load_Error *error),
-                 Eina_Bool (*head)(Emile_Image *image,
-                                   Emile_Image_Property *prop,
-                                   unsigned int property_size,
-                                   Emile_Image_Load_Error *error),
-                 Eina_Bool (*data)(Emile_Image *image,
-                                   Emile_Image_Property *prop,
-                                   unsigned int property_size,
-                                   void *pixels,
-                                   Emile_Image_Load_Error *error),
+_emile_image_new(Eina_Bool (*bind)(Emile_Image *image, Emile_Image_Load_Opts *opts, Emile_Image_Animated *animated, Emile_Image_Load_Error *error),
+                 Eina_Bool (*head)(Emile_Image *image, Emile_Image_Property *prop, unsigned int property_size, Emile_Image_Load_Error *error),
+                 Eina_Bool (*data)(Emile_Image *image, Emile_Image_Property *prop, unsigned int property_size, void *pixels, Emile_Image_Load_Error *error),
                  void (*close)(Emile_Image *image))
 {
    Emile_Image *ei;
 
-   ei = calloc(1, sizeof (Emile_Image));
-   if (!ei) return NULL;
+   ei = calloc(1, sizeof(Emile_Image));
+   if (!ei)
+     return NULL;
 
    ei->bind = bind;
    ei->head = head;
@@ -2240,7 +2300,8 @@ emile_image_tgv_memory_open(Eina_Binbuf *source,
                          _emile_tgv_head,
                          _emile_tgv_data,
                          _emile_tgv_close);
-   if (!ei) return NULL;
+   if (!ei)
+     return NULL;
 
    _emile_image_binbuf_set(ei, source);
    return _emile_image_bind(ei, opts, animated, error);
@@ -2258,7 +2319,8 @@ emile_image_tgv_file_open(Eina_File *source,
                          _emile_tgv_head,
                          _emile_tgv_data,
                          _emile_tgv_close);
-   if (!ei) return NULL;
+   if (!ei)
+     return NULL;
 
    _emile_image_file_set(ei, source);
    return _emile_image_bind(ei, opts, animated, error);
@@ -2276,7 +2338,8 @@ emile_image_jpeg_memory_open(Eina_Binbuf *source,
                          _emile_jpeg_head,
                          _emile_jpeg_data,
                          _emile_jpeg_close);
-   if (!ei) return NULL;
+   if (!ei)
+     return NULL;
 
    _emile_image_binbuf_set(ei, source);
    return _emile_image_bind(ei, opts, animated, error);
@@ -2294,7 +2357,8 @@ emile_image_jpeg_file_open(Eina_File *source,
                          _emile_jpeg_head,
                          _emile_jpeg_data,
                          _emile_jpeg_close);
-   if (!ei) return NULL;
+   if (!ei)
+     return NULL;
 
    _emile_image_file_set(ei, source);
    return _emile_image_bind(ei, opts, animated, error);
@@ -2303,7 +2367,8 @@ emile_image_jpeg_file_open(Eina_File *source,
 EAPI void
 emile_image_close(Emile_Image *image)
 {
-   if (!image) return ;
+   if (!image)
+     return;
 
    _emile_image_file_source_unmap(image);
    if (!image->bin_source)
@@ -2318,7 +2383,8 @@ emile_image_head(Emile_Image *image,
                  unsigned int property_size,
                  Emile_Image_Load_Error *error)
 {
-   if (!image) return EINA_FALSE;
+   if (!image)
+     return EINA_FALSE;
 
    *error = EMILE_IMAGE_LOAD_ERROR_NONE;
    return image->head(image, prop, property_size, error);
@@ -2331,7 +2397,8 @@ emile_image_data(Emile_Image *image,
                  void *pixels,
                  Emile_Image_Load_Error *error)
 {
-   if (!image) return EINA_FALSE;
+   if (!image)
+     return EINA_FALSE;
 
    *error = EMILE_IMAGE_LOAD_ERROR_NONE;
    return image->data(image, prop, property_size, pixels, error);
@@ -2344,19 +2411,25 @@ emile_load_error_str(Emile_Image *source EINA_UNUSED,
    switch (error)
      {
       case EMILE_IMAGE_LOAD_ERROR_NONE:
-         return "No error";
+        return "No error";
+
       case EMILE_IMAGE_LOAD_ERROR_GENERIC:
-         return "Generic error encountered while loading image.";
+        return "Generic error encountered while loading image.";
+
       case EMILE_IMAGE_LOAD_ERROR_DOES_NOT_EXIST:
-         return "File does not exist.";
+        return "File does not exist.";
+
       case EMILE_IMAGE_LOAD_ERROR_PERMISSION_DENIED:
-         return "Permission to open file denied.";
+        return "Permission to open file denied.";
+
       case EMILE_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED:
-         return "Not enough memory to open file.";
+        return "Not enough memory to open file.";
+
       case EMILE_IMAGE_LOAD_ERROR_CORRUPT_FILE:
-         return "File is corrupted.";
+        return "File is corrupted.";
+
       case EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT:
-         return "Unexpected file format.";
+        return "Unexpected file format.";
      }
    return NULL;
 }

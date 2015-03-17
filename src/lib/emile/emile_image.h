@@ -33,14 +33,14 @@ typedef enum _Emile_Colorspace
   EMILE_COLORSPACE_AGRY88 = 8, /**< AY 8bits Alpha and 8bits Grey, accessed 1 16bits at a time */
   EMILE_COLORSPACE_ETC1 = 9, /**< OpenGL ETC1 encoding of RGB texture (4 bit per pixel) @since 1.10 */
   EMILE_COLORSPACE_RGB8_ETC2 = 10, /**< OpenGL GL_COMPRESSED_RGB8_ETC2 texture compression format (4 bit per pixel) @since 1.10 */
-  EMILE_COLORSPACE_RGBA8_ETC2_EAC = 11, /**< OpenGL GL_COMPRESSED_RGBA8_ETC2_EAC texture compression format, supports alpha (8 bit per pixel) @since 1.10 */
+  EMILE_COLORSPACE_RGBA8_ETC2_EAC = 11,	/**< OpenGL GL_COMPRESSED_RGBA8_ETC2_EAC texture compression format, supports alpha (8 bit per pixel) @since 1.10 */
   EMILE_COLORSPACE_ETC1_ALPHA = 12, /**< ETC1 with alpha support using two planes: ETC1 RGB and ETC1 grey for alpha @since 1.11 */
-  EMILE_COLORSPACE_RGB_S3TC_DXT1 = 13,  /**< OpenGL COMPRESSED_RGB_S3TC_DXT1_EXT format with RGB only. @since 1.11 */
-  EMILE_COLORSPACE_RGBA_S3TC_DXT1 = 14, /**< OpenGL COMPRESSED_RGBA_S3TC_DXT1_EXT format with RGBA punchthrough. @since 1.11 */
-  EMILE_COLORSPACE_RGBA_S3TC_DXT2 = 15, /**< DirectDraw DXT2 format with premultiplied RGBA. Not supported by OpenGL itself. @since 1.11 */
-  EMILE_COLORSPACE_RGBA_S3TC_DXT3 = 16, /**< OpenGL COMPRESSED_RGBA_S3TC_DXT3_EXT format with RGBA. @since 1.11 */
-  EMILE_COLORSPACE_RGBA_S3TC_DXT4 = 17, /**< DirectDraw DXT4 format with premultiplied RGBA. Not supported by OpenGL itself. @since 1.11 */
-  EMILE_COLORSPACE_RGBA_S3TC_DXT5 = 18  /**< OpenGL COMPRESSED_RGBA_S3TC_DXT5_EXT format with RGBA. @since 1.11 */
+  EMILE_COLORSPACE_RGB_S3TC_DXT1 = 13,	/**< OpenGL COMPRESSED_RGB_S3TC_DXT1_EXT format with RGB only. @since 1.11 */
+  EMILE_COLORSPACE_RGBA_S3TC_DXT1 = 14,	/**< OpenGL COMPRESSED_RGBA_S3TC_DXT1_EXT format with RGBA punchthrough. @since 1.11 */
+  EMILE_COLORSPACE_RGBA_S3TC_DXT2 = 15,	/**< DirectDraw DXT2 format with premultiplied RGBA. Not supported by OpenGL itself. @since 1.11 */
+  EMILE_COLORSPACE_RGBA_S3TC_DXT3 = 16,	/**< OpenGL COMPRESSED_RGBA_S3TC_DXT3_EXT format with RGBA. @since 1.11 */
+  EMILE_COLORSPACE_RGBA_S3TC_DXT4 = 17,	/**< DirectDraw DXT4 format with premultiplied RGBA. Not supported by OpenGL itself. @since 1.11 */
+  EMILE_COLORSPACE_RGBA_S3TC_DXT5 = 18	/**< OpenGL COMPRESSED_RGBA_S3TC_DXT5_EXT format with RGBA. @since 1.11 */
 } Emile_Colorspace;
 
 /**
@@ -106,13 +106,13 @@ typedef enum _Emile_Image_Animated_Loop_Hint
  */
 typedef enum _Emile_Image_Load_Error
 {
-   EMILE_IMAGE_LOAD_ERROR_NONE = 0, /**< No error on load */
-   EMILE_IMAGE_LOAD_ERROR_GENERIC = 1, /**< A non-specific error occurred */
-   EMILE_IMAGE_LOAD_ERROR_DOES_NOT_EXIST = 2, /**< File (or file path) does not exist */
-   EMILE_IMAGE_LOAD_ERROR_PERMISSION_DENIED = 3, /**< Permission denied to an existing file (or path) */
-   EMILE_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4, /**< Allocation of resources failure prevented load */
-   EMILE_IMAGE_LOAD_ERROR_CORRUPT_FILE = 5, /**< File corrupt (but was detected as a known format) */
-   EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT = 6 /**< File is not a known format */
+  EMILE_IMAGE_LOAD_ERROR_NONE = 0,  /**< No error on load */
+  EMILE_IMAGE_LOAD_ERROR_GENERIC = 1,  /**< A non-specific error occurred */
+  EMILE_IMAGE_LOAD_ERROR_DOES_NOT_EXIST = 2,  /**< File (or file path) does not exist */
+  EMILE_IMAGE_LOAD_ERROR_PERMISSION_DENIED = 3,	 /**< Permission denied to an existing file (or path) */
+  EMILE_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4,  /**< Allocation of resources failure prevented load */
+  EMILE_IMAGE_LOAD_ERROR_CORRUPT_FILE = 5,  /**< File corrupt (but was detected as a known format) */
+  EMILE_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT = 6  /**< File is not a known format */
 } Emile_Image_Load_Error; /**< Emile image load error codes one can get - see emile_load_error_str() too. */
 
 /**
@@ -153,61 +153,63 @@ typedef struct _Emile_Image_Property Emile_Image_Property;
 
 struct _Emile_Image_Property
 {
-   struct {
-      unsigned char l, r, t, b;
-   } borders;
+  struct
+  {
+    unsigned char l, r, t, b;
+  } borders;
 
-   const Emile_Colorspace *cspaces;
-   Emile_Colorspace cspace;
+  const Emile_Colorspace *cspaces;
+  Emile_Colorspace cspace;
 
-   Emile_Image_Encoding encoding;
+  Emile_Image_Encoding encoding;
 
-   unsigned int w;
-   unsigned int h;
-   unsigned int row_stride;
+  unsigned int w;
+  unsigned int h;
+  unsigned int row_stride;
 
-   unsigned char scale;
+  unsigned char scale;
 
-   Eina_Bool rotated;
-   Eina_Bool alpha;
-   Eina_Bool premul;
-   Eina_Bool alpha_sparse;
+  Eina_Bool rotated;
+  Eina_Bool alpha;
+  Eina_Bool premul;
+  Eina_Bool alpha_sparse;
 
-   Eina_Bool flipped;
-   Eina_Bool comp;
+  Eina_Bool flipped;
+  Eina_Bool comp;
 };
 
 struct _Emile_Image_Animated
 {
-   Eina_List *frames;
+  Eina_List *frames;
 
-   Emile_Image_Animated_Loop_Hint loop_hint;
+  Emile_Image_Animated_Loop_Hint loop_hint;
 
-   int frame_count;
-   int loop_count;
-   int cur_frame;
+  int frame_count;
+  int loop_count;
+  int cur_frame;
 
-   Eina_Bool animated;
+  Eina_Bool animated;
 };
 
 struct _Emile_Image_Load_Opts
 {
-   Eina_Rectangle region;
-   struct {
-      int src_x, src_y, src_w, src_h;
-      int dst_w, dst_h;
-      int smooth;
+  Eina_Rectangle region;
+  struct
+  {
+    int src_x, src_y, src_w, src_h;
+    int dst_w, dst_h;
+    int smooth;
 
-      /* This should have never been part of this structure, but we keep it
-         for ABI/API compability with Evas_Loader */
-      Emile_Image_Scale_Hint scale_hint;
-   } scale_load;
-   double dpi;
-   unsigned int w, h;
-   unsigned int degree;
-   int scale_down_by;
+    /* This should have never been part of this structure, but we keep it
+       for ABI/API compability with Evas_Loader */
+    Emile_Image_Scale_Hint scale_hint;
+  } scale_load;
+  double dpi;
+  unsigned int w, h;
+  unsigned int degree;
+  int scale_down_by;
 
-   Eina_Bool orientation;
+  Eina_Bool orientation;
 };
 
 // FIXME: should we set region at load time, instead of head time
@@ -224,11 +226,7 @@ struct _Emile_Image_Load_Opts
  *
  * @since 1.14
  */
-EAPI Emile_Image *
-emile_image_tgv_memory_open(Eina_Binbuf *source,
-                            Emile_Image_Load_Opts *opts,
-                            Emile_Image_Animated *animated,
-                            Emile_Image_Load_Error *error);
+EAPI Emile_Image *emile_image_tgv_memory_open(Eina_Binbuf * source, Emile_Image_Load_Opts * opts, Emile_Image_Animated * animated, Emile_Image_Load_Error * error);
 
 /**
  * Open a TGV image from a file.
@@ -241,11 +239,7 @@ emile_image_tgv_memory_open(Eina_Binbuf *source,
  *
  * @since 1.14
  */
-EAPI Emile_Image *
-emile_image_tgv_file_open(Eina_File *source,
-                          Emile_Image_Load_Opts *opts,
-                          Emile_Image_Animated *animated,
-                          Emile_Image_Load_Error *error);
+EAPI Emile_Image *emile_image_tgv_file_open(Eina_File * source, Emile_Image_Load_Opts * opts, Emile_Image_Animated * animated, Emile_Image_Load_Error * error);
 
 
 /**
@@ -259,11 +253,7 @@ emile_image_tgv_file_open(Eina_File *source,
  *
  * @since 1.14
  */
-EAPI Emile_Image *
-emile_image_jpeg_memory_open(Eina_Binbuf *source,
-                             Emile_Image_Load_Opts *opts,
-                             Emile_Image_Animated *animated,
-                             Emile_Image_Load_Error *error);
+EAPI Emile_Image *emile_image_jpeg_memory_open(Eina_Binbuf * source, Emile_Image_Load_Opts * opts, Emile_Image_Animated * animated, Emile_Image_Load_Error * error);
 
 /**
  * Open a JPEG image from file.
@@ -276,11 +266,7 @@ emile_image_jpeg_memory_open(Eina_Binbuf *source,
  *
  * @since 1.14
  */
-EAPI Emile_Image *
-emile_image_jpeg_file_open(Eina_File *source,
-                           Emile_Image_Load_Opts *opts,
-                           Emile_Image_Animated *animated,
-                           Emile_Image_Load_Error *error);
+EAPI Emile_Image *emile_image_jpeg_file_open(Eina_File * source, Emile_Image_Load_Opts * opts, Emile_Image_Animated * animated, Emile_Image_Load_Error * error);
 
 /**
  * Read the header of an image to fill Emile_Image_Property.
@@ -293,11 +279,7 @@ emile_image_jpeg_file_open(Eina_File *source,
  *
  * @since 1.14
  */
-EAPI Eina_Bool
-emile_image_head(Emile_Image *image,
-                 Emile_Image_Property *prop,
-                 unsigned int property_size,
-                 Emile_Image_Load_Error *error);
+EAPI Eina_Bool emile_image_head(Emile_Image * image, Emile_Image_Property * prop, unsigned int property_size, Emile_Image_Load_Error * error);
 
 /**
  * Read the pixels from an image file.
@@ -311,12 +293,7 @@ emile_image_head(Emile_Image *image,
  *
  * @since 1.14
  */
-EAPI Eina_Bool
-emile_image_data(Emile_Image *image,
-                 Emile_Image_Property *prop,
-                 unsigned int property_size,
-                 void *pixels,
-                 Emile_Image_Load_Error *error);
+EAPI Eina_Bool emile_image_data(Emile_Image * image, Emile_Image_Property * prop, unsigned int property_size, void *pixels, Emile_Image_Load_Error * error);
 
 /**
  * Close an opened image handler.
@@ -325,8 +302,7 @@ emile_image_data(Emile_Image *image,
  *
  * @since 1.14
  */
-EAPI void
-emile_image_close(Emile_Image *source);
+EAPI void emile_image_close(Emile_Image * source);
 
 /**
  * Convert an error code related to an image handler into a meaningful string.
@@ -337,9 +313,7 @@ emile_image_close(Emile_Image *source);
  *
  * @since 1.14
  */
-EAPI const char *
-emile_load_error_str(Emile_Image *source,
-                     Emile_Image_Load_Error error);
+EAPI const char *emile_load_error_str(Emile_Image * source, Emile_Image_Load_Error error);
 
 /**
  * @}

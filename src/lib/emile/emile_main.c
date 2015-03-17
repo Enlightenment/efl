@@ -1,17 +1,17 @@
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+#include <config.h>
 #endif /* ifdef HAVE_CONFIG_H */
 
 #ifdef HAVE_GNUTLS
-# include <gnutls/gnutls.h>
-# include <gnutls/x509.h>
-# include <gcrypt.h>
+#include <gnutls/gnutls.h>
+#include <gnutls/x509.h>
+#include <gcrypt.h>
 #endif /* ifdef HAVE_GNUTLS */
 
 #ifdef HAVE_OPENSSL
-# include <openssl/ssl.h>
-# include <openssl/err.h>
-# include <openssl/evp.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+#include <openssl/evp.h>
 #endif /* ifdef HAVE_OPENSSL */
 
 #include <Eina.h>
@@ -26,9 +26,11 @@ int _emile_log_dom_global = -1;
 EAPI Eina_Bool
 emile_cipher_init(void)
 {
-   if (_emile_cipher_inited) return EINA_TRUE;
+   if (_emile_cipher_inited)
+     return EINA_TRUE;
 
-   if (!_emile_cipher_init()) return EINA_FALSE;
+   if (!_emile_cipher_init())
+     return EINA_FALSE;
 
    _emile_cipher_inited = EINA_TRUE;
 
@@ -65,13 +67,11 @@ emile_init(void)
         goto shutdown_eina;
      }
 
-   eina_log_timing(_emile_log_dom_global,
-                   EINA_LOG_STATE_STOP,
-                   EINA_LOG_STATE_INIT);
+   eina_log_timing(_emile_log_dom_global, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
 
    return _emile_init_count;
 
- shutdown_eina:
+shutdown_eina:
    eina_shutdown();
 
    return --_emile_init_count;
@@ -83,9 +83,7 @@ emile_shutdown(void)
    if (--_emile_init_count != 0)
      return _emile_init_count;
 
-   eina_log_timing(_emile_log_dom_global,
-                   EINA_LOG_STATE_START,
-                   EINA_LOG_STATE_SHUTDOWN);
+   eina_log_timing(_emile_log_dom_global, EINA_LOG_STATE_START, EINA_LOG_STATE_SHUTDOWN);
 
    if (_emile_cipher_inited)
      {
@@ -122,13 +120,7 @@ emile_shutdown(void)
 /* For the moment, we have just one function shared accross both cipher
  * backend, so here it is. */
 Eina_Bool
-emile_pbkdf2_sha1(const char *key,
-                  unsigned int key_len,
-                  const unsigned char *salt,
-                  unsigned int salt_len,
-                  unsigned int iter,
-                  unsigned char *res,
-                  unsigned int res_len)
+emile_pbkdf2_sha1(const char *key, unsigned int key_len, const unsigned char *salt, unsigned int salt_len, unsigned int iter, unsigned char *res, unsigned int res_len)
 {
    Eina_Binbuf *step1, *step2;
    unsigned char *buf;
@@ -140,12 +132,15 @@ emile_pbkdf2_sha1(const char *key,
    unsigned int i, j, k;
 
    buf = alloca(salt_len + 4);
-   if (!buf) return EINA_FALSE;
+   if (!buf)
+     return EINA_FALSE;
 
    step1 = eina_binbuf_manage_new(buf, salt_len + 4, EINA_TRUE);
-   if (!step1) return EINA_FALSE;
+   if (!step1)
+     return EINA_FALSE;
    step2 = eina_binbuf_manage_new(digest, 20, EINA_TRUE);
-   if (!step2) return EINA_FALSE;
+   if (!step2)
+     return EINA_FALSE;
 
    for (i = 1; len; len -= tmp_len, p += tmp_len, i++)
      {
@@ -178,3 +173,4 @@ emile_pbkdf2_sha1(const char *key,
 
    return EINA_TRUE;
 }
+

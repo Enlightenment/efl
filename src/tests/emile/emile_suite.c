@@ -1,5 +1,5 @@
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+#include <config.h>
 #endif /* ifdef HAVE_CONFIG_H */
 
 #include <stdlib.h>
@@ -23,11 +23,14 @@ emile_base_test(TCase *tc)
    tcase_add_test(tc, emile_test_init);
 }
 
-static const struct {
+static const struct
+{
    const char *name;
-   void (*build)(TCase *tc);
+   void        (*build)(TCase *tc);
 } tests[] = {
-   { "Emile_Base", emile_base_test }
+  {
+    "Emile_Base", emile_base_test
+  }
 };
 
 static void
@@ -36,16 +39,18 @@ _list_tests(void)
    unsigned int i;
 
    fputs("Available tests cases :\n", stderr);
-   for (i = 0; i < sizeof (tests) / sizeof (tests[0]); i++)
+   for (i = 0; i < sizeof(tests) / sizeof(tests[0]); i++)
      fprintf(stderr, "\t%s\n", tests[i].name);
 }
 
 static Eina_Bool
 _use_test(const char *name, int argc, char *argv[])
 {
-   argc--; argv--;
+   argc--;
+   argv--;
 
-   if (argc < 1) return EINA_TRUE;
+   if (argc < 1)
+     return EINA_TRUE;
 
    for (; argc > 1; argc--, argv++)
      if (strcmp(name, *argv) == 0)
@@ -63,16 +68,13 @@ main(int argc, char *argv[])
    int j;
 
    for (j = 1; j < argc; j++)
-     if ((strcmp(argv[j], "-h") == 0) ||
-         (strcmp(argv[j], "--help") == 0))
+     if ((strcmp(argv[j], "-h") == 0) || (strcmp(argv[j], "--help") == 0))
        {
-          fprintf(stderr, "Usage:\n\t%s [test_case1 .. [test_caseN]]\n",
-                  argv[0]);
+          fprintf(stderr, "Usage:\n\t%s [test_case1 .. [test_caseN]]\n", argv[0]);
           _list_tests();
           return 0;
        }
-     else if ((strcmp(argv[j], "-l") == 0) ||
-              (strcmp(argv[j], "--list") == 0))
+     else if ((strcmp(argv[j], "-l") == 0) || (strcmp(argv[j], "--list") == 0))
        {
           _list_tests();
           return 0;
@@ -80,11 +82,12 @@ main(int argc, char *argv[])
 
    s = suite_create("Emile");
 
-   for (i = 0; i < sizeof (tests) / sizeof (tests[0]); ++i)
+   for (i = 0; i < sizeof(tests) / sizeof(tests[0]); ++i)
      {
         TCase *tc;
 
-        if (!_use_test(tests[i].name, argc, argv)) continue ;
+        if (!_use_test(tests[i].name, argc, argv))
+          continue;
 
         tc = tcase_create(tests[i].name);
         tests[i].build(tc);
