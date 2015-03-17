@@ -18,11 +18,6 @@ static char CONFORMANT_KEY[] = "_elm_conform_key";
 
 #define ELM_CONFORM_INDICATOR_TIME 1.0
 
-#ifdef HAVE_ELEMENTARY_X
-#define SUB_TYPE_COUNT 2
-static char *sub_type[SUB_TYPE_COUNT] = { "elm_scroller", "elm_genlist" };
-#endif
-
 static const char INDICATOR_PART[] = "elm.swallow.indicator";
 static const char VIRTUALKEYPAD_PART[] = "elm.swallow.virtualkeypad";
 static const char CLIPBOARD_PART[] = "elm.swallow.clipboard";
@@ -731,15 +726,11 @@ _autoscroll_objects_update(void *data)
 
    while (sub)
      {
-        type = elm_widget_type_get(sub);
-        if (!strcmp(type, MY_CLASS_NAME_LEGACY)) break;
+        if (eo_isa(sub, ELM_CONFORMANT_CLASS)) break;
 
-        for (i = 0; i < SUB_TYPE_COUNT; i++)
-          if (!strcmp(type, sub_type[i]))
-            {
-               top_scroller = sub;
-               break;
-            }
+        if (eo_isa(sub, ELM_SCROLLER_CLASS) || eo_isa(sub, ELM_GENLIST_CLASS))
+          top_scroller = sub;
+
         sub = elm_object_parent_widget_get(sub);
      }
 
