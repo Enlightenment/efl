@@ -85,7 +85,7 @@ extern "C" {
  *
  * @return The new init count. Will be 0 if initialization failed.
  *
- * @since 1.14.0
+ * @since 1.14
  */
 EAPI int emile_init(void);
 
@@ -98,7 +98,7 @@ EAPI int emile_init(void);
  * of the internal elements will be shutdown and any memory used freed.
  *
  * @return The new init count.
- * @since 1.14.0
+ * @since 1.14
  */
 EAPI int emile_shutdown(void);
 

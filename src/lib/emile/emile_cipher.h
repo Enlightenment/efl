@@ -14,7 +14,7 @@
  *
  * Flags describing the implemented backend.
  *
- * @since 1.14.0
+ * @since 1.14
  */
 typedef enum _Emile_Cipher_Backend
 {
@@ -44,14 +44,14 @@ typedef enum _Emile_Cipher_Algorithm
  * @return EINA_TRUE on success, EINA_FALSE otherwise.
  * @see emile_cipher_module_get
  *
- * @since 1.14.0
+ * @since 1.14
  */
 EAPI Eina_Bool emile_cipher_init(void);
 /**
  * Get the name of the current used backend.
  *
  * @return the name of the current cipher backend.
- * @since 1.14.0
+ * @since 1.14
  */
 EAPI Emile_Cipher_Backend emile_cipher_module_get(void);
 
@@ -64,7 +64,7 @@ EAPI Emile_Cipher_Backend emile_cipher_module_get(void);
  * @param length The length of the symetric key to be used.
  * @return the ciphered buffer or NULL on error.
  *
- * @since 1.14.0
+ * @since 1.14
  */
 EAPI Eina_Binbuf *emile_binbuf_cipher(Emile_Cipher_Algorithm algo,
                                       const Eina_Binbuf *in,
@@ -83,7 +83,7 @@ EAPI Eina_Binbuf *emile_binbuf_cipher(Emile_Cipher_Algorithm algo,
  * have to check that the returned data make sense. You should also not treat
  * them as safe.
  *
- * @since 1.14.0
+ * @since 1.14
  */
 EAPI Eina_Binbuf *emile_binbuf_decipher(Emile_Cipher_Algorithm algo,
                                         const Eina_Binbuf *in,
