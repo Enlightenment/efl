@@ -413,8 +413,9 @@ emile_cipher_server_listen(Emile_Cipher_Type t)
 }
 
 EAPI Emile_SSL *
-emile_cipher_client_connect(Emile_SSL *server, int fd)
+emile_cipher_client_connect(Emile_SSL *server EINA_UNUSED, int fd EINA_UNUSED)
 {
+   return NULL;
 }
 
 EAPI Emile_SSL *
@@ -462,14 +463,15 @@ emile_cipher_server_connect(Emile_Cipher_Type t)
    if (ret) goto on_error;
 
    gnutls_handshake_set_private_extensions(r->session, 1);
-   ret = gnutls_credentials_set(r->session, GNUTLS_CRD_CERTIFICATE, r->cert));
+   ret = gnutls_credentials_set(r->session, GNUTLS_CRD_CERTIFICATE, r->cert);
 
    return r;
 }
 
 EAPI Eina_Bool
-emile_cipher_free(Emile_SSL *emile)
+emile_cipher_free(Emile_SSL *emile EINA_UNUSED)
 {
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
@@ -562,11 +564,13 @@ emile_cipher_read(Emile_SSL *emile, Eina_Binbuf *buffer)
    num = gnutls_record_recv(emile->session,
                             (void*) eina_binbuf_string_get(buffer),
                             eina_binbuf_length_get(buffer));
+   return 0;
 }
 
 EAPI int
-emile_cipher_write(Emile_SSL *emile, const Eina_Binbuf *buffer)
+emile_cipher_write(Emile_SSL *emile EINA_UNUSED, const Eina_Binbuf *buffer EINA_UNUSED)
 {
+   return 0;
 }
 
 EAPI const char *
