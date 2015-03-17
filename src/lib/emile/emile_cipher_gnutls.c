@@ -50,61 +50,14 @@ struct _Emile_SSL
    Eina_Bool verify_basic : 1;
 };
 
-static int
-_emile_thread_mutex_init(void **priv)
-{
-   Eina_Lock *lock;
-
-   lock = malloc(sizeof (Eina_Lock));
-   if (!lock) return ENOMEM;
-
-   if (!eina_lock_new(lock))
-     {
-        free(lock);
-        return ENOMEM;
-     }
-
-   *priv = lock;
-   return 0;
-}
-
-static int
-_emile_thread_mutex_destroy(void **priv)
-{
-   eina_lock_free(*priv);
-   free(*priv);
-   return 0;
-}
-
-static int
-_emile_thread_mutex_lock(void **priv)
-{
-   if (eina_lock_take(*priv) == EINA_LOCK_FAIL)
-     return EINVAL;
-   return 0;
-}
-
-static int
-_emile_thread_mutex_unlock(void **priv)
-{
-   if (eina_lock_release(*priv) == EINA_LOCK_FAIL)
-     return EINVAL;
-   return 0;
-}
-
-static struct gcry_thread_cbs _emile_threads = {
-  (GCRY_THREAD_OPTION_PTHREAD | (GCRY_THREAD_OPTION_VERSION << 8)),
-  NULL, _emile_thread_mutex_init, _emile_thread_mutex_destroy,
-  _emile_thread_mutex_lock, _emile_thread_mutex_unlock,
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
-};
+GCRY_THREAD_OPTION_PTHREAD_IMPL;
 
 Eina_Bool
 _emile_cipher_init(void)
 {
-   if (gcry_control(GCRYCTL_SET_THREAD_CBS, &_emile_threads))
-     WRN(
-       "YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
+   if (gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread))
+     WRN("YOU ARE USING PTHREADS, "
+         "BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
 
    /* Before the library can be used, it must initialize itself if needed. */
    if (gcry_control(GCRYCTL_ANY_INITIALIZATION_P) == 0)
@@ -466,6 +419,11 @@ emile_cipher_server_connect(Emile_Cipher_Type t)
    ret = gnutls_credentials_set(r->session, GNUTLS_CRD_CERTIFICATE, r->cert);
 
    return r;
+
+ on_error:
+   // FIXEM: cleanly destroy session
+   free(r);
+   return NULL;
 }
 
 EAPI Eina_Bool
@@ -555,7 +513,7 @@ emile_cipher_read(Emile_SSL *emile, Eina_Binbuf *buffer)
    if (emile->ssl_state == EMILE_SSL_STATE_HANDSHAKING)
      {
         DBG("Ongoing GNUTLS handshaking.");
-        _emile_cipher_handshaking(emile);
+        //_emile_cipher_handshaking(emile);
         if (emile->ssl_state == EMILE_SSL_STATE_ERROR)
           return -1;
         return 0;
@@ -564,7 +522,7 @@ emile_cipher_read(Emile_SSL *emile, Eina_Binbuf *buffer)
    num = gnutls_record_recv(emile->session,
                             (void*) eina_binbuf_string_get(buffer),
                             eina_binbuf_length_get(buffer));
-   return 0;
+   return num;
 }
 
 EAPI int
