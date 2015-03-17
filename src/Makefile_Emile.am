@@ -3,7 +3,11 @@
 lib_LTLIBRARIES += lib/emile/libemile.la
 
 installed_emilemainheadersdir = $(includedir)/emile-@VMAJ@
-dist_installed_emilemainheaders_DATA = lib/emile/Emile.h
+dist_installed_emilemainheaders_DATA = \
+lib/emile/Emile.h \
+lib/emile/emile_cipher.h \
+lib/emile/emile_compression.h \
+lib/emile/emile_image.h
 
 lib_emile_libemile_la_SOURCES = \
 lib/emile/emile_private.h \
