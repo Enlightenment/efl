@@ -1837,7 +1837,7 @@ eet_data_image_header_advance_decode_cipher(const void   *data,
              if (quality)
                *quality = 75;
 
-             if (cspaces)
+             if (cspaces && *cspaces)
                {
                   if ((*cspaces)[0] == EMILE_COLORSPACE_GRY8)
                     *cspaces = _eet_gry8_alpha_colorspace;
