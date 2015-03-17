@@ -163,6 +163,7 @@ EAPI extern int ECORE_DRM_EVENT_ACTIVATE;
 EAPI int ecore_drm_init(void);
 EAPI int ecore_drm_shutdown(void);
 
+EAPI Eina_List *ecore_drm_devices_get(void);
 EAPI Ecore_Drm_Device *ecore_drm_device_find(const char *name, const char *seat);
 EAPI void ecore_drm_device_free(Ecore_Drm_Device *dev);
 EAPI Eina_Bool ecore_drm_device_open(Ecore_Drm_Device *dev);
