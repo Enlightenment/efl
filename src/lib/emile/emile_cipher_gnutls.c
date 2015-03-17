@@ -183,7 +183,7 @@ emile_pbkdf2_sha1(const char          *key,
    unsigned char tab[4];
    unsigned char *p = res;
    unsigned char *buf;
-   unsigned long i;
+   unsigned int i;
    int digest_len = 20;
    int len = res_len;
    int tmp_len;
