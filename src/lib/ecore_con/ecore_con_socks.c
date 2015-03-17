@@ -169,7 +169,7 @@ _ecore_con_socks_svr_init_v4(Ecore_Con_Server *obj, Ecore_Con_Socks_v4 *v4)
      sbuf[8] = 0;
    if (addrlen) memcpy(sbuf + 8 + ulen, svr->name, addrlen);
 
-   svr->ecs_buf = eina_binbuf_manage_new_length(sbuf, buflen);
+   svr->ecs_buf = eina_binbuf_manage_new(sbuf, buflen, EINA_FALSE);
    return EINA_TRUE;
 }
 
@@ -208,7 +208,7 @@ _ecore_con_socks_svr_init_v5(Ecore_Con_Server *obj, Ecore_Con_Socks_v5 *v5)
         sbuf[2] = ECORE_CON_SOCKS_V5_METHOD_NONE;
      }
 
-   svr->ecs_buf = eina_binbuf_manage_new_length(sbuf, buflen);
+   svr->ecs_buf = eina_binbuf_manage_new(sbuf, buflen, EINA_FALSE);
    return EINA_TRUE;
 }
 
@@ -316,7 +316,7 @@ _ecore_con_socks_auth_v5(Ecore_Con_Server *obj, Ecore_Con_Socks_v5 *v5)
           memcpy(&data[2 + v5->ulen], v5->password, v5->plen);
         else
           data[2 + v5->ulen] = 0;
-        svr->ecs_buf = eina_binbuf_manage_new_length(data, size);
+        svr->ecs_buf = eina_binbuf_manage_new(data, size, EINA_FALSE);
         return EINA_TRUE;
 
       default:
@@ -412,7 +412,7 @@ _ecore_con_socks_read_v5(Ecore_Con_Server *obj, Ecore_Con_Socks_v5 *v5, const un
          sbuf[addrlen + 4] = svr->port >> 8;
          sbuf[addrlen + 5] = svr->port & 0xff;
 
-         svr->ecs_buf = eina_binbuf_manage_new_length(sbuf, buflen);
+         svr->ecs_buf = eina_binbuf_manage_new(sbuf, buflen, EINA_FALSE);
          ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
          break;
       }
