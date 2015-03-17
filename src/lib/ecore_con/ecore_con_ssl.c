@@ -453,7 +453,7 @@ ecore_con_ssl_init(void)
 {
    if (!_init_con_ssl_init_count++)
      {
-#ifdef ISCOMFITOR
+#if defined ISCOMFITOR && defined HAVE_GNUTLS
         if (eina_log_domain_level_check(_ecore_con_log_dom,
                                         EINA_LOG_LEVEL_DBG))
           {
