@@ -10,6 +10,20 @@
  */
 
 /**
+ * @typedef Emile_Cipher_Backend
+ *
+ * Flags describing the implemented backend.
+ *
+ * @since 1.14.0
+ */
+typedef enum _Emile_Cipher_Backend
+{
+  EMILE_NONE,
+  EMILE_OPENSSL,
+  EMILE_GNUTLS
+} Emile_Cipher_Backend;
+
+/**
  * @typedef Emile_Cipher_Algorithm
  *
  * Flags describing known cipher algorithm.
@@ -39,7 +53,7 @@ EAPI Eina_Bool emile_cipher_init(void);
  * @return the name of the current cipher backend.
  * @since 1.14.0
  */
-EAPI const char *emile_cipher_module_get(void);
+EAPI Emile_Cipher_Backend emile_cipher_module_get(void);
 
 /**
  * Cipher a buffer with a defined algorithm and key.

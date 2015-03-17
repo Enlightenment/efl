@@ -35,6 +35,20 @@ emile_cipher_init(void)
    return EINA_TRUE;
 }
 
+EAPI Emile_Cipher_Backend
+emile_cipher_module_get(void)
+{
+#ifdef HAVE_GNUTLS
+   return EMILE_GNUTLS;
+#else
+#ifdef HAVE_OPENSSL
+   return EMILE_OPENSSL;
+#else
+   return EMILE_NONE;
+#endif
+#endif
+}
+
 EAPI int
 emile_init(void)
 {
