@@ -1160,7 +1160,42 @@ _eet_data_image_rgb_encode(const void *data,
    void *d = NULL;
    size_t sz = 0;
    JSAMPROW *jbuf;
+   unsigned int *grey;
    unsigned char *buf;
+
+   /* Try to encode this buffer as GRY8 or AGRY88.
+      It is difficult to know if a different approach
+      would have payed of, but for now I do walk and
+      copy the pixels as long as they are grey. If I
+      manage to copy them up to the end, I will be
+      able to encode them as a GRY8 texture.
+    */
+   grey = malloc(sizeof (int) * w * h);
+   if (grey)
+     {
+        const unsigned int *pixels = data;
+        unsigned int i;
+
+        for (i = 0; i < w * h; i++)
+          {
+             uint8_t r, g, b;
+
+             r = R_VAL(&pixels[i]);
+             g = G_VAL(&pixels[i]);
+             b = B_VAL(&pixels[i]);
+             if (!(r == g && g == b))
+               break ;
+             grey[i] = r << 24;
+          }
+
+        if (i == w * h)
+          {
+             d = _eet_data_image_grey_encode(grey, w, h, quality, size);
+             free(grey);
+             return d;
+          }
+        free(grey);
+     }
 
    buf = alloca(3 * w);
 
