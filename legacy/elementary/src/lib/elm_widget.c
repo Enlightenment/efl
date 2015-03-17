@@ -3684,7 +3684,7 @@ elm_widget_type_get(const Evas_Object *obj)
 {
    API_ENTRY return NULL;
 
-   return evas_object_type_get(obj);
+   return eo_class_name_get(eo_class_get(obj));
 }
 
 EAPI Eina_Bool
