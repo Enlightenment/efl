@@ -31,10 +31,13 @@ emile_compress_buffer_size(const Eina_Binbuf *data, Emile_Compressor_Type t)
 }
 
 EAPI Eina_Binbuf *
-emile_binbuf_compress(const Eina_Binbuf *data, Emile_Compressor_Type t, int level)
+emile_binbuf_compress(const Eina_Binbuf *data,
+                      Emile_Compressor_Type t,
+                      Emile_Compressor_Level l)
 {
    void *compact;
    int length;
+   int level = l;
    Eina_Bool ok = EINA_FALSE;
 
    length = emile_compress_buffer_size(data, t);
