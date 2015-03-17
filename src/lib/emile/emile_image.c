@@ -201,8 +201,9 @@ static const Emile_Colorspace cspaces_etc1_alpha[2] = {
   EMILE_COLORSPACE_ARGB8888
 };
 
-static const Emile_Colorspace cspaces_gry[2] = {
+static const Emile_Colorspace cspaces_agry[2] = {
   EMILE_COLORSPACE_GRY8,
+  EMILE_COLORSPACE_AGRY88,
   EMILE_COLORSPACE_ARGB8888
 };
 
@@ -1159,6 +1160,88 @@ _rotate_change_wh8(uint8_t *to, uint8_t *from,
      }
 }
 
+static void
+_rotate16_180(uint16_t *data, int w, int h)
+{
+   uint16_t *p1, *p2;
+   uint16_t pt;
+   int x;
+
+   p1 = data;
+   p2 = data + (h * w) - 1;
+   for (x = (w * h) / 2; --x >= 0;)
+     {
+        pt = *p1;
+        *p1 = *p2;
+        *p2 = pt;
+        p1++;
+        p2--;
+     }
+}
+
+static void
+_flip_horizontal16(uint16_t *data, int w, int h)
+{
+   uint16_t *p1, *p2;
+   uint16_t pt;
+   int x, y;
+
+   for (y = 0; y < h; y++)
+     {
+        p1 = data + (y * w);
+        p2 = data + ((y + 1) * w) - 1;
+        for (x = 0; x < (w >> 1); x++)
+          {
+             pt = *p1;
+             *p1 = *p2;
+             *p2 = pt;
+             p1++;
+             p2--;
+          }
+     }
+}
+
+static void
+_flip_vertical16(uint16_t *data, int w, int h)
+{
+   uint16_t *p1, *p2;
+   uint16_t pt;
+   int x, y;
+
+   for (y = 0; y < (h >> 1); y++)
+     {
+        p1 = data + (y * w);
+        p2 = data + ((h - 1 - y) * w);
+        for (x = 0; x < w; x++)
+          {
+             pt = *p1;
+             *p1 = *p2;
+             *p2 = pt;
+             p1++;
+             p2++;
+          }
+     }
+}
+
+static void
+_rotate_change_wh16(uint16_t *to, uint16_t *from,
+                   int w, int h,
+                   int dx, int dy)
+{
+   int x, y;
+
+   for (x = h; --x >= 0;)
+     {
+        for (y = w; --y >= 0;)
+          {
+             *to = *from;
+             from++;
+             to += dy;
+          }
+        to += dx;
+     }
+}
+
 static Eina_Bool
 _emile_jpeg_bind(Emile_Image *image EINA_UNUSED,
                  Emile_Image_Load_Opts *opts EINA_UNUSED,
@@ -1231,8 +1314,8 @@ _emile_jpeg_head(Emile_Image *image,
 
    if (cinfo.jpeg_color_space == JCS_GRAYSCALE)
      {
-        // We do handle GRY8 colorspace as an output for JPEG
-        prop->cspaces = cspaces_gry;
+        // We do handle GRY8 and AGRY88 (with FF for alpha) colorspace as an output for JPEG
+        prop->cspaces = cspaces_agry;
      }
 
    /* rotation decoding */
@@ -1406,7 +1489,7 @@ _emile_jpeg_data(Emile_Image *image,
                  void *pixels,
                  Emile_Image_Load_Error *error)
 {
-   // Handle RGB, ARGB and GRY
+   // Handle RGB, ARGB, GRY and AGRY
    Emile_Image_Load_Opts *opts = NULL;
    unsigned int w, h;
    struct jpeg_decompress_struct cinfo;
@@ -1414,6 +1497,7 @@ _emile_jpeg_data(Emile_Image *image,
    const unsigned char *m = NULL;
    uint8_t *ptr, *line[16], *data;
    uint32_t *ptr2, *ptr_rotate = NULL;
+   uint16_t *ptrag, *ptrag_rotate = NULL;
    uint8_t *ptrg, *ptrg_rotate = NULL;
    unsigned int x, y, l, i, scans;
    int region = 0;
@@ -1481,7 +1565,8 @@ _emile_jpeg_data(Emile_Image *image,
       case JCS_UNKNOWN:
         break;
       case JCS_GRAYSCALE:
-        if (prop->cspace == EMILE_COLORSPACE_GRY8)
+        if (prop->cspace == EMILE_COLORSPACE_GRY8 ||
+            prop->cspace == EMILE_COLORSPACE_AGRY88)
           {
              cinfo.out_color_space = JCS_GRAYSCALE;
              break;
@@ -1576,6 +1661,7 @@ _emile_jpeg_data(Emile_Image *image,
    switch (prop->cspace)
      {
       case EMILE_COLORSPACE_GRY8:
+      case EMILE_COLORSPACE_AGRY88:
          if (!(cinfo.out_color_space == JCS_GRAYSCALE &&
                cinfo.output_components == 1))
            {
@@ -1610,6 +1696,11 @@ _emile_jpeg_data(Emile_Image *image,
           {
              ptrg = malloc(w * h * sizeof(uint8_t));
              ptrg_rotate = ptrg;
+          }
+        else if (prop->cspace == EMILE_COLORSPACE_AGRY88)
+          {
+             ptrag = malloc(w * h * sizeof(uint16_t));
+             ptrag_rotate = ptrag;
           }
         else
           {
@@ -1861,6 +1952,11 @@ _emile_jpeg_data(Emile_Image *image,
                                  *ptrg = ptr[0];
                                  ptrg++;
                               }
+                            else if (prop->cspace == EMILE_COLORSPACE_AGRY88)
+                              {
+                                 *ptrag = 0xFF | ptr[0];
+                                 ptrag++;
+                              }
                             else
                               {
                                  *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[0], ptr[0]);
@@ -1900,6 +1996,11 @@ _emile_jpeg_data(Emile_Image *image,
                                            *ptrg = ptr[0];
                                            ptrg++;
                                         }
+                                      else if (prop->cspace == EMILE_COLORSPACE_AGRY88)
+                                        {
+                                           *ptrag = 0xFF00 | ptr[0];
+                                           ptrag++;
+                                        }
                                       else
                                         {
                                            *ptr2 = ARGB_JOIN(0xff, ptr[0], ptr[0], ptr[0]);
@@ -1923,11 +2024,13 @@ done:
      {
         uint32_t *to;
         uint8_t *to8;
+        uint16_t *to16;
         int hw;
 
         hw = w * h;
         to = pixels;
         to8 = pixels;
+        to16 = pixels;
 
         switch (degree)
           {
@@ -1938,6 +2041,13 @@ done:
                     _rotate_change_wh8(to8 + hw - 1, ptrg_rotate, w, h, hw - 1, -h);
                   else
                     _rotate_change_wh8(to8 + h - 1, ptrg_rotate, w, h, -hw - 1, h);
+               }
+             else if (prop->cspace == EMILE_COLORSPACE_AGRY88)
+               {
+                  if (prop->flipped)
+                    _rotate_change_wh16(to16 + hw - 1, ptrag_rotate, w, h, hw - 1, -h);
+                  else
+                    _rotate_change_wh16(to16 + h - 1, ptrag_rotate, w, h, -hw - 1, h);
                }
              else
                {
@@ -1955,6 +2065,13 @@ done:
                   else
                     _rotate8_180(to8, w, h);
                }
+             else if (prop->cspace == EMILE_COLORSPACE_AGRY88)
+               {
+                  if (prop->flipped)
+                    _flip_vertical16(to16, w, h);
+                  else
+                    _rotate16_180(to16, w, h);
+               }
              else
                {
                   if (prop->flipped)
@@ -1971,6 +2088,13 @@ done:
                   else
                     _rotate_change_wh8(to8 + hw - h, ptrg_rotate, w, h, hw + 1, -h);
                }
+             else if (prop->cspace == EMILE_COLORSPACE_AGRY88)
+               {
+                  if (prop->flipped)
+                    _rotate_change_wh16(to16, ptrag_rotate, w, h, -hw + 1, h);
+                  else
+                    _rotate_change_wh16(to16 + hw - h, ptrag_rotate, w, h, hw + 1, -h);
+               }
              else
                {
                   if (prop->flipped)
@@ -1984,6 +2108,8 @@ done:
                {
                   if (prop->cspace == EMILE_COLORSPACE_GRY8)
                     _flip_horizontal8(to8, w, h);
+                  else if (prop->cspace == EMILE_COLORSPACE_AGRY88)
+                    _flip_horizontal16(to16, w, h);
                   else
                     _flip_horizontal(to, w, h);
                }
