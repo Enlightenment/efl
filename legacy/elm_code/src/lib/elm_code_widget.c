@@ -29,7 +29,9 @@ Eina_Unicode status_icons[] = {
 
 #define EO_CONSTRUCTOR_CHECK_RETURN(obj) do { \
    Eina_Bool finalized; \
-   if (eo_do_ret(obj, finalized, eo_finalized_get())) \
+   \
+   eo_do(obj, finalized = eo_finalized_get()); \
+   if (finalized) \
      { \
         ERR("This function is only allowed during construction."); \
         return; \
