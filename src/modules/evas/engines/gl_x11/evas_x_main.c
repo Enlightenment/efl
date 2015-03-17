@@ -846,7 +846,7 @@ try_again:
                       gles3_supported ? 3 : 2, alpha, depth_bits, stencil_bits, msaa_samples);
                   if ((depth_bits > 24) || (stencil_bits > 8))
                     {
-                       WRN("Please note that GLES might not support 32-bit depth or "
+                       WRN("Please note that your driver might not support 32-bit depth or "
                            "16-bit stencil buffers, so depth24, stencil8 are the maximum "
                            "recommended values.");
                        if (depth_bits > 24) depth_bits = 24;
@@ -977,7 +977,11 @@ try_again:
              int config_attrs[40];
              GLXFBConfig *configs = NULL, config = 0;
              int i, num;
+             int depth_bits = einfo->depth_bits;
+             int stencil_bits = einfo->stencil_bits;
+             int msaa_samples = einfo->msaa_bits;
 
+try_again:
              i = 0;
              config_attrs[i++] = GLX_DRAWABLE_TYPE;
              config_attrs[i++] = GLX_WINDOW_BIT;
@@ -1001,11 +1005,17 @@ try_again:
                   config_attrs[i++] = GLX_ALPHA_SIZE;
                   config_attrs[i++] = 0;
                }
-             // TODO: Implement support for depth, stencil & msaa
              config_attrs[i++] = GLX_DEPTH_SIZE;
-             config_attrs[i++] = 0;
+             config_attrs[i++] = depth_bits;
              config_attrs[i++] = GLX_STENCIL_SIZE;
-             config_attrs[i++] = 0;
+             config_attrs[i++] = stencil_bits;
+             if (msaa_samples)
+               {
+                  config_attrs[i++] = GLX_SAMPLE_BUFFERS;
+                  config_attrs[i++] = 1;
+                  config_attrs[i++] = GLX_SAMPLES;
+                  config_attrs[i++] = msaa_samples;
+               }
              config_attrs[i++] = GLX_AUX_BUFFERS;
              config_attrs[i++] = 0;
              config_attrs[i++] = GLX_STEREO;
@@ -1019,7 +1029,31 @@ try_again:
                                          config_attrs, &num);
              if ((!configs) || (num < 1))
                {
-                  ERR("glXChooseFBConfig returned no configs");
+                  ERR("glXChooseFBConfig() can't find any configs (alpha: %d, depth: %d, stencil: %d, msaa: %d)",
+                      alpha, depth_bits, stencil_bits, msaa_samples);
+                  if ((depth_bits > 24) || (stencil_bits > 8))
+                    {
+                       WRN("Please note that your driver might not support 32-bit depth or "
+                           "16-bit stencil buffers, so depth24, stencil8 are the maximum "
+                           "recommended values.");
+                       if (depth_bits > 24) depth_bits = 24;
+                       if (stencil_bits > 8) stencil_bits = 8;
+                       DBG("Trying again with depth:%d, stencil:%d", depth_bits, stencil_bits);
+                       goto try_again;
+                    }
+                  else if (msaa_samples)
+                    {
+                       msaa_samples /= 2;
+                       DBG("Trying again with msaa_samples: %d", msaa_samples);
+                       goto try_again;
+                    }
+                  else if (depth_bits || stencil_bits)
+                    {
+                       depth_bits = 0;
+                       stencil_bits = 0;
+                       DBG("Trying again without any depth or stencil buffer");
+                       goto try_again;
+                    }
                   return NULL;
                }
              for (i = 0; i < num; i++)
