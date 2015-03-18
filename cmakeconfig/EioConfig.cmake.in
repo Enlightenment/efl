@@ -2,7 +2,7 @@
 # EIO_INCLUDE_DIRS eio include directories
 # EIO_LIBRARIES dependencys of eio
 # EIO_DEFINITIONS compiler stuff to use it
-set(MY_PKG eet)
+set(MY_PKG eio)
 
 find_package(PkgConfig)
 if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER "2.8.2")
