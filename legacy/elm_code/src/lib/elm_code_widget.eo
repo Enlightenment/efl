@@ -180,6 +180,8 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
    events {
       line,clicked;
       cursor,changed;
+      selection,changed;
+      selection,cleared;
    }
 
 }

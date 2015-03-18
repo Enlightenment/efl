@@ -16,6 +16,26 @@ _elm_code_widget_selection_new()
    return data;
 }
 
+static void
+_elm_code_widget_selection_limit(Evas_Object *widget EINA_UNUSED, Elm_Code_Widget_Data *pd,
+                                 unsigned int *row, unsigned int *col)
+{
+   Elm_Code_Line *line;
+   Elm_Code_File *file;
+
+   file = pd->code->file;
+
+   if (*row > elm_code_file_lines_get(file))
+     *row = elm_code_file_lines_get(file);
+
+   line = elm_code_file_line_get(file, *row);
+
+   if (*col > line->unicode_length + 1)
+     *col = line->unicode_length + 1;
+   if (*col < 1)
+     *col = 1;
+}
+
 EAPI void
 elm_code_widget_selection_start(Evas_Object *widget,
                                 unsigned int line, unsigned int col)
@@ -25,6 +45,7 @@ elm_code_widget_selection_start(Evas_Object *widget,
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
+   _elm_code_widget_selection_limit(widget, pd, &line, &col);
    if (!pd->selection)
      {
         selection = _elm_code_widget_selection_new();
@@ -37,6 +58,7 @@ elm_code_widget_selection_start(Evas_Object *widget,
 
    pd->selection->start_line = line;
    pd->selection->start_col = col;
+   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget));
 }
 
 EAPI void
@@ -48,6 +70,7 @@ elm_code_widget_selection_end(Evas_Object *widget,
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
+   _elm_code_widget_selection_limit(widget, pd, &line, &col);
    if (!pd->selection)
      {
         selection = _elm_code_widget_selection_new();
@@ -60,6 +83,7 @@ elm_code_widget_selection_end(Evas_Object *widget,
 
    pd->selection->end_line = line;
    pd->selection->end_col = col;
+   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget));
 }
 
 EAPI void
@@ -73,6 +97,7 @@ elm_code_widget_selection_clear(Evas_Object *widget)
      free(pd->selection);
 
    pd->selection = NULL;
+   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget));
 }
 
 EAPI const char *
