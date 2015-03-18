@@ -4,13 +4,13 @@
  * Use 't'/'g' key to move near frustum plane from/to the camera.
  * Use '1'/'2' key to set camera to the first/second position.
  * Use '3'/'4'/'5' key to set bounding sphere/aabb/central point mode.
- * Use 'i', 'k', 'j', 'l', 'u' and 'o' keys to move mesh node in 3D.
- * Use 'z', 'x', 'c', 'Z', 'X' and 'C' keys to change scaling constants of mesh.
+ * Use 'i', 'k', 'j', 'l', 'u' and 'o' keys to move mesh node (model) in 3D.
+ * Use 'z', 'x', 'c', 'Z', 'X' and 'C' keys to change scaling constants of mesh (model).
  * See in terminal output value distance to far plane of frustum and value of visibility of node
  * @see evas_3d_camera_node_visible_get.
  *
  * @verbatim
- * gcc -o evas-3d-frustum evas-3d-frustum.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
+ * gcc -o evas-3d-frustum evas-3d-frustum.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
  * @endverbatim
  */
 
@@ -28,6 +28,7 @@
 #include <Eo.h>
 #include <math.h>
 #include "evas-common.h"
+#include "evas-3d-primitives.h"
 
 #define  WIDTH          800
 #define  HEIGHT         600
@@ -46,7 +47,8 @@ typedef struct _Scene_Data
    Eo *camera;
    Eo *light;
    Eo *mesh_model;
-   Eo *mesh;
+   Eo *mesh_sphere;
+   Eo *mesh_aabb;
    Eo *material_model;
    Eo *material;
    Eo *texture_model;
@@ -58,19 +60,7 @@ Evas_Real obj_x = 0.0, obj_y = 0.0, obj_z = 0.0, obj_sc_x = 10.0, obj_sc_y = 10.
 Evas_Real fleft = -5, fright = 5, fbottom = -5, fup = 5, fnear = 20, ffar = 1000;
 Evas_Real radius = 0;
 Evas_3D_Frustum_Mode key = EVAS_3D_FRUSTUM_MODE_AABB;
-
-typedef struct _vec3
-{
-    float   x;
-    float   y;
-    float   z;
-} vec3;
-
-static void
-_set_ball(Eo *mesh, double r, double x, double y, double z, int p);
-
-static void
-_mesh_aabb(Eo *mesh_b, Eo *mesh_node);
+static const vec2 tex_scale = {1, 1};
 
 static void
 _show_help()
@@ -104,16 +94,54 @@ _on_canvas_resize(Ecore_Evas *ee)
 static Eina_Bool
 _redraw_bounding_object(void *data)
 {
-   Evas_Real x, y, z;
+   Evas_Real px, py, pz, sx, sy, sz;
+   Evas_Real x0, y0, z0, x1, y1, z1, radius;
    Scene_Data *scene = (Scene_Data *)data;
+   Eo *current_mesh;
+   Eina_List *meshes = NULL, *l;
 
-   eo_do(scene->mesh_node_model, evas_3d_node_bounding_sphere_get(&x, &y, &z, &radius));
+   eo_do(scene->mesh_node, meshes = (Eina_List *)evas_3d_node_mesh_list_get());
+   EINA_LIST_FOREACH(meshes, l, current_mesh)
+     {
+        eo_do(scene->mesh_node, evas_3d_node_mesh_del(current_mesh));
+     }
+
    if (key == EVAS_3D_FRUSTUM_MODE_BSPHERE)
-     _set_ball(scene->mesh, radius, x, y, z, 100);
+     {
+        eo_do(scene->mesh_node_model,
+              evas_3d_node_bounding_sphere_get(&x0, &y0, &z0, &radius));
+        current_mesh = scene->mesh_sphere;
+        px = x0;
+        py = y0;
+        pz = z0;
+        sx = sy = sz = 2.0 * radius;
+     }
    else if (key == EVAS_3D_FRUSTUM_MODE_AABB)
-     _mesh_aabb(scene->mesh, scene->mesh_node_model);
+     {
+        eo_do(scene->mesh_node_model, evas_3d_node_bounding_box_get(&x0, &y0, &z0,
+                                                                    &x1, &y1, &z1));
+        current_mesh = scene->mesh_aabb;
+        px = (x1 + x0) / 2;
+        py = (y1 + y0) / 2;
+        pz = (z1 + z0) / 2;
+        sx = x1 - x0;
+        sy = y1 - y0;
+        sz = z1 - z0;
+     }
    else if (key == EVAS_3D_FRUSTUM_MODE_CENTRAL_POINT)
-     _set_ball(scene->mesh, 1, x, y, z, 1);
+     {
+        eo_do(scene->mesh_node_model,
+              evas_3d_node_bounding_sphere_get(&x0, &y0, &z0, &radius));
+        current_mesh = scene->mesh_sphere;
+        px = x0;
+        py = y0;
+        pz = z0;
+        sx = sy = sz = 0.1 * radius;
+     }
+
+   eo_do(scene->mesh_node, evas_3d_node_mesh_add(current_mesh),
+                           evas_3d_node_position_set(px, py, pz),
+                           evas_3d_node_scale_set(sx, sy, sz));
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -291,140 +319,6 @@ _light_setup(Scene_Data *data)
 }
 
 static void
-_mesh_aabb(Eo *mesh_b, Eo *mesh_node)
-{
-   Evas_Real x0, y0, z0, x1, y1, z1;
-
-   eo_do(mesh_node, evas_3d_node_bounding_box_get(&x0, &y0, &z0, &x1, &y1, &z1));
-
-   float vertices[] =
-   {
-      x0,  y0,  z1,
-      x0,  y1,  z1,
-      x1,  y1,  z1,
-      x1,  y0,  z1,
-
-      x0,  y0,  z0,
-      x1,  y0,  z0,
-      x0,  y1,  z0,
-      x1,  y1,  z0,
-
-      x0,  y0,  z0,
-      x0,  y1,  z0,
-      x0,  y0,  z1,
-      x0,  y1,  z1,
-
-      x1,  y0,  z0,
-      x1,  y1,  z0,
-      x1,  y1,  z1,
-      x1,  y0,  z1,
-
-      x0,  y1,  z0,
-      x1,  y1,  z0,
-      x0,  y1,  z1,
-      x1,  y1,  z1,
-
-      x0,  y0,  z0,
-      x1,  y0,  z0,
-      x1,  y0,  z1,
-      x0,  y0,  z1
-   };
-
-   unsigned short indices[] =
-   {
-      0,  1,  2,  3,  1,  2,  0,  3,
-      4,  5,  5,  7,  7,  6,  6,  4,
-      8,  9,  9,  11, 11, 10, 10, 8,
-      12, 13, 13, 14, 14, 15, 15, 12,
-      16, 17, 17, 19, 19, 18, 18, 16,
-      20, 21, 21, 22, 22, 23, 23, 20
-   };
-
-   float *cube_vertices = (float *) malloc(1 * sizeof(vertices));
-   unsigned short *cube_indices = (unsigned short *) malloc(1 * sizeof(indices));
-   memcpy(cube_vertices, vertices, sizeof(vertices));
-   memcpy(cube_indices, indices, sizeof(indices));
-
-   eo_do(mesh_b,
-         evas_3d_mesh_vertex_count_set(24));
-
-   eo_do(mesh_b,
-         evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_POSITION,
-                                                 3 * sizeof(float),
-                                                 &cube_vertices[ 0]),
-         evas_3d_mesh_index_data_copy_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT,
-                                          48, &cube_indices[0]));
-   free(cube_vertices);
-   free(cube_indices);
-}
-
-static void
-_set_ball(Eo *mesh, double r, double x, double y, double z, int p)
-{
-   int vcount, icount, vccount, i, j;
-   double dtheta, dfi, sinth, costh, fi, theta, sinfi, cosfi;
-   unsigned short *indices, *index;
-
-   icount = p * p * 6;
-   vccount = p + 1;
-   vcount = vccount * vccount;
-
-   dtheta = M_PI / p;
-   dfi = 2 * M_PI / p;
-
-   vec3 *vertices = malloc(sizeof(vec3) * vcount);
-   vec3 *normals = malloc(sizeof(vec3) * vcount);
-
-  for (j = 0; j < vccount; j++)
-     {
-        theta = j * dtheta;
-        sinth = sin(theta);
-        costh = cos(theta);
-        for (i = 0; i < vccount; i++)
-          {
-             fi = i * dfi;
-             sinfi = sin(fi);
-             cosfi = cos(fi);
-             vertices[i + j * vccount].x = r * sinth * cosfi + x;
-             vertices[i + j * vccount].y = r * sinth * sinfi + y;
-             vertices[i + j * vccount].z = r * costh + z;
-
-             normals[i + j * vccount].x = sinth * cosfi;
-             normals[i + j * vccount].y = sinth * sinfi;
-             normals[i + j * vccount].z = costh;
-          }
-     }
-
-   indices = malloc(sizeof(short) * icount);
-   index = &indices[0];
-
-   for(j = 0; j < p; j++)
-     for(i = 0; i < p; i++)
-       {
-          *index++ = (unsigned short)(i + vccount * j);
-          *index++ = i + vccount * (j + 1);
-          *index++ = i + 1 + vccount * (j + 1);
-
-          *index++ =  i + vccount * j;
-          *index++ =  i + 1 +  vccount * j;
-          *index++ =  i + vccount * (j + 1) + 1;
-       }
-
-   eo_do(mesh,
-         evas_3d_mesh_vertex_count_set(vcount),
-         evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_POSITION,
-                                    sizeof(vec3), &vertices[0]),
-         evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_NORMAL,
-                                    sizeof(vec3), &normals[0]),
-         evas_3d_mesh_index_data_copy_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT,
-                                    icount , &indices[0]));
-
-   free(vertices);
-   free(normals);
-   free(indices);
-}
-
-static void
 _mesh_setup(Scene_Data *data)
 {
    data->material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
@@ -439,18 +333,24 @@ _mesh_setup(Scene_Data *data)
          evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
          evas_3d_material_shininess_set(100.0));
 
-   data->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   eo_do(data->mesh,
-         evas_3d_mesh_frame_add(0);
-         evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_LINES);
-         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
-         evas_3d_mesh_frame_material_set(0, data->material));
+   data->mesh_aabb = eo_add(EVAS_3D_MESH_CLASS, evas);
+   evas_3d_add_cube_frame(data->mesh_aabb, 0);
+   eo_do(data->mesh_aabb,
+          evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_LINES),
+          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
+          evas_3d_mesh_frame_material_set(0, data->material));
 
+   data->mesh_sphere = eo_add(EVAS_3D_MESH_CLASS, evas);
+   evas_3d_add_sphere_frame(data->mesh_sphere, 0, 20, tex_scale);
+   eo_do(data->mesh_sphere,
+          evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_LINES),
+          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
+          evas_3d_mesh_frame_material_set(0, data->material));
 
    data->mesh_node =
       eo_add(EVAS_3D_NODE_CLASS, evas, evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(data->root_node, evas_3d_node_member_add(data->mesh_node));
-   eo_do(data->mesh_node, evas_3d_node_mesh_add(data->mesh));
+   eo_do(data->mesh_node, evas_3d_node_mesh_add(data->mesh_aabb));
 }
 
 static void
