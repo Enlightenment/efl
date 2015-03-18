@@ -30,3 +30,25 @@ find_package_handle_standard_args(${MY_PKG} DEFAULT_MSG
 
 mark_as_advanced(EFREET_INCLUDE_DIRS EFREET_LIBRARY EFREET_LIBRARIES EFREET_DEFINITIONS)
 
+if (Efreet_FIND_COMPONENTS)
+   foreach(_component ${Efreet_FIND_COMPONENTS})
+
+      string(TOUPPER ${_component} _COMPONENT)
+      string(TOLOWER ${_component} _component)
+      string(REGEX REPLACE "_" "-" _PKG_NAME "efreet-${_component}")
+
+      pkg_check_modules(PC_LIBEFREET_${_COMPONENT} ${_QUIET} ${_PKG_NAME})
+
+      find_library(EFREET_${_COMPONENT}_LIBRARY
+         NAMES ${PC_LIBEFREET_${_COMPONENT}_LIBRARIES}
+         HINTS ${PC_LIBEFREET_${_COMPONENT}_LIBDIR}
+               ${PC_LIBEFREET_${_COMPONENT}_LIBRARY_DIRS} )
+
+      set(EFREET_${_COMPONENT}_DEFINITIONS ${PC_LIBEFREET_${_COMPONENT}_CFLAGS_OTHER})
+      set(EFREET_${_COMPONENT}_LIBRARIES ${EFREET_${_COMPONENT}_LIBRARY})
+      set(EFREET_${_COMPONENT}_INCLUDE_DIRS ${PC_LIBEFREET_${_COMPONENT}_INCLUDE_DIRS})
+
+      find_package_handle_standard_args(efreet_${_component} DEFAULT_MSG
+         EFREET_${_COMPONENT}_LIBRARIES EFREET_${_COMPONENT}_INCLUDE_DIRS)
+    endforeach(_component)
+endif(Efreet_FIND_COMPONENTS)
