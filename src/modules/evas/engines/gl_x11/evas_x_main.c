@@ -772,7 +772,7 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
           }
 
         if (gles3_supported &&
-            (!(s = getenv("EVAS_GL_DISABLE_GLES3")) || (atoi(s) != 1)))
+            ((s = getenv("EVAS_GL_DISABLE_GLES3")) && (atoi(s) == 1)))
           {
              INF("Disabling OpenGL ES 3.x support.");
              gles3_supported = EINA_FALSE;
