@@ -3955,6 +3955,8 @@ _elm_win_fullscreen_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Eina_Bool fullscr
         // these engines... can ONLY be fullscreen
         return;
      }
+   else if (sd->type == ELM_WIN_FAKE)
+     sd->fullscreen = !!fullscreen;
    else
      {
 //        sd->fullscreen = fullscreen;
