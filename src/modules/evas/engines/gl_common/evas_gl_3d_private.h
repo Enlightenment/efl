@@ -37,8 +37,9 @@ typedef unsigned long         E3D_Shader_Flag;
 #define E3D_SHADER_FLAG_EMISSION_TEXTURE_BLEND  (1 << 26)
 #define E3D_SHADER_FLAG_NORMAL_TEXTURE_BLEND    (1 << 27)
 #define E3D_SHADER_FLAG_FOG_ENABLED             (1 << 28)
-#define E3D_SHADER_FLAG_SHADOWED                (1 << 29)
-#define E3D_SHADER_FLAG_COUNT                    30
+#define E3D_SHADER_FLAG_ALPHA_TEST_ENABLED      (1 << 29)
+#define E3D_SHADER_FLAG_SHADOWED                (1 << 30)
+#define E3D_SHADER_FLAG_COUNT                    31
 
 static inline Eina_Bool
 _flags_need_tex_coord(E3D_Shader_Flag flags)
@@ -89,6 +90,10 @@ struct _E3D_Draw_Data
    Evas_3D_Blend_Func      blend_sfactor;
    Evas_3D_Blend_Func      blend_dfactor;
    Eina_Bool               blending : 1;
+
+   Evas_3D_Comparison      alpha_comparison;
+   Evas_Real               alpha_ref_value;
+   Eina_Bool               alpha_test_enabled :1;
 
    struct {
         Evas_Vec4   position;

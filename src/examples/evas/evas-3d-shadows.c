@@ -6,7 +6,7 @@
  * @see evas_3d_object_callback_register
  *
  * @verbatim
- * gcc -o gcc -o evas-3d-shadows evas-3d-shadows.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo eina` -lm
+ * gcc -o evas-3d-shadows evas-3d-shadows.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo eina` -lm
  * @endverbatim
  */
 
@@ -37,38 +37,15 @@
 #define SPECULAR_LIGHT 1.0, 1.0, 1.0
 
 static const char *model_path = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/sonic.md2";
-static const char *image_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/sonic.png";
+
 static const vec2 tex_scale = {1, 1};
+static const vec2 fence_tex_scale = {80, 6};
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
 Eo *background = NULL;
 Eo *image = NULL;
 Evas_3D_Node *choosed_node = NULL;
-
-typedef struct _Body_3D
-{
-   Eo     *material;
-   Eo     *mesh;
-   Eo     *node;
-} Body_3D;
-
-typedef struct _Scene_Data
-{
-   Eo     *scene;
-   Eo     *root_node;
-   Eo     *camera_node;
-   Eo     *camera;
-   Eo     *light_node;
-   Eo     *light;
-
-   Body_3D     sphere;
-   Body_3D     cube;
-   Body_3D     square;
-   Body_3D     cylinder;
-   Body_3D     model;
-   Body_3D     cone;
-} Scene_Data;
 
 Eina_Bool
 _cb_clicked(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
@@ -106,6 +83,31 @@ _cb_collision(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Descri
 
    return EINA_TRUE;
 }
+
+typedef struct _Body_3D
+{
+   Eo     *material;
+   Eo     *mesh;
+   Eo     *node;
+} Body_3D;
+
+typedef struct _Scene_Data
+{
+   Eo     *scene;
+   Eo     *root_node;
+   Eo     *camera_node;
+   Eo     *camera;
+   Eo     *light_node;
+   Eo     *light;
+
+   Body_3D     sphere;
+   Body_3D     cube;
+   Body_3D     square;
+   Body_3D     cylinder;
+   Body_3D     model;
+   Body_3D     cone;
+   Body_3D     fence;
+} Scene_Data;
 
 static void
 _show_help()
@@ -212,6 +214,51 @@ _cylinder_setup(Body_3D *cylinder)
 }
 
 static void
+_fence_setup(Body_3D *fence)
+{
+
+   Eo *texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
+   eo_do(texture,
+         evas_3d_texture_file_set(PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/grid.png", NULL),
+         evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
+                                    EVAS_3D_TEXTURE_FILTER_NEAREST),
+         evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
+                                  EVAS_3D_WRAP_MODE_REPEAT));
+   Eo *texture1 = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
+   eo_do(texture1,
+         evas_3d_texture_file_set(PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/grid_n.png", NULL),
+         evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
+                                    EVAS_3D_TEXTURE_FILTER_NEAREST),
+         evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
+                                  EVAS_3D_WRAP_MODE_REPEAT));
+   fence->material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
+
+   eo_do(fence->material,
+         evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE, texture),
+         evas_3d_material_texture_set(EVAS_3D_MATERIAL_AMBIENT, texture),
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_AMBIENT, EINA_TRUE),
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE),
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE),
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_NORMAL, EINA_TRUE),
+         evas_3d_material_texture_set(EVAS_3D_MATERIAL_NORMAL, texture1),
+         evas_3d_material_shininess_set(100.0));
+   fence->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
+   evas_3d_add_cylinder_frame(fence->mesh, 0, 50, fence_tex_scale);
+
+   eo_do(fence->mesh,
+         evas_3d_mesh_frame_material_set(0, fence->material),
+         evas_3d_mesh_alpha_func_set(EVAS_3D_COMPARISON_GREATER, 0),
+         evas_3d_mesh_alpha_test_enable_set(EINA_TRUE),
+         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_NORMAL_MAP));
+   fence->node =
+      eo_add(EVAS_3D_NODE_CLASS, evas,
+                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
+   eo_do(fence->node, evas_3d_node_mesh_add(fence->mesh),
+         evas_3d_node_scale_set(7.0, 3.0, 7.0),
+         evas_3d_node_position_set(0.0, 0.5, -5.0));
+}
+
+static void
 _square_setup(Body_3D *square)
 {
    square->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
@@ -247,7 +294,7 @@ _model_setup(Body_3D *model)
 {
    Eo *texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
    eo_do(texture,
-         evas_3d_texture_file_set(image_path, NULL),
+         evas_3d_texture_file_set(PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/sonic.png", NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
                                     EVAS_3D_TEXTURE_FILTER_NEAREST),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
@@ -307,7 +354,8 @@ _light_setup(Scene_Data *data)
          evas_3d_light_ambient_set(AMBIENT_LIGHT, 1.0),
          evas_3d_light_diffuse_set(DIFFUSE_LIGHT, 1.0),
          evas_3d_light_specular_set(SPECULAR_LIGHT, 1.0),
-         evas_3d_light_projection_perspective_set(45.0, 1.0, 2.0, 1000.0));
+         evas_3d_light_spot_cutoff_set(20),
+         evas_3d_light_projection_perspective_set(40.0, 1.0, 2.0, 1000.0));
 
    data->light_node =
       eo_add(EVAS_3D_NODE_CLASS, evas,
@@ -315,7 +363,7 @@ _light_setup(Scene_Data *data)
    eo_do(data->light_node,
          evas_3d_node_light_set(data->light),
          evas_3d_node_position_set(50.0, 50.0, 20.0),
-         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 20.0,
+         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 15.0, 0.0, -5.0,
                                   EVAS_3D_SPACE_PARENT, 0.0, 0.0, 1.0));
    eo_do(data->root_node, evas_3d_node_member_add(data->light_node));
 }
@@ -343,13 +391,16 @@ _scene_setup(Scene_Data *data)
    _square_setup(&data->square);
    _model_setup(&data->model);
    _cone_setup(&data->cone);
+   _fence_setup(&data->fence);
 
-   eo_do(data->root_node, evas_3d_node_member_add(data->sphere.node));
-   eo_do(data->root_node, evas_3d_node_member_add(data->cube.node));
-   eo_do(data->root_node, evas_3d_node_member_add(data->cylinder.node));
-   eo_do(data->root_node, evas_3d_node_member_add(data->square.node));
-   eo_do(data->root_node, evas_3d_node_member_add(data->model.node));
-   eo_do(data->root_node, evas_3d_node_member_add(data->cone.node));
+   eo_do(data->root_node, 
+         evas_3d_node_member_add(data->sphere.node),
+         evas_3d_node_member_add(data->cube.node),
+         evas_3d_node_member_add(data->cylinder.node),
+         evas_3d_node_member_add(data->square.node),
+         evas_3d_node_member_add(data->model.node),
+         evas_3d_node_member_add(data->cone.node),
+         evas_3d_node_member_add(data->fence.node));
 
    eo_do(data->scene,
          evas_3d_scene_root_node_set(data->root_node),

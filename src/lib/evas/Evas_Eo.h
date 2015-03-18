@@ -488,6 +488,7 @@ typedef enum _Evas_3D_State
    EVAS_3D_STATE_MESH_SHADE_MODE,
    EVAS_3D_STATE_MESH_FOG,
    EVAS_3D_STATE_MESH_BLENDING,
+   EVAS_3D_STATE_MESH_ALPHA_TEST,
    EVAS_3D_STATE_MESH_COLOR_PICK,
 
    EVAS_3D_STATE_CAMERA_PROJECTION = 1,
@@ -668,6 +669,32 @@ typedef enum _Evas_3D_Blend_Func
    /**< The scale factors for color components is (i, i, i, 1) where i = min(As, kA, Ad)/kA*/
    EVAS_3D_BLEND_SRC_ALPHA_SATURATE,
 } Evas_3D_Blend_Func;
+
+/**
+ * Comparsion functions for testing(alpha, depth, stencil) in fragment shader.
+ *
+ * @since 1.14
+ * @ingroup Evas_3D_Types
+ */
+typedef enum _Evas_3D_Comparison
+{
+   /**< Never passes.*/
+   EVAS_3D_COMPARISON_NEVER,
+   /**< Passes if the incoming value is less than the reference value.*/
+   EVAS_3D_COMPARISON_LESS,
+   /**< Passes if the incoming value is equal to the reference value.*/
+   EVAS_3D_COMPARISON_EQUAL,
+   /**< Passes if the incoming value is less than or equal to the reference value.*/
+   EVAS_3D_COMPARISON_LEQUAL,
+   /**< Passes if the incoming value is greater than the reference value.*/
+   EVAS_3D_COMPARISON_GREATER,
+   /**< Passes if the incoming value is not equal to the reference value.*/
+   EVAS_3D_COMPARISON_NOTEQUAL,
+   /**< Passes if the incoming value is greater than or equal to the reference value.*/
+   EVAS_3D_COMPARISON_GEQUAL,
+   /**< Always passes (initial value).*/
+   EVAS_3D_COMPARISON_ALWAYS,
+} Evas_3D_Comparison;
 
 /**
  * Color formats of pixel data

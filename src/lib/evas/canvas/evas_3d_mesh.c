@@ -121,6 +121,10 @@ _mesh_init(Evas_3D_Mesh_Data *pd)
    pd->blend_dfactor = EVAS_3D_BLEND_ZERO;
    pd->blending = EINA_FALSE;
 
+   pd->alpha_comparison = EVAS_3D_COMPARISON_ALWAYS;
+   pd->alpha_ref_value = 0.0f;
+   pd->alpha_test_enabled = EINA_FALSE;
+
    pd->color_pick_key = -1.0;
    pd->color_pick_enabled = EINA_FALSE;
 }
@@ -801,6 +805,39 @@ _evas_3d_mesh_blending_func_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd,
 {
    if (sfactor) *sfactor = pd->blend_sfactor;
    if (dfactor) *dfactor = pd->blend_dfactor;
+}
+
+EOLIAN static void
+_evas_3d_mesh_alpha_func_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Comparison comparison,
+                                    Evas_Real ref_value)
+{
+   if (pd->alpha_comparison == comparison && pd->alpha_ref_value == ref_value)
+     return;
+   pd->alpha_comparison = comparison;
+   pd->alpha_ref_value = ref_value;
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_ALPHA_TEST, NULL));
+}
+
+EOLIAN static void
+_evas_3d_mesh_alpha_func_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd,
+                                   Evas_3D_Comparison *comparison,
+                                   Evas_Real *ref_value)
+{
+   if (comparison) *comparison = pd->alpha_comparison;
+   if (ref_value) *ref_value = pd->alpha_ref_value;
+}
+
+EOLIAN static void
+_evas_3d_mesh_alpha_test_enable_set(Eo *obj, Evas_3D_Mesh_Data *pd, Eina_Bool enabled)
+{
+   pd->alpha_test_enabled = enabled;
+   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_ALPHA_TEST, NULL));
+}
+
+EOLIAN static Eina_Bool
+_evas_3d_mesh_alpha_test_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
+{
+   return pd->alpha_test_enabled;
 }
 
 EOLIAN static void

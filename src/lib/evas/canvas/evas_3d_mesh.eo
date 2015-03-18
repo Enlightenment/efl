@@ -402,6 +402,56 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
             Eina_Bool enabled; /*@ Fog enabled status.*/
          }
       }
+ 
+      alpha_test_enable {
+        set {
+            /**
+             * Get the enable status of alpha test for given mesh
+             *
+             * Default alpha test disabled.
+             *
+             * @ingroup Evas_3D_Mesh
+             */
+         }
+         get {
+             /**
+              * Get the enable status of alpha test for given mesh
+              *
+              * @see alpha_test_enable_set()
+              *
+              * @ingroup Evas_3D_Mesh
+              */
+         }
+         values {
+            Eina_Bool enabled; /*@ Alpha test status.*/
+         }
+      }
+
+      alpha_func {
+        set {
+            /*
+             * The alpha test discards fragments depending on the outcome of a comparison
+             * between an incoming fragment's alpha value and a constant reference value
+             * This func specifies the reference value and the comparison function.
+             *
+             * @ingroup Evas_3D_Mesh
+             */
+        }
+        get {
+            /*
+             * Get the reference value and the comparison function for alpha testing
+             *
+             * @see eavs_3d_mesh_alpha_test_param_set()
+             *
+             * @ingroup Evas_3D_Mesh
+             */
+        }
+        values {
+           Evas_3D_Comparison comparison_func; /*@ Specifies the alpha comparison function.*/
+           Evas_Real ref_value; /*@ Specifies the reference value that incoming alpha values are compared to.*/
+        }
+      }
+
       blending_enable {
         set {
             /**

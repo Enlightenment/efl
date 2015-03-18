@@ -86,6 +86,7 @@ static const char *shader_flag_names[] =
    "EMISSION_TEXTURE_BLEND",
    "NORMAL_TEXTURE_BLEND",
    "FOG_ENABLED",
+   "ALPHA_TEST_ENABLED",
    "SHADOWED"
 };
 

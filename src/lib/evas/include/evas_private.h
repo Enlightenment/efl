@@ -344,6 +344,10 @@ struct _Evas_3D_Mesh
    Evas_3D_Blend_Func      blend_sfactor;
    Evas_3D_Blend_Func      blend_dfactor;
 
+   Evas_3D_Comparison      alpha_comparison;
+   Evas_Real               alpha_ref_value;
+   Eina_Bool               alpha_test_enabled :1;
+
    Evas_Color              fog_color;
    Eina_Bool               fog_enabled :1;
 

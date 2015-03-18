@@ -1142,12 +1142,18 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
         data->flags |= E3D_SHADER_FLAG_FOG_ENABLED;
         data->fog_color = pdmesh->fog_color;
      }
+   if (pdmesh->alpha_test_enabled)
+     data->flags |= E3D_SHADER_FLAG_ALPHA_TEST_ENABLED;
 
    if (pdmesh->shadowed)
      data->flags |= E3D_SHADER_FLAG_SHADOWED;
 
    if (pdmesh->color_pick_enabled)
      data->color_pick_key = pdmesh->color_pick_key;
+
+   data->alpha_comparison = pdmesh->alpha_comparison;
+   data->alpha_ref_value = pdmesh->alpha_ref_value;
+   data->alpha_test_enabled =pdmesh->alpha_test_enabled;
 
    data->blending = pdmesh->blending;
    data->blend_sfactor = pdmesh->blend_sfactor;
@@ -1184,6 +1190,13 @@ _mesh_draw_data_build(E3D_Draw_Data *data,
    else if (pdmesh->shade_mode == EVAS_3D_SHADE_MODE_SHADOW_MAP_RENDER)
      {
         BUILD(vertex_attrib,     VERTEX_POSITION,     EINA_TRUE);
+        if (pdmesh->alpha_test_enabled)
+          {
+             BUILD(material_texture,  MATERIAL_DIFFUSE,    EINA_FALSE);
+
+             if (_flags_need_tex_coord(data->flags))
+               BUILD(vertex_attrib,     VERTEX_TEXCOORD,     EINA_FALSE);
+          }
      }
    else if (pdmesh->shade_mode == EVAS_3D_SHADE_MODE_COLOR_PICK)
      {

@@ -1,4 +1,43 @@
-void main()
-{
+#ifdef ALPHA_TEST_ENABLED
+
+#ifdef NEED_TEX_COORD
+varying vec2   vTexCoord;
+#endif //TEX_COORD
+
+#ifdef DIFFUSE
+
+#ifdef DIFFUSE_TEXTURE
+uniform sampler2D  uTextureDiffuse0;
+#endif //DIFFUSE_TEXTURE
+
+#ifdef DIFFUSE_TEXTURE_BLEND
+uniform sampler2D  uTextureDiffuse1;
+uniform float      uTextureDiffuseWeight;
+#endif //DIFFUSE_TEXTURE_BLEND
+
+#endif //DIFFUSE
+
+#endif //ALPHA_TEST_ENABLED
+
+void main() {
+
+#ifdef ALPHA_TEST_ENABLED
+
+#ifdef DIFFUSE_TEXTURE_BLEND
+   gl_FragColor = (texture2D(uTextureDiffuse0, vTexCoord) *
+   uTextureDiffuseWeight + texture2D(uTextureDiffuse1, vTexCoord) *
+   (1.0 - uTextureDiffuseWeight));
+#else
+
+#ifdef DIFFUSE_TEXTURE
+   gl_FragColor = texture2D(uTextureDiffuse0, vTexCoord) ;
+#else
+   gl_FragColor = vec4(1);
+#endif //DIFFUSE_TEXTURE
+
+#endif //DIFFUSE_TEXTURE_BLEND
+
+#endif //ALPHA_TEST_ENABLED
+
    gl_FragColor.r = gl_FragCoord.z;
 }
