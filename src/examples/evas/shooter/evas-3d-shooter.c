@@ -9,13 +9,12 @@
 * which fixes the rocket entry. The warrior isn't passable for camera,
 * neither is wall, stairs and columns. There is a possibility to go upstairs and break down.
 *
-* Compile with "gcc -g evas-3d-shooter.c evas-3d-shooter-header.c -o evas-3d-shooter `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm"
+* Compile with "gcc -g evas-3d-shooter.c evas-3d-shooter-header.c ../evas-3d-primitives.c -o evas-3d-shooter `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm"
 *
 * Run program with flag "-s=TRUE" to turn on shadows, with "-f=TRUE" to turn on the fog, with "-b=TRUE" to turn on the blending.
 */
 
 #include "evas-3d-shooter-header.h"
-
 
 Evas_3D_Scene    *global_scene      = NULL;
 Ecore_Evas       *ecore_evas        = NULL;
@@ -169,7 +168,7 @@ _key_down(void *data,
           {
              scene->blending = EINA_TRUE;
              eo_do(scene->texture_diffuse_carpet,
-                   evas_3d_texture_file_set("Game Assets/Textures/gazebo_t_t.png", NULL));
+                   evas_3d_texture_file_set(gazebo_t_trans_path, NULL));
              eo_do(scene->mesh_carpet,
                    evas_3d_mesh_blending_enable_set(EINA_TRUE),
                    evas_3d_mesh_blending_func_set(EVAS_3D_BLEND_SRC_ALPHA, EVAS_3D_BLEND_ONE_MINUS_SRC_ALPHA));
@@ -178,7 +177,7 @@ _key_down(void *data,
           {
              scene->blending = EINA_FALSE;
              eo_do(scene->texture_diffuse_carpet,
-                   evas_3d_texture_file_set("Game Assets/Textures/gazebo_t.png", NULL));
+                   evas_3d_texture_file_set(gazebo_t_path, NULL));
              eo_do(scene->mesh_carpet,
                    evas_3d_mesh_blending_enable_set(EINA_FALSE));
           }
@@ -958,7 +957,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
    /* Setup material and texture for player */
 
    SETUP_MESH(soldier, soldier, 0.2, 0.6, 1.0)
-   MATERIAL_TEXTURE_SET(soldier, soldier, "Game Assets/Characters/soldier/soldier.md2", "Game Assets/Characters/soldier/soldier.png")
+   MATERIAL_TEXTURE_SET(soldier, soldier, soldier_path, soldier_tex_path)
 
    SETUP_MESH_NODE(soldier)
 
@@ -972,14 +971,15 @@ _mesh_setup_gun_planet(Scene_Data *data)
          evas_3d_node_mesh_frame_set(data->mesh_soldier, 0));
 
    SETUP_MESH(soldier, soldier_jump, 1.0, 1.0, 1.0)
-   MATERIAL_TEXTURE_SET(soldier, soldier_jump, "Game Assets/Characters/soldier/soldier_jump.md2", "Game Assets/Characters/soldier/soldier.png")
+   MATERIAL_TEXTURE_SET(soldier, soldier_jump, soldier_jump_path, soldier_tex_path)
 
    /* Setup material and texture for tommy gun */
 
    SETUP_MESH(tommy, tommy, 0.0, 0.3, 1.0)
    SETUP_MESH_NODE(tommy)
    eo_do(data->mesh_tommy,
-         efl_file_set("Game Assets/Models/tommy.eet", NULL),
+         efl_file_set(gun_path, NULL),
+         efl_file_save("try.obj", NULL, NULL),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG),
          evas_3d_mesh_frame_material_set(0, data->material_tommy));
 
@@ -993,8 +993,8 @@ _mesh_setup_gun_planet(Scene_Data *data)
 
    SETUP_MESH(gazebo, gazebo, 0.01, 1.0, 1.0)
    SETUP_MESH_NODE(gazebo)
-   MATERIAL_TEXTURE_SET(gazebo, gazebo, "Game Assets/Models/gazebo_b.md2", "Game Assets/Textures/gazebo.png")
-   NORMAL_SET(gazebo, gazebo, "Game Assets/Textures/gazebo_b_n.png")
+   MATERIAL_TEXTURE_SET(gazebo, gazebo, gazebo_bot_path, gazebo_b_path)
+   NORMAL_SET(gazebo, gazebo, gazebo_b_n_path)
 
    eo_do(data->mesh_node_gazebo,
          evas_3d_node_scale_set(0.18, 0.18, 0.18),
@@ -1005,8 +1005,8 @@ _mesh_setup_gun_planet(Scene_Data *data)
 
    SETUP_MESH(carpet, carpet, 0.01, 1.0, 1.0)
    SETUP_MESH_NODE(carpet)
-   MATERIAL_TEXTURE_SET(carpet, carpet, "Game Assets/Models/gazebo_t.md2", "Game Assets/Textures/gazebo_t.png")
-   NORMAL_SET(carpet, carpet, "Game Assets/Textures/gazebo_t_n.png")
+   MATERIAL_TEXTURE_SET(carpet, carpet, gazebo_top_path, gazebo_t_path)
+   NORMAL_SET(carpet, carpet, gazebo_t_n_path)
 
 
 
@@ -1014,7 +1014,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
    if (data->blending)
      {
         eo_do(data->texture_diffuse_carpet,
-              evas_3d_texture_file_set("Game Assets/Textures/gazebo_t_t.png", NULL));
+              evas_3d_texture_file_set(gazebo_t_trans_path, NULL));
         eo_do(data->mesh_carpet,
               evas_3d_mesh_blending_enable_set(EINA_TRUE),
               evas_3d_mesh_blending_func_set(EVAS_3D_BLEND_SRC_ALPHA, EVAS_3D_BLEND_ONE_MINUS_SRC_ALPHA));
@@ -1027,7 +1027,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
 
    SETUP_MESH(eagle, eagle, 0.01, 1.0, 1.0)
    SETUP_MESH_NODE(eagle)
-   MATERIAL_TEXTURE_SET(eagle, eagle, "Game Assets/Characters/eagle/eagle.md2", "Game Assets/Characters/eagle/eagle.png")
+   MATERIAL_TEXTURE_SET(eagle, eagle, eagle_path, eagle_tex_path)
 
    eo_do(data->mesh_node_eagle,
          evas_3d_node_scale_set(0.1, 0.1, 0.1),
@@ -1048,8 +1048,8 @@ _mesh_setup_gun_planet(Scene_Data *data)
    SETUP_MESH(column_c, column_c, 0.2, 0.8, 1.0)
    SETUP_MESH_NODE(column_c)
    TEXTCOORDS_SET(cube, 5.0, 0.1, 5.0, 0.1, 5.0, 0.4)
-   CUBE_TEXTURE_SET(column_c, column_c, 24, cube_vertices, cube_textcoords, 36, cube_indices, "Game Assets/Textures/bricks.jpg")
-   NORMAL_SET(column_c, column_c, "Game Assets/Textures/bricks_n.jpg")
+   CUBE_TEXTURE_SET(column_c, column_c, 24, cube_vertices, cube_textcoords, 36, cube_indices, red_brick_path)
+   NORMAL_SET(column_c, column_c, red_brick_n_path)
 
    eo_do(data->mesh_node_column_c,
          evas_3d_node_orientation_angle_axis_set(90, 0, 1.0, 0.0),
@@ -1089,8 +1089,8 @@ _mesh_setup_wall(Scene_Data *data, int index)
    SETUP_MESH(wall, wall[index], 0.2, 0.8, 1.0)
    SETUP_MESH_NODE(wall[index])
    TEXTCOORDS_SET(wall, 12.0, 1.0, 0.2, 1.0, 12.0, 0.2)
-   CUBE_TEXTURE_SET(wall, wall[index], 24, cube_vertices, wall_textcoords, 36, cube_indices, "Game Assets/Textures/bricks.jpg")
-   NORMAL_SET(wall, wall[index], "Game Assets/Textures/bricks_n.jpg")
+   CUBE_TEXTURE_SET(wall, wall[index], 24, cube_vertices, wall_textcoords, 36, cube_indices, red_brick_path)
+   NORMAL_SET(wall, wall[index], red_brick_n_path)
 
    /* placing of wall carpet on the floor grid */
    if (index == 0)
@@ -1122,15 +1122,50 @@ _mesh_setup_column(Scene_Data *data, int index)
 {
    /* Setup mesh for column */
 
-   SETUP_MESH(column, column[index], 0.4, 0.6, 1.0)
+   data->material_column = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
+
+   eo_do(data->material_column,
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_AMBIENT, EINA_TRUE),
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE),
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE),
+         evas_3d_material_enable_set(EVAS_3D_MATERIAL_NORMAL, EINA_TRUE),
+         evas_3d_material_color_set(EVAS_3D_MATERIAL_AMBIENT, 0.4, 0.4, 0.4, 1.0),
+         evas_3d_material_color_set(EVAS_3D_MATERIAL_DIFFUSE,  0.6, 0.6, 0.6, 1.0),
+         evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
+         evas_3d_material_shininess_set(50.0));
+
+   data->mesh_column[index] = eo_add(EVAS_3D_MESH_CLASS, evas);
+
    SETUP_MESH_NODE(column[index])
-   MATERIAL_TEXTURE_SET(column, column[index], "Game Assets/Models/column.ply", "Game Assets/Textures/bricks.jpg")
-   NORMAL_SET(column, column[index], "Game Assets/Textures/bricks_n.jpg")
+
+   evas_3d_add_cylinder_frame(data->mesh_column[index], 0, 50, tex_scale);
+
+   eo_do(data->mesh_column[index],
+         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
+         evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES),
+         evas_3d_mesh_frame_material_set(0, data->material_column),
+         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG),
+         evas_3d_mesh_frame_material_set(0, data->material_column));
+
+   data->texture_diffuse_column = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
+
+   eo_do(data->texture_diffuse_column,
+         evas_3d_texture_file_set(red_brick_path, NULL),
+         evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
+                                    EVAS_3D_TEXTURE_FILTER_NEAREST),
+         evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT, EVAS_3D_WRAP_MODE_REPEAT));
+
+   eo_do(data->material_column,
+         evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE,
+                                      data->texture_diffuse_column),
+         evas_3d_material_texture_set(EVAS_3D_MATERIAL_AMBIENT,
+                                      data->texture_diffuse_column));
+
+   NORMAL_SET(column, column[index], red_brick_n_path)
 
    eo_do(data->mesh_node_column[index],
-         evas_3d_node_scale_set(7.0, 7.0, 7.0),
-         evas_3d_node_position_set(10 , -10.0, -45 + 21.25 * index),
-         evas_3d_node_orientation_angle_axis_set(270, 1, 0, 0));
+         evas_3d_node_scale_set(2.2, 19.0, 2.2),
+         evas_3d_node_position_set(10 , 0, -45 + 21.25 * index));
 }
 
 void
@@ -1141,8 +1176,8 @@ _mesh_setup_grass(Scene_Data *data)
    SETUP_MESH(grass, grass, 0.4, 0.8, 1.0)
    SETUP_MESH_NODE(grass)
    CUBE_TEXTURE_SET(grass, grass, 4, grass_vertices, &grass_vertices[10],
-                         6, grass_indices, "Game Assets/Textures/grass.jpg")
-   NORMAL_SET(grass, grass, "Game Assets/Textures/grass_n.png")
+                         6, grass_indices, gray_brick_path)
+   NORMAL_SET(grass, grass, gray_brick_n_path)
 
    /* placing of grass carpet on the floor grid */
    eo_do(data->mesh_node_grass,
@@ -1159,8 +1194,8 @@ _mesh_setup(Scene_Data *data, float h EINA_UNUSED, float w EINA_UNUSED, float d 
      {
         SETUP_MESH(level[0], level[index], 0.4, 0.8, 1.0)
         SETUP_MESH_NODE(level[index])
-        CUBE_TEXTURE_SET(level[0], level[index], 24, cube_vertices, isource, 36, cube_indices, "Game Assets/Textures/bricks.jpg")
-        NORMAL_SET(level[0], level[index], "Game Assets/Textures/bricks_n.jpg")
+        CUBE_TEXTURE_SET(level[0], level[index], 24, cube_vertices, isource, 36, cube_indices, red_brick_path)
+        NORMAL_SET(level[0], level[index], red_brick_n_path)
 
         eo_do(data->mesh_node_level[index],
               evas_3d_node_scale_set(9.75, 10.0, 1.0),
@@ -1170,8 +1205,9 @@ _mesh_setup(Scene_Data *data, float h EINA_UNUSED, float w EINA_UNUSED, float d 
      {
         SETUP_MESH(level[1], level[index], 0.4, 0.8, 1.0)
         SETUP_MESH_NODE(level[index])
-        CUBE_TEXTURE_SET(level[1], level[index], 24, cube_vertices, isource, 36, cube_indices, "Game Assets/Textures/brick-stone.jpg")
-        NORMAL_SET(level[1], level[index], "Game Assets/Textures/brick-stone_n.jpg")
+        CUBE_TEXTURE_SET(level[1], level[index], 24, cube_vertices,
+                         isource, 36, cube_indices, gray_brick_path)
+        NORMAL_SET(level[1], level[index], gray_brick_n_path)
 
         eo_do(data->mesh_node_level[index],
               evas_3d_node_scale_set(1.0, 1.0, 4.0),
@@ -1186,7 +1222,7 @@ _mesh_setup_warrior(Scene_Data *data)
 
    SETUP_MESH(warrior, warrior, 0.4, 0.6, 1.0)
    SETUP_MESH_NODE(warrior)
-   MATERIAL_TEXTURE_SET(warrior, warrior, "Game Assets/Characters/warrior/warrior.md2", "Game Assets/Characters/warrior/warrior.png")
+   MATERIAL_TEXTURE_SET(warrior, warrior, warrior_path, warrior_tex_path)
 
    eo_do(data->mesh_node_warrior,
          evas_3d_node_position_set(57, -10, 0),
@@ -1198,8 +1234,8 @@ _mesh_setup_snake(Scene_Data *data)
 {
    SETUP_MESH(snake, snake, 0.01, 1.0, 1.0)
    SETUP_MESH_NODE(snake)
-   MATERIAL_TEXTURE_SET(snake, snake, "Game Assets/Characters/snake/snake.md2", "Game Assets/Characters/snake/snake.png")
-   NORMAL_SET(snake, snake, "Game Assets/Characters/snake/snake_n.png")
+   MATERIAL_TEXTURE_SET(snake, snake, snake_path, snake_tex_path)
+   NORMAL_SET(snake, snake, snake_tex_n_path)
 
    eo_do(data->mesh_node_snake,
          evas_3d_node_position_set(20, -10, 20),

@@ -355,6 +355,28 @@ resources/models/sweet_home.obj \
 resources/models/sweet_home_only_vertex_coords.obj \
 resources/models/sweet_home_without_normals.obj \
 resources/models/sweet_home_without_tex_coords.obj \
+shooter/assets/images/brick-stone_n.jpg \
+shooter/assets/images/brick-stone.jpg \
+shooter/assets/images/bricks_n.jpg \
+shooter/assets/images/eagle.png \
+shooter/assets/images/snake.png \
+shooter/assets/images/snake_n.png \
+shooter/assets/images/bricks.jpg \
+shooter/assets/images/soldier.png \
+shooter/assets/images/gazebo.png \
+shooter/assets/images/warrior.png \
+shooter/assets/images/gazebo_t.png \
+shooter/assets/images/gazebo_t_t.png \
+shooter/assets/images/gazebo_t_n.png \
+shooter/assets/images/gazebo_b_n.png \
+shooter/assets/models/warrior.md2 \
+shooter/assets/models/gazebo_b.md2 \
+shooter/assets/models/gazebo_t.md2 \
+shooter/assets/models/eagle.md2 \
+shooter/assets/models/snake.md2 \
+shooter/assets/models/soldier_jump.md2 \
+shooter/assets/models/soldier.md2 \
+shooter/assets/models/tommy.ply \
 Makefile.examples \
 evas-common.h
 
