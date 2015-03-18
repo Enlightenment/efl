@@ -162,13 +162,11 @@ ecore_wl_init(const char *name)
         ECORE_WL_EVENT_INTERFACES_BOUND = ecore_event_type_new();
      }
 
-   if (!(_ecore_wl_disp = malloc(sizeof(Ecore_Wl_Display))))
+   if (!(_ecore_wl_disp = calloc(1, sizeof(Ecore_Wl_Display))))
      {
         ERR("Could not allocate memory for Ecore_Wl_Display structure");
         goto exit_ecore_disp;
      }
-
-   memset(_ecore_wl_disp, 0, sizeof(Ecore_Wl_Display));
 
    if (!(_ecore_wl_disp->wl.display = wl_display_connect(name)))
      {

@@ -74,13 +74,11 @@ ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buf
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!(win = malloc(sizeof(Ecore_Wl_Window))))
+   if (!(win = calloc(1, sizeof(Ecore_Wl_Window))))
      {
         ERR("Failed to allocate an Ecore Wayland Window");
         return NULL;
      }
-
-   memset(win, 0, sizeof(Ecore_Wl_Window));
 
    win->display = _ecore_wl_disp;
    win->parent = parent;

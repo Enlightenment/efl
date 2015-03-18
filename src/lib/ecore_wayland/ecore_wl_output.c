@@ -73,9 +73,7 @@ _ecore_wl_output_add(Ecore_Wl_Display *ewd, unsigned int id)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!(output = malloc(sizeof(Ecore_Wl_Output)))) return;
-
-   memset(output, 0, sizeof(Ecore_Wl_Output));
+   if (!(output = calloc(1, sizeof(Ecore_Wl_Output)))) return;
 
    output->display = ewd;
 
