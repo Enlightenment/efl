@@ -119,14 +119,11 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
           }
         else
           {
-             if (svr->name[0] ==
-                 '/')
-               snprintf(buf, sizeof(buf), "%s|%i", svr->name,
-                        svr->port);
+             if (svr->name[0] == '/')
+               snprintf(buf, sizeof(buf), "%s|%i", svr->name, svr->port);
              else
                snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i",
-                        svr->name,
-                        svr->port);
+                        svr->name, svr->port);
           }
      }
    else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
@@ -273,26 +270,24 @@ ecore_con_local_listen(
    else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_SYSTEM)
      {
         mask = 0;
-        if (svr->name[0] == '/')
+        if (svr->port < 0)
           {
-             if (svr->port >= 0)
-               snprintf(buf,
-                        sizeof(buf),
-                        "%s|%i",
-                        svr->name,
-                        svr->port);
+             if (svr->name[0] == '/')
+               {
+                  strncpy(buf, svr->name, sizeof(buf) - 1);
+                  buf[sizeof(buf) - 1] = 0;
+               }
              else
-               snprintf(buf,
-                        sizeof(buf),
-                        "%s",
-                        svr->name);
+               snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s", svr->name);
           }
         else
-          snprintf(buf,
-                   sizeof(buf),
-                   "/tmp/.ecore_service|%s|%i",
-                   svr->name,
-                   svr->port);
+          {
+             if (svr->name[0] == '/')
+               snprintf(buf, sizeof(buf), "%s|%i", svr->name, svr->port);
+             else
+               snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i",
+                        svr->name, svr->port);
+          }
      }
    else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
      {
