@@ -429,7 +429,7 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
           goto close_pipe_read;
         exe->pipe_read.thread = (HANDLE)_beginthreadex(NULL, 0,
                                                        _ecore_exe_pipe_read_thread_cb,
-                                                       exe, 0, NULL);
+                                                       obj, 0, NULL);
         if (!exe->pipe_read.thread)
           goto close_pipe_read;
      }
@@ -443,7 +443,7 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
           goto close_pipe_error;
         exe->pipe_error.thread = (HANDLE)_beginthreadex(NULL, 0,
                                                         _ecore_exe_pipe_error_thread_cb,
-                                                        exe, 0, NULL);
+                                                        obj, 0, NULL);
         if (!exe->pipe_error.thread)
           goto close_pipe_error;
      }
