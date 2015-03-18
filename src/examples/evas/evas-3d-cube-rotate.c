@@ -8,7 +8,7 @@
  * is pressed. Note, that rotation is taking place around one axis only.
  *
  * @verbatim
- * gcc -o evas-3d-cube-rotate evas-3d-cube-rotate.c -g `pkg-config --libs --cflags evas ecore ecore-evas eo` -lm
+ * gcc -o evas-3d-cube-rotate evas-3d-cube-rotate.c evas-3d-primitives.c -g `pkg-config --libs --cflags evas ecore ecore-evas eo` -lm
  * @endverbatim
  */
 
@@ -19,6 +19,7 @@
 #include <Ecore_Evas.h>
 #include <Evas.h>
 #include <Eo.h>
+#include "evas-3d-primitives.h"
 
 
 #define  WIDTH          400
@@ -56,67 +57,6 @@ int              mouse_diff_y = 0;
 int              mouse_old_x  = 0;
 int              mouse_old_y  = 0;
 int              indicator    = 0;
-
-
-static const float cube_vertices[] =
-{
-   /* Front */
-   -1.0,  1.0,  1.0,     0.0,  0.0,  1.0,     1.0, 0.0, 0.0, 1.0,     0.0,  1.0,
-    1.0,  1.0,  1.0,     0.0,  0.0,  1.0,     1.0, 0.0, 0.0, 1.0,     1.0,  1.0,
-   -1.0, -1.0,  1.0,     0.0,  0.0,  1.0,     1.0, 0.0, 0.0, 1.0,     0.0,  0.0,
-    1.0, -1.0,  1.0,     0.0,  0.0,  1.0,     1.0, 0.0, 0.0, 1.0,     1.0,  0.0,
-
-   /* Back */
-    1.0,  1.0, -1.0,     0.0,  0.0, -1.0,     0.0, 0.0, 1.0, 1.0,     0.0,  1.0,
-   -1.0,  1.0, -1.0,     0.0,  0.0, -1.0,     0.0, 0.0, 1.0, 1.0,     1.0,  1.0,
-    1.0, -1.0, -1.0,     0.0,  0.0, -1.0,     0.0, 0.0, 1.0, 1.0,     0.0,  0.0,
-   -1.0, -1.0, -1.0,     0.0,  0.0, -1.0,     0.0, 0.0, 1.0, 1.0,     1.0,  0.0,
-
-   /* Left */
-   -1.0,  1.0, -1.0,    -1.0,  0.0,  0.0,     0.0, 1.0, 0.0, 1.0,     0.0,  1.0,
-   -1.0,  1.0,  1.0,    -1.0,  0.0,  0.0,     0.0, 1.0, 0.0, 1.0,     1.0,  1.0,
-   -1.0, -1.0, -1.0,    -1.0,  0.0,  0.0,     0.0, 1.0, 0.0, 1.0,     0.0,  0.0,
-   -1.0, -1.0,  1.0,    -1.0,  0.0,  0.0,     0.0, 1.0, 0.0, 1.0,     1.0,  0.0,
-
-   /* Right */
-    1.0,  1.0,  1.0,     1.0,  0.0,  0.0,     1.0, 1.0, 0.0, 1.0,     0.0,  1.0,
-    1.0,  1.0, -1.0,     1.0,  0.0,  0.0,     1.0, 1.0, 0.0, 1.0,     1.0,  1.0,
-    1.0, -1.0,  1.0,     1.0,  0.0,  0.0,     1.0, 1.0, 0.0, 1.0,     0.0,  0.0,
-    1.0, -1.0, -1.0,     1.0,  0.0,  0.0,     1.0, 1.0, 0.0, 1.0,     1.0,  0.0,
-
-   /* Top */
-   -1.0,  1.0, -1.0,     0.0,  1.0,  0.0,     1.0, 0.0, 1.0, 1.0,     0.0,  1.0,
-    1.0,  1.0, -1.0,     0.0,  1.0,  0.0,     1.0, 0.0, 1.0, 1.0,     1.0,  1.0,
-   -1.0,  1.0,  1.0,     0.0,  1.0,  0.0,     1.0, 0.0, 1.0, 1.0,     0.0,  0.0,
-    1.0,  1.0,  1.0,     0.0,  1.0,  0.0,     1.0, 0.0, 1.0, 1.0,     1.0,  0.0,
-
-   /* Bottom */
-    1.0, -1.0, -1.0,     0.0, -1.0,  0.0,     0.0, 1.0, 1.0, 1.0,     0.0,  1.0,
-   -1.0, -1.0, -1.0,     0.0, -1.0,  0.0,     0.0, 1.0, 1.0, 1.0,     1.0,  1.0,
-    1.0, -1.0,  1.0,     0.0, -1.0,  0.0,     0.0, 1.0, 1.0, 1.0,     0.0,  0.0,
-   -1.0, -1.0,  1.0,     0.0, -1.0,  0.0,     0.0, 1.0, 1.0, 1.0,     1.0,  0.0,
-};
-
-static const unsigned short cube_indices[] =
-{
-   /* Front */
-   0,   1,  2,  2,  1,  3,
-
-   /* Back */
-   4,   5,  6,  6,  5,  7,
-
-   /* Left */
-   8,   9, 10, 10,  9, 11,
-
-   /* Right */
-   12, 13, 14, 14, 13, 15,
-
-   /* Top */
-   16, 17, 18, 18, 17, 19,
-
-   /* Bottom */
-   20, 21, 22, 22, 21, 23
-};
 
 static void
 _on_delete(Ecore_Evas *ee EINA_UNUSED)
@@ -218,7 +158,7 @@ _camera_setup(Scene_Data *data)
 {
    data->camera = eo_add(EVAS_3D_CAMERA_CLASS, evas);
    eo_do(data->camera,
-         evas_3d_camera_projection_perspective_set(60.0, 1.0, 2.0, 50.0));
+         evas_3d_camera_projection_perspective_set(20.0, 1.0, 2.0, 50.0));
 
    data->camera_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                                      evas_3d_node_constructor(EVAS_3D_NODE_TYPE_CAMERA));
@@ -269,20 +209,8 @@ _mesh_setup(Scene_Data *data)
 
    /* Setup mesh. */
    data->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
+   evas_3d_add_cube_frame(data->mesh, 0);
    eo_do(data->mesh,
-         evas_3d_mesh_vertex_count_set(24),
-         evas_3d_mesh_frame_add(0),
-         evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_POSITION,
-                                            12 * sizeof(float), &cube_vertices[ 0]),
-         evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_NORMAL,
-                                            12 * sizeof(float), &cube_vertices[ 3]),
-         evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_COLOR,
-                                            12 * sizeof(float), &cube_vertices[ 6]),
-         evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_TEXCOORD,
-                                            12 * sizeof(float), &cube_vertices[10]),
-
-         evas_3d_mesh_index_data_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT, 36, &cube_indices[0]),
-         evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG),
          evas_3d_mesh_frame_material_set(0, data->material));
 
