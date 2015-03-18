@@ -108,7 +108,7 @@ _camera_setup(Scene_Data *data)
    data->camera = eo_add(EVAS_3D_CAMERA_CLASS, evas);
 
    eo_do(data->camera,
-         evas_3d_camera_projection_perspective_set(60.0, 1.0, 2.0, 50.0));
+         evas_3d_camera_projection_perspective_set(30.0, 1.0, 2.0, 50.0));
 
    data->camera_node = eo_add(EVAS_3D_NODE_CLASS, evas,
                               evas_3d_node_constructor(EVAS_3D_NODE_TYPE_CAMERA));
