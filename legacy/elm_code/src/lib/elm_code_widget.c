@@ -334,7 +334,8 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
 
    _elm_code_widget_fill_cursor(widget, line, cells, gutter, w);
    _elm_code_widget_fill_selection(widget, line, cells, gutter, w);
-   _elm_code_widget_fill_whitespace(widget, '\n', &cells[length + gutter]);
+   if (line->number < elm_code_file_lines_get(line->file))
+     _elm_code_widget_fill_whitespace(widget, '\n', &cells[length + gutter]);
 
    evas_object_textgrid_update_add(pd->grid, 0, line->number - 1, w, 1);
 }
@@ -401,7 +402,6 @@ _elm_code_widget_line_cb(void *data, Eo *obj EINA_UNUSED,
 
    return EO_CALLBACK_CONTINUE;
 }
-
 
 static Eina_Bool
 _elm_code_widget_file_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
