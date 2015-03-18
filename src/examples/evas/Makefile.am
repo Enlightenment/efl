@@ -198,17 +198,17 @@ evas_3d_cube_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_cube_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_3d_cube2
-evas_3d_cube2_SOURCES = evas-3d-cube2.c
+evas_3d_cube2_SOURCES = evas-3d-cube2.c evas-3d-primitives.c evas-3d-primitives.h
 evas_3d_cube2_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_cube2_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_3d_proxy
-evas_3d_proxy_SOURCES = evas-3d-proxy.c
+evas_3d_proxy_SOURCES = evas-3d-proxy.c evas-3d-primitives.c evas-3d-primitives.h
 evas_3d_proxy_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_proxy_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_3d_pick
-evas_3d_pick_SOURCES = evas-3d-pick.c
+evas_3d_pick_SOURCES = evas-3d-pick.c evas-3d-primitives.c evas-3d-primitives.h
 evas_3d_pick_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_pick_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
@@ -228,17 +228,17 @@ evas_3d_ply_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_ply_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_3d_frustum
-evas_3d_frustum_SOURCES = evas-3d-frustum.c
+evas_3d_frustum_SOURCES = evas-3d-frustum.c evas-3d-primitives.c evas-3d-primitives.h
 evas_3d_frustum_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_frustum_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_3d_aabb
-evas_3d_aabb_SOURCES = evas-3d-aabb.c
+evas_3d_aabb_SOURCES = evas-3d-aabb.c evas-3d-primitives.c evas-3d-primitives.h
 evas_3d_aabb_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_aabb_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_3d_cube_rotate
-evas_3d_cube_rotate_SOURCES = evas-3d-cube-rotate.c
+evas_3d_cube_rotate_SOURCES = evas-3d-cube-rotate.c evas-3d-primitives.c evas-3d-primitives.h
 evas_3d_cube_rotate_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_cube_rotate_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
@@ -248,7 +248,7 @@ evas_3d_shadows_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_shadows_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_3d_shooter
-evas_3d_shooter_SOURCES = shooter/evas-3d-shooter.c shooter/evas-3d-shooter-header.c
+evas_3d_shooter_SOURCES = shooter/evas-3d-shooter.c shooter/evas-3d-shooter-header.c evas-3d-primitives.c evas-3d-primitives.h
 evas_3d_shooter_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_shooter_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
