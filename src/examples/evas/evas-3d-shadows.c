@@ -194,8 +194,7 @@ _cone_setup(Body_3D *cone)
       eo_add(EVAS_3D_NODE_CLASS, evas,
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(cone->node, evas_3d_node_mesh_add(cone->mesh),
-         evas_3d_node_position_set(-5.0, -1.0, -3.0),
-         evas_3d_node_scale_set(1.0, 2.0, 1.0));
+         evas_3d_node_position_set(-5.0, -1.0, -3.0));
 }
 
 static void
