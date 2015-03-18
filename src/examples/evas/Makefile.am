@@ -334,6 +334,10 @@ resources/images/cube1.png \
 resources/images/normal_lego.png \
 resources/images/sonic.png \
 resources/images/sweet_home_reversed.png \
+resources/images/wood.jpg \
+resources/images/rocks.jpg \
+resources/images/four_NM_height.tga \
+resources/images/rocks_NM_height.tga \
 resources/models/mesh_for_mmap.eet \
 resources/models/mesh_for_mmap.md2 \
 resources/models/mesh_for_mmap.obj \
@@ -351,7 +355,8 @@ resources/models/sweet_home.obj \
 resources/models/sweet_home_only_vertex_coords.obj \
 resources/models/sweet_home_without_normals.obj \
 resources/models/sweet_home_without_tex_coords.obj \
-Makefile.examples
+Makefile.examples \
+evas-common.h
 
 examples: $(EXTRA_PROGRAMS) $(EDJS)
 

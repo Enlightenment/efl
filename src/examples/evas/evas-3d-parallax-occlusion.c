@@ -8,17 +8,28 @@
  * @endverbatim
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#define PACKAGE_EXAMPLES_DIR "."
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Eo.h>
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include "evas-3d-primitives.h"
+#include "evas-common.h"
 
 #define  WIDTH          400
 #define  HEIGHT         400
+
+static const char *rock_diffuse = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "rocks.jpg";
+static const char *rock_n_and_height_map = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "rocks_NM_height.tga";
+static const char *wood_diffuse = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "wood.jpg";
+static const char *wood_n_and_height_map = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "four_NM_height.tga";
 
 typedef struct _Scene_Data
 {
@@ -136,10 +147,10 @@ _mesh_setup(Scene_Data *data)
 
    data->texture_rocks = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
    data->texture_rocks_n = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
-   eo_do(data->texture_rocks, evas_3d_texture_file_set("rocks.jpg", NULL),
+   eo_do(data->texture_rocks, evas_3d_texture_file_set(rock_diffuse, NULL),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
                                   EVAS_3D_WRAP_MODE_REPEAT));
-   eo_do(data->texture_rocks_n, evas_3d_texture_file_set("rocks_NM_height.tga", NULL),
+   eo_do(data->texture_rocks_n, evas_3d_texture_file_set(rock_n_and_height_map, NULL),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
                                   EVAS_3D_WRAP_MODE_REPEAT));
 
@@ -162,10 +173,10 @@ _mesh_setup(Scene_Data *data)
 
    data->texture_wood = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
    data->texture_four_n = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
-   eo_do(data->texture_wood, evas_3d_texture_file_set("wood.jpg", NULL),
+   eo_do(data->texture_wood, evas_3d_texture_file_set(wood_diffuse, NULL),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
                                   EVAS_3D_WRAP_MODE_REPEAT));
-   eo_do(data->texture_four_n, evas_3d_texture_file_set("four_NM_height.tga", NULL),
+   eo_do(data->texture_four_n, evas_3d_texture_file_set(wood_n_and_height_map, NULL),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
                                   EVAS_3D_WRAP_MODE_REPEAT));
 
