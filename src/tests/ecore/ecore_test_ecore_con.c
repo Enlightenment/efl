@@ -175,7 +175,7 @@ _dns_err(void *data, int type EINA_UNUSED, void *ev EINA_UNUSED)
    return ECORE_CALLBACK_RENEW;
 }
 
-void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name, Eina_Bool is_ssl)
+void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name, Eina_Bool is_ssl, int server_port)
 {
    Ecore_Con_Server *server = NULL;
    Ecore_Con_Server *client;
@@ -185,7 +185,7 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
    void *server_data = malloc (1);
    void *client_data = malloc (1);
    double timeout_val = 10, timeout_ret;
-   int ret, server_port = 1234;
+   int ret;
    void *del_ret;
    const char *server_name;
 
@@ -300,103 +300,160 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
 
 START_TEST(ecore_test_ecore_con_local_user)
 {
-   _ecore_con_server_client_tests(ECORE_CON_LOCAL_USER, "test_sock", EINA_FALSE);
+   _ecore_con_server_client_tests(ECORE_CON_LOCAL_USER, "test_sock", EINA_FALSE, 12345);
+}
+END_TEST
+
+START_TEST(ecore_test_ecore_con_local_user_home)
+{
+   const char *xdg_runtime_dir = getenv("XDG_RUNTIME_DIR");
+
+   unsetenv("XDG_RUNTIME_DIR");
+   _ecore_con_server_client_tests(ECORE_CON_LOCAL_USER, "test_soc", EINA_FALSE, 12345);
+   setenv("XDG_RUNTIME_DIR", xdg_runtime_dir, 1);
+}
+END_TEST
+
+START_TEST(ecore_test_ecore_con_local_user_tmp)
+{
+   const char *xdg_runtime_dir = getenv("XDG_RUNTIME_DIR");
+   const char *homedir = getenv("HOME");
+
+   unsetenv("XDG_RUNTIME_DIR");
+   unsetenv("HOME");
+   _ecore_con_server_client_tests(ECORE_CON_LOCAL_USER, "test_sock", EINA_FALSE, 12345);
+   setenv("HOME", homedir, 1);
+   setenv("XDG_RUNTIME_DIR", xdg_runtime_dir, 1);
+}
+END_TEST
+
+START_TEST(ecore_test_ecore_con_local_user_none)
+{
+   const char *xdg_runtime_dir = getenv("XDG_RUNTIME_DIR");
+   const char *homedir = getenv("HOME");
+   const char *tmp = getenv("TMP");
+
+   unsetenv("XDG_RUNTIME_DIR");
+   unsetenv("HOME");
+   unsetenv("TMP");
+   _ecore_con_server_client_tests(ECORE_CON_LOCAL_USER, "test_sock", EINA_FALSE, 12345);
+   setenv("TMP", tmp, 1);
+   setenv("HOME", homedir, 1);
+   setenv("XDG_RUNTIME_DIR", xdg_runtime_dir, 1);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_local_system)
 {
-   _ecore_con_server_client_tests(ECORE_CON_LOCAL_SYSTEM, "test_sock", EINA_FALSE);
+   _ecore_con_server_client_tests(ECORE_CON_LOCAL_SYSTEM, "test_sock", EINA_FALSE, 12345);
+}
+END_TEST
+
+START_TEST(ecore_test_ecore_con_local_system_fullpath)
+{
+   _ecore_con_server_client_tests(ECORE_CON_LOCAL_SYSTEM, "/tmp/test_sock", EINA_FALSE, 12345);
+}
+END_TEST
+
+START_TEST(ecore_test_ecore_con_local_system_negport)
+{
+   _ecore_con_server_client_tests(ECORE_CON_LOCAL_SYSTEM, "test_sock", EINA_FALSE, -6);
+}
+END_TEST
+
+START_TEST(ecore_test_ecore_con_local_system_negport_fullpath)
+{
+   _ecore_con_server_client_tests(ECORE_CON_LOCAL_SYSTEM, "/tmp/test_sock", EINA_FALSE, -6);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_local_abstract)
 {
-   _ecore_con_server_client_tests(ECORE_CON_LOCAL_ABSTRACT, "test_sock", EINA_FALSE);
+   _ecore_con_server_client_tests(ECORE_CON_LOCAL_ABSTRACT, "test_sock", EINA_FALSE, 12345);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_remote_tcp)
 {
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP, "127.0.0.1", EINA_FALSE);
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP, "127.0.0.1", EINA_FALSE, 12345);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_remote_nodelay)
 {
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY, "127.0.0.1", EINA_FALSE);
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY, "127.0.0.1", EINA_FALSE, 12345);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_remote_tcp_ssl3)
 {
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_SSL3, "127.0.0.1", EINA_TRUE);
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_SSL3, "127.0.0.1", EINA_TRUE, 12345);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_remote_tcp_ssl3_load_cert)
 {
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE);
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE, 12345);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_remote_tcp_tls)
 {
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS, "127.0.0.1", EINA_TRUE);
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS, "127.0.0.1", EINA_TRUE, 12345);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_remote_tcp_tls_load_cert)
 {
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE);
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE, 12345);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_remote_tcp_mixed)
 {
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_MIXED, "127.0.0.1", EINA_TRUE);
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_MIXED, "127.0.0.1", EINA_TRUE, 12345);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_remote_tcp_mixed_load_cert)
 {
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE);
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE, 12345);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_remote_nodelay_ssl3)
 {
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_SSL3, "127.0.0.1", EINA_TRUE);
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_SSL3, "127.0.0.1", EINA_TRUE, 12345);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_remote_nodelay_ssl3_load_cert)
 {
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE);
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE, 12345);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_remote_nodelay_tls)
 {
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_TLS, "127.0.0.1", EINA_TRUE);
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_TLS, "127.0.0.1", EINA_TRUE, 12345);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_remote_nodelay_tls_load_cert)
 {
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE);
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE, 12345);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_remote_nodelay_mixed)
 {
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_MIXED, "127.0.0.1", EINA_TRUE);
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_MIXED, "127.0.0.1", EINA_TRUE, 12345);
 }
 END_TEST
 
 START_TEST(ecore_test_ecore_con_remote_nodelay_mixed_load_cert)
 {
-   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE);
+   _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE, 12345);
 }
 END_TEST
 
@@ -478,7 +535,13 @@ void ecore_test_ecore_con(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_con_init);
    tcase_add_test(tc, ecore_test_ecore_con_local_user);
+   tcase_add_test(tc, ecore_test_ecore_con_local_user_home);
+   tcase_add_test(tc, ecore_test_ecore_con_local_user_tmp);
+   tcase_add_test(tc, ecore_test_ecore_con_local_user_none);
    tcase_add_test(tc, ecore_test_ecore_con_local_system);
+   tcase_add_test(tc, ecore_test_ecore_con_local_system_fullpath);
+   tcase_add_test(tc, ecore_test_ecore_con_local_system_negport);
+   tcase_add_test(tc, ecore_test_ecore_con_local_system_negport_fullpath);
    tcase_add_test(tc, ecore_test_ecore_con_local_abstract);
    tcase_add_test(tc, ecore_test_ecore_con_remote_tcp);
    tcase_add_test(tc, ecore_test_ecore_con_remote_tcp_ssl3);
