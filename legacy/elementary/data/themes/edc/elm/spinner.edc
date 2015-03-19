@@ -1,6 +1,12 @@
 group { name: "elm/spinner/base/default";
    images.image: "vert_bar_inset.png" COMP;
    parts {
+      part { name: "clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.text_button";
+            rel2.to: "elm.swallow.text_button";
+         }
+      }
       part { name: "bg";
          type: SPACER;
          scale: 1;
@@ -34,8 +40,9 @@ group { name: "elm/spinner/base/default";
       }
       part { name: "elm.swallow.entry";
          type: SWALLOW;
+         clip_to: "clip";
          description { state: "default" 0.0;
-            fixed: 1 0;
+            fixed: 1 1;
             rel1.to: "elm.swallow.text_button";
             rel2.to: "elm.swallow.text_button";
             visible: 0;
