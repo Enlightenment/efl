@@ -54,6 +54,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
+static void _sizing_eval(Evas_Object *obj);
 
 static const Elm_Action key_actions[] = {
    {"select", _key_action_select},
@@ -547,10 +548,8 @@ _resize_job(void *data)
         EINA_INLIST_FOREACH(sd->items, it)
           {
              if (it->selected)
-               {
-                  _item_show(it);
-                  break;
-               }
+               _item_show(it);
+             evas_object_show(VIEW(it));
           }
      }
 
@@ -948,20 +947,44 @@ _elm_toolbar_elm_widget_event(Eo *obj, Elm_Toolbar_Data *sd, Evas_Object *src, E
 }
 
 static void
+_resizing_eval(Evas_Object *obj)
+{
+   Evas_Coord x, y, h;
+   Evas_Coord mw = -1, mh = -1;
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   evas_object_geometry_get(obj, &x, &y, NULL, &h);
+   evas_object_move(sd->more, x, y + h);
+   if (sd->resize_job) ecore_job_del(sd->resize_job);
+   // fit and fix the visibility
+   sd->resize_job = ecore_job_add(_resize_job, obj);
+}
+
+static void
+_resizing_eval_item(Elm_Toolbar_Item_Data *it)
+{
+   Evas_Coord x, y, h;
+   Evas_Coord mw = -1, mh = -1;
+   Evas_Object *obj = WIDGET(it);
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   evas_object_geometry_get(obj, &x, &y, NULL, &h);
+   evas_object_move(sd->more, x, y + h);
+   //calculate the size of item
+   edje_object_size_min_restricted_calc(VIEW(it), &mw, &mh, mw, mh);
+   if (!it->separator && !it->object)
+     elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+   evas_object_size_hint_min_set(VIEW(it), mw, mh);
+   evas_object_size_hint_max_set(VIEW(it), -1, -1);
+}
+
+static void
 _resize_cb(void *data,
            Evas *e EINA_UNUSED,
            Evas_Object *obj EINA_UNUSED,
            void *event_info EINA_UNUSED)
 {
-   Evas_Coord x, y, h;
-
-   ELM_TOOLBAR_DATA_GET(data, sd);
-
-   evas_object_geometry_get(data, &x, &y, NULL, &h);
-   evas_object_move(sd->more, x, y + h);
-
-   ecore_job_del(sd->resize_job);
-   sd->resize_job = ecore_job_add(_resize_job, data);
+   _resizing_eval(data);
 }
 
 EOLIAN static void
@@ -1219,10 +1242,6 @@ _item_theme_hook(Evas_Object *obj,
              edje_object_part_text_escaped_set(view, "elm.text", it->label);
              edje_object_signal_emit(view, "elm,state,text,visible", "elm");
           }
-        if (sd->vertical)
-          edje_object_signal_emit(view, "elm,orient,vertical", "elm");
-        else
-          edje_object_signal_emit(view, "elm,orient,horizontal", "elm");
      }
    else
      {
@@ -1230,43 +1249,47 @@ _item_theme_hook(Evas_Object *obj,
           {
              elm_widget_theme_object_set
                (obj, view, "toolbar", "separator", style);
-             if (sd->vertical)
-               {
-                  edje_object_signal_emit(view, "elm,orient,vertical", "elm");
-                  evas_object_size_hint_weight_set
-                    (view, EVAS_HINT_EXPAND, 0.0);
-                  evas_object_size_hint_align_set
-                    (view, EVAS_HINT_FILL, EVAS_HINT_FILL);
-               }
-             else
-               {
-                  edje_object_signal_emit(view, "elm,orient,horizontal", "elm");
-                  evas_object_size_hint_weight_set
-                    (view, 0.0, EVAS_HINT_EXPAND);
-                  evas_object_size_hint_align_set
-                    (view, EVAS_HINT_FILL, EVAS_HINT_FILL);
-               }
           }
         else
           {
              elm_widget_theme_object_set
                (obj, view, "toolbar", "object", style);
              edje_object_part_swallow(view, "elm.swallow.object", it->object);
-             if (sd->vertical)
-               edje_object_signal_emit(view, "elm,orient,vertical", "elm");
-             else
-               edje_object_signal_emit(view, "elm,orient,horizontal", "elm");
           }
      }
 
-   // If the min size is changed by edje signal in edc,
-   //the below function should be called before the calculation.
-   edje_object_message_signal_process(view);
+   if (sd->vertical)
+     edje_object_signal_emit(view, "elm,orient,vertical", "elm");
+   else
+     edje_object_signal_emit(view, "elm,orient,horizontal", "elm");
 
-   if (!it->separator && !it->object)
-     elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-   edje_object_size_min_restricted_calc(view, &mw, &mh, mw, mh);
-   evas_object_size_hint_min_set(view, mw, mh);
+    edje_object_message_signal_process(view);
+    if (!it->separator && !it->object)
+      elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+    if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
+      {
+         if (sd->vertical)
+           {
+              evas_object_size_hint_weight_set(view, EVAS_HINT_EXPAND, -1.0);
+              evas_object_size_hint_align_set
+                (view, EVAS_HINT_FILL, EVAS_HINT_FILL);
+           }
+         else
+           {
+              evas_object_size_hint_weight_set(VIEW(it), -1.0, EVAS_HINT_EXPAND);
+              evas_object_size_hint_align_set
+                (view, EVAS_HINT_FILL, EVAS_HINT_FILL);
+           }
+      }
+    else
+      {
+         evas_object_size_hint_weight_set
+           (VIEW(it), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+         evas_object_size_hint_align_set
+           (VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
+      }
+    _resizing_eval_item(it);
+    _sizing_eval(obj);
 }
 
 static void
@@ -1435,53 +1458,11 @@ _elm_toolbar_elm_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
 static void
 _elm_toolbar_item_label_update(Elm_Toolbar_Item_Data *item)
 {
-   Evas_Coord mw = -1, mh = -1, minw = -1, minh = -1;
-
-   ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
-
    edje_object_part_text_escaped_set(VIEW(item), "elm.text", item->label);
    if (item->label)
      edje_object_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
    else
      edje_object_signal_emit(VIEW(item), "elm,state,text,hidden", "elm");
-
-   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-   // If the min size is changed by edje signal in edc,
-   //the below function should be called before the calculation.
-   edje_object_message_signal_process(VIEW(item));
-   edje_object_size_min_restricted_calc(VIEW(item), &mw, &mh, mw, mh);
-   if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
-     {
-        if (sd->vertical)
-          {
-             evas_object_size_hint_weight_set
-               (VIEW(item), EVAS_HINT_EXPAND, -1.0);
-             evas_object_size_hint_align_set
-               (VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
-          }
-        else
-          {
-             evas_object_size_hint_weight_set
-               (VIEW(item), -1.0, EVAS_HINT_EXPAND);
-             evas_object_size_hint_align_set
-               (VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
-          }
-     }
-   else
-     {
-        evas_object_size_hint_weight_set
-          (VIEW(item), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set
-          (VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
-     }
-
-   evas_object_size_hint_min_get(VIEW(item), &minw, &minh);
-   if ((minw < mw) && (minh < mh))
-     evas_object_size_hint_min_set(VIEW(item), mw, mh);
-   else if ((minw < mw) && (minh > mh))
-     evas_object_size_hint_min_set(VIEW(item), mw, minh);
-   else if ((minw > mw) && (minh < mh))
-     evas_object_size_hint_min_set(VIEW(item), minw, mh);
 }
 
 static void
@@ -1521,7 +1502,7 @@ _item_label_set(Elm_Toolbar_Item_Data *item,
    else
      _elm_toolbar_item_label_update(item);
 
-   _resize_cb(WIDGET(item), NULL, NULL, NULL);
+   _resizing_eval_item(item);
 }
 
 EOLIAN static void
@@ -1639,7 +1620,8 @@ _item_resize(void *data,
              void *event_info EINA_UNUSED)
 {
    _sizing_eval(data);
-   _resize_cb(data, NULL, NULL, NULL);
+   _resizing_eval(data);
+
 }
 
 static void
@@ -1772,7 +1754,7 @@ _items_change(Elm_Toolbar_Item_Data *reorder_from, Elm_Toolbar_Item_Data *reorde
            _item_move_cb, reorder_to);
      }
 
-   _resize_cb(WIDGET(reorder_from), NULL, NULL, NULL);
+   _resizing_eval(WIDGET(reorder_from));
 }
 
 static void
@@ -2313,7 +2295,6 @@ _item_new(Evas_Object *obj,
           const void *data)
 {
    Evas_Object *icon_obj;
-   Evas_Coord mw, mh;
 
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
@@ -2390,41 +2371,9 @@ _item_new(Evas_Object *obj,
         edje_object_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
      }
 
-   mw = mh = -1;
-   if (!it->separator && !it->object)
-     elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-   // If the min size is changed by edje signal in edc,
-   //the below function should be called before the calculation.
-   edje_object_message_signal_process(VIEW(it));
-   edje_object_size_min_restricted_calc(VIEW(it), &mw, &mh, mw, mh);
-   if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
-     {
-        if (sd->vertical)
-          {
-             evas_object_size_hint_weight_set(VIEW(it), EVAS_HINT_EXPAND, -1.0);
-             evas_object_size_hint_align_set
-               (VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
-          }
-        else
-          {
-             evas_object_size_hint_weight_set(VIEW(it), -1.0, EVAS_HINT_EXPAND);
-             evas_object_size_hint_align_set
-               (VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
-          }
-     }
-   else
-     {
-        evas_object_size_hint_weight_set
-          (VIEW(it), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set
-          (VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
-     }
-
-   evas_object_size_hint_min_set(VIEW(it), mw, mh);
-   evas_object_size_hint_max_set(VIEW(it), -1, -1);
    evas_object_event_callback_add
      (VIEW(it), EVAS_CALLBACK_RESIZE, _item_resize, obj);
-
+   _resizing_eval_item(it);
    if ((!sd->items) && (sd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS))
      _item_select(it);
    return it;
@@ -2433,13 +2382,10 @@ _item_new(Evas_Object *obj,
 static void
 _elm_toolbar_item_icon_update(Elm_Toolbar_Item_Data *item)
 {
-   Evas_Coord mw = -1, mh = -1, minw = -1, minh = -1;
    Elm_Toolbar_Item_State *it_state;
    Evas_Object *old_icon =
      edje_object_part_swallow_get(VIEW(item), "elm.swallow.icon");
    Eina_List *l;
-
-   ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
 
    elm_widget_sub_object_del(WIDGET(item), old_icon);
    edje_object_part_swallow(VIEW(item), "elm.swallow.icon", item->icon);
@@ -2448,43 +2394,6 @@ _elm_toolbar_item_icon_update(Elm_Toolbar_Item_Data *item)
    else
        edje_object_signal_emit(VIEW(item), "elm,state,icon,hidden", "elm");
    evas_object_hide(old_icon);
-   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-   // If the min size is changed by edje signal in edc,
-   //the below function should be called before the calculation.
-   edje_object_message_signal_process(VIEW(item));
-   edje_object_size_min_restricted_calc(VIEW(item), &mw, &mh, mw, mh);
-   if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
-     {
-        if (sd->vertical)
-          {
-             evas_object_size_hint_weight_set
-               (VIEW(item), EVAS_HINT_EXPAND, -1.0);
-             evas_object_size_hint_align_set
-               (VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
-          }
-        else
-          {
-             evas_object_size_hint_weight_set
-               (VIEW(item), -1.0, EVAS_HINT_EXPAND);
-             evas_object_size_hint_align_set
-               (VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
-          }
-     }
-   else
-     {
-        evas_object_size_hint_weight_set
-          (VIEW(item), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set
-          (VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
-     }
-
-   evas_object_size_hint_min_get(VIEW(item), &minw, &minh);
-   if ((minw < mw) && (minh < mh))
-     evas_object_size_hint_min_set(VIEW(item), mw, mh);
-   else if ((minw < mw) && (minh > mh))
-     evas_object_size_hint_min_set(VIEW(item), mw, minh);
-   else if ((minw > mw) && (minh < mh))
-     evas_object_size_hint_min_set(VIEW(item), minw, mh);
 
    EINA_LIST_FOREACH(item->states, l, it_state)
      {
@@ -2555,8 +2464,7 @@ _elm_toolbar_item_icon_obj_set(Evas_Object *obj,
      }
    else
      _elm_toolbar_item_icon_update(item);
-
-   _resize_cb(obj, NULL, NULL, NULL);
+   _resizing_eval_item(item);
 }
 
 static void
@@ -3075,7 +2983,6 @@ _elm_toolbar_item_insert_before(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *
    sd->items = eina_inlist_prepend_relative
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(_before));
    evas_object_box_insert_before(sd->bx, VIEW(it), VIEW(_before));
-   evas_object_show(VIEW(it));
    _item_theme_hook(obj, it, scale, sd->icon_size);
    _sizing_eval(obj);
    sd->item_count++;
@@ -3099,7 +3006,6 @@ _elm_toolbar_item_insert_after(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *e
    sd->items = eina_inlist_append_relative
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(_after));
    evas_object_box_insert_after(sd->bx, VIEW(it), VIEW(_after));
-   evas_object_show(VIEW(it));
    _item_theme_hook(obj, it, scale, sd->icon_size);
    _sizing_eval(obj);
    sd->item_count++;
@@ -3153,7 +3059,7 @@ _elm_toolbar_item_priority_set(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *i
 {
    if (item->prio.priority == priority) return;
    item->prio.priority = priority;
-   _resize_cb(WIDGET(item), NULL, NULL, NULL);
+   _resizing_eval(WIDGET(item));
 }
 
 EOLIAN static int
@@ -3741,7 +3647,7 @@ _elm_toolbar_standard_priority_set(Eo *obj, Elm_Toolbar_Data *sd, int priority)
 {
    if (sd->standard_priority == priority) return;
    sd->standard_priority = priority;
-   _resize_cb(obj, NULL, NULL, NULL);
+   _resizing_eval(obj);
 }
 
 EOLIAN static int
