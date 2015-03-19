@@ -279,7 +279,7 @@ _init_sphere(void *this, const char *texture)
 Eina_Bool
 _init_scene(const char *texture)
 {
-   int i = 0, count = 0;
+   int i = 0;
    Evas_Real tmp;
    Test_object *m;
 
