@@ -11246,8 +11246,8 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
      };
 
    /* render object to surface with context, and offxet by x,y */
-   obj->layer->evas->engine.func->context_multiplier_unset(output,
-							   context);
+   ENFN->context_multiplier_unset(output, context);
+   ENFN->context_multiplier_set(output, context, 0, 0, 0, 0);
    ENFN->context_render_op_set(output, context, obj->cur->render_op);
    /* FIXME: This clipping is just until we fix inset handling correctly. */
    ENFN->context_clip_clip(output, context,
@@ -11668,6 +11668,12 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
            evas_common_font_instance_underline_thickness_get(NULL);
    int line_position =
            evas_common_font_instance_underline_position_get(NULL);
+   ENFN->context_multiplier_unset(output, context);
+   ENFN->context_multiplier_set(output, context,
+                                obj->cur->clipper->cur->cache.clip.r,
+                                obj->cur->clipper->cur->cache.clip.g,
+                                obj->cur->clipper->cur->cache.clip.b,
+                                obj->cur->clipper->cur->cache.clip.a);
    ITEM_WALK()
      {
         Evas_Object_Textblock_Text_Item *ti;
@@ -11701,6 +11707,7 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
               line_position, line_thickness);
      }
    ITEM_WALK_END();
+   ENFN->context_multiplier_unset(output, context);
 }
 
 static void

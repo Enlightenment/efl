@@ -446,6 +446,7 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
 	int i, maxd = 0x7fffffff;
 	int chosen_size = 0;
 	int chosen_size2 = 0;
+        FT_Int strike_index = 0;
 
 	for (i = 0; i < fi->src->ft.face->num_fixed_sizes; i++)
 	  {
@@ -459,12 +460,18 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
                   maxd = cd;
 		  chosen_size = s;
 		  chosen_size2 = fi->src->ft.face->available_sizes[i].y_ppem;
+                  strike_index = (FT_Int)i;
                   if (maxd == 0) break;
 	       }
 	  }
 	fi->real_size = chosen_size;
         FTLOCK();
-	error = FT_Set_Pixel_Sizes(fi->src->ft.face, 0, fi->real_size);
+
+        if (FT_HAS_FIXED_SIZES(fi->src->ft.face))
+          error = FT_Select_Size(fi->src->ft.face, strike_index);
+        else
+          error = FT_Set_Pixel_Sizes(fi->src->ft.face, 0, fi->real_size);
+
         FTUNLOCK();
 	if (error)
 	  {

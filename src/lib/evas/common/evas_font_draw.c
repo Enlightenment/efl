@@ -23,6 +23,72 @@ evas_common_font_draw_init(void)
 {
 }
 
+static void *
+_software_generic_image_new_from_data(int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
+{
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get())
+     {
+        Evas_Cache2 *cache = evas_common_image_cache2_get();
+        return evas_cache2_image_data(cache, w, h, image_data, alpha, cspace);
+     }
+#endif
+   return evas_cache_image_data(evas_common_image_cache_get(), w, h, image_data, alpha, cspace);
+}
+
+static void
+_software_generic_image_free(void *image)
+{
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get() && evas_cache2_image_cached(image))
+     {
+        evas_cache2_image_close(image);
+        return;
+     }
+#endif
+   evas_cache_image_drop(image);
+}
+
+static void
+_software_generic_image_draw(void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
+{
+   RGBA_Image *im;
+
+   if (!image) return;
+   im = image;
+
+#ifdef BUILD_PIPE_RENDER
+   if ((eina_cpu_count() > 1))
+     {
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_load_data(&im->cache_entry);
+#endif
+        evas_common_rgba_image_scalecache_prepare((Image_Entry *)(im),
+                                                  surface, context, smooth,
+                                                  src_x, src_y, src_w, src_h,
+                                                  dst_x, dst_y, dst_w, dst_h);
+
+        evas_common_pipe_image_draw(im, surface, context, smooth,
+                                    src_x, src_y, src_w, src_h,
+                                    dst_x, dst_y, dst_w, dst_h);
+     }
+   else
+#endif
+     {
+        evas_common_rgba_image_scalecache_prepare
+          (&im->cache_entry, surface, context, smooth,
+           src_x, src_y, src_w, src_h,
+           dst_x, dst_y, dst_w, dst_h);
+        evas_common_rgba_image_scalecache_do
+          (&im->cache_entry, surface, context, smooth,
+           src_x, src_y, src_w, src_h,
+           dst_x, dst_y, dst_w, dst_h);
+
+        evas_common_cpu_end_opt();
+     }
+}
+
 /*
  * BiDi handling: We receive the shaped string + other props from text_props,
  * we need to reorder it so we'll have the visual string (the way we draw)
@@ -42,29 +108,80 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
    EINA_INARRAY_FOREACH(glyphs->array, glyph)
      {
         RGBA_Font_Glyph *fg;
-        int chr_x, chr_y, w;
+        int chr_x, chr_y, w, h;
 
         fg = glyph->fg;
+        w = fg->glyph_out->bitmap.width;
+        h = fg->glyph_out->bitmap.rows;
+
         if ((!fg->ext_dat) && (dc->font_ext.func.gl_new))
           {
              /* extension calls */
              fg->ext_dat = dc->font_ext.func.gl_new(dc->font_ext.data, fg);
              fg->ext_dat_free = dc->font_ext.func.gl_free;
           }
-        w = fg->glyph_out->bitmap.width;
+
+        if ((!fg->ext_dat) && FT_HAS_COLOR(fg->fi->src->ft.face))
+          {
+             if (dc->font_ext.func.gl_image_new_from_data)
+               {
+                  /* extension calls */
+                  fg->ext_dat = dc->font_ext.func.gl_image_new_from_data(dc->font_ext.data,
+                                                                         (unsigned int)w, (unsigned int)h,
+                                                                         (DATA32 *)fg->glyph_out->bitmap.buffer,
+                                                                         EINA_TRUE,
+                                                                         EVAS_COLORSPACE_ARGB8888);
+                  fg->ext_dat_free = dc->font_ext.func.gl_image_free;
+               }
+             else
+               {
+                  fg->ext_dat = _software_generic_image_new_from_data(w, h,
+                                                                      (DATA32 *)fg->glyph_out->bitmap.buffer,
+                                                                      EINA_TRUE,
+                                                                      EVAS_COLORSPACE_ARGB8888);
+                  fg->ext_dat_free = _software_generic_image_free;
+               }
+          }
+
         chr_x = x + glyph->x;
         chr_y = y + glyph->y;
         if (chr_x < (ext_x + ext_w))
           {
              if ((w > 0) && ((chr_x + w) > ext_x))
                {
-                  if ((fg->ext_dat) && (dc->font_ext.func.gl_draw))
-                    dc->font_ext.func.gl_draw(dc->font_ext.data, (void *)dst,
-                                              dc, fg, chr_x, y - (chr_y - y));
-                  else if (fg->glyph_out->rle)
-                    evas_common_font_glyph_draw(fg, dc, dst, im_w,
-                                                chr_x, y - (chr_y - y),
-                                                ext_x, ext_y, ext_w, ext_h);
+                  if (fg->glyph_out->rle)
+                    {
+                       if ((fg->ext_dat) && (dc->font_ext.func.gl_draw))
+                         {
+                            dc->font_ext.func.gl_draw(dc->font_ext.data, (void *)dst,
+                                                      dc, fg, chr_x, y - (chr_y - y));
+                         }
+                       else
+                         {
+                            evas_common_font_glyph_draw(fg, dc, dst, im_w,
+                                                        chr_x, y - (chr_y - y),
+                                                        ext_x, ext_y, ext_w, ext_h);
+                         }
+                    }
+                  else if ((fg->ext_dat) && FT_HAS_COLOR(fg->fi->src->ft.face))
+                    {
+                       if (dc->font_ext.func.gl_image_draw)
+                         {
+                            dc->font_ext.func.gl_image_draw(dc->font_ext.data,
+                                                            fg->ext_dat,
+                                                            0, 0, w, h,
+                                                            chr_x, y - (chr_y - y), w, h,
+                                                            EINA_TRUE);
+                         }
+                       else
+                         {
+                            _software_generic_image_draw(dc, dst,
+                                                         fg->ext_dat,
+                                                         0, 0, w, h,
+                                                         chr_x, y - (chr_y - y), w, h,
+                                                         EINA_TRUE);
+                         }
+                    }
                }
           }
         else

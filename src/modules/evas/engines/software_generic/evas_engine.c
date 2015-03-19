@@ -352,6 +352,7 @@ struct _Evas_Thread_Command_Font
    void *gl_draw;
    void *font_ext_data;
    DATA32 col;
+   DATA32 mul_col;
    Eina_Rectangle clip_rect, ext;
    int im_w, im_h;
    void *mask;
@@ -2608,6 +2609,8 @@ _draw_thread_font_draw(void *data)
    dc.font_ext.func.gl_free = font->gl_free;
    dc.font_ext.func.gl_draw = font->gl_draw;
    dc.col.col = font->col;
+   dc.mul.col = font->mul_col;
+   dc.mul.use = (font->mul_col == 0xffffffff) ? 0 : 1;
    dc.clip.use = font->clip_use;
    dc.clip.x = font->clip_rect.x;
    dc.clip.y = font->clip_rect.y;
@@ -2642,6 +2645,7 @@ _font_draw_thread_cmd(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas
    cf->gl_draw = dc->font_ext.func.gl_draw;
    cf->font_ext_data = dc->font_ext.data;
    cf->col = dc->col.col;
+   cf->mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
    cf->clip_use = dc->clip.use;
    EINA_RECTANGLE_SET(&cf->clip_rect,
                       dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);

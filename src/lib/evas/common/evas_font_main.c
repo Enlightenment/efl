@@ -371,6 +371,12 @@ _glyph_free(RGBA_Font_Glyph *fg)
 
    if (fg->glyph_out)
      {
+        if ((!fg->glyph_out->rle) && (!fg->glyph_out->bitmap.rle_alloc))
+          {
+             FT_BitmapGlyph fbg = (FT_BitmapGlyph)fg->glyph;
+             FT_Bitmap_Done(evas_ft_lib, &(fbg->bitmap));
+          }
+
         if ((fg->glyph_out->rle) && (fg->glyph_out->bitmap.rle_alloc))
           free(fg->glyph_out->rle);
         fg->glyph_out->rle = NULL;
@@ -501,8 +507,10 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
    evas_common_font_int_reload(fi);
    FTLOCK();
    error = FT_Load_Glyph(fi->src->ft.face, idx,
-                         FT_LOAD_DEFAULT | FT_LOAD_NO_BITMAP |
-                         hintflags[fi->hinting]);
+                         (FT_HAS_COLOR(fi->src->ft.face) ?
+                          (FT_LOAD_COLOR | hintflags[fi->hinting]) :
+                          (FT_LOAD_DEFAULT | FT_LOAD_NO_BITMAP | hintflags[fi->hinting])));
+
    FTUNLOCK();
    if (error)
      {
@@ -617,16 +625,25 @@ evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg)
    fi->usage += size;
    if (fi->inuse) evas_common_font_int_use_increase(size);
 
-   fg->glyph_out->rle = evas_common_font_glyph_compress
-   (fbg->bitmap.buffer, fbg->bitmap.num_grays, fbg->bitmap.pixel_mode,
-    fbg->bitmap.pitch, fbg->bitmap.width, fbg->bitmap.rows,
-    &(fg->glyph_out->rle_size));
+   if (!FT_HAS_COLOR(fi->src->ft.face))
+     {
+        fg->glyph_out->rle = evas_common_font_glyph_compress
+           (fbg->bitmap.buffer, fbg->bitmap.num_grays, fbg->bitmap.pixel_mode,
+            fbg->bitmap.pitch, fbg->bitmap.width, fbg->bitmap.rows,
+            &(fg->glyph_out->rle_size));
+        fg->glyph_out->bitmap.rle_alloc = EINA_TRUE;
 
-   fg->glyph_out->bitmap.buffer = NULL;
+        fg->glyph_out->bitmap.buffer = NULL;
 
-   // this may be technically incorrect as we go and free a bitmap buffer
-   // behind the ftglyph's back...
-   FT_Bitmap_Done(evas_ft_lib, &(fbg->bitmap));
+        // this may be technically incorrect as we go and free a bitmap buffer
+        // behind the ftglyph's back...
+        FT_Bitmap_Done(evas_ft_lib, &(fbg->bitmap));
+     }
+   else
+     {
+        fg->glyph_out->rle = NULL;
+        fg->glyph_out->bitmap.rle_alloc = EINA_FALSE;
+     }
    
    return EINA_TRUE;
 }

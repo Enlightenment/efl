@@ -1978,6 +1978,7 @@ normal_render:
      }
    EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
      {
+        ENFN->context_multiplier_set(output, context, 0, 0, 0, 0);
         /* Shadows */
         if (haveshad)
           {
@@ -2053,8 +2054,15 @@ normal_render:
           }
 
         /* normal text */
+        ENFN->context_multiplier_unset(output, context);
+        ENFN->context_multiplier_set(output, context,
+                                     obj->cur->clipper->cur->cache.clip.r,
+                                     obj->cur->clipper->cur->cache.clip.g,
+                                     obj->cur->clipper->cur->cache.clip.b,
+                                     obj->cur->clipper->cur->cache.clip.a);
         COLOR_ONLY_SET(obj, cur->cache, clip);
         DRAW_TEXT(0, 0);
+        ENFN->context_multiplier_unset(output, context);
      }
 }
 
