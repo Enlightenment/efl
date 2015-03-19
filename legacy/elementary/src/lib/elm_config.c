@@ -218,6 +218,7 @@ _prop_config_get(void)
    _env_get();
    _config_apply();
    _config_sub_apply();
+   evas_font_reinit();
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
    _elm_rescale();
