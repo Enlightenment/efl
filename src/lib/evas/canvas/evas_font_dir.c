@@ -1493,3 +1493,19 @@ evas_font_available_list_free(Evas *eo_e, Eina_List *available)
    evas_font_dir_available_list_free(available);
 }
 
+EAPI void
+evas_font_reinit(void)
+{
+#ifdef HAVE_FONTCONFIG
+   Eina_List *l;
+   char *path;
+
+   if (fc_config) FcConfigDestroy(fc_config);
+
+   FcInitReinitialize();
+   fc_config = FcInitLoadConfigAndFonts();
+
+   EINA_LIST_FOREACH(global_font_path, l, path)
+      FcConfigAppFontAddDir(fc_config, (const FcChar8 *) path);
+#endif
+}
