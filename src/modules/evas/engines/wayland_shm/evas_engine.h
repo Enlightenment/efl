@@ -67,6 +67,7 @@ struct _Shm_Leaf
    Shm_Data *data;
    Shm_Pool *resize_pool;
    Eina_Bool valid : 1;
+   Eina_Bool reconfigure : 1;
 };
 
 typedef struct _Shm_Surface Shm_Surface;
@@ -79,6 +80,8 @@ struct _Shm_Surface
    int w, h;
    int dx, dy;
    int num_buff;
+   int last_buff;
+   int curr_buff;
 
    Shm_Leaf leaf[MAX_BUFFERS];
    Shm_Leaf *current;
@@ -116,9 +119,9 @@ struct _Outbuf
      } priv;
 };
 
-Shm_Surface *_evas_shm_surface_create(struct wl_shm *shm, struct wl_surface *surface, int w, int h, Eina_Bool alpha);
+Shm_Surface *_evas_shm_surface_create(struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha);
 void _evas_shm_surface_destroy(Shm_Surface *surface);
-void _evas_shm_surface_prepare(Shm_Surface *surface, int dx, int dy, int w, int h, int num_buff, uint32_t flags);
+void _evas_shm_surface_reconfigure(Shm_Surface *surface, int dx, int dy, int w, int h, int num_buff, uint32_t flags);
 void _evas_shm_surface_swap(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int count);
 void *_evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h);
 void _evas_shm_surface_redraw(Shm_Surface *surface);

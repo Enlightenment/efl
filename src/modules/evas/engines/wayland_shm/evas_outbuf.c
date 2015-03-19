@@ -5,9 +5,9 @@
 #endif
 #include "evas_engine.h"
 
-#define RED_MASK 0x00ff0000
-#define GREEN_MASK 0x0000ff00
-#define BLUE_MASK 0x000000ff
+#define RED_MASK 0xff0000
+#define GREEN_MASK 0x00ff00
+#define BLUE_MASK 0x0000ff
 
 Outbuf *
 _evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface)
@@ -43,12 +43,9 @@ _evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, s
      }
 
    /* try to create the outbuf surface */
-   if (!(ob->surface = _evas_shm_surface_create(shm, surface, w, h, alpha)))
+   if (!(ob->surface = 
+         _evas_shm_surface_create(shm, surface, w, h, ob->num_buff, alpha)))
      goto surf_err;
-
-   /* call prepare function to setup first buffer */
-   _evas_shm_surface_prepare(ob->surface, 0, 0, w, h, 
-                             ob->num_buff, ob->surface->flags);
 
    eina_array_step_set(&ob->priv.onebuf_regions, sizeof(Eina_Array), 8);
 
@@ -64,6 +61,27 @@ _evas_outbuf_free(Outbuf *ob)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   while (ob->priv.pending_writes)
+     {
+        RGBA_Image *img;
+        Eina_Rectangle *rect;
+
+        img = ob->priv.pending_writes->data;
+        ob->priv.pending_writes = 
+          eina_list_remove_list(ob->priv.pending_writes, ob->priv.pending_writes);
+
+        rect = img->extended_info;
+
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_close(&img->cache_entry);
+        else
+#endif
+          evas_cache_image_drop(&img->cache_entry);
+
+        eina_rectangle_free(rect);
+     }
+
    _evas_outbuf_flush(ob, NULL, MODE_FULL);
    _evas_outbuf_idle_flush(ob);
 
@@ -77,7 +95,43 @@ _evas_outbuf_free(Outbuf *ob)
 void 
 _evas_outbuf_idle_flush(Outbuf *ob)
 {
-   _evas_shm_surface_redraw(ob->surface);
+   RGBA_Image *img;
+   Eina_Rectangle *rect;
+
+   if (ob->priv.onebuf)
+     {
+        img = ob->priv.onebuf;
+        ob->priv.onebuf = NULL;
+
+        rect = img->extended_info;
+        eina_rectangle_free(rect);
+
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_close(&img->cache_entry);
+        else
+#endif
+          evas_cache_image_drop(&img->cache_entry);
+     }
+   else
+     {
+        while (ob->priv.prev_pending_writes)
+          {
+             img = ob->priv.prev_pending_writes->data;
+             ob->priv.prev_pending_writes = 
+               eina_list_remove_list(ob->priv.prev_pending_writes, 
+                                     ob->priv.prev_pending_writes);
+             rect = img->extended_info;
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               evas_cache2_image_close(&img->cache_entry);
+             else
+#endif
+               evas_cache_image_drop(&img->cache_entry);
+
+             eina_rectangle_free(rect);
+          }
+     }
 }
 
 void 
@@ -90,12 +144,6 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (render_mode == EVAS_RENDER_MODE_ASYNC_INIT) return;
-
-   if (!ob->surface->current)
-     {
-        WRN("Cannot Flush. No Current Leaf !!");
-        return;
-     }
 
    /* check for pending writes */
    if (!ob->priv.pending_writes)
@@ -113,6 +161,8 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode
         /* loop the buffer regions and assign to result */
         EINA_ARRAY_ITER_NEXT(&ob->priv.onebuf_regions, i, rect, it)
           result[i] = *rect;
+
+        _evas_shm_surface_redraw(ob->surface);
 
         /* force a buffer swap */
         _evas_shm_surface_swap(ob->surface, result, n);
@@ -197,27 +247,25 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode
              i++;
           }
 
+        _evas_shm_surface_redraw(ob->surface);
+
         /* force a buffer swap */
         _evas_shm_surface_swap(ob->surface, result, n);
      }
-
-   _evas_shm_surface_redraw(ob->surface);
 }
 
 Render_Engine_Swap_Mode 
 _evas_outbuf_swapmode_get(Outbuf *ob)
 {
-   int i = 0, count = 0;
+   int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   for (; i < ob->num_buff; i++)
-     {
-        if (ob->surface->leaf[i].busy)
-          count++;
-     }
+   i = (ob->surface->last_buff - ob->surface->curr_buff + 
+        (ob->surface->last_buff > ob->surface->last_buff ? 
+            0 : ob->surface->num_buff)) % ob->surface->num_buff;
 
-   switch (count)
+   switch (i)
      {
       case 0:
         return MODE_COPY;
@@ -263,8 +311,10 @@ _evas_outbuf_reconfigure(Outbuf *ob, int x, int y, int w, int h, int rot, Outbuf
    else
      ob->surface->flags = 0;
 
-   _evas_shm_surface_prepare(ob->surface, x, y, w, h, 
-                             ob->num_buff, ob->surface->flags);
+   _evas_shm_surface_reconfigure(ob->surface, x, y, w, h, 
+                                 ob->num_buff, ob->surface->flags);
+
+   _evas_outbuf_idle_flush(ob);
 }
 
 void *
@@ -287,7 +337,7 @@ _evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
 
              if (!(data = _evas_shm_surface_data_get(ob->surface, &bw, &bh)))
                {
-                  ERR("Could not get surface data");
+                  /* ERR("Could not get surface data"); */
                   return NULL;
                }
 
@@ -360,6 +410,8 @@ _evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
              return NULL;
           }
 
+        img->cache_entry.w = w;
+        img->cache_entry.h = h;
         img->cache_entry.flags.alpha |= ob->priv.destination_alpha ? 1 : 0;
 
 #ifdef EVAS_CSERVE2
@@ -462,7 +514,11 @@ _evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, in
    if (bpp <= 0) return;
 
    /* check for valid desination data */
-   if (!(dst = _evas_shm_surface_data_get(ob->surface, &ww, &hh))) return;
+   if (!(dst = _evas_shm_surface_data_get(ob->surface, &ww, &hh)))
+     {
+        /* ERR("Could not get surface data"); */
+        return;
+     }
 
    bpl = (ww * sizeof(int));
 
