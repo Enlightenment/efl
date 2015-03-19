@@ -3376,8 +3376,10 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
         surface = re->outbuf_new_region_for_update(re->ob,
                                                    *x, *y, *w, *h,
                                                    cx, cy, cw, ch);
-        if (!re->cur_rect)
+        if ((!re->cur_rect) || (!surface))
           {
+             evas_common_tilebuf_free_render_rects(re->rects);
+             re->rects = NULL;
              re->end = 1;
           }
         return surface;
