@@ -4556,13 +4556,18 @@ edje_edit_part_item_del(Evas_Object *obj, const char *part, const char* name)
            i++;
         }
 
-      tmp = realloc(ep->items, sizeof(Edje_Pack_Element *) * ep->items_count);
-      if (!tmp)
+      if (ep->items_count != 0)
         {
-           free(item);
-           return EINA_FALSE;
+           tmp = realloc(ep->items, sizeof(Edje_Pack_Element *) * ep->items_count);
+           if (!tmp)
+             {
+                free(item);
+                return EINA_FALSE;
+             }
+           ep->items = tmp;
         }
-      ep->items = tmp;
+      else
+        ep->items = NULL;
    }
 
    GET_EED_OR_RETURN(EINA_FALSE);
