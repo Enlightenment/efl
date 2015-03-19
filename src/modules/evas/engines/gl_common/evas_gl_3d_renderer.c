@@ -348,6 +348,7 @@ e3d_renderer_draw(E3D_Renderer *renderer, E3D_Draw_Data *data)
      }
    else glDisable(GL_BLEND);
 
+#ifndef GL_GLES
    if (data->alpha_test_enabled)
      {
         glEnable(GL_ALPHA_TEST);
@@ -355,6 +356,7 @@ e3d_renderer_draw(E3D_Renderer *renderer, E3D_Draw_Data *data)
                     (GLclampf)data->alpha_ref_value);
      }
    else glDisable(GL_ALPHA_TEST);
+#endif
 
    if (data->indices)
      {
