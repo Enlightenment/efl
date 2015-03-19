@@ -299,6 +299,13 @@ _elm_video_efl_file_file_set(Eo *obj, Elm_Video_Data *sd, const char *filename, 
    return EINA_TRUE;
 }
 
+EOLIAN static void
+_elm_video_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd EINA_UNUSED, const char **filename, const char **key EINA_UNUSED)
+{
+   if (filename)
+     *filename = emotion_object_file_get(sd->emotion);
+}
+
 EOLIAN static Evas_Object*
 _elm_video_emotion_get(Eo *obj EINA_UNUSED, Elm_Video_Data *sd)
 {

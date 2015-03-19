@@ -857,6 +857,13 @@ _elm_layout_efl_file_file_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *fi
    return int_ret;
 }
 
+EOLIAN static void
+_elm_layout_efl_file_file_get(Eo *obj, Elm_Layout_Smart_Data *sd EINA_UNUSED, const char **file, const char **group)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   edje_object_file_get(wd->resize_obj, file, group);
+}
+
 EOLIAN static Eina_Bool
 _elm_layout_theme_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *klass, const char *group, const char *style)
 {

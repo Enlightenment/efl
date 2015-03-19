@@ -628,6 +628,7 @@ class Elm_Layout (Elm_Container, Efl.File)
       Eo.Base.constructor;
       Eo.Base.dbg_info_get;
       Efl.File.file.set;
+      Efl.File.file.get;
       Evas.Object_Smart.del;
       Evas.Object_Smart.add;
       Evas.Object_Smart.calculate;
