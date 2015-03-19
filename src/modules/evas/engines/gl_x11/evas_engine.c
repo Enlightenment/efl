@@ -2727,6 +2727,7 @@ static int
 module_open(Evas_Module *em)
 {
    static Eina_Bool xrm_inited = EINA_FALSE;
+   const char *platform_env = NULL;
    if (!xrm_inited)
      {
         xrm_inited = EINA_TRUE;
@@ -2767,7 +2768,13 @@ module_open(Evas_Module *em)
    // gl_current_surface_get is in gl generic
    ORD(gl_current_context_get);
 
+   if (!(platform_env = getenv("EGL_PLATFORM")))
+      setenv("EGL_PLATFORM", "x11", 0);
+
    gl_symbols();
+
+   if (!platform_env)
+      unsetenv("EGL_PLATFORM");
 
    /* now advertise out own api */
    em->functions = (void *)(&func);
