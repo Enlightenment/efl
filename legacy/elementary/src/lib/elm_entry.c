@@ -1975,6 +1975,7 @@ _entry_selection_start_signal_cb(void *data,
    if (txt && top && (elm_win_window_id_get(top)))
      elm_cnp_selection_set(data, ELM_SEL_TYPE_PRIMARY,
                            ELM_SEL_FORMAT_MARKUP, txt, strlen(txt));
+   elm_object_focus_set(data, EINA_TRUE);
 }
 
 static void
