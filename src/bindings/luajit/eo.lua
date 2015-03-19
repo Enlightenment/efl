@@ -144,7 +144,7 @@ local eo_event_cb_fun = function(data, obj, desc, einfo)
     local  addr = eo_obj_addr_get(obj)
     local  cbs  = eo_callbacks[addr]
     assert(cbs)
-    local cidx = tonumber(ffi.cast("intptr_t", cbs))
+    local cidx = tonumber(ffi.cast("intptr_t", data))
     local fun  = cbs[cidx]
     assert(fun)
     return fun() ~= false
