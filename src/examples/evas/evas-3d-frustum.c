@@ -106,42 +106,52 @@ _redraw_bounding_object(void *data)
         eo_do(scene->mesh_node, evas_3d_node_mesh_del(current_mesh));
      }
 
-   if (key == EVAS_3D_FRUSTUM_MODE_BSPHERE)
+   switch (key)
      {
-        eo_do(scene->mesh_node_model,
-              evas_3d_node_bounding_sphere_get(&x0, &y0, &z0, &radius));
-        current_mesh = scene->mesh_sphere;
-        px = x0;
-        py = y0;
-        pz = z0;
-        sx = sy = sz = 2.0 * radius;
-     }
-   else if (key == EVAS_3D_FRUSTUM_MODE_AABB)
-     {
-        eo_do(scene->mesh_node_model, evas_3d_node_bounding_box_get(&x0, &y0, &z0,
-                                                                    &x1, &y1, &z1));
-        current_mesh = scene->mesh_aabb;
-        px = (x1 + x0) / 2;
-        py = (y1 + y0) / 2;
-        pz = (z1 + z0) / 2;
-        sx = x1 - x0;
-        sy = y1 - y0;
-        sz = z1 - z0;
-     }
-   else if (key == EVAS_3D_FRUSTUM_MODE_CENTRAL_POINT)
-     {
-        eo_do(scene->mesh_node_model,
-              evas_3d_node_bounding_sphere_get(&x0, &y0, &z0, &radius));
-        current_mesh = scene->mesh_sphere;
-        px = x0;
-        py = y0;
-        pz = z0;
-        sx = sy = sz = 0.1 * radius;
+      case EVAS_3D_FRUSTUM_MODE_BSPHERE:
+      {
+         eo_do(scene->mesh_node_model,
+               evas_3d_node_bounding_sphere_get(&x0, &y0, &z0, &radius));
+         current_mesh = scene->mesh_sphere;
+         px = x0;
+         py = y0;
+         pz = z0;
+         sx = sy = sz = 2.0 * radius;
+         break;
+      }
+      case EVAS_3D_FRUSTUM_MODE_AABB:
+      {
+         eo_do(scene->mesh_node_model,
+               evas_3d_node_bounding_box_get(&x0, &y0, &z0,
+                                             &x1, &y1, &z1));
+         current_mesh = scene->mesh_aabb;
+         px = (x1 + x0) / 2;
+         py = (y1 + y0) / 2;
+         pz = (z1 + z0) / 2;
+         sx = x1 - x0;
+         sy = y1 - y0;
+         sz = z1 - z0;
+         break;
+      }
+      case EVAS_3D_FRUSTUM_MODE_CENTRAL_POINT:
+      {
+         eo_do(scene->mesh_node_model,
+               evas_3d_node_bounding_sphere_get(&x0, &y0, &z0, &radius));
+         current_mesh = scene->mesh_sphere;
+         px = x0;
+         py = y0;
+         pz = z0;
+         sx = sy = sz = 0.1 * radius;
+         break;
+      }
+      default:
+         return ECORE_CALLBACK_RENEW;
      }
 
-   eo_do(scene->mesh_node, evas_3d_node_mesh_add(current_mesh),
-                           evas_3d_node_position_set(px, py, pz),
-                           evas_3d_node_scale_set(sx, sy, sz));
+   eo_do(scene->mesh_node,
+         evas_3d_node_mesh_add(current_mesh),
+         evas_3d_node_position_set(px, py, pz),
+         evas_3d_node_scale_set(sx, sy, sz));
 
    return ECORE_CALLBACK_RENEW;
 }
