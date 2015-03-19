@@ -443,7 +443,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
     * this was moderately okay for a time because nobody was using it or GROUP parts
     * with text in them very frequently, and so nobody noticed that the mismatch was breaking
     * sizing in some cases when the edje ellipsis value failed to be applied,
-    * which ocurred any time text.min_x was set; in this case, ellipsis would NEVER be
+    * which occurred any time text.min_x was set; in this case, ellipsis would NEVER be
     * correctly applied, and instead the text object would only ever get the first
     * ellipsis_set(0), permanently breaking the part.
     * the only way to fix this while preserving previous behavior was to bump

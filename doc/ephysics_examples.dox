@@ -1659,7 +1659,7 @@
  *
  * Here we set EPhysics_Bodys linear and angular damping values.The damping is
  * a force synchronous with the velocity of the object but in opposite
- * direction - like air resistence.
+ * direction - like air resistance.
  *
  * @skipline ephysics_body_damping_set(sphere_body1
  *

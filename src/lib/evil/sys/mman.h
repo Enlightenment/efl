@@ -102,7 +102,7 @@ extern "C" {
  * If the map view of file can not be created, -1 is returned.
  * If the mappping can not be done, -1 is returned.
  *
- * If no error occured, the starting address of the mapped view
+ * If no error occurred, the starting address of the mapped view
  * is returned.
  *
  * Conformity: None.

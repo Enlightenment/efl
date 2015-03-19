@@ -224,7 +224,7 @@ EAPI int dladdr (const void *addr, Dl_info *info);
 /**
  * @brief Get diagnostic information
  *
- * @return A @c NULL-terminated string if an error occured, @c NULL
+ * @return A @c NULL-terminated string if an error occurred, @c NULL
  * otherwise.
  *
  * Return a @c NULL-terminated character string describing the last

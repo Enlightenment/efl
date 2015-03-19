@@ -2140,7 +2140,7 @@ _glyph_request_cb(void *data, const void *msg, int size)
    return EINA_TRUE;
 
 end:
-   ERR("An unknown error occured when waiting for glyph data!");
+   ERR("An unknown error occurred when waiting for glyph data!");
    free(grd);
    return EINA_TRUE;
 }

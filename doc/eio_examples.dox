@@ -24,7 +24,7 @@
  * @li The notification callback, which allows you to know if a file or
  * a directory is copied, and the progress of the copy.
  * @li The end callback, which is called when the copy is finished.
- * @li The error callback, which is called if an error occured. You
+ * @li The error callback, which is called if an error occurred. You
  * can then retrieve the error type as an errno error.
  *
  * @warning It is the user's duty to provide the "right target". It
@@ -107,7 +107,7 @@
  * @li The end callback, which is called in the main loop when the
  * content of the directory has been correctly scanned and all the
  * file notified to the main loop.
- * @li The error callback, which is called if an error occured or
+ * @li The error callback, which is called if an error occurred or
  * if the listing was cancelled during it's run. You can then retrieve
  * the error type as an errno error.
  *
@@ -190,7 +190,7 @@
  * @li The end callback, which is called in the main loop when the
  * content of the directory has been correctly scanned and all the
  * file notified to the main loop.
- * @li The error callback, which is called if an error occured or
+ * @li The error callback, which is called if an error occurred or
  * if the listing was cancelled during it's run. You can then retrieve
  * the error type as an errno error.
  *
@@ -331,7 +331,7 @@
  * @li The end callback, which is called in the main loop when the
  * content of the directory has been correctly scanned and all the
  * file notified to the main loop.
- * @li The error callback, which is called if an error occured or
+ * @li The error callback, which is called if an error occurred or
  * if the listing was cancelled during it's run. You can then retrieve
  * the error type as an errno error.
  *

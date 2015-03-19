@@ -92,7 +92,7 @@ _on_rect_mouse_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 	printf("Inserting rect %p before the rectangle under the mouse pointer.\n", rect);
 	r = edje_object_part_box_insert_before(edje_obj, "example/box", rect, o);
 	if (!r)
-	  printf("An error ocurred when appending rect %p to the box.\n", rect);
+	  printf("An error occurred when appending rect %p to the box.\n", rect);
 
 	evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _on_rect_mouse_down, NULL);
      }
@@ -126,7 +126,7 @@ _on_bg_key_down(void *data, Evas *e, Evas_Object *o EINA_UNUSED, void *event_inf
 	printf("Inserting rect %p before the rectangle under the mouse pointer.\n", rect);
 	r = edje_object_part_box_insert_at(edje_obj, "example/box", rect, 0);
 	if (!r)
-	  printf("An error ocurred when appending rect %p to the box.\n", rect);
+	  printf("An error occurred when appending rect %p to the box.\n", rect);
 
 	evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _on_rect_mouse_down, NULL);
      }
@@ -140,7 +140,7 @@ _on_bg_key_down(void *data, Evas *e, Evas_Object *o EINA_UNUSED, void *event_inf
 	printf("Inserting rect %p before the rectangle under the mouse pointer.\n", rect);
 	r = edje_object_part_box_append(edje_obj, "example/box", rect);
 	if (!r)
-	  printf("An error ocurred when appending rect %p to the box.\n", rect);
+	  printf("An error occurred when appending rect %p to the box.\n", rect);
 
 	evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _on_rect_mouse_down, NULL);
      }
@@ -209,7 +209,7 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 	evas_object_resize(rect, RECTW, RECTH);
 	r = edje_object_part_box_append(edje_obj, "example/box", rect);
 	if (!r)
-	  printf("An error ocurred when appending rect #%d to the box.\n", i);
+	  printf("An error occurred when appending rect #%d to the box.\n", i);
 	evas_object_show(rect);
 
 	evas_object_event_callback_add(

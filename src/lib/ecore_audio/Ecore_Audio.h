@@ -110,7 +110,7 @@ struct _Ecore_Audio_Vio {
      *               SEEK_END: offset is relative to the end
      *
      * @return The resulting position from the start of the file (in bytes)
-     *         or -1 if an error occured (i.e. out of bounds)
+     *         or -1 if an error occurred (i.e. out of bounds)
      *
      * @since 1.8
      */

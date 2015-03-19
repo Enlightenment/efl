@@ -878,7 +878,7 @@
  *
  * There are two other things that are worth mentioning, we added two callbacks for the
  * objects, one for mouse down (that we use to delete the color class) and another
- * for the signal emmited when a color class is deleted.
+ * for the signal emitted when a color class is deleted.
  * @skip  evas_object_event
  * @until NULL
  * @skip  edje_object_si
