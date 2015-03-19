@@ -466,7 +466,7 @@ typedef Evas_Object          *(*Elm_Widget_Content_Unset_Cb)(const void *data, c
 typedef void                  (*Elm_Widget_Signal_Emit_Cb)(void *data, const char *emission, const char *source);
 typedef void                  (*Elm_Widget_Disable_Cb)(void *data);
 typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
-typedef void                  (*Elm_Widget_Item_Signal_Cb)(void *data, Elm_Widget_Item_Data *item, const char *emission, const char *source);
+typedef void                  (*Elm_Widget_Item_Signal_Cb)(void *data, Elm_Object_Item *item, const char *emission, const char *source);
 typedef void                  (*Elm_Widget_Style_Set_Cb)(void *data, const char *style);
 typedef const char           *(*Elm_Widget_Style_Get_Cb)(const void *data);
 typedef void                  (*Elm_Widget_Focus_Set_Cb)(void *data, Eina_Bool focused);
@@ -569,7 +569,7 @@ EINA_DEPRECATED EAPI Elm_Access_Info *_elm_access_object_get(const Evas_Object *
 
 struct _Elm_Widget_Item_Signal_Data
 {
-   Elm_Widget_Item_Data *item;
+   Elm_Object_Item *item;
    Elm_Widget_Item_Signal_Cb func;
    const char *emission;
    const char *source;

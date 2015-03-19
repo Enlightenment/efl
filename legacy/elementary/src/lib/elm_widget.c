@@ -5119,7 +5119,7 @@ _elm_widget_item_signal_emit(Eo *eo_item EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_widget_item_signal_callback_add(Eo *eo_item EINA_UNUSED,
+_elm_widget_item_signal_callback_add(Eo *eo_item,
                                      Elm_Widget_Item_Data *item,
                                      const char *emission,
                                      const char *source,
@@ -5135,7 +5135,7 @@ _elm_widget_item_signal_callback_add(Eo *eo_item EINA_UNUSED,
    wisd = malloc(sizeof(Elm_Widget_Item_Signal_Data));
    if (!wisd) return;
 
-   wisd->item = item;
+   wisd->item = eo_item;
    wisd->func = (Elm_Widget_Item_Signal_Cb)func;
    wisd->data = data;
    wisd->emission = eina_stringshare_add(emission);
