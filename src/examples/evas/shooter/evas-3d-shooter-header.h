@@ -217,4 +217,3 @@ Eina_Bool _horizontal_frame_resolution(Evas_3D_Node *node, Evas_Real x1, Evas_Re
                                         Evas_Real z2, Evas_Real *x_move, Evas_Real *z_move);
 
 void _set_ball(Eo *mesh, int p);
-
