@@ -1020,7 +1020,6 @@ _content_set(Evas_Object *obj,
 
         eo_do(sd->content_area, elm_obj_container_content_set
           (CONTENT_PART, content));
-        evas_object_show(content);
 
         evas_object_event_callback_add
           (content, EVAS_CALLBACK_DEL, _on_content_del, obj);
