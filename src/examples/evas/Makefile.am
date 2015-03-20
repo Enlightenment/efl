@@ -340,6 +340,8 @@ resources/images/four_NM_height.tga \
 resources/images/rocks_NM_height.tga \
 resources/images/grid.png \
 resources/images/grid_n.png \
+resources/models/eagle.md2 \
+resources/models/M15.obj \
 resources/models/mesh_for_mmap.eet \
 resources/models/mesh_for_mmap.md2 \
 resources/models/mesh_for_mmap.obj \
