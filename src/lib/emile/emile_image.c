@@ -1441,23 +1441,15 @@ _emile_jpeg_head(Emile_Image *image,
              opts->h = load_opts_w;
           }
 
-        if (opts->w > 0)
+        w2 = opts->w;
+        h2 = (opts->w * prop->h) / prop->w;
+        if (h2 > opts->h)
           {
-             w2 = opts->w;
-             h2 = (opts->w * prop->h) / prop->w;
-             if ((opts->h > 0) && (h2 > opts->h))
-               {
-                  unsigned int w3;
-                  h2 = opts->h;
-                  w3 = (opts->h * prop->w) / prop->h;
-                  if (w3 > w2)
-                    w2 = w3;
-               }
-          }
-        else if (opts->h > 0)
-          {
+             unsigned int w3;
              h2 = opts->h;
-             w2 = (opts->h * prop->w) / prop->h;
+             w3 = (opts->h * prop->w) / prop->h;
+             if (w3 > w2)
+               w2 = w3;
           }
         prop->w = w2;
         prop->h = h2;
