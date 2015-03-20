@@ -1312,6 +1312,7 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3D_S
    Eina_List        *l;
    Evas_3D_Node     *n;
    Evas_3D_Shade_Mode shade_mode;
+   Eina_Bool       blend_enabled;
    Evas_Color      c = {1.0, 1.0, 1.0};
    Evas_Mat4 matrix_vp;
 
@@ -1337,9 +1338,12 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3D_S
              RENDER_MESH_NODE_ITERATE_BEGIN(light_eye)
                {
                   shade_mode = pdmesh->shade_mode;
+                  blend_enabled = pdmesh->blending;
+                  pdmesh->blending = EINA_FALSE;
                   pdmesh->shade_mode = EVAS_3D_SHADE_MODE_SHADOW_MAP_RENDER;
                   _mesh_draw(renderer, nm->mesh, nm->frame, light, matrix_light_eye, &matrix_mv, &matrix_mvp, &matrix_mvp);
                   pdmesh->shade_mode = shade_mode;
+                  pdmesh->blending = blend_enabled;
                }
              RENDER_MESH_NODE_ITERATE_END
           }
