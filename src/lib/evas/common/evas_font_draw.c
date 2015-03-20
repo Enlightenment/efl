@@ -24,7 +24,7 @@ evas_common_font_draw_init(void)
 }
 
 static void *
-_software_generic_image_new_from_data(int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
+_evas_font_image_new_from_data(int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
 {
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
@@ -37,7 +37,7 @@ _software_generic_image_new_from_data(int w, int h, DATA32 *image_data, int alph
 }
 
 static void
-_software_generic_image_free(void *image)
+_evas_font_image_free(void *image)
 {
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get() && evas_cache2_image_cached(image))
@@ -50,7 +50,7 @@ _software_generic_image_free(void *image)
 }
 
 static void
-_software_generic_image_draw(void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
+_evas_font_image_draw(void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    RGBA_Image *im;
 
@@ -135,11 +135,11 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
                }
              else
                {
-                  fg->ext_dat = _software_generic_image_new_from_data(w, h,
+                  fg->ext_dat = _evas_font_image_new_from_data(w, h,
                                                                       (DATA32 *)fg->glyph_out->bitmap.buffer,
                                                                       EINA_TRUE,
                                                                       EVAS_COLORSPACE_ARGB8888);
-                  fg->ext_dat_free = _software_generic_image_free;
+                  fg->ext_dat_free = _evas_font_image_free;
                }
           }
 
@@ -175,7 +175,7 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
                          }
                        else
                          {
-                            _software_generic_image_draw(dc, dst,
+                            _evas_font_image_draw(dc, dst,
                                                          fg->ext_dat,
                                                          0, 0, w, h,
                                                          chr_x, y - (chr_y - y), w, h,
