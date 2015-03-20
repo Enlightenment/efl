@@ -1826,6 +1826,21 @@ st_images_set_image_image(void)
 
    entry->name = parse_str(0);
 
+   /* TIZEN_ONLY(150320)********************Ninepatch patch for Samsung************************************/
+   {
+       Eina_Bool b_ninepatch = is_ninepatch_image(entry->name);
+       if (b_ninepatch)
+         {
+              int border_left, border_right, border_top, border_bottom;
+              ninepatch_image_info_get(entry->name, NULL, NULL, &border_left, &border_right, &border_top, &border_bottom);
+              entry->border.l = border_left;
+              entry->border.r = border_right;
+              entry->border.t = border_top;
+              entry->border.b = border_bottom;
+        }
+   }
+   /************************************************************************************/
+
    for (i = 0; i < edje_file->image_dir->entries_count; ++i)
      if (!strcmp(edje_file->image_dir->entries[i].entry, entry->name))
        {
@@ -7237,6 +7252,23 @@ st_collections_group_parts_part_description_image_normal(void)
       data_queue_image_lookup(name, &(ed->image.id), &(ed->image.set));
       free(name);
    }
+
+/* TIZEN_ONLY(150320)********************Ninepatch patch for Samsung************************************/
+   {
+      char *name = parse_str(0);
+      Eina_Bool b_ninepatch = is_ninepatch_image(name);
+      if (b_ninepatch)
+        {
+           int border_left, border_right, border_top, border_bottom;
+           ninepatch_image_info_get(name, NULL, NULL, &border_left, &border_right, &border_top, &border_bottom);
+           ed->image.border.scale = 1;
+           ed->image.border.l = border_left;
+           ed->image.border.r = border_right;
+           ed->image.border.t = border_top;
+           ed->image.border.b = border_bottom;
+        }
+   }
+ /************************************************************************************/
 }
 
 /**
@@ -11664,3 +11696,219 @@ edje_cc_handlers_wildcard(void)
      }
    return EINA_FALSE;
 }
+
+
+/* TIZEN_ONLY(150320)********************Ninepatch patch for Samsung************************************/
+
+int getBorderInfo(unsigned long* pBuffer, int width, int height, int bytesPerLine, int* borderLeft, int* borderRight, int* borderTop, int* borderBottom);
+
+typedef struct _NinePatch_Image_Info NinePatch_Image_Info;
+
+struct _NinePatch_Image_Info
+{
+   char *name;
+   int   w;
+   int   h;
+   int   border_left;
+   int   border_right;
+   int   border_top;
+   int   border_bottom;
+};
+
+Eina_List *ninepatch_image_infos = NULL;
+
+Eina_Bool is_ninepatch_image(char* name)
+{
+   char* check_point;
+   int str_len = strlen(name);
+
+   if (str_len <= 6)
+     return EINA_FALSE;
+
+   check_point = name + str_len - 6;
+
+   if (!strncmp(check_point, ".#.png", 6))
+     return EINA_TRUE;
+   else
+     return EINA_FALSE;
+}
+
+Eina_Bool ninepatch_image_info_get(char* name, int *w, int *h, int* borderleft, int* borderright, int* bordertop, int* borderbottom)
+{
+   NinePatch_Image_Info* info;
+   Eina_List* l;
+   Eina_List* ll;
+   char* dir_name;
+   Ecore_Evas *ee;
+   Evas* evas;
+   Evas_Object *obj_img;
+   int load_err = EVAS_LOAD_ERROR_NONE;
+   void* image_data;
+   Eina_List* test;
+   int bytes_per_line;
+
+
+   EINA_LIST_FOREACH(ninepatch_image_infos, l, info)
+     {
+        if (!strcmp(info->name, name))
+          {
+             if (w)
+               *w = info->w;
+             if (h)
+               *h = info->h;
+             if (borderleft)
+               *borderleft = info->border_left;
+             if (borderright)
+               *borderright = info->border_right;
+             if (bordertop)
+               *bordertop = info->border_top;
+             if (borderbottom)
+               *borderbottom = info->border_bottom;
+             return EINA_TRUE;
+          }
+     }
+
+   ecore_evas_init();
+   ee = ecore_evas_buffer_new(1, 1);
+   if (!ee)
+     return EINA_FALSE;
+
+   evas = ecore_evas_get(ee);
+
+   obj_img = evas_object_image_add(evas);
+
+   EINA_LIST_FOREACH(img_dirs, ll, dir_name)
+     {
+        char buf[PATH_MAX];
+
+        snprintf(buf, sizeof(buf), "%s/%s", dir_name, name);
+        evas_object_image_file_set(obj_img, buf, NULL);
+        load_err = evas_object_image_load_error_get(obj_img);
+        if (load_err == EVAS_LOAD_ERROR_NONE)
+          break; //loaded...
+     }
+
+   if (load_err != EVAS_LOAD_ERROR_NONE)
+     {
+        evas_object_image_file_set(obj_img, name, NULL);
+        load_err = evas_object_image_load_error_get(obj_img);
+     }
+
+   if (load_err != EVAS_LOAD_ERROR_NONE)
+     return EINA_FALSE;
+
+
+   info = (NinePatch_Image_Info*)calloc(1, sizeof(NinePatch_Image_Info));
+   info->name = (char*)calloc(strlen(name) + 1, sizeof(char));
+   strcpy(info->name, name);
+
+
+   evas_object_image_size_get(obj_img, &info->w, &info->h);
+
+   //get border info from ninepatch image data...
+   image_data = evas_object_image_data_get(obj_img, 0);
+   bytes_per_line = evas_object_image_stride_get(obj_img);
+
+   getBorderInfo(image_data, info->w, info->h, bytes_per_line, &info->border_left, &info->border_right, &info->border_top, &info->border_bottom);
+
+   //clean evas object...
+   evas_object_del(obj_img);
+
+   //ninepatch_image_infos = eina_list_append(ninepatch_image_infos, info);
+   test = eina_list_append(ninepatch_image_infos, info);
+   ninepatch_image_infos = test;
+
+   if (w)
+     *w = info->w;
+   if (h)
+     *h = info->h;
+   if (borderleft)
+     *borderleft = info->border_left;
+   if (borderright)
+     *borderright = info->border_right;
+   if (bordertop)
+     *bordertop = info->border_top;
+   if (borderbottom)
+     *borderbottom = info->border_bottom;
+
+   return EINA_TRUE;
+}
+
+int getBorderInfo(unsigned long* pBuffer, int width, int height, int bytesPerLine, int* borderLeft, int* borderRight, int* borderTop, int* borderBottom)
+{
+   typedef unsigned int Pixel;
+
+   if (pBuffer == (void*)0 || width <= 3 || height <= 3 || (bytesPerLine < width*4 && bytesPerLine > -width*4))
+     return 0;
+
+   if (borderLeft)
+     {
+        Pixel* pProbe = (Pixel*)(pBuffer);
+        Pixel* pProbeEnd = pProbe + width;
+
+        *borderLeft = 0;
+
+        while (++pProbe < pProbeEnd)
+          {
+             if ((*pProbe & 0xFF000000) != 0)
+               break;
+
+             ++(*borderLeft);
+          }
+     }
+
+   if (borderRight)
+     {
+        Pixel* pProbe = (Pixel*)(pBuffer) + width - 1;
+        Pixel* pProbeEnd = pProbe - width;
+
+        *borderRight = 0;
+
+        while (--pProbe > pProbeEnd)
+          {
+             if ((*pProbe & 0xFF000000) != 0)
+               break;
+
+             ++(*borderRight);
+          }
+     }
+
+   if (borderTop)
+     {
+        Pixel* pProbe = (Pixel*)(pBuffer);
+        Pixel* pProbeEnd = (Pixel*)((char*)pProbe + bytesPerLine * height);
+
+        *borderTop = 0;
+
+        pProbe = (Pixel*)((char*)pProbe + bytesPerLine);
+
+        for ( ; pProbe < pProbeEnd; pProbe = (Pixel*)((char*)pProbe + bytesPerLine))
+          {
+             if ((*pProbe & 0xFF000000) != 0)
+               break;
+
+             ++(*borderTop);
+          }
+     }
+
+   if (borderBottom)
+     {
+        int y;
+
+        *borderBottom = 0;
+
+        for (y = height - 2; y >= 1; y--)
+          {
+             Pixel* pProbe = (Pixel*)((char*)pBuffer + bytesPerLine * y);
+
+             if ((*pProbe & 0xFF000000) != 0)
+               break;
+
+             ++(*borderBottom);
+          }
+     }
+
+   return 1;
+}
+
+/************************************************************************************/

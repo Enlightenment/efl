@@ -291,4 +291,9 @@ extern Eina_Bool current_group_inherit;
 
 extern int had_quote;
 
+/* TIZEN_ONLY(150320)********************Ninepatch patch for Samsung************************************/
+Eina_Bool    is_ninepatch_image(char* name);
+Eina_Bool    ninepatch_image_info_get(char* name, int *w, int *h, int* borderleft, int* borderright, int* bordertop, int* borderbottom);
+/************************************************************************************/
+
 #endif

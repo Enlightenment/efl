@@ -155,6 +155,9 @@ struct _Image_Write
    unsigned int *data;
    char *path;
    char *errstr;
+   /* TIZEN_ONLY(150320)*****************Ninepatch patch for Samsung********************/
+   Eina_Bool ninepatch;
+   /************************************************************************************/
 };
 
 struct _Sound_Write
@@ -940,6 +943,12 @@ data_thread_image_end(void *data, Ecore_Thread *thread EINA_UNUSED)
         free(iw->errstr);
      }
    if (iw->path) free(iw->path);
+
+   /* TIZEN_ONLY(150320)*****************Ninepatch patch for Samsung********************/
+   if (iw->ninepatch)
+     free(iw->data);
+   /************************************************************************************/
+
    evas_object_del(iw->im);
    free(iw);
 }
@@ -952,6 +961,39 @@ data_image_preload_done(void *data, Evas *e EINA_UNUSED, Evas_Object *o, void *e
    evas_object_image_size_get(o, &iw->w, &iw->h);
    iw->alpha = evas_object_image_alpha_get(o);
    iw->data = evas_object_image_data_get(o, 0);
+
+   /* TIZEN_ONLY(150320)*****************Ninepatch patch for Samsung********************/
+   if (iw->ninepatch)
+     {
+        int i;
+        unsigned char* real_data;
+        unsigned char* orig_data;
+        int origin_width = iw->w;
+        int depth;
+        int bytes_per_line = evas_object_image_stride_get(o);
+
+        depth = bytes_per_line / iw->w;
+
+        iw->w -= 2;
+        iw->h -= 2;
+
+        real_data = (unsigned char*)calloc(iw->w * iw->h, depth);
+        if (!real_data)
+          error_and_abort(iw->ef, "Cannot create real image data for ninepatch.");
+
+        orig_data = (unsigned char*)iw->data + (origin_width + 1)*depth;
+
+        iw->data = (unsigned int*)real_data;
+
+        for (i = 0; i < iw->h; i++)
+          {
+             memcpy(real_data, orig_data, iw->w * depth);
+             real_data += (iw->w * depth);
+             orig_data += (origin_width * depth);
+          }
+     }
+   /************************************************************************************/
+
    if (threads)
      ecore_thread_run(data_thread_image, data_thread_image_end, NULL, iw);
    else
@@ -992,11 +1034,22 @@ data_write_images(Eet_File *ef, int *image_num)
              char *s;
              int load_err = EVAS_LOAD_ERROR_NONE;
              Image_Write *iw;
+             /* TIZEN_ONLY(150320)*****************Ninepatch patch for Samsung********************/
+             Eina_Bool b_ninepatch = is_ninepatch_image((char*)img->entry);
+             /************************************************************************************/
 
              iw = calloc(1, sizeof(Image_Write));
              iw->ef = ef;
              iw->img = img;
              iw->im = im = evas_object_image_add(evas);
+
+             /* TIZEN_ONLY(150320)*****************Ninepatch patch for Samsung********************/
+             if (b_ninepatch)
+               iw->ninepatch = EINA_TRUE;
+             else
+               iw->ninepatch = EINA_FALSE;
+             /************************************************************************************/
+
              if (threads)
                evas_object_event_callback_add(im,
                                               EVAS_CALLBACK_IMAGE_PRELOADED,
