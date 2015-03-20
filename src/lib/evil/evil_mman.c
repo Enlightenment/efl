@@ -103,7 +103,7 @@ mmap(void  *addr EVIL_UNUSED,
    if (protect & (PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_READ))
      acs = FILE_MAP_EXECUTE;
 #endif
-   else if ((protect & (PAGE_READWRITE | PAGE_READONLY)) == (PAGE_READWRITE | PAGE_READONLY))
+   else if (protect & (PAGE_READWRITE | PAGE_READONLY))
      acs = FILE_MAP_READ;
    else
      {
