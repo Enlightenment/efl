@@ -679,7 +679,7 @@ typedef enum _Evas_Device_Subclass
    EVAS_DEVICE_SUBCLASS_TRACKPAD, /**< A trackpad style mouse @since 1.8 */
    EVAS_DEVICE_SUBCLASS_TRACKPOINT, /**< A trackpoint style mouse @since 1.8 */
    EVAS_DEVICE_SUBCLASS_TRACKBALL, /**< A trackball style mouse @since 1.8 */
-} Evas_Device_Subclass; /**< A general class of device @since 1.8 */
+} Evas_Device_Subclass; /**< A general subclass of device @since 1.8 */
 
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
