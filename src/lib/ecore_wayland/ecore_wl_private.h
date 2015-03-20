@@ -71,6 +71,7 @@ struct _Ecore_Wl_Display
         struct wl_shell *shell;
         struct xdg_shell *xdg_shell;
         struct wl_shell *desktop_shell;
+        struct session_recovery *session_recovery;
 # ifdef USE_IVI_SHELL
         struct ivi_application *ivi_application;
 # endif
