@@ -101,7 +101,7 @@ struct _Evas_Object_Textgrid_Text
 {
    unsigned char r, g, b, a;
    int x;
-   unsigned int text_props;
+   unsigned int text_props_index;
 };
 
 struct _Evas_Object_Textgrid_Line
@@ -330,12 +330,19 @@ evas_object_textgrid_textprop_ref(Evas_Object *eo_obj, Evas_Textgrid_Data *o, Ei
                                             &(o->glyphs_used[glyphs_index]));
 }
 
+static Evas_Text_Props *
+_textprop_from_idx(Evas_Textgrid_Data *o, unsigned int props_index)
+{
+   return &(o->glyphs[props_index >> 8].props[props_index & 0xFF]);
+}
+
+
 static void
 evas_object_textgrid_textprop_unref(Evas_Textgrid_Data *o, unsigned int props_index)
 {
    Evas_Text_Props *props;
 
-   props = &(o->glyphs[props_index >> 8].props[props_index & 0xFF]);
+   props = _textprop_from_idx(o, props_index);
 
    if (props->info)
      {
@@ -347,12 +354,6 @@ evas_object_textgrid_textprop_unref(Evas_Textgrid_Data *o, unsigned int props_in
              evas_common_text_props_content_nofree_unref(props);
           }
      }
-}
-
-static Evas_Text_Props *
-evas_object_textgrid_textprop_int_to(Evas_Textgrid_Data *o, int props)
-{
-   return &(o->glyphs[props >> 8].props[props & 0xFF]);
 }
 
 /* all nice and private */
@@ -388,10 +389,10 @@ evas_object_textgrid_row_clear(Evas_Textgrid_Data *o, Evas_Object_Textgrid_Row *
    if (r->texts)
      {
         for (i = 0; i < r->texts_num; i++)
-          if (r->texts[i].text_props != 0xFFFFFFFF)
+          if (r->texts[i].text_props_index != 0xFFFFFFFF)
             {
-               evas_object_textgrid_textprop_unref(o, r->texts[i].text_props);
-               r->texts[i].text_props = 0xFFFFFFFF;
+               evas_object_textgrid_textprop_unref(o, r->texts[i].text_props_index);
+               r->texts[i].text_props_index = 0xFFFFFFFF;
             }
         free(r->texts);
         r->texts = NULL;
@@ -528,7 +529,7 @@ evas_object_textgrid_row_text_append(Evas_Object_Textgrid_Row *row, Evas_Object 
 
    text_props_index = evas_object_textgrid_textprop_ref(eo_obj, o, codepoint);
 
-   row->texts[row->texts_num - 1].text_props = text_props_index;
+   row->texts[row->texts_num - 1].text_props_index = text_props_index;
    row->texts[row->texts_num - 1].x = x;
    row->texts[row->texts_num - 1].r = r;
    row->texts[row->texts_num - 1].g = g;
@@ -725,11 +726,9 @@ evas_object_textgrid_render(Evas_Object *eo_obj,
 
                   for (xx = 0; xx < row->texts_num; xx++)
                     {
-                       Evas_Text_Props     *props;
+                       Evas_Text_Props *props;
 
-                       props =
-                         evas_object_textgrid_textprop_int_to
-                         (o, row->texts[xx].text_props);
+                       props = _textprop_from_idx(o, row->texts[xx].text_props_index);
 
                        evas_common_font_draw_prepare(props);
 
@@ -770,9 +769,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj,
                        int              tx = xp + row->texts[xx].x;
                        int              ty = yp + o->ascent;
 
-                       props =
-                         evas_object_textgrid_textprop_int_to
-                         (o, row->texts[xx].text_props);
+                       props = _textprop_from_idx(o, row->texts[xx].text_props_index);
 
                        r = row->texts[xx].r;
                        g = row->texts[xx].g;
@@ -969,8 +966,8 @@ evas_object_textgrid_render_post(Evas_Object *eo_obj,
         unsigned int props_index;
 
         props_index = (unsigned int) (intptr_t) eina_array_pop(&o->glyphs_cleanup);
-        prop = &(o->glyphs[props_index >> 8].props[props_index & 0xFF]);
-        
+        prop = _textprop_from_idx(o, props_index);
+
         evas_common_text_props_content_nofree_unref(prop);
         if (!prop->info)
           {
@@ -1268,8 +1265,8 @@ _evas_textgrid_efl_text_properties_font_set(Eo *eo_obj, Evas_Textgrid_Data *o, c
         unsigned int props_index;
 
         props_index = (unsigned int) (intptr_t) eina_array_pop(&o->glyphs_cleanup);
-        prop = &(o->glyphs[props_index >> 8].props[props_index & 0xFF]);
-        
+        prop = _textprop_from_idx(o, props_index);
+
         evas_common_text_props_content_nofree_unref(prop);
         if (!prop->info)
           {
