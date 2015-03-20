@@ -10,13 +10,7 @@
 #include <sys/time.h>
 #endif
 
-// symbols of funcs from evas_render2 which is a next-gen replacement of
-// the current evas render code. see evas_render2.c for more.
-Eina_Bool _evas_render2_begin(Eo *eo_e, Eina_Bool make_updates, Eina_Bool do_draw, Eina_Bool do_async);
-void _evas_render2_idle_flush(Eo *eo_e);
-void _evas_render2_dump(Eo *eo_e);
-void _evas_render2_wait(Eo *eo_e);
-
+#include "evas_render2.h"
 
 /* debug rendering
  * NOTE: Define REND_DBG 1 in evas_private.h to enable debugging. Don't define
@@ -2756,21 +2750,17 @@ evas_render_updates_free(Eina_List *updates)
 }
 
 EOLIAN Eina_Bool
+_evas_canvas_render2(Eo *eo_e, Evas_Public_Data *e)
+{
+   return _evas_render2(eo_e, e);
+}
+
+EOLIAN Eina_Bool
 _evas_canvas_render_async(Eo *eo_e, Evas_Public_Data *e)
 {
-   static int render_2 = -1;
-
    evas_canvas_async_block(e);
-   if (render_2 == -1)
-     {
-        if (getenv("EVAS_RENDER2")) render_2 = 1;
-        else render_2 = 0;
-     }
-   if (render_2)
-     return _evas_render2_begin(eo_e, EINA_TRUE, EINA_TRUE, EINA_TRUE);
-   else
-     return evas_render_updates_internal(eo_e, 1, 1, evas_render_pipe_wakeup,
-                                         e, EINA_TRUE);
+   return evas_render_updates_internal(eo_e, 1, 1, evas_render_pipe_wakeup,
+                                       e, EINA_TRUE);
 }
 
 static Eina_List *
@@ -2780,18 +2770,7 @@ evas_render_updates_internal_wait(Evas *eo_e,
 {
    Eina_List *ret = NULL;
    Evas_Public_Data *e = eo_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   static int render_2 = -1;
-
-   if (render_2 == -1)
-     {
-        if (getenv("EVAS_RENDER2")) render_2 = 1;
-        else render_2 = 0;
-     }
-   if (render_2)
-     {
-        if (!_evas_render2_begin(eo_e, make_updates, do_draw, EINA_FALSE))
-          return NULL;
-     }
+   if (e->render2) return _evas_render2_updates_wait(eo_e, e);
    else
      {
         if (!evas_render_updates_internal(eo_e, make_updates, do_draw, NULL,
@@ -2824,37 +2803,31 @@ _evas_canvas_render(Eo *eo_e, Evas_Public_Data *e)
 EOLIAN void
 _evas_canvas_norender(Eo *eo_e, Evas_Public_Data *e)
 {
-   evas_canvas_async_block(e);
-   //   if (!e->changed) return;
-   evas_render_updates_internal_wait(eo_e, 0, 0);
+   if (e->render2) _evas_norender2(eo_e, e);
+   else
+     {
+        evas_canvas_async_block(e);
+        //   if (!e->changed) return;
+        evas_render_updates_internal_wait(eo_e, 0, 0);
+     }
 }
 
 EOLIAN void
 _evas_canvas_render_idle_flush(Eo *eo_e, Evas_Public_Data *e)
 {
-   static int render_2 = -1;
-
-   evas_canvas_async_block(e);
-   if (render_2 == -1)
-     {
-        if (getenv("EVAS_RENDER2")) render_2 = 1;
-        else render_2 = 0;
-     }
-   if (render_2)
-     {
-        _evas_render2_idle_flush(eo_e);
-     }
+   if (e->render2) _evas_render2_idle_flush(eo_e, e);
    else
      {
+        evas_canvas_async_block(e);
 
         evas_render_rendering_wait(e);
-        
+
         evas_fonts_zero_pressure(eo_e);
-        
+
         if ((e->engine.func) && (e->engine.func->output_idle_flush) &&
             (e->engine.data.output))
           e->engine.func->output_idle_flush(e->engine.data.output);
-        
+
         OBJS_ARRAY_FLUSH(&e->active_objects);
         OBJS_ARRAY_FLUSH(&e->render_objects);
         OBJS_ARRAY_FLUSH(&e->restack_objects);
@@ -2863,7 +2836,7 @@ _evas_canvas_render_idle_flush(Eo *eo_e, Evas_Public_Data *e)
         OBJS_ARRAY_FLUSH(&e->temporary_objects);
         eina_array_foreach(&e->clip_changes, _evas_clip_changes_free, NULL);
         eina_array_clean(&e->clip_changes);
-        
+
         e->invalidate = EINA_TRUE;
      }
 }
@@ -2871,18 +2844,12 @@ _evas_canvas_render_idle_flush(Eo *eo_e, Evas_Public_Data *e)
 EOLIAN void
 _evas_canvas_sync(Eo *eo_e, Evas_Public_Data *e)
 {
-   static int render_2 = -1;
-
-   evas_canvas_async_block(e);
-   if (render_2 == -1)
-     {
-        if (getenv("EVAS_RENDER2")) render_2 = 1;
-        else render_2 = 0;
-     }
-   if (render_2)
-     _evas_render2_wait(eo_e);
+   if (e->render2) _evas_render2_sync(eo_e, e);
    else
-     evas_render_rendering_wait(e);
+     {
+        evas_canvas_async_block(e);
+        evas_render_rendering_wait(e);
+     }
 }
 
 void
@@ -2908,31 +2875,22 @@ _evas_render_dump_map_surfaces(Evas_Object *eo_obj)
 }
 
 EOLIAN void
-_evas_canvas_render_dump(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *e)
 {
-   static int render_2 = -1;
-
-   evas_canvas_async_block(e);
-   if (render_2 == -1)
-     {
-        if (getenv("EVAS_RENDER2")) render_2 = 1;
-        else render_2 = 0;
-     }
-   if (render_2)
-     {
-        _evas_render2_dump(eo_e);
-     }
+   if (e->render2) _evas_render2_dump(eo_e, e);
    else
      {
         Evas_Layer *lay;
-        
+
+        evas_canvas_async_block(e);
+
         evas_all_sync();
         evas_cache_async_freeze();
-        
+
         EINA_INLIST_FOREACH(e->layers, lay)
           {
              Evas_Object_Protected_Data *obj;
-             
+
              EINA_INLIST_FOREACH(lay->objects, obj)
                {
                   if (obj->proxy)
@@ -2964,13 +2922,13 @@ _evas_canvas_render_dump(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
         GC_ALL(evas_object_image_pixels_cow);
         GC_ALL(evas_object_image_load_opts_cow);
         GC_ALL(evas_object_image_state_cow);
-        
+
         evas_fonts_zero_pressure(eo_e);
-   
+
         if ((e->engine.func) && (e->engine.func->output_idle_flush) &&
             (e->engine.data.output))
           e->engine.func->output_idle_flush(e->engine.data.output);
-   
+
         OBJS_ARRAY_FLUSH(&e->active_objects);
         OBJS_ARRAY_FLUSH(&e->render_objects);
         OBJS_ARRAY_FLUSH(&e->restack_objects);
@@ -2979,9 +2937,9 @@ _evas_canvas_render_dump(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
         OBJS_ARRAY_FLUSH(&e->temporary_objects);
         eina_array_foreach(&e->clip_changes, _evas_clip_changes_free, NULL);
         eina_array_clean(&e->clip_changes);
-        
+
         e->invalidate = EINA_TRUE;
-        
+
         evas_cache_async_thaw();
      }
 }

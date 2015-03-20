@@ -131,9 +131,8 @@ lib/evas/canvas/evas_object_grid.c \
 lib/evas/canvas/evas_font_dir.c \
 lib/evas/canvas/evas_rectangle.c \
 lib/evas/canvas/evas_render.c \
-lib/evas/canvas/evas_render2.c \
-lib/evas/canvas/evas_render2.h \
-lib/evas/canvas/evas_render2_updates.c \
+lib/evas/canvas/render2/evas_render2.c \
+lib/evas/canvas/render2/evas_render2.h \
 lib/evas/canvas/evas_smart.c \
 lib/evas/canvas/evas_stack.c \
 lib/evas/canvas/evas_async_events.c \
@@ -287,6 +286,8 @@ lib/evas/common/evas_text_utils.h \
 lib/evas/common/evas_font_ot.h
 
 lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/evas/canvas \
+-I$(top_srcdir)/src/lib/evas/canvas/render2 \
 -I$(top_srcdir)/src/lib/evas/common \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/lib/evas/file \

@@ -875,6 +875,24 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          return: bool;
       }
+      render2 {
+         /*@
+         Render the given Evas canvas using the new rendering infra.
+
+         This is experimental and will change over time until noted here.
+
+         @return EINA_TRUE if the canvas will render, EINA_FALSE otherwise.
+
+         This function only returns EINA_TRUE when a frame will be rendered. If the
+         previous frame is still rendering, EINA_FALSE will be returned so the users
+         know not to wait for the updates callback and just return to their main
+         loop.
+
+         @ingroup Evas_Canvas
+         @since 1.14 */
+
+         return: bool;
+      }
       focus_out {
          /*@
          Inform to the evas that it lost the focus.
