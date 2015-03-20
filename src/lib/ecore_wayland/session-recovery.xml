@@ -1,0 +1,12 @@
+<protocol name="session_recovery">
+
+  <interface name="session_recovery" version="1">
+    <request name="provide_uuid">
+      <arg name="uuid" type="string"/>
+    </request>
+    <event name="uuid">
+      <arg name="uuid" type="string"/>
+    </event>
+  </interface>
+
+</protocol>
