@@ -220,7 +220,7 @@ evas_object_textgrid_textprop_ref(Evas_Object *eo_obj, Evas_Textgrid_Data *o, Ei
         o->master_used = calloc(6, sizeof (unsigned char));
         o->glyphs = calloc(1, sizeof (Evas_Textgrid_Hash_Glyphs));
         o->glyphs_used = calloc(1, sizeof (unsigned char));
-        if (!o->master_used)
+        if (!o->master || !o->master_used || !o->glyphs || !o->glyphs_used)
           {
              free(o->master);
              o->master = NULL;
