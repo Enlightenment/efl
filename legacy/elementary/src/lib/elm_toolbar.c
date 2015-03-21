@@ -950,7 +950,6 @@ static void
 _resizing_eval(Evas_Object *obj)
 {
    Evas_Coord x, y, h;
-   Evas_Coord mw = -1, mh = -1;
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
    evas_object_geometry_get(obj, &x, &y, NULL, &h);
