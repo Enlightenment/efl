@@ -463,7 +463,11 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    if ((!output->current_mode) && (crtc_mode.clock != 0))
      {
         output->current_mode = _ecore_drm_output_mode_add(output, &crtc_mode);
-        if (!output->current_mode) goto mode_err;
+        if (!output->current_mode)
+          {
+             ERR("Failed to add mode to output");
+             goto mode_err;
+          }
      }
 
    _ecore_drm_output_edid_find(output, conn);
@@ -472,7 +476,16 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    if (!_ecore_drm_output_software_setup(dev, output))
      goto mode_err;
    else
-     DBG("Setup Output %d for Software Rendering", output->crtc_id);
+     {
+        DBG("Output %s", output->name);
+        DBG("\tMake: %s", output->make);
+        DBG("\tModel: %s", output->model);
+        DBG("\tGeom: %d %d %d %d", output->x, output->y, 
+            output->current_mode->width, output->current_mode->height);
+        DBG("\tConnector: %d", output->conn_id);
+        DBG("\tCrtc: %d", output->crtc_id);
+        DBG("\tSetup for Software Rendering");
+     }
 
    output->backlight = 
      _ecore_drm_output_backlight_init(output, conn->connector_type);
@@ -482,6 +495,7 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    return output;
 
 mode_err:
+   DBG("Removing Output %s", output->name);
    eina_stringshare_del(output->make);
    eina_stringshare_del(output->model);
    eina_stringshare_del(output->name);
@@ -639,6 +653,7 @@ _ecore_drm_update_outputs(Ecore_Drm_Output *output)
         if (!(output->dev->conn_allocator & (1 << connector_id)))
           {
              drmModeEncoder *enc;
+             int events = 0;
 
              if (!(new_output = _ecore_drm_output_create(output->dev, res, connector, x, y)))
                {
@@ -669,6 +684,12 @@ _ecore_drm_update_outputs(Ecore_Drm_Output *output)
              drmModeFreeCrtc(crtc);
              drmModeFreeEncoder(enc);
 
+             events = (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE);
+
+             new_output->watch = 
+               eeze_udev_watch_add(EEZE_UDEV_TYPE_DRM, events, 
+                                   _ecore_drm_output_event, new_output);
+
              output->dev->outputs = 
                eina_list_append(output->dev->outputs, new_output);
           }
@@ -683,6 +704,7 @@ _ecore_drm_update_outputs(Ecore_Drm_Output *output)
              if (disconnects & (1 << new_output->conn_id))
                {
                   disconnects &= ~(1 << new_output->conn_id);
+                  _ecore_drm_event_output_send(new_output, EINA_FALSE);
                   ecore_drm_output_free(new_output);
                }
           }
@@ -690,14 +712,18 @@ _ecore_drm_update_outputs(Ecore_Drm_Output *output)
 }
 
 static void
-_ecore_drm_output_event(const char *device EINA_UNUSED, Eeze_Udev_Event event EINA_UNUSED, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
+_ecore_drm_output_event(const char *device, Eeze_Udev_Event event EINA_UNUSED, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
 {
    Ecore_Drm_Output *output;
+
+   DBG("Udev Hotplug Event for Device: %s", device);
 
    if (!(output = data)) return;
 
    if (_ecore_drm_output_device_is_hotplug(output))
      _ecore_drm_update_outputs(output);
+   else
+     DBG("\tUdev Event was not a hotplug event");
 }
 
 static void
@@ -724,8 +750,8 @@ _ecore_drm_event_output_send(const Ecore_Drm_Output *output, Eina_Bool plug)
         e->h = output->current_mode->height;
         e->x = output->x;
         e->y = output->y;
-        e->phys_width = 0;
-        e->phys_height = 0;
+        e->phys_width = output->phys_width;
+        e->phys_height = output->phys_height;
         e->refresh = output->current_mode->refresh;
         e->subpixel_order = output->subpixel;
         e->make = eina_stringshare_ref(output->make);
