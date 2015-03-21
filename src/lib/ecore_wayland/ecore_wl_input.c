@@ -1533,12 +1533,12 @@ _ecore_wl_mouse_down_info_get(int dev)
    Eina_Inlist *l = NULL;
    Ecore_Wl_Mouse_Down_Info *info = NULL;
 
-   //Return the exist info
+   // Return the existing info
    l = _ecore_wl_mouse_down_info_list;
    EINA_INLIST_FOREACH(l, info)
      if (info->dev == dev) return info;
 
-   //New Device. Add it.
+   // New Device. Add it.
    info = calloc(1, sizeof(Ecore_Wl_Mouse_Down_Info));
    if (!info) return NULL;
 

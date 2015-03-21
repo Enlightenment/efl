@@ -4,6 +4,7 @@
 
 #include "ecore_wl_private.h"
 
+/* Sets the output's geometry */
 static void
 _ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output EINA_UNUSED, int x, int y, int w, int h, int subpixel EINA_UNUSED, const char *make EINA_UNUSED, const char *model EINA_UNUSED, int transform)
 {
@@ -19,6 +20,7 @@ _ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output EINA_UNUSED
    output->transform = transform;
 }
 
+/* Sets the output's mode */
 static void
 _ecore_wl_output_cb_mode(void *data, struct wl_output *wl_output EINA_UNUSED, unsigned int flags, int w, int h, int refresh EINA_UNUSED)
 {
@@ -59,13 +61,17 @@ static const struct wl_output_listener _ecore_wl_output_listener =
    _ecore_wl_output_cb_scale
 };
 
-/* @since 1.2 */
+/* Get list of available outputs */
+ *@since 1.2 */
 EAPI Eina_Inlist *
 ecore_wl_outputs_get(void)
 {
    return _ecore_wl_disp->outputs;
 }
 
+/* Create new output for the given display, and append it to the display's
+ * list of available outputs
+ */
 void
 _ecore_wl_output_add(Ecore_Wl_Display *ewd, unsigned int id)
 {
@@ -84,6 +90,9 @@ _ecore_wl_output_add(Ecore_Wl_Display *ewd, unsigned int id)
    wl_output_add_listener(output->output, &_ecore_wl_output_listener, output);
 }
 
+/* Destruct the output and remove it from the display's list of available
+ * outputs
+ */
 void
 _ecore_wl_output_del(Ecore_Wl_Output *output)
 {
