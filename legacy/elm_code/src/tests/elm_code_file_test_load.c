@@ -85,11 +85,14 @@ START_TEST (elm_code_file_line_ending_unix)
    char *path = TESTS_DIR "testfile.txt";
    Elm_Code_File *file;
    Elm_Code *code;
+   short len;
 
    code = elm_code_create();
    file = elm_code_file_open(code, path);
 
    ck_assert_int_eq(ELM_CODE_FILE_LINE_ENDING_UNIX, elm_code_file_line_ending_get(file));
+   ck_assert_str_eq("\n", elm_code_file_line_ending_chars_get(file, &len));
+   ck_assert_int_eq(1, len);
 
    elm_code_file_close(file);
    elm_code_free(code);
@@ -101,11 +104,14 @@ START_TEST (elm_code_file_line_ending_windows)
    char *path = TESTS_DIR "testfile-windows.txt";
    Elm_Code_File *file;
    Elm_Code *code;
+   short len;
 
    code = elm_code_create();
    file = elm_code_file_open(code, path);
 
    ck_assert_int_eq(ELM_CODE_FILE_LINE_ENDING_WINDOWS, elm_code_file_line_ending_get(file));
+   ck_assert_str_eq("\r\n", elm_code_file_line_ending_chars_get(file, &len));
+   ck_assert_int_eq(2, len);
 
    elm_code_file_close(file);
    elm_code_free(code);

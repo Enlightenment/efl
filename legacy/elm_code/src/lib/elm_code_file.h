@@ -50,6 +50,8 @@ EAPI const char *elm_code_file_path_get(Elm_Code_File *file);
 
 EAPI Elm_Code_File_Line_Ending elm_code_file_line_ending_get(Elm_Code_File *file);
 
+EAPI const char *elm_code_file_line_ending_chars_get(Elm_Code_File *file, short *length);
+
 /**
  * @}
  *

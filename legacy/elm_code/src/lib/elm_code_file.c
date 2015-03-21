@@ -167,6 +167,21 @@ EAPI Elm_Code_File_Line_Ending elm_code_file_line_ending_get(Elm_Code_File *file
    return file->line_ending;
 }
 
+EAPI const char *elm_code_file_line_ending_chars_get(Elm_Code_File *file, short *length)
+{
+   if (length)
+     {
+        if (elm_code_file_line_ending_get(file) == ELM_CODE_FILE_LINE_ENDING_WINDOWS)
+          *length = 2;
+        else
+          *length = 1;
+     }
+
+   if (elm_code_file_line_ending_get(file) == ELM_CODE_FILE_LINE_ENDING_WINDOWS)
+     return "\r\n";
+   return "\n";
+}
+
 EAPI void elm_code_file_clear(Elm_Code_File *file)
 {
    Elm_Code_Line *l;
