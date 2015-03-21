@@ -71,6 +71,33 @@ static void _elm_code_file_line_insert_data(Elm_Code_File *file, const char *con
      }
 }
 
+EAPI const char *elm_code_file_filename_get(Elm_Code_File *file)
+{
+   return basename((char *)eina_file_filename_get(file->file));
+}
+
+EAPI const char *elm_code_file_path_get(Elm_Code_File *file)
+{
+   return eina_file_filename_get(file->file);
+}
+
+EAPI char *_elm_code_file_tmp_path_get(Elm_Code_File *file)
+{
+   const char *name, *path;
+   char *tmp;
+   size_t dirlen;
+
+   path = elm_code_file_path_get(file);
+   name = elm_code_file_filename_get(file);
+   dirlen = strlen(path) - strlen(name);
+
+   tmp = malloc(sizeof(char) * (strlen(path) + 6));
+   snprintf(tmp, dirlen + 1, "%s", path);
+   snprintf(tmp + dirlen, strlen(name) + 6, ".%s.tmp", name);
+
+   return tmp;
+}
+
 EAPI Elm_Code_File *elm_code_file_new(Elm_Code *code)
 {
    Elm_Code_File *ret;
@@ -128,6 +155,39 @@ EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path)
    return ret;
 }
 
+EAPI void elm_code_file_save(Elm_Code_File *file)
+{
+   Eina_List *item;
+   Elm_Code_Line *line_item;
+   const char *path, *content, *crchars;
+   char *tmp;
+   unsigned int length;
+   short crlength;
+   FILE *out;
+
+   path = elm_code_file_path_get(file);
+   tmp = _elm_code_file_tmp_path_get(file);
+   crchars = elm_code_file_line_ending_chars_get(file, &crlength);
+
+   out = fopen(tmp, "w");
+   if (out == NULL)
+     {
+        free(tmp);
+        return;
+     }
+
+   EINA_LIST_FOREACH(file->lines, item, line_item)
+     {
+        content = elm_code_line_text_get(line_item, &length);
+        fwrite(content, sizeof(char), length, out);
+        fwrite(crchars, sizeof(char), crlength, out);
+     }
+   fclose(out);
+
+   ecore_file_mv(tmp, path);
+   free(tmp);
+}
+
 EAPI void elm_code_file_free(Elm_Code_File *file)
 {
    Elm_Code_Line *l;
@@ -150,16 +210,6 @@ EAPI void elm_code_file_free(Elm_Code_File *file)
 EAPI void elm_code_file_close(Elm_Code_File *file)
 {
    eina_file_close(file->file);
-}
-
-EAPI const char *elm_code_file_filename_get(Elm_Code_File *file)
-{
-   return basename((char *)eina_file_filename_get(file->file));
-}
-
-EAPI const char *elm_code_file_path_get(Elm_Code_File *file)
-{
-   return eina_file_filename_get(file->file);
 }
 
 EAPI Elm_Code_File_Line_Ending elm_code_file_line_ending_get(Elm_Code_File *file)

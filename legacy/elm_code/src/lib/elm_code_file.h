@@ -40,6 +40,8 @@ EAPI Elm_Code_File *elm_code_file_new(Elm_Code *code);
 
 EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path);
 
+EAPI void elm_code_file_save(Elm_Code_File *file);
+
 EAPI void elm_code_file_free(Elm_Code_File *file);
 
 EAPI void elm_code_file_close(Elm_Code_File *file);
