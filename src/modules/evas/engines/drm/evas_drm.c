@@ -363,7 +363,8 @@ evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer)
         if (drmModePageFlip(ob->priv.fd, ob->priv.crtc, 
                             buffer->fb, DRM_MODE_PAGE_FLIP_EVENT, ob) < 0)
           {
-             ERR("Cannot flip crtc for connector %u: %m", ob->priv.conn);
+             ERR("Cannot flip crtc %u for connector %u: %m", 
+                 ob->priv.crtc, ob->priv.conn);
              return EINA_FALSE;
           }
 
@@ -382,6 +383,7 @@ evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer)
         /* evas_drm_outbuf_framebuffer_set(ob, buffer); */
 
         /* increment buffer we are using */
+        ob->priv.last = ob->priv.curr;
         ob->priv.curr = (ob->priv.curr + 1) % ob->priv.num;
      }
 
