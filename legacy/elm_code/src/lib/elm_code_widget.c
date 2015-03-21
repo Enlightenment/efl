@@ -761,7 +761,9 @@ _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text
 
    elm_code_line_text_insert(line, col, text, length);
    eo_do(widget,
-         elm_code_widget_cursor_position_set(col + length, row));
+         elm_code_widget_cursor_position_set(col + length, row),
+// TODO construct and pass a change object
+         eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
 }
 
 static void
@@ -787,7 +789,9 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
 
    free(content);
    eo_do(widget,
-         elm_code_widget_cursor_position_set(1, row + 1));
+         elm_code_widget_cursor_position_set(1, row + 1),
+// TODO construct and pass a change object
+         eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
 }
 
 static void
@@ -831,6 +835,8 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
    if (!nextline)
      eo_do(widget,
            elm_code_widget_cursor_position_set(length1 + 1, row - 1));
+// TODO construct and pass a change object
+   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
 }
 
 static void
@@ -850,8 +856,6 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
           return;
 
         _elm_code_widget_backspaceline(widget, EINA_FALSE);
-        line = elm_code_file_line_get(code->file, row - 1);
-
         return;
      }
 
@@ -860,6 +864,9 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
    elm_code_line_text_remove(line, col - 1, 1);
    eo_do(widget,
          elm_code_widget_cursor_position_set(col - 1, row));
+
+// TODO construct and pass a change object
+   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
 }
 
 static void
@@ -884,7 +891,9 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
 
    elm_code_line_text_remove(line, col, 1);
    eo_do(widget,
-         elm_code_widget_cursor_position_set(col, row));
+         elm_code_widget_cursor_position_set(col, row),
+// TODO construct and pass a change object
+         eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
 }
 
 static void
