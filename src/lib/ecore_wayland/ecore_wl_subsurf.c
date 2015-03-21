@@ -71,8 +71,13 @@ _ecore_wl_subsurf_destroy(Ecore_Wl_Subsurf *ess)
 {
    Ecore_Wl_Window *parent;
 
-   wl_subsurface_destroy(ess->subsurface);
-   wl_surface_destroy(ess->surface);
+   if (!ess) return;
+
+   if (ess->subsurface)
+      wl_subsurface_destroy(ess->subsurface);
+
+   if (ess->surface)
+      wl_surface_destroy(ess->surface);
 
    parent = ess->parent_win;
    parent->subsurfs = (Ecore_Wl_Subsurf *)eina_inlist_remove
@@ -120,6 +125,7 @@ ecore_wl_subsurf_position_set(Ecore_Wl_Subsurf *ess, int x, int y)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ess) return;
+   if (!ess->subsurface) return;
 
    if ((x == ess->x) && (y == ess->y))
      return;
@@ -148,6 +154,7 @@ ecore_wl_subsurf_place_above(Ecore_Wl_Subsurf *ess, struct wl_surface *surface)
 
    if (!ess) return;
    if (!surface) return;
+   if (!ess->subsurface) return;
 
    wl_subsurface_place_above(ess->subsurface, surface);
 }
@@ -159,6 +166,7 @@ ecore_wl_subsurf_place_below(Ecore_Wl_Subsurf *ess, struct wl_surface *surface)
 
    if (!ess) return;
    if (!surface) return;
+   if (!ess->subsurface) return;
 
    wl_subsurface_place_below(ess->subsurface, surface);
 }
@@ -169,6 +177,7 @@ ecore_wl_subsurf_sync_set(Ecore_Wl_Subsurf *ess, Eina_Bool val)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ess) return;
+   if (!ess->subsurface) return;
 
    val = !!val;
    if (val == ess->sync) return;
@@ -189,10 +198,13 @@ ecore_wl_subsurf_opaque_region_set(Ecore_Wl_Subsurf *ess, int x, int y, int w, i
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ess) return;
+   if (!ess->surface) return;
 
    if ((w > 0) && (h > 0))
      {
         region = wl_compositor_create_region(_ecore_wl_compositor_get());
+        if (!region) return;
+
         wl_region_add(region, x, y, w, h);
         wl_surface_set_opaque_region(ess->surface, region);
         wl_region_destroy(region);
