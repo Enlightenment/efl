@@ -61,8 +61,8 @@ static const struct wl_output_listener _ecore_wl_output_listener =
    _ecore_wl_output_cb_scale
 };
 
-/* Get list of available outputs */
- *@since 1.2 */
+/* Get list of available outputs
+ * @since 1.2 */
 EAPI Eina_Inlist *
 ecore_wl_outputs_get(void)
 {
