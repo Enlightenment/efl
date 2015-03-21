@@ -25,6 +25,7 @@ static const char *conn_types[] =
 EAPI int ECORE_DRM_EVENT_OUTPUT = 0;
 
 /* local functions */
+static void _ecore_drm_output_event(const char *device, Eeze_Udev_Event event EINA_UNUSED, void *data, Eeze_Udev_Watch *watch EINA_UNUSED);
 
 static void 
 _ecore_drm_output_edid_parse_string(const uint8_t *data, char text[])
