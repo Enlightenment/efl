@@ -1016,6 +1016,7 @@ AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [test "x${have_elm}" = "xyes"])
 ### Checks for linker characteristics
 
 ### Checks for library functions
+EFL_CHECK_FUNCS([EO], [dladdr])
 
 ### Check availability
 
@@ -1127,7 +1128,6 @@ EFL_EVAL_PKGS([EET])
 ### Checks for linker characteristics
 
 ### Checks for library functions
-EFL_CHECK_FUNCS([EO], [dladdr])
 
 ### Check availability
 
