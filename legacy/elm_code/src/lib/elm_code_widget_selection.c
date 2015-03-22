@@ -58,7 +58,9 @@ elm_code_widget_selection_start(Evas_Object *widget,
 
    pd->selection->start_line = line;
    pd->selection->start_col = col;
-   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget));
+   eo_do(widget,
+         eo_event_callback_call(ELM_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget),
+         elm_code_widget_cursor_position_set(col, line));
 }
 
 EAPI void
