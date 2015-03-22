@@ -42,7 +42,8 @@ lib_emile_libemile_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/emile\" \
-@EMILE_CFLAGS@
+@EMILE_CFLAGS@ \
+@NEON_CFLAGS@
 
 if ! ENABLE_LIBLZ4
 lib_emile_libemile_la_CPPFLAGS += \
