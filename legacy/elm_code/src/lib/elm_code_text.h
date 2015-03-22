@@ -1,6 +1,8 @@
 #ifndef ELM_CODE_TEXT_H_
 # define ELM_CODE_TEXT_H_
 
+#define ELM_CODE_TEXT_NOT_FOUND -1
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -23,6 +25,10 @@ extern "C" {
 EAPI const char *elm_code_line_text_get(Elm_Code_Line *line, unsigned int *length);
 
 EAPI void elm_code_line_text_set(Elm_Code_Line *line, const char *chars, unsigned int length);
+
+EAPI int elm_code_line_text_strpos(Elm_Code_Line *line, const char *search, int offset);
+
+EAPI Eina_Bool elm_code_line_text_contains(Elm_Code_Line *line, const char *search);
 
 EAPI void elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, const char *string, int length);
 

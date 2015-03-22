@@ -42,6 +42,38 @@ elm_code_line_text_set(Elm_Code_Line *line, const char *chars, unsigned int leng
    elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
 }
 
+EAPI int
+elm_code_line_text_strpos(Elm_Code_Line *line, const char *search, int offset)
+{
+   unsigned int length, searchlen, c;
+   const char *content;
+   char *ptr;
+
+   searchlen = strlen(search);
+   content = elm_code_line_text_get(line, &length);
+   ptr = (char *) content;
+
+   if (searchlen > length)
+     return ELM_CODE_TEXT_NOT_FOUND;
+
+   ptr += offset;
+   for (c = offset; c < length - strlen(search); c++)
+     {
+        if (!strncmp(ptr, search, searchlen))
+          return c;
+
+        ptr++;
+     }
+
+   return ELM_CODE_TEXT_NOT_FOUND;
+}
+
+EAPI Eina_Bool
+elm_code_line_text_contains(Elm_Code_Line *line, const char *search)
+{
+   return elm_code_line_text_strpos(line, search, 0) != ELM_CODE_TEXT_NOT_FOUND;
+}
+
 static void
 _elm_code_line_tokens_move_right(Elm_Code_Line *line, int position, int move)
 {
