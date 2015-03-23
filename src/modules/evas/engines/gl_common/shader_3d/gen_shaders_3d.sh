@@ -24,14 +24,19 @@ for shd in ${SHADERS} ; do
   if echo ${lname} |grep _frag 2>&1 >> /dev/null ; then
     frag_shaders_source="${frag_shaders_source}    ${lname}_glsl,\n"
   fi
+
+  m4 ${DIR}/include.shd ${shd} > ${shd}.tmp
+
   OIFS=$IFS
   IFS=$'\n'
   printf "static const char const ${lname}_glsl[] ="
-  for line in `cat ${shd}` ; do
+  for line in `cat ${shd}.tmp` ; do
       printf "\n   \"${line}\\\n\""
   done
   printf ";\n\n"
   IFS=${OIFS}
+
+  rm ${shd}.tmp
 done
 
 printf "static const char *vertex_shaders[] =

@@ -1,0 +1,183 @@
+define(`FRAGMENT_SHADER_USE_TEX_COORD',`
+#ifdef NEED_TEX_COORD
+varying vec2   vTexCoord;
+#endif //TEX_COORD')
+
+define(`FRAGMENT_SHADER_USE_TEXTURE', `
+#ifdef $1_TEXTURE
+uniform sampler2D  uTexture$2`0';
+#endif //$1_TEXTURE
+#ifdef $1_TEXTURE_BLEND
+uniform sampler2D  uTexture$2`1';
+uniform float      uTexture$2Weight;
+#endif //$1_TEXTURE_BLEND')
+
+define(`FRAGMENT_SHADER_USE_FOG', `
+#ifdef FOG_ENABLED
+uniform float uFogFactor;
+uniform vec4  uFogColor;
+#endif //FOG_ENABLED')
+
+define(`FRAGMENT_SHADER_USE_SHADOWS', `
+#ifdef  SHADOWED
+varying vec4 vLightPosition;
+uniform sampler2D uShadowMap;
+float shadow;
+float pcf(vec4 lpos, float size)
+  {
+     vec3 smcoord = lpos.xyz / lpos.w * 0.5 + 0.5;
+     float i, j, randx, randy, shadow;
+     shadow = 0.0;
+     for (i = -4.0; i < 4.0; i++)
+       for (j = -4.0; j < 4.0; j++)
+         shadow += float(smcoord.z <= texture2D(uShadowMap, smcoord.xy + vec2(i / 8.0, j / 8.0)*size).x);
+     return shadow / 64.0;
+}
+#endif //SHADOWED')
+
+define(`FRAGMENT_SHADER_FOG_APPLY', `
+#ifdef FOG_ENABLED
+   float z = gl_FragCoord.z / gl_FragCoord.w;
+   float fogFactor = exp2(-uFogFactor * uFogFactor * z * z * 1.44);
+   fogFactor = clamp(fogFactor, 0.0, 1.0);
+   gl_FragColor = mix(uFogColor, gl_FragColor, fogFactor);
+#endif //FOG_ENABLED')
+
+define(`FRAGMENT_SHADER_USE_LIGHT', `
+#ifdef LIGHT_SPOT
+uniform   vec3  uLightSpotDir;
+uniform   float uLightSpotExp;
+uniform   float uLightSpotCutoffCos;
+#endif //LIGHT_SPOT
+#ifdef LIGHT_ATTENUATION
+varying   float    vLightDist;
+#endif //LIGHT_ATTENUATION')
+
+define(`FRAGMENT_SHADER_TEXTURE_BLEND', `
+#ifdef  $1_TEXTURE_BLEND
+   color = texture2D(uTexture$2`0', vTexCoord) * uTexture$2Weight +
+   texture2D(uTexture$2`1', vTexCoord) * (1.0 - uTexture$2Weight);
+#else
+#ifdef  $1_TEXTURE
+   color = texture2D(uTexture$2`0', vTexCoord);
+#else
+   color = uMaterial$2;
+#endif //$1_TEXTURE
+#endif //$1_TEXTURE_BLEND')
+
+define(`FRAGMENT_SHADER_USE_EMISSION_TERM',
+`#ifdef EMISSION'
+uniform vec4       uMaterialEmission;
+FRAGMENT_SHADER_USE_TEXTURE(EMISSION, Emission)
+`#endif //EMISSION')
+
+define(`FRAGMENT_SHADER_USE_SPECULAR_TERM',
+`#ifdef SPECULAR'
+uniform   vec4     uLightSpecular;
+uniform   float    uMaterialShininess;
+uniform   vec4     uMaterialSpecular;
+FRAGMENT_SHADER_USE_TEXTURE(SPECULAR, Specular)
+`#endif //SPECULAR')
+
+define(`FRAGMENT_SHADER_USE_AMBIENT_TERM',
+`#ifdef AMBIENT'
+uniform  vec4       uMaterialAmbient;
+uniform  vec4       uLightAmbient;
+FRAGMENT_SHADER_USE_TEXTURE(AMBIENT, Ambient)
+`#endif //AMBIENT')
+
+define(`FRAGMENT_SHADER_USE_DIFFUSE_TERM',
+`#ifdef DIFFUSE'
+uniform   vec4        uMaterialDiffuse;
+uniform   vec4        uLightDiffuse;
+FRAGMENT_SHADER_USE_TEXTURE(DIFFUSE, Diffuse)
+`#endif //DIFFUSE')
+
+define(`VERTEX_SHADER_NEED_TEX_COORD',
+`#ifdef NEED_TEX_COORD'
+varying vec2 vTexCoord;
+`#endif //NEED_TEX_COORD')
+
+define(`VERTEX_SHADER_USE_LIGHT_ATTENUATION',
+`#ifdef LIGHT_ATTENUATION'
+varying  float vLightDist;
+`#endif //LIGHT_ATTENUATION')
+
+define(`VERTEX_SHADER_USE_SHADOWS',
+`#ifdef SHADOWED'
+uniform mat4 uMatrixLight;
+varying vec4 vLightPosition;
+`#endif //SHADOWED')
+
+define(`VERTEX_SHADER_USE_POSITION',
+`#ifdef VERTEX_POSITION'
+attribute   vec4  aPosition0;
+`#endif //VERTEX_POSITION'
+
+`#ifdef VERTEX_POSITION_BLEND'
+attribute   vec4  aPosition1;
+uniform     float uPositionWeight;
+`#endif //VERTEX_POSITION_BLEND')
+
+define(`VERTEX_SHADER_USE_NORMALS',
+`#ifdef VERTEX_NORMAL'
+attribute   vec4  aNormal0;
+`#endif //VERTEX_NORMAL'
+
+`#ifdef VERTEX_NORMAL_BLEND'
+attribute   vec4  aNormal1;
+uniform     float uNormalWeight;
+`#endif //VERTEX_NORMAL_BLEND'
+)
+
+define(`VERTEX_SHADER_USE_TEXCOORD',
+`#ifdef VERTEX_TEXCOORD'
+attribute   vec4  aTexCoord0;
+`#endif //VERTEX_TEXCOORD'
+
+`#ifdef VERTEX_TEXCOORD_BLEND'
+attribute   vec4  aTexCoord1;
+uniform     float uTexCoordWeight;
+`#endif //VERTEX_TEXCOORD_BLEND'
+)
+
+define(`VERTEX_SHADER_POSITION',
+`#ifdef VERTEX_POSITION_BLEND'
+   vec4 position = aPosition0 * uPositionWeight +
+   aPosition1 * (1.0 - uPositionWeight);
+   position = vec4(position.xyz, 1.0);
+`#else'
+
+`#ifdef VERTEX_POSITION'
+   vec4 position = vec4(aPosition0.xyz, 1.0);
+`#endif // VERTEX_POSITION'
+
+`#endif //VERTEX_POSITION_BLEND')
+
+define(`VERTEX_SHADER_NORMAL',
+`#ifdef VERTEX_NORMAL_BLEND'
+   vec3 normal = aNormal0.xyz * uNormalWeight +
+   aNormal1.xyz * (1.0 - uNormalWeight);
+`#else'
+
+`#ifdef VERTEX_NORMAL'
+   vec3 normal = aNormal0.xyz;
+`#endif //VERTEX_NORMAL'
+`#endif //VERTEX_NORMAL_BLEND')
+
+define(`VERTEX_SHADER_TEXCOORD',
+`#ifdef VERTEX_TEXCOORD_BLEND'
+   vTexCoord = aTexCoord0.st * uTexCoordWeight +
+   aTexCoord1.st * (1.0 - uTexCoordWeight);
+`#else'
+
+`#ifdef VERTEX_TEXCOORD'
+   vTexCoord = aTexCoord0.st;
+`#endif //VERTEX_TEXCOORD'
+
+`#endif //VERTEX_TEXCOORD_BLEND')
+
+define(`VERTEX_SHADER_SHADOWED',
+`#ifdef SHADOWED'
+   vLightPosition = uMatrixLight * position;
+`#endif //SHADOWED')
