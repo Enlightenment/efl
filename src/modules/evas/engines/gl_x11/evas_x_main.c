@@ -133,8 +133,7 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
 #endif
    const GLubyte *vendor, *renderer, *version, *glslversion;
    int blacklist = 0;
-   int val = 0, context_optimize_disable = 0;
-   char* s;
+   int val = 0;
 
    if (!fbconf) eng_best_visual_get(info);
    if (!_evas_gl_x11_vi) return NULL;
@@ -159,15 +158,6 @@ eng_window_new(Evas_Engine_Info_GL_X11 *info,
    gw->depth_bits = depth_bits;
    gw->stencil_bits = stencil_bits;
    gw->msaa_bits = msaa_bits;
-   gw->context_current = EINA_FALSE;
-
-   if ((s = getenv("EVAS_GL_CONTEXT_SWITCH_OPTIMIZE_DISABLE")) != NULL)
-     context_optimize_disable = atoi(s);
-
-   if (context_optimize_disable == 1)
-     gw->context_switch_optimize = EINA_FALSE;
-   else
-     gw->context_switch_optimize = EINA_TRUE;
 
    if (gw->alpha && _evas_gl_x11_rgba_vi)
      gw->visualinfo = _evas_gl_x11_rgba_vi;
@@ -591,10 +581,6 @@ eng_window_use(Outbuf *gw)
 
    xwin = _tls_outbuf_get();
 
-   if (xwin && (xwin == gw))
-     if (gw->context_switch_optimize && gw->context_current)
-       return;
-
    glsym_evas_gl_preload_render_lock(eng_window_make_current, gw);
 #ifdef GL_GLES
    if (xwin)
@@ -649,8 +635,6 @@ eng_window_use(Outbuf *gw)
                   ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->glxwin, (void *)gw->win, (void *)gw->context);
                }
 #endif
-             if (xwin) xwin->context_current = EINA_FALSE;
-             gw->context_current = EINA_TRUE;
           }
      }
    if (gw) glsym_evas_gl_common_context_use(gw->gl_context);
@@ -1537,13 +1521,4 @@ eng_outbuf_egl_display_get(Outbuf *ob)
    (void) ob;
    return NULL;
 #endif
-}
-
-void
-eng_outbuf_context_is_current_set(Outbuf *ob, Eina_Bool context_current)
-{
-   if (!ob) return;
-
-   ob->context_current = context_current;
-   return;
 }

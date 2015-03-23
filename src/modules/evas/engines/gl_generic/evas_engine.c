@@ -805,23 +805,6 @@ eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const Eo *tar
    evas_gl_preload_target_unregister(gim->tex, (Eo*) target);
 }
 
-static void
-eng_gl_get_pixels_pre(void *data EINA_UNUSED)
-{
-   evgl_get_pixels_pre();
-}
-
-static void
-eng_gl_get_pixels_post(void *data)
-{
-   Render_Engine_GL_Generic *re = data;
-   if (!re) return;
-
-   evgl_get_pixels_post();
-   if (re->window_context_is_current_set)
-     re->window_context_is_current_set(re->software.ob, EINA_FALSE);
-}
-
 static Eina_Bool
 eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth, Eina_Bool do_async EINA_UNUSED)
 {
@@ -873,9 +856,9 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
                              direct_surface);
 
         // Call pixel get function
-        eng_gl_get_pixels_pre(re);
+        evgl_get_pixels_pre();
         re->func.get_pixels(re->func.get_pixels_data, re->func.obj);
-        eng_gl_get_pixels_post(re);
+        evgl_get_pixels_post();
 
         // Call end tile if it's being used
         if ((gl_context->master_clip.enabled) &&
@@ -1395,6 +1378,18 @@ eng_gl_get_pixels_set(void *data, void *get_pixels, void *get_pixels_data, void 
    re->func.get_pixels = get_pixels;
    re->func.get_pixels_data = get_pixels_data;
    re->func.obj = (Evas_Object*)obj;
+}
+
+static void
+eng_gl_get_pixels_pre(void *data EINA_UNUSED)
+{
+   evgl_get_pixels_pre();
+}
+
+static void
+eng_gl_get_pixels_post(void *data EINA_UNUSED)
+{
+   evgl_get_pixels_post();
 }
 
 static Eina_Bool
