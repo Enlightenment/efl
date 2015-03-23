@@ -1573,9 +1573,9 @@ _emile_jpeg_data(Emile_Image *image,
    struct _JPEG_error_mgr jerr;
    const unsigned char *m = NULL;
    uint8_t *ptr, *line[16], *data;
-   uint32_t *ptr2, *ptr_rotate = NULL;
+   uint32_t *ptr2 = NULL, *ptr_rotate = NULL;
    uint16_t *ptrag, *ptrag_rotate = NULL;
-   uint8_t *ptrg, *ptrg_rotate = NULL;
+   uint8_t *ptrg = NULL, *ptrg_rotate = NULL;
    unsigned int x, y, l, i, scans;
    int region = 0;
    /* rotation setting */
