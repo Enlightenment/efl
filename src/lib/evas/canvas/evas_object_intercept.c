@@ -58,7 +58,7 @@ evas_object_intercept_cleanup(Evas_Object *eo_obj)
      ret = !!(obj->interceptors->Type.func);				\
      if (ret)								\
        obj->interceptors->Type.func(obj->interceptors->Type.data, eo_obj); \
-     obj->interceptors->Type.intercepted = EINA_FALSE;			\
+     if (obj->interceptors) obj->interceptors->Type.intercepted = EINA_FALSE;			\
      return ret;                                                        \
   }
 
