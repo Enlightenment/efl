@@ -252,7 +252,7 @@ static struct Filter_Test_Case _test_cases[] = {
    { 0, 0, 0, 0, "a = buffer ({ 'alpha' }) blend ({ dst = a }) bump ({ a,compensate=yes,specular=10.0 })", NULL },
 
    { 7, 7, 7, 7, "a = buffer ({ 'alpha' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) displace ({ map = b, src = input, dst = a, intensity = 7 }) blend ({ a })", NULL },
-   { 7, 7, 7, 7, "a = buffer ({ 'alpha' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) blend ({ dst = a }) displace ({ map = b, src = a, intensity = 7 })", NULL },
+   { 7, 7, 7, 7, "a = buffer ({ 'rgba' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) blend ({ dst = a }) displace ({ map = b, src = a, intensity = 7 })", NULL },
    { 7, 7, 7, 7, "a = buffer ({ 'rgba' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) blend ({ dst = a }) displace ({ map = b, src = a, intensity = 7 })", NULL },
    { 7, 7, 7, 7, "a = buffer ({ 'rgba' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) blend ({ dst = a }) displace ({ map = b, src = a, intensity = 7, flags = 'default' })", NULL },
    { 7, 7, 7, 7, "a = buffer ({ 'rgba' }) b = buffer ({ 'rgba' }) blend ({ dst = b, color = '#330' }) blend ({ dst = a }) displace ({ map = b, src = a, intensity = 7, flags = 'nearest' })", NULL },
