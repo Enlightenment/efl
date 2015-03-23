@@ -1123,9 +1123,16 @@ EAPI void             ecore_con_socks_apply_always(Ecore_Con_Socks *ecs);
  * The socket on which the server listens depends on the connection
  * type:
  * @li If @a type is @c ECORE_CON_LOCAL_USER, the server will listen on
- *     the Unix socket "~/.ecore/[name]/[port]".
+ *     the Unix socket. The path to the socket is taken from XDG_RUNTIME_DIR,
+ *     if that is not set, then from HOME, even if this is not set, then from
+ *     TMPDIR. If none is set, then path would be /tmp. From this path socket
+ *     would be created as "[path]/.ecore/[name]/[port]". If port is negetive,
+ *     then "[path]/.ecore/[name]".
  * @li If @a type is @c ECORE_CON_LOCAL_SYSTEM, the server will listen
- *     on Unix socket "/tmp/.ecore_service|[name]|[port]".
+ *     on Unix socket "/tmp/.ecore_service|[name]|[port]". If port is negetive,
+ *     then "/tmp/.ecore_service|[name]".
+ * @li If @a type is @c ECORE_CON_LOCAL_ABSTRACT, then port number is not
+ *     considered while creating the socket.
  * @li If @a type is @c ECORE_CON_REMOTE_TCP, the server will listen
  *     on TCP port @c port.
  *
@@ -1154,14 +1161,19 @@ EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type,
  * @return A new Ecore_Con_Server.
  *
  * The socket to which the connection is made depends on the connection type:
- * @li If @a type is @c ECORE_CON_LOCAL_USER, the function will
- *     connect to the server at the Unix socket
- *     "~/.ecore/[name]/[port]".
- * @li If @a type is @c ECORE_CON_LOCAL_SYSTEM, the function will
- *     connect to the server at the Unix socket
- *     "/tmp/.ecore_service|[name]|[port]".
- * @li If @a type is @c ECORE_CON_REMOTE_TCP, the function will
- *     connect to the server at the TCP port "[name]:[port]".
+ * @li If @a type is @c ECORE_CON_LOCAL_USER, the server will conect to
+ *     the Unix socket. The path to the socket is taken from XDG_RUNTIME_DIR,
+ *     if that is not set, then from HOME, even if this is not set, then from
+ *     TMPDIR. If none is set, then path would be /tmp. From this path the
+ *     function would connect to socket at "[path]/.ecore/[name]/[port]". If
+ *     port is negetive, then to socket at "[path]/.ecore/[name]".
+ * @li If @a type is @c ECORE_CON_LOCAL_SYSTEM, the server will connect to
+ *     Unix socket at "/tmp/.ecore_service|[name]|[port]". If port is negetive,
+ *     then to Unix socket at "/tmp/.ecore_service|[name]".
+ * @li If @a type is @c ECORE_CON_LOCAL_ABSTRACT, then port number is not
+ *     considered while connecting to socket.
+ * @li If @a type is @c ECORE_CON_REMOTE_TCP, the server will listen
+ *     on TCP port @c port.
  *
  * More information about the @p type can be found at @ref _Ecore_Con_Type.
  *
