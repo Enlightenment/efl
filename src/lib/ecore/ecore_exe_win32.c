@@ -484,6 +484,7 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
    exe->process = pi.hProcess;
    exe->process_thread = pi.hThread;
    exe->process_id = pi.dwProcessId;
+   exe->pid = pi.dwProcessId;
    exe->thread_id = pi.dwThreadId;
 
    exe->h_close = ecore_main_win32_handler_add(exe->process,
