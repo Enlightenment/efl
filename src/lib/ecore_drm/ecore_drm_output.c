@@ -596,26 +596,6 @@ finish:
    _ecore_drm_output_frame_finish(output);
 }
 
-static Eina_Bool
-_ecore_drm_output_device_is_hotplug(Ecore_Drm_Output *output)
-{
-   const char *syspath;
-   const char *val;
-   int sysnum;
-
-   syspath = output->dev->drm.path;
-   sysnum = eeze_udev_syspath_get_sysnum(syspath);
-
-   if ((sysnum == -1) || (sysnum != output->dev->id))
-     return EINA_FALSE;
-
-   val = eeze_udev_syspath_get_property(syspath, "HOTPLUG");
-   if (!val)
-     return EINA_FALSE;
-
-   return (strcmp(val, "1") == 0);
-}
-
 static void
 _ecore_drm_update_outputs(Ecore_Drm_Output *output)
 {
@@ -685,7 +665,8 @@ _ecore_drm_update_outputs(Ecore_Drm_Output *output)
              drmModeFreeCrtc(crtc);
              drmModeFreeEncoder(enc);
 
-             events = (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE);
+             events = (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE | 
+                       EEZE_UDEV_EVENT_CHANGE);
 
              new_output->watch = 
                eeze_udev_watch_add(EEZE_UDEV_TYPE_DRM, events, 
@@ -713,18 +694,12 @@ _ecore_drm_update_outputs(Ecore_Drm_Output *output)
 }
 
 static void
-_ecore_drm_output_event(const char *device, Eeze_Udev_Event event EINA_UNUSED, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
+_ecore_drm_output_event(const char *device EINA_UNUSED, Eeze_Udev_Event event EINA_UNUSED, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
 {
    Ecore_Drm_Output *output;
 
-   DBG("Udev Hotplug Event for Device: %s", device);
-
    if (!(output = data)) return;
-
-   if (_ecore_drm_output_device_is_hotplug(output))
-     _ecore_drm_update_outputs(output);
-   else
-     DBG("\tUdev Event was not a hotplug event");
+   _ecore_drm_update_outputs(output);
 }
 
 static void
@@ -863,7 +838,8 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
              drmModeFreeCrtc(crtc);
              drmModeFreeEncoder(enc);
 
-             events = (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE);
+             events = (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE | 
+                       EEZE_UDEV_EVENT_CHANGE);
 
              output->watch =
                eeze_udev_watch_add(EEZE_UDEV_TYPE_DRM, events,
