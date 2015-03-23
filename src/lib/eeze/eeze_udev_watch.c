@@ -239,6 +239,10 @@ _get_syspath_from_watch(void             *data,
         if ((!(test = udev_device_get_subsystem(device)))
             || (strcmp(test, "drm")))
           goto error;
+
+        test = udev_device_get_property_value(device, "HOTPLUG");
+        if ((!test) || (strcmp(test, "1"))) goto error;
+
         break;
 
       case EEZE_UDEV_TYPE_BACKLIGHT:
@@ -334,8 +338,7 @@ eeze_udev_watch_add(Eeze_Udev_Type     type,
         break;
 
       case EEZE_UDEV_TYPE_DRM:
-        udev_monitor_filter_add_match_subsystem_devtype(mon, "drm_minor",
-                                                        NULL);
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "drm", NULL);
         break;
 
       default:
