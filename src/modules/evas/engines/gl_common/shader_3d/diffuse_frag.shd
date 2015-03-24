@@ -1,47 +1,11 @@
-#ifdef NEED_TEX_COORD
-varying vec2   vTexCoord;
-#endif //TEX_COORD
-
-#ifdef FOG_ENABLED
-uniform float uFogFactor;
-uniform vec4  uFogColor;
-#endif //FOG_ENABLED
-
-#ifdef DIFFUSE
-uniform   vec4        uMaterialDiffuse;
-
-#ifdef DIFFUSE_TEXTURE
-uniform sampler2D  uTextureDiffuse0;
-#endif //DIFFUSE_TEXTURE
-
-#ifdef DIFFUSE_TEXTURE_BLEND
-uniform sampler2D  uTextureDiffuse1;
-uniform float      uTextureDiffuseWeight;
-#endif //DIFFUSE_TEXTURE_BLEND
-
-#endif //DIFFUSE
+FRAGMENT_SHADER_USE_TEX_COORD
+FRAGMENT_SHADER_USE_FOG
+FRAGMENT_SHADER_USE_DIFFUSE_TERM
 
 void main() {
-
-#ifdef DIFFUSE_TEXTURE_BLEND
-   gl_FragColor = (texture2D(uTextureDiffuse0, vTexCoord) *
-   uTextureDiffuseWeight + texture2D(uTextureDiffuse1, vTexCoord) *
-   (1.0 - uTextureDiffuseWeight)) * uMaterialDiffuse;
-#else
-
-#ifdef DIFFUSE_TEXTURE
-   gl_FragColor = texture2D(uTextureDiffuse0, vTexCoord) * uMaterialDiffuse;
-#else
-   gl_FragColor = uMaterialDiffuse;
-#endif //DIFFUSE_TEXTURE
-
-#endif //DIFFUSE_TEXTURE_BLEND
-
-#ifdef FOG_ENABLED
-   float z = gl_FragCoord.z / gl_FragCoord.w;
-   float fogFactor = exp2( -uFogFactor * uFogFactor * z * z * 1.44);
-   fogFactor = clamp(fogFactor, 0.0, 1.0);
-   gl_FragColor = mix(uFogColor, gl_FragColor, fogFactor);
-#endif //FOG_ENABLED
-
+   vec4  color;
+   FRAGMENT_SHADER_TEXTURE_BLEND(DIFFUSE, Diffuse)
+   gl_FragColor = color;
+   FRAGMENT_SHADER_FOG_APPLY
 }
+
