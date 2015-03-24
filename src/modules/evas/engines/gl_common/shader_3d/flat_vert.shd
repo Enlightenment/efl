@@ -4,41 +4,11 @@ uniform   mat4  uMatrixModelview;
 uniform   vec4  uLightPosition;
 varying   vec2  vFactor;
 
-#ifdef SHADOWED
-uniform mat4 uMatrixLight;
-varying vec4 vLightPosition;
-#endif //SHADOWED
-
-#ifdef VERTEX_POSITION
-attribute   vec4  aPosition0;
-#endif //VERTEX_POSITION
-
-#ifdef VERTEX_POSITION_BLEND
-attribute   vec4  aPosition1;
-uniform     float uPositionWeight;
-#endif //VERTEX_POSITION_BLEND
-
-#ifdef VERTEX_NORMAL
-attribute   vec4  aNormal0;
-#endif //VERTEX_NORMAL
-
-#ifdef VERTEX_NORMAL_BLEND
-attribute   vec4  aNormal1;
-uniform     float uNormalWeight;
-#endif //VERTEX_NORMAL_BLEND
-
-#ifdef VERTEX_TEXCOORD
-attribute   vec4  aTexCoord0;
-#endif //VERTEX_TEXCOORD
-
-#ifdef VERTEX_TEXCOORD_BLEND
-attribute   vec4  aTexCoord1;
-uniform     float uTexCoordWeight;
-#endif //VERTEX_TEXCOORD_BLEND
-
-#ifdef NEED_TEX_COORD
-varying vec2 vTexCoord;
-#endif //NEED_TEX_COORD
+VERTEX_SHADER_USE_SHADOWS
+VERTEX_SHADER_USE_POSITION
+VERTEX_SHADER_USE_NORMALS
+VERTEX_SHADER_USE_TEXCOORD
+VERTEX_SHADER_NEED_TEX_COORD
 
 #ifdef LIGHT_SPOT
 uniform   vec3  uLightSpotDir;
@@ -111,44 +81,12 @@ void vertexFlat(vec4 position, vec3 normal)
 void main()
 {
 
-#ifdef VERTEX_POSITION_BLEND
-   vec4 position = aPosition0 * uPositionWeight +
-   aPosition1 * (1.0 - uPositionWeight);
-   position = vec4(position.xyz, 1.0);
-#else
-
-#ifdef VERTEX_POSITION
-   vec4 position = vec4(aPosition0.xyz, 1.0);
-#endif // VERTEX_POSITION
-
-#endif //VERTEX_POSITION_BLEND
-
-#ifdef VERTEX_NORMAL_BLEND
-   vec3 normal = aNormal0.xyz * uNormalWeight +
-   aNormal1.xyz * (1.0 - uNormalWeight);
-#else
-
-#ifdef VERTEX_NORMAL
-   vec3 normal = aNormal0.xyz;
-#endif //VERTEX_NORMAL
-
-#endif //VERTEX_NORMAL_BLEND
-
-#ifdef VERTEX_TEXCOORD_BLEND
-   vTexCoord = aTexCoord0.st * uTexCoordWeight +
-   aTexCoord1.st * (1.0 - uTexCoordWeight);
-#else
-
-#ifdef VERTEX_TEXCOORD
-   vTexCoord = aTexCoord0.st;
-#endif //VERTEX_TEXCOORD
-
-#endif //VERTEX_TEXCOORD_BLEND
+   VERTEX_SHADER_POSITION
+   VERTEX_SHADER_NORMAL
+   VERTEX_SHADER_TEXCOORD
 
    gl_Position = uMatrixMvp * position;
    vertexFlat(position, normal);
 
-#ifdef SHADOWED
-   vLightPosition = uMatrixLight * position;
-#endif
+   VERTEX_SHADER_SHADOWED
 }

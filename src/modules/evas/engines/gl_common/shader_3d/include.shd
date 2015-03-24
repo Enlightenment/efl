@@ -63,9 +63,10 @@ define(`FRAGMENT_SHADER_TEXTURE_BLEND', `
 #ifdef  $1_TEXTURE_BLEND
    color = texture2D(uTexture$2`0', vTexCoord) * uTexture$2Weight +
    texture2D(uTexture$2`1', vTexCoord) * (1.0 - uTexture$2Weight);
+   color *= uMaterial$2;
 #else
 #ifdef  $1_TEXTURE
-   color = texture2D(uTexture$2`0', vTexCoord);
+   color = texture2D(uTexture$2`0', vTexCoord) * uMaterial$2;
 #else
    color = uMaterial$2;
 #endif //$1_TEXTURE
