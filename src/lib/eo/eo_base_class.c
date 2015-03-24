@@ -32,7 +32,7 @@ typedef struct
 
 typedef struct {
      //     short event_id;
-     Eo_Event_Description *event;
+ const    Eo_Event_Description *event;
      Eina_List *callbacks;
     // Eo_Callback_Description *callbacks;
 }Eo_Event_Callbacks;
@@ -459,48 +459,7 @@ struct _Eo_Callback_Description
    Eina_Bool delete_me : 1;
    Eina_Bool func_array : 1;
 };
-#if 0
-/* Actually remove, doesn't care about walking list, or delete_me */
-static void
-_eo_callback_remove(Eo_Base_Data *pd, Eo_Callback_Description *cb)
-{
-   Eo_Callback_Description *itrc, *pitr = NULL;
-   Eo_Event_Callbacks  *cbs;
 
-   EINA_INARRAY_FOREACH(pd->callbacks, cbs){
-
-        itrc = cbs->callbacks;
-
-   //     eina_list_remove(itrc , cb);
-  //      free(cb);
-      /*  for ( ; itrc; )
-          {
-             Eo_Callback_Description *titr = itrc;
-             itrc = itrc->next;
-
-             if (titr == cb)
-               {
-                  if (pitr)
-                    {
-                       pitr->next = titr->next;
-                    }
-                  else
-                    {
-                       cbs->callbacks = titr->next;
-                    }
-                  free(titr);
-                  return;
-               }
-             else
-               {
-                  pitr = titr;
-               }
-          }*/
-
-   }
-
-}
-#endif
 /* Actually remove, doesn't care about walking list, or delete_me */
 static void
 _eo_callback_remove_all(Eo_Base_Data *pd)
@@ -541,36 +500,11 @@ _eo_callbacks_clear(Eo_Base_Data *pd)
                {
                   cbs1->callbacks = eina_list_remove_list(cbs1->callbacks, l);
                   free(cb);
-                  //   _eo_callback_remove(pd, titr);
                }
         }
    }
 }
-#if 0
-static int
-_eo_base_callback_event_cmp(const void *a, const void *b)
-{
 
-   /* If either is legacy, fallback to string comparison. */
-   if ((( (Eo_Event_Callbacks *)a)->event->doc == _legacy_event_desc) || (( (Eo_Event_Callbacks *)b)->event->doc == _legacy_event_desc))
-     {
-        /* Take stringshare shortcut if both are legacy */
-        if (( (Eo_Event_Callbacks *)a)->event->doc== ( (Eo_Event_Callbacks *)b)->event->doc)
-          {
-             return ( (void*)(((Eo_Event_Callbacks *)a)->event->name)!=(void*)(((Eo_Event_Callbacks *)b)->event->name));
-          }
-        else
-          {
-             return strcmp(((Eo_Event_Callbacks *)a)->event->name, ((Eo_Event_Callbacks *)b)->event->name);
-          }
-     }
-   else
-     {
-        return  ((void *) ( (Eo_Event_Callbacks *)a)->event) !=((void *) ( (Eo_Event_Callbacks *)b)->event) ;
-     }
-
-}
-#endif
 static int
 _eo_base_callback_priority_cmp(const void *a, const void *b)
 {
@@ -605,25 +539,15 @@ _cb_desc_match(const Eo_Event_Description *a, const Eo_Event_Description *b)
 static void
 _eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb, const Eo_Event_Description *desc, Eo_Event_Cb func, const void *data)
 {
-   Eo_Callback_Description *itr, *itrp = NULL;
-   Eo_Event_Callbacks ec;
-   ec.event = desc;
-   ec.callbacks =   NULL ;
-
-
-   //printf("insert %u %u\n", cb->priority, cb->items.item.func  );
+   Eo_Event_Callbacks ec={desc, NULL};
 
    if(!ec.event){
-        printf("sorted insertl bad event! %u %s\n", ec.event, ec.event->name);
+       DBG("sorted insertl bad event! %p %s\n", ec.event, ec.event->name);
         return;
    }
    cb->items.item.func = func;
    cb->func_data = (void *) data;
    cb->items.item.desc = desc;
-   /* int index = eina_inarray_search(pd->callbacks,//change to sorted
-      &ec,
-      _eo_base_callback_event_cmp);*/
-
 
    Eo_Event_Callbacks  *cbs1;
    Eo_Event_Callbacks  *cbs=NULL;
@@ -636,27 +560,19 @@ _eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb, const
 
    }
 
-   //  if(index ==-1 ){//new
    if(cbs==NULL){
         ec.callbacks = eina_list_sorted_insert( ec.callbacks,  _eo_base_callback_priority_cmp,
               cb);
 
-        ///check in case of index!=-1
-
         eina_inarray_push(pd->callbacks,
               &ec);
 
-        //             _eo_base_callback_event_cmp);
-
         return;
    }
-   //    cbs = eina_inarray_nth(pd->callbacks , index );
-   //   printf("insrerting to %d\n", index);
-   //  itr = cbs ->callbacks;
 
    cbs ->callbacks= eina_list_sorted_insert( cbs->callbacks, _eo_base_callback_priority_cmp,
          cb);
-   // cbs ->event = desc;
+
 }
 
 EOLIAN static void _eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *pd, 
@@ -667,7 +583,6 @@ EOLIAN static void _eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *p
    cb = calloc(1, sizeof(*cb));
    if (!cb) return;
    cb->items.item.desc = desc;
-   //   printf("base event callback %u\n", desc);
    cb->items.item.func = func;
    cb->func_data = (void *) data;
    cb->priority = priority;
@@ -720,7 +635,7 @@ _eo_base_event_callback_array_priority_add(Eo *obj, Eo_Base_Data *pd,
       Eo_Callback_Priority priority,
       const void *user_data)
 {
-   Eo_Callback_Array_Item *it;
+  const Eo_Callback_Array_Item *it;
 
    for (it = array; it->func; it++)
      {
@@ -766,7 +681,6 @@ _eo_base_event_callback_array_del(Eo *obj, Eo_Base_Data *pd,
                {
                   cb->delete_me = EINA_TRUE;
                   pd->deletions_waiting = EINA_TRUE;
-                  // return;
                   count++;
                }
         }
@@ -796,20 +710,12 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
    _eo_ref(obj);
    pd->walking_list++;
 
-   Eo_Event_Callbacks ec;
-   ec.event = desc;
-   ec.callbacks =   NULL ;
-
-
    if(!desc){
         printf("call bad event!");
         goto end;
    }
 
    Eo_Event_Callbacks  *cbs1,*cbs=NULL;
-
-   //  int index = eina_inarray_search(pd->callbacks, //todo change to sorted
-   //        &ec,    _eo_base_callback_event_cmp);
 
    EINA_INARRAY_FOREACH(pd->callbacks, cbs1){
         if(_cb_desc_match(desc, cbs1->event)){
@@ -819,15 +725,10 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
 
    }
 
-   //  if(index == -1){
    if(cbs==NULL){
         ret = EINA_FALSE;
         goto end;
    }
-
-   //   cbs = eina_inarray_nth(pd->callbacks , index );
-   //  cb = cbs ->callbacks;
-
 
    Eina_List *l;
    EINA_LIST_FOREACH( cbs->callbacks, l, cb){
@@ -838,7 +739,6 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
              if (( !cb->items.item.desc->unfreezable) &&
                    (event_freeze_count || pd->event_freeze_count))
                 continue;
-             //printf("call activating\n");
              /* Abort callback calling if the func says so. */
              if (!cb->items.item.func((void *) cb->func_data, obj_id, desc,
                       (void *) event_info))
