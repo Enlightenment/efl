@@ -202,7 +202,6 @@ _ecore_drm_logind_connect(Ecore_Drm_Device *dev)
    if (sd_session_get_seat(dev->session, &seat) < 0)
      {
         ERR("Could not get systemd seat: %m");
-        free(seat);
         return EINA_FALSE;
      }
    else if (strcmp(dev->seat, seat))
