@@ -1,3 +1,9 @@
+`#ifdef GL_ES
+precision mediump float;
+precision mediump int;
+precision lowp sampler2D;
+#endif'
+
 define(`FRAGMENT_SHADER_USE_TEX_COORD',`
 #ifdef NEED_TEX_COORD
 varying vec2   vTexCoord;

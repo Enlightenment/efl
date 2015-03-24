@@ -2,6 +2,11 @@
  * See: modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh */
 
 static const char const vertex_color_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "uniform     mat4  uMatrixMvp;\n"
    "varying     vec4  vColor;\n"
    "#ifdef VERTEX_POSITION\n"
@@ -41,6 +46,11 @@ static const char const vertex_color_vert_glsl[] =
    "}\n";
 
 static const char const vertex_color_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "varying  vec4        vColor;\n"
    "#ifdef FOG_ENABLED\n"
    "uniform float uFogFactor;\n"
@@ -58,6 +68,11 @@ static const char const vertex_color_frag_glsl[] =
    "}\n";
 
 static const char const diffuse_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "uniform mat4  uMatrixMvp;\n"
    "#ifdef VERTEX_POSITION\n"
    "attribute   vec4  aPosition0;\n"
@@ -99,6 +114,11 @@ static const char const diffuse_vert_glsl[] =
    "}\n";
 
 static const char const diffuse_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "#ifdef NEED_TEX_COORD\n"
    "varying vec2   vTexCoord;\n"
    "#endif //TEX_COORD\n"
@@ -137,6 +157,11 @@ static const char const diffuse_frag_glsl[] =
    "}\n";
 
 static const char const flat_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "uniform   mat4  uMatrixMvp;\n"
    "uniform   mat3  uMatrixNormal;\n"
    "uniform   mat4  uMatrixModelview;\n"
@@ -260,6 +285,11 @@ static const char const flat_vert_glsl[] =
    "}\n";
 
 static const char const flat_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "varying vec2   vFactor;\n"
    "#ifdef NEED_TEX_COORD\n"
    "varying vec2   vTexCoord;\n"
@@ -408,6 +438,11 @@ static const char const flat_frag_glsl[] =
    "}\n";
 
 static const char const phong_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "uniform  mat4  uMatrixMvp;\n"
    "uniform  mat3  uMatrixNormal;\n"
    "uniform  mat4  uMatrixModelview;\n"
@@ -499,6 +534,11 @@ static const char const phong_vert_glsl[] =
    "}\n";
 
 static const char const phong_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "varying  vec3        vLightVector;\n"
    "varying  vec3        vLightHalfVector;\n"
    "varying  vec3        vNormal;\n"
@@ -684,6 +724,11 @@ static const char const phong_frag_glsl[] =
    "}\n";
 
 static const char const normal_map_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "uniform  mat4  uMatrixMvp;\n"
    "uniform  mat3  uMatrixNormal;\n"
    "uniform  mat4  uMatrixModelview;\n"
@@ -832,6 +877,11 @@ static const char const normal_map_vert_glsl[] =
    "}\n";
 
 static const char const normal_map_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "varying  vec3        vLightVector;\n"
    "varying  vec3        vLightHalfVector;\n"
    "uniform  sampler2D   uTextureNormal0;\n"
@@ -1050,6 +1100,11 @@ static const char const normal_map_frag_glsl[] =
    "}\n";
 
 static const char const shadow_map_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "uniform mat4  uMatrixMvp;\n"
    "#ifdef VERTEX_POSITION\n"
    "attribute   vec4  aPosition0;\n"
@@ -1095,6 +1150,11 @@ static const char const shadow_map_vert_glsl[] =
    "}\n";
 
 static const char const shadow_map_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "#ifdef ALPHA_TEST_ENABLED\n"
    "#ifdef NEED_TEX_COORD\n"
    "varying vec2   vTexCoord;\n"
@@ -1127,6 +1187,11 @@ static const char const shadow_map_frag_glsl[] =
    "}\n";
 
 static const char const color_pick_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "uniform mat4  uMatrixMvp;\n"
    "#ifdef VERTEX_POSITION\n"
    "attribute   vec4  aPosition0;\n"
@@ -1150,6 +1215,11 @@ static const char const color_pick_vert_glsl[] =
    "}\n";
 
 static const char const color_pick_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "uniform float uColorPick;\n"
    "void main()\n"
    "{\n"
@@ -1157,6 +1227,11 @@ static const char const color_pick_frag_glsl[] =
    "}\n";
 
 static const char const parallax_occlusion_vert_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "uniform  mat4  uMatrixMvp;\n"
    "uniform  mat3  uMatrixNormal;\n"
    "uniform  mat4  uMatrixModelview;\n"
@@ -1275,6 +1350,11 @@ static const char const parallax_occlusion_vert_glsl[] =
    "}\n";
 
 static const char const parallax_occlusion_frag_glsl[] =
+   "#ifdef GL_ES\n"
+   "precision mediump float;\n"
+   "precision mediump int;\n"
+   "precision lowp sampler2D;\n"
+   "#endif\n"
    "varying  vec3        vLightVector;\n"
    "varying  vec3        vLightHalfVector;\n"
    "uniform  sampler2D   uTextureNormal0;\n"
