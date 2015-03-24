@@ -46,7 +46,8 @@
      &(tmptr)->tm_mon,                   \
      &(tmptr)->tm_mday,                  \
      &(tmptr)->tm_hour,                  \
-     &(tmptr)->tm_min}
+     &(tmptr)->tm_min,                  \
+     &(tmptr)->tm_sec}
 
 // default limits for individual fields
 static Format_Map mapping[ELM_DATETIME_TYPE_COUNT] = {
@@ -589,7 +590,7 @@ _date_cmp(struct tm *time1,
    DATETIME_TM_ARRAY(timearr1, time1);
    DATETIME_TM_ARRAY(timearr2, time2);
 
-   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT - 1; idx++)
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         if (*timearr1[idx] != *timearr2[idx])
           return EINA_FALSE;
