@@ -1299,6 +1299,7 @@ _inform_item_number(Evas_Object *obj)
    char buf[sizeof("elm,number,item,") + 4];
    static int scount = 0;
    int count = 0;
+   Evas_Coord mw, mh;
 
    EINA_INLIST_FOREACH(sd->items, it)
      {
@@ -1313,7 +1314,16 @@ _inform_item_number(Evas_Object *obj)
         EINA_INLIST_FOREACH(sd->items, it)
           {
              if (!it->separator && !it->object)
-               edje_object_signal_emit(VIEW(it), buf, "elm");
+               {
+                  edje_object_signal_emit(VIEW(it), buf, "elm");
+                  edje_object_message_signal_process(VIEW(it));
+
+                  mw = mh = -1;
+                  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+
+                  edje_object_size_min_restricted_calc(VIEW(it), &mw, &mh, mw, mh);
+                  evas_object_size_hint_min_set(VIEW(it), mw, mh);
+               }
           }
      }
 }
