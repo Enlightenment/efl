@@ -17,9 +17,9 @@
 
 static const char *conn_types[] = 
 {
-   "None", "VGA", "DVI", "DVI", "DVI",
-   "Composite", "TV", "LVDS", "CTV", "DIN",
-   "DP", "HDMI", "HDMI", "TV", "eDP",
+   "None", "VGA", "DVI-I", "DVI-D", "DVI-A",
+   "Composite", "S-Video", "LVDS", "Component", "DIN",
+   "DP", "HDMI-A", "HDMI-B", "TV", "eDP",
 };
 
 EAPI int ECORE_DRM_EVENT_OUTPUT = 0;
