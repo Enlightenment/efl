@@ -378,6 +378,7 @@ enum
    ECORE_IMF_INPUT_PANEL_LAYOUT_PASSWORD_VARIATION_NORMAL,          /**< The normal password layout @since 1.12 */
    ECORE_IMF_INPUT_PANEL_LAYOUT_PASSWORD_VARIATION_NUMBERONLY       /**< The password layout to allow only number @since 1.12 */
 };
+
 /**
  * @typedef Ecore_IMF_BiDi_Direction
  * @brief Enumeration that defines the types of Ecore_IMF bidirectionality
@@ -389,6 +390,33 @@ typedef enum
    ECORE_IMF_BIDI_DIRECTION_LTR,        /**< The Left to Right mode @since 1.12 */
    ECORE_IMF_BIDI_DIRECTION_RTL         /**< The Right to Left mode @since 1.12 */
 } Ecore_IMF_BiDi_Direction;
+
+typedef enum _Ecore_IMF_Device_Class
+{
+   ECORE_IMF_DEVICE_CLASS_NONE, /**< Not a device @since 1.14 */
+   ECORE_IMF_DEVICE_CLASS_SEAT, /**< The user/seat (the user themselves) @since 1.14 */
+   ECORE_IMF_DEVICE_CLASS_KEYBOARD, /**< A regular keyboard, numberpad or attached buttons @since 1.14 */
+   ECORE_IMF_DEVICE_CLASS_MOUSE, /**< A mouse, trackball or touchpad relative motion device @since 1.14 */
+   ECORE_IMF_DEVICE_CLASS_TOUCH, /**< A touchscreen with fingers or stylus @since 1.14 */
+   ECORE_IMF_DEVICE_CLASS_PEN, /**< A special pen device @since 1.14 */
+   ECORE_IMF_DEVICE_CLASS_POINTER, /**< A laser pointer, wii-style or "minority report" pointing device @since 1.14 */
+   ECORE_IMF_DEVICE_CLASS_GAMEPAD /**<  A gamepad controller or joystick @since 1.14 */
+} Ecore_IMF_Device_Class; /**< A general class of device @since 1.14 */
+
+typedef enum _Ecore_IMF_Device_Subclass
+{
+   ECORE_IMF_DEVICE_SUBCLASS_NONE, /**< Not a device @since 1.14 */
+   ECORE_IMF_DEVICE_SUBCLASS_FINGER, /**< The normal flat of your finger @since 1.14 */
+   ECORE_IMF_DEVICE_SUBCLASS_FINGERNAIL, /**< A fingernail @since 1.14 */
+   ECORE_IMF_DEVICE_SUBCLASS_KNUCKLE, /**< A Knuckle @since 1.14 */
+   ECORE_IMF_DEVICE_SUBCLASS_PALM, /**< The palm of a users hand @since 1.14 */
+   ECORE_IMF_DEVICE_SUBCLASS_HAND_SIZE, /**< The side of your hand @since 1.14 */
+   ECORE_IMF_DEVICE_SUBCLASS_HAND_FLAT, /**< The flat of your hand @since 1.14 */
+   ECORE_IMF_DEVICE_SUBCLASS_PEN_TIP, /**< The tip of a pen @since 1.14 */
+   ECORE_IMF_DEVICE_SUBCLASS_TRACKPAD, /**< A trackpad style mouse @since 1.14 */
+   ECORE_IMF_DEVICE_SUBCLASS_TRACKPOINT, /**< A trackpoint style mouse @since 1.14 */
+   ECORE_IMF_DEVICE_SUBCLASS_TRACKBALL, /**< A trackball style mouse @since 1.14 */
+} Ecore_IMF_Device_Subclass; /**< A general subclass of device @since 1.14 */
 
 /**
  * @struct _Ecore_IMF_Event_Preedit_Start
@@ -575,6 +603,9 @@ struct _Ecore_IMF_Event_Key_Down
    const char                   *string;    /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
    const char                   *compose;   /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
    unsigned int                  timestamp; /**< The timestamp when the event occurred */
+   const char                   *dev_name;  /**< The device name of the key pressed */
+   Ecore_IMF_Device_Class        dev_class; /**< The device class of the key pressed */
+   Ecore_IMF_Device_Subclass     dev_subclass; /**< The device subclass of the key pressed */
 };
 
 /**
@@ -590,6 +621,9 @@ struct _Ecore_IMF_Event_Key_Up
    const char                   *string;    /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
    const char                   *compose;   /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
    unsigned int                  timestamp; /**< The timestamp when the event occurred */
+   const char                   *dev_name;  /**< The device name of the key released */
+   Ecore_IMF_Device_Class        dev_class; /**< The device class of the key released */
+   Ecore_IMF_Device_Subclass     dev_subclass; /**< The device subclass of the key released */
 };
 
 /**
