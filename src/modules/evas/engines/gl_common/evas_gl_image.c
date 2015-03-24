@@ -770,8 +770,10 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
 {
    Image_Entry *ie;
    if (!im->im) return;
-   ie = &im->im->cache_entry;
    evas_gl_common_image_alloc_ensure(im);
+
+   // alloc ensure can change im->im, so only get the local variable later.
+   ie = &im->im->cache_entry;
 
 /*
    if ((im->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
