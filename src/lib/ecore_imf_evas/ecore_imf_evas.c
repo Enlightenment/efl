@@ -184,9 +184,20 @@ ecore_imf_evas_event_key_down_wrap(Evas_Event_Key_Down *evas_event,
    imf_event->string = evas_event->string ? evas_event->string : _ecore_imf_evas_event_empty;
    imf_event->compose = evas_event->compose ? evas_event->compose : _ecore_imf_evas_event_empty;
    imf_event->timestamp = evas_event->timestamp;
-   imf_event->dev_name = evas_device_name_get(evas_event->dev) ? evas_device_name_get(evas_event->dev) : _ecore_imf_evas_event_empty;
-   imf_event->dev_class = evas_device_class_get(evas_event->dev);
-   imf_event->dev_subclass = evas_device_subclass_get(evas_event->dev);
+
+   if (evas_event->dev)
+     {
+        imf_event->dev_name = evas_device_name_get(evas_event->dev) ? evas_device_name_get(evas_event->dev) : _ecore_imf_evas_event_empty;
+        imf_event->dev_class = evas_device_class_get(evas_event->dev);
+        imf_event->dev_subclass = evas_device_subclass_get(evas_event->dev);
+     }
+   else
+     {
+        imf_event->dev_name = _ecore_imf_evas_event_empty;
+        imf_event->dev_class = ECORE_IMF_DEVICE_CLASS_NONE;
+        imf_event->dev_subclass = ECORE_IMF_DEVICE_SUBCLASS_NONE;
+     }
+
    _ecore_imf_evas_event_modifiers_wrap(evas_event->modifiers, &imf_event->modifiers);
    _ecore_imf_evas_event_locks_wrap(evas_event->locks, &imf_event->locks);
 }
@@ -212,9 +223,20 @@ ecore_imf_evas_event_key_up_wrap(Evas_Event_Key_Up *evas_event,
    imf_event->string = evas_event->string ? evas_event->string : _ecore_imf_evas_event_empty;
    imf_event->compose = evas_event->compose ? evas_event->compose : _ecore_imf_evas_event_empty;
    imf_event->timestamp = evas_event->timestamp;
-   imf_event->dev_name = evas_device_name_get(evas_event->dev) ? evas_device_name_get(evas_event->dev) : _ecore_imf_evas_event_empty;
-   imf_event->dev_class = evas_device_class_get(evas_event->dev);
-   imf_event->dev_subclass = evas_device_subclass_get(evas_event->dev);
+
+   if (evas_event->dev)
+     {
+        imf_event->dev_name = evas_device_name_get(evas_event->dev) ? evas_device_name_get(evas_event->dev) : _ecore_imf_evas_event_empty;
+        imf_event->dev_class = evas_device_class_get(evas_event->dev);
+        imf_event->dev_subclass = evas_device_subclass_get(evas_event->dev);
+     }
+   else
+     {
+        imf_event->dev_name = _ecore_imf_evas_event_empty;
+        imf_event->dev_class = ECORE_IMF_DEVICE_CLASS_NONE;
+        imf_event->dev_subclass = ECORE_IMF_DEVICE_SUBCLASS_NONE;
+     }
+
    _ecore_imf_evas_event_modifiers_wrap(evas_event->modifiers, &imf_event->modifiers);
    _ecore_imf_evas_event_locks_wrap(evas_event->locks, &imf_event->locks);
 }
