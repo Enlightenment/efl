@@ -259,6 +259,11 @@ _parse_format(Evas_Object *obj,
      {
         if (fmt_parsing)
           {
+             if (cur == '_' || cur == '-' || cur == '0' || cur == '^' || cur == '#')
+               {
+                  fmt_ptr++;
+                  continue;
+               }
              fmt_parsing = EINA_FALSE;
              for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
                {
