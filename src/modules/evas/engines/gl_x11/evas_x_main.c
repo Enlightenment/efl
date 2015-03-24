@@ -463,6 +463,7 @@ try_gles2:
    gw->detected.msaa = val;
 #endif
 
+   eng_gl_symbols();
    gw->gl_context = glsym_evas_gl_common_context_new();
    if (!gw->gl_context)
      {

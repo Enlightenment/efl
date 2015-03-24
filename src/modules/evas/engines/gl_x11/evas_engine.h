@@ -198,6 +198,7 @@ Evas_Engine_GL_Context *eng_outbuf_gl_context_get(Outbuf *ob);
 void *eng_outbuf_egl_display_get(Outbuf *ob);
 
 Eina_Bool eng_preload_make_current(void *data, void *doit);
+void eng_gl_symbols(void);
 
 static inline int
 _re_wincheck(Outbuf *ob)
