@@ -730,25 +730,40 @@ _elm_tooltip_obj_free_cb(void *data, Evas *e  EINA_UNUSED, Evas_Object *obj, voi
    _elm_tooltip_unset(tt);
 }
 
+static void
+_tooltip_label_style_set(Evas_Object *obj, Evas_Object *label)
+{
+   ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
+   char buf[100] = {0};
+
+   sprintf(buf, "tooltip/%s", tt->style);
+   if (!elm_object_style_set(label, buf))
+     {
+        WRN("Failed to set tooltip label style: %s, reverting to old style",
+            buf);
+        elm_object_style_set(label, "tooltip"); //XXX: remove it in EFL 2.0
+     }
+}
+
 static Evas_Object *
-_elm_tooltip_label_create(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tooltip)
+_elm_tooltip_label_create(void *data, Evas_Object *obj, Evas_Object *tooltip)
 {
    Evas_Object *label = elm_label_add(tooltip);
    if (!label)
      return NULL;
-   elm_object_style_set(label, "tooltip");
+   _tooltip_label_style_set(obj, label);
    elm_object_text_set(label, data);
    return label;
 }
 
 static Evas_Object *
-_elm_tooltip_trans_label_create(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tooltip)
+_elm_tooltip_trans_label_create(void *data, Evas_Object *obj, Evas_Object *tooltip)
 {
    Evas_Object *label = elm_label_add(tooltip);
    const char **text = data;
    if (!label)
      return NULL;
-   elm_object_style_set(label, "tooltip");
+   _tooltip_label_style_set(obj, label);
    elm_object_domain_translatable_text_set(label, text[0], text[1]);
    return label;
 }

@@ -1,4 +1,6 @@
-group { name: "elm/label/base/tooltip";
+group { name: "elm/label/base/tooltip/default";
+   alias: "elm/label/base/tooltip"; //XXX: Remove it in EFL 2.0
+   alias: "elm/label/base/tooltip/transparent";
    styles {
       style { name: "tooltip_style";
          base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=word text_class=bubble";
