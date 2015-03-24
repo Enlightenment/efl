@@ -593,6 +593,20 @@ _date_cmp(struct tm *time1,
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_field_cmp(Elm_Datetime_Field_Type field_type,
+          struct tm *time1,
+          struct tm *time2)
+{
+   DATETIME_TM_ARRAY(timearr1, time1);
+   DATETIME_TM_ARRAY(timearr2, time2);
+
+   if (*timearr1[field_type] != *timearr2[field_type])
+     return EINA_FALSE;
+   else
+     return EINA_TRUE;
+}
+
 // validates curr_time/min_limt/max_limit according to the newly set value
 static void
 _validate_datetime_limits(struct tm *time1,
@@ -1003,7 +1017,7 @@ _elm_datetime_field_limit_set(Eo *obj, Elm_Datetime_Data *sd, Elm_Datetime_Field
 
    _apply_field_limits(obj);
 
-   if (!_date_cmp(&old_time, &sd->curr_time))
+   if (!_field_cmp(fieldtype, &old_time, &sd->curr_time))
      evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
 }
 
@@ -1019,11 +1033,9 @@ _elm_datetime_value_get(Eo *obj EINA_UNUSED, Elm_Datetime_Data *sd, struct tm *c
 EOLIAN static Eina_Bool
 _elm_datetime_value_set(Eo *obj, Elm_Datetime_Data *sd, const struct tm *newtime)
 {
-   struct tm old_time;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(newtime, EINA_FALSE);
 
-   old_time = sd->curr_time;
+   if (_date_cmp(&sd->curr_time, newtime)) return EINA_TRUE;
    sd->curr_time = *newtime;
    // apply default field restrictions for curr_time
    _apply_range_restrictions(&sd->curr_time);
@@ -1032,8 +1044,7 @@ _elm_datetime_value_set(Eo *obj, Elm_Datetime_Data *sd, const struct tm *newtime
    _validate_datetime_limits(&sd->max_limit, &sd->curr_time, EINA_TRUE);
    _apply_field_limits(obj);
 
-   if (!_date_cmp(&old_time, &sd->curr_time))
-     evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
 
    return EINA_TRUE;
 }
@@ -1054,6 +1065,7 @@ _elm_datetime_value_min_set(Eo *obj, Elm_Datetime_Data *sd, const struct tm *min
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(mintime, EINA_FALSE);
 
+   if (_date_cmp(&sd->min_limit, mintime)) return EINA_TRUE;
    sd->min_limit = *mintime;
    old_time = sd->curr_time;
    // apply default field restrictions for min_limit
@@ -1085,6 +1097,7 @@ _elm_datetime_value_max_set(Eo *obj, Elm_Datetime_Data *sd, const struct tm *max
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(maxtime, EINA_FALSE);
 
+   if (_date_cmp(&sd->max_limit, maxtime)) return EINA_TRUE;
    sd->max_limit = *maxtime;
    old_time = sd->curr_time;
    // apply default field restrictions for max_limit
