@@ -148,6 +148,16 @@ uniform     float uTexCoordWeight;
 `#endif //VERTEX_TEXCOORD_BLEND'
 )
 
+define(`VERTEX_SHADER_USE_COLOR',
+`#ifdef VERTEX_COLOR'
+attribute   vec4  aColor0;
+`#endif //VERTEX_COLOR'
+
+`#ifdef VERTEX_COLOR_BLEND'
+attribute   vec4  aColor1;
+uniform     float uColorWeight;
+`#endif //VERTEX_COLOR_BLEND')
+
 define(`VERTEX_SHADER_POSITION',
 `#ifdef VERTEX_POSITION_BLEND'
    vec4 position = aPosition0 * uPositionWeight +
