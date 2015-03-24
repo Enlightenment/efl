@@ -162,6 +162,8 @@ EAPI extern int ECORE_DRM_EVENT_ACTIVATE;
 
 EAPI extern int ECORE_DRM_EVENT_OUTPUT; /**< @since 1.14 */
 
+EAPI extern int ECORE_DRM_EVENT_SEAT_ADD; /**< @since 1.14 */
+
 /**
  * @file
  * @brief Ecore functions for dealing with drm, virtual terminals

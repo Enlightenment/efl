@@ -90,6 +90,7 @@ ecore_drm_init(void)
 
    ECORE_DRM_EVENT_ACTIVATE = ecore_event_type_new();
    ECORE_DRM_EVENT_OUTPUT = ecore_event_type_new();
+   ECORE_DRM_EVENT_SEAT_ADD = ecore_event_type_new();
 
    /* return init count */
    return _ecore_drm_init_count;

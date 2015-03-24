@@ -4,6 +4,8 @@
 
 #include "ecore_drm_private.h"
 
+EAPI int ECORE_DRM_EVENT_SEAT_ADD = -1;
+
 /* local functions */
 static int 
 _cb_open_restricted(const char *path, int flags, void *data)
@@ -59,6 +61,26 @@ _cb_close_restricted(int fd, void *data)
 }
 
 static Ecore_Drm_Seat *
+_seat_create(Ecore_Drm_Input *input, const char *seat)
+{
+   Ecore_Drm_Seat *s;
+
+   /* try to allocate space for new seat */
+   if (!(s = calloc(1, sizeof(Ecore_Drm_Seat))))
+     return NULL;
+
+   s->input = input;
+   s->name = eina_stringshare_add(seat);
+
+   /* add this new seat to list */
+   input->dev->seats = eina_list_append(input->dev->seats, s);
+
+   ecore_event_add(ECORE_DRM_EVENT_SEAT_ADD, NULL, NULL, NULL);
+
+   return s;
+}
+
+static Ecore_Drm_Seat *
 _seat_get(Ecore_Drm_Input *input, const char *seat)
 {
    Ecore_Drm_Seat *s;
@@ -68,17 +90,7 @@ _seat_get(Ecore_Drm_Input *input, const char *seat)
    EINA_LIST_FOREACH(input->dev->seats, l, s)
      if (!strcmp(s->name, seat)) return s;
 
-   /* try to allocate space for new seat */
-   if (!(s = calloc(1, sizeof(Ecore_Drm_Seat)))) 
-     return NULL;
-
-   s->input = input;
-   s->name = eina_stringshare_add(seat);
-
-   /* add this new seat to list */
-   input->dev->seats = eina_list_append(input->dev->seats, s);
-
-   return s;
+   return _seat_create(input, seat);
 }
 
 static void 
