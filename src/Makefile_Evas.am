@@ -778,7 +778,7 @@ BUILT_SOURCES += \
 modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x
 
 modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x: modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh $(GL_SHADERS_3D_GEN)
-	@echo "  SHADERS_3D  $@"
+	@echo "  SHADERS  $@"
 	@$^
 
 
