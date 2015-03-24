@@ -179,8 +179,15 @@ gl_extn_veto(Render_Engine *re)
    str = eglQueryString(eng_get_ob(re)->egl_disp, EGL_EXTENSIONS);
    if (str)
      {
+        const char *s;
         if (getenv("EVAS_GL_INFO"))
           printf("EGL EXTN:\n%s\n", str);
+        // Disable Partial Rendering
+        if ((s = getenv("EVAS_GL_PARTIAL_DISABLE")) && atoi(s))
+          {
+             extn_have_buffer_age = EINA_FALSE;
+             glsym_eglSwapBuffersWithDamage = NULL;
+          }
         if (!strstr(str, "EGL_EXT_buffer_age"))
           {
              extn_have_buffer_age = EINA_FALSE;
