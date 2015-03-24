@@ -11669,11 +11669,14 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
    int line_position =
            evas_common_font_instance_underline_position_get(NULL);
    ENFN->context_multiplier_unset(output, context);
-   ENFN->context_multiplier_set(output, context,
-                                obj->cur->clipper->cur->cache.clip.r,
-                                obj->cur->clipper->cur->cache.clip.g,
-                                obj->cur->clipper->cur->cache.clip.b,
-                                obj->cur->clipper->cur->cache.clip.a);
+
+   if (obj->cur->clipper)
+     ENFN->context_multiplier_set(output, context,
+                                  obj->cur->clipper->cur->cache.clip.r,
+                                  obj->cur->clipper->cur->cache.clip.g,
+                                  obj->cur->clipper->cur->cache.clip.b,
+                                  obj->cur->clipper->cur->cache.clip.a);
+
    ITEM_WALK()
      {
         Evas_Object_Textblock_Text_Item *ti;
