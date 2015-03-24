@@ -582,13 +582,13 @@ _max_days_get(int year,
 }
 
 static Eina_Bool
-_date_cmp(struct tm *time1,
-          struct tm *time2)
+_date_cmp(const struct tm *time1,
+          const struct tm *time2)
 {
    unsigned int idx;
 
-   DATETIME_TM_ARRAY(timearr1, time1);
-   DATETIME_TM_ARRAY(timearr2, time2);
+   const DATETIME_TM_ARRAY(timearr1, time1);
+   const DATETIME_TM_ARRAY(timearr2, time2);
 
    for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
