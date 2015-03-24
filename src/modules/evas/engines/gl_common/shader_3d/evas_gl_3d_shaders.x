@@ -1214,7 +1214,7 @@ static const char const color_pick_vert_glsl[] =
    "#endif //VERTEX_POSITION_BLEND\n"
    "void main()\n"
    "{\n"
-   "#ifdef VERTEX_POSITION_BLEND\n"
+   "   #ifdef VERTEX_POSITION_BLEND\n"
    "   vec4 position = aPosition0 * uPositionWeight +\n"
    "   aPosition1 * (1.0 - uPositionWeight);\n"
    "   position = vec4(position.xyz, 1.0);\n"

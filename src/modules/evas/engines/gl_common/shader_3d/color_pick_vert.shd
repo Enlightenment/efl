@@ -1,27 +1,10 @@
 uniform mat4  uMatrixMvp;
 
-#ifdef VERTEX_POSITION
-attribute   vec4  aPosition0;
-#endif //VERTEX_POSITION
-
-#ifdef VERTEX_POSITION_BLEND
-attribute   vec4  aPosition1;
-uniform     float uPositionWeight;
-#endif //VERTEX_POSITION_BLEND
+VERTEX_SHADER_USE_POSITION
 
 void main()
 {
-#ifdef VERTEX_POSITION_BLEND
-   vec4 position = aPosition0 * uPositionWeight +
-   aPosition1 * (1.0 - uPositionWeight);
-   position = vec4(position.xyz, 1.0);
-#else
-
-#ifdef VERTEX_POSITION
-   vec4 position = vec4(aPosition0.xyz, 1.0);
-#endif // VERTEX_POSITION
-
-#endif //VERTEX_POSITION_BLEND
+   VERTEX_SHADER_POSITION
 
    gl_Position = uMatrixMvp * position;
 }
