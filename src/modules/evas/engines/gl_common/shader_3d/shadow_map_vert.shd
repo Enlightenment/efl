@@ -1,59 +1,19 @@
 uniform mat4  uMatrixMvp;
 
-#ifdef VERTEX_POSITION
-attribute   vec4  aPosition0;
-#endif //VERTEX_POSITION
-
-#ifdef VERTEX_POSITION_BLEND
-attribute   vec4  aPosition1;
-uniform     float uPositionWeight;
-#endif //VERTEX_POSITION_BLEND
+VERTEX_SHADER_USE_POSITION
 
 #ifdef ALPHA_TEST_ENABLED
-
-#ifdef VERTEX_TEXCOORD
-attribute   vec4  aTexCoord0;
-#endif //VERTEX_TEXCOORD
-
-#ifdef VERTEX_TEXCOORD_BLEND
-attribute   vec4  aTexCoord1;
-uniform     float uTexCoordWeight;
-#endif //VERTEX_TEXCOORD_BLEND
-
-#ifdef NEED_TEX_COORD
-varying vec2   vTexCoord;
-#endif //TEX_COORD
-
+VERTEX_SHADER_USE_TEXCOORD
+VERTEX_SHADER_NEED_TEX_COORD
 #endif //ALPHA_TEST_ENABLED
 
 void main()
 {
 
-#ifdef VERTEX_POSITION_BLEND
-   vec4 position = aPosition0 * uPositionWeight +
-   aPosition1 * (1.0 - uPositionWeight);
-   position = vec4(position.xyz, 1.0);
-#else
-
-#ifdef VERTEX_POSITION
-   vec4 position = vec4(aPosition0.xyz, 1.0);
-#endif // VERTEX_POSITION
-
-#endif //VERTEX_POSITION_BLEND
+VERTEX_SHADER_POSITION
 
 #ifdef ALPHA_TEST_ENABLED
-
-#ifdef VERTEX_TEXCOORD_BLEND
-   vTexCoord = aTexCoord0.st * uTexCoordWeight +
-   aTexCoord1.st * (1.0 - uTexCoordWeight);
-#else
-
-#ifdef VERTEX_TEXCOORD
-   vTexCoord = aTexCoord0.st;
-#endif //VERTEX_TEXCOORD
-
-#endif //VERTEX_TEXCOORD_BLEND
-
+   VERTEX_SHADER_TEXCOORD
 #endif //ALPHA_TEST_ENABLED
 
    gl_Position = uMatrixMvp * position;

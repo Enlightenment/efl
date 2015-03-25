@@ -1,8 +1,5 @@
 #ifdef ALPHA_TEST_ENABLED
-
-#ifdef NEED_TEX_COORD
-varying vec2   vTexCoord;
-#endif //TEX_COORD
+FRAGMENT_SHADER_USE_TEX_COORD
 
 #ifdef DIFFUSE
 
