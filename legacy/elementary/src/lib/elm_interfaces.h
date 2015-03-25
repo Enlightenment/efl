@@ -11,7 +11,6 @@
 #include "elm_interface_atspi_image.eo.h"
 #include "elm_interface_atspi_selection.eo.h"
 #include "elm_interface_atspi_value.eo.h"
-#include "elm_interface_atspi_widget.eo.h"
 #include "elm_interface_atspi_window.eo.h"
 #endif
 #endif
@@ -23,7 +22,6 @@
 #include "elm_interface_atspi_image.eo.legacy.h"
 #include "elm_interface_atspi_selection.eo.legacy.h"
 #include "elm_interface_atspi_value.eo.legacy.h"
-#include "elm_interface_atspi_widget.eo.legacy.h"
 #include "elm_interface_atspi_window.eo.legacy.h"
 #endif
 #endif
