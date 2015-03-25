@@ -30,6 +30,8 @@ EAPI int elm_code_line_text_strpos(Elm_Code_Line *line, const char *search, int 
 
 EAPI Eina_Bool elm_code_line_text_contains(Elm_Code_Line *line, const char *search);
 
+EAPI char *elm_code_line_text_substr(Elm_Code_Line *line, unsigned int position, int length);
+
 EAPI void elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, const char *string, int length);
 
 EAPI void elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length);

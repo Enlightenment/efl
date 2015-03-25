@@ -74,6 +74,21 @@ elm_code_line_text_contains(Elm_Code_Line *line, const char *search)
    return elm_code_line_text_strpos(line, search, 0) != ELM_CODE_TEXT_NOT_FOUND;
 }
 
+EAPI char *
+elm_code_line_text_substr(Elm_Code_Line *line, unsigned int position, int length)
+{
+   const char *content;
+
+   if (!line || length < 1)
+     return strdup("");
+
+   if (position + length > line->length)
+     length = line->length - position;
+
+   content = elm_code_line_text_get(line, NULL);
+   return strndup(content + position, length);
+}
+
 static void
 _elm_code_line_tokens_move_right(Elm_Code_Line *line, int position, int move)
 {

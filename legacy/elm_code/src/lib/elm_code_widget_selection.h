@@ -21,7 +21,7 @@ EAPI void elm_code_widget_selection_end(Evas_Object *widget, unsigned int line, 
 
 EAPI void elm_code_widget_selection_clear(Evas_Object *widget);
 
-EAPI const char *elm_code_widget_selection_text_get(Evas_Object *widget);
+EAPI char *elm_code_widget_selection_text_get(Evas_Object *widget);
 
 /**
  * @}

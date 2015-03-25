@@ -12,6 +12,7 @@ elm_code_test_basic.c \
 elm_code_test_parse.c \
 elm_code_test_text.c \
 elm_code_test_widget.c \
+elm_code_test_widget_selection.c \
 elm_code_suite.c
 
 elm_code_suite_CPPFLAGS = -I$(top_builddir)/elm_code/src/lib/ \

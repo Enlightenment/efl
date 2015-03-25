@@ -102,15 +102,24 @@ elm_code_widget_selection_clear(Evas_Object *widget)
    eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget));
 }
 
-EAPI const char *
+EAPI char *
 elm_code_widget_selection_text_get(Evas_Object *widget)
 {
    Elm_Code_Widget_Data *pd;
+   Elm_Code_Line *line;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (!pd->selection)
-     return "";
+     return strdup("");
 
-   return "TODO";
+   if (pd->selection->start_line == pd->selection->end_line)
+     {
+        line = elm_code_file_line_get(pd->code->file, pd->selection->start_line);
+
+        return elm_code_line_text_substr(line, pd->selection->start_col - 1,
+                                         pd->selection->end_col - pd->selection->start_col + 1);
+     }
+
+   return strdup("TODO");
 }

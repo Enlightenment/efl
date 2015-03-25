@@ -19,6 +19,7 @@ static const struct {
   { "text", elm_code_test_text },
   { "basic", elm_code_test_basic },
   { "widget", elm_code_test_widget },
+  { "widget_selection", elm_code_test_widget_selection },
 };
 
 START_TEST(elm_code_initialization)
