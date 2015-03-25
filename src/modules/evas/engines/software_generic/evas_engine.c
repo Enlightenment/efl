@@ -1360,17 +1360,16 @@ _image_rotate_180(void *data, Image_Entry *im)
 {
    unsigned int *p1, *p2, tmp;
    DATA32 *image_data;
-   int x, hw, iw, ih;
+   int hw, iw, ih;
    Image_Entry *im2;
 
    eng_image_size_get(data, im, &iw, &ih);
    im = eng_image_data_get(data, im , 1, &image_data, NULL);
    if(!image_data) return im;
    hw = iw * ih;
-   x = (hw / 2);
    p1 = image_data;
    p2 = image_data + hw - 1;
-   for (; --x > 0; )
+   for (; p1 < p2; )
      {
         tmp = *p1;
         *p1 = *p2;
