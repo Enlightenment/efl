@@ -117,10 +117,11 @@ static char *
 _elm_code_widget_selection_text_multi_get(Elm_Code_Widget_Data *pd)
 {
    Elm_Code_Line *line;
-   char *first, *last, *ret;
+   char *first, *last, *ret, *ptr;
    const char *newline;
    short newline_len;
    int ret_len;
+   unsigned int row;
 
    newline = elm_code_file_line_ending_chars_get(pd->code->file, &newline_len);
 
@@ -129,11 +130,34 @@ _elm_code_widget_selection_text_multi_get(Elm_Code_Widget_Data *pd)
                                      line->length - pd->selection->start_col + 1);
 
    line = elm_code_file_line_get(pd->code->file, pd->selection->end_line);
-   last = elm_code_line_text_substr(line, 0, pd->selection->end_col + 1);
+   last = elm_code_line_text_substr(line, 0, pd->selection->end_col);
 
    ret_len = strlen(first) + strlen(last) + newline_len;
+
+   for (row = pd->selection->start_line + 1; row < pd->selection->end_line; row++)
+     {
+        line = elm_code_file_line_get(pd->code->file, row);
+        ret_len += line->length + newline_len;
+     }
+
    ret = malloc(sizeof(char) * (ret_len + 1));
-   snprintf(ret, ret_len, "%s%s%s", first, newline, last);
+   snprintf(ret, strlen(first) + newline_len + 1, "%s%s", first, newline);
+
+   ptr = ret;
+   ptr += strlen(first) + newline_len;
+
+   for (row = pd->selection->start_line + 1; row < pd->selection->end_line; row++)
+     {
+        line = elm_code_file_line_get(pd->code->file, row);
+        if (line->modified)
+          snprintf(ptr, line->length + 1, "%s", line->modified);
+        else
+          snprintf(ptr, line->length + 1, "%s", line->content);
+
+        snprintf(ptr + line->length, newline_len + 1, "%s", newline);
+        ptr += line->length + newline_len;
+     }
+   snprintf(ptr, strlen(last) + 1, "%s", last);
 
    free(first);
    free(last);
