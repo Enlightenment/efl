@@ -1632,6 +1632,24 @@ typedef enum _Edje_Object_Table_Homogeneous_Mode
 EAPI Eina_Bool    edje_text_class_set             (const char *text_class, const char *font, Evas_Font_Size size);
 
 /**
+ * @brief Get the font and the font size from Edje text class.
+ *
+ * @param text_class The text class name
+ * @param font The font name
+ * @param size The font size
+ *
+ * @return @c EINA_TRUE, on success or @c EINA_FALSE, on error
+ *
+ * This function gets the font and the font name from the specified Edje
+ * text class. The font string will only be valid until the text class is
+ * changed or edje is shut down.
+ * @see edje_text_class_set().
+ *
+ * @since 1.14
+ */
+EAPI Eina_Bool    edje_text_class_get             (const char *text_class, const char **font, Evas_Font_Size *size);
+
+/**
  * @brief Delete the text class.
  *
  * @param text_class The text class name string

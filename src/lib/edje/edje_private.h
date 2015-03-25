@@ -2648,6 +2648,7 @@ void _thaw(Eo *obj, void *_pd, va_list *list);
 void _color_class_set(Eo *obj, void *_pd, va_list *list);
 void _color_class_get(Eo *obj, void *_pd, va_list *list);
 void _text_class_set(Eo *obj, void *_pd, va_list *list);
+void _text_class_get(Eo *obj, void *_pd, va_list *list);
 void _part_exists(Eo *obj, void *_pd, va_list *list);
 void _part_object_get(Eo *obj, void *_pd, va_list *list);
 void _part_geometry_get(Eo *obj, void *_pd, va_list *list);

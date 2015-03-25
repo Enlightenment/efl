@@ -874,6 +874,30 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+edje_text_class_get(const char *text_class, const char **font, Evas_Font_Size *size)
+{
+   Edje_Text_Class *tc;
+
+   if (!text_class) return EINA_FALSE;
+
+   tc = eina_hash_find(_edje_text_class_hash, text_class);
+
+   if (tc)
+     {
+        if (font) *font = tc->font;
+        if (size) *size = tc->size;
+     }
+   else
+     {
+        if (font) *font = NULL;
+        if (size) *size = 0;
+
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
 void
 edje_text_class_del(const char *text_class)
 {
@@ -997,6 +1021,26 @@ _edje_object_text_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *text_clas
    _edje_textblock_style_all_update(ed);
    _edje_recalc(ed);
 
+   return EINA_TRUE;
+}
+
+EOLIAN Eina_Bool
+_edje_object_text_class_get(Eo *obj EINA_UNUSED, Edje *ed, const char *text_class, const char **font, Evas_Font_Size *size)
+{
+   Edje_Text_Class *tc = _edje_text_class_find(ed, text_class);
+
+   if (tc)
+     {
+        if (font) *font = tc->font;
+        if (size) *size = tc->size;
+     }
+   else
+     {
+        if (font) *font = NULL;
+        if (size) *size = 0;
+
+        return EINA_FALSE;
+     }
    return EINA_TRUE;
 }
 

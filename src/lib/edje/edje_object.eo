@@ -2076,6 +2076,22 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             @in Edje_Cursor cur; /*@ The cursor to adjust. */
          }
       }
+      text_class_get @const {
+         /*@
+         @brief Gets font and font size from edje text class.
+
+         @return @c EINA_TRUE, on success or @c EINA_FALSE, on error
+
+         This function gets the font and the font size from the object
+         text class. The font string will only be valid until the text
+         class is changed or the edje object is deleted. */
+         return: bool;
+         params {
+            @in const(char)* text_class; /*@ The text class name */
+            @out const(char)* font; /*@ Font name */
+            @out Evas_Font_Size size; /*@ Font Size */
+         }
+      }
       color_class_set {
          /*@
          @brief Sets the object color class.
