@@ -1345,6 +1345,22 @@ EAPI Eina_Iterator        *eina_list_iterator_reversed_new(const Eina_List *list
 EAPI Eina_Accessor        *eina_list_accessor_new(const Eina_List *list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
+ * @brief Find the member of the list and return the index.
+ * 
+ * @param list The list.
+ * @param data The data member.
+ * @return The index of data member if found, @c -1 otherwise.
+ *
+ * This function searches in @p list from beginning to end for the
+ * first member whose data pointer is @p data. If it is found, the
+ * index of the data will be returned, otherwise @c -1 will be returned.
+ *
+ * @warning @p list must be a pointer to the first element of the list.
+ * 
+ */
+EAPI int                   eina_list_data_idx(const Eina_List *list, void *data);
+
+/**
  * @def EINA_LIST_FOREACH
  * @brief Macro to iterate over a list.
  *

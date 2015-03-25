@@ -1569,3 +1569,23 @@ eina_list_accessor_new(const Eina_List *list)
 
    return &ac->accessor;
 }
+
+EAPI int
+eina_list_data_idx(const Eina_List *list, void *data)
+{
+   const Eina_List *l;
+   void *list_data;
+   int ret = 0;
+
+   if (!list) return -1;
+   EINA_MAGIC_CHECK_LIST(list, -1);
+
+   EINA_LIST_FOREACH(list, l, list_data)
+     {
+        if (list_data == data)
+          return ret;
+        ret++;
+     }
+
+   return -1;
+}
