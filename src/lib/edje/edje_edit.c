@@ -10781,7 +10781,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
                                                       buf, &ret);
 
              if (box->box.padding.x != 0 || box->box.padding.y != 0)
-               BUF_APPENDF(I6"padding: %d %d;\n", box->box.padding.y, box->box.padding.y);
+               BUF_APPENDF(I6"padding: %d %d;\n", box->box.padding.x, box->box.padding.y);
 
              if (box->box.min.h || box->box.min.v)
                BUF_APPENDF(I6"min: %d %d;\n", box->box.min.h, box->box.min.v);
