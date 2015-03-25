@@ -25,7 +25,36 @@ typedef struct
    unsigned short walking_list;
    unsigned short event_freeze_count;
    Eina_Bool deletions_waiting : 1;
+
+   //for benchmark start
+   unsigned int called_counter;
+   unsigned int callbacks_counter;
+   unsigned int called_loop_counter;
+   unsigned int called_inner_loop_counter;
+   unsigned int arrays_counter;
+   clock_t  called_sum_clocks ;
+
+   unsigned int events_counter;
+   unsigned long long int have_events;
+
+   //for benchmar endk
+
+
 } Eo_Base_Data;
+   //for benchmark start
+
+static unsigned int called_counter=0;
+static unsigned int callbacks_counter=0;
+static unsigned int called_loop_counter=0;
+static unsigned int called_inner_loop_counter=0;
+
+static unsigned int arrays_counter=0;
+static unsigned int objects_counter=0;
+
+static clock_t  called_sum_clocks =0;
+static clock_t start_clock =0;
+ //for benchmark end
+
 
 typedef struct {
      const    Eo_Event_Description *event;
@@ -536,12 +565,6 @@ _eo_callbacks_clear(Eo_Base_Data *pd)
 }
 
 
-static int
-_eo_base_callback_priority_cmp(const void *a, const void *b)
-{
-   return (( (Eo_Callback_Description *)a)->priority >( ( Eo_Callback_Description *)b)->priority) ;
-
-}
 
 static Eina_Bool
 _cb_desc_match(const Eo_Event_Description *a, const Eo_Event_Description *b)
@@ -567,7 +590,7 @@ _cb_desc_match(const Eo_Event_Description *a, const Eo_Event_Description *b)
         return (a == b);
      }
 }
-static Eo_Callback_Description *
+static void
 _eo_callbacks_list_sorted_insert( Eo_Event_Callbacks *ec, Eo_Callback_Description *cb)
 {
    Eo_Callback_Description *itr, *itrp = NULL;
@@ -601,6 +624,8 @@ _eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb, const
    cb->items.item.desc = desc;
 
    Eo_Event_Callbacks *cbs;
+
+   pd->callbacks_counter++;//avi debug
 
    EINA_INARRAY_FOREACH(pd->callbacks, cbs)
      {
@@ -748,11 +773,16 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
         return EINA_FALSE;
    }
 
+  pd->called_counter++;//avi debug
+
+     clock_t start_time = clock();
+
    Eo_Event_Callbacks *cbs;
    Eina_Bool found = EINA_FALSE;
 
    EINA_INARRAY_FOREACH(pd->callbacks, cbs)
      {
+pd->called_loop_counter++;//avi debug
         if(_cb_desc_match(desc, cbs->event))
           {
              found = EINA_TRUE;
@@ -760,7 +790,8 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
           }
      }
 
-   if(!found) return EINA_FALSE;
+   if(!found) {pd->called_sum_clocks +=clock()-start_time;//avi dbg
+        return EINA_FALSE;}
 
    ret = EINA_TRUE;
 
@@ -769,22 +800,28 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
 
        for (cb = cbs->callbacks; cb; cb = cb->next)
      {
+        pd->called_loop_counter++;//avi debug
         if (!cb->delete_me)
           {
              if (( !cb->items.item.desc->unfreezable) &&
                    (event_freeze_count || pd->event_freeze_count))
                 continue;
+             unsigned int before_func=clock();
              /* Abort callback calling if the func says so. */
              if (!cb->items.item.func((void *) cb->func_data, obj_id, desc,
                       (void *) event_info))
                {
                   ret = EINA_FALSE;
+start_time+=clock()-before_func;
                   goto end;
                }
+start_time+=clock()-before_func;
           }
      }
 
 end:
+pd->called_sum_clocks +=clock()-start_time;//avi dbg
+
    pd->walking_list--;
    _eo_callbacks_clear(pd);
    _eo_unref(obj);
@@ -1028,6 +1065,16 @@ EAPI const Eina_Value_Type *EO_DBG_INFO_TYPE = &_EO_DBG_INFO_TYPE;
 /* EO_BASE_CLASS stuff */
 #define MY_CLASS EO_BASE_CLASS
 
+static __attribute__((destructor)) void finish(void)
+{
+ 
+   printf("calbacks stats-All objects!: num objects=%u total time=%f called cal times= %u called loops=%u called inner loops=%u called clocks=%f called sec=%f callbacks count=%u clabbacks arrays=%u \n",
+         objects_counter,(double)(clock()-start_clock)/CLOCKS_PER_SEC,  called_counter,  called_loop_counter, called_inner_loop_counter,(double)called_sum_clocks,
+         (double)called_sum_clocks/CLOCKS_PER_SEC, callbacks_counter, arrays_counter
+  );//avi debug
+
+}
+
 EOLIAN static void
 _eo_base_constructor(Eo *obj, Eo_Base_Data *pd EINA_UNUSED)
 {
@@ -1044,6 +1091,24 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
    Eo *child;
 
    DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
+   DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
+   if( pd->callbacks_counter>0 && getenv("EO_DEBUG"))
+      printf("calbacks stats-%s: called cal times= %u called loops=%u called inner loops=%u alled clocks=%f called sec=%f callbacks count=%u clabbacks arrays=%u events_counter = %u\n",
+            eo_class_name_get(MY_CLASS ), pd->called_counter,  pd->called_loop_counter, pd->called_inner_loop_counter, (double)pd->called_sum_clocks,
+            (double)pd->called_sum_clocks/CLOCKS_PER_SEC, pd->callbacks_counter, pd->arrays_counter,
+            pd->events_counter);//avi debug
+
+
+   called_counter+=pd->called_counter;
+   callbacks_counter+=pd->callbacks_counter;
+   called_loop_counter+= pd->called_loop_counter;
+   arrays_counter+=pd->arrays_counter;
+   called_inner_loop_counter+=pd->called_inner_loop_counter;
+   called_sum_clocks+=pd-> called_sum_clocks;
+
+
+   if( pd->callbacks_counter>0 )//only with atleast one calllbacks
+      objects_counter++;
 
    EINA_LIST_FREE(pd->children, child)
       eo_do(child, eo_parent_set(NULL));
