@@ -370,6 +370,8 @@ _item_content_realize(Elm_Gen_Item *it,
                   ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
              if (!content) continue;
              *contents = eina_list_append(*contents, content);
+             if (_elm_config->atspi_mode && eo_isa(content, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+               eo_do(content, elm_interface_atspi_accessible_parent_set(EO_OBJ(it)));
              if (!edje_object_part_swallow(target, key, content))
                {
                   ERR("%s (%p) can not be swallowed into %s",
