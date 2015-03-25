@@ -434,12 +434,12 @@ _evas_shm_surface_swap(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int
 
    if ((rects) && (count > 0))
      {
-        unsigned int i = 0;
+        unsigned int k = 0;
 
-        for (; i < count; i++)
+        for (; k < count; k++)
           wl_surface_damage(surface->surface, 
-                            rects[i].x, rects[i].y, 
-                            rects[i].w, rects[i].h);
+                            rects[k].x, rects[k].y,
+                            rects[k].w, rects[k].h);
      }
    else
      wl_surface_damage(surface->surface, 0, 0, leaf->w, leaf->h);
