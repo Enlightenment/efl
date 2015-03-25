@@ -1326,6 +1326,8 @@ struct _Edje_Part_Description_Spec_Mesh_Node
       unsigned int           tweens_count;
       int                    id;
 
+      Eina_Bool              need_texture;
+      Eina_Bool              textured;
       Eina_Bool              set;
 
       Evas_3D_Wrap_Mode wrap1;

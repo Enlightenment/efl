@@ -379,6 +379,8 @@ static void st_collections_group_parts_part_description_orientation_look2(void);
 static void st_collections_group_parts_part_description_orientation_look_to(void);
 static void st_collections_group_parts_part_description_orientation_angle_axis(void);
 static void st_collections_group_parts_part_description_orientation_quaternion(void);
+static void ob_collections_group_parts_part_description_texture(void);
+static void st_collections_group_parts_part_description_texture_image(void);
 
 #ifdef HAVE_EPHYSICS
 static void st_collections_group_parts_part_description_physics_mass(void);
@@ -810,6 +812,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.orientation.look_to", st_collections_group_parts_part_description_orientation_look_to},
      {"collections.group.parts.part.description.orientation.angle_axis", st_collections_group_parts_part_description_orientation_angle_axis},
      {"collections.group.parts.part.description.orientation.quaternion", st_collections_group_parts_part_description_orientation_quaternion},
+     {"collections.group.parts.part.description.texture.image", st_collections_group_parts_part_description_texture_image},
 
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
@@ -1142,6 +1145,11 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.styles.style", ob_styles_style}, /* dup */
      {"collections.group.parts.part.description.box", NULL},
      {"collections.group.parts.part.description.table", NULL},
+     {"collections.group.parts.part.description.position", NULL},
+     {"collections.group.parts.part.description.properties", NULL},
+     {"collections.group.parts.part.description.orientation", NULL},
+     {"collections.group.parts.part.description.texture", ob_collections_group_parts_part_description_texture},
+     {"collections.group.parts.part.description.mesh", NULL},
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics", NULL},
      {"collections.group.parts.part.description.physics.movement_freedom", NULL},
@@ -9806,6 +9814,104 @@ st_collections_group_parts_part_description_orientation_quaternion(void)
    else
      {
         ERR("parse error %s:%i. camera, light and mesh_node  attributes in non-CAMERA, non-LIGHT and non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+/**
+   @edcsubsection{collections_group_parts_description_texture,Texture}
+ */
+
+/**
+    @page edcref
+
+    @block
+        texture
+    @context
+        part {
+            description {
+                ..
+                texture {
+                    image:        "file_name";
+                    wrap1:        REPEAT;
+                    wrap2:        REPEAT;
+                    filter1:      NEAREST;
+                    filter2:      NEAREST;
+                }
+                ..
+            }
+        }
+    @description
+        A texture block is used to set texture, this texture will be imposed on
+        MESH_NODE model.
+    @endblock
+*/
+
+static void
+ob_collections_group_parts_part_description_texture(void)
+{
+   Edje_Part_Description_Mesh_Node *ed;
+
+
+   if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+        ed->mesh_node.texture.need_texture = EINA_TRUE;
+     }
+   else
+     {
+        ERR("parse error %s:%i. "
+            "mesh_node attributes in non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+ /**
+     @page edcref
+     @property
+         shade
+         image
+     @parameters
+         [SHADE]
+         [texture's filename]
+     @effect
+         Sets the shade mode for MESH_NODE. Valid shade modes:
+            @li COLOR
+            @li DIFFUSE
+            @li FLAT
+            @li PHONG
+            @li MAP
+            @li RENDER
+         Name of image to be used as previously declared in the image block.
+         It's required in any mesh_node part.
+     @endproperty
+ */
+static void
+st_collections_group_parts_part_description_texture_image(void)
+{
+   Edje_Part_Description_Mesh_Node *ed;
+
+   check_arg_count(1);
+
+   if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        char *name;
+        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+        ed->mesh_node.texture.textured = EINA_TRUE;
+
+        name = parse_str(0);
+        data_queue_image_remove(&(ed->mesh_node.texture.id), &(ed->mesh_node.texture.set));
+        data_queue_image_lookup(name, &(ed->mesh_node.texture.id), &(ed->mesh_node.texture.set));
+        free(name);
+     }
+   else
+     {
+        ERR("parse error %s:%i. "
+            "mesh_node attributes in non-MESH_NODE part.",
             file_in, line - 1);
         exit(-1);
      }
