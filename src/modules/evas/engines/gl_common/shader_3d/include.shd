@@ -61,8 +61,8 @@ varying   float    vLightDist;
 
 define(`FRAGMENT_SHADER_TEXTURE_BLEND', `
 #ifdef  $1_TEXTURE_BLEND
-   color = texture2D(uTexture$2`0', vTexCoord) * uTexture$2Weight +
-   texture2D(uTexture$2`1', vTexCoord) * (1.0 - uTexture$2Weight);
+   color = mix(texture2D(uTexture$2`1', vTexCoord),
+               texture2D(uTexture$2`0', vTexCoord), uTexture$2Weight);
    color *= uMaterial$2;
 #else
 #ifdef  $1_TEXTURE
@@ -160,8 +160,7 @@ uniform     float uColorWeight;
 
 define(`VERTEX_SHADER_POSITION',
 `#ifdef VERTEX_POSITION_BLEND'
-   vec4 position = aPosition0 * uPositionWeight +
-   aPosition1 * (1.0 - uPositionWeight);
+   vec4 position = mix(aPosition1, aPosition0, uPositionWeight);
    position = vec4(position.xyz, 1.0);
 `#else'
 
@@ -173,8 +172,7 @@ define(`VERTEX_SHADER_POSITION',
 
 define(`VERTEX_SHADER_NORMAL',
 `#ifdef VERTEX_NORMAL_BLEND'
-   vec3 normal = aNormal0.xyz * uNormalWeight +
-   aNormal1.xyz * (1.0 - uNormalWeight);
+   vec3 normal = mix(aNormal1.xyz, aNormal0.xyz, uNormalWeight);
 `#else'
 
 `#ifdef VERTEX_NORMAL'
@@ -184,8 +182,7 @@ define(`VERTEX_SHADER_NORMAL',
 
 define(`VERTEX_SHADER_TEXCOORD',
 `#ifdef VERTEX_TEXCOORD_BLEND'
-   vTexCoord = aTexCoord0.st * uTexCoordWeight +
-   aTexCoord1.st * (1.0 - uTexCoordWeight);
+   vTexCoord = mix(aTexCoord1.st, aTexCoord0.st, uTexCoordWeight);
 `#else'
 
 `#ifdef VERTEX_TEXCOORD'
