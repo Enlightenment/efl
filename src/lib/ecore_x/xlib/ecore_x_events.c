@@ -366,9 +366,8 @@ _ecore_key_press(int event,
    if (!key)
      key = keyname;
 
-   e =
-     malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
-            (compose ? strlen(compose) : 0) + 3);
+   e = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
+              (compose ? strlen(compose) : 0) + 3);
    if (!e)
      goto on_error;
 

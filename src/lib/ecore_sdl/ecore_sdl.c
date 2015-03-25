@@ -129,7 +129,7 @@ _ecore_sdl_event_key(SDL_Event *event, double timestamp)
    Ecore_Event_Key *ev;
    unsigned int i;
 
-   ev = malloc(sizeof(Ecore_Event_Key));
+   ev = calloc(1, sizeof(Ecore_Event_Key));
    if (!ev) return NULL;
 
    ev->timestamp = timestamp;

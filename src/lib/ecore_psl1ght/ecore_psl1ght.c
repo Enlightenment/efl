@@ -351,7 +351,7 @@ _ecore_psl1ght_event_key(u16 key)
    u16 utf16;
    unsigned int i;
 
-   ev = malloc(sizeof(Ecore_Event_Key));
+   ev = calloc(1, sizeof(Ecore_Event_Key));
    if (!ev) return NULL;
 
    ev->timestamp = _ecore_psl1ght_get_time ();
@@ -467,7 +467,7 @@ _ecore_psl1ght_pad_button (const char *name, int pressed)
 {
    Ecore_Event_Key *ev = NULL;
 
-   ev = malloc(sizeof(Ecore_Event_Key));
+   ev = calloc(1, sizeof(Ecore_Event_Key));
    if (!ev) return;
 
    ev->timestamp = _ecore_psl1ght_get_time ();

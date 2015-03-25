@@ -804,7 +804,7 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
    _ecore_wl_input_keymap_translate_keysym(sym, input->modifiers,
                                            compose, sizeof(compose));
 
-   e = malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
+   e = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
               ((compose[0] != '\0') ? strlen(compose) : 0) + 3);
    if (!e) return;
 

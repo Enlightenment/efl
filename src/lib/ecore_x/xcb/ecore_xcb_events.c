@@ -2401,14 +2401,13 @@ _ecore_xcb_event_key_press(xcb_generic_event_t *event)
    key = _ecore_xcb_keymap_keysym_to_string(sym);
    if (!key) key = keyname;
 
-   e = malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
+   e = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
               (compose ? strlen(compose) : 0) + 3);
    if (e)
      {
         e->keyname = (char *)(e + 1);
         e->key = e->keyname + strlen(keyname) + 1;
 
-        e->compose = NULL;
         if (compose) e->compose = (e->key + strlen(key) + 1);
         e->string = e->compose;
 
@@ -2471,14 +2470,13 @@ _ecore_xcb_event_key_release(xcb_generic_event_t *event)
    key = _ecore_xcb_keymap_keysym_to_string(sym);
    if (!key) key = keyname;
 
-   e = malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
+   e = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
               (compose ? strlen(compose) : 0) + 3);
    if (e)
      {
         e->keyname = (char *)(e + 1);
         e->key = e->keyname + strlen(keyname) + 1;
 
-        e->compose = NULL;
         if (compose) e->compose = (e->key + strlen(key) + 1);
         e->string = e->compose;
 

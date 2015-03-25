@@ -466,7 +466,7 @@ text_input_keysym(void                 *data,
                      "key event (key: %s)",
                      keyname);
 
-   e = malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) + 
+   e = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
               strlen(string) + 3);
    if (!e) return;
 

@@ -308,7 +308,7 @@ _device_handle_key(struct libinput_device *device, struct libinput_event_keyboar
 
    if (!compose) compose = compose_buffer;
 
-   e = malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
+   e = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
               ((compose[0] != '\0') ? strlen(compose) : 0) + 3);
    if (!e) return;
 
@@ -327,7 +327,6 @@ _device_handle_key(struct libinput_device *device, struct libinput_event_keyboar
    e->timestamp = timestamp;
    e->same_screen = 1;
    e->keycode = code;
-   e->data = NULL;
 
    _device_modifiers_update(edev);
 
