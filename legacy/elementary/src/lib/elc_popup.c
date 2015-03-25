@@ -886,6 +886,13 @@ _content_text_set(Evas_Object *obj,
    else eo_do(sd->main_layout, elm_obj_container_content_set(CONTENT_PART, sd->content_area));
    if (!text) goto end;
 
+   if (sd->text_content_obj)
+     {
+        eo_do(sd->content_area, sd->text_content_obj = elm_obj_container_content_unset(CONTENT_PART));
+        evas_object_del(sd->text_content_obj);
+        sd->text_content_obj = NULL;
+     }
+
    sd->text_content_obj = elm_label_add(sd->content_area);
    snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));
    elm_object_style_set(sd->text_content_obj, style);
