@@ -10790,6 +10790,50 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
           }
      }
 
+
+   if (rp->part->type == EDJE_PART_TYPE_TABLE)
+     {
+        Edje_Part_Description_Table *table;
+
+        table = (Edje_Part_Description_Table*) pd;
+
+        if ((table->table.homogeneous != EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE) ||
+            table->table.align.x != 0.5 || table->table.align.y != 0.5 ||
+            table->table.padding.x != 0 || table->table.padding.y != 0 ||
+            !table->table.min.h || !table->table.min.v)
+          {
+             BUF_APPEND(I5"table {\n");
+
+             switch (table->table.homogeneous)
+               {
+                case EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE:
+                  {
+                     BUF_APPENDF(I6"homogeneous: TABLE;\n");
+                     break;
+                  }
+                case EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM:
+                  {
+                     BUF_APPENDF(I6"homogeneous: ITEM;\n");
+                     break;
+                  }
+               }
+
+             if (table->table.align.x != 0.5 || table->table.align.y != 0.5)
+               _edje_source_with_double_values_append(I6"align", 2,
+                                                      TO_DOUBLE(table->table.align.x),
+                                                      TO_DOUBLE(table->table.align.y),
+                                                      buf, &ret);
+
+             if (table->table.padding.x != 0 || table->table.padding.y != 0)
+               BUF_APPENDF(I6"padding: %d %d;\n", table->table.padding.x, table->table.padding.y);
+
+             if (table->table.min.h || table->table.min.v)
+               BUF_APPENDF(I6"min: %d %d;\n", table->table.min.h, table->table.min.v);
+
+             BUF_APPEND(I5"}\n");
+          }
+     }
+
    //Rel1
    if (pd->rel1.relative_x || pd->rel1.relative_y || pd->rel1.offset_x ||
        pd->rel1.offset_y || pd->rel1.id_x != -1 || pd->rel1.id_y != -1)
