@@ -43,7 +43,7 @@ _elm_code_test_line_clicked_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED,
    line = (Elm_Code_Line *)event_info;
 
    printf("CLICKED line %d\n", line->number);
-   return EINA_TRUE;
+   return EO_CALLBACK_CONTINUE;
 }
 
 static Eina_Bool

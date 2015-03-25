@@ -44,7 +44,8 @@ END_TEST
 START_TEST (elm_code_widget_construct)
 {
    Elm_Code *code;
-   Elm_Code_Widget *widget, *win;
+   Elm_Code_Widget *widget;
+   Evas_Object *win;
 
    elm_init(1, NULL);
    code = elm_code_create();
@@ -61,7 +62,8 @@ END_TEST
 
 START_TEST (elm_code_widget_construct_nocode)
 {
-   Elm_Code_Widget *widget, *win;
+   Elm_Code_Widget *widget;
+   Evas_Object *win;
 
    elm_init(1, NULL);
 
