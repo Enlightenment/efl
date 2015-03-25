@@ -241,7 +241,7 @@ do_eet_decode(const char *file,
 static void
 do_eet_insert(const char *file,
               const char *key,
-              const char *out,
+              const char *in,
               int         compress,
               const char *crypto_key)
 {
@@ -260,10 +260,10 @@ do_eet_insert(const char *file,
         exit(-1);
      }
 
-   f = fopen(out, "rb");
+   f = fopen(in, "rb");
    if (!f)
      {
-        ERR("cannot open %s", out);
+        ERR("cannot open %s", in);
         exit(-1);
      }
 
@@ -271,7 +271,7 @@ do_eet_insert(const char *file,
    size = ftell(f);
    if (size < 0)
      {
-        ERR("cannot obtain current file position %s", out);
+        ERR("cannot obtain current file position %s", in);
         fclose(f);
         exit(-1);
      }
@@ -286,7 +286,7 @@ do_eet_insert(const char *file,
 
    if (fread(data, size, 1, f) != 1)
      {
-        ERR("cannot read file %s", out);
+        ERR("cannot read file %s", in);
         exit(-1);
      }
 
@@ -299,7 +299,7 @@ do_eet_insert(const char *file,
 static void
 do_eet_encode(const char *file,
               const char *key,
-              const char *out,
+              const char *in,
               int         compress,
               const char *crypto_key)
 {
@@ -319,10 +319,10 @@ do_eet_encode(const char *file,
         exit(-1);
      }
 
-   f = fopen(out, "rb");
+   f = fopen(in, "rb");
    if (!f)
      {
-        ERR("cannot open %s", out);
+        ERR("cannot open %s", in);
         exit(-1);
      }
 
@@ -330,7 +330,7 @@ do_eet_encode(const char *file,
    textlen = ftell(f);
    if (textlen < 0)
      {
-        ERR("cannot obtain current file position %s", out);
+        ERR("cannot obtain current file position %s", in);
         fclose(f);
         exit(-1);
      }
@@ -345,14 +345,14 @@ do_eet_encode(const char *file,
 
    if (fread(text, textlen, 1, f) != 1)
      {
-        ERR("cannot read file %s", out);
+        ERR("cannot read file %s", in);
         exit(-1);
      }
 
    fclose(f);
    if (!eet_data_undump_cipher(ef, key, crypto_key, text, textlen, compress))
      {
-        ERR("cannot parse %s", out);
+        ERR("cannot parse %s", in);
         exit(-1);
      }
 
