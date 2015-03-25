@@ -7721,8 +7721,11 @@ _elm_genlist_item_elm_interface_atspi_accessible_children_get(Eo *eo_it EINA_UNU
           {
              Evas_Object *part;
              part = edje_object_part_swallow_get(VIEW(it), key);
-             if (eo_isa(part, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
-               ret = eina_list_append(ret, part);
+             if (part && eo_isa(part, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+               {
+                  ret = eina_list_append(ret, part);
+                  eo_do(part, elm_interface_atspi_accessible_parent_set(eo_it));
+               }
           }
      }
    return ret;

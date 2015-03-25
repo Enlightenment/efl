@@ -5604,7 +5604,16 @@ _elm_widget_elm_interface_atspi_accessible_children_get(Eo *obj EINA_UNUSED, Elm
 EOLIAN static Eo*
 _elm_widget_elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
 {
-   return pd->parent_obj;
+   if (pd->atspi_custom_parent)
+     return pd->atspi_custom_parent;
+   else
+     return pd->parent_obj;
+}
+
+EOLIAN static void
+_elm_widget_elm_interface_atspi_accessible_parent_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eo *parent)
+{
+   pd->atspi_custom_parent = parent;
 }
 
 EOLIAN static Elm_Atspi_State_Set
