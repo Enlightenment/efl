@@ -2773,17 +2773,6 @@ _property_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_De
 }
 
 static Eina_Bool
-_idler_cb(void *data EINA_UNUSED)
-{
-   Eo *obj;
-   EINA_LIST_FREE(_pending_objects, obj)
-      _cache_build(obj);
-   _pending_objects = NULL;
-   _cache_update_idler = NULL;
-   return EINA_FALSE;
-}
-
-static Eina_Bool
 _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Eldbus_Service_Interface *events = data;
@@ -2797,9 +2786,7 @@ _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *d
    // update cached objects
    if (ev_data->is_added)
      {
-        _pending_objects = eina_list_append(_pending_objects, obj);
-        if (!_cache_update_idler)
-          _cache_update_idler = ecore_idler_add(_idler_cb, NULL);
+        _cache_build(obj);
      }
 
    if (!STATE_TYPE_GET(_object_children_broadcast_mask, type))
