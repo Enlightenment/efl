@@ -29,7 +29,7 @@ typedef struct
 
 typedef struct {
      const    Eo_Event_Description *event;
-     Eina_List *callbacks;
+     Eo_Callback_Description *callbacks;
 }Eo_Event_Callbacks;
 
 typedef struct
@@ -457,19 +457,53 @@ struct _Eo_Callback_Description
 
 /* Actually remove, doesn't care about walking list, or delete_me */
 static void
+_eo_callback_remove(Eo_Event_Callbacks *ec, Eo_Callback_Description *cb)
+{
+   Eo_Callback_Description *itr, *pitr = NULL;
+
+
+   itr = ec->callbacks;
+
+   for ( ; itr; )
+     {
+        Eo_Callback_Description *titr = itr;
+        itr = itr->next;
+
+        if (titr == cb)
+          {
+             if (pitr)
+               {
+                  pitr->next = titr->next;
+               }
+             else
+               {
+                  ec->callbacks = titr->next;
+               }
+             free(titr);
+          }
+        else
+          {
+             pitr = titr;
+          }
+     
+     }
+}
+/* Actually remove, doesn't care about walking list, or delete_me */
+static void
 _eo_callback_remove_all(Eo_Base_Data *pd)
 {
    Eo_Event_Callbacks  *cbs;
 
    EINA_INARRAY_FOREACH(pd->callbacks, cbs)
      {
-        Eo_Callback_Description *cb = NULL;
-
-        EINA_LIST_FREE(cbs->callbacks, cb)
-           free(cb);
+   while (cbs->callbacks)
+     {
+        Eo_Callback_Description *next = cbs->callbacks->next;
+        free(cbs->callbacks);
+        cbs->callbacks = next;
+     }
      }
 }
-
 static void
 _eo_callbacks_clear(Eo_Base_Data *pd)
 {
@@ -484,22 +518,23 @@ _eo_callbacks_clear(Eo_Base_Data *pd)
       return;
 
    pd->deletions_waiting = EINA_FALSE;
-
    Eo_Event_Callbacks  *cbs;
 
    EINA_INARRAY_FOREACH(pd->callbacks, cbs)
      {
-        Eina_List *l, *l2;
-        EINA_LIST_FOREACH_SAFE(cbs->callbacks, l, l2, cb)
+   for (cb = cbs->callbacks; cb; )
+     {
+        Eo_Callback_Description *titr = cb;
+        cb = cb->next;
+
+        if (titr->delete_me)
           {
-             if (cb->delete_me)
-               {
-                  cbs->callbacks = eina_list_remove_list(cbs->callbacks, l);
-                  free(cb);
-               }
+             _eo_callback_remove(cbs, titr);
           }
      }
+     }
 }
+
 
 static int
 _eo_base_callback_priority_cmp(const void *a, const void *b)
@@ -532,9 +567,29 @@ _cb_desc_match(const Eo_Event_Description *a, const Eo_Event_Description *b)
         return (a == b);
      }
 }
+static Eo_Callback_Description *
+_eo_callbacks_list_sorted_insert( Eo_Event_Callbacks *ec, Eo_Callback_Description *cb)
+{
+   Eo_Callback_Description *itr, *itrp = NULL;
+   for (itr = ec->callbacks; itr && (itr->priority < cb->priority);
+         itr = itr->next)
+     {
+        itrp = itr;
+     }
 
+   if (itrp)
+     {
+        cb->next = itrp->next;
+        itrp->next = cb;
+     }
+   else
+     {
+        cb->next = ec->callbacks;
+        ec->callbacks = cb;
+     }
+}
 static void
-_eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb, const Eo_Event_Description *desc, Eo_Event_Cb func, const void *data)
+_eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb, const Eo_Event_Description *desc)
 {
    Eo_Event_Callbacks ec = { desc, NULL };
 
@@ -543,8 +598,6 @@ _eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb, const
         DBG("sorted insert NULL event!\n");
         return;
      }
-   cb->items.item.func = func;
-   cb->func_data = (void *) data;
    cb->items.item.desc = desc;
 
    Eo_Event_Callbacks *cbs;
@@ -553,17 +606,17 @@ _eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb, const
      {
         if(_cb_desc_match(desc, cbs->event))
           {
-             cbs->callbacks = eina_list_sorted_insert(cbs->callbacks, _eo_base_callback_priority_cmp, cb);
+             _eo_callbacks_list_sorted_insert(cbs, cb);
              return;
           }
      }
-
-   ec.callbacks = eina_list_sorted_insert(NULL, _eo_base_callback_priority_cmp, cb);
+   cb->next=NULL;
+   ec.callbacks = cb;
 
    eina_inarray_push(pd->callbacks, &ec);
 }
 
-EOLIAN static void _eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *pd, 
+EOLIAN static void _eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *pd,
       const Eo_Event_Description *desc, Eo_Callback_Priority priority, Eo_Event_Cb func, const void *data)
 {
    Eo_Callback_Description *cb;
@@ -577,7 +630,7 @@ EOLIAN static void _eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *p
    cb->func_array = EINA_FALSE;
    cb->items.item_array = NULL;
    cb->delete_me = EINA_FALSE;
-   _eo_callbacks_sorted_insert(pd, cb, desc, func, data);
+   _eo_callbacks_sorted_insert(pd, cb, desc);
 
      {
         const Eo_Callback_Array_Item arr[] = { {desc, func}, {NULL, NULL}};
@@ -597,8 +650,8 @@ _eo_base_event_callback_del(Eo *obj, Eo_Base_Data *pd,
 
    EINA_INARRAY_FOREACH(pd->callbacks, cbs)
      {
-        Eina_List *l;
-        EINA_LIST_FOREACH(cbs->callbacks, l, cb)
+       for (cb = cbs->callbacks; cb; cb = cb->next)
+
           {
              if ((cb->items.item.desc == desc) && (cb->items.item.func == func) &&
                    (cb->func_data == user_data))
@@ -639,7 +692,7 @@ _eo_base_event_callback_array_priority_add(Eo *obj, Eo_Base_Data *pd,
         cb->items.item_array = array;
         cb->func_array = EINA_TRUE;
         cb->delete_me = EINA_FALSE;
-        _eo_callbacks_sorted_insert(pd, cb,it->desc, it->func, user_data);
+        _eo_callbacks_sorted_insert(pd, cb,it->desc);
      }
 
 
@@ -660,9 +713,8 @@ _eo_base_event_callback_array_del(Eo *obj, Eo_Base_Data *pd,
    if (!pd->callbacks) goto end;
    EINA_INARRAY_FOREACH(pd->callbacks, cbs)
      {
-        Eina_List *l;
-        EINA_LIST_FOREACH( cbs->callbacks, l, cb)
-          {
+       for (cb = cbs->callbacks; cb; cb = cb->next)
+         {
              if ((cb->items.item_array == array) && (cb->func_data == user_data))
                {
                   cb->delete_me = EINA_TRUE;
@@ -715,8 +767,7 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
    _eo_ref(obj);
    pd->walking_list++;
 
-   Eina_List *l, *l2;
-   EINA_LIST_FOREACH_SAFE(cbs->callbacks, l, l2, cb)
+       for (cb = cbs->callbacks; cb; cb = cb->next)
      {
         if (!cb->delete_me)
           {
@@ -996,6 +1047,7 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
 
    EINA_LIST_FREE(pd->children, child)
       eo_do(child, eo_parent_set(NULL));
+
 
    _eo_generic_data_del_all(pd);
    _wref_destruct(pd);
