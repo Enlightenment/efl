@@ -7,99 +7,25 @@ varying  vec3        vEyeVector;
 varying vec2   vTexCoord;
 #endif //TEX_COORD
 
-#ifdef FOG_ENABLED
-uniform float uFogFactor;
-uniform vec4  uFogColor;
-#endif //FOG_ENABLED
-
-#ifdef  SHADOWED
-varying vec4 vLightPosition;
-uniform sampler2D uShadowMap;
-float shadow;
-#endif //SHADOWED
+FRAGMENT_SHADER_USE_FOG
+FRAGMENT_SHADER_USE_SHADOWS
 
 #ifdef NORMAL_TEXTURE_BLEND
 uniform  sampler2D  uTextureNormal1;
 uniform  float      uTextureNormalWeight;
 #endif //NORMAL_TEXTURE_BLEND
 
-#ifdef DIFFUSE
-uniform   vec4        uMaterialDiffuse;
-uniform   vec4        uLightDiffuse;
-
-#ifdef DIFFUSE_TEXTURE
-uniform sampler2D  uTextureDiffuse0;
-#endif //DIFFUSE_TEXTURE
-
-#ifdef DIFFUSE_TEXTURE_BLEND
-uniform sampler2D  uTextureDiffuse1;
-uniform float      uTextureDiffuseWeight;
-#endif //DIFFUSE_TEXTURE_BLEND
-
-#endif //DIFFUSE
-
-#ifdef SPECULAR
-uniform   vec4     uLightSpecular;
-uniform   float    uMaterialShininess;
-uniform   vec4     uMaterialSpecular;
-
-#ifdef SPECULAR_TEXTURE
-uniform sampler2D  uTextureSpecular0;
-#endif //SPECULAR_TEXTURE
-
-#ifdef SPECULAR_TEXTURE_BLEND
-uniform sampler2D  uTextureSpecular1;
-uniform float      uTextureSpecularWeight;
-#endif //SPECULAR_TEXTURE_BLEND
-
-#endif //SPECULAR
-
-#ifdef AMBIENT
-uniform  vec4       uMaterialAmbient;
-uniform  vec4       uLightAmbient;
-
-#ifdef AMBIENT_TEXTURE
-uniform sampler2D  uTextureAmbient0;
-#endif //AMBIENT_TEXTURE
-
-#ifdef AMBIENT_TEXTURE_BLEND
-uniform sampler2D  uTextureAmbient1;
-uniform float      uTextureAmbientWeight;
-#endif //AMBIENT_TEXTURE_BLEND
-
-#endif //AMBIENT
-
-#ifdef EMISSION
-uniform vec4       uMaterialEmission;
-
-#ifdef EMISSION_TEXTURE
-uniform sampler2D  uTextureEmission0;
-#endif //EMISSION_TEXTURE
-
-#ifdef EMISSION_TEXTURE_BLEND
-uniform sampler2D  uTextureEmission1;
-uniform float      uTextureEmissionWeight;
-#endif //EMISSION_TEXTURE_BLEND
-
-#endif //EMISSION
-
-#ifdef LIGHT_SPOT
-uniform   vec3  uLightSpotDir;
-uniform   float uLightSpotExp;
-uniform   float uLightSpotCutoffCos;
-#endif //LIGHT_SPOT
-
-#ifdef LIGHT_ATTENUATION
-varying   float    vLightDist;
-#endif //LIGHT_ATTENUATION
+FRAGMENT_SHADER_USE_DIFFUSE_TERM
+FRAGMENT_SHADER_USE_SPECULAR_TERM
+FRAGMENT_SHADER_USE_AMBIENT_TERM
+FRAGMENT_SHADER_USE_EMISSION_TERM
+FRAGMENT_SHADER_USE_LIGHT
 
 const float parallaxScale = 0.2;
 
 vec2 parallaxMapping(in vec3 view, in vec2 tex, out float parallaxHeight)
 {
-   const float minLayers = 10.0;
-   const float maxLayers = 30.0;
-   float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0, 0, 1), view)));
+   const float numLayers = 15.0;
    vec2 texStep = parallaxScale * view.xy / view.z / numLayers;
 
    float layerHeight = 1.0 / numLayers;
@@ -281,19 +207,6 @@ void fragmentParallaxMap()
 
 }
 
-#ifdef SHADOWED
-float pcf(vec4 lpos, float size)
-{
-   vec3 smcoord = lpos.xyz / lpos.w * 0.5 + 0.5;
-   float i, j, randx, randy, shadow;
-   shadow = 0.0;
-   for (i = -4.0; i < 4.0; i++)
-     for (j = -4.0; j < 4.0; j++)
-        shadow += float(smcoord.z <= texture2D(uShadowMap, smcoord.xy +vec2(i / 8.0, j / 8.0)*size).x);
-   return shadow / 64.0;
-}
-#endif //SHADOWED
-
 void main() {
 
 #ifdef SHADOWED
@@ -302,12 +215,7 @@ void main() {
 
    fragmentParallaxMap();
 
-#ifdef FOG_ENABLED
-   float z = gl_FragCoord.z / gl_FragCoord.w;
-   float fogFactor = exp2( -uFogFactor * uFogFactor * z * z * 1.44);
-   fogFactor = clamp(fogFactor, 0.0, 1.0);
-   gl_FragColor = mix(uFogColor, gl_FragColor, fogFactor);
-#endif //FOG_ENABLED
+   FRAGMENT_SHADER_FOG_APPLY
 
 }
 
