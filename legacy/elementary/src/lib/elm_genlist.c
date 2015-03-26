@@ -328,6 +328,8 @@ _item_text_realize(Elm_Gen_Item *it,
           {
              edje_object_part_text_set(target, key, "");
           }
+        if (_elm_config->atspi_mode)
+          elm_interface_atspi_accessible_name_changed_signal_emit(EO_OBJ(it));
      }
 }
 
