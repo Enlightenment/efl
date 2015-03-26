@@ -138,8 +138,9 @@ _elm_interface_atspi_accessible_index_in_parent_get(Eo *obj, void *pd EINA_UNUSE
    if (ret == (int)eina_list_count(children))
      {
         ERR("Object %s not present in its AT-SPI parents (%s) children list! This should never happen.", eo_class_name_get(eo_class_get(obj)), eo_class_name_get(eo_class_get(parent)));
-        return -1;
+        ret = -1;
      }
+   eina_list_free(children);
    return ret;
 }
 
