@@ -2658,14 +2658,8 @@ _registered_events_list_update(void)
 }
 
 static void
-_handle_listener_change(void *data EINA_UNUSED, const Eldbus_Message *msg)
+_handle_listener_change(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED)
 {
-   const char *bus, *event;
-   if (!eldbus_message_arguments_get(msg, "ss", &bus, &event))
-     {
-        ERR("Invalid org.a11y.Registry signal message args.");
-        return;
-     }
    _registered_events_list_update();
 }
 
