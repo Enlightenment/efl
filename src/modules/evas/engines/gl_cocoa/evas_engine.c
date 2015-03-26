@@ -1046,14 +1046,20 @@ eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font EINA
    					      re->win->gl_context,
    					      evas_gl_font_texture_new,
    					      evas_gl_font_texture_free,
-   					      evas_gl_font_texture_draw);
+   					      evas_gl_font_texture_draw,
+                                              NULL,
+                                              NULL,
+                                              NULL);
 	    evas_common_font_draw_prepare(intl_props);
 	    evas_common_font_draw(im, context, x, y, intl_props->glyphs);
 	    evas_common_draw_context_font_ext_set(context,
 					      NULL,
 					      NULL,
 					      NULL,
-					      NULL);
+                                              NULL,
+                                              NULL,
+                                              NULL,
+                                              NULL);
      }
 
    return EINA_FALSE;
