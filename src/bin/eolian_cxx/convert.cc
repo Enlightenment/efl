@@ -212,6 +212,20 @@ _convert_property_get_to_function(Eolian_Class const& klass,
    return get_;
 }
 
+static efl::eolian::eo_function
+_convert_function(Eolian_Class const& klass, Eolian_Function const& func)
+{
+   return {
+     function_type(func),
+     function_scope(func),
+     function_name(func),
+     function_impl(func),
+     function_return_type(func),
+     _convert_eolian_parameters(func),
+     convert_comments_function(klass, func, eolian_cxx::method)
+   };
+}
+
 
 void
 convert_eolian_inheritances(efl::eolian::eo_class& cls, Eolian_Class const& klass)
@@ -276,32 +290,42 @@ convert_eolian_functions(efl::eolian::eo_class& cls, Eolian_Class const& klass)
     , last; first != last; ++first)
      {
         Eolian_Function const& func = *first;
-        Eolian_Function_Type const func_type = function_op_type(func);
 
-        if (!function_is_visible(func, func_type))
-          continue;
-
-        if (function_is_constructor(klass, func))
+        if (function_is_visible(func, function_op_type(func)) &&
+            !function_is_constructor(klass, func))
           {
-             cls.constructors.push_back({
-                  function_impl(func),
-                  _convert_eolian_parameters(func),
-                  convert_comments_function(klass, func)
-             });
-          }
-        else
-          {
-             cls.functions.push_back({
-                 function_type(func),
-                 function_scope(func),
-                 function_name(func),
-                 function_impl(func),
-                 function_return_type(func),
-                 _convert_eolian_parameters(func),
-                 convert_comments_function(klass, func, eolian_cxx::method)
-               });
+             cls.functions.push_back(_convert_function(klass, func));
           }
      }
+   if (class_eo_name(klass) != "EO_BASE_CLASS")
+     for(efl::eina::iterator<const Eolian_Constructor> first ( ::eolian_class_constructors_get(&klass))
+      , last; first != last; ++first)
+       {
+          Eolian_Constructor const& ctor = *first;
+          Eolian_Function const& func = *(::eolian_constructor_function_get(&ctor));
+
+          efl::eolian::eo_function f;
+          if (::eolian_function_type_get(&func) != EOLIAN_PROPERTY)
+            f = _convert_function(klass, func);
+          else
+            f = _convert_property_set_to_function(klass, func);
+
+
+          (::eolian_constructor_is_optional(&ctor) ?
+            cls.optional_constructors :
+            cls.constructors
+          ).push_back({
+             function_name(func),
+             f.impl,
+             f.params,
+             f.comment
+          });
+       }
+
+   cls.all_constructors = cls.constructors;
+   cls.all_constructors.insert(cls.all_constructors.end(),
+    cls.optional_constructors.begin(), cls.optional_constructors.end());
+
    for(efl::eina::iterator<const Eolian_Function> first ( ::eolian_class_functions_get(&klass, EOLIAN_PROPERTY))
     , last; first != last; ++first)
      {

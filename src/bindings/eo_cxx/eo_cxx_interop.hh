@@ -6,9 +6,12 @@
 #include <tuple>
 #include <utility>
 #include <type_traits>
+#include <initializer_list>
 
 #include <Eina.hh>
 #include <Eo.hh>
+
+#include "eo_concrete.hh"
 
 namespace efl { namespace eolian {
 
@@ -443,6 +446,14 @@ Eina_Bool free_callback_calback(void* data, Eo* obj EINA_UNUSED
    return EO_CALLBACK_CONTINUE;
 }
 
+template <typename... Fs>
+inline
+void register_ev_del_free_callback(Eo* eoptr, Fs&&... fs)
+{
+   std::initializer_list<int const> const v {(fs.register_ev_del_free_callback(eoptr), 0)...};
+   (void) v; (void) eoptr;
+}
+
 template <typename F>
 inline
 std::vector<F>& get_static_callback_vector()
@@ -457,6 +468,16 @@ F* alloc_static_callback(F&& f)
 {
    get_static_callback_vector<F>().push_back(std::forward<F>(f));
    return &(get_static_callback_vector<F>().back());
+}
+
+/// Miscellaneous
+
+template <typename... Fs>
+inline
+void call_ctors(Fs&&... fs)
+{
+   std::initializer_list<int const> const v {(fs(), 0)...};
+   (void) v;
 }
 
 } } // namespace efl { namespace eolian {

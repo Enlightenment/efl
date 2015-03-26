@@ -17,7 +17,7 @@ struct ColourableCircle
   : efl::eo::inherit<ColourableCircle, ::colourable>
 {
    ColourableCircle(int rgb)
-     : inherit_base(efl::eo::args<::colourable>(rgb))
+     : inherit_base(::colourable::rgb_24bits_constructor(rgb))
    {}
 
    int colour_get()
@@ -46,7 +46,7 @@ struct ColourableBar
   : efl::eo::inherit<ColourableBar, ::colourablesquare>
 {
    ColourableBar()
-     : inherit_base(efl::eo::args<::colourablesquare>(0))
+     : inherit_base(::colourable::rgb_24bits_constructor(0))
    {}
 
    int colour_get()

@@ -13,16 +13,17 @@
 
 #include "eo_ops.hh"
 #include "eo_private.hh"
+#include "eo_cxx_interop.hh"
 
 namespace efl { namespace eo {
 
 namespace detail {
 
-template <typename D, typename Args, typename... E, std::size_t... S>
+template <typename D, typename... E, std::size_t... S>
 Eo_Class const* create_class(eina::index_sequence<S...>);
 
-template <typename Args, typename ... E>
-void inherit_constructor(void* this_, Args args);
+inline
+void inherit_constructor(void* this_);
 
 }
 
@@ -67,22 +68,25 @@ struct inherit
    ///
    typedef inherit<D, E...> inherit_base;
 
+   //@{
    /// @brief Class constructor.
    ///
    /// @ref inherit has a "variadic" constructor implementation that
    /// allows from zero to EFL_MAX_ARGS heterogeneous parameters.
    ///
    template<typename... Args>
-   inherit(Args&& ... args)
+   inherit(efl::eo::parent_type _p, Args&& ... args)
    {
-      typedef std::tuple<typename std::remove_reference<Args>::type...> tuple_type;
-      _eo_cls = detail::create_class<D, tuple_type, E...> (eina::make_index_sequence<sizeof...(E)>());
-      _eo_raw = eo_add_ref
-        (_eo_cls, NULL,
-         detail::inherit_constructor
-         <tuple_type, E...>
-         (static_cast<void*>(this), tuple_type(std::forward<Args>(args)...)));
+      _eo_cls = detail::create_class<D, E...> (eina::make_index_sequence<sizeof...(E)>());
+      _eo_raw = eo_add_ref(_eo_cls, _p._eo_raw, detail::inherit_constructor(this), ::efl::eolian::call_ctors(args...));
+      ::efl::eolian::register_ev_del_free_callback(_eo_raw, args...);
   }
+
+  template<typename... Args>
+   inherit(Args&& ... args)
+     : inherit(::efl::eo::parent = nullptr, std::forward<Args>(args)...)
+   {}
+   //@}
 
    /// @brief Class destructor.
    ///

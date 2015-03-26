@@ -12,10 +12,7 @@ am__v_EOLCXX_0 = @echo "  EOLCXX  " $@;
 
 SUFFIXES += .eo.hh
 
-%.eo.hh: %.eo $(_EOLIAN_CXX_DEP)
+%.eo.impl.hh %.eo.hh: %.eo $(_EOLIAN_CXX_DEP)
 	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -o $@ $<
-
-%.eo.impl.hh: %.eo.hh $(_EOLIAN_CXX_DEP)
-	true $<
 
 CLEANFILES += $(BUILT_SOURCES)

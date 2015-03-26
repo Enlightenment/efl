@@ -230,7 +230,7 @@ eo_class_declarations_generator(std::ostream& out, eo_class const& cls)
        << class_inheritance(cls)
        << '{' << endl
        << functors_constructor_methods(cls)
-       << constructor_with_constructor_methods(cls)
+       << constructors_with_constructor_methods(cls)
        << constructor_eo(cls)
        << copy_constructor(cls)
        << destructor(cls)

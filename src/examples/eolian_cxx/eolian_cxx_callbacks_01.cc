@@ -28,7 +28,7 @@ example_callbacks()
 {
    int count = 0;
    efl::ecore::poller poller(
-     poller.ecore_poller_constructor(ECORE_POLLER_CORE, 1,
+     poller.constructor(ECORE_POLLER_CORE, 1,
        [&count, &poller]
        {
           if (++count == 5)

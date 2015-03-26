@@ -19,13 +19,13 @@ main()
 
    int r, g, b;
    ::colourable obj1(
-     obj1.colourable_rgb_24bits_constructor(0x123456)
+     obj1.rgb_24bits_constructor(0x123456)
    );
    obj1.colour_set(0xc0ffee);
    obj1.composite_colour_get(&r, &g, &b);
 
    ::colourablesquare obj2(
-     obj2.colourablesquare_size_constructor(10)
+     obj2.size_constructor(10)
    );
    obj2.composite_colour_set(r, g, b);
    obj2.size_set(11);

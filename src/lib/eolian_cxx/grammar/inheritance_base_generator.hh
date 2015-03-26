@@ -315,73 +315,6 @@ operator<<(std::ostream& out, inheritance_base_operations const& x)
    return out;
 }
 
-struct inheritance_call_constructor_arguments
-{
-   parameters_container_type const& _params;
-   inheritance_call_constructor_arguments(parameters_container_type const& params)
-     : _params(params)
-   {}
-};
-
-inline std::ostream&
-operator<<(std::ostream& out, inheritance_call_constructor_arguments const& x)
-{
-   parameters_container_type::size_type i, n = x._params.size();
-   for (i=0; i<n; i++)
-     {
-        if(i!=0) out << ", ";
-        out << "::efl::eolian::to_c(args.get<" << i << ">())";
-     }
-   return out;
-}
-
-struct inheritance_call_constructors
-{
-   eo_class const& _cls;
-   inheritance_call_constructors(eo_class const& cls) : _cls(cls) {}
-};
-
-inline std::ostream&
-operator<<(std::ostream& out, inheritance_call_constructors const& x)
-{
-   constructors_container_type::const_iterator it,
-     first = x._cls.constructors.begin(),
-     last = x._cls.constructors.end();
-   for (it = first; it != last; ++it)
-     {
-        eo_constructor const& ctor = *it;
-        out << "inline void" << endl
-            << "call_constructor(::efl::eo::detail::tag< "
-            << full_name(x._cls) << " >" << endl
-            << tab(5) << ", Eo* eo, Eo_Class const* cls EINA_UNUSED," << endl
-            << tab(5) << "::efl::eo::detail::args_class<"
-            << full_name(x._cls)
-            << ", ::std::tuple<"
-            << parameters_types(ctor.params)
-            << "> > const& args)" << endl
-            << "{" << endl
-            << tab(1) << "(void)args;" << endl
-            << tab(1)
-            << "eo_do_super(eo, cls, ::" << ctor.name
-            << "(" << inheritance_call_constructor_arguments(ctor.params)
-            << "));" << endl
-            << "}" << endl << endl;
-     }
-
-   out << "inline void" << endl
-       << "call_constructor(::efl::eo::detail::tag< "
-       << full_name(x._cls) << " >" << endl
-       << tab(5) << ", Eo* eo, Eo_Class const* cls EINA_UNUSED," << endl
-       << tab(5) << "::efl::eo::detail::args_class<"
-       << full_name(x._cls)
-       << ", ::std::tuple<::efl::eo::parent_type> > const& args)" << endl
-       << "{" << endl
-       << tab(1) << "eo_do(eo, ::eo_parent_set(args.get<0>()._eo_raw));" << endl
-       << "}" << endl << endl;
-
-   return out;
-}
-
 struct inheritance_eo_class_getter
 {
    eo_class const& _cls;
@@ -410,7 +343,6 @@ eo_inheritance_detail_generator(std::ostream& out, eo_class const& cls)
          << inheritance_base_operations(cls) << endl
          << inheritance_base_operations_size_scopes(cls)
          << inheritance_operations_description(cls)
-         << inheritance_call_constructors(cls)
          << inheritance_eo_class_getter(cls)
          <<  "} } }" << endl;
 }
