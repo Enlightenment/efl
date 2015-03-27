@@ -531,11 +531,11 @@ _eina_find_eol(const char *start, int boundary, const char *end)
         if (cr)
           {
              if (lf && lf < cr)
-               return lf + 1;
-             return cr + 1;
+               return lf;
+             return cr;
           }
         else if (lf)
-           return lf + 1;
+           return lf;
 
         start += chunk;
         boundary = 4096;
@@ -552,6 +552,8 @@ _eina_file_map_lines_iterator_next(Eina_Lines_Iterator *it, void **data)
 
    if (it->current.end >= it->end)
      return EINA_FALSE;
+   if (it->current.index == 0)
+     it->current.index++;
 
    match = *it->current.end;
    while ((*it->current.end == '\n' || *it->current.end == '\r')
@@ -561,7 +563,6 @@ _eina_file_map_lines_iterator_next(Eina_Lines_Iterator *it, void **data)
           it->current.index++;
         it->current.end++;
      }
-   it->current.index++;
 
    if (it->current.end == it->end)
      return EINA_FALSE;
@@ -575,7 +576,7 @@ _eina_file_map_lines_iterator_next(Eina_Lines_Iterator *it, void **data)
    it->current.start = it->current.end;
 
    it->current.end = eol;
-   it->current.length = eol - it->current.start - 1;
+   it->current.length = eol - it->current.start;
 
    *data = &it->current;
    return EINA_TRUE;

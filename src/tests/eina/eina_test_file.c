@@ -393,7 +393,7 @@ START_TEST(eina_file_map_new_test)
 END_TEST
 
 static const char *virtual_file_data = "this\n"
-  "is a test for the sake of testing\n"
+  "is a test for the sake of testing\r\n"
   "it should detect all the line of this\n"
   "\n"
   "\r\n"
