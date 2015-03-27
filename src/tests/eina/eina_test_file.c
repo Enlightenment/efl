@@ -407,8 +407,7 @@ START_TEST(eina_test_file_virtualize)
    Eina_Iterator *it;
    Eina_File_Line *ln;
    void *map;
-   const unsigned int check[] = { 1, 2, 3, 6, 7 };
-   int i = 0;
+   unsigned int i = 0;
 
    eina_init();
 
@@ -430,13 +429,16 @@ START_TEST(eina_test_file_virtualize)
    it = eina_file_map_lines(f);
    EINA_ITERATOR_FOREACH(it, ln)
      {
-        fail_if(ln->index != check[i]);
         i++;
+        fail_if(ln->index != i);
+
+        if (i == 4 || i == 5)
+          fail_if(ln->length != 0);
      }
    fail_if(eina_iterator_container_get(it) != f);
    eina_iterator_free(it);
 
-   fail_if(i != 5);
+   fail_if(i != 7);
 
    eina_file_close(f);
 

@@ -552,17 +552,18 @@ _eina_file_map_lines_iterator_next(Eina_Lines_Iterator *it, void **data)
 
    if (it->current.end >= it->end)
      return EINA_FALSE;
-   if (it->current.index == 0)
-     it->current.index++;
 
    match = *it->current.end;
+   if (it->current.index > 0)
+     it->current.end++;
    while ((*it->current.end == '\n' || *it->current.end == '\r')
           && it->current.end < it->end)
      {
         if (match == *it->current.end)
-          it->current.index++;
+          break;
         it->current.end++;
      }
+   it->current.index++;
 
    if (it->current.end == it->end)
      return EINA_FALSE;
