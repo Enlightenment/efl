@@ -933,10 +933,10 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_obj, const char *filename, const cha
    snprintf(tmp, PATH_MAX, "%s", filename);
 
    if (upload_dir)
-     snprintf(url, sizeof(url), "ftp://%s/%s/%s", url_con->url,
+     snprintf(url, sizeof(url), "%s/%s/%s", url_con->url,
               upload_dir, basename(tmp));
    else
-     snprintf(url, sizeof(url), "ftp://%s/%s", url_con->url,
+     snprintf(url, sizeof(url), "%s/%s", url_con->url,
               basename(tmp));
 
    if (!ecore_con_url_url_set(url_obj, url))
