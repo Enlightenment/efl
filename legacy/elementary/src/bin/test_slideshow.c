@@ -3,15 +3,6 @@
 
 static Evas_Object *slideshow, *bt_start, *bt_stop;
 static Elm_Slideshow_Item_Class itc;
-static const char *img1 = PACKAGE_DATA_DIR"/images/logo.png";
-static const char *img2 = PACKAGE_DATA_DIR"/images/plant_01.jpg";
-static const char *img3 = PACKAGE_DATA_DIR"/images/rock_01.jpg";
-static const char *img4 = PACKAGE_DATA_DIR"/images/rock_02.jpg";
-static const char *img5 = PACKAGE_DATA_DIR"/images/sky_01.jpg";
-static const char *img6 = PACKAGE_DATA_DIR"/images/sky_04.jpg";
-static const char *img7 = PACKAGE_DATA_DIR"/images/wood_01.jpg";
-static const char *img8 = PACKAGE_DATA_DIR"/images/mystrale.jpg";
-static const char *img9 = PACKAGE_DATA_DIR"/images/mystrale_2.jpg";
 
 static void
 _notify_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -111,6 +102,20 @@ test_slideshow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    const Eina_List *l;
    const char *transition, *layout;
    Elm_Object_Item *slide_last_it;
+   unsigned long i;
+
+   const char *imgs[] = {
+     "logo.png",
+     "rock_01.jpg",
+     "rock_02.jpg",
+     "sky_01.jpg",
+     "sky_04.jpg",
+     "wood_01.jpg",
+     "mystrale.jpg",
+     "mystrale_2.jpg",
+     NULL
+   };
+
 
    win = elm_win_util_standard_add("slideshow", "Slideshow");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -124,15 +129,13 @@ test_slideshow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    itc.func.get = _get;
    itc.func.del = NULL;
 
-   elm_slideshow_item_add(slideshow, &itc, img1);
-   elm_slideshow_item_add(slideshow, &itc, img2);
-   elm_slideshow_item_add(slideshow, &itc, img3);
-   elm_slideshow_item_add(slideshow, &itc, img4);
-   elm_slideshow_item_add(slideshow, &itc, img9);
-   elm_slideshow_item_add(slideshow, &itc, img5);
-   elm_slideshow_item_add(slideshow, &itc, img6);
-   elm_slideshow_item_add(slideshow, &itc, img7);
-   slide_last_it = elm_slideshow_item_add(slideshow, &itc, img8);
+   for (i = 0; imgs[i]; i++)
+     {
+        const char *img = eina_stringshare_printf("%s/images/%s", elm_app_data_dir_get(), imgs[i]);
+        printf("Img : %s\n", img);
+        slide_last_it = elm_slideshow_item_add(slideshow, &itc, img);
+     }
+
    evas_object_smart_callback_add(slideshow, "transition,end", _slide_transition, slide_last_it);
 
    notify = elm_notify_add(win);
