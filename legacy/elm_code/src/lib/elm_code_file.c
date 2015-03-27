@@ -135,6 +135,7 @@ EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path)
           ret->line_ending = _elm_code_line_ending_get(line->start + line->length);
 
         /* Working around the issue that eina_file_map_lines does not trigger an item for empty lines */
+        /* This was fixed in 1.13.99 so once we depend on 1.14 minimum this can go */
         while (lastindex < line->index - 1)
           {
              ecl = _elm_code_file_line_blank_create(ret, ++lastindex, NULL);
