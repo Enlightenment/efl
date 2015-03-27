@@ -12,6 +12,8 @@ elm_code_line_free(Elm_Code_Line *line)
    if (!line)
      return;
 
+   if (line->status_text)
+     free((char *)line->status_text);
    if (line->modified)
      free(line->modified);
 

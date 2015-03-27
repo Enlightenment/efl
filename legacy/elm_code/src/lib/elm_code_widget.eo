@@ -179,6 +179,7 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
    }
    events {
       line,clicked;
+      line,gutter,clicked;
       cursor,changed;
       changed,user;
       selection,changed;

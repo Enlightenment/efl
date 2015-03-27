@@ -2,7 +2,7 @@
 # include "config.h"
 #endif
 
-#include <Elm_Code.h>
+#include "Elm_Code.h"
 #include "elm_code_private.h"
 
 typedef enum {
@@ -543,11 +543,12 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
 static Eina_Bool
 _elm_code_widget_position_at_coordinates_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd,
                                              Evas_Coord x, Evas_Coord y,
-                                             unsigned int *row, unsigned int *col)
+                                             unsigned int *row, int *col)
 {
    Elm_Code_Line *line;
    Evas_Coord ox, oy, sx, sy;
    int cw, ch;
+   unsigned int number;
 
    evas_object_geometry_get(widget, &ox, &oy, NULL, NULL);
    elm_scroller_region_get(pd->scroller, &sx, &sy, NULL, NULL);
@@ -555,53 +556,62 @@ _elm_code_widget_position_at_coordinates_get(Elm_Code_Widget *widget, Elm_Code_W
    y = y + sy - oy;
 
    evas_object_textgrid_cell_size_get(pd->grid, &cw, &ch);
+   number = ((double) y / ch) + 1;
    if (col)
      *col = ((double) x / cw) - elm_code_widget_text_left_gutter_width_get(widget) + 1;
    if (row)
-     *row = ((double) y / ch) + 1;
+     *row = number;
 
-   line = elm_code_file_line_get(pd->code->file, *row);
+   line = elm_code_file_line_get(pd->code->file, number);
    return !!line;
 }
 
 static void
-_elm_code_widget_clicked_editable_cb(Elm_Code_Widget *widget, Evas_Coord x, Evas_Coord y)
+_elm_code_widget_clicked_gutter_cb(Elm_Code_Widget *widget, unsigned int row)
 {
    Elm_Code_Widget_Data *pd;
    Elm_Code_Line *line;
-   unsigned int row, col;
-   Eina_Bool hasline;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   hasline = _elm_code_widget_position_at_coordinates_get(widget, pd, x, y, &row, &col);
-   if (!hasline)
+   line = elm_code_file_line_get(pd->code->file, row);
+   if (!line)
      return;
 
+   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_LINE_GUTTER_CLICKED, line));
+}
+
+static void
+_elm_code_widget_clicked_editable_cb(Elm_Code_Widget *widget, unsigned int row, unsigned int col)
+{
+   Elm_Code_Widget_Data *pd;
+   Elm_Code_Line *line;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
    line = elm_code_file_line_get(pd->code->file, row);
-   if (col > (unsigned int) line->unicode_length + 1)
+   if (!line)
+     return;
+
+   if (col > line->unicode_length + 1)
      col = line->unicode_length + 1;
-   else if (col == 0)
+   else if (col <= 0)
      col = 1;
 
    _elm_code_widget_cursor_move(widget, pd, col, row, EINA_FALSE);
 }
 
 static void
-_elm_code_widget_clicked_readonly_cb(Elm_Code_Widget *widget, Evas_Coord x, Evas_Coord y)
+_elm_code_widget_clicked_readonly_cb(Elm_Code_Widget *widget, unsigned int row)
 {
    Elm_Code_Widget_Data *pd;
    Elm_Code_Line *line;
-   unsigned int row;
-   Eina_Bool hasline;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-
-   hasline = _elm_code_widget_position_at_coordinates_get(widget, pd, x, y, &row, NULL);
-   if (!hasline)
+   line = elm_code_file_line_get(pd->code->file, row);
+   if (!line)
      return;
 
-   line = elm_code_file_line_get(pd->code->file, row);
    eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_LINE_CLICKED, line));
 }
 
@@ -612,7 +622,8 @@ _elm_code_widget_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    Elm_Code_Widget *widget;
    Elm_Code_Widget_Data *pd;
    Evas_Event_Mouse_Down *event;
-   unsigned int row, col;
+   unsigned int row;
+   int col;
 
    widget = (Elm_Code_Widget *)data;
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
@@ -623,7 +634,8 @@ _elm_code_widget_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
      return;
 
    _elm_code_widget_position_at_coordinates_get(widget, pd, event->canvas.x, event->canvas.y, &row, &col);
-   elm_code_widget_selection_start(widget, row, col);
+   if (col > 0)
+     elm_code_widget_selection_start(widget, row, col);
 }
 
 static void
@@ -633,7 +645,8 @@ _elm_code_widget_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    Elm_Code_Widget *widget;
    Elm_Code_Widget_Data *pd;
    Evas_Event_Mouse_Move *event;
-   unsigned int row, col;
+   unsigned int row;
+   int col;
 
    widget = (Elm_Code_Widget *)data;
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
@@ -655,6 +668,9 @@ _elm_code_widget_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
    Elm_Code_Widget_Data *pd;
    Evas_Event_Mouse_Up *event;
    Evas_Coord x, y;
+   unsigned int row;
+   int col;
+   Eina_Bool hasline;
 
    widget = (Elm_Code_Widget *)data;
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
@@ -671,10 +687,16 @@ _elm_code_widget_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
 
    x = event->canvas.x;
    y = event->canvas.y;
-   if (pd->editable)
-     _elm_code_widget_clicked_editable_cb(widget, x, y);
+   hasline = _elm_code_widget_position_at_coordinates_get(widget, pd, x, y, &row, &col);
+   if (!hasline)
+     return;
+
+   if (col <= 0)
+     _elm_code_widget_clicked_gutter_cb(widget, row);
+   else if (pd->editable)
+     _elm_code_widget_clicked_editable_cb(widget, row, (unsigned int) col);
    else
-     _elm_code_widget_clicked_readonly_cb(widget, x, y);
+     _elm_code_widget_clicked_readonly_cb(widget, row);
 }
 
 static void
