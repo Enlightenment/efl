@@ -110,7 +110,7 @@ _elm_code_widget_selection_delete_single(Elm_Code_Widget_Data *pd)
    unsigned int old_length, length;
    char *content;
 
-   if (pd->selection->end_col <= pd->selection->start_col)
+   if (pd->selection->end_col < pd->selection->start_col)
      return;
 
    line = elm_code_file_line_get(pd->code->file, pd->selection->start_line);
