@@ -480,8 +480,6 @@ _indicator_mode_set(Evas_Object *conformant, Elm_Win_Indicator_Mode indmode)
                     sd->landscape_indicator = _create_landscape_indicator(conformant);
 
                   if (!sd->landscape_indicator) return;
-
-                  evas_object_show(sd->landscape_indicator);
                   elm_layout_content_set(conformant, INDICATOR_PART, sd->landscape_indicator);
                }
              else
@@ -490,8 +488,6 @@ _indicator_mode_set(Evas_Object *conformant, Elm_Win_Indicator_Mode indmode)
                     sd->portrait_indicator = _create_portrait_indicator(conformant);
 
                   if (!sd->portrait_indicator) return;
-
-                  evas_object_show(sd->portrait_indicator);
                   elm_layout_content_set(conformant, INDICATOR_PART, sd->portrait_indicator);
                }
 
