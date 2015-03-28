@@ -771,6 +771,20 @@ _elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
    _elm_code_widget_cursor_move(widget, pd, pd->cursor_col+1, pd->cursor_line, EINA_TRUE);
 }
 
+static Eina_Bool
+_elm_code_widget_delete_selection(Elm_Code_Widget *widget)
+{
+   Elm_Code_Widget_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (!pd->selection)
+     return EINA_FALSE;
+
+   elm_code_widget_selection_delete(widget);
+   return EINA_TRUE;
+}
+
 static void
 _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text, int length)
 {
@@ -778,6 +792,7 @@ _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text
    Elm_Code_Line *line;
    unsigned int row, col;
 
+   _elm_code_widget_delete_selection(widget);
    eo_do(widget,
          code = elm_code_widget_code_get(),
          elm_code_widget_cursor_position_get(&col, &row));
@@ -798,6 +813,7 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    unsigned int row, col, length;
    char *content;
 
+   _elm_code_widget_delete_selection(widget);
    eo_do(widget,
          code = elm_code_widget_code_get(),
          elm_code_widget_cursor_position_get(&col, &row));
@@ -870,6 +886,9 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
    Elm_Code_Line *line;
    unsigned int row, col;
 
+   if (_elm_code_widget_delete_selection(widget))
+     return;
+
    eo_do(widget,
          code = elm_code_widget_code_get(),
          elm_code_widget_cursor_position_get(&col, &row));
@@ -899,6 +918,9 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
    Elm_Code *code;
    Elm_Code_Line *line;
    unsigned int row, col;
+
+   if (_elm_code_widget_delete_selection(widget))
+     return;
 
    eo_do(widget,
          code = elm_code_widget_code_get(),

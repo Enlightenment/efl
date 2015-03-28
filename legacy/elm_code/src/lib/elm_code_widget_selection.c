@@ -102,6 +102,77 @@ elm_code_widget_selection_clear(Evas_Object *widget)
    eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget));
 }
 
+static void
+_elm_code_widget_selection_delete_single(Elm_Code_Widget_Data *pd)
+{
+   Elm_Code_Line *line;
+   const char *old;
+   unsigned int old_length, length;
+   char *content;
+
+   if (pd->selection->end_col <= pd->selection->start_col)
+     return;
+
+   line = elm_code_file_line_get(pd->code->file, pd->selection->start_line);
+   old = elm_code_line_text_get(line, &old_length);
+   length = line->length - (pd->selection->end_col - pd->selection->start_col);
+   content = malloc(sizeof(char) * (length + 1));
+   snprintf(content, pd->selection->start_col, old);
+   snprintf(content + pd->selection->start_col - 1, old_length - pd->selection->end_col + 1,
+            old + pd->selection->end_col);
+   elm_code_line_text_set(line, content, length);
+   free(content);
+}
+
+static void
+_elm_code_widget_selection_delete_multi(Elm_Code_Widget_Data *pd)
+{
+   Elm_Code_Line *line;
+   const char *first, *last;
+   unsigned int last_length, length, i;
+   char *content;
+
+   if (pd->selection->end_line <= pd->selection->start_line)
+     return;
+
+   line = elm_code_file_line_get(pd->code->file, pd->selection->start_line);
+   first = elm_code_line_text_get(line, NULL);
+   line = elm_code_file_line_get(pd->code->file, pd->selection->end_line);
+   last = elm_code_line_text_get(line, &last_length);
+   length = pd->selection->start_col + last_length - pd->selection->end_col + 1;
+   content = malloc(sizeof(char) * (length + 1));
+   snprintf(content, pd->selection->start_col, first);
+   snprintf(content + pd->selection->start_col - 1, last_length - pd->selection->end_col + 1,
+            last + pd->selection->end_col);
+
+   for (i = line->number; i > pd->selection->start_line; i--)
+     elm_code_file_line_remove(pd->code->file, i);
+
+   line = elm_code_file_line_get(pd->code->file, pd->selection->start_line);
+   elm_code_line_text_set(line, content, length);
+   free(content);
+}
+
+EAPI void
+elm_code_widget_selection_delete(Evas_Object *widget)
+{
+   Elm_Code_Widget_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (!pd->selection)
+     return;
+
+   if (pd->selection->start_line == pd->selection->end_line)
+     _elm_code_widget_selection_delete_single(pd);
+   else
+     _elm_code_widget_selection_delete_multi(pd);
+
+   free(pd->selection);
+   pd->selection = NULL;
+   eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget));
+}
+
 static char *
 _elm_code_widget_selection_text_single_get(Elm_Code_Widget_Data *pd)
 {
@@ -178,6 +249,4 @@ elm_code_widget_selection_text_get(Evas_Object *widget)
      return _elm_code_widget_selection_text_single_get(pd);
    else
      return _elm_code_widget_selection_text_multi_get(pd);
-
-   return strdup("TODO");
 }
