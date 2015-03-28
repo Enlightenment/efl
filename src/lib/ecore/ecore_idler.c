@@ -87,7 +87,7 @@ static void *
 _ecore_idler_del(Ecore_Idler *obj)
 {
    Ecore_Idler_Data *idler = eo_data_scope_get(obj, MY_CLASS);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(idler, NULL);
+   if (!idler) return NULL;
    EINA_SAFETY_ON_TRUE_RETURN_VAL(idler->delete_me, NULL);
    idler->delete_me = 1;
    idlers_delete_me = 1;
