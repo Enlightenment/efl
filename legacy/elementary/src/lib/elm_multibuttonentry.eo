@@ -280,6 +280,7 @@ class Elm_Multibuttonentry (Elm_Layout)
       expanded;
       contracted;
       expand,state,changed;
+      longpressed;
    }
 
 }

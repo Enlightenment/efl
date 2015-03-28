@@ -37,6 +37,7 @@
  * - @c "contracted" - when multi-button entry is contracted.
  * - @c "expand,state,changed" - when shrink mode state of
  *       multi-button entry is changed.
+ * - @c "longpressed" - when multi-button entry is pressed for a long time.
  *
  * Default text parts of the multi-button entry widget that you can use are:
  * @li "default" - A label of the multi-button entry

@@ -28,6 +28,7 @@ static const char SIG_UNFOCUSED[] = "unfocused";
 static const char SIG_EXPANDED[] = "expanded";
 static const char SIG_CONTRACTED[] = "contracted";
 static const char SIG_EXPAND_STATE_CHANGED[] = "expand,state,changed";
+static const char SIG_LONGPRESSED[] = "longpressed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_ITEM_SELECTED, ""},
    {SIG_ITEM_ADDED, ""},
@@ -39,6 +40,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_EXPANDED, ""},
    {SIG_CONTRACTED, ""},
    {SIG_EXPAND_STATE_CHANGED, ""},
+   {SIG_LONGPRESSED, ""},
    {NULL, NULL}
 };
 
@@ -513,6 +515,51 @@ _on_item_deleted(void *data,
      }
 }
 
+static Eina_Bool
+_long_press_cb(void *data)
+{
+   Elm_Multibuttonentry_Item_Data *it = data;
+
+   ELM_MULTIBUTTONENTRY_DATA_GET(WIDGET(it), sd);
+
+   sd->longpress_timer = NULL;
+
+   evas_object_smart_callback_call(WIDGET(it), SIG_LONGPRESSED, EO_OBJ(it));
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_mouse_down_cb(void  *data,
+               Evas *evas EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED,
+               void *event_info)
+{
+   Elm_Multibuttonentry_Item_Data *it = data;
+   Evas_Event_Mouse_Down *ev = event_info;
+
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(WIDGET(it), sd);
+
+   if (ev->button != 1) return;
+
+   ecore_timer_del(sd->longpress_timer);
+   sd->longpress_timer = ecore_timer_add
+      (_elm_config->longpress_timeout, _long_press_cb, it);
+}
+
+static void
+_mouse_up_cb(void *data,
+             Evas *evas EINA_UNUSED,
+             Evas_Object *obj EINA_UNUSED,
+             void *event_info EINA_UNUSED)
+{
+   Elm_Multibuttonentry_Item_Data *it = data;
+
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(WIDGET(it), sd);
+
+   ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+}
+
 EOLIAN static void
 _elm_multibuttonentry_item_elm_widget_item_signal_emit(Eo *eo_item EINA_UNUSED,
                                                        Elm_Multibuttonentry_Item_Data *item,
@@ -664,6 +711,13 @@ _item_new(Elm_Multibuttonentry_Data *sd,
      (VIEW(item), "mouse,clicked,1", "*", _on_item_clicked, EO_OBJ(item));
    elm_layout_signal_callback_add
      (VIEW(item), "elm,deleted", "elm", _on_item_deleted, EO_OBJ(item));
+   evas_object_event_callback_add
+      (VIEW(item),
+       EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, item);
+   evas_object_event_callback_add
+      (VIEW(item),
+       EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, item);
+
    evas_object_show(VIEW(item));
 
    evas_object_smart_calculate(VIEW(item));
@@ -1466,6 +1520,7 @@ _elm_multibuttonentry_evas_object_smart_del(Eo *obj, Elm_Multibuttonentry_Data *
    evas_object_del(sd->label);
    evas_object_del(sd->guide_text);
    evas_object_del(sd->end);
+   ecore_timer_del(sd->longpress_timer);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
