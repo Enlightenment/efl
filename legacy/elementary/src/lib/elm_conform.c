@@ -499,14 +499,7 @@ _indicator_mode_set(Evas_Object *conformant, Elm_Win_Indicator_Mode indmode)
         elm_object_signal_emit(conformant, "elm,state,indicator,show", "elm");
      }
    else
-     {
-        old_indi = elm_layout_content_get(conformant, INDICATOR_PART);
-        if (old_indi)
-          {
-             evas_object_hide(old_indi);
-          }
-        elm_object_signal_emit(conformant, "elm,state,indicator,hide", "elm");
-     }
+     elm_object_signal_emit(conformant, "elm,state,indicator,hide", "elm");
 }
 
 static void
