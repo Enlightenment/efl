@@ -250,3 +250,72 @@ elm_code_widget_selection_text_get(Evas_Object *widget)
    else
      return _elm_code_widget_selection_text_multi_get(pd);
 }
+
+static void
+_selection_loss_cb(void *data, Elm_Sel_Type selection EINA_UNUSED)
+{
+   Elm_Code_Widget *widget;
+
+   widget = (Elm_Code_Widget *)data;
+// TODO we need to know whih selection we are clearing!
+//   elm_code_widget_selection_clear(widget);
+}
+
+EAPI void
+elm_code_widget_selection_cut(Evas_Object *widget)
+{
+   char *text;
+
+   text = elm_code_widget_selection_text_get(widget);
+   elm_cnp_selection_set(widget, ELM_SEL_TYPE_CLIPBOARD, ELM_SEL_FORMAT_TEXT, text, strlen(text));
+   elm_cnp_selection_loss_callback_set(widget, ELM_SEL_TYPE_CLIPBOARD, _selection_loss_cb, widget);
+   free(text);
+
+   elm_code_widget_selection_delete(widget);
+}
+
+EAPI void
+elm_code_widget_selection_copy(Evas_Object *widget)
+{
+   char *text;
+
+   text = elm_code_widget_selection_text_get(widget);
+   elm_cnp_selection_set(widget, ELM_SEL_TYPE_CLIPBOARD, ELM_SEL_FORMAT_TEXT, text, strlen(text));
+   elm_cnp_selection_loss_callback_set(widget, ELM_SEL_TYPE_CLIPBOARD, _selection_loss_cb, widget);
+   free(text);
+}
+
+static Eina_Bool
+_selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data *ev)
+{
+   Elm_Code *code;
+   Elm_Code_Widget *widget;
+   Elm_Code_Line *line;
+   unsigned int row, col;
+
+   widget = (Elm_Code_Widget *)data;
+   if (ev->format != ELM_SEL_FORMAT_TEXT)
+     return EINA_TRUE;
+
+   if (ev->len <= 0)
+     return EINA_TRUE;
+
+   eo_do(widget,
+         code = elm_code_widget_code_get(),
+         elm_code_widget_cursor_position_get(&col, &row));
+   line = elm_code_file_line_get(code->file, row);
+
+   elm_code_line_text_insert(line, col, ev->data, ev->len - 1);
+
+   eo_do(widget,
+         elm_code_widget_cursor_position_set(col + ev->len - 1, row));
+   return EINA_TRUE;
+}
+
+EAPI void
+elm_code_widget_selection_paste(Evas_Object *widget)
+{
+   elm_code_widget_selection_delete(widget);
+
+   elm_cnp_selection_get(widget, ELM_SEL_TYPE_CLIPBOARD, ELM_SEL_FORMAT_TEXT, _selection_paste_cb, widget);
+}

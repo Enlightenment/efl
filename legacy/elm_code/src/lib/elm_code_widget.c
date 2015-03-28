@@ -943,6 +943,20 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
 }
 
 static void
+_elm_code_widget_control_key_down_cb(Elm_Code_Widget *widget, const char *key)
+{
+   if (!key)
+     return;
+
+   if (!strcmp("c", key))
+     elm_code_widget_selection_copy(widget);
+   else if (!strcmp("v", key))
+     elm_code_widget_selection_paste(widget);
+   else if (!strcmp("x", key))
+     elm_code_widget_selection_cut(widget);
+}
+
+static void
 _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
                               Evas_Object *obj EINA_UNUSED, void *event_info)
 {
@@ -958,6 +972,12 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
      return;
 
    _elm_code_widget_update_focus_directions((Elm_Code_Widget *)obj);
+
+   if (evas_key_modifier_is_set(ev->modifiers, "Control"))
+     {
+        _elm_code_widget_control_key_down_cb(widget, ev->key);
+        return;
+     }
 
    if (!strcmp(ev->key, "Up"))
      _elm_code_widget_cursor_move_up(widget);

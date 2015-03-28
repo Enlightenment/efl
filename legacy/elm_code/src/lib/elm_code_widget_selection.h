@@ -25,6 +25,10 @@ EAPI void elm_code_widget_selection_delete(Evas_Object *widget);
 
 EAPI char *elm_code_widget_selection_text_get(Evas_Object *widget);
 
+EAPI void elm_code_widget_selection_cut(Evas_Object *widget);
+EAPI void elm_code_widget_selection_copy(Evas_Object *widget);
+EAPI void elm_code_widget_selection_paste(Evas_Object *widget);
+
 /**
  * @}
  */
