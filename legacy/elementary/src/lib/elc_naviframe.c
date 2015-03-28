@@ -1122,7 +1122,7 @@ _on_item_show_finished(void *data,
    if (sd->freeze_events)
      evas_object_freeze_events_set(VIEW(it), EINA_FALSE);
 
-   evas_object_smart_callback_call(WIDGET(it), SIG_TRANSITION_FINISHED, data);
+   evas_object_smart_callback_call(WIDGET(it), SIG_TRANSITION_FINISHED, EO_OBJ(it));
 }
 
 static void
