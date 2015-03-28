@@ -518,7 +518,9 @@ test_fileselector(void *data       EINA_UNUSED,
 {
    Evas_Object *win, *fs, *box, *vbox, *sep;
    char * home_env;
+#ifdef _WIN32
    char win_home_env[PATH_MAX];
+#endif
 
    /* Set the locale according to the system pref.
     * If you don't do so the file selector will order the files list in

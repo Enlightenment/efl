@@ -92,7 +92,9 @@ _fill_list(Evas_Object *obj, Elm_Genlist_Item_Class *itc)
    Eina_List *l;
    char *real;
    char *home_env = NULL;
+#ifdef _WIN32
    char win_home_env[PATH_MAX];
+#endif
    unsigned int x = 0;
 
    if (!dirs)
