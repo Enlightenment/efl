@@ -106,7 +106,6 @@ _elm_code_parser_diff_trim_leading(Elm_Code_Line *line, unsigned int count)
      }
 
    line->length -= count;
-   line->unicode_length -= count;
 }
 
 static void

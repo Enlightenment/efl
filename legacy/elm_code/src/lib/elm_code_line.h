@@ -24,7 +24,7 @@ typedef struct _Elm_Code_Line
    Elm_Code_File *file;
 
    const char *content;
-   unsigned int length, unicode_length;
+   unsigned int length;
    unsigned int number;
    char *modified;
 
@@ -36,8 +36,6 @@ typedef struct _Elm_Code_Line
 } Elm_Code_Line;
 
 EAPI void elm_code_line_free(Elm_Code_Line *line);
-
-EAPI unsigned int elm_code_line_utf8_length_get(Elm_Code_Line *line);
 
 /**
  * @brief Line markup functions.

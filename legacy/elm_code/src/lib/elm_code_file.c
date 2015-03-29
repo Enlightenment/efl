@@ -52,7 +52,6 @@ static void _elm_code_file_line_insert_data(Elm_Code_File *file, const char *con
         line->modified[length] = 0;
         line->length = length;
      }
-   line->unicode_length = elm_code_text_unicode_strlen(content, length);
 
    if (row == 1)
      file->lines = eina_list_prepend(file->lines, line);

@@ -59,6 +59,26 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
             double y; /*@ The vertical gravity of the widget's scroller - valid values are 0.0 and 1.0 */
          }
       }
+      tabstop {
+         set {
+            /*@
+            Set the width of a tab stop, used purely for visual layout of tab characters.
+
+            Recommended value is between 2 and 8.
+
+            @ingroup Layout */
+         }
+         get {
+            /*@
+            Get the current width of a tab stop.
+            This is used to determine where characters after a tab should appear in the line..
+
+            @ingroup Layout */
+         }
+         values {
+            uint tabstop; /*@ Maximum width of a tab character */
+         }
+      }
       editable {
          set {
             /*@

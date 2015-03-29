@@ -51,6 +51,8 @@ _elm_code_widget_eo_base_constructor(Eo *obj, Elm_Code_Widget_Data *pd)
 
    pd->cursor_line = 1;
    pd->cursor_col = 1;
+
+   pd->tabstop = 8;
 }
 
 EOLIAN static Eo *
@@ -92,6 +94,7 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
    Eina_List *item;
    Evas_Coord ww, wh, old_width, old_height;
    int w, h, cw, ch, gutter;
+   unsigned int line_width;
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
@@ -108,8 +111,11 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
    w = 0;
    h = elm_code_file_lines_get(pd->code->file);
    EINA_LIST_FOREACH(pd->code->file->lines, item, line)
-     if ((int) line->unicode_length + gutter + 1 > w)
-        w = (int) line->unicode_length + gutter + 1;
+     {
+        line_width = elm_code_line_text_column_width(line, pd->tabstop);
+        if ((int) column_length + gutter + 1 > w)
+          w = (int) column_length + gutter + 1;
+     }
 
    if (w*cw > ww)
      ww = w*cw;
@@ -156,21 +162,21 @@ static void
 _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
                                   unsigned int count, Elm_Code_Line *line)
 {
+   Elm_Code_Widget_Data *pd;
    Eina_List *item;
    Elm_Code_Token *token;
-   const char *content;
    unsigned int start, end, length, offset;
    unsigned int token_start_col, token_end_col;
 
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    offset = elm_code_widget_text_left_gutter_width_get(widget);
    start = offset;
-   content = elm_code_line_text_get(line, NULL);
-   length = line->unicode_length + offset;
+   length = elm_code_line_text_column_width(line, pd->tabstop) + offset;
 
    EINA_LIST_FOREACH(line->tokens, item, token)
      {
-        token_start_col = elm_code_text_unicode_strlen(content, token->start - 1) + offset;
-        token_end_col = elm_code_text_unicode_strlen(content, token->end - 1) + offset;
+        token_start_col = elm_code_line_text_column_width_to_position(line, token->start - 1, pd->tabstop) + offset;
+        token_end_col = elm_code_line_text_column_width_to_position(line, token->end - 1, pd->tabstop) + offset;
 
         if (token_start_col > start)
           _elm_code_widget_fill_line_token(cells, count, start, token_start_col, ELM_CODE_TOKEN_TYPE_DEFAULT);
@@ -235,7 +241,11 @@ _elm_code_widget_fill_whitespace(Elm_Code_Widget *widget, Eina_Unicode character
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    if (!pd->show_whitespace)
-     return;
+     {
+        if (character== '\t')
+          cell->codepoint = 0;
+        return;
+     }
 
    switch (character)
      {
@@ -301,7 +311,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
 {
    char *chr;
    Eina_Unicode unichr;
-   unsigned int length, x;
+   unsigned int length, x, charwidth, i;
    int w, chrpos, gutter;
    Evas_Textgrid_Cell *cells;
    Elm_Code_Widget_Data *pd;
@@ -315,16 +325,25 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    _elm_code_widget_fill_gutter(widget, cells, line->status, line->number);
    _elm_code_widget_fill_line_tokens(widget, cells, w, line);
 
-   length = elm_code_line_utf8_length_get(line);
+   length = elm_code_line_text_column_width(line, pd->tabstop);
    chrpos = 0;
    chr = (char *)elm_code_line_text_get(line, NULL);
 
-   for (x = gutter; x < (unsigned int) w && x < length + gutter; x++)
+   for (x = gutter; x < (unsigned int) w && x < length + gutter; x+=charwidth)
      {
         unichr = eina_unicode_utf8_next_get(chr, &chrpos);
 
         cells[x].codepoint = unichr;
         cells[x].bg = _elm_code_widget_status_type_get(widget, line->status, x - gutter + 1);
+
+        charwidth = 1;
+        if (unichr == '\t')
+          charwidth = elm_code_text_tabwidth_at_position(x - gutter, pd->tabstop);
+        for (i = x + 1; i < x + charwidth; i++)
+          {
+             cells[i].codepoint = 0;
+             cells[i].bg = _elm_code_widget_status_type_get(widget, line->status, x - gutter + 1);
+          }
 
         _elm_code_widget_fill_whitespace(widget, unichr, &cells[x]);
      }
@@ -459,7 +478,7 @@ _elm_code_widget_cursor_key_will_move(Elm_Code_Widget *widget, const char *key)
    else if (!strcmp(key, "Left"))
      return pd->cursor_col > 1;
    else if (!strcmp(key, "Right"))
-     return pd->cursor_col < (unsigned int) line->unicode_length + 1;
+     return pd->cursor_col < elm_code_line_text_column_width(line, pd->tabstop) + 1;
    else
      return EINA_FALSE;
 }
@@ -586,15 +605,17 @@ _elm_code_widget_clicked_editable_cb(Elm_Code_Widget *widget, unsigned int row, 
 {
    Elm_Code_Widget_Data *pd;
    Elm_Code_Line *line;
+   unsigned int column_width;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    line = elm_code_file_line_get(pd->code->file, row);
    if (!line)
      return;
+   column_width = elm_code_line_text_column_width(line, pd->tabstop);
 
-   if (col > line->unicode_length + 1)
-     col = line->unicode_length + 1;
+   if (col > column_width + 1)
+     col = column_width + 1;
    else if (col <= 0)
      col = 1;
 
@@ -704,7 +725,7 @@ _elm_code_widget_cursor_move_up(Elm_Code_Widget *widget)
 {
    Elm_Code_Widget_Data *pd;
    Elm_Code_Line *line;
-   unsigned int row, col;
+   unsigned int row, col, column_width;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    row = pd->cursor_line;
@@ -715,8 +736,9 @@ _elm_code_widget_cursor_move_up(Elm_Code_Widget *widget)
 
    row--;
    line = elm_code_file_line_get(pd->code->file, row);
-   if (col > (unsigned int) line->unicode_length + 1)
-     col = line->unicode_length + 1;
+   column_width = elm_code_line_text_column_width(line, pd->tabstop);
+   if (col > column_width + 1)
+     col = column_width + 1;
 
    _elm_code_widget_cursor_move(widget, pd, col, row, EINA_TRUE);
 }
@@ -726,7 +748,7 @@ _elm_code_widget_cursor_move_down(Elm_Code_Widget *widget)
 {
    Elm_Code_Widget_Data *pd;
    Elm_Code_Line *line;
-   unsigned int row, col;
+   unsigned int row, col, column_width;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    row = pd->cursor_line;
@@ -737,8 +759,9 @@ _elm_code_widget_cursor_move_down(Elm_Code_Widget *widget)
 
    row++;
    line = elm_code_file_line_get(pd->code->file, row);
-   if (col > (unsigned int) line->unicode_length + 1)
-     col = line->unicode_length + 1;
+   column_width = elm_code_line_text_column_width(line, pd->tabstop);
+   if (col > column_width + 1)
+     col = column_width + 1;
 
    _elm_code_widget_cursor_move(widget, pd, col, row, EINA_TRUE);
 }
@@ -765,7 +788,7 @@ _elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
-   if (pd->cursor_col > (unsigned int) line->unicode_length)
+   if (pd->cursor_col > elm_code_line_text_column_width(line, pd->tabstop))
      return;
 
    _elm_code_widget_cursor_move(widget, pd, pd->cursor_col+1, pd->cursor_line, EINA_TRUE);
@@ -918,6 +941,9 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
    Elm_Code *code;
    Elm_Code_Line *line;
    unsigned int row, col;
+   Elm_Code_Widget_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (_elm_code_widget_delete_selection(widget))
      return;
@@ -926,7 +952,7 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
          code = elm_code_widget_code_get(),
          elm_code_widget_cursor_position_get(&col, &row));
    line = elm_code_file_line_get(code->file, row);
-   if (col > line->unicode_length)
+   if (col > elm_code_line_text_column_width(line, pd->tabstop))
      {
         if (row == elm_code_file_lines_get(code->file))
           return;
@@ -1109,6 +1135,19 @@ _elm_code_widget_gravity_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, doub
 {
    *x = pd->gravity_x;
    *y = pd->gravity_y;
+}
+
+EOLIAN static void
+_elm_code_widget_tabstop_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, unsigned int tabstop)
+{
+   pd->tabstop = tabstop;
+   _elm_code_widget_fill(obj);
+}
+
+EOLIAN static unsigned int
+_elm_code_widget_tabstop_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+{
+   return pd->tabstop;
 }
 
 EOLIAN static void

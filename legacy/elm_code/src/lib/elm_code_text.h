@@ -48,7 +48,11 @@ EAPI void elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, 
  *
  */
 
-EAPI unsigned int elm_code_text_unicode_strlen(const char *chars, unsigned int length);
+EAPI unsigned int elm_code_text_tabwidth_at_position(unsigned int position, unsigned int tabstop);
+
+EAPI unsigned int elm_code_line_text_column_width_to_position(Elm_Code_Line *line, unsigned int length, unsigned int tabstop);
+
+EAPI unsigned int elm_code_line_text_column_width(Elm_Code_Line *line, unsigned int tabstop);
 
 /**
  * @}

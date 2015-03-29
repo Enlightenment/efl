@@ -22,6 +22,7 @@ _elm_code_widget_selection_limit(Evas_Object *widget EINA_UNUSED, Elm_Code_Widge
 {
    Elm_Code_Line *line;
    Elm_Code_File *file;
+   unsigned int width;
 
    file = pd->code->file;
 
@@ -29,9 +30,10 @@ _elm_code_widget_selection_limit(Evas_Object *widget EINA_UNUSED, Elm_Code_Widge
      *row = elm_code_file_lines_get(file);
 
    line = elm_code_file_line_get(file, *row);
+   width = elm_code_line_text_column_width(line, pd->tabstop);
 
-   if (*col > line->unicode_length + 1)
-     *col = line->unicode_length + 1;
+   if (*col > width + 1)
+     *col = width + 1;
    if (*col < 1)
      *col = 1;
 }

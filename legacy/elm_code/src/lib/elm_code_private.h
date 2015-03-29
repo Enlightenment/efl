@@ -46,7 +46,7 @@ typedef struct
    unsigned int cursor_line, cursor_col;
    Eina_Bool editable, focussed;
    Eina_Bool show_line_numbers;
-   unsigned int line_width_marker;
+   unsigned int line_width_marker, tabstop;
    Eina_Bool show_whitespace;
 
    Elm_Code_Widget_Selection_Data *selection;
