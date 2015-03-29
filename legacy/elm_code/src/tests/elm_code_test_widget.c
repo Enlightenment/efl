@@ -16,11 +16,20 @@ START_TEST (elm_code_widget_token_render_simple_test)
    Elm_Code_File *file;
    Elm_Code_Line *line;
    Elm_Code *code;
+   Elm_Code_Widget *widget;
+   Evas_Object *win;
+
    int length;
 
    Evas_Textgrid_Cell cells[25];
 
+   elm_init(1, NULL);
    code = elm_code_create();
+
+   win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
+   widget = eo_add(ELM_CODE_WIDGET_CLASS, win,
+                   elm_code_widget_code_set(code));
+
    file = code->file;
    elm_code_file_line_append(file, "some \"test content\", 45", 23, NULL);
    line = elm_code_file_line_get(file, 1);
@@ -29,7 +38,7 @@ START_TEST (elm_code_widget_token_render_simple_test)
    elm_code_line_token_add(line, 6+1, 17+1, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
    elm_code_line_token_add(line, 21+1, 22+1, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
 
-   _elm_code_widget_fill_line_tokens(NULL, cells, length+1, line);
+   _elm_code_widget_fill_line_tokens(widget, cells, length+1, line);
    _assert_cell_type(cells[1], ELM_CODE_TOKEN_TYPE_DEFAULT, 1);
    _assert_cell_type(cells[4], ELM_CODE_TOKEN_TYPE_DEFAULT, 4);
    _assert_cell_type(cells[6], ELM_CODE_TOKEN_TYPE_DEFAULT, 6);
@@ -38,6 +47,7 @@ START_TEST (elm_code_widget_token_render_simple_test)
    _assert_cell_type(cells[23], ELM_CODE_TOKEN_TYPE_COMMENT, 23);
 
    elm_code_free(code);
+   elm_shutdown();
 }
 END_TEST
 
