@@ -113,8 +113,8 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
    EINA_LIST_FOREACH(pd->code->file->lines, item, line)
      {
         line_width = elm_code_line_text_column_width(line, pd->tabstop);
-        if ((int) column_length + gutter + 1 > w)
-          w = (int) column_length + gutter + 1;
+        if ((int) line_width + gutter + 1 > w)
+          w = (int) line_width + gutter + 1;
      }
 
    if (w*cw > ww)
@@ -342,7 +342,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         for (i = x + 1; i < x + charwidth; i++)
           {
              cells[i].codepoint = 0;
-             cells[i].bg = _elm_code_widget_status_type_get(widget, line->status, x - gutter + 1);
+             cells[i].bg = _elm_code_widget_status_type_get(widget, line->status, i - gutter + 1);
           }
 
         _elm_code_widget_fill_whitespace(widget, unichr, &cells[x]);
