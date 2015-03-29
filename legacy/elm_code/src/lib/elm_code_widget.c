@@ -353,8 +353,8 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         cells[x].bg = _elm_code_widget_status_type_get(widget, line->status, x - gutter + 1);
      }
 
-   _elm_code_widget_fill_cursor(widget, line, cells, gutter, w);
    _elm_code_widget_fill_selection(widget, line, cells, gutter, w);
+   _elm_code_widget_fill_cursor(widget, line, cells, gutter, w);
    if (line->number < elm_code_file_lines_get(line->file))
      _elm_code_widget_fill_whitespace(widget, '\n', &cells[length + gutter]);
 
