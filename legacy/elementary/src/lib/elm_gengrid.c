@@ -1016,6 +1016,17 @@ _item_realize(Elm_Gen_Item *it)
 
    if (eo_it == sd->focused_item)
      {
+        const char *focus_raise;
+        if (elm_widget_focus_highlight_enabled_get(WIDGET(it)))
+          {
+             edje_object_signal_emit
+                (VIEW(it), "elm,state,focused", "elm");
+          }
+
+        focus_raise = edje_object_data_get(VIEW(it), "focusraise");
+        if ((focus_raise) && (!strcmp(focus_raise, "on")))
+          evas_object_raise(VIEW(it));
+
         _elm_widget_item_highlight_in_theme(WIDGET(it), EO_OBJ(it));
         _elm_widget_highlight_in_theme_update(WIDGET(it));
         _elm_widget_focus_highlight_start(WIDGET(it));
