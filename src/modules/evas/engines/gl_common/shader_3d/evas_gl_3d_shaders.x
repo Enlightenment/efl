@@ -1188,7 +1188,7 @@ static const char const shadow_map_frag_glsl[] =
    "#endif //DIFFUSE_TEXTURE\n"
    "#endif //DIFFUSE_TEXTURE_BLEND\n"
    "#endif //ALPHA_TEST_ENABLED\n"
-   "   gl_FragColor.r = gl_FragCoord.z;\n"
+   "   gl_FragColor = vec4(gl_FragCoord.z);\n"
    "}\n";
 
 static const char const color_pick_vert_glsl[] =
