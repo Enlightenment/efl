@@ -293,9 +293,12 @@ _selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data
    Elm_Code *code;
    Elm_Code_Widget *widget;
    Elm_Code_Line *line;
-   unsigned int row, col;
+   Elm_Code_Widget_Data *pd;
+   unsigned int row, col, col_width, position;
 
    widget = (Elm_Code_Widget *)data;
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
    if (ev->format != ELM_SEL_FORMAT_TEXT)
      return EINA_TRUE;
 
@@ -307,10 +310,13 @@ _selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data
          elm_code_widget_cursor_position_get(&col, &row));
    line = elm_code_file_line_get(code->file, row);
 
-   elm_code_line_text_insert(line, col, ev->data, ev->len - 1);
+   position = elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
+   elm_code_line_text_insert(line, position + 1, ev->data, ev->len - 1);
 
+   col_width = elm_code_line_text_column_width_to_position(line, position + ev->len - 1, pd->tabstop) -
+               elm_code_line_text_column_width_to_position(line, position, pd->tabstop);
    eo_do(widget,
-         elm_code_widget_cursor_position_set(col + ev->len - 1, row));
+         elm_code_widget_cursor_position_set(col + col_width, row));
    return EINA_TRUE;
 }
 

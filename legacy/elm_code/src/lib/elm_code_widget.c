@@ -813,7 +813,10 @@ _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text
 {
    Elm_Code *code;
    Elm_Code_Line *line;
-   unsigned int row, col;
+   Elm_Code_Widget_Data *pd;
+   unsigned int row, col, position, col_width;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    _elm_code_widget_delete_selection(widget);
    eo_do(widget,
@@ -821,9 +824,13 @@ _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text
          elm_code_widget_cursor_position_get(&col, &row));
    line = elm_code_file_line_get(code->file, row);
 
-   elm_code_line_text_insert(line, col, text, length);
+   position = elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
+   elm_code_line_text_insert(line, position + 1, text, length);
+   col_width = elm_code_line_text_column_width_to_position(line, position + length, pd->tabstop) -
+               elm_code_line_text_column_width_to_position(line, position, pd->tabstop);
+
    eo_do(widget,
-         elm_code_widget_cursor_position_set(col + length, row),
+         elm_code_widget_cursor_position_set(col + col_width, row),
 // TODO construct and pass a change object
          eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
 }
@@ -833,9 +840,11 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
 {
    Elm_Code *code;
    Elm_Code_Line *line, *newline;
-   unsigned int row, col, length;
+   Elm_Code_Widget_Data *pd;
+   unsigned int row, col, length, position;
    char *content;
 
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    _elm_code_widget_delete_selection(widget);
    eo_do(widget,
          code = elm_code_widget_code_get(),
@@ -847,8 +856,10 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    elm_code_file_line_insert(code->file, line->number + 1, "", 0, NULL);
    newline = elm_code_file_line_get(code->file, line->number + 1);
 // TODO we need to split tokens from these lines (move this to elm_code_line?)
-   elm_code_line_text_set(newline, content + col - 1, length - col + 1);
-   elm_code_line_text_set(line, content, col - 1);
+
+   position = elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
+   elm_code_line_text_set(newline, content + position, length - position + 2);
+   elm_code_line_text_set(line, content, position);
 
    free(content);
    eo_do(widget,
@@ -862,7 +873,8 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
 {
    Elm_Code *code;
    Elm_Code_Line *line, *otherline;
-   unsigned int row, col;
+   Elm_Code_Widget_Data *pd;
+   unsigned int row, col, position;
 
    const char *text1, *text2;
    char *newtext;
@@ -896,8 +908,13 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
 
    free(newtext);
    if (!nextline)
-     eo_do(widget,
-           elm_code_widget_cursor_position_set(length1 + 1, row - 1));
+     {
+        pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+        position = elm_code_line_text_column_width_to_position(line, length1, pd->tabstop);
+
+        eo_do(widget,
+              elm_code_widget_cursor_position_set(position + 1, row - 1));
+     }
 // TODO construct and pass a change object
    eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
 }
@@ -907,7 +924,8 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
 {
    Elm_Code *code;
    Elm_Code_Line *line;
-   unsigned int row, col;
+   Elm_Code_Widget_Data *pd;
+   unsigned int row, col, position, col_width, char_width;
 
    if (_elm_code_widget_delete_selection(widget))
      return;
@@ -915,6 +933,7 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
    eo_do(widget,
          code = elm_code_widget_code_get(),
          elm_code_widget_cursor_position_get(&col, &row));
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (col <= 1)
      {
@@ -927,9 +946,14 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
 
    line = elm_code_file_line_get(code->file, row);
 
-   elm_code_line_text_remove(line, col - 1, 1);
+   position = elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
+   char_width = elm_code_line_text_position_for_column_get(line, col, pd->tabstop) -
+                elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
+   col_width = elm_code_line_text_column_width_to_position(line, position, pd->tabstop) -
+               elm_code_line_text_column_width_to_position(line, position - 1, pd->tabstop);
+   elm_code_line_text_remove(line, position, char_width);
    eo_do(widget,
-         elm_code_widget_cursor_position_set(col - 1, row));
+         elm_code_widget_cursor_position_set(col - col_width, row));
 
 // TODO construct and pass a change object
    eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
@@ -940,7 +964,7 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
 {
    Elm_Code *code;
    Elm_Code_Line *line;
-   unsigned int row, col;
+   unsigned int row, col, position, char_width;
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
@@ -961,7 +985,10 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
         return;
      }
 
-   elm_code_line_text_remove(line, col, 1);
+   position = elm_code_line_text_position_for_column_get(line, col, pd->tabstop);
+   char_width = elm_code_line_text_position_for_column_get(line, col, pd->tabstop) -
+                elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
+   elm_code_line_text_remove(line, position, char_width);
    eo_do(widget,
          elm_code_widget_cursor_position_set(col, row),
 // TODO construct and pass a change object
