@@ -26,6 +26,8 @@ typedef struct
    unsigned short event_freeze_count;
    Eina_Bool deletions_waiting : 1;
 
+//clock_t  call_updated;
+
    //for benchmark start
    unsigned int called_counter;
    unsigned int callbacks_counter;
@@ -55,11 +57,19 @@ static clock_t  called_sum_clocks =0;
 static clock_t start_clock =0;
 
 static unsigned int events_counter=0;
- //for benchmark end
 
+
+static unsigned legacy_events_inserted=0;
+static unsigned regular_events_inserted=0;
+
+
+
+ //for benchmark end
+//static clock_t call_updated=0;
 
 typedef struct {
      const    Eo_Event_Description *event;
+Eina_Stringshare *event_name;
      Eo_Callback_Description *callbacks;
 }Eo_Event_Callbacks;
 
@@ -472,6 +482,7 @@ _legacy_events_hash_free_cb(void *_desc)
 struct _Eo_Callback_Description
 {
    Eo_Callback_Description *next;
+//Eina_Stringshare *event_name;
 
    union
      {
@@ -484,6 +495,9 @@ struct _Eo_Callback_Description
 
    Eina_Bool delete_me : 1;
    Eina_Bool func_array : 1;
+   Eina_Bool is_legacy : 1;
+   Eina_Bool is_legacy_counter  : 1;
+
 };
 
 /* Actually remove, doesn't care about walking list, or delete_me */
@@ -527,12 +541,12 @@ _eo_callback_remove_all(Eo_Base_Data *pd)
 
    EINA_INARRAY_FOREACH(pd->callbacks, cbs)
      {
-   while (cbs->callbacks)
-     {
-        Eo_Callback_Description *next = cbs->callbacks->next;
-        free(cbs->callbacks);
-        cbs->callbacks = next;
-     }
+        while (cbs->callbacks)
+          {
+             Eo_Callback_Description *next = cbs->callbacks->next;
+             free(cbs->callbacks);
+             cbs->callbacks = next;
+          }
      }
 }
 static void
@@ -625,43 +639,80 @@ _eo_callbacks_list_sorted_insert( Eo_Event_Callbacks *ec, Eo_Callback_Descriptio
         ec->callbacks = cb;
      }
 }
+int
+ _eo_base_event_compare( const void* e1 , const void* e2){
+
+      if( ((Eo_Event_Callbacks*)e1)->event_name ==  ((Eo_Event_Callbacks*)e2)->event_name)
+         return 0;
+
+
+      if( ((Eo_Event_Callbacks*)e1)->event_name >  ((Eo_Event_Callbacks*)e2)->event_name)
+         return 1;
+
+      return -1;
+
+ }
 static void
 _eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb, const Eo_Event_Description *desc)
 {
-   Eo_Event_Callbacks ec = { desc, NULL };
 
    if (!desc)
      {
         DBG("sorted insert NULL event!\n");
         return;
      }
-
-   //adding to events conter - statistics
-   unsigned int index = ((unsigned long long int )desc)%63;
-   if( (pd->have_events  & (1<<index) )==0){
-        pd->events_counter++;
-        pd->have_events |=  1<<index;
-   }
+     {
+        //adding to events conter - statistics
+        unsigned int index = ((unsigned long long int )desc)%63;
+        if( (pd->have_events  & (1<<index) )==0){
+             pd->events_counter++;
+             pd->have_events |=  1<<index;
+        }
+     }
    pd->callbacks_counter++;//avi debug
 
    cb->items.item.desc = desc;
-
-   Eo_Event_Callbacks *cbs;
-
-
-
-   EINA_INARRAY_FOREACH(pd->callbacks, cbs)
+   Eina_Stringshare *event_name;
+   if (desc->doc != _legacy_event_desc)
      {
-        if(_cb_desc_match(desc, cbs->event))
-          {
-             _eo_callbacks_list_sorted_insert(cbs, cb);
-             return;
-          }
+        legacy_events_inserted++;
+        event_name = eina_stringshare_add(desc->name);
      }
-   cb->next=NULL;
-   ec.callbacks = cb;
+   else{
+        event_name = desc->name;
+        regular_events_inserted++;
+   }
+   Eo_Event_Callbacks *cbs;
+   Eo_Event_Callbacks ec = { desc,event_name ,  cb };
 
-   eina_inarray_push(pd->callbacks, &ec);
+   cb->next=NULL;
+   int index = eina_inarray_search_sorted ( pd->callbacks, &ec ,  _eo_base_event_compare );
+   /*   EINA_INARRAY_FOREACH(pd->callbacks, cbs)
+        {
+   //    if(_cb_desc_match(desc, cbs->event))
+   if(event_name == cbs->event_name)
+   {
+   _eo_callbacks_list_sorted_insert(cbs, cb);
+   if (desc->doc != _legacy_event_desc)
+   eina_stringshare_del(event_name);
+
+   return;
+   }
+   }
+   */
+   if(index !=-1){
+        cbs =eina_inarray_nth(pd->callbacks , index ); 
+        _eo_callbacks_list_sorted_insert(cbs, cb);
+        if (desc->doc != _legacy_event_desc)
+           eina_stringshare_del(event_name);
+
+        return;
+   }
+
+
+   //   eina_inarray_push(pd->callbacks, &ec);
+   eina_inarray_insert_sorted(pd->callbacks , &ec ,  _eo_base_event_compare );
+
 }
 
 EOLIAN static void _eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *pd,
@@ -803,18 +854,34 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
    Eo_Event_Callbacks *cbs;
    Eina_Bool found = EINA_FALSE;
 
+
+   Eina_Stringshare *event_name;
+   if (desc->doc != _legacy_event_desc)
+     {
+
+        event_name = eina_stringshare_add(desc->name);
+     }
+   else{
+        event_name = desc->name;
+   }
+   Eo_Event_Callbacks ec = { desc,event_name ,  NULL };
+int index = eina_inarray_search_sorted ( pd->callbacks, &ec ,  _eo_base_event_compare );
+   /*
    EINA_INARRAY_FOREACH(pd->callbacks, cbs)
      {
         pd->called_loop_counter++;//avi debug
-        if(_cb_desc_match(desc, cbs->event))
+   //     if(_cb_desc_match(desc, cbs->event))
+   if(event_name == cbs->event_name)
           {
              found = EINA_TRUE;
              break;
           }
-     }
+     }*/
 
-   if(!found) {pd->called_sum_clocks +=clock()-start_time;//avi dbg
+   if(index==-1) {pd->called_sum_clocks +=clock()-start_time;//avi dbg
         return EINA_FALSE;}
+
+   cbs =eina_inarray_nth(pd->callbacks , index ); 
 
    ret = EINA_TRUE;
 
@@ -1090,13 +1157,13 @@ EAPI const Eina_Value_Type *EO_DBG_INFO_TYPE = &_EO_DBG_INFO_TYPE;
 
 static __attribute__((destructor)) void finish(void)
 {
-   printf("calbacks stats-All objects!: num objects=%u total time=%f 
-         called cal times= %u called loops=%u called clocks=%f called sec=%f 
-         callbacks count=%u events counter=%u\n",
+   printf("calbacks stats-All objects!: num objects=%u total time=%f \ 
+         called cal times= %u called loops=%u called clocks=%f called sec=%f \
+         callbacks count=%u events counter=%u legacy_events_inserted=%u  regular_events_inserted=%u \n",
          objects_counter,(double)(clock()-start_clock)/CLOCKS_PER_SEC,  called_counter,
          called_loop_counter,(double)called_sum_clocks,
          (double)called_sum_clocks/CLOCKS_PER_SEC, callbacks_counter ,
-         events_counter
+         events_counter, legacy_events_inserted, regular_events_inserted
   );//avi debug
 
 }
