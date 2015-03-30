@@ -686,8 +686,8 @@ _eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb, const
    Eo_Event_Callbacks ec = { desc,event_name ,  cb };
 
    cb->next=NULL;
-   int index = eina_inarray_search_sorted ( pd->callbacks, &ec ,  _eo_base_event_compare );
-   /*   EINA_INARRAY_FOREACH(pd->callbacks, cbs)
+//   int index = eina_inarray_search_sorted ( pd->callbacks, &ec ,  _eo_base_event_compare );
+      EINA_INARRAY_FOREACH(pd->callbacks, cbs)
         {
    //    if(_cb_desc_match(desc, cbs->event))
    if(event_name == cbs->event_name)
@@ -699,7 +699,7 @@ _eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb, const
    return;
    }
    }
-   */
+   /*
    if(index !=-1){
         cbs =eina_inarray_nth(pd->callbacks , index ); 
         _eo_callbacks_list_sorted_insert(cbs, cb);
@@ -708,10 +708,10 @@ _eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb, const
 
         return;
    }
+*/
 
-
-   //   eina_inarray_push(pd->callbacks, &ec);
-   eina_inarray_insert_sorted(pd->callbacks , &ec ,  _eo_base_event_compare );
+     eina_inarray_push(pd->callbacks, &ec);
+//   eina_inarray_insert_sorted(pd->callbacks , &ec ,  _eo_base_event_compare );
 
 }
 
@@ -865,8 +865,8 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
         event_name = desc->name;
    }
    Eo_Event_Callbacks ec = { desc,event_name ,  NULL };
-int index = eina_inarray_search_sorted ( pd->callbacks, &ec ,  _eo_base_event_compare );
-   /*
+//int index = eina_inarray_search_sorted ( pd->callbacks, &ec ,  _eo_base_event_compare );
+   
    EINA_INARRAY_FOREACH(pd->callbacks, cbs)
      {
         pd->called_loop_counter++;//avi debug
@@ -876,12 +876,12 @@ int index = eina_inarray_search_sorted ( pd->callbacks, &ec ,  _eo_base_event_co
              found = EINA_TRUE;
              break;
           }
-     }*/
+     }
 
-   if(index==-1) {pd->called_sum_clocks +=clock()-start_time;//avi dbg
+   if(found==EINA_FALSE) {pd->called_sum_clocks +=clock()-start_time;//avi dbg
         return EINA_FALSE;}
 
-   cbs =eina_inarray_nth(pd->callbacks , index ); 
+//   cbs =eina_inarray_nth(pd->callbacks , index ); 
 
    ret = EINA_TRUE;
 
