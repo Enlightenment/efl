@@ -702,6 +702,7 @@ _edje_object_color_class_set(Eo *obj EINA_UNUSED, Edje *ed, const char *color_cl
         return EINA_FALSE;
      }
    cc->name = color_class;
+   cc->desc = NULL;
    eina_hash_direct_add(ed->color_classes, cc->name, cc);
 update_color_class:
    cc->r = r;
