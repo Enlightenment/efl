@@ -858,7 +858,7 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
 // TODO we need to split tokens from these lines (move this to elm_code_line?)
 
    position = elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
-   elm_code_line_text_set(newline, content + position, length - position + 2);
+   elm_code_line_text_set(newline, content + position, length - position);
    elm_code_line_text_set(line, content, position);
 
    free(content);
