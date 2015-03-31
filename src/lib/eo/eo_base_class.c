@@ -482,20 +482,17 @@ _legacy_events_hash_free_cb(void *_desc)
 struct _Eo_Callback_Description
 {
    Eo_Callback_Description *next;
-//Eina_Stringshare *event_name;
-
    union
      {
         Eo_Callback_Array_Item item;
         const Eo_Callback_Array_Item *item_array;
      } items;
-
+        const Eo_Callback_Array_Item *item_array;
    void *func_data;
    Eo_Callback_Priority priority;
 
    Eina_Bool delete_me : 1;
    Eina_Bool func_array : 1;
-   Eina_Bool is_legacy : 1;
    Eina_Bool is_legacy_counter  : 1;
 
 };
@@ -529,8 +526,7 @@ _eo_callback_remove(Eo_Event_Callbacks *ec, Eo_Callback_Description *cb)
         else
           {
              pitr = titr;
-          }
-     
+          } 
      }
 }
 /* Actually remove, doesn't care about walking list, or delete_me */
@@ -580,44 +576,6 @@ _eo_callbacks_clear(Eo_Base_Data *pd)
      }
 }
 
-
-
-static Eina_Bool
-_cb_desc_match(const Eo_Event_Description *a, const Eo_Event_Description *b)
-{
-   if (!a)
-      return EINA_FALSE;
-
-   /* If either is legacy, fallback to string comparison. */
-   if ((a->doc == _legacy_event_desc) || (b->doc == _legacy_event_desc))
-     {
-        /* Take stringshare shortcut if both are legacy */
-        if (a->doc == b->doc)
-          {
-             if (a->name == b->name){
-      //          printf("cb_desc same name after name pointer cmp %s\n", a->name);
-                return EINA_TRUE;
-             }
-             return EINA_FALSE;
-
-          }
-        else
-          {
-             if(strcmp(a->name, b->name)==0){
- //               printf("cb_desc same name after strcmp %s\n", a->name);
-                return EINA_TRUE;
-             }
-            else{
-    //            printf("cb_desc **not** same name after strcmp %s\n", a->name);
-                 return EINA_FALSE;
-            }
-          }
-     }
-   else
-     {
-        return (a == b);
-     }
-}
 static void
 _eo_callbacks_list_sorted_insert( Eo_Event_Callbacks *ec, Eo_Callback_Description *cb)
 {
@@ -671,7 +629,6 @@ _eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb, const
      }
    pd->callbacks_counter++;//avi debug
 
-   cb->items.item.desc = desc;
    Eina_Stringshare *event_name;
    if (desc->doc != _legacy_event_desc)
      {
@@ -683,35 +640,35 @@ _eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb, const
         regular_events_inserted++;
    }
    Eo_Event_Callbacks *cbs;
-   Eo_Event_Callbacks ec = { desc,event_name ,  cb };
+   Eo_Event_Callbacks ec = { desc, event_name ,  cb };
 
    cb->next=NULL;
-//   int index = eina_inarray_search_sorted ( pd->callbacks, &ec ,  _eo_base_event_compare );
-      EINA_INARRAY_FOREACH(pd->callbacks, cbs)
-        {
-   //    if(_cb_desc_match(desc, cbs->event))
-   if(event_name == cbs->event_name)
-   {
-   _eo_callbacks_list_sorted_insert(cbs, cb);
-   if (desc->doc != _legacy_event_desc)
-   eina_stringshare_del(event_name);
+      int index = eina_inarray_search_sorted ( pd->callbacks, &ec ,  _eo_base_event_compare );
+/*   EINA_INARRAY_FOREACH(pd->callbacks, cbs)
+     {
+        //    if(_cb_desc_match(desc, cbs->event))
+        if(event_name == cbs->event_name)
+          {
+             _eo_callbacks_list_sorted_insert(cbs, cb);
+             if (desc->doc != _legacy_event_desc)
+                eina_stringshare_del(event_name);
 
-   return;
-   }
-   }
-   /*
-   if(index !=-1){
-        cbs =eina_inarray_nth(pd->callbacks , index ); 
-        _eo_callbacks_list_sorted_insert(cbs, cb);
-        if (desc->doc != _legacy_event_desc)
-           eina_stringshare_del(event_name);
+             return;
+          }
+     }*/
 
-        return;
-   }
-*/
+      if(index !=-1){
+      cbs =eina_inarray_nth(pd->callbacks , index ); 
+      _eo_callbacks_list_sorted_insert(cbs, cb);
+      if (desc->doc != _legacy_event_desc)
+      eina_stringshare_del(event_name);
 
-     eina_inarray_push(pd->callbacks, &ec);
-//   eina_inarray_insert_sorted(pd->callbacks , &ec ,  _eo_base_event_compare );
+      return;
+      }
+
+
+ //  eina_inarray_push(pd->callbacks, &ec);
+      eina_inarray_insert_sorted(pd->callbacks , &ec ,  _eo_base_event_compare );
 
 }
 
@@ -727,7 +684,7 @@ EOLIAN static void _eo_base_event_callback_priority_add(Eo *obj, Eo_Base_Data *p
    cb->func_data = (void *) data;
    cb->priority = priority;
    cb->func_array = EINA_FALSE;
-   cb->items.item_array = NULL;
+
    cb->delete_me = EINA_FALSE;
    _eo_callbacks_sorted_insert(pd, cb, desc);
 
@@ -788,7 +745,7 @@ _eo_base_event_callback_array_priority_add(Eo *obj, Eo_Base_Data *pd,
 
         cb->func_data = (void *) user_data;
         cb->priority = priority;
-        cb->items.item_array = array;
+        cb->item_array = array;
         cb->func_array = EINA_TRUE;
         cb->delete_me = EINA_FALSE;
         _eo_callbacks_sorted_insert(pd, cb,it->desc);
@@ -814,7 +771,7 @@ _eo_base_event_callback_array_del(Eo *obj, Eo_Base_Data *pd,
      {
        for (cb = cbs->callbacks; cb; cb = cb->next)
          {
-             if ((cb->items.item_array == array) && (cb->func_data == user_data))
+             if ((cb->item_array == array) && (cb->func_data == user_data))
                {
                   cb->delete_me = EINA_TRUE;
                   pd->deletions_waiting = EINA_TRUE;
@@ -865,24 +822,29 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
         event_name = desc->name;
    }
    Eo_Event_Callbacks ec = { desc,event_name ,  NULL };
-//int index = eina_inarray_search_sorted ( pd->callbacks, &ec ,  _eo_base_event_compare );
-   
-   EINA_INARRAY_FOREACH(pd->callbacks, cbs)
-     {
-        pd->called_loop_counter++;//avi debug
-   //     if(_cb_desc_match(desc, cbs->event))
-   if(event_name == cbs->event_name)
+   if( pd->callbacks->len < 7  ){ //if small array simple search will be faster
+        EINA_INARRAY_FOREACH(pd->callbacks, cbs)
           {
-             found = EINA_TRUE;
-             break;
+             pd->called_loop_counter++;//avi debug
+             //     if(_cb_desc_match(desc, cbs->event))
+             if(event_name == cbs->event_name)
+               {
+                  found = EINA_TRUE;
+                  break;
+               }
           }
-     }
+        if(found==EINA_FALSE) {pd->called_sum_clocks +=clock()-start_time;//avi dbg
+             return EINA_FALSE;}
 
-   if(found==EINA_FALSE) {pd->called_sum_clocks +=clock()-start_time;//avi dbg
-        return EINA_FALSE;}
+   }
+   else{
+        int index = eina_inarray_search_sorted ( pd->callbacks, &ec ,  _eo_base_event_compare );
 
-//   cbs =eina_inarray_nth(pd->callbacks , index ); 
+        if(index==-1) {pd->called_sum_clocks +=clock()-start_time;//avi dbg
+             return EINA_FALSE;}
 
+        cbs =eina_inarray_nth(pd->callbacks , index ); 
+   }
    ret = EINA_TRUE;
 
    _eo_ref(obj);
@@ -890,9 +852,11 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
 
    for (cb = cbs->callbacks; cb; cb = cb->next)
      {
+
         pd->called_loop_counter++;//avi debug
         if (!cb->delete_me)
           {
+
              if (( !cb->items.item.desc->unfreezable) &&
                    (event_freeze_count || pd->event_freeze_count))
                 continue;
