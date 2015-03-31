@@ -9,7 +9,7 @@
 
 typedef struct Overlay_Data
 {
-   const char file[PATH_MAX];
+   char file[PATH_MAX];
 } Overlay_Data;
 
 typedef struct Map_Source
