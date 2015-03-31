@@ -972,7 +972,13 @@ compile(void)
                    eina_prefix_lib_get(pfx));
         if (ecore_file_exists(buf2))
           {
-             if (anotate)
+             if (depfile)
+               snprintf(buf, sizeof(buf), "%s -MMD %s -MT %s %s -I%s %s -o %s"
+                        " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
+                        buf2, depfile, file_out, file_in,
+                        inc, def, clean_file,
+                        EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
+             else if (anotate)
                snprintf(buf, sizeof(buf), "%s -anotate -a %s %s -I%s %s -o %s"
                         " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
                         buf2, watchfile ? watchfile : "/dev/null", file_in,

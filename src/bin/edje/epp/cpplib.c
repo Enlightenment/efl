@@ -6502,10 +6502,10 @@ cpp_handle_options(cpp_reader * pfile, int argc, char **argv)
 		  /* The style of the choices here is a bit mixed.
 		   * The chosen scheme is a hybrid of keeping all options in one string
 		   * and specifying each option in a separate argument:
-		   * -M|-MM|-MD file|-MMD file [-MG].  An alternative is:
-		   * -M|-MM|-MD file|-MMD file|-MG|-MMG; or more concisely:
-		   * -M[M][G][D file].  This is awkward to handle in specs, and is not
-		   * as extensible.  */
+		   * -M|-MM|-MT file|-MD file|-MMD file [-MG].  An alternative is:
+		   * -M|-MM|-MT file|-MD file|-MMD file|-MG|-MMG; or more concisely:
+		   * -M[M][G][D file][T file].  This is awkward to handle in specs, and is
+		   * not as extensible.  */
 		  /* ??? -MG must be specified in addition to one of -M or -MM.
 		   * This can be relaxed in the future without breaking anything.
 		   * The converse isn't true.  */
@@ -6531,6 +6531,15 @@ cpp_handle_options(cpp_reader * pfile, int argc, char **argv)
 			  cpp_fatal("Filename missing after %s option",
 				    argv[i]);
 		       opts->deps_file = argv[++i];
+		    }
+		  /* For MT option, use file named by next arg as Target-name to write
+		   * with the dependency information.  */
+		  else if (!strcmp(argv[i], "-MT"))
+		    {
+		       if (i + 1 == argc)
+			  cpp_fatal("Filename missing after %s option",
+				    argv[i]);
+		       opts->deps_target = argv[++i];
 		    }
 		  else
 		    {

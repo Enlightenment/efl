@@ -22,6 +22,7 @@ char      *file_in = NULL;
 char      *tmp_dir = NULL;
 char      *file_out = NULL;
 char      *watchfile = NULL;
+char      *depfile = NULL;
 char      *authors = NULL;
 char      *license = NULL;
 Eina_List *licenses = NULL;
@@ -91,6 +92,7 @@ main_help(void)
       "\n"
       "-w files.txt             Dump all sources files path into files.txt\n"
       "-anotate                 Anotate the dumped files.\n"
+      "-deps files.txt          Dump gnu style include dependencies path into files.txt\n"
       "-id image/directory      Add a directory to look in for relative path images\n"
       "-fd font/directory       Add a directory to look in for relative path fonts\n"
       "-sd sound/directory      Add a directory to look in for relative path sounds samples\n"
@@ -281,6 +283,12 @@ main(int argc, char **argv)
 	  {
              anotate = 1;
           }
+	else if ((!strcmp(argv[i], "-deps")) && (i < (argc - 1)))
+	  {
+	     i++;
+	     depfile = argv[i];
+	     unlink(depfile);
+	  }
 	else if (!file_in)
 	  file_in = argv[i];
 	else if (!file_out)

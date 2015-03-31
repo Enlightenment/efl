@@ -258,6 +258,7 @@ extern Eina_List             *data_dirs;
 extern char                  *file_in;
 extern char                  *file_out;
 extern char                  *watchfile;
+extern char                  *depfile;
 extern char                  *license;
 extern char                  *authors;
 extern Eina_List             *licenses;
