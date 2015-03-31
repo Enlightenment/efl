@@ -2707,7 +2707,10 @@ _edje_object_part_swallow(Eo *obj EINA_UNUSED, Edje *ed, const char *part, Evas_
    // XXX: only with 32px shelves. The problem is probably somewhere else,
    // XXX: but until it's found, leave this here.
    // XXX: by Sachiel, January 21th 2009, 19:30 UTC
-   _edje_recalc_do(ed);
+   // GFY: I decided to try removing this while optimizing some edc and saw
+   // SRS: no downside after moderate testing, so I decided to commit it.
+   // LOL: - zmike, 1 April 2015
+   //_edje_recalc_do(ed);
 
    rp = _edje_real_part_recursive_get(&ed, part);
    rpcur = evas_object_data_get(obj_swallow, "\377 edje.swallowing_part");
