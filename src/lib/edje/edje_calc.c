@@ -3378,7 +3378,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
    pos = ep->description_pos;
 
-   if (ep->part->type == EDJE_PART_TYPE_PROXY)
+   if ((ep->part->type == EDJE_PART_TYPE_PROXY) && chosen_desc->visible)
      {
         int part_id = -1;
 
