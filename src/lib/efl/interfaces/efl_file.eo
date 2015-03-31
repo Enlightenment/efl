@@ -78,6 +78,26 @@ interface Efl.File {
             NULL, otherwise. */
          }
       }
+      async {
+         set {
+            /*@
+            If true, file open will happen asynchronously allowing for better
+            performance in some situations. The file will be opened from a
+            different thread. Classes implementing async open might then block
+            and wait when querying information from the file (eg. image size).
+
+            Only a few objects implement this feature, and this flag may
+            be ignored by EFL. In that case, get() will always return false. */
+         }
+         get {
+            /*@
+            Retrieves the asynchronous open flag, which will be true only if
+            enabled and supported by the object. */
+         }
+         values {
+            bool async; /*@ Flag for asynchronous open. */
+         }
+      }
    }
    methods {
       save @const {
@@ -110,5 +130,18 @@ interface Efl.File {
              Get rid of and clean the pointed resource.
              */
       }
+      async_wait @const {
+         /*@
+         Block and wait until all asynchronous operations are completed. Unless
+         the async flag was set on this object, this method has no effect.
+
+         Returns false if an error occured. */
+
+         return: bool;
+      }
+   }
+   events {
+      async,opened; /*@ The file was successfully opened asynchronously */
+      async,error; /*@ Error occured in asynchronous file operation */
    }
 }
