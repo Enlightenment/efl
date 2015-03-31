@@ -1261,6 +1261,16 @@ EAPI void         edje_color_class_del            (const char *color_class);
 EAPI Eina_List   *edje_color_class_list           (void);
 
 /**
+ * @brief Iterate over all the active class of an application.
+ *
+ * @return Return an iterator of Edje_Color_Class of the currently active color class
+ *
+ * This function only iterate over the Edje_Color_Class in use by
+ * an application.
+ */
+EAPI Eina_Iterator *edje_color_class_active_iterator_new(void);
+
+/**
  * @}
  */
 
