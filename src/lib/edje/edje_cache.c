@@ -1,6 +1,7 @@
 #include "edje_private.h"
 
-static Eina_Hash   *_edje_file_hash = NULL;
+Eina_Hash   *_edje_file_hash = NULL;
+
 static int          _edje_file_cache_size = 16;
 static Eina_List   *_edje_file_cache = NULL;
 

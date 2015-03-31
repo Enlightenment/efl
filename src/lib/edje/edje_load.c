@@ -234,6 +234,62 @@ edje_mmap_group_exists(Eina_File *f, const char *glob)
    return succeed;
 }
 
+typedef struct _Edje_File_Iterator Edje_File_Iterator;
+struct _Edje_File_Iterator
+{
+   Eina_Iterator iterator;
+
+   Eina_Iterator *it;
+};
+
+static Eina_Bool
+_edje_file_iterator_next(Eina_Iterator *it, void **data)
+{
+   Edje_File_Iterator *et = (void*) it;
+   Edje_File *edf = NULL;
+
+   if (!eina_iterator_next(et->it, (void**) &edf))
+     return EINA_FALSE;
+
+   *data = edf->f;
+   return EINA_TRUE;
+}
+
+static void *
+_edje_file_iterator_container(Eina_Iterator *it EINA_UNUSED)
+{
+   return NULL;
+}
+
+static void
+_edje_file_iterator_free(Eina_Iterator *it)
+{
+   Edje_File_Iterator *et = (void*) it;
+
+   EINA_MAGIC_SET(&et->iterator, 0);
+   eina_iterator_free(et->it);
+   free(et);
+}
+
+EAPI Eina_Iterator *
+edje_file_iterator_new(void)
+{
+   Edje_File_Iterator *it;
+
+   it = calloc(1, sizeof (Edje_File_Iterator));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+   it->it = eina_hash_iterator_data_new(_edje_file_hash);
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = _edje_file_iterator_next;
+   it->iterator.get_container = _edje_file_iterator_container;
+   it->iterator.free = _edje_file_iterator_free;
+
+   return &it->iterator;
+}
+
 EAPI Eina_Bool
 edje_file_group_exists(const char *file, const char *glob)
 {

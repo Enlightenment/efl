@@ -1773,6 +1773,13 @@ EAPI void              edje_mmap_collection_list_free(Eina_List *lst);
 EAPI Eina_Bool         edje_mmap_group_exists(Eina_File *f, const char *glob);
 
 /**
+ * @brief Iterate over all the opened Edje file.
+ *
+ * @return an iterator of Eina_File currently opened Edje file.
+ */
+EAPI Eina_Iterator *edje_file_iterator_new(void);
+
+/**
  * Get a list of groups in an edje file
  * @param file The path to the edje file
  *

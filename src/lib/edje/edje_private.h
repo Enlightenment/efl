@@ -2129,6 +2129,8 @@ extern Eina_Mempool *_edje_real_part_state_mp;
 extern Eina_Cow *_edje_calc_params_map_cow;
 extern Eina_Cow *_edje_calc_params_physics_cow;
 
+extern Eina_Hash       *_edje_file_hash;
+
 EAPI extern Eina_Mempool *_emp_RECTANGLE;
 EAPI extern Eina_Mempool *_emp_TEXT;
 EAPI extern Eina_Mempool *_emp_IMAGE;
