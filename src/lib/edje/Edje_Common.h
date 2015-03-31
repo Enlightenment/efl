@@ -1275,7 +1275,7 @@ EAPI Eina_Iterator *edje_color_class_active_iterator_new(void);
  *
  * @return an iterator of Edje_Color_Class provided by the Edje file.
  */
-EAPI Eina_Iterator *edje_mmap_color_class_iterator_new(Eina_File *f)
+EAPI Eina_Iterator *edje_mmap_color_class_iterator_new(Eina_File *f);
 
 
 /**
