@@ -82,30 +82,15 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
    b = (dc->col.col      ) & 0xff;
    sx = 0; sy = 0; sw = tex->w, sh = tex->h;
 
-   if (gc->dc->clip.mask && (sw > 0) && (sh > 0))
+   if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
      {
-        double nx, ny, nw, nh, dx, dy, dw, dh;
-        const double mask_x = gc->dc->clip.mask_x;
-        const double mask_y = gc->dc->clip.mask_y;
-        const double tmw = mtex->pt->w;
-        const double tmh = mtex->pt->h;
-        double scalex = 1.0;
-        double scaley = 1.0;
-
         // canvas coords
-        nx = x; ny = y; nw = tex->w; nh = tex->h;
-        RECTS_CLIP_TO_RECT(nx, ny, nw, nh,
-                           gc->dc->clip.x, gc->dc->clip.y,
-                           gc->dc->clip.w, gc->dc->clip.h);
-        if ((nw < 1) || (nh < 1)) return;
-        dx = x; dy = y; dw = sw; dh = sh;
-        mx = mask_x; my = mask_y;
-        if (mask->scaled.origin && mask->scaled.w && mask->scaled.h)
+        mx = dc->clip.mask_x;
+        my = dc->clip.mask_y;
+        if (mask->scaled.origin)
           {
              mw = mask->scaled.w;
              mh = mask->scaled.h;
-             scalex = mask->w / (double)mask->scaled.w;
-             scaley = mask->h / (double)mask->scaled.h;
              mask_smooth = mask->scaled.smooth;
           }
         else
@@ -113,15 +98,8 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
              mw = mask->w;
              mh = mask->h;
           }
-        //RECTS_CLIP_TO_RECT(mx, my, mw, mh, cx, cy, cw, ch);
-        RECTS_CLIP_TO_RECT(mx, my, mw, mh, dx, dy, dw, dh);
-
-        // convert to tex coords
-        mx = (mtex->x / tmw) + ((mx - mask_x + (mw * (nx - dx)) / dw) * scalex / tmw);
-        my = (mtex->y / tmh) + ((my - mask_y + (mh * (ny - dy)) / dy) * scaley / tmh);
-        mw = (mw * nw * scalex / dw) / tmw;
-        mh = (mh * nh * scaley / dh) / tmh;
      }
+   else mtex = NULL;
 
    if ((!gc->dc->cutout.rects) ||
        ((gc->shared->info.tune.cutout.max > 0) &&

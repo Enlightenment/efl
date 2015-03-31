@@ -79,7 +79,7 @@ _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
    glBindAttribLocation(p->prog, SHAD_TEXUV3, "tex_coord3");
    glBindAttribLocation(p->prog, SHAD_TEXA,   "tex_coorda");
    glBindAttribLocation(p->prog, SHAD_TEXSAM, "tex_sample");
-   glBindAttribLocation(p->prog, SHAD_TEXM,   "tex_coordm");
+   glBindAttribLocation(p->prog, SHAD_MASK,   "mask_coord");
 
    glGetProgramiv(p->prog, GL_LINK_STATUS, &ok);
    if (!ok)
@@ -189,9 +189,9 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
    glBindAttribLocation(p->prog, SHAD_TEXUV,  "tex_coord");
    glBindAttribLocation(p->prog, SHAD_TEXUV2, "tex_coord2");
    glBindAttribLocation(p->prog, SHAD_TEXUV3, "tex_coord3");
-   glBindAttribLocation(p->prog, SHAD_TEXA, "tex_coorda");
+   glBindAttribLocation(p->prog, SHAD_TEXA,   "tex_coorda");
    glBindAttribLocation(p->prog, SHAD_TEXSAM, "tex_sample");
-   glBindAttribLocation(p->prog, SHAD_TEXM, "tex_coordm");
+   glBindAttribLocation(p->prog, SHAD_MASK,   "mask_coord");
 
    glLinkProgram(p->prog);
    ok = 0;

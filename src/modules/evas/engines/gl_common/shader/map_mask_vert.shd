@@ -1,8 +1,8 @@
 #ifdef GL_ES
 precision highp float;
 #endif
-attribute vec4 vertex, color;
-attribute vec2 tex_coord, tex_coordm, tex_sample, tex_coorda;
+attribute vec4 vertex, color, mask_coord;
+attribute vec2 tex_coord;
 uniform mat4 mvp;
 varying vec2 tex_c, tex_m;
 varying vec4 col;
@@ -12,8 +12,8 @@ void main()
    tex_c = tex_coord;
    col = color;
 
-   // tex_coorda contains the Y-invert flag
+   // mask_coord.w contains the Y-invert flag
    // position on screen in [0..1] range of current pixel
-   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(tex_coorda.y) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);
-   tex_m = mask_Position.xy * tex_sample + tex_coordm;
+   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);
+   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;
 }

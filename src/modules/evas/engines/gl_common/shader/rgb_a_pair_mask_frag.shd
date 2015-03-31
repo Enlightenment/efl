@@ -11,9 +11,9 @@ uniform sampler2D texm;
 varying vec4 col;
 varying vec2 coord_c;
 varying vec2 coord_a;
-varying vec2 coord_m;
+varying vec2 tex_m;
 void main()
 {
-   gl_FragColor.rgb = texture2D(tex, coord_c.xy).rgb * col.rgb * texture2D(texa, coord_a).g * texture2D(texm, coord_m.xy).a;
-   gl_FragColor.a = col.a * texture2D(texa, coord_a).g * texture2D(texm, coord_m.xy).a;
+   gl_FragColor.rgb = texture2D(tex, coord_c.xy).rgb * col.rgb * texture2D(texa, coord_a).g * texture2D(texm, tex_m.xy).a;
+   gl_FragColor.a = col.a * texture2D(texa, coord_a).g * texture2D(texm, tex_m.xy).a;
 }

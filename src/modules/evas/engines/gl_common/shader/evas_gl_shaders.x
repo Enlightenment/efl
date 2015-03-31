@@ -80,7 +80,7 @@ static const char const font_mask_vert_glsl[] =
    "attribute vec4 vertex;\n"
    "attribute vec4 color;\n"
    "attribute vec2 tex_coord;\n"
-   "attribute vec2 tex_coordm;\n"
+   "attribute vec4 mask_coord;\n"
    "uniform mat4 mvp;\n"
    "varying vec4 col;\n"
    "varying vec2 tex_c;\n"
@@ -90,7 +90,10 @@ static const char const font_mask_vert_glsl[] =
    "   gl_Position = mvp * vertex;\n"
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
-   "   tex_m = tex_coordm;\n"
+   "   // mask_coord.w contains the Y-invert flag\n"
+   "   // position on screen in [0..1] range of current pixel\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
 Evas_GL_Program_Source shader_font_mask_vert_src =
 {
@@ -2244,10 +2247,10 @@ static const char const img_mask_frag_glsl[] =
    "uniform sampler2D texm;\n"
    "varying vec4 col;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_m;\n"
+   "varying vec2 tex_m;\n"
    "void main()\n"
    "{\n"
-   "   gl_FragColor = texture2D(texm, coord_m.xy).a * texture2D(tex, coord_c.xy).bgra * col;\n"
+   "   gl_FragColor = texture2D(texm, tex_m.xy).a * texture2D(tex, coord_c.xy).bgra * col;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_frag_src =
 {
@@ -2263,17 +2266,20 @@ static const char const img_mask_vert_glsl[] =
    "attribute vec4 vertex;\n"
    "attribute vec4 color;\n"
    "attribute vec2 tex_coord;\n"
-   "attribute vec2 tex_coordm;\n"
+   "attribute vec4 mask_coord;\n"
    "uniform mat4 mvp;\n"
    "varying vec4 col;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_m;\n"
+   "varying vec2 tex_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   col = color;\n"
    "   coord_c = tex_coord;\n"
-   "   coord_m = tex_coordm;\n"
+   "   // mask_coord.w contains the Y-invert flag\n"
+   "   // position on screen in [0..1] range of current pixel\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_vert_src =
 {
@@ -2293,10 +2299,10 @@ static const char const img_mask_nomul_frag_glsl[] =
    "uniform sampler2D tex;\n"
    "uniform sampler2D texm;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_m;\n"
+   "varying vec2 tex_m;\n"
    "void main()\n"
    "{\n"
-   "   gl_FragColor = texture2D(tex, coord_c.xy) * texture2D(texm, coord_m).a;\n"
+   "   gl_FragColor = texture2D(tex, coord_c.xy) * texture2D(texm, tex_m).a;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_nomul_frag_src =
 {
@@ -2311,15 +2317,18 @@ static const char const img_mask_nomul_vert_glsl[] =
    "#endif\n"
    "attribute vec4 vertex;\n"
    "attribute vec2 tex_coord;\n"
-   "attribute vec2 tex_coordm;\n"
+   "attribute vec4 mask_coord;\n"
    "uniform mat4 mvp;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_m;\n"
+   "varying vec2 tex_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   coord_c = tex_coord;\n"
-   "   coord_m = tex_coordm;\n"
+   "   // mask_coord.w contains the Y-invert flag\n"
+   "   // position on screen in [0..1] range of current pixel\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_nomul_vert_src =
 {
@@ -2340,10 +2349,10 @@ static const char const img_mask_bgra_frag_glsl[] =
    "uniform sampler2D texm;\n"
    "varying vec4 col;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_m;\n"
+   "varying vec2 tex_m;\n"
    "void main()\n"
    "{\n"
-   "   gl_FragColor = texture2D(texm, coord_m.xy).a * texture2D(tex, coord_c.xy) * col;\n"
+   "   gl_FragColor = texture2D(texm, tex_m.xy).a * texture2D(tex, coord_c.xy) * col;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_bgra_frag_src =
 {
@@ -2359,17 +2368,20 @@ static const char const img_mask_bgra_vert_glsl[] =
    "attribute vec4 vertex;\n"
    "attribute vec4 color;\n"
    "attribute vec2 tex_coord;\n"
-   "attribute vec2 tex_coordm;\n"
+   "attribute vec4 mask_coord;\n"
    "uniform mat4 mvp;\n"
    "varying vec4 col;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_m;\n"
+   "varying vec2 tex_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   col = color;\n"
    "   coord_c = tex_coord;\n"
-   "   coord_m = tex_coordm;\n"
+   "   // mask_coord.w contains the Y-invert flag\n"
+   "   // position on screen in [0..1] range of current pixel\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_bgra_vert_src =
 {
@@ -2389,10 +2401,10 @@ static const char const img_mask_bgra_nomul_frag_glsl[] =
    "uniform sampler2D tex;\n"
    "uniform sampler2D texm;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_m;\n"
+   "varying vec2 tex_m;\n"
    "void main()\n"
    "{\n"
-   "   gl_FragColor = texture2D(texm, coord_m.xy).a * texture2D(tex, coord_c.xy);\n"
+   "   gl_FragColor = texture2D(texm, tex_m.xy).a * texture2D(tex, coord_c.xy);\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_bgra_nomul_frag_src =
 {
@@ -2407,15 +2419,18 @@ static const char const img_mask_bgra_nomul_vert_glsl[] =
    "#endif\n"
    "attribute vec4 vertex;\n"
    "attribute vec2 tex_coord;\n"
-   "attribute vec2 tex_coordm;\n"
+   "attribute vec4 mask_coord;\n"
    "uniform mat4 mvp;\n"
    "varying vec2 coord_c;\n"
-   "varying vec2 coord_m;\n"
+   "varying vec2 tex_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   coord_c = tex_coord;\n"
-   "   coord_m = tex_coordm;\n"
+   "   // mask_coord.w contains the Y-invert flag\n"
+   "   // position on screen in [0..1] range of current pixel\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
 Evas_GL_Program_Source shader_img_mask_bgra_nomul_vert_src =
 {
@@ -2462,7 +2477,8 @@ static const char const yuv_mask_vert_glsl[] =
    "#endif\n"
    "attribute vec4 vertex;\n"
    "attribute vec4 color;\n"
-   "attribute vec2 tex_coord, tex_coord2, tex_coord3, tex_coordm;\n"
+   "attribute vec4 mask_coord;\n"
+   "attribute vec2 tex_coord, tex_coord2, tex_coord3;\n"
    "uniform mat4 mvp;\n"
    "varying vec4 col;\n"
    "varying vec2 tex_c, tex_c2, tex_c3, tex_m;\n"
@@ -2473,7 +2489,10 @@ static const char const yuv_mask_vert_glsl[] =
    "   tex_c = tex_coord;\n"
    "   tex_c2 = tex_coord2;\n"
    "   tex_c3 = tex_coord3;\n"
-   "   tex_m = tex_coordm;\n"
+   "   // mask_coord.w contains the Y-invert flag\n"
+   "   // position on screen in [0..1] range of current pixel\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
 Evas_GL_Program_Source shader_yuv_mask_vert_src =
 {
@@ -2523,7 +2542,8 @@ static const char const nv12_mask_vert_glsl[] =
    "#endif\n"
    "attribute vec4 vertex;\n"
    "attribute vec4 color;\n"
-   "attribute vec2 tex_coord, tex_coord2, tex_coordm;\n"
+   "attribute vec4 mask_coord;\n"
+   "attribute vec2 tex_coord, tex_coord2;\n"
    "uniform mat4 mvp;\n"
    "varying vec4 col;\n"
    "varying vec2 tex_c, tex_cuv, tex_m;\n"
@@ -2533,7 +2553,10 @@ static const char const nv12_mask_vert_glsl[] =
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "   tex_cuv = tex_coord2 * 0.5;\n"
-   "   tex_m = tex_coordm;\n"
+   "   // mask_coord.w contains the Y-invert flag\n"
+   "   // position on screen in [0..1] range of current pixel\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
 Evas_GL_Program_Source shader_nv12_mask_vert_src =
 {
@@ -2582,7 +2605,8 @@ static const char const yuy2_mask_vert_glsl[] =
    "#endif\n"
    "attribute vec4 vertex;\n"
    "attribute vec4 color;\n"
-   "attribute vec2 tex_coord, tex_coord2, tex_coordm;\n"
+   "attribute vec4 mask_coord;\n"
+   "attribute vec2 tex_coord, tex_coord2;\n"
    "uniform mat4 mvp;\n"
    "varying vec4 col;\n"
    "varying vec2 tex_c, tex_cuv, tex_m;\n"
@@ -2592,7 +2616,10 @@ static const char const yuy2_mask_vert_glsl[] =
    "   col = color;\n"
    "   tex_c = tex_coord;\n"
    "   tex_cuv = vec2(tex_coord2.x * 0.5, tex_coord2.y);\n"
-   "   tex_m = tex_coordm;\n"
+   "   // mask_coord.w contains the Y-invert flag\n"
+   "   // position on screen in [0..1] range of current pixel\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
 Evas_GL_Program_Source shader_yuy2_mask_vert_src =
 {
@@ -2615,11 +2642,11 @@ static const char const rgb_a_pair_mask_frag_glsl[] =
    "varying vec4 col;\n"
    "varying vec2 coord_c;\n"
    "varying vec2 coord_a;\n"
-   "varying vec2 coord_m;\n"
+   "varying vec2 tex_m;\n"
    "void main()\n"
    "{\n"
-   "   gl_FragColor.rgb = texture2D(tex, coord_c.xy).rgb * col.rgb * texture2D(texa, coord_a).g * texture2D(texm, coord_m.xy).a;\n"
-   "   gl_FragColor.a = col.a * texture2D(texa, coord_a).g * texture2D(texm, coord_m.xy).a;\n"
+   "   gl_FragColor.rgb = texture2D(tex, coord_c.xy).rgb * col.rgb * texture2D(texa, coord_a).g * texture2D(texm, tex_m.xy).a;\n"
+   "   gl_FragColor.a = col.a * texture2D(texa, coord_a).g * texture2D(texm, tex_m.xy).a;\n"
    "}\n";
 Evas_GL_Program_Source shader_rgb_a_pair_mask_frag_src =
 {
@@ -2636,19 +2663,22 @@ static const char const rgb_a_pair_mask_vert_glsl[] =
    "attribute vec4 color;\n"
    "attribute vec2 tex_coord;\n"
    "attribute vec2 tex_coorda;\n"
-   "attribute vec2 tex_coordm;\n"
+   "attribute vec4 mask_coord;\n"
    "uniform mat4 mvp;\n"
    "varying vec4 col;\n"
    "varying vec2 coord_c;\n"
    "varying vec2 coord_a;\n"
-   "varying vec2 coord_m;\n"
+   "varying vec2 tex_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   col = color;\n"
    "   coord_c = tex_coord;\n"
    "   coord_a = tex_coorda;\n"
-   "   coord_m = tex_coordm;\n"
+   "   // mask_coord.w contains the Y-invert flag\n"
+   "   // position on screen in [0..1] range of current pixel\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
 Evas_GL_Program_Source shader_rgb_a_pair_mask_vert_src =
 {
@@ -2667,10 +2697,10 @@ static const char const rect_mask_frag_glsl[] =
    "#endif\n"
    "uniform sampler2D texm;\n"
    "varying vec4 col;\n"
-   "varying vec4 coord_m;\n"
+   "varying vec2 tex_m;\n"
    "void main()\n"
    "{\n"
-   "   gl_FragColor = texture2D(texm, coord_m.xy).a * col;\n"
+   "   gl_FragColor = texture2D(texm, tex_m.xy).a * col;\n"
    "}\n";
 Evas_GL_Program_Source shader_rect_mask_frag_src =
 {
@@ -2685,15 +2715,18 @@ static const char const rect_mask_vert_glsl[] =
    "#endif\n"
    "attribute vec4 vertex;\n"
    "attribute vec4 color;\n"
-   "attribute vec4 tex_coordm;\n"
+   "attribute vec4 mask_coord;\n"
    "uniform mat4 mvp;\n"
    "varying vec4 col;\n"
-   "varying vec4 coord_m;\n"
+   "varying vec2 tex_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   col = color;\n"
-   "   coord_m = tex_coordm;\n"
+   "   // mask_coord.w contains the Y-invert flag\n"
+   "   // position on screen in [0..1] range of current pixel\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
 Evas_GL_Program_Source shader_rect_mask_vert_src =
 {
@@ -2729,8 +2762,8 @@ static const char const map_mask_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
-   "attribute vec4 vertex, color;\n"
-   "attribute vec2 tex_coord, tex_coordm, tex_sample, tex_coorda;\n"
+   "attribute vec4 vertex, color, mask_coord;\n"
+   "attribute vec2 tex_coord;\n"
    "uniform mat4 mvp;\n"
    "varying vec2 tex_c, tex_m;\n"
    "varying vec4 col;\n"
@@ -2739,10 +2772,10 @@ static const char const map_mask_vert_glsl[] =
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
    "   col = color;\n"
-   "   // tex_coorda contains the Y-invert flag\n"
+   "   // mask_coord.w contains the Y-invert flag\n"
    "   // position on screen in [0..1] range of current pixel\n"
-   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(tex_coorda.y) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
-   "   tex_m = mask_Position.xy * tex_sample + tex_coordm;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
 Evas_GL_Program_Source shader_map_mask_vert_src =
 {
@@ -2776,18 +2809,18 @@ static const char const map_mask_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
-   "attribute vec4 vertex;\n"
-   "attribute vec2 tex_coord, tex_coordm, tex_sample, tex_coorda;\n"
+   "attribute vec4 vertex, mask_coord;\n"
+   "attribute vec2 tex_coord;\n"
    "uniform mat4 mvp;\n"
    "varying vec2 tex_c, tex_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
-   "   // tex_coorda contains the Y-invert flag\n"
+   "   // mask_coord.w contains the Y-invert flag\n"
    "   // position on screen in [0..1] range of current pixel\n"
-   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(tex_coorda.y) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
-   "   tex_m = mask_Position.xy * tex_sample + tex_coordm;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
 Evas_GL_Program_Source shader_map_mask_nomul_vert_src =
 {
@@ -2823,8 +2856,8 @@ static const char const map_mask_bgra_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
-   "attribute vec4 vertex, color;\n"
-   "attribute vec2 tex_coord, tex_coordm, tex_sample, tex_coorda;\n"
+   "attribute vec4 vertex, color, mask_coord;\n"
+   "attribute vec2 tex_coord;\n"
    "uniform mat4 mvp;\n"
    "varying vec2 tex_c, tex_m;\n"
    "varying vec4 col;\n"
@@ -2833,10 +2866,10 @@ static const char const map_mask_bgra_vert_glsl[] =
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
    "   col = color;\n"
-   "   // tex_coorda contains the Y-invert flag\n"
+   "   // mask_coord.w contains the Y-invert flag\n"
    "   // position on screen in [0..1] range of current pixel\n"
-   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(tex_coorda.y) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
-   "   tex_m = mask_Position.xy * tex_sample + tex_coordm;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
 Evas_GL_Program_Source shader_map_mask_bgra_vert_src =
 {
@@ -2870,18 +2903,18 @@ static const char const map_mask_bgra_nomul_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision highp float;\n"
    "#endif\n"
-   "attribute vec4 vertex;\n"
-   "attribute vec2 tex_coord, tex_coordm, tex_sample, tex_coorda;\n"
+   "attribute vec4 vertex, mask_coord;\n"
+   "attribute vec2 tex_coord;\n"
    "uniform mat4 mvp;\n"
    "varying vec2 tex_c, tex_m;\n"
    "void main()\n"
    "{\n"
    "   gl_Position = mvp * vertex;\n"
    "   tex_c = tex_coord;\n"
-   "   // tex_coorda contains the Y-invert flag\n"
+   "   // mask_coord.w contains the Y-invert flag\n"
    "   // position on screen in [0..1] range of current pixel\n"
-   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(tex_coorda.y) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
-   "   tex_m = mask_Position.xy * tex_sample + tex_coordm;\n"
+   "   vec4 mask_Position = mvp * vertex * vec4(0.5, sign(mask_coord.w) * 0.5, 0.5, 0.5) + vec4(0.5, 0.5, 0, 0);\n"
+   "   tex_m = mask_Position.xy * abs(mask_coord.zw) + mask_coord.xy;\n"
    "}\n";
 Evas_GL_Program_Source shader_map_mask_bgra_nomul_vert_src =
 {

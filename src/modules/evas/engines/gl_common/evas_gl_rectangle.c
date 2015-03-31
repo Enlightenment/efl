@@ -5,7 +5,7 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
 {
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch, cr, cg, cb, ca, i;
-   double mx = 0, my = 0, mw = 0, mh = 0;
+   int mx = 0, my = 0, mw = 0, mh = 0;
    Eina_Bool mask_smooth = EINA_FALSE;
    Evas_GL_Image *mask = gc->dc->clip.mask;
    Evas_GL_Texture *mtex = mask ? mask->tex : NULL;
@@ -30,23 +30,15 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
                            gc->dc->clip.w, gc->dc->clip.h);
      }
 
-   if (mtex)
+   if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
      {
-        const double mask_x = gc->dc->clip.mask_x;
-        const double mask_y = gc->dc->clip.mask_y;
-        const double tmw = mtex->pt->w;
-        const double tmh = mtex->pt->h;
-        double scalex = 1.0;
-        double scaley = 1.0;
-
         // canvas coords
-        mx = mask_x; my = mask_y;
-        if (mask->scaled.origin && mask->scaled.w && mask->scaled.h)
+        mx = gc->dc->clip.mask_x;
+        my = gc->dc->clip.mask_y;
+        if (mask->scaled.origin)
           {
              mw = mask->scaled.w;
              mh = mask->scaled.h;
-             scalex = mask->w / (double)mask->scaled.w;
-             scaley = mask->h / (double)mask->scaled.h;
              mask_smooth = mask->scaled.smooth;
           }
         else
@@ -54,16 +46,8 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
              mw = mask->w;
              mh = mask->h;
           }
-        RECTS_CLIP_TO_RECT(mx, my, mw, mh, cx, cy, cw, ch);
-        mx -= gc->dc->clip.mask_x;
-        my -= gc->dc->clip.mask_y;
-
-        // convert to tex coords
-        mx = (mtex->x / tmw) + ((mx - mask_x) * scalex / tmw);
-        my = (mtex->y / tmh) + ((my - mask_y) * scaley / tmh);
-        mw = mw * scalex / tmw;
-        mh = mh * scaley / tmh;
      }
+   else mtex = NULL;
 
    if (!gc->dc->cutout.rects)
      {
