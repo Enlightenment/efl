@@ -8,13 +8,13 @@
    elm_object_tooltip_text_set((BT), (TEXT)); \
    elm_object_tooltip_window_mode_set((BT), EINA_TRUE)
 
-static const char img1[PATH_MAX];
-static const char img2[PATH_MAX];
-static const char img3[PATH_MAX];
-static const char img4[PATH_MAX];
-static const char img5[PATH_MAX];
-static const char img6[PATH_MAX];
-static const char img7[PATH_MAX];
+static char img1[PATH_MAX];
+static char img2[PATH_MAX];
+static char img3[PATH_MAX];
+static char img4[PATH_MAX];
+static char img5[PATH_MAX];
+static char img6[PATH_MAX];
+static char img7[PATH_MAX];
 
 Evas_Object *
 _content_new(Evas_Object *parent, const char *img)
