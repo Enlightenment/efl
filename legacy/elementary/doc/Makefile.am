@@ -1,4 +1,4 @@
-SUBDIRS = widgets
+#SUBDIRS = widgets
 
 MAINTAINERCLEANFILES = Makefile.in
 
@@ -191,7 +191,7 @@ widget-tree-figures: doc
 doc-clean:
 	rm -rf img/widget html/ latex/ man/ xml/ $(top_builddir)/$(PACKAGE_DOCNAME).tar*
 
-gen-doc:
+gen-doc: widget-preview
 	$(efl_doxygen)
 	cp -r $(srcdir)/img/* html/
 	cp -r $(srcdir)/img/* latex/
