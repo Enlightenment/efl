@@ -442,10 +442,15 @@ eng_setup(Evas *eo_e, void *in)
         if (info->info.backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
           {
              static int try_swapbuf = -1;
+             char* s;
 
              if (try_swapbuf == -1)
                {
-                  if (getenv("EVAS_NO_DRI_SWAPBUF")) try_swapbuf = 0;
+                  if ((s = getenv("EVAS_NO_DRI_SWAPBUF")) != NULL)
+                    {
+                       if (atoi(s) == 1) try_swapbuf = 0;
+                       else try_swapbuf = 1;
+                    }
                   else try_swapbuf = 1;
                }
              if (try_swapbuf)
@@ -459,7 +464,7 @@ eng_setup(Evas *eo_e, void *in)
                                           info->info.mask, info->info.shape_dither,
                                           info->info.destination_alpha);
              if (re) re->outbuf_alpha_get = evas_software_xlib_swapbuf_alpha_get;
-             else if (!re)
+             else
                {
                   re = _output_xlib_setup(e->output.w, e->output.h,
                                           info->info.rotation, info->info.connection,
