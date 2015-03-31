@@ -671,46 +671,29 @@ _edje_color_class_active_iterator_next(Eina_Iterator *it, void **data)
    Edje_Refcount *er = NULL;
    Eina_Iterator *ith;
    Edje_Color_Class *cc;
-   int r, g, b, a;
-   int r2, g2, b2, a2;
-   int r3, g3, b3, a3;
 
    if (!eina_iterator_next(et->classes, (void**) &tuple)) return EINA_FALSE;
    if (!tuple) return EINA_FALSE;
 
-   if (!edje_color_class_get(tuple->key,
-                             &r, &g, &b, &a,
-                             &r2, &g2, &b2, &a2,
-                             &r3, &g3, &b3, &a3))
-     return EINA_FALSE;
+   ith = eina_hash_iterator_data_new(tuple->data);
+   if (!eina_iterator_next(ith, (void**) &er)) return EINA_FALSE;
+
+   /*
+     We actually need to ask on an object to get the correct value.
+     It is being assumed that the color key are the same for all object here.
+     This can some times not be the case, but for now we should be fine.
+    */
+   cc = _edje_color_class_find(er->ed, tuple->key);
+   if (!cc) return EINA_FALSE;
+   et->cc = *cc;
 
    /*
      Any of the Edje object referenced should have a file with a valid
      description for this color class. Let's bet on that for now.
    */
-   ith = eina_hash_iterator_data_new(tuple->data);
-   if (!eina_iterator_next(ith, (void**) &er)) return EINA_FALSE;
    cc = eina_hash_find(er->ed->file->color_hash, tuple->key);
    if (!cc) return EINA_FALSE;
-
-   /*
-     Now set the value of a fake color class with current value as set
-     and description from edc.
-   */
-   et->cc.name = tuple->key;
    et->cc.desc = cc->desc;
-   et->cc.r = r;
-   et->cc.g = g;
-   et->cc.b = b;
-   et->cc.a = a;
-   et->cc.r2 = r2;
-   et->cc.g2 = g2;
-   et->cc.b2 = b2;
-   et->cc.a2 = a2;
-   et->cc.r3 = r3;
-   et->cc.g3 = g3;
-   et->cc.b3 = b3;
-   et->cc.a3 = a3;
 
    *data = &et->cc;
    return EINA_TRUE;
