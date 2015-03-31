@@ -132,7 +132,7 @@ _page7(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    Elm_Object_Item *it;
    char img6[PATH_MAX];
 
-   snprintf(img6, sizeof(img6), "%s/images/sky_02.png", elm_app_data_dir_get());
+   snprintf(img6, sizeof(img6), "%s/images/sky_02.jpg", elm_app_data_dir_get());
    bt = elm_button_add(nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    BUTTON_TEXT_SET(bt, "Page 6");
@@ -156,7 +156,7 @@ _page6(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    Elm_Object_Item *it;
    char img7[PATH_MAX];
 
-   snprintf(img7, sizeof(img7), "%s/images/sky_03.png", elm_app_data_dir_get());
+   snprintf(img7, sizeof(img7), "%s/images/sky_03.jpg", elm_app_data_dir_get());
    bt = elm_button_add(nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    BUTTON_TEXT_SET(bt, "Page 5");
@@ -180,7 +180,7 @@ _page5(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    Elm_Object_Item *it;
    char img5[PATH_MAX];
 
-   snprintf(img5, sizeof(img5), "%s/images/sky_01.png", elm_app_data_dir_get());
+   snprintf(img5, sizeof(img5), "%s/images/sky_01.jpg", elm_app_data_dir_get());
    bt = elm_button_add(nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    BUTTON_TEXT_SET(bt, "Page 4");
@@ -210,7 +210,7 @@ _page4(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    char img4[PATH_MAX];
    Elm_Object_Item *it;
 
-   snprintf(img4, sizeof(img4), "%s/images/rock_02.png", elm_app_data_dir_get());
+   snprintf(img4, sizeof(img4), "%s/images/rock_02.jpg", elm_app_data_dir_get());
    ic = elm_icon_add(nf);
    snprintf(buf, sizeof(buf), "%s/images/icon_right_arrow.png",
             elm_app_data_dir_get());
