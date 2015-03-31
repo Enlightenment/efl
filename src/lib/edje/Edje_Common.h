@@ -1263,12 +1263,20 @@ EAPI Eina_List   *edje_color_class_list           (void);
 /**
  * @brief Iterate over all the active class of an application.
  *
- * @return Return an iterator of Edje_Color_Class of the currently active color class
+ * @return an iterator of Edje_Color_Class of the currently active color class
  *
  * This function only iterate over the Edje_Color_Class in use by
  * an application.
  */
 EAPI Eina_Iterator *edje_color_class_active_iterator_new(void);
+
+/**
+ * @brief Iterate over all the color class provided by an Edje file.
+ *
+ * @return an iterator of Edje_Color_Class provided by the Edje file.
+ */
+EAPI Eina_Iterator *edje_mmap_color_class_iterator_new(Eina_File *f)
+
 
 /**
  * @}

@@ -897,6 +897,62 @@ edje_object_color_class_del(Evas_Object *obj, const char *color_class)
    _edje_emit(ed, "color_class,del", color_class);
 }
 
+typedef struct _Edje_File_Color_Class_Iterator Edje_File_Color_Class_Iterator;
+struct _Edje_File_Color_Class_Iterator
+{
+   Edje_Active_Color_Class_Iterator it;
+
+   Edje_File *edf;
+};
+
+static void *
+_edje_mmap_color_class_iterator_container(Eina_Iterator *it)
+{
+   Edje_File_Color_Class_Iterator *et = (void*) it;
+
+   return et->edf->f;
+}
+
+static void
+_edje_mmap_color_class_iterator_free(Eina_Iterator *it)
+{
+   Edje_File_Color_Class_Iterator *et = (void*) it;
+
+   eina_iterator_free(et->it.classes);
+   _edje_cache_file_unref(et->edf);
+   EINA_MAGIC_SET(&et->it.iterator, 0);
+   free(et);
+}
+
+EAPI Eina_Iterator *
+edje_mmap_color_class_iterator_new(Eina_File *f)
+{
+   Edje_File_Color_Class_Iterator *it;
+   Edje_File *edf;
+   int error_ret;
+
+   edf = _edje_cache_file_coll_open(f, NULL, &error_ret, NULL, NULL);
+   if (!edf) return NULL;
+
+   it = calloc(1, sizeof (Edje_File_Color_Class_Iterator));
+   if (!it) goto on_error;
+
+   EINA_MAGIC_SET(&it->it.iterator, EINA_MAGIC_ITERATOR);
+   it->edf = edf;
+   it->it.classes = eina_hash_iterator_tuple_new(edf->color_hash);
+
+   it->it.iterator.version = EINA_ITERATOR_VERSION;
+   it->it.iterator.next = _edje_color_class_active_iterator_next;
+   it->it.iterator.get_container = _edje_mmap_color_class_iterator_container;
+   it->it.iterator.free = _edje_mmap_color_class_iterator_free;
+
+   return &it->it.iterator;
+
+ on_error:
+   _edje_cache_file_unref(edf);
+   return NULL;
+}
+
 EAPI Eina_Bool
 edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size)
 {
