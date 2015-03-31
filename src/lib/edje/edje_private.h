@@ -351,7 +351,6 @@ typedef struct _Edje_Calc_Params_Map Edje_Calc_Params_Map;
 typedef struct _Edje_Calc_Params_Physics Edje_Calc_Params_Physics;
 typedef struct _Edje_Pending_Program Edje_Pending_Program;
 typedef struct _Edje_Text_Style Edje_Text_Style;
-typedef struct _Edje_Color_Class Edje_Color_Class;
 typedef struct _Edje_Text_Class Edje_Text_Class;
 typedef struct _Edje_Var Edje_Var;
 typedef struct _Edje_Var_Int Edje_Var_Int;
@@ -1861,15 +1860,6 @@ struct _Edje_Text_Style
       signed   char x, y; /* offset */
       unsigned char alpha;
    } members[32];
-};
-
-struct _Edje_Color_Class
-{
-   const char    *name;
-   unsigned char  r, g, b, a;
-   unsigned char  r2, g2, b2, a2;
-   unsigned char  r3, g3, b3, a3;
-   Eina_Stringshare *desc;
 };
 
 struct _Edje_Text_Class
