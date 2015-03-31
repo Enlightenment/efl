@@ -54,6 +54,13 @@ struct _Elm_Image_Data
 
    Elm_Image_Orient      orient;
 
+   struct {
+      Eina_Stringshare  *file, *key;
+      Eina_File         *f, *f_set;
+      void              *map;
+      Ecore_Thread      *th;
+   } async;
+
    Eina_Bool             aspect_fixed : 1;
    Eina_Bool             fill_inside : 1;
    Eina_Bool             resize_down : 1;
@@ -66,6 +73,9 @@ struct _Elm_Image_Data
    Eina_Bool             edje : 1;
    Eina_Bool             anim : 1;
    Eina_Bool             play : 1;
+   Eina_Bool             async_enable : 1;
+   Eina_Bool             async_opening : 1;
+   Eina_Bool             async_failed : 1;
 };
 
 /**

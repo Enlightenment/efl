@@ -34,6 +34,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
+static void _elm_image_smart_internal_file_set(Eo *obj, Elm_Image_Data *sd, const char *file, const Eina_File *f, const char *key, Eina_Bool *ret);
 
 static const Elm_Action key_actions[] = {
    {"activate", _key_action_activate},
@@ -204,9 +205,161 @@ _elm_image_internal_sizing_eval(Evas_Object *obj, Elm_Image_Data *sd)
    evas_object_resize(sd->hit_rect, w, h);
 }
 
-/* WARNING: whenever you patch this function, remember to do the same
- * on elm_icon.c:_elm_icon_smart_file_set()'s 2nd half.
- */
+static void
+_elm_image_async_open_do(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Evas_Object *obj = data;
+   Eina_Bool ok = EINA_FALSE;
+   Eina_File *f = NULL;
+   void *map = NULL;
+
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   sd->async_opening = EINA_TRUE;
+   if (sd->async.f_set)
+     {
+        f = sd->async.f_set;
+        sd->async.f_set = NULL;
+     }
+   else if (sd->async.file)
+     {
+        f = eina_file_open(sd->async.file, EINA_FALSE);
+     }
+   else ERR("Async open has no input file!"); // CRI?
+
+   if (f)
+     {
+        // Read just enough data for map to actually do something.
+        unsigned int buf;
+        map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+        if (map && (eina_file_size_get(f) >= sizeof(buf)))
+          {
+             memcpy(&buf, map, sizeof(buf));
+             ok = EINA_TRUE;
+          }
+     }
+
+   sd->async.f = f;
+   sd->async.map = map;
+   sd->async_failed = !ok;
+   sd->async_opening = EINA_FALSE;
+}
+
+static void
+_elm_image_async_open_done(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Evas_Object *obj = data;
+   Eina_Stringshare *file, *key;
+   Eina_Bool ok;
+   Eina_File *f;
+   void *map;
+
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   key = sd->async.key;
+   map = sd->async.map;
+   f = sd->async.f;
+   ok = (!sd->async_failed) && f && map;
+   if (sd->async.file)
+     file = sd->async.file;
+   else
+     file = f ? eina_file_filename_get(f) : NULL;
+
+   // sd->async.f_set is already NULL
+   sd->async.f = NULL;
+   sd->async.th = NULL;
+   sd->async.map = NULL;
+   sd->async_opening = EINA_FALSE;
+
+   if (sd->edje)
+     {
+        if (ok) ok = edje_object_mmap_set(sd->img, f, key);
+        if (!ok)
+          {
+             ERR("failed to open edje file '%s', group '%s': %s", file, key,
+                 edje_load_error_str(edje_object_load_error_get(sd->img)));
+          }
+     }
+   else
+     {
+        if (ok) _elm_image_smart_internal_file_set(obj, sd, file, f, key, &ok);
+        if (!ok)
+          {
+             ERR("failed to open image file '%s', key '%s': %s", file, key,
+                  evas_load_error_str(evas_object_image_load_error_get(sd->img)));
+          }
+     }
+
+   if (ok)
+     {
+        // TODO: Implement Efl.File async,opened event_info type
+        sd->async_failed = EINA_FALSE;
+        ELM_SAFE_FREE(sd->async.file, eina_stringshare_del);
+        ELM_SAFE_FREE(sd->async.key, eina_stringshare_del);
+        eo_do(obj, eo_event_callback_call(EFL_FILE_EVENT_ASYNC_OPENED, NULL));
+        _elm_image_internal_sizing_eval(obj, sd);
+     }
+   else
+     {
+        // TODO: Implement Efl.File async,error event_info type
+        sd->async_failed = EINA_TRUE;
+        // keep file,key around for file_get
+        eo_do(obj, eo_event_callback_call(EFL_FILE_EVENT_ASYNC_ERROR, NULL));
+     }
+
+   if (f)
+     {
+        if (map) eina_file_map_free(f, map);
+        eina_file_close(f);
+     }
+}
+
+static void
+_elm_image_async_open_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Elm_Image_Data *sd = data;
+
+   if (sd->async.map)
+     {
+        eina_file_map_free(sd->async.f, sd->async.map);
+        sd->async.map = NULL;
+     }
+   if (sd->async.f_set)
+     ELM_SAFE_FREE(sd->async.f_set, eina_file_close);
+   if (sd->async.f)
+     ELM_SAFE_FREE(sd->async.f, eina_file_close);
+   sd->async_failed = EINA_TRUE;
+}
+
+static Eina_Bool
+_elm_image_async_file_set(Eo *obj, Elm_Image_Data *sd,
+                          const char *file, const Eina_File *f, const char *key)
+{
+   Eina_Bool ret;
+
+   ecore_thread_cancel(sd->async.th);
+   //ecore_thread_wait(sd->async.th);
+
+   eina_stringshare_replace(&sd->async.file, file);
+   eina_stringshare_replace(&sd->async.key, key);
+   if (sd->async.map)
+     {
+        eina_file_map_free(sd->async.f, sd->async.map);
+        sd->async.map = NULL;
+     }
+   if (sd->async.f)
+     ELM_SAFE_FREE(sd->async.f, eina_file_close);
+   sd->async.f_set = eina_file_dup(f);
+   sd->async_failed = EINA_FALSE;
+   sd->async.th = ecore_thread_run(_elm_image_async_open_do,
+                                   _elm_image_async_open_done,
+                                   _elm_image_async_open_cancel, obj);
+
+   ret = (sd->async.th != NULL);
+   if (!ret) sd->async_failed = EINA_TRUE;
+   return ret;
+}
+
 static Eina_Bool
 _elm_image_edje_file_set(Evas_Object *obj,
                          const char *file,
@@ -232,21 +385,29 @@ _elm_image_edje_file_set(Evas_Object *obj,
      }
 
    sd->edje = EINA_TRUE;
-   if (f)
+   if (!sd->async_enable)
      {
-        if (!edje_object_mmap_set(sd->img, f, group))
+        if (f)
           {
-             ERR("failed to set edje file '%s', group '%s': %s", file, group,
-                 edje_load_error_str(edje_object_load_error_get(sd->img)));
-             return EINA_FALSE;
+             if (!edje_object_mmap_set(sd->img, f, group))
+               {
+                  ERR("failed to set edje file '%s', group '%s': %s", file, group,
+                      edje_load_error_str(edje_object_load_error_get(sd->img)));
+                  return EINA_FALSE;
+               }
+          }
+        else
+          {
+             if (!edje_object_file_set(sd->img, file, group))
+               {
+                  ERR("failed to set edje file '%s', group '%s': %s", file, group,
+                      edje_load_error_str(edje_object_load_error_get(sd->img)));
+                  return EINA_FALSE;
+               }
           }
      }
-   else if (!edje_object_file_set(sd->img, file, group))
-     {
-        ERR("failed to set edje file '%s', group '%s': %s", file, group,
-            edje_load_error_str(edje_object_load_error_get(sd->img)));
-        return EINA_FALSE;
-     }
+   else
+     return _elm_image_async_file_set(obj, sd, file, f, group);
 
    /* FIXME: do i want to update icon on file change ? */
    _elm_image_internal_sizing_eval(obj, sd);
@@ -386,6 +547,23 @@ _elm_image_evas_object_smart_del(Eo *obj, Elm_Image_Data *sd)
    if (sd->remote) _elm_url_cancel(sd->remote);
    free(sd->remote_data);
    eina_stringshare_del(sd->key);
+
+   if (sd->async.th)
+     {
+        ecore_thread_cancel(sd->async.th);
+        if (!ecore_thread_wait(sd->async.th, 1.0))
+          {
+             ERR("Async open thread timed out during cancellation.");
+             // skipping all other data free to avoid crashes (this leaks)
+             eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
+             return;
+          }
+     }
+
+   if (sd->async.map) eina_file_map_free(sd->async.f, sd->async.map);
+   if (sd->async.f) eina_file_close(sd->async.f);
+   eina_stringshare_del(sd->async.file);
+   eina_stringshare_del(sd->async.key);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
@@ -826,7 +1004,10 @@ _elm_image_efl_file_file_set(Eo *obj, Elm_Image_Data *sd, const char *file, cons
           break;
        }
 
-   _elm_image_smart_internal_file_set(obj, sd, file, NULL, key, &ret);
+   if (!sd->async_enable)
+     _elm_image_smart_internal_file_set(obj, sd, file, NULL, key, &ret);
+   else
+     ret = _elm_image_async_file_set(obj, sd, file, NULL, key);
 
    return ret;
 }
@@ -880,9 +1061,14 @@ _elm_image_mmap_set(Eo *obj, Elm_Image_Data *sd, const Eina_File *f, const char 
   if (sd->remote) _elm_url_cancel(sd->remote);
   sd->remote = NULL;
 
-  _elm_image_smart_internal_file_set(obj, sd,
-				     eina_file_filename_get(f), f,
-				     key, &ret);
+  if (!sd->async_enable)
+    {
+       _elm_image_smart_internal_file_set(obj, sd,
+                                          eina_file_filename_get(f), f,
+                                          key, &ret);
+    }
+  else
+    ret = _elm_image_async_file_set(obj, sd, eina_file_filename_get(f), f, key);
 
    return ret;
 }
@@ -890,6 +1076,13 @@ _elm_image_mmap_set(Eo *obj, Elm_Image_Data *sd, const Eina_File *f, const char 
 EOLIAN static void
 _elm_image_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, const char **file, const char **key)
 {
+   if (sd->async_enable && (sd->async_opening || sd->async_failed))
+     {
+        if (file) *file = sd->async.file;
+        if (key) *key = sd->async.key;
+        return;
+     }
+
    if (sd->edje)
      edje_object_file_get(sd->img, file, key);
    else
@@ -908,6 +1101,39 @@ EOLIAN static Eina_Bool
 _elm_image_smooth_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
    return sd->smooth;
+}
+
+static Eina_Bool
+_elm_image_efl_file_async_wait(Eo *obj EINA_UNUSED, Elm_Image_Data *pd)
+{
+   Eina_Bool ok = EINA_TRUE;
+   if (!pd->async_enable) return ok;
+   if (!pd->async.th) return ok;
+   if (!ecore_thread_wait(pd->async.th, 1.0))
+     {
+        ERR("Failed to wait on async file open!");
+        ok = EINA_FALSE;
+        if (!pd->async.map)
+          pd->async_failed = EINA_TRUE;
+     }
+   return ok;
+}
+
+EOLIAN static void
+_elm_image_efl_file_async_set(Eo *obj, Elm_Image_Data *pd, Eina_Bool async)
+{
+   if (pd->async_enable == async)
+     return;
+
+   pd->async_enable = async;
+   if (!async)
+     _elm_image_efl_file_async_wait(obj, pd);
+}
+
+EOLIAN static Eina_Bool
+_elm_image_efl_file_async_get(Eo *obj EINA_UNUSED, Elm_Image_Data *pd)
+{
+   return pd->async_enable;
 }
 
 EOLIAN static void
