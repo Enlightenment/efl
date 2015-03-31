@@ -3225,8 +3225,18 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
            (ep->typedata.swallow)) &&
        ep->typedata.swallow->swallowed_object)
      {
-        edje_object_size_min_calc(ep->typedata.swallow->swallowed_object,
-                                  &mmw, &mmh);
+        Edje_Size *min = NULL, *max = NULL;
+
+        if (ep->chosen_description)
+          {
+             min = &ep->chosen_description->min;
+             max = &ep->chosen_description->max;
+          }
+        if (min && max && (min->w == max->w) && (min->h == max->h))
+          mmw = min->w, mmh = min->h;
+        else
+          edje_object_size_min_calc(ep->typedata.swallow->swallowed_object,
+                                    &mmw, &mmh);
      }
 
 #ifdef EDJE_CALC_CACHE
