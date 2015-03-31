@@ -394,7 +394,7 @@ _edje_object_scale_set(Eo *obj, Edje *ed, double scale)
                edje_object_scale_set(o, scale);
           }
      }
-   edje_object_calc_force(obj);
+   _edje_recalc(ed);
 
    return EINA_TRUE;
 }
