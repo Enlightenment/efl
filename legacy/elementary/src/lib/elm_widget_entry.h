@@ -72,6 +72,7 @@ struct _Elm_Entry_Data
    void                                 *input_panel_imdata;
    int                                   input_panel_imdata_len;
    int                                   input_panel_layout_variation;
+   int                                   validators;
    struct
      {
         Evas_Object *hover_parent; /**< hover parent object. entry is a hover parent object by default */

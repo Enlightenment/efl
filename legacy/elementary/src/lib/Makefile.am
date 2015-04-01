@@ -383,7 +383,8 @@ elm_web_legacy.h \
 elm_win.h \
 elm_win_common.h \
 elm_win_eo.h \
-elm_win_legacy.h
+elm_win_legacy.h \
+elm_helper.h
 includesubdir = $(includedir)/elementary-@VMAJ@/
 
 libelementary_la_SOURCES = \
@@ -495,6 +496,7 @@ elm_video.c \
 elm_web2.c \
 elm_widget.c \
 elm_win.c \
+elm_helper.c \
 els_box.c \
 els_cursor.c \
 els_tooltip.c \
