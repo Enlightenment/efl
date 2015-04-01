@@ -411,9 +411,11 @@ fill_list(const char *file, Eina_List **l)
    if (!it) goto error;
    EINA_ITERATOR_FOREACH(it, line)
      {
-        const char *end;
-        end = line->end - 1;
-        *l = eina_list_append(*l, eina_stringshare_add_length(line->start, end - line->start));
+        if (line->end > line->start)
+          {
+             const char *end = line->end - 1;
+             *l = eina_list_append(*l, eina_stringshare_add_length(line->start, end - line->start));
+          }
      }
    eina_iterator_free(it);
 error:
