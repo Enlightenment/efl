@@ -165,6 +165,24 @@ EAPI void ecore_animator_thaw(Ecore_Animator *animator);
  * @{
  */
 
+/**
+ * Creates a timer to call the given function in the given period of time.
+ * @param   in   The interval in seconds.
+ * @param   func The given function.  If @p func returns 1, the timer is
+ *               rescheduled for the next interval @p in.
+ * @param   data Data to pass to @p func when it is called.
+ * @return  A timer object on success.  @c NULL on failure.
+ *
+ * This function adds a timer and returns its handle on success and NULL on
+ * failure. The function @p func will be called every @p in seconds. The
+ * function will be passed the @p data pointer as its parameter.
+ *
+ * When the timer @p func is called, it must return a value of either 1
+ * (or ECORE_CALLBACK_RENEW) or 0 (or ECORE_CALLBACK_CANCEL).
+ * If it returns 1, it will be called again at the next tick, or if it returns
+ * 0 it will be deleted automatically making any references/handles for it
+ * invalid.
+ */
 EAPI Ecore_Timer *ecore_timer_add(double in, Ecore_Task_Cb func, const void *data);
 
 /**
