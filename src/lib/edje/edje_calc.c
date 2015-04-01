@@ -627,9 +627,11 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
    chosen_desc = ep->chosen_description;
    ep->param1.description = epd1;
    ep->chosen_description = epd1;
-   change_w = ep->chosen_description->fixed.w != chosen_desc->fixed.w;
-   change_h = ep->chosen_description->fixed.h != chosen_desc->fixed.h;
-
+   if (chosen_desc)
+     {
+        change_w = ep->chosen_description->fixed.w != chosen_desc->fixed.w;
+        change_h = ep->chosen_description->fixed.h != chosen_desc->fixed.h;
+     }
    _edje_real_part_rel_to_apply(ed, ep, &ep->param1);
 
    if (ep->param2)
@@ -646,7 +648,7 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
      {
         if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
           _edje_external_recalc_apply(ed, ep, NULL, chosen_desc);
-        else if (ep->part->type == EDJE_PART_TYPE_GROUP)
+        else if ((chosen_desc) && (ep->part->type == EDJE_PART_TYPE_GROUP))
           {
              Edje_Size *min, *max, *pmin, *pmax;
 
