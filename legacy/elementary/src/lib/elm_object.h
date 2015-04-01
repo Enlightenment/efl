@@ -181,6 +181,16 @@ EAPI Evas_Object                 *elm_object_part_content_unset(Evas_Object *obj
 EAPI void                         elm_object_access_info_set(Evas_Object *obj, const char *txt);
 
 /**
+ * Get the text to read out when in accessibility mode
+ *
+ * @param obj The object which is to be described
+ * @return The text that describes the widget to people with poor or no vision
+ *
+ * @ingroup General
+ */
+EAPI const char *elm_object_access_info_get(Evas_Object *obj);
+
+/**
  * Get a named object from the children
  *
  * @param obj The parent object whose children to look at

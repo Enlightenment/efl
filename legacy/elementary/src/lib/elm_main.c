@@ -1698,6 +1698,12 @@ elm_object_access_info_set(Evas_Object *obj, const char *txt)
    elm_widget_access_info_set(obj, txt);
 }
 
+EAPI const char *
+elm_object_access_info_get(Evas_Object *obj)
+{
+   return elm_widget_access_info_get(obj);
+}
+
 EAPI Evas_Object *
 elm_object_name_find(const Evas_Object *obj, const char *name, int recurse)
 {
