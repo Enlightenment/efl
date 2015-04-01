@@ -424,6 +424,7 @@ struct _Evas_GL_Shared
 #define RTYPE_MAP   5 /* need to merge with image */
 #define RTYPE_YUY2  6
 #define RTYPE_NV12  7
+#define RTYPE_LINE  8
 #define ARRAY_BUFFER_USE 500
 #define ARRAY_BUFFER_USE_SHIFT 100
 
@@ -715,6 +716,7 @@ void              evas_gl_common_context_target_surface_set(Evas_Engine_GL_Conte
 void              evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
                                                    int x1, int y1, int x2, int y2,
                                                    int clip, int cx, int cy, int cw, int ch,
+                                                   Evas_GL_Texture *mtex, int mx, int my, int mw, int mh, Eina_Bool mask_smooth,
                                                    int r, int g, int b, int a);
 void              evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
                                                         int x, int y, int w, int h,

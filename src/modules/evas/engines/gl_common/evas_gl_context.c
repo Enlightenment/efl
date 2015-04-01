@@ -1363,17 +1363,23 @@ _push_mask(Evas_Engine_GL_Context *gc, int pn, int nm, Evas_GL_Texture *mtex,
    glmw = (double)(gw * mtex->w) / (double)(mw * mtex->pt->w);
    glmh = (double)(gh * mtex->h) / (double)(mh * mtex->pt->h);
    glmh *= yinv;
-   PUSH_TEXM(pn, glmx, glmy, glmw, glmh);
-   PUSH_TEXM(pn, glmx, glmy, glmw, glmh);
-   PUSH_TEXM(pn, glmx, glmy, glmw, glmh);
-   PUSH_TEXM(pn, glmx, glmy, glmw, glmh);
-   PUSH_TEXM(pn, glmx, glmy, glmw, glmh);
-   PUSH_TEXM(pn, glmx, glmy, glmw, glmh);
 
+   PUSH_TEXM(pn, glmx, glmy, glmw, glmh);
+   PUSH_TEXM(pn, glmx, glmy, glmw, glmh);
+   if (!gc->pipe[pn].array.line)
+     {
+        PUSH_TEXM(pn, glmx, glmy, glmw, glmh);
+        PUSH_TEXM(pn, glmx, glmy, glmw, glmh);
+        PUSH_TEXM(pn, glmx, glmy, glmw, glmh);
+        PUSH_TEXM(pn, glmx, glmy, glmw, glmh);
+     }
+
+   /*
    DBG("%d,%d %dx%d --> %f , %f - %f x %f [gc %dx%d, tex %d,%d %dx%d, pt %dx%d]",
        mx, my, mw, mh,
        glmx, glmy, glmw, glmh,
        gc->w, gc->h, mtex->x, mtex->y, mtex->w, mtex->h, mtex->pt->w, mtex->pt->h);
+   */
 
    return EINA_TRUE;
 }
@@ -1638,23 +1644,33 @@ void
 evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
                                  int x1, int y1, int x2, int y2,
                                  int clip, int cx, int cy, int cw, int ch,
+                                 Evas_GL_Texture *mtex, int mx, int my, int mw, int mh, Eina_Bool mask_smooth,
                                  int r, int g, int b, int a)
 {
    Eina_Bool blend = EINA_FALSE;
    Evas_GL_Shader shader = SHADER_RECT;
-   GLuint prog = gc->shared->shader[shader].prog;
    int pn = 0, i;
-
-   // FIXME: Line masking is not implemented
+   GLuint prog, mtexid = 0;
 
    if (!(gc->dc->render_op == EVAS_RENDER_COPY) && (a < 255))
      blend = EINA_TRUE;
 
+   if (mtex)
+     {
+        blend = EINA_TRUE;
+        mtexid = mtex->pt->texture;
+        shader = SHADER_RECT_MASK;
+     }
+
+   prog = gc->shared->shader[shader].prog;
    shader_array_flush(gc);
    vertex_array_size_check(gc, gc->state.top_pipe, 2);
    pn = gc->state.top_pipe;
+
+   gc->pipe[pn].region.type = RTYPE_LINE;
    gc->pipe[pn].shader.id = shader;
    gc->pipe[pn].shader.cur_tex = 0;
+   gc->pipe[pn].shader.cur_texm = mtexid;
    gc->pipe[pn].shader.cur_prog = prog;
    gc->pipe[pn].shader.blend = blend;
    gc->pipe[pn].shader.render_op = gc->dc->render_op;
@@ -1663,6 +1679,7 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].shader.cy = cy;
    gc->pipe[pn].shader.cw = cw;
    gc->pipe[pn].shader.ch = ch;
+   gc->pipe[pn].shader.mask_smooth = mask_smooth;
 
    gc->pipe[pn].array.line = 1;
    gc->pipe[pn].array.anti_alias = gc->dc->anti_alias;
@@ -1673,16 +1690,15 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_texa = 0;
    gc->pipe[pn].array.use_texsam = 0;
-   gc->pipe[pn].array.use_mask = 0;
+   gc->pipe[pn].array.use_mask = !!mtex;
 
    PIPE_GROW(gc, pn, 2);
    PUSH_VERTEX(pn, x1, y1, 0);
    PUSH_VERTEX(pn, x2, y2, 0);
+   PUSH_MASK(pn, mtex, mx, my, mw, mh);
 
    for (i = 0; i < 2; i++)
-     {
-        PUSH_COLOR(pn, r, g, b, a);
-     }
+     PUSH_COLOR(pn, r, g, b, a);
 
    shader_array_flush(gc);
    gc->pipe[pn].array.line = 0;
@@ -2914,7 +2930,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              if (gc->pipe[i].array.im->tex->pt->dyn.img)
                {
                   secsym_glEGLImageTargetTexture2DOES
-                     (GL_TEXTURE_2D, gc->pipe[i].array.im->tex->pt->dyn.img);
+                  (GL_TEXTURE_2D, gc->pipe[i].array.im->tex->pt->dyn.img);
                }
              else
 #endif
@@ -3124,6 +3140,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         unsigned char *texa_ptr = NULL;
         unsigned char *texsam_ptr = NULL;
         unsigned char *mask_ptr = NULL;
+        GLint MASK_TEXTURE = GL_TEXTURE0;
 
         if (glsym_glMapBuffer && glsym_glUnmapBuffer)
           {
@@ -3225,13 +3242,38 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              glDisableVertexAttribArray(SHAD_TEXUV3);
              glDisableVertexAttribArray(SHAD_TEXA);
              glDisableVertexAttribArray(SHAD_TEXSAM);
-             glDisableVertexAttribArray(SHAD_MASK);
+
+             /* kopi pasta from below */
+             if (gc->pipe[i].array.use_mask)
+               {
+                  glEnableVertexAttribArray(SHAD_MASK);
+                  glVertexAttribPointer(SHAD_MASK, MASK_CNT, GL_FLOAT, GL_FALSE, 0, mask_ptr);
+                  glActiveTexture(MASK_TEXTURE);
+                  glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texm);
+#ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
+                  if (shared->info.anisotropic > 0.0)
+                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
+#endif
+                  if (gc->pipe[i].shader.mask_smooth)
+                    {
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                    }
+                  else
+                    {
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                    }
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                  glActiveTexture(GL_TEXTURE0);
+               }
+             else glDisableVertexAttribArray(SHAD_MASK);
+
              glDrawArrays(GL_LINES, 0, gc->pipe[i].array.num);
           }
         else
           {
-             GLint MASK_TEXTURE = GL_TEXTURE0;
-
              if (gc->pipe[i].array.use_texuv)
                {
                   glEnableVertexAttribArray(SHAD_TEXUV);
@@ -3252,8 +3294,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                    glActiveTexture(GL_TEXTURE1);
                    glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texa);
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
-                  if (shared->info.anisotropic > 0.0)
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
+                   if (shared->info.anisotropic > 0.0)
+                     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
 #endif
                    if (gc->pipe[i].shader.smooth)
                       {
@@ -3362,8 +3404,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                    glActiveTexture(MASK_TEXTURE);
                    glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texm);
 #ifdef GL_TEXTURE_MAX_ANISOTROPY_EXT
-                  if (shared->info.anisotropic > 0.0)
-                    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
+                   if (shared->info.anisotropic > 0.0)
+                     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, shared->info.anisotropic);
 #endif
                    if (gc->pipe[i].shader.mask_smooth)
                       {
@@ -3386,17 +3428,17 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 
              if (dbgflushnum == 1)
                {
-                  const char *types[6] =
-                    {"----", "RECT", "IMAG", "FONT", "YUV-", "MAP"};
+                  const char *types[] =
+                  { "----", "RECT", "IMAG", "FONT", "YUV-", "MAP-", "YUY2", "NV12", "LINE" };
                   printf("  DRAW#%3i %4i -> %p[%4ix%4i] @ %4ix%4i -{ tex %4i type %s }-\n",
                          i,
                          gc->pipe[i].array.num / 6,
                          gc->pipe[0].shader.surface,
-                         gc->pipe[0].shader.surface->w,
-                         gc->pipe[0].shader.surface->h,
-                         gw, gh,
-                         gc->pipe[i].shader.cur_tex,
-                         types[gc->pipe[i].region.type]
+                        gc->pipe[0].shader.surface->w,
+                        gc->pipe[0].shader.surface->h,
+                        gw, gh,
+                        gc->pipe[i].shader.cur_tex,
+                        types[gc->pipe[i].region.type]
                         );
                }
              glDrawArrays(GL_TRIANGLES, 0, gc->pipe[i].array.num);
