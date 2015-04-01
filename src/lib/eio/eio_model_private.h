@@ -40,7 +40,7 @@ struct _Eio_Model_Data
    char *path;
    Eina_Array *properties_name;
    Eina_Value *properties_value[EIO_MODEL_PROP_LAST];
-   Emodel_Load load;
+   Efl_Model_Load load;
    int load_pending;
    Eina_List *children_list;
    /**< EIO data */

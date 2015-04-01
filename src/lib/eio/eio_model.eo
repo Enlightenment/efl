@@ -1,4 +1,4 @@
-class Eio.Model (Eo.Base, Emodel)
+class Eio.Model (Eo.Base, Efl.Model.Base)
 {
     legacy_prefix: null;
     methods {
@@ -33,17 +33,17 @@ class Eio.Model (Eo.Base, Emodel)
     implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Emodel.properties.get;
-      Emodel.properties_load;
-      Emodel.property.set;
-      Emodel.property.get;
-      Emodel.load;
-      Emodel.load_status.get;
-      Emodel.unload;
-      Emodel.child_add;
-      Emodel.child_del;
-      Emodel.children_slice.get;
-      Emodel.children_count.get;
-      Emodel.children_load;
+      Efl.Model.Base.properties.get;
+      Efl.Model.Base.properties_load;
+      Efl.Model.Base.property.set;
+      Efl.Model.Base.property.get;
+      Efl.Model.Base.load;
+      Efl.Model.Base.load_status.get;
+      Efl.Model.Base.unload;
+      Efl.Model.Base.child_add;
+      Efl.Model.Base.child_del;
+      Efl.Model.Base.children_slice.get;
+      Efl.Model.Base.children_count.get;
+      Efl.Model.Base.children_load;
     }
 }

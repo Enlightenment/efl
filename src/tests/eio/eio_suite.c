@@ -19,6 +19,8 @@ struct _Eio_Test_Case
 
 static const Eio_Test_Case etc[] = {
   {"Eio_Monitor", eio_test_monitor},
+  {"Eio Model", eio_model_test_file},
+  {"Eio Model Monitor", eio_model_test_monitor_add},
   {NULL, NULL}
 };
 

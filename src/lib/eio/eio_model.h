@@ -30,7 +30,7 @@
 #define _EMODEL_EIO_H
 
 #include <Eo.h>
-#include <Emodel.h>
+#include <Efl.h>
 #include <Eio.h>
 
 #ifdef __cplusplus
