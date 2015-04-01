@@ -8,7 +8,7 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
    int mx = 0, my = 0, mw = 0, mh = 0;
    Eina_Bool mask_smooth = EINA_FALSE;
    Evas_GL_Image *mask = gc->dc->clip.mask;
-   Evas_GL_Texture *mtex = mask ? mask->tex : NULL;
+   Evas_GL_Texture *mtex = NULL;
 
    if ((w <= 0) || (h <= 0)) return;
    if (!(RECTS_INTERSECT(x, y, w, h, 0, 0, gc->w, gc->h))) return;
@@ -30,16 +30,21 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
                            gc->dc->clip.w, gc->dc->clip.h);
      }
 
-   if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
+   if (mask)
      {
-        // canvas coords
-        mx = gc->dc->clip.mask_x;
-        my = gc->dc->clip.mask_y;
-        mw = mask->w;
-        mh = mask->h;
-        mask_smooth = mask->scaled.smooth;
+        evas_gl_common_image_update(gc, mask);
+        mtex = mask->tex;
+        if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
+          {
+             // canvas coords
+             mx = gc->dc->clip.mask_x;
+             my = gc->dc->clip.mask_y;
+             mw = mask->w;
+             mh = mask->h;
+             mask_smooth = mask->scaled.smooth;
+          }
+        else mtex = NULL;
      }
-   else mtex = NULL;
 
    if (!gc->dc->cutout.rects)
      {

@@ -933,7 +933,7 @@ evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
    RGBA_Draw_Context *dc = gc->dc;
    Eina_Bool mask_smooth = EINA_FALSE;
    Evas_GL_Image *mask = dc->clip.mask;
-   Evas_GL_Texture *mtex = mask ? mask->tex : NULL;
+   Evas_GL_Texture *mtex = NULL;
    int r, g, b, a;
    int c, cx, cy, cw, ch;
 
@@ -957,16 +957,21 @@ evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
    if (!im->tex) return;
    im->tex->im = im;
 
-   if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
+   if (mask)
      {
-        // canvas coords
-        mx = gc->dc->clip.mask_x;
-        my = gc->dc->clip.mask_y;
-        mw = mask->w;
-        mh = mask->h;
-        mask_smooth = mask->scaled.smooth;
+        evas_gl_common_image_update(gc, mask);
+        mtex = mask->tex;
+        if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
+          {
+             // canvas coords
+             mx = gc->dc->clip.mask_x;
+             my = gc->dc->clip.mask_y;
+             mw = mask->w;
+             mh = mask->h;
+             mask_smooth = mask->scaled.smooth;
+          }
+        else mtex = NULL;
      }
-   else mtex = NULL;
 
    evas_gl_common_context_image_map_push(gc, im->tex, npoints, p,
                                          c, cx, cy, cw, ch,
@@ -988,7 +993,7 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
 {
    int mx = 0, my = 0, mw = 0, mh = 0;
    double ssx, ssy, ssw, ssh;
-   Evas_GL_Texture *mtex = mask ? mask->tex : NULL;
+   Evas_GL_Texture *mtex = NULL;
    Eina_Bool mask_smooth = EINA_FALSE;
    int nx, ny, nw, nh;
 
@@ -998,16 +1003,21 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
    if ((nw < 1) || (nh < 1)) return;
    if (!im->tex) return;
 
-   if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
+   if (mask)
      {
-        // canvas coords
-        mx = gc->dc->clip.mask_x;
-        my = gc->dc->clip.mask_y;
-        mw = mask->w;
-        mh = mask->h;
-        mask_smooth = mask->scaled.smooth;
+        evas_gl_common_image_update(gc, mask);
+        mtex = mask->tex;
+        if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
+          {
+             // canvas coords
+             mx = gc->dc->clip.mask_x;
+             my = gc->dc->clip.mask_y;
+             mw = mask->w;
+             mh = mask->h;
+             mask_smooth = mask->scaled.smooth;
+          }
+        else mtex = NULL;
      }
-   else mtex = NULL;
 
    if ((nx == dx) && (ny == dy) && (nw == dw) && (nh == dh))
      {
@@ -1130,24 +1140,14 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
 	r = g = b = a = 255;
      }
 
-   // Prepare mask image, if there is one
-   mask = dc->clip.mask;
-   if (mask)
-     {
-        evas_gl_common_image_update(gc, mask);
-        if (!mask->tex)
-          {
-             ERR("Failed to apply mask image");
-             mask = NULL;
-          }
-     }
-
    evas_gl_common_image_update(gc, im);
    if (!im->tex)
      {
         evas_gl_common_rect_draw(gc, dx, dy, dw, dh);
         return;
      }
+
+   mask = gc->dc->clip.mask;
 
    switch (im->cs.space)
      {

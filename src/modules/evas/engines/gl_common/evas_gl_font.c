@@ -62,7 +62,7 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
    Evas_Engine_GL_Context *gc = context;
    RGBA_Draw_Context *dc = draw_context;
    Evas_GL_Image *mask = gc->dc->clip.mask;
-   Evas_GL_Texture *tex, *mtex = mask ? mask->tex : NULL;
+   Evas_GL_Texture *tex, *mtex = NULL;
    Cutout_Rect  *rct;
    int r, g, b, a;
    double ssx, ssy, ssw, ssh;
@@ -82,16 +82,21 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
    b = (dc->col.col      ) & 0xff;
    sx = 0; sy = 0; sw = tex->w, sh = tex->h;
 
-   if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
+   if (mask)
      {
-        // canvas coords
-        mx = gc->dc->clip.mask_x;
-        my = gc->dc->clip.mask_y;
-        mw = mask->w;
-        mh = mask->h;
-        mask_smooth = mask->scaled.smooth;
+        evas_gl_common_image_update(gc, mask);
+        mtex = mask->tex;
+        if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
+          {
+             // canvas coords
+             mx = gc->dc->clip.mask_x;
+             my = gc->dc->clip.mask_y;
+             mw = mask->w;
+             mh = mask->h;
+             mask_smooth = mask->scaled.smooth;
+          }
+        else mtex = NULL;
      }
-   else mtex = NULL;
 
    if ((!gc->dc->cutout.rects) ||
        ((gc->shared->info.tune.cutout.max > 0) &&

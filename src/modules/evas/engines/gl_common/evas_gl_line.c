@@ -38,6 +38,7 @@ evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int
    mask = gc->dc->clip.mask;
    if (mask)
      {
+        evas_gl_common_image_update(gc, mask);
         mtex = mask->tex;
         if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
           {
