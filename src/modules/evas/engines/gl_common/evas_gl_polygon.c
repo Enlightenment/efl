@@ -131,6 +131,10 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
    Cutout_Rect  *r;
    int c, cx, cy, cw, ch, cr, cg, cb, ca, i;
    int x = 0, y = 0, w = 0, h = 0;
+   Evas_GL_Texture *mtex = NULL;
+   Eina_Bool mask_smooth = EINA_FALSE;
+   int mx = 0, my = 0, mw = 0, mh = 0;
+   Evas_GL_Image *mask;
 
    Eina_List *l;
    int n, k, num_active_edges, yy0, yy1, *sorted_index, j;
@@ -138,8 +142,6 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
    RGBA_Vertex *point;
    Evas_GL_Polygon_Point *pt;
    Eina_Inlist *spans;
-
-   // TODO: Implement masking support (not very important right now)
 
    /* save out clip info */
    c = gc->dc->clip.use; cx = gc->dc->clip.x; cy = gc->dc->clip.y; cw = gc->dc->clip.w; ch = gc->dc->clip.h;
@@ -149,6 +151,23 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
    cr = (gc->dc->col.col >> 16) & 0xff;
    cg = (gc->dc->col.col >> 8 ) & 0xff;
    cb = (gc->dc->col.col      ) & 0xff;
+
+   mask = gc->dc->clip.mask;
+   if (mask)
+     {
+        evas_gl_common_image_update(gc, mask);
+        mtex = mask->tex;
+        if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
+          {
+             // canvas coords
+             mx = gc->dc->clip.mask_x;
+             my = gc->dc->clip.mask_y;
+             mw = mask->w;
+             mh = mask->h;
+             mask_smooth = mask->scaled.smooth;
+          }
+        else mtex = NULL;
+     }
 
    n = eina_list_count(poly->points);
    if (n < 3) return;
@@ -272,7 +291,7 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
                   h = 1;
                   evas_gl_common_context_rectangle_push(gc, x, y, w, h,
                                                         cr, cg, cb, ca,
-                                                        NULL, 0, 0, 0, 0, EINA_FALSE);
+                                                        mtex, mx, my, mw, mh, mask_smooth);
                }
           }
         else
@@ -296,7 +315,7 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
                                  if ((w > 0) && (h > 0))
                                    evas_gl_common_context_rectangle_push(gc, x, y, w, h,
                                                                          cr, cg, cb, ca,
-                                                                         NULL, 0, 0, 0, 0, EINA_FALSE);
+                                                                         mtex, mx, my, mw, mh, mask_smooth);
                               }
                          }
                     }
