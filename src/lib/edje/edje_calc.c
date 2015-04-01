@@ -567,7 +567,7 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
    Edje_Part_Description_Common *epd1;
    Edje_Part_Description_Common *epd2 = NULL;
    Edje_Part_Description_Common *chosen_desc;
-
+   Eina_Bool change_w, change_h;
    Edje_Part_Description_Image *epdi;
 
    if (!d1) d1 = "default";
@@ -627,6 +627,8 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
    chosen_desc = ep->chosen_description;
    ep->param1.description = epd1;
    ep->chosen_description = epd1;
+   change_w = ep->chosen_description->fixed.w != chosen_desc->fixed.w;
+   change_h = ep->chosen_description->fixed.h != chosen_desc->fixed.h;
 
    _edje_real_part_rel_to_apply(ed, ep, &ep->param1);
 
@@ -640,9 +642,30 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
           ep->chosen_description = epd2;
      }
 
-   if (chosen_desc != ep->chosen_description &&
-       ep->part->type == EDJE_PART_TYPE_EXTERNAL)
-     _edje_external_recalc_apply(ed, ep, NULL, chosen_desc);
+   if (chosen_desc != ep->chosen_description)
+     {
+        if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
+          _edje_external_recalc_apply(ed, ep, NULL, chosen_desc);
+        else if (ep->part->type == EDJE_PART_TYPE_GROUP)
+          {
+             Edje_Size *min, *max, *pmin, *pmax;
+
+             min = &ep->chosen_description->min;
+             max = &ep->chosen_description->max;
+             pmin = &chosen_desc->min;
+             pmax = &chosen_desc->max;
+             if (change_w || change_h ||
+                (((pmin->w == pmax->w) && (pmin->h == pmax->h) && (pmin->w > 0) && (pmin->h > 0)) &&
+                (((min->w != max->w) || (min->h != max->h) || (min->w <= 0) || (min->h <= 0)))))
+               {
+                  Edje *ted;
+
+                  ted = _edje_fetch(ep->typedata.swallow->swallowed_object);
+                  ted->recalc_call = ted->dirty = ted->recalc_hints = EINA_TRUE;
+                  _edje_recalc(ted);
+               }
+          }
+     }
 
    ed->recalc_hints = EINA_TRUE;
    ed->dirty = EINA_TRUE;
