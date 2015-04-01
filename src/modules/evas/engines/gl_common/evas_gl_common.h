@@ -425,6 +425,8 @@ struct _Evas_GL_Shared
 #define RTYPE_YUY2  6
 #define RTYPE_NV12  7
 #define RTYPE_LINE  8
+#define RTYPE_RGB_A_PAIR 9
+#define RTYPE_TEX_EXTERNAL 10
 #define ARRAY_BUFFER_USE 500
 #define ARRAY_BUFFER_USE_SHIFT 100
 

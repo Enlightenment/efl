@@ -933,10 +933,10 @@ evas_gl_common_context_new(void)
         SHADER_TEXTURE_ADD(shared, IMG_MASK_NOMUL, tex);
         SHADER_TEXTURE_ADD(shared, IMG_MASK_NOMUL, texm);
 
-        SHADER_TEXTURE_ADD(shared, IMG_MASK_BGRA, tex);
-        SHADER_TEXTURE_ADD(shared, IMG_MASK_BGRA, texm);
-        SHADER_TEXTURE_ADD(shared, IMG_MASK_BGRA_NOMUL, tex);
-        SHADER_TEXTURE_ADD(shared, IMG_MASK_BGRA_NOMUL, texm);
+        SHADER_TEXTURE_ADD(shared, IMG_BGRA_MASK, tex);
+        SHADER_TEXTURE_ADD(shared, IMG_BGRA_MASK, texm);
+        SHADER_TEXTURE_ADD(shared, IMG_BGRA_MASK_NOMUL, tex);
+        SHADER_TEXTURE_ADD(shared, IMG_BGRA_MASK_NOMUL, texm);
 
         SHADER_TEXTURE_ADD(shared, FONT_MASK, tex);
         SHADER_TEXTURE_ADD(shared, FONT_MASK, texm);
@@ -1896,28 +1896,28 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                {
                   shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
                                                         SHADER_IMG_22_BGRA_NOMUL, SHADER_IMG_22_BGRA,
-                                                        SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA);
+                                                        SHADER_IMG_22_BGRA_MASK_NOMUL, SHADER_IMG_22_BGRA_MASK);
                   sam = 1;
                }
              else if ((smooth) && (sw >= (w * 2)))
                {
                   shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
                                                         SHADER_IMG_21_BGRA_NOMUL, SHADER_IMG_21_BGRA,
-                                                        SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA);
+                                                        SHADER_IMG_BGRA_MASK_NOMUL, SHADER_IMG_BGRA_MASK);
                   sam = 1;
                }
              else if ((smooth) && (sh >= (h * 2)))
                {
                   shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
                                                         SHADER_IMG_12_BGRA_NOMUL, SHADER_IMG_12_BGRA,
-                                                        SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA);
+                                                        SHADER_IMG_BGRA_MASK_NOMUL, SHADER_IMG_BGRA_MASK);
                   sam = 1;
                }
              else
                {
                   shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
                                                         SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA,
-                                                        SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA);
+                                                        SHADER_IMG_BGRA_MASK_NOMUL, SHADER_IMG_BGRA_MASK);
                }
           }
 #ifdef GL_GLES
@@ -1926,11 +1926,11 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
              if ((!tex->alpha) && (tex->pt->native))
                shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
                                                      SHADER_TEX_EXTERNAL_NOMUL_AFILL, SHADER_TEX_EXTERNAL_AFILL,
-                                                     SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK);
+                                                     SHADER_TEX_EXTERNAL_MASK_NOMUL, SHADER_TEX_EXTERNAL_MASK);
              else
                shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
                                                      SHADER_TEX_EXTERNAL_NOMUL, SHADER_TEX_EXTERNAL,
-                                                     SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK);
+                                                     SHADER_TEX_EXTERNAL_MASK_NOMUL, SHADER_TEX_EXTERNAL_MASK);
           }
 #endif
         else
@@ -1939,48 +1939,48 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                {
                   if ((!tex->alpha) && (tex->pt->native))
                     shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
-                                                          SHADER_TEX_22_NOMUL_AFILL, SHADER_TEX_22_AFILL,
-                                                          SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK);
+                                                          SHADER_IMG_22_BGRA_NOMUL_AFILL, SHADER_IMG_22_BGRA_AFILL,
+                                                          SHADER_IMG_22_BGRA_MASK_NOMUL, SHADER_IMG_22_BGRA_MASK);
                   else
                     shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
-                                                          SHADER_TEX_22_NOMUL, SHADER_TEX_22,
-                                                          SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK);
+                                                          SHADER_IMG_22_BGRA_NOMUL, SHADER_IMG_22_BGRA,
+                                                          SHADER_IMG_22_BGRA_MASK_NOMUL, SHADER_IMG_22_BGRA_MASK);
                   sam = 1;
                }
              else if ((smooth) && (sw >= (w * 2)))
                {
                   if ((!tex->alpha) && (tex->pt->native))
                     shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
-                                                          SHADER_TEX_21_NOMUL_AFILL, SHADER_TEX_21_AFILL,
-                                                          SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK);
+                                                          SHADER_IMG_21_BGRA_NOMUL_AFILL, SHADER_IMG_21_BGRA_AFILL,
+                                                          SHADER_IMG_21_BGRA_MASK_NOMUL, SHADER_IMG_21_BGRA_MASK);
                   else
                     shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
-                                                          SHADER_TEX_21_NOMUL, SHADER_TEX_21,
-                                                          SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK);
+                                                          SHADER_IMG_21_BGRA_NOMUL, SHADER_IMG_21_BGRA,
+                                                          SHADER_IMG_21_BGRA_MASK_NOMUL, SHADER_IMG_21_BGRA_MASK);
                   sam = 1;
                }
              else if ((smooth) && (sh >= (h * 2)))
                {
                   if ((!tex->alpha) && (tex->pt->native))
                     shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
-                                                          SHADER_TEX_12_NOMUL_AFILL, SHADER_TEX_12_AFILL,
-                                                          SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK);
+                                                          SHADER_IMG_12_BGRA_NOMUL_AFILL, SHADER_IMG_12_BGRA_AFILL,
+                                                          SHADER_IMG_12_BGRA_MASK_NOMUL, SHADER_IMG_12_BGRA_MASK);
                   else
                     shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
-                                                          SHADER_TEX_12_NOMUL, SHADER_TEX_12,
-                                                          SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK);
+                                                          SHADER_IMG_12_BGRA_NOMUL, SHADER_IMG_12_BGRA,
+                                                          SHADER_IMG_12_BGRA_MASK_NOMUL, SHADER_IMG_12_BGRA_MASK);
                   sam = 1;
                }
              else
                {
                   if ((!tex->alpha) && (tex->pt->native))
                     shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
-                                                          SHADER_TEX_NOMUL_AFILL, SHADER_TEX_AFILL,
-                                                          SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK);
+                                                          SHADER_IMG_BGRA_NOMUL_AFILL, SHADER_IMG_BGRA_AFILL,
+                                                          SHADER_IMG_BGRA_MASK_NOMUL, SHADER_IMG_BGRA_MASK);
                   else
                     shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
-                                                          SHADER_TEX_NOMUL, SHADER_TEX,
-                                                          SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK);
+                                                          SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA,
+                                                          SHADER_IMG_BGRA_MASK_NOMUL, SHADER_IMG_BGRA_MASK);
                }
           }
      }
@@ -1992,28 +1992,28 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                {
                   shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
                                                         SHADER_IMG_22_BGRA_NOMUL, SHADER_IMG_22_BGRA,
-                                                        SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA);
+                                                        SHADER_IMG_BGRA_MASK_NOMUL, SHADER_IMG_BGRA_MASK);
                   sam = 1;
                }
              else if ((smooth) && (sw >= (w * 2)))
                {
                   shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
                                                         SHADER_IMG_21_BGRA_NOMUL, SHADER_IMG_21_BGRA,
-                                                        SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA);
+                                                        SHADER_IMG_BGRA_MASK_NOMUL, SHADER_IMG_BGRA_MASK);
                   sam = 1;
                }
              else if ((smooth) && (sh >= (h * 2)))
                {
                   shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
                                                         SHADER_IMG_12_BGRA_NOMUL, SHADER_IMG_12_BGRA,
-                                                        SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA);
+                                                        SHADER_IMG_BGRA_MASK_NOMUL, SHADER_IMG_BGRA_MASK);
                   sam = 1;
                }
              else
                {
                   shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
                                                         SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA,
-                                                        SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA);
+                                                        SHADER_IMG_BGRA_MASK_NOMUL, SHADER_IMG_BGRA_MASK);
                }
           }
         else
@@ -2474,7 +2474,7 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
    shader = evas_gl_common_shader_choice
      (0, NULL, r, g, b, a, !!mtex,
       SHADER_RGB_A_PAIR_NOMUL, SHADER_RGB_A_PAIR,
-      SHADER_RGB_A_PAIR_MASK, SHADER_RGB_A_PAIR_MASK);
+      SHADER_RGB_A_PAIR_MASK_NOMUL, SHADER_RGB_A_PAIR_MASK);
    prog = gc->shared->shader[shader].prog;
 
    pn = _evas_gl_common_context_push(RTYPE_IMAGE,
@@ -2579,20 +2579,20 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
       case EVAS_COLORSPACE_YCBCR422P709_PL:
         shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
                                               SHADER_YUV_NOMUL, SHADER_YUV,
-                                              SHADER_YUV_MASK, SHADER_YUV_MASK);
+                                              SHADER_YUV_MASK_NOMUL, SHADER_YUV_MASK);
         utexture = EINA_TRUE;
         break;
       case EVAS_COLORSPACE_YCBCR422601_PL:
         shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
                                               SHADER_YUY2_NOMUL, SHADER_YUY2,
-                                              SHADER_YUY2_MASK, SHADER_YUY2_MASK);
+                                              SHADER_YUY2_MASK_NOMUL, SHADER_YUY2_MASK);
         uvtexture = EINA_TRUE;
         break;
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
         shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
                                               SHADER_NV12_NOMUL, SHADER_NV12,
-                                              SHADER_NV12_MASK, SHADER_NV12_MASK);
+                                              SHADER_NV12_MASK_NOMUL, SHADER_NV12_MASK);
         uvtexture = EINA_TRUE;
         break;
 
@@ -2603,13 +2603,13 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                {
                   shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
                                                         SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA,
-                                                        SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA);
+                                                        SHADER_IMG_BGRA_MASK_NOMUL, SHADER_IMG_BGRA_MASK);
                }
              else
                {
                   shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
-                                                        SHADER_TEX_NOMUL, SHADER_TEX,
-                                                        SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA);
+                                                        SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA,
+                                                        SHADER_IMG_BGRA_MASK_NOMUL, SHADER_IMG_BGRA_MASK);
                }
           }
         else
@@ -2618,7 +2618,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                {
                   shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
                                                         SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA,
-                                                        SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA);
+                                                        SHADER_IMG_BGRA_MASK_NOMUL, SHADER_IMG_BGRA_MASK);
                }
              else
                {
@@ -3424,7 +3424,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              if (dbgflushnum == 1)
                {
                   const char *types[] =
-                  { "----", "RECT", "IMAG", "FONT", "YUV-", "MAP-", "YUY2", "NV12", "LINE" };
+                  { "----", "RECT", "IMAG", "FONT", "YUV-", "MAP-", "YUY2", "NV12", "LINE", "PAIR", "EXTR" };
                   printf("  DRAW#%3i %4i -> %p[%4ix%4i] @ %4ix%4i -{ tex %4i type %s }-\n",
                          i,
                          gc->pipe[i].array.num / 6,
