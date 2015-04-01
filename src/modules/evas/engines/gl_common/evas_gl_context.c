@@ -938,11 +938,6 @@ evas_gl_common_context_new(void)
         SHADER_TEXTURE_ADD(shared, IMG_MASK_BGRA_NOMUL, tex);
         SHADER_TEXTURE_ADD(shared, IMG_MASK_BGRA_NOMUL, texm);
 
-        SHADER_TEXTURE_ADD(shared, MAP_MASK_BGRA, tex);
-        SHADER_TEXTURE_ADD(shared, MAP_MASK_BGRA, texm);
-        SHADER_TEXTURE_ADD(shared, MAP_MASK_BGRA_NOMUL, tex);
-        SHADER_TEXTURE_ADD(shared, MAP_MASK_BGRA_NOMUL, texm);
-
         SHADER_TEXTURE_ADD(shared, FONT_MASK, tex);
         SHADER_TEXTURE_ADD(shared, FONT_MASK, texm);
 
@@ -2608,13 +2603,13 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                {
                   shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
                                                         SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA,
-                                                        SHADER_MAP_MASK_BGRA_NOMUL, SHADER_MAP_MASK_BGRA);
+                                                        SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA);
                }
              else
                {
                   shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
                                                         SHADER_TEX_NOMUL, SHADER_TEX,
-                                                        SHADER_MAP_MASK_BGRA_NOMUL, SHADER_MAP_MASK_BGRA);
+                                                        SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA);
                }
           }
         else
@@ -2623,13 +2618,13 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                {
                   shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
                                                         SHADER_IMG_BGRA_NOMUL, SHADER_IMG_BGRA,
-                                                        SHADER_MAP_MASK_BGRA_NOMUL, SHADER_MAP_MASK_BGRA);
+                                                        SHADER_IMG_MASK_BGRA_NOMUL, SHADER_IMG_MASK_BGRA);
                }
              else
                {
                   shader = evas_gl_common_shader_choice(npoints, p, r, g, b, a, !!mtex,
                                                         SHADER_IMG_NOMUL, SHADER_IMG,
-                                                        SHADER_MAP_MASK_NOMUL, SHADER_MAP_MASK);
+                                                        SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK);
                }
            }
      }
