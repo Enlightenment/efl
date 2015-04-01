@@ -416,9 +416,6 @@ ffi.metatype("Eo", {
         if not pp then
             return mt[key]
         end
-        if not pp[3] then
-            error("property '" .. key .. "' is not gettable", 2)
-        end
         local nkeys, nvals = pp[1], pp[2]
         if nkeys ~= 0 then
             -- proxy - slow path, but no way around it
@@ -426,6 +423,9 @@ ffi.metatype("Eo", {
             -- lua can't do it by default. so we help ourselves a bit with this
             return setmetatable({ nkeys = nkeys, nvals = nvals,
                 obj = self, key = key, mt = mt }, prop_proxy_meta)
+        end
+        if not pp[3] then
+            error("property '" .. key .. "' is not gettable", 2)
         end
         if nvals > 1 then
             return { mt[key .. "_get"](self) }
