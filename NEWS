@@ -1,6 +1,20 @@
 ==========
-EFL 1.13.1
+EFL 1.13.2
 ==========
+
+Changes since 1.13.1:
+---------------------
+
+Fixes:
+
+   * ecore-wl fullscreen state is based on either window type or attribute
+   * ecore/ecore_audio: fix timer control logically wrong.
+   * Evas GL: Fix list of extensions with GLESv1
+   * evas/clip: If the clipper is image or has color, clipped area should be redrawn.
+   * eina: safety check for NULL pointer
+   * evas: prevent crash.
+   * evil: fix access to a file mapping object
+   * ecore_idler: + null check.
 
 Changes since 1.13.0:
 ---------------------
