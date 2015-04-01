@@ -363,6 +363,12 @@ local prop_proxy_meta = {
         local nkeys = self.nkeys
         if nkeys > 1 then
             -- ultra slow path, q66 failed optimizing this
+            -- if you ever get to touch this, increment this
+            -- counter to let others know you failed too.
+            --
+            -- failures: 1
+            --
+            -- fortunately this one is not very commonly used.
             local atbl
             if type(key) == "table" then
                 atbl = { unpack(key) }
@@ -389,10 +395,19 @@ local prop_proxy_meta = {
     -- provides alt syntax for getters with keys
     __call = function(self, ...)
         return self.mt[self.key .. "_get"](self.obj, ...)
-    end
+    end,
+
+    -- locks out the proxy
+    __metatable = false
 }
 
+-- each __properties field looks like this:
+--
+-- { NUMBER_OF_KEYS, NUMBER_OF_VALUES, GETTABLE, SETTABLE }
+--
+-- the last two are booleans (determining if the property can be get and set).
 ffi.metatype("Eo", {
+    -- handles property getting with no keys and also property setting with keys
     __index = function(self, key)
         local mt = get_obj_mt(self)
         if mt == nil then return nil end
@@ -406,7 +421,9 @@ ffi.metatype("Eo", {
         end
         local nkeys, nvals = pp[1], pp[2]
         if nkeys ~= 0 then
-            -- proxy - slow path... TODO: find a better way
+            -- proxy - slow path, but no way around it
+            -- basically the proxy is needed because we want nice syntax and
+            -- lua can't do it by default. so we help ourselves a bit with this
             return setmetatable({ nkeys = nkeys, nvals = nvals,
                 obj = self, key = key, mt = mt }, prop_proxy_meta)
         end
@@ -417,6 +434,7 @@ ffi.metatype("Eo", {
         end
     end,
 
+    -- handles property setting with no keys
     __newindex = function(self, key, val)
         local mt = get_obj_mt(self)
         if mt == nil then return nil end
