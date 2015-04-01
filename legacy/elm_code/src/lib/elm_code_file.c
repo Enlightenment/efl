@@ -274,9 +274,6 @@ EAPI void elm_code_file_line_insert(Elm_Code_File *file, unsigned int row, const
           continue;
 
         line_item->number = r++;
-
-        if (file->parent)
-          elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line_item);
      }
 }
 
@@ -299,9 +296,6 @@ EAPI void elm_code_file_line_remove(Elm_Code_File *file, unsigned int row)
           }
 
         line_item->number = r++;
-
-        if (file->parent)
-          elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line_item);
      }
 
    if (tofree)
