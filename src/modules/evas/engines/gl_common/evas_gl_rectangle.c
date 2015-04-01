@@ -35,17 +35,9 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
         // canvas coords
         mx = gc->dc->clip.mask_x;
         my = gc->dc->clip.mask_y;
-        if (mask->scaled.origin)
-          {
-             mw = mask->scaled.w;
-             mh = mask->scaled.h;
-             mask_smooth = mask->scaled.smooth;
-          }
-        else
-          {
-             mw = mask->w;
-             mh = mask->h;
-          }
+        mw = mask->w;
+        mh = mask->h;
+        mask_smooth = mask->scaled.smooth;
      }
    else mtex = NULL;
 

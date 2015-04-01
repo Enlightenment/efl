@@ -989,12 +989,8 @@ eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
    if (!src) return NULL;
 
    gc = src->gc;
-   if ((dst_w > gc->shared->info.max_texture_size) ||
-       (dst_h > gc->shared->info.max_texture_size))
-     return NULL;
-
    if (dst && (dst->scaled.origin == src) &&
-       (dst->scaled.w == dst_w) && (dst->scaled.h == dst_h))
+       (dst->w == dst_w) && (dst->h == dst_h))
      return dst;
 
    if (dst)
@@ -1020,16 +1016,14 @@ eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
    dst->gc = gc;
    dst->cs.space = src->cs.space;
    dst->alpha = alpha;
-   dst->w = src->w;
-   dst->h = src->h;
+   dst->w = dst_w;
+   dst->h = dst_h;
    dst->tex = src->tex;
    dst->tex->references++;
    dst->tex_only = 1;
 
    if (!reffed) src->references++;
    dst->scaled.origin = src;
-   dst->scaled.w = dst_w;
-   dst->scaled.h = dst_h;
    dst->scaled.smooth = smooth;
 
    return dst;

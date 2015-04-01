@@ -619,7 +619,6 @@ struct _Evas_GL_Image
 
    struct {
       Evas_GL_Image *origin;
-      int            w, h;
       Eina_Bool      smooth : 1;
    } scaled;
 

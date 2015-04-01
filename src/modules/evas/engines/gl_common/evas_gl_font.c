@@ -85,19 +85,11 @@ evas_gl_font_texture_draw(void *context, void *surface EINA_UNUSED, void *draw_c
    if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
      {
         // canvas coords
-        mx = dc->clip.mask_x;
-        my = dc->clip.mask_y;
-        if (mask->scaled.origin)
-          {
-             mw = mask->scaled.w;
-             mh = mask->scaled.h;
-             mask_smooth = mask->scaled.smooth;
-          }
-        else
-          {
-             mw = mask->w;
-             mh = mask->h;
-          }
+        mx = gc->dc->clip.mask_x;
+        my = gc->dc->clip.mask_y;
+        mw = mask->w;
+        mh = mask->h;
+        mask_smooth = mask->scaled.smooth;
      }
    else mtex = NULL;
 

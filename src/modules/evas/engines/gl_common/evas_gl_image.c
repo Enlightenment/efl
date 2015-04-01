@@ -960,24 +960,11 @@ evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
    if (mtex && mtex->pt && mtex->pt->w && mtex->pt->h)
      {
         // canvas coords
-        mx = dc->clip.mask_x;
-        my = dc->clip.mask_y;
-        if (mask->scaled.origin)
-          {
-             mw = mask->scaled.w;
-             mh = mask->scaled.h;
-             //scalex = mask->w / (double)mask->scaled.w;
-             //scaley = mask->h / (double)mask->scaled.h;
-             mask_smooth = mask->scaled.smooth;
-          }
-        else
-          {
-             mw = mask->w;
-             mh = mask->h;
-          }
-        //if (c) RECTS_CLIP_TO_RECT(mx, my, mw, mh, cx, cy, cw, ch);
-        //mx = mx - dc->clip.mask_x;
-        //my = my - dc->clip.mask_y;
+        mx = gc->dc->clip.mask_x;
+        my = gc->dc->clip.mask_y;
+        mw = mask->w;
+        mh = mask->h;
+        mask_smooth = mask->scaled.smooth;
      }
    else mtex = NULL;
 
@@ -1016,17 +1003,9 @@ _evas_gl_common_image_push(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
         // canvas coords
         mx = gc->dc->clip.mask_x;
         my = gc->dc->clip.mask_y;
-        if (mask->scaled.origin)
-          {
-             mw = mask->scaled.w;
-             mh = mask->scaled.h;
-             mask_smooth = mask->scaled.smooth;
-          }
-        else
-          {
-             mw = mask->w;
-             mh = mask->h;
-          }
+        mw = mask->w;
+        mh = mask->h;
+        mask_smooth = mask->scaled.smooth;
      }
    else mtex = NULL;
 
