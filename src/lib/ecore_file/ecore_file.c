@@ -857,147 +857,62 @@ ecore_file_ls(const char *dir)
 EAPI char *
 ecore_file_app_exe_get(const char *app)
 {
-   char *p, *pp, *exe1 = NULL, *exe2 = NULL;
-   char *exe = NULL;
-   int in_quot_dbl = 0, in_quot_sing = 0, restart = 0;
+   Eina_Strbuf *buf;
+   char *exe;
+   const char *p;
+   Eina_Bool in_qout_double = EINA_FALSE;
+   Eina_Bool in_qout_single = EINA_FALSE;
 
    if (!app) return NULL;
-
-   p = (char *)app;
-restart:
-   while ((*p) && (isspace((unsigned char)*p))) p++;
-   exe1 = p;
-   while (*p)
+   buf = eina_strbuf_new();
+   if (!buf) return NULL;
+   p = app;
+   if ((p[0] == '~') && (p[1] == '/'))
      {
-        if (in_quot_sing)
+        const char *home = getenv("HOME");
+        if (home) eina_strbuf_append(buf, home);
+        p++;
+     }
+   for (; *p; p++)
+     {
+        if (in_qout_double)
           {
-             if (*p == '\'')
-               in_quot_sing = 0;
+             if (*p == '\\')
+               {
+                  if (p[1]) p++;
+                  eina_strbuf_append_char(buf, *p);
+               }
+             else if (*p == '"') in_qout_double = EINA_FALSE;
+             else eina_strbuf_append_char(buf, *p);
           }
-        else if (in_quot_dbl)
+        else if (in_qout_single)
           {
-             if (*p == '\"')
-               in_quot_dbl = 0;
+             if (*p == '\\')
+               {
+                  if (p[1]) p++;
+                  eina_strbuf_append_char(buf, *p);
+               }
+             else if (*p == '\'') in_qout_single = EINA_FALSE;
+             else eina_strbuf_append_char(buf, *p);
           }
         else
           {
-             if (*p == '\'')
-               in_quot_sing = 1;
-             else if (*p == '\"')
-               in_quot_dbl = 1;
-             if ((isspace((unsigned char)*p)) && ((p <= app) || (p[-1] == '\\')))
-               break;
-          }
-        p++;
-     }
-   exe2 = p;
-   if (exe2 == exe1) return NULL;
-   if (*exe1 == '~')
-     {
-        char *homedir;
-        int len;
-
-        /* Skip ~ */
-        exe1++;
-
-        homedir = getenv("HOME");
-        if (!homedir) return NULL;
-        len = strlen(homedir);
-        exe = malloc(len + exe2 - exe1 + 2);
-        if (!exe) return NULL;
-        pp = exe;
-        if (len)
-          {
-             strcpy(exe, homedir);
-             pp += len;
-             if (*(pp - 1) != '/')
+             if (*p == '\\')
                {
-                  *pp = '/';
-                  pp++;
+                  if (p[1]) p++;
+                  eina_strbuf_append_char(buf, *p);
                }
-          }
-     }
-   else
-     {
-        exe = malloc(exe2 - exe1 + 1);
-        if (!exe) return NULL;
-        pp = exe;
-     }
-   p = exe1;
-   restart = 0;
-   in_quot_dbl = 0;
-   in_quot_sing = 0;
-   while (*p)
-     {
-        if (in_quot_sing)
-          {
-             if (*p == '\'')
-               in_quot_sing = 0;
+             else if (*p == '"') in_qout_double = EINA_TRUE;
+             else if (*p == '\'') in_qout_single = EINA_TRUE;
              else
                {
-                  *pp = *p;
-                  pp++;
+                  if (isspace((unsigned char)(*p))) break;
+                  eina_strbuf_append_char(buf, *p);
                }
           }
-        else if (in_quot_dbl)
-          {
-             if (*p == '\"')
-               in_quot_dbl = 0;
-             else
-               {
-                  /* technically this is wrong. double quotes also accept
-                   * special chars:
-                   *
-                   * $, `, \
-                   */
-                  *pp = *p;
-                  pp++;
-               }
-          }
-        else
-          {
-             /* technically we should handle special chars:
-              *
-              * $, `, \, etc.
-              */
-             if ((p > exe1) && (p[-1] == '\\'))
-               {
-                  if (*p != '\n')
-                    {
-                       *pp = *p;
-                       pp++;
-                    }
-               }
-             else if ((p > exe1) && (*p == '='))
-               {
-                  restart = 1;
-                  *pp = *p;
-                  pp++;
-               }
-             else if (*p == '\'')
-               in_quot_sing = 1;
-             else if (*p == '\"')
-               in_quot_dbl = 1;
-             else if (isspace((unsigned char)*p))
-               {
-                  if (restart)
-                    {
-                       if (exe) free(exe);
-                       exe = NULL;
-                       goto restart;
-                    }
-                  else
-                    break;
-               }
-             else
-               {
-                  *pp = *p;
-                  pp++;
-               }
-          }
-        p++;
      }
-   *pp = 0;
+   exe = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
    return exe;
 }
 
