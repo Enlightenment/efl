@@ -78,6 +78,7 @@ elm_validator_regexp_free(Elm_Validator_Regexp *validator) EINA_ARG_NONNULL(1);
 EAPI Elm_Regexp_Status
 elm_validator_regexp_status_get(Elm_Validator_Regexp *validator) EINA_ARG_NONNULL(1);
 
+#ifdef EO_BETA_API
 /**
  * @brief The regex validator. Used as callback to validate event.
  *
@@ -102,6 +103,7 @@ elm_validator_regexp_status_get(Elm_Validator_Regexp *validator) EINA_ARG_NONNUL
  */
 EAPI Eina_Bool
 elm_validator_regexp_helper(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
+#endif
 
 /**
  * @}
