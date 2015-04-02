@@ -642,11 +642,14 @@ local gen_contents = function(klass)
     return cnt, evs
 end
 
-local gen_mixin = function(klass, iface)
-    return Mixin(iface, klass, gen_contents(klass))
-end
-
 local gen_class = function(klass)
+    local tp = klass:type_get()
+    local ct = eolian.class_type
+    if tp == ct.UNKNOWN then
+        error(klass:full_name_get() .. ": unknown type")
+    elseif tp == ct.MIXIN or tp == ct.INTERFACE then
+        return Mixin(tp == ct.INTERFACE, klass, gen_contents(klass))
+    end
     local inherits = klass:inherits_get():to_array()
     local ct = eolian.class_type
     -- figure out the correct lookup order
@@ -689,17 +692,7 @@ M.generate = function(fname, fstream)
     end
     local sfn = fname:match(".*[\\/](.+)$") or fname
     local klass = eolian.class_get_by_file(sfn)
-    local tp = klass:type_get()
-    local ct = eolian.class_type
-    local cl
-    if tp == ct.MIXIN or tp == ct.INTERFACE then
-        cl = gen_mixin(klass, tp == ct.INTERFACE)
-    elseif tp == ct.REGULAR or tp == ct.ABSTRACT then
-        cl = gen_class(klass)
-    else
-        error(klass:full_name_get() .. ": unknown type")
-    end
-    File(fname, klass, { cl }):generate(fstream or io.stdout)
+    File(fname, klass, { gen_class(klass) }):generate(fstream or io.stdout)
 end
 
 return M
