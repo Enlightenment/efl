@@ -9,6 +9,12 @@ local M = {}
 
 local dom
 
+local type_type = eolian.type_type
+local class_type = eolian.class_type
+local func_type = eolian.function_type
+local obj_scope = eolian.object_scope
+local param_dir = eolian.parameter_dir
+
 cutil.init_module(function()
     dom = log.Domain("lualian")
     if not dom:is_valid() then
@@ -81,7 +87,7 @@ local build_calln = function(tps, expr, isin)
 end
 
 local typeconv = function(tps, expr, isin)
-    if tps:type_get() == eolian.type_type.POINTER then
+    if tps:type_get() == type_type.POINTER then
         local base = tps:base_type_get()
         local f = (isin and known_ptr_in or known_ptr_out)[base:c_type_get()]
         if f then return f(expr) end
@@ -164,7 +170,7 @@ local Method = Node:clone {
 
         local meth = self.method
         local pars = meth:parameters_get()
-        local rett = meth:return_type_get(eolian.function_type.METHOD)
+        local rett = meth:return_type_get(func_type.METHOD)
 
         local proto = {
             name    = meth:name_get()
@@ -179,8 +185,6 @@ local Method = Node:clone {
 
         proto.full_name = meth:full_c_name_get()
 
-        local dirs = eolian.parameter_dir
-
         local fulln = proto.full_name
 
         if rett then
@@ -190,13 +194,13 @@ local Method = Node:clone {
         for v in pars do
             local dir, tps, nm = v:direction_get(), v:type_get(), kw_t(v:name_get())
             local tp = tps:c_type_get()
-            if dir == dirs.OUT or dir == dirs.INOUT then
-                if dir == dirs.INOUT then
+            if dir == param_dir.OUT or dir == param_dir.INOUT then
+                if dir == param_dir.INOUT then
                     args[#args + 1] = nm
                 end
                 cargs [#cargs  + 1] = tp .. " *" .. nm
                 vargs [#vargs  + 1] = nm
-                allocs[#allocs + 1] = { tp, nm, (dir == dirs.INOUT)
+                allocs[#allocs + 1] = { tp, nm, (dir == param_dir.INOUT)
                     and typeconv(tps, nm, true) or nil }
                 rets  [#rets   + 1] = typeconv(tps, nm .. "[0]", false)
             else
@@ -248,7 +252,7 @@ local Method = Node:clone {
 local Property = Method:clone {
     __ctor = function(self, prop, ftype)
         self.property = prop
-        self.isget    = (ftype == eolian.function_type.PROP_GET)
+        self.isget    = (ftype == func_type.PROP_GET)
         self.ftype    = ftype
     end,
 
@@ -275,8 +279,6 @@ local Property = Method:clone {
         proto.allocs = allocs
 
         proto.full_name = prop:full_c_name_get() .. proto.suffix
-
-        local dirs = eolian.parameter_dir
 
         local fulln = proto.full_name
         if #keys > 0 then
@@ -474,23 +476,22 @@ end
         local ctors = self.klass:constructors_get()
         if not ctors then return end
         -- collect constructor information
-        local ftp = eolian.function_type
-        local dir = eolian.parameter_dir
         s:write("    __eo_ctor = function(self, ")
         local cfuncs, parnames, upars = {}, {}, {}
         for ctor in ctors do
             local cfunc = ctor:function_get()
             local cn = cfunc:name_get()
             local tp = cfunc:type_get()
-            if tp == ftp.PROPERTY or tp == ftp.PROP_SET or tp == ftp.METHOD then
+            if tp == func_type.PROPERTY or tp == func_type.PROP_SET
+            or tp == func_type.METHOD then
                 cfuncs[#cfuncs + 1] = cfunc
-                if tp ~= ftp.METHOD then
+                if tp ~= func_type.METHOD then
                     for par in cfunc:property_keys_get() do
                         parnames[#parnames + 1] = build_pn(cn, par:name_get())
                     end
                 end
                 for par in cfunc:parameters_get() do
-                    if par:direction_get() ~= dir.OUT then
+                    if par:direction_get() ~= param_dir.OUT then
                         parnames[#parnames + 1] = build_pn(cn, par:name_get())
                     end
                 end
@@ -507,19 +508,19 @@ end
         local j = 1
         for i, cfunc in ipairs(cfuncs) do
             s:write("        self:", cfunc:name_get())
-            if cfunc:type_get() ~= ftp.METHOD then
+            if cfunc:type_get() ~= func_type.METHOD then
                 s:write("_set")
             end
             s:write("(")
             local fpars = {}
-            if cfunc:type_get() ~= ftp.METHOD then
+            if cfunc:type_get() ~= func_type.METHOD then
                 for par in cfunc:property_keys_get() do
                     fpars[#fpars + 1] = parnames[j]
                     j = j + 1
                 end
             end
             for par in cfunc:parameters_get() do
-                if par:direction_get() ~= dir.OUT then
+                if par:direction_get() ~= param_dir.OUT then
                     fpars[#fpars + 1] = parnames[j]
                     j = j + 1
                 end
@@ -609,26 +610,25 @@ return M
 
 local gen_contents = function(klass)
     local cnt = {}
-    local ft  = eolian.function_type
     -- first try properties
-    local props = klass:functions_get(ft.PROPERTY):to_array()
+    local props = klass:functions_get(func_type.PROPERTY):to_array()
     for i, v in ipairs(props) do
-        if v:scope_get() == eolian.object_scope.PUBLIC and not v:is_c_only() then
+        if v:scope_get() == obj_scope.PUBLIC and not v:is_c_only() then
             local ftype  = v:type_get()
-            local fread  = (ftype == ft.PROPERTY or ftype == ft.PROP_GET)
-            local fwrite = (ftype == ft.PROPERTY or ftype == ft.PROP_SET)
+            local fread  = (ftype == func_type.PROPERTY or ftype == func_type.PROP_GET)
+            local fwrite = (ftype == func_type.PROPERTY or ftype == func_type.PROP_SET)
             if fwrite then
-                cnt[#cnt + 1] = Property(v, ft.PROP_SET)
+                cnt[#cnt + 1] = Property(v, func_type.PROP_SET)
             end
             if fread then
-                cnt[#cnt + 1] = Property(v, ft.PROP_GET)
+                cnt[#cnt + 1] = Property(v, func_type.PROP_GET)
             end
         end
     end
     -- then methods
-    local meths = klass:functions_get(ft.METHOD):to_array()
+    local meths = klass:functions_get(func_type.METHOD):to_array()
     for i, v in ipairs(meths) do
-        if v:scope_get() == eolian.object_scope.PUBLIC and not v:is_c_only() then
+        if v:scope_get() == obj_scope.PUBLIC and not v:is_c_only() then
             cnt[#cnt + 1] = Method(v)
         end
     end
@@ -644,23 +644,21 @@ end
 
 local gen_class = function(klass)
     local tp = klass:type_get()
-    local ct = eolian.class_type
-    if tp == ct.UNKNOWN then
+    if tp == class_type.UNKNOWN then
         error(klass:full_name_get() .. ": unknown type")
-    elseif tp == ct.MIXIN or tp == ct.INTERFACE then
-        return Mixin(tp == ct.INTERFACE, klass, gen_contents(klass))
+    elseif tp == class_type.MIXIN or tp == class_type.INTERFACE then
+        return Mixin(tp == class_type.INTERFACE, klass, gen_contents(klass))
     end
     local inherits = klass:inherits_get():to_array()
-    local ct = eolian.class_type
     -- figure out the correct lookup order
     local parents = {}
     local mixins  = {} -- also includes ifaces, they're separated later
     for i = 1, #inherits do
         local v = inherits[i]
         local tp = eolian.class_get_by_name(v):type_get()
-        if tp == ct.REGULAR or tp == ct.ABSTRACT then
+        if tp == class_type.REGULAR or tp == class_type.ABSTRACT then
             parents[#parents + 1] = v
-        elseif tp == ct.INTERFACE or tp == ct.MIXIN then
+        elseif tp == class_type.INTERFACE or tp == class_type.MIXIN then
             mixins[#mixins + 1] = v
         else
             error(klass:full_name_get() .. ": unknown inherit " .. v)
