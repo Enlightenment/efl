@@ -187,6 +187,12 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
             Elm_Code_Line *line; /*@ @in The line to refresh. */
          }
       }
+      line_visible_get {
+         params {
+            Elm_Code_Line *line; /*@ @in The line to test for visibility. */
+         }
+         return: bool (visible); /*@ true if the line specified is currently visible within the scroll region. */
+      }
    }
    implements {
       class.constructor;

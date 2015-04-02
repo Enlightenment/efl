@@ -414,9 +414,16 @@ static Eina_Bool
 _elm_code_widget_line_cb(void *data, Eo *obj EINA_UNUSED,
                          const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   Elm_Code_Line *line;
    Elm_Code_Widget *widget;
+   Eina_Bool visible;
 
+   line = (Elm_Code_Line *)event_info;
    widget = (Elm_Code_Widget *)data;
+
+   eo_do(widget, visible = elm_code_widget_line_visible_get(line));
+   if (!visible)
+     return EO_CALLBACK_CONTINUE;
 
    // FIXME refresh just the row unless we have resized (by being the result of a row append)
    _elm_code_widget_fill(widget);
@@ -1119,6 +1126,20 @@ EOAPI void
 _elm_code_widget_line_refresh(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSED, Elm_Code_Line *line)
 {
    _elm_code_widget_fill_line(obj, line);
+}
+
+EOAPI Eina_Bool
+_elm_code_widget_line_visible_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, Elm_Code_Line *line)
+{
+   Evas_Coord cellh, viewy, viewh;
+
+   elm_scroller_region_get(pd->scroller, NULL, &viewy, NULL, &viewh);
+   evas_object_textgrid_cell_size_get(pd->grid, NULL, &cellh);
+
+   if (((int)line->number - 1) * cellh > viewy + viewh || (int)line->number * cellh < viewy)
+     return EINA_FALSE;
+
+   return EINA_TRUE;;
 }
 
 EOLIAN static void
