@@ -115,6 +115,7 @@ main_help(void)
       "-fastdecomp              Use a faster decompression algorithm (LZ4HC) (mutually exclusive with -fastcomp)\n"
       "-threads                 Compile the edje file using multiple parallel threads (by default)\n"
       "-nothreads               Compile the edje file using only the main loop\n"
+      "-V [--version]           show program version\n"
       ,progname);
 }
 
@@ -159,6 +160,11 @@ main(int argc, char **argv)
 	if (!strcmp(argv[i], "-h"))
 	  {
 	     main_help();
+	     exit(0);
+	  }
+	else if ((!strcmp(argv[i], "-V")) || (!strcmp(argv[i], "--version")))
+	  {
+	     printf("Version: %s\n", PACKAGE_VERSION);
 	     exit(0);
 	  }
 	else if (!strcmp(argv[i], "-v"))
