@@ -1232,7 +1232,6 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
       activated;
       changed;
       changed,user;
-      validate;
    }
 
 }

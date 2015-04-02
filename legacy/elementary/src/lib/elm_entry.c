@@ -282,25 +282,6 @@ _elm_entry_guide_update(Evas_Object *obj,
    sd->has_text = has_text;
 }
 
-static void
-_validate(Evas_Object *obj)
-{
-   ELM_ENTRY_DATA_GET(obj, sd);
-   Eina_Bool res;
-   Elm_Validate_Content vc;
-   Eina_Strbuf *buf;
-
-   if (sd->validators == 0) return;
-
-   vc.text = edje_object_part_text_get(sd->entry_edje, "elm.text");
-   eo_do(obj, res = eo_event_callback_call(ELM_ENTRY_EVENT_VALIDATE, (void *)&vc));
-   buf = eina_strbuf_new();
-   eina_strbuf_append_printf(buf, "validation,%s,%s", vc.signal, res == EO_CALLBACK_STOP ? "fail" : "pass");
-   edje_object_signal_emit(sd->scr_edje, eina_strbuf_string_get(buf), "elm");
-   eina_tmpstr_del(vc.signal);
-   eina_strbuf_free(buf);
-}
-
 static Elm_Entry_Markup_Filter *
 _filter_new(Elm_Entry_Filter_Cb func,
             void *data)
@@ -1100,7 +1081,6 @@ _elm_entry_elm_widget_on_focus(Eo *obj, Elm_Entry_Data *sd)
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
         evas_object_smart_callback_call(obj, SIG_FOCUSED, NULL);
         _return_key_enabled_check(obj);
-        _validate(obj);
      }
    else
      {
@@ -1122,7 +1102,6 @@ _elm_entry_elm_widget_on_focus(Eo *obj, Elm_Entry_Data *sd)
                   edje_object_part_text_select_none(sd->entry_edje, "elm.text");
                }
           }
-        edje_object_signal_emit(sd->scr_edje, "validation,default", "elm");
      }
 
    return EINA_TRUE;
@@ -1894,8 +1873,6 @@ _entry_changed_handle(void *data,
         else
           _elm_entry_guide_update(data, EINA_FALSE);
      }
-   _validate(data);
-
    /* callback - this could call callbacks that delete the
     * entry... thus... any access to sd after this could be
     * invalid */
@@ -3694,35 +3671,6 @@ elm_entry_add(Evas_Object *parent)
    return obj;
 }
 
-static Eina_Bool
-_cb_added(void *data EINA_UNUSED,
-          Eo *obj,
-          const Eo_Event_Description *desc EINA_UNUSED,
-          void *event_info)
-{
-   const Eo_Callback_Array_Item *event = event_info;
-
-   ELM_ENTRY_DATA_GET(obj, sd);
-   if (event->desc == ELM_ENTRY_EVENT_VALIDATE)
-     sd->validators++;
-   return EO_CALLBACK_CONTINUE;
-}
-
-static Eina_Bool
-_cb_deled(void *data EINA_UNUSED,
-          Eo *obj,
-          const Eo_Event_Description *desc EINA_UNUSED,
-          void *event_info)
-{
-   const Eo_Callback_Array_Item *event = event_info;
-
-   ELM_ENTRY_DATA_GET(obj, sd);
-   if (event->desc == ELM_ENTRY_EVENT_VALIDATE)
-     sd->validators--;
-   return EO_CALLBACK_CONTINUE;
-
-}
-
 EOLIAN static void
 _elm_entry_eo_base_constructor(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 {
@@ -3730,9 +3678,7 @@ _elm_entry_eo_base_constructor(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
-         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_ENTRY),
-         eo_event_callback_add(EO_EV_CALLBACK_ADD, _cb_added, NULL),
-         eo_event_callback_add(EO_EV_CALLBACK_DEL, _cb_deled, NULL));
+         elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_ENTRY));
 }
 
 EOLIAN static void

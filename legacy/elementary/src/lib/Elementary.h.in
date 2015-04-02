@@ -264,8 +264,6 @@ EAPI extern Elm_Version *elm_version;
 /* include deprecated calls last of all */
 #include <elm_deprecated.h>
 
-#include <elm_helper.h>
-
 #ifdef __cplusplus
 }
 #endif

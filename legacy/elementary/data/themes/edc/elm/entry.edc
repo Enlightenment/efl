@@ -2,20 +2,6 @@ group { name: "elm/scroller/entry/default";
    inherit: "elm/scroller/base/default";
    image: "bg_glow_in.png" COMP;
    parts {
-      part { name: "validation_glow";
-         type: RECT;
-         insert_before: "bg";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            color: 0 0 0 0;
-         }
-         description { state: "pass" 0.0;
-            color: 0 255 0 90;
-         }
-         description { state: "fail" 0.0;
-            color: 255 0 0 90;
-         }
-      }
       part { name: "bg";
          description { state: "default" 0.0;
             color: DARK_GREY_BG_COLOR;
@@ -127,24 +113,6 @@ group { name: "elm/scroller/entry/default";
          transition: DECELERATE 0.3;
          target: "glow";
       }
-      program { name: "validation_fail";
-         signal: "validation,default,fail";
-         source: "elm";
-         action: STATE_SET "fail" 0.0;
-         target: "validation_glow";
-      }
-      program { name: "validation_pass";
-         signal: "validation,default,pass";
-         source: "elm";
-         action: STATE_SET "pass" 0.0;
-         target: "validation_glow";
-      }
-      program { name: "validation_off";
-         signal: "validation,default";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "validation_glow";
-      }
    }
 }
 
@@ -156,20 +124,6 @@ group { name: "elm/scroller/entry_single/default";
    data.item: "focus_highlight" "on";
    
    parts {
-      part { name: "validation_glow";
-         type: RECT;
-         insert_before: "bg";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            color: 0 0 0 0;
-         }
-         description { state: "pass" 0.0;
-            color: 0 255 0 90;
-         }
-         description { state: "fail" 0.0;
-            color: 255 0 0 90;
-         }
-      }
       part { name: "sb_vbar_base"; type: RECT;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -360,24 +314,6 @@ group { name: "elm/scroller/entry_single/default";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.3;
          target: "glow";
-      }
-      program { name: "validation_fail";
-         signal: "validation,default,fail";
-         source: "elm";
-         action: STATE_SET "fail" 0.0;
-         target: "validation_glow";
-      }
-      program { name: "validation_pass";
-         signal: "validation,default,pass";
-         source: "elm";
-         action: STATE_SET "pass" 0.0;
-         target: "validation_glow";
-      }
-      program { name: "validation_off";
-         signal: "validation,default";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "validation_glow";
       }
    }
 }
