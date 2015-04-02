@@ -25,11 +25,11 @@ typedef struct _Edje_Color_Class Edje_Color_Class;
 struct _Edje_Color_Class
 {
    const char       *name;
-   Eina_Stringshare *desc;
 
    unsigned char  r, g, b, a;
    unsigned char  r2, g2, b2, a2;
    unsigned char  r3, g3, b3, a3;
+   Eina_Stringshare *desc;
 };
 
 /**
