@@ -270,7 +270,7 @@ typedef enum
    /** - Backlight
     * @since 1.12
     */
-   EEZE_UDEV_TYPE_BACKLIGHT, 
+   EEZE_UDEV_TYPE_BACKLIGHT,
    /** - Leds
     * @since 1.12
     */
