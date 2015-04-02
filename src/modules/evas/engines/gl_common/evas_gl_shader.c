@@ -354,3 +354,46 @@ evas_gl_common_shader_program_shutdown(Evas_GL_Program *p)
    if (p->frag) glDeleteShader(p->frag);
    if (p->prog) glDeleteProgram(p->prog);
 }
+
+Evas_GL_Shader
+evas_gl_common_img_shader_select(Shader_Sampling sam, int nomul, int afill, int bgra, int mask)
+{
+   static Evas_GL_Shader _shaders[4 * 2 * 2 * 2 * 2]; // 128 possibilities
+   static Eina_Bool init = EINA_FALSE;
+   int idx;
+
+   if (EINA_UNLIKELY(!init))
+     {
+        unsigned k;
+
+        init = EINA_TRUE;
+        for (k = 0; k < (sizeof(_shaders) / sizeof(_shaders[0])); k++)
+          _shaders[k] = SHADER_IMG;
+
+        for (k = 0; k < (sizeof(_shaders_source) / sizeof(_shaders_source[0])); k++)
+          {
+             if (_shaders_source[k].type != SHD_IMAGE) continue;
+             idx = _shaders_source[k].sam << 4;
+             idx |= _shaders_source[k].bgra << 3;
+             idx |= _shaders_source[k].mask << 2;
+             idx |= _shaders_source[k].nomul << 1;
+             idx |= _shaders_source[k].afill;
+             _shaders[idx] = _shaders_source[k].id;
+          }
+     }
+
+   idx = sam << 4;
+   idx |= bgra << 3;
+   idx |= mask << 2;
+   idx |= nomul << 1;
+   idx |= afill;
+   return _shaders[idx];
+}
+
+const char *
+evas_gl_common_shader_name_get(Evas_GL_Shader shd)
+{
+   if ((shd >= 0) && (shd < (sizeof(_shaders_source) / sizeof(_shaders_source[0]))))
+     return _shaders_source[shd].name;
+   return "UNKNOWN";
+}

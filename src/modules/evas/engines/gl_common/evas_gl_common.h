@@ -417,16 +417,32 @@ struct _Evas_GL_Shared
    int ax, ay;
 };
 
-#define RTYPE_RECT  1
-#define RTYPE_IMAGE 2
-#define RTYPE_FONT  3
-#define RTYPE_YUV   4
-#define RTYPE_MAP   5 /* need to merge with image */
-#define RTYPE_YUY2  6
-#define RTYPE_NV12  7
-#define RTYPE_LINE  8
-#define RTYPE_RGB_A_PAIR 9
-#define RTYPE_TEX_EXTERNAL 10
+typedef enum _Shader_Sampling Shader_Sampling;
+typedef enum _Shader_Type Shader_Type;
+
+enum _Shader_Sampling {
+   SHD_SAM11,
+   SHD_SAM12,
+   SHD_SAM21,
+   SHD_SAM22,
+   SHD_SAM_LAST
+};
+
+enum _Shader_Type {
+   SHD_UNKNOWN,
+   SHD_RECT,
+   SHD_FONT,
+   SHD_IMAGE,
+   SHD_YUV,
+   SHD_YUY2,
+   SHD_NV12,
+   SHD_LINE,
+   SHD_RGB_A_PAIR,
+   SHD_TEX_EXTERNAL,
+   SHD_MAP,
+   SHD_TYPE_LAST
+};
+
 #define ARRAY_BUFFER_USE 500
 #define ARRAY_BUFFER_USE_SHIFT 100
 
@@ -465,7 +481,7 @@ struct _Evas_Engine_GL_Context
    struct {
       struct {
          int             x, y, w, h;
-         int             type;
+         Shader_Type     type;
       } region;
       struct {
          int             x, y, w, h;
@@ -779,6 +795,8 @@ void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *g
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
 void              evas_gl_common_shader_program_init_done(void);
 void              evas_gl_common_shader_program_shutdown(Evas_GL_Program *p);
+Evas_GL_Shader    evas_gl_common_img_shader_select(Shader_Sampling sam, int nomul, int afill, int bgra, int mask);
+const char       *evas_gl_common_shader_name_get(Evas_GL_Shader shd);
 
 Eina_Bool         evas_gl_common_file_cache_is_dir(const char *file);
 Eina_Bool         evas_gl_common_file_cache_mkdir(const char *dir);

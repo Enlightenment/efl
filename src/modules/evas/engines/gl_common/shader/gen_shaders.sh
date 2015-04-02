@@ -129,25 +129,17 @@ for (( i = 0; i < ${#SHADERS[@]} ; i++ )) ; do
     printf "Evas_GL_Program_Source shader_${shdname}_src =\n{\n   ${shdname}_glsl,\n   NULL, 0\n};\n\n" >> ${OUTPUT}
   done
 
-  shaders_source="${shaders_source}   { SHADER_${UNAME}, &(shader_${name}_vert_src), &(shader_${name}_frag_src), \"${name}\", RTYPE_${TYPE}, SHADER_${sam}, ${bgra}, ${mask}, ${nomul}, ${afill} },\n"
+  shaders_source="${shaders_source}   { SHADER_${UNAME}, &(shader_${name}_vert_src), &(shader_${name}_frag_src), \"${name}\", SHD_${TYPE}, SHD_${sam}, ${bgra}, ${mask}, ${nomul}, ${afill} },\n"
   shaders_enum="${shaders_enum}   SHADER_${UNAME},\n"
 done
 
 printf "
-typedef enum _Shader_Sampling Shader_Sampling;
-enum _Shader_Sampling {
-   SHADER_SAM11,
-   SHADER_SAM12,
-   SHADER_SAM21,
-   SHADER_SAM22
-};
-
 static const struct {
    Evas_GL_Shader id;
    Evas_GL_Program_Source *vert;
    Evas_GL_Program_Source *frag;
    const char *name;
-   unsigned char type; // RTYPE
+   Shader_Type type;
    Shader_Sampling sam;
    Eina_Bool bgra : 1;
    Eina_Bool mask : 1;
