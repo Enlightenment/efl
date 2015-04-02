@@ -463,6 +463,7 @@ help:
           "  eet -s FILE.EET PRIVATE_KEY PUBLIC_KEY             sign FILE.EET with PRIVATE_KEY and attach PUBLIC_KEY as it's certificate\n"
           "  eet -t FILE.EET                                    give some statistic about a file\n"
           "  eet -h                                             print out this help message\n"
+          "  eet -V [--version]                                 show program version\n"
           );
         eet_shutdown();
         return -1;
@@ -470,6 +471,8 @@ help:
 
    if ((!strncmp(argv[1], "-h", 2)))
      goto help;
+   else if ((!strncmp(argv[1], "-V", 2)) || (!strncmp(argv[1], "--version",9 )))
+     printf("Version: %s\n", PACKAGE_VERSION);
    else if (((!strcmp(argv[1], "-l")) || (!strcmp(argv[1], "-v"))) && (argc > 2))
      {
         if (argc == 3)
