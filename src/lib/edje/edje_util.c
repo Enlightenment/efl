@@ -559,6 +559,7 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
    cc->a3 = a3;
 
    members = eina_hash_find(_edje_color_class_member_hash, color_class);
+   if (!members) return EINA_TRUE;
    it = eina_hash_iterator_data_new(members);
    EINA_ITERATOR_FOREACH(it, er)
      {
