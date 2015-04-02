@@ -462,6 +462,7 @@ help:
           "  eet -c FILE.EET                                    report and check the signature information of an eet file\n"
           "  eet -s FILE.EET PRIVATE_KEY PUBLIC_KEY             sign FILE.EET with PRIVATE_KEY and attach PUBLIC_KEY as it's certificate\n"
           "  eet -t FILE.EET                                    give some statistic about a file\n"
+          "  eet -h                                             print out this help message\n"
           );
         eet_shutdown();
         return -1;
