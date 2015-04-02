@@ -324,16 +324,40 @@ ecore_cocoa_feed_events(void *anEvent)
 
          EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
          Ecore_Event_Mouse_Wheel *ev;
+         float dx, dy = 0;
 
          ev = malloc(sizeof(Ecore_Event_Mouse_Wheel));
          if (!ev) return pass;
+
+         if ([event hasPreciseScrollingDeltas])
+           {
+              dx = -[event scrollingDeltaX];
+              dy = -[event scrollingDeltaY];
+           }
+         else
+           {
+              dx = -[event deltaX];
+              dy = -[event deltaY];
+           }
+
+         if (dx == 0 && dy == 0)
+           {
+              break;
+           }
 
          ev->window = (Ecore_Window)window.ecore_window_data;
          ev->event_window = ev->window;
          ev->modifiers = 0; /* FIXME: keep modifier around. */
          ev->timestamp = time;
-         ev->z = [event deltaX] != 0 ? [event deltaX] : -([event deltaY]);
-         ev->direction = [event deltaX] != 0 ? 1 : 0;
+         if (dy != 0)
+           {
+              ev->z = (dy >  0) ? 1 : -1;
+           }
+         else
+           {
+              ev->z = (dx >  0) ? 1 : -1;
+           }
+         ev->direction = (dy != 0) ? 0 : 1;
 
          ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
 
