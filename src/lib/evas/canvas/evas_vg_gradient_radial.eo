@@ -1,0 +1,36 @@
+class Evas.VG_Gradient_Radial (Evas.VG_Gradient)
+{
+   eo_prefix: evas_vg_gradient_radial;
+   legacy_prefix: null;
+   properties {
+      center {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double x;
+	    double y;
+	 }
+      }
+      radius {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double r;
+	 }
+      }
+      focal {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double x;
+	    double y;
+	 }
+      }
+   }
+}

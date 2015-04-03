@@ -488,6 +488,7 @@ OPAQUE_TYPE(Evas_Font_Instance); /* General type for RGBA_Font_Int */
 #define MAGIC_SMART                0x7c6977c5
 #define MAGIC_OBJ_SHAPE            0x747297f7
 #define MAGIC_OBJ_CONTAINER        0x71877776
+#define MAGIC_OBJ_VG               0x77817EE7
 #define MAGIC_OBJ_CUSTOM           0x7b7857ab
 #define MAGIC_EVAS_GL              0x77976718
 #define MAGIC_MAP                  0x7575177d

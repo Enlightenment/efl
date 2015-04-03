@@ -1,0 +1,113 @@
+class Evas.VG_Shape (Evas.VG_Node)
+{
+   eo_prefix: evas_vg_shape;
+   properties {
+      fill {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    Evas_VG_Node *f;
+	 }
+      }
+      stroke_scale {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double s;
+	 }
+      }
+      stroke_color {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    int r;
+	    int g;
+	    int b;
+	    int a;
+	 }
+      }
+      stroke_fill {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    Evas_VG_Node *f;
+	 }
+      }
+      stroke_width {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double w;
+	 }
+      }
+      stroke_location {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double centered;
+	 }
+      }
+      stroke_dash {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	     const(Evas_VG_Dash) *dash;
+	     uint length;
+	 }
+      }
+      stroke_marker {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    Evas_VG_Shape *m;
+	 }
+      }
+      stroke_cap {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    Evas_VG_Cap c;
+	 }
+      }
+      stroke_join {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    Evas_VG_Join j;
+	 }
+      }
+   }
+   methods {
+      path_set {
+         return: bool;
+	 params {
+	    @in const(Evas_VG_Path_Command) *op;
+	    @in const(double) *points;
+	 }
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+   }
+}

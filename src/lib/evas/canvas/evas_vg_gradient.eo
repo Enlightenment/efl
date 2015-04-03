@@ -1,0 +1,26 @@
+abstract Evas.VG_Gradient (Evas.VG_Node)
+{
+   eo_prefix: evas_vg_gradient;
+   legacy_prefix: null;
+   properties {
+      stop {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    const(Evas_VG_Gradient_Stop) *colors;
+	    uint length;
+	 }
+      }
+      spread {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    Evas_VG_Gradient_Spread s;
+	 }
+      }
+   }
+}

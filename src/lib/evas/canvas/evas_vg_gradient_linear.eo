@@ -1,0 +1,27 @@
+class Evas.VG_Gradient_Linear (Evas.VG_Gradient)
+{
+   eo_prefix: evas_vg_gradient_linear;
+   legacy_prefix: null;
+   properties {
+      start {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double x;
+	    double y;
+	 }
+      }
+      end {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double x;
+	    double y;
+	 }
+      }
+   }
+}

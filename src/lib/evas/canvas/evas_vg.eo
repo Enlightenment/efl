@@ -1,0 +1,17 @@
+class Evas.VG (Evas.Object)
+{
+   legacy_prefix: evas_object_vg;
+   eo_prefix: evas_obj_vg;
+   properties {
+      root_node {
+	 get {
+	 }
+	 values {
+	    Evas_VG_Node *container;
+	 }
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+   }
+}

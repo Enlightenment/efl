@@ -1,0 +1,8 @@
+class Evas.VG_Container (Evas.VG_Node)
+{
+   eo_prefix: evas_vg_container;
+   implements {
+      Eo.Base.constructor;
+      Evas.VG_Node.bound_get;
+   }
+}

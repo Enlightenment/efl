@@ -31,7 +31,15 @@ evas_eolian_files = \
 	lib/evas/canvas/evas_3d_mesh.eo\
 	lib/evas/canvas/evas_3d_node.eo\
 	lib/evas/canvas/evas_3d_scene.eo\
-	lib/evas/canvas/evas_3d_object.eo
+	lib/evas/canvas/evas_3d_object.eo \
+	lib/evas/canvas/evas_vg.eo \
+	lib/evas/canvas/evas_vg_node.eo \
+	lib/evas/canvas/evas_vg_container.eo \
+	lib/evas/canvas/evas_vg_shape.eo \
+	lib/evas/canvas/evas_vg_root_node.eo \
+	lib/evas/canvas/evas_vg_gradient.eo \
+	lib/evas/canvas/evas_vg_gradient_radial.eo \
+	lib/evas/canvas/evas_vg_gradient_linear.eo
 
 evas_eolian_c = $(evas_eolian_files:%.eo=%.eo.c)
 evas_eolian_h = $(evas_eolian_files:%.eo=%.eo.h) \
@@ -176,6 +184,7 @@ lib/evas/file/evas_path.h
 lib_evas_libevas_la_SOURCES += \
 $(lib_evas_file_SOURCES)
 
+# Evas_3D
 noinst_HEADERS += \
 lib/evas/include/evas_3d_utils.h
 
@@ -200,6 +209,16 @@ modules/evas/model_savers/eet/evas_model_save_eet.c \
 modules/evas/model_savers/obj/evas_model_save_obj.c \
 modules/evas/model_savers/ply/evas_model_save_ply.c \
 lib/evas/canvas/evas_3d_eet.c
+
+# Evas_VG
+lib_evas_libevas_la_SOURCES += \
+lib/evas/canvas/evas_object_vg.c \
+lib/evas/canvas/evas_vg_node.c \
+lib/evas/canvas/evas_vg_container.c \
+lib/evas/canvas/evas_vg_root_node.c \
+lib/evas/canvas/evas_vg_gradient.c \
+lib/evas/canvas/evas_vg_gradient_linear.c \
+lib/evas/canvas/evas_vg_gradient_radial.c
 
 # Engine
 lib_evas_libevas_la_SOURCES += \
