@@ -1212,6 +1212,8 @@ EFL_PLATFORM_DEPEND([EFL], [evil])
 EFL_INTERNAL_DEPEND_PKG([EFL], [eina])
 EFL_INTERNAL_DEPEND_PKG([EFL], [eo])
 
+EFL_ADD_LIBS([EFL], [-lm])
+
 EFL_LIB_END([Efl])
 #### End of Efl
 
