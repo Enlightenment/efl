@@ -6,7 +6,7 @@
 typedef struct _Evas_VG_Gradient_Data Evas_VG_Gradient_Data;
 struct _Evas_VG_Gradient_Data
 {
-   // FIXME: Later on we should deduplicate it somehow.
+   // FIXME: Later on we should deduplicate it somehow (Using Ector ?).
    Efl_Graphics_Gradient_Stop *colors;
    unsigned int colors_count;
 

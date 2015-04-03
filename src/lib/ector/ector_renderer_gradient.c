@@ -10,6 +10,10 @@
 typedef struct _Ector_Renderer_Generic_Gradient_Data Ector_Renderer_Generic_Gradient_Data;
 struct _Ector_Renderer_Generic_Gradient_Data
 {
+   Efl_Graphics_Gradient_Stop *colors;
+   unsigned int colors_count;
+
+   Efl_Graphics_Gradient_Spread s;
 };
 
 void
@@ -18,6 +22,15 @@ _ector_renderer_gradient_efl_graphics_gradient_stop_set(Eo *obj,
                                                         const Efl_Graphics_Gradient_Stop *colors,
                                                         unsigned int length)
 {
+   pd->colors = realloc(pd->colors, length * sizeof(Efl_Graphics_Gradient_Stop));
+   if (!pd->colors)
+     {
+        pd->colors_count = 0;
+        return ;
+     }
+
+   memcpy(pd->colors, colors, length * sizeof(Efl_Graphics_Gradient_Stop));
+   pd->colors_count = length;
 }
 
 void
@@ -26,6 +39,8 @@ _ector_renderer_gradient_efl_graphics_gradient_stop_get(Eo *obj,
                                                         const Efl_Graphics_Gradient_Stop **colors,
                                                         unsigned int *length)
 {
+   if (colors) *colors = pd->colors;
+   if (length) *length = pd->colors_count;
 }
 
 void
@@ -33,12 +48,14 @@ _ector_renderer_gradient_efl_graphics_gradient_spread_set(Eo *obj,
                                                           Ector_Renderer_Generic_Gradient_Data *pd,
                                                           Efl_Graphics_Gradient_Spread s)
 {
+   pd->s = s;
 }
 
 Efl_Graphics_Gradient_Spread
 _ector_renderer_gradient_efl_graphics_gradient_spread_get(Eo *obj,
                                                           Ector_Renderer_Generic_Gradient_Data *pd)
 {
+   return pd->s;
 }
 
 
