@@ -170,14 +170,12 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
 
    cairo_set_operator(pd->parent->cairo, cop);
    cairo_transform(pd->parent->cairo, &identity);
-   cx = pd->generic->origin.x - pd->parent->current.x;
-   cy = pd->generic->origin.y - pd->parent->current.y;
+   cx = pd->generic->origin.x + pd->parent->current.x;
+   cy = pd->generic->origin.y + pd->parent->current.y;
+
    cairo_translate(pd->parent->cairo, cx, cy);
 
    if (pd->m) cairo_transform(pd->parent->cairo, pd->m);
-
-   pd->parent->current.x = pd->generic->origin.x;
-   pd->parent->current.y = pd->generic->origin.y;
 
    cairo_set_source_rgba(pd->parent->cairo, r/255.0, g/255.0, b/255.0, a/255.0);
 

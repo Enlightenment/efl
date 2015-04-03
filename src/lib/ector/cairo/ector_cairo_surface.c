@@ -73,7 +73,6 @@ _ector_cairo_surface_ector_generic_surface_renderer_factory_new(Eo *obj,
 
 typedef struct _cairo_surface_t cairo_surface_t;
 
-static void (*cairo_translate)(cairo_t *cr, double tx, double ty) = NULL;
 static void (*cairo_destroy)(cairo_t *cr) = NULL;
 static cairo_surface_t *(*cairo_image_surface_create)(int format,
                                                       int width,
@@ -118,11 +117,8 @@ _ector_cairo_surface_ector_generic_surface_reference_point_set(Eo *obj EINA_UNUS
                                                                Ector_Cairo_Surface_Data *pd,
                                                                int x, int y)
 {
-   if (pd->cairo)
-     {
-        USE(obj, cairo_translate, );
-        cairo_translate(pd->cairo, x, y);
-     }
+   pd->current.x = x;
+   pd->current.y = y;
 }
 
 static void
