@@ -1,4 +1,4 @@
-class Efl.Gfx.Shape
+mixin Efl.Gfx.Shape
 {
    legacy_prefix: null;
    properties {
