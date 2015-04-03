@@ -347,12 +347,29 @@ _ector_renderer_software_shape_efl_gfx_shape_path_set(Eo *obj, Ector_Renderer_So
 }
 
 
+static Eina_Bool
+_ector_renderer_software_shape_path_changed(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
+                                            void *event_info EINA_UNUSED)
+{
+   Ector_Renderer_Software_Shape_Data *pd = data;
+   
+   if(pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
+   if(pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
+   
+   pd->shape_data = NULL;
+   pd->outline_data = NULL;
+
+   return EINA_TRUE;
+}
+
 void
 _ector_renderer_software_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
 {
    eo_do_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, eo_constructor());
    pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN, obj);
    pd->base = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
+   eo_do(obj,
+         eo_event_callback_add(EFL_GFX_PATH_CHANGED, _ector_renderer_software_shape_path_changed, pd));
 }
 
 void
