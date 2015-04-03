@@ -36,7 +36,8 @@ EAPI void
 efl_graphics_path_append_arc_to(Efl_Graphics_Path_Command **commands, double **points,
                                 double x, double y,
                                 double rx, double ry,
-                                double angle);
+                                double angle,
+                                Eina_Bool large_arc, Eina_Bool sweep);
 
 EAPI void
 efl_graphics_path_append_close(Efl_Graphics_Path_Command **commands, double **points);
@@ -54,5 +55,11 @@ efl_graphics_path_interpolate(const Efl_Graphics_Path_Command *cmd,
 EAPI Eina_Bool
 efl_graphics_path_equal_commands(const Efl_Graphics_Path_Command *a,
                                  const Efl_Graphics_Path_Command *b);
+
+EAPI Eina_Bool
+efl_graphics_path_current_get(const Efl_Graphics_Path_Command *cmd,
+                              const double *points,
+                              double *current_x, double *current_y,
+                              double *current_ctrl_x, double *current_ctrl_y);
 
 #endif

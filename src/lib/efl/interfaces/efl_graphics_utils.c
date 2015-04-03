@@ -4,6 +4,10 @@
 
 #include <Efl.h>
 
+#include <math.h>
+#include <float.h>
+#include <ctype.h>
+
 static inline unsigned int
 efl_graphics_path_command_length(Efl_Graphics_Path_Command command)
 {
@@ -12,11 +16,7 @@ efl_graphics_path_command_length(Efl_Graphics_Path_Command command)
       case EFL_GRAPHICS_PATH_COMMAND_TYPE_END: return 0;
       case EFL_GRAPHICS_PATH_COMMAND_TYPE_MOVE_TO: return 2;
       case EFL_GRAPHICS_PATH_COMMAND_TYPE_LINE_TO: return 2;
-      case EFL_GRAPHICS_PATH_COMMAND_TYPE_QUADRATIC_TO: return 4;
-      case EFL_GRAPHICS_PATH_COMMAND_TYPE_SQUADRATIC_TO: return 2;
       case EFL_GRAPHICS_PATH_COMMAND_TYPE_CUBIC_TO: return 6;
-      case EFL_GRAPHICS_PATH_COMMAND_TYPE_SCUBIC_TO: return 4;
-      case EFL_GRAPHICS_PATH_COMMAND_TYPE_ARC_TO: return 5;
       case EFL_GRAPHICS_PATH_COMMAND_TYPE_CLOSE: return 0;
       case EFL_GRAPHICS_PATH_COMMAND_TYPE_LAST: return 0;
      }
@@ -125,6 +125,52 @@ efl_graphics_path_interpolate(const Efl_Graphics_Path_Command *cmd,
        *r = (*from) * pos_map + ((*to) * (1.0 - pos_map));
 }
 
+EAPI Eina_Bool
+efl_graphics_path_current_get(const Efl_Graphics_Path_Command *cmd,
+                              const double *points,
+                              double *current_x, double *current_y,
+                              double *current_ctrl_x, double *current_ctrl_y)
+{
+   unsigned int i;
+
+   if (current_x) *current_x = 0;
+   if (current_y) *current_y = 0;
+   if (current_ctrl_x) *current_ctrl_x = 0;
+   if (current_ctrl_y) *current_ctrl_y = 0;
+   if (!cmd || !points) return EINA_FALSE;
+
+   for (i = 0; cmd[i] != EFL_GRAPHICS_PATH_COMMAND_TYPE_END; i++)
+     {
+        switch (cmd[i])
+          {
+           case EFL_GRAPHICS_PATH_COMMAND_TYPE_END:
+              break;
+           case EFL_GRAPHICS_PATH_COMMAND_TYPE_MOVE_TO:
+           case EFL_GRAPHICS_PATH_COMMAND_TYPE_LINE_TO:
+              if (current_x) *current_x = points[0];
+              if (current_y) *current_y = points[1];
+
+              points += 2;
+              break;
+           case EFL_GRAPHICS_PATH_COMMAND_TYPE_CUBIC_TO:
+              if (current_x) *current_x = points[0];
+              if (current_y) *current_y = points[1];
+              if (current_ctrl_x) *current_ctrl_x = points[4];
+              if (current_ctrl_y) *current_ctrl_y = points[5];
+
+              points += 6;
+              break;
+           case EFL_GRAPHICS_PATH_COMMAND_TYPE_CLOSE:
+              break;
+           case EFL_GRAPHICS_PATH_COMMAND_TYPE_LAST:
+           default:
+              return EINA_FALSE;
+          }
+     }
+
+   return EINA_TRUE;
+}
+
 EAPI void
 efl_graphics_path_append_move_to(Efl_Graphics_Path_Command **commands, double **points,
                                  double x, double y)
@@ -157,30 +203,49 @@ EAPI void
 efl_graphics_path_append_quadratic_to(Efl_Graphics_Path_Command **commands, double **points,
                                       double x, double y, double ctrl_x, double ctrl_y)
 {
-   double *offset_point;
+   double current_x = 0, current_y = 0;
+   double ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1;
 
-   if (!efl_graphics_path_grow(EFL_GRAPHICS_PATH_COMMAND_TYPE_QUADRATIC_TO,
-                          commands, points, &offset_point))
+   if (!efl_graphics_path_current_get(*commands, *points,
+                                      &current_x, &current_y,
+                                      NULL, NULL))
      return ;
 
-   offset_point[0] = x;
-   offset_point[1] = y;
-   offset_point[2] = ctrl_x;
-   offset_point[3] = ctrl_y;
+   // Convert quadratic bezier to cubic
+   ctrl_x0 = (current_x + 2 * ctrl_x) * (1.0 / 3.0);
+   ctrl_y0 = (current_y + 2 * ctrl_y) * (1.0 / 3.0);
+   ctrl_x1 = (x + 2 * ctrl_x) * (1.0 / 3.0);
+   ctrl_y1 = (y + 2 * ctrl_y) * (1.0 / 3.0);
+
+   efl_graphics_path_append_cubic_to(commands, points, x, y,
+                                     ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1);
 }
 
 EAPI void
 efl_graphics_path_append_squadratic_to(Efl_Graphics_Path_Command **commands, double **points,
                                        double x, double y)
 {
-   double *offset_point;
+   double xc, yc; /* quadratic control point */
+   double ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1;
+   double current_x = 0, current_y = 0;
+   double current_ctrl_x = 0, current_ctrl_y = 0;
 
-   if (!efl_graphics_path_grow(EFL_GRAPHICS_PATH_COMMAND_TYPE_SQUADRATIC_TO,
-                          commands, points, &offset_point))
+   if (!efl_graphics_path_current_get(*commands, *points,
+                                      &current_x, &current_y,
+                                      &current_ctrl_x, &current_ctrl_y))
      return ;
 
-   offset_point[0] = x;
-   offset_point[1] = y;
+   xc = 2 * current_x - current_ctrl_x;
+   yc = 2 * current_y - current_ctrl_y;
+   /* generate a quadratic bezier with control point = xc, yc */
+   ctrl_x0 = (current_x + 2 * xc) * (1.0 / 3.0);
+   ctrl_y0 = (current_y + 2 * yc) * (1.0 / 3.0);
+   ctrl_x1 = (x + 2 * xc) * (1.0 / 3.0);
+   ctrl_y1 = (y + 2 * yc) * (1.0 / 3.0);
+
+   efl_graphics_path_append_cubic_to(commands, points, x, y,
+                                     ctrl_x0, ctrl_y0,
+                                     ctrl_x1, ctrl_y1);
 }
 
 EAPI void
@@ -208,35 +273,169 @@ efl_graphics_path_append_scubic_to(Efl_Graphics_Path_Command **commands, double 
                                    double x, double y,
                                    double ctrl_x, double ctrl_y)
 {
-   double *offset_point;
+   double ctrl_x0, ctrl_y0;
+   double current_x = 0, current_y = 0;
+   double current_ctrl_x = 0, current_ctrl_y = 0;
 
-   if (!efl_graphics_path_grow(EFL_GRAPHICS_PATH_COMMAND_TYPE_SCUBIC_TO,
-                          commands, points, &offset_point))
+   if (!efl_graphics_path_current_get(*commands, *points,
+                                      &current_x, &current_y,
+                                      &current_ctrl_x, &current_ctrl_y))
      return ;
 
-   offset_point[0] = x;
-   offset_point[1] = y;
-   offset_point[2] = ctrl_x;
-   offset_point[3] = ctrl_y;
+   ctrl_x0 = 2 * current_x - current_ctrl_x;
+   ctrl_y0 = 2 * current_y - current_ctrl_y;
+
+   efl_graphics_path_append_cubic_to(commands, points, x, y,
+                                     ctrl_x0, ctrl_y0, ctrl_x, ctrl_y);
 }
 
+// This function come from librsvg rsvg-path.c
+static void
+_efl_graphics_path_append_arc_segment(Efl_Graphics_Path_Command **commands, double **points,
+                                      double xc, double yc,
+                                      double th0, double th1, double rx, double ry,
+                                      double angle)
+{
+   double x1, y1, x2, y2, x3, y3;
+   double t;
+   double th_half;
+   double f, sinf, cosf;
+
+   f = angle * M_PI / 180.0;
+   sinf = sin(f);
+   cosf = cos(f);
+
+   th_half = 0.5 * (th1 - th0);
+   t = (8.0 / 3.0) * sin(th_half * 0.5) * sin(th_half * 0.5) / sin(th_half);
+   x1 = rx * (cos(th0) - t * sin(th0));
+   y1 = ry * (sin(th0) + t * cos(th0));
+   x3 = rx* cos(th1);
+   y3 = ry* sin(th1);
+   x2 = x3 + rx * (t * sin(th1));
+   y2 = y3 + ry * (-t * cos(th1));
+
+   efl_graphics_path_append_cubic_to(commands, points,
+                                     xc + cosf * x3 - sinf * y3,
+                                     yc + sinf * x3 + cosf * y3,
+                                     xc + cosf * x1 - sinf * y1,
+                                     yc + sinf * x1 + cosf * y1,
+                                     xc + cosf * x2 - sinf * y2,
+                                     yc + sinf * x2 + cosf * y2);
+}
+
+// This function come from librsvg rsvg-path.c
 EAPI void
 efl_graphics_path_append_arc_to(Efl_Graphics_Path_Command **commands, double **points,
                                 double x, double y,
-                                double rx, double ry,
-                                double angle)
+                                double rx, double ry, double angle,
+                                Eina_Bool large_arc, Eina_Bool sweep)
 {
-   double *offset_point;
+   /* See Appendix F.6 Elliptical arc implementation notes
+      http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes */
+   double f, sinf, cosf;
+   double x1, y1, x2, y2;
+   double x1_, y1_;
+   double cx_, cy_, cx, cy;
+   double gamma;
+   double theta1, delta_theta;
+   double k1, k2, k3, k4, k5;
+   int i, n_segs;
 
-   if (!efl_graphics_path_grow(EFL_GRAPHICS_PATH_COMMAND_TYPE_ARC_TO,
-                          commands, points, &offset_point))
+   if (!efl_graphics_path_current_get(*commands, *points,
+                                      &x1, &y1,
+                                      NULL, NULL))
      return ;
 
-   offset_point[0] = x;
-   offset_point[1] = y;
-   offset_point[2] = rx;
-   offset_point[3] = ry;
-   offset_point[4] = angle;
+   /* Start and end of path segment */
+   x2 = x;
+   y2 = y;
+
+   if (x1 == x2 && y1 == y2)
+     return;
+
+   /* X-axis */
+   f = angle * M_PI / 180.0;
+   sinf = sin(f);
+   cosf = cos(f);
+
+   /* Check the radius against floading point underflow.
+      See http://bugs.debian.org/508443 */
+   if ((fabs(rx) < DBL_EPSILON) || (fabs(ry) < DBL_EPSILON))
+     {
+        efl_graphics_path_append_line_to(commands, points, x, y);
+        return;
+     }
+
+   if (rx < 0) rx = -rx;
+   if (ry < 0) ry = -ry;
+
+   k1 = (x1 - x2) / 2;
+   k2 = (y1 - y2) / 2;
+
+   x1_ = cosf * k1 + sinf * k2;
+   y1_ = -sinf * k1 + cosf * k2;
+
+   gamma = (x1_ * x1_) / (rx * rx) + (y1_ * y1_) / (ry * ry);
+   if (gamma > 1)
+     {
+        rx *= sqrt(gamma);
+        ry *= sqrt(gamma);
+     }
+
+   /* Compute the center */
+   k1 = rx * rx * y1_ * y1_ + ry * ry * x1_ * x1_;
+   if (k1 == 0) return;
+
+   k1 = sqrt(fabs((rx * rx * ry * ry) / k1 - 1));
+   if (sweep == large_arc)
+     k1 = -k1;
+
+   cx_ = k1 * rx * y1_ / ry;
+   cy_ = -k1 * ry * x1_ / rx;
+
+   cx = cosf * cx_ - sinf * cy_ + (x1 + x2) / 2;
+   cy = sinf * cx_ + cosf * cy_ + (y1 + y2) / 2;
+
+   /* Compute start angle */
+   k1 = (x1_ - cx_) / rx;
+   k2 = (y1_ - cy_) / ry;
+   k3 = (-x1_ - cx_) / rx;
+   k4 = (-y1_ - cy_) / ry;
+
+   k5 = sqrt(fabs(k1 * k1 + k2 * k2));
+   if (k5 == 0) return;
+
+   k5 = k1 / k5;
+   if (k5 < -1) k5 = -1;
+   else if(k5 > 1) k5 = 1;
+
+   theta1 = acos(k5);
+   if(k2 < 0) theta1 = -theta1;
+
+   /* Compute delta_theta */
+   k5 = sqrt(fabs((k1 * k1 + k2 * k2) * (k3 * k3 + k4 * k4)));
+   if (k5 == 0) return;
+
+   k5 = (k1 * k3 + k2 * k4) / k5;
+   if (k5 < -1) k5 = -1;
+   else if (k5 > 1) k5 = 1;
+   delta_theta = acos(k5);
+   if(k1 * k4 - k3 * k2 < 0) delta_theta = -delta_theta;
+
+   if (sweep && delta_theta < 0)
+     delta_theta += M_PI*2;
+   else if (!sweep && delta_theta > 0)
+     delta_theta -= M_PI*2;
+
+   /* Now draw the arc */
+   n_segs = ceil(fabs(delta_theta / (M_PI * 0.5 + 0.001)));
+
+   for (i = 0; i < n_segs; i++)
+     _efl_graphics_path_append_arc_segment(commands, points,
+                                           cx, cy,
+                                           theta1 + i * delta_theta / n_segs,
+                                           theta1 + (i + 1) * delta_theta / n_segs,
+                                           rx, ry, angle);
 }
 
 EAPI void
@@ -253,8 +452,8 @@ efl_graphics_path_append_circle(Efl_Graphics_Path_Command **commands, double **p
                                 double x, double y, double radius)
 {
    efl_graphics_path_append_move_to(commands, points, x, y - radius);
-   efl_graphics_path_append_arc_to(commands, points, x + radius, y, radius, radius, 0);
-   efl_graphics_path_append_arc_to(commands, points, x, y + radius, radius, radius, 0);
-   efl_graphics_path_append_arc_to(commands, points, x - radius, y, radius, radius, 0);
-   efl_graphics_path_append_arc_to(commands, points, x, y - radius, radius, radius, 0);
+   efl_graphics_path_append_arc_to(commands, points, x + radius, y, radius, radius, 0, EINA_FALSE, EINA_FALSE);
+   efl_graphics_path_append_arc_to(commands, points, x, y + radius, radius, radius, 0, EINA_FALSE, EINA_FALSE);
+   efl_graphics_path_append_arc_to(commands, points, x - radius, y, radius, radius, 0, EINA_FALSE, EINA_FALSE);
+   efl_graphics_path_append_arc_to(commands, points, x, y - radius, radius, radius, 0, EINA_FALSE, EINA_FALSE);
 }

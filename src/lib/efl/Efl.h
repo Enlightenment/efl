@@ -45,11 +45,7 @@ typedef enum _Efl_Graphics_Path_Command
   EFL_GRAPHICS_PATH_COMMAND_TYPE_END = 0, /**< End of the stream of command */
   EFL_GRAPHICS_PATH_COMMAND_TYPE_MOVE_TO, /**< A move command type */
   EFL_GRAPHICS_PATH_COMMAND_TYPE_LINE_TO, /**< A line command type */
-  EFL_GRAPHICS_PATH_COMMAND_TYPE_QUADRATIC_TO, /**< A quadratic command type */
-  EFL_GRAPHICS_PATH_COMMAND_TYPE_SQUADRATIC_TO, /**< A smooth quadratic command type */
   EFL_GRAPHICS_PATH_COMMAND_TYPE_CUBIC_TO, /**< A cubic command type */
-  EFL_GRAPHICS_PATH_COMMAND_TYPE_SCUBIC_TO, /**< A smooth cubic command type */
-  EFL_GRAPHICS_PATH_COMMAND_TYPE_ARC_TO, /**< An arc command type */
   EFL_GRAPHICS_PATH_COMMAND_TYPE_CLOSE, /**< A close command type */
   EFL_GRAPHICS_PATH_COMMAND_TYPE_LAST, /**< Not a valid command, but last one according to this version header */
 } Efl_Graphics_Path_Command;
