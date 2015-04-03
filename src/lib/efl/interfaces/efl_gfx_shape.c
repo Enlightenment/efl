@@ -239,6 +239,38 @@ interpolate(double from, double to, double pos_map)
    return (from * pos_map) + (to * (1.0 - pos_map));
 }
 
+static inline int
+interpolatei(int from, int to, double pos_map)
+{
+   return (from * pos_map) + (to * (1.0 - pos_map));
+}
+
+typedef struct _Efl_Gfx_Stroke Efl_Gfx_Stroke;
+struct _Efl_Gfx_Stroke
+{
+   double scale;
+   int r, g, b, a;
+   double w;
+   double centered;
+   const Efl_Gfx_Dash *dash;
+   unsigned int dash_length;
+   Efl_Gfx_Cap c;
+   Efl_Gfx_Join j;
+};
+
+static inline void
+stroke_get(const Eo *obj, Efl_Gfx_Stroke *stroke)
+{
+   eo_do(obj,
+         stroke->scale = efl_gfx_shape_stroke_scale_get(),
+         efl_gfx_shape_stroke_color_get(&stroke->r, &stroke->g, &stroke->b, &stroke->a),
+         stroke->w = efl_gfx_shape_stroke_width_get(),
+         stroke->centered = efl_gfx_shape_stroke_location_get(),
+         efl_gfx_shape_stroke_dash_get(&stroke->dash, &stroke->dash_length),
+         stroke->c = efl_gfx_shape_stroke_cap_get(),
+         stroke->j = efl_gfx_shape_stroke_join_get());
+}
+
 Eina_Bool
 _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
                            const Eo *from, const Eo *to, double pos_map)
@@ -247,13 +279,21 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
    Efl_Gfx_Path_Command *cmds;
    double *pts, *from_pts, *to_pts;
    unsigned int i, j;
+   Efl_Gfx_Stroke stroke_from, stroke_to;
+   Efl_Gfx_Dash *dash;
 
    from_pd = eo_data_scope_get(from, EFL_GFX_SHAPE_MIXIN);
    to_pd = eo_data_scope_get(to, EFL_GFX_SHAPE_MIXIN);
-   if (!from_pd && !to_pd) return EINA_FALSE;
+   if (!eo_isa(from, EFL_GFX_SHAPE_MIXIN) ||
+       !eo_isa(to, EFL_GFX_SHAPE_MIXIN)) return EINA_FALSE;
    if (pd == from_pd || pd == to_pd) return EINA_FALSE;
    if (!_efl_gfx_shape_equal_commands_internal(from_pd, to_pd))
      return EINA_FALSE;
+
+   stroke_get(from, &stroke_from);
+   stroke_get(to, &stroke_to);
+
+   if (stroke_from.dash_length != stroke_to.dash_length) return EINA_FALSE;
 
    cmds = realloc(pd->commands,
                   sizeof (Efl_Gfx_Path_Command) * from_pd->commands_count);
@@ -281,6 +321,9 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
           to_pts++;
        }
 
+   pd->points_count = from_pd->points_count;
+   pd->commands_count = from_pd->commands_count;
+
    pd->current.x = interpolate(from_pd->current.x,
                                to_pd->current.x,
                                pos_map);
@@ -294,7 +337,34 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
                                     to_pd->current_ctrl.y,
                                     pos_map);
 
+   dash = malloc(sizeof (Efl_Gfx_Dash) * stroke_to.dash_length);
+   if (dash)
+     {
+        for (i = 0; i < stroke_to.dash_length; i++)
+          {
+             dash[i].length = interpolate(stroke_from.dash[i].length,
+                                          stroke_to.dash[i].length, pos_map);
+             dash[i].gap = interpolate(stroke_from.dash[i].gap,
+                                       stroke_to.dash[i].gap, pos_map);
+          }
+     }
+   else
+     {
+        stroke_to.dash_length = 0;
+     }
+
    eo_do(obj,
+         efl_gfx_shape_stroke_scale_set(interpolate(stroke_to.scale, stroke_from.scale, pos_map)),
+         efl_gfx_shape_stroke_color_set(interpolatei(stroke_to.r, stroke_from.r, pos_map),
+                                        interpolatei(stroke_to.g, stroke_from.g, pos_map),
+                                        interpolatei(stroke_to.b, stroke_from.b, pos_map),
+                                        interpolatei(stroke_to.a, stroke_from.a, pos_map)),
+         efl_gfx_shape_stroke_width_set(interpolate(stroke_to.w, stroke_from.w, pos_map)),
+         efl_gfx_shape_stroke_location_set(interpolate(stroke_to.centered, stroke_from.centered, pos_map)),
+         efl_gfx_shape_stroke_dash_set(dash, stroke_to.dash_length),
+         efl_gfx_shape_stroke_cap_set(pos_map < 0.5 ? stroke_from.c : stroke_to.c),
+         efl_gfx_shape_stroke_join_set(pos_map < 0.5 ? stroke_from.j : stroke_to.j),
+
          eo_event_callback_call(EFL_GFX_PATH_CHANGED, NULL),
          eo_event_callback_call(EFL_GFX_CHANGED, NULL));
 
