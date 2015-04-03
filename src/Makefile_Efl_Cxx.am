@@ -8,7 +8,8 @@ generated_efl_cxx_bindings = \
                  lib/efl/interfaces/efl_image.eo.hh \
                  lib/efl/interfaces/efl_player.eo.hh \
                  lib/efl/interfaces/efl_text.eo.hh \
-                 lib/efl/interfaces/efl_text_properties.eo.hh
+                 lib/efl/interfaces/efl_text_properties.eo.hh \
+		 lib/efl/interfaces/efl_gfx_base.eo.hh
 
 lib/efl/Efl.hh: $(generated_efl_cxx_bindings)
 	@echo @ECHO_E@ "#ifndef EFL_CXX_EDJE_HH\n#define EFL_CXX_EDJE_HH\n" > $(top_builddir)/src/lib/efl/Efl.hh

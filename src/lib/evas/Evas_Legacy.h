@@ -568,6 +568,86 @@ EAPI void             evas_object_show(Evas_Object *obj) EINA_ARG_NONNULL(1);
 EAPI void             evas_object_hide(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 
+/**
+ *
+ * Sets the general/main color of the given Evas object to the given
+ * one.
+ *
+ * @see evas_object_color_get() (for an example)
+ * @note These color values are expected to be premultiplied by @p a.
+ *
+ * @ingroup Evas_Object_Group_Basic
+ *
+ * @param[in] r The red component of the given color.
+ * @param[in] g The green component of the given color.
+ * @param[in] b The blue component of the given color.
+ * @param[in] a The alpha component of the given color.
+ */
+EAPI void evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a);
+
+/**
+ *
+ * Retrieves the general/main color of the given Evas object.
+ *
+ * Retrieves the “main” color's RGB component (and alpha channel)
+ * values, <b>which range from 0 to 255</b>. For the alpha channel,
+ * which defines the object's transparency level, 0 means totally
+ * transparent, while 255 means opaque. These color values are
+ * premultiplied by the alpha value.
+ *
+ * Usually you’ll use this attribute for text and rectangle objects,
+ * where the “main” color is their unique one. If set for objects
+ * which themselves have colors, like the images one, those colors get
+ * modulated by this one.
+ *
+ * @note All newly created Evas rectangles get the default color
+ * values of <code>255 255 255 255</code> (opaque white).
+ *
+ * @note Use @c NULL pointers on the components you're not interested
+ * in: they'll be ignored by the function.
+ *
+ * Example:
+ * @dontinclude evas-object-manipulation.c
+ * @skip int alpha, r, g, b;
+ * @until return
+ *
+ * See the full @ref Example_Evas_Object_Manipulation "example".
+ *
+ * @ingroup Evas_Object_Group_Basic
+ *
+ * @param[out] r The red component of the given color.
+ * @param[out] g The green component of the given color.
+ * @param[out] b The blue component of the given color.
+ * @param[out] a The alpha component of the given color.
+ */
+EAPI void evas_object_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a);
+
+/**
+ *
+ * Move the given Evas object to the given location inside its canvas' viewport.
+ *
+ * @param[in] x in
+ * @param[in] y in
+ */
+EAPI void evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+
+/**
+ *
+ * Changes the size of the given Evas object.
+ *
+ * @param[in] w in
+ * @param[in] h in
+ */
+EAPI void evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+
+/**
+ *
+ * Retrieves whether or not the given Evas object is visible.
+ *
+ */
+EAPI Eina_Bool evas_object_visible_get(const Evas_Object *obj);
+
+
 #include "canvas/evas_common_interface.eo.legacy.h"
 #include "canvas/evas_object.eo.legacy.h"
 

@@ -362,7 +362,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
       Eo.Base.constructor;
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
-      Evas.Object.size.set;
+      Efl.Gfx.Base.size.set;
       Efl.Text.text.set;
       Efl.Text.text.get;
       Efl.Text_Properties.font.get;

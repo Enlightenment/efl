@@ -1,4 +1,4 @@
-abstract Evas.Object (Eo.Base, Evas.Common_Interface)
+abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base)
 {
    eo_prefix: evas_obj;
    data: Evas_Object_Protected_Data;
@@ -78,19 +78,6 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
          values {
             Evas_Coord w; /*@ Integer to use as the preferred width hint. */
             Evas_Coord h; /*@ Integer to use as the preferred height hint. */
-         }
-      }
-      visibility {
-         set {
-            /*@ Makes the given Evas object visible or invisible. */
-            legacy: null;
-         }
-         get {
-            /*@ Retrieves whether or not the given Evas object is visible. */
-            legacy: evas_object_visible_get;
-         }
-         values {
-            bool v; /*@ @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise */
          }
       }
       type {
@@ -745,20 +732,6 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             clipper, @c EINA_FALSE otherwise. */
          }
       }
-      size {
-         set {
-            /*@ Changes the size of the given Evas object. */
-            legacy: evas_object_resize;
-         }
-         get {
-            /*@ Retrieves the (rectangular) size of the given Evas object. */
-            legacy: null;
-         }
-         values {
-            Evas_Coord w; /*@ in */
-            Evas_Coord h; /*@ in */
-         }
-      }
       focus {
          set {
             /*@
@@ -1031,20 +1004,6 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
             (@c EINA_FALSE) */
          }
       }
-      position {
-         set {
-            /*@ Move the given Evas object to the given location inside its canvas' viewport. */
-            legacy: evas_object_move;
-         }
-         get {
-            /*@ Retrieves the position of the given Evas object. */
-            legacy: null;
-         }
-         values {
-            Evas_Coord x; /*@ in */
-            Evas_Coord y; /*@ in */
-         }
-      }
       anti_alias {
          set {
             /*@
@@ -1060,54 +1019,6 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
          }
          values {
             bool anti_alias; /*@ (@c EINA_TRUE) if the object is to be anti_aliased, (@c EINA_FALSE) otherwise. */
-         }
-      }
-      color {
-         set {
-            /*@
-            Sets the general/main color of the given Evas object to the given
-            one.
-
-            @see evas_object_color_get() (for an example)
-            @note These color values are expected to be premultiplied by @p a.
-
-            @ingroup Evas_Object_Group_Basic */
-         }
-         get {
-            /*@
-            Retrieves the general/main color of the given Evas object.
-
-            Retrieves the “main” color's RGB component (and alpha channel)
-            values, <b>which range from 0 to 255</b>. For the alpha channel,
-            which defines the object's transparency level, 0 means totally
-            transparent, while 255 means opaque. These color values are
-            premultiplied by the alpha value.
-
-            Usually you’ll use this attribute for text and rectangle objects,
-            where the “main” color is their unique one. If set for objects
-            which themselves have colors, like the images one, those colors get
-            modulated by this one.
-
-            @note All newly created Evas rectangles get the default color
-            values of <code>255 255 255 255</code> (opaque white).
-
-            @note Use @c NULL pointers on the components you're not interested
-            in: they'll be ignored by the function.
-
-            Example:
-            @dontinclude evas-object-manipulation.c
-            @skip int alpha, r, g, b;
-            @until return
-
-            See the full @ref Example_Evas_Object_Manipulation "example".
-
-            @ingroup Evas_Object_Group_Basic */
-         }
-         values {
-            int r; /*@ The red component of the given color. */
-            int g; /*@ The green component of the given color. */
-            int b; /*@ The blue component of the given color. */
-            int a; /*@ The alpha component of the given color. */
          }
       }
       smart_data {
@@ -1522,6 +1433,14 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface)
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
       Evas.Common_Interface.evas.get;
+      Efl.Gfx.Base.visibility.set;
+      Efl.Gfx.Base.visibility.get;
+      Efl.Gfx.Base.position.set;
+      Efl.Gfx.Base.position.get;
+      Efl.Gfx.Base.color.set;
+      Efl.Gfx.Base.color.get;
+      Efl.Gfx.Base.size.set;
+      Efl.Gfx.Base.size.get;
    }
    events {
        mouse,in; /*@ Mouse In Event */

@@ -18,7 +18,7 @@ static inline void
 part_get_geometry(Edje_Real_Part *rp, Evas_Coord *w, Evas_Coord *h)
 {
    if (!rp->part->use_alternate_font_metrics)
-     eo_do(rp->object, evas_obj_size_get(w, h));
+     eo_do(rp->object, efl_gfx_size_get(w, h));
    else
      {
         if (w) *w = evas_object_text_horiz_advance_get(rp->object);
@@ -100,7 +100,7 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
          evas_obj_text_ellipsis_set(chosen_desc->text.min_x ? -1 : params->type.text.ellipsis),
          efl_text_properties_font_set(font, size),
          efl_text_set(text),
-         evas_obj_size_set(sw, sh));
+         efl_gfx_size_set(sw, sh));
 
    return text;
 }
@@ -519,10 +519,10 @@ arrange_text:
    if (!calc_only)
      {
         eo_do(ep->object,
-              evas_obj_position_set(ed->x + TO_INT(params->eval.x) + ep->typedata.text->offset.x,
-                               ed->y + TO_INT(params->eval.y) + ep->typedata.text->offset.y);
+              efl_gfx_position_set(ed->x + TO_INT(params->eval.x) + ep->typedata.text->offset.x,
+                                   ed->y + TO_INT(params->eval.y) + ep->typedata.text->offset.y);
 
-              evas_obj_visibility_set(params->visible));
+              efl_gfx_visibility_set(params->visible));
      }
 
 
