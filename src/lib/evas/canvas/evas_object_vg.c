@@ -146,7 +146,7 @@ _evas_vg_render(Evas_Object_Protected_Data *obj,
      {
         Evas_VG_Node_Data *nd = eo_data_scope_get(n, EVAS_VG_NODE_CLASS);
 
-        obj->layer->evas->engine.func->ector_draw(output, context, surface, nd->renderer, clips, x, y, do_async);
+        obj->layer->evas->engine.func->ector_renderer_draw(output, context, surface, nd->renderer, clips, x, y, do_async);
      }
 }
 
@@ -179,9 +179,11 @@ evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
                                                            context);
    obj->layer->evas->engine.func->context_render_op_set(output, context,
                                                         obj->cur->render_op);
+   obj->layer->evas->engine.func->ector_begin(output, context, surface, do_async);
    _evas_vg_render(obj, output, context, surface, vd->root, NULL,
                    obj->cur->geometry.x + x, obj->cur->geometry.y + y,
                    do_async);
+   obj->layer->evas->engine.func->ector_end(output, context, surface, do_async);
 }
 
 static void
