@@ -1,4 +1,4 @@
-class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill)
+class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
 {
    legacy_prefix: evas_object_image;
    eo_prefix: evas_obj_image;
@@ -391,28 +391,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill)
          values {
             Evas_Border_Fill_Mode fill; /*@ Fill mode of the center region of @p obj (a value in
             #Evas_Border_Fill_Mode). */
-         }
-      }
-      size {
-         set {
-            /*@
-            Sets the size of the given image object.
-
-            This function will scale down or crop the image so that it is
-            treated as if it were at the given size. If the size given is
-            smaller than the image, it will be cropped. If the size given is
-            larger, then the image will be treated as if it were in the upper
-            left hand corner of a larger image that is otherwise transparent. */
-         }
-         get {
-            /*@
-            Retrieves the size of the given image object.
-
-            See @ref evas_object_image_size_set() for more details. */
-         }
-         values {
-            int w; /*@ The new width of the image. */
-            int h; /*@ The new height of the image. */
          }
       }
       source_visible {
@@ -1010,5 +988,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill)
       Efl.Gfx.Fill.fill_spread.get;
       Efl.Gfx.Fill.fill.set;
       Efl.Gfx.Fill.fill.get;
+      Efl.Gfx.View.size.set;
+      Efl.Gfx.View.size.get;
    }
 }

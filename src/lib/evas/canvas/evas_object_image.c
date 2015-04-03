@@ -1073,8 +1073,14 @@ _evas_image_efl_gfx_fill_fill_spread_get(Eo *eo_obj EINA_UNUSED,
    return (Evas_Fill_Spread)o->cur->spread;;
 }
 
+EAPI void
+evas_object_image_size_set(Evas_Image *obj, int w, int h)
+{
+   eo_do((Evas_Image *)obj, efl_gfx_view_size_set(w, h));
+}
+
 EOLIAN static void
-_evas_image_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
+_evas_image_efl_gfx_view_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -1137,8 +1143,16 @@ _evas_image_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
    evas_object_change(eo_obj, obj);
 }
 
+EAPI void
+evas_object_image_size_get(const Evas_Image *obj, int *w, int *h)
+{
+   eo_do((Evas_Image *)obj, efl_gfx_view_size_get(w, h));
+}
+
 EOLIAN static void
-_evas_image_size_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *w, int *h)
+_evas_image_efl_gfx_view_size_get(Eo *eo_obj EINA_UNUSED,
+                                  Evas_Image_Data *o,
+                                  int *w, int *h)
 {
    if (w) *w = o->cur->image.w;
    if (h) *h = o->cur->image.h;

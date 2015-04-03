@@ -2066,6 +2066,32 @@ image) to start drawing from.
  */
 EAPI void evas_object_image_fill_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
+/**
+ *
+ * Sets the size of the given image object.
+ *
+ * This function will scale down or crop the image so that it is
+ * treated as if it were at the given size. If the size given is
+ * smaller than the image, it will be cropped. If the size given is
+ * larger, then the image will be treated as if it were in the upper
+ * left hand corner of a larger image that is otherwise transparent.
+ *
+ * @param[in] w The new width of the image.
+ * @param[in] h The new height of the image.
+ */
+EAPI void evas_object_image_size_set(Evas_Object *obj, int w, int h);
+
+/**
+ *
+ * Retrieves the size of the given image object.
+ *
+ * See @ref evas_object_image_size_set() for more details.
+ *
+ * @param[out] w The new width of the image.
+ * @param[out] h The new height of the image.
+ */
+EAPI void evas_object_image_size_get(const Evas_Object *obj, int *w, int *h);
+
 #include "canvas/evas_image.eo.legacy.h"
 
 /**
