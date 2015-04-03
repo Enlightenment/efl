@@ -1,0 +1,11 @@
+abstract Ector.Renderer.Gradient (Ector.Renderer.Base, Efl.Graphics.Gradient)
+{
+   eo_prefix: ector_renderer_gradient;
+   legacy_prefix: null;
+   implements {
+      Efl.Graphics.Gradient.stop.set;
+      Efl.Graphics.Gradient.stop.get;
+      Efl.Graphics.Gradient.spread.set;
+      Efl.Graphics.Gradient.spread.get;
+   }
+}

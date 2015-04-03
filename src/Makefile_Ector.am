@@ -3,7 +3,8 @@
 ector_eolian_files = \
 	lib/ector/ector_surface.eo \
 	lib/ector/ector_renderer_base.eo \
-	lib/ector/ector_renderer_shape.eo
+	lib/ector/ector_renderer_shape.eo \
+	lib/ector/ector_renderer_gradient.eo
 
 ector_eolian_c = $(ector_eolian_files:%.eo=%.eo.c)
 ector_eolian_h = $(ector_eolian_files:%.eo=%.eo.h)
@@ -25,7 +26,8 @@ lib/ector/Ector.h
 lib_ector_libector_la_SOURCES = \
 lib/ector/ector_main.c \
 lib/ector/ector_renderer_shape.c \
-lib/ector/ector_renderer_base.c
+lib/ector/ector_renderer_base.c \
+lib/ector/ector_renderer_gradient.c
 
 lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECTOR_CFLAGS@ \
