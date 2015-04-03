@@ -21,6 +21,7 @@ class Evas.VG (Evas.Object, Efl.File, Efl.Gfx.Fill, Efl.Gfx.View)
    }
    implements {
       Eo.Base.constructor;
+      Eo.Base.destructor;
       Efl.File.file.set;
       Efl.File.file.get;
       Efl.File.mmap.set;
