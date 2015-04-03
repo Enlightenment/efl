@@ -5054,7 +5054,7 @@ _ector_cairo_software_surface_surface_set(Eo *obj, Ector_Cairo_Software_Surface_
      {
         pd->surface = cairo_image_surface_create_for_data(pixels,
                                                           CAIRO_FORMAT_ARGB32,
-                                                          width, height, width);
+                                                          width, height, width * sizeof (int));
         if (!pd->surface) goto end;
 
         pd->ctx = cairo_create(pd->surface);
