@@ -92,6 +92,8 @@ extern "C" {
  * @{
  */
 
+#ifdef EFL_BETA_API_SUPPORT
+
 /**
  * @typedef Ector_Surface
  * The base type to render content into.
@@ -153,8 +155,6 @@ typedef enum _Ector_Update_Type
   ECTOR_UPDATE_ALPHA = 4, /* Pushing some transparent pixels (this impact the under layer and will require to read back the surface where this surface is blitted) */
   ECTOR_UPDATE_OPAQUE = 8 /* Pushing some opaque pixels (this means that their is no need to read the under layer when blitting this surface) */
 } Ector_Update_Type;
-
-#ifdef EFL_BETA_API_SUPPORT
 
 /**
  * @brief Init the ector subsystem
