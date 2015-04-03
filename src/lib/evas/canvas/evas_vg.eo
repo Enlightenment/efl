@@ -1,4 +1,4 @@
-class Evas.VG (Evas.Object, Efl.File, Efl.Gfx.Fill)
+class Evas.VG (Evas.Object, Efl.File, Efl.Gfx.Fill, Efl.Gfx.View)
 {
    legacy_prefix: evas_object_vg;
    eo_prefix: evas_obj_vg;
@@ -10,26 +10,6 @@ class Evas.VG (Evas.Object, Efl.File, Efl.Gfx.Fill)
 	    Evas_VG_Node *container;
 	 }
       }
-      size {
-         get {
-	    /*@
-	      Get the size as defined in the original data
-	      before any scaling (as in the file or when the
-	      object were added).
-	    */
-	 }
-	 set {
-	    /*@
-	      Set the size defined in the original data
-	      before any scaling (as in the file or when the
-	      object were added).
-	    */	 
-	 }
-	 values {
-	    uint w;
-	    uint h;
-	 }
-      }
   }
    implements {
       Eo.Base.constructor;
@@ -39,5 +19,7 @@ class Evas.VG (Evas.Object, Efl.File, Efl.Gfx.Fill)
       Efl.File.mmap.get;
       Efl.Gfx.Fill.fill.set;
       Efl.Gfx.Fill.fill.get;
+      Efl.Gfx.View.size.set;
+      Efl.Gfx.View.size.get;
    }
 }
