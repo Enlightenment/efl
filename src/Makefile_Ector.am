@@ -35,12 +35,19 @@ CLEANFILES += \
 	$(ector_eolian_c) \
 	$(ector_eolian_h)
 
+ectoreolianfilesdir = $(datadir)/eolian/include/ector-@VMAJ@
+ectoreolianfiles_DATA = $(ector_eolian_files)
+
+EXTRA_DIST += $(ectoreolianfiles_DATA)
+
 lib_LTLIBRARIES += lib/ector/libector.la
 
 installed_ectormainheadersdir = $(includedir)/ector-@VMAJ@
 dist_installed_ectormainheaders_DATA = \
 lib/ector/Ector.h \
 lib/ector/ector_util.h \
+lib/ector/ector_surface.h \
+lib/ector/ector_renderer.h \
 lib/ector/cairo/Ector_Cairo.h \
 lib/ector/software/Ector_Software.h
 
@@ -77,6 +84,9 @@ lib/ector/software/sw_ft_raster.c \
 lib/ector/software/sw_ft_stroker.c
 
 lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/ector \
+-I$(top_builddir)/src/lib/ector/cairo \
+-I$(top_builddir)/src/lib/ector/software \
 @ECTOR_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
@@ -118,11 +128,11 @@ tests_ector_ector_suite_DEPENDENCIES = @USE_ECTOR_INTERNAL_LIBS@
 endif
 
 EXTRA_DIST += \
-src/lib/ector/ector_private.h \
-src/lib/ector/cairo/ector_cairo_private.h \
-src/lib/ector/software/ector_blend_private.h \
-src/lib/ector/software/ector_software_private.h \
-src/lib/ector/software/sw_ft_math.h \
-src/lib/ector/software/sw_ft_raster.h \
-src/lib/ector/software/sw_ft_stroker.h \
-src/lib/ector/software/sw_ft_types.h
+lib/ector/ector_private.h \
+lib/ector/cairo/ector_cairo_private.h \
+lib/ector/software/ector_blend_private.h \
+lib/ector/software/ector_software_private.h \
+lib/ector/software/sw_ft_math.h \
+lib/ector/software/sw_ft_raster.h \
+lib/ector/software/sw_ft_stroker.h \
+lib/ector/software/sw_ft_types.h
