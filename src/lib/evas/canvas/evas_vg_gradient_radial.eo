@@ -9,5 +9,7 @@ class Evas.VG_Gradient_Radial (Evas.VG_Gradient, Efl.Graphics.Gradient_Radial)
       Efl.Graphics.Gradient_Radial.radius.get;
       Efl.Graphics.Gradient_Radial.focal.set;
       Efl.Graphics.Gradient_Radial.focal.get;     
+      Eo.Base.constructor;
+      Eo.Base.destructor;
    }
 }

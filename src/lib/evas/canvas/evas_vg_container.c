@@ -6,10 +6,37 @@
 #define MY_CLASS EVAS_VG_CONTAINER_CLASS
 
 static void
-_evas_vg_container_eo_base_constructor(Eo *obj,
-                                       Evas_VG_Container_Data *pd EINA_UNUSED)
+_evas_vg_container_render_pre(Eo *obj EINA_UNUSED,
+                              Ector_Surface *s,
+                              void *data,
+                              Evas_VG_Node_Data *nd EINA_UNUSED)
 {
+   Evas_VG_Container_Data *pd = data;
+   Eina_List *l;
+   Eo *child;
+
+   EINA_LIST_FOREACH(pd->children, l, child)
+     _evas_vg_render_pre(child, s);
+}
+
+static void
+_evas_vg_container_eo_base_constructor(Eo *obj,
+                                       Evas_VG_Container_Data *pd)
+{
+   Evas_VG_Node_Data *nd;
+
    eo_do_super(obj, MY_CLASS, eo_constructor());
+
+   nd = eo_data_scope_get(obj, EVAS_VG_NODE_CLASS);
+   nd->render_pre = _evas_vg_container_render_pre;
+   nd->data = pd;
+}
+
+static void
+_evas_vg_container_eo_base_destructor(Eo *obj,
+                                      Evas_VG_Container_Data *pd EINA_UNUSED)
+{
+   eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 static Eina_Bool

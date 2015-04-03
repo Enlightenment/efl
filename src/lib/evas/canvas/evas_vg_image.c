@@ -59,5 +59,16 @@ _evas_vg_image_efl_file_file_get(Eo *obj, Evas_VG_Image_Data *pd,
    if (key) *key = pd->key;
 }
 
+static void
+_evas_vg_image_eo_base_constructor(Eo *obj, Evas_VG_Image_Data *pd)
+{
+   eo_error_set(obj);
+}
+
+static void
+_evas_vg_image_eo_base_destructor(Eo *obj, Evas_VG_Image_Data *pd)
+{
+   eo_error_set(obj);
+}
 
 #include "evas_vg_image.eo.c"

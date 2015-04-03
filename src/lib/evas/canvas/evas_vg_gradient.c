@@ -1,17 +1,9 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+#include "evas_vg_private.h"
+
 #include <strings.h>
-
-typedef struct _Evas_VG_Gradient_Data Evas_VG_Gradient_Data;
-struct _Evas_VG_Gradient_Data
-{
-   // FIXME: Later on we should deduplicate it somehow (Using Ector ?).
-   Efl_Graphics_Gradient_Stop *colors;
-   unsigned int colors_count;
-
-   Efl_Graphics_Gradient_Spread s;
-};
 
 static void
 _evas_vg_gradient_efl_graphics_gradient_stop_set(Eo *obj EINA_UNUSED,

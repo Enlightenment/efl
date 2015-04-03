@@ -1,6 +1,7 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+#include "evas_vg_private.h"
 #include "evas_vg_root_node.eo.h"
 
 #define MY_CLASS EVAS_VG_CLASS
@@ -164,11 +165,17 @@ evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
 static void
 evas_object_vg_render_pre(Evas_Object *eo_obj,
                           Evas_Object_Protected_Data *obj,
-                          void *type_private_data EINA_UNUSED)
+                          void *type_private_data)
 {
+   Evas_VG_Data *vd = type_private_data;
+   Evas_Public_Data *e = obj->layer->evas;
    int is_v, was_v;
+   Ector_Surface *s;
 
-   // FIXME: call all modified Ector_Renderer prepare fct
+   // FIXME: handle damage only on changed renderer.
+   s = e->engine.func->ector_get(e->engine.data.output);
+   if (vd->root && s)
+     _evas_vg_render_pre(vd->root, s);
 
    /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;

@@ -3,6 +3,7 @@ class Evas.VG_Container (Evas.VG_Node)
    eo_prefix: evas_vg_container;
    implements {
       Eo.Base.constructor;
+      Eo.Base.destructor;
       Evas.VG_Node.bound_get;
    }
 }

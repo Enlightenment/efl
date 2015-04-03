@@ -7,5 +7,7 @@ class Evas.VG_Gradient_Linear (Evas.VG_Gradient, Efl.Graphics.Gradient_Linear)
       Efl.Graphics.Gradient_Linear.start.get;
       Efl.Graphics.Gradient_Linear.end.set;
       Efl.Graphics.Gradient_Linear.end.get;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
    }
 }
