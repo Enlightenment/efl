@@ -148,8 +148,10 @@ typedef enum _Efl_Gfx_Fill_Spread
 #include "interfaces/efl_text_properties.eo.h"
 
 EAPI extern const Eo_Event_Description _EFL_GFX_CHANGED;
+EAPI extern const Eo_Event_Description _EFL_GFX_PATH_CHANGED;
 
 #define EFL_GFX_CHANGED (&(_EFL_GFX_CHANGED))
+#define EFL_GFX_PATH_CHANGED (&(_EFL_GFX_PATH_CHANGED))
 
 #include "interfaces/efl_gfx_base.eo.h"
 #include "interfaces/efl_gfx_stack.eo.h"

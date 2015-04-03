@@ -22,3 +22,6 @@
 
 EAPI const Eo_Event_Description _EFL_GFX_CHANGED =
   EO_EVENT_DESCRIPTION("Graphics changed", "The visual representation of the object changed");
+
+EAPI const Eo_Event_Description _EFL_GFX_PATH_CHANGED =
+  EO_EVENT_DESCRIPTION("Graphics path changed", "The path of a shape object changed");
