@@ -37,7 +37,7 @@ struct _Evas_VG_Gradient_Data
    Efl_Graphics_Gradient_Spread s;
 };
 
-static inline Evas_VG_Node *
+static inline Evas_VG_Node_Data *
 _evas_vg_render_pre(Evas_VG_Node *child, Ector_Surface *s, Eina_Matrix3 *m)
 {
    Evas_VG_Node_Data *child_nd = NULL;
