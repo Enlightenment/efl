@@ -244,7 +244,7 @@ efl_graphics_path_append_close(Efl_Graphics_Path_Command **commands, double **po
 {
    double *offset_point;
 
-   efl_graphics_path_grow(EFL_GRAPHICS_PATH_COMMAND_TYPE_ARC_TO,
+   efl_graphics_path_grow(EFL_GRAPHICS_PATH_COMMAND_TYPE_CLOSE,
                           commands, points, &offset_point);
 }
 
