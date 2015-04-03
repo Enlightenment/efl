@@ -36,6 +36,12 @@ static void (*cairo_path_destroy)(cairo_path_t *path) = NULL;
 static void (*cairo_new_path)(cairo_t *cr) = NULL;
 static void (*cairo_append_path)(cairo_t *cr, const cairo_path_t *path) = NULL;
 
+typedef enum _cairo_line_cap_t{lie_cap}cairo_line_cap_t;
+typedef enum _cairo_line_join_t{line_join}cairo_line_join_t;
+static void (*cairo_set_line_width)(cairo_t *cr, double width) = NULL;
+static void (*cairo_set_line_cap)(cairo_t *cr, cairo_line_cap_t line_cap) = NULL;
+static void (*cairo_set_line_join)(cairo_t *cr, cairo_line_join_t line_join) = NULL;
+
 typedef struct _Ector_Renderer_Cairo_Shape_Data Ector_Renderer_Cairo_Shape_Data;
 struct _Ector_Renderer_Cairo_Shape_Data
 {
@@ -162,6 +168,9 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
         USE(obj, cairo_fill_preserve, EINA_FALSE);
         USE(obj, cairo_set_source_rgba, EINA_FALSE);
         USE(obj, cairo_stroke, EINA_FALSE);
+        USE(obj, cairo_set_line_width, EINA_FALSE);
+        USE(obj, cairo_set_line_cap, EINA_FALSE);
+        USE(obj, cairo_set_line_join, EINA_FALSE);
 
         cairo_fill_preserve(pd->parent->cairo);
 
@@ -174,6 +183,9 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
         if (pd->shape->stroke.fill)
           eo_do(pd->shape->stroke.fill, ector_renderer_cairo_base_fill());
         // Set dash, cap and join
+        cairo_set_line_width(pd->parent->cairo, (pd->shape->stroke.width * pd->shape->stroke.scale));
+        cairo_set_line_cap(pd->parent->cairo, pd->shape->stroke.cap);
+        cairo_set_line_join(pd->parent->cairo, pd->shape->stroke.join);
         cairo_stroke(pd->parent->cairo);
      }
    else
