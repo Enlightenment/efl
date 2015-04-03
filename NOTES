@@ -1,0 +1,31 @@
+Evas_VG_Color_List
+  - List of color
+
+Evas_VG_Gradient
+  gradient_type_set (radial, linear)
+  color_list_set
+  point_set (i, x, y)
+
+Evas_VG_Fill
+  - abstract
+
+Evas_VG_Root_Node (only one at the top, Evas_VG_Container)
+
+Evas_VG_Shape
+  fill
+  stroke_scale
+  stroke_color
+  stroke_fill
+  stroke_width
+  stroke_location
+  stroke_dash(length[], gap[])
+  stroke_marker(Evas_VG_Shape *)
+  stroke_cap
+  stroke_join
+
+Evas_VG_Filter
+  ??
+
+bounds_get -> Evas_VG_Node
+
+Eina_Matrix3
