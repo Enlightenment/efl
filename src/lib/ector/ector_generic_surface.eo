@@ -31,16 +31,6 @@ abstract Ector.Generic.Surface (Eo.Base)
 	    @in const(Eo_Class) * type @nonull;
 	 }
       }
-      update_push {
-         return: bool;
-	 params {
-	    @in const(Eina_Rectangle) * r @nonull;
-	    @in Ector_Update_Type type;
-	 }
-      }
-      update_reset {
-         return: bool;
-      }
    }
    implements {
       @virtual .renderer_factory_new;

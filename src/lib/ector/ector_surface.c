@@ -26,17 +26,4 @@ _ector_generic_surface_size_get(Eo *obj,
 {
 }
 
-Eina_Bool
-_ector_generic_surface_update_push(Eo *obj,
-                                   Ector_Generic_Surface_Data *pd,
-                                   const Eina_Rectangle *r,
-                                   Ector_Update_Type type)
-{
-}
-
-Eina_Bool
-_ector_generic_surface_update_reset(Eo *obj, Ector_Generic_Surface_Data *pd)
-{
-}
-
 #include "ector_generic_surface.eo.c"
