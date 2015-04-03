@@ -15,7 +15,4 @@ class Ector.Cairo_Software.Surface (Ector.Cairo.Surface)
 	 }
       }
    }
-   implements {
-      Eo.Base.finalize;
-   }
 }
