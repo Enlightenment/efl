@@ -7,6 +7,9 @@ typedef struct _Ector_Cairo_Surface_Data Ector_Cairo_Surface_Data;
 struct _Ector_Cairo_Surface_Data
 {
    cairo_t *cairo;
+   struct {
+      double x, y;
+   } current;
 
    Eina_Bool internal : 1;
 };

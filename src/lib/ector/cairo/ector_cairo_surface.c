@@ -95,6 +95,7 @@ _ector_cairo_surface_context_set(Eo *obj,
         if (!internal) internal = cairo_image_surface_create(0, 1, 1);
         ctx = cairo_create(internal);
      }
+   pd->current.x = pd->current.y = 0;
    pd->cairo = ctx;
 }
 

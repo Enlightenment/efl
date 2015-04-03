@@ -143,6 +143,7 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
 {
    double r, g, b, a;
    cairo_operator_t cop;
+   double cx, cy;
 
    USE(obj, cairo_translate, EINA_FALSE);
    USE(obj, cairo_set_source_rgba, EINA_FALSE);
@@ -166,9 +167,14 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
    a = ((double)((pd->generic->color.a * A_VAL(&mul_col)) >> 8)) / 255;
 
    cairo_set_operator(pd->parent->cairo, cop);
+   cairo_transform(pd->parent->cairo, &identity);
    if (pd->m) cairo_transform(pd->parent->cairo, pd->m);
-   else cairo_transform(pd->parent->cairo, &identity);
-   cairo_translate(pd->parent->cairo, pd->generic->origin.x - x, pd->generic->origin.y - y);
+   cx = pd->generic->origin.x - pd->parent->current.x;
+   cy = pd->generic->origin.y - pd->parent->current.y;
+   cairo_translate(pd->parent->cairo, cx, cy);
+   pd->parent->current.x = pd->generic->origin.x;
+   pd->parent->current.y = pd->generic->origin.y;
+
    cairo_set_source_rgba(pd->parent->cairo, r, g, b, a);
 
    return EINA_TRUE;
