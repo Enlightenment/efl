@@ -33,7 +33,7 @@ struct _Ector_Renderer_Cairo_Gradient_Radial_Data
 };
 
 static Eina_Bool
-_ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_prepare(Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd, Ector_Surface *s)
+_ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_prepare(Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd)
 {
    Ector_Renderer_Generic_Gradient_Radial_Data *grd;
    Ector_Renderer_Generic_Gradient_Data *gd;

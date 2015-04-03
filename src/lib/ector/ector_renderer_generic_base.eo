@@ -103,7 +103,6 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
       prepare {
          return: bool @warn_unused;
 	 params {
-	    @in Ector_Surface *s;
 	 }
       }
       done {

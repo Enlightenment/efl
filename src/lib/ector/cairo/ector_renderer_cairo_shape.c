@@ -205,16 +205,16 @@ _ector_arc_to(Eo *obj, cairo_t* ctx,
 }
 
 static Eina_Bool
-_ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd, Ector_Surface *s)
+_ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
    // FIXME: shouldn't that be part of the shape generic implementation ?
    if (pd->shape->fill)
-     eo_do(pd->shape->fill, ector_renderer_prepare(s));
+     eo_do(pd->shape->fill, ector_renderer_prepare());
    if (pd->shape->stroke.fill)
-     eo_do(pd->shape->stroke.fill, ector_renderer_prepare(s));
+     eo_do(pd->shape->stroke.fill, ector_renderer_prepare());
    if (pd->shape->stroke.marker)
-     eo_do(pd->shape->stroke.marker, ector_renderer_prepare(s));
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, ector_renderer_prepare(s));
+     eo_do(pd->shape->stroke.marker, ector_renderer_prepare());
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, ector_renderer_prepare());
 
    // shouldn't that be moved to the cairo base object
    if (!pd->parent)
