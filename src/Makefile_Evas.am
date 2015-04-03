@@ -519,7 +519,9 @@ lib/evas/filters/blur/blur_box_rgba_neon.c
 ### Engines
 
 if EVAS_STATIC_BUILD_SOFTWARE_GENERIC
-evas_eolian_files += modules/evas/engines/software_generic/ector_cairo_software_surface.eo
+BUILT_SOURCES += \
+modules/evas/engines/software_generic/ector_cairo_software_surface.eo.c \
+modules/evas/engines/software_generic/ector_cairo_software_surface.eo.h
 lib_evas_libevas_la_SOURCES += modules/evas/engines/software_generic/evas_engine.c modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h
 lib_evas_libevas_la_LIBADD +=
 else
@@ -608,6 +610,10 @@ endif
 endif
 
 if BUILD_ENGINE_GL_COMMON
+BUILT_SOURCES += \
+modules/evas/engines/gl_generic/ector_cairo_software_surface.eo.c \
+modules/evas/engines/gl_generic/ector_cairo_software_surface.eo.h
+
 GL_COMMON_SOURCES = \
 modules/evas/engines/gl_common/evas_gl_private.h \
 modules/evas/engines/gl_common/evas_gl_common.h \

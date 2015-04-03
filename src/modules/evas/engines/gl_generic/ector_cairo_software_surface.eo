@@ -1,0 +1,18 @@
+class Ector.Cairo_Software.Surface (Ector.Cairo.Surface)
+{
+   eo_prefix: ector_cairo_software_surface;
+   legacy_prefix: null;
+   properties {
+      surface {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    void *pixels;
+	    uint width;
+	    uint height;
+	 }
+      }
+   }
+}
