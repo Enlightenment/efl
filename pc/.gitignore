@@ -17,6 +17,7 @@
 /ecore-win32.pc
 /ecore-x.pc
 /ecore.pc
+/ector.pc
 /edje.pc
 /eet.pc
 /eeze.pc

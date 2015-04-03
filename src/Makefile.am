@@ -55,6 +55,7 @@ include Makefile_Ecore_Evas.am
 include Makefile_Ecore_Audio.am
 include Makefile_Ecore_Audio_Cxx.am
 include Makefile_Ecore_Avahi.am
+include Makefile_Ector.am
 include Makefile_Embryo.am
 include Makefile_Eio.am
 include Makefile_Eldbus.am

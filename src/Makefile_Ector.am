@@ -1,0 +1,55 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/ector/libector.la
+
+installed_ectormainheadersdir = $(includedir)/ector-@VMAJ@
+dist_installed_ectormainheaders_DATA = \
+lib/ector/Ector.h
+
+lib_ector_libector_la_SOURCES = \
+lib/ector/ector_main.c
+
+lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+@ECTOR_CFLAGS@ \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/ector\" \
+@VALGRIND_CFLAGS@
+
+lib_ector_libector_la_LIBADD = @ECTOR_LIBS@ @DL_LIBS@
+lib_ector_libector_la_DEPENDENCIES = @ECTOR_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
+lib_ector_libector_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/ector/ector_suite tests/ector/cxx_compile_test
+TESTS += tests/ector/ector_suite
+
+tests_ector_ector_suite_SOURCES = \
+tests/ector/ector_suite.c \
+tests/ector/ector_suite.h \
+tests/ector/ector_test_init.c
+
+tests_ector_cxx_compile_test_SOURCES = tests/ector/cxx_compile_test.cxx
+tests_ector_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECTOR_CFLAGS@
+tests_ector_cxx_compile_test_LDADD = @USE_ECTOR_LIBS@
+tests_ector_cxx_compile_test_DEPENDENCIES = @USE_ECTOR_INTERNAL_LIBS@
+
+
+tests_ector_ector_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_WD=\"`pwd`\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ector\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/ector\" \
+-DTESTS_BUILD_DIR=PACKAGE_BUILD_DIR \
+@CHECK_CFLAGS@ \
+@ECTOR_CFLAGS@
+tests_ector_ector_suite_LDADD = @CHECK_LIBS@ @USE_ECTOR_LIBS@
+tests_ector_ector_suite_DEPENDENCIES = @USE_ECTOR_INTERNAL_LIBS@
+
+endif
+
+EXTRA_DIST += \
+src/lib/ector/ector_private.h
