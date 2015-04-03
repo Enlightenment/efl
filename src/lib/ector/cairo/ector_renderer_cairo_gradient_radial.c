@@ -129,7 +129,7 @@ _ector_renderer_cairo_gradient_radial_efl_gfx_gradient_base_stop_set(Eo *obj, Ec
    if (pd->pat) cairo_pattern_destroy(pd->pat);
    pd->pat = NULL;
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS,
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS,
                efl_gfx_gradient_stop_set(colors, length));
 }
 
