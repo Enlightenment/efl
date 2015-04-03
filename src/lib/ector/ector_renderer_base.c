@@ -143,28 +143,4 @@ _ector_renderer_base_quality_get(Eo *obj EINA_UNUSED,
    return pd->q;
 }
 
-Eina_Bool
-_ector_renderer_base_bounds_get(Eo *obj, Ector_Renderer_Generic_Base_Data *pd,
-                                Eina_Rectangle **r)
-{
-}
-
-Eina_Bool
-_ector_renderer_base_draw(Eo *obj, Ector_Renderer_Generic_Base_Data *pd,
-                          Ector_Surface *s, Ector_Rop op, Eina_Array *clips,
-                          int x, int y)
-{
-}
-
-Eina_Bool
-_ector_renderer_base_prepare(Eo *obj, Ector_Renderer_Generic_Base_Data *pd,
-                             Ector_Surface *s)
-{
-}
-
-Eina_Bool
-_ector_renderer_base_done(Eo *obj, Ector_Renderer_Generic_Base_Data *pd)
-{
-}
-
 #include "ector_renderer_generic_base.eo.c"

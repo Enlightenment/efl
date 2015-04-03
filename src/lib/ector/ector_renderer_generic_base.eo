@@ -111,4 +111,10 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
          return: bool @warn_unused;
       }
    }
+   implements {
+      @virtual .draw;
+      @virtual .bounds_get;
+      @virtual .prepare;
+      @virtual .done;
+   }
 }
