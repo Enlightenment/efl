@@ -34,7 +34,6 @@ abstract Ector.Generic.Surface (Eo.Base)
       }
    }
    implements {
-      @virtual .size.set;
-      @virtual .size.get;
+      @virtual .renderer_factory_new;
    }
 }

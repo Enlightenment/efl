@@ -27,6 +27,7 @@ lib/ector/Ector.h
 
 lib_ector_libector_la_SOURCES = \
 lib/ector/ector_main.c \
+lib/ector/ector_surface.c \
 lib/ector/ector_renderer_shape.c \
 lib/ector/ector_renderer_base.c \
 lib/ector/ector_renderer_gradient.c \
