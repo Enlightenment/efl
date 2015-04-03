@@ -46,4 +46,13 @@ efl_graphics_path_append_circle(Efl_Graphics_Path_Command **commands, double **p
                                 double x, double y, double radius);
 
 
+EAPI void
+efl_graphics_path_interpolate(const Efl_Graphics_Path_Command *cmd,
+                              double pos_map,
+                              const double *from, const double *to, double *r);
+
+EAPI Eina_Bool
+efl_graphics_path_equal_commands(const Efl_Graphics_Path_Command *a,
+                                 const Efl_Graphics_Path_Command *b);
+
 #endif

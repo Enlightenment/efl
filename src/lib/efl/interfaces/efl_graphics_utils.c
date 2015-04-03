@@ -4,7 +4,7 @@
 
 #include <Efl.h>
 
-static unsigned int
+static inline unsigned int
 efl_graphics_path_command_length(Efl_Graphics_Path_Command command)
 {
    switch (command)
@@ -93,6 +93,36 @@ efl_graphics_path_dup(Efl_Graphics_Path_Command **out_cmd, double **out_pts,
    memcpy(*out_pts, in_pts, pts_length * sizeof (double));
    memcpy(*out_cmd, in_cmd, cmd_length * sizeof (Efl_Graphics_Path_Command));
    return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+efl_graphics_path_equal_commands(const Efl_Graphics_Path_Command *a,
+                                 const Efl_Graphics_Path_Command *b)
+{
+   unsigned int i;
+
+   if (!a && !b) return EINA_TRUE;
+   if (!a || !b) return EINA_FALSE;
+
+   for (i = 0; a[i] == b[i] && a[i] != EFL_GRAPHICS_PATH_COMMAND_TYPE_END; i++)
+     ;
+
+   return a[i] == b[i];
+}
+
+EAPI void
+efl_graphics_path_interpolate(const Efl_Graphics_Path_Command *cmd,
+                              double pos_map,
+                              const double *from, const double *to, double *r)
+{
+   unsigned int i;
+   unsigned int j;
+
+   if (!cmd) return ;
+
+   for (i = 0; cmd[i] != EFL_GRAPHICS_PATH_COMMAND_TYPE_END; i++)
+     for (j = 0; j < efl_graphics_path_command_length(cmd[i]); j++)
+       *r = (*from) * pos_map + ((*to) * (1.0 - pos_map));
 }
 
 EAPI void
