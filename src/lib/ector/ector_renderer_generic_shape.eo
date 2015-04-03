@@ -32,6 +32,7 @@ class Ector.Renderer.Generic.Shape (Ector.Renderer.Generic.Base, Efl.Gfx.Shape)
       }
    }
    implements {
+      Ector.Renderer.Generic.Base.prepare;
       Efl.Gfx.Shape.stroke_scale;
       Efl.Gfx.Shape.stroke_color;
       Efl.Gfx.Shape.stroke_width;
