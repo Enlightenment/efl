@@ -165,7 +165,7 @@ main(int argc, char *argv[])
                efl_file_set(argv[arg_index], NULL));
    ecore_evas_object_associate(ee, vg, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
 
-   if (!display)
+   if (display)
      {
         ecore_evas_show(ee);
 
