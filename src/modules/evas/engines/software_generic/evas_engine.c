@@ -3606,6 +3606,8 @@ _draw_thread_ector_surface_set(void *data)
    eo_do(_software_ector,
          ector_cairo_software_surface_set(pixels, w, h));
 
+   evas_common_cpu_end_opt();
+
    eina_mempool_free(_mp_command_ector_surface, ector_surface);
 }
 
@@ -3656,6 +3658,8 @@ eng_ector_end(void *data EINA_UNUSED, void *context EINA_UNUSED, void *surface E
    else
      {
         eo_do(_software_ector, ector_cairo_software_surface_set(NULL, 0, 0));
+
+        evas_common_cpu_end_opt();
      }
 }
 
