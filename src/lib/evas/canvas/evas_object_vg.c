@@ -441,8 +441,8 @@ _evas_vg_size_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
 }
 
 void
-_evas_vg_fill_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
-                  Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+_evas_vg_efl_gfx_fill_fill_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
+                               int x, int y, int w, int h)
 {
    pd->fill.x = x;
    pd->fill.y = y;
@@ -451,8 +451,8 @@ _evas_vg_fill_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
 }
 
 void
-_evas_vg_fill_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
-                  Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_evas_vg_efl_gfx_fill_fill_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
+                               int *x, int *y, int *w, int *h)
 {
    if (x) *x = pd->fill.x;
    if (y) *y = pd->fill.y;
