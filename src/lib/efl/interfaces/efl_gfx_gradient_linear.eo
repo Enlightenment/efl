@@ -4,23 +4,35 @@ interface Efl.Gfx.Gradient.Linear (Efl.Gfx.Gradient.Base)
    properties {
       start {
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    double x;
-	    double y;
-	 }
+            /*@
+              Sets the start point of this linear gradient.
+            */
+         }
+         get {
+            /*@
+              Gets the start point of this linear gradient.
+            */
+         }
+         values {
+            double x; /*@ x co-ordinate of start point */
+            double y; /*@ y co-ordinate of start point */
+         }
       }
       end {
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    double x;
-	    double y;
-	 }
+            /*@
+              Sets the end point of this linear gradient.
+            */
+         }
+         get {
+            /*@
+              Gets the end point of this linear gradient.
+            */
+         }
+         values {
+            double x; /*@ x co-ordinate of end point */
+            double y; /*@ y co-ordinate of end point */
+         }
       }
    }
 }

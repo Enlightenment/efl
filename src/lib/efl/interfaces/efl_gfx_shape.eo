@@ -4,80 +4,154 @@ class Efl.Gfx.Shape
    properties {
       stroke_scale {
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    double s;
-	 }
+            /*@
+              Sets the stroke scale to be used for stroking the path.
+              the scale property will be used along with stroke width property.
+              @since 1.14
+            */
+         }
+         get {
+            /*@
+              Get the stroke scaling factor used for stroking this path.
+              @since 1.14
+            */
+         }
+         values {
+            double s; /*@ stroke scale value */
+         }
       }
       stroke_color {
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    int r;
-	    int g;
-	    int b;
-	    int a;
-	 }
+            /*@
+              Sets the color to be used for stroking the path.
+              @since 1.14
+            */
+         }
+         get {
+            /*@
+              Gets the color used for stroking the path.
+              @since 1.14
+            */
+         }
+         values {
+            int r; /*@ The red component of the given color. */
+            int g; /*@ The green component of the given color. */
+            int b; /*@ The blue component of the given color. */
+            int a; /*@ The alpha component of the given color. */
+         }
       }
       stroke_width {
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    double w;
-	 }
+            /*@
+              Sets the stroke width to be used for stroking the path.
+              @since 1.14
+            */
+         }
+         get {
+            /*@
+              Gets the stroke width to be used for stroking the path.
+              @since 1.14
+            */
+         }
+         values {
+            double w; /*@ stroke width to be used */
+         }
       }
       stroke_location {
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    double centered;
-	 }
+            /*@
+              Not Implemented
+            */
+         }
+         get {
+            /*@
+              Not Implemented
+            */
+         }
+         values {
+            double centered; /*@  */
+         }
       }
       stroke_dash {
          set {
-	 }
-	 get {
-	 }
-	 values {
-	     const(Efl_Gfx_Dash) *dash;
-	     uint length;
-	 }
+            /*@
+              Not Implemented
+            */
+         }
+         get {
+            /*@
+              Not Implemented
+            */
+         }
+         values {
+            const(Efl_Gfx_Dash) *dash; /*@  */
+            uint length; /*@  */
+         }
       }
       stroke_cap {
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    Efl_Gfx_Cap c;
-	 }
+            /*@
+              Sets the cap style to be used for stroking the path.
+              The cap will be used for capping the end point of a 
+              open subpath.
+
+              @see Efl_Gfx_Cap
+              @since 1.14
+            */
+         }
+         get {
+            /*@
+              Gets the cap style used for stroking path.
+              @since 1.14
+            */
+         }
+         values {
+            Efl_Gfx_Cap c; /*@ cap style to use , default is EFL_GFX_CAP_BUTT */
+         }
       }
       stroke_join {
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    Efl_Gfx_Join j;
-	 }
+            /*@
+              Sets the join style to be used for stroking the path.
+              The join style will be used for joining the two line segment
+              while stroking teh path.
+
+              @see Efl_Gfx_Join
+              @since 1.14
+            */
+         }
+         get {
+            /*@
+              Gets the join style used for stroking path.
+              @since 1.14
+            */
+         }
+         values {
+            Efl_Gfx_Join j; /*@ join style to use , default is
+                              EFL_GFX_JOIN_MITER */
+         }
       }
       path {
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    const(Efl_Gfx_Path_Command) *commands;
-	    const(double) *points;
-	 }
+            /*@
+              Set the list of commands and points to be used to create the
+              content of shape.
+
+              @note see efl_gfx_path interface for how to create a command list.
+              @see Efl_Gfx_Path_Command
+              @since 1.14
+            */
+         }
+         get {
+            /*@
+             Gets the command and points list
+             @since 1.14 
+            */
+         }
+         values {
+            const(Efl_Gfx_Path_Command) *op; /*@ command list */
+            const(double) *points; /*@ point list */
+         }
       }
       path_length {
 	 get {
