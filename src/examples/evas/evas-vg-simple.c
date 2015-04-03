@@ -521,6 +521,18 @@ vector_set(int x, int y, int w, int h)
    evas_vg_shape_stroke_width_set(fg, 5.0);
    evas_vg_shape_stroke_join_set(fg, EFL_GFX_JOIN_ROUND);
    evas_vg_shape_stroke_color_set(fg, 70, 70, 0, 70);
+
+   Efl_VG *tst = eo_add(EFL_VG_SHAPE_CLASS, root);
+   evas_vg_shape_shape_append_rect(tst, 50, 25, 200, 200, 3, 5);
+   evas_vg_node_color_set(tst, 0, 0, 200, 200);
+   evas_vg_shape_stroke_width_set(tst, 2);
+   evas_vg_shape_stroke_color_set(tst, 255, 0, 0, 255);
+
+   Efl_VG *vc = eo_add(EFL_VG_SHAPE_CLASS, root);
+   evas_vg_shape_shape_append_circle(vc, 100, 100, 23);
+   evas_vg_node_color_set(vc, 0, 200, 0, 255);
+   evas_vg_shape_stroke_width_set(vc, 4);
+   evas_vg_shape_stroke_color_set(vc, 255, 0, 0, 255);
 }
 
 int
