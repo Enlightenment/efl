@@ -74,6 +74,51 @@ interface Efl.Gfx.Base {
             int a; /*@ The alpha component of the given color. */
          }
       }
+      color_part {
+         set {
+            /*@
+            Sets a specifc color of the given Efl.Gfx.Base object to the given
+            one.
+
+            @see evas_object_color_get() (for an example)
+            @note These color values are expected to be premultiplied by @p a.
+
+            */
+	    return: bool;
+         }
+         get {
+            /*@
+            Retrieves a specific color of the given Evas object.
+
+            Retrieves a specific color's RGB component (and alpha channel)
+            values, <b>which range from 0 to 255</b>. For the alpha channel,
+            which defines the object's transparency level, 0 means totally
+            transparent, while 255 means opaque. These color values are
+            premultiplied by the alpha value.
+
+	    The “main“ color being mapped to @c NULL.
+
+            Usually you’ll use this attribute for text and rectangle objects,
+            where the “main” color is their unique one. If set for objects
+            which themselves have colors, like the images one, those colors get
+            modulated by this one.
+
+            @note Use @c NULL pointers on the components you're not interested
+            in: they'll be ignored by the function.
+
+            */
+	    return: bool;
+         }
+	 keys {
+	    const (char)* part; /*@ The part you are interested in. */
+	 }
+         values {
+            int r; /*@ The red component of the given color. */
+            int g; /*@ The green component of the given color. */
+            int b; /*@ The blue component of the given color. */
+            int a; /*@ The alpha component of the given color. */
+         }
+      }
       visible {
          set {
             /*@ Makes the given Evas object visible or invisible. */
