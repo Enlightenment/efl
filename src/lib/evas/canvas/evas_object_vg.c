@@ -193,18 +193,15 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
                           void *type_private_data)
 {
    Evas_VG_Data *vd = type_private_data;
+   Efl_VG_Base_Data *rnd;
    Evas_Public_Data *e = obj->layer->evas;
    int is_v, was_v;
    Ector_Surface *s;
 
-   // FIXME: handle damage only on changed renderer.
-   s = e->engine.func->ector_get(e->engine.data.output);
-   if (vd->root && s)
-     _evas_vg_render_pre(vd->root, s, NULL);
-
    /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;
    obj->pre_render_done = EINA_TRUE;
+
    /* pre-render phase. this does anything an object needs to do just before */
    /* rendering. this could mean loading the image data, retrieving it from */
    /* elsewhere, decoding video etc. */
@@ -224,6 +221,22 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
    is_v = evas_object_is_visible(eo_obj, obj);
    was_v = evas_object_was_visible(eo_obj,obj);
    if (!(is_v | was_v)) goto done;
+
+   // FIXME: handle damage only on changed renderer.
+   s = e->engine.func->ector_get(e->engine.data.output);
+   if (vd->root && s)
+     _evas_vg_render_pre(vd->root, s, NULL);
+
+   // FIXME: for now the walking Evas_VG_Node tree doesn't trigger any damage
+   // So just forcing it here if necessary
+   rnd = eo_data_scope_get(vd->root, EFL_VG_BASE_CLASS);
+   if (rnd->changed)
+     {
+        rnd->changed = EINA_FALSE;
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
+        goto done;
+     }
+
    if (is_v != was_v)
      {
         evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, eo_obj, is_v, was_v);

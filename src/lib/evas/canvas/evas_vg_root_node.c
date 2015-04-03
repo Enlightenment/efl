@@ -33,11 +33,15 @@ _evas_vg_root_node_render_pre(Eo *obj EINA_UNUSED,
 }
 
 static Eina_Bool
-_evas_vg_root_node_changed(void *data, Eo *obj EINA_UNUSED,
+_evas_vg_root_node_changed(void *data, Eo *obj,
                            const Eo_Event_Description *desc EINA_UNUSED,
                            void *event_info EINA_UNUSED)
 {
    Efl_VG_Root_Node_Data *pd = data;
+   Efl_VG_Base_Data *bd = eo_data_scope_get(obj, EFL_VG_BASE_CLASS);
+
+   if (bd->changed) return EINA_TRUE;
+   bd->changed = EINA_TRUE;
 
    if (pd->parent) evas_object_change(pd->parent, pd->data);
    return EINA_TRUE;
