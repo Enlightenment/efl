@@ -183,29 +183,6 @@ _ector_renderer_generic_shape_efl_gfx_shape_stroke_join_get(Eo *obj EINA_UNUSED,
    return pd->stroke.join;
 }
 
-static void
-_ector_renderer_generic_shape_efl_gfx_shape_path_set(Eo *obj EINA_UNUSED,
-                                                     Ector_Renderer_Generic_Shape_Data *pd,
-                                                     const Efl_Gfx_Path_Command *cmd,
-                                                     const double *points)
-{
-   free(pd->path.cmd);
-   pd->path.cmd = NULL;
-   free(pd->path.pts);
-   pd->path.pts = NULL;
-
-   efl_gfx_path_dup(&pd->path.cmd, &pd->path.pts, cmd, points);
-}
-
-void
-_ector_renderer_generic_shape_efl_gfx_shape_path_get(Eo *obj EINA_UNUSED,
-                                                     Ector_Renderer_Generic_Shape_Data *pd,
-                                                     const Efl_Gfx_Path_Command **op,
-                                                     const double **points)
-{
-   if (op) *op = pd->path.cmd;
-   if (points) *points = pd->path.pts;
-}
 
 static void
 _ector_renderer_generic_shape_eo_base_constructor(Eo *obj,

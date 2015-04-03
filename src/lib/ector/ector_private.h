@@ -95,11 +95,6 @@ struct _Ector_Renderer_Generic_Gradient_Radial_Data
 
 struct _Ector_Renderer_Generic_Shape_Data
 {
-   struct {
-      Efl_Gfx_Path_Command *cmd;
-      double *pts;
-   } path;
-
    Ector_Renderer *fill;
    struct {
       Ector_Renderer *fill;

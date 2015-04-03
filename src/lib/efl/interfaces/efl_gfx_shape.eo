@@ -1,4 +1,4 @@
-interface Efl.Gfx.Shape
+class Efl.Gfx.Shape
 {
    legacy_prefix: null;
    properties {
@@ -75,9 +75,141 @@ interface Efl.Gfx.Shape
 	 get {
 	 }
 	 values {
-	    const(Efl_Gfx_Path_Command) *op;
+	    const(Efl_Gfx_Path_Command) *commands;
 	    const(double) *points;
 	 }
       }
+      path_length {
+	 get {
+	 }
+	 values {
+	    uint commands;
+	    uint points;
+	 }
+      }
+      current {
+         get {
+	 }
+	 values {
+	    double x;
+	    double y;
+	 }
+      }
+      current_ctrl {
+         get {
+	 }
+	 values {
+	    double x;
+	    double y;
+	 }
+      }
+   }
+   methods {
+      dup {
+         params {
+            @in Eo *dup_from;
+	 }
+      }
+      reset {
+      }
+      append_move_to {
+         params {
+	    @in double x;
+	    @in double y;
+	 }
+      }
+      append_line_to {
+         params {
+	    @in double x;
+	    @in double y;
+	 }
+      }
+      append_quadratic_to {
+         params {
+	    @in double x;
+	    @in double y;
+	    @in double ctrl_x;
+	    @in double ctrl_y;
+	 }
+      }
+      append_squadratic_to {
+         params {
+	    @in double x;
+	    @in double y;
+	 }
+      }
+      append_cubic_to {
+         params {
+	    @in double x;
+	    @in double y;
+	    @in double ctrl_x0;
+	    @in double ctrl_y0;
+	    @in double ctrl_x1;
+	    @in double ctrl_y1;
+	 }
+      }
+      append_scubic_to {
+         params {
+	    @in double x;
+	    @in double y;
+	    @in double ctrl_x;
+	    @in double ctrl_y;
+	 }
+      }
+      append_arc_to {
+         params {
+	    @in double x;
+	    @in double y;
+	    @in double rx;
+	    @in double ry;
+	    @in double angle;
+	    @in bool large_arc;
+	    @in bool sweep;
+	 }
+      }
+      append_close {
+      }
+      append_circle {
+         params {
+	    @in double x;
+	    @in double y;
+	    @in double radius;
+	 }
+      }
+      append_svg_path {
+         params {
+	    @in const(char)* svg_path_data;
+	 }
+      }
+      interpolate {
+         return: bool;
+	 params {
+	    @in const(Eo)* from;
+	    @in const(Eo)* to;
+	    @in double pos_map;
+	 }
+      }
+      equal_commands {
+         return: bool;
+	 params {
+	    @in const(Eo)* with;
+	 }
+      }
+   }
+   implements {
+      @virtual .stroke_scale.get;
+      @virtual .stroke_scale.set;
+      @virtual .stroke_color.get;
+      @virtual .stroke_color.set;
+      @virtual .stroke_width.get;
+      @virtual .stroke_width.set;
+      @virtual .stroke_location.get;
+      @virtual .stroke_location.set;
+      @virtual .stroke_dash.get;
+      @virtual .stroke_dash.set;
+      @virtual .stroke_cap.get;
+      @virtual .stroke_cap.set;
+      @virtual .stroke_join.get;
+      @virtual .stroke_join.set;
    }
 }

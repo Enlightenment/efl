@@ -39,7 +39,6 @@ class Evas.VG_Shape (Evas.VG_Node, Efl.Gfx.Shape)
       Efl.Gfx.Shape.stroke_dash;
       Efl.Gfx.Shape.stroke_cap;
       Efl.Gfx.Shape.stroke_join;
-      Efl.Gfx.Shape.path;
       Evas.VG_Node.bound_get;
       Eo.Base.constructor;
       Eo.Base.destructor;

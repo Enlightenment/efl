@@ -8,9 +8,6 @@
 typedef struct _Evas_VG_Shape_Data Evas_VG_Shape_Data;
 struct _Evas_VG_Shape_Data
 {
-   Efl_Gfx_Path_Command *ops;
-   double *points;
-
    Evas_VG_Node *fill;
 
    struct {
@@ -30,30 +27,6 @@ struct _Evas_VG_Shape_Data
       Efl_Gfx_Join join;
    } stroke;
 };
-
-static void
-_evas_vg_shape_efl_gfx_shape_path_set(Eo *obj EINA_UNUSED,
-                                      Evas_VG_Shape_Data *pd,
-                                      const Efl_Gfx_Path_Command *ops,
-                                      const double *points)
-{
-   free(pd->points);
-   pd->points = NULL;
-   free(pd->ops);
-   pd->ops = NULL;
-
-   efl_gfx_path_dup(&pd->ops, &pd->points, ops, points);
-}
-
-static void
-_evas_vg_shape_efl_gfx_shape_path_get(Eo *obj EINA_UNUSED,
-                                      Evas_VG_Shape_Data *pd,
-                                      const Efl_Gfx_Path_Command **op,
-                                      const double **points)
-{
-   if (op) *op = pd->ops;
-   if (points) *points = pd->points;
-}
 
 static Eina_Bool
 _evas_vg_shape_evas_vg_node_bound_get(Eo *obj,
@@ -270,17 +243,7 @@ _evas_vg_shape_render_pre(Eo *obj EINA_UNUSED,
          ector_renderer_shape_fill_set(fill ? fill->renderer : NULL),
          ector_renderer_shape_stroke_fill_set(stroke_fill ? stroke_fill->renderer : NULL),
          ector_renderer_shape_stroke_marker_set(stroke_marker ? stroke_marker->renderer : NULL),
-         efl_gfx_shape_stroke_scale_set(pd->stroke.scale),
-         efl_gfx_shape_stroke_color_set(pd->stroke.r,
-                                        pd->stroke.g,
-                                        pd->stroke.b,
-                                        pd->stroke.a),
-         efl_gfx_shape_stroke_width_set(pd->stroke.width),
-         efl_gfx_shape_stroke_location_set(pd->stroke.centered),
-         efl_gfx_shape_stroke_dash_set(pd->stroke.dash, pd->stroke.dash_count),
-         efl_gfx_shape_stroke_cap_set(pd->stroke.cap),
-         efl_gfx_shape_stroke_join_set(pd->stroke.join),
-         efl_gfx_shape_path_set(pd->ops, pd->points),
+         efl_gfx_shape_dup(obj),
          ector_renderer_prepare());
 }
 

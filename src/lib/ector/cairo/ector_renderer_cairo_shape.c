@@ -48,6 +48,9 @@ struct _Ector_Renderer_Cairo_Shape_Data
 static Eina_Bool
 _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
+   const Efl_Gfx_Path_Command *cmds = NULL;
+   const double *pts = NULL;
+
    // FIXME: shouldn't that be part of the shape generic implementation ?
    if (pd->shape->fill)
      eo_do(pd->shape->fill, ector_renderer_prepare());
@@ -68,19 +71,16 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_R
         if (!pd->parent) return EINA_FALSE;
      }
 
-   if (!pd->path && pd->shape->path.cmd)
+   eo_do(obj, efl_gfx_shape_path_get(&cmds, &pts));
+   if (!pd->path && cmds)
      {
-        double *pts;
-        unsigned int i;
-
         USE(obj, cairo_new_path, EINA_FALSE);
 
         cairo_new_path(pd->parent->cairo);
 
-        pts = pd->shape->path.pts;
-        for (i = 0; pd->shape->path.cmd[i] != EFL_GFX_PATH_COMMAND_TYPE_END; i++)
+        for (; *cmds != EFL_GFX_PATH_COMMAND_TYPE_END; cmds++)
           {
-             switch (pd->shape->path.cmd[i])
+             switch (*cmds)
                {
                 case EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO:
                    USE(obj, cairo_move_to, EINA_FALSE);
