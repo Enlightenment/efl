@@ -1215,6 +1215,47 @@ EFL_INTERNAL_DEPEND_PKG([EFL], [eo])
 EFL_LIB_END([Efl])
 #### End of Efl
 
+#### Ector
+
+EFL_LIB_START([Ector])
+
+
+### Default values
+
+### Additional options to configure
+
+### Checks for programs
+
+### Checks for libraries
+
+## Compatibility layers
+
+EFL_PLATFORM_DEPEND([ECTOR], [evil])
+
+EFL_INTERNAL_DEPEND_PKG([ECTOR], [eina])
+EFL_INTERNAL_DEPEND_PKG([ECTOR], [eo])
+EFL_INTERNAL_DEPEND_PKG([ECTOR], [efl])
+
+EFL_EVAL_PKGS([ECTOR])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Check availability
+
+EFL_LIB_END([ECTOR])
+
+#### End of Ector
+
 #### Evas
 
 EFL_LIB_START([Evas])
@@ -2094,47 +2135,6 @@ EFL_ADD_FEATURE([EVAS], [dither-mask], [${build_evas_dither_mask}])
 
 EFL_LIB_END([Evas])
 #### End of Evas
-
-#### Ector
-
-EFL_LIB_START([Ector])
-
-
-### Default values
-
-### Additional options to configure
-
-### Checks for programs
-
-### Checks for libraries
-
-## Compatibility layers
-
-EFL_PLATFORM_DEPEND([ECTOR], [evil])
-
-EFL_INTERNAL_DEPEND_PKG([ECTOR], [eina])
-EFL_INTERNAL_DEPEND_PKG([ECTOR], [eo])
-EFL_INTERNAL_DEPEND_PKG([ECTOR], [efl])
-
-EFL_EVAL_PKGS([ECTOR])
-
-### Checks for header files
-
-### Checks for types
-
-### Checks for structures
-
-### Checks for compiler characteristics
-
-### Checks for linker characteristics
-
-### Checks for library functions
-
-### Check availability
-
-EFL_LIB_END([ECTOR])
-
-#### End of Ector
 
 #### Edje CXX
 EFL_LIB_START([Evas_Cxx])

@@ -35,6 +35,7 @@ include Makefile_Efl.am
 include Makefile_Emile.am
 include Makefile_Eet.am
 include Makefile_Eolian.am
+include Makefile_Ector.am
 include Makefile_Evas.am
 include Makefile_Ecore.am
 include Makefile_Ecore_Con.am
@@ -56,7 +57,6 @@ include Makefile_Ecore_Evas.am
 include Makefile_Ecore_Audio.am
 include Makefile_Ecore_Audio_Cxx.am
 include Makefile_Ecore_Avahi.am
-include Makefile_Ector.am
 include Makefile_Embryo.am
 include Makefile_Eio.am
 include Makefile_Eldbus.am
