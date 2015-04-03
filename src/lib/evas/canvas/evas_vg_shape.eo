@@ -1,6 +1,7 @@
 class Evas.VG_Shape (Evas.VG_Node)
 {
    eo_prefix: evas_vg_shape;
+   legacy_prefix: null;
    properties {
       fill {
          set {

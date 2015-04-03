@@ -221,7 +221,8 @@ lib/evas/canvas/evas_vg_gradient.c \
 lib/evas/canvas/evas_vg_gradient_linear.c \
 lib/evas/canvas/evas_vg_gradient_radial.c \
 lib/evas/canvas/evas_vg_utils.c \
-lib/evas/canvas/evas_vg_image.c
+lib/evas/canvas/evas_vg_image.c \
+lib/evas/canvas/evas_vg_shape.c
 
 # Engine
 lib_evas_libevas_la_SOURCES += \
