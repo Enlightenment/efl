@@ -856,22 +856,22 @@ _efl_gfx_path_parse_six(const char *content, char **end,
    char *end1 = NULL;
    char *end2 = NULL;
 
-   *x = strtod(content, &end1);
+   *ctrl_x0 = strtod(content, &end1);
    end1 = _strcomma(end1);
    if (!end1) return EINA_FALSE;
-   *y = strtod(end1, &end2);
+   *ctrl_y0 = strtod(end1, &end2);
    if (end1 == end2) return EINA_FALSE;
 
-   *ctrl_x0 = strtod(end2, &end2);
-   end2 = _strcomma(end2);
-   if (!end2) return EINA_FALSE;
-   *ctrl_y0 = strtod(end2, &end1);
-   if (end1 == end2) return EINA_FALSE;
-
-   *ctrl_x1 = strtod(end1, &end2);
+   *ctrl_x1 = strtod(end2, &end2);
    end2 = _strcomma(end2);
    if (!end2) return EINA_FALSE;
    *ctrl_y1 = strtod(end2, &end1);
+   if (end1 == end2) return EINA_FALSE;
+
+   *x = strtod(end1, &end2);
+   end2 = _strcomma(end2);
+   if (!end2) return EINA_FALSE;
+   *y = strtod(end2, &end1);
    if (end1 == end2) return EINA_FALSE;
 
    *end = end1;
@@ -925,16 +925,16 @@ _efl_gfx_path_parse_quad(const char *content, char **end,
    char *end1 = NULL;
    char *end2 = NULL;
 
-   *x = strtod(content, &end1);
+   *ctrl_x0 = strtod(content, &end1);
    end1 = _strcomma(end1);
    if (!end1) return EINA_FALSE;
-   *y = strtod(end1, &end2);
+   *ctrl_y0 = strtod(end1, &end2);
    if (end1 == end2) return EINA_FALSE;
 
-   *ctrl_x0 = strtod(end2, &end1);
+   *x = strtod(end2, &end1);
    end1 = _strcomma(end2);
    if (!end1) return EINA_FALSE;
-   *ctrl_y0 = strtod(end1, &end2);
+   *y = strtod(end1, &end2);
    if (end1 == end2) return EINA_FALSE;
 
    *end = end2;
