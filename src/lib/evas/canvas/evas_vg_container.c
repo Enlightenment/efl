@@ -82,5 +82,4 @@ evas_vg_container_add(Efl_VG *parent)
    return eo_add(EFL_VG_CONTAINER_CLASS, parent);
 }
 
-
 #include "efl_vg_container.eo.c"

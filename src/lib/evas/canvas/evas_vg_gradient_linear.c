@@ -101,10 +101,15 @@ _efl_vg_gradient_linear_eo_base_constructor(Eo *obj,
    nd->data = pd;
 }
 
-void
+static void
 _efl_vg_gradient_linear_eo_base_destructor(Eo *obj, Efl_VG_Gradient_Linear_Data *pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_destructor());
+}
+
+static Eina_Bool
+_efl_vg_gradient_linear_efl_vg_base_bound_get(Eo *obj, Efl_VG_Gradient_Linear_Data *pd, Eina_Rectangle *r)
+{
 }
 
 EAPI void

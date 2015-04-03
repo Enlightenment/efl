@@ -408,16 +408,16 @@ _efl_vg_base_efl_gfx_stack_lower(Eo *obj, Efl_VG_Base_Data *pd EINA_UNUSED)
 }
 
 Efl_Gfx_Stack *
-_efl_vg_base_efl_gfx_stack_below_get(Eo *obj, Efl_VG_Base_Data *pd)
+_efl_vg_base_efl_gfx_stack_below_get(Eo *obj EINA_UNUSED, Efl_VG_Base_Data *pd EINA_UNUSED)
 {
-   // FIXME: need to implement bound_get
+   // Actually a VG base node won't have any children so nothing stacked below it.
    return NULL;
 }
 
 Efl_Gfx_Stack *
 _efl_vg_base_efl_gfx_stack_above_get(Eo *obj, Efl_VG_Base_Data *pd)
 {
-   // FIXME: need to implement bound_get
+   // FIXME bound get every child of my parent and go up until vg root
    return NULL;
 }
 
