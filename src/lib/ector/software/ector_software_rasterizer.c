@@ -11,18 +11,18 @@
 #include "ector_blend_private.h"
 
 static void
-_blend_color_argb(int count, const SW_FT_Span *spans, void *userData)
+_blend_color_argb(int count, const SW_FT_Span *spans, void *user_data)
 {
-   Span_Data *data = (Span_Data *)(userData);
+   Span_Data *data = (Span_Data *)(user_data);
 
    // multiply the color with mul_col if any
    uint color = ECTOR_MUL4_SYM(data->color, data->mul_col);
-   Eina_Bool solidSource = ((color >> 24) == 255);
+   Eina_Bool solid_source = ((color >> 24) == 255);
 
    // move to the offset location
    uint *buffer = data->raster_buffer.buffer + (data->raster_buffer.width * data->offy + data->offx);
 
-   if (solidSource)
+   if (solid_source)
      {
         while (count--)
           {
@@ -60,9 +60,9 @@ int buffer_size = 2048;
 typedef void (*src_fetch) (unsigned int *buffer, Span_Data *data, int y, int x, int length);
 
 static void
-_blend_gradient(int count, const SW_FT_Span *spans, void *userData)
+_blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
 {
-    Span_Data *data = (Span_Data *)(userData);
+    Span_Data *data = (Span_Data *)(user_data);
     src_fetch fetchfunc = NULL;
 
     if(data->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
@@ -99,9 +99,9 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *userData)
 */
 static const
 SW_FT_Span *_intersect_spans_rect(const Eina_Rectangle *clip, const SW_FT_Span *spans, const SW_FT_Span *end,
-                                  SW_FT_Span **outSpans, int available)
+                                  SW_FT_Span **out_spans, int available)
 {
-   SW_FT_Span *out = *outSpans;
+   SW_FT_Span *out = *out_spans;
    const short minx = clip->x;
    const short miny = clip->y;
    const short maxx = minx + clip->w - 1;
@@ -142,7 +142,7 @@ SW_FT_Span *_intersect_spans_rect(const Eina_Rectangle *clip, const SW_FT_Span *
         --available;
     }
 
-    *outSpans = out;
+    *out_spans = out;
 
     return spans;
 }
@@ -153,9 +153,9 @@ _div_255(int x) { return (x + (x>>8) + 0x80) >> 8; }
 static const
 SW_FT_Span *_intersect_spans_region(const Shape_Rle_Data *clip, int *currentClip,
                                        const SW_FT_Span *spans, const SW_FT_Span *end,
-                                       SW_FT_Span **outSpans, int available)
+                                       SW_FT_Span **out_spans, int available)
 {
-    SW_FT_Span *out = *outSpans;
+    SW_FT_Span *out = *out_spans;
 
     const SW_FT_Span *clipSpans = clip->spans + *currentClip;
     const SW_FT_Span *clipEnd = clip->spans + clip->size;
@@ -204,19 +204,19 @@ SW_FT_Span *_intersect_spans_region(const Shape_Rle_Data *clip, int *currentClip
         }
     }
 
-    *outSpans = out;
+    *out_spans = out;
     *currentClip = clipSpans - clip->spans;
     return spans;
 }
 
 static void
-_span_fill_clipRect(int spanCount, const SW_FT_Span *spans, void *userData)
+_span_fill_clipRect(int span_count, const SW_FT_Span *spans, void *user_data)
 {
     const int NSPANS = 256;
     int clip_count, i;
     SW_FT_Span cspans[NSPANS];
-    Span_Data *fillData = (Span_Data *) userData;
-    Clip_Data clip = fillData->clip;
+    Span_Data *fill_data = (Span_Data *) user_data;
+    Clip_Data clip = fill_data->clip;
 
     clip_count = eina_array_count(clip.clips);
     for (i = 0; i < clip_count ; i ++)
@@ -225,40 +225,40 @@ _span_fill_clipRect(int spanCount, const SW_FT_Span *spans, void *userData)
         Eina_Rectangle tmpRect;
 
         // invert transform the offset
-        tmpRect.x = rect->x - fillData->offx;
-        tmpRect.y = rect->y - fillData->offy;
+        tmpRect.x = rect->x - fill_data->offx;
+        tmpRect.y = rect->y - fill_data->offy;
         tmpRect.w = rect->w;
         tmpRect.h = rect->h;
-        const SW_FT_Span *end = spans + spanCount;
+        const SW_FT_Span *end = spans + span_count;
 
         while (spans < end)
           {
              SW_FT_Span *clipped = cspans;
              spans = _intersect_spans_rect(&tmpRect,spans, end, &clipped, NSPANS);
              if (clipped - cspans)
-               fillData->unclipped_blend(clipped - cspans, cspans, fillData);
+               fill_data->unclipped_blend(clipped - cspans, cspans, fill_data);
           }
       }
 }
 
 static void
-_span_fill_clipPath(int spanCount, const SW_FT_Span *spans, void *userData)
+_span_fill_clipPath(int span_count, const SW_FT_Span *spans, void *user_data)
 {
     const int NSPANS = 256;
     int current_clip = 0;
     SW_FT_Span cspans[NSPANS];
-    Span_Data *fillData = (Span_Data *) userData;
-    Clip_Data clip = fillData->clip;
+    Span_Data *fill_data = (Span_Data *) user_data;
+    Clip_Data clip = fill_data->clip;
 
     //TODO take clip path offset into account.
     
-    const SW_FT_Span *end = spans + spanCount;
+    const SW_FT_Span *end = spans + span_count;
     while (spans < end)
       {
          SW_FT_Span *clipped = cspans;
          spans = _intersect_spans_region(clip.path, &current_clip, spans, end, &clipped, NSPANS);
          if (clipped - cspans)
-           fillData->unclipped_blend(clipped - cspans, cspans, fillData);
+           fill_data->unclipped_blend(clipped - cspans, cspans, fill_data);
       }
 }
 
@@ -291,7 +291,7 @@ _adjust_span_fill_methods(Span_Data *spdata)
      {
         spdata->blend = spdata->unclipped_blend;
      }
-   else if (spdata->clip.hasRectClip)
+   else if (spdata->clip.has_rect_clip)
      {
         spdata->blend = &_span_fill_clipRect;
      }
@@ -314,10 +314,10 @@ void ector_software_rasterizer_init(Software_Rasterizer *rasterizer)
    SW_FT_Stroker_Set(rasterizer->stroker, 1<<6,SW_FT_STROKER_LINECAP_BUTT,SW_FT_STROKER_LINEJOIN_MITER,0);
 
    //initialize the span data.
-   rasterizer->fillData.raster_buffer.buffer = NULL;
-   rasterizer->fillData.clip.enabled = EINA_FALSE;
-   rasterizer->fillData.unclipped_blend = 0;
-   rasterizer->fillData.blend = 0;
+   rasterizer->fill_data.raster_buffer.buffer = NULL;
+   rasterizer->fill_data.clip.enabled = EINA_FALSE;
+   rasterizer->fill_data.unclipped_blend = 0;
+   rasterizer->fill_data.blend = 0;
 }
 
 void ector_software_rasterizer_done(Software_Rasterizer *rasterizer)
@@ -443,12 +443,12 @@ void _setup_span_fill_matrix(Software_Rasterizer *rasterizer)
 {
    if (rasterizer->transform)
      {
-        eina_matrix3_inverse(rasterizer->transform, &rasterizer->fillData.inv);
+        eina_matrix3_inverse(rasterizer->transform, &rasterizer->fill_data.inv);
      }
    else
      {
-        eina_matrix3_identity(&rasterizer->fillData.inv);
-        eina_matrix3_identity(&rasterizer->fillData.inv);
+        eina_matrix3_identity(&rasterizer->fill_data.inv);
+        eina_matrix3_identity(&rasterizer->fill_data.inv);
      }
 }
 
@@ -461,39 +461,39 @@ void ector_software_rasterizer_clip_rect_set(Software_Rasterizer *rasterizer, Ei
 {
    if (clips)
      {
-        rasterizer->fillData.clip.clips = clips;
-        rasterizer->fillData.clip.hasRectClip = EINA_TRUE;
-        rasterizer->fillData.clip.enabled = EINA_TRUE;
+        rasterizer->fill_data.clip.clips = clips;
+        rasterizer->fill_data.clip.has_rect_clip = EINA_TRUE;
+        rasterizer->fill_data.clip.enabled = EINA_TRUE;
      }
    else
      {
-        rasterizer->fillData.clip.clips = NULL;
-        rasterizer->fillData.clip.hasRectClip = EINA_FALSE;
-        rasterizer->fillData.clip.enabled = EINA_FALSE;
+        rasterizer->fill_data.clip.clips = NULL;
+        rasterizer->fill_data.clip.has_rect_clip = EINA_FALSE;
+        rasterizer->fill_data.clip.enabled = EINA_FALSE;
      }
 }
 
 void ector_software_rasterizer_clip_shape_set(Software_Rasterizer *rasterizer, Shape_Rle_Data *clip)
 {
-   rasterizer->fillData.clip.path = clip;
-   rasterizer->fillData.clip.hasPathClip = EINA_TRUE;
-   rasterizer->fillData.clip.enabled = EINA_TRUE;
+   rasterizer->fill_data.clip.path = clip;
+   rasterizer->fill_data.clip.has_path_clip = EINA_TRUE;
+   rasterizer->fill_data.clip.enabled = EINA_TRUE;
 }
 
 void ector_software_rasterizer_color_set(Software_Rasterizer *rasterizer, int r, int g, int b, int a)
 {
-   rasterizer->fillData.color = ECTOR_ARGB_JOIN(a, r, g, b);
-   rasterizer->fillData.type = Solid;
+   rasterizer->fill_data.color = ECTOR_ARGB_JOIN(a, r, g, b);
+   rasterizer->fill_data.type = Solid;
 }
 void ector_software_rasterizer_linear_gradient_set(Software_Rasterizer *rasterizer, Ector_Renderer_Software_Gradient_Data *linear)
 {
-   rasterizer->fillData.gradient = linear;
-   rasterizer->fillData.type = LinearGradient;
+   rasterizer->fill_data.gradient = linear;
+   rasterizer->fill_data.type = LinearGradient;
 }
 void ector_software_rasterizer_radial_gradient_set(Software_Rasterizer *rasterizer, Ector_Renderer_Software_Gradient_Data *radial)
 {
-   rasterizer->fillData.gradient = radial;
-   rasterizer->fillData.type = RadialGradient;
+   rasterizer->fill_data.gradient = radial;
+   rasterizer->fill_data.type = RadialGradient;
 }
 
 
@@ -503,14 +503,14 @@ void ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
    // check for NULL rle data
    if (!rle) return;
 
-   rasterizer->fillData.offx = x;
-   rasterizer->fillData.offy = y;
-   rasterizer->fillData.mul_col = mul_col;
-   rasterizer->fillData.op = op;
+   rasterizer->fill_data.offx = x;
+   rasterizer->fill_data.offy = y;
+   rasterizer->fill_data.mul_col = mul_col;
+   rasterizer->fill_data.op = op;
 
    _setup_span_fill_matrix(rasterizer);
-   _adjust_span_fill_methods(&rasterizer->fillData);
+   _adjust_span_fill_methods(&rasterizer->fill_data);
 
-   if(rasterizer->fillData.blend)
-     rasterizer->fillData.blend(rle->size, rle->spans, &rasterizer->fillData);
+   if(rasterizer->fill_data.blend)
+     rasterizer->fill_data.blend(rle->size, rle->spans, &rasterizer->fill_data);
 }

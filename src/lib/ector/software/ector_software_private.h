@@ -42,7 +42,7 @@ typedef struct _Ector_Renderer_Software_Gradient_Data
       Software_Gradient_Linear_Data linear;
       Software_Gradient_Radial_Data radial;
    };
-   uint* colorTable;
+   uint* color_table;
 } Ector_Renderer_Software_Gradient_Data;
 
 
@@ -66,8 +66,8 @@ typedef struct _Clip_Data
    Eina_Array           *clips; //Eina_Rectangle
    Shape_Rle_Data       *path;
    unsigned int          enabled : 1;
-   unsigned int          hasRectClip : 1;
-   unsigned int          hasPathClip : 1;
+   unsigned int          has_rect_clip : 1;
+   unsigned int          has_path_clip : 1;
 } Clip_Data;
 
 
@@ -105,9 +105,9 @@ typedef struct _Software_Rasterizer
    SW_FT_Raster     raster;
    SW_FT_Stroker    stroker;
 
-   Span_Data        fillData;
+   Span_Data        fill_data;
    Eina_Matrix3    *transform;
-   Eina_Rectangle   systemClip;
+   Eina_Rectangle   system_clip;
 
 } Software_Rasterizer;
 

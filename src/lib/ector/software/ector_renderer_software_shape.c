@@ -176,7 +176,7 @@ static void _outline_transform(Outline *outline, Eina_Matrix3 *m)
    if (m)
      {
         double x, y;
-        for (i = 0; i < ft_outline->n_points ; i++)
+        for (i = 0; i < ft_outline->n_points; i++)
           {
              eina_matrix3_point_transform(m, ft_outline->points[i].x, ft_outline->points[i].y, &x, &y);
              ft_outline->points[i].x = (int)(x * 64);// to freetype 26.6 coordinate.
@@ -185,7 +185,7 @@ static void _outline_transform(Outline *outline, Eina_Matrix3 *m)
      }
    else
      {
-        for (i = 0; i < ft_outline->n_points ; i++)
+        for (i = 0; i < ft_outline->n_points; i++)
           {
              ft_outline->points[i].x = ft_outline->points[i].x <<6;// to freetype 26.6 coordinate.
              ft_outline->points[i].y = ft_outline->points[i].y <<6;
@@ -338,8 +338,8 @@ static void
 _ector_renderer_software_shape_efl_gfx_shape_path_set(Eo *obj, Ector_Renderer_Software_Shape_Data *pd,
                                                       const Efl_Gfx_Path_Command *op, const double *points)
 {
-   if(pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
-   if(pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
+   if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
+   if (pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
    pd->shape_data = NULL;
    pd->outline_data = NULL;
 
@@ -353,8 +353,8 @@ _ector_renderer_software_shape_path_changed(void *data, Eo *obj EINA_UNUSED, con
 {
    Ector_Renderer_Software_Shape_Data *pd = data;
    
-   if(pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
-   if(pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
+   if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
+   if (pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
    
    pd->shape_data = NULL;
    pd->outline_data = NULL;
@@ -377,8 +377,8 @@ _ector_renderer_software_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Softwa
 {
    Eo *parent;
 
-   if(pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
-   if(pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
+   if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
+   if (pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
 
    eo_do(obj, parent = eo_parent_get());
    eo_data_xunref(parent, pd->surface, obj);

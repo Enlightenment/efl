@@ -12,36 +12,36 @@
 static void
 _update_radial_data(Ector_Renderer_Software_Gradient_Data *gdata)
 {
-    update_color_table(gdata);
+   update_color_table(gdata);
 
-    gdata->radial.cx = gdata->grd->radial.x;
-    gdata->radial.cy = gdata->grd->radial.y;
-    gdata->radial.cradius = gdata->grd->radius;
+   gdata->radial.cx = gdata->grd->radial.x;
+   gdata->radial.cy = gdata->grd->radial.y;
+   gdata->radial.cradius = gdata->grd->radius;
 
-    if (!gdata->grd->focal.x)
-      gdata->radial.fx = gdata->grd->radial.x;
-    else
-      gdata->radial.fx = gdata->grd->focal.x;
+   if (!gdata->grd->focal.x)
+     gdata->radial.fx = gdata->grd->radial.x;
+   else
+     gdata->radial.fx = gdata->grd->focal.x;
 
-    if (!gdata->grd->focal.y)
-      gdata->radial.fy = gdata->grd->radial.y;
-    else
-      gdata->radial.fy = gdata->grd->focal.y;
+   if (!gdata->grd->focal.y)
+     gdata->radial.fy = gdata->grd->radial.y;
+   else
+     gdata->radial.fy = gdata->grd->focal.y;
 
-    gdata->radial.fradius = 0;
+   gdata->radial.fradius = 0;
 
-    gdata->radial.dx = gdata->radial.cx - gdata->radial.fx;
-    gdata->radial.dy = gdata->radial.cy - gdata->radial.fy;
+   gdata->radial.dx = gdata->radial.cx - gdata->radial.fx;
+   gdata->radial.dy = gdata->radial.cy - gdata->radial.fy;
 
-    gdata->radial.dr = gdata->radial.cradius - gdata->radial.fradius;
-    gdata->radial.sqrfr = gdata->radial.fradius * gdata->radial.fradius;
+   gdata->radial.dr = gdata->radial.cradius - gdata->radial.fradius;
+   gdata->radial.sqrfr = gdata->radial.fradius * gdata->radial.fradius;
 
-    gdata->radial.a = gdata->radial.dr * gdata->radial.dr -
-      gdata->radial.dx * gdata->radial.dx -
-      gdata->radial.dy * gdata->radial.dy;
-    gdata->radial.inv2a = 1 / (2 * gdata->radial.a);
+   gdata->radial.a = gdata->radial.dr * gdata->radial.dr -
+                     gdata->radial.dx * gdata->radial.dx -
+                     gdata->radial.dy * gdata->radial.dy;
+   gdata->radial.inv2a = 1 / (2 * gdata->radial.a);
 
-    gdata->radial.extended = (gdata->radial.fradius >= 0.00001f) || gdata->radial.a >= 0.00001f;
+   gdata->radial.extended = (gdata->radial.fradius >= 0.00001f) || gdata->radial.a >= 0.00001f;
 }
 
 
@@ -64,9 +64,9 @@ _ector_renderer_software_gradient_radial_ector_renderer_generic_base_prepare(Eo 
 // Clearly duplicated and should be in a common place...
 static Eina_Bool
 _ector_renderer_software_gradient_radial_ector_renderer_generic_base_draw(Eo *obj EINA_UNUSED,
-                                                                       Ector_Renderer_Software_Gradient_Data *pd EINA_UNUSED,
-                                                                       Ector_Rop op EINA_UNUSED, Eina_Array *clips EINA_UNUSED,
-                                                                       unsigned int mul_col EINA_UNUSED)
+                                                                          Ector_Renderer_Software_Gradient_Data *pd EINA_UNUSED,
+                                                                          Ector_Rop op EINA_UNUSED, Eina_Array *clips EINA_UNUSED,
+                                                                          unsigned int mul_col EINA_UNUSED)
 {
    return EINA_TRUE;
 }
@@ -75,7 +75,7 @@ _ector_renderer_software_gradient_radial_ector_renderer_generic_base_draw(Eo *ob
 static Eina_Bool
 _ector_renderer_software_gradient_radial_ector_renderer_software_base_fill(Eo *obj EINA_UNUSED, Ector_Renderer_Software_Gradient_Data *pd)
 {
-  ector_software_rasterizer_radial_gradient_set(pd->surface->software, pd);
+   ector_software_rasterizer_radial_gradient_set(pd->surface->software, pd);
    return EINA_TRUE;
 }
 

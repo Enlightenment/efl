@@ -53,14 +53,14 @@ static uint
 _gradient_pixel_fixed(const Ector_Renderer_Software_Gradient_Data *data, int fixed_pos)
 {
    int ipos = (fixed_pos + (FIXPT_SIZE / 2)) >> FIXPT_BITS;
-   return data->colorTable[_gradient_clamp(data, ipos)];
+   return data->color_table[_gradient_clamp(data, ipos)];
 }
 
 static inline uint
 _gradient_pixel(const Ector_Renderer_Software_Gradient_Data *data, float pos)
 {
    int ipos = (int)(pos * (GRADIENT_STOPTABLE_SIZE - 1) + (float)(0.5));
-   return data->colorTable[_gradient_clamp(data, ipos)];
+   return data->color_table[_gradient_clamp(data, ipos)];
 }
 
 typedef double (*BLEND_FUNC)(double progress);
@@ -72,7 +72,7 @@ _ease_linear(double t)
 }
 
 static void
-_generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_count, uint *colorTable, int size)
+_generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_count, uint *color_table, int size)
 {
     int pos = 0;
     Efl_Gfx_Gradient_Stop *curr, *next;
@@ -83,11 +83,11 @@ _generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_c
     double incr = 1.0 / (double)size;
     double fpos = 1.5 * incr;
 
-    colorTable[pos++] = current_color;
+    color_table[pos++] = current_color;
 
     while (fpos <= curr->offset)
       {
-         colorTable[pos] = colorTable[pos - 1];
+         color_table[pos] = color_table[pos - 1];
          pos++;
          fpos += incr;
       }
@@ -104,7 +104,7 @@ _generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_c
               double t = func((fpos - curr->offset) * delta);
               int dist = (int)(256 * t);
               int idist = 256 - dist;
-              colorTable[pos] = INTERPOLATE_PIXEL_256(current_color, idist, next_color, dist);
+              color_table[pos] = INTERPOLATE_PIXEL_256(current_color, idist, next_color, dist);
               ++pos;
               fpos += incr;
            }
@@ -112,29 +112,29 @@ _generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_c
       }
 
     for (;pos < size; ++pos)
-      colorTable[pos] = current_color;
+      color_table[pos] = current_color;
 
     // Make sure the last color stop is represented at the end of the table
-    colorTable[size-1] = current_color;
+    color_table[size-1] = current_color;
 }
 
 
 void
 update_color_table(Ector_Renderer_Software_Gradient_Data *gdata)
 {
-   if(gdata->colorTable) return;
+   if(gdata->color_table) return;
 
-   gdata->colorTable = malloc(GRADIENT_STOPTABLE_SIZE * 4);
-   _generate_gradient_color_table(gdata->gd->colors, gdata->gd->colors_count, gdata->colorTable, GRADIENT_STOPTABLE_SIZE);
+   gdata->color_table = malloc(GRADIENT_STOPTABLE_SIZE * 4);
+   _generate_gradient_color_table(gdata->gd->colors, gdata->gd->colors_count, gdata->color_table, GRADIENT_STOPTABLE_SIZE);
 }
 
 void
 destroy_color_table(Ector_Renderer_Software_Gradient_Data *gdata)
 {
-   if (gdata->colorTable)
+   if (gdata->color_table)
      {
-        free(gdata->colorTable);
-        gdata->colorTable = NULL;
+        free(gdata->color_table);
+        gdata->color_table = NULL;
      }
 }
 
