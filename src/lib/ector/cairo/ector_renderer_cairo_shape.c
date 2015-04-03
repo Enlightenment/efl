@@ -46,6 +46,19 @@ struct _Ector_Renderer_Cairo_Shape_Data
 };
 
 static Eina_Bool
+_ector_renderer_cairo_shape_path_changed(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+{
+   Ector_Renderer_Cairo_Shape_Data *pd = data;
+
+   USE(obj, cairo_path_destroy, EINA_TRUE);
+
+   if (pd->path) cairo_path_destroy(pd->path);
+   pd->path = NULL;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
    const Efl_Gfx_Path_Command *cmds = NULL;
@@ -183,25 +196,15 @@ _ector_renderer_cairo_shape_ector_renderer_cairo_base_fill(Eo *obj EINA_UNUSED,
    return EINA_FALSE;
 }
 
-static void
-_ector_renderer_cairo_shape_efl_gfx_shape_path_set(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd,
-                                                   const Efl_Gfx_Path_Command *op, const double *points)
-{
-   USE(obj, cairo_path_destroy, );
-
-   if (pd->path) cairo_path_destroy(pd->path);
-   pd->path = NULL;
-
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, efl_gfx_shape_path_set(op, points));
-}
-
-
 void
 _ector_renderer_cairo_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, eo_constructor());
    pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN, obj);
    pd->base = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
+
+   eo_do(obj,
+         eo_event_callback_add(EFL_GFX_PATH_CHANGED, _ector_renderer_cairo_shape_path_changed, pd));
 }
 
 void
