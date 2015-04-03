@@ -67,12 +67,14 @@ _evas_vg_gradient_radial_efl_graphics_gradient_radial_focal_get(Eo *obj EINA_UNU
 
 static void
 _evas_vg_gradient_radial_render_pre(Eo *obj,
+                                    Eina_Matrix3 *parent,
                                     Ector_Surface *s,
                                     void *data,
                                     Evas_VG_Node_Data *nd)
 {
    Evas_VG_Gradient_Radial_Data *pd = data;
    Evas_VG_Gradient_Data *gd = eo_data_scope_get(obj, EVAS_VG_GRADIENT_CLASS);
+   EVAS_VG_COMPUTE_MATRIX(current, parent, nd);
 
    if (!nd->renderer)
      {
@@ -80,7 +82,7 @@ _evas_vg_gradient_radial_render_pre(Eo *obj,
      }
 
    eo_do(nd->renderer,
-         ector_renderer_transformation_set(nd->m),
+         ector_renderer_transformation_set(current),
          ector_renderer_origin_set(nd->x, nd->y),
          ector_renderer_color_set(nd->r, nd->g, nd->b, nd->a),
          ector_renderer_visibility_set(nd->visibility),

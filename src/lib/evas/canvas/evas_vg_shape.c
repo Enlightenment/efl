@@ -232,16 +232,18 @@ _evas_vg_shape_efl_graphics_shape_stroke_join_get(Eo *obj EINA_UNUSED,
 
 static void
 _evas_vg_shape_render_pre(Eo *obj EINA_UNUSED,
+                          Eina_Matrix3 *parent,
                           Ector_Surface *s,
                           void *data,
                           Evas_VG_Node_Data *nd)
 {
    Evas_VG_Shape_Data *pd = data;
+   EVAS_VG_COMPUTE_MATRIX(current, parent, nd);
 
-   _evas_vg_render_pre(pd->fill, s);
-   _evas_vg_render_pre(pd->stroke.fill, s);
-   _evas_vg_render_pre(pd->stroke.marker, s);
-   _evas_vg_render_pre(nd->mask, s);
+   _evas_vg_render_pre(pd->fill, s, current);
+   _evas_vg_render_pre(pd->stroke.fill, s, current);
+   _evas_vg_render_pre(pd->stroke.marker, s, current);
+   _evas_vg_render_pre(nd->mask, s, current);
 
    if (!nd->renderer)
      {
@@ -249,7 +251,7 @@ _evas_vg_shape_render_pre(Eo *obj EINA_UNUSED,
      }
 
    eo_do(nd->renderer,
-         ector_renderer_transformation_set(nd->m),
+         ector_renderer_transformation_set(current),
          ector_renderer_origin_set(nd->x, nd->y),
          ector_renderer_color_set(nd->r, nd->g, nd->b, nd->a),
          ector_renderer_visibility_set(nd->visibility),

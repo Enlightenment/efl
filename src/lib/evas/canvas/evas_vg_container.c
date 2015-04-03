@@ -7,16 +7,18 @@
 
 static void
 _evas_vg_container_render_pre(Eo *obj EINA_UNUSED,
+                              Eina_Matrix3 *parent,
                               Ector_Surface *s,
                               void *data,
-                              Evas_VG_Node_Data *nd EINA_UNUSED)
+                              Evas_VG_Node_Data *nd)
 {
    Evas_VG_Container_Data *pd = data;
    Eina_List *l;
    Eo *child;
+   EVAS_VG_COMPUTE_MATRIX(current, parent, nd);
 
    EINA_LIST_FOREACH(pd->children, l, child)
-     _evas_vg_render_pre(child, s);
+     _evas_vg_render_pre(child, s, current);
 }
 
 static void

@@ -13,7 +13,7 @@ struct _Evas_VG_Node_Data
    Evas_VG_Node *mask;
    Ector_Renderer *renderer;
 
-   void (*render_pre)(Eo *obj, Ector_Surface *s, void *data, Evas_VG_Node_Data *nd);
+   void (*render_pre)(Eo *obj, Eina_Matrix3 *parent, Ector_Surface *s, void *data, Evas_VG_Node_Data *nd);
    void *data;
 
    double x, y;
@@ -38,13 +38,31 @@ struct _Evas_VG_Gradient_Data
 };
 
 static inline void
-_evas_vg_render_pre(Evas_VG_Node *child, Ector_Surface *s)
+_evas_vg_render_pre(Evas_VG_Node *child, Ector_Surface *s, Eina_Matrix3 *m)
 {
    Evas_VG_Node_Data *child_nd;
 
    // FIXME: Prevent infinite loop
    child_nd = eo_data_scope_get(child, EVAS_VG_NODE_CLASS);
-   child_nd->render_pre(child, s, child_nd->data, child_nd);
+   child_nd->render_pre(child, m, s, child_nd->data, child_nd);
 }
+
+#define EVAS_VG_COMPUTE_MATRIX(Current, Parent, Nd)              \
+  Eina_Matrix3 *Current = Nd->m;                                 \
+  Eina_Matrix3 _matrix_tmp;                                      \
+                                                                 \
+  if (Parent)                                                           \
+    {                                                                   \
+       if (Current)                                                     \
+         {                                                              \
+            eina_matrix3_compose(Parent, Current, &_matrix_tmp);        \
+            Current = &_matrix_tmp;                                     \
+         }                                                              \
+       else                                                             \
+         {                                                              \
+            Current = Parent;                                           \
+         }                                                              \
+    }
+
 
 #endif

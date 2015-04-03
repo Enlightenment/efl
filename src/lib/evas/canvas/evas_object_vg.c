@@ -197,7 +197,7 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
    // FIXME: handle damage only on changed renderer.
    s = e->engine.func->ector_get(e->engine.data.output);
    if (vd->root && s)
-     _evas_vg_render_pre(vd->root, s);
+     _evas_vg_render_pre(vd->root, s, NULL);
 
    /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;
