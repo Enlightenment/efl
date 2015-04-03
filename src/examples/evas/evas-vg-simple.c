@@ -1,11 +1,11 @@
 /**
- * Simple Evas example illustrating a custom Evas box object
+ * Simple Evas example illustrating a Evas_VG basic node usage.
  *
  * You'll need at least one engine built for it (excluding the buffer
  * one). See stdout/stderr for output.
  *
  * @verbatim
- * gcc -o evas-box evas-box.c `pkg-config --libs --cflags evas ecore ecore-evas eina ector eo efl`
+ * gcc -o evas_vg_simple evas-vg-simple.c `pkg-config --libs --cflags evas ecore ecore-evas eina ector eo efl`
  * @endverbatim
  */
 
