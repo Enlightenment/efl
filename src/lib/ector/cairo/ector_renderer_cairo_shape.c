@@ -20,7 +20,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_R
 }
 
 static Eina_Bool
-_ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd, Ector_Surface *s, Ector_Rop op, Eina_Array *clips, int x, int y)
+_ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd, Ector_Rop op, Eina_Array *clips, int x, int y)
 {
 }
 
