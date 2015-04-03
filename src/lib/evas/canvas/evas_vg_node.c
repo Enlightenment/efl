@@ -221,9 +221,6 @@ _evas_vg_node_eo_base_constructor(Eo *obj,
    if (!_evas_vg_node_parent_checked_get(obj, &parent, &cd))
      eo_error_set(obj);
 
-   if (cd)
-     cd->children = eina_list_append(cd->children, obj);
-
    eo_do(obj, eo_event_callback_add(EFL_GFX_CHANGED, _evas_vg_node_property_changed, pd));
    pd->changed = EINA_TRUE;
 }
