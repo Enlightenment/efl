@@ -553,4 +553,10 @@ evas_vg_shape_shape_equal_commands(Eo *obj, const Eo *with)
    return eo_do_ret(obj, ret, efl_gfx_shape_equal_commands(with));
 }
 
+EAPI Efl_VG*
+evas_vg_shape_add(Efl_VG *parent)
+{
+   return eo_add(EFL_VG_SHAPE_CLASS, parent);
+}
+
 #include "efl_vg_shape.eo.c"

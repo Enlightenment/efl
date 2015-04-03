@@ -1712,6 +1712,26 @@ EAPI Evas_Object *evas_object_vg_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_N
 
 #include "canvas/evas_vg.eo.legacy.h"
 
+/**
+ * Creates a new vector shape object \.
+ *
+ * @param parent The given vector container object.
+ * @return The created vector shape object handle.
+ *
+ * @since 1.14
+ */
+EAPI Efl_VG* evas_vg_shape_add(Efl_VG *parent);
+
+/**
+ * Creates a new vector container object \.
+ *
+ * @param parent The given vector container object.
+ * @return The created vector container object handle.
+ *
+ * @since 1.14
+ */
+EAPI Efl_VG* evas_vg_container_add(Efl_VG *parent);
+
 EAPI Eina_Bool evas_vg_node_visible_get(Eo *obj);
 EAPI void evas_vg_node_visible_set(Eo *obj, Eina_Bool v);
 EAPI void evas_vg_node_color_get(Eo *obj, int *r, int *g, int *b, int *a);

@@ -76,5 +76,11 @@ _efl_vg_container_efl_vg_base_bound_get(Eo *obj EINA_UNUSED,
    return first ? EINA_FALSE : EINA_TRUE;
 }
 
+EAPI Efl_VG*
+evas_vg_container_add(Efl_VG *parent)
+{
+   return eo_add(EFL_VG_CONTAINER_CLASS, parent);
+}
+
 
 #include "efl_vg_container.eo.c"
