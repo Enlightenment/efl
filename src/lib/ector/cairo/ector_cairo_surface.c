@@ -79,6 +79,7 @@ static void
 _ector_cairo_surface_eo_base_constructor(Eo *obj EINA_UNUSED,
                                          Ector_Cairo_Surface_Data *pd EINA_UNUSED)
 {
+   eo_do_super(obj, ECTOR_CAIRO_SURFACE_CLASS, eo_constructor());
    _cairo_count++;
 }
 
@@ -86,11 +87,12 @@ static void
 _ector_cairo_surface_eo_base_destructor(Eo *obj EINA_UNUSED,
                                         Ector_Cairo_Surface_Data *pd EINA_UNUSED)
 {
+   eo_do_super(obj, ECTOR_CAIRO_SURFACE_CLASS, eo_destructor());
+
    if (--_cairo_count) return ;
    if (_cairo_so) eina_module_free(_cairo_so);
    _cairo_so = NULL;
 }
-
 
 #include "ector_cairo_surface.eo.c"
 #include "ector_renderer_cairo_base.eo.c"
