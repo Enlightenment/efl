@@ -74,6 +74,8 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_prepare(Eo *ob
 static Eina_Bool
 _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_draw(Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd, Ector_Rop op, Eina_Array *clips, unsigned int mul_col)
 {
+   if (pd->pat) return EINA_FALSE;
+
    Ector_Renderer_Generic_Gradient_Radial_Data *gld;
 
    // FIXME: don't ignore clipping !
