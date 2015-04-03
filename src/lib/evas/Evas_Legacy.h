@@ -1730,77 +1730,714 @@ EAPI Efl_VG* evas_vg_shape_add(Efl_VG *parent);
  *
  * @since 1.14
  */
+
 EAPI Efl_VG* evas_vg_container_add(Efl_VG *parent);
 
+/**
+ *
+ * Retrieves whether or not the given Efl_Vg object is visible.
+ *
+ *
+ */
 EAPI Eina_Bool evas_vg_node_visible_get(Eo *obj);
+
+/**
+ *
+ * Makes the given Efl_Vg object visible or invisible.
+ *
+ * @param[in] v @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise
+ *
+ */
 EAPI void evas_vg_node_visible_set(Eo *obj, Eina_Bool v);
+
+/**
+ *
+ * Retrieves the general/main color of the given Efl_Vg object.
+ *
+ * Retrieves the “main” color's RGB component (and alpha channel)
+ * values, <b>which range from 0 to 255</b>. For the alpha channel,
+ * which defines the object's transparency level, 0 means totally
+ * transparent, while 255 means opaque. These color values are
+ * premultiplied by the alpha value.
+ *
+ *
+ * @note Use @c NULL pointers on the components you're not interested
+ * in: they'll be ignored by the function.
+ *
+ * @param[out] r The red component of the given color.
+ * @param[out] g The green component of the given color.
+ * @param[out] b The blue component of the given color.
+ * @param[out] a The alpha component of the given color.
+ *
+ */
 EAPI void evas_vg_node_color_get(Eo *obj, int *r, int *g, int *b, int *a);
+
+/**
+ *
+ * Sets the general/main color of the given Efl_Vg object to the given
+ * one.
+ *
+ * @see evas_vg_node_color_get() (for an example)
+ * @note These color values are expected to be premultiplied by @p a.
+ *
+ * @ingroup Evas_Object_Group_Basic
+ *
+ * @param[in] r The red component of the given color.
+ * @param[in] g The green component of the given color.
+ * @param[in] b The blue component of the given color.
+ * @param[in] a The alpha component of the given color.
+ *
+ */
 EAPI void evas_vg_node_color_set(Eo *obj, int r, int g, int b, int a);
+
+/**
+ *
+ * Retrieves the geometry of the given Efl_Vg object.
+ *
+ * @param[out] x in
+ * @param[out] y in
+ * @param[out] w in
+ * @param[out] h in
+ *
+ */
 EAPI void evas_vg_node_geometry_get(Eo *obj, int *x, int *y, int *w, int *h);
+
+/**
+ *
+ * Changes the geometry of the given Efl_Vg object.
+ *
+ * @param[in] x in
+ * @param[in] y in
+ * @param[in] w in
+ * @param[in] h in
+ *
+ */
 EAPI void evas_vg_node_geometry_set(Eo *obj, int x, int y, int w, int h);
+
+/**
+ *
+ * Stack @p obj immediately below @p below
+ *
+ * Objects, in a given canvas, are stacked in the order they get added
+ * to it.  This means that, if they overlap, the highest ones will
+ * cover the lowest ones, in that order. This function is a way to
+ * change the stacking order for the objects.
+ *
+ * This function is intended to be used with <b>objects belonging to
+ * the same layer</b> in a given canvas, otherwise it will fail (and
+ * accomplish nothing).
+ *
+ * If you have smart objects on your canvas and @p obj is a member of
+ * one of them, then @p below must also be a member of the same
+ * smart object.
+ *
+ * Similarly, if @p obj is not a member of a smart object, @p below
+ * must not be either.
+ *
+ * @see evas_object_layer_get()
+ * @see evas_object_layer_set()
+ * @see evas_object_stack_below()
+ * 
+ *
+ * @param[in] below the object below which to stack
+ *
+ */
 EAPI void evas_vg_node_stack_below(Eo *obj, Eo *below);
+
+/**
+ *
+ * Stack @p obj immediately above @p above
+ *
+ * Objects, in a given canvas, are stacked in the order they get added
+ * to it.  This means that, if they overlap, the highest ones will
+ * cover the lowest ones, in that order. This function is a way to
+ * change the stacking order for the objects.
+ *
+ * This function is intended to be used with <b>objects belonging to
+ * the same layer</b> in a given canvas, otherwise it will fail (and
+ * accomplish nothing).
+ *
+ * If you have smart objects on your canvas and @p obj is a member of
+ * one of them, then @p above must also be a member of the same
+ * smart object.
+ *
+ * Similarly, if @p obj is not a member of a smart object, @p above
+ * must not be either.
+ *
+ * @see evas_object_layer_get()
+ * @see evas_object_layer_set()
+ * @see evas_object_stack_below()
+ * 
+ *
+ * @param[in] above the object above which to stack
+ *
+ */
 EAPI void evas_vg_node_stack_above(Eo *obj, Eo *above);
+
+/**
+ *
+ * Raise @p obj to the top of its layer.
+ *
+ * @p obj will, then, be the highest one in the layer it belongs
+ * to. Object on other layers won't get touched.
+ *
+ * @see evas_object_stack_above()
+ * @see evas_object_stack_below()
+ * @see evas_object_lower()
+ * 
+ */
 EAPI void evas_vg_node_raise(Eo *obj);
+
+/**
+ *
+ * Lower @p obj to the bottom of its layer.
+ *
+ * @p obj will, then, be the lowest one in the layer it belongs
+ * to. Objects on other layers won't get touched.
+ *
+ * @see evas_object_stack_above()
+ * @see evas_object_stack_below()
+ * @see evas_object_raise()
+ * 
+ *
+ *
+ */
 EAPI void evas_vg_node_lower(Eo *obj);
 
 #include "canvas/efl_vg_base.eo.legacy.h"
 
+/**
+ *
+ * Get the stroke scaling factor used for stroking this path.
+ * @since 1.14
+ *
+ *
+ */
 EAPI double evas_vg_shape_stroke_scale_get(Eo *obj);
+
+/**
+ *
+ * Sets the stroke scale to be used for stroking the path.
+ * the scale property will be used along with stroke width property.
+ * @since 1.14
+ *
+ * @param[in] s stroke scale value
+ *
+ */
 EAPI void evas_vg_shape_stroke_scale_set(Eo *obj, double s);
+
+/**
+ *
+ * Gets the color used for stroking the path.
+ * @since 1.14
+ *
+ * @param[out] r The red component of the given color.
+ * @param[out] g The green component of the given color.
+ * @param[out] b The blue component of the given color.
+ * @param[out] a The alpha component of the given color.
+ *
+ */
 EAPI void evas_vg_shape_stroke_color_get(Eo *obj, int *r, int *g, int *b, int *a);
+
+/**
+ *
+ * Sets the color to be used for stroking the path.
+ * @since 1.14
+ *
+ * @param[in] r The red component of the given color.
+ * @param[in] g The green component of the given color.
+ * @param[in] b The blue component of the given color.
+ * @param[in] a The alpha component of the given color.
+ *
+ */
 EAPI void evas_vg_shape_stroke_color_set(Eo *obj, int r, int g, int b, int a);
+
+/**
+ *
+ * Gets the stroke width to be used for stroking the path.
+ * @since 1.14
+ *
+ *
+ */
 EAPI double evas_vg_shape_stroke_width_get(Eo *obj);
+
+/**
+ *
+ * Sets the stroke width to be used for stroking the path.
+ * @since 1.14
+ *
+ * @param[in] w stroke width to be used
+ *
+ */
 EAPI void evas_vg_shape_stroke_width_set(Eo *obj, double w);
+
+/**
+ *
+ * Not Implemented
+ *
+ *
+ */
 EAPI double evas_vg_shape_stroke_location_get(Eo *obj);
+
+/**
+ *
+ * Not Implemented
+ *
+ * @param[in] centered
+ *
+ */
 EAPI void evas_vg_shape_stroke_location_set(Eo *obj, double centered);
+
+/**
+ *
+ * Not Implemented
+ *
+ * @param[out] dash
+ * @param[out] length
+ *
+ */
 EAPI void evas_vg_shape_stroke_dash_get(Eo *obj, const Efl_Gfx_Dash **dash, unsigned int *length);
+
+/**
+ *
+ * Not Implemented
+ *
+ * @param[in] dash
+ * @param[in] length
+ *
+ */
 EAPI void evas_vg_shape_stroke_dash_set(Eo *obj, const Efl_Gfx_Dash *dash, unsigned int length);
+
+/**
+ *
+ * Gets the cap style used for stroking path.
+ * @since 1.14
+ *
+ *
+ */
 EAPI Efl_Gfx_Cap evas_vg_shape_stroke_cap_get(Eo *obj);
+
+/**
+ *
+ * Sets the cap style to be used for stroking the path.
+ * The cap will be used for capping the end point of a 
+ * open subpath.
+ *
+ * @see Efl_Gfx_Cap
+ * @since 1.14
+ *
+ * @param[in] c cap style to use , default is EFL_GFX_CAP_BUTT
+ *
+ */
 EAPI void evas_vg_shape_stroke_cap_set(Eo *obj, Efl_Gfx_Cap c);
+
+/**
+ *
+ * Gets the join style used for stroking path.
+ * @since 1.14
+ *
+ *
+ */
 EAPI Efl_Gfx_Join evas_vg_shape_stroke_join_get(Eo *obj);
+
+/**
+ *
+ * Sets the join style to be used for stroking the path.
+ * The join style will be used for joining the two line segment
+ * while stroking teh path.
+ *
+ * @see Efl_Gfx_Join
+ * @since 1.14
+ *
+ * @param[in] j join style to use , default is
+EFL_GFX_JOIN_MITER
+ *
+ */
 EAPI void evas_vg_shape_stroke_join_set(Eo *obj, Efl_Gfx_Join j);
+
+/**
+ *
+ * Set the list of commands and points to be used to create the
+ * content of shape.
+ *
+ * @note see efl_gfx_path interface for how to create a command list.
+ * @see Efl_Gfx_Path_Command
+ * @since 1.14
+ *
+ * @param[in] op command list
+ * @param[in] points point list
+ *
+ */
 EAPI void evas_vg_shape_shape_path_set(Eo *obj, const Efl_Gfx_Path_Command *op, const double *points);
+
+/**
+ *
+ * Gets the command and points list
+ * @since 1.14
+ *
+ * @param[out] op command list
+ * @param[out] points point list
+ *
+ */
+
 EAPI void evas_vg_shape_shape_path_get(Eo *obj, const Efl_Gfx_Path_Command **op, const double **points);
 EAPI void evas_vg_shape_shape_path_length_get(Eo *obj, unsigned int *commands, unsigned int *points);
 EAPI void evas_vg_shape_shape_current_get(Eo *obj, double *x, double *y);
 EAPI void evas_vg_shape_shape_current_ctrl_get(Eo *obj, double *x, double *y);
+
+/**
+ *
+ * Copy the shape data from the object specified .
+ *
+ * @since 1.14
+ *
+ *
+ * @param[in] dup_from Shape object from where data will be copied.
+ *
+ */
 EAPI void evas_vg_shape_shape_dup(Eo *obj, Eo *dup_from);
+
+/**
+ *
+ * Reset the shape data of the shape object.
+ *
+ * @since 1.14
+ * 
+ *
+ *
+ */
 EAPI void evas_vg_shape_shape_reset(Eo *obj);
+
+/**
+ *
+ * Moves the current point to the given point, 
+ * implicitly starting a new subpath and closing the previous one.
+ *
+ * @see efl_gfx_path_append_close()
+ * @since 1.14
+ *
+ *
+ * @param[in] x X co-ordinate of the current point.
+ * @param[in] y Y co-ordinate of the current point.
+ *
+ */
 EAPI void evas_vg_shape_shape_append_move_to(Eo *obj, double x, double y);
+
+/**
+ *
+ * Adds a straight line from the current position to the given endPoint.
+ * After the line is drawn, the current position is updated to be at the end
+ * point of the line.
+ *
+ * @note if no current position present, it draws a line to itself, basically
+ * a point.
+ *
+ * @see efl_gfx_path_append_move_to()
+ * @since 1.14
+ *
+ *
+ * @param[in] x X co-ordinate of end point of the line.
+ * @param[in] y Y co-ordinate of end point of the line.
+ *
+ */
 EAPI void evas_vg_shape_shape_append_line_to(Eo *obj, double x, double y);
+
+/**
+ *
+ * Adds a quadratic Bezier curve between the current position and the
+ * given end point (x,y) using the control points specified by (ctrl_x, ctrl_y).
+ * After the path is drawn, the current position is updated to be at the end
+ * point of the path.
+ *
+ * @since 1.14
+ *
+ *
+ * @param[in] x X co-ordinate of end point of the line.
+ * @param[in] y Y co-ordinate of end point of the line.
+ * @param[in] ctrl_x X co-ordinate of control point.
+ * @param[in] ctrl_y Y co-ordinate of control point.
+ *
+ */
 EAPI void evas_vg_shape_shape_append_quadratic_to(Eo *obj, double x, double y, double ctrl_x, double ctrl_y);
+
+/**
+ *
+ * Same as efl_gfx_path_append_quadratic_to() api only difference is that it
+ * uses the current control point to draw the bezier.
+ *
+ * @see efl_gfx_path_append_quadratic_to()
+ * @since 1.14
+ *
+ *
+ * @param[in] x X co-ordinate of end point of the line.
+ * @param[in] y Y co-ordinate of end point of the line.
+ *
+ */
 EAPI void evas_vg_shape_shape_append_squadratic_to(Eo *obj, double x, double y);
+
+/**
+ *
+ * Adds a cubic Bezier curve between the current position and the
+ * given end point (x,y) using the control points specified by
+ * (ctrl_x0, ctrl_y0), and (ctrl_x1, ctrl_y1). After the path is drawn,
+ * the current position is updated to be at the end point of the path.
+ *
+ * @since 1.14
+ *
+ *
+ * @param[in] x X co-ordinate of end point of the line.
+ * @param[in] y Y co-ordinate of end point of the line.
+ * @param[in] ctrl_x0 X co-ordinate of 1st control point.
+ * @param[in] ctrl_y0 Y co-ordinate of 1st control point.
+ * @param[in] ctrl_x1 X co-ordinate of 2nd control point.
+ * @param[in] ctrl_y1 Y co-ordinate of 2nd control point.
+ *
+ */
 EAPI void evas_vg_shape_shape_append_cubic_to(Eo *obj, double x, double y, double ctrl_x0, double ctrl_y0, double ctrl_x1, double ctrl_y1);
+
+/**
+ *
+ * Same as efl_gfx_path_append_cubic_to() api only difference is that it uses
+ * the current control point to draw the bezier.
+ *
+ * @see efl_gfx_path_append_cubic_to()
+ *
+ * @since 1.14
+ *
+ *
+ * @param[in] x X co-ordinate of end point of the line.
+ * @param[in] y Y co-ordinate of end point of the line.
+ * @param[in] ctrl_x X co-ordinate of 2nd control point.
+ * @param[in] ctrl_y Y co-ordinate of 2nd control point.
+ *
+ */
 EAPI void evas_vg_shape_shape_append_scubic_to(Eo *obj, double x, double y, double ctrl_x, double ctrl_y);
+
+/**
+ *
+ * Append an arc that connects from the current point int the point list
+ * to the given point (x,y). The arc is defined by the given radius in 
+ * x-direction (rx) and radius in y direction (ry) . 
+ *
+ * @note Use this api if you know the end point's of the arc otherwise
+ * use more convenient function efl_gfx_path_append_arc_to()
+ *
+ * @see efl_gfx_path_append_arc_to()
+ * @since 1.14
+ *
+ *
+ * @param[in] x X co-ordinate of end point of the arc.
+ * @param[in] y Y co-ordinate of end point of the arc.
+ * @param[in] rx radius of arc in x direction.
+ * @param[in] ry radius of arc in y direction.
+ * @param[in] angle x-axis rotation , normally 0.
+ * @param[in] large_arc Defines whether to draw the larger arc or smaller arc joining two point.
+ * @param[in] sweep Defines whether the arc will be drawn counter-clockwise or clockwise from current point to the end point taking into account the large_arc property.
+ *
+ */
 EAPI void evas_vg_shape_shape_append_arc_to(Eo *obj, double x, double y, double rx, double ry, double angle, Eina_Bool large_arc, Eina_Bool sweep);
+
+/**
+ *
+ * Closes the current subpath by drawing a line to the beginning of the subpath,
+ * automatically starting a new path. The current point of the new path is
+ * (0, 0).
+ *
+ * @note If the subpath does not contain any points, this function does nothing.
+ *
+ * @since 1.14
+ *
+ *
+ *
+ */
 EAPI void evas_vg_shape_shape_append_close(Eo *obj);
+
+/**
+ *
+ * Append a circle with given center and radius.
+ *
+ * @see efl_gfx_path_append_arc()
+ * @since 1.14
+ *
+ *
+ * @param[in] x X co-ordinate of the center of the circle.
+ * @param[in] y Y co-ordinate of the center of the circle.
+ * @param[in] radius radius of the circle.
+ *
+ */
 EAPI void evas_vg_shape_shape_append_circle(Eo *obj, double x, double y, double radius);
+
+/**
+ *
+ * Append the given rectangle with rounded corner to the path.
+ *
+ * The xr and yr arguments specify the radii of the ellipses defining the
+ * corners of the rounded rectangle.
+ *
+ * @note xr and yr are specified in terms of width and height respectively.
+ *
+ * @note if xr and yr are 0, then it will draw a rectangle without rounded corner.
+ *
+ * @since 1.14
+ *
+ *
+ * @param[in] x X co-ordinate of the rectangle.
+ * @param[in] y Y co-ordinate of the rectangle.
+ * @param[in] w Width of the rectangle.
+ * @param[in] h Height of the rectangle.
+ * @param[in] rx The x radius of the rounded corner and should be in range [ 0 to w/2 ]
+ * @param[in] ry The y radius of the rounded corner and should be in range [ 0 to h/2 ]
+ *
+ */
 EAPI void evas_vg_shape_shape_append_rect(Eo *obj, double x, double y, double w, double h, double rx, double ry);
+
 EAPI void evas_vg_shape_shape_append_svg_path(Eo *obj, const char *svg_path_data);
 EAPI Eina_Bool evas_vg_shape_shape_interpolate(Eo *obj, const Eo *from, const Eo *to, double pos_map);
 EAPI Eina_Bool evas_vg_shape_shape_equal_commands(Eo *obj, const Eo *with);
 
 #include "canvas/efl_vg_shape.eo.legacy.h"
 
+/**
+ *
+ * Set the list of color stops for the gradient
+ * @since 1.14
+ *
+ * @param[in] colors color stops list
+ * @param[in] length length of the list
+ *
+ */
 EAPI void evas_vg_gradient_stop_set(Eo *obj, const Efl_Gfx_Gradient_Stop *colors, unsigned int length);
+
+/**
+ *
+ * get the list of color stops.
+ * @since 1.14
+ *
+ * @param[out] colors color stops list
+ * @param[out] length length of the list
+ *
+ */
 EAPI void evas_vg_gradient_stop_get(Eo *obj, const Efl_Gfx_Gradient_Stop **colors, unsigned int *length);
+
+/**
+ *
+ * Specifies the spread method that should be used for this gradient.
+ * @since 1.14
+ *
+ * @param[in] s spread type to be used
+ *
+ */
 EAPI void evas_vg_gradient_spread_set(Eo *obj, Efl_Gfx_Gradient_Spread s);
+
+/**
+ *
+ * Returns the spread method use by this gradient. The default is
+ * EFL_GFX_GRADIENT_SPREAD_PAD.
+ * @since 1.14
+ *
+ *
+ */
 EAPI Efl_Gfx_Gradient_Spread evas_vg_gradient_spread_get(Eo *obj);
 
 #include "canvas/efl_vg_gradient.eo.legacy.h"
 
+/**
+ *
+ * Sets the start point of this linear gradient.
+ *
+ * @param[in] x x co-ordinate of start point
+ * @param[in] y y co-ordinate of start point
+ *
+ */
 EAPI void evas_vg_gradient_linear_start_set(Eo *obj, double x, double y);
+
+/**
+ *
+ * Gets the start point of this linear gradient.
+ *
+ * @param[out] x x co-ordinate of start point
+ * @param[out] y y co-ordinate of start point
+ *
+ */
 EAPI void evas_vg_gradient_linear_start_get(Eo *obj, double *x, double *y);
+
+/**
+ *
+ * Sets the end point of this linear gradient.
+ *
+ * @param[in] x x co-ordinate of end point
+ * @param[in] y y co-ordinate of end point
+ *
+ */
 EAPI void evas_vg_gradient_linear_end_set(Eo *obj, double x, double y);
+
+/**
+ *
+ * Gets the end point of this linear gradient.
+ *
+ * @param[out] x x co-ordinate of end point
+ * @param[out] y y co-ordinate of end point
+ *
+ */
 EAPI void evas_vg_gradient_linear_end_get(Eo *obj, double *x, double *y);
 
 #include "canvas/efl_vg_gradient_linear.eo.legacy.h"
 
+/**
+ *
+ * Sets the center of this radial gradient.
+ *
+ * @param[in] x x co-ordinate of center point
+ * @param[in] y y co-ordinate of center point
+ *
+ */
 EAPI void evas_vg_gradient_radial_center_set(Eo *obj, double x, double y);
+
+/**
+ *
+ * Gets the center of this radial gradient.
+ *
+ * @param[out] x x co-ordinate of center point
+ * @param[out] y y co-ordinate of center point
+ *
+ */
 EAPI void evas_vg_gradient_radial_center_get(Eo *obj, double *x, double *y);
+
+/**
+ *
+ * Sets the center radius of this radial gradient.
+ *
+ * @param[in] r center radius
+ *
+ */
 EAPI void evas_vg_gradient_radial_radius_set(Eo *obj, double r);
+
+/**
+ *
+ * Gets the center radius of this radial gradient.
+ *
+ *
+ */
 EAPI double evas_vg_gradient_radial_radius_get(Eo *obj);
+
+/**
+ *
+ * Sets the focal point of this radial gradient.
+ *
+ * @param[in] x x co-ordinate of focal point
+ * @param[in] y y co-ordinate of focal point
+ *
+ */
 EAPI void evas_vg_gradient_radial_focal_set(Eo *obj, double x, double y);
+
+/**
+ *
+ * Gets the focal point of this radial gradient.
+ *
+ * @param[out] x x co-ordinate of focal point
+ * @param[out] y y co-ordinate of focal point
+ *
+ */
 EAPI void evas_vg_gradient_radial_focal_get(Eo *obj, double *x, double *y);
 
 #include "canvas/efl_vg_gradient_radial.eo.legacy.h"

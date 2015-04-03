@@ -154,130 +154,226 @@ mixin Efl.Gfx.Shape
          }
       }
       path_length {
-	 get {
-	 }
-	 values {
-	    uint commands;
-	    uint points;
-	 }
+        get {
+        }
+        values {
+          uint commands;
+          uint points;
+        }
       }
       current {
-         get {
-	 }
-	 values {
-	    double x;
-	    double y;
-	 }
+        get {
+        }
+        values {
+          double x;
+          double y;
+        }
       }
       current_ctrl {
-         get {
-	 }
-	 values {
-	    double x;
-	    double y;
-	 }
+        get {
+        }
+        values {
+          double x;
+          double y;
+        }
       }
    }
    methods {
       dup {
-         params {
-            @in Eo *dup_from;
-	 }
+          /*@
+            Copy the shape data from the object specified .
+
+            @since 1.14
+          */
+        params {
+          @in Eo *dup_from; /*@ Shape object from where data will be copied.*/
+        }
       }
       reset {
+        /*@
+          Reset the shape data of the shape object.
+
+          @since 1.14
+        */
       }
       append_move_to {
-         params {
-	    @in double x;
-	    @in double y;
-	 }
+        /*@
+          Moves the current point to the given point, 
+          implicitly starting a new subpath and closing the previous one.
+
+          @see efl_gfx_path_append_close()
+          @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of the current point.*/
+          @in double y; /*@ Y co-ordinate of the current point.*/
+        }
       }
       append_line_to {
-         params {
-	    @in double x;
-	    @in double y;
-	 }
+        /*@
+          Adds a straight line from the current position to the given endPoint.
+          After the line is drawn, the current position is updated to be at the end
+          point of the line.
+
+          @note if no current position present, it draws a line to itself, basically
+                a point.
+
+          @see efl_gfx_path_append_move_to()
+          @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of end point of the line.*/
+          @in double y; /*@ Y co-ordinate of end point of the line.*/
+        }
       }
       append_quadratic_to {
-         params {
-	    @in double x;
-	    @in double y;
-	    @in double ctrl_x;
-	    @in double ctrl_y;
-	 }
+        /*@
+          Adds a quadratic Bezier curve between the current position and the
+          given end point (x,y) using the control points specified by (ctrl_x, ctrl_y).
+          After the path is drawn, the current position is updated to be at the end
+          point of the path.
+
+          @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of end point of the line.*/
+          @in double y; /*@ Y co-ordinate of end point of the line.*/
+          @in double ctrl_x; /*@ X co-ordinate of control point.*/
+          @in double ctrl_y; /*@ Y co-ordinate of control point.*/
+        }
       }
       append_squadratic_to {
-         params {
-	    @in double x;
-	    @in double y;
-	 }
+        /*@
+          Same as efl_gfx_path_append_quadratic_to() api only difference is that it
+          uses the current control point to draw the bezier.
+
+          @see efl_gfx_path_append_quadratic_to()
+          @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of end point of the line.*/
+          @in double y; /*@ Y co-ordinate of end point of the line.*/
+        }
       }
       append_cubic_to {
-         params {
-	    @in double x;
-	    @in double y;
-	    @in double ctrl_x0;
-	    @in double ctrl_y0;
-	    @in double ctrl_x1;
-	    @in double ctrl_y1;
-	 }
+        /*@
+          Adds a cubic Bezier curve between the current position and the
+          given end point (x,y) using the control points specified by
+          (ctrl_x0, ctrl_y0), and (ctrl_x1, ctrl_y1). After the path is drawn,
+          the current position is updated to be at the end point of the path.
+
+          @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of end point of the line.*/
+          @in double y; /*@ Y co-ordinate of end point of the line.*/
+          @in double ctrl_x0; /*@ X co-ordinate of 1st control point.*/
+          @in double ctrl_y0; /*@ Y co-ordinate of 1st control point.*/
+          @in double ctrl_x1; /*@ X co-ordinate of 2nd control point.*/
+          @in double ctrl_y1; /*@ Y co-ordinate of 2nd control point.*/
+        }
       }
       append_scubic_to {
-         params {
-	    @in double x;
-	    @in double y;
-	    @in double ctrl_x;
-	    @in double ctrl_y;
-	 }
+        /*@
+        Same as efl_gfx_path_append_cubic_to() api only difference is that it uses
+        the current control point to draw the bezier.
+
+        @see efl_gfx_path_append_cubic_to()
+
+        @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of end point of the line.*/
+          @in double y; /*@ Y co-ordinate of end point of the line.*/
+          @in double ctrl_x; /*@ X co-ordinate of 2nd control point.*/
+          @in double ctrl_y; /*@ Y co-ordinate of 2nd control point.*/
+        }
       }
       append_arc_to {
-         params {
-	    @in double x;
-	    @in double y;
-	    @in double rx;
-	    @in double ry;
-	    @in double angle;
-	    @in bool large_arc;
-	    @in bool sweep;
-	 }
+        /*@
+          Append an arc that connects from the current point int the point list
+          to the given point (x,y). The arc is defined by the given radius in 
+          x-direction (rx) and radius in y direction (ry) .
+
+          @note Use this api if you know the end point's of the arc otherwise
+                use more convenient function efl_gfx_path_append_arc_to()
+
+          @see efl_gfx_path_append_arc_to()
+          @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of end point of the arc.*/
+          @in double y; /*@ Y co-ordinate of end point of the arc.*/
+          @in double rx; /*@ radius of arc in x direction.*/
+          @in double ry; /*@ radius of arc in y direction.*/
+          @in double angle; /*@ x-axis rotation , normally 0.*/
+          @in bool large_arc; /*@ Defines whether to draw the larger arc or smaller arc joining two point.*/
+          @in bool sweep; /*@ Defines whether the arc will be drawn counter-clockwise or clockwise from current point to the end point taking into account the large_arc property.*/
+        }
       }
       append_close {
+        /*@
+          Closes the current subpath by drawing a line to the beginning of the subpath,
+          automatically starting a new path. The current point of the new path is
+          (0, 0).
+
+          @note If the subpath does not contain any points, this function does nothing.
+
+          @since 1.14
+        */
       }
       append_circle {
-         params {
-	    @in double x;
-	    @in double y;
-	    @in double radius;
-	 }
+        /*@
+          Append a circle with given center and radius.
+
+          @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of the center of the circle.*/
+          @in double y; /*@ Y co-ordinate of the center of the circle.*/
+          @in double radius; /*@ radius of the circle.*/
+        }
       }
       append_rect {
-         params {
-	    @in double x;
-	    @in double y;
-	    @in double w;
-	    @in double h;
-	    @in double rx;
-	    @in double ry;
-	 }
+        /*@
+          Append the given rectangle with rounded corner to the path.
+
+          The xr and yr arguments specify the radii of the ellipses defining the
+          corners of the rounded rectangle.
+
+          @note xr and yr are specified in terms of width and height respectively.
+
+          @note if xr and yr are 0, then it will draw a rectangle without rounded corner.
+
+          @since 1.14
+        */
+        params {
+            @in double x; /*@ X co-ordinate of the rectangle.*/
+            @in double y; /*@ Y co-ordinate of the rectangle.*/
+            @in double w; /*@ Width of the rectangle.*/
+            @in double h; /*@ Height of the rectangle.*/
+            @in double rx; /*@ The x radius of the rounded corner and should be in range [ 0 to w/2 ]*/
+            @in double ry; /*@ The y radius of the rounded corner and should be in range [ 0 to h/2 ]*/
+        }
       }
       append_svg_path {
-         params {
-	    @in const(char)* svg_path_data;
-	 }
+        params {
+          @in const(char)* svg_path_data;
+        }
       }
       interpolate {
-         return: bool;
-	 params {
-	    @in const(Eo)* from;
-	    @in const(Eo)* to;
-	    @in double pos_map;
-	 }
+        return: bool;
+        params {
+          @in const(Eo)* from;
+          @in const(Eo)* to;
+          @in double pos_map;
+        }
       }
       equal_commands {
-         return: bool;
-	 params {
-	    @in const(Eo)* with;
-	 }
+        return: bool;
+        params {
+          @in const(Eo)* with;
+        }
       }
    }
    implements {
