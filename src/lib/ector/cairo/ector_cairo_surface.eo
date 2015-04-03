@@ -1,0 +1,7 @@
+class Ector.cairo.Surface (Ector.Generic.Surface)
+{
+   eo_prefix: ector_cairo_surface;
+   implements {
+      Ector.Generic.Surface.renderer_factory_new;
+   }
+}

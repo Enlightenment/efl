@@ -8,6 +8,13 @@ ector_eolian_files = \
 	lib/ector/ector_renderer_generic_gradient_radial.eo \
 	lib/ector/ector_renderer_generic_gradient_linear.eo
 
+# Handle cairo backend
+ector_eolian_files += \
+	lib/ector/cairo/ector_cairo_surface.eo \
+	lib/ector/cairo/ector_renderer_cairo_shape.eo \
+	lib/ector/cairo/ector_renderer_cairo_gradient_linear.eo \
+	lib/ector/cairo/ector_renderer_cairo_gradient_radial.eo
+
 ector_eolian_c = $(ector_eolian_files:%.eo=%.eo.c)
 ector_eolian_h = $(ector_eolian_files:%.eo=%.eo.h)
 
