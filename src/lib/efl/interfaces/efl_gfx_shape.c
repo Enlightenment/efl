@@ -658,11 +658,11 @@ void
 _efl_gfx_shape_append_circle(Eo *obj, Efl_Gfx_Shape_Data *pd,
                              double x, double y, double radius)
 {
-   _efl_gfx_shape_append_move_to(obj, pd, x, y - radius);
-   _efl_gfx_shape_append_arc_to(obj, pd, x - radius, y, radius, radius, 0, EINA_FALSE, EINA_FALSE);
-   _efl_gfx_shape_append_arc_to(obj, pd, x, y + radius, radius, radius, 0, EINA_FALSE, EINA_FALSE);
-   _efl_gfx_shape_append_arc_to(obj, pd, x + radius, y, radius, radius, 0, EINA_FALSE, EINA_FALSE);
-   _efl_gfx_shape_append_arc_to(obj, pd, x, y - radius, radius, radius, 0, EINA_FALSE, EINA_FALSE);
+   _efl_gfx_shape_append_move_to(obj, pd, x - radius, y);
+   _efl_gfx_shape_append_arc_to(obj, pd, x + radius, y, radius, radius, 0, EINA_FALSE, EINA_TRUE);
+   _efl_gfx_shape_append_arc_to(obj, pd, x, y + radius, radius, radius, 0, EINA_FALSE, EINA_TRUE);
+   _efl_gfx_shape_append_arc_to(obj, pd, x - radius, y, radius, radius, 0, EINA_FALSE, EINA_TRUE);
+   _efl_gfx_shape_append_arc_to(obj, pd, x, y - radius, radius, radius, 0, EINA_FALSE, EINA_TRUE);
 }
 
 void
