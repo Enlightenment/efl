@@ -9,8 +9,15 @@ class Ector.Cairo.Surface (Ector.Generic.Surface)
             @in char* name;
          }
       }
+      context_set {
+         return: Eina_Bool;
+         params {
+	    @in cairo_t *ctx;
+	 }
+      }
    }
    implements {
       Ector.Generic.Surface.renderer_factory_new;
+      Eo.Base.finalize;
    }
 }

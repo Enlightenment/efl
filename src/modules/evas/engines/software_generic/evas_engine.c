@@ -18,6 +18,10 @@
 
 #include "Evas_Engine_Software_Generic.h"
 
+#include "cairo/Ector_Cairo.h"
+
+#include "ector_cairo_software_surface.eo.h"
+
 #ifdef EVAS_GL
 //----------------------------------//
 // OSMesa...
@@ -4694,3 +4698,25 @@ EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, software_generic);
 #ifndef EVAS_STATIC_BUILD_SOFTWARE_GENERIC
 EVAS_EINA_MODULE_DEFINE(engine, software_generic);
 #endif
+
+typedef struct _Ector_Cairo_Software_Surface_Data Ector_Cairo_Software_Surface_Data;
+struct _Ector_Cairo_Software_Surface_Data
+{
+};
+
+void
+_ector_cairo_software_surface_surface_set(Eo *obj, Ector_Cairo_Software_Surface_Data *pd, void *pixels, unsigned int width, unsigned int height)
+{
+}
+
+void
+_ector_cairo_software_surface_surface_get(Eo *obj, Ector_Cairo_Software_Surface_Data *pd, void **pixels, unsigned int *width, unsigned int *height)
+{
+}
+
+Eo *
+_ector_cairo_software_surface_eo_base_finalize(Eo *obj, Ector_Cairo_Software_Surface_Data *pd)
+{
+}
+
+#include "ector_cairo_software_surface.eo.c"

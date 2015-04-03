@@ -3,7 +3,7 @@
 
 #include <Eina.h>
 #include <Eo.h>
-#include <Evas.h>
+#include <Efl.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -108,7 +108,8 @@ typedef Eo Ector_Renderer;
  * @typedef Ector_Colorspace
  * The definiton of colorspace.
  */
-typedef Evas_Colorspace Ector_Colorspace;
+  // FIXME: Enable that when we have merged Emile
+/* typedef Evas_Colorspace Ector_Colorspace; */
 
 /**
  * Raster operations at pixel level
