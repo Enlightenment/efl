@@ -846,40 +846,9 @@ typedef enum _Evas_3D_Material_Attrib
 #include "canvas/evas_3d_object.eo.h"
 
 /**
- * Path command enum.
- *
- * @since 1.14
- * @ingroup Evas_VG_Shape
- */
-typedef enum _Evas_VG_Path_Command
-{
-  EVAS_VG_PATH_COMMAND_TYPE_END = 0, /**< End of the stream of command */
-  EVAS_VG_PATH_COMMAND_TYPE_MOVE_TO, /**< A move command type */
-  EVAS_VG_PATH_COMMAND_TYPE_LINE_TO, /**< A line command type */
-  EVAS_VG_PATH_COMMAND_TYPE_QUADRATIC_TO, /**< A quadratic command type */
-  EVAS_VG_PATH_COMMAND_TYPE_SQUADRATIC_TO, /**< A smooth quadratic command type */
-  EVAS_VG_PATH_COMMAND_TYPE_CUBIC_TO, /**< A cubic command type */
-  EVAS_VG_PATH_COMMAND_TYPE_SCUBIC_TO, /**< A smooth cubic command type */
-  EVAS_VG_PATH_COMMAND_TYPE_ARC_TO, /**< An arc command type */
-  EVAS_VG_PATH_COMMAND_TYPE_CLOSE, /**< A close command type */
-  EVAS_VG_PATH_COMMAND_TYPE_LAST, /**< Not a valid command, but last one according to this version header */
-} Evas_VG_Path_Command;
-
-/**
  * Type of abstract VG node
  */
 typedef Eo      Evas_VG_Node;
-
-
-/**
- * Type describing dash
- */
-typedef struct _Evas_VG_Dash Evas_VG_Dash;
-struct _Evas_VG_Dash
-{
-   double length;
-   double gap;
-};
 
 typedef struct _Evas_VG_Gradient_Stop Evas_VG_Gradient_Stop;
 struct _Evas_VG_Gradient_Stop
@@ -890,22 +859,6 @@ struct _Evas_VG_Gradient_Stop
    int b;
    int a;
 };
-
-typedef enum _Evas_VG_Cap
-{
-  EVAS_VG_CAP_BUTT,
-  EVAS_VG_CAP_ROUND,
-  EVAS_VG_CAP_SQUARE,
-  EVAS_VG_CAP_LAST
-} Evas_VG_Cap;
-
-typedef enum _Evas_VG_Join
-{
-  EVAS_VG_JOIN_MITER,
-  EVAS_VG_JOIN_ROUND,
-  EVAS_VG_JOIN_BEVEL,
-  EVAS_VG_JOIN_LAST
-} Evas_VG_Join;
 
 typedef enum _Evas_VG_Gradient_Spread
 {

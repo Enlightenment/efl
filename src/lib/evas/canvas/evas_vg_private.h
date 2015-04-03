@@ -22,7 +22,7 @@ struct _Evas_VG_Container_Data
 };
 
 Eina_Bool
-evas_vg_path_dup(Evas_VG_Path_Command **out_cmd, double **out_pts,
-                 const Evas_VG_Path_Command *in_cmd, const double *in_pts);
+efl_geometry_path_dup(Efl_Geometry_Path_Command **out_cmd, double **out_pts,
+                      const Efl_Geometry_Path_Command *in_cmd, const double *in_pts);
 
 #endif

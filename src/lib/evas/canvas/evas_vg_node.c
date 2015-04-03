@@ -264,4 +264,12 @@ _evas_vg_node_lower(Eo *obj, Evas_VG_Node_Data *pd EINA_UNUSED)
    eo_error_set(obj);
 }
 
+Eina_Bool
+_evas_vg_node_original_bound_get(Eo *obj,
+                                 Evas_VG_Node_Data *pd,
+                                 Eina_Rectangle *r)
+{
+   return EINA_FALSE;
+}
+
 #include "evas_vg_node.eo.c"

@@ -327,4 +327,9 @@ _evas_vg_efl_file_file_get(Eo *obj, Evas_VG_Data *pd,
 {
 }
 
+void
+_evas_vg_size_get(Eo *obj, Evas_VG_Data *pd, unsigned int *w, unsigned int *h)
+{
+}
+
 #include "evas_vg.eo.c"
