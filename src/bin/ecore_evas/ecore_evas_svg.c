@@ -157,13 +157,13 @@ main(int argc, char *argv[])
 
 
    r = eo_add(EVAS_RECTANGLE_CLASS, e,
-              evas_obj_color_set(color[0], color[1], color[2], alpha ? 0 : 255),
-              evas_obj_visibility_set(EINA_TRUE));
+              efl_gfx_color_set(color[0], color[1], color[2], alpha ? 0 : 255),
+              efl_gfx_visibility_set(EINA_TRUE));
    ecore_evas_object_associate(ee, r, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
 
    vg = eo_add(EVAS_VG_CLASS, e,
                efl_file_set(argv[arg_index], NULL),
-               evas_obj_visibility_set(EINA_TRUE));
+               efl_gfx_visibility_set(EINA_TRUE));
    ecore_evas_object_associate(ee, vg, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
 
    if (display)
