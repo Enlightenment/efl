@@ -136,7 +136,7 @@ _ector_renderer_generic_shape_efl_gfx_shape_stroke_dash_set(Eo *obj EINA_UNUSED,
      }
 
    tmp = realloc(pd->stroke.dash, length * sizeof (Efl_Gfx_Dash));
-   if (!tmp) return ;
+   if (!tmp && length) return ;
    memcpy(tmp, dash, length * sizeof (Efl_Gfx_Dash));
 
    pd->stroke.dash = tmp;
