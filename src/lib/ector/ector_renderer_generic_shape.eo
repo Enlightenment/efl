@@ -39,7 +39,7 @@ class Ector.Renderer.Generic.Shape (Ector.Renderer.Generic.Base, Efl.Graphics.Sh
       Efl.Graphics.Shape.stroke_dash;
       Efl.Graphics.Shape.stroke_cap;
       Efl.Graphics.Shape.stroke_join;
-      Efl.Graphics.Shape.path_set;
+      Efl.Graphics.Shape.path;
       Eo.Base.constructor;
       Eo.Base.destructor;
    }

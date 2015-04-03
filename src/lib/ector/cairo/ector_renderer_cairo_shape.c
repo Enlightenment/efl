@@ -180,20 +180,16 @@ _ector_renderer_cairo_shape_ector_renderer_cairo_base_fill(Eo *obj, Ector_Render
    // I need to read SVG specification and see how to map that with cairo.
 }
 
-static Eina_Bool
-_ector_renderer_cairo_shape_efl_graphics_shape_path_set(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd,
-                                                        const Efl_Graphics_Path_Command *op, const double *points)
+static void
+_ector_renderer_cairo_shape_efl_gfx_shape_path_set(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd,
+                                                   const Efl_Gfx_Path_Command *op, const double *points)
 {
-   Eina_Bool r;
-
-   USE(obj, cairo_path_destroy, EINA_FALSE);
+   USE(obj, cairo_path_destroy, );
 
    if (pd->path) cairo_path_destroy(pd->path);
    pd->path = NULL;
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, r = efl_graphics_shape_path_set(op, points));
-
-   return r;
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, efl_graphics_shape_path_set(op, points));
 }
 
 

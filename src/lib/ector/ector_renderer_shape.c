@@ -183,7 +183,7 @@ _ector_renderer_generic_shape_efl_graphics_shape_stroke_join_get(Eo *obj EINA_UN
    return pd->stroke.join;
 }
 
-static Eina_Bool
+static void
 _ector_renderer_generic_shape_efl_graphics_shape_path_set(Eo *obj EINA_UNUSED,
                                                           Ector_Renderer_Generic_Shape_Data *pd,
                                                           const Efl_Graphics_Path_Command *cmd,
@@ -194,7 +194,17 @@ _ector_renderer_generic_shape_efl_graphics_shape_path_set(Eo *obj EINA_UNUSED,
    free(pd->path.pts);
    pd->path.pts = NULL;
 
-   return efl_graphics_path_dup(&pd->path.cmd, &pd->path.pts, cmd, points);
+   efl_graphics_path_dup(&pd->path.cmd, &pd->path.pts, cmd, points);
+}
+
+void
+_ector_renderer_generic_shape_efl_graphics_shape_path_get(Eo *obj EINA_UNUSED,
+                                                          Ector_Renderer_Generic_Shape_Data *pd,
+                                                          const Efl_Graphics_Path_Command **op,
+                                                          const double **points)
+{
+   if (op) *op = pd->path.cmd;
+   if (points) *points = pd->path.pts;
 }
 
 static void

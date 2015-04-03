@@ -69,13 +69,14 @@ interface Efl.Graphics.Shape
 	    Efl_Graphics_Join j;
 	 }
       }
-   }
-   methods {
-      path_set {
-         return: bool;
-	 params {
-	    @in const(Efl_Graphics_Path_Command) *op;
-	    @in const(double) *points;
+      path {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    const(Efl_Graphics_Path_Command) *op;
+	    const(double) *points;
 	 }
       }
    }
