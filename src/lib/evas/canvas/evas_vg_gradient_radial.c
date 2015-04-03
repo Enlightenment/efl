@@ -127,6 +127,14 @@ _efl_vg_gradient_radial_eo_base_destructor(Eo *obj,
 static Eina_Bool
 _efl_vg_gradient_radial_efl_vg_base_bound_get(Eo *obj, Efl_VG_Gradient_Radial_Data *pd, Eina_Rectangle *r)
 {
+   Efl_VG_Base_Data *nd;
+
+   nd = eo_data_scope_get(obj, EFL_VG_BASE_CLASS);
+   EINA_RECTANGLE_SET(r,
+                      nd->x + pd->center.x - pd->radius,
+                      nd->y + pd->center.y - pd->radius,
+                      pd->radius * 2, pd->radius * 2);
+   return EINA_TRUE;
 }
 
 EAPI void
