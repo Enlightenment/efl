@@ -124,10 +124,13 @@ _ector_renderer_generic_base_quality_get(Eo *obj EINA_UNUSED,
 }
 
 static Eina_Bool
-_ector_renderer_generic_base_prepare(Eo *obj, Ector_Renderer_Generic_Base_Data *pd)
+_ector_renderer_generic_base_prepare(Eo *obj EINA_UNUSED,
+                                     Ector_Renderer_Generic_Base_Data *pd)
 {
    if (pd->mask)
      eo_do(pd->mask, ector_renderer_prepare());
+
+   return EINA_TRUE;
 }
 
 #include "ector_renderer_generic_base.eo.c"
