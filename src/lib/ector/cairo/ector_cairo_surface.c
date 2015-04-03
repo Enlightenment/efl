@@ -42,6 +42,12 @@ _ector_cairo_surface_symbol_get(Eo *obj EINA_UNUSED,
 #undef LOAD
      }
 
+   if (!_cairo_so)
+     {
+        ERR("Couldn't find cairo library. Please make sure that your system can locate it.");
+        return NULL;
+     }
+
    return eina_module_symbol_get(_cairo_so, name);
 }
 
