@@ -220,6 +220,23 @@ _ector_renderer_cairo_shape_ector_renderer_cairo_base_fill(Eo *obj EINA_UNUSED,
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_ector_renderer_cairo_shape_ector_renderer_generic_base_bounds_get(Eo *obj,
+                                                                   Ector_Renderer_Cairo_Shape_Data *pd EINA_UNUSED,
+                                                                   Eina_Rectangle *r)
+{
+   Ector_Renderer_Cairo_Base_Data *bd;
+
+   // FIXME: It should be possible to actually ask cairo about that
+   eo_do(obj, efl_gfx_shape_bounding_box_get(r));
+
+   bd = eo_data_scope_get(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS);
+   r->x += bd->generic->origin.x;
+   r->y += bd->generic->origin.y;
+
+   return EINA_TRUE;
+}
+
 void
 _ector_renderer_cairo_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
