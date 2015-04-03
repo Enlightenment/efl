@@ -722,7 +722,7 @@ _efl_gfx_shape_append_rect(Eo *obj, Efl_Gfx_Shape_Data *pd,
    _efl_gfx_shape_append_line_to(obj, pd, x + rx, y + h);
    // Bottom left corner
    _efl_gfx_shape_append_arc_to(obj, pd, x, y + h - ry, rx, ry, 0, EINA_FALSE, EINA_TRUE);
-   _efl_gfx_shape_append_line_to(obj, pd, x, y - ry);
+   _efl_gfx_shape_append_line_to(obj, pd, x, y + ry);
 }
 
 static void
