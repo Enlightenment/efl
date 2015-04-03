@@ -452,8 +452,8 @@ efl_graphics_path_append_circle(Efl_Graphics_Path_Command **commands, double **p
                                 double x, double y, double radius)
 {
    efl_graphics_path_append_move_to(commands, points, x, y - radius);
-   efl_graphics_path_append_arc_to(commands, points, x + radius, y, radius, radius, 0, EINA_FALSE, EINA_FALSE);
-   efl_graphics_path_append_arc_to(commands, points, x, y + radius, radius, radius, 0, EINA_FALSE, EINA_FALSE);
    efl_graphics_path_append_arc_to(commands, points, x - radius, y, radius, radius, 0, EINA_FALSE, EINA_FALSE);
+   efl_graphics_path_append_arc_to(commands, points, x, y + radius, radius, radius, 0, EINA_FALSE, EINA_FALSE);
+   efl_graphics_path_append_arc_to(commands, points, x + radius, y, radius, radius, 0, EINA_FALSE, EINA_FALSE);
    efl_graphics_path_append_arc_to(commands, points, x, y - radius, radius, radius, 0, EINA_FALSE, EINA_FALSE);
 }
