@@ -5070,6 +5070,8 @@ _ector_cairo_software_surface_surface_set(Eo *obj, Ector_Cairo_Software_Surface_
    pd->height = height;
 
  end:
+   evas_common_cpu_end_opt();
+
    eo_do(obj, ector_cairo_surface_context_set(pd->ctx));
 }
 
