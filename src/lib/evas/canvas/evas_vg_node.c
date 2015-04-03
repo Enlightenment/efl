@@ -2,6 +2,7 @@
 #include "evas_private.h"
 
 #include "evas_vg_private.h"
+#include "efl_vg_root_node.eo.h"
 
 #include <string.h>
 #include <math.h>
@@ -407,18 +408,114 @@ _efl_vg_base_efl_gfx_stack_lower(Eo *obj, Efl_VG_Base_Data *pd EINA_UNUSED)
    eo_error_set(obj);
 }
 
-static Efl_Gfx_Stack *
-_efl_vg_base_efl_gfx_stack_below_get(Eo *obj EINA_UNUSED, Efl_VG_Base_Data *pd EINA_UNUSED)
+static Eo *
+_efl_vg_base_root_parent_get(Eo *obj)
 {
-   // Actually a VG base node won't have any children so nothing stacked below it.
-   return NULL;
+   Eo *parent;
+
+   if (eo_isa(obj, EFL_VG_ROOT_NODE_CLASS))
+     return obj;
+
+   eo_do(obj, parent = eo_parent_get());
+
+   if (!parent) return NULL;
+   return _efl_vg_base_root_parent_get(parent);
+}
+
+static void
+_efl_vg_base_walk_down_at(Eo *root, Eina_Array *a, Eina_Rectangle *r)
+{
+   Eina_Rectangle bound;
+
+   eo_do(root, efl_vg_bound_get(&bound));
+   if (!eina_rectangles_intersect(&bound, r)) return ;
+
+   eina_array_push(a, root);
+
+   if (eo_isa(root, EFL_VG_CONTAINER_CLASS))
+     {
+        Efl_VG_Container_Data *cd;
+        Eina_List *l;
+        Eo *child;
+
+        cd = eo_data_scope_get(root, EFL_VG_CONTAINER_CLASS);
+        EINA_LIST_FOREACH(cd->children, l, child)
+          _efl_vg_base_walk_down_at(child, a, r);
+     }
+}
+
+static void
+_efl_vg_base_object_at(Eo *obj, Eina_Array *a, Eina_Rectangle *r)
+{
+   Eo *root;
+
+   root = _efl_vg_base_root_parent_get(obj);
+   if (!root) return ;
+
+   _efl_vg_base_walk_down_at(root, a, r);
 }
 
 static Efl_Gfx_Stack *
-_efl_vg_base_efl_gfx_stack_above_get(Eo *obj, Efl_VG_Base_Data *pd)
+_efl_vg_base_efl_gfx_stack_below_get(Eo *obj, Efl_VG_Base_Data *pd EINA_UNUSED)
 {
-   // FIXME bound get every child of my parent and go up until vg root
-   return NULL;
+   Eina_Rectangle r;
+   Eina_Array a;
+   Eo *current;
+   Eo *below = NULL;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
+   eo_do(obj, efl_vg_bound_get(&r));
+
+   eina_array_step_set(&a, sizeof (Eina_Array), 8);
+
+   _efl_vg_base_object_at(obj, &a, &r);
+
+   EINA_ARRAY_ITER_NEXT(&a, i, current, iterator)
+     if (current == obj)
+       break;
+
+   if (current == obj)
+     {
+        i++;
+        if (i < eina_array_count(&a))
+          below = eina_array_data_get(&a, i);
+     }
+
+   eina_array_flush(&a);
+
+   return below;
+}
+
+static Efl_Gfx_Stack *
+_efl_vg_base_efl_gfx_stack_above_get(Eo *obj, Efl_VG_Base_Data *pd EINA_UNUSED)
+{
+   Eina_Rectangle r;
+   Eina_Array a;
+   Eo *current;
+   Eo *above = NULL;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
+   eo_do(obj, efl_vg_bound_get(&r));
+
+   eina_array_step_set(&a, sizeof (Eina_Array), 8);
+
+   _efl_vg_base_object_at(obj, &a, &r);
+
+   EINA_ARRAY_ITER_NEXT(&a, i, current, iterator)
+     if (current == obj)
+       break;
+
+   if (current == obj)
+     {
+        if (i > 0)
+          above = eina_array_data_get(&a, i - 1);
+     }
+
+   eina_array_flush(&a);
+
+   return above;
 }
 
 static Eina_Bool
