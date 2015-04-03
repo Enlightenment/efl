@@ -36,6 +36,8 @@ extern int _ector_log_dom_global;
 #endif /* ifdef CRI */
 #define CRI(...) EINA_LOG_DOM_CRIT(_ector_log_dom_global, __VA_ARGS__)
 
+/* The following macro are internal to Ector only at this stage */
+
 typedef unsigned char DATA8;
 typedef unsigned short DATA16;
 
@@ -62,25 +64,6 @@ typedef unsigned short DATA16;
 
 #define ARGB_JOIN(a,r,g,b) \
   (((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
-
-static inline void
-ector_color_argb_premul(int a, int *r, int *g, int *b)
-{
-   a++;
-   if (r) { *r = (a * *r) >> 8; }
-   if (g) { *g = (a * *g) >> 8; }
-   if (b) { *b = (a * *b) >> 8; }
-}
-
-static inline void
-ector_color_argb_unpremul(int a, int *r, int *g, int *b)
-{
-   if (!a) return;
-   if (r) { *r = (255 * *r) / a; }
-   if (g) { *g = (255 * *g) / a; }
-   if (b) { *b = (255 * *b) / a; }
-}
-
 
 static inline void
 _ector_renderer_replace(Ector_Renderer **d, const Ector_Renderer *s)
