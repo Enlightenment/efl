@@ -174,6 +174,7 @@ EAPI int ector_shutdown(void);
 
 #include "ector_surface.h"
 #include "ector_renderer.h"
+#include "ector_util.h"
 
 #endif
 

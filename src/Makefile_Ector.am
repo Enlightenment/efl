@@ -40,6 +40,7 @@ lib_LTLIBRARIES += lib/ector/libector.la
 installed_ectormainheadersdir = $(includedir)/ector-@VMAJ@
 dist_installed_ectormainheaders_DATA = \
 lib/ector/Ector.h \
+lib/ector/ector_util.h \
 lib/ector/cairo/Ector_Cairo.h \
 lib/ector/software/Ector_Software.h
 
