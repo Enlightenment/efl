@@ -5,7 +5,8 @@ class Ector.Renderer.Cairo.Gradient_Radial (Ector.Renderer.Cairo.Base, Ector.Ren
    implements {
       Ector.Renderer.Generic.Base.prepare;
       Ector.Renderer.Generic.Base.draw;
-      Ector.Renderer.Generic.Base.done;
       Ector.Renderer.Cairo.Base.fill;
+      Eo.Base.destructor;
+      Efl.Graphics.Gradient.stop.set;
    }
 }
