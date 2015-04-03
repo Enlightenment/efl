@@ -14,3 +14,4 @@
 #include "interfaces/efl_graphics_shape.eo.c"
 #include "interfaces/efl_graphics_gradient.eo.c"
 #include "interfaces/efl_graphics_gradient_linear.eo.c"
+#include "interfaces/efl_graphics_gradient_radial.eo.c"

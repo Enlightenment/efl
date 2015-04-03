@@ -1,0 +1,35 @@
+interface Efl.Graphics.Gradient_Radial (Efl.Graphics.Gradient)
+{
+   legacy_prefix: null;
+   properties {
+      center {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double x;
+	    double y;
+	 }
+      }
+      radius {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double r;
+	 }
+      }
+      focal {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double x;
+	    double y;
+	 }
+      }
+   }
+}
