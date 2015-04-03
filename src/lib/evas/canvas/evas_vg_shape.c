@@ -34,7 +34,7 @@ _efl_vg_shape_efl_vg_base_bounds_get(Eo *obj,
                                     Eina_Rectangle *r)
 {
    // FIXME: Use the renderer bounding box when it has been created instead of an estimation
-   eo_do(obj, efl_gfx_shape_bounding_box_get(r));
+   eo_do(obj, efl_gfx_shape_bounds_get(r));
 }
 
 static void

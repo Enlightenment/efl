@@ -228,7 +228,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_bounds_get(Eo *obj,
    Ector_Renderer_Cairo_Base_Data *bd;
 
    // FIXME: It should be possible to actually ask cairo about that
-   eo_do(obj, efl_gfx_shape_bounding_box_get(r));
+   eo_do(obj, efl_gfx_shape_bounds_get(r));
 
    bd = eo_data_scope_get(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS);
    r->x += bd->generic->origin.x;

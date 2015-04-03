@@ -189,7 +189,7 @@ mixin Efl.Gfx.Shape
           @in Eo *dup_from; /*@ Shape object from where data will be copied.*/
         }
       }
-      bounding_box_get {
+      bounds_get {
         /*@
           Compute and return the bounding box of the currently set path
 
