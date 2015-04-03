@@ -319,7 +319,6 @@ _efl_vg_shape_eo_base_constructor(Eo *obj, Efl_VG_Shape_Data *pd)
    pd->stroke.cap = EFL_GFX_CAP_BUTT;
    pd->stroke.join = EFL_GFX_JOIN_MITER;
    pd->stroke.scale = 1;
-   pd->stroke.a = 1;
    pd->stroke.centered = 0.5;
 
    nd = eo_data_scope_get(obj, EFL_VG_BASE_CLASS);
