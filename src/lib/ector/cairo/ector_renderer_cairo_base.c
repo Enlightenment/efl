@@ -66,6 +66,11 @@ static void (*cairo_set_source_rgba)(cairo_t *cr,
 static void (*cairo_set_operator)(cairo_t *cr, cairo_operator_t op) = NULL;
 static void (*cairo_matrix_init_identity)(cairo_matrix_t *matrix) = NULL;
 
+static void (*cairo_new_path)(cairo_t *cr) = NULL;
+static void (*cairo_rectangle)(cairo_t *cr, double x, double y, double width, double height) = NULL;
+static void (*cairo_clip)(cairo_t *cr) = NULL;
+static void (*cairo_device_to_user)(cairo_t *cr, double *x, double *y) = NULL;
+
 typedef struct _Ector_Renderer_Cairo_Base_Data Ector_Renderer_Cairo_Base_Data;
 struct _Ector_Renderer_Cairo_Base_Data
 {
@@ -175,6 +180,27 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
    pd->parent->current.y = pd->generic->origin.y;
 
    cairo_set_source_rgba(pd->parent->cairo, r, g, b, a);
+
+   USE(obj, cairo_new_path, EINA_FALSE);
+   USE(obj, cairo_rectangle, EINA_FALSE);
+   USE(obj, cairo_clip, EINA_FALSE);
+   USE(obj, cairo_device_to_user, EINA_FALSE);
+   if (clips)
+     {
+        int clip_count =  eina_array_count(clips);
+        int i=0;
+        for (; i < clip_count ; i++)
+          {
+             Eina_Rectangle *clip = (Eina_Rectangle *)eina_array_data_get(clips, i);
+             double x = (double)clip->x;
+             double y = (double)clip->y;
+
+             cairo_new_path(pd->parent->cairo);
+             cairo_device_to_user(pd->parent->cairo, &x, &y);
+             cairo_rectangle(pd->parent->cairo, x, y, clip->w, clip->h);
+          }
+        cairo_clip(pd->parent->cairo);
+     }
 
    return EINA_TRUE;
 }
