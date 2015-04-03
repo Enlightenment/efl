@@ -1,4 +1,4 @@
-class Ector.Renderer.Cairo.Gradient_Linear (Ector.Renderer.Cairo.Base, Ector.Renderer.Generic.Gradient_Linear)
+class Ector.Renderer.Cairo.Gradient_Linear (Ector.Renderer.Generic.Gradient_Linear, Ector.Renderer.Cairo.Base)
 {
    eo_prefix: ector_renderer_cairo_gradient_linear;
    legacy_prefix: null;

@@ -51,13 +51,6 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_R
    const Efl_Gfx_Path_Command *cmds = NULL;
    const double *pts = NULL;
 
-   // FIXME: shouldn't that be part of the shape generic implementation ?
-   if (pd->shape->fill)
-     eo_do(pd->shape->fill, ector_renderer_prepare());
-   if (pd->shape->stroke.fill)
-     eo_do(pd->shape->stroke.fill, ector_renderer_prepare());
-   if (pd->shape->stroke.marker)
-     eo_do(pd->shape->stroke.marker, ector_renderer_prepare());
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, ector_renderer_prepare());
 
    // shouldn't that be moved to the cairo base object
@@ -178,6 +171,8 @@ _ector_renderer_cairo_shape_ector_renderer_cairo_base_fill(Eo *obj, Ector_Render
 {
    // FIXME: let's find out how to fill a shape with a shape later.
    // I need to read SVG specification and see how to map that with cairo.
+   ERR("fill with shape not implemented\n");
+   return EINA_FALSE;
 }
 
 static void
