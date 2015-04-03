@@ -3832,7 +3832,10 @@ static Evas_Func func =
      NULL, // eng_drawable_free
      NULL, // eng_drawable_size_get
      NULL, // eng_image_drawable_set
-     NULL, // eng_drawable_render_scene
+     NULL, // eng_drawable_scene_render
+     NULL, // eng_drawable_scene_render_to_texture
+     NULL, // eng_drawable_texture_color_pick_id_get
+     NULL, // eng_drawable_texture_pixel_color_get
      NULL, // eng_texture_new
      NULL, // eng_texture_free
      NULL, // eng_texture_data_set
