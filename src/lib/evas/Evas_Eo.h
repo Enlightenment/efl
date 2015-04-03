@@ -931,3 +931,4 @@ typedef enum _Evas_VG_Gradient_Spread
 #include "canvas/evas_vg_gradient.eo.h"
 #include "canvas/evas_vg_gradient_linear.eo.h"
 #include "canvas/evas_vg_gradient_radial.eo.h"
+#include "canvas/evas_vg_image.eo.h"

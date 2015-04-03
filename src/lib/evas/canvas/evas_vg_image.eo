@@ -1,0 +1,32 @@
+class Evas.VG_Image (Evas.VG_Node, Efl.File)
+{
+   eo_prefix: evas_vg_image;
+   legacy_prefix: null;
+   properties {
+      position {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    int x;
+	    int y;
+	 }
+      }
+      size {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    uint w;
+	    uint h;
+	 }
+      }
+      // FIXME: add aspect ratio following SVG specification
+   }
+   implements {
+      Efl.File.file.set;
+      Efl.File.file.get;
+   }
+}

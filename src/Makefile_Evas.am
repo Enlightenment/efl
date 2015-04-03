@@ -39,7 +39,8 @@ evas_eolian_files = \
 	lib/evas/canvas/evas_vg_root_node.eo \
 	lib/evas/canvas/evas_vg_gradient.eo \
 	lib/evas/canvas/evas_vg_gradient_radial.eo \
-	lib/evas/canvas/evas_vg_gradient_linear.eo
+	lib/evas/canvas/evas_vg_gradient_linear.eo \
+	lib/evas/canvas/evas_vg_image.eo
 
 evas_eolian_c = $(evas_eolian_files:%.eo=%.eo.c)
 evas_eolian_h = $(evas_eolian_files:%.eo=%.eo.h) \
@@ -219,7 +220,8 @@ lib/evas/canvas/evas_vg_root_node.c \
 lib/evas/canvas/evas_vg_gradient.c \
 lib/evas/canvas/evas_vg_gradient_linear.c \
 lib/evas/canvas/evas_vg_gradient_radial.c \
-lib/evas/canvas/evas_vg_utils.c
+lib/evas/canvas/evas_vg_utils.c \
+lib/evas/canvas/evas_vg_image.c
 
 # Engine
 lib_evas_libevas_la_SOURCES += \
