@@ -262,6 +262,7 @@ extern "C" {
 #include <eina_value_util.h>
 #include <eina_cow.h>
 #include <eina_thread_queue.h>
+#include <eina_matrix.h>
 
 #ifdef __cplusplus
 }
