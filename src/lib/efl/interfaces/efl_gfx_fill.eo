@@ -1,0 +1,72 @@
+interface Efl.Gfx.Fill {
+   legacy_prefix: null;
+   properties {
+      fill_spread {
+         set {
+            /*@
+            Sets the tiling mode for the given evas image object's fill.
+            EFL_GFX_FILL_RESTRICT, or EFL_GFX_FILL_PAD. */
+         }
+         get {
+            /*@
+            Retrieves the spread (tiling mode) for the given image object's
+            fill.
+
+            @return  The current spread mode of the image object. */
+         }
+         values {
+            Efl_Gfx_Fill_Spread spread; /*@ One of EVAS_TEXTURE_REFLECT, EVAS_TEXTURE_REPEAT, */
+         }
+      }
+      fill {
+         set {
+            /*@
+            Set how to fill an image object's drawing rectangle given the
+            (real) image bound to it.
+
+            Note that if @p w or @p h are smaller than the dimensions of
+            @p obj, the displayed image will be @b tiled around the object's
+            area. To have only one copy of the bound image drawn, @p x and @p y
+            must be 0 and @p w and @p h need to be the exact width and height
+            of the image object itself, respectively.
+
+            See the following image to better understand the effects of this
+            call. On this diagram, both image object and original image source
+            have @c a x @c a dimensions and the image itself is a circle, with
+            empty space around it:
+
+            @image html image-fill.png
+            @image rtf image-fill.png
+            @image latex image-fill.eps
+
+            @warning The default values for the fill parameters are @p x = 0,
+            @p y = 0, @p w = 0 and @p h = 0. Thus, if you're not using the
+            evas_object_image_filled_add() helper and want your image
+            displayed, you'll have to set valid values with this function on
+            your object.
+
+            @note evas_object_image_filled_set() is a helper function which
+            will @b override the values set here automatically, for you, in a
+            given way. */
+         }
+         get {
+            /*@
+            Retrieve how an image object is to fill its drawing rectangle,
+            given the (real) image bound to it.
+
+            @note Use @c NULL pointers on the fill components you're not
+            interested in: they'll be ignored by the function.
+
+            See @ref evas_object_image_fill_set() for more details. */
+         }
+         values {
+            int x; /*@ The x coordinate (from the top left corner of the bound
+            image) to start drawing from. */
+            int y; /*@ The y coordinate (from the top left corner of the bound
+            image) to start drawing from. */
+            int w; /*@ The width the bound image will be displayed at. */
+            int h; /*@ The height the bound image will be displayed at. */
+         }
+      }
+   }
+}

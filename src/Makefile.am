@@ -4,6 +4,7 @@ BUILT_SOURCES =
 
 EOLIAN_FLAGS = -I$(srcdir)\
 	       -I$(srcdir)/lib/eo \
+	       -I$(srcdir)/lib/ector \
 	       -I$(srcdir)/lib/evas/canvas \
 	       -I$(srcdir)/lib/edje \
 	       -I$(srcdir)/lib/efl/interfaces \
@@ -34,6 +35,7 @@ include Makefile_Efl.am
 include Makefile_Emile.am
 include Makefile_Eet.am
 include Makefile_Eolian.am
+include Makefile_Ector.am
 include Makefile_Evas.am
 include Makefile_Ecore.am
 include Makefile_Ecore_Con.am

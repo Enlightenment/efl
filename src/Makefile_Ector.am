@@ -1,0 +1,138 @@
+
+### Library
+ector_eolian_files = \
+	lib/ector/ector_generic_surface.eo \
+	lib/ector/ector_renderer_generic_base.eo \
+	lib/ector/ector_renderer_generic_shape.eo \
+	lib/ector/ector_renderer_generic_gradient.eo \
+	lib/ector/ector_renderer_generic_gradient_radial.eo \
+	lib/ector/ector_renderer_generic_gradient_linear.eo
+
+# Handle cairo backend
+ector_eolian_files += \
+	lib/ector/cairo/ector_cairo_surface.eo \
+	lib/ector/cairo/ector_renderer_cairo_base.eo \
+	lib/ector/cairo/ector_renderer_cairo_shape.eo \
+	lib/ector/cairo/ector_renderer_cairo_gradient_linear.eo \
+	lib/ector/cairo/ector_renderer_cairo_gradient_radial.eo
+
+# Handle FreeType rasterizer
+ector_eolian_files += \
+	lib/ector/software/ector_software_surface.eo \
+	lib/ector/software/ector_renderer_software_base.eo \
+	lib/ector/software/ector_renderer_software_shape.eo \
+	lib/ector/software/ector_renderer_software_gradient_radial.eo \
+	lib/ector/software/ector_renderer_software_gradient_linear.eo
+
+ector_eolian_c = $(ector_eolian_files:%.eo=%.eo.c)
+ector_eolian_h = $(ector_eolian_files:%.eo=%.eo.h)
+
+BUILT_SOURCES += \
+	$(ector_eolian_c) \
+	$(ector_eolian_h)
+
+CLEANFILES += \
+	$(ector_eolian_c) \
+	$(ector_eolian_h)
+
+ectoreolianfilesdir = $(datadir)/eolian/include/ector-@VMAJ@
+ectoreolianfiles_DATA = $(ector_eolian_files)
+
+EXTRA_DIST += $(ectoreolianfiles_DATA)
+
+lib_LTLIBRARIES += lib/ector/libector.la
+
+installed_ectormainheadersdir = $(includedir)/ector-@VMAJ@
+dist_installed_ectormainheaders_DATA = \
+lib/ector/Ector.h \
+lib/ector/ector_util.h \
+lib/ector/ector_surface.h \
+lib/ector/ector_renderer.h \
+lib/ector/cairo/Ector_Cairo.h \
+lib/ector/software/Ector_Software.h
+
+# And the generic implementation
+
+lib_ector_libector_la_SOURCES = \
+lib/ector/ector_main.c \
+lib/ector/ector_surface.c \
+lib/ector/ector_renderer_shape.c \
+lib/ector/ector_renderer_base.c \
+lib/ector/ector_renderer_gradient.c \
+lib/ector/ector_renderer_gradient_radial.c \
+lib/ector/ector_renderer_gradient_linear.c
+
+# And now the cairo backend
+lib_ector_libector_la_SOURCES += \
+lib/ector/cairo/ector_renderer_cairo_gradient_linear.c \
+lib/ector/cairo/ector_renderer_cairo_gradient_radial.c \
+lib/ector/cairo/ector_renderer_cairo_shape.c \
+lib/ector/cairo/ector_renderer_cairo_base.c \
+lib/ector/cairo/ector_cairo_surface.c
+
+# And the Freetype rasterizer
+
+lib_ector_libector_la_SOURCES += \
+lib/ector/software/ector_renderer_software_gradient_linear.c \
+lib/ector/software/ector_renderer_software_gradient_radial.c \
+lib/ector/software/ector_renderer_software_shape.c \
+lib/ector/software/ector_software_gradient.c \
+lib/ector/software/ector_software_rasterizer.c \
+lib/ector/software/ector_software_surface.c \
+lib/ector/software/sw_ft_math.c \
+lib/ector/software/sw_ft_raster.c \
+lib/ector/software/sw_ft_stroker.c
+
+lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/ector \
+-I$(top_builddir)/src/lib/ector/cairo \
+-I$(top_builddir)/src/lib/ector/software \
+@ECTOR_CFLAGS@ \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/ector\" \
+@VALGRIND_CFLAGS@
+
+lib_ector_libector_la_LIBADD = @ECTOR_LIBS@ @DL_LIBS@
+lib_ector_libector_la_DEPENDENCIES = @ECTOR_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
+lib_ector_libector_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/ector/ector_suite tests/ector/cxx_compile_test
+TESTS += tests/ector/ector_suite
+
+tests_ector_ector_suite_SOURCES = \
+tests/ector/ector_suite.c \
+tests/ector/ector_suite.h \
+tests/ector/ector_test_init.c
+
+tests_ector_cxx_compile_test_SOURCES = tests/ector/cxx_compile_test.cxx
+tests_ector_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECTOR_CFLAGS@
+tests_ector_cxx_compile_test_LDADD = @USE_ECTOR_LIBS@
+tests_ector_cxx_compile_test_DEPENDENCIES = @USE_ECTOR_INTERNAL_LIBS@
+
+
+tests_ector_ector_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_WD=\"`pwd`\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ector\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/ector\" \
+-DTESTS_BUILD_DIR=PACKAGE_BUILD_DIR \
+@CHECK_CFLAGS@ \
+@ECTOR_CFLAGS@
+tests_ector_ector_suite_LDADD = @CHECK_LIBS@ @USE_ECTOR_LIBS@
+tests_ector_ector_suite_DEPENDENCIES = @USE_ECTOR_INTERNAL_LIBS@
+
+endif
+
+EXTRA_DIST += \
+lib/ector/ector_private.h \
+lib/ector/cairo/ector_cairo_private.h \
+lib/ector/software/ector_blend_private.h \
+lib/ector/software/ector_software_private.h \
+lib/ector/software/sw_ft_math.h \
+lib/ector/software/sw_ft_raster.h \
+lib/ector/software/sw_ft_stroker.h \
+lib/ector/software/sw_ft_types.h

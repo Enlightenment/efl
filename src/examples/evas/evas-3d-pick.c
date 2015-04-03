@@ -199,15 +199,15 @@ main(void)
    /* Add evas objects. */
    background = eo_add(EVAS_RECTANGLE_CLASS, evas);
    eo_do(background,
-         evas_obj_color_set(0, 0, 0, 255),
-         evas_obj_size_set(WIDTH, HEIGHT),
-         evas_obj_visibility_set(EINA_TRUE));
+         efl_gfx_color_set(0, 0, 0, 255),
+         efl_gfx_size_set(WIDTH, HEIGHT),
+         efl_gfx_visible_set(EINA_TRUE));
 
    image = evas_object_image_filled_add(evas);
    eo_do(image,
          evas_obj_image_scene_set(scene),
-         evas_obj_size_set(WIDTH, HEIGHT),
-         evas_obj_visibility_set(EINA_TRUE));
+         efl_gfx_size_set(WIDTH, HEIGHT),
+         efl_gfx_visible_set(EINA_TRUE));
    evas_object_event_callback_add(image, EVAS_CALLBACK_MOUSE_DOWN,
                                   _on_mouse_down, NULL);
 

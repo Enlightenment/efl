@@ -70,20 +70,20 @@ example_complex_types()
    bg.color_set(255, 255, 255, 255);
    bg.position_set(0, 0);
    bg.size_set(500, 250);
-   bg.visibility_set(true);
+   bg.visible_set(true);
 
    efl::evas::grid grid(efl::eo::parent = canvas);
    grid.position_set(0, 0);
    grid.object_smart::color_set(0, 0, 0, 255);
    grid.size_set(5, 5);
-   grid.visibility_set(true);
+   grid.visible_set(true);
 
    efl::evas::text text1(efl::eo::parent = canvas);
    text1.style_set(EVAS_TEXT_STYLE_OUTLINE);
    text1.color_set(255, 0, 0, 255);
    text1.font_set("DejaVu", 32);
    text1.text_set("EFL++ Examples");
-   text1.visibility_set(true);
+   text1.visible_set(true);
    int t1w, t1h;
    text1.size_get(&t1w, &t1h);
    grid.pack(text1, 1, 1, t1w, t1h);
@@ -96,7 +96,7 @@ example_complex_types()
    std::stringstream ss;
    ss << "version " << EFL_VERSION_MAJOR << "." << EFL_VERSION_MINOR;
    text2.text_set(ss.str().c_str());
-   text2.visibility_set(true);
+   text2.visible_set(true);
    int t2w, t2h;
    text2.size_get(&t2w, &t2h);
 

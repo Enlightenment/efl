@@ -1,0 +1,18 @@
+abstract Ector.Renderer.Cairo.Base (Ector.Renderer.Generic.Base)
+{
+   legacy_prefix: null;
+   methods {
+      fill {
+         return: bool;
+      }
+   }
+   implements {
+      @virtual .fill;
+      Ector.Renderer.Generic.Base.prepare;
+      Ector.Renderer.Generic.Base.draw;
+      Ector.Renderer.Generic.Base.color.set;
+      Ector.Renderer.Generic.Base.color.get;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+   }
+}

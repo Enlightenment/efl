@@ -5,9 +5,6 @@
 # include <config.h>
 #endif
 
-#include <Eina.h>
-#include <eina_safety_checks.h>
-
 #include "Evas.h"
 
 #include "../file/evas_module.h"
@@ -488,6 +485,7 @@ OPAQUE_TYPE(Evas_Font_Instance); /* General type for RGBA_Font_Int */
 #define MAGIC_SMART                0x7c6977c5
 #define MAGIC_OBJ_SHAPE            0x747297f7
 #define MAGIC_OBJ_CONTAINER        0x71877776
+#define MAGIC_OBJ_VG               0x77817EE7
 #define MAGIC_OBJ_CUSTOM           0x7b7857ab
 #define MAGIC_EVAS_GL              0x77976718
 #define MAGIC_MAP                  0x7575177d
@@ -736,6 +734,7 @@ struct _Evas_Public_Data
    struct {
       Evas_Module *module;
       Evas_Func *func;
+      Ector_Surface *surface;
       struct {
          void *output;
 
@@ -1364,6 +1363,11 @@ struct _Evas_Func
    void  (*texture_filter_set)           (void *data, void *texture, Evas_3D_Texture_Filter min, Evas_3D_Texture_Filter mag);
    void  (*texture_filter_get)           (void *data, void *texture, Evas_3D_Texture_Filter *min, Evas_3D_Texture_Filter *mag);
    void  (*texture_image_set)            (void *data, void *texture, void *image);
+
+   Ector_Surface *(*ector_get)           (void *data);
+   void  (*ector_begin)                  (void *data, void *context, void *surface, int x, int y, Eina_Bool do_async);
+   void  (*ector_renderer_draw)          (void *data, void *context, void *surface, Ector_Renderer *r, Eina_Array *clips, Eina_Bool do_async);
+   void  (*ector_end)                    (void *data, void *context, void *surface, Eina_Bool do_async);
 };
 
 struct _Evas_Image_Save_Func
@@ -1698,7 +1702,7 @@ void _evas_3d_eet_file_free(void);
 
 /* Temporary save/load functions */
 void evas_common_load_model_from_file(Evas_3D_Mesh *model, const char *file);
-void evas_common_load_model_from_eina_file(Evas_3D_Mesh *model, Eina_File *file);
+void evas_common_load_model_from_eina_file(Evas_3D_Mesh *model, const Eina_File *file);
 void evas_common_save_model_to_file(Evas_3D_Mesh *model, const char *file, Evas_3D_Mesh_Frame *f);
 void evas_model_load_file_eet(Evas_3D_Mesh *mesh, Eina_File *file);
 void evas_model_load_file_md2(Evas_3D_Mesh *mesh, Eina_File *file);
@@ -1779,6 +1783,8 @@ void _evas_device_cleanup(Evas *e);
 Evas_Device *_evas_device_top_get(const Evas *e);
 void _evas_device_ref(Evas_Device *dev);
 void _evas_device_unref(Evas_Device *dev);
+
+Eina_Bool evas_vg_loader_svg(Evas_Object *vg, const Eina_File *f, const char *key EINA_UNUSED);
 
 extern Eina_Cow *evas_object_proxy_cow;
 extern Eina_Cow *evas_object_map_cow;

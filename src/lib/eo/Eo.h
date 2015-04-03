@@ -486,32 +486,32 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
 
 #define EO_HOOK_CALL_PREPARE(Hook, FuncName)                                \
      if (Hook)                                                          \
-       Hook(call.klass, call.obj, FuncName, call.func);
+       Hook(___call.klass, ___call.obj, FuncName, ___call.func);
 
 #define EO_HOOK_CALL_PREPAREV(Hook, FuncName, ...)                          \
      if (Hook)                                                          \
-       Hook(call.klass, call.obj, FuncName, call.func, __VA_ARGS__);
+       Hook(___call.klass, ___call.obj, FuncName, ___call.func, __VA_ARGS__);
 
 // cache OP id, get real fct and object data then do the call
 #define EO_FUNC_COMMON_OP(Name, DefRet)                                 \
-     Eo_Op_Call_Data call;                                              \
-     Eina_Bool is_main_loop = eina_main_loop_is();                      \
-     static Eo_Op op = EO_NOOP;                                         \
-     if (op == EO_NOOP)                                                 \
-       op = _eo_api_op_id_get((void*) Name, is_main_loop, __FILE__, __LINE__); \
-     if (!_eo_call_resolve(#Name, op, &call, is_main_loop, __FILE__, __LINE__)) return DefRet; \
-     _Eo_##Name##_func _func_ = (_Eo_##Name##_func) call.func;        \
+     Eo_Op_Call_Data ___call;                                           \
+     Eina_Bool ___is_main_loop = eina_main_loop_is();                   \
+     static Eo_Op ___op = EO_NOOP;                                      \
+     if (___op == EO_NOOP)                                              \
+       ___op = _eo_api_op_id_get((void*) Name, ___is_main_loop, __FILE__, __LINE__); \
+     if (!_eo_call_resolve(#Name, ___op, &___call, ___is_main_loop, __FILE__, __LINE__)) return DefRet; \
+     _Eo_##Name##_func _func_ = (_Eo_##Name##_func) ___call.func;       \
 
 // to define an EAPI function
-#define EO_FUNC_BODY(Name, Ret, DefRet)                                \
+#define EO_FUNC_BODY(Name, Ret, DefRet)                                 \
   Ret                                                                   \
   Name(void)                                                            \
   {                                                                     \
-     typedef Ret (*_Eo_##Name##_func)(Eo *, void *obj_data);           \
+     typedef Ret (*_Eo_##Name##_func)(Eo *, void *obj_data);            \
      Ret _r;                                                            \
-     EO_FUNC_COMMON_OP(Name, DefRet);                                  \
-     EO_HOOK_CALL_PREPARE(eo_hook_call_pre, #Name);                    \
-     _r = _func_(call.obj, call.data);                                  \
+     EO_FUNC_COMMON_OP(Name, DefRet);                                   \
+     EO_HOOK_CALL_PREPARE(eo_hook_call_pre, #Name);                     \
+     _r = _func_(___call.obj, ___call.data);                            \
      EO_HOOK_CALL_PREPARE(eo_hook_call_post, #Name);                    \
      return _r;                                                         \
   }
@@ -520,35 +520,35 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
   void									\
   Name(void)                                                            \
   {                                                                     \
-     typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data);          \
-     EO_FUNC_COMMON_OP(Name, );                                        \
-     EO_HOOK_CALL_PREPARE(eo_hook_call_pre, #Name);                          \
-     _func_(call.obj, call.data);                                       \
-     EO_HOOK_CALL_PREPARE(eo_hook_call_post, #Name);                         \
+     typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data);           \
+     EO_FUNC_COMMON_OP(Name, );                                         \
+     EO_HOOK_CALL_PREPARE(eo_hook_call_pre, #Name);                     \
+     _func_(___call.obj, ___call.data);                                 \
+     EO_HOOK_CALL_PREPARE(eo_hook_call_post, #Name);                    \
   }
 
-#define EO_FUNC_BODYV(Name, Ret, DefRet, Arguments, ...)               \
+#define EO_FUNC_BODYV(Name, Ret, DefRet, Arguments, ...)                \
   Ret                                                                   \
   Name(__VA_ARGS__)                                                     \
   {                                                                     \
      typedef Ret (*_Eo_##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
      Ret _r;                                                            \
-     EO_FUNC_COMMON_OP(Name, DefRet);                                  \
-     EO_HOOK_CALL_PREPAREV(eo_hook_call_pre, #Name, Arguments);              \
-     _r = _func_(call.obj, call.data, Arguments);                       \
-     EO_HOOK_CALL_PREPAREV(eo_hook_call_post, #Name, Arguments);             \
+     EO_FUNC_COMMON_OP(Name, DefRet);                                   \
+     EO_HOOK_CALL_PREPAREV(eo_hook_call_pre, #Name, Arguments);         \
+     _r = _func_(___call.obj, ___call.data, Arguments);                 \
+     EO_HOOK_CALL_PREPAREV(eo_hook_call_post, #Name, Arguments);        \
      return _r;                                                         \
   }
 
-#define EO_VOID_FUNC_BODYV(Name, Arguments, ...)                       \
+#define EO_VOID_FUNC_BODYV(Name, Arguments, ...)                        \
   void                                                                  \
   Name(__VA_ARGS__)                                                     \
   {                                                                     \
      typedef void (*_Eo_##Name##_func)(Eo *, void *obj_data, __VA_ARGS__); \
-     EO_FUNC_COMMON_OP(Name, );                                        \
-     EO_HOOK_CALL_PREPAREV(eo_hook_call_pre, #Name, Arguments);              \
-     _func_(call.obj, call.data, Arguments);                            \
-     EO_HOOK_CALL_PREPAREV(eo_hook_call_post, #Name, Arguments);             \
+     EO_FUNC_COMMON_OP(Name, );                                         \
+     EO_HOOK_CALL_PREPAREV(eo_hook_call_pre, #Name, Arguments);         \
+     _func_(___call.obj, ___call.data, Arguments);                      \
+     EO_HOOK_CALL_PREPAREV(eo_hook_call_post, #Name, Arguments);        \
   }
 
 // OP ID of an overriding function

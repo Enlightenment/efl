@@ -136,8 +136,8 @@ _on_canvas_resize(Ecore_Evas *ee)
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
 
    evas_object_resize(background, w, h);
-   eo_do(background, evas_obj_size_set(w, h));
-   eo_do(image, evas_obj_size_set(w, h));
+   eo_do(background, efl_gfx_size_set(w, h));
+   eo_do(image, efl_gfx_size_set(w, h));
 }
 
 static Eina_Bool

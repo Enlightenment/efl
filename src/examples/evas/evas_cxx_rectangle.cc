@@ -44,7 +44,7 @@ int main()
       rect.color_set(255, 0, 0, 255);
       rect.position_set(10, 10);
       rect.size_set(100, 100);
-      rect.visibility_set(true);
+      rect.visible_set(true);
       canvas.render();
    }
 

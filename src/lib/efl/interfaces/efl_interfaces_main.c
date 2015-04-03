@@ -10,3 +10,18 @@
 #include "interfaces/efl_player.eo.c"
 #include "interfaces/efl_text.eo.c"
 #include "interfaces/efl_text_properties.eo.c"
+
+#include "interfaces/efl_gfx_base.eo.c"
+#include "interfaces/efl_gfx_stack.eo.c"
+#include "interfaces/efl_gfx_fill.eo.c"
+#include "interfaces/efl_gfx_view.eo.c"
+
+#include "interfaces/efl_gfx_gradient_base.eo.c"
+#include "interfaces/efl_gfx_gradient_linear.eo.c"
+#include "interfaces/efl_gfx_gradient_radial.eo.c"
+
+EAPI const Eo_Event_Description _EFL_GFX_CHANGED =
+  EO_EVENT_DESCRIPTION("Graphics changed", "The visual representation of the object changed");
+
+EAPI const Eo_Event_Description _EFL_GFX_PATH_CHANGED =
+  EO_EVENT_DESCRIPTION("Graphics path changed", "The path of a shape object changed");

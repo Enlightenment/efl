@@ -31,7 +31,15 @@ evas_eolian_files = \
 	lib/evas/canvas/evas_3d_mesh.eo\
 	lib/evas/canvas/evas_3d_node.eo\
 	lib/evas/canvas/evas_3d_scene.eo\
-	lib/evas/canvas/evas_3d_object.eo
+	lib/evas/canvas/evas_3d_object.eo \
+	lib/evas/canvas/evas_vg.eo \
+	lib/evas/canvas/efl_vg_base.eo \
+	lib/evas/canvas/efl_vg_container.eo \
+	lib/evas/canvas/efl_vg_shape.eo \
+	lib/evas/canvas/efl_vg_root_node.eo \
+	lib/evas/canvas/efl_vg_gradient.eo \
+	lib/evas/canvas/efl_vg_gradient_radial.eo \
+	lib/evas/canvas/efl_vg_gradient_linear.eo
 
 evas_eolian_c = $(evas_eolian_files:%.eo=%.eo.c)
 evas_eolian_h = $(evas_eolian_files:%.eo=%.eo.h) \
@@ -76,7 +84,8 @@ lib/evas/include/evas_macros.h \
 lib/evas/include/evas_mmx.h \
 lib/evas/include/evas_common_private.h \
 lib/evas/include/evas_blend_ops.h \
-lib/evas/include/evas_filter.h
+lib/evas/include/evas_filter.h \
+lib/evas/canvas/evas_vg_private.h
 
 # Linebreak
 
@@ -176,6 +185,7 @@ lib/evas/file/evas_path.h
 lib_evas_libevas_la_SOURCES += \
 $(lib_evas_file_SOURCES)
 
+# Evas_3D
 noinst_HEADERS += \
 lib/evas/include/evas_3d_utils.h
 
@@ -200,6 +210,18 @@ modules/evas/model_savers/eet/evas_model_save_eet.c \
 modules/evas/model_savers/obj/evas_model_save_obj.c \
 modules/evas/model_savers/ply/evas_model_save_ply.c \
 lib/evas/canvas/evas_3d_eet.c
+
+# Evas_VG
+lib_evas_libevas_la_SOURCES += \
+lib/evas/canvas/evas_object_vg.c \
+lib/evas/canvas/evas_vg_node.c \
+lib/evas/canvas/evas_vg_container.c \
+lib/evas/canvas/evas_vg_root_node.c \
+lib/evas/canvas/evas_vg_gradient.c \
+lib/evas/canvas/evas_vg_gradient_linear.c \
+lib/evas/canvas/evas_vg_gradient_radial.c \
+lib/evas/canvas/evas_vg_utils.c \
+lib/evas/canvas/evas_vg_shape.c
 
 # Engine
 lib_evas_libevas_la_SOURCES += \
@@ -293,6 +315,9 @@ lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/file \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/static_libs/libunibreak \
+-I$(top_builddir)/src/lib/evas/canvas \
+-I$(top_builddir)/src/modules/evas/engines/software_generic \
+-I$(top_builddir)/src/modules/evas/engines/gl_generic \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/evas\" \
@@ -492,10 +517,18 @@ lib/evas/filters/blur/blur_box_rgba_i386.c \
 lib/evas/filters/blur/blur_box_rgba_sse3.c \
 lib/evas/filters/blur/blur_box_rgba_neon.c
 
+### Vector surface helper
+
+EXTRA_DIST += \
+modules/evas/engines/software_generic/ector_cairo_software_surface.eo \
+modules/evas/engines/gl_generic/ector_cairo_software_surface.eo
 
 ### Engines
 
 if EVAS_STATIC_BUILD_SOFTWARE_GENERIC
+BUILT_SOURCES += \
+modules/evas/engines/software_generic/ector_cairo_software_surface.eo.c \
+modules/evas/engines/software_generic/ector_cairo_software_surface.eo.h
 lib_evas_libevas_la_SOURCES += modules/evas/engines/software_generic/evas_engine.c modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h
 lib_evas_libevas_la_LIBADD +=
 else
@@ -511,6 +544,7 @@ modules_evas_engines_software_generic_module_la_SOURCES = modules/evas/engines/s
 modules_evas_engines_software_generic_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
+-I$(top_builddir)/src/modules/evas/engines/software_generic \
 @EVAS_CFLAGS@
 modules_evas_engines_software_generic_module_la_LIBADD = @USE_EVAS_LIBS@
 modules_evas_engines_software_generic_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
@@ -584,6 +618,10 @@ endif
 endif
 
 if BUILD_ENGINE_GL_COMMON
+BUILT_SOURCES += \
+modules/evas/engines/gl_generic/ector_cairo_software_surface.eo.c \
+modules/evas/engines/gl_generic/ector_cairo_software_surface.eo.h
+
 GL_COMMON_SOURCES = \
 modules/evas/engines/gl_common/evas_gl_private.h \
 modules/evas/engines/gl_common/evas_gl_common.h \
@@ -695,6 +733,7 @@ modules_evas_engines_gl_generic_module_la_CFLAGS = \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
+-I$(top_builddir)/src/modules/evas/engines/gl_generic \
 @evas_engine_gl_common_cflags@ \
 @EVAS_CFLAGS@
 modules_evas_engines_gl_generic_module_la_LIBADD = \

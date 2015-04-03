@@ -1,0 +1,43 @@
+mixin Ector.Renderer.Generic.Shape (Efl.Gfx.Shape)
+{
+   eo_prefix: ector_renderer_shape;
+   legacy_prefix: null;
+   properties {
+      fill {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    const(Ector_Renderer) *r;
+	 }
+      }
+      stroke_fill {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    const(Ector_Renderer) *r;
+	 }
+      }
+      stroke_marker {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    const(Ector_Renderer) *r;
+	 }
+      }
+   }
+   implements {
+      Efl.Gfx.Shape.stroke_scale;
+      Efl.Gfx.Shape.stroke_color;
+      Efl.Gfx.Shape.stroke_width;
+      Efl.Gfx.Shape.stroke_location;
+      Efl.Gfx.Shape.stroke_dash;
+      Efl.Gfx.Shape.stroke_cap;
+      Efl.Gfx.Shape.stroke_join;
+   }
+}

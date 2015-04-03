@@ -278,6 +278,23 @@ EAPI Eina_Bool eina_simple_xml_attributes_parse(const char *buf, unsigned buflen
 						Eina_Simple_XML_Attribute_Cb func, const void *data);
 
 /**
+ * Given a buffer with the xml value of an attributes, parse them to key:value pairs.
+ *
+ * @param buf the input string. Need to contain \0 terminator.
+ * @param func what to call back while parse to do some action. The
+ *        first parameter is the given user @a data, the second is the
+ *        key (null-terminated) and the last is the value (null
+ *        terminated). These strings should not be modified and
+ *        reference is just valid until the function return.
+ * @param data data to pass to the callback function.
+ *
+ * @return #EINA_TRUE on success or #EINA_FALSE if it was aborted by user or
+ *          parsing error.
+ */
+EAPI Eina_Bool
+eina_simple_xml_attribute_w3c_parse(const char *buf, Eina_Simple_XML_Attribute_Cb func, const void *data);
+
+/**
  * Create (and append) new attribute to tag.
  *
  * @param parent if provided, will be set in the resulting structure

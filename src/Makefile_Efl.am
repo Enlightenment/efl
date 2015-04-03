@@ -4,7 +4,15 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_image.eo \
       lib/efl/interfaces/efl_player.eo \
       lib/efl/interfaces/efl_text.eo \
-      lib/efl/interfaces/efl_text_properties.eo
+      lib/efl/interfaces/efl_text_properties.eo \
+      lib/efl/interfaces/efl_gfx_base.eo \
+      lib/efl/interfaces/efl_gfx_stack.eo \
+      lib/efl/interfaces/efl_gfx_fill.eo \
+      lib/efl/interfaces/efl_gfx_view.eo \
+      lib/efl/interfaces/efl_gfx_shape.eo \
+      lib/efl/interfaces/efl_gfx_gradient_base.eo \
+      lib/efl/interfaces/efl_gfx_gradient_linear.eo \
+      lib/efl/interfaces/efl_gfx_gradient_radial.eo
 
 efl_eolian_files_h = $(efl_eolian_files:%.eo=%.eo.h)
 efl_eolian_files_c = $(efl_eolian_files:%.eo=%.eo.c)
@@ -27,7 +35,10 @@ efleolianfiles_DATA = $(efl_eolian_files)
 
 lib_LTLIBRARIES += lib/efl/libefl.la
 
-lib_efl_libefl_la_SOURCES = lib/efl/interfaces/efl_interfaces_main.c
+lib_efl_libefl_la_SOURCES = \
+lib/efl/interfaces/efl_interfaces_main.c \
+lib/efl/interfaces/efl_gfx_shape.c
+
 lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@
 lib_efl_libefl_la_LIBADD = @EFL_LIBS@
 lib_efl_libefl_la_DEPENDENCIES = @EFL_INTERNAL_LIBS@
@@ -39,7 +50,8 @@ dist_installed_eflheaders_DATA = \
               lib/efl/Efl.h
 
 installed_eflinterfacesdir = $(includedir)/efl-@VMAJ@/interfaces
-nodist_installed_eflinterfaces_DATA = $(efl_eolian_files_h)
+nodist_installed_eflinterfaces_DATA = \
+$(efl_eolian_files_h)
 
 if HAVE_ELUA
 

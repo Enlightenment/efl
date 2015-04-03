@@ -1,0 +1,8 @@
+class Efl.VG.Root_Node (Efl.VG.Container)
+{
+   legacy_prefix: evas_vg_root_node;
+   implements {
+      Eo.Base.parent.set;
+      Eo.Base.constructor;
+   }
+}

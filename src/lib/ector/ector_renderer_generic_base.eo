@@ -1,0 +1,116 @@
+abstract Ector.Renderer.Generic.Base (Eo.Base)
+{
+   eo_prefix: ector_renderer;
+   legacy_prefix: null;
+   properties {
+      transformation {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    const(Eina_Matrix3) *m;
+	 }
+      }
+      origin {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double x;
+	    double y;
+	 }
+      }
+      visibility {
+         set {
+            /*@ Makes the given Ector renderer visible or invisible. */
+	 }
+	 get {
+            /*@ Retrieves whether or not the given Ector renderer is visible. */
+	 }
+	 values {
+	    bool v; /*@ @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise */
+	 }
+      }
+      color {
+         set {
+            /*@
+            Sets the general/main color of the given Ector renderer to the given
+            one.
+
+            @note These color values are expected to be premultiplied by @p a.
+
+            @ingroup Ector_Renderer_Group_Basic */
+         }
+         get {
+            /*@
+            Retrieves the general/main color of the given Ector renderer.
+
+            Retrieves the “main” color's RGB component (and alpha channel)
+            values, <b>which range from 0 to 255</b>. For the alpha channel,
+            which defines the object's transparency level, 0 means totally
+            transparent, while 255 means opaque. These color values are
+            premultiplied by the alpha value.
+
+            @note Use @c NULL pointers on the components you're not interested
+            in: they'll be ignored by the function.
+
+            @ingroup Ector_Renderer_Group_Basic */
+	 }
+	 values {
+            int r; /*@ The red component of the given color. */
+            int g; /*@ The green component of the given color. */
+            int b; /*@ The blue component of the given color. */
+            int a; /*@ The alpha component of the given color. */
+	 }
+      }
+      mask {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    Ector_Renderer *r;
+	 }
+      }
+      quality {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    Ector_Quality q;
+	 }
+      }
+   }
+   methods {
+      bounds_get {
+	 params {
+	    @out Eina_Rectangle r;
+	 }
+      }
+      draw {
+         return: bool @warn_unused;
+	 params {
+	    @in Ector_Rop op;
+	    @in array<Eina_Rectangle *> *clips; /*@ array of Eina_Rectangle clip */
+	    @in uint mul_col;
+	 }
+      }
+      prepare {
+         return: bool @warn_unused;
+	 params {
+	 }
+      }
+      done {
+         return: bool @warn_unused;
+      }
+   }
+   implements {
+      Eo.Base.destructor;
+      @virtual .draw;
+      @virtual .bounds_get;
+      @virtual .done;
+   }
+}

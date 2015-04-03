@@ -1,0 +1,405 @@
+mixin Efl.Gfx.Shape
+{
+   legacy_prefix: null;
+   properties {
+      stroke_scale {
+         set {
+            /*@
+              Sets the stroke scale to be used for stroking the path.
+              the scale property will be used along with stroke width property.
+              @since 1.14
+            */
+         }
+         get {
+            /*@
+              Get the stroke scaling factor used for stroking this path.
+              @since 1.14
+            */
+         }
+         values {
+            double s; /*@ stroke scale value */
+         }
+      }
+      stroke_color {
+         set {
+            /*@
+              Sets the color to be used for stroking the path.
+              @since 1.14
+            */
+         }
+         get {
+            /*@
+              Gets the color used for stroking the path.
+              @since 1.14
+            */
+         }
+         values {
+            int r; /*@ The red component of the given color. */
+            int g; /*@ The green component of the given color. */
+            int b; /*@ The blue component of the given color. */
+            int a; /*@ The alpha component of the given color. */
+         }
+      }
+      stroke_width {
+         set {
+            /*@
+              Sets the stroke width to be used for stroking the path.
+              @since 1.14
+            */
+         }
+         get {
+            /*@
+              Gets the stroke width to be used for stroking the path.
+              @since 1.14
+            */
+         }
+         values {
+            double w; /*@ stroke width to be used */
+         }
+      }
+      stroke_location {
+         set {
+            /*@
+              Not Implemented
+            */
+         }
+         get {
+            /*@
+              Not Implemented
+            */
+         }
+         values {
+            double centered; /*@  */
+         }
+      }
+      stroke_dash {
+         set {
+            /*@
+              Not Implemented
+            */
+         }
+         get {
+            /*@
+              Not Implemented
+            */
+         }
+         values {
+            const(Efl_Gfx_Dash) *dash; /*@  */
+            uint length; /*@  */
+         }
+      }
+      stroke_cap {
+         set {
+            /*@
+              Sets the cap style to be used for stroking the path.
+              The cap will be used for capping the end point of a 
+              open subpath.
+
+              @see Efl_Gfx_Cap
+              @since 1.14
+            */
+         }
+         get {
+            /*@
+              Gets the cap style used for stroking path.
+              @since 1.14
+            */
+         }
+         values {
+            Efl_Gfx_Cap c; /*@ cap style to use , default is EFL_GFX_CAP_BUTT */
+         }
+      }
+      stroke_join {
+         set {
+            /*@
+              Sets the join style to be used for stroking the path.
+              The join style will be used for joining the two line segment
+              while stroking teh path.
+
+              @see Efl_Gfx_Join
+              @since 1.14
+            */
+         }
+         get {
+            /*@
+              Gets the join style used for stroking path.
+              @since 1.14
+            */
+         }
+         values {
+            Efl_Gfx_Join j; /*@ join style to use , default is
+                              EFL_GFX_JOIN_MITER */
+         }
+      }
+      path {
+         set {
+            /*@
+              Set the list of commands and points to be used to create the
+              content of shape.
+
+              @note see efl_gfx_path interface for how to create a command list.
+              @see Efl_Gfx_Path_Command
+              @since 1.14
+            */
+         }
+         get {
+            /*@
+             Gets the command and points list
+             @since 1.14 
+            */
+         }
+         values {
+            const(Efl_Gfx_Path_Command) *op; /*@ command list */
+            const(double) *points; /*@ point list */
+         }
+      }
+      path_length {
+        get {
+        }
+        values {
+          uint commands;
+          uint points;
+        }
+      }
+      current {
+        get {
+        }
+        values {
+          double x;
+          double y;
+        }
+      }
+      current_ctrl {
+        get {
+        }
+        values {
+          double x;
+          double y;
+        }
+      }
+   }
+   methods {
+      dup {
+          /*@
+            Copy the shape data from the object specified .
+
+            @since 1.14
+          */
+        params {
+          @in Eo *dup_from; /*@ Shape object from where data will be copied.*/
+        }
+      }
+      bounds_get {
+        /*@
+          Compute and return the bounding box of the currently set path
+
+          @since 1.14
+	*/
+        params {
+	  @out Eina_Rectangle r; /*@ Contain the bounding box of the currently set path */
+	}
+      }
+      reset {
+        /*@
+          Reset the shape data of the shape object.
+
+          @since 1.14
+        */
+      }
+      append_move_to {
+        /*@
+          Moves the current point to the given point, 
+          implicitly starting a new subpath and closing the previous one.
+
+          @see efl_gfx_path_append_close()
+          @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of the current point.*/
+          @in double y; /*@ Y co-ordinate of the current point.*/
+        }
+      }
+      append_line_to {
+        /*@
+          Adds a straight line from the current position to the given endPoint.
+          After the line is drawn, the current position is updated to be at the end
+          point of the line.
+
+          @note if no current position present, it draws a line to itself, basically
+                a point.
+
+          @see efl_gfx_path_append_move_to()
+          @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of end point of the line.*/
+          @in double y; /*@ Y co-ordinate of end point of the line.*/
+        }
+      }
+      append_quadratic_to {
+        /*@
+          Adds a quadratic Bezier curve between the current position and the
+          given end point (x,y) using the control points specified by (ctrl_x, ctrl_y).
+          After the path is drawn, the current position is updated to be at the end
+          point of the path.
+
+          @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of end point of the line.*/
+          @in double y; /*@ Y co-ordinate of end point of the line.*/
+          @in double ctrl_x; /*@ X co-ordinate of control point.*/
+          @in double ctrl_y; /*@ Y co-ordinate of control point.*/
+        }
+      }
+      append_squadratic_to {
+        /*@
+          Same as efl_gfx_path_append_quadratic_to() api only difference is that it
+          uses the current control point to draw the bezier.
+
+          @see efl_gfx_path_append_quadratic_to()
+          @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of end point of the line.*/
+          @in double y; /*@ Y co-ordinate of end point of the line.*/
+        }
+      }
+      append_cubic_to {
+        /*@
+          Adds a cubic Bezier curve between the current position and the
+          given end point (x,y) using the control points specified by
+          (ctrl_x0, ctrl_y0), and (ctrl_x1, ctrl_y1). After the path is drawn,
+          the current position is updated to be at the end point of the path.
+
+          @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of end point of the line.*/
+          @in double y; /*@ Y co-ordinate of end point of the line.*/
+          @in double ctrl_x0; /*@ X co-ordinate of 1st control point.*/
+          @in double ctrl_y0; /*@ Y co-ordinate of 1st control point.*/
+          @in double ctrl_x1; /*@ X co-ordinate of 2nd control point.*/
+          @in double ctrl_y1; /*@ Y co-ordinate of 2nd control point.*/
+        }
+      }
+      append_scubic_to {
+        /*@
+        Same as efl_gfx_path_append_cubic_to() api only difference is that it uses
+        the current control point to draw the bezier.
+
+        @see efl_gfx_path_append_cubic_to()
+
+        @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of end point of the line.*/
+          @in double y; /*@ Y co-ordinate of end point of the line.*/
+          @in double ctrl_x; /*@ X co-ordinate of 2nd control point.*/
+          @in double ctrl_y; /*@ Y co-ordinate of 2nd control point.*/
+        }
+      }
+      append_arc_to {
+        /*@
+          Append an arc that connects from the current point int the point list
+          to the given point (x,y). The arc is defined by the given radius in 
+          x-direction (rx) and radius in y direction (ry) .
+
+          @note Use this api if you know the end point's of the arc otherwise
+                use more convenient function efl_gfx_path_append_arc_to()
+
+          @see efl_gfx_path_append_arc_to()
+          @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of end point of the arc.*/
+          @in double y; /*@ Y co-ordinate of end point of the arc.*/
+          @in double rx; /*@ radius of arc in x direction.*/
+          @in double ry; /*@ radius of arc in y direction.*/
+          @in double angle; /*@ x-axis rotation , normally 0.*/
+          @in bool large_arc; /*@ Defines whether to draw the larger arc or smaller arc joining two point.*/
+          @in bool sweep; /*@ Defines whether the arc will be drawn counter-clockwise or clockwise from current point to the end point taking into account the large_arc property.*/
+        }
+      }
+      append_close {
+        /*@
+          Closes the current subpath by drawing a line to the beginning of the subpath,
+          automatically starting a new path. The current point of the new path is
+          (0, 0).
+
+          @note If the subpath does not contain any points, this function does nothing.
+
+          @since 1.14
+        */
+      }
+      append_circle {
+        /*@
+          Append a circle with given center and radius.
+
+          @since 1.14
+        */
+        params {
+          @in double x; /*@ X co-ordinate of the center of the circle.*/
+          @in double y; /*@ Y co-ordinate of the center of the circle.*/
+          @in double radius; /*@ radius of the circle.*/
+        }
+      }
+      append_rect {
+        /*@
+          Append the given rectangle with rounded corner to the path.
+
+          The xr and yr arguments specify the radii of the ellipses defining the
+          corners of the rounded rectangle.
+
+          @note xr and yr are specified in terms of width and height respectively.
+
+          @note if xr and yr are 0, then it will draw a rectangle without rounded corner.
+
+          @since 1.14
+        */
+        params {
+            @in double x; /*@ X co-ordinate of the rectangle.*/
+            @in double y; /*@ Y co-ordinate of the rectangle.*/
+            @in double w; /*@ Width of the rectangle.*/
+            @in double h; /*@ Height of the rectangle.*/
+            @in double rx; /*@ The x radius of the rounded corner and should be in range [ 0 to w/2 ]*/
+            @in double ry; /*@ The y radius of the rounded corner and should be in range [ 0 to h/2 ]*/
+        }
+      }
+      append_svg_path {
+        params {
+          @in const(char)* svg_path_data;
+        }
+      }
+      interpolate {
+        return: bool;
+        params {
+          @in const(Eo)* from;
+          @in const(Eo)* to;
+          @in double pos_map;
+        }
+      }
+      equal_commands {
+        return: bool;
+        params {
+          @in const(Eo)* with;
+        }
+      }
+   }
+   implements {
+      @virtual .stroke_scale.get;
+      @virtual .stroke_scale.set;
+      @virtual .stroke_color.get;
+      @virtual .stroke_color.set;
+      @virtual .stroke_width.get;
+      @virtual .stroke_width.set;
+      @virtual .stroke_location.get;
+      @virtual .stroke_location.set;
+      @virtual .stroke_dash.get;
+      @virtual .stroke_dash.set;
+      @virtual .stroke_cap.get;
+      @virtual .stroke_cap.set;
+      @virtual .stroke_join.get;
+      @virtual .stroke_join.set;
+   }
+}

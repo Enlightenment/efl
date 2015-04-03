@@ -235,23 +235,23 @@ template <typename Args, typename... E>
 EAPI void inherit_constructor(void* this_, Args args)
 {
    typedef void (*func_t)(Eo *, void *, void*, Args);
-   Eo_Op_Call_Data call;
+   Eo_Op_Call_Data ___call;
    static Eo_Op op = EO_NOOP;
    if ( op == EO_NOOP )
      op = _eo_api_op_id_get
        (reinterpret_cast<void*>
         (static_cast<void(*)(void*, Args)>(&detail::inherit_constructor<Args, E...>)),
         ::eina_main_loop_is(), __FILE__, __LINE__);
-   if (!_eo_call_resolve("detail::inherit_constructor", op, &call,
+   if (!_eo_call_resolve("detail::inherit_constructor", op, &___call,
                          ::eina_main_loop_is(), __FILE__, __LINE__))
      {
-        assert(_eo_call_resolve("detail::inherit_constructor", op, &call,
+        assert(_eo_call_resolve("detail::inherit_constructor", op, &___call,
                                 ::eina_main_loop_is(), __FILE__, __LINE__));
         return;
      }
-   func_t func = (func_t) call.func;
+   func_t func = (func_t) ___call.func;
    EO_HOOK_CALL_PREPARE(eo_hook_call_pre, "");
-   func(call.obj, call.data, this_, args);
+   func(___call.obj, ___call.data, this_, args);
    EO_HOOK_CALL_PREPARE(eo_hook_call_post, "");
 }
 

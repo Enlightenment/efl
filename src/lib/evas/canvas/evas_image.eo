@@ -1,4 +1,4 @@
-class Evas.Image (Evas.Object, Efl.File, Efl.Image)
+class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
 {
    legacy_prefix: evas_object_image;
    eo_prefix: evas_obj_image;
@@ -362,23 +362,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image)
             bool enable; /*@ @c EINA_TRUE means that it should honor the orientation information */
          }
       }
-      fill_spread {
-         set {
-            /*@
-            Sets the tiling mode for the given evas image object's fill.
-            EVAS_TEXTURE_RESTRICT, or EVAS_TEXTURE_PAD. */
-         }
-         get {
-            /*@
-            Retrieves the spread (tiling mode) for the given image object's
-            fill.
-
-            @return  The current spread mode of the image object. */
-         }
-         values {
-            Evas_Fill_Spread spread; /*@ One of EVAS_TEXTURE_REFLECT, EVAS_TEXTURE_REPEAT, */
-         }
-      }
       border_center_fill {
          set {
             /*@
@@ -408,28 +391,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image)
          values {
             Evas_Border_Fill_Mode fill; /*@ Fill mode of the center region of @p obj (a value in
             #Evas_Border_Fill_Mode). */
-         }
-      }
-      size {
-         set {
-            /*@
-            Sets the size of the given image object.
-
-            This function will scale down or crop the image so that it is
-            treated as if it were at the given size. If the size given is
-            smaller than the image, it will be cropped. If the size given is
-            larger, then the image will be treated as if it were in the upper
-            left hand corner of a larger image that is otherwise transparent. */
-         }
-         get {
-            /*@
-            Retrieves the size of the given image object.
-
-            See @ref evas_object_image_size_set() for more details. */
-         }
-         values {
-            int w; /*@ The new width of the image. */
-            int h; /*@ The new height of the image. */
          }
       }
       source_visible {
@@ -472,56 +433,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image)
          values {
             bool visible; /*@ @c EINA_TRUE is source object to be shown, @c EINA_FALSE
             otherwise. */
-         }
-      }
-      fill {
-         set {
-            /*@
-            Set how to fill an image object's drawing rectangle given the
-            (real) image bound to it.
-
-            Note that if @p w or @p h are smaller than the dimensions of
-            @p obj, the displayed image will be @b tiled around the object's
-            area. To have only one copy of the bound image drawn, @p x and @p y
-            must be 0 and @p w and @p h need to be the exact width and height
-            of the image object itself, respectively.
-
-            See the following image to better understand the effects of this
-            call. On this diagram, both image object and original image source
-            have @c a x @c a dimensions and the image itself is a circle, with
-            empty space around it:
-
-            @image html image-fill.png
-            @image rtf image-fill.png
-            @image latex image-fill.eps
-
-            @warning The default values for the fill parameters are @p x = 0,
-            @p y = 0, @p w = 0 and @p h = 0. Thus, if you're not using the
-            evas_object_image_filled_add() helper and want your image
-            displayed, you'll have to set valid values with this function on
-            your object.
-
-            @note evas_object_image_filled_set() is a helper function which
-            will @b override the values set here automatically, for you, in a
-            given way. */
-         }
-         get {
-            /*@
-            Retrieve how an image object is to fill its drawing rectangle,
-            given the (real) image bound to it.
-
-            @note Use @c NULL pointers on the fill components you're not
-            interested in: they'll be ignored by the function.
-
-            See @ref evas_object_image_fill_set() for more details. */
-         }
-         values {
-            Evas_Coord x; /*@ The x coordinate (from the top left corner of the bound
-            image) to start drawing from. */
-            Evas_Coord y; /*@ The y coordinate (from the top left corner of the bound
-            image) to start drawing from. */
-            Evas_Coord w; /*@ The width the bound image will be displayed at. */
-            Evas_Coord h; /*@ The height the bound image will be displayed at. */
          }
       }
       native_surface {
@@ -661,35 +572,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image)
          values {
             Evas_Object_Image_Pixels_Get_Cb func @nonull; /*@ The callback function. */
             void *data; /*@ The data pointer to be passed to @a func. */
-         }
-      }
-      mmap {
-         set {
-            /*@
-            Set the source mmaped file from where an image object must fetch the real
-            image data (it must be an Eina_File).
-
-            If the file supports multiple data stored in it (as Eet files do),
-            you can specify the key to be used as the index of the image in
-            this file.
-
-            @since 1.8 */
-         }
-         get {
-            /*@
-            Get the source mmaped file from where an image object must fetch the real
-            image data (it must be an Eina_File).
-
-            If the file supports multiple data stored in it (as Eet files do),
-            you can get the key to be used as the index of the image in
-            this file.
-
-            @since 1.10 */
-         }
-         values {
-            const(Eina.File)* f; /*@ The mmaped file */
-            const(char)* key; /*@ The image key in @p file (if its an Eet one), or @c
-            NULL, otherwise. */
          }
       }
       data_copy {
@@ -1094,11 +976,19 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image)
       Eo.Base.dbg_info_get;
       Efl.File.file.set;
       Efl.File.file.get;
+      Efl.File.mmap.set;
+      Efl.File.mmap.get;
       Efl.File.save;
       Efl.Image.animated.get;
       Efl.Image.load_size.set;
       Efl.Image.load_size.get;
       Efl.Image.smooth_scale.set;
       Efl.Image.smooth_scale.get;
+      Efl.Gfx.Fill.fill_spread.set;
+      Efl.Gfx.Fill.fill_spread.get;
+      Efl.Gfx.Fill.fill.set;
+      Efl.Gfx.Fill.fill.get;
+      Efl.Gfx.View.size.set;
+      Efl.Gfx.View.size.get;
    }
 }

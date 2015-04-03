@@ -926,7 +926,7 @@ _evas_object_text_layout(Evas_Object *eo_obj, Evas_Text_Data *o, Eina_Unicode *t
 }
 
 EOLIAN static void
-_evas_text_evas_object_size_set(Eo *eo_obj, Evas_Text_Data *o, Evas_Coord w, Evas_Coord h)
+_evas_text_efl_gfx_base_size_set(Eo *eo_obj, Evas_Text_Data *o, int w, int h)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -1235,7 +1235,7 @@ _evas_text_style_set(Eo *eo_obj, Evas_Text_Data *o, Evas_Text_Style_Type style)
    h = obj->cur->geometry.h + (t - pt) + (b - pb);
 
    eo_do_super(eo_obj, MY_CLASS,
-               evas_obj_size_set(w, h));
+               efl_gfx_size_set(w, h));
    evas_object_change(eo_obj, obj);
 }
 
@@ -2350,12 +2350,12 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
 
              min = w + l + r < obj->cur->geometry.w || obj->cur->geometry.w == 0 ? w + l + r : obj->cur->geometry.w;
              eo_do_super(eo_obj, MY_CLASS,
-                         evas_obj_size_set(min, h + t + b));
+                         efl_gfx_size_set(min, h + t + b));
           }
         else
           {
              eo_do_super(eo_obj, MY_CLASS,
-                         evas_obj_size_set(w + l + r, h + t + b));
+                         efl_gfx_size_set(w + l + r, h + t + b));
           }
 ////        obj->cur->cache.geometry.validity = 0;
      }
@@ -2369,7 +2369,7 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
           evas_filter_program_padding_get(o->cur.filter->chain, &l, &r, &t, &b);
 
         eo_do_super(eo_obj, MY_CLASS,
-                    evas_obj_size_set(0, o->max_ascent + o->max_descent + t + b));
+                    efl_gfx_size_set(0, o->max_ascent + o->max_descent + t + b));
 ////        obj->cur->cache.geometry.validity = 0;
      }
    o->last_computed.w = obj->cur->geometry.w;

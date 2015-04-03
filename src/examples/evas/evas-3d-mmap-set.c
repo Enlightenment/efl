@@ -34,7 +34,7 @@
    extention##_file = eina_file_open(buffer , 0);                                     \
    mesh_##extention = eo_add(EVAS_3D_MESH_CLASS, evas);                               \
    eo_do(mesh_##extention,                                                            \
-         evas_3d_mesh_mmap_set(extention##_file, NULL),                               \
+         efl_file_mmap_set(extention##_file, NULL),                                   \
          evas_3d_mesh_frame_material_set(0, material),                                \
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));                      \
    node_##extention = eo_add(EVAS_3D_NODE_CLASS, evas,                                \
@@ -161,8 +161,8 @@ _on_canvas_resize(Ecore_Evas *ee)
    int w, h;
 
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
-   eo_do(background, evas_obj_size_set(w, h));
-   eo_do(image, evas_obj_size_set(w, h));
+   eo_do(background, efl_gfx_size_set(w, h));
+   eo_do(image, efl_gfx_size_set(w, h));
 }
 
 int
@@ -258,15 +258,15 @@ main(void)
    /* Add a background rectangle objects. */
    background = eo_add(EVAS_RECTANGLE_CLASS, evas);
    eo_do(background,
-         evas_obj_color_set(20, 20, 200, 255),
-         evas_obj_size_set(WIDTH, HEIGHT),
-         evas_obj_visibility_set(EINA_TRUE));
+         efl_gfx_color_set(20, 20, 200, 255),
+         efl_gfx_size_set(WIDTH, HEIGHT),
+         efl_gfx_visible_set(EINA_TRUE));
 
    /* Add an image object for 3D scene rendering. */
    image = evas_object_image_filled_add(evas);
    eo_do(image,
-         evas_obj_size_set(WIDTH, HEIGHT),
-         evas_obj_visibility_set(EINA_TRUE));
+         efl_gfx_size_set(WIDTH, HEIGHT),
+         efl_gfx_visible_set(EINA_TRUE));
 
    /* Set the image object as render target for 3D scene. */
    eo_do(image, evas_obj_image_scene_set(scene));

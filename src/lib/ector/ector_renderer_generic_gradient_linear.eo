@@ -1,0 +1,11 @@
+mixin Ector.Renderer.Generic.Gradient_Linear (Efl.Gfx.Gradient.Linear)
+{
+   eo_prefix: ector_renderer_gradient_linear;
+   legacy_prefix: null;
+   implements {
+      Efl.Gfx.Gradient.Linear.start.set;
+      Efl.Gfx.Gradient.Linear.start.get;
+      Efl.Gfx.Gradient.Linear.end.set;
+      Efl.Gfx.Gradient.Linear.end.get;
+   }
+}

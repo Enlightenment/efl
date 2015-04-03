@@ -4,21 +4,6 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
    data: Evas_3D_Mesh_Data;
 
    methods {
-      mmap_set {
-         /**
-          * Load mesh data from Eina_File.
-          *
-          * Loading a mesh from existing Eina_File is supported. Currently, only MD2, OBJ,
-          * PLY and EET file formats are supported.
-          *
-          * @ingroup Evas_3D_Mesh
-          */
-         params {
-            @in Eina_File* file; /*@ Eina_File with mesh data. */
-            @in const(char)* key; /*@ Key in the mesh file. */
-         }
-      }
-
       frame_vertex_data_set {
          /*@
            Set the vertex data of the key frame of the given mesh.
@@ -540,6 +525,9 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       Evas_3D_Object.update_notify;
       Evas_3D_Object.change_notify;
       Efl.File.file.set;
+      Efl.File.file.get;
+      Efl.File.mmap.set;
+      Efl.File.mmap.get;
       Efl.File.save;
    }
 

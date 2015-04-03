@@ -1,0 +1,27 @@
+interface Efl.Gfx.View {
+   legacy_prefix: null;
+   properties {
+      size {
+         set {
+            /*@
+            Sets the size of the given image object.
+
+            This function will scale down or crop the image so that it is
+            treated as if it were at the given size. If the size given is
+            smaller than the image, it will be cropped. If the size given is
+            larger, then the image will be treated as if it were in the upper
+            left hand corner of a larger image that is otherwise transparent. */
+         }
+         get {
+            /*@
+            Retrieves the size of the given image object.
+
+            See @ref evas_object_image_size_set() for more details. */
+         }
+         values {
+            int w; /*@ The new width of the image. */
+            int h; /*@ The new height of the image. */
+         }
+      }
+   }
+}

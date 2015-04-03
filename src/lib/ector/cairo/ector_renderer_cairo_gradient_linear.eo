@@ -1,0 +1,13 @@
+class Ector.Renderer.Cairo.Gradient_Linear (Ector.Renderer.Cairo.Base, Ector.Renderer.Generic.Gradient, Ector.Renderer.Generic.Gradient_Linear)
+{
+   eo_prefix: ector_renderer_cairo_gradient_linear;
+   legacy_prefix: null;
+   implements {
+      Ector.Renderer.Generic.Base.prepare;
+      Ector.Renderer.Generic.Base.draw;
+      Ector.Renderer.Generic.Base.bounds_get;
+      Ector.Renderer.Cairo.Base.fill;
+      Eo.Base.destructor;
+      Efl.Gfx.Gradient.Base.stop.set;
+   }
+}

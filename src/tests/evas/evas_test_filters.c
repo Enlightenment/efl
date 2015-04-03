@@ -387,14 +387,14 @@ START_TEST(evas_filter_text_render_test)
              evas_object_resize(o, 10, 10);
              evas_object_show(o);
              eo_do(to,
-                   evas_obj_color_set(255, 255, 255, 255),
+                   efl_gfx_color_set(255, 255, 255, 255),
                    evas_obj_text_filter_source_set(tc->source, o),
                    evas_obj_text_filter_program_set(tc->code));
           }
         else
           {
              eo_do(to,
-                   evas_obj_color_set(255, 255, 255, 255),
+                   efl_gfx_color_set(255, 255, 255, 255),
                    evas_obj_text_filter_program_set(tc->code));
           }
 

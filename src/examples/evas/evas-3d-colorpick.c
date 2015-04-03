@@ -121,8 +121,8 @@ _on_canvas_resize(Ecore_Evas *ee)
    int w, h;
 
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
-   eo_do(bg, evas_obj_size_set(w, h));
-   eo_do(image, evas_obj_size_set(w, h));
+   eo_do(bg, efl_gfx_size_set(w, h));
+   eo_do(image, efl_gfx_size_set(w, h));
 }
 
 static Eina_Bool
@@ -409,8 +409,8 @@ int main(int argc, char **argv)
    image = evas_object_image_filled_add(evas);
 
    eo_do(image,
-         evas_obj_size_set(WIDTH, HEIGHT),
-         evas_obj_visibility_set(EINA_TRUE));
+         efl_gfx_size_set(WIDTH, HEIGHT),
+         efl_gfx_visible_set(EINA_TRUE));
    evas_object_focus_set(image, EINA_TRUE);
    eo_do(image, evas_obj_image_scene_set(globalscene.scene));
 

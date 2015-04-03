@@ -1422,7 +1422,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                   if (!chosen_desc->text.min_x)
                     {
 	               eo_do(ep->object,
-	        	     evas_obj_size_set(TO_INT(params->eval.w), TO_INT(params->eval.h)),
+	        	     efl_gfx_size_set(TO_INT(params->eval.w), TO_INT(params->eval.h)),
 	        	     evas_obj_textblock_size_formatted_get(&tw, &th));
                     }
                   else
@@ -1450,7 +1450,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
              if (!chosen_desc->text.max_x)
                {
 		  eo_do(ep->object,
-			evas_obj_size_set(TO_INT(params->eval.w), TO_INT(params->eval.h)),
+			efl_gfx_size_set(TO_INT(params->eval.w), TO_INT(params->eval.h)),
 			evas_obj_textblock_size_formatted_get(&tw, &th));
                }
              else
@@ -1538,7 +1538,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
      return;
 
    // Note: No need to add padding to that, it's already in the geometry
-   eo_do(ep->object, evas_obj_size_get(&mw, &mh));
+   eo_do(ep->object, efl_gfx_size_get(&mw, &mh));
 
    if (chosen_desc->text.max_x)
      {
@@ -1698,7 +1698,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
 	     eo_do(ep->object,
 		   evas_obj_text_style_set(style),
 		   evas_obj_text_set(text),
-		   evas_obj_size_get(&tw, &th));
+		   efl_gfx_size_get(&tw, &th));
              if (chosen_desc->text.max_x)
                {
                   int l, r;
@@ -2686,10 +2686,10 @@ _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
      }
 
    eo_do(ep->object,
-         evas_obj_image_fill_set(p3->type.common.fill.x,
-                                 p3->type.common.fill.y,
-                                 p3->type.common.fill.w,
-                                 p3->type.common.fill.h),
+         efl_gfx_fill_set(p3->type.common.fill.x,
+                          p3->type.common.fill.y,
+                          p3->type.common.fill.w,
+                          p3->type.common.fill.h),
          efl_image_smooth_scale_set(p3->smooth),
          evas_obj_image_source_visible_set(chosen_desc->proxy.source_visible),
          evas_obj_image_source_clip_set(chosen_desc->proxy.source_clip));
@@ -2727,9 +2727,9 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
      }
 
    eo_do(ep->object,
-	 evas_obj_image_fill_set(p3->type.common.fill.x, p3->type.common.fill.y,
-				 p3->type.common.fill.w, p3->type.common.fill.h),
-	 efl_image_smooth_scale_set(p3->smooth));
+         efl_gfx_fill_set(p3->type.common.fill.x, p3->type.common.fill.y,
+                          p3->type.common.fill.w, p3->type.common.fill.h),
+         efl_image_smooth_scale_set(p3->smooth));
    if (chosen_desc->image.border.scale)
      {
         if (p3->type.common.spec.image.border_scale_by > FROM_DOUBLE(0.0))
@@ -3918,7 +3918,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
               /* visibility and color have no meaning on SWALLOW and GROUP part. */
 #ifdef HAVE_EPHYSICS
               eo_do(ep->object,
-                    evas_obj_size_set(pf->final.w, pf->final.h));
+                    efl_gfx_size_set(pf->final.w, pf->final.h));
               if ((ep->part->physics_body) && (!ep->body))
                 {
                    if (_edje_physics_world_geometry_check(ed->world))
@@ -3936,19 +3936,19 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                 }
               else
                 eo_do(ep->object,
-                      evas_obj_position_set(ed->x + pf->final.x, ed->y + pf->final.y));
+                      efl_gfx_position_set(ed->x + pf->final.x, ed->y + pf->final.y));
 #else
 	      eo_do(ep->object,
-                    evas_obj_position_set(ed->x + pf->final.x, ed->y + pf->final.y),
-		    evas_obj_size_set(pf->final.w, pf->final.h));
+                    efl_gfx_position_set(ed->x + pf->final.x, ed->y + pf->final.y),
+		    efl_gfx_size_set(pf->final.w, pf->final.h));
 #endif
 
               if (ep->nested_smart)
                 {  /* Move, Resize all nested parts */
                    /* Not really needed but will improve the bounding box evaluation done by Evas */
 		   eo_do(ep->nested_smart,
-			 evas_obj_position_set(ed->x + pf->final.x, ed->y + pf->final.y),
-			 evas_obj_size_set(pf->final.w, pf->final.h));
+			 efl_gfx_position_set(ed->x + pf->final.x, ed->y + pf->final.y),
+			 efl_gfx_size_set(pf->final.w, pf->final.h));
                 }
               if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
                 _edje_entry_real_part_configure(ed, ep);
@@ -4012,9 +4012,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   if (ep->part->type == EDJE_PART_TYPE_GROUP)
                     vis = evas_object_visible_get(ed->obj);
                   eo_do(ep->typedata.swallow->swallowed_object,
-                        evas_obj_position_set(ed->x + pf->final.x, ed->y + pf->final.y),
-                        evas_obj_size_set(pf->final.w, pf->final.h),
-                        evas_obj_visibility_set(vis));
+                        efl_gfx_position_set(ed->x + pf->final.x, ed->y + pf->final.y),
+                        efl_gfx_size_set(pf->final.w, pf->final.h),
+                        efl_gfx_visible_set(vis));
                }
              else evas_object_hide(ep->typedata.swallow->swallowed_object);
              mo = ep->typedata.swallow->swallowed_object;

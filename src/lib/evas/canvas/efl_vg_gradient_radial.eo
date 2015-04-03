@@ -1,0 +1,15 @@
+class Efl.VG.Gradient_Radial (Efl.VG.Gradient, Efl.Gfx.Gradient.Radial)
+{
+   legacy_prefix: evas_vg_gradient_radial;
+   implements {
+      Efl.Gfx.Gradient.Radial.center.set;
+      Efl.Gfx.Gradient.Radial.center.get;
+      Efl.Gfx.Gradient.Radial.radius.set;
+      Efl.Gfx.Gradient.Radial.radius.get;
+      Efl.Gfx.Gradient.Radial.focal.set;
+      Efl.Gfx.Gradient.Radial.focal.get;     
+      Efl.VG.Base.bounds_get;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+   }
+}

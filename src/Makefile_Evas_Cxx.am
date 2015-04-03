@@ -33,7 +33,16 @@ lib/evas/canvas/evas_3d_mesh.eo.hh \
 lib/evas/canvas/evas_3d_node.eo.hh \
 lib/evas/canvas/evas_3d_object.eo.hh \
 lib/evas/canvas/evas_3d_scene.eo.hh \
-lib/evas/canvas/evas_3d_texture.eo.hh
+lib/evas/canvas/evas_3d_texture.eo.hh \
+lib/evas/canvas/evas_vg.eo.hh \
+lib/evas/canvas/efl_vg_base.eo.hh \
+lib/evas/canvas/efl_vg_container.eo.hh \
+lib/evas/canvas/efl_vg_shape.eo.hh \
+lib/evas/canvas/efl_vg_root_node.eo.hh \
+lib/evas/canvas/efl_vg_gradient.eo.hh \
+lib/evas/canvas/efl_vg_gradient_radial.eo.hh \
+lib/evas/canvas/efl_vg_gradient_linear.eo.hh \
+lib/evas/canvas/efl_vg_image.eo.hh
 
 lib/evas/Evas.hh: $(generated_evas_canvas_cxx_bindings)
 	@echo @ECHO_E@ "#ifndef EFL_CXX_EVAS_HH\n#define EFL_CXX_EVAS_HH\n" > $(top_builddir)/src/lib/evas/Evas.hh

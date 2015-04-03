@@ -1,0 +1,30 @@
+class Evas.VG (Evas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
+{
+   legacy_prefix: evas_object_vg;
+   eo_prefix: evas_obj_vg;
+   properties {
+      root_node {
+         get {
+            /*@
+              Get the root node of the evas_object_vg.
+
+              @note To manually create the shape object and show in the Vg
+                    object canvas you must create the hirarchy and set the
+                    parent as root node.
+              @since 1.14
+            */
+         }
+         values {
+            Efl_VG *container; /*@ Root node of the VG canvas */
+         }
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Efl.Gfx.Fill.fill.set;
+      Efl.Gfx.Fill.fill.get;
+      Efl.Gfx.View.size.set;
+      Efl.Gfx.View.size.get;
+   }
+}

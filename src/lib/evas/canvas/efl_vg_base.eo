@@ -1,0 +1,95 @@
+abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
+{
+   eo_prefix: efl_vg;
+   legacy_prefix: evas_vg_node;
+   properties {
+      transformation {
+         set {
+            /*@
+             Sets the transformation matrix to be used for this node object.
+             @since 1.14
+            */
+         }
+         get {
+            /*@
+             Gets the transformation matrix used for this node object.
+             @since 1.14
+            */
+         }
+         values {
+            const(Eina_Matrix3) *m; /*@ transformation matrix */
+         }
+      }
+      origin {
+         set {
+            /*@
+             Sets the origin position of this node object. This origin position
+             affects to node transformation
+             @since 1.14
+            */
+         }
+         get {
+            /*@
+             Gets the origin position of this node object.
+             @since 1.14
+            */
+         }
+         values {
+            double x; /* @origin x position */
+            double y; /* @origin y position */
+         }
+      }
+      mask {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    Efl_VG *m;
+	 }
+      }
+/*      quality {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    Evas_VG_Quality q;
+	 }
+      } */
+   }
+   methods {
+      bounds_get {
+         /*@
+          Give the bounding box in screen coordinate as being drawn.
+          It will start as the control box until it is refined once the shape
+          is computed.
+          @since 1.14
+         */
+         params {
+            @out Eina_Rectangle r; /*@ bounding box to be returned */
+         }
+      }
+   }
+   implements {
+      Eo.Base.parent.set;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Efl.Gfx.Base.visible.set;
+      Efl.Gfx.Base.visible.get;
+      Efl.Gfx.Base.color.set;
+      Efl.Gfx.Base.color.get;
+      Efl.Gfx.Base.color_part.set;
+      Efl.Gfx.Base.color_part.get;
+      Efl.Gfx.Base.size.get;
+      Efl.Gfx.Base.position.set;
+      Efl.Gfx.Base.position.get;
+      Efl.Gfx.Stack.below.get;
+      Efl.Gfx.Stack.above.get;
+      Efl.Gfx.Stack.stack_below;
+      Efl.Gfx.Stack.stack_above;
+      Efl.Gfx.Stack.raise;
+      Efl.Gfx.Stack.lower;
+      @virtual .bounds_get;
+   }
+}

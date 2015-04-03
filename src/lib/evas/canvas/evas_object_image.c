@@ -412,7 +412,7 @@ evas_object_image_memfile_set(Evas_Object *eo_obj, void *data, int size, char *f
 
    f = eina_file_virtualize(NULL, data, size, EINA_TRUE);
    if (!f) return ;
-   eo_do(eo_obj, evas_obj_image_mmap_set(f, key));
+   eo_do(eo_obj, efl_file_mmap_set(f, key));
    eina_file_close(f);
 }
 
@@ -544,8 +544,10 @@ _image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o)
    evas_object_change(eo_obj, obj);
 }
 
-EOLIAN static void
-_evas_image_mmap_set(Eo *eo_obj, Evas_Image_Data *o, const Eina_File *f, const char *key)
+EOLIAN static Eina_Bool
+_evas_image_efl_file_mmap_set(Eo *eo_obj,
+                              Evas_Image_Data *o,
+                              const Eina_File *f, const char *key)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Image_Load_Opts lo;
@@ -553,18 +555,22 @@ _evas_image_mmap_set(Eo *eo_obj, Evas_Image_Data *o, const Eina_File *f, const c
    if (o->cur->u.f == f)
      {
         if ((!o->cur->key) && (!key))
-          return;
+          return EINA_FALSE;
         if ((o->cur->key) && (key) && (!strcmp(o->cur->key, key)))
-          return;
+          return EINA_FALSE;
      }
    evas_object_async_block(obj);
    _image_init_set(f, NULL, key, eo_obj, obj, o, &lo);
    o->engine_data = ENFN->image_mmap(ENDT, o->cur->u.f, o->cur->key, &o->load_error, &lo);
    _image_done_set(eo_obj, obj, o);
+
+   return EINA_TRUE;
 }
 
 EOLIAN static void
-_evas_image_mmap_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, const Eina_File **f, const char **key)
+_evas_image_efl_file_mmap_get(Eo *eo_obj EINA_UNUSED,
+                              Evas_Image_Data *o,
+                              const Eina_File **f, const char **key)
 {
    if (f)
      *f = o->cur->mmaped_source ? o->cur->u.f : NULL;
@@ -972,8 +978,17 @@ _evas_image_border_scale_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
    return o->cur->border.scale;
 }
 
+EAPI void
+evas_object_image_fill_set(Evas_Image *obj,
+                           Evas_Coord x, Evas_Coord y,
+                           Evas_Coord w, Evas_Coord h)
+{
+   eo_do((Evas_Image *)obj, efl_gfx_fill_set(x, y, w, h));
+}
+
 EOLIAN static void
-_evas_image_fill_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+_evas_image_efl_gfx_fill_fill_set(Eo *eo_obj, Evas_Image_Data *o,
+                                  int x, int y, int w, int h)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -1002,8 +1017,17 @@ _evas_image_fill_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Coord x, Evas_Coord y,
    evas_object_change(eo_obj, obj);
 }
 
+EAPI void
+evas_object_image_fill_get(const Evas_Image *obj,
+                           Evas_Coord *x, Evas_Coord *y,
+                           Evas_Coord *w, Evas_Coord *h)
+{
+   eo_do((Evas_Image *)obj, efl_gfx_fill_get(x, y, w, h));
+}
+
 EOLIAN static void
-_evas_image_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_evas_image_efl_gfx_fill_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o,
+                                  int *x, int *y, int *w, int *h)
 {
    if (x) *x = o->cur->fill.x;
    if (y) *y = o->cur->fill.y;
@@ -1011,8 +1035,15 @@ _evas_image_fill_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, Evas_Coord *x, 
    if (h) *h = o->cur->fill.h;
 }
 
+EAPI void
+evas_object_image_fill_spread_set(Evas_Image *obj, Evas_Fill_Spread spread)
+{
+   eo_do((Evas_Image *)obj, efl_gfx_fill_spread_set(spread));
+}
+
 EOLIAN static void
-_evas_image_fill_spread_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Fill_Spread spread)
+_evas_image_efl_gfx_fill_fill_spread_set(Eo *eo_obj, Evas_Image_Data *o,
+                                         Efl_Gfx_Fill_Spread spread)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -1027,14 +1058,29 @@ _evas_image_fill_spread_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Fill_Spread spr
    evas_object_change(eo_obj, obj);
 }
 
-EOLIAN static Evas_Fill_Spread
-_evas_image_fill_spread_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+EAPI Evas_Fill_Spread
+evas_object_image_fill_spread_get(const Evas_Image *obj)
+{
+   Evas_Fill_Spread ret;
+
+   return eo_do_ret((Evas_Image *)obj, ret, efl_gfx_fill_spread_get());
+}
+
+EOLIAN static Efl_Gfx_Fill_Spread
+_evas_image_efl_gfx_fill_fill_spread_get(Eo *eo_obj EINA_UNUSED,
+                                         Evas_Image_Data *o)
 {
    return (Evas_Fill_Spread)o->cur->spread;;
 }
 
+EAPI void
+evas_object_image_size_set(Evas_Image *obj, int w, int h)
+{
+   eo_do((Evas_Image *)obj, efl_gfx_view_size_set(w, h));
+}
+
 EOLIAN static void
-_evas_image_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
+_evas_image_efl_gfx_view_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
 
@@ -1097,8 +1143,16 @@ _evas_image_size_set(Eo *eo_obj, Evas_Image_Data *o, int w, int h)
    evas_object_change(eo_obj, obj);
 }
 
+EAPI void
+evas_object_image_size_get(const Evas_Image *obj, int *w, int *h)
+{
+   eo_do((Evas_Image *)obj, efl_gfx_view_size_get(w, h));
+}
+
 EOLIAN static void
-_evas_image_size_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *w, int *h)
+_evas_image_efl_gfx_view_size_get(Eo *eo_obj EINA_UNUSED,
+                                  Evas_Image_Data *o,
+                                  int *w, int *h)
 {
    if (w) *w = o->cur->image.w;
    if (h) *h = o->cur->image.h;
@@ -4915,6 +4969,17 @@ evas_object_image_file_get(const Eo *obj, const char **file, const char **key)
    eo_do((Eo *) obj, efl_file_get(file, key));
 }
 
+EAPI void
+evas_object_image_mmap_set(Evas_Image *obj, const Eina_File *f, const char *key)
+{
+   eo_do((Evas_Image *)obj, efl_file_mmap_set(f, key));
+}
+
+EAPI void
+evas_object_image_mmap_get(const Evas_Image *obj, const Eina_File **f, const char **key)
+{
+   eo_do((Evas_Image *)obj, efl_file_mmap_get(f, key));
+}
 
 EAPI Eina_Bool
 evas_object_image_save(const Eo *obj, const char *file, const char *key, const char *flags)

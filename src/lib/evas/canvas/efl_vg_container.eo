@@ -1,0 +1,9 @@
+class Efl.VG.Container (Efl.VG.Base)
+{
+   legacy_prefix: evas_vg_container;
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Efl.VG.Base.bounds_get;
+   }
+}
