@@ -22,10 +22,6 @@
 #define EFL_BETA_API_SUPPORT 1
 #endif
 
-#ifndef EFL_EO_API_SUPPORT
-#define EFL_EO_API_SUPPORT 1
-#endif
-
 #include <Eo.h>
 #include <Efl.h>
 #include <Evas.h>
@@ -133,7 +129,7 @@ main(void)
 
    for (i = 0; i < sizeof (batmans_path) / sizeof (batmans_path[0]); i++)
      {
-        batmans_vg[i] = eo_add(EFL_VG_SHAPE_CLASS, NULL);
+        batmans_vg[i] = evas_vg_shape_add(NULL);
         evas_vg_shape_shape_append_svg_path(batmans_vg[i], batmans_path[i]);
      }
 
@@ -141,12 +137,12 @@ main(void)
 
    root = evas_object_vg_root_node_get(vg);
 
-   circle = eo_add(EFL_VG_SHAPE_CLASS, root);
+   circle = evas_vg_shape_add(root);
    evas_vg_shape_shape_append_circle(circle, WIDTH / 2, HEIGHT / 2, 200);
    evas_vg_node_color_set(circle, 255, 255, 255, 255);
    evas_vg_shape_stroke_color_set(circle, 0, 0, 0, 0);
 
-   batman = eo_add(EFL_VG_SHAPE_CLASS, root);
+   batman = evas_vg_shape_add(root);
    evas_vg_node_origin_set(batman, 100, 150);
    evas_vg_node_color_set(batman, 0, 0, 0, 255);
    evas_vg_shape_stroke_color_set(batman, 0, 0, 0, 0);
