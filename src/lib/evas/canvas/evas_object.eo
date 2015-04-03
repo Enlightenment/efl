@@ -1433,8 +1433,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base)
       Eo.Base.destructor;
       Eo.Base.dbg_info_get;
       Evas.Common_Interface.evas.get;
-      Efl.Gfx.Base.visibility.set;
-      Efl.Gfx.Base.visibility.get;
+      Efl.Gfx.Base.visible.set;
+      Efl.Gfx.Base.visible.get;
       Efl.Gfx.Base.position.set;
       Efl.Gfx.Base.position.get;
       Efl.Gfx.Base.color.set;

@@ -4014,7 +4014,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   eo_do(ep->typedata.swallow->swallowed_object,
                         efl_gfx_position_set(ed->x + pf->final.x, ed->y + pf->final.y),
                         efl_gfx_size_set(pf->final.w, pf->final.h),
-                        efl_gfx_visibility_set(vis));
+                        efl_gfx_visible_set(vis));
                }
              else evas_object_hide(ep->typedata.swallow->swallowed_object);
              mo = ep->typedata.swallow->swallowed_object;

@@ -1204,14 +1204,14 @@ evas_object_show(Evas_Object *eo_obj)
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   eo_do(eo_obj, efl_gfx_visibility_set(EINA_TRUE));
+   eo_do(eo_obj, efl_gfx_visible_set(EINA_TRUE));
 }
 
 EAPI void
 evas_object_hide(Evas_Object *eo_obj)
 {
    if (!eo_obj) return;
-   eo_do(eo_obj, efl_gfx_visibility_set(EINA_FALSE));
+   eo_do(eo_obj, efl_gfx_visible_set(EINA_FALSE));
 }
 
 EAPI Eina_Bool
@@ -1219,13 +1219,13 @@ evas_object_visible_get(const Evas_Object *obj)
 {
    Eina_Bool ret;
 
-   return eo_do_ret((Evas_Object *)obj, ret, efl_gfx_visibility_get());
+   return eo_do_ret((Evas_Object *)obj, ret, efl_gfx_visible_get());
 }
 
 static void
-_evas_object_efl_gfx_base_visibility_set(Eo *eo_obj,
-                                         Evas_Object_Protected_Data *obj,
-                                         Eina_Bool visible)
+_evas_object_efl_gfx_base_visible_set(Eo *eo_obj,
+                                      Evas_Object_Protected_Data *obj,
+                                      Eina_Bool visible)
 {
    evas_object_async_block(obj);
    if (visible) _show(eo_obj, obj);
@@ -1401,7 +1401,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 static Eina_Bool
-_evas_object_efl_gfx_base_visibility_get(Eo *eo_obj EINA_UNUSED,
+_evas_object_efl_gfx_base_visible_get(Eo *eo_obj EINA_UNUSED,
                                          Evas_Object_Protected_Data *obj)
 {
    if (obj->delete_me) return EINA_FALSE;
@@ -1590,7 +1590,7 @@ _evas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EI
    Eina_Bool clipees_has;
 
    eo_do(eo_obj,
-         visible = efl_gfx_visibility_get(),
+         visible = efl_gfx_visible_get(),
          layer = evas_obj_layer_get(),
          name = evas_obj_name_get(),
          efl_gfx_position_get(&x, &y),

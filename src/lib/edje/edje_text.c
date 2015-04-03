@@ -522,7 +522,7 @@ arrange_text:
               efl_gfx_position_set(ed->x + TO_INT(params->eval.x) + ep->typedata.text->offset.x,
                                    ed->y + TO_INT(params->eval.y) + ep->typedata.text->offset.y);
 
-              efl_gfx_visibility_set(params->visible));
+              efl_gfx_visible_set(params->visible));
      }
 
 
