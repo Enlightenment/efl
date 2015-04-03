@@ -482,9 +482,7 @@ void ector_software_rasterizer_clip_shape_set(Software_Rasterizer *rasterizer, S
 
 void ector_software_rasterizer_color_set(Software_Rasterizer *rasterizer, int r, int g, int b, int a)
 {
-   uint color = ECTOR_ARGB_JOIN(a, r, g, b);
-
-   rasterizer->fillData.color = _ector_premultiply(color);
+   rasterizer->fillData.color = ECTOR_ARGB_JOIN(a, r, g, b);
    rasterizer->fillData.type = Solid;
 }
 void ector_software_rasterizer_linear_gradient_set(Software_Rasterizer *rasterizer, Ector_Renderer_Software_Gradient_Data *linear)

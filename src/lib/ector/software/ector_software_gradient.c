@@ -82,7 +82,6 @@ _generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_c
     uint current_color = ECTOR_ARGB_JOIN(curr->a, curr->r, curr->g, curr->b);
     double incr = 1.0 / (double)size;
     double fpos = 1.5 * incr;
-    current_color = _ector_premultiply(current_color);
 
     colorTable[pos++] = current_color;
 
@@ -99,7 +98,6 @@ _generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_c
          next = (gradient_stops + i + 1);
          double delta = 1/(next->offset - curr->offset);
          uint next_color = ECTOR_ARGB_JOIN(next->a, next->r, next->g, next->b);
-         next_color = _ector_premultiply(next_color);
          BLEND_FUNC func = &_ease_linear;
          while (fpos < next->offset && pos < size)
            {
@@ -113,12 +111,11 @@ _generate_gradient_color_table(Efl_Gfx_Gradient_Stop *gradient_stops, int stop_c
          current_color = next_color;
       }
 
-    uint last_color = _ector_premultiply(current_color);
     for (;pos < size; ++pos)
-      colorTable[pos] = last_color;
+      colorTable[pos] = current_color;
 
     // Make sure the last color stop is represented at the end of the table
-    colorTable[size-1] = last_color;
+    colorTable[size-1] = current_color;
 }
 
 

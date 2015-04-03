@@ -89,18 +89,6 @@ _ector_comp_func_source_over(uint *dest, uint *src, int length, uint const_alpha
     }
 }
 
-
-static inline uint 
-_ector_premultiply(uint data)
-{
-    DATA32  a = 1 + (data >> 24);
-    data = ( data & 0xff000000) +
-      (((((data) >> 8) & 0xff) * a) & 0xff00) +
-      (((((data) & 0x00ff00ff) * a) >> 8) & 0x00ff00ff);
-
-    return data;
-}
-
 static inline uint 
 INTERPOLATE_PIXEL_256(uint x, uint a, uint y, uint b) {
     uint t = (x & 0xff00ff) * a + (y & 0xff00ff) * b;
