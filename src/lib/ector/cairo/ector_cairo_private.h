@@ -7,12 +7,14 @@ typedef struct _Ector_Cairo_Surface_Data Ector_Cairo_Surface_Data;
 struct _Ector_Cairo_Surface_Data
 {
    cairo_t *cairo;
+
+   Eina_Bool internal : 1;
 };
 
 #define CHECK_CAIRO(Parent) (!(Parent && Parent->cairo))
 
-#define USE(Obj, Sym, Error)                     \
-  if (!Sym) _ector_cairo_symbol_get(Obj, #Sym);  \
+#define USE(Obj, Sym, Error)                            \
+  if (!Sym) Sym = _ector_cairo_symbol_get(Obj, #Sym);   \
   if (!Sym) return Error;
 
 static inline void *

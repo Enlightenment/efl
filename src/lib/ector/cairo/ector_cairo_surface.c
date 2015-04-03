@@ -45,26 +45,57 @@ _ector_cairo_surface_symbol_get(Eo *obj EINA_UNUSED,
    return eina_module_symbol_get(_cairo_so, name);
 }
 
+#undef USE
+#define USE(Obj, Sym, Error)                                            \
+  if (!Sym) Sym = _ector_cairo_surface_symbol_get(Obj, NULL, #Sym);     \
+  if (!Sym) return Error;
 
 static Ector_Renderer *
 _ector_cairo_surface_ector_generic_surface_renderer_factory_new(Eo *obj,
                                                                 Ector_Cairo_Surface_Data *pd EINA_UNUSED,
                                                                 const Eo_Class *type)
 {
-   if (eo_isa(type, ECTOR_RENDERER_CAIRO_SHAPE_CLASS))
+   if (type == ECTOR_RENDERER_GENERIC_SHAPE_CLASS)
      return eo_add(ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj);
-   else if (eo_isa(type, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS))
+   else if (type == ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_CLASS)
      return eo_add(ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, obj);
-   else if (eo_isa(type, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS))
+   else if (type == ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_CLASS)
      return eo_add(ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, obj);
    return NULL;
 }
 
+typedef struct _cairo_surface_t cairo_surface_t;
+
+static void (*cairo_destroy)(cairo_t *cr) = NULL;
+static cairo_surface_t *(*cairo_image_surface_create)(int format,
+                                                      int width,
+                                                      int height) = NULL;
+static cairo_t *(*cairo_create)(cairo_surface_t *target) = NULL;
+
+static cairo_surface_t *internal = NULL;
+
 static void
-_ector_cairo_surface_context_set(Eo *obj EINA_UNUSED,
+_ector_cairo_surface_context_set(Eo *obj,
                                  Ector_Cairo_Surface_Data *pd,
                                  cairo_t *ctx)
 {
+   if (pd->internal)
+     {
+        USE(obj, cairo_destroy, );
+
+        if (pd->cairo) cairo_destroy(pd->cairo);
+        pd->internal = EINA_FALSE;
+     }
+   if (!ctx)
+     {
+        USE(obj, cairo_image_surface_create, );
+        USE(obj, cairo_create, );
+
+        fprintf(stderr, "tada\n");
+
+        if (!internal) internal = cairo_image_surface_create(0, 1, 1);
+        ctx = cairo_create(internal);
+     }
    pd->cairo = ctx;
 }
 
@@ -76,11 +107,13 @@ _ector_cairo_surface_context_get(Eo *obj EINA_UNUSED,
 }
 
 static void
-_ector_cairo_surface_eo_base_constructor(Eo *obj EINA_UNUSED,
-                                         Ector_Cairo_Surface_Data *pd EINA_UNUSED)
+_ector_cairo_surface_eo_base_constructor(Eo *obj,
+                                         Ector_Cairo_Surface_Data *pd)
 {
    eo_do_super(obj, ECTOR_CAIRO_SURFACE_CLASS, eo_constructor());
    _cairo_count++;
+
+   _ector_cairo_surface_context_set(obj, pd, NULL);
 }
 
 static void
