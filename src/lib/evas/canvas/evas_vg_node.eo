@@ -71,6 +71,8 @@ abstract Evas.VG_Node (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
       Efl.Gfx.Base.visible.get;
       Efl.Gfx.Base.color.set;
       Efl.Gfx.Base.color.get;
+      Efl.Gfx.Base.color_part.set;
+      Efl.Gfx.Base.color_part.get;
       Efl.Gfx.Base.size.get;
       Efl.Gfx.Base.position.set;
       Efl.Gfx.Base.position.get;
