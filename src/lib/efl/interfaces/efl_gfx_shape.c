@@ -802,6 +802,10 @@ _efl_gfx_shape_append_rect(Eo *obj, Efl_Gfx_Shape_Data *pd,
                            double x, double y, double w, double h,
                            double rx, double ry)
 {
+   // clamp the x and y radius value.
+   if (rx > w/2) rx = w/2;
+   if (ry > h/2) ry = h/2;
+
    _efl_gfx_shape_append_move_to(obj, pd, x, y + ry);
    // Top left corner
    _efl_gfx_shape_append_arc_to(obj, pd, x + rx, y, rx, ry, 0, EINA_FALSE, EINA_TRUE);
