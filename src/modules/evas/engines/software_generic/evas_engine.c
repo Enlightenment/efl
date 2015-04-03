@@ -3530,7 +3530,7 @@ eng_ector_renderer_draw(void *data EINA_UNUSED, void *context, void *surface, Ec
    Eina_Rectangle *r;
    Eina_Rectangle clip;
    Eina_Array_Iterator it;
-   unsigned int i;
+   unsigned int i, col;
 
    if (dc->clip.use)
      {
@@ -3571,10 +3571,21 @@ eng_ector_renderer_draw(void *data EINA_UNUSED, void *context, void *surface, Ec
    if (eina_array_count(c) == 0)
      eina_array_push(c, eina_rectangle_new(clip.x, clip.y, clip.w, clip.h));
 
+   {
+      unsigned int mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
+      int r, g, b, a;
+
+      r = (R_VAL(&mul_col) * R_VAL(&dc->col.col)) >> 8;
+      g = (G_VAL(&mul_col) * G_VAL(&dc->col.col)) >> 8;
+      b = (B_VAL(&mul_col) * B_VAL(&dc->col.col)) >> 8;
+      a = (A_VAL(&mul_col) * A_VAL(&dc->col.col)) >> 8;
+      col = ARGB_JOIN(r, g, b, a);
+   }
+
    ector.r = eo_ref(renderer);
    ector.clips = c;
    ector.render_op = _evas_render_op_to_ector_rop(dc->render_op);
-   ector.mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
+   ector.mul_col = col;
    ector.x = x;
    ector.y = y;
    ector.free_it = EINA_FALSE;
