@@ -75,6 +75,7 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_generic_base_draw(Eo *obj,
    if (!pd->pat || !gld || CHECK_CAIRO(pd->parent)) return EINA_FALSE;
 
    USE(obj, cairo_rectangle, EINA_FALSE);
+   USE(obj, cairo_fill, EINA_FALSE);
 
    cairo_rectangle(pd->parent->cairo, gld->start.x - x, gld->start.y - y,
                    gld->end.x - gld->start.x,
