@@ -276,7 +276,7 @@ test_3d(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info E
    evas_object_show(sl);
 
    sl = elm_slider_add(win);
-   elm_object_text_set(sl, "CX Off");
+   elm_object_text_set(sl, "PX Off");
    elm_slider_unit_format_set(sl, "%1.0f units");
    elm_slider_indicator_format_set(sl, "%1.0f units");
    elm_slider_span_size_set(sl, 360);
@@ -289,7 +289,7 @@ test_3d(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info E
    evas_object_show(sl);
 
    sl = elm_slider_add(win);
-   elm_object_text_set(sl, "CY Off");
+   elm_object_text_set(sl, "PY Off");
    elm_slider_unit_format_set(sl, "%1.0f units");
    elm_slider_indicator_format_set(sl, "%1.0f units");
    elm_slider_span_size_set(sl, 360);
