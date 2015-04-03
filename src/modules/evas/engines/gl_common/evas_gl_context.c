@@ -1513,11 +1513,12 @@ vertex_array_size_check(Evas_Engine_GL_Context *gc EINA_UNUSED, int pn EINA_UNUS
 static Evas_GL_Shader
 evas_gl_common_shader_select(Evas_Engine_GL_Context *gc,
                              Shader_Type type,
-                             RGBA_Map_Point *p, int npoints EINA_UNUSED,
+                             RGBA_Map_Point *p, int npoints,
                              int r, int g, int b, int a,
                              int sw, int sh, int w, int h, Eina_Bool smooth,
                              Evas_GL_Texture *tex, Eina_Bool tex_only,
-                             Evas_GL_Texture *mtex)
+                             Evas_GL_Texture *mtex,
+                             int *psam, int *pnomul)
 {
    const Eina_Bool gc_bgra = gc->shared->info.bgra;
    int nomul = 1, bgra = 0;
@@ -1551,9 +1552,12 @@ evas_gl_common_shader_select(Evas_Engine_GL_Context *gc,
    // color mul
    if ((a == 255) && (r == 255) && (g == 255) && (b == 255) && p)
      {
-        if ((p[0].col != 0xffffffff) || (p[1].col != 0xffffffff) ||
-            (p[2].col != 0xffffffff) || (p[3].col != 0xffffffff))
-          nomul = 0;
+        for (k = 0; k < npoints; k++)
+          if (p[k].col != 0xffffffff)
+            {
+               nomul = 0;
+               break;
+            }
      }
    else if (!p)
      nomul = 0;
@@ -1594,16 +1598,17 @@ evas_gl_common_shader_select(Evas_Engine_GL_Context *gc,
 
         };
 
-        if (type == SHD_YUV)
-          k = 0;
-        else if (type == SHD_YUY2)
-          k = 4;
-        else if (type == SHD_NV12)
-          k = 8;
-        else if (type == SHD_RGB_A_PAIR)
-          k = 12;
-        else if (type == SHD_TEX_EXTERNAL)
-          k = 16;
+        switch (type)
+          {
+           case SHD_YUV: k = 0; break;
+           case SHD_YUY2: k = 4; break;
+           case SHD_NV12: k = 8; break;
+           case SHD_RGB_A_PAIR: k = 12; break;
+           case SHD_TEX_EXTERNAL: k = 16; break;
+           default:
+             CRI("Unknown shader type requested!");
+             return SHADER_RECT;
+          }
 
         shader = yuv_shaders[k + (afill * 4) + (mask * 2) + (!nomul)];
      }
@@ -1614,6 +1619,8 @@ evas_gl_common_shader_select(Evas_Engine_GL_Context *gc,
        evas_gl_common_shader_name_get(shader));
    */
 
+   if (psam) *psam = sam;
+   if (pnomul) *pnomul = nomul;
    return shader;
 }
 
@@ -1963,7 +1970,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    Eina_Bool blend = EINA_FALSE;
    Evas_GL_Shader shader = SHADER_IMG;
    GLuint prog = gc->shared->shader[shader].prog;
-   int pn = 0, sam = 0, render_op = gc->dc->render_op;
+   int pn = 0, sam = 0, render_op = gc->dc->render_op, nomul = 0;
 
    if (!!mtex)
      {
@@ -1976,7 +1983,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
 
    shader = evas_gl_common_shader_select(gc, SHD_IMAGE, NULL, 0, r, g, b, a,
                                          sw, sh, w, h, smooth, tex, tex_only,
-                                         mtex);
+                                         mtex, &sam, &nomul);
    prog = gc->shared->shader[shader].prog;
 
    if (tex->ptt)
@@ -2024,13 +2031,12 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].shader.ch = 0;
    gc->pipe[pn].array.line = 0;
    gc->pipe[pn].array.use_vertex = 1;
-   // if nomul... dont need this
-   gc->pipe[pn].array.use_color = 1;
+   gc->pipe[pn].array.use_color = !nomul;
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
    gc->pipe[pn].array.use_mask = !!mtex;
-   gc->pipe[pn].array.use_texsam = sam;
+   gc->pipe[pn].array.use_texsam = (sam != SHD_SAM11);
 
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
@@ -2070,8 +2076,8 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
 
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
    
-   // if nomul... dont need this
-   PUSH_6_COLORS(pn, r, g, b, a);
+   if (!nomul)
+     PUSH_6_COLORS(pn, r, g, b, a);
 }
 
 void
@@ -2159,13 +2165,14 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
    Eina_Bool blend = 0;
    Evas_GL_Shader shader;
    GLuint prog;
-   int pn = 0;
+   int pn = 0, nomul = 0;
 
    if ((a < 255) || (!!mtex))
      blend = 1;
 
    shader = evas_gl_common_shader_select(gc, SHD_YUV, NULL, 0, r, g, b, a,
-                                         w, h, w, h, smooth, tex, 0, mtex);
+                                         w, h, w, h, smooth, tex, 0, mtex,
+                                         NULL, &nomul);
    prog = gc->shared->shader[shader].prog;
 
    pn = _evas_gl_common_context_push(SHD_YUV,
@@ -2195,7 +2202,7 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].shader.ch = 0;
    gc->pipe[pn].array.line = 0;
    gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = 1;
+   gc->pipe[pn].array.use_color = !nomul;
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = 1;
    gc->pipe[pn].array.use_texuv3 = 1;
@@ -2220,7 +2227,8 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
    PUSH_6_TEXUV2(pn, t2x1, t2y1, t2x2, t2y2);
    PUSH_6_TEXUV3(pn, t2x1, t2y1, t2x2, t2y2);
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
-   PUSH_6_COLORS(pn, r, g, b, a);
+   if (!nomul)
+     PUSH_6_COLORS(pn, r, g, b, a);
 }
 
 void
@@ -2236,13 +2244,14 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
    Eina_Bool blend = 0;
    Evas_GL_Shader shader;
    GLuint prog;
-   int pn = 0;
+   int pn = 0, nomul = 0;
 
    if ((a < 255) || (!!mtex))
      blend = 1;
 
    shader = evas_gl_common_shader_select(gc, SHD_YUY2, NULL, 0, r, g, b, a,
-                                         sw, sh, w, h, smooth, tex, 0, mtex);
+                                         sw, sh, w, h, smooth, tex, 0, mtex,
+                                         NULL, &nomul);
    prog = gc->shared->shader[shader].prog;
 
    pn = _evas_gl_common_context_push(SHD_YUY2,
@@ -2271,7 +2280,7 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].shader.ch = 0;
    gc->pipe[pn].array.line = 0;
    gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = 1;
+   gc->pipe[pn].array.use_color = !nomul;
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = 1;
    gc->pipe[pn].array.use_texuv3 = 0;
@@ -2295,7 +2304,8 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
    PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
    PUSH_6_TEXUV2(pn, t2x1, t2y1, t2x2, t2y2);
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
-   PUSH_6_COLORS(pn, r, g, b, a);
+   if (!nomul)
+     PUSH_6_COLORS(pn, r, g, b, a);
 }
 
 void
@@ -2311,13 +2321,14 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
    Eina_Bool blend = 0;
    Evas_GL_Shader shader;
    GLuint prog;
-   int pn = 0;
+   int pn = 0, nomul = 0;
 
    if ((a < 255) || (!!mtex))
      blend = 1;
 
    shader = evas_gl_common_shader_select(gc, SHD_NV12, NULL, 0, r, g, b, a,
-                                         sw, sh, w, h, smooth, tex, 0, mtex);
+                                         sw, sh, w, h, smooth, tex, 0, mtex,
+                                         NULL, &nomul);
    prog = gc->shared->shader[shader].prog;
    prog = gc->shared->shader[shader].prog;
 
@@ -2349,7 +2360,7 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].shader.ch = 0;
    gc->pipe[pn].array.line = 0;
    gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = 1;
+   gc->pipe[pn].array.use_color = !nomul;
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = 1;
    gc->pipe[pn].array.use_texuv3 = 0;
@@ -2373,7 +2384,8 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
    PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
    PUSH_6_TEXUV2(pn, t2x1, t2y1, t2x2, t2y2);
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
-   PUSH_6_COLORS(pn, r, g, b, a);
+   if (!nomul)
+     PUSH_6_COLORS(pn, r, g, b, a);
 }
 
 void
@@ -2397,10 +2409,11 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
    GLfloat tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
    Evas_GL_Shader shader;
    GLuint prog;
-   int pn;
+   int pn, nomul = 0;
 
    shader = evas_gl_common_shader_select(gc, SHD_RGB_A_PAIR, NULL, 0, r, g, b, a,
-                                         sw, sh, w, h, smooth, tex, 0, mtex);
+                                         sw, sh, w, h, smooth, tex, 0, mtex,
+                                         NULL, &nomul);
    prog = gc->shared->shader[shader].prog;
 
    pn = _evas_gl_common_context_push(SHD_RGB_A_PAIR,
@@ -2429,8 +2442,7 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].shader.ch = 0;
    gc->pipe[pn].array.line = 0;
    gc->pipe[pn].array.use_vertex = EINA_TRUE;
-   // if nomul... dont need this
-   gc->pipe[pn].array.use_color = EINA_TRUE;
+   gc->pipe[pn].array.use_color = !nomul;
    gc->pipe[pn].array.use_texuv = EINA_TRUE;
    gc->pipe[pn].array.use_texuv2 = 0;
    gc->pipe[pn].array.use_texuv3 = 0;
@@ -2456,7 +2468,8 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
    PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
    PUSH_6_TEXA(pn, t2x1, t2y1, t2x2, t2y2);
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
-   PUSH_6_COLORS(pn, r, g, b, a);
+   if (!nomul)
+     PUSH_6_COLORS(pn, r, g, b, a);
 }
 
 void
@@ -2480,7 +2493,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    Eina_Bool uvtexture = EINA_FALSE;
    Shader_Type type;
    int pn = 0, i;
-   int flat = 0;
+   int flat = 0, nomul = 0;
    GLuint prog;
 
    if (!(gc->dc->render_op == EVAS_RENDER_COPY) &&
@@ -2521,7 +2534,8 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
         break;
      }
    shader = evas_gl_common_shader_select(gc, type, p, npoints, r, g, b, a,
-                                         w, h, w, h, smooth, tex, tex_only, mtex);
+                                         w, h, w, h, smooth, tex, tex_only,
+                                         mtex, NULL, &nomul);
    prog = gc->shared->shader[shader].prog;
 
    /* FIXME: Add RGB+A support, as well as YUV map masking
@@ -2688,11 +2702,14 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                          t2y[points[i]]);
           }
 
-        PUSH_COLOR(pn,
-                   R_VAL(&cl),
-                   G_VAL(&cl),
-                   B_VAL(&cl),
-                   A_VAL(&cl));
+        if (!nomul)
+          {
+             PUSH_COLOR(pn,
+                        R_VAL(&cl),
+                        G_VAL(&cl),
+                        B_VAL(&cl),
+                        A_VAL(&cl));
+          }
      }
 
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
