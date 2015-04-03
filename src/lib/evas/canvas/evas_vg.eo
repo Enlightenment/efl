@@ -1,4 +1,4 @@
-class Evas.VG (Evas.Object)
+class Evas.VG (Evas.Object, Efl.File)
 {
    legacy_prefix: evas_object_vg;
    eo_prefix: evas_obj_vg;
@@ -13,5 +13,7 @@ class Evas.VG (Evas.Object)
    }
    implements {
       Eo.Base.constructor;
+      Efl.File.file.set;
+      Efl.File.file.get;
    }
 }

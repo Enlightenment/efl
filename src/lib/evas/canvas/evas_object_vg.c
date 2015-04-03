@@ -312,4 +312,19 @@ evas_object_vg_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
    return 0;
 }
 
+
+Eina_Bool
+_evas_vg_efl_file_file_set(Eo *obj, Evas_VG_Data *pd,
+                           const char *file, const char *key)
+{
+   // FIXME: just load SVG for now
+   return EINA_FALSE;
+}
+
+void
+_evas_vg_efl_file_file_get(Eo *obj, Evas_VG_Data *pd,
+                           const char **file, const char **key)
+{
+}
+
 #include "evas_vg.eo.c"
