@@ -23,4 +23,14 @@ _ector_cairo_surface_ector_generic_surface_renderer_factory_new(Eo *obj, Ector_C
 {
 }
 
+Eina_Bool
+_ector_cairo_surface_context_set(Eo *obj, Ector_Cairo_Surface_Data *pd, cairo_t *ctx)
+{
+}
+
+Eo *
+_ector_cairo_surface_eo_base_finalize(Eo *obj, Ector_Cairo_Surface_Data *pd)
+{
+}
+
 #include "ector_cairo_surface.eo.c"
