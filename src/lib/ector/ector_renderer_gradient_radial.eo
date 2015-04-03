@@ -1,0 +1,13 @@
+abstract Ector.Renderer.Gradient_Radial (Ector.Renderer.Gradient, Efl.Graphics.Gradient_Radial)
+{
+   eo_prefix: ector_renderer_gradient_radial;
+   legacy_prefix: null;
+   implements {
+      Efl.Graphics.Gradient_Radial.center.set;
+      Efl.Graphics.Gradient_Radial.center.get;
+      Efl.Graphics.Gradient_Radial.radius.set;
+      Efl.Graphics.Gradient_Radial.radius.get;
+      Efl.Graphics.Gradient_Radial.focal.set;
+      Efl.Graphics.Gradient_Radial.focal.get;
+   }
+}

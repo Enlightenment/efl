@@ -1,0 +1,11 @@
+abstract Ector.Renderer.Gradient_Linear (Ector.Renderer.Gradient, Efl.Graphics.Gradient_Linear)
+{
+   eo_prefix: ector_renderer_gradient_linear;
+   legacy_prefix: null;
+   implements {
+      Efl.Graphics.Gradient_Linear.start.set;
+      Efl.Graphics.Gradient_Linear.start.get;
+      Efl.Graphics.Gradient_Linear.end.set;
+      Efl.Graphics.Gradient_Linear.end.get;
+   }
+}
