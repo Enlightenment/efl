@@ -5,22 +5,39 @@ abstract Evas.VG_Node (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
    properties {
       transformation {
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    const(Eina_Matrix3) *m;
-	 }
+            /*@
+             Sets the transformation matrix to be used for this node object.
+             @since 1.14
+            */
+         }
+         get {
+            /*@
+             Gets the transformation matrix used for this node object.
+             @since 1.14
+            */
+         }
+         values {
+            const(Eina_Matrix3) *m; /*@ transformation matrix */
+         }
       }
       origin {
          set {
-	 }
-	 get {
-	 }
-	 values {
-	    double x;
-	    double y;
-	 }
+            /*@
+             Sets the origin position of this node object. This origin position
+             affects to node transformation
+             @since 1.14
+            */
+         }
+         get {
+            /*@
+             Gets the origin position of this node object.
+             @since 1.14
+            */
+         }
+         values {
+            double x; /* @origin x position */
+            double y; /* @origin y position */
+         }
       }
       mask {
          set {
@@ -43,25 +60,27 @@ abstract Evas.VG_Node (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
    }
    methods {
       bound_get {
-        /*@
-	 Give the bounding box in screen coordinate as being drawn.
-	 It will start as the control box until it is refined once
-	 the shape is computed.
-	*/
+         /*@
+          Give the bounding box in screen coordinate as being drawn.
+          It will start as the control box until it is refined once the shape
+          is computed.
+          @since 1.14
+         */
          return: bool @warn_unused;
-	 params {
-	    @out Eina_Rectangle r;
-	 }
+         params {
+            @out Eina_Rectangle r; /*@ bounding box to be returned */
+         }
       }
       original_bound_get {
-        /*@
-	 Give the bounding box in screen coordinate as defined in
-	 the file or at the insertion of the object (before any scaling).
-	*/
+         /*@
+          Give the bounding box in screen coordinate as defined in
+          the file or at the insertion of the object (before any scaling).
+          @since 1.14
+         */
          return: bool @warn_unused;
-	 params {
-	    @out Eina_Rectangle r;
-	 }
+         params {
+            @out Eina_Rectangle r; /*@ original bounding box to be returned */
+         }
       }
    }
    implements {
