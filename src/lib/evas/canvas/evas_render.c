@@ -107,7 +107,7 @@ _time_get()
 }
 
 struct accumulator {
-   double total, min, max;
+   double total, min, max, draw_start_time;
    int samples;
    const char *what;
 };
@@ -128,8 +128,27 @@ static struct accumulator sync_accumulator = {
 };
 
 static void
-_accumulate_time(double before, struct accumulator *acc)
+_accumulate_time(double before, Eina_Bool async)
 {
+   static Eina_Bool async_start = EINA_TRUE;
+   static double cache_before;
+   struct accumulator *acc = &sync_accumulator;
+   if (async)
+     {
+        acc = &async_accumulator;
+        if (async_start)
+          {
+             async_start = EINA_FALSE;
+             cache_before = before;
+             return;
+          }
+        else
+          {
+             async_start = EINA_TRUE;
+             before = cache_before;
+          }
+     }
+
    double diff = _time_get() - before;
 
    acc->total += diff;
@@ -2084,9 +2103,7 @@ evas_render_updates_internal(Evas *eo_e,
    int redraw_all = 0;
    Eina_Bool haveup = 0;
    Evas_Render_Mode render_mode = EVAS_RENDER_MODE_UNDEF;
-#ifdef EVAS_RENDER_DEBUG_TIMING
-   double start_time = _time_get();
-#endif
+
    Eina_Rectangle clip_rect;
 
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
@@ -2108,6 +2125,10 @@ evas_render_updates_internal(Evas *eo_e,
               evas_render_rendering_wait(e);
           }
      }
+
+#ifdef EVAS_RENDER_DEBUG_TIMING
+   double start_time = _time_get();
+#endif
 
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
@@ -2639,7 +2660,7 @@ evas_render_updates_internal(Evas *eo_e,
    RD(0, "---]\n");
 
 #ifdef EVAS_RENDER_DEBUG_TIMING
-   _accumulate_time(start_time, do_async ? &async_accumulator : &sync_accumulator);
+   _accumulate_time(start_time, do_async);
 #endif
 
    return EINA_TRUE;
@@ -2725,6 +2746,10 @@ evas_render_wakeup(Evas *eo_e)
    evas_render_updates_free(ret_updates);
 
    eo_unref(eo_e);
+
+#ifdef EVAS_RENDER_DEBUG_TIMING
+   _accumulate_time(0, EINA_TRUE);
+#endif
 }
 
 static void
