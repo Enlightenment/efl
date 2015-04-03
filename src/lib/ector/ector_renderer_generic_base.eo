@@ -113,7 +113,6 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
    implements {
       @virtual .draw;
       @virtual .bounds_get;
-      @virtual .prepare;
       @virtual .done;
    }
 }
