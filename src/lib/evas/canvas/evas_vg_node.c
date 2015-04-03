@@ -4,6 +4,7 @@
 #include "evas_vg_private.h"
 
 #include <string.h>
+#include <math.h>
 
 #define MY_CLASS EVAS_VG_NODE_CLASS
 
@@ -50,23 +51,42 @@ _evas_vg_node_origin_get(Eo *obj EINA_UNUSED,
 }
 
 void
-_evas_vg_node_visibility_set(Eo *obj EINA_UNUSED,
-                             Evas_VG_Node_Data *pd,
-                             Eina_Bool v)
+_evas_vg_node_efl_gfx_base_position_set(Eo *obj EINA_UNUSED,
+                                        Evas_VG_Node_Data *pd,
+                                        int x, int y)
+{
+   pd->x = lrint(x);
+   pd->y = lrint(y);
+}
+
+void
+_evas_vg_node_efl_gfx_base_position_get(Eo *obj EINA_UNUSED,
+                                        Evas_VG_Node_Data *pd,
+                                        int *x, int *y)
+{
+   if (x) *x = pd->x;
+   if (y) *y = pd->y;
+}
+
+void
+_evas_vg_node_efl_gfx_base_visible_set(Eo *obj EINA_UNUSED,
+                                       Evas_VG_Node_Data *pd, Eina_Bool v)
 {
    pd->visibility = v;
 }
 
+
 Eina_Bool
-_evas_vg_node_visibility_get(Eo *obj EINA_UNUSED, Evas_VG_Node_Data *pd)
+_evas_vg_node_efl_gfx_base_visible_get(Eo *obj EINA_UNUSED,
+                                       Evas_VG_Node_Data *pd)
 {
    return pd->visibility;
 }
 
 void
-_evas_vg_node_color_set(Eo *obj EINA_UNUSED,
-                        Evas_VG_Node_Data *pd,
-                        int r, int g, int b, int a)
+_evas_vg_node_efl_gfx_base_color_set(Eo *obj EINA_UNUSED,
+                                     Evas_VG_Node_Data *pd,
+                                     int r, int g, int b, int a)
 {
    pd->r = r;
    pd->g = g;
@@ -75,9 +95,9 @@ _evas_vg_node_color_set(Eo *obj EINA_UNUSED,
 }
 
 void
-_evas_vg_node_color_get(Eo *obj EINA_UNUSED,
-                        Evas_VG_Node_Data *pd,
-                        int *r, int *g, int *b, int *a)
+_evas_vg_node_efl_gfx_base_color_get(Eo *obj EINA_UNUSED,
+                                     Evas_VG_Node_Data *pd,
+                                     int *r, int *g, int *b, int *a)
 {
    if (r) *r = pd->r;
    if (g) *g = pd->g;
@@ -100,6 +120,18 @@ Evas_VG_Node*
 _evas_vg_node_mask_get(Eo *obj EINA_UNUSED, Evas_VG_Node_Data *pd)
 {
    return pd->mask;
+}
+
+void
+_evas_vg_node_efl_gfx_base_size_get(Eo *obj,
+                                    Evas_VG_Node_Data *pd EINA_UNUSED,
+                                    int *w, int *h)
+{
+   Eina_Rectangle bound = { 0, 0, 0, 0 };
+
+   eo_do(obj, evas_vg_node_bound_get(&bound));
+   if (w) *w = bound.w;
+   if (h) *h = bound.h;
 }
 
 // Parent should be a container otherwise dismissing the stacking operation

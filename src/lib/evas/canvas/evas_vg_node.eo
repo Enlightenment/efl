@@ -1,4 +1,4 @@
-abstract Evas.VG_Node (Eo.Base)
+abstract Evas.VG_Node (Eo.Base, Efl.Gfx.Base)
 {
    eo_prefix: evas_vg_node;
    legacy_prefix: null;
@@ -20,49 +20,6 @@ abstract Evas.VG_Node (Eo.Base)
 	 values {
 	    double x;
 	    double y;
-	 }
-      }
-      visibility {
-         set {
-            /*@ Makes the given Evas_VG node visible or invisible. */
-	 }
-	 get {
-            /*@ Retrieves whether or not the given Evas_VG node is visible. */
-	 }
-	 values {
-	    Eina_Bool v; /*@ @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise */
-	 }
-      }
-      color {
-         set {
-            /*@
-            Sets the general/main color of the given Evas_VG node to the given
-            one.
-
-            @note These color values are expected to be premultiplied by @p a.
-
-            @ingroup Evas_VG_Node_Group */
-         }
-         get {
-            /*@
-            Retrieves the general/main color of the given Evas_VG node.
-
-            Retrieves the “main” color's RGB component (and alpha channel)
-            values, <b>which range from 0 to 255</b>. For the alpha channel,
-            which defines the object's transparency level, 0 means totally
-            transparent, while 255 means opaque. These color values are
-            premultiplied by the alpha value.
-
-            @note Use @c NULL pointers on the components you're not interested
-            in: they'll be ignored by the function.
-
-            @ingroup Evas_VG_Node_Group */
-	 }
-	 values {
-            int r; /*@ The red component of the given color. */
-            int g; /*@ The green component of the given color. */
-            int b; /*@ The blue component of the given color. */
-            int a; /*@ The alpha component of the given color. */
 	 }
       }
       mask {
@@ -173,6 +130,13 @@ abstract Evas.VG_Node (Eo.Base)
    implements {
       Eo.Base.parent.set;
       Eo.Base.constructor;
+      Efl.Gfx.Base.visible.set;
+      Efl.Gfx.Base.visible.get;
+      Efl.Gfx.Base.color.set;
+      Efl.Gfx.Base.color.get;
+      Efl.Gfx.Base.size.get;
+      Efl.Gfx.Base.position.set;
+      Efl.Gfx.Base.position.get;
       @virtual .bound_get;
    }
 }
