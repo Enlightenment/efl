@@ -5,7 +5,8 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_player.eo \
       lib/efl/interfaces/efl_text.eo \
       lib/efl/interfaces/efl_text_properties.eo \
-      lib/efl/interfaces/efl_graphics_shape.eo
+      lib/efl/interfaces/efl_graphics_shape.eo \
+      lib/efl/interfaces/efl_graphics_gradient.eo
 
 efl_eolian_files_h = $(efl_eolian_files:%.eo=%.eo.h)
 efl_eolian_files_c = $(efl_eolian_files:%.eo=%.eo.c)

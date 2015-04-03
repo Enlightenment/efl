@@ -1,26 +1,11 @@
-abstract Evas.VG_Gradient (Evas.VG_Node)
+abstract Evas.VG_Gradient (Evas.VG_Node, Efl.Graphics.Gradient)
 {
    eo_prefix: evas_vg_gradient;
    legacy_prefix: null;
-   properties {
-      stop {
-         set {
-	 }
-	 get {
-	 }
-	 values {
-	    const(Evas_VG_Gradient_Stop) *colors;
-	    uint length;
-	 }
-      }
-      spread {
-         set {
-	 }
-	 get {
-	 }
-	 values {
-	    Evas_VG_Gradient_Spread s;
-	 }
-      }
+   implements {
+      Efl.Graphics.Gradient.stop.set;
+      Efl.Graphics.Gradient.stop.get;
+      Efl.Graphics.Gradient.spread.set;
+      Efl.Graphics.Gradient.spread.get;
    }
 }

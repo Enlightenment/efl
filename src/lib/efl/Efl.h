@@ -89,6 +89,32 @@ typedef enum _Efl_Graphics_Join
   EFL_GRAPHICS_JOIN_LAST
 } Efl_Graphics_Join;
 
+/**
+ * Type defining gradient stop.
+ * @since 1.13
+ */
+typedef struct _Efl_Graphics_Gradient_Stop Efl_Graphics_Gradient_Stop;
+struct _Efl_Graphics_Gradient_Stop
+{
+   double offset;
+   int r;
+   int g;
+   int b;
+   int a;
+};
+
+/**
+ * Type defining how the gradient spread after its limit.
+ * @since 1.13
+ */
+typedef enum _Efl_Graphics_Gradient_Spread
+{
+  EFL_GRAPHICS_GRADIENT_SPREAD_PAD,
+  EFL_GRAPHICS_GRADIENT_SPREAD_REFLECT,
+  EFL_GRAPHICS_GRADIENT_SPREAD_REPEAT,
+  EFL_GRAPHICS_GRADIENT_SPREAD_LAST
+} Efl_Graphics_Gradient_Spread;
+
 #ifdef EFL_BETA_API_SUPPORT
 
 /* Interfaces */
@@ -100,6 +126,7 @@ typedef enum _Efl_Graphics_Join
 #include "interfaces/efl_text_properties.eo.h"
 
 #include "interfaces/efl_graphics_shape.eo.h"
+#include "interfaces/efl_graphics_gradient.eo.h"
 
 #endif
 

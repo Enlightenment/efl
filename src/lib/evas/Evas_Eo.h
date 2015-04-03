@@ -850,24 +850,6 @@ typedef enum _Evas_3D_Material_Attrib
  */
 typedef Eo      Evas_VG_Node;
 
-typedef struct _Evas_VG_Gradient_Stop Evas_VG_Gradient_Stop;
-struct _Evas_VG_Gradient_Stop
-{
-   double offset;
-   int r;
-   int g;
-   int b;
-   int a;
-};
-
-typedef enum _Evas_VG_Gradient_Spread
-{
-  EVAS_VG_GRADIENT_SPREAD_PAD,
-  EVAS_VG_GRADIENT_SPREAD_REFLECT,
-  EVAS_VG_GRADIENT_SPREAD_REPEAT,
-  EVAS_VG_GRADIENT_SPREAD_LAST
-} Evas_VG_Gradient_Spread;
-
 /**
  * @ingroup Evas_Object_VG
  *

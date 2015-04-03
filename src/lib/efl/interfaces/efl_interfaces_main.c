@@ -12,3 +12,4 @@
 #include "interfaces/efl_text_properties.eo.c"
 
 #include "interfaces/efl_graphics_shape.eo.c"
+#include "interfaces/efl_graphics_gradient.eo.c"
