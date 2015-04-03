@@ -94,4 +94,5 @@ tests_ector_ector_suite_DEPENDENCIES = @USE_ECTOR_INTERNAL_LIBS@
 endif
 
 EXTRA_DIST += \
-src/lib/ector/ector_private.h
+src/lib/ector/ector_private.h \
+src/lib/ector/cairo/ector_cairo_private,h

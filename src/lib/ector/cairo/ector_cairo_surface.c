@@ -7,30 +7,90 @@
 #include <cairo/Ector_Cairo.h>
 
 #include "ector_private.h"
+#include "ector_cairo_private.h"
 
-typedef struct _Ector_Cairo_Surface_Data Ector_Cairo_Surface_Data;
-struct _Ector_Cairo_Surface_Data
-{
-};
+static unsigned int _cairo_count = 0;
+static Eina_Module *_cairo_so = NULL;
 
-void *
-_ector_cairo_surface_symbol_get(Eo *obj, Ector_Cairo_Surface_Data *pd, char *name)
+static void *
+_ector_cairo_surface_symbol_get(Eo *obj EINA_UNUSED,
+                                Ector_Cairo_Surface_Data *pd EINA_UNUSED,
+                                const char *name)
 {
+   if (!_cairo_so)
+     {
+#define LOAD(x)                                 \
+        if (!_cairo_so)                         \
+          {                                     \
+             _cairo_so = eina_module_new(x);    \
+             if (_cairo_so &&                   \
+                 !eina_module_load(_cairo_so))  \
+               {                                \
+                  eina_module_free(_cairo_so);  \
+                  _cairo_so = NULL;             \
+               }                                \
+          }
+#if defined(_WIN32) || defined(__CYGWIN__)
+        LOAD("libcairo.dll");
+#elif defined(__APPLE__) && defined(__MACH__)
+        LOAD("libcairo.dylib");
+        LOAD("libcairo.so");
+#else
+        LOAD("libcairo.so");
+#endif
+
+#undef LOAD
+     }
+
+   return eina_module_symbol_get(_cairo_so, name);
 }
 
-Ector_Renderer *
-_ector_cairo_surface_ector_generic_surface_renderer_factory_new(Eo *obj, Ector_Cairo_Surface_Data *pd, const Eo_Class *type)
+
+static Ector_Renderer *
+_ector_cairo_surface_ector_generic_surface_renderer_factory_new(Eo *obj,
+                                                                Ector_Cairo_Surface_Data *pd EINA_UNUSED,
+                                                                const Eo_Class *type)
 {
+   if (eo_isa(type, ECTOR_RENDERER_CAIRO_SHAPE_CLASS))
+     return eo_add(ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj);
+   else if (eo_isa(type, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS))
+     return eo_add(ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, obj);
+   else if (eo_isa(type, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS))
+     return eo_add(ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, obj);
+   return NULL;
 }
 
-Eina_Bool
-_ector_cairo_surface_context_set(Eo *obj, Ector_Cairo_Surface_Data *pd, cairo_t *ctx)
+static void
+_ector_cairo_surface_context_set(Eo *obj EINA_UNUSED,
+                                 Ector_Cairo_Surface_Data *pd,
+                                 cairo_t *ctx)
 {
+   pd->cairo = ctx;
 }
 
-Eo *
-_ector_cairo_surface_eo_base_finalize(Eo *obj, Ector_Cairo_Surface_Data *pd)
+static cairo_t *
+_ector_cairo_surface_context_get(Eo *obj EINA_UNUSED,
+                                 Ector_Cairo_Surface_Data *pd)
 {
+   return pd->cairo;
 }
+
+static void
+_ector_cairo_surface_eo_base_constructor(Eo *obj EINA_UNUSED,
+                                         Ector_Cairo_Surface_Data *pd EINA_UNUSED)
+{
+   _cairo_count++;
+}
+
+static void
+_ector_cairo_surface_eo_base_destructor(Eo *obj EINA_UNUSED,
+                                        Ector_Cairo_Surface_Data *pd EINA_UNUSED)
+{
+   if (--_cairo_count) return ;
+   if (_cairo_so) eina_module_free(_cairo_so);
+   _cairo_so = NULL;
+}
+
 
 #include "ector_cairo_surface.eo.c"
+#include "ector_renderer_cairo_base.eo.c"

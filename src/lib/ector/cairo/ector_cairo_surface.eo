@@ -2,22 +2,28 @@ class Ector.Cairo.Surface (Ector.Generic.Surface)
 {
    eo_prefix: ector_cairo_surface;
    legacy_prefix: null;
+   properties {
+      context {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    cairo_t *ctx;
+	 }
+      }
+   }
    methods {
       symbol_get {
          return: void * @warn_unused;
          params {
-            @in char* name;
+            @in const(char)* name;
          }
-      }
-      context_set {
-         return: Eina_Bool;
-         params {
-	    @in cairo_t *ctx;
-	 }
       }
    }
    implements {
       Ector.Generic.Surface.renderer_factory_new;
-      Eo.Base.finalize;
+      Eo.Base.destructor;
+      Eo.Base.constructor;
    }
 }
