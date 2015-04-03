@@ -3609,6 +3609,9 @@ _draw_thread_ector_surface_set(void *data)
    unsigned int x = 0;
    unsigned int y = 0;
 
+   // flush the cpu pipeline before ector drawing.
+   evas_common_cpu_end_opt();
+
    if (surface)
      {
         pixels = evas_cache_image_pixels(&surface->cache_entry);
@@ -3630,8 +3633,6 @@ _draw_thread_ector_surface_set(void *data)
               ector_software_surface_set(pixels, w, h),
               ector_surface_reference_point_set(x, y));
      }
-
-   evas_common_cpu_end_opt();
 
    eina_mempool_free(_mp_command_ector_surface, ector_surface);
 }
