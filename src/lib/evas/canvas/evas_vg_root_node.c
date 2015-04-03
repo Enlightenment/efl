@@ -1,6 +1,7 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+#include "evas_vg_private.h"
 #include "evas_vg_root_node.eo.h"
 
 #include <string.h>
@@ -13,6 +14,26 @@ struct _Evas_VG_Root_Node_Data
    Evas_Object *parent;
    Evas_Object_Protected_Data *data;
 };
+
+static void
+_evas_vg_root_node_render_pre(Eo *obj EINA_UNUSED,
+                              Eina_Matrix3 *parent,
+                              Ector_Surface *s,
+                              void *data,
+                              Evas_VG_Node_Data *nd)
+{
+   Evas_VG_Container_Data *pd = data;
+   Eina_List *l;
+   Eo *child;
+
+   if (!nd->changed) return ;
+   nd->changed = EINA_FALSE;
+
+   EVAS_VG_COMPUTE_MATRIX(current, parent, nd);
+
+   EINA_LIST_FOREACH(pd->children, l, child)
+     _evas_vg_render_pre(child, s, current);
+}
 
 static Eina_Bool
 _evas_vg_root_node_changed(void *data, Eo *obj EINA_UNUSED,
@@ -47,6 +68,8 @@ void
 _evas_vg_root_node_eo_base_constructor(Eo *obj,
                                        Evas_VG_Root_Node_Data *pd)
 {
+   Evas_VG_Container_Data *cd;
+   Evas_VG_Node_Data *nd;
    Eo *parent;
 
    // Nice little hack, jump over parent constructor in Efl_VG_Root
@@ -54,6 +77,13 @@ _evas_vg_root_node_eo_base_constructor(Eo *obj,
    eo_do(obj, parent = eo_parent_get());
    if (!eo_isa(parent, EVAS_VG_CLASS))
      eo_error_set(obj);
+
+   cd = eo_data_scope_get(obj, EVAS_VG_CONTAINER_CLASS);
+   cd->children = NULL;
+
+   nd = eo_data_scope_get(obj, EVAS_VG_NODE_CLASS);
+   nd->render_pre = _evas_vg_root_node_render_pre;
+   nd->data = cd;
 
    eo_do(obj, eo_event_callback_add(EFL_GFX_CHANGED, _evas_vg_root_node_changed, pd));
 }
