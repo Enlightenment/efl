@@ -46,6 +46,8 @@ EAPI void
 efl_graphics_path_append_circle(Efl_Graphics_Path_Command **commands, double **points,
                                 double x, double y, double radius);
 
+EAPI Eina_Bool
+efl_graphics_path_append_svg_path(Efl_Graphics_Path_Command **commands, double **points, const char *svg_path_data);
 
 EAPI void
 efl_graphics_path_interpolate(const Efl_Graphics_Path_Command *cmd,

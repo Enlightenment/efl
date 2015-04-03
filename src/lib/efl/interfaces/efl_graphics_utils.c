@@ -457,3 +457,517 @@ efl_graphics_path_append_circle(Efl_Graphics_Path_Command **commands, double **p
    efl_graphics_path_append_arc_to(commands, points, x + radius, y, radius, radius, 0, EINA_FALSE, EINA_FALSE);
    efl_graphics_path_append_arc_to(commands, points, x, y - radius, radius, radius, 0, EINA_FALSE, EINA_FALSE);
 }
+
+static void
+_efl_graphics_path_append_horizontal_to(Efl_Graphics_Path_Command **commands, double **points,
+                                        double d, double current_x EINA_UNUSED, double current_y)
+{
+   efl_graphics_path_append_line_to(commands, points, d, current_y);
+}
+
+static void
+_efl_graphics_path_append_vertical_to(Efl_Graphics_Path_Command **commands, double **points,
+                                        double d, double current_x, double current_y EINA_UNUSED)
+{
+   efl_graphics_path_append_line_to(commands, points, current_x, d);
+}
+
+static char *
+_strcomma(const char *content)
+{
+   while (*content && isspace(*content)) content++;
+   if (*content != ',') return NULL;
+   return (char*) content + 1;
+}
+
+static inline Eina_Bool
+_next_isnumber(const char *content)
+{
+   char *tmp = NULL;
+
+   (void) strtod(content, &tmp);
+   return content != tmp;
+}
+
+static Eina_Bool
+_efl_graphics_path_parse_pair(const char *content, char **end, double *x, double *y)
+{
+   /* "x,y" */
+   char *end1 = NULL;
+   char *end2 = NULL;
+
+   *x = strtod(content, &end1);
+   end1 = _strcomma(end1);
+   if (!end1) return EINA_FALSE;
+   *y = strtod(end1, &end2);
+   if (end1 == end2) return EINA_FALSE;
+
+   *end = end2;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_efl_graphics_path_parse_pair_to(const char *content, char **end,
+                                 Efl_Graphics_Path_Command **commands, double **points,
+                                 double *current_x, double *current_y,
+                                 void (*func)(Efl_Graphics_Path_Command **commands, double **points, double x, double y),
+                                 Eina_Bool rel)
+{
+   double x, y;
+
+   *end = (char*) content;
+   do
+     {
+        Eina_Bool r;
+
+        r = _efl_graphics_path_parse_pair(content, end, &x, &y);
+        if (!r) return EINA_FALSE;
+
+        if (rel)
+          {
+             x += *current_x;
+             y += *current_y;
+          }
+
+        func(commands, points, x, y);
+        content = *end;
+
+        *current_x = x;
+        *current_y = y;
+     }
+   while (_next_isnumber(content));
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_efl_graphics_path_parse_double_to(const char *content, char **end,
+                                   Efl_Graphics_Path_Command **commands, double **points,
+                                   double *current, double current_x, double current_y,
+                                   void (*func)(Efl_Graphics_Path_Command **commands, double **points, double d, double current_x, double current_y),
+                                   Eina_Bool rel)
+{
+   double d;
+   Eina_Bool first = EINA_FALSE;
+
+   *end = (char*) content;
+   do
+     {
+        d = strtod(content, end);
+        if (content == *end)
+          return first;
+        first = EINA_TRUE;
+
+        if (rel)
+          {
+             d += *current;
+          }
+
+        func(commands, points, d, current_x, current_y);
+        content = *end;
+
+        *current = d;
+     }
+   while (1); // This is an optimisation as we have only one parameter.
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_efl_graphics_path_parse_six(const char *content, char **end,
+                             double *x, double *y,
+                             double *ctrl_x0, double *ctrl_y0,
+                             double *ctrl_x1, double *ctrl_y1)
+{
+   /* "x,y ctrl_x0,ctrl_y0 ctrl_x1,ctrl_y1" */
+   char *end1 = NULL;
+   char *end2 = NULL;
+
+   *x = strtod(content, &end1);
+   end1 = _strcomma(end1);
+   if (!end1) return EINA_FALSE;
+   *y = strtod(end1, &end2);
+   if (end1 == end2) return EINA_FALSE;
+
+   *ctrl_x0 = strtod(end2, &end2);
+   end2 = _strcomma(end2);
+   if (!end2) return EINA_FALSE;
+   *ctrl_y0 = strtod(end2, &end1);
+   if (end1 == end2) return EINA_FALSE;
+
+   *ctrl_x1 = strtod(end1, &end2);
+   end2 = _strcomma(end2);
+   if (!end2) return EINA_FALSE;
+   *ctrl_y1 = strtod(end2, &end1);
+   if (end1 == end2) return EINA_FALSE;
+
+   *end = end1;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_efl_graphics_path_parse_six_to(const char *content, char **end,
+                                Efl_Graphics_Path_Command **commands, double **points,
+                                double *current_x, double *current_y,
+                                void (*func)(Efl_Graphics_Path_Command **commands, double **points, double x, double y, double ctrl_x0, double ctrl_y0, double ctrl_x1, double ctrl_y1),
+                                 Eina_Bool rel)
+{
+   double x, y, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1;
+
+   *end = (char*) content;
+   do
+     {
+        Eina_Bool r;
+
+        r = _efl_graphics_path_parse_six(content, end,
+                                         &x, &y,
+                                         &ctrl_x0, &ctrl_y0,
+                                         &ctrl_x1, &ctrl_y1);
+        if (!r) return EINA_FALSE;
+
+        if (rel)
+          {
+             x += *current_x;
+             y += *current_y;
+          }
+
+        func(commands, points, x, y, ctrl_x0, ctrl_y0, ctrl_x1, ctrl_y1);
+        content = *end;
+
+        *current_x = x;
+        *current_y = y;
+     }
+   while (_next_isnumber(content));
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_efl_graphics_path_parse_quad(const char *content, char **end,
+                              double *x, double *y,
+                              double *ctrl_x0, double *ctrl_y0)
+{
+   /* "x,y ctrl_x0,ctrl_y0" */
+   char *end1 = NULL;
+   char *end2 = NULL;
+
+   *x = strtod(content, &end1);
+   end1 = _strcomma(end1);
+   if (!end1) return EINA_FALSE;
+   *y = strtod(end1, &end2);
+   if (end1 == end2) return EINA_FALSE;
+
+   *ctrl_x0 = strtod(end2, &end1);
+   end1 = _strcomma(end2);
+   if (!end1) return EINA_FALSE;
+   *ctrl_y0 = strtod(end1, &end2);
+   if (end1 == end2) return EINA_FALSE;
+
+   *end = end2;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_efl_graphics_path_parse_quad_to(const char *content, char **end,
+                                 Efl_Graphics_Path_Command **commands, double **points,
+                                 double *current_x, double *current_y,
+                                 void (*func)(Efl_Graphics_Path_Command **commands, double **points,
+                                              double x, double y, double ctrl_x0, double ctrl_y0),
+                                 Eina_Bool rel)
+{
+   double x, y, ctrl_x0, ctrl_y0;
+
+   *end = (char*) content;
+   do
+     {
+        Eina_Bool r;
+
+        r = _efl_graphics_path_parse_quad(content, end,
+                                          &x, &y,
+                                          &ctrl_x0, &ctrl_y0);
+        if (!r) return EINA_FALSE;
+
+        if (rel)
+          {
+             x += *current_x;
+             y += *current_y;
+          }
+
+        func(commands, points, x, y, ctrl_x0, ctrl_y0);
+        content = *end;
+
+        *current_x = x;
+        *current_y = y;
+     }
+   while (_next_isnumber(content));
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_efl_graphics_path_parse_arc(const char *content, char **end,
+                             double *x, double *y,
+                             double *rx, double *ry,
+                             double *radius,
+                             Eina_Bool *large_arc, Eina_Bool *sweep)
+{
+   /* "rx,ry r large-arc-flag,sweep-flag x,y" */
+   char *end1 = NULL;
+   char *end2 = NULL;
+
+   *rx = strtod(content, &end1);
+   end1 = _strcomma(end1);
+   if (!end1) return EINA_FALSE;
+   *ry = strtod(end1, &end2);
+   if (end1 == end2) return EINA_FALSE;
+
+   *radius = strtod(end2, &end1);
+   if (end1 == end2) return EINA_FALSE;
+
+   *large_arc = strtol(end1, &end2, 10) ? EINA_TRUE : EINA_FALSE;
+   end1 = _strcomma(end2);
+   if (!end1) return EINA_FALSE;
+   *sweep = strtol(end1, &end2, 10) ? EINA_TRUE : EINA_FALSE;
+   if (end1 == end2) return EINA_FALSE;
+
+   *x = strtod(end2, &end1);
+   end1 = _strcomma(end2);
+   if (!end1) return EINA_FALSE;
+   *y = strtod(end1, &end2);
+   if (end1 == end2) return EINA_FALSE;
+
+   *end = end2;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_efl_graphics_path_parse_arc_to(const char *content, char **end,
+                                Efl_Graphics_Path_Command **commands, double **points,
+                                double *current_x, double *current_y,
+                                void (*func)(Efl_Graphics_Path_Command **commands, double **points,
+                                             double x, double y, double rx, double ry, double angle,
+                                             Eina_Bool large_arc, Eina_Bool sweep),
+                                Eina_Bool rel)
+{
+   double x, y, rx, ry, angle;
+   Eina_Bool large_arc, sweep; // FIXME: handle those flag
+
+   *end = (char*) content;
+   do
+     {
+        Eina_Bool r;
+
+        r = _efl_graphics_path_parse_arc(content, end,
+                                         &x, &y,
+                                         &rx, &ry,
+                                         &angle,
+                                         &large_arc, &sweep);
+        if (!r) return EINA_FALSE;
+
+        if (rel)
+          {
+             x += *current_x;
+             y += *current_y;
+          }
+
+        func(commands, points, x, y, rx, ry, angle, large_arc, sweep);
+        content = *end;
+
+        *current_x = x;
+        *current_y = y;
+     }
+   while (_next_isnumber(content));
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+efl_graphics_path_append_svg_path(Efl_Graphics_Path_Command **commands, double **points, const char *svg_path_data)
+{
+   double current_x = 0, current_y = 0;
+   char *content = (char*) svg_path_data;
+
+   if (!content) return EINA_FALSE;
+
+   while (content[0] != '\0')
+     {
+        while (isspace(content[0])) content++;
+
+        switch (content[0])
+          {
+           case 'M':
+              if (!_efl_graphics_path_parse_pair_to(&content[1],
+                                                    &content,
+                                                    commands, points,
+                                                    &current_x, &current_y,
+                                                    efl_graphics_path_append_move_to,
+                                                    EINA_FALSE))
+                return EINA_FALSE;
+              break;
+           case 'm':
+              if (!_efl_graphics_path_parse_pair_to(&content[1],
+                                                    &content,
+                                                    commands, points,
+                                                    &current_x, &current_y,
+                                                    efl_graphics_path_append_move_to,
+                                                    EINA_TRUE))
+                return EINA_FALSE;
+              break;
+           case 'z':
+              efl_graphics_path_append_close(commands, points);
+              content++;
+              break;
+           case 'L':
+              if (!_efl_graphics_path_parse_pair_to(&content[1],
+                                                    &content,
+                                                    commands, points,
+                                                    &current_x, &current_y,
+                                                    efl_graphics_path_append_line_to,
+                                                    EINA_FALSE))
+                return EINA_FALSE;
+              break;
+           case 'l':
+              if (!_efl_graphics_path_parse_pair_to(&content[1],
+                                                    &content,
+                                                    commands, points,
+                                                    &current_x, &current_y,
+                                                    efl_graphics_path_append_line_to,
+                                                    EINA_TRUE))
+                return EINA_FALSE;
+              break;
+           case 'H':
+              if (!_efl_graphics_path_parse_double_to(&content[1],
+                                                      &content,
+                                                      commands, points,
+                                                      &current_x, current_x, current_y,
+                                                      _efl_graphics_path_append_horizontal_to,
+                                                      EINA_FALSE))
+                return EINA_FALSE;
+              break;
+           case 'h':
+              if (!_efl_graphics_path_parse_double_to(&content[1],
+                                                      &content,
+                                                      commands, points,
+                                                      &current_x, current_x, current_y,
+                                                      _efl_graphics_path_append_horizontal_to,
+                                                      EINA_TRUE))
+                return EINA_FALSE;
+              break;
+           case 'V':
+              if (!_efl_graphics_path_parse_double_to(&content[1],
+                                                      &content,
+                                                      commands, points,
+                                                      &current_y, current_x, current_y,
+                                                      _efl_graphics_path_append_vertical_to,
+                                                      EINA_FALSE))
+                return EINA_FALSE;
+              break;
+           case 'v':
+              if (!_efl_graphics_path_parse_double_to(&content[1],
+                                                      &content,
+                                                      commands, points,
+                                                      &current_y, current_x, current_y,
+                                                      _efl_graphics_path_append_vertical_to,
+                                                      EINA_TRUE))
+                return EINA_FALSE;
+              break;
+           case 'C':
+              if (!_efl_graphics_path_parse_six_to(&content[1],
+                                                   &content,
+                                                   commands, points,
+                                                   &current_x, &current_y,
+                                                   efl_graphics_path_append_cubic_to,
+                                                   EINA_FALSE))
+                  return EINA_FALSE;
+              break;
+           case 'c':
+              if (!_efl_graphics_path_parse_six_to(&content[1],
+                                                   &content,
+                                                   commands, points,
+                                                   &current_x, &current_y,
+                                                   efl_graphics_path_append_cubic_to,
+                                                   EINA_TRUE))
+                return EINA_FALSE;
+              break;
+           case 'S':
+              if (!_efl_graphics_path_parse_quad_to(&content[1],
+                                                    &content,
+                                                    commands, points,
+                                                    &current_x, &current_y,
+                                                    efl_graphics_path_append_scubic_to,
+                                                    EINA_FALSE))
+                return EINA_FALSE;
+              break;
+           case 's':
+              if (!_efl_graphics_path_parse_quad_to(&content[1],
+                                                    &content,
+                                                    commands, points,
+                                                    &current_x, &current_y,
+                                                    efl_graphics_path_append_scubic_to,
+                                                    EINA_TRUE))
+                return EINA_FALSE;
+              break;
+           case 'Q':
+              if (!_efl_graphics_path_parse_quad_to(&content[1],
+                                                    &content,
+                                                    commands, points,
+                                                    &current_x, &current_y,
+                                                    efl_graphics_path_append_quadratic_to,
+                                                    EINA_FALSE))
+                return EINA_FALSE;
+              break;
+           case 'q':
+              if (!_efl_graphics_path_parse_quad_to(&content[1],
+                                                    &content,
+                                                    commands, points,
+                                                    &current_x, &current_y,
+                                                    efl_graphics_path_append_quadratic_to,
+                                                    EINA_TRUE))
+                return EINA_FALSE;
+              break;
+           case 'T':
+              if (!_efl_graphics_path_parse_pair_to(&content[1],
+                                                    &content,
+                                                    commands, points,
+                                                    &current_x, &current_y,
+                                                    efl_graphics_path_append_squadratic_to,
+                                                    EINA_FALSE))
+                return EINA_FALSE;
+              break;
+           case 't':
+              if (!_efl_graphics_path_parse_pair_to(&content[1],
+                                                    &content,
+                                                    commands, points,
+                                                    &current_x, &current_y,
+                                                    efl_graphics_path_append_squadratic_to,
+                                                    EINA_TRUE))
+                return EINA_FALSE;
+              break;
+           case 'A':
+                if (!_efl_graphics_path_parse_arc_to(&content[1],
+                                                     &content,
+                                                     commands, points,
+                                                     &current_x, &current_y,
+                                                     efl_graphics_path_append_arc_to,
+                                                     EINA_FALSE))
+                  return EINA_FALSE;
+              break;
+           case 'a':
+              if (!_efl_graphics_path_parse_arc_to(&content[1],
+                                                   &content,
+                                                   commands, points,
+                                                   &current_x, &current_y,
+                                                   efl_graphics_path_append_arc_to,
+                                                   EINA_TRUE))
+                return EINA_FALSE;
+              break;
+           default:
+              return EINA_FALSE;
+          }
+     }
+
+   return EINA_TRUE;
+}
