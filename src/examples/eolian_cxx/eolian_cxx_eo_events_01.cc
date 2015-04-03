@@ -73,7 +73,7 @@ example_complex_types()
      bg.color_set(255, 255, 255, 255);
      bg.position_set(0, 0);
      bg.size_set(500, 250);
-     bg.visibility_set(true);
+     bg.visible_set(true);
 
      efl::eo::signal_connection conn =
        bg.callback_mouse_down_add
