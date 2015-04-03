@@ -7,15 +7,6 @@
 
 #include "ector_private.h"
 
-typedef struct _Ector_Renderer_Generic_Gradient_Radial_Data Ector_Renderer_Generic_Gradient_Radial_Data;
-struct _Ector_Renderer_Generic_Gradient_Radial_Data
-{
-   struct {
-      double x, y;
-   } radial, focal;
-   double radius;
-};
-
 void
 _ector_renderer_gradient_radial_efl_graphics_gradient_radial_center_set(Eo *obj EINA_UNUSED,
                                                                         Ector_Renderer_Generic_Gradient_Radial_Data *pd,

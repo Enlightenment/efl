@@ -7,26 +7,6 @@
 
 #include "ector_private.h"
 
-typedef struct _Ector_Renderer_Generic_Base_Data Ector_Renderer_Generic_Base_Data;
-struct _Ector_Renderer_Generic_Base_Data
-{
-   Eina_Matrix3 *m;
-
-   struct {
-      double x;
-      double y;
-   } origin;
-
-   struct {
-      int r, g, b, a;
-   } color;
-
-   Ector_Renderer *mask;
-
-   Ector_Quality q;
-   Eina_Bool visibility;
-};
-
 void
 _ector_renderer_base_transformation_set(Eo *obj EINA_UNUSED,
                                         Ector_Renderer_Generic_Base_Data *pd,

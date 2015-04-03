@@ -7,14 +7,6 @@
 
 #include "ector_private.h"
 
-typedef struct _Ector_Renderer_Generic_Gradient_Linear_Data Ector_Renderer_Generic_Gradient_Linear_Data;
-struct _Ector_Renderer_Generic_Gradient_Linear_Data
-{
-   struct {
-      double x, y;
-   } start, end;
-};
-
 void
 _ector_renderer_gradient_linear_efl_graphics_gradient_linear_start_set(Eo *obj EINA_UNUSED,
                                                                        Ector_Renderer_Generic_Gradient_Linear_Data *pd,

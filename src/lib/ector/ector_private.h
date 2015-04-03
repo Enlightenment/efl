@@ -45,4 +45,80 @@ _ector_renderer_replace(Ector_Renderer **d, const Ector_Renderer *s)
    eo_unref(tmp);
 }
 
+typedef struct _Ector_Renderer_Generic_Base_Data Ector_Renderer_Generic_Base_Data;
+typedef struct _Ector_Renderer_Generic_Gradient_Data Ector_Renderer_Generic_Gradient_Data;
+typedef struct _Ector_Renderer_Generic_Gradient_Linear_Data Ector_Renderer_Generic_Gradient_Linear_Data;
+typedef struct _Ector_Renderer_Generic_Gradient_Radial_Data Ector_Renderer_Generic_Gradient_Radial_Data;
+typedef struct _Ector_Renderer_Generic_Shape_Data Ector_Renderer_Generic_Shape_Data;
+
+struct _Ector_Renderer_Generic_Base_Data
+{
+   Eina_Matrix3 *m;
+
+   struct {
+      double x;
+      double y;
+   } origin;
+
+   struct {
+      int r, g, b, a;
+   } color;
+
+   Ector_Renderer *mask;
+
+   Ector_Quality q;
+   Eina_Bool visibility;
+};
+
+struct _Ector_Renderer_Generic_Gradient_Data
+{
+   Efl_Graphics_Gradient_Stop *colors;
+   unsigned int colors_count;
+
+   Efl_Graphics_Gradient_Spread s;
+};
+
+struct _Ector_Renderer_Generic_Gradient_Linear_Data
+{
+   struct {
+      double x, y;
+   } start, end;
+};
+
+struct _Ector_Renderer_Generic_Gradient_Radial_Data
+{
+   struct {
+      double x, y;
+   } radial, focal;
+   double radius;
+};
+
+struct _Ector_Renderer_Generic_Shape_Data
+{
+   struct {
+      Efl_Graphics_Path_Command *cmd;
+      double *pts;
+   } path;
+
+   Ector_Renderer *fill;
+   struct {
+      Ector_Renderer *fill;
+      Ector_Renderer *marker;
+
+      double scale;
+      double width;
+      double centered;
+
+      struct {
+         int r, g, b, a;
+      } color;
+
+      Efl_Graphics_Dash *dash;
+      unsigned int dash_length;
+
+      Efl_Graphics_Cap cap;
+      Efl_Graphics_Cap join;
+   } stroke;
+};
+
 #endif

@@ -7,15 +7,6 @@
 
 #include "ector_private.h"
 
-typedef struct _Ector_Renderer_Generic_Gradient_Data Ector_Renderer_Generic_Gradient_Data;
-struct _Ector_Renderer_Generic_Gradient_Data
-{
-   Efl_Graphics_Gradient_Stop *colors;
-   unsigned int colors_count;
-
-   Efl_Graphics_Gradient_Spread s;
-};
-
 void
 _ector_renderer_gradient_efl_graphics_gradient_stop_set(Eo *obj,
                                                         Ector_Renderer_Generic_Gradient_Data *pd,

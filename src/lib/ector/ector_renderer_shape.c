@@ -7,35 +7,6 @@
 
 #include "ector_private.h"
 
-typedef struct _Ector_Renderer_Generic_Shape_Data Ector_Renderer_Generic_Shape_Data;
-struct _Ector_Renderer_Generic_Shape_Data
-{
-   struct {
-      Efl_Graphics_Path_Command *cmd;
-      double *pts;
-   } path;
-
-   Ector_Renderer *fill;
-   struct {
-      Ector_Renderer *fill;
-      Ector_Renderer *marker;
-
-      double scale;
-      double width;
-      double centered;
-
-      struct {
-         int r, g, b, a;
-      } color;
-
-      Efl_Graphics_Dash *dash;
-      unsigned int dash_length;
-
-      Efl_Graphics_Cap cap;
-      Efl_Graphics_Cap join;
-   } stroke;
-};
-
 void
 _ector_renderer_shape_fill_set(Eo *obj EINA_UNUSED,
                                Ector_Renderer_Generic_Shape_Data *pd,
