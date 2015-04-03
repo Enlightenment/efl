@@ -9,11 +9,11 @@ struct _Ector_Cairo_Surface_Data
    cairo_t *cairo;
 };
 
+#define CHECK_CAIRO(Parent) (!(Parent && Parent->cairo))
+
 #define USE(Obj, Sym, Error)                     \
   if (!Sym) _ector_cairo_symbol_get(Obj, #Sym);  \
   if (!Sym) return Error;
-
-#define CHECK_CAIRO(Parent) (!(Parent && Parent->cairo))
 
 static inline void *
 _ector_cairo_symbol_get(Eo *obj, const char *name)
