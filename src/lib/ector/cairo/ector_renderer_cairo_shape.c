@@ -14,6 +14,18 @@
 
 typedef struct _cairo_path_t cairo_path_t;
 
+typedef enum _cairo_line_cap {
+  CAIRO_LINE_CAP_BUTT,
+  CAIRO_LINE_CAP_ROUND,
+  CAIRO_LINE_CAP_SQUARE
+} cairo_line_cap_t;
+
+typedef enum _cairo_line_join {
+  CAIRO_LINE_JOIN_MITER,
+  CAIRO_LINE_JOIN_ROUND,
+  CAIRO_LINE_JOIN_BEVEL
+} cairo_line_join_t;
+
 static void (*cairo_move_to)(cairo_t *cr, double x, double y) = NULL;
 static void (*cairo_line_to)(cairo_t *cr, double x, double y) = NULL;
 static void (*cairo_curve_to)(cairo_t *cr,
@@ -36,8 +48,6 @@ static void (*cairo_path_destroy)(cairo_path_t *path) = NULL;
 static void (*cairo_new_path)(cairo_t *cr) = NULL;
 static void (*cairo_append_path)(cairo_t *cr, const cairo_path_t *path) = NULL;
 
-typedef enum _cairo_line_cap_t{lie_cap}cairo_line_cap_t;
-typedef enum _cairo_line_join_t{line_join}cairo_line_join_t;
 static void (*cairo_set_line_width)(cairo_t *cr, double width) = NULL;
 static void (*cairo_set_line_cap)(cairo_t *cr, cairo_line_cap_t line_cap) = NULL;
 static void (*cairo_set_line_join)(cairo_t *cr, cairo_line_join_t line_join) = NULL;

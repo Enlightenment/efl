@@ -30,6 +30,29 @@ struct _Ector_Renderer_Cairo_Base_Data
    cairo_matrix_t *m;
 };
 
+typedef enum _cairo_extend {
+    CAIRO_EXTEND_NONE,
+    CAIRO_EXTEND_REPEAT,
+    CAIRO_EXTEND_REFLECT,
+    CAIRO_EXTEND_PAD
+} cairo_extend_t;
+
+static inline cairo_extend_t
+_ector_cairo_extent_get(Efl_Gfx_Gradient_Spread s)
+{
+   switch (s)
+     {
+       case EFL_GFX_GRADIENT_SPREAD_PAD:
+          return CAIRO_EXTEND_PAD;
+       case EFL_GFX_GRADIENT_SPREAD_REFLECT:
+          return CAIRO_EXTEND_REFLECT;
+       case EFL_GFX_GRADIENT_SPREAD_REPEAT:
+          return CAIRO_EXTEND_REPEAT;
+       default:
+          return CAIRO_EXTEND_NONE;
+     }
+}
+
 #define CHECK_CAIRO(Parent) (!(Parent && Parent->cairo))
 
 #define USE(Obj, Sym, Error)                            \
