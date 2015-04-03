@@ -85,7 +85,8 @@ lib/evas/include/evas_macros.h \
 lib/evas/include/evas_mmx.h \
 lib/evas/include/evas_common_private.h \
 lib/evas/include/evas_blend_ops.h \
-lib/evas/include/evas_filter.h
+lib/evas/include/evas_filter.h \
+lib/evas/canvas/evas_vg_private.h
 
 # Linebreak
 
@@ -317,6 +318,9 @@ lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/file \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/static_libs/libunibreak \
+-I$(top_builddir)/src/lib/evas/canvas \
+-I$(top_builddir)/src/modules/evas/engines/software_generic \
+-I$(top_builddir)/src/modules/evas/engines/gl_generic \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/evas\" \
@@ -543,6 +547,7 @@ modules_evas_engines_software_generic_module_la_SOURCES = modules/evas/engines/s
 modules_evas_engines_software_generic_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
+-I$(top_builddir)/src/modules/evas/engines/software_generic \
 @EVAS_CFLAGS@
 modules_evas_engines_software_generic_module_la_LIBADD = @USE_EVAS_LIBS@
 modules_evas_engines_software_generic_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
@@ -731,6 +736,7 @@ modules_evas_engines_gl_generic_module_la_CFLAGS = \
 -I$(top_srcdir)/src/lib/evas/include \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
+-I$(top_builddir)/src/modules/evas/engines/gl_generic \
 @evas_engine_gl_common_cflags@ \
 @EVAS_CFLAGS@
 modules_evas_engines_gl_generic_module_la_LIBADD = \
