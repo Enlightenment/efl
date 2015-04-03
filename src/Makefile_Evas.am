@@ -516,6 +516,11 @@ lib/evas/filters/blur/blur_box_rgba_i386.c \
 lib/evas/filters/blur/blur_box_rgba_sse3.c \
 lib/evas/filters/blur/blur_box_rgba_neon.c
 
+### Vector surface helper
+
+EXTRA_DIST += \
+modules/evas/engines/software_generic/ector_cairo_software_surface.eo \
+modules/evas/engines/gl_generic/ector_cairo_software_surface.eo
 
 ### Engines
 
