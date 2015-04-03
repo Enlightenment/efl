@@ -1,4 +1,4 @@
-class Ector.Renderer.Cairo.Shape (Ector.Renderer.Generic.Shape)
+class Ector.Renderer.Cairo.Shape (Ector.Renderer.Cairo.Base, Ector.Renderer.Generic.Shape)
 {
    eo_prefix: ector_renderer_cairo_shape;
    legacy_prefix: null;
@@ -6,5 +6,6 @@ class Ector.Renderer.Cairo.Shape (Ector.Renderer.Generic.Shape)
       Ector.Renderer.Generic.Base.prepare;
       Ector.Renderer.Generic.Base.draw;
       Ector.Renderer.Generic.Base.done;
+      Ector.Renderer.Cairo.Base.fill;
    }
 }

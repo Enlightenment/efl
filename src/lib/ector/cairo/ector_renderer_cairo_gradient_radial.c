@@ -4,8 +4,10 @@
 
 #include <Eina.h>
 #include <Ector.h>
+#include <cairo/Ector_Cairo.h>
 
 #include "ector_private.h"
+#include "ector_cairo_private.h"
 
 typedef struct _Ector_Renderer_Cairo_Gradient_Radial_Data Ector_Renderer_Cairo_Gradient_Radial_Data;
 struct _Ector_Renderer_Cairo_Gradient_Radial_Data
@@ -24,6 +26,11 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_draw(Eo *obj, 
 
 static Eina_Bool
 _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_done(Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd)
+{
+}
+
+static Eina_Bool
+_ector_renderer_cairo_gradient_radial_ector_renderer_cairo_base_fill(Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd)
 {
 }
 
