@@ -21,6 +21,10 @@ struct _Evas_VG_Data
    /* Opening an SVG file (could actually be inside an eet section */
    Eina_File    *f;
    const char   *key;
+
+   Eina_Rectangle fill;
+
+   unsigned int width, height;
 };
 
 static void evas_object_vg_render(Evas_Object *eo_obj,
@@ -115,6 +119,7 @@ _evas_vg_eo_base_constructor(Eo *eo_obj, Evas_VG_Data *pd)
 
    /* root node */
    pd->root = eo_add(EVAS_VG_ROOT_NODE_CLASS, eo_obj);
+   fprintf(stderr, "creating root node: %p\n", pd->root);
 
    eo_do(eo_obj, parent = eo_parent_get());
    evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
@@ -379,8 +384,39 @@ _evas_vg_efl_file_file_get(Eo *obj, Evas_VG_Data *pd EINA_UNUSED,
 }
 
 void
-_evas_vg_size_get(Eo *obj, Evas_VG_Data *pd, unsigned int *w, unsigned int *h)
+_evas_vg_size_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
+                  unsigned int *w, unsigned int *h)
 {
+   if (w) *w = pd->width;
+   if (h) *h = pd->height;
+}
+
+void
+_evas_vg_size_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
+                  unsigned int w, unsigned int h)
+{
+   pd->width = w;
+   pd->height = h;
+}
+
+void
+_evas_vg_fill_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
+                  Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+{
+   pd->fill.x = x;
+   pd->fill.y = y;
+   pd->fill.w = w;
+   pd->fill.h = h;
+}
+
+void
+_evas_vg_fill_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
+                  Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   if (x) *x = pd->fill.x;
+   if (y) *y = pd->fill.y;
+   if (w) *w = pd->fill.w;
+   if (h) *h = pd->fill.h;
 }
 
 #include "evas_vg.eo.c"
