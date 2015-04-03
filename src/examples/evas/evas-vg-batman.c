@@ -105,7 +105,7 @@ main(void)
 
    if (!ecore_evas_init())
      return -1;
-
+   //setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
    ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
    if (!ee) return -1;
 
@@ -136,6 +136,11 @@ main(void)
    animation = ecore_animator_timeline_add(1, _animator, NULL);
 
    root = evas_object_vg_root_node_get(vg);
+
+   Eina_Matrix3 matrix;
+   eina_matrix3_scale(&matrix, 1.1, 1.1);
+   evas_vg_node_transformation_set(root, &matrix);
+
 
    circle = evas_vg_shape_add(root);
    evas_vg_shape_shape_append_circle(circle, WIDTH / 2, HEIGHT / 2, 200);
