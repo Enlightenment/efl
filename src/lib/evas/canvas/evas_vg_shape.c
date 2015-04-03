@@ -8,13 +8,13 @@
 typedef struct _Evas_VG_Shape_Data Evas_VG_Shape_Data;
 struct _Evas_VG_Shape_Data
 {
-   Efl_Graphics_Path_Command *ops;
+   Efl_Gfx_Path_Command *ops;
    double *points;
 
    Evas_VG_Node *fill;
 
    struct {
-      Efl_Graphics_Dash *dash;
+      Efl_Gfx_Dash *dash;
       Evas_VG_Node *fill;
       Evas_VG_Node *marker;
 
@@ -26,30 +26,30 @@ struct _Evas_VG_Shape_Data
 
       unsigned int dash_count;
 
-      Efl_Graphics_Cap cap;
-      Efl_Graphics_Join join;
+      Efl_Gfx_Cap cap;
+      Efl_Gfx_Join join;
    } stroke;
 };
 
 static void
-_evas_vg_shape_efl_graphics_shape_path_set(Eo *obj EINA_UNUSED,
-                                           Evas_VG_Shape_Data *pd,
-                                           const Efl_Graphics_Path_Command *ops,
-                                           const double *points)
+_evas_vg_shape_efl_gfx_shape_path_set(Eo *obj EINA_UNUSED,
+                                      Evas_VG_Shape_Data *pd,
+                                      const Efl_Gfx_Path_Command *ops,
+                                      const double *points)
 {
    free(pd->points);
    pd->points = NULL;
    free(pd->ops);
    pd->ops = NULL;
 
-   efl_graphics_path_dup(&pd->ops, &pd->points, ops, points);
+   efl_gfx_path_dup(&pd->ops, &pd->points, ops, points);
 }
 
 static void
-_evas_vg_shape_efl_graphics_shape_path_get(Eo *obj EINA_UNUSED,
-                                           Evas_VG_Shape_Data *pd,
-                                           const Efl_Graphics_Path_Command **op,
-                                           const double **points)
+_evas_vg_shape_efl_gfx_shape_path_get(Eo *obj EINA_UNUSED,
+                                      Evas_VG_Shape_Data *pd,
+                                      const Efl_Gfx_Path_Command **op,
+                                      const double **points)
 {
    if (op) *op = pd->ops;
    if (points) *points = pd->points;
@@ -81,24 +81,24 @@ _evas_vg_shape_fill_get(Eo *obj EINA_UNUSED, Evas_VG_Shape_Data *pd)
 }
 
 static void
-_evas_vg_shape_efl_graphics_shape_stroke_scale_set(Eo *obj EINA_UNUSED,
-                                                   Evas_VG_Shape_Data *pd,
-                                                   double s)
+_evas_vg_shape_efl_gfx_shape_stroke_scale_set(Eo *obj EINA_UNUSED,
+                                              Evas_VG_Shape_Data *pd,
+                                              double s)
 {
    pd->stroke.scale = s;
 }
 
 static double
-_evas_vg_shape_efl_graphics_shape_stroke_scale_get(Eo *obj EINA_UNUSED,
-                                                   Evas_VG_Shape_Data *pd)
+_evas_vg_shape_efl_gfx_shape_stroke_scale_get(Eo *obj EINA_UNUSED,
+                                              Evas_VG_Shape_Data *pd)
 {
    return pd->stroke.scale;
 }
 
 static void
-_evas_vg_shape_efl_graphics_shape_stroke_color_set(Eo *obj EINA_UNUSED,
-                                                   Evas_VG_Shape_Data *pd,
-                                                   int r, int g, int b, int a)
+_evas_vg_shape_efl_gfx_shape_stroke_color_set(Eo *obj EINA_UNUSED,
+                                              Evas_VG_Shape_Data *pd,
+                                              int r, int g, int b, int a)
 {
    pd->stroke.r = r;
    pd->stroke.g = g;
@@ -107,9 +107,9 @@ _evas_vg_shape_efl_graphics_shape_stroke_color_set(Eo *obj EINA_UNUSED,
 }
 
 static void
-_evas_vg_shape_efl_graphics_shape_stroke_color_get(Eo *obj EINA_UNUSED,
-                                                   Evas_VG_Shape_Data *pd,
-                                                   int *r, int *g, int *b, int *a)
+_evas_vg_shape_efl_gfx_shape_stroke_color_get(Eo *obj EINA_UNUSED,
+                                              Evas_VG_Shape_Data *pd,
+                                              int *r, int *g, int *b, int *a)
 {
    if (r) *r = pd->stroke.r;
    if (g) *g = pd->stroke.g;
@@ -136,57 +136,57 @@ _evas_vg_shape_stroke_fill_get(Eo *obj EINA_UNUSED,
 }
 
 static void
-_evas_vg_shape_efl_graphics_shape_stroke_width_set(Eo *obj EINA_UNUSED,
-                                                   Evas_VG_Shape_Data *pd,
-                                                   double w)
+_evas_vg_shape_efl_gfx_shape_stroke_width_set(Eo *obj EINA_UNUSED,
+                                              Evas_VG_Shape_Data *pd,
+                                              double w)
 {
    pd->stroke.width = w;
 }
 
 static double
-_evas_vg_shape_efl_graphics_shape_stroke_width_get(Eo *obj EINA_UNUSED,
-                                                   Evas_VG_Shape_Data *pd)
+_evas_vg_shape_efl_gfx_shape_stroke_width_get(Eo *obj EINA_UNUSED,
+                                              Evas_VG_Shape_Data *pd)
 {
    return pd->stroke.width;
 }
 
 static void
-_evas_vg_shape_efl_graphics_shape_stroke_location_set(Eo *obj EINA_UNUSED,
-                                                      Evas_VG_Shape_Data *pd,
-                                                      double centered)
+_evas_vg_shape_efl_gfx_shape_stroke_location_set(Eo *obj EINA_UNUSED,
+                                                 Evas_VG_Shape_Data *pd,
+                                                 double centered)
 {
    pd->stroke.centered = centered;
 }
 
 static double
-_evas_vg_shape_efl_graphics_shape_stroke_location_get(Eo *obj EINA_UNUSED,
-                                                      Evas_VG_Shape_Data *pd)
+_evas_vg_shape_efl_gfx_shape_stroke_location_get(Eo *obj EINA_UNUSED,
+                                                 Evas_VG_Shape_Data *pd)
 {
    return pd->stroke.centered;
 }
 
 static void
-_evas_vg_shape_efl_graphics_shape_stroke_dash_set(Eo *obj EINA_UNUSED,
-                                                  Evas_VG_Shape_Data *pd,
-                                                  const Efl_Graphics_Dash *dash,
-                                                  unsigned int length)
+_evas_vg_shape_efl_gfx_shape_stroke_dash_set(Eo *obj EINA_UNUSED,
+                                             Evas_VG_Shape_Data *pd,
+                                             const Efl_Gfx_Dash *dash,
+                                             unsigned int length)
 {
    free(pd->stroke.dash);
    pd->stroke.dash = NULL;
    pd->stroke.dash_count = 0;
 
-   pd->stroke.dash = malloc(sizeof (Efl_Graphics_Dash) * length);
+   pd->stroke.dash = malloc(sizeof (Efl_Gfx_Dash) * length);
    if (!pd->stroke.dash) return ;
 
-   memcpy(pd->stroke.dash, dash, sizeof (Efl_Graphics_Dash) * length);
+   memcpy(pd->stroke.dash, dash, sizeof (Efl_Gfx_Dash) * length);
    pd->stroke.dash_count = length;
 }
 
 static void
-_evas_vg_shape_efl_graphics_shape_stroke_dash_get(Eo *obj EINA_UNUSED,
-                                                  Evas_VG_Shape_Data *pd,
-                                                  const Efl_Graphics_Dash **dash,
-                                                  unsigned int *length)
+_evas_vg_shape_efl_gfx_shape_stroke_dash_get(Eo *obj EINA_UNUSED,
+                                             Evas_VG_Shape_Data *pd,
+                                             const Efl_Gfx_Dash **dash,
+                                             unsigned int *length)
 {
    if (dash) *dash = pd->stroke.dash;
    if (length) *length = pd->stroke.dash_count;
@@ -211,31 +211,31 @@ _evas_vg_shape_stroke_marker_get(Eo *obj EINA_UNUSED,
 }
 
 static void
-_evas_vg_shape_efl_graphics_shape_stroke_cap_set(Eo *obj EINA_UNUSED,
-                                                 Evas_VG_Shape_Data *pd,
-                                                 Efl_Graphics_Cap c)
+_evas_vg_shape_efl_gfx_shape_stroke_cap_set(Eo *obj EINA_UNUSED,
+                                            Evas_VG_Shape_Data *pd,
+                                            Efl_Gfx_Cap c)
 {
    pd->stroke.cap = c;
 }
 
-static Efl_Graphics_Cap
-_evas_vg_shape_efl_graphics_shape_stroke_cap_get(Eo *obj EINA_UNUSED,
-                                                 Evas_VG_Shape_Data *pd)
+static Efl_Gfx_Cap
+_evas_vg_shape_efl_gfx_shape_stroke_cap_get(Eo *obj EINA_UNUSED,
+                                            Evas_VG_Shape_Data *pd)
 {
    return pd->stroke.cap;
 }
 
 static void
-_evas_vg_shape_efl_graphics_shape_stroke_join_set(Eo *obj EINA_UNUSED,
-                                                  Evas_VG_Shape_Data *pd,
-                                                  Efl_Graphics_Join j)
+_evas_vg_shape_efl_gfx_shape_stroke_join_set(Eo *obj EINA_UNUSED,
+                                             Evas_VG_Shape_Data *pd,
+                                             Efl_Gfx_Join j)
 {
    pd->stroke.join = j;
 }
 
-static Efl_Graphics_Join
-_evas_vg_shape_efl_graphics_shape_stroke_join_get(Eo *obj EINA_UNUSED,
-                                                  Evas_VG_Shape_Data *pd)
+static Efl_Gfx_Join
+_evas_vg_shape_efl_gfx_shape_stroke_join_get(Eo *obj EINA_UNUSED,
+                                             Evas_VG_Shape_Data *pd)
 {
    return pd->stroke.join;
 }
@@ -270,17 +270,17 @@ _evas_vg_shape_render_pre(Eo *obj EINA_UNUSED,
          ector_renderer_shape_fill_set(fill ? fill->renderer : NULL),
          ector_renderer_shape_stroke_fill_set(stroke_fill ? stroke_fill->renderer : NULL),
          ector_renderer_shape_stroke_marker_set(stroke_marker ? stroke_marker->renderer : NULL),
-         efl_graphics_shape_stroke_scale_set(pd->stroke.scale),
-         efl_graphics_shape_stroke_color_set(pd->stroke.r,
-                                             pd->stroke.g,
-                                             pd->stroke.b,
-                                             pd->stroke.a),
-         efl_graphics_shape_stroke_width_set(pd->stroke.width),
-         efl_graphics_shape_stroke_location_set(pd->stroke.centered),
-         efl_graphics_shape_stroke_dash_set(pd->stroke.dash, pd->stroke.dash_count),
-         efl_graphics_shape_stroke_cap_set(pd->stroke.cap),
-         efl_graphics_shape_stroke_join_set(pd->stroke.join),
-         efl_graphics_shape_path_set(pd->ops, pd->points),
+         efl_gfx_shape_stroke_scale_set(pd->stroke.scale),
+         efl_gfx_shape_stroke_color_set(pd->stroke.r,
+                                        pd->stroke.g,
+                                        pd->stroke.b,
+                                        pd->stroke.a),
+         efl_gfx_shape_stroke_width_set(pd->stroke.width),
+         efl_gfx_shape_stroke_location_set(pd->stroke.centered),
+         efl_gfx_shape_stroke_dash_set(pd->stroke.dash, pd->stroke.dash_count),
+         efl_gfx_shape_stroke_cap_set(pd->stroke.cap),
+         efl_gfx_shape_stroke_join_set(pd->stroke.join),
+         efl_gfx_shape_path_set(pd->ops, pd->points),
          ector_renderer_prepare());
 }
 
@@ -291,8 +291,8 @@ _evas_vg_shape_eo_base_constructor(Eo *obj, Evas_VG_Shape_Data *pd)
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
 
-   pd->stroke.cap = EFL_GRAPHICS_CAP_BUTT;
-   pd->stroke.join = EFL_GRAPHICS_JOIN_MITER;
+   pd->stroke.cap = EFL_GFX_CAP_BUTT;
+   pd->stroke.join = EFL_GFX_JOIN_MITER;
    pd->stroke.scale = 1;
    pd->stroke.a = 1;
    pd->stroke.centered = 0.5;

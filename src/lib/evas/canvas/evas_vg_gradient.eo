@@ -1,11 +1,11 @@
-abstract Evas.VG_Gradient (Evas.VG_Node, Efl.Graphics.Gradient)
+abstract Evas.VG_Gradient (Evas.VG_Node, Efl.Gfx.Gradient)
 {
    eo_prefix: evas_vg_gradient;
    legacy_prefix: null;
    implements {
-      Efl.Graphics.Gradient.stop.set;
-      Efl.Graphics.Gradient.stop.get;
-      Efl.Graphics.Gradient.spread.set;
-      Efl.Graphics.Gradient.spread.get;
+      Efl.Gfx.Gradient.stop.set;
+      Efl.Gfx.Gradient.stop.get;
+      Efl.Gfx.Gradient.spread.set;
+      Efl.Gfx.Gradient.spread.get;
    }
 }

@@ -1,4 +1,4 @@
-interface Efl.Graphics.Gradient_Radial (Efl.Graphics.Gradient)
+interface Efl.Gfx.Gradient_Radial (Efl.Gfx.Gradient)
 {
    legacy_prefix: null;
    properties {

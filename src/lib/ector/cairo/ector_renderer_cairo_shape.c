@@ -78,25 +78,25 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_R
         cairo_new_path(pd->parent->cairo);
 
         pts = pd->shape->path.pts;
-        for (i = 0; pd->shape->path.cmd[i] != EFL_GRAPHICS_PATH_COMMAND_TYPE_END; i++)
+        for (i = 0; pd->shape->path.cmd[i] != EFL_GFX_PATH_COMMAND_TYPE_END; i++)
           {
              switch (pd->shape->path.cmd[i])
                {
-                case EFL_GRAPHICS_PATH_COMMAND_TYPE_MOVE_TO:
+                case EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO:
                    USE(obj, cairo_move_to, EINA_FALSE);
 
                    cairo_move_to(pd->parent->cairo, pts[0], pts[1]);
 
                    pts += 2;
                    break;
-                case EFL_GRAPHICS_PATH_COMMAND_TYPE_LINE_TO:
+                case EFL_GFX_PATH_COMMAND_TYPE_LINE_TO:
                    USE(obj, cairo_line_to, EINA_FALSE);
 
                    cairo_line_to(pd->parent->cairo, pts[0], pts[1]);
 
                    pts += 2;
                    break;
-                case EFL_GRAPHICS_PATH_COMMAND_TYPE_CUBIC_TO:
+                case EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO:
                    USE(obj, cairo_curve_to, EINA_FALSE);
 
                    // Be careful, we do have a different order than
@@ -108,13 +108,13 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_R
 
                    pts += 6;
                    break;
-                case EFL_GRAPHICS_PATH_COMMAND_TYPE_CLOSE:
+                case EFL_GFX_PATH_COMMAND_TYPE_CLOSE:
                    USE(obj, cairo_close_path, EINA_FALSE);
 
                    cairo_close_path(pd->parent->cairo);
                    break;
-                case EFL_GRAPHICS_PATH_COMMAND_TYPE_LAST:
-                case EFL_GRAPHICS_PATH_COMMAND_TYPE_END:
+                case EFL_GFX_PATH_COMMAND_TYPE_LAST:
+                case EFL_GFX_PATH_COMMAND_TYPE_END:
                    break;
                }
           }
@@ -189,7 +189,7 @@ _ector_renderer_cairo_shape_efl_gfx_shape_path_set(Eo *obj, Ector_Renderer_Cairo
    if (pd->path) cairo_path_destroy(pd->path);
    pd->path = NULL;
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, efl_graphics_shape_path_set(op, points));
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, efl_gfx_shape_path_set(op, points));
 }
 
 

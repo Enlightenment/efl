@@ -1,12 +1,12 @@
-class Evas.VG_Gradient_Linear (Evas.VG_Gradient, Efl.Graphics.Gradient_Linear)
+class Evas.VG_Gradient_Linear (Evas.VG_Gradient, Efl.Gfx.Gradient_Linear)
 {
    eo_prefix: evas_vg_gradient_linear;
    legacy_prefix: null;
    implements {
-      Efl.Graphics.Gradient_Linear.start.set;
-      Efl.Graphics.Gradient_Linear.start.get;
-      Efl.Graphics.Gradient_Linear.end.set;
-      Efl.Graphics.Gradient_Linear.end.get;
+      Efl.Gfx.Gradient_Linear.start.set;
+      Efl.Gfx.Gradient_Linear.start.get;
+      Efl.Gfx.Gradient_Linear.end.set;
+      Efl.Gfx.Gradient_Linear.end.get;
       Eo.Base.constructor;
       Eo.Base.destructor;
    }

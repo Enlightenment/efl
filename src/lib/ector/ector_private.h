@@ -72,10 +72,10 @@ struct _Ector_Renderer_Generic_Base_Data
 
 struct _Ector_Renderer_Generic_Gradient_Data
 {
-   Efl_Graphics_Gradient_Stop *colors;
+   Efl_Gfx_Gradient_Stop *colors;
    unsigned int colors_count;
 
-   Efl_Graphics_Gradient_Spread s;
+   Efl_Gfx_Gradient_Spread s;
 };
 
 struct _Ector_Renderer_Generic_Gradient_Linear_Data
@@ -96,7 +96,7 @@ struct _Ector_Renderer_Generic_Gradient_Radial_Data
 struct _Ector_Renderer_Generic_Shape_Data
 {
    struct {
-      Efl_Graphics_Path_Command *cmd;
+      Efl_Gfx_Path_Command *cmd;
       double *pts;
    } path;
 
@@ -113,11 +113,11 @@ struct _Ector_Renderer_Generic_Shape_Data
          int r, g, b, a;
       } color;
 
-      Efl_Graphics_Dash *dash;
+      Efl_Gfx_Dash *dash;
       unsigned int dash_length;
 
-      Efl_Graphics_Cap cap;
-      Efl_Graphics_Cap join;
+      Efl_Gfx_Cap cap;
+      Efl_Gfx_Cap join;
    } stroke;
 };
 

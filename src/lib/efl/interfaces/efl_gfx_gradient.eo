@@ -1,26 +1,26 @@
-interface Efl.Graphics.Gradient_Linear (Efl.Graphics.Gradient)
+interface Efl.Gfx.Gradient
 {
    legacy_prefix: null;
    properties {
-      start {
+      stop {
          set {
 	 }
 	 get {
 	 }
 	 values {
-	    double x;
-	    double y;
+	    const(Efl_Gfx_Gradient_Stop) *colors;
+	    uint length;
 	 }
       }
-      end {
+      spread {
          set {
 	 }
 	 get {
 	 }
 	 values {
-	    double x;
-	    double y;
+	    Efl_Gfx_Gradient_Spread s;
 	 }
       }
    }
+
 }

@@ -16,36 +16,36 @@ struct _Evas_VG_Gradient_Linear_Data
 };
 
 static void
-_evas_vg_gradient_linear_efl_graphics_gradient_linear_start_set(Eo *obj EINA_UNUSED,
-                                   Evas_VG_Gradient_Linear_Data *pd,
-                                   double x, double y)
+_evas_vg_gradient_linear_efl_gfx_gradient_linear_start_set(Eo *obj EINA_UNUSED,
+                                                           Evas_VG_Gradient_Linear_Data *pd,
+                                                           double x, double y)
 {
    pd->start.x = x;
    pd->start.y = y;
 }
 
 static void
-_evas_vg_gradient_linear_efl_graphics_gradient_linear_start_get(Eo *obj EINA_UNUSED,
-                                   Evas_VG_Gradient_Linear_Data *pd,
-                                   double *x, double *y)
+_evas_vg_gradient_linear_efl_gfx_gradient_linear_start_get(Eo *obj EINA_UNUSED,
+                                                           Evas_VG_Gradient_Linear_Data *pd,
+                                                           double *x, double *y)
 {
    if (x) *x = pd->start.x;
    if (y) *y = pd->start.y;
 }
 
 static void
-_evas_vg_gradient_linear_efl_graphics_gradient_linear_end_set(Eo *obj EINA_UNUSED,
-                                 Evas_VG_Gradient_Linear_Data *pd,
-                                 double x, double y)
+_evas_vg_gradient_linear_efl_gfx_gradient_linear_end_set(Eo *obj EINA_UNUSED,
+                                                         Evas_VG_Gradient_Linear_Data *pd,
+                                                         double x, double y)
 {
    pd->end.x = x;
    pd->end.y = y;
 }
 
 static void
-_evas_vg_gradient_linear_efl_graphics_gradient_linear_end_get(Eo *obj EINA_UNUSED,
-                                 Evas_VG_Gradient_Linear_Data *pd,
-                                 double *x, double *y)
+_evas_vg_gradient_linear_efl_gfx_gradient_linear_end_get(Eo *obj EINA_UNUSED,
+                                                         Evas_VG_Gradient_Linear_Data *pd,
+                                                         double *x, double *y)
 {
    if (x) *x = pd->end.x;
    if (y) *y = pd->end.y;
@@ -72,10 +72,10 @@ _evas_vg_gradient_linear_render_pre(Eo *obj,
          ector_renderer_origin_set(nd->x, nd->y),
          ector_renderer_color_set(nd->r, nd->g, nd->b, nd->a),
          ector_renderer_visibility_set(nd->visibility),
-         efl_graphics_gradient_stop_set(gd->colors, gd->colors_count),
-         efl_graphics_gradient_spread_set(gd->s),
-         efl_graphics_gradient_linear_start_set(pd->start.x, pd->start.y),
-         efl_graphics_gradient_linear_end_set(pd->end.x, pd->end.y),
+         efl_gfx_gradient_stop_set(gd->colors, gd->colors_count),
+         efl_gfx_gradient_spread_set(gd->s),
+         efl_gfx_gradient_linear_start_set(pd->start.x, pd->start.y),
+         efl_gfx_gradient_linear_end_set(pd->end.x, pd->end.y),
          ector_renderer_prepare());
 }
 

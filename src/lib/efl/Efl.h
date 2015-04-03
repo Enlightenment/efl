@@ -38,24 +38,24 @@ extern "C"
  * Path command enum.
  *
  * @since 1.13
- * @ingroup Efl_Graphics_Shape
+ * @ingroup Efl_Gfx_Shape
  */
-typedef enum _Efl_Graphics_Path_Command
+typedef enum _Efl_Gfx_Path_Command
 {
-  EFL_GRAPHICS_PATH_COMMAND_TYPE_END = 0, /**< End of the stream of command */
-  EFL_GRAPHICS_PATH_COMMAND_TYPE_MOVE_TO, /**< A move command type */
-  EFL_GRAPHICS_PATH_COMMAND_TYPE_LINE_TO, /**< A line command type */
-  EFL_GRAPHICS_PATH_COMMAND_TYPE_CUBIC_TO, /**< A cubic command type */
-  EFL_GRAPHICS_PATH_COMMAND_TYPE_CLOSE, /**< A close command type */
-  EFL_GRAPHICS_PATH_COMMAND_TYPE_LAST, /**< Not a valid command, but last one according to this version header */
-} Efl_Graphics_Path_Command;
+  EFL_GFX_PATH_COMMAND_TYPE_END = 0, /**< End of the stream of command */
+  EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO, /**< A move command type */
+  EFL_GFX_PATH_COMMAND_TYPE_LINE_TO, /**< A line command type */
+  EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO, /**< A cubic command type */
+  EFL_GFX_PATH_COMMAND_TYPE_CLOSE, /**< A close command type */
+  EFL_GFX_PATH_COMMAND_TYPE_LAST, /**< Not a valid command, but last one according to this version header */
+} Efl_Gfx_Path_Command;
 
 /**
  * Type describing dash
  * @since 1.13
  */
-typedef struct _Efl_Graphics_Dash Efl_Graphics_Dash;
-struct _Efl_Graphics_Dash
+typedef struct _Efl_Gfx_Dash Efl_Gfx_Dash;
+struct _Efl_Gfx_Dash
 {
    double length;
    double gap;
@@ -65,32 +65,32 @@ struct _Efl_Graphics_Dash
  * Type defining how a line end.
  * @since 1.13
  */
-typedef enum _Efl_Graphics_Cap
+typedef enum _Efl_Gfx_Cap
 {
-  EFL_GRAPHICS_CAP_BUTT,
-  EFL_GRAPHICS_CAP_ROUND,
-  EFL_GRAPHICS_CAP_SQUARE,
-  EFL_GRAPHICS_CAP_LAST
-} Efl_Graphics_Cap;
+  EFL_GFX_CAP_BUTT,
+  EFL_GFX_CAP_ROUND,
+  EFL_GFX_CAP_SQUARE,
+  EFL_GFX_CAP_LAST
+} Efl_Gfx_Cap;
 
 /**
  * Type defining how join between path are drawn.
  * @since 1.13
  */
-typedef enum _Efl_Graphics_Join
+typedef enum _Efl_Gfx_Join
 {
-  EFL_GRAPHICS_JOIN_MITER,
-  EFL_GRAPHICS_JOIN_ROUND,
-  EFL_GRAPHICS_JOIN_BEVEL,
-  EFL_GRAPHICS_JOIN_LAST
-} Efl_Graphics_Join;
+  EFL_GFX_JOIN_MITER,
+  EFL_GFX_JOIN_ROUND,
+  EFL_GFX_JOIN_BEVEL,
+  EFL_GFX_JOIN_LAST
+} Efl_Gfx_Join;
 
 /**
  * Type defining gradient stop.
  * @since 1.13
  */
-typedef struct _Efl_Graphics_Gradient_Stop Efl_Graphics_Gradient_Stop;
-struct _Efl_Graphics_Gradient_Stop
+typedef struct _Efl_Gfx_Gradient_Stop Efl_Gfx_Gradient_Stop;
+struct _Efl_Gfx_Gradient_Stop
 {
    double offset;
    int r;
@@ -103,13 +103,13 @@ struct _Efl_Graphics_Gradient_Stop
  * Type defining how the gradient spread after its limit.
  * @since 1.13
  */
-typedef enum _Efl_Graphics_Gradient_Spread
+typedef enum _Efl_Gfx_Gradient_Spread
 {
-  EFL_GRAPHICS_GRADIENT_SPREAD_PAD,
-  EFL_GRAPHICS_GRADIENT_SPREAD_REFLECT,
-  EFL_GRAPHICS_GRADIENT_SPREAD_REPEAT,
-  EFL_GRAPHICS_GRADIENT_SPREAD_LAST
-} Efl_Graphics_Gradient_Spread;
+  EFL_GFX_GRADIENT_SPREAD_PAD,
+  EFL_GFX_GRADIENT_SPREAD_REFLECT,
+  EFL_GFX_GRADIENT_SPREAD_REPEAT,
+  EFL_GFX_GRADIENT_SPREAD_LAST
+} Efl_Gfx_Gradient_Spread;
 
 #ifdef EFL_BETA_API_SUPPORT
 
@@ -121,11 +121,12 @@ typedef enum _Efl_Graphics_Gradient_Spread
 #include "interfaces/efl_text.eo.h"
 #include "interfaces/efl_text_properties.eo.h"
 
-#include "interfaces/efl_graphics_utils.h"
-#include "interfaces/efl_graphics_shape.eo.h"
-#include "interfaces/efl_graphics_gradient.eo.h"
-#include "interfaces/efl_graphics_gradient_linear.eo.h"
-#include "interfaces/efl_graphics_gradient_radial.eo.h"
+#include "interfaces/efl_gfx_utils.h"
+
+#include "interfaces/efl_gfx_shape.eo.h"
+#include "interfaces/efl_gfx_gradient.eo.h"
+#include "interfaces/efl_gfx_gradient_linear.eo.h"
+#include "interfaces/efl_gfx_gradient_radial.eo.h"
 
 #endif
 

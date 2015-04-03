@@ -1,4 +1,4 @@
-class Evas.VG_Shape (Evas.VG_Node, Efl.Graphics.Shape)
+class Evas.VG_Shape (Evas.VG_Node, Efl.Gfx.Shape)
 {
    eo_prefix: evas_vg_shape;
    legacy_prefix: null;
@@ -32,14 +32,14 @@ class Evas.VG_Shape (Evas.VG_Node, Efl.Graphics.Shape)
       }
    }
    implements {
-      Efl.Graphics.Shape.stroke_scale;
-      Efl.Graphics.Shape.stroke_color;
-      Efl.Graphics.Shape.stroke_width;
-      Efl.Graphics.Shape.stroke_location;
-      Efl.Graphics.Shape.stroke_dash;
-      Efl.Graphics.Shape.stroke_cap;
-      Efl.Graphics.Shape.stroke_join;
-      Efl.Graphics.Shape.path;
+      Efl.Gfx.Shape.stroke_scale;
+      Efl.Gfx.Shape.stroke_color;
+      Efl.Gfx.Shape.stroke_width;
+      Efl.Gfx.Shape.stroke_location;
+      Efl.Gfx.Shape.stroke_dash;
+      Efl.Gfx.Shape.stroke_cap;
+      Efl.Gfx.Shape.stroke_join;
+      Efl.Gfx.Shape.path;
       Evas.VG_Node.bound_get;
       Eo.Base.constructor;
       Eo.Base.destructor;

@@ -15,51 +15,51 @@ struct _Evas_VG_Gradient_Radial_Data
 };
 
 static void
-_evas_vg_gradient_radial_efl_graphics_gradient_radial_center_set(Eo *obj EINA_UNUSED,
-                                                 Evas_VG_Gradient_Radial_Data *pd,
-                                                 double x, double y)
+_evas_vg_gradient_radial_efl_gfx_gradient_radial_center_set(Eo *obj EINA_UNUSED,
+                                                            Evas_VG_Gradient_Radial_Data *pd,
+                                                            double x, double y)
 {
    pd->center.x = x;
    pd->center.y = y;
 }
 
 static void
-_evas_vg_gradient_radial_efl_graphics_gradient_radial_center_get(Eo *obj EINA_UNUSED,
-                                                 Evas_VG_Gradient_Radial_Data *pd,
-                                                 double *x, double *y)
+_evas_vg_gradient_radial_efl_gfx_gradient_radial_center_get(Eo *obj EINA_UNUSED,
+                                                            Evas_VG_Gradient_Radial_Data *pd,
+                                                            double *x, double *y)
 {
    if (x) *x = pd->center.x;
    if (y) *y = pd->center.y;
 }
 
 static void
-_evas_vg_gradient_radial_efl_graphics_gradient_radial_radius_set(Eo *obj EINA_UNUSED,
-                                                 Evas_VG_Gradient_Radial_Data *pd,
-                                                 double r)
+_evas_vg_gradient_radial_efl_gfx_gradient_radial_radius_set(Eo *obj EINA_UNUSED,
+                                                            Evas_VG_Gradient_Radial_Data *pd,
+                                                            double r)
 {
    pd->radius = r;
 }
 
 static double
-_evas_vg_gradient_radial_efl_graphics_gradient_radial_radius_get(Eo *obj EINA_UNUSED,
-                                                 Evas_VG_Gradient_Radial_Data *pd)
+_evas_vg_gradient_radial_efl_gfx_gradient_radial_radius_get(Eo *obj EINA_UNUSED,
+                                                            Evas_VG_Gradient_Radial_Data *pd)
 {
    return pd->radius;
 }
 
 static void
-_evas_vg_gradient_radial_efl_graphics_gradient_radial_focal_set(Eo *obj EINA_UNUSED,
-                                                Evas_VG_Gradient_Radial_Data *pd,
-                                                double x, double y)
+_evas_vg_gradient_radial_efl_gfx_gradient_radial_focal_set(Eo *obj EINA_UNUSED,
+                                                           Evas_VG_Gradient_Radial_Data *pd,
+                                                           double x, double y)
 {
    pd->focal.x = x;
    pd->focal.y = y;
 }
 
 static void
-_evas_vg_gradient_radial_efl_graphics_gradient_radial_focal_get(Eo *obj EINA_UNUSED,
-                                                Evas_VG_Gradient_Radial_Data *pd,
-                                                double *x, double *y)
+_evas_vg_gradient_radial_efl_gfx_gradient_radial_focal_get(Eo *obj EINA_UNUSED,
+                                                           Evas_VG_Gradient_Radial_Data *pd,
+                                                           double *x, double *y)
 {
    if (x) *x = pd->focal.x;
    if (y) *y = pd->focal.y;
@@ -86,11 +86,11 @@ _evas_vg_gradient_radial_render_pre(Eo *obj,
          ector_renderer_origin_set(nd->x, nd->y),
          ector_renderer_color_set(nd->r, nd->g, nd->b, nd->a),
          ector_renderer_visibility_set(nd->visibility),
-         efl_graphics_gradient_stop_set(gd->colors, gd->colors_count),
-         efl_graphics_gradient_spread_set(gd->s),
-         efl_graphics_gradient_radial_center_set(pd->center.x, pd->center.y),
-         efl_graphics_gradient_radial_focal_set(pd->focal.x, pd->focal.y),
-         efl_graphics_gradient_radial_radius_set(pd->radius),
+         efl_gfx_gradient_stop_set(gd->colors, gd->colors_count),
+         efl_gfx_gradient_spread_set(gd->s),
+         efl_gfx_gradient_radial_center_set(pd->center.x, pd->center.y),
+         efl_gfx_gradient_radial_focal_set(pd->focal.x, pd->focal.y),
+         efl_gfx_gradient_radial_radius_set(pd->radius),
          ector_renderer_prepare());
 }
 

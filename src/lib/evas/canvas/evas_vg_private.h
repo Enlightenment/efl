@@ -31,10 +31,10 @@ struct _Evas_VG_Container_Data
 struct _Evas_VG_Gradient_Data
 {
    // FIXME: Later on we should deduplicate it somehow (Using Ector ?).
-   Efl_Graphics_Gradient_Stop *colors;
+   Efl_Gfx_Gradient_Stop *colors;
    unsigned int colors_count;
 
-   Efl_Graphics_Gradient_Spread s;
+   Efl_Gfx_Gradient_Spread s;
 };
 
 static inline Evas_VG_Node_Data *

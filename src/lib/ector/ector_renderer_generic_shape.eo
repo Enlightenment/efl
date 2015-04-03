@@ -1,4 +1,4 @@
-class Ector.Renderer.Generic.Shape (Ector.Renderer.Generic.Base, Efl.Graphics.Shape)
+class Ector.Renderer.Generic.Shape (Ector.Renderer.Generic.Base, Efl.Gfx.Shape)
 {
    eo_prefix: ector_renderer_shape;
    legacy_prefix: null;
@@ -32,14 +32,14 @@ class Ector.Renderer.Generic.Shape (Ector.Renderer.Generic.Base, Efl.Graphics.Sh
       }
    }
    implements {
-      Efl.Graphics.Shape.stroke_scale;
-      Efl.Graphics.Shape.stroke_color;
-      Efl.Graphics.Shape.stroke_width;
-      Efl.Graphics.Shape.stroke_location;
-      Efl.Graphics.Shape.stroke_dash;
-      Efl.Graphics.Shape.stroke_cap;
-      Efl.Graphics.Shape.stroke_join;
-      Efl.Graphics.Shape.path;
+      Efl.Gfx.Shape.stroke_scale;
+      Efl.Gfx.Shape.stroke_color;
+      Efl.Gfx.Shape.stroke_width;
+      Efl.Gfx.Shape.stroke_location;
+      Efl.Gfx.Shape.stroke_dash;
+      Efl.Gfx.Shape.stroke_cap;
+      Efl.Gfx.Shape.stroke_join;
+      Efl.Gfx.Shape.path;
       Eo.Base.constructor;
       Eo.Base.destructor;
    }

@@ -6,7 +6,7 @@ class Ector.Renderer.Cairo.Shape (Ector.Renderer.Cairo.Base, Ector.Renderer.Gene
       Ector.Renderer.Generic.Base.prepare;
       Ector.Renderer.Generic.Base.draw;
       Ector.Renderer.Cairo.Base.fill;
-      Efl.Graphics.Shape.path.set;
+      Efl.Gfx.Shape.path.set;
       Eo.Base.constructor;
       Eo.Base.destructor;
    }

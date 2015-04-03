@@ -1,0 +1,26 @@
+interface Efl.Gfx.Gradient_Linear (Efl.Gfx.Gradient)
+{
+   legacy_prefix: null;
+   properties {
+      start {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double x;
+	    double y;
+	 }
+      }
+      end {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double x;
+	    double y;
+	 }
+      }
+   }
+}
