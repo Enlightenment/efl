@@ -1,4 +1,4 @@
-abstract Ector.Renderer (Eo.Base)
+abstract Ector.Renderer.Base (Eo.Base)
 {
    eo_prefix: ector_renderer;
    legacy_prefix: null;
@@ -9,7 +9,7 @@ abstract Ector.Renderer (Eo.Base)
 	 get {
 	 }
 	 values {
-	    Eina_Matrix3 m;
+	    const(Eina_Matrix3) *m;
 	 }
       }
       origin {

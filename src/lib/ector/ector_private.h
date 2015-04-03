@@ -36,4 +36,13 @@ extern int _ector_log_dom_global;
 #endif /* ifdef CRI */
 #define CRI(...) EINA_LOG_DOM_CRIT(_ector_log_dom_global, __VA_ARGS__)
 
+static inline void
+_ector_renderer_replace(Ector_Renderer **d, const Ector_Renderer *s)
+{
+   Ector_Renderer *tmp = *d;
+
+   *d = eo_ref(s);
+   eo_unref(tmp);
+}
+
 #endif

@@ -1,0 +1,47 @@
+class Ector.Renderer.Shape (Ector.Renderer.Base, Efl.Geometry.Shape)
+{
+   eo_prefix: ector_renderer_shape;
+   legacy_prefix: null;
+   properties {
+      fill {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    const(Ector_Renderer) *r;
+	 }
+      }
+      stroke_fill {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    const(Ector_Renderer) *r;
+	 }
+      }
+      stroke_marker {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    const(Ector_Renderer) *r;
+	 }
+      }
+   }
+   implements {
+      Efl.Geometry.Shape.stroke_scale;
+      Efl.Geometry.Shape.stroke_color;
+      Efl.Geometry.Shape.stroke_width;
+      Efl.Geometry.Shape.stroke_location;
+      Efl.Geometry.Shape.stroke_dash;
+      Efl.Geometry.Shape.stroke_cap;
+      Efl.Geometry.Shape.stroke_join;
+      Efl.Geometry.Shape.path_set;
+      Ector.Renderer.Base.prepare;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+   }
+}
