@@ -1,4 +1,4 @@
-abstract Evas.VG_Node (Eo.Base, Efl.Gfx.Base)
+abstract Evas.VG_Node (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
 {
    eo_prefix: evas_vg_node;
    legacy_prefix: null;
@@ -63,69 +63,6 @@ abstract Evas.VG_Node (Eo.Base, Efl.Gfx.Base)
 	    @out Eina_Rectangle r;
 	 }
       }
-      
-      raise {
-        /*@
-         Raise @p obj to the top of its layer.
-
-         @p obj will, then, be the highest one in the layer it belongs
-         to. Object on other layers won't get touched.
-
-         @see evas_vg_node_stack_above()
-         @see evas_vg_node_stack_below()
-         @see evas_vg_node_lower() */
-      }
-      stack_above {
-         /*@
-         Stack @p obj immediately above @p above
-
-         Objects, in a given Evas_VG_Container, are stacked in the order they get added
-         to it.  This means that, if they overlap, the highest ones will
-         cover the lowest ones, in that order. This function is a way to
-         change the stacking order for the objects.
-
-         This function is intended to be used with <b>objects belonging to
-         the same container</b>, otherwise it will fail (and
-         accomplish nothing).
-
-         @see evas_vg_node_stack_below() */
-
-         params {
-            @in Evas_VG_Node *above @nonull; /*@ the object above which to stack */
-         }
-      }
-      stack_below {
-         /*@
-         Stack @p obj immediately below @p below
-
-         Objects, in a given container, are stacked in the order they get added
-         to it.  This means that, if they overlap, the highest ones will
-         cover the lowest ones, in that order. This function is a way to
-         change the stacking order for the objects.
-
-         This function is intended to be used with <b>objects belonging to
-         the same container</b>, otherwise it will fail (and
-         accomplish nothing).
-
-         @see evas_vg_node_layer_get()
-         @see evas_vg_node_layer_set()
-         @see evas_vg_node_stack_below() */
-
-         params {
-            @in Evas_Object *below @nonull; /*@ the object below which to stack */
-         }
-      }
-      lower {
-         /*@
-         Lower @p obj to the bottom of its layer.
-
-         @p obj will, then, be the lowest one in the layer it belongs
-         to. Objects on other layers won't get touched.
-
-         @see evas_vg_node_stack_above()
-         @see evas_vg_node_stack_below()
-         @see evas_vg_node_raise() */
-      }
    }
    implements {
       Eo.Base.parent.set;
@@ -137,6 +74,12 @@ abstract Evas.VG_Node (Eo.Base, Efl.Gfx.Base)
       Efl.Gfx.Base.size.get;
       Efl.Gfx.Base.position.set;
       Efl.Gfx.Base.position.get;
+      Efl.Gfx.Stack.below.get;
+      Efl.Gfx.Stack.above.get;
+      Efl.Gfx.Stack.stack_below;
+      Efl.Gfx.Stack.stack_above;
+      Efl.Gfx.Stack.raise;
+      Efl.Gfx.Stack.lower;
       @virtual .bound_get;
    }
 }
