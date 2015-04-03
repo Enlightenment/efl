@@ -19,8 +19,7 @@ _evas_vg_root_node_eo_base_parent_set(Eo *obj,
 {
    // Nice little hack, jump over parent parent_set in Evas_VG_Root
    eo_do_super(obj, EVAS_VG_NODE_CLASS, eo_constructor());
-   if (!eo_isa(parent, EVAS_VG_CLASS) &&
-       !eo_isa(parent, EVAS_VG_CONTAINER_CLASS))
+   if (!eo_isa(parent, EVAS_VG_CLASS))
      eo_error_set(obj);
 }
 
@@ -33,8 +32,7 @@ _evas_vg_root_node_eo_base_constructor(Eo *obj,
    // Nice little hack, jump over parent constructor in Evas_VG_Root
    eo_do_super(obj, EVAS_VG_NODE_CLASS, eo_constructor());
    eo_do(obj, parent = eo_parent_get());
-   if (!eo_isa(parent, EVAS_VG_CLASS) &&
-       !eo_isa(parent, EVAS_VG_CONTAINER_CLASS))
+   if (!eo_isa(parent, EVAS_VG_CLASS))
      eo_error_set(obj);
 }
 
