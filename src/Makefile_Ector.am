@@ -50,6 +50,7 @@ lib_ector_libector_la_SOURCES += \
 lib/ector/cairo/ector_renderer_cairo_gradient_linear.c \
 lib/ector/cairo/ector_renderer_cairo_gradient_radial.c \
 lib/ector/cairo/ector_renderer_cairo_shape.c \
+lib/ector/cairo/ector_renderer_cairo_base.c \
 lib/ector/cairo/ector_cairo_surface.c
 
 lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \

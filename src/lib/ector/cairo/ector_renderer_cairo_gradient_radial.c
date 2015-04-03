@@ -40,10 +40,12 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_prepare(Eo *ob
    Ector_Renderer_Generic_Gradient_Data *gd;
    unsigned int i;
 
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, ector_renderer_prepare());
+
    if (pd->pat) return EINA_FALSE;
 
-   grd = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_CLASS);
-   gd = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_CLASS);
+   grd = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_MIXIN);
+   gd = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_MIXIN);
    if (!grd || !gd) return EINA_FALSE;
 
    USE(obj, cairo_pattern_create_radial, EINA_FALSE);
@@ -75,14 +77,16 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_draw(Eo *obj, 
    Ector_Renderer_Generic_Gradient_Radial_Data *gld;
 
    // FIXME: don't ignore clipping !
-   gld = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_CLASS);
+   gld = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_MIXIN);
    if (!pd->pat || !gld) return EINA_FALSE;
+
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, ector_renderer_draw(op, clips, x, y, mul_col));
 
    USE(obj, cairo_arc, EINA_FALSE);
    USE(obj, cairo_fill, EINA_FALSE);
 
    cairo_arc(pd->parent->cairo,
-             gld->radial.x - x, gld->radial.y - y,
+             gld->radial.x, gld->radial.y,
              gld->radius,
              0, 2 * M_PI);
    eo_do(obj, ector_renderer_cairo_base_fill());

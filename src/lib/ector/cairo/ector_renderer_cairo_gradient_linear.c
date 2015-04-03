@@ -35,10 +35,12 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_generic_base_prepare(Eo *ob
    Ector_Renderer_Generic_Gradient_Data *gd;
    unsigned int i;
 
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, ector_renderer_prepare());
+
    if (pd->pat) return EINA_FALSE;
 
-   gld = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_CLASS);
-   gd = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_CLASS);
+   gld = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_MIXIN);
+   gd = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_MIXIN);
    if (!gld || !gd) return EINA_FALSE;
 
    USE(obj, cairo_pattern_create_linear, EINA_FALSE);
@@ -71,13 +73,15 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_generic_base_draw(Eo *obj,
    Ector_Renderer_Generic_Gradient_Linear_Data *gld;
 
    // FIXME: don't ignore clipping !
-   gld = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_CLASS);
+   gld = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_MIXIN);
    if (!pd->pat || !gld) return EINA_FALSE;
+
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, ector_renderer_draw(op, clips, x, y, mul_col));
 
    USE(obj, cairo_rectangle, EINA_FALSE);
    USE(obj, cairo_fill, EINA_FALSE);
 
-   cairo_rectangle(pd->parent->cairo, gld->start.x - x, gld->start.y - y,
+   cairo_rectangle(pd->parent->cairo, gld->start.x, gld->start.y,
                    gld->end.x - gld->start.x,
                    gld->end.y - gld->start.y);
    eo_do(obj, ector_renderer_cairo_base_fill());

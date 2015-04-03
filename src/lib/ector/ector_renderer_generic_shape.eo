@@ -1,4 +1,4 @@
-class Ector.Renderer.Generic.Shape (Ector.Renderer.Generic.Base, Efl.Gfx.Shape)
+mixin Ector.Renderer.Generic.Shape (Efl.Gfx.Shape)
 {
    eo_prefix: ector_renderer_shape;
    legacy_prefix: null;
@@ -32,7 +32,6 @@ class Ector.Renderer.Generic.Shape (Ector.Renderer.Generic.Base, Efl.Gfx.Shape)
       }
    }
    implements {
-      Ector.Renderer.Generic.Base.prepare;
       Efl.Gfx.Shape.stroke_scale;
       Efl.Gfx.Shape.stroke_color;
       Efl.Gfx.Shape.stroke_width;

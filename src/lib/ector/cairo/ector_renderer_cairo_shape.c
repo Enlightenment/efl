@@ -53,6 +53,13 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_R
 
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, ector_renderer_prepare());
 
+   if (pd->shape->fill)
+     eo_do(pd->shape->fill, ector_renderer_prepare());
+   if (pd->shape->stroke.fill)
+     eo_do(pd->shape->stroke.fill, ector_renderer_prepare());
+   if (pd->shape->stroke.marker)
+     eo_do(pd->shape->stroke.marker, ector_renderer_prepare());
+
    // shouldn't that be moved to the cairo base object
    if (!pd->parent)
      {
@@ -125,8 +132,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
 {
    if (pd->path == NULL) return EINA_FALSE;
 
-   // FIXME: find a way to offset the drawing and setting multiple clips
-
+   // FIXME: find a way to set multiple clips
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, ector_renderer_draw(op, clips, x, y, mul_col));
 
    USE(obj, cairo_new_path, EINA_FALSE);
@@ -167,10 +173,12 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
 }
 
 static Eina_Bool
-_ector_renderer_cairo_shape_ector_renderer_cairo_base_fill(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
+_ector_renderer_cairo_shape_ector_renderer_cairo_base_fill(Eo *obj EINA_UNUSED,
+                                                           Ector_Renderer_Cairo_Shape_Data *pd EINA_UNUSED)
 {
    // FIXME: let's find out how to fill a shape with a shape later.
    // I need to read SVG specification and see how to map that with cairo.
+#warning "fill for a shape object is unhandled at this moment in cairo backend."
    ERR("fill with shape not implemented\n");
    return EINA_FALSE;
 }
@@ -192,7 +200,7 @@ void
 _ector_renderer_cairo_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, eo_constructor());
-   pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_CLASS, obj);
+   pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN, obj);
    pd->base = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
 }
 

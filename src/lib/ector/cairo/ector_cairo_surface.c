@@ -55,12 +55,13 @@ _ector_cairo_surface_ector_generic_surface_renderer_factory_new(Eo *obj,
                                                                 Ector_Cairo_Surface_Data *pd EINA_UNUSED,
                                                                 const Eo_Class *type)
 {
-   if (type == ECTOR_RENDERER_GENERIC_SHAPE_CLASS)
+   if (type == ECTOR_RENDERER_GENERIC_SHAPE_MIXIN)
      return eo_add(ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj);
-   else if (type == ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_CLASS)
+   else if (type == ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_MIXIN)
      return eo_add(ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, obj);
-   else if (type == ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_CLASS)
+   else if (type == ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_MIXIN)
      return eo_add(ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, obj);
+   ERR("Couldn't find class for type: %s\n", eo_class_name_get(type));
    return NULL;
 }
 
@@ -126,4 +127,3 @@ _ector_cairo_surface_eo_base_destructor(Eo *obj EINA_UNUSED,
 }
 
 #include "ector_cairo_surface.eo.c"
-#include "ector_renderer_cairo_base.eo.c"

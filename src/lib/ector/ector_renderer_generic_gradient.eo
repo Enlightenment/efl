@@ -1,4 +1,4 @@
-abstract Ector.Renderer.Generic.Gradient (Ector.Renderer.Generic.Base, Efl.Gfx.Gradient.Base)
+mixin Ector.Renderer.Generic.Gradient (Efl.Gfx.Gradient.Base)
 {
    eo_prefix: ector_renderer_gradient;
    legacy_prefix: null;

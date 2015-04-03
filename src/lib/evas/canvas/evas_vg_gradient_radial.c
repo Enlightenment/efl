@@ -89,7 +89,7 @@ _efl_vg_gradient_radial_render_pre(Eo *obj,
 
    if (!nd->renderer)
      {
-        eo_do(s, nd->renderer = ector_surface_renderer_factory_new(ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_CLASS));
+        eo_do(s, nd->renderer = ector_surface_renderer_factory_new(ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_MIXIN));
      }
 
    eo_do(nd->renderer,
