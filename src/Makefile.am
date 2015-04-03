@@ -4,6 +4,7 @@ BUILT_SOURCES =
 
 EOLIAN_FLAGS = -I$(srcdir)\
 	       -I$(srcdir)/lib/eo \
+	       -I$(srcdir)/lib/ector \
 	       -I$(srcdir)/lib/evas/canvas \
 	       -I$(srcdir)/lib/edje \
 	       -I$(srcdir)/lib/efl/interfaces \
