@@ -2232,9 +2232,11 @@ eng_ector_end(void *data, void *context EINA_UNUSED, void *surface EINA_UNUSED, 
    Render_Engine_GL_Generic *re = data;
    Evas_GL_Image *im;
    int w, h;
+   Eina_Bool mul_use;
 
    gl_context = re->window_gl_context_get(re->software.ob);
    w = gl_context->w; h = gl_context->h;
+   mul_use = gl_context->dc->mul.use;
 
    if (use_cairo)
      {
@@ -2248,6 +2250,14 @@ eng_ector_end(void *data, void *context EINA_UNUSED, void *surface EINA_UNUSED, 
      }
 
    im = evas_gl_common_image_new_from_copied_data(gl_context, w, h, software_buffer, 1, EVAS_COLORSPACE_ARGB8888);
+
+   if (!mul_use)
+   {
+      // @hack as image_draw uses below fields to do colour multiplication.
+      gl_context->dc->mul.col = ector_color_multiply(0xffffffff,gl_context->dc->col.col);
+      gl_context->dc->mul.use = EINA_TRUE;
+   }
+   
    // We actually just bluntly push the pixel all over the
    // destination surface. We don't have the actual information
    // of the widget size. This is not a problem.
@@ -2257,6 +2267,9 @@ eng_ector_end(void *data, void *context EINA_UNUSED, void *surface EINA_UNUSED, 
    evas_gl_common_image_draw(gl_context, im, 0, 0, w, h, 0, 0, w, h, 0);
 
    evas_gl_common_image_free(im);
+
+   // restore gl state
+   gl_context->dc->mul.use = mul_use;
 }
 
 static Evas_Func func, pfunc;
