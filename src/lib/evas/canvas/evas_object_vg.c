@@ -75,6 +75,9 @@ evas_object_vg_add(Evas *e)
    return NULL;
    MAGIC_CHECK_END();
    Evas_Object *eo_obj = eo_add(MY_CLASS, e);
+
+   // Ask backend to return the main Ector_Surface
+
    return eo_obj;
 }
 
@@ -118,6 +121,13 @@ evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
                       void *output EINA_UNUSED, void *context EINA_UNUSED, void *surface EINA_UNUSED,
                       int x EINA_UNUSED, int y EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
 {
+   // FIXME: Set context (that should affect Ector_Surface) and
+   // then call Ector_Renderer render from bottom to top. Get the
+   // Ector_Surface that match the output from Evas engine API.
+   // It is a requirement that you can reparent an Ector_Renderer
+   // to another Ector_Surface as long as that Ector_Surface is a
+   // child of the main Ector_Surface (necessary for Evas_Map).
+
    /* render object to surface with context, and offxet by x,y */
    /* obj->layer->evas->engine.func->context_color_set(output, */
    /*                                                  context, */
@@ -139,8 +149,6 @@ evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
    /*                                               obj->cur->geometry.w, */
    /*                                               obj->cur->geometry.h, */
    /*                                               do_async); */
-   // FIXME: I guess I should create an image, get the pixels data and
-   // start using that for Cairo.
 }
 
 static void
@@ -150,7 +158,7 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
 {
    int is_v, was_v;
 
-   // FIXME: Later on start doing precalc of span and stuff for all shape.
+   // FIXME: call all modified Ector_Renderer prepare fct
 
    /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;
