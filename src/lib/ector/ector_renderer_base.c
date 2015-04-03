@@ -8,27 +8,29 @@
 #include "ector_private.h"
 
 static void
+_ector_renderer_generic_base_eo_base_destructor(Eo *obj, Ector_Renderer_Generic_Base_Data *pd)
+{
+   if (pd->m) free(pd->m);
+   eo_do_super(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, eo_destructor());
+}
+
+static void
 _ector_renderer_generic_base_transformation_set(Eo *obj EINA_UNUSED,
                                                 Ector_Renderer_Generic_Base_Data *pd,
                                                 const Eina_Matrix3 *m)
 {
-   Eina_Matrix3 *tmp = pd->m;
-
-   pd->m = NULL;
    if (!m)
      {
-        free(tmp);
-        tmp = NULL;
+        free(pd->m);
+        pd->m = NULL;
      }
    else
      {
-        if (!tmp) tmp = malloc(sizeof (Eina_Matrix3));
-        if (!tmp) return ;
+        if (!pd->m) pd->m = malloc(sizeof (Eina_Matrix3));
+        if (!pd->m) return ;
 
-        memcpy(tmp, m, sizeof (Eina_Matrix3));
+        memcpy(pd->m, m, sizeof (Eina_Matrix3));
      }
-
-   pd->m = tmp;
 }
 
 static const Eina_Matrix3 *
