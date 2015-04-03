@@ -23,7 +23,7 @@ evas_vg_path_command_length(Evas_VG_Path_Command command)
 }
 
 static inline void
-_evas_vg_path_length(Evas_VG_Path_Command *commands,
+_evas_vg_path_length(const Evas_VG_Path_Command *commands,
                      unsigned int *cmd_length,
                      unsigned int *pts_length)
 {
@@ -47,7 +47,7 @@ evas_vg_path_grow(Evas_VG_Path_Command command,
    double *pts_tmp;
    unsigned int cmd_length = 0, pts_length = 0;
 
-   _evas_vg_path_length(commands, &cmd_length, &pts_length);
+   _evas_vg_path_length(*commands, &cmd_length, &pts_length);
 
    if (evas_vg_path_command_length(command))
      {
@@ -74,7 +74,7 @@ evas_vg_path_grow(Evas_VG_Path_Command command,
 
 Eina_Bool
 evas_vg_path_dup(Evas_VG_Path_Command **out_cmd, double **out_pts,
-                 Evas_VG_Path_Command *in_cmd, double *in_pts)
+                 const Evas_VG_Path_Command *in_cmd, const double *in_pts)
 {
    unsigned int cmd_length = 0, pts_length = 0;
 
