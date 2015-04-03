@@ -5,9 +5,6 @@
 # include <config.h>
 #endif
 
-#include <Eina.h>
-#include <Ector.h>
-
 #include "Evas.h"
 
 #include "../file/evas_module.h"

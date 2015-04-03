@@ -49,6 +49,7 @@
 
 #include <Eina.h>
 #include <Eo.h>
+#include <Ector.h>
 
 #ifdef BUILD_LOADER_EET
 # include <Eet.h>
