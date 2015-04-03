@@ -201,15 +201,16 @@ _ector_renderer_cairo_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Cairo_Sha
 {
    Eo *parent;
 
-   USE(obj, cairo_path_destroy, );
-   if (pd->path) cairo_path_destroy(pd->path);
-
    eo_do(obj, parent = eo_parent_get());
    eo_data_xunref(parent, pd->parent, obj);
 
    eo_data_xunref(obj, pd->shape, obj);
    eo_data_xunref(obj, pd->base, obj);
+
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, eo_destructor());
+
+   USE(obj, cairo_path_destroy, );
+   if (pd->path) cairo_path_destroy(pd->path);
 }
 
 
