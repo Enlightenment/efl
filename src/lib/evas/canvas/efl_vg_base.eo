@@ -74,6 +74,7 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
    implements {
       Eo.Base.parent.set;
       Eo.Base.constructor;
+      Eo.Base.destructor;
       Efl.Gfx.Base.visible.set;
       Efl.Gfx.Base.visible.get;
       Efl.Gfx.Base.color.set;

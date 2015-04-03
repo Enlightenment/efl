@@ -247,6 +247,17 @@ _efl_vg_base_eo_base_constructor(Eo *obj,
 }
 
 static void
+_efl_vg_base_eo_base_destructor(Eo *obj, Efl_VG_Base_Data *pd)
+{
+   if (pd->m)
+     {
+        free(pd->m);
+        pd->m = NULL;
+     }
+   eo_do_super(obj, MY_CLASS, eo_destructor());
+}
+
+static void
 _efl_vg_base_eo_base_parent_set(Eo *obj,
                                 Efl_VG_Base_Data *pd EINA_UNUSED,
                                 Eo *parent)
