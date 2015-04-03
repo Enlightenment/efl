@@ -12,12 +12,6 @@
 #include "ector_private.h"
 #include "ector_cairo_private.h"
 
-typedef struct {
-   double xx; double yx;
-   double xy; double yy;
-   double x0; double y0;
-} cairo_matrix_t;
-
 typedef enum {
   CAIRO_OPERATOR_CLEAR,
 
@@ -70,15 +64,6 @@ static void (*cairo_new_path)(cairo_t *cr) = NULL;
 static void (*cairo_rectangle)(cairo_t *cr, double x, double y, double width, double height) = NULL;
 static void (*cairo_clip)(cairo_t *cr) = NULL;
 static void (*cairo_device_to_user)(cairo_t *cr, double *x, double *y) = NULL;
-
-typedef struct _Ector_Renderer_Cairo_Base_Data Ector_Renderer_Cairo_Base_Data;
-struct _Ector_Renderer_Cairo_Base_Data
-{
-   Ector_Cairo_Surface_Data *parent;
-   Ector_Renderer_Generic_Base_Data *generic;
-
-   cairo_matrix_t *m;
-};
 
 static cairo_matrix_t identity;
 

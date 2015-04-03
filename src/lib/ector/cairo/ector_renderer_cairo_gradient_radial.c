@@ -122,6 +122,24 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_cairo_base_fill(Eo *obj, Ec
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_bounds_get(Eo *obj EINA_UNUSED,
+                                                                             Ector_Renderer_Cairo_Gradient_Radial_Data *pd EINA_UNUSED,
+                                                                             Eina_Rectangle *r)
+{
+   Ector_Renderer_Generic_Gradient_Radial_Data *gld;
+   Ector_Renderer_Cairo_Base_Data *bd;
+
+   gld = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_MIXIN);
+   bd = eo_data_scope_get(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS);
+   EINA_RECTANGLE_SET(r,
+                      bd->generic->origin.x + gld->radial.x - gld->radius,
+                      bd->generic->origin.y + gld->radial.y - gld->radius,
+                      gld->radius * 2, gld->radius * 2);
+
+   return EINA_TRUE;
+}
+
 void
 _ector_renderer_cairo_gradient_radial_eo_base_destructor(Eo *obj,
                                                          Ector_Renderer_Cairo_Gradient_Radial_Data *pd)

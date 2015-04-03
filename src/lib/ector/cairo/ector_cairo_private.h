@@ -3,7 +3,15 @@
 
 typedef void cairo_pattern_t;
 
+typedef struct {
+   double xx; double yx;
+   double xy; double yy;
+   double x0; double y0;
+} cairo_matrix_t;
+
 typedef struct _Ector_Cairo_Surface_Data Ector_Cairo_Surface_Data;
+typedef struct _Ector_Renderer_Cairo_Base_Data Ector_Renderer_Cairo_Base_Data;
+
 struct _Ector_Cairo_Surface_Data
 {
    cairo_t *cairo;
@@ -12,6 +20,14 @@ struct _Ector_Cairo_Surface_Data
    } current;
 
    Eina_Bool internal : 1;
+};
+
+struct _Ector_Renderer_Cairo_Base_Data
+{
+   Ector_Cairo_Surface_Data *parent;
+   Ector_Renderer_Generic_Base_Data *generic;
+
+   cairo_matrix_t *m;
 };
 
 #define CHECK_CAIRO(Parent) (!(Parent && Parent->cairo))
