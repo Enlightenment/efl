@@ -79,6 +79,25 @@ _evas_vg_shape_efl_gfx_shape_stroke_color_set(Eo *obj EINA_UNUSED,
    pd->stroke.a = a;
 }
 
+static Eina_Bool
+_evas_vg_shape_efl_gfx_base_color_part_set(Eo *obj, Evas_VG_Shape_Data *pd,
+                                           const char * part,
+                                           int r, int g, int b, int a)
+{
+   Eina_Bool ret;
+
+   if (part && !strcmp(part, "stroke"))
+     {
+        _evas_vg_shape_efl_gfx_shape_stroke_color_set(obj, pd, r, g, b, a);
+        return EINA_TRUE;
+     }
+
+   eo_do_super(obj, EFL_VG_SHAPE_CLASS,
+               ret = efl_gfx_color_part_set(part, r, g, b, a));
+
+   return ret;
+}
+
 static void
 _evas_vg_shape_efl_gfx_shape_stroke_color_get(Eo *obj EINA_UNUSED,
                                               Evas_VG_Shape_Data *pd,
@@ -88,6 +107,25 @@ _evas_vg_shape_efl_gfx_shape_stroke_color_get(Eo *obj EINA_UNUSED,
    if (g) *g = pd->stroke.g;
    if (b) *b = pd->stroke.b;
    if (a) *a = pd->stroke.a;
+}
+
+static Eina_Bool
+_evas_vg_shape_efl_gfx_base_color_part_get(Eo *obj, Evas_VG_Shape_Data *pd,
+                                           const char * part,
+                                           int *r, int *g, int *b, int *a)
+{
+   Eina_Bool ret;
+
+   if (part && !strcmp(part, "stroke"))
+     {
+        _evas_vg_shape_efl_gfx_shape_stroke_color_get(obj, pd, r, g, b, a);
+        return EINA_TRUE;
+     }
+
+   eo_do_super(obj, EFL_VG_SHAPE_CLASS,
+               ret = efl_gfx_color_part_get(part, r, g, b, a));
+
+   return ret;
 }
 
 static void
