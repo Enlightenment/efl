@@ -11,6 +11,7 @@ ector_eolian_files = \
 # Handle cairo backend
 ector_eolian_files += \
 	lib/ector/cairo/ector_cairo_surface.eo \
+	lib/ector/cairo/ector_renderer_cairo_base.eo \
 	lib/ector/cairo/ector_renderer_cairo_shape.eo \
 	lib/ector/cairo/ector_renderer_cairo_gradient_linear.eo \
 	lib/ector/cairo/ector_renderer_cairo_gradient_radial.eo

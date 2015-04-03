@@ -1,0 +1,9 @@
+interface Ector.Renderer.Cairo.Base
+{
+   legacy_prefix: null;
+   methods {
+      fill {
+         return: bool;
+      }
+   }
+}
