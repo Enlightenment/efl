@@ -130,7 +130,7 @@ _evas_vg_render(Evas_Object_Protected_Data *obj,
 {
    Evas_VG_Container_Data *vd = eo_data_scope_get(n, EVAS_VG_CONTAINER_CLASS);
 
-   if (vd)
+   if (eo_isa(n, EVAS_VG_CONTAINER_CLASS))
      {
         Evas_VG_Node *child;
         Eina_List *l;
@@ -142,7 +142,9 @@ _evas_vg_render(Evas_Object_Protected_Data *obj,
      }
    else
      {
-        Evas_VG_Node_Data *nd = eo_data_scope_get(n, EVAS_VG_NODE_CLASS);
+        Evas_VG_Node_Data *nd;
+
+        nd = eo_data_scope_get(n, EVAS_VG_NODE_CLASS);
 
         obj->layer->evas->engine.func->ector_renderer_draw(output, context, surface, nd->renderer, clips, x, y, do_async);
      }

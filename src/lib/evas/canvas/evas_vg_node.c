@@ -279,8 +279,8 @@ _evas_vg_node_efl_gfx_stack_raise(Eo *obj, Evas_VG_Node_Data *pd EINA_UNUSED)
    Eo *parent;
 
    eo_do(obj, parent = eo_parent_get());
+   if (!eo_isa(parent, EVAS_VG_CONTAINER_CLASS)) goto on_error;
    cd = eo_data_scope_get(parent, EVAS_VG_CONTAINER_CLASS);
-   if (!cd) goto on_error;
 
    // FIXME: this could become slow with to much object
    lookup = eina_list_data_find_list(cd->children, obj);
@@ -309,8 +309,8 @@ _evas_vg_node_efl_gfx_stack_stack_above(Eo *obj,
    Eo *parent;
 
    eo_do(obj, parent = eo_parent_get());
+   if (!eo_isa(parent, EVAS_VG_CONTAINER_CLASS)) goto on_error;
    cd = eo_data_scope_get(parent, EVAS_VG_CONTAINER_CLASS);
-   if (!cd) goto on_error;
 
    // FIXME: this could become slow with to much object
    lookup = eina_list_data_find_list(cd->children, obj);
@@ -339,8 +339,8 @@ _evas_vg_node_efl_gfx_stack_stack_below(Eo *obj,
    Eo *parent;
 
    eo_do(obj, parent = eo_parent_get());
+   if (!eo_isa(parent, EVAS_VG_CONTAINER_CLASS)) goto on_error;
    cd = eo_data_scope_get(parent, EVAS_VG_CONTAINER_CLASS);
-   if (!cd) goto on_error;
 
    // FIXME: this could become slow with to much object
    lookup = eina_list_data_find_list(cd->children, obj);
@@ -367,8 +367,8 @@ _evas_vg_node_efl_gfx_stack_lower(Eo *obj, Evas_VG_Node_Data *pd EINA_UNUSED)
    Eo *parent;
 
    eo_do(obj, parent = eo_parent_get());
+   if (!eo_isa(parent, EVAS_VG_CONTAINER_CLASS)) goto on_error;
    cd = eo_data_scope_get(parent, EVAS_VG_CONTAINER_CLASS);
-   if (!cd) goto on_error;
 
    // FIXME: this could become slow with to much object
    lookup = eina_list_data_find_list(cd->children, obj);
