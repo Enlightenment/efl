@@ -147,6 +147,68 @@ SW_FT_Span *_intersect_spans_rect(const Eina_Rectangle *clip, const SW_FT_Span *
     return spans;
 }
 
+static inline int
+_div_255(int x) { return (x + (x>>8) + 0x80) >> 8; }
+
+static const
+SW_FT_Span *_intersect_spans_region(const Shape_Rle_Data *clip, int *currentClip,
+                                       const SW_FT_Span *spans, const SW_FT_Span *end,
+                                       SW_FT_Span **outSpans, int available)
+{
+    SW_FT_Span *out = *outSpans;
+
+    const SW_FT_Span *clipSpans = clip->spans + *currentClip;
+    const SW_FT_Span *clipEnd = clip->spans + clip->size;
+
+    while (available && spans < end ) {
+        if (clipSpans >= clipEnd) {
+            spans = end;
+            break;
+        }
+        if (clipSpans->y > spans->y) {
+            ++spans;
+            continue;
+        }
+        if (spans->y != clipSpans->y) {
+            ++clipSpans;
+            continue;
+        }
+        //assert(spans->y == clipSpans->y);
+
+        int sx1 = spans->x;
+        int sx2 = sx1 + spans->len;
+        int cx1 = clipSpans->x;
+        int cx2 = cx1 + clipSpans->len;
+
+        if (cx1 < sx1 && cx2 < sx1) {
+            ++clipSpans;
+            continue;
+        } else if (sx1 < cx1 && sx2 < cx1) {
+            ++spans;
+            continue;
+        }
+        int x = MAX(sx1, cx1);
+        int len = MIN(sx2, cx2) - x;
+        if (len) {
+            out->x = MAX(sx1, cx1);
+            out->len = MIN(sx2, cx2) - out->x;
+            out->y = spans->y;
+            out->coverage = _div_255(spans->coverage * clipSpans->coverage);
+            ++out;
+            --available;
+        }
+        if (sx2 < cx2) {
+            ++spans;
+        } else {
+            ++clipSpans;
+        }
+    }
+
+    *outSpans = out;
+    *currentClip = clipSpans - clip->spans;
+    return spans;
+}
+
 static void
 _span_fill_clipRect(int spanCount, const SW_FT_Span *spans, void *userData)
 {
@@ -167,8 +229,6 @@ _span_fill_clipRect(int spanCount, const SW_FT_Span *spans, void *userData)
         tmpRect.y = rect->y - fillData->offy;
         tmpRect.w = rect->w;
         tmpRect.h = rect->h;
-        //printf("Clip after Offset : %d , %d ,%d , %d\n",tmpRect.x, tmpRect.y, tmpRect.w, tmpRect.h);
-        //printf("Offset = %d , %d \n", fillData->offx, fillData->offy);
         const SW_FT_Span *end = spans + spanCount;
 
         while (spans < end)
@@ -178,6 +238,27 @@ _span_fill_clipRect(int spanCount, const SW_FT_Span *spans, void *userData)
              if (clipped - cspans)
                fillData->unclipped_blend(clipped - cspans, cspans, fillData);
           }
+      }
+}
+
+static void
+_span_fill_clipPath(int spanCount, const SW_FT_Span *spans, void *userData)
+{
+    const int NSPANS = 256;
+    int current_clip = 0;
+    SW_FT_Span cspans[NSPANS];
+    Span_Data *fillData = (Span_Data *) userData;
+    Clip_Data clip = fillData->clip;
+
+    //TODO take clip path offset into account.
+    
+    const SW_FT_Span *end = spans + spanCount;
+    while (spans < end)
+      {
+         SW_FT_Span *clipped = cspans;
+         spans = _intersect_spans_region(clip.path, &current_clip, spans, end, &clipped, NSPANS);
+         if (clipped - cspans)
+           fillData->unclipped_blend(clipped - cspans, cspans, fillData);
       }
 }
 
@@ -216,7 +297,7 @@ _adjust_span_fill_methods(Span_Data *spdata)
      }
    else
      {
-        spdata->blend = &_span_fill_clipRect; //TODO change when do path clipping
+        spdata->blend = &_span_fill_clipPath;
      }
 }
 
