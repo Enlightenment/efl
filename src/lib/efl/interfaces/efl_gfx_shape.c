@@ -203,6 +203,36 @@ _efl_gfx_shape_path_length_get(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd,
 }
 
 void
+_efl_gfx_shape_bounding_box_get(Eo *obj EINA_UNUSED,
+                                Efl_Gfx_Shape_Data *pd,
+                                Eina_Rectangle *r)
+{
+   double minx, miny, maxx, maxy;
+   unsigned int i;
+
+   EINA_RECTANGLE_SET(r, 0, 0, 0, 0);
+
+   if (pd->points_count <= 0) return ;
+
+   minx = pd->points[0];
+   miny = pd->points[1];
+   maxx = pd->points[0];
+   maxy = pd->points[1];
+
+   for (i = 1; i < pd->points_count; i += 2)
+     {
+        minx = minx < pd->points[i] ? minx : pd->points[i];
+        miny = miny < pd->points[i + 1] ? miny : pd->points[i + 1];
+        maxx = maxx > pd->points[i] ? maxx : pd->points[i];
+        maxy = maxy > pd->points[i + 1] ? maxy : pd->points[i + 1];
+     }
+
+   EINA_RECTANGLE_SET(r,
+                      minx, miny,
+                      maxx - minx, maxy - miny);
+}
+
+void
 _efl_gfx_shape_current_get(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd,
                            double *x, double *y)
 {

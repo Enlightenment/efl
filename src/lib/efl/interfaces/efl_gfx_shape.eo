@@ -189,6 +189,16 @@ mixin Efl.Gfx.Shape
           @in Eo *dup_from; /*@ Shape object from where data will be copied.*/
         }
       }
+      bounding_box_get {
+        /*@
+          Compute and return the bounding box of the currently set path
+
+          @since 1.14
+	*/
+        params {
+	  @out Eina_Rectangle r; /*@ Contain the bounding box of the currently set path */
+	}
+      }
       reset {
         /*@
           Reset the shape data of the shape object.
