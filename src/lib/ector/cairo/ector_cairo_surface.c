@@ -91,8 +91,6 @@ _ector_cairo_surface_context_set(Eo *obj,
         USE(obj, cairo_image_surface_create, );
         USE(obj, cairo_create, );
 
-        fprintf(stderr, "tada\n");
-
         if (!internal) internal = cairo_image_surface_create(0, 1, 1);
         ctx = cairo_create(internal);
      }
