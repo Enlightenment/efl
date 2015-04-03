@@ -1,4 +1,4 @@
-class Evas.VG_Root_Node (Evas.VG_Node)
+class Evas.VG_Root_Node (Evas.VG_Container)
 {
    eo_prefix: evas_vg_root_node;
    implements {

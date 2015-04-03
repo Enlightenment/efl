@@ -10,6 +10,19 @@ class Evas.VG (Evas.Object, Efl.File)
 	    Evas_VG_Node *container;
 	 }
       }
+      size {
+         get {
+	    /*@
+	      Get the size as defined in the original data
+	      before any scaling (as in the file or when the
+	      object were added).
+	    */
+	 }
+	 values {
+	    uint w;
+	    uint h;
+	 }
+      }
    }
    implements {
       Eo.Base.constructor;

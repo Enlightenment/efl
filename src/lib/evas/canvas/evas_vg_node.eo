@@ -86,11 +86,27 @@ abstract Evas.VG_Node (Eo.Base)
    }
    methods {
       bound_get {
+        /*@
+	 Give the bounding box in screen coordinate as being drawn.
+	 It will start as the control box until it is refined once
+	 the shape is computed.
+	*/
          return: bool @warn_unused;
 	 params {
 	    @out Eina_Rectangle r;
 	 }
       }
+      original_bound_get {
+        /*@
+	 Give the bounding box in screen coordinate as defined in
+	 the file or at the insertion of the object (before any scaling).
+	*/
+         return: bool @warn_unused;
+	 params {
+	    @out Eina_Rectangle r;
+	 }
+      }
+      
       raise {
         /*@
          Raise @p obj to the top of its layer.
