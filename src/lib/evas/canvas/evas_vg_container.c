@@ -45,8 +45,8 @@ _efl_vg_container_eo_base_destructor(Eo *obj,
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
-static Eina_Bool
-_efl_vg_container_efl_vg_base_bound_get(Eo *obj EINA_UNUSED,
+static void
+_efl_vg_container_efl_vg_base_bounds_get(Eo *obj EINA_UNUSED,
                                         Efl_VG_Container_Data *pd,
                                         Eina_Rectangle *r)
 {
@@ -55,25 +55,21 @@ _efl_vg_container_efl_vg_base_bound_get(Eo *obj EINA_UNUSED,
    Eina_List *l;
    Eo *child;
 
-   if (!r) return EINA_FALSE;
-
    EINA_RECTANGLE_SET(&s, -1, -1, 0, 0);
 
    EINA_LIST_FOREACH(pd->children, l, child)
      {
         if (first)
           {
-             eo_do(child, efl_vg_bound_get(r));
+             eo_do(child, efl_vg_bounds_get(r));
              first = EINA_FALSE;
           }
         else
           {
-             eo_do(child, efl_vg_bound_get(&s));
+             eo_do(child, efl_vg_bounds_get(&s));
              eina_rectangle_union(r, &s);
           }
      }
-   // returning EINA_FALSE if no bouding box was found
-   return first ? EINA_FALSE : EINA_TRUE;
 }
 
 EAPI Efl_VG*

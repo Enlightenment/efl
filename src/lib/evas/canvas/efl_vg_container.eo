@@ -4,6 +4,6 @@ class Efl.VG.Container (Efl.VG.Base)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Efl.VG.Base.bound_get;
+      Efl.VG.Base.bounds_get;
    }
 }

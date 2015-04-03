@@ -191,11 +191,11 @@ _efl_vg_base_efl_gfx_base_size_get(Eo *obj,
                                    Efl_VG_Base_Data *pd EINA_UNUSED,
                                    int *w, int *h)
 {
-   Eina_Rectangle bound = { 0, 0, 0, 0 };
+   Eina_Rectangle r = { 0, 0, 0, 0 };
 
-   eo_do(obj, efl_vg_bound_get(&bound));
-   if (w) *w = bound.w;
-   if (h) *h = bound.h;
+   eo_do(obj, efl_vg_bounds_get(&r));
+   if (w) *w = r.w;
+   if (h) *h = r.h;
 }
 
 // Parent should be a container otherwise dismissing the stacking operation
@@ -425,10 +425,10 @@ _efl_vg_base_root_parent_get(Eo *obj)
 static void
 _efl_vg_base_walk_down_at(Eo *root, Eina_Array *a, Eina_Rectangle *r)
 {
-   Eina_Rectangle bound;
+   Eina_Rectangle bounds;
 
-   eo_do(root, efl_vg_bound_get(&bound));
-   if (!eina_rectangles_intersect(&bound, r)) return ;
+   eo_do(root, efl_vg_bounds_get(&bounds));
+   if (!eina_rectangles_intersect(&bounds, r)) return ;
 
    eina_array_push(a, root);
 
@@ -465,7 +465,7 @@ _efl_vg_base_efl_gfx_stack_below_get(Eo *obj, Efl_VG_Base_Data *pd EINA_UNUSED)
    Eina_Array_Iterator iterator;
    unsigned int i;
 
-   eo_do(obj, efl_vg_bound_get(&r));
+   eo_do(obj, efl_vg_bounds_get(&r));
 
    eina_array_step_set(&a, sizeof (Eina_Array), 8);
 
@@ -497,7 +497,7 @@ _efl_vg_base_efl_gfx_stack_above_get(Eo *obj, Efl_VG_Base_Data *pd EINA_UNUSED)
    Eina_Array_Iterator iterator;
    unsigned int i;
 
-   eo_do(obj, efl_vg_bound_get(&r));
+   eo_do(obj, efl_vg_bounds_get(&r));
 
    eina_array_step_set(&a, sizeof (Eina_Array), 8);
 

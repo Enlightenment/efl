@@ -40,7 +40,7 @@ class Efl.VG.Shape (Efl.VG.Base, Efl.Gfx.Shape)
       Efl.Gfx.Shape.stroke_join;
       Efl.Gfx.Base.color_part.set;
       Efl.Gfx.Base.color_part.get;
-      Efl.VG.Base.bound_get;
+      Efl.VG.Base.bounds_get;
       Eo.Base.constructor;
       Eo.Base.destructor;
    }

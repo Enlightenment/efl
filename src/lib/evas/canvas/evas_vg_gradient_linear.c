@@ -107,8 +107,8 @@ _efl_vg_gradient_linear_eo_base_destructor(Eo *obj, Efl_VG_Gradient_Linear_Data 
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
-static Eina_Bool
-_efl_vg_gradient_linear_efl_vg_base_bound_get(Eo *obj, Efl_VG_Gradient_Linear_Data *pd, Eina_Rectangle *r)
+static void
+_efl_vg_gradient_linear_efl_vg_base_bounds_get(Eo *obj, Efl_VG_Gradient_Linear_Data *pd, Eina_Rectangle *r)
 {
    Efl_VG_Base_Data *nd;
 
@@ -116,7 +116,6 @@ _efl_vg_gradient_linear_efl_vg_base_bound_get(Eo *obj, Efl_VG_Gradient_Linear_Da
    EINA_RECTANGLE_SET(r,
                       nd->x + pd->start.x, nd->y + pd->start.y,
                       pd->end.x - pd->start.x, pd->end.y - pd->start.x);
-   return EINA_TRUE;
 }
 
 EAPI void
