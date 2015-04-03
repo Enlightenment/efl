@@ -1215,6 +1215,7 @@ _efl_gfx_shape_append_svg_path(Eo *obj, Efl_Gfx_Shape_Data *pd,
                 return ;
               break;
            case 'z':
+           case 'Z':
               _efl_gfx_shape_append_close(obj, pd);
               content++;
               break;
