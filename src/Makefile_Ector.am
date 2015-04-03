@@ -30,7 +30,10 @@ lib_LTLIBRARIES += lib/ector/libector.la
 
 installed_ectormainheadersdir = $(includedir)/ector-@VMAJ@
 dist_installed_ectormainheaders_DATA = \
-lib/ector/Ector.h
+lib/ector/Ector.h \
+lib/ector/cairo/Ector_Cairo.h
+
+# And the cairo header
 
 lib_ector_libector_la_SOURCES = \
 lib/ector/ector_main.c \
@@ -45,7 +48,8 @@ lib/ector/ector_renderer_gradient_linear.c
 lib_ector_libector_la_SOURCES += \
 lib/ector/cairo/ector_renderer_cairo_gradient_linear.c \
 lib/ector/cairo/ector_renderer_cairo_gradient_radial.c \
-lib/ector/cairo/ector_renderer_cairo_shape.c
+lib/ector/cairo/ector_renderer_cairo_shape.c \
+lib/ector/cairo/ector_cairo_surface.c
 
 lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECTOR_CFLAGS@ \
