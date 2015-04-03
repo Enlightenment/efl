@@ -5,9 +5,8 @@
 
 #define MY_CLASS EVAS_VG_CLASS
 
-
 /* private magic number for rectangle objects */
-static const char o_type[] = "rectangle";
+static const char o_type[] = "vectors";
 
 const char *o_vg_type = o_type;
 
