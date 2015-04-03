@@ -59,6 +59,7 @@ printf "#include \"../evas_gl_private.h\"\n\n" >> ${OUTPUT}
 shaders_source=""
 shaders_enum=""
 shaders_type=(frag vert)
+shaders_textures=""
 
 # Generate SHD files
 LIST=""
@@ -79,6 +80,7 @@ for (( i = 0; i < ${#SHADERS[@]} ; i++ )) ; do
   nomul=0
   afill=0
   sam="SAM11"
+  tex=""
 
   # Urgh. Some fixups
   case $TYPE in
@@ -91,8 +93,13 @@ for (( i = 0; i < ${#SHADERS[@]} ; i++ )) ; do
     UP=`upper $opt`
     OPTS="$OPTS -DSHD_${UP}"
     case $opt in
+     tex) tex="${tex}tex ";;
+     mask) tex="${tex}texm " ; mask=1;;
+     texa) tex="${tex}texa ";;
+     yuv) tex="${tex}texu texv ";;
+     nv12) tex="${tex}texuv ";;
+     yuy2) tex="${tex}texuv ";;
      bgra) bgra=1;;
-     mask) mask=1;;
      nomul) nomul=1;;
      afill) afill=1;;
      external) FGM=${FGM_HEADER_OES};;
@@ -131,6 +138,14 @@ for (( i = 0; i < ${#SHADERS[@]} ; i++ )) ; do
 
   shaders_source="${shaders_source}   { SHADER_${UNAME}, &(shader_${name}_vert_src), &(shader_${name}_frag_src), \"${name}\", SHD_${TYPE}, SHD_${sam}, ${bgra}, ${mask}, ${nomul}, ${afill} },\n"
   shaders_enum="${shaders_enum}   SHADER_${UNAME},\n"
+
+  # Bind textures to the programs. Only if there is more than 1 texture.
+  textures=(${tex})
+  if [ ${#textures[@]} -ge 2 ] ; then
+    for tname in ${tex} ; do
+      shaders_textures="${shaders_textures}   { SHADER_${UNAME}, \"${tname}\" },\n"
+    done
+  fi
 done
 
 printf "
@@ -154,6 +169,17 @@ printf "/* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED\n * See: $0 */
 typedef enum {
 ${shaders_enum}   SHADER_LAST
 } Evas_GL_Shader;
+
+#ifdef _EVAS_GL_CONTEXT_C
+
+static struct {
+   Evas_GL_Shader id;
+   const char *tname;
+} _shaders_textures[] = {
+${shaders_textures}   { SHADER_LAST, NULL }
+};
+
+#endif // _EVAS_GL_CONTEXT_C
 " >| ${OUTPUT_ENUM}
 
 # You can remove the files now

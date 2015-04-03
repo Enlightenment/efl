@@ -1,3 +1,4 @@
+#define _EVAS_GL_CONTEXT_C
 #include "evas_gl_private.h"
 
 #ifdef HAVE_DLSYM
@@ -632,6 +633,7 @@ evas_gl_common_context_new(void)
    if (!shared)
      {
         const char *ext;
+        int shd;
 
         shared = calloc(1, sizeof(Evas_GL_Shared));
         ext = (const char *) glGetString(GL_EXTENSIONS);
@@ -880,68 +882,14 @@ evas_gl_common_context_new(void)
 
         if (!evas_gl_common_shader_program_init(shared)) goto error;
 
-#define SHADER_TEXTURE_ADD(Shared, Shader, Name)                        \
-        glUseProgram(Shared->shader[SHADER_##Shader].prog);             \
-        glUniform1i(glGetUniformLocation(Shared->shader[SHADER_##Shader].prog, #Name), Shared->shader[SHADER_##Shader].tex_count++);
-
-        SHADER_TEXTURE_ADD(shared, YUV, tex);
-        SHADER_TEXTURE_ADD(shared, YUV, texu);
-        SHADER_TEXTURE_ADD(shared, YUV, texv);
-
-        SHADER_TEXTURE_ADD(shared, YUV_MASK, tex);
-        SHADER_TEXTURE_ADD(shared, YUV_MASK, texu);
-        SHADER_TEXTURE_ADD(shared, YUV_MASK, texv);
-        SHADER_TEXTURE_ADD(shared, YUV_MASK, texm);
-
-        SHADER_TEXTURE_ADD(shared, YUY2, tex);
-        SHADER_TEXTURE_ADD(shared, YUY2, texuv);
-
-        SHADER_TEXTURE_ADD(shared, YUY2_MASK, tex);
-        SHADER_TEXTURE_ADD(shared, YUY2_MASK, texuv);
-        SHADER_TEXTURE_ADD(shared, YUY2_MASK, texm);
-
-        SHADER_TEXTURE_ADD(shared, NV12, tex);
-        SHADER_TEXTURE_ADD(shared, NV12, texuv);
-
-        SHADER_TEXTURE_ADD(shared, NV12_MASK, tex);
-        SHADER_TEXTURE_ADD(shared, NV12_MASK, texuv);
-        SHADER_TEXTURE_ADD(shared, NV12_MASK, texm);
-
-        SHADER_TEXTURE_ADD(shared, YUV_NOMUL, tex);
-        SHADER_TEXTURE_ADD(shared, YUV_NOMUL, texu);
-        SHADER_TEXTURE_ADD(shared, YUV_NOMUL, texv);
-
-        SHADER_TEXTURE_ADD(shared, YUY2_NOMUL, tex);
-        SHADER_TEXTURE_ADD(shared, YUY2_NOMUL, texuv);
-
-        SHADER_TEXTURE_ADD(shared, NV12_NOMUL, tex);
-        SHADER_TEXTURE_ADD(shared, NV12_NOMUL, texuv);
-
-        // Note: there is no nomul version for YUV,YUY2,NV12,RGB+A with MASK
-
-        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR, tex);
-        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR, texa);
-        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_NOMUL, tex);
-        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_NOMUL, texa);
-
-        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_MASK, tex);
-        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_MASK, texa);
-        SHADER_TEXTURE_ADD(shared, RGB_A_PAIR_MASK, texm);
-
-        SHADER_TEXTURE_ADD(shared, IMG_MASK, tex);
-        SHADER_TEXTURE_ADD(shared, IMG_MASK, texm);
-        SHADER_TEXTURE_ADD(shared, IMG_MASK_NOMUL, tex);
-        SHADER_TEXTURE_ADD(shared, IMG_MASK_NOMUL, texm);
-
-        SHADER_TEXTURE_ADD(shared, IMG_BGRA_MASK, tex);
-        SHADER_TEXTURE_ADD(shared, IMG_BGRA_MASK, texm);
-        SHADER_TEXTURE_ADD(shared, IMG_BGRA_MASK_NOMUL, tex);
-        SHADER_TEXTURE_ADD(shared, IMG_BGRA_MASK_NOMUL, texm);
-
-        SHADER_TEXTURE_ADD(shared, FONT_MASK, tex);
-        SHADER_TEXTURE_ADD(shared, FONT_MASK, texm);
-
-        SHADER_TEXTURE_ADD(shared, RECT_MASK, texm);
+        /* Bind textures */
+        for (shd = 0; _shaders_textures[shd].id != SHADER_LAST; shd++)
+          {
+             GLuint loc;
+             glUseProgram(shared->shader[_shaders_textures[shd].id].prog);
+             loc = glGetUniformLocation(shared->shader[_shaders_textures[shd].id].prog, _shaders_textures[shd].tname);
+             glUniform1i(loc, shared->shader[_shaders_textures[shd].id].tex_count++);
+          }
 
         if (gc->state.current.cur_prog == PRG_INVALID)
            glUseProgram(shared->shader[0].prog);
@@ -1550,16 +1498,19 @@ evas_gl_common_shader_select(Evas_Engine_GL_Context *gc,
      }
 
    // color mul
-   if ((a == 255) && (r == 255) && (g == 255) && (b == 255) && p)
+   if ((a == 255) && (r == 255) && (g == 255) && (b == 255))
      {
-        for (k = 0; k < npoints; k++)
-          if (p[k].col != 0xffffffff)
-            {
-               nomul = 0;
-               break;
-            }
+        if (p)
+          {
+             for (k = 0; k < npoints; k++)
+               if (p[k].col != 0xffffffff)
+                 {
+                    nomul = 0;
+                    break;
+                 }
+          }
      }
-   else if (!p)
+   else
      nomul = 0;
 
    // bgra
@@ -3363,6 +3314,10 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->state.current.id        = gc->pipe[i].shader.id;
         gc->state.current.cur_prog  = gc->pipe[i].shader.cur_prog;
         gc->state.current.cur_tex   = gc->pipe[i].shader.cur_tex;
+        gc->state.current.cur_texm  = gc->pipe[i].shader.cur_texm;
+        gc->state.current.cur_texa  = gc->pipe[i].shader.cur_texa;
+        gc->state.current.cur_texu  = gc->pipe[i].shader.cur_texu;
+        gc->state.current.cur_texv  = gc->pipe[i].shader.cur_texv;
         gc->state.current.render_op = gc->pipe[i].shader.render_op;
 //        gc->state.current.cx        = gc->pipe[i].shader.cx;
 //        gc->state.current.cy        = gc->pipe[i].shader.cy;
@@ -3391,13 +3346,14 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->pipe[i].array.use_texa = 0;
         gc->pipe[i].array.use_texsam = 0;
         gc->pipe[i].array.use_mask = 0;
+        gc->pipe[i].array.anti_alias = 0;
         
         gc->pipe[i].array.vertex = NULL;
         gc->pipe[i].array.color = NULL;
         gc->pipe[i].array.texuv = NULL;
-        gc->pipe[i].array.texa = NULL;
         gc->pipe[i].array.texuv2 = NULL;
         gc->pipe[i].array.texuv3 = NULL;
+        gc->pipe[i].array.texa = NULL;
         gc->pipe[i].array.texsam = NULL;
         gc->pipe[i].array.mask = NULL;
 
