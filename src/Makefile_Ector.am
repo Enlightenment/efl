@@ -41,6 +41,12 @@ lib/ector/ector_renderer_gradient.c \
 lib/ector/ector_renderer_gradient_radial.c \
 lib/ector/ector_renderer_gradient_linear.c
 
+# And now the cairo backend
+lib_ector_libector_la_SOURCES += \
+lib/ector/cairo/ector_renderer_cairo_gradient_linear.c \
+lib/ector/cairo/ector_renderer_cairo_gradient_radial.c \
+lib/ector/cairo/ector_renderer_cairo_shape.c
+
 lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECTOR_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
