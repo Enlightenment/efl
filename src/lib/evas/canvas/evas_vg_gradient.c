@@ -13,7 +13,7 @@ struct _Evas_VG_Gradient_Data
    Efl_Graphics_Gradient_Spread s;
 };
 
-void
+static void
 _evas_vg_gradient_efl_graphics_gradient_stop_set(Eo *obj EINA_UNUSED,
                                                  Evas_VG_Gradient_Data *pd,
                                                  const Efl_Graphics_Gradient_Stop *colors,
@@ -30,7 +30,7 @@ _evas_vg_gradient_efl_graphics_gradient_stop_set(Eo *obj EINA_UNUSED,
    pd->colors_count = length;
 }
 
-void
+static void
 _evas_vg_gradient_efl_graphics_gradient_stop_get(Eo *obj EINA_UNUSED,
                                                  Evas_VG_Gradient_Data *pd,
                                                  const Efl_Graphics_Gradient_Stop **colors,
@@ -40,7 +40,7 @@ _evas_vg_gradient_efl_graphics_gradient_stop_get(Eo *obj EINA_UNUSED,
    if (length) *length = pd->colors_count;
 }
 
-void
+static void
 _evas_vg_gradient_efl_graphics_gradient_spread_set(Eo *obj EINA_UNUSED,
                                                    Evas_VG_Gradient_Data *pd,
                                                    Efl_Graphics_Gradient_Spread s)
@@ -48,7 +48,7 @@ _evas_vg_gradient_efl_graphics_gradient_spread_set(Eo *obj EINA_UNUSED,
    pd->s = s;
 }
 
-Efl_Graphics_Gradient_Spread
+static Efl_Graphics_Gradient_Spread
 _evas_vg_gradient_efl_graphics_gradient_spread_get(Eo *obj EINA_UNUSED,
                                                    Evas_VG_Gradient_Data *pd)
 {

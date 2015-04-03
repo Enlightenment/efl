@@ -9,10 +9,13 @@ struct _Evas_VG_Node_Data
 
    void (*render_pre)(void);
    void (*render)(void);
+   void *data;
 
    double x, y;
    int r, g, b, a;
-   Eina_Bool visibility;
+
+   Eina_Bool visibility : 1;
+   Eina_Bool changed : 1;
 };
 
 typedef struct _Evas_VG_Container_Data Evas_VG_Container_Data;

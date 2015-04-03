@@ -10,7 +10,7 @@ struct _Evas_VG_Gradient_Radial_Data
    double radius;
 };
 
-void
+static void
 _evas_vg_gradient_radial_efl_graphics_gradient_radial_center_set(Eo *obj EINA_UNUSED,
                                                  Evas_VG_Gradient_Radial_Data *pd,
                                                  double x, double y)
@@ -19,7 +19,7 @@ _evas_vg_gradient_radial_efl_graphics_gradient_radial_center_set(Eo *obj EINA_UN
    pd->center.y = y;
 }
 
-void
+static void
 _evas_vg_gradient_radial_efl_graphics_gradient_radial_center_get(Eo *obj EINA_UNUSED,
                                                  Evas_VG_Gradient_Radial_Data *pd,
                                                  double *x, double *y)
@@ -28,7 +28,7 @@ _evas_vg_gradient_radial_efl_graphics_gradient_radial_center_get(Eo *obj EINA_UN
    if (y) *y = pd->center.y;
 }
 
-void
+static void
 _evas_vg_gradient_radial_efl_graphics_gradient_radial_radius_set(Eo *obj EINA_UNUSED,
                                                  Evas_VG_Gradient_Radial_Data *pd,
                                                  double r)
@@ -36,14 +36,14 @@ _evas_vg_gradient_radial_efl_graphics_gradient_radial_radius_set(Eo *obj EINA_UN
    pd->radius = r;
 }
 
-double
+static double
 _evas_vg_gradient_radial_efl_graphics_gradient_radial_radius_get(Eo *obj EINA_UNUSED,
                                                  Evas_VG_Gradient_Radial_Data *pd)
 {
    return pd->radius;
 }
 
-void
+static void
 _evas_vg_gradient_radial_efl_graphics_gradient_radial_focal_set(Eo *obj EINA_UNUSED,
                                                 Evas_VG_Gradient_Radial_Data *pd,
                                                 double x, double y)
@@ -52,7 +52,7 @@ _evas_vg_gradient_radial_efl_graphics_gradient_radial_focal_set(Eo *obj EINA_UNU
    pd->focal.y = y;
 }
 
-void
+static void
 _evas_vg_gradient_radial_efl_graphics_gradient_radial_focal_get(Eo *obj EINA_UNUSED,
                                                 Evas_VG_Gradient_Radial_Data *pd,
                                                 double *x, double *y)

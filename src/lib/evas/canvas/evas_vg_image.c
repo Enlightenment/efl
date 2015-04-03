@@ -13,21 +13,21 @@ struct _Evas_VG_Image_Data
    unsigned int w, h;
 };
 
-void
+static void
 _evas_vg_image_position_set(Eo *obj, Evas_VG_Image_Data *pd, int x, int y)
 {
    pd->x = x;
    pd->y = y;
 }
 
-void
+static void
 _evas_vg_image_position_get(Eo *obj, Evas_VG_Image_Data *pd, int *x, int *y)
 {
    if (x) *x = pd->x;
    if (y) *y = pd->y;
 }
 
-void
+static void
 _evas_vg_image_size_set(Eo *obj, Evas_VG_Image_Data *pd,
                         unsigned int w, unsigned int h)
 {
@@ -35,7 +35,7 @@ _evas_vg_image_size_set(Eo *obj, Evas_VG_Image_Data *pd,
    pd->h = h;
 }
 
-void
+static void
 _evas_vg_image_size_get(Eo *obj, Evas_VG_Image_Data *pd,
                         unsigned int *w, unsigned int *h)
 {
@@ -43,7 +43,7 @@ _evas_vg_image_size_get(Eo *obj, Evas_VG_Image_Data *pd,
    if (h) *h = pd->h;
 }
 
-Eina_Bool
+static Eina_Bool
 _evas_vg_image_efl_file_file_set(Eo *obj, Evas_VG_Image_Data *pd,
                                  const char *file, const char *key)
 {
@@ -51,7 +51,7 @@ _evas_vg_image_efl_file_file_set(Eo *obj, Evas_VG_Image_Data *pd,
    eina_stringshare_replace(&pd->key, key);
 }
 
-void
+static void
 _evas_vg_image_efl_file_file_get(Eo *obj, Evas_VG_Image_Data *pd,
                                  const char **file, const char **key)
 {
