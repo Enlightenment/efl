@@ -64,6 +64,7 @@ static void (*cairo_set_source_rgba)(cairo_t *cr,
                                      double red, double green, double blue,
                                      double alpha) = NULL;
 static void (*cairo_set_operator)(cairo_t *cr, cairo_operator_t op) = NULL;
+static void (*cairo_matrix_init_identity)(cairo_matrix_t *matrix) = NULL;
 
 typedef struct _Ector_Renderer_Cairo_Base_Data Ector_Renderer_Cairo_Base_Data;
 struct _Ector_Renderer_Cairo_Base_Data
@@ -73,6 +74,8 @@ struct _Ector_Renderer_Cairo_Base_Data
 
    cairo_matrix_t *m;
 };
+
+static cairo_matrix_t identity;
 
 // Cairo need unpremul color, so force unpremul here
 void
@@ -166,7 +169,7 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
    cairo_translate(pd->parent->cairo, pd->generic->origin.x - x, pd->generic->origin.y - y);
    cairo_set_source_rgba(pd->parent->cairo, r, g, b, a);
    if (pd->m) cairo_transform(pd->parent->cairo, pd->m);
-   else cairo_transform(pd->parent->cairo, NULL);
+   else cairo_transform(pd->parent->cairo, &identity);
 
    return EINA_TRUE;
 }
@@ -177,6 +180,10 @@ _ector_renderer_cairo_base_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Bas
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS, eo_constructor());
 
    pd->generic = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
+
+   USE(obj, cairo_matrix_init_identity, );
+
+   cairo_matrix_init_identity(&identity);
 }
 
 static void
