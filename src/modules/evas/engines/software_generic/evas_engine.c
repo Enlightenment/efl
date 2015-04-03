@@ -397,7 +397,6 @@ struct _Evas_Thread_Command_Ector
 
    DATA32 mul_col;
    Ector_Rop render_op;
-   int x, y;
 
    Eina_Bool free_it;
 };
@@ -405,6 +404,7 @@ struct _Evas_Thread_Command_Ector
 struct _Evas_Thread_Command_Ector_Surface
 {
    void *surface;
+   int x, y;
 };
 
 Eina_Mempool *_mp_command_rect = NULL;
@@ -3513,15 +3513,13 @@ _draw_thread_ector_draw(void *data)
    eo_do(ector->r,
          ector_renderer_draw(ector->render_op,
                              ector->clips,
-                             ector->x,
-                             ector->y,
                              ector->mul_col));
 
    _draw_thread_ector_cleanup(ector);
 }
 
 static void
-eng_ector_renderer_draw(void *data EINA_UNUSED, void *context, void *surface, Ector_Renderer *renderer, Eina_Array *clips, int x, int y, Eina_Bool do_async)
+eng_ector_renderer_draw(void *data EINA_UNUSED, void *context, void *surface, Ector_Renderer *renderer, Eina_Array *clips, Eina_Bool do_async)
 {
    RGBA_Image *dst = surface;
    RGBA_Draw_Context *dc = context;
@@ -3576,8 +3574,6 @@ eng_ector_renderer_draw(void *data EINA_UNUSED, void *context, void *surface, Ec
    ector.render_op = _evas_render_op_to_ector_rop(dc->render_op);
    ector.mul_col = ector_color_multiply(dc->mul.use ? dc->mul.col : 0xffffffff,
                                         dc->col.col);;
-   ector.x = x;
-   ector.y = y;
    ector.free_it = EINA_FALSE;
 
    if (do_async)
@@ -3610,23 +3606,29 @@ _draw_thread_ector_surface_set(void *data)
    void *pixels = NULL;
    unsigned int w = 0;
    unsigned int h = 0;
+   unsigned int x = 0;
+   unsigned int y = 0;
 
    if (surface)
      {
         pixels = evas_cache_image_pixels(&surface->cache_entry);
         w = surface->cache_entry.w;
         h = surface->cache_entry.h;
+        x = ector_surface->x;
+        y = ector_surface->y;
      }
 
    if (use_cairo)
      {
         eo_do(_software_ector,
-              ector_cairo_software_surface_set(pixels, w, h));
+              ector_cairo_software_surface_set(pixels, w, h),
+              ector_surface_reference_point_set(x, y));
      }
    else
      {
         eo_do(_software_ector,
-              ector_software_surface_set(pixels, w, h));
+              ector_software_surface_set(pixels, w, h),
+              ector_surface_reference_point_set(x, y));
      }
 
    evas_common_cpu_end_opt();
@@ -3635,7 +3637,7 @@ _draw_thread_ector_surface_set(void *data)
 }
 
 static void
-eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, void *surface, Eina_Bool do_async)
+eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, void *surface, int x, int y, Eina_Bool do_async)
 {
    if (do_async)
      {
@@ -3645,6 +3647,8 @@ eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, void *surface
         if (!nes) return ;
 
         nes->surface = surface;
+        nes->x = x;
+        nes->y = y;
 
         evas_thread_cmd_enqueue(_draw_thread_ector_surface_set, nes);
      }
@@ -3659,8 +3663,18 @@ eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, void *surface
         w = sf->cache_entry.w;
         h = sf->cache_entry.h;
 
-        eo_do(_software_ector,
-              ector_cairo_software_surface_set(pixels, w, h));
+        if (use_cairo)
+          {
+             eo_do(_software_ector,
+                   ector_cairo_software_surface_set(pixels, w, h),
+                   ector_surface_reference_point_set(x, y));
+          }
+        else
+          {
+             eo_do(_software_ector,
+                   ector_software_surface_set(pixels, w, h),
+                   ector_surface_reference_point_set(x, y));
+          }
      }
 }
 

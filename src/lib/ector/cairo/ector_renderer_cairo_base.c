@@ -138,7 +138,6 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
                                                             Ector_Renderer_Cairo_Base_Data *pd,
                                                             Ector_Rop op,
                                                             Eina_Array *clips EINA_UNUSED,
-                                                            int x, int y,
                                                             unsigned int mul_col)
 {
    double r, g, b, a;

@@ -114,6 +114,8 @@ typedef struct _Software_Rasterizer
 struct _Ector_Software_Surface_Data
 {
    Software_Rasterizer *software;
+   int x;
+   int y;
 };
 
 

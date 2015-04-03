@@ -72,7 +72,7 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_prepare(Eo *ob
 
 // Clearly duplicated and should be in a common place...
 static Eina_Bool
-_ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_draw(Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd, Ector_Rop op, Eina_Array *clips, int x, int y, unsigned int mul_col)
+_ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_draw(Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd, Ector_Rop op, Eina_Array *clips, unsigned int mul_col)
 {
    Ector_Renderer_Generic_Gradient_Radial_Data *gld;
 
@@ -80,7 +80,7 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_draw(Eo *obj, 
    gld = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_RADIAL_MIXIN);
    if (!pd->pat || !gld) return EINA_FALSE;
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, ector_renderer_draw(op, clips, x, y, mul_col));
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_RADIAL_CLASS, ector_renderer_draw(op, clips, mul_col));
 
    USE(obj, cairo_arc, EINA_FALSE);
    USE(obj, cairo_fill, EINA_FALSE);

@@ -23,6 +23,7 @@ class Ector.Cairo.Surface (Ector.Generic.Surface)
    }
    implements {
       Ector.Generic.Surface.renderer_factory_new;
+      Ector.Generic.Surface.reference_point.set;
       Eo.Base.destructor;
       Eo.Base.constructor;
    }

@@ -96,8 +96,6 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	 params {
 	    @in Ector_Rop op;
 	    @in array<Eina_Rectangle *> *clips; /*@ array of Eina_Rectangle clip */
-	    @in int x;
-	    @in int y;
 	    @in uint mul_col;
 	 }
       }

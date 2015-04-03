@@ -126,7 +126,7 @@ _evas_vg_eo_base_constructor(Eo *eo_obj, Evas_VG_Data *pd)
 static void
 _evas_vg_render(Evas_Object_Protected_Data *obj,
                 void *output, void *context, void *surface, Efl_VG *n,
-                Eina_Array *clips, int x, int y, Eina_Bool do_async)
+                Eina_Array *clips, Eina_Bool do_async)
 {
    Efl_VG_Container_Data *vd = eo_data_scope_get(n, EFL_VG_CONTAINER_CLASS);
 
@@ -138,7 +138,7 @@ _evas_vg_render(Evas_Object_Protected_Data *obj,
         EINA_LIST_FOREACH(vd->children, l, child)
           _evas_vg_render(obj,
                           output, context, surface, child,
-                          clips, x, y, do_async);
+                          clips, do_async);
      }
    else
      {
@@ -146,7 +146,7 @@ _evas_vg_render(Evas_Object_Protected_Data *obj,
 
         nd = eo_data_scope_get(n, EFL_VG_BASE_CLASS);
 
-        obj->layer->evas->engine.func->ector_renderer_draw(output, context, surface, nd->renderer, clips, x, y, do_async);
+        obj->layer->evas->engine.func->ector_renderer_draw(output, context, surface, nd->renderer, clips, do_async);
      }
 }
 
@@ -179,9 +179,10 @@ evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
                                                            context);
    obj->layer->evas->engine.func->context_render_op_set(output, context,
                                                         obj->cur->render_op);
-   obj->layer->evas->engine.func->ector_begin(output, context, surface, do_async);
+   obj->layer->evas->engine.func->ector_begin(output, context, surface,
+                                              obj->cur->geometry.x + x, obj->cur->geometry.y + y,
+                                              do_async);
    _evas_vg_render(obj, output, context, surface, vd->root, NULL,
-                   obj->cur->geometry.x + x, obj->cur->geometry.y + y,
                    do_async);
    obj->layer->evas->engine.func->ector_end(output, context, surface, do_async);
 }

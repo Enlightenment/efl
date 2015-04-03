@@ -281,11 +281,13 @@ _ector_renderer_software_shape_ector_renderer_generic_base_prepare(Eo *obj, Ecto
 }
 
 static Eina_Bool
-_ector_renderer_software_shape_ector_renderer_generic_base_draw(Eo *obj EINA_UNUSED, Ector_Renderer_Software_Shape_Data *pd, Ector_Rop op, Eina_Array *clips, int x, int y, unsigned int mul_col)
+_ector_renderer_software_shape_ector_renderer_generic_base_draw(Eo *obj EINA_UNUSED, Ector_Renderer_Software_Shape_Data *pd, Ector_Rop op, Eina_Array *clips, unsigned int mul_col)
 {
+   int x, y;
+
    // adjust the offset
-   x = x + (int)pd->base->origin.x;
-   y = y + (int)pd->base->origin.y;
+   x = pd->surface->x + (int)pd->base->origin.x;
+   y = pd->surface->y + (int)pd->base->origin.y;
 
    // fill the span_data structure
    ector_software_rasterizer_clip_rect_set(pd->surface->software, clips);

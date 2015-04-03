@@ -57,7 +57,7 @@ static Eina_Bool
 _ector_renderer_software_gradient_linear_ector_renderer_generic_base_draw(Eo *obj EINA_UNUSED,
                                                                           Ector_Renderer_Software_Gradient_Data *pd EINA_UNUSED,
                                                                           Ector_Rop op EINA_UNUSED, Eina_Array *clips EINA_UNUSED,
-                                                                          int x EINA_UNUSED, int y EINA_UNUSED, unsigned int mul_col EINA_UNUSED)
+                                                                          unsigned int mul_col EINA_UNUSED)
 {
    return EINA_TRUE;
 }

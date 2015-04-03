@@ -90,5 +90,14 @@ _ector_software_surface_eo_base_destructor(Eo *obj EINA_UNUSED,
    eo_do_super(obj, ECTOR_SOFTWARE_SURFACE_CLASS, eo_destructor());
 }
 
+static void
+_ector_software_surface_ector_generic_surface_reference_point_set(Eo *obj EINA_UNUSED,
+                                                                  Ector_Software_Surface_Data *pd,
+                                                                  int x, int y)
+{
+   pd->x = x;
+   pd->y = y;
+}
+
 #include "ector_software_surface.eo.c"
 #include "ector_renderer_software_base.eo.c"
