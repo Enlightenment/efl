@@ -157,10 +157,10 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
          break;
      }
 
-   r = ((double)((pd->generic->color.r * R_VAL(&mul_col)) / 255)) / 255;
-   g = ((double)((pd->generic->color.g * G_VAL(&mul_col)) / 255)) / 255;
-   b = ((double)((pd->generic->color.b * B_VAL(&mul_col)) / 255)) / 255;
-   a = ((double)((pd->generic->color.a * A_VAL(&mul_col)) / 255)) / 255;
+   r = ((double)((pd->generic->color.r * R_VAL(&mul_col)) >> 8)) / 255;
+   g = ((double)((pd->generic->color.g * G_VAL(&mul_col)) >> 8)) / 255;
+   b = ((double)((pd->generic->color.b * B_VAL(&mul_col)) >> 8)) / 255;
+   a = ((double)((pd->generic->color.a * A_VAL(&mul_col)) >> 8)) / 255;
 
    cairo_set_operator(pd->parent->cairo, cop);
    cairo_translate(pd->parent->cairo, pd->generic->origin.x - x, pd->generic->origin.y - y);
