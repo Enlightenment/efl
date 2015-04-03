@@ -42,7 +42,7 @@ _evas_vg_root_node_changed(void *data, Eo *obj EINA_UNUSED,
 {
    Evas_VG_Root_Node_Data *pd = data;
 
-   evas_object_change(pd->parent, pd->data);
+   if (pd->parent) evas_object_change(pd->parent, pd->data);
    return EINA_TRUE;
 }
 
@@ -60,7 +60,7 @@ _evas_vg_root_node_eo_base_parent_set(Eo *obj,
    else
      {
         pd->parent = parent;
-        pd->data = eo_data_scope_get(parent, EVAS_OBJECT_CLASS);
+        pd->data = parent ? eo_data_scope_get(parent, EVAS_OBJECT_CLASS) : NULL;
      }
 }
 
