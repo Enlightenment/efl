@@ -40,7 +40,5 @@ class Ector.Renderer.Generic.Shape (Ector.Renderer.Generic.Base, Efl.Gfx.Shape)
       Efl.Gfx.Shape.stroke_dash;
       Efl.Gfx.Shape.stroke_cap;
       Efl.Gfx.Shape.stroke_join;
-      Eo.Base.constructor;
-      Eo.Base.destructor;
    }
 }

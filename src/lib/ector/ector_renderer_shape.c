@@ -193,20 +193,7 @@ _ector_renderer_generic_shape_ector_renderer_generic_base_prepare(Eo *obj,
      eo_do(pd->stroke.fill, ector_renderer_prepare());
    if (pd->stroke.marker)
      eo_do(pd->stroke.marker, ector_renderer_prepare());
-}
-
-
-static void
-_ector_renderer_generic_shape_eo_base_constructor(Eo *obj,
-                                                  Ector_Renderer_Generic_Shape_Data *pd)
-{
-   eo_do_super(obj, ECTOR_RENDERER_GENERIC_SHAPE_CLASS, eo_constructor());
-}
-
-static void
-_ector_renderer_generic_shape_eo_base_destructor(Eo *obj, Ector_Renderer_Generic_Shape_Data *pd)
-{
-   eo_do_super(obj, ECTOR_RENDERER_GENERIC_SHAPE_CLASS, eo_destructor());
+   return EINA_TRUE;
 }
 
 #include "ector_renderer_generic_shape.eo.c"
