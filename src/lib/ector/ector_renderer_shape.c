@@ -23,11 +23,11 @@ struct _Ector_Renderer_Shape_Data
          int r, g, b, a;
       } color;
 
-      Efl_Geometry_Dash *dash;
+      Efl_Graphics_Dash *dash;
       unsigned int dash_length;
 
-      Efl_Geometry_Cap cap;
-      Efl_Geometry_Cap join;
+      Efl_Graphics_Cap cap;
+      Efl_Graphics_Cap join;
    } stroke;
 };
 
@@ -77,7 +77,7 @@ _ector_renderer_shape_stroke_marker_get(Eo *obj EINA_UNUSED,
 }
 
 void
-_ector_renderer_shape_efl_geometry_shape_stroke_scale_set(Eo *obj EINA_UNUSED,
+_ector_renderer_shape_efl_graphics_shape_stroke_scale_set(Eo *obj EINA_UNUSED,
                                                           Ector_Renderer_Shape_Data *pd,
                                                           double s)
 {
@@ -85,14 +85,14 @@ _ector_renderer_shape_efl_geometry_shape_stroke_scale_set(Eo *obj EINA_UNUSED,
 }
 
 double
-_ector_renderer_shape_efl_geometry_shape_stroke_scale_get(Eo *obj EINA_UNUSED,
+_ector_renderer_shape_efl_graphics_shape_stroke_scale_get(Eo *obj EINA_UNUSED,
                                                           Ector_Renderer_Shape_Data *pd)
 {
    return pd->stroke.scale;
 }
 
 void
-_ector_renderer_shape_efl_geometry_shape_stroke_color_set(Eo *obj EINA_UNUSED,
+_ector_renderer_shape_efl_graphics_shape_stroke_color_set(Eo *obj EINA_UNUSED,
                                                           Ector_Renderer_Shape_Data *pd,
                                                           int r, int g, int b, int a)
 {
@@ -104,7 +104,7 @@ _ector_renderer_shape_efl_geometry_shape_stroke_color_set(Eo *obj EINA_UNUSED,
 
 
 void
-_ector_renderer_shape_efl_geometry_shape_stroke_color_get(Eo *obj EINA_UNUSED,
+_ector_renderer_shape_efl_graphics_shape_stroke_color_get(Eo *obj EINA_UNUSED,
                                                           Ector_Renderer_Shape_Data *pd,
                                                           int *r, int *g, int *b, int *a)
 {
@@ -115,7 +115,7 @@ _ector_renderer_shape_efl_geometry_shape_stroke_color_get(Eo *obj EINA_UNUSED,
 }
 
 void
-_ector_renderer_shape_efl_geometry_shape_stroke_width_set(Eo *obj EINA_UNUSED,
+_ector_renderer_shape_efl_graphics_shape_stroke_width_set(Eo *obj EINA_UNUSED,
                                                           Ector_Renderer_Shape_Data *pd,
                                                           double w)
 {
@@ -123,14 +123,14 @@ _ector_renderer_shape_efl_geometry_shape_stroke_width_set(Eo *obj EINA_UNUSED,
 }
 
 double
-_ector_renderer_shape_efl_geometry_shape_stroke_width_get(Eo *obj EINA_UNUSED,
+_ector_renderer_shape_efl_graphics_shape_stroke_width_get(Eo *obj EINA_UNUSED,
                                                           Ector_Renderer_Shape_Data *pd)
 {
    return pd->stroke.width;
 }
 
 void
-_ector_renderer_shape_efl_geometry_shape_stroke_location_set(Eo *obj EINA_UNUSED,
+_ector_renderer_shape_efl_graphics_shape_stroke_location_set(Eo *obj EINA_UNUSED,
                                                              Ector_Renderer_Shape_Data *pd,
                                                              double centered)
 {
@@ -138,19 +138,19 @@ _ector_renderer_shape_efl_geometry_shape_stroke_location_set(Eo *obj EINA_UNUSED
 }
 
 double
-_ector_renderer_shape_efl_geometry_shape_stroke_location_get(Eo *obj EINA_UNUSED,
+_ector_renderer_shape_efl_graphics_shape_stroke_location_get(Eo *obj EINA_UNUSED,
                                                              Ector_Renderer_Shape_Data *pd)
 {
    return pd->stroke.centered;
 }
 
 void
-_ector_renderer_shape_efl_geometry_shape_stroke_dash_set(Eo *obj EINA_UNUSED,
+_ector_renderer_shape_efl_graphics_shape_stroke_dash_set(Eo *obj EINA_UNUSED,
                                                          Ector_Renderer_Shape_Data *pd,
-                                                         const Efl_Geometry_Dash *dash,
+                                                         const Efl_Graphics_Dash *dash,
                                                          unsigned int length)
 {
-   Efl_Geometry_Dash *tmp;
+   Efl_Graphics_Dash *tmp;
 
    if (!dash)
      {
@@ -160,18 +160,18 @@ _ector_renderer_shape_efl_geometry_shape_stroke_dash_set(Eo *obj EINA_UNUSED,
         return ;
      }
 
-   tmp = realloc(pd->stroke.dash, length * sizeof (Efl_Geometry_Dash));
+   tmp = realloc(pd->stroke.dash, length * sizeof (Efl_Graphics_Dash));
    if (!tmp) return ;
-   memcpy(tmp, dash, length * sizeof (Efl_Geometry_Dash));
+   memcpy(tmp, dash, length * sizeof (Efl_Graphics_Dash));
 
    pd->stroke.dash = tmp;
    pd->stroke.dash_length = length;
 }
 
 void
-_ector_renderer_shape_efl_geometry_shape_stroke_dash_get(Eo *obj EINA_UNUSED,
+_ector_renderer_shape_efl_graphics_shape_stroke_dash_get(Eo *obj EINA_UNUSED,
                                                          Ector_Renderer_Shape_Data *pd,
-                                                         const Efl_Geometry_Dash **dash,
+                                                         const Efl_Graphics_Dash **dash,
                                                          unsigned int *length)
 {
    if (dash) *dash = pd->stroke.dash;
@@ -179,39 +179,39 @@ _ector_renderer_shape_efl_geometry_shape_stroke_dash_get(Eo *obj EINA_UNUSED,
 }
 
 void
-_ector_renderer_shape_efl_geometry_shape_stroke_cap_set(Eo *obj EINA_UNUSED,
+_ector_renderer_shape_efl_graphics_shape_stroke_cap_set(Eo *obj EINA_UNUSED,
                                                         Ector_Renderer_Shape_Data *pd,
-                                                        Efl_Geometry_Cap c)
+                                                        Efl_Graphics_Cap c)
 {
    pd->stroke.cap = c;
 }
 
-Efl_Geometry_Cap
-_ector_renderer_shape_efl_geometry_shape_stroke_cap_get(Eo *obj EINA_UNUSED,
+Efl_Graphics_Cap
+_ector_renderer_shape_efl_graphics_shape_stroke_cap_get(Eo *obj EINA_UNUSED,
                                                         Ector_Renderer_Shape_Data *pd)
 {
    return pd->stroke.cap;
 }
 
 void
-_ector_renderer_shape_efl_geometry_shape_stroke_join_set(Eo *obj EINA_UNUSED,
+_ector_renderer_shape_efl_graphics_shape_stroke_join_set(Eo *obj EINA_UNUSED,
                                                          Ector_Renderer_Shape_Data *pd,
-                                                         Efl_Geometry_Join j)
+                                                         Efl_Graphics_Join j)
 {
    pd->stroke.join = j;
 }
 
-Efl_Geometry_Join
-_ector_renderer_shape_efl_geometry_shape_stroke_join_get(Eo *obj EINA_UNUSED,
+Efl_Graphics_Join
+_ector_renderer_shape_efl_graphics_shape_stroke_join_get(Eo *obj EINA_UNUSED,
                                                          Ector_Renderer_Shape_Data *pd)
 {
    return pd->stroke.join;
 }
 
 Eina_Bool
-_ector_renderer_shape_efl_geometry_shape_path_set(Eo *obj,
+_ector_renderer_shape_efl_graphics_shape_path_set(Eo *obj,
                                                   Ector_Renderer_Shape_Data *pd,
-                                                  const Efl_Geometry_Path_Command *op,
+                                                  const Efl_Graphics_Path_Command *op,
                                                   const double *points)
 {
 }

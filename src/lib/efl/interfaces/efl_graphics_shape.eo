@@ -1,4 +1,4 @@
-interface Efl.Geometry.Shape
+interface Efl.Graphics.Shape
 {
    legacy_prefix: null;
    properties {
@@ -47,7 +47,7 @@ interface Efl.Geometry.Shape
 	 get {
 	 }
 	 values {
-	     const(Efl_Geometry_Dash) *dash;
+	     const(Efl_Graphics_Dash) *dash;
 	     uint length;
 	 }
       }
@@ -57,7 +57,7 @@ interface Efl.Geometry.Shape
 	 get {
 	 }
 	 values {
-	    Efl_Geometry_Cap c;
+	    Efl_Graphics_Cap c;
 	 }
       }
       stroke_join {
@@ -66,7 +66,7 @@ interface Efl.Geometry.Shape
 	 get {
 	 }
 	 values {
-	    Efl_Geometry_Join j;
+	    Efl_Graphics_Join j;
 	 }
       }
    }
@@ -74,7 +74,7 @@ interface Efl.Geometry.Shape
       path_set {
          return: bool;
 	 params {
-	    @in const(Efl_Geometry_Path_Command) *op;
+	    @in const(Efl_Graphics_Path_Command) *op;
 	    @in const(double) *points;
 	 }
       }
