@@ -19,10 +19,6 @@ struct _Evas_VG_Data
    void   *engine_data;
    Efl_VG *root;
 
-   /* Opening an SVG file (could actually be inside an eet section */
-   Eina_File    *f;
-   const char   *key;
-
    Eina_Rectangle fill;
 
    unsigned int width, height;
@@ -373,72 +369,6 @@ evas_object_vg_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
                           void *type_private_data EINA_UNUSED)
 {
    return 0;
-}
-
-
-static Eina_Bool
-_evas_vg_efl_file_mmap_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
-                           const Eina_File *f, const char *key)
-{
-   Eina_File *tmp;
-
-   if (f == pd->f &&
-       ((key == NULL && pd->key == NULL) ||
-        (key != NULL && pd->key != NULL && !strcmp(key, pd->key))))
-     return EINA_FALSE;
-
-   tmp = f ? eina_file_dup(f) : NULL;
-
-   if (tmp)
-     {
-        if (!evas_vg_loader_svg(obj, tmp, NULL))
-          {
-             eina_file_close(tmp);
-             return EINA_FALSE;
-          }
-     }
-
-   // it succeeded.
-   if (pd->f) eina_file_close(pd->f);
-   pd->f = tmp;
-   eina_stringshare_replace(&pd->key, key);
-
-   return EINA_TRUE;
-}
-
-static void
-_evas_vg_efl_file_mmap_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
-                           const Eina_File **f, const char **key)
-{
-   if (f) *f = pd->f;
-   if (key) *key = pd->key;
-}
-
-Eina_Bool
-_evas_vg_efl_file_file_set(Eo *obj, Evas_VG_Data *pd EINA_UNUSED,
-                           const char *file, const char *key)
-{
-   Eina_File *f;
-   Eina_Bool r = EINA_FALSE;
-
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f) return EINA_FALSE;
-
-   eo_do(obj, efl_file_mmap_set(f, key));
-
-   eina_file_close(f);
-   return r;
-}
-
-void
-_evas_vg_efl_file_file_get(Eo *obj, Evas_VG_Data *pd EINA_UNUSED,
-                           const char **file, const char **key)
-{
-   const Eina_File *f = NULL;
-
-   eo_do(obj, efl_file_mmap_get(&f, key));
-
-   if (file) *file = eina_file_filename_get(f);
 }
 
 void

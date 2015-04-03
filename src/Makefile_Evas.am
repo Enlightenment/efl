@@ -150,8 +150,7 @@ lib/evas/canvas/evas_stats.c \
 lib/evas/canvas/evas_touch_point.c \
 lib/evas/canvas/evas_map.c \
 lib/evas/canvas/evas_gl.c \
-lib/evas/canvas/evas_out.c \
-lib/evas/canvas/evas_vg_loader_svg.c
+lib/evas/canvas/evas_out.c
 
 # Cache
 lib_evas_libevas_la_SOURCES += \

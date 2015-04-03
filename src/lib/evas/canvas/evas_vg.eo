@@ -1,4 +1,4 @@
-class Evas.VG (Evas.Object, Efl.File, Efl.Gfx.Fill, Efl.Gfx.View)
+class Evas.VG (Evas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
 {
    legacy_prefix: evas_object_vg;
    eo_prefix: evas_obj_vg;
@@ -22,10 +22,6 @@ class Evas.VG (Evas.Object, Efl.File, Efl.Gfx.Fill, Efl.Gfx.View)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Efl.File.file.set;
-      Efl.File.file.get;
-      Efl.File.mmap.set;
-      Efl.File.mmap.get;
       Efl.Gfx.Fill.fill.set;
       Efl.Gfx.Fill.fill.get;
       Efl.Gfx.View.size.set;
