@@ -7,12 +7,12 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl/interfaces \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
--I$(top_srcdir)/src/lib/evas \
 -I$(top_srcdir)/src/lib/ector \
+-I$(top_srcdir)/src/lib/evas \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eo \
--I$(top_builddir)/src/lib/evas \
 -I$(top_builddir)/src/lib/ector \
+-I$(top_builddir)/src/lib/evas \
 @EVAS_CFLAGS@
 
 EDCS = aspect.edc
@@ -54,11 +54,11 @@ ECORE_EVAS_COMMON_LDADD = \
 $(top_builddir)/src/lib/efl/libefl.la \
 $(top_builddir)/src/lib/eina/libeina.la \
 $(top_builddir)/src/lib/eo/libeo.la \
-$(top_builddir)/src/lib/ector/libector.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_file/libecore_file.la \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 $(top_builddir)/src/lib/ecore_evas/libecore_evas.la \
+$(top_builddir)/src/lib/ector/libector.la \
 $(top_builddir)/src/lib/evas/libevas.la \
 @EVAS_LDFLAGS@ -lm
 
@@ -71,7 +71,9 @@ EDJE_COMMON_CPPFLAGS = \
 -I$(top_builddir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/eet \
 -I$(top_builddir)/src/lib/eet \
+-I$(top_srcdir)/src/lib/ector \
 -I$(top_srcdir)/src/lib/evas \
+-I$(top_builddir)/src/lib/ector \
 -I$(top_builddir)/src/lib/evas \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore \
@@ -96,7 +98,6 @@ EDJE_COMMON_LDADD = \
 $(top_builddir)/src/lib/eina/libeina.la \
 $(top_builddir)/src/lib/eo/libeo.la \
 $(top_builddir)/src/lib/eet/libeet.la \
-$(top_builddir)/src/lib/ector/libector.la \
 $(top_builddir)/src/lib/evas/libevas.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_evas/libecore_evas.la \
@@ -288,6 +289,11 @@ evas_gl_SOURCES = evas-gl.c
 evas_gl_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_gl_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
+EXTRA_PROGRAMS += evas_vg_simple
+evas_vg_simple_SOURCES = evas-vg-simple.c
+evas_vg_simple_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+evas_vg_simple_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
+
 .edc.edj:
 	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $< $(builddir)/$(@F)
 
@@ -330,7 +336,8 @@ evas-smart-object.c \
 evas-stacking.c \
 evas-table.c \
 evas-multi-touch.c \
-evas-text.c
+evas-text.c \
+evas-vg-simple.c
 
 DATA_FILES = \
 resources/images/enlightenment.png \
