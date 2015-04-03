@@ -109,9 +109,7 @@ _key_action_move(Evas_Object *obj, const char *params)
          elm_interface_scrollable_page_size_get(&page_x, &page_y),
          elm_interface_scrollable_content_viewport_geometry_get
          (NULL, NULL, &v_w, &v_h));
-   eo_do(sd->content,
-         evas_obj_position_get(&c_x, &c_y),
-         evas_obj_size_get(&max_x, &max_y));
+   evas_object_geometry_get(sd->content, &c_x, &c_y, &max_x, &max_y);
 
    current_focus = elm_widget_focused_object_get(obj);
    evas_object_geometry_get(current_focus, &f_x, &f_y, &f_w, &f_h);
