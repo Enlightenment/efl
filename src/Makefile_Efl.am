@@ -24,6 +24,7 @@ CLEANFILES += \
 EXTRA_DIST += \
       lib/efl/Efl_Config.h \
       lib/efl/Efl.h \
+      lib/efl/interfaces/efl_graphics_utils.h \
       $(efl_eolian_files)
 
 efleolianfilesdir = $(datadir)/eolian/include/efl-@VMAJ@
@@ -31,7 +32,10 @@ efleolianfiles_DATA = $(efl_eolian_files)
 
 lib_LTLIBRARIES += lib/efl/libefl.la
 
-lib_efl_libefl_la_SOURCES = lib/efl/interfaces/efl_interfaces_main.c
+lib_efl_libefl_la_SOURCES = \
+lib/efl/interfaces/efl_interfaces_main.c \
+lib/efl/interfaces/efl_graphics_utils.c
+
 lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@
 lib_efl_libefl_la_LIBADD = @EFL_LIBS@
 lib_efl_libefl_la_DEPENDENCIES = @EFL_INTERNAL_LIBS@
@@ -43,7 +47,9 @@ dist_installed_eflheaders_DATA = \
               lib/efl/Efl.h
 
 installed_eflinterfacesdir = $(includedir)/efl-@VMAJ@/interfaces
-nodist_installed_eflinterfaces_DATA = $(efl_eolian_files_h)
+nodist_installed_eflinterfaces_DATA = \
+$(efl_eolian_files_h) \
+lib/efl/interfaces/efl_graphics_utils.h
 
 if HAVE_ELUA
 

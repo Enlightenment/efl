@@ -21,8 +21,4 @@ struct _Evas_VG_Container_Data
    Eina_List *children;
 };
 
-Eina_Bool
-efl_graphics_path_dup(Efl_Graphics_Path_Command **out_cmd, double **out_pts,
-                      const Efl_Graphics_Path_Command *in_cmd, const double *in_pts);
-
 #endif
