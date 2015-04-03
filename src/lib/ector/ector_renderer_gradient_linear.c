@@ -7,7 +7,7 @@
 
 #include "ector_private.h"
 
-void
+static void
 _ector_renderer_gradient_linear_efl_graphics_gradient_linear_start_set(Eo *obj EINA_UNUSED,
                                                                        Ector_Renderer_Generic_Gradient_Linear_Data *pd,
                                                                        double x, double y)
@@ -16,7 +16,7 @@ _ector_renderer_gradient_linear_efl_graphics_gradient_linear_start_set(Eo *obj E
    pd->start.y = y;
 }
 
-void
+static void
 _ector_renderer_gradient_linear_efl_graphics_gradient_linear_start_get(Eo *obj EINA_UNUSED,
                                                                        Ector_Renderer_Generic_Gradient_Linear_Data *pd,
                                                                        double *x, double *y)
@@ -25,7 +25,7 @@ _ector_renderer_gradient_linear_efl_graphics_gradient_linear_start_get(Eo *obj E
    if (y) *y = pd->start.y;
 }
 
-void
+static void
 _ector_renderer_gradient_linear_efl_graphics_gradient_linear_end_set(Eo *obj EINA_UNUSED,
                                                                      Ector_Renderer_Generic_Gradient_Linear_Data *pd,
                                                                      double x, double y)
@@ -34,7 +34,7 @@ _ector_renderer_gradient_linear_efl_graphics_gradient_linear_end_set(Eo *obj EIN
    pd->end.y = y;
 }
 
-void
+static void
 _ector_renderer_gradient_linear_efl_graphics_gradient_linear_end_get(Eo *obj EINA_UNUSED,
                                                                      Ector_Renderer_Generic_Gradient_Linear_Data *pd,
                                                                      double *x, double *y)

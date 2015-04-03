@@ -7,7 +7,7 @@
 
 #include "ector_private.h"
 
-void
+static void
 _ector_renderer_gradient_efl_graphics_gradient_stop_set(Eo *obj,
                                                         Ector_Renderer_Generic_Gradient_Data *pd,
                                                         const Efl_Graphics_Gradient_Stop *colors,
@@ -24,7 +24,7 @@ _ector_renderer_gradient_efl_graphics_gradient_stop_set(Eo *obj,
    pd->colors_count = length;
 }
 
-void
+static void
 _ector_renderer_gradient_efl_graphics_gradient_stop_get(Eo *obj,
                                                         Ector_Renderer_Generic_Gradient_Data *pd,
                                                         const Efl_Graphics_Gradient_Stop **colors,
@@ -34,7 +34,7 @@ _ector_renderer_gradient_efl_graphics_gradient_stop_get(Eo *obj,
    if (length) *length = pd->colors_count;
 }
 
-void
+static void
 _ector_renderer_gradient_efl_graphics_gradient_spread_set(Eo *obj,
                                                           Ector_Renderer_Generic_Gradient_Data *pd,
                                                           Efl_Graphics_Gradient_Spread s)
@@ -42,7 +42,7 @@ _ector_renderer_gradient_efl_graphics_gradient_spread_set(Eo *obj,
    pd->s = s;
 }
 
-Efl_Graphics_Gradient_Spread
+static Efl_Graphics_Gradient_Spread
 _ector_renderer_gradient_efl_graphics_gradient_spread_get(Eo *obj,
                                                           Ector_Renderer_Generic_Gradient_Data *pd)
 {

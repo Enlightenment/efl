@@ -7,7 +7,7 @@
 
 #include "ector_private.h"
 
-void
+static void
 _ector_renderer_base_transformation_set(Eo *obj EINA_UNUSED,
                                         Ector_Renderer_Generic_Base_Data *pd,
                                         const Eina_Matrix3 *m)
@@ -31,14 +31,14 @@ _ector_renderer_base_transformation_set(Eo *obj EINA_UNUSED,
    pd->m = tmp;
 }
 
-const Eina_Matrix3 *
+static const Eina_Matrix3 *
 _ector_renderer_base_transformation_get(Eo *obj EINA_UNUSED,
                                         Ector_Renderer_Generic_Base_Data *pd)
 {
    return pd->m;
 }
 
-void
+static void
 _ector_renderer_base_origin_set(Eo *obj EINA_UNUSED,
                                 Ector_Renderer_Generic_Base_Data *pd,
                                 double x, double y)
@@ -47,7 +47,7 @@ _ector_renderer_base_origin_set(Eo *obj EINA_UNUSED,
    pd->origin.y = y;
 }
 
-void
+static void
 _ector_renderer_base_origin_get(Eo *obj EINA_UNUSED,
                                 Ector_Renderer_Generic_Base_Data *pd,
                                 double *x, double *y)
@@ -56,7 +56,7 @@ _ector_renderer_base_origin_get(Eo *obj EINA_UNUSED,
    if (y) *y = pd->origin.y;
 }
 
-void
+static void
 _ector_renderer_base_visibility_set(Eo *obj EINA_UNUSED,
                                     Ector_Renderer_Generic_Base_Data *pd,
                                     Eina_Bool v)
@@ -64,14 +64,14 @@ _ector_renderer_base_visibility_set(Eo *obj EINA_UNUSED,
    pd->visibility = v;
 }
 
-Eina_Bool
+static Eina_Bool
 _ector_renderer_base_visibility_get(Eo *obj EINA_UNUSED,
                                     Ector_Renderer_Generic_Base_Data *pd)
 {
    return pd->visibility;
 }
 
-void
+static void
 _ector_renderer_base_color_set(Eo *obj EINA_UNUSED,
                                Ector_Renderer_Generic_Base_Data *pd,
                                int r, int g, int b, int a)
@@ -82,7 +82,7 @@ _ector_renderer_base_color_set(Eo *obj EINA_UNUSED,
    pd->color.a = a;
 }
 
-void
+static void
 _ector_renderer_base_color_get(Eo *obj EINA_UNUSED,
                                Ector_Renderer_Generic_Base_Data *pd,
                                int *r, int *g, int *b, int *a)
@@ -93,7 +93,7 @@ _ector_renderer_base_color_get(Eo *obj EINA_UNUSED,
    if (a) *a = pd->color.a;
 }
 
-void
+static void
 _ector_renderer_base_mask_set(Eo *obj EINA_UNUSED,
                               Ector_Renderer_Generic_Base_Data *pd,
                               Ector_Renderer *r)
@@ -101,14 +101,14 @@ _ector_renderer_base_mask_set(Eo *obj EINA_UNUSED,
    _ector_renderer_replace(&pd->mask, r);
 }
 
-Ector_Renderer *
+static Ector_Renderer *
 _ector_renderer_base_mask_get(Eo *obj EINA_UNUSED,
                               Ector_Renderer_Generic_Base_Data *pd)
 {
    return pd->mask;
 }
 
-void
+static void
 _ector_renderer_base_quality_set(Eo *obj EINA_UNUSED,
                                  Ector_Renderer_Generic_Base_Data *pd,
                                  Ector_Quality q)
@@ -116,7 +116,7 @@ _ector_renderer_base_quality_set(Eo *obj EINA_UNUSED,
    pd->q = q;
 }
 
-Ector_Quality
+static Ector_Quality
 _ector_renderer_base_quality_get(Eo *obj EINA_UNUSED,
                                  Ector_Renderer_Generic_Base_Data *pd)
 {
