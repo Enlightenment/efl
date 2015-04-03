@@ -10,6 +10,11 @@
 typedef struct _Ector_Renderer_Generic_Shape_Data Ector_Renderer_Generic_Shape_Data;
 struct _Ector_Renderer_Generic_Shape_Data
 {
+   struct {
+      Efl_Graphics_Path_Command *cmd;
+      double *pts;
+   } path;
+
    Ector_Renderer *fill;
    struct {
       Ector_Renderer *fill;
@@ -209,11 +214,17 @@ _ector_renderer_shape_efl_graphics_shape_stroke_join_get(Eo *obj EINA_UNUSED,
 }
 
 Eina_Bool
-_ector_renderer_shape_efl_graphics_shape_path_set(Eo *obj,
+_ector_renderer_shape_efl_graphics_shape_path_set(Eo *obj EINA_UNUSED,
                                                   Ector_Renderer_Generic_Shape_Data *pd,
-                                                  const Efl_Graphics_Path_Command *op,
+                                                  const Efl_Graphics_Path_Command *cmd,
                                                   const double *points)
 {
+   free(pd->path.cmd);
+   pd->path.cmd = NULL;
+   free(pd->path.pts);
+   pd->path.pts = NULL;
+
+   return efl_graphics_path_dup(&pd->path.cmd, &pd->path.pts, cmd, points);
 }
 
 void
