@@ -88,7 +88,6 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_color_set(Eo *obj EINA_UN
                                                                  Ector_Renderer_Cairo_Base_Data *pd,
                                                                  int r, int g, int b, int a)
 {
-   ector_color_argb_unpremul(a, &r ,&g, &b);
    pd->generic->color.r = r;
    pd->generic->color.g = g;
    pd->generic->color.b = b;
@@ -104,8 +103,6 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_color_get(Eo *obj EINA_UN
    if (g) *g = pd->generic->color.g;
    if (b) *b = pd->generic->color.b;
    if (a) *a = pd->generic->color.a;
-
-   ector_color_argb_premul(pd->generic->color.a, r, g, b);
 }
 
 static Eina_Bool
@@ -145,7 +142,7 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
                                                             Eina_Array *clips EINA_UNUSED,
                                                             unsigned int mul_col)
 {
-   double r, g, b, a;
+   int r, g, b, a;
    cairo_operator_t cop;
    double cx, cy;
 
@@ -165,10 +162,11 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
          break;
      }
 
-   r = ((double)((pd->generic->color.r * R_VAL(&mul_col)) >> 8)) / 255;
-   g = ((double)((pd->generic->color.g * G_VAL(&mul_col)) >> 8)) / 255;
-   b = ((double)((pd->generic->color.b * B_VAL(&mul_col)) >> 8)) / 255;
-   a = ((double)((pd->generic->color.a * A_VAL(&mul_col)) >> 8)) / 255;
+   r = ((pd->generic->color.r * R_VAL(&mul_col)) >> 8);
+   g = ((pd->generic->color.g * G_VAL(&mul_col)) >> 8);
+   b = ((pd->generic->color.b * B_VAL(&mul_col)) >> 8);
+   a = ((pd->generic->color.a * A_VAL(&mul_col)) >> 8);
+   ector_color_argb_unpremul(a, &r, &g, &b);
 
    cairo_set_operator(pd->parent->cairo, cop);
    cairo_transform(pd->parent->cairo, &identity);
@@ -179,7 +177,7 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
    pd->parent->current.x = pd->generic->origin.x;
    pd->parent->current.y = pd->generic->origin.y;
 
-   cairo_set_source_rgba(pd->parent->cairo, r, g, b, a);
+   cairo_set_source_rgba(pd->parent->cairo, r/255.0, g/255.0, b/255.0, a/255.0);
 
    USE(obj, cairo_new_path, EINA_FALSE);
    USE(obj, cairo_rectangle, EINA_FALSE);

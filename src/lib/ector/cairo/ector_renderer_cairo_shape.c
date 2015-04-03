@@ -149,9 +149,9 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_prepare(Eo *obj, Ector_R
 static Eina_Bool
 _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd, Ector_Rop op, Eina_Array *clips, unsigned int mul_col)
 {
+   int r, g, b, a;
    if (pd->path == NULL) return EINA_FALSE;
 
-   // FIXME: find a way to set multiple clips
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, ector_renderer_draw(op, clips, mul_col));
 
    USE(obj, cairo_new_path, EINA_FALSE);
@@ -163,7 +163,7 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
    if (pd->shape->fill)
      eo_do(pd->shape->fill, ector_renderer_cairo_base_fill());
 
-   if (pd->shape->stroke.color.a > 0)
+   if (pd->shape->stroke.fill || pd->shape->stroke.color.a > 0)
      {
         USE(obj, cairo_fill_preserve, EINA_FALSE);
         USE(obj, cairo_set_source_rgba, EINA_FALSE);
@@ -174,19 +174,23 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
 
         cairo_fill_preserve(pd->parent->cairo);
 
-        cairo_set_source_rgba(pd->parent->cairo,
-                              pd->shape->stroke.color.r / 255.0,
-                              pd->shape->stroke.color.g / 255.0,
-                              pd->shape->stroke.color.b / 255.0,
-                              pd->shape->stroke.color.a / 255.0);
-
         if (pd->shape->stroke.fill)
           eo_do(pd->shape->stroke.fill, ector_renderer_cairo_base_fill());
-        // Set dash, cap and join
-        cairo_set_line_width(pd->parent->cairo, (pd->shape->stroke.width * pd->shape->stroke.scale));
-        cairo_set_line_cap(pd->parent->cairo, pd->shape->stroke.cap);
-        cairo_set_line_join(pd->parent->cairo, pd->shape->stroke.join);
-        cairo_stroke(pd->parent->cairo);
+       else
+         {
+            r = (((pd->shape->stroke.color.r * R_VAL(&mul_col)) + 0xff) >> 8);
+            g = (((pd->shape->stroke.color.g * G_VAL(&mul_col)) + 0xff) >> 8);
+            b = (((pd->shape->stroke.color.b * B_VAL(&mul_col)) + 0xff) >> 8);
+            a = (((pd->shape->stroke.color.a * A_VAL(&mul_col)) + 0xff) >> 8);
+            ector_color_argb_unpremul(a, &r, &g, &b);
+            cairo_set_source_rgba(pd->parent->cairo, r/255.0, g/255.0, b/255.0, a/255.0);
+         }
+
+       // Set dash, cap and join
+       cairo_set_line_width(pd->parent->cairo, (pd->shape->stroke.width * pd->shape->stroke.scale * 2));
+       cairo_set_line_cap(pd->parent->cairo, pd->shape->stroke.cap);
+       cairo_set_line_join(pd->parent->cairo, pd->shape->stroke.join);
+       cairo_stroke(pd->parent->cairo);
      }
    else
      {
