@@ -28,6 +28,8 @@ class Evas.VG_Image (Evas.VG_Node, Efl.File)
    implements {
       Efl.File.file.set;
       Efl.File.file.get;
+      Efl.File.mmap.set;
+      Efl.File.mmap.get;
       Eo.Base.constructor;
       Eo.Base.destructor;
    }
