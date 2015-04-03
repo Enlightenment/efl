@@ -19,7 +19,7 @@ _evas_vg_root_node_eo_base_parent_set(Eo *obj,
 {
    // Nice little hack, jump over parent parent_set in Evas_VG_Root
    eo_do_super(obj, EVAS_VG_NODE_CLASS, eo_parent_set(parent));
-   if (!eo_isa(parent, EVAS_VG_CLASS))
+   if (parent && !eo_isa(parent, EVAS_VG_CLASS))
      eo_error_set(obj);
 }
 
