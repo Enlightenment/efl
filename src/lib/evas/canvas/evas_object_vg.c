@@ -16,8 +16,12 @@ typedef struct _Evas_VG_Data      Evas_VG_Data;
 
 struct _Evas_VG_Data
 {
-   void             *engine_data;
-   Evas_VG_Node     *root;
+   void         *engine_data;
+   Evas_VG_Node *root;
+
+   /* Opening an SVG file (could actually be inside an eet section */
+   Eina_File    *f;
+   const char   *key;
 };
 
 static void evas_object_vg_render(Evas_Object *eo_obj,
@@ -321,18 +325,55 @@ evas_object_vg_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
 }
 
 
+static Eina_Bool
+_evas_vg_mmap_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
+                  const Eina_File *f, const char *key EINA_UNUSED)
+// For now we don't handle eet section filled with SVG, that's for later
+{
+   Eina_File *tmp = f ? eina_file_dup(f) : NULL;
+
+   // Start parsing here.
+
+   // it succeeded.
+   if (pd->f) eina_file_close(pd->f);
+   pd->f = tmp;
+
+   return EINA_TRUE;
+}
+
+static void
+_evas_vg_mmap_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
+                  const Eina_File **f, const char **key)
+{
+   if (f) *f = pd->f;
+   if (key) *key = pd->key;
+}
+
 Eina_Bool
-_evas_vg_efl_file_file_set(Eo *obj, Evas_VG_Data *pd,
+_evas_vg_efl_file_file_set(Eo *obj, Evas_VG_Data *pd EINA_UNUSED,
                            const char *file, const char *key)
 {
-   // FIXME: just load SVG for now
-   return EINA_FALSE;
+   Eina_File *f;
+   Eina_Bool r = EINA_FALSE;
+
+   f = eina_file_open(file, EINA_FALSE);
+   if (!f) return EINA_FALSE;
+
+   eo_do(obj, r = evas_obj_vg_mmap_set(f, key));
+
+   eina_file_close(f);
+   return r;
 }
 
 void
-_evas_vg_efl_file_file_get(Eo *obj, Evas_VG_Data *pd,
+_evas_vg_efl_file_file_get(Eo *obj, Evas_VG_Data *pd EINA_UNUSED,
                            const char **file, const char **key)
 {
+   const Eina_File *f = NULL;
+
+   eo_do(obj, evas_obj_vg_mmap_get(&f, key));
+
+   if (file) *file = eina_file_filename_get(f);
 }
 
 void
