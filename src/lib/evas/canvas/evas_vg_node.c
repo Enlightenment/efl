@@ -104,7 +104,8 @@ _evas_vg_node_mask_get(Eo *obj EINA_UNUSED, Evas_VG_Node_Data *pd)
 
 // Parent should be a container otherwise dismissing the stacking operation
 void
-_evas_vg_node_eo_base_constructor(Eo *obj, Evas_VG_Node_Data *pd EINA_UNUSED)
+_evas_vg_node_eo_base_constructor(Eo *obj,
+                                  Evas_VG_Node_Data *pd EINA_UNUSED)
 {
    Evas_VG_Container_Data *cd;
    Eo *parent;
@@ -112,13 +113,22 @@ _evas_vg_node_eo_base_constructor(Eo *obj, Evas_VG_Node_Data *pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, eo_constructor());
 
    eo_do(obj, parent = eo_parent_get());
-   cd = eo_data_scope_get(parent, EVAS_VG_CONTAINER_CLASS);
-   if (!cd)
+   if (eo_isa(parent, EVAS_VG_CONTAINER_CLASS))
      {
-        eo_error_set(obj);
-        return ;
+        cd = eo_data_scope_get(parent, EVAS_VG_CONTAINER_CLASS);
+        if (!cd)
+          {
+             ERR("Can't get EVAS_VG_CONTAINER_CLASS data.");
+             eo_error_set(obj);
+             return ;
+          }
+        cd->children = eina_list_append(cd->children, obj);
      }
-   cd->children = eina_list_append(cd->children, obj);
+   else if (parent != NULL && !eo_isa(parent, EVAS_VG_CLASS))
+     {
+        ERR("Not even an EVAS_VG_CLASS.");
+        eo_error_set(obj);
+     }
 }
 
 void
@@ -126,30 +136,48 @@ _evas_vg_node_eo_base_parent_set(Eo *obj,
                                  Evas_VG_Node_Data *pd EINA_UNUSED,
                                  Eo *parent)
 {
-   Evas_VG_Container_Data *cd;
-   Evas_VG_Container_Data *old_cd;
+   Evas_VG_Container_Data *cd = NULL;
+   Evas_VG_Container_Data *old_cd = NULL;
    Eo *old_parent;
 
-   cd = eo_data_scope_get(parent, EVAS_VG_CONTAINER_CLASS);
-   if (!cd)
+   if (eo_isa(parent, EVAS_VG_CONTAINER_CLASS))
      {
-        eo_error_set(obj);
-        return ;
+        ERR("Can't get EVAS_VG_CONTAINER_CLASS data from %p.", parent);
+        cd = eo_data_scope_get(parent, EVAS_VG_CONTAINER_CLASS);
+        if (!cd) goto on_error;
+     }
+   else if (parent != NULL && !eo_isa(parent, EVAS_VG_CLASS))
+     {
+        ERR("%p not even an EVAS_VG_CLASS.", parent);
+        goto on_error;
      }
 
    eo_do(obj, old_parent = eo_parent_get());
-   old_cd = eo_data_scope_get(old_parent, EVAS_VG_CONTAINER_CLASS);
-   if (!old_cd)
+   if (eo_isa(old_parent, EVAS_VG_CONTAINER_CLASS))
      {
-        eo_error_set(obj);
-        return ;
+        ERR("Can't get EVAS_VG_CONTAINER_CLASS data from %p.", old_parent);
+        old_cd = eo_data_scope_get(old_parent, EVAS_VG_CONTAINER_CLASS);
+        if (!old_cd) goto on_error;
+     }
+   else if (old_parent != NULL && !eo_isa(old_parent, EVAS_VG_CLASS))
+     {
+        ERR("%p not even an EVAS_VG_CLASS.", old_parent);
+        goto on_error;
      }
 
    // FIXME: this may become slow with to much object
-   old_cd->children = eina_list_remove(old_cd->children, obj);
+   if (old_cd)
+     old_cd->children = eina_list_remove(old_cd->children, obj);
 
    eo_do_super(obj, MY_CLASS, eo_parent_set(parent));
-   cd->children = eina_list_append(cd->children, obj);
+   if (cd)
+     cd->children = eina_list_append(cd->children, obj);
+
+   return ;
+
+ on_error:
+   eo_error_set(obj);
+   return ;
 }
 
 void
