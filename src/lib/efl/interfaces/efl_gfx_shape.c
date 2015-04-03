@@ -495,41 +495,9 @@ _efl_gfx_shape_append_squadratic_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
                                   ctrl_x1, ctrl_y1);
 }
 
-// This function come from librsvg rsvg-path.c
-static void
-_efl_gfx_shape_append_arc_segment(Eo *eo, Efl_Gfx_Shape_Data *pd,
-                                  double xc, double yc,
-                                  double th0, double th1, double rx, double ry,
-                                  double angle)
-{
-   double x1, y1, x2, y2, x3, y3;
-   double t;
-   double th_half;
-   double f, sinf, cosf;
-
-   f = angle * M_PI / 180.0;
-   sinf = sin(f);
-   cosf = cos(f);
-
-   th_half = 0.5 * (th1 - th0);
-   t = (8.0 / 3.0) * sin(th_half * 0.5) * sin(th_half * 0.5) / sin(th_half);
-   x1 = rx * (cos(th0) - t * sin(th0));
-   y1 = ry * (sin(th0) + t * cos(th0));
-   x3 = rx* cos(th1);
-   y3 = ry* sin(th1);
-   x2 = x3 + rx * (t * sin(th1));
-   y2 = y3 + ry * (-t * cos(th1));
-
-   _efl_gfx_shape_append_cubic_to(eo, pd,
-                                  xc + cosf * x3 - sinf * y3,
-                                  yc + sinf * x3 + cosf * y3,
-                                  xc + cosf * x1 - sinf * y1,
-                                  yc + sinf * x1 + cosf * y1,
-                                  xc + cosf * x2 - sinf * y2,
-                                  yc + sinf * x2 + cosf * y2);
-}
-
-// This function come from librsvg rsvg-path.c
+/*
+ * code adapted from enesim which was adapted from moonlight sources
+ */
 void
 _efl_gfx_shape_append_arc_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
                              double x, double y,
@@ -537,110 +505,182 @@ _efl_gfx_shape_append_arc_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
                              double angle,
                              Eina_Bool large_arc, Eina_Bool sweep)
 {
-   /* See Appendix F.6 Elliptical arc implementation notes
-      http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes */
-   double f, sinf, cosf;
-   double x1, y1, x2, y2;
-   double x1_, y1_;
-   double cx_, cy_, cx, cy;
-   double gamma;
+   double cxp, cyp, cx, cy;
+   double sx, sy;
+   double cos_phi, sin_phi;
+   double dx2, dy2;
+   double x1p, y1p;
+   double x1p2, y1p2;
+   double rx2, ry2;
+   double lambda;
+   double c;
+   double at;
    double theta1, delta_theta;
-   double k1, k2, k3, k4, k5;
-   int i, n_segs;
+   double nat;
+   double delta, bcp;
+   double cos_phi_rx, cos_phi_ry;
+   double sin_phi_rx, sin_phi_ry;
+   double cos_theta1, sin_theta1;
+   int segments, i;
 
-   x1 = pd->current.x;
-   y1 = pd->current.x;
+   // some helpful stuff is available here:
+   // http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
+   sx = pd->current.x;
+   sy = pd->current.y;
 
-   /* Start and end of path segment */
-   x2 = x;
-   y2 = y;
-
-   if (x1 == x2 && y1 == y2)
+   // if start and end points are identical, then no arc is drawn
+   if ((fabs(x - sx) < (1 / 256.0)) && (fabs(y - sy) < (1 / 256.0)))
      return;
 
-   /* X-axis */
-   f = angle * M_PI / 180.0;
-   sinf = sin(f);
-   cosf = cos(f);
-
-   /* Check the radius against floading point underflow.
-      See http://bugs.debian.org/508443 */
-   if ((fabs(rx) < DBL_EPSILON) || (fabs(ry) < DBL_EPSILON))
+   // Correction of out-of-range radii, see F6.6.1 (step 2)
+   rx = fabs(rx);
+   ry = fabs(ry);
+   if ((rx < 0.5) || (ry < 0.5))
      {
         _efl_gfx_shape_append_line_to(obj, pd, x, y);
         return;
      }
 
-   if (rx < 0) rx = -rx;
-   if (ry < 0) ry = -ry;
+   angle = angle * M_PI / 180.0;
+   cos_phi = cos(angle);
+   sin_phi = sin(angle);
+   dx2 = (sx - x) / 2.0;
+   dy2 = (sy - y) / 2.0;
+   x1p = cos_phi * dx2 + sin_phi * dy2;
+   y1p = cos_phi * dy2 - sin_phi * dx2;
+   x1p2 = x1p * x1p;
+   y1p2 = y1p * y1p;
+   rx2 = rx * rx;
+   ry2 = ry * ry;
+   lambda = (x1p2 / rx2) + (y1p2 / ry2);
 
-   k1 = (x1 - x2) / 2;
-   k2 = (y1 - y2) / 2;
-
-   x1_ = cosf * k1 + sinf * k2;
-   y1_ = -sinf * k1 + cosf * k2;
-
-   gamma = (x1_ * x1_) / (rx * rx) + (y1_ * y1_) / (ry * ry);
-   if (gamma > 1)
+   // Correction of out-of-range radii, see F6.6.2 (step 4)
+   if (lambda > 1.0)
      {
-        rx *= sqrt(gamma);
-        ry *= sqrt(gamma);
+        // see F6.6.3
+        double lambda_root = sqrt(lambda);
+
+        rx *= lambda_root;
+        ry *= lambda_root;
+        // update rx2 and ry2
+        rx2 = rx * rx;
+        ry2 = ry * ry;
      }
 
-   /* Compute the center */
-   k1 = rx * rx * y1_ * y1_ + ry * ry * x1_ * x1_;
-   if (k1 == 0) return;
+   c = (rx2 * ry2) - (rx2 * y1p2) - (ry2 * x1p2);
 
-   k1 = sqrt(fabs((rx * rx * ry * ry) / k1 - 1));
-   if (sweep == large_arc)
-     k1 = -k1;
+   // check if there is no possible solution
+   // (i.e. we can't do a square root of a negative value)
+   if (c < 0.0)
+     {
+        // scale uniformly until we have a single solution
+        // (see F6.2) i.e. when c == 0.0
+        double scale = sqrt(1.0 - c / (rx2 * ry2));
+        rx *= scale;
+        ry *= scale;
+        // update rx2 and ry2
+        rx2 = rx * rx;
+        ry2 = ry * ry;
 
-   cx_ = k1 * rx * y1_ / ry;
-   cy_ = -k1 * ry * x1_ / rx;
+        // step 2 (F6.5.2) - simplified since c == 0.0
+        cxp = 0.0;
+        cyp = 0.0;
+        // step 3 (F6.5.3 first part) - simplified since cxp and cyp == 0.0
+        cx = 0.0;
+        cy = 0.0;
+     }
+   else
+     {
+        // complete c calculation
+        c = sqrt(c / ((rx2 * y1p2) + (ry2 * x1p2)));
+        // inverse sign if Fa == Fs
+        if (large_arc == sweep)
+          c = -c;
 
-   cx = cosf * cx_ - sinf * cy_ + (x1 + x2) / 2;
-   cy = sinf * cx_ + cosf * cy_ + (y1 + y2) / 2;
+        // step 2 (F6.5.2)
+        cxp = c * ( rx * y1p / ry);
+        cyp = c * (-ry * x1p / rx);
 
-   /* Compute start angle */
-   k1 = (x1_ - cx_) / rx;
-   k2 = (y1_ - cy_) / ry;
-   k3 = (-x1_ - cx_) / rx;
-   k4 = (-y1_ - cy_) / ry;
+        // step 3 (F6.5.3 first part)
+        cx = cos_phi * cxp - sin_phi * cyp;
+        cy = sin_phi * cxp + cos_phi * cyp;
+     }
 
-   k5 = sqrt(fabs(k1 * k1 + k2 * k2));
-   if (k5 == 0) return;
+   // step 3 (F6.5.3 second part) we now have the center point of the ellipse
+   cx += (sx + x) / 2.0;
+   cy += (sy + y) / 2.0;
 
-   k5 = k1 / k5;
-   if (k5 < -1) k5 = -1;
-   else if(k5 > 1) k5 = 1;
+   // step 4 (F6.5.4)
+   // we dont' use arccos (as per w3c doc),
+   // see http://www.euclideanspace.com/maths/algebra/vectors/angleBetween/index.htm
+   // note: atan2 (0.0, 1.0) == 0.0
+   at = atan2(((y1p - cyp) / ry), ((x1p - cxp) / rx));
+   theta1 = (at < 0.0) ? 2.0 * M_PI + at : at;
 
-   theta1 = acos(k5);
-   if(k2 < 0) theta1 = -theta1;
+   nat = atan2(((-y1p - cyp) / ry), ((-x1p - cxp) / rx));
+   delta_theta = (nat < at) ? 2.0 * M_PI - at + nat : nat - at;
 
-   /* Compute delta_theta */
-   k5 = sqrt(fabs((k1 * k1 + k2 * k2) * (k3 * k3 + k4 * k4)));
-   if (k5 == 0) return;
+   if (sweep)
+     {
+        // ensure delta theta < 0 or else add 360 degrees
+        if (delta_theta < 0.0)
+          delta_theta += 2.0 * M_PI;
+     }
+   else
+     {
+        // ensure delta theta > 0 or else substract 360 degrees
+        if (delta_theta > 0.0)
+          delta_theta -= 2.0 * M_PI;
+     }
 
-   k5 = (k1 * k3 + k2 * k4) / k5;
-   if (k5 < -1) k5 = -1;
-   else if (k5 > 1) k5 = 1;
-   delta_theta = acos(k5);
-   if(k1 * k4 - k3 * k2 < 0) delta_theta = -delta_theta;
+   // add several cubic bezier to approximate the arc
+   // (smaller than 90 degrees)
+   // we add one extra segment because we want something
+   // smaller than 90deg (i.e. not 90 itself)
+   segments = (int) (fabs(delta_theta / M_PI_2)) + 1;
+   delta = delta_theta / segments;
 
-   if (sweep && delta_theta < 0)
-     delta_theta += M_PI*2;
-   else if (!sweep && delta_theta > 0)
-     delta_theta -= M_PI*2;
+   // http://www.stillhq.com/ctpfaq/2001/comp.text.pdf-faq-2001-04.txt (section 2.13)
+   bcp = 4.0 / 3 * (1 - cos(delta / 2)) / sin(delta / 2);
 
-   /* Now draw the arc */
-   n_segs = ceil(fabs(delta_theta / (M_PI * 0.5 + 0.001)));
+   cos_phi_rx = cos_phi * rx;
+   cos_phi_ry = cos_phi * ry;
+   sin_phi_rx = sin_phi * rx;
+   sin_phi_ry = sin_phi * ry;
 
-   for (i = 0; i < n_segs; i++)
-     _efl_gfx_shape_append_arc_segment(obj, pd,
-                                       cx, cy,
-                                       theta1 + i * delta_theta / n_segs,
-                                       theta1 + (i + 1) * delta_theta / n_segs,
-                                       rx, ry, angle);
+   cos_theta1 = cos(theta1);
+   sin_theta1 = sin(theta1);
+
+   for (i = 0; i < segments; ++i)
+     {
+        // end angle (for this segment) = current + delta
+        double c1x, c1y, ex, ey, c2x, c2y;
+        double theta2 = theta1 + delta;
+        double cos_theta2 = cos(theta2);
+        double sin_theta2 = sin(theta2);
+
+        // first control point (based on start point sx,sy)
+        c1x = sx - bcp * (cos_phi_rx * sin_theta1 + sin_phi_ry * cos_theta1);
+        c1y = sy + bcp * (cos_phi_ry * cos_theta1 - sin_phi_rx * sin_theta1);
+
+        // end point (for this segment)
+        ex = cx + (cos_phi_rx * cos_theta2 - sin_phi_ry * sin_theta2);
+        ey = cy + (sin_phi_rx * cos_theta2 + cos_phi_ry * sin_theta2);
+
+        // second control point (based on end point ex,ey)
+        c2x = ex + bcp * (cos_phi_rx * sin_theta2 + sin_phi_ry * cos_theta2);
+        c2y = ey + bcp * (sin_phi_rx * sin_theta2 - cos_phi_ry * cos_theta2);
+
+        _efl_gfx_shape_append_cubic_to(obj, pd, ex, ey, c1x, c1y, c2x, c2y);
+
+        // next start point is the current end point (same for angle)
+        sx = ex;
+        sy = ey;
+        theta1 = theta2;
+        // avoid recomputations
+        cos_theta1 = cos_theta2;
+        sin_theta1 = sin_theta2;
+     }
 }
 
 void
