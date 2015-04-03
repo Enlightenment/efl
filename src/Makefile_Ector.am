@@ -1,5 +1,19 @@
 
 ### Library
+ector_eolian_files = \
+	lib/ector/ector_surface.eo \
+	lib/ector/ector_renderer.eo
+
+ector_eolian_c = $(ector_eolian_files:%.eo=%.eo.c)
+ector_eolian_h = $(ector_eolian_files:%.eo=%.eo.h)
+
+BUILT_SOURCES += \
+	$(ector_eolian_c) \
+	$(ector_eolian_h)
+
+CLEANFILES += \
+	$(ector_eolian_c) \
+	$(ector_eolian_h)
 
 lib_LTLIBRARIES += lib/ector/libector.la
 

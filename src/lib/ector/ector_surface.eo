@@ -1,0 +1,40 @@
+abstract Ector.Surface (Eo.Base)
+{
+   eo_prefix: ector_surface;
+   properties {
+      size {
+         set {
+            /*@ Changes the size of the given Evas object. */
+         }
+         get {
+            /*@ Retrieves the (rectangular) size of the given Evas object. */
+         }
+         values {
+            int w; /*@ in */
+            int h; /*@ in */
+         }
+      }
+   }
+   methods {
+      renderer_factory_new {
+         return: Ector_Renderer *;
+	 params {
+	    @in const(Eo_Class) * type @nonull;
+	 }
+      }
+      update_push {
+         return: bool;
+	 params {
+	    @in const(Eina_Rectangle) * r @nonull;
+	    @in Ector_Update_Type type;
+	 }
+      }
+      update_reset {
+         return: bool;
+      }
+   }
+   implements {
+      @virtual .size.set;
+      @virtual .size.get;
+   }
+}
