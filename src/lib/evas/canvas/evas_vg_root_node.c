@@ -47,7 +47,7 @@ _evas_vg_root_node_changed(void *data, Eo *obj,
    return EINA_TRUE;
 }
 
-void
+static void
 _efl_vg_root_node_eo_base_parent_set(Eo *obj,
                                      Efl_VG_Root_Node_Data *pd,
                                      Eo *parent)
@@ -65,7 +65,7 @@ _efl_vg_root_node_eo_base_parent_set(Eo *obj,
      }
 }
 
-void
+static void
 _efl_vg_root_node_eo_base_constructor(Eo *obj,
                                       Efl_VG_Root_Node_Data *pd)
 {
