@@ -1,6 +1,8 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+#include "evas_vg_private.h"
+
 static unsigned int
 evas_vg_path_command_length(Evas_VG_Path_Command command)
 {
@@ -20,6 +22,22 @@ evas_vg_path_command_length(Evas_VG_Path_Command command)
    return 0;
 }
 
+static inline void
+_evas_vg_path_length(Evas_VG_Path_Command *commands,
+                     unsigned int *cmd_length,
+                     unsigned int *pts_length)
+{
+   if (commands)
+     while (commands[*cmd_length] != EVAS_VG_PATH_COMMAND_TYPE_END)
+       {
+          *pts_length += evas_vg_path_command_length(commands[*cmd_length]);
+          (*cmd_length)++;
+       }
+
+   // Accounting for END command and handle gracefully the NULL case at the same time
+   cmd_length++;
+}
+
 static inline Eina_Bool
 evas_vg_path_grow(Evas_VG_Path_Command command,
                   Evas_VG_Path_Command **commands, double **points,
@@ -29,16 +47,7 @@ evas_vg_path_grow(Evas_VG_Path_Command command,
    double *pts_tmp;
    unsigned int cmd_length = 0, pts_length = 0;
 
-   if (command)
-     {
-        while (commands[cmd_length] != EVAS_VG_PATH_COMMAND_TYPE_END)
-          {
-             pts_length += evas_vg_path_command_length((*commands)[cmd_length]);
-             cmd_length++;
-          }
-     }
-   // Accounting for END command and handle gracefully the NULL case at the same time
-   cmd_length++;
+   _evas_vg_path_length(commands, &cmd_length, &pts_length);
 
    if (evas_vg_path_command_length(command))
      {
@@ -60,6 +69,28 @@ evas_vg_path_grow(Evas_VG_Path_Command command,
    // NULL terminate the stream
    cmd_tmp[cmd_length] = EVAS_VG_PATH_COMMAND_TYPE_END;
 
+   return EINA_TRUE;
+}
+
+Eina_Bool
+evas_vg_path_dup(Evas_VG_Path_Command **out_cmd, double **out_pts,
+                 Evas_VG_Path_Command *in_cmd, double *in_pts)
+{
+   unsigned int cmd_length = 0, pts_length = 0;
+
+   _evas_vg_path_length(in_cmd, &cmd_length, &pts_length);
+
+   *out_pts = malloc(pts_length * sizeof (double));
+   *out_cmd = malloc(cmd_length * sizeof (Evas_VG_Path_Command));
+   if (!(*out_pts) || !(*out_cmd))
+     {
+        free(*out_pts);
+        free(*out_cmd);
+        return EINA_FALSE;
+     }
+
+   memcpy(*out_pts, in_pts, pts_length * sizeof (double));
+   memcpy(*out_cmd, in_cmd, cmd_length * sizeof (Evas_VG_Path_Command));
    return EINA_TRUE;
 }
 

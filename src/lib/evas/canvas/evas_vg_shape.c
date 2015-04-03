@@ -13,8 +13,15 @@ struct _Evas_VG_Shape_Data
 };
 
 Eina_Bool
-_evas_vg_shape_path_set(Eo *obj, Evas_VG_Shape_Data *pd, Evas_VG_Path_Command *op, double *points)
+_evas_vg_shape_path_set(Eo *obj, Evas_VG_Shape_Data *pd,
+                        Evas_VG_Path_Command *op, double *points)
 {
+   free(pd->points);
+   pd->points = NULL;
+   free(pd->op);
+   pd->op = NULL;
+
+   return evas_vg_path_dup(&pd->op, &pd->points, op, points);
 }
 
 Eina_Bool
