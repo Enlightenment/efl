@@ -2524,7 +2524,9 @@ _ector_cairo_software_surface_surface_set(Eo *obj, Ector_Cairo_Software_Surface_
    pd->height = height;
 
  end:
-   eo_do(obj, ector_cairo_surface_context_set(pd->ctx));
+   eo_do(obj,
+         ector_cairo_surface_context_set(pd->ctx),
+         ector_surface_size_set(pd->width, pd->height));
 }
 
 static void
