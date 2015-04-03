@@ -26,9 +26,6 @@ _evas_vg_root_node_render_pre(Eo *obj EINA_UNUSED,
    Eina_List *l;
    Eo *child;
 
-   if (!nd->changed) return ;
-   nd->changed = EINA_FALSE;
-
    EFL_VG_COMPUTE_MATRIX(current, parent, nd);
 
    EINA_LIST_FOREACH(pd->children, l, child)
