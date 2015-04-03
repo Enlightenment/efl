@@ -280,9 +280,12 @@ _efl_vg_shape_render_pre(Eo *obj EINA_UNUSED,
 {
    Efl_VG_Shape_Data *pd = data;
    Efl_VG_Base_Data *fill, *stroke_fill, *stroke_marker, *mask;
+   double xn = nd->x, yn = nd->y ;
 
    if (!nd->changed) return ;
    nd->changed = EINA_FALSE;
+
+   if(parent) eina_matrix3_point_transform(parent, nd->x, nd->y, &xn, &yn);
 
    EFL_VG_COMPUTE_MATRIX(current, parent, nd);
 
@@ -298,7 +301,7 @@ _efl_vg_shape_render_pre(Eo *obj EINA_UNUSED,
 
    eo_do(nd->renderer,
          ector_renderer_transformation_set(current),
-         ector_renderer_origin_set(nd->x, nd->y),
+         ector_renderer_origin_set(xn, yn),
          ector_renderer_color_set(nd->r, nd->g, nd->b, nd->a),
          ector_renderer_visibility_set(nd->visibility),
          ector_renderer_mask_set(mask ? mask->renderer : NULL),

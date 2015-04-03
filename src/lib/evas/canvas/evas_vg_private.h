@@ -57,10 +57,10 @@ _efl_vg_base_changed(Eo *obj)
    eo_do(obj, eo_event_callback_call(EFL_GFX_CHANGED, NULL));
 }
 
-#define EFL_VG_COMPUTE_MATRIX(Current, Parent, Nd)               \
-  Eina_Matrix3 *Current = Nd->m;                                 \
-  Eina_Matrix3 _matrix_tmp;                                      \
-                                                                 \
+#define EFL_VG_COMPUTE_MATRIX(Current, Parent, Nd)                      \
+  Eina_Matrix3 *Current = Nd->m;                                        \
+  Eina_Matrix3 _matrix_tmp, translate;                                  \
+                                                                        \
   if (Parent)                                                           \
     {                                                                   \
        if (Current)                                                     \
@@ -70,7 +70,11 @@ _efl_vg_base_changed(Eo *obj)
          }                                                              \
        else                                                             \
          {                                                              \
-            Current = Parent;                                           \
+            eina_matrix3_translate(&translate, -(Nd->x), -(Nd->y));     \
+            eina_matrix3_compose(Parent, &translate, &_matrix_tmp);     \
+            eina_matrix3_translate(&translate, (Nd->x), (Nd->y));       \
+            eina_matrix3_compose(&_matrix_tmp, &translate, &_matrix_tmp); \
+            Current = &_matrix_tmp;                                     \
          }                                                              \
     }
 
