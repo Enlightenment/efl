@@ -95,7 +95,7 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_draw(Eo *obj, 
 static Eina_Bool
 _ector_renderer_cairo_gradient_radial_ector_renderer_cairo_base_fill(Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd)
 {
-   if (!pd->pat || CHECK_CAIRO(pd->parent)) return EINA_FALSE;
+   if (!pd->pat) return EINA_FALSE;
 
    USE(obj, cairo_set_source, EINA_FALSE);
 

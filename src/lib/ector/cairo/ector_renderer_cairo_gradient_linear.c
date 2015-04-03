@@ -72,7 +72,7 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_generic_base_draw(Eo *obj,
 
    // FIXME: don't ignore clipping !
    gld = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_CLASS);
-   if (!pd->pat || !gld || CHECK_CAIRO(pd->parent)) return EINA_FALSE;
+   if (!pd->pat || !gld) return EINA_FALSE;
 
    USE(obj, cairo_rectangle, EINA_FALSE);
    USE(obj, cairo_fill, EINA_FALSE);
@@ -90,7 +90,7 @@ static Eina_Bool
 _ector_renderer_cairo_gradient_linear_ector_renderer_cairo_base_fill(Eo *obj,
                                                                      Ector_Renderer_Cairo_Gradient_Linear_Data *pd)
 {
-   if (!pd->pat || CHECK_CAIRO(pd->parent)) return EINA_FALSE;
+   if (!pd->pat) return EINA_FALSE;
 
    USE(obj, cairo_set_source, EINA_FALSE);
 
