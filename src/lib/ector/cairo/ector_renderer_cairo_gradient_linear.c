@@ -20,6 +20,9 @@ static void (*cairo_pattern_add_color_stop_rgba)(cairo_pattern_t *pattern, doubl
                                                  double red, double green, double blue, double alpha) = NULL;
 static void (*cairo_pattern_destroy)(cairo_pattern_t *pattern) = NULL;
 
+typedef enum _cairo_extend_t{cairo_extend}cairo_extend_t;
+static void (*cairo_pattern_set_extend)(cairo_pattern_t *pattern, cairo_extend_t extend) = NULL;
+
 typedef struct _Ector_Renderer_Cairo_Gradient_Linear_Data Ector_Renderer_Cairo_Gradient_Linear_Data;
 struct _Ector_Renderer_Cairo_Gradient_Linear_Data
 {
@@ -52,6 +55,9 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_generic_base_prepare(Eo *ob
      cairo_pattern_add_color_stop_rgba(pd->pat, gd->colors[i].offset,
                                        gd->colors[i].r, gd->colors[i].g,
                                        gd->colors[i].b, gd->colors[i].a);
+
+   USE(obj, cairo_pattern_set_extend, EINA_FALSE);
+   cairo_pattern_set_extend(pd->pat, gd->s);
 
    if (!pd->parent)
      {
