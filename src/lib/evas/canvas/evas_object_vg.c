@@ -119,7 +119,6 @@ _evas_vg_eo_base_constructor(Eo *eo_obj, Evas_VG_Data *pd)
 
    /* root node */
    pd->root = eo_add(EVAS_VG_ROOT_NODE_CLASS, eo_obj);
-   fprintf(stderr, "creating root node: %p\n", pd->root);
 
    eo_do(eo_obj, parent = eo_parent_get());
    evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
