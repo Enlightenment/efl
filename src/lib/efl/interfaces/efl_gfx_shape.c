@@ -56,29 +56,34 @@ _efl_gfx_path_length(const Efl_Gfx_Path_Command *commands,
 
 static inline Eina_Bool
 efl_gfx_path_grow(Efl_Gfx_Path_Command command,
-                  Efl_Gfx_Path_Command **commands, double **points,
+                  Efl_Gfx_Shape_Data *pd,
                   double **offset_point)
 {
    Efl_Gfx_Path_Command *cmd_tmp;
    double *pts_tmp;
    unsigned int cmd_length = 0, pts_length = 0;
 
-   _efl_gfx_path_length(*commands, &cmd_length, &pts_length);
+   cmd_length = pd->commands_count ? pd->commands_count : 1;
+   pts_length = pd->points_count;
 
    if (_efl_gfx_path_command_length(command))
      {
         pts_length += _efl_gfx_path_command_length(command);
-        pts_tmp = realloc(*points, pts_length * sizeof (double));
+        pts_tmp = realloc(pd->points, pts_length * sizeof (double));
         if (!pts_tmp) return EINA_FALSE;
 
-        *points = pts_tmp;
-        *offset_point = *points + pts_length - _efl_gfx_path_command_length(command);
+        pd->points = pts_tmp;
+        *offset_point = pd->points +
+          pts_length - _efl_gfx_path_command_length(command);
      }
 
-   cmd_tmp = realloc(*commands,
+   cmd_tmp = realloc(pd->commands,
                      (cmd_length + 1) * sizeof (Efl_Gfx_Path_Command));
    if (!cmd_tmp) return EINA_FALSE;
-   *commands = cmd_tmp;
+   pd->commands = cmd_tmp;
+
+   pd->commands_count = cmd_length + 1;
+   pd->points_count = pts_length;
 
    // Append the command
    cmd_tmp[cmd_length - 1] = command;
@@ -368,7 +373,7 @@ _efl_gfx_shape_append_move_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
    double *offset_point;
 
    if (!efl_gfx_path_grow(EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO,
-                          &pd->commands, &pd->points, &offset_point))
+                          pd, &offset_point))
      return ;
 
    offset_point[0] = x;
@@ -387,7 +392,7 @@ _efl_gfx_shape_append_line_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
    double *offset_point;
 
    if (!efl_gfx_path_grow(EFL_GFX_PATH_COMMAND_TYPE_LINE_TO,
-                          &pd->commands, &pd->points, &offset_point))
+                          pd, &offset_point))
      return ;
 
    offset_point[0] = x;
@@ -408,7 +413,7 @@ _efl_gfx_shape_append_cubic_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
    double *offset_point;
 
    if (!efl_gfx_path_grow(EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO,
-                          &pd->commands, &pd->points, &offset_point))
+                          pd, &offset_point))
      return ;
 
    offset_point[0] = x;
@@ -689,7 +694,7 @@ _efl_gfx_shape_append_close(Eo *obj, Efl_Gfx_Shape_Data *pd)
    double *offset_point;
 
    efl_gfx_path_grow(EFL_GFX_PATH_COMMAND_TYPE_CLOSE,
-                     &pd->commands, &pd->points, &offset_point);
+                     pd, &offset_point);
 
    eo_do(obj, eo_event_callback_call(EFL_GFX_CHANGED, NULL));
 }
