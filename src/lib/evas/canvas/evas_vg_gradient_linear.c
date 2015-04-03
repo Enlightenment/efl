@@ -12,7 +12,7 @@ struct _Evas_VG_Gradient_Linear_Data
 };
 
 void
-_evas_vg_gradient_linear_start_set(Eo *obj EINA_UNUSED,
+_evas_vg_gradient_linear_efl_graphics_gradient_linear_start_set(Eo *obj EINA_UNUSED,
                                    Evas_VG_Gradient_Linear_Data *pd,
                                    double x, double y)
 {
@@ -21,7 +21,7 @@ _evas_vg_gradient_linear_start_set(Eo *obj EINA_UNUSED,
 }
 
 void
-_evas_vg_gradient_linear_start_get(Eo *obj EINA_UNUSED,
+_evas_vg_gradient_linear_efl_graphics_gradient_linear_start_get(Eo *obj EINA_UNUSED,
                                    Evas_VG_Gradient_Linear_Data *pd,
                                    double *x, double *y)
 {
@@ -30,7 +30,7 @@ _evas_vg_gradient_linear_start_get(Eo *obj EINA_UNUSED,
 }
 
 void
-_evas_vg_gradient_linear_end_set(Eo *obj EINA_UNUSED,
+_evas_vg_gradient_linear_efl_graphics_gradient_linear_end_set(Eo *obj EINA_UNUSED,
                                  Evas_VG_Gradient_Linear_Data *pd,
                                  double x, double y)
 {
@@ -39,7 +39,7 @@ _evas_vg_gradient_linear_end_set(Eo *obj EINA_UNUSED,
 }
 
 void
-_evas_vg_gradient_linear_end_get(Eo *obj EINA_UNUSED,
+_evas_vg_gradient_linear_efl_graphics_gradient_linear_end_get(Eo *obj EINA_UNUSED,
                                  Evas_VG_Gradient_Linear_Data *pd,
                                  double *x, double *y)
 {
