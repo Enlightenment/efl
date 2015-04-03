@@ -14,7 +14,7 @@ generated_efl_cxx_bindings = \
 		 lib/efl/interfaces/efl_gfx_fill.eo.hh \
 		 lib/efl/interfaces/efl_gfx_view.eo.hh \
 	         lib/efl/interfaces/efl_gfx_shape.eo.hh \
-		 lib/efl/interfaces/efl_gfx_gradient.eo.hh \
+		 lib/efl/interfaces/efl_gfx_gradient_base.eo.hh \
 		 lib/efl/interfaces/efl_gfx_gradient_linear.eo.hh \
 		 lib/efl/interfaces/efl_gfx_gradient_radial.eo.hh
 

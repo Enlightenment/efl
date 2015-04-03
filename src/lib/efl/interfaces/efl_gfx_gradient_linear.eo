@@ -1,4 +1,4 @@
-interface Efl.Gfx.Gradient_Linear (Efl.Gfx.Gradient)
+interface Efl.Gfx.Gradient.Linear (Efl.Gfx.Gradient.Base)
 {
    legacy_prefix: null;
    properties {
