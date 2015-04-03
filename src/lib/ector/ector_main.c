@@ -22,7 +22,7 @@
 #include <Ector.h>
 #include "ector_private.h"
 
-int _ector_log_dom = 0;
+int _ector_log_dom_global = 0;
 
 static int _ector_main_count = 0;
 
@@ -35,8 +35,8 @@ ector_init(void)
    eina_init();
    eo_init();
 
-   _ector_log_dom = eina_log_domain_register("ector", ECTOR_DEFAULT_LOG_COLOR);
-   if (_ector_log_dom < 0)
+   _ector_log_dom_global = eina_log_domain_register("ector", ECTOR_DEFAULT_LOG_COLOR);
+   if (_ector_log_dom_global < 0)
      {
         EINA_LOG_ERR("Could not register log domain: ector");
         goto on_error;
@@ -44,7 +44,7 @@ ector_init(void)
 
    _ector_main_count = 1;
 
-   eina_log_timing(_ector_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
+   eina_log_timing(_ector_log_dom_global, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
 
    return _ector_main_count;
 
@@ -68,13 +68,13 @@ ector_shutdown(void)
    if (EINA_LIKELY(_ector_main_count > 0))
      return _ector_main_count;
 
-   eina_log_timing(_ector_log_dom,
+   eina_log_timing(_ector_log_dom_global,
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
 
    eo_shutdown();
 
-   eina_log_domain_unregister(_ector_log_dom);
+   eina_log_domain_unregister(_ector_log_dom_global);
 
    eina_shutdown();
    return _ector_main_count;
