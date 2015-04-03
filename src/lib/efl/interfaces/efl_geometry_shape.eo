@@ -1,0 +1,82 @@
+interface Efl.Geometry.Shape
+{
+   legacy_prefix: null;
+   properties {
+      stroke_scale {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double s;
+	 }
+      }
+      stroke_color {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    int r;
+	    int g;
+	    int b;
+	    int a;
+	 }
+      }
+      stroke_width {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double w;
+	 }
+      }
+      stroke_location {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    double centered;
+	 }
+      }
+      stroke_dash {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	     const(Efl_Geometry_Dash) *dash;
+	     uint length;
+	 }
+      }
+      stroke_cap {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    Efl_Geometry_Cap c;
+	 }
+      }
+      stroke_join {
+         set {
+	 }
+	 get {
+	 }
+	 values {
+	    Efl_Geometry_Join j;
+	 }
+      }
+   }
+   methods {
+      path_set {
+         return: bool;
+	 params {
+	    @in const(Efl_Geometry_Path_Command) *op;
+	    @in const(double) *points;
+	 }
+      }
+   }
+}

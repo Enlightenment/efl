@@ -10,3 +10,5 @@
 #include "interfaces/efl_player.eo.c"
 #include "interfaces/efl_text.eo.c"
 #include "interfaces/efl_text_properties.eo.c"
+
+#include "interfaces/efl_geometry_shape.eo.c"
