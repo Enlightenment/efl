@@ -42,6 +42,9 @@ static void (*cairo_set_line_width)(cairo_t *cr, double width) = NULL;
 static void (*cairo_set_line_cap)(cairo_t *cr, cairo_line_cap_t line_cap) = NULL;
 static void (*cairo_set_line_join)(cairo_t *cr, cairo_line_join_t line_join) = NULL;
 
+static void (*cairo_save)(cairo_t *cr) = NULL;
+static void (*cairo_restore)(cairo_t *cr) = NULL;
+
 typedef struct _Ector_Renderer_Cairo_Shape_Data Ector_Renderer_Cairo_Shape_Data;
 struct _Ector_Renderer_Cairo_Shape_Data
 {
@@ -152,6 +155,9 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
    int r, g, b, a;
    if (pd->path == NULL) return EINA_FALSE;
 
+   USE(obj, cairo_save, EINA_FALSE);
+   cairo_save(pd->parent->cairo);
+
    eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, ector_renderer_draw(op, clips, mul_col));
 
    USE(obj, cairo_new_path, EINA_FALSE);
@@ -198,6 +204,8 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
         cairo_fill(pd->parent->cairo);
      }
 
+   USE(obj, cairo_restore, EINA_FALSE);
+   cairo_restore(pd->parent->cairo);
    return EINA_TRUE;
 }
 
