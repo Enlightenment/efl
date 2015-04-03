@@ -1,12 +1,12 @@
 
 ### Library
 ector_eolian_files = \
-	lib/ector/ector_surface.eo \
-	lib/ector/ector_renderer_base.eo \
-	lib/ector/ector_renderer_shape.eo \
-	lib/ector/ector_renderer_gradient.eo \
-	lib/ector/ector_renderer_gradient_radial.eo \
-	lib/ector/ector_renderer_gradient_linear.eo
+	lib/ector/ector_generic_surface.eo \
+	lib/ector/ector_renderer_generic_base.eo \
+	lib/ector/ector_renderer_generic_shape.eo \
+	lib/ector/ector_renderer_generic_gradient.eo \
+	lib/ector/ector_renderer_generic_gradient_radial.eo \
+	lib/ector/ector_renderer_generic_gradient_linear.eo
 
 ector_eolian_c = $(ector_eolian_files:%.eo=%.eo.c)
 ector_eolian_h = $(ector_eolian_files:%.eo=%.eo.h)

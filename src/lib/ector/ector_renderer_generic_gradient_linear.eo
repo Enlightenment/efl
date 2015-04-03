@@ -1,4 +1,4 @@
-abstract Ector.Renderer.Gradient_Linear (Ector.Renderer.Gradient, Efl.Graphics.Gradient_Linear)
+abstract Ector.Renderer.Generic.Gradient_Linear (Ector.Renderer.Generic.Gradient, Efl.Graphics.Gradient_Linear)
 {
    eo_prefix: ector_renderer_gradient_linear;
    legacy_prefix: null;

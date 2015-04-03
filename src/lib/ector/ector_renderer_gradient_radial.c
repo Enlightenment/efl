@@ -7,8 +7,8 @@
 
 #include "ector_private.h"
 
-typedef struct _Ector_Renderer_Gradient_Radial_Data Ector_Renderer_Gradient_Radial_Data;
-struct _Ector_Renderer_Gradient_Radial_Data
+typedef struct _Ector_Renderer_Generic_Gradient_Radial_Data Ector_Renderer_Generic_Gradient_Radial_Data;
+struct _Ector_Renderer_Generic_Gradient_Radial_Data
 {
    struct {
       double x, y;
@@ -18,7 +18,7 @@ struct _Ector_Renderer_Gradient_Radial_Data
 
 void
 _ector_renderer_gradient_radial_efl_graphics_gradient_radial_center_set(Eo *obj EINA_UNUSED,
-                                                                        Ector_Renderer_Gradient_Radial_Data *pd,
+                                                                        Ector_Renderer_Generic_Gradient_Radial_Data *pd,
                                                                         double x, double y)
 {
    pd->radial.x = x;
@@ -27,7 +27,7 @@ _ector_renderer_gradient_radial_efl_graphics_gradient_radial_center_set(Eo *obj 
 
 void
 _ector_renderer_gradient_radial_efl_graphics_gradient_radial_center_get(Eo *obj EINA_UNUSED,
-                                                                        Ector_Renderer_Gradient_Radial_Data *pd,
+                                                                        Ector_Renderer_Generic_Gradient_Radial_Data *pd,
                                                                         double *x, double *y)
 {
    if (x) *x = pd->radial.x;
@@ -36,7 +36,7 @@ _ector_renderer_gradient_radial_efl_graphics_gradient_radial_center_get(Eo *obj 
 
 void
 _ector_renderer_gradient_radial_efl_graphics_gradient_radial_radius_set(Eo *obj EINA_UNUSED,
-                                                                        Ector_Renderer_Gradient_Radial_Data *pd,
+                                                                        Ector_Renderer_Generic_Gradient_Radial_Data *pd,
                                                                         double r)
 {
    pd->radius = r;
@@ -44,7 +44,7 @@ _ector_renderer_gradient_radial_efl_graphics_gradient_radial_radius_set(Eo *obj 
 
 double
 _ector_renderer_gradient_radial_efl_graphics_gradient_radial_radius_get(Eo *obj EINA_UNUSED,
-                                                                        Ector_Renderer_Gradient_Radial_Data *pd)
+                                                                        Ector_Renderer_Generic_Gradient_Radial_Data *pd)
 {
    return pd->radius;
 }
@@ -52,7 +52,7 @@ _ector_renderer_gradient_radial_efl_graphics_gradient_radial_radius_get(Eo *obj 
 
 void
 _ector_renderer_gradient_radial_efl_graphics_gradient_radial_focal_set(Eo *obj EINA_UNUSED,
-                                                                       Ector_Renderer_Gradient_Radial_Data *pd,
+                                                                       Ector_Renderer_Generic_Gradient_Radial_Data *pd,
                                                                        double x, double y)
 {
    pd->focal.x = x;
@@ -61,11 +61,11 @@ _ector_renderer_gradient_radial_efl_graphics_gradient_radial_focal_set(Eo *obj E
 
 void
 _ector_renderer_gradient_radial_efl_graphics_gradient_radial_focal_get(Eo *obj EINA_UNUSED,
-                                                                       Ector_Renderer_Gradient_Radial_Data *pd,
+                                                                       Ector_Renderer_Generic_Gradient_Radial_Data *pd,
                                                                        double *x, double *y)
 {
    if (x) *x = pd->focal.x;
    if (y) *y = pd->focal.y;
 }
 
-#include "ector_renderer_gradient_radial.eo.c"
+#include "ector_renderer_generic_gradient_radial.eo.c"

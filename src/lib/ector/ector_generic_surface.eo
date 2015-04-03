@@ -1,4 +1,4 @@
-abstract Ector.Surface (Eo.Base)
+abstract Ector.Generic.Surface (Eo.Base)
 {
    eo_prefix: ector_surface;
    properties {

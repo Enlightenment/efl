@@ -1,4 +1,4 @@
-abstract Ector.Renderer.Gradient_Radial (Ector.Renderer.Gradient, Efl.Graphics.Gradient_Radial)
+abstract Ector.Renderer.Generic.Gradient_Radial (Ector.Renderer.Generic.Gradient, Efl.Graphics.Gradient_Radial)
 {
    eo_prefix: ector_renderer_gradient_radial;
    legacy_prefix: null;

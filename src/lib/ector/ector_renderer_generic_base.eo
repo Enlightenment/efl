@@ -1,4 +1,4 @@
-abstract Ector.Renderer.Base (Eo.Base)
+abstract Ector.Renderer.Generic.Base (Eo.Base)
 {
    eo_prefix: ector_renderer;
    legacy_prefix: null;

@@ -7,8 +7,8 @@
 
 #include "ector_private.h"
 
-typedef struct _Ector_Renderer_Gradient_Linear_Data Ector_Renderer_Gradient_Linear_Data;
-struct _Ector_Renderer_Gradient_Linear_Data
+typedef struct _Ector_Renderer_Generic_Gradient_Linear_Data Ector_Renderer_Generic_Gradient_Linear_Data;
+struct _Ector_Renderer_Generic_Gradient_Linear_Data
 {
    struct {
       double x, y;
@@ -17,7 +17,7 @@ struct _Ector_Renderer_Gradient_Linear_Data
 
 void
 _ector_renderer_gradient_linear_efl_graphics_gradient_linear_start_set(Eo *obj EINA_UNUSED,
-                                                                       Ector_Renderer_Gradient_Linear_Data *pd,
+                                                                       Ector_Renderer_Generic_Gradient_Linear_Data *pd,
                                                                        double x, double y)
 {
    pd->start.x = x;
@@ -26,7 +26,7 @@ _ector_renderer_gradient_linear_efl_graphics_gradient_linear_start_set(Eo *obj E
 
 void
 _ector_renderer_gradient_linear_efl_graphics_gradient_linear_start_get(Eo *obj EINA_UNUSED,
-                                                                       Ector_Renderer_Gradient_Linear_Data *pd,
+                                                                       Ector_Renderer_Generic_Gradient_Linear_Data *pd,
                                                                        double *x, double *y)
 {
    if (x) *x = pd->start.x;
@@ -35,7 +35,7 @@ _ector_renderer_gradient_linear_efl_graphics_gradient_linear_start_get(Eo *obj E
 
 void
 _ector_renderer_gradient_linear_efl_graphics_gradient_linear_end_set(Eo *obj EINA_UNUSED,
-                                                                     Ector_Renderer_Gradient_Linear_Data *pd,
+                                                                     Ector_Renderer_Generic_Gradient_Linear_Data *pd,
                                                                      double x, double y)
 {
    pd->end.x = x;
@@ -44,11 +44,11 @@ _ector_renderer_gradient_linear_efl_graphics_gradient_linear_end_set(Eo *obj EIN
 
 void
 _ector_renderer_gradient_linear_efl_graphics_gradient_linear_end_get(Eo *obj EINA_UNUSED,
-                                                                     Ector_Renderer_Gradient_Linear_Data *pd,
+                                                                     Ector_Renderer_Generic_Gradient_Linear_Data *pd,
                                                                      double *x, double *y)
 {
    if (x) *x = pd->end.x;
    if (y) *y = pd->end.y;
 }
 
-#include "ector_renderer_gradient_linear.eo.c"
+#include "ector_renderer_generic_gradient_linear.eo.c"

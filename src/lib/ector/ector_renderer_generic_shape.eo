@@ -1,4 +1,4 @@
-class Ector.Renderer.Shape (Ector.Renderer.Base, Efl.Graphics.Shape)
+class Ector.Renderer.Generic.Shape (Ector.Renderer.Generic.Base, Efl.Graphics.Shape)
 {
    eo_prefix: ector_renderer_shape;
    legacy_prefix: null;
@@ -40,7 +40,6 @@ class Ector.Renderer.Shape (Ector.Renderer.Base, Efl.Graphics.Shape)
       Efl.Graphics.Shape.stroke_cap;
       Efl.Graphics.Shape.stroke_join;
       Efl.Graphics.Shape.path_set;
-      Ector.Renderer.Base.prepare;
       Eo.Base.constructor;
       Eo.Base.destructor;
    }
