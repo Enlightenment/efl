@@ -1712,6 +1712,8 @@ EAPI Evas_Object *evas_object_vg_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_N
 
 #include "canvas/evas_vg.eo.legacy.h"
 
+#ifdef EFL_BETA_API_SUPPORT
+
 /**
  * Creates a new vector shape object \.
  *
@@ -2441,6 +2443,8 @@ EAPI void evas_vg_gradient_radial_focal_set(Eo *obj, double x, double y);
 EAPI void evas_vg_gradient_radial_focal_get(Eo *obj, double *x, double *y);
 
 #include "canvas/efl_vg_gradient_radial.eo.legacy.h"
+
+#endif
 
 /**
  * @}
