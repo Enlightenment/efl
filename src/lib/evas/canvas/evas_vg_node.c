@@ -518,14 +518,6 @@ _efl_vg_base_efl_gfx_stack_above_get(Eo *obj, Efl_VG_Base_Data *pd EINA_UNUSED)
    return above;
 }
 
-static Eina_Bool
-_efl_vg_base_original_bound_get(Eo *obj,
-                                Efl_VG_Base_Data *pd,
-                                Eina_Rectangle *r)
-{
-   return EINA_FALSE;
-}
-
 EAPI Eina_Bool
 evas_vg_node_visible_get(Eo *obj)
 {
