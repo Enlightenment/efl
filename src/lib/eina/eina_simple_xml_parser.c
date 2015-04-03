@@ -556,6 +556,63 @@ eina_simple_xml_attributes_parse(const char *buf, unsigned buflen, Eina_Simple_X
    return EINA_TRUE;
 }
 
+EAPI Eina_Bool
+eina_simple_xml_attribute_w3c_parse(const char *buf, Eina_Simple_XML_Attribute_Cb func, const void *data)
+{
+   const char *end;
+   char *key;
+   char *val;
+   char *next;
+
+   if (!buf) return EINA_FALSE;
+
+   end = buf + strlen(buf);
+   key = alloca(end - buf + 1);
+   val = alloca(end - buf + 1);
+
+   if (buf == end) return EINA_TRUE;
+
+   do
+     {
+        char *sep = strchr(buf, ':');
+        next = strchr(buf, ';');
+
+        key[0] = '\0';
+        val[0] = '\0';
+
+        if (next == NULL && sep != NULL)
+          {
+             memcpy(key, buf, sep - buf);
+             key[sep - buf] = '\0';
+
+             memcpy(val, sep + 1, end - sep - 1);
+             val[end - sep - 1] = '\0';
+          }
+        else if (sep < next && sep != NULL)
+          {
+             memcpy(key, buf, sep - buf);
+             key[sep - buf] = '\0';
+
+             memcpy(val, sep + 1, next - sep - 1);
+             val[next - sep - 1] = '\0';
+          }
+        else if (next)
+          {
+             memcpy(key, buf, next - buf);
+             key[next - buf] = '\0';
+          }
+
+        if (key[0])
+          if (!func((void*) data, key, val))
+            return EINA_FALSE;
+
+        buf = next + 1;
+     }
+   while (next != NULL);
+
+   return EINA_TRUE;
+}
+
 /* Node loader *************************************************************/
 
 EAPI Eina_Simple_XML_Attribute *
