@@ -1,7 +1,6 @@
-abstract Evas.VG_Gradient (Evas.VG_Node, Efl.Gfx.Gradient.Base)
+abstract Efl.VG.Gradient (Efl.VG.Base, Efl.Gfx.Gradient.Base)
 {
-   eo_prefix: evas_vg_gradient;
-   legacy_prefix: null;
+   legacy_prefix: evas_vg_gradient;
    implements {
       Efl.Gfx.Gradient.Base.stop.set;
       Efl.Gfx.Gradient.Base.stop.get;

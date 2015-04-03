@@ -3,52 +3,52 @@
 
 #include "evas_vg_private.h"
 
-#define MY_CLASS EVAS_VG_CONTAINER_CLASS
+#define MY_CLASS EFL_VG_CONTAINER_CLASS
 
 static void
-_evas_vg_container_render_pre(Eo *obj EINA_UNUSED,
-                              Eina_Matrix3 *parent,
-                              Ector_Surface *s,
-                              void *data,
-                              Evas_VG_Node_Data *nd)
+_efl_vg_container_render_pre(Eo *obj EINA_UNUSED,
+                             Eina_Matrix3 *parent,
+                             Ector_Surface *s,
+                             void *data,
+                             Efl_VG_Base_Data *nd)
 {
-   Evas_VG_Container_Data *pd = data;
+   Efl_VG_Container_Data *pd = data;
    Eina_List *l;
    Eo *child;
 
    if (!nd->changed) return ;
    nd->changed = EINA_FALSE;
 
-   EVAS_VG_COMPUTE_MATRIX(current, parent, nd);
+   EFL_VG_COMPUTE_MATRIX(current, parent, nd);
 
    EINA_LIST_FOREACH(pd->children, l, child)
      _evas_vg_render_pre(child, s, current);
 }
 
 static void
-_evas_vg_container_eo_base_constructor(Eo *obj,
-                                       Evas_VG_Container_Data *pd)
+_efl_vg_container_eo_base_constructor(Eo *obj,
+                                      Efl_VG_Container_Data *pd)
 {
-   Evas_VG_Node_Data *nd;
+   Efl_VG_Base_Data *nd;
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
 
-   nd = eo_data_scope_get(obj, EVAS_VG_NODE_CLASS);
-   nd->render_pre = _evas_vg_container_render_pre;
+   nd = eo_data_scope_get(obj, EFL_VG_BASE_CLASS);
+   nd->render_pre = _efl_vg_container_render_pre;
    nd->data = pd;
 }
 
 static void
-_evas_vg_container_eo_base_destructor(Eo *obj,
-                                      Evas_VG_Container_Data *pd EINA_UNUSED)
+_efl_vg_container_eo_base_destructor(Eo *obj,
+                                     Efl_VG_Container_Data *pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 static Eina_Bool
-_evas_vg_container_evas_vg_node_bound_get(Eo *obj EINA_UNUSED,
-                                          Evas_VG_Container_Data *pd,
-                                          Eina_Rectangle *r)
+_efl_vg_container_efl_vg_base_bound_get(Eo *obj EINA_UNUSED,
+                                        Efl_VG_Container_Data *pd,
+                                        Eina_Rectangle *r)
 {
    Eina_Rectangle s;
    Eina_Bool first = EINA_TRUE;
@@ -63,12 +63,12 @@ _evas_vg_container_evas_vg_node_bound_get(Eo *obj EINA_UNUSED,
      {
         if (first)
           {
-             eo_do(child, evas_vg_node_bound_get(r));
+             eo_do(child, efl_vg_bound_get(r));
              first = EINA_FALSE;
           }
         else
           {
-             eo_do(child, evas_vg_node_bound_get(&s));
+             eo_do(child, efl_vg_bound_get(&s));
              eina_rectangle_union(r, &s);
           }
      }
@@ -77,4 +77,4 @@ _evas_vg_container_evas_vg_node_bound_get(Eo *obj EINA_UNUSED,
 }
 
 
-#include "evas_vg_container.eo.c"
+#include "efl_vg_container.eo.c"

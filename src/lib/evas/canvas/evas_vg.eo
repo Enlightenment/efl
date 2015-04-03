@@ -15,7 +15,7 @@ class Evas.VG (Evas.Object, Efl.File, Efl.Gfx.Fill, Efl.Gfx.View)
             */
          }
          values {
-            Evas_VG_Node *container; /*@ Root node of the VG canvas */
+            Efl_VG *container; /*@ Root node of the VG canvas */
          }
       }
    }

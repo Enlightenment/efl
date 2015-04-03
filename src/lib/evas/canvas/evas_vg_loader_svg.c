@@ -116,7 +116,7 @@ _tag_linearGradient_handler(Evas_SVG_Loader *loader,
                                     _attrs_id_parser, &id);
 
    if (!id) return EINA_FALSE;
-   node = eo_add(EVAS_VG_GRADIENT_LINEAR_CLASS, NULL);
+   node = eo_add(EFL_VG_GRADIENT_LINEAR_CLASS, NULL);
    if (!node) return EINA_FALSE;
 
    eina_hash_direct_add(loader->definition, id, node);
@@ -481,7 +481,7 @@ _tag_g_handler(Evas_SVG_Loader *loader,
 
    parent = eina_array_data_get(loader->stack, eina_array_count(loader->stack) - 1);
 
-   node = eo_add(EVAS_VG_CONTAINER_CLASS, parent);
+   node = eo_add(EFL_VG_CONTAINER_CLASS, parent);
    eina_array_push(loader->stack, node);
 
    return EINA_TRUE;

@@ -1,7 +1,7 @@
-abstract Evas.VG_Node (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
+abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
 {
-   eo_prefix: evas_vg_node;
-   legacy_prefix: null;
+   eo_prefix: efl_vg;
+   legacy_prefix: evas_vg_node;
    properties {
       transformation {
          set {
@@ -45,7 +45,7 @@ abstract Evas.VG_Node (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
 	 get {
 	 }
 	 values {
-	    Evas_VG_Node *m;
+	    Efl_VG *m;
 	 }
       }
 /*      quality {

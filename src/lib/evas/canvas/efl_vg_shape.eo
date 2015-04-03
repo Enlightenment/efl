@@ -1,7 +1,6 @@
-class Evas.VG_Shape (Evas.VG_Node, Efl.Gfx.Shape)
+class Efl.VG.Shape (Efl.VG.Base, Efl.Gfx.Shape)
 {
-   eo_prefix: evas_vg_shape;
-   legacy_prefix: null;
+   legacy_prefix: evas_vg_shape;
    properties {
       fill {
          set {
@@ -9,7 +8,7 @@ class Evas.VG_Shape (Evas.VG_Node, Efl.Gfx.Shape)
 	 get {
 	 }
 	 values {
-	    Evas_VG_Node *f;
+	    Efl_VG *f;
 	 }
       }
       stroke_fill {
@@ -18,7 +17,7 @@ class Evas.VG_Shape (Evas.VG_Node, Efl.Gfx.Shape)
 	 get {
 	 }
 	 values {
-	    Evas_VG_Node *f;
+	    Efl_VG *f;
 	 }
       }
       stroke_marker {
@@ -27,7 +26,7 @@ class Evas.VG_Shape (Evas.VG_Node, Efl.Gfx.Shape)
 	 get {
 	 }
 	 values {
-	    Evas_VG_Node *m;
+	    Efl_VG *m;
 	 }
       }
    }
@@ -41,7 +40,7 @@ class Evas.VG_Shape (Evas.VG_Node, Efl.Gfx.Shape)
       Efl.Gfx.Shape.stroke_join;
       Efl.Gfx.Base.color_part.set;
       Efl.Gfx.Base.color_part.get;
-      Evas.VG_Node.bound_get;
+      Efl.VG.Base.bound_get;
       Eo.Base.constructor;
       Eo.Base.destructor;
    }

@@ -2,7 +2,7 @@
 #include "evas_private.h"
 
 #include "evas_vg_private.h"
-#include "evas_vg_root_node.eo.h"
+#include "efl_vg_root_node.eo.h"
 
 #define MY_CLASS EVAS_VG_CLASS
 
@@ -16,8 +16,8 @@ typedef struct _Evas_VG_Data      Evas_VG_Data;
 
 struct _Evas_VG_Data
 {
-   void         *engine_data;
-   Evas_VG_Node *root;
+   void   *engine_data;
+   Efl_VG *root;
 
    /* Opening an SVG file (could actually be inside an eet section */
    Eina_File    *f;
@@ -89,7 +89,7 @@ evas_object_vg_add(Evas *e)
    return eo_obj;
 }
 
-Evas_VG_Node *
+Efl_VG *
 _evas_vg_root_node_get(Eo *obj EINA_UNUSED, Evas_VG_Data *pd)
 {
    return pd->root;
@@ -116,7 +116,7 @@ _evas_vg_eo_base_constructor(Eo *eo_obj, Evas_VG_Data *pd)
    obj->type = o_type;
 
    /* root node */
-   pd->root = eo_add(EVAS_VG_ROOT_NODE_CLASS, eo_obj);
+   pd->root = eo_add(EFL_VG_ROOT_NODE_CLASS, eo_obj);
    eo_ref(pd->root);
 
    eo_do(eo_obj, parent = eo_parent_get());
@@ -125,14 +125,14 @@ _evas_vg_eo_base_constructor(Eo *eo_obj, Evas_VG_Data *pd)
 
 static void
 _evas_vg_render(Evas_Object_Protected_Data *obj,
-                void *output, void *context, void *surface, Evas_VG_Node *n,
+                void *output, void *context, void *surface, Efl_VG *n,
                 Eina_Array *clips, int x, int y, Eina_Bool do_async)
 {
-   Evas_VG_Container_Data *vd = eo_data_scope_get(n, EVAS_VG_CONTAINER_CLASS);
+   Efl_VG_Container_Data *vd = eo_data_scope_get(n, EFL_VG_CONTAINER_CLASS);
 
-   if (eo_isa(n, EVAS_VG_CONTAINER_CLASS))
+   if (eo_isa(n, EFL_VG_CONTAINER_CLASS))
      {
-        Evas_VG_Node *child;
+        Efl_VG *child;
         Eina_List *l;
 
         EINA_LIST_FOREACH(vd->children, l, child)
@@ -142,9 +142,9 @@ _evas_vg_render(Evas_Object_Protected_Data *obj,
      }
    else
      {
-        Evas_VG_Node_Data *nd;
+        Efl_VG_Base_Data *nd;
 
-        nd = eo_data_scope_get(n, EVAS_VG_NODE_CLASS);
+        nd = eo_data_scope_get(n, EFL_VG_BASE_CLASS);
 
         obj->layer->evas->engine.func->ector_renderer_draw(output, context, surface, nd->renderer, clips, x, y, do_async);
      }

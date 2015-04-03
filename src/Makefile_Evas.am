@@ -33,14 +33,14 @@ evas_eolian_files = \
 	lib/evas/canvas/evas_3d_scene.eo\
 	lib/evas/canvas/evas_3d_object.eo \
 	lib/evas/canvas/evas_vg.eo \
-	lib/evas/canvas/evas_vg_node.eo \
-	lib/evas/canvas/evas_vg_container.eo \
-	lib/evas/canvas/evas_vg_shape.eo \
-	lib/evas/canvas/evas_vg_root_node.eo \
-	lib/evas/canvas/evas_vg_gradient.eo \
-	lib/evas/canvas/evas_vg_gradient_radial.eo \
-	lib/evas/canvas/evas_vg_gradient_linear.eo \
-	lib/evas/canvas/evas_vg_image.eo
+	lib/evas/canvas/efl_vg_base.eo \
+	lib/evas/canvas/efl_vg_container.eo \
+	lib/evas/canvas/efl_vg_shape.eo \
+	lib/evas/canvas/efl_vg_root_node.eo \
+	lib/evas/canvas/efl_vg_gradient.eo \
+	lib/evas/canvas/efl_vg_gradient_radial.eo \
+	lib/evas/canvas/efl_vg_gradient_linear.eo \
+	lib/evas/canvas/efl_vg_image.eo
 
 evas_eolian_c = $(evas_eolian_files:%.eo=%.eo.c)
 evas_eolian_h = $(evas_eolian_files:%.eo=%.eo.h) \

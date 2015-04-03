@@ -1710,13 +1710,79 @@ EAPI Evas_Object *evas_object_rectangle_add(Evas *e) EINA_WARN_UNUSED_RESULT EIN
  */
 EAPI Evas_Object *evas_object_vg_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
-#include "canvas/evas_vg_node.eo.legacy.h"
 #include "canvas/evas_vg.eo.legacy.h"
-#include "canvas/evas_vg_shape.eo.legacy.h"
-#include "canvas/evas_vg_gradient.eo.legacy.h"
-#include "canvas/evas_vg_gradient_linear.eo.legacy.h"
-#include "canvas/evas_vg_gradient_radial.eo.legacy.h"
-#include "canvas/evas_vg_image.eo.legacy.h"
+
+EAPI Eina_Bool evas_vg_node_visible_get(Eo *obj);
+EAPI void evas_vg_node_visible_set(Eo *obj, Eina_Bool v);
+EAPI void evas_vg_node_color_get(Eo *obj, int *r, int *g, int *b, int *a);
+EAPI void evas_vg_node_color_set(Eo *obj, int r, int g, int b, int a);
+EAPI void evas_vg_node_geometry_get(Eo *obj, int *x, int *y, int *w, int *h);
+EAPI void evas_vg_node_geometry_set(Eo *obj, int x, int y, int w, int h);
+EAPI void evas_vg_node_stack_below(Eo *obj, Eo *below);
+EAPI void evas_vg_node_stack_above(Eo *obj, Eo *above);
+EAPI void evas_vg_node_raise(Eo *obj);
+EAPI void evas_vg_node_lower(Eo *obj);
+
+#include "canvas/efl_vg_base.eo.legacy.h"
+
+EAPI double evas_vg_shape_stroke_scale_get(Eo *obj);
+EAPI void evas_vg_shape_stroke_scale_set(Eo *obj, double s);
+EAPI void evas_vg_shape_stroke_color_get(Eo *obj, int *r, int *g, int *b, int *a);
+EAPI void evas_vg_shape_stroke_color_set(Eo *obj, int r, int g, int b, int a);
+EAPI double evas_vg_shape_stroke_width_get(Eo *obj);
+EAPI void evas_vg_shape_stroke_width_set(Eo *obj, double w);
+EAPI double evas_vg_shape_stroke_location_get(Eo *obj);
+EAPI void evas_vg_shape_stroke_location_set(Eo *obj, double centered);
+EAPI void evas_vg_shape_stroke_dash_get(Eo *obj, const Efl_Gfx_Dash **dash, unsigned int *length);
+EAPI void evas_vg_shape_stroke_dash_set(Eo *obj, const Efl_Gfx_Dash *dash, unsigned int length);
+EAPI Efl_Gfx_Cap evas_vg_shape_stroke_cap_get(Eo *obj);
+EAPI void evas_vg_shape_stroke_cap_set(Eo *obj, Efl_Gfx_Cap c);
+EAPI Efl_Gfx_Join evas_vg_shape_stroke_join_get(Eo *obj);
+EAPI void evas_vg_shape_stroke_join_set(Eo *obj, Efl_Gfx_Join j);
+EAPI void evas_vg_shape_shape_path_set(Eo *obj, const Efl_Gfx_Path_Command *op, const double *points);
+EAPI void evas_vg_shape_shape_path_get(Eo *obj, const Efl_Gfx_Path_Command **op, const double **points);
+EAPI void evas_vg_shape_shape_path_length_get(Eo *obj, unsigned int *commands, unsigned int *points);
+EAPI void evas_vg_shape_shape_current_get(Eo *obj, double *x, double *y);
+EAPI void evas_vg_shape_shape_current_ctrl_get(Eo *obj, double *x, double *y);
+EAPI void evas_vg_shape_shape_dup(Eo *obj, Eo *dup_from);
+EAPI void evas_vg_shape_shape_reset(Eo *obj);
+EAPI void evas_vg_shape_shape_append_move_to(Eo *obj, double x, double y);
+EAPI void evas_vg_shape_shape_append_line_to(Eo *obj, double x, double y);
+EAPI void evas_vg_shape_shape_append_quadratic_to(Eo *obj, double x, double y, double ctrl_x, double ctrl_y);
+EAPI void evas_vg_shape_shape_append_squadratic_to(Eo *obj, double x, double y);
+EAPI void evas_vg_shape_shape_append_cubic_to(Eo *obj, double x, double y, double ctrl_x0, double ctrl_y0, double ctrl_x1, double ctrl_y1);
+EAPI void evas_vg_shape_shape_append_scubic_to(Eo *obj, double x, double y, double ctrl_x, double ctrl_y);
+EAPI void evas_vg_shape_shape_append_arc_to(Eo *obj, double x, double y, double rx, double ry, double angle, Eina_Bool large_arc, Eina_Bool sweep);
+EAPI void evas_vg_shape_shape_append_close(Eo *obj);
+EAPI void evas_vg_shape_shape_append_circle(Eo *obj, double x, double y, double radius);
+EAPI void evas_vg_shape_shape_append_svg_path(Eo *obj, const char *svg_path_data);
+EAPI Eina_Bool evas_vg_shape_shape_interpolate(Eo *obj, const Eo *from, const Eo *to, double pos_map);
+EAPI Eina_Bool evas_vg_shape_shape_equal_commands(Eo *obj, const Eo *with);
+
+#include "canvas/efl_vg_shape.eo.legacy.h"
+
+EAPI void evas_vg_gradient_stop_set(Eo *obj, const Efl_Gfx_Gradient_Stop *colors, unsigned int length);
+EAPI void evas_vg_gradient_stop_get(Eo *obj, const Efl_Gfx_Gradient_Stop **colors, unsigned int *length);
+EAPI void evas_vg_gradient_spread_set(Eo *obj, Efl_Gfx_Gradient_Spread s);
+EAPI Efl_Gfx_Gradient_Spread evas_vg_gradient_spread_get(Eo *obj);
+
+#include "canvas/efl_vg_gradient.eo.legacy.h"
+
+EAPI void evas_vg_gradient_linear_start_set(Eo *obj, double x, double y);
+EAPI void evas_vg_gradient_linear_start_get(Eo *obj, double *x, double *y);
+EAPI void evas_vg_gradient_linear_end_set(Eo *obj, double x, double y);
+EAPI void evas_vg_gradient_linear_end_get(Eo *obj, double *x, double *y);
+
+#include "canvas/efl_vg_gradient_linear.eo.legacy.h"
+
+EAPI void evas_vg_gradient_radial_center_set(Eo *obj, double x, double y);
+EAPI void evas_vg_gradient_radial_center_get(Eo *obj, double *x, double *y);
+EAPI void evas_vg_gradient_radial_radius_set(Eo *obj, double r);
+EAPI double evas_vg_gradient_radial_radius_get(Eo *obj);
+EAPI void evas_vg_gradient_radial_focal_set(Eo *obj, double x, double y);
+EAPI void evas_vg_gradient_radial_focal_get(Eo *obj, double *x, double *y);
+
+#include "canvas/efl_vg_gradient_radial.eo.legacy.h"
 
 /**
  * @}

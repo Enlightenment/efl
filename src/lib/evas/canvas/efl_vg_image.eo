@@ -1,7 +1,6 @@
-class Evas.VG_Image (Evas.VG_Node, Efl.File)
+class Efl.VG.Image (Efl.VG.Base, Efl.File)
 {
-   eo_prefix: evas_vg_image;
-   legacy_prefix: null;
+   legacy_prefix: evas_vg_image;
    properties {
       position {
          set {

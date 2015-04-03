@@ -846,11 +846,6 @@ typedef enum _Evas_3D_Material_Attrib
 #include "canvas/evas_3d_object.eo.h"
 
 /**
- * Type of abstract VG node
- */
-typedef Eo      Evas_VG_Node;
-
-/**
  * @ingroup Evas_Object_VG
  *
  * @{
@@ -860,10 +855,10 @@ typedef Eo      Evas_VG_Node;
  * @}
  */
 
-#include "canvas/evas_vg_node.eo.h"
-#include "canvas/evas_vg_container.eo.h"
-#include "canvas/evas_vg_shape.eo.h"
-#include "canvas/evas_vg_gradient.eo.h"
-#include "canvas/evas_vg_gradient_linear.eo.h"
-#include "canvas/evas_vg_gradient_radial.eo.h"
-#include "canvas/evas_vg_image.eo.h"
+#include "canvas/efl_vg_base.eo.h"
+#include "canvas/efl_vg_container.eo.h"
+#include "canvas/efl_vg_shape.eo.h"
+#include "canvas/efl_vg_gradient.eo.h"
+#include "canvas/efl_vg_gradient_linear.eo.h"
+#include "canvas/efl_vg_gradient_radial.eo.h"
+#include "canvas/efl_vg_image.eo.h"
