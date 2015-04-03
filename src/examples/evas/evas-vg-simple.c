@@ -349,7 +349,7 @@ Point _curves_for_arc(int x, int y, int w, int h,
     return startPoint;
 }
 
-void _arcto(Evas_VG_Node *obj, int x, int y, int width, int height, int startAngle, int sweepLength)
+void _arcto(Efl_VG *obj, int x, int y, int width, int height, int startAngle, int sweepLength)
 {
     int point_count;
 
@@ -359,27 +359,25 @@ void _arcto(Evas_VG_Node *obj, int x, int y, int width, int height, int startAng
     int cy = y + (height)/2;
     int i;
 
-    eo_do(obj,
-          efl_gfx_shape_append_move_to(cx, cy);
-
-          efl_gfx_shape_append_line_to(curve_start.x, curve_start.y);
-          for (i = 0; i < point_count; i += 3)
-            {
-               efl_gfx_shape_append_cubic_to(pts[i+2].x, pts[i+2].y,
+    evas_vg_shape_shape_append_move_to(obj, cx, cy);
+    evas_vg_shape_shape_append_line_to(obj, curve_start.x, curve_start.y);
+    for (i = 0; i < point_count; i += 3)
+      {
+         evas_vg_shape_shape_append_cubic_to(obj,
+                                             pts[i+2].x, pts[i+2].y,
                                              pts[i].x, pts[i].y,
                                              pts[i+1].x, pts[i+1].y);
-            }
-          efl_gfx_shape_append_close());
+      }
+    evas_vg_shape_shape_append_close(obj);
 }
 
-void _rect_add(Evas_VG_Node *obj, int x, int y, int w, int h)
+void _rect_add(Efl_VG *obj, int x, int y, int w, int h)
 {
-   eo_do(obj,
-         efl_gfx_shape_append_move_to(x, y);
-         efl_gfx_shape_append_line_to(x + w, y);
-         efl_gfx_shape_append_line_to(x + w, y +h);
-         efl_gfx_shape_append_line_to(x, y +h);
-         efl_gfx_shape_append_close());
+   evas_vg_shape_shape_append_move_to(obj, x, y);
+   evas_vg_shape_shape_append_line_to(obj, x + w, y);
+   evas_vg_shape_shape_append_line_to(obj, x + w, y +h);
+   evas_vg_shape_shape_append_line_to(obj, x, y +h);
+   evas_vg_shape_shape_append_close(obj);
 }
 
 
@@ -441,19 +439,18 @@ vector_set(int x, int y, int w, int h)
    Eina_Matrix3 matrix;
    eina_matrix3_rotate(&matrix, radian);
 
-   Evas_VG_Node *root = evas_object_vg_root_node_get(d.vg);
+   Efl_VG *root = evas_object_vg_root_node_get(d.vg);
    //eo_do(root, evas_vg_node_transformation_set(&matrix));
 
-   Evas_VG_Node *bg = eo_add(EVAS_VG_SHAPE_CLASS, root);
+   Efl_VG *bg = eo_add(EFL_VG_SHAPE_CLASS, root);
    _rect_add(bg, 0, 0 , vg_w, vg_h);
-   eo_do(bg,
-         evas_vg_node_origin_set(0, 0),
-         efl_gfx_shape_stroke_width_set(1.0),
-         efl_gfx_color_set(128, 128, 128, 80));
+   evas_vg_node_origin_set(bg, 0,0);
+   evas_vg_shape_stroke_width_set(bg, 1.0);
+   evas_vg_node_color_set(bg, 80, 80, 80, 80);
 
-   Evas_VG_Node *shape = eo_add(EVAS_VG_SHAPE_CLASS, root);
-   Evas_VG_Node *rgradient = eo_add(EVAS_VG_GRADIENT_RADIAL_CLASS, root);
-   Evas_VG_Node *lgradient = eo_add(EVAS_VG_GRADIENT_LINEAR_CLASS, root);
+   Efl_VG *shape = eo_add(EFL_VG_SHAPE_CLASS, root);
+   Efl_VG *rgradient = eo_add(EFL_VG_GRADIENT_RADIAL_CLASS, root);
+   Efl_VG *lgradient = eo_add(EFL_VG_GRADIENT_LINEAR_CLASS, root);
 
    _arcto(shape, 0, 0, 100, 100, 25, 330);
 
@@ -474,65 +471,56 @@ vector_set(int x, int y, int w, int h)
    stops[2].a = 255;
    stops[2].offset = 1;
 
-   eo_do(rgradient,
-         evas_vg_node_origin_set(10,10),
-         efl_gfx_gradient_stop_set(stops, 3),
-         efl_gfx_gradient_spread_set(EFL_GFX_GRADIENT_SPREAD_REFLECT),
-         efl_gfx_gradient_stop_set(stops, 3),
-         efl_gfx_gradient_radial_center_set(30, 30),
-         efl_gfx_gradient_radial_radius_set(80));
+   evas_vg_node_origin_set(rgradient, 10, 10);
+   evas_vg_gradient_spread_set(rgradient, EFL_GFX_GRADIENT_SPREAD_REFLECT);
+   evas_vg_gradient_stop_set(rgradient, stops, 3);
+   evas_vg_gradient_radial_center_set(rgradient, 30, 30);
+   evas_vg_gradient_radial_radius_set(rgradient, 80);
 
-   eo_do(lgradient,
-         evas_vg_node_origin_set(10,10),
-         efl_gfx_gradient_stop_set(stops, 3),
-         efl_gfx_gradient_spread_set(EFL_GFX_GRADIENT_SPREAD_REFLECT),
-         efl_gfx_gradient_stop_set(stops, 3),
-         efl_gfx_gradient_linear_start_set(10,10),
-         efl_gfx_gradient_linear_end_set(50,50));
+   evas_vg_node_origin_set(lgradient, 10, 10);
+   evas_vg_gradient_stop_set(lgradient, stops, 3);
+   evas_vg_gradient_spread_set(lgradient, EFL_GFX_GRADIENT_SPREAD_REFLECT);
+   evas_vg_gradient_stop_set(lgradient, stops, 3);
+   evas_vg_gradient_linear_start_set(lgradient, 10, 10);
+   evas_vg_gradient_linear_end_set(lgradient, 50, 50);
 
-   eo_do(shape,
-         evas_vg_node_origin_set(10, 10),
-         evas_vg_shape_fill_set(rgradient),
-         efl_gfx_shape_stroke_scale_set(2.0),
-         efl_gfx_shape_stroke_width_set(1.0),
-         efl_gfx_color_set(0, 0, 255, 255),
-         efl_gfx_shape_stroke_color_set(0, 0, 255, 128));
+   evas_vg_node_origin_set(shape, 10, 10);
+   evas_vg_shape_fill_set(shape, rgradient);
+   evas_vg_shape_stroke_scale_set(shape, 2.0);
+   evas_vg_shape_stroke_width_set(shape, 1.0);
+   evas_vg_node_color_set(shape, 0, 0, 255, 255);
+   evas_vg_shape_stroke_color_set(shape, 0, 0, 255, 128);
 
-   Evas_VG_Node *rect = eo_add(EVAS_VG_SHAPE_CLASS, root);
+   Efl_VG *rect = eo_add(EFL_VG_SHAPE_CLASS, root);
    _rect_add(rect, 0, 0, 100, 100);
-   eo_do(rect,
-         evas_vg_node_origin_set(100, 100),
-         evas_vg_shape_fill_set(lgradient),
-         efl_gfx_shape_stroke_width_set(2.0),
-         efl_gfx_shape_stroke_join_set(EFL_GFX_JOIN_ROUND),
-         efl_gfx_shape_stroke_color_set(255, 255, 255, 255));
+   evas_vg_node_origin_set(rect, 100, 100);
+   evas_vg_shape_fill_set(rect, lgradient);
+   evas_vg_shape_stroke_width_set(rect, 2.0);
+   evas_vg_shape_stroke_join_set(rect, EFL_GFX_JOIN_ROUND);
+   evas_vg_shape_stroke_color_set(rect, 255, 255, 255, 255);
 
-
-   Evas_VG_Node *rect1 = eo_add(EVAS_VG_SHAPE_CLASS, root);
+   Efl_VG *rect1 = eo_add(EFL_VG_SHAPE_CLASS, root);
    _rect_add(rect1, 0, 0, 70, 70);
-   eo_do(rect1,
-         evas_vg_node_origin_set(50, 70),
-         efl_gfx_shape_stroke_scale_set(2),
-         efl_gfx_shape_stroke_width_set(8.0),
-         efl_gfx_shape_stroke_join_set(EFL_GFX_JOIN_ROUND),
-         efl_gfx_shape_stroke_color_set(0, 100, 80, 100));
+   evas_vg_node_origin_set(rect1, 50, 70);
+   evas_vg_shape_stroke_scale_set(rect1, 2);
+   evas_vg_shape_stroke_width_set(rect1, 8.0);
+   evas_vg_shape_stroke_join_set(rect1, EFL_GFX_JOIN_ROUND);
+   evas_vg_shape_stroke_color_set(rect1, 0, 100, 80, 100);
 
-   Evas_VG_Node *circle = eo_add(EVAS_VG_SHAPE_CLASS, root);
+   Efl_VG *circle = eo_add(EFL_VG_SHAPE_CLASS, root);
    _arcto(circle, 0, 0, 250, 100, 30, 300);
-   eo_do(circle,
-         evas_vg_shape_fill_set(lgradient),
-         //evas_vg_node_transformation_set(&matrix),
-         evas_vg_node_origin_set(50,50),
-         efl_gfx_color_set(50, 0, 0, 50));
+   evas_vg_shape_fill_set(circle, lgradient);
+   //evas_vg_node_transformation_set(&matrix),
+   evas_vg_node_origin_set(circle, 50,50);
+   evas_vg_node_color_set(circle, 50, 0, 0, 50);
 
    // Foreground
-   Evas_VG_Node *fg = eo_add(EVAS_VG_SHAPE_CLASS, root);
+   Efl_VG *fg = eo_add(EFL_VG_SHAPE_CLASS, root);
    _rect_add(fg, 0, 0, vg_w, vg_h);
-   eo_do(fg,
-         evas_vg_node_origin_set(0, 0),
-         efl_gfx_shape_stroke_width_set(5.0),
-         efl_gfx_shape_stroke_join_set(EFL_GFX_JOIN_ROUND),
-         efl_gfx_shape_stroke_color_set(70, 70, 0, 70));
+   evas_vg_node_origin_set(fg, 0, 0);
+   evas_vg_shape_stroke_width_set(fg, 5.0);
+   evas_vg_shape_stroke_join_set(fg, EFL_GFX_JOIN_ROUND);
+   evas_vg_shape_stroke_color_set(fg, 70, 70, 0, 70);
 }
 
 int
@@ -570,4 +558,3 @@ error:
    ecore_evas_shutdown();
    return -1;
 }
-
