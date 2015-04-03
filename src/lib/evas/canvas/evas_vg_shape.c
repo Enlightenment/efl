@@ -238,12 +238,13 @@ _evas_vg_shape_render_pre(Eo *obj EINA_UNUSED,
                           Evas_VG_Node_Data *nd)
 {
    Evas_VG_Shape_Data *pd = data;
+   Evas_VG_Node_Data *fill, *stroke_fill, *stroke_marker, *mask;
    EVAS_VG_COMPUTE_MATRIX(current, parent, nd);
 
-   _evas_vg_render_pre(pd->fill, s, current);
-   _evas_vg_render_pre(pd->stroke.fill, s, current);
-   _evas_vg_render_pre(pd->stroke.marker, s, current);
-   _evas_vg_render_pre(nd->mask, s, current);
+   fill = _evas_vg_render_pre(pd->fill, s, current);
+   stroke_fill = _evas_vg_render_pre(pd->stroke.fill, s, current);
+   stroke_marker = _evas_vg_render_pre(pd->stroke.marker, s, current);
+   mask = _evas_vg_render_pre(nd->mask, s, current);
 
    if (!nd->renderer)
      {
@@ -255,10 +256,10 @@ _evas_vg_shape_render_pre(Eo *obj EINA_UNUSED,
          ector_renderer_origin_set(nd->x, nd->y),
          ector_renderer_color_set(nd->r, nd->g, nd->b, nd->a),
          ector_renderer_visibility_set(nd->visibility),
-         ector_renderer_mask_set(nd->mask),
-         ector_renderer_shape_fill_set(pd->fill),
-         ector_renderer_shape_stroke_fill_set(pd->stroke.fill),
-         ector_renderer_shape_stroke_marker_set(pd->stroke.marker),
+         ector_renderer_mask_set(mask->renderer),
+         ector_renderer_shape_fill_set(fill->renderer),
+         ector_renderer_shape_stroke_fill_set(stroke_fill->renderer),
+         ector_renderer_shape_stroke_marker_set(stroke_marker->renderer),
          efl_graphics_shape_stroke_scale_set(pd->stroke.scale),
          efl_graphics_shape_stroke_color_set(pd->stroke.r,
                                              pd->stroke.g,

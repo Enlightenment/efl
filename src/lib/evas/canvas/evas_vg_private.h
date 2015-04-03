@@ -37,14 +37,18 @@ struct _Evas_VG_Gradient_Data
    Efl_Graphics_Gradient_Spread s;
 };
 
-static inline void
+static inline Evas_VG_Node *
 _evas_vg_render_pre(Evas_VG_Node *child, Ector_Surface *s, Eina_Matrix3 *m)
 {
-   Evas_VG_Node_Data *child_nd;
+   Evas_VG_Node_Data *child_nd = NULL;
 
    // FIXME: Prevent infinite loop
-   child_nd = eo_data_scope_get(child, EVAS_VG_NODE_CLASS);
-   child_nd->render_pre(child, m, s, child_nd->data, child_nd);
+   if (child)
+     child_nd = eo_data_scope_get(child, EVAS_VG_NODE_CLASS);
+   if (child_nd)
+     child_nd->render_pre(child, m, s, child_nd->data, child_nd);
+
+   return child_nd;
 }
 
 #define EVAS_VG_COMPUTE_MATRIX(Current, Parent, Nd)              \
