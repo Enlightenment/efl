@@ -3534,21 +3534,25 @@ eng_ector_renderer_draw(void *data EINA_UNUSED, void *context, void *surface, Ec
      }
 
    c = eina_array_new(8);
-   EINA_ARRAY_ITER_NEXT(clips, i, r, it)
+   if (clips)
      {
-        Eina_Rectangle *rc;
+        EINA_ARRAY_ITER_NEXT(clips, i, r, it)
+          {
+             Eina_Rectangle *rc;
 
-        rc = eina_rectangle_new(r->x, r->y, r->w, r->h);
-        if (!rc) continue;
+             rc = eina_rectangle_new(r->x, r->y, r->w, r->h);
+             if (!rc) continue;
 
-        if (eina_rectangle_intersection(rc, &clip))
-          eina_array_push(c, rc);
-        else
-          eina_rectangle_free(rc);
+             if (eina_rectangle_intersection(rc, &clip))
+               eina_array_push(c, rc);
+             else
+               eina_rectangle_free(rc);
+          }
+
+        if (eina_array_count(c) == 0 &&
+            eina_array_count(clips) > 0)
+          return ;
      }
-   if (eina_array_count(c) == 0 &&
-       eina_array_count(clips) > 0)
-     return ;
 
    if (eina_array_count(c) == 0)
      eina_array_push(c, eina_rectangle_new(clip.x, clip.y, clip.w, clip.h));
