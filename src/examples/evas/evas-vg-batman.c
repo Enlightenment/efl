@@ -56,7 +56,6 @@ static const char *batmans_path[] = {
   "M 202,170 C 188,115 157,108 124,105 146,84.3 171,71.5 199,70.2 211,98.6 243,103 277,106 279,99.3 281,92.6 283,86 285,91.9 287,97.9 290,104 293,104 297,104 300,104 303,104 307,104 310,104 313,97.9 315,91.9 317,86 319,92.6 321,99.3 323,106 357,103 389,98.6 401,70.2 429,71.5 454,84.3 476,105 443,108 412,115 398,170 349,157 318,175 300,214 282,175 251,157 202,170 Z",
   "M 220,179 C 200,127 150,130 123,175 122,110 160,85.1 201,64 208,99.2 243,111 268,92.9 278,86.1 284,68.2 287,40.7 289,49.6 292,58.4 294,67.3 296,67.3 298,67.3 300,67.3 302,67.3 304,67.3 306,67.3 308,58.4 311,49.6 313,40.7 316,68.2 322,86.1 332,92.9 357,111 392,99.3 399,64 440,85.1 478,110 477,175 450,130 400,127 380,179 355,155 305,208 300,247 295,208 245,155 220,179 Z",
   "M 166,154 C 179,119 154,95.4 114,79.3 155,79.1 197,78.9 239,78.7 242,103 250,109 283,109 289,109 290,93.9 291,83.7 292,88.3 292,92.9 293,97.5 295,97.5 298,97.5 300,97.5 302,97.5 305,97.5 307,97.5 308,92.9 308,88.3 309,83.7 310,93.9 311,109 317,109 350,109 358,103 361,78.7 403,78.9 445,79.1 486,79.3 446,95.4 421,119 434,154 377,151 320,151 300,207 280,151 223,151 166,154 Z",
-  "M 166,154 C 179,119 154,95.4 114,79.3 155,79.1 197,78.9 239,78.7 242,103 250,109 283,109 289,109 290,93.9 291,83.7 292,88.3 292,92.9 293,97.5 295,97.5 298,97.5 300,97.5 302,97.5 305,97.5 307,97.5 308,92.9 308,88.3 309,83.7 310,93.9 311,109 317,109 350,109 358,103 361,78.7 403,78.9 445,79.1 486,79.3 446,95.4 421,119 434,154 377,151 320,151 300,207 280,151 223,151 166,154 Z"
 };
 
 static void
@@ -130,6 +129,17 @@ main(void)
    for (i = 0; i < sizeof (batmans_path) / sizeof (batmans_path[0]); i++)
      {
         batmans_vg[i] = evas_vg_shape_add(NULL);
+       evas_vg_node_color_set(batmans_vg[i], 0, 0, 0, 255);
+       evas_vg_shape_stroke_color_set(batmans_vg[i], 128, 10,10, 128);
+       evas_vg_shape_stroke_width_set(batmans_vg[i], 4.0);
+       evas_vg_shape_stroke_join_set(batmans_vg[i], EFL_GFX_JOIN_MITER);
+       if(i % 2)
+       {
+          evas_vg_shape_stroke_color_set(batmans_vg[i], 10, 10,128, 128);
+          evas_vg_shape_stroke_width_set(batmans_vg[i], 2.0);
+          evas_vg_node_color_set(batmans_vg[i], 120, 120, 120, 255);
+          evas_vg_shape_stroke_join_set(batmans_vg[i], EFL_GFX_JOIN_ROUND);
+       }
         evas_vg_shape_shape_append_svg_path(batmans_vg[i], batmans_path[i]);
      }
 
@@ -145,12 +155,12 @@ main(void)
    circle = evas_vg_shape_add(root);
    evas_vg_shape_shape_append_circle(circle, WIDTH / 2, HEIGHT / 2, 200);
    evas_vg_node_color_set(circle, 255, 255, 255, 255);
-   evas_vg_shape_stroke_color_set(circle, 0, 0, 0, 0);
+   evas_vg_shape_stroke_width_set(circle, 1);
+   evas_vg_shape_stroke_color_set(circle, 255, 0, 0, 255);
 
    batman = evas_vg_shape_add(root);
-   evas_vg_node_origin_set(batman, 100, 150);
    evas_vg_node_color_set(batman, 0, 0, 0, 255);
-   evas_vg_shape_stroke_color_set(batman, 0, 0, 0, 0);
+   evas_vg_node_origin_set(batman, 100, 150);
    evas_vg_shape_shape_append_move_to(batman, 256, 213);
    evas_vg_shape_shape_dup(batman, batmans_vg[0]);
 
