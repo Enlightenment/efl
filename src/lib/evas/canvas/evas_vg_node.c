@@ -1,6 +1,8 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+#include "evas_vg_private.h"
+
 #include <string.h>
 
 #define MY_CLASS EVAS_VG_NODE_CLASS
@@ -113,27 +115,79 @@ _evas_vg_node_mask_get(Eo *obj EINA_UNUSED, Evas_VG_Node_Data *pd)
 
 // Parent should be a container otherwise dismissing the stacking operation
 void
-_evas_vg_node_eo_base_constructor(Eo *obj, Evas_VG_Node_Data *pd)
+_evas_vg_node_eo_base_constructor(Eo *obj, Evas_VG_Node_Data *pd EINA_UNUSED)
 {
+   Evas_VG_Container_Data *cd;
    Eo *parent;
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
+
    eo_do(obj, parent = eo_parent_get());
-   if (!eo_isa(parent, EVAS_VG_CONTAINER_CLASS))
-     eo_error_set(obj);
+   cd = eo_data_scope_get(parent, EVAS_VG_CONTAINER_CLASS);
+   if (!cd)
+     {
+        eo_error_set(obj);
+        return ;
+     }
+   cd->children = eina_list_append(cd->children, obj);
 }
 
 void
-_evas_vg_node_eo_base_parent_set(Eo *obj, Evas_VG_Node_Data *pd, Eo *parent)
+_evas_vg_node_eo_base_parent_set(Eo *obj,
+                                 Evas_VG_Node_Data *pd EINA_UNUSED,
+                                 Eo *parent)
 {
+   Evas_VG_Container_Data *cd;
+   Evas_VG_Container_Data *old_cd;
+   Eo *old_parent;
+
+   cd = eo_data_scope_get(parent, EVAS_VG_CONTAINER_CLASS);
+   if (!cd)
+     {
+        eo_error_set(obj);
+        return ;
+     }
+
+   eo_do(obj, old_parent = eo_parent_get());
+   old_cd = eo_data_scope_get(old_parent, EVAS_VG_CONTAINER_CLASS);
+   if (!old_cd)
+     {
+        eo_error_set(obj);
+        return ;
+     }
+
+   // FIXME: this may become slow with to much object
+   old_cd->children = eina_list_remove(old_cd->children, obj);
+
+   eo_do_super(obj, MY_CLASS, eo_parent_set(parent));
+   cd->children = eina_list_append(cd->children, obj);
 }
 
 void
 _evas_vg_node_raise(Eo *obj, Evas_VG_Node_Data *pd EINA_UNUSED)
 {
+   Evas_VG_Container_Data *cd;
+   Eina_List *lookup, *next;
    Eo *parent;
 
    eo_do(obj, parent = eo_parent_get());
+   cd = eo_data_scope_get(parent, EVAS_VG_CONTAINER_CLASS);
+   if (!cd) goto on_error;
+
+   // FIXME: this could become slow with to much object
+   lookup = eina_list_data_find_list(cd->children, obj);
+   if (!lookup) goto on_error;
+
+   next = eina_list_next(lookup);
+   if (!next) return ;
+
+   cd->children = eina_list_remove_list(cd->children, lookup);
+   cd->children = eina_list_append_relative_list(cd->children, obj, next);
+
+   return ;
+
+ on_error:
+   eo_error_set(obj);
 }
 
 void
@@ -141,9 +195,28 @@ _evas_vg_node_stack_above(Eo *obj,
                           Evas_VG_Node_Data *pd EINA_UNUSED,
                           Evas_VG_Node *above)
 {
+   Evas_VG_Container_Data *cd;
+   Eina_List *lookup, *ref;
    Eo *parent;
 
    eo_do(obj, parent = eo_parent_get());
+   cd = eo_data_scope_get(parent, EVAS_VG_CONTAINER_CLASS);
+   if (!cd) goto on_error;
+
+   // FIXME: this could become slow with to much object
+   lookup = eina_list_data_find_list(cd->children, obj);
+   if (!lookup) goto on_error;
+
+   ref = eina_list_data_find_list(cd->children, above);
+   if (!ref) goto on_error;
+
+   cd->children = eina_list_remove_list(cd->children, lookup);
+   cd->children = eina_list_append_relative_list(cd->children, obj, ref);
+
+   return ;
+
+ on_error:
+   eo_error_set(obj);
 }
 
 void
@@ -151,17 +224,55 @@ _evas_vg_node_stack_below(Eo *obj,
                           Evas_VG_Node_Data *pd EINA_UNUSED,
                           Evas_Object *below)
 {
+   Evas_VG_Container_Data *cd;
+   Eina_List *lookup, *ref;
    Eo *parent;
 
    eo_do(obj, parent = eo_parent_get());
+   cd = eo_data_scope_get(parent, EVAS_VG_CONTAINER_CLASS);
+   if (!cd) goto on_error;
+
+   // FIXME: this could become slow with to much object
+   lookup = eina_list_data_find_list(cd->children, obj);
+   if (!lookup) goto on_error;
+
+   ref = eina_list_data_find_list(cd->children, below);
+   if (!ref) goto on_error;
+
+   cd->children = eina_list_remove_list(cd->children, lookup);
+   cd->children = eina_list_prepend_relative_list(cd->children, obj, ref);
+
+   return ;
+
+ on_error:
+   eo_error_set(obj);
 }
 
 void
 _evas_vg_node_lower(Eo *obj, Evas_VG_Node_Data *pd EINA_UNUSED)
 {
+   Evas_VG_Container_Data *cd;
+   Eina_List *lookup, *prev;
    Eo *parent;
 
    eo_do(obj, parent = eo_parent_get());
+   cd = eo_data_scope_get(parent, EVAS_VG_CONTAINER_CLASS);
+   if (!cd) goto on_error;
+
+   // FIXME: this could become slow with to much object
+   lookup = eina_list_data_find_list(cd->children, obj);
+   if (!lookup) goto on_error;
+
+   prev = eina_list_prev(lookup);
+   if (!prev) return ;
+
+   cd->children = eina_list_remove_list(cd->children, lookup);
+   cd->children = eina_list_prepend_relative_list(cd->children, obj, prev);
+
+   return ;
+
+ on_error:
+   eo_error_set(obj);
 }
 
 #include "evas_vg_node.eo.c"
