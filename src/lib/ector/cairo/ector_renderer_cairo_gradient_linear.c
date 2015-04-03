@@ -71,14 +71,15 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_generic_base_draw(Eo *obj,
 {
    Ector_Renderer_Generic_Gradient_Linear_Data *gld;
 
-   // FIXME: don't ignore clipping and offset !
+   // FIXME: don't ignore clipping !
    gld = eo_data_scope_get(obj, ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_CLASS);
    if (!pd->pat || !gld || CHECK_CAIRO(pd->parent)) return EINA_FALSE;
 
    USE(obj, cairo_rectangle, EINA_FALSE);
 
-   cairo_rectangle(pd->parent->cairo, gld->start.x, gld->start.y,
-                   gld->end.x - gld->start.x, gld->end.y - gld->start.y);
+   cairo_rectangle(pd->parent->cairo, gld->start.x - x, gld->start.y - y,
+                   gld->end.x - gld->start.x,
+                   gld->end.y - gld->start.y);
    eo_do(obj, ector_renderer_cairo_base_fill());
    cairo_fill(pd->parent->cairo);
 
@@ -92,7 +93,6 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_cairo_base_fill(Eo *obj,
    if (!pd->pat || CHECK_CAIRO(pd->parent)) return EINA_FALSE;
 
    USE(obj, cairo_set_source, EINA_FALSE);
-   USE(obj, cairo_fill, EINA_FALSE);
 
    cairo_set_source(pd->parent->cairo, pd->pat);
 
@@ -113,7 +113,7 @@ _ector_renderer_cairo_gradient_linear_eo_base_destructor(Eo *obj,
    eo_do(obj, parent = eo_parent_get());
    eo_data_xunref(parent, pd->parent, obj);
 
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, eo_constructor());
+   eo_do_super(obj, ECTOR_RENDERER_CAIRO_GRADIENT_LINEAR_CLASS, eo_destructor());
 }
 
 void
