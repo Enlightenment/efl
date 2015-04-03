@@ -143,6 +143,15 @@ _efl_gfx_shape_path_set(Eo *obj, Efl_Gfx_Shape_Data *pd,
    double *pts;
    unsigned int cmds_length = 0, pts_length = 0;
 
+   if (!commands)
+     {
+        free(pd->commands); pd->commands = NULL;
+        free(pd->points); pd->points = NULL;
+        pd->current.x = pd->current.y = 0;
+        pd->current_ctrl.x = pd->current_ctrl.y = 0;
+        goto end;
+     }
+
    _efl_gfx_path_length(commands, &cmds_length, &pts_length);
 
    cmds = realloc(pd->commands,
@@ -165,6 +174,7 @@ _efl_gfx_shape_path_set(Eo *obj, Efl_Gfx_Shape_Data *pd,
                                 &pd->current.x, &pd->current.y,
                                 &pd->current_ctrl.x, &pd->current_ctrl.y);
 
+ end:
    eo_do(obj, eo_event_callback_call(EFL_GFX_CHANGED, NULL));
 }
 
