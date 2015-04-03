@@ -312,7 +312,7 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
    double *pts, *from_pts, *to_pts;
    unsigned int i, j;
    Efl_Gfx_Property property_from, property_to;
-   Efl_Gfx_Dash *dash;
+   Efl_Gfx_Dash *dash = NULL;
 
    from_pd = eo_data_scope_get(from, EFL_GFX_SHAPE_MIXIN);
    to_pd = eo_data_scope_get(to, EFL_GFX_SHAPE_MIXIN);
@@ -369,9 +369,11 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
                                     to_pd->current_ctrl.y,
                                     pos_map);
 
-   dash = malloc(sizeof (Efl_Gfx_Dash) * property_to.dash_length);
-   if (dash)
+   if (property_to.dash_length)
      {
+        dash = malloc(sizeof (Efl_Gfx_Dash) * property_to.dash_length);
+        if (!dash) return EINA_FALSE;
+
         for (i = 0; i < property_to.dash_length; i++)
           {
              dash[i].length = interpolate(property_from.dash[i].length,
@@ -380,10 +382,7 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
                                        property_to.dash[i].gap, pos_map);
           }
      }
-   else
-     {
-        property_to.dash_length = 0;
-     }
+
 
    eo_do(obj,
          efl_gfx_shape_stroke_scale_set(interpolate(property_to.scale, property_from.scale, pos_map)),
