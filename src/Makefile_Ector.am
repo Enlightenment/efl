@@ -16,6 +16,14 @@ ector_eolian_files += \
 	lib/ector/cairo/ector_renderer_cairo_gradient_linear.eo \
 	lib/ector/cairo/ector_renderer_cairo_gradient_radial.eo
 
+# Handle FreeType rasterizer
+ector_eolian_files += \
+	lib/ector/software/ector_software_surface.eo \
+	lib/ector/software/ector_renderer_software_base.eo \
+	lib/ector/software/ector_renderer_software_shape.eo \
+	lib/ector/software/ector_renderer_software_gradient_radial.eo \
+	lib/ector/software/ector_renderer_software_gradient_linear.eo
+
 ector_eolian_c = $(ector_eolian_files:%.eo=%.eo.c)
 ector_eolian_h = $(ector_eolian_files:%.eo=%.eo.h)
 
@@ -32,9 +40,10 @@ lib_LTLIBRARIES += lib/ector/libector.la
 installed_ectormainheadersdir = $(includedir)/ector-@VMAJ@
 dist_installed_ectormainheaders_DATA = \
 lib/ector/Ector.h \
-lib/ector/cairo/Ector_Cairo.h
+lib/ector/cairo/Ector_Cairo.h \
+lib/ector/software/Ector_Software.h
 
-# And the cairo header
+# And the generic implementation
 
 lib_ector_libector_la_SOURCES = \
 lib/ector/ector_main.c \
@@ -52,6 +61,19 @@ lib/ector/cairo/ector_renderer_cairo_gradient_radial.c \
 lib/ector/cairo/ector_renderer_cairo_shape.c \
 lib/ector/cairo/ector_renderer_cairo_base.c \
 lib/ector/cairo/ector_cairo_surface.c
+
+# And the Freetype rasterizer
+
+lib_ector_libector_la_SOURCES += \
+lib/ector/software/ector_renderer_software_gradient_linear.c \
+lib/ector/software/ector_renderer_software_gradient_radial.c \
+lib/ector/software/ector_renderer_software_shape.c \
+lib/ector/software/ector_software_gradient.c \
+lib/ector/software/ector_software_rasterizer.c \
+lib/ector/software/ector_software_surface.c \
+lib/ector/software/sw_ft_math.c \
+lib/ector/software/sw_ft_raster.c \
+lib/ector/software/sw_ft_stroker.c
 
 lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECTOR_CFLAGS@ \
@@ -96,4 +118,10 @@ endif
 
 EXTRA_DIST += \
 src/lib/ector/ector_private.h \
-src/lib/ector/cairo/ector_cairo_private,h
+src/lib/ector/cairo/ector_cairo_private.h \
+src/lib/ector/software/ector_blend_private.h \
+src/lib/ector/software/ector_software_private.h \
+src/lib/ector/software/sw_ft_math.h \
+src/lib/ector/software/sw_ft_raster.h \
+src/lib/ector/software/sw_ft_stroker.h \
+src/lib/ector/software/sw_ft_types.h
