@@ -86,7 +86,6 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
    }
    methods {
       bounds_get {
-         return: bool @warn_unused;
 	 params {
 	    @out Eina_Rectangle r;
 	 }

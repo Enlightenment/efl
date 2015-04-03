@@ -117,7 +117,7 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_cairo_base_fill(Eo *obj,
    return EINA_TRUE;
 }
 
-static Eina_Bool
+static void
 _ector_renderer_cairo_gradient_linear_ector_renderer_generic_base_bounds_get(Eo *obj,
                                                                              Ector_Renderer_Cairo_Gradient_Linear_Data *pd EINA_UNUSED,
                                                                              Eina_Rectangle *r)
@@ -132,8 +132,6 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_generic_base_bounds_get(Eo 
                       bd->generic->origin.y + gld->start.y,
                       gld->end.x - gld->start.x,
                       gld->end.y - gld->start.x);
-
-   return EINA_TRUE;
 }
 
 void
