@@ -250,6 +250,16 @@ mixin Efl.Gfx.Shape
 	    @in double radius;
 	 }
       }
+      append_rect {
+         params {
+	    @in double x;
+	    @in double y;
+	    @in double w;
+	    @in double h;
+	    @in double rx;
+	    @in double ry;
+	 }
+      }
       append_svg_path {
          params {
 	    @in const(char)* svg_path_data;

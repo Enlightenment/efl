@@ -526,6 +526,12 @@ evas_vg_shape_shape_append_circle(Eo *obj, double x, double y, double radius)
 }
 
 EAPI void
+evas_vg_shape_shape_append_rect(Eo *obj, double x, double y, double w, double h, double rx, double ry)
+{
+   eo_do(obj, efl_gfx_shape_append_rect(x, y, w, h, rx, ry));
+}
+
+EAPI void
 evas_vg_shape_shape_append_svg_path(Eo *obj, const char *svg_path_data)
 {
    eo_do(obj, efl_gfx_shape_append_svg_path(svg_path_data));

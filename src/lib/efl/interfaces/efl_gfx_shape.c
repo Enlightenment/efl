@@ -665,6 +665,26 @@ _efl_gfx_shape_append_circle(Eo *obj, Efl_Gfx_Shape_Data *pd,
    _efl_gfx_shape_append_arc_to(obj, pd, x, y - radius, radius, radius, 0, EINA_FALSE, EINA_FALSE);
 }
 
+void
+_efl_gfx_shape_append_rect(Eo *obj, Efl_Gfx_Shape_Data *pd,
+                           double x, double y, double w, double h,
+                           double rx, double ry)
+{
+   _efl_gfx_shape_append_move_to(obj, pd, x, y + ry);
+   // Top left corner
+   _efl_gfx_shape_append_arc_to(obj, pd, x + rx, y, rx, ry, 0, EINA_FALSE, EINA_TRUE);
+   _efl_gfx_shape_append_line_to(obj, pd, x + w - rx, y);
+   // Top right corner
+   _efl_gfx_shape_append_arc_to(obj, pd, x + w, y + ry, rx, ry, 0, EINA_FALSE, EINA_TRUE);
+   _efl_gfx_shape_append_line_to(obj, pd, x + w, y + h - ry);
+   // Bottom right corner
+   _efl_gfx_shape_append_arc_to(obj, pd, x + w - rx, y + h, rx, ry, 0, EINA_FALSE, EINA_TRUE);
+   _efl_gfx_shape_append_line_to(obj, pd, x + rx, y + h);
+   // Bottom left corner
+   _efl_gfx_shape_append_arc_to(obj, pd, x, y + h - ry, rx, ry, 0, EINA_FALSE, EINA_TRUE);
+   _efl_gfx_shape_append_line_to(obj, pd, x, y - ry);
+}
+
 static void
 _efl_gfx_path_append_horizontal_to(Eo *obj, Efl_Gfx_Shape_Data *pd,
                                    double d, double current_x EINA_UNUSED, double current_y)

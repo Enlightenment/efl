@@ -1755,6 +1755,7 @@ EAPI void evas_vg_shape_shape_append_scubic_to(Eo *obj, double x, double y, doub
 EAPI void evas_vg_shape_shape_append_arc_to(Eo *obj, double x, double y, double rx, double ry, double angle, Eina_Bool large_arc, Eina_Bool sweep);
 EAPI void evas_vg_shape_shape_append_close(Eo *obj);
 EAPI void evas_vg_shape_shape_append_circle(Eo *obj, double x, double y, double radius);
+EAPI void evas_vg_shape_shape_append_rect(Eo *obj, double x, double y, double w, double h, double rx, double ry);
 EAPI void evas_vg_shape_shape_append_svg_path(Eo *obj, const char *svg_path_data);
 EAPI Eina_Bool evas_vg_shape_shape_interpolate(Eo *obj, const Eo *from, const Eo *to, double pos_map);
 EAPI Eina_Bool evas_vg_shape_shape_equal_commands(Eo *obj, const Eo *with);
