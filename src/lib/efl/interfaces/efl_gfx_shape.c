@@ -249,17 +249,18 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
    from_pd = eo_data_scope_get(from, EFL_GFX_SHAPE_MIXIN);
    to_pd = eo_data_scope_get(to, EFL_GFX_SHAPE_MIXIN);
    if (!from_pd && !to_pd) return EINA_FALSE;
+   if (pd == from_pd || pd == to_pd) return EINA_FALSE;
    if (!_efl_gfx_shape_equal_commands_internal(from_pd, to_pd))
      return EINA_FALSE;
 
    cmds = realloc(pd->commands,
                   sizeof (Efl_Gfx_Path_Command) * from_pd->commands_count);
-   if (!cmds) return EINA_FALSE;
+   if (!cmds && from_pd->commands_count) return EINA_FALSE;
    pd->commands = cmds;
 
    pts = realloc(pd->points,
                  sizeof (double) * from_pd->points_count);
-   if (!pts) return EINA_FALSE;
+   if (!pts && from_pd->points_count) return EINA_FALSE;
    pd->points = pts;
 
    memcpy(cmds, from_pd->commands,
