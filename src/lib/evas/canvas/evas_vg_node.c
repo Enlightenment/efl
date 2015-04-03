@@ -7,17 +7,6 @@
 
 #define MY_CLASS EVAS_VG_NODE_CLASS
 
-typedef struct _Evas_VG_Node_Data Evas_VG_Node_Data;
-struct _Evas_VG_Node_Data
-{
-   Eina_Matrix3 *m;
-   Evas_VG_Node *mask;
-
-   double x, y;
-   int r, g, b, a;
-   Eina_Bool visibility;
-};
-
 // FIXME:
 // - share private structure with evas_object_vg
 // - mark parent canvas evas_object dirty after any change on the object
