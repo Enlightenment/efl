@@ -275,11 +275,12 @@ interpolatei(int from, int to, double pos_map)
    return (from * pos_map) + (to * (1.0 - pos_map));
 }
 
-typedef struct _Efl_Gfx_Stroke Efl_Gfx_Stroke;
-struct _Efl_Gfx_Stroke
+typedef struct _Efl_Gfx_Property Efl_Gfx_Property;
+struct _Efl_Gfx_Property
 {
    double scale;
    int r, g, b, a;
+   int fr, fg, fb, fa; 
    double w;
    double centered;
    const Efl_Gfx_Dash *dash;
@@ -289,16 +290,17 @@ struct _Efl_Gfx_Stroke
 };
 
 static inline void
-stroke_get(const Eo *obj, Efl_Gfx_Stroke *stroke)
+gfx_property_get(const Eo *obj, Efl_Gfx_Property *property)
 {
    eo_do(obj,
-         stroke->scale = efl_gfx_shape_stroke_scale_get(),
-         efl_gfx_shape_stroke_color_get(&stroke->r, &stroke->g, &stroke->b, &stroke->a),
-         stroke->w = efl_gfx_shape_stroke_width_get(),
-         stroke->centered = efl_gfx_shape_stroke_location_get(),
-         efl_gfx_shape_stroke_dash_get(&stroke->dash, &stroke->dash_length),
-         stroke->c = efl_gfx_shape_stroke_cap_get(),
-         stroke->j = efl_gfx_shape_stroke_join_get());
+         property->scale = efl_gfx_shape_stroke_scale_get(),
+         efl_gfx_shape_stroke_color_get(&property->r, &property->g, &property->b, &property->a),
+         efl_gfx_color_get(&property->fr, &property->fg, &property->fb, &property->fa),
+         property->w = efl_gfx_shape_stroke_width_get(),
+         property->centered = efl_gfx_shape_stroke_location_get(),
+         efl_gfx_shape_stroke_dash_get(&property->dash, &property->dash_length),
+         property->c = efl_gfx_shape_stroke_cap_get(),
+         property->j = efl_gfx_shape_stroke_join_get());
 }
 
 static Eina_Bool
@@ -309,7 +311,7 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
    Efl_Gfx_Path_Command *cmds;
    double *pts, *from_pts, *to_pts;
    unsigned int i, j;
-   Efl_Gfx_Stroke stroke_from, stroke_to;
+   Efl_Gfx_Property property_from, property_to;
    Efl_Gfx_Dash *dash;
 
    from_pd = eo_data_scope_get(from, EFL_GFX_SHAPE_MIXIN);
@@ -320,10 +322,10 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
    if (!_efl_gfx_shape_equal_commands_internal(from_pd, to_pd))
      return EINA_FALSE;
 
-   stroke_get(from, &stroke_from);
-   stroke_get(to, &stroke_to);
+   gfx_property_get(from, &property_from);
+   gfx_property_get(to, &property_to);
 
-   if (stroke_from.dash_length != stroke_to.dash_length) return EINA_FALSE;
+   if (property_from.dash_length != property_to.dash_length) return EINA_FALSE;
 
    cmds = realloc(pd->commands,
                   sizeof (Efl_Gfx_Path_Command) * from_pd->commands_count);
@@ -367,33 +369,37 @@ _efl_gfx_shape_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
                                     to_pd->current_ctrl.y,
                                     pos_map);
 
-   dash = malloc(sizeof (Efl_Gfx_Dash) * stroke_to.dash_length);
+   dash = malloc(sizeof (Efl_Gfx_Dash) * property_to.dash_length);
    if (dash)
      {
-        for (i = 0; i < stroke_to.dash_length; i++)
+        for (i = 0; i < property_to.dash_length; i++)
           {
-             dash[i].length = interpolate(stroke_from.dash[i].length,
-                                          stroke_to.dash[i].length, pos_map);
-             dash[i].gap = interpolate(stroke_from.dash[i].gap,
-                                       stroke_to.dash[i].gap, pos_map);
+             dash[i].length = interpolate(property_from.dash[i].length,
+                                          property_to.dash[i].length, pos_map);
+             dash[i].gap = interpolate(property_from.dash[i].gap,
+                                       property_to.dash[i].gap, pos_map);
           }
      }
    else
      {
-        stroke_to.dash_length = 0;
+        property_to.dash_length = 0;
      }
 
    eo_do(obj,
-         efl_gfx_shape_stroke_scale_set(interpolate(stroke_to.scale, stroke_from.scale, pos_map)),
-         efl_gfx_shape_stroke_color_set(interpolatei(stroke_to.r, stroke_from.r, pos_map),
-                                        interpolatei(stroke_to.g, stroke_from.g, pos_map),
-                                        interpolatei(stroke_to.b, stroke_from.b, pos_map),
-                                        interpolatei(stroke_to.a, stroke_from.a, pos_map)),
-         efl_gfx_shape_stroke_width_set(interpolate(stroke_to.w, stroke_from.w, pos_map)),
-         efl_gfx_shape_stroke_location_set(interpolate(stroke_to.centered, stroke_from.centered, pos_map)),
-         efl_gfx_shape_stroke_dash_set(dash, stroke_to.dash_length),
-         efl_gfx_shape_stroke_cap_set(pos_map < 0.5 ? stroke_from.c : stroke_to.c),
-         efl_gfx_shape_stroke_join_set(pos_map < 0.5 ? stroke_from.j : stroke_to.j),
+         efl_gfx_shape_stroke_scale_set(interpolate(property_to.scale, property_from.scale, pos_map)),
+         efl_gfx_shape_stroke_color_set(interpolatei(property_to.r, property_from.r, pos_map),
+                                        interpolatei(property_to.g, property_from.g, pos_map),
+                                        interpolatei(property_to.b, property_from.b, pos_map),
+                                        interpolatei(property_to.a, property_from.a, pos_map)),
+         efl_gfx_color_set(interpolatei(property_to.fr, property_from.fr, pos_map),
+                           interpolatei(property_to.fg, property_from.fg, pos_map),
+                           interpolatei(property_to.fb, property_from.fb, pos_map),
+                           interpolatei(property_to.fa, property_from.fa, pos_map)),
+         efl_gfx_shape_stroke_width_set(interpolate(property_to.w, property_from.w, pos_map)),
+         efl_gfx_shape_stroke_location_set(interpolate(property_to.centered, property_from.centered, pos_map)),
+         efl_gfx_shape_stroke_dash_set(dash, property_to.dash_length),
+         efl_gfx_shape_stroke_cap_set(pos_map < 0.5 ? property_from.c : property_to.c),
+         efl_gfx_shape_stroke_join_set(pos_map < 0.5 ? property_from.j : property_to.j),
 
          eo_event_callback_call(EFL_GFX_PATH_CHANGED, NULL),
          eo_event_callback_call(EFL_GFX_CHANGED, NULL));
