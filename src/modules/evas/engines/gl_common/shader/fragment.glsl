@@ -16,7 +16,10 @@ precision mediump float;
 varying vec4 col;
 #endif
 
-#ifdef SHD_TEX
+#ifdef SHD_EXTERNAL
+uniform SAMPLER_EXTERNAL_OES tex;
+varying vec2 tex_c;
+#elif defined(SHD_TEX)
 uniform sampler2D tex;
 varying vec2 tex_c;
 #endif
@@ -50,12 +53,6 @@ varying vec2 tex_s[4];
 #ifdef SHD_MASK
 uniform sampler2D texm;
 varying vec2 tex_m;
-#endif
-
-#ifdef SHD_EXTERNAL
-# define SHD_TEX
-// uniform samplerExternalOES tex;
-varying vec2 tex_c;
 #endif
 
 #ifdef SHD_ALPHA
@@ -115,7 +112,7 @@ void main()
    vec4 col11 = texture2D(tex, tex_c + tex_s[3]).SWZ;
    c = (col00 + col01 + col10 + col11) / div_s;
 
-#elif defined(SHD_TEX)
+#elif defined(SHD_TEX) || defined(SHD_EXTERNAL)
    c = texture2D(tex, tex_c).SWZ;
 
 #else

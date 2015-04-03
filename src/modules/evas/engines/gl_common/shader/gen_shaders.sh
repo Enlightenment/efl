@@ -29,9 +29,9 @@ precision highp float;
 # else
 precision mediump float;
 # endif
-uniform samplerExternalOES tex;
+# define SAMPLER_EXTERNAL_OES samplerExternalOES
 #else
-uniform sampler2D tex;
+# define SAMPLER_EXTERNAL_OES sampler2D
 #endif
 "
 

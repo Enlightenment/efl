@@ -68,7 +68,7 @@ void main()
    col = color;
 #endif
 
-#ifdef SHD_TEX
+#if defined(SHD_TEX) || defined(SHD_EXTERNAL)
    tex_c = tex_coord;
 #endif
 
