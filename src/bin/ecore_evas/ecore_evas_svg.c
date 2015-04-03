@@ -162,7 +162,8 @@ main(int argc, char *argv[])
    ecore_evas_object_associate(ee, r, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
 
    vg = eo_add(EVAS_VG_CLASS, e,
-               efl_file_set(argv[arg_index], NULL));
+               efl_file_set(argv[arg_index], NULL),
+               evas_obj_visibility_set(EINA_TRUE));
    ecore_evas_object_associate(ee, vg, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
 
    if (display)
