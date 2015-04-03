@@ -178,8 +178,16 @@ _evas_object_layer_set_child(Evas_Object *eo_obj, Evas_Object *par, short l)
 
 /* public functions */
 
+EAPI void
+evas_object_layer_set(Evas_Object *obj, short l)
+{
+   eo_do((Evas_Object *)obj, efl_gfx_stack_layer_set(l));
+}
+
 EOLIAN void
-_evas_object_layer_set(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, short l)
+_evas_object_efl_gfx_stack_layer_set(Eo *eo_obj,
+                                     Evas_Object_Protected_Data *obj,
+                                     short l)
 {
    Evas *eo_e;
 
@@ -236,8 +244,17 @@ _evas_object_layer_set(Eo *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED, 
    evas_object_inform_call_restack(eo_obj);
 }
 
+EAPI short
+evas_object_layer_get(const Evas_Object *obj)
+{
+   short ret;
+
+   return eo_do_ret((Evas_Object *)obj, ret, efl_gfx_stack_layer_get());
+}
+
 EOLIAN short
-_evas_object_layer_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+_evas_object_efl_gfx_stack_layer_get(Eo *eo_obj EINA_UNUSED,
+                                     Evas_Object_Protected_Data *obj)
 {
    if (obj->smart.parent)
      {

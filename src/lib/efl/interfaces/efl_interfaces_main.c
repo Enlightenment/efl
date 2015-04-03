@@ -12,6 +12,7 @@
 #include "interfaces/efl_text_properties.eo.c"
 
 #include "interfaces/efl_gfx_base.eo.c"
+#include "interfaces/efl_gfx_stack.eo.c"
 #include "interfaces/efl_gfx_shape.eo.c"
 #include "interfaces/efl_gfx_gradient.eo.c"
 #include "interfaces/efl_gfx_gradient_linear.eo.c"

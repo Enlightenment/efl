@@ -124,6 +124,7 @@ typedef enum _Efl_Gfx_Gradient_Spread
 #include "interfaces/efl_gfx_utils.h"
 
 #include "interfaces/efl_gfx_base.eo.h"
+#include "interfaces/efl_gfx_stack.eo.h"
 #include "interfaces/efl_gfx_shape.eo.h"
 #include "interfaces/efl_gfx_gradient.eo.h"
 #include "interfaces/efl_gfx_gradient_linear.eo.h"

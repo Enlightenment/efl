@@ -1591,7 +1591,7 @@ _evas_object_eo_base_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Data *obj EI
 
    eo_do(eo_obj,
          visible = efl_gfx_visible_get(),
-         layer = evas_obj_layer_get(),
+         layer = efl_gfx_stack_layer_get(),
          name = evas_obj_name_get(),
          efl_gfx_position_get(&x, &y),
          efl_gfx_size_get(&w, &h),

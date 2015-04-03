@@ -10,6 +10,7 @@ generated_efl_cxx_bindings = \
                  lib/efl/interfaces/efl_text.eo.hh \
                  lib/efl/interfaces/efl_text_properties.eo.hh \
 		 lib/efl/interfaces/efl_gfx_base.eo.hh \
+		 lib/efl/interfaces/efl_gfx_stack.eo.hh \
 	         lib/efl/interfaces/efl_gfx_shape.eo.hh \
 		 lib/efl/interfaces/efl_gfx_gradient.eo.hh \
 		 lib/efl/interfaces/efl_gfx_gradient_linear.eo.hh \
