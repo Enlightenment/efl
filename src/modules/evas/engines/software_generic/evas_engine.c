@@ -19,6 +19,7 @@
 #include "Evas_Engine_Software_Generic.h"
 
 #include "cairo/Ector_Cairo.h"
+#include "software/Ector_Software.h"
 
 #include "ector_cairo_software_surface.eo.h"
 
@@ -3452,13 +3453,26 @@ eng_output_idle_flush(void *data)
 }
 
 static Ector_Surface *_software_ector = NULL;
+static Eina_Bool use_cairo;
 
 static Ector_Surface *
 eng_ector_get(void *data EINA_UNUSED)
 {
    if (!_software_ector)
      {
-        _software_ector = eo_add(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
+        const char *ector_backend;
+
+        ector_backend = getenv("ECTOR_BACKEND");
+        if (ector_backend && !strcasecmp(ector_backend, "freetype"))
+          {
+             _software_ector = eo_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
+             use_cairo = EINA_FALSE;
+          }
+        else
+          {
+             _software_ector = eo_add(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
+             use_cairo = EINA_TRUE;
+          }
      }
    return _software_ector;
 }
@@ -3603,8 +3617,16 @@ _draw_thread_ector_surface_set(void *data)
         h = surface->cache_entry.h;
      }
 
-   eo_do(_software_ector,
-         ector_cairo_software_surface_set(pixels, w, h));
+   if (use_cairo)
+     {
+        eo_do(_software_ector,
+              ector_cairo_software_surface_set(pixels, w, h));
+     }
+   else
+     {
+        eo_do(_software_ector,
+              ector_software_surface_set(pixels, w, h));
+     }
 
    evas_common_cpu_end_opt();
 
