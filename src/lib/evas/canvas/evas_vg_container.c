@@ -11,14 +11,6 @@ _evas_vg_container_eo_base_constructor(Eo *obj, Evas_VG_Container_Data *pd)
    Eo *parent;
 
    eo_do_super(obj, MY_CLASS, eo_constructor());
-
-   eo_do(obj, parent = eo_parent_get());
-   if (!eo_isa(obj, EVAS_VG_CONTAINER_CLASS) &&
-       !eo_isa(obj, EVAS_VG_CLASS))
-     {
-        ERR("Parent must be either an Evas_Object_VG or an Evas_VG_Container.");
-        eo_error_set(obj);
-     }
 }
 
 Eina_Bool
