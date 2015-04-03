@@ -88,7 +88,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
       bounds_get {
          return: bool @warn_unused;
 	 params {
-	    @out Eina_Rectangle *r;
+	    @out Eina_Rectangle r;
 	 }
       }
       draw {
