@@ -366,7 +366,7 @@ static Eina_Bool
 _evas_vg_efl_file_mmap_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
                            const Eina_File *f, const char *key)
 {
-   Eina_File *tmp = f ? eina_file_dup(f) : NULL;
+   Eina_File *tmp;
 
    if (f == pd->f &&
        ((key == NULL && pd->key == NULL) ||
@@ -387,6 +387,7 @@ _evas_vg_efl_file_mmap_set(Eo *obj EINA_UNUSED, Evas_VG_Data *pd,
    // it succeeded.
    if (pd->f) eina_file_close(pd->f);
    pd->f = tmp;
+   eina_stringshare_replace(&pd->key, key);
 
    return EINA_TRUE;
 }

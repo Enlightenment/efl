@@ -1787,6 +1787,8 @@ Evas_Device *_evas_device_top_get(const Evas *e);
 void _evas_device_ref(Evas_Device *dev);
 void _evas_device_unref(Evas_Device *dev);
 
+Eina_Bool evas_vg_loader_svg(Evas_Object *vg, const Eina_File *f, const char *key EINA_UNUSED);
+
 extern Eina_Cow *evas_object_proxy_cow;
 extern Eina_Cow *evas_object_map_cow;
 extern Eina_Cow *evas_object_state_cow;
