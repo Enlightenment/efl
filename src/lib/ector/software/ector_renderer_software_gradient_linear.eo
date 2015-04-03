@@ -1,0 +1,14 @@
+class Ector.Renderer.Software.Gradient_Linear (Ector.Renderer.Software.Base, Ector.Renderer.Generic.Gradient, Ector.Renderer.Generic.Gradient_Linear)
+{
+   eo_prefix: ector_renderer_software_gradient_linear;
+   legacy_prefix: null;
+   data: Ector_Renderer_Software_Gradient_Data;
+   implements {
+      Ector.Renderer.Generic.Base.prepare;
+      Ector.Renderer.Generic.Base.draw;
+      Ector.Renderer.Software.Base.fill;
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Efl.Gfx.Gradient.Base.stop.set;
+   }
+}

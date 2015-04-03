@@ -1,0 +1,13 @@
+class Ector.Renderer.Software.Shape (Ector.Renderer.Software.Base, Ector.Renderer.Generic.Shape)
+{
+   eo_prefix: ector_renderer_software_shape;
+   legacy_prefix: null;
+   implements {
+      Ector.Renderer.Generic.Base.prepare;
+      Ector.Renderer.Generic.Base.draw;
+      Ector.Renderer.Software.Base.fill;
+      Efl.Gfx.Shape.path.set;
+      Eo.Base.constructor;
+      Eo.Base.destructor;      
+   }
+}

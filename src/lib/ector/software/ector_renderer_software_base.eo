@@ -1,0 +1,12 @@
+class Ector.Renderer.Software.Base (Ector.Renderer.Generic.Base)
+{
+   legacy_prefix: null;
+   methods {
+      fill {
+         return: bool;
+      }
+   }
+   implements {
+      @virtual .fill;
+   }
+}
