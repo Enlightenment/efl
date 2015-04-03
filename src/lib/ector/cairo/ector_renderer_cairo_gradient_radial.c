@@ -69,7 +69,7 @@ _ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_prepare(Eo *ob
 
 // Clearly duplicated and should be in a common place...
 static Eina_Bool
-_ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_draw(Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd, Ector_Rop op, Eina_Array *clips, int x, int y)
+_ector_renderer_cairo_gradient_radial_ector_renderer_generic_base_draw(Eo *obj, Ector_Renderer_Cairo_Gradient_Radial_Data *pd, Ector_Rop op, Eina_Array *clips, int x, int y, unsigned int mul_col)
 {
    Ector_Renderer_Generic_Gradient_Linear_Data *gld;
 

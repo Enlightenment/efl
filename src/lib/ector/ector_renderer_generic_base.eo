@@ -98,6 +98,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	    @in array<Eina_Rectangle *> *clips; /*@ array of Eina_Rectangle clip */
 	    @in int x;
 	    @in int y;
+	    @in uint mul_col;
 	 }
       }
       prepare {
