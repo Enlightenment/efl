@@ -126,12 +126,39 @@ _evas_vg_eo_base_constructor(Eo *eo_obj, Evas_VG_Data *pd)
 }
 
 static void
-evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
-                      Evas_Object_Protected_Data *obj EINA_UNUSED,
-                      void *type_private_data EINA_UNUSED,
-                      void *output EINA_UNUSED, void *context EINA_UNUSED, void *surface EINA_UNUSED,
-                      int x EINA_UNUSED, int y EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
+_evas_vg_render(Evas_Object_Protected_Data *obj,
+                void *output, void *context, void *surface, Evas_VG_Node *n,
+                Eina_Array *clips, int x, int y, Eina_Bool do_async)
 {
+   Evas_VG_Container_Data *vd = eo_data_scope_get(n, EVAS_VG_CONTAINER_CLASS);
+
+   if (vd)
+     {
+        Evas_VG_Node *child;
+        Eina_List *l;
+
+        EINA_LIST_FOREACH(vd->children, l, child)
+          _evas_vg_render(obj,
+                          output, context, surface, child,
+                          clips, x, y, do_async);
+     }
+   else
+     {
+        Evas_VG_Node_Data *nd = eo_data_scope_get(n, EVAS_VG_NODE_CLASS);
+
+        obj->layer->evas->engine.func->ector_draw(output, context, surface, nd->renderer, clips, x, y, do_async);
+     }
+}
+
+static void
+evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
+                      Evas_Object_Protected_Data *obj,
+                      void *type_private_data,
+                      void *output, void *context, void *surface,
+                      int x, int y, Eina_Bool do_async)
+{
+   Evas_VG_Data *vd = type_private_data;
+
    // FIXME: Set context (that should affect Ector_Surface) and
    // then call Ector_Renderer render from bottom to top. Get the
    // Ector_Surface that match the output from Evas engine API.
@@ -140,26 +167,21 @@ evas_object_vg_render(Evas_Object *eo_obj EINA_UNUSED,
    // child of the main Ector_Surface (necessary for Evas_Map).
 
    /* render object to surface with context, and offxet by x,y */
-   /* obj->layer->evas->engine.func->context_color_set(output, */
-   /*                                                  context, */
-   /*                                                  obj->cur->cache.clip.r, */
-   /*                                                  obj->cur->cache.clip.g, */
-   /*                                                  obj->cur->cache.clip.b, */
-   /*                                                  obj->cur->cache.clip.a); */
-   /* obj->layer->evas->engine.func->context_anti_alias_set(output, context, */
-   /*                                                       obj->cur->anti_alias); */
-   /* obj->layer->evas->engine.func->context_multiplier_unset(output, */
-   /*                                                         context); */
-   /* obj->layer->evas->engine.func->context_render_op_set(output, context, */
-   /*                                                      obj->cur->render_op); */
-   /* obj->layer->evas->engine.func->rectangle_draw(output, */
-   /*                                               context, */
-   /*                                               surface, */
-   /*                                               obj->cur->geometry.x + x, */
-   /*                                               obj->cur->geometry.y + y, */
-   /*                                               obj->cur->geometry.w, */
-   /*                                               obj->cur->geometry.h, */
-   /*                                               do_async); */
+   obj->layer->evas->engine.func->context_color_set(output,
+                                                    context,
+                                                    obj->cur->cache.clip.r,
+                                                    obj->cur->cache.clip.g,
+                                                    obj->cur->cache.clip.b,
+                                                    obj->cur->cache.clip.a);
+   obj->layer->evas->engine.func->context_anti_alias_set(output, context,
+                                                         obj->cur->anti_alias);
+   obj->layer->evas->engine.func->context_multiplier_unset(output,
+                                                           context);
+   obj->layer->evas->engine.func->context_render_op_set(output, context,
+                                                        obj->cur->render_op);
+   _evas_vg_render(obj, output, context, surface, vd->root, NULL,
+                   obj->cur->geometry.x + x, obj->cur->geometry.y + y,
+                   do_async);
 }
 
 static void
