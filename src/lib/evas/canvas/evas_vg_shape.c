@@ -199,6 +199,9 @@ _efl_vg_shape_efl_gfx_shape_stroke_dash_set(Eo *obj EINA_UNUSED,
    pd->stroke.dash = NULL;
    pd->stroke.dash_count = 0;
 
+   // check for null or empty dash
+   if (!dash || !length) return;
+
    pd->stroke.dash = malloc(sizeof (Efl_Gfx_Dash) * length);
    if (!pd->stroke.dash) return ;
 
