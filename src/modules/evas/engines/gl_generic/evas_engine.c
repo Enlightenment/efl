@@ -2392,8 +2392,8 @@ EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, gl_generic);
 EVAS_EINA_MODULE_DEFINE(engine, gl_generic);
 #endif
 
-#define USE(Obj, Sym, Error)                     \
-  if (!Sym) _ector_cairo_symbol_get(Obj, #Sym);  \
+#define USE(Obj, Sym, Error)                            \
+  if (!Sym) Sym = _ector_cairo_symbol_get(Obj, #Sym);   \
   if (!Sym) return Error;
 
 static inline void *
@@ -2446,23 +2446,26 @@ _ector_cairo_software_surface_surface_set(Eo *obj, Ector_Cairo_Software_Surface_
    USE(obj, cairo_create, );
    USE(obj, cairo_destroy, );
 
-   cairo_surface_destroy(pd->surface); pd->surface = NULL;
-   cairo_destroy(pd->ctx); pd->ctx = NULL;
+   if (pd->surface) cairo_surface_destroy(pd->surface); pd->surface = NULL;
+   if (pd->ctx) cairo_destroy(pd->ctx); pd->ctx = NULL;
 
    pd->pixels = NULL;
    pd->width = 0;
    pd->height = 0;
 
-   pd->surface = cairo_image_surface_create_for_data(pixels, CAIRO_FORMAT_ARGB32, width, height, width);
-   if (pd->surface) goto end;
-
-   pd->ctx = cairo_create(pd->surface);
-   if (pd->ctx)
+   if (pixels)
      {
-        pd->pixels = pixels;
-        pd->width = width;
-        pd->height = height;
+        pd->surface = cairo_image_surface_create_for_data(pixels,
+                                                          CAIRO_FORMAT_ARGB32,
+                                                          width, height, width);
+        if (!pd->surface) goto end;
+
+        pd->ctx = cairo_create(pd->surface);
+        if (!pd->ctx) goto end;
      }
+   pd->pixels = pixels;
+   pd->width = width;
+   pd->height = height;
 
  end:
    eo_do(obj, ector_cairo_surface_context_set(pd->ctx));
