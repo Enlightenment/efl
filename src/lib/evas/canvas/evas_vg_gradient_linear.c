@@ -22,6 +22,8 @@ _evas_vg_gradient_linear_efl_gfx_gradient_linear_start_set(Eo *obj EINA_UNUSED,
 {
    pd->start.x = x;
    pd->start.y = y;
+
+   _evas_vg_node_changed(obj);
 }
 
 static void
@@ -40,6 +42,8 @@ _evas_vg_gradient_linear_efl_gfx_gradient_linear_end_set(Eo *obj EINA_UNUSED,
 {
    pd->end.x = x;
    pd->end.y = y;
+
+   _evas_vg_node_changed(obj);
 }
 
 static void
@@ -59,7 +63,12 @@ _evas_vg_gradient_linear_render_pre(Eo *obj,
                                     Evas_VG_Node_Data *nd)
 {
    Evas_VG_Gradient_Linear_Data *pd = data;
-   Evas_VG_Gradient_Data *gd = eo_data_scope_get(obj, EVAS_VG_GRADIENT_CLASS);
+   Evas_VG_Gradient_Data *gd;
+
+   if (!nd->changed) return ;
+   nd->changed = EINA_FALSE;
+
+   gd = eo_data_scope_get(obj, EVAS_VG_GRADIENT_CLASS);
    EVAS_VG_COMPUTE_MATRIX(current, parent, nd);
 
    if (!nd->renderer)

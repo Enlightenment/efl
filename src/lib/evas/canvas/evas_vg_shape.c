@@ -45,6 +45,8 @@ _evas_vg_shape_fill_set(Eo *obj EINA_UNUSED,
 
    pd->fill = eo_ref(f);
    eo_unref(tmp);
+
+   _evas_vg_node_changed(obj);
 }
 
 static Evas_VG_Node *
@@ -59,6 +61,8 @@ _evas_vg_shape_efl_gfx_shape_stroke_scale_set(Eo *obj EINA_UNUSED,
                                               double s)
 {
    pd->stroke.scale = s;
+
+   _evas_vg_node_changed(obj);
 }
 
 static double
@@ -77,6 +81,8 @@ _evas_vg_shape_efl_gfx_shape_stroke_color_set(Eo *obj EINA_UNUSED,
    pd->stroke.g = g;
    pd->stroke.b = b;
    pd->stroke.a = a;
+
+   _evas_vg_node_changed(obj);
 }
 
 static Eina_Bool
@@ -137,6 +143,8 @@ _evas_vg_shape_stroke_fill_set(Eo *obj EINA_UNUSED,
 
    pd->stroke.fill = eo_ref(f);
    eo_unref(tmp);
+
+   _evas_vg_node_changed(obj);
 }
 
 static Evas_VG_Node *
@@ -152,6 +160,8 @@ _evas_vg_shape_efl_gfx_shape_stroke_width_set(Eo *obj EINA_UNUSED,
                                               double w)
 {
    pd->stroke.width = w;
+
+   _evas_vg_node_changed(obj);
 }
 
 static double
@@ -167,6 +177,8 @@ _evas_vg_shape_efl_gfx_shape_stroke_location_set(Eo *obj EINA_UNUSED,
                                                  double centered)
 {
    pd->stroke.centered = centered;
+
+   _evas_vg_node_changed(obj);
 }
 
 static double
@@ -191,6 +203,8 @@ _evas_vg_shape_efl_gfx_shape_stroke_dash_set(Eo *obj EINA_UNUSED,
 
    memcpy(pd->stroke.dash, dash, sizeof (Efl_Gfx_Dash) * length);
    pd->stroke.dash_count = length;
+
+   _evas_vg_node_changed(obj);
 }
 
 static void
@@ -212,6 +226,8 @@ _evas_vg_shape_stroke_marker_set(Eo *obj EINA_UNUSED,
 
    pd->stroke.marker = eo_ref(m);
    eo_unref(tmp);
+
+   _evas_vg_node_changed(obj);
 }
 
 static Evas_VG_Shape *
@@ -227,6 +243,8 @@ _evas_vg_shape_efl_gfx_shape_stroke_cap_set(Eo *obj EINA_UNUSED,
                                             Efl_Gfx_Cap c)
 {
    pd->stroke.cap = c;
+
+   _evas_vg_node_changed(obj);
 }
 
 static Efl_Gfx_Cap
@@ -242,6 +260,8 @@ _evas_vg_shape_efl_gfx_shape_stroke_join_set(Eo *obj EINA_UNUSED,
                                              Efl_Gfx_Join j)
 {
    pd->stroke.join = j;
+
+   _evas_vg_node_changed(obj);
 }
 
 static Efl_Gfx_Join
@@ -260,6 +280,10 @@ _evas_vg_shape_render_pre(Eo *obj EINA_UNUSED,
 {
    Evas_VG_Shape_Data *pd = data;
    Evas_VG_Node_Data *fill, *stroke_fill, *stroke_marker, *mask;
+
+   if (!nd->changed) return ;
+   nd->changed = EINA_FALSE;
+
    EVAS_VG_COMPUTE_MATRIX(current, parent, nd);
 
    fill = _evas_vg_render_pre(pd->fill, s, current);

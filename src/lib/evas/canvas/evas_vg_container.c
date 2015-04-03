@@ -15,6 +15,10 @@ _evas_vg_container_render_pre(Eo *obj EINA_UNUSED,
    Evas_VG_Container_Data *pd = data;
    Eina_List *l;
    Eo *child;
+
+   if (!nd->changed) return ;
+   nd->changed = EINA_FALSE;
+
    EVAS_VG_COMPUTE_MATRIX(current, parent, nd);
 
    EINA_LIST_FOREACH(pd->children, l, child)

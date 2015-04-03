@@ -8,13 +8,22 @@
 
 #define MY_CLASS EVAS_VG_NODE_CLASS
 
-// FIXME:
-// - share private structure with evas_object_vg
-// - mark parent canvas evas_object dirty after any change on the object
-// - add a virtual render function as part of the private data field
+static Eina_Bool
+_evas_vg_node_property_changed(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+{
+   Evas_VG_Node_Data *pd = data;
+   Eo *parent;
+
+   if (pd->changed) return EINA_TRUE;
+   pd->changed = EINA_TRUE;
+
+   eo_do(obj, parent = eo_parent_get());
+   eo_do(parent, eo_event_callback_call(desc, event_info));
+   return EINA_TRUE;
+}
 
 void
-_evas_vg_node_transformation_set(Eo *obj EINA_UNUSED,
+_evas_vg_node_transformation_set(Eo *obj,
                                  Evas_VG_Node_Data *pd,
                                  const Eina_Matrix3 *m)
 {
@@ -24,6 +33,8 @@ _evas_vg_node_transformation_set(Eo *obj EINA_UNUSED,
         if (!pd->m) return ;
      }
    memcpy(pd->m, m, sizeof (Eina_Matrix3));
+
+   _evas_vg_node_changed(obj);
 }
 
 const Eina_Matrix3 *
@@ -33,12 +44,14 @@ _evas_vg_node_transformation_get(Eo *obj EINA_UNUSED, Evas_VG_Node_Data *pd)
 }
 
 void
-_evas_vg_node_origin_set(Eo *obj EINA_UNUSED,
+_evas_vg_node_origin_set(Eo *obj,
                          Evas_VG_Node_Data *pd,
                          double x, double y)
 {
    pd->x = x;
    pd->y = y;
+
+   _evas_vg_node_changed(obj);
 }
 
 void
@@ -57,6 +70,8 @@ _evas_vg_node_efl_gfx_base_position_set(Eo *obj EINA_UNUSED,
 {
    pd->x = lrint(x);
    pd->y = lrint(y);
+
+   _evas_vg_node_changed(obj);
 }
 
 void
@@ -73,6 +88,8 @@ _evas_vg_node_efl_gfx_base_visible_set(Eo *obj EINA_UNUSED,
                                        Evas_VG_Node_Data *pd, Eina_Bool v)
 {
    pd->visibility = v;
+
+   _evas_vg_node_changed(obj);
 }
 
 
@@ -92,6 +109,8 @@ _evas_vg_node_efl_gfx_base_color_set(Eo *obj EINA_UNUSED,
    pd->g = g;
    pd->b = b;
    pd->a = a;
+
+   _evas_vg_node_changed(obj);
 }
 
 Eina_Bool
@@ -136,6 +155,8 @@ _evas_vg_node_mask_set(Eo *obj EINA_UNUSED,
 
    pd->mask = eo_ref(r);
    eo_unref(tmp);
+
+   _evas_vg_node_changed(obj);
 }
 
 Evas_VG_Node*
@@ -159,9 +180,12 @@ _evas_vg_node_efl_gfx_base_size_get(Eo *obj,
 // Parent should be a container otherwise dismissing the stacking operation
 static Eina_Bool
 _evas_vg_node_parent_checked_get(Eo *obj,
-                                 Eo **parent, Evas_VG_Container_Data **cd)
+                                 Eo **parent,
+                                 Evas_VG_Container_Data **cd)
 {
+   *cd = NULL;
    eo_do(obj, *parent = eo_parent_get());
+
    if (eo_isa(*parent, EVAS_VG_CONTAINER_CLASS))
      {
         *cd = eo_data_scope_get(*parent, EVAS_VG_CONTAINER_CLASS);
@@ -187,7 +211,7 @@ _evas_vg_node_parent_checked_get(Eo *obj,
 
 void
 _evas_vg_node_eo_base_constructor(Eo *obj,
-                                  Evas_VG_Node_Data *pd EINA_UNUSED)
+                                  Evas_VG_Node_Data *pd)
 {
    Evas_VG_Container_Data *cd = NULL;
    Eo *parent;
@@ -199,6 +223,9 @@ _evas_vg_node_eo_base_constructor(Eo *obj,
 
    if (cd)
      cd->children = eina_list_append(cd->children, obj);
+
+   eo_do(obj, eo_event_callback_add(EFL_GFX_CHANGED, _evas_vg_node_property_changed, pd));
+   pd->changed = EINA_TRUE;
 }
 
 void
@@ -219,7 +246,7 @@ _evas_vg_node_eo_base_parent_set(Eo *obj,
              goto on_error;
           }
      }
-   else if (parent != NULL && !eo_isa(parent, EVAS_VG_CLASS))
+   else if (parent != NULL)
      {
         ERR("%p not even an EVAS_VG_CLASS.", parent);
         goto on_error;
@@ -235,6 +262,10 @@ _evas_vg_node_eo_base_parent_set(Eo *obj,
    eo_do_super(obj, MY_CLASS, eo_parent_set(parent));
    if (cd)
      cd->children = eina_list_append(cd->children, obj);
+
+   _evas_vg_node_changed(old_parent);
+   _evas_vg_node_changed(obj);
+   _evas_vg_node_changed(parent);
 
    return ;
 
@@ -264,6 +295,7 @@ _evas_vg_node_efl_gfx_stack_raise(Eo *obj, Evas_VG_Node_Data *pd EINA_UNUSED)
    cd->children = eina_list_remove_list(cd->children, lookup);
    cd->children = eina_list_append_relative_list(cd->children, obj, next);
 
+   _evas_vg_node_changed(parent);
    return ;
 
  on_error:
@@ -293,6 +325,7 @@ _evas_vg_node_efl_gfx_stack_stack_above(Eo *obj,
    cd->children = eina_list_remove_list(cd->children, lookup);
    cd->children = eina_list_append_relative_list(cd->children, obj, ref);
 
+   _evas_vg_node_changed(parent);
    return ;
 
  on_error:
@@ -322,6 +355,7 @@ _evas_vg_node_efl_gfx_stack_stack_below(Eo *obj,
    cd->children = eina_list_remove_list(cd->children, lookup);
    cd->children = eina_list_prepend_relative_list(cd->children, obj, ref);
 
+   _evas_vg_node_changed(parent);
    return ;
 
  on_error:
@@ -349,6 +383,7 @@ _evas_vg_node_efl_gfx_stack_lower(Eo *obj, Evas_VG_Node_Data *pd EINA_UNUSED)
    cd->children = eina_list_remove_list(cd->children, lookup);
    cd->children = eina_list_prepend_relative_list(cd->children, obj, prev);
 
+   _evas_vg_node_changed(parent);
    return ;
 
  on_error:

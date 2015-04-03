@@ -51,6 +51,12 @@ _evas_vg_render_pre(Evas_VG_Node *child, Ector_Surface *s, Eina_Matrix3 *m)
    return child_nd;
 }
 
+static inline void
+_evas_vg_node_changed(Eo *obj)
+{
+   eo_do(obj, eo_event_callback_call(EFL_GFX_CHANGED, NULL));
+}
+
 #define EVAS_VG_COMPUTE_MATRIX(Current, Parent, Nd)              \
   Eina_Matrix3 *Current = Nd->m;                                 \
   Eina_Matrix3 _matrix_tmp;                                      \
