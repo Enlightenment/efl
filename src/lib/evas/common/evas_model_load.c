@@ -65,7 +65,7 @@ evas_common_load_model_from_file(Evas_3D_Mesh *model, const char *file)
 }
 
 void
-evas_common_load_model_from_eina_file(Evas_3D_Mesh *model, Eina_File *file)
+evas_common_load_model_from_eina_file(Evas_3D_Mesh *model, const Eina_File *file)
 {
    Eina_File *e_file = eina_file_dup(file);
 

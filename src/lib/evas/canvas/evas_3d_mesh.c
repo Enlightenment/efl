@@ -840,16 +840,39 @@ _evas_3d_mesh_alpha_test_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
    return pd->alpha_test_enabled;
 }
 
-EOLIAN static void
-_evas_3d_mesh_mmap_set(Eo *obj, Evas_3D_Mesh_Data *pd,
-                       Eina_File *file, const char *key EINA_UNUSED)
+EOLIAN static Eina_Bool
+_evas_3d_mesh_efl_file_mmap_set(Eo *obj,
+                                Evas_3D_Mesh_Data *pd,
+                                const Eina_File *f, const char *key EINA_UNUSED)
 {
    _mesh_fini(pd);
    _mesh_init(pd);
 
-   if (file == NULL) return;
+   if (f == NULL) return EINA_FALSE;
 
-   evas_common_load_model_from_eina_file(obj, file);
+   evas_common_load_model_from_eina_file(obj, f);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static void
+_evas_3d_mesh_efl_file_mmap_get(Eo *obj EINA_UNUSED,
+                                Evas_3D_Mesh_Data *pd EINA_UNUSED,
+                                const Eina_File **f EINA_UNUSED,
+                                const char **key EINA_UNUSED)
+{
+   #warning "mmap get is not implemented on Evas_3D_Mesh."
+   ERR("mmap get is not implemented !");
+}
+
+EOLIAN static void
+_evas_3d_mesh_efl_file_file_get(Eo *obj EINA_UNUSED,
+                                Evas_3D_Mesh_Data *pd EINA_UNUSED,
+                                const char **file EINA_UNUSED,
+                                const char **key EINA_UNUSED)
+{
+   #warning "file get is not implemented on Evas_3D_Mesh."
+   ERR("file get is not implemented !");
 }
 
 EOLIAN static Eina_Bool

@@ -663,35 +663,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image)
             void *data; /*@ The data pointer to be passed to @a func. */
          }
       }
-      mmap {
-         set {
-            /*@
-            Set the source mmaped file from where an image object must fetch the real
-            image data (it must be an Eina_File).
-
-            If the file supports multiple data stored in it (as Eet files do),
-            you can specify the key to be used as the index of the image in
-            this file.
-
-            @since 1.8 */
-         }
-         get {
-            /*@
-            Get the source mmaped file from where an image object must fetch the real
-            image data (it must be an Eina_File).
-
-            If the file supports multiple data stored in it (as Eet files do),
-            you can get the key to be used as the index of the image in
-            this file.
-
-            @since 1.10 */
-         }
-         values {
-            const(Eina.File)* f; /*@ The mmaped file */
-            const(char)* key; /*@ The image key in @p file (if its an Eet one), or @c
-            NULL, otherwise. */
-         }
-      }
       data_copy {
          set {
             /*@
@@ -1094,6 +1065,8 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image)
       Eo.Base.dbg_info_get;
       Efl.File.file.set;
       Efl.File.file.get;
+      Efl.File.mmap.set;
+      Efl.File.mmap.get;
       Efl.File.save;
       Efl.Image.animated.get;
       Efl.Image.load_size.set;

@@ -1578,6 +1578,40 @@ EAPI void evas_object_image_file_get(const Eo *obj, const char **file, const cha
 
 /**
  *
+ * Set the source mmaped file from where an image object must fetch the real
+ * image data (it must be an Eina_File).
+ *
+ * If the file supports multiple data stored in it (as Eet files do),
+ * you can specify the key to be used as the index of the image in
+ * this file.
+ *
+ * @since 1.8
+ *
+ * @param[in] f The mmaped file
+ * @param[in] key The image key in @p file (if its an Eet one), or @c
+NULL, otherwise.
+ */
+EAPI void evas_object_image_mmap_set(Eo *obj, const Eina_File *f, const char *key);
+
+/**
+ *
+ * Get the source mmaped file from where an image object must fetch the real
+ * image data (it must be an Eina_File).
+ *
+ * If the file supports multiple data stored in it (as Eet files do),
+ * you can get the key to be used as the index of the image in
+ * this file.
+ *
+ * @since 1.10
+ *
+ * @param[out] f The mmaped file
+ * @param[out] key The image key in @p file (if its an Eet one), or @c
+NULL, otherwise.
+ */
+EAPI void evas_object_image_mmap_get(const Eo *obj, const Eina_File **f, const char **key);
+
+/**
+ *
  * Save the given image object's contents to an (image) file.
  *
  * The extension suffix on @p file will determine which <b>saver
