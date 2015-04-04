@@ -372,7 +372,7 @@ edje_password_show_last_timeout_set(double password_show_last_timeout)
 }
 
 EOLIAN Eina_Bool
-_edje_object_scale_set(Eo *obj, Edje *ed, double scale)
+_edje_object_scale_set(Eo *obj EINA_UNUSED, Edje *ed, double scale)
 {
    Edje *ged;
    Evas_Object *o;
