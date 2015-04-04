@@ -4,7 +4,7 @@
 
 #include "elm_code_suite.h"
 
-#include "elm_code_widget_selection.h"
+#include "widget/elm_code_widget_selection.h"
 
 START_TEST (elm_code_test_widget_selection_set)
 {

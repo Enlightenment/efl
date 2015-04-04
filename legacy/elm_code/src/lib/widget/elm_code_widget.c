@@ -4,6 +4,7 @@
 
 #include "Elm_Code.h"
 #include "elm_code_private.h"
+#include "elm_code_widget_private.h"
 
 typedef enum {
    ELM_CODE_WIDGET_COLOR_GUTTER_BG = ELM_CODE_TOKEN_TYPE_COUNT,

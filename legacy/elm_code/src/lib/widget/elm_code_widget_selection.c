@@ -4,7 +4,7 @@
 
 #include "Elm_Code.h"
 
-#include "elm_code_private.h"
+#include "elm_code_widget_private.h"
 
 static Elm_Code_Widget_Selection_Data *
 _elm_code_widget_selection_new()

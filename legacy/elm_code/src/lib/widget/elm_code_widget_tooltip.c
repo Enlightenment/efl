@@ -4,7 +4,7 @@
 
 #include "Elm_Code.h"
 
-#include "elm_code_private.h"
+#include "elm_code_widget_private.h"
 
 void
 _elm_code_widget_tooltip_text_set(Evas_Object *widget, const char *text)

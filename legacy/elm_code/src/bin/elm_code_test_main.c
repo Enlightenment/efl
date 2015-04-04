@@ -14,7 +14,6 @@
 #include <Elementary.h>
 
 #include <Elm_Code.h>
-#include "elm_code_widget.eo.h"
 
 #include "elm_code_test_private.h"
 

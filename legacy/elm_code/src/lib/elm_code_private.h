@@ -24,35 +24,6 @@ extern int _elm_code_lib_log_dom;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_elm_code_lib_log_dom, __VA_ARGS__)
 
-#endif
-
-/**
- * Structure holding the info about a selected region.
- */
-typedef struct
-{
-   unsigned int start_line, end_line;
-   unsigned int start_col, end_col;
-} Elm_Code_Widget_Selection_Data;
-
-typedef struct
-{
-   Elm_Code *code;
-   Evas_Object *grid, *scroller;
-
-   Evas_Font_Size font_size;
-   double gravity_x, gravity_y;
-
-   unsigned int cursor_line, cursor_col;
-   Eina_Bool editable, focussed;
-   Eina_Bool show_line_numbers;
-   unsigned int line_width_marker, tabstop;
-   Eina_Bool show_whitespace;
-
-   Elm_Code_Widget_Selection_Data *selection;
-   Evas_Object *tooltip;
-} Elm_Code_Widget_Data;
-
 /* Private parser callbacks */
 
 void _elm_code_parse_setup();
@@ -61,8 +32,5 @@ void _elm_code_parse_line(Elm_Code *code, Elm_Code_Line *line);
 
 void _elm_code_parse_file(Elm_Code *code, Elm_Code_File *file);
 
-/* Private widget methods */
 
-void _elm_code_widget_tooltip_text_set(Evas_Object *widget, const char *text);
-
-void _elm_code_widget_tooltip_add(Evas_Object *widget);
+#endif

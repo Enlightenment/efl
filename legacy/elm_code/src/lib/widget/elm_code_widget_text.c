@@ -4,7 +4,7 @@
 
 #include "Elm_Code.h"
 
-#include "elm_code_private.h"
+#include "elm_code_widget_private.h"
 
 EAPI int
 elm_code_widget_text_line_number_width_get(Elm_Code_Widget *widget)

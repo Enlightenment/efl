@@ -38,9 +38,9 @@
 #include "elm_code_text.h"
 #include "elm_code_file.h"
 #include "elm_code_parse.h"
-#include "elm_code_widget.eo.h"
-#include "elm_code_widget_text.h"
-#include "elm_code_widget_selection.h"
+#include "widget/elm_code_widget.eo.h"
+#include "widget/elm_code_widget_text.h"
+#include "widget/elm_code_widget_selection.h"
 #include "elm_code_diff_widget.h"
 
 #ifdef __cplusplus

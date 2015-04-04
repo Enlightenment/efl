@@ -23,9 +23,9 @@ elm_code_line.h \
 elm_code_text.h \
 elm_code_file.h \
 elm_code_parse.h \
-elm_code_widget.eo.h \
-elm_code_widget_text.h \
-elm_code_widget_selection.h \
+widget/elm_code_widget.eo.h \
+widget/elm_code_widget_text.h \
+widget/elm_code_widget_selection.h \
 elm_code_diff_widget.h \
 Elm_Code.h
 includesdir = $(includedir)/edi-@VMAJ@
@@ -35,19 +35,20 @@ elm_code_line.c \
 elm_code_text.c \
 elm_code_file.c \
 elm_code_parse.c \
-elm_code_widget_text.c \
-elm_code_widget_tooltip.c \
-elm_code_widget_selection.c \
-elm_code_widget.c \
+widget/elm_code_widget_text.c \
+widget/elm_code_widget_tooltip.c \
+widget/elm_code_widget_selection.c \
+widget/elm_code_widget.c \
 elm_code_diff_widget.c \
 elm_code.c \
-elm_code_private.h
+elm_code_private.h \
+elm_code_widget_private.h
 
 libelm_code_la_LIBADD = @EFL_LIBS@ -lm
 libelm_code_la_LDFLAGS = -no-undefined @EFL_LTLIBRARY_FLAGS@
 
 elm_code_eolian_files = \
-elm_code_widget.eo
+widget/elm_code_widget.eo
 
 elm_code_eolian_c = $(elm_code_eolian_files:%.eo=%.eo.c)
 elm_code_eolian_h = $(elm_code_eolian_files:%.eo=%.eo.h)
