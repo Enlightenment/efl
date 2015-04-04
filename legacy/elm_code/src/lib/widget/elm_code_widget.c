@@ -99,7 +99,7 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   gutter = elm_code_widget_text_left_gutter_width_get(widget);
+   eo_do(widget, gutter = elm_code_widget_text_left_gutter_width_get());
 
    if (!pd->code)
      return;
@@ -170,7 +170,7 @@ _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
    unsigned int token_start_col, token_end_col;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   offset = elm_code_widget_text_left_gutter_width_get(widget);
+   eo_do(widget, offset = elm_code_widget_text_left_gutter_width_get());
    start = offset;
    length = elm_code_line_text_column_width(line, pd->tabstop) + offset;
 
@@ -203,7 +203,7 @@ _elm_code_widget_fill_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   gutter = elm_code_widget_text_left_gutter_width_get(widget);
+   eo_do(widget, gutter = elm_code_widget_text_left_gutter_width_get());
 
    evas_object_textgrid_size_get(pd->grid, &w, NULL);
 
@@ -318,7 +318,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   gutter = elm_code_widget_text_left_gutter_width_get(widget);
+   eo_do(widget, gutter = elm_code_widget_text_left_gutter_width_get());
 
    evas_object_textgrid_size_get(pd->grid, &w, NULL);
    cells = evas_object_textgrid_cellrow_get(pd->grid, line->number - 1);
@@ -371,7 +371,7 @@ _elm_code_widget_empty_line(Elm_Code_Widget *widget, unsigned int number)
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   gutter = elm_code_widget_text_left_gutter_width_get(widget);
+   eo_do(widget, gutter = elm_code_widget_text_left_gutter_width_get());
 
    evas_object_textgrid_size_get(pd->grid, &w, NULL);
    cells = evas_object_textgrid_cellrow_get(pd->grid, number - 1);
@@ -524,13 +524,15 @@ _elm_code_widget_cursor_ensure_visible(Elm_Code_Widget *widget)
    Evas_Coord viewx, viewy, vieww, viewh, cellw, cellh;
    Evas_Coord curx, cury;
    Elm_Code_Widget_Data *pd;
+   int gutter;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    elm_scroller_region_get(pd->scroller, &viewx, &viewy, &vieww, &viewh);
    evas_object_textgrid_cell_size_get(pd->grid, &cellw, &cellh);
 
-   curx = (pd->cursor_col + elm_code_widget_text_left_gutter_width_get(widget) - 1) * cellw;
+   eo_do(widget, gutter = elm_code_widget_text_left_gutter_width_get());
+   curx = (pd->cursor_col + gutter - 1) * cellw;
    cury = (pd->cursor_line - 1) * cellh;
 
    if (curx >= viewx && cury >= viewy && curx + cellw <= viewx + vieww && cury + cellh <= viewy + viewh)
@@ -574,7 +576,7 @@ _elm_code_widget_position_at_coordinates_get(Elm_Code_Widget *widget, Elm_Code_W
 {
    Elm_Code_Line *line;
    Evas_Coord ox, oy, sx, sy;
-   int cw, ch;
+   int cw, ch, gutter;
    unsigned int number;
 
    evas_object_geometry_get(widget, &ox, &oy, NULL, NULL);
@@ -583,9 +585,10 @@ _elm_code_widget_position_at_coordinates_get(Elm_Code_Widget *widget, Elm_Code_W
    y = y + sy - oy;
 
    evas_object_textgrid_cell_size_get(pd->grid, &cw, &ch);
+   eo_do(widget, gutter = elm_code_widget_text_left_gutter_width_get());
    number = ((double) y / ch) + 1;
    if (col)
-     *col = ((double) x / cw) - elm_code_widget_text_left_gutter_width_get(widget) + 1;
+     *col = ((double) x / cw) - gutter + 1;
    if (row)
      *row = number;
 
@@ -1393,4 +1396,5 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
    _elm_code_widget_font_size_set(obj, pd, 10);
 }
 
+#include "elm_code_widget_text.c"
 #include "elm_code_widget.eo.c"

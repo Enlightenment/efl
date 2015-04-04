@@ -191,7 +191,15 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
          params {
             Elm_Code_Line *line; /*@ @in The line to test for visibility. */
          }
-         return: bool (visible); /*@ true if the line specified is currently visible within the scroll region. */
+         return: bool; /*@ true if the line specified is currently visible within the scroll region. */
+      }
+
+      /* text functions */
+      text_left_gutter_width_get {
+         return: int; /*@ the current column width of the gutter for the widget. */
+      }
+      text_line_number_width_get {
+         return: int; /*@ the column width required to represent the number of lines in the widget. */
       }
    }
    implements {

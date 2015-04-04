@@ -24,7 +24,6 @@ elm_code_text.h \
 elm_code_file.h \
 elm_code_parse.h \
 widget/elm_code_widget.eo.h \
-widget/elm_code_widget_text.h \
 widget/elm_code_widget_selection.h \
 elm_code_diff_widget.h \
 Elm_Code.h
@@ -35,7 +34,6 @@ elm_code_line.c \
 elm_code_text.c \
 elm_code_file.c \
 elm_code_parse.c \
-widget/elm_code_widget_text.c \
 widget/elm_code_widget_tooltip.c \
 widget/elm_code_widget_selection.c \
 widget/elm_code_widget.c \
