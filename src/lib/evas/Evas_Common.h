@@ -2290,7 +2290,7 @@ EAPI void            evas_map_util_quat_rotate(Evas_Map *m, double qx, double qy
  *
  * This is used to apply lighting calculations (from a single light source)
  * to a given map. The R, G and B values of each vertex will be modified to
- * reflect the lighting based on the lixth point coordinates, the light
+ * reflect the lighting based on the light point coordinates, the light
  * color and the ambient color, and at what angle the map is facing the
  * light source. A surface should have its points be declared in a
  * clockwise fashion if the face is "facing" towards you (as opposed to
