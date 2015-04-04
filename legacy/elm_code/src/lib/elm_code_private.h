@@ -50,6 +50,7 @@ typedef struct
    Eina_Bool show_whitespace;
 
    Elm_Code_Widget_Selection_Data *selection;
+   Evas_Object *tooltip;
 } Elm_Code_Widget_Data;
 
 /* Private parser callbacks */
@@ -59,3 +60,9 @@ void _elm_code_parse_setup();
 void _elm_code_parse_line(Elm_Code *code, Elm_Code_Line *line);
 
 void _elm_code_parse_file(Elm_Code *code, Elm_Code_File *file);
+
+/* Private widget methods */
+
+void _elm_code_widget_tooltip_text_set(Evas_Object *widget, const char *text);
+
+void _elm_code_widget_tooltip_add(Evas_Object *widget);

@@ -672,18 +672,27 @@ _elm_code_widget_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
 {
    Elm_Code_Widget *widget;
    Elm_Code_Widget_Data *pd;
+   Elm_Code_Line *line;
    Evas_Event_Mouse_Move *event;
    unsigned int row;
    int col;
+   Eina_Bool hasline;
 
    widget = (Elm_Code_Widget *)data;
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    event = (Evas_Event_Mouse_Move *)event_info;
 
+   hasline = _elm_code_widget_position_at_coordinates_get(widget, pd, event->cur.canvas.x, event->cur.canvas.y, &row, &col);
+   if (!hasline)
+     _elm_code_widget_tooltip_text_set(widget, NULL);
+   else
+     {
+        line = elm_code_file_line_get(pd->code->file, row);
+        _elm_code_widget_tooltip_text_set(widget, line->status_text);
+     }
+
    if (!pd->editable || !pd->selection || !event->buttons)
      return;
-
-   _elm_code_widget_position_at_coordinates_get(widget, pd, event->cur.canvas.x, event->cur.canvas.y, &row, &col);
 
    elm_code_widget_selection_end(widget, row, col);
 }
@@ -1360,6 +1369,7 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(grid);
+   _elm_code_widget_tooltip_add(obj);
    elm_object_content_set(scroller, grid);
    pd->grid = grid;
    _elm_code_widget_setup_palette(grid);

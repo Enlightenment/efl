@@ -36,6 +36,7 @@ elm_code_text.c \
 elm_code_file.c \
 elm_code_parse.c \
 elm_code_widget_text.c \
+elm_code_widget_tooltip.c \
 elm_code_widget_selection.c \
 elm_code_widget.c \
 elm_code_diff_widget.c \
