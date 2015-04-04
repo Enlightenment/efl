@@ -721,6 +721,7 @@ edje_color_class_active_iterator_new(void)
 {
    Edje_Active_Color_Class_Iterator *it;
 
+   if (!_edje_color_class_member_hash) return NULL;
    it = calloc(1, sizeof (Edje_Active_Color_Class_Iterator));
    if (!it) return NULL;
 
