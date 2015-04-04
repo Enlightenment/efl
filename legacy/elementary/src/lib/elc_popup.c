@@ -1042,6 +1042,7 @@ _action_button_set(Evas_Object *obj,
                    unsigned int idx)
 {
    char buf[128], style[1024];
+   unsigned int i;
 
    ELM_POPUP_DATA_GET(obj, sd);
 
@@ -1066,7 +1067,7 @@ _action_button_set(Evas_Object *obj,
    evas_object_event_callback_add
      (btn, EVAS_CALLBACK_DEL, _on_button_del, obj);
 
-   for (unsigned int i = ELM_POPUP_ACTION_BUTTON_MAX - 1; i >= idx; i--)
+   for (i = ELM_POPUP_ACTION_BUTTON_MAX - 1; i >= idx; i--)
      {
         if (sd->buttons[i])
           {
