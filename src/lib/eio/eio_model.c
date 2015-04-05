@@ -11,6 +11,7 @@
 #include <Ecore.h>
 #include <Eo.h>
 
+#include "eio_private.h"
 #include "eio_model_private.h"
 
 #define MY_CLASS EIO_MODEL_CLASS
@@ -128,18 +129,19 @@ _eio_move_done_cb(void *data, Eio_File *handler EINA_UNUSED)
 static void
 _eio_error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error)
 {
-   if(error != 0)
+   if (error != 0)
      {
-        fprintf(stderr, "Error: %s : %d: %s\n", __FUNCTION__, error, strerror(errno));
-        EINA_SAFETY_ON_FALSE_RETURN(EINA_FALSE); /**< force check error only to be more verbose */
+        ERR("%d: %s.", error, strerror(error));
      }
-   fprintf(stdout, "%s : %d\n", __FUNCTION__, error);
 }
 
 static void
-_eio_prop_set_error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error EINA_UNUSED)
+_eio_prop_set_error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error)
 {
-   fprintf(stdout, "%s : %d\n", __FUNCTION__, error);
+   if (error != 0)
+     {
+        ERR("%d: %s.", error, strerror(error));
+     }
 }
 
 
@@ -245,7 +247,7 @@ _eio_error_unlink_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int 
 {
    Eio_Model_Data *priv = data;
 
-   fprintf(stdout, "%s : %d\n", __FUNCTION__, error);
+   ERR("%d: %s.", error, strerror(error));
 
    eo_unref(priv->obj);
 }
@@ -311,7 +313,7 @@ _eio_model_emodel_property_set(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, const 
      {
          priv->path = dest;
 
-         fprintf(stdout, " path %s filename %s\n", priv->path, basename(priv->path));
+         INF("path '%s' with filename '%s'.", priv->path, basename(priv->path));
 
          eina_value_struct_set(priv->properties, "path", priv->path);
          eina_value_struct_set(priv->properties, "filename", basename(priv->path));
@@ -432,7 +434,9 @@ _eio_error_children_load_cb(void *data, Eio_File *handler EINA_UNUSED, int error
 {
    Eio_Model_Data *priv = data;
    Eo *child;
-   fprintf(stderr, "%s: err=%d\n", __FUNCTION__, error);
+
+   ERR("%d: %s.", error, strerror(error));
+
    EINA_LIST_FREE(priv->children_list, child)
        eo_unref(child);
 
