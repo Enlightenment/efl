@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: eio C++ API
+Description: Enlightenned Asynchronous Input Output library C++ API.
+Requires.private: @requirements_pc_eio@
+Version: @VERSION@
+Libs: -L${libdir} -leio
+Libs.private: @requirements_libs_eio@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/eio-@VMAJ@ -I${includedir}/eio-cxx-@VMAJ@

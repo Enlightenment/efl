@@ -143,6 +143,7 @@ pc/ecore-evas.pc \
 pc/ecore-avahi.pc \
 pc/ector.pc \
 pc/embryo.pc \
+pc/emodel.pc \
 pc/eio.pc \
 pc/eldbus.pc \
 pc/efreet.pc \
@@ -162,7 +163,9 @@ pc/ecore-cxx.pc \
 pc/eolian-cxx.pc \
 pc/edje-cxx.pc \
 pc/eet-cxx.pc \
-pc/eo-cxx.pc
+pc/eo-cxx.pc \
+pc/emodel-cxx.pc \
+pc/eio-cxx.pc
 endif
 
 if HAVE_ELUA

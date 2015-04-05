@@ -10,7 +10,9 @@ EOLIAN_FLAGS = -I$(srcdir)\
 	       -I$(srcdir)/lib/efl/interfaces \
 	       -I$(srcdir)/lib/ecore_audio \
 	       -I$(srcdir)/lib/ecore \
-	       -I$(srcdir)/lib/ecore_con
+	       -I$(srcdir)/lib/ecore_con \
+	       -I$(srcdir)/lib/emodel \
+	       -I$(srcdir)/lib/eio
 
 DIST_SUBDIRS =
 SUBDIRS =
@@ -65,6 +67,7 @@ include Makefile_Eeze.am
 include Makefile_EPhysics.am
 include Makefile_Edje.am
 include Makefile_Emotion.am
+include Makefile_Emodel.am
 include Makefile_Ethumb.am
 include Makefile_Ethumb_Client.am
 
@@ -77,6 +80,8 @@ include Makefile_Eo_Cxx.am
 include Makefile_Efl_Cxx.am
 include Makefile_Edje_Cxx.am
 include Makefile_Evas_Cxx.am
+include Makefile_Emodel_Cxx.am
+include Makefile_Eio_Cxx.am
 
 include Makefile_Elua.am
 include Makefile_Elocation.am
