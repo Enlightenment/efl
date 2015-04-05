@@ -37,7 +37,8 @@ test_colorclass()
    elm_win_autodel_set(win, EINA_TRUE);
 
    elm_color_class_translate_cb_set(tl_cb);
-   elm_color_class_list_cb_set(name_cb);
+   /* uncomment when edje_mmap_color_class_iterator_new() stops crashing */
+   //elm_color_class_list_cb_set(name_cb);
    cc = elm_color_class_editor_add(win, 0);
    elm_win_resize_object_add(win, cc);
    evas_object_size_hint_weight_set(cc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
