@@ -101,6 +101,7 @@ edc/elm/calendar.edc \
 edc/elm/check.edc \
 edc/elm/clock.edc \
 edc/elm/colorsel.edc \
+edc/elm/colorclass.edc \
 edc/elm/conform.edc \
 edc/elm/ctxpopup.edc \
 edc/elm/cursor.edc \

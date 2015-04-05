@@ -50,6 +50,7 @@ collections {
 #include "edc/elm/photocam.edc"
 #include "edc/elm/tooltip.edc"
 #include "edc/elm/colorsel.edc"
+#include "edc/elm/colorclass.edc"
 #include "edc/elm/segment_control.edc"
 #include "edc/elm/flipselector.edc"
 #include "edc/elm/notify.edc"

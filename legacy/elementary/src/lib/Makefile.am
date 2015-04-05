@@ -186,6 +186,7 @@ elm_colorselector.h \
 elm_colorselector_eo.h \
 elm_colorselector_legacy.h \
 elm_colorselector_common.h \
+elm_color_class.h \
 elm_config.h \
 elm_conform.h \
 elm_conform_eo.h \
@@ -419,6 +420,7 @@ elm_check.c \
 elm_clock.c \
 elm_cnp.c \
 elm_colorselector.c \
+elm_color_class.c \
 elm_config.c \
 elm_conform.c \
 elm_container.c \
