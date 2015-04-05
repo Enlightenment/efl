@@ -1,3 +1,6 @@
+#ifndef ELM_COLOR_CLASS_H
+# define ELM_COLOR_CLASS_H
+
 /**
  * @defgroup Elm_Color_Class_Group Color Class Editor
  * @ingroup Elm_Color_Class_Group
@@ -6,25 +9,65 @@
  * @{
  */
 
+#define ELM_COLOR_CLASS_METHOD_BASE "org.elementary.colorclass"
+
 /**
  * @typedef Elm_Color_Class_Name_Cb
  * @brief A callback used to translate color class descriptions
  * @since 1.14
  */
 typedef char *(*Elm_Color_Class_Name_Cb)(char *);
+
+/**
+ * @typedef Elm_Color_Class_List_Cb
+ * @brief A callback used to provide a list of allocated Edje_Color_Class structs used by an application
+ * @since 1.14
+ *
+ * The list and its members will be freed internally.
+ */
+typedef Eina_List *(*Elm_Color_Class_List_Cb)(void);
+
 /**
  * @brief Create a new color class editor
  * @param obj The parent object
- * @param cb The translation callback to use
+ * @param winid The remote window id to edit
  *
  * A color class editor is a visual representation of the color schemes in an application.
  * Values changed in the editor are stored in Elementary's config and will remain until they
- * are reset or the config is cleared.
+ * are reset or the config is cleared. By default, the editor will load only the currently active
+ * color classes in an application.
  *
- * Passing a @c NULL param for @p cb will cause the editor to work in remote mode, using dbus
- * signals to message between the target application.
+ * If @p winid is provided the editor will run in remote mode, managing color classes over DBus
+ * for applications which provide the required interfaces.
+ *
  * @since 1.14
  */
-EAPI Evas_Object *elm_color_class_editor_add(Evas_Object *obj, Elm_Color_Class_Name_Cb cb);
+EAPI Evas_Object *elm_color_class_editor_add(Evas_Object *obj, uint64_t winid);
+
+/**
+ * @brief Set a callback to provide translations for color class descriptions
+ * @param cb The callback to use
+ *
+ * This callback will be called globally by the application to translate any available color class
+ * description strings from the theme's color classes.
+ *
+ * @since 1.14
+ **/
+EAPI void elm_color_class_translate_cb_set(Elm_Color_Class_Name_Cb cb);
+
+/**
+ * @brief Set a callback to provide a list of supplementary color classes
+ * @param cb The callback to use
+ *
+ * This callback will be called globally by the application to provide extra color classes
+ * that an application may use but which may not be currently loaded.
+ *
+ * @see Elm_Color_Class_List_Cb
+ *
+ * @since 1.14
+ **/
+EAPI void elm_color_class_list_cb_set(Elm_Color_Class_List_Cb cb);
 
 /** }@ */
+
+#endif

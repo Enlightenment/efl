@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node name="/">
+   <interface name="org.elementary.colorclass">
+      <method name="SendCC">
+         <arg type="t" name="winid" direction="in" />
+         <arg type="a(ssa(iiii))" name="Array of color classes" direction="in" />
+         <annotation name="org.freedesktop.DBus.Method.NoReply" value="true" />
+      </method>
+      <method name="Close">
+         <arg type="t" name="winid" direction="in" />
+         <annotation name="org.freedesktop.DBus.Method.NoReply" value="true" />
+      </method>
+      <signal name="Edit">
+         <arg type="t" name="winid" direction="out" />
+      </signal>
+      <signal name="Changed">
+         <arg type="t" name="winid" direction="out" />
+         <arg type="s" name="Color class name" direction="out" />
+         <arg type="a(iiii)" name="Colors" direction="out" />
+      </signal>
+   </interface>
+</node>
+

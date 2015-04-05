@@ -388,6 +388,11 @@ elm_win_legacy.h \
 elm_helper.h
 includesubdir = $(includedir)/elementary-@VMAJ@/
 
+COLORCLASS_GEN = \
+eldbus_elementary_colorclass.c \
+eldbus_elementary_colorclass.h \
+eldbus_utils.h
+
 libelementary_la_SOURCES = \
 elm_priv.h \
 els_box.h \
@@ -502,7 +507,8 @@ elm_helper.c \
 els_box.c \
 els_cursor.c \
 els_tooltip.c \
-elu_ews_wm.c
+elu_ews_wm.c \
+$(COLORCLASS_GEN)
 
 libelementary_la_CFLAGS = @ELEMENTARY_CFLAGS@
 libelementary_la_LIBADD = \
@@ -512,9 +518,16 @@ libelementary_la_LIBADD = \
 libelementary_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 EXTRA_DIST = \
+elm_color_class.xml \
 elm_factory.h \
 elm_factory.c \
 elm_intro.h.in
+
+$(COLORCLASS_GEN): elm_color_class.xml
+	@cd $(top_builddir)/src/lib && \
+	eldbus-codegen $(abs_top_srcdir)/src/lib/elm_color_class.xml
+elm_color_class.c: $(COLORCLASS_GEN)
+
 
 elm_eolian_files = \
 elm_access.eo \
@@ -772,3 +785,4 @@ endif
 
 
 
+MAINTAINERCLEANFILES += $(COLORCLASS_GEN)

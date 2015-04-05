@@ -696,6 +696,7 @@ elm_quicklaunch_sub_init(int    argc,
         ecore_con_url_init();
         _elm_prefs_init();
         _elm_ews_wm_init();
+        elm_color_class_init();
      }
    return _elm_sub_init_count;
 }
@@ -744,6 +745,7 @@ elm_quicklaunch_shutdown(void)
    ELM_SAFE_FREE(_elm_appname, free);
 
    _elm_config_shutdown();
+   elm_color_class_shutdown();
 
    ELM_SAFE_FREE(_elm_exit_handler, ecore_event_handler_del);
 
