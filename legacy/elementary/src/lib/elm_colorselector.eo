@@ -141,6 +141,7 @@ class Elm_Colorselector (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
       color,item,selected;
       color,item,longpressed;
       changed;
+      changed,user;
       language,changed;
       access,changed;
       focused;

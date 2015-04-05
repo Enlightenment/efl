@@ -23,6 +23,7 @@
 #define DEFAULT_VER_PAD 10
 
 static const char SIG_CHANGED[] = "changed";
+static const char SIG_CHANGED_USER[] = "changed,user";
 static const char SIG_COLOR_ITEM_SELECTED[] = "color,item,selected";
 static const char SIG_COLOR_ITEM_LONGPRESSED[] = "color,item,longpressed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
@@ -34,6 +35,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
    {SIG_WIDGET_ACCESS_CHANGED, ""}, /**< handled by elm_widget */
    {SIG_LAYOUT_FOCUSED, ""}, /**< handled by elm_layout */
    {SIG_LAYOUT_UNFOCUSED, ""}, /**< handled by elm_layout */
+   {SIG_CHANGED_USER, ""},
    {NULL, NULL}
 };
 
@@ -402,6 +404,7 @@ _update_hsla_from_colorbar(Evas_Object *obj, Color_Type type, double x)
    _update_colorbars(sd);
    _color_picker_init(sd);
    evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+   evas_object_smart_callback_call(obj, SIG_CHANGED_USER, NULL);
 }
 
 static void
@@ -485,6 +488,7 @@ _spinner_changed_cb(void *data,
          break;
      }
    evas_object_data_del(obj, "_changed");
+   evas_object_smart_callback_call(obj, SIG_CHANGED_USER, NULL);
 }
 
 #ifdef HAVE_ELEMENTARY_X
@@ -571,6 +575,7 @@ _mouse_up_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
    b = pixels[17 * 9 + 9] & 0xFF;
 
    _colors_set(o, r, g, b, 0xFF);
+   evas_object_smart_callback_call(o, SIG_CHANGED_USER, NULL);
 
    return EINA_TRUE;
 }
