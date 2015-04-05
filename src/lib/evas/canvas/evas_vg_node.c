@@ -484,14 +484,12 @@ _efl_vg_base_efl_gfx_stack_below_get(Eo *obj, Efl_VG_Base_Data *pd EINA_UNUSED)
 
    EINA_ARRAY_ITER_NEXT(&a, i, current, iterator)
      if (current == obj)
-       break;
-
-   if (current == obj)
-     {
-        i++;
-        if (i < eina_array_count(&a))
-          below = eina_array_data_get(&a, i);
-     }
+       {
+          i++;
+          if (i < eina_array_count(&a))
+            below = eina_array_data_get(&a, i);
+          break;
+       }
 
    eina_array_flush(&a);
 
@@ -516,13 +514,11 @@ _efl_vg_base_efl_gfx_stack_above_get(Eo *obj, Efl_VG_Base_Data *pd EINA_UNUSED)
 
    EINA_ARRAY_ITER_NEXT(&a, i, current, iterator)
      if (current == obj)
-       break;
-
-   if (current == obj)
-     {
-        if (i > 0)
-          above = eina_array_data_get(&a, i - 1);
-     }
+       {
+          if (i > 0)
+            above = eina_array_data_get(&a, i - 1);
+          break;
+       }
 
    eina_array_flush(&a);
 
