@@ -68,6 +68,18 @@ EAPI void elm_color_class_translate_cb_set(Elm_Color_Class_Name_Cb cb);
  **/
 EAPI void elm_color_class_list_cb_set(Elm_Color_Class_List_Cb cb);
 
+/**
+ * @brief Create an allocated list of allocated Edje_Color_Class structs from an open edje file
+ * @param f The file to list color classes from
+ * @return The list of color classes present in the file
+ *
+ * This is a helper function to create a list for use with #Elm_Color_Class_List_Cb callbacks.
+ *
+ * @see Elm_Color_Class_List_Cb
+ *
+ * @since 1.14
+ **/
+EAPI Eina_List *elm_color_class_util_edje_file_list(Eina_File *f);
 /** }@ */
 
 #endif

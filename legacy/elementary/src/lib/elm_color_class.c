@@ -703,3 +703,29 @@ elm_color_class_list_cb_set(Elm_Color_Class_List_Cb cb)
 {
    list_cb = cb;
 }
+
+EAPI Eina_List *
+elm_color_class_util_edje_file_list(Eina_File *f)
+{
+   Edje_Color_Class *ecc, *ecc2;
+   Eina_Iterator *it;
+   Eina_List *ret = NULL;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(f, NULL);
+
+   it = edje_mmap_color_class_iterator_new(f);
+   if (!it) return NULL;
+   EINA_ITERATOR_FOREACH(it, ecc)
+     {
+        ecc2 = malloc(sizeof(Edje_Color_Class));
+        memcpy(ecc2, ecc, sizeof(Edje_Color_Class));
+        ecc2->name = eina_stringshare_add(ecc->name);
+        if (tl_cb)
+          ecc2->desc = eina_stringshare_add(tl_cb((char*)ecc->desc));
+        else
+          ecc2->desc = eina_stringshare_add(ecc->desc);
+        ret = eina_list_append(ret, ecc2);
+     }
+   eina_iterator_free(it);
+   return ret;
+}
