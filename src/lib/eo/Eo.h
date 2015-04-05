@@ -257,8 +257,9 @@ struct _Eo_Event_Description
 {
    const char *name; /**< name of the event. */
    const char *doc; /**< Explanation about the event. */
-
    Eina_Bool   unfreezable; /**< Eina_True if the event cannot be frozen */
+   Eina_Bool is_more_events;
+   struct _Eo_Event_Description* counter;
 };
 
 /**
@@ -274,7 +275,7 @@ typedef struct _Eo_Event_Description Eo_Event_Description;
  * @param doc Additional doc for the event.
  * @see Eo_Event_Description
  */
-#define EO_EVENT_DESCRIPTION(name, doc) { name, doc, EINA_FALSE }
+#define EO_EVENT_DESCRIPTION(name, doc) { name, doc, EINA_FALSE , EINA_FALSE, NULL}
 
 /**
  * @def EO_HOT_EVENT_DESCRIPTION(name, doc)
@@ -285,7 +286,7 @@ typedef struct _Eo_Event_Description Eo_Event_Description;
  * @see Eo_Event_Description
  * @see EO_EVENT_DESCRIPTION
  */
-#define EO_HOT_EVENT_DESCRIPTION(name, doc) { name, doc, EINA_TRUE }
+#define EO_HOT_EVENT_DESCRIPTION(name, doc) { name, doc,  EINA_TRUE ,EINA_FALSE,  NULL}
 
 
 
@@ -960,6 +961,7 @@ typedef void (*eo_key_data_free_func)(void *);
  */
 EAPI const Eo_Event_Description *eo_base_legacy_only_event_description_get(const char *_event_name);
 
+EAPI void eo_base_regular_set_counter_description(const Eo_Event_Description *desc);
 /**
  * @def EO_CALLBACK_PRIORITY_BEFORE
  * Slightly more prioritized than default.

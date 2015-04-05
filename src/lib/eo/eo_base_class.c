@@ -25,7 +25,39 @@ typedef struct
    unsigned short walking_list;
    unsigned short event_freeze_count;
    Eina_Bool deletions_waiting : 1;
+
+
+   unsigned int called_counter;
+   unsigned int callbacks_counter;
+   unsigned int called_loop_counter;
+   unsigned int called_inner_loop_counter;
+   unsigned int arrays_counter;
+   clock_t  called_sum_clocks ;
+
+   unsigned int events_counter;
+   unsigned long long int have_events;
+
 } Eo_Base_Data;
+
+
+static unsigned int called_counter=0;
+static unsigned int callbacks_counter=0;
+static unsigned int called_loop_counter=0;
+static unsigned int called_inner_loop_counter=0;
+
+static unsigned int arrays_counter=0;
+static unsigned int objects_counter=0;
+
+static clock_t  called_sum_clocks =0;
+static clock_t start_clock =0;
+
+static unsigned int events_counter=0;
+
+
+static unsigned legacy_events_inserted=0;
+static unsigned regular_events_inserted=0;
+
+
 
 typedef struct
 {
@@ -408,12 +440,15 @@ eo_base_legacy_only_event_description_get(const char *_event_name)
 {
    Eina_Stringshare *event_name = eina_stringshare_add(_event_name);
    Eo_Event_Description *event_desc = eina_hash_find(_legacy_events_hash, event_name);
-   if (!event_desc)
+   if (!event_desc || event_desc->doc!=_legacy_event_desc)
      {
-        event_desc = calloc(1, sizeof(Eo_Event_Description));
-        event_desc->name = event_name;
-        event_desc->doc = _legacy_event_desc;
-        eina_hash_add(_legacy_events_hash, event_name, event_desc);
+         Eo_Event_Description *desc = calloc(1, sizeof(Eo_Event_Description));
+        desc->name = event_name;
+        desc->doc = _legacy_event_desc;
+        desc->counter = event_desc;
+        desc->is_more_events = EINA_FALSE;
+        eina_hash_add(_legacy_events_hash, event_name, desc);
+        return desc;
      }
    else
      {
@@ -427,10 +462,57 @@ static void
 _legacy_events_hash_free_cb(void *_desc)
 {
    Eo_Event_Description *desc = _desc;
-   eina_stringshare_del(desc->name);
-   free(desc);
+
+   if(desc->doc == _legacy_event_desc){
+
+        eina_stringshare_del(desc->name);
+
+        free(desc);
+   }
+   else  {
+        Eina_Stringshare *event_name = eina_stringshare_add(desc->name);
+        eina_stringshare_del(event_name);//for the current share;
+        eina_stringshare_del(event_name);//for the shared key
+   }
 }
 
+EAPI void
+eo_base_regular_set_counter_description(const Eo_Event_Description *desc)
+{
+   if(desc->doc == _legacy_event_desc)
+      /*its only for regular event. with legacy we handle
+       * in eo_base_legacy_only_event_description_get */
+      return;
+
+   Eina_Stringshare *event_name = eina_stringshare_add(desc->name);
+   Eo_Event_Description *event_desc = eina_hash_find(_legacy_events_hash, event_name);
+   if (!event_desc)
+     {
+
+        eina_hash_add(_legacy_events_hash, event_name, desc);
+     }
+   else
+     {
+        /*if more than one regular events with same name. only in rare occasions*/
+
+        if(event_desc->doc != _legacy_event_desc && event_desc!=desc){
+             /* we found a regular event. lets create a legacy events so we can mark
+              * that there are more events*/
+            Eo_Event_Description *new =
+                eo_base_legacy_only_event_description_get(event_desc->name);
+             new->is_more_events = EINA_TRUE;
+
+        }
+        else{
+             if( event_desc->counter && event_desc->counter!=desc)
+                event_desc ->is_more_events = EINA_TRUE;
+             else event_desc->counter = desc;
+        }
+        eina_stringshare_del(event_name);
+
+     }
+
+}
 /* EOF Legacy */
 
 struct _Eo_Callback_Description
@@ -541,6 +623,7 @@ _eo_callbacks_sorted_insert(Eo_Base_Data *pd, Eo_Callback_Description *cb)
         cb->next = pd->callbacks;
         pd->callbacks = cb;
      }
+   pd->callbacks_counter++;//avi debug
 }
 
 EOLIAN static void
@@ -639,10 +722,8 @@ _eo_base_event_callback_array_del(Eo *obj, Eo_Base_Data *pd,
 static Eina_Bool
 _cb_desc_match(const Eo_Event_Description *a, const Eo_Event_Description *b)
 {
-   if (!a)
-      return EINA_FALSE;
 
-   /* If either is legacy, fallback to string comparison. */
+
    if ((a->doc == _legacy_event_desc) || (b->doc == _legacy_event_desc))
      {
         /* Take stringshare shortcut if both are legacy */
@@ -652,13 +733,30 @@ _cb_desc_match(const Eo_Event_Description *a, const Eo_Event_Description *b)
           }
         else
           {
-             return !strcmp(a->name, b->name);
+             if (b->doc == _legacy_event_desc){
+                  if( b->counter == b)/*b is legacy and a is not*/
+                     return EINA_TRUE;
+                  else if(b->is_more_events)
+                     return !strcmp(a->name, b->name);
+
+                  else return EINA_FALSE;
+             }
+             else{
+                  if( a->counter == b)
+                     return EINA_TRUE;
+                  else if(a->is_more_events)
+                     return !strcmp(a->name, b->name);
+
+                  else return EINA_FALSE;
+
+             }
           }
      }
    else
      {
         return (a == b);
      }
+
 }
 
 EOLIAN static Eina_Bool
@@ -676,6 +774,11 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
    _eo_ref(obj);
    pd->walking_list++;
 
+   pd->called_counter++;//avi debug
+
+   clock_t start_time = clock();
+
+
    for (cb = pd->callbacks; cb; cb = cb->next)
      {
         if (!cb->delete_me)
@@ -688,40 +791,48 @@ _eo_base_event_callback_call(Eo *obj_id, Eo_Base_Data *pd,
                     {
                        if (!_cb_desc_match(it->desc, desc))
                           continue;
+
                        if (!it->desc->unfreezable &&
-                           (event_freeze_count || pd->event_freeze_count))
+                             (event_freeze_count || pd->event_freeze_count))
                           continue;
 
+                       unsigned int before_func=clock();
                        /* Abort callback calling if the func says so. */
                        if (!it->func((void *) cb->func_data, obj_id, desc,
                                 (void *) event_info))
                          {
                             ret = EINA_FALSE;
+                            start_time+=clock()-before_func;
                             goto end;
                          }
+                       start_time+=clock()-before_func;
                     }
                }
              else
                {
                   if (!_cb_desc_match(cb->items.item.desc, desc))
-                    continue;
-                  if ((!cb->items.item.desc
-                       || !cb->items.item.desc->unfreezable) &&
-                      (event_freeze_count || pd->event_freeze_count))
-                    continue;
+                     continue;
 
+                  if ((!cb->items.item.desc
+                           || !cb->items.item.desc->unfreezable) &&
+                        (event_freeze_count || pd->event_freeze_count))
+                     continue;
+                  unsigned int before_func=clock();
                   /* Abort callback calling if the func says so. */
                   if (!cb->items.item.func((void *) cb->func_data, obj_id, desc,
-                                           (void *) event_info))
+                           (void *) event_info))
                     {
                        ret = EINA_FALSE;
+                       start_time+=clock()-before_func;
                        goto end;
                     }
+                  start_time+=clock()-before_func;
                }
           }
      }
 
 end:
+   pd->called_sum_clocks +=clock()-start_time;//avi dbg
    pd->walking_list--;
    _eo_callbacks_clear(pd);
    _eo_unref(obj);
@@ -965,10 +1076,39 @@ EAPI const Eina_Value_Type *EO_DBG_INFO_TYPE = &_EO_DBG_INFO_TYPE;
 /* EO_BASE_CLASS stuff */
 #define MY_CLASS EO_BASE_CLASS
 
+
+
+static __attribute__((destructor)) void finish(void)
+{
+   printf("calbacks stats-All objects!: num objects=%u total time=%f \ 
+         called cal times= %u called loops=%u called clocks=%f called sec=%f \
+         callbacks count=%u events counter=%u legacy_events_inserted=%u  regular_events_inserted=%u \n",
+         objects_counter,(double)(clock()-start_clock)/CLOCKS_PER_SEC,  called_counter,
+         called_loop_counter,(double)called_sum_clocks,
+         (double)called_sum_clocks/CLOCKS_PER_SEC, callbacks_counter ,
+         events_counter, legacy_events_inserted, regular_events_inserted
+         );//avi debug
+
+}
+
+
 EOLIAN static void
 _eo_base_constructor(Eo *obj, Eo_Base_Data *pd EINA_UNUSED)
 {
    DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
+
+
+
+   pd->called_counter=0;
+   pd->callbacks_counter=0;
+   pd-> called_loop_counter=0;
+
+   pd-> called_loop_counter=0;
+
+   pd-> called_sum_clocks =0;
+   pd->events_counter=0;
+   pd->have_events = 0;
+
 
    _eo_condtor_done(obj);
 }
@@ -979,6 +1119,21 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
    Eo *child;
 
    DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
+
+   if( pd->callbacks_counter>0 ){//only with atleast one calllbacks
+
+        called_counter+=pd->called_counter;
+        callbacks_counter+=pd->callbacks_counter;
+        called_loop_counter+= pd->called_loop_counter;
+        arrays_counter+=pd->arrays_counter;
+        called_inner_loop_counter+=pd->called_inner_loop_counter;
+        called_sum_clocks+=pd-> called_sum_clocks;
+        events_counter+=pd->events_counter;
+
+        objects_counter++;
+   }
+
+
 
    EINA_LIST_FREE(pd->children, child)
       eo_do(child, eo_parent_set(NULL));

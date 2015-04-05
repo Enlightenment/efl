@@ -1468,6 +1468,15 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent_id, ...)
 
    DBG("Finished building class '%s'", klass->desc->name);
 
+
+
+   const Eo_Event_Description **descs = klass->desc->events;
+   /*add to the hash table*/
+   for(; descs && *descs  ;descs++){
+        eo_base_regular_set_counter_description(*descs);
+        DBG("adding event %s class %s\n", (*descs)->name,  klass->desc->name);
+   }
+
    return _eo_class_id_get(klass);
 }
 
