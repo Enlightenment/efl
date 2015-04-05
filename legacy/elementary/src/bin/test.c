@@ -257,6 +257,8 @@ void test_win_dialog(void *data, Evas_Object *obj, void *event_info);
 void test_box_disable(void *data, Evas_Object *obj, void *event_info);
 void test_layout_disable(void *data, Evas_Object *obj, void *event_info);
 
+void test_colorclass();
+
 Evas_Object *win, *tbx; // TODO: refactoring
 void *tt;
 Eina_List *tests;
@@ -723,6 +725,7 @@ add_tests:
    ADD_TEST(NULL, "Selectors", "Menu 2", test_menu2);
    ADD_TEST(NULL, "Selectors", "DiskSelector", test_diskselector);
    ADD_TEST(NULL, "Selectors", "ColorSelector", test_colorselector);
+   ADD_TEST(NULL, "Selectors", "Color Classes", test_colorclass);
    ADD_TEST(NULL, "Selectors", "SegmentControl", test_segment_control);
    ADD_TEST(NULL, "Selectors", "Hoversel", test_hoversel);
    ADD_TEST(NULL, "Selectors", "Hoversel Focus", test_hoversel_focus);
