@@ -30,12 +30,10 @@ struct reqs_t {
    int changed_is_lnk;
    int changed_size;
    int changed_mtime;
-   int changed_icon;
 
    /* properties list */
    int proplist_filename;
    int proplist_path;
-   int proplist_icon;
    int proplist_mtime;
    int proplist_is_dir;
    int proplist_is_lnk;
@@ -140,31 +138,24 @@ _load_status_cb(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *des
 }
 
 static Eina_Bool
-_properties_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+_properties_change_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    const Emodel_Property_Event *evt = (Emodel_Property_Event *)event_info;
-   Emodel_Property_Pair *pair = NULL;
-   Eina_List *l = NULL;
+   Eina_Value v;
 
-   EINA_LIST_FOREACH(evt->changed_properties, l, pair)
-     {
-        char *str;
-        str = eina_value_to_string(&pair->value);
-        fprintf(stdout, "Received changed property=%s, value=%s\n",
-                pair->property, str);
-        free(str);
-        if(!strcmp(pair->property, "is_dir"))
-          reqs.changed_is_dir = 1;
-        if(!strcmp(pair->property, "is_lnk"))
-          reqs.changed_is_lnk = 1;
-        if(!strcmp(pair->property, "size"))
-          reqs.changed_size = 1;
-        if(!strcmp(pair->property, "mtime"))
-          reqs.changed_mtime = 1;
-        if(!strcmp(pair->property, "icon"))
-          reqs.changed_icon = 1;
-     }
+   if (eina_value_type_get(evt->changed_properties) != EINA_VALUE_TYPE_STRUCT)
+     return EINA_FALSE;
 
+   if(eina_value_struct_value_get(evt->changed_properties, "is_dir", &v) == EINA_TRUE)
+     reqs.changed_is_dir = 1;
+   if(eina_value_struct_value_get(evt->changed_properties, "is_lnk", &v) == EINA_TRUE)
+     reqs.changed_is_lnk = 1;
+   if(eina_value_struct_value_get(evt->changed_properties, "size", &v) == EINA_TRUE)
+     reqs.changed_size = 1;
+   if(eina_value_struct_value_get(evt->changed_properties, "mtime", &v) == EINA_TRUE)
+     reqs.changed_mtime = 1;
+
+   eina_value_flush(&v);
    reqs.properties = 1;
    return EINA_TRUE;
 }
@@ -192,10 +183,10 @@ START_TEST(emodel_test_test_file)
 #ifdef _RUN_LOCAL_TEST
    Eina_Value nameset_value;
 #endif
-   Eina_List *properties_list;
-   Eina_List *l;
+   Eina_Array *properties_list;
+   Eina_Array_Iterator iterator;
    char *str;
-   int i;
+   unsigned int i;
 
    memset(&reqs, -1, sizeof(struct reqs_t));
 
@@ -207,7 +198,7 @@ START_TEST(emodel_test_test_file)
    fail_if(!filemodel, "ERROR: Cannot init model!\n");
 
    eo_do(filemodel, eo_event_callback_add(EMODEL_EVENT_LOAD_STATUS, _load_status_cb, NULL));
-   eo_do(filemodel, eo_event_callback_add(EMODEL_EVENT_PROPERTIES_CHANGED, _properties_cb, NULL));
+   eo_do(filemodel, eo_event_callback_add(EMODEL_EVENT_PROPERTIES_CHANGED, _properties_change_cb, NULL));
    eo_do(filemodel, eo_event_callback_add(EMODEL_EVENT_CHILDREN_COUNT_CHANGED, _children_count_cb, NULL));
 
    eo_do(filemodel, emodel_load());
@@ -225,15 +216,13 @@ START_TEST(emodel_test_test_file)
 
    i = 0;
    eo_do(filemodel, emodel_properties_list_get(&properties_list));
-   EINA_LIST_FOREACH((Eina_List *)properties_list, l, str)
+   EINA_ARRAY_ITER_NEXT(properties_list, i, str, iterator)
      {
-        fprintf(stdout, "Returned property list %d: %s\n", i++, str);
+        fprintf(stdout, "Returned property list %d: %s\n", i, str);
         if(!strcmp(str, "filename"))
           reqs.proplist_filename = 1;
         else if(!strcmp(str, "path"))
           reqs.proplist_path = 1;
-        else if(!strcmp(str, "icon"))
-          reqs.proplist_icon = 1;
         else if(!strcmp(str, "mtime"))
           reqs.proplist_mtime = 1;
         else if(!strcmp(str, "is_dir"))
@@ -268,6 +257,6 @@ END_TEST
 void
 emodel_test_file(TCase *tc)
 {
-   /* tcase_add_test(tc, emodel_test_test_file); */
+    tcase_add_test(tc, emodel_test_test_file);
 }
 

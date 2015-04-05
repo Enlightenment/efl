@@ -22,13 +22,16 @@ static void _eio_model_emodel_properties_load(Eo *, Eio_Model_Data *);
 static void _eio_model_emodel_children_load(Eo *, Eio_Model_Data *);
 
 static void
-_load_set(Eio_Model_Data *priv, Emodel_Load load)
+_load_set(Eio_Model_Data *priv, Emodel_Load_Status status)
 {
+   Emodel_Load load;
+
+   load.status = status;
    if ((priv->load.status & (EMODEL_LOAD_STATUS_LOADED | EMODEL_LOAD_STATUS_LOADING)) &&
                         (load.status & (EMODEL_LOAD_STATUS_LOADED | EMODEL_LOAD_STATUS_LOADING)))
      {
-        load.status = priv->load.status | load.status;
-        switch (load.status)
+        load.status = priv->load.status | status;
+        switch (status)
           {
            case EMODEL_LOAD_STATUS_LOADED_PROPERTIES:
              load.status &= ~EMODEL_LOAD_STATUS_LOADING_PROPERTIES;
@@ -53,33 +56,6 @@ _load_set(Eio_Model_Data *priv, Emodel_Load load)
      }
 }
 
-static void
-_stat_pro_set(Eio_Model_Data *priv, int prop_id, const Eina_Value *value, Emodel_Property_Event *evt)
-{
-   Eina_Value old_value;
-   int changed;
-   Emodel_Property_Pair *pair = NULL;
-   const char *prop = EIO_MODEL_PROPERTIES_DESC->members[prop_id].name;
-
-   eina_value_struct_value_get(priv->properties, prop, &old_value);
-   changed = eina_value_compare(&old_value, value);
-
-   if(changed) eina_value_struct_value_set(priv->properties, prop, value);
-   eina_value_flush(&old_value);
-   if(!changed) return;
-
-   pair = calloc(1, sizeof(Emodel_Property_Pair));
-   EINA_SAFETY_ON_NULL_RETURN(pair);
-   if(!eina_value_copy((Eina_Value*)value, &pair->value))
-     {
-        free(pair);
-        return;
-     }
-
-   pair->property = eina_stringshare_add(prop);
-   evt->changed_properties = eina_list_append(evt->changed_properties, pair);
-}
-
 /**
  *  Callbacks
  *  Property
@@ -88,52 +64,34 @@ static void
 _eio_stat_done_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina_Stat *stat)
 {
    Emodel_Property_Event evt;
-   Eina_Value value;
    Eio_Model_Data *priv = data;
-   Emodel_Load load;
+   Eina_Bool changed = EINA_FALSE;
+   Eina_Value_Struct_Desc *desc = EIO_MODEL_PROPERTIES_DESC;
+
    EINA_SAFETY_ON_FALSE_RETURN(eo_ref_get(priv->obj));
 
    priv->stat = stat;
    memset(&evt, 0, sizeof(Emodel_Property_Event));
 
-   // Setup for Eina_Bool
-   eina_value_setup(&value, EINA_VALUE_TYPE_INT);
-   eina_value_set(&value, eio_file_is_dir(stat));
-   _stat_pro_set(priv, EIO_MODEL_PROP_IS_DIR, (const Eina_Value*)&value, &evt);
-   eina_value_flush(&value);
+   changed |= eina_value_struct_set(priv->properties,
+                   desc->members[EIO_MODEL_PROP_IS_DIR].name, eio_file_is_dir(stat));
 
-   // Setup for Eina_Bool
-   eina_value_setup(&value, EINA_VALUE_TYPE_INT);
-   eina_value_set(&value, eio_file_is_lnk(stat));
-   _stat_pro_set(priv, EIO_MODEL_PROP_IS_LNK, (const Eina_Value*)&value, &evt);
-   eina_value_flush(&value);
+   changed |= eina_value_struct_set(priv->properties,
+                   desc->members[EIO_MODEL_PROP_IS_LNK].name, eio_file_is_lnk(stat));
 
-   // Setup for double
-   eina_value_setup(&value, EINA_VALUE_TYPE_TIMEVAL);
-   eina_value_set(&value, eio_file_mtime(stat));
-   _stat_pro_set(priv, EIO_MODEL_PROP_MTIME, (const Eina_Value*)&value, &evt);
-   eina_value_flush(&value);
+   changed |= eina_value_struct_set(priv->properties,
+                   desc->members[EIO_MODEL_PROP_MTIME].name, eio_file_mtime(stat));
 
-   // Setup for long long
-   eina_value_setup(&value, EINA_VALUE_TYPE_INT64);
-   eina_value_set(&value, eio_file_size(stat));
-   _stat_pro_set(priv, EIO_MODEL_PROP_SIZE, (const Eina_Value*)&value, &evt);
-   eina_value_flush(&value);
+   changed |= eina_value_struct_set(priv->properties,
+                   desc->members[EIO_MODEL_PROP_SIZE].name, eio_file_size(stat));
 
-   if (evt.changed_properties != NULL)
+   if (changed == EINA_TRUE)
      {
-        Emodel_Property_Pair *pair;
+        evt.changed_properties = priv->properties;
         eo_do(priv->obj, eo_event_callback_call(EMODEL_EVENT_PROPERTIES_CHANGED, &evt));
-        EINA_LIST_FREE(evt.changed_properties, pair)
-          {
-             eina_stringshare_del(pair->property);
-             eina_value_flush(&pair->value);
-             free(pair);
-          }
      }
 
-   load.status = EMODEL_LOAD_STATUS_LOADED_PROPERTIES;
-   _load_set(priv, load);
+   _load_set(priv, EMODEL_LOAD_STATUS_LOADED_PROPERTIES);
 
    if (priv->load_pending & EMODEL_LOAD_STATUS_LOADED_CHILDREN)
      _eio_model_emodel_children_load(priv->obj, priv);
@@ -149,7 +107,6 @@ static void
 _eio_move_done_cb(void *data, Eio_File *handler EINA_UNUSED)
 {
    Emodel_Property_Event evt;
-   Emodel_Property_Pair pair_path, pair_filename;
    Eio_Model_Data *priv = data;
    Eina_Value_Struct_Desc *desc = EIO_MODEL_PROPERTIES_DESC;
 
@@ -161,24 +118,11 @@ _eio_move_done_cb(void *data, Eio_File *handler EINA_UNUSED)
     * When mv is executed we update our values and
     * notify both path and filename properties listeners.
     */
-   pair_path.property = eina_stringshare_add(desc->members[EIO_MODEL_PROP_PATH].name);
-   eina_value_struct_set(priv->properties, pair_path.property, priv->path);
-   eina_value_struct_value_get(priv->properties, pair_path.property, &pair_path.value);
-   evt.changed_properties = eina_list_append(evt.changed_properties, &pair_path);
-
-   pair_filename.property = eina_stringshare_add(desc->members[EIO_MODEL_PROP_FILENAME].name);
-   eina_value_struct_set(priv->properties, pair_filename.property, basename(priv->path));
-   eina_value_struct_value_get(priv->properties, pair_filename.property, &pair_filename.value);
-   evt.changed_properties = eina_list_append(evt.changed_properties, &pair_filename);
+   eina_value_struct_set(priv->properties, desc->members[EIO_MODEL_PROP_PATH].name, priv->path);
+   eina_value_struct_set(priv->properties, desc->members[EIO_MODEL_PROP_FILENAME].name, basename(priv->path));
+   evt.changed_properties = priv->properties;
 
    eo_do(priv->obj, eo_event_callback_call(EMODEL_EVENT_PROPERTIES_CHANGED, &evt));
-
-   eina_stringshare_del(pair_path.property);
-   eina_stringshare_del(pair_filename.property);
-   eina_value_flush(&pair_filename.value);
-   eina_value_flush(&pair_path.value);
-
-   eina_list_free(evt.changed_properties);
 }
 
 static void
@@ -247,8 +191,6 @@ _emodel_evt_deleted_ecore_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void 
        if(cur)
          {
            Emodel_Children_Event cevt;
-
-
            cevt.index = i;
            cevt.child = cur->data;
 
@@ -314,7 +256,7 @@ _eio_error_unlink_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int 
  */
 static Emodel_Load_Status
 _eio_model_emodel_properties_list_get(Eo *obj EINA_UNUSED,
-                                       Eio_Model_Data *_pd, Eina_List * const* properties_list)
+                                       Eio_Model_Data *_pd, Eina_Array * const* properties_list)
 {
    Eio_Model_Data *priv = _pd;
    unsigned int i;
@@ -322,14 +264,15 @@ _eio_model_emodel_properties_list_get(Eo *obj EINA_UNUSED,
    EINA_SAFETY_ON_NULL_RETURN_VAL(priv, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(priv->obj, EINA_FALSE);
 
-   if(priv->properties_list == NULL)
+   if(priv->properties_array == NULL)
      {
         Eina_Value_Struct_Desc *desc = EIO_MODEL_PROPERTIES_DESC;
+        priv->properties_array = eina_array_new(desc->member_count);
         for(i = 0; i < desc->member_count; ++i)
-          priv->properties_list = eina_list_append(priv->properties_list, desc->members[i].name);
+          eina_array_push(priv->properties_array, desc->members[i].name);
      }
 
-   *(Eina_List **)properties_list = priv->properties_list;
+   *(Eina_Array **)properties_list = priv->properties_array;
 
    return priv->load.status;
 }
@@ -340,15 +283,11 @@ _eio_model_emodel_properties_list_get(Eo *obj EINA_UNUSED,
 static Emodel_Load_Status
 _eio_model_emodel_property_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, const char *property, Eina_Value *value)
 {
-   Eina_Value _v;
    EINA_SAFETY_ON_NULL_RETURN_VAL(property, EMODEL_LOAD_STATUS_ERROR);
    EINA_SAFETY_ON_NULL_RETURN_VAL(priv, EMODEL_LOAD_STATUS_ERROR);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(priv->obj, EMODEL_LOAD_STATUS_ERROR);
 
-   if (eina_value_struct_value_get(priv->properties, property, &_v) == EINA_TRUE)
-     {
-        eina_value_copy(&_v, value);
-     }
+   //XXX Return error code?
+   eina_value_struct_value_get(priv->properties, property, value);
 
    return priv->load.status;
 }
@@ -375,7 +314,7 @@ _eio_model_emodel_property_set(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, const 
          fprintf(stdout, " path %s filename %s\n", priv->path, basename(priv->path));
 
          eina_value_struct_set(priv->properties, "path", priv->path);
-         eina_value_struct_set(priv->properties, "filename", eina_stringshare_add(basename(priv->path)));
+         eina_value_struct_set(priv->properties, "filename", basename(priv->path));
 
          _eio_monitors_list_load(priv);
 
@@ -413,7 +352,6 @@ _eio_model_emodel_children_count_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, 
  static void
 _eio_model_emodel_properties_load(Eo *obj EINA_UNUSED, Eio_Model_Data *priv)
 {
-   Emodel_Load load;
    if (priv->path == NULL)
      {
          priv->load_pending |= EMODEL_LOAD_STATUS_LOADED_PROPERTIES;
@@ -423,8 +361,7 @@ _eio_model_emodel_properties_load(Eo *obj EINA_UNUSED, Eio_Model_Data *priv)
 
    if (!(priv->load.status & (EMODEL_LOAD_STATUS_LOADED_PROPERTIES | EMODEL_LOAD_STATUS_LOADING_PROPERTIES)))
      {
-        load.status = EMODEL_LOAD_STATUS_LOADING_PROPERTIES;
-         _load_set(priv, load);
+         _load_set(priv, EMODEL_LOAD_STATUS_LOADING_PROPERTIES);
          priv->file = eio_file_direct_stat(priv->path, _eio_stat_done_cb, _eio_error_cb, priv);
      }
 }
@@ -470,11 +407,10 @@ _eio_main_children_load_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina
    Eio_Model_Data *priv = data;
    EINA_SAFETY_ON_NULL_RETURN(priv);
 
-   child = eo_add_ref(MY_CLASS, NULL, eio_model_path_set(info->path));
+   child = eo_add(MY_CLASS, NULL, eio_model_path_set(info->path));
    if (priv->filter_cb)
-     {
-        eo_do(child, eio_model_children_filter_set(priv->filter_cb, priv->filter_userdata));
-     }
+     eo_do(child, eio_model_children_filter_set(priv->filter_cb, priv->filter_userdata));
+
    priv->children_list = eina_list_append(priv->children_list, child);
 }
 
@@ -483,13 +419,11 @@ _eio_done_children_load_cb(void *data, Eio_File *handler EINA_UNUSED)
 {
    unsigned long count;
    Eio_Model_Data *priv = data;
-   Emodel_Load load;
    EINA_SAFETY_ON_NULL_RETURN(priv);
 
    count = eina_list_count(priv->children_list);
-   load.status = EMODEL_LOAD_STATUS_LOADED_CHILDREN;
+   _load_set(priv, EMODEL_LOAD_STATUS_LOADED_CHILDREN);
 
-   _load_set(priv, load);
    eo_do(priv->obj, eo_event_callback_call(EMODEL_EVENT_CHILDREN_COUNT_CHANGED, &count));
 }
 
@@ -498,14 +432,11 @@ _eio_error_children_load_cb(void *data, Eio_File *handler EINA_UNUSED, int error
 {
    Eio_Model_Data *priv = data;
    Eo *child;
-   Emodel_Load load;
    fprintf(stderr, "%s: err=%d\n", __FUNCTION__, error);
    EINA_LIST_FREE(priv->children_list, child)
        eo_unref(child);
 
-   load.status = EMODEL_LOAD_STATUS_LOADED_CHILDREN;
-
-   _load_set(priv, load);
+   _load_set(priv, EMODEL_LOAD_STATUS_LOADED_CHILDREN);
 }
 
 /**
@@ -514,7 +445,6 @@ _eio_error_children_load_cb(void *data, Eio_File *handler EINA_UNUSED, int error
 static void
 _eio_model_emodel_children_load(Eo *obj EINA_UNUSED, Eio_Model_Data *priv)
 {
-   Emodel_Load load;
    if (priv->path == NULL)
      {
          priv->load_pending |= EMODEL_LOAD_STATUS_LOADED_CHILDREN;
@@ -522,12 +452,12 @@ _eio_model_emodel_children_load(Eo *obj EINA_UNUSED, Eio_Model_Data *priv)
      }
    priv->load_pending &= ~EMODEL_LOAD_STATUS_LOADED_CHILDREN;
 
-   if (!(priv->load.status & (EMODEL_LOAD_STATUS_LOADED_CHILDREN | EMODEL_LOAD_STATUS_LOADING_CHILDREN)))
+   if (priv->children_list == NULL &&
+                   !(priv->load.status & (EMODEL_LOAD_STATUS_LOADED_CHILDREN | EMODEL_LOAD_STATUS_LOADING_CHILDREN)))
      {
         _eio_model_emodel_monitor_add(priv);
 
-        load.status = EMODEL_LOAD_STATUS_LOADING_CHILDREN;
-         _load_set(priv, load);
+         _load_set(priv, EMODEL_LOAD_STATUS_LOADING_CHILDREN);
          eio_file_direct_ls(priv->path, _eio_filter_children_load_cb,
                       _eio_main_children_load_cb, _eio_done_children_load_cb,
                       _eio_error_children_load_cb, priv);
@@ -559,7 +489,6 @@ _eio_model_emodel_load_status_get(Eo *obj EINA_UNUSED, Eio_Model_Data *priv)
 static void
 _eio_model_emodel_unload(Eo *obj  EINA_UNUSED, Eio_Model_Data *priv)
 {
-   Emodel_Load load;
    if (!(priv->load.status & EMODEL_LOAD_STATUS_UNLOADED))
      {
          Eo *child;
@@ -568,8 +497,7 @@ _eio_model_emodel_unload(Eo *obj  EINA_UNUSED, Eio_Model_Data *priv)
               eo_unref(child);
            }
 
-         load.status = EMODEL_LOAD_STATUS_UNLOADED;
-         _load_set(priv, load);
+         _load_set(priv, EMODEL_LOAD_STATUS_UNLOADED);
      }
 }
 
@@ -709,7 +637,6 @@ _struct_properties_init(void)
      EINA_VALUE_STRUCT_MEMBER(NULL, This_Eio_Properties, is_lnk),
      EINA_VALUE_STRUCT_MEMBER(NULL, This_Eio_Properties, size)
    };
-   //XXX: Check data types
    prop_members[EIO_MODEL_PROP_FILENAME].type = EINA_VALUE_TYPE_STRING;
    prop_members[EIO_MODEL_PROP_PATH].type = EINA_VALUE_TYPE_STRING;
    prop_members[EIO_MODEL_PROP_MTIME].type = EINA_VALUE_TYPE_TIMEVAL;
@@ -746,7 +673,6 @@ _eio_model_eo_base_constructor(Eo *obj, Eio_Model_Data *priv)
 static void
 _eio_model_path_set(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, const char *path)
 {
-  //_eio_model_eo_base_constructor(obj, priv);
    priv->path = strdup(path);
 
    eina_value_struct_set(priv->properties, "path", priv->path);
@@ -760,11 +686,15 @@ static void
 _eio_model_eo_base_destructor(Eo *obj , Eio_Model_Data *priv)
 {
    Eo *child;
+
    if(priv->monitor)
      eio_monitor_del(priv->monitor);
 
-   eina_list_free(priv->properties_list);
-   eina_value_free(priv->properties);
+   if (priv->properties_array)
+     eina_array_free(priv->properties_array);
+
+   if (priv->properties)
+     eina_value_free(priv->properties);
 
    EINA_LIST_FREE(priv->children_list, child)
      eo_unref(child);

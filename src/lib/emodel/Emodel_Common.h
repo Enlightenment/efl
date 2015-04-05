@@ -46,26 +46,12 @@ struct _Emodel_Load
 typedef struct _Emodel_Load Emodel_Load;
 
 /**
- * @struct _Emodel_Property_Pair
- */
-struct _Emodel_Property_Pair
-{
-   Eina_Value value; /**< the property value */
-   Eina_Stringshare *property; /**< the property name */
-};
-
-/**
- * @typedef Emodel_Property_Pair
- */
-typedef struct _Emodel_Property_Pair Emodel_Property_Pair;
-
-/**
  * @struct _Emodel_Property_Event
  */
 struct _Emodel_Property_Event
 {
-   Eina_List *changed_properties; /**< the property value */
-   Eina_List *invalidated_properties; /**< the property name */
+   const Eina_Value *changed_properties; /**< Eina_Value_Struct or Eina_Value_Hash with changed properties values */
+   Eina_Array *invalidated_properties; /**< array of name */
 };
 
 /**

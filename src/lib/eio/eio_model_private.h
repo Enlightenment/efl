@@ -4,7 +4,6 @@
 #define PROP_LIST_SIZE 7
 
 typedef struct _Eio_Model_Data                 Eio_Model_Data;
-//typedef struct _Eio_Model_Child_Add            Eio_Model_Child_Add;
 typedef struct _Eio_Model_Monitor_Data         Eio_Model_Monitor_Data;
 
 struct _Eio_Model_Monitor_Data
@@ -33,7 +32,7 @@ struct _Eio_Model_Data
 {
    Eo *obj;
    char *path;
-   Eina_List *properties_list;
+   Eina_Array *properties_array;
    Eina_Value *properties;
    Emodel_Load load;
    int load_pending;
@@ -48,15 +47,5 @@ struct _Eio_Model_Data
    Eio_Filter_Direct_Cb filter_cb;
    void *filter_userdata;
 };
-
-/*
-struct _Eio_Model_Child_Add
-{
-   Eo *child;
-   Eio_Model_Data *priv;
-   char* fullpath;
-   char *name;
-};
-*/
 
 #endif
