@@ -139,6 +139,8 @@ typedef enum _Efl_Gfx_Fill_Spread
 
 #ifdef EFL_BETA_API_SUPPORT
 
+#include <Efl_Model_Common.h>
+  
 /* Interfaces */
 #include "interfaces/efl_control.eo.h"
 #include "interfaces/efl_file.eo.h"
@@ -146,6 +148,7 @@ typedef enum _Efl_Gfx_Fill_Spread
 #include "interfaces/efl_player.eo.h"
 #include "interfaces/efl_text.eo.h"
 #include "interfaces/efl_text_properties.eo.h"
+#include "interfaces/efl_model_base.eo.h"
 
 EAPI extern const Eo_Event_Description _EFL_GFX_CHANGED;
 EAPI extern const Eo_Event_Description _EFL_GFX_PATH_CHANGED;

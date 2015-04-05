@@ -1,46 +1,47 @@
 /*
- * type Emodel_Load_Status: enum _Emodel_Load_Status
+ * type Efl_Model_Load_Status: enum _Efl_Model_Load_Status
  * {
- *    EMODEL_LOAD_STATUS_ERROR = 0, /*@ Error in Load Model *
- *    EMODEL_LOAD_STATUS_LOADING_PROPERTIES = (1 << 0), /*@ properties load in progress *
- *    EMODEL_LOAD_STATUS_LOADING_CHILDREN =   (1 << 1), /*@ children load in progress *
- *    EMODEL_LOAD_STATUS_LOADING = (1 << 0) | (1 << 1), /*@ children and properties load in progress *
+ *    EFL_MODEL_LOAD_STATUS_ERROR = 0, /*@ Error in Load Model *
+ *    EFL_MODEL_LOAD_STATUS_LOADING_PROPERTIES = (1 << 0), /*@ properties load in progress *
+ *    EFL_MODEL_LOAD_STATUS_LOADING_CHILDREN =   (1 << 1), /*@ children load in progress *
+ *    EFL_MODEL_LOAD_STATUS_LOADING = (1 << 0) | (1 << 1), /*@ children and properties load in progress *
  *
- *    EMODEL_LOAD_STATUS_LOADED_PROPERTIES = (1 << 2), /*@ Model as ready to fetch properties *
- *    EMODEL_LOAD_STATUS_LOADED_CHILDREN =   (1 << 3), /*@ Model as ready to fetch children *
- *    EMODEL_LOAD_STATUS_LOADED = (1 << 2) | (1 << 3), /*@ Model as ready to fetch properties and children *
+ *    EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES = (1 << 2), /*@ Model as ready to fetch properties *
+ *    EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN =   (1 << 3), /*@ Model as ready to fetch children *
+ *    EFL_MODEL_LOAD_STATUS_LOADED = (1 << 2) | (1 << 3), /*@ Model as ready to fetch properties and children *
  *
- *    EMODEL_LOAD_STATUS_UNLOADING = (1 << 4), /*@ Model Unload in progress *
- *    EMODEL_LOAD_STATUS_UNLOADED =  (1 << 5)  /*@ Model Unloaded *
+ *    EFL_MODEL_LOAD_STATUS_UNLOADING = (1 << 4), /*@ Model Unload in progress *
+ *    EFL_MODEL_LOAD_STATUS_UNLOADED =  (1 << 5)  /*@ Model Unloaded *
  * }
  *
  *
- * type Emodel_Property_Event: struct _Emodel_Property_Event
+ * type Efl_Model_Property_Event: struct _Efl_Model_Property_Event
  * {
  *  changed_properties: Eina_Array* <const(char)*>; /*@ List of changed properties *
  *  invalidated_properties: Eina_Array* <const(char)*>; /*@ Removed properties identified by name *
  * }
  */
 
-interface Emodel ()
+interface Efl.Model.Base ()
 {
    legacy_prefix: null;
+   eo_prefix: efl_model;
       properties {
          load_status {
             get {
             /*@
              Get a load emodel current status.
 
-             @return: @c Emodel_Load_Status
+             @return: @c Efl_Model_Load_Status
 
              By convention this means get the current model status.
-             Possible values are defined Emodel_Load_Status enumerator.
+             Possible values are defined Efl_Model_Load_Status enumerator.
 
-             @see Emodel_Load_Status
-             @see emodel_load
+             @see Efl_Model_Load_Status
+             @see efl_model_load
 
-             @since 1.11 */
-             return: Emodel_Load_Status;
+             @since 1.14 */
+             return: Efl_Model_Load_Status;
             }
          }
          properties {
@@ -48,17 +49,17 @@ interface Emodel ()
                 /*@
                 Get properties from model.
 
-              @return: @c Emodel_Load_Status
+              @return: @c Efl_Model_Load_Status
 
                 properties_get is due to provide callers a way the fetch the current
                 properties implemented/used by the model.
-                The event EMODEL_EVENT_PROPERTIES_CHANGE will be raised to notify listeners
+                The event EFL_MODEL_EVENT_PROPERTIES_CHANGE will be raised to notify listeners
                 of any modifications in the properties.
 
-                @see EMODEL_EVENT_PROPERTIES_CHANGE
-                @since 1.11 */
+                @see EFL_MODEL_EVENT_PROPERTIES_CHANGE
+                @since 1.14 */
 
-                return: Emodel_Load_Status;
+                return: Efl_Model_Load_Status;
          }
          values {
                const(array<const(char*)>*) properties; /*@ array of current properties */
@@ -71,40 +72,40 @@ interface Emodel ()
 
                 @return: @c EINA_TRUE, on success, @c EINA_FALSE in readonly property or error
 
-                The caller must ensure to call at least emodel_prop_list before being
+                The caller must ensure to call at least efl_model_prop_list before being
                 able to see/set properties.
                 This function sets a new property value into given property name. Once
                 the operation is completed the concrete implementation should raise
-                EMODEL_EVENT_PROPERTIES_CHANGE event in order to notify listeners of the
+                EFL_MODEL_EVENT_PROPERTIES_CHANGE event in order to notify listeners of the
                 new value of the property.
 
                 If the model doesn't have the property then there are two possibilities,
                 either raise an error or create the new property in model
 
-                @see emodel_property_get
-                @see EMODEL_EVENT_PROPERTIES_CHANGE
-                @since 1.11 */
+                @see efl_model_property_get
+                @see EFL_MODEL_EVENT_PROPERTIES_CHANGE
+                @since 1.14 */
 
-                return: Emodel_Load_Status;
+                return: Efl_Model_Load_Status;
             }
             get {
                 /*@
                 Retrieve the value of a given property name.
 
-                @return: @c Load Status, on success, @c EMODEL_LOAD_STATUS_ERROR otherwise
+                @return: @c Load Status, on success, @c EFL_MODEL_LOAD_STATUS_ERROR otherwise
 
                 property_get will only be available when load status is equal to
-                EMODEL_LOAD_STATUS_LOADED.
+                EFL_MODEL_LOAD_STATUS_LOADED.
 
                 At this point the caller is free to get values from properties.
-                The event EMODEL_EVENT_PROPERTIES_CHANGE may be raised to notify
+                The event EFL_MODEL_EVENT_PROPERTIES_CHANGE may be raised to notify
                 listeners of the property/value.
 
-                @see emodel_properties_get
-                @see EMODEL_EVENT_PROPERTIES_CHANGE
+                @see efl_model_properties_get
+                @see EFL_MODEL_EVENT_PROPERTIES_CHANGE
 
-                @since 1.11 */
-                return: Emodel_Load_Status;
+                @since 1.14 */
+                return: Efl_Model_Load_Status;
             }
             keys {
                const(char)* property; /*@ Property name */
@@ -118,14 +119,14 @@ interface Emodel ()
                /*@
                Get children slice OR full range.
 
-               @return: @c Emodel_Load_Status. See below for more info.
+               @return: @c Efl_Model_Load_Status. See below for more info.
 
                Before being able to get the children list the model status must be
-               on loaded status (EMODEL_LOAD_STATUS_LOADED).
+               on loaded status (EFL_MODEL_LOAD_STATUS_LOADED).
                However there may be circunstancies where the model could be
                in a different state, in such cases it is advisable
                to simply return: its current state, which will be
-               of course, different than @c EMODEL_LOAD_STATUS_LOADED_CHILDREN.
+               of course, different than @c EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN.
                When children accessor is return:ed as NULL one should then
                test the current load status return:ed by @children_slice_get
                in order to check against an empty list or real error.
@@ -154,20 +155,20 @@ interface Emodel ()
                @code
 
                // Returns full list
-               eo_do(obj, emodel_children_slice_get(0, 0, &children_accessor));
+               eo_do(obj, efl_model_children_slice_get(0, 0, &children_accessor));
 
                // Returns 5 items, counting from item #5
-               eo_do(obj, emodel_children_slice_get(5, 5, &children_accessor));
+               eo_do(obj, efl_model_children_slice_get(5, 5, &children_accessor));
 
                @endcode
 
-               @see emodel_children_get
-               @see emodel_children_count_get
-               @see emodel_load
-               @see emodel_load_status_get
-               @since 1.11 */
+               @see efl_model_children_get
+               @see efl_model_children_count_get
+               @see efl_model_load
+               @see efl_model_load_status_get
+               @since 1.14 */
 
-               return: Emodel_Load_Status;
+               return: Efl_Model_Load_Status;
             }
             keys {
                 unsigned start; /*@ Range begin - start from here. If start and count are 0 slice is ignored.*/
@@ -184,18 +185,18 @@ interface Emodel ()
 
                 @return: @c EINA_TRUE, on success, @c EINA_FALSE otherwise
 
-                When emodel_load is completed emodel_coildren_count_get can be use
+                When efl_model_load is completed efl_model_coildren_count_get can be use
                 to get the number of children. children_count_get can also be used
                 before calling children_slice_get so a valid range is known.
-                Event EMODEL_CHILDREN_COUNT_CHANGED is emitted when count is finished.
+                Event EFL_MODEL_CHILDREN_COUNT_CHANGED is emitted when count is finished.
 
-                @see emodel_children_get
-                @see emodel_children_slice_get
-                @see emodel_load
-                @see emodel_load_status_get
-                @since 1.11 */
+                @see efl_model_children_get
+                @see efl_model_children_slice_get
+                @see efl_model_load
+                @see efl_model_load_status_get
+                @since 1.14 */
 
-                return: Emodel_Load_Status;
+                return: Efl_Model_Load_Status;
              }
             values {
                 unsigned children_count;
@@ -211,21 +212,21 @@ interface Emodel ()
               the models properties and children with it. For example in the case of file
               system backed model, this means opening the relevant files and reading the
               data from them(creating the properties and children from it).
-              the model emit EMODEL_EVENT_LOAD_STATUS after end with Emodel_Load_Status
+              the model emit EFL_MODEL_EVENT_LOAD_STATUS after end with Efl_Model_Load_Status
               @warning This convention should be followed, but no guarantees of behaviour
               by user defined types can be given.
 
               Alternatively is possible to use properties_load to load only properties
-              and children_load to load only children. If emodel_load is called then
+              and children_load to load only children. If efl_model_load is called then
               calling properties_load and/or children_load is not necessary.
 
-              @see Emodel_Load_Status
-              @see emodel_properties_load
-              @see emodel_children_load
-              @see emodel_unload
-              @see emodel_load_status_get
+              @see Efl_Model_Load_Status
+              @see efl_model_properties_load
+              @see efl_model_children_load
+              @see efl_model_unload
+              @see efl_model_load_status_get
 
-              @since 1.11 */
+              @since 1.14 */
          }
          unload {
             /*@
@@ -234,42 +235,42 @@ interface Emodel ()
               By convention this means releasing data received/read from an external source. For
               example of a database backed model this might mean releasing the iterator for
               the currently loaded data or deleting a temporary table.
-              the model emit EMODEL_EVENT_LOAD_STATUS after end with model load status
+              the model emit EFL_MODEL_EVENT_LOAD_STATUS after end with model load status
               @warning This convention should be followed, but no guarantees of behaviour
               by user defined types can be given.
 
-              @see Emodel_Load_Status
-              @see emodel_load
-              @see emodel_load_status_get
+              @see Efl_Model_Load_Status
+              @see efl_model_load
+              @see efl_model_load_status_get
 
-              @since 1.11 */
+              @since 1.14 */
          }
          properties_load {
             /*@
               Properties emodel load.
 
               By convention this means loading data from an external source and populating
-              the models properties only. This method is a subset of emodel_load, meaning that
+              the models properties only. This method is a subset of efl_model_load, meaning that
               it won't load children, it is a hint.
-              For loadind both properties and children use emodel_load
+              For loadind both properties and children use efl_model_load
               instead.
 
-              @see emodel_load
+              @see efl_model_load
 
-              @since 1.11 */
+              @since 1.14 */
          }
          children_load {
             /*@
               Children emodel load.
 
               By convention this means loading data from an external source and populating
-              the models children only. This method is a subset of emodel_load, meaning that
-              it won't load properties. For loadind both properties and children use emodel_load
+              the models children only. This method is a subset of efl_model_load, meaning that
+              it won't load properties. For loadind both properties and children use efl_model_load
               instead.
 
-              @see emodel_load
+              @see efl_model_load
 
-              @since 1.11 */
+              @since 1.14 */
          }
          child_add {
             /*@
@@ -279,13 +280,13 @@ interface Emodel ()
 
               Add a new child, possibly dummy, depending on the implementation,
               of a internal keeping. When the child is effectively
-              added the event EMODEL_EVENT_CHILD_ADD is then raised and the new child
+              added the event EFL_MODEL_EVENT_CHILD_ADD is then raised and the new child
               is kept along with other children.
 
-              @see EMODEL_EVENT_CHILD_ADD
+              @see EFL_MODEL_EVENT_CHILD_ADD
               @see load_status_get
 
-              @since 1.11 */
+              @since 1.14 */
 
             return: Eo *;
          }
@@ -293,16 +294,16 @@ interface Emodel ()
             /*@
               Remove a child.
 
-              @return: @c Emodel_Load_Status on success, @c EMODEL_LOAD_STATUS_ERROR otherwise.
+              @return: @c Efl_Model_Load_Status on success, @c EFL_MODEL_LOAD_STATUS_ERROR otherwise.
 
               Remove a child of a internal keeping. When the child is effectively
-              removed the event EMODEL_EVENT_CHILD_REMOVED is then raised to give a
+              removed the event EFL_MODEL_EVENT_CHILD_REMOVED is then raised to give a
               chance for listeners to perform any cleanup and/or update references.
 
-              @see EMODEL_EVENT_CHILD_REMOVED
-              @since 1.11 */
+              @see EFL_MODEL_EVENT_CHILD_REMOVED
+              @since 1.14 */
 
-              return: Emodel_Load_Status;
+              return: Efl_Model_Load_Status;
 
             params {
                @in Eo* child; /*@ Child to be removed */
@@ -311,8 +312,8 @@ interface Emodel ()
       }
 
    events {
-      load,status: Emodel_Load_Status; /*@ Event dispatch when load status changes */
-      properties,changed: Emodel_Properties_Evt; /*@ Event dispatched when properties list is available. */
+      load,status: Efl_Model_Load_Status; /*@ Event dispatch when load status changes */
+      properties,changed: Efl_Model_Properties_Evt; /*@ Event dispatched when properties list is available. */
       child,added; /*@ Event dispatched when new child is added. */
       child,removed; /*@ Event dispatched when child is removed. */
       children,count,changed; /*@ Event dispatched when children count is finished. */
