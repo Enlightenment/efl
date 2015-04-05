@@ -25,3 +25,5 @@ EAPI const Eo_Event_Description _EFL_GFX_CHANGED =
 
 EAPI const Eo_Event_Description _EFL_GFX_PATH_CHANGED =
   EO_EVENT_DESCRIPTION("Graphics path changed", "The path of a shape object changed");
+
+#include "interfaces/efl_model_base.eo.c"

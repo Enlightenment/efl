@@ -1,10 +1,24 @@
 
 ### Library
 
+EIO_EOS = \
+        lib/eio/eio_model.eo
+
+EIO_EOS_H =  $(EIO_EOS:%.eo=%.eo.h)
+EIO_EOS_C =  $(EIO_EOS:%.eo=%.eo.c)
+
+BUILT_SOURCES += $(EIO_EOS_C) $(EIO_EOS_H)
+
+eioeolianfilesdir = $(datadir)/eolian/include/eio-@VMAJ@
+eioeolianfiles_DATA = $(EIO_EOS)
+
 lib_LTLIBRARIES += lib/eio/libeio.la
+EXTRA_DIST += $(eioeolianfiles_DATA)
 
 installed_eiomainheadersdir = $(includedir)/eio-@VMAJ@
+
 dist_installed_eiomainheaders_DATA = lib/eio/Eio.h lib/eio/eio_inline_helper.x
+nodist_installed_eiomainheaders_DATA = $(EIO_EOS_H)
 
 lib_eio_libeio_la_SOURCES = \
 lib/eio/eio_dir.c \
@@ -16,6 +30,8 @@ lib/eio/eio_monitor.c \
 lib/eio/eio_monitor_poll.c \
 lib/eio/eio_single.c \
 lib/eio/eio_xattr.c \
+lib/eio/eio_model.c \
+lib/eio/eio_model_private.h \
 lib/eio/eio_private.h
 
 if HAVE_INOTIFY
@@ -30,9 +46,9 @@ endif
 endif
 endif
 
-lib_eio_libeio_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EIO_CFLAGS@
-lib_eio_libeio_la_LIBADD = @EIO_LIBS@
-lib_eio_libeio_la_DEPENDENCIES = @EIO_INTERNAL_LIBS@
+lib_eio_libeio_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EIO_CFLAGS@ @EFL_CFLAGS@
+lib_eio_libeio_la_LIBADD = @EIO_LIBS@ @EFL_LIBS@
+lib_eio_libeio_la_DEPENDENCIES = @EIO_INTERNAL_LIBS@ @EFL_INTERNAL_LIBS@
 lib_eio_libeio_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 if HAVE_NOTIFY_COCOA
 lib_eio_libeio_la_LDFLAGS += -framework CoreServices
@@ -45,6 +61,8 @@ TESTS += tests/eio/eio_suite
 
 tests_eio_eio_suite_SOURCES = \
 tests/eio/eio_suite.c \
+tests/eio/eio_model_test_file.c \
+tests/eio/eio_model_test_monitor_add.c \
 tests/eio/eio_test_monitor.c
 
 tests_eio_eio_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
@@ -52,16 +70,20 @@ tests_eio_eio_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eio\" \
 @CHECK_CFLAGS@ \
 @ECORE_FILE_CFLAGS@ \
-@EIO_CFLAGS@
+@EIO_CFLAGS@ @EFL_CFLAGS@
 
 tests_eio_eio_suite_LDADD = \
 @CHECK_LIBS@ \
 @USE_ECORE_FILE_LIBS@ \
 @USE_EIO_LIBS@
+@USE_EFL_LIBS@
 
 tests_eio_eio_suite_DEPENDENCIES = \
 @USE_EIO_INTERNAL_LIBS@
 
 endif
 
-EXTRA_DIST += tests/eio/eio_suite.h
+EXTRA_DIST += \
+tests/eio/eio_suite.h \
+lib/eio/eio_model.h
+

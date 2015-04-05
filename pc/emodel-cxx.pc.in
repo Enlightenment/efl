@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: emodel C++ API
+Description: MVC Library C++ API.
+Version: @PACKAGE_VERSION@
+Requires.private: @requirements_pc_emodel@
+Libs: -L${libdir} -lemodel
+Libs.private: @requirements_libs_emodel@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/emodel-@VMAJ@ -I${includedir}/emodel-cxx-@VMAJ@
