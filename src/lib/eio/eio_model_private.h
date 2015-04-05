@@ -14,32 +14,38 @@ struct _Eio_Model_Monitor_Data
    int mon_event_child_del[3]; /**< plus EIO_MONITOR_ERROR */
 };
 
-/**
- * !! Warning: Do not change enum's order
- * before checking _eio_model_constructor.
- * @see Eina_Value_Struct_Member.
- */
 enum {
    EIO_MODEL_PROP_FILENAME = 0,
    EIO_MODEL_PROP_PATH,
    EIO_MODEL_PROP_MTIME,
    EIO_MODEL_PROP_IS_DIR,
    EIO_MODEL_PROP_IS_LNK,
-   EIO_MODEL_PROP_SIZE
+   EIO_MODEL_PROP_SIZE,
+   EIO_MODEL_PROP_LAST
+};
+
+static const char* _eio_model_prop_names[] =
+{
+   [EIO_MODEL_PROP_FILENAME]  = "filename",
+   [EIO_MODEL_PROP_PATH]      = "path",
+   [EIO_MODEL_PROP_MTIME]     = "mtime",
+   [EIO_MODEL_PROP_IS_DIR]    = "is_dir",
+   [EIO_MODEL_PROP_IS_LNK]    = "is_lnk",
+   [EIO_MODEL_PROP_SIZE]      = "size"
 };
 
 struct _Eio_Model_Data
 {
    Eo *obj;
    char *path;
-   Eina_Array *properties_array;
-   Eina_Value *properties;
+   Eina_Array *properties_name;
+   Eina_Value *properties_value[EIO_MODEL_PROP_LAST];
    Emodel_Load load;
    int load_pending;
    Eina_List *children_list;
    /**< EIO data */
    Eio_File *file;
-   const Eina_Stat *stat;
+   Eina_Bool is_dir;
    Eio_Monitor *monitor;
    Eio_Model_Monitor_Data mon;
    int cb_count_child_add; /**< monitor reference counter for child add event */
