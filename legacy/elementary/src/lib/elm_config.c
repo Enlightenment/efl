@@ -1013,7 +1013,7 @@ _elm_config_color_overlay_set(const char *color_class,
 
    EINA_LIST_FOREACH(_elm_config->color_overlays, l, ecd)
      {
-        if (strcmp(ecd->color_class, color_class))
+        if (!eina_streq(ecd->color_class, color_class))
           continue;
 
         ecd->color.r = r;
@@ -1065,7 +1065,7 @@ _elm_config_color_overlay_remove(const char *color_class)
    EINA_LIST_FOREACH(_elm_config->color_overlays, l, ecd)
      {
         if (!ecd->color_class) continue;
-        if (strcmp(ecd->color_class, color_class)) continue;
+        if (!eina_streq(ecd->color_class, color_class)) continue;
 
         _color_overlays_del =
            eina_list_append(_color_overlays_del,
