@@ -26,10 +26,10 @@
 #define  WIDTH          400
 #define  HEIGHT         400
 
-static const char *rock_diffuse = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "rocks.jpg";
-static const char *rock_n_and_height_map = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "rocks_NM_height.tga";
-static const char *wood_diffuse = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "wood.jpg";
-static const char *wood_n_and_height_map = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "four_NM_height.tga";
+static const char *rock_diffuse = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/rocks.jpg";
+static const char *rock_n_and_height_map = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/rocks_NM_height.tga";
+static const char *wood_diffuse = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/wood.jpg";
+static const char *wood_n_and_height_map = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/four_NM_height.tga";
 
 typedef struct _Scene_Data
 {
