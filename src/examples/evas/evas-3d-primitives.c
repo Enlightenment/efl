@@ -427,18 +427,18 @@ evas_3d_add_cylinder_frame(Eo *mesh, int frame, int p, vec2 tex_scale)
         fi = i * dfi;
         sinfi = sin(fi);
         cosfi = cos(fi);
-        vertices[i + vccount].x = vertices[i].x = sinfi ;
-        vertices[i].y = -0.5;
-        vertices[i + vccount].z = vertices[i].z = cosfi;
-        vertices[i + vccount].y = 0.5;
+        vertices[i + vccount].x = vertices[i].x = sinfi / 2.0;
+        vertices[i + vccount].y = vertices[i].y = cosfi / 2.0;
+        vertices[i].z = -0.5;
+        vertices[i + vccount].z = 0.5;
 
         normals[i + vccount].x = normals[i].x = sinfi;
-        normals[i + vccount].y = normals[i].y = 0;
-        normals[i + vccount].z = normals[i].z = cosfi;
+        normals[i + vccount].y = normals[i].y = cosfi;
+        normals[i + vccount].z = normals[i].z = 0;
 
         tangents[i + vccount].x = tangents[i].x = cosfi;
-        tangents[i + vccount].y = tangents[i].y = 0;
-        tangents[i + vccount].z = tangents[i].z = -sinfi;
+        tangents[i + vccount].y = tangents[i].y = -sinfi;
+        tangents[i + vccount].z = tangents[i].z = 0;
 
         tex_coord[i].x = i / (float)(vccount - 1) * tex_scale.x;
         tex_coord[i].y = 0;
