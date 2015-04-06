@@ -10496,21 +10496,29 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
      case EDJE_ACTION_TYPE_SOUND_TONE:
        {
           BUF_APPEND(I4"action: PLAY_TONE ");
-          BUF_APPENDF("\"%s\" %.4f\n;", epr->tone_name, epr->duration);
+          BUF_APPENDF("\"%s\" %.4f;\n", epr->tone_name, epr->duration);
           break;
        }
-     //TODO Support Drag
-     //~ case EDJE_ACTION_TYPE_DRAG_VAL_SET:
-	//~ eina_strbuf_append(buf, I4"action: DRAG_VAL_SET TODO;\n");
-	//~ break;
-     //~ case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
-	//~ eina_strbuf_append(buf, I4"action: DRAG_VAL_STEP TODO;\n");
-	//~ break;
-     //~ case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
-	//~ eina_strbuf_append(buf, I4"action: DRAG_VAL_PAGE TODO;\n");
-	//~ break;
+     case EDJE_ACTION_TYPE_DRAG_VAL_SET:
+       {
+          BUF_APPEND(I4"action: DRAG_VAL_SET ");
+          BUF_APPENDF("%.4f %.4f;\n", epr->value, epr->value2);
+          break;
+       }
+     case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
+       {
+          BUF_APPEND(I4"action: DRAG_VAL_STEP ");
+          BUF_APPENDF("%.4f %.4f;\n", epr->value, epr->value2);
+          break;
+       }
+     case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
+       {
+          BUF_APPEND(I4"action: DRAG_VAL_PAGE ");
+          BUF_APPENDF("%.4f %.4f;\n", epr->value, epr->value2);
+          break;
+       }
      default:
-	break;
+       break;
      }
 
    /* Transition */
