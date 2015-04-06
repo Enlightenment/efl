@@ -3,30 +3,6 @@
 #endif
 #include <Elementary.h>
 
-static char *
-tl_cb(char *str)
-{
-   return str;
-}
-
-static Eina_List *
-name_cb(void)
-{
-   Eina_List *l, *ret = NULL;
-   Eina_Iterator *it;
-   Eina_File *f;
-
-   it = edje_file_iterator_new();
-   if (!it) return NULL;
-   EINA_ITERATOR_FOREACH(it, f)
-     {
-        l = elm_color_class_util_edje_file_list(f);
-        if (l)
-          ret = eina_list_merge(ret, l);
-     }
-   eina_iterator_free(it);
-   return ret;
-}
 
 void
 test_colorclass()
@@ -36,9 +12,6 @@ test_colorclass()
    win = elm_win_util_standard_add("colorclass", "Color Classes");
    elm_win_autodel_set(win, EINA_TRUE);
 
-   elm_color_class_translate_cb_set(tl_cb);
-   /* uncomment when edje_mmap_color_class_iterator_new() stops crashing */
-   //elm_color_class_list_cb_set(name_cb);
    cc = elm_color_class_editor_add(win, 0);
    elm_win_resize_object_add(win, cc);
    evas_object_size_hint_weight_set(cc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

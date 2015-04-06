@@ -905,6 +905,32 @@ add_tests:
    evas_object_show(win);
 }
 
+static char *
+colorclass_tl_cb(char *str)
+{
+   /* FIXME: translate? */
+   return str;
+}
+
+static Eina_List *
+colorclass_list_cb(void)
+{
+   Eina_List *l, *ret = NULL;
+   Eina_Iterator *it;
+   Eina_File *f;
+
+   it = edje_file_iterator_new();
+   if (!it) return NULL;
+   EINA_ITERATOR_FOREACH(it, f)
+     {
+        l = elm_color_class_util_edje_file_list(f);
+        if (l)
+          ret = eina_list_merge(ret, l);
+     }
+   eina_iterator_free(it);
+   return ret;
+}
+
 /* this is your elementary main function - it MUST be called IMMEDIATELY
  * after elm_init() and MUST be passed argc and argv, and MUST be called
  * elm_main and not be static - must be a visible symbol with EAPI_MAIN infront */
@@ -954,6 +980,8 @@ elm_main(int argc, char **argv)
           }
      }
 
+   elm_color_class_translate_cb_set(colorclass_tl_cb);
+   elm_color_class_list_cb_set(colorclass_list_cb);
    /* put here any init specific to this app like parsing args etc. */
    my_win_main(autorun, test_win_only); /* create main window */
    elm_run(); /* and run the program now and handle all events etc. */
