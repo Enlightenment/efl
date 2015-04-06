@@ -265,7 +265,7 @@ gears_draw(GLData *gld)
    static const GLfloat blue[4] = { 0.2, 0.2, 1.0, 1.0 };
    GLfloat m[16];
 
-   gl->glClearColor(0.8, 0.8, 0.1, 0.5);
+   gl->glClearColor(0x25 / 255., 0x13 / 255., 0.0, 1.0);
    gl->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    memcpy(m, gld->proj, sizeof m);
@@ -510,6 +510,8 @@ _on_direct(void *data,
 {
    if (!data) return;
 
+   // ON_DEMAND is necessary for Direct Rendering
+   elm_glview_render_policy_set(data, ELM_GLVIEW_RENDER_POLICY_ON_DEMAND);
    elm_glview_mode_set(data, 0
                        | ELM_GLVIEW_ALPHA
                        | ELM_GLVIEW_DEPTH
@@ -524,6 +526,8 @@ _on_indirect(void *data,
 {
    if (!data) return;
 
+   // note that with policy ALWAYS the window will flicker on resize
+   elm_glview_render_policy_set(data, ELM_GLVIEW_RENDER_POLICY_ALWAYS);
    elm_glview_mode_set(data, 0
                        | ELM_GLVIEW_ALPHA
                        | ELM_GLVIEW_DEPTH
@@ -614,6 +618,10 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    Ecore_Animator *ani;
    GLData *gld = NULL;
 
+   // since we want a depth buffer and direct rendering, we need the window
+   // itself to have a depth buffer
+   elm_config_accel_preference_set("gl:depth");
+
    // alloc a data struct to hold our relevant gl info in
    if (!(gld = calloc(1, sizeof(GLData)))) return;
    gldata_init(gld);
@@ -642,7 +650,7 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
         elm_glview_init_func_set(gl, _init_gl);
         elm_glview_del_func_set(gl, _del_gl);
         elm_glview_resize_func_set(gl, _resize_gl);
-        elm_glview_render_func_set(gl, (Elm_GLView_Func_Cb)_draw_gl);
+        elm_glview_render_func_set(gl, _draw_gl);
         elm_box_pack_end(bx, gl);
         evas_object_show(gl);
 
