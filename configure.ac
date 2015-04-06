@@ -136,6 +136,12 @@ case "${build_tests}" in
      ;;
 esac
 
+AC_ARG_WITH([ecore-con-http-test-url],
+   [AS_HELP_STRING([--with-ecore-con-http-test-url=http://username:password@example.com],[Url of http server for testing with username and password])],[ECORE_CON_HTTP_TEST_URL=${withval}][AC_DEFINE_UNQUOTED([ECORE_CON_HTTP_TEST_URL],["$withval"],[Http url for testing])])
+
+AC_ARG_WITH([ecore-con-ftp-test-url],
+   [AS_HELP_STRING([--with-ecore-con-ftp-test-url=ftp://username:password@ftp.example.com?file=filename&directory=dir],[Url of ftp server for testing with username, password, complete filepath for upload with optional directory])],[ECORE_CON_FTP_TEST_URL=${withval}][AC_DEFINE_UNQUOTED([ECORE_CON_FTP_TEST_URL],["$withval"],[Ftp url for testing])])
+
 dbusservicedir="${datadir}/dbus-1/services"
 AC_ARG_WITH([dbus-services],
    [AS_HELP_STRING([--with-dbus-services=DBUS_SERVICES],[specify a directory to store dbus service files.])],
