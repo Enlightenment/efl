@@ -1,5 +1,5 @@
 class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
-                Elm_Interface_Atspi_Widget_Action)
+                Elm_Interface_Atspi_Widget_Action, Elm_Interface_Atspi_Selection)
 {
    eo_prefix: elm_obj_list;
    properties {
@@ -609,6 +609,15 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
       Elm_Layout.sizing_eval;
       Elm_Interface_Scrollable.policy.set;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
+      Elm_Interface_Atspi_Accessible.children.get;
+      Elm_Interface_Atspi_Selection.selected_children_count.get;
+      Elm_Interface_Atspi_Selection.selected_child.get;
+      Elm_Interface_Atspi_Selection.selected_child_deselect;
+      Elm_Interface_Atspi_Selection.child_select;
+      Elm_Interface_Atspi_Selection.child_deselect;
+      Elm_Interface_Atspi_Selection.is_child_selected;
+      Elm_Interface_Atspi_Selection.all_children_select;
+      Elm_Interface_Atspi_Selection.clear;
    }
    events {
       activated;

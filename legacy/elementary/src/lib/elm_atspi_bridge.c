@@ -35,9 +35,14 @@
 
 #define SIZE(x) sizeof(x)/sizeof(x[0])
 
-static int _init_count = 0;
+typedef struct Key_Event_Info {
+     Ecore_Event_Key event;
+     int type;
+} Key_Event_Info;
 
+static int _init_count = 0;
 static Eldbus_Connection *_a11y_bus = NULL;
+static Eina_List *reemited_events;
 static Eo *_root;
 static Ecore_Idler *_cache_update_idler;
 static Eina_List *_pending_objects;
@@ -50,7 +55,7 @@ static unsigned long _object_property_broadcast_mask;
 static unsigned long _object_children_broadcast_mask;
 static unsigned long long _object_state_broadcast_mask;
 static unsigned long long _window_signal_broadcast_mask;
-static Ecore_Event_Handler *_key_hdl;
+static Ecore_Event_Filter *_key_flr;
 
 static Eina_Bool _state_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
 static Eina_Bool _property_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info);
@@ -68,7 +73,7 @@ static void _object_append_desktop_reference(Eldbus_Message_Iter *iter);
 static void _cache_build(void *obj);
 static void _object_register(Eo *obj, char *path);
 static void _iter_interfaces_append(Eldbus_Message_Iter *iter, const Eo *obj);
-static Eina_Bool _elm_atspi_bridge_key_down_event_notify(void *data, int type, void *event);
+static Eina_Bool _elm_atspi_bridge_key_filter(void *data, void *loop, int type, void *event);
 static void _object_signal_send(Eldbus_Service_Interface *infc, int sig_id, const char *minor, unsigned int det1, unsigned int det2, const char *variant_sig, ...);
 
 EO_CALLBACKS_ARRAY_DEFINE(_events_cb,
@@ -1767,10 +1772,12 @@ _accessible_property_get(const Eldbus_Service_Interface *interface, const char *
 
    if (!strcmp(property, "Name"))
      {
-        eo_do(obj, ret = elm_interface_atspi_accessible_name_get());
-        if (!ret)
-          ret = "";
-        eldbus_message_iter_basic_append(iter, 's', ret);
+        char *ret2;
+        eo_do(obj, ret2 = elm_interface_atspi_accessible_name_get());
+        if (!ret2)
+          ret2 = strdup("");
+        eldbus_message_iter_basic_append(iter, 's', ret2);
+        free(ret2);
         return EINA_TRUE;
      }
    else if (!strcmp(property, "Description"))
@@ -2135,11 +2142,13 @@ _append_item_fn(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, 
   _iter_interfaces_append(iter_struct, data);
 
   /* Marshall name */
-  const char *name = NULL;
+  char *name = NULL;
   eo_do(data, name = elm_interface_atspi_accessible_name_get());
   if (!name)
-    name = "";
+    name = strdup("");
+
   eldbus_message_iter_basic_append(iter_struct, 's', name);
+  free(name);
 
   /* Marshall role */
   eldbus_message_iter_basic_append(iter_struct, 'u', role);
@@ -2649,14 +2658,8 @@ _registered_events_list_update(void)
 }
 
 static void
-_handle_listener_change(void *data EINA_UNUSED, const Eldbus_Message *msg)
+_handle_listener_change(void *data EINA_UNUSED, const Eldbus_Message *msg EINA_UNUSED)
 {
-   const char *bus, *event;
-   if (!eldbus_message_arguments_get(msg, "ss", &bus, &event))
-     {
-        ERR("Invalid org.a11y.Registry signal message args.");
-        return;
-     }
    _registered_events_list_update();
 }
 
@@ -2764,17 +2767,6 @@ _property_changed_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_De
 }
 
 static Eina_Bool
-_idler_cb(void *data EINA_UNUSED)
-{
-   Eo *obj;
-   EINA_LIST_FREE(_pending_objects, obj)
-      _cache_build(obj);
-   _pending_objects = NULL;
-   _cache_update_idler = NULL;
-   return EINA_FALSE;
-}
-
-static Eina_Bool
 _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Eldbus_Service_Interface *events = data;
@@ -2788,9 +2780,7 @@ _children_changed_signal_send(void *data, Eo *obj, const Eo_Event_Description *d
    // update cached objects
    if (ev_data->is_added)
      {
-        _pending_objects = eina_list_append(_pending_objects, obj);
-        if (!_cache_update_idler)
-          _cache_update_idler = ecore_idler_add(_idler_cb, NULL);
+        _cache_build(obj);
      }
 
    if (!STATE_TYPE_GET(_object_children_broadcast_mask, type))
@@ -3048,7 +3038,7 @@ _event_handlers_register(void)
    _register_hdl = eldbus_signal_handler_add(_a11y_bus, ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_REGISTRY, ATSPI_DBUS_INTERFACE_REGISTRY, "EventListenerRegistered", _handle_listener_change, NULL);
    _unregister_hdl = eldbus_signal_handler_add(_a11y_bus, ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_REGISTRY, ATSPI_DBUS_INTERFACE_REGISTRY, "EventListenerDeregistered", _handle_listener_change, NULL);
 
-   _key_hdl = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _elm_atspi_bridge_key_down_event_notify, NULL);
+   _key_flr = ecore_event_filter_add(NULL, _elm_atspi_bridge_key_filter, NULL, NULL);
 }
 
 static Eina_Bool
@@ -3252,46 +3242,132 @@ _elm_atspi_bridge_shutdown(void)
           eldbus_connection_unref(_a11y_bus);
         _a11y_bus = NULL;
 
-        if (_key_hdl)
-          ecore_event_handler_del(_key_hdl);
-        _key_hdl = NULL;
+        if (_key_flr)
+          ecore_event_filter_del(_key_flr);
+        _key_flr = NULL;
 
         _init_count = 0;
         _root = NULL;
      }
 }
 
+static Key_Event_Info*
+_key_event_info_new(int event_type, const Ecore_Event_Key *data)
+{
+   Key_Event_Info *ret;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data, NULL);
+
+   ret = calloc(sizeof(Key_Event_Info), 1);
+
+   ret->type = event_type;
+   ret->event = *data;
+
+   ret->event.keyname = eina_stringshare_add(data->keyname);
+   ret->event.key = eina_stringshare_add(data->key);
+   ret->event.string = eina_stringshare_add(data->string);
+   ret->event.compose = eina_stringshare_add(data->compose);
+
+   // not sure why it is here, but explicite keep it NULLed.
+   ret->event.data = NULL;
+
+   return ret;
+}
+
 static void
-_iter_marshall_key_down_event(Eldbus_Message_Iter *iter, Ecore_Event_Key *event)
+_key_event_info_free(Key_Event_Info *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN(data);
+
+   eina_stringshare_del(data->event.keyname);
+   eina_stringshare_del(data->event.key);
+   eina_stringshare_del(data->event.string);
+   eina_stringshare_del(data->event.compose);
+
+   free(data);
+}
+
+static void
+_iter_marshall_key_event(Eldbus_Message_Iter *iter, Key_Event_Info *data)
 {
    Eldbus_Message_Iter *struct_iter;
-
-   EINA_SAFETY_ON_NULL_RETURN(event);
+   EINA_SAFETY_ON_NULL_RETURN(data);
 
    struct_iter = eldbus_message_iter_container_new(iter, 'r', NULL);
 
-   const char *str = event->keyname ? event->keyname : "";
-   int is_text = event->keyname? 1 : 0;
-   eldbus_message_iter_arguments_append(struct_iter, "uiiiisb", ATSPI_KEY_PRESSED_EVENT, 0, event->keycode, 0, event->timestamp, str, is_text);
+   const char *str = data->event.keyname ? data->event.keyname : "";
+   int is_text = data->event.keyname ? 1 : 0;
+   int type;
+   if (data->type == ECORE_EVENT_KEY_DOWN)
+     type = ATSPI_KEY_PRESSED_EVENT;
+   else
+     type = ATSPI_KEY_RELEASED_EVENT;
 
+   eldbus_message_iter_arguments_append(struct_iter, "uiiiisb", type, 0, data->event.keycode, 0, data->event.timestamp, str, is_text);
    eldbus_message_iter_container_close(iter, struct_iter);
 }
 
+static void
+_on_event_del(void *user_data, void *func_data EINA_UNUSED)
+{
+   Key_Event_Info *info = user_data;
+   _key_event_info_free(info);
+}
+
+static void
+_on_listener_answer(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
+{
+   Key_Event_Info *info = data;
+   const char *errname, *errmsg;
+   Eina_Bool ret = EINA_TRUE;
+
+   if (eldbus_message_error_get(msg, &errname, &errmsg))
+     {
+        ERR("%s %s", errname, errmsg);
+        goto reemit;
+     }
+   if (!eldbus_message_arguments_get(msg, "b", &ret))
+     {
+        ERR("Return message doen not contian return value");
+        goto reemit;
+     }
+   if (ret)
+     {
+        _key_event_info_free(info);
+        return;
+     }
+reemit:
+   ecore_event_add(info->type, &info->event, _on_event_del, info);
+   reemited_events = eina_list_append(reemited_events, &info->event);
+}
+
 static Eina_Bool
-_elm_atspi_bridge_key_down_event_notify(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_elm_atspi_bridge_key_filter(void *data EINA_UNUSED, void *loop EINA_UNUSED, int type, void *event)
 {
    Eldbus_Message *msg;
    Eldbus_Message_Iter *iter;
    Ecore_Event_Key *key_event = event;
+   Key_Event_Info *ke;
 
    if (!_init_count) return EINA_TRUE;
+   if ((type != ECORE_EVENT_KEY_DOWN) && (type != ECORE_EVENT_KEY_UP)) return EINA_TRUE;
+
+   // check if reemited
+   if (eina_list_data_find(reemited_events, event))
+     {
+        reemited_events = eina_list_remove(reemited_events, event);
+        return EINA_TRUE;
+     }
+
+   ke = _key_event_info_new(type, key_event);
+   if (!ke) return EINA_TRUE;
 
    msg = eldbus_message_method_call_new(ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_DEC,
                                         ATSPI_DBUS_INTERFACE_DEC, "NotifyListenersSync");
    iter = eldbus_message_iter_get(msg);
-   _iter_marshall_key_down_event(iter, key_event);
+   _iter_marshall_key_event(iter, ke);
 
-   eldbus_connection_send(_a11y_bus, msg, NULL, NULL, -1);
+   // timeout should be kept reasonaby low to avoid
+   eldbus_connection_send(_a11y_bus, msg, _on_listener_answer, ke, 500);
 
-   return EINA_TRUE;
+   return EINA_FALSE;
 }

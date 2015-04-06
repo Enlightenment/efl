@@ -14,12 +14,13 @@ mixin Elm_Interface_Atspi_Accessible ()
       }
       name @protected {
          get {
-            /*@ Gets an string describing ATSPI widget role name. */
+            /*@ Gets an string describing ATSPI widget role name. 
+                Should be free by a user. */
          }
          set {
          }
          values {
-            const(char)* name; /*@ obj name */
+            char* name; /*@ obj name */
          }
       }
       relation_set @protected {

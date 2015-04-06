@@ -6,9 +6,7 @@ class Elm_List_Item(Elm_Widget_Item)
                 get {
                      /*@
                       Get a value whether item is a separator or not.
-
-                      @see elm_list_item_separator_set() for details.
-
+@see elm_list_item_separator_set() for details.  
                       @ingroup List
                       */
                 }
@@ -163,6 +161,9 @@ class Elm_List_Item(Elm_Widget_Item)
            Elm_Widget_Item.part_content.get;
            Elm_Widget_Item.part_content.set;
            Elm_Widget_Item.part_content_unset;
+           Elm_Interface_Atspi_Accessible.name.get;
+           Elm_Interface_Atspi_Accessible.state_set.get;
+           Elm_Interface_Atspi_Accessible.children.get;
       }
 }
 

@@ -407,6 +407,10 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_List                    *focus_chain;
    Eina_List                    *event_cb;
 
+   int                          role;         /**< Accessibility role */
+   const char                   *description; /**< Accessibility description */
+   Eo                           *atspi_custom_parent; /**< Accessibility parent if different then parent_obj */
+
    /* this is a hook to be set on-the-fly on widgets. this is code
     * handling the request of showing a specific region from an inner
     * widget (mainly issued by entries, on cursor moving) */
@@ -616,6 +620,10 @@ struct _Elm_Widget_Item_Data
    Eina_List                     *signals;
    Eina_Hash                     *labels;
    Evas_Object                   *track_obj;
+
+   /**< A11Y info */
+   const char                    *description;
+   int                            role;
 
    Eina_Bool                      disabled : 1;
    Eina_Bool                      on_deletion : 1;

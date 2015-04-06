@@ -728,6 +728,8 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
       Elm_Layout.sizing_eval;
       Elm_Interface_Scrollable.bounce_allow;
       Elm_Interface_Scrollable.policy;
+      Elm_Interface_Atspi_Accessible.children.get;
+      Elm_Interface_Atspi_Accessible.state_set.get;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
