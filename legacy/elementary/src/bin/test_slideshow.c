@@ -101,7 +101,7 @@ test_slideshow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    Evas_Object *win, *notify, *bx, *bt, *hv, *spin;
    const Eina_List *l;
    const char *transition, *layout;
-   Elm_Object_Item *slide_last_it;
+   Elm_Object_Item *slide_last_it = NULL;
    unsigned long i;
 
    const char *imgs[] = {
