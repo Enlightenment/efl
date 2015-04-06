@@ -10386,7 +10386,7 @@ static Eina_Bool
 _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Strbuf *buf)
 {
    Eina_List *l, *ll;
-   const char *s, *s2;
+   const char *s;
    double db, db2,v1,v2,v3,v4;
    char *data;
    Eina_Bool ret = EINA_TRUE;
@@ -10425,26 +10425,19 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
    switch (epr->action)
      {
      case EDJE_ACTION_TYPE_ACTION_STOP:
-	BUF_APPEND(I4"action: ACTION_STOP;\n");
-	break;
+        BUF_APPEND(I4"action: ACTION_STOP;\n");
+        break;
      case EDJE_ACTION_TYPE_STATE_SET:
-        if ((s = eina_stringshare_add(epr->state)))
-	  {
-		BUF_APPENDF(I4"action: STATE_SET \"%s\" %.2f;\n", s,
-			edje_edit_program_value_get(obj, program));
-		edje_edit_string_free(s);
-	  }
-	break;
+        if (epr->state)
+          {
+             BUF_APPENDF(I4"action: STATE_SET \"%s\" %.2f;\n", epr->state,
+                         edje_edit_program_value_get(obj, program));
+          }
+        break;
      case EDJE_ACTION_TYPE_SIGNAL_EMIT:
-        s = eina_stringshare_add(epr->state);
-        s2 =  eina_stringshare_add(epr->state2);
-	if (s && s2)
-	  {
-		BUF_APPENDF(I4"action: SIGNAL_EMIT \"%s\" \"%s\";\n", s, s2);
-		edje_edit_string_free(s);
-		edje_edit_string_free(s2);
-	  }
-	break;
+        if (epr->state && epr->state2)
+          BUF_APPENDF(I4"action: SIGNAL_EMIT \"%s\" \"%s\";\n", epr->state, epr->state2);
+        break;
      case EDJE_ACTION_TYPE_SCRIPT:
           {
              Program_Script *ps;
