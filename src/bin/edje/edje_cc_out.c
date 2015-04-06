@@ -3578,17 +3578,29 @@ using_file(const char *filename, const char type)
 {
    FILE *f;
 
-   if (!watchfile) return;
-   f = fopen(watchfile, "ab");
-   if (!f) return;
-   if (anotate)
+   if (depfile)
      {
-       fprintf(f, "%c: %s\n", type, filename);
+        f = fopen(depfile, "ab");
+        if (!f) return;
+        if (type != 'O')
+          {
+             fprintf(f, " \\\n  %s", filename);
+          }
+        fclose(f);
      }
-   else
+   else if (watchfile)
      {
-       fputs(filename, f);
-       fputc('\n', f);
+        f = fopen(watchfile, "ab");
+        if (!f) return;
+        if (anotate)
+          {
+             fprintf(f, "%c: %s\n", type, filename);
+          }
+        else
+          {
+             fputs(filename, f);
+             fputc('\n', f);
+          }
+        fclose(f);
      }
-   fclose(f);
 }

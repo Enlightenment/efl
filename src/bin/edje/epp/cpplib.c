@@ -6775,7 +6775,6 @@ cpp_finish(cpp_reader * pfile)
 	     else if (!(deps_stream = fopen(opts->deps_file, deps_mode)))
 		cpp_pfatal_with_name(pfile, opts->deps_file);
 	     fputs(pfile->deps_buffer, deps_stream);
-	     putc('\n', deps_stream);
 	     if (opts->deps_file)
 	       {
 		  if (ferror(deps_stream) || fclose(deps_stream) != 0)

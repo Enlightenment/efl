@@ -92,7 +92,7 @@ main_help(void)
       "\n"
       "-w files.txt             Dump all sources files path into files.txt\n"
       "-anotate                 Anotate the dumped files.\n"
-      "-deps files.txt          Dump gnu style include dependencies path into files.txt\n"
+      "-deps files.txt          Dump gnu style include dependencies path into files.txt (overrides -w/-anotate)\n"
       "-id image/directory      Add a directory to look in for relative path images\n"
       "-fd font/directory       Add a directory to look in for relative path fonts\n"
       "-sd sound/directory      Add a directory to look in for relative path sounds samples\n"
