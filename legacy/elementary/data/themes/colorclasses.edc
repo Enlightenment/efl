@@ -14,172 +14,227 @@ color_classes {
 // wm
    color_class { name: "border_title";
       color: FN_COL_DISABLE;
+      desc: "Title of an inactive window frame";
    }
    color_class { name: "border_title_active";
       color: FN_COL_DEFAULT_SOFT_SHADOW;
+      desc: "Title of an active window frame";
    }
    color_class { name: "border_frame";
       color: WIN_DEFAULT_BASIC;
+      desc: "Base of an inactive window frame";
    }
    color_class { name: "border_frame_active";
       color: WIN_DEFAULT_BASIC;
+      desc: "Base of an active window frame";
    }
    color_class { name: "border_bottom";
       color: WIN_DEFAULT_BASIC;
+      desc: "Bottom edge of a window frame";
    }
    color_class { name: "move_text";
       color: FN_COL_DEFAULT;
+      desc: "Info text while moving a window";
    }
    color_class { name: "resize_text";
       color: FN_COL_DEFAULT;
+      desc: "Info text while resizing a window";
    }
    color_class { name: "menu_base";
       color: WIN_DEFAULT_BASIC;
+      desc: "Base color of a menu";
    }
    color_class { name: "menu_title";
       color: FN_COL_DISABLE;
+      desc: "Title text of a menu";
    }
    color_class { name: "menu_item";
       color: FN_COL_DEFAULT;
+      desc: "Text of an inactive menu item";
    }
    color_class { name: "menu_item_active";
       color: FN_COL_HIGHLIGHT;
+      desc: "Text of an active menu item";
    }
    color_class { name: "menu_item_disabled";
       color: FN_COL_DISABLE;
+      desc: "Text of a disabled menu item";
    }
    color_class { name: "winlist_item";
       color: FN_COL_DEFAULT;
+      desc: "Text of an inactive winlist item";
    }
    color_class { name: "winlist_item_active";
       color: FN_COL_HIGHLIGHT;
+      desc: "Text of an active winlist item";
    }
    color_class { name: "winlist_label";
       color: FN_COL_DEFAULT;
+      desc: "Text of the current winlist item";
    }
    color_class { name: "winlist_title";
       color: FN_COL_DISABLE;
+      desc: "Text of the winlist's title";
    }
    color_class { name: "dialog_base";
       color: WIN_DEFAULT_BASIC;
+      desc: "Base color of a dialog window";
    }
    color_class { name: "shelf_base";
       color: WIN_DEFAULT_BASIC;
+      desc: "Base color of a shelf";
    }
    color_class { name: "fileman_base";
       color: WIN_DEFAULT_BASIC;
+      desc: "Base color of filemanager backgrounds";
    }
 
 // widgets
    color_class { name: "button_text";
       color: FN_COL_DEFAULT;
+      desc: "Text of a button";
    }
    color_class { name: "button_text_disabled";
       color: FN_COL_DISABLE;
+      desc: "Text of a disabled button";
    }
    color_class { name: "button_text_anchor";
       color: FN_COL_HIGHLIGHT;
+      desc: "Text of an anchor link";
    }
    color_class { name: "button_text_anchor_clicked";
       color: FN_COL_HIGHLIGHT_CLICKED;
+      desc: "Text of an anchor link when clicked";
    }
    color_class { name: "button_text_anchor_disabled";
       color: FN_COL_HIGHLIGHT_DISABLE;
+      desc: "Text of a disabled anchor link";
    }
    color_class { name: "check_text";
       color: FN_COL_DEFAULT;
+      desc: "Text of a checkbox's label";
    }
    color_class { name: "check_text_disabled";
       color: FN_COL_DISABLE;
+      desc: "Text of a disabled checkbox's label";
    }
    color_class { name: "check_off_text";
       color: FN_COL_DEFAULT;
+      desc: "Text of a checkbox's label when unchecked";
    }
    color_class { name: "check_off_text_disabled";
       color: FN_COL_DISABLE;
+      desc: "Text of a disabled checkbox's label when unchecked";
    }
    color_class { name: "check_on_text";
       color: FN_COL_HIGHLIGHT;
+      desc: "Text of a checkbox's label when checked";
    }
    color_class { name: "check_on_text_disabled";
       color: FN_COL_DISABLE;
+      desc: "Text of a disabled checkbox's label when checked";
    }
    color_class { name: "entry_text";
       color: FN_COL_DEFAULT_BASIC;
+      desc: "Text in an entry box";
    }
    color_class { name: "entry_text_disabled";
       color: FN_COL_DEFAULT_BASIC;
+      desc: "Text in a disabled entry box";
    }
    color_class { name: "label_text";
       color: FN_COL_DEFAULT;
+      desc: "Text of a generic label";
    }
    color_class { name: "label_text_disabled";
       color: FN_COL_DISABLE;
+      desc: "Text of a disabled generic label";
    }
    color_class { name: "frame_base";
       color: WIN_DEFAULT_BASIC;
+      desc: "Base of a frame widget";
    }
    color_class { name: "scrollframe_base";
       color: WIN_DEFAULT_BASIC;
+      desc: "Base of a scroller widget";
    }
    color_class { name: "radio_text";
       color: FN_COL_DEFAULT;
+      desc: "Text of a radio widget's label";
    }
    color_class { name: "radio_text_disabled";
       color: FN_COL_DISABLE;
+      desc: "Text of a disabled radio widget's label";
    }
    color_class { name: "slider_text";
       color: FN_COL_DEFAULT;
+      desc: "Text of a slider widget's label";
    }
    color_class { name: "slider_text_disabled";
       color: FN_COL_DISABLE;
+      desc: "Text of a disabled slider widget's label";
    }
    color_class { name: "ilist_item_selected";
       color: FN_COL_HIGHLIGHT;
+      desc: "Text of a selected ilist item";
    }
    color_class { name: "ilist_item";
       color: FN_COL_DEFAULT;
+      desc: "Text of an even-numbered, unselected ilist item";
    }
    color_class { name: "ilist_item_base";
       color: WIN_DEFAULT_BASIC;
+      desc: "Base of an even-numbered ilist item";
    }
    color_class { name: "ilist_item_odd";
       color: FN_COL_DEFAULT;
+      desc: "Text of an odd-numbered, unselected ilist item";
    }
    color_class { name: "ilist_item_odd_base";
       color: WIN_DEFAULT_BASIC;
+      desc: "Base of an odd-numbered ilist item";
    }
    color_class { name: "ilist_item_header";
       color: FN_COL_DEFAULT;
+      desc: "Text of an even-numbered ilist header";
    }
    color_class { name: "ilist_item_header_base";
       color: WIN_DEFAULT_BASIC;
+      desc: "Base of an even-numbered ilist header";
    }
    color_class { name: "ilist_item_header_odd";
       color: FN_COL_DEFAULT;
+      desc: "Text of an odd-numbered ilist header";
    }
    color_class { name: "ilist_item_header_odd_base";
       color: WIN_DEFAULT_BASIC;
+      desc: "Base of an odd-numbered ilist header";
    }
 
    color_class { name: "hoversel_text";
       color: FN_COL_DEFAULT;
+      desc: "Text of a hoverselector item";
    }
    color_class { name: "hoversel_text_disabled";
       color: FN_COL_DISABLE;
+      desc: "Text of a disabled hoverselector item";
    }
    color_class { name: "hoversel_item_active";
       color: FN_COL_HIGHLIGHT;
+      desc: "Text of an active hoverselector item";
    }
    
 // modules
    color_class { name: "module_label";
       color: FN_COL_DEFAULT;
+      desc: "Default text of a gadget";
    }
    color_class { name: "module_label_invisible";
       color: FN_COL_TRANSPARENT;
+      desc: "Transparent text of a gadget";
    }
    color_class { name: "module_label_plain";
       color: FN_COL_DEFAULT_BASIC;
+      desc: "Plain text of a gadget";
    }
 }
