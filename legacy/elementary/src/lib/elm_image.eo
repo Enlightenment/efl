@@ -538,6 +538,7 @@ class Elm_Image (Elm_Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
       Eo.Base.constructor;
       Efl.File.file.set;
       Efl.File.file.get;
+      Efl.File.mmap.set;
       Efl.File.async.set;
       Efl.File.async.get;
       Efl.File.async_wait;

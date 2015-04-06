@@ -843,8 +843,9 @@ elm_image_file_set(Evas_Object *obj,
 
    ELM_IMAGE_CHECK(obj) EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
-   eo_do(obj, ret = efl_file_set(file, group));
-   eo_do(obj, elm_obj_image_sizing_eval());
+   eo_do(obj,
+         ret = efl_file_set(file, group);
+         elm_obj_image_sizing_eval());
    return ret;
 }
 
@@ -863,9 +864,21 @@ elm_image_mmap_set(Evas_Object *obj,
 
    ELM_IMAGE_CHECK(obj) EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
+   eo_do(obj, ret = efl_file_mmap_set(file, group));
+   return ret;
+}
+
+EOLIAN Eina_Bool
+_elm_image_efl_file_mmap_set(Eo *obj, Elm_Image_Data *pd EINA_UNUSED,
+                             const Eina_File *file, const char *key)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
    eo_do(obj,
-         ret = elm_obj_image_mmap_set(file, group),
+         ret = elm_obj_image_mmap_set(file, key),
          elm_obj_image_sizing_eval());
+
    return ret;
 }
 
