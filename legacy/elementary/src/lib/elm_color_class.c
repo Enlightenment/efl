@@ -56,6 +56,17 @@ static Eldbus_Service_Interface *remote_iface;
 static Elm_Color_Class_Name_Cb tl_cb;
 static Elm_Color_Class_List_Cb list_cb;
 
+static int
+_colorclass_sort(Elm_Object_Item *a, Elm_Object_Item *b)
+{
+   Edje_Color_Class *a1, *b1;
+
+   a1 = elm_object_item_data_get(a);
+   b1 = elm_object_item_data_get(b);
+
+   return strcmp(a1->name, b1->name);
+}
+
 static void
 _colorclass_cc_update(Colorclass_UI *cc, int num)
 {
@@ -533,7 +544,7 @@ _dbus_send_cc(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Me
                &ecc->color[i].r, &ecc->color[i].g, &ecc->color[i].b, &ecc->color[i].a);
              i++;
           }
-        elm_genlist_item_append(cc->gl, &itc, ecc, NULL, 0, NULL, NULL);
+        elm_genlist_item_sorted_insert(cc->gl, &itc, ecc, NULL, 0, (Eina_Compare_Cb)_colorclass_sort, NULL, NULL);
      }
    if (elm_genlist_items_count(cc->gl))
      elm_object_signal_emit(cc->ly, "elm,state,loaded", "elm");
@@ -685,7 +696,7 @@ elm_color_class_editor_add(Evas_Object *obj, uint64_t winid)
                   if (eina_hash_find(test, ecc->name)) continue;
                   eina_hash_add(test, ecc->name, ecc2);
                }
-             elm_genlist_item_append(gl, &itc, ecc, NULL, 0, NULL, NULL);
+             elm_genlist_item_sorted_insert(gl, &itc, ecc, NULL, 0, (Eina_Compare_Cb)_colorclass_sort, NULL, NULL);
           }
      }
 
