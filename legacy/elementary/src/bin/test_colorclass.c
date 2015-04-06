@@ -47,5 +47,5 @@ test_colorclass()
 
    evas_object_show(win);
    evas_object_size_hint_min_set(win, 400, 280);
-   evas_object_resize(win, 400, 233);
+   evas_object_resize(win, 400, 280);
 }
