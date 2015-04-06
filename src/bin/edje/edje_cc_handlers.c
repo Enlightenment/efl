@@ -381,6 +381,12 @@ static void st_collections_group_parts_part_description_orientation_angle_axis(v
 static void st_collections_group_parts_part_description_orientation_quaternion(void);
 static void ob_collections_group_parts_part_description_texture(void);
 static void st_collections_group_parts_part_description_texture_image(void);
+static void st_collections_group_parts_part_description_texture_wrap1(void);
+static void st_collections_group_parts_part_description_texture_wrap2(void);
+static void st_collections_group_parts_part_description_texture_filter1(void);
+static void st_collections_group_parts_part_description_texture_filter2(void);
+static void st_collections_group_parts_part_description_mesh_assembly(void);
+static void st_collections_group_parts_part_description_mesh_geometry(void);
 
 #ifdef HAVE_EPHYSICS
 static void st_collections_group_parts_part_description_physics_mass(void);
@@ -813,6 +819,12 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.orientation.angle_axis", st_collections_group_parts_part_description_orientation_angle_axis},
      {"collections.group.parts.part.description.orientation.quaternion", st_collections_group_parts_part_description_orientation_quaternion},
      {"collections.group.parts.part.description.texture.image", st_collections_group_parts_part_description_texture_image},
+     {"collections.group.parts.part.description.texture.wrap1", st_collections_group_parts_part_description_texture_wrap1},
+     {"collections.group.parts.part.description.texture.wrap2", st_collections_group_parts_part_description_texture_wrap2},
+     {"collections.group.parts.part.description.texture.filter1", st_collections_group_parts_part_description_texture_filter1},
+     {"collections.group.parts.part.description.texture.filter2", st_collections_group_parts_part_description_texture_filter2},
+     {"collections.group.parts.part.description.mesh.assembly", st_collections_group_parts_part_description_mesh_assembly},
+     {"collections.group.parts.part.description.mesh.geometry", st_collections_group_parts_part_description_mesh_geometry},
 
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
@@ -9912,6 +9924,277 @@ st_collections_group_parts_part_description_texture_image(void)
      {
         ERR("parse error %s:%i. "
             "mesh_node attributes in non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+/**
+    @page edcref
+    @property
+        wrap1
+    @parameters
+        [WRAP]
+    @effect
+        Sets the wrap mode for S-axis. Valid wrap modes:
+            @li CLAMP
+            @li REPEAT
+            @li REFLECT
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_texture_wrap1(void)
+{
+   unsigned int wrap1;
+
+   check_arg_count(1);
+
+   wrap1 = parse_enum(0,
+                     "CLAMP", EVAS_3D_WRAP_MODE_CLAMP,
+                     "REPEAT", EVAS_3D_WRAP_MODE_REPEAT,
+                     "REFLECT", EVAS_3D_WRAP_MODE_REFLECT,
+                     NULL);
+
+   if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        Edje_Part_Description_Mesh_Node *ed;
+
+        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+        ed->mesh_node.texture.wrap1 = wrap1;
+     }
+   else
+     {
+        ERR("parse error %s:%i. mesh_node attributes in non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+/**
+    @page edcref
+    @property
+        wrap2
+    @parameters
+        [SHADE]
+    @effect
+        Sets the wrap mode for T-axis. Valid wrap modes:
+            @li CLAMP
+            @li REPEAT
+            @li REFLECT
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_texture_wrap2(void)
+{
+   unsigned int wrap2;
+
+   check_arg_count(1);
+
+   wrap2 = parse_enum(0,
+                     "CLAMP", EVAS_3D_WRAP_MODE_CLAMP,
+                     "REPEAT", EVAS_3D_WRAP_MODE_REPEAT,
+                     "REFLECT", EVAS_3D_WRAP_MODE_REFLECT,
+                     NULL);
+
+   if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        Edje_Part_Description_Mesh_Node *ed;
+
+        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+        ed->mesh_node.texture.wrap2 = wrap2;
+     }
+   else
+     {
+        ERR("parse error %s:%i. mesh_node attributes in non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+/**
+    @page edcref
+    @property
+        filter1
+    @parameters
+        [FILTER]
+    @effect
+        Sets the minification filter used when down-scrolling. Valid filter types:
+            @li NEAREST
+            @li LINEAR
+            @li NEAREST_MIPMAP_NEAREST
+            @li LINEAR_MIPMAP_NEAREST
+            @li NEAREST_MIPMAP_LINEAR
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_texture_filter1(void)
+{
+   unsigned int filter1;
+
+   check_arg_count(1);
+
+   filter1 = parse_enum(0,
+                     "NEAREST", EVAS_3D_TEXTURE_FILTER_NEAREST,
+                     "LINEAR", EVAS_3D_TEXTURE_FILTER_LINEAR,
+                     "NEAREST_NEAREST", EVAS_3D_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST,
+                     "LINEAR_NEAREST", EVAS_3D_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
+                     "NEAREST_LINEAR", EVAS_3D_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,
+                     "LINEAR_LINEAR", EVAS_3D_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,
+                     NULL);
+
+   if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        Edje_Part_Description_Mesh_Node *ed;
+
+        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+        ed->mesh_node.texture.filter1 = filter1;
+     }
+   else
+     {
+        ERR("parse error %s:%i. mesh_node attributes in non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+/**
+    @page edcref
+    @property
+        filter2
+    @parameters
+        [FILTER]
+    @effect
+        Sets the magnification filter used when down-scrolling. Valid filter types:
+            @li NEAREST
+            @li LINEAR
+            @li NEAREST_MIPMAP_NEAREST
+            @li LINEAR_MIPMAP_NEAREST
+            @li NEAREST_MIPMAP_LINEAR
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_texture_filter2(void)
+{
+   unsigned int filter2;
+
+   check_arg_count(1);
+
+   filter2 = parse_enum(0,
+                     "NEAREST", EVAS_3D_TEXTURE_FILTER_NEAREST,
+                     "LINEAR", EVAS_3D_TEXTURE_FILTER_LINEAR,
+                     "NEAREST_NEAREST", EVAS_3D_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST,
+                     "LINEAR_NEAREST", EVAS_3D_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
+                     "NEAREST_LINEAR", EVAS_3D_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,
+                     "LINEAR_LINEAR", EVAS_3D_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,
+                     NULL);
+
+   if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        Edje_Part_Description_Mesh_Node *ed;
+
+        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+        ed->mesh_node.texture.filter2 = filter2;
+     }
+   else
+     {
+        ERR("parse error %s:%i. mesh_node attributes in non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+/**
+    @page edcref
+    @property
+        assembly
+    @parameters
+        [ASSEMBLY]
+    @effect
+        Sets the vertex assembly of the mesh. Valid assemblies:
+            @li POINTS
+            @li LINES
+            @li LINE_STRIP
+            @li LINE_LOOP
+            @li TRIANGLES
+            @li TRIANGLE_STRIP
+            @li TRIANGLE_FAN
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_mesh_assembly(void)
+{
+   unsigned int assembly;
+
+   check_arg_count(1);
+
+   assembly = parse_enum(0,
+                     "POINTS", EVAS_3D_VERTEX_ASSEMBLY_POINTS,
+                     "LINES", EVAS_3D_VERTEX_ASSEMBLY_LINES,
+                     "LINE_STRIP", EVAS_3D_VERTEX_ASSEMBLY_LINE_STRIP,
+                     "LINE_LOOP", EVAS_3D_VERTEX_ASSEMBLY_LINE_LOOP,
+                     "TRIANGLES", EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES,
+                     "TRIANGLE_STRIP", EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP,
+                     "TRIANGLE_FAN", EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_FAN,
+                     NULL);
+
+   if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        Edje_Part_Description_Mesh_Node *ed;
+
+        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+        ed->mesh_node.mesh.assembly = assembly;
+     }
+   else
+     {
+        ERR("parse error %s:%i. mesh_node attributes in non-MESH_NODE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+}
+
+/**
+    @page edcref
+    @property
+        geometry
+    @parameters
+        [model's filename]
+    @effect
+        Name of model to be used as previously declared in the model block.
+        It's required in any mesh_node part.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_mesh_geometry(void)
+{
+   Edje_Part_Description_Mesh_Node *ed;
+
+   check_arg_count(1);
+
+   if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
+     {
+        char *name;
+        ed = (Edje_Part_Description_Mesh_Node*) current_desc;
+
+        name = parse_str(0);
+        if (!ecore_file_exists(name))
+          {
+             ERR("Unable to load model \"%s\". Check if path to file is correct (both directory and file name).",
+                 name);
+             exit(-1);
+          }
+        data_queue_model_remove(&(ed->mesh_node.mesh.id), &(ed->mesh_node.mesh.set));
+        data_queue_model_lookup(name, &(ed->mesh_node.mesh.id), &(ed->mesh_node.mesh.set));
+        free(name);
+     }
+   else
+     {
+        ERR("parse error %s:%i. "
+            "image attributes in non-MESH_NODE part.",
             file_in, line - 1);
         exit(-1);
      }
