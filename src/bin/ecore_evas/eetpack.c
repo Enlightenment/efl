@@ -8,7 +8,7 @@
 #include <Evas.h>
 #include <Ecore_Evas.h>
 
-static const char *file = NULL;
+static const char *output = NULL;
 static Eet_File *ef = NULL;
 static Ecore_Evas *ee = NULL;
 static Evas *evas = NULL;
@@ -18,11 +18,11 @@ static void
 file_add(void)
 {
    if (ef) return;
-   ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
-   if (!ef) ef = eet_open(file, EET_FILE_MODE_WRITE);
+   ef = eet_open(output, EET_FILE_MODE_READ_WRITE);
+   if (!ef) ef = eet_open(output, EET_FILE_MODE_WRITE);
    if (!ef)
      {
-        printf("ERROR: Cannot open %s for reading or writing!\n", file);
+        printf("ERROR: Cannot open %s for reading or writing!\n", output);
         exit(-1);
      }
 }
@@ -31,10 +31,10 @@ static void
 file_del(void)
 {
    if (ef) return;
-   ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
+   ef = eet_open(output, EET_FILE_MODE_READ_WRITE);
    if (!ef)
      {
-        printf("ERROR: Cannot open %s for writing!\n", file);
+        printf("ERROR: Cannot open %s for writing!\n", output);
         exit(-1);
      }
 }
@@ -280,7 +280,7 @@ main(int argc, char **argv)
    ecore_evas_init();
 
    scratch_canvas_init();
-   file = argv[1];
+   output = argv[1];
    commands(2, argc, argv);
    if (ef) eet_close(ef);
 
