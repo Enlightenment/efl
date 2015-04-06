@@ -79,6 +79,9 @@ _glview_update_surface(Evas_Object *obj)
    evas_gl_native_surface_get(sd->evasgl, sd->surface, &ns);
    evas_object_image_native_surface_set(wd->resize_obj, &ns);
    elm_glview_changed_set(obj);
+
+   // fake a resize event so that clients can reconfigure their viewport
+   sd->resized = EINA_TRUE;
 }
 
 EOLIAN static void
