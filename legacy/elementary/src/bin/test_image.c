@@ -96,7 +96,7 @@ test_remote_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *e
    evas_object_show(box);
 
    im = elm_image_add(win);
-   elm_image_file_set(im, "http://31.media.tumblr.com/29f1ecd4f98aaff73fb21f479b450d4c/tumblr_mqsxdciQmB1rrju89o1_1280.jpg", NULL);
+   elm_image_file_set(im, "http://41.media.tumblr.com/29f1ecd4f98aaff73fb21f479b450d4c/tumblr_mqsxdciQmB1rrju89o1_1280.jpg", NULL);
    evas_object_size_hint_weight_set(im, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(im, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
