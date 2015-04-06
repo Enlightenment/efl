@@ -209,6 +209,7 @@ struct _Evas_3D_Node
 {
    Eina_List        *members;
    Evas_3D_Node     *parent;
+   Evas_3D_Node     *billboard_target;
 
    Evas_Vec3         position;
    Evas_Vec4         orientation;

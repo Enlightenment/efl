@@ -576,6 +576,35 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
             int frame; /*@ The animation frame number.*/
          }
       }
+
+      billboard_target {
+         set {
+            /*
+              Set behavior of node like billboard object.
+
+              @param node          The given node.
+              @param billboard     Pointer to target node for given node.
+
+              @ingroup Evas_3D_Node
+             */
+         }
+         get {
+            /*
+              Get the target node for billboard object.
+
+              @param node          The given node.
+              @return              The pointer to target node for billboard object,
+                                   or @c NULL if there're none.
+
+              @see evas_3d_node_billboard_set()
+
+              @ingroup Evas_3D_Node
+             */
+         }
+         values {
+            Eo *target;      /*@ Target node.*/
+         }
+      }
    }
    implements {
       Eo.Base.destructor;

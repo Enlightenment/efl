@@ -1,9 +1,11 @@
 /**
- * This example illustrating use of shadows in the scene and callbacks(clicked, collision).
+ * This example illustrating use of shadows, callbacks(clicked, collision),
+ * and technic of the billboard.
  * Model and cube are clickable. Model detects collision with sphere.
  * Cube detects collision with sphere, model and cone.
  * @see evas_3d_scene_shadows_enable_set(Eina_Bool _shadows_enabled)
  * @see evas_3d_object_callback_register
+ * @see evas_3d_billboard_set/get
  *
  * @verbatim
  * gcc -o evas-3d-shadows evas-3d-shadows.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo eina` -lm
@@ -37,7 +39,8 @@
 #define SPECULAR_LIGHT 1.0, 1.0, 1.0
 
 static const char *model_path = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/sonic.md2";
-
+static const char *image_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/sonic.png";
+static const char *b_image_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/billboard.png";
 static const vec2 tex_scale = {1, 1};
 static const vec2 fence_tex_scale = {80, 6};
 
@@ -89,6 +92,7 @@ typedef struct _Body_3D
    Eo     *material;
    Eo     *mesh;
    Eo     *node;
+   Eo     *texture;
 } Body_3D;
 
 typedef struct _Scene_Data
@@ -99,6 +103,7 @@ typedef struct _Scene_Data
    Eo     *camera;
    Eo     *light_node;
    Eo     *light;
+   Eo     *mediator;
 
    Body_3D     sphere;
    Body_3D     cube;
@@ -107,6 +112,9 @@ typedef struct _Scene_Data
    Body_3D     model;
    Body_3D     cone;
    Body_3D     fence;
+   Body_3D     billboard;
+
+   Eina_Bool   init;
 } Scene_Data;
 
 static void
@@ -114,23 +122,37 @@ _show_help()
 {
    fprintf(stdout, "Press 'w'/'s' key to move up/down object\n");
    fprintf(stdout, "Press 'a'/'d' key to move left/right object\n");
-   fprintf(stdout, "Press 'q'/'e' key to to move near/far object\n");
+   fprintf(stdout, "Press 'q'/'e' key to move near/far object\n");
    fprintf(stdout, "Cude and model can be moved.\n");
    fprintf(stdout, "Cube detects intersection with model, sphere, cone\n");
    fprintf(stdout, "Model detects intersection with sphere\n");
+   fprintf(stdout, "Press '1'/'2' key to change kind of node - billboard/normal model\n");
+   fprintf(stdout, "Press Up/Down key to change position of camera\n");
+   fprintf(stdout, "Press 'i' key to return initial view of scene\n");
 }
 
 static Eina_Bool
 _animate_scene(void *data)
 {
-   static int frame = 0;
-   Body_3D *body = (Body_3D *)data;
-
-   eo_do(body->node, evas_3d_node_mesh_frame_set(body->mesh, frame));
-
-   /*frame += 32;*/
-
-   if (frame > 256 * 20) frame = 0;
+   static float angle = 0;
+   Evas_Real x, y, z;
+   Scene_Data *scene = (Scene_Data *)data;
+   if (scene->init)
+     {
+        eo_do(scene->mediator,
+              evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
+        eo_do(scene->mediator,
+              evas_3d_node_position_set(sin(angle) * 20 , y , cos(angle) * 20),
+              evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 3.0, 0.0,
+                                        EVAS_3D_SPACE_PARENT, 0.0, 5.0, 0.0));
+        angle += 0.005;
+        if (angle > 360) angle = 0.0;
+     }
+   else
+     eo_do(scene->mediator,
+           evas_3d_node_position_set(0.0, 6.0, 12.0),
+           evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 3.0, 0.0,
+                                    EVAS_3D_SPACE_PARENT, 0.0, 5.0, 0.0));
 
    return EINA_TRUE;
 }
@@ -241,6 +263,9 @@ _fence_setup(Body_3D *fence)
          evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE),
          evas_3d_material_enable_set(EVAS_3D_MATERIAL_NORMAL, EINA_TRUE),
          evas_3d_material_texture_set(EVAS_3D_MATERIAL_NORMAL, texture1),
+         evas_3d_material_color_set(EVAS_3D_MATERIAL_AMBIENT, 1.0, 1.0, 1.0, 1.0),
+         evas_3d_material_color_set(EVAS_3D_MATERIAL_DIFFUSE, 1.0, 1.0, 1.0, 1.0),
+         evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
          evas_3d_material_shininess_set(100.0));
    fence->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
    evas_3d_add_cylinder_frame(fence->mesh, 0, 50, fence_tex_scale);
@@ -292,9 +317,9 @@ _box_setup(Body_3D *box)
 static void
 _model_setup(Body_3D *model)
 {
-   Eo *texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
-   eo_do(texture,
-         evas_3d_texture_file_set(PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/sonic.png", NULL),
+   model->texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
+   eo_do(model->texture,
+         evas_3d_texture_file_set(image_path, NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
                                     EVAS_3D_TEXTURE_FILTER_NEAREST),
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
@@ -302,8 +327,8 @@ _model_setup(Body_3D *model)
    model->material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
 
    eo_do(model->material,
-         evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE, texture),
-         evas_3d_material_texture_set(EVAS_3D_MATERIAL_AMBIENT, texture),
+         evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE, model->texture),
+         evas_3d_material_texture_set(EVAS_3D_MATERIAL_AMBIENT, model->texture),
          evas_3d_material_enable_set(EVAS_3D_MATERIAL_AMBIENT, EINA_TRUE),
          evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE),
          evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE),
@@ -311,7 +336,6 @@ _model_setup(Body_3D *model)
 
 
    model->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-
    eo_do(model->mesh,
          efl_file_set(model_path, NULL),
          evas_3d_mesh_frame_material_set(0, model->material),
@@ -326,24 +350,69 @@ _model_setup(Body_3D *model)
 }
 
 static void
+_billboard_setup(Scene_Data *data)
+{
+   data->billboard.texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
+   eo_do(data->billboard.texture,
+         evas_3d_texture_file_set(b_image_path, NULL),
+         evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
+                                    EVAS_3D_TEXTURE_FILTER_NEAREST),
+         evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
+                                  EVAS_3D_WRAP_MODE_REPEAT));
+
+   data->billboard.mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
+   evas_3d_add_square_frame(data->billboard.mesh, 0);
+
+   _body_material_set(&(data->billboard), 1.0, 1.0, 1.0);
+
+   eo_do(data->billboard.material,
+         evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE, data->billboard.texture));
+
+   eo_do(data->billboard.mesh,
+         evas_3d_mesh_frame_material_set(0, data->billboard.material),
+         evas_3d_mesh_alpha_func_set(EVAS_3D_COMPARISON_GREATER, 0),
+         evas_3d_mesh_alpha_test_enable_set(EINA_TRUE),
+         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
+         evas_3d_mesh_blending_enable_set(EINA_TRUE),
+         evas_3d_mesh_blending_func_set(EVAS_3D_BLEND_SRC_ALPHA,
+                                        EVAS_3D_BLEND_ONE_MINUS_SRC_ALPHA));
+
+   data->billboard.node = eo_add(EVAS_3D_NODE_CLASS, evas,
+                                 evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
+   eo_do(data->billboard.node,
+         evas_3d_node_mesh_add(data->billboard.mesh),
+         evas_3d_node_position_set(0.0, 2.0, 0.0),
+         evas_3d_node_scale_set(2.2, 4.6, 4.0));
+
+   eo_do(data->billboard.node,
+         evas_3d_node_billboard_target_set(data->mediator));
+}
+
+static void
 _camera_setup(Scene_Data *data)
 {
    data->camera = eo_add(EVAS_3D_CAMERA_CLASS, evas);
+   data->mediator = eo_add(EVAS_3D_NODE_CLASS, evas,
+                           evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
 
    eo_do(data->camera,
-         evas_3d_camera_projection_perspective_set(50.0, 1.0, 2.0, 50.0));
+         evas_3d_camera_projection_perspective_set(50.0, 1.0, 2.0, 100.0));
 
   data->camera_node =
       eo_add(EVAS_3D_NODE_CLASS, evas,
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_CAMERA));
 
   eo_do(data->camera_node,
-        evas_3d_node_camera_set(data->camera),
+        evas_3d_node_camera_set(data->camera));
+
+
+  eo_do(data->mediator,
         evas_3d_node_position_set(0.0, 6.0, 12.0),
         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 3.0, 0.0,
                                   EVAS_3D_SPACE_PARENT, 0.0, 5.0, 0.0));
 
-  eo_do(data->root_node, evas_3d_node_member_add(data->camera_node));
+  eo_do(data->mediator, evas_3d_node_member_add(data->camera_node));
+  eo_do(data->root_node, evas_3d_node_member_add(data->mediator));
 }
 
 static void
@@ -362,7 +431,7 @@ _light_setup(Scene_Data *data)
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_LIGHT));
    eo_do(data->light_node,
          evas_3d_node_light_set(data->light),
-         evas_3d_node_position_set(50.0, 50.0, 20.0),
+         evas_3d_node_position_set(50.0, 50.0, 70.0),
          evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 15.0, 0.0, -5.0,
                                   EVAS_3D_SPACE_PARENT, 0.0, 0.0, 1.0));
    eo_do(data->root_node, evas_3d_node_member_add(data->light_node));
@@ -371,6 +440,8 @@ _light_setup(Scene_Data *data)
 static void
 _scene_setup(Scene_Data *data)
 {
+   data->init = EINA_FALSE;
+
    data->scene = eo_add(EVAS_3D_SCENE_CLASS, evas);
 
    eo_do(data->scene,
@@ -392,8 +463,9 @@ _scene_setup(Scene_Data *data)
    _model_setup(&data->model);
    _cone_setup(&data->cone);
    _fence_setup(&data->fence);
+   _billboard_setup(data);
 
-   eo_do(data->root_node, 
+   eo_do(data->root_node,
          evas_3d_node_member_add(data->sphere.node),
          evas_3d_node_member_add(data->cube.node),
          evas_3d_node_member_add(data->cylinder.node),
@@ -412,6 +484,7 @@ static void
 _on_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
+   Scene_Data *scene = (Scene_Data *)data;
    if (!strcmp("w", ev->key))
      {
         Evas_Real x, y, z;
@@ -447,6 +520,34 @@ _on_key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *eo EINA_U
         Evas_Real x, y, z;
         eo_do(choosed_node, evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
         eo_do(choosed_node, evas_3d_node_position_set(x, y, z + STEP));
+     }
+   else if(!strcmp("1", ev->key))
+     {
+        eo_do(scene->root_node, evas_3d_node_member_del(scene->model.node));
+        eo_do(scene->root_node, evas_3d_node_member_add(scene->billboard.node));
+     }
+   else if(!strcmp("2", ev->key))
+     {
+        eo_do(scene->root_node, evas_3d_node_member_add(scene->model.node));
+        eo_do(scene->root_node, evas_3d_node_member_del(scene->billboard.node));
+     }
+   else if(!strcmp("Up", ev->key))
+     {
+        Evas_Real x, y, z;
+        eo_do(scene->camera_node, evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
+        eo_do(scene->camera_node, evas_3d_node_position_set(x, y, z + STEP));
+     }
+   else if(!strcmp("Down", ev->key))
+     {
+        Evas_Real x, y, z;
+        eo_do(scene->camera_node, evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
+        eo_do(scene->camera_node, evas_3d_node_position_set(x, y, z - STEP));
+     }
+   else if (!strcmp("i", ev->key))
+     {
+        scene->init = !scene->init;
+        eo_do(scene->model.node, evas_3d_node_position_set(0.0, 0.0, 0.0));
+        eo_do(scene->billboard.node, evas_3d_node_position_set(0.0, 2.0, 0.0));
      }
    else
      {
@@ -551,12 +652,15 @@ main(void)
    eo_do(data.model.node, eo_event_callback_add(EVAS_3D_OBJECT_EVENT_CLICKED, _cb_clicked, NULL));
    eo_do(data.model.node, eo_event_callback_add(EVAS_3D_OBJECT_EVENT_COLLISION, _cb_collision, nodes1));
 
+   eo_do(data.billboard.node, eo_event_callback_add(EVAS_3D_OBJECT_EVENT_CLICKED, _cb_clicked, NULL));
+   eo_do(data.billboard.node, eo_event_callback_add(EVAS_3D_OBJECT_EVENT_COLLISION, _cb_collision, nodes1));
+
    evas_object_event_callback_add(image, EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down, &data);
    evas_object_event_callback_add(image, EVAS_CALLBACK_KEY_DOWN, _on_key_down, &data);
 
    /* Add animator. */
    ecore_animator_frametime_set(0.008);
-   anim = ecore_animator_add(_animate_scene, &data.model);
+   anim = ecore_animator_add(_animate_scene, &data);
 
    /* Enter main loop. */
    ecore_main_loop_begin();
