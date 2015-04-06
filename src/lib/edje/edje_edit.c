@@ -10401,6 +10401,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
    double db, db2,v1,v2,v3,v4;
    char *data;
    Eina_Bool ret = EINA_TRUE;
+   Eina_Bool no_transition = EINA_FALSE;
    const char *api_name, *api_description;
    Edje_Program *epr;
    int tweenmode = 0;
@@ -10540,6 +10541,8 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
       case EDJE_TWEEN_MODE_LINEAR:
         if (db)
           BUF_APPENDF(I4"transition: LINEAR %.5f", db);
+        else
+          no_transition = EINA_TRUE;
         break;
       case EDJE_TWEEN_MODE_ACCELERATE:
         BUF_APPENDF(I4"transition: ACCELERATE %.5f", db);
@@ -10585,15 +10588,17 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
         BUF_APPENDF(I4"transition: CUBIC_BEZIER %.5f %.5f %.5f %.5f %.5f", db,v1,v2,v3,v4);
         break;
       default:
+        no_transition = EINA_TRUE;
         break;
      }
 
-   if( db && (tweenmode >= EDJE_TWEEN_MODE_LINEAR) && (tweenmode < EDJE_TWEEN_MODE_LAST))
+   if (!no_transition)
      {
-        if(epr->tween.mode & EDJE_TWEEN_MODE_OPT_FROM_CURRENT)
-          BUF_APPENDF(" CURRENT");
+        if (epr->tween.mode & EDJE_TWEEN_MODE_OPT_FROM_CURRENT)
+          BUF_APPENDF(" CURRENT;\n");
+        else
+          BUF_APPENDF(";\n");
      }
-   BUF_APPENDF(";\n");
    /* In */
    db = epr->in.from;
    db2 = epr->in.range;
