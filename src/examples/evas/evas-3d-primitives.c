@@ -455,13 +455,15 @@ void
 evas_3d_add_cone_frame(Eo *mesh, int frame, int p, vec2 tex_scale)
 {
    int vcount, icount, vccount, i;
-   double dfi, fi, sinfi, cosfi;
+   double dfi, fi, sinfi, cosfi, nplane, nz;
 
    icount = p * 6;
    vccount = p + 1;
    vcount = 2 * vccount;
 
    dfi = 2.0 * M_PI / p;
+   nz = sqrt(1.0 / 3.0);
+   nplane = sqrt(2.0 / 3.0);
 
    ALLOCATE_VERTEX_DATA
 
@@ -470,20 +472,20 @@ evas_3d_add_cone_frame(Eo *mesh, int frame, int p, vec2 tex_scale)
         fi = i * dfi;
         sinfi = sin(fi);
         cosfi = cos(fi);
-        vertices[i].x = sinfi;
-        vertices[i].y = 0;
-        vertices[i].z = cosfi;
+        vertices[i].x = sinfi / 2.0;
+        vertices[i].y = cosfi / 2.0;
+        vertices[i].z = -0.5;
         vertices[i + vccount].x = 0;
-        vertices[i + vccount].y = 1;
-        vertices[i + vccount].z = 0;
+        vertices[i + vccount].y = 0;
+        vertices[i + vccount].z = 0.5;
 
-        normals[i + vccount].x = normals[i].x = sinfi * 0.71;
-        normals[i + vccount].y = normals[i].y = 0.71;
-        normals[i + vccount].z = normals[i].z = cosfi * 0.71;
+        normals[i + vccount].x = normals[i].x = sinfi * nplane;
+        normals[i + vccount].y = normals[i].y = cosfi * nplane;
+        normals[i + vccount].z = normals[i].z = nz;
 
         tangents[i + vccount].x = tangents[i].x = cosfi;
-        tangents[i + vccount].y = tangents[i].y = 0;
-        tangents[i + vccount].z = tangents[i].z = -sinfi;
+        tangents[i + vccount].y = tangents[i].y = -sinfi;
+        tangents[i + vccount].z = tangents[i].z = 0;
 
         tex_coord[i].x = i / (float)(vccount - 1) * tex_scale.x;
         tex_coord[i].y = 0;
