@@ -187,8 +187,6 @@ TESTS += tests/ecore/ecore_suite
 tests_ecore_ecore_suite_SOURCES = \
 tests/ecore/ecore_suite.c \
 tests/ecore/ecore_test_ecore.c \
-tests/ecore/ecore_test_ecore_con.c \
-tests/ecore/ecore_test_ecore_con_url.c \
 tests/ecore/ecore_test_ecore_imf.c \
 tests/ecore/ecore_test_timer.c \
 tests/ecore/ecore_test_ecore_evas.c \
@@ -204,7 +202,6 @@ tests_ecore_ecore_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @CHECK_CFLAGS@ \
 @ECORE_CFLAGS@ \
 @ECORE_AUDIO_CFLAGS@ \
-@ECORE_CON_CFLAGS@ \
 @ECORE_FILE_CFLAGS@ \
 @ECORE_X_CFLAGS@ \
 @ECORE_IMF_CFLAGS@ \
@@ -219,7 +216,6 @@ tests_ecore_ecore_suite_LDADD = \
 @CHECK_LIBS@ \
 @USE_ECORE_LIBS@ \
 @USE_ECORE_AUDIO_LIBS@ \
-@USE_ECORE_CON_LIBS@ \
 @USE_ECORE_FILE_LIBS@ \
 @USE_ECORE_X_LIBS@ \
 @USE_ECORE_IMF_LIBS@ \
@@ -232,7 +228,6 @@ tests_ecore_ecore_suite_LDADD = \
 tests_ecore_ecore_suite_DEPENDENCIES = \
 @USE_ECORE_INTERNAL_LIBS@ \
 @USE_ECORE_AUDIO_INTERNAL_LIBS@ \
-@USE_ECORE_CON_INTERNAL_LIBS@ \
 @USE_ECORE_FILE_INTERNAL_LIBS@ \
 @USE_ECORE_X_INTERNAL_LIBS@ \
 @USE_ECORE_IMF_INTERNAL_LIBS@ \
@@ -266,9 +261,7 @@ endif
 
 EXTRA_DIST += \
 tests/ecore/modem.wav \
-tests/ecore/sms.ogg \
-tests/ecore/server.key \
-tests/ecore/server.pem
+tests/ecore/sms.ogg
 
 if HAVE_ELUA
 

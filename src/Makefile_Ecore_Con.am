@@ -69,6 +69,41 @@ lib_ecore_con_libecore_con_la_LIBADD = @ECORE_CON_LIBS@ @EVIL_LIBS@
 lib_ecore_con_libecore_con_la_DEPENDENCIES = @ECORE_CON_INTERNAL_LIBS@
 lib_ecore_con_libecore_con_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/ecore_con/ecore_con_suite
+TESTS += tests/ecore_con/ecore_con_suite
+
+tests_ecore_con_ecore_con_suite_SOURCES = \
+tests/ecore_con/ecore_con_suite.c \
+tests/ecore_con/ecore_con_test_ecore_con.c \
+tests/ecore_con/ecore_con_test_ecore_con_url.c \
+tests/ecore_con/ecore_con_suite.h
+
+tests_ecore_con_ecore_con_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_con\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_con\" \
+@CHECK_CFLAGS@ \
+@ECORE_CFLAGS@ \
+@ECORE_CON_CFLAGS@
+
+tests_ecore_con_ecore_con_suite_LDADD = \
+@CHECK_LIBS@ \
+@USE_ECORE_LIBS@ \
+@USE_ECORE_CON_LIBS@
+
+tests_ecore_con_ecore_con_suite_DEPENDENCIES = \
+@USE_ECORE_INTERNAL_LIBS@ \
+@USE_ECORE_CON_INTERNAL_LIBS@
+
+EXTRA_DIST += \
+tests/ecore_con/server.key \
+tests/ecore_con/server.pem
+
+endif
+
 if HAVE_ELUA
 
 ecore_con_eolian_lua = $(ecore_con_eolian_files:%.eo=%.eo.lua)

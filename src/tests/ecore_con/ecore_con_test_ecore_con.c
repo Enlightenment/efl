@@ -2,7 +2,7 @@
 # include <config.h>
 #endif
 
-#include "ecore_suite.h"
+#include "ecore_con_suite.h"
 
 #include <stdio.h>
 #include <Ecore.h>
@@ -15,47 +15,47 @@ Eina_Bool
 _add(void *data, int type EINA_UNUSED, void *ev)
 {
    fail_if (type != ECORE_CON_EVENT_CLIENT_ADD &&
-       type != ECORE_CON_EVENT_SERVER_ADD);
+            type != ECORE_CON_EVENT_SERVER_ADD);
 
    /* Server */
    if (type == ECORE_CON_EVENT_CLIENT_ADD)
      {
-       Ecore_Con_Event_Client_Add *event = ev;
-       double timeout_val = 10, ret;
-       void *del_data;
+        Ecore_Con_Event_Client_Add *event = ev;
+        double timeout_val = 10, ret;
+        void *del_data;
 
-       fail_if (data != (void *) 1);
-       fail_if (!event->client);
+        fail_if (data != (void *) 1);
+        fail_if (!event->client);
 
-       printf("Client with ip %s, port %d, connected = %d!\n",
-           ecore_con_client_ip_get(event->client),
-           ecore_con_client_port_get(event->client),
-           ecore_con_client_connected_get(event->client));
+        printf("Client with ip %s, port %d, connected = %d!\n",
+               ecore_con_client_ip_get(event->client),
+               ecore_con_client_port_get(event->client),
+               ecore_con_client_connected_get(event->client));
 
-       ecore_con_client_timeout_set(event->client, timeout_val);
-       ret = ecore_con_client_timeout_get(event->client);
-       fail_if (ret != timeout_val);
+        ecore_con_client_timeout_set(event->client, timeout_val);
+        ret = ecore_con_client_timeout_get(event->client);
+        fail_if (ret != timeout_val);
 
-       ecore_con_client_data_set(event->client, cdata);
-       del_data = ecore_con_client_data_get(event->client);
-       fail_if (strcmp((char *)del_data, cdata));
+        ecore_con_client_data_set(event->client, cdata);
+        del_data = ecore_con_client_data_get(event->client);
+        fail_if (strcmp((char *)del_data, cdata));
      }
    else if (type == ECORE_CON_EVENT_SERVER_ADD)
      {
-       Ecore_Con_Event_Server_Add *event = ev;
-       const char ping[] = "PING";
-       int ret;
+        Ecore_Con_Event_Server_Add *event = ev;
+        const char ping[] = "PING";
+        int ret;
 
-       fail_if (data != (void *) 2);
-       fail_if (!event->server);
-       printf("Server with ip %s, name %s, port %d, connected = %d!\n",
-           ecore_con_server_ip_get(event->server),
-           ecore_con_server_name_get(event->server),
-           ecore_con_server_port_get(event->server),
-           ecore_con_server_connected_get(event->server));
-       ret = ecore_con_server_send(event->server, ping, sizeof(ping));
-       fail_if (ret != sizeof(ping));
-       ecore_con_server_flush(event->server);
+        fail_if (data != (void *) 2);
+        fail_if (!event->server);
+        printf("Server with ip %s, name %s, port %d, connected = %d!\n",
+               ecore_con_server_ip_get(event->server),
+               ecore_con_server_name_get(event->server),
+               ecore_con_server_port_get(event->server),
+               ecore_con_server_connected_get(event->server));
+        ret = ecore_con_server_send(event->server, ping, sizeof(ping));
+        fail_if (ret != sizeof(ping));
+        ecore_con_server_flush(event->server);
      }
 
    return ECORE_CALLBACK_RENEW;
@@ -67,34 +67,35 @@ _del(void *data , int type EINA_UNUSED, void *ev)
    void *del_data;
 
    fail_if (type != ECORE_CON_EVENT_CLIENT_DEL &&
-       type != ECORE_CON_EVENT_SERVER_DEL);
+            type != ECORE_CON_EVENT_SERVER_DEL);
 
    /* Server */
    if (type == ECORE_CON_EVENT_CLIENT_DEL)
      {
-       Ecore_Con_Event_Client_Del *event = ev;
+        Ecore_Con_Event_Client_Del *event = ev;
 
-       fail_if (data != (void *) 1);
-       fail_if (!event->client);
+        fail_if (data != (void *) 1);
+        fail_if (!event->client);
 
-       printf("Lost client with ip %s!\n", ecore_con_client_ip_get(event->client));
-       printf("Client was connected for %0.3f seconds.\n",
-           ecore_con_client_uptime_get(event->client));
+        printf("Lost client with ip %s!\n",
+               ecore_con_client_ip_get(event->client));
+        printf("Client was connected for %0.3f seconds.\n",
+               ecore_con_client_uptime_get(event->client));
 
-       del_data = ecore_con_client_del(event->client);
-       fail_if (strcmp((char *)del_data, cdata));
+        del_data = ecore_con_client_del(event->client);
+        fail_if (strcmp((char *)del_data, cdata));
      }
    else if (type == ECORE_CON_EVENT_SERVER_DEL)
      {
-       Ecore_Con_Event_Server_Del *event = ev;
+        Ecore_Con_Event_Server_Del *event = ev;
 
-       fail_if (!event->server);
+        fail_if (!event->server);
 
-       fail_if (data != (void *) 2);
+        fail_if (data != (void *) 2);
 
-       printf("Lost server with ip %s!\n", ecore_con_server_ip_get(event->server));
+        printf("Lost server with ip %s!\n", ecore_con_server_ip_get(event->server));
 
-       ecore_con_server_del(event->server);
+        ecore_con_server_del(event->server);
      }
    fail ();
 
@@ -106,52 +107,52 @@ _data(void *data, int type EINA_UNUSED, void *ev)
 {
 
    fail_if (type != ECORE_CON_EVENT_CLIENT_DATA &&
-       type != ECORE_CON_EVENT_SERVER_DATA);
+            type != ECORE_CON_EVENT_SERVER_DATA);
 
    /* Server */
    if (type == ECORE_CON_EVENT_CLIENT_DATA)
      {
-       Ecore_Con_Event_Client_Data *event = ev;
-       const char pong[] = "PONG";
-       int ret;
+        Ecore_Con_Event_Client_Data *event = ev;
+        const char pong[] = "PONG";
+        int ret;
 
-       char fmt[128];
-       fail_if (data != (void *) 1);
+        char fmt[128];
+        fail_if (data != (void *) 1);
 
-       snprintf(fmt, sizeof(fmt),
-           "Received %i bytes from client %s port %d:\n"
-           ">>>>>\n"
-           "%%.%is\n"
-           ">>>>>\n",
-           event->size, ecore_con_client_ip_get(event->client),
-           ecore_con_client_port_get(event->client), event->size);
+        snprintf(fmt, sizeof(fmt),
+                 "Received %i bytes from client %s port %d:\n"
+                 ">>>>>\n"
+                 "%%.%is\n"
+                 ">>>>>\n",
+                 event->size, ecore_con_client_ip_get(event->client),
+                 ecore_con_client_port_get(event->client), event->size);
 
-       printf(fmt, event->data);
-       fail_if (event->size != sizeof("PING"));
-       fail_if (memcmp (event->data, "PING", sizeof("PING")) != 0);
+        printf(fmt, event->data);
+        fail_if (event->size != sizeof("PING"));
+        fail_if (memcmp (event->data, "PING", sizeof("PING")) != 0);
 
-       ret = ecore_con_client_send(event->client, pong, sizeof(pong));
-       fail_if (ret != sizeof(pong));
-       ecore_con_client_flush(event->client);
+        ret = ecore_con_client_send(event->client, pong, sizeof(pong));
+        fail_if (ret != sizeof(pong));
+        ecore_con_client_flush(event->client);
      }
    else if (type == ECORE_CON_EVENT_SERVER_DATA)
      {
-       Ecore_Con_Event_Server_Data *event = ev;
-       char fmt[128];
+        Ecore_Con_Event_Server_Data *event = ev;
+        char fmt[128];
 
-       fail_if (data != (void *) 2);
+        fail_if (data != (void *) 2);
 
-       snprintf(fmt, sizeof(fmt),
-           "Received %i bytes from server:\n"
-           ">>>>>\n"
-           "%%.%is\n"
-           ">>>>>\n",
-           event->size, event->size);
+        snprintf(fmt, sizeof(fmt),
+                 "Received %i bytes from server:\n"
+                 ">>>>>\n"
+                 "%%.%is\n"
+                 ">>>>>\n",
+                 event->size, event->size);
 
-       printf(fmt, event->data);
-       fail_if (event->size != sizeof("PONG"));
-       fail_if (memcmp (event->data, "PONG", sizeof("PONG")) != 0);
-       ecore_main_loop_quit();
+        printf(fmt, event->data);
+        fail_if (event->size != sizeof("PONG"));
+        fail_if (memcmp (event->data, "PONG", sizeof("PONG")) != 0);
+        ecore_main_loop_quit();
      }
 
    return ECORE_CALLBACK_RENEW;
@@ -195,29 +196,29 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
    fail_if(ret != 1);
 
    handlers[0] = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ADD,
-       _add, (void *) 1);
+                                         _add, (void *) 1);
    fail_if(handlers[0] == NULL);
    handlers[1] = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DEL,
-       _del, (void *) 1);
+                                         _del, (void *) 1);
    fail_if(handlers[1] == NULL);
    handlers[2] = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DATA,
-       _data, (void *) 1);
+                                         _data, (void *) 1);
    fail_if(handlers[2] == NULL);
 
    handlers[3] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD,
-       _add, (void *) 2);
+                                         _add, (void *) 2);
    fail_if(handlers[3] == NULL);
    handlers[4] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DEL,
-       _del, (void *) 2);
+                                         _del, (void *) 2);
    fail_if(handlers[4] == NULL);
    handlers[5] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA,
-       _data, (void *) 2);
+                                         _data, (void *) 2);
    fail_if(handlers[5] == NULL);
 
    fail_if (ecore_con_server_connected_get(server));
 
    server = ecore_con_server_add(compl_type, name, server_port,
-       server_data);
+                                 server_data);
    fail_if (server == NULL);
 
    if (is_ssl)
@@ -244,7 +245,7 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
    ecore_con_server_client_limit_set(server, 1, 0);
 
    client = ecore_con_server_connect(compl_type, name, server_port,
-       client_data);
+                                     client_data);
    fail_if (client == NULL);
 
    if (is_ssl)
@@ -263,7 +264,7 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
           eina_list_count(clients));
    EINA_LIST_FOREACH(clients, l, cl)
      {
-       printf("%s\n", ecore_con_client_ip_get(cl));
+        printf("%s\n", ecore_con_client_ip_get(cl));
      }
 
    printf("Server was up for %0.3f seconds\n",
@@ -331,13 +332,13 @@ START_TEST(ecore_test_ecore_con_local_user_none)
 {
    const char *xdg_runtime_dir = getenv("XDG_RUNTIME_DIR");
    const char *homedir = getenv("HOME");
-   const char *tmp = getenv("TMP");
+   const char *tmp = getenv("TMPDIR");
 
    unsetenv("XDG_RUNTIME_DIR");
    unsetenv("HOME");
-   unsetenv("TMP");
+   unsetenv("TMPDIR");
    _ecore_con_server_client_tests(ECORE_CON_LOCAL_USER, "test_sock", EINA_FALSE, 12345);
-   setenv("TMP", tmp, 1);
+   setenv("TMPDIR", tmp, 1);
    setenv("HOME", homedir, 1);
    setenv("XDG_RUNTIME_DIR", xdg_runtime_dir, 1);
 }
@@ -531,7 +532,7 @@ START_TEST(ecore_test_ecore_con_shutdown_bef_init)
 }
 END_TEST
 
-void ecore_test_ecore_con(TCase *tc)
+void ecore_con_test_ecore_con(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_con_init);
    tcase_add_test(tc, ecore_test_ecore_con_local_user);

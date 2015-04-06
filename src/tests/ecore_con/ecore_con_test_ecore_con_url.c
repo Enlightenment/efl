@@ -2,7 +2,7 @@
 # include <config.h>
 #endif
 
-#include "ecore_suite.h"
+#include "ecore_con_suite.h"
 
 #include <stdio.h>
 #include <Ecore.h>
@@ -318,7 +318,7 @@ START_TEST(ecore_test_ecore_con_url_init)
 }
 END_TEST
 
-void ecore_test_ecore_con_url(TCase *tc)
+void ecore_con_test_ecore_con_url(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_con_url_init);
    tcase_add_test(tc, ecore_test_ecore_con_url_create);
