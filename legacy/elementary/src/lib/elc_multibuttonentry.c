@@ -83,8 +83,7 @@ _elm_multibuttonentry_elm_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Data 
         if (VIEW(item))
           elm_layout_theme_set
             (VIEW(item), "multibuttonentry", "btn", elm_widget_style_get(obj));
-        edje_object_scale_set
-          (elm_layout_edje_get(VIEW(item)), elm_widget_scale_get(obj) * elm_config_scale_get());
+        elm_object_scale_set(VIEW(item), elm_widget_scale_get(obj) * elm_config_scale_get());
      }
 
    elm_layout_sizing_eval(obj);
@@ -387,12 +386,12 @@ _current_item_state_change(Evas_Object *obj,
    switch (state)
      {
       case MULTIBUTTONENTRY_BUTTON_STATE_SELECTED:
-        edje_object_signal_emit(elm_layout_edje_get(VIEW(item)), "elm,state,focused", "elm");
+        elm_layout_signal_emit(VIEW(item), "elm,state,focused", "elm");
         evas_object_smart_callback_call(obj, SIG_ITEM_SELECTED, EO_OBJ(item));
         break;
       case MULTIBUTTONENTRY_BUTTON_STATE_DEFAULT:
       default:
-        edje_object_signal_emit(elm_layout_edje_get(VIEW(item)), "elm,state,default", "elm");
+        elm_layout_signal_emit(VIEW(item), "elm,state,default", "elm");
         sd->selected_it = NULL;
         break;
      }
@@ -565,7 +564,7 @@ _elm_multibuttonentry_item_elm_widget_item_signal_emit(Eo *eo_item EINA_UNUSED,
                                                        const char *emission,
                                                        const char *source)
 {
-   edje_object_signal_emit(elm_layout_edje_get(VIEW(item)), emission, source);
+   elm_layout_signal_emit(VIEW(item), emission, source);
 }
 
 EOLIAN static void
