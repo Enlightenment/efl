@@ -922,12 +922,13 @@ _elm_win_focus_highlight_reconfigure_job(void *data)
        (!sd->focus_highlight.theme_changed))
      return;
 
-   if ((previous) && (sd->focus_highlight.prev.in_theme))
+   if (previous)
      {
         evas_object_event_callback_del_full
            (previous, EVAS_CALLBACK_DEL, _elm_win_focus_prev_target_del, data);
-        elm_widget_signal_emit
-           (previous, "elm,action,focus_highlight,hide", "elm");
+        if (sd->focus_highlight.prev.in_theme)
+          elm_widget_signal_emit
+             (previous, "elm,action,focus_highlight,hide", "elm");
      }
 
    if (!target)
