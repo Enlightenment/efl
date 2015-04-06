@@ -43,11 +43,13 @@ group { "elm/layout/colorclass/base"; program_source: "elm"; nobroadcast;
       rect { "bg"; nomouse;
          desc { hid;
             rel1.to: "colors";
+            rel1.offset: -2 -2;
             rel2.to: "colors";
             color: 0 0 0 0;
          }
          desc { "vis";
             rel1.to: "colors";
+            rel1.offset: -2 -2;
             rel2.to_x: "colors";
             color: 0 0 0 225;
          }
