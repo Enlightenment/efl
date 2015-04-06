@@ -43,7 +43,7 @@ group { "elm/layout/colorclass/base"; program_source: "elm"; nobroadcast;
             action: SIGNAL_EMIT "elm,colorclass,deactivate" "elm";
          }
       }
-      rect { "bg"; nomouse;
+      rect { "bg";
          desc { hid;
             rel1.to: "colors";
             rel1.offset: -2 -2;
