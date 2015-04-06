@@ -36,6 +36,9 @@ group { "elm/layout/colorclass/base"; program_source: "elm"; nobroadcast;
          desc { "vis";
             color: 0 0 0 192;
          }
+         desc { "vis_remote";
+            color: 0 0 0 0;
+         }
          program { signal: "mouse,down,1"; source: "fader";
             action: SIGNAL_EMIT "elm,colorclass,deactivate" "elm";
          }
@@ -54,8 +57,14 @@ group { "elm/layout/colorclass/base"; program_source: "elm"; nobroadcast;
             color: 0 0 0 225;
          }
       }
+      rect { "colorclip"; clip: "clip";
+         desc { align: 0 0;
+            rel2.relative: 1 0;
+            rel2.to_y: "elm.swallow.reset";
+         }
+      }
       alias: "elm.swallow.colors" "colors:colors";
-      group { "colors"; source: "colorclass/colors"; clip: "clip";
+      group { "colors"; source: "colorclass/colors"; clip: "colorclip";
          desc { hid; align: 0 0;
             rel1.relative: 1.1 0.1;
             rel2.relative: 1.9 0;
@@ -127,7 +136,19 @@ group { "elm/layout/colorclass/base"; program_source: "elm"; nobroadcast;
       program { signal: "elm,colors,show";
          transition: LINEAR 0.2;
          action: STATE_SET "vis";
-         targets: "fader" "colors" "elm.swallow.reset" "bg";
+         targets: "colors" "elm.swallow.reset" "bg";
+      }
+      program { signal: "elm,colors,show";
+         transition: LINEAR 0.2;
+         action: STATE_SET "vis";
+         targets: "fader";
+         filter: "remote_fader" "default";
+      }
+      program { signal: "elm,colors,show";
+         transition: LINEAR 0.2;
+         action: STATE_SET "vis_remote";
+         targets: "fader";
+         filter: "remote_fader" "vis";
       }
       program { signal: "select,1"; source: "colors:elm";
          action: SIGNAL_EMIT "elm,colorclass,select,1" "elm";
