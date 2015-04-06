@@ -11321,17 +11321,17 @@ _edje_generate_source_of_part(Evas_Object *obj, Edje_Part *ep, Eina_Strbuf *buf)
                   if (item->source)
                     BUF_APPENDF(I7"source: \"%s\";\n", item->source);
                   if ((item->min.w != 0) || (item->min.h != 0))
-                    BUF_APPENDF(I7"min: %d %d;\n", item->min.h, item->min.h);
+                    BUF_APPENDF(I7"min: %d %d;\n", item->min.w, item->min.h);
                   if ((item->max.w != -1) || (item->max.h != -1))
-                    BUF_APPENDF(I7"max: %d %d;\n", item->max.h, item->max.h);
+                    BUF_APPENDF(I7"max: %d %d;\n", item->max.w, item->max.h);
                   if (item->aspect.mode)
                     BUF_APPENDF(I7"aspect_mode: \"%s\";\n", aspect_mode[item->aspect.mode]);
                   if ((item->aspect.w != 0) || (item->aspect.h != 0))
-                    BUF_APPENDF(I7"aspect: %d %d;\n", item->aspect.h, item->aspect.h);
+                    BUF_APPENDF(I7"aspect: %d %d;\n", item->aspect.w, item->aspect.h);
                   if ((item->prefer.w != 0) || (item->prefer.h != 0))
-                    BUF_APPENDF(I7"prefer: %d %d;\n", item->prefer.h, item->prefer.h);
+                    BUF_APPENDF(I7"prefer: %d %d;\n", item->prefer.w, item->prefer.h);
                   if ((item->spread.w != 1) || (item->spread.h != 1))
-                    BUF_APPENDF(I7"spread: %d %d;\n", item->spread.h, item->spread.h);
+                    BUF_APPENDF(I7"spread: %d %d;\n", item->spread.w, item->spread.h);
                   if ((item->padding.l != 0) || (item->padding.t != 0) ||
                       (item->padding.r != 0) || (item->padding.b != 0))
                     BUF_APPENDF(I7"padding: %d %d %d %d;\n",
