@@ -1096,10 +1096,7 @@ _elm_image_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd, const char
         return;
      }
 
-   if (sd->edje)
-     edje_object_file_get(sd->img, file, key);
-   else
-     evas_object_image_file_get(sd->img, file, key);
+   eo_do(sd->img, efl_file_get(file, key));
 }
 
 EOLIAN static void
