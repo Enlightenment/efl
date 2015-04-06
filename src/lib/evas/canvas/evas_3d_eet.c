@@ -4,6 +4,7 @@
 
 Evas_3D_File_Eet* eet_file;
 const char EVAS_3D_FILE_CACHE_FILE_ENTRY[] = "evas_3d file";
+Eet_Data_Descriptor *_vec2_descriptor;
 Eet_Data_Descriptor *_vec3_descriptor;
 Eet_Data_Descriptor *_vertex_descriptor;
 Eet_Data_Descriptor *_geometry_descriptor;
@@ -36,6 +37,8 @@ _evas_3d_eet_file_init(void)
 
 /* initialization of bonding between structure units in eet file */
    Eet_Data_Descriptor_Class eddc;
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Evas_3D_Vec2_Eet);
+   _vec2_descriptor = eet_data_descriptor_file_new(&eddc);
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Evas_3D_Vec3_Eet);
    _vec3_descriptor = eet_data_descriptor_file_new(&eddc);
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Evas_3D_Vertex_Eet);
@@ -55,6 +58,13 @@ _evas_3d_eet_file_init(void)
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Evas_3D_File_Eet);
    _file_descriptor = eet_data_descriptor_file_new(&eddc);
 
+/* Vec_2 */
+#define ADD_BASIC(member, eet_type) EET_DATA_DESCRIPTOR_ADD_BASIC \
+   (_vec2_descriptor, Evas_3D_Vec3_Eet, # member, member, eet_type);
+   ADD_BASIC(x, EET_T_FLOAT);
+   ADD_BASIC(y, EET_T_FLOAT);
+#undef ADD_BASIC
+
 /* Vec_3 */
 #define ADD_BASIC(member, eet_type) EET_DATA_DESCRIPTOR_ADD_BASIC \
    (_vec3_descriptor, Evas_3D_Vec3_Eet, # member, member, eet_type);
@@ -69,7 +79,7 @@ _evas_3d_eet_file_init(void)
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_vertex_descriptor, Evas_3D_Vertex_Eet,
                                       "normal", normal, _vec3_descriptor);
    EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(_vertex_descriptor, Evas_3D_Vertex_Eet,
-                                      "texcoord", texcoord, _vec3_descriptor);
+                                      "texcoord", texcoord, _vec2_descriptor);
 
 /* Geometry */
    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_geometry_descriptor, Evas_3D_Geometry_Eet,
@@ -151,6 +161,7 @@ _evas_3d_eet_descriptor_shutdown(void)
 {
    eet_data_descriptor_free(_geometry_descriptor);
    eet_data_descriptor_free(_vertex_descriptor);
+   eet_data_descriptor_free(_vec2_descriptor);
    eet_data_descriptor_free(_vec3_descriptor);
    eet_data_descriptor_free(_color_descriptor);
    eet_data_descriptor_free(_material_descriptor);

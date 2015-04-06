@@ -76,6 +76,7 @@ typedef struct _Evas_3D_Material         Evas_3D_Material_Data;
 typedef struct _Evas_3D_Texture          Evas_3D_Texture_Data;
 
 /* Structs for mesh eet saver/loader */
+typedef struct _Evas_3D_Vec2_Eet         Evas_3D_Vec2_Eet;
 typedef struct _Evas_3D_Vec3_Eet         Evas_3D_Vec3_Eet;
 typedef struct _Evas_3D_Vertex_Eet       Evas_3D_Vertex_Eet;
 typedef struct _Evas_3D_Geometry_Eet     Evas_3D_Geometry_Eet;
@@ -85,6 +86,12 @@ typedef struct _Evas_3D_Frame_Eet        Evas_3D_Frame_Eet;
 typedef struct _Evas_3D_Mesh_Eet         Evas_3D_Mesh_Eet;
 typedef struct _Evas_3D_Header_Eet       Evas_3D_Header_Eet;
 typedef struct _Evas_3D_File_Eet         Evas_3D_File_Eet;
+
+struct _Evas_3D_Vec2_Eet
+{
+   float x;
+   float y;
+};
 
 struct _Evas_3D_Vec3_Eet
 {
@@ -97,7 +104,7 @@ struct _Evas_3D_Vertex_Eet
 {
    Evas_3D_Vec3_Eet position;
    Evas_3D_Vec3_Eet normal;
-   Evas_3D_Vec3_Eet texcoord;
+   Evas_3D_Vec2_Eet texcoord;
 };//one point of mesh
 
 struct _Evas_3D_Geometry_Eet

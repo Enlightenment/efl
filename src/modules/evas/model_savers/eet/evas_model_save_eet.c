@@ -40,7 +40,7 @@ _set_geometry_to_eet_file_from_mesh(Evas_3D_Mesh_Data *mesh,
    geometry->vertices_count = mesh->vertex_count;
    geometries[0] = mesh->vertex_count;
 
-#define SAVE_GEOMETRICS(a, component)\
+#define SAVE_GEOMETRICS(a, component, command_for_z_component)\
    vb = &f->vertices[a];\
    if (vb->data == NULL)\
      {\
@@ -55,15 +55,13 @@ _set_geometry_to_eet_file_from_mesh(Evas_3D_Mesh_Data *mesh,
      {\
         vertices[i].component.x = src[0];\
         vertices[i].component.y = src[1];\
-        vertices[i].component.z = src[2];\
+        command_for_z_component\
         src += f->vertices[a].element_count;\
      }
-
    geometry->vertices = vertices;
-   SAVE_GEOMETRICS(EVAS_3D_VERTEX_POSITION, position)
-   SAVE_GEOMETRICS(EVAS_3D_VERTEX_NORMAL, normal)
-   SAVE_GEOMETRICS(EVAS_3D_VERTEX_TEXCOORD, texcoord)
-
+   SAVE_GEOMETRICS(EVAS_3D_VERTEX_POSITION, position, vertices[i].position.z = src[2];)
+   SAVE_GEOMETRICS(EVAS_3D_VERTEX_NORMAL, normal, vertices[i].normal.z = src[2];)
+   SAVE_GEOMETRICS(EVAS_3D_VERTEX_TEXCOORD, texcoord,)
 #undef SAVE_GEOMETRICS
 
    eet_mesh->geometries = geometry;
