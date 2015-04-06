@@ -81,9 +81,8 @@ _elm_multibuttonentry_elm_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Data 
      {
         ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_item, item);
         if (VIEW(item))
-          elm_widget_theme_object_set
-            (obj, elm_layout_edje_get(VIEW(item)), "multibuttonentry", "btn",
-            elm_widget_style_get(obj));
+          elm_layout_theme_set
+            (VIEW(item), "multibuttonentry", "btn", elm_widget_style_get(obj));
         edje_object_scale_set
           (elm_layout_edje_get(VIEW(item)), elm_widget_scale_get(obj) * elm_config_scale_get());
      }
