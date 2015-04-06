@@ -106,6 +106,12 @@ typedef struct _orientation_Test_Res {
    int (*compare_func)(const uint32_t *d1, const uint32_t *d2, int w2, int h2);
 } Orientation_Test_Res;
 
+typedef struct _orient_Test {
+   Evas_Image_Orient orient;
+   const char *desc;
+   int (*compare_func)(const uint32_t *d1, const uint32_t *d2, int w2, int h2);
+} Orient_Test;
+
 static int _compare_img(const uint32_t *d1, const uint32_t *d2, int w2, int h2)
 {
    return memcmp(d1, d2, w2 * h2 * 4);
@@ -281,6 +287,56 @@ START_TEST(evas_object_image_loader_orientation)
 
    evas_object_del(orig);
    evas_object_del(rot);
+
+   evas_free(e);
+   evas_shutdown();
+}
+END_TEST
+
+START_TEST(evas_object_image_orient)
+{
+   Evas *e = _setup_evas();
+   Evas_Object *orig;
+   Orient_Test res[] = {
+       {EVAS_IMAGE_ORIENT_0, "Original", _compare_img},
+       {EVAS_IMAGE_FLIP_HORIZONTAL, "Flip horizontally", _compare_img_flip_h},
+       {EVAS_IMAGE_ORIENT_180, "Rotate 180° CW", _compare_img_180},
+       {EVAS_IMAGE_FLIP_VERTICAL, "Flip vertically", _compare_img_flip_v},
+       {EVAS_IMAGE_FLIP_TRANSPOSE, "Transpose", _compare_img_transpose},
+       {EVAS_IMAGE_ORIENT_90, "Rotate 90° CW", _compare_img_90},
+       {EVAS_IMAGE_FLIP_TRANSVERSE, "Transverse", _compare_img_transverse},
+       {EVAS_IMAGE_ORIENT_270, "Rotate 90° CCW", _compare_img_270},
+       {0, NULL, NULL}
+   };
+   int w, h, r_w, r_h;
+   uint32_t *d, *r_d;
+   int i;
+
+   orig = evas_object_image_add(e);
+   evas_object_image_file_set(orig, TESTS_IMG_DIR"/Light.jpg", NULL);
+   fail_if(evas_object_image_load_error_get(orig) != EVAS_LOAD_ERROR_NONE);
+   evas_object_image_size_get(orig, &w, &h);
+   fail_if(w == 0 || h == 0);
+
+   d = malloc(w * h * 4);
+   fail_if(!d);
+   r_d = evas_object_image_data_get(orig, EINA_FALSE);
+   memcpy(d, r_d, w * h * 4);
+
+   for (i = 0; res[i].desc; i++)
+     {
+        evas_object_image_orient_set(orig, res[i].orient);
+        fail_if(evas_object_image_orient_get(orig) != res[i].orient);
+        evas_object_image_size_get(orig, &r_w, &r_h);
+        fail_if(w * h != r_w * r_h);
+
+        r_d = evas_object_image_data_get(orig, EINA_FALSE);
+
+        fail_if(res[i].compare_func(d, r_d, r_w, r_h),
+                "Image orientation test failed: orient flag: %s\n", res[i].desc);
+     }
+
+   evas_object_del(orig);
 
    evas_free(e);
    evas_shutdown();
@@ -476,6 +532,7 @@ void evas_test_image_object(TCase *tc)
 {
    tcase_add_test(tc, evas_object_image_loader);
    tcase_add_test(tc, evas_object_image_loader_orientation);
+   tcase_add_test(tc, evas_object_image_orient);
 #if BUILD_LOADER_TGV && BUILD_LOADER_PNG
    tcase_add_test(tc, evas_object_image_tgv_loader_data);
 #endif
