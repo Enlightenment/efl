@@ -261,7 +261,8 @@ group { "colorclass/color1"; nomouse; nobroadcast;
       rect { "event"; mouse;
          desc { color: 0 0 0 0; fixed: 1 1; }
       }
-      rect { "bg";
+      rect { "clip"; }
+      rect { "bg"; clip: "clip";
          desc {
             rel1.to: "color";
             rel2.to: "color";
@@ -269,7 +270,7 @@ group { "colorclass/color1"; nomouse; nobroadcast;
             fixed: 1 1;
          }
       }
-      image { "pat";
+      image { "pat"; clip: "clip";
          desc {
             rel1.to: "bg";
             rel2.to: "bg";
@@ -278,7 +279,7 @@ group { "colorclass/color1"; nomouse; nobroadcast;
             fixed: 1 1;
          }
       }
-      rect { "color";
+      rect { "color"; clip: "clip";
          desc { align: 0 0;
             min: 40 20;
             max: 40 20;
@@ -287,7 +288,7 @@ group { "colorclass/color1"; nomouse; nobroadcast;
             fixed: 1 1;
          }
       }
-      image { "shadow";
+      image { "shadow"; clip: "clip";
          desc {
             image.normal: "inset_shadow.png";
             image.border: 5 5 7 3;
@@ -299,20 +300,20 @@ group { "colorclass/color1"; nomouse; nobroadcast;
             fixed: 1 1;
          }
       }
-      image { "inset";
+      image { "inset"; clip: "clip";
          desc {
             image.normal: "bevel_in.png";
             image.border: 1 1 1 1;
             image.middle: 0;
             rel1.to: "bg";
-            rel1.offset: -1 -1;
+            rel1.offset: 1 1;
             rel2.to: "bg";
-            rel2.offset: 0 0;
+            rel2.offset: -2 -2;
             fill.smooth: 0;
             fixed: 1 1;
          }
       }
-      text { "text";
+      text { "text"; clip: "clip";
          effect: SHADOW BOTTOM;
          scale: 1;
          desc { align: 0 0.5;
