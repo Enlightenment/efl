@@ -3950,6 +3950,9 @@ _check_recursive_reference(Edje *ed, const char *source, Eina_List *group_path, 
 
    e = eina_hash_find(ed->file->collection, source);
 
+   /* forcing collection load into memory */
+   Evas_Object *part_obj = edje_edit_object_add(ed->base->evas);
+   edje_object_file_set(part_obj, ed->file->path, e->entry);
    /* Go through every part to find parts with type GROUP */
    for (i = 0; i < e->ref->parts_count; ++i)
      {
@@ -3960,7 +3963,10 @@ _check_recursive_reference(Edje *ed, const char *source, Eina_List *group_path, 
              EINA_LIST_FOREACH(group_path, l, data)
                {
                   if (data == e->ref->parts[i]->source)
-                    return EINA_FALSE;
+                    {
+                       evas_object_del(part_obj);
+                       return EINA_FALSE;
+                    }
                }
              group_path = eina_list_append(group_path, source);
              no_ref &= _check_recursive_reference(ed, e->ref->parts[i]->source, group_path, part);
@@ -3968,8 +3974,13 @@ _check_recursive_reference(Edje *ed, const char *source, Eina_List *group_path, 
 
         /* We did a loop here... this part doesn't have source yet,
            but if it will set, it'll be a recursive reference. */
-        if (e->ref->parts[i] == part) return EINA_FALSE;
+        if (e->ref->parts[i] == part)
+          {
+             evas_object_del(part_obj);
+             return EINA_FALSE;
+          }
      }
+   evas_object_del(part_obj);
    return no_ref;
 }
 
