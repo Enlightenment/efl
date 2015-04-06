@@ -47,6 +47,7 @@ struct _Elm_Glview_Data
 
    Eina_Bool                initialized : 1;
    Eina_Bool                resized : 1;
+   Eina_Bool                warned_about_dr : 1;
 };
 
 /**

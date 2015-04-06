@@ -48,6 +48,8 @@ static void
 _glview_update_surface(Evas_Object *obj)
 {
    Evas_Native_Surface ns = { 0 };
+   Evas_GL_Options_Bits opt;
+
    ELM_GLVIEW_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    if (!sd) return;
@@ -60,7 +62,20 @@ _glview_update_surface(Evas_Object *obj)
 
    evas_object_image_size_set(wd->resize_obj, sd->w, sd->h);
 
+   opt = sd->config->options_bits;
+   if ((opt & EVAS_GL_OPTIONS_DIRECT) &&
+       (sd->render_policy != ELM_GLVIEW_RENDER_POLICY_ON_DEMAND))
+     {
+        if (!sd->warned_about_dr)
+          {
+             WRN("App requested direct rendering but render policy is not ON_DEMAND. "
+                 "Disabling direct rendering...");
+             sd->warned_about_dr = EINA_TRUE;
+          }
+        sd->config->options_bits &= ~(EVAS_GL_OPTIONS_DIRECT);
+     }
    sd->surface = evas_gl_surface_create(sd->evasgl, sd->config, sd->w, sd->h);
+   sd->config->options_bits = opt;
    evas_gl_native_surface_get(sd->evasgl, sd->surface, &ns);
    evas_object_image_native_surface_set(wd->resize_obj, &ns);
    elm_glview_changed_set(obj);
@@ -385,6 +400,7 @@ _elm_glview_mode_set(Eo *obj, Elm_Glview_Data *sd, Elm_GLView_Mode mode)
      evas_object_image_alpha_set(wd->resize_obj, EINA_FALSE);
 
    sd->mode = mode;
+   sd->warned_about_dr = EINA_FALSE;
 
    _glview_update_surface(obj);
    if (!sd->surface)
@@ -429,6 +445,7 @@ _elm_glview_render_policy_set(Eo *obj, Elm_Glview_Data *sd, Elm_GLView_Render_Po
 
    if (sd->render_policy == policy) return EINA_TRUE;
 
+   sd->warned_about_dr = EINA_FALSE;
    sd->render_policy = policy;
    _set_render_policy_callback(obj);
 
