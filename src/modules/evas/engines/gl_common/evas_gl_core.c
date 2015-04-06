@@ -1469,6 +1469,10 @@ _evgl_not_in_pixel_get(void)
    if (!ctx || !ctx->current_sfc)
      return 0;
 
+   // if indirect rendering, we don't care. eg. elm_glview's init cb
+   if (!ctx->current_sfc->direct_fb_opt)
+     return 0;
+
    return !rsc->direct.in_get_pixels;
 }
 
