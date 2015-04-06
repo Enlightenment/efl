@@ -508,7 +508,8 @@ static void st_collections_group_nobroadcast(void);
      {PREFIX"color_classes.color_class.color", st_color_class_color}, /* dup */ \
      {PREFIX"color_classes.color_class.color2", st_color_class_color2}, /* dup */ \
      {PREFIX"color_classes.color_class.color3", st_color_class_color3}, /* dup */ \
-     {PREFIX"color_classes.color_class.description", st_color_class_desc}, /* dup */
+     {PREFIX"color_classes.color_class.description", st_color_class_desc}, /* dup */ \
+     {PREFIX"color_classes.color_class.desc", st_color_class_desc}, /* dup */
 
 #define PROGRAM_SEQUENCE(PREFIX, NAME, FN) \
      {PREFIX".program."NAME, FN}, /* dup */ \
@@ -962,6 +963,10 @@ New_Statement_Handler statement_handlers[] =
              clip -> clip_to
           }
        }
+    }
+    color_class {
+       desc -> description
+       @since 1.14
     }
 
     @description
