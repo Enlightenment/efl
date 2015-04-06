@@ -907,6 +907,24 @@ struct _Edje_File_Color_Class_Iterator
    Edje_File *edf;
 };
 
+static Eina_Bool
+_edje_mmap_color_class_iterator_next(Eina_Iterator *it, void **data)
+{
+   Edje_File_Color_Class_Iterator *et = (void*) it;
+   Eina_Hash_Tuple *tuple = NULL;
+   Edje_Color_Class *cc = NULL;
+
+   if (!eina_iterator_next(et->it.classes, (void**) &tuple)) return EINA_FALSE;
+   if (!tuple) return EINA_FALSE;
+
+   cc = tuple->data;
+
+   et->it.cc = *cc;
+
+   *data = &et->it.cc;
+   return EINA_TRUE;
+}
+
 static void *
 _edje_mmap_color_class_iterator_container(Eina_Iterator *it)
 {
@@ -944,7 +962,7 @@ edje_mmap_color_class_iterator_new(Eina_File *f)
    it->it.classes = eina_hash_iterator_tuple_new(edf->color_hash);
 
    it->it.iterator.version = EINA_ITERATOR_VERSION;
-   it->it.iterator.next = _edje_color_class_active_iterator_next;
+   it->it.iterator.next = _edje_mmap_color_class_iterator_next;
    it->it.iterator.get_container = _edje_mmap_color_class_iterator_container;
    it->it.iterator.free = _edje_mmap_color_class_iterator_free;
 
