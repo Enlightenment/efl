@@ -10707,7 +10707,8 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
                                             TO_DOUBLE(pd->align.y),
                                             buf, &ret);
 
-   //TODO Support fixed
+   if (pd->fixed.w || pd->fixed.h)
+     BUF_APPENDF(I5"fixed: %d %d;\n", pd->fixed.w, pd->fixed.h);
 
    if (pd->min.w || pd->min.h)
      BUF_APPENDF(I5"min: %d %d;\n", pd->min.w, pd->min.h);
