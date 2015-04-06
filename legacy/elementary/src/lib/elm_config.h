@@ -894,7 +894,7 @@ EINA_DEPRECATED EAPI void        elm_config_preferred_engine_set(const char *eng
  *
  * See elm_config_accel_preference_set() for more information, but this simply
  * returns what was set by this call, nothing more.
- * 
+ *
  * @see elm_config_accel_preference_set()
  * @since 1.10
  */
@@ -911,7 +911,7 @@ EAPI const char *elm_config_accel_preference_get(void);
  * means to rendering and which hardware unit application renders GUIs with.
  * This may or may not be honored, but a best attempt will
  * be made. Known strings are as follows:
- * 
+ *
  * "gl", "opengl" - try use OpenGL.
  * "3d" - try and use a 3d acceleration unit.
  * "hw", "hardware", "accel" - try any acceleration unit (best possible)
@@ -934,10 +934,10 @@ EAPI const char *elm_config_accel_preference_get(void);
  * "hw:depth:stencil", - use HW acceleration with default depth and stencil buffers
  * "opengl:depth24:stencil8:msaa_mid" - use OpenGL with 24-bit depth,
  *      8-bit stencil and a medium number of MSAA samples in the backbuffer.
- * 
+ *
  * This takes precedence over engine preferences set with
  * elm_config_preferred_engine_set().
- * 
+ *
  * @see elm_win_add()
  * @see elm_config_accel_preference_override_set()
  *
@@ -1277,7 +1277,7 @@ EAPI void       elm_config_cache_edje_collection_cache_size_set(int size);
  * engines to use vsync display if possible.
  *
  * @return If vsync is enabled
- * 
+ *
  * @since 1.11
  */
 EAPI Eina_Bool  elm_config_vsync_get(void);
@@ -1749,7 +1749,7 @@ EAPI void      elm_config_audio_mute_set(Edje_Channel channel, Eina_Bool mute);
  * widget automatically if keyboard controls like "Tab" are used to switch
  * focus between widgets. Mouse or touch control will hide this auto shown
  * focus, unless focus display has been expliccitly forced on for the window.
- * 
+ *
  * @return The enabled state for auto focus display
  * @since 1.14
  */
@@ -1762,7 +1762,7 @@ EAPI Eina_Bool elm_config_window_auto_focus_enable_get(void);
  * widget automatically if keyboard controls like "Tab" are used to switch
  * focus between widgets. Mouse or touch control will hide this auto shown
  * focus, unless focus display has been expliccitly forced on for the window.
- * 
+ *
  * @param enable the auto focus display enabled state
  * @since 1.14
  */
