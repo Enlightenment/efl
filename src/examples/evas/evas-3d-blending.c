@@ -4,18 +4,18 @@
  * For more detailes see https://www.opengl.org/sdk/docs/man2/xhtml/glBlendFunc.xml
  *
  * @verbatim
- * gcc -o evas-3d-blending evas-3d-blending.c `pkg-config --libs --cflags evas ecore ecore-evas eo`-lm
+ * gcc -o evas-3d-blending evas-3d-blending.c evas-3d-primitives.c `pkg-config --libs --cflags evas ecore ecore-evas eo`-lm
  * @endverbatim
  */
 
 #define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 
-#include <math.h>
 #include <Eo.h>
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include "evas-3d-primitives.h"
 
 #define  WIDTH          1024
 #define  HEIGHT         1024
@@ -71,20 +71,7 @@ typedef struct _Scene_Data
    Eo     *material1;
 } Scene_Data;
 
-typedef struct _vec3
-{
-    float   x;
-    float   y;
-    float   z;
-} vec3;
-
-typedef struct _vec4
-{
-    float   x;
-    float   y;
-    float   z;
-    float   w;
-} vec4;
+static const vec2 tex_scale = {1, 1};
 
 Evas             *evas        = NULL;
 Eo               *background  = NULL;
@@ -200,65 +187,11 @@ _light_setup(Scene_Data *data)
 static void
 _set_ball(Eo *mesh, int p, Evas_3D_Material *material)
 {
-   int vcount, icount, vccount, i, j;
-   double dtheta, dfi, sinth, costh, fi, theta, sinfi, cosfi;
-   unsigned short *indices, *index;
 
-   icount = p * p * 6;
-   vccount = p + 1;
-   vcount = vccount * vccount;
-
-   dtheta = M_PI / p;
-   dfi = 2 * M_PI / p;
-
-   vec3 *vertices = malloc(sizeof(vec3) * vcount);
-   vec3 *normals = malloc(sizeof(vec3) * vcount);
-
-   for (j = 0; j < vccount; j++)
-     {
-        theta = j * dtheta;
-        sinth = sin(theta);
-        costh = cos(theta);
-        for (i = 0; i < vccount; i++)
-          {
-             fi = i * dfi;
-             sinfi = sin(fi);
-             cosfi = cos(fi);
-             vertices[i + j * vccount].x = sinth * cosfi;
-             vertices[i + j * vccount].y = sinth * sinfi;
-             vertices[i + j * vccount].z = costh;
-
-             normals[i + j * vccount].x = sinth * cosfi;
-             normals[i + j * vccount].y = sinth * sinfi;
-             normals[i + j * vccount].z = costh;
-          }
-     }
-
-   indices = malloc(sizeof(short) * icount);
-   index = &indices[0];
-
-   for(j = 0; j < p; j++)
-     for(i = 0; i < p; i++)
-       {
-          *index++ = (unsigned short)(i + vccount * j);
-          *index++ = i + vccount * (j + 1);
-          *index++ = i + 1 + vccount * (j + 1);
-
-          *index++ =  i + vccount * j;
-          *index++ =  i + 1 +  vccount * j;
-          *index++ =  i + vccount * (j + 1) + 1;
-       }
-
-   eo_do(mesh, evas_3d_mesh_vertex_count_set(vcount),
-            evas_3d_mesh_frame_add(0);
-            evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_POSITION,
-                                       sizeof(vec3), &vertices[0]);
-            evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_NORMAL,
-                                       sizeof(vec3), &normals[0]);
-            evas_3d_mesh_index_data_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT,
-                                icount , &indices[0]);
-            evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG);
-            evas_3d_mesh_frame_material_set(0, material));
+   evas_3d_add_sphere_frame(mesh, 0, p, tex_scale);
+   eo_do(mesh,
+         evas_3d_mesh_frame_material_set(0, material),
+         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 }
 
 static void
@@ -291,8 +224,8 @@ _mesh_setup(Scene_Data *data)
    data->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
    data->mesh1 = eo_add(EVAS_3D_MESH_CLASS, evas);
 
-   _set_ball(data->mesh, 100, data->material);
-   _set_ball(data->mesh1, 100, data->material1);
+   _set_ball(data->mesh, 50, data->material);
+   _set_ball(data->mesh1, 50, data->material1);
 
    data->mesh_node =
       eo_add(EVAS_3D_NODE_CLASS, evas,
@@ -311,8 +244,13 @@ _mesh_setup(Scene_Data *data)
    eo_do(data->mesh1, evas_3d_mesh_blending_enable_set(EINA_TRUE),
       evas_3d_mesh_blending_func_set(func1, func2));
 
+   eo_do(data->mesh_node,
+         evas_3d_node_scale_set(2.0, 2.0, 2.0),
+         evas_3d_node_orientation_angle_axis_set(90.0, 1.0, 0.0, 0.0));
+
    eo_do(data->mesh_node1,
-         evas_3d_node_scale_set(2.5, 2.5, 2.5));
+         evas_3d_node_scale_set(5.0, 5.0, 5.0),
+         evas_3d_node_orientation_angle_axis_set(90.0, 1.0, 0.0, 0.0));
 }
 
 static void
