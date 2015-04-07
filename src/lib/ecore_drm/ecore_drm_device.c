@@ -84,7 +84,7 @@ _ecore_drm_device_cb_idle(void *data)
 
    if (!(dev = data)) return ECORE_CALLBACK_CANCEL;
 
-   /* TODO: skip repaints if we are VT-switched away */
+   if (!dev->active) return ECORE_CALLBACK_RENEW;
 
    EINA_LIST_FOREACH(dev->outputs, l, output)
      {
