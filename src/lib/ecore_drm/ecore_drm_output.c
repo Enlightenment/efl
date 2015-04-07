@@ -869,6 +869,17 @@ ecore_drm_output_enable(Ecore_Drm_Output *output)
    return EINA_TRUE;
 }
 
+EAPI void
+ecore_drm_output_disable(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   output->enabled = EINA_FALSE;
+   output->need_repaint = EINA_FALSE;
+   ecore_drm_output_cursor_size_set(output, 0, 0, 0);
+   ecore_drm_output_dpms_set(output, DRM_MODE_DPMS_OFF);
+}
+
 EAPI void 
 ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb)
 {

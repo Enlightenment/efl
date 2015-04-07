@@ -229,6 +229,18 @@ EAPI Eina_Bool ecore_drm_outputs_create(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_output_free(Ecore_Drm_Output *output);
 EAPI void ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle, int w, int h);
 EAPI Eina_Bool ecore_drm_output_enable(Ecore_Drm_Output *output);
+
+/**
+ * Disable a Ecore_Drm_Output
+ *
+ * This function will disable rendering on an Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to disable
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI void ecore_drm_output_disable(Ecore_Drm_Output *output);
 EAPI void ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb);
 EAPI void ecore_drm_output_repaint(Ecore_Drm_Output *output);
 EAPI void ecore_drm_output_size_get(Ecore_Drm_Device *dev, int output, int *w, int *h);
