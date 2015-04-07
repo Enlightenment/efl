@@ -1585,7 +1585,9 @@ _elm_colorselector_evas_object_smart_add(Eo *obj, Elm_Colorselector_Data *priv)
 
    /* setup the color picker */
    priv->picker = elm_layout_add(obj);
-   elm_layout_theme_set(priv->picker, "colorselector", "picker/base", elm_widget_style_get(obj));
+   if (!elm_layout_theme_set(priv->picker, "colorselector", "picker/base", elm_widget_style_get(obj)))
+     CRI("Failed to set layout!");
+
    evas_object_size_hint_weight_set(priv->picker, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(priv->picker, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_widget_sub_object_add(obj, priv->picker);

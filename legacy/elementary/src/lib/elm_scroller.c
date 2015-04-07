@@ -634,7 +634,9 @@ _loop_content_set(Evas_Object *obj, Elm_Scroller_Data *sd, Evas_Object *content)
      {
         sd->contents = elm_layout_add(obj);
         evas_object_smart_member_add(sd->contents, obj);
-        elm_layout_theme_set(sd->contents, "scroller", "contents", elm_widget_style_get(obj));
+        if (!elm_layout_theme_set(sd->contents, "scroller", "contents", elm_widget_style_get(obj)))
+          CRI("Failed to set layout!");
+
         evas_object_size_hint_weight_set(sd->contents, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(sd->contents, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
