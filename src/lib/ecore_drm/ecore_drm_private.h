@@ -34,7 +34,6 @@
 #  include <systemd/sd-login.h>
 # endif
 
-# include <Eeze.h>
 # include <Eldbus.h>
 # include <Ecore_Drm.h>
 
@@ -114,7 +113,6 @@ struct _Ecore_Drm_Output
    unsigned int crtc_id;
    unsigned int conn_id;
    drmModeCrtcPtr crtc;
-   Eeze_Udev_Watch *watch;
 
    int x, y, phys_width, phys_height;
    int drm_fd;
@@ -262,6 +260,7 @@ void _ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
 void _ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb);
 void _ecore_drm_output_repaint_start(Ecore_Drm_Output *output);
 void _ecore_drm_output_frame_finish(Ecore_Drm_Output *output);
+void _ecore_drm_outputs_update(Ecore_Drm_Device *dev);
 
 Eina_Bool _ecore_drm_logind_connect(Ecore_Drm_Device *dev);
 void _ecore_drm_logind_disconnect(Ecore_Drm_Device *dev);
