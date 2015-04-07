@@ -14,6 +14,42 @@
 
 /* TODO: DOXY !! */
 
+static Eina_Bool
+_ecore_drm_fb_create2(int fd, int w, int h, Ecore_Drm_Fb *fb)
+{
+   struct drm_mode_fb_cmd2 cmd;
+   uint32_t hdls[4], pitches[4], offsets[4], fmt;
+
+#define _fourcc_code(a,b,c,d) \
+   ((uint32_t)(a) | ((uint32_t)(b) << 8) | \
+       ((uint32_t)(c) << 16) | ((uint32_t)(d) << 24))
+   fmt = (_fourcc_code('X', 'R', '2', '4'));
+
+   hdls[0] = fb->hdl;
+   pitches[0] = fb->stride;
+   offsets[0] = 0;
+
+   memset(&cmd, 0, sizeof(struct drm_mode_fb_cmd2));
+   cmd.fb_id = 0;
+   cmd.width = w;
+   cmd.height = h;
+   cmd.pixel_format = fmt;
+   cmd.flags = 0;
+   memcpy(cmd.handles, hdls, 4 * sizeof(hdls[0]));
+   memcpy(cmd.pitches, pitches, 4 * sizeof(pitches[0]));
+   memcpy(cmd.offsets, offsets, 4 * sizeof(offsets[0]));
+
+   if (drmIoctl(fd, DRM_IOCTL_MODE_ADDFB2, &cmd))
+     return EINA_FALSE;
+
+   fb->id = cmd.fb_id;
+
+   /* if (drmModeAddFB2(fd, w, h, fmt, hdls, pitches, offsets, &fb->id, 0)) */
+   /*   return EINA_FALSE; */
+
+   return EINA_TRUE;
+}
+
 EAPI Ecore_Drm_Fb *
 ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height)
 {
@@ -42,11 +78,15 @@ ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height)
    fb->size = carg.size;
    fb->fd = dev->drm.fd;
 
-   if (drmModeAddFB(dev->drm.fd, width, height, 24, 32, 
-                    fb->stride, fb->hdl, &fb->id))
+   if (!_ecore_drm_fb_create2(dev->drm.fd, width, height, fb))
      {
-        ERR("Could not add framebuffer: %m");
-        goto add_err;
+        WRN("Could not add framebuffer2: %m");
+        if (drmModeAddFB(dev->drm.fd, width, height, 24, 32,
+                         fb->stride, fb->hdl, &fb->id))
+          {
+             ERR("Could not add framebuffer: %m");
+             goto add_err;
+          }
      }
 
    memset(&marg, 0, sizeof(struct drm_mode_map_dumb));
