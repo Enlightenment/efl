@@ -332,6 +332,22 @@ EAPI Eina_Stringshare *ecore_drm_output_make_get(Ecore_Drm_Output *output);
 EAPI void ecore_drm_output_dpms_set(Ecore_Drm_Output *output, int level);
 
 /**
+ * Set the gamma level of an Ecore_Drm_Output
+ *
+ * This function will set the gamma of an Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to set the gamma level on
+ * @param size The gamma table size to set
+ * @param r The amount to scale the red channel
+ * @param g The amount to scale the green channel
+ * @param b The amount to scale the blue channel
+ * 
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI void ecore_drm_output_gamma_set(Ecore_Drm_Output *output, uint16_t size, uint16_t *r, uint16_t *g, uint16_t *b);
+
+/**
  * Get the pointer position of Ecore_Drm_Device
  *
  * This function will give the pointer position of Ecore_Drm_Device
