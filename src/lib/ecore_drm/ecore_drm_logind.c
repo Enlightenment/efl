@@ -144,6 +144,8 @@ _ecore_drm_logind_cb_activate(void *data, int type EINA_UNUSED, void *event)
    ev = event;
    dev = data;
 
+   dev->active = ev->active;
+
    if (ev->active)
      {
         /* set output mode */
@@ -164,7 +166,7 @@ _ecore_drm_logind_cb_activate(void *data, int type EINA_UNUSED, void *event)
 
         /* disable hardware cursor */
         EINA_LIST_FOREACH(dev->outputs, l, output)
-          ecore_drm_output_cursor_size_set(output, 0, 0, 0);
+          ecore_drm_output_disable(output);
 
         /* disable sprites */
         EINA_LIST_FOREACH(dev->sprites, l, sprite)
