@@ -32,7 +32,7 @@ evas_common_convert_argb_premul(DATA32 *data, unsigned int len)
    DATA32 *de = data + len;
    DATA32 nas = 0;
 
-   #ifdef BUILD_NEON
+#ifdef BUILD_NEON
    if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
      {
         uint8x8_t mask_0x00 = vdup_n_u8(0);
@@ -42,31 +42,30 @@ evas_common_convert_argb_premul(DATA32 *data, unsigned int len)
 
         while (data <= de - 8)
           {
-
              uint8x8x4_t rgba = vld4_u8(data);
 
-             cmp = vand_u8(vorr_u8(
-               vceq_u8(rgba.val[3], mask_0xff),
-               vceq_u8(rgba.val[3], mask_0x00)
-             ), mask_0x01);
+             cmp = vand_u8(vorr_u8(vceq_u8(rgba.val[3], mask_0xff),
+                                   vceq_u8(rgba.val[3], mask_0x00)),
+                           mask_0x01);
              nas += vpaddl_u32(vpaddl_u16(vpaddl_u8(cmp)));
 
              uint16x8x4_t lrgba;
-
              lrgba.val[0] = vmovl_u8(rgba.val[0]);
              lrgba.val[1] = vmovl_u8(rgba.val[1]);
              lrgba.val[2] = vmovl_u8(rgba.val[2]);
+             lrgba.val[3] = vaddl_u8(rgba.val[3], mask_0x01);
 
-             rgba.val[0] = vshrn_n_u16(vmlal_u8(lrgba.val[0], rgba.val[0], rgba.val[3]), 8);
-             rgba.val[1] = vshrn_n_u16(vmlal_u8(lrgba.val[1], rgba.val[1], rgba.val[3]), 8);
-             rgba.val[2] = vshrn_n_u16(vmlal_u8(lrgba.val[2], rgba.val[2], rgba.val[3]), 8);
-
+             rgba.val[0] = vshrn_n_u16(vmlaq_u16(lrgba.val[0], lrgba.val[0],
+                                                 lrgba.val[3]), 8);
+             rgba.val[1] = vshrn_n_u16(vmlaq_u16(lrgba.val[1], lrgba.val[1],
+                                                 lrgba.val[3]), 8);
+             rgba.val[2] = vshrn_n_u16(vmlaq_u16(lrgba.val[2], lrgba.val[2],
+                                                 lrgba.val[3]), 8);
              vst4_u8(data, rgba);
              data += 8;
-
           }
      }
-   #endif
+#endif
 
    while (data < de)
      {
