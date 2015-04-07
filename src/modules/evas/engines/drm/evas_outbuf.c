@@ -9,36 +9,6 @@
 #define BLUE_MASK 0x0000ff
 
 static void 
-_evas_outbuf_buffer_put(Outbuf *ob, Ecore_Drm_Fb *buffer, Eina_Rectangle *rects, unsigned int count)
-{
-   /* validate input params */
-   if ((!ob) || (!buffer)) return;
-
-#ifdef DRM_MODE_FEATURE_DIRTYFB
-   drmModeClip *clip;
-   unsigned int i = 0;
-   int ret;
-
-   clip = alloca(count * sizeof(drmModeClip));
-   for (i = 0; i < count; i++)
-     {
-        clip[i].x1 = rects[i].x;
-        clip[i].y1 = rects[i].y;
-        clip[i].x2 = rects[i].w;
-        clip[i].y2 = rects[i].h;
-     }
-
-   /* DBG("Marking FB Dirty: %d", buffer->fb); */
-   ret = drmModeDirtyFB(ob->priv.fd, buffer->id, clip, count);
-   if (ret)
-     {
-        if (ret == -EINVAL)
-          ERR("Could not set FB Dirty: %m");
-     }
-#endif
-}
-
-static void 
 _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
 {
    Ecore_Drm_Fb *buff;
@@ -49,7 +19,7 @@ _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    evas_drm_outbuf_framebuffer_set(ob, buff);
 
    /* mark the fb as dirty */
-   _evas_outbuf_buffer_put(ob, buff, rects, count);
+   ecore_drm_fb_dirty(buff, rects, count);
 
    /* send this buffer to the crtc */
    evas_drm_framebuffer_send(ob, buff);
