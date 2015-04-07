@@ -696,21 +696,18 @@ _ecore_drm_event_output_send(const Ecore_Drm_Output *output, Eina_Bool plug)
 
    if (!(e = calloc(1, sizeof(Ecore_Drm_Event_Output)))) return;
    e->plug = plug;
-   if (plug)
-     {
-        e->id = output->crtc_id;
-        e->w = output->current_mode->width;
-        e->h = output->current_mode->height;
-        e->x = output->x;
-        e->y = output->y;
-        e->phys_width = output->phys_width;
-        e->phys_height = output->phys_height;
-        e->refresh = output->current_mode->refresh;
-        e->subpixel_order = output->subpixel;
-        e->make = eina_stringshare_ref(output->make);
-        e->model = eina_stringshare_ref(output->model);
-        e->transform = 0;
-     }
+   e->id = output->crtc_id;
+   e->w = output->current_mode->width;
+   e->h = output->current_mode->height;
+   e->x = output->x;
+   e->y = output->y;
+   e->phys_width = output->phys_width;
+   e->phys_height = output->phys_height;
+   e->refresh = output->current_mode->refresh;
+   e->subpixel_order = output->subpixel;
+   e->make = eina_stringshare_ref(output->make);
+   e->model = eina_stringshare_ref(output->model);
+   e->transform = 0;
    ecore_event_add(ECORE_DRM_EVENT_OUTPUT, e,
                    _ecore_drm_event_output_free, NULL);
 }
