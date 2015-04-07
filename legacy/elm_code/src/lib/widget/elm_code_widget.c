@@ -945,7 +945,7 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
    Elm_Code *code;
    Elm_Code_Line *line;
    Elm_Code_Widget_Data *pd;
-   unsigned int row, col, position, col_width, char_width;
+   unsigned int row, col, position, start_col, char_width;
 
    if (_elm_code_widget_delete_selection(widget))
      return;
@@ -969,11 +969,11 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
    position = elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
    char_width = elm_code_line_text_position_for_column_get(line, col, pd->tabstop) -
                 elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
-   col_width = elm_code_line_text_column_width_to_position(line, position, pd->tabstop) -
-               elm_code_line_text_column_width_to_position(line, position - 1, pd->tabstop);
-   elm_code_line_text_remove(line, position, char_width);
+   start_col = elm_code_line_text_column_width_to_position(line, position - 1, pd->tabstop);
+
+   elm_code_line_text_remove(line, position, char_width?char_width:1);
    eo_do(widget,
-         elm_code_widget_cursor_position_set(col - col_width, row));
+         elm_code_widget_cursor_position_set(start_col + 1, row));
 
 // TODO construct and pass a change object
    eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
@@ -984,7 +984,7 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
 {
    Elm_Code *code;
    Elm_Code_Line *line;
-   unsigned int row, col, position, char_width;
+   unsigned int row, col, position, char_width, start_col;
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
@@ -1008,9 +1008,11 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
    position = elm_code_line_text_position_for_column_get(line, col, pd->tabstop);
    char_width = elm_code_line_text_position_for_column_get(line, col, pd->tabstop) -
                 elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
-   elm_code_line_text_remove(line, position, char_width);
+   start_col = elm_code_line_text_column_width_to_position(line, position - 1, pd->tabstop);
+
+   elm_code_line_text_remove(line, position, char_width?char_width:1);
    eo_do(widget,
-         elm_code_widget_cursor_position_set(col, row),
+         elm_code_widget_cursor_position_set(start_col + 1, row),
 // TODO construct and pass a change object
          eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
 }
