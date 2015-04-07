@@ -25,6 +25,25 @@ static const char *conn_types[] =
 
 EAPI int ECORE_DRM_EVENT_OUTPUT = 0;
 
+static drmModePropertyPtr
+_ecore_drm_output_property_get(int fd, drmModeConnectorPtr conn, const char *name)
+{
+   drmModePropertyPtr prop;
+   int i = 0;
+
+   for (; i < conn->count_props; i++)
+     {
+        if (!(prop = drmModeGetProperty(fd, conn->props[i])))
+          continue;
+
+        if (!strcmp(prop->name, name)) return prop;
+
+        drmModeFreeProperty(prop);
+     }
+
+   return NULL;
+}
+
 static void 
 _ecore_drm_output_edid_parse_string(const uint8_t *data, char text[])
 {
@@ -430,6 +449,7 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    output->conn_id = conn->connector_id;
    dev->conn_allocator |= (1 << output->conn_id);
    output->crtc = drmModeGetCrtc(dev->drm.fd, output->crtc_id);
+   output->dpms = _ecore_drm_output_property_get(dev->drm.fd, conn, "DPMS");
 
    memset(&mode, 0, sizeof(mode));
    if ((enc = drmModeGetEncoder(dev->drm.fd, conn->encoder_id)))
@@ -500,6 +520,7 @@ mode_err:
    eina_stringshare_del(output->name);
    EINA_LIST_FREE(output->modes, mode)
      free(mode);
+   drmModeFreeProperty(output->dpms);
    drmModeFreeCrtc(output->crtc);
    dev->crtc_allocator &= ~(1 << output->crtc_id);
    dev->conn_allocator &= ~(1 << output->conn_id);
@@ -537,6 +558,7 @@ _ecore_drm_output_free(Ecore_Drm_Output *output)
    if (output->model) eina_stringshare_del(output->model);
    if (output->make) eina_stringshare_del(output->make);
 
+   if (output->dpms) drmModeFreeProperty(output->dpms);
    if (output->crtc) drmModeFreeCrtc(output->crtc);
 
    free(output);
@@ -874,6 +896,8 @@ ecore_drm_output_enable(Ecore_Drm_Output *output)
 
    if ((!output) || (!output->current)) return EINA_FALSE;
 
+   ecore_drm_output_dpms_set(output, DRM_MODE_DPMS_ON);
+
    mode = output->current_mode;
    if (drmModeSetCrtc(output->drm_fd, output->crtc_id, output->current->id, 
                       0, 0, &output->conn_id, 1, &mode->info) < 0)
@@ -1077,4 +1101,14 @@ ecore_drm_output_make_get(Ecore_Drm_Output *output)
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
 
    return output->make;
+}
+
+EAPI void
+ecore_drm_output_dpms_set(Ecore_Drm_Output *output, int level)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+   EINA_SAFETY_ON_NULL_RETURN(output->dpms);
+
+   drmModeConnectorSetProperty(output->dev->drm.fd, output->conn_id,
+                               output->dpms->prop_id, level);
 }
