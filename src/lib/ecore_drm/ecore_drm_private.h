@@ -82,6 +82,8 @@ extern int _ecore_drm_log_dom;
 # define WRN(...) EINA_LOG_DOM_WARN(_ecore_drm_log_dom, __VA_ARGS__)
 # define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_drm_log_dom, __VA_ARGS__)
 
+# define ALEN(array) (sizeof(array) / sizeof(array)[0])
+
 struct _Ecore_Drm_Output_Mode
 {
    unsigned int flags;
@@ -133,8 +135,6 @@ struct _Ecore_Drm_Output
         char serial[13];
      } edid;
 
-   Ecore_Drm_Fb *current, *next;
-   Ecore_Drm_Fb *dumb[NUM_FRAME_BUFFERS];
    Ecore_Drm_Backlight *backlight;   
 
    Eina_Bool enabled : 1;
