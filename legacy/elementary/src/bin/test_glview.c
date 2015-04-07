@@ -617,18 +617,22 @@ test_glview(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    Evas_Object *win, *bx, *bt, *gl, *lb;
    Ecore_Animator *ani;
    GLData *gld = NULL;
-
-   // since we want a depth buffer and direct rendering, we need the window
-   // itself to have a depth buffer
-   elm_config_accel_preference_set("gl:depth");
+   const char *accel;
 
    // alloc a data struct to hold our relevant gl info in
    if (!(gld = calloc(1, sizeof(GLData)))) return;
    gldata_init(gld);
 
+   // add a Z-depth buffer to the window and try to use GL
+   accel = elm_config_accel_preference_get();
+   elm_config_accel_preference_set("gl:depth");
+
    // new window - do the usual and give it a name, title and delete handler
    win = elm_win_util_standard_add("glview", "GLView");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   // restore previous accel preference
+   elm_config_accel_preference_set(accel);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
