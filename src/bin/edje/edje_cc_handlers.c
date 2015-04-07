@@ -309,6 +309,9 @@ static void st_collections_group_parts_part_description_max(void);
 static void st_collections_group_parts_part_description_step(void);
 static void st_collections_group_parts_part_description_aspect(void);
 static void st_collections_group_parts_part_description_aspect_preference(void);
+static void st_collections_group_parts_part_description_rel_to(void);
+static void st_collections_group_parts_part_description_rel_to_x(void);
+static void st_collections_group_parts_part_description_rel_to_y(void);
 static void st_collections_group_parts_part_description_rel1_relative(void);
 static void st_collections_group_parts_part_description_rel1_offset(void);
 static void st_collections_group_parts_part_description_rel1_to_set(const char *name);
@@ -746,6 +749,9 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.step", st_collections_group_parts_part_description_step},
      {"collections.group.parts.part.description.aspect", st_collections_group_parts_part_description_aspect},
      {"collections.group.parts.part.description.aspect_preference", st_collections_group_parts_part_description_aspect_preference},
+     {"collections.group.parts.part.description.rel.to", st_collections_group_parts_part_description_rel_to},
+     {"collections.group.parts.part.description.rel.to_x", st_collections_group_parts_part_description_rel_to_x},
+     {"collections.group.parts.part.description.rel.to_y", st_collections_group_parts_part_description_rel_to_y},
      {"collections.group.parts.part.description.rel1.relative", st_collections_group_parts_part_description_rel1_relative},
      {"collections.group.parts.part.description.rel1.offset", st_collections_group_parts_part_description_rel1_offset},
      {"collections.group.parts.part.description.rel1.to", st_collections_group_parts_part_description_rel1_to},
@@ -7194,7 +7200,7 @@ st_collections_group_parts_part_description_color3(void)
 /**
     @page edcref
     @block
-        rel1/rel2
+        rel1/rel2/rel
     @context
         description {
             ..
@@ -7208,11 +7214,16 @@ st_collections_group_parts_part_description_color3(void)
                 offset:    -1  -1;
             }
             ..
+            rel {
+                to: "somepart";
+            }
+            ..
         }
     @description
         The rel1 and rel2 blocks are used to define the position of each corner
         of the part's container. With rel1 being the left-up corner and rel2
-        being the right-down corner.
+        being the right-down corner; rel (no number) is equivalent to setting both
+        rel1 AND rel2 since 1.14.
     @endblock
 
     @property
@@ -7275,6 +7286,20 @@ st_collections_group_parts_part_description_rel1_to_set(const char *name)
 }
 
 static void
+st_collections_group_parts_part_description_rel_to(void)
+{
+   check_arg_count(1);
+
+   {
+      char *name;
+      name = parse_str(0);
+      st_collections_group_parts_part_description_rel1_to_set(name);
+      st_collections_group_parts_part_description_rel2_to_set(name);
+      free(name);
+   }
+}
+
+static void
 st_collections_group_parts_part_description_rel1_to(void)
 {
    check_arg_count(1);
@@ -7299,6 +7324,25 @@ st_collections_group_parts_part_description_rel1_to(void)
         Setting to "" will un-set this value for inherited parts.
     @endproperty
 */
+static void
+st_collections_group_parts_part_description_rel_to_x(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+
+   {
+      char *name;
+
+      name = parse_str(0);
+      data_queue_part_lookup(pc, name, &(current_desc->rel1.id_x));
+      data_queue_part_lookup(pc, name, &(current_desc->rel2.id_x));
+      free(name);
+   }
+}
+
 static void
 st_collections_group_parts_part_description_rel1_to_x(void)
 {
@@ -7329,6 +7373,25 @@ st_collections_group_parts_part_description_rel1_to_x(void)
         "relative". Setting to "" will un-set this value for inherited parts.
     @endproperty
 */
+static void
+st_collections_group_parts_part_description_rel_to_y(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+
+   {
+      char *name;
+
+      name = parse_str(0);
+      data_queue_part_lookup(pc, name, &(current_desc->rel1.id_y));
+      data_queue_part_lookup(pc, name, &(current_desc->rel2.id_y));
+      free(name);
+   }
+}
+
 static void
 st_collections_group_parts_part_description_rel1_to_y(void)
 {
