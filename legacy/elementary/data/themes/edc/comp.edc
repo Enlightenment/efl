@@ -54,7 +54,7 @@ group { name: "e/comp/screen/overlay/default";
             visible: 0;
          }
          description { state: "visible" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 1.0;
             color: 255 255 255 255;
@@ -67,7 +67,7 @@ group { name: "e/comp/screen/overlay/default";
             visible: 0;
          }
          description { state: "visible" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             color: 0 0 0 255;
             visible: 1;
          }
@@ -78,7 +78,7 @@ group { name: "e/comp/screen/overlay/default";
             visible: 0;
          }
          description { state: "visible" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             color: 0 0 0 255;
             visible: 1;
          }
@@ -262,7 +262,7 @@ group { name: "e/comp/frame/default";
             visible: 0;
          }
          description { state: "visible" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             color: 255 255 255 255;
             visible: 1;
          }
@@ -273,14 +273,13 @@ group { name: "e/comp/frame/default";
             image.normal: "win_shadow.png";
             image.border: 14 14 14 14;
             image.middle: 0;
-            rel1.to: "e.swallow.content";
+            rel.to: "e.swallow.content";
             rel1.offset: -7  -3;
-            rel2.to: "e.swallow.content";
             rel2.offset: 6 11;
             fill.smooth: 0;
          }
          description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             visible: 0;
          }
       }
@@ -290,14 +289,13 @@ group { name: "e/comp/frame/default";
             image.normal: "win_glow.png";
             image.border: 9 9 9 9;
             image.middle: 0;
-            rel1.to: "gspacer";
-            rel2.to: "gspacer";
+            rel.to: "gspacer";
             fill.smooth: 0;
             color: 255 255 255 0;
             visible: 0;
          }
          description { state: "focused" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             color: 255 255 255 255;
             visible: 1;
          }
@@ -308,7 +306,7 @@ group { name: "e/comp/frame/default";
             rel2.relative: 0.95 0.95;
          }
          description { state: "visible" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             rel1.relative: 0.0  0.0;
             rel2.relative: 1.0  1.0;
          }
@@ -319,26 +317,23 @@ group { name: "e/comp/frame/default";
          mouse_events: 0;
          description { state: "default" 0.0;
             color_class: "comp_focus-out_color";
-            rel1.to: "clipper";
-            rel2.to: "clipper";
+            rel.to: "clipper";
          }
          description { state: "focused" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             color_class: "comp_focus_color";
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW;
          clip_to: "focus-clipper";
          description { state: "default" 0.0;
-            rel1.to: "shower";
-            rel2.to: "shower";
+            rel.to: "shower";
          }
       }
       spacer { "gspacer";
          desc {
-            rel1.to: "e.swallow.content";
+            rel.to: "e.swallow.content";
             rel1.offset: -5  -5;
-            rel2.to: "e.swallow.content";
             rel2.offset: 4 4;
          }
       }
@@ -678,12 +673,12 @@ group { name: "e/comp/frame/fullscreen";
             visible: 0;
          }
          description { state: "visible1" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             color: 255 255 255 255;
             visible: 1;
          }
          description { state: "visible2" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             color: 255 255 255 255;
             visible: 1;
          }
@@ -703,7 +698,7 @@ group { name: "e/comp/frame/fullscreen";
             visible: 0;
          }
          description { state: "visible" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 1.0;
             color: 255 255 255 255;
@@ -716,7 +711,7 @@ group { name: "e/comp/frame/fullscreen";
             visible: 0;
          }
          description { state: "visible" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             color: 0 0 0 255;
             visible: 1;
          }
@@ -727,14 +722,14 @@ group { name: "e/comp/frame/fullscreen";
             rel2.relative: 0.5 0.5;
          }
          description { state: "visible1" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             rel1.relative: 0.1 0.49;
             rel1.offset: 0 0;
             rel2.relative: 0.9 0.51;
             rel2.offset: -1 -1;
          }
          description { state: "visible2" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             rel1.relative: 0.0  0.0;
             rel2.relative: 1.0  1.0;
          }
@@ -754,12 +749,12 @@ group { name: "e/comp/frame/fullscreen";
             visible: 0;
          }
          description { state: "visible1" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             color: 255 255 255 255;
             visible: 1;
          }
          description { state: "visible2" 0.0;
-            inherit: "default" 0.0;
+            inherit;
             color: 255 255 255 0;
             visible: 0;
          }
