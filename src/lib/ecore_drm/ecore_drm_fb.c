@@ -15,7 +15,7 @@
 /* TODO: DOXY !! */
 
 static Eina_Bool
-_ecore_drm_fb_create2(int fd, int w, int h, Ecore_Drm_Fb *fb)
+_ecore_drm_fb_create2(int fd, Ecore_Drm_Fb *fb)
 {
    struct drm_mode_fb_cmd2 cmd;
    uint32_t hdls[4], pitches[4], offsets[4], fmt;
@@ -31,8 +31,8 @@ _ecore_drm_fb_create2(int fd, int w, int h, Ecore_Drm_Fb *fb)
 
    memset(&cmd, 0, sizeof(struct drm_mode_fb_cmd2));
    cmd.fb_id = 0;
-   cmd.width = w;
-   cmd.height = h;
+   cmd.width = fb->w;
+   cmd.height = fb->h;
    cmd.pixel_format = fmt;
    cmd.flags = 0;
    memcpy(cmd.handles, hdls, 4 * sizeof(hdls[0]));
@@ -77,11 +77,13 @@ ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height)
    fb->stride = carg.pitch;
    fb->size = carg.size;
    fb->fd = dev->drm.fd;
+   fb->w = width;
+   fb->h = height;
 
-   if (!_ecore_drm_fb_create2(dev->drm.fd, width, height, fb))
+   if (!_ecore_drm_fb_create2(dev->drm.fd, fb))
      {
         WRN("Could not add framebuffer2: %m");
-        if (drmModeAddFB(dev->drm.fd, width, height, 24, 32,
+        if (drmModeAddFB(dev->drm.fd, fb->w, fb->h, 24, 32,
                          fb->stride, fb->hdl, &fb->id))
           {
              ERR("Could not add framebuffer: %m");

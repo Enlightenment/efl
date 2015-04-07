@@ -61,6 +61,7 @@ typedef struct _Ecore_Drm_Fb
    unsigned int stride, size;
    int fd;
    void *mmap;
+   int w, h;
 } Ecore_Drm_Fb;
 
 struct _Ecore_Drm_Device
