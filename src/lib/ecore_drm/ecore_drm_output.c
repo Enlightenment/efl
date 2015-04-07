@@ -1024,6 +1024,7 @@ ecore_drm_outputs_geometry_get(Ecore_Drm_Device *dev, int *x, int *y, int *w, in
 
    EINA_LIST_FOREACH(dev->outputs, l, output)
      {
+        if (output->cloned) continue;
         ox += output->x;
         oy += output->y;
         ow += MAX(ow, output->current_mode->width);
