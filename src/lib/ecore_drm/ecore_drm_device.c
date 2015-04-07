@@ -58,19 +58,12 @@ static Eina_Bool
 _ecore_drm_device_cb_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 {
    Ecore_Drm_Device *dev;
-   drmEventContext ctx;
 
    if (!(dev = data)) return ECORE_CALLBACK_RENEW;
 
    DBG("Drm Device Event");
 
-   memset(&ctx, 0, sizeof(ctx));
-
-   ctx.version = DRM_EVENT_CONTEXT_VERSION;
-   ctx.page_flip_handler = _ecore_drm_device_cb_page_flip;
-   ctx.vblank_handler = _ecore_drm_device_cb_vblank;
-
-   drmHandleEvent(dev->drm.fd, &ctx);
+   drmHandleEvent(dev->drm.fd, &dev->drm_ctx);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -326,6 +319,11 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
         ERR("Failed to create xkb context: %m");
         return EINA_FALSE;
      }
+
+   memset(&dev->drm_ctx, 0, sizeof(dev->drm_ctx));
+   dev->drm_ctx.version = DRM_EVENT_CONTEXT_VERSION;
+   dev->drm_ctx.page_flip_handler = _ecore_drm_device_cb_page_flip;
+   dev->drm_ctx.vblank_handler = _ecore_drm_device_cb_vblank;
 
    events = (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE |
              EEZE_UDEV_EVENT_CHANGE);

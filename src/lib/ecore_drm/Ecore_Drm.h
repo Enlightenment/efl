@@ -117,6 +117,10 @@ struct _Ecore_Drm_Device
    int current_fb;
    Ecore_Drm_Fb *current, *next;
    Ecore_Drm_Fb *dumb[2];
+
+   drmEventContext drm_ctx;
+
+   Eina_Bool active : 1;
 };
 
 struct _Ecore_Drm_Event_Activate
@@ -204,6 +208,8 @@ EAPI Eina_Bool ecore_drm_device_master_drop(Ecore_Drm_Device *dev);
 EAPI int ecore_drm_device_fd_get(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_device_window_set(Ecore_Drm_Device *dev, unsigned int window);
 EAPI const char *ecore_drm_device_name_get(Ecore_Drm_Device *dev);
+
+EAPI void ecore_drm_device_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb);
 
 /**
  * Setup an Ecore_Drm_Device for software rendering
