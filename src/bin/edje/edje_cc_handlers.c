@@ -1045,6 +1045,7 @@ New_Statement_Handler statement_handlers_short_single[] =
      {"collections.group.nomouse", st_collections_group_nomouse},
      {"collections.group.broadcast", st_collections_group_broadcast},
      {"collections.group.nobroadcast", st_collections_group_nobroadcast},
+     {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
 };
 
 #define PROGRAM_OBJECTS(PREFIX) \
@@ -6397,6 +6398,7 @@ ob_collections_group_parts_part_desc(void)
         named description. The properties defined in this part will override
         the inherited properties, reducing the amount of necessary code for
         simple state changes. Note: inheritance in Edje is single level only.
+        @since 1.14 omitting both the description name and index will inherit the default 0.0 description.
     @endproperty
 */
 static void
@@ -6408,7 +6410,7 @@ st_collections_group_parts_part_description_inherit(void)
    Edje_Part_Image_Id *iid;
    char *parent_name;
    const char *state_name;
-   double parent_val, state_val;
+   double parent_val = 0.0, state_val;
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
    ep = current_part;
@@ -6417,8 +6419,6 @@ st_collections_group_parts_part_description_inherit(void)
    parent = parent_desc;
    if (!parent)
      {
-        check_min_arg_count(1);
-
         /* inherit may not be used in the default description */
         if (!ep->other.desc_count)
           {
@@ -6429,11 +6429,21 @@ st_collections_group_parts_part_description_inherit(void)
           }
 
         /* find the description that we inherit from */
-        parent_name = parse_str(0);
-        if (get_arg_count() == 2)
-          parent_val = parse_float_range(1, 0.0, 1.0);
-        else
-          parent_val = 0.0;
+        switch (get_arg_count())
+          {
+           case 0:
+             parent_name = strdup("default");
+             break;
+           case 2:
+             parent_val = parse_float_range(1, 0.0, 1.0);
+           case 1:
+             parent_name = parse_str(0);
+             break;
+           default:
+             ERR("parse error %s:%i. too many parameters",
+                 file_in, line - 1);
+             exit(-1);
+          }
 
         if (!strcmp (parent_name, "default") && parent_val == 0.0)
           parent = ep->default_desc;
