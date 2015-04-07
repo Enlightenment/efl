@@ -256,4 +256,18 @@ EAPI void ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
 
 EAPI Eina_Bool ecore_drm_launcher_connect(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev);
+
+/**
+ * Set the dpms level of an Ecore_Drm_Output
+ *
+ * This function will set the DPMS level of an Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to set the dpms level on
+ * @param level The level to set
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI void ecore_drm_output_dpms_set(Ecore_Drm_Output *output, int level);
+
 #endif
