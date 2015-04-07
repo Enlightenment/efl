@@ -18,9 +18,10 @@ _ecore_drm_device_cb_page_flip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSE
 
    if (output->pending_flip)
      {
-        ecore_drm_output_fb_release(output, output->current);
-        output->current = output->next;
-        output->next = NULL;
+        if (output->dev->current)
+          ecore_drm_output_fb_release(output, output->dev->current);
+        output->dev->current = output->dev->next;
+        output->dev->next = NULL;
      }
 
    output->pending_flip = EINA_FALSE;
@@ -82,6 +83,8 @@ _ecore_drm_device_cb_idle(void *data)
    Eina_List *l;
 
    if (!(dev = data)) return ECORE_CALLBACK_CANCEL;
+
+   /* TODO: skip repaints if we are VT-switched away */
 
    EINA_LIST_FOREACH(dev->outputs, l, output)
      {
@@ -232,9 +235,18 @@ EAPI void
 ecore_drm_device_free(Ecore_Drm_Device *dev)
 {
    Ecore_Drm_Output *output;
+   unsigned int i = 0;
 
    /* check for valid device */
    if (!dev) return;
+
+   for (; i < ALEN(dev->dumb); i++)
+     {
+        if (dev->dumb[i]) ecore_drm_fb_destroy(dev->dumb[i]);
+        dev->dumb[i] = NULL;
+     }
+
+   ecore_drm_inputs_destroy(dev);
 
    /* free outputs */
    EINA_LIST_FREE(dev->outputs, output)
@@ -536,4 +548,50 @@ ecore_drm_device_pointer_xy_get(Ecore_Drm_Device *dev, int *x, int *y)
              return;
           }
      }
+}
+
+EAPI Eina_Bool
+ecore_drm_device_software_setup(Ecore_Drm_Device *dev)
+{
+   unsigned int i = 0;
+   int w = 0, h = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
+
+   /* destroy any old buffers */
+   for (; i < ALEN(dev->dumb); i++)
+     {
+        if (dev->dumb[i]) ecore_drm_fb_destroy(dev->dumb[i]);
+        dev->dumb[i] = NULL;
+     }
+
+   /* get screen size */
+   ecore_drm_outputs_geometry_get(dev, NULL, NULL, &w, &h);
+
+   /* create new buffers */
+   for (i = 0; i < ALEN(dev->dumb); i++)
+     {
+        if (!(dev->dumb[i] = ecore_drm_fb_create(dev, w, h)))
+          {
+             ERR("Could not create dumb framebuffer: %m");
+             goto err;
+          }
+
+        DBG("Ecore_Drm_Device Created Dumb Buffer");
+        DBG("\tFb: %d", dev->dumb[i]->id);
+        DBG("\tHandle: %d", dev->dumb[i]->hdl);
+        DBG("\tStride: %d", dev->dumb[i]->stride);
+        DBG("\tSize: %d", dev->dumb[i]->size);
+        DBG("\tW: %d\tH: %d", dev->dumb[i]->w, dev->dumb[i]->h);
+     }
+
+   return EINA_TRUE;
+
+err:
+   for (i = 0; i < ALEN(dev->dumb); i++)
+     {
+        if (dev->dumb[i]) ecore_drm_fb_destroy(dev->dumb[i]);
+        dev->dumb[i] = NULL;
+     }
+   return EINA_FALSE;
 }

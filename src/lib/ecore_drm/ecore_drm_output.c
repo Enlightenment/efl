@@ -5,8 +5,6 @@
 #include "ecore_drm_private.h"
 #include <ctype.h>
 
-#define ALEN(array) (sizeof(array) / sizeof(array)[0])
-
 #define EDID_DESCRIPTOR_ALPHANUMERIC_DATA_STRING 0xfe
 #define EDID_DESCRIPTOR_DISPLAY_PRODUCT_NAME 0xfc
 #define EDID_DESCRIPTOR_DISPLAY_PRODUCT_SERIAL_NUMBER 0xff
@@ -178,46 +176,6 @@ _ecore_drm_output_edid_find(Ecore_Drm_Output *output, drmModeConnector *conn)
      }
 
    drmModeFreePropertyBlob(blob);
-}
-
-static Eina_Bool 
-_ecore_drm_output_software_setup(Ecore_Drm_Device *dev, Ecore_Drm_Output *output)
-{
-   unsigned int i = 0;
-   int w = 0, h = 0;
-
-   if ((!dev) || (!output)) return EINA_FALSE;
-
-   if (output->current_mode)
-     {
-        w = output->current_mode->width;
-        h = output->current_mode->height;
-     }
-   else
-     {
-        w = 1024;
-        h = 768;
-     }
-
-   for (i = 0; i < NUM_FRAME_BUFFERS; i++)
-     {
-        if (!(output->dumb[i] = ecore_drm_fb_create(dev, w, h)))
-          {
-             ERR("Could not create dumb framebuffer %d", i);
-             goto err;
-          }
-     }
-
-   return EINA_TRUE;
-
-err:
-   for (i = 0; i < NUM_FRAME_BUFFERS; i++)
-     {
-        if (output->dumb[i]) ecore_drm_fb_destroy(output->dumb[i]);
-        output->dumb[i] = NULL;
-     }
-
-   return EINA_FALSE;
 }
 
 static void 
@@ -545,9 +503,6 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    /* TODO: implement support for LCMS ? */
    output->gamma = output->crtc->gamma_size;
 
-   if (!_ecore_drm_output_software_setup(dev, output))
-     goto err;
-
    dev->outputs = eina_list_append(dev->outputs, output);
 
    DBG("Created New Output At %d,%d", output->x, output->y);
@@ -643,7 +598,8 @@ _ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb)
 {
    if ((!output) || (!fb)) return;
 
-   if ((fb->mmap) && (fb != output->dumb[0]) && (fb != output->dumb[1]))
+   if ((fb->mmap) &&
+       (fb != output->dev->dumb[0]) && (fb != output->dev->dumb[1]))
      ecore_drm_fb_destroy(fb);
 }
 
@@ -657,14 +613,13 @@ _ecore_drm_output_repaint_start(Ecore_Drm_Output *output)
    if (!output) return;
    if (output->pending_destroy) return;
 
-   if (!output->current)
+   if (!output->dev->current)
      {
         /* DBG("\tNo Current FB"); */
         goto finish;
      }
 
-   fb = output->current->id;
-
+   fb = output->dev->current->id;
    if (drmModePageFlip(output->dev->drm.fd, output->crtc_id, fb, 
                        DRM_MODE_PAGE_FLIP_EVENT, output) < 0)
      {
@@ -876,17 +831,38 @@ ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle, int w, in
 EAPI Eina_Bool 
 ecore_drm_output_enable(Ecore_Drm_Output *output)
 {
+   Ecore_Drm_Device *dev;
    Ecore_Drm_Output_Mode *mode;
+   int x = 0, y = 0;
 
-   if ((!output) || (!output->current)) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->current_mode, EINA_FALSE);
+
+   if (!(dev = output->dev)) return EINA_FALSE;
+
+   output->enabled = EINA_TRUE;
+   if (!dev->current)
+     {
+        /* schedule repaint */
+        /* NB: this will trigger a redraw at next idle */
+        output->need_repaint = EINA_TRUE;
+        return EINA_TRUE;
+     }
 
    ecore_drm_output_dpms_set(output, DRM_MODE_DPMS_ON);
 
-   mode = output->current_mode;
-   if (drmModeSetCrtc(output->dev->drm.fd, output->crtc_id, output->current->id, 
-                      0, 0, &output->conn_id, 1, &mode->info) < 0)
+   if (!output->cloned)
      {
-        ERR("Could not set output crtc: %m");
+        x = output->x;
+        y = output->y;
+     }
+
+   mode = output->current_mode;
+   if (drmModeSetCrtc(dev->drm.fd, output->crtc_id, dev->current->id, x, y, 
+                      &output->conn_id, 1, &mode->info) < 0)
+     {
+        ERR("Failed to set Mode %dx%d for Output %s: %m",
+            mode->width, mode->height, output->name);
         return EINA_FALSE;
      }
 
@@ -896,57 +872,59 @@ ecore_drm_output_enable(Ecore_Drm_Output *output)
 EAPI void 
 ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb)
 {
-   if ((!output) || (!fb)) return;
-
-   if ((fb->mmap) && (fb != output->dumb[0]) && (fb != output->dumb[1]))
-     ecore_drm_fb_destroy(fb);
+   _ecore_drm_output_fb_release(output, fb);
 }
 
 EAPI void 
 ecore_drm_output_repaint(Ecore_Drm_Output *output)
 {
-   Eina_List *l;
+   Ecore_Drm_Device *dev;
    Ecore_Drm_Sprite *sprite;
+   Eina_List *l;
    int ret = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(output);
    EINA_SAFETY_ON_TRUE_RETURN(output->pending_destroy);
 
+   if (!(dev = output->dev)) return;
+
    /* DBG("Output Repaint: %d %d", output->crtc_id, output->conn_id); */
 
    /* TODO: assign planes ? */
 
-   if (!output->next)
+   if (!dev->next)
      _ecore_drm_output_software_render(output);
-
-   if (!output->next) return;
+   if (!dev->next) return;
 
    output->need_repaint = EINA_FALSE;
 
-   if (!output->current)
+   if ((!dev->current) || 
+       (dev->current->stride != dev->next->stride))
      {
         Ecore_Drm_Output_Mode *mode;
 
         mode = output->current_mode;
-
-        ret = drmModeSetCrtc(output->dev->drm.fd, output->crtc_id, 
-                             output->next->id, 0, 0, &output->conn_id, 1, 
-                             &mode->info);
+        ret = drmModeSetCrtc(dev->drm.fd, output->crtc_id, dev->next->id,
+                             0, 0, &output->conn_id, 1, &mode->info);
         if (ret) goto err;
+
+        ecore_drm_output_dpms_set(output, DRM_MODE_DPMS_ON);
      }
 
-   /* TODO: set dpms to on */
-
-   if (drmModePageFlip(output->dev->drm.fd, output->crtc_id, output->next->id,
+   if (drmModePageFlip(dev->drm.fd, output->crtc_id, dev->next->id,
                        DRM_MODE_PAGE_FLIP_EVENT, output) < 0)
      {
-        /* ERR("Scheduling pageflip failed"); */
+        ERR("Could not schedule pageflip: %m");
+        DBG("\tCrtc: %d\tConn: %d\tFB: %d",
+            output->crtc_id, output->conn_id, dev->next->id);
         goto err;
      }
 
    output->pending_flip = EINA_TRUE;
 
-   EINA_LIST_FOREACH(output->dev->sprites, l, sprite)
+   /* TODO: output_cursor_set */
+
+   EINA_LIST_FOREACH(dev->sprites, l, sprite)
      {
         unsigned int flags = 0, id = 0;
         drmVBlank vbl = 
@@ -959,13 +937,13 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
             (!ecore_drm_sprites_crtc_supported(output, sprite->crtcs)))
           continue;
 
-        if ((sprite->next_fb) && (!output->dev->cursors_broken))
+        if ((sprite->next_fb) && (!dev->cursors_broken))
           id = sprite->next_fb->id;
 
         ecore_drm_sprites_fb_set(sprite, id, flags);
 
         vbl.request.signal = (unsigned long)sprite;
-        ret = drmWaitVBlank(output->dev->drm.fd, &vbl);
+        ret = drmWaitVBlank(dev->drm.fd, &vbl);
         if (ret) ERR("Error Wait VBlank: %m");
 
         sprite->output = output;
@@ -975,10 +953,10 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
    return;
 
 err:
-   if (output->next)
+   if (dev->next)
      {
-        ecore_drm_output_fb_release(output, output->next);
-        output->next = NULL;
+        _ecore_drm_output_fb_release(output, dev->next);
+        dev->next = NULL;
      }
 }
 
