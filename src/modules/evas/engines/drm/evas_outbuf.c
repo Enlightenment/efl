@@ -8,23 +8,8 @@
 #define GREEN_MASK 0x00ff00
 #define BLUE_MASK 0x0000ff
 
-static Eina_Bool 
-_evas_outbuf_buffer_new(Outbuf *ob, Buffer *buff)
-{
-   buff->w = ob->w;
-   buff->h = ob->h;
-   if (buff->w < ob->priv.mode.hdisplay) buff->w = ob->priv.mode.hdisplay;
-   if (buff->h < ob->priv.mode.vdisplay) buff->h = ob->priv.mode.vdisplay;
-
-   /* create a dumb framebuffer */
-   if (!evas_drm_framebuffer_create(ob->priv.fd, buff, ob->depth))
-     return EINA_FALSE;
-
-   return EINA_TRUE;
-}
-
 static void 
-_evas_outbuf_buffer_put(Outbuf *ob, Buffer *buffer, Eina_Rectangle *rects, unsigned int count)
+_evas_outbuf_buffer_put(Outbuf *ob, Ecore_Drm_Fb *buffer, Eina_Rectangle *rects, unsigned int count)
 {
    /* validate input params */
    if ((!ob) || (!buffer)) return;
@@ -44,7 +29,7 @@ _evas_outbuf_buffer_put(Outbuf *ob, Buffer *buffer, Eina_Rectangle *rects, unsig
      }
 
    /* DBG("Marking FB Dirty: %d", buffer->fb); */
-   ret = drmModeDirtyFB(ob->priv.fd, buffer->fb, clip, count);
+   ret = drmModeDirtyFB(ob->priv.fd, buffer->id, clip, count);
    if (ret)
      {
         if (ret == -EINVAL)
@@ -56,12 +41,12 @@ _evas_outbuf_buffer_put(Outbuf *ob, Buffer *buffer, Eina_Rectangle *rects, unsig
 static void 
 _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
 {
-   Buffer *buff;
+   Ecore_Drm_Fb *buff;
 
-   buff = &(ob->priv.buffer[ob->priv.curr]);
+   buff = ob->priv.buffer[ob->priv.curr];
 
    /* if this buffer is not valid, we need to set it */
-   if (!buff->valid) evas_drm_outbuf_framebuffer_set(ob, buff);
+   evas_drm_outbuf_framebuffer_set(ob, buff);
 
    /* mark the fb as dirty */
    _evas_outbuf_buffer_put(ob, buff, rects, count);
@@ -84,6 +69,7 @@ evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
    ob->w = w;
    ob->h = h;
 
+   ob->info = info;
    ob->depth = info->info.depth;
    ob->rotation = info->info.rotation;
    ob->destination_alpha = info->info.destination_alpha;
@@ -124,17 +110,20 @@ evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
    /* try to create buffers */
    for (; i < ob->priv.num; i++)
      {
-        if (!_evas_outbuf_buffer_new(ob, &(ob->priv.buffer[i])))
-          break;
+        ob->priv.buffer[i] = 
+          ecore_drm_fb_create(ob->info->info.dev, ob->w, ob->h);
+        if (!ob->priv.buffer[i])
+          {
+             ERR("Failed to create buffer %d", i);
+             break;
+          }
      }
 
    /* set the front buffer to be the one on the crtc */
-   evas_drm_outbuf_framebuffer_set(ob, &(ob->priv.buffer[0]));
+   evas_drm_outbuf_framebuffer_set(ob, ob->priv.buffer[0]);
 
    /* set back buffer as first one to draw into */
    /* ob->priv.curr = (ob->priv.num - 1); */
-
-   ob->info = info;
 
    return ob;
 }
@@ -146,7 +135,7 @@ evas_outbuf_free(Outbuf *ob)
 
    /* destroy the old buffers */
    for (; i < ob->priv.num; i++)
-     evas_drm_framebuffer_destroy(ob->priv.fd, &(ob->priv.buffer[i]));
+     ecore_drm_fb_destroy(ob->priv.buffer[i]);
 
    /* free allocate space for outbuf */
    free(ob);
@@ -190,13 +179,15 @@ evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
 
    /* destroy the old buffers */
    for (; i < ob->priv.num; i++)
-     evas_drm_framebuffer_destroy(ob->priv.fd, &(ob->priv.buffer[i]));
+     ecore_drm_fb_destroy(ob->priv.buffer[i]);
 
    for (i = 0; i < ob->priv.num; i++)
      {
-        if (!_evas_outbuf_buffer_new(ob, &(ob->priv.buffer[i])))
+        ob->priv.buffer[i] = 
+          ecore_drm_fb_create(ob->info->info.dev, ob->w, ob->h);
+        if (!ob->priv.buffer[i])
           {
-             CRI("Failed to create buffer");
+             ERR("Failed to create buffer %d", i);
              break;
           }
      }
@@ -290,7 +281,7 @@ evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int
    Eina_Rectangle rect = {0, 0, 0, 0}, pr;
    DATA32 *src;
    DATA8 *dst;
-   Buffer *buff;
+   Ecore_Drm_Fb *buff;
    int bpp = 0, bpl = 0;
    int rx = 0, ry = 0;
 
@@ -304,8 +295,8 @@ evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int
    if (!(src = update->image.data)) return;
 
    /* check for valid desination data */
-   buff = &(ob->priv.buffer[ob->priv.curr]);
-   if (!(dst = buff->data)) return;
+   buff = ob->priv.buffer[ob->priv.curr];
+   if (!(dst = buff->mmap)) return;
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {

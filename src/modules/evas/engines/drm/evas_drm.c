@@ -233,7 +233,7 @@ evas_drm_outbuf_setup(Outbuf *ob)
 }
 
 void 
-evas_drm_outbuf_framebuffer_set(Outbuf *ob, Buffer *buffer)
+evas_drm_outbuf_framebuffer_set(Outbuf *ob, Ecore_Drm_Fb *buffer)
 {
    int ret;
 
@@ -242,115 +242,13 @@ evas_drm_outbuf_framebuffer_set(Outbuf *ob, Buffer *buffer)
 
    /* DBG("Drm Framebuffer Set: %d", buffer->fb); */
 
-   buffer->valid = EINA_FALSE;
-   ret = drmModeSetCrtc(ob->priv.fd, ob->priv.crtc, buffer->fb, 0, 0, 
+   ret = drmModeSetCrtc(ob->priv.fd, ob->priv.crtc, buffer->id, 0, 0, 
                         &ob->priv.conn, 1, &ob->priv.mode);
-
    if (ret) ERR("Failed to set crtc: %m");
-   else buffer->valid = EINA_TRUE;
 }
 
 Eina_Bool 
-evas_drm_framebuffer_create(int fd, Buffer *buffer, int depth)
-{
-   struct drm_mode_create_dumb carg;
-   struct drm_mode_destroy_dumb darg;
-   struct drm_mode_map_dumb marg;
-
-   /* check for valid info */
-   if (fd < 0) return EINA_FALSE;
-
-   /* try to create a dumb buffer */
-   memset(&carg, 0, sizeof(carg));
-   carg.width = buffer->w;
-   carg.height = buffer->h;
-   carg.bpp = depth;
-
-   if (drmIoctl(fd, DRM_IOCTL_MODE_CREATE_DUMB, &carg) < 0)
-     {
-        ERR("Could not create dumb buffer: %m");
-        return EINA_FALSE;
-     }
-
-   buffer->stride = carg.pitch;
-   buffer->size = carg.size;
-   buffer->handle = carg.handle;
-
-   DBG("Buffer: %d %d", buffer->w, buffer->h);
-   DBG("Buffer Stride: %d", buffer->stride);
-   DBG("Buffer Size: %d", buffer->size);
-
-   /* try to create a framebuffer object */
-   /* FIXME: Hardcoded bpp */
-   if (drmModeAddFB(fd, buffer->w, buffer->h, 24, depth, buffer->stride, 
-                    buffer->handle, &buffer->fb))
-     {
-        ERR("Could not create framebuffer object: %m");
-        goto add_err;
-     }
-
-   DBG("Creating dumb buffer: %d %d %d %d", buffer->fb, 
-       buffer->w, buffer->h, depth);
-
-   /* try to mmap the buffer */
-   memset(&marg, 0, sizeof(marg));
-   marg.handle = buffer->handle;
-   if (drmIoctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &marg))
-     {
-        ERR("Could not map dumb buffer: %m");
-        goto map_err;
-     }
-
-   /* do actual mmap of memory */
-   buffer->data = 
-     mmap(NULL, buffer->size, (PROT_READ | PROT_WRITE), 
-          MAP_SHARED, fd, marg.offset);
-   if (buffer->data == MAP_FAILED)
-     {
-        ERR("Could not mmap dumb buffer: %m");
-        goto map_err;
-     }
-
-   /* clear memory */
-   memset(buffer->data, 0, buffer->size);
-
-   return EINA_TRUE;
-
-map_err:
-   /* remove the framebuffer */
-   drmModeRmFB(fd, buffer->fb);
-
-add_err:
-   /* destroy buffer */
-   memset(&darg, 0, sizeof(darg));
-   darg.handle = buffer->handle;
-   drmIoctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
-
-   return EINA_FALSE;
-}
-
-void 
-evas_drm_framebuffer_destroy(int fd, Buffer *buffer)
-{
-   struct drm_mode_destroy_dumb darg;
-
-   /* check for valid info */
-   if (fd < 0) return;
-
-   /* unmap the buffer data */
-   if (buffer->data) munmap(buffer->data, buffer->size);
-
-   /* remove the framebuffer */
-   drmModeRmFB(fd, buffer->fb);
-
-   /* destroy buffer */
-   memset(&darg, 0, sizeof(darg));
-   darg.handle = buffer->handle;
-   drmIoctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
-}
-
-Eina_Bool 
-evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer)
+evas_drm_framebuffer_send(Outbuf *ob, Ecore_Drm_Fb *buffer)
 {
    /* check for valid Output buffer */
    if ((!ob) || (ob->priv.fd < 0)) return EINA_FALSE;
@@ -361,7 +259,7 @@ evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer)
    if (ob->vsync)
      {
         if (drmModePageFlip(ob->priv.fd, ob->priv.crtc, 
-                            buffer->fb, DRM_MODE_PAGE_FLIP_EVENT, ob) < 0)
+                            buffer->id, DRM_MODE_PAGE_FLIP_EVENT, ob) < 0)
           {
              ERR("Cannot flip crtc %u for connector %u: %m", 
                  ob->priv.crtc, ob->priv.conn);
