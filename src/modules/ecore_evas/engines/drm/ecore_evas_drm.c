@@ -172,6 +172,12 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
    /* try to init drm */
    if (_ecore_evas_drm_init(device) < 1) return NULL;
 
+   if (!ecore_drm_device_software_setup(dev))
+     {
+        ERR("Could not setup device for software");
+        goto soft_err;
+     }
+
    /* try to allocate space for new ecore_evas */
    if (!(ee = calloc(1, sizeof(Ecore_Evas))))
      {
@@ -284,6 +290,7 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
 
 eng_err:
    ecore_evas_free(ee);
+soft_err:
 ee_err:
    _ecore_evas_drm_shutdown();
    return NULL;
