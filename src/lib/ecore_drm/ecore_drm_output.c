@@ -1019,7 +1019,7 @@ ecore_drm_outputs_geometry_get(Ecore_Drm_Device *dev, int *x, int *y, int *w, in
         ox += output->x;
         oy += output->y;
         ow += MAX(ow, output->current_mode->width);
-        oh += MAX(oh, output->current_mode->height);
+        oh = MAX(oh, output->current_mode->height);
      }
 
    if (x) *x = ox;
