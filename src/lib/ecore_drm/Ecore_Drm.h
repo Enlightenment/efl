@@ -113,6 +113,10 @@ struct _Ecore_Drm_Device
    unsigned int window;
 
    Eeze_Udev_Watch *watch;
+
+   int current_fb;
+   Ecore_Drm_Fb *current, *next;
+   Ecore_Drm_Fb *dumb[2];
 };
 
 struct _Ecore_Drm_Event_Activate
@@ -200,6 +204,20 @@ EAPI Eina_Bool ecore_drm_device_master_drop(Ecore_Drm_Device *dev);
 EAPI int ecore_drm_device_fd_get(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_device_window_set(Ecore_Drm_Device *dev, unsigned int window);
 EAPI const char *ecore_drm_device_name_get(Ecore_Drm_Device *dev);
+
+/**
+ * Setup an Ecore_Drm_Device for software rendering
+ *
+ * This function will setup an Ecore_Drm_Device for software rendering
+ * which includes creating dumb buffers to render into
+ *
+ * @param dev The Ecore_Drm_Device to setup for software rendering
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ *
+ * @ingroup Ecore_Drm_Device_Group
+ * @since 1.15
+ */
+EAPI Eina_Bool ecore_drm_device_software_setup(Ecore_Drm_Device *dev);
 
 EAPI Eina_Bool ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name);
 EAPI Eina_Bool ecore_drm_tty_close(Ecore_Drm_Device *dev);
