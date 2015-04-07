@@ -117,15 +117,10 @@ struct _Ecore_Drm_Output
 
    int x, y, phys_width, phys_height;
 
-   Eina_Bool need_repaint : 1;
-   Eina_Bool repaint_scheduled : 1;
-
-   Eina_Bool pending_flip : 1;
-   Eina_Bool pending_vblank : 1;
-
    int pipe;
    const char *make, *model, *name;
    unsigned int subpixel;
+   uint16_t gamma;
 
    Ecore_Drm_Output_Mode *current_mode;
    Eina_List *modes;
@@ -142,10 +137,13 @@ struct _Ecore_Drm_Output
    Ecore_Drm_Fb *dumb[NUM_FRAME_BUFFERS];
    Ecore_Drm_Backlight *backlight;   
 
-   uint16_t gamma;
-
    Eina_Bool enabled : 1;
    Eina_Bool cloned : 1;
+   Eina_Bool need_repaint : 1;
+   Eina_Bool repaint_scheduled : 1;
+   Eina_Bool pending_destroy : 1;
+   Eina_Bool pending_flip : 1;
+   Eina_Bool pending_vblank : 1;
 };
 
 struct _Ecore_Drm_Seat

@@ -24,7 +24,13 @@ _ecore_drm_device_cb_page_flip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSE
      }
 
    output->pending_flip = EINA_FALSE;
-   if (!output->pending_vblank) ecore_drm_output_repaint(output);
+   if (output->pending_destroy)
+     {
+        output->pending_destroy = EINA_FALSE;
+        ecore_drm_output_free(output);
+     }
+   else if (!output->pending_vblank)
+     ecore_drm_output_repaint(output);
 }
 
 static void 
@@ -79,7 +85,7 @@ _ecore_drm_device_cb_idle(void *data)
 
    EINA_LIST_FOREACH(dev->outputs, l, output)
      {
-        output->need_repaint = EINA_TRUE;
+        if ((!output->enabled) || (!output->need_repaint)) continue;
         if (output->repaint_scheduled) continue;
         _ecore_drm_output_repaint_start(output);
      }
