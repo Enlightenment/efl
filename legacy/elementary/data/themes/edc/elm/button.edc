@@ -1530,7 +1530,7 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
                }
             }
             description { state: "disabled" 0.0;
-               inherit: "default" 0 0 ;
+               inherit: "default" 0.0 ;
                color: FN_COL_DISABLE;
                color_class: "spinner_disabled";
             }
