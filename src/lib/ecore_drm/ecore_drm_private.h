@@ -26,10 +26,6 @@
 # include <libinput.h>
 # include <xkbcommon/xkbcommon.h>
 
-# include <xf86drm.h>
-# include <xf86drmMode.h>
-# include <drm_fourcc.h>
-
 # ifdef HAVE_SYSTEMD_LOGIN
 #  include <systemd/sd-login.h>
 # endif
