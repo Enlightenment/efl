@@ -82,11 +82,11 @@ _ecore_drm_output_edid_parse(Ecore_Drm_Output *output, const uint8_t *data, size
         if (data[i + 2] != 0) continue;
 
         if (data[i + 3] == EDID_DESCRIPTOR_DISPLAY_PRODUCT_NAME)
-          _ecore_drm_output_edid_parse_string(&data[i+5], output->edid.monitor);
+          _ecore_drm_output_edid_parse_string(&data[i + 5], output->edid.monitor);
         else if (data[i + 3] == EDID_DESCRIPTOR_DISPLAY_PRODUCT_SERIAL_NUMBER)
-          _ecore_drm_output_edid_parse_string(&data[i+5], output->edid.serial);
+          _ecore_drm_output_edid_parse_string(&data[i + 5], output->edid.serial);
         else if (data[i + 3] == EDID_DESCRIPTOR_ALPHANUMERIC_DATA_STRING)
-          _ecore_drm_output_edid_parse_string(&data[i+5], output->edid.eisa);
+          _ecore_drm_output_edid_parse_string(&data[i + 5], output->edid.eisa);
      }
 
    return 0;
