@@ -23,6 +23,9 @@
 #  endif // ifdef __GNUC__
 # endif // ifdef _MSC_VER
 
+# include <xf86drm.h>
+# include <xf86drmMode.h>
+# include <drm_fourcc.h>
 # include <Ecore.h>
 # include <Eeze.h>
 
