@@ -113,6 +113,7 @@ struct _Ecore_Drm_Output
    unsigned int crtc_id;
    unsigned int conn_id;
    drmModeCrtcPtr crtc;
+   drmModePropertyPtr dpms;
 
    int x, y, phys_width, phys_height;
    int drm_fd;

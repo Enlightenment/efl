@@ -319,6 +319,19 @@ EAPI Eina_Stringshare *ecore_drm_output_model_get(Ecore_Drm_Output *output);
 EAPI Eina_Stringshare *ecore_drm_output_make_get(Ecore_Drm_Output *output);
 
 /**
+ * Set the dpms level of an Ecore_Drm_Output
+ *
+ * This function will set the DPMS level of an Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to set the dpms level on
+ * @param level The level to set
+ * 
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI void ecore_drm_output_dpms_set(Ecore_Drm_Output *output, int level);
+
+/**
  * Get the pointer position of Ecore_Drm_Device
  *
  * This function will give the pointer position of Ecore_Drm_Device
