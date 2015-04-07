@@ -9,10 +9,7 @@
  * 
  * Functions that deal with frame buffers.
  * 
- * 
  */
-
-/* TODO: DOXY !! */
 
 static Eina_Bool
 _ecore_drm_fb_create2(int fd, Ecore_Drm_Fb *fb)
@@ -136,4 +133,32 @@ ecore_drm_fb_destroy(Ecore_Drm_Fb *fb)
    darg.handle = fb->hdl;
    drmIoctl(fb->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
    free(fb);
+}
+
+EAPI void
+ecore_drm_fb_dirty(Ecore_Drm_Fb *fb, Eina_Rectangle *rects, unsigned int count)
+{
+   EINA_SAFETY_ON_NULL_RETURN(fb);
+
+#ifdef DRM_MODE_FEATURE_DIRTYFB
+   drmModeClip *clip;
+   unsigned int i = 0;
+   int ret;
+
+   clip = alloca(count * sizeof(drmModeClip));
+   for (i = 0; i < count; i++)
+     {
+        clip[i].x1 = rects[i].x;
+        clip[i].y1 = rects[i].y;
+        clip[i].x2 = rects[i].w;
+        clip[i].y2 = rects[i].h;
+     }
+
+   ret = drmModeDirtyFB(fb->fd, fb->id, clip, count);
+   if (ret)
+     {
+        if (ret == -EINVAL)
+          ERR("Could not mark FB as Dirty: %m");
+     }
+#endif
 }
