@@ -155,7 +155,6 @@ _ecore_drm_launcher_device_open_no_pending(const char *device, int flags)
           }
      }
 
-   DBG("Device opened %s", device);
    return fd;
 }
 
