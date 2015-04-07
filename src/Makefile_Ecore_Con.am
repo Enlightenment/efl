@@ -69,6 +69,10 @@ lib_ecore_con_libecore_con_la_LIBADD = @ECORE_CON_LIBS@ @EVIL_LIBS@
 lib_ecore_con_libecore_con_la_DEPENDENCIES = @ECORE_CON_INTERNAL_LIBS@
 lib_ecore_con_libecore_con_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
+EXTRA_DIST += \
+tests/ecore_con/server.key \
+tests/ecore_con/server.pem
+
 ### Unit tests
 
 if EFL_ENABLE_TESTS
@@ -97,10 +101,6 @@ tests_ecore_con_ecore_con_suite_LDADD = \
 tests_ecore_con_ecore_con_suite_DEPENDENCIES = \
 @USE_ECORE_INTERNAL_LIBS@ \
 @USE_ECORE_CON_INTERNAL_LIBS@
-
-EXTRA_DIST += \
-tests/ecore_con/server.key \
-tests/ecore_con/server.pem
 
 endif
 
