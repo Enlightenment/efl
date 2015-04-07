@@ -154,15 +154,7 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
    ector_color_argb_unpremul(a, &r, &g, &b);
 
    cairo_set_operator(pd->parent->cairo, cop);
-   cairo_transform(pd->parent->cairo, &identity);
-   cx = pd->generic->origin.x + pd->parent->current.x;
-   cy = pd->generic->origin.y + pd->parent->current.y;
 
-   cairo_translate(pd->parent->cairo, cx, cy);
-
-   if (pd->m) cairo_transform(pd->parent->cairo, pd->m);
-
-   cairo_set_source_rgba(pd->parent->cairo, r/255.0, g/255.0, b/255.0, a/255.0);
 
    USE(obj, cairo_new_path, EINA_FALSE);
    USE(obj, cairo_rectangle, EINA_FALSE);
@@ -184,6 +176,16 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
           }
         cairo_clip(pd->parent->cairo);
      }
+
+   cairo_transform(pd->parent->cairo, &identity);
+   cx = pd->generic->origin.x + pd->parent->current.x;
+   cy = pd->generic->origin.y + pd->parent->current.y;
+
+   cairo_translate(pd->parent->cairo, cx, cy);
+
+   if (pd->m) cairo_transform(pd->parent->cairo, pd->m);
+
+   cairo_set_source_rgba(pd->parent->cairo, r/255.0, g/255.0, b/255.0, a/255.0);
 
    return EINA_TRUE;
 }
