@@ -2,7 +2,7 @@
  * Example illustrating usage of fog effect.
  *
  * @verbatim
- * gcc -o evas-3d-fog evas-3d-fog.c `pkg-config --libs --cflags evas ecore ecore-evas eo`-lm
+ * gcc -o evas-3d-fog evas-3d-fog.c evas-3d-primitives.c `pkg-config --libs --cflags evas ecore ecore-evas eo`-lm
  * @endverbatim
  */
 
@@ -14,6 +14,7 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
+#include "evas-3d-primitives.h"
 
 #define  WIDTH          1024
 #define  HEIGHT         1024
@@ -30,6 +31,7 @@ typedef struct _Scene_Data
    Eo     *light_node;
    Eo     *mesh_node;
    Eo     *mesh_node1;
+   Eo     *animation_node;
 
    Eo     *camera;
    Eo     *light;
@@ -38,26 +40,12 @@ typedef struct _Scene_Data
    Eo     *material;
 } Scene_Data;
 
-typedef struct _vec3
-{
-    float   x;
-    float   y;
-    float   z;
-} vec3;
-
-typedef struct _vec4
-{
-    float   x;
-    float   y;
-    float   z;
-    float   w;
-} vec4;
+static const vec2 tex_scale = {1, 1};
 
 Ecore_Evas       *ecore_evas  = NULL;
 Evas             *evas        = NULL;
 Eo               *background  = NULL;
 Eo               *image       = NULL;
-
 
 static void
 _on_delete(Ecore_Evas *ee EINA_UNUSED)
@@ -85,7 +73,7 @@ _animate_scene(void *data)
 
    angle += 0.5;
 
-   eo_do(scene->mesh_node,
+   eo_do(scene->animation_node,
          evas_3d_node_orientation_angle_axis_set(angle, 0.0, 1.0, 0.0));
 
    if (angle > 360.0) angle -= 360.0f;
@@ -135,68 +123,12 @@ _light_setup(Scene_Data *data)
 }
 
 static void
-_set_ball(Eo *mesh, double r, double x, double y, double z, int p, Evas_3D_Material *material)
+_set_ball(Eo *mesh, int p, Evas_3D_Material *material)
 {
-   int vcount, icount, vccount, i, j;
-   double dtheta, dfi, sinth, costh, fi, theta, sinfi, cosfi;
-   unsigned short *indices, *index;
+   evas_3d_add_sphere_frame(mesh, 0, p, tex_scale);
 
-   icount = p * p * 6;
-   vccount = p + 1;
-   vcount = vccount * vccount;
-
-   dtheta = pi / p;
-   dfi = 2 * pi / p;
-
-   vec3 *vertices = malloc(sizeof(vec3) * vcount);
-   vec3 *normals = malloc(sizeof(vec3) * vcount);
-
-   for (j = 0; j < vccount; j++)
-     {
-        theta = j * dtheta;
-        sinth = sin(theta);
-        costh = cos(theta);
-        for (i = 0; i < vccount; i++)
-          {
-             fi = i * dfi;
-             sinfi = sin(fi);
-             cosfi = cos(fi);
-             vertices[i + j * vccount].x = r * sinth * cosfi + x;
-             vertices[i + j * vccount].y = r * sinth * sinfi + y;
-             vertices[i + j * vccount].z = r * costh + z;
-
-             normals[i + j * vccount].x = sinth * cosfi;
-             normals[i + j * vccount].y = sinth * sinfi;
-             normals[i + j * vccount].z = costh;
-          }
-     }
-
-   indices = malloc(sizeof(short) * icount);
-   index = &indices[0];
-
-   for(j = 0; j < p; j++)
-     for(i = 0; i < p; i++)
-       {
-          *index++ = (unsigned short)(i + vccount * j);
-          *index++ = i + vccount * (j + 1);
-          *index++ = i + 1 + vccount * (j + 1);
-
-          *index++ =  i + vccount * j;
-          *index++ =  i + 1 +  vccount * j;
-          *index++ =  i + vccount * (j + 1) + 1;
-       }
-
-   eo_do(mesh, evas_3d_mesh_vertex_count_set(vcount),
-            evas_3d_mesh_frame_add(0);
-            evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_POSITION,
-                                       sizeof(vec3), &vertices[0]);
-            evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_NORMAL,
-                                       sizeof(vec3), &normals[0]);
-            evas_3d_mesh_index_data_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT,
-                                icount , &indices[0]);
-            evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES);
-            evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG);
-            evas_3d_mesh_frame_material_set(0, material));
+   eo_do(mesh, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG),
+               evas_3d_mesh_frame_material_set(0, material));
 }
 
 
@@ -218,23 +150,29 @@ _mesh_setup(Scene_Data *data)
    data->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
    data->mesh1 = eo_add(EVAS_3D_MESH_CLASS, evas);
 
+   _set_ball(data->mesh, 100, data->material);
+   _set_ball(data->mesh1, 100, data->material);
 
-   _set_ball(data->mesh, 1, 4, 0, 0, 100, data->material);
-   _set_ball(data->mesh1, 2, 0, 0, 0, 100, data->material);
+   data->animation_node =
+      eo_add(EVAS_3D_NODE_CLASS, evas,
+                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
 
    data->mesh_node =
       eo_add(EVAS_3D_NODE_CLASS, evas,
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
 
-   eo_do(data->root_node, evas_3d_node_member_add(data->mesh_node));
-   eo_do(data->mesh_node, evas_3d_node_mesh_add(data->mesh));
+   eo_do(data->animation_node, evas_3d_node_member_add(data->mesh_node));
+   eo_do(data->root_node, evas_3d_node_member_add(data->animation_node));
+   eo_do(data->mesh_node, evas_3d_node_mesh_add(data->mesh),
+                          evas_3d_node_position_set(0.0, 0.0, 3.0));
 
    data->mesh_node1 =
       eo_add(EVAS_3D_NODE_CLASS, evas,
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
 
    eo_do(data->root_node, evas_3d_node_member_add(data->mesh_node1));
-   eo_do(data->mesh_node1, evas_3d_node_mesh_add(data->mesh1));
+   eo_do(data->mesh_node1, evas_3d_node_mesh_add(data->mesh1),
+                           evas_3d_node_scale_set(3, 3, 3));
 
    eo_do(data->mesh, evas_3d_mesh_fog_enable_set(EINA_TRUE), evas_3d_mesh_fog_color_set(FOG_COLOR, FOG_FACTOR));
    eo_do(data->mesh1, evas_3d_mesh_fog_enable_set(EINA_TRUE), evas_3d_mesh_fog_color_set(FOG_COLOR, FOG_FACTOR));
@@ -265,7 +203,6 @@ _scene_setup(Scene_Data *data)
 int
 main(void)
 {
-
    //Unless Evas 3D supports Software renderer, we set gl backened forcely.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
    Scene_Data data;
@@ -301,7 +238,6 @@ main(void)
 
    /* Set the image object as render target for 3D scene. */
    eo_do(image, evas_obj_image_scene_set(data.scene));
-
 
    /* Add animation timer callback. */
    ecore_animator_frametime_set(0.008);
