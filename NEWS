@@ -1,6 +1,133 @@
 ==========
-EFL 1.13.0
+EFL 1.14.0
 ==========
+
+Changes since 1.13.0:
+---------------------
+
+Features:
+
+   * edje: add of model lookups.
+   * evas: Evas_3D - ColorPick mechanism finding node and mesh in scene.
+   * evas/gl_x11: introduce tbm native surface type
+   * evas/software_x11: implement native surface set for x11 type
+   * evas/software_x11: implement tbm native surface type
+   * edje: Edje_Edit - functions to edit layouts of BOX parts
+   * evas: Evas_3D - callbacks for Evas 3D.
+   * Edje: new set/get API omogeneous, paddings and align for BOX/TABLE in Edje Edit
+   * ecore_con_url: add ecore_con_url_head()
+   * edje: add camera properties to edje_cc.
+   * Edje: Edje_Edit - setter and getter for min param of TABLE/BOX parts
+   * edje: Adding the zoom effect of map to edje
+   * Evas GL: Automatic fallback to indirect rendering when the scene has not changed.
+   * ecore-drm: Add function to return the pointer xy of Ecore_Drm_Device
+   * ecore-drm: Implement edid parsing for Ecore_Drm_Output
+   * edje color classes can now have text descriptions
+   * Evas GL: Add support for Evas GL 3.0
+   * Eolian: add API to return the class from a function.
+   * ecore-drm: add ecore_drm_devices_get to get the list of drm devices
+   * evas: Support bitmap embedded color font. (T2139)
+   * Eolian: add API to determine if a function is implemented.
+   * edje: add edje_color_class_active_iterator_new()
+   * ecore_evas - eetpack utility for packing files (imgs) into eet files
+   * edje: add part.desc.rel.{to,to_x,to_y} keywords
+   * edje: allow empty part.desc.inherit; statements to autoinherit default desc
+
+Fixes:
+
+   * Edje: edje_edit - fix Segmentation Fault on new BOX part
+   * evas text: fix _ellipsis_get to return -1.0 on failure.
+   * eina: fix eina_bench.c compilation error.
+   * Evas masking: Fix some garbage pixels with the SW engine
+   * Evas masking: Fix potential issues with map & masking
+   * Evas masking: Force BLEND mode in case of image masking (GL)
+   * ecore-drm should not use sscanf when getting logind vt
+   * eina: correctly handle and report Eina_File error on Windows.
+   * eina: fix Eina_Log to only try to free non deleted log.
+   * eolian: add right extension to eolian_gen if we are on Windows
+   * eio: check that the file to be monitored is not an empty string.
+   * ecore: directly allocating and freeing Ecore_Win32_Handler variable.
+   * ecore_con: fix _ecore_con_server_flush on Windows.
+   * ecore_con: fix use of FormatMessage for error reporting on windows.
+   * eina: fix directory listing on windows when directory is empty.
+   * ecore-drm: Disable/Enable inputs if we release/acquire the VT
+   * ecore-drm: Disable/Enable inputs if we release/aquire VT through logind
+   * ecore-drm: Print error when taking control of a device fails
+   * ecore/drm: Fix libinput >= 0.8 check
+   * ee-win32 probably might compile now
+   * ecore/drm: Compile ecore_drm_logind.c without condition
+   * edje: edje_edit - fix group source generation of item 'weight' param
+   * edje: edje_edit - fix group source generation of box params
+   * evas: fix error checking of eglBindAPI.
+   * ecore-drm: Fix issue of checking improper eldbus message for errors
+   * ecore-drm: Don't recreate ecore_event handlers if we already have them
+   * ecore-drm: Fix issue of ecore_drm not calling ReleaseDevice when an input is destroyed
+   * ecore-drm: Fix issue with ecore_drm_evdev->path being incorrect
+   * evas: Evas_3D - fix bug with pack meshes data.
+   * ecore-drm: Add output id to output event
+   * edje: fix windows build
+   * evil: fix gecos field of struct pw
+   * Evas GL: Fix leak of surfaces with GLES 1.1
+   * eina + ecore - fix main loop thread id tracking on fork
+   * evas-3d: fix incorrect reading of .obj file which had an empty line before data in unix encoding.
+   * ecore-wl fullscreen state is based on either window type or attribute
+   * ecore-xcb: Fix 'variable set but not used' message
+   * evas-software-x11: Remove improper EINA_UNUSED for function parameter
+   * evas-software-x11: Provide TBM Native Surface support for xcb engine
+   * ecore/ecore_audio: fix timer control logically wrong.
+   * evas-gl-drm: Cleanup compiler warnings for dbg/err messages
+   * evas-gl-drm: Fix T2158: compile fails when --with-opengl=full is passed
+   * ecore-imf: Add check for environment variable to enable show/hide of input panel
+   * ecore-wl: Send xdg_surface_set_window_geometry when we update window size/position
+   * ecore-drm: Center mouse pointer on an output when it gets created
+   * ecore-evas-drm: Fix function call to ecore_evas_pointer_xy_get for drm engine
+   * edje - somehow edje doesn't init evas and this makes edje_decc break...
+   * Evas GL: Fix list of extensions with GLESv1
+   * evas: fix bug in the destructor of node in Evas_3D.
+   * edje: Edje_Edit - fix part alias source generation.
+   * examples: fix bad unref's in ecore and evas.
+   * ecore-drm: Return the index of the crtc from output_crtc_find
+   * eina: win32 release lock in case of error
+   * eio: fix segmentation fault on eio_monitor for win32 api
+   * ecore_cocoa: remove ObjC autorelease block to avoid segv when window is closed.
+   * ecore_cocoa: move mouse event handling to NSWindow
+   * ecore_cocoa: handle right and other mouse events
+   * ecore_cocoa: fix keyboad event handling
+   * ecore-wl cursor setup no longer triggers errors on startup (T2202)
+   * ecore-wl now allocates cursor_theme_name struct member of Ecore_Wl_Input
+   * edje: Edje_Edit - fix program transition source generation
+   * edje: Edje_Edit - add data items into generated code for the group.
+   * efl - bring back symlink complaint regardless of env vars
+   * ecore_cocoa: release resources on window close event
+   * evas: make current context on lockFocus for gl_cocoa backend.
+   * evas: bypass lockfocus in NSView on OSX
+   * ecore_cocoa: don't reject mouse events outside the window
+   * ecore_cocoa: fix mouse scrollwheel direction
+   * evas-wayland-shm: Refactor Evas Wayland Shm Engine (Fix T2201)
+   * ecore-evas-wayland: Remove frame callbacks from Ecore_Evas wayland engine
+   * ecore_con: fix ECORE_CON_LOCAL_SYSTEM use with negative port number.
+   * eina: safety check for NULL pointer
+   * evas/gl_x11: set EGL_PLATFORM environment variable
+   * Edje: edje edit - ability to remove last item in BOX/TABLE
+   * evas-gl-common: Fix building when --with-opengl=es
+   * evas-software-generic: Allow future rendering calls if evas has to skip a frame
+   * evas-wayland-shm: Fix redrawing issues that were causing 'flashing' in latest engine code.
+   * ecore-drm: Add more debug info when output is created or updated
+   * ecore-drm: Fix build error caused by missing function declaration
+   * evil: fix access to a file mapping object
+   * evas: prevent crash.
+   * eeze: Fix issue of eeze_udev_watch_add not getting events for drm
+   * ecore-drm: Fix issue of not getting updated for output hotplug events
+   * ecore_exe: fix ecore_exe_pid_get on windows
+   * ecore-drm: Use better output names
+   * ecore_idler: + null check.
+   * Edje: Edje_Edit - fix typo in code generation of BOX part
+   * eina: Change newline parsing to handle crlf better (T2236)
+   * ecore_drm: use get_vt instead of parsing the tty attribute
+   * ecore_file - fix nasty memory issues in ecore_file_app_exe_get()
+   * efreetd - cache - fix handling a text index file with 0 length lines
+   * eolian_cxx: fix build error for some generated C++ wrappers
+   * evas-3d: T2226 (Evas Eet saver does out of range access) fixed.
 
 Changes since 1.12.0:
 ---------------------
