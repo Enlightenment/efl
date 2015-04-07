@@ -635,6 +635,7 @@ _emile_tgv_data(Emile_Image *image,
    if (prop->cspace == EMILE_COLORSPACE_ARGB8888)
      prop->premul = image->unpremul;  /* call premul if unpremul data */
 
+   *error = EMILE_IMAGE_LOAD_ERROR_NONE;
    r = EINA_TRUE;
 
 on_error:
