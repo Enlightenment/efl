@@ -594,6 +594,12 @@ _ecore_drm_output_free(Ecore_Drm_Output *output)
    /* check for valid output */
    if (!output) return;
 
+   if (output->pending_flip)
+     {
+        output->pending_destroy = EINA_TRUE;
+        return;
+     }
+
    /* delete the backlight struct */
    if (output->backlight) 
      _ecore_drm_output_backlight_shutdown(output->backlight);
@@ -649,6 +655,7 @@ _ecore_drm_output_repaint_start(Ecore_Drm_Output *output)
    /* DBG("Output Repaint Start"); */
 
    if (!output) return;
+   if (output->pending_destroy) return;
 
    if (!output->current)
      {
@@ -902,7 +909,8 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
    Ecore_Drm_Sprite *sprite;
    int ret = 0;
 
-   if (!output) return;
+   EINA_SAFETY_ON_NULL_RETURN(output);
+   EINA_SAFETY_ON_TRUE_RETURN(output->pending_destroy);
 
    /* DBG("Output Repaint: %d %d", output->crtc_id, output->conn_id); */
 
