@@ -24,9 +24,6 @@ static const char *conn_types[] =
 
 EAPI int ECORE_DRM_EVENT_OUTPUT = 0;
 
-/* local functions */
-static void _ecore_drm_output_event(const char *device, Eeze_Udev_Event event EINA_UNUSED, void *data, Eeze_Udev_Watch *watch EINA_UNUSED);
-
 static void 
 _ecore_drm_output_edid_parse_string(const uint8_t *data, char text[])
 {
@@ -517,9 +514,6 @@ _ecore_drm_output_free(Ecore_Drm_Output *output)
    /* check for valid output */
    if (!output) return;
 
-   /* delete any added udev watch */
-   if (output->watch) eeze_udev_watch_del(output->watch);
-
    /* delete the backlight struct */
    if (output->backlight) 
      _ecore_drm_output_backlight_shutdown(output->backlight);
@@ -596,19 +590,18 @@ finish:
    _ecore_drm_output_frame_finish(output);
 }
 
-static void
-_ecore_drm_update_outputs(Ecore_Drm_Output *output)
+void
+_ecore_drm_outputs_update(Ecore_Drm_Device *dev)
 {
    Ecore_Drm_Output *new_output;
    drmModeConnector *connector;
    drmModeRes *res;
    drmModeCrtc *crtc;
-   int x = 0, y = 0;
+   int x = 0, y = 0, i;
    uint32_t connected = 0, disconnects = 0;
-   int i;
    Eina_List *l;
 
-   res = drmModeGetResources(output->drm_fd);
+   res = drmModeGetResources(dev->drm.fd);
    if (!res)
      {
         ERR("Could not get resources for drm card: %m");
@@ -619,7 +612,7 @@ _ecore_drm_update_outputs(Ecore_Drm_Output *output)
      {
         int connector_id = res->connectors[i];
 
-        connector = drmModeGetConnector(output->drm_fd, connector_id);
+        connector = drmModeGetConnector(dev->drm.fd, connector_id);
         if (connector == NULL)
           continue;
 
@@ -631,28 +624,27 @@ _ecore_drm_update_outputs(Ecore_Drm_Output *output)
 
         connected |= (1 << connector_id);
 
-        if (!(output->dev->conn_allocator & (1 << connector_id)))
+        if (!(dev->conn_allocator & (1 << connector_id)))
           {
              drmModeEncoder *enc;
-             int events = 0;
 
-             if (!(new_output = _ecore_drm_output_create(output->dev, res, connector, x, y)))
+             if (!(new_output = _ecore_drm_output_create(dev, res, connector, x, y)))
                {
                   drmModeFreeConnector(connector);
                   _ecore_drm_output_free(new_output);
                   continue;
                }
 
-             new_output->drm_fd = output->dev->drm.fd;
+             new_output->drm_fd = dev->drm.fd;
 
-             if (!(enc = drmModeGetEncoder(new_output->dev->drm.fd, connector->encoder_id)))
+             if (!(enc = drmModeGetEncoder(dev->drm.fd, connector->encoder_id)))
                {
                   drmModeFreeConnector(connector);
                   _ecore_drm_output_free(new_output);
                   continue;
                }
 
-             if (!(crtc = drmModeGetCrtc(new_output->dev->drm.fd, enc->crtc_id)))
+             if (!(crtc = drmModeGetCrtc(dev->drm.fd, enc->crtc_id)))
                {
                   drmModeFreeEncoder(enc);
                   drmModeFreeConnector(connector);
@@ -665,23 +657,16 @@ _ecore_drm_update_outputs(Ecore_Drm_Output *output)
              drmModeFreeCrtc(crtc);
              drmModeFreeEncoder(enc);
 
-             events = (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE | 
-                       EEZE_UDEV_EVENT_CHANGE);
-
-             new_output->watch = 
-               eeze_udev_watch_add(EEZE_UDEV_TYPE_DRM, events, 
-                                   _ecore_drm_output_event, new_output);
-
-             output->dev->outputs = 
-               eina_list_append(output->dev->outputs, new_output);
+             dev->outputs = eina_list_append(dev->outputs, new_output);
           }
-          drmModeFreeConnector(connector);
+
+        drmModeFreeConnector(connector);
      }
 
-   disconnects = output->dev->conn_allocator & ~connected;
+   disconnects = dev->conn_allocator & ~connected;
    if (disconnects)
      {
-        EINA_LIST_FOREACH(output->dev->outputs, l, new_output)
+        EINA_LIST_FOREACH(dev->outputs, l, new_output)
           {
              if (disconnects & (1 << new_output->conn_id))
                {
@@ -691,15 +676,6 @@ _ecore_drm_update_outputs(Ecore_Drm_Output *output)
                }
           }
      }
-}
-
-static void
-_ecore_drm_output_event(const char *device EINA_UNUSED, Eeze_Udev_Event event EINA_UNUSED, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
-{
-   Ecore_Drm_Output *output;
-
-   if (!(output = data)) return;
-   _ecore_drm_update_outputs(output);
 }
 
 static void
@@ -796,8 +772,6 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
 
    for (i = 0; i < res->count_connectors; i++)
      {
-        int events = 0;
-
         /* get the connector */
         if (!(conn = drmModeGetConnector(dev->drm.fd, res->connectors[i])))
           continue;
@@ -837,16 +811,6 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
 
              drmModeFreeCrtc(crtc);
              drmModeFreeEncoder(enc);
-
-             events = (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE | 
-                       EEZE_UDEV_EVENT_CHANGE);
-
-             output->watch =
-               eeze_udev_watch_add(EEZE_UDEV_TYPE_DRM, events,
-                                   _ecore_drm_output_event, output);
-
-             if (!output->watch)
-               ERR("Could not create Eeze_Udev_Watch for drm output");
 
              dev->outputs = eina_list_append(dev->outputs, output);
           }

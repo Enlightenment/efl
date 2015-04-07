@@ -87,6 +87,15 @@ _ecore_drm_device_cb_idle(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
+static void
+_ecore_drm_device_cb_output_event(const char *device EINA_UNUSED, Eeze_Udev_Event event EINA_UNUSED, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
+{
+   Ecore_Drm_Device *dev;
+
+   if (!(dev = data)) return;
+   _ecore_drm_outputs_update(dev);
+}
+
 /**
  * @defgroup Ecore_Drm_Device_Group Device manipulation functions
  * 
@@ -261,6 +270,7 @@ EAPI Eina_Bool
 ecore_drm_device_open(Ecore_Drm_Device *dev)
 {
    uint64_t caps;
+   int events = 0;
 
    /* check for valid device */
    if ((!dev) || (!dev->drm.name)) return EINA_FALSE;
@@ -299,6 +309,13 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
         return EINA_FALSE;
      }
 
+   events = (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE |
+             EEZE_UDEV_EVENT_CHANGE);
+
+   dev->watch =
+     eeze_udev_watch_add(EEZE_UDEV_TYPE_DRM, events,
+                         _ecore_drm_device_cb_output_event, NULL);
+
    dev->drm.hdlr = 
      ecore_main_fd_handler_add(dev->drm.fd, ECORE_FD_READ, 
                                _ecore_drm_device_cb_event, dev, NULL, NULL);
@@ -325,6 +342,9 @@ ecore_drm_device_close(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
    if (!dev) return EINA_FALSE;
+
+   /* delete udev watch */
+   if (dev->watch) eeze_udev_watch_del(dev->watch);
 
    /* close xkb context */
    if (dev->xkb_ctx) xkb_context_unref(dev->xkb_ctx);

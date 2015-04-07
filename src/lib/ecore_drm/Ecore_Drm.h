@@ -24,6 +24,7 @@
 #endif // ifdef _MSC_VER
 
 #include <Ecore.h>
+#include <Eeze.h>
 
 typedef enum _Ecore_Drm_Evdev_Capabilities
 {
@@ -110,6 +111,8 @@ struct _Ecore_Drm_Device
    struct xkb_context *xkb_ctx;
 
    unsigned int window;
+
+   Eeze_Udev_Watch *watch;
 };
 
 struct _Ecore_Drm_Event_Activate
