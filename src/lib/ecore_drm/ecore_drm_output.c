@@ -1089,3 +1089,15 @@ ecore_drm_output_dpms_set(Ecore_Drm_Output *output, int level)
    drmModeConnectorSetProperty(output->dev->drm.fd, output->conn_id,
                                output->dpms->prop_id, level);
 }
+
+EAPI void
+ecore_drm_output_gamma_set(Ecore_Drm_Output *output, uint16_t size, uint16_t *r, uint16_t *g, uint16_t *b)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+   EINA_SAFETY_ON_NULL_RETURN(output->crtc);
+
+   if (output->gamma != size) return;
+
+   if (drmModeCrtcSetGamma(output->dev->drm.fd, output->crtc_id, size, r, g, b))
+     ERR("Failed to set output gamma: %m");
+}
