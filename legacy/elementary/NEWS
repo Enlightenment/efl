@@ -1,6 +1,72 @@
 =================
-Elementary 1.13.0
+Elementary 1.14.0
 =================
+
+Changes since 1.13.0:
+---------------------
+
+Features:
+
+   * elm scroller - add adnimated and accelerated wheel scroll
+   * elm_transit: Add elm_transit_go_in() API
+   * DnD/Wl: add cancel support
+   * DnD/Wl: support multi-layer Drag and Drop
+   * genlist: Implemented genlist expand mode and content_min_limit function
+   * elm - focus feature - add config option to automatically show/hide focus
+   * elm_slider: Added elm_slider_indicator_visible_mode_set/get.
+   * config: Reinitialize font config using evas_font_reinit() API.
+   * scroller: add loop feature.
+   * multibuttonentry: Add item long pressed callback.
+   * Elm helper: add the posix regex validator.
+   * add colorclass editor
+
+Fixes:
+
+   * panel: Remove error message from elm_panel_add API and _theme_apply func.
+   * popup: passing right parameter to elm_layout_sizing_eval
+   * elm engine - restore explicit use of ELM_ENGNE env var
+   * genlist: select the focused item on enter key input
+   * gengrid: select the focused item on enter key input
+   * genlist: Fix elm_genlist_item_index_get.
+   * popup: removed button style setting code in theme_apply
+   * multibuttonentry: Item selected callback called twice redundantly.
+   * entry: Don't unlink empty files when saving @fix T2122.
+   * genlist/gengrid : Add upadating 'focus' state in item realized function.
+   * datetime: Fix elm_datetime_field_limit_set.
+   * elementary_test: fix build on windows
+   * elementary: Restart default cursor for wayland windows
+   * elementary: Fix issue of cursor getting unset on DRM engine
+   * layout: apply widget's states when elm_layout_file_set is called
+   * gengrid/genlist/list: focus first item if first_item_focus_on_first_focus_in is on whether focus highlight is enabled or not
+   * config: fix config name
+   * elm_win framespace toggling on fullscreen change: activate!
+   * hoversel: Enabled default mirroring in hoversel.
+   * Genlist: make reordered item selected
+   * popup: correct popup position.
+   * layout: here default content alias can be acceptable.
+   * Genlist/Gengrid : Modified to handle the focus highlight on unrealized items
+   * genlist: Send param item type instead of eo item type.
+   * widget: fix the abi break.
+   * GLView: Return false if the surface could not be created
+   * conform: Use eo_isa() to check object types.
+   * elm_win fullscreen setting on FAKE wins should just toggle the flag
+   * elm_widget: fix wrong parmeter.
+   * elm_entry: fix focus on text selection
+   * [elm_datetime] Fix to parse the POSIX locale format properly.
+   * [elm_datetime] Fix to consider second field while comparing datetime values.
+   * elm_datetime: compatibility for Windows.
+   * elm_prefs: compatibility for Windows.
+   * elm_slideshow: looking for right data directory in prefix.
+   * elm_prefs: looking for right lib directory in prefix.
+   * elm_panel: display directory from HOME on Windows.
+   * elm_fileselector: display directory from HOME on Windows.
+   * elm_diskselector: check if sd variable is null.
+   * task_switcher: add variable verification.
+   * elm_genlist: use of elm_app_data_dir_get() instead of PACKAGE_DATA_DIR.
+   * elm_naviframe: use of elm_app_data_dir_get() instead of PACKAGE_DATA_DIR.
+   * elm_naviframe: use of elm_app_data_dir_get() instead of PACKAGE_DATA_DIR.
+   * elm_map: use of elm_app_data_dir_get() instead of PACKAGE_DATA_DIR
+   * Elm_Win: Fix _elm_win_focus_prev_target_del callback added repeatly without callback del.
 
 Changes since 1.12.0:
 ---------------------
