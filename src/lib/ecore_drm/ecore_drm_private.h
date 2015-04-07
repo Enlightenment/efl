@@ -116,7 +116,6 @@ struct _Ecore_Drm_Output
    drmModePropertyPtr dpms;
 
    int x, y, phys_width, phys_height;
-   int drm_fd;
 
    Eina_Bool need_repaint : 1;
    Eina_Bool repaint_scheduled : 1;
@@ -124,6 +123,7 @@ struct _Ecore_Drm_Output
    Eina_Bool pending_flip : 1;
    Eina_Bool pending_vblank : 1;
 
+   int pipe;
    const char *make, *model, *name;
    unsigned int subpixel;
 
@@ -141,6 +141,11 @@ struct _Ecore_Drm_Output
    Ecore_Drm_Fb *current, *next;
    Ecore_Drm_Fb *dumb[NUM_FRAME_BUFFERS];
    Ecore_Drm_Backlight *backlight;   
+
+   uint16_t gamma;
+
+   Eina_Bool enabled : 1;
+   Eina_Bool cloned : 1;
 };
 
 struct _Ecore_Drm_Seat
@@ -242,7 +247,6 @@ struct _Ecore_Drm_Sprite
 typedef void (*Ecore_Drm_Open_Cb)(void *data, int fd, Eina_Bool b);
 
 void _ecore_drm_event_activate_send(Eina_Bool active);
-void _ecore_drm_event_output_send(const Ecore_Drm_Output *output, Eina_Bool plug);
 
 Eina_Bool _ecore_drm_launcher_device_open(const char *device, Ecore_Drm_Open_Cb callback, void *data, int flags);
 int _ecore_drm_launcher_device_open_no_pending(const char *device, int flags);
