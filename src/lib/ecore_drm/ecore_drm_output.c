@@ -422,7 +422,7 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    else
      conn_name = "UNKNOWN";
 
-   snprintf(name, sizeof(name), "%s%d", conn_name, conn->connector_type_id);
+   snprintf(name, sizeof(name), "%s-%d", conn_name, conn->connector_type_id);
    output->name = eina_stringshare_add(name);
 
    output->crtc_id = res->crtcs[i];
