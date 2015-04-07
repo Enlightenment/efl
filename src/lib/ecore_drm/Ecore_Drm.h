@@ -183,6 +183,7 @@ EAPI extern int ECORE_DRM_EVENT_SEAT_ADD; /**< @since 1.14 */
  * @li @ref Ecore_Drm_Output_Group
  * @li @ref Ecore_Drm_Input_Group
  * @li @ref Ecore_Drm_Sprite_Group
+ * @li @ref Ecore_Drm_Fb_Group
  * 
  */
 
@@ -232,6 +233,20 @@ EAPI Eina_Bool ecore_drm_sprites_crtc_supported(Ecore_Drm_Output *output, unsign
 
 EAPI Ecore_Drm_Fb *ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height);
 EAPI void ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
+
+/**
+ * Mark an Ecore_Drm_Fb as dirty
+ *
+ * This function mark an Ecore_Drm_Fb as being dirty
+ *
+ * @param fb The Ecore_Drm_Fb to mark as dirty
+ * @param rects The regions of the Ecore_Drm_Fb which are dirty
+ * @param count The number of regions
+ * 
+ * @ingroup Ecore_Drm_Fb_Group
+ * @since 1.15
+ */
+EAPI void ecore_drm_fb_dirty(Ecore_Drm_Fb *fb, Eina_Rectangle *rects, unsigned int count);
 
 EAPI Eina_Bool ecore_drm_launcher_connect(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev);
