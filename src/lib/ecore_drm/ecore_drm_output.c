@@ -291,8 +291,8 @@ _ecore_drm_output_mode_add(Ecore_Drm_Output *output, drmModeModeInfo *info)
    mode->refresh = refresh;
    mode->info = *info;
 
-   /* DBG("Added Mode: %dx%d@%d to Output %d",  */
-   /*     mode->width, mode->height, mode->refresh, output->crtc_id); */
+   if (info->type & DRM_MODE_TYPE_PREFERRED)
+     mode->flags |= DRM_MODE_TYPE_PREFERRED;
 
    output->modes = eina_list_append(output->modes, mode);
 
