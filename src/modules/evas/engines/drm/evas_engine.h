@@ -49,24 +49,7 @@ extern int _evas_engine_drm_log_dom;
 /* define a maximum number of 'buffers' (double-buff, triple-buff, etc) */
 # define NUM_BUFFERS 2
 
-typedef struct _Buffer Buffer;
 typedef struct _Plane Plane;
-
-struct _Buffer
-{
-   int w, h;
-   int stride, size;
-   int handle;
-   unsigned int fb;
-
-   void *data; // used for software framebuffers
-
-# ifdef HAVE_DRM_HW_ACCEL
-   void *bo; // used for hardware framebuffers
-# endif
-
-   Eina_Bool valid : 1;
-};
 
 struct _Plane
 {
@@ -93,7 +76,7 @@ struct _Outbuf
 
    struct
    {
-      Buffer buffer[NUM_BUFFERS];
+      Ecore_Drm_Fb *buffer[NUM_BUFFERS];
 
       Eina_List *pending_writes;
       Eina_List *planes;
@@ -128,9 +111,7 @@ void evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
 void evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
 
 Eina_Bool evas_drm_outbuf_setup(Outbuf *ob);
-void evas_drm_outbuf_framebuffer_set(Outbuf *ob, Buffer *buffer);
-Eina_Bool evas_drm_framebuffer_create(int fd, Buffer *buffer, int depth);
-void evas_drm_framebuffer_destroy(int fd, Buffer *buffer);
-Eina_Bool evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer);
+void evas_drm_outbuf_framebuffer_set(Outbuf *ob, Ecore_Drm_Fb *buffer);
+Eina_Bool evas_drm_framebuffer_send(Outbuf *ob, Ecore_Drm_Fb *buffer);
 
 #endif
