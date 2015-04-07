@@ -1,31 +1,42 @@
 
 ### Library
-ector_eolian_files = \
+ector_eolian_files_generic = \
 	lib/ector/ector_generic_surface.eo \
 	lib/ector/ector_renderer_generic_base.eo \
 	lib/ector/ector_renderer_generic_shape.eo \
 	lib/ector/ector_renderer_generic_gradient.eo \
 	lib/ector/ector_renderer_generic_gradient_radial.eo \
 	lib/ector/ector_renderer_generic_gradient_linear.eo
+ector_eolian_generic_h = $(ector_eolian_files_generic:%.eo=%.eo.h)
 
 # Handle cairo backend
-ector_eolian_files += \
+ector_eolian_files_cairo = \
 	lib/ector/cairo/ector_cairo_surface.eo \
 	lib/ector/cairo/ector_renderer_cairo_base.eo \
 	lib/ector/cairo/ector_renderer_cairo_shape.eo \
 	lib/ector/cairo/ector_renderer_cairo_gradient_linear.eo \
 	lib/ector/cairo/ector_renderer_cairo_gradient_radial.eo
+ector_eolian_cairo_h = $(ector_eolian_files_cairo:%.eo=%.eo.h)
 
 # Handle FreeType rasterizer
-ector_eolian_files += \
+ector_eolian_files_software = \
 	lib/ector/software/ector_software_surface.eo \
 	lib/ector/software/ector_renderer_software_base.eo \
 	lib/ector/software/ector_renderer_software_shape.eo \
 	lib/ector/software/ector_renderer_software_gradient_radial.eo \
 	lib/ector/software/ector_renderer_software_gradient_linear.eo
+ector_eolian_software_h = $(ector_eolian_files_software:%.eo=%.eo.h)
+
+ector_eolian_files = \
+                     $(ector_eolian_files_generic) \
+                     $(ector_eolian_files_cairo) \
+                     $(ector_eolian_files_software)
 
 ector_eolian_c = $(ector_eolian_files:%.eo=%.eo.c)
-ector_eolian_h = $(ector_eolian_files:%.eo=%.eo.h)
+ector_eolian_h = \
+                 $(ector_eolian_generic_h) \
+                 $(ector_eolian_cairo_h) \
+                 $(ector_eolian_software_h)
 
 BUILT_SOURCES += \
 	$(ector_eolian_c) \
@@ -62,6 +73,9 @@ lib/ector/ector_renderer_gradient.c \
 lib/ector/ector_renderer_gradient_radial.c \
 lib/ector/ector_renderer_gradient_linear.c
 
+installed_ectorgenericheadersdir = $(includedir)/ector-@VMAJ@/generic
+dist_installed_ectorgenericheaders_DATA = $(ector_eolian_generic_h)
+
 # And now the cairo backend
 lib_ector_libector_la_SOURCES += \
 lib/ector/cairo/ector_renderer_cairo_gradient_linear.c \
@@ -69,6 +83,9 @@ lib/ector/cairo/ector_renderer_cairo_gradient_radial.c \
 lib/ector/cairo/ector_renderer_cairo_shape.c \
 lib/ector/cairo/ector_renderer_cairo_base.c \
 lib/ector/cairo/ector_cairo_surface.c
+
+installed_ectorcairoheadersdir = $(includedir)/ector-@VMAJ@/cairo
+dist_installed_ectorcairoheaders_DATA = $(ector_eolian_cairo_h)
 
 # And the Freetype rasterizer
 
@@ -82,6 +99,9 @@ lib/ector/software/ector_software_surface.c \
 lib/ector/software/sw_ft_math.c \
 lib/ector/software/sw_ft_raster.c \
 lib/ector/software/sw_ft_stroker.c
+
+installed_ectorsoftwareheadersdir = $(includedir)/ector-@VMAJ@/software
+dist_installed_ectorsoftwareheaders_DATA = $(ector_eolian_software_h)
 
 lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/ector \
