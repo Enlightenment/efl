@@ -369,21 +369,21 @@ edje_object_mmap_set(Edje_Object *obj, const Eina_File *file, const char *group)
 {
    Eina_Bool ret;
 
-   return eo_do_ret((Edje_Object *)obj, ret, efl_file_mmap_set(file, group));
+   return eo_do_ret(obj, ret, efl_file_mmap_set(file, group));
 }
 
 EAPI Eina_Bool
-edje_object_file_set(Eo *obj, const char *file, const char *group)
+edje_object_file_set(Edje_Object *obj, const char *file, const char *group)
 {
    Eina_Bool ret = 0;
-   eo_do((Eo *) obj, ret = efl_file_set(file, group));
+   eo_do(obj, ret = efl_file_set(file, group));
    return ret;
 }
 
 EAPI void
-edje_object_file_get(const Eo *obj, const char **file, const char **group)
+edje_object_file_get(const Edje_Object *obj, const char **file, const char **group)
 {
-   eo_do((Eo *) obj, efl_file_get(file, group));
+   eo_do((Edje_Object *) obj, efl_file_get(file, group));
 }
 
 #include "edje_object.eo.c"

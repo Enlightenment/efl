@@ -189,7 +189,7 @@ EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect
  * @param[in] group The name of the group, in @p file, which implements an
 Edje object
  */
-EAPI Eina_Bool edje_object_file_set(Eo *obj, const char *file, const char *group);
+EAPI Eina_Bool edje_object_file_set(Edje_Object *obj, const char *file, const char *group);
 
 /**
  *
@@ -210,7 +210,7 @@ EAPI Eina_Bool edje_object_file_set(Eo *obj, const char *file, const char *group
  * @param[out] group The name of the group, in @p file, which implements an
 Edje object
  */
-EAPI void edje_object_file_get(const Eo *obj, const char **file, const char **group);
+EAPI void edje_object_file_get(const Edje_Object *obj, const char **file, const char **group);
 
 
 /**
@@ -246,7 +246,7 @@ EAPI void edje_object_file_get(const Eo *obj, const char **file, const char **gr
  * @param[in] group The name of the group, in @p file, which implements an
 Edje object
  */
-EAPI Eina_Bool edje_object_mmap_set(Eo *obj, const Eina_File *file, const char *group);
+EAPI Eina_Bool edje_object_mmap_set(Edje_Object *obj, const Eina_File *file, const char *group);
 
 
 #include "edje_object.eo.legacy.h"
