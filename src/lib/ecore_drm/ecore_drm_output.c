@@ -1054,3 +1054,21 @@ ecore_drm_output_gamma_set(Ecore_Drm_Output *output, uint16_t size, uint16_t *r,
    if (drmModeCrtcSetGamma(output->dev->drm.fd, output->crtc_id, size, r, g, b))
      ERR("Failed to set output gamma: %m");
 }
+
+EAPI unsigned int
+ecore_drm_output_crtc_buffer_get(Ecore_Drm_Output *output)
+{
+   drmModeCrtc *crtc;
+   unsigned int id = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->crtc, 0);
+
+   if (!(crtc = drmModeGetCrtc(output->dev->drm.fd, output->crtc_id)))
+     return 0;
+
+   id = crtc->buffer_id;
+   drmModeFreeCrtc(crtc);
+
+   return id;
+}
