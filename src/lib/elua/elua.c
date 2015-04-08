@@ -106,13 +106,14 @@ _elua_errmsg(const char *pname, const char *msg)
 }
 
 EAPI int
-elua_report_error(lua_State *L, const char *pname, int status)
+elua_report_error(Elua_State *es, const char *pname, int status)
 {
-   if (status && !lua_isnil(L, -1))
+   if (!es || !es->luastate) return status;
+   if (status && !lua_isnil(es->luastate, -1))
      {
-        const char *msg = lua_tostring(L, -1);
+        const char *msg = lua_tostring(es->luastate, -1);
         _elua_errmsg(pname, msg ? msg : "(non-string error)");
-        lua_pop(L, 1);
+        lua_pop(es->luastate, 1);
      }
    return status;
 }

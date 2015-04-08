@@ -71,7 +71,7 @@ EAPI void elua_state_free(Elua_State *state);
 
 EAPI Elua_State *elua_state_from_lua_get(lua_State *L);
 
-EAPI int elua_report_error(lua_State *L, const char *pname, int status);
+EAPI int elua_report_error(Elua_State *es, const char *pname, int status);
 
 EAPI void elua_state_setup_i18n(lua_State *L);
 
