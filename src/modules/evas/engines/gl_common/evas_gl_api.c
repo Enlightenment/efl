@@ -5747,10 +5747,12 @@ _evgl_load_gles3_apis(void *dl_handle, Evas_GL_API *funcs)
    ORD(glUniformMatrix3x4fv);
    ORD(glUniformMatrix4x3fv);
    ORD(glUnmapBuffer);
+   ORD(glVertexAttribDivisor);
    ORD(glVertexAttribI4i);
    ORD(glVertexAttribI4iv);
    ORD(glVertexAttribI4ui);
    ORD(glVertexAttribI4uiv);
+   ORD(glVertexAttribIPointer);
    ORD(glWaitSync);
 #undef ORD
    return EINA_TRUE;
