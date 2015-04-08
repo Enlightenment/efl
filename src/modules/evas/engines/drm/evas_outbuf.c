@@ -3,6 +3,11 @@
 # include "evas_cs2_private.h"
 #endif
 
+/* FIXME: We NEED to get the color map from the VT and use that for the mask */
+#define RED_MASK 0xff0000
+#define GREEN_MASK 0x00ff00
+#define BLUE_MASK 0x0000ff
+
 static void
 _evas_outbuf_cb_pageflip(void *data)
 {
