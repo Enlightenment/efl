@@ -39,6 +39,7 @@ static int          elua_require_ref = LUA_REFNIL;
 static int          elua_appload_ref = LUA_REFNIL;
 static const char  *elua_progname    = NULL;
 static Eina_Prefix *elua_prefix      = NULL;
+static Elua_State  *elua_state       = NULL;
 
 static int _el_log_domain = -1;
 
@@ -124,11 +125,11 @@ elua_init_module(lua_State *L)
 static int
 elua_register_require(lua_State *L)
 {
-   const char *corepath = lua_touserdata(L, lua_upvalueindex(1));
-   const char *modpath  = lua_touserdata(L, lua_upvalueindex(2));
-   const char *appspath = lua_touserdata(L, lua_upvalueindex(3));
-   Eina_List  *largs    = lua_touserdata(L, lua_upvalueindex(4)), *l = NULL;
-   Eina_Bool   noenv    = lua_toboolean (L, lua_upvalueindex(5));
+   const char *corepath = elua_state->coredir;
+   const char *modpath  = elua_state->moddir;
+   const char *appspath = elua_state->appsdir;
+   Eina_List  *largs    = lua_touserdata(L, lua_upvalueindex(1)), *l = NULL;
+   Eina_Bool   noenv    = lua_toboolean (L, lua_upvalueindex(2));
    Arg_Data   *data     = NULL;
    char corepathbuf[PATH_MAX], modpathbuf[PATH_MAX], appspathbuf[PATH_MAX];
    int n = 3;
@@ -297,8 +298,6 @@ elua_bin_shutdown(Elua_State *es, int c)
    exit(c);
 }
 
-static Elua_State *elua_state = NULL;
-
 struct Main_Data
 {
    Elua_State  *es;
@@ -440,12 +439,9 @@ elua_main(lua_State *L)
         m->status = 1;
         return 0;
      }
-   lua_pushlightuserdata(L, coredir);
-   lua_pushlightuserdata(L, moddir);
-   lua_pushlightuserdata(L, appsdir);
    lua_pushlightuserdata(L, largs);
    lua_pushboolean      (L, noenv);
-   lua_pushcclosure(L, elua_register_require, 5);
+   lua_pushcclosure(L, elua_register_require, 2);
    lua_createtable(L, 0, 0);
    luaL_register(L, NULL, cutillib);
    lua_call(L, 2, 0);
