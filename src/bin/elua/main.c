@@ -404,8 +404,6 @@ elua_main(lua_State *L)
 
    lua_gc(L, LUA_GCSTOP, 0);
 
-   luaL_openlibs(L);
-
    elua_prefix = eina_prefix_new(elua_progname, elua_main, "ELUA", "elua", "checkme",
                                  PACKAGE_BIN_DIR, "", PACKAGE_DATA_DIR,
                                  LOCALE_DIR);
