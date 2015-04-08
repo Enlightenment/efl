@@ -72,6 +72,8 @@ elua_state_new(void)
    ret = malloc(sizeof(Elua_State));
    ret->luastate = L;
    luaL_openlibs(L);
+   lua_pushlightuserdata(L, ret);
+   lua_setfield(L, LUA_REGISTRYINDEX, "elua_ptr");
    return ret;
 }
 
@@ -81,6 +83,20 @@ elua_state_free(Elua_State *state)
    if (!state) return;
    if (state->luastate) lua_close(state->luastate);
    free(state);
+}
+
+EAPI Elua_State *
+elua_state_from_lua_get(lua_State *L)
+{
+   lua_getfield(L, LUA_REGISTRYINDEX, "elua_ptr");
+   if (!lua_isnil(L, -1))
+     {
+        void *st = lua_touserdata(L, -1);
+        lua_pop(L, 1);
+        return (Elua_State *)st;
+     }
+   lua_pop(L, 1);
+   return NULL;
 }
 
 static void
