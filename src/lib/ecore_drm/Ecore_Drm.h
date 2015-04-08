@@ -173,7 +173,7 @@ typedef struct _Ecore_Drm_Event_Activate Ecore_Drm_Event_Activate;
 /** @since 1.14 */
 typedef struct _Ecore_Drm_Event_Output Ecore_Drm_Event_Output;
 
-/** @since 1.15 */
+/** @since 1.14 */
 typedef void (*Ecore_Drm_Pageflip_Cb)(void *data);
 
 EAPI extern int ECORE_DRM_EVENT_ACTIVATE;
@@ -348,7 +348,7 @@ EAPI const char *ecore_drm_device_name_get(Ecore_Drm_Device *dev);
  * @return EINA_TRUE on success, EINA_FALSE on failure
  *
  * @ingroup Ecore_Drm_Device_Group
- * @since 1.15
+ * @since 1.14
  */
 EAPI Eina_Bool ecore_drm_device_software_setup(Ecore_Drm_Device *dev);
 
@@ -365,7 +365,7 @@ EAPI Eina_Bool ecore_drm_device_software_setup(Ecore_Drm_Device *dev);
  * @return An Ecore_Drm_Output if one exists at these coordinates or NULL
  *
  * @ingroup Ecore_Drm_Device_Group
- * @since 1.15
+ * @since 1.14
  */
 EAPI Ecore_Drm_Output *ecore_drm_device_output_find(Ecore_Drm_Device *dev, int x, int y);
 
@@ -478,7 +478,7 @@ EAPI Eina_Bool ecore_drm_output_enable(Ecore_Drm_Output *output);
  * @param output The Ecore_Drm_Output to disable
  *
  * @ingroup Ecore_Drm_Output_Group
- * @since 1.15
+ * @since 1.14
  */
 EAPI void ecore_drm_output_disable(Ecore_Drm_Output *output);
 
@@ -518,7 +518,7 @@ EAPI void ecore_drm_outputs_geometry_get(Ecore_Drm_Device *dev, int *x, int *y, 
  * @return The id of the default crtc for this output
  *
  * @ingroup Ecore_Drm_Output_Group
- * @since 1.15
+ * @since 1.14
  */
 EAPI unsigned int ecore_drm_output_crtc_id_get(Ecore_Drm_Output *output);
 
@@ -532,7 +532,7 @@ EAPI unsigned int ecore_drm_output_crtc_id_get(Ecore_Drm_Output *output);
  * @return The id of the default buffer for this output
  *
  * @ingroup Ecore_Drm_Output_Group
- * @since 1.15
+ * @since 1.14
  */
 EAPI unsigned int ecore_drm_output_crtc_buffer_get(Ecore_Drm_Output *output);
 
@@ -546,7 +546,7 @@ EAPI unsigned int ecore_drm_output_crtc_buffer_get(Ecore_Drm_Output *output);
  * @return The id of the default connector id for this output
  *
  * @ingroup Ecore_Drm_Output_Group
- * @since 1.15
+ * @since 1.14
  */
 EAPI unsigned int ecore_drm_output_connector_id_get(Ecore_Drm_Output *output);
 
@@ -575,7 +575,7 @@ EAPI void ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
  * @param count The number of regions
  * 
  * @ingroup Ecore_Drm_Fb_Group
- * @since 1.15
+ * @since 1.14
  */
 EAPI void ecore_drm_fb_dirty(Ecore_Drm_Fb *fb, Eina_Rectangle *rects, unsigned int count);
 
@@ -589,7 +589,7 @@ EAPI void ecore_drm_fb_dirty(Ecore_Drm_Fb *fb, Eina_Rectangle *rects, unsigned i
  * @param fb The Ecore_Drm_Fb to make the current framebuffer
  *
  * @ingroup Ecore_Drm_Fb_Group
- * @since 1.15
+ * @since 1.14
  */
 EAPI void ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb);
 
@@ -605,7 +605,7 @@ EAPI void ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb);
  * @param data The data to pass to the callback function
  *
  * @ingroup Ecore_Drm_Fb_Group
- * @since 1.15
+ * @since 1.14
  */
 EAPI void ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb func, void *data);
 
@@ -703,7 +703,7 @@ EAPI Eina_Stringshare *ecore_drm_output_make_get(Ecore_Drm_Output *output);
  * @param level The level to set
  * 
  * @ingroup Ecore_Drm_Output_Group
- * @since 1.15
+ * @since 1.14
  */
 EAPI void ecore_drm_output_dpms_set(Ecore_Drm_Output *output, int level);
 
@@ -719,7 +719,7 @@ EAPI void ecore_drm_output_dpms_set(Ecore_Drm_Output *output, int level);
  * @param b The amount to scale the blue channel
  * 
  * @ingroup Ecore_Drm_Output_Group
- * @since 1.15
+ * @since 1.14
  */
 EAPI void ecore_drm_output_gamma_set(Ecore_Drm_Output *output, uint16_t size, uint16_t *r, uint16_t *g, uint16_t *b);
 
