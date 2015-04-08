@@ -5,6 +5,10 @@
 #include "ecore_drm_private.h"
 #include <dlfcn.h>
 
+#define INSIDE(x, y, xx, yy, ww, hh) \
+   (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && \
+       ((x) >= (xx)) && ((y) >= (yy)))
+
 static Eina_List *drm_devices;
 
 static void 
@@ -479,4 +483,33 @@ err:
         dev->dumb[i] = NULL;
      }
    return EINA_FALSE;
+}
+
+EAPI Ecore_Drm_Output *
+ecore_drm_device_output_find(Ecore_Drm_Device *dev, int x, int y)
+{
+   Ecore_Drm_Output *output;
+   Eina_List *l;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
+
+   EINA_LIST_FOREACH(dev->outputs, l, output)
+     {
+        int ox = 0, oy = 0;
+        int ow = 0, oh = 0;
+
+        if (!output->cloned)
+          {
+             ox = output->x;
+             oy = output->y;
+          }
+
+        ow = output->current_mode->width;
+        oh = output->current_mode->height;
+
+        if (INSIDE(x, y, ox, oy, ow, oh))
+          return output;
+     }
+
+   return NULL;
 }

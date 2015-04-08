@@ -341,12 +341,30 @@ EAPI const char *ecore_drm_device_name_get(Ecore_Drm_Device *dev);
  * which includes creating dumb buffers to render into
  *
  * @param dev The Ecore_Drm_Device to setup for software rendering
+ *
  * @return EINA_TRUE on success, EINA_FALSE on failure
  *
  * @ingroup Ecore_Drm_Device_Group
  * @since 1.15
  */
 EAPI Eina_Bool ecore_drm_device_software_setup(Ecore_Drm_Device *dev);
+
+/**
+ * Find an Ecore_Drm_Output at the given coordinates
+ *
+ * This function will loop all the existing outputs in Ecore_Drm_Device and 
+ * return an output if one exists that encapsulates the given coordinates.
+ *
+ * @param dev The Ecore_Drm_Device to search
+ * @param x The x coordinate
+ * @param y The y coordinate
+ *
+ * @return An Ecore_Drm_Output if one exists at these coordinates or NULL
+ *
+ * @ingroup Ecore_Drm_Device_Group
+ * @since 1.15
+ */
+EAPI Ecore_Drm_Output *ecore_drm_device_output_find(Ecore_Drm_Device *dev, int x, int y);
 
 /**
  * Open a tty for use
