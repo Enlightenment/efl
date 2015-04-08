@@ -1056,6 +1056,14 @@ ecore_drm_output_gamma_set(Ecore_Drm_Output *output, uint16_t size, uint16_t *r,
 }
 
 EAPI unsigned int
+ecore_drm_output_crtc_id_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);
+
+   return output->crtc_id;
+}
+
+EAPI unsigned int
 ecore_drm_output_crtc_buffer_get(Ecore_Drm_Output *output)
 {
    drmModeCrtc *crtc;
