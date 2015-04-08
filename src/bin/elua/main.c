@@ -297,29 +297,7 @@ elua_bin_shutdown(Elua_State *es, int c)
    exit(c);
 }
 
-static int         elua_cb_ref = LUA_REFNIL;
-static Elua_State *elua_state  = NULL;
-
-static void
-elua_smart_cb_wrapper(void *data, void *obj EINA_UNUSED, void *einfo EINA_UNUSED)
-{
-   int idx = (size_t)data;
-   lua_rawgeti(elua_state->luastate, LUA_REGISTRYINDEX, elua_cb_ref);
-   lua_rawgeti(elua_state->luastate, -1, idx);
-   lua_call(elua_state->luastate, 0, 0);
-   lua_pop(elua_state->luastate, 1);
-}
-
-static int
-elua_register_callbacks(lua_State *L)
-{
-   union { void (*fptr)(void*, void*, void*); void *ptr; } u;
-   lua_pushvalue(L, 1);
-   elua_cb_ref = luaL_ref(L, LUA_REGISTRYINDEX);
-   u.fptr = elua_smart_cb_wrapper;
-   lua_pushlightuserdata(L, u.ptr);
-   return 1;
-}
+static Elua_State *elua_state = NULL;
 
 struct Main_Data
 {
@@ -331,10 +309,9 @@ struct Main_Data
 
 const luaL_reg cutillib[] =
 {
-   { "init_module"       , elua_init_module        },
-   { "register_callbacks", elua_register_callbacks },
-   { "popenv"            , elua_io_popen           },
-   { NULL                , NULL                    }
+   { "init_module", elua_init_module },
+   { "popenv"     , elua_io_popen    },
+   { NULL         , NULL             }
 };
 
 static void
