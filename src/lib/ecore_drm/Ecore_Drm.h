@@ -173,6 +173,9 @@ typedef struct _Ecore_Drm_Event_Activate Ecore_Drm_Event_Activate;
 /** @since 1.14 */
 typedef struct _Ecore_Drm_Event_Output Ecore_Drm_Event_Output;
 
+/** @since 1.15 */
+typedef void (*Ecore_Drm_Pageflip_Cb)(void *data);
+
 EAPI extern int ECORE_DRM_EVENT_ACTIVATE;
 
 EAPI extern int ECORE_DRM_EVENT_OUTPUT; /**< @since 1.14 */
@@ -575,6 +578,36 @@ EAPI void ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
  * @since 1.15
  */
 EAPI void ecore_drm_fb_dirty(Ecore_Drm_Fb *fb, Eina_Rectangle *rects, unsigned int count);
+
+/**
+ * Set an Ecore_Drm_Fb as the current framebuffer
+ *
+ * This function will set the given Ecore_Drm_Fb as the framebuffer used
+ * across all outputs
+ *
+ * @param dev The Ecore_Drm_Device to use
+ * @param fb The Ecore_Drm_Fb to make the current framebuffer
+ *
+ * @ingroup Ecore_Drm_Fb_Group
+ * @since 1.15
+ */
+EAPI void ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb);
+
+/**
+ * Send an Ecore_Drm_Fb to the Ecore_Drm_Device
+ *
+ * This function will call drmModePageFlip for the given device using the
+ * given Ecore_Drm_Fb as the framebuffer
+ *
+ * @param dev The Ecore_Drm_Device to use
+ * @param fb The Ecore_Drm_Fb to send
+ * @param cb The function to call when the page flip has completed
+ * @param data The data to pass to the callback function
+ *
+ * @ingroup Ecore_Drm_Fb_Group
+ * @since 1.15
+ */
+EAPI void ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb func, void *data);
 
 EAPI Eina_Bool ecore_drm_launcher_connect(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev);

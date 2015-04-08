@@ -162,3 +162,70 @@ ecore_drm_fb_dirty(Ecore_Drm_Fb *fb, Eina_Rectangle *rects, unsigned int count)
      }
 #endif
 }
+
+EAPI void
+ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb)
+{
+   Ecore_Drm_Output *output;
+   Eina_List *l;
+
+   EINA_SAFETY_ON_NULL_RETURN(dev);
+   EINA_SAFETY_ON_NULL_RETURN(fb);
+
+   if ((fb->w != dev->dumb[0]->w) || (fb->h != dev->dumb[0]->h))
+     {
+        /* we need to copy from fb to dev->dumb */
+        CRIT("Trying to set a Framebuffer of improper size !!");
+        return;
+     }
+
+   EINA_LIST_FOREACH(dev->outputs, l, output)
+     {
+        int x = 0, y = 0;
+
+        if (!output->cloned)
+          {
+             x = output->x;
+             y = output->y;
+          }
+
+        if (drmModeSetCrtc(dev->drm.fd, output->crtc_id, fb->id, x, y,
+                           &output->conn_id, 1, &output->current_mode->info))
+          {
+             ERR("Failed to set Mode %dx%d for Output %s: %m",
+                 output->current_mode->width, output->current_mode->height,
+                 output->name);
+          }
+     }
+}
+
+EAPI void
+ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb func, void *data)
+{
+   Ecore_Drm_Output *output;
+   Eina_List *l;
+   Ecore_Drm_Pageflip_Callback *cb;
+
+   EINA_SAFETY_ON_NULL_RETURN(dev);
+   EINA_SAFETY_ON_NULL_RETURN(fb);
+   EINA_SAFETY_ON_NULL_RETURN(func);
+
+   if (eina_list_count(dev->outputs) < 1) return;
+
+   if (!(cb = calloc(1, sizeof(Ecore_Drm_Pageflip_Callback))))
+     return;
+
+   cb->func = func;
+   cb->data = data;
+   cb->count = eina_list_count(dev->outputs);
+
+   EINA_LIST_FOREACH(dev->outputs, l, output)
+     {
+        if (drmModePageFlip(dev->drm.fd, output->crtc_id, fb->id,
+                            DRM_MODE_PAGE_FLIP_EVENT, cb) < 0)
+          {
+             ERR("Cannot flip crtc %u for connector %u: %m",
+                 output->crtc_id, output->conn_id);
+          }
+     }
+}
