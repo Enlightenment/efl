@@ -1269,6 +1269,8 @@ EAPI Eina_List   *edje_color_class_list           (void);
  *
  * This function only iterate over the Edje_Color_Class in use by
  * an application.
+ *
+ * @since 1.14
  */
 EAPI Eina_Iterator *edje_color_class_active_iterator_new(void);
 
