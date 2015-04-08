@@ -80,6 +80,13 @@ extern int _ecore_drm_log_dom;
 
 # define ALEN(array) (sizeof(array) / sizeof(array)[0])
 
+typedef struct _Ecore_Drm_Pageflip_Callback
+{
+   Ecore_Drm_Pageflip_Cb func;
+   void *data;
+   int count;
+} Ecore_Drm_Pageflip_Callback;
+
 struct _Ecore_Drm_Output_Mode
 {
    unsigned int flags;
