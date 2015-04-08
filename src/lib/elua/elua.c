@@ -69,7 +69,7 @@ elua_state_new(void)
    lua_State *L = luaL_newstate();
    if (!L)
      return NULL;
-   ret = malloc(sizeof(Elua_State));
+   ret = calloc(1, sizeof(Elua_State));
    ret->luastate = L;
    luaL_openlibs(L);
    lua_pushlightuserdata(L, ret);
@@ -82,7 +82,20 @@ elua_state_free(Elua_State *es)
 {
    if (!es) return;
    if (es->luastate) lua_close(es->luastate);
+   eina_stringshare_del(es->coredir);
+   eina_stringshare_del(es->moddir);
+   eina_stringshare_del(es->appsdir);
    free(es);
+}
+
+EAPI void
+elua_state_dirs_set(Elua_State *es, const char *core, const char *mods,
+                    const char *apps)
+{
+   if (!es) return;
+   if (core) es->coredir = eina_stringshare_add(core);
+   if (mods) es->moddir  = eina_stringshare_add(mods);
+   if (apps) es->appsdir = eina_stringshare_add(apps);
 }
 
 EAPI Elua_State *

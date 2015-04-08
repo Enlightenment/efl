@@ -54,6 +54,8 @@ extern "C" {
 
 #ifdef EFL_BETA_API_SUPPORT
 
+#include <Eina.h>
+
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
@@ -61,6 +63,9 @@ extern "C" {
 typedef struct _Elua_State
 {
    lua_State *luastate;
+   Eina_Stringshare *coredir;
+   Eina_Stringshare *moddir;
+   Eina_Stringshare *appsdir;
 } Elua_State;
 
 EAPI int elua_init(void);
@@ -68,6 +73,9 @@ EAPI int elua_shutdown(void);
 
 EAPI Elua_State *elua_state_new(void);
 EAPI void elua_state_free(Elua_State *es);
+
+EAPI void elua_state_dirs_set(Elua_State *es, const char *core,
+                              const char *mods, const char *apps);
 
 EAPI Elua_State *elua_state_from_lua_get(lua_State *L);
 

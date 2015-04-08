@@ -402,6 +402,8 @@ elua_main(lua_State *L)
 
    INF("arguments parsed");
 
+   elua_state_dirs_set(es, coredir, moddir, appsdir);
+
    lua_gc(L, LUA_GCSTOP, 0);
 
    elua_prefix = eina_prefix_new(elua_progname, elua_main, "ELUA", "elua", "checkme",
