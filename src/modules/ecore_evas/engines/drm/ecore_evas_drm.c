@@ -249,13 +249,32 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
 
    if ((einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(ee->evas)))
      {
+        Ecore_Drm_Output *output;
+        char *num;
+
         einfo->info.depth = 32; // FIXME
         einfo->info.destination_alpha = ee->alpha;
         einfo->info.rotation = ee->rotation;
-        einfo->info.vsync = EINA_TRUE;
+
+        if ((num = getenv("EVAS_DRM_VSYNC")))
+          {
+             if (!atoi(num))
+               einfo->info.vsync = EINA_FALSE;
+             else
+               einfo->info.vsync = EINA_TRUE;
+          }
+        else
+          einfo->info.vsync = EINA_TRUE;
+
         einfo->info.use_hw_accel = EINA_FALSE;
-        einfo->info.fd = ecore_drm_device_fd_get(dev);
         einfo->info.dev = dev;
+
+        if ((output = ecore_drm_device_output_find(dev, x, y)))
+          {
+             einfo->info.conn_id = ecore_drm_output_connector_id_get(output);
+             einfo->info.crtc_id = ecore_drm_output_crtc_id_get(output);
+             einfo->info.buffer_id = ecore_drm_output_crtc_buffer_get(output);
+          }
 
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
@@ -269,7 +288,7 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
         goto eng_err;
      }
 
-   ee->prop.window = einfo->info.output;
+   ee->prop.window = einfo->info.buffer_id;
 
    _ecore_evas_register(ee);
    ecore_evas_input_event_register(ee);
@@ -869,7 +888,7 @@ _ecore_evas_drm_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
         edata->w = ee->w;
         edata->h = ee->h;
         if ((einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(ee->evas)))
-          ecore_drm_output_size_get(dev, einfo->info.output, &ow, &oh);
+          ecore_drm_output_size_get(dev, einfo->info.buffer_id, &ow, &oh);
 
         if ((ow == 0) || (oh == 0))
           {
