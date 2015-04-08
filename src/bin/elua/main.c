@@ -269,37 +269,37 @@ elua_doscript(lua_State *L, int argc, char **argv, int n, int *quit)
 }
 
 void
-elua_bin_shutdown(lua_State *L, int c)
+elua_bin_shutdown(Elua_State *es, int c)
 {
    void *data;
    INF("elua shutdown");
 
-   EINA_LIST_FREE(elua_modlist, data)
+   if (es) EINA_LIST_FREE(elua_modlist, data)
      {
-        lua_rawgeti(L, LUA_REGISTRYINDEX, (size_t)data);
-        lua_call(L, 0, 0);
+        lua_rawgeti(es->luastate, LUA_REGISTRYINDEX, (size_t)data);
+        lua_call(es->luastate, 0, 0);
      }
 
    if (elua_prefix) eina_prefix_free(elua_prefix);
 
-   if (L) lua_close(L);
+   if (es) elua_state_free(es);
    if (_el_log_domain != EINA_LOG_DOMAIN_GLOBAL)
      eina_log_domain_unregister(_el_log_domain);
    elua_shutdown();
    exit(c);
 }
 
-static int        elua_cb_ref = LUA_REFNIL;
-static lua_State *elua_state  = NULL;
+static int         elua_cb_ref = LUA_REFNIL;
+static Elua_State *elua_state  = NULL;
 
 static void
 elua_smart_cb_wrapper(void *data, void *obj EINA_UNUSED, void *einfo EINA_UNUSED)
 {
    int idx = (size_t)data;
-   lua_rawgeti(elua_state, LUA_REGISTRYINDEX, elua_cb_ref);
-   lua_rawgeti(elua_state, -1, idx);
-   lua_call(elua_state, 0, 0);
-   lua_pop(elua_state, 1);
+   lua_rawgeti(elua_state->luastate, LUA_REGISTRYINDEX, elua_cb_ref);
+   lua_rawgeti(elua_state->luastate, -1, idx);
+   lua_call(elua_state->luastate, 0, 0);
+   lua_pop(elua_state->luastate, 1);
 }
 
 static int
@@ -530,7 +530,7 @@ int
 main(int argc, char **argv)
 {
    struct Main_Data m;
-   lua_State *L = NULL;
+   Elua_State *es = NULL;
 
 #ifdef ENABLE_NLS
    setlocale(LC_ALL, "");
@@ -550,13 +550,13 @@ main(int argc, char **argv)
 
    INF("elua logging initialized: %d", _el_log_domain);
 
-   if (!(L = luaL_newstate()))
+   if (!(es = elua_state_new()))
      {
         ERR("could not initialize elua state.");
-        elua_bin_shutdown(L, 1);
+        elua_bin_shutdown(es, 1);
      }
 
-   elua_state = L;
+   elua_state = es;
 
    INF("elua lua state created");
 
@@ -564,7 +564,7 @@ main(int argc, char **argv)
    m.argv   = argv;
    m.status = 0;
 
-   elua_bin_shutdown(L, !!(lua_cpcall(L, elua_main, &m) || m.status));
+   elua_bin_shutdown(es, !!(lua_cpcall(es->luastate, elua_main, &m) || m.status));
 
    return 0; /* never gets here */
 }
