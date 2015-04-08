@@ -62,6 +62,27 @@ elua_shutdown(void)
    return _elua_init_counter;
 }
 
+EAPI Elua_State *
+elua_state_new(void)
+{
+   Elua_State *ret = NULL;
+   lua_State *L = luaL_newstate();
+   if (!L)
+     return NULL;
+   ret = malloc(sizeof(Elua_State));
+   ret->luastate = L;
+   luaL_openlibs(L);
+   return ret;
+}
+
+EAPI void
+elua_state_free(Elua_State *state)
+{
+   if (!state) return;
+   if (state->luastate) lua_close(state->luastate);
+   free(state);
+}
+
 static void
 _elua_errmsg(const char *pname, const char *msg)
 {
