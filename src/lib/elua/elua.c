@@ -78,11 +78,11 @@ elua_state_new(void)
 }
 
 EAPI void
-elua_state_free(Elua_State *state)
+elua_state_free(Elua_State *es)
 {
-   if (!state) return;
-   if (state->luastate) lua_close(state->luastate);
-   free(state);
+   if (!es) return;
+   if (es->luastate) lua_close(es->luastate);
+   free(es);
 }
 
 EAPI Elua_State *
@@ -153,19 +153,19 @@ const luaL_reg gettextlib[] =
 };
 
 EAPI void
-elua_state_setup_i18n(lua_State *L)
+elua_state_setup_i18n(Elua_State *es)
 {
 #ifdef ENABLE_NLS
    char *(*dgettextp)(const char*, const char*) = dgettext;
    char *(*dngettextp)(const char*, const char*, const char*, unsigned long)
       = dngettext;
 #endif
-   lua_createtable(L, 0, 0);
-   luaL_register(L, NULL, gettextlib);
+   lua_createtable(es->luastate, 0, 0);
+   luaL_register(es->luastate, NULL, gettextlib);
 #ifdef ENABLE_NLS
-   lua_pushlightuserdata(L, *((void**)&dgettextp));
-   lua_setfield(L, -2, "dgettext");
-   lua_pushlightuserdata(L, *((void**)&dngettextp));
-   lua_setfield(L, -2, "dngettext");
+   lua_pushlightuserdata(es->luastate, *((void**)&dgettextp));
+   lua_setfield(es->luastate, -2, "dgettext");
+   lua_pushlightuserdata(es->luastate, *((void**)&dngettextp));
+   lua_setfield(es->luastate, -2, "dngettext");
 #endif
 }

@@ -67,13 +67,13 @@ EAPI int elua_init(void);
 EAPI int elua_shutdown(void);
 
 EAPI Elua_State *elua_state_new(void);
-EAPI void elua_state_free(Elua_State *state);
+EAPI void elua_state_free(Elua_State *es);
 
 EAPI Elua_State *elua_state_from_lua_get(lua_State *L);
 
 EAPI int elua_report_error(Elua_State *es, const char *pname, int status);
 
-EAPI void elua_state_setup_i18n(lua_State *L);
+EAPI void elua_state_setup_i18n(Elua_State *es);
 
 EAPI int elua_io_popen(lua_State *L);
 EAPI int elua_io_loadfile(lua_State *L, const char *fname);

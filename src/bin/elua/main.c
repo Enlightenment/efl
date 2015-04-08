@@ -476,7 +476,7 @@ elua_main(lua_State *L)
         m->status = 1;
         return 0;
      }
-   elua_state_setup_i18n(L);
+   elua_state_setup_i18n(elua_state);
    lua_call(L, 1, 0);
 
    elua_io_register(L);
