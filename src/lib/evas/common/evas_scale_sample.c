@@ -131,7 +131,7 @@ _evas_common_scale_rgba_sample_scale_mask(int y,
                                           int dst_clip_x, int dst_clip_y,
                                           int dst_clip_w, int dst_clip_h, int dst_w,
                                           int mask_x, int mask_y,
-                                          DATA32 **row_ptr, int *lin_ptr, RGBA_Image *im,
+                                          DATA32 **row_ptr, int *lin_ptr, RGBA_Image *mask_ie,
                                           DATA32 *dptr, RGBA_Gfx_Func func, RGBA_Gfx_Func func2,
                                           unsigned int mul_col)
 {
@@ -141,14 +141,24 @@ _evas_common_scale_rgba_sample_scale_mask(int y,
    /* a scanline buffer */
    buf = alloca(dst_clip_w * sizeof(DATA32));
 
+   // Adjust clipping info
+   if (EINA_UNLIKELY((dst_clip_x - mask_x) < 0))
+     dst_clip_x = mask_x;
+   if (EINA_UNLIKELY((dst_clip_y - mask_y + y) < 0))
+     dst_clip_y = mask_y + y;
+   if (EINA_UNLIKELY((dst_clip_x - mask_x + dst_clip_w) > (int)mask_ie->cache_entry.w))
+     dst_clip_w = mask_x - mask_ie->cache_entry.w - dst_clip_x;
+   if (EINA_UNLIKELY((dst_clip_y - mask_y + y + dst_clip_h) > (int)mask_ie->cache_entry.h))
+     dst_clip_h = mask_y + y - mask_ie->cache_entry.h - dst_clip_y;
+
    dptr = dptr + dst_w * y;
    for (; y < dst_clip_h; y++)
      {
         DATA8 *mask;
 
         dst_ptr = buf;
-        mask = im->image.data8
-          + ((dst_clip_y - mask_y + y) * im->cache_entry.w)
+        mask = mask_ie->image.data8
+          + ((dst_clip_y - mask_y + y) * mask_ie->cache_entry.w)
           + (dst_clip_x - mask_x);
 
         for (x = 0; x < dst_clip_w; x++)
@@ -325,6 +335,15 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
           }
         else
           func = evas_common_gfx_func_composite_pixel_mask_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, dst_clip_w, render_op);
+        // Adjust clipping info
+        if (EINA_UNLIKELY((dst_clip_x - mask_x) < 0))
+          dst_clip_x = mask_x;
+        if (EINA_UNLIKELY((dst_clip_y - mask_y) < 0))
+          dst_clip_y = mask_y;
+        if (EINA_UNLIKELY((dst_clip_x - mask_x + dst_clip_w) > (int)mask_ie->cache_entry.w))
+          dst_clip_w = mask_ie->cache_entry.w - dst_clip_x + mask_x;
+        if (EINA_UNLIKELY((dst_clip_y - mask_y + dst_clip_h) > (int)mask_ie->cache_entry.h))
+          dst_clip_h = mask_ie->cache_entry.h - dst_clip_y + mask_y;
      }
 
    if ((dst_region_w == src_region_w) && (dst_region_h == src_region_h))
@@ -449,8 +468,9 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    DATA32  *ptr, *dst_ptr, *src_data, *dst_data;
    DATA8   *mask;
    int      dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h;
-   int      src_w, src_h, dst_w, dst_h;
+   int      src_w, src_h, dst_w, dst_h, mask_x, mask_y;
    RGBA_Gfx_Func func, func2 = NULL;
+   RGBA_Image *mask_ie = dc->clip.mask;
 
    if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h, 0, 0, dst->cache_entry.w, dst->cache_entry.h)))
      return EINA_FALSE;
@@ -578,7 +598,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    /* figure out dest start ptr */
    dst_ptr = dst_data + dst_clip_x + (dst_clip_y * dst_w);
 
-   if (!dc->clip.mask)
+   if (!mask_ie)
      {
         if (dc->mul.use)
           func = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dc->mul.col, dst->cache_entry.flags.alpha, dst_clip_w, dc->render_op);
@@ -590,6 +610,17 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
         func = evas_common_gfx_func_composite_pixel_mask_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, dst_clip_w, dc->render_op);
         if (dc->mul.use)
           func2 = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dc->mul.col, dst->cache_entry.flags.alpha, dst_clip_w, EVAS_RENDER_COPY);
+        // Adjust clipping info
+        mask_x = dc->clip.mask_x;
+        mask_y = dc->clip.mask_y;
+        if (EINA_UNLIKELY((dst_clip_x - mask_x) < 0))
+          dst_clip_x = mask_x;
+        if (EINA_UNLIKELY((dst_clip_y - mask_y) < 0))
+          dst_clip_y = mask_y;
+        if (EINA_UNLIKELY((dst_clip_x - mask_x + dst_clip_w) > (int)mask_ie->cache_entry.w))
+          dst_clip_w = mask_ie->cache_entry.w - dst_clip_x + mask_x;
+        if (EINA_UNLIKELY((dst_clip_y - mask_y + dst_clip_h) > (int)mask_ie->cache_entry.h))
+          dst_clip_h = mask_ie->cache_entry.h - dst_clip_y + mask_y;
      }
 
    if ((dst_region_w == src_region_w) && (dst_region_h == src_region_h))
@@ -621,18 +652,16 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
              ptr = src_data + ((dst_clip_y - dst_region_y + src_region_y) * src_w) + (dst_clip_x - dst_region_x) + src_region_x;
 
              /* image masking */
-             if (dc->clip.mask)
+             if (mask_ie)
                {
-                  RGBA_Image *im = dc->clip.mask;
-
                   if (dc->mul.use)
                     buf = alloca(dst_clip_w * sizeof(DATA32));
 
                   for (y = 0; y < dst_clip_h; y++)
                     {
-                       mask = im->image.data8
-                          + ((dst_clip_y - dc->clip.mask_y + y) * im->cache_entry.w)
-                          + (dst_clip_x - dc->clip.mask_x);
+                       mask = mask_ie->image.data8
+                          + ((dst_clip_y - mask_y + y) * mask_ie->cache_entry.w)
+                          + (dst_clip_x - mask_x);
 
                        /* * blend here [clip_w *] ptr -> dst_ptr * */
                        if (dc->mul.use)
@@ -723,8 +752,8 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
                   local.dst_clip_h = dst_clip_h;
                   local.dst_clip_w = dst_clip_w;
                   local.dst_w = dst_w;
-                  local.mask_x = dc->clip.mask_x;
-                  local.mask_y = dc->clip.mask_y;
+                  local.mask_x = mask_x;
+                  local.mask_y = mask_y;
                   local.mul_col = mul_col;
 
                   msg = eina_thread_queue_send(thread_queue, sizeof (Evas_Scale_Msg), &ref);

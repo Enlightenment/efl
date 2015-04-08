@@ -131,6 +131,19 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst, int dst_clip_x, int dst_clip_y, int
    /* figure out dest start ptr */
    dst_ptr = dst->image.data + dst_clip_x + (dst_clip_y * dst_w);
 
+   if (mask_ie)
+     {
+        // Adjust clipping info
+        if (EINA_UNLIKELY((dst_clip_x - mask_x) < 0))
+          dst_clip_x = mask_x;
+        if (EINA_UNLIKELY((dst_clip_y - mask_y) < 0))
+          dst_clip_y = mask_y;
+        if (EINA_UNLIKELY((dst_clip_x - mask_x + dst_clip_w) > (int)mask_ie->cache_entry.w))
+          dst_clip_w = mask_ie->cache_entry.w - dst_clip_x + mask_x;
+        if (EINA_UNLIKELY((dst_clip_y - mask_y + dst_clip_h) > (int)mask_ie->cache_entry.h))
+          dst_clip_h = mask_ie->cache_entry.h - dst_clip_y + mask_y;
+     }
+
 /* FIXME:
  *
  * things to do later for speedups:

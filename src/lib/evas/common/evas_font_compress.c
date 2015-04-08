@@ -534,6 +534,16 @@ evas_common_font_glyph_draw(RGBA_Font_Glyph *fg,
 
         buf = alloca(sizeof(DATA32) * w * h);
 
+        // Adjust clipping info
+        if (EINA_UNLIKELY((x + x1) < dc->clip.mask_x))
+          x1 = dc->clip.mask_x - x;
+        if (EINA_UNLIKELY((y + y1) < dc->clip.mask_y))
+          y1 = dc->clip.mask_y - y;
+        if (EINA_UNLIKELY((x + x2) > (int)(x + x1 + im->cache_entry.w)))
+          x2 = x1 + im->cache_entry.w;
+        if (EINA_UNLIKELY((y + y2) > (int)(y + y1 + im->cache_entry.h)))
+          y2 = y1 + im->cache_entry.h;
+
         // Step 1: alpha glyph drawing
         src8 = evas_common_font_glyph_uncompress(fg, NULL, NULL);
         if (!src8) return;

@@ -135,7 +135,18 @@ rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, in
 #endif
      {
         if (mask_ie)
-          func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst->cache_entry.flags.alpha, w, dc->render_op);
+          {
+             func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst->cache_entry.flags.alpha, w, dc->render_op);
+             // Adjust clipping info
+             if (EINA_UNLIKELY((x - dc->clip.mask_x) < 0))
+               x = dc->clip.mask_x;
+             if (EINA_UNLIKELY((y - dc->clip.mask_y) < 0))
+               y = dc->clip.mask_y;
+             if (EINA_UNLIKELY((x - dc->clip.mask_x + w) > (int)mask_ie->cache_entry.w))
+               w = mask_ie->cache_entry.w + dc->clip.mask_x - x;
+             if (EINA_UNLIKELY((y - dc->clip.mask_y + h) > (int)mask_ie->cache_entry.h))
+               h = mask_ie->cache_entry.h + dc->clip.mask_y - y;
+          }
         else
           func = evas_common_gfx_func_composite_color_span_get(dc->col.col, dst->cache_entry.flags.alpha, w, dc->render_op);
         ptr = dst->image.data + (y * dst->cache_entry.w) + x;
@@ -165,7 +176,18 @@ evas_common_rectangle_rgba_draw(RGBA_Image *dst, DATA32 color, int render_op, in
    int yy;
 
    if (mask_ie)
-     func = evas_common_gfx_func_composite_mask_color_span_get(color, dst->cache_entry.flags.alpha, w, render_op);
+     {
+        func = evas_common_gfx_func_composite_mask_color_span_get(color, dst->cache_entry.flags.alpha, w, render_op);
+        // Adjust clipping info
+        if (EINA_UNLIKELY((x - mask_x) < 0))
+          x = mask_x;
+        if (EINA_UNLIKELY((y - mask_y) < 0))
+          y = mask_y;
+        if (EINA_UNLIKELY((x - mask_x + w) > (int)mask_ie->cache_entry.w))
+          w = mask_ie->cache_entry.w + mask_x - x;
+        if (EINA_UNLIKELY((y - mask_y + h) > (int)mask_ie->cache_entry.h))
+          h = mask_ie->cache_entry.h + mask_y - y;
+     }
    else
      func = evas_common_gfx_func_composite_color_span_get(color, dst->cache_entry.flags.alpha, w, render_op);
 
