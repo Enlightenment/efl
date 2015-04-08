@@ -105,18 +105,6 @@ _ecore_drm_device_cb_output_event(const char *device EINA_UNUSED, Eeze_Udev_Even
  * the DRM device itself.
  */
 
-/**
- * Find a drm device in the system.
- *
- * @param name The name of the device to find. If NULL, this function will 
- *             search for the default drm device.
- * @param seat The name of the seat where this device may be found. If NULL, 
- *             this function will use a default seat name 'seat0'.
- * 
- * @return An opaque Ecore_Drm_Device structure representing the card.
- * 
- * @ingroup Ecore_Drm_Device_Group
- */
 EAPI Ecore_Drm_Device *
 ecore_drm_device_find(const char *name, const char *seat)
 {
@@ -215,15 +203,6 @@ out:
    return dev;
 }
 
-/**
- * Free an Ecore_Drm_Device
- *
- * This function will cleanup and free any previously allocated Ecore_Drm_Device.
- * 
- * @param dev The Ecore_Drm_Device to free
- * 
- * @ingroup Ecore_Drm_Device_Group
- */
 EAPI void 
 ecore_drm_device_free(Ecore_Drm_Device *dev)
 {
@@ -266,17 +245,6 @@ ecore_drm_device_free(Ecore_Drm_Device *dev)
    free(dev);
 }
 
-/**
- * Open an Ecore_Drm_Device
- *
- * This function will open an existing Ecore_Drm_Device for use.
- * 
- * @param dev The Ecore_Drm_Device to try and open
- * 
- * @return EINA_TRUE on success, EINA_FALSE on failure
- * 
- * @ingroup Ecore_Drm_Device_Group
- */
 EAPI Eina_Bool 
 ecore_drm_device_open(Ecore_Drm_Device *dev)
 {
@@ -342,17 +310,6 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-/**
- * Close an Ecore_Drm_Device
- *
- * This function will close a previously opened Ecore_Drm_Device
- * 
- * @param dev The Ecore_Drm_Device to free
- * 
- * @return EINA_TRUE on success, EINA_FALSE on failure
- * 
- * @ingroup Ecore_Drm_Device_Group
- */
 EAPI Eina_Bool 
 ecore_drm_device_close(Ecore_Drm_Device *dev)
 {
@@ -382,17 +339,6 @@ ecore_drm_devices_get(void)
    return drm_devices;
 }
 
-/**
- * Get if a given Ecore_Drm_Device is master
- * 
- * This function will check if the given drm device is set to master
- * 
- * @param dev The Ecore_Drm_Device to check
- * 
- * @return EINA_TRUE if device is master, EINA_FALSE otherwise
- * 
- * @ingroup Ecore_Drm_Device_Group
- */
 EAPI Eina_Bool 
 ecore_drm_device_master_get(Ecore_Drm_Device *dev)
 {
@@ -409,17 +355,6 @@ ecore_drm_device_master_get(Ecore_Drm_Device *dev)
    return EINA_FALSE;
 }
 
-/**
- * Set a given Ecore_Drm_Device to master
- * 
- * This function will attempt to set a given drm device to be master
- * 
- * @param dev The Ecore_Drm_Device to set
- * 
- * @return EINA_TRUE on success, EINA_FALSE on failure
- * 
- * @ingroup Ecore_Drm_Device_Group
- */
 EAPI Eina_Bool 
 ecore_drm_device_master_set(Ecore_Drm_Device *dev)
 {
@@ -433,17 +368,6 @@ ecore_drm_device_master_set(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-/**
- * Tell a given Ecore_Drm_Device to stop being master
- * 
- * This function will attempt to ask a drm device to stop being master
- * 
- * @param dev The Ecore_Drm_Device to set
- * 
- * @return EINA_TRUE on success, EINA_FALSE on failure
- * 
- * @ingroup Ecore_Drm_Device_Group
- */
 EAPI Eina_Bool 
 ecore_drm_device_master_drop(Ecore_Drm_Device *dev)
 {
@@ -457,18 +381,6 @@ ecore_drm_device_master_drop(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-/**
- * Get the file descriptor of Ecore_Drm_Device
- *
- * This function will get the file descriptor of drm device
- *
- * @param dev The Ecore_Drm_Device to get
- *
- * @return fd value on success, -1 on failure
- *
- * @ingroup Ecore_Drm_Device_Group
- *
- */
 EAPI int 
 ecore_drm_device_fd_get(Ecore_Drm_Device *dev)
 {
@@ -476,18 +388,6 @@ ecore_drm_device_fd_get(Ecore_Drm_Device *dev)
    return dev->drm.fd;
 }
 
-/**
- * Set the window of Ecore_Drm_Device
- *
- * This function will set the window for given drm device
- *
- * @param dev The Ecore_Drm_Device for which window is set
- * @param window The window to set
- *
- * @ingroup Ecore_Drm_Device_Group
- *
- * @since 1.10
- */
 EAPI void 
 ecore_drm_device_window_set(Ecore_Drm_Device *dev, unsigned int window)
 {
@@ -497,19 +397,6 @@ ecore_drm_device_window_set(Ecore_Drm_Device *dev, unsigned int window)
    dev->window = window;
 }
 
-/**
- * Get the name of the Ecore_Drm_Device
- *
- * This function will return the name of Ecore_Drm_Device
- *
- * @param dev The Ecore_Drm_Device to get name
- *
- * @return device name on success, NULL on failure
- *
- * @ingroup Ecore_Drm_Device_Group
- *
- * @since 1.10
- */
 EAPI const char *
 ecore_drm_device_name_get(Ecore_Drm_Device *dev)
 {

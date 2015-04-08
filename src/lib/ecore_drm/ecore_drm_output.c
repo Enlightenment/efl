@@ -714,18 +714,6 @@ next:
  * 
  */
 
-/**
- * Create outputs for a drm device
- *
- * This function will create outputs for Ecore_Drm_Device
- *
- * @param dev The Ecore_Drm_Device device for which outputs
- *            needs to be created   
- * 
- * @return EINA_TRUE on success, EINA_FALSE on failure.
- *
- * @ingroup Ecore_Drm_Output_Group
- */
 EAPI Eina_Bool 
 ecore_drm_outputs_create(Ecore_Drm_Device *dev)
 {
@@ -794,33 +782,12 @@ next:
    return ret;
 }
 
-/**
- * Free an Ecore_Drm_Output 
- *
- * This function will cleanup and free any previously allocated Ecore_Drm_Output
- *
- * @param output The Ecore_Drm_Output to free
- * 
- * @ingroup Ecore_Drm_Output_Group
- */
 EAPI void 
 ecore_drm_output_free(Ecore_Drm_Output *output)
 {
    _ecore_drm_output_free(output);
 }
 
-/**
- * Set the cursor size for Ecore_Drm_Output 
- *
- * This function will set the cursor size of Ecore_Drm_Output
- *
- * @param output The Ecore_Drm_Output to set
- * @param handle The Drm handle
- * @param w The width of cursor
- * @param h The height of cursor
- *
- * @ingroup Ecore_Drm_Output_Group
- */
 EAPI void 
 ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle, int w, int h)
 {
@@ -971,18 +938,6 @@ err:
      }
 }
 
-/**
- * Get the output size of Ecore_Drm_Device
- *
- * This function will give the output size of Ecore_Drm_Device
- *
- * @param dev The Ecore_Drm_Device to get output size
- * @param output The output id whose information needs to be retrived 
- * @param *w The parameter in which output width is stored
- * @param *h The parameter in which output height is stored
- *
- * @ingroup Ecore_Drm_Output_Group
- */
 EAPI void 
 ecore_drm_output_size_get(Ecore_Drm_Device *dev, int output, int *w, int *h)
 {

@@ -129,17 +129,6 @@ err_kmode:
  * Functions that deal with opening, closing, and otherwise using a tty
  */
 
-/**
- * Open a tty for use
- * 
- * @param dev  The Ecore_Drm_Device that this tty will belong to.
- * @param name The name of the tty to try and open. 
- *             If NULL, /dev/tty0 will be used.
- * 
- * @return     EINA_TRUE on success, EINA_FALSE on failure
- * 
- * @ingroup Ecore_Drm_Tty_Group
- */
 EAPI Eina_Bool 
 ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
 {
@@ -233,15 +222,6 @@ _ecore_drm_tty_restore(Ecore_Drm_Device *dev)
      ERR("Could not reset VT handling\n");
 }
 
-/**
- * Close an already opened tty
- * 
- * @param dev The Ecore_Drm_Device which owns this tty.
- * 
- * @return    EINA_TRUE on success, EINA_FALSE on failure
- * 
- * @ingroup Ecore_Drm_Tty_Group
- */
 EAPI Eina_Bool 
 ecore_drm_tty_close(Ecore_Drm_Device *dev)
 {
@@ -263,15 +243,6 @@ ecore_drm_tty_close(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-/**
- * Release a virtual terminal
- * 
- * @param dev The Ecore_Drm_Device which owns this tty.
- * 
- * @return    EINA_TRUE on success, EINA_FALSE on failure
- * 
- * @ingroup Ecore_Drm_Tty_Group
- */
 EAPI Eina_Bool 
 ecore_drm_tty_release(Ecore_Drm_Device *dev)
 {
@@ -288,15 +259,6 @@ ecore_drm_tty_release(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-/**
- * Acquire a virtual terminal
- * 
- * @param dev The Ecore_Drm_Device which owns this tty.
- * 
- * @return    EINA_TRUE on success, EINA_FALSE on failure
- * 
- * @ingroup Ecore_Drm_Tty_Group
- */
 EAPI Eina_Bool 
 ecore_drm_tty_acquire(Ecore_Drm_Device *dev)
 {
@@ -313,17 +275,6 @@ ecore_drm_tty_acquire(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-/**
- * Get the opened virtual terminal file descriptor
- * 
- * @param dev The Ecore_Drm_Device which owns this tty.
- * 
- * @return    The tty fd opened from previous call to ecore_drm_tty_open
- * 
- * @ingroup Ecore_Drm_Tty_Group
- * 
- * @since 1.10
- */
 EAPI int 
 ecore_drm_tty_get(Ecore_Drm_Device *dev)
 {
