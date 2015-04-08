@@ -1080,3 +1080,11 @@ ecore_drm_output_crtc_buffer_get(Ecore_Drm_Output *output)
 
    return id;
 }
+
+EAPI unsigned int
+ecore_drm_output_connector_id_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);
+
+   return output->conn_id;
+}

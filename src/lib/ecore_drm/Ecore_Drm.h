@@ -533,6 +533,20 @@ EAPI unsigned int ecore_drm_output_crtc_id_get(Ecore_Drm_Output *output);
  */
 EAPI unsigned int ecore_drm_output_crtc_buffer_get(Ecore_Drm_Output *output);
 
+/**
+ * Get the connector id of an output
+ *
+ * This function will return the default connector id for an output
+ *
+ * @param output The Ecore_Drm_Output to get the default connector of
+ *
+ * @return The id of the default connector id for this output
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI unsigned int ecore_drm_output_connector_id_get(Ecore_Drm_Output *output);
+
 /* TODO: Doxy */
 EAPI Eina_Bool ecore_drm_inputs_create(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_inputs_destroy(Ecore_Drm_Device *dev);
