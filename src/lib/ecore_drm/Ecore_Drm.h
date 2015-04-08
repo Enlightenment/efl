@@ -521,13 +521,13 @@ EAPI unsigned int ecore_drm_output_crtc_id_get(Ecore_Drm_Output *output);
 
 /**
  * Get the crtc buffer of an output
- * 
+ *
  * This function will return the default buffer id for an output
- * 
+ *
  * @param output The Ecore_Drm_Output to get the default buffer of
- * 
+ *
  * @return The id of the default buffer for this output
- * 
+ *
  * @ingroup Ecore_Drm_Output_Group
  * @since 1.15
  */
