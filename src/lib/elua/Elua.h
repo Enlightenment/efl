@@ -58,6 +58,11 @@ extern "C" {
 #include <lualib.h>
 #include <lauxlib.h>
 
+typedef struct _Elua_State
+{
+   lua_State *luastate;
+} Elua_State;
+
 EAPI int elua_init(void);
 EAPI int elua_shutdown(void);
 
