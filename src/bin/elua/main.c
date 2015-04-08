@@ -216,8 +216,9 @@ elua_dostr(Elua_State *es, const char *chunk, const char *chname)
 }
 
 static Eina_Bool
-elua_loadapp(lua_State *L, const char *appname)
+elua_loadapp(Elua_State *es, const char *appname)
 {
+   lua_State *L = es->luastate;
    lua_rawgeti(L, LUA_REGISTRYINDEX, elua_appload_ref);
    lua_pushstring(L, appname);
    lua_call(L, 1, 2);
@@ -252,7 +253,7 @@ elua_doscript(Elua_State *es, int argc, char **argv, int n, int *quit)
              status = elua_io_loadfile(L, fname);
           }
         else
-          status = !elua_loadapp(L, fname);
+          status = !elua_loadapp(es, fname);
      }
    else
      {
