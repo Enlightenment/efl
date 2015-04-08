@@ -183,7 +183,8 @@ Ecore_Fd_Handler *
                                       Ecore_Fd_Cb func,
                                       const void *data,
                                       Ecore_Fd_Cb buf_func,
-                                      const void *buf_data);
+                                      const void *buf_data,
+                                      Eina_Bool is_file);
 void      *_ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler);
 
 void       _ecore_fd_close_on_exec(int fd);

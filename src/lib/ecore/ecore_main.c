@@ -1037,7 +1037,8 @@ _ecore_main_fd_handler_add(int                    fd,
                            Ecore_Fd_Cb            func,
                            const void            *data,
                            Ecore_Fd_Cb            buf_func,
-                           const void            *buf_data)
+                           const void            *buf_data,
+                           Eina_Bool              is_file)
 {
    Ecore_Fd_Handler *fdh = NULL;
 
@@ -1049,6 +1050,7 @@ _ecore_main_fd_handler_add(int                    fd,
    fdh->next_ready = NULL;
    fdh->fd = fd;
    fdh->flags = flags;
+   fdh->file = is_file;
    if (_ecore_main_fdh_poll_add(fdh) < 0)
      {
         int err = errno;
@@ -1084,7 +1086,7 @@ ecore_main_fd_handler_add(int                    fd,
    Ecore_Fd_Handler *fdh = NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
-   fdh = _ecore_main_fd_handler_add(fd, flags, func, data, buf_func, buf_data);
+   fdh = _ecore_main_fd_handler_add(fd, flags, func, data, buf_func, buf_data, EINA_FALSE);
    _ecore_unlock();
    return fdh;
 }
@@ -1098,42 +1100,9 @@ ecore_main_fd_handler_file_add(int                    fd,
                                const void            *buf_data)
 {
    Ecore_Fd_Handler *fdh = NULL;
-
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
-
-   if ((fd < 0) || (flags == 0) || (!func)) goto unlock;
-
-   fdh = ecore_fd_handler_calloc(1);
-   if (!fdh) goto unlock;
-   ECORE_MAGIC_SET(fdh, ECORE_MAGIC_FD_HANDLER);
-   fdh->next_ready = NULL;
-   fdh->fd = fd;
-   fdh->flags = flags;
-   fdh->file = EINA_TRUE;
-   if (_ecore_main_fdh_poll_add(fdh) < 0)
-     {
-        int err = errno;
-        ERR("Failed to add poll on fd %d (errno = %d: %s)!", fd, err, strerror(err));
-        ecore_fd_handler_mp_free(fdh);
-        fdh = NULL;
-        goto unlock;
-     }
-   fdh->read_active = EINA_FALSE;
-   fdh->write_active = EINA_FALSE;
-   fdh->error_active = EINA_FALSE;
-   fdh->delete_me = EINA_FALSE;
-   fdh->func = func;
-   fdh->data = (void *)data;
-   fdh->buf_func = buf_func;
-   if (buf_func)
-     fd_handlers_with_buffer = eina_list_append(fd_handlers_with_buffer, fdh);
-   fdh->buf_data = (void *)buf_data;
-   fd_handlers = (Ecore_Fd_Handler *)
-     eina_inlist_append(EINA_INLIST_GET(fd_handlers),
-                        EINA_INLIST_GET(fdh));
-   file_fd_handlers = eina_list_append(file_fd_handlers, fdh);
-unlock:
+   fdh = _ecore_main_fd_handler_add(fd, flags, func, data, buf_func, buf_data, EINA_TRUE);
    _ecore_unlock();
 
    return fdh;
