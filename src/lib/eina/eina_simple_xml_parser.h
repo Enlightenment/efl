@@ -290,6 +290,8 @@ EAPI Eina_Bool eina_simple_xml_attributes_parse(const char *buf, unsigned buflen
  *
  * @return #EINA_TRUE on success or #EINA_FALSE if it was aborted by user or
  *          parsing error.
+ *
+ * @since 1.14
  */
 EAPI Eina_Bool
 eina_simple_xml_attribute_w3c_parse(const char *buf, Eina_Simple_XML_Attribute_Cb func, const void *data);
