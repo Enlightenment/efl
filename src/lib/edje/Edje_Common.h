@@ -1782,6 +1782,8 @@ EAPI Eina_Bool         edje_mmap_group_exists(Eina_File *f, const char *glob);
  * @brief Iterate over all the opened Edje file.
  *
  * @return an iterator of Eina_File currently opened Edje file.
+ *
+ * @since 1.14
  */
 EAPI Eina_Iterator *edje_file_iterator_new(void);
 
