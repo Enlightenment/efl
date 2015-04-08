@@ -35,6 +35,8 @@ eina_unicode_utf8_next_get(const char *buf, int *iindex)
    Eina_Unicode r;
    unsigned char d;
 
+   if (!buf || !iindex) return 0;
+
    ind = *iindex;
 
    /* if this char is the null terminator, exit */
