@@ -10,32 +10,46 @@
        ((x) >= (xx)) && ((y) >= (yy)))
 
 static Eina_List *drm_devices;
+static int flip_count = 0;
 
 static void 
 _ecore_drm_device_cb_page_flip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
 {
-   Ecore_Drm_Output *output;
+   Ecore_Drm_Pageflip_Callback *cb;
 
    DBG("Drm Page Flip Event");
 
-   if (!(output = data)) return;
+   if (!(cb = data)) return;
 
-   if (output->pending_flip)
-     {
-        if (output->dev->current)
-          ecore_drm_output_fb_release(output, output->dev->current);
-        output->dev->current = output->dev->next;
-        output->dev->next = NULL;
-     }
+   flip_count++;
+   if (flip_count < cb->count) return;
 
-   output->pending_flip = EINA_FALSE;
-   if (output->pending_destroy)
-     {
-        output->pending_destroy = EINA_FALSE;
-        ecore_drm_output_free(output);
-     }
-   else if (!output->pending_vblank)
-     ecore_drm_output_repaint(output);
+   flip_count = 0;
+   if (cb->func) cb->func(cb->data);
+   /* free(cb); */
+
+   /* Ecore_Drm_Output *output; */
+
+   /* DBG("Drm Page Flip Event"); */
+
+   /* if (!(output = data)) return; */
+
+   /* if (output->pending_flip) */
+   /*   { */
+   /*      if (output->dev->current) */
+   /*        ecore_drm_output_fb_release(output, output->dev->current); */
+   /*      output->dev->current = output->dev->next; */
+   /*      output->dev->next = NULL; */
+   /*   } */
+
+   /* output->pending_flip = EINA_FALSE; */
+   /* if (output->pending_destroy) */
+   /*   { */
+   /*      output->pending_destroy = EINA_FALSE; */
+   /*      ecore_drm_output_free(output); */
+   /*   } */
+   /* else if (!output->pending_vblank) */
+   /*   ecore_drm_output_repaint(output); */
 }
 
 static void 
@@ -308,8 +322,8 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
      ecore_main_fd_handler_add(dev->drm.fd, ECORE_FD_READ, 
                                _ecore_drm_device_cb_event, dev, NULL, NULL);
 
-   dev->drm.idler = 
-     ecore_idle_enterer_add(_ecore_drm_device_cb_idle, dev);
+   /* dev->drm.idler =  */
+   /*   ecore_idle_enterer_add(_ecore_drm_device_cb_idle, dev); */
 
    return EINA_TRUE;
 }
