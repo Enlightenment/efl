@@ -323,9 +323,10 @@ elua_register_callbacks(lua_State *L)
 
 struct Main_Data
 {
-   int    argc;
-   char **argv;
-   int    status;
+   Elua_State  *es;
+   int          argc;
+   char       **argv;
+   int          status;
 };
 
 const luaL_reg cutillib[] =
@@ -385,6 +386,7 @@ elua_main(lua_State *L)
    int ch;
 
    struct Main_Data *m = (struct Main_Data*)lua_touserdata(L, 1);
+   Elua_State *es = m->es;
 
    int    argc = m->argc;
    char **argv = m->argv;
@@ -456,7 +458,7 @@ elua_main(lua_State *L)
           }
      }
    snprintf(modfile, sizeof(modfile), "%s/module.lua", coref);
-   if (elua_report_error(elua_state, elua_progname, elua_io_loadfile(L, modfile)))
+   if (elua_report_error(es, elua_progname, elua_io_loadfile(L, modfile)))
      {
         m->status = 1;
         return 0;
@@ -472,12 +474,12 @@ elua_main(lua_State *L)
    lua_call(L, 2, 0);
 
    snprintf(modfile, sizeof(modfile), "%s/gettext.lua", coref);
-   if (elua_report_error(elua_state, elua_progname, elua_io_loadfile(L, modfile)))
+   if (elua_report_error(es, elua_progname, elua_io_loadfile(L, modfile)))
      {
         m->status = 1;
         return 0;
      }
-   elua_state_setup_i18n(elua_state);
+   elua_state_setup_i18n(es);
    lua_call(L, 1, 0);
 
    elua_io_register(L);
@@ -492,14 +494,14 @@ elua_main(lua_State *L)
           {
              case ARG_CODE:
                 if (!hasexec) hasexec = EINA_TRUE;
-                if (elua_dostr(elua_state, data->value, "=(command line)"))
+                if (elua_dostr(es, data->value, "=(command line)"))
                   {
                      m->status = 1;
                      return 0;
                   }
                 break;
              case ARG_LIBRARY:
-                if (elua_dolib(elua_state, data->value))
+                if (elua_dolib(es, data->value))
                   {
                      m->status = 1;
                      return 0;
@@ -517,13 +519,13 @@ elua_main(lua_State *L)
    if (optind < argc)
      {
         int quit = 0;
-        if ((m->status = elua_doscript(elua_state, argc, argv, optind, &quit))) return 0;
+        if ((m->status = elua_doscript(es, argc, argv, optind, &quit))) return 0;
         if (quit) return 0;
      }
    else if (!hasexec)
      {
         int quit;
-        if ((m->status = elua_dofile(elua_state, NULL))) return 0;
+        if ((m->status = elua_dofile(es, NULL))) return 0;
         quit = lua_toboolean(L, -1);
         lua_pop(L, 1);
         if (quit) return 0;
@@ -568,6 +570,7 @@ main(int argc, char **argv)
 
    INF("elua lua state created");
 
+   m.es     = es;
    m.argc   = argc;
    m.argv   = argv;
    m.status = 0;
