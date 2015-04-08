@@ -187,6 +187,8 @@ EAPI void                         elm_object_access_info_set(Evas_Object *obj, c
  * @return The text that describes the widget to people with poor or no vision
  *
  * @ingroup General
+ *
+ * @since 1.14
  */
 EAPI const char *elm_object_access_info_get(Evas_Object *obj);
 
