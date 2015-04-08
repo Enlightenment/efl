@@ -267,6 +267,7 @@ extern "C" {
 #include <eina_evlog.h>
 #include <eina_util.h>
 #include <eina_quaternion.h>
+#include <eina_bezier.h>
 
 #undef EAPI
 #define EAPI
