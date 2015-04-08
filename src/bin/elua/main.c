@@ -85,8 +85,9 @@ elua_docall(Elua_State *es, int narg, int nret)
 }
 
 static int
-elua_getargs(lua_State *L, int argc, char **argv, int n)
+elua_getargs(Elua_State *es, int argc, char **argv, int n)
 {
+   lua_State *L = es->luastate;
    int i;
    int narg = argc - (n + 1);
    luaL_checkstack(L, narg + 3, "too many arguments to script");
@@ -235,7 +236,7 @@ elua_doscript(Elua_State *es, int argc, char **argv, int n, int *quit)
    int status;
    lua_State *L = es->luastate;
    const char *fname = argv[n];
-   int narg = elua_getargs(L, argc, argv, n);
+   int narg = elua_getargs(es, argc, argv, n);
    lua_setglobal(L, "arg");
    if (fname[0] == '-' && !fname[1])
      {
