@@ -3,10 +3,18 @@
 # include "evas_cs2_private.h"
 #endif
 
-/* FIXME: We NEED to get the color map from the VT and use that for the mask */
-#define RED_MASK 0xff0000
-#define GREEN_MASK 0x00ff00
-#define BLUE_MASK 0x0000ff
+static void
+_evas_outbuf_cb_pageflip(void *data)
+{
+   Outbuf *ob;
+
+   if (!(ob = data)) return;
+
+   DBG("Outbuf Pagelip Done");
+
+   ob->priv.last = ob->priv.curr;
+   ob->priv.curr = (ob->priv.curr + 1) % ob->priv.num;
+}
 
 static void 
 _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
@@ -16,13 +24,13 @@ _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    buff = ob->priv.buffer[ob->priv.curr];
 
    /* if this buffer is not valid, we need to set it */
-   evas_drm_outbuf_framebuffer_set(ob, buff);
+   ecore_drm_fb_set(ob->info->info.dev, buff);
 
    /* mark the fb as dirty */
    ecore_drm_fb_dirty(buff, rects, count);
 
    /* send this buffer to the crtc */
-   evas_drm_framebuffer_send(ob, buff);
+   ecore_drm_fb_send(ob->info->info.dev, buff, _evas_outbuf_cb_pageflip, ob);
 }
 
 Outbuf *
@@ -45,32 +53,19 @@ evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
    ob->destination_alpha = info->info.destination_alpha;
    ob->vsync = info->info.vsync;
 
-   /* set drm card fd */
-   ob->priv.fd = info->info.fd;
+   ob->priv.crtc_id = info->info.crtc_id;
+   ob->priv.conn_id = info->info.conn_id;
+   ob->priv.buffer_id = info->info.buffer_id;
 
-   /* try to setup the drm card for this outbuf */
-   if (!evas_drm_outbuf_setup(ob))
-     {
-        ERR("Could not setup output");
-        free(ob);
-        return NULL;
-     }
-
-   if (ob->w < ob->priv.mode.hdisplay) ob->w = ob->priv.mode.hdisplay;
-   if (ob->h < ob->priv.mode.vdisplay) ob->h = ob->priv.mode.vdisplay;
-
-   info->info.output = ob->priv.fb;
-
-   ob->priv.num = NUM_BUFFERS;
+   /* default to double-buffer */
+   ob->priv.num = 2;
 
    /* check for buffer override */
    if ((num = getenv("EVAS_DRM_BUFFERS")))
      {
         ob->priv.num = atoi(num);
-
-        /* cap maximum # of buffers */
         if (ob->priv.num <= 0) ob->priv.num = 1;
-        else if (ob->priv.num > 3) ob->priv.num = 3;
+        else if (ob->priv.num > 4) ob->priv.num = 4;
      }
 
    /* check for vsync override */
@@ -87,13 +82,18 @@ evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
              ERR("Failed to create buffer %d", i);
              break;
           }
+
+        DBG("Evas Engine Created Dumb Buffer");
+        DBG("\tFb: %d", ob->priv.buffer[i]->id);
+        DBG("\tHandle: %d", ob->priv.buffer[i]->hdl);
+        DBG("\tStride: %d", ob->priv.buffer[i]->stride);
+        DBG("\tSize: %d", ob->priv.buffer[i]->size);
+        DBG("\tW: %d\tH: %d",
+            ob->priv.buffer[i]->w, ob->priv.buffer[i]->h);
      }
 
    /* set the front buffer to be the one on the crtc */
-   evas_drm_outbuf_framebuffer_set(ob, ob->priv.buffer[0]);
-
-   /* set back buffer as first one to draw into */
-   /* ob->priv.curr = (ob->priv.num - 1); */
+   ecore_drm_fb_set(info->info.dev, ob->priv.buffer[0]);
 
    return ob;
 }
@@ -136,15 +136,11 @@ evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
      {
         ob->w = w;
         ob->h = h;
-        if (ob->w < ob->priv.mode.hdisplay) ob->w = ob->priv.mode.hdisplay;
-        if (ob->h < ob->priv.mode.vdisplay) ob->h = ob->priv.mode.vdisplay;
      }
    else
      {
         ob->w = h;
         ob->h = w;
-        if (ob->w < ob->priv.mode.vdisplay) ob->w = ob->priv.mode.vdisplay;
-        if (ob->h < ob->priv.mode.hdisplay) ob->h = ob->priv.mode.hdisplay;
      }
 
    /* destroy the old buffers */
@@ -450,7 +446,7 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode 
 }
 
 int
-evas_outbuf_get_rot(Outbuf *ob)
+evas_outbuf_rot_get(Outbuf *ob)
 {
-   return ob->info->info.rotation;
+   return ob->rotation;
 }
