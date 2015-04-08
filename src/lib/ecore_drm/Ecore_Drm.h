@@ -212,8 +212,6 @@ EAPI int ecore_drm_device_fd_get(Ecore_Drm_Device *dev);
 EAPI void ecore_drm_device_window_set(Ecore_Drm_Device *dev, unsigned int window);
 EAPI const char *ecore_drm_device_name_get(Ecore_Drm_Device *dev);
 
-EAPI void ecore_drm_device_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb);
-
 /**
  * Setup an Ecore_Drm_Device for software rendering
  *
