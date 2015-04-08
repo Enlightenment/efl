@@ -192,6 +192,7 @@ EFL_WITH_BIN([elementary], [elementary-codegen], [elementary_codegen])
 EFL_WITH_BIN([elementary], [elm-prefs-cc], [elm_prefs_cc])
 EFL_WITH_BIN([eolian], [eolian-gen], [eolian_gen])
 EFL_WITH_BIN([eolian-cxx], [eolian-cxx], [eolian_cxx])
+EFL_WITH_BIN([eldbus], [eldbus_codegen], [eldbus-codegen])
 # Force the helper to try external eolian generators
 AM_CONDITIONAL([HAVE_EOLIAN_GEN], [true])
 AM_CONDITIONAL([HAVE_EOLIAN_CXX], [true])
@@ -560,6 +561,7 @@ echo "  elementary_codegen.......: ${elementary_codegen}"
 echo "  elm_prefs_cc.............: ${elm_prefs_cc}"
 echo "  eolian_gen...............: ${eolian_gen}"
 echo "  eolian_cxx...............: ${eolian_cxx}"
+echo "  eldbus_codegen...........: ${eldbus_codegen}"
 echo
 echo "  Build elementary_test....: ${have_elementary_test}"
 echo "  Build elementary_codegen.: ${have_elementary_codegen}"

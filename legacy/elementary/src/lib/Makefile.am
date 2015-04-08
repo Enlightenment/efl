@@ -524,7 +524,7 @@ elm_intro.h.in
 
 $(COLORCLASS_GEN): elm_color_class.xml
 	@cd $(top_builddir)/src/lib && \
-	eldbus-codegen $(abs_top_srcdir)/src/lib/elm_color_class.xml
+	@eldbus_codegen@ $(abs_top_srcdir)/src/lib/elm_color_class.xml
 elm_color_class.c: $(COLORCLASS_GEN)
 
 
