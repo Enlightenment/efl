@@ -265,7 +265,7 @@ evas_3d_obj_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_obj_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
 EXTRA_PROGRAMS += evas_3d_blending
-evas_3d_blending_SOURCES = evas-3d-blending.c
+evas_3d_blending_SOURCES = evas-3d-blending.c evas-3d-primitives.c
 evas_3d_blending_LDADD = $(ECORE_EVAS_COMMON_LDADD) @EFL_PTHREAD_LIBS@
 evas_3d_blending_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
