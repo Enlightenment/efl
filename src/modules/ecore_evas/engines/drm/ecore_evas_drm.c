@@ -319,11 +319,6 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
     * message that the driver could not load. Let's be proactive and
     * work around this for the user by preloading the glapi library */
    dlopen("libglapi.so.0", (RTLD_LAZY | RTLD_GLOBAL));
-   if (dlerror())
-     {
-        _ecore_evas_drm_shutdown();
-        return NULL;
-     }
 
    /* try to allocate space for new ecore_evas */
    if (!(ee = calloc(1, sizeof(Ecore_Evas))))
