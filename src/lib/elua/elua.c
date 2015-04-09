@@ -98,6 +98,27 @@ elua_state_dirs_set(Elua_State *es, const char *core, const char *mods,
    if (apps) es->appsdir = eina_stringshare_add(apps);
 }
 
+EAPI Eina_Stringshare *
+elua_state_core_dir_get(Elua_State *es)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, NULL);
+   return es->coredir;
+}
+
+EAPI Eina_Stringshare *
+elua_state_mod_dir_get(Elua_State *es)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, NULL);
+   return es->moddir;
+}
+
+EAPI Eina_Stringshare *
+elua_state_apps_dir_get(Elua_State *es)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, NULL);
+   return es->moddir;
+}
+
 EAPI Elua_State *
 elua_state_from_lua_get(lua_State *L)
 {

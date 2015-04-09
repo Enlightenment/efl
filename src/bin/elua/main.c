@@ -125,9 +125,9 @@ elua_init_module(lua_State *L)
 static int
 elua_register_require(lua_State *L)
 {
-   const char *corepath = elua_state->coredir;
-   const char *modpath  = elua_state->moddir;
-   const char *appspath = elua_state->appsdir;
+   const char *corepath = elua_state_core_dir_get(elua_state);
+   const char *modpath  = elua_state_mod_dir_get(elua_state);
+   const char *appspath = elua_state_apps_dir_get(elua_state);
    Eina_List  *largs    = lua_touserdata(L, lua_upvalueindex(1)), *l = NULL;
    Eina_Bool   noenv    = lua_toboolean (L, lua_upvalueindex(2));
    Arg_Data   *data     = NULL;
