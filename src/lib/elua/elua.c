@@ -92,7 +92,7 @@ EAPI void
 elua_state_dirs_set(Elua_State *es, const char *core, const char *mods,
                     const char *apps)
 {
-   if (!es) return;
+   EINA_SAFETY_ON_NULL_RETURN(es);
    if (core) es->coredir = eina_stringshare_add(core);
    if (mods) es->moddir  = eina_stringshare_add(mods);
    if (apps) es->appsdir = eina_stringshare_add(apps);
@@ -101,6 +101,7 @@ elua_state_dirs_set(Elua_State *es, const char *core, const char *mods,
 EAPI Elua_State *
 elua_state_from_lua_get(lua_State *L)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(L, NULL);
    lua_getfield(L, LUA_REGISTRYINDEX, "elua_ptr");
    if (!lua_isnil(L, -1))
      {
@@ -121,7 +122,7 @@ _elua_errmsg(const char *pname, const char *msg)
 EAPI int
 elua_report_error(Elua_State *es, const char *pname, int status)
 {
-   if (!es || !es->luastate) return status;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(es && es->luastate, status);
    if (status && !lua_isnil(es->luastate, -1))
      {
         const char *msg = lua_tostring(es->luastate, -1);
