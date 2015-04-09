@@ -127,7 +127,6 @@ pc/eina.pc \
 pc/eo.pc \
 pc/eolian.pc \
 pc/efl.pc \
-pc/efl-cxx.pc \
 pc/emile.pc \
 pc/eet.pc \
 pc/evas.pc \
@@ -159,6 +158,7 @@ pkgconfig_DATA += \
 pc/eina-cxx.pc \
 pc/evas-cxx.pc \
 pc/ecore-cxx.pc \
+pc/efl-cxx.pc \
 pc/eolian-cxx.pc \
 pc/edje-cxx.pc \
 pc/eet-cxx.pc \
