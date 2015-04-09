@@ -9,6 +9,8 @@
  * IT AT RUNTIME.
  */
 
+typedef struct _Async_Open_Data Async_Open_Data;
+
 /**
  * @addtogroup Widget
  * @{
@@ -55,10 +57,10 @@ struct _Elm_Image_Data
    Elm_Image_Orient      orient;
 
    struct {
-      Eina_Stringshare  *file, *key;
-      Eina_File         *f, *f_set;
-      void              *map;
       Ecore_Thread      *th;
+      Async_Open_Data   *todo, *done;
+      Eina_Stringshare  *file, *key; // only for file_get()
+      Eina_Spinlock      lck;
    } async;
 
    Eina_Bool             aspect_fixed : 1;
