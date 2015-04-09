@@ -119,40 +119,31 @@ elua_register_require(lua_State *L)
    elua_require_ref = luaL_ref(L, LUA_REGISTRYINDEX);
    lua_pushvalue(L, 2);
    elua_appload_ref = luaL_ref(L, LUA_REGISTRYINDEX);
-   if (getenv("EFL_RUN_IN_TREE"))
+   if (!corepath)
      {
-        corepath = PACKAGE_SRC_DIR "/src/scripts/elua/core";
-        modpath  = PACKAGE_SRC_DIR "/src/scripts/elua/modules";
-        appspath = PACKAGE_SRC_DIR "/src/scripts/elua/apps";
+        if (noenv || !(corepath = getenv("ELUA_CORE_DIR")) || !corepath[0])
+          {
+             corepath = corepathbuf;
+             snprintf(corepathbuf, sizeof(corepathbuf), "%s/core",
+                      eina_prefix_data_get(elua_prefix));
+          }
      }
-   else
+   if (!modpath)
      {
-        if (!corepath)
+        if (noenv || !(modpath = getenv("ELUA_MODULES_DIR")) || !modpath[0])
           {
-             if (noenv || !(corepath = getenv("ELUA_CORE_DIR")) || !corepath[0])
-               {
-                  corepath = corepathbuf;
-                  snprintf(corepathbuf, sizeof(corepathbuf), "%s/core",
-                           eina_prefix_data_get(elua_prefix));
-               }
+             modpath = modpathbuf;
+             snprintf(modpathbuf, sizeof(modpathbuf), "%s/modules",
+                      eina_prefix_data_get(elua_prefix));
           }
-        if (!modpath)
+     }
+   if (!appspath)
+     {
+        if (noenv || !(appspath = getenv("ELUA_APPS_DIR")) || !appspath[0])
           {
-             if (noenv || !(modpath = getenv("ELUA_MODULES_DIR")) || !modpath[0])
-               {
-                  modpath = modpathbuf;
-                  snprintf(modpathbuf, sizeof(modpathbuf), "%s/modules",
-                           eina_prefix_data_get(elua_prefix));
-               }
-          }
-        if (!appspath)
-          {
-             if (noenv || !(appspath = getenv("ELUA_APPS_DIR")) || !appspath[0])
-               {
-                  appspath = appspathbuf;
-                  snprintf(appspathbuf, sizeof(appspathbuf), "%s/apps",
-                           eina_prefix_data_get(elua_prefix));
-               }
+             appspath = appspathbuf;
+             snprintf(appspathbuf, sizeof(appspathbuf), "%s/apps",
+                      eina_prefix_data_get(elua_prefix));
           }
      }
    lua_pushfstring(L, "%s/?.lua;", corepath);
@@ -388,15 +379,7 @@ elua_main(lua_State *L)
         return 0;
      }
 
-   if (getenv("EFL_RUN_IN_TREE"))
-     {
-        Arg_Data *v = malloc(sizeof(Arg_Data));
-        v->type     = ARG_LIBDIR;
-        v->value    = PACKAGE_SRC_DIR "/src/bindings/luajit";
-        largs       = eina_list_append(largs, v);
-        coref       = PACKAGE_SRC_DIR "/src/scripts/elua/core";
-     }
-   else if (!(coref = coredir))
+   if (!(coref = coredir))
      {
         if (noenv || !(coref = getenv("ELUA_CORE_DIR")) || !coref[0])
           {

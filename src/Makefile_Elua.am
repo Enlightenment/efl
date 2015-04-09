@@ -14,7 +14,6 @@ lib_elua_libelua_la_SOURCES = \
 
 lib_elua_libelua_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@ \
 	-DLOCALE_DIR=\"@LOCALE_DIR@\" \
-	-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
 	-DPACKAGE_BIN_DIR=\"$(bindir)\" \
 	-DPACKAGE_DATA_DIR=\"$(datadir)/elua\"
 
@@ -33,7 +32,6 @@ bin_elua_elua_SOURCES = \
 
 bin_elua_elua_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@ \
 	-DLOCALE_DIR=\"@LOCALE_DIR@\" \
-	-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
 	-DPACKAGE_BIN_DIR=\"$(bindir)\" \
 	-DPACKAGE_DATA_DIR=\"$(datadir)/elua\"
 
