@@ -203,7 +203,7 @@ static int
 elua_dofile(Elua_State *es, const char *fname)
 {
    return elua_report_error(es, elua_progname,
-                            elua_io_loadfile(es->luastate, fname)
+                            elua_io_loadfile(es, fname)
                             || elua_docall(es, 0, 1));
 }
 
@@ -236,10 +236,9 @@ static int
 elua_doscript(Elua_State *es, int argc, char **argv, int n, int *quit)
 {
    int status;
-   lua_State *L = es->luastate;
    const char *fname = argv[n];
    int narg = elua_getargs(es, argc, argv, n);
-   lua_setglobal(L, "arg");
+   lua_setglobal(es->luastate, "arg");
    if (fname[0] == '-' && !fname[1])
      {
         fname = NULL;
@@ -251,28 +250,28 @@ elua_doscript(Elua_State *es, int argc, char **argv, int n, int *quit)
         if (f)
           {
              fclose(f);
-             status = elua_io_loadfile(L, fname);
+             status = elua_io_loadfile(es, fname);
           }
         else
           status = !elua_loadapp(es, fname);
      }
    else
      {
-        status = elua_io_loadfile(L, fname);
+        status = elua_io_loadfile(es, fname);
      }
-   lua_insert(L, -(narg + 1));
+   lua_insert(es->luastate, -(narg + 1));
    if (!status)
      {
          status = elua_docall(es, narg, 1);
      }
    else
      {
-        lua_pop(L, narg);
+        lua_pop(es->luastate, narg);
      }
    if (!status)
      {
-        *quit = lua_toboolean(L, -1);
-        lua_pop(L, 1);
+        *quit = lua_toboolean(es->luastate, -1);
+        lua_pop(es->luastate, 1);
      }
    return elua_report_error(es, elua_progname, status);
 }
@@ -434,7 +433,7 @@ elua_main(lua_State *L)
           }
      }
    snprintf(modfile, sizeof(modfile), "%s/module.lua", coref);
-   if (elua_report_error(es, elua_progname, elua_io_loadfile(L, modfile)))
+   if (elua_report_error(es, elua_progname, elua_io_loadfile(es, modfile)))
      {
         m->status = 1;
         return 0;
@@ -447,7 +446,7 @@ elua_main(lua_State *L)
    lua_call(L, 2, 0);
 
    snprintf(modfile, sizeof(modfile), "%s/gettext.lua", coref);
-   if (elua_report_error(es, elua_progname, elua_io_loadfile(L, modfile)))
+   if (elua_report_error(es, elua_progname, elua_io_loadfile(es, modfile)))
      {
         m->status = 1;
         return 0;

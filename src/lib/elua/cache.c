@@ -150,13 +150,16 @@ getf_map(lua_State *L EINA_UNUSED, void *ud, size_t *size)
 }
 
 EAPI int
-elua_io_loadfile(lua_State *L, const char *fname)
+elua_io_loadfile(Elua_State *es, const char *fname)
 {
    Map_Stream s;
    int status;
    Eina_File *f;
    const char *chname;
    Eina_Bool bcache = EINA_FALSE;
+   lua_State *L;
+   if (!es || !es->luastate) return -1;
+   L = es->luastate;
    if (!fname)
      {
         return elua_loadstdin(L);
@@ -187,8 +190,9 @@ elua_io_loadfile(lua_State *L, const char *fname)
 static int
 loadfile(lua_State *L)
 {
+   Elua_State *es = elua_state_from_lua_get(L);
    const char *fname = luaL_optstring(L, 1, NULL);
-   int status = elua_io_loadfile(L, fname),
+   int status = elua_io_loadfile(es, fname),
        hasenv = (lua_gettop(L) >= 3);
    if (!status)
      {
