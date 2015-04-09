@@ -74,7 +74,7 @@ static int
 elua_docall(Elua_State *es, int narg, int nret)
 {
    int status;
-   lua_State *L = es->luastate;
+   lua_State *L = elua_state_lua_state_get(es);
    int bs = lua_gettop(L) - narg;
    lua_pushcfunction(L, elua_traceback);
    lua_insert(L, bs);
@@ -88,7 +88,7 @@ elua_docall(Elua_State *es, int narg, int nret)
 static int
 elua_getargs(Elua_State *es, int argc, char **argv, int n)
 {
-   lua_State *L = es->luastate;
+   lua_State *L = elua_state_lua_state_get(es);
    int i;
    int narg = argc - (n + 1);
    luaL_checkstack(L, narg + 3, "too many arguments to script");
@@ -193,7 +193,7 @@ elua_register_require(lua_State *L)
 static int
 elua_dolib(Elua_State *es, const char *libname)
 {
-   lua_State *L = es->luastate;
+   lua_State *L = elua_state_lua_state_get(es);
    lua_rawgeti(L, LUA_REGISTRYINDEX, elua_require_ref);
    lua_pushstring(L, libname);
    return elua_report_error(es, elua_progname, lua_pcall(L, 1, 0, 0));
@@ -211,7 +211,7 @@ static int
 elua_dostr(Elua_State *es, const char *chunk, const char *chname)
 {
    return elua_report_error(es, elua_progname,
-                            luaL_loadbuffer(es->luastate, chunk, strlen(chunk),
+                            luaL_loadbuffer(elua_state_lua_state_get(es), chunk, strlen(chunk),
                                             chname)
                             || elua_docall(es, 0, 0));
 }
@@ -219,7 +219,7 @@ elua_dostr(Elua_State *es, const char *chunk, const char *chname)
 static Eina_Bool
 elua_loadapp(Elua_State *es, const char *appname)
 {
-   lua_State *L = es->luastate;
+   lua_State *L = elua_state_lua_state_get(es);
    lua_rawgeti(L, LUA_REGISTRYINDEX, elua_appload_ref);
    lua_pushstring(L, appname);
    lua_call(L, 1, 2);
@@ -238,7 +238,7 @@ elua_doscript(Elua_State *es, int argc, char **argv, int n, int *quit)
    int status;
    const char *fname = argv[n];
    int narg = elua_getargs(es, argc, argv, n);
-   lua_setglobal(es->luastate, "arg");
+   lua_setglobal(elua_state_lua_state_get(es), "arg");
    if (fname[0] == '-' && !fname[1])
      {
         fname = NULL;
@@ -259,19 +259,19 @@ elua_doscript(Elua_State *es, int argc, char **argv, int n, int *quit)
      {
         status = elua_io_loadfile(es, fname);
      }
-   lua_insert(es->luastate, -(narg + 1));
+   lua_insert(elua_state_lua_state_get(es), -(narg + 1));
    if (!status)
      {
          status = elua_docall(es, narg, 1);
      }
    else
      {
-        lua_pop(es->luastate, narg);
+        lua_pop(elua_state_lua_state_get(es), narg);
      }
    if (!status)
      {
-        *quit = lua_toboolean(es->luastate, -1);
-        lua_pop(es->luastate, 1);
+        *quit = lua_toboolean(elua_state_lua_state_get(es), -1);
+        lua_pop(elua_state_lua_state_get(es), 1);
      }
    return elua_report_error(es, elua_progname, status);
 }
@@ -284,8 +284,8 @@ elua_bin_shutdown(Elua_State *es, int c)
 
    if (es) EINA_LIST_FREE(elua_modlist, data)
      {
-        lua_rawgeti(es->luastate, LUA_REGISTRYINDEX, (size_t)data);
-        lua_call(es->luastate, 0, 0);
+        lua_rawgeti(elua_state_lua_state_get(es), LUA_REGISTRYINDEX, (size_t)data);
+        lua_call(elua_state_lua_state_get(es), 0, 0);
      }
 
    if (elua_prefix) eina_prefix_free(elua_prefix);
@@ -547,7 +547,7 @@ main(int argc, char **argv)
    m.argv   = argv;
    m.status = 0;
 
-   elua_bin_shutdown(es, !!(lua_cpcall(es->luastate, elua_main, &m) || m.status));
+   elua_bin_shutdown(es, !!(lua_cpcall(elua_state_lua_state_get(es), elua_main, &m) || m.status));
 
    return 0; /* never gets here */
 }
