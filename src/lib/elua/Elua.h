@@ -83,6 +83,8 @@ EAPI Eina_Stringshare *elua_state_core_dir_get(const Elua_State *es);
 EAPI Eina_Stringshare *elua_state_mod_dir_get(const Elua_State *es);
 EAPI Eina_Stringshare *elua_state_apps_dir_get(const Elua_State *es);
 
+EAPI lua_State *elua_state_lua_state_get(const Elua_State *es);
+
 EAPI int elua_report_error(const Elua_State *es, const char *pname, int status);
 
 EAPI void elua_state_setup_i18n(const Elua_State *es);

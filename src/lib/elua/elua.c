@@ -119,6 +119,13 @@ elua_state_apps_dir_get(const Elua_State *es)
    return es->moddir;
 }
 
+EAPI lua_State *
+elua_state_lua_state_get(const Elua_State *es)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, NULL);
+   return es->luastate;
+}
+
 EAPI Elua_State *
 elua_state_from_lua_get(lua_State *L)
 {
