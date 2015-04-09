@@ -454,7 +454,7 @@ elua_main(lua_State *L)
    elua_state_setup_i18n(es);
    lua_call(L, 1, 0);
 
-   elua_io_register(L);
+   elua_io_register(es);
    lua_gc(L, LUA_GCRESTART, 0);
 
    INF("elua lua state initialized");

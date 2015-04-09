@@ -85,7 +85,7 @@ EAPI void elua_state_setup_i18n(Elua_State *es);
 
 EAPI int elua_io_popen(lua_State *L);
 EAPI int elua_io_loadfile(Elua_State *es, const char *fname);
-EAPI void elua_io_register(lua_State *L);
+EAPI void elua_io_register(Elua_State *es);
 
 #endif
 

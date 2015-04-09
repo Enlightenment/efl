@@ -209,8 +209,9 @@ loadfile(lua_State *L)
 }
 
 EAPI void
-elua_io_register(lua_State *L)
+elua_io_register(Elua_State *es)
 {
-   lua_pushcfunction(L, loadfile);
-   lua_setglobal(L, "loadfile");
+   EINA_SAFETY_ON_FALSE_RETURN(es && es->luastate);
+   lua_pushcfunction(es->luastate, loadfile);
+   lua_setglobal(es->luastate, "loadfile");
 }
