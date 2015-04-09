@@ -5,7 +5,7 @@ Name:           efl
 Version:        1.13.1
 Release:        0
 License:        LGPL-2.1
-Summary:        Enlightenment Foundation Libraries - set of libraries used (not only) by E17
+Summary:        Enlightenment Foundation Libraries - set of libraries used (not only) by enlightenment
 Url:            http://enlightenment.org/
 Group:          Graphics & UI Framework/API
 Source:         %{name}-%{version}.tar.bz2
@@ -579,6 +579,7 @@ CFLAGS+=" -DMESA_EGL_NO_X11_HEADERS "
 %if %{with wayland}
     --enable-wayland \
     --enable-drm \
+    --enable-gl-drm \
     --enable-egl \
     --with-opengl=es \
     --enable-tile-rotate \
