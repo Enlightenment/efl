@@ -33,10 +33,7 @@ ector_eolian_files = \
                      $(ector_eolian_files_software)
 
 ector_eolian_c = $(ector_eolian_files:%.eo=%.eo.c)
-ector_eolian_h = \
-                 $(ector_eolian_generic_h) \
-                 $(ector_eolian_cairo_h) \
-                 $(ector_eolian_software_h)
+ector_eolian_h = $(ector_eolian_files:%.eo=%.eo.h)
 
 BUILT_SOURCES += \
 	$(ector_eolian_c) \
