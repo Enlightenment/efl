@@ -34,7 +34,6 @@ enum
    ARG_LIBDIR
 };
 
-static Eina_List   *elua_modlist     = NULL;
 static int          elua_require_ref = LUA_REFNIL;
 static int          elua_appload_ref = LUA_REFNIL;
 static const char  *elua_progname    = NULL;
@@ -103,23 +102,6 @@ elua_getargs(Elua_State *es, int argc, char **argv, int n)
         lua_rawseti(L, -2, i - n);
      }
    return narg;
-}
-
-static int
-elua_init_module(lua_State *L)
-{
-   if (!lua_isnoneornil(L, 1))
-     {
-        lua_pushvalue(L, 1);
-        lua_call(L, 0, 0);
-     }
-   if (!lua_isnoneornil(L, 2))
-     {
-        lua_pushvalue(L, 2);
-        elua_modlist = eina_list_append(elua_modlist,
-           (void*)(size_t)luaL_ref(L, LUA_REGISTRYINDEX));
-     }
-   return 0;
 }
 
 static int
@@ -279,17 +261,8 @@ elua_doscript(Elua_State *es, int argc, char **argv, int n, int *quit)
 void
 elua_bin_shutdown(Elua_State *es, int c)
 {
-   void *data;
    INF("elua shutdown");
-
-   if (es) EINA_LIST_FREE(elua_modlist, data)
-     {
-        lua_rawgeti(elua_state_lua_state_get(es), LUA_REGISTRYINDEX, (size_t)data);
-        lua_call(elua_state_lua_state_get(es), 0, 0);
-     }
-
    if (elua_prefix) eina_prefix_free(elua_prefix);
-
    if (es) elua_state_free(es);
    if (_el_log_domain != EINA_LOG_DOMAIN_GLOBAL)
      eina_log_domain_unregister(_el_log_domain);
@@ -307,7 +280,7 @@ struct Main_Data
 
 const luaL_reg cutillib[] =
 {
-   { "init_module", elua_init_module },
+   { "init_module", elua_module_init },
    { "popenv"     , elua_io_popen    },
    { NULL         , NULL             }
 };

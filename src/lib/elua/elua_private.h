@@ -33,6 +33,7 @@ struct _Elua_State
    Eina_Stringshare *coredir;
    Eina_Stringshare *moddir;
    Eina_Stringshare *appsdir;
+   Eina_List *cmods;
 };
 
 extern int _elua_log_dom;

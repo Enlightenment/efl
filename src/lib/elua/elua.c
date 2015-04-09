@@ -81,7 +81,18 @@ EAPI void
 elua_state_free(Elua_State *es)
 {
    if (!es) return;
-   if (es->luastate) lua_close(es->luastate);
+   if (es->luastate)
+     {
+        void *data;
+        EINA_LIST_FREE(es->cmods, data)
+          {
+             lua_rawgeti(es->luastate, LUA_REGISTRYINDEX, (size_t)data);
+             lua_call(es->luastate, 0, 0);
+          }
+        lua_close(es->luastate);
+     }
+   else if (es->cmods)
+     eina_list_free(es->cmods);
    eina_stringshare_del(es->coredir);
    eina_stringshare_del(es->moddir);
    eina_stringshare_del(es->appsdir);
@@ -210,4 +221,22 @@ elua_state_setup_i18n(const Elua_State *es)
    lua_pushlightuserdata(es->luastate, *((void**)&dngettextp));
    lua_setfield(es->luastate, -2, "dngettext");
 #endif
+}
+
+EAPI int
+elua_module_init(lua_State *L)
+{
+   Elua_State *es = elua_state_from_lua_get(L);
+   if (!lua_isnoneornil(L, 1))
+     {
+        lua_pushvalue(L, 1);
+        lua_call(L, 0, 0);
+     }
+   if (!lua_isnoneornil(L, 2))
+     {
+        lua_pushvalue(L, 2);
+        es->cmods = eina_list_append(es->cmods,
+           (void*)(size_t)luaL_ref(L, LUA_REGISTRYINDEX));
+     }
+   return 0;
 }
