@@ -60,13 +60,7 @@ extern "C" {
 #include <lualib.h>
 #include <lauxlib.h>
 
-typedef struct _Elua_State
-{
-   lua_State *luastate;
-   Eina_Stringshare *coredir;
-   Eina_Stringshare *moddir;
-   Eina_Stringshare *appsdir;
-} Elua_State;
+typedef struct _Elua_State Elua_State;
 
 EAPI int elua_init(void);
 EAPI int elua_shutdown(void);

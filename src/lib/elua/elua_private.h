@@ -27,6 +27,14 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
+struct _Elua_State
+{
+   lua_State *luastate;
+   Eina_Stringshare *coredir;
+   Eina_Stringshare *moddir;
+   Eina_Stringshare *appsdir;
+};
+
 extern int _elua_log_dom;
 
 #define DBG(...) EINA_LOG_DOM_DBG(_elua_log_dom, __VA_ARGS__)
