@@ -116,6 +116,24 @@ struct _Ecore_Drm_Event_Activate
    Eina_Bool active;
 };
 
+struct _Ecore_Drm_Event_Page_Flip
+{
+   int          fd;
+   unsigned int sequence;
+   unsigned int sec;
+   unsigned int usec;
+   void        *data;
+};
+
+struct _Ecore_Drm_Event_Vblank
+{
+   int          fd;
+   unsigned int sequence;
+   unsigned int sec;
+   unsigned int usec;
+   void        *data;
+};
+
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm_Device Ecore_Drm_Device;
 
@@ -140,7 +158,15 @@ typedef struct _Ecore_Drm_Sprite Ecore_Drm_Sprite;
 /* sturcture to inform drm activation state */
 typedef struct _Ecore_Drm_Event_Activate Ecore_Drm_Event_Activate;
 
+/* sturcture to inform drm page flip */
+typedef struct _Ecore_Drm_Event_Page_Flip Ecore_Drm_Event_Page_Flip;
+
+/* sturcture to inform drm vblank */
+typedef struct _Ecore_Drm_Event_Vblank Ecore_Drm_Event_Vblank;
+
 EAPI extern int ECORE_DRM_EVENT_ACTIVATE;
+EAPI extern int ECORE_DRM_EVENT_PAGE_FLIP;
+EAPI extern int ECORE_DRM_EVENT_VBLANK;
 
 /**
  * @file

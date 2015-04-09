@@ -26,6 +26,13 @@ typedef struct _Ecore_Evas_Engine_Drm_Data Ecore_Evas_Engine_Drm_Data;
 struct _Ecore_Evas_Engine_Drm_Data
 {
    int w, h;
+   struct
+     {
+        void (*flip) (int fd, unsigned int seq, unsigned int sec, unsigned int usec, void *data);
+        void (*vblank) (int fd, unsigned int seq, unsigned int sec, unsigned int usec, void *data);
+     } func;
+   int wait_for_flip_done;
+   int need_render;
 };
 
 /* local function prototypes */
@@ -72,9 +79,13 @@ static int _ecore_evas_drm_render_updates_process(Ecore_Evas *ee, Eina_List *upd
 static void _ecore_evas_drm_screen_geometry_get(const Ecore_Evas *ee EINA_UNUSED, int *x, int *y, int *w, int *h);
 static void _ecore_evas_drm_pointer_xy_get(const Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y);
 
+static Eina_Bool _ecore_evas_drm_event_page_flip(void *data, int type, void *event);
+static Eina_Bool _ecore_evas_drm_event_vblank(void *data, int type, void *event);
+
 /* local variables */
 static int _ecore_evas_init_count = 0;
 static Ecore_Drm_Device *dev = NULL;
+static Ecore_Event_Handler *_ecore_evas_event_handlers[2];
 
 static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
 {
@@ -280,6 +291,14 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
                                            (ecore_time_get() * 1000.0) &
                                            0xffffffff), NULL);
 
+   _ecore_evas_event_handlers[0] =
+      ecore_event_handler_add(ECORE_DRM_EVENT_PAGE_FLIP,
+                              _ecore_evas_drm_event_page_flip, ee);
+
+   _ecore_evas_event_handlers[1] =
+      ecore_event_handler_add(ECORE_DRM_EVENT_VBLANK,
+                              _ecore_evas_drm_event_vblank, ee);
+
    return ee;
 
 eng_err:
@@ -411,6 +430,10 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
                gbm_surface_create(einfo->info.gbm, w, h, format, flags);
           }
 
+        /* setting up drm event handler of evas gl_drm engine */
+        if (einfo->func.flip) edata->func.flip = einfo->func.flip;
+        if (einfo->func.vblank) edata->func.vblank = einfo->func.vblank;
+
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
@@ -439,6 +462,14 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
                             (unsigned int)((unsigned long long)
                                            (ecore_time_get() * 1000.0) &
                                            0xffffffff), NULL);
+
+   _ecore_evas_event_handlers[0] =
+      ecore_event_handler_add(ECORE_DRM_EVENT_PAGE_FLIP,
+                              _ecore_evas_drm_event_page_flip, ee);
+
+   _ecore_evas_event_handlers[1] =
+      ecore_event_handler_add(ECORE_DRM_EVENT_VBLANK,
+                              _ecore_evas_drm_event_vblank, ee);
 
    return ee;
 
@@ -534,7 +565,15 @@ dev_err:
 static int
 _ecore_evas_drm_shutdown(void)
 {
+   unsigned int i;
+
    if (--_ecore_evas_init_count != 0) return _ecore_evas_init_count;
+
+   for (i = 0; i < sizeof(_ecore_evas_event_handlers) / sizeof(Ecore_Event_Handler*); i++)
+     {
+        if (_ecore_evas_event_handlers[i])
+          ecore_event_handler_del(_ecore_evas_event_handlers[i]);
+     }
 
    ecore_drm_inputs_destroy(dev);
    /* NB: No need to free outputs here. Is done in device free */
@@ -547,6 +586,50 @@ _ecore_evas_drm_shutdown(void)
    ecore_event_evas_shutdown();
 
    return _ecore_evas_init_count;
+}
+
+static Eina_Bool
+_ecore_evas_drm_event_page_flip(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Drm_Event_Page_Flip *e;
+   Ecore_Evas_Engine_Drm_Data *edata;
+
+   e = event;
+   ee = data;
+   edata = ee->engine.data;
+
+   if (edata->func.flip)
+     edata->func.flip(e->fd, e->sequence, e->sec, e->usec, e->data);
+
+   if (edata->wait_for_flip_done)
+     {
+        edata->wait_for_flip_done = 0;
+        if (edata->need_render)
+          {
+             _ecore_evas_drm_render(ee);
+             edata->need_render = 0;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_ecore_evas_drm_event_vblank(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Drm_Event_Vblank *e;
+   Ecore_Evas_Engine_Drm_Data *edata;
+
+   e = event;
+   ee = data;
+   edata = ee->engine.data;
+
+   if (edata->func.vblank)
+     edata->func.vblank(e->fd, e->sequence, e->sec, e->usec, e->data);
+
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Ecore_Evas_Interface_Drm *
@@ -944,11 +1027,20 @@ _ecore_evas_drm_render(Ecore_Evas *ee)
    Eina_List *l;
    Ecore_Evas *ee2;
 
+   Ecore_Evas_Engine_Drm_Data *edata;
+   edata = ee->engine.data;
+
    if (ee->in_async_render) return 0;
 
    if (!ee->visible)
      {
         evas_norender(ee->evas);
+        return 0;
+     }
+
+   if (edata->wait_for_flip_done)
+     {
+        edata->need_render = 1;
         return 0;
      }
 
@@ -969,6 +1061,9 @@ _ecore_evas_drm_render(Ecore_Evas *ee)
         updates = evas_render_updates(ee->evas);
         rend = _ecore_evas_drm_render_updates_process(ee, updates);
         evas_render_updates_free(updates);
+
+        if (rend)
+          edata->wait_for_flip_done = 1;
      }
    else if (evas_render_async(ee->evas))
      {

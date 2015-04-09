@@ -33,6 +33,13 @@ struct _Evas_Engine_Info_GL_Drm
         void *data;
      } callback;
 
+   struct
+     {
+        /* functions for handling drm events */
+        void (*flip) (int fd, unsigned int seq, unsigned int sec, unsigned int usec, void *data);
+        void (*vblank) (int fd, unsigned int seq, unsigned int sec, unsigned int usec, void *data);
+     } func;
+
    /* non-blocking or blocking mode */
    Evas_Engine_Render_Mode render_mode;
 

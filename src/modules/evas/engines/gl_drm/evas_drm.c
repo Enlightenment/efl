@@ -70,8 +70,8 @@ _evas_drm_crtc_buffer_get(int fd, int crtc_id)
    return id;
 }
 
-static void
-_evas_drm_outbuf_page_flip(int fd EINA_UNUSED, unsigned int seq EINA_UNUSED, unsigned int tv_sec EINA_UNUSED, unsigned int tv_usec EINA_UNUSED, void *data)
+void
+evas_drm_outbuf_event_flip(int fd EINA_UNUSED, unsigned int seq EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
 {
    Outbuf *ob;
    Buffer *buff;
@@ -84,6 +84,13 @@ _evas_drm_outbuf_page_flip(int fd EINA_UNUSED, unsigned int seq EINA_UNUSED, uns
 
    ob->priv.pending_flip = EINA_FALSE;
    ob->priv.curr = (ob->priv.curr + 1) % ob->priv.num;
+}
+
+void
+evas_drm_outbuf_event_vblank(int fd EINA_UNUSED, unsigned int seq EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
+{
+   /* do nothing */
+   ;
 }
 
 static Eina_Bool
@@ -190,11 +197,6 @@ evas_drm_outbuf_setup(Outbuf *ob)
 
    /* check for valid Output buffer */
    if ((!ob) || (ob->priv.fd < 0)) return EINA_FALSE;
-
-   /* setup drmHandleEvent context */
-   memset(&ob->priv.ctx, 0, sizeof(ob->priv.ctx));
-   ob->priv.ctx.version = DRM_EVENT_CONTEXT_VERSION;
-   ob->priv.ctx.page_flip_handler = _evas_drm_outbuf_page_flip;
 
    /* try to get drm resources */
    if (!(res = drmModeGetResources(ob->priv.fd)))
@@ -365,9 +367,6 @@ evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer)
           }
 
         ob->priv.pending_flip = EINA_TRUE;
-
-        while (ob->priv.pending_flip)
-          drmHandleEvent(ob->priv.fd, &ob->priv.ctx);
      }
    else
      {

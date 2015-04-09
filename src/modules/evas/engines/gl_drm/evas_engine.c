@@ -541,6 +541,12 @@ eng_info(Evas *eo_e EINA_UNUSED)
    info->magic.magic = rand();
    info->render_mode = EVAS_RENDER_MODE_BLOCKING;
 
+   /* setup drm page flip done and vblank event handlers.
+    * then these will be called when drm event occurrs.
+    */
+   info->func.flip = evas_drm_outbuf_event_flip;
+   info->func.vblank = evas_drm_outbuf_event_vblank;
+
    return info;
 }
 

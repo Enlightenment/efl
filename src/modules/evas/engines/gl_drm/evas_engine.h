@@ -63,7 +63,7 @@ extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock;
 # endif
 # define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_gl_drm_log_dom, __VA_ARGS__)
 
-# define NUM_BUFFERS 2
+# define NUM_BUFFERS 4
 
 typedef struct _Buffer Buffer;
 typedef struct _Plane Plane;
@@ -127,7 +127,6 @@ struct _Outbuf
       Buffer buffer[NUM_BUFFERS];
       int curr, num;
       drmModeModeInfo mode;
-      drmEventContext ctx;
       Eina_List *pending_writes;
       Eina_List *planes;
       Eina_Bool pending_flip : 1;
@@ -183,4 +182,6 @@ Eina_Bool evas_drm_gbm_shutdown(Evas_Engine_Info_GL_Drm *info);
 Eina_Bool evas_drm_outbuf_setup(Outbuf *ob);
 void evas_drm_outbuf_framebuffer_set(Outbuf *ob, Buffer *buffer);
 Eina_Bool evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer);
+void evas_drm_outbuf_event_flip(int fd, unsigned int seq, unsigned int sec, unsigned int usec, void *data);
+void evas_drm_outbuf_event_vblank(int fd, unsigned int seq, unsigned int sec, unsigned int usec, void *data);
 #endif

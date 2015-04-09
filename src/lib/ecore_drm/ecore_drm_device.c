@@ -10,41 +10,35 @@ static Eina_List *drm_devices;
 static void 
 _ecore_drm_device_cb_page_flip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
 {
-   Ecore_Drm_Output *output;
+   Ecore_Drm_Event_Page_Flip *e;
 
-   DBG("Drm Page Flip Event");
+   e = calloc(1, sizeof(Ecore_Drm_Event_Page_Flip));
+   if (!e)
+     return;
 
-   if (!(output = data)) return;
-
-   if (output->pending_flip)
-     {
-        ecore_drm_output_fb_release(output, output->current);
-        output->current = output->next;
-        output->next = NULL;
-     }
-
-   output->pending_flip = EINA_FALSE;
-   if (!output->pending_vblank) ecore_drm_output_repaint(output);
+   e->fd = fd;
+   e->sequence = frame;
+   e->sec = sec;
+   e->usec = usec;
+   e->data = data;
+   ecore_event_add(ECORE_DRM_EVENT_PAGE_FLIP, e, NULL, NULL);
 }
 
 static void 
 _ecore_drm_device_cb_vblank(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
 {
-   Ecore_Drm_Sprite *sprite;
-   Ecore_Drm_Output *output;
+   Ecore_Drm_Event_Vblank *e;
 
-   DBG("Drm VBlank Event");
+   e = calloc(1, sizeof(Ecore_Drm_Event_Vblank));
+   if (!e)
+     return;
 
-   if (!(sprite = data)) return;
-
-   output = sprite->output;
-   output->pending_vblank = EINA_FALSE;
-
-   ecore_drm_output_fb_release(output, sprite->current_fb);
-   sprite->current_fb = sprite->next_fb;
-   sprite->next_fb = NULL;
-
-   if (!output->pending_flip) _ecore_drm_output_frame_finish(output);
+   e->fd = fd;
+   e->sequence = frame;
+   e->sec = sec;
+   e->usec = usec;
+   e->data = data;
+   ecore_event_add(ECORE_DRM_EVENT_VBLANK, e, NULL, NULL);
 }
 
 static Eina_Bool 
@@ -302,9 +296,6 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
    dev->drm.hdlr = 
      ecore_main_fd_handler_add(dev->drm.fd, ECORE_FD_READ, 
                                _ecore_drm_device_cb_event, dev, NULL, NULL);
-
-   dev->drm.idler = 
-     ecore_idle_enterer_add(_ecore_drm_device_cb_idle, dev);
 
    return EINA_TRUE;
 }
