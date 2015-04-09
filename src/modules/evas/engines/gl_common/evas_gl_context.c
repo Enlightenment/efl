@@ -1841,7 +1841,8 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                }
              else
                {
-                  if ((!tex->alpha) && (tex->pt->native))
+                  //Tizen Only  : (!tex->im->native.offbuffer)
+                  if ((!tex->alpha) && (tex->pt->native) && (!tex->im->native.offbuffer))
                     shader = evas_gl_common_shader_choice(0, NULL, r, g, b, a, !!mtex,
                                                           SHADER_TEX_NOMUL_AFILL, SHADER_TEX_AFILL,
                                                           SHADER_IMG_MASK_NOMUL, SHADER_IMG_MASK);
