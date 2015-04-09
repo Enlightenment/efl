@@ -100,7 +100,8 @@ eina_thread_queue_free(Eina_Thread_Queue *thq) EINA_ARG_NONNULL(1);
  * This allocates space for a new message on the message queue, but does not
  * actually trigger the send. For that you will need to call
  * eina_thread_queue_send_done() to complete the send and trigger the other
- * side.
+ * side. Every message must at least be a Eina_Thread_Queue_Msg in size and
+ * have this structure as the first member (first N bytes) of the message.
  * 
  * @since 1.11
  */
