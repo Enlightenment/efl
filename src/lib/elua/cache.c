@@ -150,7 +150,7 @@ getf_map(lua_State *L EINA_UNUSED, void *ud, size_t *size)
 }
 
 EAPI int
-elua_io_loadfile(Elua_State *es, const char *fname)
+elua_io_loadfile(const Elua_State *es, const char *fname)
 {
    Map_Stream s;
    int status;
@@ -209,7 +209,7 @@ loadfile(lua_State *L)
 }
 
 EAPI void
-elua_io_register(Elua_State *es)
+elua_io_register(const Elua_State *es)
 {
    EINA_SAFETY_ON_FALSE_RETURN(es && es->luastate);
    lua_pushcfunction(es->luastate, loadfile);

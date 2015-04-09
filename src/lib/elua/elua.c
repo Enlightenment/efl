@@ -99,21 +99,21 @@ elua_state_dirs_set(Elua_State *es, const char *core, const char *mods,
 }
 
 EAPI Eina_Stringshare *
-elua_state_core_dir_get(Elua_State *es)
+elua_state_core_dir_get(const Elua_State *es)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, NULL);
    return es->coredir;
 }
 
 EAPI Eina_Stringshare *
-elua_state_mod_dir_get(Elua_State *es)
+elua_state_mod_dir_get(const Elua_State *es)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, NULL);
    return es->moddir;
 }
 
 EAPI Eina_Stringshare *
-elua_state_apps_dir_get(Elua_State *es)
+elua_state_apps_dir_get(const Elua_State *es)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, NULL);
    return es->moddir;
@@ -141,7 +141,7 @@ _elua_errmsg(const char *pname, const char *msg)
 }
 
 EAPI int
-elua_report_error(Elua_State *es, const char *pname, int status)
+elua_report_error(const Elua_State *es, const char *pname, int status)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(es && es->luastate, status);
    if (status && !lua_isnil(es->luastate, -1))
@@ -188,7 +188,7 @@ const luaL_reg gettextlib[] =
 };
 
 EAPI void
-elua_state_setup_i18n(Elua_State *es)
+elua_state_setup_i18n(const Elua_State *es)
 {
 #ifdef ENABLE_NLS
    char *(*dgettextp)(const char*, const char*) = dgettext;
