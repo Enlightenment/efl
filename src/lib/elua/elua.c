@@ -350,3 +350,151 @@ elua_module_system_init(lua_State *L)
    lua_concat(L, 2);
    return 2;
 }
+
+/* Utility functions - these could be written using the other APIs */
+
+static int
+_elua_traceback(lua_State *L)
+{
+   lua_getglobal(L, "debug");
+   if (!lua_istable(L, -1))
+     {
+        lua_pop(L, 1);
+        return 1;
+     }
+   lua_getfield(L, -1, "traceback");
+   if (!lua_isfunction(L, -1))
+     {
+        lua_pop(L, 2);
+        return 1;
+     }
+   lua_pushvalue(L, 1);
+   lua_pushinteger(L, 2);
+   lua_call(L, 2, 1);
+   return 1;
+}
+
+static int
+_elua_docall(Elua_State *es, int narg, int nret)
+{
+   int status;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
+   int bs = lua_gettop(es->luastate) - narg;
+   lua_pushcfunction(es->luastate, _elua_traceback);
+   lua_insert(es->luastate, bs);
+   status = lua_pcall(es->luastate, narg, nret, bs);
+   lua_remove(es->luastate, bs);
+   if (status)
+      lua_gc(es->luastate, LUA_GCCOLLECT, 0);
+   return status;
+}
+
+static int
+_elua_getargs(Elua_State *es, int argc, char **argv, int n)
+{
+   int i;
+   int narg = argc - (n + 1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
+   luaL_checkstack(es->luastate, narg + 3, "too many arguments to script");
+   for (i = n + 1; i < argc; ++i)
+     {
+        lua_pushstring(es->luastate, argv[i]);
+     }
+   lua_createtable(es->luastate, narg, n + 1);
+   for (i = 0; i < argc; ++i)
+     {
+        lua_pushstring(es->luastate, argv[i]);
+        lua_rawseti(es->luastate, -2, i - n);
+     }
+   return narg;
+}
+
+EAPI int
+elua_util_require(Elua_State *es, const char *libname)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(es->requireref, -1);
+   lua_pushstring(es->luastate, libname);
+   return elua_report_error(es, es->progname,
+                            lua_pcall(es->luastate, 1, 0, 0));
+}
+
+EAPI int
+elua_util_file_run(Elua_State *es, const char *fname)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
+   return elua_report_error(es, es->progname,
+                            elua_io_loadfile(es, fname)
+                            || _elua_docall(es, 0, 1));
+}
+
+EAPI int
+elua_util_string_run(Elua_State *es, const char *chunk, const char *chname)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
+   return elua_report_error(es, es->progname,
+                            luaL_loadbuffer(es->luastate, chunk, strlen(chunk),
+                                            chname)
+                            || _elua_docall(es, 0, 0));
+}
+
+EAPI Eina_Bool
+elua_util_app_load(Elua_State *es, const char *appname)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(es->apploadref, EINA_FALSE);
+   lua_pushstring(es->luastate, appname);
+   lua_call(es->luastate, 1, 2);
+   if (lua_isnil(es->luastate, -2))
+     {
+        lua_remove(es->luastate, -2);
+        return EINA_FALSE;
+     }
+   lua_pop(es->luastate, 1);
+   return EINA_TRUE;
+}
+
+EAPI int
+elua_util_script_run(Elua_State *es, int argc, char **argv, int n, int *quit)
+{
+   int status, narg;
+   const char *fname;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(n < argc, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
+   fname = argv[n];
+   narg = _elua_getargs(es, argc, argv, n);
+   lua_setglobal(es->luastate, "arg");
+   if (fname[0] == '-' && !fname[1]) fname = NULL;
+   if (fname)
+     {
+        /* check if there is a file of that name */
+        FILE *f = fopen(fname, "r");
+        if (f)
+          {
+             fclose(f);
+             status = elua_io_loadfile(es, fname);
+          }
+        else
+          status = !elua_util_app_load(es, fname);
+     }
+   else
+     status = elua_io_loadfile(es, fname);
+   lua_insert(es->luastate, -(narg + 1));
+   if (!status)
+     status = _elua_docall(es, narg, 1);
+   else
+     lua_pop(es->luastate, narg);
+   if (!status)
+     {
+        *quit = lua_toboolean(es->luastate, -1);
+        lua_pop(es->luastate, 1);
+     }
+   return elua_report_error(es, es->progname, status);
+}

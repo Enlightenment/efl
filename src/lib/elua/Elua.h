@@ -98,6 +98,14 @@ EAPI int elua_io_popen(lua_State *L);
 EAPI int elua_module_init(lua_State *L);
 EAPI int elua_module_system_init(lua_State *L);
 
+EAPI int elua_util_require(Elua_State *es, const char *libname);
+EAPI int elua_util_file_run(Elua_State *es, const char *fname);
+EAPI int elua_util_string_run(Elua_State *es, const char *chunk,
+                              const char *chname);
+EAPI Eina_Bool elua_util_app_load(Elua_State *es, const char *appname);
+EAPI int elua_util_script_run(Elua_State *es, int argc, char **argv, int n,
+                              int *quit);
+
 #endif
 
 #ifdef __cplusplus
