@@ -1492,18 +1492,6 @@ AC_ARG_ENABLE([drm],
    ],
    [want_drm="no"])
 
-want_drm_hw_accel="no"
-AC_ARG_ENABLE([drm-hw-accel],
-   [AS_HELP_STRING([--enable-drm-hw-accel],[enable drm hardware acceleration. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_drm_hw_accel="yes"
-    else
-       want_drm_hw_accel="no"
-    fi
-   ],
-   [want_drm_hw_accel="no"])
-
 
 AC_ARG_ENABLE([gl-drm],
    [AC_HELP_STRING([--enable-gl-drm],
