@@ -42,50 +42,13 @@ static const char *model_path = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/sonic.m
 static const char *image_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/sonic.png";
 static const char *b_image_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/billboard.png";
 static const vec2 tex_scale = {1, 1};
-static const vec2 fence_tex_scale = {80, 6};
+static const vec2 fence_tex_scale = {160, 12};
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
 Eo *background = NULL;
 Eo *image = NULL;
 Evas_3D_Node *choosed_node = NULL;
-
-Eina_Bool
-_cb_clicked(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
-{
-   Eina_List *meshes = NULL, *l;
-   Evas_3D_Mesh *m;
-   eo_do((Evas_3D_Node *)event_info, meshes = (Eina_List *)evas_3d_node_mesh_list_get());
-   EINA_LIST_FOREACH(meshes, l, m)
-     {
-        eo_do(m, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE));
-     }
-   if (choosed_node != (Evas_3D_Node *)event_info)
-     {
-        eo_do(choosed_node, meshes = (Eina_List *)evas_3d_node_mesh_list_get());
-        EINA_LIST_FOREACH(meshes, l, m)
-          {
-             eo_do(m, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
-          }
-        choosed_node = (Evas_3D_Node *)event_info;
-     }
-
-   return EINA_TRUE;
-}
-
-Eina_Bool
-_cb_collision(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
-{
-   Eina_List *meshes = NULL, *l;
-   Evas_3D_Mesh *m;
-   eo_do((Evas_3D_Node *)event_info, meshes = (Eina_List *)evas_3d_node_mesh_list_get());
-   EINA_LIST_FOREACH(meshes, l, m)
-     {
-        eo_do(m, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE));
-     }
-
-   return EINA_TRUE;
-}
 
 typedef struct _Body_3D
 {
@@ -116,6 +79,48 @@ typedef struct _Scene_Data
 
    Eina_Bool   init;
 } Scene_Data;
+
+Eina_Bool
+_cb_clicked(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+{
+   Eina_List *meshes = NULL, *l;
+   Evas_3D_Mesh *m;
+   Evas_3D_Node *billboard = NULL;
+   eo_do((Evas_3D_Node *)event_info, meshes = (Eina_List *)evas_3d_node_mesh_list_get());
+   EINA_LIST_FOREACH(meshes, l, m)
+     {
+        eo_do(m, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE));
+     }
+   if (choosed_node != (Evas_3D_Node *)event_info)
+     {
+        eo_do(choosed_node, billboard = evas_3d_node_billboard_target_get());
+        if (!billboard)
+          {
+             eo_do(choosed_node, meshes = (Eina_List *)evas_3d_node_mesh_list_get());
+             EINA_LIST_FOREACH(meshes, l, m)
+               {
+                  eo_do(m, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
+               }
+          }
+        choosed_node = (Evas_3D_Node *)event_info;
+     }
+
+   return EINA_TRUE;
+}
+
+Eina_Bool
+_cb_collision(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
+{
+   Eina_List *meshes = NULL, *l;
+   Evas_3D_Mesh *m;
+   eo_do((Evas_3D_Node *)event_info, meshes = (Eina_List *)evas_3d_node_mesh_list_get());
+   EINA_LIST_FOREACH(meshes, l, m)
+     {
+        eo_do(m, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE));
+     }
+
+   return EINA_TRUE;
+}
 
 static void
 _show_help()
@@ -218,7 +223,8 @@ _cone_setup(Body_3D *cone)
       eo_add(EVAS_3D_NODE_CLASS, evas,
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(cone->node, evas_3d_node_mesh_add(cone->mesh),
-         evas_3d_node_position_set(-5.0, -1.0, -3.0));
+         evas_3d_node_orientation_angle_axis_set(-90.0, 1.0, 0.0, 0.0),
+         evas_3d_node_position_set(-4.0, 0.0, -3.0));
 }
 
 static void
@@ -232,6 +238,7 @@ _cylinder_setup(Body_3D *cylinder)
       eo_add(EVAS_3D_NODE_CLASS, evas,
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(cylinder->node, evas_3d_node_mesh_add(cylinder->mesh),
+         evas_3d_node_orientation_angle_axis_set(-90.0, 1.0, 0.0, 0.0),
          evas_3d_node_position_set(-2.0, 3.0, 1.0));
 }
 
@@ -279,8 +286,9 @@ _fence_setup(Body_3D *fence)
       eo_add(EVAS_3D_NODE_CLASS, evas,
                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(fence->node, evas_3d_node_mesh_add(fence->mesh),
-         evas_3d_node_scale_set(7.0, 3.0, 7.0),
-         evas_3d_node_position_set(0.0, 0.5, -5.0));
+          evas_3d_node_orientation_angle_axis_set(-90.0, 1.0, 0.0, 0.0),
+          evas_3d_node_scale_set(10.0, 10.0, 5.0),
+          evas_3d_node_position_set(0.0, -1.0, -2.0));
 }
 
 static void
@@ -311,7 +319,7 @@ _box_setup(Body_3D *box)
    box->node = eo_add(EVAS_3D_NODE_CLASS, evas,
                       evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
    eo_do(box->node, evas_3d_node_mesh_add(box->mesh),
-         evas_3d_node_position_set(5.0, 0.0, -3.0));
+         evas_3d_node_position_set(3.0, 0.0, -3.0));
 }
 
 static void
