@@ -365,6 +365,8 @@ eina_thread_queue_new(void)
 EAPI void
 eina_thread_queue_free(Eina_Thread_Queue *thq)
 {
+   if (!thq) return;
+
 #ifndef ATOMIC
    eina_spinlock_free(&(thq->lock_pending));
 #endif
