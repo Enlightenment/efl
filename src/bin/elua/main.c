@@ -30,14 +30,11 @@ typedef struct Arg_Data
 enum
 {
    ARG_CODE = 0,
-   ARG_LIBRARY,
-   ARG_LIBDIR
+   ARG_LIBRARY
 };
 
-static int          elua_require_ref = LUA_REFNIL;
-static int          elua_appload_ref = LUA_REFNIL;
-static const char  *elua_progname    = NULL;
-static Elua_State  *elua_state       = NULL;
+static const char *elua_progname = NULL;
+static Elua_State *elua_state    = NULL;
 
 static int _el_log_domain = -1;
 
@@ -104,40 +101,10 @@ elua_getargs(Elua_State *es, int argc, char **argv, int n)
 }
 
 static int
-elua_register_require(lua_State *L)
-{
-   const char *corepath = elua_state_core_dir_get(elua_state);
-   const char *modpath  = elua_state_mod_dir_get(elua_state);
-   const char *appspath = elua_state_apps_dir_get(elua_state);
-   Eina_List  *largs    = lua_touserdata(L, lua_upvalueindex(1)), *l = NULL;
-   Arg_Data   *data     = NULL;
-   int n = 3;
-   lua_pushvalue(L, 1);
-   elua_require_ref = luaL_ref(L, LUA_REGISTRYINDEX);
-   lua_pushvalue(L, 2);
-   elua_appload_ref = luaL_ref(L, LUA_REGISTRYINDEX);
-   lua_pushfstring(L, "%s/?.lua;", corepath);
-   EINA_LIST_FOREACH(largs, l, data)
-     {
-        if (data->type != ARG_LIBDIR) continue;
-        lua_pushfstring(L, "%s/?.lua;", data->value);
-        ++n;
-     }
-   lua_pushfstring(L, "%s/?.eo.lua;", modpath);
-   lua_pushfstring(L, "%s/?.lua;", modpath);
-   lua_pushvalue(L, 3);
-   lua_concat(L, n + 1);
-   lua_pushfstring(L, "%s/?.lua;", appspath);
-   lua_pushvalue(L, 4);
-   lua_concat(L, 2);
-   return 2;
-}
-
-static int
 elua_dolib(Elua_State *es, const char *libname)
 {
    lua_State *L = elua_state_lua_state_get(es);
-   lua_rawgeti(L, LUA_REGISTRYINDEX, elua_require_ref);
+   elua_state_require_ref_push(es);
    lua_pushstring(L, libname);
    return elua_report_error(es, elua_progname, lua_pcall(L, 1, 0, 0));
 }
@@ -163,7 +130,7 @@ static Eina_Bool
 elua_loadapp(Elua_State *es, const char *appname)
 {
    lua_State *L = elua_state_lua_state_get(es);
-   lua_rawgeti(L, LUA_REGISTRYINDEX, elua_appload_ref);
+   elua_state_appload_ref_push(es);
    lua_pushstring(L, appname);
    lua_call(L, 1, 2);
    if (lua_isnil(L, -2))
@@ -317,15 +284,16 @@ elua_main(lua_State *L)
              break;
            case 'e':
            case 'l':
-           case 'I':
              {
                 Arg_Data *v = malloc(sizeof(Arg_Data));
-                v->type = (ch == 'e') ? ARG_CODE : ((ch == 'l')
-                                      ? ARG_LIBRARY : ARG_LIBDIR);
+                v->type = (ch == 'e') ? ARG_CODE : ARG_LIBRARY;
                 v->value = optarg;
                 largs = eina_list_append(largs, v);
                 break;
              }
+           case 'I':
+             elua_state_include_path_add(es, optarg);
+             break;
            case 'E':
              noenv = EINA_TRUE;
           }
@@ -355,8 +323,7 @@ elua_main(lua_State *L)
         m->status = 1;
         return 0;
      }
-   lua_pushlightuserdata(L, largs);
-   lua_pushcclosure(L, elua_register_require, 1);
+   lua_pushcfunction(L, elua_module_system_init);
    lua_createtable(L, 0, 0);
    luaL_register(L, NULL, cutillib);
    lua_call(L, 2, 0);
