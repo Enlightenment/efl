@@ -485,6 +485,9 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    src_data = src->image.data;
    dst_data = dst->image.data;
 
+   mask_x = dc->clip.mask_x;
+   mask_y = dc->clip.mask_y;
+
    if (dc->clip.use)
      {
         dst_clip_x = dc->clip.x;
@@ -611,8 +614,6 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
         if (dc->mul.use)
           func2 = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dc->mul.col, dst->cache_entry.flags.alpha, dst_clip_w, EVAS_RENDER_COPY);
         // Adjust clipping info
-        mask_x = dc->clip.mask_x;
-        mask_y = dc->clip.mask_y;
         if (EINA_UNLIKELY((dst_clip_x - mask_x) < 0))
           dst_clip_x = mask_x;
         if (EINA_UNLIKELY((dst_clip_y - mask_y) < 0))
