@@ -40,7 +40,7 @@
 extern "C"
 #  endif
 /**
- * Allocates memory in the stack frame of the caller, so it's automatically 
+ * Allocates memory in the stack frame of the caller, so it's automatically
  * freed when the caller returns.  See alloca(3) for detials.
  */
 void *alloca (long);

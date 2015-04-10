@@ -55,33 +55,33 @@
 
 /**
  * @page eina_tmpstr_ppage
- * 
+ *
  * Eina tmpstr is intended for being able to conveniently pass strings back
  * to a calling parent without having to use single static buffers (which
  * don't work with multiple threads or when returning multilpe times as
  * parameters to a single function.
- * 
+ *
  * The traditional way to "return" a string in C is either to provide a buffer
  * as a paramater to return it in, return a pointer to a single static buffer,
  * which has issues, or return a duplicated string. All cases are inconvenient
  * and return special handling. This is intended to make this easier. Now you
  * can do something like this:
- * 
+ *
  * @code
  * Eina_Tmpstr *my_homedir(void) {
  *   return eina_tmpstr_add(getenv("HOME"));
  * }
- * 
+ *
  * Eina_Tmpstr *my_tmpdir(void) {
  *   return eina_tmpstr_add(getenv("TMP"));
  * }
- * 
+ *
  * void my_movefile(Eina_Tmpstr *src, Eina_Tmpstr *dst) {
  *   rename(src, dst);
  *   eina_tmpstr_del(src);
  *   eina_tmpstr_del(dst);
  * }
- * 
+ *
  * char buf[500];
  * my_movefile(my_homedir(), my_tmpdir());
  * my_movefile("/tmp/file", "/tmp/newname");
@@ -89,7 +89,7 @@
  * snprintf(buf, sizeof(buf), "/tmp/%i.file", rand());
  * my_movefile("/tmp.file", buf);
  * @endcode
- * 
+ *
  * Notice that you can interchange standard C strings (static ones or even
  * generated buffers) with tmpstrings. The Eina_Tmpstr type is merely a
  * type marker letting you know that the function will clean up those
@@ -122,62 +122,62 @@ typedef const char Eina_Tmpstr;
 
 /**
  * @brief Add a new temporary string based on the input string.
- * 
+ *
  * @param str This is the input stringthat is copied into the temp string.
  * @return A pointer to the tmp string that is a standard C string.
- * 
+ *
  * When you add a temporary string (tmpstr) it is expected to have a very
  * short lifespan, and at any one time only a few of these are intended to
  * exist. This is not intended for longer term storage of strings. The
  * intended use is the ability to safely pass strings as return values from
  * functions directly into parameters of new functions and then have the
  * string be cleaned up automatically by the caller.
- * 
+ *
  * If @p str is NULL, or no memory space exists to store the tmpstr, then
  * NULL will be returned, otherwise a valid string pointer will be returned
  * that you can treat as any other C string (eg strdup(tmpstr) or
  * printf("%s\n", tmpstr) etc.). This string should be considered read-only
  * and immutable, and when youa re done with the string yo should delete it
  * with eina_tmpstr_del().
- * 
+ *
  * Example usage:
- * 
+ *
  * @code
  * Eina_Tmpstr *my_homedir(void) {
  *   return eina_tmpstr_add(getenv("HOME"));
  * }
- * 
+ *
  * void my_rmfile(Eina_Tmpstr *str) {
  *   if (!str) return;
  *   unlink(str);
  *   eina_tmpstr_del(str);
  * }
- * 
+ *
  * my_rmfile(my_homedir());
  * my_rmfile("/tmp/file");
  * @endcode
- * 
+ *
  * @see eina_tmpstr_del()
  * @see eina_tmpstr_add_length()
- * 
+ *
  * @since 1.8.0
  */
 EAPI Eina_Tmpstr *eina_tmpstr_add(const char *str) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Add a new temporary string based on the input string and length.
- * 
+ *
  * @param str This is the input stringthat is copied into the temp string.
  * @param length This is the maximum length and the allocated length of the temp string.
  * @return A pointer to the tmp string that is a standard C string.
- * 
+ *
  * When you add a temporary string (tmpstr) it is expected to have a very
  * short lifespan, and at any one time only a few of these are intended to
  * exist. This is not intended for longer term storage of strings. The
  * intended use is the ability to safely pass strings as return values from
  * functions directly into parameters of new functions and then have the
  * string be cleaned up automatically by the caller.
- * 
+ *
  * If @p str is NULL, or no memory space exists to store the tmpstr, then
  * NULL will be returned, otherwise a valid string pointer will be returned
  * that you can treat as any other C string (eg strdup(tmpstr) or
@@ -192,7 +192,7 @@ EAPI Eina_Tmpstr *eina_tmpstr_add(const char *str) EINA_WARN_UNUSED_RESULT;
  *       with length == strlen(str).
  * @see eina_tmpstr_del()
  * @see eina_tmpstr_add()
- * 
+ *
  * @since 1.8.0
  */
 EAPI Eina_Tmpstr *eina_tmpstr_add_length(const char *str, size_t length);
@@ -223,16 +223,16 @@ EAPI size_t eina_tmpstr_len(Eina_Tmpstr *tmpstr);
 
 /**
  * @brief Delete the temporary string if it is one, or ignore it if it is not.
- * 
+ *
  * @param tmpstr This is any C string pointer, but if it is a tmp string
  * it is freed.
- * 
+ *
  * This will delete the given temporary string @p tmpstr if it is a valid
  * temporary string, or otherwise it will ignore it and do nothing so this
  * can be used safely with non-temporary strings.
- * 
+ *
  * @see eina_tmpstr_add()
- * 
+ *
  * @since 1.8.0
  */
 EAPI void eina_tmpstr_del(Eina_Tmpstr *tmpstr) EINA_ARG_NONNULL(1);

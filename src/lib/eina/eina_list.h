@@ -38,7 +38,7 @@
  * include stdio.h so we can use printf.
  * @skip #include
  * @until Eina.h
- * 
+ *
  * Just some boilerplate code, declaring some variable and initializing eina.
  * @until eina_init
  * Here we add a sequence of elements to our list. By using append we add
@@ -55,15 +55,15 @@
  * is done a list is created. The other @b very important detail to notice is
  * that the return value is attributed to the @a list variable, this needs to
  * be done every time we use a a function that alters the contents of the list.
- * 
+ *
  * Now that we have a list with some elements in it we can look at its contents.
  * @until printf
- * 
+ *
  * There are many ways of accessing elements in the list, including by its
  * index:
  * @until nth
  * @note It should be noted that the index starts at 0.
- * 
+ *
  * @ref eina_list_append() is not the only way to add elements to a a list. A
  * common requirement is to add an element in a specific position this can be
  * accomplished using @ref eina_list_append_relative() and
@@ -71,7 +71,7 @@
  * @until zarek
  * First @a "cain" is added after the second element(remember that indexes are
  * 0 based) and then we add @a "zarek" after @a "cain".
- * 
+ *
  * @ref Eina_List also has prepend analogs to append functions we have used so
  * far:
  * @until lampkin
@@ -82,11 +82,11 @@
  * @endhtmlonly
  * @image rtf eina_list_example_01_b.png
  * @image latex eina_list_example_01_b.eps "" width=\textwidth
- * 
+ *
  * Once done using the list it needs to be freed, and since we are done with
  * eina that also need to be shutdown:
  * @until }
- * 
+ *
  * The full source code can be found on the examples folder
  * on the @ref eina_list_01_c "eina_list_01.c" file.
  */
@@ -101,25 +101,25 @@
 /**
  * @page eina_list_02_example_page Sorting Eina_List elements
  * @dontinclude eina_list_02.c
- * 
+ *
  * If you don't know how to create lists see
  * @ref eina_list_01_example_page.
- * 
+ *
  * @skip #include
  * @until boomer
  * This is the code we have already seen to create a list. Now if we need to
  * search the list we can do it like this:
  * @until return
- * 
+ *
  * However if searching the list multiple times it probably is better to sort
  * the list since the sorted_search functions are much faster:
  * @until return
- * 
+ *
  * Once the list is sorted it's not a good idea to use append/prepend functions
  * since that would add the element in the wrong place, instead elements should
  * be added with @ref eina_list_sorted_insert():
  * @until sorted_insert
- * 
+ *
  * A noteworthy use case is adding an element to a list only if it doesn't exist
  * already, this can accomplished by searching for the element that is closest
  * to what is being added, and if that doesn't match add:
@@ -127,18 +127,18 @@
  * @note @ref eina_list_search_sorted_near_list() will tell you not only the
  * nearest node to what was searched for but how it compares to your term, this
  * way it is easy to know if you have to add before or after that node.
- * 
+ *
  * It is sometimes useful to get a portion of the list as another list, here we
  * take every element that comes after "boomer" and split it into "other_list":
  * @until split_list
- * 
+ *
  * It is also possible to add entire lists of elements using
  * @ref eina_list_sorted_merge():
  * @until sorted_merge
- * 
+ *
  * And as always release memory and shutdown eina before ending:
  * @until }
- * 
+ *
  * The full source code can be found on the examples folder
  * on the @ref eina_list_02_c "eina_list_02.c" file.
  */
@@ -153,22 +153,22 @@
 /**
  * @page eina_list_03_example_page Reordering Eina_List elements
  * @dontinclude eina_list_03.c
- * 
+ *
  * If you don't know how to create lists see
  * @ref eina_list_01_example_page.
- * 
+ *
  * We start out with code that should be familiar by now:
  * @skip #include
  * @until gemenon
- * 
+ *
  * You can move elements around in a list using @ref eina_list_move() or using
  * @ref eina_list_promote_list() and @ref eina_list_demote_list() which move a
  * list node to the head and end of the list respectevely:
  * @until demote
- * 
+ *
  * Removing elements from a list can be done with ease:
  * @until sagitarius
- * 
+ *
  * To replace an element in the list it is not necessary to remove it and then
  * add with the new value, it is possible to just change the value of a node:
  * @until aquarius
@@ -181,10 +181,10 @@
  * reverse order and print every element to see if worked as expected:
  * @until iterator_free
  * @note Always remember to free your iterators when done using them.
- * 
+ *
  * And as always release memory and shutdown eina before ending:
  * @until }
- * 
+ *
  * The full source code can be found on the examples folder
  * on the @ref eina_list_03_c "eina_list_03.c" file.
  */
@@ -223,7 +223,7 @@
  *
  * And shut everything down:
  * @until }
- * 
+ *
  * The full source code can be found on the examples folder
  * on the @ref eina_list_04_c "eina_list_04.c" file.
  */
@@ -239,13 +239,13 @@
  * @addtogroup Eina_List_Group List
  *
  * @brief These functions provide double linked list management.
- * 
+ *
  * Eina_List is a doubly linked list. It can store data of any type in the
  * form of void pointers. It has convenience functions to do all the common
  * operations which means it should rarely if ever be necessary to directly
  * access the struct's fields. Nevertheless it can be useful to understand the
  * inner workings of the data structure being used.
- * 
+ *
  * @ref Eina_List nodes keep references to the previous node, the next node, its
  * data and to an accounting structure.
  *
@@ -259,13 +259,13 @@
  * @ref Eina_List_Accounting is used to improve the performance of some
  * functions. It is private and <b>should not</b> be modified. It contains a
  * reference to the end of the list and the number of elements in the list.
- * 
+ *
  * @note Every function that modifies the contents of the list returns a pointer
  * to the head of the list and it is essential that this be pointer be used in
  * any future references to the list.
- * 
+ *
  * Most functions have two versions that have the same effect but operate on
- * different arguments, the @a plain functions operate over data(eg.: 
+ * different arguments, the @a plain functions operate over data(eg.:
  * @ref eina_list_append_relative, @ref eina_list_remove,
  * @ref eina_list_data_find), the @a list versions of these functions operate
  * on @ref Eina_List nodes.

@@ -70,5 +70,5 @@ eina_list_last_data_get(const Eina_List *list)
    if (!list) return NULL;
    return eina_list_data_get(eina_list_last(list));
 }
-  
+
 #endif /* EINA_LIST_INLINE_H_ */

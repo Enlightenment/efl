@@ -20,9 +20,9 @@
 # define EINA_INLINE_UNICODE_
 
 EAPI Eina_Unicode _eina_unicode_utf8_next_get(int ind,
-					      unsigned char d,
-					      const char *buf, 
-					      int *iindex);
+                                              unsigned char d,
+                                              const char *buf,
+                                              int *iindex);
 
 #define ERROR_REPLACEMENT_BASE  0xDC80
 #define EINA_IS_INVALID_BYTE(x)      ((x == 192) || (x == 193) || (x >= 245))
@@ -47,7 +47,7 @@ eina_unicode_utf8_next_get(const char *buf, int *iindex)
         *iindex = ind;
         return d;
      }
-   
+
    if ((d & 0xe0) == 0xc0)
      { // 2 byte (11bit) - 110xxxxx 10xxxxxx
         r  = (d & 0x1f) << 6;

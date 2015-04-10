@@ -47,16 +47,16 @@ typedef struct _Eina_Class Eina_Class;
 typedef struct _Eina_Object Eina_Object;
 
 typedef void (*Eina_Class_Callback)(Eina_Class *c,
-				    void *object,
-				    void *data);
+                                    void *object,
+                                    void *data);
 
 Eina_Class *eina_class_new(const char *name,
-			   unsigned int class_size,
-			   unsigned int pool_size,
-			   Eina_Class_Callback constructor,
-			   Eina_Class_Callback destructor,
-			   Eina_Class *parent,
-			   void *data);
+                           unsigned int class_size,
+                           unsigned int pool_size,
+                           Eina_Class_Callback constructor,
+                           Eina_Class_Callback destructor,
+                           Eina_Class *parent,
+                           void *data);
 const char *eina_class_name_get(Eina_Class *c);
 unsigned int eina_class_size_get(Eina_Class *c);
 unsigned int eina_class_object_size_get(Eina_Class *c);
@@ -65,16 +65,16 @@ void eina_class_repack(Eina_Class *c);
 
 Eina_Object *eina_object_add(Eina_Class *c);
 void *eina_object_pointer_get(Eina_Class *c,
-			      Eina_Object *object);
-void eina_object_del(Eina_Class *c, 
-		     Eina_Object *object);
+                              Eina_Object *object);
+void eina_object_del(Eina_Class *c,
+                     Eina_Object *object);
 
 Eina_Bool eina_object_parent_set(Eina_Class *parent_class, Eina_Object *parent,
-				 Eina_Class *object_class, Eina_Object *object);
+                                 Eina_Class *object_class, Eina_Object *object);
 Eina_Object *eina_object_parent_get(Eina_Class *c, Eina_Object *object);
 
 /**
  * @}
  */
 
-#endif	   
+#endif

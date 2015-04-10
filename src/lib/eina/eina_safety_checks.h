@@ -77,7 +77,7 @@
  *
  * Whenever these macros capture an error, EINA_LOG_ERR() will be
  * called.
- * 
+ *
  * @see EINA_SAFETY_ON_NULL_RETURN(), EINA_SAFETY_ON_NULL_RETURN_VAL()
  *      and other macros.
  *

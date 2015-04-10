@@ -103,7 +103,7 @@
  *
  * To get the data and iterate, use eina_iterator_next(). To call a function on
  * all the elements of a container, use eina_iterator_foreach().
- * 
+ *
  * Here an @ref eina_iterator_example_page "example"
  */
 

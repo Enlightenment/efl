@@ -108,7 +108,7 @@
  *
  * C is a weak statically typed language, in other words, it just checks for
  * types during compile time and any cast that makes the compiler believe the
- * type is correct. 
+ * type is correct.
  *
  * In the real world code, we often need to deal with casts, either explicit or
  * implicit, by means of @c void*. We also need to resort to casts when doing
