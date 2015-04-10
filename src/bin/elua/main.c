@@ -21,18 +21,6 @@
 
 #include "Elua.h"
 
-typedef struct Arg_Data
-{
-   int type;
-   const char *value;
-} Arg_Data;
-
-enum
-{
-   ARG_CODE = 0,
-   ARG_LIBRARY
-};
-
 static const char *elua_progname = NULL;
 static Elua_State *elua_state    = NULL;
 
@@ -224,7 +212,6 @@ elua_print_help(const char *pname, FILE *stream)
                    "  -C[COREDIR], --core-dir=[COREDIR]   Elua core directory path.\n"
                    "  -M[MODDIR],  --modules-dir=[MODDIR] Elua modules directory path.\n"
                    "  -A[APPDIR],  --apps-dir=[APPDIR]    Elua applications directory path.\n"
-                   "  -e[CODE],    --execute=[CODE]       Execute string 'code'.\n"
                    "  -l[LIBRARY], --library=[LIBRARY]    Require library 'library'.\n"
                    "  -I[DIR],     --lib-dir=[DIR]        Append an additional require path.\n"
                    "  -E,          --noenv                Ignore environment variables.\n", pname);
@@ -238,7 +225,6 @@ static struct option lopt[] =
    { "modules-dir", required_argument, NULL, 'M' },
    { "apps-dir"   , required_argument, NULL, 'A' },
 
-   { "execute"    , required_argument, NULL, 'e' },
    { "library"    , required_argument, NULL, 'l' },
    { "lib-dir"    , required_argument, NULL, 'I' },
    { "noenv"      , no_argument      , NULL, 'E' },
@@ -251,10 +237,10 @@ elua_main(lua_State *L)
 {
    Eina_Bool   noenv   = EINA_FALSE,
                hasexec = EINA_FALSE;
-   Eina_List  *largs   = NULL, *l = NULL;
-   Arg_Data   *data    = NULL;
+   Eina_List  *largs   = NULL;
    const char *coredir = NULL, *moddir = NULL, *appsdir = NULL;
    char        modfile[PATH_MAX];
+   char       *data    = NULL;
 
    int ch;
 
@@ -266,12 +252,13 @@ elua_main(lua_State *L)
 
    elua_progname = (argv[0] && argv[0][0]) ? argv[0] : "elua";
 
-   while ((ch = getopt_long(argc, argv, "+LhC:M:A:e:l:I:E", lopt, NULL)) != -1)
+   while ((ch = getopt_long(argc, argv, "+LhC:M:A:l:I:E", lopt, NULL)) != -1)
      {
         switch (ch)
           {
            case 'h':
              elua_print_help(elua_progname, stdout);
+             if (largs) eina_list_free(largs);
              return 0;
            case 'C':
              coredir = optarg;
@@ -282,20 +269,17 @@ elua_main(lua_State *L)
            case 'A':
              appsdir = optarg;
              break;
-           case 'e':
            case 'l':
-             {
-                Arg_Data *v = malloc(sizeof(Arg_Data));
-                v->type = (ch == 'e') ? ARG_CODE : ARG_LIBRARY;
-                v->value = optarg;
-                largs = eina_list_append(largs, v);
-                break;
-             }
+             if (!optarg[0]) continue;
+             largs = eina_list_append(largs, optarg);
+             break;
            case 'I':
+             if (!optarg[0]) continue;
              elua_state_include_path_add(es, optarg);
              break;
            case 'E':
              noenv = EINA_TRUE;
+             break;
           }
      }
 
@@ -313,16 +297,12 @@ elua_main(lua_State *L)
    if (!coredir || !moddir || !appsdir)
      {
         ERR("could not set one or more script directories");
-        m->status = 1;
-        return 0;
+        goto error;
      }
 
    snprintf(modfile, sizeof(modfile), "%s/module.lua", coredir);
    if (elua_report_error(es, elua_progname, elua_io_loadfile(es, modfile)))
-     {
-        m->status = 1;
-        return 0;
-     }
+     goto error;
    lua_pushcfunction(L, elua_module_system_init);
    lua_createtable(L, 0, 0);
    luaL_register(L, NULL, cutillib);
@@ -330,10 +310,7 @@ elua_main(lua_State *L)
 
    snprintf(modfile, sizeof(modfile), "%s/gettext.lua", coredir);
    if (elua_report_error(es, elua_progname, elua_io_loadfile(es, modfile)))
-     {
-        m->status = 1;
-        return 0;
-     }
+     goto error;
    elua_state_setup_i18n(es);
    lua_call(L, 1, 0);
 
@@ -343,34 +320,13 @@ elua_main(lua_State *L)
    INF("elua lua state initialized");
 
    /* load all the things */
-   EINA_LIST_FOREACH(largs, l, data)
+   EINA_LIST_FREE(largs, data)
      {
-        switch (data->type)
-          {
-             case ARG_CODE:
-                if (!hasexec) hasexec = EINA_TRUE;
-                if (elua_dostr(es, data->value, "=(command line)"))
-                  {
-                     m->status = 1;
-                     return 0;
-                  }
-                break;
-             case ARG_LIBRARY:
-                if (elua_dolib(es, data->value))
-                  {
-                     m->status = 1;
-                     return 0;
-                  }
-                break;
-             default:
-                break;
-          }
+        if (elua_dolib(es, data))
+          goto error;
      }
 
-   /* cleanup */
-   EINA_LIST_FREE(largs, data) free(data);
-
-   /* run script or execute sdin as file */
+   /* run script or execute stdin as file */
    if (optind < argc)
      {
         int quit = 0;
@@ -388,6 +344,11 @@ elua_main(lua_State *L)
 
    ecore_main_loop_begin();
 
+   return 0;
+
+error:
+   m->status = 1;
+   if (largs) eina_list_free(largs);
    return 0;
 }
 
