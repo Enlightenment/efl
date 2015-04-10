@@ -37,7 +37,6 @@ enum
 static int          elua_require_ref = LUA_REFNIL;
 static int          elua_appload_ref = LUA_REFNIL;
 static const char  *elua_progname    = NULL;
-static Eina_Prefix *elua_prefix      = NULL;
 static Elua_State  *elua_state       = NULL;
 
 static int _el_log_domain = -1;
@@ -224,7 +223,6 @@ void
 elua_bin_shutdown(Elua_State *es, int c)
 {
    INF("elua shutdown");
-   if (elua_prefix) eina_prefix_free(elua_prefix);
    if (es) elua_state_free(es);
    if (_el_log_domain != EINA_LOG_DOMAIN_GLOBAL)
      eina_log_domain_unregister(_el_log_domain);
@@ -336,17 +334,6 @@ elua_main(lua_State *L)
    INF("arguments parsed");
 
    lua_gc(L, LUA_GCSTOP, 0);
-
-   elua_prefix = eina_prefix_new(elua_progname, elua_main, "ELUA", "elua", "checkme",
-                                 PACKAGE_BIN_DIR, "", PACKAGE_DATA_DIR,
-                                 LOCALE_DIR);
-
-   if (!elua_prefix)
-     {
-        ERR("could not find elua prefix");
-        m->status = 1;
-        return 0;
-     }
 
    elua_state_dirs_set(es, coredir, moddir, appsdir);
    elua_state_dirs_fill(es, noenv);

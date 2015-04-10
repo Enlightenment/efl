@@ -31,9 +31,7 @@ bin_elua_elua_SOURCES = \
 	bin/elua/main.c
 
 bin_elua_elua_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@ \
-	-DLOCALE_DIR=\"@LOCALE_DIR@\" \
-	-DPACKAGE_BIN_DIR=\"$(bindir)\" \
-	-DPACKAGE_DATA_DIR=\"$(datadir)/elua\"
+	-DLOCALE_DIR=\"@LOCALE_DIR@\"
 
 if HAVE_OSX
 if  HAVE_X86_64
