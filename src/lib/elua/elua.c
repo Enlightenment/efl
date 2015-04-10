@@ -416,7 +416,7 @@ elua_util_require(Elua_State *es, const char *libname)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(es->requireref, -1);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(elua_state_require_ref_push(es), -1);
    lua_pushstring(es->luastate, libname);
    return elua_report_error(es, es->progname,
                             lua_pcall(es->luastate, 1, 0, 0));
@@ -448,7 +448,7 @@ elua_util_app_load(Elua_State *es, const char *appname)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(es->apploadref, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(elua_state_appload_ref_push(es), EINA_FALSE);
    lua_pushstring(es->luastate, appname);
    lua_call(es->luastate, 1, 2);
    if (lua_isnil(es->luastate, -2))

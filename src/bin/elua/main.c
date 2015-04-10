@@ -30,149 +30,6 @@ static int         _el_log_domain = -1;
 #define ERR(...) EINA_LOG_DOM_ERR(_el_log_domain, __VA_ARGS__)
 #define CRT(...) EINA_LOG_DOM_CRITICAL(_el_log_domain, __VA_ARGS__)
 
-static int
-elua_traceback(lua_State *L)
-{
-   lua_getglobal(L, "debug");
-   if (!lua_istable(L, -1))
-     {
-        lua_pop(L, 1);
-        return 1;
-     }
-   lua_getfield(L, -1, "traceback");
-   if (!lua_isfunction(L, -1))
-     {
-        lua_pop(L, 2);
-        return 1;
-     }
-   lua_pushvalue(L, 1);
-   lua_pushinteger(L, 2);
-   lua_call(L, 2, 1);
-   return 1;
-}
-
-static int
-elua_docall(Elua_State *es, int narg, int nret)
-{
-   int status;
-   lua_State *L = elua_state_lua_state_get(es);
-   int bs = lua_gettop(L) - narg;
-   lua_pushcfunction(L, elua_traceback);
-   lua_insert(L, bs);
-   status = lua_pcall(L, narg, nret, bs);
-   lua_remove(L, bs);
-   if (status)
-      lua_gc(L, LUA_GCCOLLECT, 0);
-   return status;
-}
-
-static int
-elua_getargs(Elua_State *es, int argc, char **argv, int n)
-{
-   lua_State *L = elua_state_lua_state_get(es);
-   int i;
-   int narg = argc - (n + 1);
-   luaL_checkstack(L, narg + 3, "too many arguments to script");
-   for (i = n + 1; i < argc; ++i)
-     {
-        lua_pushstring(L, argv[i]);
-     }
-   lua_createtable(L, narg, n + 1);
-   for (i = 0; i < argc; ++i)
-     {
-        lua_pushstring(L, argv[i]);
-        lua_rawseti(L, -2, i - n);
-     }
-   return narg;
-}
-
-static int
-elua_dolib(Elua_State *es, const char *libname)
-{
-   lua_State *L = elua_state_lua_state_get(es);
-   elua_state_require_ref_push(es);
-   lua_pushstring(L, libname);
-   return elua_report_error(es, elua_state_prog_name_get(es),
-                            lua_pcall(L, 1, 0, 0));
-}
-
-static int
-elua_dofile(Elua_State *es, const char *fname)
-{
-   return elua_report_error(es, elua_state_prog_name_get(es),
-                            elua_io_loadfile(es, fname)
-                            || elua_docall(es, 0, 1));
-}
-
-static int
-elua_dostr(Elua_State *es, const char *chunk, const char *chname)
-{
-   return elua_report_error(es, elua_state_prog_name_get(es),
-                            luaL_loadbuffer(elua_state_lua_state_get(es),
-                                            chunk, strlen(chunk), chname)
-                            || elua_docall(es, 0, 0));
-}
-
-static Eina_Bool
-elua_loadapp(Elua_State *es, const char *appname)
-{
-   lua_State *L = elua_state_lua_state_get(es);
-   elua_state_appload_ref_push(es);
-   lua_pushstring(L, appname);
-   lua_call(L, 1, 2);
-   if (lua_isnil(L, -2))
-     {
-        lua_remove(L, -2);
-        return EINA_FALSE;
-     }
-   lua_pop(L, 1);
-   return EINA_TRUE;
-}
-
-static int
-elua_doscript(Elua_State *es, int argc, char **argv, int n, int *quit)
-{
-   int status;
-   const char *fname = argv[n];
-   int narg = elua_getargs(es, argc, argv, n);
-   lua_setglobal(elua_state_lua_state_get(es), "arg");
-   if (fname[0] == '-' && !fname[1])
-     {
-        fname = NULL;
-     }
-   if (fname)
-     {
-        /* check if there is a file of that name */
-        FILE *f = fopen(fname, "r");
-        if (f)
-          {
-             fclose(f);
-             status = elua_io_loadfile(es, fname);
-          }
-        else
-          status = !elua_loadapp(es, fname);
-     }
-   else
-     {
-        status = elua_io_loadfile(es, fname);
-     }
-   lua_insert(elua_state_lua_state_get(es), -(narg + 1));
-   if (!status)
-     {
-         status = elua_docall(es, narg, 1);
-     }
-   else
-     {
-        lua_pop(elua_state_lua_state_get(es), narg);
-     }
-   if (!status)
-     {
-        *quit = lua_toboolean(elua_state_lua_state_get(es), -1);
-        lua_pop(elua_state_lua_state_get(es), 1);
-     }
-   return elua_report_error(es, elua_state_prog_name_get(es), status);
-}
-
 void
 elua_bin_shutdown(Elua_State *es, int c)
 {
@@ -321,7 +178,7 @@ elua_main(lua_State *L)
    /* load all the things */
    EINA_LIST_FREE(largs, data)
      {
-        if (elua_dolib(es, data))
+        if (elua_util_require(es, data))
           goto error;
      }
 
@@ -329,13 +186,14 @@ elua_main(lua_State *L)
    if (optind < argc)
      {
         int quit = 0;
-        if ((m->status = elua_doscript(es, argc, argv, optind, &quit))) return 0;
+        if ((m->status = elua_util_script_run(es, argc, argv, optind, &quit)))
+          return 0;
         if (quit) return 0;
      }
    else if (!hasexec)
      {
         int quit;
-        if ((m->status = elua_dofile(es, NULL))) return 0;
+        if ((m->status = elua_util_file_run(es, NULL))) return 0;
         quit = lua_toboolean(L, -1);
         lua_pop(L, 1);
         if (quit) return 0;
