@@ -6,6 +6,16 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
+static const char pathfmt[] = "../../data/images/icon_%02d.png";
+static const char invalid[] = "thereisnosuchimage.png";
+#define MAX_IMAGE_ID 23
+
+typedef struct _Test_Data Test_Data;
+struct _Test_Data
+{
+   int image_id;
+   Eina_Bool success;
+};
 
 START_TEST (elm_atspi_role_get)
 {
@@ -24,7 +34,142 @@ START_TEST (elm_atspi_role_get)
 }
 END_TEST
 
+static Eina_Bool
+_async_error_cb(void *data, Eo *obj,
+                const Eo_Event_Description *desc EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   Test_Data *td = data;
+   char path[PATH_MAX];
+   sprintf(path, pathfmt, td->image_id);
+   eo_do(obj, efl_file_set(path, NULL));
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+_async_opened_cb(void *data, Eo *obj,
+                 const Eo_Event_Description *desc EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
+{
+   Test_Data *td = data;
+   const char *ff, *kk, *r1, *r2;
+   char path[PATH_MAX];
+
+   sprintf(path, pathfmt, td->image_id);
+   eo_do(obj, efl_file_get(&ff, &kk));
+   r1 = strrchr(ff, '/');
+   r2 = strrchr(path, '/');
+   ck_assert(!strcmp(r1, r2));
+   ck_assert(!kk);
+
+   if (td->image_id < MAX_IMAGE_ID / 2)
+     {
+        td->image_id++;
+        sprintf(path, pathfmt, td->image_id);
+        eo_do(obj, efl_file_set(path, NULL));
+        return EO_CALLBACK_CONTINUE;
+     }
+   else if (td->image_id < MAX_IMAGE_ID)
+     {
+        // mini stress-test
+        for (; td->image_id < MAX_IMAGE_ID;)
+          {
+             sprintf(path, pathfmt, ++td->image_id);
+             eo_do(obj, efl_file_set(path, NULL));
+          }
+        return EO_CALLBACK_CONTINUE;
+     }
+
+   td->success = 1;
+   ecore_main_loop_quit();
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+_timeout_cb(void *data)
+{
+   Test_Data *td = data;
+
+   td->success = 0;
+   ecore_main_loop_quit();
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+START_TEST (elm_image_async_path)
+{
+   Evas_Object *win, *image;
+   Eina_Bool one, two, ok;
+   Test_Data td;
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
+
+   td.success = 0;
+   td.image_id = 0;
+
+   image = elm_image_add(win);
+   eo_do(image,
+         one = efl_file_async_get();
+         efl_file_async_set(1);
+         eo_event_callback_add(EFL_FILE_EVENT_ASYNC_ERROR, _async_error_cb, &td);
+         eo_event_callback_add(EFL_FILE_EVENT_ASYNC_OPENED, _async_opened_cb, &td);
+         ok = efl_file_set(invalid, NULL);
+         two = efl_file_async_get());
+   ck_assert(!one && two);
+   ck_assert(ok);
+
+   ecore_timer_add(10.0, _timeout_cb, &td);
+
+   elm_run();
+   ck_assert(td.success);
+
+   elm_shutdown();
+}
+END_TEST
+
+START_TEST (elm_image_async_mmap)
+{
+   Evas_Object *win, *image;
+   Eina_Bool ok;
+   Test_Data td;
+   Eina_File *f;
+   char path[PATH_MAX];
+
+   elm_init(1, NULL);
+   win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
+
+   td.success = 0;
+   td.image_id = 1;
+
+   sprintf(path, pathfmt, td.image_id);
+   f = eina_file_open(path, 0);
+   ck_assert(f);
+
+   image = elm_image_add(win);
+   eo_do(image,
+         efl_file_async_set(1);
+         eo_event_callback_add(EFL_FILE_EVENT_ASYNC_ERROR, _async_error_cb, &td);
+         eo_event_callback_add(EFL_FILE_EVENT_ASYNC_OPENED, _async_opened_cb, &td);
+         ok = efl_file_mmap_set(f, NULL);
+         );
+   ck_assert(ok);
+
+   ecore_timer_add(10.0, _timeout_cb, &td);
+
+   elm_run();
+   ck_assert(td.success);
+
+   eina_file_close(f);
+
+   elm_shutdown();
+}
+END_TEST
+
 void elm_test_image(TCase *tc)
 {
- tcase_add_test(tc, elm_atspi_role_get);
+    tcase_add_test(tc, elm_atspi_role_get);
+    tcase_add_test(tc, elm_image_async_path);
+    tcase_add_test(tc, elm_image_async_mmap);
 }
