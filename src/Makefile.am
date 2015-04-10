@@ -45,7 +45,6 @@ include Makefile_Ecore_File.am
 include Makefile_Ecore_Input.am
 include Makefile_Ecore_Input_Evas.am
 include Makefile_Ecore_Cocoa.am
-include Makefile_Ecore_Drm.am
 include Makefile_Ecore_FB.am
 include Makefile_Ecore_Psl1ght.am
 include Makefile_Ecore_SDL.am
@@ -54,15 +53,16 @@ include Makefile_Ecore_Win32.am
 include Makefile_Ecore_X.am
 include Makefile_Ecore_IMF.am
 include Makefile_Ecore_IMF_Evas.am
+include Makefile_Eldbus.am
+include Makefile_Eeze.am
+include Makefile_Ecore_Drm.am
 include Makefile_Ecore_Evas.am
 include Makefile_Ecore_Audio.am
 include Makefile_Ecore_Audio_Cxx.am
 include Makefile_Ecore_Avahi.am
 include Makefile_Embryo.am
 include Makefile_Eio.am
-include Makefile_Eldbus.am
 include Makefile_Efreet.am
-include Makefile_Eeze.am
 include Makefile_EPhysics.am
 include Makefile_Edje.am
 include Makefile_Emotion.am
