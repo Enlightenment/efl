@@ -49,13 +49,6 @@ struct Main_Data
    int          status;
 };
 
-const luaL_reg cutillib[] =
-{
-   { "init_module", elua_module_init },
-   { "popenv"     , elua_io_popen    },
-   { NULL         , NULL             }
-};
-
 static void
 elua_print_help(const char *pname, FILE *stream)
 {
@@ -95,7 +88,6 @@ elua_main(lua_State *L)
                hasexec = EINA_FALSE;
    Eina_List  *largs   = NULL;
    const char *coredir = NULL, *moddir = NULL, *appsdir = NULL;
-   char        modfile[PATH_MAX];
    char       *data    = NULL;
 
    int ch;
@@ -144,26 +136,7 @@ elua_main(lua_State *L)
    elua_state_dirs_set(es, coredir, moddir, appsdir);
    elua_state_dirs_fill(es, noenv);
 
-   coredir = elua_state_core_dir_get(es);
-   moddir  = elua_state_mod_dir_get(es);
-   appsdir = elua_state_apps_dir_get(es);
-
-   if (!coredir || !moddir || !appsdir)
-     {
-        ERR("could not set one or more script directories");
-        goto error;
-     }
-
-   snprintf(modfile, sizeof(modfile), "%s/module.lua", coredir);
-   if (elua_report_error(es, elua_state_prog_name_get(es),
-       elua_io_loadfile(es, modfile)))
-     goto error;
-   lua_pushcfunction(L, elua_module_system_init);
-   lua_createtable(L, 0, 0);
-   luaL_register(L, NULL, cutillib);
-   lua_call(L, 2, 0);
-
-   if (!elua_state_setup_i18n(es))
+   if (!elua_state_setup_modules(es) || !elua_state_setup_i18n(es))
      goto error;
 
    elua_io_register(es);

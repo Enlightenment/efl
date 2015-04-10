@@ -295,9 +295,9 @@ elua_state_setup_i18n(const Elua_State *es)
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->coredir, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->progname, EINA_FALSE);
    snprintf(buf, sizeof(buf), "%s/gettext.lua", es->coredir);
-   if (elua_report_error(es, elua_state_prog_name_get(es),
-       elua_io_loadfile(es, buf)))
+   if (elua_report_error(es, es->progname, elua_io_loadfile(es, buf)))
      return EINA_FALSE;
    lua_createtable(es->luastate, 0, 0);
    luaL_register(es->luastate, NULL, gettextlib);
@@ -308,6 +308,31 @@ elua_state_setup_i18n(const Elua_State *es)
    lua_setfield(es->luastate, -2, "dngettext");
 #endif
    lua_call(es->luastate, 1, 0);
+   return EINA_TRUE;
+}
+
+const luaL_reg _elua_cutillib[] =
+{
+   { "init_module", elua_module_init },
+   { "popenv"     , elua_io_popen    },
+   { NULL         , NULL             }
+};
+
+EAPI Eina_Bool
+elua_state_setup_modules(const Elua_State *es)
+{
+   char buf[PATH_MAX];
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->coredir, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->progname, EINA_FALSE);
+   snprintf(buf, sizeof(buf), "%s/module.lua", es->coredir);
+   if (elua_report_error(es, es->progname, elua_io_loadfile(es, buf)))
+     return EINA_FALSE;
+   lua_pushcfunction(es->luastate, elua_module_system_init);
+   lua_createtable(es->luastate, 0, 0);
+   luaL_register(es->luastate, NULL, _elua_cutillib);
+   lua_call(es->luastate, 2, 0);
    return EINA_TRUE;
 }
 

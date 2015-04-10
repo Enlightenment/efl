@@ -90,6 +90,7 @@ EAPI lua_State *elua_state_lua_state_get(const Elua_State *es);
 EAPI int elua_report_error(const Elua_State *es, const char *pname, int status);
 
 EAPI Eina_Bool elua_state_setup_i18n(const Elua_State *es);
+EAPI Eina_Bool elua_state_setup_modules(const Elua_State *es);
 
 EAPI int elua_io_loadfile(const Elua_State *es, const char *fname);
 EAPI void elua_io_register(const Elua_State *es);
