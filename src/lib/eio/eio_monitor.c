@@ -365,20 +365,12 @@ eio_monitor_stringshared_add(const char *path)
    monitor->fallback = EINA_FALSE;
    monitor->rename = EINA_FALSE;
    monitor->delete_me = EINA_FALSE;
+   monitor->exist = NULL;
 
    EINA_REFCOUNT_INIT(monitor);
-   EINA_REFCOUNT_REF(monitor); /* as we spawn a thread for this monitor, we need to refcount specifically for it */
 
-   monitor->exist = eio_file_direct_stat(monitor->path,
-                                         _eio_monitor_stat_cb,
-                                         _eio_monitor_error_cb,
-                                         monitor);
-   if (!monitor->exist)
-     {
-        _eio_monitor_free(monitor);
-        return NULL;
-     }
-
+   eio_monitor_backend_add(monitor);
+   
    eina_hash_direct_add(_eio_monitors, path, monitor);
    INF("New monitor on '%s'.", path);
 
