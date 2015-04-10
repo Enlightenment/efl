@@ -52,6 +52,7 @@ struct _Eio_Model_Data
    int cb_count_child_del; /**< monitor reference counter for child del event*/
    Eio_Filter_Direct_Cb filter_cb;
    void *filter_userdata;
+   Eina_Spinlock filter_lock; /**< filter callback is called from another thread */
 };
 
 #endif

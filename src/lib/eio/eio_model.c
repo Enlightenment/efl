@@ -148,19 +148,16 @@ _efl_model_evt_added_ecore_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void
    Efl_Model_Children_Event cevt;
    Eina_Value path;
 
-   if (priv->children_list)
-     {
-        cevt.child = eo_add_ref(EIO_MODEL_CLASS, priv->obj, eio_model_path_set(evt->filename));
-        priv->children_list = eina_list_append(priv->children_list, cevt.child);
-        cevt.index = eina_list_count(priv->children_list);
+   cevt.child = eo_add_ref(EIO_MODEL_CLASS, priv->obj, eio_model_path_set(evt->filename));
+   priv->children_list = eina_list_append(priv->children_list, cevt.child);
+   cevt.index = eina_list_count(priv->children_list);
 
-        eina_value_setup(&path, EINA_VALUE_TYPE_STRING);
-        eina_value_set(&path, evt->filename);
-        eo_do(cevt.child, eio_model_children_filter_set(priv->filter_cb, priv->filter_userdata));
-        eina_value_flush(&path);
+   eina_value_setup(&path, EINA_VALUE_TYPE_STRING);
+   eina_value_set(&path, evt->filename);
+   eo_do(cevt.child, eio_model_children_filter_set(priv->filter_cb, priv->filter_userdata));
+   eina_value_flush(&path);
 
-        eo_do(priv->obj, eo_event_callback_call(EFL_MODEL_BASE_EVENT_CHILD_ADDED, &cevt));
-     }
+   eo_do(priv->obj, eo_event_callback_call(EFL_MODEL_BASE_EVENT_CHILD_ADDED, &cevt));
 
    return EINA_TRUE;
 }
@@ -391,10 +388,15 @@ _eio_filter_children_load_cb(void *data, Eio_File *handler, const Eina_File_Dire
    Eio_Model_Data *priv = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(priv, EINA_FALSE);
 
+   eina_spinlock_take(&priv->filter_lock);
    if (priv->filter_cb)
      {
-        return priv->filter_cb(priv->filter_userdata, handler, info);
+        Eina_Bool r = priv->filter_cb(priv->filter_userdata, handler, info);
+        eina_spinlock_release(&priv->filter_lock);
+        return r;
      }
+   else
+     eina_spinlock_release(&priv->filter_lock);
 
    return EINA_TRUE;
 }
@@ -407,8 +409,10 @@ _eio_main_children_load_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina
    EINA_SAFETY_ON_NULL_RETURN(priv);
 
    child = eo_add(MY_CLASS, NULL, eio_model_path_set(info->path));
+   eina_spinlock_take(&priv->filter_lock);
    if (priv->filter_cb)
      eo_do(child, eio_model_children_filter_set(priv->filter_cb, priv->filter_userdata));
+   eina_spinlock_release(&priv->filter_lock);
 
    priv->children_list = eina_list_append(priv->children_list, child);
 }
@@ -506,8 +510,12 @@ _eio_model_efl_model_base_unload(Eo *obj  EINA_UNUSED, Eio_Model_Data *priv)
 static void
 _eio_model_children_filter_set(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, Eio_Filter_Direct_Cb filter_cb, void *data)
 {
+   eina_spinlock_take(&priv->filter_lock);
+   
    priv->filter_cb = filter_cb;
    priv->filter_userdata = data;
+
+   eina_spinlock_release(&priv->filter_lock);
 }
 
 /**
@@ -637,6 +645,7 @@ _eio_model_eo_base_constructor(Eo *obj, Eio_Model_Data *priv)
 
    priv->load.status = EFL_MODEL_LOAD_STATUS_UNLOADED;
    priv->monitor = NULL;
+   eina_spinlock_new(&priv->filter_lock);
 }
 
 static void
@@ -659,6 +668,8 @@ _eio_model_eo_base_destructor(Eo *obj , Eio_Model_Data *priv)
 
    if (priv->monitor)
      eio_monitor_del(priv->monitor);
+
+   eina_spinlock_free(&priv->filter_lock);
 
    if (priv->properties_name)
      eina_array_free(priv->properties_name);
