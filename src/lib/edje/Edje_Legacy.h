@@ -158,7 +158,6 @@ EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord 
 EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah);
 
 /**
- *
  * @brief Sets the @b EDJ file (and group within it) to load an Edje
  * object's contents from
  *
@@ -192,7 +191,6 @@ Edje object
 EAPI Eina_Bool edje_object_file_set(Edje_Object *obj, const char *file, const char *group);
 
 /**
- *
  * @brief Get the file and group name that a given Edje object is bound to
  *
  * This gets the EDJ file's path, with the respective group set for
@@ -214,7 +212,6 @@ EAPI void edje_object_file_get(const Edje_Object *obj, const char **file, const 
 
 
 /**
- *
  * @brief Sets the @b EDJ file (and group within it) to load an Edje
  * object's contents from
  *

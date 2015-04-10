@@ -221,12 +221,12 @@ EAPI void edje_edit_string_list_free(Eina_List *lst);
 EAPI void edje_edit_string_free(const char *str);
 
 /** Get the name of the program that compiled the edje file.
-  * Can be 'edje_cc' or 'edje_edit'
-  *
-  * @param obj Object being edited.
-  *
-  * @return Compiler stored in the Edje file
-  */
+ * Can be 'edje_cc' or 'edje_edit'
+ *
+ * @param obj Object being edited.
+ *
+ * @return Compiler stored in the Edje file
+ */
 EAPI const char * edje_edit_compiler_get(Evas_Object *obj);
 
 /** Save the modified edje object back to his file.

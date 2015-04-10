@@ -977,7 +977,7 @@ typedef struct _Edje_Entry_Change_Info        Edje_Entry_Change_Info;
 
 /**
  * @typedef Edje_Text_Filter_Type
- * 
+ *
  * All Edje text filters type values.
  */
 typedef enum _Edje_Text_Filter_Type
@@ -990,7 +990,7 @@ typedef enum _Edje_Text_Filter_Type
 /**
  * @typedef Edje_Text_Autocapital_Type
  *
- * All Text auto capital mode type values 
+ * All Text auto capital mode type values
  *
  */
 typedef enum _Edje_Text_Autocapital_Type
@@ -1003,7 +1003,7 @@ typedef enum _Edje_Text_Autocapital_Type
 
 /**
  * @typedef Edje_Input_Panel_Lang
- * 
+ *
  */
 typedef enum _Edje_Input_Panel_Lang
 {
@@ -1048,7 +1048,7 @@ typedef enum _Edje_Input_Panel_Layout
 
 /*
  * @typedef Edje_Input_Hints
- * @brief Edje input hints 
+ * @brief Edje input hints
  */
 typedef enum
 {
@@ -2248,7 +2248,7 @@ EAPI const Edje_Perspective *edje_evas_global_perspective_get(const Evas *e);
  *
  * @see edje_audio_channel_mute_set()
  * @see edje_audio_channel_mute_get()
- * 
+ *
  * @since 1.9
  */
 typedef enum _Edje_Channel
