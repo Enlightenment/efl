@@ -21,10 +21,8 @@
 
 #include "Elua.h"
 
-static const char *elua_progname = NULL;
-static Elua_State *elua_state    = NULL;
-
-static int _el_log_domain = -1;
+static Elua_State *elua_state     = NULL;
+static int         _el_log_domain = -1;
 
 #define DBG(...) EINA_LOG_DOM_DBG(_el_log_domain, __VA_ARGS__)
 #define INF(...) EINA_LOG_DOM_INFO(_el_log_domain, __VA_ARGS__)
@@ -94,13 +92,14 @@ elua_dolib(Elua_State *es, const char *libname)
    lua_State *L = elua_state_lua_state_get(es);
    elua_state_require_ref_push(es);
    lua_pushstring(L, libname);
-   return elua_report_error(es, elua_progname, lua_pcall(L, 1, 0, 0));
+   return elua_report_error(es, elua_state_prog_name_get(es),
+                            lua_pcall(L, 1, 0, 0));
 }
 
 static int
 elua_dofile(Elua_State *es, const char *fname)
 {
-   return elua_report_error(es, elua_progname,
+   return elua_report_error(es, elua_state_prog_name_get(es),
                             elua_io_loadfile(es, fname)
                             || elua_docall(es, 0, 1));
 }
@@ -108,9 +107,9 @@ elua_dofile(Elua_State *es, const char *fname)
 static int
 elua_dostr(Elua_State *es, const char *chunk, const char *chname)
 {
-   return elua_report_error(es, elua_progname,
-                            luaL_loadbuffer(elua_state_lua_state_get(es), chunk, strlen(chunk),
-                                            chname)
+   return elua_report_error(es, elua_state_prog_name_get(es),
+                            luaL_loadbuffer(elua_state_lua_state_get(es),
+                                            chunk, strlen(chunk), chname)
                             || elua_docall(es, 0, 0));
 }
 
@@ -171,7 +170,7 @@ elua_doscript(Elua_State *es, int argc, char **argv, int n, int *quit)
         *quit = lua_toboolean(elua_state_lua_state_get(es), -1);
         lua_pop(elua_state_lua_state_get(es), 1);
      }
-   return elua_report_error(es, elua_progname, status);
+   return elua_report_error(es, elua_state_prog_name_get(es), status);
 }
 
 void
@@ -250,14 +249,12 @@ elua_main(lua_State *L)
    int    argc = m->argc;
    char **argv = m->argv;
 
-   elua_progname = (argv[0] && argv[0][0]) ? argv[0] : "elua";
-
    while ((ch = getopt_long(argc, argv, "+LhC:M:A:l:I:E", lopt, NULL)) != -1)
      {
         switch (ch)
           {
            case 'h':
-             elua_print_help(elua_progname, stdout);
+             elua_print_help(elua_state_prog_name_get(es), stdout);
              if (largs) eina_list_free(largs);
              return 0;
            case 'C':
@@ -301,7 +298,8 @@ elua_main(lua_State *L)
      }
 
    snprintf(modfile, sizeof(modfile), "%s/module.lua", coredir);
-   if (elua_report_error(es, elua_progname, elua_io_loadfile(es, modfile)))
+   if (elua_report_error(es, elua_state_prog_name_get(es),
+       elua_io_loadfile(es, modfile)))
      goto error;
    lua_pushcfunction(L, elua_module_system_init);
    lua_createtable(L, 0, 0);
@@ -309,7 +307,8 @@ elua_main(lua_State *L)
    lua_call(L, 2, 0);
 
    snprintf(modfile, sizeof(modfile), "%s/gettext.lua", coredir);
-   if (elua_report_error(es, elua_progname, elua_io_loadfile(es, modfile)))
+   if (elua_report_error(es, elua_state_prog_name_get(es),
+       elua_io_loadfile(es, modfile)))
      goto error;
    elua_state_setup_i18n(es);
    lua_call(L, 1, 0);
