@@ -34,7 +34,7 @@ _load_monitor_status_cb(void *data, Eo *obj, const Eo_Event_Description *desc EI
   str = eina_value_to_string(value_prop);
   fail_if(!str, "ERROR: Cannot convert value to string!\n");
   fprintf(stderr, "new children filename %s\n", str);
-  if(strcmp(str, temp_filename) == 0)
+  if(temp_filename && strcmp(str, temp_filename) == 0)
     {
       fprintf(stderr, "is child that we want\n");
       eo_do(obj, eo_event_callback_del(EFL_MODEL_BASE_EVENT_LOAD_STATUS, _load_monitor_status_cb, data));
@@ -64,7 +64,7 @@ _children_removed_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, const Eo_Event
 
             str = eina_value_to_string(value_prop);
             fail_if(!str, "ERROR: Cannot convert value to string!\n");
-            if(strcmp(str, temp_filename) == 0)
+            if(temp_filename && strcmp(str, temp_filename) == 0)
               ecore_main_loop_quit();
          }
     }
