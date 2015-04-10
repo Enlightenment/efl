@@ -350,6 +350,7 @@ icon_changes_listen(void)
    icon_changes_listen_recursive(stack, efreet_icon_user_dir_get(), EINA_TRUE);
    EINA_LIST_FOREACH(icon_extra_dirs, l, dir)
      {
+        if (!strcmp(dir, "/")) continue;
         eina_inarray_flush(stack);
         icon_changes_listen_recursive(stack, dir, EINA_TRUE);
      }
@@ -528,10 +529,12 @@ cache_icon_dir_add(const char *dir)
    if (!san) return;
    if (!eina_list_search_unsorted_list(icon_extra_dirs, EINA_COMPARE_CB(strcmp), san))
      {
+        if (!strcmp(san, "/")) goto out;
         icon_extra_dirs = eina_list_append(icon_extra_dirs, eina_stringshare_add(san));
         save_list("extra_icon.dirs", icon_extra_dirs);
         cache_icon_update(EINA_TRUE);
      }
+out:
    free(san);
 }
 
