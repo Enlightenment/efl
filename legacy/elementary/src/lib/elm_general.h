@@ -387,7 +387,7 @@ typedef enum _Elm_Process_State
  * runs as normal and may be user-visible or "active" in some way. A
  * background application is not user-visible or otherwise important and
  * likely should release resources and not wake up often or process much.
- * 
+ *
  * @ingroup General
  * @since 1.12
  */

@@ -77,7 +77,6 @@ EAPI Evas_Object                 *elm_layout_content_get(const Evas_Object *obj,
 EAPI Evas_Object                 *elm_layout_content_unset(Evas_Object *obj, const char *swallow);
 
 /**
- *
  * Set the file that will be used as layout
  *
  * @return (1 = success, 0 = error)

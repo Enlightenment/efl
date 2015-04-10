@@ -49,7 +49,6 @@ EAPI void                         elm_bg_color_set(Evas_Object *obj, int r, int 
 EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b);
 
 /**
- *
  * Set the file (image or edje collection) to give life for the
  * background
  *
@@ -79,7 +78,6 @@ EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *
 EAPI Eina_Bool elm_bg_file_set(Eo *obj, const char *file, const char *group);
 
 /**
- *
  * Get the file (image or edje collection) set on a given background
  * widget
  *

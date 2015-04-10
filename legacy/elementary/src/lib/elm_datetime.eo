@@ -190,7 +190,6 @@ class Elm_Datetime (Elm_Layout)
 
          Minute: default value range is from 0 to 59.
 
-
          @return @c EINA_TRUE if current time is set successfully.
 
          @see elm_datetime_value_set()

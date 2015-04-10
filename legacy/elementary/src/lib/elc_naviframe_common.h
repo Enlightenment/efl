@@ -24,6 +24,7 @@ EAPI Evas_Object     *elm_naviframe_add(Evas_Object *parent);
 EAPI void             elm_naviframe_item_title_enabled_set(Elm_Object_Item *it, Eina_Bool enabled, Eina_Bool transition);
 
 Elm_Object_Item *elm_naviframe_item_push(Evas_Object *obj, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style);
+
 /**
  * @brief Simple version of item_push.
  *

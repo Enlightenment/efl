@@ -37,7 +37,6 @@ EAPI Evas_Object     *elm_image_add(Evas_Object *parent);
 EAPI Eina_Bool        elm_image_file_set(Evas_Object *obj, const char *file, const char *group);
 
 /**
- *
  * Get the file that will be used as image.
  *
  * @see elm_image_file_set()
