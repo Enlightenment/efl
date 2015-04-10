@@ -282,8 +282,7 @@ endif
 
 bin_PROGRAMS += \
 bin/ecore_evas/ecore_evas_convert \
-bin/ecore_evas/eetpack \
-bin/ecore_evas/ecore_evas_svg
+bin/ecore_evas/eetpack
 
 bin_ecore_evas_ecore_evas_convert_SOURCES = bin/ecore_evas/ecore_evas_convert.c
 bin_ecore_evas_ecore_evas_convert_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_EVAS_CFLAGS@
@@ -294,8 +293,3 @@ bin_ecore_evas_eetpack_SOURCES = bin/ecore_evas/eetpack.c
 bin_ecore_evas_eetpack_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_EVAS_CFLAGS@ @EINA_CFLAGS@ @EET_CFLAGS@ @EVAS_CFLAGS@
 bin_ecore_evas_eetpack_LDADD = @USE_ECORE_EVAS_LIBS@ @USE_EINA_LIBS@ @USE_EET_LIBS@ @USE_EVAS_LIBS@
 bin_ecore_evas_eetpack_DEPENDENCIES = @USE_ECORE_EVAS_INTERNAL_LIBS@ @USE_EINA_INTERNAL_LIBS@ @USE_EET_INTERNAL_LIBS@ @USE_EVAS_INTERNAL_LIBS@
-
-bin_ecore_evas_ecore_evas_svg_SOURCES = bin/ecore_evas/ecore_evas_svg.c
-bin_ecore_evas_ecore_evas_svg_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_EVAS_CFLAGS@
-bin_ecore_evas_ecore_evas_svg_LDADD = @USE_ECORE_EVAS_LIBS@
-bin_ecore_evas_ecore_evas_svg_DEPENDENCIES = @USE_ECORE_EVAS_INTERNAL_LIBS@
