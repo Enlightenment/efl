@@ -887,6 +887,8 @@ _elm_image_file_set_do(Evas_Object *obj)
 EOLIAN static Eina_Bool
 _elm_image_memfile_set(Eo *obj, Elm_Image_Data *sd, const void *img, size_t size, const char *format, const char *key)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(img, EINA_FALSE);
+
    _elm_image_file_set_do(obj);
 
    evas_object_image_memfile_set
