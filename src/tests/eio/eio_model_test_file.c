@@ -16,14 +16,6 @@
 #define EFL_MODEL_TEST_FILENAME_PATH "/tmp"
 #define EFL_MODEL_MAX_TEST_CHILDS 16
 
-/**
- * The following test works however
- * it is going to rename (move) the original directory to
- * new one so '/tmp' as root dir doesn't work , you'll need to use
- * '/tmp/some_other_dir' as root instead.
- */
-//#define _RUN_LOCAL_TEST
-
 struct reqs_t {
    /* property change */
    int changed_is_dir;
@@ -44,6 +36,9 @@ struct reqs_t {
    int children;
    int child_add;
    int child_del;
+
+   /* load status */
+  int properties_loaded;
 };
 
 static struct reqs_t reqs;
@@ -72,7 +67,12 @@ _load_status_cb(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *des
      printf("Children is Loaded\n");
 
    if (st->status & EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES)
-     printf("Properties is Loaded\n");
+     {
+        fprintf(stderr, "Properties are Loaded\n"); fflush(stderr);
+        if(!reqs.properties_loaded)
+          ecore_main_loop_quit();
+        reqs.properties_loaded = 1;
+     }
 
    if ((st->status & EFL_MODEL_LOAD_STATUS_LOADED) == EFL_MODEL_LOAD_STATUS_LOADED)
      {
@@ -103,8 +103,6 @@ _load_status_cb(void *data EINA_UNUSED, Eo *obj, const Eo_Event_Description *des
 
         /**< get full list */
         eo_do(obj, status = efl_model_children_slice_get(0 ,0 ,(Eina_Accessor **)&accessor));
-        eina_accessor_free(accessor);
-        eo_do(obj, status = efl_model_children_slice_get(5 ,5 ,(Eina_Accessor **)&accessor));
         eina_accessor_free(accessor);
         ecore_main_loop_quit();
      }
@@ -155,15 +153,12 @@ START_TEST(eio_model_test_test_file)
    Eo *filemodel = NULL;
    const Eina_Value *value_prop;
    Efl_Model_Load_Status status;
-#ifdef _RUN_LOCAL_TEST
-   Eina_Value nameset_value;
-#endif
    Eina_Array *properties_list;
    Eina_Array_Iterator iterator;
    char *str;
    unsigned int i;
 
-   memset(&reqs, -1, sizeof(struct reqs_t));
+   memset(&reqs, 0, sizeof(struct reqs_t));
 
    fail_if(!eina_init(), "ERROR: Cannot init Eina!\n");
    fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
@@ -180,6 +175,8 @@ START_TEST(eio_model_test_test_file)
 
    handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, exit_func, NULL);
 
+   ecore_main_loop_begin();
+   
    eo_do(filemodel, status = efl_model_property_get("filename", &value_prop));
    str = eina_value_to_string(value_prop);
    printf("efl_model_test filename %s, load status %d\n", str, status);
@@ -207,16 +204,6 @@ START_TEST(eio_model_test_test_file)
 
    ecore_main_loop_begin();
 
-#ifdef _RUN_LOCAL_TEST
-   eina_value_setup(&nameset_value, EINA_VALUE_TYPE_STRING);
-   eina_value_setup(&value_prop, EINA_VALUE_TYPE_STRING);
-   eina_value_set(&nameset_value, "/tmp/efl_model_test");
-   eo_do(filemodel, efl_model_property_set("path", &nameset_value));
-   eina_value_flush(&nameset_value);
-   eo_do(filemodel, status = efl_model_property_get("path", &value_prop));
-#endif
-
-   sleep(1); /**< EIO is asynchrounous so I must give some time for deletions to execute */
    eo_unref(filemodel);
    ecore_shutdown();
    eina_shutdown();

@@ -122,7 +122,7 @@ _eio_error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error)
 {
    if (error != 0)
      {
-        ERR("%d: %s.", error, strerror(error));
+        WRN("%d: %s.", error, strerror(error));
      }
 }
 
@@ -131,7 +131,7 @@ _eio_prop_set_error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, in
 {
    if (error != 0)
      {
-        ERR("%d: %s.", error, strerror(error));
+        WRN("%d: %s.", error, strerror(error));
      }
 }
 
@@ -432,7 +432,7 @@ _eio_error_children_load_cb(void *data, Eio_File *handler EINA_UNUSED, int error
    Eio_Model_Data *priv = data;
    Eo *child;
 
-   ERR("%d: %s.", error, strerror(error));
+   WRN("%d: %s.", error, strerror(error));
 
    EINA_LIST_FREE(priv->children_list, child)
      eo_unref(child);
@@ -544,11 +544,6 @@ _eio_model_efl_model_base_child_del(Eo *obj EINA_UNUSED, Eio_Model_Data *priv, E
 {
    Eio_Model_Data *child_priv;
    EINA_SAFETY_ON_NULL_RETURN_VAL(child, EFL_MODEL_LOAD_STATUS_ERROR);
-
-   if (priv->children_list != NULL)
-     {
-        priv->children_list = eina_list_remove(priv->children_list, child);
-     }
 
    child_priv = eo_data_scope_get(child, MY_CLASS);
    EINA_SAFETY_ON_NULL_RETURN_VAL(child_priv, EFL_MODEL_LOAD_STATUS_ERROR);
