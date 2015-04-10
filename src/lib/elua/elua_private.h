@@ -30,6 +30,7 @@
 struct _Elua_State
 {
    lua_State *luastate;
+   Eina_Stringshare *progname;
    Eina_Stringshare *coredir;
    Eina_Stringshare *moddir;
    Eina_Stringshare *appsdir;

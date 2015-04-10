@@ -65,7 +65,7 @@ typedef struct _Elua_State Elua_State;
 EAPI int elua_init(void);
 EAPI int elua_shutdown(void);
 
-EAPI Elua_State *elua_state_new(void);
+EAPI Elua_State *elua_state_new(const char *progname);
 EAPI Elua_State *elua_state_from_lua_get(lua_State *L);
 
 EAPI void elua_state_free(Elua_State *es);

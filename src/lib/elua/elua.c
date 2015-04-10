@@ -63,7 +63,7 @@ elua_shutdown(void)
 }
 
 EAPI Elua_State *
-elua_state_new(void)
+elua_state_new(const char *progname)
 {
    Elua_State *ret = NULL;
    lua_State *L = luaL_newstate();
@@ -71,6 +71,7 @@ elua_state_new(void)
      return NULL;
    ret = calloc(1, sizeof(Elua_State));
    ret->luastate = L;
+   if (progname) ret->progname = eina_stringshare_add(progname);
    luaL_openlibs(L);
    lua_pushlightuserdata(L, ret);
    lua_setfield(L, LUA_REGISTRYINDEX, "elua_ptr");
@@ -95,6 +96,7 @@ elua_state_free(Elua_State *es)
      eina_list_free(es->cmods);
    EINA_LIST_FREE(es->lincs, data)
      eina_stringshare_del(data);
+   eina_stringshare_del(es->progname);
    eina_stringshare_del(es->coredir);
    eina_stringshare_del(es->moddir);
    eina_stringshare_del(es->appsdir);

@@ -376,7 +376,7 @@ main(int argc, char **argv)
 
    INF("elua logging initialized: %d", _el_log_domain);
 
-   if (!(es = elua_state_new()))
+   if (!(es = elua_state_new((argv[0] && argv[0][0]) ? argv[0] : "elua")))
      {
         ERR("could not initialize elua state.");
         elua_bin_shutdown(es, 1);
