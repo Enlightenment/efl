@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__))
+#if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__)) || defined (__FreeBSD__)
 # include <libgen.h>
 #endif
 
