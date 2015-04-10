@@ -2,8 +2,6 @@
 # include <config.h>
 #endif
 
-/* The Lua runtime component of the EFL */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
@@ -21,8 +19,7 @@
 
 #include "Elua.h"
 
-static Elua_State *elua_state     = NULL;
-static int         _el_log_domain = -1;
+static int _el_log_domain = -1;
 
 #define DBG(...) EINA_LOG_DOM_DBG(_el_log_domain, __VA_ARGS__)
 #define INF(...) EINA_LOG_DOM_INFO(_el_log_domain, __VA_ARGS__)
@@ -84,19 +81,18 @@ static struct option lopt[] =
 static int
 elua_main(lua_State *L)
 {
-   Eina_Bool   noenv   = EINA_FALSE,
-               hasexec = EINA_FALSE;
+   Eina_Bool   noenv   = EINA_FALSE;
    Eina_List  *largs   = NULL;
    const char *coredir = NULL, *moddir = NULL, *appsdir = NULL;
    char       *data    = NULL;
 
-   int ch;
-
-   struct Main_Data *m = (struct Main_Data*)lua_touserdata(L, 1);
-   Elua_State *es = m->es;
+   struct Main_Data *m  = (struct Main_Data*)lua_touserdata(L, 1);
+   Elua_State       *es = m->es;
 
    int    argc = m->argc;
    char **argv = m->argv;
+
+   int ch;
 
    while ((ch = getopt_long(argc, argv, "+LhC:M:A:l:I:E", lopt, NULL)) != -1)
      {
@@ -140,32 +136,26 @@ elua_main(lua_State *L)
      goto error;
 
    elua_io_register(es);
+
    lua_gc(L, LUA_GCRESTART, 0);
 
    INF("elua lua state initialized");
 
-   /* load all the things */
    EINA_LIST_FREE(largs, data)
-     {
-        if (elua_util_require(es, data))
-          goto error;
-     }
+     if (elua_util_require(es, data)) goto error;
 
-   /* run script or execute stdin as file */
    if (optind < argc)
      {
         int quit = 0;
-        if ((m->status = elua_util_script_run(es, argc, argv, optind, &quit)))
+        if (elua_util_script_run(es, argc, argv, optind, &quit))
+          goto error;
+        if (quit)
           return 0;
-        if (quit) return 0;
      }
-   else if (!hasexec)
+   else
      {
-        int quit;
-        if ((m->status = elua_util_file_run(es, NULL))) return 0;
-        quit = lua_toboolean(L, -1);
-        lua_pop(L, 1);
-        if (quit) return 0;
+        ERR("nothing to run");
+        goto error;
      }
 
    ecore_main_loop_begin();
@@ -207,8 +197,6 @@ main(int argc, char **argv)
         ERR("could not initialize elua state.");
         elua_bin_shutdown(es, 1);
      }
-
-   elua_state = es;
 
    INF("elua lua state created");
 
