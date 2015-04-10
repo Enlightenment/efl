@@ -1961,6 +1961,9 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
    if ((dbg = evgl_engine->api_debug_mode))
      DBG("Destroying surface sfc %p (eng %p)", sfc, eng_data);
 
+   if (sfc->current_ctx && sfc->current_ctx->current_sfc == sfc)
+      sfc->current_ctx->current_sfc = NULL;
+
    if ((rsc->current_ctx) && (rsc->current_ctx->current_sfc == sfc) )
      {
         if (evgl_engine->api_debug_mode)
