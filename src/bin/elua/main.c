@@ -111,41 +111,12 @@ elua_register_require(lua_State *L)
    const char *modpath  = elua_state_mod_dir_get(elua_state);
    const char *appspath = elua_state_apps_dir_get(elua_state);
    Eina_List  *largs    = lua_touserdata(L, lua_upvalueindex(1)), *l = NULL;
-   Eina_Bool   noenv    = lua_toboolean (L, lua_upvalueindex(2));
    Arg_Data   *data     = NULL;
-   char corepathbuf[PATH_MAX], modpathbuf[PATH_MAX], appspathbuf[PATH_MAX];
    int n = 3;
    lua_pushvalue(L, 1);
    elua_require_ref = luaL_ref(L, LUA_REGISTRYINDEX);
    lua_pushvalue(L, 2);
    elua_appload_ref = luaL_ref(L, LUA_REGISTRYINDEX);
-   if (!corepath)
-     {
-        if (noenv || !(corepath = getenv("ELUA_CORE_DIR")) || !corepath[0])
-          {
-             corepath = corepathbuf;
-             snprintf(corepathbuf, sizeof(corepathbuf), "%s/core",
-                      eina_prefix_data_get(elua_prefix));
-          }
-     }
-   if (!modpath)
-     {
-        if (noenv || !(modpath = getenv("ELUA_MODULES_DIR")) || !modpath[0])
-          {
-             modpath = modpathbuf;
-             snprintf(modpathbuf, sizeof(modpathbuf), "%s/modules",
-                      eina_prefix_data_get(elua_prefix));
-          }
-     }
-   if (!appspath)
-     {
-        if (noenv || !(appspath = getenv("ELUA_APPS_DIR")) || !appspath[0])
-          {
-             appspath = appspathbuf;
-             snprintf(appspathbuf, sizeof(appspathbuf), "%s/apps",
-                      eina_prefix_data_get(elua_prefix));
-          }
-     }
    lua_pushfstring(L, "%s/?.lua;", corepath);
    EINA_LIST_FOREACH(largs, l, data)
      {
@@ -317,10 +288,9 @@ elua_main(lua_State *L)
                hasexec = EINA_FALSE;
    Eina_List  *largs   = NULL, *l = NULL;
    Arg_Data   *data    = NULL;
-   const char *coref   = NULL;
    char       *coredir = NULL, *moddir = NULL, *appsdir = NULL;
+   char coredirbuf[PATH_MAX], moddirbuf[PATH_MAX], appsdirbuf[PATH_MAX];
    char        modfile[PATH_MAX];
-   char       corefbuf[PATH_MAX];
 
    int ch;
 
@@ -364,8 +334,6 @@ elua_main(lua_State *L)
 
    INF("arguments parsed");
 
-   elua_state_dirs_set(es, coredir, moddir, appsdir);
-
    lua_gc(L, LUA_GCSTOP, 0);
 
    elua_prefix = eina_prefix_new(elua_progname, elua_main, "ELUA", "elua", "checkme",
@@ -379,29 +347,49 @@ elua_main(lua_State *L)
         return 0;
      }
 
-   if (!(coref = coredir))
+   if (!coredir)
      {
-        if (noenv || !(coref = getenv("ELUA_CORE_DIR")) || !coref[0])
+        if (noenv || !(coredir = getenv("ELUA_CORE_DIR")) || !coredir[0])
           {
-             coref = corefbuf;
-             snprintf(corefbuf, sizeof(corefbuf), "%s/core",
-                     eina_prefix_data_get(elua_prefix));
+             coredir = coredirbuf;
+             snprintf(coredirbuf, sizeof(coredirbuf), "%s/core",
+                      eina_prefix_data_get(elua_prefix));
           }
      }
-   snprintf(modfile, sizeof(modfile), "%s/module.lua", coref);
+   if (!moddir)
+     {
+        if (noenv || !(moddir = getenv("ELUA_MODULES_DIR")) || !moddir[0])
+          {
+             moddir = moddirbuf;
+             snprintf(moddirbuf, sizeof(moddirbuf), "%s/modules",
+                      eina_prefix_data_get(elua_prefix));
+          }
+     }
+   if (!appsdir)
+     {
+        if (noenv || !(appsdir = getenv("ELUA_APPS_DIR")) || !appsdir[0])
+          {
+             appsdir = appsdirbuf;
+             snprintf(appsdirbuf, sizeof(appsdirbuf), "%s/apps",
+                      eina_prefix_data_get(elua_prefix));
+          }
+     }
+
+   elua_state_dirs_set(es, coredir, moddir, appsdir);
+
+   snprintf(modfile, sizeof(modfile), "%s/module.lua", coredir);
    if (elua_report_error(es, elua_progname, elua_io_loadfile(es, modfile)))
      {
         m->status = 1;
         return 0;
      }
    lua_pushlightuserdata(L, largs);
-   lua_pushboolean      (L, noenv);
-   lua_pushcclosure(L, elua_register_require, 2);
+   lua_pushcclosure(L, elua_register_require, 1);
    lua_createtable(L, 0, 0);
    luaL_register(L, NULL, cutillib);
    lua_call(L, 2, 0);
 
-   snprintf(modfile, sizeof(modfile), "%s/gettext.lua", coref);
+   snprintf(modfile, sizeof(modfile), "%s/gettext.lua", coredir);
    if (elua_report_error(es, elua_progname, elua_io_loadfile(es, modfile)))
      {
         m->status = 1;
