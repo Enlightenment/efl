@@ -34,6 +34,8 @@ struct _Elua_State
    Eina_Stringshare *moddir;
    Eina_Stringshare *appsdir;
    Eina_List *cmods;
+   Eina_List *lincs;
+   int requireref, apploadref;
 };
 
 extern int _elua_log_dom;

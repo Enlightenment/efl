@@ -80,10 +80,10 @@ elua_state_new(void)
 EAPI void
 elua_state_free(Elua_State *es)
 {
+   void *data;
    if (!es) return;
    if (es->luastate)
      {
-        void *data;
         EINA_LIST_FREE(es->cmods, data)
           {
              lua_rawgeti(es->luastate, LUA_REGISTRYINDEX, (size_t)data);
@@ -93,6 +93,8 @@ elua_state_free(Elua_State *es)
      }
    else if (es->cmods)
      eina_list_free(es->cmods);
+   EINA_LIST_FREE(es->lincs, data)
+     eina_stringshare_del(data);
    eina_stringshare_del(es->coredir);
    eina_stringshare_del(es->moddir);
    eina_stringshare_del(es->appsdir);
@@ -166,6 +168,15 @@ elua_state_apps_dir_get(const Elua_State *es)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, NULL);
    return es->moddir;
+}
+
+EAPI void
+elua_state_include_path_add(Elua_State *es, const char *path)
+{
+   EINA_SAFETY_ON_NULL_RETURN(es);
+   EINA_SAFETY_ON_NULL_RETURN(path);
+   EINA_SAFETY_ON_FALSE_RETURN(path[0]);
+   es->lincs = eina_list_append(es->lincs, eina_stringshare_add(path));
 }
 
 EAPI lua_State *
@@ -277,4 +288,36 @@ elua_module_init(lua_State *L)
            (void*)(size_t)luaL_ref(L, LUA_REGISTRYINDEX));
      }
    return 0;
+}
+
+EAPI int
+elua_module_system_init(lua_State *L)
+{
+   Elua_State       *es       = elua_state_from_lua_get(L);
+   const char       *corepath = es->coredir;
+   const char       *modpath  = es->moddir;
+   const char       *appspath = es->appsdir;
+   Eina_Stringshare *data     = NULL;
+   int n = 3;
+   if (!corepath || !modpath || !appspath)
+     return 0;
+   lua_pushvalue(L, 1);
+   es->requireref = luaL_ref(L, LUA_REGISTRYINDEX);
+   lua_pushvalue(L, 2);
+   es->apploadref = luaL_ref(L, LUA_REGISTRYINDEX);
+   lua_pushfstring(L, "%s/?.lua;", corepath);
+   EINA_LIST_FREE(es->lincs, data)
+     {
+        lua_pushfstring(L, "%s/?.lua;", data);
+        eina_stringshare_del(data);
+        ++n;
+     }
+   lua_pushfstring(L, "%s/?.eo.lua;", modpath);
+   lua_pushfstring(L, "%s/?.lua;", modpath);
+   lua_pushvalue(L, 3);
+   lua_concat(L, n + 1);
+   lua_pushfstring(L, "%s/?.lua;", appspath);
+   lua_pushvalue(L, 4);
+   lua_concat(L, 2);
+   return 2;
 }
