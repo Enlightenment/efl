@@ -159,7 +159,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             @since 1.8 */
          }
          values {
-            Elm_Object_Multi_Select_Mode mode; /*@ The multi select mode */
+            Elm_Object_Multi_Select_Mode mode(2); /*@ The multi select mode */
          }
       }
       mode {
@@ -195,7 +195,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
             @ingroup List */
          }
          values {
-            Elm_List_Mode mode; /*@ One of #Elm_List_Mode: #ELM_LIST_COMPRESS,
+            Elm_List_Mode mode(4); /*@ One of #Elm_List_Mode: #ELM_LIST_COMPRESS,
             #ELM_LIST_SCROLL, #ELM_LIST_LIMIT or #ELM_LIST_EXPAND. */
          }
       }

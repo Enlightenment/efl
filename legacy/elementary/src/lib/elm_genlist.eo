@@ -71,7 +71,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            Elm_Object_Select_Mode mode; /*@ The select mode */
+            Elm_Object_Select_Mode mode(4); /*@ The select mode */
          }
       }
       focus_on_selection {
@@ -239,7 +239,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @since 1.8 */
          }
          values {
-            Elm_Object_Multi_Select_Mode mode; /*@ The multi select mode */
+            Elm_Object_Multi_Select_Mode mode(2); /*@ The multi select mode */
          }
       }
       block_count {
@@ -370,7 +370,7 @@ class Elm_Genlist (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            Elm_List_Mode mode; /*@ The mode to use (one of #ELM_LIST_SCROLL or #ELM_LIST_LIMIT). */
+            Elm_List_Mode mode(4); /*@ The mode to use (one of #ELM_LIST_SCROLL or #ELM_LIST_LIMIT). */
          }
       }
       decorated_item {

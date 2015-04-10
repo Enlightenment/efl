@@ -175,7 +175,7 @@ class Elm_Genlist_Item(Elm_Widget_Item)
                       */
                 }
                 values {
-                     int index; /*@ @return the position inside the list of item. */
+                     int index(-1); /*@ @return the position inside the list of item. */
                 }
            }
            decorate_mode {
@@ -267,7 +267,7 @@ class Elm_Genlist_Item(Elm_Widget_Item)
                       */
                 }
                 values {
-                     Elm_Object_Select_Mode mode; /*@ The selected mode */
+                     Elm_Object_Select_Mode mode(4); /*@ The selected mode */
                 }
            }
            type {
@@ -284,7 +284,7 @@ class Elm_Genlist_Item(Elm_Widget_Item)
                       */
                 }
                 values {
-                     Elm_Genlist_Item_Type type; /*@ Item tupe */
+                     Elm_Genlist_Item_Type type(4); /*@ Item tupe */
                 }
            }
       }

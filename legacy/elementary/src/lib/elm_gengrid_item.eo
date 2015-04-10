@@ -93,7 +93,7 @@ class Elm_Gengrid_Item(Elm_Widget_Item)
                       */
                 }
                 values {
-                     int index; /*@ @return the position inside the list of item. */
+                     int index(-1); /*@ @return the position inside the list of item. */
                 }
            }
            pos {

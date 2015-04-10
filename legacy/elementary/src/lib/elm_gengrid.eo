@@ -179,7 +179,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable,
             @ingroup Gengrid */
          }
          values {
-            Elm_Object_Select_Mode mode; /*@ The select mode */
+            Elm_Object_Select_Mode mode(4); /*@ The select mode */
          }
       }
       reorder_mode {
@@ -292,7 +292,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable,
             @since 1.8 */
          }
          values {
-            Elm_Object_Multi_Select_Mode mode; /*@ The multi select mode */
+            Elm_Object_Multi_Select_Mode mode(2); /*@ The multi select mode */
          }
       }
       horizontal {
