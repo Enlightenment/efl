@@ -607,7 +607,13 @@ _evas_image_efl_file_file_set(Eo *eo_obj, Evas_Image_Data *o, const char *file, 
 EOLIAN static void
 _evas_image_efl_file_file_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, const char **file, const char **key)
 {
-   if (file) *file = o->cur->u.file;
+   if (file)
+     {
+        if (o->cur->mmaped_source)
+          *file = eina_file_filename_get(o->cur->u.f);
+        else
+          *file = o->cur->u.file;
+     }
    if (key) *key = o->cur->key;
 }
 
