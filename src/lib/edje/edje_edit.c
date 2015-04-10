@@ -3084,6 +3084,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    ep->use_alternate_font_metrics = 0;
    ep->clip_to_id = -1;
    ep->dragable.confine_id = -1;
+   ep->dragable.threshold_id = -1;
    ep->dragable.event_id = -1;
    if (source)
      ep->source = eina_stringshare_add(source);
