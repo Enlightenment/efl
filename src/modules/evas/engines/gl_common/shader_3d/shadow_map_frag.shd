@@ -17,7 +17,9 @@ uniform float      uTextureDiffuseWeight;
 #endif //ALPHA_TEST_ENABLED
 
 void main() {
-
+#ifndef NEED_TEX_COORD
+   gl_FragColor = vec4(1);
+#endif
 #ifdef ALPHA_TEST_ENABLED
 
 #ifdef DIFFUSE_TEXTURE_BLEND
