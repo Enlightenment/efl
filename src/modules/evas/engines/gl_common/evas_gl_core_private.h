@@ -326,7 +326,6 @@ struct _EVGL_Engine
    // Keep track of all the current surfaces/contexts
    Eina_List         *surfaces;
    Eina_List         *contexts;
-   Eina_Hash         *direct_surfaces; // unsigned (texid) --> EVGL_Surface*
 
    //void              *engine_data;  
    Eina_Hash         *safe_extensions;

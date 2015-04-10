@@ -1667,9 +1667,6 @@ evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
    // Clear Function Pointers
    if (!gl_funcs) gl_funcs = calloc(1, EVAS_GL_API_STRUCT_SIZE);
 
-   // Direct surfaces map texid->Evas_GL_Surface
-   evgl_engine->direct_surfaces = eina_hash_int32_new(NULL);
-
    return evgl_engine;
 
 error:
@@ -1705,12 +1702,6 @@ evgl_engine_shutdown(void *eng_data)
 
    // Destroy internal resources
    _evgl_tls_resource_destroy(eng_data);
-
-   if (evgl_engine->direct_surfaces)
-     {
-        eina_hash_free(evgl_engine->direct_surfaces);
-        evgl_engine->direct_surfaces = NULL;
-     }
 
    LKD(evgl_engine->resource_lock);
 
@@ -1791,20 +1782,6 @@ evgl_surface_create(void *eng_data, Evas_GL_Config *cfg, int w, int h)
    // Keep track of all the created surfaces
    LKL(evgl_engine->resource_lock);
    evgl_engine->surfaces = eina_list_prepend(evgl_engine->surfaces, sfc);
-
-   if (sfc->direct_fb_opt)
-     {
-        if (!sfc->indirect)
-          {
-             eina_hash_add(evgl_engine->direct_surfaces, &sfc->color_buf, sfc);
-             DBG("Added tex %d as direct surface: %p", sfc->color_buf, sfc);
-          }
-        else
-          {
-             eina_hash_add(evgl_engine->direct_surfaces, &sfc->indirect_sfc_native, sfc);
-             DBG("Added native %p as direct surface: %p", sfc->indirect_sfc_native, sfc);
-          }
-     }
    LKU(evgl_engine->resource_lock);
 
    if (dbg) DBG("Created surface sfc %p (eng %p)", sfc, eng_data);
@@ -2045,20 +2022,6 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
    // Remove it from the list
    LKL(evgl_engine->resource_lock);
    evgl_engine->surfaces = eina_list_remove(evgl_engine->surfaces, sfc);
-
-   if (sfc->direct_fb_opt)
-     {
-        if (!sfc->indirect)
-          {
-             eina_hash_del(evgl_engine->direct_surfaces, &sfc->color_buf, sfc);
-             DBG("Removed tex %d as direct surface: %p", sfc->color_buf, sfc);
-          }
-        else
-          {
-             eina_hash_del(evgl_engine->direct_surfaces, &sfc->indirect_sfc_native, sfc);
-             DBG("Removed native %p as direct surface: %p", sfc->indirect_sfc_native, sfc);
-          }
-     }
    LKU(evgl_engine->resource_lock);
 
    free(sfc);
@@ -2623,19 +2586,10 @@ evgl_native_surface_get(EVGL_Surface *sfc, Evas_Native_Surface *ns)
         return 0;
      }
 
-   if (!sfc->indirect)
-     {
-        ns->type = EVAS_NATIVE_SURFACE_EVASGL;
-        ns->version = EVAS_NATIVE_SURFACE_VERSION;
-        ns->data.evasgl.surface = sfc;
-     }
-   else
-     {
-        ns->type = EVAS_NATIVE_SURFACE_X11;
-        ns->version = EVAS_NATIVE_SURFACE_VERSION;
-        ns->data.x11.pixmap = (unsigned long)(intptr_t)sfc->indirect_sfc_native;
-        ns->data.x11.visual = sfc->indirect_sfc_visual;
-     }
+   ns->type = EVAS_NATIVE_SURFACE_EVASGL;
+   ns->version = EVAS_NATIVE_SURFACE_VERSION;
+   ns->data.evasgl.surface = sfc;
+
    return 1;
 }
 
@@ -2669,38 +2623,14 @@ evgl_native_surface_direct_opts_get(Evas_Native_Surface *ns,
    if (!evgl_engine) return EINA_FALSE;
    if (!ns) return EINA_FALSE;
 
-   if (ns->type == EVAS_NATIVE_SURFACE_OPENGL &&
-       ns->data.opengl.texture_id)
-     {
-        sfc = eina_hash_find(evgl_engine->direct_surfaces, &ns->data.opengl.texture_id);
-        if (!sfc)
-          {
-             if (evgl_engine->api_debug_mode)
-               DBG("Native surface %p (color_buf %d) was not found.",
-                   ns, ns->data.opengl.texture_id);
-             return EINA_FALSE;
-          }
-     }
-   else if (ns->type == EVAS_NATIVE_SURFACE_X11 &&
-            ns->data.x11.pixmap)
-     {
-        sfc = eina_hash_find(evgl_engine->direct_surfaces, &ns->data.x11.pixmap);
-        if (!sfc)
-          {
-             if (evgl_engine->api_debug_mode)
-               DBG("Native surface %p (pixmap %lx) was not found.",
-                   ns, ns->data.x11.pixmap);
-             return EINA_FALSE;
-          }
-     }
-   else if (ns->type == EVAS_NATIVE_SURFACE_EVASGL &&
+   if (ns->type == EVAS_NATIVE_SURFACE_EVASGL &&
             ns->data.evasgl.surface)
      {
         sfc = ns->data.evasgl.surface;
      }
    else
      {
-        ERR("Only EVAS_NATIVE_SURFACE_OPENGL or EVAS_NATIVE_SURFACE_X11 can be used for direct rendering");
+        ERR("Only EVAS_NATIVE_SURFACE_EVASGL can be used for direct rendering");
         return EINA_FALSE;
      }
 

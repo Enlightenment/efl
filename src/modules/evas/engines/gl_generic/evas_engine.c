@@ -837,11 +837,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
              evgl_direct_partial_info_set(gl_context->preserve_bit);
           }
 
-        if (n->type == EVAS_NATIVE_SURFACE_OPENGL)
-          direct_surface = eina_hash_find(evgl_engine->direct_surfaces, &n->data.opengl.texture_id);
-        else if (n->type == EVAS_NATIVE_SURFACE_X11)
-          direct_surface = eina_hash_find(evgl_engine->direct_surfaces, &n->data.x11.pixmap);
-        else if (n->type == EVAS_NATIVE_SURFACE_EVASGL)
+        if (n->type == EVAS_NATIVE_SURFACE_EVASGL)
           direct_surface = n->data.evasgl.surface;
         else
           {
