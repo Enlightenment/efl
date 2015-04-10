@@ -3840,11 +3840,22 @@ _evgl_gles1_api_init(void)
    if (_initialized) return EINA_TRUE;
 
    memset(&_gles1_api, 0, sizeof(_gles1_api));
+
+#ifdef GL_GLES
    _gles1_handle = dlopen("libGLES_CM.so", RTLD_NOW);
    if (!_gles1_handle) _gles1_handle = dlopen("libGLES_CM.so.1", RTLD_NOW);
    if (!_gles1_handle) _gles1_handle = dlopen("libGLES_CM.so.1.1", RTLD_NOW);
    if (!_gles1_handle) _gles1_handle = dlopen("libGLESv1_CM.so", RTLD_NOW);
    if (!_gles1_handle) _gles1_handle = dlopen("libGLESv1_CM.so.1", RTLD_NOW);
+#else
+   _gles1_handle = dlopen("libGL.so", RTLD_NOW);
+   if (!_gles1_handle) _gles1_handle = dlopen("libGL.so.4", RTLD_NOW);
+   if (!_gles1_handle) _gles1_handle = dlopen("libGL.so.3", RTLD_NOW);
+   if (!_gles1_handle) _gles1_handle = dlopen("libGL.so.2", RTLD_NOW);
+   if (!_gles1_handle) _gles1_handle = dlopen("libGL.so.1", RTLD_NOW);
+   if (!_gles1_handle) _gles1_handle = dlopen("libGL.so.0", RTLD_NOW);
+#endif
+
    if (!_gles1_handle)
      {
         WRN("OpenGL ES 1 was not found on this system. Evas GL will not support GLES 1 contexts.");
