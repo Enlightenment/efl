@@ -288,8 +288,7 @@ elua_main(lua_State *L)
                hasexec = EINA_FALSE;
    Eina_List  *largs   = NULL, *l = NULL;
    Arg_Data   *data    = NULL;
-   char       *coredir = NULL, *moddir = NULL, *appsdir = NULL;
-   char coredirbuf[PATH_MAX], moddirbuf[PATH_MAX], appsdirbuf[PATH_MAX];
+   const char *coredir = NULL, *moddir = NULL, *appsdir = NULL;
    char        modfile[PATH_MAX];
 
    int ch;
@@ -306,29 +305,31 @@ elua_main(lua_State *L)
      {
         switch (ch)
           {
-             case 'h':
-                elua_print_help(elua_progname, stdout);
-                return 0;
-             case 'C':
-                coredir = optarg;
+           case 'h':
+             elua_print_help(elua_progname, stdout);
+             return 0;
+           case 'C':
+             coredir = optarg;
+             break;
+           case 'M':
+             moddir = optarg;
+             break;
+           case 'A':
+             appsdir = optarg;
+             break;
+           case 'e':
+           case 'l':
+           case 'I':
+             {
+                Arg_Data *v = malloc(sizeof(Arg_Data));
+                v->type = (ch == 'e') ? ARG_CODE : ((ch == 'l')
+                                      ? ARG_LIBRARY : ARG_LIBDIR);
+                v->value = optarg;
+                largs = eina_list_append(largs, v);
                 break;
-             case 'M':
-                moddir = optarg;
-                break;
-             case 'A':
-                appsdir = optarg;
-                break;
-             case 'e':
-             case 'l':
-             case 'I':
-               {
-                  Arg_Data *v = malloc(sizeof(Arg_Data));
-                  v->type = (ch == 'e') ? ARG_CODE : ((ch == 'l')
-                                        ? ARG_LIBRARY : ARG_LIBDIR);
-                  v->value = optarg;
-                  largs = eina_list_append(largs, v);
-                  break;
-               }
+             }
+           case 'E':
+             noenv = EINA_TRUE;
           }
      }
 
@@ -347,35 +348,19 @@ elua_main(lua_State *L)
         return 0;
      }
 
-   if (!coredir)
-     {
-        if (noenv || !(coredir = getenv("ELUA_CORE_DIR")) || !coredir[0])
-          {
-             coredir = coredirbuf;
-             snprintf(coredirbuf, sizeof(coredirbuf), "%s/core",
-                      eina_prefix_data_get(elua_prefix));
-          }
-     }
-   if (!moddir)
-     {
-        if (noenv || !(moddir = getenv("ELUA_MODULES_DIR")) || !moddir[0])
-          {
-             moddir = moddirbuf;
-             snprintf(moddirbuf, sizeof(moddirbuf), "%s/modules",
-                      eina_prefix_data_get(elua_prefix));
-          }
-     }
-   if (!appsdir)
-     {
-        if (noenv || !(appsdir = getenv("ELUA_APPS_DIR")) || !appsdir[0])
-          {
-             appsdir = appsdirbuf;
-             snprintf(appsdirbuf, sizeof(appsdirbuf), "%s/apps",
-                      eina_prefix_data_get(elua_prefix));
-          }
-     }
-
    elua_state_dirs_set(es, coredir, moddir, appsdir);
+   elua_state_dirs_fill(es, noenv);
+
+   coredir = elua_state_core_dir_get(es);
+   moddir  = elua_state_mod_dir_get(es);
+   appsdir = elua_state_apps_dir_get(es);
+
+   if (!coredir || !moddir || !appsdir)
+     {
+        ERR("could not set one or more script directories");
+        m->status = 1;
+        return 0;
+     }
 
    snprintf(modfile, sizeof(modfile), "%s/module.lua", coredir);
    if (elua_report_error(es, elua_progname, elua_io_loadfile(es, modfile)))

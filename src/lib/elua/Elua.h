@@ -72,6 +72,7 @@ EAPI void elua_state_free(Elua_State *es);
 
 EAPI void elua_state_dirs_set(Elua_State *es, const char *core,
                               const char *mods, const char *apps);
+EAPI void elua_state_dirs_fill(Elua_State *es, Eina_Bool ignore_env);
 
 EAPI Eina_Stringshare *elua_state_core_dir_get(const Elua_State *es);
 EAPI Eina_Stringshare *elua_state_mod_dir_get(const Elua_State *es);
