@@ -863,12 +863,14 @@ EINA_DEPRECATED EAPI void        elm_config_engine_set(const char *engine);
  *
  * This gets the global rendering engine that is applied to all Elementary
  * applications and is PREFERRED by the application. This can (and will)
- * override the engine configured for all applications which.
+ * override the engine configured for all applications which. It is rare to
+ * explicitly ask for an engine (likely need is the buffer engine and not
+ * much more), so use elm_config_accel_preference_get() and
+ * elm_config_accel_preference_set() normally.
  *
  * @see elm_config_preferred_engine_set()
- * @deprecated use elm_config_accel_preference_get() + elm_config_accel_preference_set()
  */
-EINA_DEPRECATED EAPI const char *elm_config_preferred_engine_get(void);
+EAPI const char *elm_config_preferred_engine_get(void);
 
 /**
  * @brief Set Elementary's preferred rendering engine for use.
@@ -878,13 +880,15 @@ EINA_DEPRECATED EAPI const char *elm_config_preferred_engine_get(void);
  * Note that it will take effect only to Elementary windows created after
  * this is called. This overrides the engine set by configuration at
  * application startup. Note that it is a hint and may not be honored.
+ * It is rare to explicitly ask for an engine (likely need is the buffer
+ * engine and not much more), so use elm_config_accel_preference_get() and
+ * elm_config_accel_preference_set() normally.
  *
  * @see elm_win_add()
  * @see elm_config_accel_preference_set()
  * @see elm_config_engine_set()
- * @deprecated use elm_config_accel_preference_get() + elm_config_accel_preference_set()
  */
-EINA_DEPRECATED EAPI void        elm_config_preferred_engine_set(const char *engine);
+EAPI void        elm_config_preferred_engine_set(const char *engine);
 
 /**
  * @brief Get Elementary's preferred engine to use.
