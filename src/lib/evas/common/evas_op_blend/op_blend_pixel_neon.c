@@ -30,8 +30,10 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 
 		"vmul.u32	d8,	d16, d8		\n\t"
 
+		"vmovl.u8	q9,	d4		\n\t"
 		"vmull.u8	q6,	d4,d8		\n\t"
-		"vqrshrn.u16	d8,	q6, #8		\n\t"
+		"vadd.u16	q6,	q6, q9		\n\t"
+		"vshrn.u16	d8,	q6, #8		\n\t"
 		// Add to 's'
 		"vqadd.u8	q2,	q4,q0		\n\t"
 
@@ -61,8 +63,10 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 
 		"vmul.u32	d8,	d16, d8		\n\t"
 
+		"vmovl.u8	q9,	d4		\n\t"
 		"vmull.u8	q6,	d4,d8		\n\t"
-		"vqrshrn.u16	d8,	q6, #8		\n\t"
+		"vadd.u16	q6,	q6, q9		\n\t"
+		"vshrn.u16	d8,	q6, #8		\n\t"
 		// Add to 's'
 		"vqadd.u8	d4,	d8,d0		\n\t"
 		"vstr		d4,	[%[d]]		\n\t"
@@ -87,13 +91,18 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 		// Multiply into all fields
 		"vmul.u32	q4,	q8,q4		\n\t"
 
+		"vmovl.u8	q9,	d4		\n\t"
+		"vmovl.u8	q10,	d5		\n\t"
 		// a * d  (clobbering 'd'/q7)
 		"vmull.u8	q6,	d4,d8		\n\t"
 		"vmull.u8	q2,	d5,d9		\n\t"
 
+		"vadd.u16	q6,	q6, q9		\n\t"
+		"vadd.u16	q2,	q2, q10		\n\t"
+
 		// Shift & narrow it
-		"vqrshrn.u16	d8,	q6, #8		\n\t"
-		"vqrshrn.u16	d9,	q2, #8		\n\t"
+		"vshrn.u16	d8,	q6, #8		\n\t"
+		"vshrn.u16	d9,	q2, #8		\n\t"
 
 		// Add to s
 		"vqadd.u8	q2,	q4,q0		\n\t"
@@ -126,6 +135,10 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 		"vmul.u32	q4,	q8,q4		\n\t"
 			"vmul.u32	q5,	q8,q5	\n\t"
 
+		"vmovl.u8	q9,	d4		\n\t"
+		"vmovl.u8	q10,	d5		\n\t"
+		"vmovl.u8	q11,	d6		\n\t"
+		"vmovl.u8	q12,	d7		\n\t"
 
 		// a * d  (clobbering 'd'/q7)
 		"vmull.u8	q6,	d4,d8		\n\t"
@@ -133,13 +146,18 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 			"vmull.u8	q7,	d6,d10	\n\t"
 			"vmull.u8	q3,	d7,d11	\n\t"
 
+		"vadd.u16	q6,	q6, q9		\n\t"
+		"vadd.u16	q2,	q2, q10		\n\t"
+		"vadd.u16	q7,	q7, q11		\n\t"
+		"vadd.u16	q3,	q3, q12		\n\t"
+
 		"cmp	 %[tmp], %[d]\n\t"
 
 		// Shift & narrow it
-		"vqrshrn.u16	d8,	q6, #8		\n\t"
-		"vqrshrn.u16	d9,	q2, #8		\n\t"
-			"vqrshrn.u16	d10,	q7, #8	\n\t"
-			"vqrshrn.u16	d11,	q3, #8	\n\t"
+		"vshrn.u16	d8,	q6, #8		\n\t"
+		"vshrn.u16	d9,	q2, #8		\n\t"
+			"vshrn.u16	d10,	q7, #8	\n\t"
+			"vshrn.u16	d11,	q3, #8	\n\t"
 
 
 		// Add to s
@@ -171,8 +189,10 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 
 		"vmul.u32	d8,	d16, d8		\n\t"
 
+		"vmovl.u8	q9,	d4		\n\t"
 		"vmull.u8	q6,	d4,d8		\n\t"
-		"vqrshrn.u16	d8,	q6, #8		\n\t"
+		"vadd.u16	q6,	q6, q9		\n\t"
+		"vshrn.u16	d8,	q6, #8		\n\t"
 		// Add to 's'
 		"vqadd.u8	d4,	d8,d0		\n\t"
 
@@ -195,8 +215,10 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 
 		"vmul.u32	d8,	d8, d16		\n\t"
 
+		"vmovl.u8	q9,	d4		\n\t"
 		"vmull.u8	q6,	d8,d4		\n\t"
-		"vqrshrn.u16	d8,	q6, #8		\n\t"
+		"vadd.u16	q6,	q6, q9		\n\t"
+		"vshrn.u16	d8,	q6, #8		\n\t"
 		// Add to 's'
 		"vqadd.u8	d0,	d0,d8		\n\t"
 		"vst1.32	d0[0],	[%[d]]		\n\t"
@@ -247,10 +269,12 @@ _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 		// Mulitply into all fields
 		"vmul.u32	d8,	d8, d16			\n\t"
 
+		"vmovl.u8	q9,	d4			\n\t"
 		// Multiply out
 		"vmull.u8	q6,	d8, d4			\n\t"
+		"vadd.u16	q6,	q6, q9			\n\t"
 
-		"vqrshrn.u16	d8,	q6, #8			\n\t"
+		"vshrn.u16	d8,	q6, #8			\n\t"
 
 		// Add to s
 		"vqadd.u8	d0,	d0,d8			\n\t"
@@ -278,10 +302,12 @@ _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 		// Mulitply into all fields
 		"vmul.u32	d8,	d8, d16			\n\t"
 
+		"vmovl.u8	q9,	d4			\n\t"
 		// Multiply out
 		"vmull.u8	q6,	d8, d4			\n\t"
+		"vadd.u16	q6,	q6, q9			\n\t"
 
-		"vqrshrn.u16	d8,	q6, #8			\n\t"
+		"vshrn.u16	d8,	q6, #8			\n\t"
 
 		// Add to s
 		"vqadd.u8	d0,	d0,d8			\n\t"
@@ -316,18 +342,28 @@ _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 			"vmul.u32	q5,	q5, q8		\n\t"
 		"pld	[%[pl]]					\n\t"
 
+		"vmovl.u8	q9,	d4			\n\t"
+		"vmovl.u8	q10,	d5			\n\t"
+		"vmovl.u8	q11,	d6			\n\t"
+		"vmovl.u8	q12,	d7			\n\t"
+
 		// Multiply out
 		"vmull.u8	q6,	d8, d4			\n\t"
 			"vmull.u8	q7,	d10, d6		\n\t"
 		"vmull.u8	q2,	d9, d5			\n\t"
 			"vmull.u8	q3,	d11, d7		\n\t"
 
+		"vadd.u16	q6,	q6, q9			\n\t"
+		"vadd.u16	q2,	q2, q10			\n\t"
+		"vadd.u16	q7,	q7, q11			\n\t"
+		"vadd.u16	q3,	q3, q12			\n\t"
+
 		"add	%[pl], %[d], #32			\n\t"
 
-		"vqrshrn.u16	d8,	q6, #8			\n\t"
-			"vqrshrn.u16	d10,	q7, #8		\n\t"
-		"vqrshrn.u16	d9,	q2, #8			\n\t"
-			"vqrshrn.u16	d11,	q3, #8		\n\t"
+		"vshrn.u16	d8,	q6, #8			\n\t"
+			"vshrn.u16	d10,	q7, #8		\n\t"
+		"vshrn.u16	d9,	q2, #8			\n\t"
+			"vshrn.u16	d11,	q3, #8		\n\t"
 		"pld	[%[pl]]					\n\t"
 
 		"cmp 		%[tmp], %[pl]			\n\t"
@@ -360,10 +396,12 @@ _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 		// Mulitply into all fields
 		"vmul.u32	d8,	d8, d16			\n\t"
 
+		"vmovl.u8	q9,	d4			\n\t"
 		// Multiply out
 		"vmull.u8	q6,	d8, d4			\n\t"
+		"vadd.u16	q6,	q6, q9			\n\t"
 
-		"vqrshrn.u16	d8,	q6, #8			\n\t"
+		"vshrn.u16	d8,	q6, #8			\n\t"
 
 		// Add to s
 		"vqadd.u8	d0,	d0,d8			\n\t"
@@ -389,9 +427,11 @@ _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 		"vmul.u32	d8,	d8, d16			\n\t"
 
 		// Multiply out
+		"vmovl.u8	q9,	d4			\n\t"
 		"vmull.u8	q6,	d8, d4			\n\t"
+		"vadd.u16	q6,	q6, q9			\n\t"
 
-		"vqrshrn.u16	d8,	q6, #8			\n\t"
+		"vshrn.u16	d8,	q6, #8			\n\t"
 
 		// Add to s
 		"vqadd.u8	d0,	d0,d8			\n\t"
