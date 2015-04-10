@@ -160,7 +160,8 @@
  * @author Jae Yong Hwang <j_yong.hwang@@samsung.com>
  * @author Kabeer Khan <kabeer.khan@@samsung.com>
  * @author yinsc <shouchen.yin@@samsung.com>
- * @author Subodh Kumar <s7158.kumar@samsung.com>
+ * @author Subodh Kumar <s7158.kumar@@samsung.com>
+ * @author Kumar Navneet <k.navneet@@samsung.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.

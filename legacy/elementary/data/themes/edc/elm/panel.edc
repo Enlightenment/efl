@@ -391,6 +391,9 @@ group { name: "elm/panel/left/default";
    images.image: "icon_arrow_up.png" COMP;
    images.image: "icon_arrow_down.png" COMP;
    data.item: "focus_highlight" "on";
+   script {
+      public is_rtl = 0;
+   }
    parts {
       part { name: "shadow"; mouse_events: 0;
          description { state: "default" 0.0;
@@ -487,6 +490,10 @@ group { name: "elm/panel/left/default";
             rel2.to: "elm.swallow.event";
             color: 0 0 0 0;
          }
+         description { state: "hidden" 0.0;
+            rel1.to: "elm.swallow.event";
+            rel2.to: "elm.swallow.event";
+         }
       }
       part { name: "dots"; mouse_events: 0;
          description { state: "default" 0.0;
@@ -524,24 +531,78 @@ group { name: "elm/panel/left/default";
          transition: DECELERATE 0.3;
          target: "elm.swallow.event";
          target: "base";
-         target: "icn";
+      }
+      program {
+         signal: "elm,action,show"; source: "elm";
+         script {
+            if (get_int(is_rtl) == 0)
+              set_state(PART:"icn", "default", 0.0);
+            else
+              set_state(PART:"icn", "hidden", 0.0);
+         }
+      }
+      program {
+         signal: "edje,state,rtl"; 
+         source: "edje";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"elm.swallow.event", st, 30, vl);
+            if (!strcmp(st, "default"))
+              set_state(PART:"icn", "hidden", 0.0);
+            else
+              set_state(PART:"icn", "default", 0.0);
+            set_int(is_rtl, 1);
+         }
+      }
+      program {
+         signal: "edje,state,ltr"; 
+         source: "edje";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"elm.swallow.event", st, 30, vl);
+            if (!strcmp(st, "default"))
+              set_state(PART:"icn", "default", 0.0);
+            else
+              set_state(PART:"icn", "hidden", 0.0);
+            set_int(is_rtl, 0);
+         }
       }
       program {
          signal: "elm,action,hide"; source: "elm";
          action: STATE_SET "hidden" 0.0;
          transition: ACCELERATE 0.3;
          target: "elm.swallow.event";
-         target: "icn";
+      }
+      program {
+         signal: "elm,action,hide"; source: "elm";
+         script {
+            if (get_int(is_rtl) == 0)
+              set_state(PART:"icn", "hidden", 0.0);
+            else
+              set_state(PART:"icn", "default", 0.0);
+         }
       }
       program { name: "hide1";
          signal: "elm,action,hide"; source: "elm";
          script {
             new x, y, w, h;
-            
-            custom_state(PART:"base", "default", 0.0);
-            set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
-            get_geometry(PART:"elm.swallow.event", x, y, w, h);
-            set_state_val(PART:"base", STATE_REL1_OFFSET, w, 0);
+            if (get_int(is_rtl) == 0)
+              {
+                 custom_state(PART:"base", "default", 0.0);
+                 set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
+                 get_geometry(PART:"elm.swallow.event", x, y, w, h);
+                 set_state_val(PART:"base", STATE_REL1_OFFSET, w, 0);
+               }
+            else
+              {
+                 custom_state(PART:"base", "default", 0.0);
+                 set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
+                 set_state_val(PART:"base", STATE_REL2, -2.0, 1.0);
+                 get_geometry(PART:"elm.swallow.event", x, y, w, h);
+                 set_state_val(PART:"base", STATE_REL2_OFFSET, -w, 0);
+              }
          }
          after: "hide2";
       }
@@ -608,7 +669,7 @@ group { name: "elm/panel/right/default";
       program { name: "hide1";
          script {
             new x, y, w, h;
-            
+    
             custom_state(PART:"base", "default", 0.0);
             set_state_val(PART:"base", STATE_REL1, 1.0, 0.0);
             set_state_val(PART:"base", STATE_REL2, 2.0, 1.0);
@@ -674,11 +735,47 @@ group { name: "elm/panel/top/default";
             set_state_val(PART:"base", STATE_REL1_OFFSET, 0, h);
          }
       }
+      program {
+         signal: "elm,action,show"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "icn";
+      }
+      program {
+         signal: "edje,state,rtl"; 
+         source: "edje";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"elm.swallow.event", st, 30, vl);
+            if (!strcmp(st, "default"))
+              set_state(PART:"icn", "default", 0.0);
+            else
+              set_state(PART:"icn", "hidden", 0.0);
+         }
+      }
+      program {
+         signal: "edje,state,ltr"; 
+         source: "edje";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"elm.swallow.event", st, 30, vl);
+            if (!strcmp(st, "default"))
+              set_state(PART:"icn", "default", 0.0);
+            else
+              set_state(PART:"icn", "hidden", 0.0);
+         }
+      }
+      program {
+         signal: "elm,action,hide"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "icn";
+      }
    }
 }
 
 group { name: "elm/panel/bottom/default";
-   inherit: "elm/panel/left/default";
+   inherit: "elm/panel/top/default";
    parts {
       part { name: "base";
          description { state: "default" 0.0;
@@ -724,7 +821,6 @@ group { name: "elm/panel/bottom/default";
       program { name: "hide1";
          script {
             new x, y, w, h;
-            
             custom_state(PART:"base", "default", 0.0);
             set_state_val(PART:"base", STATE_REL1, 0.0, 1.0);
             set_state_val(PART:"base", STATE_REL2, 1.0, 2.0);
