@@ -283,7 +283,7 @@ const luaL_reg gettextlib[] =
    { NULL, NULL }
 };
 
-EAPI void
+EAPI Eina_Bool
 elua_state_setup_i18n(const Elua_State *es)
 {
 #ifdef ENABLE_NLS
@@ -291,6 +291,14 @@ elua_state_setup_i18n(const Elua_State *es)
    char *(*dngettextp)(const char*, const char*, const char*, unsigned long)
       = dngettext;
 #endif
+   char buf[PATH_MAX];
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->coredir, EINA_FALSE);
+   snprintf(buf, sizeof(buf), "%s/gettext.lua", es->coredir);
+   if (elua_report_error(es, elua_state_prog_name_get(es),
+       elua_io_loadfile(es, buf)))
+     return EINA_FALSE;
    lua_createtable(es->luastate, 0, 0);
    luaL_register(es->luastate, NULL, gettextlib);
 #ifdef ENABLE_NLS
@@ -299,6 +307,8 @@ elua_state_setup_i18n(const Elua_State *es)
    lua_pushlightuserdata(es->luastate, *((void**)&dngettextp));
    lua_setfield(es->luastate, -2, "dngettext");
 #endif
+   lua_call(es->luastate, 1, 0);
+   return EINA_TRUE;
 }
 
 EAPI int

@@ -163,12 +163,8 @@ elua_main(lua_State *L)
    luaL_register(L, NULL, cutillib);
    lua_call(L, 2, 0);
 
-   snprintf(modfile, sizeof(modfile), "%s/gettext.lua", coredir);
-   if (elua_report_error(es, elua_state_prog_name_get(es),
-       elua_io_loadfile(es, modfile)))
+   if (!elua_state_setup_i18n(es))
      goto error;
-   elua_state_setup_i18n(es);
-   lua_call(L, 1, 0);
 
    elua_io_register(es);
    lua_gc(L, LUA_GCRESTART, 0);
