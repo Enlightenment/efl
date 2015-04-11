@@ -204,7 +204,7 @@ eng_window_new(Evas_Engine_Info_GL_Drm *info, Evas *e, struct gbm_device *gbm, s
      blacklist = EINA_TRUE;
    if (strstr((const char *)renderer, "llvmpipe"))
      blacklist = EINA_TRUE;
-   if ((blacklist) && (!getenv("EVAS_GL_NO_BLACKLIST")))
+   if (blacklist)
      {
         ERR("OpenGL Driver blacklisted:");
         ERR("Vendor: %s", (const char *)vendor);

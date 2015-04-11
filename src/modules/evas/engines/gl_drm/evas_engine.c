@@ -80,6 +80,9 @@ void *(*glsym_eglCreateImage)(EGLDisplay a, EGLContext b, EGLenum c, EGLClientBu
 void (*glsym_eglDestroyImage)(EGLDisplay a, void *b) = NULL;
 void (*glsym_glEGLImageTargetTexture2DOES)(int a, void *b)  = NULL;
 unsigned int (*glsym_eglSwapBuffersWithDamage)(EGLDisplay a, void *b, const EGLint *d, EGLint c) = NULL;
+
+unsigned int (*glsym_eglBindWaylandDisplayWL)(EGLDisplay dpy, struct wl_display *display) = NULL;
+unsigned int (*glsym_eglUnbindWaylandDisplayWL)(EGLDisplay dpy, struct wl_display *display) = NULL;
 unsigned int (*glsym_eglQueryWaylandBufferWL)(EGLDisplay a, struct wl_resource *b, EGLint c, EGLint *d) = NULL;
 
 /* local function prototypes */
@@ -203,6 +206,10 @@ gl_symbols(void)
    FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage",
            glsym_func_uint);
 
+   FINDSYM(glsym_eglBindWaylandDisplayWL, "eglBindWaylandDisplayWL",
+           glsym_func_uint);
+   FINDSYM(glsym_eglUnbindWaylandDisplayWL, "eglUnbindWaylandDisplayWL",
+           glsym_func_uint);
    FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL",
            glsym_func_uint);
 
@@ -1222,6 +1229,16 @@ module_open(Evas_Module *em)
     * implicit env set (EGL_PLATFORM=drm) prevent that. */
    setenv("EGL_PLATFORM", "drm", 1);
    gl_symbols();
+
+   if (!((glsym_eglBindWaylandDisplayWL) &&
+         (glsym_eglUnbindWaylandDisplayWL) &&
+         (glsym_eglQueryWaylandBufferWL)))
+     {
+        EINA_LOG_ERR("GLES driver doesn't support EGL_WL_bind_wayland_display extension.");
+        eina_log_domain_unregister(_evas_engine_gl_drm_log_dom);
+        /* TODO: unload gl_generic engine too */
+        return 0;
+     }
 
    /* now advertise out own api */
    em->functions = (void *)(&func);
