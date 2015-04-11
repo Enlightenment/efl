@@ -486,7 +486,8 @@ ee_err:
 static int
 _ecore_evas_drm_init(const char *device)
 {
-   if (++_ecore_evas_init_count != 1) return _ecore_evas_init_count;
+   _ecore_evas_init_count++;
+   if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
 
    /* try to init ecore_drm */
    if (!ecore_drm_init())
@@ -567,24 +568,28 @@ _ecore_evas_drm_shutdown(void)
 {
    unsigned int i;
 
-   if (--_ecore_evas_init_count != 0) return _ecore_evas_init_count;
-
-   for (i = 0; i < sizeof(_ecore_evas_event_handlers) / sizeof(Ecore_Event_Handler*); i++)
+   _ecore_evas_init_count--;
+   if (_ecore_evas_init_count == 0)
      {
-        if (_ecore_evas_event_handlers[i])
-          ecore_event_handler_del(_ecore_evas_event_handlers[i]);
+        for (i = 0; i < sizeof(_ecore_evas_event_handlers) / sizeof(Ecore_Event_Handler*); i++)
+          {
+             if (_ecore_evas_event_handlers[i])
+               ecore_event_handler_del(_ecore_evas_event_handlers[i]);
+          }
+
+        ecore_drm_inputs_destroy(dev);
+        /* NB: No need to free outputs here. Is done in device free */
+        ecore_drm_sprites_destroy(dev);
+        ecore_drm_device_close(dev);
+        ecore_drm_launcher_disconnect(dev);
+        ecore_drm_device_free(dev);
+        ecore_drm_shutdown();
+
+        ecore_event_evas_shutdown();
+
+        dev = NULL;
      }
-
-   ecore_drm_inputs_destroy(dev);
-   /* NB: No need to free outputs here. Is done in device free */
-   ecore_drm_sprites_destroy(dev);
-   ecore_drm_device_close(dev);
-   ecore_drm_launcher_disconnect(dev);
-   ecore_drm_device_free(dev);
-   ecore_drm_shutdown();
-
-   ecore_event_evas_shutdown();
-
+   if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;
 }
 
