@@ -351,10 +351,11 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
      }
 
    dev->use_hw_accel = EINA_FALSE;
-   if (!_ecore_drm_output_software_setup(dev, output))
-     goto mode_err;
-   else
-     DBG("Setup Output %d for Software Rendering", output->crtc_id);
+   /* do not create drm fb dumb object here. object will be created by evas engine */
+   //if (!_ecore_drm_output_software_setup(dev, output))
+   //  goto mode_err;
+   //else
+   //  DBG("Setup Output %d for Software Rendering", output->crtc_id);
 
    output->backlight = 
      _ecore_drm_output_backlight_init(output, conn->connector_type);
