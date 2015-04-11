@@ -251,7 +251,7 @@ ecore_drm_tty_close(Ecore_Drm_Device *dev)
    if (dev->tty.name) eina_stringshare_del(dev->tty.name);
    dev->tty.name = NULL;
 
-   unsetenv("ECORE_DRM_TTY");
+   //unsetenv("ECORE_DRM_TTY");
 
    return EINA_TRUE;
 }
