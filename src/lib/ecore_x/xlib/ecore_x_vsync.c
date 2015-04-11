@@ -452,7 +452,7 @@ _drm_init(int *flags)
      }
    snprintf(buf, sizeof(buf), "/dev/dri/card0");
    if (stat(buf, &st) != 0) return 0;
-   drm_fd = open(buf, O_RDWR);
+   drm_fd = open(buf, O_RDWR | O_CLOEXEC);
    if (drm_fd < 0) return 0;
 
    if (!getenv("ECORE_VSYNC_DRM_ALL"))
