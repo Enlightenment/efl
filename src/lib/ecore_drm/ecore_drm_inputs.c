@@ -277,6 +277,9 @@ ecore_drm_inputs_destroy(Ecore_Drm_Device *dev)
    Ecore_Drm_Seat *seat;
    Ecore_Drm_Evdev *edev;
 
+   /* check for valid device */
+   if (!dev) return;
+
    EINA_LIST_FREE(dev->seats, seat)
      {
         EINA_LIST_FREE(seat->devices, edev)

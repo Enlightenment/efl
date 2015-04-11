@@ -86,6 +86,9 @@ ecore_drm_launcher_connect(Ecore_Drm_Device *dev)
 EAPI void 
 ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev)
 {
+   /* check for valid device */
+   if (!dev) return;
+
    if (dev->tty.switch_hdlr) ecore_event_handler_del(dev->tty.switch_hdlr);
    dev->tty.switch_hdlr = NULL;
 
