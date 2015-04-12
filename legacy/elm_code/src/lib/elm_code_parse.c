@@ -37,13 +37,6 @@ _elm_code_parse_file(Elm_Code *code, Elm_Code_File *file)
 {
    Elm_Code_Parser *parser;
    Eina_List *item;
-   Elm_Code_Line *line;
-
-   EINA_LIST_FOREACH(file->lines, item, line)
-     {
-        elm_code_line_tokens_clear(line);
-        elm_code_line_status_clear(line);
-     }
 
    EINA_LIST_FOREACH(code->parsers, item, parser)
      {
