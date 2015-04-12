@@ -2628,11 +2628,7 @@ evgl_native_surface_direct_opts_get(Evas_Native_Surface *ns,
      {
         sfc = ns->data.evasgl.surface;
      }
-   else
-     {
-        ERR("Only EVAS_NATIVE_SURFACE_EVASGL can be used for direct rendering");
-        return EINA_FALSE;
-     }
+   else return EINA_FALSE;
 
    if (evgl_engine->api_debug_mode)
      {
