@@ -493,14 +493,6 @@ main(int argc, char **argv)
     /* unlink old cache files */
     if (changed)
     {
-        if (unlink(efreet_desktop_cache_file()) < 0)
-        {
-            if (errno != ENOENT) goto error;
-        }
-        if (unlink(efreet_desktop_util_cache_file()) < 0)
-        {
-            if (errno != ENOENT) goto error;
-        }
         /* rename tmp files to real files */
         if (rename(util_file, efreet_desktop_util_cache_file()) < 0) goto error;
         efreet_setowner(efreet_desktop_util_cache_file());
