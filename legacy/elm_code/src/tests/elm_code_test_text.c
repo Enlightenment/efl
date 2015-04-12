@@ -46,7 +46,7 @@ START_TEST (elm_code_text_contains_test)
    code = elm_code_create();
    file = elm_code_file_new(code);
 
-   elm_code_file_line_append(file, "a test string...", 17, NULL);
+   elm_code_file_line_append(file, "a test string...", 16, NULL);
    line = elm_code_file_line_get(file, 1);
 
    ck_assert_int_eq(EINA_TRUE, elm_code_line_text_contains(line, "test"));
@@ -66,7 +66,7 @@ START_TEST (elm_code_text_strpos_test)
    code = elm_code_create();
    file = elm_code_file_new(code);
 
-   elm_code_file_line_append(file, "a test string...", 17, NULL);
+   elm_code_file_line_append(file, "a test string...", 16, NULL);
    line = elm_code_file_line_get(file, 1);
 
    ck_assert_int_eq(2, elm_code_line_text_strpos(line, "test", 0));
@@ -76,6 +76,7 @@ START_TEST (elm_code_text_strpos_test)
    ck_assert_int_eq(ELM_CODE_TEXT_NOT_FOUND, elm_code_line_text_strpos(line, "text", 0));
 
    ck_assert_int_eq(0, elm_code_line_text_strpos(line, "a t", 0));
+   ck_assert_int_eq(ELM_CODE_TEXT_NOT_FOUND, elm_code_line_text_strpos(line, "a t", 2));
    ck_assert_int_eq(13, elm_code_line_text_strpos(line, "...", 0));
 }
 END_TEST

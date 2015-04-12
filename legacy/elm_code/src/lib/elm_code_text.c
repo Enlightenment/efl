@@ -56,7 +56,7 @@ elm_code_line_text_strpos(Elm_Code_Line *line, const char *search, int offset)
      return ELM_CODE_TEXT_NOT_FOUND;
 
    ptr += offset;
-   for (c = offset; c < length - strlen(search); c++)
+   for (c = offset; c <= length - searchlen; c++)
      {
         if (!strncmp(ptr, search, searchlen))
           return c;
