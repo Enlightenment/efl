@@ -22,6 +22,8 @@ _elm_code_parse_line(Elm_Code *code, Elm_Code_Line *line)
    Elm_Code_Parser *parser;
    Eina_List *item;
 
+   elm_code_line_tokens_clear(line);
+
    EINA_LIST_FOREACH(code->parsers, item, parser)
      {
         if (parser->parse_line)
@@ -34,6 +36,12 @@ _elm_code_parse_file(Elm_Code *code, Elm_Code_File *file)
 {
    Elm_Code_Parser *parser;
    Eina_List *item;
+   Elm_Code_Line *line;
+
+   EINA_LIST_FOREACH(file->lines, item, line)
+     {
+        elm_code_line_tokens_clear(line);
+     }
 
    EINA_LIST_FOREACH(code->parsers, item, parser)
      {

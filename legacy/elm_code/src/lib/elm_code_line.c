@@ -57,3 +57,13 @@ EAPI void elm_code_line_token_add(Elm_Code_Line *line, int start, int end, int l
         elm_code_line_token_add(next_line, 1, end, lines - 1, type);
      }
 }
+
+EAPI void elm_code_line_tokens_clear(Elm_Code_Line *line)
+{
+   Elm_Code_Token *token;
+
+   EINA_LIST_FREE(line->tokens, token)
+     free(token);
+   line->tokens = NULL;
+}
+

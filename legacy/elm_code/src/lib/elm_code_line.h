@@ -51,6 +51,8 @@ EAPI void elm_code_line_status_set(Elm_Code_Line *line, Elm_Code_Status_Type sta
 
 EAPI void elm_code_line_token_add(Elm_Code_Line *line, int start, int end, int lines, Elm_Code_Token_Type type);
 
+EAPI void elm_code_line_tokens_clear(Elm_Code_Line *line);
+
 /**
  * @}
  */
