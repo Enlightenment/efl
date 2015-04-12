@@ -28,6 +28,17 @@ EAPI void elm_code_line_status_set(Elm_Code_Line *line, Elm_Code_Status_Type sta
    line->status = status;
 }
 
+EAPI void elm_code_line_status_text_set(Elm_Code_Line *line, const char *text)
+{
+   if (line->status_text)
+     free(line->status_text);
+
+   if (text)
+     line->status_text = strdup(text);
+   else
+     line->status_text = NULL;
+}
+
 EAPI void elm_code_line_token_add(Elm_Code_Line *line, int start, int end, int lines,
                                   Elm_Code_Token_Type type)
 {
@@ -65,5 +76,15 @@ EAPI void elm_code_line_tokens_clear(Elm_Code_Line *line)
    EINA_LIST_FREE(line->tokens, token)
      free(token);
    line->tokens = NULL;
+}
+
+EAPI void elm_code_line_status_clear(Elm_Code_Line *line)
+{
+   line->status = ELM_CODE_STATUS_TYPE_DEFAULT;
+   if (line->status_text)
+     {
+        free((char *)line->status_text);
+        line->status_text = NULL;
+     }
 }
 

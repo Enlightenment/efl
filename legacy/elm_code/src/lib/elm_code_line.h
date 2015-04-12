@@ -32,7 +32,7 @@ typedef struct _Elm_Code_Line
    Eina_List *tokens;
 
    void *data;
-   const char *status_text;
+   char *status_text;
 } Elm_Code_Line;
 
 EAPI void elm_code_line_free(Elm_Code_Line *line);
@@ -48,6 +48,10 @@ EAPI void elm_code_line_free(Elm_Code_Line *line);
  */
 
 EAPI void elm_code_line_status_set(Elm_Code_Line *line, Elm_Code_Status_Type status);
+
+EAPI void elm_code_line_status_text_set(Elm_Code_Line *line, const char *text);
+
+EAPI void elm_code_line_status_clear(Elm_Code_Line *line);
 
 EAPI void elm_code_line_token_add(Elm_Code_Line *line, int start, int end, int lines, Elm_Code_Token_Type type);
 
