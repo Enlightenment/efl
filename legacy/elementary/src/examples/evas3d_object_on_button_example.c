@@ -307,8 +307,8 @@ elm_main(int argc, char **argv)
    /* Add an image object for 3D scene rendering. */
    image = evas_object_image_filled_add(evas);
    eo_do(image,
-         evas_obj_size_set(WIDTH, HEIGHT),
-         evas_obj_visibility_set(EINA_TRUE));
+         efl_gfx_size_set(WIDTH, HEIGHT),
+         efl_gfx_visible_set(EINA_TRUE));
 
    btn = elm_button_add(win);
    evas_object_resize(btn, (WIDTH * 2) / 3, (HEIGHT * 2) / 3);

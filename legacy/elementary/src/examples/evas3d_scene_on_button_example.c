@@ -287,7 +287,7 @@ elm_main(int argc, char **argv)
 
    image = evas_object_image_filled_add(evas);
    eo_do(image,
-         evas_obj_visibility_set(EINA_TRUE));
+         efl_gfx_visible_set(EINA_TRUE));
 
    /* Set the image object as render target for 3D scene. */
    eo_do(image, evas_obj_image_scene_set(data.scene));
