@@ -259,6 +259,30 @@ stat_cmp(const void *a, const void *b)
    return 1;
 }
 
+static Eina_Bool
+_check_recurse_monitor_sanity(Eina_Inarray *stack, const char *path, unsigned int stack_limit)
+{
+   const char *home = getenv("HOME");
+
+   // protect against too deep recursion even if it's valid.
+   if (eina_inarray_count(stack) >= stack_limit)
+     {
+        ERR("Recursing too far. Level %i. Stopping at %s\n", stack_limit, path);
+        return EINA_FALSE;
+     }
+   // detect if we start recursing at $HOME - a sign of something wrong
+   if ((home) && (!strcmp(home, path)))
+     {
+        char buf[PATH_MAX];
+
+        ERR("Recursively monitor homedir! Remove cache and exit.");
+        snprintf(buf, sizeof(buf), "%s/efreet", efreet_cache_home_get());
+        ecore_file_recursive_rm(buf);
+        exit(-1);
+     }
+   return EINA_TRUE;
+}
+
 static void
 icon_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool base)
 {
@@ -268,8 +292,7 @@ icon_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool b
 
    if (stat(path, &st) == -1) return;
    if (eina_inarray_search(stack, &st, stat_cmp) >= 0) return;
-   // protect against too deep recursion even if it's valid.
-   if (eina_inarray_count(stack) >= 8) return;
+   if (!_check_recurse_monitor_sanity(stack, path, 8)) return;
    eina_inarray_push(stack, &st);
 
    if ((!ecore_file_is_dir(path)) && (base))
@@ -306,8 +329,7 @@ desktop_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Boo
 
    if (stat(path, &st) == -1) return;
    if (eina_inarray_search(stack, &st, stat_cmp) >= 0) return;
-   // protect against too deep recursion even if it's valid.
-   if (eina_inarray_count(stack) >= 3) return;
+   if (!_check_recurse_monitor_sanity(stack, path, 3)) return;
    eina_inarray_push(stack, &st);
    if ((!ecore_file_is_dir(path)) && (base))
      {
@@ -371,7 +393,8 @@ icon_changes_listen(void)
         icon_changes_listen_recursive(stack, buf, EINA_TRUE);
      }
 #endif
-   icon_changes_monitor_add("/usr/share/pixmaps");
+   eina_inarray_flush(stack);
+   icon_changes_listen_recursive(stack, "/usr/share/pixmaps", EINA_TRUE);
    eina_inarray_free(stack);
 }
 
