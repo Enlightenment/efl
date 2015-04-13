@@ -519,9 +519,7 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
         yoffset = im->cache_entry.borders.t;
         break;
       case EVAS_COLORSPACE_ETC1_ALPHA:
-        // One must call evas_gl_common_texture_rgb_a_pair_new() instead.
-        ERR("Trying to upload ETC1+Alpha texture as a normal texture. Abort.");
-        return NULL;
+        return evas_gl_common_texture_rgb_a_pair_new(gc, im);
      default:
         // One pixel gap and two pixels for duplicated borders
         w = im->cache_entry.w + 3;
