@@ -85,11 +85,15 @@ _init_cow(void)
 EOLIAN static void
 _evas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
+   Eo *parent = NULL;
+
    eo_do_super(eo_obj, MY_CLASS, eo_constructor());
    eo_do(eo_obj, evas_obj_type_set(MY_CLASS_NAME));
    eo_manual_free_set(eo_obj, EINA_TRUE);
 
-   if (!obj || !_init_cow())
+   eo_do(eo_obj, parent = eo_parent_get());
+
+   if (!obj || !_init_cow() || !eo_isa(parent, EVAS_COMMON_INTERFACE_INTERFACE))
      {
         eo_error_set(eo_obj);
         return;
