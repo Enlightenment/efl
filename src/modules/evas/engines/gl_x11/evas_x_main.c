@@ -792,15 +792,20 @@ void *
 eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
 {
    Evas_GL_X11_Visual *evis;
-   int alpha = einfo->info.destination_alpha;
-   int depth_bits = einfo->depth_bits;
-   int stencil_bits = einfo->stencil_bits;
-   int msaa_samples = einfo->msaa_bits;
+   int alpha;
+   int depth_bits;
+   int stencil_bits;
+   int msaa_samples;
    int config_attrs[40], i, num, idx;
    Eina_Bool found;
 
    if (!einfo) return NULL;
    if (!einfo->info.display) return NULL;
+
+   alpha = einfo->info.destination_alpha;
+   depth_bits = einfo->depth_bits;
+   stencil_bits = einfo->stencil_bits;
+   msaa_samples = einfo->msaa_bits;
 
    idx = _visuals_hash_index_get_from_info(einfo);
    evis = eina_hash_find(_evas_gl_visuals, &idx);
