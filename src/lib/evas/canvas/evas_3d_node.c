@@ -570,8 +570,8 @@ _update_node_shapes(Evas_3D_Node *node)
                   _rotate_vertices(&pd->orientation_world, count, vertices);
                   _calculate_box(&pd->local_aabb, count, vertices);
                }
-             free(vertices);
           }
+        free(vertices);
      }
 
    pd->bsphere.radius = pd->local_bsphere.radius;
