@@ -672,7 +672,7 @@ EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MA
  * @since 1.1.0
  *
  * This function inserts item into a linked list assuming it was
- * sorted and the result will be sorted. If @p list is @c NULLL, item
+ * sorted and the result will be sorted. If @p list is @c NULL, item
  * is returned. On success, a new list pointer that should be
  * used in place of the one given to this function is
  * returned. Otherwise, the old pointer is returned.
@@ -704,7 +704,7 @@ EAPI Eina_Inlist_Sorted_State *eina_inlist_sorted_state_new(void);
  * @since 1.1.0
  *
  * See eina_inlist_sorted_state_insert() for more information. This function is
- * usefull if you didn't use eina_inlist_sorted_state_insert() at some point, but
+ * useful if you didn't use eina_inlist_sorted_state_insert() at some point, but
  * still think you have a sorted list. It will only correctly work on a sorted list.
  */
 EAPI int eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inlist *list);
@@ -834,7 +834,7 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 /**
  * @def EINA_INLIST_FOREACH_SAFE
  * @param list The list to iterate on.
- * @param list2 Auxiliar Eina_Inlist variable so we can save the pointer to the
+ * @param list2 Auxiliary Eina_Inlist variable so we can save the pointer to the
  * next element, allowing us to free/remove the current one. Note that this
  * macro is only safe if the next element is not removed. Only the current one
  * is allowed to be removed.

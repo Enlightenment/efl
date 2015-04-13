@@ -163,7 +163,7 @@
  *
  * You can move elements around in a list using @ref eina_list_move() or using
  * @ref eina_list_promote_list() and @ref eina_list_demote_list() which move a
- * list node to the head and end of the list respectevely:
+ * list node to the head and end of the list respectively:
  * @until demote
  *
  * Removing elements from a list can be done with ease:
@@ -515,7 +515,7 @@ EAPI Eina_List            *eina_list_prepend_relative_list(Eina_List *list, cons
  * @return A list pointer.
  *
  * This function inserts values into a linked list assuming it was
- * sorted and the result will be sorted. If @p list is @c NULLL, a new
+ * sorted and the result will be sorted. If @p list is @c NULL, a new
  * list is returned. On success, a new list pointer that should be
  * used in place of the one given to this function is
  * returned. Otherwise, the old pointer is returned.
@@ -834,7 +834,7 @@ EAPI Eina_List            *eina_list_reverse_clone(const Eina_List *list) EINA_W
  * @return The new list that has been cloned.
  *
  * This function clone in order of all elements in @p list. If @p list
- * is @c NULL, this functon returns @c NULL. This returns a copy of
+ * is @c NULL, this function returns @c NULL. This returns a copy of
  * the given list.
  *
  * @note @b copy: this will copy the list and you should then
@@ -894,7 +894,7 @@ EAPI Eina_List            *eina_list_sort(Eina_List *list, unsigned int limit, E
  * @brief Shuffle list.
  *
  * @param list The list handle to shuffle.
- * @param func A function pointer that can return an int between 2 inclusives values
+ * @param func A function pointer that can return an int between 2 inclusive values
  * @return the new head of list.
  *
  * This function shuffles @p list.
@@ -944,7 +944,7 @@ EAPI Eina_List            *eina_list_merge(Eina_List *left, Eina_List *right) EI
  * smallest one to be head of the returned list. It will continue this process
  * for all entry of both list.
  *
- * Both left and right lists are not vailid anymore after the merge and should
+ * Both left and right lists are not valid anymore after the merge and should
  * not be used. If @p func is @c NULL, it will return @c NULL.
  *
  * Example:
@@ -952,7 +952,7 @@ EAPI Eina_List            *eina_list_merge(Eina_List *left, Eina_List *right) EI
  * int
  * sort_cb(void *d1, void *d2)
  * {
- *   const char *txt = NULL;
+ *    const char *txt = NULL;
  *    const char *txt2 = NULL;
  *
  *    if(!d1) return(1);
@@ -1020,7 +1020,7 @@ EAPI Eina_List            *eina_list_split_list(Eina_List *list, Eina_List *rela
  * 
  * However this has the downside of walking through the list twice, once to
  * check if the data is already present and another to insert the element in the
- * corret position. This can be done more eficiently:
+ * correct position. This can be done more efficiently:
  * @code
  * int cmp_result;
  * l = eina_list_search_sorted_near_list(list, cmp_func, "my data",
