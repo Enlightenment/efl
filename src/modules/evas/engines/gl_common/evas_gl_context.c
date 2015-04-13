@@ -3006,7 +3006,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 # define VERTEX_SIZE (gc->pipe[i].array.num * sizeof(GLshort) * VERTEX_CNT)
 # define COLOR_SIZE (gc->pipe[i].array.num * sizeof(GLubyte) * COLOR_CNT)
 # define TEX_SIZE (gc->pipe[i].array.num * sizeof(GLfloat) * TEX_CNT)
-# define MASK_SIZE (gc->pipe[i].array.num * sizeof(GLubyte) * MASK_CNT)
+# define MASK_SIZE (gc->pipe[i].array.num * sizeof(GLfloat) * MASK_CNT)
              vertex_ptr = NULL;
              color_ptr = vertex_ptr + VERTEX_SIZE;
              texuv_ptr = color_ptr + COLOR_SIZE;
@@ -3015,7 +3015,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              texa_ptr = texuv3_ptr + TEX_SIZE;
              texsam_ptr = texa_ptr + TEX_SIZE;
              mask_ptr = texsam_ptr + TEX_SIZE;
-# define END_POINTER (mask_ptr + TEX_SIZE)
+# define END_POINTER (mask_ptr + MASK_SIZE)
 
              glBindBuffer(GL_ARRAY_BUFFER, gc->pipe[i].array.buffer);
              if ((gc->pipe[i].array.buffer_alloc < (long)END_POINTER) ||
