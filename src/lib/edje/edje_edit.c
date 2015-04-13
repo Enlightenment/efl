@@ -6782,7 +6782,9 @@ edje_edit_state_map_point_color_set(Evas_Object *obj, const char *part, const ch
 
    if (!color)
      {
-        color = _alloc(sizeof(Edje_Map_Color));
+        if (!(color = _alloc(sizeof(Edje_Map_Color))))
+          return EINA_FALSE;
+
         pd->map.colors_count++;
         pd->map.colors =
            realloc(pd->map.colors,
