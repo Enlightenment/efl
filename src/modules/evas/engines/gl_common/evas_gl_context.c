@@ -2442,6 +2442,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    Evas_GL_Shader shader = SHADER_IMG;
    Eina_Bool utexture = EINA_FALSE;
    Eina_Bool uvtexture = EINA_FALSE;
+   Eina_Bool use_texa = EINA_FALSE;
    Shader_Type type;
    int pn = 0, i;
    int flat = 0, nomul = 0;
@@ -2480,6 +2481,10 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
         type = SHD_NV12;
         uvtexture = EINA_TRUE;
         break;
+      case EVAS_COLORSPACE_ETC1_ALPHA:
+        type = SHD_RGB_A_PAIR;
+        use_texa = EINA_TRUE;
+        break;
       default:
         type = SHD_MAP;
         break;
@@ -2488,13 +2493,6 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                                          w, h, w, h, smooth, tex, tex_only,
                                          mtex, NULL, &nomul);
    prog = gc->shared->shader[shader].prog;
-
-   /* FIXME: Add RGB+A support, as well as YUV map masking
-    * Print error messages for easier debugging... */
-   if (cspace == EVAS_COLORSPACE_ETC1_ALPHA)
-     ERR("Proper support for ETC1+Alpha maps is not implemented!");
-   else if (mtex && (utexture || uvtexture))
-     ERR("Support for YUV or ETC1+Alpha map masking is not implemented!");
 
    x = w = (p[0].x >> FP);
    y = h = (p[0].y >> FP);
@@ -2599,7 +2597,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_texuv2 = (utexture || uvtexture) ? 1 : 0;
    gc->pipe[pn].array.use_texuv3 = (utexture) ? 1 : 0;
    gc->pipe[pn].array.use_mask = !!mtex;
-   gc->pipe[pn].array.use_texa = 0;
+   gc->pipe[pn].array.use_texa = use_texa;
    gc->pipe[pn].array.use_texsam = 0;
 
    pipe_region_expand(gc, pn, x, y, w, h);
