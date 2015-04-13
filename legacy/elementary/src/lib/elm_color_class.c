@@ -134,7 +134,7 @@ _colorclass_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
 
    elm_colorselector_color_get(cc->cs, (int*)&cc->current->color[cc->num].r, (int*)&cc->current->color[cc->num].g,
                                (int*)&cc->current->color[cc->num].b, (int*)&cc->current->color[cc->num].a);
-   if (remote_iface)
+   if (cc->winid && remote_iface)
      _dbus_signal_changed(cc);
    else
      edje_color_class_set(cc->current->name,
@@ -157,7 +157,7 @@ _colorclass_reset(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
    Colorclass color;
 
    if (!cc->current) return;
-   if (remote_iface)
+   if (cc->winid && remote_iface)
      {
         Eldbus_Message *msg;
 
@@ -185,8 +185,6 @@ _colorclass_reset(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
    _colorclass_cc_update(cc, 0);
    _colorclass_cc_update(cc, 1);
    _colorclass_cc_update(cc, 2);
-   if (remote_iface)
-     _dbus_signal_changed(cc);
 }
 
 static void
@@ -283,7 +281,7 @@ _colorclass_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    _colorclass_save(cc);
    if (cc->winid)
      remote_ccuis = eina_inlist_remove(remote_ccuis, EINA_INLIST_GET(cc));
-   if (remote_iface && (!remote_ccuis))
+   if (cc->winid && remote_iface && (!remote_ccuis))
      {
         Eldbus_Connection *conn;
 
@@ -325,7 +323,7 @@ _dbus_request_name_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pen
         elm_object_signal_emit(cc->ly, "elm,state,info", "elm");
         return;
      }
-   if (remote_ccuis)
+   if (cc->winid && remote_ccuis)
      eldbus_service_signal_emit(remote_iface, COLORCLASS_SIGNAL_EDIT, cc->winid);
 }
 
