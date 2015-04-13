@@ -234,7 +234,10 @@ _colorclass_save(Colorclass_UI *cc)
      {
         _colorclass_apply(cc);
         if (cc->changed || (cc->exist && cc->change_reset))
-          elm_config_save();
+          {
+             elm_config_save();
+             elm_config_all_flush();
+          }
      }
 }
 
