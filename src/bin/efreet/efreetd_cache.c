@@ -512,7 +512,7 @@ _check_recurse_monitor_sanity(Eina_Inarray *stack, const char *path, unsigned in
 
         ERR("Recursively monitor homedir! Remove cache and exit.");
         snprintf(buf, sizeof(buf), "%s/efreet", efreet_cache_home_get());
-        ecore_file_recursive_rm(buf);
+        if (!ecore_file_recursive_rm(buf)) ERR("Can't delete efreet cache dir");
         exit(-1);
      }
    return EINA_TRUE;
