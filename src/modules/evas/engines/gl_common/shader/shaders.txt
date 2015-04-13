@@ -77,12 +77,12 @@ img_22_bgra_nomul_afill:tex,sam22,bgra,nomul,afill
 
 
 # RGB+A. We can add more!
-rgb_a_pair:texa
-rgb_a_pair_mask:texa,mask
-rgb_a_pair_nomul:texa,nomul
-rgb_a_pair_mask_nomul:texa,mask,nomul
-#rgb_a_pair_afill:texa,afill
-#rgb_a_pair_nomul_afill:texa,nomul,afill
+rgb_a_pair:tex,texa
+rgb_a_pair_mask:tex,texa,mask
+rgb_a_pair_nomul:tex,texa,nomul
+rgb_a_pair_mask_nomul:tex,texa,mask,nomul
+#rgb_a_pair_afill:tex,texa,afill
+#rgb_a_pair_nomul_afill:tex,texa,nomul,afill
 
 
 
