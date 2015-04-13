@@ -305,6 +305,7 @@ _emile_tgv_head(Emile_Image *image,
         prop->alpha = EINA_TRUE;
         prop->premul = !!(m[OFFSET_OPTIONS] & 0x4);
         image->unpremul = prop->premul;
+        image->cspace = EMILE_COLORSPACE_ETC1_ALPHA;
         break;
 
       default:
