@@ -3254,6 +3254,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                     }
                   glActiveTexture(GL_TEXTURE0);
 
+                  glDisableVertexAttribArray(SHAD_TEXUV3);
                   MASK_TEXTURE += 1;
                }
              else
