@@ -511,7 +511,7 @@ struct _Evas_Engine_GL_Context
          GLfloat *texsam;
          GLfloat *mask;
          Eina_Bool line: 1;
-         Eina_Bool use_vertex : 1;
+         Eina_Bool use_vertex : 1; // always true
          Eina_Bool use_color : 1;
          Eina_Bool use_texuv : 1;
          Eina_Bool use_texuv2 : 1;

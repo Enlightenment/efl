@@ -1742,7 +1742,7 @@ evas_gl_common_context_line_push(Evas_Engine_GL_Context *gc,
    shader_array_flush(gc);
    gc->pipe[pn].array.line = 0;
    gc->pipe[pn].array.anti_alias = 0;
-   gc->pipe[pn].array.use_vertex = 0;
+   //gc->pipe[pn].array.use_vertex = 0;
    gc->pipe[pn].array.use_color = 0;
    gc->pipe[pn].array.use_texuv = 0;
    gc->pipe[pn].array.use_texuv2 = 0;
@@ -3077,8 +3077,17 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              texsam_ptr = (unsigned char *)gc->pipe[i].array.texsam;
              mask_ptr = (unsigned char *)gc->pipe[i].array.mask;
           }
+
+        // use_vertex is always true
         glVertexAttribPointer(SHAD_VERTEX, VERTEX_CNT, GL_SHORT, GL_FALSE, 0, vertex_ptr);
-        glVertexAttribPointer(SHAD_COLOR, COLOR_CNT, GL_UNSIGNED_BYTE, GL_TRUE, 0, color_ptr);
+
+        if (gc->pipe[i].array.use_color)
+          {
+             glEnableVertexAttribArray(SHAD_COLOR);
+             glVertexAttribPointer(SHAD_COLOR, COLOR_CNT, GL_UNSIGNED_BYTE, GL_TRUE, 0, color_ptr);
+          }
+        else
+          glDisableVertexAttribArray(SHAD_COLOR);
 
         if (gc->pipe[i].array.line)
           {
@@ -3338,7 +3347,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         if (gc->pipe[i].array.mask) free(gc->pipe[i].array.mask);
 
         gc->pipe[i].array.line = 0;
-        gc->pipe[i].array.use_vertex = 0;
+        //gc->pipe[i].array.use_vertex = 0;
         gc->pipe[i].array.use_color = 0;
         gc->pipe[i].array.use_texuv = 0;
         gc->pipe[i].array.use_texuv2 = 0;
