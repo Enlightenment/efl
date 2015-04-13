@@ -21,22 +21,8 @@
 
 static int _el_log_domain = -1;
 
-#define DBG(...) EINA_LOG_DOM_DBG(_el_log_domain, __VA_ARGS__)
 #define INF(...) EINA_LOG_DOM_INFO(_el_log_domain, __VA_ARGS__)
-#define WRN(...) EINA_LOG_DOM_WARN(_el_log_domain, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(_el_log_domain, __VA_ARGS__)
-#define CRT(...) EINA_LOG_DOM_CRITICAL(_el_log_domain, __VA_ARGS__)
-
-void
-elua_bin_shutdown(Elua_State *es, int c)
-{
-   INF("elua shutdown");
-   if (es) elua_state_free(es);
-   if (_el_log_domain != EINA_LOG_DOMAIN_GLOBAL)
-     eina_log_domain_unregister(_el_log_domain);
-   elua_shutdown();
-   exit(c);
-}
 
 struct Main_Data
 {
@@ -95,35 +81,27 @@ elua_main(lua_State *L)
    int ch;
 
    while ((ch = getopt_long(argc, argv, "+LhC:M:A:l:I:E", lopt, NULL)) != -1)
-     {
-        switch (ch)
-          {
-           case 'h':
-             elua_print_help(elua_state_prog_name_get(es), stdout);
-             if (largs) eina_list_free(largs);
-             return 0;
-           case 'C':
-             coredir = optarg;
-             break;
-           case 'M':
-             moddir = optarg;
-             break;
-           case 'A':
-             appsdir = optarg;
-             break;
-           case 'l':
-             if (!optarg[0]) continue;
-             largs = eina_list_append(largs, optarg);
-             break;
-           case 'I':
-             if (!optarg[0]) continue;
-             elua_state_include_path_add(es, optarg);
-             break;
-           case 'E':
-             noenv = EINA_TRUE;
-             break;
-          }
-     }
+     switch (ch)
+       {
+        case 'h':
+          elua_print_help(elua_state_prog_name_get(es), stdout); goto success;
+        case 'C':
+          coredir = optarg; break;
+        case 'M':
+          moddir  = optarg; break;
+        case 'A':
+          appsdir = optarg; break;
+        case 'l':
+        case 'I':
+          if (!optarg[0]) continue;
+          if (ch == 'l')
+            largs = eina_list_append(largs, optarg);
+          else
+            elua_state_include_path_add(es, optarg);
+          break;
+        case 'E':
+          noenv = EINA_TRUE; break;
+       }
 
    INF("arguments parsed");
 
@@ -150,7 +128,7 @@ elua_main(lua_State *L)
         if (elua_util_script_run(es, argc, argv, optind, &quit))
           goto error;
         if (quit)
-          return 0;
+          goto success;
      }
    else
      {
@@ -160,12 +138,24 @@ elua_main(lua_State *L)
 
    ecore_main_loop_begin();
 
-   return 0;
+   goto success;
 
 error:
    m->status = 1;
+success:
    if (largs) eina_list_free(largs);
    return 0;
+}
+
+void
+elua_bin_shutdown(Elua_State *es, int c)
+{
+   INF("elua shutdown");
+   if (es) elua_state_free(es);
+   if (_el_log_domain != EINA_LOG_DOMAIN_GLOBAL)
+     eina_log_domain_unregister(_el_log_domain);
+   elua_shutdown();
+   exit(c);
 }
 
 int
