@@ -677,8 +677,8 @@ fill_list(const char *file, Eina_List **l)
      {
         if (line->end > line->start)
           {
-             const char *end = line->end - 1;
-             *l = eina_list_append(*l, eina_stringshare_add_length(line->start, end - line->start));
+             const char *s = eina_stringshare_add_length(line->start, line->end - line->start);
+             if (s) *l = eina_list_append(*l, s);
           }
      }
    eina_iterator_free(it);
@@ -689,9 +689,9 @@ error:
 static void
 read_lists(void)
 {
-   fill_list("extra_desktop.dirs", &desktop_extra_dirs);
-   fill_list("extra_icon.dirs", &icon_extra_dirs);
-   fill_list("icon.exts", &icon_exts);
+   fill_list("extra_desktops.dirs", &desktop_extra_dirs);
+   fill_list("extra_icons.dirs", &icon_extra_dirs);
+   fill_list("icons.exts", &icon_exts);
 }
 
 static void
@@ -777,7 +777,7 @@ cache_desktop_dir_add(const char *dir)
      {
         /* Not a registered path */
         desktop_extra_dirs = eina_list_append(desktop_extra_dirs, eina_stringshare_add(san));
-        save_list("extra_desktop.dirs", desktop_extra_dirs);
+        save_list("extra_desktops.dirs", desktop_extra_dirs);
         cache_desktop_update();
      }
    free(san);
@@ -794,7 +794,7 @@ cache_icon_dir_add(const char *dir)
      {
         if (!strcmp(san, "/")) goto out;
         icon_extra_dirs = eina_list_append(icon_extra_dirs, eina_stringshare_add(san));
-        save_list("extra_icon.dirs", icon_extra_dirs);
+        save_list("extra_icons.dirs", icon_extra_dirs);
         cache_icon_update(EINA_TRUE);
      }
 out:
@@ -807,7 +807,7 @@ cache_icon_ext_add(const char *ext)
    if (!eina_list_search_unsorted_list(icon_exts, EINA_COMPARE_CB(strcmp), ext))
      {
         icon_exts = eina_list_append(icon_exts, eina_stringshare_add(ext));
-        save_list("icon.exts", icon_exts);
+        save_list("icons.exts", icon_exts);
         cache_icon_update(EINA_TRUE);
      }
 }
