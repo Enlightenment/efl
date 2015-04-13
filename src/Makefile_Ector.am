@@ -71,7 +71,7 @@ lib/ector/ector_renderer_gradient_radial.c \
 lib/ector/ector_renderer_gradient_linear.c
 
 installed_ectorgenericheadersdir = $(includedir)/ector-@VMAJ@/generic
-dist_installed_ectorgenericheaders_DATA = $(ector_eolian_generic_h)
+nodist_installed_ectorgenericheaders_DATA = $(ector_eolian_generic_h)
 
 # And now the cairo backend
 lib_ector_libector_la_SOURCES += \
@@ -82,7 +82,7 @@ lib/ector/cairo/ector_renderer_cairo_base.c \
 lib/ector/cairo/ector_cairo_surface.c
 
 installed_ectorcairoheadersdir = $(includedir)/ector-@VMAJ@/cairo
-dist_installed_ectorcairoheaders_DATA = $(ector_eolian_cairo_h)
+nodist_installed_ectorcairoheaders_DATA = $(ector_eolian_cairo_h)
 
 # And the Freetype rasterizer
 
@@ -98,7 +98,7 @@ lib/ector/software/sw_ft_raster.c \
 lib/ector/software/sw_ft_stroker.c
 
 installed_ectorsoftwareheadersdir = $(includedir)/ector-@VMAJ@/software
-dist_installed_ectorsoftwareheaders_DATA = $(ector_eolian_software_h)
+nodist_installed_ectorsoftwareheaders_DATA = $(ector_eolian_software_h)
 
 lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/ector \
