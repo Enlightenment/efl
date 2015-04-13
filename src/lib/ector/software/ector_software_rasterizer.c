@@ -80,7 +80,8 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
          while (length)
            {
               int l = MIN(length, buffer_size);
-              fetchfunc(buffer, data, spans->y, spans->x, l);
+              if (fetchfunc)
+                fetchfunc(buffer, data, spans->y, spans->x, l);
               if (data->mul_col == 0xffffffff)
                 _ector_comp_func_source_over(target, buffer, l, spans->coverage); // TODO use proper composition func
               else
