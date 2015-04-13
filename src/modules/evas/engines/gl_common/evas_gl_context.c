@@ -2594,7 +2594,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].shader.ch = ch;
    gc->pipe[pn].array.line = 0;
    gc->pipe[pn].array.use_vertex = 1;
-   gc->pipe[pn].array.use_color = 1;
+   gc->pipe[pn].array.use_color = !nomul;
    gc->pipe[pn].array.use_texuv = 1;
    gc->pipe[pn].array.use_texuv2 = (utexture || uvtexture) ? 1 : 0;
    gc->pipe[pn].array.use_texuv3 = (utexture) ? 1 : 0;
