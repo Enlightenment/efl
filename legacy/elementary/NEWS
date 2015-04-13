@@ -67,6 +67,11 @@ Fixes:
    * elm_naviframe: use of elm_app_data_dir_get() instead of PACKAGE_DATA_DIR.
    * elm_map: use of elm_app_data_dir_get() instead of PACKAGE_DATA_DIR
    * Elm_Win: Fix _elm_win_focus_prev_target_del callback added repeatly without callback del.
+   * elm image - stop repeating events by default - wrong
+   * elm_genlist: pass eo_it to eo_do_ret func, not VIEW(it)
+   * [elm_panel] Fix mirroring issue.
+   * test_naviframe: Fix content image file names.
+   * elm_image: return EINA_FALSE if the data source is NULL in elm_image_memfile_set
 
 Changes since 1.12.0:
 ---------------------
