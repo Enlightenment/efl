@@ -3563,7 +3563,10 @@ eng_ector_renderer_draw(void *data EINA_UNUSED, void *context, void *surface, Ec
 
         if (eina_array_count(c) == 0 &&
             eina_array_count(clips) > 0)
-          return ;
+          {
+             eina_array_free(c);
+             return;
+          }
      }
 
    if (eina_array_count(c) == 0)
@@ -3584,7 +3587,7 @@ eng_ector_renderer_draw(void *data EINA_UNUSED, void *context, void *surface, Ec
         if (!ne)
           {
              _draw_thread_ector_cleanup(&ector);
-             return ;
+             return;
           }
 
         memcpy(ne, &ector, sizeof (Evas_Thread_Command_Ector));
