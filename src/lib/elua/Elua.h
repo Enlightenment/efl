@@ -87,15 +87,15 @@ EAPI Eina_Bool elua_state_appload_ref_push(Elua_State *es);
 
 EAPI lua_State *elua_state_lua_state_get(const Elua_State *es);
 
-EAPI int elua_report_error(const Elua_State *es, const char *pname, int status);
+EAPI int elua_error_report(const Elua_State *es, const char *pname, int status);
 
-EAPI Eina_Bool elua_state_setup_i18n(const Elua_State *es);
-EAPI Eina_Bool elua_state_setup_modules(const Elua_State *es);
+EAPI Eina_Bool elua_state_i18n_setup(const Elua_State *es);
+EAPI Eina_Bool elua_state_modules_setup(const Elua_State *es);
+EAPI Eina_Bool elua_state_io_setup(const Elua_State *es);
 
 EAPI int elua_io_loadfile(const Elua_State *es, const char *fname);
-EAPI void elua_io_register(const Elua_State *es);
-
 EAPI int elua_io_popen(lua_State *L);
+
 EAPI int elua_module_init(lua_State *L);
 EAPI int elua_module_system_init(lua_State *L);
 

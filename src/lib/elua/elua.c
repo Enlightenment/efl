@@ -237,7 +237,7 @@ _elua_errmsg(const char *pname, const char *msg)
 }
 
 EAPI int
-elua_report_error(const Elua_State *es, const char *pname, int status)
+elua_error_report(const Elua_State *es, const char *pname, int status)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(es && es->luastate, status);
    if (status && !lua_isnil(es->luastate, -1))
@@ -284,7 +284,7 @@ const luaL_reg gettextlib[] =
 };
 
 EAPI Eina_Bool
-elua_state_setup_i18n(const Elua_State *es)
+elua_state_i18n_setup(const Elua_State *es)
 {
 #ifdef ENABLE_NLS
    char *(*dgettextp)(const char*, const char*) = dgettext;
@@ -297,7 +297,7 @@ elua_state_setup_i18n(const Elua_State *es)
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->coredir, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->progname, EINA_FALSE);
    snprintf(buf, sizeof(buf), "%s/gettext.lua", es->coredir);
-   if (elua_report_error(es, es->progname, elua_io_loadfile(es, buf)))
+   if (elua_error_report(es, es->progname, elua_io_loadfile(es, buf)))
      return EINA_FALSE;
    lua_createtable(es->luastate, 0, 0);
    luaL_register(es->luastate, NULL, gettextlib);
@@ -319,7 +319,7 @@ const luaL_reg _elua_cutillib[] =
 };
 
 EAPI Eina_Bool
-elua_state_setup_modules(const Elua_State *es)
+elua_state_modules_setup(const Elua_State *es)
 {
    char buf[PATH_MAX];
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
@@ -327,7 +327,7 @@ elua_state_setup_modules(const Elua_State *es)
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->coredir, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->progname, EINA_FALSE);
    snprintf(buf, sizeof(buf), "%s/module.lua", es->coredir);
-   if (elua_report_error(es, es->progname, elua_io_loadfile(es, buf)))
+   if (elua_error_report(es, es->progname, elua_io_loadfile(es, buf)))
      return EINA_FALSE;
    lua_pushcfunction(es->luastate, elua_module_system_init);
    lua_createtable(es->luastate, 0, 0);
@@ -453,7 +453,7 @@ elua_util_require(Elua_State *es, const char *libname)
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(elua_state_require_ref_push(es), -1);
    lua_pushstring(es->luastate, libname);
-   return elua_report_error(es, es->progname,
+   return elua_error_report(es, es->progname,
                             lua_pcall(es->luastate, 1, 0, 0));
 }
 
@@ -462,7 +462,7 @@ elua_util_file_run(Elua_State *es, const char *fname)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
-   return elua_report_error(es, es->progname,
+   return elua_error_report(es, es->progname,
                             elua_io_loadfile(es, fname)
                             || _elua_docall(es, 0, 1));
 }
@@ -472,7 +472,7 @@ elua_util_string_run(Elua_State *es, const char *chunk, const char *chname)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
-   return elua_report_error(es, es->progname,
+   return elua_error_report(es, es->progname,
                             luaL_loadbuffer(es->luastate, chunk, strlen(chunk),
                                             chname)
                             || _elua_docall(es, 0, 0));
@@ -531,5 +531,5 @@ elua_util_script_run(Elua_State *es, int argc, char **argv, int n, int *quit)
         *quit = lua_toboolean(es->luastate, -1);
         lua_pop(es->luastate, 1);
      }
-   return elua_report_error(es, es->progname, status);
+   return elua_error_report(es, es->progname, status);
 }

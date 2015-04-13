@@ -110,10 +110,9 @@ elua_main(lua_State *L)
    elua_state_dirs_set(es, coredir, moddir, appsdir);
    elua_state_dirs_fill(es, noenv);
 
-   if (!elua_state_setup_modules(es) || !elua_state_setup_i18n(es))
+   if (!elua_state_modules_setup(es) || !elua_state_i18n_setup(es)
+    || !elua_state_io_setup(es))
      goto error;
-
-   elua_io_register(es);
 
    lua_gc(L, LUA_GCRESTART, 0);
 

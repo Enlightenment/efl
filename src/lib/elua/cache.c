@@ -208,10 +208,11 @@ loadfile(lua_State *L)
    return 2;
 }
 
-EAPI void
-elua_io_register(const Elua_State *es)
+EAPI Eina_Bool
+elua_state_io_setup(const Elua_State *es)
 {
-   EINA_SAFETY_ON_FALSE_RETURN(es && es->luastate);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(es && es->luastate, EINA_FALSE);
    lua_pushcfunction(es->luastate, loadfile);
    lua_setglobal(es->luastate, "loadfile");
+   return EINA_TRUE;
 }
