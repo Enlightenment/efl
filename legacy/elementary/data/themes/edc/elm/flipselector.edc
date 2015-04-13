@@ -10,14 +10,14 @@ group { name: "elm/flipselector/base/default";
    images.image: "shine.png" COMP;
    images.image: "win_shadow.png" COMP;
    images.image: "bevel_out.png" COMP;
-   
+
    data.item: "max_len" FLIP_PICKER_MAX_LEN_STR;
-   
+
    //FIXME: quick successive clicks on, say, up, lead to nastiness
    script {
       public cur, prev, next, lock;
 
-      flip_up(str[]) {
+      flip_up(str[]) {
          new tmp[FLIP_PICKER_MAX_LEN];
          if (get_int(lock) == 1) {
             replace_str(next, 0, str);
@@ -48,7 +48,7 @@ group { name: "elm/flipselector/base/default";
          set_state(PART:"bottom_shadow", "default", 0.0);
          anim(0.2, "animator_top_down", 1);
       }
-      flip_dn(str[]) {      
+      flip_dn(str[]) {
          new tmp[FLIP_PICKER_MAX_LEN];
          if (get_int(lock) == 1) {
             replace_str(next, 0, str);
