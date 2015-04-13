@@ -3,6 +3,7 @@
    <interface name="org.elementary.colorclass">
       <method name="SendCC">
          <arg type="t" name="winid" direction="in" />
+         <arg type="b" name="reset" direction="in" />
          <arg type="a(ssa(iiii))" name="Array of color classes" direction="in" />
          <annotation name="org.freedesktop.DBus.Method.NoReply" value="true" />
       </method>
@@ -17,6 +18,10 @@
          <arg type="t" name="winid" direction="out" />
          <arg type="s" name="Color class name" direction="out" />
          <arg type="a(iiii)" name="Colors" direction="out" />
+      </signal>
+      <signal name="Reset">
+         <arg type="t" name="winid" direction="out" />
+         <arg type="s" name="name" direction="out" />
       </signal>
    </interface>
 </node>

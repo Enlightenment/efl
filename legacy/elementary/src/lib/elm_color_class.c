@@ -42,12 +42,14 @@ typedef enum
 {
    COLORCLASS_SIGNAL_EDIT,
    COLORCLASS_SIGNAL_CHANGED,
+   COLORCLASS_SIGNAL_RESET,
 } Colorclass_Signals;
 
 static const Eldbus_Signal colorclass_editor_signals[] =
 {
    [COLORCLASS_SIGNAL_EDIT] = {"Edit", ELDBUS_ARGS({"t", "Window ID"}), 0},
    [COLORCLASS_SIGNAL_CHANGED] = {"Changed", ELDBUS_ARGS({"t", "Window ID"}, {"s", "Color class name"}, {"a(iiii)", "Colors"}), 0},
+   [COLORCLASS_SIGNAL_RESET] = {"Reset", ELDBUS_ARGS({"t", "Window ID"}, {"b", "Color class name"}), 0},
    {NULL, NULL, 0}
 };
 
@@ -155,6 +157,17 @@ _colorclass_reset(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
    Colorclass color;
 
    if (!cc->current) return;
+   if (remote_iface)
+     {
+        Eldbus_Message *msg;
+
+        msg = eldbus_service_signal_new(remote_iface, COLORCLASS_SIGNAL_RESET);
+        eldbus_message_arguments_append(msg, "t", cc->winid);
+        eldbus_message_arguments_append(msg, "s", cc->current->name);
+        eldbus_service_signal_send(remote_iface, msg);
+        cc->change_reset = 1;
+        return;
+     }
    edje_color_class_del(cc->current->name);
    edje_color_class_get(cc->current->name,
                         (int*)&color.color[0].r, (int*)&color.color[0].g, (int*)&color.color[0].b, (int*)&color.color[0].a,
@@ -384,6 +397,7 @@ _dbus_edit(void *d EINA_UNUSED, int t EINA_UNUSED, Elementary_Colorclass_Edit_Da
    msg = eldbus_proxy_method_call_new(cc_proxy, "SendCC");
    iter = eldbus_message_iter_get(msg);
    eldbus_message_arguments_append(msg, "t", ev->winid);
+   eldbus_message_arguments_append(msg, "b", 0);
    iter = eldbus_message_iter_get(msg);
    array = eldbus_message_iter_container_new(iter, 'a', "(ssa(iiii))");
    if (list_cb)
@@ -472,6 +486,36 @@ out:
    return ECORE_CALLBACK_RENEW;
 }
 
+static Eina_Bool
+_dbus_reset(void *d EINA_UNUSED, int t EINA_UNUSED, Elementary_Colorclass_Reset_Data *ev)
+{
+   Evas_Object *win;
+   Eldbus_Message *msg;
+   Eldbus_Message_Iter *iter, *array;
+   Colorclass color;
+
+   win = _colorclass_find_win(ev->winid);
+   if (!win) return ECORE_CALLBACK_RENEW;
+
+   msg = eldbus_proxy_method_call_new(cc_proxy, "SendCC");
+   iter = eldbus_message_iter_get(msg);
+   eldbus_message_arguments_append(msg, "t", ev->winid);
+   eldbus_message_arguments_append(msg, "b", 1);
+   iter = eldbus_message_iter_get(msg);
+   array = eldbus_message_iter_container_new(iter, 'a', "(ssa(iiii))");
+   color.name = ev->name;
+   color.desc = NULL;
+   edje_color_class_del(ev->name);
+   edje_color_class_get(ev->name,
+                        (int*)&color.color[0].r, (int*)&color.color[0].g, (int*)&color.color[0].b, (int*)&color.color[0].a,
+                        (int*)&color.color[1].r, (int*)&color.color[1].g, (int*)&color.color[1].b, (int*)&color.color[1].a,
+                        (int*)&color.color[2].r, (int*)&color.color[2].g, (int*)&color.color[2].b, (int*)&color.color[2].a);
+   _dbus_edit_helper(array, &color);
+   eldbus_message_iter_container_close(iter, array);
+   eldbus_proxy_send(cc_proxy, msg, NULL, NULL, -1);
+   return ECORE_CALLBACK_RENEW;
+}
+
 static Elm_Genlist_Item_Class itc =
 {
    .item_style = "default",
@@ -516,8 +560,9 @@ _dbus_send_cc(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Me
    Colorclass_UI *cc;
    Eldbus_Message_Iter *array, *struc;
    uint64_t winid;
+   Eina_Bool reset;
 
-   if (!eldbus_message_arguments_get(msg, "ta(ssa(iiii))", &winid, &array))
+   if (!eldbus_message_arguments_get(msg, "tba(ssa(iiii))", &winid, &reset, &array))
      return eldbus_message_method_return_new(msg);
    cc = _dbus_ccui_find(winid);
    if (!cc)
@@ -547,7 +592,24 @@ _dbus_send_cc(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Me
                &ecc->color[i].r, &ecc->color[i].g, &ecc->color[i].b, &ecc->color[i].a);
              i++;
           }
-        elm_genlist_item_sorted_insert(cc->gl, &itc, ecc, NULL, 0, (Eina_Compare_Cb)_colorclass_sort, NULL, NULL);
+        if (reset)
+          {
+             cc->changed = !!memcmp(ecc->color, cc->current->color, sizeof(ecc->color));
+             cc->change_reset = 1;
+             memcpy(cc->current->color, ecc->color, sizeof(ecc->color));
+             edje_color_class_set("elm_colorclass_text",
+                                  ecc->color[0].r, ecc->color[0].g, ecc->color[0].b, ecc->color[0].a,
+                                  ecc->color[1].r, ecc->color[1].g, ecc->color[1].b, ecc->color[1].a,
+                                  ecc->color[2].r, ecc->color[2].g, ecc->color[2].b, ecc->color[2].a);
+             elm_colorselector_color_set(cc->cs, ecc->color[cc->num].r, ecc->color[cc->num].g,
+                                         ecc->color[cc->num].b, ecc->color[cc->num].a);
+             _colorclass_cc_update(cc, 0);
+             _colorclass_cc_update(cc, 1);
+             _colorclass_cc_update(cc, 2);
+             return eldbus_message_method_return_new(msg);
+          }
+        else
+          elm_genlist_item_sorted_insert(cc->gl, &itc, ecc, NULL, 0, (Eina_Compare_Cb)_colorclass_sort, NULL, NULL);
      }
    if (elm_genlist_items_count(cc->gl))
      elm_object_signal_emit(cc->ly, "elm,state,loaded", "elm");
@@ -573,6 +635,7 @@ elm_color_class_init(void)
    cc_proxy = elementary_colorclass_proxy_get(eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION), ELM_COLOR_CLASS_METHOD_BASE, NULL);
    h1 = ecore_event_handler_add(ELEMENTARY_COLORCLASS_EDIT_EVENT, (Ecore_Event_Handler_Cb)_dbus_edit, NULL);
    h2 = ecore_event_handler_add(ELEMENTARY_COLORCLASS_CHANGED_EVENT, (Ecore_Event_Handler_Cb)_dbus_changed, NULL);
+   h2 = ecore_event_handler_add(ELEMENTARY_COLORCLASS_RESET_EVENT, (Ecore_Event_Handler_Cb)_dbus_reset, NULL);
 }
 
 void
@@ -588,7 +651,7 @@ elm_color_class_shutdown(void)
 
 static const Eldbus_Method colorclass_editor_methods[] =
 {
-      { "SendCC", ELDBUS_ARGS({"t", "Window ID"}, {"a(ssa(iiii))", "Array of color classes"}), NULL, _dbus_send_cc, 0},
+      { "SendCC", ELDBUS_ARGS({"t", "Window ID"}, {"b", "reset"}, {"a(ssa(iiii))", "Array of color classes"}), NULL, _dbus_send_cc, 0},
       { "Close", ELDBUS_ARGS({"t", "Window ID"}), NULL, _dbus_close, 0},
       {NULL, NULL, NULL, NULL, 0}
 };
