@@ -325,31 +325,27 @@ struct compatibility_persistent<T, true> : v8::UniquePersistent<T>
   typedef v8::UniquePersistent<T> _base;
 
   compatibility_persistent(compatibility_persistent&& other)
-    : _base(other.Pass()), handle_(other.handle())
+    : _base(other.Pass())
   {
   }
   compatibility_persistent& operator=(compatibility_persistent&& other)
   {
     this->_base::operator=(other.Pass());
-    handle_ = other.handle();
     return *this;
   }
   
   compatibility_persistent() {}
   compatibility_persistent(v8::Isolate* isolate, v8::Handle<T> v)
-    : _base(isolate, v), handle_(v)
+    : _base(isolate, v)
   {
   }
   
   T* operator->() const
   {
-    return *handle_;
+    return *handle();
   }
 
-  v8::Handle<T>& handle() { return handle_; }
-  v8::Handle<T> const& handle() const { return handle_; }
-
-  v8::Handle<T> handle_;
+  v8::Local<T> handle() const { return v8::Local<T>::New(v8::Isolate::GetCurrent(), *this); }
 };
 
 template <typename T>

@@ -38,19 +38,19 @@ template<class T>
 v8::Local<v8::Object> export_accessor( ::efl::eina::accessor<T> &a, v8::Isolate *isolate)
 {
   typedef ::efl::eina::accessor<T> accessor_type;
-    
-  static auto obj_tpl = [&]() -> compatibility_persistent<v8::ObjectTemplate>
+
+  auto obj_tpl = [&]() -> compatibility_persistent<v8::ObjectTemplate>*
     {
       auto obj_tpl = compatibility_new<v8::ObjectTemplate>(isolate);
-      obj_tpl->SetInternalFieldCount(1);
+      (*obj_tpl)->SetInternalFieldCount(1);
 
-      obj_tpl->Set(js::compatibility_new<v8::String>(isolate, "get")
-                   , js::compatibility_new<v8::FunctionTemplate>(isolate, &accessor_get<accessor_type>));
+      (*obj_tpl)->Set(js::compatibility_new<v8::String>(isolate, "get")
+                      , js::compatibility_new<v8::FunctionTemplate>(isolate, &accessor_get<accessor_type>));
   
-      return {isolate, obj_tpl};
+      return new compatibility_persistent<v8::ObjectTemplate> {isolate, obj_tpl};
     }();
 
-  auto instance = obj_tpl.handle()->NewInstance();
+  auto instance = obj_tpl->handle()->NewInstance();
   compatibility_set_pointer_internal_field(instance, 0, &a);
   return instance;
 }

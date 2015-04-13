@@ -391,7 +391,7 @@ int main(int argc, char** argv)
 
            os << "  {\n";
            os << "    static efl::eo::js::event_information const event_information\n";
-           os << "     = {&constructor_from_eo.handle(), ";
+           os << "     = {&constructor_from_eo, ";
            os << eolian_event_c_name_get(&*first);
            os << "};\n\n";
            os << "    /* should include event " << ::eolian_event_name_get(&*first) << "*/" << std::endl;

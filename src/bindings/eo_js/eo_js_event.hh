@@ -21,7 +21,7 @@ namespace efl { namespace eo { namespace js {
 
 struct event_information
 {
-  v8::Handle<v8::Function>* constructor;
+  eina::js::compatibility_persistent<v8::Function>* constructor;
   Eo_Event_Description const* event;
 };
 
@@ -36,7 +36,7 @@ inline Eina_Bool event_callback(void* data, Eo* obj, Eo_Event_Description const*
 {
   event_callback_information* event = static_cast<event_callback_information*>(data);
   v8::Handle<v8::Value> a[] = {eina::js::compatibility_new<v8::External>(nullptr, obj)};
-  v8::Local<v8::Object> self = (*event->event_info->constructor)->NewInstance(1, a);
+  v8::Local<v8::Object> self = (event->event_info->constructor->handle())->NewInstance(1, a);
 
   v8::Handle<v8::Value> call_args[] = {self};
   event->function->Call(eina::js::compatibility_global(), 1, call_args);

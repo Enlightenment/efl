@@ -101,7 +101,7 @@ efl::eina::js::compatibility_return_type set_eina_error(efl::eina::js::compatibi
 }
 
 EAPI void eina_container_register(v8::Handle<v8::Object> global, v8::Isolate* isolate);
-EAPI v8::Handle<v8::FunctionTemplate> get_list_instance_template();
+EAPI v8::Local<v8::Function> get_list_instance_template();
 
 efl::eina::ptr_list<int> list;
 efl::eina::js::range_eina_list<int> raw_list;
@@ -128,7 +128,7 @@ void test_setup(v8::Handle<v8::Object> exports)
   v8::Handle<v8::Value> a[] = {efl::eina::js::compatibility_new<v8::External>(nullptr, &raw_list)};
   std::cerr << __LINE__ << std::endl;
   exports->Set(efl::eina::js::compatibility_new<v8::String>(nullptr, "raw_list")
-               , get_list_instance_template()->GetFunction()->NewInstance(1, a));
+               , get_list_instance_template()->NewInstance(1, a));
   std::cerr << __LINE__ << std::endl;
 
   // error globals

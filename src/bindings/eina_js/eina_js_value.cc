@@ -104,21 +104,23 @@ void register_value(v8::Isolate *isolate, v8::Handle<v8::Object> global,
   typedef ::efl::eina::value value_type;
   typedef value_type *ptr_type;
 
-  static compatibility_persistent<v8::FunctionTemplate> constructor
+  static compatibility_persistent<v8::FunctionTemplate>* constructor
+     = new compatibility_persistent<v8::FunctionTemplate>
      {isolate, compatibility_new<v8::FunctionTemplate>(isolate, &eina_value_constructor)};
   
-  static compatibility_persistent<v8::ObjectTemplate>
-    instance = {isolate, constructor.handle()->InstanceTemplate()};
-  instance.handle()->SetInternalFieldCount(1);
+  static compatibility_persistent<v8::ObjectTemplate>* instance
+    = new compatibility_persistent<v8::ObjectTemplate>
+      {isolate, constructor->handle()->InstanceTemplate()};
+  instance->handle()->SetInternalFieldCount(1);
 
-  auto prototype = constructor.handle()->PrototypeTemplate();
+  auto prototype = constructor->handle()->PrototypeTemplate();
   
   prototype->Set(compatibility_new<v8::String>(isolate, "set")
                  , compatibility_new<FunctionTemplate>(isolate, &eina_value_set));
   prototype->Set(compatibility_new<v8::String>(isolate, "get")
                  , compatibility_new<FunctionTemplate>(isolate, &eina_value_get));
   
-  global->Set(name, constructor.handle()->GetFunction());
+  global->Set(name, constructor->handle()->GetFunction());
 }
 
 EAPI
