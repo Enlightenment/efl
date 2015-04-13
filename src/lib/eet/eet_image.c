@@ -1976,6 +1976,7 @@ _eet_data_image_decode_inside(const void   *data,
           {
              Eina_Binbuf *in;
              Eina_Binbuf *out;
+             Eina_Bool expanded;
 
              in = eina_binbuf_manage_new((const unsigned char *) body, size - 8 * sizeof (int), EINA_TRUE);
              if (!in) return 0;
@@ -1983,13 +1984,10 @@ _eet_data_image_decode_inside(const void   *data,
              if ((src_h == h) && (src_w == w) && (row_stride == src_w * 4))
                {
                   out = eina_binbuf_manage_new((void*) d, w * h * 4, EINA_TRUE);
-                  if (!emile_expand(in, out,
-                                           eet_2_emile_compressor(comp)))
-                    {
-                       eina_binbuf_free(in);
-                       eina_binbuf_free(out);
-                       return 0;
-                    }
+                  expanded = emile_expand(in, out, eet_2_emile_compressor(comp));
+                  eina_binbuf_free(in);
+                  eina_binbuf_free(out);
+                  if (!expanded) return 0;
                }
              else
                {
