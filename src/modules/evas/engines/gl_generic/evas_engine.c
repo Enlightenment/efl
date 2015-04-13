@@ -989,6 +989,24 @@ eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
 
    if (!src) return NULL;
 
+   // masking will work only with single texture images
+   switch (src->cs.space)
+     {
+      case EVAS_COLORSPACE_AGRY88:
+      case EVAS_COLORSPACE_ARGB8888:
+      case EVAS_COLORSPACE_GRY8:
+      case EVAS_COLORSPACE_RGBA8_ETC2_EAC:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT1:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT2:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT3:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT4:
+      case EVAS_COLORSPACE_RGBA_S3TC_DXT5:
+        break;
+      default:
+        DBG("cspace %d can't be used for masking's fast path", src->cs.space);
+        return NULL;
+     }
+
    gc = src->gc;
    if (dst && (dst->scaled.origin == src) &&
        (dst->w == dst_w) && (dst->h == dst_h))
