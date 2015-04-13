@@ -418,6 +418,13 @@ _elm_image_async_file_set(Eo *obj, Elm_Image_Data *sd,
    Async_Open_Data *todo;
    Eina_Bool was_running;
 
+   if (sd->async_opening &&
+       ((file == sd->async.file) ||
+        (file && sd->async.file && !strcmp(file, sd->async.file))) &&
+       ((key == sd->async.key) ||
+        (key && sd->async.key && !strcmp(key, sd->async.key))))
+     return EINA_TRUE;
+
    sd->async_opening = EINA_TRUE;
    eina_stringshare_replace(&sd->async.file, file);
    eina_stringshare_replace(&sd->async.key, key);
