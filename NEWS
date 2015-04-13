@@ -32,6 +32,16 @@ Features:
    * ecore_evas - eetpack utility for packing files (imgs) into eet files
    * edje: add part.desc.rel.{to,to_x,to_y} keywords
    * edje: allow empty part.desc.inherit; statements to autoinherit default desc
+   * ecore-drm: Add support for DPMS on an output
+   * ecore-drm: Add API function to set output gamma
+   * ecore-drm: Add API function to mark a Framebuffer as dirty
+   * ecore-drm: Add API to setup the drm device for software rendering
+   * ecore-drm: Add API function to disable an output
+   * ecore-drm: Add API function to find an output at given coordinates
+   * ecore-drm: Add API function to return an output crtc buffer id
+   * ecore-drm: Add API function to return an output's crtc id
+   * ecore-drm: Add an API function to return the connector id of an output
+   * ecore-drm: Add 2 new API functions for setting and sending framebuffers
 
 Fixes:
 
@@ -128,6 +138,59 @@ Fixes:
    * efreetd - cache - fix handling a text index file with 0 length lines
    * eolian_cxx: fix build error for some generated C++ wrappers
    * evas-3d: T2226 (Evas Eet saver does out of range access) fixed.
+   * Ector: Ship missing headers.
+   * ecore_cocoa: fix scrollwheel behavior
+   * eina: eina_unicode_utf8_next_get should return 0 when one of the parameters is NULL to avoid null pointer access. it also corresponds to the description in doc.
+   * ecore-drm: Create all framebuffers using XRGB8888 by default
+   * evas-drm: Remove evas_bufmgr.c from the Evas Drm engine
+   * ecore-drm: Add width & height to Ecore_Drm_Fb structure
+   * evas-drm: Use Ecore_Drm_Fb for framebuffers
+   * ecore-drm: Move Eeze Udev Watch to Drm Device
+   * ecore-drm: Add more connector types
+   * ecore-drm: Fix issue with edid_parse_string truncating strings
+   * ecore-drm: Better output name format
+   * ecore-drm: Send ECORE_DRM_EVENT_OUTPUT on unplug also
+   * ecore-drm: Set mode flag for preferred if this is the preferred mode
+   * ecore-drm: Fix output_geometry_get function
+   * eina: Add NULL check for eina_threadqueue_free
+   * [evas/evas_3D] Uninitialized component of vector gl_FragColor in shadow_map shader
+   * Evas GL: reset current surface to NULL when it is destroyed
+   * Evas GL: Add missing dlopen for GLX 1.x version
+   * Evas image: Return proper path even with mmap
+   * ecore-drm: Improve drm output creation, mode detection, and cloning support
+   * evas-drm: Use ecore_drm_fb_dirty function to mark framebuffer as dirty
+   * ecore-drm: Delay destroy of output if there is a pending flip
+   * ecore-drm: Fix issue of outputs_geometry_get not skipping cloned outputs
+   * ecore-drm: Remove per-output framebuffers
+   * ecore-drm: Update drm device & output code to remove per-output dumb buffers
+   * ecore-evas-drm: Setup Ecore_Drm_Device for software rendering
+   * ecore-drm: Update device active state on VT switch and use new output_disable function
+   * ecore-drm: Skip repaints if we are VT switched away
+   * ecore-drm: Create drmEventContext Once during device open
+   * ecore-drm: Move drm headers to Ecore_Drm
+   * ecore-drm: Remove unused API function that should not have been committed
+   * ecore-drm: Move doxygen documentation to main Ecore_Drm header
+   * ecore-drm: Modify device pageflip function to accept ecore_drm_fb callbacks
+   * ecore-drm: Change @since 1.15 to @since 1.14 for newly added APIs
+   * ecore-evas-drm: Use new Ecore_Drm functions to get properties of the output
+   * evas-drm: Cleanup Engine Info structure
+   * evas-drm: Cleanup evas_engine header file
+   * evas-drm: Cleanup drm engine code
+   * evas-drm: Make evas drm engine use new ecore_drm functions
+   * evas-drm: Remove evas_drm file from build order
+   * evas-drm: Add back in the r, g, b masks for conversion
+   * evas_object_box: add MAGIC_CHECK when it is added.
+   * Edje: Edje_Edit - new part addition should initialise threshold as -1
+   * ecore x vsync - ensure drm fb is set to close on exec - intended (T2138)
+   * efreetd - startup slowness fix for recursing directories
+   * efl: Remove dead configure options for drm-hw-accel
+   * evas: Fix CID1293000 (resource leak)
+   * ector: Fix Coverity CID1293003
+   * evas-3d: Fix Resource leak from CID1271635
+   * edje: Fix dereference null return value (CID1287154)
+   * evas-gl-x11: Fix dereference before null check (CID1293519)
+   * evas-software-x11: Fix dereference before null check(s) (CID1270030, CID1270028, CID1270029)
+   * Evas object: verify the parent is valid and fail if not.
 
 Changes since 1.12.0:
 ---------------------
