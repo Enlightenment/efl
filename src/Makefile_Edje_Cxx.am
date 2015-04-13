@@ -2,10 +2,8 @@
 if HAVE_CXX11
 
 ### Generated headers
-
-generated_edje_cxx_bindings = \
-lib/edje/edje_object.eo.hh \
-lib/edje/edje_edit.eo.hh
+generated_edje_cxx_bindings = $(edje_eolian_files:%.eo=%.eo.hh)
+generated_edje_cxx_impl_bindings = $(edje_eolian_files:%.eo=%.eo.impl.hh)
 
 lib/edje/Edje.hh: $(generated_edje_cxx_bindings)
 	@echo @ECHO_E@ "#ifndef EFL_CXX_EDJE_HH\n#define EFL_CXX_EDJE_HH\n" > $(top_builddir)/src/lib/edje/Edje.hh
@@ -15,8 +13,7 @@ lib/edje/Edje.hh: $(generated_edje_cxx_bindings)
 
 generated_edje_cxx_all = \
 	$(generated_edje_cxx_bindings) \
-	lib/edje/edje_object.eo.impl.hh \
-	lib/edje/edje_edit.eo.impl.hh \
+	$(generated_edje_cxx_impl_bindings) \
 	lib/edje/Edje.hh
 
 CLEANFILES += $(generated_edje_cxx_all)

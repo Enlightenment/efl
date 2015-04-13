@@ -2,21 +2,8 @@ if HAVE_CXX11
 
 ### Generated headers
 
-generated_efl_cxx_bindings = \
-                 lib/efl/interfaces/efl_control.eo.hh \
-                 lib/efl/interfaces/efl_file.eo.hh \
-                 lib/efl/interfaces/efl_image.eo.hh \
-                 lib/efl/interfaces/efl_player.eo.hh \
-                 lib/efl/interfaces/efl_text.eo.hh \
-                 lib/efl/interfaces/efl_text_properties.eo.hh \
-		 lib/efl/interfaces/efl_gfx_base.eo.hh \
-		 lib/efl/interfaces/efl_gfx_stack.eo.hh \
-		 lib/efl/interfaces/efl_gfx_fill.eo.hh \
-		 lib/efl/interfaces/efl_gfx_view.eo.hh \
-	         lib/efl/interfaces/efl_gfx_shape.eo.hh \
-		 lib/efl/interfaces/efl_gfx_gradient_base.eo.hh \
-		 lib/efl/interfaces/efl_gfx_gradient_linear.eo.hh \
-		 lib/efl/interfaces/efl_gfx_gradient_radial.eo.hh
+generated_efl_cxx_bindings = $(efl_eolian_files:%.eo=%.eo.hh)
+generated_efl_cxx_impl_bindings = $(efl_eolian_files:%.eo=%.eo.impl.hh)
 
 lib/efl/Efl.hh: $(generated_efl_cxx_bindings)
 	@echo @ECHO_E@ "#ifndef EFL_CXX_HH\n#define EFL_CXX_HH\n" > $(top_builddir)/src/lib/efl/Efl.hh
@@ -26,12 +13,7 @@ lib/efl/Efl.hh: $(generated_efl_cxx_bindings)
 
 generated_efl_cxx_all = \
 	$(generated_efl_cxx_bindings) \
-	lib/efl/interfaces/efl_control.eo.impl.hh \
-	lib/efl/interfaces/efl_file.eo.impl.hh \
-	lib/efl/interfaces/efl_image.eo.impl.hh \
-	lib/efl/interfaces/efl_player.eo.impl.hh \
-	lib/efl/interfaces/efl_text.eo.impl.hh \
-	lib/efl/interfaces/efl_text_properties.eo.impl.hh \
+	$(generated_efl_cxx_impl_bindings) \
 	lib/efl/Efl.hh
 
 CLEANFILES += $(generated_efl_cxx_all)

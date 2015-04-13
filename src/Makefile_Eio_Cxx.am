@@ -1,8 +1,8 @@
 if HAVE_CXX11
 
 ### Generated headers
-
-generated_eio_cxx_bindings = lib/eio/eio_model.eo.hh
+generated_eio_cxx_bindings = $(EIO_EOS:%.eo=%.eo.hh)
+generated_eio_cxx_impl_bindings = $(EIO_EOS:%.eo=%.eo.impl.hh)
 
 lib/eio/Eio.hh: $(generated_eio_cxx_bindings)
 	@echo @ECHO_E@ "#ifndef EFL_CXX_EIO_HH\n#define EFL_CXX_EIO_HH\n" > $(top_builddir)/src/lib/eio/Eio.hh
@@ -12,6 +12,7 @@ lib/eio/Eio.hh: $(generated_eio_cxx_bindings)
 
 generated_eio_cxx_all = \
 	$(generated_eio_cxx_bindings) \
+	$(generated_eio_cxx_impl_bindings) \
 	lib/eio/Eio.hh
 
 CLEANFILES += $(generated_eio_cxx_all)

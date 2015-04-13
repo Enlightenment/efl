@@ -6,13 +6,8 @@ if HAVE_CXX11
 installed_ecorecxxmainheadersdir = $(includedir)/ecore-cxx-@VMAJ@
 dist_installed_ecorecxxmainheaders_DATA = bindings/ecore_cxx/Ecore.hh
 
-generated_ecore_cxx_bindings = \
-lib/ecore/ecore_poller.eo.hh \
-lib/ecore/ecore_job.eo.hh \
-lib/ecore/ecore_idler.eo.hh \
-lib/ecore/ecore_idle_exiter.eo.hh \
-lib/ecore/ecore_animator.eo.hh \
-lib/ecore/ecore_parent.eo.hh
+generated_ecore_cxx_bindings = $(ecore_eolian_files:%.eo=%.eo.hh)
+generated_ecore_cxx_impl_bindings = $(ecore_eolian_files:%.eo=%.eo.impl.hh)
 
 lib/ecore/Ecore.eo.hh: $(generated_ecore_cxx_bindings)
 	@echo @ECHO_E@ "#ifndef EFL_CXX_ECORE_HH\n#define EFL_CXX_ECORE_HH\n" > $(top_builddir)/src/lib/ecore/Ecore.eo.hh
@@ -22,12 +17,7 @@ lib/ecore/Ecore.eo.hh: $(generated_ecore_cxx_bindings)
 
 generated_ecore_cxx_all = \
 	$(generated_ecore_cxx_bindings) \
-	lib/ecore/ecore_poller.eo.impl.hh \
-	lib/ecore/ecore_job.eo.impl.hh \
-	lib/ecore/ecore_idler.eo.impl.hh \
-	lib/ecore/ecore_idle_exiter.eo.impl.hh \
-	lib/ecore/ecore_animator.eo.impl.hh \
-	lib/ecore/ecore_parent.eo.impl.hh \
+	$(generated_ecore_cxx_impl_bindings) \
 	lib/ecore/Ecore.eo.hh
 
 CLEANFILES += $(generated_ecore_cxx_all)
@@ -46,7 +36,10 @@ tests_ecore_cxx_ecore_cxx_suite_SOURCES = \
 tests/ecore_cxx/ecore_cxx_suite.cc \
 tests/ecore_cxx/ecore_cxx_test_safe_call.cc
 
-tests_ecore_cxx_ecore_cxx_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+tests_ecore_cxx_ecore_cxx_suite_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/efl/interfaces \
+-I$(top_builddir)/src/lib/ecore \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_cxx\" \
 @CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EINA_CFLAGS@ \
@@ -57,6 +50,7 @@ tests_ecore_cxx_ecore_cxx_suite_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@
 
 tests_ecore_cxx_cxx_compile_test_SOURCES = tests/ecore_cxx/cxx_compile_test.cc
 tests_ecore_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/efl/interfaces/ \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_cxx\" \
