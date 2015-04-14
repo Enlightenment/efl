@@ -52,18 +52,18 @@ evas_common_convert_argb_unpremul(DATA32 *data, unsigned int len)
 
    while (data < de)
      {
-	DATA32  a = (*data >> 24) + 1;
+        DATA32 a = (*data >> 24);
 
         if (p_val == *data) *data = p_res;
         else
           {
              p_val = *data;
-             if ((a > 1) && (a < 256))
+             if ((a > 0) && (a < 255))
                *data = ARGB_JOIN(a,
                                  (R_VAL(data) * 255) / a,
                                  (G_VAL(data) * 255) / a,
                                  (B_VAL(data) * 255) / a);
-             else if (a == 1)
+             else if (a == 0)
                *data = 0x00000000;
              p_res = *data;
           }
