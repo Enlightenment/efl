@@ -131,7 +131,12 @@ subdir_cache_init(void)
      }
    // if we don't have a decoded subdir cache - allocate one
    if (!subdir_cache) subdir_cache = calloc(1, sizeof(Subdir_Cache));
-   if (!subdir_cache) ERR("Cannot allocate subdir cache in memory");
+   if (!subdir_cache)
+     {
+        ERR("Cannot allocate subdir cache in memory");
+        return;
+     }
+
    // if we don't have a hash in the subdir cache - allocate it
    if (!subdir_cache->dirs)
      subdir_cache->dirs = eina_hash_string_superfast_new(EINA_FREE_CB(subdir_cache_dir_free));
