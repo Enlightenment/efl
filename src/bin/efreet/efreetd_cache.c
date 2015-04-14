@@ -190,7 +190,7 @@ subdir_cache_save(void)
    subdir_need_save = EINA_FALSE;
 }
 
-static Subdir_Cache_Dir *
+static const Subdir_Cache_Dir *
 subdir_cache_get(const struct stat *st, const char *path)
 {
    Eina_Iterator *it;
@@ -546,7 +546,7 @@ icon_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Bool b
    if (S_ISDIR(st.st_mode))
      {
         unsigned int i;
-        Subdir_Cache_Dir *cd = subdir_cache_get(&st, path);
+        const Subdir_Cache_Dir *cd = subdir_cache_get(&st, path);
         icon_changes_monitor_add(&st, path);
         if (cd)
           {
@@ -585,7 +585,7 @@ desktop_changes_listen_recursive(Eina_Inarray *stack, const char *path, Eina_Boo
    if (S_ISDIR(st.st_mode))
      {
         unsigned int i;
-        Subdir_Cache_Dir *cd = subdir_cache_get(&st, path);
+        const Subdir_Cache_Dir *cd = subdir_cache_get(&st, path);
         desktop_changes_monitor_add(&st, path);
         if (cd)
           {
