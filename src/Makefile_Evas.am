@@ -705,6 +705,7 @@ modules/evas/engines/gl_common/shader_3d/evas_gl_3d_shaders.x: modules/evas/engi
 
 GL_GENERIC_SOURCES = \
 modules/evas/engines/gl_generic/evas_engine.c \
+modules/evas/engines/gl_generic/ector_surface.c \
 modules/evas/engines/gl_generic/Evas_Engine_GL_Generic.h
 
 if EVAS_STATIC_BUILD_GL_COMMON
