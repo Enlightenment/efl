@@ -92,7 +92,7 @@ class Elm_Radio (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
          @ingroup Radio */
 
          params {
-            @in Evas_Object *group; /*@ Any object whose group the @p obj is to join. */
+            @in Elm_Radio *group; /*@ Any radio object whose group the @p obj is to join. */
          }
       }
    }
