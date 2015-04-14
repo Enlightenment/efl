@@ -190,7 +190,7 @@ elua_io_loadfile(const Elua_State *es, const char *fname)
 static int
 loadfile(lua_State *L)
 {
-   Elua_State *es = elua_state_from_lua_get(L);
+   Elua_State *es = elua_state_from_lua_state_get(L);
    const char *fname = luaL_optstring(L, 1, NULL);
    int status = elua_io_loadfile(es, fname),
        hasenv = (lua_gettop(L) >= 3);

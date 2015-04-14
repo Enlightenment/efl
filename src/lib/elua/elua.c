@@ -216,7 +216,7 @@ elua_state_lua_state_get(const Elua_State *es)
 }
 
 EAPI Elua_State *
-elua_state_from_lua_get(lua_State *L)
+elua_state_from_lua_state_get(lua_State *L)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(L, NULL);
    lua_getfield(L, LUA_REGISTRYINDEX, "elua_ptr");
@@ -339,7 +339,7 @@ elua_state_modules_setup(const Elua_State *es)
 EAPI int
 elua_module_init(lua_State *L)
 {
-   Elua_State *es = elua_state_from_lua_get(L);
+   Elua_State *es = elua_state_from_lua_state_get(L);
    if (!lua_isnoneornil(L, 1))
      {
         lua_pushvalue(L, 1);
@@ -357,7 +357,7 @@ elua_module_init(lua_State *L)
 EAPI int
 elua_module_system_init(lua_State *L)
 {
-   Elua_State       *es       = elua_state_from_lua_get(L);
+   Elua_State       *es       = elua_state_from_lua_state_get(L);
    const char       *corepath = es->coredir;
    const char       *modpath  = es->moddir;
    const char       *appspath = es->appsdir;
