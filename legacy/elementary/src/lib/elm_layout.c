@@ -1725,4 +1725,10 @@ elm_layout_file_set(Eo *obj, const char *file, const char *group)
    return eo_do_ret((Eo *) obj, ret, efl_file_set(file, group));
 }
 
+EAPI void
+elm_layout_file_get(Eo *obj, const char **file, const char **group)
+{
+   eo_do((Eo *) obj, efl_file_get(file, group));
+}
+
 #include "elm_layout.eo.c"

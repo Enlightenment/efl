@@ -460,5 +460,11 @@ elm_video_file_set(Eo *obj, const char *filename)
    return eo_do_ret((Eo *) obj, ret, efl_file_set(filename, NULL));
 }
 
+EAPI void
+elm_video_file_get(Eo *obj, const char **filename)
+{
+   eo_do((Eo *) obj, efl_file_get(filename, NULL));
+}
+
 
 #include "elm_video.eo.c"

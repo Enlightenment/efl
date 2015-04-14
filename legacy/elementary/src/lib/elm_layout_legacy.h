@@ -88,4 +88,17 @@ EAPI Evas_Object                 *elm_layout_content_unset(Evas_Object *obj, con
  */
 EAPI Eina_Bool elm_layout_file_set(Eo *obj, const char *file, const char *group);
 
+/**
+ * Get the loaded file
+ *
+ *
+ * @ingroup Layout
+ *
+ * @param file The path to file (edj) used as layout
+ * @param group The group that the layout belongs in edje file
+ *
+ * @since 1.14
+ */
+EAPI void elm_layout_file_get(Eo *obj, const char **file, const char **group);
+
 #include "elm_layout.eo.legacy.h"

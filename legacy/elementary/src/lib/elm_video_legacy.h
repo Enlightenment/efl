@@ -48,4 +48,16 @@ the available Webcam on your system).
  */
 EAPI Eina_Bool elm_video_file_set(Eo *obj, const char *filename);
 
+/**
+ *
+ * @brief Get the file or URI that is used as the video source.
+ *
+ * @ingroup Video
+ *
+ * @param filename The file or URI.
+ *
+ * @since 1.14
+ */
+EAPI void elm_video_file_get(Eo *obj, const char **filename);
+
 #include "elm_video.eo.legacy.h"
