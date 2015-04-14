@@ -29,7 +29,7 @@ class Eo_step(gdb.Command):
       if symbol_equal_to_string(gdb.selected_frame().function(), self.START_FUNC):
          gdb.execute("finish", False, to_string=True)
       else:
-         print "Search limit reached, you tried calling eo_step too far from an eo_do."
+         print("Search limit reached, you tried calling eo_step too far from an eo_do.")
          return
 
       # Step until we move to a different function. FIXME: The hook can confuse us, needs to be solved.
