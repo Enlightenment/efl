@@ -54,6 +54,8 @@ _glview_update_surface(Evas_Object *obj)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    if (!sd) return;
 
+   evas_gl_make_current(sd->evasgl, NULL, NULL);
+
    if (sd->surface)
      {
         evas_object_image_native_surface_set(wd->resize_obj, NULL);
@@ -270,6 +272,7 @@ _elm_glview_evas_object_smart_del(Eo *obj, Elm_Glview_Data *sd)
      }
 
    ecore_idle_enterer_del(sd->render_idle_enterer);
+   evas_gl_make_current(sd->evasgl, NULL, NULL);
 
    if (sd->surface)
      {
