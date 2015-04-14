@@ -808,6 +808,7 @@ struct _Evas_Public_Data
    Eina_Array     pending_objects;
    Eina_Array     obscuring_objects;
    Eina_Array     temporary_objects;
+   Eina_Array     snapshot_objects;
    Eina_Array     clip_changes;
    Eina_Array     scie_unref_queue;
    Eina_Array     image_unref_queue;
@@ -1004,6 +1005,7 @@ struct _Evas_Object_Protected_State
 
    Eina_Bool             cached_surface : 1;
    Eina_Bool             parent_cached_surface : 1;
+   Eina_Bool             snapshot : 1;
 };
 
 struct _Evas_Object_Protected_Data
