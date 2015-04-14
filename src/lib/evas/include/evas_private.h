@@ -1321,7 +1321,7 @@ struct _Evas_Func
    void *(*gl_current_surface_get)       (void *data);
    int  (*gl_rotation_angle_get)         (void *data);
    Eina_Bool (*gl_surface_query)         (void *data, void *surface, int attr, void *value);
-   Eina_Bool (*gl_surface_direct_renderable_get) (void *data, Evas_Native_Surface *ns, Eina_Bool *override);
+   Eina_Bool (*gl_surface_direct_renderable_get) (void *data, Evas_Native_Surface *ns, Eina_Bool *override, void *surface);
    void (*gl_image_direct_set)           (void *data, void *image, Eina_Bool direct);
    int  (*gl_image_direct_get)           (void *data, void *image);
    void (*gl_get_pixels_pre)             (void *data);

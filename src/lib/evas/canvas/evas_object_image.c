@@ -2900,7 +2900,7 @@ evas_draw_image_map_async_check(Evas_Object_Protected_Data *obj,
 
 static void *
 evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o,
-			  void *output, void *pixels)
+                          void *output, void *surface, void *pixels)
 {
    Eina_Bool direct_override = EINA_FALSE, direct_force_off = EINA_FALSE;
 
@@ -2923,7 +2923,7 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
                        if (ENFN->gl_direct_override_get)
                          ENFN->gl_direct_override_get(output, &direct_override, &direct_force_off);
                        if (ENFN->gl_surface_direct_renderable_get)
-                         direct_renderable = ENFN->gl_surface_direct_renderable_get(output, ns, &direct_override);
+                         direct_renderable = ENFN->gl_surface_direct_renderable_get(output, ns, &direct_override, surface);
 
                        if ( ((direct_override) ||
                              ((direct_renderable) &&
@@ -2996,7 +2996,7 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
              if (ENFN->gl_direct_override_get)
                ENFN->gl_direct_override_get(output, &direct_override, &direct_force_off);
              if (ENFN->gl_surface_direct_renderable_get)
-               ENFN->gl_surface_direct_renderable_get(output, ns, &direct_override);
+               ENFN->gl_surface_direct_renderable_get(output, ns, &direct_override, surface);
 
              if (direct_override && !direct_force_off)
                {
@@ -3130,7 +3130,7 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
      }
    else if (!o->cur->source)
      {
-        pixels = evas_process_dirty_pixels(eo_obj, obj, o, output, o->engine_data);
+        pixels = evas_process_dirty_pixels(eo_obj, obj, o, output, surface, o->engine_data);
         /* pixels = o->engine_data; */
         imagew = o->cur->image.w;
         imageh = o->cur->image.h;

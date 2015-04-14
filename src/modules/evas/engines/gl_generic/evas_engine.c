@@ -1375,10 +1375,12 @@ eng_gl_direct_override_get(void *data, Eina_Bool *override, Eina_Bool *force_off
 }
 
 static Eina_Bool
-eng_gl_surface_direct_renderable_get(void *data, Evas_Native_Surface *ns, Eina_Bool *override)
+eng_gl_surface_direct_renderable_get(void *data, Evas_Native_Surface *ns, Eina_Bool *override, void *surface)
 {
    Render_Engine_GL_Generic *re = data;
    Eina_Bool direct_render, client_side_rotation;
+   Evas_Engine_GL_Context *gl_context;
+   Evas_GL_Image *sfc = surface;
 
    EVGLINIT(data, EINA_FALSE);
    if (!re || !ns) return EINA_FALSE;
@@ -1389,6 +1391,10 @@ eng_gl_surface_direct_renderable_get(void *data, Evas_Native_Surface *ns, Eina_B
      return EINA_FALSE;
 
    if ((re->software.outbuf_get_rot(re->software.ob) != 0) && (!client_side_rotation))
+     return EINA_FALSE;
+
+   gl_context = re->window_gl_context_get(re->software.ob);
+   if (gl_context->def_surface != sfc)
      return EINA_FALSE;
 
    return EINA_TRUE;
