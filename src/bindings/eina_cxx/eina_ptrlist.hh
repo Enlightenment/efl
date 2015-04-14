@@ -283,6 +283,12 @@ struct range_ptr_list : _range_template<T, _ptr_list_access_traits>
   typedef typename _base_type::native_handle_type native_handle_type; /** Type for the native Eina list handle. */
 
   /**
+   * @brief Creates a singular range
+   */
+  range_ptr_list()
+  {}
+
+  /**
    * @brief Creates a range from a native Eina list handle.
    */
   range_ptr_list(native_handle_type list)

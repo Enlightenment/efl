@@ -38,6 +38,12 @@ struct _const_range_template
   typedef _const_range_template<T, Traits> _self_type; /**< Type of the range itself.  */
 
   /**
+   * @brief Creates a singular range object
+   */
+  _const_range_template()
+  {}
+
+  /**
    * @brief Creates a range object wrapping the given native container handle.
    */
   _const_range_template(native_handle_type handle)
@@ -368,6 +374,12 @@ struct _range_template : private std::conditional
   typedef typename _base_type::reverse_iterator reverse_iterator; /**< Type for reverse iterator to the range. */
   typedef typename _base_type::size_type size_type; /**< Type for size information. */
   typedef typename _base_type::difference_type difference_type; /**< Type to represent the distance between two iterators. */
+
+  /**
+   * @brief Creates a singular range object
+   */
+  _range_template()
+  {}
 
   /**
    * @brief Creates a range object wrapping the given native container handle.
