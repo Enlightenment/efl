@@ -529,7 +529,7 @@ if EVAS_STATIC_BUILD_SOFTWARE_GENERIC
 BUILT_SOURCES += \
 modules/evas/engines/software_generic/ector_cairo_software_surface.eo.c \
 modules/evas/engines/software_generic/ector_cairo_software_surface.eo.h
-lib_evas_libevas_la_SOURCES += modules/evas/engines/software_generic/evas_engine.c modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h
+lib_evas_libevas_la_SOURCES += modules/evas/engines/software_generic/evas_engine.c modules/evas/engines/software_generic/ector_surface.c modules/evas/engines/software_generic/Evas_Engine_Software_Generic.h
 lib_evas_libevas_la_LIBADD +=
 else
 enginesoftwaregenericpkgdir = $(libdir)/evas/modules/engines/software_generic/$(MODULE_ARCH)
