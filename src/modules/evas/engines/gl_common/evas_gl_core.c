@@ -1938,9 +1938,6 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
    if ((dbg = evgl_engine->api_debug_mode))
      DBG("Destroying surface sfc %p (eng %p)", sfc, eng_data);
 
-   if (sfc->current_ctx && sfc->current_ctx->current_sfc == sfc)
-      sfc->current_ctx->current_sfc = NULL;
-
    if ((rsc->current_ctx) && (rsc->current_ctx->current_sfc == sfc) )
      {
         if (evgl_engine->api_debug_mode)
@@ -1955,6 +1952,9 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
           }
         evgl_make_current(eng_data, NULL, NULL);
      }
+
+   if (sfc->current_ctx && sfc->current_ctx->current_sfc == sfc)
+      sfc->current_ctx->current_sfc = NULL;
 
    if (!sfc->pbuffer.native_surface)
      {
@@ -2122,6 +2122,9 @@ evgl_context_destroy(void *eng_data, EVGL_Context *ctx)
    // if the context is not current (?)
 
    if (dbg) DBG("Destroying context (eng = %p, ctx = %p)", eng_data, ctx);
+
+   if (ctx->current_sfc && (ctx->current_sfc->current_ctx == ctx))
+     ctx->current_sfc->current_ctx = NULL;
 
    // Set the context current with resource context/surface
    if (!_internal_resource_make_current(eng_data, NULL))
