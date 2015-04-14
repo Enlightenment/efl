@@ -1014,6 +1014,9 @@ _item_realize(Elm_Gen_Item *it)
    if (it->mouse_cursor)
      eo_do(eo_it, elm_wdg_item_cursor_set(it->mouse_cursor));
 
+   if (it->cursor_engine_only)
+     eo_do(eo_it, elm_wdg_item_cursor_engine_only_set(it->cursor_engine_only));
+
    if (eo_it == sd->focused_item)
      {
         const char *focus_raise;
@@ -4430,17 +4433,23 @@ elm_gengrid_item_cursor_style_get(const Elm_Object_Item *it)
 }
 
 EAPI void
-elm_gengrid_item_cursor_engine_only_set(Elm_Object_Item *it,
+elm_gengrid_item_cursor_engine_only_set(Elm_Object_Item *eo_it,
                                         Eina_Bool engine_only)
 {
-   eo_do(it, elm_wdg_item_cursor_engine_only_set(engine_only));
+   ELM_GENGRID_ITEM_DATA_GET(eo_it, it);
+   it->cursor_engine_only = engine_only;
+   if (it->realized)
+     eo_do(eo_it, elm_wdg_item_cursor_engine_only_set(engine_only));
 }
 
 EAPI Eina_Bool
-elm_gengrid_item_cursor_engine_only_get(const Elm_Object_Item *it)
+elm_gengrid_item_cursor_engine_only_get(const Elm_Object_Item *eo_it)
 {
+   ELM_GENGRID_ITEM_DATA_GET(eo_it, it);
    Eina_Bool ret;
-   return eo_do_ret(it, ret, elm_wdg_item_cursor_engine_only_get());
+   if (it->realized)
+     return eo_do_ret(eo_it, ret, elm_wdg_item_cursor_engine_only_get());
+   else return it->cursor_engine_only;
 }
 
 EAPI void

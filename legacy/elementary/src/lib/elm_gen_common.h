@@ -66,6 +66,7 @@ struct Elm_Gen_Item
    Eina_Bool                 decorate_it_set : 1; /**< item uses style mode for highlight/select */
    Eina_Bool                 flipped : 1; /**< a flag that shows the flip status of the item. */
    Eina_Bool                 has_contents : 1; /**< content objs have or previously did exist (size calcs) */
+   Eina_Bool                 cursor_engine_only : 1;
 };
 
 #endif
