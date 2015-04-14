@@ -336,9 +336,9 @@ struct _EVGL_Engine
 extern EVGL_Engine   *evgl_engine;
 
 // Internally used functions
-extern void           _evgl_api_get(Evas_GL_API *api, int debug);
+extern void           _evgl_api_gles2_get(Evas_GL_API *api, Eina_Bool debug);
 extern void           _evgl_api_gles1_get(Evas_GL_API *api, Eina_Bool debug);
-extern Eina_Bool      _evgl_api_gles3_get(Evas_GL_API *api, Eina_Bool debug);
+extern void           _evgl_api_gles3_get(Evas_GL_API *api, Eina_Bool debug);
 extern EVGL_Resource *_evgl_tls_resource_get(void);
 extern EVGL_Resource *_evgl_tls_resource_create(void *data);
 extern void           _evgl_tls_resource_destroy(void *data);
@@ -346,7 +346,9 @@ extern EVGL_Context  *_evgl_current_context_get(void);
 extern int            _evgl_not_in_pixel_get(void);
 extern int            _evgl_direct_enabled(void);
 extern EVGLNative_Context _evgl_native_context_get(Evas_GL_Context *ctx);
-Eina_Bool             _evgl_api_gles1_ext_init(void);
+Eina_Bool             _evgl_api_gles2_ext_init(void *getproc, const char *glueexts);
+Eina_Bool             _evgl_api_gles1_ext_init(void *getproc, const char *glueexts);
+Eina_Bool             _evgl_api_gles3_ext_init(void *getproc, const char *glueexts);
 Evas_GL_API*          _evgl_api_gles1_internal_get(void);
 Evas_GL_API*          _evgl_api_gles3_internal_get(void);
 

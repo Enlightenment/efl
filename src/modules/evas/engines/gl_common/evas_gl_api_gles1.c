@@ -3863,8 +3863,6 @@ _evgl_gles1_api_init(void)
      }
 
    _evgl_load_gles1_apis(_gles1_handle, &_gles1_api);
-   if (!_evgl_api_gles1_ext_init())
-     WRN("Could not initialize OpenGL ES 1 extensions yet.");
 
    _initialized = EINA_TRUE;
    return EINA_TRUE;
@@ -4024,8 +4022,6 @@ _debug_gles1_api_get(Evas_GL_API *funcs)
    ORD(glVertexPointer);
    ORD(glViewport);
 #undef ORD
-
-   evgl_api_gles1_ext_get(funcs);
 }
 
 static void
@@ -4182,8 +4178,6 @@ _normal_gles1_api_get(Evas_GL_API *funcs)
    ORD(glVertexPointer);
    ORD(glViewport);
 #undef ORD
-
-   evgl_api_gles1_ext_get(funcs);
 }
 
 void

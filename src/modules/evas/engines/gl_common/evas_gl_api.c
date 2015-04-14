@@ -4716,7 +4716,7 @@ _evgld_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 //-------------------------------------------------------------//
 
 static void
-_normal_gl_api_get(Evas_GL_API *funcs)
+_normal_gles2_api_get(Evas_GL_API *funcs)
 {
    funcs->version = EVAS_GL_API_VERSION;
 
@@ -4892,8 +4892,6 @@ _normal_gl_api_get(Evas_GL_API *funcs)
    ORD(glReleaseShaderCompiler);
 
 #undef ORD
-
-   evgl_api_ext_get(funcs);
 }
 
 static void
@@ -4915,7 +4913,7 @@ _direct_scissor_off_api_get(Evas_GL_API *funcs)
 
 
 static void
-_debug_gl_api_get(Evas_GL_API *funcs)
+_debug_gles2_api_get(Evas_GL_API *funcs)
 {
    funcs->version = EVAS_GL_API_VERSION;
 
@@ -5065,20 +5063,18 @@ _debug_gl_api_get(Evas_GL_API *funcs)
    ORD(glBindFramebuffer);
    ORD(glBindRenderbuffer);
 #undef ORD
-
-   evgl_api_ext_get(funcs);
 }
 
 void
-_evgl_api_get(Evas_GL_API *funcs, int debug)
+_evgl_api_gles2_get(Evas_GL_API *funcs, Eina_Bool debug)
 {
    if (debug)
-      _debug_gl_api_get(funcs);
+     _debug_gles2_api_get(funcs);
    else
-      _normal_gl_api_get(funcs);
+     _normal_gles2_api_get(funcs);
 
    if (evgl_engine->direct_scissor_off)
-      _direct_scissor_off_api_get(funcs);
+     _direct_scissor_off_api_get(funcs);
 }
 
 static void
@@ -5368,8 +5364,6 @@ _normal_gles3_api_get(Evas_GL_API *funcs)
    ORD(glReleaseShaderCompiler);
 
 #undef ORD
-
-   evgl_api_gles3_ext_get(funcs);
 }
 
 static void
@@ -5628,8 +5622,6 @@ _debug_gles3_api_get(Evas_GL_API *funcs)
    ORD(glVertexAttribIPointer);
    ORD(glWaitSync);
 #undef ORD
-
-   evgl_api_gles3_ext_get(funcs);
 }
 
 
@@ -5761,7 +5753,7 @@ _evgl_load_gles3_apis(void *dl_handle, Evas_GL_API *funcs)
 
 
 static Eina_Bool
-_evgl_api_init(void)
+_evgl_gles3_api_init(void)
 {
    static Eina_Bool _initialized = EINA_FALSE;
    if (_initialized) return EINA_TRUE;
@@ -5797,20 +5789,17 @@ _evgl_api_init(void)
      {
         return EINA_FALSE;
      }
-/*  TODO
-   if (!_evgl_api_gles3_ext_init())
-     WRN("Could not initialize OpenGL ES 1 extensions yet.");
-*/
+
    _initialized = EINA_TRUE;
    return EINA_TRUE;
 }
 
 
-Eina_Bool
+void
 _evgl_api_gles3_get(Evas_GL_API *funcs, Eina_Bool debug)
 {
-   if(!_evgl_api_init())
-      return EINA_FALSE;
+   if (!_evgl_gles3_api_init())
+     return;
 
    if (debug)
      _debug_gles3_api_get(funcs);
@@ -5820,7 +5809,7 @@ _evgl_api_gles3_get(Evas_GL_API *funcs, Eina_Bool debug)
    if (evgl_engine->direct_scissor_off)
      _direct_scissor_off_api_get(funcs);
 
-   return EINA_TRUE;
+   return;
 }
 
 Evas_GL_API *

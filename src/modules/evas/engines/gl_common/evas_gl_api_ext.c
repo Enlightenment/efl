@@ -310,9 +310,13 @@ evgl_evasglQueryWaylandBuffer(Evas_GL *evas_gl EINA_UNUSED,
 //  5: GLESv3 and GLESv2 initialized,
 //  7: GLESv3 + GLESv2  + GLESv1 all initialized.
 static int _evgl_api_ext_status = 0;
+#define EVASGL_API_GLES2_EXT_INITIALIZED 0x1
+#define EVASGL_API_GLES1_EXT_INITIALIZED 0x2
+#define EVASGL_API_GLES3_EXT_INITIALIZED 0x4
+
 
 Eina_Bool
-evgl_api_ext_init(void *getproc, const char *glueexts)
+_evgl_api_gles2_ext_init(void *getproc, const char *glueexts)
 {
    const char *glexts;
    fp_getproc gp = (fp_getproc)getproc;
@@ -476,19 +480,22 @@ evgl_api_ext_init(void *getproc, const char *glueexts)
    eina_strbuf_free(sb);
    eina_strbuf_free(sboff);
 
-  _evgl_api_ext_status = 1;
+  _evgl_api_ext_status |= EVASGL_API_GLES2_EXT_INITIALIZED;
    return EINA_TRUE;
 }
 
 void
-evgl_api_ext_get(Evas_GL_API *gl_funcs)
+evgl_api_gles2_ext_get(Evas_GL_API *gl_funcs, void *getproc, const char *glueexts)
 {
-   if (_evgl_api_ext_status < 1)
+   if (!(_evgl_api_ext_status & EVASGL_API_GLES2_EXT_INITIALIZED))
      {
-        ERR("EVGL extension is not yet initialized.");
-        return;
+        DBG("Initializing GLESv2 extensions...");
+        if (!_evgl_api_gles2_ext_init(getproc, glueexts))
+          {
+             ERR("GLESv2 extensions initialization failed");
+             return;
+          }
      }
-
 #define ORD(f) EVAS_API_OVERRIDE(f, gl_funcs, gl_ext_sym_)
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -541,23 +548,21 @@ evgl_api_ext_get(Evas_GL_API *gl_funcs)
 }
 
 Eina_Bool
-_evgl_api_gles1_ext_init(void)
+_evgl_api_gles1_ext_init(void *getproc, const char *glueexts)
 {
-   // Return if GLESv1 ext is already intiialised
-   if (_evgl_api_ext_status & 0x2)
-     return EINA_TRUE;
-
-#ifdef GL_GLES
+   const char *glexts;
+   fp_getproc gp = (fp_getproc)getproc;
    int _curext_supported = 0;
    Evas_GL_API *gles1_funcs;
-   const char *gles1_exts, *eglexts;
+   Eina_Strbuf *sb = eina_strbuf_new();
+
+#ifdef GL_GLES
    EVGL_Resource *rsc;
    EGLint context_version;
    EGLDisplay dpy = EGLDISPLAY_GET();
-   Eina_Strbuf *sb = eina_strbuf_new();
 
    /* glGetString returns the information for the currently bound context
-    * So, update gles1_exts only if GLES1 context is currently bound.
+    * So, update glexts only if GLES1 context is currently bound.
     * Check here if GLESv1 is current
     */
    if (!(rsc=_evgl_tls_resource_get()))
@@ -568,7 +573,7 @@ _evgl_api_gles1_ext_init(void)
 
    if ((dpy == EGL_NO_DISPLAY) || !rsc->current_ctx)
      {
-        DBG("Unable to initialize GLES1 extensions. Engine not initialised");
+        DBG("Unable to initialize GLES1 extensions. Engine not initialized");
         return EINA_FALSE;
      }
 
@@ -583,6 +588,7 @@ _evgl_api_gles1_ext_init(void)
         DBG("GLESv1 context not bound");
         return EINA_FALSE;
      }
+#endif
 
    gles1_funcs = _evgl_api_gles1_internal_get();
    if (!gles1_funcs || !gles1_funcs->glGetString)
@@ -591,18 +597,11 @@ _evgl_api_gles1_ext_init(void)
         return EINA_FALSE;
      }
 
-   gles1_exts = (const char *) gles1_funcs->glGetString(GL_EXTENSIONS);
-   if (!gles1_exts)
+   glexts = (const char *) gles1_funcs->glGetString(GL_EXTENSIONS);
+   if (!glexts)
      {
         ERR("GLESv1:glGetString(GL_EXTENSIONS) returned NULL!");
         return EINA_FALSE;
-     }
-
-   eglexts = eglQueryString(dpy, EGL_EXTENSIONS);
-   if (!eglexts)
-     {
-        ERR("eglQueryString(EGL_EXTENSIONS) returned NULL!");
-        eglexts = "";
      }
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -611,7 +610,7 @@ _evgl_api_gles1_ext_init(void)
 
    // Preparing all the magic macros
 #define GETPROCADDR(sym) \
-   ((__typeof__((*drvfunc))) (eglGetProcAddress(sym)))
+   (((!(*drvfunc)) && (gp)) ? (__typeof__((*drvfunc)))gp(sym) : (__typeof__((*drvfunc)))dlsym(RTLD_DEFAULT, sym))
 
 #define _EVASGL_EXT_BEGIN(name) \
    { \
@@ -622,7 +621,7 @@ _evgl_api_gles1_ext_init(void)
    }
 
 #define _EVASGL_EXT_CHECK_SUPPORT(name) \
-   ((strstr(gles1_exts, name) != NULL) || (strstr(eglexts, name) != NULL))
+   ((strstr(glexts, name) != NULL) || (strstr(glueexts, name) != NULL))
 
 #define _EVASGL_EXT_DISCARD_SUPPORT() \
    *ext_support = 0;
@@ -743,27 +742,17 @@ _evgl_api_gles1_ext_init(void)
      DBG("GLES1: List of supported extensions:\n%s", _gles1_ext_string);
 
    // GLESv1 version has been initialized!
-   _evgl_api_ext_status |= 0x2;
+   _evgl_api_ext_status |= EVASGL_API_GLES1_EXT_INITIALIZED;
    return EINA_TRUE;
-#else
-   ERR("GLESv1 support is not implemented for GLX");
-   return EINA_FALSE;
-#endif
 }
 
 void
-evgl_api_gles1_ext_get(Evas_GL_API *gl_funcs)
+evgl_api_gles1_ext_get(Evas_GL_API *gl_funcs, void *getproc, const char *glueexts)
 {
-   if (_evgl_api_ext_status < 1)
-     {
-        ERR("EVGL extension is not yet initialized.");
-        return;
-     }
-
-   if (!(_evgl_api_ext_status & 0x2))
+   if (!(_evgl_api_ext_status & EVASGL_API_GLES1_EXT_INITIALIZED))
      {
         DBG("Initializing GLESv1 extensions...");
-        if (!_evgl_api_gles1_ext_init())
+        if (!_evgl_api_gles1_ext_init(getproc, glueexts))
           {
              ERR("GLESv1 extensions initialization failed");
              return;
@@ -821,16 +810,15 @@ evgl_api_gles1_ext_get(Evas_GL_API *gl_funcs)
 }
 
 Eina_Bool
-_evgl_api_gles3_ext_init(void)
+_evgl_api_gles3_ext_init(void *getproc, const char *glueexts)
 {
-   if (_evgl_api_ext_status & 0x4)
-     return EINA_TRUE;
-
-#ifdef GL_GLES
-   Eina_Strbuf *sb = eina_strbuf_new();
+   const char *glexts;
+   fp_getproc gp = (fp_getproc)getproc;
    int _curext_supported = 0;
    Evas_GL_API *gles3_funcs;
-   const char *gles3_exts;
+   Eina_Strbuf *sb = eina_strbuf_new();
+
+#ifdef GL_GLES
    EVGL_Resource *rsc;
    EGLint context_version;
    EGLDisplay dpy = EGLDISPLAY_GET();
@@ -847,7 +835,7 @@ _evgl_api_gles3_ext_init(void)
 
    if ((dpy == EGL_NO_DISPLAY) || !rsc->current_ctx)
      {
-        DBG("Unable to initialize GLES3 extensions. Engine not initialised");
+        DBG("Unable to initialize GLES3 extensions. Engine not initialized");
         return EINA_FALSE;
      }
 
@@ -862,6 +850,7 @@ _evgl_api_gles3_ext_init(void)
         DBG("GLESv3 context not bound");
         return EINA_FALSE;
      }
+#endif
 
    gles3_funcs = _evgl_api_gles3_internal_get();
    if (!gles3_funcs || !gles3_funcs->glGetString)
@@ -870,8 +859,8 @@ _evgl_api_gles3_ext_init(void)
         return EINA_FALSE;
      }
 
-   gles3_exts = (const char *) gles3_funcs->glGetString(GL_EXTENSIONS);
-   if (!gles3_exts)
+   glexts = (const char *) gles3_funcs->glGetString(GL_EXTENSIONS);
+   if (!glexts)
      {
         ERR("GLESv3:glGetString(GL_EXTENSIONS) returned NULL!");
         return EINA_FALSE;
@@ -883,7 +872,7 @@ _evgl_api_gles3_ext_init(void)
 
    // Preparing all the magic macros
 #define GETPROCADDR(sym) \
-   ((__typeof__((*drvfunc))) (eglGetProcAddress(sym)))
+      (((!(*drvfunc)) && (gp)) ? (__typeof__((*drvfunc)))gp(sym) : (__typeof__((*drvfunc)))dlsym(RTLD_DEFAULT, sym))
 
 #define _EVASGL_EXT_BEGIN(name) \
    { \
@@ -894,7 +883,7 @@ _evgl_api_gles3_ext_init(void)
    }
 
 #define _EVASGL_EXT_CHECK_SUPPORT(name) \
-   (strstr(gles3_exts, name) != NULL)
+   ((strstr(glexts, name) != NULL) || (strstr(glueexts, name) != NULL))
 
 #define _EVASGL_EXT_DISCARD_SUPPORT() \
    *ext_support = 0;
@@ -1009,28 +998,17 @@ _evgl_api_gles3_ext_init(void)
      DBG("GLES3: List of supported extensions:\n%s", _gles3_ext_string);
 
    // GLESv3 version has been initialized!
-   _evgl_api_ext_status |= 0x4;
+   _evgl_api_ext_status |= EVASGL_API_GLES3_EXT_INITIALIZED;
    return EINA_TRUE;
-
-#else
-   ERR("GLES3 is not supported with GLX (yet)!");
-   return EINA_FALSE;
-#endif
 }
 
 void
-evgl_api_gles3_ext_get(Evas_GL_API *gl_funcs)
+evgl_api_gles3_ext_get(Evas_GL_API *gl_funcs, void *getproc, const char *glueexts)
 {
-   if (_evgl_api_ext_status < 1)
-     {
-        ERR("EVGL extension is not yet initialized.");
-        return;
-     }
-
-   if (!(_evgl_api_ext_status & 0x4))
+   if (!(_evgl_api_ext_status & EVASGL_API_GLES3_EXT_INITIALIZED))
      {
         DBG("Initializing GLESv3 extensions...");
-        if (!_evgl_api_gles3_ext_init())
+        if (!_evgl_api_gles3_ext_init(getproc, glueexts))
           {
              ERR("GLESv3 extensions initialization failed");
              return;

@@ -724,6 +724,7 @@ _EVASGL_EXT_END()
 
 _EVASGL_EXT_BEGIN(framebuffer_object)
         _EVASGL_EXT_DRVNAME(GL_OES_framebuffer_object)
+        _EVASGL_EXT_DRVNAME(GL_ARB_framebuffer_object)
 
         _EVASGL_EXT_FUNCTION_BEGIN(GLboolean, glIsRenderbufferOES, (GLuint renderbuffer))
                 _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("glIsRenderbuffer")

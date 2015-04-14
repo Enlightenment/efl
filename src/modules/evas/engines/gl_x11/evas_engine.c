@@ -540,13 +540,6 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
                                    (GLXContext)share_ctx,
                                    1);
      }
-   else if ((version == EVAS_GL_GLES_1_X) || (version == EVAS_GL_GLES_3_X))
-     {
-        context = glXCreateContext(eng_get_ob(re)->info->info.display,
-                                   eng_get_ob(re)->visualinfo,
-                                   NULL,
-                                   1);
-     }
    else
      {
         context = glXCreateContext(eng_get_ob(re)->info->info.display,

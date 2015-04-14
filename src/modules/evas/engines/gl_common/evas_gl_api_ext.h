@@ -93,10 +93,9 @@
 #define EXTENSION_SUPPORT_GLES1(name) (_gles1_ext_support_##name == 1)
 #define EXTENSION_SUPPORT_GLES3(name) (_gles3_ext_support_##name == 1)
 
-extern Eina_Bool evgl_api_ext_init(void *getproc, const char *glueexts);
-extern void evgl_api_ext_get(Evas_GL_API *gl_funcs);
-extern void evgl_api_gles1_ext_get(Evas_GL_API *gl_funcs);
-extern void evgl_api_gles3_ext_get(Evas_GL_API *gl_funcs);
+extern void evgl_api_gles2_ext_get(Evas_GL_API *gl_funcs, void *getproc, const char *glueexts);
+extern void evgl_api_gles1_ext_get(Evas_GL_API *gl_funcs, void *getproc, const char *glueexts);
+extern void evgl_api_gles3_ext_get(Evas_GL_API *gl_funcs, void *getproc, const char *glueexts);
 extern const char *evgl_api_ext_string_get(Eina_Bool official, int version);
 
 #endif //_EVAS_GL_API_EXT_H

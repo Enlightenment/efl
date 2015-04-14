@@ -1532,7 +1532,7 @@ eng_gl_api_get(void *data, int version)
         ERR("Version not supported!");
         return NULL;
      }
-   ret = evgl_api_get(version);
+   ret = evgl_api_get(data, version);
 
    //Disable GLES3 support if symbols not present
    if ((!ret) && (version == EVAS_GL_GLES_3_X))

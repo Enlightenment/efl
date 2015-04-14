@@ -10,8 +10,8 @@ typedef struct _GL_Format
 
 // Extended struct size based on the 314 functions found in gl31.h
 #define EVAS_GL_API_STRUCT_SIZE (sizeof(Evas_GL_API) + 300 * sizeof(void*))
-static Evas_GL_API *gl_funcs = NULL;
 static Evas_GL_API *gles1_funcs = NULL;
+static Evas_GL_API *gles2_funcs = NULL;
 static Evas_GL_API *gles3_funcs = NULL;
 
 EVGL_Engine *evgl_engine = NULL;
@@ -1600,22 +1600,6 @@ evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
 
    evgl_engine->safe_extensions = eina_hash_string_small_new(NULL);
 
-   // Initialize Extensions
-   if (efunc->proc_address_get && efunc->ext_string_get)
-     {
-        if (!evgl_api_ext_init(efunc->proc_address_get, efunc->ext_string_get(eng_data)))
-          {
-             ERR("Extensions failed to load. This shouldn't happen, Evas GL load fails.");
-             goto error;
-          }
-     }
-   else
-     ERR("Proc address get function not available. Extensions not initialized.");
-
-   if (efunc->ext_string_get)
-     DBG("GLUE Extension String: %s", efunc->ext_string_get(eng_data));
-   DBG("GL Extension String: %s", glGetString(GL_EXTENSIONS));
-
    // Surface Caps
    if (!_surface_cap_init(eng_data))
      {
@@ -1663,9 +1647,6 @@ evgl_engine_init(void *eng_data, const EVGL_Interface *efunc)
 
    // Maint Thread ID (get tid not available in eina thread yet)
    evgl_engine->main_tid = 0;
-
-   // Clear Function Pointers
-   if (!gl_funcs) gl_funcs = calloc(1, EVAS_GL_API_STRUCT_SIZE);
 
    return evgl_engine;
 
@@ -2263,7 +2244,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
    // to use fbo & egl image passing to evas
    if (!ctx->extension_checked)
      {
-        if (!evgl_api_get(ctx->version))
+        if (!evgl_api_get(eng_data, ctx->version))
           {
              ERR("Unable to get the list of GL APIs for version %d", ctx->version);
              evas_gl_common_error_set(eng_data, EVAS_GL_NOT_INITIALIZED);
@@ -2388,8 +2369,10 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
    else
      {
         Eina_Bool use_extension = EINA_FALSE;
+#ifdef GL_GLES
         if ((ctx->version == EVAS_GL_GLES_1_X) && (gles1_funcs))
           use_extension = EINA_TRUE;
+#endif
 
         // Normal FBO Rendering
         // Create FBO if it hasn't been created
@@ -2730,30 +2713,33 @@ evgl_get_pixels_post(void)
 }
 
 Evas_GL_API *
-evgl_api_get(Evas_GL_Context_Version version)
+evgl_api_get(void *eng_data, Evas_GL_Context_Version version)
 {
    if (version == EVAS_GL_GLES_2_X)
      {
-        _evgl_api_get(gl_funcs, evgl_engine->api_debug_mode);
-        return gl_funcs;
+        if (!gles2_funcs) gles2_funcs = calloc(1, EVAS_GL_API_STRUCT_SIZE);
+
+        _evgl_api_gles2_get(gles2_funcs, evgl_engine->api_debug_mode);
+        evgl_api_gles2_ext_get(gles2_funcs, evgl_engine->funcs->proc_address_get, evgl_engine->funcs->ext_string_get(eng_data));
+
+        return gles2_funcs;
      }
    else if (version == EVAS_GL_GLES_1_X)
      {
         if (!gles1_funcs) gles1_funcs = calloc(1, EVAS_GL_API_STRUCT_SIZE);
 
         _evgl_api_gles1_get(gles1_funcs, evgl_engine->api_debug_mode);
+        evgl_api_gles1_ext_get(gles1_funcs, evgl_engine->funcs->proc_address_get, evgl_engine->funcs->ext_string_get(eng_data));
+
         return gles1_funcs;
      }
    else if (version == EVAS_GL_GLES_3_X)
      {
-        // Allocate gles3 funcs here, as this is called only if GLES_3 is supported
         if (!gles3_funcs) gles3_funcs = calloc(1, EVAS_GL_API_STRUCT_SIZE);
 
-        if (!_evgl_api_gles3_get(gles3_funcs, evgl_engine->api_debug_mode))
-          {
-             free(gles3_funcs);
-             gles3_funcs = NULL;
-          }
+        _evgl_api_gles3_get(gles3_funcs, evgl_engine->api_debug_mode);
+        evgl_api_gles3_ext_get(gles3_funcs, evgl_engine->funcs->proc_address_get, evgl_engine->funcs->ext_string_get(eng_data));
+
         return gles3_funcs;
      }
    else return NULL;
