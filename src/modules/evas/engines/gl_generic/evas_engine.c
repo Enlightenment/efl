@@ -33,6 +33,17 @@
 
 static int _evas_engine_GL_log_dom = -1;
 
+#undef ERR
+#undef DBG
+#undef INF
+#undef WRN
+#undef CRI
+#define ERR(...) EINA_LOG_DOM_ERR(_evas_engine_GL_log_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_evas_engine_GL_log_dom, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_evas_engine_GL_log_dom, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_evas_engine_GL_log_dom, __VA_ARGS__)
+#define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_GL_log_dom, __VA_ARGS__)
+
 static int eng_gl_image_direct_get(void *data EINA_UNUSED, void *image);
 
 static void
@@ -2296,7 +2307,7 @@ module_open(Evas_Module *em)
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
    if (_evas_engine_GL_log_dom < 0)
-     _evas_engine_GL_log_dom = eina_log_domain_register("evas-gl", EVAS_DEFAULT_LOG_COLOR);
+     _evas_engine_GL_log_dom = eina_log_domain_register("evas-gl_generic", EVAS_DEFAULT_LOG_COLOR);
    if (_evas_engine_GL_log_dom < 0)
      {
         EINA_LOG_ERR("Can not create a module log domain.");
