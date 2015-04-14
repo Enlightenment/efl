@@ -7,9 +7,10 @@
 #include <Efl.h>
 #include <Eina.h>
 #include <eio_model.h>
-#include <Eio.h>
 #include <Ecore.h>
 #include <Eo.h>
+
+#include <Eio.h>
 
 #include "eio_private.h"
 #include "eio_model_private.h"
