@@ -145,7 +145,7 @@ _texture_proxy_subrender(Evas_3D_Texture *obj)
              evas_render_mapped(e, pd->source, source, ctx, proxy_write->surface,
                                 -source->cur->geometry.x,
                                 -source->cur->geometry.y,
-                                1, 0, 0, e->output.w, e->output.h,
+                                2, 0, 0, e->output.w, e->output.h,
                                 &proxy_render_data, 1, EINA_FALSE, EINA_FALSE);
           }
 
