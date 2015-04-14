@@ -78,8 +78,10 @@ eng_window_new(Evas_Engine_Info_GL_Drm *info, Evas *e, struct gbm_device *gbm, s
         return NULL;
      }
 
-   if (gw->w < gw->priv.mode.hdisplay) gw->w = gw->priv.mode.hdisplay;
-   if (gw->h < gw->priv.mode.vdisplay) gw->h = gw->priv.mode.vdisplay;
+   // Do not check and store display size of currnet drm mode.
+   // This avoids resizing gbm surface when reconfiguring engine.
+   //if (gw->w < gw->priv.mode.hdisplay) gw->w = gw->priv.mode.hdisplay;
+   //if (gw->h < gw->priv.mode.vdisplay) gw->h = gw->priv.mode.vdisplay;
 
    info->info.output = gw->priv.fb;
    // TODO: change vsync for drm egl
@@ -256,15 +258,6 @@ eng_window_free(Outbuf *gw)
    if (gw->egl_surface[0] != EGL_NO_SURFACE)
      eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
 
-//TODO: consider gbm_surface destroy or not.
-#if 0
-   if (gw->surface)
-     {
-        gbm_surface_destroy(gw->surface);
-        gw->info->info.surface = NULL;
-     }
-#endif
-
    if (ref == 0)
      {
         if (context) eglDestroyContext(gw->egl_disp, context);
@@ -272,6 +265,7 @@ eng_window_free(Outbuf *gw)
         eglReleaseThread();
         context = EGL_NO_CONTEXT;
      }
+
    free(gw);
 }
 
@@ -431,13 +425,68 @@ eng_gl_context_use(Context_3D *ctx)
 void
 eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth EINA_UNUSED)
 {
-   ob->w = w;
-   ob->h = h;
-   ob->rot = rot;
-   eng_window_use(ob);
-   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot,1);
+   Evas_Public_Data *epd;
+   Render_Engine *re;
+   Evas_Engine_Info_GL_Drm *info;
+   Outbuf *new_ob;
+   struct gbm_surface *old_surface;
 
-   //TODO: need drm gbm surface destroy & re-create.?
+   EINA_SAFETY_ON_NULL_RETURN(ob);
+
+   if (!((ob->w == w) && (ob->h == h)))
+     {
+        epd = eo_data_scope_get(ob->evas, EVAS_CANVAS_CLASS);
+        EINA_SAFETY_ON_NULL_RETURN(epd);
+
+        re = epd->engine.data.output;
+        EINA_SAFETY_ON_NULL_RETURN(re);
+
+        info = ob->info;
+        EINA_SAFETY_ON_NULL_RETURN(info);
+
+        old_surface = info->info.surface;
+
+        info->info.surface = gbm_surface_create(info->info.gbm, w, h,
+                                                info->info.format,
+                                                info->info.flags);
+        EINA_SAFETY_ON_NULL_RETURN(info->info.surface);
+
+        new_ob = eng_window_new(ob->info,
+                                ob->evas,
+                                info->info.gbm,
+                                info->info.surface,
+                                ob->screen,
+                                ob->depth,
+                                w,
+                                h,
+                                0,
+                                ob->alpha,
+                                ob->rot,
+                                ob->swap_mode);
+        if (!new_ob)
+          {
+             ERR("eng_window_new failed. fd:%d gbm:%p surface:%p %dx%d",
+                 info->info.fd, info->info.gbm, info->info.surface, w, h);
+
+             /* shutdown destroy gbm surface & shutdown gbm device */
+             if (info->info.surface) gbm_surface_destroy(info->info.surface);
+             info->info.surface = old_surface;
+             return;
+          }
+
+        eng_get_ob(re)->gl_context->references++;
+
+        eng_window_free(ob);
+        if (old_surface) gbm_surface_destroy(old_surface);
+
+        re->generic.software.ob = NULL;
+
+        eng_window_use(new_ob);
+        evas_render_engine_software_generic_update(&re->generic.software, new_ob, w, h);
+        eng_get_ob(re)->gl_context->references--;
+
+        glsym_evas_gl_common_context_resize(new_ob->gl_context, w, h, rot, 1);
+     }
 }
 
 int

@@ -67,6 +67,7 @@ extern Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock;
 
 typedef struct _Buffer Buffer;
 typedef struct _Plane Plane;
+typedef struct _Render_Engine Render_Engine;
 
 struct _Buffer
 {
@@ -91,6 +92,11 @@ struct _Plane
 
    unsigned int num_formats;
    unsigned int formats[];
+};
+
+struct _Render_Engine
+{
+   Render_Engine_GL_Generic generic;
 };
 
 struct _Outbuf
@@ -184,4 +190,10 @@ void evas_drm_outbuf_framebuffer_set(Outbuf *ob, Buffer *buffer);
 Eina_Bool evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer);
 void evas_drm_outbuf_event_flip(int fd, unsigned int seq, unsigned int sec, unsigned int usec, void *data);
 void evas_drm_outbuf_event_vblank(int fd, unsigned int seq, unsigned int sec, unsigned int usec, void *data);
+
+static inline Outbuf *
+eng_get_ob(Render_Engine *re)
+{
+   return re->generic.software.ob;
+}
 #endif

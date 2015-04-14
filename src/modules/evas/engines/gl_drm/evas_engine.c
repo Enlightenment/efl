@@ -51,12 +51,6 @@ Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_relax = NULL;
 
 /* local structures */
-typedef struct _Render_Engine Render_Engine;
-struct _Render_Engine
-{
-   Render_Engine_GL_Generic generic;
-};
-
 typedef struct _Native Native;
 struct _Native
 {
@@ -109,11 +103,6 @@ static Eina_Bool initted = EINA_FALSE;
 static int gl_wins = 0;
 
 /* local inline functions */
-static inline Outbuf *
-eng_get_ob(Render_Engine *re)
-{
-   return re->generic.software.ob;
-}
 
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
