@@ -334,12 +334,12 @@ _toggle_entry(Evas_Object *obj)
         if (!sd->ent)
           {
              sd->ent = elm_entry_add(obj);
+             Eina_Strbuf *buf = eina_strbuf_new();
+             eina_strbuf_append_printf(buf, "spinner/%s", elm_widget_style_get(obj));
+             elm_widget_style_set(sd->ent, eina_strbuf_string_get(buf));
+             eina_strbuf_free(buf);
              if (sd->button_layout)
                {
-                  Eina_Strbuf *buf = eina_strbuf_new();
-                  eina_strbuf_append_printf(buf, "spinner/%s", elm_widget_style_get(obj));
-                  elm_widget_style_set(sd->ent, eina_strbuf_string_get(buf));
-                  eina_strbuf_free(buf);
                   evas_object_event_callback_add
                     (sd->ent, EVAS_CALLBACK_SHOW, _entry_show_cb, obj);
                }
