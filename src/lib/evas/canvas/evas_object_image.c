@@ -2933,6 +2933,10 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
                               (obj->cur->color.g == 255) &&
                               (obj->cur->color.b == 255) &&
                               (obj->cur->color.a == 255) &&
+                              (obj->cur->cache.clip.r == 255) &&
+                              (obj->cur->cache.clip.g == 255) &&
+                              (obj->cur->cache.clip.b == 255) &&
+                              (obj->cur->cache.clip.a == 255) &&
                               (!obj->map->cur.map))
                              ) && (!direct_force_off) )
                          {
