@@ -657,6 +657,8 @@ eeze_suite(void)
    tcase_add_test(tc, eeze_test_sensor_obj_get);
    suite_add_tcase(s, tc);
 
+   tcase_set_timeout(tc, 0);
+
    return s;
 }
 
