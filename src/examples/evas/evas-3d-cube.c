@@ -4,7 +4,7 @@
  * This example is the best to start introduction to usage of Evas-3D.
  *
  * @verbatim
- * gcc -o evas-3d-cube evas-3d-cube.c `pkg-config --libs --cflags evas ecore ecore-evas eo`
+ * gcc -o evas-3d-cube evas-3d-cube.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`
  * @endverbatim
  */
 

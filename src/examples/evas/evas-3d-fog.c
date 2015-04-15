@@ -2,7 +2,7 @@
  * Example illustrating usage of fog effect.
  *
  * @verbatim
- * gcc -o evas-3d-fog evas-3d-fog.c evas-3d-primitives.c `pkg-config --libs --cflags evas ecore ecore-evas eo`-lm
+ * gcc -o evas-3d-fog evas-3d-fog.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`-lm
  * @endverbatim
  */
 
@@ -61,8 +61,8 @@ _on_canvas_resize(Ecore_Evas *ee)
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
 
    evas_object_resize(background, w, h);
-   eo_do(background, evas_obj_size_set(w, h));
-   eo_do(image, evas_obj_size_set(w, h));
+   eo_do(background, efl_gfx_size_set(w, h));
+   eo_do(image, efl_gfx_size_set(w, h));
 }
 
 static Eina_Bool
@@ -225,16 +225,16 @@ main(void)
    /* Add a background rectangle objects. */
    background = eo_add(EVAS_RECTANGLE_CLASS, evas);
    eo_do(background,
-         evas_obj_color_set(0, 0, 0, 255),
-         evas_obj_size_set(WIDTH, HEIGHT),
-         evas_obj_visibility_set(EINA_TRUE));
+         efl_gfx_color_set(0, 0, 0, 255),
+         efl_gfx_size_set(WIDTH, HEIGHT),
+         efl_gfx_visible_set(EINA_TRUE));
 
    /* Add an image object for 3D scene rendering. */
    image = evas_object_image_filled_add(evas);
 
    eo_do(image,
-         evas_obj_size_set(WIDTH, HEIGHT),
-         evas_obj_visibility_set(EINA_TRUE));
+         efl_gfx_size_set(WIDTH, HEIGHT),
+         efl_gfx_visible_set(EINA_TRUE));
 
    /* Set the image object as render target for 3D scene. */
    eo_do(image, evas_obj_image_scene_set(data.scene));

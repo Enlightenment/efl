@@ -4,7 +4,7 @@
  * Data which will be used as texture can be generated directly in application.
  *
  * @verbatim
- * gcc -o evas-3d-proxy evas-3d-proxy.c evas-3d-primitives.c `pkg-config --libs --cflags evas ecore ecore-evas eo` -lm
+ * gcc -o evas-3d-proxy evas-3d-proxy.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
  * @endverbatim
  */
 

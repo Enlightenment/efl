@@ -6,7 +6,7 @@
  * and parameters which can be got from this function.
  *
  * @verbatim
- * gcc -o evas-3d-pick evas-3d-pick.c evas-3d-primitives.c `pkg-config --libs --cflags evas ecore ecore-evas eo` -lm
+ * gcc -o evas-3d-pick evas-3d-pick.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
  * @endverbatim
  */
 

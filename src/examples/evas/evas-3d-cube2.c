@@ -3,7 +3,7 @@
  * by interpolation between frames.
  *
  * @verbatim
- * gcc -o evas-3d-cube2 evas-3d-cube2.c evas-3d-primitives.c `pkg-config --libs --cflags evas ecore ecore-evas eo` -lm
+ * gcc -o evas-3d-cube2 evas-3d-cube2.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
  * @endverbatim
  */
 

@@ -6,7 +6,7 @@
  * Show the results.
  *
  * @verbatim
- * gcc -o evas-3d-mmap-set evas-3d-mmap-set.c `pkg-config --libs --cflags evas ecore ecore-evas eina eo` -lm
+ * gcc -o evas-3d-mmap-set evas-3d-mmap-set.c `pkg-config --libs --cflags efl evas ecore ecore-evas eina eo` -lm
  * @endverbatim
  */
 
