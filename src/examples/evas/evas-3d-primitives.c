@@ -246,13 +246,13 @@ _generate_grid_indices(unsigned short *indices, int count)
    for (j = 0; j < count; j++)
      for (i = 0; i < count; i++)
        {
-          *index++ = (unsigned short)(i + vccount * j);
-          *index++ = i + vccount * (j + 1);
-          *index++ = i + 1 + vccount * (j + 1);
+          *index++ = (i * vccount) + j;
+          *index++ = (i * vccount) + j + 1;
+          *index++ = ((i + 1) * vccount) + j;
 
-          *index++ = i + vccount * j;
-          *index++ = i + 1 +  vccount * j;
-          *index++ = i + vccount * (j + 1) + 1;
+          *index++ = ((i + 1) * vccount) + j;
+          *index++ = (i * vccount) + j + 1;
+          *index++ = ((i + 1) * vccount) + j + 1;
        }
 }
 
