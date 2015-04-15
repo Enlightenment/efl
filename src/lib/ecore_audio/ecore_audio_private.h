@@ -169,6 +169,12 @@ Ecore_Audio_Module *ecore_audio_sndfile_init(void);
 void                ecore_audio_sndfile_shutdown(void);
 #endif /* HAVE_SNDFILE */
 
+#ifdef HAVE_COREAUDIO
+/* ecore_audio_core_audio */
+Ecore_Audio_Module *ecore_audio_core_audio_init(void);
+void                ecore_audio_core_audio_shutdown(void);
+#endif /* HAVE_COREAUDIO */
+
 Ecore_Audio_Module *ecore_audio_tone_init(void);
 void                ecore_audio_tone_shutdown(void);
 

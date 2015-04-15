@@ -3208,6 +3208,54 @@ AC_ARG_ENABLE([pulseaudio],
    ],
    [want_pulseaudio="yes"])
 
+if test "x${have_darwin}" = "xyes"; then
+   want_pulseaudio="no"
+   want_alsa="no"
+   want_coreaudio="yes"
+else
+   want_coreaudio="no"
+fi
+
+
+# CoreAudio flags
+if test "x${want_coreaudio}" = "xyes"; then
+   coreaudio_ldflags=""
+   have_coreaudio="no"
+   LIBS_save="$LIBS"
+   LIBS="$LIBS -framework CoreAudio"
+   AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM(
+	 [[
+#include <CoreAudio/CoreAudio.h>
+	 ]],
+	 [[
+UInt32 size;
+AudioDeviceID dev_id;
+AudioObjectPropertyAddress prop = {
+   kAudioHardwarePropertyDefaultOutputDevice,
+   kAudioObjectPropertyScopeGlobal,
+   kAudioObjectPropertyElementMaster
+};
+size = sizeof(AudioDeviceID);
+AudioObjectGetPropertyData(kAudioObjectSystemObject, &prop, 0, NULL,
+		           &size, &dev_id);
+	 ]])],
+	 [
+	  have_coreaudio="yes"
+	  coreaudio_ldflags="-framework CoreAudio"
+	 ],
+	 [have_coreaudio="no"])
+      LIBS="$LIBS_save"
+      AC_MSG_CHECKING([whether Apple CoreAudio framework is supported])
+      AC_MSG_RESULT([${have_coreaudio}])
+fi
+AC_SUBST(coreaudio_ldflags)
+if test "x${have_coreaudio}" = "xyes"; then
+   AC_DEFINE([HAVE_COREAUDIO], [1], [CoreAudio support enabled])
+else
+   AC_DEFINE([HAVE_COREAUDIO], [0], [CoreAudio support disabled])
+fi
+
 
 ### Default values
 
@@ -3234,6 +3282,7 @@ EFL_EVAL_PKGS([ECORE_AUDIO])
 EFL_ADD_FEATURE([ECORE_AUDIO], [alsa])
 EFL_ADD_FEATURE([ECORE_AUDIO], [pulseaudio])
 EFL_ADD_FEATURE([ECORE_AUDIO], [sndfile])
+EFL_ADD_FEATURE([ECORE_AUDIO], [coreaudio])
 
 ### Checks for header files
 
@@ -3250,6 +3299,7 @@ EFL_ADD_FEATURE([ECORE_AUDIO], [sndfile])
 EFL_LIB_END_OPTIONAL([Ecore_Audio])
 AM_CONDITIONAL([HAVE_ECORE_AUDIO_PULSE], [test "x${want_pulseaudio}" = "xyes"])
 AM_CONDITIONAL([HAVE_ECORE_AUDIO_SNDFILE], [test "x${want_sndfile}" = "xyes"])
+AM_CONDITIONAL([HAVE_ECORE_AUDIO_CORE_AUDIO], [test "x${want_coreaudio}" = "xyes"])
 
 #### End of Ecore_Audio
 
@@ -4117,7 +4167,7 @@ EFL_LIB_START([Edje])
 ### Additional options to configure
 
 ### Default values
-want_multisense="${want_pulseaudio}"
+
 AC_ARG_ENABLE([multisense],
    [AS_HELP_STRING([--enable-multisense],[Enable multisense support. @<:@default=enabled@:>@])],
    [
@@ -4128,7 +4178,13 @@ AC_ARG_ENABLE([multisense],
        CFOPT_WARNING="xyes"
     fi
    ],
-   [want_multisense="${want_pulseaudio}"])
+   [
+    if test "x${want_pulseaudio}" = "xyes" -o "x${want_coreaudio}" = "xyes"; then
+       want_multisense="yes"
+    else
+       want_multisense="no"
+    fi
+   ])
 
 # TODO: should we keep or remove these?
 want_edje_program_cache="no"
@@ -4960,11 +5016,12 @@ if test -n "$CFOPT_WARNING"; then
     echo "Reconsider disabling audio."
     echo "_____________________________________________________________________"
   fi
-  if test "x${want_pulseaudio}" = "xno"; then
+  if test "x${have_darwin}" = "xno" -a "x${want_pulseaudio}" = "xno"; then
     echo "_____________________________________________________________________"
-    echo "The only audio output method supported by Ecore right now is via"
-    echo "Pulseaudio. You have disabled that and likely have broken a whole"
-    echo "bunch of things in the process. Reconsider your configure options."
+    echo "The only audio output method supported by Ecore right now on your"
+    echo "system is via Pulseaudio. You have disabled that and likely have"
+    echo "broken a whole bunch of things in the process. Reconsider your"
+    echo "configure options."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_xinput2}" = "xno"; then
@@ -5143,3 +5200,4 @@ if test "x${efl_deprecated_option}" = "xyes"; then
   echo ""
   echo "#-------------------------------------------------------------------#"
 fi
+

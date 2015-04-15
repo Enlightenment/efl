@@ -44,6 +44,7 @@ enum _Ecore_Audio_Type {
     ECORE_AUDIO_TYPE_ALSA,    /**< Use ALSA module*/
     ECORE_AUDIO_TYPE_SNDFILE, /**< Use libsndfile module */
     ECORE_AUDIO_TYPE_TONE,    /**< Use tone module */
+    ECORE_AUDIO_TYPE_CORE_AUDIO, /**< Use Core Audio module (Apple) */
     ECORE_AUDIO_TYPE_CUSTOM,  /**< Use custom module */
     ECORE_AUDIO_MODULE_LAST,  /**< Sentinel */
 };
@@ -211,7 +212,13 @@ EAPI int                 ecore_audio_shutdown(void);
 
 #include <ecore_audio_obj_in_tone.h>
 
-#include <ecore_audio_obj_out_pulse.h>
+#if HAVE_COREAUDIO
+# include <ecore_audio_obj_out_core_audio.h>
+#endif
+
+#if HAVE_PULSE
+# include <ecore_audio_obj_out_pulse.h>
+#endif
 
 /**
  * @}
