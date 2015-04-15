@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 #define COOKIEJAR "testcookieXXXXXX.jar"
-#define DEFAULT_LINK "www.google.com" 
+#define DEFAULT_LINK "www.google.com"
 
 typedef struct _url_test
 {
