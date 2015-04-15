@@ -383,6 +383,38 @@ evas_3d_add_sphere_frame(Eo *mesh, int frame, int p, vec2 tex_scale)
 }
 
 void
+_normalize(vec3 *vertices, vec3 *normals, int vcount)
+{
+   int i;
+   vec3 min, max;
+   min = max = vertices[0];
+
+#define CHECK_MIN_AND_MAX(coord)                \
+        if (min.coord > vertices[i].coord)      \
+          min.coord = vertices[i].coord;        \
+        else if (max.coord < vertices[i].coord) \
+          max.coord = vertices[i].coord;
+   for (i = 1; i < vcount; i++)
+     {
+        CHECK_MIN_AND_MAX(x)
+        CHECK_MIN_AND_MAX(y)
+        CHECK_MIN_AND_MAX(z)
+     }
+#undef CHECK_MIN_AND_MAX
+
+   for (i = 0; i < vcount; i++)
+     {
+        vertices[i].x = (vertices[i].x - min.x) / (max.x - min.x) - 0.5;
+        vertices[i].y = (vertices[i].y - min.y) / (max.y - min.y) - 0.5;
+        vertices[i].z = (vertices[i].z - min.z) / (max.z - min.z) - 0.5;
+
+        normals[i].x = normals[i].x / (max.x - min.x);
+        normals[i].y = normals[i].y / (max.y - min.y);
+        normals[i].z = normals[i].z / (max.z - min.z);
+     }
+}
+
+void
 evas_3d_add_func_surface_frame(Eo *mesh, int frame, Surface func, int p, vec2 tex_scale)
 {
    int vcount, icount, vccount, i, j;
@@ -413,6 +445,7 @@ evas_3d_add_func_surface_frame(Eo *mesh, int frame, Surface func, int p, vec2 te
           }
      }
 
+   _normalize(vertices, normals, vcount);
    _generate_grid_indices(indices, p);
    SET_VERTEX_DATA(frame)
 }
