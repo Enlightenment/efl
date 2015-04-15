@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <setjmp.h>
 #include <jpeglib.h>
+#include <jerror.h>
 
 #ifdef HAVE_EVIL
 #include <Evil.h>
@@ -673,8 +674,12 @@ _emile_image_jpeg_error_exit_cb(j_common_ptr cinfo)
    char buffer[JMSG_LENGTH_MAX];
    emptr errmgr;
 
-   (*cinfo->err->format_message)(cinfo, buffer);
-   ERR("%s", buffer);
+   // Avoid message "Not a JPEG file: starts with 0x%02x 0x%02x"
+   if (cinfo->client_data || (cinfo->err->msg_code != JERR_NO_SOI))
+     {
+        (*cinfo->err->format_message)(cinfo, buffer);
+        ERR("%s", buffer);
+     }
    errmgr = (emptr)cinfo->err;
    longjmp(errmgr->setjmp_buffer, 1);
 }
@@ -1352,6 +1357,7 @@ _emile_jpeg_head(Emile_Image *image,
 
    memset(&cinfo, 0, sizeof(cinfo));
    cinfo.err = jpeg_std_error(&(jerr.pub));
+   cinfo.client_data = NULL;
    jerr.pub.error_exit = _emile_image_jpeg_error_exit_cb;
    jerr.pub.emit_message = _emile_image_jpeg_emit_message_cb;
    jerr.pub.output_message = _emile_image_jpeg_output_message_cb;
@@ -1610,6 +1616,7 @@ _emile_jpeg_data(Emile_Image *image,
      }
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
+   cinfo.client_data = (void *)(intptr_t) 0x1;
    jerr.pub.error_exit = _emile_image_jpeg_error_exit_cb;
    jerr.pub.emit_message = _emile_image_jpeg_emit_message_cb;
    jerr.pub.output_message = _emile_image_jpeg_output_message_cb;
