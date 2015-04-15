@@ -152,4 +152,7 @@ endif
 if ELEMENTARY_ENABLE_COVERAGE
 	@$(MAKE) $(AM_MAKEFLAGS) lcov-report
 endif
+
+clean-local:
+	rm src/tests/check-results.xml
 endif
