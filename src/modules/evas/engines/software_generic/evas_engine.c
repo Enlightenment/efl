@@ -3499,7 +3499,7 @@ eng_ector_get(void *data EINA_UNUSED)
         const char *ector_backend;
 
         ector_backend = getenv("ECTOR_BACKEND");
-        if (ector_backend && !strcasecmp(ector_backend, "freetype"))
+        if (ector_backend && !strcasecmp(ector_backend, "default"))
           {
              _software_ector = eo_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
              use_cairo = EINA_FALSE;
