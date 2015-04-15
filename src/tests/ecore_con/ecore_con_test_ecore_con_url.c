@@ -10,6 +10,9 @@
 #include <Eina.h>
 #include <unistd.h>
 
+#define COOKIEJAR "testcookieXXXXXX.jar"
+#define DEFAULT_LINK "www.google.com" 
+
 typedef struct _url_test
 {
    const char *_test_file;
@@ -155,7 +158,7 @@ error_user:
 }
 
 #ifdef ECORE_CON_FTP_TEST_URL
-START_TEST(ecore_test_ecore_con_url_ftp_upload)
+START_TEST(ecore_con_test_ecore_con_url_ftp_upload)
 {
    Ecore_Con_Url *ec_url;
    url_test *info;
@@ -193,7 +196,7 @@ END_TEST
 #endif
 
 #ifdef ECORE_CON_HTTP_TEST_URL
-START_TEST(ecore_test_ecore_con_url_post)
+START_TEST(ecore_con_test_ecore_con_url_post)
 {
    Ecore_Con_Url *ec_url;
    url_test *info;
@@ -236,7 +239,7 @@ START_TEST(ecore_test_ecore_con_url_post)
 END_TEST
 #endif
 
-START_TEST(ecore_test_ecore_con_url_download)
+START_TEST(ecore_con_test_ecore_con_url_download)
 {
    Ecore_Con_Url *url;
    url_test *info;
@@ -244,7 +247,7 @@ START_TEST(ecore_test_ecore_con_url_download)
 #ifdef ECORE_CON_HTTP_TEST_URL
    const char link[] = ECORE_CON_HTTP_TEST_URL;
 #else
-   const char link[] = "www.google.com";
+   const char link[] = DEFAULT_LINK;
 #endif
    char url_data[] = "test";
 
@@ -285,7 +288,7 @@ START_TEST(ecore_test_ecore_con_url_download)
 }
 END_TEST
 
-START_TEST(ecore_test_ecore_con_url_create)
+START_TEST(ecore_con_test_ecore_con_url_create)
 {
    Ecore_Con_Url *url;
    int ret;
@@ -306,7 +309,7 @@ START_TEST(ecore_test_ecore_con_url_create)
 }
 END_TEST
 
-START_TEST(ecore_test_ecore_con_url_init)
+START_TEST(ecore_con_test_ecore_con_url_init)
 {
    int ret;
 
@@ -318,15 +321,139 @@ START_TEST(ecore_test_ecore_con_url_init)
 }
 END_TEST
 
+static Eina_Bool
+_url_cookies_compl_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
+{
+   Ecore_Con_Event_Url_Complete *url_complete = event_info;
+   const Eina_List *headers, *l;
+   char *str;
+
+   headers = ecore_con_url_response_headers_get(url_complete->url_con);
+
+   fail_unless(headers);
+
+   printf("response headers:\n");
+   EINA_LIST_FOREACH(headers, l, str)
+     printf("header: %s", str);
+
+   ecore_con_url_cookies_jar_write(url_complete->url_con);
+
+   ecore_main_loop_quit();
+
+   return EINA_TRUE;
+}
+
+static Ecore_Con_Url *
+_ecore_con_url_cookies_test_init()
+{
+   Ecore_Con_Url *ec_url = NULL;
+#ifdef ECORE_CON_HTTP_TEST_URL
+   const char link[] = ECORE_CON_HTTP_TEST_URL;
+#else
+   const char link[] = DEFAULT_LINK;
+#endif
+
+   eina_init();
+   ecore_con_init();
+   ecore_con_url_init();
+
+   ec_url = ecore_con_url_new(link);
+   fail_unless(ec_url);
+
+   ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE,
+                           _url_cookies_compl_cb, NULL);
+
+   ecore_con_url_additional_header_add(ec_url, "User-Agent",
+                                       "Ecore_Con client");
+
+   ecore_con_url_cookies_init(ec_url);
+
+   return ec_url;
+}
+
+static void
+_ecore_con_url_cookies_test_shutdown(Ecore_Con_Url *ec_url, int tmpfd, Eina_Tmpstr **path)
+{
+   close(tmpfd);
+   unlink(*path);
+   eina_tmpstr_del(*path);
+   ecore_con_url_free(ec_url);
+   ecore_con_url_shutdown();
+   ecore_con_shutdown();
+   eina_shutdown();
+}
+
+START_TEST(ecore_con_test_ecore_con_url_cookies_clear)
+{
+   Ecore_Con_Url *ec_url = _ecore_con_url_cookies_test_init();
+   Eina_Tmpstr *path;
+   int tmpfd;
+
+   tmpfd = eina_file_mkstemp(COOKIEJAR, &path);
+
+   ecore_con_url_cookies_file_add(ec_url, path);
+   fail_unless(ecore_con_url_cookies_jar_file_set(ec_url, path));
+   ecore_con_url_cookies_clear(ec_url);
+
+   fail_unless(ecore_con_url_get(ec_url));
+
+   ecore_main_loop_begin();
+
+   _ecore_con_url_cookies_test_shutdown(ec_url, tmpfd, &path);
+}
+END_TEST
+
+START_TEST(ecore_con_test_ecore_con_url_cookies_clear_session)
+{
+   Ecore_Con_Url *ec_url = _ecore_con_url_cookies_test_init();
+   Eina_Tmpstr *path;
+   int tmpfd;
+
+   tmpfd = eina_file_mkstemp(COOKIEJAR, &path);
+
+   ecore_con_url_cookies_file_add(ec_url, path);
+   fail_unless(ecore_con_url_cookies_jar_file_set(ec_url, path));
+   ecore_con_url_cookies_session_clear(ec_url);
+
+   fail_unless(ecore_con_url_get(ec_url));
+
+   ecore_main_loop_begin();
+
+   _ecore_con_url_cookies_test_shutdown(ec_url, tmpfd, &path);
+}
+END_TEST
+
+START_TEST(ecore_con_test_ecore_con_url_cookies_ignore_session)
+{
+   Ecore_Con_Url *ec_url = _ecore_con_url_cookies_test_init();
+   Eina_Tmpstr *path;
+   int tmpfd;
+
+   tmpfd = eina_file_mkstemp(COOKIEJAR, &path);
+
+   fail_unless(ecore_con_url_cookies_jar_file_set(ec_url, path));
+   ecore_con_url_cookies_ignore_old_session_set(ec_url,EINA_TRUE);
+
+   fail_unless(ecore_con_url_get(ec_url));
+
+   ecore_main_loop_begin();
+
+   _ecore_con_url_cookies_test_shutdown(ec_url, tmpfd, &path);
+}
+END_TEST
+
 void ecore_con_test_ecore_con_url(TCase *tc)
 {
-   tcase_add_test(tc, ecore_test_ecore_con_url_init);
-   tcase_add_test(tc, ecore_test_ecore_con_url_create);
-   tcase_add_test(tc, ecore_test_ecore_con_url_download);
+   tcase_add_test(tc, ecore_con_test_ecore_con_url_init);
+   tcase_add_test(tc, ecore_con_test_ecore_con_url_create);
+   tcase_add_test(tc, ecore_con_test_ecore_con_url_download);
+   tcase_add_test(tc, ecore_con_test_ecore_con_url_cookies_clear);
+   tcase_add_test(tc, ecore_con_test_ecore_con_url_cookies_clear_session);
+   tcase_add_test(tc, ecore_con_test_ecore_con_url_cookies_ignore_session);
 #ifdef ECORE_CON_HTTP_TEST_URL
-   tcase_add_test(tc, ecore_test_ecore_con_url_post);
+   tcase_add_test(tc, ecore_con_test_ecore_con_url_post);
 #endif
 #ifdef ECORE_CON_FTP_TEST_URL
-   tcase_add_test(tc, ecore_test_ecore_con_url_ftp_upload);
+   tcase_add_test(tc, ecore_con_test_ecore_con_url_ftp_upload);
 #endif
 }
