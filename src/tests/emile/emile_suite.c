@@ -44,7 +44,7 @@ _list_tests(void)
 }
 
 static Eina_Bool
-_use_test(const char *name, int argc, char *argv[])
+_use_test(const char *name, int argc, const char *argv[])
 {
    argc--;
    argv--;
@@ -58,12 +58,36 @@ _use_test(const char *name, int argc, char *argv[])
    return EINA_FALSE;
 }
 
+static Suite *
+emile_suite_build(int argc, const char **argv)
+{
+   TCase *tc;
+   Suite *s;
+   unsigned int i;
+
+   s = suite_create("Emile");
+
+   for (i = 0; i < sizeof(tests) / sizeof(tests[0]); ++i)
+     {
+        if (!_use_test(tests[i].name, argc, argv))
+          continue;
+
+        tc = tcase_create(tests[i].name);
+        tests[i].build(tc);
+        suite_add_tcase(s, tc);
+#ifndef _WIN32
+        tcase_set_timeout(tc, 0);
+#endif
+     }
+
+   return s;
+}
+
 int
 main(int argc, char *argv[])
 {
    SRunner *sr;
    Suite *s;
-   unsigned int i;
    int failed_count;
    int j;
 
@@ -80,24 +104,9 @@ main(int argc, char *argv[])
           return 0;
        }
 
-   s = suite_create("Emile");
-
-   for (i = 0; i < sizeof(tests) / sizeof(tests[0]); ++i)
-     {
-        TCase *tc;
-
-        if (!_use_test(tests[i].name, argc, argv))
-          continue;
-
-        tc = tcase_create(tests[i].name);
-        tests[i].build(tc);
-        suite_add_tcase(s, tc);
-#ifndef _WIN32
-        tcase_set_timeout(tc, 0);
-#endif
-     }
-
+   s = emile_suite_build(argc, (const char **)argv);
    sr = srunner_create(s);
+
    srunner_set_xml(sr, TESTS_BUILD_DIR "/check-results.xml");
    srunner_run_all(sr, CK_ENV);
    failed_count = srunner_ntests_failed(sr);
