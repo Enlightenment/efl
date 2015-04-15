@@ -96,6 +96,13 @@ completion_cb(void *data EINA_UNUSED, const char *file EINA_UNUSED, int status)
    ecore_main_loop_quit();
 }
 
+void
+err_completion_cb(void *data EINA_UNUSED, const char *file EINA_UNUSED, int status)
+{
+   fail_if(status != 1);
+   ecore_main_loop_quit();
+}
+
 int
 progress_cb(void *data EINA_UNUSED, const char *file EINA_UNUSED,
             long int dltotal, long int dlnow,
@@ -357,6 +364,7 @@ START_TEST(ecore_test_ecore_file_download)
    char dest_name[MAXSIZE] = {'\0'};
    Eina_Bool res;
    Eina_Hash *headers;
+   Ecore_File_Download_Job *job = NULL;
    int ret;
 
    ret = ecore_file_init();
@@ -366,17 +374,32 @@ START_TEST(ecore_test_ecore_file_download)
    fail_if(!download_dir);
    download_file = ecore_file_file_get(download_url);
    fail_if(!download_file);
+   fail_if(!ecore_file_download_protocol_available("http://"));
    strcat(dest_name, download_dir);
    strcat(dest_name, "/");
    strcat(dest_name, download_file);
    res = ecore_file_download(download_url, dest_name, completion_cb,
-                             progress_cb, NULL, NULL);
+                             progress_cb, NULL, &job);
    fail_if(res != EINA_TRUE);
+   fail_if(!job);
    ecore_main_loop_begin();
    fprintf(stderr, "Downloaded %lld bytes\n", ecore_file_size(dest_name));
    res = ecore_file_exists(dest_name);
    fail_if(res != EINA_TRUE);
    res = ecore_file_unlink(dest_name);
+   fail_if(res != EINA_TRUE);
+
+   res = ecore_file_download("xxyyzz", dest_name, completion_cb,
+                             progress_cb, &job, NULL);
+   fail_if(res != EINA_FALSE);
+
+   res = ecore_file_download(download_url, dest_name, err_completion_cb,
+                             progress_cb, &job, NULL);
+   fail_if(res != EINA_TRUE);
+   fail_if(!job);
+   ecore_file_download_abort(job);
+   ecore_main_loop_begin();
+   res = ecore_file_remove(dest_name);
    fail_if(res != EINA_TRUE);
 
    headers = eina_hash_string_small_new(NULL);
