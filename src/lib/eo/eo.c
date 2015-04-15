@@ -1584,6 +1584,14 @@ eo_error_set_internal(const Eo *obj_id, const char *file, int line)
    obj->do_error = EINA_TRUE;
 }
 
+EAPI Eina_Bool
+eo_error_get_internal(const Eo *obj_id)
+{
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_TRUE);
+
+   return obj->do_error;
+}
+
 void
 _eo_condtor_done(Eo *obj_id)
 {

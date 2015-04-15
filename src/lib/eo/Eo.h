@@ -631,6 +631,19 @@ EAPI const Eo_Class *eo_class_get(const Eo *obj);
 EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
 /* @endcond */
 
+/**
+ * @def eo_error_get
+ * @brief Get whether or not the eo has error when constructing, destructing or calling a function of the object.
+ * @param obj the object to work on.
+ *
+ * @see eo_error_set()
+ */
+#define eo_error_get(obj) eo_error_get_internal(obj)
+
+/* @cond 0 */
+EAPI Eina_Bool eo_error_get_internal(const Eo *obj);
+/* @endcond */
+
 #define _eo_add_common(klass, parent, is_ref, ...) \
    ( \
      _eo_do_start(_eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref), \
