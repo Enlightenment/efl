@@ -3,6 +3,14 @@
 #ifdef BUILD_NEON
 static void
 _op_copy_c_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+#ifdef BUILD_NEON_INTRINSICS
+   DATA32 *e;
+   UNROLL8_PLD_WHILE(d, l, e,
+                     {
+                        *d = c;
+                        d++;
+                     });
+#else
 #define AP "COPY_C_DP_"
    uint32_t *e = d + l,*tmp;
    asm volatile (
@@ -85,6 +93,7 @@ _op_copy_c_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 
 
    );
+#endif
 }
 
 #define _op_copy_cn_dp_neon _op_copy_c_dp_neon

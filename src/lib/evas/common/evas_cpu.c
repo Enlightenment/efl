@@ -2,6 +2,11 @@
 #ifdef BUILD_MMX
 #include "evas_mmx.h"
 #endif
+#ifdef BUILD_NEON
+#ifdef BUILD_NEON_INTRINSICS
+#include <arm_neon.h>
+#endif
+#endif
 #if defined BUILD_SSE3
 #include <immintrin.h>
 #endif
@@ -92,6 +97,9 @@ evas_common_cpu_neon_test(void)
 {
 //#if defined(__ARM_ARCH__) && (__ARM_ARCH__ >= 70)
 #ifdef BUILD_NEON
+#ifdef BUILD_NEON_INTRINSICS
+   volatile uint32x4_t temp = vdupq_n_u32(0x1);
+#else
    asm volatile (
 		".fpu neon	     \n\t"
                  "vqadd.u8 d0, d1, d0\n"
@@ -100,6 +108,7 @@ evas_common_cpu_neon_test(void)
                  : /* Clobbered */
                  "d0", "d1"
                  );
+#endif
 #endif
 //#endif
 }

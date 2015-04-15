@@ -132,6 +132,9 @@ evas_common_copy_rev_pixels_c(DATA32 *src, DATA32 *dst, int len)
 static void
 evas_common_copy_pixels_rev_neon(DATA32 *src, DATA32 *dst, int len)
 {
+#ifdef BUILD_NEON_INTRINSICS
+evas_common_copy_pixels_rev_c(src, dst, len);
+#else
    uint32_t *tmp = (void *)37;
 #define AP	"evas_common_copy_rev_pixels_neon_"
    asm volatile (
@@ -228,6 +231,7 @@ evas_common_copy_pixels_rev_neon(DATA32 *src, DATA32 *dst, int len)
    );
 #undef AP
 
+#endif
 }
 #endif
 
@@ -324,6 +328,9 @@ evas_common_copy_pixels_mmx2(DATA32 *src, DATA32 *dst, int len)
 #ifdef BUILD_NEON
 static void
 evas_common_copy_pixels_neon(DATA32 *src, DATA32 *dst, int len){
+#ifdef BUILD_NEON_INTRINSICS
+evas_common_copy_pixels_c(src, dst, len);
+#else
    uint32_t *e,*tmp = (void *)37;
    e = dst + len;
 #define AP	"evas_common_copy_pixels_neon_"
@@ -410,6 +417,7 @@ evas_common_copy_pixels_neon(DATA32 *src, DATA32 *dst, int len){
    );
 #undef AP
 
+#endif
 }
 #endif /* BUILD_NEON */
 

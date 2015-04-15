@@ -3,6 +3,16 @@
 #ifdef BUILD_NEON
 static void
 _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+#ifdef BUILD_NEON_INTRINSICS
+   DATA32 *e;
+   int alpha;
+   UNROLL8_PLD_WHILE(d, l, e,
+                     {
+                        alpha = 256 - (*s >> 24);
+                        *d = *s++ + MUL_256(alpha, *d);
+                        d++;
+                     });
+#else
 #define AP "blend_p_dp_"
   asm volatile (
 	".fpu neon					\n\t"
@@ -238,11 +248,31 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
           : "q0", "q1", "q2","q3", "q4","q5","q6", "q7","q8","memory" // clobbered
    );
 #undef AP
-
+#endif
 }
 
 static void
 _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+#ifdef BUILD_NEON_INTRINSICS
+   DATA32 *e;
+   int alpha;
+   UNROLL8_PLD_WHILE(d, l, e,
+                     {
+                        switch (*s & 0xff000000)
+                          {
+                          case 0:
+                             break;
+                          case 0xff000000:
+                             *d = *s;
+                             break;
+                          default:
+                             alpha = 256 - (*s >> 24);
+                             *d = *s + MUL_256(alpha, *d);
+                             break;
+                          }
+                        s++;  d++;
+                     });
+#else
 #define AP "blend_pas_dp_"
    DATA32 *e = d + l,*tmp  = e + 32,*pl=(void*)912;
       asm volatile (
@@ -447,6 +477,7 @@ _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 		 "q0","q1","q2","q3","q4","q5","q6","q7","q8","memory"
       );
 #undef AP
+#endif
 }
 
 #define _op_blend_pan_dp_neon NULL

@@ -576,6 +576,21 @@ case $host_cpu in
        CFLAGS="${CFLAGS_save}"
     fi
     ;;
+  aarch64*)
+    if test "x${want_neon}" = "xyes"; then
+       build_cpu_neon="yes"
+       AC_MSG_CHECKING([whether to use NEON instructions])
+       AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <arm_neon.h>]], [[volatile uint32x4_t test = vdupq_n_u32(0x1);]])],[
+           AC_MSG_RESULT([yes])
+           AC_DEFINE([BUILD_NEON], [1], [Build NEON Code])
+           AC_DEFINE([BUILD_NEON_INTRINSICS], [1], [Build NEON Intrinsics])
+           build_cpu_neon="yes"
+       	 ],[
+	   AC_MSG_RESULT([no])
+           build_cpu_neon="no"
+       	 ])
+    fi
+    ;;
 esac
 
 AC_SUBST([ALTIVEC_CFLAGS])
@@ -4739,6 +4754,9 @@ case $host_cpu in
     EFL_ADD_FEATURE([cpu], [altivec], [${build_cpu_altivec}])
     ;;
   arm*)
+    EFL_ADD_FEATURE([cpu], [neon], [${build_cpu_neon}])
+    ;;
+  aarch64*)
     EFL_ADD_FEATURE([cpu], [neon], [${build_cpu_neon}])
     ;;
 esac

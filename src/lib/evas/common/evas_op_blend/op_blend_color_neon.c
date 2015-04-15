@@ -3,6 +3,14 @@
 #ifdef BUILD_NEON
 static void
 _op_blend_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
+#ifdef BUILD_NEON_INTRINSICS
+    DATA32 *e, a = 256 - (c >> 24);
+    UNROLL8_PLD_WHILE(d, l, e,
+                      {
+                         *d = c + MUL_256(a, *d);
+                         d++;
+                      });
+#else
 	DATA32 *e, *tmp = 0;
 #define AP	"B_C_DP"
    asm volatile (
@@ -142,7 +150,7 @@ _op_blend_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c, DATA3
 
 	);
 #undef AP
-
+#endif
 }
 
 #define _op_blend_caa_dp_neon _op_blend_c_dp_neon

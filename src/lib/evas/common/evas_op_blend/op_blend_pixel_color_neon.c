@@ -7,7 +7,18 @@
  * reads, then two writes, a miss on read is 'just' two reads */
 static void
 _op_blend_p_c_dp_neon(DATA32 * __restrict s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 * __restrict d, int l) {
-
+#ifdef BUILD_NEON_INTRINSICS
+   DATA32 *e;
+   int alpha;
+   UNROLL8_PLD_WHILE(d, l, e,
+                     {
+                        DATA32 sc = MUL4_SYM(c, *s);
+                        alpha = 256 - (sc >> 24);
+                        *d = sc + MUL_256(alpha, *d);
+                        d++;
+                        s++;
+                     });
+#else
 #define AP	"blend_p_c_dp_"
    asm volatile (
       ".fpu neon\n\t"
@@ -92,6 +103,7 @@ _op_blend_p_c_dp_neon(DATA32 * __restrict s, DATA8 *m EINA_UNUSED, DATA32 c, DAT
       : "q0", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "memory"
    );
 #undef AP
+#endif
 }
 
 static void
