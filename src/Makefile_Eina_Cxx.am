@@ -70,6 +70,12 @@ tests_eina_cxx_eina_cxx_suite_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
 tests_eina_cxx_eina_cxx_suite_LDADD = @CHECK_LIBS@ @USE_EINA_LIBS@ @USE_EO_LIBS@
 tests_eina_cxx_eina_cxx_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 
+check-eina-cxx:
+	check_PROGRAMS=tests/eina_cxx/eina_cxx_suite
+	make check TESTS=tests/eina_cxx/eina_cxx_suite
+
+check-eina-cxx: override DISABLE_SUBTESTS = 0
+
 endif
 endif
 

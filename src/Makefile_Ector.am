@@ -142,6 +142,12 @@ tests_ector_ector_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 tests_ector_ector_suite_LDADD = @CHECK_LIBS@ @USE_ECTOR_LIBS@
 tests_ector_ector_suite_DEPENDENCIES = @USE_ECTOR_INTERNAL_LIBS@
 
+check-ector:
+	check_PROGRAMS=tests/ector/ector_suite
+	make check TESTS=tests/ector/ector_suite
+
+check-ector: override DISABLE_SUBTESTS = 0
+
 endif
 
 EXTRA_DIST += \

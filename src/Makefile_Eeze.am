@@ -170,5 +170,12 @@ tests_eeze_eeze_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @CHECK_CFLAGS@
 tests_eeze_eeze_suite_LDADD = @CHECK_LIBS@ @USE_EEZE_LIBS@
 tests_eeze_eeze_suite_DEPENDENCIES = @USE_EEZE_INTERNAL_LIBS@
+
+check-eeze:
+	check_PROGRAMS=tests/eeze/eeze_suite
+	make check TESTS=tests/eeze/eeze_suite
+
+check-eeze: override DISABLE_SUBTESTS = 0
+
 endif
 endif

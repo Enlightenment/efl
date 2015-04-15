@@ -42,5 +42,11 @@ tests_evas_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 tests_evas_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_EVAS_LIBS@
 tests_evas_cxx_cxx_compile_test_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 
+check-evas-cxx:
+	check_PROGRAMS=tests/evas_cxx/cxx_compile_test
+	make check TESTS=tests/evas_cxx/cxx_compile_test
+
+check-evas-cxx: override DISABLE_SUBTESTS = 0
+
 endif
 endif

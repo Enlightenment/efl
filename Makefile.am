@@ -432,6 +432,75 @@ endif
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) $(AM_MAKEFLAGS) lcov-report
 endif
+
+check: override DISABLE_SUBTESTS = 1
+check:
+	ifeq($(DISABLE_SUBTESTS), 1)
+	make check-recursive
+	endif
+
+check-eina:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eina
+check-eina-cxx:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eina-cxx
+check-ecore:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-ecore
+check-ecore-audio-cxx:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-ecore-audio-cxx
+check-ecore-con:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-ecore-con
+check-ecore-cxx:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-ecore-cxx
+check-ecore-cxx-compile:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-ecore-cxx-compile
+check-ector:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-ector
+check-edje:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-edje
+check-edje-cxx:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-edje-cxx
+check-eet:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eet
+check-eet-cxx:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eet-cxx
+check-eeze:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eeze
+check-efreet:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-efreet
+check-eio:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eio
+check-eldbus:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eldbus
+check-eldbus-cxx:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eldbus-cxx
+check-emile:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-emile
+check-eo:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eo
+check-eo-composite-object:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eo-composite-object
+check-eo-constructors:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eo-constructors
+check-eo-function-overrides:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eo-function-overrides
+check-eo-interface:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eo-interface
+check-eo-mixin:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eo-mixin
+check-eo-text-access:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eo-text-access
+check-eo-signals:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eo-signals
+check-eo-children:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eo-children
+check-eolian:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eolian
+check-eolian-cxx:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-eolian-cxx
+check-evas:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-evas
+check-evas-cxx:
+	$(MAKE) $(AM_MAKEFLAGS) -C src check-evas-cxx
 endif
 
 # benchmark

@@ -60,5 +60,17 @@ tests_ecore_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 tests_ecore_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_ECORE_LIBS@
 tests_ecore_cxx_cxx_compile_test_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@
 
+check-ecore-cxx:
+	check_PROGRAMS=tests/ecore_cxx/ecore_cxx_suite
+	make check TESTS=tests/ecore_cxx/ecore_cxx_suite
+
+check-ecore-cxx: override DISABLE_SUBTESTS = 0
+
+check-ecore-cxx-compile:
+	check_PROGRAMS=tests/ecore_cxx/cxx_compile_test
+	make check TESTS=tests/ecore_cxx/cxx_compile_test
+
+check-ecore-cxx-compile: override DISABLE_SUBTESTS = 0
+
 endif
 endif

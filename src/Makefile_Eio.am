@@ -85,4 +85,10 @@ tests_eio_eio_suite_LDADD = \
 tests_eio_eio_suite_DEPENDENCIES = \
 @USE_EIO_INTERNAL_LIBS@
 
+check-eio:
+	check_PROGRAMS=tests/eio/eio_suite
+	make check TESTS=tests/eio/eio_suite
+
+check-eio: override DISABLE_SUBTESTS = 0
+
 endif

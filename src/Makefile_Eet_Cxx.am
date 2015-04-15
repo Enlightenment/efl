@@ -30,5 +30,12 @@ tests_eet_cxx_eet_cxx_suite_CPPFLAGS = 	\
 @EO_CFLAGS@ @CHECK_CFLAGS@ @EET_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EET_CFLAGS@ @EINA_CFLAGS@
 tests_eet_cxx_eet_cxx_suite_LDADD = @CHECK_LIBS@ @USE_EET_LIBS@
 tests_eet_cxx_eet_cxx_suite_DEPENDENCIES = @USE_EET_INTERNAL_LIBS@
+
+check-eet-cxx:
+	check_PROGRAMS=tests/eet_cxx/eet_cxx_suite
+	make check TESTS=tests/eet_cxx/eet_cxx_suite
+
+check-eet-cxx: override DISABLE_SUBTESTS = 0
+
 endif
 endif

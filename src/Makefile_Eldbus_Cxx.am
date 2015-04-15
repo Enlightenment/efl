@@ -46,6 +46,12 @@ tests_eldbus_cxx_eldbus_cxx_suite_CPPFLAGS = \
 tests_eldbus_cxx_eldbus_cxx_suite_LDADD = @CHECK_LIBS@ @USE_ELDBUS_LIBS@
 tests_eldbus_cxx_eldbus_cxx_suite_DEPENDENCIES = @USE_ELDBUS_INTERNAL_LIBS@
 
+check-eldbus-cxx:
+	check_PROGRAMS=tests/eldbus_cxx/eldbus_cxx_suite
+	make check TESTS=tests/eldbus_cxx/eldbus_cxx_suite
+
+check-eldbus-cxx: override DISABLE_SUBTESTS = 0
+
 endif
 
 endif

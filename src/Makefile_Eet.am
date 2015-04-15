@@ -92,6 +92,12 @@ tests_eet_eet_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EET_CFLAGS@
 tests_eet_eet_suite_LDADD = @CHECK_LIBS@ @USE_EET_LIBS@
 tests_eet_eet_suite_DEPENDENCIES = @USE_EET_INTERNAL_LIBS@
+check-eet:
+	check_PROGRAMS=tests/eet/eet_suite
+	make check TESTS=tests/eet/eet_suite
+
+check-eet: override DISABLE_SUBTESTS = 0
+
 endif
 
 EXTRA_DIST += \

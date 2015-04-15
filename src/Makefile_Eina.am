@@ -297,6 +297,12 @@ tests_eina_eina_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 tests_eina_eina_suite_LDADD = @CHECK_LIBS@ @USE_EINA_LIBS@
 tests_eina_eina_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
+check-eina:
+	check_PROGRAMS=tests/eina/eina_suite
+	make check TESTS=tests/eina/eina_suite
+
+check-eina: override DISABLE_SUBTESTS = 0
+
 tests_eina_cxx_compile_test_SOURCES = tests/eina/cxx_compile_test.cxx
 tests_eina_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EINA_CFLAGS@
 tests_eina_cxx_compile_test_LDADD = @USE_EINA_LIBS@

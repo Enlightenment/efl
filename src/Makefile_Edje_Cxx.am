@@ -39,6 +39,12 @@ tests_edje_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 tests_edje_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_EDJE_LIBS@
 tests_edje_cxx_cxx_compile_test_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
 
+check-edje-cxx:
+	check_PROGRAMS=tests/edje_cxx/cxx_compile_test
+	make check TESTS=tests/edje_cxx/cxx_compile_test
+
+check-edje-cxx: override DISABLE_SUBTESTS = 0
+
 endif
 
 endif
