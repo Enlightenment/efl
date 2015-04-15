@@ -20,6 +20,7 @@ struct _Ecore_Con_Test_Case
 static const Ecore_Con_Test_Case etc[] = {
   { "Ecore_Con", ecore_con_test_ecore_con },
   { "Ecore_Con_Url", ecore_con_test_ecore_con_url },
+  { "Ecore_Con_Eet", ecore_con_test_ecore_con_eet },
   { NULL, NULL }
 };
 

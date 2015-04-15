@@ -84,6 +84,7 @@ tests_ecore_con_ecore_con_suite_SOURCES = \
 tests/ecore_con/ecore_con_suite.c \
 tests/ecore_con/ecore_con_test_ecore_con.c \
 tests/ecore_con/ecore_con_test_ecore_con_url.c \
+tests/ecore_con/ecore_con_test_ecore_con_eet.c \
 tests/ecore_con/ecore_con_suite.h
 
 tests_ecore_con_ecore_con_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
