@@ -3634,7 +3634,7 @@ EOLIAN static void
 _elm_toolbar_horizontal_set(Eo *obj, Elm_Toolbar_Data *sd, Eina_Bool horizontal)
 {
    horizontal = !!horizontal;
-   if (!horizontal == sd->vertical) return;
+   if (horizontal != sd->vertical) return;
    sd->vertical = !horizontal;
    if (sd->vertical)
      evas_object_box_align_set(sd->bx, 0.5, sd->align);
