@@ -106,7 +106,6 @@ _img_new(Evas_Object *obj)
 
    img = evas_object_image_add(evas_object_evas_get(obj));
    evas_object_image_scale_hint_set(img, EVAS_IMAGE_SCALE_HINT_STATIC);
-   evas_object_repeat_events_set(img, EINA_TRUE);
    evas_object_event_callback_add
      (img, EVAS_CALLBACK_IMAGE_PRELOADED, _on_image_preloaded, sd);
 
@@ -628,6 +627,7 @@ _elm_image_evas_object_smart_add(Eo *obj, Elm_Image_Data *priv)
 
    evas_object_color_set(priv->hit_rect, 0, 0, 0, 0);
    evas_object_show(priv->hit_rect);
+   evas_object_repeat_events_set(priv->hit_rect, EINA_TRUE);
 
    evas_object_event_callback_add
       (priv->hit_rect, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up, obj);
