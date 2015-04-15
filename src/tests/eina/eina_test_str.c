@@ -316,7 +316,8 @@ START_TEST(str_memdup)
       char *s;
       double d;
    } t1,*t2;
-   unsigned char buf[7], *temp_buf;
+   unsigned char buf[7];
+   char *temp_buf;
 
    eina_init();
 
