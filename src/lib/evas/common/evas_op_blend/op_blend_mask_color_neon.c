@@ -1,3 +1,8 @@
+#ifdef BUILD_NEON
+#ifdef BUILD_NEON_INTRINSICS
+#include <arm_neon.h>
+#endif
+#endif
 #define NEONDEBUG 0
 
 
@@ -20,28 +25,129 @@
 static void
 _op_blend_mas_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 #ifdef BUILD_NEON_INTRINSICS
-   DATA32 *e;
-   int alpha = 256 - (c >> 24);
-   UNROLL8_PLD_WHILE(d, l, e,
-                     {
-                        DATA32 a = *m;
-                        switch(a)
-                          {
-                          case 0:
-                             break;
-                          case 255:
-                             *d = c + MUL_256(alpha, *d);
-                             break;
-                          default:
-                               {
-                                  DATA32 mc = MUL_SYM(a, c);
-                                  a = 256 - (mc >> 24);
-                                  *d = mc + MUL_256(a, *d);
-                               }
-                             break;
-                          }
-                        m++;  d++;
-                     });
+   uint16x8_t d0_16x8;
+   uint16x8_t d1_16x8;
+   uint16x8_t m_16x8;
+   uint16x8_t mc0_16x8;
+   uint16x8_t mc1_16x8;
+   uint16x8_t temp0_16x8;
+   uint16x8_t temp1_16x8;
+   uint16x8_t x255_16x8;
+   uint32x2_t c_32x2;
+   uint32x2_t m_32x2;
+   uint32x4_t a_32x4;
+   uint32x4_t d_32x4;
+   uint32x4_t m_32x4;
+   uint32x4_t x1_32x4;
+   uint8x16_t a_8x16;
+   uint8x16_t d_8x16;
+   uint8x16_t m_8x16;
+   uint8x16_t mc_8x16;
+   uint8x16_t temp_8x16;
+   uint8x16_t x1_8x16;
+   uint8x8_t a0_8x8;
+   uint8x8_t a1_8x8;
+   uint8x8_t c_8x8;
+   uint8x8_t d0_8x8;
+   uint8x8_t d1_8x8;
+   uint8x8_t m0_8x8;
+   uint8x8_t m1_8x8;
+   uint8x8_t m_8x8;
+   uint8x8_t mc0_8x8;
+   uint8x8_t mc1_8x8;
+   uint8x8_t temp0_8x8;
+   uint8x8_t temp1_8x8;
+
+   x1_8x16 = vdupq_n_u8(0x1);
+   x255_16x8 = vdupq_n_u16(0xff);
+   x1_32x4 = vreinterpretq_u32_u8(x1_8x16);
+   c_32x2 = vdup_n_u32(c);
+   c_8x8 = vreinterpret_u8_u32(c_32x2);
+
+   DATA32 *start = d;
+   int size = l;
+   DATA32 *end = start + (size & ~7);
+   while (start < end) {
+      int k = *((int *)m);
+      if (k == 0)
+      {
+         m+=4;
+         start+=4;
+         continue;
+      }
+
+      m_32x2 = vld1_lane_u32((DATA32*)m, m_32x2, 0);
+
+      d_32x4 = vld1q_u32(start);
+
+      m_8x8 = vreinterpret_u8_u32(m_32x2);
+      m_16x8 = vmovl_u8(m_8x8);
+      m_8x16 = vreinterpretq_u8_u16(m_16x8);
+      m_8x8 = vget_low_u8(m_8x16);
+      m_16x8 = vmovl_u8(m_8x8);
+      m_32x4 = vreinterpretq_u32_u16(m_16x8);
+
+      m_32x4 = vmulq_u32(m_32x4, x1_32x4);
+      m_8x16 = vreinterpretq_u8_u32(m_32x4);
+      m0_8x8 = vget_low_u8(m_8x16);
+      m1_8x8 = vget_high_u8(m_8x16);
+
+      mc0_16x8 = vmull_u8(m0_8x8, c_8x8);
+      mc1_16x8 = vmull_u8(m1_8x8, c_8x8);
+
+      mc0_16x8 = vaddq_u16(mc0_16x8, x255_16x8);
+      mc1_16x8 = vaddq_u16(mc1_16x8, x255_16x8);
+
+      mc0_8x8 = vshrn_n_u16(mc0_16x8, 8);
+      mc1_8x8 = vshrn_n_u16(mc1_16x8, 8);
+
+      mc_8x16 = vcombine_u8(mc0_8x8, mc1_8x8);
+      a_8x16 = vmvnq_u8(mc_8x16);
+      a_32x4 = vreinterpretq_u32_u8(a_8x16);
+      a_32x4 = vshrq_n_u32(a_32x4, 24);
+      a_32x4 = vmulq_u32(a_32x4, x1_32x4);
+
+      a_8x16 = vreinterpretq_u8_u32(a_32x4);
+      a0_8x8 = vget_low_u8(a_8x16);
+      a1_8x8 = vget_high_u8(a_8x16);
+
+      d_8x16 = vreinterpretq_u8_u32(d_32x4);
+
+      d0_8x8 = vget_low_u8(d_8x16);
+      d1_8x8 = vget_high_u8(d_8x16);
+
+      d0_16x8 = vmovl_u8(d0_8x8);
+      d1_16x8 = vmovl_u8(d1_8x8);
+
+      temp0_16x8 = vmull_u8(a0_8x8, d0_8x8);
+      temp1_16x8 = vmull_u8(a1_8x8, d1_8x8);
+
+      temp0_16x8 = vaddq_u16(temp0_16x8, d0_16x8);
+      temp1_16x8 = vaddq_u16(temp1_16x8, d1_16x8);
+
+      temp0_8x8 = vshrn_n_u16(temp0_16x8,8);
+      temp1_8x8 = vshrn_n_u16(temp1_16x8,8);
+
+      temp_8x16 = vcombine_u8(temp0_8x8, temp1_8x8);
+
+      d_8x16 = vaddq_u8(mc_8x16, temp_8x16);
+
+      d_32x4 = vreinterpretq_u32_u8(d_8x16);
+
+      vst1q_u32(start, d_32x4);
+
+      start+=4;
+      m+=4;
+
+   }
+   end += (size & 7);
+   while (start <  end) {
+      DATA32 a = *m;
+      DATA32 mc = MUL_SYM(a, c);
+      a = 256 - (mc >> 24);
+      *start = mc + MUL_256(a, *start);
+      m++;  start++;
+   }
 #else
    DATA32 *e = d + l;
 
