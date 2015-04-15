@@ -457,7 +457,7 @@ evas_3d_add_terrain_frame(Eo *mesh, int frame, int p, vec2 tex_scale)
 }
 
 void
-evas_3d_add_torus_frame(Eo *mesh, int frame, float rratio, int p, vec2 tex_scale)
+evas_3d_add_torus_frame(Eo *mesh, int frame, float ratio, int p, vec2 tex_scale)
 {
    int vcount, icount, vccount, i, j;
    icount = p * p * 6;
@@ -470,6 +470,20 @@ evas_3d_add_torus_frame(Eo *mesh, int frame, float rratio, int p, vec2 tex_scale
 
    d = 2 * M_PI / p;
 
+   float rratio;
+
+   if ((ratio > 1.0) || (ratio < 0.0))
+     {
+        printf("Ratio of torus should be between 0.0 and 1.0. \n");
+        printf("Ratio = %f is a bad value, so 0.25 is used like default ratio.\n",
+                ratio);
+        rratio = 0.25;
+     }
+   else
+     {
+        rratio = ratio;
+     }
+
    for (j = 0; j < vccount; j++)
      {
         theta = j * d;
@@ -480,16 +494,16 @@ evas_3d_add_torus_frame(Eo *mesh, int frame, float rratio, int p, vec2 tex_scale
              fi = i * d;
              sinfi = sin(fi);
              cosfi = cos(fi);
-             vertices[i + j * vccount].x = (1 + rratio * cosfi) * costh;
-             vertices[i + j * vccount].y = (1 + rratio * cosfi) * sinth;
-             vertices[i + j * vccount].z = rratio * sinfi;
+             vertices[i + j * vccount].x = (1.0 - rratio + rratio * cosfi) * costh * 0.5;
+             vertices[i + j * vccount].y = (1.0 - rratio + rratio * cosfi) * sinth * 0.5;
+             vertices[i + j * vccount].z = rratio * sinfi * 0.5;
 
              normals[i + j * vccount].x = cosfi * costh;
              normals[i + j * vccount].y = cosfi * sinth;
              normals[i + j * vccount].z = sinfi;
 
-             tangents[i + j * vccount].x = - sinfi * costh;
-             tangents[i + j * vccount].y = - sinfi * sinth;
+             tangents[i + j * vccount].x = -sinfi * costh;
+             tangents[i + j * vccount].y = -sinfi * sinth;
              tangents[i + j * vccount].z = cosfi;
 
              _vec3_normalize(&normals[i + j * vccount]);
