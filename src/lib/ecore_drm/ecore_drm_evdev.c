@@ -98,6 +98,10 @@ _device_configure(Ecore_Drm_Evdev *edev)
         libinput_device_config_tap_set_enabled(edev->device, tap);
      }
 
+   ecore_drm_outputs_geometry_get(edev->seat->input->dev, 
+                                  &edev->mouse.minx, &edev->mouse.miny,
+                                  &edev->mouse.maxw, &edev->mouse.maxh);
+
    _device_output_set(edev);
    _device_calibration_set(edev);
 }
@@ -345,23 +349,20 @@ _device_pointer_motion(Ecore_Drm_Evdev *edev, struct libinput_event_pointer *eve
 {
    Ecore_Drm_Input *input;
    Ecore_Event_Mouse_Move *ev;
-   int x, y, w, h;
 
    if (!(input = edev->seat->input)) return;
 
    if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Move)))) return;
 
-   ecore_drm_outputs_geometry_get(input->dev, &x, &y, &w, &h);
+   if (edev->mouse.ix < edev->mouse.minx)
+     edev->mouse.dx = edev->mouse.ix = edev->mouse.minx;
+   else if (edev->mouse.ix >= (edev->mouse.minx + edev->mouse.maxw))
+     edev->mouse.dx = edev->mouse.ix = (edev->mouse.minx + edev->mouse.maxw - 1);
 
-   if (edev->mouse.ix < x)
-     edev->mouse.dx = edev->mouse.ix = x;
-   else if (edev->mouse.ix >= (x + w))
-     edev->mouse.dx = edev->mouse.ix = (x + w - 1);
-
-   if (edev->mouse.iy < y)
-     edev->mouse.dy = edev->mouse.iy = y;
-   else if (edev->mouse.iy >= (y + h))
-     edev->mouse.dy = edev->mouse.iy = (y + h - 1);
+   if (edev->mouse.iy < edev->mouse.miny)
+     edev->mouse.dy = edev->mouse.iy = edev->mouse.miny;
+   else if (edev->mouse.iy >= (edev->mouse.miny + edev->mouse.maxh))
+     edev->mouse.dy = edev->mouse.iy = (edev->mouse.miny + edev->mouse.maxh - 1);
 
    ev->window = (Ecore_Window)input->dev->window;
    ev->event_window = (Ecore_Window)input->dev->window;

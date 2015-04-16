@@ -197,6 +197,7 @@ struct _Ecore_Drm_Evdev
    struct 
      {
         int ix, iy;
+        int minx, miny, maxw, maxh;
         double dx, dy;
         unsigned int last, prev;
         double threshold;
