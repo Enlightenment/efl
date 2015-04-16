@@ -218,6 +218,8 @@ EAPI void                  elm_win_wm_rotation_preferred_rotation_set(const Evas
  *
  * @ingroup Win
  * @since 1.8
+ * @note Unless you are getting the window id for the purpose of communicating between client<->compositor over dbus,
+ * this is definitely not the function you are looking for.
  */
 EAPI Ecore_Window          elm_win_window_id_get(const Evas_Object *obj);
 
