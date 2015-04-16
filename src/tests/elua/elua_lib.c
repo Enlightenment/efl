@@ -65,6 +65,12 @@ START_TEST(elua_api)
     fail_if(elua_util_app_load(st, "non_existent_app"));
     fail_if(lua_type(lst, -1) != LUA_TSTRING);
     lua_pop(lst, 1);
+    fail_if(elua_io_loadfile(st, ELUA_CORE_DIR "/util.lua"));
+    fail_if(lua_type(lst, -1) != LUA_TFUNCTION);
+    lua_pop(lst, 1);
+    fail_if(!elua_io_loadfile(st, ELUA_CORE_DIR "/non_existent_file.lua"));
+    fail_if(lua_type(lst, -1) != LUA_TSTRING);
+    lua_pop(lst, 1);
 
     /* halfassed testing here, but not possible otherwise */
     fail_if(elua_util_error_report(st, "foo", 0));
