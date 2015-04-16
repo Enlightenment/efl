@@ -19,6 +19,12 @@ START_TEST(elua_api)
     st = elua_state_new("test");
     fail_if(!st);
 
+    elua_state_dirs_set(st, ELUA_CORE_DIR, ELUA_MODULES_DIR, ELUA_APPS_DIR);
+
+    fail_if(strcmp(elua_state_core_dir_get(st), ELUA_CORE_DIR));
+    fail_if(strcmp(elua_state_mod_dir_get(st), ELUA_MODULES_DIR));
+    fail_if(strcmp(elua_state_apps_dir_get(st), ELUA_APPS_DIR));
+
     lst = elua_state_lua_state_get(st);
     fail_if(!lst);
 

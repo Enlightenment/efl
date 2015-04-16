@@ -169,7 +169,7 @@ EAPI Eina_Stringshare *
 elua_state_apps_dir_get(const Elua_State *es)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, NULL);
-   return es->moddir;
+   return es->appsdir;
 }
 
 EAPI Eina_Stringshare *

@@ -4,11 +4,8 @@ _ELUA_GEN_DEP = @elua_bin@
 else
 ELUA_GEN = ELUA_EOLIAN_LIBRARY_PATH=$(top_builddir)/src/lib/eolian/.libs \
 	$(top_builddir)/src/bin/elua/elua${EXEEXT} \
-	-I$(abs_top_srcdir)/src/bindings/luajit \
-	-C$(abs_top_srcdir)/src/scripts/elua/core \
-	-M$(abs_top_srcdir)/src/scripts/elua/modules \
-	-A$(abs_top_srcdir)/src/scripts/elua/apps \
-	lualian
+	-I$(ELUA_BINDINGS_DIR) -C$(ELUA_CORE_DIR) -M$(ELUA_MODULES_DIR) \
+	-A$(ELUA_APPS_DIR) lualian
 _ELUA_GEN_DEP = bin/elua/elua${EXEEXT} scripts/elua/apps/lualian.lua \
 	scripts/elua/modules/lualian.lua \
 	scripts/elua/modules/getopt.lua scripts/elua/core/util.lua \
