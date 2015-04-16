@@ -604,6 +604,7 @@ _dbus_send_cc(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Me
              _colorclass_cc_update(cc, 0);
              _colorclass_cc_update(cc, 1);
              _colorclass_cc_update(cc, 2);
+             free(ecc);
              return eldbus_message_method_return_new(msg);
           }
         else
