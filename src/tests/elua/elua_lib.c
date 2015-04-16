@@ -16,6 +16,12 @@ START_TEST(elua_api)
     char buf[] = "tmpXXXXXX";
     FILE *f;
     int fd;
+    char *cargv[2];
+    char arg1[] = "test";
+    char arg2[] = "lualian";
+    int quit = 0;
+    cargv[0] = arg1;
+    cargv[1] = arg2;
 
     fail_if(!elua_init());
 
@@ -94,6 +100,18 @@ START_TEST(elua_api)
     lua_pushliteral(lst, "msg");
     fail_if(!elua_util_error_report(st, "foo", 5));
     fail_if(lua_gettop(lst) > 0);
+
+    fail_if(elua_util_script_run(st, 2, cargv, 1, &quit));
+    fail_if(quit != 1);
+
+    f = fopen(buf, "w");
+    fail_if(!f);
+    fprintf(f, "return false");
+    fclose(f);
+    cargv[1] = buf;
+    fail_if(elua_util_script_run(st, 2, cargv, 1, &quit));
+    fail_if(quit != 0);
+    fail_if(remove(buf));
 
     elua_state_free(st);
 
