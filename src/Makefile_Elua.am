@@ -102,4 +102,33 @@ eluacore_DATA = \
 
 EXTRA_DIST += $(eluacore_DATA)
 
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/elua/elua_suite
+
+tests_elua_elua_suite_SOURCES = \
+tests/elua/elua_lib.c \
+tests/elua/elua_suite.c \
+tests/elua/elua_suite.h
+
+tests_elua_elua_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/elua\" \
+-DPACKAGE_DATA_DIR=\"$(top_srcdir)/src/tests/elua\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+@CHECK_CFLAGS@ \
+@ELUA_CFLAGS@
+
+TESTS += tests/elua/elua_suite
+
+if HAVE_OSX
+if  HAVE_X86_64
+tests_elua_elua_suite_LDFLAGS = -pagezero_size 10000 -image_base 100000000
+endif
+endif
+
+tests_elua_elua_suite_LDADD = @CHECK_LIBS@ @USE_ELUA_LIBS@
+tests_elua_elua_suite_DEPENDENCIES = @USE_ELUA_INTERNAL_LIBS@
+
+endif
+
 endif
