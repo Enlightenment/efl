@@ -50,6 +50,14 @@ START_TEST(elua_api)
     fail_if(!elua_state_i18n_setup(st));
     fail_if(!elua_state_io_setup(st));
 
+    fail_if(!elua_state_require_ref_push(st));
+    fail_if(lua_type(lst, -1) != LUA_TFUNCTION);
+    lua_pop(lst, 1);
+
+    fail_if(!elua_state_appload_ref_push(st));
+    fail_if(lua_type(lst, -1) != LUA_TFUNCTION);
+    lua_pop(lst, 1);
+
     elua_state_free(st);
 
     elua_shutdown();
