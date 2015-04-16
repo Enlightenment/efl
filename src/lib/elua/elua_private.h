@@ -47,4 +47,6 @@ extern int _elua_log_dom;
 #define ERR(...) EINA_LOG_DOM_ERR(_elua_log_dom, __VA_ARGS__)
 #define CRT(...) EINA_LOG_DOM_CRITICAL(_elua_log_dom, __VA_ARGS__)
 
+int _elua_io_popen(lua_State *L);
+
 #endif

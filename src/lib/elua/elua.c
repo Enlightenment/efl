@@ -292,11 +292,14 @@ elua_state_i18n_setup(const Elua_State *es)
    return EINA_TRUE;
 }
 
+int _elua_module_init(lua_State *L);
+int _elua_module_system_init(lua_State *L);
+
 const luaL_reg _elua_cutillib[] =
 {
-   { "init_module", elua_module_init },
-   { "popenv"     , elua_io_popen    },
-   { NULL         , NULL             }
+   { "init_module", _elua_module_init },
+   { "popenv"     , _elua_io_popen    },
+   { NULL         , NULL              }
 };
 
 EAPI Eina_Bool
@@ -310,15 +313,15 @@ elua_state_modules_setup(const Elua_State *es)
    snprintf(buf, sizeof(buf), "%s/module.lua", es->coredir);
    if (elua_util_error_report(es, es->progname, elua_io_loadfile(es, buf)))
      return EINA_FALSE;
-   lua_pushcfunction(es->luastate, elua_module_system_init);
+   lua_pushcfunction(es->luastate, _elua_module_system_init);
    lua_createtable(es->luastate, 0, 0);
    luaL_register(es->luastate, NULL, _elua_cutillib);
    lua_call(es->luastate, 2, 0);
    return EINA_TRUE;
 }
 
-EAPI int
-elua_module_init(lua_State *L)
+int
+_elua_module_init(lua_State *L)
 {
    Elua_State *es = elua_state_from_lua_state_get(L);
    if (!lua_isnoneornil(L, 1))
@@ -335,8 +338,8 @@ elua_module_init(lua_State *L)
    return 0;
 }
 
-EAPI int
-elua_module_system_init(lua_State *L)
+int
+_elua_module_system_init(lua_State *L)
 {
    Elua_State       *es       = elua_state_from_lua_state_get(L);
    const char       *corepath = es->coredir;
