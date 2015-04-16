@@ -11,10 +11,18 @@
 
 START_TEST(elua_api)
 {
+    Elua_State *st;
+    lua_State *lst;
+
     fail_if(!elua_init());
 
-    Elua_State *st = elua_state_new("test");
+    st = elua_state_new("test");
     fail_if(!st);
+
+    lst = elua_state_lua_state_get(st);
+    fail_if(!lst);
+
+    fail_if(elua_state_from_lua_state_get(lst) != st);
 
     elua_state_free(st);
 
