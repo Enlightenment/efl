@@ -9,11 +9,6 @@
 #include "Elua.h"
 #include "elua_suite.h"
 
-/* Untestable APIs:
- *
- * void elua_state_include_path_add(Elua_State *, const char *);
- */
-
 START_TEST(elua_api)
 {
     Elua_State *st;
@@ -39,6 +34,9 @@ START_TEST(elua_api)
     fail_if(strcmp(elua_state_mod_dir_get(st), ELUA_MODULES_DIR));
     fail_if(strcmp(elua_state_apps_dir_get(st), ELUA_APPS_DIR));
 
+    /* needed for later setup, but untestable alone */
+    elua_state_include_path_add(st, ELUA_BINDINGS_DIR);
+
     lst = elua_state_lua_state_get(st);
     fail_if(!lst);
 
@@ -57,6 +55,10 @@ START_TEST(elua_api)
     fail_if(!elua_state_appload_ref_push(st));
     fail_if(lua_type(lst, -1) != LUA_TFUNCTION);
     lua_pop(lst, 1);
+
+    fail_if(elua_util_require(st, "util"));
+    fail_if(elua_util_string_run(st, "return 1337", "foo"));
+    fail_if(!elua_util_string_run(st, "foo bar", "foo")); /* invalid code */
 
     elua_state_free(st);
 
