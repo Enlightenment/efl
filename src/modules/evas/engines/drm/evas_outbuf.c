@@ -185,6 +185,8 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
         return MODE_DOUBLE;
       case 2:
         return MODE_TRIPLE;
+      case 3:
+        return MODE_QUADRUPLE;
       default:
         return MODE_FULL;
      }
