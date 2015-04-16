@@ -226,6 +226,12 @@ ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb
           {
              ERR("Cannot flip crtc %u for connector %u: %m",
                  output->crtc_id, output->conn_id);
+             continue;
           }
+
+        fb->pending_flip = EINA_TRUE;
      }
+
+   while (fb->pending_flip)
+     drmHandleEvent(dev->drm.fd, &dev->drm_ctx);
 }

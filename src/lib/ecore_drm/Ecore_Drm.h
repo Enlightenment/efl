@@ -66,6 +66,7 @@ typedef struct _Ecore_Drm_Fb
    int fd;
    void *mmap;
    int w, h;
+   Eina_Bool pending_flip : 1;
 } Ecore_Drm_Fb;
 
 struct _Ecore_Drm_Device
