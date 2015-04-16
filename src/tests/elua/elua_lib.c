@@ -13,6 +13,9 @@ START_TEST(elua_api)
 {
     Elua_State *st;
     lua_State *lst;
+    char buf[] = "tmpXXXXXX";
+    FILE *f;
+    int fd;
 
     fail_if(!elua_init());
 
@@ -74,6 +77,17 @@ START_TEST(elua_api)
     fail_if(!elua_io_loadfile(st, ELUA_CORE_DIR "/non_existent_file.lua"));
     fail_if(lua_type(lst, -1) != LUA_TSTRING);
     lua_pop(lst, 1);
+
+    fd = mkstemp(buf);
+    fail_if(fd < 0);
+    f = fdopen(fd, "w");
+    fail_if(!f);
+    fprintf(f, "return 5\n");
+    fclose(f);
+    fail_if(elua_util_file_run(st, buf));
+    fail_if(lua_tointeger(lst, -1) != 5);
+    lua_pop(lst, 1);
+    fail_if(remove(buf));
 
     /* halfassed testing here, but not possible otherwise */
     fail_if(elua_util_error_report(st, "foo", 0));
