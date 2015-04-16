@@ -316,7 +316,7 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
 
    dev->watch =
      eeze_udev_watch_add(EEZE_UDEV_TYPE_DRM, events,
-                         _ecore_drm_device_cb_output_event, NULL);
+                         _ecore_drm_device_cb_output_event, dev);
 
    dev->drm.hdlr = 
      ecore_main_fd_handler_add(dev->drm.fd, ECORE_FD_READ, 
