@@ -60,7 +60,17 @@ START_TEST(elua_api)
     fail_if(elua_util_string_run(st, "return 1337", "foo"));
     fail_if(!elua_util_string_run(st, "foo bar", "foo")); /* invalid code */
     fail_if(!elua_util_app_load(st, "lualian"));
+    fail_if(lua_type(lst, -1) != LUA_TFUNCTION);
+    lua_pop(lst, 1);
     fail_if(elua_util_app_load(st, "non_existent_app"));
+    fail_if(lua_type(lst, -1) != LUA_TSTRING);
+    lua_pop(lst, 1);
+
+    /* halfassed testing here, but not possible otherwise */
+    fail_if(elua_util_error_report(st, "foo", 0));
+    lua_pushliteral(lst, "msg");
+    fail_if(!elua_util_error_report(st, "foo", 5));
+    fail_if(lua_gettop(lst) > 0);
 
     elua_state_free(st);
 
