@@ -59,6 +59,8 @@ START_TEST(elua_api)
     fail_if(elua_util_require(st, "util"));
     fail_if(elua_util_string_run(st, "return 1337", "foo"));
     fail_if(!elua_util_string_run(st, "foo bar", "foo")); /* invalid code */
+    fail_if(!elua_util_app_load(st, "lualian"));
+    fail_if(elua_util_app_load(st, "non_existent_app"));
 
     elua_state_free(st);
 
