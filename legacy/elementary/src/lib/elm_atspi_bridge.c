@@ -188,6 +188,7 @@ static const Eldbus_Signal _event_obj_signals[] = {
    [ATSPI_OBJECT_EVENT_TEXT_ATTRIBUTES_CHANGED] = {"TextAttributesChanged", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
    [ATSPI_OBJECT_EVENT_TEXT_CARET_MOVED] = {"TextCaretMoved", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
    [ATSPI_OBJECT_EVENT_ATTRIBUTES_CHANGED] = {"AttributesChanged", ELDBUS_ARGS({"siiv(so)", NULL}), 0},
+   {NULL, ELDBUS_ARGS({NULL, NULL}), 0}
 };
 
 static const Eldbus_Signal _window_obj_signals[] = {
