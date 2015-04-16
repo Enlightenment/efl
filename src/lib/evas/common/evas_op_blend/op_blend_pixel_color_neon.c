@@ -1,3 +1,8 @@
+#ifdef BUILD_NEON
+#ifdef BUILD_NEON_INTRINSICS
+#include <arm_neon.h>
+#endif
+#endif
 /* blend pixel x color --> dst */
 #ifdef BUILD_NEON
 
@@ -8,16 +13,107 @@
 static void
 _op_blend_p_c_dp_neon(DATA32 * __restrict s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 * __restrict d, int l) {
 #ifdef BUILD_NEON_INTRINSICS
-   DATA32 *e;
-   int alpha;
-   UNROLL8_PLD_WHILE(d, l, e,
-                     {
-                        DATA32 sc = MUL4_SYM(c, *s);
-                        alpha = 256 - (sc >> 24);
-                        *d = sc + MUL_256(alpha, *d);
-                        d++;
-                        s++;
-                     });
+   uint16x8_t ad0_16x8;
+   uint16x8_t ad1_16x8;
+   uint16x8_t sc0_16x8;
+   uint16x8_t sc1_16x8;
+   uint16x8_t x255_16x8;
+   uint32x2_t c_32x2;
+   uint32x4_t ad_32x4;
+   uint32x4_t alpha_32x4;
+   uint32x4_t cond_32x4;
+   uint32x4_t d_32x4;
+   uint32x4_t s_32x4;
+   uint32x4_t sc_32x4;
+   uint32x4_t x0_32x4;
+   uint32x4_t x1_32x4;
+   uint8x16_t ad_8x16;
+   uint8x16_t alpha_8x16;
+   uint8x16_t d_8x16;
+   uint8x16_t s_8x16;
+   uint8x16_t sc_8x16;
+   uint8x16_t x0_8x16;
+   uint8x16_t x1_8x16;
+   uint8x8_t ad0_8x8;
+   uint8x8_t ad1_8x8;
+   uint8x8_t alpha0_8x8;
+   uint8x8_t alpha1_8x8;
+   uint8x8_t c_8x8;
+   uint8x8_t d0_8x8;
+   uint8x8_t d1_8x8;
+   uint8x8_t s0_8x8;
+   uint8x8_t s1_8x8;
+   uint8x8_t sc0_8x8;
+   uint8x8_t sc1_8x8;
+
+   c_32x2 = vdup_n_u32(c);
+   c_8x8 = vreinterpret_u8_u32(c_32x2);
+   x255_16x8 = vdupq_n_u16(0xff);
+   x0_8x16 = vdupq_n_u8(0x0);
+   x0_32x4 = vreinterpretq_u32_u8(x0_8x16);
+   x1_8x16 = vdupq_n_u8(0x1);
+   x1_32x4 = vreinterpretq_u32_u8(x1_8x16);
+   DATA32 *start = d;
+   int size = l;
+   DATA32 *end = start + (size & ~3);
+   while (start < end)
+   {
+
+      s_32x4 = vld1q_u32(s);
+      s_8x16 = vreinterpretq_u8_u32(s_32x4);
+
+      d_32x4 = vld1q_u32(start);
+      d_8x16 = vreinterpretq_u8_u32(d_32x4);
+      d0_8x8 = vget_low_u8(d_8x16);
+      d1_8x8 = vget_high_u8(d_8x16);
+
+      s0_8x8 = vget_low_u8(s_8x16);
+      s1_8x8 = vget_high_u8(s_8x16);
+
+      sc0_16x8 = vmull_u8(s0_8x8, c_8x8);
+      sc1_16x8 = vmull_u8(s1_8x8, c_8x8);
+      sc0_16x8 = vaddq_u16(sc0_16x8, x255_16x8);
+      sc1_16x8 = vaddq_u16(sc1_16x8, x255_16x8);
+      sc0_8x8 = vshrn_n_u16(sc0_16x8, 8);
+      sc1_8x8 = vshrn_n_u16(sc1_16x8, 8);
+      sc_8x16 = vcombine_u8(sc0_8x8, sc1_8x8);
+
+      alpha_32x4 = vreinterpretq_u32_u8(sc_8x16);
+      alpha_32x4 = vshrq_n_u32(alpha_32x4, 24);
+      alpha_32x4 = vmulq_u32(x1_32x4, alpha_32x4);
+      alpha_8x16 = vreinterpretq_u8_u32(alpha_32x4);
+      alpha_8x16 = vsubq_u8(x0_8x16, alpha_8x16);
+      alpha0_8x8 = vget_low_u8(alpha_8x16);
+      alpha1_8x8 = vget_high_u8(alpha_8x16);
+
+      ad0_16x8 = vmull_u8(alpha0_8x8, d0_8x8);
+      ad1_16x8 = vmull_u8(alpha1_8x8, d1_8x8);
+      ad0_8x8 = vshrn_n_u16(ad0_16x8,8);
+      ad1_8x8 = vshrn_n_u16(ad1_16x8,8);
+      ad_8x16 = vcombine_u8(ad0_8x8, ad1_8x8);
+      ad_32x4 = vreinterpretq_u32_u8(ad_8x16);
+
+      alpha_32x4 = vreinterpretq_u32_u8(alpha_8x16);
+      cond_32x4 = vceqq_u32(alpha_32x4, x0_32x4);
+      ad_32x4 = vbslq_u32(cond_32x4, d_32x4 , ad_32x4);
+
+      sc_32x4 = vreinterpretq_u32_u8(sc_8x16);
+      d_32x4 = vaddq_u32(sc_32x4, ad_32x4);
+
+      vst1q_u32(start, d_32x4);
+
+      s+=4;
+      start+=4;
+   }
+   end += (size & 3);
+   while (start <  end)
+   {
+      DATA32 sc = MUL4_SYM(c, *s);
+      DATA32 alpha = 256 - (sc >> 24);
+      *start = sc + MUL_256(alpha, *start);
+      start++;
+      s++;
+   }
 #else
 #define AP	"blend_p_c_dp_"
    asm volatile (
