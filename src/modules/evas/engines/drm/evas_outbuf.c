@@ -12,10 +12,14 @@ static void
 _evas_outbuf_cb_pageflip(void *data)
 {
    Outbuf *ob;
+   Ecore_Drm_Fb *fb;
 
    if (!(ob = data)) return;
 
    DBG("Outbuf Pagelip Done");
+
+   if ((fb = ob->priv.buffer[ob->priv.curr]))
+     fb->pending_flip = EINA_FALSE;
 
    ob->priv.last = ob->priv.curr;
    ob->priv.curr = (ob->priv.curr + 1) % ob->priv.num;
