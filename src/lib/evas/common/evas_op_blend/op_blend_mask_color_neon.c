@@ -279,25 +279,123 @@ _op_blend_mas_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, in
 static void
 _op_blend_mas_can_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 #ifdef BUILD_NEON_INTRINSICS
-   DATA32 *e;
-   int alpha;
-   UNROLL8_PLD_WHILE(d, l, e,
-                     {
-                        alpha = *m;
-                        switch(alpha)
-                          {
-                          case 0:
-                             break;
-                          case 255:
-                             *d = c;
-                             break;
-                          default:
-                             alpha++;
-                             *d = INTERP_256(alpha, c, *d);
-                             break;
-                          }
-                        m++;  d++;
-                     });
+   int16x8_t c_i16x8;
+   int16x8_t d0_i16x8;
+   int16x8_t d1_i16x8;
+   int16x8_t dc0_i16x8;
+   int16x8_t dc1_i16x8;
+   int16x8_t m0_i16x8;
+   int16x8_t m1_i16x8;
+   int8x16_t dc_i8x16;
+   int8x8_t dc0_i8x8;
+   int8x8_t dc1_i8x8;
+   uint16x8_t c_16x8;
+   uint16x8_t d0_16x8;
+   uint16x8_t d1_16x8;
+   uint16x8_t m0_16x8;
+   uint16x8_t m1_16x8;
+   uint16x8_t m_16x8;
+   uint32x2_t c_32x2;
+   uint32x2_t m_32x2;
+   uint32x4_t d_32x4;
+   uint32x4_t dc_32x4;
+   uint32x4_t m_32x4;
+   uint32x4_t x1_32x4;
+   uint8x16_t d_8x16;
+   uint8x16_t m_8x16;
+   uint8x16_t x1_8x16;
+   uint8x8_t c_8x8;
+   uint8x8_t d0_8x8;
+   uint8x8_t d1_8x8;
+   uint8x8_t m0_8x8;
+   uint8x8_t m1_8x8;
+   uint8x8_t m_8x8;
+   uint8x8_t x1_8x8;
+   uint32x4_t x0_32x4;
+   uint32x4_t cond_32x4;
+
+   c_32x2 = vdup_n_u32(c);
+   c_8x8 = vreinterpret_u8_u32(c_32x2);
+   c_16x8 = vmovl_u8(c_8x8);
+   c_i16x8 = vreinterpretq_s16_u16(c_16x8);
+   x1_8x16 = vdupq_n_u8(0x1);
+   x1_8x8 = vget_low_u8(x1_8x16);
+   x1_32x4 = vreinterpretq_u32_u8(x1_8x16);
+   x0_32x4 = vdupq_n_u32(0x0);
+
+   DATA32 *start = d;
+   int size = l;
+   DATA32 *end = start + (size & ~3);
+   while (start < end) {
+      int k = *((int *)m);
+      if (k == 0)
+      {
+         m+=4;
+         start+=4;
+         continue;
+      }
+
+      m_32x2 = vld1_lane_u32((DATA32*)m, m_32x2, 0);
+      d_32x4 = vld1q_u32(start);
+      d_8x16 = vreinterpretq_u8_u32(d_32x4);
+      d0_8x8 = vget_low_u8(d_8x16);
+      d1_8x8 = vget_high_u8(d_8x16);
+
+      m_8x8 = vreinterpret_u8_u32(m_32x2);
+      m_16x8 = vmovl_u8(m_8x8);
+      m_8x16 = vreinterpretq_u8_u16(m_16x8);
+      m_8x8 = vget_low_u8(m_8x16);
+      m_16x8 = vmovl_u8(m_8x8);
+      m_32x4 = vreinterpretq_u32_u16(m_16x8);
+
+      m_32x4 = vmulq_u32(m_32x4, x1_32x4);
+      m_8x16 = vreinterpretq_u8_u32(m_32x4);
+      m0_8x8 = vget_low_u8(m_8x16);
+      m1_8x8 = vget_high_u8(m_8x16);
+      m0_16x8 = vaddl_u8(m0_8x8, x1_8x8);
+      m1_16x8 = vaddl_u8(m1_8x8, x1_8x8);
+
+      m0_i16x8 = vreinterpretq_s16_u16(m0_16x8);
+      m1_i16x8 = vreinterpretq_s16_u16(m1_16x8);
+
+      d0_16x8 = vmovl_u8(d0_8x8);
+      d1_16x8 = vmovl_u8(d1_8x8);
+
+      d0_i16x8 = vreinterpretq_s16_u16(d0_16x8);
+      d1_i16x8 = vreinterpretq_s16_u16(d1_16x8);
+
+      dc0_i16x8 = vsubq_s16(c_i16x8, d0_i16x8);
+      dc1_i16x8 = vsubq_s16(c_i16x8, d1_i16x8);
+
+      dc0_i16x8 = vmulq_s16(dc0_i16x8, m0_i16x8);
+      dc1_i16x8 = vmulq_s16(dc1_i16x8, m1_i16x8);
+
+      dc0_i16x8 = vshrq_n_s16(dc0_i16x8, 8);
+      dc1_i16x8 = vshrq_n_s16(dc1_i16x8, 8);
+
+      dc0_i16x8 = vaddq_s16(dc0_i16x8, d0_i16x8);
+      dc1_i16x8 = vaddq_s16(dc1_i16x8, d1_i16x8);
+
+      dc0_i8x8 = vmovn_s16(dc0_i16x8);
+      dc1_i8x8 = vmovn_s16(dc1_i16x8);
+
+      dc_i8x16 = vcombine_s8(dc0_i8x8, dc1_i8x8);
+      dc_32x4 = vreinterpretq_u32_s8(dc_i8x16);
+
+      cond_32x4 = vceqq_u32(m_32x4, x0_32x4);
+      dc_32x4 = vbslq_u32(cond_32x4, d_32x4, dc_32x4);
+
+      vst1q_u32(start, dc_32x4);
+      m+=4;
+      start+=4;
+   }
+   end += (size & 3);
+   while (start <  end) {
+      DATA32 alpha = *m;
+      alpha++;
+      *start = INTERP_256(alpha, c, *start);
+      m++;  start++;
+   }
 #else
    DATA32 *e,*tmp;
    int alpha;
