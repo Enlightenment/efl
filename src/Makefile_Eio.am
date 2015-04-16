@@ -74,8 +74,8 @@ tests_eio_eio_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 
 tests_eio_eio_suite_LDADD = \
 @CHECK_LIBS@ \
+@USE_EIO_LIBS@ \
 @USE_ECORE_FILE_LIBS@ \
-@USE_EIO_LIBS@
 @USE_EFL_LIBS@
 
 tests_eio_eio_suite_DEPENDENCIES = \
