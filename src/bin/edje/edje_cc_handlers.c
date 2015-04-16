@@ -6377,6 +6377,9 @@ ob_collections_group_parts_part_description(void)
    ed->minmul.have = 1;
    ed->minmul.w = FROM_INT(1);
    ed->minmul.h = FROM_INT(1);
+   ed->align_3d.x = FROM_DOUBLE(0.5);
+   ed->align_3d.y = FROM_DOUBLE(0.5);
+   ed->align_3d.z = FROM_DOUBLE(0.5);
 }
 
 static void
@@ -6870,7 +6873,7 @@ st_collections_group_parts_part_description_limit(void)
     @property
         align
     @parameters
-        [X axis] [Y axis]
+        [X axis] [Y axis] ([Z axis])
     @effect
         When the displayed object's size is smaller (or bigger) than
         its container, this property moves it relatively along both
@@ -6878,16 +6881,24 @@ st_collections_group_parts_part_description_limit(void)
         the object touching container's respective ones, while @c
         "1.0" stands for right/bottom edges of the object (on
         horizonal/vertical axis, respectively). The default value is
-        @c "0.5 0.5".
+        @c "0.5 0.5". There is one more parametr for Z axis in case
+        of MESH_NODE.
     @endproperty
 */
 static void
 st_collections_group_parts_part_description_align(void)
 {
-   check_arg_count(2);
-
-   current_desc->align.x = FROM_DOUBLE(parse_float_range(0, 0.0, 1.0));
-   current_desc->align.y = FROM_DOUBLE(parse_float_range(1, 0.0, 1.0));
+   if (get_arg_count() == 2)
+     {
+        current_desc->align.x = FROM_DOUBLE(parse_float_range(0, 0.0, 1.0));
+        current_desc->align.y = FROM_DOUBLE(parse_float_range(1, 0.0, 1.0));
+     }
+   else if (get_arg_count() == 3)
+     {
+        current_desc->align_3d.x = FROM_DOUBLE(parse_float_range(0, 0.0, 1.0));
+        current_desc->align_3d.y = FROM_DOUBLE(parse_float_range(1, 0.0, 1.0));
+        current_desc->align_3d.z = FROM_DOUBLE(parse_float_range(2, 0.0, 1.0));
+     }
 }
 
 /**
