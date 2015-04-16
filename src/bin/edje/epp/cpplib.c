@@ -500,7 +500,7 @@ unsigned char       is_hor_space[256];
 /* table to tell if c is horizontal or vertical space.  */
 static unsigned char is_space[256];
 
-static int           anotate = 0;
+static int           annotate = 0;
 
 /* Initialize syntactic classifications of characters.  */
 
@@ -6612,9 +6612,9 @@ cpp_handle_options(cpp_reader * pfile, int argc, char **argv)
                                opts->watchfile = argv[i];
                             }
                        }
-                     else if (!strcmp(argv[i], "-anotate"))
+                     else if (!strcmp(argv[i], "-annotate"))
                        {
-                          anotate = 1;
+                          annotate = 1;
                        }
 		     break;
                   }
@@ -7494,7 +7494,7 @@ using_file(const char *filename, const char type)
    if (!options.watchfile) return;
    f = fopen(options.watchfile, "a");
    if (!f) return;
-   if (anotate)
+   if (annotate)
      {
         fprintf(f, "%c: %s\n", type, filename);
      }

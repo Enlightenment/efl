@@ -979,7 +979,7 @@ compile(void)
                         inc, def, clean_file,
                         EINA_VERSION_MAJOR, EINA_VERSION_MINOR);
              else if (annotate)
-               snprintf(buf, sizeof(buf), "%s -anotate -a %s %s -I%s %s -o %s"
+               snprintf(buf, sizeof(buf), "%s -annotate -a %s %s -I%s %s -o %s"
                         " -DEFL_VERSION_MAJOR=%d -DEFL_VERSION_MINOR=%d",
                         buf2, watchfile ? watchfile : "/dev/null", file_in,
                         inc, def, clean_file,
