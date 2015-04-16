@@ -1124,7 +1124,7 @@ _evas_3d_node_member_add(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Node *member)
         return;
      }
    Evas_3D_Node_Data *pdmember = eo_data_scope_get(member, MY_CLASS);
-   if (pdmember->parent == obj)
+   if (!pdmember || pdmember->parent == obj)
      return;
 
    if (pdmember->parent)
@@ -1157,7 +1157,7 @@ EOLIAN static void
 _evas_3d_node_member_del(Eo *obj, Evas_3D_Node_Data *pd, Evas_3D_Node *member)
 {
    Evas_3D_Node_Data *pdmember = eo_data_scope_get(member, MY_CLASS);
-   if (pdmember->parent != obj)
+   if (!pdmember || pdmember->parent != obj)
      {
         ERR("Failed to delete a member node (not a member of the given node)");
         return;
