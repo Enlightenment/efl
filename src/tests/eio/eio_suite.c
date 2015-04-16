@@ -21,6 +21,7 @@ static const Eio_Test_Case etc[] = {
   {"Eio_Monitor", eio_test_monitor},
   {"Eio Model", eio_model_test_file},
   {"Eio Model Monitor", eio_model_test_monitor_add},
+  {"Eio File", eio_test_file},
   {NULL, NULL}
 };
 
