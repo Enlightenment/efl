@@ -9,6 +9,11 @@
 #include "Elua.h"
 #include "elua_suite.h"
 
+/* Untestable APIs:
+ *
+ * void elua_state_include_path_add(Elua_State *, const char *);
+ */
+
 START_TEST(elua_api)
 {
     Elua_State *st;
@@ -40,6 +45,10 @@ START_TEST(elua_api)
     fail_if(elua_state_from_lua_state_get(lst) != st);
 
     fail_if(strcmp(elua_state_prog_name_get(st), "test"));
+
+    fail_if(!elua_state_modules_setup(st));
+    fail_if(!elua_state_i18n_setup(st));
+    fail_if(!elua_state_io_setup(st));
 
     elua_state_free(st);
 
