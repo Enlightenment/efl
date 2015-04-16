@@ -345,30 +345,23 @@ _device_pointer_motion(Ecore_Drm_Evdev *edev, struct libinput_event_pointer *eve
 {
    Ecore_Drm_Input *input;
    Ecore_Event_Mouse_Move *ev;
-   Ecore_Drm_Output *output;
+   int x, y, w, h;
 
    if (!(input = edev->seat->input)) return;
 
    if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Move)))) return;
 
-   if ((output = edev->output))
-     {
-        if (edev->mouse.ix < output->x)
-          edev->mouse.dx = edev->mouse.ix = output->x;
-        else if (edev->mouse.ix >= (output->x + output->current_mode->width))
-          {
-             edev->mouse.dx =
-               edev->mouse.ix = (output->x + output->current_mode->width - 1);
-          }
+   ecore_drm_outputs_geometry_get(input->dev, &x, &y, &w, &h);
 
-        if (edev->mouse.iy < output->y)
-          edev->mouse.dy = edev->mouse.iy = output->y;
-        else if (edev->mouse.iy >= (output->y + output->current_mode->height))
-          {
-             edev->mouse.dy = 
-               edev->mouse.iy = (output->y + output->current_mode->height - 1);
-          }
-     }
+   if (edev->mouse.ix < x)
+     edev->mouse.dx = edev->mouse.ix = x;
+   else if (edev->mouse.ix >= (x + w))
+     edev->mouse.dx = edev->mouse.ix = (x + w - 1);
+
+   if (edev->mouse.iy < y)
+     edev->mouse.dy = edev->mouse.iy = y;
+   else if (edev->mouse.iy >= (y + h))
+     edev->mouse.dy = edev->mouse.iy = (y + h - 1);
 
    ev->window = (Ecore_Window)input->dev->window;
    ev->event_window = (Ecore_Window)input->dev->window;
