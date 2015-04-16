@@ -5098,13 +5098,13 @@ _elm_win_window_id_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
          (!strcmp(engine_name, ELM_WAYLAND_EGL)))))
      {
 #if HAVE_ELEMENTARY_WAYLAND
-        if (sd->wl.win) return (Ecore_Window)ecore_wl_window_id_get(sd->wl.win);
+        if (sd->wl.win) return (Ecore_Window)ecore_wl_window_surface_id_get(sd->wl.win);
         if (sd->parent)
           {
              Ecore_Wl_Window *parent;
 
              parent = elm_win_wl_window_get(sd->parent);
-             if (parent) return (Ecore_Window)ecore_wl_window_id_get(parent);
+             if (parent) return (Ecore_Window)ecore_wl_window_surface_id_get(parent);
              return 0;
           }
 #endif
