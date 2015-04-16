@@ -289,7 +289,7 @@ extern New_Nested_Handler     nested_handlers[];
 extern New_Nested_Handler     nested_handlers_short[];
 extern int                    compress_mode;
 extern int                    threads;
-extern int		      anotate;
+extern int                    annotate;
 extern Eina_Bool current_group_inherit;
 
 extern int had_quote;

@@ -37,7 +37,7 @@ int        min_quality = 0;
 int        max_quality = 100;
 int        compress_mode = EET_COMPRESSION_HI;
 int        threads = 0;
-int        anotate = 0;
+int        annotate = 0;
 int        no_etc1 = 0;
 int        no_etc2 = 0;
 
@@ -91,8 +91,8 @@ main_help(void)
       "Where OPTIONS is one or more of:\n"
       "\n"
       "-w files.txt             Dump all sources files path into files.txt\n"
-      "-anotate                 Anotate the dumped files.\n"
-      "-deps files.txt          Dump gnu style include dependencies path into files.txt (overrides -w/-anotate)\n"
+      "-annotate                Annotate the dumped files.\n"
+      "-deps files.txt          Dump gnu style include dependencies path into files.txt (overrides -w/-annotate)\n"
       "-id image/directory      Add a directory to look in for relative path images\n"
       "-fd font/directory       Add a directory to look in for relative path fonts\n"
       "-sd sound/directory      Add a directory to look in for relative path sounds samples\n"
@@ -285,9 +285,9 @@ main(int argc, char **argv)
              watchfile = argv[i];
              unlink(watchfile);
 	  }
-	else if (!strcmp(argv[i], "-anotate"))
+	else if (!strcmp(argv[i], "-annotate"))
 	  {
-             anotate = 1;
+             annotate = 1;
           }
 	else if ((!strcmp(argv[i], "-deps")) && (i < (argc - 1)))
 	  {
@@ -364,7 +364,7 @@ main(int argc, char **argv)
      }
 
    using_file(file_in, 'E');
-   if (anotate) using_file(file_out, 'O');
+   if (annotate) using_file(file_out, 'O');
 
    if (!edje_init())
      exit(-1);

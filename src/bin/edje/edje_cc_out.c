@@ -3593,7 +3593,7 @@ using_file(const char *filename, const char type)
      {
         f = fopen(watchfile, "ab");
         if (!f) return;
-        if (anotate)
+        if (annotate)
           {
              fprintf(f, "%c: %s\n", type, filename);
           }
