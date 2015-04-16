@@ -9,13 +9,21 @@
 #include "Elua.h"
 #include "elua_suite.h"
 
-/*START_TEST(test_name)
+START_TEST(elua_api)
 {
+    fail_if(!elua_init());
+
+    Elua_State *st = elua_state_new("test");
+    fail_if(!st);
+
+    elua_state_free(st);
+
+    elua_shutdown();
 }
-END_TEST*/
+END_TEST
 
 void elua_lib_test(TCase *tc)
 {
-   //tcase_add_test(tc, test_name);
+   tcase_add_test(tc, elua_api);
 }
 
