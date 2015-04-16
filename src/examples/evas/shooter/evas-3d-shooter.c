@@ -1164,8 +1164,9 @@ _mesh_setup_column(Scene_Data *data, int index)
    NORMAL_SET(column, column[index], red_brick_n_path)
 
    eo_do(data->mesh_node_column[index],
-         evas_3d_node_scale_set(2.2, 19.0, 2.2),
-         evas_3d_node_position_set(10 , 0, -45 + 21.25 * index));
+         evas_3d_node_scale_set(2.2, 2.2, 19.0),
+         evas_3d_node_position_set(10 , 0, -45 + 21.25 * index),
+         evas_3d_node_orientation_angle_axis_set(90, 1.0, 0.0, 0.0));
 }
 
 void
