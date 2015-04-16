@@ -24,6 +24,8 @@ START_TEST(elua_api)
 
     fail_if(elua_state_from_lua_state_get(lst) != st);
 
+    fail_if(strcmp(elua_state_prog_name_get(st), "test"));
+
     elua_state_free(st);
 
     elua_shutdown();
