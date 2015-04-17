@@ -1131,15 +1131,70 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             return: Evas_Object *;
          }
       }
-      @property type {
-         get {
-            /*@
-            Get the type of a window.
+      @property name {
+         /*@
+         The window name.
 
-            @return The type of a window object. If the object is not window object, return #ELM_WIN_UNKNOWN.
+         The meaning of name depends on the underlying windowing system.
+
+         The window name is a constructing property that need to be set at
+         creation within @ref eo_add.
+
+         Example:
+         @code
+         win = eo_add(ELM_WIN_CLASS, NULL, elm_obj_win_name_set(ELM_WIN_BASIC));
+         @endcode
+
+         @note Once set, it can NOT be modified afterward.
+
+         @ingroup Win */
+
+         set {
+            /*@
+            Can only be used at creation time, within @ref eo_add.
 
             @ingroup Win */
-            return: Elm_Win_Type(-1);
+         }
+         values {
+            const(char)* name @nullable;
+         }
+      }
+      @property type {
+         /*@
+         The type of the window.
+
+         It is a hint of how the Window Manager should handle it.
+
+         The window type is a constructing property that need to be set at
+         creation within @ref eo_add.
+
+         Example:
+         @code
+         win = eo_add(ELM_WIN_CLASS, NULL, elm_obj_win_type_set(ELM_WIN_BASIC));
+         @endcode
+
+         @note Once set, it can NOT be modified afterward.
+
+         @see Elm_Win_Type
+
+         @ingroup Win */
+
+         set {
+            /*@
+            Can only be used at creation time, within @ref eo_add.
+
+            @see Elm_Win_Type
+
+            @ingroup Win */
+         }
+         get {
+            /*@
+            If the object is not window object, return #ELM_WIN_UNKNOWN.
+
+            @ingroup Win */
+         }
+         values {
+            Elm_Win_Type type(-1);
          }
       }
       @property noblank {
@@ -1192,14 +1247,6 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
            values {
                 Ecore_Evas *oee;
            }
-      }
-      constructor {
-         /*@ No description supplied by the EAPI. */
-         legacy: null;
-         params {
-            @in const(char)* name;
-            @in Elm_Win_Type type;
-         }
       }
       wm_manual_rotation_done_manual {
          /*@
@@ -1352,6 +1399,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
    implements {
       class.constructor;
       Eo.Base.constructor;
+      Eo.Base.finalize;
       Evas.Object_Smart.hide;
       Evas.Object_Smart.show;
       Evas.Object_Smart.move;
@@ -1369,7 +1417,8 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    constructors {
-      .constructor;
+      .name;
+      .type;
    }
    events {
       delete,request;

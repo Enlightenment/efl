@@ -176,6 +176,7 @@ struct _Elm_Win_Data
    const char  *title;
    const char  *icon_name;
    const char  *role;
+   Eina_Stringshare *name;
 
    Evas_Object *main_menu;
 
@@ -1806,6 +1807,7 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
    eina_stringshare_del(sd->title);
    eina_stringshare_del(sd->icon_name);
    eina_stringshare_del(sd->role);
+   eina_stringshare_del(sd->name);
    evas_object_del(sd->icon);
    evas_object_del(sd->main_menu);
 
@@ -2958,7 +2960,9 @@ elm_win_add(Evas_Object *parent,
             const char *name,
             Elm_Win_Type type)
 {
-   Evas_Object *obj = eo_add(MY_CLASS, parent, elm_obj_win_constructor(name, type));
+   Evas_Object *obj = eo_add(MY_CLASS, parent,
+                             elm_obj_win_name_set(name),
+                             elm_obj_win_type_set(type));
    return obj;
 }
 
@@ -2967,7 +2971,8 @@ elm_win_fake_add(Ecore_Evas *ee)
 {
    return eo_add(MY_CLASS, NULL,
          elm_obj_win_fake_canvas_set(ee),
-         elm_obj_win_constructor(NULL, ELM_WIN_FAKE));
+         elm_obj_win_name_set(NULL),
+         elm_obj_win_type_set(ELM_WIN_FAKE));
 }
 
 static void
@@ -3118,8 +3123,8 @@ _cb_deled(void *_data,
    return EO_CALLBACK_CONTINUE;
 }
 
-EOLIAN static void
-_elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type type)
+static void
+_elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type type)
 {
    sd->obj = obj; // in ctor
 
@@ -3586,6 +3591,7 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
      }
 
    TRAP(sd, name_class_set, name, _elm_appname);
+   TRAP(sd, title_set, sd->title);
    ecore_evas_callback_delete_request_set(sd->ee, _elm_win_delete_request);
    ecore_evas_callback_state_change_set(sd->ee, _elm_win_state_change);
    ecore_evas_callback_focus_in_set(sd->ee, _elm_win_focus_in);
@@ -3705,16 +3711,48 @@ _elm_win_eo_base_constructor(Eo *obj EINA_UNUSED, Elm_Win_Data *_pd EINA_UNUSED)
    /* Do nothing. */
 }
 
+EOLIAN static Eo *
+_elm_win_eo_base_finalize(Eo *obj, Elm_Win_Data *_pd)
+{
+   _elm_win_finalize_internal(obj, _pd, _pd->name, _pd->type);
+   eo_do_super(obj, MY_CLASS, obj = eo_finalize());
+   return obj;
+}
+
 EOLIAN static void
 _elm_win_fake_canvas_set(Eo *obj EINA_UNUSED, Elm_Win_Data *pd, Ecore_Evas *oee)
 {
    pd->ee = oee;
 }
 
+EOLIAN static void
+_elm_win_type_set(Eo *obj, Elm_Win_Data *sd, Elm_Win_Type type)
+{
+   Eina_Bool finalized;
+   if (eo_do_ret(obj, finalized, eo_finalized_get()))
+     {
+        ERR("This function is only allowed during construction.");
+        return;
+     }
+   sd->type = type;
+}
+
 EOLIAN static Elm_Win_Type
 _elm_win_type_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 {
    return sd->type;
+}
+
+EOLIAN static void
+_elm_win_name_set(Eo *obj, Elm_Win_Data *sd, const char *name)
+{
+   Eina_Bool finalized;
+   if (eo_do_ret(obj, finalized, eo_finalized_get()))
+     {
+        ERR("This function is only allowed during construction.");
+        return;
+     }
+   sd->name = eina_stringshare_add(name);
 }
 
 EOLIAN static void
@@ -3806,7 +3844,8 @@ _elm_win_title_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *title)
 {
    if (!title) return;
    eina_stringshare_replace(&(sd->title), title);
-   TRAP(sd, title_set, sd->title);
+   if (sd->ee)
+     TRAP(sd, title_set, sd->title);
    if (sd->frame_obj)
      edje_object_part_text_escaped_set
        (sd->frame_obj, "elm.text.title", sd->title);
