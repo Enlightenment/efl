@@ -177,10 +177,10 @@ _ecore_file_download(const char *url,
  * percentage of the downloaded file. Return 0 from this callback, if provided,
  * to continue the operation or anything else to abort the download. The only
  * operations that can be aborted are those with protocol 'http' or 'ftp'. In
- * that case @p job_ret can be filled. It can be used with
- * ecore_file_download_abort() or ecore_file_download_abort_all() to
- * respectively abort one or all download operations. This function returns
- * @c EINA_TRUE if the download starts, @c EINA_FALSE otherwise.
+ * that case @p job_ret can be passed to ecore_file_download_abort() to abort
+ * that download job. Similarly ecore_file_download_abort_all() can be used to
+ * abort all download operations. This function returns @c EINA_TRUE if the
+ * download starts, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_file_download(const char *url,
