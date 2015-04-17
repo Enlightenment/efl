@@ -607,6 +607,13 @@ EAPI Eo * _eo_add_end(void);
 
 #define eo_do_super_ret(eoid, clsid, ret_tmp, func) _eo_do_common_ret(eoid, clsid, EINA_TRUE, ret_tmp, func)
 
+#define eo_do_part(eoid, part_func, ...) \
+  do { \
+       Eo *__eo_part = eoid; \
+       eo_do(eoid, __eo_part = part_func); \
+       eo_do(__eo_part, __VA_ARGS__); \
+  } while (0)
+
 /*****************************************************************************/
 
 /**
