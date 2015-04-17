@@ -22,25 +22,25 @@ static const char SIG_ITEM_SELECTED[] = "item,selected";
 static const char SIG_ITEM_ADDED[] = "item,added";
 static const char SIG_ITEM_DELETED[] = "item,deleted";
 static const char SIG_ITEM_CLICKED[] = "item,clicked";
+static const char SIG_ITEM_LONGPRESSED[] = "item,longpressed";
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_FOCUSED[] = "focused";
 static const char SIG_UNFOCUSED[] = "unfocused";
 static const char SIG_EXPANDED[] = "expanded";
 static const char SIG_CONTRACTED[] = "contracted";
 static const char SIG_EXPAND_STATE_CHANGED[] = "expand,state,changed";
-static const char SIG_LONGPRESSED[] = "longpressed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_ITEM_SELECTED, ""},
    {SIG_ITEM_ADDED, ""},
    {SIG_ITEM_DELETED, ""},
    {SIG_ITEM_CLICKED, ""},
+   {SIG_ITEM_LONGPRESSED, ""},
    {SIG_CLICKED, ""},
    {SIG_FOCUSED, ""},
    {SIG_UNFOCUSED, ""},
    {SIG_EXPANDED, ""},
    {SIG_CONTRACTED, ""},
    {SIG_EXPAND_STATE_CHANGED, ""},
-   {SIG_LONGPRESSED, ""},
    {NULL, NULL}
 };
 
@@ -522,7 +522,7 @@ _long_press_cb(void *data)
 
    sd->longpress_timer = NULL;
 
-   evas_object_smart_callback_call(WIDGET(it), SIG_LONGPRESSED, EO_OBJ(it));
+   evas_object_smart_callback_call(WIDGET(it), SIG_ITEM_LONGPRESSED, EO_OBJ(it));
 
    return ECORE_CALLBACK_CANCEL;
 }

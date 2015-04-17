@@ -30,6 +30,7 @@
  * - @c "item,deleted" - when a multi-button entry item is deleted.
  * - @c "item,clicked" - this is called when an item is clicked by user
  *       interaction. Both "item,selected" and "item,clicked" are needed.
+ * - @c "item,longpressed" - when multi-button entry item is pressed for a long time.
  * - @c "clicked" - when multi-button entry is clicked.
  * - @c "focused" - when multi-button entry is focused.
  * - @c "unfocused" - when multi-button entry is unfocused.
@@ -37,7 +38,6 @@
  * - @c "contracted" - when multi-button entry is contracted.
  * - @c "expand,state,changed" - when shrink mode state of
  *       multi-button entry is changed.
- * - @c "longpressed" - when multi-button entry is pressed for a long time.
  *
  * Default text parts of the multi-button entry widget that you can use are:
  * @li "default" - A label of the multi-button entry
