@@ -53,19 +53,57 @@ _activate(Evas_Object *obj)
 {
    ELM_CHECK_DATA_GET(obj, sd);
 
-   sd->state = !sd->state;
-   if (sd->statep) *sd->statep = sd->state;
-   if (sd->state)
+   if (!sd->three_state_mode)
      {
-        elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
-        if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
-             _elm_access_say(E_("State: On"));
+        sd->state = !sd->state;
      }
    else
      {
-        elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
-        if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
-             _elm_access_say(E_("State: Off"));
+        if (sd->state == _CHECK_STATE_UNCHECKED)
+          sd->state = _CHECK_STATE_CHECKED;
+        else if (sd->state == _CHECK_STATE_CHECKED)
+          sd->state = _CHECK_STATE_INDETERMINATE;
+        else
+          sd->state = _CHECK_STATE_UNCHECKED;
+     }
+
+   if (sd->statep) *sd->statep = sd->state;
+
+   if (!sd->three_state_mode)
+     {
+        if (sd->state)
+          {
+             elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+             if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+               _elm_access_say(E_("State: On"));
+          }
+        else
+          {
+             elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+             if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+               _elm_access_say(E_("State: Off"));
+          }
+     }
+   else
+     {
+        if (sd->state == _CHECK_STATE_CHECKED)
+          {
+             elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+             if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+               _elm_access_say(E_("State: On"));
+          }
+        else if (sd->state == _CHECK_STATE_UNCHECKED)
+          {
+             elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+             if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+               _elm_access_say(E_("State: Off"));
+          }
+        else
+          {
+             elm_layout_signal_emit(obj, "elm,state,check,indeterminate", "elm");
+             if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+               _elm_access_say(E_("State: Indeterminate"));
+          }
      }
 
    evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
@@ -99,8 +137,10 @@ _elm_check_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Check_Data 
 
    eo_do_super(obj, ELM_CHECK_CLASS, states = elm_interface_atspi_accessible_state_set_get());
 
-   if (elm_check_state_get(obj))
-       STATE_TYPE_SET(states, ELM_ATSPI_STATE_CHECKED);
+   if (elm_check_state_get(obj) == _CHECK_STATE_CHECKED)
+     STATE_TYPE_SET(states, ELM_ATSPI_STATE_CHECKED);
+   else if (elm_check_state_get(obj) == _CHECK_STATE_INDETERMINATE)
+     STATE_TYPE_SET(states, ELM_ATSPI_STATE_INDETERMINATE);
 
    return states;
 }
@@ -198,8 +238,9 @@ _elm_check_elm_widget_theme_apply(Eo *obj, Elm_Check_Data *sd)
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
-   if (!sd->state) elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
-   else elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+   if (sd->state == _CHECK_STATE_UNCHECKED) elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+   else if (sd->state == _CHECK_STATE_CHECKED) elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+   else elm_layout_signal_emit(obj, "elm,state,check,indeterminate", "elm");
 
    edje_object_message_signal_process(wd->resize_obj);
 
@@ -228,11 +269,11 @@ static char *
 _access_state_cb(void *data, Evas_Object *obj)
 {
    Elm_Check_Data *sd = eo_data_scope_get(data, MY_CLASS);
-   const char *on_text, *off_text;
+   const char *on_text, *off_text, *indeterminate_text;
 
    if (elm_widget_disabled_get(obj))
      return strdup(E_("State: Disabled"));
-   if (sd->state)
+   if (sd->state == _CHECK_STATE_CHECKED)
      {
         on_text = elm_layout_text_get(data, "on");
 
@@ -246,17 +287,30 @@ _access_state_cb(void *data, Evas_Object *obj)
         else
           return strdup(E_("State: On"));
      }
-
-   off_text = elm_layout_text_get(data, "off");
-
-   if (off_text)
+   else if (sd->state == _CHECK_STATE_UNCHECKED)
      {
-        char buf[1024];
+        off_text = elm_layout_text_get(data, "off");
 
-        snprintf(buf, sizeof(buf), "%s: %s", E_("State"), off_text);
-        return strdup(buf);
+        if (off_text)
+          {
+             char buf[1024];
+             snprintf(buf, sizeof(buf), "%s: %s", E_("State"), off_text);
+             return strdup(buf);
+          }
+        return strdup(E_("State: Off"));
      }
-   return strdup(E_("State: Off"));
+   else
+     {
+        indeterminate_text = elm_layout_text_get(data, "indeterminate");
+
+        if (indeterminate_text)
+          {
+             char buf[1024];
+             snprintf(buf, sizeof(buf), "%s: %s", E_("State"), indeterminate_text);
+             return strdup(buf);
+          }
+        return strdup(E_("State: indeterminate"));
+     }
 }
 
 static void
@@ -269,7 +323,7 @@ _on_check_off(void *data,
 
    ELM_CHECK_DATA_GET(obj, sd);
 
-   sd->state = EINA_FALSE;
+   sd->state = _CHECK_STATE_UNCHECKED;
    if (sd->statep) *sd->statep = sd->state;
 
    elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
@@ -291,15 +345,36 @@ _on_check_on(void *data,
 
    ELM_CHECK_DATA_GET(obj, sd);
 
-   sd->state = EINA_TRUE;
+   sd->state = _CHECK_STATE_CHECKED;
    if (sd->statep) *sd->statep = sd->state;
    elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
-       elm_interface_atspi_accessible_state_changed_signal_emit(data,
-                                                                ELM_ATSPI_STATE_CHECKED,
-                                                                sd->state);
+     elm_interface_atspi_accessible_state_changed_signal_emit(data,
+                                                              ELM_ATSPI_STATE_CHECKED,
+                                                              sd->state);
+}
+
+static void
+_on_check_indeterminate(void *data,
+             Evas_Object *o EINA_UNUSED,
+             const char *emission EINA_UNUSED,
+             const char *source EINA_UNUSED)
+{
+   Evas_Object *obj = data;
+
+   ELM_CHECK_DATA_GET(obj, sd);
+
+   sd->state = _CHECK_STATE_INDETERMINATE;
+   if (sd->statep) *sd->statep = sd->state;
+   elm_layout_signal_emit(obj, "elm,state,check,indeterminate", "elm");
+   evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
+
+   if (_elm_config->atspi_mode)
+     elm_interface_atspi_accessible_state_changed_signal_emit(data,
+                                                              ELM_ATSPI_STATE_CHECKED,
+                                                              sd->state);
 }
 
 static void
@@ -325,6 +400,9 @@ _elm_check_evas_object_smart_add(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
    edje_object_signal_callback_add
      (wd->resize_obj, "elm,action,check,off", "*",
      _on_check_off, obj);
+   edje_object_signal_callback_add
+     (wd->resize_obj, "elm,action,check,indeterminate", "*",
+     _on_check_indeterminate, obj);
    edje_object_signal_callback_add
      (wd->resize_obj, "elm,action,check,toggle", "*",
      _on_check_toggle, obj);
@@ -376,7 +454,7 @@ _elm_check_eo_base_constructor(Eo *obj, Elm_Check_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_check_state_set(Eo *obj, Elm_Check_Data *sd, Eina_Bool state)
+_elm_check_state_set(Eo *obj, Elm_Check_Data *sd, Check_State state)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -384,23 +462,25 @@ _elm_check_state_set(Eo *obj, Elm_Check_Data *sd, Eina_Bool state)
      {
         sd->state = state;
         if (sd->statep) *sd->statep = sd->state;
-        if (sd->state)
+        if (sd->state == _CHECK_STATE_UNCHECKED)
+          elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+        else if ((sd->state == _CHECK_STATE_CHECKED) || (!sd->three_state_mode))
           elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
         else
-          elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+          elm_layout_signal_emit(obj, "elm,state,check,indeterminate", "elm");
      }
 
    edje_object_message_signal_process(wd->resize_obj);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static Check_State
 _elm_check_state_get(Eo *obj EINA_UNUSED, Elm_Check_Data *sd)
 {
    return sd->state;
 }
 
 EOLIAN static void
-_elm_check_state_pointer_set(Eo *obj, Elm_Check_Data *sd, Eina_Bool *statep)
+_elm_check_state_pointer_set(Eo *obj, Elm_Check_Data *sd, Check_State *statep)
 {
    if (statep)
      {
@@ -408,14 +488,37 @@ _elm_check_state_pointer_set(Eo *obj, Elm_Check_Data *sd, Eina_Bool *statep)
         if (*sd->statep != sd->state)
           {
              sd->state = *sd->statep;
-             if (sd->state)
+             if (sd->state == _CHECK_STATE_CHECKED)
                elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
-             else
+             else if (sd->state == _CHECK_STATE_UNCHECKED)
                elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
+             else
+               elm_layout_signal_emit(obj, "elm,state,check,indeterminate", "elm");
           }
      }
    else
      sd->statep = NULL;
+}
+
+EOLIAN static void
+_elm_check_three_state_mode_set(Eo *obj, Elm_Check_Data *sd, Eina_Bool is_enabled)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   if (is_enabled != sd->three_state_mode)
+     {
+        sd->three_state_mode = is_enabled;
+        if ((!sd->three_state_mode) && (sd->state == _CHECK_STATE_INDETERMINATE))
+          elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
+     }
+
+   edje_object_message_signal_process(wd->resize_obj);
+}
+
+EOLIAN static Eina_Bool
+_elm_check_three_state_mode_get(Eo *obj EINA_UNUSED, Elm_Check_Data *sd)
+{
+   return sd->three_state_mode;
 }
 
 EOLIAN static Eina_Bool

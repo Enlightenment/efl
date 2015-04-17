@@ -2,6 +2,7 @@ group { name: "elm/check/base/default";
    images.image: "inset_shadow_tiny.png" COMP;
    images.image: "bevel_in.png" COMP;
    images.image: "sym_check_alum.png" COMP;
+   images.image: "sym_check_indeterminate.png" COMP;
 #define ICON     1
 #define LABEL    2
 #define MASK     3
@@ -144,6 +145,11 @@ group { name: "elm/check/base/default";
             inherit: "default" 0.0;
             visible: 1;
          }
+         description { state: "mixed" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "sym_check_indeterminate.png";
+            visible: 1;
+         }
       }
       part { name: "clip"; type: RECT;
          description { state: "default" 0.0;
@@ -267,6 +273,11 @@ group { name: "elm/check/base/default";
       program {
          signal: "elm,state,check,off"; source: "elm";
          action:  STATE_SET "default" 0.0;
+         target: "indicator";
+      }
+      program {
+         signal: "elm,state,check,indeterminate"; source: "elm";
+         action:  STATE_SET "mixed" 0.0;
          target: "indicator";
       }
       program {

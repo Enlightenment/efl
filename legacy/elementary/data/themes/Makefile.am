@@ -586,6 +586,7 @@ img/split_v_glow.png \
 img/split_v_hilight.png \
 img/split_v_inset.png \
 img/sym_check_alum.png \
+img/sym_check_indeterminate.png \
 img/sym_close_dark_normal.png \
 img/sym_close_dark_selected.png \
 img/sym_close_light_normal.png \

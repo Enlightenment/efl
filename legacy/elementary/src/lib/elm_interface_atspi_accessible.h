@@ -221,7 +221,7 @@ typedef enum _Elm_Atspi_Relation_Type Elm_Atspi_Relation_Type;
 struct _Elm_Atspi_Event_State_Changed_Data
 {
    Elm_Atspi_State_Type type;
-   Eina_Bool new_value;
+   int new_value;
 };
 
 
