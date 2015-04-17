@@ -842,7 +842,7 @@ _item_free(const Evas_Object *eo_obj, Evas_Object_Textblock_Line *ln, Evas_Objec
    if (ln)
      {
         ln->items = (Evas_Object_Textblock_Item *) eina_inlist_remove(
-              EINA_INLIST_GET(ln->items), EINA_INLIST_GET(ln->items));
+              EINA_INLIST_GET(ln->items), EINA_INLIST_GET(it));
      }
    free(it);
 }
