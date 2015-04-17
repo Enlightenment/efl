@@ -105,5 +105,27 @@ interface Efl.Player {
                   bool mute; /*@ The mute state. True or false. */
              }
         }
+        length {
+             /**
+              * @brief Get the length of play for the media file.
+              *
+              * This function returns the length of the media file in seconds.
+              */
+             get {
+             }
+             values {
+                  double length; /*@ The length of the stream in seconds. */
+             }
+        }
+        seekable {
+             /**
+              * @brief Get whether the media file is seekable.
+              */
+             get {
+             }
+             values {
+                  bool seekable; /*@ True if seekable. */
+             }
+        }
    }
 }

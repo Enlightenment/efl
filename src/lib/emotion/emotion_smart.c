@@ -733,11 +733,8 @@ emotion_object_buffer_size_get(const Evas_Object *obj)
 EAPI Eina_Bool
 emotion_object_seekable_get(const Evas_Object *obj)
 {
-   Emotion_Object_Data *sd;
-
-   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   if (!sd->engine_instance) return EINA_FALSE;
-   return emotion_engine_instance_seekable(sd->engine_instance);
+   Eina_Bool ret;
+   return eo_do_ret(obj, ret, efl_player_seekable_get());
 }
 
 EAPI Eina_Bool
@@ -763,12 +760,8 @@ emotion_object_audio_handled_get(const Evas_Object *obj)
 EAPI double
 emotion_object_play_length_get(const Evas_Object *obj)
 {
-   Emotion_Object_Data *sd;
-
-   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0.0);
-   if (!sd->engine_instance) return 0.0;
-   sd->len = emotion_engine_instance_len_get(sd->engine_instance);
-   return sd->len;
+   double ret;
+   return eo_do_ret(obj, ret, efl_player_length_get());
 }
 
 EAPI void
@@ -1183,6 +1176,21 @@ EOLIAN static double
 _emotion_object_efl_player_progress_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd)
 {
    return sd->progress.stat;
+}
+
+EOLIAN static double
+_emotion_object_efl_player_length_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd)
+{
+   if (!sd->engine_instance) return 0.0;
+   sd->len = emotion_engine_instance_len_get(sd->engine_instance);
+   return sd->len;
+}
+
+EOLIAN static Eina_Bool
+_emotion_object_efl_player_seekable_get(Eo *obj EINA_UNUSED, Emotion_Object_Data *sd)
+{
+   if (!sd->engine_instance) return EINA_FALSE;
+   return emotion_engine_instance_seekable(sd->engine_instance);
 }
 
 EAPI const char *
