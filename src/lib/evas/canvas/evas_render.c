@@ -2942,6 +2942,14 @@ _evas_canvas_render_dump(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
      }
 }
 
+EOLIAN void
+_evas_canvas_render_copy(Eo *obj EINA_UNUSED, Evas_Public_Data *e, void *buffer, int stride, int width, int height, uint format, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh)
+{
+  if ((e->engine.func) && (e->engine.func->output_copy) &&
+      (e->engine.data.output))
+    e->engine.func->output_copy(e->engine.data.output, buffer, stride, width, height, format, sx, sy, sw, sh, dx, dy, dw, dh);
+}
+
 void
 evas_render_invalidate(Evas *eo_e)
 {

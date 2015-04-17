@@ -127,6 +127,8 @@ void evas_outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y
 void evas_outbuf_update_region_free(Outbuf *ob, RGBA_Image *update);
 void evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
 
+void evas_outbuf_copy(Outbuf *ob, void *buffer, int stride, int width, int height, uint format, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh);
+
 Eina_Bool evas_drm_outbuf_setup(Outbuf *ob);
 void evas_drm_outbuf_framebuffer_set(Outbuf *ob, Buffer *buffer);
 Eina_Bool evas_drm_framebuffer_create(int fd, Buffer *buffer, int depth);

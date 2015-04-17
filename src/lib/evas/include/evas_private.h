@@ -1331,6 +1331,8 @@ struct _Evas_Func
    void  (*texture_filter_set)           (void *data, void *texture, Evas_3D_Texture_Filter min, Evas_3D_Texture_Filter mag);
    void  (*texture_filter_get)           (void *data, void *texture, Evas_3D_Texture_Filter *min, Evas_3D_Texture_Filter *mag);
    void  (*texture_image_set)            (void *data, void *texture, void *image);
+
+   void  (*output_copy)                  (void *data, void *buffer, int stride, int width, int height, uint format, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh);
 };
 
 struct _Evas_Image_Save_Func
@@ -1587,6 +1589,7 @@ void _canvas_norender(Eo *e, void *_pd, va_list *list);
 void _canvas_render_idle_flush(Eo *e, void *_pd, va_list *list);
 void _canvas_sync(Eo *obj, void *_pd, va_list *list);
 void _canvas_render_dump(Eo *obj, void *_pd, va_list *list);
+void _canvas_render_copy(Eo *obj, void *_pd, va_list *list);
 
 void _canvas_object_bottom_get(Eo *e, void *_pd, va_list *list);
 void _canvas_object_top_get(Eo *e, void *_pd, va_list *list);

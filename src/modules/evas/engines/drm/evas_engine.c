@@ -16,6 +16,13 @@ static Evas_Func func, pfunc;
 /* external variables */
 int _evas_engine_drm_log_dom;
 
+/* local inline functions */
+static inline Outbuf *
+eng_get_ob(Render_Engine *re)
+{
+   return re->generic.ob;
+}
+
 /* local functions */
 static void *
 _output_setup(Evas_Engine_Info_Drm *info, int w, int h)
@@ -163,6 +170,20 @@ eng_output_free(void *data)
    evas_common_image_shutdown();
 }
 
+static void
+eng_output_copy(void *data, void *buffer, int stride, int width, int height, uint format, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh)
+{
+   Render_Engine *re = (Render_Engine *)data;
+   Outbuf *ob;
+
+   EINA_SAFETY_ON_NULL_RETURN(re);
+
+   ob = eng_get_ob(re);
+   EINA_SAFETY_ON_NULL_RETURN(ob);
+
+   evas_outbuf_copy(ob, buffer, stride, width, height, format, sx, sy, sw, sh, dx, dy, dw, dh);
+}
+
 /* module api functions */
 static int
 module_open(Evas_Module *em)
@@ -192,6 +213,7 @@ module_open(Evas_Module *em)
    EVAS_API_OVERRIDE(info_free, &func, eng_);
    EVAS_API_OVERRIDE(setup, &func, eng_);
    EVAS_API_OVERRIDE(output_free, &func, eng_);
+   EVAS_API_OVERRIDE(output_copy, &func, eng_);
 
    /* advertise our engine functions */
    em->functions = (void *)(&func);

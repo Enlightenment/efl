@@ -1519,6 +1519,28 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Canvas */
 
       }
+      render_copy {
+         /*@
+         Get a image from evas
+
+         @ingroup Evas_Canvas */
+
+         params {
+            @in void *buffer;
+            @in int stride;
+            @in int width;
+            @in int height;
+            @in uint format;
+            @in int sx;
+            @in int sy;
+            @in int sw;
+            @in int sh;
+            @in int dx;
+            @in int dy;
+            @in int dw;
+            @in int dh;
+         }
+      }
       event_feed_mouse_in {
          /*@
          Mouse in event feed.
