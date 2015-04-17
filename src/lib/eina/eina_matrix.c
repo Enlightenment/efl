@@ -419,29 +419,33 @@ eina_matrix3_f16p16_compose(const Eina_Matrix3_F16p16 *m1,
 EAPI void
 eina_matrix3_translate(Eina_Matrix3 *m, double tx, double ty)
 {
-   MATRIX_XX(m) = 1;
-   MATRIX_XY(m) = 0;
-   MATRIX_XZ(m) = tx;
-   MATRIX_YX(m) = 0;
-   MATRIX_YY(m) = 1;
-   MATRIX_YZ(m) = ty;
-   MATRIX_ZX(m) = 0;
-   MATRIX_ZY(m) = 0;
-   MATRIX_ZZ(m) = 1;
+   Eina_Matrix3 tmp;
+   MATRIX_XX(&tmp) = 1;
+   MATRIX_XY(&tmp) = 0;
+   MATRIX_XZ(&tmp) = tx;
+   MATRIX_YX(&tmp) = 0;
+   MATRIX_YY(&tmp) = 1;
+   MATRIX_YZ(&tmp) = ty;
+   MATRIX_ZX(&tmp) = 0;
+   MATRIX_ZY(&tmp) = 0;
+   MATRIX_ZZ(&tmp) = 1;
+   eina_matrix3_compose(m, &tmp, m);
 }
 
 EAPI void
 eina_matrix3_scale(Eina_Matrix3 *m, double sx, double sy)
 {
-   MATRIX_XX(m) = sx;
-   MATRIX_XY(m) = 0;
-   MATRIX_XZ(m) = 0;
-   MATRIX_YX(m) = 0;
-   MATRIX_YY(m) = sy;
-   MATRIX_YZ(m) = 0;
-   MATRIX_ZX(m) = 0;
-   MATRIX_ZY(m) = 0;
-   MATRIX_ZZ(m) = 1;
+   Eina_Matrix3 tmp;
+   MATRIX_XX(&tmp) = sx;
+   MATRIX_XY(&tmp) = 0;
+   MATRIX_XZ(&tmp) = 0;
+   MATRIX_YX(&tmp) = 0;
+   MATRIX_YY(&tmp) = sy;
+   MATRIX_YZ(&tmp) = 0;
+   MATRIX_ZX(&tmp) = 0;
+   MATRIX_ZY(&tmp) = 0;
+   MATRIX_ZZ(&tmp) = 1;
+   eina_matrix3_compose(m, &tmp, m);
 }
 
 EAPI void
@@ -458,15 +462,17 @@ eina_matrix3_rotate(Eina_Matrix3 *m, double rad)
    s = _sin(rad);
 #endif
 
-   MATRIX_XX(m) = c;
-   MATRIX_XY(m) = -s;
-   MATRIX_XZ(m) = 0;
-   MATRIX_YX(m) = s;
-   MATRIX_YY(m) = c;
-   MATRIX_YZ(m) = 0;
-   MATRIX_ZX(m) = 0;
-   MATRIX_ZY(m) = 0;
-   MATRIX_ZZ(m) = 1;
+   Eina_Matrix3 tmp;
+   MATRIX_XX(&tmp) = c;
+   MATRIX_XY(&tmp) = -s;
+   MATRIX_XZ(&tmp) = 0;
+   MATRIX_YX(&tmp) = s;
+   MATRIX_YY(&tmp) = c;
+   MATRIX_YZ(&tmp) = 0;
+   MATRIX_ZX(&tmp) = 0;
+   MATRIX_ZY(&tmp) = 0;
+   MATRIX_ZZ(&tmp) = 1;
+   eina_matrix3_compose(m, &tmp, m);
 }
 
 EAPI void
