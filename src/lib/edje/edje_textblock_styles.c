@@ -291,27 +291,12 @@ _edje_textblock_style_member_add(Edje *ed, Edje_Style *stl)
    Edje_Style_Tag *tag;
    Eina_List *l;
 
-   if (!stl) return;
+   if (!stl) return ;
 
    EINA_LIST_FOREACH(stl->tags, l, tag)
      {
         if (tag->text_class)
           _edje_text_class_member_add(ed, tag->text_class);
-     }
-}
-
-static inline void
-_edje_textblock_style_member_del(Edje *ed, Edje_Style *stl)
-{
-   Edje_Style_Tag *tag;
-   Eina_List *l;
-
-   if (!stl) return;
-
-   EINA_LIST_FOREACH(stl->tags, l, tag)
-     {
-        if (tag->text_class)
-          _edje_text_class_member_del(ed, tag->text_class);
      }
 }
 
@@ -355,15 +340,53 @@ _edje_textblock_styles_del(Edje *ed, Edje_Part *pt)
 
    desc = (Edje_Part_Description_Text *)pt->default_desc;
    style = edje_string_get(&desc->text.style);
-   stl = _edje_textblock_style_search(ed, style);
-   _edje_textblock_style_member_del(ed, stl);
+   if (style)
+     {
+        Eina_List *l;
+
+        EINA_LIST_FOREACH(ed->file->styles, l, stl)
+          {
+             if ((stl->name) && (!strcmp(stl->name, style))) break;
+             stl = NULL;
+          }
+     }
+   if (stl)
+     {
+        Edje_Style_Tag *tag;
+        Eina_List *l;
+
+        EINA_LIST_FOREACH(stl->tags, l, tag)
+          {
+             if (tag->text_class)
+               _edje_text_class_member_del(ed, tag->text_class);
+          }
+     }
 
    for (i = 0; i < pt->other.desc_count; ++i)
      {
         desc = (Edje_Part_Description_Text *)pt->other.desc[i];
         style = edje_string_get(&desc->text.style);
-        stl = _edje_textblock_style_search(ed, style);
-        _edje_textblock_style_member_del(ed, stl);
+        if (style)
+          {
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(ed->file->styles, l, stl)
+               {
+                  if ((stl->name) && (!strcmp(stl->name, style))) break;
+                  stl = NULL;
+               }
+          }
+        if (stl)
+          {
+             Edje_Style_Tag *tag;
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(stl->tags, l, tag)
+               {
+                  if (tag->text_class)
+                    _edje_text_class_member_del(ed, tag->text_class);
+               }
+          }
      }
 }
 
