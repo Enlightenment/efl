@@ -110,7 +110,7 @@ Evas_Image_Load_Func evas_image_load_jpeg_func =
   evas_image_load_file_data_jpeg,
   NULL,
   EINA_TRUE,
-  EINA_FALSE
+  EINA_TRUE
 };
 
 static int
