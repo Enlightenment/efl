@@ -1831,9 +1831,10 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
    EINA_COW_WRITE_BEGIN(evas_object_mask_cow, mask->mask, Evas_Object_Mask_Data, mdata)
      mdata->redraw = EINA_FALSE;
 
-     if (is_image)
+     if (is_image && ENFN->image_scaled_update)
        {
-          Eina_Bool filled = EINA_FALSE;
+          Eina_Bool filled = EINA_FALSE, border = EINA_FALSE;
+          int bl = 0, br = 0, bt = 0, bb = 0;
 
           if (evas_object_image_filled_get(mask->object))
             filled = EINA_TRUE;
@@ -1845,8 +1846,11 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
                  filled = EINA_TRUE;
             }
 
-          if (filled & !prev_mask && mask->func->engine_data_get &&
-              ENFN->image_scaled_update)
+          evas_object_image_border_get(mask->object, &bl, &br, &bt, &bb);
+          if (bl || br || bt || bb)
+            border = EINA_TRUE;
+
+          if (!border && filled & !prev_mask && mask->func->engine_data_get)
             {
                /* Fast path (for GL) that avoids creating a map surface, render the
                 * scaled image in it, when the shaders can just scale on the fly. */
