@@ -59,7 +59,7 @@ _efl_vg_base_changed(Eo *obj)
 
 #define EFL_VG_COMPUTE_MATRIX(Current, Parent, Nd)                      \
   Eina_Matrix3 *Current = Nd->m;                                        \
-  Eina_Matrix3 _matrix_tmp, translate;                                  \
+  Eina_Matrix3 _matrix_tmp;                                             \
                                                                         \
   if (Parent)                                                           \
     {                                                                   \
@@ -70,10 +70,10 @@ _efl_vg_base_changed(Eo *obj)
          }                                                              \
        else                                                             \
          {                                                              \
-            eina_matrix3_translate(&translate, -(Nd->x), -(Nd->y));     \
-            eina_matrix3_compose(Parent, &translate, &_matrix_tmp);     \
-            eina_matrix3_translate(&translate, (Nd->x), (Nd->y));       \
-            eina_matrix3_compose(&_matrix_tmp, &translate, &_matrix_tmp); \
+            eina_matrix3_identity(&_matrix_tmp);                        \
+            eina_matrix3_translate(&_matrix_tmp, -(Nd->x), -(Nd->y));   \
+            eina_matrix3_compose(Parent, &_matrix_tmp, &_matrix_tmp);   \
+            eina_matrix3_translate(&_matrix_tmp, (Nd->x), (Nd->y));     \
             Current = &_matrix_tmp;                                     \
          }                                                              \
     }
