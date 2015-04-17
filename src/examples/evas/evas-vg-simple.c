@@ -437,6 +437,7 @@ vector_set(int x, int y, int w, int h)
    // apply some transformation
    double radian = 30.0 * 2 * 3.141 / 360.0;
    Eina_Matrix3 matrix;
+   eina_matrix3_identity(&matrix);
    eina_matrix3_rotate(&matrix, radian);
 
    Efl_VG *root = evas_object_vg_root_node_get(d.vg);

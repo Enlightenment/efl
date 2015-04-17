@@ -148,6 +148,7 @@ main(void)
    root = evas_object_vg_root_node_get(vg);
 
    Eina_Matrix3 matrix;
+   eina_matrix3_identity(&matrix);
    eina_matrix3_scale(&matrix, 1.1, 1.1);
    evas_vg_node_transformation_set(root, &matrix);
 
