@@ -45,6 +45,15 @@ _class_hi_print(Eo_Class *klass, void *data EINA_UNUSED)
    return EINA_TRUE;
 }
 
+EO_FUNC_BODYV(simple_part_get, Eo *, NULL, EO_FUNC_CALL(name), const char *name);
+
+static Eo *
+_part_get(Eo *obj, void *class_data EINA_UNUSED, const char *name EINA_UNUSED)
+{
+   /* A normal part get will do something saner, we just create objects. */
+   return eo_add(SIMPLE_CLASS, obj);
+}
+
 EO_VOID_FUNC_BODYV(simple_recursive, EO_FUNC_CALL(n), int n);
 
 static void
@@ -83,6 +92,7 @@ static Eo_Op_Description op_descs[] = {
      EO_OP_FUNC(simple_a_print, _a_print, "Print property a"),
      EO_OP_CLASS_FUNC(simple_class_hi_print, _class_hi_print, "Print property a"),
      EO_OP_FUNC(simple_recursive, _recursive, "Recursive function"),
+     EO_OP_FUNC(simple_part_get, _part_get, "Part getter"),
      EO_OP_FUNC(simple_pure_virtual, NULL, "Pure Virtual function"),
      EO_OP_SENTINEL
 };
