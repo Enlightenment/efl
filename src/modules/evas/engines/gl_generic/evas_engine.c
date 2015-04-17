@@ -7,6 +7,10 @@
 # include <unistd.h>
 #endif
 
+#include "software/Ector_Software.h"
+
+#include "ector_cairo_software_surface.eo.h"
+
 #ifdef HAVE_DLSYM
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
 #else
@@ -20,10 +24,6 @@
 #ifdef EVAS_CSERVE2
 #include "evas_cs2_private.h"
 #endif
-
-#include "software/Ector_Software.h"
-
-#include "ector_cairo_software_surface.eo.h"
 
 #define EVAS_GL_NO_GL_H_CHECK 1
 #include "Evas_GL.h"

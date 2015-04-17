@@ -7,6 +7,8 @@
 
 #include <software/Ector_Software.h>
 
+#include "ector_cairo_software_surface.eo.h"
+
 #ifdef HAVE_DLSYM
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
 
@@ -19,8 +21,6 @@
 #endif
 
 #include "Evas_Engine_Software_Generic.h"
-
-#include "ector_cairo_software_surface.eo.h"
 
 #ifdef EVAS_GL
 //----------------------------------//
