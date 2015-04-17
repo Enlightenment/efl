@@ -390,11 +390,11 @@ START_TEST(ecore_test_ecore_file_download)
    fail_if(res != EINA_TRUE);
 
    res = ecore_file_download("xxyyzz", dest_name, completion_cb,
-                             progress_cb, &job, NULL);
+                             progress_cb, NULL, &job);
    fail_if(res != EINA_FALSE);
 
    res = ecore_file_download(download_url, dest_name, err_completion_cb,
-                             progress_cb, &job, NULL);
+                             progress_cb, NULL, &job);
    fail_if(res != EINA_TRUE);
    fail_if(!job);
    ecore_file_download_abort(job);
