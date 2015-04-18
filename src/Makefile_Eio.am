@@ -66,6 +66,7 @@ tests/eio/eio_model_test_file.c \
 tests/eio/eio_model_test_monitor_add.c \
 tests/eio/eio_test_monitor.c \
 tests/eio/eio_test_file.c \
+tests/eio/eio_test_xattr.c \
 tests/eio/eio_suite.h
 
 tests_eio_eio_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
