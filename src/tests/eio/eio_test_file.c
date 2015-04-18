@@ -14,7 +14,7 @@
 #include "eio_suite.h"
 
 static int default_rights = 0777;
-int test_count = 0;
+static int test_count = 0;
 
 static Eina_Bool
 _filter_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, const char *file)
