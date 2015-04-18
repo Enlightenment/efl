@@ -32,7 +32,8 @@ lib/eio/eio_single.c \
 lib/eio/eio_xattr.c \
 lib/eio/eio_model.c \
 lib/eio/eio_model_private.h \
-lib/eio/eio_private.h
+lib/eio/eio_private.h \
+lib/eio/eio_model.h
 
 if HAVE_INOTIFY
 lib_eio_libeio_la_SOURCES += lib/eio/eio_monitor_inotify.c
@@ -64,7 +65,8 @@ tests/eio/eio_suite.c \
 tests/eio/eio_model_test_file.c \
 tests/eio/eio_model_test_monitor_add.c \
 tests/eio/eio_test_monitor.c \
-tests/eio/eio_test_file.c
+tests/eio/eio_test_file.c \
+tests/eio/eio_suite.h
 
 tests_eio_eio_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eio\" \
@@ -83,8 +85,3 @@ tests_eio_eio_suite_DEPENDENCIES = \
 @USE_EIO_INTERNAL_LIBS@
 
 endif
-
-EXTRA_DIST += \
-tests/eio/eio_suite.h \
-lib/eio/eio_model.h
-
