@@ -61,14 +61,20 @@ static HANDLE DataToHandle(const char *data, int size)
 EAPI int
 ecore_win32_dnd_init()
 {
+   HRESULT res;
+
    if (_ecore_win32_dnd_init_count > 0)
      {
-	_ecore_win32_dnd_init_count++;
-	return _ecore_win32_dnd_init_count;
+        _ecore_win32_dnd_init_count++;
+        return _ecore_win32_dnd_init_count;
      }
 
-   if (OleInitialize(NULL) != S_OK)
-     return 0;
+   res = OleInitialize(NULL);
+   if ((res != S_OK) && (res != S_FALSE))
+     {
+        EINA_LOG_ERR("OleInitialize(NULL) returned %ld.", (long) res);
+        return 0;
+     }
 
    _ecore_win32_dnd_init_count++;
 
