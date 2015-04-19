@@ -13,16 +13,16 @@ lib/evil/evil_langinfo.h \
 lib/evil/evil_macro.h \
 lib/evil/evil_macro_pop.h \
 lib/evil/evil_main.h \
-lib/evil/evil_stdlib.h \
 lib/evil/evil_stdio.h \
+lib/evil/evil_stdlib.h \
 lib/evil/evil_string.h \
 lib/evil/evil_time.h \
 lib/evil/evil_unistd.h \
 lib/evil/evil_util.h \
-lib/evil/pwd.h \
-lib/evil/fnmatch.h \
 lib/evil/dirent.h \
-lib/evil/dlfcn.h
+lib/evil/dlfcn.h \
+lib/evil/fnmatch.h \
+lib/evil/pwd.h
 
 evilmmanheadersdir = $(includedir)/evil-@VMAJ@/sys
 dist_evilmmanheaders_DATA = \
@@ -39,13 +39,12 @@ lib/evil/evil_link_xp.cpp \
 lib/evil/evil_main.c \
 lib/evil/evil_mman.c \
 lib/evil/evil_pwd.c \
-lib/evil/evil_stdlib.c \
 lib/evil/evil_stdio.c \
+lib/evil/evil_stdlib.c \
 lib/evil/evil_string.c \
 lib/evil/evil_time.c \
 lib/evil/evil_unistd.c \
 lib/evil/evil_util.c \
-lib/evil/evil_uuid.c \
 lib/evil/evil_private.h \
 lib/evil/evil_fnmatch_private.h
 
