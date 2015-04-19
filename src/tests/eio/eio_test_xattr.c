@@ -159,6 +159,6 @@ void eio_test_xattr(TCase *tc)
 #ifdef XATTR_TEST_DIR
    tcase_add_test(tc, eio_test_xattr_set);
 #else
-   (void)tc
+   (void)tc;
 #endif
 }
