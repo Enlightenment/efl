@@ -81,10 +81,21 @@ START_TEST (elm_code_text_strpos_test)
 }
 END_TEST
 
+START_TEST (elm_code_text_newline_position_test)
+{
+   const char *unixtext = "a test\nwith newline";
+   const char *wintext = "a windows\r\nnewline";
+
+   ck_assert_int_eq(6, elm_code_text_newlinenpos(unixtext, strlen(unixtext)));
+   ck_assert_int_eq(9, elm_code_text_newlinenpos(wintext, strlen(wintext)));
+}
+END_TEST
+
 void elm_code_test_text(TCase *tc)
 {
    tcase_add_test(tc, elm_code_text_get_test);
    tcase_add_test(tc, elm_code_text_insert_test);
    tcase_add_test(tc, elm_code_text_contains_test);
    tcase_add_test(tc, elm_code_text_strpos_test);
+   tcase_add_test(tc, elm_code_text_newline_position_test);
 }

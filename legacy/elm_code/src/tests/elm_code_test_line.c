@@ -44,9 +44,32 @@ START_TEST (elm_code_line_token_count_test)
 }
 END_TEST
 
+START_TEST (elm_code_line_split_test)
+{
+   Elm_Code *code;
+   Elm_Code_File *file;
+   Elm_Code_Line *line, *newline;
+
+   code = elm_code_create();
+   file = elm_code_file_new(code);
+
+   elm_code_file_line_append(file, "line1line2", 10, NULL);
+   line = elm_code_file_line_get(file, 1);
+   ck_assert_int_eq(1, elm_code_file_lines_get(file));
+   ck_assert_int_eq(10, line->length);
+
+   elm_code_line_split_at(line, 5);
+   ck_assert_int_eq(2, elm_code_file_lines_get(file));
+   newline = elm_code_file_line_get(file, 2);
+   ck_assert_int_eq(5, line->length);
+   ck_assert_int_eq(5, newline->length);
+}
+END_TEST
+
 void elm_code_test_line(TCase *tc)
 {
    tcase_add_test(tc, elm_code_line_create_test);
    tcase_add_test(tc, elm_code_line_token_count_test);
+   tcase_add_test(tc, elm_code_line_split_test);
 }
 

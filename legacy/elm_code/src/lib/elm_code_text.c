@@ -42,14 +42,12 @@ elm_code_line_text_set(Elm_Code_Line *line, const char *chars, unsigned int leng
 }
 
 EAPI int
-elm_code_line_text_strpos(Elm_Code_Line *line, const char *search, int offset)
+elm_code_text_strnpos(const char *content, unsigned int length, const char *search, int offset)
 {
-   unsigned int length, searchlen, c;
-   const char *content;
+   unsigned int searchlen, c;
    char *ptr;
 
    searchlen = strlen(search);
-   content = elm_code_line_text_get(line, &length);
    ptr = (char *) content;
 
    if (searchlen > length)
@@ -65,6 +63,16 @@ elm_code_line_text_strpos(Elm_Code_Line *line, const char *search, int offset)
      }
 
    return ELM_CODE_TEXT_NOT_FOUND;
+}
+
+EAPI int
+elm_code_line_text_strpos(Elm_Code_Line *line, const char *search, int offset)
+{
+   unsigned int length;
+   const char *content;
+
+   content = elm_code_line_text_get(line, &length);
+   return elm_code_text_strnpos(content, length, search, offset);
 }
 
 EAPI Eina_Bool
@@ -201,10 +209,34 @@ elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length
 
 /* generic text functions */
 
-unsigned int
+EAPI unsigned int
 elm_code_text_tabwidth_at_position(unsigned int position, unsigned int tabstop)
 {
    return tabstop - (position % tabstop);
+}
+
+EAPI int
+elm_code_text_newlinenpos(const char *text, unsigned int length)
+{
+   int lfpos, crpos;
+   int check;
+
+   lfpos = elm_code_text_strnpos(text, length, "\n", 0);
+   check = length;
+   if (lfpos != ELM_CODE_TEXT_NOT_FOUND)
+     check = lfpos;
+   crpos = elm_code_text_strnpos(text, check, "\r", 0);
+
+   if (lfpos == ELM_CODE_TEXT_NOT_FOUND && crpos == ELM_CODE_TEXT_NOT_FOUND)
+     return ELM_CODE_TEXT_NOT_FOUND;
+
+   if (crpos == ELM_CODE_TEXT_NOT_FOUND)
+     return lfpos;
+   if (lfpos == ELM_CODE_TEXT_NOT_FOUND)
+     return crpos;
+   if (lfpos < crpos)
+     return lfpos;
+   return crpos;
 }
 
 EAPI unsigned int

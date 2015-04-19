@@ -859,10 +859,9 @@ static void
 _elm_code_widget_newline(Elm_Code_Widget *widget)
 {
    Elm_Code *code;
-   Elm_Code_Line *line, *newline;
+   Elm_Code_Line *line;
    Elm_Code_Widget_Data *pd;
-   unsigned int row, col, length, position;
-   char *content;
+   unsigned int row, col, position;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    _elm_code_widget_delete_selection(widget);
@@ -871,17 +870,9 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
          elm_code_widget_cursor_position_get(&col, &row));
    line = elm_code_file_line_get(code->file, row);
 
-   content = (char *) elm_code_line_text_get(line, &length);
-   content = strndup(content, length);
-   elm_code_file_line_insert(code->file, line->number + 1, "", 0, NULL);
-   newline = elm_code_file_line_get(code->file, line->number + 1);
-// TODO we need to split tokens from these lines (move this to elm_code_line?)
-
    position = elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
-   elm_code_line_text_set(newline, content + position, length - position);
-   elm_code_line_text_set(line, content, position);
+   elm_code_line_split_at(line, position);
 
-   free(content);
    eo_do(widget,
          elm_code_widget_cursor_position_set(1, row + 1),
 // TODO construct and pass a change object

@@ -20,6 +20,24 @@ elm_code_line_free(Elm_Code_Line *line)
    free(line);
 }
 
+EAPI void elm_code_line_split_at(Elm_Code_Line *line, unsigned int position)
+{
+   Elm_Code_Line *newline;
+   char *content;
+   unsigned int length;
+
+   content = (char *) elm_code_line_text_get(line, &length);
+   content = strndup(content, length);
+   elm_code_file_line_insert(line->file, line->number + 1, "", 0, NULL);
+   newline = elm_code_file_line_get(line->file, line->number + 1);
+// TODO we need to split tokens from these lines
+
+   elm_code_line_text_set(newline, content + position, length - position);
+   elm_code_line_text_set(line, content, position);
+
+   free(content);
+}
+
 EAPI void elm_code_line_status_set(Elm_Code_Line *line, Elm_Code_Status_Type status)
 {
    if (!line)

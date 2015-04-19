@@ -38,8 +38,20 @@ typedef struct _Elm_Code_Line
 EAPI void elm_code_line_free(Elm_Code_Line *line);
 
 /**
+ * @brief Line manipulation functions.
+ * @defgroup Content
+ * @{
+ *
+ * Functions for changing the content of lines in an Elm_Code_File
+ */
+
+EAPI void elm_code_line_split_at(Elm_Code_Line *line, unsigned int position);
+
+/**
+ * @}
+ *
  * @brief Line markup functions.
- * @defgroup Line highlighting and status manipulation
+ * @defgroup Highlighting
  *
  * @{
  *
