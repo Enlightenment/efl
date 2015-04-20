@@ -497,6 +497,7 @@ _emile_tgv_data(Emile_Image *image,
             if (block_length == 0)
               {
                  *error = EMILE_IMAGE_LOAD_ERROR_CORRUPT_FILE;
+                 eina_binbuf_free(buffer);
                  return EINA_FALSE;
               }
 
