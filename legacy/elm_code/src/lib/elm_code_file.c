@@ -186,6 +186,13 @@ EAPI void elm_code_file_save(Elm_Code_File *file)
 
    ecore_file_mv(tmp, path);
    free(tmp);
+
+   if (file->parent)
+     {
+        _elm_code_parse_reset_file(file->parent, file);
+        _elm_code_parse_file(file->parent, file);
+        elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_FILE_LOAD_DONE, file);
+     }
 }
 
 EAPI void elm_code_file_free(Elm_Code_File *file)

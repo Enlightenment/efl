@@ -38,7 +38,11 @@ elm_code_line_text_set(Elm_Code_Line *line, const char *chars, unsigned int leng
    line->length = length;
 
    file = line->file;
-   elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
+   if (file->parent)
+     {
+        _elm_code_parse_line(file->parent, line);
+        elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
+     }
 }
 
 EAPI int

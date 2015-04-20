@@ -45,6 +45,18 @@ _elm_code_parse_file(Elm_Code *code, Elm_Code_File *file)
      }
 }
 
+void
+_elm_code_parse_reset_file(Elm_Code *code, Elm_Code_File *file)
+{
+   Elm_Code_Line *line;
+   Eina_List *item;
+
+   EINA_LIST_FOREACH(file->lines, item, line)
+    {
+       _elm_code_parse_line(code, line);
+    }
+}
+
 static Elm_Code_Parser *
 _elm_code_parser_new(void (*parse_line)(Elm_Code_Line *, void *),
                      void (*parse_file)(Elm_Code_File *, void *))
@@ -164,9 +176,19 @@ _elm_code_parser_diff_parse_file(Elm_Code_File *file, void *data EINA_UNUSED)
      }
 }
 
+static void
+_elm_code_parser_todo_parse_line(Elm_Code_Line *line, void *data EINA_UNUSED)
+{
+   if (elm_code_line_text_strpos(line, "TODO", 0) != ELM_CODE_TEXT_NOT_FOUND)
+     elm_code_line_status_set(line, ELM_CODE_STATUS_TYPE_TODO);
+   else if (elm_code_line_text_strpos(line, "FIXME", 0) != ELM_CODE_TEXT_NOT_FOUND)
+     elm_code_line_status_set(line, ELM_CODE_STATUS_TYPE_TODO);
+}
+
 void
 _elm_code_parse_setup()
 {
    ELM_CODE_PARSER_STANDARD_DIFF = _elm_code_parser_new(_elm_code_parser_diff_parse_line,
                                                         _elm_code_parser_diff_parse_file);
+   ELM_CODE_PARSER_STANDARD_TODO = _elm_code_parser_new(_elm_code_parser_todo_parse_line, NULL);
 }

@@ -1299,6 +1299,9 @@ _elm_code_widget_setup_palette(Evas_Object *o)
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_FAILED,
                                     96, 54, 54, 255);
 
+   evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_STATUS_TYPE_TODO,
+                                    54, 54, 96, 255);
+
    // setup token colors
    evas_object_textgrid_palette_set(o, EVAS_TEXTGRID_PALETTE_STANDARD, ELM_CODE_TOKEN_TYPE_DEFAULT,
                                     205, 205, 205, 255);

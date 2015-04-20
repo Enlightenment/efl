@@ -13,6 +13,7 @@ extern "C" {
 typedef struct _Elm_Code_Parser Elm_Code_Parser;
 
 EAPI Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_DIFF; /**< A provided parser that will mark up diff text */
+EAPI Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_TODO; /**< A provided parser that will highlight TODO and FIXME lines */
 
 /**
  * @brief Parser helper functions.

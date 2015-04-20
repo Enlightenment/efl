@@ -32,5 +32,7 @@ void _elm_code_parse_line(Elm_Code *code, Elm_Code_Line *line);
 
 void _elm_code_parse_file(Elm_Code *code, Elm_Code_File *file);
 
+void _elm_code_parse_reset_file(Elm_Code *code, Elm_Code_File *file);
+
 
 #endif
