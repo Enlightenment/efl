@@ -14,7 +14,7 @@
 #define MY_CLASS_NAME_LEGACY "elm_clock"
 
 #define DEFAULT_FIRST_INTERVAL 0.85
-static void _time_update(Evas_Object *obj);
+static void _time_update(Evas_Object *obj, Eina_Bool theme_update);
 
 static const char SIG_CHANGED[] = "changed";
 
@@ -72,7 +72,7 @@ _on_clock_val_up(void *data)
 
    sd->interval = sd->interval / 1.05;
    ecore_timer_interval_set(sd->spin, sd->interval);
-   _time_update(data);
+   _time_update(data, EINA_FALSE);
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
    return ECORE_CALLBACK_RENEW;
 
@@ -127,7 +127,7 @@ _on_clock_val_down(void *data)
      }
    sd->interval = sd->interval / 1.05;
    ecore_timer_interval_set(sd->spin, sd->interval);
-   _time_update(data);
+   _time_update(data, EINA_FALSE);
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
    return ECORE_CALLBACK_RENEW;
 
@@ -339,7 +339,7 @@ _access_time_register(Evas_Object *obj, Eina_Bool is_access)
 }
 
 static void
-_time_update(Evas_Object *obj)
+_time_update(Evas_Object *obj, Eina_Bool theme_update)
 {
    ELM_CLOCK_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -348,7 +348,7 @@ _time_update(Evas_Object *obj)
    const char *style = elm_widget_style_get(obj);
 
    if ((sd->cur.seconds != sd->seconds) || (sd->cur.am_pm != sd->am_pm) ||
-       (sd->cur.edit != sd->edit) || (sd->cur.digedit != sd->digedit))
+       (sd->cur.edit != sd->edit) || (sd->cur.digedit != sd->digedit) || theme_update)
      {
         int i;
         Evas_Coord mw, mh;
@@ -568,7 +568,7 @@ _elm_clock_elm_widget_theme_apply(Eo *obj, Elm_Clock_Data *sd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, int_ret = elm_obj_widget_theme_apply());
    if (!int_ret) return EINA_FALSE;
 
-   _time_update(obj);
+   _time_update(obj, EINA_TRUE);
 
    return EINA_TRUE;
 }
@@ -597,7 +597,7 @@ _ticker(void *data)
              sd->hrs = tm->tm_hour;
              sd->min = tm->tm_min;
              sd->sec = tm->tm_sec;
-             _time_update(data);
+             _time_update(data, EINA_FALSE);
           }
      }
 
@@ -666,7 +666,7 @@ _elm_clock_evas_object_smart_add(Eo *obj, Elm_Clock_Data *priv)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   _time_update(obj);
+   _time_update(obj, EINA_FALSE);
    _ticker(obj);
 
    /* access */
@@ -827,7 +827,7 @@ _elm_clock_time_set(Eo *obj, Elm_Clock_Data *sd, int hrs, int min, int sec)
    sd->sec = sec;
 
    _timediff_set(sd);
-   _time_update(obj);
+   _time_update(obj, EINA_FALSE);
 }
 
 EOLIAN static void
@@ -847,7 +847,7 @@ _elm_clock_edit_set(Eo *obj, Elm_Clock_Data *sd, Eina_Bool edit)
    if ((edit) && (sd->digedit == ELM_CLOCK_EDIT_DEFAULT))
      elm_clock_edit_mode_set(obj, ELM_CLOCK_EDIT_ALL);
    else
-     _time_update(obj);
+     _time_update(obj, EINA_FALSE);
 }
 
 EOLIAN static Eina_Bool
@@ -863,7 +863,7 @@ _elm_clock_edit_mode_set(Eo *obj, Elm_Clock_Data *sd, Elm_Clock_Edit_Mode digedi
    if (digedit == ELM_CLOCK_EDIT_DEFAULT)
      elm_clock_edit_set(obj, EINA_FALSE);
    else
-     _time_update(obj);
+     _time_update(obj, EINA_FALSE);
 }
 
 EOLIAN static Elm_Clock_Edit_Mode
@@ -876,7 +876,7 @@ EOLIAN static void
 _elm_clock_show_am_pm_set(Eo *obj, Elm_Clock_Data *sd, Eina_Bool am_pm)
 {
    sd->am_pm = !!am_pm;
-   _time_update(obj);
+   _time_update(obj, EINA_FALSE);
 }
 
 EOLIAN static Eina_Bool
@@ -889,7 +889,7 @@ EOLIAN static void
 _elm_clock_show_seconds_set(Eo *obj, Elm_Clock_Data *sd, Eina_Bool seconds)
 {
    sd->seconds = !!seconds;
-   _time_update(obj);
+   _time_update(obj, EINA_FALSE);
 }
 
 EOLIAN static Eina_Bool
