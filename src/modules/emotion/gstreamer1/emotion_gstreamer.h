@@ -109,6 +109,7 @@ struct _EmotionVideoSinkPrivate {
 
     /* We need to keep a copy of the last inserted buffer as evas doesn't copy YUV data around */
    GstBuffer        *last_buffer;
+   GstMapInfo        map_info;
 
    int frames;
    int flapse;
@@ -124,6 +125,7 @@ struct _EmotionVideoSinkPrivate {
    //
    // Protected by the buffer mutex
    Eina_Bool unlocked : 1;
+   Eina_Bool mapped : 1;
 };
 
 struct _Emotion_Gstreamer_Buffer

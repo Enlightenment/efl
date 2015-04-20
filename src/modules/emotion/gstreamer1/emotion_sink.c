@@ -137,6 +137,22 @@ emotion_video_sink_dispose(GObject* object)
    sink = EMOTION_VIDEO_SINK(object);
    priv = sink->priv;
 
+   if ((priv->mapped) && (priv->last_buffer))
+     {
+        if (priv->evas_object)
+          {
+             evas_object_image_size_set(priv->evas_object, 1, 1);
+             evas_object_image_data_set(priv->evas_object, NULL);
+          }
+        gst_buffer_unmap(priv->last_buffer, &(priv->map_info));
+        priv->mapped = EINA_FALSE;
+     }
+   if (priv->last_buffer)
+     {
+        if (priv->last_buffer) gst_buffer_unref(priv->last_buffer);
+        priv->last_buffer = NULL;
+     }
+
    eina_lock_free(&priv->m);
    eina_condition_free(&priv->c);
 
@@ -210,9 +226,21 @@ emotion_video_sink_stop(GstBaseSink* base_sink)
 
    INF("sink stop");
 
-   gst_buffer_replace(&priv->last_buffer, NULL);
-
    eina_lock_take(&priv->m);
+   if (priv->last_buffer)
+     {
+        if (priv->evas_object)
+          {
+             evas_object_image_size_set(priv->evas_object, 1, 1);
+             evas_object_image_data_set(priv->evas_object, NULL);
+          }
+        if (priv->mapped)
+          gst_buffer_unmap(priv->last_buffer, &(priv->map_info));
+        priv->mapped = EINA_FALSE;
+        if (priv->last_buffer) gst_buffer_unref(priv->last_buffer);
+        priv->last_buffer = NULL;
+     }
+
    /* If there still is a pending frame, neutralize it */
    if (priv->send)
      {
@@ -371,8 +399,6 @@ emotion_video_sink_main_render(void *data)
 
    buffer = gst_buffer_ref(send->frame);
 
-   // XXX: need to map buffer and KEEP MAPPED until we set new video data or
-   // on the evas image object or release the object
    if (!gst_buffer_map(buffer, &map, GST_MAP_READ))
      goto exit_point;
 
@@ -391,9 +417,6 @@ emotion_video_sink_main_render(void *data)
    else
      WRN("No way to decode %x colorspace !", send->eformat);
 
-   // XXX: this unmap here is broken
-   gst_buffer_unmap(buffer, &map);
-
    evas_object_image_data_set(priv->evas_object, evas_data);
    evas_object_image_data_update_add(priv->evas_object, 0, 0, send->info.width, send->eheight);
    evas_object_image_pixels_dirty_set(priv->evas_object, 0);
@@ -405,7 +428,13 @@ emotion_video_sink_main_render(void *data)
 
    _emotion_frame_resize(priv->emotion_object, send->info.width, send->eheight, ratio);
 
-   gst_buffer_replace(&priv->last_buffer, buffer);
+   if ((priv->mapped) && (priv->last_buffer))
+     gst_buffer_unmap(priv->last_buffer, &(priv->map_info));
+   priv->map_info = map;
+   priv->mapped = EINA_TRUE;
+
+   if (priv->last_buffer) gst_buffer_unref(priv->last_buffer);
+   priv->last_buffer = buffer;
 
    _emotion_frame_new(priv->emotion_object);
 
@@ -415,7 +444,6 @@ emotion_video_sink_main_render(void *data)
 
    eina_lock_release(&priv->m);
 
-   if (buffer) gst_buffer_unref(buffer);
    emotion_gstreamer_buffer_free(send);
 
    _emotion_pending_ecore_end();
