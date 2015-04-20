@@ -166,6 +166,16 @@ EAPI Elua_State *elua_state_new(const char *progname);
  */
 EAPI Elua_State *elua_state_from_lua_state_get(lua_State *L);
 
+/**
+ * @brief Destroy an Elua state.
+ *
+ * Given an Elua state, this destroys its internal Lua state as well as all
+ * other data its holding and then frees the Elua state itself.
+ *
+ * @param[in] es The Elua state.
+ *
+ * @ingroup Elua
+ */
 EAPI void elua_state_free(Elua_State *es);
 
 EAPI void elua_state_dirs_set(Elua_State *es, const char *core,
