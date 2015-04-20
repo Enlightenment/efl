@@ -225,7 +225,6 @@ _ector_renderer_cairo_shape_ector_renderer_cairo_base_fill(Eo *obj EINA_UNUSED,
 {
    // FIXME: let's find out how to fill a shape with a shape later.
    // I need to read SVG specification and see how to map that with cairo.
-#warning "fill for a shape object is unhandled at this moment in cairo backend."
    ERR("fill with shape not implemented\n");
    return EINA_FALSE;
 }
