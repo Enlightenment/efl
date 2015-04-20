@@ -348,9 +348,6 @@ _update_emotion_fps(EmotionVideoSinkPrivate *priv)
      }
    else if ((tim - priv->rlapse) >= 0.5)
      {
-        printf("FRAME: %i, FPS: %3.1f\n",
-               priv->frames,
-               (priv->frames - priv->flapse) / (tim - priv->rlapse));
         priv->rlapse = tim;
         priv->flapse = priv->frames;
      }
