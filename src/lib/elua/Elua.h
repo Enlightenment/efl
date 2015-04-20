@@ -449,8 +449,21 @@ EAPI Eina_Bool elua_util_app_load(Elua_State *es, const char *appname);
 EAPI int elua_util_script_run(Elua_State *es, int argc, char **argv, int n,
                               int *quit);
 
-EAPI int elua_util_error_report(const Elua_State *es, const char *pname,
-                                int status);
+/**
+ * @brief Reports an error using Eina logging.
+ *
+ * If the given status is 0, this function just returns it. Otherwise, it takes
+ * the topmost item on the Lua stack, converts it to string (if it cannot be
+ * converted, a "(non-string error)" placeholder is used) and logs it out
+ * as an error, together with the program name set on Elua state init.
+ *
+ * @param[in] es The Elua state.
+ * @param[in] status The status code.
+ * @return The status code.
+ *
+ * @ingroup Elua
+ */
+EAPI int elua_util_error_report(const Elua_State *es, int status);
 
 #endif
 
