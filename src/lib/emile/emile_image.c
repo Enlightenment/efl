@@ -510,7 +510,10 @@ _emile_tgv_data(Emile_Image *image,
                                image->block.width, image->block.height);
 
             if (!eina_rectangle_intersection(&current, &master))
-              continue;
+              {
+                 eina_binbuf_free(data_start);
+                 continue;
+              }
 
             if (image->compress)
               {
