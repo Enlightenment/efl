@@ -328,7 +328,7 @@ evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
 
    if (!obj->callbacks) return NULL;
 
-   EINA_INLIST_FOREACH(obj->callbacks, info)
+   EINA_INLIST_REVERSE_FOREACH(obj->callbacks, info)
      {
         if ((info->func == func) && (info->type == type))
           {
