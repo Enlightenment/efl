@@ -306,6 +306,19 @@ EAPI Eina_Bool elua_state_appload_ref_push(Elua_State *es);
  */
 EAPI lua_State *elua_state_lua_state_get(const Elua_State *es);
 
+/**
+ * @brief Set up internationalization support for an Elua state.
+ *
+ * This function sets up correct i18n for an Elua state. That means loading
+ * the gettext bindings and making Lua aware of them. This also works when
+ * i18n support is disabled at compilation time, so you can just call it
+ * unconditionally.
+ *
+ * @param[in] es The Elua state.
+ * @return EINA_TRUE on success, EINA_FALSE on failure.
+ *
+ * @ingroup Elua
+ */
 EAPI Eina_Bool elua_state_i18n_setup(const Elua_State *es);
 EAPI Eina_Bool elua_state_modules_setup(const Elua_State *es);
 EAPI Eina_Bool elua_state_io_setup(const Elua_State *es);
