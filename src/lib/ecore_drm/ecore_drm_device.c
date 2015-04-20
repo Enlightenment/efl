@@ -86,26 +86,26 @@ _ecore_drm_device_cb_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
    return ECORE_CALLBACK_RENEW;
 }
 
-static Eina_Bool 
-_ecore_drm_device_cb_idle(void *data)
-{
-   Ecore_Drm_Device *dev;
-   Ecore_Drm_Output *output;
-   Eina_List *l;
+/* static Eina_Bool  */
+/* _ecore_drm_device_cb_idle(void *data) */
+/* { */
+/*    Ecore_Drm_Device *dev; */
+/*    Ecore_Drm_Output *output; */
+/*    Eina_List *l; */
 
-   if (!(dev = data)) return ECORE_CALLBACK_CANCEL;
+/*    if (!(dev = data)) return ECORE_CALLBACK_CANCEL; */
 
-   if (!dev->active) return ECORE_CALLBACK_RENEW;
+/*    if (!dev->active) return ECORE_CALLBACK_RENEW; */
 
-   EINA_LIST_FOREACH(dev->outputs, l, output)
-     {
-        if ((!output->enabled) || (!output->need_repaint)) continue;
-        if (output->repaint_scheduled) continue;
-        _ecore_drm_output_repaint_start(output);
-     }
+/*    EINA_LIST_FOREACH(dev->outputs, l, output) */
+/*      { */
+/*         if ((!output->enabled) || (!output->need_repaint)) continue; */
+/*         if (output->repaint_scheduled) continue; */
+/*         _ecore_drm_output_repaint_start(output); */
+/*      } */
 
-   return ECORE_CALLBACK_RENEW;
-}
+/*    return ECORE_CALLBACK_RENEW; */
+/* } */
 
 static void
 _ecore_drm_device_cb_output_event(const char *device EINA_UNUSED, Eeze_Udev_Event event EINA_UNUSED, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
