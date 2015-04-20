@@ -327,7 +327,7 @@ eio_file_free(Eio_File *common)
    if (common->main.associated)
      eina_hash_free(common->main.associated);
    eio_file_unregister(common);
-   free(common);
+   eio_common_free(common);
 }
 
 Eina_Bool
@@ -428,7 +428,7 @@ eio_file_direct_stat(const char *path,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   s = malloc(sizeof (Eio_File_Stat));
+   s = eio_common_alloc(sizeof (Eio_File_Stat));
    if (!s) return NULL;
 
    s->path = eina_stringshare_add(path);
@@ -460,7 +460,7 @@ eio_file_direct_lstat(const char *path,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   s = malloc(sizeof (Eio_File_Stat));
+   s = eio_common_alloc(sizeof (Eio_File_Stat));
    if (!s) return NULL;
 
    s->path = eina_stringshare_add(path);
@@ -490,7 +490,7 @@ eio_file_unlink(const char *path,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   l = malloc(sizeof (Eio_File_Unlink));
+   l = eio_common_alloc(sizeof (Eio_File_Unlink));
    if (!l) return NULL;
 
    l->path = eina_stringshare_add(path);
@@ -520,7 +520,7 @@ eio_file_mkdir(const char *path,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   r = malloc(sizeof (Eio_File_Mkdir));
+   r = eio_common_alloc(sizeof (Eio_File_Mkdir));
    if (!r) return NULL;
 
    r->path = eina_stringshare_add(path);
@@ -551,7 +551,7 @@ eio_file_chmod(const char *path,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   r = malloc(sizeof (Eio_File_Mkdir));
+   r = eio_common_alloc(sizeof (Eio_File_Mkdir));
    if (!r) return NULL;
 
    r->path = eina_stringshare_add(path);
@@ -583,7 +583,7 @@ eio_file_chown(const char *path,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   c = malloc(sizeof (Eio_File_Chown));
+   c = eio_common_alloc(sizeof (Eio_File_Chown));
    if (!c) return NULL;
 
    c->path = eina_stringshare_add(path);

@@ -233,6 +233,18 @@ eio_pack_send(Ecore_Thread *thread, Eina_List *pack, double *start)
    return pack;
 }
 
+void *
+eio_common_alloc(size_t size)
+{
+   return calloc(1, size);
+}
+
+void
+eio_common_free(Eio_File *common)
+{
+   free(common);
+}
+
 // For now use a list for simplicity and we should not have that many
 // pending request
 static Eina_List *tracked_thread = NULL;

@@ -43,7 +43,7 @@ static void
 _eio_eet_open_free(Eio_Eet_Open *eet)
 {
    if (eet->filename) eina_stringshare_del(eet->filename);
-   free(eet);
+   eio_file_free((Eio_File *)eet);
 }
 
 static void
@@ -88,7 +88,7 @@ _eio_eet_simple_end(void *data, Ecore_Thread *thread EINA_UNUSED)
    Eio_Eet_Simple *eet = data;
 
    eet->common.done_cb((void*) eet->common.data, &eet->common);
-   free(eet);
+   eio_file_free((Eio_File *)eet);
 }
 
 static void
@@ -97,7 +97,7 @@ _eio_eet_simple_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
    Eio_Eet_Simple *eet = data;
 
    eet->error_cb((void*) eet->common.data, &eet->common, eet->error);
-   free(eet);
+   eio_file_free((Eio_File *)eet);
 }
 
 static void
@@ -117,7 +117,7 @@ _eio_eet_write_cipher_free(Eio_Eet_Write *ew)
 {
    eina_stringshare_del(ew->name);
    eina_stringshare_del(ew->cipher_key);
-   free(ew);
+   eio_file_free((Eio_File *)ew);
 }
 
 static void
@@ -320,7 +320,7 @@ eio_eet_open(const char *filename,
    EINA_SAFETY_ON_NULL_RETURN_VAL(eet_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   eet = malloc(sizeof (Eio_Eet_Open));
+   eet = eio_common_alloc(sizeof(Eio_Eet_Open));
    EINA_SAFETY_ON_NULL_RETURN_VAL(eet, NULL);
 
    eet->eet_cb = eet_cb;
@@ -351,7 +351,7 @@ eio_eet_close(Eet_File *ef,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   eet = malloc(sizeof (Eio_Eet_Simple));
+   eet = eio_common_alloc(sizeof(Eio_Eet_Simple));
    EINA_SAFETY_ON_NULL_RETURN_VAL(eet, NULL);
 
    eet->ef = ef;
@@ -381,7 +381,7 @@ eio_eet_flush(Eet_File *ef,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   eet = malloc(sizeof (Eio_Eet_Simple));
+   eet = eio_common_alloc(sizeof(Eio_Eet_Simple));
    EINA_SAFETY_ON_NULL_RETURN_VAL(eet, NULL);
 
    eet->ef = ef;
@@ -427,7 +427,7 @@ eio_eet_data_write_cipher(Eet_File *ef,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   ew = malloc(sizeof (Eio_Eet_Write));
+   ew = eio_common_alloc(sizeof(Eio_Eet_Write));
    EINA_SAFETY_ON_NULL_RETURN_VAL(ew, NULL);
 
    ew->ef = ef;
@@ -467,7 +467,7 @@ eio_eet_data_read_cipher(Eet_File *ef,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   er = malloc(sizeof (Eio_Eet_Read));
+   er = eio_common_alloc(sizeof(Eio_Eet_Read));
    EINA_SAFETY_ON_NULL_RETURN_VAL(er, NULL);
 
    er->ef = ef;
@@ -510,7 +510,7 @@ eio_eet_data_image_write_cipher(Eet_File *ef,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   eiw = malloc(sizeof (Eio_Eet_Image_Write));
+   eiw = eio_common_alloc(sizeof(Eio_Eet_Image_Write));
    EINA_SAFETY_ON_NULL_RETURN_VAL(eiw, NULL);
 
    eiw->ef = ef;
@@ -551,7 +551,7 @@ eio_eet_read_direct(Eet_File *ef,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   er = malloc(sizeof (Eio_Eet_Read));
+   er = eio_common_alloc(sizeof(Eio_Eet_Read));
    EINA_SAFETY_ON_NULL_RETURN_VAL(er, NULL);
 
    er->ef = ef;
@@ -587,7 +587,7 @@ eio_eet_read_cipher(Eet_File *ef,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   er = malloc(sizeof (Eio_Eet_Read));
+   er = eio_common_alloc(sizeof(Eio_Eet_Read));
    EINA_SAFETY_ON_NULL_RETURN_VAL(er, NULL);
 
    er->ef = ef;
@@ -625,7 +625,7 @@ eio_eet_write_cipher(Eet_File *ef,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   ew = malloc(sizeof (Eio_Eet_Write));
+   ew = eio_common_alloc(sizeof(Eio_Eet_Write));
    EINA_SAFETY_ON_NULL_RETURN_VAL(ew, NULL);
 
    ew->ef = ef;

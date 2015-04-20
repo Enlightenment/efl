@@ -505,7 +505,7 @@ eio_file_ls(const char *dir,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   async = calloc(1, sizeof (Eio_File_Char_Ls));
+   async = eio_common_alloc(sizeof(Eio_File_Char_Ls));
    EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
 
    async->filter_cb = filter_cb;
@@ -540,7 +540,7 @@ eio_file_direct_ls(const char *dir,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   async = calloc(1, sizeof(Eio_File_Direct_Ls));
+   async = eio_common_alloc(sizeof(Eio_File_Direct_Ls));
    EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
 
    async->filter_cb = filter_cb;
@@ -575,7 +575,7 @@ eio_file_stat_ls(const char *dir,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   async = calloc(1, sizeof(Eio_File_Direct_Ls));
+   async = eio_common_alloc(sizeof(Eio_File_Direct_Ls));
    EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
 
    async->filter_cb = filter_cb;
@@ -679,7 +679,7 @@ eio_file_copy(const char *source,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   copy = malloc(sizeof(Eio_File_Progress));
+   copy = eio_common_alloc(sizeof(Eio_File_Progress));
    EINA_SAFETY_ON_NULL_RETURN_VAL(copy, NULL);
 
    copy->op = EIO_FILE_COPY;
@@ -715,7 +715,7 @@ eio_file_move(const char *source,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   move = malloc(sizeof(Eio_File_Move));
+   move = eio_common_alloc(sizeof(Eio_File_Move));
    EINA_SAFETY_ON_NULL_RETURN_VAL(move, NULL);
 
    move->progress.op = EIO_FILE_MOVE;
