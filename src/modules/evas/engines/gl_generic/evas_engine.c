@@ -2207,7 +2207,10 @@ eng_ector_renderer_draw(void *data, void *context EINA_UNUSED, void *surface, Ec
 
         if (eina_array_count(c) == 0 &&
             eina_array_count(clips) > 0)
-          return ;
+          {
+             eina_array_free(c);
+             return;
+          }
      }
 
    if (eina_array_count(c) == 0)
