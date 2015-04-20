@@ -389,6 +389,19 @@ EAPI int elua_util_require(Elua_State *es, const char *libname);
  * @ingroup Elua
  */
 EAPI int elua_util_file_run(Elua_State *es, const char *fname);
+
+/**
+ * @brief Runs a string.
+ *
+ * Runs a string. Returns zero on success or non-zero value on failure.
+ *
+ * @param[in] es The Elua state.
+ * @param[in] chunk The string to run.
+ * @param[in] chname The chunk name to use for traceback/debug.
+ * @return 0 for no errors, a non-zero value for errors (-1 for NULL es).
+ *
+ * @ingroup Elua
+ */
 EAPI int elua_util_string_run(Elua_State *es, const char *chunk,
                               const char *chname);
 EAPI Eina_Bool elua_util_app_load(Elua_State *es, const char *appname);
