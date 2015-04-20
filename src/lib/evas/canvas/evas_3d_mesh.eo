@@ -525,9 +525,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       Evas_3D_Object.update_notify;
       Evas_3D_Object.change_notify;
       Efl.File.file.set;
-      Efl.File.file.get;
       Efl.File.mmap.set;
-      Efl.File.mmap.get;
       Efl.File.save;
    }
 

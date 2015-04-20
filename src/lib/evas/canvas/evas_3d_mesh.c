@@ -855,25 +855,7 @@ _evas_3d_mesh_efl_file_mmap_set(Eo *obj,
    return EINA_TRUE;
 }
 
-EOLIAN static void
-_evas_3d_mesh_efl_file_mmap_get(Eo *obj EINA_UNUSED,
-                                Evas_3D_Mesh_Data *pd EINA_UNUSED,
-                                const Eina_File **f EINA_UNUSED,
-                                const char **key EINA_UNUSED)
-{
-   #warning "mmap get is not implemented on Evas_3D_Mesh."
-   ERR("mmap get is not implemented !");
-}
-
-EOLIAN static void
-_evas_3d_mesh_efl_file_file_get(Eo *obj EINA_UNUSED,
-                                Evas_3D_Mesh_Data *pd EINA_UNUSED,
-                                const char **file EINA_UNUSED,
-                                const char **key EINA_UNUSED)
-{
-   #warning "file get is not implemented on Evas_3D_Mesh."
-   ERR("file get is not implemented !");
-}
+/* FIXME: Imelemnt mmap_get and file_get. */
 
 EOLIAN static Eina_Bool
 _evas_3d_mesh_efl_file_file_set(Eo *obj, Evas_3D_Mesh_Data *pd,
