@@ -223,8 +223,31 @@ EAPI void elua_state_dirs_set(Elua_State *es, const char *core,
  */
 EAPI void elua_state_dirs_fill(Elua_State *es, Eina_Bool ignore_env);
 
+/**
+ * @brief Retrieve the Elua core dir.
+ *
+ * @param[in] es The Elua state.
+ *
+ * @ingroup Elua
+ */
 EAPI Eina_Stringshare *elua_state_core_dir_get(const Elua_State *es);
+
+/**
+ * @brief Retrieve the Elua module dir.
+ *
+ * @param[in] es The Elua state.
+ *
+ * @ingroup Elua
+ */
 EAPI Eina_Stringshare *elua_state_mod_dir_get(const Elua_State *es);
+
+/**
+ * @brief Retrieve the Elua apps dir.
+ *
+ * @param[in] es The Elua state.
+ *
+ * @ingroup Elua
+ */
 EAPI Eina_Stringshare *elua_state_apps_dir_get(const Elua_State *es);
 
 EAPI Eina_Stringshare *elua_state_prog_name_get(const Elua_State *es);
