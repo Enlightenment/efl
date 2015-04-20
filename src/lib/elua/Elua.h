@@ -333,6 +333,18 @@ EAPI Eina_Bool elua_state_i18n_setup(const Elua_State *es);
  * @ingroup Elua
  */
 EAPI Eina_Bool elua_state_modules_setup(const Elua_State *es);
+
+/**
+ * @brief Set up IO support for an Elua state.
+ *
+ * Elua provides its own loadfile based around mmap to replace the less
+ * efficient Lua version. This function takes care of the setup.
+ *
+ * @param[in] es The Elua state.
+ * @return EINA_TRUE on success, EINA_FALSE on failure.
+ *
+ * @ingroup Elua
+ */
 EAPI Eina_Bool elua_state_io_setup(const Elua_State *es);
 
 EAPI int elua_io_loadfile(const Elua_State *es, const char *fname);
