@@ -70,8 +70,25 @@ START_TEST(evas_object_event_callbacks_priority)
          _obj_event_cb, (void *) 3);
    evas_object_move(rect, 3, 3);
 
-   /* Make sure we got through all the callbacks */
+   /* Make sure we got through all the callbacks in priority order */
    fail_if(counter != 4);
+
+   /* Verify order of dels (must be reverse order of adds) */
+   counter = 1;
+   evas_object_event_callback_del(rect, EVAS_CALLBACK_MOVE, _obj_event_cb);
+   evas_object_event_callback_del(rect, EVAS_CALLBACK_MOVE, _obj_event_cb);
+   evas_object_event_callback_del(rect, EVAS_CALLBACK_MOVE, _obj_event_cb);
+   evas_object_event_callback_priority_add(rect, EVAS_CALLBACK_MOVE, 10,
+         _obj_event_cb, (void *) 2);
+   evas_object_event_callback_priority_add(rect, EVAS_CALLBACK_MOVE, 0,
+         _obj_event_cb, (void *) 1);
+   evas_object_event_callback_priority_add(rect, EVAS_CALLBACK_MOVE, -10,
+         _obj_event_cb, (void *) 3);
+   evas_object_event_callback_del(rect, EVAS_CALLBACK_MOVE, _obj_event_cb);
+   evas_object_move(rect, 2, 2);
+
+   /* Make sure we got through only the 2 first callbacks (in priority order) */
+   fail_if(counter != 3);
 
    END_CALLBACK_TEST();
 }
