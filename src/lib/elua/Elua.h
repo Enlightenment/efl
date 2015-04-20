@@ -418,6 +418,34 @@ EAPI int elua_util_string_run(Elua_State *es, const char *chunk,
  * @ingroup Elua
  */
 EAPI Eina_Bool elua_util_app_load(Elua_State *es, const char *appname);
+
+/**
+ * @brief Runs a script.
+ *
+ * This is a more complicated function that runs a script. It's a combination
+ * of the previously mentioned util functions. It takes argc and argv, which
+ * are typically given to the program, and an index of the first positional
+ * arg in argv (i.e. not options). The value on this index is then used as
+ * the potential name.
+ *
+ * If this name is either a dash or empty, the script is loaded from stdin.
+ * If it's a value and a file with this name exists, the script is loaded from
+ * the file. Otherwise, the name is treated to be an application name, and
+ * is loaded from the application path.
+ *
+ * If all succeeds, this is then run, and a quit value is written into the
+ * quit arg; if it's true (1), it means the app wants to exit immediately.
+ * If it's false (0), it means the app likely wants to execute a main loop.
+ *
+ * @param[in] es The Elua state.
+ * @param[in] argc The argument count.
+ * @param[in] argv The arguments.
+ * @param[in] n The index of the first positional argument.
+ * @param[out] quit Whether to quit or run a main loop.
+ * @return 0 on success, non-zero value on failure (-1 for NULL inputs).
+ *
+ * @ingroup Elua
+ */
 EAPI int elua_util_script_run(Elua_State *es, int argc, char **argv, int n,
                               int *quit);
 
