@@ -375,6 +375,19 @@ EAPI int elua_io_loadfile(const Elua_State *es, const char *fname);
  * @ingroup Elua
  */
 EAPI int elua_util_require(Elua_State *es, const char *libname);
+
+/**
+ * @brief Runs a file.
+ *
+ * Runs a file. Uses the Elua mmapped file IO to load the file. Returns zero
+ * on success or non-zero value on failure.
+ *
+ * @param[in] es The Elua state.
+ * @param[in] fname The file name.
+ * @return 0 for no errors, a non-zero value for errors (-1 for NULL es).
+ *
+ * @ingroup Elua
+ */
 EAPI int elua_util_file_run(Elua_State *es, const char *fname);
 EAPI int elua_util_string_run(Elua_State *es, const char *chunk,
                               const char *chname);
