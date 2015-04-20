@@ -19,6 +19,7 @@ _extnbuf_new(const char *base, int id, Eina_Bool sys, int num,
    char file[PATH_MAX];
    mode_t mode = S_IRUSR | S_IWUSR;
    int page_size;
+   Eina_Tmpstr *tmp;
 
    page_size = eina_cpu_page_size();
 
@@ -40,18 +41,7 @@ _extnbuf_new(const char *base, int id, Eina_Bool sys, int num,
    
    if (b->am_owner)
      {
-        const char *s = NULL;
-        
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-        if (getuid() == geteuid())
-#endif
-          {
-             s = getenv("XDG_RUNTIME_DIR");
-             if (!s) s = getenv("TMPDIR");
-          }
-        if (!s) s = "/tmp";
-        snprintf(file, sizeof(file), "%s/ee-lock-XXXXXX", s);
-        b->lockfd = mkstemp(file);
+        b->lockfd = eina_file_mkstemp("ee-lock-XXXXXX", &tmp);
         if (b->lockfd < 0) goto err;
         b->lock = eina_stringshare_add(file);
         if (!b->lock) goto err;
@@ -69,6 +59,7 @@ _extnbuf_new(const char *base, int id, Eina_Bool sys, int num,
    if (b->addr == MAP_FAILED) goto err;
    return b;
 err:
+   if (tmp) eina_tmpstr_del(tmp);
    _extnbuf_free(b);
    return NULL;
 }
