@@ -263,6 +263,13 @@ EAPI Eina_Stringshare *elua_state_apps_dir_get(const Elua_State *es);
  */
 EAPI Eina_Stringshare *elua_state_prog_name_get(const Elua_State *es);
 
+/**
+ * @brief Add another path to look up modules in to the state.
+ *
+ * @param[in] es The Elua state.
+ *
+ * @ingroup Elua
+ */
 EAPI void elua_state_include_path_add(Elua_State *es, const char *path);
 
 EAPI Eina_Bool elua_state_require_ref_push(Elua_State *es);
