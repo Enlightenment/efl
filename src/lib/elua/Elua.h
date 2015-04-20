@@ -347,6 +347,18 @@ EAPI Eina_Bool elua_state_modules_setup(const Elua_State *es);
  */
 EAPI Eina_Bool elua_state_io_setup(const Elua_State *es);
 
+/**
+ * @brief Loads a file using Elua's own mmap-based IO.
+ *
+ * This function behaves identically to luaL_loadfile when it comes to
+ * semantics. The loaded file remains on the Lua stack.
+ *
+ * @param[in] es The Elua state.
+ * @param[in] fname The file name.
+ * @return 0 for no errors, a non-zero value for errors (-1 for NULL es).
+ *
+ * @ingroup Elua
+ */
 EAPI int elua_io_loadfile(const Elua_State *es, const char *fname);
 
 EAPI int elua_util_require(Elua_State *es, const char *libname);
