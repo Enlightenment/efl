@@ -187,6 +187,10 @@ EAPI void elua_state_free(Elua_State *es);
  * where extra modules will be loaded and the apps path refers to from where
  * Elua applications will be loaded (this is not a module path).
  *
+ * If you provide NULL for any path, it will not be set. This allows you to
+ * split the setting into multiple calls. By the time of state use all need
+ * to be set.
+ *
  * @param[in] es The Elua state.
  * @param[in] core The core path.
  * @param[in] mods The modules path.
@@ -200,6 +204,23 @@ EAPI void elua_state_free(Elua_State *es);
  */
 EAPI void elua_state_dirs_set(Elua_State *es, const char *core,
                               const char *mods, const char *apps);
+
+/**
+ * @brief Fill the currently unset Elua dirs.
+ *
+ * This checks if any of the three main paths are unset and tries to fill
+ * them from the environment. It first tries environment variables to fill
+ * them (ELUA_CORE_DIR, ELUA_MODULES_DIR, ELUA_APPS_DIR) unless the ignore_env
+ * param is EINA_TRUE. If it is (or if the environment vars weren't set right)
+ * it uses eina prefix of the library to determine the paths. In that case
+ * they will expand to DATADIR/core, DATADIR/modules and DATADIR/apps, where
+ * DATADIR is typically something like /usr/share/elua.
+ *
+ * @param[in] es The Elua state.
+ * @param[in] ignore_env If set to EINA_TRUE, this ignores the env vars.
+ *
+ * @ingroup Elua
+ */
 EAPI void elua_state_dirs_fill(Elua_State *es, Eina_Bool ignore_env);
 
 EAPI Eina_Stringshare *elua_state_core_dir_get(const Elua_State *es);
