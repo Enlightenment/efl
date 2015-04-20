@@ -104,9 +104,35 @@ extern "C" {
 #include <lualib.h>
 #include <lauxlib.h>
 
+/** Opaque Elua state
+ *
+ * @ingroup Elua
+ */
 typedef struct _Elua_State Elua_State;
 
+/**
+ * @brief Initialize the Elua library.
+ *
+ * This initializes the Elua library for usage. It maintains an internal
+ * counter so that multiple calls will only increment/decrement correctly.
+ *
+ * @see elua_shutdown
+ *
+ * @ingroup Elua
+ */
 EAPI int elua_init(void);
+
+/**
+ * @brief Shutdown the Elua library.
+ *
+ * Depending on the internal initialization counter, this either decrements
+ * or completely shuts down the Elua library. In any case, call this once for
+ * each init call.
+ *
+ * @see elua_init
+ *
+ * @ingroup Elua
+ */
 EAPI int elua_shutdown(void);
 
 EAPI Elua_State *elua_state_new(const char *progname);
