@@ -178,6 +178,26 @@ EAPI Elua_State *elua_state_from_lua_state_get(lua_State *L);
  */
 EAPI void elua_state_free(Elua_State *es);
 
+/**
+ * @brief Set the Elua directory paths.
+ *
+ * Every Elua state needs three paths - the core script path, the module
+ * path and the apps path. The core path refers to from where core scripts
+ * will be loaded (such as the module system), the module path refers to from
+ * where extra modules will be loaded and the apps path refers to from where
+ * Elua applications will be loaded (this is not a module path).
+ *
+ * @param[in] es The Elua state.
+ * @param[in] core The core path.
+ * @param[in] mods The modules path.
+ * @param[in] apps The apps path.
+ *
+ * @see elua_state_core_dir_get
+ * @see elua_state_mod_dir_get
+ * @see elua_state_apps_dir_get
+ *
+ * @ingroup Elua
+ */
 EAPI void elua_state_dirs_set(Elua_State *es, const char *core,
                               const char *mods, const char *apps);
 EAPI void elua_state_dirs_fill(Elua_State *es, Eina_Bool ignore_env);
