@@ -320,6 +320,18 @@ EAPI lua_State *elua_state_lua_state_get(const Elua_State *es);
  * @ingroup Elua
  */
 EAPI Eina_Bool elua_state_i18n_setup(const Elua_State *es);
+
+/**
+ * @brief Set up module support for an Elua state.
+ *
+ * This loads the Elua module system and makes Lua aware of it. It also
+ * registers the Elua C utility library module.
+ *
+ * @param[in] es The Elua state.
+ * @return EINA_TRUE on success, EINA_FALSE on failure.
+ *
+ * @ingroup Elua
+ */
 EAPI Eina_Bool elua_state_modules_setup(const Elua_State *es);
 EAPI Eina_Bool elua_state_io_setup(const Elua_State *es);
 
