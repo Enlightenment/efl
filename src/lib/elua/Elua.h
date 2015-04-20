@@ -281,6 +281,15 @@ EAPI void elua_state_include_path_add(Elua_State *es, const char *path);
  * @ingroup Elua
  */
 EAPI Eina_Bool elua_state_require_ref_push(Elua_State *es);
+
+/**
+ * @brief Push the Elua app loader function onto the Lua stack.
+ *
+ * @param[in] es The Elua state.
+ * @return EINA_TRUE if the push was successful, EINA_FALSE otherwise.
+ *
+ * @ingroup Elua
+ */
 EAPI Eina_Bool elua_state_appload_ref_push(Elua_State *es);
 
 EAPI lua_State *elua_state_lua_state_get(const Elua_State *es);
