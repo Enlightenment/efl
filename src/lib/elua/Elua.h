@@ -52,6 +52,50 @@ extern "C" {
 # include <config.h>
 #endif
 
+/**
+ * @page elua_main Elua library (BETA)
+ *
+ * @date 2015 (created)
+ *
+ * @section toc Table of Contents
+ *
+ * @li @ref elua_main_intro
+ * @li @ref elua_main_compiling
+ * @li @ref elua_main_next_steps
+ *
+ * @section elua_main_intro Introduction
+ *
+ * The Elua library provides all necessary infrastructure required to set up
+ * a fully functional Lua state able of running Elua scripts. This is provided
+ * as a library in order to encourage reuse from different libraries and apps.
+ *
+ * @section elua_main_compiling How to compile
+ *
+ * As Elua is a library, compiling is very simple.
+ *
+ * Compiling C or C++ files into object files:
+ *
+ * @verbatim
+   gcc -c -o main.o main.c `pkg-config --cflags elua`
+   @endverbatim
+ *
+ * Linking object files into a binary executable:
+ *
+ * @verbatim
+   gcc -o my_application main.o `pkg-config --libs elua`
+   @endverbatim
+ *
+ * See @ref pkgconfig
+ *
+ * @section elua_main_next_steps Next Steps
+ *
+ * There is a comperehensive API reference available that should get you up
+ * and running.
+ *
+ * @addtogroup Elua
+ * @{
+ */
+
 #ifdef EFL_BETA_API_SUPPORT
 
 #include <Eina.h>
