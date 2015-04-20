@@ -191,6 +191,20 @@ Fixes:
    * evas-gl-x11: Fix dereference before null check (CID1293519)
    * evas-software-x11: Fix dereference before null check(s) (CID1270030, CID1270028, CID1270029)
    * Evas object: verify the parent is valid and fail if not.
+   * efreetd: If we fail to allocate space for subdir_cache, then get out (CID1294212)
+   * Evas GL: Fallback to indirect rendering if mul_col != 0xFFFFFFFF
+   * eo_gdb.py: fix syntax error
+   * eio: reorder tests linkage to unbreak debian-based systems
+   * evas-drm: Handle render mode for 4 buffers
+   * ecore-drm: Add pending_flip field to Ecore_Drm_Fb
+   * evas-drm: Mark the Ecore_Drm_Fb as complete when we get the page flip event. (T2289)
+   * ecore-drm: Fix hotplugging of outputs
+   * ecore-drm: Fix mouse movement across multiple outputs
+   * ecore-drm: Don't fetch output geometry on every mouse movement
+   * evas: fix possible segfault in evas_3d_node_member_add/del.
+   * Evas textblock: remove freed item from the line list
+   * evas: restore the value of "do_region" in jpeg loader as EINA_TRUE
+   * emotion - gst1 module - handle long standing bad map/unmap of gst buf
 
 Changes since 1.12.0:
 ---------------------
