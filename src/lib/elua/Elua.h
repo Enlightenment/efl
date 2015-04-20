@@ -292,6 +292,18 @@ EAPI Eina_Bool elua_state_require_ref_push(Elua_State *es);
  */
 EAPI Eina_Bool elua_state_appload_ref_push(Elua_State *es);
 
+/**
+ * @brief Retrieve the Lua state from an Elua state.
+ *
+ * This function retrieves the Lua state from a valid Elua state. As an
+ * Elua state is always initialized, this will return a valid state, unless
+ * the given Elua state is NULL, in which case it will also return NULL.
+ *
+ * @param[in] es The Elua state.
+ * @return The Lua state or NULL.
+ *
+ * @ingroup Elua
+ */
 EAPI lua_State *elua_state_lua_state_get(const Elua_State *es);
 
 EAPI Eina_Bool elua_state_i18n_setup(const Elua_State *es);
