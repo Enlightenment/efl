@@ -1109,6 +1109,7 @@ try_again:
      {
         ERR("glXChooseFBConfig() can't find any configs (alpha: %d, depth: %d, stencil: %d, msaa: %d)",
             alpha, depth_bits, stencil_bits, msaa_samples);
+        if (configs) XFree(configs);
         if ((depth_bits > 24) || (stencil_bits > 8))
           {
              WRN("Please note that your driver might not support 32-bit depth or "
@@ -1187,6 +1188,7 @@ try_again:
         XFree(visinfo);
      }
 
+   XFree(configs);
    if (!found)
      {
         ERR("Could not find a matching config. Now what?");
