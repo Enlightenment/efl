@@ -317,7 +317,7 @@ START_TEST(str_memdup)
       double d;
    } t1,*t2;
    unsigned char buf[7];
-   char *temp_buf;
+   unsigned char *temp_buf;
 
    eina_init();
 
@@ -333,7 +333,7 @@ START_TEST(str_memdup)
 
    memcpy(buf, "aaabbb", 6);
    temp_buf = eina_memdup(buf, 6, EINA_TRUE);
-   fail_if(strcmp(temp_buf, "aaabbb") != 0);
+   fail_if(strcmp((char *) temp_buf, "aaabbb") != 0);
    free(temp_buf);
 
    eina_shutdown();
