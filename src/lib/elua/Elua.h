@@ -135,6 +135,20 @@ EAPI int elua_init(void);
  */
 EAPI int elua_shutdown(void);
 
+/**
+ * @brief Create a new Elua state.
+ *
+ * This creates a new Elua state. An Elua state is externally opaque, but
+ * it contains a LuaJIT state as well as some additional information that
+ * is mostly initialized by other APIs.
+ *
+ * @param[in] progname The program name that holds the Elua state. This will
+ * be used for stuff like error reporting. Typically the same as the binary
+ * name of the application (argv[0]).
+ * @return A new Elua state or NULL.
+ *
+ * @ingroup Elua
+ */
 EAPI Elua_State *elua_state_new(const char *progname);
 EAPI Elua_State *elua_state_from_lua_state_get(lua_State *L);
 
