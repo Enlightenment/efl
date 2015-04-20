@@ -98,6 +98,10 @@ START_TEST(binbuf_remove)
 }
 END_TEST
 
+/* eina_binbuf_manage_new_length and eina_binbuf_manage_read_only_new_length
+ * are deprecated */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 START_TEST(binbuf_manage_simple)
 {
    Eina_Binbuf *buf;
@@ -154,6 +158,7 @@ START_TEST(binbuf_manage_read_only_simple)
    eina_shutdown();
 }
 END_TEST
+#pragma GCC diagnostic pop
 
 START_TEST(binbuf_insert)
 {
