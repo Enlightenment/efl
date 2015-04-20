@@ -5011,7 +5011,7 @@ _ecore_evas_x_interface_x11_new(void)
    iface->shape_input_rectangle_subtract = _ecore_evas_x11_shape_input_rectangle_subtract;
    iface->shape_input_empty = _ecore_evas_x11_shape_input_empty;
    iface->shape_input_reset = _ecore_evas_x11_shape_input_reset;
-   iface->shape_input_reset = _ecore_evas_x11_shape_input_apply;
+   iface->shape_input_apply = _ecore_evas_x11_shape_input_apply;
 
    return iface;
 }
