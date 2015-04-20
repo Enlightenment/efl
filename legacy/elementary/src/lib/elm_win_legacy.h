@@ -184,6 +184,9 @@ EAPI void                  elm_win_render(Evas_Object *obj);
 /**
  * Get the Ecore_Wl_Window of an Evas_Object
  *
+ * Do not use this function if you'd like your application/library be portable.
+ * You have been warned.
+ *
  * @param obj the object
  *
  * @return The Ecore_Wl_Window of @p obj
