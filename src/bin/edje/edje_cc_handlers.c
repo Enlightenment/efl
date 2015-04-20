@@ -13052,7 +13052,6 @@ edje_cc_handlers_wildcard(void)
         end = strrchr(last, '.');
         if (end) last = end + 1;
      }
-   if (!last) return EINA_FALSE;
    if (current_part)
      {
         if ((!strcmp(last, "part")) && (!current_part->name))
