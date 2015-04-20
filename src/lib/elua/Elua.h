@@ -361,6 +361,19 @@ EAPI Eina_Bool elua_state_io_setup(const Elua_State *es);
  */
 EAPI int elua_io_loadfile(const Elua_State *es, const char *fname);
 
+/**
+ * @brief Requires a module.
+ *
+ * Requires a Lua module. Leaves the Lua stack clean. Returns 0 on success
+ * or non-zero value on failure (see lua_pcall).
+ *
+ * @param[in] es The Elua state.
+ * @param[in] libname The library name.
+ * @return 0 for no errors, a non-zero value for errors (-1 for NULL es or
+ * NULL require).
+ *
+ * @ingroup Elua
+ */
 EAPI int elua_util_require(Elua_State *es, const char *libname);
 EAPI int elua_util_file_run(Elua_State *es, const char *fname);
 EAPI int elua_util_string_run(Elua_State *es, const char *chunk,
