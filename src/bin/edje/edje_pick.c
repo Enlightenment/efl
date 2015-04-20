@@ -657,8 +657,6 @@ _edje_pick_header_make(Edje_File *out_file , Edje_File *edf, Eina_List *ifs)
           }
      }
 
-   _edje_cache_file_unref(edf);
-
    return status;
 }
 
@@ -1344,6 +1342,7 @@ main(int argc, char **argv)
         k = _edje_pick_header_make(out_file, edf, inp_files);
         if (k != EDJE_PICK_NO_ERROR)
           {
+             _edje_cache_file_unref(edf);
              eet_close(ef);
              return _edje_pick_cleanup(inp_files, out_file, k);
           }
@@ -1365,6 +1364,7 @@ main(int argc, char **argv)
              if (!ce || (ce->id < 0))
                {
                   EINA_LOG_ERR("Failed to find group <%s> id\n", name1);
+                  _edje_cache_file_unref(edf);
                   return _edje_pick_cleanup(inp_files, out_file,
                                             EDJE_PICK_GROUP_NOT_FOUND);
                }
@@ -1379,6 +1379,7 @@ main(int argc, char **argv)
              if (!edc)
                {
                   EINA_LOG_ERR("Failed to read group <%s> id <%d>\n", name1, ce->id);
+                  _edje_cache_file_unref(edf);
                   return _edje_pick_cleanup(inp_files, out_file,
                                             EDJE_PICK_GROUP_NOT_FOUND);
                }
@@ -1401,6 +1402,7 @@ main(int argc, char **argv)
              }
 
              free(edc);
+             _edje_cache_file_unref(edf);
              edje_cache_emp_free(ce);
              eet_close(ef);
           }
