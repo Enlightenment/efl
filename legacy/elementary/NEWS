@@ -72,6 +72,12 @@ Fixes:
    * [elm_panel] Fix mirroring issue.
    * test_naviframe: Fix content image file names.
    * elm_image: return EINA_FALSE if the data source is NULL in elm_image_memfile_set
+   * spinner: fix entry style in non 'button_layout' mode
+   * elm_gengrid: mark cursor_engine_only in data and update state when realized
+   * atspi: add missing signals array sentiel.
+   * elementary: Fix elm_win_window_id_get for wayland
+   * elm_slider: fix theme apply
+   * elm_clock: fix theme apply
 
 Changes since 1.12.0:
 ---------------------
