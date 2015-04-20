@@ -86,6 +86,7 @@ _ecore_drm_device_cb_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
    return ECORE_CALLBACK_RENEW;
 }
 
+#if 0
 static Eina_Bool 
 _ecore_drm_device_cb_idle(void *data)
 {
@@ -106,6 +107,7 @@ _ecore_drm_device_cb_idle(void *data)
 
    return ECORE_CALLBACK_RENEW;
 }
+#endif
 
 static void
 _ecore_drm_device_cb_output_event(const char *device EINA_UNUSED, Eeze_Udev_Event event EINA_UNUSED, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
