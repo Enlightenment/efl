@@ -698,10 +698,26 @@ static void
 _ecore_evas_drm_show(Ecore_Evas *ee)
 {
    if ((!ee) || (ee->visible)) return;
-   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-   ee->prop.withdrawn = EINA_FALSE;
-   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
+
+   ee->should_be_visible = 1;
+
+   if (ee->prop.avoid_damage)
+     _ecore_evas_drm_render(ee);
+
+   if (ee->prop.override)
+     {
+        ee->prop.withdrawn = EINA_FALSE;
+        if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
+     }
+
+   if (ee->visible) return;
+
    ee->visible = 1;
+   if (ee->prop.fullscreen)
+     {
+        evas_focus_in(ee->evas);
+        if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+     }
    if (ee->func.fn_show) ee->func.fn_show(ee);
 }
 
@@ -709,11 +725,18 @@ static void
 _ecore_evas_drm_hide(Ecore_Evas *ee)
 {
    if ((!ee) || (!ee->visible)) return;
-   evas_sync(ee->evas);
-   ee->prop.withdrawn = EINA_TRUE;
-   if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
+
+   if (ee->prop.override)
+     {
+        ee->prop.withdrawn = EINA_TRUE;
+        if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
+     }
+
+   if (!ee->visible) return;
+
    ee->visible = 0;
    ee->should_be_visible = 0;
+   evas_sync(ee->evas);
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
 
