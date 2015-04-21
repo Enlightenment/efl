@@ -1,5 +1,6 @@
-#ifndef ELM_COLOR_CLASS_H
-# define ELM_COLOR_CLASS_H
+#ifdef EFL_BETA_API_SUPPORT
+# ifndef ELM_COLOR_CLASS_H
+#  define ELM_COLOR_CLASS_H
 
 /**
  * @defgroup Elm_Color_Class_Group Color Class Editor
@@ -82,4 +83,5 @@ EAPI void elm_color_class_list_cb_set(Elm_Color_Class_List_Cb cb);
 EAPI Eina_List *elm_color_class_util_edje_file_list(Eina_File *f);
 /** }@ */
 
+# endif
 #endif
