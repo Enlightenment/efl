@@ -1143,7 +1143,7 @@ ecore_con_event_server_data(Ecore_Con_Server *obj, unsigned char *buf, int num, 
    ecore_event_add(ECORE_CON_EVENT_SERVER_DATA, e,
                    _ecore_con_event_server_data_free, NULL);
      {
-        Ecore_Con_Event_Data_Received event_info = { 0 };
+        Ecore_Con_Event_Data_Received event_info = { NULL, 0 };
         event_info.data = e->data;
         event_info.size = e->size;
         eo_do(obj, eo_event_callback_call(ECORE_CON_BASE_EVENT_DATA_RECEIVED, &event_info));
@@ -1250,7 +1250,7 @@ ecore_con_event_client_data(Ecore_Con_Client *obj, unsigned char *buf, int num, 
    ecore_event_add(ECORE_CON_EVENT_CLIENT_DATA, e,
                    (Ecore_End_Cb)_ecore_con_event_client_data_free, cl->host_server);
      {
-        Ecore_Con_Event_Data_Received event_info = { 0 };
+        Ecore_Con_Event_Data_Received event_info = { NULL, 0 };
         event_info.data = e->data;
         event_info.size = e->size;
         eo_do(obj, eo_event_callback_call(ECORE_CON_BASE_EVENT_DATA_RECEIVED, &event_info));
