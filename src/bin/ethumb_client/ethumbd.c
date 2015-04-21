@@ -878,17 +878,6 @@ _ethumb_table_append(Ethumbd *ed)
    return i;
 }
 
-static inline int
-_get_idx_for_path(const char *path)
-{
-   int i;
-   int n;
-   n = sscanf(path, "/org/enlightenment/Ethumb/%d", &i);
-   if (!n)
-     return -1;
-   return i;
-}
-
 static void _name_owner_changed_cb(void *context, const char *bus, const char *old_id, const char *new_id);
 
 static void
