@@ -540,6 +540,7 @@ rg_etc1_color_quad_set(unsigned int old_color, unsigned int new_color)
    return (new_color & ~A_MASK) | (old_color & A_MASK);
 }
 
+#if 0
 static inline void
 rg_etc1_color_quad_get(unsigned int color, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *alpha)
 {
@@ -549,6 +550,7 @@ rg_etc1_color_quad_get(unsigned int color, unsigned char *r, unsigned char *g, u
    if (b) *b = B_VAL_GET(&color);
    if (alpha) *alpha = A_VAL_GET(&color);
 }
+#endif
 
 #if RG_ETC1_CONSTRAINED_SUBBLOCK
 static inline unsigned char
@@ -749,6 +751,7 @@ rg_etc1_vec_scale(float r[3], float s)
      r[i] *= s;
 }
 
+#if 0
 static inline unsigned char
 rg_etc1_block_byte_bits_get(const unsigned char bytes[8], unsigned char offset, unsigned char num)
 {
@@ -767,6 +770,7 @@ rg_etc1_block_byte_bits_set(unsigned char bytes[8], unsigned char offset, unsign
    bytes[byte_offset] &= ~(mask << byte_bit_offset);
    bytes[byte_offset] |= (((!!bits) & 0x1) << byte_bit_offset);
 }
+#endif
 
 static inline unsigned char
 rg_etc1_block_flip_bit_get(const unsigned char bytes[8])
@@ -774,12 +778,14 @@ rg_etc1_block_flip_bit_get(const unsigned char bytes[8])
    return (bytes[3] & 1) != 0;
 }
 
+#if 0
 static inline void
 rg_etc1_block_flip_bit_set(unsigned char bytes[8], unsigned char flip)
 {
    bytes[3] &= ~1;
    bytes[3] |= (!!flip) & 0x1;
 }
+#endif
 
 static inline unsigned char
 rg_etc1_block_diff_bit_get(const unsigned char bytes[8])
@@ -787,6 +793,7 @@ rg_etc1_block_diff_bit_get(const unsigned char bytes[8])
    return (bytes[3] & 2) != 0;
 }
 
+#if 0
 static inline void
 rg_etc1_block_diff_bit_set(unsigned char bytes[8], unsigned char diff)
 {
@@ -862,6 +869,7 @@ rg_etc1_block_selector_set(unsigned char bytes[8], unsigned char x, unsigned cha
    p[-2] &= ~mask;
    p[-2] |= (msb << byte_bit_offsets);
 }
+#endif
 
 static inline unsigned short
 rg_etc_block_base4_color_get(const unsigned char bytes[8], unsigned char idx)
@@ -884,6 +892,7 @@ rg_etc_block_base4_color_get(const unsigned char bytes[8], unsigned char idx)
    return b | (g << 4) | (r << 8);
 }
 
+#if 0
 static inline void
 rg_etc1_block_base4_color_set(unsigned char bytes[8], unsigned char idx, unsigned short c)
 {
@@ -900,6 +909,7 @@ rg_etc1_block_base4_color_set(unsigned char bytes[8], unsigned char idx, unsigne
         rg_etc1_block_byte_bits_set(bytes, cETC1AbsColor4B1BitOffset, 4, c & 15);
      }
 }
+#endif
 
 static inline unsigned short
 rg_etc1_block_base5_color_get(const unsigned char bytes[8])
@@ -913,6 +923,7 @@ rg_etc1_block_base5_color_get(const unsigned char bytes[8])
    return b | (g << 5) | (r << 10);
 }
 
+#if 0
 static inline void
 rg_etc1_block_base5_color_set(unsigned char bytes[8], unsigned short c)
 {
@@ -920,6 +931,7 @@ rg_etc1_block_base5_color_set(unsigned char bytes[8], unsigned short c)
    rg_etc1_block_byte_bits_set(bytes, cETC1BaseColor5GBitOffset, 5, (c >> 5) & 31);
    rg_etc1_block_byte_bits_set(bytes, cETC1BaseColor5BBitOffset, 5, c & 31);
 }
+#endif
 
 static inline unsigned short
 rg_etc1_block_delta3_color_get(const unsigned char bytes[8])
@@ -933,6 +945,7 @@ rg_etc1_block_delta3_color_get(const unsigned char bytes[8])
    return b | (g << 3) | (r << 6);
 }
 
+#if 0
 static inline void
 rg_etc1_block_delta3_color_set(unsigned char bytes[8], unsigned short c)
 {
@@ -967,6 +980,7 @@ rg_etc1_block_color5_pack(unsigned int c, unsigned char scaled, unsigned char bi
    rg_etc1_color_quad_get(c, &r, &g, &b, NULL);
    return rg_etc1_block_color5_component_pack(r, g, b, scaled, bias);
 }
+#endif
 
 static inline void
 rg_etc1_block_color5_component_unpack(unsigned char *r, unsigned char *g, unsigned char *b,
@@ -984,6 +998,7 @@ rg_etc1_block_color5_component_unpack(unsigned char *r, unsigned char *g, unsign
      }
 }
 
+#if 0
 static inline unsigned int
 rg_etc1_block_color5_unpack(unsigned short packed_color5, unsigned char scaled, unsigned char alpha)
 {
@@ -1009,6 +1024,7 @@ rg_etc1_block_delta3_pack(char r, char g, char b)
 
    return b | (g << 3) | (r << 6);
 }
+#endif
 
 // Results range from -4 to 3 (cETC1ColorDeltaMin to cETC1ColorDeltaMax)
 static inline void
@@ -1023,6 +1039,7 @@ rg_etc1_block_delta3_unpack(char *r, char *g, char *b, unsigned short packed_del
    if (*b >= 4) *b -= 8;
 }
 
+#if 0
 static inline unsigned short
 rg_etc1_block_color4_component_pack(unsigned char r, unsigned char g, unsigned char b,
                                     unsigned char scaled, unsigned char bias)
@@ -1049,6 +1066,7 @@ rg_etc1_block_color4_pack(unsigned int color, unsigned char scaled, unsigned cha
    rg_etc1_color_quad_get(color, &r, &g, &b, NULL);
    return rg_etc1_block_color4_component_pack(r, g, b, scaled, bias);
 }
+#endif
 
 static inline void
 rg_etc1_block_color4_component_unpack(unsigned char *r, unsigned char *g, unsigned char *b,
@@ -1066,6 +1084,7 @@ rg_etc1_block_color4_component_unpack(unsigned char *r, unsigned char *g, unsign
      }
 }
 
+#if 0
 static inline unsigned int
 rg_etc1_block_color4_unpack(unsigned short packed_color4, unsigned char scaled, unsigned char alpha)
 {
@@ -1075,6 +1094,7 @@ rg_etc1_block_color4_unpack(unsigned short packed_color4, unsigned char scaled, 
 
    return rg_etc1_color_quad_init(r, g, b, alpha);
 }
+#endif
 
 
 static inline unsigned char
@@ -1108,7 +1128,7 @@ rg_etc1_block_color5_delta3_component_unpack(unsigned char *r, unsigned char *g,
    return success;
 }
 
-
+#if 0
 static inline unsigned char
 rg_etc1_block_color5_delta3_unpack(unsigned int *result,
                                    unsigned short packed_color5, unsigned short packed_delta3,
@@ -1122,6 +1142,7 @@ rg_etc1_block_color5_delta3_unpack(unsigned int *result,
    *result = rg_etc1_color_quad_init(r, g, b, alpha);
    return success;
 }
+#endif
 
 static inline void
 rg_etc1_block_sublock_diff(unsigned int dst[4], const int *pInten_modifer_table,
@@ -1523,6 +1544,7 @@ rg_etc1_solution_coordinates_component_set(Etc1_Solution_Coordinates *solution,
    solution->m_color4 = color4;
 }
 
+#if 0
 static inline void
 rg_etc1_solution_coordinates_set(Etc1_Solution_Coordinates *solution,
                                  color_quad_u8 unscaled_color, unsigned int inten_table, unsigned char color4)
@@ -1531,6 +1553,7 @@ rg_etc1_solution_coordinates_set(Etc1_Solution_Coordinates *solution,
    solution->m_inten_table = inten_table;
    solution->m_color4 = color4;
 }
+#endif
 
 static inline void
 rg_etc1_solution_coordinates_clear(Etc1_Solution_Coordinates *solution)
@@ -1569,6 +1592,7 @@ rg_etc1_solution_coordinates_get_scaled_color(color_quad_u8 *color, const Etc1_S
    rg_etc1_color_quad_u8_init(color, br, bg, bb, 255);
 }
 
+#if 0
 static inline void
 rg_etc1_solution_coordinates_block_colors_get(const Etc1_Solution_Coordinates *coords, color_quad_u8 colors[4])
 {
@@ -1581,6 +1605,7 @@ rg_etc1_solution_coordinates_block_colors_get(const Etc1_Solution_Coordinates *c
    for (i = 0; i < 4; i++)
      rg_etc1_color_quad_u8_init(&colors[i], br + pInten_table[i], bg + pInten_table[i], bb + pInten_table[i], 255);
 }
+#endif
 
 static inline void
 rg_etc1_pack_params_clear(rg_etc1_pack_params *params)
@@ -1620,12 +1645,14 @@ rg_etc1_optimizer_params_clean(rg_etc1_optimizer_params *params)
    params->m_constrain_against_base_color5 = EINA_FALSE;
 }
 
+#if 0
 static inline void
 rg_etc1_optimizer_params_base_clear(rg_etc1_optimizer_params *params)
 {
    rg_etc1_pack_params_clear(params->base_params);
    rg_etc1_optimizer_params_clean(params);
 }
+#endif
 
 typedef struct
 {

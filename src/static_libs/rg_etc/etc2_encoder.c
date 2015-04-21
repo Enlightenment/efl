@@ -36,10 +36,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Enable this flag when working on (quality) optimizations
 //#define DEBUG
 
+#ifdef DEBUG
 // Weights for the distance (perceptual mode) - sum is ~1024
 static const int R_WEIGHT = 299 * 1024 / 1000;
 static const int G_WEIGHT = 587 * 1024 / 1000;
 static const int B_WEIGHT = 114 * 1024 / 1000;
+#endif
 
 static const int kTargetError[3] = {
    5*5*16, // 34 dB
@@ -446,6 +448,7 @@ _etc2_h_mode_header_pack(uint8_t *etc2, Eina_Bool *swap_colors,
    return EINA_TRUE;
 }
 
+#ifdef DEBUG
 static inline int
 _rgb_distance_percept(uint32_t color1, uint32_t color2)
 {
@@ -454,6 +457,7 @@ _rgb_distance_percept(uint32_t color1, uint32_t color2)
    int B = B_VAL(color1) - B_VAL(color2);
    return (R * R * R_WEIGHT) + (G * G * G_WEIGHT) + (B * B * B_WEIGHT);
 }
+#endif
 
 static inline int
 _rgb_distance_euclid(uint32_t color1, uint32_t color2)
