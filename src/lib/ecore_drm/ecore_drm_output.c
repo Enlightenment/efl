@@ -299,6 +299,8 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    output->dev = dev;
    output->x = x;
    output->y = y;
+   output->mw = conn->mmWidth;
+   output->mh = conn->mmHeight;
 
    output->subpixel = conn->subpixel;
    output->make = eina_stringshare_add("unknown");
@@ -609,8 +611,8 @@ _ecore_drm_event_output_send(const Ecore_Drm_Output *output, Eina_Bool plug)
         e->h = output->current_mode->height;
         e->x = output->x;
         e->y = output->y;
-        e->phys_width = 0;
-        e->phys_height = 0;
+        e->phys_width = output->mw;
+        e->phys_height = output->mh;
         e->refresh = output->current_mode->refresh;
         e->subpixel_order = output->subpixel;
         e->make = eina_stringshare_ref(output->make);

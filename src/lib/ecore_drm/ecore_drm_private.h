@@ -118,6 +118,7 @@ struct _Ecore_Drm_Output
 
    int x, y;
    int drm_fd;
+   unsigned int mw, mh;
 
    Eina_Bool need_repaint : 1;
    Eina_Bool repaint_scheduled : 1;
