@@ -1605,7 +1605,6 @@ rg_etc1_solution_coordinates_block_colors_get(const Etc1_Solution_Coordinates *c
    for (i = 0; i < 4; i++)
      rg_etc1_color_quad_u8_init(&colors[i], br + pInten_table[i], bg + pInten_table[i], bb + pInten_table[i], 255);
 }
-#endif
 
 static inline void
 rg_etc1_pack_params_clear(rg_etc1_pack_params *params)
@@ -1613,6 +1612,7 @@ rg_etc1_pack_params_clear(rg_etc1_pack_params *params)
    params->m_quality = rg_etc1_high_quality;
    params->m_dithering = EINA_FALSE;
 }
+#endif
 
 static const int rg_etc1_default_scan_delta[] = { 0 };
 
@@ -2115,7 +2115,7 @@ rg_etc1_optimizer_evaluate_solution_fast(rg_etc1_optimizer *optimizer, const Etc
           {
              if (block_inten[0] > optimizer->m_pSorted_luma[n - 1])
                {
-                  const uint min_error = labs(block_inten[0] - optimizer->m_pSorted_luma[n - 1]);
+                  const uint min_error = labs((long) block_inten[0] - (long) optimizer->m_pSorted_luma[n - 1]);
                   if (min_error >= trial_solution->m_error)
                     continue;
                }
@@ -2130,7 +2130,7 @@ rg_etc1_optimizer_evaluate_solution_fast(rg_etc1_optimizer *optimizer, const Etc
           {
              if (optimizer->m_pSorted_luma[0] > block_inten[3])
                {
-                  const uint min_error = labs(optimizer->m_pSorted_luma[0] - block_inten[3]);
+                  const uint min_error = labs((long) optimizer->m_pSorted_luma[0] - (long) block_inten[3]);
                   if (min_error >= trial_solution->m_error)
                     continue;
                }
@@ -2581,9 +2581,9 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_BGRA, rg_e
    uint best_use_color4=EINA_FALSE;
    uint best_flip=EINA_FALSE;
    uint8 best_selectors[2][8];
-   rg_etc1_optimizer optimizer = { 0 };
-   rg_etc1_optimizer_results best_results[2] = { { 0 } };
-   rg_etc1_optimizer_results results[3] = { { 0 } };
+   rg_etc1_optimizer optimizer;
+   rg_etc1_optimizer_results best_results[2];
+   rg_etc1_optimizer_results results[3];
    rg_etc1_optimizer_params params;
    uint i, flip;
    uint8 selectors[3][8];
@@ -2592,6 +2592,10 @@ rg_etc1_pack_block(void* pETC1_block, const unsigned int* pSrc_pixels_BGRA, rg_e
    static const int s_scan_delta_0_to_4[] = { -4, -3, -2, -1, 0, 1, 2, 3, 4 };
    static const int s_scan_delta_0_to_1[] = { -1, 0, 1 };
    static const int s_scan_delta_0[] = { 0 };
+
+   memset(&optimizer, 0, sizeof(optimizer));
+   memset(&best_results, 0, sizeof(best_results));
+   memset(&results, 0, sizeof(results));
 
 #ifdef RG_ETC1_BUILD_DEBUG
    // Ensure all alpha values are 0xFF.
