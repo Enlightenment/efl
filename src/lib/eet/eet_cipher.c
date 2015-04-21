@@ -889,6 +889,7 @@ eet_cipher(const void   *data,
    if (result) *result = out ? eina_binbuf_string_steal(out) : NULL;
 
    eina_binbuf_free(out);
+   eina_binbuf_free(in);
    return out ? EET_ERROR_NONE : EET_ERROR_ENCRYPT_FAILED;
 }
 
@@ -910,5 +911,6 @@ eet_decipher(const void   *data,
    if (result) *result = out ? eina_binbuf_string_steal(out) : NULL;
 
    eina_binbuf_free(out);
+   eina_binbuf_free(in);
    return out ? EET_ERROR_NONE : EET_ERROR_DECRYPT_FAILED;
 }
