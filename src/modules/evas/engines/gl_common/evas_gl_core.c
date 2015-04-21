@@ -270,6 +270,29 @@ _egl_image_create(EVGL_Context *context, GLuint tex)
 }
 
 static void
+_egl_image_destroy(void *image)
+{
+#ifdef GL_GLES
+   EGLDisplay dpy = EGL_NO_DISPLAY;
+   EVGL_Resource *rsc = NULL;
+
+   // Retrieve the resource object
+   if (!(rsc = _evgl_tls_resource_get()))
+     {
+        ERR("Error creating resources in tls.");
+        return;
+     }
+
+   dpy = (EGLDisplay)rsc->display;
+   if (!dpy) return;
+
+   EXT_FUNC(eglDestroyImage)(dpy, image);
+#else
+   (void) image;
+#endif
+}
+
+static void
 _framebuffer_create(GLuint *buf, Eina_Bool use_extension)
 {
    if (use_extension)
@@ -1150,7 +1173,12 @@ _surface_buffers_allocate(void *eng_data, EVGL_Surface *sfc, int w, int h, int m
      {
         _texture_allocate_2d(sfc->color_buf, sfc->color_ifmt, sfc->color_fmt,
                              GL_UNSIGNED_BYTE, w, h);
-        if ((sfc->current_ctx) && (sfc->current_ctx->fbo_image_supported))
+        if (sfc->egl_image)
+          {
+             _egl_image_destroy(sfc->egl_image);
+             sfc->egl_image = NULL;
+          }
+        if ((sfc->current_ctx) && (sfc->current_ctx->fbo_image_supported) && (w) && (h))
           sfc->egl_image = _egl_image_create(sfc->current_ctx, sfc->color_buf);
 
         sfc->buffer_mem[0] = w * h * 4;
@@ -1191,6 +1219,11 @@ _surface_buffers_allocate(void *eng_data, EVGL_Surface *sfc, int w, int h, int m
 static int
 _surface_buffers_destroy(EVGL_Surface *sfc)
 {
+   if (sfc->egl_image)
+     {
+        _egl_image_destroy(sfc->egl_image);
+        sfc->egl_image = NULL;
+     }
    if (sfc->color_buf)
       _texture_destroy(&sfc->color_buf);
    if (sfc->depth_buf)
@@ -2277,7 +2310,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
              // Destroy created resources
              if (sfc->buffers_allocated)
                {
-                  if (!_surface_buffers_allocate(eng_data, sfc, 0, 0, 1))
+                  if (!_surface_buffers_allocate(eng_data, sfc, 0, 0, 0))
                     {
                        ERR("Unable to destroy surface buffers!");
                        evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ALLOC);
@@ -2298,7 +2331,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
                   if (!sfc->buffers_allocated)
                     {
                        if (dbg) DBG("Allocating buffers for sfc %p", sfc);
-                       if (!_surface_buffers_allocate(eng_data, sfc, sfc->w, sfc->h, 1))
+                       if (!_surface_buffers_allocate(eng_data, sfc, sfc->w, sfc->h, 0))
                          {
                             ERR("Unable Create Specificed Surfaces.  Unsupported format!");
                             evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ALLOC);
