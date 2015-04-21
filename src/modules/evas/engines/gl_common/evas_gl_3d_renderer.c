@@ -82,6 +82,7 @@ _gl_blend_func_get(Evas_3D_Blend_Func blend_func)
      }
 }
 
+#ifndef GL_GLES
 static inline GLenum
 _gl_comparison_func_get(Evas_3D_Comparison comparison_func)
 {
@@ -107,6 +108,7 @@ _gl_comparison_func_get(Evas_3D_Comparison comparison_func)
          return GL_ALWAYS;
      }
 }
+#endif
 
 static inline void
 _renderer_vertex_attrib_array_enable(E3D_Renderer *renderer, int index)

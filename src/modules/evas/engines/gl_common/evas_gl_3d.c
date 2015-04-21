@@ -1313,7 +1313,7 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3D_S
    Evas_3D_Node     *n;
    Evas_3D_Shade_Mode shade_mode;
    Eina_Bool       blend_enabled;
-   Evas_Color      c = {1.0, 1.0, 1.0};
+   Evas_Color      c = {1.0, 1.0, 1.0, 1.0};
    Evas_Mat4 matrix_vp;
 
    glEnable(GL_POLYGON_OFFSET_FILL);
@@ -1442,7 +1442,7 @@ e3d_drawable_scene_render_to_texture(E3D_Drawable *drawable, E3D_Renderer *rende
    Eina_Iterator *itmn;
    void *ptrmn;
    Eina_List *repeat_node = NULL;
-   Evas_Color c = {0, 0, 0}, *unic_color = NULL;
+   Evas_Color c = {0, 0, 0, 0}, *unic_color = NULL;
 
    glBindFramebuffer(GL_FRAMEBUFFER, drawable->color_pick_fb_id);
    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
