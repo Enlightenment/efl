@@ -77,6 +77,8 @@ evas_common_convert_argb8888_to(void *data, int w, int h, int stride, Eina_Bool 
      {
 	case EVAS_COLORSPACE_RGB565_A5P:
 	  return evas_common_convert_argb8888_to_rgb565_a5p(data, w, h, stride, has_alpha);
+	case EVAS_COLORSPACE_GRY8:
+	  return evas_common_convert_argb8888_to_a8(data, w, h, stride, has_alpha);
 	default:
 	  break;
      }
