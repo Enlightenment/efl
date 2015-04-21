@@ -143,6 +143,12 @@ im_module_init(void)
    _ecore_imf_wayland_log_dom = 
      eina_log_domain_register("ecore_imf_wayland", EINA_COLOR_YELLOW);
 
+   if (!getenv("WAYLAND_DISPLAY"))
+     return EINA_FALSE;
+
+   if (!ecore_wl_init(NULL))
+     return EINA_FALSE;
+
    ecore_imf_module_register(&wayland_im_info, im_module_create, 
                              im_module_exit);
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "im module initalized");
@@ -154,6 +160,7 @@ static void
 im_module_shutdown(void)
 {
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "im module shutdown");
+   ecore_wl_shutdown();
 }
 
 EINA_MODULE_INIT(im_module_init);
