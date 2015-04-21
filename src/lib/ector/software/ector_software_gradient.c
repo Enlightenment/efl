@@ -217,7 +217,7 @@ fetch_radial_gradient(uint *buffer, Span_Data *data, int y, int x, int length)
    Ector_Renderer_Software_Gradient_Data *g_data = data->gradient;
 
    // avoid division by zero
-   if (abs(g_data->radial.a) <= 0.00001f)
+   if (fabsf(g_data->radial.a) <= 0.00001f)
      {
         _ector_memfill(buffer, 0, length);
         return;
