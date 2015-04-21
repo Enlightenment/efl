@@ -88,7 +88,6 @@ _alloc(size_t size)
 /*************/
 
 /* Edje_Edit smart! Overloads the edje one adding some more control stuff */
-static const char _edje_edit_type[] = "edje_edit";
 
 typedef struct _Edje_Edit Edje_Edit;
 struct _Edje_Edit
