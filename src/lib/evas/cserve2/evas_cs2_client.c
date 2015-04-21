@@ -94,25 +94,6 @@ static unsigned int _glyph_request_server_send(Font_Entry *fe, Font_Hint_Flags h
 #define UNIX_PATH_MAX sizeof(((struct sockaddr_un *)NULL)->sun_path)
 #endif
 
-static inline Eina_Bool
-_memory_zero_cmp(void *data, size_t len)
-{
-   const int *idata = data;
-   const char *cdata;
-   int remain;
-
-   if (!data || !len) return EINA_TRUE;
-
-   for (remain = len / sizeof(idata); remain > 0; --remain)
-     if (*idata++ != 0) return EINA_FALSE;
-
-   cdata = (const char*) idata;
-   for (remain = ((const char*) data + len) - cdata; remain > 0; --remain)
-     if (*cdata++ != 0) return EINA_FALSE;
-
-   return EINA_TRUE;
-}
-
 static void
 _file_entry_free(void *data)
 {
