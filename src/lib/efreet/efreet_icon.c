@@ -612,7 +612,7 @@ static double
 efreet_icon_size_distance(Efreet_Cache_Icon_Element *elem, unsigned int size)
 {
     if (elem->type == EFREET_ICON_SIZE_TYPE_FIXED)
-        return (abs(elem->normal - size));
+        return (abs((int) elem->normal - (int) size));
 
     if ((elem->type == EFREET_ICON_SIZE_TYPE_SCALABLE) ||
         (elem->type == EFREET_ICON_SIZE_TYPE_THRESHOLD))
