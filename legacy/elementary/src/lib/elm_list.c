@@ -2846,6 +2846,7 @@ EOLIAN static Elm_Object_Item*
 _elm_list_item_insert_before(Eo *obj, Elm_List_Data *sd, Elm_Object_Item *eo_before, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
 {
    Elm_List_Item_Data *it;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_before, NULL);
    ELM_LIST_ITEM_DATA_GET(eo_before, before_it);
 
    ELM_LIST_ITEM_CHECK_OR_RETURN(before_it, NULL);
@@ -2867,6 +2868,7 @@ EOLIAN static Elm_Object_Item*
 _elm_list_item_insert_after(Eo *obj, Elm_List_Data *sd, Elm_Object_Item *eo_after, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
 {
    Elm_List_Item_Data *it;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_after, NULL);
    ELM_LIST_ITEM_DATA_GET(eo_after, after_it);
 
    ELM_LIST_ITEM_CHECK_OR_RETURN(after_it, NULL);

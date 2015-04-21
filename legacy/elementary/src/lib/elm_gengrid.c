@@ -3942,6 +3942,7 @@ _elm_gengrid_item_insert_before(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid
 {
    Elm_Gen_Item *it;
    Eina_Inlist *tmp;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_relative, NULL);
    ELM_GENGRID_ITEM_DATA_GET(eo_relative, relative);
 
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(relative, NULL);
@@ -3969,6 +3970,7 @@ _elm_gengrid_item_insert_after(Eo *obj, Elm_Gengrid_Data *sd, const Elm_Gengrid_
 {
    Elm_Gen_Item *it;
    Eina_Inlist *tmp;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_relative, NULL);
    ELM_GENGRID_ITEM_DATA_GET(eo_relative, relative);
 
    ELM_GENGRID_ITEM_CHECK_OR_RETURN(relative, NULL);

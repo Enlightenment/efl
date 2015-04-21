@@ -2987,6 +2987,7 @@ _elm_toolbar_item_insert_before(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *
    Elm_Toolbar_Item_Data *it;
    double scale;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_before, NULL);
    ELM_TOOLBAR_ITEM_DATA_GET(eo_before, _before);
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(_before,  NULL);
 
@@ -3010,6 +3011,7 @@ _elm_toolbar_item_insert_after(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *e
    Elm_Toolbar_Item_Data *it;
    double scale;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_after, NULL);
    ELM_TOOLBAR_ITEM_DATA_GET(eo_after, _after);
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(_after, NULL);
 

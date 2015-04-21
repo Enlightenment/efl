@@ -1570,6 +1570,8 @@ _elm_naviframe_item_insert_before(Eo *obj, Elm_Naviframe_Data *sd, Elm_Object_It
 {
    Elm_Object_Item *eo_it;
    Elm_Naviframe_Item_Data *prev_it = NULL;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_before, NULL);
    ELM_NAVIFRAME_ITEM_DATA_GET(eo_before, before);
 
    ELM_NAVIFRAME_ITEM_CHECK_OR_RETURN(before, NULL);
@@ -1604,6 +1606,7 @@ _elm_naviframe_item_insert_after(Eo *obj, Elm_Naviframe_Data *sd, Elm_Object_Ite
    Elm_Object_Item *eo_item;
    Eina_Bool top_inserted = EINA_FALSE;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_after, NULL);
    ELM_NAVIFRAME_ITEM_DATA_GET(eo_after, after);
 
    ELM_NAVIFRAME_ITEM_CHECK_OR_RETURN(after, NULL);
