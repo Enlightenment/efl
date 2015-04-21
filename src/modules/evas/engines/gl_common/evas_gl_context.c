@@ -2029,6 +2029,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    Evas_GL_Shader shader = SHADER_IMG;
    GLuint prog = gc->shared->shader[shader].prog;
    int pn = 0, sam = 0, render_op = gc->dc->render_op, nomul = 0;
+   int yinvert = 0;
 
    if (!!mtex)
      {
@@ -2121,7 +2122,15 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    ox4 = sx;
    oy4 = sy + sh;
 
-   if (tex->im)
+   if ((tex->im) && (tex->im->native.data))
+     {
+        if (tex->im->native.func.yinvert)
+          yinvert = tex->im->native.func.yinvert(tex->im->native.func.data, tex->im);
+        else
+          yinvert = tex->im->native.yinvert;
+     }
+
+   if ((tex->im) && (tex->im->native.data) && (!yinvert))
      {
         switch (tex->im->orient)
           {
@@ -2707,7 +2716,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    Eina_Bool use_texa = EINA_FALSE;
    Shader_Type type;
    int pn = 0, i;
-   int flat = 0, nomul = 0;
+   int flat = 0, nomul = 0, yinvert = 0;
    GLuint prog;
 
    if (!(gc->dc->render_op == EVAS_RENDER_COPY) &&
@@ -2868,7 +2877,15 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
 
-   if ((tex->im) && (tex->im->native.data) && (!tex->im->native.yinvert))
+   if ((tex->im) && (tex->im->native.data))
+     {
+        if (tex->im->native.func.yinvert)
+          yinvert = tex->im->native.func.yinvert(tex->im->native.func.data, tex->im);
+        else
+          yinvert = tex->im->native.yinvert;
+     }
+
+   if ((tex->im) && (tex->im->native.data) && (!yinvert))
      {
         for (i = 0; i < 4; i++)
           {

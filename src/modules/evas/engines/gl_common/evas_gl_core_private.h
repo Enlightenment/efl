@@ -116,6 +116,7 @@ struct _EVGL_Surface
 
    // Flag indicating this surface is used for indirect rendering
    unsigned indirect : 1;
+   unsigned yinvert : 1;
 
    // Moved from evgl_engine
    unsigned direct_override : 1;
@@ -124,6 +125,7 @@ struct _EVGL_Surface
    // Init Flag
    unsigned buffers_allocated : 1;
 
+   void   *cfg;
    int     cfg_index;
 
 
@@ -174,6 +176,7 @@ struct _EVGL_Context
    unsigned     viewport_updated : 1;
    unsigned     extension_checked : 1;
    unsigned     fbo_image_supported : 1;
+   unsigned     pixmap_image_supported : 1;
 
    int          scissor_coord[4];
    int          viewport_coord[4];
