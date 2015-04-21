@@ -2,8 +2,6 @@
 
 static const GLenum rgba_fmt   = GL_RGBA;
 static const GLenum rgba_ifmt  = GL_RGBA;
-static const GLenum rgb_fmt    = GL_RGBA;
-static const GLenum rgb_ifmt   = GL_RGB;
 
 #ifdef GL_GLES
 static const GLenum bgra_fmt   = GL_BGRA;
@@ -11,6 +9,8 @@ static const GLenum bgra_ifmt  = GL_BGRA;
 static const GLenum bgr_fmt    = GL_BGRA;
 static const GLenum bgr_ifmt   = GL_BGRA;
 #else
+static const GLenum rgb_fmt    = GL_RGBA;
+static const GLenum rgb_ifmt   = GL_RGB;
 static const GLenum bgra_fmt   = GL_BGRA;
 static const GLenum bgra_ifmt  = GL_RGBA;
 static const GLenum bgr_fmt    = GL_BGRA;
@@ -89,6 +89,8 @@ static const struct {
   { MATCH_ANY, MATCH_ANY, EVAS_COLORSPACE_RGBA_S3TC_DXT5, &s3tc_rgba_dxt45_fmt, &s3tc_rgba_dxt45_fmt }
 };
 
+#ifdef GL_TEXTURE_INTERNAL_FORMAT
+# ifndef GL_GLES
 static const GLenum matching_rgb[] = { GL_RGB4, GL_RGB8, GL_RGB12, GL_RGB16, 0x0 };
 static const GLenum matching_rgba[] = { GL_RGBA4, GL_RGBA8, GL_RGBA12, GL_RGBA16, 0x0 };
 static const GLenum matching_alpha[] = { GL_ALPHA4, GL_ALPHA8, GL_ALPHA12, GL_ALPHA16, 0x0 };
@@ -107,10 +109,6 @@ static const struct {
   { GL_LUMINANCE_ALPHA, matching_luminance_alpha }
 };
 
-#define MATCH(_r, _v) ((_r == MATCH_ANY) || (_v == MATCH_ANY) || (_r == _v))
-
-#ifdef GL_TEXTURE_INTERNAL_FORMAT
-# ifndef GL_GLES
 static Eina_Bool
 _evas_gl_texture_match(GLenum intfmt, GLenum intfmtret)
 {
@@ -133,6 +131,8 @@ _evas_gl_texture_match(GLenum intfmt, GLenum intfmtret)
 }
 # endif
 #endif
+
+#define MATCH(_r, _v) ((_r == MATCH_ANY) || (_v == MATCH_ANY) || (_r == _v))
 
 static int
 _evas_gl_texture_search_format(Eina_Bool alpha, Eina_Bool bgra, Evas_Colorspace cspace)
