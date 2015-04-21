@@ -16,7 +16,12 @@ typedef struct _Edje_Version
 
 EAPI extern Edje_Version *edje_version;
 
+#ifndef _EDJE_OBJECT_EO_CLASS_TYPE
+#define _EDJE_OBJECT_EO_CLASS_TYPE
+
 typedef Eo Edje_Object;
+
+#endif
 
 /**
  * @typedef Edje_Color_Class
