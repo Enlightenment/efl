@@ -19,7 +19,7 @@ _extnbuf_new(const char *base, int id, Eina_Bool sys, int num,
    char file[PATH_MAX];
    mode_t mode = S_IRUSR | S_IWUSR;
    int page_size;
-   Eina_Tmpstr *tmp;
+   Eina_Tmpstr *tmp = NULL;
 
    page_size = eina_cpu_page_size();
 
