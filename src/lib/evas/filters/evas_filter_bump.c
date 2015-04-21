@@ -137,14 +137,14 @@ _bump_map_cpu_alpha_alpha(Evas_Filter_Command *cmd)
      }
 
    // Compute appropriate lx, ly
-   if (abs(zangle) >= 90)
+   if (fabsf(zangle) >= 90.f)
      {
         WRN("Z angle was defined as %.0f, out of range. Defaults to %.0f.",
             zangle, DEFAULT_ZANGLE);
         zangle = DEFAULT_ZANGLE;
      }
 
-   lxy = sin(abs(zangle * M_PI / 180.));
+   lxy = sin(fabs(zangle * M_PI / 180.));
    lx = (int) (40.f * (lxy + 1.0) * cos(xyangle * M_PI / 180.));
    ly = (int) (40.f * (lxy + 1.0) * sin(xyangle * M_PI / 180.));
    INF("Using light vector (%d,%d)", lx, ly);
@@ -266,7 +266,7 @@ _bump_map_cpu_alpha_rgba(Evas_Filter_Command *cmd)
    color = cmd->bump.color;
 
    // Compute appropriate lx, ly
-   if (abs(zangle) >= 90)
+   if (fabs(zangle) >= 90.)
      {
         WRN("Z angle was defined as %.0f, out of range. Defaults to %.0f.",
             zangle, DEFAULT_ZANGLE);
