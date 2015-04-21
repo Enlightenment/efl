@@ -291,7 +291,11 @@ _ecore_x_axis_update(Ecore_Window window,
    int i;
 
    e = malloc(sizeof(Ecore_Event_Axis_Update));
-   if (!e) return;
+   if (!e)
+     {
+        if (axis) free(axis);
+        return;
+     }
 
    e->window = window;
    e->event_window = event_window;
