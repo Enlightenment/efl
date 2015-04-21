@@ -486,7 +486,7 @@ _on_item_clicked(void *data,
    _item_select(WIDGET(it), it);
 
    if (sd->selected_it)
-     evas_object_smart_callback_call(VIEW(it), SIG_ITEM_CLICKED, eo_it);
+     evas_object_smart_callback_call(WIDGET(it), SIG_ITEM_CLICKED, eo_it);
 }
 
 static void
