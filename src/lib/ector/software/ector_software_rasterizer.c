@@ -412,7 +412,7 @@ ector_software_rasterizer_generate_stroke_rle_data(Software_Rasterizer *rasteriz
    SW_FT_Stroker_ParseOutline(rasterizer->stroker, outline, !closePath);
    SW_FT_Stroker_GetCounts(rasterizer->stroker,&points, &contors);
 
-   SW_FT_Outline strokeOutline = {0};
+   SW_FT_Outline strokeOutline = { 0, 0, NULL, NULL, NULL, 0 };
    strokeOutline.points = (SW_FT_Vector *) calloc(points, sizeof(SW_FT_Vector));
    strokeOutline.tags = (char *) calloc(points, sizeof(char));
    strokeOutline.contours = (short *) calloc(contors, sizeof(short));
