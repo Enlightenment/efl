@@ -251,7 +251,7 @@ evas_image_load_file_head_dds(void *loader_data,
       case FOURCC('D', 'X', 'T', '3'):
         loader->format = EVAS_COLORSPACE_RGBA_S3TC_DXT3;
         prop->alpha = EINA_TRUE;
-        prop->cspaces = cspaces_s3tc_dxt5;
+        prop->cspaces = cspaces_s3tc_dxt3;
         break;
       case FOURCC('D', 'X', 'T', '4'):
         loader->format = EVAS_COLORSPACE_RGBA_S3TC_DXT4;
