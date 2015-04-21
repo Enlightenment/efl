@@ -663,23 +663,6 @@ _device_handle_touch_event(Ecore_Drm_Evdev *edev, struct libinput_event_touch *e
 }
 
 static void 
-_device_handle_touch_down(struct libinput_device *device, struct libinput_event_touch *event)
-{
-   Ecore_Drm_Evdev *edev;
-
-   if (!(edev = libinput_device_get_user_data(device))) return;
-
-   edev->mouse.x = 
-     libinput_event_touch_get_x_transformed(event, edev->output->current_mode->width);
-   edev->mouse.y = 
-     libinput_event_touch_get_y_transformed(event, edev->output->current_mode->height);
-
-   edev->mt_slot = libinput_event_touch_get_seat_slot(event);
-
-   _device_handle_touch_event(edev, event, ECORE_EVENT_MOUSE_BUTTON_DOWN);
-}
-
-static void 
 _device_handle_touch_motion(struct libinput_device *device, struct libinput_event_touch *event)
 {
    Ecore_Drm_Evdev *edev;
@@ -727,6 +710,25 @@ _device_handle_touch_motion(struct libinput_device *device, struct libinput_even
    ev->multi.root.y = ev->y;
 
    ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+}
+
+static void
+_device_handle_touch_down(struct libinput_device *device, struct libinput_event_touch *event)
+{
+   Ecore_Drm_Evdev *edev;
+
+   if (!(edev = libinput_device_get_user_data(device))) return;
+
+   edev->mouse.x =
+     libinput_event_touch_get_x_transformed(event, edev->output->current_mode->width);
+   edev->mouse.y =
+     libinput_event_touch_get_y_transformed(event, edev->output->current_mode->height);
+
+   edev->mt_slot = libinput_event_touch_get_seat_slot(event);
+
+   _device_handle_touch_motion(device, event);
+
+   _device_handle_touch_event(edev, event, ECORE_EVENT_MOUSE_BUTTON_DOWN);
 }
 
 static void 
