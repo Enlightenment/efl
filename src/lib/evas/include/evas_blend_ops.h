@@ -111,7 +111,7 @@ extern const DATA32 ALPHA_256;
 
 #define MUL3_SYM(x, y) \
  ( ((((((x) >> 8) & 0xff00) * (((y) >> 16) & 0xff)) + 0xff00) & 0xff0000) + \
-   ((((((x) & 0xff00) * ((y) & 0xff00)) + 0xff00) >> 16) & 0xff00) + \
+   ((((((x) & 0xff00) * ((y) & 0xff00)) + 0xff0000) >> 16) & 0xff00) + \
    (((((x) & 0xff) * ((y) & 0xff)) + 0xff) >> 8) )
 
 #define MUL_SYM(a, x) \
