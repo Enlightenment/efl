@@ -175,7 +175,7 @@ ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb)
    if ((fb->w != dev->dumb[0]->w) || (fb->h != dev->dumb[0]->h))
      {
         /* we need to copy from fb to dev->dumb */
-        CRIT("Trying to set a Framebuffer of improper size !!");
+        WRN("Trying to set a Framebuffer of improper size !!");
         return;
      }
 
