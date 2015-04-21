@@ -437,7 +437,7 @@ class Elm_Gengrid (Elm_Layout, Elm_Interface_Scrollable,
 
             Mouse wheel can be used for the user to scroll up and down the gengrid.
 
-            It's enabled by default.
+            Wheel is enabled by default.
 
             @see elm_gengrid_wheel_disabled_get()
 

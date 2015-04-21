@@ -69,7 +69,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          set {
               /* @brief Set Wheel disable
                * Enable or disable mouse wheel to be used to scroll the scroller content.
-               * It's disabled by default.
+               * Wheel is enabled by default.
                *
                * @ingroup Widget
                */

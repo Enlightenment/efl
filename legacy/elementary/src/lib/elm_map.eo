@@ -85,7 +85,7 @@ class Elm_Map (Elm_Widget, Elm_Interface_Scrollable,
 
             Mouse wheel can be used for the user to zoom in or zoom out the map.
 
-            It's disabled by default.
+            Wheel is enabled by default.
 
             @see elm_map_wheel_disabled_get()
 
