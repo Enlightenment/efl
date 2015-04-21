@@ -75,6 +75,7 @@ struct _Shm_Surface
 {
    struct wl_shm *shm;
    struct wl_surface *surface;
+   struct wl_display *display;
    struct wl_callback *frame_cb;
    uint32_t flags;
    int w, h;
@@ -119,14 +120,14 @@ struct _Outbuf
      } priv;
 };
 
-Shm_Surface *_evas_shm_surface_create(struct wl_shm *shm, struct wl_surface *surface, int w, int h, int num_buff, Eina_Bool alpha);
+Shm_Surface *_evas_shm_surface_create(struct wl_shm *shm, struct wl_surface *surface, struct wl_display *display, int w, int h, int num_buff, Eina_Bool alpha);
 void _evas_shm_surface_destroy(Shm_Surface *surface);
 void _evas_shm_surface_reconfigure(Shm_Surface *surface, int dx, int dy, int w, int h, int num_buff, uint32_t flags);
 void _evas_shm_surface_swap(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int count);
 void *_evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h);
 void _evas_shm_surface_redraw(Shm_Surface *surface);
 
-Outbuf *_evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface);
+Outbuf *_evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface, struct wl_display *display);
 void _evas_outbuf_free(Outbuf *ob);
 void _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects, Evas_Render_Mode render_mode);
 void _evas_outbuf_idle_flush(Outbuf *ob);

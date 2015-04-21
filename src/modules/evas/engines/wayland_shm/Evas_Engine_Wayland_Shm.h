@@ -13,6 +13,7 @@ struct _Evas_Engine_Info_Wayland_Shm
    struct 
      {
         /* the wayland shm object used to create new shm pool */
+        struct wl_display *wl_display;
         struct wl_shm *wl_shm;
         struct wl_surface *wl_surface;
 

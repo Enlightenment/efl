@@ -10,7 +10,7 @@
 #define BLUE_MASK 0x0000ff
 
 Outbuf *
-_evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface)
+_evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface, struct wl_display *display)
 {
    Outbuf *ob = NULL;
    char *num;
@@ -44,7 +44,7 @@ _evas_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, s
 
    /* try to create the outbuf surface */
    if (!(ob->surface =
-         _evas_shm_surface_create(shm, surface, w, h, ob->num_buff, alpha)))
+         _evas_shm_surface_create(shm, surface, display, w, h, ob->num_buff, alpha)))
      goto surf_err;
 
    eina_array_step_set(&ob->priv.onebuf_regions, sizeof(Eina_Array), 8);

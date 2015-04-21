@@ -23,7 +23,7 @@ struct _Render_Engine
 
 /* LOCAL FUNCTIONS */
 Render_Engine *
-_render_engine_swapbuf_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface)
+_render_engine_swapbuf_setup(int w, int h, unsigned int rotation, unsigned int depth, Eina_Bool alpha, struct wl_shm *shm, struct wl_surface *surface, struct wl_display *display)
 {
    Render_Engine *re;
    Outbuf *ob;
@@ -33,7 +33,7 @@ _render_engine_swapbuf_setup(int w, int h, unsigned int rotation, unsigned int d
    /* try to allocate space for new render engine */
    if (!(re = calloc(1, sizeof(Render_Engine)))) return NULL;
 
-   ob = _evas_outbuf_setup(w, h, rotation, depth, alpha, shm, surface);
+   ob = _evas_outbuf_setup(w, h, rotation, depth, alpha, shm, surface, display);
    if (!ob) goto err;
 
    if (!evas_render_engine_software_generic_init(&re->generic, ob,
@@ -131,7 +131,8 @@ eng_setup(Evas *eo_evas, void *info)
                                           einfo->info.depth,
                                           einfo->info.destination_alpha,
                                           einfo->info.wl_shm,
-                                          einfo->info.wl_surface);
+                                          einfo->info.wl_surface,
+                                          einfo->info.wl_display);
 
         if (re)
           re->generic.ob->info = einfo;
@@ -146,7 +147,8 @@ eng_setup(Evas *eo_evas, void *info)
                                 einfo->info.rotation, einfo->info.depth,
                                 einfo->info.destination_alpha,
                                 einfo->info.wl_shm,
-                                einfo->info.wl_surface);
+                                einfo->info.wl_surface,
+                                einfo->info.wl_display);
         if (ob)
           {
              ob->info = einfo;

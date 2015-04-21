@@ -207,6 +207,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
         einfo->info.wl_shm = ecore_wl_shm_get();
+        einfo->info.wl_display = ecore_wl_display_get();
         einfo->info.destination_alpha = EINA_TRUE;
         einfo->info.rotation = ee->rotation;
         einfo->info.wl_surface = ecore_wl_window_surface_create(wdata->win);
