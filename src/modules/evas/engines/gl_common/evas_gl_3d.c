@@ -642,15 +642,6 @@ e3d_drawable_format_get(E3D_Drawable *drawable)
    return drawable->format;
 }
 
-static inline GLuint
-_texture_id_get(Evas_3D_Texture *texture)
-{
-   Evas_3D_Texture_Data *pd = eo_data_scope_get(texture, EVAS_3D_TEXTURE_CLASS);
-   E3D_Texture *tex = (E3D_Texture *)pd->engine_data;
-
-   return tex->tex;
-}
-
 static inline void
 _mesh_frame_find(Evas_3D_Mesh *mesh, int frame,
                  Eina_List **l, Eina_List **r)
