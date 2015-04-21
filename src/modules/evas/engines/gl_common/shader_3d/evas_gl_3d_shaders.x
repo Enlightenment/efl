@@ -1,7 +1,7 @@
 /* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED
  * See: modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh */
 
-static const char const vertex_color_vert_glsl[] =
+static const char vertex_color_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"
@@ -44,7 +44,7 @@ static const char const vertex_color_vert_glsl[] =
    "   gl_Position = uMatrixMvp * position;\n"
    "}\n";
 
-static const char const vertex_color_frag_glsl[] =
+static const char vertex_color_frag_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"
@@ -67,7 +67,7 @@ static const char const vertex_color_frag_glsl[] =
    "#endif //FOG_ENABLED\n"
    "}\n";
 
-static const char const diffuse_vert_glsl[] =
+static const char diffuse_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"
@@ -111,7 +111,7 @@ static const char const diffuse_vert_glsl[] =
    "   gl_Position = uMatrixMvp * position;\n"
    "}\n";
 
-static const char const diffuse_frag_glsl[] =
+static const char diffuse_frag_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"
@@ -159,7 +159,7 @@ static const char const diffuse_frag_glsl[] =
    "#endif //FOG_ENABLED\n"
    "}\n";
 
-static const char const flat_vert_glsl[] =
+static const char flat_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"
@@ -284,7 +284,7 @@ static const char const flat_vert_glsl[] =
    "#endif //SHADOWED\n"
    "}\n";
 
-static const char const flat_frag_glsl[] =
+static const char flat_frag_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"
@@ -440,7 +440,7 @@ static const char const flat_frag_glsl[] =
    "#endif //FOG_ENABLED\n"
    "}\n";
 
-static const char const phong_vert_glsl[] =
+static const char phong_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"
@@ -533,7 +533,7 @@ static const char const phong_vert_glsl[] =
    "#endif //SHADOWED\n"
    "}\n";
 
-static const char const phong_frag_glsl[] =
+static const char phong_frag_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"
@@ -727,7 +727,7 @@ static const char const phong_frag_glsl[] =
    "#endif //FOG_ENABLED\n"
    "}\n";
 
-static const char const normal_map_vert_glsl[] =
+static const char normal_map_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"
@@ -877,7 +877,7 @@ static const char const normal_map_vert_glsl[] =
    "#endif\n"
    "}\n";
 
-static const char const normal_map_frag_glsl[] =
+static const char normal_map_frag_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"
@@ -1106,7 +1106,7 @@ static const char const normal_map_frag_glsl[] =
    "#endif //FOG_ENABLED\n"
    "}\n";
 
-static const char const shadow_map_vert_glsl[] =
+static const char shadow_map_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"
@@ -1154,7 +1154,7 @@ static const char const shadow_map_vert_glsl[] =
    "   gl_Position = uMatrixMvp * position;\n"
    "}\n";
 
-static const char const shadow_map_frag_glsl[] =
+static const char shadow_map_frag_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"
@@ -1194,7 +1194,7 @@ static const char const shadow_map_frag_glsl[] =
    "   gl_FragColor.r = gl_FragCoord.z;\n"
    "}\n";
 
-static const char const color_pick_vert_glsl[] =
+static const char color_pick_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"
@@ -1221,7 +1221,7 @@ static const char const color_pick_vert_glsl[] =
    "   gl_Position = uMatrixMvp * position;\n"
    "}\n";
 
-static const char const color_pick_frag_glsl[] =
+static const char color_pick_frag_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"
@@ -1233,7 +1233,7 @@ static const char const color_pick_frag_glsl[] =
    "   gl_FragColor = vec4(uColorPick);\n"
    "}\n";
 
-static const char const parallax_occlusion_vert_glsl[] =
+static const char parallax_occlusion_vert_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"
@@ -1353,7 +1353,7 @@ static const char const parallax_occlusion_vert_glsl[] =
    "#endif //SHADOWED\n"
    "}\n";
 
-static const char const parallax_occlusion_frag_glsl[] =
+static const char parallax_occlusion_frag_glsl[] =
    "#ifdef GL_ES\n"
    "precision mediump float;\n"
    "precision mediump int;\n"

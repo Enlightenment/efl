@@ -29,7 +29,7 @@ for shd in ${SHADERS} ; do
 
   OIFS=$IFS
   IFS=$'\n'
-  printf "static const char const ${lname}_glsl[] ="
+  printf "static const char ${lname}_glsl[] ="
   for line in `cat ${shd}.tmp` ; do
       printf "\n   \"${line}\\\n\""
   done

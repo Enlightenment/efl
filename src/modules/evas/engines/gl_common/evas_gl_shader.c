@@ -393,7 +393,7 @@ evas_gl_common_img_shader_select(Shader_Sampling sam, int nomul, int afill, int 
 const char *
 evas_gl_common_shader_name_get(Evas_GL_Shader shd)
 {
-   if ((shd >= 0) && (shd < (sizeof(_shaders_source) / sizeof(_shaders_source[0]))))
+   if (shd < (sizeof(_shaders_source) / sizeof(_shaders_source[0])))
      return _shaders_source[shd].name;
    return "UNKNOWN";
 }

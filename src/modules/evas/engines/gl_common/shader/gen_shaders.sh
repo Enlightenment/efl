@@ -126,7 +126,7 @@ for (( i = 0; i < ${#SHADERS[@]} ; i++ )) ; do
 
     OIFS=$IFS
     IFS=$'\n'
-    printf "static const char const ${shdname}_glsl[] =" >> ${OUTPUT}
+    printf "static const char ${shdname}_glsl[] =" >> ${OUTPUT}
     for line in `cat ${shd}` ; do
       printf "\n   \"${line}\\\n\"" >> ${OUTPUT}
     done
