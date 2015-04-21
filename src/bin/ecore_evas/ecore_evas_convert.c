@@ -97,7 +97,7 @@ main(int argc, char *argv[])
    Eina_Bool compress = 1;
    Eina_Bool quit_option = EINA_FALSE;
    Eina_Strbuf *flags = NULL;
-   struct Save_Job job = {0};
+   struct Save_Job job = { NULL, NULL, NULL, NULL, 0, 0 };
 
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_INT(quality),
