@@ -237,12 +237,6 @@ _eina_rbtree_node_init(Eina_Rbtree *node)
    node->color = EINA_RBTREE_RED;
 }
 
-static inline Eina_Bool
-_eina_rbtree_is_red(Eina_Rbtree *node)
-{
-   return !!node && node->color == EINA_RBTREE_RED;
-}
-
 static inline Eina_Rbtree *
 _eina_rbtree_inline_single_rotation(Eina_Rbtree *node,
                                     Eina_Rbtree_Direction dir)
