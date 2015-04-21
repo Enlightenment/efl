@@ -110,7 +110,7 @@ EAPI void
 edje_audio_channel_mute_set(Edje_Channel channel, Eina_Bool mute)
 {
 #ifdef ENABLE_MULTISENSE
-   if ((channel < 0) || (channel > 7)) return;
+   if ((unsigned) channel > 7) return;
    _channel_mute_states[channel] = mute;
 #else
    (void) channel;
@@ -122,7 +122,7 @@ EAPI Eina_Bool
 edje_audio_channel_mute_get(Edje_Channel channel)
 {
 #ifdef ENABLE_MULTISENSE
-   if ((channel < 0) || (channel > 7)) return EINA_FALSE;
+   if ((unsigned) channel > 7) return EINA_FALSE;
    return _channel_mute_states[channel];
 #else
    (void) channel;
