@@ -37,7 +37,7 @@ static const Evas_Object_Filter_Data default_filter = {
 };
 const void * const evas_object_filter_cow_default = &default_filter;
 static const Evas_Object_Mask_Data default_mask = {
-  NULL, 0, 0, EINA_FALSE
+  NULL, 0, 0, EINA_FALSE, EINA_FALSE, EINA_FALSE, EINA_FALSE
 };
 
 Eina_Cow *evas_object_proxy_cow = NULL;

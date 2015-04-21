@@ -2,7 +2,6 @@
 
 #ifdef EVAS_RENDER_DEBUG_TIMING
 #include <sys/time.h>
-#endif
 
 #ifndef _WIN32
 static inline double
@@ -20,23 +19,16 @@ get_time(void)
 }
 #endif
 
-
-
-
-
-
-
-
-
-// a list of canvases currently rendering
-static Eina_List *_rendering = NULL;
-
 static inline void
 out_time(double t)
 {
    double b = (t * 100.0) / (1.0 / 60.0);
    printf("%1.8fs (%1.2f%% 60fps budget)\n", t, b);
 }
+#endif
+
+// a list of canvases currently rendering
+static Eina_List *_rendering = NULL;
 
 static void
 _always_call(Eo *eo_e, Evas_Callback_Type type, void *event_info)
