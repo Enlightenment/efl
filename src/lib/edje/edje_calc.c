@@ -742,7 +742,7 @@ _edje_recalc_do(Edje *ed)
    if (!ed->calc_only)
      {
         if (ed->recalc_call)
-          evas_object_smart_callback_call(ed->obj, "recalc", NULL);
+          eo_do(ed->obj, eo_event_callback_call(EDJE_OBJECT_EVENT_RECALC, NULL));
      }
    else
      evas_object_smart_need_recalculate_set(ed->obj, need_calc);
