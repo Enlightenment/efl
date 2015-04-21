@@ -204,8 +204,8 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_draw(Eo *obj, Ector_Rend
 
        // Set dash, cap and join
        cairo_set_line_width(pd->parent->cairo, (pd->shape->stroke.width * pd->shape->stroke.scale * 2));
-       cairo_set_line_cap(pd->parent->cairo, pd->shape->stroke.cap);
-       cairo_set_line_join(pd->parent->cairo, pd->shape->stroke.join);
+       cairo_set_line_cap(pd->parent->cairo, (cairo_line_cap_t) pd->shape->stroke.cap);
+       cairo_set_line_join(pd->parent->cairo, (cairo_line_join_t) pd->shape->stroke.join);
        cairo_stroke(pd->parent->cairo);
      }
    else

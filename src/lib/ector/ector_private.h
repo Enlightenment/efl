@@ -141,7 +141,7 @@ struct _Ector_Renderer_Generic_Shape_Data
       unsigned int dash_length;
 
       Efl_Gfx_Cap cap;
-      Efl_Gfx_Cap join;
+      Efl_Gfx_Join join;
    } stroke;
 };
 
