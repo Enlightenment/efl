@@ -2,8 +2,8 @@
 
 #define FUZZ 32
 #define MAXREG 24
+#define MAX_NODES 1024
 
-static inline void rect_list_node_pool_set_max(int max);
 static inline void rect_list_node_pool_flush(void);
 static inline list_node_t *rect_list_node_pool_get(void);
 static inline void rect_list_node_pool_put(list_node_t *node);
@@ -16,7 +16,6 @@ static inline list_node_t *rect_list_unlink_next(list_t *rects, list_node_t *par
 static inline void rect_list_del_next(list_t *rects, list_node_t *parent_node);
 static inline void rect_list_clear(list_t *rects);
 static inline void rect_list_del_split_strict(list_t *rects, const rect_t del_r);
-static inline void rect_list_add_split_strict(list_t *rects, list_node_t *node);
 static inline list_node_t *rect_list_add_split_fuzzy(list_t *rects, list_node_t *node, int accepted_error);
 static inline void rect_list_merge_rects(list_t *rects, list_t *to_merge, int accepted_error);
 static inline void rect_list_add_split_fuzzy_and_merge(list_t *rects, list_node_t *node, int split_accepted_error, int merge_accepted_error);
@@ -31,24 +30,7 @@ typedef struct list_node_pool
    int max;
 } list_node_pool_t;
 
-static list_node_pool_t list_node_pool = { NULL, 0, 1024 };
-
-static inline void
-rect_list_node_pool_set_max(int max)
-{
-   int diff;
-
-   diff = list_node_pool.len - max;
-   for (; diff > 0 && list_node_pool.node; diff--)
-     {
-        list_node_t *node = list_node_pool.node;
-        list_node_pool.node = node->next;
-        list_node_pool.len--;
-        free(node);
-     }
-
-   list_node_pool.max = max;
-}
+static list_node_pool_t list_node_pool = { NULL, 0, MAX_NODES };
 
 static inline void
 rect_list_node_pool_flush(void)
@@ -318,69 +300,6 @@ rect_list_del_split_strict(list_t *rects, const rect_t del_r)
      }
 
    rect_list_concat(rects, &modified);
-}
-
-static inline void
-rect_list_add_split_strict(list_t *rects, list_node_t *node)
-{
-   list_t dirty = list_zeroed;
-   list_t new_dirty = list_zeroed;
-   list_node_t *cur_node;
-
-   if (!rects->head)
-     {
-        rect_list_append_node(rects, node);
-        return;
-     }
-   rect_list_append_node(&dirty, node);
-   cur_node = rects->head;
-   while (dirty.head)
-     {
-        rect_t current;
-
-        if (!cur_node)
-	  {
-	     rect_list_concat(rects, &dirty);
-	     break;
-	  }
-        current = ((rect_node_t*)cur_node)->rect;
-        while (dirty.head)
-	  {
-	     int intra_width, intra_height;
-	     rect_t r;
-
-	     r = ((rect_node_t *)dirty.head)->rect;
-	     _calc_intra_rect_area(r, current, &intra_width, &intra_height);
-	     if ((intra_width == r.width) && (intra_height == r.height))
-	       /*  .-------.cur
-		*  | .---.r|
-		*  | |   | |
-		*  | `---' |
-		*  `-------'
-		*/
-	       rect_list_del_next(&dirty, NULL);
-	     else if ((intra_width <= 0) || (intra_height <= 0))
-	       {
-		  /*  .---.cur     .---.r
-		   *  |   |        |   |
-		   *  `---+---.r   `---+---.cur
-		   *      |   |        |   |
-		   *      `---'        `---'
-		   */
-		  list_node_t *tmp;
-		  tmp = rect_list_unlink_next(&dirty, NULL);
-		  rect_list_append_node(&new_dirty, tmp);
-	       }
-	     else
-	       {
-		  _split_strict(&new_dirty, current, r);
-		  rect_list_del_next(&dirty, NULL);
-	       }
-	  }
-        dirty = new_dirty;
-        new_dirty = list_zeroed;
-        cur_node = cur_node->next;
-    }
 }
 
 static inline void
