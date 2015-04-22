@@ -27,6 +27,10 @@ _add(void *data, int type EINA_UNUSED, void *ev)
         fail_if (data != (void *) 1);
         fail_if (!event->client);
 
+        fprintf(stderr, "client fd: %d\n",
+                ecore_con_client_fd_get(event->client));
+        fail_unless(ecore_con_client_fd_get(event->client));
+
         printf("Client with ip %s, port %d, connected = %d!\n",
                ecore_con_client_ip_get(event->client),
                ecore_con_client_port_get(event->client),
@@ -79,8 +83,11 @@ _del(void *data , int type EINA_UNUSED, void *ev)
 
         printf("Lost client with ip %s!\n",
                ecore_con_client_ip_get(event->client));
+        fail_if(ecore_con_client_ip_get(event->client));
+
         printf("Client was connected for %0.3f seconds.\n",
                ecore_con_client_uptime_get(event->client));
+        fail_unless(ecore_con_client_uptime_get(event->client));
 
         del_data = ecore_con_client_del(event->client);
         fail_if (strcmp((char *)del_data, cdata));
@@ -93,7 +100,9 @@ _del(void *data , int type EINA_UNUSED, void *ev)
 
         fail_if (data != (void *) 2);
 
-        printf("Lost server with ip %s!\n", ecore_con_server_ip_get(event->server));
+        printf("Lost server with ip %s!\n",
+                ecore_con_server_ip_get(event->server));
+        fail_unless(ecore_con_server_ip_get(event->server));
 
         ecore_con_server_del(event->server);
      }
@@ -179,7 +188,7 @@ _dns_err(void *data, int type EINA_UNUSED, void *ev EINA_UNUSED)
 void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name, Eina_Bool is_ssl, int server_port)
 {
    Ecore_Con_Server *server = NULL;
-   Ecore_Con_Server *client;
+   Ecore_Con_Server *client, *client2;
    Ecore_Con_Client *cl;
    const Eina_List *clients, *l;
    Ecore_Event_Handler *handlers[6];
@@ -248,6 +257,10 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
                                      client_data);
    fail_if (client == NULL);
 
+   client2 = ecore_con_server_connect(compl_type, name, server_port,
+                                     client_data);
+   fail_if (client2 == NULL);
+
    if (is_ssl)
      {
         fail_unless(ecore_con_ssl_server_cafile_add(server, TESTS_SRC_DIR"/server.pem"));
@@ -259,6 +272,14 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
 
    ecore_main_loop_begin();
 
+   fprintf(stderr, "server fd for client 1: %d\n",
+           ecore_con_server_fd_get(client));
+   fail_unless(ecore_con_server_fd_get(client));
+
+   fprintf(stderr, "server fd for client 2: %d\n",
+           ecore_con_server_fd_get(client2));
+   fail_unless(ecore_con_server_fd_get(client2));
+
    clients = ecore_con_server_clients_get(server);
    printf("Clients connected to this server when exiting: %d\n",
           eina_list_count(clients));
@@ -269,6 +290,9 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
 
    printf("Server was up for %0.3f seconds\n",
           ecore_con_server_uptime_get(server));
+
+   del_ret = ecore_con_server_del(client2);
+   fail_if (del_ret != client_data);
 
    del_ret = ecore_con_server_del(server);
    fail_if (strcmp((char *)del_ret, sdata));
@@ -532,6 +556,32 @@ START_TEST(ecore_test_ecore_con_shutdown_bef_init)
 }
 END_TEST
 
+static void
+_lookup_done_cb(const char *canonname, const char *ip, struct sockaddr *addr, int addrlen, void *data)
+{
+   fail_if(strncmp(canonname,(char *)data, strlen((char *)data)));
+
+   fprintf(stderr, "canonname = %s\n", canonname);
+   fprintf(stderr, "ip = %s\n", ip);
+   fprintf(stderr, "addr = %p\n", addr);
+   fprintf(stderr, "addrlen = %d\n", addrlen);
+
+   ecore_main_loop_quit();
+}
+
+START_TEST(ecore_test_ecore_con_dns_lookup)
+{
+   const char link[] = "www.google.com";
+   ecore_con_init();
+
+   fail_unless(ecore_con_lookup(link, _lookup_done_cb, link));
+
+   ecore_main_loop_begin();
+
+   ecore_con_shutdown();
+}
+END_TEST
+
 void ecore_con_test_ecore_con(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_con_init);
@@ -560,5 +610,6 @@ void ecore_con_test_ecore_con(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_con_remote_nodelay_mixed_load_cert);
    tcase_add_test(tc, ecore_test_ecore_con_ssl_available);
    tcase_add_test(tc, ecore_test_ecore_con_dns);
+   tcase_add_test(tc, ecore_test_ecore_con_dns_lookup);
    tcase_add_test(tc, ecore_test_ecore_con_shutdown_bef_init);
 }
