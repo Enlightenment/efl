@@ -721,11 +721,25 @@ typedef enum _Evas_3D_Wrap_Mode
  */
 typedef enum _Evas_3D_Mesh_Primitive
 {
+   /**< An empty space */
    EVAS_3D_MESH_PRIMITIVE_NONE = 0,
-   EVAS_3D_MESH_PRIMITIVE_CUBE = 1,
-   EVAS_3D_MESH_PRIMITIVE_SPHERE = 2
+   /**< One sided square */
+   EVAS_3D_MESH_PRIMITIVE_SQUARE,
+   /**< Cube */
+   EVAS_3D_MESH_PRIMITIVE_CUBE,
+   /**< Cylinder (can use precision and texture scale) */
+   EVAS_3D_MESH_PRIMITIVE_CYLINDER,
+   /**< Cone (can use precision and texture scale) */
+   EVAS_3D_MESH_PRIMITIVE_CONE,
+   /**< Sphere (can use precision and texture scale) */
+   EVAS_3D_MESH_PRIMITIVE_SPHERE,
+   /**< Torus (can use ratio, precision and texture scale) */
+   EVAS_3D_MESH_PRIMITIVE_TORUS,
+   /**< Custom surface (can use pointer to users function, precision and texture scale) */
+   EVAS_3D_MESH_PRIMITIVE_SURFACE,
+   /**< Terrain as surface with pointer to Perlin's noise function */
+   EVAS_3D_MESH_PRIMITIVE_TERRAIN
 } Evas_3D_Mesh_Primitive;
-
 
 /**
  * Texture filters
