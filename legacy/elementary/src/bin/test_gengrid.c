@@ -1414,7 +1414,7 @@ _grid5_search_item(grid5_Event_Data *event_data, Elm_Object_Item * it)
      {
         printf("Found.\n");
         elm_gengrid_item_selected_set(event_data->last_item_found, EINA_TRUE);
-        elm_gengrid_item_bring_in(event_data->last_item_found, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+        elm_gengrid_item_bring_in(event_data->last_item_found, ELM_GENGRID_ITEM_SCROLLTO_MIDDLE);
         elm_object_focus_set(event_data->en_obj, EINA_TRUE);
      }
    else
