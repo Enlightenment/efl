@@ -2260,8 +2260,8 @@ _angle_get(Evas_Coord xx1,
 {
    double a, xx, yy, rt = (-1);
 
-   xx = fabs(xx2 - xx1);
-   yy = fabs(yy2 - yy1);
+   xx = abs(xx2 - xx1);
+   yy = abs(yy2 - yy1);
 
    if (((int)xx) && ((int)yy))
      {
@@ -2528,8 +2528,8 @@ _momentum_test(Evas_Object *obj,
         st->line_end.y = pe_local.y;
         st->t_end = pe_local.timestamp;
 
-        if ((fabs(st->info.mx) > ELM_GESTURE_MINIMUM_MOMENTUM) ||
-            (fabs(st->info.my) > ELM_GESTURE_MINIMUM_MOMENTUM))
+        if ((abs(st->info.mx) > ELM_GESTURE_MINIMUM_MOMENTUM) ||
+            (abs(st->info.my) > ELM_GESTURE_MINIMUM_MOMENTUM))
           state_to_report = ELM_GESTURE_STATE_END;
         else
           state_to_report = ELM_GESTURE_STATE_ABORT;
@@ -2997,8 +2997,8 @@ _finger_gap_length_get(Evas_Coord xx1,
                        Evas_Coord *y)
 {
    double a, b, xx, yy, gap;
-   xx = fabs(xx2 - xx1);
-   yy = fabs(yy2 - yy1);
+   xx = abs(xx2 - xx1);
+   yy = abs(yy2 - yy1);
    gap = sqrt((xx * xx) + (yy * yy));
 
    /* START - Compute zoom center point */
