@@ -395,12 +395,12 @@ class Elm_Calendar (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
       Evas.Object_Smart.calculate;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm_Widget.theme_apply;
-      Elm_Widget.focus_next_manager_is;
-      Elm_Widget.focus_direction_manager_is;
-      Elm_Widget.access;
-      Elm_Widget.focus_next;
-      Elm_Widget.event;
+      Elm.Widget.theme_apply;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.access;
+      Elm.Widget.focus_next;
+      Elm.Widget.event;
       Elm_Layout.sizing_eval;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }

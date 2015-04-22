@@ -394,12 +394,12 @@ class Elm_Slider (Elm_Layout, Elm_Interface_Atspi_Value,
       Evas.Object_Smart.calculate;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm_Widget.theme_apply;
-      Elm_Widget.activate;
-      Elm_Widget.focus_next_manager_is;
-      Elm_Widget.focus_direction_manager_is;
-      Elm_Widget.on_focus;
-      Elm_Widget.event;
+      Elm.Widget.theme_apply;
+      Elm.Widget.activate;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.on_focus;
+      Elm.Widget.event;
       Elm_Layout.text_aliases.get;
       Elm_Layout.content_aliases.get;
       Elm_Layout.sizing_eval;

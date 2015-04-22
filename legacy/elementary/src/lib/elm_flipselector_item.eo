@@ -1,4 +1,4 @@
-class Elm_Flipselector_Item(Elm_Widget_Item)
+class Elm_Flipselector_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_flipselector_item;
    properties {
@@ -66,8 +66,8 @@ class Elm_Flipselector_Item(Elm_Widget_Item)
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Elm_Widget_Item.signal_emit;
-        Elm_Widget_Item.part_text.get;
-        Elm_Widget_Item.part_text.set;
+        Elm.Widget_Item.signal_emit;
+        Elm.Widget_Item.part_text.get;
+        Elm.Widget_Item.part_text.set;
    }
 }

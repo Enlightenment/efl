@@ -1,4 +1,4 @@
-class Elm_Glview (Elm_Widget)
+class Elm_Glview (Elm.Widget)
 {
    eo_prefix: elm_obj_glview;
    methods {
@@ -215,7 +215,7 @@ class Elm_Glview (Elm_Widget)
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
       Evas.Object_Smart.resize;
-      Elm_Widget.on_focus;
+      Elm.Widget.on_focus;
    }
    events {
       focused;

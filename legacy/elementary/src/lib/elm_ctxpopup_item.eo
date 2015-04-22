@@ -1,4 +1,4 @@
-class Elm_Ctxpopup_Item(Elm_Widget_Item)
+class Elm_Ctxpopup_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_ctxpopup_item;
    properties {
@@ -48,11 +48,11 @@ class Elm_Ctxpopup_Item(Elm_Widget_Item)
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Elm_Widget_Item.disable;
-        Elm_Widget_Item.signal_emit;
-        Elm_Widget_Item.part_text.get;
-        Elm_Widget_Item.part_text.set;
-        Elm_Widget_Item.part_content.get;
-        Elm_Widget_Item.part_content.set;
+        Elm.Widget_Item.disable;
+        Elm.Widget_Item.signal_emit;
+        Elm.Widget_Item.part_text.get;
+        Elm.Widget_Item.part_text.set;
+        Elm.Widget_Item.part_content.get;
+        Elm.Widget_Item.part_content.set;
    }
 }

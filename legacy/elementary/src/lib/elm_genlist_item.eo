@@ -1,4 +1,4 @@
-class Elm_Genlist_Item(Elm_Widget_Item)
+class Elm_Genlist_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_genlist_item;
       data: Elm_Gen_Item;
@@ -491,20 +491,20 @@ class Elm_Genlist_Item(Elm_Widget_Item)
       }
       implements {
            Eo.Base.constructor;
-           Elm_Widget_Item.del_pre;
-           Elm_Widget_Item.disable;
-           Elm_Widget_Item.signal_emit;
-           Elm_Widget_Item.focus.set;
-           Elm_Widget_Item.focus.get;
-           Elm_Widget_Item.part_text.get;
-           Elm_Widget_Item.part_content.get;
-           Elm_Widget_Item.tooltip_text_set;
-           Elm_Widget_Item.tooltip_style.set;
-           Elm_Widget_Item.tooltip_window_mode.set;
-           Elm_Widget_Item.tooltip_content_cb_set;
-           Elm_Widget_Item.tooltip_unset;
-           Elm_Widget_Item.cursor.set;
-           Elm_Widget_Item.cursor_unset;
+           Elm.Widget_Item.del_pre;
+           Elm.Widget_Item.disable;
+           Elm.Widget_Item.signal_emit;
+           Elm.Widget_Item.focus.set;
+           Elm.Widget_Item.focus.get;
+           Elm.Widget_Item.part_text.get;
+           Elm.Widget_Item.part_content.get;
+           Elm.Widget_Item.tooltip_text_set;
+           Elm.Widget_Item.tooltip_style.set;
+           Elm.Widget_Item.tooltip_window_mode.set;
+           Elm.Widget_Item.tooltip_content_cb_set;
+           Elm.Widget_Item.tooltip_unset;
+           Elm.Widget_Item.cursor.set;
+           Elm.Widget_Item.cursor_unset;
            Elm_Interface_Atspi_Accessible.name.get;
            Elm_Interface_Atspi_Accessible.state_set.get;
            Elm_Interface_Atspi_Accessible.children.get;

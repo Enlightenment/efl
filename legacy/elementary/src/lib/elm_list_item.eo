@@ -1,4 +1,4 @@
-class Elm_List_Item(Elm_Widget_Item)
+class Elm_List_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_list_item;
       properties {
@@ -151,16 +151,16 @@ class Elm_List_Item(Elm_Widget_Item)
       }
       implements {
            Eo.Base.constructor;
-           Elm_Widget_Item.disable;
-           Elm_Widget_Item.del_pre;
-           Elm_Widget_Item.signal_emit;
-           Elm_Widget_Item.focus.set;
-           Elm_Widget_Item.focus.get;
-           Elm_Widget_Item.part_text.get;
-           Elm_Widget_Item.part_text.set;
-           Elm_Widget_Item.part_content.get;
-           Elm_Widget_Item.part_content.set;
-           Elm_Widget_Item.part_content_unset;
+           Elm.Widget_Item.disable;
+           Elm.Widget_Item.del_pre;
+           Elm.Widget_Item.signal_emit;
+           Elm.Widget_Item.focus.set;
+           Elm.Widget_Item.focus.get;
+           Elm.Widget_Item.part_text.get;
+           Elm.Widget_Item.part_text.set;
+           Elm.Widget_Item.part_content.get;
+           Elm.Widget_Item.part_content.set;
+           Elm.Widget_Item.part_content_unset;
            Elm_Interface_Atspi_Accessible.name.get;
            Elm_Interface_Atspi_Accessible.state_set.get;
            Elm_Interface_Atspi_Accessible.children.get;

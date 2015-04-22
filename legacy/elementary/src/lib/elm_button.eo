@@ -100,12 +100,12 @@ class Elm_Button (Elm_Layout, Evas.Clickable_Interface,
       class.constructor;
       Eo.Base.constructor;
       Evas.Object_Smart.add;
-      Elm_Widget.activate;
-      Elm_Widget.focus_next_manager_is;
-      Elm_Widget.focus_direction_manager_is;
-      Elm_Widget.theme_apply;
-      Elm_Widget.sub_object_del;
-      Elm_Widget.event;
+      Elm.Widget.activate;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.theme_apply;
+      Elm.Widget.sub_object_del;
+      Elm.Widget.event;
       Elm_Container.content_set;
       Elm_Layout.text_aliases.get;
       Elm_Layout.content_aliases.get;

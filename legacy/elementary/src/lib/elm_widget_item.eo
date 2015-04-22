@@ -1,4 +1,4 @@
-class Elm_Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
+class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
 {
       eo_prefix: elm_wdg_item;
       legacy_prefix: elm_object_item;

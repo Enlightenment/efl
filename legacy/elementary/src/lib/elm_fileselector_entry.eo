@@ -101,11 +101,11 @@ class Elm_Fileselector_Entry (Elm_Layout, Elm_Interface_Fileselector)
       Eo.Base.constructor;
       Evas.Object_Smart.del;
       Evas.Object_Smart.add;
-      Elm_Widget.theme_apply;
-      Elm_Widget.focus_next_manager_is;
-      Elm_Widget.focus_next;
-      Elm_Widget.disable;
-      Elm_Widget.focus_direction_manager_is;
+      Elm.Widget.theme_apply;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.disable;
+      Elm.Widget.focus_direction_manager_is;
       Elm_Container.content_get;
       Elm_Container.content_unset;
       Elm_Container.content_set;

@@ -1,4 +1,4 @@
-class Elm_Gesture_Layer (Elm_Widget)
+class Elm_Gesture_Layer (Elm.Widget)
 {
    eo_prefix: elm_obj_gesture_layer;
    properties {
@@ -182,7 +182,7 @@ class Elm_Gesture_Layer (Elm_Widget)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm_Widget.disable;
+      Elm.Widget.disable;
    }
 
 }

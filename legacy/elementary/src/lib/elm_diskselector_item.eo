@@ -1,4 +1,4 @@
-class Elm_Diskselector_Item(Elm_Widget_Item)
+class Elm_Diskselector_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_diskselector_item;
       properties {
@@ -96,9 +96,9 @@ class Elm_Diskselector_Item(Elm_Widget_Item)
       implements {
            Eo.Base.constructor;
            Eo.Base.destructor;
-           Elm_Widget_Item.part_text.get;
-           Elm_Widget_Item.part_text.set;
-           Elm_Widget_Item.part_content.get;
-           Elm_Widget_Item.part_content.set;
+           Elm.Widget_Item.part_text.get;
+           Elm.Widget_Item.part_text.set;
+           Elm.Widget_Item.part_content.get;
+           Elm.Widget_Item.part_content.set;
       }
 }

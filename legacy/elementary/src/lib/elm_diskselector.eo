@@ -1,4 +1,4 @@
-class Elm_Diskselector (Elm_Widget, Elm_Interface_Scrollable,
+class Elm_Diskselector (Elm.Widget, Elm_Interface_Scrollable,
                         Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_diskselector;
@@ -241,14 +241,14 @@ class Elm_Diskselector (Elm_Widget, Elm_Interface_Scrollable,
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
       Evas.Object_Smart.resize;
-      Elm_Widget.focus_next_manager_is;
-      Elm_Widget.access;
-      Elm_Widget.focus_next;
-      Elm_Widget.theme_apply;
-      Elm_Widget.on_focus;
-      Elm_Widget.translate;
-      Elm_Widget.sub_object_del;
-      Elm_Widget.event;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.access;
+      Elm.Widget.focus_next;
+      Elm.Widget.theme_apply;
+      Elm.Widget.on_focus;
+      Elm.Widget.translate;
+      Elm.Widget.sub_object_del;
+      Elm.Widget.event;
       Elm_Interface_Scrollable.policy;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }

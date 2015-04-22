@@ -270,9 +270,9 @@ class Elm_Panes (Elm_Layout)
       class.constructor;
       Eo.Base.constructor;
       Evas.Object_Smart.add;
-      Elm_Widget.focus_next_manager_is;
-      Elm_Widget.focus_next;
-      Elm_Widget.theme_apply;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.theme_apply;
       Elm_Layout.content_aliases.get;
    }
    events {

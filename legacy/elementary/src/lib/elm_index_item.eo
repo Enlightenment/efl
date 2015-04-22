@@ -1,4 +1,4 @@
-class Elm_Index_Item(Elm_Widget_Item)
+class Elm_Index_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_index_item;
    properties {
@@ -41,6 +41,6 @@ class Elm_Index_Item(Elm_Widget_Item)
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Elm_Widget_Item.access_register;
+        Elm.Widget_Item.access_register;
    }
 }

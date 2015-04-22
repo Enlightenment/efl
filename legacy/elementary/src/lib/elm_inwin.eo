@@ -24,9 +24,9 @@ class Elm_Inwin (Elm_Layout)
       class.constructor;
       Eo.Base.constructor;
       Evas.Object_Smart.add;
-      Elm_Widget.parent.set;
-      Elm_Widget.focus_next_manager_is;
-      Elm_Widget.focus_next;
+      Elm.Widget.parent.set;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_next;
       Elm_Layout.content_aliases.get;
       Elm_Layout.sizing_eval;
    }

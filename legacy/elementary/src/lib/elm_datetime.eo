@@ -312,12 +312,12 @@ class Elm_Datetime (Elm_Layout)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm_Widget.theme_apply;
-      Elm_Widget.focus_next_manager_is;
-      Elm_Widget.focus_next;
-      Elm_Widget.disable;
-      Elm_Widget.on_focus;
-      Elm_Widget.translate;
+      Elm.Widget.theme_apply;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.disable;
+      Elm.Widget.on_focus;
+      Elm.Widget.translate;
       Elm_Layout.sizing_eval;
    }
    events {

@@ -1,4 +1,4 @@
-class Elm_Slideshow_Item(Elm_Widget_Item)
+class Elm_Slideshow_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_slideshow_item;
    methods {

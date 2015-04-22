@@ -1,4 +1,4 @@
-class Elm_Color_Item(Elm_Widget_Item)
+class Elm_Color_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_color_item;
    properties {
@@ -49,7 +49,7 @@ class Elm_Color_Item(Elm_Widget_Item)
    implements {
         Eo.Base.constructor;
         Eo.Base.destructor;
-        Elm_Widget_Item.access_register;
-        Elm_Widget_Item.signal_emit;
+        Elm.Widget_Item.access_register;
+        Elm.Widget_Item.signal_emit;
    }
 }

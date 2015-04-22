@@ -1,4 +1,4 @@
-abstract Elm_Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Interface_Atspi_Component)
+abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Interface_Atspi_Component)
 {
    eo_prefix: elm_obj_widget;
    data: Elm_Widget_Smart_Data;

@@ -191,13 +191,13 @@ class Elm_Segment_Control (Elm_Layout)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm_Widget.theme_apply;
-      Elm_Widget.focus_next_manager_is;
-      Elm_Widget.focus_next;
-      Elm_Widget.focus_direction_manager_is;
-      Elm_Widget.access;
-      Elm_Widget.disable;
-      Elm_Widget.translate;
+      Elm.Widget.theme_apply;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.access;
+      Elm.Widget.disable;
+      Elm.Widget.translate;
       Elm_Layout.sizing_eval;
    }
    events {

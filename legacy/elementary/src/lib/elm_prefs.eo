@@ -1,4 +1,4 @@
-class Elm_Prefs (Elm_Widget, Efl.File)
+class Elm_Prefs (Elm.Widget, Efl.File)
 {
    eo_prefix: elm_obj_prefs;
    properties {
@@ -318,7 +318,7 @@ class Elm_Prefs (Elm_Widget, Efl.File)
       Efl.File.file.get;
       Evas.Object_Smart.del;
       Evas.Object_Smart.add;
-      Elm_Widget.focus_next;
+      Elm.Widget.focus_next;
    }
    events {
       page,changed; /*@ s */

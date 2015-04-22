@@ -1,4 +1,4 @@
-class Elm_Web (Elm_Widget)
+class Elm_Web (Elm.Widget)
 {
    eo_prefix: elm_obj_web;
    properties {
@@ -668,9 +668,9 @@ class Elm_Web (Elm_Widget)
       Eo.Base.constructor;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
-      Elm_Widget.theme_apply;
-      Elm_Widget.on_focus;
-      Elm_Widget.event;
+      Elm.Widget.theme_apply;
+      Elm.Widget.on_focus;
+      Elm.Widget.event;
    }
    events {
       uri,changed; /*@ s */

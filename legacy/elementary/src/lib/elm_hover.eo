@@ -75,12 +75,12 @@ class Elm_Hover (Elm_Layout, Evas.Clickable_Interface)
       Evas.Object_Smart.move;
       Evas.Object_Smart.add;
       Evas.Object_Smart.resize;
-      Elm_Widget.theme_apply;
-      Elm_Widget.sub_object_add;
-      Elm_Widget.parent;
-      Elm_Widget.focus_direction_manager_is;
-      Elm_Widget.focus_next_manager_is;
-      Elm_Widget.sub_object_del;
+      Elm.Widget.theme_apply;
+      Elm.Widget.sub_object_add;
+      Elm.Widget.parent;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.sub_object_del;
       Elm_Container.content_get;
       Elm_Container.content_set;
       Elm_Container.content_unset;

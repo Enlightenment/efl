@@ -1,4 +1,4 @@
-class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
+class Elm_Win (Elm.Widget, Elm_Interface_Atspi_Window,
                Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_win;
@@ -1360,13 +1360,13 @@ class Elm_Win (Elm_Widget, Elm_Interface_Atspi_Window,
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
       Evas.Object_Smart.resize;
-      Elm_Widget.focus_direction;
-      Elm_Widget.focus_next_manager_is;
-      Elm_Widget.focus_direction_manager_is;
-      Elm_Widget.focus_next;
-      Elm_Widget.theme_apply;
-      Elm_Widget.on_focus;
-      Elm_Widget.event;
+      Elm.Widget.focus_direction;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
+      Elm.Widget.focus_next;
+      Elm.Widget.theme_apply;
+      Elm.Widget.on_focus;
+      Elm.Widget.event;
       Elm_Interface_Atspi_Accessible.parent.get;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
