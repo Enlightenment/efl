@@ -56,6 +56,11 @@ START_TEST(strbuf_simple)
    fail_if(eina_strbuf_length_get(buf) != 0);
    fail_if(!strcmp(eina_strbuf_string_get(buf), TEXT));
 
+   eina_strbuf_string_free(buf);
+   fail_if(eina_strbuf_length_get(buf));
+   eina_strbuf_append(buf, TEXT);
+   fail_if(strcmp(eina_strbuf_string_get(buf), TEXT));
+
    eina_strbuf_free(buf);
 
    eina_shutdown();
