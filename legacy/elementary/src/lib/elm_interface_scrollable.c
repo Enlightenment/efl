@@ -1209,15 +1209,15 @@ _elm_scroll_wanted_coordinates_update(Elm_Scrollable_Smart_Interface_Data *sid,
    eo_do(sid->obj, elm_interface_scrollable_content_viewport_geometry_get
          (NULL, NULL, &sid->ww, &sid->wh));
 
-   if (x < minx)
+   if (x < minx && !sid->is_mirrored)
      {
         if (!sid->loop_h) sid->wx = minx;
         else sid->wx = mx;
      }
-   else if (!sid->loop_h && (x > mx)) sid->wx = mx;
-   else if (sid->loop_h && x >= (sid->ww + mx)) sid->wx = 0;
    else if (sid->is_mirrored)
      sid->wx = _elm_scroll_x_mirrored_get(sid->obj, x);
+   else if (!sid->loop_h && (x > mx)) sid->wx = mx;
+   else if (sid->loop_h && x >= (sid->ww + mx)) sid->wx = 0;
    else sid->wx = x;
 
    if (y < miny)
