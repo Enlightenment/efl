@@ -1,4 +1,4 @@
-class Elm_Bubble (Elm.Layout)
+class Elm.Bubble (Elm.Layout)
 {
    eo_prefix: elm_obj_bubble;
    properties {
