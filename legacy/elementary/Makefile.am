@@ -1,3 +1,4 @@
+AM_DISTCHECK_CONFIGURE_FLAGS = --with-tests=regular
 SUBDIRS = src data config doc
 
 if HAVE_PO
