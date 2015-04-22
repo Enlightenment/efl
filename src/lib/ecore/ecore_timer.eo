@@ -19,7 +19,7 @@ class Ecore.Timer (Eo.Base)
             /*@ Get the interval the timer ticks on. */
          }
          values {
-            double in; /*@ The new interval in seconds */
+            double in(-1); /*@ The new interval in seconds */
          }
       }
       pending {
