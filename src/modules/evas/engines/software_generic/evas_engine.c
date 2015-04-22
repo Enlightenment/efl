@@ -3917,15 +3917,13 @@ static Evas_Func func =
      NULL, // eng_drawable_texture_pixel_color_get
      NULL, // eng_texture_new
      NULL, // eng_texture_free
-     NULL, // eng_texture_data_set
-     NULL, // eng_texture_file_set
-     NULL, // eng_texture_color_format_get
      NULL, // eng_texture_size_get
      NULL, // eng_texture_wrap_set
      NULL, // eng_texture_wrap_get
      NULL, // eng_texture_filter_set
      NULL, // eng_texture_filter_get
      NULL, // eng_texture_image_set
+     NULL, // eng_texture_image_get
      eng_ector_get,
      eng_ector_begin,
      eng_ector_renderer_draw,

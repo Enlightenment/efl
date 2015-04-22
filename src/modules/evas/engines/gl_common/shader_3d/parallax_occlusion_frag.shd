@@ -1,10 +1,13 @@
 varying  vec3        vLightVector;
 varying  vec3        vLightHalfVector;
-uniform  sampler2D   uTextureNormal0;
 varying  vec3        vEyeVector;
+uniform  sampler2D   uTextureNormal0;
+uniform  mat3 uTextureMatrixTransformNormal0;
 
 #ifdef NEED_TEX_COORD
 varying vec2   vTexCoord;
+vec3 Tex0CoordNormal = 
+   vec3(vTexCoord, 1.0) * uTextureMatrixTransformNormal0;
 #endif //TEX_COORD
 
 FRAGMENT_SHADER_USE_FOG
@@ -13,6 +16,9 @@ FRAGMENT_SHADER_USE_SHADOWS
 #ifdef NORMAL_TEXTURE_BLEND
 uniform  sampler2D  uTextureNormal1;
 uniform  float      uTextureNormalWeight;
+uniform mat3 uTextureMatrixTransformNormal1;
+vec3 Tex1CoordNormal = 
+   vec3(vTexCoord, 1.0) * uTextureMatrixTransformNormal1;
 #endif //NORMAL_TEXTURE_BLEND
 
 FRAGMENT_SHADER_USE_DIFFUSE_TERM
@@ -35,8 +41,8 @@ vec2 parallaxMapping(in vec3 view, in vec2 tex, out float parallaxHeight)
    vec2 currentTextureCoords = tex;
 
 #ifdef NORMAL_TEXTURE_BLEND
-   float heightFromTexture = (1.0 - texture2D(uTextureNormal0, currentTextureCoords).a) * uTextureNormalWeight;
-   heightFromTexture += (1.0 - texture2D(uTextureNormal1, currentTextureCoords).a) *
+   float heightFromTexture = (1.0 - texture2D(uTextureNormal0, vec2(Tex0CoordNormal)).a) * uTextureNormalWeight;
+   heightFromTexture += (1.0 - texture2D(uTextureNormal1, vec2(Tex1CoordNormal)).a) *
    (1.0 - uTextureNormalWeight);
 #else
    float heightFromTexture = 1.0 - texture2D(uTextureNormal0, currentTextureCoords).a;
@@ -83,7 +89,7 @@ void fragmentParallaxMap()
    vec4  color;
 
    float parallaxHeight;
-   vec2 tex = parallaxMapping(vEyeVector, vTexCoord, parallaxHeight);
+   vec2 tex = parallaxMapping(vEyeVector, vec2(Tex0CoordNormal), parallaxHeight);
 
    vec3  lv = normalize(vLightVector);
 

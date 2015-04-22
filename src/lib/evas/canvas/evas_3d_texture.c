@@ -234,7 +234,7 @@ _evas_3d_texture_evas_3d_object_update_notify(Eo *obj, Evas_3D_Texture_Data *pd)
              if (e->engine.func->texture_new)
                {
                   pd->engine_data =
-                     e->engine.func->texture_new(e->engine.data.output);
+                     e->engine.func->texture_new(e->engine.data.output, pd->atlas_enable);
                }
 
              if (pd->engine_data == NULL)
@@ -308,7 +308,6 @@ evas_3d_texture_material_del(Evas_3D_Texture *texture, Evas_3D_Material *materia
      eina_hash_set(pd->materials, &material, (const void *)(uintptr_t)(count - 1));
 }
 
-
 EAPI Evas_3D_Texture *
 evas_3d_texture_add(Evas *e)
 {
@@ -324,6 +323,8 @@ EOLIAN static void
 _evas_3d_texture_eo_base_constructor(Eo *obj, Evas_3D_Texture_Data *pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_constructor());
+   pd->atlas_enable = EINA_TRUE;
+
    eo_do(obj, evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_TEXTURE));
 }
 
@@ -335,37 +336,68 @@ _evas_3d_texture_eo_base_destructor(Eo *obj, Evas_3D_Texture_Data *pd  EINA_UNUS
 }
 
 EOLIAN static void
-_evas_3d_texture_data_set(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd, Evas_3D_Color_Format color_format,
-                             Evas_3D_Pixel_Format pixel_format, int w, int h, const void *data)
+_evas_3d_texture_data_set(Eo *obj, Evas_3D_Texture_Data *pd,
+                          Evas_Colorspace color_format,
+                          int w, int h, const void *data)
 {
    Eo *evas = NULL;
+   void *image = NULL;
    eo_do(obj, evas = evas_common_evas_get());
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
 
    if (!pd->engine_data && e->engine.func->texture_new)
-     pd->engine_data = e->engine.func->texture_new(e->engine.data.output);
+     pd->engine_data = e->engine.func->texture_new(e->engine.data.output, pd->atlas_enable);
+   if (!data)
+     {
+        ERR("Failure, image data is empty");
+        return;
+     }
 
-   if (e->engine.func->texture_data_set)
-     e->engine.func->texture_data_set(e->engine.data.output, pd->engine_data,
-                                      color_format, pixel_format, w, h, data);
+   image = e->engine.func->image_new_from_data(e->engine.data.output, w, h, (DATA32 *)data, EINA_TRUE, color_format);
+   if (!image)
+     {
+        ERR("Can't load image from data");
+        return;
+     }
 
+   if (e->engine.func->texture_image_set)
+     e->engine.func->texture_image_set(e->engine.data.output,
+                                       pd->engine_data,
+                                       image);
+   e->engine.func->image_free(e->engine.data.output, image);
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_TEXTURE_DATA, NULL));
 }
 
 EOLIAN static void
 _evas_3d_texture_file_set(Eo *obj, Evas_3D_Texture_Data *pd, const char *file, const char *key)
 {
+
+   Evas_Image_Load_Opts lo;
+   int load_error;
    Eo *evas = NULL;
+   void *image;
+
    eo_do(obj, evas = evas_common_evas_get());
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
 
    if (!pd->engine_data && e->engine.func->texture_new)
-     pd->engine_data = e->engine.func->texture_new(e->engine.data.output);
+     pd->engine_data = e->engine.func->texture_new(e->engine.data.output, pd->atlas_enable);
 
-   if (e->engine.func->texture_file_set)
-     e->engine.func->texture_file_set(e->engine.data.output, pd->engine_data,
-                                      file, key);
+   memset(&lo, 0x0, sizeof(Evas_Image_Load_Opts));
+   image = e->engine.func->image_load(e->engine.data.output,
+                                      file, key, &load_error, &lo);
+   if (!image)
+     {
+        ERR("Can't load image from file");
+        return;
+     }
 
+   if (e->engine.func->texture_image_set)
+     e->engine.func->texture_image_set(e->engine.data.output,
+                                       pd->engine_data,
+                                       image);
+
+   e->engine.func->image_free(e->engine.data.output, image);
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_TEXTURE_DATA, NULL));
 }
 
@@ -374,6 +406,7 @@ _evas_3d_texture_source_set(Eo *obj , Evas_3D_Texture_Data *pd, Evas_Object *sou
 {
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
+   Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
    Evas_Object_Protected_Data *src;
 
    if (source == pd->source)
@@ -403,6 +436,8 @@ _evas_3d_texture_source_set(Eo *obj , Evas_3D_Texture_Data *pd, Evas_Object *sou
         ERR("No evas surface associated with the source object.");
         return;
      }
+   if (!pd->engine_data && e->engine.func->texture_new)
+     pd->engine_data = e->engine.func->texture_new(e->engine.data.output, pd->atlas_enable);
 
    _texture_proxy_set(obj, source, src);
    eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_TEXTURE_DATA, NULL));
@@ -442,19 +477,21 @@ _evas_3d_texture_source_visible_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *p
    return !src_obj->proxy->src_invisible;
 }
 
-EOLIAN static Evas_3D_Color_Format
+EOLIAN static Evas_Colorspace
 _evas_3d_texture_color_format_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd)
 {
-   // FIXME: we need an unknown color format and unify that with Evas color space to
-   Evas_3D_Color_Format format = -1;
+   Evas_Colorspace format = -1;
    Eo *evas = NULL;
    eo_do(obj, evas = evas_common_evas_get());
    Evas_Public_Data *e = eo_data_scope_get(evas, EVAS_CANVAS_CLASS);
 
-   if (e->engine.func->texture_color_format_get)
+   if (e->engine.func->image_colorspace_get &&
+       e->engine.func->texture_image_get)
      {
-        e->engine.func->texture_color_format_get(e->engine.data.output,
-                                                 pd->engine_data, &format);
+        void *image;
+
+        image = e->engine.func->texture_image_get(e->engine.data.output, pd->engine_data);
+        format = e->engine.func->image_colorspace_get(e->engine.data.output, image);
      }
 
    return format;
@@ -527,4 +564,15 @@ _evas_3d_texture_filter_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd, Evas_
      }
 }
 
+EOLIAN static void
+_evas_3d_texture_atlas_enable_set(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd, Eina_Bool use_atlas)
+{
+   if (pd->atlas_enable != use_atlas) pd->atlas_enable = use_atlas;
+}
+
+EOLIAN static Eina_Bool
+_evas_3d_texture_atlas_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Texture_Data *pd)
+{
+   return pd->atlas_enable;
+}
 #include "canvas/evas_3d_texture.eo.c"

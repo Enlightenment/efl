@@ -369,9 +369,11 @@ struct _Evas_3D_Texture
    Evas_Object      *source;
    Eina_Bool         proxy_rendering;
    void             *proxy_surface;
-
    /* Engine-side object. */
    void             *engine_data;
+
+   /*Use atlases, @EINA_TRUE by default*/
+   Eina_Bool        atlas_enable :1;
 };
 
 struct _Evas_3D_Material
@@ -389,7 +391,7 @@ struct _Evas_3D_Material
 
 struct _Evas_3D_Scene_Public_Data
 {
-   Evas_Color        bg_color;
+   Evas_Color       bg_color;
    Evas_3D_Node     *camera_node;
    Eina_List        *light_nodes;
    Eina_List        *mesh_nodes;
@@ -1360,17 +1362,15 @@ struct _Evas_Func
    int (*drawable_texture_color_pick_id_get) (void *drawable);
    double (*drawable_texture_pixel_color_get) (unsigned int tex EINA_UNUSED, int x, int y, void *drawable);
 
-   void *(*texture_new)                  (void *data);
+   void *(*texture_new)                  (void *data, Eina_Bool use_atlas);
    void  (*texture_free)                 (void *data, void *texture);
-   void  (*texture_data_set)             (void *data, void *texture, Evas_3D_Color_Format format, Evas_3D_Pixel_Format pixel_format, int w, int h, const void *pixels);
-   void  (*texture_file_set)             (void *data, void *texture, const char *file, const char *key);
-   void  (*texture_color_format_get)     (void *data, void *texture, Evas_3D_Color_Format *format);
    void  (*texture_size_get)             (void *data, void *texture, int *w, int *h);
    void  (*texture_wrap_set)             (void *data, void *texture, Evas_3D_Wrap_Mode s, Evas_3D_Wrap_Mode t);
    void  (*texture_wrap_get)             (void *data, void *texture, Evas_3D_Wrap_Mode *s, Evas_3D_Wrap_Mode *t);
    void  (*texture_filter_set)           (void *data, void *texture, Evas_3D_Texture_Filter min, Evas_3D_Texture_Filter mag);
    void  (*texture_filter_get)           (void *data, void *texture, Evas_3D_Texture_Filter *min, Evas_3D_Texture_Filter *mag);
    void  (*texture_image_set)            (void *data, void *texture, void *image);
+   void *(*texture_image_get)            (void *data, void *texture);
 
    Ector_Surface *(*ector_get)           (void *data);
    void  (*ector_begin)                  (void *data, void *context, void *surface, int x, int y, Eina_Bool do_async);

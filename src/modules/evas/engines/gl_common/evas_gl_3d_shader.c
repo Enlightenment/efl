@@ -32,6 +32,18 @@ typedef enum _E3D_Uniform
    E3D_UNIFORM_TEXTURE_EMISSION1,
    E3D_UNIFORM_TEXTURE_NORMAL1,
 
+   E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_AMBIENT0,
+   E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_DIFFUSE0,
+   E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_SPECULAR0,
+   E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_EMISSION0,
+   E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_NORMAL0,
+
+   E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_AMBIENT1,
+   E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_DIFFUSE1,
+   E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_SPECULAR1,
+   E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_EMISSION1,
+   E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_NORMAL1,
+
    E3D_UNIFORM_SHADOWMAP,
 
    E3D_UNIFORM_LIGHT_POSITION,
@@ -312,6 +324,16 @@ static const char *uniform_names[] =
    "uTextureSpecular1",
    "uTextureEmission1",
    "uTextureNormal1",
+   "uTextureMatrixTransformAmbient0",
+   "uTextureMatrixTransformDiffuse0",
+   "uTextureMatrixTransformSpecular0",
+   "uTextureMatrixTransformEmission0",
+   "uTextureMatrixTransformNormal0",
+   "uTextureMatrixTransformAmbient1",
+   "uTextureMatrixTransformDiffuse1",
+   "uTextureMatrixTransformSpecular1",
+   "uTextureMatrixTransformEmission1",
+   "uTextureMatrixTransformNormal1",
    "uShadowMap",
    "uLightPosition",
    "uLightSpotDir",
@@ -344,6 +366,15 @@ _program_uniform_init(E3D_Program *program)
 static inline void
 _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
 {
+#define SET_TEX_COORD_TRANSFORM_MATRIX(attrib, tn)                             \
+   if (data->materials[attrib].tex##tn)                                        \
+     {                                                                         \
+        float   m[9];                                                          \
+        for(int i = 0 ; i < 9 ; i++)                                           \
+          m[i] = data->materials[attrib].tex##tn->trans.m[i];                  \
+        glUniformMatrix3fv(loc, 1, EINA_FALSE, &m[0]);                         \
+     }
+
    switch (u)
      {
       case E3D_UNIFORM_MATRIX_MVP: {
@@ -434,6 +465,46 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
       case E3D_UNIFORM_TEXTURE_NORMAL1:
          glUniform1i(loc, data->materials[EVAS_3D_MATERIAL_NORMAL].sampler1);
          break;
+      case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_AMBIENT0: {
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_AMBIENT, 0)
+         break;
+      }
+      case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_DIFFUSE0: {
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_DIFFUSE, 0)
+         break;
+      }
+      case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_SPECULAR0: {
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_SPECULAR, 0)
+         break;
+      }
+      case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_EMISSION0: {
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_EMISSION, 0)
+         break;
+      }
+      case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_NORMAL0: {
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_NORMAL, 0)
+         break;
+      }
+      case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_AMBIENT1: {
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_AMBIENT, 1)
+         break;
+      }
+      case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_DIFFUSE1: {
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_DIFFUSE, 1)
+         break;
+      }
+      case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_SPECULAR1: {
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_SPECULAR, 1)
+         break;
+      }
+      case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_EMISSION1: {
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_EMISSION, 1)
+         break;
+      }
+      case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_NORMAL1: {
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_NORMAL, 1)
+         break;
+      }
       case E3D_UNIFORM_SHADOWMAP:
          glUniform1i(loc, data->smap_sampler);
          break;
@@ -512,6 +583,7 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
          ERR("Invalid uniform ID.");
          break;
      }
+#undef SET_TEX_SHIFT
 }
 
 void

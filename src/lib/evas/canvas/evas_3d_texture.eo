@@ -31,6 +31,29 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
             bool visible; /*@ @c EINA_TRUE for visible, @c EINA_FALSE for invisible.*/
          }
       }
+      atlas_enable {
+         set {
+            /*
+              Set enable flag to generation texture unit with support atlas.
+
+              Use this flag only in case not normalize texture coordinates.
+
+              By default, is enabled.
+
+              @ingroup Evas_3D_Texture
+             */
+         }
+         get {
+            /*
+              Get enable flag of generation texture unit with support atlas.
+
+              @ingroup Evas_3D_Texture
+             */
+         }
+         values {
+            bool use_atlas; /*@ @c EINA_TRUE for enable, @c EINA_FALSE for disable.*/
+         }
+      }
    }
    methods {
       data_set {
@@ -43,8 +66,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
           */
 
          params {
-            @in Evas_3D_Color_Format color_format; /*@ Color format of the texture. */
-            @in Evas_3D_Pixel_Format pixel_format; /*@ Pixel format of the data. */
+            @in Evas_Colorspace color_format; /*@ Color format of the texture. */
             @in int w; /*@ Width of the data. */
             @in int h; /*@ Height of the data. */
             @in const(void)* data; /*@ Pointer to the data. */
@@ -54,8 +76,6 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
       file_set {
          /*
            Set the data of the given texture from file.
-
-           Only PNG format is supported.
 
            @ingroup Evas_3D_Texture
           */
@@ -96,7 +116,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_3D_Texture
           */
-         return: Evas_3D_Color_Format;
+         return: Evas_Colorspace;
       }
 
       size_get @const {

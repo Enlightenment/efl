@@ -2203,50 +2203,15 @@ eng_drawable_scene_render_to_texture(void *data, void *drawable, void *scene_dat
 }
 
 static void *
-eng_texture_new(void *data EINA_UNUSED)
+eng_texture_new(void *data EINA_UNUSED, Eina_Bool use_atlas)
 {
-   return e3d_texture_new();
+   return e3d_texture_new(use_atlas);
 }
 
 static void
 eng_texture_free(void *data EINA_UNUSED, void *texture)
 {
    e3d_texture_free((E3D_Texture *)texture);
-}
-
-static void
-eng_texture_data_set(void *data, void *texture, Evas_3D_Color_Format color_format,
-                     Evas_3D_Pixel_Format pixel_format, int w, int h, const void *pixels)
-{
-   Evas_Engine_GL_Context *gl_context;
-   Render_Engine_GL_Generic *re = data;
-
-   re->window_use(re->software.ob);
-   gl_context = re->window_gl_context_get(re->software.ob);
-   evas_gl_common_context_flush(gl_context);
-   eng_context_3d_use(data);
-
-   e3d_texture_data_set((E3D_Texture *)texture, color_format, pixel_format, w, h, pixels);
-}
-
-static void
-eng_texture_file_set(void *data, void *texture, const char *file, const char *key)
-{
-   Evas_Engine_GL_Context *gl_context;
-   Render_Engine_GL_Generic *re = data;
-
-   re->window_use(re->software.ob);
-   gl_context = re->window_gl_context_get(re->software.ob);
-   evas_gl_common_context_flush(gl_context);
-   eng_context_3d_use(data);
-
-   e3d_texture_file_set((E3D_Texture *)texture, file, key);
-}
-
-static void
-eng_texture_color_format_get(void *data EINA_UNUSED, void *texture, Evas_3D_Color_Format *format)
-{
-   *format = e3d_texture_color_format_get((E3D_Texture *)texture);
 }
 
 static void
@@ -2284,10 +2249,21 @@ eng_texture_filter_get(void *data EINA_UNUSED, void *texture,
 }
 
 static void
-eng_texture_image_set(void *data EINA_UNUSED, void *texture, void *image)
+eng_texture_image_set(void *data, void *texture, void *image)
 {
-   Evas_GL_Image *im = (Evas_GL_Image *)image;
-   e3d_texture_import((E3D_Texture *)texture, im->tex->pt->texture);
+   Evas_Engine_GL_Context *gl_context;
+   Render_Engine_GL_Generic *re = data;
+
+   re->window_use(re->software.ob);
+   gl_context = re->window_gl_context_get(re->software.ob);
+
+   e3d_texture_set(gl_context, (E3D_Texture *)texture, (Evas_GL_Image *)image);
+}
+
+static void *
+eng_texture_image_get(void *data EINA_UNUSED, void *texture)
+{
+   return e3d_texture_get((E3D_Texture *)texture);
 }
 
 static Ector_Surface *_software_ector = NULL;
@@ -2607,15 +2583,13 @@ module_open(Evas_Module *em)
 
    ORD(texture_new);
    ORD(texture_free);
-   ORD(texture_data_set);
-   ORD(texture_file_set);
-   ORD(texture_color_format_get);
    ORD(texture_size_get);
    ORD(texture_wrap_set);
    ORD(texture_wrap_get);
    ORD(texture_filter_set);
    ORD(texture_filter_get);
    ORD(texture_image_set);
+   ORD(texture_image_get);
 
    ORD(ector_get);
    ORD(ector_begin);

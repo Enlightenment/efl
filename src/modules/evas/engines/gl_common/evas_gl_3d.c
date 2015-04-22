@@ -21,9 +21,6 @@
 void
 e3d_texture_param_update(E3D_Texture *texture)
 {
-   if (texture->is_imported)
-     return;
-
    if (texture->wrap_dirty)
      {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texture->wrap_s);
@@ -40,7 +37,7 @@ e3d_texture_param_update(E3D_Texture *texture)
 }
 
 E3D_Texture *
-e3d_texture_new(void)
+e3d_texture_new(Eina_Bool use_atlas)
 {
    E3D_Texture *texture = NULL;
 
@@ -52,12 +49,14 @@ e3d_texture_new(void)
         return NULL;
      }
 
+   evas_mat3_identity_set(&texture->trans);
+
    texture->w = 0;
    texture->h = 0;
+   texture->x = 0;
+   texture->y = 0;
 
-   texture->is_imported = EINA_FALSE;
    texture->tex = 0;
-   texture->format = GL_RGBA;
 
    texture->wrap_dirty = EINA_TRUE;
    texture->wrap_s = GL_CLAMP_TO_EDGE;
@@ -67,192 +66,63 @@ e3d_texture_new(void)
    texture->filter_min = GL_NEAREST;
    texture->filter_mag = GL_NEAREST;
 
+   texture->atlas_enable = use_atlas;
+
    return texture;
 }
 
 void
 e3d_texture_free(E3D_Texture *texture)
 {
-   if (texture->tex && !texture->is_imported)
-     glDeleteTextures(1, &texture->tex);
-
+   if (texture)
+     {
+        if (texture->surface)
+          evas_gl_common_image_unref(texture->surface);
+     }
    free(texture);
-}
-
-void
-e3d_texture_data_set(E3D_Texture *texture,
-                     Evas_3D_Color_Format color_format, Evas_3D_Pixel_Format pixel_format,
-                     int w, int h, const void *data)
-{
-   GLenum   format;
-   GLenum   iformat;
-   GLenum   type;
-
-   if (color_format == EVAS_3D_COLOR_FORMAT_RGBA)
-     {
-        format = GL_RGBA;
-        iformat = GL_BGRA;
-
-        if (pixel_format == EVAS_3D_PIXEL_FORMAT_8888)
-          type = GL_UNSIGNED_BYTE;
-        else if (pixel_format == EVAS_3D_PIXEL_FORMAT_4444)
-          type = GL_UNSIGNED_SHORT_4_4_4_4;
-        else if (pixel_format == EVAS_3D_PIXEL_FORMAT_5551)
-          type = GL_UNSIGNED_SHORT_5_5_5_1;
-        else
-          {
-             ERR("Texture data format mismatch.");
-             return;
-          }
-     }
-   else if (color_format == EVAS_3D_COLOR_FORMAT_RGB)
-     {
-        format = GL_RGB;
-        iformat = GL_BGR;
-
-        if (pixel_format == EVAS_3D_PIXEL_FORMAT_565)
-          type = GL_UNSIGNED_SHORT_5_6_5;
-        else if (pixel_format == EVAS_3D_PIXEL_FORMAT_888)
-          type = GL_UNSIGNED_BYTE;
-        else
-          {
-             ERR("Texture data format mismatch.");
-             return;
-          }
-     }
-   else if (color_format == EVAS_3D_COLOR_FORMAT_ALPHA)
-     {
-        format = GL_LUMINANCE;
-        iformat = GL_LUMINANCE;
-
-        if (pixel_format == EVAS_3D_PIXEL_FORMAT_8)
-          type = GL_UNSIGNED_BYTE;
-        else
-          {
-             ERR("Texture data format mismatch.");
-             return;
-          }
-     }
-   else
-     {
-        ERR("Invalid texture color format");
-        return;
-     }
-
-   if (texture->tex == 0 || texture->is_imported)
-     {
-        glGenTextures(1, &texture->tex);
-        texture->wrap_dirty = EINA_TRUE;
-        texture->filter_dirty = EINA_TRUE;
-     }
-
-   glBindTexture(GL_TEXTURE_2D, texture->tex);
-   glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, iformat, type, data);
-
-   if (texture->wrap_dirty)
-     {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texture->wrap_s);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, texture->wrap_t);
-        texture->wrap_dirty = EINA_FALSE;
-     }
-
-   if (texture->filter_dirty)
-     {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->filter_min);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texture->filter_mag);
-        texture->filter_dirty = EINA_FALSE;
-     }
-
-   texture->is_imported = EINA_FALSE;
-   texture->format = format;
-}
-
-void
-e3d_texture_file_set(E3D_Texture *texture, const char *file, const char *key)
-{
-   Evas_Image_Load_Opts lo;
-   int error;
-   Evas_3D_Color_Format color_format;
-   Evas_3D_Pixel_Format pixel_format;
-
-   memset(&lo, 0x0, sizeof(Evas_Image_Load_Opts));
-   RGBA_Image *im = evas_common_load_image_from_file(file, key, &lo, &error);
-   if (!im) return;
-
-   error = evas_cache_image_load_data(&im->cache_entry);
-
-   switch(im->cache_entry.space)
-     {
-        case EVAS_COLORSPACE_ARGB8888:
-          pixel_format = EVAS_3D_PIXEL_FORMAT_8888;
-          color_format = EVAS_3D_COLOR_FORMAT_RGBA;
-          break;
-        default:
-          return;
-     }
-   e3d_texture_data_set(texture, color_format, pixel_format, im->cache_entry.w,
-                        im->cache_entry.h, im->image.data);
-   evas_cache_image_unload_data(&im->cache_entry);
-}
-
-Evas_3D_Color_Format
-e3d_texture_color_format_get(E3D_Texture *texture)
-{
-   if (texture->is_imported)
-     {
-        ERR("Cannot get the size of an imported texture.");
-        return EVAS_3D_COLOR_FORMAT_RGBA;
-     }
-
-   switch (texture->format)
-     {
-      case GL_RGBA:
-         return EVAS_3D_COLOR_FORMAT_RGBA;
-      case GL_RGB:
-         return EVAS_3D_COLOR_FORMAT_RGB;
-      case GL_ALPHA:
-         return EVAS_3D_COLOR_FORMAT_ALPHA;
-      default:
-         break;
-     }
-
-   ERR("Invalid texture format.");
-   return EVAS_3D_COLOR_FORMAT_RGBA;
 }
 
 void
 e3d_texture_size_get(const E3D_Texture *texture, int *w, int *h)
 {
-   if (texture->is_imported)
-     {
-        ERR("Invalid operation on an imported texture resource.");
-        return;
-     }
-
    if (w) *w = texture->w;
    if (h) *h = texture->h;
 }
 
 void
-e3d_texture_import(E3D_Texture *texture, GLuint tex)
+e3d_texture_set(Evas_Engine_GL_Context *gc,
+                E3D_Texture *texture,
+                Evas_GL_Image *im)
 {
-   if (tex == 0)
-     {
-        ERR("Cannot import an invalid texture ID.");
-        return;
-     }
+   Evas_Mat3 pt,st;
+   Evas_Real pt_x, pt_y, st_x, st_y;
 
-   if (texture->tex && !texture->is_imported)
-     glDeleteTextures(1, &texture->tex);
+   texture->surface = im;
+   evas_gl_common_image_ref(im);
 
-   texture->tex = tex;
-   texture->is_imported = EINA_TRUE;
+   evas_gl_common_image_update(gc, im);
+
+   texture->tex = im->tex->pt->texture;
+   texture->w = im->w;
+   texture->h = im->h;
+   texture->x = im->tex->x;
+   texture->y = im->tex->y;
+
+   pt_x = im->tex->pt->w ? (im->tex->x/(Evas_Real)im->tex->pt->w) : 0;
+   pt_y = im->tex->pt->h ? (im->tex->y/(Evas_Real)im->tex->pt->h) : 0;
+
+   st_x = im->tex->pt->w ? (im->w/(Evas_Real)im->tex->pt->w) : 1.0;
+   st_y = im->tex->pt->h ? (im->h/(Evas_Real)im->tex->pt->h) : 1.0;
+   /*Build adjusting matrix for texture unit coordinates*/
+   evas_mat3_set_position_transform(&pt, pt_x, pt_y);
+   evas_mat3_set_scale_transform(&st, st_x, st_y);
+   evas_mat3_multiply(&texture->trans, &st, &pt);
 }
 
-Eina_Bool
-e3d_texture_is_imported_get(const E3D_Texture *texture)
+Evas_GL_Image *
+e3d_texture_get(E3D_Texture *texture)
 {
-   return texture->is_imported;
+   return texture ? texture->surface : NULL;
 }
 
 static inline GLenum
@@ -348,12 +218,6 @@ e3d_texture_wrap_set(E3D_Texture *texture, Evas_3D_Wrap_Mode s, Evas_3D_Wrap_Mod
 {
    GLenum gl_s, gl_t;
 
-   if (texture->is_imported)
-     {
-        ERR("Invalid operation on an imported texture resource.");
-        return;
-     }
-
    gl_s = _to_gl_texture_wrap(s);
    gl_t = _to_gl_texture_wrap(t);
 
@@ -368,12 +232,6 @@ e3d_texture_wrap_set(E3D_Texture *texture, Evas_3D_Wrap_Mode s, Evas_3D_Wrap_Mod
 void
 e3d_texture_wrap_get(const E3D_Texture *texture, Evas_3D_Wrap_Mode *s, Evas_3D_Wrap_Mode *t)
 {
-   if (texture->is_imported)
-     {
-        ERR("Invalid operation on an imported texture resource.");
-        return;
-     }
-
    if (s)
      *s = _to_e3d_texture_wrap(texture->wrap_s);
 
@@ -385,12 +243,6 @@ void
 e3d_texture_filter_set(E3D_Texture *texture, Evas_3D_Texture_Filter min, Evas_3D_Texture_Filter mag)
 {
    GLenum gl_min, gl_mag;
-
-   if (texture->is_imported)
-     {
-        ERR("Invalid operation on an imported texture resource.");
-        return;
-     }
 
    gl_min = _to_gl_texture_filter(min);
    gl_mag = _to_gl_texture_filter(mag);
@@ -407,12 +259,6 @@ void
 e3d_texture_filter_get(const E3D_Texture *texture,
                        Evas_3D_Texture_Filter *min, Evas_3D_Texture_Filter *mag)
 {
-   if (texture->is_imported)
-     {
-        ERR("Invalid operation on an imported texture resource.");
-        return;
-     }
-
    if (min)
      *min = _to_e3d_texture_filter(texture->filter_min);
 

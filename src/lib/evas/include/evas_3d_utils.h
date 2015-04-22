@@ -1150,6 +1150,36 @@ evas_mat3_invserse(Evas_Mat3 *out, const Evas_Mat3 *mat)
      }
 }
 
+static inline void
+evas_mat3_set_position_transform(Evas_Mat3 *out, const Evas_Real p_x, const Evas_Real p_y)
+{
+   Evas_Real        *d = &out->m[0];
+   memset(d, 0x00, sizeof(Evas_Mat3));
+   d[0] = 1;
+   d[2] = p_x;
+   d[4] = 1;
+   d[5] = p_y;
+   d[8] = 1;
+   if (p_x || p_y)
+     out->flags = 0;
+   else
+     out->flags = EVAS_MATRIX_IS_IDENTITY;
+}
+
+static inline void
+evas_mat3_set_scale_transform(Evas_Mat3 *out, Evas_Real s_x, Evas_Real s_y)
+{
+   Evas_Real        *d = &out->m[0];
+   memset(d, 0x00, sizeof(Evas_Mat3));
+   d[0] = s_x;
+   d[4] = s_y;
+   d[8] = 1;
+   if (s_x != 1.0 || s_y != 1.0)
+     out->flags = 0;
+   else
+     out->flags = EVAS_MATRIX_IS_IDENTITY;
+}
+
 /* 2x2 matrix */
 static inline void
 evas_mat2_identity_set(Evas_Mat2 *m)

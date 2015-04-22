@@ -111,19 +111,25 @@ struct _E3D_Draw_Data
 
 struct _E3D_Texture
 {
-   int         w, h;
+   /*Offset for atlasses*/
+   int               x, y;
+   int               w, h;
 
-   Eina_Bool   is_imported;
-   GLuint      tex;
-   GLenum      format;
+   Evas_GL_Image     *surface;
+   /*Tranformation matrix, use it for adjusting texture unit coordinates*/
+   Evas_Mat3         trans;
 
-   Eina_Bool   wrap_dirty;
-   GLenum      wrap_s;
-   GLenum      wrap_t;
+   GLuint            tex;
 
-   Eina_Bool   filter_dirty;
-   GLenum      filter_min;
-   GLenum      filter_mag;
+   Eina_Bool         wrap_dirty;
+   GLenum            wrap_s;
+   GLenum            wrap_t;
+
+   Eina_Bool         filter_dirty;
+   GLenum            filter_min;
+   GLenum            filter_mag;
+   /*Use atlas for generation texture unit, @EINA_TRUE by default*/
+   Eina_Bool         atlas_enable;
 };
 
 struct _E3D_Drawable

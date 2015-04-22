@@ -698,44 +698,6 @@ typedef enum _Evas_3D_Comparison
 } Evas_3D_Comparison;
 
 /**
- * Color formats of pixel data
- *
- * @since 1.10
- * @ingroup Evas_3D_Types
- */
-typedef enum _Evas_3D_Color_Format
-{
-   /**< Color contains full components, red, green, blue and alpha */
-   EVAS_3D_COLOR_FORMAT_RGBA = 0,
-   /**< Color contains only red, green and blue components */
-   EVAS_3D_COLOR_FORMAT_RGB,
-   /**< Color contains only alpha component */
-   EVAS_3D_COLOR_FORMAT_ALPHA
-} Evas_3D_Color_Format;
-
-/**
- * Pixel formats
- *
- * @since 1.10
- * @ingroup Evas_3D_Types
- */
-typedef enum _Evas_3D_Pixel_Format
-{
-   /**< 8-bit pixel with single component */
-   EVAS_3D_PIXEL_FORMAT_8 = 0,
-   /**< 16-bit pixel with three components (5-6-5 bit) */
-   EVAS_3D_PIXEL_FORMAT_565,
-   /**< 24-bit pixel with three 8-bit components */
-   EVAS_3D_PIXEL_FORMAT_888,
-   /**< 32-bit pixel with four 8-bit components */
-   EVAS_3D_PIXEL_FORMAT_8888,
-   /**< 16-bit pixel with four 4-bit components */
-   EVAS_3D_PIXEL_FORMAT_4444,
-   /**< 16-bit pixel with four components (5-5-5-1 bit) */
-   EVAS_3D_PIXEL_FORMAT_5551
-} Evas_3D_Pixel_Format;
-
-/**
  * Wrap modes
  *
  * @since 1.10
