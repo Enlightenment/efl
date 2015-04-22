@@ -9,29 +9,34 @@
 static void
 _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 #ifdef BUILD_NEON_INTRINSICS
-   uint16x8_t alpha00_16x8;
-   uint16x8_t alpha01_16x8;
-   uint16x8_t alpha10_16x8;
-   uint16x8_t alpha11_16x8;
-   uint16x8_t d00_16x8;
-   uint16x8_t d01_16x8;
-   uint16x8_t d10_16x8;
-   uint16x8_t d11_16x8;
+   uint16x8_t ad00_16x8;
+   uint16x8_t ad01_16x8;
+   uint16x8_t ad10_16x8;
+   uint16x8_t ad11_16x8;
+   uint32x4_t ad0_32x4;
+   uint32x4_t ad1_32x4;
    uint32x4_t alpha0_32x4;
    uint32x4_t alpha1_32x4;
+   uint32x4_t cond0_32x4;
+   uint32x4_t cond1_32x4;
    uint32x4_t d0_32x4;
    uint32x4_t d1_32x4;
    uint32x4_t s0_32x4;
    uint32x4_t s1_32x4;
+   uint32x4_t x0_32x4;
    uint32x4_t x1_32x4;
+   uint8x16_t ad0_8x16;
+   uint8x16_t ad1_8x16;
    uint8x16_t alpha0_8x16;
    uint8x16_t alpha1_8x16;
    uint8x16_t d0_8x16;
    uint8x16_t d1_8x16;
-   uint8x16_t s0_8x16;
-   uint8x16_t s1_8x16;
+   uint8x16_t x0_8x16;
    uint8x16_t x1_8x16;
-   uint8x16_t x255_8x16;
+   uint8x8_t ad00_8x8;
+   uint8x8_t ad01_8x8;
+   uint8x8_t ad10_8x8;
+   uint8x8_t ad11_8x8;
    uint8x8_t alpha00_8x8;
    uint8x8_t alpha01_8x8;
    uint8x8_t alpha10_8x8;
@@ -43,7 +48,8 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 
    x1_8x16 = vdupq_n_u8(0x1);
    x1_32x4 = vreinterpretq_u32_u8(x1_8x16);
-   x255_8x16 = vdupq_n_u8(0xff);
+   x0_8x16 = vdupq_n_u8(0x0);
+   x0_32x4 = vreinterpretq_u32_u8(x0_8x16);
 
    DATA32 *start = d;
    int size = l;
@@ -56,6 +62,13 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
       d0_32x4 = vld1q_u32(start);
       d1_32x4 = vld1q_u32(start+4);
 
+      d0_8x16 = vreinterpretq_u8_u32(d0_32x4);
+      d1_8x16 = vreinterpretq_u8_u32(d1_32x4);
+      d00_8x8 = vget_low_u8(d0_8x16);
+      d01_8x8 = vget_high_u8(d0_8x16);
+      d10_8x8 = vget_low_u8(d1_8x16);
+      d11_8x8 = vget_high_u8(d1_8x16);
+
       alpha0_32x4 = vshrq_n_u32(s0_32x4, 24);
       alpha1_32x4 = vshrq_n_u32(s1_32x4, 24);
 
@@ -65,46 +78,43 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
       alpha0_8x16 = vreinterpretq_u8_u32(alpha0_32x4);
       alpha1_8x16 = vreinterpretq_u8_u32(alpha1_32x4);
 
-      alpha0_8x16 = vsubq_u8(x255_8x16, alpha0_8x16);
-      alpha1_8x16 = vsubq_u8(x255_8x16, alpha1_8x16);
+      alpha0_8x16 = vsubq_u8(x0_8x16, alpha0_8x16);
+      alpha1_8x16 = vsubq_u8(x0_8x16, alpha1_8x16);
+
+      alpha0_32x4 = vreinterpretq_u32_u8(alpha0_8x16);
+      alpha1_32x4 = vreinterpretq_u32_u8(alpha1_8x16);
 
       alpha10_8x8 = vget_low_u8(alpha1_8x16);
       alpha11_8x8 = vget_high_u8(alpha1_8x16);
       alpha00_8x8 = vget_low_u8(alpha0_8x16);
       alpha01_8x8 = vget_high_u8(alpha0_8x16);
-      d0_8x16 = vreinterpretq_u8_u32(d0_32x4);
-      d1_8x16 = vreinterpretq_u8_u32(d1_32x4);
-      d00_8x8 = vget_low_u8(d0_8x16);
-      d01_8x8 = vget_high_u8(d0_8x16);
-      d10_8x8 = vget_low_u8(d1_8x16);
-      d11_8x8 = vget_high_u8(d1_8x16);
-      alpha00_16x8 = vmull_u8(alpha00_8x8, d00_8x8);
-      alpha01_16x8 = vmull_u8(alpha01_8x8, d01_8x8);
-      alpha10_16x8 = vmull_u8(alpha10_8x8, d10_8x8);
-      alpha11_16x8 = vmull_u8(alpha11_8x8, d11_8x8);
-      d00_16x8 = vmovl_u8(d00_8x8);
-      d01_16x8 = vmovl_u8(d01_8x8);
-      d10_16x8 = vmovl_u8(d10_8x8);
-      d11_16x8 = vmovl_u8(d11_8x8);
-      alpha00_16x8 = vaddq_u16(alpha00_16x8, d00_16x8);
-      alpha01_16x8 = vaddq_u16(alpha01_16x8, d01_16x8);
-      alpha10_16x8 = vaddq_u16(alpha10_16x8, d10_16x8);
-      alpha11_16x8 = vaddq_u16(alpha11_16x8, d11_16x8);
-      alpha00_8x8 = vshrn_n_u16(alpha00_16x8,8);
-      alpha01_8x8 = vshrn_n_u16(alpha01_16x8,8);
-      alpha10_8x8 = vshrn_n_u16(alpha10_16x8,8);
-      alpha11_8x8 = vshrn_n_u16(alpha11_16x8,8);
-      alpha0_8x16 = vcombine_u8(alpha00_8x8, alpha01_8x8);
-      alpha1_8x16 = vcombine_u8(alpha10_8x8, alpha11_8x8);
-      s0_8x16 = vreinterpretq_u8_u32(s0_32x4);
-      s1_8x16 = vreinterpretq_u8_u32(s1_32x4);
-      d0_8x16 = vaddq_u8(s0_8x16, alpha0_8x16);
-      d1_8x16 = vaddq_u8(s1_8x16, alpha1_8x16);
-      d0_32x4 = vreinterpretq_u32_u8(d0_8x16);
-      d1_32x4 = vreinterpretq_u32_u8(d1_8x16);
+
+      ad00_16x8 = vmull_u8(alpha00_8x8, d00_8x8);
+      ad01_16x8 = vmull_u8(alpha01_8x8, d01_8x8);
+      ad10_16x8 = vmull_u8(alpha10_8x8, d10_8x8);
+      ad11_16x8 = vmull_u8(alpha11_8x8, d11_8x8);
+      ad00_8x8 = vshrn_n_u16(ad00_16x8,8);
+      ad01_8x8 = vshrn_n_u16(ad01_16x8,8);
+      ad10_8x8 = vshrn_n_u16(ad10_16x8,8);
+      ad11_8x8 = vshrn_n_u16(ad11_16x8,8);
+
+      ad0_8x16 = vcombine_u8(ad00_8x8, ad01_8x8);
+      ad1_8x16 = vcombine_u8(ad10_8x8, ad11_8x8);
+      ad0_32x4 = vreinterpretq_u32_u8(ad0_8x16);
+      ad1_32x4 = vreinterpretq_u32_u8(ad1_8x16);
+
+      cond0_32x4 = vceqq_u32(alpha0_32x4, x0_32x4);
+      cond1_32x4 = vceqq_u32(alpha1_32x4, x0_32x4);
+
+      ad0_32x4 = vbslq_u32(cond0_32x4, d0_32x4, ad0_32x4);
+      ad1_32x4 = vbslq_u32(cond1_32x4, d1_32x4, ad1_32x4);
+
+      d0_32x4 = vaddq_u32(s0_32x4, ad0_32x4);
+      d1_32x4 = vaddq_u32(s1_32x4, ad1_32x4);
 
       vst1q_u32(start, d0_32x4);
       vst1q_u32(start+4, d1_32x4);
+
       s+=8;
       start+=8;
    }
@@ -358,29 +368,34 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 static void
 _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 #ifdef BUILD_NEON_INTRINSICS
-   uint16x8_t alpha00_16x8;
-   uint16x8_t alpha01_16x8;
-   uint16x8_t alpha10_16x8;
-   uint16x8_t alpha11_16x8;
-   uint16x8_t d00_16x8;
-   uint16x8_t d01_16x8;
-   uint16x8_t d10_16x8;
-   uint16x8_t d11_16x8;
+   uint16x8_t ad00_16x8;
+   uint16x8_t ad01_16x8;
+   uint16x8_t ad10_16x8;
+   uint16x8_t ad11_16x8;
+   uint32x4_t ad0_32x4;
+   uint32x4_t ad1_32x4;
    uint32x4_t alpha0_32x4;
    uint32x4_t alpha1_32x4;
+   uint32x4_t cond0_32x4;
+   uint32x4_t cond1_32x4;
    uint32x4_t d0_32x4;
    uint32x4_t d1_32x4;
    uint32x4_t s0_32x4;
    uint32x4_t s1_32x4;
+   uint32x4_t x0_32x4;
    uint32x4_t x1_32x4;
+   uint8x16_t ad0_8x16;
+   uint8x16_t ad1_8x16;
    uint8x16_t alpha0_8x16;
    uint8x16_t alpha1_8x16;
    uint8x16_t d0_8x16;
    uint8x16_t d1_8x16;
-   uint8x16_t s0_8x16;
-   uint8x16_t s1_8x16;
+   uint8x16_t x0_8x16;
    uint8x16_t x1_8x16;
-   uint8x16_t x255_8x16;
+   uint8x8_t ad00_8x8;
+   uint8x8_t ad01_8x8;
+   uint8x8_t ad10_8x8;
+   uint8x8_t ad11_8x8;
    uint8x8_t alpha00_8x8;
    uint8x8_t alpha01_8x8;
    uint8x8_t alpha10_8x8;
@@ -392,7 +407,8 @@ _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 
    x1_8x16 = vdupq_n_u8(0x1);
    x1_32x4 = vreinterpretq_u32_u8(x1_8x16);
-   x255_8x16 = vdupq_n_u8(0xff);
+   x0_8x16 = vdupq_n_u8(0x0);
+   x0_32x4 = vreinterpretq_u32_u8(x0_8x16);
 
    DATA32 *start = d;
    int size = l;
@@ -405,6 +421,13 @@ _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
       d0_32x4 = vld1q_u32(start);
       d1_32x4 = vld1q_u32(start+4);
 
+      d0_8x16 = vreinterpretq_u8_u32(d0_32x4);
+      d1_8x16 = vreinterpretq_u8_u32(d1_32x4);
+      d00_8x8 = vget_low_u8(d0_8x16);
+      d01_8x8 = vget_high_u8(d0_8x16);
+      d10_8x8 = vget_low_u8(d1_8x16);
+      d11_8x8 = vget_high_u8(d1_8x16);
+
       alpha0_32x4 = vshrq_n_u32(s0_32x4, 24);
       alpha1_32x4 = vshrq_n_u32(s1_32x4, 24);
 
@@ -414,46 +437,43 @@ _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
       alpha0_8x16 = vreinterpretq_u8_u32(alpha0_32x4);
       alpha1_8x16 = vreinterpretq_u8_u32(alpha1_32x4);
 
-      alpha0_8x16 = vsubq_u8(x255_8x16, alpha0_8x16);
-      alpha1_8x16 = vsubq_u8(x255_8x16, alpha1_8x16);
+      alpha0_8x16 = vsubq_u8(x0_8x16, alpha0_8x16);
+      alpha1_8x16 = vsubq_u8(x0_8x16, alpha1_8x16);
+
+      alpha0_32x4 = vreinterpretq_u32_u8(alpha0_8x16);
+      alpha1_32x4 = vreinterpretq_u32_u8(alpha1_8x16);
 
       alpha10_8x8 = vget_low_u8(alpha1_8x16);
       alpha11_8x8 = vget_high_u8(alpha1_8x16);
       alpha00_8x8 = vget_low_u8(alpha0_8x16);
       alpha01_8x8 = vget_high_u8(alpha0_8x16);
-      d0_8x16 = vreinterpretq_u8_u32(d0_32x4);
-      d1_8x16 = vreinterpretq_u8_u32(d1_32x4);
-      d00_8x8 = vget_low_u8(d0_8x16);
-      d01_8x8 = vget_high_u8(d0_8x16);
-      d10_8x8 = vget_low_u8(d1_8x16);
-      d11_8x8 = vget_high_u8(d1_8x16);
-      alpha00_16x8 = vmull_u8(alpha00_8x8, d00_8x8);
-      alpha01_16x8 = vmull_u8(alpha01_8x8, d01_8x8);
-      alpha10_16x8 = vmull_u8(alpha10_8x8, d10_8x8);
-      alpha11_16x8 = vmull_u8(alpha11_8x8, d11_8x8);
-      d00_16x8 = vmovl_u8(d00_8x8);
-      d01_16x8 = vmovl_u8(d01_8x8);
-      d10_16x8 = vmovl_u8(d10_8x8);
-      d11_16x8 = vmovl_u8(d11_8x8);
-      alpha00_16x8 = vaddq_u16(alpha00_16x8, d00_16x8);
-      alpha01_16x8 = vaddq_u16(alpha01_16x8, d01_16x8);
-      alpha10_16x8 = vaddq_u16(alpha10_16x8, d10_16x8);
-      alpha11_16x8 = vaddq_u16(alpha11_16x8, d11_16x8);
-      alpha00_8x8 = vshrn_n_u16(alpha00_16x8,8);
-      alpha01_8x8 = vshrn_n_u16(alpha01_16x8,8);
-      alpha10_8x8 = vshrn_n_u16(alpha10_16x8,8);
-      alpha11_8x8 = vshrn_n_u16(alpha11_16x8,8);
-      alpha0_8x16 = vcombine_u8(alpha00_8x8, alpha01_8x8);
-      alpha1_8x16 = vcombine_u8(alpha10_8x8, alpha11_8x8);
-      s0_8x16 = vreinterpretq_u8_u32(s0_32x4);
-      s1_8x16 = vreinterpretq_u8_u32(s1_32x4);
-      d0_8x16 = vaddq_u8(s0_8x16, alpha0_8x16);
-      d1_8x16 = vaddq_u8(s1_8x16, alpha1_8x16);
-      d0_32x4 = vreinterpretq_u32_u8(d0_8x16);
-      d1_32x4 = vreinterpretq_u32_u8(d1_8x16);
+
+      ad00_16x8 = vmull_u8(alpha00_8x8, d00_8x8);
+      ad01_16x8 = vmull_u8(alpha01_8x8, d01_8x8);
+      ad10_16x8 = vmull_u8(alpha10_8x8, d10_8x8);
+      ad11_16x8 = vmull_u8(alpha11_8x8, d11_8x8);
+      ad00_8x8 = vshrn_n_u16(ad00_16x8,8);
+      ad01_8x8 = vshrn_n_u16(ad01_16x8,8);
+      ad10_8x8 = vshrn_n_u16(ad10_16x8,8);
+      ad11_8x8 = vshrn_n_u16(ad11_16x8,8);
+
+      ad0_8x16 = vcombine_u8(ad00_8x8, ad01_8x8);
+      ad1_8x16 = vcombine_u8(ad10_8x8, ad11_8x8);
+      ad0_32x4 = vreinterpretq_u32_u8(ad0_8x16);
+      ad1_32x4 = vreinterpretq_u32_u8(ad1_8x16);
+
+      cond0_32x4 = vceqq_u32(alpha0_32x4, x0_32x4);
+      cond1_32x4 = vceqq_u32(alpha1_32x4, x0_32x4);
+
+      ad0_32x4 = vbslq_u32(cond0_32x4, d0_32x4, ad0_32x4);
+      ad1_32x4 = vbslq_u32(cond1_32x4, d1_32x4, ad1_32x4);
+
+      d0_32x4 = vaddq_u32(s0_32x4, ad0_32x4);
+      d1_32x4 = vaddq_u32(s1_32x4, ad1_32x4);
 
       vst1q_u32(start, d0_32x4);
       vst1q_u32(start+4, d1_32x4);
+
       s+=8;
       start+=8;
    }
