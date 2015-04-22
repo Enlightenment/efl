@@ -1,4 +1,4 @@
-class Elm_Actionslider (Elm_Layout)
+class Elm.Actionslider (Elm_Layout)
 {
    eo_prefix: elm_obj_actionslider;
    properties {
