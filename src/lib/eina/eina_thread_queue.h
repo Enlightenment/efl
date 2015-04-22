@@ -17,7 +17,7 @@
  *
  * This is a uni-directional zero-copy thread message queue specifically
  * designed with the idea of sending large volumes of messages with no
- * copies from one thread to another (or from/to the mainloop). The ides
+ * copies from one thread to another (or from/to the mainloop). The idea
  * is that a thread queue is created and then one or more threads send
  * messages in one end and fetch messages on the other end. If you set a
  * parent message queue to 1 or more queues, then this parent will wake up
@@ -92,7 +92,7 @@ eina_thread_queue_free(Eina_Thread_Queue *thq) EINA_ARG_NONNULL(1);
 /**
  * @brief Allocate a message to send down a thread queue
  *
- * @param thq The thred queue to allocate the message on
+ * @param thq The thread queue to allocate the message on
  * @param size The size, in bytes, of the message, including standard header
  * @param allocref A pointer to store a general reference handle for the message
  * @return A pointer to the message data to fill in
