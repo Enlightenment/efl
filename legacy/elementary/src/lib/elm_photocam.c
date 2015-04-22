@@ -1301,8 +1301,11 @@ _elm_photocam_image_orient_set(Eo *obj, Elm_Photocam_Data *sd, Evas_Image_Orient
    Eina_List *l;
    Elm_Phocam_Grid *g, *g_orient = NULL;
 
-   if (sd->orient == orient) return;
-
+   if (sd->orient == orient)
+     {
+        sd->orientation_changed = EINA_FALSE;
+        return;
+     }
    sd->orientation_changed = EINA_TRUE;
    sd->orient = orient;
    g = _grid_create(obj);
