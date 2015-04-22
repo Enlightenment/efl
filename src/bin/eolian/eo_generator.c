@@ -16,16 +16,6 @@ static _eolian_class_vars class_env;
 static Eina_Hash *_funcs_params_init = NULL;
 
 static const char
-tmpl_dtor[] = "\
-static void\n\
-_gen_@#class_class_destructor(Eo_Class *klass)\n\
-{\n\
-   _@#class_class_destructor(klass);\n\
-}\n\
-\n\
-";
-
-static const char
 tmpl_eo_ops_desc[] = "\
 static Eo_Op_Description _@#class_op_desc[] = {@#list_op\n\
      EO_OP_SENTINEL\n\
