@@ -13,6 +13,13 @@
 
 #include "eio_suite.h"
 
+static char *str_attr = "user.name";
+static char *str_data = "Vivek Ellur";
+static char *int_attr = "user.id";
+static int  int_data = 1234;
+static char *double_attr = "user.size";
+static double double_data = 123.456;
+
 const char *attribute[] =
   {
      "user.comment1",
@@ -85,6 +92,30 @@ _done_get_cb(void *data, Eio_File *handler EINA_UNUSED, const char *name, unsign
 }
 
 static void
+_done_string_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, const char *xattr_string)
+{
+   fail_if(strcmp(xattr_string, str_data) != 0);
+
+   ecore_main_loop_quit();
+}
+
+static void
+_done_int_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int xattr_int)
+{
+   fail_if(xattr_int != int_data);
+
+   ecore_main_loop_quit();
+}
+
+static void
+_done_double_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, double xattr_double)
+{
+   fail_if(xattr_double != double_data);
+
+   ecore_main_loop_quit();
+}
+
+static void
 _error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error)
 
 {
@@ -152,12 +183,84 @@ START_TEST(eio_test_xattr_set)
    ecore_shutdown();
 }
 END_TEST
+
+START_TEST(eio_test_xattr_types_set)
+{
+   char *filename = "eio-tmpfile";
+
+   Eina_Tmpstr *test_file_path;
+   int  fd, num_of_attr=0;
+   Eio_File *fp;
+
+   ecore_init();
+   eina_init();
+   eio_init();
+
+   test_file_path = get_file_path(XATTR_TEST_DIR, filename);
+   fd = open(test_file_path,
+             O_WRONLY | O_CREAT | O_TRUNC,
+             S_IRWXU | S_IRWXG | S_IRWXO);
+   fail_if(fd == 0);
+   fp = eio_file_xattr_string_set(test_file_path, str_attr,
+                                str_data, EINA_XATTR_INSERT,
+                                _done_once_cb, _error_cb, &num_of_attr);
+
+   fail_if(num_of_attr != 0); // test asynchronous
+   fail_if(!fp);
+
+   ecore_main_loop_begin();
+
+   fp = eio_file_xattr_string_get(test_file_path, str_attr,
+                                  _done_string_cb, _error_cb, NULL);
+   fail_if(!fp);
+
+   ecore_main_loop_begin();
+
+   fp = eio_file_xattr_int_set(test_file_path, int_attr,
+                                int_data, EINA_XATTR_INSERT,
+                                _done_once_cb, _error_cb, &num_of_attr);
+
+   fail_if(num_of_attr != 0); // test asynchronous
+   fail_if(!fp);
+
+   ecore_main_loop_begin();
+
+   fp = eio_file_xattr_int_get(test_file_path, int_attr,
+                                  _done_int_cb, _error_cb, NULL);
+   fail_if(!fp);
+
+   ecore_main_loop_begin();
+
+   fp = eio_file_xattr_double_set(test_file_path, double_attr,
+                                double_data, EINA_XATTR_INSERT,
+                                _done_once_cb, _error_cb, &num_of_attr);
+
+   fail_if(num_of_attr != 0); // test asynchronous
+   fail_if(!fp);
+
+   ecore_main_loop_begin();
+
+   fp = eio_file_xattr_double_get(test_file_path, double_attr,
+                                  _done_double_cb, _error_cb, NULL);
+   fail_if(!fp);
+
+   ecore_main_loop_begin();
+
+   close(fd);
+   unlink(test_file_path);
+   eina_tmpstr_del(test_file_path);
+   eio_shutdown();
+   eina_shutdown();
+   ecore_shutdown();
+}
+END_TEST
 #endif
 
 void eio_test_xattr(TCase *tc)
 {
 #ifdef XATTR_TEST_DIR
    tcase_add_test(tc, eio_test_xattr_set);
+   tcase_add_test(tc, eio_test_xattr_types_set);
 #else
    (void)tc;
 #endif
