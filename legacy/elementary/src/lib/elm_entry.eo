@@ -446,14 +446,14 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             /*@
             Get the input panel layout of the entry
 
-            @return layout type
+            @return layout type. It returns ELM_INPUT_PANEL_LAYOUT_INVALID(8) when it fails.
 
             @see elm_entry_input_panel_layout_set
 
             @ingroup Entry */
          }
          values {
-            Elm_Input_Panel_Layout layout; /*@ layout type */
+            Elm_Input_Panel_Layout layout(8); /*@ layout type */
          }
       }
       input_panel_return_key_type {
