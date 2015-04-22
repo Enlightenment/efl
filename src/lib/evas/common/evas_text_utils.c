@@ -409,8 +409,7 @@ _content_create_ot(RGBA_Font_Int *fi, const Eina_Unicode *text,
         gl_itr++;
      }
 }
-#endif
-
+#else
 static inline void
 _content_create_regular(RGBA_Font_Int *fi, const Eina_Unicode *text,
       Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props,
@@ -516,6 +515,7 @@ _content_create_regular(RGBA_Font_Int *fi, const Eina_Unicode *text,
       free(base_str);
 # endif
 }
+#endif
 
 EAPI Eina_Bool
 evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
