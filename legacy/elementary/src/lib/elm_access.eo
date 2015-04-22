@@ -1,4 +1,4 @@
-class Elm_Access (Elm.Widget)
+class Elm.Access (Elm.Widget)
 {
 eo_prefix: elm_obj_access;
    data: null;
