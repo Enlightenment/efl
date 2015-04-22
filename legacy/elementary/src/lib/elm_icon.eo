@@ -1,4 +1,4 @@
-class Elm.Icon (Elm_Image)
+class Elm.Icon (Elm.Image)
 {
    eo_prefix: elm_obj_icon;
    properties {
@@ -101,7 +101,7 @@ class Elm.Icon (Elm_Image)
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
       Elm.Widget.theme_apply;
-      Elm_Image.memfile.set;
+      Elm.Image.memfile.set;
       Efl.File.file.set;
    }
    events {

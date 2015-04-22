@@ -1,4 +1,4 @@
-class Elm_Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
+class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
                  Edje.Object,
                  Elm_Interface_Atspi_Image, Elm_Interface_Atspi_Widget_Action)
 {
