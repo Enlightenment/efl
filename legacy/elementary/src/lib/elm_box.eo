@@ -1,4 +1,4 @@
-class Elm_Box (Elm.Widget)
+class Elm.Box (Elm.Widget)
 {
    eo_prefix: elm_obj_box;
    properties {
