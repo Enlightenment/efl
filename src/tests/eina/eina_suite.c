@@ -79,6 +79,7 @@ static const Eina_Test_Case etc[] = {
 #ifdef XATTR_TEST_DIR
    { "Xattr", eina_test_xattr },
 #endif
+   {"Crc", eina_test_crc },
    { NULL, NULL }
 };
 
