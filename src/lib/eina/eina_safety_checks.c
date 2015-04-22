@@ -60,8 +60,6 @@ eina_safety_checks_shutdown(void)
 
 EAPI Eina_Error EINA_ERROR_SAFETY_FAILED = 0;
 
-static const char EINA_ERROR_SAFETY_FAILED_STR[] = "Safety check failed.";
-
 /**
  * @endcond
  */
