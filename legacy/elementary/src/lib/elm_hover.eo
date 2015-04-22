@@ -81,9 +81,9 @@ class Elm_Hover (Elm.Layout, Evas.Clickable_Interface)
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.sub_object_del;
-      Elm_Container.content_get;
-      Elm_Container.content_set;
-      Elm_Container.content_unset;
+      Elm.Container.content_get;
+      Elm.Container.content_set;
+      Elm.Container.content_unset;
       Elm.Layout.sizing_eval;
       Elm.Layout.content_aliases.get;
    }

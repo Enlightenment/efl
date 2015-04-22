@@ -106,7 +106,7 @@ class Elm_Button (Elm.Layout, Evas.Clickable_Interface,
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_del;
       Elm.Widget.event;
-      Elm_Container.content_set;
+      Elm.Container.content_set;
       Elm.Layout.text_aliases.get;
       Elm.Layout.content_aliases.get;
       Elm.Layout.sizing_eval;

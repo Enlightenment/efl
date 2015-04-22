@@ -1,4 +1,4 @@
-class Elm.Layout (Elm_Container, Efl.File)
+class Elm.Layout (Elm.Container, Efl.File)
 {
    eo_prefix: elm_obj_layout;
    data: Elm_Layout_Smart_Data;
@@ -641,10 +641,10 @@ class Elm.Layout (Elm_Container, Efl.File)
       Elm.Widget.disable;
       Elm.Widget.sub_object_del;
       Elm.Widget.on_focus;
-      Elm_Container.content_get;
-      Elm_Container.content_set;
-      Elm_Container.content_unset;
-      Elm_Container.content_swallow_list.get;
+      Elm.Container.content_get;
+      Elm.Container.content_set;
+      Elm.Container.content_unset;
+      Elm.Container.content_swallow_list.get;
    }
    events {
       theme,changed;

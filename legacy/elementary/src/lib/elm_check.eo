@@ -54,7 +54,7 @@ class Elm_Check (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       Elm.Widget.theme_apply;
       Elm.Widget.sub_object_del;
       Elm.Widget.event;
-      Elm_Container.content_set;
+      Elm.Container.content_set;
       Elm.Layout.text_aliases.get;
       Elm.Layout.content_aliases.get;
       Elm.Layout.sizing_eval;

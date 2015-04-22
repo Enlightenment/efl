@@ -8,7 +8,7 @@ class Elm_Player (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       Evas.Object_Smart.del;
       Elm.Widget.theme_apply;
       Elm.Widget.event;
-      Elm_Container.content_set;
+      Elm.Container.content_set;
       Elm.Layout.sizing_eval;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }

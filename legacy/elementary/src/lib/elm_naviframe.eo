@@ -267,9 +267,9 @@ class Elm_Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       Elm.Widget.translate;
       Elm.Widget.theme_apply;
       Elm.Widget.event;
-      Elm_Container.content_get;
-      Elm_Container.content_set;
-      Elm_Container.content_unset;
+      Elm.Container.content_get;
+      Elm.Container.content_set;
+      Elm.Container.content_unset;
       Elm.Layout.text_set;
       Elm.Layout.text_get;
       Elm.Layout.signal_emit;

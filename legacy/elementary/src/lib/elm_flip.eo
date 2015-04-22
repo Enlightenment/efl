@@ -1,4 +1,4 @@
-class Elm_Flip (Elm_Container)
+class Elm_Flip (Elm.Container)
 {
    eo_prefix: elm_obj_flip;
    properties {
@@ -252,9 +252,9 @@ class Elm_Flip (Elm_Container)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.sub_object_del;
-      Elm_Container.content_get;
-      Elm_Container.content_set;
-      Elm_Container.content_unset;
+      Elm.Container.content_get;
+      Elm.Container.content_set;
+      Elm.Container.content_unset;
    }
    events {
       animate,begin;

@@ -282,7 +282,7 @@ class Elm_Progressbar (Elm.Layout)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.sub_object_del;
-      Elm_Container.content_set;
+      Elm.Container.content_set;
       Elm.Layout.text_aliases.get;
       Elm.Layout.content_aliases.get;
       Elm.Layout.sizing_eval;
