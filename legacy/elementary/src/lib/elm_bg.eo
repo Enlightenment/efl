@@ -1,4 +1,4 @@
-class Elm_Bg (Elm_Layout, Efl.File)
+class Elm_Bg (Elm.Layout, Efl.File)
 {
    eo_prefix: elm_obj_bg;
    properties {
@@ -100,8 +100,8 @@ class Elm_Bg (Elm_Layout, Efl.File)
       class.constructor;
       Eo.Base.constructor;
       Evas.Object_Smart.add;
-      Elm_Layout.content_aliases.get;
-      Elm_Layout.sizing_eval;
+      Elm.Layout.content_aliases.get;
+      Elm.Layout.sizing_eval;
       Efl.File.file.set;
       Efl.File.file.get;
    }

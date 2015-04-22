@@ -1,4 +1,4 @@
-class Elm_Button (Elm_Layout, Evas.Clickable_Interface,
+class Elm_Button (Elm.Layout, Evas.Clickable_Interface,
                   Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_button;
@@ -107,9 +107,9 @@ class Elm_Button (Elm_Layout, Evas.Clickable_Interface,
       Elm.Widget.sub_object_del;
       Elm.Widget.event;
       Elm_Container.content_set;
-      Elm_Layout.text_aliases.get;
-      Elm_Layout.content_aliases.get;
-      Elm_Layout.sizing_eval;
+      Elm.Layout.text_aliases.get;
+      Elm.Layout.content_aliases.get;
+      Elm.Layout.sizing_eval;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
 }

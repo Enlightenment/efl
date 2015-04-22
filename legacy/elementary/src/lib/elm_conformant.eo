@@ -1,4 +1,4 @@
-class Elm_Conformant (Elm_Layout)
+class Elm_Conformant (Elm.Layout)
 {
    eo_prefix: elm_obj_conformant;
    implements {
@@ -8,7 +8,7 @@ class Elm_Conformant (Elm_Layout)
       Evas.Object_Smart.del;
       Elm.Widget.parent.set;
       Elm.Widget.theme_apply;
-      Elm_Layout.content_aliases.get;
+      Elm.Layout.content_aliases.get;
    }
    events {
       virtualkeypad,state,on;

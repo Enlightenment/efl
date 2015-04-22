@@ -1,4 +1,4 @@
-class Elm_Segment_Control (Elm_Layout)
+class Elm_Segment_Control (Elm.Layout)
 {
    eo_prefix: elm_obj_segment_control;
    properties {
@@ -198,7 +198,7 @@ class Elm_Segment_Control (Elm_Layout)
       Elm.Widget.access;
       Elm.Widget.disable;
       Elm.Widget.translate;
-      Elm_Layout.sizing_eval;
+      Elm.Layout.sizing_eval;
    }
    events {
       changed;

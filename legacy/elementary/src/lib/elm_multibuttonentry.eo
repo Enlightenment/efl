@@ -1,4 +1,4 @@
-class Elm_Multibuttonentry (Elm_Layout)
+class Elm_Multibuttonentry (Elm.Layout)
 {
    eo_prefix: elm_obj_multibuttonentry;
    properties {
@@ -265,9 +265,9 @@ class Elm_Multibuttonentry (Elm_Layout)
       Elm.Widget.on_focus;
       Elm.Widget.translate;
       Elm.Widget.event;
-      Elm_Layout.text_set;
-      Elm_Layout.text_get;
-      Elm_Layout.sizing_eval;
+      Elm.Layout.text_set;
+      Elm.Layout.text_get;
+      Elm.Layout.sizing_eval;
    }
    events {
       item,selected;

@@ -1,4 +1,4 @@
-class Elm_Fileselector (Elm_Layout, Elm_Interface_Fileselector,
+class Elm_Fileselector (Elm.Layout, Elm_Interface_Fileselector,
                         Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_fileselector;
@@ -46,8 +46,8 @@ class Elm_Fileselector (Elm_Layout, Elm_Interface_Fileselector,
       Elm.Widget.event;
       Elm.Widget.theme_apply;
       Elm.Widget.focus_next_manager_is;
-      Elm_Layout.sizing_eval;
-      Elm_Layout.text_set;
+      Elm.Layout.sizing_eval;
+      Elm.Layout.text_set;
       Elm_Interface_Fileselector.selected_paths.get;
       Elm_Interface_Fileselector.custom_filter_append;
       Elm_Interface_Fileselector.expandable;

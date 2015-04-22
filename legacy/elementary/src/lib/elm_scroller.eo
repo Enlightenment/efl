@@ -1,4 +1,4 @@
-class Elm_Scroller (Elm_Layout, Elm_Interface_Scrollable,
+class Elm_Scroller (Elm.Layout, Elm_Interface_Scrollable,
                     Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_scroller;
@@ -89,7 +89,7 @@ class Elm_Scroller (Elm_Layout, Elm_Interface_Scrollable,
       Elm_Container.content_get;
       Elm_Container.content_set;
       Elm_Container.content_unset;
-      Elm_Layout.sizing_eval;
+      Elm.Layout.sizing_eval;
       Elm_Interface_Scrollable.page_size.set;
       Elm_Interface_Scrollable.policy.set;
       Elm_Interface_Scrollable.single_direction;

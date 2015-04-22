@@ -1,4 +1,4 @@
-class Elm_Hover (Elm_Layout, Evas.Clickable_Interface)
+class Elm_Hover (Elm.Layout, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_hover;
    properties {
@@ -84,8 +84,8 @@ class Elm_Hover (Elm_Layout, Evas.Clickable_Interface)
       Elm_Container.content_get;
       Elm_Container.content_set;
       Elm_Container.content_unset;
-      Elm_Layout.sizing_eval;
-      Elm_Layout.content_aliases.get;
+      Elm.Layout.sizing_eval;
+      Elm.Layout.content_aliases.get;
    }
    events {
       focused;

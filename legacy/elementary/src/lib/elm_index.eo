@@ -1,4 +1,4 @@
-class Elm_Index (Elm_Layout)
+class Elm_Index (Elm.Layout)
 {
    eo_prefix: elm_obj_index;
    properties {
@@ -354,7 +354,7 @@ class Elm_Index (Elm_Layout)
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.access;
       Elm.Widget.focus_next;
-      Elm_Layout.sizing_eval;
+      Elm.Layout.sizing_eval;
    }
    events {
       changed;

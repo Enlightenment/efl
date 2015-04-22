@@ -1,4 +1,4 @@
-class Elm_Frame (Elm_Layout, Evas.Clickable_Interface)
+class Elm_Frame (Elm.Layout, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_frame;
    properties {
@@ -71,8 +71,8 @@ class Elm_Frame (Elm_Layout, Evas.Clickable_Interface)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.focus_direction_manager_is;
-      Elm_Layout.text_aliases.get;
-      Elm_Layout.content_aliases.get;
+      Elm.Layout.text_aliases.get;
+      Elm.Layout.content_aliases.get;
    }
    events {
       clicked;

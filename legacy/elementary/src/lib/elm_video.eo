@@ -1,4 +1,4 @@
-class Elm_Video (Elm_Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
+class Elm_Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_video;
    properties {
@@ -187,7 +187,7 @@ class Elm_Video (Elm_Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.event;
-      Elm_Layout.sizing_eval;
+      Elm.Layout.sizing_eval;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {

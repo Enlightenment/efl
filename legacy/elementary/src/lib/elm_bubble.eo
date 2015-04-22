@@ -1,4 +1,4 @@
-class Elm_Bubble (Elm_Layout)
+class Elm_Bubble (Elm.Layout)
 {
    eo_prefix: elm_obj_bubble;
    properties {
@@ -38,10 +38,10 @@ class Elm_Bubble (Elm_Layout)
       Elm.Widget.focus_next;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.access;
-      Elm_Layout.text_set;
-      Elm_Layout.text_aliases.get;
-      Elm_Layout.content_aliases.get;
-      Elm_Layout.sizing_eval;
+      Elm.Layout.text_set;
+      Elm.Layout.text_aliases.get;
+      Elm.Layout.content_aliases.get;
+      Elm.Layout.sizing_eval;
    }
    events {
       clicked;

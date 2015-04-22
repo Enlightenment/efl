@@ -1,4 +1,4 @@
-class Elm_Label (Elm_Layout)
+class Elm_Label (Elm.Layout)
 {
    eo_prefix: elm_obj_label;
    properties {
@@ -194,9 +194,9 @@ class Elm_Label (Elm_Layout)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.theme_apply;
-      Elm_Layout.text_set;
-      Elm_Layout.text_aliases.get;
-      Elm_Layout.sizing_eval;
+      Elm.Layout.text_set;
+      Elm.Layout.text_aliases.get;
+      Elm.Layout.sizing_eval;
    }
    events {
       language,changed;

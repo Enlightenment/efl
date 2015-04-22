@@ -1,4 +1,4 @@
-class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
+class Elm_List (Elm.Layout, Elm_Interface_Scrollable,
                 Elm_Interface_Atspi_Widget_Action, Elm_Interface_Atspi_Selection)
 {
    eo_prefix: elm_obj_list;
@@ -606,7 +606,7 @@ class Elm_List (Elm_Layout, Elm_Interface_Scrollable,
       Elm.Widget.focused_item.get;
       Elm.Widget.item_loop_enabled.set;
       Elm.Widget.item_loop_enabled.get;
-      Elm_Layout.sizing_eval;
+      Elm.Layout.sizing_eval;
       Elm_Interface_Scrollable.policy.set;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
       Elm_Interface_Atspi_Accessible.children.get;

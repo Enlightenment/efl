@@ -1,4 +1,4 @@
-class Elm_Clock (Elm_Layout)
+class Elm_Clock (Elm.Layout)
 {
    eo_prefix: elm_obj_clock;
    properties {

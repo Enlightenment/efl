@@ -1,4 +1,4 @@
-class Elm_Panes (Elm_Layout)
+class Elm_Panes (Elm.Layout)
 {
    eo_prefix: elm_obj_panes;
    properties {
@@ -273,7 +273,7 @@ class Elm_Panes (Elm_Layout)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.theme_apply;
-      Elm_Layout.content_aliases.get;
+      Elm.Layout.content_aliases.get;
    }
    events {
       clicked;

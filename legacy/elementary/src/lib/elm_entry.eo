@@ -1,4 +1,4 @@
-class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
+class Elm_Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
                  Elm_Interface_Atspi_Text, Elm_Interface_Atspi_Editable_Text)
 {
    eo_prefix: elm_obj_entry;
@@ -1191,14 +1191,14 @@ class Elm_Entry (Elm_Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
       Elm.Widget.focus_next_manager_is;
       Elm_Container.content_unset;
       Elm_Container.content_set;
-      Elm_Layout.theme_enable;
-      Elm_Layout.sizing_eval;
-      Elm_Layout.text_get;
-      Elm_Layout.signal_callback_add;
-      Elm_Layout.signal_callback_del;
-      Elm_Layout.signal_emit;
-      Elm_Layout.text_set;
-      Elm_Layout.content_aliases.get;
+      Elm.Layout.theme_enable;
+      Elm.Layout.sizing_eval;
+      Elm.Layout.text_get;
+      Elm.Layout.signal_callback_add;
+      Elm.Layout.signal_callback_del;
+      Elm.Layout.signal_emit;
+      Elm.Layout.text_set;
+      Elm.Layout.content_aliases.get;
       Elm_Interface_Scrollable.policy.set;
       Elm_Interface_Scrollable.bounce_allow.set;
       Elm_Interface_Atspi_Accessible.state_set.get;

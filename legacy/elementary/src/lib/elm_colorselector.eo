@@ -1,4 +1,4 @@
-class Elm_Colorselector (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
+class Elm_Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_colorselector;
    properties {
@@ -134,7 +134,7 @@ class Elm_Colorselector (Elm_Layout, Elm_Interface_Atspi_Widget_Action)
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.access;
       Elm.Widget.event;
-      Elm_Layout.sizing_eval;
+      Elm.Layout.sizing_eval;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {

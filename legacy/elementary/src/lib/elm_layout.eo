@@ -1,4 +1,4 @@
-class Elm_Layout (Elm_Container, Efl.File)
+class Elm.Layout (Elm_Container, Efl.File)
 {
    eo_prefix: elm_obj_layout;
    data: Elm_Layout_Smart_Data;
@@ -60,7 +60,7 @@ class Elm_Layout (Elm_Container, Efl.File)
             legacy: null;
          }
          values {
-            const(Elm_Layout_Part_Alias_Description)* aliases;
+            const(Elm.Layout_Part_Alias_Description)* aliases;
          }
       }
       content_aliases {
@@ -69,7 +69,7 @@ class Elm_Layout (Elm_Container, Efl.File)
             legacy: null;
          }
          values {
-            const(Elm_Layout_Part_Alias_Description)* aliases;
+            const(Elm.Layout_Part_Alias_Description)* aliases;
          }
       }
       edje {

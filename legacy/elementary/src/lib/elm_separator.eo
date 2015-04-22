@@ -1,4 +1,4 @@
-class Elm_Separator (Elm_Layout)
+class Elm_Separator (Elm.Layout)
 {
    eo_prefix: elm_obj_separator;
    properties {
@@ -31,7 +31,7 @@ class Elm_Separator (Elm_Layout)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
       Elm.Widget.theme_apply;
-      Elm_Layout.sizing_eval;
+      Elm.Layout.sizing_eval;
    }
 
 }
