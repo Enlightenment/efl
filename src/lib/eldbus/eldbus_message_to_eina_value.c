@@ -91,7 +91,7 @@ _type_offset(char type, unsigned base)
      return base;
    if (!(base % size))
      return base;
-   padding = abs(base - size);
+   padding = (base > size) ? base - size : size - base;
    return base + padding;
 }
 
