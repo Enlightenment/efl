@@ -1,4 +1,4 @@
-class Elm_Multibuttonentry (Elm.Layout)
+class Elm.Multibuttonentry (Elm.Layout)
 {
    eo_prefix: elm_obj_multibuttonentry;
    properties {

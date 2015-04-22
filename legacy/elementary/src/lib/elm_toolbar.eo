@@ -1,4 +1,4 @@
-class Elm_Toolbar (Elm.Widget, Elm_Interface_Scrollable,
+class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
                    Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_toolbar;

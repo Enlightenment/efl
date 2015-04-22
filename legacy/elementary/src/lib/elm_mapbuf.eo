@@ -1,4 +1,4 @@
-class Elm_Mapbuf (Elm.Container)
+class Elm.Mapbuf (Elm.Container)
 {
    eo_prefix: elm_obj_mapbuf;
    properties {

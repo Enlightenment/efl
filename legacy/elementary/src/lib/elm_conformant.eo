@@ -1,4 +1,4 @@
-class Elm_Conformant (Elm.Layout)
+class Elm.Conformant (Elm.Layout)
 {
    eo_prefix: elm_obj_conformant;
    implements {

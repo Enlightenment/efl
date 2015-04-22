@@ -1,4 +1,4 @@
-class Elm_Panel (Elm.Layout, Elm_Interface_Scrollable,
+class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
                  Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_panel;

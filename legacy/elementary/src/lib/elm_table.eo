@@ -1,4 +1,4 @@
-class Elm_Table (Elm.Widget)
+class Elm.Table (Elm.Widget)
 {
    eo_prefix: elm_obj_table;
    data: null;

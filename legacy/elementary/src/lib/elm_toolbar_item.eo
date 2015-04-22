@@ -1,4 +1,4 @@
-class Elm_Toolbar_Item(Elm.Widget_Item)
+class Elm.Toolbar_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_toolbar_item;
       properties {

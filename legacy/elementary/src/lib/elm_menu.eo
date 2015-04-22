@@ -1,4 +1,4 @@
-class Elm_Menu (Elm.Widget, Evas.Clickable_Interface)
+class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_menu;
    properties {

@@ -1,4 +1,4 @@
-class Elm_Grid (Elm.Widget)
+class Elm.Grid (Elm.Widget)
 {
    eo_prefix: elm_obj_grid;
    data: null;

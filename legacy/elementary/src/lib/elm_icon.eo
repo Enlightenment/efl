@@ -1,4 +1,4 @@
-class Elm_Icon (Elm_Image)
+class Elm.Icon (Elm_Image)
 {
    eo_prefix: elm_obj_icon;
    properties {

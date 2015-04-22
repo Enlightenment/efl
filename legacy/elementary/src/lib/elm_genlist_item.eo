@@ -1,4 +1,4 @@
-class Elm_Genlist_Item(Elm.Widget_Item)
+class Elm.Genlist_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_genlist_item;
       data: Elm_Gen_Item;

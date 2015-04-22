@@ -1,4 +1,4 @@
-class Elm_Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
+class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_thumb;
    properties {

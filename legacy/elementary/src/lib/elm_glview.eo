@@ -1,4 +1,4 @@
-class Elm_Glview (Elm.Widget)
+class Elm.Glview (Elm.Widget)
 {
    eo_prefix: elm_obj_glview;
    methods {

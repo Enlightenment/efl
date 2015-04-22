@@ -1,4 +1,4 @@
-class Elm_Systray (Eo.Base)
+class Elm.Systray (Eo.Base)
 {
    eo_prefix: elm_obj_systray;
    data: null;

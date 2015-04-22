@@ -1,4 +1,4 @@
-class Elm_Gengrid (Elm.Layout, Elm_Interface_Scrollable,
+class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
                    Evas.Clickable_Interface, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_gengrid;

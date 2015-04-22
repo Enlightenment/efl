@@ -1,4 +1,4 @@
-class Elm_Flipselector_Item(Elm.Widget_Item)
+class Elm.Flipselector_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_flipselector_item;
    properties {

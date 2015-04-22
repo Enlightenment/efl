@@ -1,4 +1,4 @@
-class Elm_Prefs (Elm.Widget, Efl.File)
+class Elm.Prefs (Elm.Widget, Efl.File)
 {
    eo_prefix: elm_obj_prefs;
    properties {

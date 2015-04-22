@@ -1,4 +1,4 @@
-class Elm_Diskselector_Item(Elm.Widget_Item)
+class Elm.Diskselector_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_diskselector_item;
       properties {

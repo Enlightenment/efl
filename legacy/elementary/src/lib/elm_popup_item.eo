@@ -1,4 +1,4 @@
-class Elm_Popup_Item(Elm.Widget_Item)
+class Elm.Popup_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_popup_item;
       implements {

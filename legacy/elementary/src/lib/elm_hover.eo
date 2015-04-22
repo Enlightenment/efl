@@ -1,4 +1,4 @@
-class Elm_Hover (Elm.Layout, Evas.Clickable_Interface)
+class Elm.Hover (Elm.Layout, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_hover;
    properties {

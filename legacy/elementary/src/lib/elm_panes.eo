@@ -1,4 +1,4 @@
-class Elm_Panes (Elm.Layout)
+class Elm.Panes (Elm.Layout)
 {
    eo_prefix: elm_obj_panes;
    properties {

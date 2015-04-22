@@ -1,4 +1,4 @@
-class Elm_Notify (Elm.Container)
+class Elm.Notify (Elm.Container)
 {
    eo_prefix: elm_obj_notify;
    properties {

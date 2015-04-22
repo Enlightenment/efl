@@ -1,4 +1,4 @@
-class Elm_Separator (Elm.Layout)
+class Elm.Separator (Elm.Layout)
 {
    eo_prefix: elm_obj_separator;
    properties {

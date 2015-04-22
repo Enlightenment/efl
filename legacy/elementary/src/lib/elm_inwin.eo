@@ -1,4 +1,4 @@
-class Elm_Inwin (Elm.Layout)
+class Elm.Inwin (Elm.Layout)
 {
    eo_prefix: elm_obj_win_inwin;
    data: null;

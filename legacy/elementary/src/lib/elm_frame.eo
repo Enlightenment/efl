@@ -1,4 +1,4 @@
-class Elm_Frame (Elm.Layout, Evas.Clickable_Interface)
+class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_frame;
    properties {

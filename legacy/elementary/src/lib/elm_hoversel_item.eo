@@ -1,4 +1,4 @@
-class Elm_Hoversel_Item(Elm.Widget_Item)
+class Elm.Hoversel_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_hoversel_item;
    properties {

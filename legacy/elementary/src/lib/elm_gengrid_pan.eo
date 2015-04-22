@@ -1,4 +1,4 @@
-class Elm_Gengrid_Pan (Elm_Pan)
+class Elm.Gengrid_Pan (Elm_Pan)
 {
    eo_prefix: elm_obj_gengrid_pan;
    implements {

@@ -1,4 +1,4 @@
-class Elm_Slider (Elm.Layout, Elm_Interface_Atspi_Value,
+class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
                   Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_slider;

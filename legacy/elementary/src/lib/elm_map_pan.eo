@@ -1,4 +1,4 @@
-class Elm_Map_Pan (Elm_Pan)
+class Elm.Map_Pan (Elm_Pan)
 {
    eo_prefix: elm_obj_map_pan;
    implements {

@@ -1,4 +1,4 @@
-class Elm_Naviframe_Item(Elm.Widget_Item)
+class Elm.Naviframe_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_naviframe_item;
    properties {

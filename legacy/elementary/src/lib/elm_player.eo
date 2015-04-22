@@ -1,4 +1,4 @@
-class Elm_Player (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
+class Elm.Player (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_player;
    implements {

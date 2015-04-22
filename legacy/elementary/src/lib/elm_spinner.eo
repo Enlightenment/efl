@@ -1,4 +1,4 @@
-class Elm_Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Widget_Action)
+class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_spinner;
    properties {

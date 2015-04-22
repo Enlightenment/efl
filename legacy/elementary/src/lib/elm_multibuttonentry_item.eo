@@ -1,4 +1,4 @@
-class Elm_Multibuttonentry_Item(Elm.Widget_Item)
+class Elm.Multibuttonentry_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_multibuttonentry_item;
    properties {

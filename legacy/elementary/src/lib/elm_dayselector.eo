@@ -1,4 +1,4 @@
-class Elm_Dayselector (Elm.Layout)
+class Elm.Dayselector (Elm.Layout)
 {
    eo_prefix: elm_obj_dayselector;
    properties {

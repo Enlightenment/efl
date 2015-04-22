@@ -1,4 +1,4 @@
-class Elm_Dayselector_Item(Elm.Widget_Item)
+class Elm.Dayselector_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_dayselector_item;
    implements {

@@ -1,4 +1,4 @@
-class Elm_Label (Elm.Layout)
+class Elm.Label (Elm.Layout)
 {
    eo_prefix: elm_obj_label;
    properties {

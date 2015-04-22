@@ -1,4 +1,4 @@
-class Elm_Flipselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
+class Elm.Flipselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_flipselector;
    properties {

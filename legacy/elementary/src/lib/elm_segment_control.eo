@@ -1,4 +1,4 @@
-class Elm_Segment_Control (Elm.Layout)
+class Elm.Segment_Control (Elm.Layout)
 {
    eo_prefix: elm_obj_segment_control;
    properties {

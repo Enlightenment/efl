@@ -1,4 +1,4 @@
-class Elm_Photocam_Pan (Elm_Pan)
+class Elm.Photocam_Pan (Elm_Pan)
 {
    eo_prefix: elm_obj_photocam_pan;
    implements {

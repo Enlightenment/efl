@@ -1,4 +1,4 @@
-class Elm_Plug (Elm.Widget)
+class Elm.Plug (Elm.Widget)
 {
    eo_prefix: elm_obj_plug;
    data: null;

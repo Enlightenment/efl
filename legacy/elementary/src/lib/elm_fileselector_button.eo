@@ -1,4 +1,4 @@
-class Elm_Fileselector_Button (Elm_Button, Elm_Interface_Fileselector)
+class Elm.Fileselector_Button (Elm_Button, Elm_Interface_Fileselector)
 {
    eo_prefix: elm_obj_fileselector_button;
    properties {

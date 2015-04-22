@@ -1,4 +1,4 @@
-class Elm_List_Item(Elm.Widget_Item)
+class Elm.List_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_list_item;
       properties {

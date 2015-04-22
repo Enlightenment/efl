@@ -1,4 +1,4 @@
-class Elm_Hoversel (Elm_Button, Evas.Selectable_Interface,
+class Elm.Hoversel (Elm_Button, Evas.Selectable_Interface,
                     Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_hoversel;

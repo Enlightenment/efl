@@ -1,4 +1,4 @@
-class Elm_Route (Elm.Widget)
+class Elm.Route (Elm.Widget)
 {
    eo_prefix: elm_obj_route;
    properties {

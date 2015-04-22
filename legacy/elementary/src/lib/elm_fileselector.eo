@@ -1,4 +1,4 @@
-class Elm_Fileselector (Elm.Layout, Elm_Interface_Fileselector,
+class Elm.Fileselector (Elm.Layout, Elm_Interface_Fileselector,
                         Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_fileselector;

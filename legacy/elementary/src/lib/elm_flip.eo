@@ -1,4 +1,4 @@
-class Elm_Flip (Elm.Container)
+class Elm.Flip (Elm.Container)
 {
    eo_prefix: elm_obj_flip;
    properties {

@@ -1,4 +1,4 @@
-class Elm_Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
+class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_video;
    properties {

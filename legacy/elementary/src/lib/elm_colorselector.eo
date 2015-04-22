@@ -1,4 +1,4 @@
-class Elm_Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
+class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_colorselector;
    properties {

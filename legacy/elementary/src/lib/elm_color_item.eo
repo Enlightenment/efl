@@ -1,4 +1,4 @@
-class Elm_Color_Item(Elm.Widget_Item)
+class Elm.Color_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_color_item;
    properties {

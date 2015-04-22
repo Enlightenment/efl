@@ -1,4 +1,4 @@
-class Elm_Progressbar (Elm.Layout)
+class Elm.Progressbar (Elm.Layout)
 {
    eo_prefix: elm_obj_progressbar;
    properties {

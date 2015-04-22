@@ -1,4 +1,4 @@
-class Elm_Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
+class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_ctxpopup;
    properties {

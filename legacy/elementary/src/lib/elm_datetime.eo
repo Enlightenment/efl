@@ -1,4 +1,4 @@
-class Elm_Datetime (Elm.Layout)
+class Elm.Datetime (Elm.Layout)
 {
    eo_prefix: elm_obj_datetime;
    properties {

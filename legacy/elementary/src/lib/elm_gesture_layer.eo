@@ -1,4 +1,4 @@
-class Elm_Gesture_Layer (Elm.Widget)
+class Elm.Gesture_Layer (Elm.Widget)
 {
    eo_prefix: elm_obj_gesture_layer;
    properties {

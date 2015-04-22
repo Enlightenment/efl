@@ -1,4 +1,4 @@
-class Elm_Index (Elm.Layout)
+class Elm.Index (Elm.Layout)
 {
    eo_prefix: elm_obj_index;
    properties {

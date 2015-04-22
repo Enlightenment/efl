@@ -1,4 +1,4 @@
-class Elm_Win (Elm.Widget, Elm_Interface_Atspi_Window,
+class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
                Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_win;
