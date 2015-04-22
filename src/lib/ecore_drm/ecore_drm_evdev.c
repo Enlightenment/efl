@@ -65,19 +65,15 @@ _device_output_set(Ecore_Drm_Evdev *edev)
         DBG("Device Has Output Name: %s", oname);
 
         EINA_LIST_FOREACH(input->dev->outputs, l, output)
-          {
-             if ((output->name) && (!strcmp(output->name, oname)))
-               {
-                  edev->output = output;
-                  break;
-               }
-          }
+          if ((output->name) && (!strcmp(output->name, oname))) break;
      }
-   else
-     {
-        if (!(output = eina_list_nth(input->dev->outputs, 0))) return;
-        edev->output = output;
-     }
+
+   if (!output)
+     output = eina_list_nth(input->dev->outputs, 0);
+
+   if (!output) return;
+
+   edev->output = output;
 
    if (libinput_device_has_capability(edev->device, 
                                       LIBINPUT_DEVICE_CAP_POINTER))
