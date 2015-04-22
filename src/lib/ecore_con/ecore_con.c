@@ -2950,9 +2950,7 @@ _ecore_con_lookup_done(void *data,
    else
      lk->done_cb(NULL, NULL, NULL, 0, (void *)lk->data);
 
-   free(svr->name);
    free(lk);
-   free(svr);
 }
 
 #include "ecore_con_base.eo.c"
