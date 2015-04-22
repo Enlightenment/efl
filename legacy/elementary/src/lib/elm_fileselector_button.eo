@@ -1,4 +1,4 @@
-class Elm.Fileselector_Button (Elm_Button, Elm_Interface_Fileselector)
+class Elm.Fileselector_Button (Elm.Button, Elm_Interface_Fileselector)
 {
    eo_prefix: elm_obj_fileselector_button;
    properties {
@@ -101,7 +101,7 @@ class Elm.Fileselector_Button (Elm_Button, Elm_Interface_Fileselector)
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
       Elm.Widget.theme_apply;
-      Elm_Button.admits_autorepeat.get;
+      Elm.Button.admits_autorepeat.get;
       Elm_Interface_Fileselector.selected_paths.get;
       Elm_Interface_Fileselector.expandable;
       Elm_Interface_Fileselector.thumbnail_size;

@@ -1,4 +1,4 @@
-class Elm.Hoversel (Elm_Button, Evas.Selectable_Interface,
+class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
                     Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_hoversel;
@@ -150,7 +150,7 @@ class Elm.Hoversel (Elm_Button, Evas.Selectable_Interface,
       Elm.Widget.theme_apply;
       Elm.Widget.translate;
       Elm.Widget.event;
-      Elm_Button.admits_autorepeat.get;
+      Elm.Button.admits_autorepeat.get;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {

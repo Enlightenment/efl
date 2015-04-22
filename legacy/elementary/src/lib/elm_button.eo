@@ -1,4 +1,4 @@
-class Elm_Button (Elm.Layout, Evas.Clickable_Interface,
+class Elm.Button (Elm.Layout, Evas.Clickable_Interface,
                   Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_button;
