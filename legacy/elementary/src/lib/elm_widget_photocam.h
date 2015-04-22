@@ -130,6 +130,7 @@ struct _Elm_Photocam_Data
    Eina_Bool    resized : 1;
    Eina_Bool    on_hold : 1;
    Eina_Bool    paused : 1;
+   Eina_Bool    orientation_changed : 1;
 };
 
 struct _Elm_Photocam_Pan_Data

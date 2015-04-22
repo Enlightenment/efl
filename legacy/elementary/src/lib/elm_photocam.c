@@ -728,6 +728,13 @@ _zoom_do(Evas_Object *obj,
    sd->show.w = ow;
    sd->show.h = oh;
 
+   if (sd->orientation_changed)
+     {
+        evas_object_smart_member_del(sd->img);
+        elm_widget_sub_object_del(obj, sd->img);
+        evas_object_smart_member_add(sd->img, sd->pan_obj);
+        elm_widget_sub_object_add(obj, sd->img);
+     }
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job_cb, obj);
    if (t >= 1.0)
@@ -1296,6 +1303,7 @@ _elm_photocam_image_orient_set(Eo *obj, Elm_Photocam_Data *sd, Evas_Image_Orient
 
    if (sd->orient == orient) return;
 
+   sd->orientation_changed = EINA_TRUE;
    sd->orient = orient;
    g = _grid_create(obj);
    if (g)
@@ -1543,6 +1551,7 @@ _internal_file_set(Eo *obj, Elm_Photocam_Data *sd, const char *file, Eina_File *
    sd->zoom = 0.0;
    elm_photocam_zoom_set(obj, tz);
    sd->orient = EVAS_IMAGE_ORIENT_NONE;
+   sd->orientation_changed = EINA_FALSE;
 
    if (ret) *ret = evas_object_image_load_error_get(sd->img);
 }
