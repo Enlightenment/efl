@@ -192,8 +192,7 @@ efreet_util_desktop_exec_find(const char *exec)
         exe = ecore_file_app_exe_get(names->array[i]);
         if (!exe) continue;
         file = ecore_file_file_get(exe);
-        if (!file) continue;
-        if (strcmp(exec, exe) && strcmp(exec, file))
+        if ((!file) || (strcmp(exec, exe) && strcmp(exec, file)))
         {
             free(exe);
             continue;
