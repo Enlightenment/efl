@@ -76,6 +76,7 @@ elm_suite_SOURCES = \
 
 elm_suite_CPPFLAGS = \
 	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests\" \
+	-DELM_IMAGE_DATA_DIR=\"${top_srcdir}/data\" \
 	-I$(top_srcdir)/src/lib \
 	-I$(top_builddir)/src/lib \
 	@CHECK_CFLAGS@ \
@@ -93,6 +94,7 @@ check_PROGRAMS += elm_cxx_suite
 elm_cxx_suite_SOURCES = elm_cxx_suite.cc
 elm_cxx_suite_CPPFLAGS = \
 	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests\" \
+	-DELM_IMAGE_DATA_DIR=\"${top_srcdir}/data\" \
 	-I$(top_srcdir)/src/lib \
 	-I$(top_builddir)/src/lib \
 	@CHECK_CFLAGS@ \

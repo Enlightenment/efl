@@ -6,7 +6,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-static const char pathfmt[] = "../../data/images/icon_%02d.png";
+static const char pathfmt[] =  ELM_IMAGE_DATA_DIR"/images/icon_%02d.png";
 static const char invalid[] = "thereisnosuchimage.png";
 #define MAX_IMAGE_ID 23
 
