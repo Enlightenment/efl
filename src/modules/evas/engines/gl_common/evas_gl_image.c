@@ -516,7 +516,7 @@ evas_gl_common_image_alpha_set(Evas_GL_Image *im, int alpha)
      }
    else
      {
-        im->tex = evas_gl_common_texture_new(im->gc, im->im);
+        im->tex = evas_gl_common_texture_new(im->gc, im->im, EINA_FALSE);
         if (im->tex) evas_gl_common_texture_update(im->tex, im->im);
      }
    return im;
@@ -679,7 +679,7 @@ evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
         evas_cache_image_colorspace(&im->im->cache_entry, im->cs.space);
         im->im = (RGBA_Image *)evas_cache_image_size_set(&im->im->cache_entry, im->w, im->h);
         if (!im->tex)
-           im->tex = evas_gl_common_texture_new(im->gc, im->im);
+           im->tex = evas_gl_common_texture_new(im->gc, im->im, EINA_FALSE);
      }
 }
 
@@ -841,14 +841,14 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
              if (evas_cache2_image_cached(ie))
                {
                   evas_cache2_image_load_data(ie);
-                  im->tex = evas_gl_common_texture_new(gc, im->im);
+                  im->tex = evas_gl_common_texture_new(gc, im->im, im->disable_atlas);
                   evas_cache2_image_unload_data(ie);
                }
              else
 #endif
                {
                   evas_cache_image_load_data(ie);
-                  im->tex = evas_gl_common_texture_new(gc, im->im);
+                  im->tex = evas_gl_common_texture_new(gc, im->im, im->disable_atlas);
                   evas_cache_image_unload_data(ie);
                }
           }

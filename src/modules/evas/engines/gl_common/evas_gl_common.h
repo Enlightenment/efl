@@ -654,6 +654,8 @@ struct _Evas_GL_Image
    unsigned char    tex_only : 1;
    unsigned char    locked : 1; // gl_surface_lock/unlock
    unsigned char    direct : 1; // evas gl direct renderable
+   /*Disable generate atlas for texture unit, EINA_FALSE by default*/
+   Eina_Bool        disable_atlas : 1;
 };
 
 struct _Evas_GL_Font_Texture
@@ -811,7 +813,7 @@ int               evas_gl_common_file_cache_save(Evas_GL_Shared *shared);
 void              evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h);
 
 void              evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt);
-Evas_GL_Texture  *evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im);
+Evas_GL_Texture  *evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im, Eina_Bool disable_atlas);
 Evas_GL_Texture  *evas_gl_common_texture_native_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha, Evas_GL_Image *im);
 Evas_GL_Texture  *evas_gl_common_texture_render_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha);
 Evas_GL_Texture  *evas_gl_common_texture_dynamic_new(Evas_Engine_GL_Context *gc, Evas_GL_Image *im);

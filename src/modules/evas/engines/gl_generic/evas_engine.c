@@ -966,7 +966,7 @@ eng_image_data_preload_request(void *data, void *image, const Eo *target)
 
         re->window_use(re->software.ob);
         gl_context = re->window_gl_context_get(re->software.ob);
-        gim->tex = evas_gl_common_texture_new(gl_context, gim->im);
+        gim->tex = evas_gl_common_texture_new(gl_context, gim->im, EINA_FALSE);
      }
    evas_gl_preload_target_register(gim->tex, (Eo*) target);
 }

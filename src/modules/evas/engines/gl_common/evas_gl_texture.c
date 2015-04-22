@@ -439,13 +439,18 @@ _pool_tex_alloc(Evas_GL_Texture_Pool *pt, int w, int h, int *u, int *v)
 static Evas_GL_Texture_Pool *
 _pool_tex_find(Evas_Engine_GL_Context *gc, int w, int h,
                GLenum intformat, GLenum format, int *u, int *v,
-               Eina_Rectangle **apt, int atlas_w)
+               Eina_Rectangle **apt, int atlas_w, Eina_Bool disable_atlas)
 {
    Evas_GL_Texture_Pool *pt = NULL;
    Eina_List *l;
    int th2;
    int pool_h;
-
+   /*Return texture unit without atlas*/
+   if (disable_atlas)
+     {
+        pt = _pool_tex_new(gc, w, h, intformat, format);
+        return pt ? pt : NULL;
+     }
    if (atlas_w > gc->shared->info.max_texture_size)
       atlas_w = gc->shared->info.max_texture_size;
    if ((w > gc->shared->info.tune.atlas.max_w) ||
@@ -490,7 +495,7 @@ _pool_tex_find(Evas_Engine_GL_Context *gc, int w, int h,
 }
 
 Evas_GL_Texture *
-evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
+evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im, Eina_Bool disable_atlas)
 {
    Evas_GL_Texture *tex;
    GLsizei w, h;
@@ -535,7 +540,7 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
                             *matching_format[lformat].intformat,
                             *matching_format[lformat].format,
                             &u, &v, &tex->apt,
-                            gc->shared->info.tune.atlas.max_alloc_size);
+                            gc->shared->info.tune.atlas.max_alloc_size, disable_atlas);
    if (!tex->pt)
      {
         evas_gl_common_texture_light_free(tex);
@@ -1350,7 +1355,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
                                   *matching_format[lformat].intformat,
                                   *matching_format[lformat].format,
                                   &u, &v, &tex->aptt,
-                                  tex->gc->shared->info.tune.atlas.max_alloc_size);
+                                  tex->gc->shared->info.tune.atlas.max_alloc_size, EINA_FALSE);
         if (!tex->ptt)
           goto upload;
 
@@ -1470,7 +1475,7 @@ evas_gl_common_texture_alpha_new(Evas_Engine_GL_Context *gc, DATA8 *pixels,
 
    tex->pt = _pool_tex_find(gc, w + 3, fh, alpha_ifmt, alpha_fmt, &u, &v,
                             &tex->apt,
-                            gc->shared->info.tune.atlas.max_alloc_alpha_size);
+                            gc->shared->info.tune.atlas.max_alloc_alpha_size, EINA_FALSE);
    if (!tex->pt)
      {
         evas_gl_common_texture_light_free(tex);
