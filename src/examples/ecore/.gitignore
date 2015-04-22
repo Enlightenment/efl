@@ -6,6 +6,8 @@
 /ecore_compose_get_example
 /ecore_con_client_example
 /ecore_con_client_simple_example
+/ecore_con_eet_client_example
+/ecore_con_eet_server_example
 /ecore_con_lookup_example
 /ecore_con_server_example
 /ecore_con_server_http_example
