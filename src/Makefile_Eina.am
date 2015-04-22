@@ -87,7 +87,8 @@ lib/eina/eina_cow.h \
 lib/eina/eina_inline_unicode.x \
 lib/eina/eina_thread_queue.h \
 lib/eina/eina_matrix.h \
-lib/eina/eina_quad.h
+lib/eina/eina_quad.h \
+lib/eina/eina_crc.h
 
 lib_eina_libeina_la_SOURCES = \
 lib/eina/eina_abi.c \
@@ -144,7 +145,8 @@ lib/eina/eina_private.h \
 lib/eina/eina_strbuf_common.h \
 lib/eina/eina_thread_queue.c \
 lib/eina/eina_matrix.c \
-lib/eina/eina_quad.c
+lib/eina/eina_quad.c \
+lib/eina/eina_crc.c
 
 # Will be back for developper after 1.2
 # lib/eina/eina_model.c \
