@@ -376,7 +376,7 @@ _spin_value(void *data)
    double real_speed = sd->spin_speed;
 
    /* Sanity check: our step size should be at least as large as our rounding value */
-   if ((sd->spin_speed != 0.0) && (abs(sd->spin_speed) < sd->round))
+   if ((sd->spin_speed != 0.0) && (fabs(sd->spin_speed) < sd->round))
      {
         WRN("The spinning step is smaller than the rounding value, please check your code");
         real_speed = sd->spin_speed > 0 ? sd->round : -sd->round;
