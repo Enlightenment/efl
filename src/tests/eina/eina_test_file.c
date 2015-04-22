@@ -503,6 +503,76 @@ START_TEST(eina_test_file_path)
 }
 END_TEST
 
+#ifdef XATTR_TEST_DIR
+START_TEST(eina_test_file_xattr)
+{
+   Eina_File *ef;
+   char *filename = "tmpfile";
+   const char *attribute[] =
+     {
+        "user.comment1",
+        "user.comment2",
+        "user.comment3"
+     };
+   const char *data[] =
+     {
+        "This is a test file",
+        "This line is a comment",
+        "This file has extra attributes"
+     };
+   char *ret_str;
+   unsigned int i;
+   Eina_Bool ret;
+   Eina_Tmpstr *test_file_path;
+   Eina_Iterator *it;
+   int fd;
+   Eina_Xattr *xattr;
+
+   eina_init();
+   test_file_path = get_full_path(XATTR_TEST_DIR, filename);
+
+   fd = open(test_file_path, O_RDONLY | O_CREAT | O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
+   fail_if(fd == 0);
+   close(fd);
+
+   for (i = 0; i < sizeof(attribute) / sizeof(attribute[0]); ++i)
+     {
+        ret = eina_xattr_set(test_file_path, attribute[i], data[i], strlen(data[i]), EINA_XATTR_INSERT);
+        fail_if(ret != EINA_TRUE);
+     }
+
+   ef = eina_file_open(test_file_path, EINA_FALSE);
+   fail_if(!ef);
+
+   it = eina_file_xattr_get(ef);
+   EINA_ITERATOR_FOREACH(it, ret_str)
+     {
+        for (i = 0; i < sizeof (attribute) / sizeof (attribute[0]); i++)
+          if (strcmp(attribute[i], ret_str) == 0)
+            break ;
+        fail_if(i == sizeof (attribute) / sizeof (attribute[0]));
+     }
+   eina_iterator_free(it);
+
+   it = eina_file_xattr_value_get(ef);
+   EINA_ITERATOR_FOREACH(it, xattr)
+     {
+        for (i = 0; i < sizeof (data) / sizeof (data[0]); i++)
+          if (strcmp(attribute[i], xattr->name) == 0 &&
+              strcmp(data[i], xattr->value) == 0)
+            break ;
+        fail_if(i == sizeof (data) / sizeof (data[0]));
+     }
+   eina_iterator_free(it);
+
+   unlink(test_file_path);
+   eina_tmpstr_del(test_file_path);
+   eina_file_close(ef);
+   eina_shutdown();
+}
+END_TEST
+#endif
+
 void
 eina_test_file(TCase *tc)
 {
@@ -513,4 +583,7 @@ eina_test_file(TCase *tc)
    tcase_add_test(tc, eina_test_file_virtualize);
    tcase_add_test(tc, eina_test_file_thread);
    tcase_add_test(tc, eina_test_file_path);
+#ifdef XATTR_TEST_DIR
+   tcase_add_test(tc, eina_test_file_xattr);
+#endif
 }

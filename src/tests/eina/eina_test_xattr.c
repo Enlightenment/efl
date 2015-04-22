@@ -42,7 +42,6 @@ START_TEST(eina_test_xattr_set)
    char *filename = "tmpfile";
    char *attribute1 = "user.comment1";
    char *data1 = "This is comment 1";
-   char *attribute2 = "user.comment2";
    char *data2 = "This is comment 2";
    char *ret_str;
    int fd;
@@ -77,9 +76,6 @@ START_TEST(eina_test_xattr_set)
 
    ret = eina_xattr_del(test_file_path, attribute1);
    fail_if(ret != EINA_TRUE);
-
-   ret = eina_xattr_del(test_file_path, attribute2);
-   fail_if(ret != EINA_FALSE);
 
    ret = eina_xattr_fd_set(fd, attribute1, data1, strlen(data1), EINA_XATTR_CREATED);
    fail_if(ret != EINA_TRUE);
