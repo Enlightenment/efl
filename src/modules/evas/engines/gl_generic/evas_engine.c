@@ -43,7 +43,18 @@ static int _evas_engine_GL_log_dom = -1;
 #define WRN(...) EINA_LOG_DOM_WARN(_evas_engine_GL_log_dom, __VA_ARGS__)
 #define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_GL_log_dom, __VA_ARGS__)
 
+#ifdef GL_GLES
+# ifndef GL_FRAMEBUFFER
+#  define GL_FRAMEBUFFER GL_FRAMEBUFFER_OES
+# endif
+#else
+# ifndef GL_FRAMEBUFFER
+#  define GL_FRAMEBUFFER GL_FRAMEBUFFER_EXT
+# endif
+#endif
+
 static int eng_gl_image_direct_get(void *data EINA_UNUSED, void *image);
+static int eng_gl_surface_destroy(void *data, void *surface);
 
 static void
 eng_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h, Eina_Bool do_async EINA_UNUSED)
@@ -473,14 +484,27 @@ eng_image_free(void *data, void *image)
 static void
 eng_image_size_get(void *data EINA_UNUSED, void *image, int *w, int *h)
 {
+   Evas_GL_Image *im;
    if (!image)
      {
         *w = 0;
         *h = 0;
         return;
      }
-   if (w) *w = ((Evas_GL_Image *)image)->w;
-   if (h) *h = ((Evas_GL_Image *)image)->h;
+   im = image;
+   if (im->orient == EVAS_IMAGE_ORIENT_90 ||
+       im->orient == EVAS_IMAGE_ORIENT_270 ||
+       im->orient == EVAS_IMAGE_FLIP_TRANSPOSE ||
+       im->orient == EVAS_IMAGE_FLIP_TRANSVERSE)
+     {
+        if (w) *w = ((Evas_GL_Image *)image)->h;
+        if (h) *h = ((Evas_GL_Image *)image)->w;
+     }
+   else
+     {
+        if (w) *w = ((Evas_GL_Image *)image)->w;
+        if (h) *h = ((Evas_GL_Image *)image)->h;
+     }
 }
 
 static void *
@@ -548,6 +572,91 @@ eng_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
    return image;
 }
 
+static Evas_GL_Image *
+_rotate_image_data(void *data, void *img)
+{
+   int alpha;
+   Evas_GL_Image *im1, *im2;
+   Evas_Engine_GL_Context *gl_context;
+   Render_Engine_GL_Generic *re = data;
+   RGBA_Draw_Context *dc;
+   DATA32 *pixels;
+   int w, h;
+
+   re->window_use(re->software.ob);
+   gl_context = re->window_gl_context_get(re->software.ob);
+   im1 = img;
+
+   w = im1->w;
+   h = im1->h;
+   alpha = eng_image_alpha_get(data, img);
+
+   if (im1->orient == EVAS_IMAGE_ORIENT_90 ||
+       im1->orient == EVAS_IMAGE_ORIENT_270 ||
+       im1->orient == EVAS_IMAGE_FLIP_TRANSPOSE ||
+       im1->orient == EVAS_IMAGE_FLIP_TRANSVERSE)
+     {
+        w = im1->h;
+        h = im1->w;
+     }
+
+   im2 = evas_gl_common_image_surface_new(gl_context, w, h, alpha);
+
+   evas_gl_common_context_target_surface_set(gl_context, im2);
+
+   // Create a new and temporary context
+   dc = evas_common_draw_context_new();
+   evas_common_draw_context_set_clip(dc, 0, 0, im2->w, im2->h);
+   gl_context->dc = dc;
+
+   // Image draw handle the rotation magically for us
+   evas_gl_common_image_draw(gl_context, im1,
+                             0, 0, w, h,
+                             0, 0, im2->w, im2->h,
+                             0);
+   // Do not forget to flush everything or you will have nothing in your buffer
+   evas_gl_common_context_flush(gl_context);
+
+   gl_context->dc = NULL;
+   evas_common_draw_context_free(dc);
+
+   glsym_glBindFramebuffer(GL_FRAMEBUFFER, im2->tex->pt->fb);
+   GLERRV("glsym_glBindFramebuffer");
+
+   // Rely on Evas_GL_Image infrastructure to allocate pixels
+   im2->im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
+   if (!im2->im) return NULL;
+   im2->im->cache_entry.flags.alpha = !!alpha;
+   evas_gl_common_image_alloc_ensure(im2);
+   pixels = im2->im->image.data;
+
+   if (im2->tex->pt->format == GL_BGRA)
+     {
+        glReadPixels(0, 0, im2->w, im2->h, GL_BGRA,
+                     GL_UNSIGNED_BYTE, pixels);
+     }
+   else
+     {
+        DATA32 *ptr = pixels;
+        unsigned int k;
+
+        glReadPixels(0, 0, im2->w, im2->h, GL_RGBA,
+                     GL_UNSIGNED_BYTE, pixels);
+        for (k = im2->w * im2->h; k; --k)
+          {
+             const DATA32 v = *ptr;
+             *ptr++ = (v & 0xFF00FF00)
+               | ((v & 0x00FF0000) >> 16)
+               | ((v & 0x000000FF) << 16);
+          }
+     }
+
+   glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
+   GLERRV("glsym_glBindFramebuffer");
+
+   return im2;
+}
+
 static void *
 eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, int *err)
 {
@@ -555,18 +664,32 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
    Evas_GL_Image *im;
    int error;
 
+   *image_data = NULL;
+
    if (!image)
      {
-        *image_data = NULL;
         if (err) *err = EVAS_LOAD_ERROR_GENERIC;
         return NULL;
      }
    im = image;
    if (im->native.data)
      {
-        *image_data = NULL;
         if (err) *err = EVAS_LOAD_ERROR_NONE;
         return im;
+     }
+
+   if (im->orient != EVAS_IMAGE_ORIENT_NONE)
+     {
+        Evas_GL_Image *im_new = _rotate_image_data(data, image);
+        if (!im_new)
+          {
+             if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+             return im;
+          }
+        evas_gl_common_image_free(im);
+
+        *image_data = im_new->im->image.data;
+        return im_new;
      }
 
 #ifdef GL_GLES
@@ -769,6 +892,32 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
          break;
      }
    return im;
+}
+
+static void *
+eng_image_orient_set(void *data, void *image, Evas_Image_Orient orient)
+{
+   Render_Engine_GL_Generic *re = data;
+   Evas_GL_Image *im;
+
+   if (!image) return NULL;
+   im = image;
+   if (im->orient == orient) return image;
+
+   re->window_use(re->software.ob);
+
+   im->orient = orient;
+   return im;
+}
+
+static Evas_Image_Orient
+eng_image_orient_get(void *data EINA_UNUSED, void *image)
+{
+   Evas_GL_Image *im;
+
+   if (!image) return EVAS_IMAGE_ORIENT_NONE;
+   im = image;
+   return im->orient;
 }
 
 static void
@@ -1473,16 +1622,6 @@ eng_gl_surface_read_pixels(void *data, void *surface,
         ERR("Conversion to colorspace %d is not supported!", (int) cspace);
         return EINA_FALSE;
      }
-
-#ifdef GL_GLES
-# ifndef GL_FRAMEBUFFER
-#  define GL_FRAMEBUFFER GL_FRAMEBUFFER_OES
-# endif
-#else
-# ifndef GL_FRAMEBUFFER
-#  define GL_FRAMEBUFFER GL_FRAMEBUFFER_EXT
-# endif
-#endif
 
    /* Since this is an FBO, the pixels are already in the right Y order.
     * But some devices don't support GL_BGRA, so we still need to convert.
@@ -2351,6 +2490,8 @@ module_open(Evas_Module *em)
    ORD(image_data_preload_cancel);
    ORD(image_alpha_set);
    ORD(image_alpha_get);
+   ORD(image_orient_set);
+   ORD(image_orient_get);
    ORD(image_border_set);
    ORD(image_border_get);
    ORD(image_draw);

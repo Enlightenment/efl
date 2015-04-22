@@ -644,8 +644,9 @@ struct _Evas_GL_Image
    int scale_hint, content_hint;
    int csize;
 
-   Eina_List       *filtered;
-   Eina_List       *targets;
+   Eina_List         *filtered;
+   Eina_List         *targets;
+   Evas_Image_Orient orient;
 
    unsigned char    dirty : 1;
    unsigned char    cached : 1;

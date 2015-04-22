@@ -1256,9 +1256,53 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
    PUSH_VERTEX(pn, x    , y + h, 0); PUSH_VERTEX(pn, x + w, y    , 0); \
    PUSH_VERTEX(pn, x + w, y + h, 0); PUSH_VERTEX(pn, x    , y + h, 0); \
    } while (0)
-#define PUSH_6_TEXUV(pn, x1, y1, x2, y2) do { \
-   PUSH_TEXUV(pn, x1, y1); PUSH_TEXUV(pn, x2, y1); PUSH_TEXUV(pn, x1, y2); \
-   PUSH_TEXUV(pn, x2, y1); PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x1, y2); \
+#define PUSH_6_TEXUV(pn, Tex, x1, y1, x2, y2) do {                      \
+   Evas_GL_Texture *_tex = Tex;                                         \
+   if (_tex && _tex->im)                                                \
+     {                                                                  \
+        switch (_tex->im->orient)                                       \
+          {                                                             \
+           case EVAS_IMAGE_ORIENT_NONE:                                 \
+              PUSH_TEXUV(pn, x1, y1); PUSH_TEXUV(pn, x2, y1); PUSH_TEXUV(pn, x1, y2); \
+              PUSH_TEXUV(pn, x2, y1); PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x1, y2); \
+              break;                                                    \
+           case EVAS_IMAGE_ORIENT_90:                                   \
+              PUSH_TEXUV(pn, x1, y2); PUSH_TEXUV(pn, x1, y1); PUSH_TEXUV(pn, x2, y2); \
+              PUSH_TEXUV(pn, x1, y1); PUSH_TEXUV(pn, x2, y1); PUSH_TEXUV(pn, x2, y2); \
+              break;                                                    \
+           case EVAS_IMAGE_ORIENT_180:                                  \
+              PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x1, y2); PUSH_TEXUV(pn, x2, y1); \
+              PUSH_TEXUV(pn, x1, y2); PUSH_TEXUV(pn, x1, y1); PUSH_TEXUV(pn, x2, y1); \
+              break;                                                    \
+           case EVAS_IMAGE_ORIENT_270:                                  \
+              PUSH_TEXUV(pn, x2, y1); PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x1, y1); \
+              PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x1, y2); PUSH_TEXUV(pn, x1, y1); \
+              break;                                                    \
+           case EVAS_IMAGE_FLIP_HORIZONTAL:                             \
+              PUSH_TEXUV(pn, x2, y1); PUSH_TEXUV(pn, x1, y1); PUSH_TEXUV(pn, x2, y2); \
+              PUSH_TEXUV(pn, x1, y1); PUSH_TEXUV(pn, x1, y2); PUSH_TEXUV(pn, x2, y2); \
+              break;                                                    \
+           case EVAS_IMAGE_FLIP_VERTICAL:                               \
+              PUSH_TEXUV(pn, x1, y2); PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x1, y1); \
+              PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x2, y1); PUSH_TEXUV(pn, x1, y1); \
+              break;                                                    \
+           case EVAS_IMAGE_FLIP_TRANSVERSE:                             \
+              PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x2, y1); PUSH_TEXUV(pn, x1, y2); \
+              PUSH_TEXUV(pn, x2, y1); PUSH_TEXUV(pn, x1, y1); PUSH_TEXUV(pn, x1, y2); \
+              break;                                                    \
+           case EVAS_IMAGE_FLIP_TRANSPOSE:                              \
+              PUSH_TEXUV(pn, x1, y1); PUSH_TEXUV(pn, x1, y2); PUSH_TEXUV(pn, x2, y1); \
+              PUSH_TEXUV(pn, x1, y2); PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x2, y1); \
+              break;                                                    \
+           default:                                                     \
+              ERR("Wrong orientation");                                 \
+          }                                                             \
+     }                                                                  \
+   else                                                                 \
+     {                                                                  \
+        PUSH_TEXUV(pn, x1, y1); PUSH_TEXUV(pn, x2, y1); PUSH_TEXUV(pn, x1, y2); \
+        PUSH_TEXUV(pn, x2, y1); PUSH_TEXUV(pn, x2, y2); PUSH_TEXUV(pn, x1, y2); \
+     }                                                                  \
    } while (0)
 #define PUSH_6_TEXUV2(pn, x1, y1, x2, y2) do { \
    PUSH_TEXUV2(pn, x1, y1); PUSH_TEXUV2(pn, x2, y1); PUSH_TEXUV2(pn, x1, y2); \
@@ -1918,6 +1962,7 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    Evas_GL_Texture_Pool *pt;
    GLfloat tx1, tx2, ty1, ty2;
    GLfloat offsetx, offsety;
+   double pw, ph;
    Eina_Bool blend = EINA_FALSE;
    Evas_GL_Shader shader = SHADER_IMG;
    GLuint prog = gc->shared->shader[shader].prog;
@@ -1992,23 +2037,36 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
    pipe_region_expand(gc, pn, x, y, w, h);
    PIPE_GROW(gc, pn, 6);
 
+   pw = pt->w;
+   ph = pt->h;
+   if (tex->im &&
+       (tex->im->orient == EVAS_IMAGE_ORIENT_90 ||
+        tex->im->orient == EVAS_IMAGE_ORIENT_270 ||
+        tex->im->orient == EVAS_IMAGE_FLIP_TRANSPOSE ||
+        tex->im->orient == EVAS_IMAGE_FLIP_TRANSVERSE))
+     {
+        // Adjust size for taking rotation into account as im->w and h are already modified.
+        pw = pt->h;
+        ph = pt->w;
+     }
+
    if ((tex->im) && (tex->im->native.data) && (!tex->im->native.yinvert))
      {
-        tx1 = ((double)(offsetx) + sx) / (double)pt->w;
-        ty1 = 1.0 - ((double)(offsety) + sy) / (double)pt->h;
-        tx2 = ((double)(offsetx) + sx + sw) / (double)pt->w;
-        ty2 = 1.0 - ((double)(offsety) + sy + sh) / (double)pt->h;
+        tx1 = ((double)(offsetx) + sx) / pw;
+        ty1 = 1.0 - ((double)(offsety) + sy) / ph;
+        tx2 = ((double)(offsetx) + sx + sw) / pw;
+        ty2 = 1.0 - ((double)(offsety) + sy + sh) / ph;
      }
    else
      {
-        tx1 = ((double)(offsetx) + sx) / (double)pt->w;
-        ty1 = ((double)(offsety) + sy) / (double)pt->h;
-        tx2 = ((double)(offsetx) + sx + sw) / (double)pt->w;
-        ty2 = ((double)(offsety) + sy + sh) / (double)pt->h;
+        tx1 = ((double)(offsetx) + sx) / pw;
+        ty1 = ((double)(offsety) + sy) / ph;
+        tx2 = ((double)(offsetx) + sx + sw) / pw;
+        ty2 = ((double)(offsety) + sy + sh) / ph;
      }
 
    PUSH_6_VERTICES(pn, x, y, w, h);
-   PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
+   PUSH_6_TEXUV(pn, tex, tx1, ty1, tx2, ty2);
 
    if (sam)
      {
@@ -2098,7 +2156,7 @@ evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
      }
 
    PUSH_6_VERTICES(pn, x, y, w, h);
-   PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
+   PUSH_6_TEXUV(pn, NULL, tx1, ty1, tx2, ty2);
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
    PUSH_6_COLORS(pn, r, g, b, a);
 }
@@ -2174,7 +2232,7 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
    t2y2 = ((sy + sh) / 2) / (double)tex->ptu->h;
 
    PUSH_6_VERTICES(pn, x, y, w, h);
-   PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
+   PUSH_6_TEXUV(pn, NULL, tx1, ty1, tx2, ty2);
    PUSH_6_TEXUV2(pn, t2x1, t2y1, t2x2, t2y2);
    PUSH_6_TEXUV3(pn, t2x1, t2y1, t2x2, t2y2);
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
@@ -2252,7 +2310,7 @@ evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
    t2y2 = (sy + sh) / (double)tex->ptuv->h;
 
    PUSH_6_VERTICES(pn, x, y, w, h);
-   PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
+   PUSH_6_TEXUV(pn, NULL, tx1, ty1, tx2, ty2);
    PUSH_6_TEXUV2(pn, t2x1, t2y1, t2x2, t2y2);
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
    if (!nomul)
@@ -2332,7 +2390,7 @@ evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
    t2y2 = (sy + sh) / (double)tex->ptuv->h;
 
    PUSH_6_VERTICES(pn, x, y, w, h);
-   PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
+   PUSH_6_TEXUV(pn, NULL, tx1, ty1, tx2, ty2);
    PUSH_6_TEXUV2(pn, t2x1, t2y1, t2x2, t2y2);
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
    if (!nomul)
@@ -2416,7 +2474,7 @@ evas_gl_common_context_rgb_a_pair_push(Evas_Engine_GL_Context *gc,
    t2y2 = (tex->y + sy + sh) / (double)tex->pta->h;
 
    PUSH_6_VERTICES(pn, x, y, w, h);
-   PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
+   PUSH_6_TEXUV(pn, NULL, tx1, ty1, tx2, ty2);
    PUSH_6_TEXA(pn, t2x1, t2y1, t2x2, t2y2);
    PUSH_MASK(pn, mtex, mx, my, mw, mh);
    if (!nomul)

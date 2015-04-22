@@ -228,6 +228,7 @@ found_cspace:
    im->gc = gc;
    im->cached = 1;
    im->cs.space = cspace;
+   im->orient = EVAS_IMAGE_ORIENT_NONE;
    im->alpha = im->im->cache_entry.flags.alpha;
    im->w = im->im->cache_entry.w;
    im->h = im->im->cache_entry.h;
