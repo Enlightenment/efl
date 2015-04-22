@@ -67,7 +67,9 @@ ecore_server_bench \
 ecore_thread_example \
 ecore_time_functions_example \
 ecore_timer_example \
-ecore_getopt_example
+ecore_getopt_example \
+ecore_con_eet_client_example \
+ecore_con_eet_server_example
 
 ECORE_COMMON_LDADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
@@ -237,6 +239,12 @@ ecore_timer_example_LDADD = $(ECORE_COMMON_LDADD)
 ecore_getopt_example_SOURCES = ecore_getopt_example.c
 ecore_getopt_example_LDADD = $(ECORE_COMMON_LDADD)
 
+ecore_con_eet_client_example_SOURCES = ecore_con_eet_client_example.c ecore_con_eet_descriptor_example.c
+ecore_con_eet_client_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+
+ecore_con_eet_server_example_SOURCES = ecore_con_eet_server_example.c ecore_con_eet_descriptor_example.c
+ecore_con_eet_server_example_LDADD = $(ECORE_CON_COMMON_LDADD)
+
 SRCS = \
 ecore_animator_example.c \
 ecore_audio_custom.c \
@@ -279,7 +287,10 @@ ecore_server_bench.c \
 ecore_thread_example.c \
 ecore_time_functions_example.c \
 ecore_timer_example.c \
-ecore_getopt_example.c
+ecore_getopt_example.c \
+ecore_con_eet_client_example.c \
+ecore_con_eet_server_example.c \
+ecore_con_eet_descriptor_example.c 
 
 DATA_FILES = red.png Makefile.examples
 
