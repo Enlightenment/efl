@@ -353,7 +353,7 @@ ecore_drm_device_close(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-EAPI Eina_List *
+EAPI const Eina_List *
 ecore_drm_devices_get(void)
 {
    return drm_devices;

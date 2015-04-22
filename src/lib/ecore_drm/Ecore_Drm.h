@@ -746,6 +746,6 @@ EAPI void ecore_drm_device_pointer_xy_get(Ecore_Drm_Device *dev, int *x, int *y)
  * @ingroup Ecore_Drm_Device_Group
  * @since 1.14
  */
-EAPI Eina_List *ecore_drm_devices_get(void);
+EAPI const Eina_List *ecore_drm_devices_get(void);
 
 #endif
