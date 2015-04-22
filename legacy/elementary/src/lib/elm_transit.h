@@ -713,7 +713,7 @@ EAPI void                   elm_transit_smooth_set(Elm_Transit *transit, Eina_Bo
  * @since 1.8
  *
  */
-Eina_Bool                   elm_transit_smooth_get(const Elm_Transit *transit);
+EAPI Eina_Bool              elm_transit_smooth_get(const Elm_Transit *transit);
 
 /**
  * Add the Resizing Effect to Elm_Transit.
