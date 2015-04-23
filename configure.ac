@@ -617,6 +617,31 @@ AC_DEFINE_IF([HAVE_ATFILE_SOURCE],
 
 ######################  EFL  ######################
 
+want_libeeze="yes"
+AC_ARG_ENABLE([libeeze],
+   [AS_HELP_STRING([--disable-libeeze],[disable Eeze device library @<:@default=enable@:>@])],
+   [
+    if test "x${enableval}" = "xyes"; then
+       want_libeeze="yes"
+    else
+       want_libeeze="no"
+       CFOPT_WARNING="yes"
+    fi
+   ])
+
+build_libeeze="yes"
+if test "x${want_libeeze}" = "xyes" ; then
+    if test "x${have_linux}" = "xyes" ; then
+        build_libeeze="yes"
+    else
+        build_libeeze="no"
+        want_libeeze="no"
+        CFOPT_WARNING="yes"
+    fi
+else
+    build_libeeze="no"
+fi
+
 AC_ARG_ENABLE([systemd],
    [AS_HELP_STRING([--enable-systemd],[Enable systemd support. @<:@default=disabled@:>@])],
    [
@@ -2965,7 +2990,7 @@ have_libmount_new="no"
 have_libmount_old="no"
 have_eeze_mount="no"
 
-EFL_LIB_START_OPTIONAL([Eeze], [test "${have_linux}" = "yes"])
+EFL_LIB_START_OPTIONAL([Eeze], [test "x${build_libeeze}" = "xyes"])
 
 ### Additional options to configure
 AC_ARG_WITH([mount],
@@ -4991,6 +5016,13 @@ if test -n "$CFOPT_WARNING"; then
     echo "API."
     echo "If you are not working on this migration please leave the option set"
     echo "to both as it will break your build if set to eo."
+    echo "_____________________________________________________________________"
+  fi
+  if test "x${want_libeeze}" = "xno"; then
+    echo "_____________________________________________________________________"
+    echo "Libeeze has been disabled, and it is used heavily for support of"
+    echo "removable devices etc. and disabling this will hurt support for"
+    echo "Enlightenment and its filemanager."
     echo "_____________________________________________________________________"
   fi
   echo "_____________________________________________________________________"
