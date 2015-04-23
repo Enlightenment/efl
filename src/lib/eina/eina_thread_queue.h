@@ -164,7 +164,7 @@ eina_thread_queue_wait_done(Eina_Thread_Queue *thq, void *allocref) EINA_ARG_NON
  * @return A pointer to the message data
  *
  * This is the same as eina_thread_queue_wait(), but if no messages are
- * available for reading, it immediately returns NULL tot he caller, without
+ * available for reading, it immediately returns NULL to the caller, without
  * waiting for a new message to arrive.
  *
  * @see eina_thread_queue_wait()
