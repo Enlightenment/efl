@@ -327,7 +327,7 @@ _ecore_drm_output_brightness_set(Ecore_Drm_Backlight *backlight, double brightne
 */
 
 static Ecore_Drm_Backlight *
-_ecore_drm_output_backlight_init(Ecore_Drm_Output *output EINA_UNUSED, uint32_t conn_type)
+_ecore_drm_output_backlight_init(Ecore_Drm_Output *output, uint32_t conn_type)
 {
    Ecore_Drm_Backlight *backlight = NULL;
    Ecore_Drm_Backlight_Type type = 0;
@@ -342,6 +342,8 @@ _ecore_drm_output_backlight_init(Ecore_Drm_Output *output EINA_UNUSED, uint32_t 
 
    EINA_LIST_FOREACH(devs, l, device)
      {
+        /* ensure this backlight is owned by this output's device */
+        if (strncmp(device, output->dev->drm.path, strlen(output->dev->drm.path))) continue;
         if (!(devtype = eeze_udev_syspath_get_sysattr(device, "type")))
           continue;
 
