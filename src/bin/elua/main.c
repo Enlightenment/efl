@@ -17,7 +17,7 @@
 #include <Eina.h>
 #include <Ecore.h>
 
-#include "Elua.h"
+#include <Elua.h>
 
 static int _el_log_domain = -1;
 
