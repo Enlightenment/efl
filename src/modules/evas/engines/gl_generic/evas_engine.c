@@ -1175,6 +1175,13 @@ eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
      {
         if (dst->scaled.origin == src)
           {
+             if (dst->references == 1)
+               {
+                  dst->w = dst_w;
+                  dst->h = dst_h;
+                  dst->scaled.smooth = smooth;
+                  return dst;
+               }
              src->references++;
              reffed = EINA_TRUE;
           }
