@@ -352,27 +352,24 @@ _ecore_drm_output_backlight_init(Ecore_Drm_Output *output, uint32_t conn_type)
         else if (!strcmp(devtype, "firmware"))
           type = ECORE_DRM_BACKLIGHT_FIRMWARE;
 
-        if ((conn_type != DRM_MODE_CONNECTOR_LVDS) && 
-            (conn_type != DRM_MODE_CONNECTOR_eDP))
-          {
-             if (type != ECORE_DRM_BACKLIGHT_RAW) goto cont;
-          }
+        if ((conn_type == DRM_MODE_CONNECTOR_LVDS) ||
+            (conn_type == DRM_MODE_CONNECTOR_eDP) ||
+            (type == ECORE_DRM_BACKLIGHT_RAW))
+          found = EINA_TRUE;
 
-        found = EINA_TRUE;
-cont:
         eina_stringshare_del(devtype);
         if (found) break;
      }
 
-   if (!found) goto out;
-
-   if ((backlight = calloc(1, sizeof(Ecore_Drm_Backlight))))
+   if (found)
      {
-        backlight->type = type;
-        backlight->device = eina_stringshare_add(device);
+        if ((backlight = calloc(1, sizeof(Ecore_Drm_Backlight))))
+          {
+             backlight->type = type;
+             backlight->device = eina_stringshare_add(device);
+          }
      }
 
-out:
    EINA_LIST_FREE(devs, device)
      eina_stringshare_del(device);
 
