@@ -335,15 +335,13 @@ _ecore_drm_output_backlight_init(Ecore_Drm_Output *output, uint32_t conn_type)
    Eina_Bool found = EINA_FALSE;
    const char *device, *devtype;
 
-   if (!(devs = eeze_udev_find_by_type(EEZE_UDEV_TYPE_BACKLIGHT, NULL)))
-     devs = eeze_udev_find_by_type(EEZE_UDEV_TYPE_LEDS, NULL);
+   if (!(devs = eeze_udev_find_by_filter("backlight", NULL, output->dev->drm.path)))
+     devs = eeze_udev_find_by_filter("leds", NULL, output->dev->drm.path);
 
    if (!devs) return NULL;
 
    EINA_LIST_FOREACH(devs, l, device)
      {
-        /* ensure this backlight is owned by this output's device */
-        if (strncmp(device, output->dev->drm.path, strlen(output->dev->drm.path))) continue;
         if (!(devtype = eeze_udev_syspath_get_sysattr(device, "type")))
           continue;
 
