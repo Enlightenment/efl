@@ -34,6 +34,7 @@ struct _Elua_State
    Eina_Stringshare *coredir;
    Eina_Stringshare *moddir;
    Eina_Stringshare *appsdir;
+   Eina_List *lmods;
    Eina_List *cmods;
    Eina_List *lincs;
    int requireref, apploadref;
@@ -48,5 +49,6 @@ extern int _elua_log_dom;
 #define CRT(...) EINA_LOG_DOM_CRITICAL(_elua_log_dom, __VA_ARGS__)
 
 int _elua_io_popen(lua_State *L);
+Eina_Bool _elua_state_io_setup(const Elua_State *es);
 
 #endif

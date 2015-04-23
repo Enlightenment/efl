@@ -307,45 +307,29 @@ EAPI Eina_Bool elua_state_appload_ref_push(Elua_State *es);
 EAPI lua_State *elua_state_lua_state_get(const Elua_State *es);
 
 /**
- * @brief Set up internationalization support for an Elua state.
+ * @brief Set up the Elua state.
+ *
+ * This API function sets up 3 things, module system, i18n and I/O. After that
+ * it requires all modules not yet required (i.e. those queued in before the
+ * state was fully initialized).
  *
  * This function sets up correct i18n for an Elua state. That means loading
  * the gettext bindings and making Lua aware of them. This also works when
  * i18n support is disabled at compilation time, so you can just call it
  * unconditionally.
  *
- * @param[in] es The Elua state.
- * @return EINA_TRUE on success, EINA_FALSE on failure.
- *
- * @ingroup Elua
- */
-EAPI Eina_Bool elua_state_i18n_setup(const Elua_State *es);
-
-/**
- * @brief Set up module support for an Elua state.
- *
- * This loads the Elua module system and makes Lua aware of it. It also
+ * This also loads the Elua module system and makes Lua aware of it. It also
  * registers the Elua C utility library module.
  *
- * @param[in] es The Elua state.
- * @return EINA_TRUE on success, EINA_FALSE on failure.
- *
- * @ingroup Elua
- */
-EAPI Eina_Bool elua_state_modules_setup(const Elua_State *es);
-
-/**
- * @brief Set up IO support for an Elua state.
- *
- * Elua provides its own loadfile based around mmap to replace the less
- * efficient Lua version. This function takes care of the setup.
+ * Finally, Elua provides its own loadfile based around mmap to replace the
+ * less efficient Lua version. This function takes care of the setup.
  *
  * @param[in] es The Elua state.
  * @return EINA_TRUE on success, EINA_FALSE on failure.
  *
  * @ingroup Elua
  */
-EAPI Eina_Bool elua_state_io_setup(const Elua_State *es);
+EAPI Eina_Bool elua_state_setup(Elua_State *es);
 
 /**
  * @brief Loads a file using Elua's own mmap-based IO.

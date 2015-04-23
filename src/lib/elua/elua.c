@@ -94,6 +94,8 @@ elua_state_free(Elua_State *es)
      }
    else if (es->cmods)
      eina_list_free(es->cmods);
+   EINA_LIST_FREE(es->lmods, data)
+     eina_stringshare_del(data);
    EINA_LIST_FREE(es->lincs, data)
      eina_stringshare_del(data);
    eina_stringshare_del(es->progname);
@@ -264,8 +266,8 @@ const luaL_reg gettextlib[] =
    { NULL, NULL }
 };
 
-EAPI Eina_Bool
-elua_state_i18n_setup(const Elua_State *es)
+static Eina_Bool
+_elua_state_i18n_setup(const Elua_State *es)
 {
 #ifdef ENABLE_NLS
    char *(*dgettextp)(const char*, const char*) = dgettext;
@@ -302,8 +304,8 @@ const luaL_reg _elua_cutillib[] =
    { NULL         , NULL              }
 };
 
-EAPI Eina_Bool
-elua_state_modules_setup(const Elua_State *es)
+static Eina_Bool
+_elua_state_modules_setup(const Elua_State *es)
 {
    char buf[PATH_MAX];
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
@@ -368,6 +370,42 @@ _elua_module_system_init(lua_State *L)
    lua_pushvalue(L, 4);
    lua_concat(L, 2);
    return 2;
+}
+
+EAPI Eina_Bool
+elua_state_setup(Elua_State *es)
+{
+   Eina_Stringshare *data;
+   Eina_Bool failed = EINA_FALSE;
+
+   if (!_elua_state_modules_setup(es))
+     return EINA_FALSE;
+   if (!_elua_state_i18n_setup(es))
+     return EINA_FALSE;
+   if (!_elua_state_io_setup(es))
+     return EINA_FALSE;
+
+   /* finally require the necessary modules */
+   EINA_LIST_FREE(es->lmods, data)
+     {
+        if (!failed)
+          {
+             if (!elua_state_require_ref_push(es))
+               {
+                  failed = EINA_TRUE;
+                  break;
+               }
+             lua_pushstring(es->luastate, data);
+             if (elua_util_error_report(es, lua_pcall(es->luastate, 1, 0, 0)))
+               {
+                  failed = EINA_TRUE;
+                  break;
+               }
+          }
+        eina_stringshare_del(data);
+     }
+
+   return EINA_TRUE;
 }
 
 /* Utility functions - these could be written using the other APIs */
@@ -435,7 +473,12 @@ elua_util_require(Elua_State *es, const char *libname)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(elua_state_require_ref_push(es), -1);
+   if (!elua_state_require_ref_push(es))
+     {
+        /* store stuff until things are correctly set up */
+        es->lmods = eina_list_append(es->lmods, eina_stringshare_add(libname));
+        return 0;
+     }
    lua_pushstring(es->luastate, libname);
    return elua_util_error_report(es, lua_pcall(es->luastate, 1, 0, 0));
 }

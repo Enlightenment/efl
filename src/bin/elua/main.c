@@ -54,9 +54,7 @@ static int
 elua_main(lua_State *L)
 {
    Eina_Bool   noenv   = EINA_FALSE;
-   Eina_List  *largs   = NULL;
    const char *coredir = NULL, *moddir = NULL, *appsdir = NULL;
-   char       *data    = NULL;
 
    struct Main_Data *m  = (struct Main_Data*)lua_touserdata(L, 1);
    Elua_State       *es = m->es;
@@ -70,7 +68,7 @@ elua_main(lua_State *L)
      switch (ch)
        {
         case 'h':
-          elua_print_help(elua_state_prog_name_get(es), stdout); goto success;
+          elua_print_help(elua_state_prog_name_get(es), stdout); return 0;
         case 'C':
           coredir = optarg; break;
         case 'M':
@@ -81,7 +79,7 @@ elua_main(lua_State *L)
         case 'I':
           if (!optarg[0]) continue;
           if (ch == 'l')
-            largs = eina_list_append(largs, optarg);
+            elua_util_require(es, optarg);
           else
             elua_state_include_path_add(es, optarg);
           break;
@@ -96,39 +94,36 @@ elua_main(lua_State *L)
    elua_state_dirs_set(es, coredir, moddir, appsdir);
    elua_state_dirs_fill(es, noenv);
 
-   if (!elua_state_modules_setup(es) || !elua_state_i18n_setup(es)
-    || !elua_state_io_setup(es))
-     goto error;
+   if (!elua_state_setup(es))
+     {
+        m->status = 1;
+        return 0;
+     }
 
    lua_gc(L, LUA_GCRESTART, 0);
 
    INF("elua lua state initialized");
 
-   EINA_LIST_FREE(largs, data)
-     if (elua_util_require(es, data)) goto error;
-
    if (optind < argc)
      {
         int quit = 0;
         if (elua_util_script_run(es, argc, argv, optind, &quit))
-          goto error;
+          {
+             m->status = 1;
+             return 0;
+          }
         if (quit)
-          goto success;
+          return 0;
      }
    else
      {
         ERR("nothing to run");
-        goto error;
+        m->status = 1;
+        return 0;
      }
 
    ecore_main_loop_begin();
 
-   goto success;
-
-error:
-   m->status = 1;
-success:
-   if (largs) eina_list_free(largs);
    return 0;
 }
 
