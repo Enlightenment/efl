@@ -114,7 +114,7 @@ class Elm.Gesture_Layer (Elm.Widget)
             Elm_Gesture_Type idx; /*@ The gesture you would like to track its state. */
             Elm_Gesture_State cb_type; /*@ what event this callback tracks: START, MOVE, END, ABORT. */
             Elm_Gesture_Event_Cb cb; /*@ callback function pointer. */
-            void *data; /*@ user info to be sent to callback (usually, Smart Data) */
+            void *data @optional; /*@ user info to be sent to callback (usually, Smart Data) */
          }
       }
    }
@@ -148,7 +148,7 @@ class Elm.Gesture_Layer (Elm.Widget)
             @in Elm_Gesture_Type idx; /*@ The gesture you would like to track its state. */
             @in Elm_Gesture_State cb_type; /*@ what event this callback tracks: START, MOVE, END, ABORT. */
             @in Elm_Gesture_Event_Cb cb; /*@ callback function pointer. */
-            @in void *data; /*@ user info for the callback (usually, Smart Data) */
+            @in void *data @nullable; /*@ user info for the callback (usually, Smart Data) */
          }
       }
       cb_add {
@@ -173,7 +173,7 @@ class Elm.Gesture_Layer (Elm.Widget)
             @in Elm_Gesture_Type idx; /*@ The gesture you would like to track its state. */
             @in Elm_Gesture_State cb_type; /*@ what event this callback tracks: START, MOVE, END, ABORT. */
             @in Elm_Gesture_Event_Cb cb; /*@ callback function pointer. */
-            @in void *data; /*@ user info to be sent to callback (usually, Smart Data) */
+            @in void *data @optional; /*@ user info to be sent to callback (usually, Smart Data) */
          }
       }
    }

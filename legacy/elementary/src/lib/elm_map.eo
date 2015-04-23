@@ -280,7 +280,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @since 1.7
 
             @ingroup Map */
-            return: list *;
+            return: list<Elm_Map_Overlay *> *;
          }
       }
       tile_load_status {
@@ -384,8 +384,8 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             @in double flat; /*@ The start latitude. */
             @in double tlon; /*@ The destination longitude. */
             @in double tlat; /*@ The destination latitude. */
-            @in Elm_Map_Route_Cb route_cb; /*@ The route to be traced. */
-            @in void *data; /*@ A pointer of user data. */
+            @in Elm_Map_Route_Cb route_cb @optional; /*@ The route to be traced. */
+            @in void *data @optional; /*@ A pointer of user data. */
          }
       }
       track_add {
@@ -601,11 +601,11 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          @ingroup Map */
          return: Elm_Map_Name *;
          params {
-            @in const(char)* address; /*@ The address. */
+            @in const(char)* address @optional; /*@ The address. */
             @in double lon; /*@ The longitude. */
             @in double lat; /*@ The latitude. */
-            @in Elm_Map_Name_Cb name_cb; /*@ The callback function. */
-            @in void *data; /*@ The user callback data. */
+            @in Elm_Map_Name_Cb name_cb @optional; /*@ The callback function. */
+            @in void *data @optional; /*@ The user callback data. */
          }
       }
       name_search @const {
@@ -620,8 +620,8 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
          @ingroup Map */
          params {
             @in const(char)* address; /*@ The address. */
-            @in Elm_Map_Name_List_Cb name_cb; /*@ The callback function. */
-            @in void *data; /*@ The user callback data. */
+            @in Elm_Map_Name_List_Cb name_cb @optional; /*@ The callback function. */
+            @in void *data @optional; /*@ The user callback data. */
          }
       }
       region_bring_in {

@@ -297,8 +297,8 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: bool;
          params {
-            @in const(char)* part; /*@ The TEXT part where to set the text */
-            @in const(char)* text; /*@ The text to set */
+            @in const(char)* part @nullable; /*@ The TEXT part where to set the text */
+            @in const(char)* text @nullable; /*@ The text to set */
          }
       }
       text_get @const {
@@ -330,7 +330,7 @@ class Elm.Layout (Elm.Container, Efl.File)
             @in const(char)* source; /*@ The signal's source string */
             @in Edje_Signal_Cb func; /*@ The callback function to be executed when the signal is
             emitted. */
-            @in void *data; /*@ A pointer to data to pass in to the callback function. */
+            @in void *data @optional; /*@ A pointer to data to pass in to the callback function. */
          }
       }
       part_cursor_set {
@@ -381,7 +381,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          return: bool;
          params {
             @in const(char)* part; /*@ the box part to insert. */
-            @in Evas_Object *child; /*@ the child object to insert into box. */
+            @in own(Evas_Object *) child; /*@ the child object to insert into box. */
             @in const(Evas_Object)* reference; /*@ another reference object to insert before in box. */
          }
       }
@@ -406,7 +406,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          return: bool;
          params {
             @in const(char)* part; /*@ the box part to insert. */
-            @in Evas_Object *child; /*@ the child object to insert into box. */
+            @in own(Evas_Object *) child; /*@ the child object to insert into box. */
             @in uint pos; /*@ the numeric position >=0 to insert the child. */
          }
       }
@@ -466,7 +466,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          return: bool;
          params {
             @in const(char)* part; /*@ the box part to which the object will be appended. */
-            @in Evas_Object *child; /*@ the child object to append to box. */
+            @in own(Evas_Object *) child; /*@ the child object to append to box. */
          }
       }
       signal_callback_del {
@@ -528,7 +528,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          return: bool;
          params {
             @in const(char)* part; /*@ the box part to prepend. */
-            @in Evas_Object *child; /*@ the child object to prepend to box. */
+            @in own(Evas_Object *) child; /*@ the child object to prepend to box. */
          }
       }
       signal_emit {
@@ -577,7 +577,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          return: bool;
          params {
             @in const(char)* part; /*@ the box part to pack child. */
-            @in Evas_Object *child; /*@ the child object to pack into table. */
+            @in own(Evas_Object *) child; /*@ the child object to pack into table. */
             @in ushort col; /*@ the column to which the child should be added. (>= 0) */
             @in ushort row; /*@ the row to which the child should be added. (>= 0) */
             @in ushort colspan; /*@ how many columns should be used to store this object. (>=

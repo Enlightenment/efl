@@ -25,7 +25,7 @@ class Elm.Naviframe_Item(Elm.Widget_Item)
                  */
              }
              values {
-                 const (char) *style; /*@ The current item style name. @c NULL would be default */
+                 const (char) *style @nullable; /*@ The current item style name. @c NULL would be default */
              }
         }
    }
@@ -64,8 +64,8 @@ class Elm.Naviframe_Item(Elm.Widget_Item)
              @ingroup Naviframe
             */
             params {
-                @in Eina_Bool enable; /*@ If @c EINA_TRUE, title area will be enabled, disabled otherwise */
-                @in Eina_Bool transition; /*@ If @c EINA_TRUE, transition effect of the title will be visible, invisible otherwise */
+                @in bool enable; /*@ If @c EINA_TRUE, title area will be enabled, disabled otherwise */
+                @in bool transition; /*@ If @c EINA_TRUE, transition effect of the title will be visible, invisible otherwise */
              }
         }
       promote {
@@ -93,8 +93,8 @@ class Elm.Naviframe_Item(Elm.Widget_Item)
              @ingroup Naviframe
              */
              params {
-                  @in Elm_Naviframe_Item_Pop_Cb func; /*@ The callback function */
-                  @in void *data; /*@ Data to be passed to func call */
+                  @in Elm_Naviframe_Item_Pop_Cb func @nullable; /*@ The callback function */
+                  @in void *data @optional; /*@ Data to be passed to func call */
              }
         }
    }

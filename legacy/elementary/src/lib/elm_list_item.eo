@@ -25,8 +25,8 @@ class Elm.List_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Eina_Bool setting; /*@ @c EINA_TRUE means item @p it is a separator. @c EINA_FALSE
-                                         indicates it's not. */
+                     bool setting; /*@ @c EINA_TRUE means item @p it is a separator. @c EINA_FALSE
+                                    indicates it's not. */
                 }
            }
            selected {
@@ -62,7 +62,7 @@ class Elm.List_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Eina_Bool selected; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
+                     bool selected; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
                 }
            }
            object {

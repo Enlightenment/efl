@@ -52,7 +52,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             @ingroup Hoversel */
          }
          values {
-            Evas_Object *parent; /*@ The parent to use */
+            Evas_Object *parent @nullable; /*@ The parent to use */
          }
       }
       expanded {
@@ -77,7 +77,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             @see elm_hoversel_item_add()
 
             @ingroup Hoversel */
-            return: const(list)*;
+            return: const(list<Elm_Object_Item *>)*;
          }
       }
    }
@@ -128,13 +128,13 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* label; /*@ The text label to use for the item (NULL if not desired) */
-            @in const(char)* icon_file; /*@ An image file path on disk to use for the icon or standard
+            @in const(char)* label @optional; /*@ The text label to use for the item (NULL if not desired) */
+            @in const(char)* icon_file @optional; /*@ An image file path on disk to use for the icon or standard
             icon name (NULL if not desired) */
             @in Elm_Icon_Type icon_type; /*@ The icon type if relevant */
-            @in Evas_Smart_Cb func; /*@ Convenience function to call when this item is selected. The last
+            @in Evas_Smart_Cb func @optional; /*@ Convenience function to call when this item is selected. The last
             parameter @p event_info of @c func is the selected item pointer. */
-            @in const(void)* data; /*@ Data to pass to item-related functions */
+            @in const(void)* data @optional; /*@ Data to pass to item-related functions */
          }
       }
    }

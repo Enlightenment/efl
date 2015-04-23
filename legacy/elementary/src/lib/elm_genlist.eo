@@ -440,7 +440,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @see elm_genlist_realized_items_update()
 
             @ingroup Genlist */
-            return: list *;
+            return: free(own(list<Elm_Gen_Item *> *), eina_list_free) @warn_unused;
          }
       }
       selected_items {
@@ -464,7 +464,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @see elm_genlist_selected_item_get()
 
             @ingroup Genlist */
-            return: const(list)*;
+            return: const(list<Elm_Object_Item *>)*;
          }
       }
       last_item {
@@ -502,11 +502,11 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          params {
             @in const(Elm_Genlist_Item_Class)* itc; /*@ The item class for the item */
             @in const(void)* data; /*@ The item data */
-            @in Elm_Object_Item *parent; /*@ The parent item, or NULL if none */
+            @in Elm_Object_Item *parent @nullable; /*@ The parent item, or NULL if none */
             @in Elm_Object_Item *before_it; /*@ The item to place this new one before. */
             @in Elm_Genlist_Item_Type type; /*@ Item type */
-            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is selected */
-            @in const(void)* func_data; /*@ Data passed to @p func above. */
+            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when the item is selected */
+            @in const(void)* func_data @optional; /*@ Data passed to @p func above. */
          }
       }
       realized_items_update {
@@ -545,11 +545,11 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          params {
             @in const(Elm_Genlist_Item_Class)* itc; /*@ The item class for the item */
             @in const(void)* data; /*@ The item data */
-            @in Elm_Object_Item *parent; /*@ The parent item, or NULL if none */
+            @in Elm_Object_Item *parent @nullable; /*@ The parent item, or NULL if none */
             @in Elm_Object_Item *after_it; /*@ The item to place this new one after. */
             @in Elm_Genlist_Item_Type type; /*@ Item type */
-            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is selected */
-            @in const(void)* func_data; /*@ Data passed to @p func above. */
+            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when the item is selected */
+            @in const(void)* func_data @optional; /*@ Data passed to @p func above. */
          }
       }
       at_xy_item_get @const {
@@ -607,10 +607,10 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          params {
             @in const(Elm_Genlist_Item_Class)* itc; /*@ The item class for the item */
             @in const(void)* data; /*@ The item data */
-            @in Elm_Object_Item *parent; /*@ The parent item, or NULL if none */
+            @in Elm_Object_Item *parent @nullable; /*@ The parent item, or NULL if none */
             @in Elm_Genlist_Item_Type type; /*@ Item type */
-            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is selected */
-            @in const(void)* func_data; /*@ Data passed to @p func above. */
+            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when the item is selected */
+            @in const(void)* func_data @optional; /*@ Data passed to @p func above. */
          }
       }
       clear {
@@ -644,10 +644,10 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          params {
             @in const(Elm_Genlist_Item_Class)* itc; /*@ The item class for the item */
             @in const(void)* data; /*@ The item data */
-            @in Elm_Object_Item *parent; /*@ The parent item, or NULL if none */
+            @in Elm_Object_Item *parent @nullable; /*@ The parent item, or NULL if none */
             @in Elm_Genlist_Item_Type type; /*@ Item type */
-            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is selected */
-            @in const(void)* func_data; /*@ Data passed to @p func above. */
+            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when the item is selected */
+            @in const(void)* func_data @optional; /*@ Data passed to @p func above. */
          }
       }
       item_sorted_insert {
@@ -671,11 +671,11 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          params {
             @in const(Elm_Genlist_Item_Class)* itc; /*@ The item class for the item */
             @in const(void)* data; /*@ The item data */
-            @in Elm_Object_Item *parent; /*@ The parent item, or NULL if none */
+            @in Elm_Object_Item *parent @nullable; /*@ The parent item, or NULL if none */
             @in Elm_Genlist_Item_Type type; /*@ Item type */
             @in Eina_Compare_Cb comp; /*@ The function called for the sort */
-            @in Evas_Smart_Cb func; /*@ Convenience function called when item selected */
-            @in const(void)* func_data; /*@ Data passed to @p func above. */
+            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when item selected */
+            @in const(void)* func_data @optional; /*@ Data passed to @p func above. */
          }
       }
       search_by_text_item_get {
@@ -696,7 +696,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          return: Elm_Object_Item *;
          params {
-            @in Elm_Object_Item * item_to_search_from; /*@ Pointer to item to start search from. If NULL search will be started from the first item of the genlist. */
+            @in Elm_Object_Item * item_to_search_from @optional; /*@ Pointer to item to start search from. If NULL search will be started from the first item of the genlist. */
             @in const(char)* part_name; /*@ Name of the TEXT part of genlist item to search string in. */
             @in const(char)* pattern; /*@ The search pattern. */
             @in Elm_Glob_Match_Flags flags; /*@ Search flags */

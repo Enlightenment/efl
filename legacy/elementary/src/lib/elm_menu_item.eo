@@ -46,7 +46,7 @@ class Elm.Menu_Item(Elm.Widget_Item)
                  */
              }
              values {
-                 Eina_Bool selected; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
+                 bool selected; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
              }
         }
    }
@@ -96,7 +96,7 @@ class Elm.Menu_Item(Elm.Widget_Item)
 
              @ingroup Menu
              */
-             return: const (Eina_List) *; /*@ An Eina_List* of @p item's subitems */
+             return: const (list<Elm_Object_Item *>) *; /*@ An Eina_List* of @p item's subitems */
         }
      is_separator @const {
             /*@

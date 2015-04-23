@@ -89,7 +89,7 @@ class Elm.Glview (Elm.Widget)
             @ingroup GLView */
          }
          values {
-            Elm_GLView_Func_Cb func; /*@ The delete function to be registered. */
+            Elm_GLView_Func_Cb func @nullable; /*@ The delete function to be registered. */
          }
       }
       init_func {
@@ -105,7 +105,7 @@ class Elm.Glview (Elm.Widget)
             @ingroup GLView */
          }
          values {
-            Elm_GLView_Func_Cb func; /*@ The init function to be registered. */
+            Elm_GLView_Func_Cb func @nullable; /*@ The init function to be registered. */
          }
       }
       render_policy {
@@ -157,7 +157,7 @@ class Elm.Glview (Elm.Widget)
             @ingroup GLView */
          }
          values {
-            Elm_GLView_Func_Cb func; /*@ The render function to be registered. */
+            Elm_GLView_Func_Cb func @nullable; /*@ The render function to be registered. */
          }
       }
       gl_api {

@@ -82,7 +82,7 @@ class Elm.Datetime (Elm.Layout)
             /*@ Get the datetime format. */
          }
          values {
-            const(char)* fmt; /*@ The datetime format */
+            const(char)* fmt @nullable; /*@ The datetime format */
          }
       }
    }

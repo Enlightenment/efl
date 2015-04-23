@@ -46,7 +46,7 @@ mixin Elm_Interface_Atspi_Action ()
             /*@ Get list of available widget actions */
          }
          values {
-            list *actions; /*@ contains statically allocated strings */
+            list<Elm_Atspi_Action> *actions; /*@ contains statically allocated strings */
          }
       }
    }
@@ -64,7 +64,7 @@ mixin Elm_Interface_Atspi_Action ()
          params {
             @in  int id;
          }
-         return: char *;
+         return: own(char *) @warn_unused;
       }
    }
    implements {

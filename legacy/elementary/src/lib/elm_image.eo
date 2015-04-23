@@ -435,7 +435,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
          }
          values {
             const(Eina_File)* file; /*@ The handler to an Eina_File that will be used as image source */
-            const(char)* group; /*@ The group that the image belongs to, in case it's an
+            const(char)* group @optional; /*@ The group that the image belongs to, in case it's an
             EET (including Edje case) file. This can be used as a key inside
             evas image cache if this is a normal image file not eet file. */
          }
@@ -465,8 +465,8 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
          values {
             const(void)* img; /*@ The binary data that will be used as image source */
             size size; /*@ The size of binary data blob @p img */
-            const(char)* format; /*@ (Optional) expected format of @p img bytes */
-            const(char)* key; /*@ Optional indexing key of @p img to be passed to the
+            const(char)* format @optional; /*@ (Optional) expected format of @p img bytes */
+            const(char)* key @optional; /*@ Optional indexing key of @p img to be passed to the
             image loader (eg. if @p img is a memory-mapped EET file) */
          }
       }

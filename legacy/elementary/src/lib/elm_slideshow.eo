@@ -112,7 +112,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Slideshow */
          }
          values {
-            const(char)* transition; /*@ The new transition's name string */
+            const(char)* transition @nullable; /*@ The new transition's name string */
          }
       }
       loop {
@@ -201,7 +201,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             call to this function when changes happen.
 
             @ingroup Slideshow */
-            return: const(list)*;
+            return: const(list<Elm_Object_Item *>)*;
          }
       }
       transitions {
@@ -243,7 +243,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_slideshow_transition_set()
 
             @ingroup Slideshow */
-            return: const(list)*;
+            return: const(list<const(char)*>)*;
          }
       }
       count {
@@ -303,7 +303,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_slideshow_layout_set()
 
             @ingroup Slideshow */
-            return: const(list)*;
+            return: const(list<const(char)*>)*;
          }
       }
    }

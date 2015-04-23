@@ -82,10 +82,10 @@ class Elm.Segment_Control (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in Evas_Object *icon; /*@ The icon object to use for the left side of the item. An
+            @in Evas_Object *icon @optional; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). */
-            @in const(char)* label; /*@ The label of the item. */
+            @in const(char)* label @optional; /*@ The label of the item. */
             @in int idx; /*@ Item position. Value should be between 0 and items count. */
          }
       }
@@ -158,10 +158,10 @@ class Elm.Segment_Control (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in Evas_Object *icon; /*@ The icon object to use for the left side of the item. An
+            @in Evas_Object *icon @optional; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). */
-            @in const(char)* label; /*@ The label of the item.
+            @in const(char)* label @optional; /*@ The label of the item.
             Note that, NULL is different from empty string "". */
          }
       }

@@ -261,8 +261,8 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            Elm_Web_Window_Open func; /*@ The hook function to be called when a window is requested */
-            void *data; /*@ User data */
+            Elm_Web_Window_Open func @nullable; /*@ The hook function to be called when a window is requested */
+            void *data @optional; /*@ User data */
          }
       }
       dialog_file_selector_hook {
@@ -280,8 +280,8 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            Elm_Web_Dialog_File_Selector func; /*@ The callback function to be used */
-            void *data; /*@ User data */
+            Elm_Web_Dialog_File_Selector func @nullable; /*@ The callback function to be used */
+            void *data @optional; /*@ User data */
          }
       }
       dialog_confirm_hook {
@@ -298,8 +298,8 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            Elm_Web_Dialog_Confirm func; /*@ The callback function to be used */
-            void *data; /*@ User data */
+            Elm_Web_Dialog_Confirm func @nullable; /*@ The callback function to be used */
+            void *data @optional; /*@ User data */
          }
       }
       popup_selected {
@@ -333,8 +333,8 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            Elm_Web_Dialog_Prompt func; /*@ The callback function to be used */
-            void *data; /*@ User data */
+            Elm_Web_Dialog_Prompt func @nullable; /*@ The callback function to be used */
+            void *data @optional; /*@ User data */
          }
       }
       dialog_alert_hook {
@@ -351,8 +351,8 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            Elm_Web_Dialog_Alert func; /*@ The callback function to be used */
-            void *data; /*@ User data */
+            Elm_Web_Dialog_Alert func @nullable; /*@ The callback function to be used */
+            void *data @optional; /*@ User data */
          }
       }
       forward_possible {
@@ -426,7 +426,7 @@ class Elm.Web (Elm.Widget)
             error occurred
 
             @ingroup Web */
-            return: const(char)*;
+            return: own(const(char)*) @warn_unused;
          }
       }
       title {
@@ -441,7 +441,7 @@ class Elm.Web (Elm.Widget)
             failure
 
             @ingroup Web */
-            return: const(char)*;
+            return: free(own(const(char)*), eina_stringshare_del) @warn_unused;
          }
       }
    }
@@ -503,8 +503,8 @@ class Elm.Web (Elm.Widget)
          return: bool;
          params {
             @in const(char)* html; /*@ HTML data to load */
-            @in const(char)* base_url; /*@ Base URL used for relative paths to external objects (optional) */
-            @in const(char)* unreachable_url; /*@ URL that could not be reached (optional) */
+            @in const(char)* base_url @optional; /*@ Base URL used for relative paths to external objects (optional) */
+            @in const(char)* unreachable_url @optional; /*@ URL that could not be reached (optional) */
          }
       }
       text_search @const {

@@ -17,7 +17,7 @@ class Elm_App_Server (Eo.Base)
             /*@ Return a iterator with all views of application */
          }
          values {
-            iterator *ret; /*@ Iterator with all views of application, you must free iterator after use */
+            free(own(iterator<Elm_App_Server_View *> *), eina_iterator_free) ret; /*@ Iterator with all views of application, you must free iterator after use */
          }
       }
       path {
@@ -77,7 +77,7 @@ class Elm_App_Server (Eo.Base)
       title_set {
          /*@ Set a title to application. */
          params {
-            @in const(char)* title; /*@ title of application */
+            @in const(char)* title @nullable; /*@ title of application */
          }
       }
       title_get {

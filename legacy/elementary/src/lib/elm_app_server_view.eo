@@ -36,7 +36,7 @@ class Elm_App_Server_View (Eo.Base)
          get {
          }
          values {
-            const(char)* title;
+            const(char)* title @nullable;
          }
       }
       window {
@@ -87,7 +87,7 @@ class Elm_App_Server_View (Eo.Base)
          /*@ Class constructor of elm_app_server_view */
          legacy: null;
          params {
-            @in const(char)* id; /*@ identifier of view */
+            @in const(char)* id @nullable; /*@ identifier of view */
          }
       }
       pause {

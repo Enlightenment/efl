@@ -325,7 +325,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            const(char)* fmt; /*@ The format string for the label display. */
+            const(char)* fmt @nullable; /*@ The format string for the label display. */
          }
       }
    }

@@ -18,7 +18,7 @@ class Elm.Multibuttonentry_Item(Elm.Widget_Item)
                  */
              }
              values {
-                 Eina_Bool selected; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
+                 bool selected; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
              }
         }
    }

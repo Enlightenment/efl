@@ -341,7 +341,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb scroll_up_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb scroll_up_cb @nullable; /*@ The callback */
          }
       }
       hbar_drag_cb {
@@ -353,7 +353,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb hbar_drag_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb hbar_drag_cb @nullable; /*@ The callback */
          }
       }
       drag_start_cb {
@@ -365,7 +365,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb drag_start_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb drag_start_cb @nullable; /*@ The callback */
          }
       }
       freeze {
@@ -381,7 +381,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ When the viewport is resized, the callback is called. */
          }
          values {
-            Elm_Interface_Scrollable_Resize_Cb viewport_resize_cb;
+            Elm_Interface_Scrollable_Resize_Cb viewport_resize_cb @nullable;
          }
       }
       scroll_left_cb {
@@ -393,7 +393,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb scroll_left_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb scroll_left_cb @nullable; /*@ The callback */
          }
       }
       vbar_press_cb {
@@ -405,7 +405,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb vbar_press_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb vbar_press_cb @nullable; /*@ The callback */
          }
       }
       hbar_press_cb {
@@ -417,7 +417,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb hbar_press_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb hbar_press_cb @nullable; /*@ The callback */
          }
       }
       hbar_unpress_cb {
@@ -429,7 +429,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb hbar_unpress_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb hbar_unpress_cb @nullable; /*@ The callback */
          }
       }
       drag_stop_cb {
@@ -442,7 +442,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb drag_stop_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb drag_stop_cb @nullable; /*@ The callback */
          }
       }
       extern_pan {
@@ -450,7 +450,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Evas_Object *pan;
+            Evas_Object *pan @nullable;
          }
       }
       page_change_cb {
@@ -462,7 +462,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb page_change_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb page_change_cb @nullable; /*@ The callback */
          }
       }
       hold {
@@ -482,7 +482,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb animate_start_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb animate_start_cb @nullable; /*@ The callback */
          }
       }
       scroll_down_cb {
@@ -494,7 +494,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb scroll_down_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb scroll_down_cb @nullable; /*@ The callback */
          }
       }
       page_relative {
@@ -515,7 +515,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb scroll_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb scroll_cb @nullable; /*@ The callback */
          }
       }
       animate_stop_cb {
@@ -527,7 +527,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb animate_stop_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb animate_stop_cb @nullable; /*@ The callback */
          }
       }
       mirrored {
@@ -543,7 +543,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Elm_Interface_Scrollable_Min_Limit_Cb min_limit_cb;
+            Elm_Interface_Scrollable_Min_Limit_Cb min_limit_cb @nullable;
          }
       }
       scroll_right_cb {
@@ -555,7 +555,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb scroll_right_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb scroll_right_cb @nullable; /*@ The callback */
          }
       }
       content {
@@ -563,7 +563,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Evas_Object *content;
+            Evas_Object *content @nullable;
          }
       }
       edge_left_cb {
@@ -575,7 +575,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb edge_left_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb edge_left_cb @nullable; /*@ The callback */
          }
       }
       vbar_drag_cb {
@@ -587,7 +587,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb vbar_drag_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb vbar_drag_cb @nullable; /*@ The callback */
          }
       }
       vbar_unpress_cb {
@@ -599,7 +599,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb vbar_unpress_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb vbar_unpress_cb @nullable; /*@ The callback */
          }
       }
       edge_bottom_cb {
@@ -611,7 +611,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb edge_bottom_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb edge_bottom_cb @nullable; /*@ The callback */
          }
       }
       edge_right_cb {
@@ -623,7 +623,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb edge_right_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb edge_right_cb @nullable; /*@ The callback */
          }
       }
       edge_top_cb {
@@ -635,7 +635,7 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            Elm_Interface_Scrollable_Cb edge_top_cb; /*@ The callback */
+            Elm_Interface_Scrollable_Cb edge_top_cb @nullable; /*@ The callback */
          }
       }
       objects {

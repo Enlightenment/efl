@@ -237,7 +237,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            const(char)* style; /*@ The style to use for the underlying hover */
+            const(char)* style @nullable; /*@ The style to use for the underlying hover */
          }
       }
       single_line {
@@ -392,7 +392,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
          values {
-            Evas_Object *parent; /*@ The object to use as parent for the hover */
+            Evas_Object *parent @nullable; /*@ The object to use as parent for the hover */
          }
       }
       prediction_allow {
@@ -737,7 +737,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @return The text pointed by the cursors.
 
             @ingroup Entry */
-            return: char *;
+            return: own(char *) @warn_unused;
          }
       }
       selection {
@@ -806,7 +806,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          params {
             @in Elm_Entry_Item_Provider_Cb func; /*@ The function called to provide the item object */
-            @in void *data; /*@ The data passed to @p func */
+            @in void *data @optional; /*@ The data passed to @p func */
          }
       }
       input_panel_show {
@@ -909,7 +909,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          params {
             @in Elm_Entry_Item_Provider_Cb func; /*@ The function called to provide the item object */
-            @in void *data; /*@ The data passed to @p func */
+            @in void *data @optional; /*@ The data passed to @p func */
          }
       }
       text_style_user_peek @const {
@@ -1073,7 +1073,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          params {
             @in Elm_Entry_Filter_Cb func; /*@ The filter function to remove */
-            @in void *data; /*@ The user data passed when adding the function */
+            @in void *data @optional; /*@ The user data passed when adding the function */
          }
       }
       item_provider_append {
@@ -1093,7 +1093,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          params {
             @in Elm_Entry_Item_Provider_Cb func; /*@ The function called to provide the item object */
-            @in void *data; /*@ The data passed to @p func */
+            @in void *data @optional; /*@ The data passed to @p func */
          }
       }
       markup_filter_append {
@@ -1113,7 +1113,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          params {
             @in Elm_Entry_Filter_Cb func; /*@ The function to use as text filter */
-            @in void *data; /*@ User data to pass to @p func */
+            @in void *data @optional; /*@ User data to pass to @p func */
          }
       }
       entry_append {
@@ -1149,11 +1149,11 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
          @ingroup Entry */
 
          params {
-            @in const(char)* label; /*@ The item's text label */
-            @in const(char)* icon_file; /*@ The item's icon file */
+            @in const(char)* label @optional; /*@ The item's text label */
+            @in const(char)* icon_file @optional; /*@ The item's icon file */
             @in Elm_Icon_Type icon_type; /*@ The item's icon type */
-            @in Evas_Smart_Cb func; /*@ The callback to execute when the item is clicked */
-            @in const(void)* data; /*@ The data to associate with the item for related functions */
+            @in Evas_Smart_Cb func @optional; /*@ The callback to execute when the item is clicked */
+            @in const(void)* data @optional; /*@ The data to associate with the item for related functions */
          }
       }
       markup_filter_prepend {
@@ -1167,7 +1167,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
 
          params {
             @in Elm_Entry_Filter_Cb func; /*@ The function to use as text filter */
-            @in void *data; /*@ User data to pass to @p func */
+            @in void *data @optional; /*@ User data to pass to @p func */
          }
       }
    }

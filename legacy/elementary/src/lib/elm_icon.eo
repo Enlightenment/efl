@@ -90,8 +90,8 @@ class Elm.Icon (Elm.Image)
             @ingroup Icon */
          }
          values {
-            const(char)* file; /*@ The path to file that will be used as icon image */
-            const(char)* group; /*@ The group that the icon belongs to an edje file */
+            const(char)* file @nullable; /*@ The path to file that will be used as icon image */
+            const(char)* group @optional; /*@ The group that the icon belongs to an edje file */
          }
       }
    }

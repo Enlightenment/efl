@@ -40,7 +40,7 @@ class Elm.Check (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Check */
          }
          values {
-            bool *statep; /*@ Pointer to the boolean to modify */
+            bool *statep @nullable; /*@ Pointer to the boolean to modify */
          }
       }
    }

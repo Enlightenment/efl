@@ -373,7 +373,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @see elm_gengrid_realized_items_update()
 
             @ingroup Gengrid */
-            return: list *;
+            return: free(own(list<Elm_Gen_Item *> *), eina_list_free) @warn_unused;
          }
       }
       first_item {
@@ -410,7 +410,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @see elm_gengrid_selected_item_get()
 
             @ingroup Gengrid */
-            return: const(list)*;
+            return: const(list<Elm_Object_Item *>)*;
          }
       }
       last_item {
@@ -483,9 +483,9 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
             @in const(void)* data; /*@ The item data. */
             @in Elm_Object_Item *relative; /*@ The item to place this new one before. */
-            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
+            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when the item is
             selected. */
-            @in const(void)* func_data; /*@ Data to be passed to @p func. */
+            @in const(void)* func_data @optional; /*@ Data to be passed to @p func. */
          }
       }
       realized_items_update {
@@ -524,9 +524,9 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
             @in const(void)* data; /*@ The item data. */
             @in Elm_Object_Item *relative; /*@ The item to place this new one after. */
-            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
+            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when the item is
             selected. */
-            @in const(void)* func_data; /*@ Data to be passed to @p func. */
+            @in const(void)* func_data @optional; /*@ Data to be passed to @p func. */
          }
       }
       items_count @const {
@@ -588,9 +588,9 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
          params {
             @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
             @in const(void)* data; /*@ The item data. */
-            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
+            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when the item is
             selected. */
-            @in const(void)* func_data; /*@ Data to be passed to @p func. */
+            @in const(void)* func_data @optional; /*@ Data to be passed to @p func. */
          }
       }
       item_prepend {
@@ -612,9 +612,9 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
          params {
             @in const(Elm_Gengrid_Item_Class)* itc; /*@ The item class for the item. */
             @in const(void)* data; /*@ The item data. */
-            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is
+            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when the item is
             selected. */
-            @in const(void)* func_data; /*@ Data to be passed to @p func. */
+            @in const(void)* func_data @optional; /*@ Data to be passed to @p func. */
          }
       }
       clear {
@@ -653,8 +653,8 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
             @in const(void)* data; /*@ The item data. */
             @in Eina_Compare_Cb comp; /*@ User defined comparison function that defines the sort order
             based on gengrid item and its data. */
-            @in Evas_Smart_Cb func; /*@ Convenience function called when the item is selected. */
-            @in const(void)* func_data; /*@ Data to be passed to @p func. */
+            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when the item is selected. */
+            @in const(void)* func_data @optional; /*@ Data to be passed to @p func. */
          }
       }
       search_by_text_item_get {
@@ -675,7 +675,7 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in Elm_Object_Item *item_to_search_from; /*@ Pointer to item to start search from. If NULL search will be started from the first item of the gengrid. */
+            @in Elm_Object_Item *item_to_search_from @optional; /*@ Pointer to item to start search from. If NULL search will be started from the first item of the gengrid. */
             @in const(char) *part_name; /*@ Name of the TEXT part of gengrid item to search string in. */
             @in const(char) *pattern; /*@ The search pattern. */
             @in Elm_Glob_Match_Flags flags; /*@ Search flags */

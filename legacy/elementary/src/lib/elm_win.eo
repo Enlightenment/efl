@@ -307,7 +307,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            const(char)* style; /*@ The style to set */
+            const(char)* style @nullable; /*@ The style to set */
          }
       }
       borderless {
@@ -538,7 +538,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            Evas_Object *icon @const_get; /*@ The Evas image object to use for an icon */
+            Evas_Object *icon @const_get @nullable; /*@ The Evas image object to use for an icon */
          }
       }
       quickpanel_priority_minor {
@@ -1247,7 +1247,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
 
          params {
             @in Elm_Illume_Command command; /*@ The command to send */
-            @in void *params; /*@ Optional parameters for the command */
+            @in void *params @optional; /*@ Optional parameters for the command */
          }
       }
       activate {

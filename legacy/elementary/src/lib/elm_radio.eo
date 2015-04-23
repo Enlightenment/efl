@@ -64,7 +64,7 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Radio */
          }
          values {
-            int *valuep; /*@ Pointer to the integer to modify */
+            int *valuep @nullable; /*@ Pointer to the integer to modify */
          }
       }
       selected_object {

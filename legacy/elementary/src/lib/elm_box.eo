@@ -135,9 +135,9 @@ class Elm.Box (Elm.Widget)
             @ingroup Box */
          }
          values {
-            Evas_Object_Box_Layout cb; /*@ The callback function used for layout */
-            const(void)* data; /*@ Data that will be passed to layout function */
-            Ecore_Cb free_data; /*@ Function called to free @p data */
+            Evas_Object_Box_Layout cb @nullable; /*@ The callback function used for layout */
+            const(void)* data @optional; /*@ Data that will be passed to layout function */
+            Ecore_Cb free_data @optional; /*@ Function called to free @p data */
          }
       }
       children {
@@ -151,7 +151,7 @@ class Elm.Box (Elm.Widget)
             You must free this list with eina_list_free() once you are done with it.
 
             @ingroup Box */
-            return: own(list<Evas_Object*>*);
+            return: free(own(list<Evas_Object*>*), eina_list_free) @warn_unused;
          }
       }
    }

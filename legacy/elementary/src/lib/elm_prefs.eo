@@ -48,7 +48,7 @@ class Elm.Prefs (Elm.Widget, Efl.File)
             @since 1.8 */
          }
          values {
-            Elm_Prefs_Data *data; /*@ A valid prefs_data handle */
+            Elm_Prefs_Data *data @nullable; /*@ A valid prefs_data handle */
          }
       }
       autosave {

@@ -150,9 +150,9 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          return: Elm_Object_Item *;
          params {
             @in const(char)* label; /*@ The Label of the new item */
-            @in Evas_Object *icon; /*@ Icon to be set on new item */
-            @in Evas_Smart_Cb func; /*@ Convenience function called when item selected */
-            @in const(void)* data; /*@ Data passed to @p func above */
+            @in Evas_Object *icon @optional; /*@ Icon to be set on new item */
+            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when item selected */
+            @in const(void)* data @optional; /*@ Data passed to @p func above */
          }
       }
    }

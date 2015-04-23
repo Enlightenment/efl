@@ -98,7 +98,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Eina_Bool selected; /*@ The selected state */
+                     bool selected; /*@ The selected state */
                 }
            }
            icon {
@@ -194,7 +194,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Eina_Bool separator;
+                     bool separator;
                 }
            }
            menu {
@@ -246,7 +246,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      return: bool;
                 }
                 values {
-                     Elm_Toolbar_Item_State *state;
+                     Elm_Toolbar_Item_State *state @nullable;
                 }
            }
       }
@@ -309,8 +309,8 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                 params {
                      @in const (char) *icon; /*@ A string with icon name or the absolute path of an image file. */
                      @in const (char) *label; /*@ The label of the new state. */
-                     @in Evas_Smart_Cb func; /*@ The function to call when the item is clicked when this * state is selected. */
-                     @in const (void) *data; /*@ The data to associate with the state. */
+                     @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is clicked when this * state is selected. */
+                     @in const (void) *data @optional; /*@ The data to associate with the state. */
                 }
                 return: Elm_Toolbar_Item_State *; /*@ The toolbar item state, or @c NULL upon failure. */
            }
@@ -409,7 +409,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                  @ingroup Toolbar
                  */
                 params {
-                     @in Eina_Bool menu; /*@ If @c EINA_TRUE, @p item will opens a menu when selected. */
+                     @in bool menu; /*@ If @c EINA_TRUE, @p item will opens a menu when selected. */
                 }
            }
       }

@@ -32,8 +32,8 @@ interface Elm_Interface_Atspi_Text ()
                                    to given granularity. -1 in case of error. */
          }
          values {
-            char *string; /*@ Newly allocated UTF-8 encoded string.
-                            Must be free by a user. */
+            own(char *) string; /*@ Newly allocated UTF-8 encoded string.
+                                  Must be free by a user. */
          }
       }
       text @protected {
@@ -45,7 +45,7 @@ interface Elm_Interface_Atspi_Text ()
             int end_offset; /*@ End offset of text. */
          }
          values {
-            char *text; /*@ UTF-8 encoded text. */
+            own(char *) text; /*@ UTF-8 encoded text. */
          }
       }
       caret_offset @protected {
@@ -73,7 +73,7 @@ interface Elm_Interface_Atspi_Text ()
                                     is set. */
          }
          values {
-            char *value; /* Value of text attribute. Should be free() */
+            own(char *) value; /* Value of text attribute. Should be free() */
          }
       }
       attributes @protected {
@@ -85,14 +85,14 @@ interface Elm_Interface_Atspi_Text ()
             int *end_offset;
          }
          values {
-            own(list*) attributes;
+            own(list<own(Elm_Atspi_Text_Attribute *)> *) attributes;
          }
       }
       default_attributes @protected {
          get {
          }
          values {
-            own(list*) attributes;
+            own(list<own(Elm_Atspi_Text_Attribute *)>*) attributes;
          }
       }
       character_extents @protected {
@@ -136,7 +136,7 @@ interface Elm_Interface_Atspi_Text ()
             Elm_Atspi_Text_Clip_Type yclip;
          }
          values {
-            list *ranges;
+            own(list<own(Elm_Atspi_Text_Range *)> *) ranges;
          }
       }
       range_extents @protected {

@@ -82,8 +82,8 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
 
            @ingroup Photo */
          params {
-            @in const(char)* file; /*@ The path to file that will be used as thumbnail. */
-            @in const(char)* group; /*@ The key used in case of an EET file. */
+            @in const(char)* file @nullable; /*@ The path to file that will be used as thumbnail. */
+            @in const(char)* group @optional; /*@ The key used in case of an EET file. */
          }
       }
    }

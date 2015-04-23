@@ -8,7 +8,7 @@ class Elm_App_Client (Eo.Base)
             /*@ Return a iterator with all views of application. */
          }
          values {
-            iterator *ret; /*@ The iterator with all views, must be freed after use */
+            free(own(iterator<Elm_App_Client_View *> *), eina_iterator_free) ret; /*@ The iterator with all views, must be freed after use */
          }
       }
       package {
@@ -37,9 +37,9 @@ class Elm_App_Client (Eo.Base)
       view_open {
          /*@ Open an application view. */
          params {
-            @in Eina_Value *args; /*@ an array of */
-            @in Elm_App_Client_Open_View_Cb view_open_cb; /*@ callback to be called when view open */
-            @in const(void)* data; /*@ calback user data */
+            @in Eina_Value *args @optional; /*@ an array of */
+            @in Elm_App_Client_Open_View_Cb view_open_cb @optional; /*@ callback to be called when view open */
+            @in const(void)* data @optional; /*@ calback user data */
          }
          return: Elm_App_Client_Pending *; /* handler to cancel the view opening if it takes to long */
       }

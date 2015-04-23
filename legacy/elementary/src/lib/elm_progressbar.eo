@@ -199,7 +199,7 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            const(char)* units; /*@ The format string for @p obj's units label */
+            const(char)* units @nullable; /*@ The format string for @p obj's units label */
          }
       }
       unit_format_function {
@@ -216,8 +216,8 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            progressbar_func_type func; /*@ The unit format function */
-            progressbar_freefunc_type free_func; /*@ The freeing function for the format string. */
+            progressbar_func_type func @nullable; /*@ The unit format function */
+            progressbar_freefunc_type free_func @optional; /*@ The freeing function for the format string. */
          }
       }
    }

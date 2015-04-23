@@ -135,9 +135,9 @@ class Elm.Flipselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          return: Elm_Object_Item *;
          params {
             @in const(char)* label; /*@ The (text) label of the new item */
-            @in Evas_Smart_Cb func; /*@ Convenience callback function to take place when
+            @in Evas_Smart_Cb func @optional; /*@ Convenience callback function to take place when
             item is selected */
-            @in void *data; /*@ Data passed to @p func, above */
+            @in void *data @optional; /*@ Data passed to @p func, above */
          }
       }
       flip_next {
@@ -174,9 +174,9 @@ class Elm.Flipselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          return: Elm_Object_Item *;
          params {
             @in const(char)* label; /*@ The (text) label of the new item */
-            @in Evas_Smart_Cb func; /*@ Convenience callback function to take place when
+            @in Evas_Smart_Cb func @optional; /*@ Convenience callback function to take place when
             item is selected */
-            @in const(void)* data; /*@ Data passed to @p func, above */
+            @in const(void)* data @optional; /*@ Data passed to @p func, above */
          }
       }
       flip_prev {

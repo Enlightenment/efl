@@ -105,7 +105,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            const(char)* indicator; /*@ The format string for the indicator display. */
+            const(char)* indicator @nullable; /*@ The format string for the indicator display. */
          }
       }
       inverted {
@@ -241,7 +241,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            const(char)* units; /*@ The format string for the unit display. */
+            const(char)* units @nullable; /*@ The format string for the unit display. */
          }
       }
       indicator_show_on_focus {
@@ -367,8 +367,8 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            slider_func_type func; /*@ The indicator format function. */
-            slider_freefunc_type free_func; /*@ The freeing function for the format string. */
+            slider_func_type func @nullable; /*@ The indicator format function. */
+            slider_freefunc_type free_func @nullable; /*@ The freeing function for the format string. */
          }
       }
       units_format_function {
@@ -383,8 +383,8 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            slider_func_type func; /*@ The units format function. */
-            slider_freefunc_type free_func; /*@ The freeing function for the format string. */
+            slider_func_type func @nullable; /*@ The units format function. */
+            slider_freefunc_type free_func @nullable; /*@ The freeing function for the format string. */
          }
       }
    }

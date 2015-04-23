@@ -276,8 +276,8 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            const(char)* file; /*@ Pointer to thumb path. */
-            const(char)* key; /*@ Pointer to thumb key. */
+            const(char)* file @optional; /*@ Pointer to thumb path. */
+            const(char)* key @optional; /*@ Pointer to thumb key. */
          }
       }
    }

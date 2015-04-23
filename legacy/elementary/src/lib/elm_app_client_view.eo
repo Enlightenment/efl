@@ -90,22 +90,22 @@ class Elm_App_Client_View (Eo.Base)
       pause {
          /*@ Pause view */
          params {
-            @in Elm_App_Client_View_Cb cb; /*@ callback to be called when view was paused */
-            @in const(void)* data; /*@ callback user data */
+            @in Elm_App_Client_View_Cb cb @optional; /*@ callback to be called when view was paused */
+            @in const(void)* data @optional; /*@ callback user data */
          }
       }
       resume {
          /*@ Resume view */
          params {
-            @in Elm_App_Client_View_Cb cb; /*@ callback to be called when view was resumed */
-            @in const(void)* data; /*@ callback user data */
+            @in Elm_App_Client_View_Cb cb @optional; /*@ callback to be called when view was resumed */
+            @in const(void)* data @optional; /*@ callback user data */
          }
       }
       close {
          /*@ Close view */
          params {
-            @in Elm_App_Client_View_Cb cb; /*@ callback to be called when view was closed */
-            @in const(void)* data; /*@ callback user data */
+            @in Elm_App_Client_View_Cb cb @optional; /*@ callback to be called when view was closed */
+            @in const(void)* data @optional; /*@ callback user data */
          }
       }
    }

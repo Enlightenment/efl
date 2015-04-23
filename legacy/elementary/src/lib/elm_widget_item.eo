@@ -160,9 +160,9 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                       */
                 }
                 values {
-                     Eina_Bool engine_only; /* Use @c EINA_TRUE to have cursors looked for only
-                                               on those provided by the rendering engine, @c EINA_FALSE
-                                               to have them searched on the widget's theme, as well. */
+                     bool engine_only; /* Use @c EINA_TRUE to have cursors looked for only
+                                          on those provided by the rendering engine, @c EINA_FALSE
+                                          to have them searched on the widget's theme, as well. */
                 }
            }
            part_content {
@@ -191,7 +191,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                       */
                 }
                 keys {
-                     const (char) *part; /*@ The content part name  (NULL for the default content) */
+                     const (char) *part @nullable; /*@ The content part name  (NULL for the default content) */
                 }
                 values {
                      Evas_Object *content; /*@ The content of the object item */
@@ -217,7 +217,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                       */
                 }
                 keys {
-                     const (char) *part; /*@ The text part name (NULL for the default label) */
+                     const (char) *part @nullable; /*@ The text part name (NULL for the default label) */
                 }
                 values {
                      const (char) *label; /*@ Text of the label */
@@ -261,7 +261,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                       */
                 }
                 values {
-                     Eina_Bool focused; /*@ The focused state */
+                     bool focused; /*@ The focused state */
                 }
            }
            style {
@@ -314,32 +314,31 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                       */
                 }
                 values {
-                     Eina_Bool disable; /*@ @c EINA_TRUE, if the widget item is disabled, @c EINA_FALSE if it's enabled (or on errors) */
-                }
-           }
-           access_order {
-                get {
-                     /**
-                       @brief Get highlight order
-                       @since 1.8
-
-                       @ingroup General
-                      */
-                }
-                set {
-                     /**
-                       @brief Set highlight order
-                       @since 1.8
-
-                       @ingroup General
-                      */
-                }
-                values {
-                     Eina_List *objs @const_get; /*@ Order of objects to pass highlight */
+                     bool disable; /*@ @c EINA_TRUE, if the widget item is disabled, @c EINA_FALSE if it's enabled (or on errors) */
                 }
            }
       }
       methods {
+           access_order_get {
+                /**
+                  @brief Get highlight order
+                  @since 1.8
+
+                  @ingroup General
+                 */
+                return: const(list<Evas_Object *>) *;
+           }
+           access_order_set {
+                /**
+                  @brief Set highlight order
+                  @since 1.8
+
+                  @ingroup General
+                 */
+                params {
+                     @in own(list<Evas_Object *> *) objs; /*@ Order of objects to pass highlight */
+                }
+           }
            widget_get @const {
                 /**
                   Get the widget object's handle which contains a given item
@@ -572,7 +571,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                 params {
                      const (char) *part; /*@ The part name of the translatable text */
                      const (char) *domain; /*@ The translation domain to use */
-                     Eina_Bool translatable; /*@ @c EINA_TRUE, the part text will be translated internally. @c EINA_FALSE, otherwise. */
+                     bool translatable; /*@ @c EINA_TRUE, the part text will be translated internally. @c EINA_FALSE, otherwise. */
                 }
            }
            track {
@@ -662,7 +661,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                   @ingroup General
                  */
                 params {
-                     Evas_Smart_Cb del_cb; /*@ The function called */
+                     Evas_Smart_Cb del_cb @nullable; /*@ The function called */
                 }
            }
            tooltip_content_cb_set {
@@ -680,13 +679,13 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                   @ingroup General
                  */
                 params {
-                     Elm_Tooltip_Item_Content_Cb func; /*@ the function used to create the tooltip contents. */
-                     const (void) *data; /*@ what to provide to @a func as callback data/context. */
-                     Evas_Smart_Cb del_cb; /*@ called when data is not needed anymore, either when
-                                             another callback replaces @a func, the tooltip is unset with
-                                             elm_object_item_tooltip_unset() or the owner @a item
-                                             dies. This callback receives as the first parameter the
-                                             given @a data, and @p event_info is the item. */
+                     Elm_Tooltip_Item_Content_Cb func @nullable; /*@ the function used to create the tooltip contents. */
+                     const (void) *data @optional; /*@ what to provide to @a func as callback data/context. */
+                     Evas_Smart_Cb del_cb @optional; /*@ called when data is not needed anymore, either when
+                                                       another callback replaces @a func, the tooltip is unset with
+                                                       elm_object_item_tooltip_unset() or the owner @a item
+                                                       dies. This callback receives as the first parameter the
+                                                       given @a data, and @p event_info is the item. */
 
                 }
            }
