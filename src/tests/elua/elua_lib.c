@@ -56,9 +56,7 @@ START_TEST(elua_api)
 
     fail_if(strcmp(elua_state_prog_name_get(st), "test"));
 
-    fail_if(!elua_state_modules_setup(st));
-    fail_if(!elua_state_i18n_setup(st));
-    fail_if(!elua_state_io_setup(st));
+    fail_if(!elua_state_setup(st));
 
     fail_if(!elua_state_require_ref_push(st));
     fail_if(lua_type(lst, -1) != LUA_TFUNCTION);
@@ -96,9 +94,9 @@ START_TEST(elua_api)
     fail_if(remove(buf));
 
     /* halfassed testing here, but not possible otherwise */
-    fail_if(elua_util_error_report(st, "foo", 0));
+    fail_if(elua_util_error_report(st, 0));
     lua_pushliteral(lst, "msg");
-    fail_if(!elua_util_error_report(st, "foo", 5));
+    fail_if(!elua_util_error_report(st, 5));
     fail_if(lua_gettop(lst) > 0);
 
     fail_if(elua_util_script_run(st, 2, cargv, 1, &quit));
