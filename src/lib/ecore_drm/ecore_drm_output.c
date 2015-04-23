@@ -400,7 +400,7 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    drmModeCrtc *crtc;
    drmModeEncoder *enc;
    drmModeModeInfo crtc_mode;
-   Ecore_Drm_Output_Mode *mode, *current, *preferred, *best;
+   Ecore_Drm_Output_Mode *mode, *current = NULL, *preferred = NULL, *best = NULL;
    Eina_List *l;
 
    /* try to find a crtc for this connector */
