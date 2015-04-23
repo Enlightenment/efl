@@ -39,29 +39,15 @@ elua_print_help(const char *pname, FILE *stream)
                    "A main entry for all EFL/LuaJIT powered applications.\n\n"
                    "The following options are supported:\n\n"
                    ""
-                   "  -h,          --help                 Show this message.\n"
-                   "  -l,          --license              Show a license message.\n"
-                   "  -C[COREDIR], --core-dir=[COREDIR]   Elua core directory path.\n"
-                   "  -M[MODDIR],  --modules-dir=[MODDIR] Elua modules directory path.\n"
-                   "  -A[APPDIR],  --apps-dir=[APPDIR]    Elua applications directory path.\n"
-                   "  -l[LIBRARY], --library=[LIBRARY]    Require library 'library'.\n"
-                   "  -I[DIR],     --lib-dir=[DIR]        Append an additional require path.\n"
-                   "  -E,          --noenv                Ignore environment variables.\n", pname);
+                   "  -h          Show this message.\n"
+                   "  -l          Show a license message.\n"
+                   "  -C[COREDIR] Elua core directory path.\n"
+                   "  -M[MODDIR]  Elua modules directory path.\n"
+                   "  -A[APPDIR]  Elua applications directory path.\n"
+                   "  -l[LIBRARY] Require library 'library'.\n"
+                   "  -I[DIR],    Append an additional require path.\n"
+                   "  -E,         Ignore environment variables.\n", pname);
 }
-
-static struct option lopt[] =
-{
-   { "help"       , no_argument      , NULL, 'h' },
-
-   { "core-dir"   , required_argument, NULL, 'C' },
-   { "modules-dir", required_argument, NULL, 'M' },
-   { "apps-dir"   , required_argument, NULL, 'A' },
-
-   { "library"    , required_argument, NULL, 'l' },
-   { "lib-dir"    , required_argument, NULL, 'I' },
-   { "noenv"      , no_argument      , NULL, 'E' },
-   { NULL         , 0                , NULL,   0 }
-};
 
 /* protected main */
 static int
@@ -80,7 +66,7 @@ elua_main(lua_State *L)
 
    int ch;
 
-   while ((ch = getopt_long(argc, argv, "+LhC:M:A:l:I:E", lopt, NULL)) != -1)
+   while ((ch = getopt(argc, argv, "+LhC:M:A:l:I:E")) != -1)
      switch (ch)
        {
         case 'h':
