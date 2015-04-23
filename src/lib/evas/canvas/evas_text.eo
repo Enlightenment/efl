@@ -320,7 +320,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
    methods {
       last_up_to_pos @const {
          /*@ Returns the logical position of the last char in the text up to the pos given. this is NOT the position of the last char because of the possibility of RTL in the text. */
-         return: int;
+         return: int(-1);
          params {
             @in Evas_Coord x; /*@ in */
             @in Evas_Coord y; /*@ in */
