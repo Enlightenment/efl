@@ -7,7 +7,7 @@ module_arch=@MODULE_ARCH@
 datarootdir=@datarootdir@
 datadir=@datadir@
 eoincludedir=@datadir@/eolian/include
-eolian_flags=-I${eoincludedir}/ecore-@VMAJ@
+eolian_flags=-I${pc_sysrootdir}/${eoincludedir}/ecore-@VMAJ@
 
 Name: ecore C++ API
 Description: Ecore event abstraction library C++ API

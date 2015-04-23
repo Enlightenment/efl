@@ -12,7 +12,7 @@ vmic=@VMIC@
 multisense=@want_multisense@
 physics=@want_physics@
 eoincludedir=@datadir@/eolian/include
-eolian_flags=-I${eoincludedir}/edje-@VMAJ@
+eolian_flags=-I${pc_sysrootdir}/${eoincludedir}/edje-@VMAJ@
 
 Name: edje C++ API
 Description: Enlightened graphical design and layout engine C++ API.
