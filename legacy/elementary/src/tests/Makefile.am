@@ -1,5 +1,6 @@
 AM_TESTS_ENVIRONMENT = \
-	ELM_DATA_DIR=${top_builddir}/data
+	ELM_DATA_DIR=${top_builddir}/data \
+	ELM_RUN_IN_TREE=1
 
 AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in

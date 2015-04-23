@@ -108,6 +108,8 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    Suite *s;
    SRunner *sr;
 
+   putenv("ELM_RUN_IN_TREE=1");
+
    s = elm_suite();
    sr = srunner_create(s);
 

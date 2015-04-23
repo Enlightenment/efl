@@ -22,6 +22,7 @@ AM_CPPFLAGS = \
 -DLOCALE_DIR=\"$(localedir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DICON_DIR=\"$(datadir)/icons\" \
+-DELM_TOP_BUILD_DIR=\"$(top_builddir)\" \
 -DELEMENTARY_BUILD \
 @ELEMENTARY_CFLAGS@
 
