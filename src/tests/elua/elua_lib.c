@@ -66,9 +66,9 @@ START_TEST(elua_api)
     fail_if(lua_type(lst, -1) != LUA_TFUNCTION);
     lua_pop(lst, 1);
 
-    fail_if(elua_util_require(st, "util"));
-    fail_if(elua_util_string_run(st, "return 1337", "foo"));
-    fail_if(!elua_util_string_run(st, "foo bar", "foo")); /* invalid code */
+    fail_if(!elua_util_require(st, "util"));
+    fail_if(!elua_util_string_run(st, "return 1337", "foo"));
+    fail_if(elua_util_string_run(st, "foo bar", "foo")); /* invalid code */
     fail_if(!elua_util_app_load(st, "lualian"));
     fail_if(lua_type(lst, -1) != LUA_TFUNCTION);
     lua_pop(lst, 1);
@@ -88,7 +88,7 @@ START_TEST(elua_api)
     fail_if(!f);
     fprintf(f, "return 5\n");
     fclose(f);
-    fail_if(elua_util_file_run(st, buf));
+    fail_if(!elua_util_file_run(st, buf));
     fail_if(lua_tointeger(lst, -1) != 5);
     lua_pop(lst, 1);
     fail_if(remove(buf));
@@ -99,7 +99,7 @@ START_TEST(elua_api)
     fail_if(!elua_util_error_report(st, 5));
     fail_if(lua_gettop(lst) > 0);
 
-    fail_if(elua_util_script_run(st, 2, cargv, 1, &quit));
+    fail_if(!elua_util_script_run(st, 2, cargv, 1, &quit));
     fail_if(quit != 1);
 
     f = fopen(buf, "w");
@@ -107,7 +107,7 @@ START_TEST(elua_api)
     fprintf(f, "return false");
     fclose(f);
     cargv[1] = buf;
-    fail_if(elua_util_script_run(st, 2, cargv, 1, &quit));
+    fail_if(!elua_util_script_run(st, 2, cargv, 1, &quit));
     fail_if(quit != 0);
     fail_if(remove(buf));
 

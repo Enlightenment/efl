@@ -107,7 +107,7 @@ elua_main(lua_State *L)
    if (optind < argc)
      {
         int quit = 0;
-        if (elua_util_script_run(es, argc, argv, optind, &quit))
+        if (!elua_util_script_run(es, argc, argv, optind, &quit))
           {
              m->status = 1;
              return 0;

@@ -468,11 +468,11 @@ _elua_getargs(Elua_State *es, int argc, char **argv, int n)
    return narg;
 }
 
-EAPI int
+EAPI Eina_Bool
 elua_util_require(Elua_State *es, const char *libname)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, EINA_FALSE);
    if (!elua_state_require_ref_push(es))
      {
         /* store stuff until things are correctly set up */
@@ -480,26 +480,26 @@ elua_util_require(Elua_State *es, const char *libname)
         return 0;
      }
    lua_pushstring(es->luastate, libname);
-   return elua_util_error_report(es, lua_pcall(es->luastate, 1, 0, 0));
+   return !elua_util_error_report(es, lua_pcall(es->luastate, 1, 0, 0));
 }
 
-EAPI int
+EAPI Eina_Bool
 elua_util_file_run(Elua_State *es, const char *fname)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
-   return elua_util_error_report(es, elua_io_loadfile(es, fname)
-                                 || _elua_docall(es, 0, 1));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, EINA_FALSE);
+   return !elua_util_error_report(es, elua_io_loadfile(es, fname)
+                                  || _elua_docall(es, 0, 1));
 }
 
-EAPI int
+EAPI Eina_Bool
 elua_util_string_run(Elua_State *es, const char *chunk, const char *chname)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
-   return elua_util_error_report(es, luaL_loadbuffer(es->luastate, chunk,
-                                                     strlen(chunk), chname)
-                                     || _elua_docall(es, 0, 0));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, EINA_FALSE);
+   return !elua_util_error_report(es, luaL_loadbuffer(es->luastate, chunk,
+                                                      strlen(chunk), chname)
+                                      || _elua_docall(es, 0, 0));
 }
 
 EAPI Eina_Bool
@@ -519,7 +519,7 @@ elua_util_app_load(Elua_State *es, const char *appname)
    return EINA_TRUE;
 }
 
-EAPI int
+EAPI Eina_Bool
 elua_util_script_run(Elua_State *es, int argc, char **argv, int n, int *quit)
 {
    int status, narg;
@@ -555,7 +555,7 @@ elua_util_script_run(Elua_State *es, int argc, char **argv, int n, int *quit)
         *quit = lua_toboolean(es->luastate, -1);
         lua_pop(es->luastate, 1);
      }
-   return elua_util_error_report(es, status);
+   return !elua_util_error_report(es, status);
 }
 
 static void

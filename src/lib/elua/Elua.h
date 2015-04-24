@@ -348,46 +348,43 @@ EAPI int elua_io_loadfile(const Elua_State *es, const char *fname);
 /**
  * @brief Requires a module.
  *
- * Requires a Lua module. Leaves the Lua stack clean. Returns 0 on success
- * or non-zero value on failure (see lua_pcall).
+ * Requires a Lua module. Leaves the Lua stack clean.
  *
  * @param[in] es The Elua state.
  * @param[in] libname The library name.
- * @return 0 for no errors, a non-zero value for errors (-1 for NULL es or
- * NULL require).
+ * @return EINA_TRUE on success, EINA_FALSE on failure.
  *
  * @ingroup Elua
  */
-EAPI int elua_util_require(Elua_State *es, const char *libname);
+EAPI Eina_Bool elua_util_require(Elua_State *es, const char *libname);
 
 /**
  * @brief Runs a file.
  *
- * Runs a file. Uses the Elua mmapped file IO to load the file. Returns zero
- * on success or non-zero value on failure.
+ * Runs a file. Uses the Elua mmapped file IO to load the file.
  *
  * @param[in] es The Elua state.
  * @param[in] fname The file name.
- * @return 0 for no errors, a non-zero value for errors (-1 for NULL es).
+ * @return EINA_TRUE on success, EINA_FALSE on failure.
  *
  * @ingroup Elua
  */
-EAPI int elua_util_file_run(Elua_State *es, const char *fname);
+EAPI Eina_Bool elua_util_file_run(Elua_State *es, const char *fname);
 
 /**
  * @brief Runs a string.
  *
- * Runs a string. Returns zero on success or non-zero value on failure.
+ * Runs a string.
  *
  * @param[in] es The Elua state.
  * @param[in] chunk The string to run.
  * @param[in] chname The chunk name to use for traceback/debug.
- * @return 0 for no errors, a non-zero value for errors (-1 for NULL es).
+ * @return EINA_TRUE on success, EINA_FALSE on failure.
  *
  * @ingroup Elua
  */
-EAPI int elua_util_string_run(Elua_State *es, const char *chunk,
-                              const char *chname);
+EAPI Eina_Bool elua_util_string_run(Elua_State *es, const char *chunk,
+                                    const char *chname);
 
 /**
  * @brief Loads an application.
@@ -424,14 +421,14 @@ EAPI Eina_Bool elua_util_app_load(Elua_State *es, const char *appname);
  * @param[in] es The Elua state.
  * @param[in] argc The argument count.
  * @param[in] argv The arguments.
- * @param[in] n The index of the first positional argument.
+ * @param[in] n The index of the first positional argt.
  * @param[out] quit Whether to quit or run a main loop.
- * @return 0 on success, non-zero value on failure (-1 for NULL inputs).
+ * @return EINA_TRUE on success, EINA_FALSE on failure.
  *
  * @ingroup Elua
  */
-EAPI int elua_util_script_run(Elua_State *es, int argc, char **argv, int n,
-                              int *quit);
+EAPI Eina_Bool elua_util_script_run(Elua_State *es, int argc, char **argv,
+                                    int n, int *quit);
 
 /**
  * @brief Reports an error using Eina logging.
