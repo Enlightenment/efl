@@ -879,7 +879,8 @@ ecore_drm_inputs_device_axis_size_set(Ecore_Drm_Evdev *edev, int w, int h)
    const char *vals;
    enum libinput_config_status status;
 
-   if ((w == 0) || (h == 0)) return;
+   EINA_SAFETY_ON_NULL_RETURN(edev);
+   EINA_SAFETY_ON_TRUE_RETURN((w == 0) || (h == 0));
 
    if ((!libinput_device_config_calibration_has_matrix(edev->device)) || 
        (libinput_device_config_calibration_get_default_matrix(edev->device, cal) != 0))

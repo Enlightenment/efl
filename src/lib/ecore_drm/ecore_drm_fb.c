@@ -55,6 +55,8 @@ ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height)
    struct drm_mode_destroy_dumb darg;
    struct drm_mode_map_dumb marg;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((width < 1) || (height < 1), NULL);
    if (!(fb = calloc(1, sizeof(Ecore_Drm_Fb)))) return NULL;
 
    memset(&carg, 0, sizeof(struct drm_mode_create_dumb));
@@ -139,6 +141,8 @@ EAPI void
 ecore_drm_fb_dirty(Ecore_Drm_Fb *fb, Eina_Rectangle *rects, unsigned int count)
 {
    EINA_SAFETY_ON_NULL_RETURN(fb);
+   EINA_SAFETY_ON_NULL_RETURN(rects);
+   EINA_SAFETY_ON_TRUE_RETURN(!count);
 
 #ifdef DRM_MODE_FEATURE_DIRTYFB
    drmModeClip *clip;

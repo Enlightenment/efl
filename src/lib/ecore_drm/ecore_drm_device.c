@@ -334,7 +334,7 @@ EAPI Eina_Bool
 ecore_drm_device_close(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
-   if (!dev) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
 
    /* delete udev watch */
    if (dev->watch) eeze_udev_watch_del(dev->watch);
@@ -404,7 +404,7 @@ ecore_drm_device_master_drop(Ecore_Drm_Device *dev)
 EAPI int 
 ecore_drm_device_fd_get(Ecore_Drm_Device *dev)
 {
-   if (!dev) return -1;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, -1);
    return dev->drm.fd;
 }
 
@@ -412,7 +412,7 @@ EAPI void
 ecore_drm_device_window_set(Ecore_Drm_Device *dev, unsigned int window)
 {
    /* check for valid device */
-   if ((!dev) || (dev->drm.fd < 0)) return;
+   EINA_SAFETY_ON_TRUE_RETURN((!dev) || (dev->drm.fd < 0));
 
    dev->window = window;
 }
@@ -421,7 +421,7 @@ EAPI const char *
 ecore_drm_device_name_get(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
-   if ((!dev) || (dev->drm.fd < 0)) return NULL;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((!dev) || (dev->drm.fd < 0), NULL);
 
    return dev->drm.name;
 }
@@ -437,7 +437,7 @@ ecore_drm_device_pointer_xy_get(Ecore_Drm_Device *dev, int *x, int *y)
    if (y) *y = 0;
 
    /* check for valid device */
-   if ((!dev) || (dev->drm.fd < 0)) return;
+   EINA_SAFETY_ON_TRUE_RETURN((!dev) || (dev->drm.fd < 0));
 
    EINA_LIST_FOREACH(dev->seats, l, seat)
      {
@@ -508,6 +508,7 @@ ecore_drm_device_output_find(Ecore_Drm_Device *dev, int x, int y)
    Eina_List *l;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((x < 0) || (y < 0), NULL);
 
    EINA_LIST_FOREACH(dev->outputs, l, output)
      {

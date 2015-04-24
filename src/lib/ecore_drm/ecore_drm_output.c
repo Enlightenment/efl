@@ -721,6 +721,7 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
    int i = 0, x = 0, y = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(dev->drm.fd < 0, EINA_FALSE);
 
    /* DBG("Create outputs for %d", dev->drm.fd); */
 
@@ -788,7 +789,7 @@ ecore_drm_output_free(Ecore_Drm_Output *output)
 EAPI void 
 ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle, int w, int h)
 {
-   if (!output) return;
+   EINA_SAFETY_ON_NULL_RETURN(output);
    drmModeSetCursor(output->dev->drm.fd, output->crtc_id, handle, w, h);
 }
 
@@ -800,9 +801,10 @@ ecore_drm_output_enable(Ecore_Drm_Output *output)
    int x = 0, y = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->dev, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(output->current_mode, EINA_FALSE);
 
-   if (!(dev = output->dev)) return EINA_FALSE;
+   dev = output->dev;
 
    output->enabled = EINA_TRUE;
    if (!dev->current)
@@ -847,6 +849,8 @@ ecore_drm_output_disable(Ecore_Drm_Output *output)
 EAPI void 
 ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb)
 {
+   EINA_SAFETY_ON_NULL_RETURN(output);
+   EINA_SAFETY_ON_NULL_RETURN(fb);
    _ecore_drm_output_fb_release(output, fb);
 }
 
@@ -859,9 +863,10 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
    int ret = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(output);
+   EINA_SAFETY_ON_NULL_RETURN(output->dev);
    EINA_SAFETY_ON_TRUE_RETURN(output->pending_destroy);
 
-   if (!(dev = output->dev)) return;
+   dev = output->dev;
 
    /* DBG("Output Repaint: %d %d", output->crtc_id, output->conn_id); */
 
@@ -942,7 +947,7 @@ ecore_drm_output_size_get(Ecore_Drm_Device *dev, int output, int *w, int *h)
 
    if (w) *w = 0;
    if (h) *h = 0;
-   if (!dev) return;
+   EINA_SAFETY_ON_NULL_RETURN(dev);
 
    if (!(fb = drmModeGetFB(dev->drm.fd, output))) return;
    if (w) *w = fb->width;
@@ -961,7 +966,7 @@ ecore_drm_outputs_geometry_get(Ecore_Drm_Device *dev, int *x, int *y, int *w, in
    if (y) *y = 0;
    if (w) *w = 0;
    if (h) *h = 0;
-   if (!dev) return;
+   EINA_SAFETY_ON_NULL_RETURN(dev);
 
    EINA_LIST_FOREACH(dev->outputs, l, output)
      {
@@ -1032,6 +1037,7 @@ EAPI void
 ecore_drm_output_dpms_set(Ecore_Drm_Output *output, int level)
 {
    EINA_SAFETY_ON_NULL_RETURN(output);
+   EINA_SAFETY_ON_NULL_RETURN(output->dev);
    EINA_SAFETY_ON_NULL_RETURN(output->dpms);
 
    drmModeConnectorSetProperty(output->dev->drm.fd, output->conn_id,
@@ -1042,6 +1048,7 @@ EAPI void
 ecore_drm_output_gamma_set(Ecore_Drm_Output *output, uint16_t size, uint16_t *r, uint16_t *g, uint16_t *b)
 {
    EINA_SAFETY_ON_NULL_RETURN(output);
+   EINA_SAFETY_ON_NULL_RETURN(output->dev);
    EINA_SAFETY_ON_NULL_RETURN(output->crtc);
 
    if (output->gamma != size) return;
@@ -1065,6 +1072,7 @@ ecore_drm_output_crtc_buffer_get(Ecore_Drm_Output *output)
    unsigned int id = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->dev, 0);
    EINA_SAFETY_ON_NULL_RETURN_VAL(output->crtc, 0);
 
    if (!(crtc = drmModeGetCrtc(output->dev->drm.fd, output->crtc_id)))

@@ -21,7 +21,7 @@ ecore_drm_sprites_create(Ecore_Drm_Device *dev)
    unsigned int i = 0;
 
    /* check for valid device */
-   if ((!dev) || (dev->drm.fd < 0)) return EINA_FALSE;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((!dev) || (dev->drm.fd < 0), EINA_FALSE);
 
    /* get plane resources */
    if (!(res = drmModeGetPlaneResources(dev->drm.fd))) return EINA_FALSE;
@@ -66,7 +66,7 @@ ecore_drm_sprites_destroy(Ecore_Drm_Device *dev)
    Ecore_Drm_Sprite *sprite;
 
    /* check for valid device */
-   if (!dev) return;
+   EINA_SAFETY_ON_NULL_RETURN(dev);
 
    EINA_LIST_FREE(dev->sprites, sprite)
      {
@@ -82,7 +82,7 @@ ecore_drm_sprites_destroy(Ecore_Drm_Device *dev)
 EAPI void 
 ecore_drm_sprites_fb_set(Ecore_Drm_Sprite *sprite, int fb_id, int flags)
 {
-   if ((!sprite) || (!sprite->output)) return;
+   EINA_SAFETY_ON_TRUE_RETURN((!sprite) || (!sprite->output));
 
    if (fb_id)
      {
@@ -106,6 +106,8 @@ ecore_drm_sprites_crtc_supported(Ecore_Drm_Output *output, unsigned int supporte
    Ecore_Drm_Device *dev;
    unsigned int c = 0;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->dev, EINA_FALSE);
    dev = output->dev;
 
    for (c = 0; c < dev->crtc_count; c++)

@@ -56,6 +56,7 @@ _ecore_drm_launcher_device_flags_set(int fd, int flags)
 EAPI Eina_Bool 
 ecore_drm_launcher_connect(Ecore_Drm_Device *dev)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
    /* try to connect to logind */
    if (!(logind = _ecore_drm_logind_connect(dev)))
      {
@@ -86,6 +87,7 @@ ecore_drm_launcher_connect(Ecore_Drm_Device *dev)
 EAPI void 
 ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev)
 {
+   EINA_SAFETY_ON_NULL_RETURN(dev);
    if (dev->tty.switch_hdlr) ecore_event_handler_del(dev->tty.switch_hdlr);
    dev->tty.switch_hdlr = NULL;
 

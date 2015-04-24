@@ -135,7 +135,7 @@ ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
    char tty[32] = "<stdin>";
 
    /* check for valid device */
-   if ((!dev) || (!dev->drm.name)) return EINA_FALSE;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((!dev) || (!dev->drm.name), EINA_FALSE);
 
    /* assign default tty fd of -1 */
    dev->tty.fd = -1;
@@ -226,7 +226,7 @@ EAPI Eina_Bool
 ecore_drm_tty_close(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
-   if ((!dev) || (!dev->drm.name)) return EINA_FALSE;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((!dev) || (!dev->drm.name), EINA_FALSE);
 
    _ecore_drm_tty_restore(dev);
 
@@ -247,7 +247,7 @@ EAPI Eina_Bool
 ecore_drm_tty_release(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
-   if ((!dev) || (!dev->drm.name) || (dev->tty.fd < 0)) return EINA_FALSE;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((!dev) || (!dev->drm.name) || (dev->tty.fd < 0), EINA_FALSE);
 
    /* send ioctl for vt release */
    if (ioctl(dev->tty.fd, VT_RELDISP, 1) < 0) 
@@ -263,7 +263,7 @@ EAPI Eina_Bool
 ecore_drm_tty_acquire(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
-   if ((!dev) || (!dev->drm.name) || (dev->tty.fd < 0)) return EINA_FALSE;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((!dev) || (!dev->drm.name) || (dev->tty.fd < 0), EINA_FALSE);
 
    /* send ioctl for vt acquire */
    if (ioctl(dev->tty.fd, VT_RELDISP, VT_ACKACQ) < 0) 
@@ -279,7 +279,7 @@ EAPI int
 ecore_drm_tty_get(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
-   if ((!dev) || (!dev->drm.name) || (dev->tty.fd < 0)) return -1;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((!dev) || (!dev->drm.name) || (dev->tty.fd < 0), -1);
 
    return dev->tty.fd;
 }
