@@ -899,6 +899,7 @@ eng_image_orient_set(void *data, void *image, Evas_Image_Orient orient)
 {
    Render_Engine_GL_Generic *re = data;
    Evas_GL_Image *im;
+   Evas_GL_Image *im_new;
 
    if (!image) return NULL;
    im = image;
@@ -906,8 +907,19 @@ eng_image_orient_set(void *data, void *image, Evas_Image_Orient orient)
 
    re->window_use(re->software.ob);
 
-   im->orient = orient;
-   return im;
+   evas_gl_common_image_update(im->gc, im);
+
+   im_new = evas_gl_common_image_new(im->gc, im->w, im->h, im->alpha, im->cs.space);
+   if (!im_new) return im;
+
+   *im_new = *im;
+
+   im_new->tex->references++;
+   im_new->tex->pt->references++;
+   im_new->orient = orient;
+
+   evas_gl_common_image_free(im);
+   return im_new;
 }
 
 static Evas_Image_Orient
