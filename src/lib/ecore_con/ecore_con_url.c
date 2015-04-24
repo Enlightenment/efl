@@ -309,13 +309,17 @@ _c_init(void)
          }                                    \
     }
 #if defined(_WIN32) || defined(__CYGWIN__)
+   LOAD("libcurl-5.dll"); // try correct dll first
    LOAD("libcurl-4.dll"); // try correct dll first
    LOAD("libcurl.dll"); // try 1
    LOAD("curllib.dll"); // if fail try 2
 #elif defined(__APPLE__) && defined(__MACH__)
+   LOAD("libcurl.5.dylib"); // try 1
    LOAD("libcurl.4.dylib"); // try 1
+   LOAD("libcurl.so.5"); // if fail try 2
    LOAD("libcurl.so.4"); // if fail try 2
 #else
+   LOAD("libcurl.so.5"); // try only
    LOAD("libcurl.so.4"); // try only
 #endif
    if (!_c->mod) goto error;
