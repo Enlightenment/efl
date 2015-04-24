@@ -4266,7 +4266,10 @@ _edje_real_part_box_remove_all(Edje *ed, Edje_Real_Part *rp, Eina_Bool clear)
              _edje_box_layout_remove_child(rp, child_obj);
              _edje_child_remove(ed, rp, child_obj);
              if (!evas_object_box_remove_at(rp->object, i))
-               return EINA_FALSE;
+               {
+                  eina_list_free(children);
+                  return EINA_FALSE;
+               }
              if (clear)
                evas_object_del(child_obj);
           }
