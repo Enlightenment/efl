@@ -3,6 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eet \
 -I$(top_srcdir)/src/lib/emile \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/evas \
@@ -16,6 +17,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_srcdir)/src/lib/ecore_audio \
 -I$(top_builddir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eet \
 -I$(top_builddir)/src/lib/emile \
 -I$(top_builddir)/src/lib/eo \
 -I$(top_builddir)/src/lib/evas \
