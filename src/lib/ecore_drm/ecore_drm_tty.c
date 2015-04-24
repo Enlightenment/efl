@@ -44,9 +44,7 @@ _ecore_drm_tty_cb_vt_signal(void *data, int type EINA_UNUSED, void *event)
 Eina_Bool
 _ecore_drm_tty_switch(Ecore_Drm_Device *dev, int activate_vt)
 {
-   if (!ioctl(dev->tty.fd, VT_ACTIVATE, activate_vt) < 0)
-     return EINA_FALSE;
-   return EINA_TRUE;
+   return ioctl(dev->tty.fd, VT_ACTIVATE, activate_vt) >= 0;
 }
 
 static Eina_Bool 
