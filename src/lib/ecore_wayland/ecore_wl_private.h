@@ -12,6 +12,8 @@
 # define IVI_SURFACE_ID 6000
 # endif
 
+# include "tizen-policy-client-protocol.h"
+
 //# define LOGFNS 1
 
 # ifdef LOGFNS
@@ -76,6 +78,7 @@ struct _Ecore_Wl_Display
 # endif
         struct wl_shm *shm;
         struct wl_data_device_manager *data_device_manager;
+        struct tizen_policy *tz_policy;
      } wl;
 
    int fd;
@@ -116,6 +119,7 @@ struct _Ecore_Wl_Window
    struct ivi_surface *ivi_surface;
    int ivi_surface_id;
 # endif
+   struct tizen_visibility *tz_visibility;
 
    struct wl_region *opaque_region;
    struct wl_region *input_region;

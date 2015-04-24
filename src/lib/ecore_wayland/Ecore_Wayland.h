@@ -56,6 +56,7 @@ typedef struct _Ecore_Wl_Event_Focus_Out Ecore_Wl_Event_Focus_Out;
 typedef struct _Ecore_Wl_Event_Window_Configure Ecore_Wl_Event_Window_Configure;
 typedef struct _Ecore_Wl_Event_Window_Activate Ecore_Wl_Event_Window_Activate;
 typedef struct _Ecore_Wl_Event_Window_Deactivate Ecore_Wl_Event_Window_Deactivate;
+typedef struct _Ecore_Wl_Event_Window_Visibility_Change Ecore_Wl_Event_Window_Visibility_Change;
 typedef struct _Ecore_Wl_Event_Dnd_Enter Ecore_Wl_Event_Dnd_Enter;
 typedef struct _Ecore_Wl_Event_Dnd_Position Ecore_Wl_Event_Dnd_Position;
 typedef struct _Ecore_Wl_Event_Dnd_Leave Ecore_Wl_Event_Dnd_Leave;
@@ -162,6 +163,12 @@ struct _Ecore_Wl_Event_Window_Deactivate
    Eina_Bool fobscured;
 };
 
+struct _Ecore_Wl_Event_Window_Visibility_Change
+{
+   unsigned int win;
+   int          fully_obscured;
+};
+
 struct _Ecore_Wl_Event_Dnd_Enter
 {
    unsigned int win, source;
@@ -239,6 +246,7 @@ struct _Ecore_Wl_Event_Interfaces_Bound
    Eina_Bool seat : 1;
    Eina_Bool data_device_manager : 1;
    Eina_Bool subcompositor : 1;
+   Eina_Bool policy : 1;
 };
 
 /**
@@ -268,6 +276,7 @@ EAPI extern int ECORE_WL_EVENT_FOCUS_OUT;
 EAPI extern int ECORE_WL_EVENT_WINDOW_CONFIGURE;
 EAPI extern int ECORE_WL_EVENT_WINDOW_ACTIVATE;
 EAPI extern int ECORE_WL_EVENT_WINDOW_DEACTIVATE;
+EAPI extern int ECORE_WL_EVENT_WINDOW_VISIBILITY_CHANGE;
 EAPI extern int ECORE_WL_EVENT_DND_ENTER;
 EAPI extern int ECORE_WL_EVENT_DND_POSITION;
 EAPI extern int ECORE_WL_EVENT_DND_LEAVE;
