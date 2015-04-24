@@ -456,7 +456,7 @@ _key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    ELM_SPINNER_DATA_GET(obj, sd);
    if (sd->spin_timer) _spin_stop(obj);
-   else _entry_toggle_cb(NULL, obj, NULL, NULL);
+   else if (sd->entry_visible) _entry_toggle_cb(NULL, obj, NULL, NULL);
    return EINA_FALSE;
 }
 
