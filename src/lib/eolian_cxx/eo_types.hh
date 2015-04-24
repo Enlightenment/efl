@@ -294,6 +294,8 @@ struct eo_function
 
 struct eo_event
 {
+   eo_event() : scope(eolian_scope::public_) {}
+  
    eolian_scope scope;
    std::string name;
    std::string eo_name;
