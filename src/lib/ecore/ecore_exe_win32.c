@@ -60,7 +60,7 @@ _ecore_exe_close_cb(void *data,
 
    e->exit_code = exit_code;
    e->exited = 1;
-   e->pid = exe->process_id;
+   e->pid = exe->pid;
    e->exe = obj;
 
    ecore_event_add(ECORE_EXE_EVENT_DEL, e,
@@ -483,7 +483,6 @@ _impl_ecore_exe_eo_base_finalize(Eo *obj, Ecore_Exe_Data *exe)
 
    exe->process = pi.hProcess;
    exe->process_thread = pi.hThread;
-   exe->process_id = pi.dwProcessId;
    exe->pid = pi.dwProcessId;
    exe->thread_id = pi.dwThreadId;
 

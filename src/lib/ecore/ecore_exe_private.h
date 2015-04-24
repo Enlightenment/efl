@@ -76,7 +76,6 @@ struct _Ecore_Exe_Data
 #ifdef _WIN32
    HANDLE process;
    HANDLE process_thread;
-   DWORD process_id;
    DWORD thread_id;
    Ecore_Win32_Handler *h_close;
    Ecore_Exe_Win32_Signal sig;
