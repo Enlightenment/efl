@@ -200,7 +200,7 @@ struct _Ecore_Drm_Evdev
         int minx, miny, maxw, maxh;
         double dx, dy;
         unsigned int last, prev;
-        double threshold;
+        uint32_t threshold;
         Eina_Bool did_double : 1;
         Eina_Bool did_triple : 1;
         uint32_t prev_button, last_button;

@@ -610,7 +610,7 @@ _ecore_drm_evdev_device_create(Ecore_Drm_Seat *seat, struct libinput_device *dev
         edev->seat_caps |= EVDEV_SEAT_POINTER;
 
         /* TODO: make this configurable */
-        edev->mouse.threshold = 0.25;
+        edev->mouse.threshold = 250;
      }
 
    if (libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_TOUCH))
