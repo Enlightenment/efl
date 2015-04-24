@@ -334,6 +334,7 @@ test_naviframe_complex(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    nf = elm_naviframe_add(win);
    evas_object_size_hint_weight_set(nf, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(nf, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_naviframe_prev_btn_auto_pushed_set(nf, EINA_FALSE);
    elm_box_pack_end(box, nf);
    evas_object_show(nf);
 
