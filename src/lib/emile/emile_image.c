@@ -1400,7 +1400,7 @@ _emile_jpeg_head(Emile_Image *image,
      }
 
    /* rotation decoding */
-   if (opts->orientation)
+   if (opts && opts->orientation)
      {
         degree = _get_orientation(m, length, &prop->flipped);
         if (degree != 0 || prop->flipped)
@@ -1430,17 +1430,17 @@ _emile_jpeg_head(Emile_Image *image,
           *error = EMILE_IMAGE_LOAD_ERROR_GENERIC;
         return EINA_FALSE;
      }
-   if (opts->scale_down_by > 1)
+   if (opts && opts->scale_down_by > 1)
      {
         prop->w /= opts->scale_down_by;
         prop->h /= opts->scale_down_by;
      }
-   else if (opts->dpi > 0.0)
+   else if (opts && opts->dpi > 0.0)
      {
         prop->w = (prop->w * opts->dpi) / 90.0;
         prop->h = (prop->h * opts->dpi) / 90.0;
      }
-   else if ((opts->w > 0) && (opts->h > 0))
+   else if (opts && ((opts->w > 0) && (opts->h > 0)))
      {
         unsigned int w2 = prop->w, h2 = prop->h;
         /* user set load_opts' w,h on the assumption
@@ -1528,7 +1528,7 @@ _emile_jpeg_head(Emile_Image *image,
    prop->h = cinfo.output_height;
 
    /* be nice and clip region to image. if its totally outside, fail load */
-   if ((opts->region.w > 0) && (opts->region.h > 0))
+   if (opts && ((opts->region.w > 0) && (opts->region.h > 0)))
      {
         unsigned int load_region_x = opts->region.x;
         unsigned int load_region_y = opts->region.y;
