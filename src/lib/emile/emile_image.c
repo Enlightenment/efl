@@ -1599,6 +1599,9 @@ _emile_jpeg_data(Emile_Image *image,
    volatile int degree = 0;
    volatile Eina_Bool change_wh = EINA_FALSE;
    Eina_Bool line_done = EINA_FALSE;
+   Eina_Bool ptrg_free = EINA_FALSE;
+   Eina_Bool ptrag_free = EINA_FALSE;
+   Eina_Bool r = EINA_FALSE;
    unsigned int length;
 
    if (sizeof(Emile_Image_Property) != property_size)
@@ -1781,11 +1784,13 @@ _emile_jpeg_data(Emile_Image *image,
           {
              ptrg = malloc(w * h * sizeof(uint8_t));
              ptrg_rotate = ptrg;
+             ptrg_free = EINA_TRUE;
           }
         else if (prop->cspace == EMILE_COLORSPACE_AGRY88)
           {
              ptrag = malloc(w * h * sizeof(uint16_t));
              ptrag_rotate = ptrag;
+             ptrag_free = EINA_TRUE;
           }
         else
           {
@@ -2216,15 +2221,17 @@ done:
      }
    /* end data decoding */
    jpeg_finish_decompress(&cinfo);
-   jpeg_destroy_decompress(&cinfo);
-   _emile_jpeg_membuf_src_term(&cinfo);
    *error = EMILE_IMAGE_LOAD_ERROR_NONE;
-   return EINA_TRUE;
+   r = EINA_TRUE;
 
-on_error:
+ on_error:
+   if (ptrg_free) free(ptrg);
+   if (ptrag_free) free(ptrag);
+
    jpeg_destroy_decompress(&cinfo);
    _emile_jpeg_membuf_src_term(&cinfo);
-   return EINA_FALSE;
+   return r;
+
 }
 
 static void
