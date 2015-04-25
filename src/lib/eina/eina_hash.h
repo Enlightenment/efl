@@ -1067,26 +1067,26 @@ EAPI void           eina_hash_foreach(const Eina_Hash  *hash,
  */
 EAPI void eina_hash_list_append(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 /**
- * @brief Append data to an #Eina_List inside a hash
+ * @brief Prepend data to an #Eina_List inside a hash
  *
  * This function is identical to the sequence of calling
- * eina_hash_find(), eina_list_append(), eina_hash_set(),
+ * eina_hash_find(), eina_list_prepend(), eina_hash_set(),
  * but with one fewer required hash lookup.
  * @param hash The hash table
  * @param key The key associated with the data
- * @param data The data to append to the list
+ * @param data The data to prepend to the list
  * @since 1.10
  */
 EAPI void eina_hash_list_prepend(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 /**
- * @brief Append data to an #Eina_List inside a hash
+ * @brief Remove data from an #Eina_List inside a hash
  *
  * This function is identical to the sequence of calling
- * eina_hash_find(), eina_list_append(), eina_hash_set(),
+ * eina_hash_find(), eina_list_remove(), eina_hash_set(),
  * but with one fewer required hash lookup.
  * @param hash The hash table
  * @param key The key associated with the data
- * @param data The data to append to the list
+ * @param data The data to remove from the list
  * @since 1.10
  */
 EAPI void eina_hash_list_remove(Eina_Hash *hash, const void *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
