@@ -2039,7 +2039,7 @@ _emile_jpeg_data(Emile_Image *image,
                               }
                             else if (prop->cspace == EMILE_COLORSPACE_AGRY88)
                               {
-                                 *ptrag = 0xFF | ptr[0];
+                                 *ptrag = 0xFF00 | ptr[0];
                                  ptrag++;
                               }
                             else
