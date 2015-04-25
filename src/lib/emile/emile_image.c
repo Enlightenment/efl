@@ -1698,7 +1698,7 @@ _emile_jpeg_data(Emile_Image *image,
         ie_h = prop->h;
      }
 
-   if ((opts->region.w > 0) && (opts->region.h > 0))
+   if (opt && ((opts->region.w > 0) && (opts->region.h > 0)))
      {
         region = 1;
 
