@@ -1,0 +1,14 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+
+Name: Assh
+Description: Asynchronous SSH library
+Version: @PACKAGE_VERSION@
+Requires.private:
+Libs: -L${libdir} -lassh
+Libs.private:
+Cflags: -I${includedir}/assh/

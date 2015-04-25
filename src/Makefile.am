@@ -24,6 +24,9 @@ check_PROGRAMS =
 TESTS =
 EXTRA_DIST =
 
+if ! ENABLE_LIBASSH
+   SUBDIRS += static_libs/assh
+endif
 
 EFL_INSTALL_EXEC_HOOK=
 

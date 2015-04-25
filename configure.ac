@@ -404,6 +404,30 @@ AC_DEFINE_IF([ENABLE_LIBLZ4], [test "${want_liblz4}" = "yes"], [1], [Use liblz4 
 AC_SUBST([want_liblz4])
 AC_SUBST([ENABLE_LIBLZ4])
 
+# check for libassh
+want_libassh="no"
+AC_ARG_ENABLE([libassh],
+   [AS_HELP_STRING([--enable-libassh],[Enable usage of libassh instead of our embedded copy. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes"; then
+       PKG_CHECK_MODULES([LIBASSH], [libassh])
+       EFL_DEPEND_PKG([ECORE_CON], [libassh])
+       want_libassh="yes"
+    else
+       want_libassh="no"
+    fi
+   ],
+   [want_libassh="no"])
+
+AM_CONDITIONAL([ENABLE_LIBASSH], [test "x${want_libassh}" = "xyes"])
+AC_DEFINE_IF([ENABLE_LIBASSH], [test "x${want_libassh}" = "xyes"], [1], [Use libassh external library instead of embedded copy])
+AC_SUBST([want_libassh])
+AC_SUBST([ENABLE_LIBASSH])
+
+if test "x${want_libassh}" = "xno"; then
+   AC_CONFIG_SUBDIRS([src/static_libs/assh])
+fi
+
 #### Checks for header files
 
 # Common Checks (keep names sorted for ease of use):

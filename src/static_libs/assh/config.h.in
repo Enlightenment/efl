@@ -1,0 +1,121 @@
+/* config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* SSH authentication max password length */
+#undef CONFIG_ASSH_AUTH_PASSWORD_LEN
+
+/* SSH authentication max username length */
+#undef CONFIG_ASSH_AUTH_USERNAME_LEN
+
+/* SSH client support */
+#undef CONFIG_ASSH_CLIENT
+
+/* SSH client authentication: password support */
+#undef CONFIG_ASSH_CLIENT_AUTH_PASSWORD
+
+/* SSH client authentication: public key support */
+#undef CONFIG_ASSH_CLIENT_AUTH_PUBLICKEY
+
+/* SSH client authentication: public key signature is not sent directly */
+#undef CONFIG_ASSH_CLIENT_AUTH_USE_PKOK
+
+/* SSH server support */
+#undef CONFIG_ASSH_SERVER
+
+/* SSH server authentication: password support */
+#undef CONFIG_ASSH_SERVER_AUTH_PASSWORD
+
+/* SSH server authentication: public key support */
+#undef CONFIG_ASSH_SERVER_AUTH_PUBLICKEY
+
+/* Libgcrypt support */
+#undef CONFIG_ASSH_USE_GCRYPT
+
+/* use of gcrypt secur memory allocation */
+#undef CONFIG_ASSH_USE_GCRYPT_ALLOC
+
+/* use of gcrypt big number functions */
+#undef CONFIG_ASSH_USE_GCRYPT_BIGNUM
+
+/* use of gcrypt cipherss */
+#undef CONFIG_ASSH_USE_GCRYPT_CIPHERS
+
+/* use of gcrypt hash algorithms */
+#undef CONFIG_ASSH_USE_GCRYPT_HASH
+
+/* use of gcrypt random number generation */
+#undef CONFIG_ASSH_USE_GCRYPT_PRNG
+
+/* Define to 1 if you have the <assert.h> header file. */
+#undef HAVE_ASSERT_H
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Define to 1 if you have the <gcrypt.h> header file. */
+#undef HAVE_GCRYPT_H
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
+#undef LT_OBJDIR
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Version number of package */
+#undef VERSION
+
+/* Define to empty if `const' does not conform to ANSI C. */
+#undef const
+
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+#undef inline
+#endif
