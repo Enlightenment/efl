@@ -94,7 +94,7 @@ evas_image_load_file_head_png(void *loader_data,
    png_uint_32 w32, h32;
    int bit_depth, color_type, interlace_type;
    char hasa;
-   Eina_Bool r = EINA_FALSE;
+   volatile Eina_Bool r = EINA_FALSE;
 
    opts = loader->opts;
    f = loader->f;
@@ -218,10 +218,12 @@ evas_image_load_file_data_png(void *loader_data,
    unsigned int pack_offset;
    int w, h;
    int bit_depth, color_type, interlace_type;
-   char hasa, passes;
+   volatile char hasa;
+   char passes;
    int i, j, p, k;
-   int scale_ratio = 1, image_w = 0, image_h = 0;
-   Eina_Bool r = EINA_FALSE;
+   volatile int scale_ratio = 1;
+   int image_w = 0, image_h = 0;
+   volatile Eina_Bool r = EINA_FALSE;
 
    opts = loader->opts;
    f = loader->f;
