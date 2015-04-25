@@ -1430,8 +1430,7 @@ assh_bignum_modinv_mt(struct assh_context_s *ctx,
 
 struct assh_bignum_sieve_s
 {
-  uint32_t offsets[ASSH_SIEVE_PRIMES];
-  uint16_t p2mod[ASSH_SIEVE_PRIMES];
+  uint16_t offsets[ASSH_SIEVE_PRIMES];
 };
 
 /* compute offsets of prime number sieve */
@@ -1443,47 +1442,41 @@ assh_bignum_sieve_init(struct assh_context_s *ctx,
   assh_error_t err;
   size_t l = assh_bignum_words(bn->bits);
   assh_bnword_t *n = bn->n;  
-  assh_bnword_t w = n[0];
   size_t i, k;
 
+  /* compute n modulus some prime numbers */
   for (i = 0; i < ASSH_SIEVE_PRIMES; i++)
     {
-      s->offsets[i] = w % assh_primes[i];
-      s->p2mod[i] = assh_pow2_mod_primes[i];
-    }
+      uint32_t o = n[0] % assh_primes[i];
+      uint16_t m = ASSH_BN_WORDMAX % assh_primes[i] + 1;
+      uint16_t p = assh_primes[i];
+      uint16_t p2m = m;
 
-  /* compute n modulus some prime numbers */
-  for (k = 1; k < l; k++)
-    {
-      /* prevent overflow */
-      if ((k % 64) == 0)
-        for (i = 0; i < ASSH_SIEVE_PRIMES; i++)
-          s->offsets[i] %= assh_primes[i];
-
-      w = n[k];
-
-      /* update the sieve with the next big number word */
-      for (i = 0; i < ASSH_SIEVE_PRIMES; i++)
+      for (k = 1; k < l; k++)
         {
-          uint16_t m = s->p2mod[i];
-          uint16_t p = assh_primes[i];
-          s->offsets[i] += (w % p) * (uint32_t)m;
-          s->p2mod[i] = ((uint32_t)m * assh_pow2_mod_primes[i]) % p;
+          /* prevent overflow */
+          if ((k & 63) == 0)
+            o %= p;
+
+          /* update the sieve with the next big number word */
+          o += (uint32_t)m * (n[k] % p);
+          m = ((uint32_t)m * p2m) % p;
         }
+
+      s->offsets[i] = o % p;
     }
 
   /* adjust sieve values */
   for (i = 0; i < ASSH_SIEVE_PRIMES; i++)
     {
-      uint32_t x = s->offsets[i];
+      uint16_t o = s->offsets[i];
       uint16_t p = assh_primes[i];
-      x = x % p;
-      if (x)
-        x = p - x;
+      if (o)
+        o = p - o;
       /* keep s->offsets[n] + bignum odd */
-      if ((x ^ n[0] ^ 1) & 1)
-        x += p;
-      s->offsets[i] = x;
+      if ((o ^ n[0] ^ 1) & 1)
+        o += p;
+      s->offsets[i] = o;
     }
 
   return ASSH_OK;

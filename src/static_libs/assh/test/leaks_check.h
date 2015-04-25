@@ -58,6 +58,8 @@ static ASSH_ALLOCATOR(assh_leaks_allocator)
       bsize = realloc(bsize - 1, sizeof(size_t) + size);
       if (bsize != NULL)
 	{
+	  alloc_size -= *bsize;
+	  alloc_size += size;
 	  *ptr = bsize + 1;
 	  *bsize = size;
 	  return ASSH_OK;
