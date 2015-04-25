@@ -519,13 +519,19 @@ _emile_tgv_data(Emile_Image *image,
             if (image->compress)
               {
                  if (!emile_expand(data_start, buffer, EMILE_LZ4HC))
-                   goto on_error;
+                   {
+                      eina_binbuf_free(data_start);
+                      goto on_error;
+                   }
               }
             else
               {
                  buffer = data_start;
                  if (block_count * etc_block_size != block_length)
-                   goto on_error;
+                   {
+                      eina_binbuf_free(data_start);
+                      goto on_error;
+                   }
               }
             it = eina_binbuf_string_get(buffer);
 
@@ -635,6 +641,8 @@ _emile_tgv_data(Emile_Image *image,
                         abort();
                      }
                 } /* bx,by inside blocks */
+
+            eina_binbuf_free(data_start);
          } /* x,y macroblocks */
 
    // TODO: Add support for more unpremultiplied modes (ETC2)
