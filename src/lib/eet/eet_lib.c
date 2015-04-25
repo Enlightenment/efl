@@ -1701,7 +1701,7 @@ _base64_dec(const char *file, int *size_ret)
 
              if (tmp)
                {
-                  int len = _b64_dec(tmp, buf, end - buf);
+                  size_t len = _b64_dec(tmp, buf, end - buf);
                   char *str = malloc(end - buf + 1);
                   strncpy(str, buf, end - buf);
                   str[end - buf] = 0;
