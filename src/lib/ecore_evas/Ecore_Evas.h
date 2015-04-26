@@ -178,7 +178,7 @@ EAPI void        ecore_evas_app_comp_sync_set(Eina_Bool do_sync);
 EAPI Eina_Bool   ecore_evas_app_comp_sync_get(void);
 
 /**
- * @brief Returns a list of supported engines names.
+ * @brief Return a list of supported engines names.
  *
  * @return Newly allocated list with engines names. Engines names
  * strings are internal and should be considered constants, do not
@@ -192,7 +192,7 @@ EAPI Eina_List  *ecore_evas_engines_get(void);
  */
 EAPI void        ecore_evas_engines_free(Eina_List *engines);
 /**
- * @brief Creates a new Ecore_Evas based on engine name and common parameters.
+ * @brief Create a new Ecore_Evas based on engine name and common parameters.
  *
  * @param engine_name engine name as returned by
  *        ecore_evas_engines_get() or @c NULL to use environment variable
@@ -566,7 +566,7 @@ EAPI Eina_Bool   ecore_evas_focus_skip_get(const Ecore_Evas *ee);
  */
 EAPI void        ecore_evas_ignore_events_set(Ecore_Evas *ee, Eina_Bool ignore);
 /**
- * @brief Returns the ignore state of an Ecore_Evas' window.
+ * @brief Return the ignore state of an Ecore_Evas' window.
  *
  * @param ee The Ecore_Evas whose window's ignore events state is returned.
  * @return The Ecore_Evas window's ignore state.
@@ -874,7 +874,7 @@ EAPI void ecore_evas_msg_parent_send(Ecore_Evas *ee, int msg_domain, int msg_id,
  */
 EAPI void ecore_evas_msg_send(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, int size);
 /**
- * Set a callback for parent Ecore_Evas message.
+ * @brief Set a callback for parent Ecore_Evas message.
  *
  * @param ee The Ecore_Evas to set callbacks on
  * @param func_parent_handle The handle to be called when message arive.
@@ -888,7 +888,7 @@ EAPI void ecore_evas_msg_send(Ecore_Evas *ee, int msg_domain, int msg_id, void *
  */
 EAPI void ecore_evas_callback_msg_parent_handle_set(Ecore_Evas *ee, void (*func_parent_handle)(Ecore_Evas *ee, int msg_domain, int msg_id, void *data, int size));
 /**
- * Set a callback for child Ecore_Evas message.
+ * @brief Set a callback for child Ecore_Evas message.
  *
  * @param ee The Ecore_Evas to set callbacks on
  * @param func_handle  The handle to be called when message arive
@@ -1065,7 +1065,7 @@ EAPI void        ecore_evas_name_class_set(Ecore_Evas *ee, const char *n, const 
  */
 EAPI void        ecore_evas_name_class_get(const Ecore_Evas *ee, const char **n, const char **c);
 /**
- * @brief Returns a pointer to the underlying window.
+ * @brief Return a pointer to the underlying window.
  *
  * @param ee The Ecore_Evas whose window is desired.
  * @return A pointer to the underlying window.
@@ -1075,10 +1075,52 @@ EAPI void        ecore_evas_name_class_get(const Ecore_Evas *ee, const char **n,
 EAPI Ecore_Window ecore_evas_window_get(const Ecore_Evas *ee);
 
 /* engine/target specific init calls */
+
+/**
+ * @brief Create Ecore_Evas using software x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and NULL is returned.
+ * @param disp_name The name of the Ecore_Evas to be created.
+ * @param parent The parent of the Ecore_Evas to be created.
+ * @param x The X coordinate to be used.
+ * @param y The Y coordinate to be used.
+ * @param w The width of the Ecore_Evas to be created.
+ * @param h The height of the Ecore_Evas to be created.
+ * @return A handle to the created Ecore_Evas.
+ */
 EAPI Ecore_Evas     *ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
+
+/**
+ * @brief Get the window from Ecore_Evas using software x11.
+ * @note If ecore is not compiled with support for x11 or if @p ee was not
+ * created with ecore_evas_software_x11_new() then nothing is done and
+ * 0 is returned.
+ * @param ee The Ecore_Evas from which to get the window.
+ * @return The window of type Ecore_X_Window.
+ */
 EAPI Ecore_X_Window  ecore_evas_software_x11_window_get(const Ecore_Evas *ee);
+
+/**
+ * @brief Set the direct_resize of Ecore_Evas using software x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done.
+ * @param ee The Ecore_Evas in which to set direct resize.
+ * @param on Enables the resize of Ecore_Evas if equals EINA_TRUE, disables if equals EINA_FALSE.
+ */
 EAPI void            ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, Eina_Bool on);
+
+/**
+ * @brief Get if the Ecore_Evas is being directly resized using software x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and EINA_FALSE is returned.
+ * @param ee The Ecore_Evas from which to get direct resize.
+ * @return EINA_TRUE if the resize was managed directly, otherwise return EINA_FALSE.
+ */
 EAPI Eina_Bool       ecore_evas_software_x11_direct_resize_get(const Ecore_Evas *ee);
+
+/**
+ * @brief Add extra window on Ecore_Evas using software x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done.
+ * @param ee The Ecore_Evas on which to add the window.
+ * @param win The window to be added at the Ecore_Evas.
+ */
 EAPI void            ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
 
 /**
@@ -1094,7 +1136,7 @@ EAPI void            ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *
 EAPI Ecore_Evas     *ecore_evas_software_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 
 /**
- * @brief Returns the underlying Ecore_X_Pixmap used in the Ecore_Evas
+ * @brief Return the underlying Ecore_X_Pixmap used in the Ecore_Evas
  *
  * @param ee The Ecore_Evas whose pixmap is desired.
  * @return The underlying Ecore_X_Pixmap
@@ -1124,12 +1166,62 @@ EAPI Ecore_X_Pixmap ecore_evas_software_x11_pixmap_get(const Ecore_Evas *ee);
 #define ECORE_EVAS_GL_X11_SWAP_MODE_DOUBLE 3
 #define ECORE_EVAS_GL_X11_SWAP_MODE_TRIPLE 4
 
+/**
+ * @brief Create Ecore_Evas using opengl x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and NULL is returned.
+ * @param disp_name The name of the display of the Ecore_Evas to be created.
+ * @param parent The parent of the Ecore_Evas to be created.
+ * @param x The X coordinate to be used.
+ * @param y The Y coordinate to be used.
+ * @param w The width of the Ecore_Evas to be created.
+ * @param h The height of the Ecore_Evas to be created.
+ * @return The new Ecore_Evas.
+ */
 EAPI Ecore_Evas     *ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_Evas     *ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h, const int *opt);
+
+/**
+ * @brief Get the window from Ecore_Evas using opengl x11.
+ * @note If ecore is not compiled with support for x11 or if @p ee was not
+ * created with ecore_evas_gl_x11_new() then nothing is done and
+ * 0 is returned.
+ * @param ee The Ecore_Evas from which to get the window.
+ * @return The window of type Ecore_X_Window of Ecore_Evas.
+ */
 EAPI Ecore_X_Window  ecore_evas_gl_x11_window_get(const Ecore_Evas *ee);
+
+/**
+ * @brief Set direct_resize for Ecore_Evas using opengl x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done.
+ * @param ee The Ecore_Evas in which to set direct resize.
+ * @param on Enables the resize of Ecore_Evas if equals EINA_TRUE, disables if equals EINA_FALSE.
+ */
 EAPI void            ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, Eina_Bool on);
+
+/**
+ * @brief Get if the Ecore_Evas is being directly resized using opengl x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and EINA_FALSE is returned.
+ * @param ee The Ecore_Evas from which to get direct resize.
+ * @return EINA_TRUE if the resize was managed directly, otherwise return EINA_FALSE.
+ */
 EAPI Eina_Bool       ecore_evas_gl_x11_direct_resize_get(const Ecore_Evas *ee);
+
+/**
+ * @brief Add extra window on Ecore_Evas using opengl x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done.
+ * @param ee The Ecore_Evas for which to add the window.
+ * @param win The window to be added at the Ecore_Evas.
+ */
 EAPI void            ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
+
+/**
+ * @brief Set the functions to be used before and after the swap callback.
+ * @note If ecore is not compiled with support to x11 then nothing is done and the function is returned.
+ * @param ee The Ecore_Evas for which to set the swap callback.
+ * @param data The data for which to set the swap callback.
+ * @param pre_cb The function to be called before the callback.
+ * @param post_cb The function to be called after the callback.
+ */
 EAPI void            ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Evas *ee, void *data, void (*pre_cb) (void *data, Evas *e), void (*post_cb) (void *data, Evas *e));
 
 /**
@@ -1145,7 +1237,7 @@ EAPI void            ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Ev
 EAPI Ecore_Evas     *ecore_evas_gl_x11_pixmap_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 
 /**
- * @brief Returns the underlying Ecore_X_Pixmap used in the Ecore_Evas
+ * @brief Return the underlying Ecore_X_Pixmap used in the Ecore_Evas
  *
  * @param ee The Ecore_Evas whose pixmap is desired.
  * @return The underlying Ecore_X_Pixmap
@@ -1179,6 +1271,14 @@ EAPI void            ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee
 EAPI Eina_Bool       ecore_evas_software_x11_16_direct_resize_get(const Ecore_Evas *ee) EINA_DEPRECATED;
 EAPI void            ecore_evas_software_x11_16_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win) EINA_DEPRECATED;
 
+/**
+ * @brief Create Ecore_Evas using fb backend.
+ * @param disp_name The name of the display to be used.
+ * @param rotation The rotation to be used.
+ * @param w The width of the Ecore_Evas to be created.
+ * @param h The height of the Ecore_Evas to be created.
+ * @return The new Ecore_Evas.
+ */
 EAPI Ecore_Evas     *ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h);
 
 EAPI Ecore_Evas     *ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w, int h) EINA_DEPRECATED;
@@ -1317,7 +1417,7 @@ EAPI Ecore_Evas     *ecore_evas_ews_new(int x, int y, int w, int h);
 
 
 /**
- * Returns the backing store image object that represents the given
+ * @brief Return the backing store image object that represents the given
  * window in EWS.
  * @return The evas object of EWS backing store.
  *
@@ -1333,7 +1433,7 @@ EAPI Ecore_Evas     *ecore_evas_ews_new(int x, int y, int w, int h);
 EAPI Evas_Object *ecore_evas_ews_backing_store_get(const Ecore_Evas *ee);
 
 /**
- * Calls the window to be deleted (freed), but can let user decide to
+ * @brief Call the window to be deleted (freed), but can let user decide to
  * forbid it by using ecore_evas_callback_delete_request_set()
  *
  * @param ee The Ecore_Evas for which window will be deleted.
@@ -1544,7 +1644,7 @@ EAPI void       *ecore_evas_data_get(const Ecore_Evas *ee, const char *key);
  */
 EAPI void        ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void *data);
 /**
- * Set a callback for Ecore_Evas resize events.
+ * @brief Set a callback for Ecore_Evas resize events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1556,7 +1656,7 @@ EAPI void        ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void
  */
 EAPI void        ecore_evas_callback_resize_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * Set a callback for Ecore_Evas move events.
+ * @brief Set a callback for Ecore_Evas move events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1568,7 +1668,7 @@ EAPI void        ecore_evas_callback_resize_set(Ecore_Evas *ee, Ecore_Evas_Event
  */
 EAPI void        ecore_evas_callback_move_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * Set a callback for Ecore_Evas show events.
+ * @brief Set a callback for Ecore_Evas show events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1580,7 +1680,7 @@ EAPI void        ecore_evas_callback_move_set(Ecore_Evas *ee, Ecore_Evas_Event_C
  */
 EAPI void        ecore_evas_callback_show_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * Set a callback for Ecore_Evas hide events.
+ * @brief Set a callback for Ecore_Evas hide events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1592,7 +1692,7 @@ EAPI void        ecore_evas_callback_show_set(Ecore_Evas *ee, Ecore_Evas_Event_C
  */
 EAPI void        ecore_evas_callback_hide_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * Set a callback for Ecore_Evas delete request events.
+ * @brief Set a callback for Ecore_Evas delete request events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1604,7 +1704,7 @@ EAPI void        ecore_evas_callback_hide_set(Ecore_Evas *ee, Ecore_Evas_Event_C
  */
 EAPI void        ecore_evas_callback_delete_request_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * Set a callback for Ecore_Evas destroy events.
+ * @brief Set a callback for Ecore_Evas destroy events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1616,7 +1716,7 @@ EAPI void        ecore_evas_callback_delete_request_set(Ecore_Evas *ee, Ecore_Ev
  */
 EAPI void        ecore_evas_callback_destroy_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * Set a callback for Ecore_Evas focus in events.
+ * @brief Set a callback for Ecore_Evas focus in events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1628,7 +1728,7 @@ EAPI void        ecore_evas_callback_destroy_set(Ecore_Evas *ee, Ecore_Evas_Even
  */
 EAPI void        ecore_evas_callback_focus_in_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * Set a callback for Ecore_Evas focus out events.
+ * @brief Set a callback for Ecore_Evas focus out events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1640,7 +1740,7 @@ EAPI void        ecore_evas_callback_focus_in_set(Ecore_Evas *ee, Ecore_Evas_Eve
  */
 EAPI void        ecore_evas_callback_focus_out_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * Set a callback for Ecore_Evas sticky events.
+ * @brief Set a callback for Ecore_Evas sticky events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1652,7 +1752,7 @@ EAPI void        ecore_evas_callback_focus_out_set(Ecore_Evas *ee, Ecore_Evas_Ev
  */
 EAPI void        ecore_evas_callback_sticky_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * Set a callback for Ecore_Evas un-sticky events.
+ * @brief Set a callback for Ecore_Evas un-sticky events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1664,7 +1764,7 @@ EAPI void        ecore_evas_callback_sticky_set(Ecore_Evas *ee, Ecore_Evas_Event
  */
 EAPI void        ecore_evas_callback_unsticky_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * Set a callback for Ecore_Evas mouse in events.
+ * @brief Set a callback for Ecore_Evas mouse in events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1676,7 +1776,7 @@ EAPI void        ecore_evas_callback_unsticky_set(Ecore_Evas *ee, Ecore_Evas_Eve
  */
 EAPI void        ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * Set a callback for Ecore_Evas mouse out events.
+ * @brief Set a callback for Ecore_Evas mouse out events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1688,7 +1788,7 @@ EAPI void        ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, Ecore_Evas_Eve
  */
 EAPI void        ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * Set a callback for Ecore_Evas pre render events.
+ * @brief Set a callback for Ecore_Evas pre render events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1700,7 +1800,7 @@ EAPI void        ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, Ecore_Evas_Ev
  */
 EAPI void        ecore_evas_callback_pre_render_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * Set a callback for Ecore_Evas mouse post render events.
+ * @brief Set a callback for Ecore_Evas mouse post render events.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1712,7 +1812,7 @@ EAPI void        ecore_evas_callback_pre_render_set(Ecore_Evas *ee, Ecore_Evas_E
  */
 EAPI void        ecore_evas_callback_post_render_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * Set a callback for Ecore_Evas pre-free event.
+ * @brief Set a callback for Ecore_Evas pre-free event.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
  *
@@ -1724,7 +1824,7 @@ EAPI void        ecore_evas_callback_post_render_set(Ecore_Evas *ee, Ecore_Evas_
  */
 EAPI void        ecore_evas_callback_pre_free_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
- * Set a callback for Ecore_Evas state changes.
+ * @brief Set a callback for Ecore_Evas state changes.
  * @param ee The Ecore_Evas to set callbacks on
  * @param func The function to call
 
@@ -1738,7 +1838,7 @@ EAPI void        ecore_evas_callback_pre_free_set(Ecore_Evas *ee, Ecore_Evas_Eve
 EAPI void        ecore_evas_callback_state_change_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 
 /**
- * Get an Ecore_Evas's Evas
+ * @brief Get an Ecore_Evas's Evas
  * @param ee The Ecore_Evas whose Evas you wish to get
  * @return The Evas wrapped by @p ee
  *
@@ -1747,7 +1847,7 @@ EAPI void        ecore_evas_callback_state_change_set(Ecore_Evas *ee, Ecore_Evas
 EAPI Evas       *ecore_evas_get(const Ecore_Evas *ee);
 
 /**
- * Provide Managed move co-ordinates for an Ecore_Evas
+ * @brief Provide Managed move co-ordinates for an Ecore_Evas
  * @param ee The Ecore_Evas to move
  * @param x The x coordinate to set as the managed location
  * @param y The y coordinate to set as the managed location
@@ -1757,7 +1857,7 @@ EAPI Evas       *ecore_evas_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_managed_move(Ecore_Evas *ee, int x, int y);
 
 /**
- * Set whether an Ecore_Evas is shaped or not.
+ * @brief Set whether an Ecore_Evas is shaped or not.
  *
  * @param ee The Ecore_Evas to shape.
  * @param shaped @c EINA_TRUE to shape, @c EINA_FALSE to not.
@@ -1772,7 +1872,7 @@ EAPI void        ecore_evas_managed_move(Ecore_Evas *ee, int x, int y);
 EAPI void        ecore_evas_shaped_set(Ecore_Evas *ee, Eina_Bool shaped);
 
 /**
- * Query whether an Ecore_Evas is shaped or not.
+ * @brief Query whether an Ecore_Evas is shaped or not.
  *
  * @param ee The Ecore_Evas to query.
  * @return @c EINA_TRUE if shaped, @c EINA_FALSE if not.
@@ -1798,7 +1898,7 @@ EAPI void        ecore_evas_show(Ecore_Evas *ee);
 EAPI void        ecore_evas_hide(Ecore_Evas *ee);
 
 /**
- * Activate (set focus to, via the window manager) an Ecore_Evas' window.
+ * @brief Activate (set focus to, via the window manager) an Ecore_Evas' window.
  * @param ee The Ecore_Evas to activate.
  *
  * This functions activates the Ecore_Evas.
@@ -1807,7 +1907,7 @@ EAPI void        ecore_evas_activate(Ecore_Evas *ee);
 
 
 /**
- * Set the minimum size of a given @c Ecore_Evas window
+ * @brief Set the minimum size of a given @c Ecore_Evas window
  *
  * @param ee An @c Ecore_Evas window's handle
  * @param w The minimum width
@@ -1826,7 +1926,7 @@ EAPI void        ecore_evas_activate(Ecore_Evas *ee);
 EAPI void        ecore_evas_size_min_set(Ecore_Evas *ee, int w, int h);
 
 /**
- * Get the minimum size set for a given @c Ecore_Evas window
+ * @brief Get the minimum size set for a given @c Ecore_Evas window
  *
  * @param ee An @c Ecore_Evas window's handle
  * @param w A pointer to an int to place the minimum width in.
@@ -1840,7 +1940,7 @@ EAPI void        ecore_evas_size_min_set(Ecore_Evas *ee, int w, int h);
 EAPI void        ecore_evas_size_min_get(const Ecore_Evas *ee, int *w, int *h);
 
 /**
- * Set the maximum size of a given @c Ecore_Evas window
+ * @brief Set the maximum size of a given @c Ecore_Evas window
  *
  * @param ee An @c Ecore_Evas window's handle
  * @param w The maximum width
@@ -1855,7 +1955,7 @@ EAPI void        ecore_evas_size_min_get(const Ecore_Evas *ee, int *w, int *h);
 EAPI void        ecore_evas_size_max_set(Ecore_Evas *ee, int w, int h);
 
 /**
- * Get the maximum size set for a given @c Ecore_Evas window
+ * @brief Get the maximum size set for a given @c Ecore_Evas window
  *
  * @param ee An @c Ecore_Evas window's handle
  * @param w A pointer to an int to place the maximum width in.
@@ -1869,7 +1969,7 @@ EAPI void        ecore_evas_size_max_set(Ecore_Evas *ee, int w, int h);
 EAPI void        ecore_evas_size_max_get(const Ecore_Evas *ee, int *w, int *h);
 
 /**
- * Set the base size for a given @c Ecore_Evas window
+ * @brief Set the base size for a given @c Ecore_Evas window
  *
  * @param ee An @c Ecore_Evas window's handle
  * @param w The base width
@@ -1884,7 +1984,7 @@ EAPI void        ecore_evas_size_max_get(const Ecore_Evas *ee, int *w, int *h);
 EAPI void        ecore_evas_size_base_set(Ecore_Evas *ee, int w, int h);
 
 /**
- * Get the base size set for a given @c Ecore_Evas window
+ * @brief Get the base size set for a given @c Ecore_Evas window
  *
  * @param ee An @c Ecore_Evas window's handle
  * @param w A pointer to an int to place the base width in.
@@ -1898,7 +1998,7 @@ EAPI void        ecore_evas_size_base_set(Ecore_Evas *ee, int w, int h);
 EAPI void        ecore_evas_size_base_get(const Ecore_Evas *ee, int *w, int *h);
 
 /**
- * Set the "size step" for a given @c Ecore_Evas window
+ * @brief Set the "size step" for a given @c Ecore_Evas window
  *
  * @param ee An @c Ecore_Evas window's handle
  * @param w The step width
@@ -1911,7 +2011,7 @@ EAPI void        ecore_evas_size_base_get(const Ecore_Evas *ee, int *w, int *h);
 EAPI void        ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h);
 
 /**
- * Get the "size step" set for a given @c Ecore_Evas window
+ * @brief Get the "size step" set for a given @c Ecore_Evas window
  *
  * @param ee An @c Ecore_Evas window's handle
  * @param w A pointer to an int to place the step width in.
@@ -2000,7 +2100,7 @@ EAPI void        ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, 
 EAPI Evas_Object*        ecore_evas_cursor_unset(Ecore_Evas *ee);
 
 /**
- * Tell the WM whether or not to ignore an Ecore_Evas' window
+ * @brief Tell the WM whether or not to ignore an Ecore_Evas' window
  *
  * @param ee The Ecore_Evas.
  * @param on @c EINA_TRUE to ignore, @c EINA_FALSE to not.
@@ -2011,7 +2111,7 @@ EAPI Evas_Object*        ecore_evas_cursor_unset(Ecore_Evas *ee);
 EAPI void        ecore_evas_override_set(Ecore_Evas *ee, Eina_Bool on);
 
 /**
- * Query whether an Ecore_Evas' window is overridden or not
+ * @brief Query whether an Ecore_Evas' window is overridden or not
  *
  * @param ee The Ecore_Evas to set.
  * @return @c EINA_TRUE if @p ee is overridden, @c EINA_FALSE if not.
@@ -2019,7 +2119,7 @@ EAPI void        ecore_evas_override_set(Ecore_Evas *ee, Eina_Bool on);
 EAPI Eina_Bool   ecore_evas_override_get(const Ecore_Evas *ee);
 
 /**
- * Set whether or not an Ecore_Evas' window should avoid damage
+ * @brief Set whether or not an Ecore_Evas' window should avoid damage
  *
  * @param ee The Ecore_Evas
  * @param on The type of the damage management
@@ -2047,7 +2147,7 @@ EAPI Eina_Bool   ecore_evas_override_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_avoid_damage_set(Ecore_Evas *ee, Ecore_Evas_Avoid_Damage_Type on);
 
 /**
- * Query whether an Ecore_Evas' window avoids damage or not
+ * @brief Query whether an Ecore_Evas' window avoids damage or not
  * @param ee The Ecore_Evas to set
  * @return The type of the damage management
  *
@@ -2055,7 +2155,7 @@ EAPI void        ecore_evas_avoid_damage_set(Ecore_Evas *ee, Ecore_Evas_Avoid_Da
 EAPI Ecore_Evas_Avoid_Damage_Type ecore_evas_avoid_damage_get(const Ecore_Evas *ee);
 
 /**
- * Set the withdrawn state of an Ecore_Evas' window.
+ * @brief Set the withdrawn state of an Ecore_Evas' window.
  * @param ee The Ecore_Evas whose window's withdrawn state is set.
  * @param withdrawn The Ecore_Evas window's new withdrawn state.
  *
@@ -2063,7 +2163,7 @@ EAPI Ecore_Evas_Avoid_Damage_Type ecore_evas_avoid_damage_get(const Ecore_Evas *
 EAPI void        ecore_evas_withdrawn_set(Ecore_Evas *ee, Eina_Bool withdrawn);
 
 /**
- * Returns the withdrawn state of an Ecore_Evas' window.
+ * @brief Return the withdrawn state of an Ecore_Evas' window.
  * @param ee The Ecore_Evas whose window's withdrawn state is returned.
  * @return The Ecore_Evas window's withdrawn state.
  *
@@ -2071,7 +2171,7 @@ EAPI void        ecore_evas_withdrawn_set(Ecore_Evas *ee, Eina_Bool withdrawn);
 EAPI Eina_Bool   ecore_evas_withdrawn_get(const Ecore_Evas *ee);
 
 /**
- * Set the sticky state of an Ecore_Evas window.
+ * @brief Set the sticky state of an Ecore_Evas window.
  *
  * @param ee The Ecore_Evas whose window's sticky state is set.
  * @param sticky The Ecore_Evas window's new sticky state.
@@ -2080,7 +2180,7 @@ EAPI Eina_Bool   ecore_evas_withdrawn_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_sticky_set(Ecore_Evas *ee, Eina_Bool sticky);
 
 /**
- * Returns the sticky state of an Ecore_Evas' window.
+ * @brief Return the sticky state of an Ecore_Evas' window.
  *
  * @param ee The Ecore_Evas whose window's sticky state is returned.
  * @return The Ecore_Evas window's sticky state.
@@ -2089,7 +2189,7 @@ EAPI void        ecore_evas_sticky_set(Ecore_Evas *ee, Eina_Bool sticky);
 EAPI Eina_Bool   ecore_evas_sticky_get(const Ecore_Evas *ee);
 
 /**
- * Enable/disable manual render
+ * @brief Enable/disable manual render
  *
  * @param ee An @c Ecore_Evas handle
  * @param manual_render Enable/disable manual render. @c EINA_TRUE to enable
@@ -2108,7 +2208,7 @@ EAPI Eina_Bool   ecore_evas_sticky_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_manual_render_set(Ecore_Evas *ee, Eina_Bool manual_render);
 
 /**
- * Get enable/disable status of manual render
+ * @brief Get enable/disable status of manual render
  *
  * @param ee An @c Ecore_Evas handle
  * @return @c EINA_TRUE if manual render is enabled, @c EINA_FALSE if manual
@@ -2120,7 +2220,7 @@ EAPI void        ecore_evas_manual_render_set(Ecore_Evas *ee, Eina_Bool manual_r
 EAPI Eina_Bool   ecore_evas_manual_render_get(const Ecore_Evas *ee);
 
 /**
- * @brief Registers an @c Ecore_Evas to receive events through ecore_input_evas.
+ * @brief Register an @c Ecore_Evas to receive events through ecore_input_evas.
  *
  * @param ee The @c Ecore_Evas handle.
  *
@@ -2133,7 +2233,7 @@ EAPI Eina_Bool   ecore_evas_manual_render_get(const Ecore_Evas *ee);
  */
 EAPI void        ecore_evas_input_event_register(Ecore_Evas *ee);
 /**
- * @brief Unregisters an @c Ecore_Evas receiving events through ecore_input_evas.
+ * @brief Unregister an @c Ecore_Evas receiving events through ecore_input_evas.
  *
  * @param ee The @c Ecore_Evas handle.
  *
@@ -2283,7 +2383,7 @@ EAPI void           ecore_evas_x11_shape_input_apply(Ecore_Evas *ee);
  */
 
 /**
- * Sets the engine to be used by the backing store engine.
+ * @brief Set the engine to be used by the backing store engine.
  *
  * @param engine The engine to be set.
  * @param options The options of the engine to be set.
@@ -2293,7 +2393,7 @@ EAPI void           ecore_evas_x11_shape_input_apply(Ecore_Evas *ee);
 EAPI Eina_Bool ecore_evas_ews_engine_set(const char *engine, const char *options);
 
 /**
- * Reconfigure the backing store used.
+ * @brief Reconfigure the backing store used.
  *
  * @param x The X coordinate to be used.
  * @param y The Y coordinate to be used.
@@ -2305,7 +2405,7 @@ EAPI Eina_Bool ecore_evas_ews_engine_set(const char *engine, const char *options
 EAPI Eina_Bool ecore_evas_ews_setup(int x, int y, int w, int h);
 
 /**
- * Return the internal backing store in use.
+ * @brief Return the internal backing store in use.
  *
  * @return The internal backing store in use.
  * @note this will forced it to be created, making future calls to
@@ -2317,7 +2417,7 @@ EAPI Eina_Bool ecore_evas_ews_setup(int x, int y, int w, int h);
 EAPI Ecore_Evas *ecore_evas_ews_ecore_evas_get(void);
 
 /**
- * Return the internal backing store in use.
+ * @brief Return the internal backing store in use.
  *
  * @return The internal backing store in use.
  * @note this will forced it to be created, making future calls to
@@ -2329,12 +2429,12 @@ EAPI Ecore_Evas *ecore_evas_ews_ecore_evas_get(void);
 EAPI Evas *ecore_evas_ews_evas_get(void);
 
 /**
- * Get the current background.
+ * @brief Get the current background.
  */
 EAPI Evas_Object *ecore_evas_ews_background_get(void);
 
 /**
- * Set the current background, must be created at evas ecore_evas_ews_evas_get()
+ * @brief Set the current background, must be created at evas ecore_evas_ews_evas_get()
  *
  * It will be kept at lowest layer (EVAS_LAYER_MIN) and below
  * everything else. You can set any object, default is a black
@@ -2346,7 +2446,7 @@ EAPI Evas_Object *ecore_evas_ews_background_get(void);
 EAPI void ecore_evas_ews_background_set(Evas_Object *o);
 
 /**
- * Return all Ecore_Evas* created by EWS.
+ * @brief Return all Ecore_Evas* created by EWS.
  *
  * @return An eina list of Ecore_evases.
  e @note Do not change the returned list or its contents.
@@ -2355,7 +2455,7 @@ EAPI void ecore_evas_ews_background_set(Evas_Object *o);
 EAPI const Eina_List *ecore_evas_ews_children_get(void);
 
 /**
- * Set the identifier of the manager taking care of internal windows.
+ * @brief Set the identifier of the manager taking care of internal windows.
  *
  * The ECORE_EVAS_EWS_EVENT_MANAGER_CHANGE event is issued. Consider
  * handling it to know if you should stop handling events yourself
@@ -2369,7 +2469,7 @@ EAPI const Eina_List *ecore_evas_ews_children_get(void);
 EAPI void        ecore_evas_ews_manager_set(const void *manager);
 
 /**
- * Get the identifier of the manager taking care of internal windows.
+ * @brief Get the identifier of the manager taking care of internal windows.
  *
  * @return the value set by ecore_evas_ews_manager_set()
  * @since 1.1
