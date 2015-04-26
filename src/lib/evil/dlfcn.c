@@ -22,13 +22,13 @@
 #include "dlfcn.h"
 
 
-static char *dl_err = NULL;
-static int dl_err_viewed = 0;
+static char *_dl_err = NULL;
+static int _dl_err_viewed = 0;
 
 static void
-get_last_error(char *desc)
+_dl_get_last_error(char *desc)
 {
-   char  *str;
+   char *str;
    size_t l1;
    size_t l2;
 
@@ -37,20 +37,20 @@ get_last_error(char *desc)
    l1 = strlen(desc);
    l2 = strlen(str);
 
-   if (dl_err)
-     free(dl_err);
+   if (_dl_err)
+     free(_dl_err);
 
-   dl_err = (char *)malloc(sizeof(char) * (l1 + l2 + 1));
-   if (!dl_err)
-     dl_err = strdup("not enough resource");
+   _dl_err = (char *)malloc(sizeof(char) * (l1 + l2 + 1));
+   if (!_dl_err)
+     _dl_err = strdup("not enough resource");
    else
      {
-        memcpy(dl_err, desc, l1);
-        memcpy(dl_err + l1, str, l2);
-        dl_err[l1 + l2] = '\0';
+        memcpy(_dl_err, desc, l1);
+        memcpy(_dl_err + l1, str, l2);
+        _dl_err[l1 + l2] = '\0';
      }
    free(str);
-   dl_err_viewed = 0;
+   _dl_err_viewed = 0;
 }
 
 void *
@@ -62,7 +62,7 @@ dlopen(const char* path, int mode EVIL_UNUSED)
      {
         module = GetModuleHandle(NULL);
         if (!module)
-          get_last_error("GetModuleHandle returned: ");
+          _dl_get_last_error("GetModuleHandle returned: ");
      }
    else
      {
@@ -75,10 +75,10 @@ dlopen(const char* path, int mode EVIL_UNUSED)
         new_path = (char *)malloc(sizeof(char) * (l + 1));
         if (!new_path)
           {
-             if (dl_err)
-               free(dl_err);
-             dl_err = strdup("not enough resource");
-             dl_err_viewed = 0;
+             if (_dl_err)
+               free(_dl_err);
+             _dl_err = strdup("not enough resource");
+             _dl_err_viewed = 0;
              return NULL;
           }
         for (i = 0; i <= l; i++)
@@ -101,7 +101,7 @@ dlopen(const char* path, int mode EVIL_UNUSED)
                                LOAD_WITH_ALTERED_SEARCH_PATH);
 #endif /* ! UNICODE */
         if (!module)
-          get_last_error("LoadLibraryEx returned: ");
+          _dl_get_last_error("LoadLibraryEx returned: ");
 
         free(new_path);
      }
@@ -116,7 +116,7 @@ dlclose(void* handle)
      return 0;
    else
      {
-        get_last_error("FreeLibrary returned: ");
+        _dl_get_last_error("FreeLibrary returned: ");
         return -1;
      }
 }
@@ -146,7 +146,7 @@ dlsym(void *handle, const char *symbol)
                                 modules, sizeof(modules), &needed))
           return NULL;
 
-        for (i = 0; i < (needed /  sizeof(HMODULE)); i++)
+        for (i = 0; i < (needed / sizeof(HMODULE)); i++)
           {
             fp = GetProcAddress(modules[i], new_symbol);
             if (fp) break;
@@ -160,7 +160,7 @@ dlsym(void *handle, const char *symbol)
 #endif /* UNICODE */
 
    if (!fp)
-     get_last_error("GetProcAddress returned: ");
+     _dl_get_last_error("GetProcAddress returned: ");
 
    return fp;
 }
@@ -221,15 +221,15 @@ dladdr (const void *addr EVIL_UNUSED, Dl_info *info)
 char *
 dlerror (void)
 {
-   if (!dl_err_viewed)
+   if (!_dl_err_viewed)
      {
-        dl_err_viewed = 1;
-        return dl_err;
+        _dl_err_viewed = 1;
+        return _dl_err;
      }
    else
      {
-        if (dl_err)
-          free(dl_err);
+        if (_dl_err)
+          free(_dl_err);
         return NULL;
      }
 }
