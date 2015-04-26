@@ -70,17 +70,20 @@ int main(int argc, char **argv)
   int r = connect(sock, (struct sockaddr*)(&sin), sizeof(sin));
   assert(r == 0);
 
-  struct assh_context_s context;
-  assh_context_init(&context, ASSH_CLIENT);
+  struct assh_context_s *context;
 
-  if (assh_service_register_default(&context) != ASSH_OK)
+  if (assh_context_create(&context, ASSH_CLIENT, NULL, NULL))
+    abort();
+
+  if (assh_service_register_default(context) != ASSH_OK)
     return -1;
 
-  if (assh_algo_register_default(&context, 99, 10) != ASSH_OK)
+  if (assh_algo_register_default(context, 99, 10) != ASSH_OK)
     return -1;
 
-  struct assh_session_s session;
-  if (assh_session_init(&context, &session) != ASSH_OK)
+  struct assh_session_s *session;
+
+  if (assh_session_create(context, &session) != ASSH_OK)
     return -1;
 
   int rnd_fd = open("/dev/urandom", O_RDONLY);
@@ -98,7 +101,7 @@ int main(int argc, char **argv)
     {
       struct assh_event_s event;
 
-      err = assh_event_table_run(&session, &ev_table, &event);
+      err = assh_event_table_run(session, &ev_table, &event);
       if (ASSH_ERR_ERROR(err) != ASSH_OK)
         {
           fprintf(stderr, "assh error %x sv %x in main loop (errno=%i)\n",
@@ -113,7 +116,7 @@ int main(int argc, char **argv)
         case ASSH_EVENT_KEX_HOSTKEY_LOOKUP: {
           /* XXX the key validity may be checked before adding
              the key to the list of known hosts. */
-          if (assh_key_validate(&context, event.kex.hostkey_lookup.key))
+          if (assh_key_validate(context, event.kex.hostkey_lookup.key))
             break;
 
           event.kex.hostkey_lookup.accept = 1;
@@ -130,13 +133,13 @@ int main(int argc, char **argv)
           if (event.userauth_client.methods.use_pub_key)
             {
 #if 0
-              if (assh_load_key_filename(&context, &event.userauth_client.methods.pub_keys,
+              if (assh_load_key_filename(context, &event.userauth_client.methods.pub_keys,
                                          &assh_key_dsa, ASSH_ALGO_SIGN, "dsa_user_key",
                                          ASSH_KEY_FMT_PV_RFC2440_PEM_ASN1) != ASSH_OK)
                 fprintf(stderr, "unable to load user dsa key\n");
 #endif
 #if 1
-              if (assh_load_key_filename(&context, &event.userauth_client.methods.pub_keys,
+              if (assh_load_key_filename(context, &event.userauth_client.methods.pub_keys,
                                          &assh_key_rsa, ASSH_ALGO_SIGN, "rsa_user_key",
                                          ASSH_KEY_FMT_PV_RFC2440_PEM_ASN1) != ASSH_OK)
                 fprintf(stderr, "unable to load user rsa key\n");
@@ -158,14 +161,14 @@ int main(int argc, char **argv)
           printf("Don't know how to handle event %u\n", event.id);
         }
 
-      err = assh_event_done(&session, &event);
+      err = assh_event_done(session, &event);
       if (err != ASSH_OK)
         fprintf(stderr, "assh error %x in main loop (errno=%i)\n", err, errno);
     }
 
  err_:
-  assh_session_cleanup(&session);
-  assh_context_cleanup(&context);
+  assh_session_release(session);
+  assh_context_release(context);
   return 0;
 }
 

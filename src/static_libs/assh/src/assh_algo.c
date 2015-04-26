@@ -43,33 +43,10 @@ static int assh_algo_order(const struct assh_algo_s *a,
 	  (a->speed * (99 - safety) + a->safety * safety));
 }
 
-assh_error_t assh_algo_register_va(struct assh_context_s *c, unsigned int safety,
-				   unsigned int min_safety, ...)
+static void assh_algo_udpate(struct assh_context_s *c,
+			     unsigned int safety,
+			     unsigned int min_safety)
 {
-  assh_error_t err = ASSH_OK;
-  va_list ap;
-  va_start(ap, min_safety);
-
-  /* append algorithms to the array */
-  while (1)
-    {
-      struct assh_algo_s *algo = va_arg(ap, void*);
-      if (algo == NULL)
-        break;
-      if (algo->safety < min_safety)
-	continue;
-      ASSH_CHK_GTO(c->algos_count == ASSH_MAX_ALGORITHMS, ASSH_ERR_MEM, err_);
-      c->algos[c->algos_count++] = algo;
-    }
- err_:
-
-  va_end(ap);
-
-  if (safety == (unsigned int)-1)
-    return err;
-
-  ASSH_CHK_RET(safety > 99, ASSH_ERR_BAD_ARG);
-
   /* sort algorithms by class and safety/speed factor */
   int_fast16_t i, j, k;
   for (i = 0; i < c->algos_count; i++)
@@ -137,73 +114,143 @@ assh_error_t assh_algo_register_va(struct assh_context_s *c, unsigned int safety
     }
   kex_init_size += /* empty languages */ 4 * 2 + /* fkpf */ 1 + /* reserved */ 4;
   c->kex_init_size = kex_init_size;
-
-  return err;
 }
 
-assh_error_t assh_algo_register_default(struct assh_context_s *c, unsigned int safety,
-					unsigned int min_safety)
+assh_error_t assh_algo_register(struct assh_context_s *c, unsigned int safety,
+				unsigned int min_safety, const struct assh_algo_s *table[])
 {
-  assh_error_t err;
+  assh_error_t err = ASSH_OK;
+  size_t i, count = c->algos_count;
 
-#ifdef CONFIG_ASSH_USE_GCRYPT_CIPHERS
-  ASSH_ERR_RET(assh_cipher_register_gcrypt(c, -1, min_safety));
-#endif
+  ASSH_CHK_RET(safety > 99, ASSH_ERR_BAD_ARG);
 
-  ASSH_ERR_RET(assh_algo_register_va(c, safety, min_safety,
-			/* kex */
-			&assh_kex_curve25519_sha256,
-			&assh_kex_m383_sha384,
-			&assh_kex_m511_sha512,
-			&assh_kex_dh_group1_sha1,
-			&assh_kex_dh_group14_sha1,
-			&assh_kex_dh_gex_sha1,
-			&assh_kex_dh_gex_sha256_12,
-			&assh_kex_dh_gex_sha256_8,
-			&assh_kex_dh_gex_sha256_4,
-			&assh_kex_rsa1024_sha1,
-			&assh_kex_rsa2048_sha256,
-			/* sign */
-			&assh_sign_dsa,
-		        &assh_sign_dsa2048_sha224,
-		        &assh_sign_dsa2048_sha256,
-		        &assh_sign_dsa3072_sha256,
-			&assh_sign_rsa_sha1_md5,
-			&assh_sign_rsa_sha1,
-			&assh_sign_rsa_sha1_2048,
-			&assh_sign_rsa_sha256_2048,
-			&assh_sign_rsa_sha256_3072,
-			&assh_sign_ed25519,
-			&assh_sign_eddsa_e382,
-			&assh_sign_eddsa_e521,
-#ifndef CONFIG_ASSH_USE_GCRYPT_CIPHERS
-			/* ciphers */
-			&assh_cipher_arc4,
-			&assh_cipher_arc4_128,
-			&assh_cipher_arc4_256,
-			&assh_cipher_aes128_cbc,
-			&assh_cipher_aes192_cbc,
-			&assh_cipher_aes256_cbc,
-		        &assh_cipher_aes128_ctr,
-			&assh_cipher_aes192_ctr,
-			&assh_cipher_aes256_ctr,
-#endif
-			/* mac */
-			&assh_hmac_md5,
-			&assh_hmac_md5_96,
-			&assh_hmac_sha1,
-			&assh_hmac_sha1_96,
-			&assh_hmac_sha256,
-			&assh_hmac_sha512,
-#ifdef CONFIG_ASSH_USE_GCRYPT_HASH
-			&assh_hmac_ripemd160,
-#endif
-			/* compress */
-			&assh_compress_none,
-				     NULL));
+  for (i = 0; table[i] != NULL; i++)
+    {
+      const struct assh_algo_s *algo = table[i];
+      if (algo->safety < min_safety)
+	continue;
+      ASSH_CHK_RET(count == ASSH_MAX_ALGORITHMS, ASSH_ERR_MEM);
+      c->algos[count++] = algo;
+    }
+
+  c->algos_count = count;
+  assh_algo_udpate(c, safety, min_safety);
 
   return ASSH_OK;
 }
+
+const struct assh_algo_s *
+assh_algo_registered(struct assh_context_s *c, uint_fast16_t i)
+{
+  if (i >= c->algos_count)
+    return NULL;
+  return c->algos[i];
+}
+
+assh_error_t assh_algo_register_va(struct assh_context_s *c, unsigned int safety,
+				   unsigned int min_safety, ...)
+{
+  assh_error_t err = ASSH_OK;
+  va_list ap;
+  size_t count = c->algos_count;
+
+  ASSH_CHK_RET(safety > 99, ASSH_ERR_BAD_ARG);
+
+  va_start(ap, min_safety);
+
+  /* append algorithms to the array */
+  while (1)
+    {
+      struct assh_algo_s *algo = va_arg(ap, void*);
+      if (algo == NULL)
+        break;
+      if (algo->safety < min_safety)
+	continue;
+      ASSH_CHK_GTO(count == ASSH_MAX_ALGORITHMS, ASSH_ERR_MEM, err_);
+      c->algos[count++] = algo;
+    }
+
+  c->algos_count = count;
+  assh_algo_udpate(c, safety, min_safety);
+
+ err_:
+  va_end(ap);
+  return err;
+}
+
+void assh_algo_unregister(struct assh_context_s *c)
+{
+  c->algos_count = 0;
+}
+
+const struct assh_algo_s *assh_algo_table[] = {
+  /* kex */
+  &assh_kex_curve25519_sha256.algo,
+  &assh_kex_m383_sha384.algo,
+  &assh_kex_m511_sha512.algo,
+  &assh_kex_dh_group1_sha1.algo,
+  &assh_kex_dh_group14_sha1.algo,
+  &assh_kex_dh_gex_sha1.algo,
+  &assh_kex_dh_gex_sha256_12.algo,
+  &assh_kex_dh_gex_sha256_8.algo,
+  &assh_kex_dh_gex_sha256_4.algo,
+  &assh_kex_rsa1024_sha1.algo,
+  &assh_kex_rsa2048_sha256.algo,
+  /* sign */
+  &assh_sign_dsa.algo,
+  &assh_sign_dsa2048_sha224.algo,
+  &assh_sign_dsa2048_sha256.algo,
+  &assh_sign_dsa3072_sha256.algo,
+  &assh_sign_rsa_sha1_md5.algo,
+  &assh_sign_rsa_sha1.algo,
+  &assh_sign_rsa_sha1_2048.algo,
+  &assh_sign_rsa_sha256_2048.algo,
+  &assh_sign_rsa_sha256_3072.algo,
+  &assh_sign_ed25519.algo,
+  &assh_sign_eddsa_e382.algo,
+  &assh_sign_eddsa_e521.algo,
+  /* ciphers */
+#ifdef CONFIG_ASSH_USE_GCRYPT_CIPHERS
+  &assh_cipher_tdes_cbc.algo,
+  &assh_cipher_tdes_ctr.algo,
+  &assh_cipher_cast128_cbc.algo,
+  &assh_cipher_cast128_ctr.algo,
+  &assh_cipher_blowfish_cbc.algo,
+  &assh_cipher_blowfish_ctr.algo,
+  &assh_cipher_twofish128_cbc.algo,
+  &assh_cipher_twofish256_cbc.algo,
+  &assh_cipher_twofish128_ctr.algo,
+  &assh_cipher_twofish256_ctr.algo,
+  &assh_cipher_serpent128_cbc.algo,
+  &assh_cipher_serpent192_cbc.algo,
+  &assh_cipher_serpent256_cbc.algo,
+  &assh_cipher_serpent128_ctr.algo,
+  &assh_cipher_serpent192_ctr.algo,
+  &assh_cipher_serpent256_ctr.algo,
+#endif
+  &assh_cipher_arc4.algo,
+  &assh_cipher_arc4_128.algo,
+  &assh_cipher_arc4_256.algo,
+  &assh_cipher_aes128_cbc.algo,
+  &assh_cipher_aes192_cbc.algo,
+  &assh_cipher_aes256_cbc.algo,
+  &assh_cipher_aes128_ctr.algo,
+  &assh_cipher_aes192_ctr.algo,
+  &assh_cipher_aes256_ctr.algo,
+  /* mac */
+  &assh_hmac_md5.algo,
+  &assh_hmac_md5_96.algo,
+  &assh_hmac_sha1.algo,
+  &assh_hmac_sha1_96.algo,
+  &assh_hmac_sha256.algo,
+  &assh_hmac_sha512.algo,
+#ifdef CONFIG_ASSH_USE_GCRYPT_HASH
+  &assh_hmac_ripemd160.algo,
+#endif
+  /* compress */
+  &assh_compress_none.algo,
+  NULL
+};
 
 assh_error_t assh_algo_by_name(struct assh_context_s *c,
 			       enum assh_algo_class_e class_, const char *name,

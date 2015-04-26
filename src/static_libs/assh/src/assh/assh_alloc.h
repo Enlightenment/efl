@@ -54,7 +54,7 @@ assh_alloc(struct assh_context_s *c, size_t size,
 	   enum assh_alloc_type_e type, void **result)
 {
   *result = NULL;
-  return c->f_alloc(c, result, size, type);
+  return c->f_alloc(c->alloc_pv, result, size, type);
 }
 
 /** @internal @This reallocates memory. */
@@ -62,14 +62,14 @@ ASSH_INLINE ASSH_WARN_UNUSED_RESULT assh_error_t
 assh_realloc(struct assh_context_s *c, void **ptr, size_t size,
 	     enum assh_alloc_type_e type)
 {
-  return c->f_alloc(c, ptr, size, type);
+  return c->f_alloc(c->alloc_pv, ptr, size, type);
 }
 
 /** @internal @This releases memory. */
 ASSH_INLINE void assh_free(struct assh_context_s *c, void *ptr)
 {
   if (ptr != NULL)
-    (void)c->f_alloc(c, &ptr, 0, ASSH_ALLOC_NONE);
+    (void)c->f_alloc(c->alloc_pv, &ptr, 0, ASSH_ALLOC_NONE);
 }
 
 #ifdef CONFIG_ASSH_ALLOCA

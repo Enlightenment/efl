@@ -309,7 +309,7 @@ struct assh_buffer_s
 #define ASSH_IDENT "SSH-2.0-LIBASSH\r\n"
 
 /** @internal This macro specifies the prototype of a memory allocator function. */
-#define ASSH_ALLOCATOR(n) assh_error_t (n)(struct assh_context_s *c, void **ptr, \
+#define ASSH_ALLOCATOR(n) assh_error_t (n)(void *alloc_pv, void **ptr, \
 					   size_t size, enum assh_alloc_type_e type)
 
 /** Memory allocator function type, same behavior as standard @tt realloc. */

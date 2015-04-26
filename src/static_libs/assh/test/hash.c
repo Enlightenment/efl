@@ -119,7 +119,7 @@ main(int argc, char **argv)
     return -1;
 #endif
 
-  assh_context_init(&context, ASSH_SERVER);
+  assh_context_init(&context, ASSH_SERVER, NULL, NULL);
 
   uint_fast8_t i;
   for (i = 0; tests[i].algo != NULL; i++)

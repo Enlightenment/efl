@@ -138,8 +138,8 @@ int test(int (*fend)(int, int), int n)
 
   //  ASSH_DEBUG("==============================================================\n");
 
-  assh_context_init(&context[0], ASSH_SERVER);
-  assh_context_init(&context[1], ASSH_CLIENT);
+  assh_context_init(&context[0], ASSH_SERVER, assh_leaks_allocator, NULL);
+  assh_context_init(&context[1], ASSH_CLIENT, assh_leaks_allocator, NULL);
 
   ch_refs = 0;
   for (j = 0; j < CH_MAP_SIZE; j++)
@@ -157,8 +157,6 @@ int test(int (*fend)(int, int), int n)
       fifo_init(&fifo[i]);
 
       rq_fifo_init(&global_rq_fifo[i]);
-
-      assh_context_allocator(&context[i], assh_leaks_allocator, NULL);
 
       if (assh_service_register_va(&context[i], &assh_service_connection, NULL))
 	return -1;

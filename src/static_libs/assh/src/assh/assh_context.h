@@ -55,6 +55,9 @@ struct assh_packet_pool_s
 /** @internalmembers @This is the library main context structure. */
 struct assh_context_s
 {
+  /** User private data */
+  void *user_pv;
+
   /** Number of initialized sessions attached to this context. */
   unsigned int session_count;
 
@@ -106,40 +109,51 @@ struct assh_context_s
 
   /** Big number engine */
   const struct assh_bignum_algo_s *bignum;
-
-  /** User private data */
-  void *pv;
 };
 
-/** @This initializes a context for use as a client or server. */
+/** @This allocates and initializes a context. The @tt alloc parameter
+    may be @tt NULL. @see assh_context_init */
+ASSH_WARN_UNUSED_RESULT assh_error_t
+assh_context_create(struct assh_context_s **ctx,
+		    enum assh_context_type_e type,
+		    assh_allocator_t *alloc, void *alloc_pv);
+
+/** @This initializes a context for use as a client or server. This
+    can be used to initialize a statically allocated context
+    object. The @tt alloc parameter may be @tt NULL. 
+
+    When a stable ABI is needed, use the @ref assh_context_create
+    function instead. */
 void assh_context_init(struct assh_context_s *ctx,
-                       enum assh_context_type_e type);
+                       enum assh_context_type_e type,
+		       assh_allocator_t *alloc,
+		       void *alloc_pv);
 
 /** @This releases resources associated with a context. All existing
     @ref assh_session_s objects must have been released when calling
-    this function. */
+    this function. @see assh_context_init */
 void assh_context_cleanup(struct assh_context_s *ctx);
+
+/** @This cleanups and releases a context created by the @ref
+    assh_context_create function. All existing @ref assh_session_s
+    objects must have been released when calling this function. @see
+    assh_context_create */
+void assh_context_release(struct assh_context_s *ctx);
 
 /** @This set the user private pointer of the context. */
 ASSH_INLINE void
 assh_context_set_pv(struct assh_context_s *ctx,
                     void *private)
 {
-  ctx->pv = private;
+  ctx->user_pv = private;
 }
 
 /** @This get the user private pointer of the context. */
 ASSH_INLINE void *
 assh_context_get_pv(struct assh_context_s *ctx)
 {
-  return ctx->pv;
+  return ctx->user_pv;
 }
-
-/** @This sets the memory allocator used by the context. The
-    default memory allocator uses the C library @tt realloc function. */
-void assh_context_allocator(struct assh_context_s *c,
-			    assh_allocator_t *alloc,
-			    void *alloc_pv);
 
 /** @This setups the pseudo-random number generator for use with
     this context. If an other prng has already been setup, it will be

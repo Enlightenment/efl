@@ -79,45 +79,47 @@ int main()
     abort();
 
   /** init a server context */
-  struct assh_context_s context;
-  assh_context_init(&context, ASSH_SERVER);
+  struct assh_context_s *context;
+
+  if (assh_context_create(&context, ASSH_SERVER, NULL, NULL))
+    abort();
 
   /** register authentication and connection services */
-  if (assh_service_register_default(&context) != ASSH_OK)
+  if (assh_service_register_default(context) != ASSH_OK)
     return -1;
 
   /** register algorithms */
-  if (assh_algo_register_default(&context, 99, 10) != ASSH_OK)
+  if (assh_algo_register_default(context, 99, 10) != ASSH_OK)
     return -1;
 
   /** load host key */
 #if 1
-  if (assh_load_hostkey_filename(&context, &assh_key_dsa, ASSH_ALGO_SIGN, "dsa_host_key",
+  if (assh_load_hostkey_filename(context, &assh_key_dsa, ASSH_ALGO_SIGN, "dsa_host_key",
 				 ASSH_KEY_FMT_PV_RFC2440_PEM_ASN1) != ASSH_OK)
     fprintf(stderr, "unable to load dsa key\n");
 
-  if (assh_load_hostkey_filename(&context, &assh_key_dsa, ASSH_ALGO_SIGN, "dsa2048_host_key",
+  if (assh_load_hostkey_filename(context, &assh_key_dsa, ASSH_ALGO_SIGN, "dsa2048_host_key",
 				 ASSH_KEY_FMT_PV_RFC2440_PEM_ASN1) != ASSH_OK)
     fprintf(stderr, "unable to load dsa 2048 key\n");
 #endif
 
 #if 1
-  if (assh_load_hostkey_filename(&context, &assh_key_rsa, ASSH_ALGO_SIGN, "rsa_host_key",
+  if (assh_load_hostkey_filename(context, &assh_key_rsa, ASSH_ALGO_SIGN, "rsa_host_key",
 				 ASSH_KEY_FMT_PV_RFC2440_PEM_ASN1) != ASSH_OK)
     fprintf(stderr, "unable to load rsa key\n");
 #endif
 
 #if 1
-  if (assh_load_hostkey_filename(&context, &assh_key_ed25519, ASSH_ALGO_SIGN, "ed25519_host_key",
+  if (assh_load_hostkey_filename(context, &assh_key_ed25519, ASSH_ALGO_SIGN, "ed25519_host_key",
 				 ASSH_KEY_FMT_PV_OPENSSH_V1_KEY) != ASSH_OK)
     fprintf(stderr, "unable to load ed25519 key\n");
 #endif
 
-  if (assh_load_hostkey_filename(&context, &assh_key_eddsa_e382, ASSH_ALGO_SIGN, "e382_host_key",
+  if (assh_load_hostkey_filename(context, &assh_key_eddsa_e382, ASSH_ALGO_SIGN, "e382_host_key",
 				 ASSH_KEY_FMT_PV_OPENSSH_V1_KEY) != ASSH_OK)
     fprintf(stderr, "unable to load eddsa e382 key\n");
 
-  if (assh_load_hostkey_filename(&context, &assh_key_eddsa_e521, ASSH_ALGO_SIGN, "e521_host_key",
+  if (assh_load_hostkey_filename(context, &assh_key_eddsa_e521, ASSH_ALGO_SIGN, "e521_host_key",
 				 ASSH_KEY_FMT_PV_OPENSSH_V1_KEY) != ASSH_OK)
     fprintf(stderr, "unable to load eddsa e521 key\n");
 
@@ -136,8 +138,8 @@ int main()
       int conn = accept(sock, (struct sockaddr*)&con_addr, &addr_size);
 
       /** init a session for the incoming connection */
-      struct assh_session_s session;
-      if (assh_session_init(&context, &session) != ASSH_OK)
+      struct assh_session_s *session;
+      if (assh_session_create(context, &session) != ASSH_OK)
 	return -1;
 
       time_t t = time(0);
@@ -165,7 +167,7 @@ int main()
 
 	  /** get events from the core and use registered event
 	      handlers to process most events. */
-	  assh_error_t err = assh_event_table_run(&session, &ev_table, &event);
+	  assh_error_t err = assh_event_table_run(session, &ev_table, &event);
 	  if (ASSH_ERR_ERROR(err) != ASSH_OK)
 	    {
 	      fprintf(stderr, "assh error %x in main loop (errno=%i)\n", err, errno);
@@ -189,14 +191,14 @@ int main()
 #warning validate key ? keys should be validated once when added to the list
 
 	      event.userauth_server.userkey.found = 1;
-	      err = assh_event_done(&session, &event);
+	      err = assh_event_done(session, &event);
 	      break;
 	    }
 
 	    case ASSH_EVENT_USERAUTH_SERVER_PASSWORD:
 	      /* XXX check that event user/password pair matches. */
 	      event.userauth_server.password.success = 1;
-	      err = assh_event_done(&session, &event);
+	      err = assh_event_done(session, &event);
 	      break;
 
 	    case ASSH_EVENT_CHANNEL_OPEN: {
@@ -206,7 +208,7 @@ int main()
 		{
 		  co_e->reply = ASSH_CONNECTION_REPLY_SUCCESS;
 		}
-	      err = assh_event_done(&session, &event);
+	      err = assh_event_done(session, &event);
 	      break;
 	    }
 
@@ -221,7 +223,7 @@ int main()
 		{
 		  rq_e->reply = ASSH_CONNECTION_REPLY_SUCCESS;
 		}
-	      err = assh_event_done(&session, &event);
+	      err = assh_event_done(session, &event);
 	      break;
 	    }
 
@@ -238,7 +240,7 @@ int main()
 		memcpy(data, dt_e->data.data, size);
 
 	      /* acknowledge input data event before sending */
-	      err = assh_event_done(&session, &event);
+	      err = assh_event_done(session, &event);
 
 	      if (perr == ASSH_OK)  /* send output data */
 		err = assh_channel_data_send(dt_e->ch, size);
@@ -247,18 +249,18 @@ int main()
 
 	    default:
 	      printf("Don't know how to handle event %u\n", event.id);
-	      err = assh_event_done(&session, &event);
+	      err = assh_event_done(session, &event);
 	    }
 
 	  if (err != ASSH_OK)
 	    fprintf(stderr, "assh error %i in main loop (errno=%i)\n", err, errno);
 	}
 
-      assh_session_cleanup(&session);
+      assh_session_release(session);
       break;
     }
 
-  assh_context_cleanup(&context);
+  assh_context_release(context);
 
   return 0;
 }

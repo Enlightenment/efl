@@ -35,6 +35,9 @@
 /** @internalmembers @This is the session context structure. */
 struct assh_session_s
 {
+  /** User private pointer */
+  void *user_pv;
+
   /** Pointer to associated main context. */
   struct assh_context_s *ctx;
 
@@ -88,9 +91,6 @@ struct assh_session_s
   /** Current service private data. */
   void *srv_pv;
 
-  /** User private pointer */
-  void *pv;
-
   /****************** ssh output stream state */
 
   /** Currrent output ssh stream generator state. */
@@ -142,14 +142,14 @@ ASSH_INLINE void
 assh_session_set_pv(struct assh_session_s *ctx,
                     void *private)
 {
-  ctx->pv = private;
+  ctx->user_pv = private;
 }
 
 /** @This get the user private pointer of the session. */
 ASSH_INLINE void *
 assh_session_get_pv(struct assh_session_s *ctx)
 {
-  return ctx->pv;
+  return ctx->user_pv;
 }
 
 /** @internal This changes the current transport state */
@@ -162,13 +162,26 @@ ASSH_INLINE void assh_transport_state(struct assh_session_s *s,
   s->tr_st = st;
 }
 
-/** @This initializes a new ssh session object. */
+/** @This initializes a new ssh session object. When a stable ABI is
+    needed, use the @ref assh_context_create function instead. This
+    can be used to initialize a statically allocated session
+    object. The @tt alloc parameter may be @tt NULL. */
 ASSH_WARN_UNUSED_RESULT assh_error_t
 assh_session_init(struct assh_context_s *c,
 		  struct assh_session_s *s);
 
+/** @This allocates and initializes a ssh session. The @tt alloc
+    parameter may be @tt NULL. @see assh_session_init */
+ASSH_WARN_UNUSED_RESULT assh_error_t
+assh_session_create(struct assh_context_s *c,
+		    struct assh_session_s **s);
+
 /** @This cleanups a ssh session object. */
 void assh_session_cleanup(struct assh_session_s *s);
+
+/** @This cleanups and releases a session created by the @ref
+    assh_session_create function. */
+void assh_session_release(struct assh_session_s *s);
 
 /** @internal This changes the session state according to the provided
     error code and associated severity level.

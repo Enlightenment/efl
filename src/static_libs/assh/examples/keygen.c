@@ -44,31 +44,38 @@ int main(int argc, char *argv[])
 
   const struct assh_key_s *key;
 
-  struct assh_context_s context;
-  assh_context_init(&context, ASSH_SERVER);
+  struct assh_context_s *context;
 
-  if (assh_context_prng(&context, NULL))
+  if (assh_context_create(&context, ASSH_SERVER, NULL, NULL))
     abort();
 
-  if (assh_key_create(&context, &key, bits, &assh_key_dsa, ASSH_ALGO_ANY))
+  if (context == NULL)
     abort();
 
-  if (assh_key_validate(&context, key))
+  if (assh_context_prng(context, NULL))
+    abort();
+
+  if (assh_key_create(context, &key, bits, &assh_key_dsa, ASSH_ALGO_ANY))
+    abort();
+
+  if (assh_key_validate(context, key))
     abort();
 
   size_t len;
 
-  if (key->algo->f_output(&context, key, NULL, &len, ASSH_KEY_FMT_PV_OPENSSH_V1_KEY))
+  if (key->algo->f_output(context, key, NULL, &len, ASSH_KEY_FMT_PV_OPENSSH_V1_KEY))
     abort();
 
   uint8_t blob[len];
 
-  if (key->algo->f_output(&context, key, blob, &len, ASSH_KEY_FMT_PV_OPENSSH_V1_KEY))
+  if (key->algo->f_output(context, key, blob, &len, ASSH_KEY_FMT_PV_OPENSSH_V1_KEY))
     abort();
 
   FILE *f = fopen("dsa_key", "wb");
   fwrite(blob, len, 1, f);
   fclose(f);
+
+  assh_context_release(context);
 
   return 0;
 }

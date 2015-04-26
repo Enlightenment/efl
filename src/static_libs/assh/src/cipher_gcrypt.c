@@ -161,20 +161,3 @@ ASSH_GCRYPT_CIPHER(serpent128_ctr, "serpent128-ctr", GCRY_CIPHER_SERPENT128, GCR
 ASSH_GCRYPT_CIPHER(serpent192_ctr, "serpent192-ctr", GCRY_CIPHER_SERPENT192, GCRY_CIPHER_MODE_CTR,    16, 24, 66, 40, 0);
 ASSH_GCRYPT_CIPHER(serpent256_ctr, "serpent256-ctr", GCRY_CIPHER_SERPENT256, GCRY_CIPHER_MODE_CTR,    16, 32, 76, 40, 0);
 
-assh_error_t assh_cipher_register_gcrypt(struct assh_context_s *c, unsigned int safety,
-					 unsigned int min_safety)
-{
-  return assh_algo_register_va(c, safety, min_safety,
-    &assh_cipher_arc4, &assh_cipher_arc4_128, &assh_cipher_arc4_256,
-    &assh_cipher_tdes_cbc, &assh_cipher_tdes_ctr,
-    &assh_cipher_cast128_cbc, &assh_cipher_cast128_ctr,
-    &assh_cipher_blowfish_cbc, &assh_cipher_blowfish_ctr,
-    &assh_cipher_aes128_cbc, &assh_cipher_aes192_cbc, &assh_cipher_aes256_cbc,
-    &assh_cipher_aes128_ctr, &assh_cipher_aes192_ctr, &assh_cipher_aes256_ctr,
-    &assh_cipher_twofish128_cbc, &assh_cipher_twofish256_cbc,
-    &assh_cipher_twofish128_ctr, &assh_cipher_twofish256_ctr,
-    &assh_cipher_serpent128_cbc, &assh_cipher_serpent192_cbc, &assh_cipher_serpent256_cbc,
-    &assh_cipher_serpent128_ctr, &assh_cipher_serpent192_ctr, &assh_cipher_serpent256_ctr,
-    NULL);
-}
-

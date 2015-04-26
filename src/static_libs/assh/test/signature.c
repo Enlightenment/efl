@@ -351,7 +351,7 @@ int main(int argc, char **argv)
     return -1;
 #endif
 
-  assh_context_init(&context, ASSH_SERVER);
+  assh_context_init(&context, ASSH_SERVER, NULL, NULL);
   ASSH_ERR_RET(assh_context_prng(&context, &assh_prng_weak));
 
   for (i = 0; algos[i].algo; i++)

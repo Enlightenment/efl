@@ -111,6 +111,37 @@ ASSH_WARN_UNUSED_RESULT assh_error_t
 assh_algo_register_va(struct assh_context_s *c, unsigned int safety,
 		      unsigned int min_safety, ...);
 
+/**
+   @This registers the specified @ref assh_algo_s objects for use by
+   the given context. The last table entry must be @tt NULL.
+   @see assh_algo_register_va
+*/
+ASSH_WARN_UNUSED_RESULT assh_error_t
+assh_algo_register(struct assh_context_s *c, unsigned int safety,
+		   unsigned int min_safety, const struct assh_algo_s *table[]);
+
+/** NULL terminated array of available algorithms. */
+extern const struct assh_algo_s *assh_algo_table[];
+
+/** @This returns registered algorithms indexed from 0. @tt NULL is
+    returned when out of range. */
+const struct assh_algo_s *
+assh_algo_registered(struct assh_context_s *c, uint_fast16_t i);
+
+/** @internal @This registers the default set of available algorithms
+    depending on the library configuration. It relies on the @ref
+    assh_algo_register_va function. */
+ASSH_INLINE ASSH_WARN_UNUSED_RESULT assh_error_t
+assh_algo_register_default(struct assh_context_s *c,
+                           unsigned int safety,
+			   unsigned int min_safety)
+{
+  return assh_algo_register(c, safety, min_safety, assh_algo_table);
+}
+
+/** Unregister all algorithms */
+void assh_algo_unregister(struct assh_context_s *c);
+
 /** @internal @This finds a registered algorithm with matching class
     and name. */
 ASSH_WARN_UNUSED_RESULT assh_error_t
@@ -138,14 +169,6 @@ assh_bool_t
 assh_algo_suitable_key(struct assh_context_s *c,
                        const struct assh_algo_s *algo,
                        const struct assh_key_s *key);
-
-/** @internal @This registers the default set of available algorithms
-    depending on the library configuration. It relies on the @ref
-    assh_algo_register_va function. */
-ASSH_WARN_UNUSED_RESULT assh_error_t
-assh_algo_register_default(struct assh_context_s *c,
-                           unsigned int safety,
-			   unsigned int min_safety);
 
 #endif
 

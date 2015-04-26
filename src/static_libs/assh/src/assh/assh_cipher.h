@@ -98,12 +98,6 @@ extern const struct assh_algo_cipher_s assh_cipher_aes256_ctr;
 
 # ifdef CONFIG_ASSH_USE_GCRYPT_CIPHERS
 
-/** @This registers all gcrypt based cipher algorithms. @see
-    assh_algo_register_va */
-ASSH_WARN_UNUSED_RESULT assh_error_t
-assh_cipher_register_gcrypt(struct assh_context_s *c, unsigned int safety,
-			    unsigned int min_safety);
-
 /** @multiple @This is a cipher algorithm implementation descriptor. */
 extern const struct assh_algo_cipher_s assh_cipher_tdes_cbc;
 extern const struct assh_algo_cipher_s assh_cipher_tdes_ctr;

@@ -79,7 +79,9 @@ static ASSH_ALLOCATOR(assh_default_allocator)
 }
 
 void assh_context_init(struct assh_context_s *c,
-                       enum assh_context_type_e type)
+                       enum assh_context_type_e type,
+		       assh_allocator_t *alloc,
+		       void *alloc_pv)
 {
   c->session_count = 0;
 
@@ -93,7 +95,11 @@ void assh_context_init(struct assh_context_s *c,
 	 0);
 
   c->type = type;
-  c->f_alloc = assh_default_allocator;
+
+  if (alloc == NULL)
+    alloc = assh_default_allocator;
+  c->f_alloc = alloc;
+  c->alloc_pv = alloc_pv;
 
   c->prng = NULL;
   c->keys = NULL;
@@ -120,6 +126,33 @@ void assh_context_init(struct assh_context_s *c,
 #else
   c->bignum = &assh_bignum_builtin;
 #endif
+}
+
+ASSH_WARN_UNUSED_RESULT assh_error_t
+assh_context_create(struct assh_context_s **ctx,
+		    enum assh_context_type_e type,
+		    assh_allocator_t *alloc, void *alloc_pv)
+{
+  assh_error_t err;
+
+  if (alloc == NULL)
+    {
+      alloc = assh_default_allocator;
+      alloc_pv = NULL;
+    }
+
+  *ctx = NULL;
+  ASSH_ERR_RET(alloc(alloc_pv, (void**)ctx, sizeof(struct assh_context_s), ASSH_ALLOC_INTERNAL));
+
+  assh_context_init(*ctx, type, alloc, alloc_pv);
+
+  return ASSH_OK;
+}
+
+void assh_context_release(struct assh_context_s *ctx)
+{
+  assh_context_cleanup(ctx);
+  assh_free(ctx, ctx);
 }
 
 static void assh_pck_pool_cleanup(struct assh_context_s *c)
@@ -154,14 +187,6 @@ void assh_context_cleanup(struct assh_context_s *c)
 
   if (c->prng != NULL)
     c->prng->f_cleanup(c);
-}
-
-void assh_context_allocator(struct assh_context_s *c,
-			    assh_allocator_t *alloc,
-			    void *alloc_pv)
-{
-  c->f_alloc = alloc ? alloc : assh_default_allocator;
-  c->alloc_pv = alloc_pv;
 }
 
 assh_error_t assh_context_prng(struct assh_context_s *c,

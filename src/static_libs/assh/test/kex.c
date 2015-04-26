@@ -127,8 +127,8 @@ int test(const struct assh_algo_kex_s *kex,
 	 const struct algo_with_key_s *kex_key,
 	 const struct algo_with_key_s *sign_key)
 {
-  assh_context_init(&context[0], ASSH_SERVER);
-  assh_context_init(&context[1], ASSH_CLIENT);
+  assh_context_init(&context[0], ASSH_SERVER, assh_leaks_allocator, NULL);
+  assh_context_init(&context[1], ASSH_CLIENT, assh_leaks_allocator, NULL);
   uint_fast8_t i;
 
   fprintf(stderr, "==== %s, %s, %s, %s, %s ====\n",
@@ -140,8 +140,6 @@ int test(const struct assh_algo_kex_s *kex,
       struct assh_context_s *c = &context[i];
 
       fifo_init(&fifo[i]);
-
-      assh_context_allocator(c, assh_leaks_allocator, NULL);
 
       if (assh_service_register_va(c, &assh_service_connection, NULL))
 	return -1;

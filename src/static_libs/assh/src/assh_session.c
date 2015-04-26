@@ -30,6 +30,7 @@
 #include <assh/assh_queue.h>
 #include <assh/assh_service.h>
 #include <assh/assh_transport.h>
+#include <assh/assh_alloc.h>
 
 assh_error_t assh_session_init(struct assh_context_s *c,
 			       struct assh_session_s *s)
@@ -77,6 +78,18 @@ assh_error_t assh_session_init(struct assh_context_s *c,
   return ASSH_OK;
 }
 
+assh_error_t assh_session_create(struct assh_context_s *c,
+				 struct assh_session_s **s)
+{
+  assh_error_t err;
+  ASSH_ERR_RET(assh_alloc(c, sizeof(**s), ASSH_ALLOC_INTERNAL, (void**)s));
+  ASSH_ERR_GTO(assh_session_init(c, *s), err);
+  return ASSH_OK;
+ err:
+  assh_free(c, *s);
+  return err;
+}
+
 static void assh_pck_queue_cleanup(struct assh_queue_s *q)
 {
   while (q->count > 0)
@@ -87,6 +100,12 @@ static void assh_pck_queue_cleanup(struct assh_queue_s *q)
       struct assh_packet_s *p = (struct assh_packet_s*)e;
       assh_packet_release(p);
     }
+}
+
+void assh_session_release(struct assh_session_s *s)
+{
+  assh_session_cleanup(s);
+  assh_free(s->ctx, s);
 }
 
 void assh_session_cleanup(struct assh_session_s *s)
