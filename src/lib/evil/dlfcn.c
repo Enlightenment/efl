@@ -144,7 +144,13 @@ dlsym(void *handle, const char *symbol)
         /* TODO: use EnumProcessModulesEx() on Windows >= Vista */
         if (!EnumProcessModules(GetCurrentProcess(),
                                 modules, sizeof(modules), &needed))
-          return NULL;
+          {
+#ifdef UNICODE
+             _dl_get_last_error("EnumProcessModules returned: ");
+             free((void *)new_symbol);
+#endif /* UNICODE */
+             return NULL;
+          }
 
         for (i = 0; i < (needed / sizeof(HMODULE)); i++)
           {
