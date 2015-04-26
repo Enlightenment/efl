@@ -1,0 +1,33 @@
+class Efl.Network.Ssh.Channel.Interactive_Session (Efl.Network.Ssh.Channel.Base)
+{
+   eo_prefix: efl_network_ssh_channel_interactive_session;
+   legacy_prefix: ecore_con_ssh_channel_interactive_session;
+   methods {
+      pty_req {
+         params {
+            const(char)* term;
+            const(char)* modes;
+            uint columns;
+            uint rows;
+            uint width;
+            uint height;
+         }
+         return: Efl_Network_Ssh_Request *;
+      }
+      env_req {
+         params {
+            const(char)* name;
+            const(char)* value;
+         }
+      }
+      shell_req {
+         return: Efl_Network_Ssh_Request *;
+      }
+      exec_req {
+         params {
+            const(char)* command;
+         }
+         return: Efl_Network_Ssh_Request *;
+      }
+   }
+}

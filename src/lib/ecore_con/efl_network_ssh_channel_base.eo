@@ -1,0 +1,40 @@
+class Efl.Network.Ssh.Channel.Base
+{
+   eo_prefix: efl_network_ssh_channel;
+   legacy_prefix: ecore_con_ssh_channel;
+   methods {
+      data_send {
+         params {
+            const(void)* data;
+            size_t size;
+         }
+         return: bool;
+      }
+      binbuf_send {
+         params {
+            const(Eina_Binbuf)* data;
+         }
+         return: bool;
+      }
+      data_ext_send {
+         params {
+            uint type;
+            const(void)* data;
+            size_t size;
+         }
+         return: bool;
+      }
+      binbuf_ext_send {
+         params {
+            uint type;
+            const(Eina_Binbuf)* data;
+         }
+         return: bool;
+      }
+   }
+   events {
+      data,received;
+      data,error;
+      request,reply;
+   }
+}

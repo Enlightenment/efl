@@ -1,0 +1,64 @@
+class Efl.Network.Ssh.Client (Ecore.Con.Connector)
+{
+   eo_prefix: efl_network_ssh_client;
+   legacy_prefix: ecore_con_ssh_client;
+   properties {
+      user {
+         set {
+         }
+         get {
+         }
+         values {
+            const(char)* user;
+         }
+      }
+      passwd {
+         set {
+         }
+         get {
+         }
+         values {
+            const(char)* passwd;
+         }
+      }
+   }
+   methods {
+      keys_list {
+         return: free(own(iterator<const(char)*> *), eina_iterator_free);
+      }
+      key_add {
+         params {
+            const(char)* path @nonull;
+         }
+         return: bool;
+      }
+      key_del {
+         params {
+            const(char)* path @nonull;
+         }
+         return: bool;
+      }
+      hostkey {
+         params {
+            bool validate;
+         }
+         return: bool;
+      }
+      interactive_session_new {
+         return: Efl_Network_Ssh_Channel_Interactive_Session *;
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.finalize;
+      Eo.Base.destructor;
+      Ecore.Con.Base.send;
+      Ecore.Con.Base.flush;
+   }
+   events {
+      hostkey,known;
+      hostkey,unknown;
+      auth,passwd;
+      auth,keys;
+   }
+}

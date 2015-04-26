@@ -6,7 +6,10 @@ ecore_con_eolian_files = \
 	lib/ecore_con/ecore_con_client.eo \
 	lib/ecore_con/ecore_con_server.eo \
 	lib/ecore_con/ecore_con_connector.eo \
-	lib/ecore_con/ecore_con_url.eo
+	lib/ecore_con/ecore_con_url.eo \
+	lib/ecore_con/efl_network_ssh_client.eo \
+	lib/ecore_con/efl_network_ssh_channel_base.eo \
+	lib/ecore_con/efl_network_ssh_channel_interactive_session.eo
 
 ecore_con_eolian_c = $(ecore_con_eolian_files:%.eo=%.eo.c)
 ecore_con_eolian_h = $(ecore_con_eolian_files:%.eo=%.eo.h) \
@@ -34,7 +37,8 @@ dist_installed_ecoreconmainheaders_DATA = \
 lib/ecore_con/Ecore_Con.h \
 lib/ecore_con/Ecore_Con_Legacy.h \
 lib/ecore_con/Ecore_Con_Eo.h \
-lib/ecore_con/Ecore_Con_Eet.h
+lib/ecore_con/Ecore_Con_Eet.h \
+lib/ecore_con/Ecore_Con_Ssh.h
 
 nodist_installed_ecoreconmainheaders_DATA = \
                                             $(ecore_con_eolian_h)
@@ -46,7 +50,8 @@ lib/ecore_con/ecore_con_eet.c \
 lib/ecore_con/ecore_con_socks.c \
 lib/ecore_con/ecore_con_ssl.c \
 lib/ecore_con/ecore_con_url.c \
-lib/ecore_con/ecore_con_private.h
+lib/ecore_con/ecore_con_private.h \
+lib/ecore_con/ecore_con_ssh.c
 
 if HAVE_WINDOWS
 lib_ecore_con_libecore_con_la_SOURCES += lib/ecore_con/ecore_con_local_win32.c
