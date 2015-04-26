@@ -1,5 +1,8 @@
 //Compile with:
-// gcc -o emotion_border_example emotion_border_example.c `pkg-config --libs --cflags emotion evas ecore ecore-evas eina`
+// gcc -o emotion_border_example emotion_border_example.c `pkg-config --libs --cflags emotion evas ecore ecore-evas eina eo`
+
+#define EFL_EO_API_SUPPORT
+#define EFL_BETA_API_SUPPORT
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>
@@ -14,10 +17,13 @@
 static Eina_List *filenames = NULL;
 static Eina_List *curfile = NULL;
 
-static void
-_playback_started_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool
+_playback_started_cb(void *data EINA_UNUSED,
+            Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
     printf("Emotion object started playback.\n");
+
+    return EINA_TRUE;
 }
 
 static Evas_Object *
@@ -27,8 +33,8 @@ _create_emotion_object(Evas *e)
 
    emotion_object_init(em, "gstreamer1");
 
-   evas_object_smart_callback_add(
-       em, "playback_started", _playback_started_cb, NULL);
+   eo_do(em, eo_event_callback_add(
+     EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, _playback_started_cb, NULL));
 
    return em;
 }
@@ -103,38 +109,53 @@ _on_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *
      }
 }
 
-static void
-_frame_decode_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool
+_frame_decode_cb(void *data EINA_UNUSED,
+            Eo *o EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    // fprintf(stderr, "smartcb: frame_decode\n");
+
+   return EINA_TRUE;
 }
 
-static void
-_length_change_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
+static Eina_Bool
+_length_change_cb(void *data EINA_UNUSED,
+            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    fprintf(stderr, "smartcb: length_change: %0.3f\n", emotion_object_play_length_get(o));
+
+   return EINA_TRUE;
 }
 
-static void
-_position_update_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
+static Eina_Bool
+_position_update_cb(void *data EINA_UNUSED,
+            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    fprintf(stderr, "smartcb: position_update: %0.3f\n", emotion_object_position_get(o));
+
+   return EINA_TRUE;
 }
 
-static void
-_progress_change_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
+static Eina_Bool
+_progress_change_cb(void *data EINA_UNUSED,
+            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    fprintf(stderr, "smartcb: progress_change: %0.3f, %s\n",
 	   emotion_object_progress_status_get(o),
 	   emotion_object_progress_info_get(o));
+
+   return EINA_TRUE;
 }
 
-static void
-_frame_resize_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
+static Eina_Bool
+_frame_resize_cb(void *data EINA_UNUSED,
+            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    int w, h;
    emotion_object_size_get(o, &w, &h);
    fprintf(stderr, "smartcb: frame_resize: %dx%d\n", w, h);
+
+   return EINA_TRUE;
 }
 
 static void /* adjust canvas' contents on resizes */
@@ -152,6 +173,15 @@ _canvas_resize_cb(Ecore_Evas *ee)
    evas_object_move(em, 10, 10);
    evas_object_resize(em, w - 20, h - 20);
 }
+
+static const Eo_Callback_Array_Item emotion_object_example_callbacks[] = {
+       { EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb },
+       { EMOTION_OBJECT_EVENT_LENGTH_CHANGE, _length_change_cb },
+       { EMOTION_OBJECT_EVENT_POSITION_UPDATE, _position_update_cb },
+       { EMOTION_OBJECT_EVENT_PROGRESS_CHANGE, _progress_change_cb },
+       { EMOTION_OBJECT_EVENT_FRAME_RESIZE, _frame_resize_cb },
+       { NULL, NULL }
+};
 
 int
 main(int argc, const char *argv[])
@@ -211,11 +241,7 @@ main(int argc, const char *argv[])
 
    ecore_evas_data_set(ee, "emotion", em);
 
-   evas_object_smart_callback_add(em, "frame_decode", _frame_decode_cb, NULL);
-   evas_object_smart_callback_add(em, "length_change", _length_change_cb, NULL);
-   evas_object_smart_callback_add(em, "position_update", _position_update_cb, NULL);
-   evas_object_smart_callback_add(em, "progress_change", _progress_change_cb, NULL);
-   evas_object_smart_callback_add(em, "frame_resize", _frame_resize_cb, NULL);
+   eo_do(em, eo_event_callback_array_add(emotion_object_example_callbacks, NULL));
 
    evas_object_event_callback_add(bg, EVAS_CALLBACK_KEY_DOWN, _on_key_down, em);
    evas_object_focus_set(bg, EINA_TRUE);

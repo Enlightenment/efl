@@ -1,7 +1,11 @@
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
+#else
+#define EFL_EO_API_SUPPORT
+#define EFL_BETA_API_SUPPORT
 #endif
 
+#include <Eo.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -325,8 +329,9 @@ video_obj_time_changed(Evas_Object *obj, Evas_Object *edje)
    edje_object_part_text_set(edje, "video_progress_txt", buf);
 }
 
-static void
-video_obj_frame_decode_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+static Eina_Bool
+video_obj_frame_decode_cb(void *data,
+      Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    video_obj_time_changed(obj, data);
 
@@ -338,10 +343,12 @@ video_obj_frame_decode_cb(void *data, Evas_Object *obj, void *event_info EINA_UN
         printf("FPS: %3.3f\n", 1.0 / (t - pt));
         pt = t;
      }
+   return EINA_TRUE;
 }
 
-static void
-video_obj_frame_resize_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+static Eina_Bool
+video_obj_frame_resize_cb(void *data,
+      Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *oe;
    int iw, ih;
@@ -359,24 +366,33 @@ video_obj_frame_resize_cb(void *data, Evas_Object *obj, void *event_info EINA_UN
    evas_object_resize(oe, w, h);
    evas_object_size_hint_min_set(obj, 0, 0);
    edje_object_part_swallow(oe, "video_swallow", obj);
+
+   return EINA_TRUE;
 }
 
-static void
-video_obj_length_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+static Eina_Bool
+video_obj_length_change_cb(void *data,
+      Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("len change!\n");
    video_obj_time_changed(obj, data);
+
+   return EINA_TRUE;
 }
 
-static void
-video_obj_position_update_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+static Eina_Bool
+video_obj_position_update_cb(void *data,
+      Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("pos up!\n");
    video_obj_time_changed(obj, data);
+
+   return EINA_TRUE;
 }
 
-static void
-video_obj_stopped_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+static Eina_Bool
+video_obj_stopped_cb(void *data EINA_UNUSED,
+      Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("video stopped!!!\n");
    if (loop)
@@ -384,53 +400,72 @@ video_obj_stopped_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info 
         emotion_object_position_set(obj, 0.0);
         emotion_object_play_set(obj, 1);
      }
+
+   return EINA_TRUE;
 }
 
-static void
-video_obj_channels_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+static Eina_Bool
+video_obj_channels_cb(void *data EINA_UNUSED,
+      Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("channels changed: [AUD %i][VID %i][SPU %i]\n",
           emotion_object_audio_channel_count(obj),
           emotion_object_video_channel_count(obj),
           emotion_object_spu_channel_count(obj));
+
+   return EINA_TRUE;
 }
 
-static void
-video_obj_title_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+static Eina_Bool
+ video_obj_title_cb(void *data EINA_UNUSED,
+      Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("video title to: \"%s\"\n", emotion_object_title_get(obj));
+
+   return EINA_TRUE;
 }
 
-static void
-video_obj_progress_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+static Eina_Bool
+video_obj_progress_cb(void *data EINA_UNUSED,
+      Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("progress: \"%s\" %3.3f\n",
           emotion_object_progress_info_get(obj),
           emotion_object_progress_status_get(obj));
+
+   return EINA_TRUE;
 }
 
-static void
-video_obj_ref_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+static Eina_Bool
+video_obj_ref_cb(void *data EINA_UNUSED,
+      Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("video ref to: \"%s\" %i\n",
           emotion_object_ref_file_get(obj),
           emotion_object_ref_num_get(obj));
+
+   return EINA_TRUE;
 }
 
-static void
-video_obj_button_num_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+static Eina_Bool
+video_obj_button_num_cb(void *data EINA_UNUSED,
+      Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("video spu buttons to: %i\n",
           emotion_object_spu_button_count_get(obj));
+
+   return EINA_TRUE;
 }
 
-static void
-video_obj_button_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+static Eina_Bool
+video_obj_button_cb(void *data EINA_UNUSED,
+      Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf("video selected spu button: %i\n",
           emotion_object_spu_button_get(obj));
-}
 
+   return EINA_TRUE;
+}
 
 static void
 video_obj_signal_play_cb(void *data, Evas_Object *o, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
@@ -576,6 +611,20 @@ video_obj_signal_frame_move_cb(void *data EINA_UNUSED, Evas_Object *o, const cha
      }
 }
 
+static const Eo_Callback_Array_Item emotion_object_test_callbacks[] = {
+       { EMOTION_OBJECT_EVENT_FRAME_DECODE, video_obj_frame_decode_cb },
+       { EMOTION_OBJECT_EVENT_FRAME_RESIZE, video_obj_frame_resize_cb },
+       { EMOTION_OBJECT_EVENT_LENGTH_CHANGE, video_obj_length_change_cb },
+       { EMOTION_OBJECT_EVENT_POSITION_UPDATE, video_obj_position_update_cb },
+       { EMOTION_OBJECT_EVENT_DECODE_STOP, video_obj_stopped_cb },
+       { EMOTION_OBJECT_EVENT_CHANNELS_CHANGE, video_obj_channels_cb },
+       { EMOTION_OBJECT_EVENT_TITLE_CHANGE, video_obj_title_cb },
+       { EMOTION_OBJECT_EVENT_PROGRESS_CHANGE, video_obj_progress_cb },
+       { EMOTION_OBJECT_EVENT_REF_CHANGE, video_obj_ref_cb },
+       { EMOTION_OBJECT_EVENT_BUTTON_NUM_CHANGE, video_obj_button_num_cb },
+       { EMOTION_OBJECT_EVENT_BUTTON_CHANGE, video_obj_button_cb },
+       { NULL, NULL }
+};
 
 static void
 init_video_object(const char *module_filename, const char *filename)
@@ -621,18 +670,7 @@ init_video_object(const char *module_filename, const char *filename)
    edje_object_size_min_calc(oe, &w, &h);
    evas_object_resize(oe, w, h);
 
-   evas_object_smart_callback_add(o, "frame_decode", video_obj_frame_decode_cb, oe);
-   evas_object_smart_callback_add(o, "frame_resize", video_obj_frame_resize_cb, oe);
-   evas_object_smart_callback_add(o, "length_change", video_obj_length_change_cb, oe);
-   evas_object_smart_callback_add(o, "position_update", video_obj_position_update_cb, oe);
-
-   evas_object_smart_callback_add(o, "decode_stop", video_obj_stopped_cb, oe);
-   evas_object_smart_callback_add(o, "channels_change", video_obj_channels_cb, oe);
-   evas_object_smart_callback_add(o, "title_change", video_obj_title_cb, oe);
-   evas_object_smart_callback_add(o, "progress_change", video_obj_progress_cb, oe);
-   evas_object_smart_callback_add(o, "ref_change", video_obj_ref_cb, oe);
-   evas_object_smart_callback_add(o, "button_num_change", video_obj_button_num_cb, oe);
-   evas_object_smart_callback_add(o, "button_change", video_obj_button_cb, oe);
+   eo_do(o, eo_event_callback_array_add(emotion_object_test_callbacks, oe));
 
    edje_object_signal_callback_add(oe, "video_control", "play", video_obj_signal_play_cb, o);
    edje_object_signal_callback_add(oe, "video_control", "pause", video_obj_signal_pause_cb, o);

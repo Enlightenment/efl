@@ -1,5 +1,8 @@
 //Compile with:
-// gcc -o emotion_signals_example emotion_signals_example.c `pkg-config --libs --cflags emotion evas ecore ecore-evas`
+// gcc -o emotion_signals_example emotion_signals_example.c `pkg-config --libs --cflags emotion evas ecore ecore-evas eo`
+
+#define EFL_EO_API_SUPPORT
+#define EFL_BETA_API_SUPPORT
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>
@@ -30,74 +33,96 @@ _display_info(Evas_Object *o)
    printf("\n");
 }
 
-static void
-_playback_started_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
+static Eina_Bool
+_playback_started_cb(void *data EINA_UNUSED,
+            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object started playback.\n");
    _display_info(o);
+
+   return EINA_TRUE;
 }
 
-static void
-_playback_finished_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
+static Eina_Bool
+_playback_finished_cb(void *data EINA_UNUSED,
+            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object finished playback.\n");
    _display_info(o);
+
+   return EINA_TRUE;
 }
 
-static void
-_open_done_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
+static Eina_Bool
+_open_done_cb(void *data EINA_UNUSED,
+            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object open done.\n");
    _display_info(o);
+
+   return EINA_TRUE;
 }
 
-static void
-_position_update_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
+static Eina_Bool
+_position_update_cb(void *data EINA_UNUSED,
+            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object first position update.\n");
-   evas_object_smart_callback_del(o, "position_update", _position_update_cb);
+   eo_do(o, eo_event_callback_del(EMOTION_OBJECT_EVENT_POSITION_UPDATE,
+             _position_update_cb, NULL));
    _display_info(o);
+
+   return EINA_TRUE;
 }
 
-static void
-_frame_decode_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
+static Eina_Bool
+_frame_decode_cb(void *data EINA_UNUSED,
+            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object first frame decode.\n");
-   evas_object_smart_callback_del(o, "frame_decode", _frame_decode_cb);
+   eo_do(o, eo_event_callback_del(EMOTION_OBJECT_EVENT_FRAME_DECODE,
+            _frame_decode_cb, NULL));
    _display_info(o);
+
+   return EINA_TRUE;
 }
 
-static void
-_decode_stop_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
+static Eina_Bool
+_decode_stop_cb(void *data EINA_UNUSED,
+            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object decode stop.\n");
    _display_info(o);
+
+   return EINA_TRUE;
 }
 
-static void
-_frame_resize_cb(void *data EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
+static Eina_Bool
+_frame_resize_cb(void *data EINA_UNUSED,
+            Eo *o, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    printf(">>> Emotion object frame resize.\n");
    _display_info(o);
+
+   return EINA_TRUE;
 }
+
+static const Eo_Callback_Array_Item emotion_object_example_callbacks[] = {
+       { EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, _playback_started_cb },
+       { EMOTION_OBJECT_EVENT_PLAYBACK_FINISHED, _playback_finished_cb },
+       { EMOTION_OBJECT_EVENT_OPEN_DONE, _open_done_cb },
+       { EMOTION_OBJECT_EVENT_POSITION_UPDATE, _position_update_cb },
+       { EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb },
+       { EMOTION_OBJECT_EVENT_DECODE_STOP, _decode_stop_cb },
+       { EMOTION_OBJECT_EVENT_FRAME_RESIZE, _frame_resize_cb },
+       { NULL, NULL }
+};
 
 static void
 _setup_emotion_callbacks(Evas_Object *o)
 {
-   evas_object_smart_callback_add(
-      o, "playback_started", _playback_started_cb, NULL);
-   evas_object_smart_callback_add(
-      o, "playback_finished", _playback_finished_cb, NULL);
-   evas_object_smart_callback_add(
-      o, "open_done", _open_done_cb, NULL);
-   evas_object_smart_callback_add(
-      o, "position_update", _position_update_cb, NULL);
-   evas_object_smart_callback_add(
-      o, "frame_decode", _frame_decode_cb, NULL);
-   evas_object_smart_callback_add(
-      o, "decode_stop", _decode_stop_cb, NULL);
-   evas_object_smart_callback_add(
-      o, "frame_resize", _frame_resize_cb, NULL);
+   eo_do(o, eo_event_callback_add
+     (EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, _playback_started_cb, NULL));
 }
 
 int

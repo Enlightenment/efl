@@ -1,5 +1,8 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#else
+#define EFL_EO_API_SUPPORT
+#define EFL_BETA_API_SUPPORT
 #endif
 
 #include "Ethumb.h"
@@ -9,6 +12,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <Eo.h>
 #include <Eina.h>
 #include <Eet.h>
 #include <Ecore_File.h>
@@ -67,8 +71,9 @@ _resize_movie(struct _emotion_plugin *_plugin)
    emotion_object_audio_mute_set(_plugin->video, 1);
 }
 
-static void
-_frame_decode_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool
+_frame_decode_cb(void *data,
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    struct _emotion_plugin *_plugin = data;
 
@@ -76,16 +81,22 @@ _frame_decode_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_U
      _frame_grab(data);
    else
      _frame_grab_single(data);
-}
 
-static void
-_frame_resized_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
+   return EINA_TRUE;
+ }
+
+static Eina_Bool
+_frame_resized_cb(void *data,
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _resize_movie(data);
+
+   return EINA_TRUE;
 }
 
-static void
-_video_stopped_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool
+_video_stopped_cb(void *data,
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    struct _emotion_plugin *_plugin = data;
 
@@ -94,6 +105,8 @@ _video_stopped_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_
    _plugin->ptotal = 0;
    _plugin->first = EINA_FALSE;
    _plugin->total_time = _plugin->tmp_time;
+
+   return EINA_TRUE;
 }
 
 static void
@@ -194,12 +207,12 @@ _finish_thumb_generation(struct _emotion_plugin *_plugin, int success)
 {
    int r = 0;
 
-   evas_object_smart_callback_del(_plugin->video, "frame_resize",
-                                  _frame_resized_cb);
-   evas_object_smart_callback_del(_plugin->video, "frame_decode",
-                                  _frame_decode_cb);
-   evas_object_smart_callback_del(_plugin->video, "decode_stop",
-                                  _video_stopped_cb);
+   eo_do(_plugin->video, eo_event_callback_del(
+           EMOTION_OBJECT_EVENT_FRAME_RESIZE,  _frame_resized_cb, _plugin));
+   eo_do(_plugin->video, eo_event_callback_del(
+           EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb, _plugin));
+   eo_do(_plugin->video, eo_event_callback_del(
+           EMOTION_OBJECT_EVENT_DECODE_STOP, _video_stopped_cb, _plugin));
 
    emotion_object_play_set(_plugin->video, 0);
 
@@ -243,8 +256,9 @@ _frame_grab_single(void *data)
 
    ethumb_image_save(e);
 
-   evas_object_smart_callback_del(_plugin->video, "frame_resize",
-				  _frame_resized_cb);
+   eo_do(_plugin->video, eo_event_callback_del(
+           EMOTION_OBJECT_EVENT_FRAME_RESIZE,  _frame_resized_cb, _plugin));
+
    emotion_object_play_set(_plugin->video, 0);
    evas_object_del(_plugin->video);
    free(_plugin);
@@ -383,12 +397,12 @@ _thumb_generate(Ethumb *e)
    _plugin->pcount = 1;
 
    _resize_movie(_plugin);
-   evas_object_smart_callback_add(o, "frame_decode",
-				  _frame_decode_cb, _plugin);
-   evas_object_smart_callback_add(o, "frame_resize",
-				  _frame_resized_cb, _plugin);
-   evas_object_smart_callback_add(o, "decode_stop",
-				  _video_stopped_cb, _plugin);
+   eo_do(o, eo_event_callback_add
+     (EMOTION_OBJECT_EVENT_FRAME_DECODE, _frame_decode_cb, _plugin));
+   eo_do(o, eo_event_callback_add
+     (EMOTION_OBJECT_EVENT_FRAME_RESIZE,_frame_resized_cb, _plugin));
+   eo_do(o, eo_event_callback_add
+     (EMOTION_OBJECT_EVENT_DECODE_STOP, _video_stopped_cb, _plugin));
 
    if (f == ETHUMB_THUMB_EET)
      {

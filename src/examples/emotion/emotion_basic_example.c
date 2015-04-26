@@ -1,5 +1,9 @@
 //Compile with:
-// gcc -o emotion_basic_example emotion_basic_example.c `pkg-config --libs --cflags emotion evas ecore ecore-evas`
+// gcc -o emotion_basic_example emotion_basic_example.c `pkg-config --libs --cflags emotion evas ecore ecore-evas eo`
+
+#define EFL_BETA_API_SUPPORT
+#define EFL_EO_API_SUPPORT
+#include <Eo.h>
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>
@@ -10,10 +14,13 @@
 #define WIDTH  (320)
 #define HEIGHT (240)
 
-static void
-_playback_started_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool
+_playback_started_cb(void *data EINA_UNUSED,
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
     printf("Emotion object started playback.\n");
+
+    return EINA_TRUE;
 }
 
 int
@@ -58,8 +65,8 @@ main(int argc, const char *argv[])
    em = emotion_object_add(e);
    emotion_object_init(em, NULL);
 
-   evas_object_smart_callback_add(
-       em, "playback_started", _playback_started_cb, NULL);
+   eo_do(em, eo_event_callback_add
+     (EMOTION_OBJECT_EVENT_PLAYBACK_START, _playback_started_cb, NULL));
 
    emotion_object_file_set(em, filename);
 
