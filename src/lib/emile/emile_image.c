@@ -497,8 +497,7 @@ _emile_tgv_data(Emile_Image *image,
             if (block_length == 0)
               {
                  *error = EMILE_IMAGE_LOAD_ERROR_CORRUPT_FILE;
-                 eina_binbuf_free(buffer);
-                 return EINA_FALSE;
+                 goto on_error;
               }
 
             data_start = eina_binbuf_manage_new(m + offset,
@@ -653,6 +652,7 @@ _emile_tgv_data(Emile_Image *image,
    r = EINA_TRUE;
 
 on_error:
+   if (image->compress) eina_binbuf_free(buffer);
    return r;
 }
 
