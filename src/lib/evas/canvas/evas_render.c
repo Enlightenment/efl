@@ -2913,18 +2913,23 @@ _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *e)
 
              EINA_INLIST_FOREACH(lay->objects, obj)
                {
-                  if (obj->proxy)
+                  if (obj->proxy->surface)
                     {
                        EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy, Evas_Object_Proxy_Data, proxy_write)
                          {
-                            if (proxy_write->surface)
-                              {
-                                 e->engine.func->image_map_surface_free(e->engine.data.output,
-                                                                        proxy_write->surface);
-                                 proxy_write->surface = NULL;
-                              }
+                            e->engine.func->image_map_surface_free(e->engine.data.output, proxy_write->surface);
+                            proxy_write->surface = NULL;
                          }
                        EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write);
+                    }
+                  if (obj->mask->surface)
+                    {
+                       EINA_COW_WRITE_BEGIN(evas_object_mask_cow, obj->mask, Evas_Object_Mask_Data, mdata)
+                         {
+                            e->engine.func->image_map_surface_free(e->engine.data.output, mdata->surface);
+                            mdata->surface = NULL;
+                         }
+                       EINA_COW_WRITE_END(evas_object_mask_cow, obj->mask, mdata);
                     }
                   if ((obj->type) && (!strcmp(obj->type, "image")))
                     evas_object_inform_call_image_unloaded(obj->object);
