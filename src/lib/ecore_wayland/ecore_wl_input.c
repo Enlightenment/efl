@@ -778,6 +778,8 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
 
    /* get the keysym for this key code */
    nsyms = xkb_key_get_syms(input->xkb.state, code, &syms);
+   /* no valid keysym available: reject */
+   if (!nsyms) return;
    if (nsyms == 1) sym = syms[0];
 
    /* get the name of this keysym */
