@@ -846,6 +846,25 @@ _elm_scroll_scroll_bar_size_adjust(Elm_Scrollable_Smart_Interface_Data *sid)
         if (vx != mx) x = px;
         if (vy != my) y = py;
         eo_do(sid->pan_obj, elm_obj_pan_pos_set(x, y));
+
+        if (mx > 0) vx = (double)(x - minx) / (double)mx;
+        else vx = 0.0;
+
+        if (vx < 0.0) vx = 0.0;
+        else if (vx > 1.0)
+          vx = 1.0;
+
+        if (my > 0) vy = (double)(y - miny) / (double)my;
+        else vy = 0.0;
+
+        if (vy < 0.0) vy = 0.0;
+        else if (vy > 1.0)
+          vy = 1.0;
+
+        edje_object_part_drag_value_set
+           (sid->edje_obj, "elm.dragable.vbar", 0.0, vy);
+        edje_object_part_drag_value_set
+           (sid->edje_obj, "elm.dragable.hbar", vx, 0.0);
      }
    else
      {
