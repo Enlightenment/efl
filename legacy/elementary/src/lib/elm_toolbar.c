@@ -576,6 +576,7 @@ _resize_job(void *data)
              evas_object_hide(VIEW(it));
           }
      }
+   eina_list_free(list);
    list = evas_object_box_children_get(sd->bx_more2);
    EINA_INLIST_FOREACH(sd->items, it)
      {
@@ -588,6 +589,7 @@ _resize_job(void *data)
              evas_object_hide(VIEW(it));
           }
      }
+   eina_list_free(list);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 }
@@ -780,14 +782,14 @@ static Elm_Toolbar_Item_Data *
 _focus_next_item_get(Evas_Object *obj, Eina_Bool reverse)
 {
    ELM_TOOLBAR_DATA_GET(obj, sd);
-   Eina_List *list = NULL;
+   Eina_List *list = NULL, *children_list;
    Elm_Toolbar_Item_Data *it = NULL;
    Evas_Object *it_obj = NULL;
 
-   list = evas_object_box_children_get(sd->bx);
+   children_list = evas_object_box_children_get(sd->bx);
    if (reverse)
-     list = eina_list_reverse(list);
-
+     children_list = eina_list_reverse(children_list);
+   list = children_list;
    if (sd->focused_item)
      {
         ELM_TOOLBAR_ITEM_DATA_GET(sd->focused_item, focus_it);
@@ -812,6 +814,7 @@ _focus_next_item_get(Evas_Object *obj, Eina_Bool reverse)
         if (it_obj) it = evas_object_data_get(it_obj, "item");
         else it = NULL;
      }
+   eina_list_free(children_list);
 
    return it;
 }
@@ -1062,6 +1065,7 @@ _item_select(Elm_Toolbar_Item_Data *it)
    Evas_Object *obj;
    Eina_Bool sel;
    Eina_Bool tmp;
+   Eina_List *list;
 
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
 
@@ -1098,12 +1102,14 @@ _item_select(Elm_Toolbar_Item_Data *it)
                {
                   if (sd->more_item == it)
                     {
-                       if (!evas_object_box_children_get(sd->bx_more2))
+                       list = evas_object_box_children_get(sd->bx_more2);
+                       if (!list)
                          elm_layout_signal_emit
                            (sd->more, "elm,state,open", "elm");
                        else
                          elm_layout_signal_emit
                            (sd->more, "elm,state,open2", "elm");
+                       eina_list_free(list);
                     }
                   else
                     {
@@ -1899,6 +1905,7 @@ _animate_missed_items(Elm_Toolbar_Item_Data *prev, Elm_Toolbar_Item_Data *next)
         else
           l = eina_list_prev(l);
      }
+   eina_list_free(list);
 }
 
 static void
@@ -2799,6 +2806,7 @@ _access_item_find_append(const Evas_Object *obj,
         if (eina_list_data_find(list, it->base->view))
           items = eina_list_append(items, it->base->access_obj);
      }
+   eina_list_free(list);
 
    return items;
 }
@@ -2815,6 +2823,7 @@ EOLIAN static Eina_Bool
 _elm_toolbar_elm_widget_focus_next(Eo *obj, Elm_Toolbar_Data *sd, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Eina_List *items = NULL;
+   Eina_List *list;
 
    if (sd->more_item && sd->more_item->selected)
      {
@@ -2825,10 +2834,10 @@ _elm_toolbar_elm_widget_focus_next(Eo *obj, Elm_Toolbar_Data *sd, Elm_Focus_Dire
    else
      {
         items = _access_item_find_append(obj, sd->bx, items);
-        if (sd->more_item &&
-            eina_list_data_find(evas_object_box_children_get(sd->bx),
-                                            sd->more_item->base->view))
+        list = evas_object_box_children_get(sd->bx);
+        if (sd->more_item && eina_list_data_find(list, sd->more_item->base->view))
           items = eina_list_append(items, sd->more_item->base->access_obj);
+        eina_list_free(list);
      }
 
    return elm_widget_focus_list_next_get
