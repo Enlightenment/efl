@@ -205,6 +205,23 @@ Fixes:
    * Evas textblock: remove freed item from the line list
    * evas: restore the value of "do_region" in jpeg loader as EINA_TRUE
    * emotion - gst1 module - handle long standing bad map/unmap of gst buf
+   * eio - fix crashes due to stale eio files in tracking list (T2129)
+   * ecore-drm: Remove 'defined but not used' function
+   * ecore-drm: Use #if 0 to comment out unused function
+   * ecore-evas-x: Fix issue of wrong interface function pointer being set (CID1267461)
+   * emile: Fix resource leak (CID1288918)
+   * emile: Fix resource leak (CID1288919)
+   * ecore-evas-extn: Use eina_mkstemp in place of mkstemp (CID1039610)
+   * ecore_imf: init wayland before using wayland calls.
+   * evas-blend-ops: fix off-by-1 in the C MUL3_SYM "simd" multiplier
+   * ecore-evas-drm: Fix issue of fullscreen surfaces not getting focus on show (T2349)
+   * evas: fix rotation and flipping of image in gl engine (T2338)
+   * efl: Move test for gl library to evas-gl-drm engine checks and Fix T2167
+   * efreet: fix leak in efreet_util_desktop_exec_find()
+   * ecore_timer: fix the default return value.
+   * evas_text: fix default return value.
+   * edje_util: fix memory leak
+   * eina: correct document for eina_hash_list_prepend/remove.
 
 Changes since 1.12.0:
 ---------------------
