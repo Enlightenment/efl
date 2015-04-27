@@ -117,9 +117,6 @@ struct _Ecore_Wl_Window
    int ivi_surface_id;
 # endif
 
-   struct wl_region *opaque_region;
-   struct wl_region *input_region;
-
    struct xdg_surface *xdg_surface;
    struct xdg_popup *xdg_popup;
    Eina_Bool focused : 1;
