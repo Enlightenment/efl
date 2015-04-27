@@ -78,6 +78,14 @@ Fixes:
    * elementary: Fix elm_win_window_id_get for wayland
    * elm_slider: fix theme apply
    * elm_clock: fix theme apply
+   * elm: add safety check
+   * elm_segment_control: mark default return value in eolian API
+   * elm_photocam: Fixed T2337, zoom in/out rotated photocam image
+   * Genlist: Fix for memory leak
+   * elm_photocam: Limiting image reload in zoom in/out
+   * elm_multibuttonentry: change theme_set API to provide full widget theming
+   * elm_multibuttonentry: fix label position and size defects
+   * elm_toolbar: fix memory leaks
 
 Changes since 1.12.0:
 ---------------------
