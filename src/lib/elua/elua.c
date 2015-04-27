@@ -194,7 +194,6 @@ EAPI Eina_Bool
 elua_state_require_ref_push(Elua_State *es)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(es->requireref != LUA_REFNIL, EINA_FALSE);
    lua_rawgeti(es->luastate, LUA_REGISTRYINDEX, es->requireref);
    return EINA_TRUE;
@@ -204,7 +203,6 @@ EAPI Eina_Bool
 elua_state_appload_ref_push(Elua_State *es)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(es->apploadref != LUA_REFNIL, EINA_FALSE);
    lua_rawgeti(es->luastate, LUA_REGISTRYINDEX, es->apploadref);
    return EINA_TRUE;
@@ -276,7 +274,6 @@ _elua_state_i18n_setup(const Elua_State *es)
 #endif
    char buf[PATH_MAX];
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->coredir, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->progname, EINA_FALSE);
    snprintf(buf, sizeof(buf), "%s/gettext.lua", es->coredir);
@@ -309,7 +306,6 @@ _elua_state_modules_setup(const Elua_State *es)
 {
    char buf[PATH_MAX];
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->coredir, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es->progname, EINA_FALSE);
    snprintf(buf, sizeof(buf), "%s/module.lua", es->coredir);
@@ -436,7 +432,6 @@ _elua_docall(Elua_State *es, int narg, int nret)
 {
    int status;
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
    int bs = lua_gettop(es->luastate) - narg;
    lua_pushcfunction(es->luastate, _elua_traceback);
    lua_insert(es->luastate, bs);
@@ -453,7 +448,6 @@ _elua_getargs(Elua_State *es, int argc, char **argv, int n)
    int i;
    int narg = argc - (n + 1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
    luaL_checkstack(es->luastate, narg + 3, "too many arguments to script");
    for (i = n + 1; i < argc; ++i)
      {
@@ -472,7 +466,6 @@ EAPI Eina_Bool
 elua_util_require(Elua_State *es, const char *libname)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, EINA_FALSE);
    if (!elua_state_require_ref_push(es))
      {
         /* store stuff until things are correctly set up */
@@ -487,7 +480,6 @@ EAPI Eina_Bool
 elua_util_file_run(Elua_State *es, const char *fname)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, EINA_FALSE);
    return !elua_util_error_report(es, elua_io_loadfile(es, fname)
                                   || _elua_docall(es, 0, 1));
 }
@@ -496,7 +488,6 @@ EAPI Eina_Bool
 elua_util_string_run(Elua_State *es, const char *chunk, const char *chname)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, EINA_FALSE);
    return !elua_util_error_report(es, luaL_loadbuffer(es->luastate, chunk,
                                                       strlen(chunk), chname)
                                       || _elua_docall(es, 0, 0));
@@ -506,7 +497,6 @@ EAPI int
 elua_util_app_load(Elua_State *es, const char *appname)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(elua_state_appload_ref_push(es), -1);
    lua_pushstring(es->luastate, appname);
    lua_call(es->luastate, 1, 2);
@@ -526,7 +516,6 @@ elua_util_script_run(Elua_State *es, int argc, char **argv, int n, int *quit)
    const char *fname;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(n < argc, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(es->luastate, -1);
    fname = argv[n];
    narg = _elua_getargs(es, argc, argv, n);
    lua_setglobal(es->luastate, "arg");
@@ -567,7 +556,7 @@ _elua_errmsg(const char *pname, const char *msg)
 EAPI int
 elua_util_error_report(const Elua_State *es, int status)
 {
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(es && es->luastate, status);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(es, status);
    if (status && !lua_isnil(es->luastate, -1))
      {
         const char *msg = lua_tostring(es->luastate, -1);
