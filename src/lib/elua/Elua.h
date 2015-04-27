@@ -335,7 +335,10 @@ EAPI Eina_Bool elua_state_setup(Elua_State *es);
  * @brief Loads a file using Elua's own mmap-based IO.
  *
  * This function behaves identically to luaL_loadfile when it comes to
- * semantics. The loaded file remains on the Lua stack.
+ * semantics. The loaded file remains on the Lua stack. If the input
+ * state is NULL, the return value is -1 and nothing is left on the stack.
+ * On any different error, the error object is left on the stack and this
+ * returns a value larger than zero (LUA_ERR*). On success, zero is returned.
  *
  * @param[in] es The Elua state.
  * @param[in] fname The file name.
@@ -390,15 +393,18 @@ EAPI Eina_Bool elua_util_string_run(Elua_State *es, const char *chunk,
  * @brief Loads an application.
  *
  * This loads an app, respecting the app path set on state initialization.
- * Leaves the Lua stack clean. Actually runs the app.
+ * Actually runs the app. If the input state is NULL, the return value is -1
+ * nd nothing is left on the stack. On any different error, the error object
+ * is left on the stack and this returns 1. On success, zero is returned
+ * (and the return value from the app is left on the stack).
  *
  * @param[in] es The Elua state.
  * @param[in] appname The application name.
- * @return EINA_TRUE on success, EINA_FALSE on failure.
+ * @return 0 for no errors, 1 on errors, -1 on null input.
  *
  * @ingroup Elua
  */
-EAPI Eina_Bool elua_util_app_load(Elua_State *es, const char *appname);
+EAPI int elua_util_app_load(Elua_State *es, const char *appname);
 
 /**
  * @brief Runs a script.
