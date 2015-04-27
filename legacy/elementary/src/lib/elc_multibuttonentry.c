@@ -291,11 +291,7 @@ _view_update(Elm_Multibuttonentry_Data *sd)
 
    // update label
    if (sd->label)
-     {
-        elm_box_unpack(sd->box, sd->label);
-        elm_box_pack_start(sd->box, sd->label);
-        evas_object_size_hint_min_get(sd->label, &width, &height);
-     }
+     evas_object_size_hint_min_get(sd->label, &width, &height);
 
    if (sd->guide_text)
      {
@@ -1155,11 +1151,13 @@ _label_set(Evas_Object *obj,
      {
         edje_object_signal_emit(sd->label, "elm,mbe,clear_text", "elm");
         edje_object_size_min_calc(sd->label, &width, &height);
+        elm_box_unpack(sd->box, sd->label);
      }
    else
      {
         edje_object_signal_emit(sd->label, "elm,mbe,set_text", "elm");
         edje_object_size_min_calc(sd->label, &width, &height);
+        elm_box_pack_start(sd->box, sd->label);
      }
 
    elm_coords_finger_size_adjust(1, &width, 1, &height);
