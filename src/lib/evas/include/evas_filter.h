@@ -4,6 +4,32 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef _WIN32
+# ifdef EFL_EVAS_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif /* ! DLL_EXPORT */
+# else
+#  define EAPI __declspec(dllimport)
+# endif /* ! EFL_EVAS_BUILD */
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif /* ! _WIN32 */
+
 typedef struct _Evas_Filter_Context Evas_Filter_Context;
 typedef struct _Evas_Filter_Command Evas_Filter_Command;
 typedef struct _Evas_Filter_Instruction Evas_Filter_Instruction;
@@ -249,5 +275,7 @@ struct _Evas_Filter_Proxy_Binding
    Eina_Stringshare *name;
 };
 
-#endif
+#undef EAPI
+#define EAPI
 
+#endif

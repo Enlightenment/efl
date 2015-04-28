@@ -215,4 +215,7 @@ EAPI Eina_Bool    evas_module_unregister (const Evas_Module_Api *module, Evas_Mo
 }
 #endif
 
+#undef EAPI
+#define EAPI
+
 #endif
