@@ -808,6 +808,148 @@ init_blend_pixel_color_pt_funcs_neon(void)
 
 #ifdef BUILD_NEON
 
+static void
+_op_blend_rel_p_c_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
+   uint16x8_t ad0_16x8;
+   uint16x8_t ad1_16x8;
+   uint16x8_t dsc0_16x8;
+   uint16x8_t dsc1_16x8;
+   uint16x8_t sc0_16x8;
+   uint16x8_t sc1_16x8;
+   uint16x8_t x255_16x8;
+   uint32x2_t c_32x2;
+   uint32x4_t ad_32x4;
+   uint32x4_t alpha_32x4;
+   uint32x4_t cond_32x4;
+   uint32x4_t d_32x4;
+   uint32x4_t dsc_32x4;
+   uint32x4_t s_32x4;
+   uint32x4_t x0_32x4;
+   uint32x4_t x1_32x4;
+   uint8x16_t ad_8x16;
+   uint8x16_t alpha_8x16;
+   uint8x16_t d_8x16;
+   uint8x16_t dsc_8x16;
+   uint8x16_t s_8x16;
+   uint8x16_t sc_8x16;
+   uint8x16_t x0_8x16;
+   uint8x16_t x1_8x16;
+   uint8x8_t ad0_8x8;
+   uint8x8_t ad1_8x8;
+   uint8x8_t alpha0_8x8;
+   uint8x8_t alpha1_8x8;
+   uint8x8_t c_8x8;
+   uint8x8_t d0_8x8;
+   uint8x8_t d1_8x8;
+   uint8x8_t dsc0_8x8;
+   uint8x8_t dsc1_8x8;
+   uint8x8_t s0_8x8;
+   uint8x8_t s1_8x8;
+   uint8x8_t sc0_8x8;
+   uint8x8_t sc1_8x8;
+
+   c_32x2 = vdup_n_u32(c);
+   c_8x8 = vreinterpret_u8_u32(c_32x2);
+   x255_16x8 = vdupq_n_u16(0xff);
+   x0_8x16 = vdupq_n_u8(0x0);
+   x0_32x4 = vreinterpretq_u32_u8(x0_8x16);
+   x1_8x16 = vdupq_n_u8(0x1);
+   x1_32x4 = vreinterpretq_u32_u8(x1_8x16);
+
+   DATA32 *end = d + (l & ~3);
+   while (d < end)
+   {
+      // load 4 elements from s
+      s_32x4 = vld1q_u32(s);
+      s_8x16 = vreinterpretq_u8_u32(s_32x4);
+      s0_8x8 = vget_low_u8(s_8x16);
+      s1_8x8 = vget_high_u8(s_8x16);
+
+      // load 4 elements from d
+      d_32x4 = vld1q_u32(d);
+      d_8x16 = vreinterpretq_u8_u32(d_32x4);
+      d0_8x8 = vget_low_u8(d_8x16);
+      d1_8x8 = vget_high_u8(d_8x16);
+
+      // multiply MUL4_SYM(c, *s);
+      sc0_16x8 = vmull_u8(s0_8x8, c_8x8);
+      sc1_16x8 = vmull_u8(s1_8x8, c_8x8);
+      sc0_16x8 = vaddq_u16(sc0_16x8, x255_16x8);
+      sc1_16x8 = vaddq_u16(sc1_16x8, x255_16x8);
+      sc0_8x8 = vshrn_n_u16(sc0_16x8, 8);
+      sc1_8x8 = vshrn_n_u16(sc1_16x8, 8);
+      sc_8x16 = vcombine_u8(sc0_8x8, sc1_8x8);
+
+      // calculate alpha = 256 - (sc >> 24)
+      alpha_32x4 = vreinterpretq_u32_u8(sc_8x16);
+      alpha_32x4 = vshrq_n_u32(alpha_32x4, 24);
+      alpha_32x4 = vmulq_u32(x1_32x4, alpha_32x4);
+      alpha_8x16 = vreinterpretq_u8_u32(alpha_32x4);
+      alpha_8x16 = vsubq_u8(x0_8x16, alpha_8x16);
+      alpha0_8x8 = vget_low_u8(alpha_8x16);
+      alpha1_8x8 = vget_high_u8(alpha_8x16);
+
+      // multiply MUL_256(alpha, *d);
+      ad0_16x8 = vmull_u8(alpha0_8x8, d0_8x8);
+      ad1_16x8 = vmull_u8(alpha1_8x8, d1_8x8);
+      ad0_8x8 = vshrn_n_u16(ad0_16x8,8);
+      ad1_8x8 = vshrn_n_u16(ad1_16x8,8);
+      ad_8x16 = vcombine_u8(ad0_8x8, ad1_8x8);
+      ad_32x4 = vreinterpretq_u32_u8(ad_8x16);
+
+      // select d when alpha is 0
+      alpha_32x4 = vreinterpretq_u32_u8(alpha_8x16);
+      cond_32x4 = vceqq_u32(alpha_32x4, x0_32x4);
+      ad_32x4 = vbslq_u32(cond_32x4, d_32x4 , ad_32x4);
+
+      // shift (*d >> 24)
+      dsc_32x4 = vshrq_n_u32(d_32x4, 24);
+      dsc_32x4 = vmulq_u32(x1_32x4, dsc_32x4);
+      dsc_8x16 = vreinterpretq_u8_u32(dsc_32x4);
+      dsc0_8x8 = vget_low_u8(dsc_8x16);
+      dsc1_8x8 = vget_high_u8(dsc_8x16);
+
+      // multiply MUL_256(*d >> 24, sc);
+      dsc0_16x8 = vmull_u8(dsc0_8x8, sc0_8x8);
+      dsc1_16x8 = vmull_u8(dsc1_8x8, sc1_8x8);
+      dsc0_16x8 = vaddq_u16(dsc0_16x8, x255_16x8);
+      dsc1_16x8 = vaddq_u16(dsc1_16x8, x255_16x8);
+      dsc0_8x8 = vshrn_n_u16(dsc0_16x8, 8);
+      dsc1_8x8 = vshrn_n_u16(dsc1_16x8, 8);
+      dsc_8x16 = vcombine_u8(dsc0_8x8, dsc1_8x8);
+
+      // add up everything
+      dsc_32x4 = vreinterpretq_u32_u8(dsc_8x16);
+      d_32x4 = vaddq_u32(dsc_32x4, ad_32x4);
+
+      // save result
+      vst1q_u32(d, d_32x4);
+
+      d+=4;
+      s+=4;
+   }
+
+   end += (l & 3);
+   int alpha;
+   while (d < end)
+   {
+      DATA32 sc = MUL4_SYM(c, *s);
+      alpha = 256 - (sc >> 24);
+      *d = MUL_SYM(*d >> 24, sc) + MUL_256(alpha, *d);
+      d++;
+      s++;
+   }
+}
+
+#define _op_blend_rel_pas_c_dp_neon _op_blend_rel_p_c_dp_neon
+#define _op_blend_rel_pan_c_dp_neon _op_blend_rel_p_c_dp_neon
+#define _op_blend_rel_p_can_dp_neon _op_blend_rel_p_c_dp_neon
+#define _op_blend_rel_pas_can_dp_neon _op_blend_rel_p_c_dp_neon
+#define _op_blend_rel_pan_can_dp_neon _op_blend_rel_p_c_dp_neon
+#define _op_blend_rel_p_caa_dp_neon _op_blend_rel_p_c_dp_neon
+#define _op_blend_rel_pas_caa_dp_neon _op_blend_rel_p_c_dp_neon
+#define _op_blend_rel_pan_caa_dp_neon _op_blend_rel_p_c_dp_neon
+
 #define _op_blend_rel_p_c_dpan_neon _op_blend_p_c_dpan_neon
 #define _op_blend_rel_pas_c_dpan_neon _op_blend_pas_c_dpan_neon
 #define _op_blend_rel_pan_c_dpan_neon _op_blend_pan_c_dpan_neon
@@ -821,6 +963,16 @@ init_blend_pixel_color_pt_funcs_neon(void)
 static void
 init_blend_rel_pixel_color_span_funcs_neon(void)
 {
+   op_blend_rel_span_funcs[SP][SM_N][SC][DP][CPU_NEON] = _op_blend_rel_p_c_dp_neon;
+   op_blend_rel_span_funcs[SP_AS][SM_N][SC][DP][CPU_NEON] = _op_blend_rel_pas_c_dp_neon;
+   op_blend_rel_span_funcs[SP_AN][SM_N][SC][DP][CPU_NEON] = _op_blend_rel_pan_c_dp_neon;
+   op_blend_rel_span_funcs[SP][SM_N][SC_AN][DP][CPU_NEON] = _op_blend_rel_p_can_dp_neon;
+   op_blend_rel_span_funcs[SP_AS][SM_N][SC_AN][DP][CPU_NEON] = _op_blend_rel_pas_can_dp_neon;
+   op_blend_rel_span_funcs[SP_AN][SM_N][SC_AN][DP][CPU_NEON] = _op_blend_rel_pan_can_dp_neon;
+   op_blend_rel_span_funcs[SP][SM_N][SC_AA][DP][CPU_NEON] = _op_blend_rel_p_caa_dp_neon;
+   op_blend_rel_span_funcs[SP_AS][SM_N][SC_AA][DP][CPU_NEON] = _op_blend_rel_pas_caa_dp_neon;
+   op_blend_rel_span_funcs[SP_AN][SM_N][SC_AA][DP][CPU_NEON] = _op_blend_rel_pan_caa_dp_neon;
+
    op_blend_rel_span_funcs[SP][SM_N][SC][DP_AN][CPU_NEON] = _op_blend_rel_p_c_dpan_neon;
    op_blend_rel_span_funcs[SP_AS][SM_N][SC][DP_AN][CPU_NEON] = _op_blend_rel_pas_c_dpan_neon;
    op_blend_rel_span_funcs[SP_AN][SM_N][SC][DP_AN][CPU_NEON] = _op_blend_rel_pan_c_dpan_neon;
