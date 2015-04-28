@@ -83,21 +83,23 @@ _visuals_set(Evas_Object *obj)
      elm_layout_signal_emit(sd->main_layout, "elm,state,action_area,hidden", "elm");
 }
 
-static void
+static Eina_Bool
 _block_clicked_cb(void *data,
-                  Evas_Object *obj EINA_UNUSED,
-                  void *event_info EINA_UNUSED)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   evas_object_smart_callback_call(data, SIG_BLOCK_CLICKED, NULL);
+   eo_do(data, eo_event_callback_call(ELM_POPUP_EVENT_BLOCK_CLICKED, NULL));
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _timeout_cb(void *data,
-            Evas_Object *obj EINA_UNUSED,
-            void *event_info EINA_UNUSED)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    evas_object_hide(data);
-   evas_object_smart_callback_call(data, SIG_TIMEOUT, NULL);
+   eo_do(data, eo_event_callback_call(ELM_POPUP_EVENT_TIMEOUT, NULL));
+
+   return EINA_TRUE;
 }
 
 static Evas_Object *
@@ -196,9 +198,10 @@ _elm_popup_evas_object_smart_del(Eo *obj, Elm_Popup_Data *sd)
    evas_object_event_callback_del_full(sd->parent, EVAS_CALLBACK_RESIZE, _parent_geom_cb, obj);
    evas_object_event_callback_del_full(sd->parent, EVAS_CALLBACK_MOVE, _parent_geom_cb, obj);
 
-   evas_object_smart_callback_del
-     (sd->notify, "block,clicked", _block_clicked_cb);
-   evas_object_smart_callback_del(sd->notify, "timeout", _timeout_cb);
+   eo_do(sd->notify, eo_event_callback_del(
+     ELM_POPUP_EVENT_BLOCK_CLICKED, _block_clicked_cb, obj));
+   eo_do(sd->notify, eo_event_callback_del(
+     ELM_POPUP_EVENT_TIMEOUT, _timeout_cb, obj));
    evas_object_event_callback_del
      (sd->content, EVAS_CALLBACK_DEL, _on_content_del);
    evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _on_show);
@@ -765,24 +768,26 @@ _elm_popup_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED, Elm_Popup_Ite
    elm_layout_signal_emit(VIEW(it), emission, source);
 }
 
-static void
+static Eina_Bool
 _item_focused_cb(void *data,
-                 Evas_Object *obj EINA_UNUSED,
-                 void *event_info EINA_UNUSED)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Popup_Item_Data *it = data;
 
-   evas_object_smart_callback_call(WIDGET(it), SIG_ITEM_FOCUSED, EO_OBJ(it));
+   eo_do(WIDGET(it), eo_event_callback_call(ELM_POPUP_EVENT_ITEM_FOCUSED, EO_OBJ(it)));
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _item_unfocused_cb(void *data,
-                   Evas_Object *obj EINA_UNUSED,
-                   void *event_info EINA_UNUSED)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Popup_Item_Data *it = data;
 
-   evas_object_smart_callback_call(WIDGET(it), SIG_ITEM_UNFOCUSED, EO_OBJ(it));
+   eo_do(WIDGET(it), eo_event_callback_call(ELM_POPUP_EVENT_ITEM_UNFOCUSED, EO_OBJ(it)));
+
+   return EINA_TRUE;
 }
 
 EOLIAN static Eo *
@@ -810,8 +815,10 @@ _item_new(Elm_Popup_Item_Data *it)
         elm_layout_signal_callback_add(VIEW(it), "elm,action,click", "*",
                                        _item_select_cb, it);
         evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
-        evas_object_smart_callback_add(VIEW(it), SIG_LAYOUT_FOCUSED, _item_focused_cb, it);
-        evas_object_smart_callback_add(VIEW(it), SIG_LAYOUT_UNFOCUSED, _item_unfocused_cb, it);
+        eo_do(VIEW(it), eo_event_callback_add
+              (ELM_LAYOUT_EVENT_FOCUSED, _item_focused_cb, it));
+        eo_do(VIEW(it), eo_event_callback_add
+              (ELM_LAYOUT_EVENT_UNFOCUSED, _item_unfocused_cb, it));
         evas_object_show(VIEW(it));
      }
 }
@@ -1439,10 +1446,11 @@ _elm_popup_evas_object_smart_add(Eo *obj, Elm_Popup_Data *priv)
          _size_hints_changed_cb, obj);
 
    priv->content_text_wrap_type = ELM_WRAP_MIXED;
-   evas_object_smart_callback_add
-     (priv->notify, "block,clicked", _block_clicked_cb, obj);
+   eo_do(priv->notify, eo_event_callback_add
+         (ELM_POPUP_EVENT_BLOCK_CLICKED,_block_clicked_cb, obj));
 
-   evas_object_smart_callback_add(priv->notify, "timeout", _timeout_cb, obj);
+   eo_do(priv->notify, eo_event_callback_add
+         (ELM_POPUP_EVENT_TIMEOUT, _timeout_cb, obj));
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_can_focus_set(priv->main_layout, EINA_TRUE);
