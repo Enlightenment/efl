@@ -13,6 +13,9 @@
 
 #include "eio_suite.h"
 
+
+#ifdef XATTR_TEST_DIR
+
 static char *str_attr = "user.name";
 static char *str_data = "Vivek Ellur";
 static char *int_attr = "user.id";
@@ -125,7 +128,6 @@ _error_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, int error)
    ecore_main_loop_quit();
 }
 
-#ifdef XATTR_TEST_DIR
 START_TEST(eio_test_xattr_set)
 {
    char *filename = "eio-tmpfile";
