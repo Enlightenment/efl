@@ -452,6 +452,7 @@ ecore_con_eet_server_new(Ecore_Con_Server *server)
    r = calloc(1, sizeof (Ecore_Con_Eet));
    if (!r) return NULL;
 
+   r->client = EINA_FALSE;
    r->server = server;
    r->handler_add = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ADD,
                                             (Ecore_Event_Handler_Cb)_ecore_con_eet_server_connected, r);
@@ -511,7 +512,6 @@ ecore_con_eet_server_free(Ecore_Con_Eet *r)
           {
              _ecore_con_eet_reply_cleanup(r->u.client.r);
              eet_connection_close(r->u.client.r->econn, NULL);
-             free(r->u.client.r);
           }
         EINA_LIST_FREE(r->u.client.server_connect_callbacks, s)
           free(s);
