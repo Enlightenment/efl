@@ -1157,6 +1157,17 @@ static inline int eina_hash_int64(const unsigned long long int *pkey,
 static inline int eina_hash_murmur3(const char *key,
                            int         len) EINA_ARG_NONNULL(1);
 
+/**
+ * @brief
+ * Hash function using crc-32 algorithm and and 0xEDB88320 polynomial
+ *
+ * @param key The key to hash
+ * @param len The length of the key
+ * @return The hash value
+ */
+static inline int eina_hash_crc(const char *key,
+                           int         len) EINA_ARG_NONNULL(1);
+
 #include "eina_inline_hash.x"
 
 /**
