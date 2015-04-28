@@ -1,4 +1,4 @@
-
+if HAVE_ECORE_AUDIO
 if HAVE_CXX11
 
 ### Generated headers
@@ -47,4 +47,5 @@ tests_ecore_audio_cxx_cxx_compile_test_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@
 
 endif
 
+endif
 endif
