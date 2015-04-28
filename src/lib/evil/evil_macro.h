@@ -1,8 +1,6 @@
 #ifndef __EVIL_MACRO_H__
 #define __EVIL_MACRO_H__
 
-
-
 #ifdef EAPI
 # undef EAPI
 #endif /* EAPI */

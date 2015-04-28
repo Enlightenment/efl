@@ -201,6 +201,9 @@ typedef unsigned long  gid_t;
 
 #define sigsetjmp(Env, Save) setjmp(Env)
 
+#undef EAPI
+#define EAPI
+
 #ifdef __cplusplus
 }
 #endif
