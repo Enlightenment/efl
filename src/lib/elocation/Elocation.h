@@ -66,6 +66,10 @@
 #include <Ecore.h>
 #include <Eldbus.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @ingroup Location
  * @brief Available location events that are emitted from the library
@@ -415,6 +419,10 @@ EAPI Eina_Bool elocation_init(void);
  * @since 1.13
  */
 EAPI void elocation_shutdown(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* BETA API */
 
