@@ -4725,10 +4725,11 @@ EAPI void ephysics_constraint_del(EPhysics_Constraint *constraint);
 /**
  * @}
  */
-
-
 #ifdef __cplusplus
 }
 #endif
+
+#undef EAPI
+#define EAPI
 
 #endif
