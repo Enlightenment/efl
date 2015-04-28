@@ -38,7 +38,7 @@ struct Opaque;
 #endif
 #define STRUCT_CLASS struct_class_get()
 
-const Eo_Class *struct_class_get(void) EINA_CONST;
+EAPI const Eo_Class *struct_class_get(void) EINA_CONST;
 
 /**
  *

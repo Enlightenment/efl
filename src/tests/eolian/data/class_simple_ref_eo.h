@@ -18,7 +18,7 @@ typedef Eo Class_Simple;
  */
 #define CLASS_SIMPLE_CLASS class_simple_class_get()
 
-const Eo_Class *class_simple_class_get(void) EINA_CONST;
+EAPI const Eo_Class *class_simple_class_get(void) EINA_CONST;
 
 /**
  *
