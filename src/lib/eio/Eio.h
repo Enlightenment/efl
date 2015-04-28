@@ -1296,5 +1296,7 @@ EAPI const char *eio_monitor_path_get(Eio_Monitor *monitor);
 }
 #endif
 
+#undef EAPI
+#define EAPI
 
 #endif
