@@ -265,6 +265,9 @@ extern "C" {
 #include <eina_matrix.h>
 #include <eina_crc.h>
 
+#undef EAPI
+#define EAPI
+
 #ifdef __cplusplus
 }
 #endif

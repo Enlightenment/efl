@@ -61,6 +61,28 @@
 # endif
 #endif
 
+#ifdef _WIN32
+# ifdef DLL_EXPORT
+#  define EXPORTAPI __declspec(dllexport)
+# else
+#  define EXPORTAPI
+# endif /* ! DLL_EXPORT */
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EXPORTAPI __attribute__ ((visibility("default")))
+#  else
+#   define EXPORTAPI
+#  endif
+# else
+/**
+ * @def EAPI
+ * @brief Used to export functions(by changing visibility).
+ */
+#  define EXPORTAPI
+# endif
+#endif
+
 #include "eina_config.h"
 
 #ifdef EINA_UNUSED

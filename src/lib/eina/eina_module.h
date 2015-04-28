@@ -96,14 +96,14 @@ typedef void (*Eina_Module_Shutdown)(void);
  * declares the given function as the module initializer (__eina_module_init).
  * It must be of signature #Eina_Module_Init
  */
-#define EINA_MODULE_INIT(f) EAPI Eina_Module_Init __eina_module_init = &f
+#define EINA_MODULE_INIT(f) EXPORTAPI Eina_Module_Init __eina_module_init = &f
 
 /**
  * @def EINA_MODULE_SHUTDOWN
  * declares the given function as the module shutdownializer
  * (__eina_module_shutdown). It must be of signature #Eina_Module_Shutdown
  */
-#define EINA_MODULE_SHUTDOWN(f) EAPI Eina_Module_Shutdown __eina_module_shutdown = &f
+#define EINA_MODULE_SHUTDOWN(f) EXPORTAPI Eina_Module_Shutdown __eina_module_shutdown = &f
 
 extern EAPI Eina_Error EINA_ERROR_WRONG_MODULE;
 extern EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED;
