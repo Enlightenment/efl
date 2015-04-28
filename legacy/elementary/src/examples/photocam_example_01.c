@@ -8,11 +8,21 @@ static void _fit(void *data, Evas_Object *obj, void *event_info);
 static void _unfit(void *data, Evas_Object *obj, void *event_info);
 static void _zoom(void *data, Evas_Object *obj, void *event_info);
 static void _bring_in(void *data, Evas_Object *obj, void *event_info);
+static void _orient(void *data, Evas_Object *obj, void *event_info);
+static void _orient_do(void *data, Evas_Object *obj, void *event_info);
+
+typedef struct _Orient_Data Orient_Data;
+struct _Orient_Data
+{
+   Evas_Object *ph;
+   Evas_Image_Orient orient;
+};
 
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *obj, *photocam;
+   Evas_Object *win, *obj, *photocam, *menu;
+   Orient_Data *orient_data;
    char buf[PATH_MAX];
 
    elm_app_info_set(elm_main, "elementary", "images/insanely_huge_test_image.jpg");
@@ -42,6 +52,47 @@ elm_main(int argc, char **argv)
    evas_object_resize(obj, 70, 30);
    evas_object_move(obj, 70, 410);
    evas_object_smart_callback_add(obj, "clicked", _unfit, photocam);
+
+   orient_data = (Orient_Data *)malloc(sizeof(Orient_Data));
+   orient_data->ph = photocam;
+   orient_data->orient = 0;
+   menu = elm_menu_add(win);
+   elm_menu_item_add(menu, NULL, NULL, "orient 0", _orient_do, orient_data);
+   orient_data = (Orient_Data *)malloc(sizeof(Orient_Data));
+   orient_data->ph = photocam;
+   orient_data->orient = 1;
+   elm_menu_item_add(menu, NULL, NULL, "orient 90", _orient_do, orient_data);
+   orient_data = (Orient_Data *)malloc(sizeof(Orient_Data));
+   orient_data->ph = photocam;
+   orient_data->orient = 2;
+   elm_menu_item_add(menu, NULL, NULL, "orient 180", _orient_do, orient_data);
+   orient_data = (Orient_Data *)malloc(sizeof(Orient_Data));
+   orient_data->ph = photocam;
+   orient_data->orient = 3;
+   elm_menu_item_add(menu, NULL, NULL, "orient 270", _orient_do, orient_data);
+   orient_data = (Orient_Data *)malloc(sizeof(Orient_Data));
+   orient_data->ph = photocam;
+   orient_data->orient = 4;
+   elm_menu_item_add(menu, NULL, NULL, "flip horizontal", _orient_do, orient_data);
+   orient_data = (Orient_Data *)malloc(sizeof(Orient_Data));
+   orient_data->ph = photocam;
+   orient_data->orient = 5;
+   elm_menu_item_add(menu, NULL, NULL, "flip vertical", _orient_do, orient_data);
+   orient_data = (Orient_Data *)malloc(sizeof(Orient_Data));
+   orient_data->ph = photocam;
+   orient_data->orient = 6;
+   elm_menu_item_add(menu, NULL, NULL, "flip transverse", _orient_do, orient_data);
+   orient_data = (Orient_Data *)malloc(sizeof(Orient_Data));
+   orient_data->ph = photocam;
+   orient_data->orient = 7;
+   elm_menu_item_add(menu, NULL, NULL, "flip transpose", _orient_do, orient_data);
+
+   obj = elm_button_add(win);
+   elm_object_text_set(obj, "Orient");
+   evas_object_show(obj);
+   evas_object_resize(obj, 70, 30);
+   evas_object_move(obj, 470, 410);
+   evas_object_smart_callback_add(obj, "clicked", _orient, menu);
 
    obj = elm_slider_add(win);
    elm_object_text_set(obj, "Zoom");
@@ -87,4 +138,22 @@ _zoom(void *data, Evas_Object *obj, void *event_info)
 {
    double z = elm_slider_value_get(obj) * 8;
    elm_photocam_zoom_set(data, z);
+}
+
+static void
+_orient(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *mn = data;
+   if (!mn) return;
+
+   evas_object_show(mn);
+}
+
+static void
+_orient_do(void *data, Evas_Object *obj, void *event_info)
+{
+   Orient_Data *orient_data = data;
+   if (!orient_data) return;
+
+   elm_photocam_image_orient_set(orient_data->ph, orient_data->orient);
 }
