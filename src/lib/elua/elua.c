@@ -1,4 +1,3 @@
-#include "Elua.h"
 #include "elua_private.h"
 
 static Eina_Prefix *_elua_pfx = NULL;

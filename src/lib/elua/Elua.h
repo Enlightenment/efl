@@ -48,10 +48,6 @@
 extern "C" {
 #endif
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
 /**
  * @page elua_main Elua library (BETA)
  *
@@ -457,5 +453,8 @@ EAPI int elua_util_error_report(const Elua_State *es, int status);
 #ifdef __cplusplus
 } // extern "C" {
 #endif
+
+#undef EAPI
+#define EAPI
 
 #endif

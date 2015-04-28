@@ -1,4 +1,3 @@
-#include "Elua.h"
 #include "elua_private.h"
 
 #include <sys/types.h>

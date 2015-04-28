@@ -28,6 +28,8 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
+#include "Elua.h"
+
 struct _Elua_State
 {
    lua_State *luastate;

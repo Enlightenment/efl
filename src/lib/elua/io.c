@@ -1,4 +1,3 @@
-#include "Elua.h"
 #include "elua_private.h"
 
 /* expand fname to full path name (so that PATH is ignored) plus turn
