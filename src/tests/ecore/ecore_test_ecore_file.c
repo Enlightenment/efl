@@ -127,7 +127,9 @@ END_TEST
 START_TEST(ecore_test_ecore_file_operations)
 {
    const char* dirs[] = {"b", "b/c", "b/c/d", "d", 0};
+   char *dirs2[] = {"a2", "b2", "c2", 0};
    const char *src_dir, *src_file, *dest_file;
+   const char *not_exist_file;
    const char *tmpdir = NULL;
    char *dup_dir, *path;
    char *random_text = "This is random test String";
@@ -137,6 +139,7 @@ START_TEST(ecore_test_ecore_file_operations)
    char dir[MAXSIZE] = {'\0'};
    unsigned int ret;
    int fd;
+   int i;
    Eina_Bool res;
    Eina_List *list, *l;
 
@@ -294,6 +297,92 @@ START_TEST(ecore_test_ecore_file_operations)
      free(dup_dir);
    ret = setenv("PATH", src_dir, 1);
    fail_if(ret != 0);
+
+   src_dir = get_tmp_dir();
+   fail_if(!src_dir);
+   strcpy(dir, src_dir);
+   strcat(dir, "/");
+   strcat(dir, dirs[0]);
+   fail_if(ecore_file_mkdir(dir) != EINA_TRUE);
+
+   fail_if(ecore_file_mkdirs(NULL) != -1);
+   for (i = 0; i < 3; i++)
+     {
+        char tmp[PATH_MAX];
+        strcpy(tmp, src_dir);
+        strcat(tmp, "/");
+        strcat(tmp, dirs2[i]);
+        dirs2[i] = strdup(tmp);
+     }
+   fail_if(ecore_file_mkdirs((const char **)dirs2) != 3);
+   for (i = 0; i < 3; i++)
+     free(dirs2[i]);
+
+   fail_if(ecore_file_mksubdirs(src_dir, NULL) != -1);
+   fail_if(ecore_file_mksubdirs(NULL, dirs) != -1);
+   fail_if(ecore_file_mksubdirs("", dirs) != -1);
+   fail_if(ecore_file_mksubdirs(src_file, dirs) != 0);
+
+   src_dir = get_tmp_dir();
+   fail_if(!src_dir);
+   fail_if(ecore_file_rmdir(src_dir) != EINA_TRUE);
+   fail_if(ecore_file_dir_is_empty(src_dir) != -1);
+   fail_if(ecore_file_ls(src_dir) != NULL);
+
+   not_exist_file = get_tmp_file();
+   fail_if(!not_exist_file);
+   fail_if(ecore_file_remove(not_exist_file) != EINA_TRUE);
+   fail_if(ecore_file_exists(not_exist_file) != EINA_FALSE);
+   fail_if(ecore_file_mod_time(not_exist_file) != 0);
+   fail_if(ecore_file_size(not_exist_file) != 0);
+
+   ck_assert_str_eq(ecore_file_realpath(NULL), "");
+   ck_assert_str_eq(ecore_file_realpath(not_exist_file), "");
+
+   src_file = get_tmp_file();
+   fail_if(!src_file);
+   fail_if(ecore_file_remove(src_file) != EINA_TRUE);
+   fd = open(src_file, O_RDWR|O_CREAT, 0400);
+   fail_if(fd < 0);
+   fail_if(close(fd) != 0);
+   fail_if(ecore_file_can_read(src_file) != EINA_TRUE);
+   fail_if(ecore_file_can_write(src_file) != EINA_FALSE);
+   fail_if(ecore_file_can_exec(src_file) != EINA_FALSE);
+   fail_if(ecore_file_cp(src_file, src_file) != EINA_FALSE);
+
+   src_file = get_tmp_file();
+   fail_if(!src_file);
+   fail_if(ecore_file_remove(src_file) != EINA_TRUE);
+   fd = open(src_file, O_RDWR|O_CREAT, 0200);
+   fail_if(fd < 0);
+   fail_if(close(fd) != 0);
+   fail_if(ecore_file_can_read(src_file) != EINA_FALSE);
+   fail_if(ecore_file_can_write(src_file) != EINA_TRUE);
+   fail_if(ecore_file_can_exec(src_file) != EINA_FALSE);
+
+   src_file = get_tmp_file();
+   fail_if(!src_file);
+   fail_if(ecore_file_remove(src_file) != EINA_TRUE);
+   fd = open(src_file, O_RDWR|O_CREAT, 0100);
+   fail_if(fd < 0);
+   fail_if(close(fd) != 0);
+   fail_if(ecore_file_can_read(src_file) != EINA_FALSE);
+   fail_if(ecore_file_can_write(src_file) != EINA_FALSE);
+   fail_if(ecore_file_can_exec(src_file) != EINA_TRUE);
+
+   fail_if(ecore_file_unlink(not_exist_file) != EINA_FALSE);
+   fail_if(ecore_file_remove(not_exist_file) != EINA_FALSE);
+   fail_if(ecore_file_cp(not_exist_file, "test_file") != EINA_FALSE);
+   fail_if(ecore_file_mv(not_exist_file, "test_file") != EINA_FALSE);
+
+   fail_if(ecore_file_mkpath(src_dir) != EINA_TRUE);
+   fail_if(ecore_file_mkpath(NULL) != EINA_FALSE);
+   fail_if(ecore_file_mkpaths(dirs) != 4);
+   fail_if(ecore_file_mkpaths(NULL) != -1);
+
+   fail_if(ecore_file_dir_get(NULL) != NULL);
+   fail_if(ecore_file_strip_ext(NULL) != NULL);
+   fail_if(ecore_file_escape_name(NULL) != NULL);
 
    ret = ecore_file_shutdown();
    fail_if(ret != 0);
