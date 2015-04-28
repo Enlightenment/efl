@@ -149,6 +149,9 @@ EAPI int efreet_shutdown(void);
  */
 EAPI void efreet_lang_reset(void);
 
+#undef EAPI
+#define EAPI
+
 #ifdef __cplusplus
 }
 #endif

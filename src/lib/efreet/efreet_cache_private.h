@@ -12,6 +12,32 @@
 #define EFREET_CACHE_VERSION "__efreet//version"
 #define EFREET_CACHE_ICON_FALLBACK "__efreet_fallback"
 
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef _WIN32
+# ifdef EFL_EFREET_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif /* ! DLL_EXPORT */
+# else
+#  define EAPI __declspec(dllimport)
+# endif /* ! EFL_EFREET_BUILD */
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif
+
 EAPI const char *efreet_desktop_util_cache_file(void);
 EAPI const char *efreet_desktop_cache_file(void);
 EAPI const char *efreet_icon_cache_file(const char *theme);
@@ -56,5 +82,8 @@ struct _Efreet_Cache_Desktop
 
     double check_time; /**< Last time we check for disk modification */
 };
+
+#undef EAPI
+#define EAPI
 
 #endif
