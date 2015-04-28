@@ -326,6 +326,7 @@ static void st_collections_group_parts_part_description_rel2_to_set(const char *
 static void st_collections_group_parts_part_description_rel2_to(void);
 static void st_collections_group_parts_part_description_rel2_to_x(void);
 static void st_collections_group_parts_part_description_rel2_to_y(void);
+static void st_collections_group_parts_part_description_clip_to_id(void);
 static void st_collections_group_parts_part_description_image_normal(void);
 static void st_collections_group_parts_part_description_image_tween(void);
 static void st_collections_group_parts_part_description_image_border(void);
@@ -771,6 +772,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.rel2.to", st_collections_group_parts_part_description_rel2_to},
      {"collections.group.parts.part.description.rel2.to_x", st_collections_group_parts_part_description_rel2_to_x},
      {"collections.group.parts.part.description.rel2.to_y", st_collections_group_parts_part_description_rel2_to_y},
+     {"collections.group.parts.part.description.clip_to", st_collections_group_parts_part_description_clip_to_id},
      {"collections.group.parts.part.description.image.normal", st_collections_group_parts_part_description_image_normal},
      {"collections.group.parts.part.description.image.tween", st_collections_group_parts_part_description_image_tween},
      IMAGE_SET_STATEMENTS("collections.group.parts.part.description.image")
@@ -1496,6 +1498,7 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
    result->physics.depth = 30;
 #endif
 
+   result->clip_to_id = -1;
    return result;
 }
 
@@ -4581,6 +4584,7 @@ _part_desc_free(Edje_Part_Collection *pc,
    part_lookup_del(pc, &(ed->rel1.id_y));
    part_lookup_del(pc, &(ed->rel2.id_x));
    part_lookup_del(pc, &(ed->rel2.id_y));
+   part_lookup_del(pc, &(ed->clip_to_id));
    part_lookup_del(pc, &(ed->map.id_persp));
    part_lookup_del(pc, &(ed->map.id_light));
    part_lookup_del(pc, &(ed->map.rot.id_center));
@@ -5381,11 +5385,11 @@ st_collections_group_parts_part_clip_to_id(void)
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
      {
-	char *name;
+        char *name;
 
-	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(current_part->clip_to_id));
-	free(name);
+        name = parse_str(0);
+        data_queue_part_lookup(pc, name, &(current_part->clip_to_id));
+        free(name);
      }
 }
 
@@ -6397,6 +6401,7 @@ _copied_map_colors_get(Edje_Part_Description_Common *parent)
             fixed: 0 0;
             step: 0 0;
             aspect: 1 1;
+            clip_to: "clip_override_part_name";
 
             rel1 {
                 ..
@@ -6428,6 +6433,7 @@ ob_collections_group_parts_part_description(void)
    ed->rel1.id_y = -1;
    ed->rel2.id_x = -1;
    ed->rel2.id_y = -1;
+   ed->clip_to_id = -1;
 
    if (!ep->default_desc)
      {
@@ -6627,6 +6633,8 @@ st_collections_group_parts_part_description_inherit(void)
    data_queue_copied_part_lookup(pc, &parent->rel1.id_y, &ed->rel1.id_y);
    data_queue_copied_part_lookup(pc, &parent->rel2.id_x, &ed->rel2.id_x);
    data_queue_copied_part_lookup(pc, &parent->rel2.id_y, &ed->rel2.id_y);
+
+   data_queue_copied_part_lookup(pc, &parent->clip_to_id, &ed->clip_to_id);
 
    data_queue_copied_part_lookup(pc, &parent->map.id_persp, &ed->map.id_persp);
    data_queue_copied_part_lookup(pc, &parent->map.id_light, &ed->map.id_light);
@@ -7623,6 +7631,23 @@ st_collections_group_parts_part_description_rel2_to_y(void)
       data_queue_part_lookup(pc, name, &(current_desc->rel2.id_y));
       free(name);
    }
+}
+
+static void
+st_collections_group_parts_part_description_clip_to_id(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+     {
+        char *name;
+
+        name = parse_str(0);
+        data_queue_part_lookup(pc, name, &(current_desc->clip_to_id));
+        free(name);
+     }
 }
 
 /** @edcsubsection{collections_group_parts_description_image,

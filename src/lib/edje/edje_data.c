@@ -75,16 +75,21 @@ Eet_Data_Descriptor *_edje_edd_edje_physics_face = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_map_colors = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_map_colors_pointer = NULL;
 
+/* allocate a description struct.
+ * this initializes clip_to_id as this field will not be present in most
+ * edje files.
+ */
 #define EMP(Type, Minus)                            \
   EAPI Eina_Mempool *_emp_##Type = NULL;            \
                                                     \
   static void *                                     \
   mem_alloc_##Minus(size_t size)                    \
   {                                                 \
-     void *data;                                    \
+     Edje_Part_Description_Common *data;            \
                                                     \
      data = eina_mempool_malloc(_emp_##Type, size); \
      memset(data, 0, size);                         \
+     data->clip_to_id = -1;                         \
      return data;                                   \
   }                                                 \
                                                     \
@@ -94,20 +99,21 @@ Eet_Data_Descriptor *_edje_edd_edje_map_colors_pointer = NULL;
      eina_mempool_free(_emp_##Type, data);          \
   }
 
-EMP(RECTANGLE, rectangle);
-EMP(TEXT, text);
-EMP(IMAGE, image);
-EMP(PROXY, proxy);
-EMP(SWALLOW, swallow);
-EMP(TEXTBLOCK, textblock);
-EMP(GROUP, group);
-EMP(BOX, box);
-EMP(TABLE, table);
-EMP(EXTERNAL, external);
-EMP(SPACER, spacer);
-EMP(MESH_NODE, mesh_node);
-EMP(LIGHT, light);
-EMP(CAMERA, camera);
+EMP(RECTANGLE, rectangle)
+EMP(TEXT, text)
+EMP(IMAGE, image)
+EMP(PROXY, proxy)
+EMP(SWALLOW, swallow)
+EMP(TEXTBLOCK, textblock)
+EMP(GROUP, group)
+EMP(BOX, box)
+EMP(TABLE, table)
+EMP(EXTERNAL, external)
+EMP(SPACER, spacer)
+EMP(MESH_NODE, mesh_node)
+EMP(LIGHT, light)
+EMP(CAMERA, camera)
+#undef EMP
 
 EAPI Eina_Mempool *_emp_part = NULL;
 
@@ -661,6 +667,7 @@ _edje_edd_init(void)
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.offset_y", rel2.offset_y, EET_T_INT);                         \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_x", rel2.id_x, EET_T_INT);                                 \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_y", rel2.id_y, EET_T_INT);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "clip_to_id", clip_to_id, EET_T_INT);                               \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color_class", color_class, EET_T_STRING);                          \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.r", color.r, EET_T_UCHAR);                                   \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.g", color.g, EET_T_UCHAR);                                   \
@@ -751,6 +758,7 @@ _edje_edd_init(void)
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.offset_y", Dec.rel2.offset_y, EET_T_INT);                         \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_x", Dec.rel2.id_x, EET_T_INT);                                 \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_y", Dec.rel2.id_y, EET_T_INT);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "clip_to_id", Dec.clip_to_id, EET_T_INT);                               \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color_class", Dec.color_class, EET_T_STRING);                          \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.r", Dec.color.r, EET_T_UCHAR);                                   \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.g", Dec.color.g, EET_T_UCHAR);                                   \

@@ -1174,6 +1174,8 @@ struct _Edje_Part_Description_Common
    Edje_Color color;
    Edje_Color color2;
 
+   int        clip_to_id; /* state clip override @since 1.15 */
+
    struct {
       FLOAT_T        relative_x;
       FLOAT_T        relative_y;
@@ -1715,6 +1717,7 @@ struct _Edje_Calc_Params
 #ifdef HAVE_EPHYSICS
    const Edje_Calc_Params_Physics *physics; // 90
 #endif
+   Edje_Real_Part  *clip_to; /* state clip override @since 1.15 */
    unsigned char    persp_on : 1;
    unsigned char    lighted : 1;
    unsigned char    mapped : 1;

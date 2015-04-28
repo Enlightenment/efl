@@ -465,6 +465,19 @@ check_nameless_state(Edje_Part_Collection *pc, Edje_Part *ep, Edje_Part_Descript
 }
 
 static void
+check_state(Edje_Part_Collection *pc, Edje_Part *ep, Edje_Part_Description_Common *ed, Eet_File *ef)
+{
+   /* FIXME: When smart masks are supported, remove this check */
+   if (ed->clip_to_id != -1 &&
+       (pc->parts[ed->clip_to_id]->type != EDJE_PART_TYPE_RECTANGLE) &&
+       (pc->parts[ed->clip_to_id]->type != EDJE_PART_TYPE_IMAGE))
+     error_and_abort(ef, "Collection %i: description.clip_to point to a non RECT/IMAGE part '%s' !",
+                     pc->id, pc->parts[ed->clip_to_id]->name);
+
+   check_nameless_state(pc, ep, ed, ef);
+}
+
+static void
 check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 {
    unsigned int i;
@@ -475,7 +488,7 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 		     "for part \"%s\"", pc->id, ep->name);
 
    for (i = 0; i < ep->other.desc_count; ++i)
-     check_nameless_state(pc, ep, ep->other.desc[i], ef);
+     check_state(pc, ep, ep->other.desc[i], ef);
 
    if (ep->type == EDJE_PART_TYPE_IMAGE)
      {
@@ -490,7 +503,7 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
    else if (ep->type == EDJE_PART_TYPE_GROUP)
      check_source_links(pc, ep, ef, group_path);
 
-   /* FIXME: When mask are supported remove this check */
+   /* FIXME: When smart masks are supported, remove this check */
    if (ep->clip_to_id != -1 &&
        (pc->parts[ep->clip_to_id]->type != EDJE_PART_TYPE_RECTANGLE) &&
        (pc->parts[ep->clip_to_id]->type != EDJE_PART_TYPE_IMAGE))

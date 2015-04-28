@@ -8,6 +8,7 @@ static void                          _edje_part_recalc_single(Edje *ed, Edje_Rea
                                                               Edje_Real_Part *center, Edje_Real_Part *light, Edje_Real_Part *persp,
                                                               Edje_Real_Part *rel1_to_x, Edje_Real_Part *rel1_to_y,
                                                               Edje_Real_Part *rel2_to_x, Edje_Real_Part *rel2_to_y,
+                                                              Edje_Real_Part *clip_to,
                                                               Edje_Real_Part *confine_to, Edje_Real_Part *threshold,
                                                               Edje_Calc_Params *params,
                                                               Evas_Coord mmw, Evas_Coord mmh,
@@ -746,7 +747,7 @@ _edje_recalc_do(Edje *ed)
         Edje_Real_Part *ep;
 
         ep = ed->table_parts[i];
-        ep->calculated = FLAG_NONE;
+        ep->calculated = FLAG_NONE; // FIXME: this is dubious (see below)
         ep->calculating = FLAG_NONE;
      }
    for (i = 0; i < ed->table_parts_size; i++)
@@ -754,7 +755,7 @@ _edje_recalc_do(Edje *ed)
         Edje_Real_Part *ep;
 
         ep = ed->table_parts[i];
-        if (ep->calculated != FLAG_XY)
+        if (ep->calculated != FLAG_XY) // FIXME: this is always true (see for above)
           _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY, NULL);
      }
    if (!ed->calc_only) ed->recalc = EINA_FALSE;
@@ -2346,6 +2347,7 @@ _edje_part_recalc_single(Edje *ed,
                          Edje_Real_Part *rel1_to_y,
                          Edje_Real_Part *rel2_to_x,
                          Edje_Real_Part *rel2_to_y,
+                         Edje_Real_Part *clip_to,
                          Edje_Real_Part *confine_to,
                          Edje_Real_Part *threshold,
                          Edje_Calc_Params *params,
@@ -2396,6 +2398,9 @@ _edje_part_recalc_single(Edje *ed,
 
    /* visible */
    params->visible = desc->visible;
+
+   /* clip override */
+   params->clip_to = clip_to;
 
    /* set parameters, some are required for recalc_single_text[block] */
    switch (ep->part->type)
@@ -3232,11 +3237,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    int statel2 = -1;
    int statep1 = -1;
    int statep2 = -1;
+   int statecl = -1;
    Edje_Real_Part *center[2] = { NULL, NULL };
    Edje_Real_Part *light[2] = { NULL, NULL };
    Edje_Real_Part *persp[2] = { NULL, NULL };
    Edje_Real_Part *rp1[4] = { NULL, NULL, NULL, NULL };
    Edje_Real_Part *rp2[4] = { NULL, NULL, NULL, NULL };
+   Edje_Real_Part *clip1 = NULL, *clip2 = NULL;
    Edje_Calc_Params *p1, *pf;
    Edje_Part_Description_Common *chosen_desc;
    Edje_Real_Part *confine_to = NULL;
@@ -3344,6 +3351,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
           rp1[Rel1Y] = ed->table_parts[ep->param1.description->rel1.id_y];
         if (ep->param1.description->rel2.id_y >= 0)
           rp1[Rel2Y] = ed->table_parts[ep->param1.description->rel2.id_y];
+        if (ep->param1.description->clip_to_id >= 0)
+          clip1 = ed->table_parts[ep->param1.description->clip_to_id % ed->table_parts_size];
      }
    if (ep->param2)
      {
@@ -3355,6 +3364,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
           rp2[Rel1Y] = ed->table_parts[ep->param2->description->rel1.id_y];
         if (ep->param2->description->rel2.id_y >= 0)
           rp2[Rel2Y] = ed->table_parts[ep->param2->description->rel2.id_y];
+        if (ep->param2->description->clip_to_id >= 0)
+          clip2 = ed->table_parts[ep->param2->description->clip_to_id % ed->table_parts_size];
      }
 
    if (flags & FLAG_X)
@@ -3432,6 +3443,17 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 #endif
                }
           }
+     }
+   if (clip1)
+     {
+        _edje_part_recalc(ed, clip1, flags, NULL);
+        statecl = clip1->state;
+     }
+   if (clip2)
+     {
+        _edje_part_recalc(ed, clip2, flags, NULL);
+        if (statecl < clip2->state)
+          statecl = clip2->state;
      }
    if (ep->drag)
      {
@@ -3530,6 +3552,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
             (statec1 >= ep->param1.state) ||
             (statel1 >= ep->param1.state) ||
             (statep1 >= ep->param1.state) ||
+            (statecl >= ep->param1.state) ||
             proxy_invalidate ||
             state ||
             ed->need_map_update ||
@@ -3541,7 +3564,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
            _edje_part_recalc_single(ed, ep, ep->param1.description,
                                     chosen_desc, center[0], light[0],
                                     persp[0], rp1[Rel1X], rp1[Rel1Y],
-                                    rp1[Rel2X], rp1[Rel2Y], confine_to,
+                                    rp1[Rel2X], rp1[Rel2Y], clip1, confine_to,
                                     threshold, p1, mmw, mmh,
                                     pos);
 #ifdef EDJE_CALC_CACHE
@@ -3598,6 +3621,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
             (statec2 >= ep->param2->state) ||
             (statel2 >= ep->param2->state) ||
             (statep2 >= ep->param2->state) ||
+            (statecl >= ep->param2->state) ||
             proxy_invalidate ||
             state ||
             ed->need_map_update ||
@@ -3609,7 +3633,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
            _edje_part_recalc_single(ed, ep, ep->param2->description,
                                     chosen_desc, center[1], light[1],
                                     persp[1], rp2[Rel1X], rp2[Rel1Y],
-                                    rp2[Rel2X], rp2[Rel2Y], confine_to,
+                                    rp2[Rel2X], rp2[Rel2Y], clip2, confine_to,
                                     threshold, p2, mmw, mmh,
                                     pos);
 #ifdef EDJE_CALC_CACHE
@@ -3631,6 +3655,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
           p3->visible = (pos != ZERO);
         else
           p3->visible = p1->visible;
+
+        /* clip_to will behave a bit like visible */
+        if (pos == ZERO)
+          p3->clip_to = p1->clip_to;
+        else if (pos == FROM_INT(1))
+          p3->clip_to = p2->clip_to;
+        else if (!p1->clip_to)
+          p3->clip_to = p2->clip_to;
+        else
+          p3->clip_to = p1->clip_to;
 
         p3->smooth = (beginning_pos) ? p1->smooth : p2->smooth;
 
@@ -4015,12 +4049,20 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
              if (ep->nested_smart) /* Move, Resize all nested parts */
                {   /* Not really needed but will improve the bounding box evaluation done by Evas */
-                 eo_do(ep->nested_smart,
-                       efl_gfx_position_set(ed->x + pf->final.x, ed->y + pf->final.y),
-                       efl_gfx_size_set(pf->final.w, pf->final.h));
+                  eo_do(ep->nested_smart,
+                        efl_gfx_position_set(ed->x + pf->final.x, ed->y + pf->final.y),
+                        efl_gfx_size_set(pf->final.w, pf->final.h));
                }
              if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
                _edje_entry_real_part_configure(ed, ep);
+
+             /* handle clip overrides */
+             if (pf->clip_to && pf->clip_to->object)
+               evas_object_clip_set(ep->object, pf->clip_to->object);
+             else if (ep->part->clip_to_id >= 0)
+               evas_object_clip_set(ep->object, ed->table_parts[ep->part->clip_to_id % ed->table_parts_size]->object);
+             else
+               evas_object_clip_set(ep->object, ed->base->clipper);
              break;
 
            case EDJE_PART_TYPE_TEXT:
@@ -4085,6 +4127,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              (ep->typedata.swallow)) &&
             (ep->typedata.swallow->swallowed_object))
           {
+             if (pf->clip_to && pf->clip_to->object)
+               evas_object_clip_set(ep->typedata.swallow->swallowed_object, pf->clip_to->object);
+             else if (ep->part->clip_to_id >= 0)
+               evas_object_clip_set(ep->typedata.swallow->swallowed_object, ed->table_parts[ep->part->clip_to_id % ed->table_parts_size]->object);
+             else
+               evas_object_clip_set(ep->typedata.swallow->swallowed_object, ed->base->clipper);
+
              if (pf->visible)
                {
                   Eina_Bool vis = EINA_TRUE;

@@ -846,6 +846,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                     }
                   for (i = 0; i < ed->table_parts_size; i++)
                     {
+                       Edje_Real_Part *clip_to = NULL;
+
                        rp = ed->table_parts[i];
                        if (rp->param1.description)   /* FIXME: prevent rel to gone radient part to go wrong. You may
                                                         be able to remove this when all theme are correctly rewritten. */
@@ -859,20 +861,18 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                             if (rp->param1.description->rel2.id_y >= 0)
                               rp->param1.description->rel2.id_y %= ed->table_parts_size;
                          }
-                       if (rp->part->clip_to_id >= 0)
-                         {
-                            Edje_Real_Part *clip_to;
 
-                            clip_to = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
-                            if (clip_to &&
-                                clip_to->object &&
-                                rp->object)
-                              {
-                                 evas_object_pass_events_set(clip_to->object, 1);
-                                 evas_object_pointer_mode_set(clip_to->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
-                                 evas_object_clip_set(rp->object, clip_to->object);
-                              }
+                       if (rp->param1.description && (rp->param1.description->clip_to_id >= 0))
+                         clip_to = ed->table_parts[rp->param1.description->clip_to_id % ed->table_parts_size];
+                       else if (rp->part->clip_to_id >= 0)
+                         clip_to = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
+                       if (clip_to && clip_to->object && rp->object)
+                         {
+                            evas_object_pass_events_set(clip_to->object, 1);
+                            evas_object_pointer_mode_set(clip_to->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
+                            evas_object_clip_set(rp->object, clip_to->object);
                          }
+
                        if (rp->drag)
                          {
                             if (rp->part->dragable.confine_id >= 0)

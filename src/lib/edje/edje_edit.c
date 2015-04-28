@@ -532,6 +532,7 @@ _edje_part_description_id_set(int type, Edje_Part_Description_Common *c, int old
    if (c->rel1.id_y == old_id) c->rel1.id_y = new_id;
    if (c->rel2.id_x == old_id) c->rel2.id_x = new_id;
    if (c->rel2.id_y == old_id) c->rel2.id_y = new_id;
+   if (c->clip_to_id == old_id) c->clip_to_id = new_id;
 
    if (type == EDJE_PART_TYPE_TEXT
        || type == EDJE_PART_TYPE_TEXTBLOCK)
@@ -630,18 +631,26 @@ _edje_part_id_set(Edje *ed, Edje_Real_Part *rp, int new_id)
 static void
 _edje_part_description_id_switch(int type, Edje_Part_Description_Common *c, int id1, int id2)
 {
-   if (c->rel1.id_x == id1) c->rel1.id_x = id2;
+   if (c->rel1.id_x == id1)
+     c->rel1.id_x = id2;
    else if (c->rel1.id_x == id2)
      c->rel1.id_x = id1;
-   if (c->rel1.id_y == id1) c->rel1.id_y = id2;
+   if (c->rel1.id_y == id1)
+     c->rel1.id_y = id2;
    else if (c->rel1.id_y == id2)
      c->rel1.id_y = id1;
-   if (c->rel2.id_x == id1) c->rel2.id_x = id2;
+   if (c->rel2.id_x == id1)
+     c->rel2.id_x = id2;
    else if (c->rel2.id_x == id2)
      c->rel2.id_x = id1;
-   if (c->rel2.id_y == id1) c->rel2.id_y = id2;
+   if (c->rel2.id_y == id1)
+     c->rel2.id_y = id2;
    else if (c->rel2.id_y == id2)
      c->rel2.id_y = id1;
+   if (c->clip_to_id == id1)
+     c->clip_to_id = id2;
+   else if (c->clip_to_id == id2)
+     c->clip_to_id = id1;
 
    if (type == EDJE_PART_TYPE_TEXT
        || type == EDJE_PART_TYPE_TEXTBLOCK)
@@ -5262,6 +5271,7 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
    pd->rel2.offset_y = -1;
    pd->rel2.id_x = -1;
    pd->rel2.id_y = -1;
+   pd->clip_to_id = -1;
    pd->color_class = NULL;
    pd->color.r = 255;
    pd->color.g = 255;
