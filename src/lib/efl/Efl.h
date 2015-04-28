@@ -2,8 +2,7 @@
 #define _EFL_H
 
 #if defined ( __cplusplus )
-extern "C"
-{
+extern "C" {
 #endif
 
 #include <Eo.h>
@@ -170,5 +169,8 @@ EAPI extern const Eo_Event_Description _EFL_GFX_PATH_CHANGED;
 #if defined ( __cplusplus )
 }
 #endif
+
+#undef EAPI
+#define EAPI
 
 #endif
