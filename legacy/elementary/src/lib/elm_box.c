@@ -28,24 +28,26 @@ _elm_box_list_data_get(const Eina_List *list)
    return opt->obj;
 }
 
-static void
+static Eina_Bool
 _child_added_cb_proxy(void *data,
-                      Evas_Object *o EINA_UNUSED,
-                      void *event_info)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Evas_Object *box = data;
    Evas_Object_Box_Option *opt = event_info;
-   evas_object_smart_callback_call(box, SIG_CHILD_ADDED, opt->obj);
+   eo_do(box, eo_event_callback_call(ELM_BOX_EVENT_CHILD_ADDED, opt->obj));
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _child_removed_cb_proxy(void *data,
-                        Evas_Object *o EINA_UNUSED,
-                        void *event_info)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Evas_Object *box = data;
    Evas_Object *child = event_info;
-   evas_object_smart_callback_call(box, SIG_CHILD_REMOVED, child);
+   eo_do(box, eo_event_callback_call(ELM_BOX_EVENT_CHILD_REMOVED, child));
+
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
@@ -192,27 +194,27 @@ _transition_animation(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
-static void
+static Eina_Bool
 _transition_layout_child_added(void *data,
-                               Evas_Object *obj EINA_UNUSED,
-                               void *event_info)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Transition_Animation_Data *tad;
    Evas_Object_Box_Option *opt = event_info;
    Elm_Box_Transition *layout_data = data;
 
    tad = calloc(1, sizeof(Transition_Animation_Data));
-   if (!tad) return;
+   if (!tad) return EINA_TRUE;
 
    tad->obj = opt->obj;
    layout_data->objs = eina_list_append(layout_data->objs, tad);
    layout_data->recalculate = EINA_TRUE;
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _transition_layout_child_removed(void *data,
-                                 Evas_Object *obj EINA_UNUSED,
-                                 void *event_info)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info)
 {
    Eina_List *l;
    Transition_Animation_Data *tad;
@@ -228,6 +230,8 @@ _transition_layout_child_removed(void *data,
              break;
           }
      }
+
+   return EINA_TRUE;
 }
 
 static void
@@ -319,10 +323,10 @@ _transition_layout_animation_start(Evas_Object *obj,
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_RESIZE, _transition_layout_obj_resize_cb,
      layout_data);
-   evas_object_smart_callback_add
-     (obj, SIG_CHILD_ADDED, _transition_layout_child_added, layout_data);
-   evas_object_smart_callback_add
-     (obj, SIG_CHILD_REMOVED, _transition_layout_child_removed, layout_data);
+   eo_do(obj, eo_event_callback_add
+     (ELM_BOX_EVENT_CHILD_ADDED, _transition_layout_child_added, layout_data));
+   eo_do(obj, eo_event_callback_add
+     (ELM_BOX_EVENT_CHILD_REMOVED, _transition_layout_child_removed, layout_data));
 
    if (!layout_data->animator)
      layout_data->animator = ecore_animator_add(transition_animation_cb, obj);
@@ -387,10 +391,10 @@ _elm_box_evas_object_smart_add(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
 
-   evas_object_smart_callback_add(wd->resize_obj, SIG_CHILD_ADDED,
-                                  _child_added_cb_proxy, obj);
-   evas_object_smart_callback_add(wd->resize_obj, SIG_CHILD_REMOVED,
-                                  _child_removed_cb_proxy, obj);
+   eo_do(wd->resize_obj, eo_event_callback_add
+      (ELM_BOX_EVENT_CHILD_ADDED, _child_added_cb_proxy, obj));
+   eo_do(wd->resize_obj, eo_event_callback_add
+     (ELM_BOX_EVENT_CHILD_REMOVED, _child_removed_cb_proxy, obj));
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
@@ -642,10 +646,10 @@ elm_box_transition_free(void *data)
 
    evas_object_event_callback_del
      (box_data->box, EVAS_CALLBACK_RESIZE, _transition_layout_obj_resize_cb);
-   evas_object_smart_callback_del
-     (box_data->box, SIG_CHILD_ADDED, _transition_layout_child_added);
-   evas_object_smart_callback_del
-     (box_data->box, SIG_CHILD_REMOVED, _transition_layout_child_removed);
+   eo_do(box_data->box, eo_event_callback_del(
+      ELM_BOX_EVENT_CHILD_ADDED, _transition_layout_child_added, box_data));
+   eo_do(box_data->box, eo_event_callback_del(
+      ELM_BOX_EVENT_CHILD_REMOVED, _transition_layout_child_removed, box_data));
    ecore_animator_del(box_data->animator);
 
    free(data);
