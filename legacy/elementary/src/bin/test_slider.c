@@ -155,8 +155,6 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_part_content_set(sl, "end", ic);
    elm_slider_unit_format_set(sl, "%3.0f units");
    elm_slider_span_size_set(sl, 80);
-   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
-   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    elm_slider_indicator_format_set(sl, "%3.0f");
    elm_slider_min_max_set(sl, 50, 150);
    elm_slider_value_set(sl, 80);
@@ -178,8 +176,6 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_text_set(sl, "Disabled inverted");
    elm_object_part_content_set(sl, "end", ic);
    elm_slider_span_size_set(sl, 80);
-   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
-   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    elm_slider_indicator_format_set(sl, "%3.0f");
    elm_slider_min_max_set(sl, 50, 150);
    elm_slider_value_set(sl, 80);
