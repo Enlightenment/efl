@@ -15,8 +15,8 @@
 
 #include <math.h>
 
-#include "ephysics_private.h"
 #include "ephysics_trimesh.h"
+#include "ephysics_private.h"
 #include "ephysics_body_materials.h"
 
 #ifdef  __cplusplus
