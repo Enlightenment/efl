@@ -110,7 +110,7 @@ struct _Eina_Stringshare_Small_Bucket
    /* separate arrays for faster lookups */
    const char **strings;
    unsigned char *lengths;
-   unsigned short *references;
+   unsigned int *references;
    int count;
    int size;
 };
@@ -413,7 +413,7 @@ _eina_stringshare_small_bucket_dump(Eina_Stringshare_Small_Bucket *bucket,
 {
    const char **s = bucket->strings;
    unsigned char *l = bucket->lengths;
-   unsigned short *r = bucket->references;
+   unsigned int *r = bucket->references;
    int i;
 
    di->used += sizeof(*bucket);
