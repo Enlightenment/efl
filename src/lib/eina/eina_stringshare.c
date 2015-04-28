@@ -426,7 +426,7 @@ _eina_stringshare_small_bucket_dump(Eina_Stringshare_Small_Bucket *bucket,
      {
         int dups;
 
-        printf("DDD: %5hhu %5hu '%s'\n", *l, *r, *s);
+        printf("DDD: %5hhu %5u '%s'\n", *l, *r, *s);
 
         dups = (*r - 1);
 
