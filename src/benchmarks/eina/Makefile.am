@@ -18,6 +18,7 @@ eina_bench_SOURCES = \
 eina_bench.c \
 eina_bench_sort.c \
 eina_bench_hash.c \
+eina_bench_crc_hash.c \
 eina_bench_stringshare.c \
 eina_bench_convert.c \
 eina_bench_mempool.c \
