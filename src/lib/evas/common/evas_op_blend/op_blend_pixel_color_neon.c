@@ -1,8 +1,3 @@
-#ifdef BUILD_NEON
-#ifdef BUILD_NEON_INTRINSICS
-#include <arm_neon.h>
-#endif
-#endif
 /* blend pixel x color --> dst */
 #ifdef BUILD_NEON
 
@@ -202,240 +197,521 @@ _op_blend_p_c_dp_neon(DATA32 * __restrict s, DATA8 *m EINA_UNUSED, DATA32 c, DAT
 #endif
 }
 
+
+static void
+_op_blend_pan_c_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
+   uint16x8_t ad0_16x8;
+   uint16x8_t ad1_16x8;
+   uint16x8_t sc0_16x8;
+   uint16x8_t sc1_16x8;
+   uint16x8_t x255_16x8;
+   uint32x4_t ad_32x4;
+   uint32x4_t c_32x4;
+   uint32x4_t d_32x4;
+   uint32x4_t mask_32x4;
+   uint32x4_t s_32x4;
+   uint32x4_t sc_32x4;
+   uint8x16_t ad_8x16;
+   uint8x16_t c_8x16;
+   uint8x16_t d_8x16;
+   uint8x16_t mask_8x16;
+   uint8x16_t s_8x16;
+   uint8x16_t sc_8x16;
+   uint8x8_t a_8x8;
+   uint8x8_t ad0_8x8;
+   uint8x8_t ad1_8x8;
+   uint8x8_t c_8x8;
+   uint8x8_t d0_8x8;
+   uint8x8_t d1_8x8;
+   uint8x8_t s0_8x8;
+   uint8x8_t s1_8x8;
+   uint8x8_t sc0_8x8;
+   uint8x8_t sc1_8x8;
+
+   // alpha can only be 0 if color is 0x0. In that case we can just return.
+   // Otherwise we can assume alpha != 0. This allows more optimization in
+   // NEON code.
+
+   if(!c)
+      return;
+
+   unsigned char a;
+   a = ~(c >> 24) + 1; // 256 - (c >> 24)
+
+   a_8x8 = vdup_n_u8(a);
+   c_32x4 = vdupq_n_u32(c);
+   c_8x16 = vreinterpretq_u8_u32(c_32x4);
+   c_8x8 = vget_low_u8(c_8x16);
+   x255_16x8 = vdupq_n_u16(0xff);
+   mask_32x4 = vdupq_n_u32(0xff000000);
+   mask_8x16 = vreinterpretq_u8_u32(mask_32x4);
+
+   DATA32 *end = d + (l & ~3);
+   while (d < end)
+   {
+      // load 4 elements from d
+      d_32x4 = vld1q_u32(d);
+      d_8x16 = vreinterpretq_u8_u32(d_32x4);
+      d0_8x8 = vget_low_u8(d_8x16);
+      d1_8x8 = vget_high_u8(d_8x16);
+
+      // multiply MUL_256(a, *d)
+      ad0_16x8 = vmull_u8(a_8x8, d0_8x8);
+      ad1_16x8 = vmull_u8(a_8x8, d1_8x8);
+      ad0_8x8 = vshrn_n_u16(ad0_16x8,8);
+      ad1_8x8 = vshrn_n_u16(ad1_16x8,8);
+      ad_8x16 = vcombine_u8(ad0_8x8, ad1_8x8);
+      ad_32x4 = vreinterpretq_u32_u8(ad_8x16);
+
+      // load 4 elements from s
+      s_32x4 = vld1q_u32(s);
+      s_8x16 = vreinterpretq_u8_u32(s_32x4);
+      s0_8x8 = vget_low_u8(s_8x16);
+      s1_8x8 = vget_high_u8(s_8x16);
+
+      // multiply MUL_SYM(c, *s);
+      sc0_16x8 = vmull_u8(s0_8x8, c_8x8);
+      sc1_16x8 = vmull_u8(s1_8x8, c_8x8);
+      sc0_16x8 = vaddq_u16(sc0_16x8, x255_16x8);
+      sc1_16x8 = vaddq_u16(sc1_16x8, x255_16x8);
+      sc0_8x8 = vshrn_n_u16(sc0_16x8, 8);
+      sc1_8x8 = vshrn_n_u16(sc1_16x8, 8);
+      sc_8x16 = vcombine_u8(sc0_8x8, sc1_8x8);
+
+      // select alpha channel from c
+      sc_8x16 = vbslq_u8(mask_8x16, c_8x16, sc_8x16);
+      sc_32x4 = vreinterpretq_u32_u8(sc_8x16);
+
+      // add up everything
+      d_32x4 = vaddq_u32(sc_32x4, ad_32x4);
+
+      // save result
+      vst1q_u32(d, d_32x4);
+
+      d+=4;
+      s+=4;
+   }
+
+   end += (l & 3);
+   while (d < end)
+   {
+      *d = ((c & 0xff000000) + MUL3_SYM(c, *s)) + MUL_256(a, *d);
+      d++;
+      s++;
+   }
+
+}
+
+static void
+_op_blend_p_can_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
+   uint16x8_t ad0_16x8;
+   uint16x8_t ad1_16x8;
+   uint16x8_t sc0_16x8;
+   uint16x8_t sc1_16x8;
+   uint16x8_t x255_16x8;
+   uint32x2_t c_32x2;
+   uint32x4_t ad_32x4;
+   uint32x4_t alpha_32x4;
+   uint32x4_t cond_32x4;
+   uint32x4_t d_32x4;
+   uint32x4_t mask_32x4;
+   uint32x4_t s_32x4;
+   uint32x4_t sc_32x4;
+   uint32x4_t x0_32x4;
+   uint32x4_t x1_32x4;
+   uint8x16_t ad_8x16;
+   uint8x16_t alpha_8x16;
+   uint8x16_t d_8x16;
+   uint8x16_t mask_8x16;
+   uint8x16_t s_8x16;
+   uint8x16_t sc_8x16;
+   uint8x16_t x0_8x16;
+   uint8x16_t x1_8x16;
+   uint8x8_t ad0_8x8;
+   uint8x8_t ad1_8x8;
+   uint8x8_t alpha0_8x8;
+   uint8x8_t alpha1_8x8;
+   uint8x8_t c_8x8;
+   uint8x8_t d0_8x8;
+   uint8x8_t d1_8x8;
+   uint8x8_t s0_8x8;
+   uint8x8_t s1_8x8;
+   uint8x8_t sc0_8x8;
+   uint8x8_t sc1_8x8;
+
+   x1_8x16 = vdupq_n_u8(0x1);
+   x1_32x4 = vreinterpretq_u32_u8(x1_8x16);
+   x0_8x16 = vdupq_n_u8(0x0);
+   x0_32x4 = vreinterpretq_u32_u8(x0_8x16);
+   mask_32x4 = vdupq_n_u32(0xff000000);
+   mask_8x16 = vreinterpretq_u8_u32(mask_32x4);
+   c_32x2 = vdup_n_u32(c);
+   c_8x8 = vreinterpret_u8_u32(c_32x2);
+   x255_16x8 = vdupq_n_u16(0xff);
+
+   DATA32 *end = d + (l & ~3);
+   while (d < end)
+   {
+      // load 4 elements from s
+      s_32x4 = vld1q_u32(s);
+      s_8x16 = vreinterpretq_u8_u32(s_32x4);
+      s0_8x8 = vget_low_u8(s_8x16);
+      s1_8x8 = vget_high_u8(s_8x16);
+
+      // load 4 elements from d
+      d_32x4 = vld1q_u32(d);
+      d_8x16 = vreinterpretq_u8_u32(d_32x4);
+      d0_8x8 = vget_low_u8(d_8x16);
+      d1_8x8 = vget_high_u8(d_8x16);
+
+      // calculate alpha = 256 - (*s >> 24)
+      alpha_32x4 = vshrq_n_u32(s_32x4, 24);
+      alpha_32x4 = vmulq_u32(x1_32x4, alpha_32x4);
+      alpha_8x16 = vreinterpretq_u8_u32(alpha_32x4);
+      alpha_8x16 = vsubq_u8(x0_8x16, alpha_8x16);
+      alpha0_8x8 = vget_low_u8(alpha_8x16);
+      alpha1_8x8 = vget_high_u8(alpha_8x16);
+
+      // multiply MUL_SYM(c, *s);
+      sc0_16x8 = vmull_u8(s0_8x8, c_8x8);
+      sc1_16x8 = vmull_u8(s1_8x8, c_8x8);
+      sc0_16x8 = vaddq_u16(sc0_16x8, x255_16x8);
+      sc1_16x8 = vaddq_u16(sc1_16x8, x255_16x8);
+      sc0_8x8 = vshrn_n_u16(sc0_16x8, 8);
+      sc1_8x8 = vshrn_n_u16(sc1_16x8, 8);
+      sc_8x16 = vcombine_u8(sc0_8x8, sc1_8x8);
+
+      // select alpha channel from *s
+      sc_8x16 = vbslq_u8(mask_8x16, s_8x16, sc_8x16);
+      sc_32x4 = vreinterpretq_u32_u8(sc_8x16);
+
+      // multiply MUL_256(a, *d)
+      ad0_16x8 = vmull_u8(alpha0_8x8, d0_8x8);
+      ad1_16x8 = vmull_u8(alpha1_8x8, d1_8x8);
+      ad0_8x8 = vshrn_n_u16(ad0_16x8,8);
+      ad1_8x8 = vshrn_n_u16(ad1_16x8,8);
+      ad_8x16 = vcombine_u8(ad0_8x8, ad1_8x8);
+      ad_32x4 = vreinterpretq_u32_u8(ad_8x16);
+
+      // select d if alpha is 0
+      cond_32x4 = vceqq_u32(alpha_32x4, x0_32x4);
+      ad_32x4 = vbslq_u32(cond_32x4, d_32x4, ad_32x4);
+
+      // add up everything
+      d_32x4 = vaddq_u32(sc_32x4, ad_32x4);
+
+      // save result
+      vst1q_u32(d, d_32x4);
+
+      d+=4;
+      s+=4;
+   }
+
+   end += (l & 3);
+   int alpha;
+   while (d < end)
+   {
+      alpha = 256 - (*s >> 24);
+      *d = ((*s & 0xff000000) + MUL3_SYM(c, *s)) + MUL_256(alpha, *d);
+      d++;
+      s++;
+   }
+}
+
 static void
 _op_blend_pan_can_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
-   DATA32 *e;
-   UNROLL8_PLD_WHILE(d, l, e,
-                     {
-                        *d++ = 0xff000000 + MUL3_SYM(c, *s);
-                        s++;
-                     });
+   uint16x8_t sc00_16x8;
+   uint16x8_t sc01_16x8;
+   uint16x8_t sc10_16x8;
+   uint16x8_t sc11_16x8;
+   uint16x8_t x255_16x8;
+   uint32x2_t c_32x2;
+   uint32x4_t d0_32x4;
+   uint32x4_t d1_32x4;
+   uint32x4_t mask_32x4;
+   uint32x4_t s0_32x4;
+   uint32x4_t s1_32x4;
+   uint32x4_t sc0_32x4;
+   uint32x4_t sc1_32x4;
+   uint8x16_t s0_8x16;
+   uint8x16_t s1_8x16;
+   uint8x16_t sc0_8x16;
+   uint8x16_t sc1_8x16;
+   uint8x8_t c_8x8;
+   uint8x8_t s00_8x8;
+   uint8x8_t s01_8x8;
+   uint8x8_t s10_8x8;
+   uint8x8_t s11_8x8;
+   uint8x8_t sc00_8x8;
+   uint8x8_t sc01_8x8;
+   uint8x8_t sc10_8x8;
+   uint8x8_t sc11_8x8;
+
+   mask_32x4 = vdupq_n_u32(0xff000000);
+   x255_16x8 = vdupq_n_u16(0xff);
+   c_32x2 = vdup_n_u32(c);
+   c_8x8 = vreinterpret_u8_u32(c_32x2);
+
+   DATA32 *end = d + (l & ~7);
+   while (d < end)
+   {
+      // load 8 elements from s
+      s0_32x4 = vld1q_u32(s);
+      s0_8x16 = vreinterpretq_u8_u32(s0_32x4);
+      s00_8x8 = vget_low_u8(s0_8x16);
+      s01_8x8 = vget_high_u8(s0_8x16);
+      s1_32x4 = vld1q_u32(s+4);
+      s1_8x16 = vreinterpretq_u8_u32(s1_32x4);
+      s10_8x8 = vget_low_u8(s1_8x16);
+      s11_8x8 = vget_high_u8(s1_8x16);
+
+      // multiply MUL_SYM(c, *s);
+      sc00_16x8 = vmull_u8(s00_8x8, c_8x8);
+      sc01_16x8 = vmull_u8(s01_8x8, c_8x8);
+      sc10_16x8 = vmull_u8(s10_8x8, c_8x8);
+      sc11_16x8 = vmull_u8(s11_8x8, c_8x8);
+      sc00_16x8 = vaddq_u16(sc00_16x8, x255_16x8);
+      sc01_16x8 = vaddq_u16(sc01_16x8, x255_16x8);
+      sc10_16x8 = vaddq_u16(sc10_16x8, x255_16x8);
+      sc11_16x8 = vaddq_u16(sc11_16x8, x255_16x8);
+      sc00_8x8 = vshrn_n_u16(sc00_16x8, 8);
+      sc01_8x8 = vshrn_n_u16(sc01_16x8, 8);
+      sc10_8x8 = vshrn_n_u16(sc10_16x8, 8);
+      sc11_8x8 = vshrn_n_u16(sc11_16x8, 8);
+      sc0_8x16 = vcombine_u8(sc00_8x8, sc01_8x8);
+      sc1_8x16 = vcombine_u8(sc10_8x8, sc11_8x8);
+
+      // add alpha channel
+      sc0_32x4 = vreinterpretq_u32_u8(sc0_8x16);
+      sc1_32x4 = vreinterpretq_u32_u8(sc1_8x16);
+      d0_32x4 = vorrq_u32(sc0_32x4, mask_32x4);
+      d1_32x4 = vorrq_u32(sc1_32x4, mask_32x4);
+
+      // save result
+      vst1q_u32(d, d0_32x4);
+      vst1q_u32(d+4, d1_32x4);
+
+      d+=8;
+      s+=8;
+   }
+
+   end += (l & 7);
+   while (d < end)
+   {
+      *d++ = 0xff000000 + MUL3_SYM(c, *s);
+      s++;
+   }
+}
+
+static void
+_op_blend_p_caa_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
+   uint16x8_t ad0_16x8;
+   uint16x8_t ad1_16x8;
+   uint16x8_t cs0_16x8;
+   uint16x8_t cs1_16x8;
+   uint32x4_t ad_32x4;
+   uint32x4_t alpha_32x4;
+   uint32x4_t c_32x4;
+   uint32x4_t cond_32x4;
+   uint32x4_t cs_32x4;
+   uint32x4_t d_32x4;
+   uint32x4_t s_32x4;
+   uint32x4_t x0_32x4;
+   uint32x4_t x1_32x4;
+   uint8x16_t ad_8x16;
+   uint8x16_t alpha_8x16;
+   uint8x16_t c_8x16;
+   uint8x16_t cs_8x16;
+   uint8x16_t d_8x16;
+   uint8x16_t s_8x16;
+   uint8x16_t x0_8x16;
+   uint8x16_t x1_8x16;
+   uint8x8_t ad0_8x8;
+   uint8x8_t ad1_8x8;
+   uint8x8_t alpha0_8x8;
+   uint8x8_t alpha1_8x8;
+   uint8x8_t c_8x8;
+   uint8x8_t cs0_8x8;
+   uint8x8_t cs1_8x8;
+   uint8x8_t d0_8x8;
+   uint8x8_t d1_8x8;
+   uint8x8_t s0_8x8;
+   uint8x8_t s1_8x8;
+
+   int temp = (1 + c) & 0xff;
+
+   x1_8x16 = vdupq_n_u8(0x1);
+   x1_32x4 = vreinterpretq_u32_u8(x1_8x16);
+   c_32x4 = vdupq_n_u32(temp);
+   c_32x4 = vmulq_u32(x1_32x4, c_32x4);
+   c_8x16 = vreinterpretq_u8_u32(c_32x4);
+   c_8x8 = vget_low_u8(c_8x16);
+   x0_8x16 = vdupq_n_u8(0x0);
+   x0_32x4 = vreinterpretq_u32_u8(x0_8x16);
+
+   DATA32 *end = d + (l & ~3);
+   while (d < end)
+   {
+      // load 4 elements from s
+      s_32x4 = vld1q_u32(s);
+      s_8x16 = vreinterpretq_u8_u32(s_32x4);
+      s0_8x8 = vget_low_u8(s_8x16);
+      s1_8x8 = vget_high_u8(s_8x16);
+
+      // multiply MUL_256(c, *s)
+      cs0_16x8 = vmull_u8(c_8x8, s0_8x8);
+      cs1_16x8 = vmull_u8(c_8x8, s1_8x8);
+      cs0_8x8 = vshrn_n_u16(cs0_16x8,8);
+      cs1_8x8 = vshrn_n_u16(cs1_16x8,8);
+      cs_8x16 = vcombine_u8(cs0_8x8, cs1_8x8);
+      cs_32x4 = vreinterpretq_u32_u8(cs_8x16);
+
+      // select s if c is 0
+      cond_32x4 = vceqq_u32(c_32x4, x0_32x4);
+      cs_32x4 = vbslq_u32(cond_32x4, s_32x4 , cs_32x4);
+
+      // calculate alpha = 256 - (*s >> 24)
+      alpha_32x4 = vshrq_n_u32(cs_32x4, 24);
+      alpha_32x4 = vmulq_u32(x1_32x4, alpha_32x4);
+      alpha_8x16 = vreinterpretq_u8_u32(alpha_32x4);
+      alpha_8x16 = vsubq_u8(x0_8x16, alpha_8x16);
+      alpha0_8x8 = vget_low_u8(alpha_8x16);
+      alpha1_8x8 = vget_high_u8(alpha_8x16);
+
+      // load 4 elements from d
+      d_32x4 = vld1q_u32(d);
+      d_8x16 = vreinterpretq_u8_u32(d_32x4);
+      d0_8x8 = vget_low_u8(d_8x16);
+      d1_8x8 = vget_high_u8(d_8x16);
+
+      // multiply MUL_256(a, *d)
+      ad0_16x8 = vmull_u8(alpha0_8x8, d0_8x8);
+      ad1_16x8 = vmull_u8(alpha1_8x8, d1_8x8);
+      ad0_8x8 = vshrn_n_u16(ad0_16x8,8);
+      ad1_8x8 = vshrn_n_u16(ad1_16x8,8);
+      ad_8x16 = vcombine_u8(ad0_8x8, ad1_8x8);
+      ad_32x4 = vreinterpretq_u32_u8(ad_8x16);
+
+      // select d if alpha is 0
+      alpha_32x4 = vreinterpretq_u32_u8(alpha_8x16);
+      cond_32x4 = vceqq_u32(alpha_32x4, x0_32x4);
+      ad_32x4 = vbslq_u32(cond_32x4, d_32x4 , ad_32x4);
+
+      // add up everything
+      d_32x4 = vaddq_u32(cs_32x4, ad_32x4);
+
+      // save result
+      vst1q_u32(d, d_32x4);
+
+      d+=4;
+      s+=4;
+   }
+
+   end += (l & 3);
+   int alpha;
+   c = 1 + (c & 0xff);
+   while (d < end)
+   {
+      DATA32 sc = MUL_256(c, *s);
+      alpha = 256 - (sc >> 24);
+      *d = sc + MUL_256(alpha, *d);
+      d++;
+      s++;
+   }
+
 }
 
 static void
 _op_blend_pan_caa_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
-#if 1
-   DATA32 *e;
-   DATA32 sc;
-   int alpha;
+   int16x8_t c_i16x8;
+   int16x8_t d0_i16x8;
+   int16x8_t d1_i16x8;
+   int16x8_t ds0_i16x8;
+   int16x8_t ds1_i16x8;
+   int16x8_t s0_i16x8;
+   int16x8_t s1_i16x8;
+   int8x16_t ds_i8x16;
+   int8x8_t ds0_i8x8;
+   int8x8_t ds1_i8x8;
+   uint16x8_t c_16x8;
+   uint16x8_t d0_16x8;
+   uint16x8_t d1_16x8;
+   uint16x8_t s0_16x8;
+   uint16x8_t s1_16x8;
+   uint32x4_t d_32x4;
+   uint32x4_t ds_32x4;
+   uint32x4_t s_32x4;
+   uint8x16_t d_8x16;
+   uint8x16_t s_8x16;
+   uint8x8_t d0_8x8;
+   uint8x8_t d1_8x8;
+   uint8x8_t s0_8x8;
+   uint8x8_t s1_8x8;
+
    c = 1 + (c & 0xff);
-   UNROLL8_PLD_WHILE(d, l, e,
-                    {
-                       sc = MUL_256(c, *s);
-                       alpha = 256 - (sc >> 24);
-                       *d = sc + MUL_256(alpha, *d);
-                       d++;
-                       s++;
-                    });
-#else // the below neon is buggy!! misses rendering of spans, i think with alignment. quick - just disable this.
-#define AP	"_op_blend_pan_caa_dp_"
-   DATA32 *e = d + l, *tmp = (void*)73;
-      asm volatile (
-	".fpu neon					\n\t"
-		/* Set up 'c' */
-		"vdup.u8     d14, %[c]		\n\t"
-		"vmov.i8     d15, #1		\n\t"
-		"vaddl.u8   q15, d14, d15	\n\t"
-		"vshr.u8	q15,#1		\n\t"
 
-		// Pick a loop
-		"andS		%[tmp], %[d], $0xf	\n\t"
-		"beq		"AP"quadstart		\n\t"
+   c_16x8 = vdupq_n_u16(c);
+   c_i16x8 = vreinterpretq_s16_u16(c_16x8);
 
-		"andS		%[tmp], %[d], $0x4	\n\t"
-		"beq		"AP"dualstart		\n\t"
+   DATA32 *end = d + (l & ~3);
+   while (d < end)
+   {
+      // load 4 elements from d
+      d_32x4 = vld1q_u32(d);
+      d_8x16 = vreinterpretq_u8_u32(d_32x4);
+      d0_8x8 = vget_low_u8(d_8x16);
+      d1_8x8 = vget_high_u8(d_8x16);
 
-	AP"singleloop:					\n\t"
-		"vld1.32	d4[0],  [%[d]]		\n\t"
-		"vld1.32	d0[0],  [%[s]]!		\n\t"
+      // spread d so that each channel occupies 16 bit
+      d0_16x8 = vmovl_u8(d0_8x8);
+      d1_16x8 = vmovl_u8(d1_8x8);
+      d0_i16x8 = vreinterpretq_s16_u16(d0_16x8);
+      d1_i16x8 = vreinterpretq_s16_u16(d1_16x8);
 
-		// Long version of 'd'
-		"vmovl.u8	q8, d4			\n\t"
+      // load 4 elements from s
+      s_32x4 = vld1q_u32(s);
+      s_8x16 = vreinterpretq_u8_u32(s_32x4);
+      s0_8x8 = vget_low_u8(s_8x16);
+      s1_8x8 = vget_high_u8(s_8x16);
 
-		// Long version of 's'
-		"vmovl.u8	q6, d0			\n\t"
+      // spread s so that each channel occupies 16 bit
+      s0_16x8 = vmovl_u8(s0_8x8);
+      s1_16x8 = vmovl_u8(s1_8x8);
+      s0_i16x8 = vreinterpretq_s16_u16(s0_16x8);
+      s1_i16x8 = vreinterpretq_s16_u16(s1_16x8);
 
-		// d8 = s -d
-		"vsub.s16	d8, d12, d16		\n\t"
+      // interpolate
+      ds0_i16x8 = vsubq_s16(s0_i16x8, d0_i16x8);
+      ds1_i16x8 = vsubq_s16(s1_i16x8, d1_i16x8);
+      ds0_i16x8 = vmulq_s16(ds0_i16x8, c_i16x8);
+      ds1_i16x8 = vmulq_s16(ds1_i16x8, c_i16x8);
+      ds0_i16x8 = vshrq_n_s16(ds0_i16x8, 8);
+      ds1_i16x8 = vshrq_n_s16(ds1_i16x8, 8);
+      ds0_i16x8 = vaddq_s16(ds0_i16x8, d0_i16x8);
+      ds1_i16x8 = vaddq_s16(ds1_i16x8, d1_i16x8);
+      ds0_i8x8 = vmovn_s16(ds0_i16x8);
+      ds1_i8x8 = vmovn_s16(ds1_i16x8);
 
-		// Multiply
-		"vmul.s16	d8, d8, d30		\n\t"
+      // save result
+      ds_i8x16 = vcombine_s8(ds0_i8x8, ds1_i8x8);
+      ds_32x4 = vreinterpretq_u32_s8(ds_i8x16);
+      vst1q_u32(d, ds_32x4);
 
-		// Shift down
-		"vshr.s16	d8, #7			\n\t"
+      d+=4;
+      s+=4;
+   }
 
-		// Add 'd'
-		"vqadd.s16	d8, d8, d16		\n\t"
-
-		// Shrink to save
-		"vqmovun.s16	d0,  q4			\n\t"
-		"vst1.32	d0[0], [%[d]]!		\n\t"
-
-		// Now where?
-		"andS		%[tmp], %[d], $0xf	\n\t"
-		"beq		"AP"quadstart		\n\t"
-
-	AP"dualstart:					\n\t"
-		// Check we have enough
-		"sub		%[tmp], %[e], %[d]	\n\t"
-		"cmp		%[tmp], #16		\n\t"
-		"blt		"AP"loopout		\n\t"
-
-	AP"dualloop:"
-		"vldm		%[d], 	{d4}		\n\t"
-		"vldm		%[s]!,	{d0}		\n\t"
-
-		// Long version of d
-		"vmovl.u8	q8, d4		\n\t"
-
-		// Long version of s
-		"vmovl.u8	q6, d0		\n\t"
-
-		// q4/q5 = s-d
-		"vsub.s16 	q4, q6, q8 	\n\t"
-
-		// Multiply
-		"vmul.s16	q4,  q4,q15	\n\t"
-
-		// Shift down
-		"vshr.s16	q4, #7		\n\t"
-
-		// Add d
-		"vqadd.s16	q4, q4, q8	\n\t"
-
-		// Shrink to save
-		"vqmovun.s16	d0,  q4		\n\t"
-
-		"vstm		%[d]!,	{d0}	\n\t"
-	AP"quadstart:					\n\t"
-		"sub		%[tmp], %[e], %[d]	\n\t"
-		"cmp		%[tmp], #16		\n\t"
-		"blt		"AP"loopout		\n\t"
-
-		"sub		%[tmp], %[e], #15	\n\t"
-
-	AP"quadloop:				\n\t"
-		//  load 's' -> q0, 'd' -> q2
-		"vldm	%[d],  {d4,d5}		\n\t"
-		"vldm	%[s]!, {d0,d1}		\n\t"
-
-		// Long version of d
-		"vmovl.u8	q8, d4		\n\t"
-		"vmovl.u8	q9, d5		\n\t"
-
-		// Long version of s
-		"vmovl.u8	q6, d0		\n\t"
-		"vmovl.u8	q7, d1		\n\t"
-
-		// q4/q5 = s-d
-		"vsub.s16 	q4, q6, q8 	\n\t"
-		"vsub.s16 	q5, q7, q9 	\n\t"
-
-		// Multiply
-		"vmul.s16	q4,  q4,q15	\n\t"
-		"vmul.s16	q5,  q5,q15	\n\t"
-
-		// Shift down
-		"vshr.s16	q4, #7		\n\t"
-		"vshr.s16	q5, #7		\n\t"
-
-		// Add d
-		"vqadd.s16	q4, q4, q8	\n\t"
-		"vqadd.s16	q5, q5, q9	\n\t"
-
-		// Shrink to save
-		"vqmovun.s16	d0,  q4		\n\t"
-		"vqmovun.s16	d1,  q5		\n\t"
-		"vstm		%[d]!,	{d0,d1}	\n\t"
-		"cmp		%[tmp], %[d] 		\n\t"
-
-		"bhi "AP"quadloop\n\t"
-
-
-		"b "AP"done\n\t"
-	AP"loopout:					\n\t"
-		"cmp 		%[d], %[e]		\n\t"
-                "beq 		"AP"done\n\t"
-		"sub		%[tmp],%[e], %[d]	\n\t"
-		"cmp		%[tmp],$0x04		\n\t"
-		"beq		"AP"singleloop2		\n\t"
-
-	AP"dualloop2:					\n\t"
-		"vldm		%[d], 	{d4}		\n\t"
-		"vldm		%[s]!,	{d0}		\n\t"
-
-		// Long version of d
-		"vmovl.u8	q8, d4		\n\t"
-
-		// Long version of s
-		"vmovl.u8	q6, d0		\n\t"
-
-		// q4/q5 = s-d
-		"vsub.s16 	q4, q6, q8 	\n\t"
-
-		// Multiply
-		"vmul.s16	q4,  q4,q15	\n\t"
-
-		// Shift down
-		"vshr.s16	q4, #7		\n\t"
-
-		// Add d
-		"vqadd.s16	q4, q4, q8	\n\t"
-
-		// Shrink to save
-		"vqmovun.s16	d0,  q4		\n\t"
-
-		"vstm		%[d]!,	{d0}	\n\t"
-
-		"cmp 		%[d], %[e]		\n\t"
-                "beq 		"AP"done		\n\t"
-
-	AP"singleloop2:					\n\t"
-		"vld1.32	d4[0],  [%[d]]		\n\t"
-		"vld1.32	d0[0],  [%[s]]!		\n\t"
-
-		// Long version of 'd'
-		"vmovl.u8	q8, d4			\n\t"
-
-		// Long version of 's'
-		"vmovl.u8	q6, d0			\n\t"
-
-		// d8 = s -d
-		"vsub.s16	d8, d12, d16		\n\t"
-
-		// Multiply
-		"vmul.s16	d8, d8, d30		\n\t"
-
-		// Shift down
-		"vshr.s16	d8, #7			\n\t"
-
-		// Add 'd'
-		"vqadd.s16	d8, d8, d16		\n\t"
-
-		// Shrink to save
-		"vqmovun.s16	d0,  q4			\n\t"
-
-		"vst1.32	d0[0], [%[d]]		\n\t"
-
-
-	AP"done:					\n\t"
-
-	// No output
-	:
-	// Input
-	: [s] "r" (s), [d] "r" (d), [e] "r" (e), [c] "r" (c), [tmp] "r" (tmp)
-	// Clobbered
-	: "q0", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "memory"
-      );
-#undef AP
-#endif   
+   end += (l & 3);
+   while (d < end)
+   {
+      *d = INTERP_256(c, *s, *d);
+      d++;
+      s++;
+   }
 }
 
 #define _op_blend_pas_c_dp_neon _op_blend_p_c_dp_neon
-#define _op_blend_pan_c_dp_neon _op_blend_p_c_dp_neon
-#define _op_blend_p_can_dp_neon _op_blend_p_c_dp_neon
 #define _op_blend_pas_can_dp_neon _op_blend_p_c_dp_neon
-#define _op_blend_p_caa_dp_neon _op_blend_p_c_dp_neon
 #define _op_blend_pas_caa_dp_neon _op_blend_p_c_dp_neon
 
 #define _op_blend_p_c_dpan_neon _op_blend_p_c_dp_neon
