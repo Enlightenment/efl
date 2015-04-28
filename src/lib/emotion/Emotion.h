@@ -1347,4 +1347,7 @@ EAPI const char      *emotion_webcam_device_get(const Emotion_Webcam *ew);
 }
 #endif
 
+#undef EAPI
+#define EAPI
+
 #endif
