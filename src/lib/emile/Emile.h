@@ -114,4 +114,7 @@ EAPI int emile_shutdown(void);
 }
 #endif
 
+#undef EAPI
+#define EAPI
+
 #endif
