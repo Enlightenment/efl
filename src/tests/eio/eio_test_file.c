@@ -10,11 +10,24 @@
 
 #include <Eio.h>
 #include <Ecore.h>
+#include <Ecore_File.h>
 
 #include "eio_suite.h"
 
-static int default_rights = 0777;
+static unsigned int default_rights = 0755;
 static int test_count = 0;
+static const char *good_dirs[] =
+     {
+        "eio_file_ls_simple_dir",
+        "b."
+     };
+static const char *files[] =
+     {
+        ".hidden_file",
+        "~$b@:-*$a!{}",
+        "$b$a",
+        "normal_file"
+     };
 
 static Eina_Bool
 _filter_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, const char *file)
@@ -67,12 +80,23 @@ _direct_main_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina_File_Direc
 }
 
 static void
-_progress_cb(void *data, Eio_File *handler EINA_UNUSED, const Eio_Progress *info)
+_progress_cb(void *data, Eio_File *handler EINA_UNUSED, const Eio_Progress *info EINA_UNUSED)
 {
    int *number_of_listed_files = (int *)data;
 
-   fprintf(stderr, "Processing file:%s\n", info->source);
    (*number_of_listed_files)++;
+}
+
+static void
+_stat_done_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina_Stat *stat)
+{
+   unsigned int rights;
+   Eina_Bool *is_dir = (Eina_Bool *)data;
+   fail_if(eio_file_is_dir(stat) != *is_dir);
+   fail_if(eio_file_is_lnk(stat));
+   rights = stat->mode & (S_IRWXU | S_IRWXG | S_IRWXO);
+   fail_if(rights != default_rights);
+   ecore_main_loop_quit();
 }
 
 static void
@@ -117,18 +141,6 @@ Eina_Tmpstr*
 create_test_dirs(Eina_Tmpstr *test_dirname)
 {
    int i, fd;
-   const char *good_dirs[] =
-     {
-        "eio_file_ls_simple_dir",
-        "b."
-     };
-   const char *files[] =
-     {
-        ".hidden_file",
-        "~$b@:-*$a!{}",
-        "$b$a",
-        "normal_file"
-     };
    int count = sizeof(good_dirs) / sizeof(const char *);
    fail_if(test_dirname == NULL);
 
@@ -162,6 +174,7 @@ create_test_dirs(Eina_Tmpstr *test_dirname)
 START_TEST(eio_file_test_ls)
 {
    int number_of_listed_files = 0, ret;
+   const char *new_dir = "new_dir";
 
    ret = ecore_init();
    fail_if(ret < 1);
@@ -172,6 +185,8 @@ START_TEST(eio_file_test_ls)
 
    Eina_Tmpstr *test_dirname = get_eio_test_file_tmp_dir();
    Eina_Tmpstr *nested_dirname = create_test_dirs(test_dirname);
+   Eina_Tmpstr *nested_filename = get_full_path(test_dirname, files[3]);
+   Eina_Tmpstr *new_dirname = get_full_path(test_dirname, new_dir);
 
    eio_file_ls(test_dirname, _filter_cb, _main_cb, _done_cb, _error_cb,
                &number_of_listed_files);
@@ -203,6 +218,14 @@ START_TEST(eio_file_test_ls)
    fail_if(number_of_listed_files != 0); //check asynchronous
    ecore_main_loop_begin();
 
+   test_count = 1;
+   eio_file_unlink(nested_filename, _done_cb, _error_cb, &test_count);
+   ecore_main_loop_begin();
+
+   test_count = 1;
+   eio_file_mkdir(new_dirname, default_rights, _done_cb, _error_cb, &test_count);
+   ecore_main_loop_begin();
+
    number_of_listed_files = 0;
    eio_dir_unlink(nested_dirname, _delete_filter_cb, _progress_cb, _done_cb,
                    _error_cb, &number_of_listed_files);
@@ -213,12 +236,128 @@ START_TEST(eio_file_test_ls)
    number_of_listed_files = 0;
    eio_dir_unlink(test_dirname, _delete_filter_cb, _progress_cb, _done_cb,
                    _error_cb, &number_of_listed_files);
-   test_count = 6; // 4 internal files + 1 dir + 1 test_dir
+   test_count = 6; // 3 internal files + 2 dir + 1 test_dir
    fail_if(number_of_listed_files != 0); // check asynchronous
    ecore_main_loop_begin();
 
    eina_tmpstr_del(nested_dirname);
    eina_tmpstr_del(test_dirname);
+   eina_tmpstr_del(nested_filename);
+   eina_tmpstr_del(new_dirname);
+   eina_shutdown();
+   eio_shutdown();
+   ecore_shutdown();
+}
+END_TEST
+
+START_TEST(eio_file_test_file)
+{
+   int number_of_listed_files = 0, ret;
+   Eina_Bool is_dir;
+   const char * new_file = "new_file";
+
+   ret = ecore_init();
+   fail_if(ret < 1);
+   ret = eio_init();
+   fail_if(ret < 1);
+   ret = eina_init();
+   fail_if(ret < 1);
+   ret = ecore_file_init();
+   fail_if(ret < 1);
+
+
+   Eina_Tmpstr *test_dirname = get_eio_test_file_tmp_dir();
+   Eina_Tmpstr *nested_dirname = create_test_dirs(test_dirname);
+   Eina_Tmpstr *nested_filename = get_full_path(test_dirname, files[3]);
+   Eina_Tmpstr *new_filename = get_full_path(nested_dirname, new_file);
+   Eina_Tmpstr *new_dirname = get_full_path(test_dirname, new_file);
+
+   is_dir = EINA_TRUE;
+   eio_file_direct_stat(nested_dirname, _stat_done_cb, _error_cb, &is_dir);
+   ecore_main_loop_begin();
+
+   test_count = 1;
+   default_rights = 0766;
+   eio_file_chmod(nested_filename, default_rights, _done_cb, _error_cb, &test_count);
+   ecore_main_loop_begin();
+
+   is_dir = EINA_FALSE;
+   eio_file_direct_stat(nested_filename, _stat_done_cb, _error_cb, &is_dir);
+   ecore_main_loop_begin();
+
+   test_count = 1;
+   eio_file_move(nested_filename, new_filename, _progress_cb, _done_cb,
+                 _error_cb, &test_count);
+   ecore_main_loop_begin();
+
+   fail_if(ecore_file_exists(nested_filename));
+   eio_file_ls(nested_dirname, _filter_cb, _main_cb, _done_cb, _error_cb,
+               &number_of_listed_files);
+   test_count = 4;
+   fail_if(number_of_listed_files != 0); //check asynchronous
+   ecore_main_loop_begin();
+
+   number_of_listed_files = 0;
+   eio_file_ls(test_dirname, _filter_cb, _main_cb, _done_cb, _error_cb,
+               &number_of_listed_files);
+   test_count = 4; //2 dirs + 2 normal files
+   fail_if(number_of_listed_files != 0); //check asynchronous
+   ecore_main_loop_begin();
+
+   test_count = 1;
+   eio_file_copy(new_filename, nested_filename, _progress_cb, _done_cb,
+                 _error_cb, &test_count);
+   ecore_main_loop_begin();
+
+   number_of_listed_files = 0;
+   eio_file_ls(nested_dirname, _filter_cb, _main_cb, _done_cb, _error_cb,
+               &number_of_listed_files);
+   test_count = 4; // 3 normal files + 1 new file
+   fail_if(number_of_listed_files != 0); //check asynchronous
+   ecore_main_loop_begin();
+
+   number_of_listed_files = 0;
+   eio_file_ls(test_dirname, _filter_cb, _main_cb, _done_cb, _error_cb,
+               &number_of_listed_files);
+   test_count = 5;
+   fail_if(number_of_listed_files != 0); //check asynchronous
+   ecore_main_loop_begin();
+
+   number_of_listed_files = 0;
+   eio_dir_move(nested_dirname, new_dirname, _direct_filter_cb, _progress_cb,
+                _done_cb, _error_cb,  &number_of_listed_files);
+   test_count = 1;
+   fail_if(number_of_listed_files != 0); //check asynchronous
+   ecore_main_loop_begin();
+   fail_if(ecore_file_is_dir(nested_dirname));
+   fail_if(!ecore_file_is_dir(new_dirname));
+
+   number_of_listed_files = 0;
+   eio_dir_copy(new_dirname, nested_dirname, _direct_filter_cb, _progress_cb,
+                _done_cb, _error_cb,  &number_of_listed_files);
+   test_count = 6;
+   fail_if(number_of_listed_files != 0); //check asynchronous
+   ecore_main_loop_begin();
+   fail_if(!ecore_file_is_dir(nested_dirname));
+   fail_if(!ecore_file_is_dir(new_dirname));
+
+   number_of_listed_files = 0;
+   eio_dir_unlink(nested_dirname, _delete_filter_cb, _progress_cb, _done_cb,
+                   _error_cb, &number_of_listed_files);
+   test_count = 5; // 4 internal files + 1 nested_dir
+   fail_if(number_of_listed_files != 0); // check asynchronous
+   ecore_main_loop_begin();
+   fail_if(ecore_file_is_dir(nested_dirname));
+
+   fail_if(!ecore_file_recursive_rm(test_dirname));
+   fail_if(ecore_file_is_dir(new_dirname));
+
+   eina_tmpstr_del(nested_dirname);
+   eina_tmpstr_del(test_dirname);
+   eina_tmpstr_del(nested_filename);
+   eina_tmpstr_del(new_filename);
+   eina_tmpstr_del(new_dirname);
+   ecore_file_shutdown();
    eina_shutdown();
    eio_shutdown();
    ecore_shutdown();
@@ -229,5 +368,6 @@ void
 eio_test_file(TCase *tc)
 {
     tcase_add_test(tc, eio_file_test_ls);
+    tcase_add_test(tc, eio_file_test_file);
 }
 
