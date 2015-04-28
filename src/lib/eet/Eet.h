@@ -4821,9 +4821,11 @@ eet_connection_close(Eet_Connection *conn,
                      Eina_Bool *on_going);
 
 /***************************************************************************/
-
 #ifdef __cplusplus
 }
 #endif /* ifdef __cplusplus */
+
+#undef EAPI
+#define EAPI
 
 #endif /* ifndef _EET_H */
