@@ -1097,9 +1097,11 @@ struct _Eo_Callback_Array_Item
 /**
  * @}
  */
-
 #ifdef __cplusplus
-} 
+}
 #endif
+
+#undef EAPI
+#define EAPI
 
 #endif
