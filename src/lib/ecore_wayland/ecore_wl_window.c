@@ -618,7 +618,11 @@ ecore_wl_window_alpha_set(Ecore_Wl_Window *win, Eina_Bool alpha)
      ecore_wl_window_opaque_region_set(win, win->opaque.x, win->opaque.y, 
                                        win->opaque.w, win->opaque.h);
    else
-     ecore_wl_window_opaque_region_set(win, win->opaque.x, win->opaque.y, 0, 0);
+     {
+        ecore_wl_window_opaque_region_set(win, win->opaque.x, win->opaque.y, 0, 0);
+        if (win->surface)
+          wl_surface_set_opaque_region(win->surface, NULL);
+     }
 }
 
 EAPI Eina_Bool
@@ -899,6 +903,8 @@ ecore_wl_window_opaque_region_set(Ecore_Wl_Window *win, int x, int y, int w, int
         break;
      }
 
+   if (win->surface)
+     wl_surface_set_opaque_region(win->surface, win->opaque_region);
    /* if ((w > 0) && (h > 0)) */
    /*   { */
    /*      if ((win->opaque.w == w) && (win->opaque.h == h)) */
