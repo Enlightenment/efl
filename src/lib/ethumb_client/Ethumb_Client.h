@@ -201,9 +201,9 @@ typedef void (*Ethumb_Client_Async_Error_Cb)(Ethumb_Client *ethumbd, void *data)
 typedef struct _Ethumb_Client_Async Ethumb_Client_Async;
 
 EAPI Ethumb_Client_Async *ethumb_client_thumb_async_get(Ethumb_Client *client,
-							Ethumb_Client_Async_Done_Cb done,
-							Ethumb_Client_Async_Error_Cb error,
-							const void *data);
+                                                        Ethumb_Client_Async_Done_Cb done,
+                                                        Ethumb_Client_Async_Error_Cb error,
+                                                        const void *data);
 EAPI void ethumb_client_thumb_async_cancel(Ethumb_Client *client, Ethumb_Client_Async *request);
   /**
  * @}
@@ -212,9 +212,11 @@ EAPI void ethumb_client_thumb_async_cancel(Ethumb_Client *client, Ethumb_Client_
 /**
  * @}
  */
-
-
 #ifdef __cplusplus
 }
 #endif
+
+#undef EAPI
+#define EAPI
+
 #endif /* __ETHUMB_CLIENT_H__ */

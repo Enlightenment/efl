@@ -565,7 +565,7 @@ EAPI Eina_Bool ethumb_cmp(const Ethumb *e1, const Ethumb *e2) EINA_ARG_NONNULL(1
 
 EAPI int ethumb_hash(const void *key, int key_length) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 EAPI int ethumb_key_cmp(const void *key1, int key1_length,
-			const void *key2, int key2_length) EINA_ARG_NONNULL(1, 3) EINA_WARN_UNUSED_RESULT EINA_PURE;
+                        const void *key2, int key2_length) EINA_ARG_NONNULL(1, 3) EINA_WARN_UNUSED_RESULT EINA_PURE;
 EAPI unsigned int ethumb_length(const void *key) EINA_PURE EINA_WARN_UNUSED_RESULT;
 
   /**
@@ -575,8 +575,11 @@ EAPI unsigned int ethumb_length(const void *key) EINA_PURE EINA_WARN_UNUSED_RESU
 /**
  * @}
  */
-
 #ifdef __cplusplus
 }
 #endif
+
+#undef EAPI
+#define EAPI
+
 #endif /* __ETHUMB_H__ */
