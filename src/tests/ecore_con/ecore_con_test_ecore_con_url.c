@@ -70,6 +70,7 @@ _url_compl_cb(void *data, int type EINA_UNUSED, void *event_info)
    return EINA_FALSE;
 }
 
+#if defined(ECORE_CON_HTTP_TEST_URL) || defined(ECORE_CON_FTP_TEST_URL)
 static Eina_Bool
 _parse_url(char *link, char *url, char **user, char **passwd, char **file, char **dir)
 {
@@ -156,6 +157,7 @@ error_user:
    fprintf(stderr, "Wrong URL format\n");
    return EINA_FALSE;
 }
+#endif
 
 #ifdef ECORE_CON_FTP_TEST_URL
 START_TEST(ecore_con_test_ecore_con_url_ftp_upload)
