@@ -261,4 +261,7 @@ extern "C" {
 }
 #endif
 
+#undef EAPI
+#define EAPI
+
 #endif
