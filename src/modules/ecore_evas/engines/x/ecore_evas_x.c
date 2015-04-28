@@ -26,6 +26,28 @@
 #include "ecore_evas_private.h"
 #include "ecore_evas_x11.h"
 
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef _WIN32
+# ifdef DLL_EXPORT
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI
+# endif /* ! DLL_EXPORT */
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif /* ! _WIN32 */
+
 #define EDBG(...)                                                       \
   EINA_LOG(_ecore_evas_log_dom, EINA_LOG_LEVEL_DBG + 1, __VA_ARGS__);
 

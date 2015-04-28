@@ -159,15 +159,17 @@ EAPI void ecore_cocoa_window_borderless_set(Ecore_Cocoa_Window *window,
                                             int                 on);
 
 EAPI void ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
-				      void *view);
+                                      void *view);
 
 EAPI int ecore_cocoa_titlebar_height_get(void);
 
 EAPI Ecore_Cocoa_Window_Id ecore_cocoa_window_get_window_id(Ecore_Cocoa_Window *window);
 
-
 #ifdef __cplusplus
 }
 #endif
+
+#undef EAPI
+#define EAPI
 
 #endif

@@ -27,6 +27,28 @@
 # include <Evas_Engine_Software_DDraw.h>
 #endif
 
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef _WIN32
+# ifdef DLL_EXPORT
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI
+# endif /* ! DLL_EXPORT */
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif /* ! _WIN32 */
+
 #ifdef BUILD_ECORE_EVAS_WIN32
 
 #define ECORE_EVAS_EVENT_COUNT 10

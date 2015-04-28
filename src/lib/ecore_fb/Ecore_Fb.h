@@ -98,4 +98,7 @@ EAPI void                      ecore_fb_touch_screen_calibrate_get(int *xscale, 
 }
 #endif
 
+#undef EAPI
+#define EAPI
+
 #endif

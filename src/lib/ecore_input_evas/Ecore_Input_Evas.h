@@ -62,4 +62,7 @@ EAPI void      ecore_event_evas_modifier_lock_update(Evas *e, unsigned int modif
 }
 #endif
 
+#undef EAPI
+#define EAPI
+
 #endif

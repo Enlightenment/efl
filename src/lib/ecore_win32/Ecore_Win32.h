@@ -520,10 +520,11 @@ EAPI void      ecore_win32_dnd_unregister_drop_target(Ecore_Win32_Window *window
  * @}
  */
 
-
 #ifdef __cplusplus
 }
 #endif
 
+#undef EAPI
+#define EAPI
 
 #endif /* __ECORE_WIN32_H__ */

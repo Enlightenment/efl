@@ -359,10 +359,13 @@ EAPI void              ecore_ipc_client_flush(Ecore_Ipc_Client *cl);
 EAPI int               ecore_ipc_ssl_available_get(void);
 /* FIXME: need to add a callback to "ok" large ipc messages greater than */
 /*        a certain size (security/DOS attack safety) */
-   
+
 #ifdef __cplusplus
 }
 #endif
+
+#undef EAPI
+#define EAPI
 
 /**
  * @}

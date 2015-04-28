@@ -13,6 +13,27 @@
 #include "Ecore_Evas.h"
 #include "ecore_evas_private.h"
 
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef _WIN32
+# ifdef DLL_EXPORT
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI
+# endif /* ! DLL_EXPORT */
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif /* ! _WIN32 */
 
 // FIXME: this engine has lots of problems. only 1 window at a time, drawRect looks wrong, doesnt handle resizes and more
 

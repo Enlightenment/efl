@@ -85,4 +85,7 @@ EAPI const void  *ecore_avahi_poll_get(Ecore_Avahi *handler); // return AvahiPol
 }
 #endif
 
+#undef EAPI
+#define EAPI
+
 #endif

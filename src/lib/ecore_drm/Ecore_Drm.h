@@ -1,6 +1,12 @@
 #ifndef _ECORE_DRM_H
 # define _ECORE_DRM_H
 
+# include <xf86drm.h>
+# include <xf86drmMode.h>
+# include <drm_fourcc.h>
+# include <Ecore.h>
+# include <Eeze.h>
+
 # ifdef EAPI
 #  undef EAPI
 # endif
@@ -23,11 +29,9 @@
 #  endif // ifdef __GNUC__
 # endif // ifdef _MSC_VER
 
-# include <xf86drm.h>
-# include <xf86drmMode.h>
-# include <drm_fourcc.h>
-# include <Ecore.h>
-# include <Eeze.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef enum _Ecore_Drm_Evdev_Capabilities
 {
@@ -756,5 +760,12 @@ EAPI void ecore_drm_device_pointer_xy_get(Ecore_Drm_Device *dev, int *x, int *y)
  * @since 1.14
  */
 EAPI const Eina_List *ecore_drm_devices_get(void);
+
+#ifdef __cplusplus
+}
+#endif
+
+#undef EAPI
+#define EAPI
 
 #endif

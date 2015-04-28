@@ -165,4 +165,7 @@ EAPI void ecore_imf_evas_event_key_up_wrap(Evas_Event_Key_Up *evas_event, Ecore_
 }
 #endif
 
+#undef EAPI
+#define EAPI
+
 #endif

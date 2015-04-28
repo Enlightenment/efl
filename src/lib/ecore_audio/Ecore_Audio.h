@@ -224,4 +224,7 @@ EAPI int                 ecore_audio_shutdown(void);
  * @}
  */
 
+#undef EAPI
+#define EAPI
+
 #endif

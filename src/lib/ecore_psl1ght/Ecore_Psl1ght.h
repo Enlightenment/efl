@@ -118,4 +118,7 @@ EAPI void ecore_psl1ght_optimal_screen_resolution_get(int *w, int *h);
 }
 #endif
 
+#undef EAPI
+#define EAPI
+
 #endif

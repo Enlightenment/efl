@@ -21,6 +21,28 @@
 # include <dlfcn.h>
 #endif
 
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef _WIN32
+# ifdef DLL_EXPORT
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI
+# endif /* ! DLL_EXPORT */
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif /* ! _WIN32 */
+
 typedef struct _Ecore_Evas_Engine_Drm_Data Ecore_Evas_Engine_Drm_Data;
 
 struct _Ecore_Evas_Engine_Drm_Data

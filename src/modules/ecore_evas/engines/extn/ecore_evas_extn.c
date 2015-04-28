@@ -1,5 +1,27 @@
 #include "ecore_evas_extn_engine.h"
 
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef _WIN32
+# ifdef DLL_EXPORT
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI
+# endif /* ! DLL_EXPORT */
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif /* ! _WIN32 */
+
 #define NBUF 2
 
 static int blank = 0x00000000;

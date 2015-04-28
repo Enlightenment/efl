@@ -2708,11 +2708,14 @@ EAPI void                                  ecore_x_e_window_rotation_change_prep
 EAPI void                                  ecore_x_e_window_rotation_change_request_send(Ecore_X_Window win, int rot); /**< @since 1.9 */
 EAPI void                                  ecore_x_e_window_rotation_change_done_send(Ecore_X_Window root, Ecore_X_Window win, int rot, int w, int h); /**< @since 1.9 */
 
+#include <Ecore_X_Atoms.h>
+#include <Ecore_X_Cursor.h>
+
 #ifdef __cplusplus
 }
 #endif // ifdef __cplusplus
 
-#include <Ecore_X_Atoms.h>
-#include <Ecore_X_Cursor.h>
+#undef EAPI
+#define EAPI
 
 #endif // ifndef _ECORE_X_H

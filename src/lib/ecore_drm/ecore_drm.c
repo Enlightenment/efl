@@ -2,7 +2,6 @@
 # include "config.h"
 #endif
 
-#include "Ecore_Drm.h"
 #include "ecore_drm_private.h"
 
 /* local variables */

@@ -2797,4 +2797,7 @@ EAPI int ecore_evas_pixmap_depth_get(const Ecore_Evas *ee);
 }
 #endif
 
+#undef EAPI
+#define EAPI
+
 #endif

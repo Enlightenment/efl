@@ -964,8 +964,12 @@ EAPI void ecore_wl_subsurf_sync_set(Ecore_Wl_Subsurf *ess, Eina_Bool val);
  * @since 1.8
  */
 EAPI void ecore_wl_subsurf_opaque_region_set(Ecore_Wl_Subsurf *ess, int x, int y, int w, int h);
+
 #ifdef __cplusplus
 }
 #endif
+
+#undef EAPI
+#define EAPI
 
 #endif

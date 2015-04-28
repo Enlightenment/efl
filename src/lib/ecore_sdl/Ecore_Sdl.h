@@ -120,4 +120,7 @@ struct _Ecore_Sdl_Event_Mouse_Wheel /** SDL Mouse Wheel event */
 }
 #endif
 
+#undef EAPI
+#define EAPI
+
 #endif
