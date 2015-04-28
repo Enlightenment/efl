@@ -39,6 +39,7 @@ evas_common_convert_argb_premul(DATA32 *data, unsigned int len)
         uint8x8_t mask_0x01 = vdup_n_u8(1);
         uint8x8_t mask_0xff = vdup_n_u8(255);
         uint8x8_t cmp;
+        uint64x1_t tmp;
 
         while (data <= de - 8)
           {
@@ -47,7 +48,8 @@ evas_common_convert_argb_premul(DATA32 *data, unsigned int len)
              cmp = vand_u8(vorr_u8(vceq_u8(rgba.val[3], mask_0xff),
                                    vceq_u8(rgba.val[3], mask_0x00)),
                            mask_0x01);
-             nas += vpaddl_u32(vpaddl_u16(vpaddl_u8(cmp)));
+             tmp = vpaddl_u32(vpaddl_u16(vpaddl_u8(cmp)));
+             nas += vget_lane_u32(vreinterpret_u32_u64(tmp), 0);
 
              uint16x8x4_t lrgba;
              lrgba.val[0] = vmovl_u8(rgba.val[0]);
