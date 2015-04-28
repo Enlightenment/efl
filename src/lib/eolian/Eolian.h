@@ -1329,6 +1329,17 @@ EAPI Eolian_Object_Scope eolian_event_scope_get(const Eolian_Event *event);
 EAPI Eina_Stringshare *eolian_event_c_name_get(const Eolian_Event *event);
 
 /*
+ * @brief Get an event in a class by its name
+ *
+ * @param[in] klass the class
+ * @param[in] event_name name of the event
+ * @return the Eolian_Event if found, NULL otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Event *eolian_class_event_get_by_name(const Eolian_Class *klass, const char *event_name);
+
+/*
  * @brief Indicates if the class constructor has to invoke
  * a non-generated class constructor function.
  *

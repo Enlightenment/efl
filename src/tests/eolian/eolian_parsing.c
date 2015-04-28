@@ -129,6 +129,9 @@ START_TEST(eolian_events)
    fail_if(strcmp(type_name, "Evas_Event_Clicked_Double_Info"));
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
+   /* Check eolian_class_event_get_by_name */
+   fail_if(!eolian_class_event_get_by_name(class, "clicked,double"));
+   fail_if(eolian_class_event_get_by_name(class, "clicked,triple"));
 
    eolian_shutdown();
 }

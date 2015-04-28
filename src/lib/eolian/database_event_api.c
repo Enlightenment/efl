@@ -44,3 +44,23 @@ eolian_event_c_name_get(const Eolian_Event *event)
     while ((tmp = strpbrk(tmp, ".,"))) *tmp = '_';
     return eina_stringshare_add(buf);
 }
+
+EAPI const Eolian_Event *
+eolian_class_event_get_by_name(const Eolian_Class *klass, const char *event_name)
+{
+   Eina_List *itr;
+   Eolian_Event *event = NULL;
+   if (!klass) return NULL;
+   Eina_Stringshare *shr_ev = eina_stringshare_add(event_name);
+
+   EINA_LIST_FOREACH(klass->events, itr, event)
+        {
+           if (event->name == shr_ev)
+              goto end;
+        }
+
+   event = NULL;
+end:
+   eina_stringshare_del(shr_ev);
+   return event;
+}
