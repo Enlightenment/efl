@@ -214,7 +214,7 @@ EAPI Eina_Bool
 ecore_drm_inputs_create(Ecore_Drm_Device *dev)
 {
    Ecore_Drm_Input *input;
-   int level, priority = LIBINPUT_LOG_PRIORITY_INFO;
+   int level, priority = LIBINPUT_LOG_PRIORITY_ERROR;
 
    /* check for valid device */
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
