@@ -191,14 +191,15 @@ _item_signal_emit_cb(void *data,
    eina_stringshare_replace(&it->day_style, emission);
 }
 
-static void
+static Eina_Bool
 _item_clicked_cb(void *data,
-                 Evas_Object *obj EINA_UNUSED,
-                 void *event_info EINA_UNUSED)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Dayselector_Item_Data *it = data;
 
-   evas_object_smart_callback_call(WIDGET(it), SIG_CHANGED, (void *)it->day);
+   eo_do(WIDGET(it), eo_event_callback_call(ELM_CHECK_EVENT_CHANGED, (void *)it->day));
+
+   return EINA_TRUE;
 }
 
 static Elm_Dayselector_Item_Data *
@@ -269,7 +270,8 @@ _elm_dayselector_elm_container_content_set(Eo *obj, Elm_Dayselector_Data *sd, co
    snprintf(buf, sizeof(buf), "day%d,visible", _item_location_get(sd, it));
    elm_layout_signal_emit(obj, buf, "elm");
 
-   evas_object_smart_callback_add(VIEW(it), "changed", _item_clicked_cb, it);
+   eo_do(VIEW(it), eo_event_callback_add
+     (ELM_CHECK_EVENT_CHANGED, _item_clicked_cb, it));
    evas_object_event_callback_add
      (VIEW(it), EVAS_CALLBACK_DEL, _item_del_cb, obj);
 
@@ -317,7 +319,8 @@ _elm_dayselector_elm_container_content_unset(Eo *obj, Elm_Dayselector_Data *sd, 
    if (!content) return NULL;
 
    sd->items = eina_list_remove(sd->items, it);
-   evas_object_smart_callback_del(content, "changed", _item_clicked_cb);
+   eo_do(content, eo_event_callback_del(
+      ELM_CHECK_EVENT_CHANGED, _item_clicked_cb, it));
    evas_object_event_callback_del(content, EVAS_CALLBACK_DEL, _item_del_cb);
 
    elm_object_signal_callback_del
