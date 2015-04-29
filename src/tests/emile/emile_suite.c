@@ -92,7 +92,9 @@ main(int argc, char *argv[])
         tc = tcase_create(tests[i].name);
         tests[i].build(tc);
         suite_add_tcase(s, tc);
+#ifndef _WIN32
         tcase_set_timeout(tc, 0);
+#endif
      }
 
    sr = srunner_create(s);
