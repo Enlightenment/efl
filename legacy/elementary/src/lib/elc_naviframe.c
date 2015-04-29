@@ -41,7 +41,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static const char SIG_CLICKED[] = "clicked";
 
-static void _on_item_back_btn_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED);
+static Eina_Bool _on_item_back_btn_clicked(void *data,
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED);
 
 static Eina_Bool _key_action_top_item_get(Evas_Object *obj, const char *params);
 
@@ -341,7 +342,8 @@ _on_item_title_transition_finished(void *data,
 {
    Elm_Naviframe_Item_Data *it = data;
 
-   evas_object_smart_callback_call(WIDGET(it), SIG_TITLE_TRANSITION_FINISHED, EO_OBJ(it));
+   eo_do(WIDGET(it), eo_event_callback_call
+         (ELM_NAVIFRAME_EVENT_TITLE_TRANSITION_FINISHED, EO_OBJ(it)));
 }
 
 static void
@@ -675,8 +677,10 @@ _item_title_prev_btn_unset(Elm_Naviframe_Item_Data *it)
 
    evas_object_event_callback_del
      (content, EVAS_CALLBACK_DEL, _item_title_prev_btn_del_cb);
-   evas_object_smart_callback_del(content, SIG_CLICKED,
-                                  _on_item_back_btn_clicked);
+   Eo* parent = eo_do_ret(content, parent, eo_parent_get());
+   eo_do(content, eo_event_callback_del(
+            EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_item_back_btn_clicked,
+            parent));
    it->title_prev_btn = NULL;
    return content;
 }
@@ -932,17 +936,20 @@ _elm_naviframe_elm_layout_sizing_eval(Eo *obj, Elm_Naviframe_Data *sd)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-static void
+static Eina_Bool
 _on_item_back_btn_clicked(void *data,
-                          Evas_Object *obj,
-                          void *event_info EINA_UNUSED)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    /* Since edje has the event queue, clicked event could be happend
       multiple times on some heavy environment. This callback del will
       prevent those scenario and guarantee only one clicked for it's own
       page. */
-   evas_object_smart_callback_del(obj, SIG_CLICKED, _on_item_back_btn_clicked);
+   eo_do(obj, eo_event_callback_del(
+            EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED,  _on_item_back_btn_clicked,
+            data));
    elm_naviframe_item_pop(data);
+
+   return EINA_TRUE;
 }
 
 static Evas_Object *
@@ -954,8 +961,8 @@ _back_btn_new(Evas_Object *obj, const char *title_label)
    btn = elm_button_add(obj);
 
    if (!btn) return NULL;
-   evas_object_smart_callback_add
-     (btn, SIG_CLICKED, _on_item_back_btn_clicked, obj);
+   eo_do(btn, eo_event_callback_add
+         (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_item_back_btn_clicked, obj));
    snprintf
      (buf, sizeof(buf), "naviframe/back_btn/%s", elm_widget_style_get(obj));
    elm_object_style_set(btn, buf);
@@ -1066,7 +1073,7 @@ _on_item_title_clicked(void *data,
 {
    Elm_Naviframe_Item_Data *it = data;
 
-   evas_object_smart_callback_call(WIDGET(it), SIG_TITLE_CLICKED, EO_OBJ(it));
+   eo_do(WIDGET(it), eo_event_callback_call(ELM_NAVIFRAME_EVENT_TITLE_CLICKED,  EO_OBJ(it)));
 }
 
 /* "elm,state,cur,pushed"
@@ -1130,7 +1137,7 @@ _on_item_show_finished(void *data,
    if (sd->freeze_events)
      evas_object_freeze_events_set(VIEW(it), EINA_FALSE);
 
-   evas_object_smart_callback_call(WIDGET(it), SIG_TRANSITION_FINISHED, EO_OBJ(it));
+   eo_do(WIDGET(it), eo_event_callback_call(ELM_NAVIFRAME_EVENT_TRANSITION_FINISHED, EO_OBJ(it)));
 }
 
 static void
@@ -1464,7 +1471,7 @@ _key_action_top_item_get(Evas_Object *obj, const char *params EINA_UNUSED)
    ///Leave for compatibility.
    ELM_NAVIFRAME_ITEM_DATA_GET(eo_item, it);
    if (it->title_prev_btn)
-     evas_object_smart_callback_call(it->title_prev_btn, SIG_CLICKED, NULL);
+     eo_do(it->title_prev_btn, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
 
    return EINA_TRUE;
 }
