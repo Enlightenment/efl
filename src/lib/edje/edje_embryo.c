@@ -2784,8 +2784,8 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
            {
               Edje_Part_Description_Text *text;
 
-              if (rp->part->type == EDJE_PART_TYPE_TEXT
-                  || rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+              if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+                  (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK))
                 return 0;
 
               CHKPARAM(4);
