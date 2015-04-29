@@ -141,7 +141,9 @@ struct _Elm_Win_Data
    } screen;
    struct
    {
+#if 0
       Ecore_Evas  *ee;
+#endif
       Evas        *evas;
       Evas_Object *obj, *hot_obj;
       int          hot_x, hot_y;
@@ -1490,7 +1492,9 @@ _elm_win_evas_object_smart_hide(Eo *obj, Elm_Win_Data *sd)
    if (sd->pointer.obj)
      {
         evas_object_hide(sd->pointer.obj);
+#if 0
         ecore_evas_hide(sd->pointer.ee);
+#endif
      }
 }
 
@@ -1844,7 +1848,9 @@ _elm_win_obj_intercept_show(void *data,
      }
    if (sd->pointer.obj)
      {
+#if 0
         ecore_evas_show(sd->pointer.ee);
+#endif
         evas_object_show(sd->pointer.obj);
      }
    evas_object_show(obj);
