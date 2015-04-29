@@ -89,10 +89,6 @@ lib/eina/eina_thread_queue.h \
 lib/eina/eina_matrix.h \
 lib/eina/eina_quad.h
 
-# Will be back for developper after 1.2.
-# lib/eina/eina_model.h
-# lib/eina/eina_object.h
-
 lib_eina_libeina_la_SOURCES = \
 lib/eina/eina_abi.c \
 lib/eina/eina_accessor.c \
