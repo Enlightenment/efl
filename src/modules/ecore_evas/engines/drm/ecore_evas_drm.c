@@ -33,6 +33,8 @@ struct _Ecore_Evas_Engine_Drm_Data
      } func;
    int wait_for_flip_done;
    int need_render;
+
+   Ecore_Timer *flip_done_timer;
 };
 
 /* local function prototypes */
@@ -609,6 +611,12 @@ _ecore_evas_drm_event_page_flip(void *data, int type EINA_UNUSED, void *event)
 
    if (edata->wait_for_flip_done)
      {
+        if (edata->flip_done_timer)
+          {
+             ecore_timer_del(edata->flip_done_timer);
+             edata->flip_done_timer = NULL;
+          }
+
         edata->wait_for_flip_done = 0;
         if (edata->need_render)
           {
@@ -658,6 +666,13 @@ _ecore_evas_drm_free(Ecore_Evas *ee)
    Ecore_Evas_Engine_Drm_Data *data;
 
    data = ee->engine.data;
+
+   if (data->flip_done_timer)
+     {
+        ecore_timer_del(data->flip_done_timer);
+        data->flip_done_timer = NULL;
+     }
+
    ecore_evas_input_event_unregister(ee);
    free(data);
    _ecore_evas_drm_shutdown();
@@ -1025,6 +1040,18 @@ _ecore_evas_drm_aspect_set(Ecore_Evas *ee, double aspect)
    ee->prop.aspect = aspect;
 }
 
+static Eina_Bool
+_ecore_evas_drm_render_done_timeout(void *data)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Drm_Data *edata = ee->engine.data;
+
+   edata->flip_done_timer = NULL;
+   edata->wait_for_flip_done = 0;
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
 static int
 _ecore_evas_drm_render(Ecore_Evas *ee)
 {
@@ -1074,6 +1101,14 @@ _ecore_evas_drm_render(Ecore_Evas *ee)
      {
         ee->in_async_render = EINA_TRUE;
         rend = 1;
+     }
+
+   if (edata->wait_for_flip_done)
+     {
+        if (edata->flip_done_timer)
+          ecore_timer_del(edata->flip_done_timer);
+
+        edata->flip_done_timer = ecore_timer_add(0.1f, _ecore_evas_drm_render_done_timeout, ee);
      }
 
    return rend;
