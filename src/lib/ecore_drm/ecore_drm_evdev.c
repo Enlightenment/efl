@@ -5,6 +5,8 @@
 #include "ecore_drm_private.h"
 #include <ctype.h>
 
+static void  _device_modifiers_update(Ecore_Drm_Evdev *edev);
+
 static void 
 _device_calibration_set(Ecore_Drm_Evdev *edev)
 {
@@ -78,8 +80,40 @@ _device_output_set(Ecore_Drm_Evdev *edev)
    if (libinput_device_has_capability(edev->device, 
                                       LIBINPUT_DEVICE_CAP_POINTER))
      {
+        Ecore_Drm_Input *input;
+        Ecore_Event_Mouse_Move *ev;
+
         edev->mouse.dx = edev->output->current_mode->width / 2;
         edev->mouse.dy = edev->output->current_mode->height / 2;
+
+        /* send a fake motion event to let other know the initial pos of mouse */
+        if (!(input = edev->seat->input)) return;
+        if (!(ev = calloc(1, sizeof(Ecore_Event_Mouse_Move)))) return;
+
+        ev->window = (Ecore_Window)input->dev->window;
+        ev->event_window = (Ecore_Window)input->dev->window;
+        ev->root_window = (Ecore_Window)input->dev->window;
+
+        _device_modifiers_update(edev);
+        ev->modifiers = edev->xkb.modifiers;
+        ev->same_screen = 1;
+
+        ev->x = edev->mouse.dx;
+        ev->y = edev->mouse.dy;
+        ev->root.x = ev->x;
+        ev->root.y = ev->y;
+        ev->multi.device = edev->mt_slot;
+        ev->multi.radius = 1;
+        ev->multi.radius_x = 1;
+        ev->multi.radius_y = 1;
+        ev->multi.pressure = 1.0;
+        ev->multi.angle = 0.0;
+        ev->multi.x = ev->x;
+        ev->multi.y = ev->y;
+        ev->multi.root.x = ev->x;
+        ev->multi.root.y = ev->y;
+
+        ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
      }
 }
 
