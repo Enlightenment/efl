@@ -51,7 +51,7 @@ static void
 _device_output_set(Ecore_Drm_Evdev *edev)
 {
    Ecore_Drm_Input *input;
-   Ecore_Drm_Output *output;
+   Ecore_Drm_Output *output = NULL;
    const char *oname;
 
    if (!edev->seat) return;
