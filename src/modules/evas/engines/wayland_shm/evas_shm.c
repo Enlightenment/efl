@@ -412,23 +412,16 @@ _evas_shm_surface_swap(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   for (; i < surface->num_buff; i++)
-     {
-        if (surface->leaf[i].busy) continue;
-        if ((!leaf) || (leaf->valid))
-          {
-             leaf = &surface->leaf[i];
-             break;
-          }
-     }
+   leaf = &surface->leaf[surface->curr_buff];
+   if (!leaf) return;
 
-   if (!leaf)
+   if (leaf->busy)
      {
-        /* WRN("All buffers held by server"); */
+        WRN("Trying to use a busy buffer");
         return;
      }
 
-   /* DBG("Current Leaf %d", (int)(leaf - &surface->leaf[0])); */
+   DBG("Current Leaf %d", (int)(leaf - &surface->leaf[0]));
 
    wl_surface_attach(surface->surface, leaf->data->buffer, 0, 0);
 
@@ -450,8 +443,6 @@ _evas_shm_surface_swap(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int
    surface->dx = 0;
    surface->dy = 0;
    surface->redraw = EINA_TRUE;
-   surface->last_buff = surface->curr_buff;
-   surface->curr_buff = (int)(leaf - &surface->leaf[0]);
 }
 
 void *
@@ -477,7 +468,7 @@ _evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h)
 
    if (!leaf)
      {
-        /* WRN("All buffers held by server"); */
+        WRN("All buffers held by server");
         return NULL;
      }
 
@@ -485,6 +476,9 @@ _evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h)
 
    if (w) *w = leaf->w;
    if (h) *h = leaf->h;
+
+   surface->last_buff = surface->curr_buff;
+   surface->curr_buff = (int)(leaf - &surface->leaf[0]);
 
    return leaf->data->map;
 }
