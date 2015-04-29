@@ -2050,20 +2050,25 @@ _native_bind_cb(void *data EINA_UNUSED, void *image)
     {
       if (n->surface)
         {
-#ifdef GL_GLES
-          void *surface = glsym_evgl_native_surface_buffer_get(n->surface);
-          if (glsym_glEGLImageTargetTexture2DOES)
+          Eina_Bool is_egl_image;
+          void *buffer = glsym_evgl_native_surface_buffer_get(n->surface, &is_egl_image);
+          if (is_egl_image)
             {
-              glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, surface);
-              if (eglGetError() != EGL_SUCCESS)
-                ERR("glEGLImageTargetTexture2DOES() failed.");
+#ifdef GL_GLES
+               if (glsym_glEGLImageTargetTexture2DOES)
+                 {
+                    glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, buffer);
+                    if (eglGetError() != EGL_SUCCESS)
+                      ERR("glEGLImageTargetTexture2DOES() failed.");
+                 }
+               else
+#endif
+                 ERR("Try glEGLImageTargetTexture2DOES on EGL with no support");
             }
           else
-            ERR("Try glEGLImageTargetTexture2DOES on EGL with no support");
-#else
-          GLuint tex = (GLuint)(uintptr_t)glsym_evgl_native_surface_buffer_get(n->surface);
-          glBindTexture(GL_TEXTURE_2D, tex);
-#endif
+            {
+               glBindTexture(GL_TEXTURE_2D, (GLuint)(uintptr_t)buffer);
+            }
         }
     }
 }

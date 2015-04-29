@@ -2563,18 +2563,28 @@ evgl_safe_extension_get(const char *name, void **pfuncptr)
 }
 
 void *
-evgl_native_surface_buffer_get(EVGL_Surface *sfc)
+evgl_native_surface_buffer_get(EVGL_Surface *sfc, Eina_Bool *is_egl_image)
 {
+   void *buf = NULL;
+   *is_egl_image = EINA_FALSE;
+
    if (!evgl_engine)
      {
         ERR("Invalid input data.  Engine: %p", evgl_engine);
         return NULL;
      }
-#ifdef GL_GLES
-   return sfc->egl_image;
-#else
-   return (void *)(uintptr_t)sfc->color_buf;
-#endif
+
+   if (sfc->egl_image)
+     {
+        buf = sfc->egl_image;
+        *is_egl_image = EINA_TRUE;
+     }
+   else
+     {
+        buf = (void *)(uintptr_t)sfc->color_buf;
+     }
+
+   return buf;
 }
 
 int
