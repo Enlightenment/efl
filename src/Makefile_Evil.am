@@ -113,6 +113,7 @@ bin/evil/evil_test_print.h \
 bin/evil/evil_test_realpath.h \
 bin/evil/evil_test_util.h
 
+
 #suite_SOURCES +=  bin/evil/memcpy_glibc_i686.S # see EXTRA_DIST below!
 
 bin_evil_evil_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EVIL_CFLAGS@
@@ -123,7 +124,33 @@ bin_evil_test_evil_SOURCES = bin/evil/test_evil.c
 bin_evil_test_evil_LDADD = @USE_EVIL_LIBS@
 bin_evil_test_evil_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
 
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/evil/evil_suite
+TESTS += tests/evil/evil_suite
+
+tests_evil_evil_suite_SOURCES = \
+tests/evil/evil_suite.c \
+tests/evil/evil_suite.h \
+tests/evil/evil_test_dlfcn.c \
+tests/evil/evil_test_main.c
+
+tests_evil_evil_suite_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/evil\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/evil\" \
+-DTESTS_BUILD_DIR=PACKAGE_BUILD_DIR \
+@CHECK_CFLAGS@ \
+@EVIL_CFLAGS@
+tests_evil_evil_suite_LDADD = @USE_EVIL_LIBS@ @DL_LIBS@ @CHECK_LIBS@
+tests_evil_evil_suite_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
+
 endif
+
+endif
+
 EXTRA_DIST += \
 lib/evil/regex/regerror.ih \
 lib/evil/regex/engine.ih \

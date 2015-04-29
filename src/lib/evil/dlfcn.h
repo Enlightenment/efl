@@ -64,29 +64,39 @@ x * This header provides functions to load and unload dynamic-link
  */
 #define RTLD_NODELETE 0x01000  /* do not delete object when closed.  */
 
+#ifdef _GNU_SOURCE
+
 /**
  * @def RTLD_DEFAULT
  * Symbols are searched in all the DLL opened by the current process.
+ * This symbol is defined only when _GNU_SOURCE was defined before
+ * including dlfcn.h.
  */
 #define RTLD_DEFAULT ((void*)1) /* search the symbol on all the DLL of the current process */
 
 /**
  * @typedef Dl_info
  * @brief A structure that stores infomation of a calling process.
+ * This typedef is defined only when _GNU_SOURCE was defined before
+ * including dlfcn.h.
  */
 typedef struct Dl_info Dl_info;
 
 /**
  * @struct Dl_info
  * @brief A structure that stores infomation of a calling process.
+ * This structure is defined only when _GNU_SOURCE was defined before
+ * including dlfcn.h.
  */
 struct Dl_info
 {
-   char        dli_fname[PATH_MAX];  /**< Filename of defining object */
-   void       *dli_fbase;            /**< Load address of that object */
-   const char *dli_sname;            /**< Name of nearest lower symbol */
-   void       *dli_saddr;            /**< Exact value of nearest symbol */
+   const char *dli_fname;  /**< Filename of defining object */
+   void       *dli_fbase;  /**< Load address of that object */
+   const char *dli_sname;  /**< Name of nearest lower symbol */
+   void       *dli_saddr;  /**< Exact value of nearest symbol */
 };
+
+#endif /* _GNU_SOURCE */
 
 /**
  * @brief Map a specified executable module (either a .dll or .exe file)
@@ -197,29 +207,34 @@ EAPI int   dlclose(void* handle);
  */
 EAPI void *dlsym(void* handle, const char* symbol);
 
+#ifdef _GNU_SOURCE
+
 /**
- * @brief Get the location of the current process (.exe)
+ * @brief Resolve module and function pointers from the given function
+ * pointer address.
  *
- * @param addr Unused.
- * @param info Pointer to the Dl_info to fill.
+ * @param addr A function pointer.
+ * @param info Pointer to the #Dl_info to fill.
  * @return 1 on success, 0 otherwise.
  *
- * Fill the dli_fname member of @p info with the absolute name
- * of the current calling process (.exe file that is executed).
- * All other members are set to @c NULL.
+ * Fill @p info with the absolute name of the module which has the
+ * fonction pointer @p addr, the base address of that module, the name
+ * and address of the symbol. If no symbol matching @p addr could be
+ * found (as in an EXE file), then dli_sname and dli_saddr are set to
+ * NULL and the function returns 1. See #Dl_info for more informations.
  *
- * Contrary to the unix function, the full name of the shared
- * library is not returned, but insted the full name of the current
- * calling process (.exe file).
+ * This function is available only when _GNU_SOURCE was defined before
+ * including dlfcn.h.
  *
  * Conformity: None.
  *
- * Supported OS: Windows Vista, Windows XP or Windows 2000
- * Professional.
+ * Supported OS: Windows Vista, Windows XP.
  *
  * @ingroup Evil_Dlfcn
  */
 EAPI int dladdr (const void *addr, Dl_info *info);
+
+#endif /* _GNU_SOURCE */
 
 /**
  * @brief Get diagnostic information
