@@ -109,7 +109,7 @@ _drag_done_cb(void *unused EINA_UNUSED,
    ELM_PHOTO_DATA_GET(obj, sd);
 
    elm_object_scroll_freeze_pop(obj);
-   evas_object_smart_callback_call(obj, SIG_DRAG_END, NULL);
+   eo_do(obj, eo_event_callback_call(EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_END, NULL));
    sd->drag_started = EINA_FALSE;
 }
 
@@ -171,7 +171,8 @@ _long_press_cb(void *obj)
                   _drag_done_cb, NULL))
           {
              elm_object_scroll_freeze_push(obj);
-             evas_object_smart_callback_call(obj, SIG_DRAG_START, NULL);
+             eo_do(obj, eo_event_callback_call
+               (EVAS_DRAGGABLE_INTERFACE_EVENT_DRAG_START, NULL));
              sd->drag_started = EINA_TRUE;
           }
      }
@@ -213,7 +214,7 @@ _mouse_up(void *data,
    ELM_SAFE_FREE(sd->long_press_timer, ecore_timer_del);
 
    if (!sd->drag_started)
-     evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
+     eo_do(data, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
 }
 
 static inline int
@@ -241,12 +242,13 @@ _elm_photo_internal_image_follow(Evas_Object *obj)
      (img, EVAS_CALLBACK_RESIZE, _icon_move_resize_cb, obj);
 }
 
-static void
+static Eina_Bool
 _on_thumb_done(void *data,
-               Evas_Object *obj EINA_UNUSED,
-               void *event EINA_UNUSED)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _elm_photo_internal_image_follow(data);
+
+   return EINA_TRUE;
 }
 
 EOLIAN static void
@@ -274,8 +276,8 @@ _elm_photo_evas_object_smart_add(Eo *obj, Elm_Photo_Data *priv)
    evas_object_event_callback_add
      (priv->icon, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down, obj);
 
-   evas_object_smart_callback_add
-     (priv->icon, "thumb,done", _on_thumb_done, obj);
+   eo_do(priv->icon, eo_event_callback_add
+     (ELM_ICON_EVENT_THUMB_DONE, _on_thumb_done, obj));
 
    _elm_photo_internal_image_follow(obj);
 

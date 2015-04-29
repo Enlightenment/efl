@@ -93,10 +93,5 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
       Evas.Object_Smart.del;
       Elm.Widget.theme_apply;
    }
-   events {
-      clicked;
-      drag,start;
-      drag,end;
-   }
 
 }
