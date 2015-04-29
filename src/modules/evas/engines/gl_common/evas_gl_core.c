@@ -1933,32 +1933,18 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
    if ((dbg = evgl_engine->api_debug_mode))
      DBG("Destroying surface sfc %p (eng %p)", sfc, eng_data);
 
-   if ((rsc->current_ctx) && (rsc->current_ctx->current_sfc == sfc) )
+   // Make current to current context to destroy surface buffers
+   if (!_internal_resource_make_current(eng_data, rsc->current_ctx))
      {
-        if (evgl_engine->api_debug_mode)
-          {
-             ERR("The surface is still current before it's being destroyed.");
-             ERR("Doing make_current(NULL, NULL)");
-          }
-        else
-          {
-             WRN("The surface is still current before it's being destroyed.");
-             WRN("Doing make_current(NULL, NULL)");
-          }
-        evgl_make_current(eng_data, NULL, NULL);
+        ERR("Error doing an internal resource make current");
+        return 0;
      }
 
-   if (sfc->current_ctx && sfc->current_ctx->current_sfc == sfc)
-      sfc->current_ctx->current_sfc = NULL;
-
-   if (!sfc->pbuffer.native_surface)
+   // Destroy created buffers
+   if (!_surface_buffers_destroy(sfc))
      {
-        // Set the context current with resource context/surface
-        if (!_internal_resource_make_current(eng_data, NULL))
-          {
-             ERR("Error doing an internal resource make current");
-             return 0;
-          }
+        ERR("Error deleting surface resources.");
+        return 0;
      }
 
    // Destroy indirect surface
@@ -1983,14 +1969,6 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
           }
      }
 
-
-   // Destroy created buffers
-   if (!_surface_buffers_destroy(sfc))
-     {
-        ERR("Error deleting surface resources.");
-        return 0;
-     }
-
    // Destroy PBuffer surfaces
    if (sfc->pbuffer.native_surface)
      {
@@ -2006,6 +1984,24 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
         if (!ret) ERR("Engine failed to destroy a PBuffer.");
         return ret;
      }
+
+   if ((rsc->current_ctx) && (rsc->current_ctx->current_sfc == sfc) )
+     {
+        if (evgl_engine->api_debug_mode)
+          {
+             ERR("The surface is still current before it's being destroyed.");
+             ERR("Doing make_current(NULL, NULL)");
+          }
+        else
+          {
+             WRN("The surface is still current before it's being destroyed.");
+             WRN("Doing make_current(NULL, NULL)");
+          }
+        evgl_make_current(eng_data, NULL, NULL);
+     }
+
+   if (sfc->current_ctx && sfc->current_ctx->current_sfc == sfc)
+      sfc->current_ctx->current_sfc = NULL;
 
    if (dbg) DBG("Calling make_current(NULL, NULL)");
    if (!evgl_engine->funcs->make_current(eng_data, NULL, NULL, 0))
