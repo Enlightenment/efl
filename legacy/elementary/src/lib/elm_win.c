@@ -1043,6 +1043,9 @@ _elm_win_focus_in(Ecore_Evas *ee)
         edje_object_signal_emit(sd->frame_obj, "elm,action,focus", "elm");
      }
 
+   if (_elm_config->atspi_mode)
+     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED, NULL));
+
    /* do nothing */
    /* else if (sd->img_obj) */
    /*   { */
@@ -1071,6 +1074,9 @@ _elm_win_focus_out(Ecore_Evas *ee)
 
    /* access */
    _elm_access_object_highlight_disable(evas_object_evas_get(obj));
+
+   if (_elm_config->atspi_mode)
+     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED, NULL));
 
    /* do nothing */
    /* if (sd->img_obj) */
@@ -1263,9 +1269,17 @@ _elm_win_state_change(Ecore_Evas *ee)
         if (sd->withdrawn)
           evas_object_smart_callback_call(obj, SIG_WITHDRAWN, NULL);
         else if (sd->iconified)
-          evas_object_smart_callback_call(obj, SIG_ICONIFIED, NULL);
+          {
+             evas_object_smart_callback_call(obj, SIG_ICONIFIED, NULL);
+             if (_elm_config->atspi_mode)
+               eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MINIMIZED, NULL));
+          }
         else
-          evas_object_smart_callback_call(obj, SIG_NORMAL, NULL);
+          {
+             evas_object_smart_callback_call(obj, SIG_NORMAL, NULL);
+             if (_elm_config->atspi_mode)
+               eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_RESTORED, NULL));
+          }
      }
    if (ch_sticky)
      {
@@ -1297,9 +1311,17 @@ _elm_win_state_change(Ecore_Evas *ee)
    if (ch_maximized)
      {
         if (sd->maximized)
-          evas_object_smart_callback_call(obj, SIG_MAXIMIZED, NULL);
+          {
+             evas_object_smart_callback_call(obj, SIG_MAXIMIZED, NULL);
+             if (_elm_config->atspi_mode)
+               eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MAXIMIZED, NULL));
+          }
         else
-          evas_object_smart_callback_call(obj, SIG_UNMAXIMIZED, NULL);
+          {
+             evas_object_smart_callback_call(obj, SIG_UNMAXIMIZED, NULL);
+             if (_elm_config->atspi_mode)
+               eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_RESTORED, NULL));
+          }
      }
    if (ch_profile)
      {
@@ -1468,6 +1490,9 @@ _elm_win_evas_object_smart_show(Eo *obj, Elm_Win_Data *sd)
    TRAP(sd, show);
 
    if (sd->shot.info) _shot_handle(sd);
+
+   if (_elm_config->atspi_mode)
+     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, NULL));
 }
 
 EOLIAN static void
@@ -1503,6 +1528,8 @@ _elm_win_evas_object_smart_hide(Eo *obj, Elm_Win_Data *sd)
         ecore_evas_hide(sd->pointer.ee);
 #endif
      }
+   if (_elm_config->atspi_mode)
+     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DESTROYED, NULL));
 }
 
 static void
@@ -1949,6 +1976,8 @@ _elm_win_delete_request(Ecore_Evas *ee)
    evas_object_ref(obj);
    evas_object_smart_callback_call(obj, SIG_DELETE_REQUEST, NULL);
    // FIXME: if above callback deletes - then the below will be invalid
+   if (_elm_config->atspi_mode)
+     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DESTROYED, NULL));
    if (autodel) evas_object_del(obj);
    else sd->autodel_clear = NULL;
    evas_object_unref(obj);
@@ -2750,6 +2779,8 @@ _elm_win_frame_cb_close(void *data,
    evas_object_ref(win);
    evas_object_smart_callback_call(win, SIG_DELETE_REQUEST, NULL);
    // FIXME: if above callback deletes - then the below will be invalid
+   if (_elm_config->atspi_mode)
+     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DESTROYED, NULL));
    if (autodel) evas_object_del(win);
    else sd->autodel_clear = NULL;
    evas_object_unref(win);
@@ -3696,7 +3727,6 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
    if (_elm_config->atspi_mode == ELM_ATSPI_MODE_ON)
      {
         elm_interface_atspi_accessible_children_changed_added_signal_emit(_elm_atspi_bridge_root_get(), obj);
-        eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_CREATED, NULL));
      }
 
    evas_object_show(sd->edje);
