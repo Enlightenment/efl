@@ -217,6 +217,9 @@ eng_output_resize(void *data, int w, int h)
    evas_common_tilebuf_free(re->generic.tb);
    if ((re->generic.tb = evas_common_tilebuf_new(w, h)))
      evas_common_tilebuf_set_tile_size(re->generic.tb, TILESIZE, TILESIZE);
+
+   re->generic.w = w;
+   re->generic.h = h;
 }
 
 /* EVAS MODULE FUNCTIONS */
