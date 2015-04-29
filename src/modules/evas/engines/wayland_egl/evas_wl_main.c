@@ -257,7 +257,7 @@ eng_window_use(Outbuf *gw)
           }
      }
 
-   if (gw)
+   if ((gw) && (gw->gl_context))
      {
         glsym_evas_gl_common_context_use(gw->gl_context);
         glsym_evas_gl_common_context_resize(gw->gl_context, gw->w, gw->h, gw->rot,0);

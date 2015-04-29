@@ -1126,6 +1126,7 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
 EAPI void
 evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot, int force_update)
 {
+   if (!gc) return;
    if ((!force_update) && (gc->w == w) && (gc->h == h) && (gc->rot == rot)) return;
    evas_gl_common_context_flush(gc);
    gc->change.size = 1;
