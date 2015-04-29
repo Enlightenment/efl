@@ -101,7 +101,7 @@ START_TEST(eina_file_split_simple)
 #endif
 
 #ifdef _WIN32
-   ea = eina_file_split(strdup("\\this\\is\\a\\small\\test"));
+   ea = eina_file_split(strdup("\\this/is\\a/small/test"));
 #else
    ea = eina_file_split(strdup("/this/is/a/small/test"));
 #endif
@@ -119,7 +119,7 @@ START_TEST(eina_file_split_simple)
 #ifdef _WIN32
    ea =
       eina_file_split(strdup(
-                         "this\\\\is\\\\\\a \\more\\complex\\\\\\case\\\\\\"));
+                         "this\\/\\is\\//\\\\a \\more/\\complex///case\\\\\\"));
 #else
    ea = eina_file_split(strdup("this//is///a /more/complex///case///"));
 #endif

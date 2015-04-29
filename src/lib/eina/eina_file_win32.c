@@ -395,6 +395,16 @@ _eina_file_map_close(Eina_File_Map *map)
    free(map);
 }
 
+static char *
+_eina_file_sep_find(char *s)
+{
+   for (; *s != '\0'; ++s)
+     if ((*s == '\\') || (*s == '/'))
+       return s;
+
+   return NULL;
+}
+
 /**
  * @endcond
  */
@@ -529,28 +539,17 @@ eina_file_split(char *path)
    if (!ea)
       return NULL;
 
-   current = path;
-   while (*current)
+   for (current = _eina_file_sep_find(path);
+        current;
+        path = current + 1, current = _eina_file_sep_find(path))
      {
-        if ((*current == '\\') || (*current == '/'))
-          {
-             if (((*current == '\\') && (current[1] == '\\')) ||
-                 ((*current == '/') && (current[1] == '/')))
-               {
-                  *current = '\0';
-                  goto next_char;
-               }
+        length = current - path;
 
-             length = current - path;
-             if (length <= 0)
-               goto next_char;
+        if (length <= 0)
+           continue;
 
-             eina_array_push(ea, path);
-             *current = '\0';
-             path = current + 1;
-          }
-     next_char:
-        current++;
+        eina_array_push(ea, path);
+        *current = '\0';
      }
 
    if (*path != '\0')
