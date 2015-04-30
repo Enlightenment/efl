@@ -1500,6 +1500,22 @@ evas_gl_common_current_context_get(void)
      return rsc->current_ctx;
 }
 
+EAPI void *
+evgl_current_native_context_get(EVGL_Context *ctx)
+{
+   EVGLNative_Context context;
+
+   if (!ctx)
+     return NULL;
+
+   context = ctx->context;
+
+   if ((ctx->pixmap_image_supported) && evgl_direct_rendered())
+     context = ctx->indirect_context;
+
+   return context;
+}
+
 int
 _evgl_not_in_pixel_get(void)
 {
@@ -1577,7 +1593,7 @@ _evgl_native_context_get(Evas_GL_Context *ctx)
 
    evglctx = glsym_evas_gl_native_context_get(ctx);
    if (!evglctx) return NULL;
-   return evglctx->context;
+   return evgl_current_native_context_get(evglctx);;
 }
 
 //---------------------------------------------------------------//
