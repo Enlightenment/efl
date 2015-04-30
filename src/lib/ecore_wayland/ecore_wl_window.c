@@ -146,6 +146,9 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
           }
      }
 
+   if (win->visible) _ecore_wl_window_hide_send(win);
+   win->visible = EINA_FALSE;
+
    if (win->anim_callback) wl_callback_destroy(win->anim_callback);
    win->anim_callback = NULL;
 
@@ -452,7 +455,11 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
         break;
      }
 
-   _ecore_wl_window_show_send(win);
+   if (!win->visible)
+     {
+        _ecore_wl_window_show_send(win);
+		win->visible = EINA_TRUE;
+     }
 }
 
 EAPI void 
@@ -462,7 +469,11 @@ ecore_wl_window_hide(Ecore_Wl_Window *win)
 
    if (!win) return;
 
-   _ecore_wl_window_hide_send(win);
+   if (win->visible)
+     {
+        _ecore_wl_window_hide_send(win);
+        win->visible = EINA_FALSE;
+     }
 
    if (win->xdg_surface) xdg_surface_destroy(win->xdg_surface);
    win->xdg_surface = NULL;

@@ -126,6 +126,7 @@ struct _Ecore_Wl_Window
 
    struct xdg_surface *xdg_surface;
    struct xdg_popup *xdg_popup;
+   Eina_Bool visible : 1;
    Eina_Bool focused : 1;
    Eina_Bool resizing : 1;
 
