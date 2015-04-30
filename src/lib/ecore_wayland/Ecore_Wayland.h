@@ -586,6 +586,7 @@ EAPI void ecore_wl_window_hide(Ecore_Wl_Window *win);
  * @since 1.2
  */
 EAPI void ecore_wl_window_raise(Ecore_Wl_Window *win);
+EAPI void ecore_wl_window_activate(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized);
 EAPI Eina_Bool ecore_wl_window_maximized_get(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen);

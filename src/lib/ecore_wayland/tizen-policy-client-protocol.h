@@ -19,6 +19,7 @@ extern const struct wl_interface tizen_policy_interface;
 extern const struct wl_interface tizen_visibility_interface;
 
 #define TIZEN_POLICY_GET_VISIBILITY	0
+#define TIZEN_POLICY_ACTIVATE	1
 
 static inline void
 tizen_policy_set_user_data(struct tizen_policy *tizen_policy, void *user_data)
@@ -47,6 +48,13 @@ tizen_policy_get_visibility(struct tizen_policy *tizen_policy, struct wl_surface
 			 TIZEN_POLICY_GET_VISIBILITY, &tizen_visibility_interface, NULL, surface);
 
 	return (struct tizen_visibility *) id;
+}
+
+static inline void
+tizen_policy_activate(struct tizen_policy *tizen_policy, struct wl_surface *surface)
+{
+	wl_proxy_marshal((struct wl_proxy *) tizen_policy,
+			 TIZEN_POLICY_ACTIVATE, surface);
 }
 
 #ifndef TIZEN_VISIBILITY_VISIBILITY_ENUM
