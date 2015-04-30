@@ -247,7 +247,6 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, 
 
  err:
    ecore_evas_free(ee);
-   _ecore_evas_wl_common_shutdown();
  ee_err:
    ecore_wl_shutdown();
    return NULL;
