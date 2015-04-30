@@ -277,10 +277,57 @@ success:
    return 1;
 };
 
+static int
+_elua_get_localeconv(lua_State *L)
+{
+   struct lconv *lc = localeconv();
+   lua_createtable(L, 0, 24);
+
+#define ELUA_LCF_S(name) \
+   lua_pushstring(L, lc->name); \
+   lua_setfield(L, -2, #name);
+
+#define ELUA_LCF_C(name) \
+   lua_pushinteger(L, (int)lc->name); \
+   lua_setfield(L, -2, #name);
+
+   ELUA_LCF_S(decimal_point);
+   ELUA_LCF_S(thousands_sep);
+   ELUA_LCF_S(grouping);
+   ELUA_LCF_S(int_curr_symbol);
+   ELUA_LCF_S(currency_symbol);
+   ELUA_LCF_S(mon_decimal_point);
+   ELUA_LCF_S(mon_thousands_sep);
+   ELUA_LCF_S(mon_grouping);
+   ELUA_LCF_S(positive_sign);
+   ELUA_LCF_S(negative_sign);
+
+   ELUA_LCF_C(frac_digits);
+   ELUA_LCF_C(p_cs_precedes);
+   ELUA_LCF_C(n_cs_precedes);
+   ELUA_LCF_C(p_sep_by_space);
+   ELUA_LCF_C(n_sep_by_space);
+   ELUA_LCF_C(p_sign_posn);
+   ELUA_LCF_C(n_sign_posn);
+   ELUA_LCF_C(int_frac_digits);
+   ELUA_LCF_C(int_p_cs_precedes);
+   ELUA_LCF_C(int_n_cs_precedes);
+   ELUA_LCF_C(int_p_sep_by_space);
+   ELUA_LCF_C(int_n_sep_by_space);
+   ELUA_LCF_C(int_p_sign_posn);
+   ELUA_LCF_C(int_n_sign_posn);
+
+#undef ELUA_LCF_S
+#undef ELUA_LCF_C
+
+   return 1;
+};
+
 const luaL_reg gettextlib[] =
 {
    { "bind_textdomain", _elua_gettext_bind_textdomain },
    { "get_message_language", _elua_get_message_language },
+   { "get_localeconv", _elua_get_localeconv },
    { NULL, NULL }
 };
 
