@@ -727,7 +727,7 @@ _evgl_glGetString(GLenum name)
 #endif
 
       case GL_EXTENSIONS:
-        // Passing the verion -  GLESv2/GLESv3.
+        // Passing the version -  GLESv2/GLESv3.
         return (GLubyte *) evgl_api_ext_string_get(EINA_TRUE, rsc->current_ctx->version);
 
       default:

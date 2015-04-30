@@ -266,7 +266,7 @@ _egl_image_create(EVGL_Context *context, int target, void *buffer)
    attribs[n++] = 0;
    attribs[n++] = EGL_NONE;
 
-   return EXT_FUNC(eglCreateImage)(dpy, ctx, target, (EGLClientBuffer)(uintptr_t)buffer, attribs);
+   return EXT_FUNC_EGL(eglCreateImage)(dpy, ctx, target, (EGLClientBuffer)(uintptr_t)buffer, attribs);
 #else
    (void) context; (void) target; (void) buffer;
    return NULL;
@@ -290,7 +290,7 @@ _egl_image_destroy(void *image)
    dpy = (EGLDisplay)rsc->display;
    if (!dpy) return;
 
-   EXT_FUNC(eglDestroyImage)(dpy, image);
+   EXT_FUNC_EGL(eglDestroyImage)(dpy, image);
 #else
    (void) image;
 #endif
@@ -883,10 +883,9 @@ _context_ext_check(EVGL_Context *ctx)
          fbo_supported = 1;
      }
 
-   if (EXTENSION_SUPPORT(EGL_KHR_image_base))
+   if (EXTENSION_SUPPORT_EGL(EGL_KHR_image_base))
      egl_image_supported = 1;
-
-   if (EXTENSION_SUPPORT(EGL_KHR_gl_texture_2D_image))
+   if (EXTENSION_SUPPORT_EGL(EGL_KHR_gl_texture_2D_image))
      texture_image_supported = 1;
 #else
    fbo_supported = 1;
@@ -2505,10 +2504,22 @@ evgl_string_query(int name)
    switch(name)
      {
       case EVAS_GL_EXTENSIONS:
-         rsc = _evgl_tls_resource_get();
-         if ((rsc) && (rsc->current_ctx))
-           ctx_version = rsc->current_ctx->version;
-         return evgl_api_ext_string_get(EINA_FALSE, ctx_version);
+        {
+           Eina_Strbuf *extstr = eina_strbuf_new();
+           const char *glstr = NULL, *eglstr = NULL, *str = NULL;
+           rsc = _evgl_tls_resource_get();
+           if ((rsc) && (rsc->current_ctx))
+             ctx_version = rsc->current_ctx->version;
+           glstr = evgl_api_ext_string_get(EINA_FALSE, ctx_version);
+           if (glstr)
+             eina_strbuf_append(extstr, glstr);
+           eglstr = evgl_api_ext_egl_string_get();
+           if (eglstr)
+             eina_strbuf_append(extstr, eglstr);
+           str = eina_strbuf_string_steal(extstr);
+           eina_strbuf_free(extstr);
+           return str;
+        }
 
       default:
          return "";
@@ -2756,6 +2767,12 @@ evgl_get_pixels_post(void)
 Evas_GL_API *
 evgl_api_get(void *eng_data, Evas_GL_Context_Version version)
 {
+#ifdef GL_GLES
+    if (!evgl_api_egl_ext_init(evgl_engine->funcs->proc_address_get, evgl_engine->funcs->ext_string_get(eng_data)))
+      {
+         ERR("EGL extensions initialization failed");
+      }
+#endif
    if (version == EVAS_GL_GLES_2_X)
      {
         if (!gles2_funcs) gles2_funcs = calloc(1, EVAS_GL_API_STRUCT_SIZE);

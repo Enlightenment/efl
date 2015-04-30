@@ -64,6 +64,14 @@
 # define _EVASGL_EXT_WHITELIST_ONLY 1
 #endif
 
+#ifndef _EVASGL_EXT_ENABLE_GL_GLES
+# define _EVASGL_EXT_ENABLE_GL_GLES 1
+#endif
+
+#ifndef _EVASGL_EXT_ENABLE_EGL
+# define _EVASGL_EXT_ENABLE_EGL 1
+#endif
+
 #ifndef _EVASGL_EXT_FUNCTION_WHITELIST
 # define _EVASGL_EXT_FUNCTION_WHITELIST(name)
 #endif
@@ -71,6 +79,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // GL/GLES EXTENSIONS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#if _EVASGL_EXT_ENABLE_GL_GLES
 _EVASGL_EXT_BEGIN(get_program_binary)
 	_EVASGL_EXT_DRVNAME(GL_OES_get_program_binary)
 
@@ -1143,7 +1152,46 @@ _EVASGL_EXT_BEGIN(shader_texture_lod)
         _EVASGL_EXT_DRVNAME(GL_EXT_shader_texture_lod)
 _EVASGL_EXT_END()
 
+#ifdef GL_GLES
+_EVASGL_EXT_BEGIN(GL_OES_EGL_image)
 
+	_EVASGL_EXT_DRVNAME(GL_OES_EGL_image)
+
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(void, glEGLImageTargetTexture2DOES, (GLenum target, GLeglImageOES image))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("glEGLImageTargetTexture2DOES")
+	_EVASGL_EXT_FUNCTION_PRIVATE_END()
+	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(void, glEGLImageTargetRenderbufferStorageOES, (GLenum target, GLeglImageOES image))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("glEGLImageTargetRenderbufferStorageOES")
+	_EVASGL_EXT_FUNCTION_PRIVATE_END()
+
+	_EVASGL_EXT_FUNCTION_BEGIN(void, glEvasGLImageTargetTexture2DOES, (GLenum target, EvasGLImage image))
+		_EVASGL_EXT_FUNCTION_DRVFUNC(evgl_glEvasGLImageTargetTexture2D)
+	_EVASGL_EXT_FUNCTION_END()
+	_EVASGL_EXT_FUNCTION_BEGIN(void, glEvasGLImageTargetRenderbufferStorageOES, (GLenum target, EvasGLImage image))
+		_EVASGL_EXT_FUNCTION_DRVFUNC(evgl_glEvasGLImageTargetRenderbufferStorage)
+	_EVASGL_EXT_FUNCTION_END()
+
+	#ifdef _EVASGL_EXT_VERIFY
+	{
+                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base")) _EVASGL_EXT_DISCARD_SUPPORT();
+	}
+	#endif
+
+_EVASGL_EXT_END()
+
+
+_EVASGL_EXT_BEGIN(GL_OES_EGL_image_external)
+
+   _EVASGL_EXT_DRVNAME(GL_OES_EGL_image_external)
+
+	#ifdef _EVASGL_EXT_VERIFY
+   {
+                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base")) _EVASGL_EXT_DISCARD_SUPPORT();
+   }
+	#endif
+
+_EVASGL_EXT_END()
+#endif // GL_GLES
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1400,6 +1448,7 @@ _EVASGL_EXT_END()
 
 
 #endif // _EVASGL_EXT_WHITELIST_ONLY ("safe" extensions)
+#endif // _EVASGL_EXT_ENABLE_GL_GLES
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1410,7 +1459,7 @@ _EVASGL_EXT_END()
 // EGL EXTENSIONS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #ifdef GL_GLES
-
+#if _EVASGL_EXT_ENABLE_EGL
 _EVASGL_EXT_BEGIN(EGL_KHR_image_base)
 
 	_EVASGL_EXT_DRVNAME(EGL_KHR_image_base)
@@ -1437,34 +1486,6 @@ _EVASGL_EXT_BEGIN(EGL_KHR_image_base)
 		// Add special function pointers
 		//evgl_evasglCreateImage_ptr = GETPROCADDR("eglCreateImageKHR");
 		//evgl_evasglDestroyImage_ptr = GETPROCADDR("eglDestroyImageKHR");
-	}
-	#endif
-
-_EVASGL_EXT_END()
-
-
-
-_EVASGL_EXT_BEGIN(GL_OES_EGL_image)
-
-	_EVASGL_EXT_DRVNAME(GL_OES_EGL_image)
-
-	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(void, glEGLImageTargetTexture2DOES, (GLenum target, GLeglImageOES image))
-                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("glEGLImageTargetTexture2DOES")
-	_EVASGL_EXT_FUNCTION_PRIVATE_END()
-	_EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(void, glEGLImageTargetRenderbufferStorageOES, (GLenum target, GLeglImageOES image))
-                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("glEGLImageTargetRenderbufferStorageOES")
-	_EVASGL_EXT_FUNCTION_PRIVATE_END()
-
-	_EVASGL_EXT_FUNCTION_BEGIN(void, glEvasGLImageTargetTexture2DOES, (GLenum target, EvasGLImage image))
-		_EVASGL_EXT_FUNCTION_DRVFUNC(evgl_glEvasGLImageTargetTexture2D)
-	_EVASGL_EXT_FUNCTION_END()
-	_EVASGL_EXT_FUNCTION_BEGIN(void, glEvasGLImageTargetRenderbufferStorageOES, (GLenum target, EvasGLImage image))
-		_EVASGL_EXT_FUNCTION_DRVFUNC(evgl_glEvasGLImageTargetRenderbufferStorage)
-	_EVASGL_EXT_FUNCTION_END()
-
-	#ifdef _EVASGL_EXT_VERIFY
-	{
-                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base")) _EVASGL_EXT_DISCARD_SUPPORT();
 	}
 	#endif
 
@@ -1542,14 +1563,6 @@ _EVASGL_EXT_BEGIN(EGL_KHR_gl_renderbuffer_image)
 _EVASGL_EXT_END()
 
 
-_EVASGL_EXT_BEGIN(GL_OES_EGL_image_external)
-        _EVASGL_EXT_DRVNAME(GL_OES_EGL_image_external)
-	#ifdef _EVASGL_EXT_VERIFY
-	{
-                if (!_EVASGL_EXT_CHECK_SUPPORT("EGL_KHR_image_base")) _EVASGL_EXT_DISCARD_SUPPORT();
-	}
-	#endif
-_EVASGL_EXT_END()
 
 
 _EVASGL_EXT_BEGIN(EGL_KHR_fence_sync)
@@ -1655,7 +1668,7 @@ _EVASGL_EXT_BEGIN(EGL_SEC_map_image)
 _EVASGL_EXT_END()
 #endif
 
-
+#endif // _EVASGL_EXT_ENABLE_EGL
 #endif
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
