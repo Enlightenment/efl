@@ -291,8 +291,8 @@ _ecore_drm_logind_device_open_no_pending(const char *device)
 {
    struct stat st;
 
-   if (stat(device, &st) < 0) return EINA_FALSE;
-   if (!S_ISCHR(st.st_mode)) return EINA_FALSE;
+   if (stat(device, &st) < 0) return -1;
+   if (!S_ISCHR(st.st_mode)) return -1;
 
    return _ecore_drm_dbus_device_take_no_pending(major(st.st_rdev), minor(st.st_rdev), NULL, -1);
 }
