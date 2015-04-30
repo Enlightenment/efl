@@ -13,6 +13,8 @@ static void _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *
 static void _ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct wl_output *output EINA_UNUSED);
 static void _ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output EINA_UNUSED);
 static void _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, int edges);
+static void _ecore_wl_window_show_send(Ecore_Wl_Window *win);
+static void _ecore_wl_window_hide_send(Ecore_Wl_Window *win);
 static char *_ecore_wl_window_id_str_get(unsigned int win_id);
 static void _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface, int32_t width, int32_t height,struct wl_array *states, uint32_t serial);
 static void _ecore_xdg_handle_surface_delete(void *data, struct xdg_surface *xdg_surface);
@@ -449,6 +451,8 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
       default:
         break;
      }
+
+   _ecore_wl_window_show_send(win);
 }
 
 EAPI void 
@@ -457,6 +461,8 @@ ecore_wl_window_hide(Ecore_Wl_Window *win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
+
+   _ecore_wl_window_hide_send(win);
 
    if (win->xdg_surface) xdg_surface_destroy(win->xdg_surface);
    win->xdg_surface = NULL;
@@ -1224,6 +1230,40 @@ _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, int edges)
    ev->h = h;
    ev->edges = edges;
    ecore_event_add(ECORE_WL_EVENT_WINDOW_CONFIGURE, ev, NULL, NULL);
+}
+
+static void
+_ecore_wl_window_show_send(Ecore_Wl_Window *win)
+{
+   Ecore_Wl_Event_Window_Show *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Window_Show)))) return;
+   ev->win = win->id;
+   if (win->parent)
+       ev->parent_win = win->parent->id;
+   else
+       ev->parent_win = 0;
+   ev->event_win = win->id;
+   ecore_event_add(ECORE_WL_EVENT_WINDOW_SHOW, ev, NULL, NULL);
+}
+
+static void
+_ecore_wl_window_hide_send(Ecore_Wl_Window *win)
+{
+   Ecore_Wl_Event_Window_Hide *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Window_Hide)))) return;
+   ev->win = win->id;
+   if (win->parent)
+       ev->parent_win = win->parent->id;
+   else
+       ev->parent_win = 0;
+   ev->event_win = win->id;
+   ecore_event_add(ECORE_WL_EVENT_WINDOW_HIDE, ev, NULL, NULL);
 }
 
 static char *
