@@ -258,9 +258,29 @@ _elua_gettext_bind_textdomain(lua_State *L)
 #endif
 }
 
+static int
+_elua_get_message_language(lua_State *L)
+{
+   const char *e;
+   e = getenv("LANGUAGE");
+   if (e && e[0]) goto success;
+   e = getenv("LC_ALL");
+   if (e && e[0]) goto success;
+   e = getenv("LC_MESSAGES");
+   if (e && e[0]) goto success;
+   e = getenv("LANG");
+   if (e && e[0]) goto success;
+   lua_pushnil(L);
+   return 1;
+success:
+   lua_pushstring(L, e);
+   return 1;
+};
+
 const luaL_reg gettextlib[] =
 {
    { "bind_textdomain", _elua_gettext_bind_textdomain },
+   { "get_message_language", _elua_get_message_language },
    { NULL, NULL }
 };
 

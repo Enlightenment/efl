@@ -7,7 +7,6 @@ local M = {}
 local gettext = ...
 
 local bind_textdomain         = gettext.bind_textdomain
-local bind_textdomain_codeset = gettext.bind_textdomain_codeset
 local dgettext                = gettext.dgettext
 local dngettext               = gettext.dngettext
 
