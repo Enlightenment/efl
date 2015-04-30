@@ -140,8 +140,10 @@ _ecore_drm_launcher_device_open_no_pending(const char *device, int flags)
    if (logind)
      {
         fd = _ecore_drm_logind_device_open_no_pending(device);
-        if ((fd = _ecore_drm_launcher_device_flags_set(fd, flags)) < 0)
+        if (fd < 0) return -1;
+        if (_ecore_drm_launcher_device_flags_set(fd, flags) < 0)
           {
+             close(fd);
              _ecore_drm_logind_device_close(device);
              return -1;
           }
