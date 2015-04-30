@@ -288,7 +288,7 @@ _elua_get_localeconv(lua_State *L)
    lua_setfield(L, -2, #name);
 
 #define ELUA_LCF_C(name) \
-   lua_pushinteger(L, (int)lc->name); \
+   lua_pushinteger(L, (lc->name == CHAR_MAX) ? -1 : (int)lc->name); \
    lua_setfield(L, -2, #name);
 
    ELUA_LCF_S(decimal_point);
