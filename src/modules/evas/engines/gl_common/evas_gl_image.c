@@ -55,6 +55,7 @@ _evas_gl_image_cache_trim(Evas_Engine_GL_Context *gc)
      {
         Evas_GL_Image *im2;
         Eina_List *l = NULL;
+        Eina_Bool removed = EINA_FALSE;
 
         EINA_LIST_REVERSE_FOREACH(gc->shared->images, l, im2)
           {
@@ -66,11 +67,14 @@ _evas_gl_image_cache_trim(Evas_Engine_GL_Context *gc)
                   im2->gc->shared->images_size -= (im2->csize);
                   evas_gl_common_image_free(im2);
                   l = NULL;
+                  removed = EINA_TRUE;
                   break;
                }
           }
-        if (!gc->shared->images)
+
+        if (!removed || !gc->shared->images)
           {
+             ERR("Preventing infinite loop.");
 //             printf("EEK %i > %i, no imgs\n",
 //                    gc->shared->images_size, size);
              break;
