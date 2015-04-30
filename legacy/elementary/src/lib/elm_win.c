@@ -196,6 +196,12 @@ struct _Elm_Win_Data
 
    void *trap_data;
 
+   struct
+     {
+        Ecore_Animator *obj;
+        unsigned short wants;
+     } animator;
+
    double       aspect;
    int          size_base_w, size_base_h;
    int          size_step_w, size_step_h;
@@ -3059,6 +3065,59 @@ _accel_is_gl(void)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_animator_tick_cb(void *_obj)
+{
+   Elm_Win *obj = _obj;
+   eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_ANIMATOR_TICK, NULL));
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_cb_added(void *_data,
+          Eo *obj,
+          const Eo_Event_Description *desc EINA_UNUSED,
+          void *event_info)
+{
+   const Eo_Callback_Array_Item *event = event_info;
+   Elm_Win_Data *data = _data;
+
+   if (event->desc == ELM_WIN_EVENT_ANIMATOR_TICK)
+     {
+        data->animator.wants++;
+        if (data->animator.wants == 1)
+          {
+             data->animator.obj = eo_add(ECORE_ANIMATOR_CLASS, obj,
+                   ecore_animator_constructor(_animator_tick_cb, obj));
+          }
+     }
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+_cb_deled(void *_data,
+          Eo *obj EINA_UNUSED,
+          const Eo_Event_Description *desc EINA_UNUSED,
+          void *event_info)
+{
+   const Eo_Callback_Array_Item *event = event_info;
+   Elm_Win_Data *data = _data;
+
+   if (event->desc == ELM_WIN_EVENT_ANIMATOR_TICK)
+     {
+        data->animator.wants--;
+        if (data->animator.wants == 0)
+          {
+             eo_del(data->animator.obj);
+             data->animator.obj = NULL;
+          }
+     }
+
+   return EO_CALLBACK_CONTINUE;
+}
+
 EOLIAN static void
 _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type type)
 {
@@ -3635,6 +3694,9 @@ _elm_win_constructor(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type t
      }
 
    evas_object_show(sd->edje);
+
+   eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_ADD, _cb_added, sd),
+         eo_event_callback_add(EO_EV_CALLBACK_DEL, _cb_deled, sd));
 }
 
 EOLIAN static void
