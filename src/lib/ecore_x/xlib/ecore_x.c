@@ -1892,7 +1892,7 @@ _ecore_x_window_key_grab_internal(Ecore_X_Window win,
    for (i = 0; i < 8; i++)
      {
         XGrabKey(_ecore_x_disp, keycode, m | locks[i],
-                 win, False, GrabModeSync, GrabModeAsync);
+                 win, False, GrabModeAsync, GrabModeAsync);
         if (_ecore_xlib_sync) ecore_x_sync();
      }
 }
