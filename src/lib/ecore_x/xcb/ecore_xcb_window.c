@@ -1861,7 +1861,7 @@ ecore_x_window_key_grab(Ecore_X_Window win,
 
    for (i = 0; i < 8; i++)
      xcb_grab_key(_ecore_xcb_conn, 0, win, m | locks[i],
-                  keycode, XCB_GRAB_MODE_SYNC, XCB_GRAB_MODE_ASYNC);
+                  keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
    _ecore_xcb_key_grabs_num++;
    t = realloc(_ecore_xcb_key_grabs,
                _ecore_xcb_key_grabs_num * sizeof(Ecore_X_Window));
