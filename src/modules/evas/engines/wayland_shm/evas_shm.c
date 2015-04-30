@@ -408,7 +408,6 @@ void
 _evas_shm_surface_swap(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int count)
 {
    Shm_Leaf *leaf = NULL;
-   int i = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -421,7 +420,9 @@ _evas_shm_surface_swap(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int
         return;
      }
 
-   DBG("Current Leaf %d", (int)(leaf - &surface->leaf[0]));
+   /* DBG("Current Leaf %d", (int)(leaf - &surface->leaf[0])); */
+
+   surface->last_buff = surface->curr_buff;
 
    wl_surface_attach(surface->surface, leaf->data->buffer, 0, 0);
 
@@ -443,6 +444,7 @@ _evas_shm_surface_swap(Shm_Surface *surface, Eina_Rectangle *rects, unsigned int
    surface->dx = 0;
    surface->dy = 0;
    surface->redraw = EINA_TRUE;
+   surface->mapped = EINA_TRUE;
 }
 
 void *
@@ -468,7 +470,7 @@ _evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h)
 
    if (!leaf)
      {
-        WRN("All buffers held by server");
+        /* WRN("All buffers held by server"); */
         return NULL;
      }
 
@@ -477,7 +479,6 @@ _evas_shm_surface_data_get(Shm_Surface *surface, int *w, int *h)
    if (w) *w = leaf->w;
    if (h) *h = leaf->h;
 
-   surface->last_buff = surface->curr_buff;
    surface->curr_buff = (int)(leaf - &surface->leaf[0]);
 
    return leaf->data->map;

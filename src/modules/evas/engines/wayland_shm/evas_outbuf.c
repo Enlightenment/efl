@@ -257,27 +257,29 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode
 Render_Engine_Swap_Mode 
 _evas_outbuf_swapmode_get(Outbuf *ob)
 {
-   int i = 0;
+   int i = 0, n = 0, count = 0, ret = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   i = (ob->surface->last_buff - ob->surface->curr_buff + 
-        (ob->surface->last_buff > ob->surface->last_buff ? 
-            0 : ob->surface->num_buff)) % ob->surface->num_buff;
+   if (!ob->surface->mapped) return MODE_FULL;
 
-   switch (i)
+   for (; i < ob->surface->num_buff; i++)
      {
-      case 0:
-        return MODE_COPY;
-      case 1:
-        return MODE_DOUBLE;
-      case 2:
-        return MODE_TRIPLE;
-      case 3:
-        return MODE_QUADRUPLE;
-      default:
-        return MODE_FULL;
+        n = (ob->surface->num_buff + ob->surface->curr_buff - (i)) % ob->surface->num_buff;
+        if (ob->surface->leaf[n].busy) count++;
      }
+
+   if (count == ob->surface->num_buff) ret = MODE_FULL;
+   else if (count == 0) ret = MODE_COPY;
+   else if (count == 1) ret = MODE_DOUBLE;
+   else if (count == 2) ret = MODE_TRIPLE;
+   else if (count == 3) ret = MODE_QUADRUPLE;
+   else ret = MODE_FULL;
+
+   /* DBG("SWAPMODE: %d (0=FULL, 1=COPY, 2=DOUBLE, 3=TRIPLE, 4=QUAD", ret); */
+   /* DBG("\tBusy: %d", count); */
+
+   return ret;
 }
 
 int 
