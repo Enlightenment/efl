@@ -788,7 +788,7 @@ eo_lexer_token_to_str(int token, char *buf)
      {
         memcpy(buf, "<eof>", 6);
      }
-   if (token < START_CUSTOM)
+   else if (token < START_CUSTOM)
      {
         assert((unsigned char)token == token);
         if (iscntrl(token))
