@@ -260,7 +260,7 @@ _scale_cb(const Evas_Object *obj EINA_UNUSED,
        (zoom >= (int)(sizeof(_osm_scale_meter) / sizeof(_osm_scale_meter[0])))
       )
      return 0;
-   return _osm_scale_meter[zoom] / cos(lat * ELM_PI / 180.0);
+   return _osm_scale_meter[zoom] * cos(lat * ELM_PI / 180.0);
 }
 
 const Source_Tile src_tiles[] =
