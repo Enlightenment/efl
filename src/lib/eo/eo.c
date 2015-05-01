@@ -8,6 +8,8 @@
 
 #include <Eina.h>
 
+#define EO_BASE_PROTECTED
+
 #include "Eo.h"
 #include "eo_ptr_indirection.h"
 #include "eo_private.h"

@@ -1,6 +1,8 @@
 #ifndef _EO_PRIVATE_H
 #define _EO_PRIVATE_H
 
+#define EO_BASE_PROTECTED
+
 #include <Eo.h>
 #include <Eina.h>
 
