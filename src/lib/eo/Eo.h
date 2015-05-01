@@ -1018,6 +1018,11 @@ struct _Eo_Callback_Array_Item
    Eo_Event_Cb func; /**< The callback function. */
 };
 
+/**
+ * Helper for creating global callback arrays.
+ * The problem is on windows where you can't declare a static array with
+ * external symbols in it, because the addresses are only known at runtime.
+ */
 #define EO_CALLBACKS_ARRAY_DEFINE(Name, ...)                            \
   static Eo_Callback_Array_Item *                                       \
   Name(void)                                                            \
@@ -1068,7 +1073,7 @@ struct _Eo_Callback_Array_Item
  * @}
  */
 
-/* XXX: Remove, for compat with the old names. */
+/* XXX: Deprecated, here for compat, DO NOT USE */
 #define EO_EV_CALLBACK_ADD EO_BASE_EVENT_CALLBACK_ADD
 #define EO_EV_CALLBACK_DEL EO_BASE_EVENT_CALLBACK_DEL
 #define EO_EV_DEL EO_BASE_EVENT_DEL
