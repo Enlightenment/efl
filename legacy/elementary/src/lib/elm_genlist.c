@@ -2461,7 +2461,7 @@ _item_multi_select_down(Elm_Genlist_Data *sd)
    while ((eo_next))
      {
         ELM_GENLIST_ITEM_DATA_GET(eo_next, next);
-        if ((_is_no_select(next)) && (!elm_object_item_disabled_get(eo_next)))
+        if ((!_is_no_select(next)) && (!elm_object_item_disabled_get(eo_next)))
           break;
         eo_next = EO_OBJ(ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next));
      }
