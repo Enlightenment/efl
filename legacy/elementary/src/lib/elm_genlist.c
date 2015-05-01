@@ -2650,7 +2650,7 @@ _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
           return EINA_FALSE;
 
         while ((next) &&
-               (!eo_do_ret(EO_OBJ(next), tmp, elm_wdg_item_disabled_get())))
+               (eo_do_ret(EO_OBJ(next), tmp, elm_wdg_item_disabled_get())))
           next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
      }
    else
