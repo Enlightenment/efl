@@ -912,11 +912,21 @@ eng_image_orient_set(void *data, void *image, Evas_Image_Orient orient)
    im_new = evas_gl_common_image_new(im->gc, im->w, im->h, im->alpha, im->cs.space);
    if (!im_new) return im;
 
-   *im_new = *im;
+   im_new->load_opts = im->load_opts;
+   im_new->scaled = im->scaled;
+   im_new->scale_hint = im->scale_hint;
+   im_new->content_hint = im->content_hint;
+   im_new->csize = im->csize;
+   im_new->alpha = im->alpha;
+   im_new->tex_only = im->tex_only;
+   im_new->locked = im->locked;
+   im_new->direct = im->direct;
+   im_new->cached = EINA_FALSE;
 
+   im_new->orient = orient;
+   im_new->tex = im->tex;
    im_new->tex->references++;
    im_new->tex->pt->references++;
-   im_new->orient = orient;
 
    evas_gl_common_image_free(im);
    return im_new;
