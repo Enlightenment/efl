@@ -124,8 +124,6 @@ typedef Eo Eo_Class;
  */
 typedef short Eo_Callback_Priority;
 
-#ifdef EFL_BETA_API_SUPPORT
-
 /**
  * @var _eo_class_creation_lock
  * This variable is used for locking purposes in the class_get function
@@ -1083,8 +1081,6 @@ struct _Eo_Callback_Array_Item
 #include "eo_base.eo.h"
 
 #define EO_CLASS EO_BASE_CLASS
-
-#endif
 
 /**
  * @}
