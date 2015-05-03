@@ -233,7 +233,7 @@ _block_area_clicked_cb(void *data,
                        const char *emission EINA_UNUSED,
                        const char *source EINA_UNUSED)
 {
-   evas_object_smart_callback_call(data, SIG_BLOCK_CLICKED, NULL);
+   eo_do(data, eo_event_callback_call(ELM_NOTIFY_EVENT_BLOCK_CLICKED, NULL));
 }
 
 EOLIAN static void
@@ -273,7 +273,7 @@ _timer_cb(void *data)
      {
         evas_object_hide(obj);
      }
-   evas_object_smart_callback_call(obj, SIG_TIMEOUT, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_NOTIFY_EVENT_TIMEOUT, NULL));
 
 end:
    return ECORE_CALLBACK_CANCEL;

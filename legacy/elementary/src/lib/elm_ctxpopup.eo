@@ -265,10 +265,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      language,changed;
-      access,changed;
-      focused;
-      unfocused;
+      dismissed;
    }
 
 }

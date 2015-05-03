@@ -722,6 +722,24 @@ class Elm.Gengrid (Elm.Layout, Elm_Interface_Scrollable,
       access,changed;
       focused;
       unfocused;
+      realized;
+      unrealized;
+      index,update;
+      scroll,page,changed;
+      edge,bottom;
+      edge,top;
+      edge,right;
+      edge,left;
+      item,focused;
+      item,unfocused;
+      item,reorder,anim,start;
+      item,reorder,anim,stop;
+      activated;
+      highlighted;
+      unhighlighted;
+      selected;
+      unselected;
+      released;
    }
 
 }

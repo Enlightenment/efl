@@ -634,6 +634,8 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
       unhighlighted;
       item,focused;
       item,unfocused;
+      item,reorder,anim,start;
+      item,reorder,anim,stop;
       language,changed;
       access,changed;
       focused;
