@@ -89,46 +89,54 @@ _elm_hoversel_elm_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
    return EINA_TRUE;
 }
 
-static void
-_on_hover_clicked(void *data,
-                  Evas_Object *obj EINA_UNUSED,
-                  void *event_info EINA_UNUSED)
+static Eina_Bool
+_on_hover_clicked(void *data EINA_UNUSED,
+                     Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    elm_hoversel_hover_end(data);
+
+   return EINA_TRUE;
 }
 
-static void
-_on_item_clicked(void *data,
-                 Evas_Object *obj EINA_UNUSED,
-                 void *event_info EINA_UNUSED)
+static Eina_Bool
+_on_item_clicked(void *data EINA_UNUSED,
+                     Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *item = data;
    Evas_Object *obj2 = WIDGET(item);
    Elm_Object_Item *eo_it = EO_OBJ(item);
 
    if (item->func) item->func((void *)WIDGET_ITEM_DATA_GET(eo_it), obj2, eo_it);
-   evas_object_smart_callback_call(obj2, SIG_SELECTED, eo_it);
+   eo_do(obj2, eo_event_callback_call(ELM_HOVERSEL_EVENT_SELECTED, eo_it));
    elm_hoversel_hover_end(obj2);
+
+   return EINA_TRUE;
 }
 
-static void
-_item_focused_cb(void *data,
-                 Evas_Object *obj EINA_UNUSED,
-                 void *event_info EINA_UNUSED)
+static Eina_Bool
+_item_focused_cb(void *data EINA_UNUSED,
+                     Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
+                     void *event_info EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *it = data;
 
-   evas_object_smart_callback_call(WIDGET(it), SIG_ITEM_FOCUSED, EO_OBJ(it));
+   eo_do(WIDGET(it), eo_event_callback_call(ELM_HOVERSEL_EVENT_ITEM_FOCUSED, EO_OBJ(it)));
+
+   return EINA_TRUE;
 }
 
-static void
-_item_unfocused_cb(void *data,
-                   Evas_Object *obj EINA_UNUSED,
+static Eina_Bool
+_item_unfocused_cb(void *data EINA_UNUSED,
+                   Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                    void *event_info EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *it = data;
 
-   evas_object_smart_callback_call(WIDGET(it), SIG_ITEM_UNFOCUSED, EO_OBJ(it));
+   eo_do(WIDGET(it), eo_event_callback_call(ELM_HOVERSEL_EVENT_ITEM_UNFOCUSED, EO_OBJ(it)));
+
+   return EINA_TRUE;
 }
 
 static void
@@ -162,8 +170,8 @@ _activate(Evas_Object *obj)
 
    elm_object_style_set(sd->hover, buf);
 
-   evas_object_smart_callback_add
-     (sd->hover, "clicked", _on_hover_clicked, obj);
+   eo_do(sd->hover, eo_event_callback_add
+     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_hover_clicked, obj));
    elm_hover_target_set(sd->hover, obj);
 
    /* hover's content */
@@ -200,10 +208,12 @@ _activate(Evas_Object *obj)
         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_box_pack_end(bx, bt);
-        evas_object_smart_callback_add(bt, "clicked", _on_item_clicked, item);
+        eo_do(bt, eo_event_callback_add
+          (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_item_clicked, item));
         evas_object_show(bt);
-        evas_object_smart_callback_add(bt, SIG_LAYOUT_FOCUSED, _item_focused_cb, item);
-        evas_object_smart_callback_add(bt, SIG_LAYOUT_UNFOCUSED, _item_unfocused_cb, item);
+        eo_do(bt,
+              eo_event_callback_add(ELM_LAYOUT_EVENT_FOCUSED, _item_focused_cb, item),
+              eo_event_callback_add(ELM_LAYOUT_EVENT_UNFOCUSED, _item_unfocused_cb, item));
      }
 
    if (sd->horizontal)
@@ -213,16 +223,18 @@ _activate(Evas_Object *obj)
      elm_object_part_content_set(sd->hover, elm_hover_best_content_location_get
                                    (sd->hover, ELM_HOVER_AXIS_VERTICAL), bx);
 
-   evas_object_smart_callback_call(obj, SIG_EXPANDED, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_HOVERSEL_EVENT_EXPANDED, NULL));
    evas_object_show(sd->hover);
 }
 
-static void
-_on_clicked(void *data,
-            Evas_Object *obj EINA_UNUSED,
+static Eina_Bool
+_on_clicked(void *data EINA_UNUSED,
+            Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
             void *event_info EINA_UNUSED)
 {
    _activate(data);
+
+   return EINA_TRUE;
 }
 
 static void
@@ -302,7 +314,8 @@ _elm_hoversel_evas_object_smart_add(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
    elm_widget_sub_object_parent_add(obj);
 
-   evas_object_smart_callback_add(obj, "clicked", _on_clicked, obj);
+   eo_do(obj, eo_event_callback_add(
+         EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_clicked, obj));
 
    //What are you doing here?
    eo_do(obj, elm_obj_widget_theme_apply());
@@ -433,7 +446,7 @@ _elm_hoversel_hover_end(Eo *obj, Elm_Hoversel_Data *sd)
      }
    ELM_SAFE_FREE(sd->hover, evas_object_del);
 
-   evas_object_smart_callback_call(obj, SIG_DISMISSED, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_HOVERSEL_EVENT_DISMISSED, NULL));
 }
 
 EOLIAN static Eina_Bool
