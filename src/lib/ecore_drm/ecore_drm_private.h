@@ -140,6 +140,7 @@ struct _Ecore_Drm_Output
 
    Ecore_Drm_Backlight *backlight;   
 
+   Eina_Bool connected : 1;
    Eina_Bool enabled : 1;
    Eina_Bool cloned : 1;
    Eina_Bool need_repaint : 1;

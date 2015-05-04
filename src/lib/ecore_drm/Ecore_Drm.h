@@ -788,6 +788,18 @@ EAPI const Eina_List *ecore_drm_devices_get(void);
  */
 EAPI void ecore_drm_screen_size_range_get(Ecore_Drm_Device *dev, int *minw, int *minh, int *maxw, int *maxh);
 
+/**
+ * Get if a given output is connected
+ *
+ * @param output The Ecore_Drm_Output to get the connected status of
+ *
+ * @return EINA_TRUE if output is connected, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI Eina_Bool ecore_drm_output_connected_get(Ecore_Drm_Output *output);
+
 #ifdef __cplusplus
 }
 #endif

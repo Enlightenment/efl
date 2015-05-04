@@ -754,12 +754,14 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
         if (!(conn = drmModeGetConnector(dev->drm.fd, res->connectors[i])))
           continue;
 
-        if (conn->connection != DRM_MODE_CONNECTED) goto next;
+        /* if (conn->connection != DRM_MODE_CONNECTED) goto next; */
 
         /* create output for this connector */
         if (!(output =
               _ecore_drm_output_create(dev, res, conn, x, y, EINA_FALSE)))
           goto next;
+
+        output->connected = (conn->connection == DRM_MODE_CONNECTED);
 
         x += output->current_mode->width;
 
@@ -1098,4 +1100,12 @@ ecore_drm_output_name_get(Ecore_Drm_Output *output)
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
 
    return strdup(output->name);
+}
+
+EAPI Eina_Bool
+ecore_drm_output_connected_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+
+   return output->connected;
 }
