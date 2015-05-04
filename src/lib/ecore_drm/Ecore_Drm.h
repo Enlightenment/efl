@@ -800,6 +800,18 @@ EAPI void ecore_drm_screen_size_range_get(Ecore_Drm_Device *dev, int *minw, int 
  */
 EAPI Eina_Bool ecore_drm_output_connected_get(Ecore_Drm_Output *output);
 
+/**
+ * Get the connector type of a given Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to get the connector type of
+ *
+ * @return An unsigned integer representing the type of connector for this output
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI unsigned int ecore_drm_output_connector_type_get(Ecore_Drm_Output *output);
+
 #ifdef __cplusplus
 }
 #endif

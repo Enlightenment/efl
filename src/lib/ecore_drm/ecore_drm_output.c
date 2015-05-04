@@ -1110,3 +1110,11 @@ ecore_drm_output_connected_get(Ecore_Drm_Output *output)
 
    return output->connected;
 }
+
+EAPI unsigned int
+ecore_drm_output_connector_type_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);
+
+   return output->conn_type;
+}
