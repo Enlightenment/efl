@@ -812,6 +812,18 @@ EAPI Eina_Bool ecore_drm_output_connected_get(Ecore_Drm_Output *output);
  */
 EAPI unsigned int ecore_drm_output_connector_type_get(Ecore_Drm_Output *output);
 
+/**
+ * Get if a given output has a backlight
+ *
+ * @param output The Ecore_Drm_Output to get the backlight of
+ *
+ * @return EINA_TRUE if this output has a backlight, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI Eina_Bool ecore_drm_output_backlight_get(Ecore_Drm_Output *output);
+
 #ifdef __cplusplus
 }
 #endif

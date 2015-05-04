@@ -1118,3 +1118,10 @@ ecore_drm_output_connector_type_get(Ecore_Drm_Output *output)
 
    return output->conn_type;
 }
+
+EAPI Eina_Bool
+ecore_drm_output_backlight_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+   return (output->backlight != NULL);
+}
