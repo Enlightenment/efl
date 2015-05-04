@@ -160,9 +160,12 @@ _ecore_drm_output_edid_find(Ecore_Drm_Output *output, drmModeConnector *conn)
                                            conn->prop_values[i]);
           }
         drmModeFreeProperty(prop);
+        if (blob) break;
      }
 
    if (!blob) return;
+
+   output->edid_blob = (char *)eina_memdup(blob->data, blob->length, 1);
 
    ret = _ecore_drm_output_edid_parse(output, blob->data, blob->length);
    if (!ret)
@@ -1124,4 +1127,13 @@ ecore_drm_output_backlight_get(Ecore_Drm_Output *output)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
    return (output->backlight != NULL);
+}
+
+EAPI char *
+ecore_drm_output_edid_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->edid_blob, NULL);
+
+   return strdup(output->edid_blob);
 }

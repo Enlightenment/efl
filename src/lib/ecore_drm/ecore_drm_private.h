@@ -131,6 +131,8 @@ struct _Ecore_Drm_Output
    Ecore_Drm_Output_Mode *current_mode;
    Eina_List *modes;
 
+   char *edid_blob;
+
    struct
      {
         char eisa[13];

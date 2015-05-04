@@ -824,6 +824,18 @@ EAPI unsigned int ecore_drm_output_connector_type_get(Ecore_Drm_Output *output);
  */
 EAPI Eina_Bool ecore_drm_output_backlight_get(Ecore_Drm_Output *output);
 
+/**
+ * Get the edid of a given output
+ *
+ * @param output The Ecore_Drm_Output to get the backlight of
+ *
+ * @return A string representing the edid
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI char *ecore_drm_output_edid_get(Ecore_Drm_Output *output);
+
 #ifdef __cplusplus
 }
 #endif
