@@ -16,7 +16,7 @@ _evas_outbuf_cb_pageflip(void *data)
 
    if (!(ob = data)) return;
 
-   DBG("Outbuf Pagelip Done");
+   /* DBG("Outbuf Pagelip Done"); */
 
    if ((fb = ob->priv.buffer[ob->priv.curr]))
      fb->pending_flip = EINA_FALSE;
