@@ -80,6 +80,7 @@ _get(void *data, Evas_Object *obj)
    //elm_photocam_file_set(photo, data);
    //elm_photocam_zoom_mode_set(photo, ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT);
 
+   printf("_get (item data: '%s')\n", (char*)data);
    Evas_Object *photo = elm_image_add(obj);
    elm_image_file_set(photo, data, NULL);
    elm_image_fill_outside_set(photo, EINA_FALSE);
@@ -88,9 +89,26 @@ _get(void *data, Evas_Object *obj)
 }
 
 static void
-_slide_transition(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_del(void *data, Evas_Object *obj EINA_UNUSED)
+{
+   printf("_del (item data: '%s')\n", (char*)data);
+}
+
+
+static void
+_changed_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Elm_Object_Item *slide_it = (Elm_Object_Item *) event_info;
+   printf("CHANGED (item data: '%s')\n",
+          (char*)elm_object_item_data_get(slide_it));
+}
+
+static void
+_transition_end_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *slide_it = (Elm_Object_Item *) event_info;
+   printf("TRANSITION,END (item data: '%s')\n",
+          (char*)elm_object_item_data_get(slide_it));
    if (data == slide_it)
      printf("Reaches to End of slides\n");
 }
@@ -123,20 +141,21 @@ test_slideshow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    slideshow = elm_slideshow_add(win);
    elm_slideshow_loop_set(slideshow, EINA_TRUE);
    evas_object_size_hint_weight_set(slideshow, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_smart_callback_add(slideshow, "changed", _changed_cb, NULL);
    elm_win_resize_object_add(win, slideshow);
    evas_object_show(slideshow);
 
    itc.func.get = _get;
-   itc.func.del = NULL;
+   itc.func.del = _del;
 
    for (i = 0; imgs[i]; i++)
      {
         const char *img = eina_stringshare_printf("%s/images/%s", elm_app_data_dir_get(), imgs[i]);
-        printf("Img : %s\n", img);
         slide_last_it = elm_slideshow_item_add(slideshow, &itc, img);
      }
 
-   evas_object_smart_callback_add(slideshow, "transition,end", _slide_transition, slide_last_it);
+   evas_object_smart_callback_add(slideshow, "transition,end",
+                                  _transition_end_cb, slide_last_it);
 
    notify = elm_notify_add(win);
    elm_notify_align_set(notify, 0.5, 1.0);

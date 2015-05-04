@@ -270,7 +270,7 @@ _on_slideshow_end(void *data,
    elm_layout_signal_emit(data, "anim,end", "slideshow");
 
    if (emission != NULL)
-     evas_object_smart_callback_call(data, SIG_TRANSITION_END, sd->current);
+     evas_object_smart_callback_call(data, SIG_TRANSITION_END, EO_OBJ(sd->current));
 }
 
 static Eina_Bool
@@ -475,7 +475,7 @@ _elm_slideshow_item_show(Eo *eo_item EINA_UNUSED, Elm_Slideshow_Item_Data *item)
 
    sd->previous = sd->current;
    sd->current = next;
-   evas_object_smart_callback_call(WIDGET(item), SIG_CHANGED, sd->current);
+   evas_object_smart_callback_call(WIDGET(item), SIG_CHANGED, EO_OBJ(sd->current));
 }
 
 EOLIAN static void
@@ -512,7 +512,7 @@ _elm_slideshow_next(Eo *obj, Elm_Slideshow_Data *sd)
 
    sd->previous = sd->current;
    sd->current = next;
-   evas_object_smart_callback_call(obj, SIG_CHANGED, sd->current);
+   evas_object_smart_callback_call(obj, SIG_CHANGED, EO_OBJ(sd->current));
 }
 
 EOLIAN static void
@@ -549,7 +549,7 @@ _elm_slideshow_previous(Eo *obj, Elm_Slideshow_Data *sd)
 
    sd->previous = sd->current;
    sd->current = prev;
-   evas_object_smart_callback_call(obj, SIG_CHANGED, sd->current);
+   evas_object_smart_callback_call(obj, SIG_CHANGED, EO_OBJ(sd->current));
 }
 
 EOLIAN static const Eina_List*
