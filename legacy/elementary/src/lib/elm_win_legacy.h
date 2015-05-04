@@ -1,3 +1,5 @@
+#include "elm_win.eo.legacy.h"
+
 /**
  * Adds a window object. If this is the first window created, pass NULL as
  * @p parent.
@@ -225,5 +227,3 @@ EAPI void                  elm_win_wm_rotation_preferred_rotation_set(const Evas
  * this is definitely not the function you are looking for.
  */
 EAPI Ecore_Window          elm_win_window_id_get(const Evas_Object *obj);
-
-#include "elm_win.eo.legacy.h"
