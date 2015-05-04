@@ -17,7 +17,7 @@ _ecore_drm_device_cb_page_flip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSE
 {
    Ecore_Drm_Pageflip_Callback *cb;
 
-   DBG("Drm Page Flip Event");
+   /* DBG("Drm Page Flip Event"); */
 
    if (!(cb = data)) return;
 
@@ -58,7 +58,7 @@ _ecore_drm_device_cb_vblank(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, 
    Ecore_Drm_Sprite *sprite;
    Ecore_Drm_Output *output;
 
-   DBG("Drm VBlank Event");
+   /* DBG("Drm VBlank Event"); */
 
    if (!(sprite = data)) return;
 
@@ -79,7 +79,7 @@ _ecore_drm_device_cb_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 
    if (!(dev = data)) return ECORE_CALLBACK_RENEW;
 
-   DBG("Drm Device Event");
+   /* DBG("Drm Device Event"); */
 
    drmHandleEvent(dev->drm.fd, &dev->drm_ctx);
 
