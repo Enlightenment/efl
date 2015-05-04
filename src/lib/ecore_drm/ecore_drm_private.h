@@ -117,6 +117,7 @@ struct _Ecore_Drm_Output
    Ecore_Drm_Device *dev;
    unsigned int crtc_id;
    unsigned int conn_id;
+   unsigned int conn_type;
    drmModeCrtcPtr crtc;
    drmModePropertyPtr dpms;
 

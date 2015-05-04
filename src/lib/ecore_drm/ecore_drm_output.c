@@ -419,6 +419,7 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    output->model = eina_stringshare_add("UNKNOWN");
    output->name = eina_stringshare_add("UNKNOWN");
 
+   output->conn_type = conn->connector_type;
    if (conn->connector_type < ALEN(conn_types))
      type = conn_types[conn->connector_type];
    else
