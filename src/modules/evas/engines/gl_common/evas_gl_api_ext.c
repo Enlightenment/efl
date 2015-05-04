@@ -120,7 +120,7 @@ _evgl_egl_display_get(const char *function)
 
    if (!rsc->current_eng)
      {
-        ERR("%s: Unable to retrieve Current Engine", function);
+        ERR("%s: no current engine set; ensure you've called evas_gl_make_current()", function);
         evas_gl_common_error_set(NULL, EVAS_GL_NOT_INITIALIZED);
         return EGL_NO_DISPLAY;
      }
