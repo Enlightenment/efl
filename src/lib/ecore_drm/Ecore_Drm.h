@@ -761,6 +761,20 @@ EAPI void ecore_drm_device_pointer_xy_get(Ecore_Drm_Device *dev, int *x, int *y)
  */
 EAPI const Eina_List *ecore_drm_devices_get(void);
 
+/**
+ * Get the minimum and maximum screen size range
+ *
+ * @param dev The Ecore_Drm_Device to get screen size range from
+ * @param *minw The parameter in which smallest width is stored
+ * @param *minh The parameter in which smallest height is stored
+ * @param *maxw The parameter in which largest width is stored
+ * @param *maxh The parameter in which largest height is stored
+ *
+ * @ingroup Ecore_Drm_Device_Group
+ * @since 1.15
+ */
+EAPI void ecore_drm_screen_size_range_get(Ecore_Drm_Device *dev, int *minw, int *minh, int *maxw, int *maxh);
+
 #ifdef __cplusplus
 }
 #endif

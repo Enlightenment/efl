@@ -530,3 +530,14 @@ ecore_drm_device_output_find(Ecore_Drm_Device *dev, int x, int y)
 
    return NULL;
 }
+
+EAPI void
+ecore_drm_screen_size_range_get(Ecore_Drm_Device *dev, int *minw, int *minh, int *maxw, int *maxh)
+{
+   EINA_SAFETY_ON_NULL_RETURN(dev);
+
+   if (minw) *minw = dev->min_width;
+   if (minh) *minh = dev->min_height;
+   if (maxw) *maxw = dev->max_width;
+   if (maxh) *maxh = dev->max_height;
+}
