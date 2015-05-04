@@ -4956,17 +4956,19 @@ _elm_gengrid_item_elm_interface_atspi_accessible_name_get(Eo *eo_it EINA_UNUSED,
 
         EINA_LIST_FREE(texts, key)
           {
-             char *s = it->itc->func.text_get
+             char *str_markup = it->itc->func.text_get
                 ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
 
-             s = _elm_util_mkup_to_text(s);
+             char *str_utf8 = _elm_util_mkup_to_text(str_markup);
 
-             if (s)
+             free(str_markup);
+
+             if (str_utf8)
                {
                   if (eina_strbuf_length_get(buf) > 0)
                     eina_strbuf_append(buf, ", ");
-                  eina_strbuf_append(buf, s);
-                  free(s);
+                  eina_strbuf_append(buf, str_utf8);
+                  free(str_utf8);
                }
           }
      }
