@@ -1222,6 +1222,7 @@ _ecore_evas_wl_common_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int la
    old = ee->prop.cursor.object;
    if (obj == NULL)
      {
+        ecore_wl_window_pointer_set(wdata->win, NULL, 0, 0);
         ee->prop.cursor.object = NULL;
         ee->prop.cursor.layer = 0;
         ee->prop.cursor.hot.x = 0;
