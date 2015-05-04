@@ -1091,3 +1091,11 @@ ecore_drm_output_connector_id_get(Ecore_Drm_Output *output)
 
    return output->conn_id;
 }
+
+EAPI char *
+ecore_drm_output_name_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+
+   return strdup(output->name);
+}

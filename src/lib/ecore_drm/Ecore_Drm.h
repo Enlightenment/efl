@@ -709,6 +709,19 @@ EAPI Eina_Stringshare *ecore_drm_output_model_get(Ecore_Drm_Output *output);
 EAPI Eina_Stringshare *ecore_drm_output_make_get(Ecore_Drm_Output *output);
 
 /**
+ * Get the name of Ecore_Drm_Output
+ *
+ * This function will give the name of Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to get name for
+ * @return The name. Caller should free this return.
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI char *ecore_drm_output_name_get(Ecore_Drm_Output *output);
+
+/**
  * Set the dpms level of an Ecore_Drm_Output
  *
  * This function will set the DPMS level of an Ecore_Drm_Output
