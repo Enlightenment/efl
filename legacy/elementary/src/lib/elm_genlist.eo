@@ -1,7 +1,8 @@
 import elm_general;
 
 class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
-                   Elm_Interface_Atspi_Widget_Action, Elm_Interface_Atspi_Selection)
+                   Elm_Interface_Atspi_Widget_Action, Elm_Interface_Atspi_Selection,
+                   Evas.Selectable_Interface)
 {
    eo_prefix: elm_obj_genlist;
    methods {
@@ -747,6 +748,38 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
       unfocused;
       item,focused;
       item,unfocused;
+      vbar,drag;
+      vbar,press;
+      vbar,unpress;
+      hbar,drag;
+      hbar,press;
+      hbar,unpress;
+      edge,top;
+      edge,bottom;
+      edge,left;
+      edge,right;
+      moved;
+      moved,before;
+      moved,after;
+      swipe;
+      multi,pinch,in;
+      multi,pinch,out;
+      multi,swipe,down;
+      multi,swipe,up;
+      multi,swipe,right;
+      multi,swipe,left;
+      released;
+      activated;
+      highlighted;
+      unhighlighted;
+      realized;
+      unrealized;
+      contract,request;
+      expand,request;
+      contracted;
+      expanded;
+      index,update;
+      tree,effect,finished;
    }
 
 }
