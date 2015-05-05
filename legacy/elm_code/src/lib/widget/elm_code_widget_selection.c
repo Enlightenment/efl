@@ -310,6 +310,7 @@ _selection_paste_multi(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, Elm_Co
    Elm_Code_Line *line;
    unsigned int position, newrow, remain;
    int nlpos;
+   short nllen;
    char *ptr;
 
    line = elm_code_file_line_get(code->file, row);
@@ -319,15 +320,15 @@ _selection_paste_multi(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, Elm_Co
    newrow = row;
    ptr = (char *)text;
    remain = len;
-   while ((nlpos = elm_code_text_newlinenpos(ptr, remain)) != ELM_CODE_TEXT_NOT_FOUND)
+   while ((nlpos = elm_code_text_newlinenpos(ptr, remain, &nllen)) != ELM_CODE_TEXT_NOT_FOUND)
      {
         if (newrow == row)
           _selection_paste_single(widget, pd, code, col, row, text, nlpos);
         else
           elm_code_file_line_insert(code->file, newrow, ptr, nlpos, NULL);
 
-        remain -= nlpos + 1; // TODO make this adapt to windows lengths (length param to newlinenpos)
-        ptr += nlpos + 1;
+        remain -= nlpos + nllen;
+        ptr += nlpos + nllen;
         newrow++;
      }
 
@@ -355,7 +356,7 @@ _selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data
          code = elm_code_widget_code_get(),
          elm_code_widget_cursor_position_get(&col, &row));
 
-   if (elm_code_text_newlinenpos(ev->data, ev->len) == ELM_CODE_TEXT_NOT_FOUND)
+   if (elm_code_text_newlinenpos(ev->data, ev->len, NULL) == ELM_CODE_TEXT_NOT_FOUND)
      _selection_paste_single(widget, pd, code, col, row, ev->data, ev->len - 1);
    else
      _selection_paste_multi(widget, pd, code, col, row, ev->data, ev->len - 1);

@@ -52,7 +52,7 @@ EAPI unsigned int elm_code_text_tabwidth_at_position(unsigned int position, unsi
 
 EAPI int elm_code_text_strnpos(const char *text, unsigned int length, const char *search, int offset);
 
-EAPI int elm_code_text_newlinenpos(const char *text, unsigned int length);
+EAPI int elm_code_text_newlinenpos(const char *text, unsigned int length, short *nllen);
 
 EAPI unsigned int elm_code_line_text_column_width_to_position(Elm_Code_Line *line, unsigned int length, unsigned int tabstop);
 

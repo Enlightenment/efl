@@ -220,15 +220,17 @@ elm_code_text_tabwidth_at_position(unsigned int position, unsigned int tabstop)
 }
 
 EAPI int
-elm_code_text_newlinenpos(const char *text, unsigned int length)
+elm_code_text_newlinenpos(const char *text, unsigned int length, short *nllen)
 {
    int lfpos, crpos;
    int check;
 
+   if (nllen)
+     *nllen = 1;
    lfpos = elm_code_text_strnpos(text, length, "\n", 0);
    check = length;
    if (lfpos != ELM_CODE_TEXT_NOT_FOUND)
-     check = lfpos;
+     check = lfpos + 1;
    crpos = elm_code_text_strnpos(text, check, "\r", 0);
 
    if (lfpos == ELM_CODE_TEXT_NOT_FOUND && crpos == ELM_CODE_TEXT_NOT_FOUND)
@@ -238,6 +240,9 @@ elm_code_text_newlinenpos(const char *text, unsigned int length)
      return lfpos;
    if (lfpos == ELM_CODE_TEXT_NOT_FOUND)
      return crpos;
+
+   if (nllen)
+     *nllen = 2;
    if (lfpos < crpos)
      return lfpos;
    return crpos;
