@@ -404,8 +404,8 @@ _update_hsla_from_colorbar(Evas_Object *obj, Color_Type type, double x)
    _update_colorbars(sd);
    if ((sd->mode == ELM_COLORSELECTOR_ALL) || (sd->mode == ELM_COLORSELECTOR_PICKER))
      _color_picker_init(sd);
-   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
-   evas_object_smart_callback_call(obj, SIG_CHANGED_USER, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_COLORSELECTOR_EVENT_CHANGED, NULL));
+   eo_do(obj, eo_event_callback_call(ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL));
 }
 
 static void
@@ -460,13 +460,12 @@ _colors_set(Evas_Object *obj,
      }
    if ((sd->mode == ELM_COLORSELECTOR_ALL) || (sd->mode == ELM_COLORSELECTOR_PICKER))
      _color_picker_init(sd);
-   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_COLORSELECTOR_EVENT_CHANGED, NULL));
 }
 
-static void
+static Eina_Bool
 _spinner_changed_cb(void *data,
-                    Evas_Object *obj,
-                    void *event_info EINA_UNUSED)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Colorselector_Data *sd = data;
    Evas_Object *parent;
@@ -494,7 +493,9 @@ _spinner_changed_cb(void *data,
          break;
      }
    evas_object_data_del(obj, "_changed");
-   evas_object_smart_callback_call(obj, SIG_CHANGED_USER, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL));
+
+   return EINA_TRUE;
 }
 
 #ifdef HAVE_ELEMENTARY_X
@@ -523,8 +524,9 @@ _x11_elm_widget_xwin_get(const Evas_Object *obj)
    return xwin;
 }
 
-static void
-_start_grab_pick_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+static Eina_Bool
+_start_grab_pick_cb(void *data,
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *o = data;
 
@@ -538,6 +540,8 @@ _start_grab_pick_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 
    ecore_x_keyboard_grab(sd->grab.xroot);
    ecore_x_pointer_grab(sd->grab.xroot);
+
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -581,7 +585,7 @@ _mouse_up_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
    b = pixels[17 * 8 + 8] & 0xFF;
 
    _colors_set(o, r, g, b, 0xFF);
-   evas_object_smart_callback_call(o, SIG_CHANGED_USER, NULL);
+   eo_do(o, eo_event_callback_call(ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL));
 
    return EINA_TRUE;
 }
@@ -723,7 +727,8 @@ _create_colorpicker(Evas_Object *obj)
         sd->button = elm_button_add(sd->picker);
         elm_object_style_set(sd->button, style);
         elm_object_text_set(sd->button, E_("Pick a color"));
-        evas_object_smart_callback_add(sd->button, "clicked", _start_grab_pick_cb, obj);
+        eo_do(sd->button, eo_event_callback_add
+              (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _start_grab_pick_cb, obj));
         elm_box_pack_end(bx, sd->button);
         evas_object_show(sd->button);
      }
@@ -746,7 +751,8 @@ _create_colorpicker(Evas_Object *obj)
         spinner = elm_spinner_add(sd->picker);
         elm_object_style_set(spinner, style);
         evas_object_data_set(spinner, "parent", obj);
-        evas_object_smart_callback_add(spinner, "changed", _spinner_changed_cb, sd);
+        eo_do(spinner, eo_event_callback_add
+              (ELM_COLORSELECTOR_EVENT_CHANGED, _spinner_changed_cb, sd));
         elm_spinner_editable_set(spinner, EINA_TRUE);
         elm_spinner_interval_set(spinner, 0.1);
         elm_spinner_min_max_set(spinner, 0, 255);
@@ -816,10 +822,9 @@ _colorbar_cb(void *data,
    sd->focused = ELM_COLORSELECTOR_COMPONENTS;
 }
 
-static void
+static Eina_Bool
 _button_clicked_cb(void *data,
-                   Evas_Object *obj,
-                   void *event_info EINA_UNUSED)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Color_Bar_Data *cb_data = data;
    double x, y, step;
@@ -859,12 +864,13 @@ _button_clicked_cb(void *data,
    _update_hsla_from_colorbar(cb_data->parent, cb_data->color_type, x);
    sd->sel_color_type = cb_data->color_type;
    sd->focused = ELM_COLORSELECTOR_COMPONENTS;
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _button_repeat_cb(void *data,
-                  Evas_Object *obj EINA_UNUSED,
-                  void *event_info EINA_UNUSED)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Color_Bar_Data *cb_data = data;
    double x, y, step;
@@ -880,6 +886,8 @@ _button_repeat_cb(void *data,
 
    edje_object_part_drag_value_set(cb_data->colorbar, "elm.arrow", x, y);
    _update_hsla_from_colorbar(cb_data->parent, cb_data->color_type, x);
+
+   return EINA_TRUE;
 }
 
 static void
@@ -1050,17 +1058,15 @@ _color_bars_add(Evas_Object *obj)
         elm_widget_sub_object_add(obj, sd->cb_data[i]->lbt);
         edje_object_part_swallow
           (sd->cb_data[i]->colorbar, "elm.l_button", sd->cb_data[i]->lbt);
-        evas_object_smart_callback_add
-          (sd->cb_data[i]->lbt, "clicked", _button_clicked_cb,
-          sd->cb_data[i]);
+        eo_do(sd->cb_data[i]->lbt, eo_event_callback_add
+          (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _button_clicked_cb, sd->cb_data[i]));
         elm_button_autorepeat_set(sd->cb_data[i]->lbt, EINA_TRUE);
         elm_button_autorepeat_initial_timeout_set
           (sd->cb_data[i]->lbt, _elm_config->longpress_timeout);
         elm_button_autorepeat_gap_timeout_set
           (sd->cb_data[i]->lbt, (1.0 / _elm_config->fps));
-        evas_object_smart_callback_add
-          (sd->cb_data[i]->lbt, "repeated", _button_repeat_cb,
-          sd->cb_data[i]);
+        eo_do(sd->cb_data[i]->lbt, eo_event_callback_add
+          (EVAS_CLICKABLE_INTERFACE_EVENT_REPEATED, _button_repeat_cb, sd->cb_data[i]));
 
         /* load right button */
         if (!sd->cb_data[i]->rbt) sd->cb_data[i]->rbt = elm_button_add(obj);
@@ -1070,17 +1076,15 @@ _color_bars_add(Evas_Object *obj)
         elm_widget_sub_object_add(obj, sd->cb_data[i]->rbt);
         edje_object_part_swallow
           (sd->cb_data[i]->colorbar, "elm.r_button", sd->cb_data[i]->rbt);
-        evas_object_smart_callback_add
-          (sd->cb_data[i]->rbt, "clicked", _button_clicked_cb,
-          sd->cb_data[i]);
+        eo_do(sd->cb_data[i]->rbt, eo_event_callback_add
+          (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _button_clicked_cb, sd->cb_data[i]));
         elm_button_autorepeat_set(sd->cb_data[i]->rbt, EINA_TRUE);
         elm_button_autorepeat_initial_timeout_set
           (sd->cb_data[i]->rbt, _elm_config->longpress_timeout);
         elm_button_autorepeat_gap_timeout_set
           (sd->cb_data[i]->rbt, (1.0 / _elm_config->fps));
-        evas_object_smart_callback_add
-          (sd->cb_data[i]->rbt, "repeated", _button_repeat_cb,
-          sd->cb_data[i]);
+        eo_do(sd->cb_data[i]->rbt, eo_event_callback_add
+          (EVAS_CLICKABLE_INTERFACE_EVENT_REPEATED, _button_repeat_cb, sd->cb_data[i]));
      }
 }
 
@@ -1334,8 +1338,8 @@ _on_color_long_press(void *data)
 
    sd->longpress_timer = NULL;
 
-   evas_object_smart_callback_call
-     (WIDGET(item), SIG_COLOR_ITEM_LONGPRESSED, EO_OBJ(item));
+   eo_do(WIDGET(item), eo_event_callback_call
+     (ELM_COLORSELECTOR_EVENT_COLOR_ITEM_LONGPRESSED, EO_OBJ(item)));
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1380,8 +1384,8 @@ _on_color_released(void *data,
    elm_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
    elm_colorselector_color_set(WIDGET(item), item->color->r, item->color->g,
                                item->color->b, item->color->a);
-   evas_object_smart_callback_call(WIDGET(item), SIG_COLOR_ITEM_SELECTED,
-                                   EO_OBJ(item));
+   eo_do(WIDGET(item), eo_event_callback_call
+     (ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED, EO_OBJ(item)));
 
    eo_temp_item = eina_list_data_get(sd->selected);
    if (eo_temp_item && (eo_temp_item != EO_OBJ(item)))
@@ -1774,7 +1778,7 @@ _key_action_move(Evas_Object *obj, const char *params)
           cl = eina_list_prev(sd->selected);
 		  else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
           _button_clicked_cb(sd->cb_data[sd->sel_color_type],
-                             sd->cb_data[sd->sel_color_type]->lbt, NULL);
+                             sd->cb_data[sd->sel_color_type]->lbt, NULL, NULL);
         else return EINA_FALSE;
      }
    else if (!strcmp(dir, "right"))
@@ -1783,7 +1787,7 @@ _key_action_move(Evas_Object *obj, const char *params)
           cl = eina_list_next(sd->selected);
         else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
           _button_clicked_cb(sd->cb_data[sd->sel_color_type],
-                             sd->cb_data[sd->sel_color_type]->rbt, NULL);
+                             sd->cb_data[sd->sel_color_type]->rbt, NULL, NULL);
         else return EINA_FALSE;
      }
    else if (!strcmp(dir, "up"))
@@ -1847,8 +1851,8 @@ _key_action_move(Evas_Object *obj, const char *params)
         elm_colorselector_color_set
           (WIDGET(item), item->color->r, item->color->g, item->color->b,
           item->color->a);
-        evas_object_smart_callback_call
-          (WIDGET(item), SIG_COLOR_ITEM_SELECTED, eo_item);
+        eo_do(WIDGET(item), eo_event_callback_call
+          (ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED, eo_item));
         sd->selected = cl;
      }
    else if (!cl && sd->focused == ELM_COLORSELECTOR_PALETTE)

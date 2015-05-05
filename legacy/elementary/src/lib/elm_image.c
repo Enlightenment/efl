@@ -72,7 +72,7 @@ _on_mouse_up(void *data,
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
-   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
+   eo_do(data, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
 }
 
 static Eina_Bool
@@ -607,7 +607,7 @@ _elm_image_drag_n_drop_cb(void *elm_obj,
         DBG("dnd: %s, %s, %s", elm_widget_type_get(elm_obj),
               SIG_DND, (char *)drop->data);
 
-        evas_object_smart_callback_call(elm_obj, SIG_DND, drop->data);
+        eo_do(elm_obj, eo_event_callback_call(ELM_IMAGE_EVENT_DROP, drop->data));
         return EINA_TRUE;
      }
 
@@ -783,7 +783,7 @@ _elm_image_elm_widget_theme_apply(Eo *obj, Elm_Image_Data *sd EINA_UNUSED)
 static Eina_Bool
 _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
+   eo_do(obj, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
    return EINA_TRUE;
 }
 
@@ -1061,7 +1061,7 @@ _elm_image_smart_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf
 
         free(sd->remote_data);
         sd->remote_data = NULL;
-        evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &err);
+        eo_do(obj, eo_event_callback_call(ELM_IMAGE_EVENT_DOWNLOAD_ERROR, &err));
      }
    else
      {
@@ -1071,7 +1071,7 @@ _elm_image_smart_download_done(void *data, Elm_Url *url EINA_UNUSED, Eina_Binbuf
              evas_object_image_preload(sd->img, EINA_FALSE);
           }
 
-        evas_object_smart_callback_call(obj, SIG_DOWNLOAD_DONE, NULL);
+        eo_do(obj, eo_event_callback_call(ELM_IMAGE_EVENT_DOWNLOAD_DONE, NULL));
      }
 
    ELM_SAFE_FREE(sd->key, eina_stringshare_del);
@@ -1084,7 +1084,7 @@ _elm_image_smart_download_cancel(void *data, Elm_Url *url EINA_UNUSED, int error
    Elm_Image_Data *sd = eo_data_scope_get(obj, MY_CLASS);
    Elm_Image_Error err = { error, EINA_FALSE };
 
-   evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &err);
+   eo_do(obj, eo_event_callback_call(ELM_IMAGE_EVENT_DOWNLOAD_ERROR, &err));
 
    sd->remote = NULL;
    ELM_SAFE_FREE(sd->key, eina_stringshare_del);
@@ -1098,7 +1098,7 @@ _elm_image_smart_download_progress(void *data, Elm_Url *url EINA_UNUSED, double 
 
    progress.now = now;
    progress.total = total;
-   evas_object_smart_callback_call(obj, SIG_DOWNLOAD_PROGRESS, &progress);
+   eo_do(obj, eo_event_callback_call(ELM_IMAGE_EVENT_DOWNLOAD_PROGRESS, &progress));
 }
 
 static const char *remote_uri[] = {
@@ -1126,7 +1126,8 @@ _elm_image_efl_file_file_set(Eo *obj, Elm_Image_Data *sd, const char *file, cons
                                         obj);
           if (sd->remote)
             {
-               evas_object_smart_callback_call(obj, SIG_DOWNLOAD_START, NULL);
+               eo_do(obj, eo_event_callback_call
+                     (ELM_IMAGE_EVENT_DOWNLOAD_START, NULL));
                eina_stringshare_replace(&sd->key, key);
                return EINA_TRUE;
             }
