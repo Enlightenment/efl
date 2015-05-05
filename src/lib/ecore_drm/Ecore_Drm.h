@@ -468,7 +468,16 @@ EAPI void ecore_drm_output_free(Ecore_Drm_Output *output);
  */
 EAPI void ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle, int w, int h);
 
-/* TODO: Doxy */
+/**
+ * Enable a Ecore_Drm_Output
+ *
+ * This function will enable rendering on an Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to enable
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.14
+ */
 EAPI Eina_Bool ecore_drm_output_enable(Ecore_Drm_Output *output);
 
 /**
