@@ -814,6 +814,37 @@ _elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
    _elm_code_widget_cursor_move(widget, pd, pd->cursor_col+1, pd->cursor_line, EINA_TRUE);
 }
 
+
+static void
+_elm_code_widget_cursor_move_home(Elm_Code_Widget *widget)
+{
+   Elm_Code_Widget_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (pd->cursor_col <= 1)
+     return;
+
+   _elm_code_widget_cursor_move(widget, pd, 1, pd->cursor_line, EINA_TRUE);
+}
+
+static void
+_elm_code_widget_cursor_move_end(Elm_Code_Widget *widget)
+{
+   Elm_Code_Widget_Data *pd;
+   Elm_Code_Line *line;
+   unsigned int lastcol;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
+   lastcol = elm_code_line_text_column_width(line, pd->tabstop);
+   if (pd->cursor_col > lastcol + 1)
+     return;
+
+   _elm_code_widget_cursor_move(widget, pd, lastcol + 1, pd->cursor_line, EINA_TRUE);
+}
+
 static Eina_Bool
 _elm_code_widget_delete_selection(Elm_Code_Widget *widget)
 {
@@ -1053,6 +1084,10 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
      _elm_code_widget_cursor_move_left(widget);
    else if (!strcmp(ev->key, "Right"))
      _elm_code_widget_cursor_move_right(widget);
+   else if (!strcmp(ev->key, "Home"))
+     _elm_code_widget_cursor_move_home(widget);
+   else if (!strcmp(ev->key, "End"))
+     _elm_code_widget_cursor_move_end(widget);
 
    else if (!strcmp(ev->key, "KP_Enter") || !strcmp(ev->key, "Return"))
      _elm_code_widget_newline(widget);
