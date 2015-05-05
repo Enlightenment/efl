@@ -29,6 +29,8 @@
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 
+#include "eina_debug.h"
+
 # include <pthread.h>
 # include <errno.h>
 
@@ -100,13 +102,20 @@ _eina_internal_call(void *context)
 {
    Eina_Thread_Call *c = context;
    void *r;
+   pthread_t self;
 
    if (c->prio == EINA_THREAD_BACKGROUND ||
        c->prio == EINA_THREAD_IDLE)
      eina_sched_prio_drop();
 
-   /* FIXME: set priority and affinity */
+   self = pthread_self();
+#ifdef EINA_HAVE_DEBUG
+   _eina_debug_thread_add(&self);
+#endif
    r = c->func((void*) c->data, eina_thread_self());
+#ifdef EINA_HAVE_DEBUG
+   _eina_debug_thread_del(&self);
+#endif
 
    free(c);
 

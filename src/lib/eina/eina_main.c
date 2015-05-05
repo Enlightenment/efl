@@ -120,6 +120,7 @@ EAPI Eina_Inlist *_eina_tracking = NULL;
  */
 #define S(x) extern Eina_Bool eina_ ## x ## _init(void); \
    extern Eina_Bool eina_ ## x ## _shutdown(void)
+   S(debug);
    S(log);
    S(error);
    S(safety_checks);
@@ -165,6 +166,7 @@ struct eina_desc_setup
 static const struct eina_desc_setup _eina_desc_setup[] = {
 #define S(x) {# x, eina_ ## x ## _init, eina_ ## x ## _shutdown}
    /* log is a special case as it needs printf */
+   S(debug),
    S(stringshare),
    S(error),
    S(safety_checks),

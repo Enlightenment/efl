@@ -101,6 +101,14 @@ lib/eina/eina_convert.c \
 lib/eina/eina_counter.c \
 lib/eina/eina_cow.c \
 lib/eina/eina_cpu.c \
+lib/eina/eina_debug.h \
+lib/eina/eina_debug.c \
+lib/eina/eina_debug_chunk.c \
+lib/eina/eina_debug_bt.c \
+lib/eina/eina_debug_bt_file.c \
+lib/eina/eina_debug_thread.c \
+lib/eina/eina_debug_monitor.c \
+lib/eina/eina_debug_proto.c \
 lib/eina/eina_error.c \
 lib/eina/eina_file_common.h \
 lib/eina/eina_file_common.c \
@@ -221,14 +229,29 @@ endif
 
 lib_eina_libeina_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @EINA_CFLAGS@ \
+@UNWIND_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eina\" \
 @VALGRIND_CFLAGS@
 
-lib_eina_libeina_la_LIBADD = @EINA_LIBS@ @DL_LIBS@
+lib_eina_libeina_la_LIBADD = @EINA_LIBS@ @DL_LIBS@ @UNWIND_LIBS@
 lib_eina_libeina_la_DEPENDENCIES = @EINA_INTERNAL_LIBS@ @DL_INTERNAL_LIBS@
 lib_eina_libeina_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+### Binaries
+
+bin_PROGRAMS += bin/eina/eina_btlog
+
+bin_eina_eina_btlog_SOURCES = bin/eina/eina_btlog.c
+bin_eina_eina_btlog_CPPFLAGS =  -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/eina\" \
+@EINA_CFLAGS@
+
+bin_eina_eina_btlog_LDADD = @USE_EINA_LIBS@
+bin_eina_eina_btlog_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
 ### Script
 

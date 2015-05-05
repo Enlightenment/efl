@@ -849,6 +849,12 @@ case "${build_profile}" in
      ;;
 esac
 
+PKG_CHECK_MODULES(UNWIND, [libunwind libunwind-generic],
+                  [have_unwind=yes], [have_unwind=no])
+AS_IF([test "x$have_unwind" = "xyes"],
+      [AC_DEFINE([HAVE_UNWIND], [1], [Have libunwind])])
+AM_CONDITIONAL(HAVE_UNWIND, test "x$have_unwind" = "xyes")
+
 EINA_CONFIG([HAVE_ALLOCA_H], [test "x${ac_cv_working_alloca_h}" = "xyes"])
 EINA_CONFIG([SAFETY_CHECKS], [test "x${have_safety_checks}" = "xyes"])
 EINA_CONFIG([DEFAULT_MEMPOOL], [test "x${want_default_mempool}" = "xyes"])
@@ -4801,7 +4807,7 @@ echo "  Cryptography..: ${build_crypto}"
 echo "  X11...........: ${with_x11}"
 echo "  OpenGL........: ${with_opengl}"
 echo "  C++11.........: ${have_cxx11}"
-echo "Eina............: yes (${features_eina})"
+echo "Eina............: yes (${features_eina} unwind=$have_unwind)"
 echo "Eo..............: yes (${features_eo})"
 echo "Eolian..........: yes (${features_eolian})"
 echo "Emile...........: yes (${features_emile})"
