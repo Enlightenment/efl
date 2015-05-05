@@ -76,6 +76,13 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static Eina_Error PHOTO_FILE_LOAD_ERROR_GENERIC;
+static Eina_Error PHOTO_FILE_LOAD_ERROR_DOES_NOT_EXIST;
+static Eina_Error PHOTO_FILE_LOAD_ERROR_PERMISSION_DENIED;
+static Eina_Error PHOTO_FILE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+static Eina_Error PHOTO_FILE_LOAD_ERROR_CORRUPT_FILE;
+static Eina_Error PHOTO_FILE_LOAD_ERROR_UNKNOWN_FORMAT;
+
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_zoom(Evas_Object *obj, const char *params);
 
@@ -1617,8 +1624,8 @@ static const char *remote_uri[] = {
   "http://", "https://", "ftp://"
 };
 
-EOLIAN static Evas_Load_Error
-_elm_photocam_file_set(Eo *obj, Elm_Photocam_Data *sd, const char *file)
+static Evas_Load_Error
+_elm_photocam_file_set_internal(Eo *obj, Elm_Photocam_Data *sd, const char *file)
 {
    Evas_Load_Error ret = EVAS_LOAD_ERROR_NONE;
    unsigned int i;
@@ -1664,10 +1671,57 @@ _elm_photocam_file_set(Eo *obj, Elm_Photocam_Data *sd, const char *file)
    return ret;
 }
 
-EOLIAN static const char*
-_elm_photocam_file_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd)
+EOLIAN static Eina_Bool
+_elm_photocam_efl_file_file_set(Eo *obj, Elm_Photocam_Data *sd, const char *file, const char *key EINA_UNUSED)
 {
-   return sd->file;
+   Evas_Load_Error ret = _elm_photocam_file_set_internal(obj, sd, file);
+
+   if (ret == EVAS_LOAD_ERROR_NONE) return EINA_TRUE;
+
+   eina_error_set(
+     ret == EVAS_LOAD_ERROR_DOES_NOT_EXIST             ? PHOTO_FILE_LOAD_ERROR_DOES_NOT_EXIST :
+     ret == EVAS_LOAD_ERROR_PERMISSION_DENIED          ? PHOTO_FILE_LOAD_ERROR_PERMISSION_DENIED :
+     ret == EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED ? PHOTO_FILE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED :
+     ret == EVAS_LOAD_ERROR_CORRUPT_FILE               ? PHOTO_FILE_LOAD_ERROR_CORRUPT_FILE :
+     ret == EVAS_LOAD_ERROR_UNKNOWN_FORMAT             ? PHOTO_FILE_LOAD_ERROR_UNKNOWN_FORMAT :
+     PHOTO_FILE_LOAD_ERROR_GENERIC
+   );
+   return EINA_FALSE;
+}
+
+EAPI Evas_Load_Error
+elm_photocam_file_set(Elm_Photocam *obj, const char *file)
+{
+   Eina_Bool ret;
+   if (eo_do_ret(obj, ret, efl_file_set(file, NULL))) return EVAS_LOAD_ERROR_NONE;
+
+   Eina_Error err = eina_error_get();
+   return err == PHOTO_FILE_LOAD_ERROR_DOES_NOT_EXIST ?
+            EVAS_LOAD_ERROR_DOES_NOT_EXIST :
+          err == PHOTO_FILE_LOAD_ERROR_PERMISSION_DENIED ?
+            EVAS_LOAD_ERROR_PERMISSION_DENIED :
+          err == PHOTO_FILE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED ?
+            EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED :
+          err == PHOTO_FILE_LOAD_ERROR_CORRUPT_FILE ?
+            EVAS_LOAD_ERROR_CORRUPT_FILE :
+          err == PHOTO_FILE_LOAD_ERROR_UNKNOWN_FORMAT ?
+            EVAS_LOAD_ERROR_UNKNOWN_FORMAT :
+          EVAS_LOAD_ERROR_GENERIC;
+}
+
+EOLIAN static void
+_elm_photocam_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Photocam_Data *sd, const char **file, const char **key)
+{
+   if (file) *file = sd->file;
+   if (key) *key = NULL;
+}
+
+EAPI const char*
+elm_photocam_file_get(const Elm_Photocam *obj)
+{
+   const char *ret = NULL;
+   eo_do(obj, efl_file_get(&ret, NULL));
+   return ret;
 }
 
 EOLIAN static void
@@ -2145,6 +2199,13 @@ static void
 _elm_photocam_class_constructor(Eo_Class *klass)
 {
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+
+   PHOTO_FILE_LOAD_ERROR_GENERIC = eina_error_msg_static_register("Generic load error");
+   PHOTO_FILE_LOAD_ERROR_DOES_NOT_EXIST = eina_error_msg_static_register("File does not exist");
+   PHOTO_FILE_LOAD_ERROR_PERMISSION_DENIED = eina_error_msg_static_register("Permission denied to an existing file");
+   PHOTO_FILE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = eina_error_msg_static_register("Allocation of resources failure prevented load");
+   PHOTO_FILE_LOAD_ERROR_CORRUPT_FILE = eina_error_msg_static_register("File corrupt (but was detected as a known format)");
+   PHOTO_FILE_LOAD_ERROR_UNKNOWN_FORMAT = eina_error_msg_static_register("File is not a known format");
 }
 
 EOLIAN const Elm_Atspi_Action *

@@ -1,5 +1,5 @@
 class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
-                    Elm_Interface_Atspi_Widget_Action)
+                    Elm_Interface_Atspi_Widget_Action, Efl.File)
 {
    eo_prefix: elm_obj_photocam;
    properties {
@@ -29,37 +29,6 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
          }
          values {
             bool paused; /*@ The pause state to set */
-         }
-      }
-      file {
-         set {
-            /*@
-            @brief Set the photo file to be shown
-
-            @return The return error (see EVAS_LOAD_ERROR_NONE, EVAS_LOAD_ERROR_GENERIC etc.)
-
-            This sets (and shows) the specified file (with a relative or absolute
-            path) and will return a load error (same error that
-            evas_object_image_load_error_get() will return). The image will change and
-            adjust its size at this point and begin a background load process for this
-            photo that at some time in the future will be displayed at the full
-            quality needed.
-
-            @ingroup Photocam */
-            return: Evas_Load_Error;
-         }
-         get {
-            /*@
-            @brief Returns the path of the current image file
-
-            @return Returns the path
-
-            @see elm_photocam_file_set()
-
-            @ingroup Photocam */
-         }
-         values {
-            const(char)* file; /*@ The photo file */
          }
       }
       gesture_enabled {
@@ -266,6 +235,8 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
       Elm.Widget.event;
       Elm_Interface_Scrollable.region_bring_in;
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
+      Efl.File.file.set;
+      Efl.File.file.get;
    }
    events {
       clicked;
