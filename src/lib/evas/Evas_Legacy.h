@@ -206,7 +206,7 @@ EAPI void *evas_event_callback_del_full(Evas *e, Evas_Callback_Type type, Evas_E
  * Evas has a stack of callbacks that get called after all the callbacks for
  * an event have triggered (all the objects it triggers on and all the callbacks
  * in each object triggered). When all these have been called, the stack is
- * unwond from most recently to least recently pushed item and removed from the
+ * unwound from most recently to least recently pushed item and removed from the
  * stack calling the callback set for it.
  *
  * This is intended for doing reverse logic-like processing, example - when a
