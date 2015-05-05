@@ -1137,3 +1137,12 @@ ecore_drm_output_edid_get(Ecore_Drm_Output *output)
 
    return strdup(output->edid_blob);
 }
+
+EAPI Eina_List *
+ecore_drm_output_modes_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->modes, NULL);
+
+   return output->modes;
+}

@@ -87,14 +87,6 @@ typedef struct _Ecore_Drm_Pageflip_Callback
    int count;
 } Ecore_Drm_Pageflip_Callback;
 
-struct _Ecore_Drm_Output_Mode
-{
-   unsigned int flags;
-   int width, height;
-   unsigned int refresh;
-   drmModeModeInfo info;
-};
-
 typedef enum _Ecore_Drm_Backlight_Type
 {
    ECORE_DRM_BACKLIGHT_RAW,

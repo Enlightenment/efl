@@ -153,8 +153,14 @@ struct _Ecore_Drm_Event_Output
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm_Device Ecore_Drm_Device;
 
-/* opaque structure to represent a drm output mode */
-typedef struct _Ecore_Drm_Output_Mode Ecore_Drm_Output_Mode;
+/* structure to represent a drm output mode */
+typedef struct _Ecore_Drm_Output_Mode
+{
+   unsigned int flags;
+   int width, height;
+   unsigned int refresh;
+   drmModeModeInfo info;
+} Ecore_Drm_Output_Mode;
 
 /* opaque structure to represent a drm output */
 typedef struct _Ecore_Drm_Output Ecore_Drm_Output;
@@ -835,6 +841,20 @@ EAPI Eina_Bool ecore_drm_output_backlight_get(Ecore_Drm_Output *output);
  * @since 1.15
  */
 EAPI char *ecore_drm_output_edid_get(Ecore_Drm_Output *output);
+
+/**
+ * Get a list of the modes supported on a given output
+ *
+ * @param output The Ecore_Drm_Output to get the modes for
+ *
+ * @return An Eina_List of the modes supported for this output
+ *
+ * @note The returned list should not be freed
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI Eina_List *ecore_drm_output_modes_get(Ecore_Drm_Output *output);
 
 #ifdef __cplusplus
 }
