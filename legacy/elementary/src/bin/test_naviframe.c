@@ -329,3 +329,60 @@ test_naviframe2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    evas_object_resize(win, 400, 400);
    evas_object_show(win);
 }
+
+static void
+_bt_pop_all(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Elm_Object_Item *it = evas_object_data_get(obj, "root");
+
+   while (elm_naviframe_top_item_get(data) != it)
+     elm_naviframe_item_pop(data);
+}
+
+void
+test_naviframe3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *tb, *bxh, *nf, *btn, *content;
+   Elm_Object_Item *it;
+
+   snprintf(img1, sizeof(img1), "%s/images/logo.png", elm_app_data_dir_get());
+   win = elm_win_util_standard_add("naviframe", "Naviframe");
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bxh = elm_box_add(win);
+   evas_object_size_hint_weight_set(bxh, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_horizontal_set(bxh, EINA_TRUE);
+   elm_win_resize_object_add(win, bxh);
+   evas_object_show(bxh);
+
+   tb = elm_toolbar_add(win);
+   evas_object_size_hint_weight_set(tb, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_toolbar_horizontal_set(tb, EINA_FALSE);
+   elm_toolbar_select_mode_set(tb, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   elm_box_pack_end(bxh, tb);
+   evas_object_show(tb);
+
+   nf = elm_naviframe_add(win);
+   evas_object_size_hint_weight_set(nf, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(nf, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bxh, nf);
+   evas_object_show(nf);
+
+   btn = elm_button_add(nf);
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(btn, "clicked", _page2, nf);
+   BUTTON_TEXT_SET(btn, "Next");
+   evas_object_show(btn);
+
+   content = _content_new(nf, img1);
+   it = elm_naviframe_item_push(nf, "Page 1", NULL, btn, content, NULL);
+   evas_object_data_set(nf, "page1", it);
+
+   evas_object_data_set(tb, "root", it);
+   elm_toolbar_item_append(tb, NULL, "Pop all", _bt_pop_all, nf);
+
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
+}

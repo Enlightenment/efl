@@ -225,6 +225,7 @@ void test_glview_manygears(void *data, Evas_Object *obj, void *event_info);
 void test_3d(void *data, Evas_Object *obj, void *event_info);
 void test_naviframe(void *data, Evas_Object *obj, void *event_info);
 void test_naviframe2(void *data, Evas_Object *obj, void *event_info);
+void test_naviframe3(void *data, Evas_Object *obj, void *event_info);
 void test_naviframe_complex(void *data, Evas_Object *obj, void *event_info);
 //void test_factory(void *data, Evas_Object *obj, void *event_info);
 void test_datetime(void *data, Evas_Object *obj, void *event_info);
@@ -803,6 +804,7 @@ add_tests:
    //------------------------------//
    ADD_TEST(NULL, "Naviframe", "Naviframe", test_naviframe);
    ADD_TEST(NULL, "Naviframe", "Naviframe 2", test_naviframe2);
+   ADD_TEST(NULL, "Naviframe", "Naviframe 3", test_naviframe3);
    ADD_TEST(NULL, "Naviframe", "Naviframe: Complex", test_naviframe_complex);
 
    //------------------------------//
