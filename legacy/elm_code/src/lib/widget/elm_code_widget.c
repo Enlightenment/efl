@@ -484,9 +484,10 @@ _elm_code_widget_cursor_key_will_move(Elm_Code_Widget *widget, const char *key)
    else if (!strcmp(key, "Down"))
      return pd->cursor_line < elm_code_file_lines_get(pd->code->file);
    else if (!strcmp(key, "Left"))
-     return pd->cursor_col > 1;
+     return pd->cursor_col > 1 || pd->cursor_line > 1;
    else if (!strcmp(key, "Right"))
-     return pd->cursor_col < elm_code_line_text_column_width(line, pd->tabstop) + 1;
+     return pd->cursor_col < elm_code_line_text_column_width(line, pd->tabstop) + 1 ||
+        pd->cursor_line < elm_code_file_lines_get(pd->code->file);
    else
      return EINA_FALSE;
 }
@@ -741,6 +742,36 @@ _elm_code_widget_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
 }
 
 static void
+_elm_code_widget_cursor_move_home(Elm_Code_Widget *widget)
+{
+   Elm_Code_Widget_Data *pd;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (pd->cursor_col <= 1)
+     return;
+
+   _elm_code_widget_cursor_move(widget, pd, 1, pd->cursor_line, EINA_TRUE);
+}
+
+static void
+_elm_code_widget_cursor_move_end(Elm_Code_Widget *widget)
+{
+   Elm_Code_Widget_Data *pd;
+   Elm_Code_Line *line;
+   unsigned int lastcol;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
+   lastcol = elm_code_line_text_column_width(line, pd->tabstop);
+   if (pd->cursor_col > lastcol + 1)
+     return;
+
+   _elm_code_widget_cursor_move(widget, pd, lastcol + 1, pd->cursor_line, EINA_TRUE);
+}
+
+static void
 _elm_code_widget_cursor_move_up(Elm_Code_Widget *widget)
 {
    Elm_Code_Widget_Data *pd;
@@ -794,7 +825,14 @@ _elm_code_widget_cursor_move_left(Elm_Code_Widget *widget)
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (pd->cursor_col <= 1)
-     return;
+     {
+        if (pd->cursor_line > 1)
+          {
+             _elm_code_widget_cursor_move_up(widget);
+             _elm_code_widget_cursor_move_end(widget);
+          }
+        return;
+     }
 
    _elm_code_widget_cursor_move(widget, pd, pd->cursor_col-1, pd->cursor_line, EINA_TRUE);
 }
@@ -809,40 +847,16 @@ _elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
 
    line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
    if (pd->cursor_col > elm_code_line_text_column_width(line, pd->tabstop))
-     return;
+     {
+        if (pd->cursor_line < elm_code_file_lines_get(pd->code->file))
+          {
+             _elm_code_widget_cursor_move_down(widget);
+             _elm_code_widget_cursor_move_home(widget);
+          }
+        return;
+     }
 
    _elm_code_widget_cursor_move(widget, pd, pd->cursor_col+1, pd->cursor_line, EINA_TRUE);
-}
-
-
-static void
-_elm_code_widget_cursor_move_home(Elm_Code_Widget *widget)
-{
-   Elm_Code_Widget_Data *pd;
-
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-
-   if (pd->cursor_col <= 1)
-     return;
-
-   _elm_code_widget_cursor_move(widget, pd, 1, pd->cursor_line, EINA_TRUE);
-}
-
-static void
-_elm_code_widget_cursor_move_end(Elm_Code_Widget *widget)
-{
-   Elm_Code_Widget_Data *pd;
-   Elm_Code_Line *line;
-   unsigned int lastcol;
-
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-
-   line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
-   lastcol = elm_code_line_text_column_width(line, pd->tabstop);
-   if (pd->cursor_col > lastcol + 1)
-     return;
-
-   _elm_code_widget_cursor_move(widget, pd, lastcol + 1, pd->cursor_line, EINA_TRUE);
 }
 
 static Eina_Bool
