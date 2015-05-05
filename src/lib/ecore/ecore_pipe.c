@@ -438,7 +438,7 @@ _ecore_pipe_wait(Ecore_Pipe *p,
    FD_SET(p->fd_read, &rset);
 
    if (wait >= 0.0)
-     end = ecore_loop_time_get() + wait;
+     end = ecore_time_get() + wait;
    timeout = wait;
 
    while (message_count > 0 && (timeout > 0.0 || wait <= 0.0))
@@ -493,7 +493,7 @@ _ecore_pipe_wait(Ecore_Pipe *p,
           }
 
         if (wait >= 0.0)
-          timeout = end - ecore_loop_time_get();
+          timeout = end - ecore_time_get();
      }
 
    return total;
