@@ -3940,46 +3940,53 @@ edje_edit_part_source_get(Evas_Object *obj, const char *part)
 static Eina_Bool
 _check_recursive_reference(Edje *ed, const char *source, Eina_List *group_path, Edje_Part *part)
 {
-   unsigned int i;
    char *data;
-   Edje_Part_Collection_Directory_Entry *e;
-   Eina_List *l;
+   Edje_Part_Collection_Directory_Entry *pce;
+   Eina_List *l, *part_list, *pll;
    Eina_Bool no_ref = EINA_TRUE;
+   Eina_Stringshare *part_name, *part_source = NULL;
+   Edje_Part_Type type;
 
    if (!source) return EINA_TRUE;
 
-   e = eina_hash_find(ed->file->collection, source);
+   pce = eina_hash_find(ed->file->collection, source);
 
    /* forcing collection load into memory */
    Evas_Object *part_obj = edje_edit_object_add(ed->base->evas);
-   edje_object_file_set(part_obj, ed->file->path, e->entry);
+   edje_object_file_set(part_obj, ed->file->path, pce->entry);
    /* Go through every part to find parts with type GROUP */
-   for (i = 0; i < e->ref->parts_count; ++i)
+   part_list = edje_edit_parts_list_get(part_obj);
+   EINA_LIST_FOREACH(part_list, pll, part_name)
      {
-        if ((e->ref->parts[i]->type == EDJE_PART_TYPE_GROUP) &&
-            (e->ref->parts[i]->source))
+        eina_stringshare_del(part_source);
+        part_source = edje_edit_part_source_get(part_obj, part_name);
+        type = edje_edit_part_type_get(part_obj, part_name);
+        if ((type ==  EDJE_PART_TYPE_GROUP) && part_source)
           {
              /* Make sure that this group isn't already in the tree of parents */
              EINA_LIST_FOREACH(group_path, l, data)
                {
-                  if (data == e->ref->parts[i]->source)
+                  if (data == part_source)
                     {
-                       evas_object_del(part_obj);
-                       return EINA_FALSE;
+                       no_ref = EINA_FALSE;
+                       goto end;
                     }
                }
              group_path = eina_list_append(group_path, source);
-             no_ref &= _check_recursive_reference(ed, e->ref->parts[i]->source, group_path, part);
+             no_ref &= _check_recursive_reference(ed, part_source, group_path, part);
           }
 
         /* We did a loop here... this part doesn't have source yet,
            but if it will set, it'll be a recursive reference. */
-        if (e->ref->parts[i] == part)
+        if (!strcmp(part_name, part->name)) /* TODO: check if part->name is also stringshare and values can be compared with == */
           {
-             evas_object_del(part_obj);
-             return EINA_FALSE;
+             no_ref = EINA_FALSE;
+             goto end;
           }
      }
+end:
+   eina_stringshare_del(part_source);
+   edje_edit_string_list_free(part_list);
    evas_object_del(part_obj);
    return no_ref;
 }
