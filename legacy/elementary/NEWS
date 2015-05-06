@@ -86,6 +86,10 @@ Fixes:
    * elm_multibuttonentry: change theme_set API to provide full widget theming
    * elm_multibuttonentry: fix label position and size defects
    * elm_toolbar: fix memory leaks
+   * Genlist: fix multiselect for ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY select_mode
+   * Genlist: rectification in _item_focused_next()
+   * map: fix scale calculation error
+   * Fix slideshow smart events event_info
 
 Changes since 1.12.0:
 ---------------------
