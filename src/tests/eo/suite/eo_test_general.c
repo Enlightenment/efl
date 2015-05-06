@@ -4,6 +4,8 @@
 
 #include <stdio.h>
 
+#define EO_BASE_PROTECTED
+
 #include "Eo.h"
 #include "eo_suite.h"
 #include "eo_test_class_simple.h"
