@@ -667,7 +667,7 @@ EXTRA_lib_evas_libevas_la_DEPENDENCIES = modules/evas/engines/gl_common/shader/e
 
 modules/evas/engines/gl_common/shader/evas_gl_shaders.x: $(GL_SHADERS_GEN)
 	@echo "  SHADERS  $@"
-	@bash $(builddir)/modules/evas/engines/gl_common/shader/gen_shaders.sh
+	@bash $(srcdir)/modules/evas/engines/gl_common/shader/gen_shaders.sh
 
 modules/evas/engines/gl_common/shader/evas_gl_enum.x: modules/evas/engines/gl_common/shader/evas_gl_shaders.x
 
