@@ -1,4 +1,4 @@
-class Elm.Actionslider (Elm.Layout)
+class Elm.Actionslider (Elm.Layout, Evas.Selectable_Interface)
 {
    eo_prefix: elm_obj_actionslider;
    methods {
@@ -90,6 +90,7 @@ class Elm.Actionslider (Elm.Layout)
    events {
       language,changed;
       access,changed;
+      pos_changed;
    }
 
 }

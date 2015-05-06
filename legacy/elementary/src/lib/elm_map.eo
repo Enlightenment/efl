@@ -1,5 +1,6 @@
 class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
-               Elm_Interface_Atspi_Widget_Action)
+               Elm_Interface_Atspi_Widget_Action,
+               Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_map;
    methods {
@@ -786,17 +787,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      clicked;
-      clicked,double;
       press;
-      longpressed;
-      scroll;
-      scroll,drag,start;
-      scroll,drag,stop;
-      scroll,anim,start;
-      scroll,anim,stop;
-      zoom,start;
-      zoom,stop;
       zoom,change;
       loaded;
       tile,load;
