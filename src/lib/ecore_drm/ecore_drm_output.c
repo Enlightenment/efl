@@ -422,6 +422,7 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    output->model = eina_stringshare_add("UNKNOWN");
    output->name = eina_stringshare_add("UNKNOWN");
 
+   output->connected = (conn->connection == DRM_MODE_CONNECTED);
    output->conn_type = conn->connector_type;
    if (conn->connector_type < ALEN(conn_types))
      type = conn_types[conn->connector_type];
@@ -887,8 +888,6 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
         if (!(output =
               _ecore_drm_output_create(dev, res, conn, x, y, EINA_FALSE)))
           goto next;
-
-        output->connected = (conn->connection == DRM_MODE_CONNECTED);
 
         x += output->current_mode->width;
 
