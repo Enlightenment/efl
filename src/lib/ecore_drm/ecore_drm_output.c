@@ -1263,3 +1263,15 @@ ecore_drm_output_primary_get(Ecore_Drm_Device *dev)
 
    return NULL;
 }
+
+EAPI void
+ecore_drm_output_crtc_size_get(Ecore_Drm_Output *output, int *width, int *height)
+{
+   if (width) *width = 0;
+   if (height) *height = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   if (width) *width = output->crtc->width;
+   if (height) *height = output->crtc->height;
+}
