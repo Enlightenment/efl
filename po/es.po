@@ -2,20 +2,21 @@
 # Copyright (C) 2012 Enlightenment development team
 # This file is put in the public domain.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
-# Adrián Arévalo <adri58@gmail.com>, 2012.
+# Adrián Arévalo <adri58@gmail.com>, 2015.
+# Roy W. Reese <waterbearer54@gmx.com> 2015.
 msgid ""
 msgstr ""
-"Project-Id-Version: Efl\n"
+"Project-Id-Version: EFL\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2015-02-04 18:08+0900\n"
-"PO-Revision-Date: 2013-01-04 23:53+0100\n"
+"PO-Revision-Date: 2015-05-03 18:09+0100\n"
 "Last-Translator: Adrián Arévalo <adri58@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.7.5\n"
 
 #: src/lib/ecore/ecore_getopt.c:89
 msgid "Version:"
@@ -26,9 +27,9 @@ msgid "Usage:"
 msgstr "Uso:"
 
 #: src/lib/ecore/ecore_getopt.c:105
-#, fuzzy, c-format
+#, c-format
 msgid "%s [options]"
-msgstr "%s [opciones]\n"
+msgstr "%s [opciones]"
 
 #: src/lib/ecore/ecore_getopt.c:305
 msgid "Copyright:"
@@ -52,12 +53,11 @@ msgstr "Elecciones:"
 
 #: src/lib/ecore/ecore_getopt.c:644 src/lib/ecore/ecore_getopt.c:645
 msgid "No categories available."
-msgstr ""
+msgstr "No hay categorías disponibles."
 
 #: src/lib/ecore/ecore_getopt.c:649
-#, fuzzy
 msgid "Categories: "
-msgstr "Elecciones:"
+msgstr "Categorías:"
 
 #: src/lib/ecore/ecore_getopt.c:771
 msgid "Options:\n"
@@ -65,12 +65,12 @@ msgstr "Opciones:\n"
 
 #: src/lib/ecore/ecore_getopt.c:780
 msgid "Positional arguments:\n"
-msgstr ""
+msgstr "Argumentos posicionales:\n"
 
 #: src/lib/ecore/ecore_getopt.c:847
-#, fuzzy, c-format
+#, c-format
 msgid "ERROR: unknown category '%s'.\n"
-msgstr "ERROR: opción desconocida --%s.\n"
+msgstr "ERROR: categoría desconocida '%s'.\n"
 
 #: src/lib/ecore/ecore_getopt.c:951
 #, c-format
@@ -157,14 +157,14 @@ msgid "ERROR: option -%c requires an argument!\n"
 msgstr "ERROR: La opción -%c requiere un argumento!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1878
-#, fuzzy, c-format
+#, c-format
 msgid "ERROR: missing required positional argument %s.\n"
-msgstr "ERROR: La opción -%c requiere un argumento!\n"
+msgstr "ERROR: Falta un argumento posicional requerido %s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1910
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
-msgstr ""
+msgstr "ERROR: tipo de acción %d no permitido para argumento posicional %s\n"
 
 #: src/lib/ecore/ecore_getopt.c:2031 src/lib/ecore/ecore_getopt.c:2097
 msgid "ERROR: no parser provided.\n"
@@ -193,9 +193,8 @@ msgid " See -%c.\n"
 msgstr " Vea -%c.\n"
 
 #: src/lib/ecore/ecore_getopt.c:2137
-#, fuzzy
 msgid "ERROR: invalid positional arguments found."
-msgstr "ERROR: opciones inválidas."
+msgstr "ERROR: argumentos posicionales inválidos encontrados."
 
 #: src/lib/ecore/ecore_getopt.c:2172
 #, c-format
