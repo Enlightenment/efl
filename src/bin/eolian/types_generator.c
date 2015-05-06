@@ -4,6 +4,7 @@
 
 #include <Eina.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "Eolian.h"
 #include "types_generator.h"
@@ -22,7 +23,11 @@ _concat_name(const Eolian_Type *tp)
    name = eolian_type_name_get(tp);
    if (name) eina_strbuf_append_printf(buf, "%s", name);
    if (eina_strbuf_length_get(buf))
-      str = eina_strbuf_string_steal(buf);
+     {
+        char *tmp = str = eina_strbuf_string_steal(buf);
+        *tmp = toupper(*tmp);
+        while (*tmp) if (*tmp++ == '_' && *tmp) *tmp = toupper(*tmp);
+     }
    eina_strbuf_free(buf);
    return str;
 }
@@ -118,14 +123,11 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef, Eina_Bool full)
                    break;
                 }
               char *pre = NULL;
-              eina_strbuf_append_printf(buf, "enum %s {\n", name);
+              eina_strbuf_append_printf(buf, "typedef enum\n{\n");
               if (eolian_type_enum_legacy_prefix_get(tp))
-                {
-                   pre = strdup(eolian_type_enum_legacy_prefix_get(tp));
-                   free(name);
-                }
+                pre = strdup(eolian_type_enum_legacy_prefix_get(tp));
               else
-                pre = name;
+                pre = strdup(name);
               eina_str_toupper(&pre);
               Eina_Iterator *members = eolian_type_enum_fields_get(tp);
               Eina_Bool next = eina_iterator_next(members, (void**)&member);
@@ -162,10 +164,11 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef, Eina_Bool full)
                    if (desc) eina_strbuf_append_printf(buf, " /** %s */", desc);
                    eina_strbuf_append(buf, "\n");
                 }
+              eina_strbuf_append_printf(buf, "} %s", name);
               eina_strbuf_free(membuf);
+              free(name);
               free(pre);
               eina_iterator_free(members);
-              eina_strbuf_append(buf, "}");
               break;
            }
       default:
