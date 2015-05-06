@@ -222,6 +222,26 @@ Fixes:
    * evas_text: fix default return value.
    * edje_util: fix memory leak
    * eina: correct document for eina_hash_list_prepend/remove.
+   * ecore-wayland: Fix issue of efl/elm apps not setting opaque & input regions
+   * autotools: fix non-verbose build output
+   * eolian: mark _class_get func protos with EOAPI
+   * Edje embryo: Fix invalid check for get_state_val (text str)
+   * Eina: fix eina_file_split on Windows and update unit test
+   * ecore-drm: Fix using uninitialized output value
+   * evas-wayland-shm: Use size of buffer when caching
+   * evas-wayland-shm: Minimize race condition when finding free leaf
+   * evas-wayland-shm: Update software_generic render engine size on output resize
+   * evas-wayland-shm: Fix T2352 (focused window borders blink)
+   * ecore-evas-wayland: remove duplicated shutdown of ecore_evas_wl_common
+   * ecore_drm: close fd if flag set fails
+   * ecore-drm: append O_CLOEXEC always
+   * ecore-drm: don't return EINA_FALSE as an invalid fd
+   * ecore-drm: close fd when asked to close fd
+   * eolian: specialize tmp free for typedef (avoid double free issue)
+   * eolian: fix lexer assertion failure
+   * ecore-evas-wayland: Fix issue of setting NULL cursor object
+   * edje: _check_recursive_reference reworked to fix segv in Edje_Edit.
+   * ecore-drm: Add missing doxy for ecore_drm_output_enable
 
 Changes since 1.12.0:
 ---------------------
