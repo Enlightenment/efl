@@ -1236,6 +1236,24 @@ _files_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
        }
 }
 
+/* FIXME: This is a dirty hack to avoid a broken layout on fileselector come up.
+ * In some cases on some systems the genlist file view comes up with a height of
+ * 10 and only resizes when interacted manually. This only papers over it for the
+ * 1.14 release and will be removed from master directly afterwards. If we find
+ * a solution we are able to backport this will also go away from the efl-1.14
+ * stable branch. See T2367 for the full details.
+ */
+static void
+_files_on_resize(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o, void *event EINA_UNUSED)
+{
+   Evas_Coord x, y, w, h;
+
+   evas_object_geometry_get(o, &x, &y, &w, &h);
+
+   if (h < 20)
+     evas_object_resize(o, 394, 279);
+}
+
 static Evas_Object *
 _files_list_add(Evas_Object *obj)
 {
@@ -1258,6 +1276,7 @@ _files_list_add(Evas_Object *obj)
    evas_object_smart_callback_add(li, "expanded", _on_list_expanded, obj);
    evas_object_smart_callback_add(li, "contracted", _on_list_contracted, obj);
    evas_object_event_callback_add(li, EVAS_CALLBACK_KEY_DOWN, _files_key_down, obj);
+   evas_object_event_callback_add(li, EVAS_CALLBACK_RESIZE, _files_on_resize, obj);
 
    elm_widget_sub_object_add(obj, li);
 
