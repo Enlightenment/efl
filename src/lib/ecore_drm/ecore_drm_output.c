@@ -706,6 +706,123 @@ next:
      }
 }
 
+static void
+_ecore_drm_output_planes_get(Ecore_Drm_Device *dev)
+{
+   drmModePlaneRes *pres;
+   unsigned int i = 0, j = 0;
+   int k = 0;
+
+   pres = drmModeGetPlaneResources(dev->drm.fd);
+   if (!pres) return;
+
+   for (; i < pres->count_planes; i++)
+     {
+        drmModePlane *plane;
+        drmModeObjectPropertiesPtr props;
+        int type = -1;
+
+        plane = drmModeGetPlane(dev->drm.fd, pres->planes[i]);
+        if (!plane) continue;
+
+        props = drmModeObjectGetProperties(dev->drm.fd, plane->plane_id,
+                                           DRM_MODE_OBJECT_PLANE);
+        if (!props) goto free_plane;
+
+        DBG("Plane %u Properties:", plane->plane_id);
+
+        for (j = 0; type == -1 && j < props->count_props; j++)
+          {
+             drmModePropertyPtr prop;
+
+             prop = drmModeGetProperty(dev->drm.fd, props->props[j]);
+             if (!prop) continue;
+
+             if (!strcmp(prop->name, "type"))
+               {
+                  type = props->prop_values[j];
+                  DBG("\tType: %d", type);
+                  for (k = 0; k < prop->count_enums; k++)
+                    {
+                       DBG("\t\t%s=%llu", prop->enums[k].name,
+                           prop->enums[k].value);
+                    }
+               }
+
+             drmModeFreeProperty(prop);
+          }
+
+        DBG("\tFormats:");
+        for (j = 0; j < plane->count_formats; j++)
+          DBG("\t\t%4.4s", (char *)&plane->formats[j]);
+
+        for (j = 0; j < props->count_props; j++ )
+          {
+             drmModePropertyPtr prop;
+
+             prop = drmModeGetProperty(dev->drm.fd, props->props[j]);
+             if (!prop) continue;
+
+             DBG("\tProperty Name: %s", prop->name);
+
+             if (prop->flags & DRM_MODE_PROP_RANGE)
+               {
+                  DBG("\t\tRange Property");
+                  for (k = 0; k < prop->count_values; k++)
+                    DBG("\t\t\t%"PRIu64, prop->values[k]);
+               }
+             if (prop->flags & DRM_MODE_PROP_ENUM)
+               {
+                  DBG("\t\tEnum Property");
+                  for (k = 0; k < prop->count_enums; k++)
+                    DBG("\t\t\t%s=%llu", prop->enums[k].name,
+                        prop->enums[k].value);
+               }
+             if (prop->flags & DRM_MODE_PROP_BITMASK)
+               {
+                  DBG("\t\tBitmask Property");
+                  for (k = 0; k < prop->count_enums; k++)
+                    DBG("\t\t\t%s=0x%llx", prop->enums[k].name,
+                        (1LL << prop->enums[k].value));
+               }
+
+             if (!strcmp(prop->name, "rotation"))
+               {
+                  DBG("\t\tSupported Rotations:");
+                  for (k = 0; k < prop->count_enums; k++)
+                    {
+                       if (!strcmp(prop->enums[k].name, "rotate-0"))
+                         DBG("\t\t\tRotate 0");
+                       else if (!strcmp(prop->enums[k].name, "rotate-90"))
+                         DBG("\t\t\tRotate 90");
+                       else if (!strcmp(prop->enums[k].name, "rotate-180"))
+                         DBG("\t\t\tRotate 180");
+                       else if (!strcmp(prop->enums[k].name, "rotate-270"))
+                         DBG("\t\t\tRotate 270");
+                       else if (!strcmp(prop->enums[k].name, "reflect-x"))
+                         DBG("\t\t\tReflect X");
+                       else if (!strcmp(prop->enums[k].name, "reflect-y"))
+                         DBG("\t\t\tReflect Y");
+                       else
+                         DBG("\t\t\t%s", prop->enums[k].name);
+                    }
+               }
+
+             drmModeFreeProperty(prop);
+          }
+
+        DBG("\tCurrent Crtc: %d", plane->crtc_id);
+        DBG("\tPossible Crtcs: 0x%08x", plane->possible_crtcs);
+
+        drmModeFreeObjectProperties(props);
+
+free_plane:
+        drmModeFreePlane(plane);
+     }
+
+   drmModeFreePlaneResources(pres);
+}
+
 /* public functions */
 
 /**
@@ -752,6 +869,12 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
    dev->max_width = res->max_width;
    dev->max_height = res->max_height;
 
+   /* DBG("Dev Size"); */
+   /* DBG("\tMin Width: %u", res->min_width); */
+   /* DBG("\tMin Height: %u", res->min_height); */
+   /* DBG("\tMax Width: %u", res->max_width); */
+   /* DBG("\tMax Height: %u", res->max_height); */
+
    for (i = 0; i < res->count_connectors; i++)
      {
         /* get the connector */
@@ -775,6 +898,7 @@ next:
      }
 
    /* TODO: Planes */
+   _ecore_drm_output_planes_get(dev);
 
    ret = EINA_TRUE;
    if (eina_list_count(dev->outputs) < 1) 
