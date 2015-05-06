@@ -740,15 +740,7 @@ _ecore_drm_output_planes_get(Ecore_Drm_Device *dev)
              if (!prop) continue;
 
              if (!strcmp(prop->name, "type"))
-               {
-                  type = props->prop_values[j];
-                  DBG("\tType: %d", type);
-                  for (k = 0; k < prop->count_enums; k++)
-                    {
-                       DBG("\t\t%s=%llu", prop->enums[k].name,
-                           prop->enums[k].value);
-                    }
-               }
+               type = props->prop_values[j];
 
              drmModeFreeProperty(prop);
           }
@@ -787,27 +779,7 @@ _ecore_drm_output_planes_get(Ecore_Drm_Device *dev)
                         (1LL << prop->enums[k].value));
                }
 
-             if (!strcmp(prop->name, "rotation"))
-               {
-                  DBG("\t\tSupported Rotations:");
-                  for (k = 0; k < prop->count_enums; k++)
-                    {
-                       if (!strcmp(prop->enums[k].name, "rotate-0"))
-                         DBG("\t\t\tRotate 0");
-                       else if (!strcmp(prop->enums[k].name, "rotate-90"))
-                         DBG("\t\t\tRotate 90");
-                       else if (!strcmp(prop->enums[k].name, "rotate-180"))
-                         DBG("\t\t\tRotate 180");
-                       else if (!strcmp(prop->enums[k].name, "rotate-270"))
-                         DBG("\t\t\tRotate 270");
-                       else if (!strcmp(prop->enums[k].name, "reflect-x"))
-                         DBG("\t\t\tReflect X");
-                       else if (!strcmp(prop->enums[k].name, "reflect-y"))
-                         DBG("\t\t\tReflect Y");
-                       else
-                         DBG("\t\t\t%s", prop->enums[k].name);
-                    }
-               }
+             DBG("\t\tValue: %"PRIu64, props->prop_values[j]);
 
              drmModeFreeProperty(prop);
           }
