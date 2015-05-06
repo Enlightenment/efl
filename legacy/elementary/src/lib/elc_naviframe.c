@@ -1387,7 +1387,6 @@ _deferred(void *data)
 {
    Elm_Naviframe_Data *nfd = data;
    Elm_Naviframe_Op *nfo;
-   Elm_Naviframe_Item_Data *last = NULL;
 
    EINA_LIST_FREE(nfd->ops, nfo)
      {
