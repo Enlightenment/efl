@@ -2,20 +2,21 @@
 # Copyright (C) YEAR Enlightenment development team
 # This file is distributed under the same license as the PACKAGE package.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
-#: src/lib/elm_config.c:3176
+# Adrián Arévalo <adri58@gmail.com>, 2015.
+# Roy W. Reese <waterbearer54@gmx.com>, 2015.
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2015-02-11 10:42+0900\n"
-"PO-Revision-Date: 2013-01-04 14:42+0100\n"
+"PO-Revision-Date: 2015-05-03 18:19+0100\n"
 "Last-Translator: Adrián Arévalo <adri58@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.7.6\n"
 
 #: src/lib/elc_fileselector.c:1449
 msgid "Up"
@@ -27,7 +28,7 @@ msgstr "Carpeta personal"
 
 #: src/lib/elc_fileselector.c:1527
 msgid "Search"
-msgstr ""
+msgstr "Buscar"
 
 #: src/lib/elc_fileselector.c:1693 src/lib/elm_entry.c:1487
 #: src/lib/elm_entry.c:1512
@@ -40,43 +41,46 @@ msgstr "Aceptar"
 
 #: src/lib/elc_multibuttonentry.c:615
 msgid "multi button entry label"
-msgstr ""
+msgstr "etiqueta de entrada multi-botón"
 
 #: src/lib/elc_multibuttonentry.c:637
 msgid "multi button entry item"
-msgstr ""
+msgstr "elemento de entrada multi-botón"
 
 #: src/lib/elc_multibuttonentry.c:1496
 msgid "multi button entry"
-msgstr ""
+msgstr "entrada multi-botón"
 
 #: src/lib/elc_naviframe.c:431
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 #: src/lib/elc_naviframe.c:957 src/lib/elc_naviframe.c:1156
 msgid "Back"
-msgstr ""
+msgstr "Atrás"
 
 #: src/lib/elc_naviframe.c:1249
 msgid "Next"
-msgstr ""
+msgstr "Siguiente"
 
 #: src/lib/elc_popup.c:261 src/lib/elc_popup.c:865
+#, fuzzy
 msgid "Popup Title"
-msgstr ""
+msgstr "Nombre emergente"
 
 #: src/lib/elc_popup.c:271 src/lib/elc_popup.c:930
+#, fuzzy
 msgid "Popup Body Text"
-msgstr ""
+msgstr "Texto emergente"
 
 #: src/lib/elm_bubble.c:194
 msgid "Bubble"
 msgstr "Burbuja"
 
+# Antiguemente: "Clickado"
 #: src/lib/elm_button.c:66
 msgid "Clicked"
-msgstr "Clickado"
+msgstr "Seleccionado"
 
 #: src/lib/elm_button.c:271 src/lib/elm_check.c:235 src/lib/elm_gengrid.c:814
 #: src/lib/elm_genlist.c:1572 src/lib/elm_list.c:2182 src/lib/elm_radio.c:256
@@ -129,6 +133,7 @@ msgstr "mes del calendario"
 msgid "calendar year"
 msgstr "año del calendario"
 
+# RR: Traducción italiana usa ativado/desactivado. No sé a que refiere la cadena.
 #: src/lib/elm_check.c:62 src/lib/elm_check.c:248 src/lib/elm_radio.c:102
 #: src/lib/elm_radio.c:257
 msgid "State: On"
@@ -162,18 +167,18 @@ msgstr "Estado: Editable"
 msgid "Clock"
 msgstr "Reloj"
 
+# RR: Antiguamente - "Paleta de selección de color", pero creo que refiere a un selector como en las cadenas más abajo.
 #: src/lib/elm_colorselector.c:1391
 msgid "color selector palette item"
-msgstr "Paleta de selección de color"
+msgstr "Selector de color de paleta"
 
 #: src/lib/elm_config.c:3192
 msgid "default:LTR"
 msgstr "Predeterminado: LTR"
 
 #: src/lib/elm_dayselector.c:404
-#, fuzzy
 msgid "day selector item"
-msgstr "Selector de disco"
+msgstr "Selector de día"
 
 #: src/lib/elm_diskselector.c:693
 msgid "diskselector item"
@@ -225,11 +230,11 @@ msgstr "estado: cerrado"
 
 #: src/lib/elm_panel.c:110
 msgid "A panel is open"
-msgstr ""
+msgstr "Ya hay un panel abierto"
 
 #: src/lib/elm_panel.c:112
 msgid "Double tap to close panel menu"
-msgstr ""
+msgstr "Doble click para cerrar el menú de panel"
 
 #: src/lib/elm_panel.c:182
 msgid "panel button"
@@ -248,17 +253,16 @@ msgid "State: Selected"
 msgstr "Estado: Seleccionado"
 
 #: src/lib/elm_segment_control.c:530
-#, fuzzy
 msgid "State: Unselected"
-msgstr "Estado: Seleccionado"
+msgstr "Estado: No seleccionado"
 
 #: src/lib/elm_segment_control.c:544
 msgid "Segment Control Item"
-msgstr ""
+msgstr "Elemento del control del segmento"
 
 #: src/lib/elm_slider.c:889
 msgid "slider"
-msgstr "barra de desplazamiento"
+msgstr "deslizador"
 
 #: src/lib/elm_spinner.c:667
 msgid "spinner increment button"
