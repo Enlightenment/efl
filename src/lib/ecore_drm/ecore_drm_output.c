@@ -507,6 +507,13 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
 
    dev->outputs = eina_list_append(dev->outputs, output);
 
+   /* NB: 'primary' output property is not supported in HW, so we need to
+    * implement it via software. As such, the First output which gets
+    * listed via libdrm will be assigned 'primary' until user changes
+    * it via config */
+   if (eina_list_count(dev->outputs) == 1)
+     output->primary = EINA_TRUE;
+
    DBG("Created New Output At %d,%d", output->x, output->y);
    DBG("\tCrtc Pos: %d %d", output->crtc->x, output->crtc->y);
    DBG("\tCrtc: %d", output->crtc_id);
@@ -515,6 +522,7 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    DBG("\tModel: %s", output->model);
    DBG("\tName: %s", output->name);
    DBG("\tCloned: %d", output->cloned);
+   DBG("\tPrimary: %d", output->primary);
 
    EINA_LIST_FOREACH(output->modes, l, mode)
      {
