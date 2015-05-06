@@ -87,6 +87,7 @@ START_TEST(eina_test_xattr_set)
 
    ret = eina_xattr_fd_del(fd, attribute1);
    fail_if(ret != EINA_TRUE);
+
    close(fd);
    unlink(test_file_path);
    eina_tmpstr_del(test_file_path);
@@ -112,7 +113,7 @@ START_TEST(eina_test_xattr_list)
         "This file has extra attributes"
      };
    char *ret_str;
-   int fd, fd1;
+   int fd, fd1, count=0;
    unsigned int i;
    Eina_Bool ret;
    Eina_Tmpstr *test_file_path, *cp_file_path;
@@ -134,61 +135,81 @@ START_TEST(eina_test_xattr_list)
         ret = eina_xattr_set(test_file_path, attribute[i], data[i], strlen(data[i]), EINA_XATTR_INSERT);
         fail_if(ret != EINA_TRUE);
      }
+
    it = eina_xattr_ls(test_file_path);
    EINA_ITERATOR_FOREACH(it, ret_str)
      {
         for (i = 0; i < sizeof (attribute) / sizeof (attribute[0]); i++)
           if (strcmp(attribute[i], ret_str) == 0)
-            break ;
-        fail_if(i == sizeof (attribute) / sizeof (attribute[0]));
+            {
+               count++;
+               break ;
+            }
      }
+   fail_if(count != sizeof (attribute) / sizeof (attribute[0]));
    eina_iterator_free(it);
 
+   count = 0;
    it = eina_xattr_value_ls(test_file_path);
    EINA_ITERATOR_FOREACH(it, xattr)
      {
         for (i = 0; i < sizeof (data) / sizeof (data[0]); i++)
           if (strcmp(attribute[i], xattr->name) == 0 &&
               strcmp(data[i], xattr->value) == 0)
-            break ;
-        fail_if(i == sizeof (data) / sizeof (data[0]));
+            {
+               count++;
+               break ;
+            }
      }
+   fail_if(count != sizeof (data) / sizeof (data[0]));
    eina_iterator_free(it);
 
+   count = 0;
    it = eina_xattr_fd_ls(fd);
    EINA_ITERATOR_FOREACH(it, ret_str)
      {
         for (i = 0; i < sizeof (attribute) / sizeof (attribute[0]); i++)
           if (strcmp(attribute[i], ret_str) == 0)
-            break ;
-        fail_if(i == sizeof (attribute) / sizeof (attribute[0]));
+            {
+               count++;
+               break ;
+            }
      }
+   fail_if(count != sizeof (attribute) / sizeof (attribute[0]));
    eina_iterator_free(it);
 
+   count = 0;
    it = eina_xattr_value_fd_ls(fd);
    EINA_ITERATOR_FOREACH(it, xattr)
      {
         for (i = 0; i < sizeof (data) / sizeof (data[0]); i++)
           if (strcmp(attribute[i], xattr->name) == 0 &&
               strcmp(data[i], xattr->value) == 0)
-            break ;
-        fail_if(i == sizeof (data) / sizeof (data[0]));
+            {
+               count++;
+               break ;
+            }
      }
+   fail_if(count != sizeof (data) / sizeof (data[0]));
    eina_iterator_free(it);
 
    /* Test case for eina_xattr_copy and eina_xattr_fd_copy */
    ret = eina_xattr_copy(test_file_path, cp_file_path);
    fail_if(ret != EINA_TRUE);
 
+   count = 0;
    it = eina_xattr_value_ls(cp_file_path);
    EINA_ITERATOR_FOREACH(it, xattr)
      {
         for (i = 0; i < sizeof (data) / sizeof (data[0]); i++)
           if (strcmp(attribute[i], xattr->name) == 0 &&
               strcmp(data[i], xattr->value) == 0)
-            break ;
-        fail_if(i == sizeof (data) / sizeof (data[0]));
+            {
+               count++;
+               break ;
+            }
      }
+   fail_if(count != sizeof (data) / sizeof (data[0]));
    eina_iterator_free(it);
 
    for (i = 0; i < sizeof(attribute) / sizeof(attribute[0]); ++i)
@@ -199,15 +220,20 @@ START_TEST(eina_test_xattr_list)
 
    ret = eina_xattr_fd_copy(fd, fd1);
    fail_if(ret != EINA_TRUE);
+
+   count = 0;
    it = eina_xattr_value_fd_ls(fd1);
    EINA_ITERATOR_FOREACH(it, xattr)
      {
         for (i = 0; i < sizeof (data) / sizeof (data[0]); i++)
           if (strcmp(attribute[i], xattr->name) == 0 &&
               strcmp(data[i], xattr->value) == 0)
-            break ;
-        fail_if(i == sizeof (data) / sizeof (data[0]));
+            {
+               count++;
+               break ;
+            }
      }
+   fail_if(count != sizeof (data) / sizeof (data[0]));
    eina_iterator_free(it);
 
    close(fd);

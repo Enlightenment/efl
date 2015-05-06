@@ -525,7 +525,7 @@ START_TEST(eina_test_file_xattr)
    Eina_Bool ret;
    Eina_Tmpstr *test_file_path;
    Eina_Iterator *it;
-   int fd;
+   int fd, count=0;
    Eina_Xattr *xattr;
 
    eina_init();
@@ -549,20 +549,27 @@ START_TEST(eina_test_file_xattr)
      {
         for (i = 0; i < sizeof (attribute) / sizeof (attribute[0]); i++)
           if (strcmp(attribute[i], ret_str) == 0)
-            break ;
-        fail_if(i == sizeof (attribute) / sizeof (attribute[0]));
+            {
+               count++;
+               break;
+            }
      }
+   fail_if(count != sizeof (attribute) / sizeof (attribute[0]));
    eina_iterator_free(it);
 
+   count = 0;
    it = eina_file_xattr_value_get(ef);
    EINA_ITERATOR_FOREACH(it, xattr)
      {
         for (i = 0; i < sizeof (data) / sizeof (data[0]); i++)
           if (strcmp(attribute[i], xattr->name) == 0 &&
               strcmp(data[i], xattr->value) == 0)
-            break ;
-        fail_if(i == sizeof (data) / sizeof (data[0]));
+            {
+               count++;
+               break;
+            }
      }
+   fail_if(count != sizeof (data) / sizeof (data[0]));
    eina_iterator_free(it);
 
    unlink(test_file_path);

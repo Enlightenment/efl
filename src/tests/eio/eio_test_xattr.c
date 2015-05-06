@@ -58,10 +58,10 @@ _main_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED, const char *attr
 
    for (i = 0; i < sizeof (attribute) / sizeof (attribute[0]); ++i)
      if (strcmp(attr, attribute[i]) == 0)
-       break;
-
-   fail_if(i == sizeof (attribute) / sizeof (attribute[0]));
-   (*num_of_attr)++;
+       {
+          (*num_of_attr)++;
+          break;
+       }
 }
 
 static void
