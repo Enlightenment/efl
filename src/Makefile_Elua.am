@@ -14,7 +14,6 @@ lib_elua_libelua_la_SOURCES = \
 
 lib_elua_libelua_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@ \
 	-DLOCALE_DIR=\"@LOCALE_DIR@\" \
-	-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
 	-DPACKAGE_BIN_DIR=\"$(bindir)\" \
 	-DPACKAGE_DATA_DIR=\"$(datadir)/elua\"
 
@@ -32,10 +31,7 @@ bin_elua_elua_SOURCES = \
 	bin/elua/main.c
 
 bin_elua_elua_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@ \
-	-DLOCALE_DIR=\"@LOCALE_DIR@\" \
-	-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
-	-DPACKAGE_BIN_DIR=\"$(bindir)\" \
-	-DPACKAGE_DATA_DIR=\"$(datadir)/elua\"
+	-DLOCALE_DIR=\"@LOCALE_DIR@\"
 
 if HAVE_OSX
 if  HAVE_X86_64
@@ -49,6 +45,11 @@ else
 bin_elua_elua_LDADD = @ELUA_LIBS@ @USE_ELUA_LIBS@
 endif
 bin_elua_elua_DEPENDENCIES = @ELUA_INTERNAL_LIBS@ lib/elua/libelua.la
+
+ELUA_BINDINGS_DIR = $(abs_top_srcdir)/src/bindings/luajit
+ELUA_CORE_DIR = $(abs_top_srcdir)/src/scripts/elua/core
+ELUA_MODULES_DIR = $(abs_top_srcdir)/src/scripts/elua/modules
+ELUA_APPS_DIR = $(abs_top_srcdir)/src/scripts/elua/apps
 
 ### Helper for other modules using Elua
 include Makefile_Elua_Helper.am
@@ -105,5 +106,38 @@ eluacore_DATA = \
 	scripts/elua/core/util.lua
 
 EXTRA_DIST += $(eluacore_DATA)
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/elua/elua_suite
+
+tests_elua_elua_suite_SOURCES = \
+tests/elua/elua_lib.c \
+tests/elua/elua_suite.c \
+tests/elua/elua_suite.h
+
+tests_elua_elua_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/elua\" \
+-DPACKAGE_DATA_DIR=\"$(top_srcdir)/src/tests/elua\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DELUA_BINDINGS_DIR=\"$(ELUA_BINDINGS_DIR)\" \
+-DELUA_CORE_DIR=\"$(ELUA_CORE_DIR)\" \
+-DELUA_MODULES_DIR=\"$(ELUA_MODULES_DIR)\" \
+-DELUA_APPS_DIR=\"$(ELUA_APPS_DIR)\" \
+@CHECK_CFLAGS@ \
+@ELUA_CFLAGS@
+
+TESTS += tests/elua/elua_suite
+
+if HAVE_OSX
+if  HAVE_X86_64
+tests_elua_elua_suite_LDFLAGS = -pagezero_size 10000 -image_base 100000000
+endif
+endif
+
+tests_elua_elua_suite_LDADD = @CHECK_LIBS@ @USE_ELUA_LIBS@
+tests_elua_elua_suite_DEPENDENCIES = @USE_ELUA_INTERNAL_LIBS@
+
+endif
 
 endif

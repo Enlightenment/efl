@@ -341,8 +341,8 @@ elua_newfile(lua_State *L)
    return f;
 }
 
-EAPI int
-elua_io_popen(lua_State *L)
+int
+_elua_io_popen(lua_State *L)
 {
    const char *fname = luaL_checkstring(L, 1);
    const char *mode  = luaL_optstring(L, 2, "r");
