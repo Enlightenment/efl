@@ -240,8 +240,8 @@ _shrink_mode_set(Evas_Object *obj,
                   evas_object_show(sd->end);
 
                   sd->view_state = MULTIBUTTONENTRY_VIEW_SHRINK;
-                  evas_object_smart_callback_call
-                    (obj, SIG_EXPAND_STATE_CHANGED, (void *)1);
+                  eo_do(obj, eo_event_callback_call
+                    (ELM_MULTIBUTTONENTRY_EVENT_EXPAND_STATE_CHANGED, (void *)1));
                   break;
                }
           }
@@ -273,8 +273,9 @@ _shrink_mode_set(Evas_Object *obj,
           }
 
         sd->view_state = MULTIBUTTONENTRY_VIEW_NONE;
-        evas_object_smart_callback_call
-          (obj, SIG_EXPAND_STATE_CHANGED, (void *)(uintptr_t)sd->shrink);
+        eo_do(obj, eo_event_callback_call
+          (ELM_MULTIBUTTONENTRY_EVENT_EXPAND_STATE_CHANGED,
+          (void *)(uintptr_t)sd->shrink));
      }
 
    if (sd->view_state != MULTIBUTTONENTRY_VIEW_SHRINK)
@@ -329,14 +330,16 @@ _elm_multibuttonentry_elm_widget_on_focus(Eo *obj, Elm_Multibuttonentry_Data *sd
                   elm_entry_input_panel_show(sd->entry);
                }
           }
-        evas_object_smart_callback_call(obj, SIG_FOCUSED, NULL);
+        eo_do(obj, eo_event_callback_call
+          (ELM_MULTIBUTTONENTRY_EVENT_FOCUSED, NULL));
      }
    else
      {
         _view_update(sd);
 
         elm_entry_input_panel_hide(sd->entry);
-        evas_object_smart_callback_call(obj, SIG_UNFOCUSED, NULL);
+        eo_do(obj, eo_event_callback_call
+          (ELM_MULTIBUTTONENTRY_EVENT_UNFOCUSED, NULL));
      }
 
 end:
@@ -360,7 +363,8 @@ _item_del(Elm_Multibuttonentry_Item_Data *item)
              sd->items = eina_list_remove(sd->items, eo_it);
              elm_box_unpack(sd->box, VIEW(it));
 
-             evas_object_smart_callback_call(obj, SIG_ITEM_DELETED, eo_it);
+             eo_do(obj, eo_event_callback_call
+               (ELM_MULTIBUTTONENTRY_EVENT_ITEM_DELETED, eo_it));
 
              evas_object_del(VIEW(it));
 
@@ -393,7 +397,8 @@ _current_item_state_change(Evas_Object *obj,
      {
       case MULTIBUTTONENTRY_BUTTON_STATE_SELECTED:
         elm_layout_signal_emit(VIEW(item), "elm,state,focused", "elm");
-        evas_object_smart_callback_call(obj, SIG_ITEM_SELECTED, EO_OBJ(item));
+        eo_do(obj, eo_event_callback_call
+          (ELM_MULTIBUTTONENTRY_EVENT_ITEM_SELECTED, EO_OBJ(item)));
         break;
       case MULTIBUTTONENTRY_BUTTON_STATE_DEFAULT:
       default:
@@ -492,7 +497,8 @@ _on_item_clicked(void *data,
    _item_select(WIDGET(it), it);
 
    if (sd->selected_it)
-     evas_object_smart_callback_call(WIDGET(it), SIG_ITEM_CLICKED, eo_it);
+     eo_do(WIDGET(it), eo_event_callback_call
+       (ELM_MULTIBUTTONENTRY_EVENT_ITEM_CLICKED, eo_it));
 }
 
 static void
@@ -528,7 +534,8 @@ _long_press_cb(void *data)
 
    sd->longpress_timer = NULL;
 
-   evas_object_smart_callback_call(WIDGET(it), SIG_ITEM_LONGPRESSED, EO_OBJ(it));
+   eo_do(WIDGET(it), eo_event_callback_call
+     (ELM_MULTIBUTTONENTRY_EVENT_ITEM_LONGPRESSED, EO_OBJ(it)));
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -863,7 +870,8 @@ _item_new(Elm_Multibuttonentry_Data *sd,
       default:
         break;
      }
-   evas_object_smart_callback_call(obj, SIG_ITEM_ADDED, eo_item);
+   eo_do(obj, eo_event_callback_call
+     (ELM_MULTIBUTTONENTRY_EVENT_ITEM_ADDED, eo_item));
 
    return eo_item;
 }
@@ -904,7 +912,7 @@ _mouse_clicked_signal_cb(void *data EINA_UNUSED,
                          const char *emission EINA_UNUSED,
                          const char *source EINA_UNUSED)
 {
-   evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
+   eo_do(obj, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
 }
 
 static void
@@ -922,9 +930,11 @@ _box_resize_cb(void *data,
    evas_object_geometry_get(sd->box, NULL, NULL, &w, &h);
 
    if (sd->h_box < h)
-     evas_object_smart_callback_call(sd->parent, SIG_EXPANDED, NULL);
+     eo_do(sd->parent, eo_event_callback_call
+       (ELM_MULTIBUTTONENTRY_EVENT_EXPANDED, NULL));
    else if (sd->h_box > h)
-     evas_object_smart_callback_call(sd->parent, SIG_CONTRACTED, NULL);
+     eo_do(sd->parent, eo_event_callback_call
+       (ELM_MULTIBUTTONENTRY_EVENT_CONTRACTED, NULL));
 
    if (sd->items && sd->w_box != w)
      {
@@ -969,25 +979,25 @@ _entry_resize_cb(void *data,
      elm_widget_show_region_set(sd->entry, en_x, en_y, en_w, en_h, EINA_TRUE);
 }
 
-static void
+static Eina_Bool
 _entry_changed_cb(void *data,
-                  Evas_Object *obj EINA_UNUSED,
-                  void *event_info EINA_UNUSED)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(data, sd, EINA_TRUE);
    const char *str;
 
    str = elm_object_text_get(sd->entry);
    sd->n_str = str ? strlen(str) : 0;
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _entry_focus_in_cb(void *data,
-                   Evas_Object *obj EINA_UNUSED,
-                   void *event_info EINA_UNUSED)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Multibuttonentry_Item_Data *item = NULL;
-   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(data, sd, EINA_TRUE);
 
    if (sd->selected_it)
      {
@@ -995,30 +1005,34 @@ _entry_focus_in_cb(void *data,
         elm_object_focus_set(sd->entry, EINA_FALSE);
         evas_object_focus_set(VIEW(item), EINA_TRUE);
      }
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _entry_focus_out_cb(void *data,
-                    Evas_Object *obj EINA_UNUSED,
-                    void *event_info EINA_UNUSED)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(data, sd, EINA_TRUE);
    const char *str;
 
    str = elm_object_text_get(sd->entry);
    if (str && str[0])
      _item_new(sd, str, MULTIBUTTONENTRY_POS_END, NULL, NULL, NULL);
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _entry_clicked_cb(void *data,
-                  Evas_Object *obj EINA_UNUSED,
-                  void *event_info EINA_UNUSED)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN(data, sd);
+   ELM_MULTIBUTTONENTRY_DATA_GET_OR_RETURN_VAL(data, sd, EINA_TRUE);
 
    _current_item_state_change(sd->parent, MULTIBUTTONENTRY_BUTTON_STATE_DEFAULT);
    elm_object_focus_set(sd->entry, EINA_TRUE);
+
+   return EINA_TRUE;
 }
 
 static void
@@ -1119,14 +1133,14 @@ _callbacks_register(Evas_Object *obj)
      (sd->entry, EVAS_CALLBACK_KEY_DOWN, _entry_key_down_cb, obj);
    evas_object_event_callback_add
      (sd->entry, EVAS_CALLBACK_RESIZE, _entry_resize_cb, obj);
-   evas_object_smart_callback_add
-     (sd->entry, "changed", _entry_changed_cb, obj);
-   evas_object_smart_callback_add
-     (sd->entry, "focused", _entry_focus_in_cb, obj);
-   evas_object_smart_callback_add
-     (sd->entry, "unfocused", _entry_focus_out_cb, obj);
-   evas_object_smart_callback_add
-     (sd->entry, "clicked", _entry_clicked_cb, obj);
+   eo_do(sd->entry, eo_event_callback_add
+     (ELM_MULTIBUTTONENTRY_EVENT_CHANGED, _entry_changed_cb, obj));
+   eo_do(sd->entry, eo_event_callback_add
+     (ELM_MULTIBUTTONENTRY_EVENT_FOCUSED, _entry_focus_in_cb, obj));
+   eo_do(sd->entry, eo_event_callback_add
+     (ELM_MULTIBUTTONENTRY_EVENT_UNFOCUSED, _entry_focus_out_cb, obj));
+   eo_do(sd->entry, eo_event_callback_add
+     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _entry_clicked_cb, obj));
 }
 
 static void

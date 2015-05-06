@@ -273,12 +273,12 @@ class Elm.Multibuttonentry (Elm.Layout)
       item,deleted;
       item,clicked;
       item,longpressed;
-      clicked;
       focused;
       unfocused;
       expanded;
       contracted;
       expand,state,changed;
+      changed;
    }
 
 }
