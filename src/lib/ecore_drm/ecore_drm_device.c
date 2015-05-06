@@ -281,6 +281,10 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
 
    DBG("Opened Device %s : %d", dev->drm.name, dev->drm.fd);
 
+   /* set client capabilities to 'universal planes' so drm core will expose
+    * the full universal plane list (including primary & cursor planes) */
+   drmSetClientCap(dev->drm.fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1);
+
    if (!drmGetCap(dev->drm.fd, DRM_CAP_TIMESTAMP_MONOTONIC, &caps))
      {
         if (caps == 1)
