@@ -28,7 +28,9 @@ struct _Elm_Naviframe_Data
 {
    Eina_Inlist          *stack; /* top item is the list's LAST item */
    Eina_List            *popping;
+   Eina_List            *ops;
    Evas_Object          *dummy_edje;
+   Ecore_Animator       *animator;
    Evas_Display_Mode     dispmode;
 
    Eina_Bool             preserve : 1;
@@ -49,7 +51,6 @@ struct _Elm_Naviframe_Item_Data
    Evas_Object *title_prev_btn;
    Evas_Object *title_next_btn;
    Evas_Object *title_icon;
-   Ecore_Animator *animator;
    Evas_Display_Mode dispmode;
    Elm_Naviframe_Item_Pop_Cb pop_cb;
    void        *pop_data;
@@ -63,6 +64,15 @@ struct _Elm_Naviframe_Item_Data
    Eina_Bool    title_enabled : 1;
    Eina_Bool    popping : 1; /**< a flag to notify the item is on poping. this flag is set true at the start of item pop. */
    Eina_Bool    delete_me : 1; /**< a flag to notify the item is on deletion. this flag is set true at the start of item deletion. */
+};
+
+typedef struct _Elm_Naviframe_Op Elm_Naviframe_Op;
+struct _Elm_Naviframe_Op
+{
+   Elm_Naviframe_Item_Data *self;
+   Elm_Naviframe_Item_Data *related;
+
+   Eina_Bool push : 1;
 };
 
 typedef struct _Elm_Naviframe_Content_Item_Pair Elm_Naviframe_Content_Item_Pair;

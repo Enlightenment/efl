@@ -530,14 +530,14 @@ _elm_naviframe_item_elm_widget_item_part_text_get(Eo *nit EINA_UNUSED,
 EOLIAN static void
 _elm_naviframe_item_eo_base_destructor(Eo *eo_item, Elm_Naviframe_Item_Data *it)
 {
+   Eina_List *l;
+   Elm_Naviframe_Op *nfo;
    Elm_Naviframe_Item_Data *nit = it, *prev_it = NULL;
    Eina_Bool top;
 
    ELM_NAVIFRAME_DATA_GET(WIDGET(nit), sd);
 
    nit->delete_me = EINA_TRUE;
-
-   ecore_animator_del(nit->animator);
 
    top = (eo_item == elm_naviframe_top_item_get(WIDGET(nit)));
    if (evas_object_data_get(VIEW(nit), "out_of_list"))
@@ -566,6 +566,14 @@ _elm_naviframe_item_eo_base_destructor(Eo *eo_item, Elm_Naviframe_Item_Data *it)
      }
 
 end:
+   // This should not happen, but just in case and by security
+   // make sure there is no more reference to this item.
+   EINA_LIST_FOREACH(sd->ops, l, nfo)
+     {
+        if (nfo->related == nit) nfo->related = NULL;
+        if (nfo->self == nit) nfo->self = NULL;
+     }
+
    _item_free(nit);
 
    eo_do_super(eo_item, ELM_NAVIFRAME_ITEM_CLASS, eo_destructor());
@@ -1366,26 +1374,42 @@ _elm_naviframe_evas_object_smart_add(Eo *obj, Elm_Naviframe_Data *priv)
    elm_widget_can_focus_set(obj, EINA_TRUE);
 }
 
-static Eina_Bool
-_pop_transition_cb(void *data)
+static void
+_send_signal(Elm_Naviframe_Item_Data *it, const char *signal)
 {
-   Elm_Object_Item *eo_prev_it;
-   Elm_Naviframe_Item_Data *it;
-   it = (Elm_Naviframe_Item_Data *)data;
-
-   it->animator = NULL;
-
-   eo_prev_it = elm_naviframe_top_item_get(WIDGET(it));
-   if (eo_prev_it)
-     {
-        ELM_NAVIFRAME_ITEM_DATA_GET(eo_prev_it, prev_it);
-        elm_object_signal_emit(VIEW(prev_it), "elm,state,prev,popped,deferred",
-                               "elm");
-        edje_object_message_signal_process(elm_layout_edje_get(VIEW(prev_it)));
-     }
-   elm_object_signal_emit(VIEW(it), "elm,state,cur,popped,deferred", "elm");
+   if (!it) return ;
+   elm_object_signal_emit(VIEW(it), signal, "elm");
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
+}
 
+static Eina_Bool
+_deferred(void *data)
+{
+   Elm_Naviframe_Data *nfd = data;
+   Elm_Naviframe_Op *nfo;
+   Elm_Naviframe_Item_Data *last = NULL;
+
+   EINA_LIST_FREE(nfd->ops, nfo)
+     {
+        const char *signals_cur[] = {
+          "elm,state,cur,popped,deferred",
+          "elm,state,cur,pushed,deferred"
+        };
+        const char *signals_prev = "elm,state,prev,popped,deferred";
+        const char *signals_new = "elm,state,new,pushed,deferred";
+        Elm_Naviframe_Item_Data *cur;
+        Elm_Naviframe_Item_Data *other;
+
+        cur = nfo->push ? nfo->related : nfo->self;
+        other = nfo->push ? nfo->self : nfo->related;
+
+        _send_signal(cur, signals_cur[nfo->push]);
+        _send_signal(other, nfo->push ? signals_new : signals_prev);
+
+        free(nfo);
+     }
+
+   nfd->animator = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -1393,6 +1417,7 @@ EOLIAN static void
 _elm_naviframe_evas_object_smart_del(Eo *obj, Elm_Naviframe_Data *sd)
 {
    Elm_Naviframe_Item_Data *it;
+   Elm_Naviframe_Op *nfo;
 
    sd->on_deletion = EINA_TRUE;
 
@@ -1403,11 +1428,11 @@ _elm_naviframe_evas_object_smart_del(Eo *obj, Elm_Naviframe_Data *sd)
      }
 
    //All popping items which are not called yet by animator.
+   if (sd->animator) ecore_animator_del(sd->animator);
+   EINA_LIST_FREE(sd->ops, nfo)
+     free(nfo);
    EINA_LIST_FREE(sd->popping, it)
-     {
-        ecore_animator_del(it->animator);
-        eo_do(EO_OBJ(it), elm_wdg_item_del());
-     }
+     eo_do(EO_OBJ(it), elm_wdg_item_del());
 
    evas_object_del(sd->dummy_edje);
 
@@ -1466,27 +1491,6 @@ _elm_naviframe_elm_widget_access(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd, Ei
      _access_obj_process(it, is_access);
 }
 
-static Eina_Bool
-_push_transition_cb(void *data)
-{
-   Elm_Naviframe_Item_Data *prev_it, *it = data;
-
-   it->animator = NULL;
-
-   if (EINA_INLIST_GET(it)->prev)
-     {
-        prev_it = EINA_INLIST_CONTAINER_GET(EINA_INLIST_GET(it)->prev,
-                                            Elm_Naviframe_Item_Data);
-        elm_object_signal_emit(VIEW(prev_it), "elm,state,cur,pushed,deferred",
-                                "elm");
-        edje_object_message_signal_process(elm_layout_edje_get(VIEW(prev_it)));
-     }
-   elm_object_signal_emit(VIEW(it), "elm,state,new,pushed,deferred", "elm");
-   edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
-
-   return ECORE_CALLBACK_CANCEL;
-}
-
 static void
 _item_push_helper(Elm_Naviframe_Item_Data *item)
 {
@@ -1501,6 +1505,8 @@ _item_push_helper(Elm_Naviframe_Item_Data *item)
    _resize_object_reset(obj, item);
    if (top_item)
      {
+        Elm_Naviframe_Op *nfo = calloc(1, sizeof (Elm_Naviframe_Op));
+
         elm_widget_tree_unfocusable_set(VIEW(item), EINA_FALSE);
         elm_widget_tree_unfocusable_set(VIEW(top_item), EINA_TRUE);
 
@@ -1514,8 +1520,12 @@ _item_push_helper(Elm_Naviframe_Item_Data *item)
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(top_item)));
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(item)));
 
-        ecore_animator_del(item->animator);
-        item->animator = ecore_animator_add(_push_transition_cb, item);
+        nfo->self = item;
+        nfo->related = top_item;
+        nfo->push = EINA_TRUE;
+
+        sd->ops = eina_list_append(sd->ops, nfo);
+        if (!sd->animator) sd->animator = ecore_animator_add(_deferred, sd);
      }
    else
      {
@@ -1653,8 +1663,6 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
    Elm_Naviframe_Item_Data *prev_it = NULL;
    Evas_Object *content = NULL;
 
-   if (sd->freeze_events && sd->popping) return NULL;
-
    eo_item = elm_naviframe_top_item_get(obj);
    if (!eo_item) return NULL;
 
@@ -1694,6 +1702,8 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
 
    if (prev_it)
      {
+        Elm_Naviframe_Op *nfo = calloc(1, sizeof (Elm_Naviframe_Op));
+
         elm_widget_tree_unfocusable_set(VIEW(it), EINA_TRUE);
         elm_widget_tree_unfocusable_set(VIEW(prev_it), EINA_FALSE);
 
@@ -1713,13 +1723,20 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(prev_it)));
 
-        ecore_animator_del(it->animator);
-        it->animator = ecore_animator_add(_pop_transition_cb, it);
+        if (!nfo) goto on_error;
+
+        nfo->self = it;
+        nfo->related = prev_it;
+        nfo->push = EINA_FALSE;
+
         sd->popping = eina_list_append(sd->popping, it);
+        sd->ops = eina_list_append(sd->ops, nfo);
+        if (!sd->animator) sd->animator = ecore_animator_add(_deferred, sd);
      }
    else
      eo_do(eo_item, elm_wdg_item_del());
 
+ on_error:
    return content;
 }
 
