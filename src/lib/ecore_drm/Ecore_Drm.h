@@ -856,6 +856,18 @@ EAPI char *ecore_drm_output_edid_get(Ecore_Drm_Output *output);
  */
 EAPI Eina_List *ecore_drm_output_modes_get(Ecore_Drm_Output *output);
 
+/**
+ * Get the output which is marked as primary
+ *
+ * @param dev The Ecore_Drm_Device to get the primary output from
+ *
+ * @return The primary Ecore_Drm_Output or NULL if no primary output is set
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI Ecore_Drm_Output *ecore_drm_output_primary_get(Ecore_Drm_Device *dev);
+
 #ifdef __cplusplus
 }
 #endif

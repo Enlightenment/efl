@@ -1249,3 +1249,17 @@ ecore_drm_output_modes_get(Ecore_Drm_Output *output)
 
    return output->modes;
 }
+
+EAPI Ecore_Drm_Output *
+ecore_drm_output_primary_get(Ecore_Drm_Device *dev)
+{
+   Ecore_Drm_Output *ret;
+   const Eina_List *l;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
+
+   EINA_LIST_FOREACH(dev->outputs, l, ret)
+     if (ret->primary) return ret;
+
+   return NULL;
+}
