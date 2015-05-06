@@ -1,6 +1,23 @@
 type Evas.Coord: int; /* Simple type definition */
 type List_Objects: own(list<Eo *>*); /* A little more complex */
 
+enum Enum.Bar
+{
+   legacy: bar;
+   first_item  = 0,
+   second_item,
+   last_item
+}
+
+enum Elm.Object.Select_mode
+{
+   default = 0,
+   always,
+   none,
+   display_only,
+   max
+}
+
 class Typedef {
    methods {
       foo {
