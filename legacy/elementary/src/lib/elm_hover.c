@@ -243,8 +243,8 @@ _elm_hover_smt_sub_re_eval(Evas_Object *obj)
    sd->smt_sub->obj = sub;
 
    if (sd->smt_sub != prev)
-     evas_object_smart_callback_call
-       (obj, SIG_SMART_LOCATION_CHANGED, (void *)sd->smt_sub->swallow);
+     eo_do(obj, eo_event_callback_call
+       (ELM_HOVER_EVENT_SMART_CHANGED, (void *)sd->smt_sub->swallow));
 
    if (elm_widget_mirrored_get(obj))
      {
@@ -517,8 +517,9 @@ _hov_dismiss_cb(void *data,
                 const char *source EINA_UNUSED)
 {
    evas_object_hide(data);
-   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
-   evas_object_smart_callback_call(data, SIG_DISMISSED, NULL);
+   eo_do(data, eo_event_callback_call
+     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
+   eo_do(data, eo_event_callback_call(ELM_HOVER_EVENT_DISMISSED, NULL));
 }
 
 EOLIAN static void
@@ -560,8 +561,9 @@ _elm_hover_evas_object_smart_del(Eo *obj, Elm_Hover_Data *sd)
 
    if (evas_object_visible_get(obj))
      {
-        evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
-        evas_object_smart_callback_call(obj, SIG_DISMISSED, NULL);
+        eo_do(obj, eo_event_callback_call
+          (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
+        eo_do(obj, eo_event_callback_call(ELM_HOVER_EVENT_DISMISSED, NULL));
      }
 
    elm_hover_target_set(obj, NULL);

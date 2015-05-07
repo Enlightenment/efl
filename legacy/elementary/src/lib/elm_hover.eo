@@ -88,6 +88,8 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface)
    events {
       focused;
       unfocused;
+      smart,changed;
+      dismissed;
    }
 
 }
