@@ -1643,18 +1643,6 @@ parse_methods(Eo_Lexer *ls)
 }
 
 static void
-parse_properties(Eo_Lexer *ls)
-{
-   int line, col;
-   eo_lexer_get(ls);
-   line = ls->line_number, col = ls->column;
-   check_next(ls, '{');
-   while (ls->t.token != '}')
-     parse_property(ls);
-   check_match(ls, '}', '{', line, col);
-}
-
-static void
 parse_implements(Eo_Lexer *ls, Eina_Bool iface)
 {
    int line, col;
@@ -1698,7 +1686,6 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
    Eina_Bool has_legacy_prefix = EINA_FALSE,
              has_eo_prefix     = EINA_FALSE,
              has_data          = EINA_FALSE,
-             has_properties    = EINA_FALSE,
              has_methods       = EINA_FALSE,
              has_implements    = EINA_FALSE,
              has_constructors  = EINA_FALSE,
@@ -1741,10 +1728,6 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
         ls->tmp.kls->data_type = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
         check_next(ls, ';');
-        break;
-      case KW_properties:
-        CASE_LOCK(ls, properties, "properties definition")
-        parse_properties(ls);
         break;
       case KW_methods:
         CASE_LOCK(ls, methods, "methods definition")
