@@ -829,7 +829,7 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard EINA_UN
    else
      ecore_event_add(ECORE_EVENT_KEY_UP, e, NULL, NULL);
 
-   if (!xkb_keymap_key_repeats(input->xkb.keymap, keycode)) return;
+   if (!xkb_keymap_key_repeats(input->xkb.keymap, code)) return;
 
    if ((!state) && (keycode == input->repeat.key))
      {
