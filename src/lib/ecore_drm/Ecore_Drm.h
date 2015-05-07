@@ -880,6 +880,22 @@ EAPI Ecore_Drm_Output *ecore_drm_output_primary_get(Ecore_Drm_Device *dev);
  */
 EAPI void ecore_drm_output_crtc_size_get(Ecore_Drm_Output *output, int *width, int *height);
 
+/**
+ * Find an Ecore_Drm_Output which has the given name
+ *
+ * This function will loop all the existing outputs in Ecore_Drm_Device and 
+ * return an output if one exists that matches the given name.
+ *
+ * @param dev The Ecore_Drm_Device to search
+ * @param name The Ecore_Drm_Output matching this name
+ *
+ * @return An Ecore_Drm_Output if one exists at these coordinates or NULL
+ *
+ * @ingroup Ecore_Drm_Device_Group
+ * @since 1.15
+ */
+EAPI Ecore_Drm_Output *ecore_drm_device_output_name_find(Ecore_Drm_Device *dev, const char *name);
+
 # ifdef __cplusplus
 }
 # endif

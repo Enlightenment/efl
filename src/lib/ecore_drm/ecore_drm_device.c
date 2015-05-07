@@ -545,3 +545,19 @@ ecore_drm_screen_size_range_get(Ecore_Drm_Device *dev, int *minw, int *minh, int
    if (maxw) *maxw = dev->max_width;
    if (maxh) *maxh = dev->max_height;
 }
+
+EAPI Ecore_Drm_Output *
+ecore_drm_device_output_name_find(Ecore_Drm_Device *dev, const char *name)
+{
+   Ecore_Drm_Output *output;
+   Eina_List *l;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(name, NULL);
+
+   EINA_LIST_FOREACH(dev->outputs, l, output)
+     if ((output->name) && (!strcmp(name, output->name)))
+       return output;
+
+   return NULL;
+}
