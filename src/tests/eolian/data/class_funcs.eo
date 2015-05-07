@@ -1,15 +1,13 @@
 class Class_Funcs {
-   properties {
-      a @class {
-         get {
-         }
-      }
-      b {
-         get {
-         }
-      }
-   }
    methods {
+      @property a @class {
+         get {
+         }
+      }
+      @property b {
+         get {
+         }
+      }
       foo @class {
       }
       bar {

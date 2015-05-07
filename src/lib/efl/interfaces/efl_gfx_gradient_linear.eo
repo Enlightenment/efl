@@ -1,8 +1,8 @@
 interface Efl.Gfx.Gradient.Linear (Efl.Gfx.Gradient.Base)
 {
    legacy_prefix: null;
-   properties {
-      start {
+   methods {
+      @property start {
          set {
             /*@
               Sets the start point of this linear gradient.
@@ -18,7 +18,7 @@ interface Efl.Gfx.Gradient.Linear (Efl.Gfx.Gradient.Base)
             double y; /*@ y co-ordinate of start point */
          }
       }
-      end {
+      @property end {
          set {
             /*@
               Sets the end point of this linear gradient.

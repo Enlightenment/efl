@@ -2,8 +2,8 @@
 
 interface Efl.Control {
    legacy_prefix: null;
-   properties {
-        priority {
+   methods {
+        @property priority {
              /*@ Control the priority of the object. */
              set {
              }
@@ -13,7 +13,7 @@ interface Efl.Control {
                   int priority; /*@ The priority of the object */
              }
         }
-        suspend {
+        @property suspend {
              /*@ Controls whether the object is suspended or not. */
              set {
              }

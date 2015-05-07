@@ -2,8 +2,8 @@ class Evas.Table (Evas.Smart_Clipped)
 {
    legacy_prefix: evas_object_table;
    eo_prefix: evas_obj_table;
-   properties {
-      homogeneous {
+   methods {
+      @property homogeneous {
          set {
             /*@
             @brief Set how this table should layout children.
@@ -57,7 +57,7 @@ class Evas.Table (Evas.Smart_Clipped)
             Evas_Object_Table_Homogeneous_Mode homogeneous;
          }
       }
-      align {
+      @property align {
          set {
             /*@
             Set the alignment of the whole bounding box of contents. */
@@ -71,7 +71,7 @@ class Evas.Table (Evas.Smart_Clipped)
             double vertical;
          }
       }
-      padding {
+      @property padding {
          set {
             /*@
             Set padding between cells. */
@@ -85,7 +85,7 @@ class Evas.Table (Evas.Smart_Clipped)
             Evas_Coord vertical;
          }
       }
-      mirrored {
+      @property mirrored {
          set {
             /*@
             Sets the mirrored mode of the table. In mirrored mode the table items go
@@ -106,7 +106,7 @@ class Evas.Table (Evas.Smart_Clipped)
             bool mirrored; /*@ the mirrored mode to set */
          }
       }
-      col_row_size {
+      @property col_row_size {
          get {
             /*@
             Get the number of columns and rows this table takes.
@@ -121,7 +121,7 @@ class Evas.Table (Evas.Smart_Clipped)
             int rows;
          }
       }
-      children {
+      @property children {
          get {
             /*@
             Get the list of children for the table.
@@ -133,7 +133,7 @@ class Evas.Table (Evas.Smart_Clipped)
             return: free(own(list<Evas.Object *> *), eina_list_free) @warn_unused;
          }
       }
-      child {
+      @property child {
          get {
             /*@
             Get the child of the table at the given coordinates
@@ -148,8 +148,6 @@ class Evas.Table (Evas.Smart_Clipped)
             Evas_Object *child;
          }
       }
-   }
-   methods {
       clear {
          /*@
          Faster way to remove all child objects from a table object. */

@@ -3,8 +3,8 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
    legacy_prefix: null;
    data: Evas_3D_Light_Data;
 
-   properties {
-      directional {
+   methods {
+      @property directional {
          set {
             /*@
               Set the directional flag of the given light.
@@ -34,7 +34,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      spot_exponent {
+      @property spot_exponent {
          set {
             /*@
               Set the spot exponent of the given light.
@@ -65,7 +65,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      spot_cutoff {
+      @property spot_cutoff {
          set {
             /*@
               Set the spot cutoff angle of the given light.
@@ -92,7 +92,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      attenuation_enable {
+      @property attenuation_enable {
          set {
             /*@
               Set the attenuation enable flag of the given light.
@@ -117,8 +117,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
             bool enable; /*@ Whether to enable attenuation (@c EINA_TRUE), or not (@c EINA_FALSE)..*/
          }
       }
-   }
-   methods {
+
       ambient_set {
          /*@
            Set the ambient color of the given light.

@@ -2,8 +2,8 @@ class Evas.VG (Evas.Object, Efl.Gfx.Fill, Efl.Gfx.View)
 {
    legacy_prefix: evas_object_vg;
    eo_prefix: evas_obj_vg;
-   properties {
-      root_node {
+   methods {
+      @property root_node {
          get {
             /*@
               Get the root node of the evas_object_vg.

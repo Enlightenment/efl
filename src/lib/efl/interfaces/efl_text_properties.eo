@@ -2,8 +2,8 @@ type Efl_Font_Size: int;
 
 interface Efl.Text_Properties {
    legacy_prefix: null;
-   properties {
-      font {
+   methods {
+      @property font {
          set {
             /*@
             Set the font family or filename, and size on a given text object.
@@ -33,7 +33,7 @@ interface Efl.Text_Properties {
             Efl_Font_Size size; /*@ The font size, in points. */
          }
       }
-      font_source {
+      @property font_source {
          set {
             /*@
             Set the font (source) file to be used on a given text object.

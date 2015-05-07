@@ -2,8 +2,8 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
 {
    legacy_prefix: evas_object_image;
    eo_prefix: evas_obj_image;
-   properties {
-      load_dpi {
+   methods {
+      @property load_dpi {
          set {
             /*@
             Set the DPI resolution of an image object's source image.
@@ -28,7 +28,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
          }
       }
 
-      source_clip {
+      @property source_clip {
          set {
             /*@
             Clip the proxy object with the source object's clipper.
@@ -53,7 +53,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             (@c EINA_TRUE) or not (@c EINA_FALSE) */
          }
       }
-      source {
+      @property source {
          set {
             /*@
             Set the source object on an image object to used as a @b proxy.
@@ -91,7 +91,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             Evas_Object *src; /*@ Source object to use for the proxy. */
          }
       }
-      filled {
+      @property filled {
          set {
             /*@
             Set whether the image object's fill property should track the
@@ -120,7 +120,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             object size or @c EINA_FALSE, otherwise. */
          }
       }
-      content_hint {
+      @property content_hint {
          set {
             /*@
             Set the content hint setting of a given image object of the canvas.
@@ -151,7 +151,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             #Evas_Image_Content_Hint ones. */
          }
       }
-      load_region {
+      @property load_region {
          set {
             /*@
             Inform a given image object to load a selective region of its
@@ -183,7 +183,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             int h; /*@ Height of the region to be loaded. */
          }
       }
-      alpha {
+      @property alpha {
          set {
             /*@
             Enable or disable alpha channel usage on the given image object.
@@ -214,7 +214,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             or not (@c EINA_FALSE). */
          }
       }
-      border {
+      @property border {
          set {
             /*@
             Set the dimensions for an image object's border, a region which @b
@@ -269,7 +269,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             int b; /*@ The border's bottom width. */
          }
       }
-      border_scale {
+      @property border_scale {
          set {
             /*@
             Sets the scaling factor (multiplier) for the borders of an image
@@ -292,7 +292,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             double scale; /*@ The scale factor (default is @c 1.0 - i.e. no scaling) */
          }
       }
-      pixels_dirty {
+      @property pixels_dirty {
          set {
             /*@
             Mark whether the given image object is dirty and needs to request its pixels.
@@ -313,7 +313,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             bool dirty; /*@ Whether the image is dirty. */
          }
       }
-      video_surface {
+      @property video_surface {
          set {
             /*@
             Set the video surface linked to a given image of the canvas
@@ -334,7 +334,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @since 1.1 */
          }
       }
-      video_surface_caps {
+      @property video_surface_caps {
          set {
             /*@ Set the video surface capabilities to a given image of the canvas */
          }
@@ -345,7 +345,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             uint caps; /*@ in */
          }
       }
-      load_orientation {
+      @property load_orientation {
          set {
             /*@
             Define if the orientation information in the image file should be honored.
@@ -362,7 +362,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             bool enable; /*@ @c EINA_TRUE means that it should honor the orientation information */
          }
       }
-      border_center_fill {
+      @property border_center_fill {
          set {
             /*@
             Sets @b how the center part of the given image object (not the
@@ -393,7 +393,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             #Evas_Border_Fill_Mode). */
          }
       }
-      source_visible {
+      @property source_visible {
          set {
             /*@
             Set the source object to be visible or not.
@@ -435,7 +435,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             otherwise. */
          }
       }
-      native_surface {
+      @property native_surface {
          set {
             /*@
             Set the native surface of a given image of the canvas
@@ -456,7 +456,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             Evas_Native_Surface *surf/* @const_get*/ @nonull; /*@ The new native surface. */
          }
       }
-      load_scale_down {
+      @property load_scale_down {
          set {
             /*@
             Set the scale down factor of a given image object's source image,
@@ -478,7 +478,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             int scale_down; /*@ The scale down factor. */
          }
       }
-      scale_hint {
+      @property scale_hint {
          set {
             /*@
             Set the scale hint of a given image of the canvas.
@@ -506,7 +506,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             #Evas_Image_Scale_Hint. */
          }
       }
-      source_events {
+      @property source_events {
          set {
             /*@
             Set whether an Evas object is to source events.
@@ -542,7 +542,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             (@c EINA_FALSE) */
          }
       }
-      colorspace {
+      @property colorspace {
          set {
             /*@
             Set the colorspace of a given image of the canvas.
@@ -561,7 +561,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             Evas_Colorspace cspace; /*@ The new color space. */
          }
       }
-      pixels_get_callback {
+      @property pixels_get_callback {
          set {
             /*@
             Set the callback function to get pixels from a canvas' image.
@@ -574,7 +574,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             void *data; /*@ The data pointer to be passed to @a func. */
          }
       }
-      data_copy {
+      @property data_copy {
          set {
             /*@
             Replaces the raw image data of the given image object.
@@ -599,7 +599,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             void *data; /*@ The raw data to replace. */
          }
       }
-      animated_frame {
+      @property animated_frame {
          set {
             /*@
             Set the frame to current frame of an image object
@@ -619,7 +619,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             int frame_index; /*@ The index of current frame */
          }
       }
-      region_support {
+      @property region_support {
          get {
             /*@
             Get the support state of a given image
@@ -631,7 +631,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             return: bool @warn_unused;
          }
       }
-      load_error {
+      @property load_error {
          get {
             /*@
             Retrieves a number representing any error that occurred during the
@@ -643,7 +643,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             return: Evas_Load_Error @warn_unused;
          }
       }
-      animated_frame_count {
+      @property animated_frame_count {
          get {
             /*@
             Get the total number of frames of the image object.
@@ -662,7 +662,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             return: int;
          }
       }
-      stride {
+      @property stride {
          get {
             /*@
             Retrieves the row stride of the given image object.
@@ -674,7 +674,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             return: int @warn_unused;
          }
       }
-      animated_loop_type {
+      @property animated_loop_type {
          get {
             /*@
             Get the kind of looping the image object does.
@@ -700,7 +700,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             return: Evas_Image_Animated_Loop_Hint;
          }
       }
-      animated_loop_count {
+      @property animated_loop_count {
          get {
             /*@
             Get the number times the animation of the object loops.
@@ -725,7 +725,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
          }
       }
 
-      scene {
+      @property scene {
          set {
             /*@
             Set the 3D scene of a given image of the canvas.
@@ -752,7 +752,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             Evas_3D_Scene *scene; /*@ 3D scene on an image object. */
          }
       }
-      filter_program {
+      @property filter_program {
          set {
             /*@ Set an Evas filter program on this Text Object.
 
@@ -781,7 +781,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
               */
          }
       }
-      filter_source {
+      @property filter_source {
          set {
             /*@ Bind an object to use as a mask or texture with Evas Filters.
 
@@ -794,7 +794,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             Eo* eobj; /*@ Eo object to use through proxy rendering */
          }
       }
-      filter_padding {
+      @property filter_padding {
          get {
             /*@ Get the value of the extra padding set when a filter is used. */
             return: bool; /*@ Returns false if the filter is invalid and padding is 0 */
@@ -807,7 +807,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             int b; /*@ Bottom padding in pixels */
          }
       }
-      orient {
+      @property orient {
          set {
             /*@
             Set the image orientation.
@@ -835,8 +835,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             Default is #EVAS_IMAGE_ORIENT_NONE. */
          }
       }
-   }
-   methods {
       preload_begin {
          /*@ Begin preloading an image object's image data in the background */
          legacy: null;

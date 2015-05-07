@@ -1,8 +1,8 @@
 interface Efl.Gfx.Gradient.Radial (Efl.Gfx.Gradient.Base)
 {
    legacy_prefix: null;
-   properties {
-      center {
+   methods {
+      @property center {
          set {
             /*@
               Sets the center of this radial gradient.
@@ -18,7 +18,7 @@ interface Efl.Gfx.Gradient.Radial (Efl.Gfx.Gradient.Base)
             double y; /*@ y co-ordinate of center point */
          }
       }
-      radius {
+      @property radius {
          set {
             /*@
               Sets the center radius of this radial gradient.
@@ -33,7 +33,7 @@ interface Efl.Gfx.Gradient.Radial (Efl.Gfx.Gradient.Base)
             double r; /*@ center radius */
          }
       }
-      focal {
+      @property focal {
          set {
             /*@
               Sets the focal point of this radial gradient.

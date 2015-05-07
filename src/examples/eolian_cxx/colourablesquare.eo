@@ -2,8 +2,8 @@ class ColourableSquare (Colourable)
 {
     legacy_prefix: legacy;
     data: ColourableSquare_Data;
-    properties {
-        size {
+    methods {
+        @property size {
             set {
                 /*@ Sets size. */
             }
@@ -14,8 +14,6 @@ class ColourableSquare (Colourable)
                 int size; /*@ The size. */
             }
         }
-    }
-    methods {
       size_constructor {
            legacy: null;
            params {

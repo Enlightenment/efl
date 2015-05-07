@@ -1,7 +1,7 @@
 interface Efl.Gfx.View {
    legacy_prefix: null;
-   properties {
-      size {
+   methods {
+      @property size {
          set {
             /*@
             Sets the size of the given image object.

@@ -3,8 +3,8 @@ abstract Eo.Base ()
    eo_prefix: eo;
    legacy_prefix: null;
 
-   properties {
-      parent {
+   methods {
+      @property parent {
          set {
             /*@ Set the parent of an object
 Parents keep references to their children so in order to delete objects that have parents you need to set parent to NULL or use eo_del() that does that for you (and also unrefs the object). */
@@ -16,7 +16,7 @@ Parents keep references to their children so in order to delete objects that hav
             Eo* parent; /*@ the new parent */
          }
       }
-      event_global_freeze_count @class {
+      @property event_global_freeze_count @class {
          get {
             /*@ return freeze events of object.
 Return event freeze count. */
@@ -25,7 +25,7 @@ Return event freeze count. */
             int fcount; /*@ The event freeze count of the object */
          }
       }
-      event_freeze_count {
+      @property event_freeze_count {
          get {
             /*@ return freeze events of object.
 Return event freeze count. */
@@ -34,7 +34,7 @@ Return event freeze count. */
             int fcount; /*@ The event freeze count of the object */
          }
       }
-      finalized {
+      @property finalized {
          /*@ True if the object is already finalized, false otherwise. */
          get {
          }
@@ -42,8 +42,6 @@ Return event freeze count. */
             bool finalized;
          }
       }
-   }
-   methods {
       constructor {
          /*@ Call the object's constructor.
 Should not be used with #eo_do. Only use it with #eo_do_super. */

@@ -1,6 +1,6 @@
 class Object_Impl (Base) {
-   properties {
-      a {
+   methods {
+      @property a {
          set {
             return: bool (false);
          }
@@ -13,7 +13,7 @@ class Object_Impl (Base) {
             own(list<int>*) value @const_set;
          }
       }
-      b {
+      @property b {
          set {
          }
          get {
@@ -23,8 +23,6 @@ class Object_Impl (Base) {
             own(list<int>*) value;
          }
       }
-   }
-   methods {
       constructor_1 {
          params {
             @in int a;

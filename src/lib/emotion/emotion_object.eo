@@ -1,7 +1,7 @@
 class Emotion.Object (Evas.Object_Smart, Efl.File, Efl.Player, Efl.Image) {
    eo_prefix: emotion_obj;
-   properties {
-        option {
+   methods {
+        @property option {
              set {
                   /**
                    * @brief Set the specified option for the current module.
@@ -23,7 +23,7 @@ class Emotion.Object (Evas.Object_Smart, Efl.File, Efl.Player, Efl.Image) {
                   const(char) *val; /*@ The value of the option. Currently only supports "off" (?!?!?!) */
              }
         }
-        engine {
+        @property engine {
              set {
                   /**
                    * @brief Initializes an emotion object with the specified module.

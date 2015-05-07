@@ -1,7 +1,7 @@
 interface Efl.Player {
    legacy_prefix: null;
-   properties {
-        play {
+   methods {
+        @property play {
              set {
                   /*@
                    * @brief Set play/pause state of the media file.
@@ -19,7 +19,7 @@ interface Efl.Player {
                   bool play; /*@ true if playing, false otherwise. */
              }
         }
-        position {
+        @property position {
              set {
                   /*@
                    * @brief Set the position in the media file.
@@ -47,7 +47,7 @@ interface Efl.Player {
                   double second; /*@ The position (in seconds). */
              }
         }
-        progress {
+        @property progress {
              get {
                   /*@
                    * @brief Get how much of the file has been played.
@@ -60,7 +60,7 @@ interface Efl.Player {
                   double progress; /*@ The progress within the [0, 1] range. */
              }
         }
-        play_speed {
+        @property play_speed {
              /**
               * @brief Control the play speed of the media file.
               *
@@ -76,7 +76,7 @@ interface Efl.Player {
                   double speed; /*@ The play speed in the [0, infinity) range. */
              }
         }
-        audio_volume {
+        @property audio_volume {
              /**
               * @brief Control the audio volume.
               *
@@ -93,7 +93,7 @@ interface Efl.Player {
                   double volume; /*@ The volume level */
              }
         }
-        audio_mute {
+        @property audio_mute {
              /**
               * @brief This property controls the audio mute state.
               */
@@ -105,7 +105,7 @@ interface Efl.Player {
                   bool mute; /*@ The mute state. True or false. */
              }
         }
-        length {
+        @property length {
              /**
               * @brief Get the length of play for the media file.
               *
@@ -117,7 +117,7 @@ interface Efl.Player {
                   double length; /*@ The length of the stream in seconds. */
              }
         }
-        seekable {
+        @property seekable {
              /**
               * @brief Get whether the media file is seekable.
               */

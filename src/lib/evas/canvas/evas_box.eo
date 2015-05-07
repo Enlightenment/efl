@@ -3,8 +3,8 @@ class Evas.Box (Evas.Smart_Clipped)
    legacy_prefix: evas_object_box;
    eo_prefix: evas_obj_box;
    data: Evas_Object_Box_Data;
-   properties {
-      align {
+   methods {
+      @property align {
          set {
             /*@
             Set the alignment of the whole bounding box of contents, for a
@@ -33,7 +33,7 @@ class Evas.Box (Evas.Smart_Clipped)
             double vertical; /*@ the vertical alignment, in pixels */
          }
       }
-      padding {
+      @property padding {
          set {
             /*@
             Set the (space) padding between cells set for a given box object.
@@ -53,7 +53,7 @@ class Evas.Box (Evas.Smart_Clipped)
             Evas_Coord vertical; /*@ the vertical padding, in pixels */
          }
       }
-      layout {
+      @property layout {
          set {
             /*@
             Set a new layouting function to a given box object
@@ -82,8 +82,6 @@ class Evas.Box (Evas.Smart_Clipped)
             Eina.Free_Cb free_data; /*@ Function to free @p data, if need be. */
          }
       }
-   }
-   methods {
       layout_horizontal {
          /*@
          Layout function which sets the box @a o to a (basic) horizontal box

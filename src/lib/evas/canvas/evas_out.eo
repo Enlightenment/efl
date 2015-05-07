@@ -2,8 +2,8 @@ class Evas.Out (Eo.Base)
 {
    eo_prefix: evas_out;
    legacy_prefix: evas_output;
-   properties {
-      view {
+   methods {
+      @property view {
          set {
             /*@ Sets the viewport region of the canvas that the output displays This sets both the viewport region in the canvas that displays on the given output, but also the viewport size will match the output resolution 1:1. */
          }
@@ -17,7 +17,7 @@ class Evas.Out (Eo.Base)
             Evas_Coord h;
          }
       }
-      engine_info {
+      @property engine_info {
          set {
             /*@ Sets the engine specific output parameters for a given output. */
             return: bool;

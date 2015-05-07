@@ -1,6 +1,6 @@
 class Consts {
-   properties {
-      a {
+   methods {
+      @property a {
          set {
             return: bool (true); /*@ comment for property set return */
          }
@@ -11,8 +11,6 @@ class Consts {
             char *buffer @const_get;
          }
       }
-   }
-   methods {
       foo @const {
          /*@ comment foo */
          params {

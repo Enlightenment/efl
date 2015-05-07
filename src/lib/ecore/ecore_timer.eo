@@ -8,8 +8,8 @@ class Ecore.Timer (Eo.Base)
     *  guarantee exact timing, but try to work on a "best effort basis.
     */
    eo_prefix: ecore_obj_timer;
-   properties {
-      interval {
+   methods {
+      @property interval {
          set {
             /*@ Change the interval the timer ticks off. If set during
              * a timer call, this will affect the next interval.
@@ -22,14 +22,12 @@ class Ecore.Timer (Eo.Base)
             double in(-1); /*@ The new interval in seconds */
          }
       }
-      pending {
+      @property pending {
          get {
             /*@ Get the pending time regarding a timer. */
             return: double;
          }
       }
-   }
-   methods {
       loop_constructor {
          /*@ Create a timer to call in a given time from now */
          legacy: null;

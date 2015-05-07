@@ -48,10 +48,8 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
             @out Evas_Real a; /*@ Pointer to receive alpha component of the color. */
          }
       }
-   }
 
-   properties {
-      enable {
+      @property enable {
          set {
             /*
               Set the material attribute enable flag of the given material.
@@ -83,7 +81,7 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      shininess {
+      @property shininess {
          set {
             /*
               Set the shininess of the given material.
@@ -113,7 +111,7 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      texture {
+      @property texture {
          set {
             /*@
               Set the texture of the given material.

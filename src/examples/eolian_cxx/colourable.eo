@@ -19,9 +19,7 @@ class Colourable (Eo.Base)
             }
             return: int; /*@ The RGB colour. */
         }
-    }
-    properties {
-        colour {
+        @property colour {
             set {
                 /*@ Sets a 24-bit RGB colour. */
             }
@@ -32,7 +30,7 @@ class Colourable (Eo.Base)
                 int rgb; /*@ The RGB colour value. */
             }
         }
-        composite_colour {
+        @property composite_colour {
             set {
                 /*@ Sets a composite RGB colour. */
             }

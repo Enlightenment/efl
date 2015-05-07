@@ -2,8 +2,8 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
 {
    eo_prefix: evas_obj_smart;
    data: Evas_Smart_Data;
-   properties {
-      need_recalculate {
+   methods {
+      @property need_recalculate {
          set {
             /*@
             Set or unset the flag signalling that a given smart object needs to
@@ -49,7 +49,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
             (@c EINA_FALSE) the flag. */
          }
       }
-      clip {
+      @property clip {
          set {
             /*@ No description supplied by the EAPI. */
             legacy: null;
@@ -58,7 +58,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
             Evas_Object *clip;
          }
       }
-      color {
+      @property color {
          set {
             /*@ No description supplied by the EAPI. */
             legacy: null;
@@ -70,7 +70,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
             int a;
          }
       }
-      data {
+      @property data {
          set {
             /*@
             Store a pointer to user data for a given smart object.
@@ -86,7 +86,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
             void *data; /*@ A pointer to user data */
          }
       }
-      members {
+      @property members {
          get {
             /*@
             Retrieves the list of the member objects of a given Evas smart
@@ -105,7 +105,7 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
             return: list<Evas.Object*> * @warn_unused;
          }
       }
-      smart {
+      @property smart {
          get {
             /*@
             Get the #Evas_Smart from which @p obj smart object was created.
@@ -116,8 +116,6 @@ class Evas.Object_Smart (Evas.Object, Evas.Signal_Interface)
             return: Evas_Smart * @warn_unused;
          }
       }
-   }
-   methods {
       show {
          /*@ No description supplied by the EAPI. */
          legacy: null;

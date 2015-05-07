@@ -2,8 +2,8 @@ class Evas.Line (Evas.Object)
 {
    legacy_prefix: evas_object_line;
    eo_prefix: evas_obj_line;
-   properties {
-      xy {
+   methods {
+      @property xy {
          set {
             /*@
             @since 1.8

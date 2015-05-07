@@ -2,8 +2,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 {
    legacy_prefix: evas;
    data: Evas_Public_Data;
-   properties {
-      output_framespace {
+   methods {
+      @property output_framespace {
          set {
             /*@
             Sets the output framespace size of the render engine of the given evas.
@@ -31,7 +31,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             Evas_Coord h; /*@ The height in output units, usually pixels. */
          }
       }
-      output_viewport {
+      @property output_viewport {
          set {
             /*@
             Sets the output viewport of the given evas in evas units.
@@ -71,7 +71,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             Evas_Coord h; /*@ The height of the viewport.  Must be greater than 0. */
          }
       }
-      image_cache {
+      @property image_cache {
          set {
             /*@
             Set the image cache.
@@ -88,7 +88,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             int size; /*@ The cache size. */
          }
       }
-      event_default_flags {
+      @property event_default_flags {
          set {
             /*@
             Set the default set of flags an event begins with
@@ -114,7 +114,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             Evas_Event_Flags flags; /*@ The default flags to use */
          }
       }
-      output_method {
+      @property output_method {
          set {
             /*@
             Sets the output engine for the given evas.
@@ -139,7 +139,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             int render_method; /*@ The numeric engine value to use. */
          }
       }
-      font_cache {
+      @property font_cache {
          set {
             /*@
             Changes the size of font cache of the given evas.
@@ -158,7 +158,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             int size; /*@ The size, in bytes. */
          }
       }
-      output_size {
+      @property output_size {
          set {
             /*@
             Sets the output size of the render engine of the given evas.
@@ -189,7 +189,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             int h; /*@ The height in output units, usually pixels. */
          }
       }
-      data_attach {
+      @property data_attach {
          set {
             /*@
             Attaches a specific pointer to the evas for fetching later
@@ -207,7 +207,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             void *data; /*@ The pointer to attach */
          }
       }
-      font_hinting {
+      @property font_hinting {
          set {
             /*@
             Changes the font hinting for the given evas.
@@ -227,7 +227,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             Evas_Font_Hinting_Flags hinting; /*@ The hinting to use, one of #EVAS_FONT_HINTING_NONE, */
          }
       }
-      engine_info {
+      @property engine_info {
          set {
             /*@
             Applies the engine settings for the given evas from the given @c
@@ -265,7 +265,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             Evas_Engine_Info *info; /*@ The pointer to the Engine Info to use */
          }
       }
-      focus {
+      @property focus {
          get {
             /*@
             Retrieve the object that currently has focus.
@@ -305,7 +305,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             return: Evas_Object * @warn_unused;
          }
       }
-      object_top {
+      @property object_top {
          get {
             /*@
             Get the highest (stacked) Evas object on the canvas @p e.
@@ -328,7 +328,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             return: Evas_Object * @warn_unused;
          }
       }
-      key_lock {
+      @property key_lock {
          get {
             /*@
             Returns a handle to the list of lock keys registered in the canvas
@@ -346,7 +346,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             return: const(Evas_Lock)* @warn_unused;
          }
       }
-      pointer_canvas_xy {
+      @property pointer_canvas_xy {
          get {
             /*@
             This function returns the current known pointer co-ordinates
@@ -371,7 +371,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @ingroup Evas_Pointer_Group */
          }
       }
-      event_down_count {
+      @property event_down_count {
          get {
             /*@
             Get the number of mouse or multi presses currently active
@@ -383,7 +383,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             return: int;
          }
       }
-      smart_objects_calculate_count {
+      @property smart_objects_calculate_count {
          get {
             /*@
             This gets the internal counter that counts the number of smart calculations
@@ -401,7 +401,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             return: int;
          }
       }
-      focus_state {
+      @property focus_state {
          get {
             /*@
             Get the focus state known by the given evas
@@ -411,7 +411,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             return: bool;
          }
       }
-      changed {
+      @property changed {
          get {
             /*@
             Get the changed marker for the canvas
@@ -423,7 +423,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             return: bool;
          }
       }
-      pointer_output_xy {
+      @property pointer_output_xy {
          get {
             /*@
             This function returns the current known pointer co-ordinates
@@ -448,7 +448,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @ingroup Evas_Pointer_Group */
          }
       }
-      pointer_inside {
+      @property pointer_inside {
          get {
             /*@
             Returns whether the mouse pointer is logically inside the canvas
@@ -479,7 +479,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             return: bool @warn_unused;
          }
       }
-      image_max_size {
+      @property image_max_size {
          get {
             /*@
             Get the maximum image size evas can possibly handle
@@ -498,7 +498,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             int maxh; /*@ Pointer to hold the return value in pixels of the maximum height */
          }
       }
-      object_bottom {
+      @property object_bottom {
          get {
             /*@
             Get the lowest (stacked) Evas object on the canvas @p e.
@@ -520,7 +520,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             return: Evas_Object * @warn_unused;
          }
       }
-      key_modifier {
+      @property key_modifier {
          get {
             /*@
             Returns a handle to the list of modifier keys registered in the
@@ -538,7 +538,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             return: const(Evas_Modifier)* @warn_unused;
          }
       }
-      pointer_button_down_mask {
+      @property pointer_button_down_mask {
          get {
             /*@
             Returns a bitmask with the mouse buttons currently pressed, set to 1
@@ -578,8 +578,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             return: int @warn_unused;
          }
       }
-   }
-   methods {
+
       tree_objects_at_xy_get {
          /*@
          Retrieve a list of Evas objects lying over a given position in

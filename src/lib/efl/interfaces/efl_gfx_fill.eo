@@ -1,7 +1,7 @@
 interface Efl.Gfx.Fill {
    legacy_prefix: null;
-   properties {
-      fill_spread {
+   methods {
+      @property fill_spread {
          set {
             /*@
             Sets the tiling mode for the given evas image object's fill.
@@ -18,7 +18,7 @@ interface Efl.Gfx.Fill {
             Efl_Gfx_Fill_Spread spread; /*@ One of EVAS_TEXTURE_REFLECT, EVAS_TEXTURE_REPEAT, */
          }
       }
-      fill {
+      @property fill {
          set {
             /*@
             Set how to fill an image object's drawing rectangle given the

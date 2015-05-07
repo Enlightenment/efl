@@ -367,11 +367,8 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
             @in Evas_Real *r;
          }
       }
-   }
 
-   properties {
-
-      position_inherit {
+      @property position_inherit {
          set {
             /*
               Set the position inheritance flag of the given node.
@@ -403,7 +400,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      orientation_inherit {
+      @property orientation_inherit {
          set {
             /*
               Set the orientation inheritance flag of the given node.
@@ -436,7 +433,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      scale_inherit {
+      @property scale_inherit {
          set {
             /*
               Set the scale inheritance flag of the given node.
@@ -468,7 +465,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      camera {
+      @property camera {
          set {
             /*
               Set a camera to the given node.
@@ -501,7 +498,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      light {
+      @property light {
          set {
             /*
               Set the light of the given node.
@@ -534,7 +531,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      mesh_frame {
+      @property mesh_frame {
          set {
             /*
               Set the animation frame number of the given node for the given mesh.
@@ -577,7 +574,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          }
       }
 
-      billboard_target {
+      @property billboard_target {
          set {
             /*
               Set behavior of node like billboard object.

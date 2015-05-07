@@ -3,8 +3,8 @@ class Ecore_Audio (Eo.Base)
    legacy_prefix: null;
    eo_prefix: ecore_audio_obj;
    data: Ecore_Audio_Object;
-   properties {
-      name {
+   methods {
+      @property name {
          set {
             /*@
             Set the name of the object
@@ -21,7 +21,7 @@ class Ecore_Audio (Eo.Base)
             const(char)* name; 
          }
       }
-      paused {
+      @property paused {
          set {
             /*@
             Set the pause state of the object
@@ -38,7 +38,7 @@ class Ecore_Audio (Eo.Base)
             bool paused; /*ret EINA_TRUE if object is paused, EINA_FALSE if not*/
          }
       }
-      volume {
+      @property volume {
          set {
             /*@
             Set the volume of the object
@@ -55,7 +55,7 @@ class Ecore_Audio (Eo.Base)
             double volume; /*The volume*/
          }
       }
-      source {
+      @property source {
          set {
             /*@
             Set the source of the object
@@ -76,7 +76,7 @@ class Ecore_Audio (Eo.Base)
             const(char)* source; /*The source to set to (i.e. file, URL, device)*/
          }
       }
-      format {
+      @property format {
          set {
             /*@
             Set the format of the object
@@ -100,8 +100,6 @@ class Ecore_Audio (Eo.Base)
             Ecore_Audio_Format format; /*The format of the object*/
          }
       }
-   }
-   methods {
       vio_set {
          /*@
          Set the virtual IO functions

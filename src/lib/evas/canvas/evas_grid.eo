@@ -2,8 +2,8 @@ class Evas.Grid (Evas.Smart_Clipped)
 {
    legacy_prefix: evas_object_grid;
    eo_prefix: evas_obj_grid;
-   properties {
-      mirrored {
+   methods {
+      @property mirrored {
          set {
             /*@
             Sets the mirrored mode of the grid. In mirrored mode the grid items go
@@ -24,7 +24,7 @@ class Evas.Grid (Evas.Smart_Clipped)
             bool mirrored; /*@ the mirrored mode to set */
          }
       }
-      size {
+      @property size {
          set {
             /*@
             Set the virtual resolution for the grid
@@ -43,7 +43,7 @@ class Evas.Grid (Evas.Smart_Clipped)
             int h; /*@ The virtual vertical size (resolution) in integer units */
          }
       }
-      children {
+      @property children {
          get {
             /*@
             Get the list of children for the grid.
@@ -56,8 +56,6 @@ class Evas.Grid (Evas.Smart_Clipped)
             return: free(own(list<Evas.Object *> *), eina_list_free) @warn_unused;
          }
       }
-   }
-   methods {
       accessor_new @const {
          /*@
          Get an accessor to get random access to the list of children for the grid.

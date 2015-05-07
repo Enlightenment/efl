@@ -291,9 +291,8 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
             @out Evas_3D_Blend_Func dfactor; /*@ Pointer to receive destination blendin factors key.*/
          }
       }
-   }
-   properties {
-      shade_mode {
+
+      @property shade_mode {
          set {
             /**
              * Set the shade mode of the given mesh.
@@ -316,7 +315,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
             Evas_3D_Shade_Mode mode; /*@ The shade mode.*/
          }
       }
-      color_pick_enable {
+      @property color_pick_enable {
         set {
             /**
              * Set posibility color picking.
@@ -337,7 +336,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
             Eina_Bool enabled; /*@ Posibility flag */
          }
       }
-      vertex_count {
+      @property vertex_count {
         set {
               /**
                * Set the vertex count of the given mesh.
@@ -364,7 +363,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
             uint count; /*@ Vertex count.*/
          }
       }
-      fog_enable {
+      @property fog_enable {
         set {
             /**
              * Enable or disable fog effect for given mesh.
@@ -388,7 +387,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
          }
       }
  
-      alpha_test_enable {
+      @property alpha_test_enable {
         set {
             /**
              * Get the enable status of alpha test for given mesh
@@ -412,7 +411,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
          }
       }
 
-      alpha_func {
+      @property alpha_func {
         set {
             /*
              * The alpha test discards fragments depending on the outcome of a comparison
@@ -437,7 +436,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
         }
       }
 
-      blending_enable {
+      @property blending_enable {
         set {
             /**
              * Enable or disable blending for given mesh.
@@ -461,7 +460,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
          }
       }
 
-      frame_material {
+      @property frame_material {
          set {
             /**
               Set the material of the key frame of the given mesh.
@@ -489,7 +488,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
          }
       }
 
-      vertex_assembly {
+      @property vertex_assembly {
          set {
             /*
               Set the vertex assembly of the given mesh.

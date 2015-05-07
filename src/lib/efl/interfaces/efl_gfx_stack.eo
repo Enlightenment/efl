@@ -1,7 +1,7 @@
 interface Efl.Gfx.Stack {
    legacy_prefix: null;
-   properties {
-      layer {
+   methods {
+      @property layer {
          set {
             /*@
             Sets the layer of its canvas that the given object will be part of.
@@ -34,7 +34,7 @@ interface Efl.Gfx.Stack {
             Must be between #EVAS_LAYER_MIN and #EVAS_LAYER_MAX. */
          }
       }
-      below {
+      @property below {
          get {
             /*@
             Get the Evas object stacked right below @p obj
@@ -51,7 +51,7 @@ interface Efl.Gfx.Stack {
             return: Efl_Gfx_Stack * @warn_unused;
          }
       }
-      above {
+      @property above {
          get {
             /*@
             Get the Evas object stacked right above @p obj
@@ -68,8 +68,6 @@ interface Efl.Gfx.Stack {
             return: Efl_Gfx_Stack * @warn_unused;
          }
       }
-   }
-   methods {
       stack_below {
          /*@
          Stack @p obj immediately below @p below

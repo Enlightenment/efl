@@ -2,8 +2,8 @@ abstract Ecore.Con.Base (Eo.Base) {
    legacy_prefix: ecore_con;
    eo_prefix: ecore_con_obj;
    data: null;
-   properties {
-      ip {
+   methods {
+      @property ip {
          /**
           * Control the IP address of a server that has been connected to.
           *
@@ -20,7 +20,7 @@ abstract Ecore.Con.Base (Eo.Base) {
             const(char)* ip; /*@ The IP address */
          }
       }
-      uptime {
+      @property uptime {
          /*@
           * @brief Check how long the object has been connected
           *
@@ -33,7 +33,7 @@ abstract Ecore.Con.Base (Eo.Base) {
             double uptime; /*@ The total time, in seconds, that the object has been connected. */
          }
       }
-      port {
+      @property port {
          /*@
           * @brief Return the port that the obj is connected to
           *
@@ -48,7 +48,7 @@ abstract Ecore.Con.Base (Eo.Base) {
             int port; /*@ The The port that obj is connected to, or -1 on error. */
          }
       }
-      fd {
+      @property fd {
          /*@
           * Get the fd that the server is connected to
           *
@@ -65,7 +65,7 @@ abstract Ecore.Con.Base (Eo.Base) {
             int fd; /*@ The fd, or -1 on failure. */
          }
       }
-      connected {
+      @property connected {
          /*@
           * Returns whether the client is still connected
           */
@@ -76,7 +76,7 @@ abstract Ecore.Con.Base (Eo.Base) {
             bool connected; /*@ Returns True if connected, False otherwise. */
          }
       }
-      timeout {
+      @property timeout {
          /*@
           * Control the default time after which an inactive client will be disconnected
           *
@@ -99,8 +99,6 @@ abstract Ecore.Con.Base (Eo.Base) {
             double timeout; /*@ The timeout, in seconds, to disconnect after. */
          }
       }
-   }
-   methods {
       flush {
          /*@
           * Flushes all pending data to the given server.

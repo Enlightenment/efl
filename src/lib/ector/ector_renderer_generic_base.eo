@@ -2,8 +2,8 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 {
    eo_prefix: ector_renderer;
    legacy_prefix: null;
-   properties {
-      transformation {
+   methods {
+      @property transformation {
          set {
 	 }
 	 get {
@@ -12,7 +12,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	    const(Eina_Matrix3) *m;
 	 }
       }
-      origin {
+      @property origin {
          set {
 	 }
 	 get {
@@ -22,7 +22,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	    double y;
 	 }
       }
-      visibility {
+      @property visibility {
          set {
             /*@ Makes the given Ector renderer visible or invisible. */
 	 }
@@ -33,7 +33,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	    bool v; /*@ @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise */
 	 }
       }
-      color {
+      @property color {
          set {
             /*@
             Sets the general/main color of the given Ector renderer to the given
@@ -65,7 +65,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
             int a; /*@ The alpha component of the given color. */
 	 }
       }
-      mask {
+      @property mask {
          set {
 	 }
 	 get {
@@ -74,7 +74,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	    Ector_Renderer *r;
 	 }
       }
-      quality {
+      @property quality {
          set {
 	 }
 	 get {
@@ -83,8 +83,6 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	    Ector_Quality q;
 	 }
       }
-   }
-   methods {
       bounds_get {
 	 params {
 	    @out Eina_Rectangle r;

@@ -11,9 +11,7 @@ class Ecore.Poller (Eo.Base)
             @in const(void)* data;
          }
       }
-   }
-   properties {
-      interval {
+      @property interval {
          set {
             /*@
             @brief Changes the polling interval rate of @p poller.

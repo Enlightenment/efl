@@ -2,8 +2,8 @@ interface Efl.Gfx.Gradient.Base
 {
    eo_prefix: efl_gfx_gradient;
    legacy_prefix: null;
-   properties {
-      stop {
+   methods {
+      @property stop {
          set {
             /*@
               Set the list of color stops for the gradient
@@ -19,7 +19,7 @@ interface Efl.Gfx.Gradient.Base
             uint length; /*@ length of the list */
          }
       }
-      spread {
+      @property spread {
          set {
             /*@
               Specifies the spread method that should be used for this gradient.

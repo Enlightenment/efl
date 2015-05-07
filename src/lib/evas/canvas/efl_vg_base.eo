@@ -2,8 +2,8 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
 {
    eo_prefix: efl_vg;
    legacy_prefix: evas_vg_node;
-   properties {
-      transformation {
+   methods {
+      @property transformation {
          set {
             /*@
              Sets the transformation matrix to be used for this node object.
@@ -20,7 +20,7 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
             const(Eina_Matrix3) *m; /*@ transformation matrix */
          }
       }
-      origin {
+      @property origin {
          set {
             /*@
              Sets the origin position of this node object. This origin position
@@ -39,7 +39,7 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
             double y; /* @origin y position */
          }
       }
-      mask {
+      @property mask {
          set {
 	 }
 	 get {
@@ -57,8 +57,6 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
 	    Evas_VG_Quality q;
 	 }
       } */
-   }
-   methods {
       bounds_get {
          /*@
           Give the bounding box in screen coordinate as being drawn.

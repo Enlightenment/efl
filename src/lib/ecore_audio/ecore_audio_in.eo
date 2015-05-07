@@ -3,8 +3,8 @@ class Ecore_Audio_In (Ecore_Audio)
    legacy_prefix: null;
    eo_prefix: ecore_audio_obj_in;
    data: Ecore_Audio_Input;
-      properties {
-      speed {
+   methods {
+      @property speed {
          set {
             /*@
             Set the playback speed of the input.
@@ -21,7 +21,7 @@ class Ecore_Audio_In (Ecore_Audio)
             double speed; /*The speed, 1.0 is the default*/
          }
       }
-      samplerate {
+      @property samplerate {
          set {
             /*@
             Set the sample-rate of the input
@@ -38,7 +38,7 @@ class Ecore_Audio_In (Ecore_Audio)
             int samplerate; /*The samplerate in Hz*/
          }
       }
-      channels {
+      @property channels {
          set {
             /*@
             Set the amount of channels the input has
@@ -55,7 +55,7 @@ class Ecore_Audio_In (Ecore_Audio)
             int channels; /*The number of channels*/
          }
       }
-      preloaded {
+      @property preloaded {
          set {
             /*@
             Set the preloaded state of the input
@@ -72,7 +72,7 @@ class Ecore_Audio_In (Ecore_Audio)
             bool preloaded; /*EINA_TRUE if the input should be cached, EINA_FALSE otherwise*/
          }
       }
-      looped {
+      @property looped {
          set {
             /*@
             Set the looped state of the input
@@ -93,7 +93,7 @@ class Ecore_Audio_In (Ecore_Audio)
             bool looped; /*EINA_TRUE if the input should be looped, EINA_FALSE otherwise*/
          }
       }
-      length {
+      @property length {
          set {
             /*@
             Set the length of the input
@@ -113,7 +113,7 @@ class Ecore_Audio_In (Ecore_Audio)
             double length; /*The length of the input in seconds*/
          }
       }
-      output {
+      @property output {
          get {
             /*@
             Get the output that this input is attached to
@@ -124,7 +124,7 @@ class Ecore_Audio_In (Ecore_Audio)
             Eo *output; /*The output*/
          }
       }
-      remaining {
+      @property remaining {
          get {
             /*@
             Get the remaining time of the input
@@ -135,8 +135,6 @@ class Ecore_Audio_In (Ecore_Audio)
             double remaining; /*The amount of time in seconds left to play*/
          }
       }
-   }
-   methods {
       read {
          /*@
          Read from the input

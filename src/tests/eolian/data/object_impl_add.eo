@@ -1,8 +1,8 @@
 class Object_Impl_Add (Base) {
    data: Object_Impl_Data;
 
-   properties {
-      c {
+   methods {
+      @property c {
          set {
          }
          get {

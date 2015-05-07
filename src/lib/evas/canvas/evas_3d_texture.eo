@@ -2,8 +2,8 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
    data : Evas_3D_Texture_Data;
-   properties {
-      source_visible {
+   methods {
+      @property source_visible {
          set {
             /*
               Set the visibility flag of the source evas object of the given texture.
@@ -31,7 +31,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
             bool visible; /*@ @c EINA_TRUE for visible, @c EINA_FALSE for invisible.*/
          }
       }
-      atlas_enable {
+      @property atlas_enable {
          set {
             /*
               Set enable flag to generation texture unit with support atlas.
@@ -54,8 +54,6 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
             bool use_atlas; /*@ @c EINA_TRUE for enable, @c EINA_FALSE for disable.*/
          }
       }
-   }
-   methods {
       data_set {
          /*
            Set the data of the given texture.

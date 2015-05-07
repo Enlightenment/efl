@@ -1,7 +1,7 @@
 class Ecore.Con.Server (Ecore.Con.Base) {
    eo_prefix: ecore_con_server_obj;
-   properties {
-      name {
+   methods {
+      @property name {
          /*@
           * Retrieves the name of server.
           *
@@ -16,7 +16,7 @@ class Ecore.Con.Server (Ecore.Con.Base) {
             const(char) *name; /*@ The name of the server. */
          }
       }
-      client_limit {
+      @property client_limit {
          /*@
           * Sets a limit on the number of clients that can be handled concurrently
           * by the given server, and a policy on what to do if excess clients try to
@@ -39,7 +39,7 @@ class Ecore.Con.Server (Ecore.Con.Base) {
          }
       }
       /* FIXME: Should this return an iterator? */
-      clients {
+      @property clients {
          /*@
           * Retrieves the current list of clients.
           *
@@ -54,7 +54,7 @@ class Ecore.Con.Server (Ecore.Con.Base) {
             const(list<const(Ecore.Con.Client) *>) *clients; /*@ The list of clients on this server. */
          }
       }
-      connection_type {
+      @property connection_type {
         get {
             legacy: null;
         }

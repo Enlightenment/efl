@@ -1,7 +1,7 @@
 class nmsp1.nmsp11.class2
 {
-   properties {
-      a {
+   methods {
+      @property a {
          set {
          }
       }

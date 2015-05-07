@@ -1,12 +1,12 @@
 class Override (Base) {
-   properties {
-      a {
+   methods {
+      @property a {
          set {
          }
          get {
          }
       }
-      b {
+      @property b {
          set {
          }
          get {
@@ -20,7 +20,7 @@ class Override (Base) {
               int c;
          }
       }
-      c {
+      @property c {
          set {
          }
          get {
@@ -32,8 +32,6 @@ class Override (Base) {
               int c(50);
          }
       }
-   }
-   methods {
       foo {
       }
       bar {

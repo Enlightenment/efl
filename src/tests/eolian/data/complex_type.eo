@@ -1,6 +1,6 @@
 class Complex_Type {
-   properties {
-      a {
+   methods {
+      @property a {
          set {
             return: own(list<array<own(Eo**)>*>*);
          }
@@ -10,8 +10,6 @@ class Complex_Type {
             own(list<int>*) value;
          }
       }
-   }
-   methods {
       foo {
          params {
             own(char*) buf;

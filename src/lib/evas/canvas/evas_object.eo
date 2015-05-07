@@ -2,8 +2,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
 {
    eo_prefix: evas_obj;
    data: Evas_Object_Protected_Data;
-   properties {
-      size_hint_max {
+   methods {
+      @property size_hint_max {
          set {
             /*@
             Sets the hints for an object's maximum size.
@@ -46,7 +46,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             Evas_Coord h; /*@ Integer to use as the maximum height hint. */
          }
       }
-      size_hint_request {
+      @property size_hint_request {
          set {
             /*@
             Sets the hints for an object's optimum size.
@@ -80,7 +80,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             Evas_Coord h; /*@ Integer to use as the preferred height hint. */
          }
       }
-      type {
+      @property type {
          set {
             /*@ Sets the type of the given Evas object. */
             legacy: null;
@@ -117,7 +117,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             const(char)* type; /*@ in */
          }
       }
-      size_hint_min {
+      @property size_hint_min {
          set {
             /*@
             Sets the hints for an object's minimum size.
@@ -160,7 +160,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             Evas_Coord h; /*@ Integer to use as the minimum height hint. */
          }
       }
-      pointer_mode {
+      @property pointer_mode {
          set {
             /*@
             Set pointer behavior.
@@ -190,7 +190,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             Evas_Object_Pointer_Mode pointer_mode; /*@ desired behavior. */
          }
       }
-      render_op {
+      @property render_op {
          set {
             /*@
             Sets the render_op to be used for rendering the Evas object.
@@ -206,7 +206,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             Evas_Render_Op render_op; /*@ one of the Evas_Render_Op values. */
          }
       }
-      freeze_events {
+      @property freeze_events {
          set {
             /*@
             Set whether an Evas object is to freeze (discard) events.
@@ -247,7 +247,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             (@c EINA_FALSE) */
          }
       }
-      map {
+      @property map {
          set {
             /*@
             Set current object transformation map.
@@ -311,7 +311,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             const(Evas_Map)* map; /*@ new map to use */
          }
       }
-      size_hint_aspect {
+      @property size_hint_aspect {
          set {
             /*@
             Sets the hints for an object's aspect ratio.
@@ -381,7 +381,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             Evas_Coord h; /*@ Integer to use as aspect height ratio term. */
          }
       }
-      clip {
+      @property clip {
          set {
             /*@
             Clip one object to another.
@@ -457,7 +457,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             Evas_Object *clip @nonull; /*@ The object to clip @p obj by */
          }
       }
-      size_hint_padding {
+      @property size_hint_padding {
          set {
             /*@
             Sets the hints for an object's padding space.
@@ -506,7 +506,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             Evas_Coord b; /*@ Integer to specify bottom padding. */
          }
       }
-      repeat_events {
+      @property repeat_events {
          set {
             /*@
             Set whether an Evas object is to repeat events.
@@ -547,7 +547,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             (@c EINA_FALSE) */
          }
       }
-      size_hint_weight {
+      @property size_hint_weight {
          set {
             /*@
             Sets the hints for an object's weight.
@@ -603,7 +603,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             double y; /*@ Nonnegative double value to use as vertical weight hint. */
          }
       }
-      name {
+      @property name {
          set {
             /*@
             Sets the name of the given Evas object to the given name.
@@ -636,7 +636,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             const(char)* name; /*@ The given name. */
          }
       }
-      scale {
+      @property scale {
          set {
             /*@
             Sets the scaling factor for an Evas object. Does not affect all
@@ -668,7 +668,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             default size. */
          }
       }
-      static_clip {
+      @property static_clip {
          set {
             /*@
             Set a hint flag on the given Evas object that it's used as a "static
@@ -699,7 +699,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             clipper, @c EINA_FALSE otherwise. */
          }
       }
-      focus {
+      @property focus {
          set {
             /*@
             Sets or unsets a given object as the currently focused one on its
@@ -749,7 +749,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             to take away the focus from it. */
          }
       }
-      is_frame_object {
+      @property is_frame_object {
          set {
             /*@             @since 1.2 */
          }
@@ -760,7 +760,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             bool is_frame; /*@ in */
          }
       }
-      map_enable {
+      @property map_enable {
          set {
             /*@
             Enable or disable the map that is set.
@@ -787,7 +787,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             bool enabled; /*@ enabled state */
          }
       }
-      precise_is_inside {
+      @property precise_is_inside {
          set {
             /*@
             Set whether to use precise (usually expensive) point collision
@@ -828,7 +828,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             not. The default value is false. */
          }
       }
-      size_hint_align {
+      @property size_hint_align {
          set {
             /*@
             Sets the hints for an object's alignment.
@@ -893,7 +893,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             special value #EVAS_HINT_FILL, to use as vertical alignment hint. */
          }
       }
-      propagate_events {
+      @property propagate_events {
          set {
             /*@
             Set whether events on a smart object's member should get propagated
@@ -930,7 +930,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             (@c EINA_FALSE) */
          }
       }
-      pass_events {
+      @property pass_events {
          set {
             /*@
             Set whether an Evas object is to pass (ignore) events.
@@ -971,7 +971,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             (@c EINA_FALSE) */
          }
       }
-      anti_alias {
+      @property anti_alias {
          set {
             /*@
             Sets whether or not the given Evas object is to be drawn anti-aliased.
@@ -988,7 +988,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             bool anti_alias; /*@ (@c EINA_TRUE) if the object is to be anti_aliased, (@c EINA_FALSE) otherwise. */
          }
       }
-      smart_data {
+      @property smart_data {
          get {
             /*@
             Retrieve user data stored on a given smart object.
@@ -1003,7 +1003,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             return: void * @warn_unused;
          }
       }
-      smart_clipped_clipper {
+      @property smart_clipped_clipper {
          get {
             /*@
             Get the clipper object for the given clipped smart object.
@@ -1017,7 +1017,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             return: Evas_Object * @warn_unused;
          }
       }
-      clipees {
+      @property clipees {
          get {
             /*@
             Return a list of objects currently clipped by @p obj.
@@ -1059,7 +1059,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             return: const(list<Evas.Object*>)* @warn_unused;
          }
       }
-      smart_parent {
+      @property smart_parent {
          get {
             /*@
             Gets the parent smart object of a given Evas object, if it has one.
@@ -1071,7 +1071,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             return: Evas_Object * @warn_unused;
          }
       }
-      size_hint_display_mode {
+      @property size_hint_display_mode {
          get {
             /*@
             Retrieves the hints for an object's display mode
@@ -1092,8 +1092,6 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             Evas_Display_Mode dispmode; /*@ display mode hint */
          }
       }
-   }
-   methods {
       clipees_has @const {
          /*@
          Test if any object is clipped by @p obj.

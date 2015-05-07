@@ -1,8 +1,8 @@
 class Efl.VG.Shape (Efl.VG.Base, Efl.Gfx.Shape)
 {
    legacy_prefix: evas_vg_shape;
-   properties {
-      fill {
+   methods {
+      @property fill {
          set {
 	 }
 	 get {
@@ -11,7 +11,7 @@ class Efl.VG.Shape (Efl.VG.Base, Efl.Gfx.Shape)
 	    Efl_VG *f;
 	 }
       }
-      stroke_fill {
+      @property stroke_fill {
          set {
 	 }
 	 get {
@@ -20,7 +20,7 @@ class Efl.VG.Shape (Efl.VG.Base, Efl.Gfx.Shape)
 	    Efl_VG *f;
 	 }
       }
-      stroke_marker {
+      @property stroke_marker {
          set {
 	 }
 	 get {

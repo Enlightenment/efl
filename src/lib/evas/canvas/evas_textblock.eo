@@ -2,8 +2,8 @@ class Evas.Textblock (Evas.Object)
 {
    legacy_prefix: evas_object_textblock;
    eo_prefix: evas_obj_textblock;
-   properties {
-      text_markup {
+   methods {
+      @property text_markup {
          set {
             /*@
             Sets the tetxblock's text to the markup text.
@@ -22,7 +22,7 @@ class Evas.Textblock (Evas.Object)
             const(char)* text; /*@ the markup text to use. */
          }
       }
-      valign {
+      @property valign {
          set {
             /*@
             @brief Sets the vertical alignment of text within the textblock object
@@ -45,7 +45,7 @@ class Evas.Textblock (Evas.Object)
             double align; /*@ A value between @c 0.0 and @c 1.0. */
          }
       }
-      bidi_delimiters {
+      @property bidi_delimiters {
          set {
             /*@
             @brief Sets the BiDi delimiters used in the textblock.
@@ -72,7 +72,7 @@ class Evas.Textblock (Evas.Object)
             const(char)* delim; /*@ A null terminated string of delimiters, e.g ",|". */
          }
       }
-      replace_char {
+      @property replace_char {
          set {
             /*@
             @brief Set the "replacement character" to use for the given textblock object. */
@@ -81,7 +81,7 @@ class Evas.Textblock (Evas.Object)
             const(char)* ch; /*@ The charset name. */
          }
       }
-      legacy_newline {
+      @property legacy_newline {
          set {
             /*@
             @brief Sets newline mode. When true, newline character will behave
@@ -101,7 +101,7 @@ class Evas.Textblock (Evas.Object)
             bool mode; /*@ @c EINA_TRUE for legacy mode, @c EINA_FALSE otherwise. */
          }
       }
-      style {
+      @property style {
          set {
             /*@
             Set the objects style to ts.
@@ -116,7 +116,7 @@ class Evas.Textblock (Evas.Object)
             const(Evas_Textblock_Style)* ts; /*@ the style to set. */
          }
       }
-      node_format_first {
+      @property node_format_first {
          get {
             /*@ Returns the first format node. */
             legacy: evas_textblock_node_format_first_get;
@@ -125,7 +125,7 @@ class Evas.Textblock (Evas.Object)
             const(Evas_Object_Textblock_Node_Format)* format;
          }
       }
-      size_formatted {
+      @property size_formatted {
          get {
             /*@
             Get the formatted width and height. This calculates the actual size after restricting
@@ -150,7 +150,7 @@ class Evas.Textblock (Evas.Object)
             Evas_Coord h; /*@ the height of the object */
          }
       }
-      node_format_last {
+      @property node_format_last {
          get {
             /*@ Returns the last format node. */
             legacy: evas_textblock_node_format_last_get;
@@ -159,7 +159,7 @@ class Evas.Textblock (Evas.Object)
             const(Evas_Object_Textblock_Node_Format)* format;
          }
       }
-      cursor {
+      @property cursor {
          get {
             /*@
             Return the object's main cursor.
@@ -168,7 +168,7 @@ class Evas.Textblock (Evas.Object)
             return: Evas_Textblock_Cursor *;
          }
       }
-      size_native {
+      @property size_native {
          get {
             /*@
             Get the native width and height. This calculates the actual size without taking account
@@ -191,7 +191,7 @@ class Evas.Textblock (Evas.Object)
             Evas_Coord h; /*@ the height returned */
          }
       }
-      style_insets {
+      @property style_insets {
          get {
             /*@ No description supplied by the EAPI. */
          }
@@ -202,8 +202,6 @@ class Evas.Textblock (Evas.Object)
             Evas_Coord b;
          }
       }
-   }
-   methods {
       line_number_geometry_get @const {
          /*@
          Get the geometry of a line number.

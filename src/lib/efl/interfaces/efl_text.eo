@@ -1,7 +1,7 @@
 interface Efl.Text {
    legacy_prefix: null;
-   properties {
-      text {
+   methods {
+      @property text {
          set {
             /*@
             Sets the text string to be displayed by the given text object.

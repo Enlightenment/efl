@@ -1,8 +1,8 @@
 class Ecore.Exe (Eo.Base, Efl.Control)
 {
    eo_prefix: ecore_obj_exe;
-   properties {
-        command {
+   methods {
+        @property command {
              /*@ Control the command that's executed. FIXME: May need a split/rename. */
              set {
                   legacy: null;
@@ -15,9 +15,6 @@ class Ecore.Exe (Eo.Base, Efl.Control)
                   Ecore_Exe_Flags flags; /*@ The execution flags. */
              }
         }
-   }
-   methods {
-
    }
    implements {
         Eo.Base.destructor;

@@ -1,7 +1,7 @@
 interface Efl.File {
    legacy_prefix: null;
-   properties {
-      mmap {
+   methods {
+      @property mmap {
          set {
             /*@
             Set the source mmaped file from where an image object must fetch the real
@@ -32,7 +32,7 @@ interface Efl.File {
             NULL, otherwise. */
          }
       }
-      file {
+      @property file {
          set {
             /*@
             Set the source file from where an image object must fetch the real
@@ -78,7 +78,7 @@ interface Efl.File {
             NULL, otherwise. */
          }
       }
-      async {
+      @property async {
          set {
             /*@
             If true, file open will happen asynchronously allowing for better
@@ -98,8 +98,6 @@ interface Efl.File {
             bool async; /*@ Flag for asynchronous open. */
          }
       }
-   }
-   methods {
       save @const {
          /*@
          Save the given image object's contents to an (image) file.

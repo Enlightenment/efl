@@ -3,8 +3,8 @@ class Class_Simple {
    legacy_prefix: evas_object_simple;
    eo_prefix: evas_obj_simple;
    data: Evas_Simple_Data;
-   properties {
-      a {
+   methods {
+      @property a {
          /*@ Common desc for a */
          set {
             /*@
@@ -17,13 +17,11 @@ class Class_Simple {
             int value (100); /*@ Value description */
          }
       }
-      b @c_only {
+      @property b @c_only {
         set {
            eo: null;
         }
       }
-   }
-   methods {
       foo {
          /*@ comment foo */
          params {

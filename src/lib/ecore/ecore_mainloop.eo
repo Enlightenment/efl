@@ -2,8 +2,8 @@ class Ecore_Mainloop (Eo.Base)
 {
    legacy_prefix: null;
    data: null;
-   properties {
-      select_func {
+   methods {
+      @property select_func {
          set {
          }
          get {
@@ -12,8 +12,6 @@ class Ecore_Mainloop (Eo.Base)
             Ecore_Select_Function select_func;
          }
       }
-   }
-   methods {
       iterate {
       }
       iterate_may_block {

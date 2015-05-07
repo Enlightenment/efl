@@ -26,8 +26,8 @@ interface Efl.Model.Base ()
 {
    legacy_prefix: null;
    eo_prefix: efl_model;
-      properties {
-         load_status {
+      methods {
+         @property load_status {
             get {
             /*@
              Get a load emodel current status.
@@ -44,7 +44,7 @@ interface Efl.Model.Base ()
              return: Efl_Model_Load_Status;
             }
          }
-         properties {
+         @property properties {
             get {
                 /*@
                 Get properties from model.
@@ -65,7 +65,7 @@ interface Efl.Model.Base ()
                const(array<const(char*)>*) properties; /*@ array of current properties */
             }
         }
-         property {
+         @property property {
             set {
                 /*@
                 Set a property value of a given property name.
@@ -114,7 +114,7 @@ interface Efl.Model.Base ()
                const(Eina_Value)* value; /*@ New value */
             }
          }
-         children_slice {
+         @property children_slice {
             get {
                /*@
                Get children slice OR full range.
@@ -178,7 +178,7 @@ interface Efl.Model.Base ()
                 accessor<list*>* children_accessor;
             }
          }
-         children_count {
+         @property children_count {
              get {
                 /*@
                 Get children count.
@@ -202,8 +202,6 @@ interface Efl.Model.Base ()
                 unsigned children_count;
             }
          }
-      }
-      methods {
          load {
             /*@
               Load emodel.

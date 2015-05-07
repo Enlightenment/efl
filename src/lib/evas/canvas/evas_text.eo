@@ -2,8 +2,8 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
 {
    legacy_prefix: evas_object_text;
    eo_prefix: evas_obj_text;
-   properties {
-      shadow_color {
+   methods {
+      @property shadow_color {
          set {
             /*@
             Sets the shadow color for the given text object.
@@ -40,7 +40,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             int a; /*@ The alpha component of the given color. */
          }
       }
-      ellipsis {
+      @property ellipsis {
          set {
             /*@
             @brief Sets the ellipsis that should be used for the text object.
@@ -66,7 +66,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             double ellipsis(-1); /*@ the ellipsis. */
          }
       }
-      bidi_delimiters {
+      @property bidi_delimiters {
          set {
             /*@
             @brief Sets the BiDi delimiters used in the textblock.
@@ -92,7 +92,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             const(char)* delim; /*@ A null terminated string of delimiters, e.g ",|". */
          }
       }
-      outline_color {
+      @property outline_color {
          set {
             /*@
             Sets the outline color for the given text object.
@@ -122,7 +122,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             int a; /*@ The alpha component of the given color. */
          }
       }
-      glow2_color {
+      @property glow2_color {
          set {
             /*@
             Sets the 'glow 2' color for the given text object.
@@ -150,7 +150,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             int a; /*@ The alpha component of the given color. */
          }
       }
-      style {
+      @property style {
          set {
             /*@
             Sets the style to apply on the given text object.
@@ -187,7 +187,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             Evas_Text_Style_Type style; /*@ a style type. */
          }
       }
-      glow_color {
+      @property glow_color {
          set {
             /*@
             Sets the glow color for the given text object.
@@ -219,7 +219,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             int a; /*@ The alpha component of the given color. */
          }
       }
-      filter_program {
+      @property filter_program {
          set {
             /*@ Set an Evas filter program on this Text Object.
 
@@ -242,7 +242,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
               to the standard text effect */
          }
       }
-      filter_source {
+      @property filter_source {
          set {
             /*@ Bind an object to use as a mask or texture with Evas Filters.
 
@@ -260,12 +260,12 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             Eo* eobj; /*@ Eo object to use through proxy rendering */
          }
       }
-      max_descent {
+      @property max_descent {
          get {
             return: Evas_Coord;
          }
       }
-      style_pad {
+      @property style_pad {
          get {
             /*@
             Gets the text style pad of a text object. */
@@ -277,7 +277,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             int b; /*@ The bottom pad (or @c NULL). */
          }
       }
-      direction {
+      @property direction {
          get {
             /*@
             Retrieves the direction of the text currently being displayed in the
@@ -286,38 +286,36 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             return: Evas_BiDi_Direction;
          }
       }
-      ascent {
+      @property ascent {
          get {
             return: Evas_Coord;
          }
       }
-      horiz_advance {
+      @property horiz_advance {
          get {
             return: Evas_Coord;
          }
       }
-      inset {
+      @property inset {
          get {
             return: Evas_Coord;
          }
       }
-      max_ascent {
+      @property max_ascent {
          get {
             return: Evas_Coord;
          }
       }
-      vert_advance {
+      @property vert_advance {
          get {
             return: Evas_Coord;
          }
       }
-      descent {
+      @property descent {
          get {
             return: Evas_Coord;
          }
       }
-   }
-   methods {
       last_up_to_pos @const {
          /*@ Returns the logical position of the last char in the text up to the pos given. this is NOT the position of the last char because of the possibility of RTL in the text. */
          return: int(-1);

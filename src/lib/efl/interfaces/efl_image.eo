@@ -1,7 +1,7 @@
 interface Efl.Image {
    legacy_prefix: null;
-   properties {
-      animated {
+   methods {
+      @property animated {
          get {
             /*@
               Check if an image  can be animated (have multiple frames)
@@ -13,7 +13,7 @@ interface Efl.Image {
               bool is_animated; /*@ If it's animated or not. */
          }
       }
-      load_size {
+      @property load_size {
          set {
             /*@
               Set the loading size of an image. The image will be loaded into memory as if it was
@@ -28,7 +28,7 @@ interface Efl.Image {
             int h; /*@ The new height of the image's load size. */
          }
       }
-      smooth_scale {
+      @property smooth_scale {
          set {
             /*@
             Sets whether to use high-quality image scaling algorithm on the
@@ -52,7 +52,7 @@ interface Efl.Image {
             bool smooth_scale; /*@ Whether to use smooth scale or not. */
          }
       }
-      ratio {
+      @property ratio {
          get {
             /*@
               The native ration of the image object

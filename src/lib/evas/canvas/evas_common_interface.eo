@@ -1,8 +1,8 @@
 interface Evas.Common_Interface ()
 {
    eo_prefix: evas_common;
-   properties {
-      evas {
+   methods {
+      @property evas {
          get {
             /*@ No description supplied by the EAPI. */
             legacy: evas_object_evas_get;

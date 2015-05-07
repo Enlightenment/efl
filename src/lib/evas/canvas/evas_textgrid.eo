@@ -2,8 +2,8 @@ class Evas.Textgrid (Evas.Object, Efl.Text_Properties)
 {
    legacy_prefix: evas_object_textgrid;
    eo_prefix: evas_obj_textgrid;
-   properties {
-      supported_font_styles {
+   methods {
+      @property supported_font_styles {
          set {
             /*@
             This function is not implemented yet, do not use. */
@@ -17,7 +17,7 @@ class Evas.Textgrid (Evas.Object, Efl.Text_Properties)
             Evas_Textgrid_Font_Style styles;
          }
       }
-      size {
+      @property size {
          set {
             /*@
             @brief Set the size of the textgrid object.
@@ -45,7 +45,7 @@ class Evas.Textgrid (Evas.Object, Efl.Text_Properties)
             int h; /*@ The number of rows (height in cells) of the grid. */
          }
       }
-      cell_size {
+      @property cell_size {
          get {
             /*@
             @brief Retrieve the size of a cell of the given textgrid object in pixels.
@@ -68,8 +68,6 @@ class Evas.Textgrid (Evas.Object, Efl.Text_Properties)
             pixels of a cell. */
          }
       }
-   }
-   methods {
       update_add {
          /*@
          @brief Indicate for evas that part of a textgrid region (cells) has been updated.

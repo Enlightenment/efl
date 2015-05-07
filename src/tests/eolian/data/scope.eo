@@ -1,19 +1,17 @@
 class Scope {
-   properties {
-      a @protected {
-         get {
-         }
-      }
-      b {
-         get {
-         }
-      }
-      c {
-         get {
-         }
-      }
-   }
    methods {
+      @property a @protected {
+         get {
+         }
+      }
+      @property b {
+         get {
+         }
+      }
+      @property c {
+         get {
+         }
+      }
       foo {
       }
       bar @protected {

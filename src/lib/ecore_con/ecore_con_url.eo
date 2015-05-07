@@ -1,7 +1,7 @@
 class Ecore.Con.Url (Eo.Base) {
    eo_prefix: ecore_con_url_obj;
-   properties {
-      url {
+   methods {
+      @property url {
          /**
           * Controls the URL to send the request to.
           */

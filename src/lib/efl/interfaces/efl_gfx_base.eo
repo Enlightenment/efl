@@ -1,8 +1,8 @@
 interface Efl.Gfx.Base {
    legacy_prefix: null;
    eo_prefix: efl_gfx;
-   properties {
-      position {
+   methods {
+      @property position {
          set {
             /*@ Move the given Evas object to the given location inside its canvas' viewport. */
          }
@@ -14,7 +14,7 @@ interface Efl.Gfx.Base {
             int y; /*@ in */
          }
       }
-      size {
+      @property size {
          set {
             /*@ Changes the size of the given Evas object. */
          }
@@ -26,7 +26,7 @@ interface Efl.Gfx.Base {
             int h; /*@ in */
          }
       }
-      color {
+      @property color {
          set {
             /*@
             Sets the general/main color of the given Evas object to the given
@@ -74,7 +74,7 @@ interface Efl.Gfx.Base {
             int a; /*@ The alpha component of the given color. */
          }
       }
-      color_part {
+      @property color_part {
          set {
             /*@
             Sets a specifc color of the given Efl.Gfx.Base object to the given
@@ -119,7 +119,7 @@ interface Efl.Gfx.Base {
             int a; /*@ The alpha component of the given color. */
          }
       }
-      visible {
+      @property visible {
          set {
             /*@ Makes the given Evas object visible or invisible. */
          }
