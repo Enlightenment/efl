@@ -29,9 +29,9 @@
 #  endif // ifdef __GNUC__
 # endif // ifdef _MSC_VER
 
-#ifdef __cplusplus
+# ifdef __cplusplus
 extern "C" {
-#endif
+# endif
 
 typedef enum _Ecore_Drm_Evdev_Capabilities
 {
@@ -880,11 +880,11 @@ EAPI Ecore_Drm_Output *ecore_drm_output_primary_get(Ecore_Drm_Device *dev);
  */
 EAPI void ecore_drm_output_crtc_size_get(Ecore_Drm_Output *output, int *width, int *height);
 
-#ifdef __cplusplus
+# ifdef __cplusplus
 }
-#endif
+# endif
 
-#undef EAPI
-#define EAPI
+# undef EAPI
+# define EAPI
 
 #endif
