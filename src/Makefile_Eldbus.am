@@ -82,10 +82,4 @@ tests_eldbus_eldbus_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl @CHECK_CFLAGS
 tests_eldbus_eldbus_suite_LDADD = @CHECK_LIBS@ @USE_ELDBUS_LIBS@
 tests_eldbus_eldbus_suite_DEPENDENCIES = @USE_ELDBUS_INTERNAL_LIBS@
 
-check-eldbus:
-	check_PROGRAMS=tests/eldbus/eldbus_suite
-	make check TESTS=tests/eldbus/eldbus_suite
-
-check-eldbus: override DISABLE_SUBTESTS = 0
-
 endif

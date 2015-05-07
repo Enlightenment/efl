@@ -288,12 +288,6 @@ edjedatafiles_DATA = tests/edje/data/test_layout.edj \
 CLEANFILES += tests/edje/data/test_layout.edj \
               tests/edje/data/complex_layout.edj
 
-check-edje:
-	check_PROGRAMS=tests/edje/edje_suite
-	make check TESTS=tests/edje/edje_suite
-
-check-edje: override DISABLE_SUBTESTS = 0
-
 endif
 
 EXTRA_DIST += $(EDJE_DATA_FILES)

@@ -257,11 +257,6 @@ if HAVE_ECORE_FB
 tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_fb.c
 endif
 
-check-ecore:
-	check_PROGRAMS=tests/ecore/ecore_suite
-	make check TESTS=tests/ecore/ecore_suite
-
-check-ecore: override DISABLE_SUBTESTS = 0
 endif
 
 EXTRA_DIST += \

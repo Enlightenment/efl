@@ -192,51 +192,6 @@ tests_eo_test_signals_LDADD = @USE_EO_LIBS@
 tests_eo_test_signals_DEPENDENCIES = @USE_EO_INTERNAL_LIBS@
 TESTS += tests/eo/test_signals
 
-check-eo:
-	check_PROGRAMS=tests/eo/eo_suite
-	make check TESTS=tests/eo/eo_suite
-check-eo: override DISABLE_SUBTESTS = 0
-
-check-eo-composite-object:
-	check_PROGRAMS=tests/eo/test_composite_objects
-	make check TESTS=tests/eo/test_composite_objects
-check-eo-composite-object: override DISABLE_SUBTESTS = 0
-
-check-eo-constructors:
-	check_PROGRAMS=tests/eo/test_constructors
-	make check TESTS=tests/eo/test_constructors
-check-eo-constructors: override DISABLE_SUBTESTS = 0
-
-check-eo-function-overrides:
-	check_PROGRAMS=tests/eo/test_function_overrides
-	make check TESTS=tests/eo/test_function_overrides
-check-eo-function-overrides: override DISABLE_SUBTESTS = 0
-
-check-eo-interface:
-	check_PROGRAMS=tests/eo/test_interface
-	make check TESTS=tests/eo/test_interface
-check-eo-interface: override DISABLE_SUBTESTS = 0
-
-check-eo-mixin:
-	check_PROGRAMS=tests/eo/test_mixin
-	make check TESTS=tests/eo/test_mixin
-check-eo-mixin: override DISABLE_SUBTESTS = 0
-
-check-eo-text-access:
-	check_PROGRAMS=tests/eo/test_access
-	make check TESTS=tests/eo/test_access
-check-eo-text-access: override DISABLE_SUBTESTS = 0
-
-check-eo-signals:
-	check_PROGRAMS=tests/eo/test_signals
-	make check TESTS=tests/eo/test_signals
-check-eo-signals: override DISABLE_SUBTESTS = 0
-
-check-eo-children:
-	check_PROGRAMS=tests/eo/test_children
-	make check TESTS=tests/eo/test_children
-check-eo-children: override DISABLE_SUBTESTS = 0
-
 endif
 
 

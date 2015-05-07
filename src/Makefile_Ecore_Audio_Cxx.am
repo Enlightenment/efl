@@ -45,12 +45,6 @@ tests_ecore_audio_cxx_cxx_compile_test_CPPFLAGS = \
 tests_ecore_audio_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_ECORE_LIBS@
 tests_ecore_audio_cxx_cxx_compile_test_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@
 
-check-ecore-audio-cxx:
-	check_PROGRAMS=tests/ecore_audio_cxx/cxx_compile_test
-	make check TESTS=tests/ecore_audio_cxx/cxx_compile_test
-
-check-ecore-audio-cxx: override DISABLE_SUBTESTS = 0
-
 endif
 
 endif

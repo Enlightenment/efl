@@ -2113,12 +2113,6 @@ tests_evas_evas_suite_LDADD = @CHECK_LIBS@ @USE_EVAS_LIBS@ @USE_ECORE_EVAS_LIBS@
 tests_evas_evas_suite_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 endif
 
-check-evas:
-	check_PROGRAMS=tests/evas/evas_suite
-	make check TESTS=tests/evas/evas_suite
-
-check-evas: override DISABLE_SUBTESTS = 0
-
 EXTRA_DIST += \
 tests/evas/TestFont.eet \
 tests/evas/images/HM7Y9233-50.tgv \

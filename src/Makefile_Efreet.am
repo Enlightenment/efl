@@ -220,12 +220,6 @@ tests_efreet_efreet_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMM
 tests_efreet_efreet_suite_LDADD = @CHECK_LIBS@ @USE_EFREET_LIBS@
 tests_efreet_efreet_suite_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
 
-check-efreet:
-	check_PROGRAMS=tests/efreet/efreet_suite
-##make check TESTS=tests/efreet/efreet_suite
-
-check-efreet: override DISABLE_SUBTESTS = 0
-
 endif
 
 EXTRA_DIST += \

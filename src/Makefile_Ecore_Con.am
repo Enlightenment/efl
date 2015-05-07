@@ -103,12 +103,6 @@ tests_ecore_con_ecore_con_suite_DEPENDENCIES = \
 @USE_ECORE_INTERNAL_LIBS@ \
 @USE_ECORE_CON_INTERNAL_LIBS@
 
-check-ecore-con:
-	check_PROGRAMS=tests/ecore_con/ecore_con_suite
-	make check TESTS=tests/ecore_con/ecore_con_suite
-
-check-ecore-con: override DISABLE_SUBTESTS = 0
-
 endif
 
 if HAVE_ELUA
