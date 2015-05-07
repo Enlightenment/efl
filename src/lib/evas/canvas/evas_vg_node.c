@@ -28,12 +28,20 @@ _efl_vg_base_transformation_set(Eo *obj,
                                 Efl_VG_Base_Data *pd,
                                 const Eina_Matrix3 *m)
 {
-   if (!pd->m)
+   if (m)
      {
-        pd->m = malloc(sizeof (Eina_Matrix3));
-        if (!pd->m) return ;
+        if (!pd->m)
+          {
+             pd->m = malloc(sizeof (Eina_Matrix3));
+             if (!pd->m) return;
+          }
+        memcpy(pd->m, m, sizeof (Eina_Matrix3));
      }
-   memcpy(pd->m, m, sizeof (Eina_Matrix3));
+   else
+     {
+        free(pd->m);
+        pd->m = NULL;
+     }
 
    _efl_vg_base_changed(obj);
 }
