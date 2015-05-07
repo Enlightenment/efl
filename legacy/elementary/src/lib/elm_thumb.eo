@@ -308,8 +308,6 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
       Evas.Object_Smart.show;
    }
    events {
-      clicked;
-      clicked,double;
       generate,error;
       generate,start;
       generate,stop;
