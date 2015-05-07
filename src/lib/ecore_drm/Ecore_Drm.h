@@ -869,6 +869,16 @@ EAPI Eina_List *ecore_drm_output_modes_get(Ecore_Drm_Output *output);
 EAPI Ecore_Drm_Output *ecore_drm_output_primary_get(Ecore_Drm_Device *dev);
 
 /**
+ * Set a given output as primary
+ *
+ * @param output The Ecore_Drm_Output to set as primary
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI void ecore_drm_output_primary_set(Ecore_Drm_Output *output);
+
+/**
  * Get the size of the crtc for a given output
  *
  * @param output The Ecore_Drm_Output to get the crtc size of

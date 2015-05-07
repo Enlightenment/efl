@@ -1265,6 +1265,22 @@ ecore_drm_output_primary_get(Ecore_Drm_Device *dev)
 }
 
 EAPI void
+ecore_drm_output_primary_set(Ecore_Drm_Output *output)
+{
+   const Eina_List *l;
+   Ecore_Drm_Output *out;
+
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   /* unmark all outputs as primary */
+   EINA_LIST_FOREACH(output->dev->outputs, l, out)
+     out->primary = EINA_FALSE;
+
+   /* mark this output as primary */
+   output->primary = EINA_TRUE;
+}
+
+EAPI void
 ecore_drm_output_crtc_size_get(Ecore_Drm_Output *output, int *width, int *height)
 {
    if (width) *width = 0;

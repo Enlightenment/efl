@@ -553,7 +553,7 @@ ecore_drm_device_output_name_find(Ecore_Drm_Device *dev, const char *name)
    Eina_List *l;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(name, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
 
    EINA_LIST_FOREACH(dev->outputs, l, output)
      if ((output->name) && (!strcmp(name, output->name)))
