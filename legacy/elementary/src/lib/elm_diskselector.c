@@ -89,7 +89,8 @@ _item_select(Elm_Diskselector_Item_Data *it)
    _selected_item_indicate(sd->selected_item);
 
    if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
-   evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, eo_it);
+   eo_do(WIDGET(it), eo_event_callback_call
+     (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it));
 }
 
 static int
@@ -610,7 +611,8 @@ _item_click_cb(void *data,
      }
 
    if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
-   evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED, eo_it);
+   eo_do(WIDGET(it), eo_event_callback_call
+     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, eo_it));
 }
 
 static char *
@@ -1096,31 +1098,35 @@ _scroll_animate_stop_cb(Evas_Object *obj,
 
    if (!it) return;
    _item_select(it);
-   evas_object_smart_callback_call(data, SIG_SCROLL_ANIM_STOP, EO_OBJ(it));
+   eo_do(data, eo_event_callback_call
+     (EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_ANIM_STOP, EO_OBJ(it)));
 }
 
 static void
 _scroll_animate_start_cb(Evas_Object *obj,
                          void *data EINA_UNUSED)
 {
-   evas_object_smart_callback_call
-     (obj, SIG_SCROLL_ANIM_START, elm_diskselector_selected_item_get(obj));
+   eo_do(obj, eo_event_callback_call
+     (EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_ANIM_START,
+     elm_diskselector_selected_item_get(obj)));
 }
 
 static void
 _scroll_drag_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
-   evas_object_smart_callback_call
-     (obj, SIG_SCROLL_DRAG_START, elm_diskselector_selected_item_get(obj));
+   eo_do(obj, eo_event_callback_call
+     (EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_DRAG_START,
+     elm_diskselector_selected_item_get(obj)));
 }
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   evas_object_smart_callback_call
-     (obj, SIG_SCROLL_DRAG_STOP, elm_diskselector_selected_item_get(obj));
+   eo_do(obj, eo_event_callback_call
+     (EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_DRAG_STOP,
+     elm_diskselector_selected_item_get(obj)));
 }
 
 static void

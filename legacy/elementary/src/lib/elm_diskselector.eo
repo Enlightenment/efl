@@ -1,5 +1,7 @@
 class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
-                        Elm_Interface_Atspi_Widget_Action)
+                        Elm_Interface_Atspi_Widget_Action,
+                        Evas.Clickable_Interface, Evas.Scrollable_Interface,
+                        Evas.Selectable_Interface)
 {
    eo_prefix: elm_obj_diskselector;
    methods {
@@ -251,12 +253,6 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      selected;
-      clicked;
-      scroll,anim,start;
-      scroll,anim,stop;
-      scroll,drag,start;
-      scroll,drag,stop;
       language,changed;
       access,changed;
       focused;
