@@ -4,7 +4,7 @@
  * Word breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2013 Tom Hacohen <tom at stosb dot com>
+ * Copyright (C) 2013-2015 Tom Hacohen <tom at stosb dot com>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -30,9 +30,9 @@
  * Unicode 6.0.0:
  *      <URL:http://www.unicode.org/reports/tr29/tr29-17.html>
  *
- * This library has been updated according to Revision 21, for
- * Unicode 6.2.0:
- *      <URL:http://www.unicode.org/reports/tr29/tr29-21.html>
+ * This library has been updated according to Revision 25, for
+ * Unicode 7.0.0:
+ *      <URL:http://www.unicode.org/reports/tr29/tr29-25.html>
  *
  * The Unicode Terms of Use are available at
  *      <URL:http://www.unicode.org/copyright.html>
@@ -44,16 +44,14 @@
  * Implementation of the word breaking algorithm as described in Unicode
  * Standard Annex 29.
  *
- * @version 2.4, 2013/09/28
+ * @version 2.6, 2015/04/18
  * @author  Tom Hacohen
  */
 
 #include <assert.h>
 #include <stddef.h>
 #include <string.h>
-#include "linebreak.h"
-#include "linebreakdef.h"
-
+#include "unibreakdef.h"
 #include "wordbreak.h"
 #include "wordbreakdata.c"
 
@@ -128,7 +126,6 @@ static void set_brks_to(
     while (posNext < posEnd)
     {
         utf32_t ch;
-        (void)ch;
         ch = get_next_char(s, len, &posNext);
         assert(ch != EOS);
         for (; posStart < posNext - 1; ++posStart)
@@ -257,8 +254,24 @@ static void set_wordbreaks(
             posLast = posCur;
             break;
 
+        case WBP_Hebrew_Letter:
         case WBP_ALetter:
-            if ((wbcSeqStart == WBP_ALetter) || /* WB5,6,7 */
+            if ((wbcSeqStart == WBP_Hebrew_Letter) &&
+                    (wbcLast == WBP_Double_Quote)) /* WB7b,c */
+            {
+               if (wbcCur == WBP_Hebrew_Letter)
+                 {
+                     set_brks_to(s, brks, posLast, posCur, len,
+                             WORDBREAK_NOBREAK, get_next_char);
+                 }
+               else
+                 {
+                     set_brks_to(s, brks, posLast, posCur, len,
+                             WORDBREAK_BREAK, get_next_char);
+                 }
+            }
+            else if (((wbcSeqStart == WBP_ALetter) ||
+                        (wbcSeqStart == WBP_Hebrew_Letter)) || /* WB5,6,7 */
                     (wbcLast == WBP_Numeric) || /* WB10 */
                     (wbcSeqStart == WBP_ExtendNumLet)) /* WB13b */
             {
@@ -275,8 +288,18 @@ static void set_wordbreaks(
             posLast = posCur;
             break;
 
+        case WBP_Single_Quote:
+            if (wbcLast == WBP_Hebrew_Letter) /* WB7a */
+            {
+                set_brks_to(s, brks, posLast, posCur, len,
+                            WORDBREAK_NOBREAK, get_next_char);
+                wbcSeqStart = wbcCur;
+                posLast = posCur;
+            }
+            /* No break on purpose */
         case WBP_MidNumLet:
-            if ((wbcLast == WBP_ALetter) || /* WB6,7 */
+            if (((wbcLast == WBP_ALetter) ||
+                        (wbcLast == WBP_Hebrew_Letter)) || /* WB6,7 */
                     (wbcLast == WBP_Numeric)) /* WB11,12 */
             {
                 /* Go on */
@@ -291,7 +314,8 @@ static void set_wordbreaks(
             break;
 
         case WBP_MidLetter:
-            if (wbcLast == WBP_ALetter) /* WB6,7 */
+            if ((wbcLast == WBP_ALetter) ||
+                    (wbcLast == WBP_Hebrew_Letter)) /* WB6,7 */
             {
                 /* Go on */
             }
@@ -320,7 +344,8 @@ static void set_wordbreaks(
 
         case WBP_Numeric:
             if ((wbcSeqStart == WBP_Numeric) || /* WB8,11,12 */
-                    (wbcLast == WBP_ALetter) || /* WB9 */
+                    ((wbcLast == WBP_ALetter) ||
+                     (wbcLast == WBP_Hebrew_Letter)) || /* WB9 */
                     (wbcSeqStart == WBP_ExtendNumLet)) /* WB13b */
             {
                 set_brks_to(s, brks, posLast, posCur, len,
@@ -340,6 +365,7 @@ static void set_wordbreaks(
             /* WB13a,13b */
             if ((wbcSeqStart == wbcLast) &&
                 ((wbcLast == WBP_ALetter) ||
+                 (wbcLast == WBP_Hebrew_Letter) ||
                  (wbcLast == WBP_Numeric) ||
                  (wbcLast == WBP_Katakana) ||
                  (wbcLast == WBP_ExtendNumLet)))
@@ -357,15 +383,29 @@ static void set_wordbreaks(
             posLast = posCur;
             break;
 
-        case WBP_Regional:
+        case WBP_Regional_Indicator:
             /* WB13c */
-            if (wbcSeqStart == WBP_Regional)
+            if (wbcSeqStart == WBP_Regional_Indicator)
             {
                 set_brks_to(s, brks, posLast, posCur, len,
                             WORDBREAK_NOBREAK, get_next_char);
             }
             wbcSeqStart = wbcCur;
             posLast = posCur;
+            break;
+
+        case WBP_Double_Quote:
+            if (wbcLast == WBP_Hebrew_Letter) /* WB7b,c */
+            {
+               /* Go on */
+            }
+            else
+            {
+                set_brks_to(s, brks, posLast, posCur, len,
+                            WORDBREAK_BREAK, get_next_char);
+                wbcSeqStart = wbcCur;
+                posLast = posCur;
+            }
             break;
 
         case WBP_Any:
@@ -409,7 +449,7 @@ void set_wordbreaks_utf8(
         char *brks)
 {
     set_wordbreaks(s, len, lang, brks,
-                   (get_next_char_t)lb_get_next_char_utf8);
+                   (get_next_char_t)ub_get_next_char_utf8);
 }
 
 /**
@@ -429,7 +469,7 @@ void set_wordbreaks_utf16(
         char *brks)
 {
     set_wordbreaks(s, len, lang, brks,
-                   (get_next_char_t)lb_get_next_char_utf16);
+                   (get_next_char_t)ub_get_next_char_utf16);
 }
 
 /**
@@ -449,5 +489,5 @@ void set_wordbreaks_utf32(
         char *brks)
 {
     set_wordbreaks(s, len, lang, brks,
-                   (get_next_char_t)lb_get_next_char_utf32);
+                   (get_next_char_t)ub_get_next_char_utf32);
 }

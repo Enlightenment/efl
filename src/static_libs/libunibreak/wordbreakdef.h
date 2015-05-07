@@ -4,8 +4,7 @@
  * Word breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2013 Tom Hacohen <tom at stosb dot com>
- * Copyright (C) 2013 Petr Filipsky <philodej at gmail dot com>
+ * Copyright (C) 2013-15 Tom Hacohen <tom at stosb dot com>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -31,9 +30,8 @@
  * Unicode 6.0.0:
  *      <URL:http://www.unicode.org/reports/tr29/tr29-17.html>
  *
- * This library has been updated according to Revision 21, for
- * Unicode 6.2.0:
- *      <URL:http://www.unicode.org/reports/tr29/tr29-21.html>
+ * This library has been updated according to Revision 25, for
+ * Unicode 7.0.0:
  *
  * The Unicode Terms of Use are available at
  *      <URL:http://www.unicode.org/copyright.html>
@@ -45,10 +43,11 @@
  * Definitions of internal data structures, declarations of global
  * variables, and function prototypes for the word breaking algorithm.
  *
- * @version 2.4, 2013/11/10
+ * @version 2.6, 2015/04/19
  * @author  Tom Hacohen
- * @author  Petr Filipsky
  */
+
+#include "unibreakdef.h"
 
 /**
  * Word break classes.  This is a direct mapping of Table 3 of Unicode
@@ -61,18 +60,18 @@ enum WordBreakClass
     WBP_LF,
     WBP_Newline,
     WBP_Extend,
+    WBP_Regional_Indicator,
     WBP_Format,
     WBP_Katakana,
+    WBP_Hebrew_Letter,
     WBP_ALetter,
+    WBP_Single_Quote,
+    WBP_Double_Quote,
     WBP_MidNumLet,
     WBP_MidLetter,
     WBP_MidNum,
     WBP_Numeric,
     WBP_ExtendNumLet,
-    WBP_Regional,
-    WBP_Hebrew,
-    WBP_Single,
-    WBP_Double,
     WBP_Any
 };
 

@@ -4,7 +4,7 @@
  * Line breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2008-2013 Wu Yongwei <wuyongwei at gmail dot com>
+ * Copyright (C) 2008-2015 Wu Yongwei <wuyongwei at gmail dot com>
  * Copyright (C) 2013 Petr Filipsky <philodej at gmail dot com>
  *
  * This software is provided 'as-is', without any express or implied
@@ -31,9 +31,9 @@
  * Unicode 5.0.0:
  *      <URL:http://www.unicode.org/reports/tr14/tr14-19.html>
  *
- * This library has been updated according to Revision 30, for
- * Unicode 6.2.0:
- *      <URL:http://www.unicode.org/reports/tr14/tr14-30.html>
+ * This library has been updated according to Revision 33, for
+ * Unicode 7.0.0:
+ *      <URL:http://www.unicode.org/reports/tr14/tr14-33.html>
  *
  * The Unicode Terms of Use are available at
  *      <URL:http://www.unicode.org/copyright.html>
@@ -45,7 +45,7 @@
  * Implementation of the line breaking algorithm as described in Unicode
  * Standard Annex 14.
  *
- * @version 2.5, 2013/11/14
+ * @version 2.7, 2015/04/18
  * @author  Wu Yongwei
  * @author  Petr Filipsky
  */
@@ -65,11 +65,6 @@
  * Size of the second-level index to the line breaking properties.
  */
 #define LINEBREAK_INDEX_SIZE 40
-
-/**
- * Version number of the library.
- */
-const int linebreak_version = LINEBREAK_VERSION;
 
 /**
  * Enumeration of break actions.  They are used in the break action
@@ -451,7 +446,7 @@ static enum LineBreakClass resolve_lb_class(
  * @post                  \a lbpCtx->lbcCur has the updated line break class
  */
 static void treat_first_char(
-        struct LineBreakContext* lbpCtx)
+        struct LineBreakContext *lbpCtx)
 {
     switch (lbpCtx->lbcCur)
     {
@@ -465,6 +460,8 @@ static void treat_first_char(
     case LBP_SP:
         lbpCtx->lbcCur = LBP_WJ;        /* Leading space treated as WJ */
         break;
+    case LBP_HL:
+        lbpCtx->fLb21aHebrew = 1;       /* Rule LB21a */
     default:
         break;
     }
@@ -485,7 +482,7 @@ static void treat_first_char(
  *                        table lookup is needed
  */
 static int get_lb_result_simple(
-        struct LineBreakContext* lbpCtx)
+        struct LineBreakContext *lbpCtx)
 {
     if (lbpCtx->lbcCur == LBP_BK
         || (lbpCtx->lbcCur == LBP_CR && lbpCtx->lbcNew != LBP_LF))
@@ -528,13 +525,12 @@ static int get_lb_result_simple(
  *                        #LINEBREAK_ALLOWBREAK, and #LINEBREAK_NOBREAK
  */
 static int get_lb_result_lookup(
-        struct LineBreakContext* lbpCtx)
+        struct LineBreakContext *lbpCtx)
 {
-    /* TODO: Rule LB21a, as introduced by Revision 28 of UAX#14, is not
-     * yet implemented below. */
     int brk = LINEBREAK_UNDEFINED;
-    assert(lbpCtx->lbcCur <= LBP_JT);
-    assert(lbpCtx->lbcNew <= LBP_JT);
+
+    assert(lbpCtx->lbcCur <= LBP_RI);
+    assert(lbpCtx->lbcNew <= LBP_RI);
     switch (baTable[lbpCtx->lbcCur - 1][lbpCtx->lbcNew - 1])
     {
     case DIR_BRK:
@@ -555,6 +551,19 @@ static int get_lb_result_lookup(
         brk = LINEBREAK_NOBREAK;
         break;
     }
+
+    /* Special processing due to rule LB21a */
+    if (lbpCtx->fLb21aHebrew &&
+        (lbpCtx->lbcCur == LBP_HY || lbpCtx->lbcCur == LBP_BA))
+    {
+        brk = LINEBREAK_NOBREAK;
+        lbpCtx->fLb21aHebrew = 0;
+    }
+    else if (!(lbpCtx->lbcNew == LBP_HY || lbpCtx->lbcNew == LBP_BA))
+    {
+        lbpCtx->fLb21aHebrew = (lbpCtx->lbcNew == LBP_HL);
+    }
+
     lbpCtx->lbcCur = lbpCtx->lbcNew;
     return brk;
 }
@@ -568,9 +577,9 @@ static int get_lb_result_lookup(
  * @post                  the line breaking context is initialized
  */
 void lb_init_break_context(
-        struct LineBreakContext* lbpCtx,
+        struct LineBreakContext *lbpCtx,
         utf32_t ch,
-        const char* lang)
+        const char *lang)
 {
     lbpCtx->lang = lang;
     lbpCtx->lbpLang = get_lb_prop_lang(lang);
@@ -579,6 +588,7 @@ void lb_init_break_context(
     lbpCtx->lbcCur = resolve_lb_class(
                         get_char_lb_class_lang(ch, lbpCtx->lbpLang),
                         lbpCtx->lang);
+    lbpCtx->fLb21aHebrew = 0;
     treat_first_char(lbpCtx);
 }
 
@@ -593,7 +603,7 @@ void lb_init_break_context(
  * @post                  the line breaking context is updated
  */
 int lb_process_next_char(
-        struct LineBreakContext* lbpCtx,
+        struct LineBreakContext *lbpCtx,
         utf32_t ch )
 {
     int brk;
@@ -615,127 +625,6 @@ int lb_process_next_char(
         break;
     }
     return brk;
-}
-
-/**
- * Gets the next Unicode character in a UTF-8 sequence.  The index will
- * be advanced to the next complete character, unless the end of string
- * is reached in the middle of a UTF-8 sequence.
- *
- * @param[in]     s    input UTF-8 string
- * @param[in]     len  length of the string in bytes
- * @param[in,out] ip   pointer to the index
- * @return             the Unicode character beginning at the index; or
- *                     #EOS if end of input is encountered
- */
-utf32_t lb_get_next_char_utf8(
-        const utf8_t *s,
-        size_t len,
-        size_t *ip)
-{
-    utf8_t ch;
-    utf32_t res;
-
-    assert(*ip <= len);
-    if (*ip == len)
-        return EOS;
-    ch = s[*ip];
-
-    if (ch < 0xC2 || ch > 0xF4)
-    {   /* One-byte sequence, tail (should not occur), or invalid */
-        *ip += 1;
-        return ch;
-    }
-    else if (ch < 0xE0)
-    {   /* Two-byte sequence */
-        if (*ip + 2 > len)
-            return EOS;
-        res = ((ch & 0x1F) << 6) + (s[*ip + 1] & 0x3F);
-        *ip += 2;
-        return res;
-    }
-    else if (ch < 0xF0)
-    {   /* Three-byte sequence */
-        if (*ip + 3 > len)
-            return EOS;
-        res = ((ch & 0x0F) << 12) +
-              ((s[*ip + 1] & 0x3F) << 6) +
-              ((s[*ip + 2] & 0x3F));
-        *ip += 3;
-        return res;
-    }
-    else
-    {   /* Four-byte sequence */
-        if (*ip + 4 > len)
-            return EOS;
-        res = ((ch & 0x07) << 18) +
-              ((s[*ip + 1] & 0x3F) << 12) +
-              ((s[*ip + 2] & 0x3F) << 6) +
-              ((s[*ip + 3] & 0x3F));
-        *ip += 4;
-        return res;
-    }
-}
-
-/**
- * Gets the next Unicode character in a UTF-16 sequence.  The index will
- * be advanced to the next complete character, unless the end of string
- * is reached in the middle of a UTF-16 surrogate pair.
- *
- * @param[in]     s    input UTF-16 string
- * @param[in]     len  length of the string in words
- * @param[in,out] ip   pointer to the index
- * @return             the Unicode character beginning at the index; or
- *                     #EOS if end of input is encountered
- */
-utf32_t lb_get_next_char_utf16(
-        const utf16_t *s,
-        size_t len,
-        size_t *ip)
-{
-    utf16_t ch;
-
-    assert(*ip <= len);
-    if (*ip == len)
-        return EOS;
-    ch = s[(*ip)++];
-
-    if (ch < 0xD800 || ch > 0xDBFF)
-    {   /* If the character is not a high surrogate */
-        return ch;
-    }
-    if (*ip == len)
-    {   /* If the input ends here (an error) */
-        --(*ip);
-        return EOS;
-    }
-    if (s[*ip] < 0xDC00 || s[*ip] > 0xDFFF)
-    {   /* If the next character is not the low surrogate (an error) */
-        return ch;
-    }
-    /* Return the constructed character and advance the index again */
-    return (((utf32_t)ch & 0x3FF) << 10) + (s[(*ip)++] & 0x3FF) + 0x10000;
-}
-
-/**
- * Gets the next Unicode character in a UTF-32 sequence.  The index will
- * be advanced to the next character.
- *
- * @param[in]     s    input UTF-32 string
- * @param[in]     len  length of the string in dwords
- * @param[in,out] ip   pointer to the index
- * @return             the Unicode character beginning at the index; or
- *                     #EOS if end of input is encountered
- */
-utf32_t lb_get_next_char_utf32(
-        const utf32_t *s,
-        size_t len,
-        size_t *ip)
-{
-    assert(*ip <= len);
-    if (*ip == len)
-        return EOS;
-    return s[(*ip)++];
 }
 
 /**
@@ -809,7 +698,7 @@ void set_linebreaks_utf8(
         char *brks)
 {
     set_linebreaks(s, len, lang, brks,
-                   (get_next_char_t)lb_get_next_char_utf8);
+                   (get_next_char_t)ub_get_next_char_utf8);
 }
 
 /**
@@ -829,7 +718,7 @@ void set_linebreaks_utf16(
         char *brks)
 {
     set_linebreaks(s, len, lang, brks,
-                   (get_next_char_t)lb_get_next_char_utf16);
+                   (get_next_char_t)ub_get_next_char_utf16);
 }
 
 /**
@@ -849,7 +738,7 @@ void set_linebreaks_utf32(
         char *brks)
 {
     set_linebreaks(s, len, lang, brks,
-                   (get_next_char_t)lb_get_next_char_utf32);
+                   (get_next_char_t)ub_get_next_char_utf32);
 }
 
 /**
@@ -868,7 +757,7 @@ void set_linebreaks_utf32(
 int is_line_breakable(
         utf32_t char1,
         utf32_t char2,
-        const char* lang)
+        const char *lang)
 {
     utf32_t s[2];
     char brks[2];

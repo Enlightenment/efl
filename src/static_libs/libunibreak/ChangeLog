@@ -1,3 +1,167 @@
+2015-04-19  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* LICENCE: Update copyright information.
+
+2015-04-19  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/linebreakdata2.tmp: Remove the unnecessary inclusion of
+	"linebreak.h".
+	* src/linebreakdata.c: Ditto.
+
+2015-04-19  Wu Yongwei  <wuyongwei@gmail.com>
+
+	Use extended regexp to simplify expressions.
+	* src/LineBreak1.sed: Simplify with extended regexp.
+	* src/LineBreak2.sed: Ditto.
+	* src/Makefile.am: Add `-E' to the command line of sed.
+
+2015-04-19  Wu Yongwei  <wuyongwei@gmail.com>
+
+	Make further clean-up for the 3.0 release.
+	* configure.ac (AC_INIT): Change the library version to `3.0'.
+	* Doxyfile (PROJECT_NUMBER): Change to `3.0'.
+	(EXCLUDE): Add the missing `src/' before `filter_dup.c'.
+	* src/wordbreakdata1.tmpl: Remove the inclusion of "linebreak.h".
+	* src/wordbreakdata.c: Ditto.
+
+2015-04-19  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/wordbreakdef.h: Include "unibreakdef.h".
+
+2015-04-19  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* purge: Make it remove `compile'.
+
+2015-04-18  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/unibreakdef.c: New file.
+	* src/unibreakdef.h: New file.
+	* src/wordbreak.c: Rename reference to `lb_get_next_char...' to
+	`ub_get_next_char...'.
+	* src/linebreak.c: Ditto.
+	(lb_get_next_char_utf8): Remove definition.
+	(lb_get_next_char_utf16): Ditto.
+	(lb_get_next_char_utf32): Ditto.
+	* src/linebreakdef.h: Include "unibreakdef.h".
+	(EOS): Remove definition.
+	(get_next_char_t): Remove typedef.
+	(lb_get_next_char_utf8): Remove declaration.
+	(lb_get_next_char_utf16): Ditto.
+	(lb_get_next_char_utf32): Ditto.
+	* src/Makefile.am (include_HEADERS): Add `unibreakdef.h'.
+	(libunibreak_la_SOURCES): Add `unibreakdef.c'.
+	(libunibreak_la_CFLAGS): Define to `-W -Wall'.
+
+2015-04-18  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/unibreakbase.c: New file.
+	* src/unibreakbase.h: New file.
+	* src/linebreak.c (linebreak_version): Remove definition.
+	* src/linebreak.h: Include "unibreakbase.h".
+	(linebreak_version): Remove declaration.
+	(LINEBREAK_VERSION): Remove definition.
+	(utf8_t): Remove typedef.
+	(utf16_t): Remove typedef.
+	(utf32_t): Remove typedef.
+	* src/wordbreak.h: Include "unibreakbase.h" instead of
+	"linebreak.h".
+	* src/Makefile.am (include_HEADERS): Add `unibreakbase.h'.
+	(libunibreak_la_SOURCES): Add `unibreakbase.c'.
+	(libunibreak_la_LDFLAGS): Set the version-info to `3:0:0'.
+
+2015-04-13  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/wordbreak.c: Update copyright and version information.
+	* src/wordbreak.h: Ditto.
+	* src/wordbreakdef.h: Ditto.
+
+2015-04-13  Tom Hacohen  <tom@stosb.com>
+
+	* src/wordbreakdef.h (enum WordBreakClass): Clean up and reorder.
+
+2015-04-10  Tom Hacohen  <tom@stosb.com>
+
+	Don't ship internal header.
+	* src/Makefile.am (include_HEADERS): Remove `wordbreakdef.h'.
+	(EXTRA_DIST): Add `wordbreakdef.h'.
+
+2015-04-10  Tom Hacohen  <tom@stosb.com>
+
+	Update files according to UAX #29-29, for Unicode 7.0.0.
+	* src/wordbreak.c (set_wordbreaks): Take care of Hebrew letters.
+	* src/wordbreakdata.h (enum WordBreakClass): Add WBP_Hebrew_Letter,
+	WBP_Single_Quote, and WBP_Double_Quote.
+	* src/wordbreakdata.c: Regenerate from WordBreakProperty-7.0.0.txt.
+
+2015-04-10  Tom Hacohen  <tom@stosb.com>
+
+	* src/sort_numeric_hex.py: Fix compatibility issue with new Python.
+	* src/Makefile.am (wordbreakdata): Fix word break data enum for
+	names with underscores.
+	* src/wordbreakdef.h (enum WordBreakClass): Correct WBP_Regional to
+	WBP_Regional_Indicator.
+	* src/wordbreak.c: Ditto.
+	* src/wordbreakdata.c: Ditto.
+
+2015-04-05  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/linebreak.c: Make pointer alignment consistent.
+	* src/linebreak.h: Ditto.
+	* src/linebreakdef.h: Ditto.
+
+2015-04-05  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/linebreak.h: Update copyright year and UAX information.
+	* src/linebreakdef.c: Ditto.
+
+2015-04-05  Wu Yongwei  <wuyongwei@gmail.com>
+
+	Implement rule LB21a, as introduced by Revision 28 of UAX #14.
+	* src/linebreakdef.h (struct LineBreakContext): Add new field
+	fLb21aHebrew.
+	* src/linebreak.c (treat_first_char): Initialize fLb21aHebrew
+	properly.
+	(lb_init_break_context): Clear fLb21aHebrew.
+	(get_lb_result_lookup): Apply rule LB21a and update fLb21aHebrew.
+
+2014-12-06  Mikhail Polubisok  <mpolubisok@gmail.com>
+
+	* src/linebreak.c (get_lb_result_lookup): Extend assertion condition
+	that has been wrong since Unicode 6.2.
+
+2014-09-19  Petr Filipsky  <philodej@gmail.com>
+
+	* src/LineBreak1.sed: Fix sed expression due to changed
+	LineBreak.txt file format.
+
+2014-05-24  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/Makefile.gcc (TARGET): Change from `liblinebreak.a' to
+	`libunibreak.a'.
+
+2014-05-23  Christoph Junghans  <junghans@votca.org>
+
+	Fix `make install DESTDIR=...'.
+	* Makefile.am (install-exec-hook): Prefix `$(DESTDIR)/' before
+	`${libdir}'.
+
+2014-02-16  Wu Yongwei  <wuyongwei@gmail.com>
+
+	Following https://people.gnome.org/~walters/docs/build-api.txt, add
+	a quasi-standard autogen.sh, which generates `configure' and runs it
+	optionally.
+	* autogen.sh: New file.
+
+2014-02-12  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* bootstrap: Remove the overkill bits and add back autoreconf.
+	* purge: Ensure config.cache is removed.
+
+2014-02-10  Tom Hacohen  <tom@stosb.com>
+
+	* bootstrap: Solve bootstrap problems found on Linux and Mac (thanks
+	to Nick Shvelidze and Christopher Baker).
+
 2013-11-14  Wu Yongwei  <wuyongwei@gmail.com>
 
 	* src/linebreak.c: Add/update comments and doc comments.

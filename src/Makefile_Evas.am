@@ -90,6 +90,8 @@ lib/evas/canvas/evas_vg_private.h
 # Linebreak
 
 noinst_HEADERS += \
+static_libs/libunibreak/unibreakbase.h \
+static_libs/libunibreak/unibreakdef.h \
 static_libs/libunibreak/linebreak.h \
 static_libs/libunibreak/linebreakdef.h \
 static_libs/libunibreak/wordbreakdef.h \
@@ -98,6 +100,8 @@ static_libs/libunibreak/wordbreakdata.c
 
 # Linebreak
 lib_evas_libevas_la_SOURCES = \
+static_libs/libunibreak/unibreakbase.c \
+static_libs/libunibreak/unibreakdef.c \
 static_libs/libunibreak/linebreak.c \
 static_libs/libunibreak/linebreakdata.c \
 static_libs/libunibreak/linebreakdef.c \

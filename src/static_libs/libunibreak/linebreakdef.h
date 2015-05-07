@@ -4,7 +4,7 @@
  * Line breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2008-2013 Wu Yongwei <wuyongwei at gmail dot com>
+ * Copyright (C) 2008-2015 Wu Yongwei <wuyongwei at gmail dot com>
  * Copyright (C) 2013 Petr Filipsky <philodej at gmail dot com>
  *
  * This software is provided 'as-is', without any express or implied
@@ -31,9 +31,9 @@
  * Unicode 5.0.0:
  *      <URL:http://www.unicode.org/reports/tr14/tr14-19.html>
  *
- * This library has been updated according to Revision 30, for
- * Unicode 6.2.0:
- *      <URL:http://www.unicode.org/reports/tr14/tr14-30.html>
+ * This library has been updated according to Revision 33, for
+ * Unicode 7.0.0:
+ *      <URL:http://www.unicode.org/reports/tr14/tr14-33.html>
  *
  * The Unicode Terms of Use are available at
  *      <URL:http://www.unicode.org/copyright.html>
@@ -45,16 +45,12 @@
  * Definitions of internal data structures, declarations of global
  * variables, and function prototypes for the line breaking algorithm.
  *
- * @version 2.4, 2013/11/10
+ * @version 2.6, 2015/04/18
  * @author  Wu Yongwei
  * @author  Petr Filipsky
  */
 
-/**
- * Constant value to mark the end of string.  It is not a valid Unicode
- * character.
- */
-#define EOS 0xFFFFFFFF
+#include "unibreakdef.h"
 
 /**
  * Line break classes.  This is a direct mapping of Table 1 of Unicode
@@ -143,28 +139,20 @@ struct LineBreakContext
     enum LineBreakClass lbcCur;     /**< Breaking class of current codepoint */
     enum LineBreakClass lbcNew;     /**< Breaking class of next codepoint */
     enum LineBreakClass lbcLast;    /**< Breaking class of last codepoint */
+    int fLb21aHebrew;               /**< Flag for Hebrew letters (LB21a) */
 };
-
-/**
- * Abstract function interface for #lb_get_next_char_utf8,
- * #lb_get_next_char_utf16, and #lb_get_next_char_utf32.
- */
-typedef utf32_t (*get_next_char_t)(const void *, size_t, size_t *);
 
 /* Declarations */
 extern struct LineBreakProperties lb_prop_default[];
 extern struct LineBreakPropertiesLang lb_prop_lang_map[];
 
 /* Function Prototype */
-utf32_t lb_get_next_char_utf8(const utf8_t *s, size_t len, size_t *ip);
-utf32_t lb_get_next_char_utf16(const utf16_t *s, size_t len, size_t *ip);
-utf32_t lb_get_next_char_utf32(const utf32_t *s, size_t len, size_t *ip);
 void lb_init_break_context(
-        struct LineBreakContext* lbpCtx,
+        struct LineBreakContext *lbpCtx,
         utf32_t ch,
-        const char* lang);
+        const char *lang);
 int lb_process_next_char(
-        struct LineBreakContext* lbpCtx,
+        struct LineBreakContext *lbpCtx,
         utf32_t ch);
 void set_linebreaks(
         const void *s,

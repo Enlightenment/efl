@@ -1,10 +1,10 @@
 /* vim: set expandtab tabstop=4 softtabstop=4 shiftwidth=4: */
 
 /*
- * Line breaking in a Unicode sequence.  Designed to be used in a
+ * Break processing in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2008-2015 Wu Yongwei <wuyongwei at gmail dot com>
+ * Copyright (C) 2015 Wu Yongwei <wuyongwei at gmail dot com>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -39,40 +39,42 @@
  */
 
 /**
- * @file    linebreak.h
+ * @file    unibreakdef.h
  *
- * Header file for the line breaking algorithm.
+ * Header file for private definitions in the libunibreak library.
  *
- * @version 2.4, 2015/04/18
+ * @version 1.1, 2015/04/19
  * @author  Wu Yongwei
  */
 
-#ifndef LINEBREAK_H
-#define LINEBREAK_H
+#ifndef UNIBREAKDEF_H
+#define UNIBREAKDEF_H
 
-#include <stddef.h>
 #include "unibreakbase.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define LINEBREAK_MUSTBREAK     0   /**< Break is mandatory */
-#define LINEBREAK_ALLOWBREAK    1   /**< Break is allowed */
-#define LINEBREAK_NOBREAK       2   /**< No break is possible */
-#define LINEBREAK_INSIDEACHAR   3   /**< A UTF-8/16 sequence is unfinished */
+/**
+ * Constant value to mark the end of string.  It is not a valid Unicode
+ * character.
+ */
+#define EOS 0xFFFFFFFF
 
-void init_linebreak(void);
-void set_linebreaks_utf8(
-        const utf8_t *s, size_t len, const char *lang, char *brks);
-void set_linebreaks_utf16(
-        const utf16_t *s, size_t len, const char *lang, char *brks);
-void set_linebreaks_utf32(
-        const utf32_t *s, size_t len, const char *lang, char *brks);
-int is_line_breakable(utf32_t char1, utf32_t char2, const char *lang);
+/**
+ * Abstract function interface for #ub_get_next_char_utf8,
+ * #ub_get_next_char_utf16, and #ub_get_next_char_utf32.
+ */
+typedef utf32_t (*get_next_char_t)(const void *, size_t, size_t *);
+
+/* Function Prototype */
+utf32_t ub_get_next_char_utf8(const utf8_t *s, size_t len, size_t *ip);
+utf32_t ub_get_next_char_utf16(const utf16_t *s, size_t len, size_t *ip);
+utf32_t ub_get_next_char_utf32(const utf32_t *s, size_t len, size_t *ip);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* LINEBREAK_H */
+#endif /* UNIBREAKDEF_H */
