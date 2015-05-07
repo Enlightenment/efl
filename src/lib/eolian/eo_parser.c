@@ -1630,7 +1630,15 @@ parse_methods(Eo_Lexer *ls)
    line = ls->line_number, col = ls->column;
    check_next(ls, '{');
    while (ls->t.token != '}')
-     parse_method(ls);
+     {
+        if (ls->t.kw == KW_at_property)
+          {
+             eo_lexer_get(ls);
+             parse_property(ls);
+             continue;
+          }
+        parse_method(ls);
+     }
    check_match(ls, '}', '{', line, col);
 }
 
