@@ -18,7 +18,7 @@ START_TEST(elua_api)
     int fd;
     char *cargv[2];
     char arg1[] = "test";
-    char arg2[] = "lualian";
+    char arg2[] = "test";
     int quit = 0;
     cargv[0] = arg1;
     cargv[1] = arg2;
@@ -69,7 +69,7 @@ START_TEST(elua_api)
     fail_if(!elua_util_require(st, "util"));
     fail_if(!elua_util_string_run(st, "return 1337", "foo"));
     fail_if(elua_util_string_run(st, "foo bar", "foo")); /* invalid code */
-    fail_if(elua_util_app_load(st, "lualian"));
+    fail_if(elua_util_app_load(st, "test"));
     fail_if(lua_type(lst, -1) != LUA_TFUNCTION);
     lua_pop(lst, 1);
     fail_if(!elua_util_app_load(st, "non_existent_app"));

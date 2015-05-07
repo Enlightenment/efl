@@ -123,7 +123,7 @@ tests_elua_elua_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DELUA_BINDINGS_DIR=\"$(ELUA_BINDINGS_DIR)\" \
 -DELUA_CORE_DIR=\"$(ELUA_CORE_DIR)\" \
 -DELUA_MODULES_DIR=\"$(ELUA_MODULES_DIR)\" \
--DELUA_APPS_DIR=\"$(ELUA_APPS_DIR)\" \
+-DELUA_APPS_DIR=\"$(top_srcdir)/src/tests/elua/data/apps\" \
 @CHECK_CFLAGS@ \
 @ELUA_CFLAGS@
 
@@ -139,5 +139,7 @@ tests_elua_elua_suite_LDADD = @CHECK_LIBS@ @USE_ELUA_LIBS@
 tests_elua_elua_suite_DEPENDENCIES = @USE_ELUA_INTERNAL_LIBS@
 
 endif
+
+EXTRA_DIST += tests/elua/data/apps/test.lua
 
 endif
