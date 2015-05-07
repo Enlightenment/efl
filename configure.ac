@@ -1762,6 +1762,8 @@ EFL_ADD_LIBS([EVAS], [-lm])
 # Freetype
 EFL_DEPEND_PKG([EVAS], [FREETYPE], [freetype2 >= 9.3.0])
 
+EFL_DEPEND_PKG([EVAS], [UNIBREAK], [libunibreak])
+
 ## optional dependencies
 
 # FontConfig
