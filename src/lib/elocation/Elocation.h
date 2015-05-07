@@ -6,6 +6,7 @@
  */
 
 /**
+ * @page elocation_main Elocation (BETA)
  *
  * @section intro Elocation Use Cases
  *
