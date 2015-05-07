@@ -87,8 +87,24 @@ lib/evas/include/evas_blend_ops.h \
 lib/evas/include/evas_filter.h \
 lib/evas/canvas/evas_vg_private.h
 
-# Main
+# Linebreak
+
+noinst_HEADERS += \
+static_libs/libunibreak/linebreak.h \
+static_libs/libunibreak/linebreakdef.h \
+static_libs/libunibreak/wordbreakdef.h \
+static_libs/libunibreak/wordbreak.h \
+static_libs/libunibreak/wordbreakdata.c
+
+# Linebreak
 lib_evas_libevas_la_SOURCES = \
+static_libs/libunibreak/linebreak.c \
+static_libs/libunibreak/linebreakdata.c \
+static_libs/libunibreak/linebreakdef.c \
+static_libs/libunibreak/wordbreak.c
+
+# Main
+lib_evas_libevas_la_SOURCES += \
 lib/evas/main.c
 
 # Canvas
@@ -298,6 +314,7 @@ lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/cserve2 \
 -I$(top_srcdir)/src/lib/evas/file \
 -I$(top_srcdir)/src/lib/evas/include \
+-I$(top_srcdir)/src/static_libs/libunibreak \
 -I$(top_builddir)/src/lib/evas/canvas \
 -I$(top_builddir)/src/modules/evas/engines/software_generic \
 -I$(top_builddir)/src/modules/evas/engines/gl_generic \
@@ -348,6 +365,15 @@ lib/evas/common/libevas_convert_rgb_32.la \
 @EVAS_INTERNAL_LIBS@
 
 lib_evas_libevas_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+# Linebreak
+
+EXTRA_DIST += \
+static_libs/libunibreak/LICENCE \
+static_libs/libunibreak/AUTHORS \
+static_libs/libunibreak/NEWS \
+static_libs/libunibreak/README \
+static_libs/libunibreak/ChangeLog
 
 # Engines
 
