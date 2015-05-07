@@ -1,8 +1,8 @@
 class Elm.Multibuttonentry (Elm.Layout)
 {
    eo_prefix: elm_obj_multibuttonentry;
-   properties {
-      editable {
+   methods {
+      @property editable {
          set {
             /*@
             Sets if the multibuttonentry is to be editable or not.
@@ -25,7 +25,7 @@ class Elm.Multibuttonentry (Elm.Layout)
             bool editable; /*@ If @c EINA_TRUE, user can add/delete item in multibuttonentry, if not, the multibuttonentry is non-editable. */
          }
       }
-      expanded {
+      @property expanded {
          set {
             /*@
             Set/Unset the multibuttonentry to expanded state.
@@ -50,7 +50,7 @@ class Elm.Multibuttonentry (Elm.Layout)
             Set this to EINA_FALSE for single line state. */
          }
       }
-      format_function {
+      @property format_function {
          set {
             /*@
             Set a function to format the string that will be used to display
@@ -69,7 +69,7 @@ class Elm.Multibuttonentry (Elm.Layout)
             const(void)* data @optional; /*@ data User data to passed to @a format_function */
          }
       }
-      items {
+      @property items {
          get {
             /*@
             Get a list of items in the multibuttonentry
@@ -80,7 +80,7 @@ class Elm.Multibuttonentry (Elm.Layout)
             return: const(list<Elm_Object_Item *>)*;
          }
       }
-      first_item {
+      @property first_item {
          get {
             /*@
             Get the first item in the multibuttonentry
@@ -91,7 +91,7 @@ class Elm.Multibuttonentry (Elm.Layout)
             return: Elm_Object_Item *;
          }
       }
-      last_item {
+      @property last_item {
          get {
             /*@
             Get the last item in the multibuttonentry
@@ -102,7 +102,7 @@ class Elm.Multibuttonentry (Elm.Layout)
             return: Elm_Object_Item *;
          }
       }
-      entry {
+      @property entry {
          get {
             /*@
             Get the entry of the multibuttonentry object
@@ -113,7 +113,7 @@ class Elm.Multibuttonentry (Elm.Layout)
             return: Evas_Object *;
          }
       }
-      selected_item {
+      @property selected_item {
          get {
             /*@
             Get the selected item in the multibuttonentry
@@ -124,8 +124,6 @@ class Elm.Multibuttonentry (Elm.Layout)
             return: Elm_Object_Item *;
          }
       }
-   }
-   methods {
       item_prepend {
          /*@
          Prepend a new item to the multibuttonentry

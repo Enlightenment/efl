@@ -1,8 +1,8 @@
 class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_slideshow;
-   properties {
-      cache_after {
+   methods {
+      @property cache_after {
          set {
             /*@
             Set the number of items to cache, on a given slideshow widget,
@@ -30,7 +30,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             int count; /*@ Number of items to cache after the current one */
          }
       }
-      cache_before {
+      @property cache_before {
          set {
             /*@
             Set the number of items to cache, on a given slideshow widget,
@@ -58,7 +58,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             int count; /*@ Number of items to cache before the current one */
          }
       }
-      layout {
+      @property layout {
          set {
             /*@
             Set the current slide layout in use for a given slideshow widget
@@ -85,7 +85,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             const(char)* layout; /*@ The new layout's name string */
          }
       }
-      transition {
+      @property transition {
          set {
             /*@
             Set the current slide transition/effect in use for a given
@@ -115,7 +115,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             const(char)* transition @nullable; /*@ The new transition's name string */
          }
       }
-      loop {
+      @property loop {
          set {
             /*@
             Set if, after a slideshow is started, for a given slideshow
@@ -148,7 +148,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             list of items */
          }
       }
-      timeout {
+      @property timeout {
          set {
             /*@
             Set the interval between each image transition on a given
@@ -184,7 +184,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             double timeout; /*@ The new displaying timeout for images */
          }
       }
-      items {
+      @property items {
          get {
             /*@
             Get the internal list of items in a given slideshow widget.
@@ -204,7 +204,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: const(list<Elm_Object_Item *>)*;
          }
       }
-      transitions {
+      @property transitions {
          get {
             /*@
             Returns the list of sliding transition/effect names available, for a
@@ -246,7 +246,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: const(list<const(char)*>)*;
          }
       }
-      count {
+      @property count {
          get {
             /*@
             Get the number of items stored in a given slideshow widget
@@ -257,7 +257,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: uint;
          }
       }
-      item_current {
+      @property item_current {
          get {
             /*@
             Returns the currently displayed item, in a given slideshow widget
@@ -269,7 +269,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: Elm_Object_Item *;
          }
       }
-      layouts {
+      @property layouts {
          get {
             /*@
             Returns the list of @b layout names available, for a given
@@ -306,8 +306,6 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: const(list<const(char)*>)*;
          }
       }
-   }
-   methods {
       previous {
          /*@
          Slide to the @b previous item, in a given slideshow widget

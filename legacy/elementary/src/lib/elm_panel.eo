@@ -2,8 +2,8 @@ class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
                  Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_panel;
-   properties {
-      orient {
+   methods {
+      @property orient {
          set {
             /*@
             @brief Sets the orientation of the panel
@@ -27,7 +27,7 @@ class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
             @li #ELM_PANEL_ORIENT_RIGHT */
          }
       }
-      hidden {
+      @property hidden {
          set {
             /*@
             @brief Set the state of the panel.
@@ -46,7 +46,7 @@ class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
             bool hidden; /*@ If true, the panel will run the animation to disappear. */
          }
       }
-      scrollable {
+      @property scrollable {
          set {
             /*@
             @brief Set the scrollability of the panel.
@@ -66,7 +66,7 @@ class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
             bool scrollable;
          }
       }
-      scrollable_content_size {
+      @property scrollable_content_size {
          set {
             /*@
             @brief Set the size of the scrollable panel.
@@ -77,8 +77,6 @@ class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
             double ratio;
          }
       }
-   }
-   methods {
       toggle {
          /*@
          @brief Toggle the hidden state of the panel from code

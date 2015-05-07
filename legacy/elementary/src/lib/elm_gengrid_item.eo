@@ -2,8 +2,8 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_gengrid_item;
       data: Elm_Gen_Item;
-      properties {
-           prev {
+      methods {
+           @property prev {
                 get {
                      /*@
                       Get the @b previous item in a gengrid widget's internal list of items,
@@ -21,7 +21,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                      Elm_Object_Item *item; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
                 }
            }
-           next {
+           @property next {
                 get {
                      /*@
                       Get the @b next item in a gengrid widget's internal list of items,
@@ -39,7 +39,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                      Elm_Object_Item *item; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
                 }
            }
-           selected {
+           @property selected {
                 get {
                      /*@
                       Get whether a given gengrid item is selected or not
@@ -69,7 +69,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                      Eina_Bool selected; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
                 }
            }
-           item_class {
+           @property item_class {
                 get {
                      /*@
                       Get the Gengrid Item class for the given Gengrid Item.
@@ -84,7 +84,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                      const (Elm_Gengrid_Item_Class) *itc; /*@ Gengrid Item class for the given item */
                 }
            }
-           index {
+           @property index {
                 get {
                      /*@
                       Get the index of the item. It is only valid once displayed.
@@ -96,7 +96,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                      int index(-1); /*@ @return the position inside the list of item. */
                 }
            }
-           pos {
+           @property pos {
                 get {
                      /*@
                       Get a given gengrid item's position, relative to the whole
@@ -114,7 +114,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                      uint y; /*@ Pointer to variable to store the item's <b>column number</b>. */
                 }
            }
-           select_mode {
+           @property select_mode {
                 get {
                      /*@
                       Get the gengrid item's select mode.
@@ -155,8 +155,6 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                      Elm_Object_Select_Mode mode(4); /*@ The selected mode */
                 }
            }
-      }
-      methods {
            /*      init { FIXME
                    params {
                    Evas_Smart_Cb func;

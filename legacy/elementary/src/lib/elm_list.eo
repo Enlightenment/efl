@@ -2,8 +2,8 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
                 Elm_Interface_Atspi_Widget_Action, Elm_Interface_Atspi_Selection)
 {
    eo_prefix: elm_obj_list;
-   properties {
-      horizontal {
+   methods {
+      @property horizontal {
          set {
             /*@
             Enable or disable horizontal mode on the list object.
@@ -36,7 +36,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             disable it, i.e., to enable vertical mode. */
          }
       }
-      select_mode {
+      @property select_mode {
          set {
             /*@
             Set the list select mode.
@@ -70,7 +70,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             Elm_Object_Select_Mode mode(4); /*@ The select mode */
          }
       }
-      focus_on_selection {
+      @property focus_on_selection {
          set {
             /*@
             Set focus upon items selection mode
@@ -96,7 +96,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             (EINA_TRUE = enabled, EINA_FALSE = disabled) */
          }
       }
-      multi_select {
+      @property multi_select {
          set {
             /*@
             Enable or disable multiple items selection on the list object.
@@ -128,7 +128,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             disable it. */
          }
       }
-      multi_select_mode {
+      @property multi_select_mode {
          set {
             /*@
             Set the list multi select mode.
@@ -162,7 +162,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             Elm_Object_Multi_Select_Mode mode(2); /*@ The multi select mode */
          }
       }
-      mode {
+      @property mode {
          set {
             /*@
             Set which mode to use for the list object.
@@ -199,7 +199,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             #ELM_LIST_SCROLL, #ELM_LIST_LIMIT or #ELM_LIST_EXPAND. */
          }
       }
-      selected_item {
+      @property selected_item {
          get {
             /*@
             Get the selected item.
@@ -217,7 +217,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             return: Elm_Object_Item *;
          }
       }
-      items {
+      @property items {
          get {
             /*@
             Get a list of all the list items.
@@ -233,7 +233,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             return: const(list<Elm_Object_Item *>)*;
          }
       }
-      first_item {
+      @property first_item {
          get {
             /*@
             Get the first item in the list
@@ -246,7 +246,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             return: Elm_Object_Item *;
          }
       }
-      selected_items {
+      @property selected_items {
          get {
             /*@
             Return a list of the currently selected list items.
@@ -264,7 +264,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             return: const(list<Elm_Object_Item *>)*;
          }
       }
-      last_item {
+      @property last_item {
          get {
             /*@
             Get the last item in the list
@@ -277,8 +277,6 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             return: Elm_Object_Item *;
          }
       }
-   }
-   methods {
       item_insert_before {
          /*@
          Insert a new item into the list object before item @p before.

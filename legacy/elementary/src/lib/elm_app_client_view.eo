@@ -2,8 +2,8 @@ class Elm_App_Client_View (Eo.Base)
 {
    legacy_prefix: null;
    eo_prefix: elm_app_client_view;
-   properties {
-      state {
+   methods {
+      @property state {
          get {
             /*@ Get state of view */
          }
@@ -11,7 +11,7 @@ class Elm_App_Client_View (Eo.Base)
             Elm_App_View_State state; /*@ state of view */
          }
       }
-      new_events {
+      @property new_events {
          get {
             /*@ Get new events of view */
          }
@@ -19,7 +19,7 @@ class Elm_App_Client_View (Eo.Base)
             int events; /*@ number of events of view */
          }
       }
-      window {
+      @property window {
          get {
             /*@ Get window of view */
          }
@@ -27,7 +27,7 @@ class Elm_App_Client_View (Eo.Base)
             int window; /*@ window of view */
          }
       }
-      icon_pixels {
+      @property icon_pixels {
          get {
             /*@ Get icon pixels of view, view could have a icon in raw format not saved in disk. */
          }
@@ -38,7 +38,7 @@ class Elm_App_Client_View (Eo.Base)
             const(ubyte)* pixels; /*@ uchar array, with all bytes of icon */
          }
       }
-      path {
+      @property path {
          get {
             /*@ Get DBus path of view */
          }
@@ -46,7 +46,7 @@ class Elm_App_Client_View (Eo.Base)
             const(char)* ret; /*@ DBus path of view */
          }
       }
-      package {
+      @property package {
          get {
             /*@ Get application package */
          }
@@ -54,7 +54,7 @@ class Elm_App_Client_View (Eo.Base)
             const(char)* ret; /*@ Package of application */
          }
       }
-      icon {
+      @property icon {
          get {
             /*@ Get icon path of view */
          }
@@ -62,7 +62,7 @@ class Elm_App_Client_View (Eo.Base)
             const(char)* ret; /*@ icon path of view */
          }
       }
-      progress {
+      @property progress {
          get {
             /*@ Get progress of view, should be -1 if there nothing in progress or something between 0-100 */
          }
@@ -70,7 +70,7 @@ class Elm_App_Client_View (Eo.Base)
             ushort progress; /*@ progress of view */
          }
       }
-      title {
+      @property title {
          get {
             /*@ Get title of view */
          }
@@ -78,8 +78,6 @@ class Elm_App_Client_View (Eo.Base)
             const(char)* ret; /*@ title of view */
          }
       }
-   }
-   methods {
       constructor {
          /*@ Class constructor of elm_app_client_view */
          legacy: null;

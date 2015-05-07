@@ -2,8 +2,8 @@ class Elm_Pan (Evas.Smart_Clipped)
 {
    eo_prefix: elm_obj_pan;
    data: Elm_Pan_Smart_Data;
-   properties {
-      gravity {
+   methods {
+      @property gravity {
          set {
             /*@ No description supplied by the EAPI. */
          }
@@ -15,7 +15,7 @@ class Elm_Pan (Evas.Smart_Clipped)
             double y;
          }
       }
-      pos {
+      @property pos {
          set {
             /*@ No description supplied by the EAPI. */
          }
@@ -27,7 +27,7 @@ class Elm_Pan (Evas.Smart_Clipped)
             Evas_Coord y;
          }
       }
-      content_size {
+      @property content_size {
          get {
             /*@ No description supplied by the EAPI. */
          }
@@ -36,7 +36,7 @@ class Elm_Pan (Evas.Smart_Clipped)
             Evas_Coord h;
          }
       }
-      pos_min {
+      @property pos_min {
          get {
             /*@ No description supplied by the EAPI. */
          }
@@ -45,7 +45,7 @@ class Elm_Pan (Evas.Smart_Clipped)
             Evas_Coord y;
          }
       }
-      pos_max {
+      @property pos_max {
          get {
             /*@ No description supplied by the EAPI. */
          }

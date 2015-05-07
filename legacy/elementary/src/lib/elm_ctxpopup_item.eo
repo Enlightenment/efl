@@ -1,8 +1,8 @@
 class Elm.Ctxpopup_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_ctxpopup_item;
-   properties {
-      prev {
+   methods {
+      @property prev {
          get {
             /*@
              Get the item before @p it in a ctxpopup widget's internal list of
@@ -19,7 +19,7 @@ class Elm.Ctxpopup_Item(Elm.Widget_Item)
                                        previous item for @p it or there's an error, @c NULL is returned. */
          }
       }
-      next {
+      @property next {
          get {
             /*@
              Get the item after @p it in a ctxpopup widget's
@@ -36,8 +36,6 @@ class Elm.Ctxpopup_Item(Elm.Widget_Item)
                                        previous item for @p it or there's an error, @c NULL is returned. */
          }
       }
-   }
-   methods {
       init {
          params {
             Evas_Smart_Cb func @nullable;

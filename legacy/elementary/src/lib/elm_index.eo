@@ -1,8 +1,8 @@
 class Elm.Index (Elm.Layout)
 {
    eo_prefix: elm_obj_index;
-   properties {
-      autohide_disabled {
+   methods {
+      @property autohide_disabled {
          set {
             /*@
             Enable or disable auto hiding feature for a given index widget.
@@ -25,7 +25,7 @@ class Elm.Index (Elm.Layout)
             bool disabled; /*@ @c EINA_TRUE to disable auto hiding, @c EINA_FALSE to enable */
          }
       }
-      omit_enabled {
+      @property omit_enabled {
          set {
             /*@
             Enable or disable omit feature for a given index widget.
@@ -52,7 +52,7 @@ class Elm.Index (Elm.Layout)
             bool enabled; /*@ @c EINA_TRUE to enable omit feature, @c EINA_FALSE to disable */
          }
       }
-      horizontal {
+      @property horizontal {
          set {
             /*@
             Enable or disable horizontal mode on the index object
@@ -84,7 +84,7 @@ class Elm.Index (Elm.Layout)
             "finger" wide on the bottom side of the index widget's container. */
          }
       }
-      delay_change_time {
+      @property delay_change_time {
          set {
             /*@
             Set a delay change time for index object.
@@ -109,7 +109,7 @@ class Elm.Index (Elm.Layout)
             double dtime; /*@ The delay change time to set. */
          }
       }
-      indicator_disabled {
+      @property indicator_disabled {
          set {
             /*@
             Set the indicator as to be disabled.
@@ -134,7 +134,7 @@ class Elm.Index (Elm.Layout)
             bool disabled; /*@ @c EINA_TRUE to disable it, @c EINA_FALSE to enable it */
          }
       }
-      item_level {
+      @property item_level {
          set {
             /*@
             Set the items level for a given index widget.
@@ -157,8 +157,6 @@ class Elm.Index (Elm.Layout)
             int level; /*@ @c 0 or @c 1, the currently implemented levels. */
          }
       }
-   }
-   methods {
       level_go {
          /*@
          Flush the changes made to the index items so they work correctly

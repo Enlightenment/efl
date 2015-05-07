@@ -2,8 +2,8 @@ class Elm.Layout (Elm.Container, Efl.File)
 {
    eo_prefix: elm_obj_layout;
    data: Elm_Layout_Smart_Data;
-   properties {
-      edje_object_can_access {
+   methods {
+      @property edje_object_can_access {
          set {
             /*@
             Set accessibility to all texblock(text) parts in the layout object
@@ -35,7 +35,7 @@ class Elm.Layout (Elm.Container, Efl.File)
             to have accessibility. @c EINA_TRUE means textblock(text) parts can be accessible */
          }
       }
-      theme {
+      @property theme {
          set {
             /*@
             Set the edje group from the elementary theme that will be used as layout
@@ -54,7 +54,7 @@ class Elm.Layout (Elm.Container, Efl.File)
             const(char)* style; /*@ the style to used */
          }
       }
-      text_aliases {
+      @property text_aliases {
          get {
             /*@ No description supplied by the EAPI. */
             legacy: null;
@@ -63,7 +63,7 @@ class Elm.Layout (Elm.Container, Efl.File)
             const(Elm.Layout_Part_Alias_Description)* aliases;
          }
       }
-      content_aliases {
+      @property content_aliases {
          get {
             /*@ No description supplied by the EAPI. */
             legacy: null;
@@ -72,7 +72,7 @@ class Elm.Layout (Elm.Container, Efl.File)
             const(Elm.Layout_Part_Alias_Description)* aliases;
          }
       }
-      edje {
+      @property edje {
          get {
             /*@
             Get the edje layout
@@ -102,8 +102,6 @@ class Elm.Layout (Elm.Container, Efl.File)
             return: Evas_Object *;
          }
       }
-   }
-   methods {
       box_remove_all {
          /*@
          Remove all children of the given part box.

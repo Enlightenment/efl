@@ -1,8 +1,8 @@
 class Elm.Web (Elm.Widget)
 {
    eo_prefix: elm_obj_web;
-   properties {
-      text_matches_highlight {
+   methods {
+      @property text_matches_highlight {
          set {
             /*@
             Sets whether to highlight the matched marks
@@ -28,7 +28,7 @@ class Elm.Web (Elm.Widget)
             bool highlight; /*@ Whether to highlight the marks or not */
          }
       }
-      useragent {
+      @property useragent {
          set {
             /*@
             Change useragent of a elm_web object
@@ -47,7 +47,7 @@ class Elm.Web (Elm.Widget)
             const(char)* user_agent; /*@ String for useragent */
          }
       }
-      url {
+      @property url {
          set {
             /*@
             Sets the URL for the web object
@@ -76,7 +76,7 @@ class Elm.Web (Elm.Widget)
             const(char)* url; /*@ The URL to set */
          }
       }
-      bg_color {
+      @property bg_color {
          set {
             /*@
             Sets the background color to be used by the web object
@@ -102,7 +102,7 @@ class Elm.Web (Elm.Widget)
             int a; /*@ Alpha component */
          }
       }
-      inwin_mode {
+      @property inwin_mode {
          set {
             /*@
             Sets the default dialogs to use an Inwin instead of a normal window
@@ -125,7 +125,7 @@ class Elm.Web (Elm.Widget)
             bool value; /*@ @c EINA_TRUE to use Inwin, @c EINA_FALSE to use a normal window */
          }
       }
-      tab_propagate {
+      @property tab_propagate {
          set {
             /*@
             Sets whether to use tab propagation
@@ -152,7 +152,7 @@ class Elm.Web (Elm.Widget)
             bool propagate; /*@ Whether to propagate Tab keys to Elementary or not */
          }
       }
-      history_enabled {
+      @property history_enabled {
          set {
             /*@
             Enables or disables the browsing history
@@ -171,7 +171,7 @@ class Elm.Web (Elm.Widget)
             bool enable; /*@ Whether to enable or disable the browsing history */
          }
       }
-      zoom_mode {
+      @property zoom_mode {
          set {
             /*@
             Sets the zoom mode to use
@@ -202,7 +202,7 @@ class Elm.Web (Elm.Widget)
             Elm_Web_Zoom_Mode mode; /*@ The mode to set */
          }
       }
-      zoom {
+      @property zoom {
          set {
             /*@
             Sets the zoom level of the web object
@@ -232,7 +232,7 @@ class Elm.Web (Elm.Widget)
             double zoom; /*@ The zoom level to set */
          }
       }
-      console_message_hook {
+      @property console_message_hook {
          set {
             /*@
             Sets the function to call when a console message is emitted from JS
@@ -247,7 +247,7 @@ class Elm.Web (Elm.Widget)
             void *data; /*@ User data */
          }
       }
-      window_create_hook {
+      @property window_create_hook {
          set {
             /*@
             Sets the function to call when a new window is requested
@@ -265,7 +265,7 @@ class Elm.Web (Elm.Widget)
             void *data @optional; /*@ User data */
          }
       }
-      dialog_file_selector_hook {
+      @property dialog_file_selector_hook {
          set {
             /*@
             Sets the function to call when an file selector dialog
@@ -284,7 +284,7 @@ class Elm.Web (Elm.Widget)
             void *data @optional; /*@ User data */
          }
       }
-      dialog_confirm_hook {
+      @property dialog_confirm_hook {
          set {
             /*@
             Sets the function to call when an confirm dialog
@@ -302,7 +302,7 @@ class Elm.Web (Elm.Widget)
             void *data @optional; /*@ User data */
          }
       }
-      popup_selected {
+      @property popup_selected {
          set {
             /*@
             Tells the web object which index in the currently open popup was selected
@@ -319,7 +319,7 @@ class Elm.Web (Elm.Widget)
             int idx; /*@ The index selected */
          }
       }
-      dialog_prompt_hook {
+      @property dialog_prompt_hook {
          set {
             /*@
             Sets the function to call when an prompt dialog
@@ -337,7 +337,7 @@ class Elm.Web (Elm.Widget)
             void *data @optional; /*@ User data */
          }
       }
-      dialog_alert_hook {
+      @property dialog_alert_hook {
          set {
             /*@
             Sets the function to call when an alert dialog
@@ -355,7 +355,7 @@ class Elm.Web (Elm.Widget)
             void *data @optional; /*@ User data */
          }
       }
-      forward_possible {
+      @property forward_possible {
          get {
             /*@
             Queries whether it's possible to go forward in history
@@ -367,7 +367,7 @@ class Elm.Web (Elm.Widget)
             return: bool;
          }
       }
-      webkit_view {
+      @property webkit_view {
          get {
             /*@
             Get internal ewk_view object from web object.
@@ -387,7 +387,7 @@ class Elm.Web (Elm.Widget)
             return: Evas_Object *;
          }
       }
-      back_possible {
+      @property back_possible {
          get {
             /*@
             Queries whether it's possible to go back in history
@@ -399,7 +399,7 @@ class Elm.Web (Elm.Widget)
             return: bool;
          }
       }
-      load_progress {
+      @property load_progress {
          get {
             /*@
             Get the overall loading progress of the page
@@ -415,7 +415,7 @@ class Elm.Web (Elm.Widget)
             return: double;
          }
       }
-      selection {
+      @property selection {
          get {
             /*@
             Get a copy of the currently selected text
@@ -429,7 +429,7 @@ class Elm.Web (Elm.Widget)
             return: own(const(char)*) @warn_unused;
          }
       }
-      title {
+      @property title {
          get {
             /*@
             Get the current title
@@ -444,8 +444,6 @@ class Elm.Web (Elm.Widget)
             return: free(own(const(char)*), eina_stringshare_del) @warn_unused;
          }
       }
-   }
-   methods {
       navigate {
          /*@
          Jumps the given number of steps in the browsing history

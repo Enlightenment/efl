@@ -1,8 +1,8 @@
 class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_Interface)
 {
    eo_prefix: elm_obj_photo;
-   properties {
-      editable {
+   methods {
+      @property editable {
          set {
             /*@
             Set editability of the photo.
@@ -18,7 +18,7 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
             bool set; /*@ To set of clear editability. */
          }
       }
-      fill_inside {
+      @property fill_inside {
          set {
             /*@
             Set if the photo should be completely visible or not.
@@ -32,7 +32,7 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
             bool fill; /*@ if true the photo will be completely visible */
          }
       }
-      aspect_fixed {
+      @property aspect_fixed {
          set {
             /*@
             Set whether the original aspect ratio of the photo should be kept on resize.
@@ -60,7 +60,7 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
             @c EINA_FALSE otherwise. */
          }
       }
-      size {
+      @property size {
          set {
             /*@
             Set the size that will be used on the photo
@@ -74,8 +74,6 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
             int size; /*@ The size of the photo */
          }
       }
-   }
-   methods {
       thumb_set @const {
          /*@
            Set the file that will be used as thumbnail in the photo.

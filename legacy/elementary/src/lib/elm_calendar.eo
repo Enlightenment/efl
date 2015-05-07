@@ -1,8 +1,8 @@
 class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_calendar;
-   properties {
-      first_day_of_week {
+   methods {
+      @property first_day_of_week {
          set {
             /*@
             Set the first day of week to use on calendar widgets'.
@@ -25,7 +25,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             ..., Saturday = 6) */
          }
       }
-      selectable {
+      @property selectable {
          set {
             /*@
             Define which fields of a @b tm struct will be taken into account, when
@@ -53,7 +53,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             Elm_Calendar_Selectable selectable; /*@ A bitmask of Elm_Calendar_Selectable */
          }
       }
-      interval {
+      @property interval {
          set {
             /*@
             Set the interval on time updates for an user mouse button hold
@@ -92,7 +92,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             double interval; /*@ The (first) interval value in seconds */
          }
       }
-      weekdays_names {
+      @property weekdays_names {
          set {
             /*@
             Set weekdays names to be displayed by the calendar.
@@ -140,7 +140,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @warning The strings must be NULL terminated ('@\0'). */
          }
       }
-      select_mode {
+      @property select_mode {
          set {
             /*@
             Set select day mode to use.
@@ -165,7 +165,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             Elm_Calendar_Select_Mode mode; /*@ The select mode to use. */
          }
       }
-      min_max_year {
+      @property min_max_year {
          set {
             /*@
             Set the minimum and maximum values for the year
@@ -200,7 +200,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             int max; /*@ The maximum year; */
          }
       }
-      format_function {
+      @property format_function {
          set {
             /*@
             Set a function to format the string that will be used to display
@@ -233,7 +233,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             the selected date */
          }
       }
-      marks {
+      @property marks {
          get {
             /*@
             Get a list of all the calendar marks.
@@ -248,8 +248,6 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: const(list)*;
          }
       }
-   }
-   methods {
       selected_time_set {
          /*@
          Set selected date to be highlighted on calendar.

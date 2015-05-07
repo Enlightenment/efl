@@ -2,8 +2,8 @@ class Elm.Plug (Elm.Widget)
 {
    eo_prefix: elm_obj_plug;
    data: null;
-   properties {
-      image_object {
+   methods {
+      @property image_object {
          get {
             /*@
             Get the basic Evas_Image object from this object (widget).
@@ -21,8 +21,6 @@ class Elm.Plug (Elm.Widget)
             return: Evas_Object *;
          }
       }
-   }
-   methods {
       connect {
          /*@
          Connect a plug widget to service provided by socket image.

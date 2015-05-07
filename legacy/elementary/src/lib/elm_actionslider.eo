@@ -1,8 +1,8 @@
 class Elm.Actionslider (Elm.Layout)
 {
    eo_prefix: elm_obj_actionslider;
-   properties {
-      indicator_pos {
+   methods {
+      @property indicator_pos {
          set {
             /*@
             Set actionslider indicator position.
@@ -21,7 +21,7 @@ class Elm.Actionslider (Elm.Layout)
             Elm_Actionslider_Pos pos; /*@ The position of the indicator. */
          }
       }
-      magnet_pos {
+      @property magnet_pos {
          set {
             /*@
             Set actionslider magnet position. To make multiple positions magnets @c or
@@ -41,7 +41,7 @@ class Elm.Actionslider (Elm.Layout)
             Elm_Actionslider_Pos pos; /*@ Bit mask indicating the magnet positions. */
          }
       }
-      enabled_pos {
+      @property enabled_pos {
          set {
             /*@
             Set actionslider enabled position. To set multiple positions as enabled @c or
@@ -63,7 +63,7 @@ class Elm.Actionslider (Elm.Layout)
             Elm_Actionslider_Pos pos; /*@ Bit mask indicating the enabled positions. */
          }
       }
-      selected_label {
+      @property selected_label {
          get {
             /*@
             Get actionslider selected label.

@@ -1,8 +1,8 @@
 class Elm.Bg (Elm.Layout, Efl.File)
 {
    eo_prefix: elm_obj_bg;
-   properties {
-      option {
+   methods {
+      @property option {
          set {
             /*@
             Set the mode of display for a given background widget's image
@@ -31,7 +31,7 @@ class Elm.Bg (Elm.Layout, Efl.File)
             Elm_Bg_Option option; /*@ The desired background option (see #Elm_Bg_Option) */
          }
       }
-      color {
+      @property color {
          set {
             /*@
             Set the color on a given background widget
@@ -69,7 +69,7 @@ class Elm.Bg (Elm.Layout, Efl.File)
             int a; /*@ The blue color component's value */
          }
       }
-      load_size {
+      @property load_size {
          set {
             /*@
             Set the size of the pixmap representation of the image set on a

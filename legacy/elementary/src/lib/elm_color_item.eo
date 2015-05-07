@@ -1,8 +1,8 @@
 class Elm.Color_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_color_item;
-   properties {
-        color {
+   methods {
+        @property color {
              get {
                  /*@
                  Get Palette item's color.
@@ -24,7 +24,7 @@ class Elm.Color_Item(Elm.Widget_Item)
                  int a; /*@ alpha-value of color */
              }
         }
-        selected {
+        @property selected {
              get {
                  /*@
                  Get the selected state of color palette item

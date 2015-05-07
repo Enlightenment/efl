@@ -1,8 +1,8 @@
 class Elm.Dayselector (Elm.Layout)
 {
    eo_prefix: elm_obj_dayselector;
-   properties {
-      week_start {
+   methods {
+      @property week_start {
          set {
             /*@
             Set the starting day of Dayselector.
@@ -27,7 +27,7 @@ class Elm.Dayselector (Elm.Layout)
             Elm_Dayselector_Day day; /*@ Dayselector_Day the first day that the user wants to display. */
          }
       }
-      weekend_length {
+      @property weekend_length {
          set {
             /*@
             Set the weekend length of Dayselector.
@@ -51,7 +51,7 @@ class Elm.Dayselector (Elm.Layout)
             uint length; /*@ Weekend length, number of days as an integer. */
          }
       }
-      weekend_start {
+      @property weekend_start {
          set {
             /*@
             Set the weekend starting day of Dayselector.
@@ -76,8 +76,6 @@ class Elm.Dayselector (Elm.Layout)
             Elm_Dayselector_Day day; /*@ Dayselector_Day the first day from where weekend starts. */
          }
       }
-   }
-   methods {
       weekdays_names_set {
          /*@
          Set weekdays names to be displayed by the Dayselector.

@@ -1,8 +1,8 @@
 class Elm.Separator (Elm.Layout)
 {
    eo_prefix: elm_obj_separator;
-   properties {
-      horizontal {
+   methods {
+      @property horizontal {
          set {
             /*@
             @brief Set the horizontal mode of a separator object

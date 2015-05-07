@@ -1,8 +1,8 @@
 class Elm.Index_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_index_item;
-   properties {
-        selected {
+   methods {
+        @property selected {
              set {
                  /*@
                   Set the selected state of an item.
@@ -25,9 +25,6 @@ class Elm.Index_Item(Elm.Widget_Item)
                  Eina_Bool selected; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
              }
         }
-
-   }
-   methods {
       letter_get @const {
             /*@
              Get the letter (string) set on a given index widget item.

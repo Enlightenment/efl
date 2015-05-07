@@ -1,8 +1,8 @@
 class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_popup;
-   properties {
-      align {
+   methods {
+      @property align {
          set {
             /*@
             @brief Set the alignment of the popup object
@@ -26,7 +26,7 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             double vertical; /*@ The vertical alignment of the popup */
          }
       }
-      allow_events {
+      @property allow_events {
          set {
             /*@
             @brief Sets whether events should be passed to by a click outside.
@@ -52,7 +52,7 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             bool allow; /*@ @c EINA_TRUE Events are passed to lower objects, else not */
          }
       }
-      content_text_wrap_type {
+      @property content_text_wrap_type {
          set {
             /*@
             @brief Sets the wrapping type of content text packed in content
@@ -75,7 +75,7 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             Elm_Wrap_Type wrap; /*@ wrapping type of type Elm_Wrap_Type */
          }
       }
-      orient {
+      @property orient {
          set {
             /*@
             @brief Sets the orientation of the popup in the parent region
@@ -100,7 +100,7 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             Elm_Popup_Orient orient; /*@ the orientation of the popup */
          }
       }
-      timeout {
+      @property timeout {
          set {
             /*@
             @brief Sets a timeout to hide popup automatically
@@ -131,8 +131,6 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             double timeout; /*@ The timeout in seconds */
          }
       }
-   }
-   methods {
       item_append {
          /*@
          @brief Add a new item to a Popup object

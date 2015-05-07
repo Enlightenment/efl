@@ -2,8 +2,8 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
                     Elm_Interface_Atspi_Widget_Action, Efl.File)
 {
    eo_prefix: elm_obj_photocam;
-   properties {
-      paused {
+   methods {
+      @property paused {
          set {
             /*@
             @brief Set the paused state for photocam
@@ -31,7 +31,7 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             bool paused; /*@ The pause state to set */
          }
       }
-      gesture_enabled {
+      @property gesture_enabled {
          set {
             /*@
             @brief Set the gesture state for photocam.
@@ -57,7 +57,7 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             bool gesture; /*@ The gesture state to set */
          }
       }
-      zoom {
+      @property zoom {
          set {
             /*@
             @brief Set the zoom level of the photo
@@ -93,7 +93,7 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             double zoom; /*@ The zoom level to set */
          }
       }
-      zoom_mode {
+      @property zoom_mode {
          set {
             /*@
             @brief Set the zoom mode
@@ -126,7 +126,7 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             Elm_Photocam_Zoom_Mode mode; /*@ The desired mode */
          }
       }
-      image_region {
+      @property image_region {
          get {
             /*@
             @brief Get the region of the image that is currently shown
@@ -143,7 +143,7 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             int h; /*@ A pointer to the height */
          }
       }
-      internal_image {
+      @property internal_image {
          get {
             /*@
             @brief Get the internal low-res image used for photocam
@@ -158,7 +158,7 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             return: Evas_Object *;
          }
       }
-      image_size {
+      @property image_size {
          get {
             /*@
             @brief Get the current image pixel width and height
@@ -174,7 +174,7 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             int h; /*@ A pointer to the height return */
          }
       }
-      image_orient {
+      @property image_orient {
          set {
             /*@
             Set the photocam image orientation.
@@ -204,8 +204,6 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
             Default is #EVAS_IMAGE_ORIENT_NONE. */
          }
       }
-   }
-   methods {
       image_region_show {
          /*@
          @brief Set the viewed region of the image

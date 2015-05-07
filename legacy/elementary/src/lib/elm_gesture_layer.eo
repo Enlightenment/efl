@@ -1,8 +1,8 @@
 class Elm.Gesture_Layer (Elm.Widget)
 {
    eo_prefix: elm_obj_gesture_layer;
-   properties {
-      zoom_step {
+   methods {
+      @property zoom_step {
          set {
             /*@
             This function sets step-value for zoom action.
@@ -27,7 +27,7 @@ class Elm.Gesture_Layer (Elm.Widget)
             double step; /*@ new zoom step value. */
          }
       }
-      tap_finger_size {
+      @property tap_finger_size {
          set {
             /*@
             This function sets the gesture layer finger-size for taps
@@ -52,7 +52,7 @@ class Elm.Gesture_Layer (Elm.Widget)
             Evas_Coord sz; /*@ Finger size */
          }
       }
-      hold_events {
+      @property hold_events {
          set {
             /*@
             This function is to make gesture-layer repeat events.
@@ -75,7 +75,7 @@ class Elm.Gesture_Layer (Elm.Widget)
             bool hold_events; /*@ hold events or not. */
          }
       }
-      rotate_step {
+      @property rotate_step {
          set {
             /*@
             This function sets step-value for rotate action.
@@ -96,7 +96,7 @@ class Elm.Gesture_Layer (Elm.Widget)
             double step; /*@ new rotate step value. */
          }
       }
-      cb {
+      @property cb {
          set {
             /*@
             Use function to set callbacks to be notified about
@@ -117,8 +117,6 @@ class Elm.Gesture_Layer (Elm.Widget)
             void *data @optional; /*@ user info to be sent to callback (usually, Smart Data) */
          }
       }
-   }
-   methods {
       attach {
          /*@
          Attach a given gesture layer widget to an Evas object, thus setting

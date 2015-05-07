@@ -1,8 +1,8 @@
 class Elm.Box (Elm.Widget)
 {
    eo_prefix: elm_obj_box;
-   properties {
-      homogeneous {
+   methods {
+      @property homogeneous {
          set {
             /*@
             Set the box to arrange its children homogeneously
@@ -26,7 +26,7 @@ class Elm.Box (Elm.Widget)
             bool homogeneous; /*@ The homogeneous flag */
          }
       }
-      align {
+      @property align {
          set {
             /*@
             Set the alignment of the whole bounding box of contents.
@@ -50,7 +50,7 @@ class Elm.Box (Elm.Widget)
             double vertical; /*@ The vertical alignment of elements */
          }
       }
-      horizontal {
+      @property horizontal {
          set {
             /*@
             Set the horizontal orientation
@@ -77,7 +77,7 @@ class Elm.Box (Elm.Widget)
             @c EINA_FALSE = vertical) */
          }
       }
-      padding {
+      @property padding {
          set {
             /*@
             Set the space (padding) between the box's elements.
@@ -102,7 +102,7 @@ class Elm.Box (Elm.Widget)
             Evas_Coord vertical; /*@ The vertical space between elements */
          }
       }
-      layout {
+      @property layout {
          set {
             /*@
             Set the layout defining function to be used by the box
@@ -140,7 +140,7 @@ class Elm.Box (Elm.Widget)
             Ecore_Cb free_data @optional; /*@ Function called to free @p data */
          }
       }
-      children {
+      @property children {
          get {
             /*@
             Get a list of the objects packed into the box
@@ -154,8 +154,6 @@ class Elm.Box (Elm.Widget)
             return: free(own(list<Evas_Object*>*), eina_list_free) @warn_unused;
          }
       }
-   }
-   methods {
       pack_end {
          /*@
          Add an object at the end of the pack list

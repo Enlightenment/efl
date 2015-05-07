@@ -3,8 +3,8 @@ class Elm.Container (Elm.Widget)
    legacy_prefix: null;
    eo_prefix: elm_obj_container;
    data: null;
-   properties {
-      content_swallow_list {
+   methods {
+      @property content_swallow_list {
          get {
             /*@ Get the list of swallow parts in the object. */
          }
@@ -12,8 +12,6 @@ class Elm.Container (Elm.Widget)
             free(own(list<Evas_Object *> *), eina_list_free) ret; /*@ list */
          }
       }
-   }
-   methods {
       content_set {
          /*@ Swallow the given object into the given part of the container. */
          params {

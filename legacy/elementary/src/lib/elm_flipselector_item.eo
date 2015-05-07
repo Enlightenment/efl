@@ -1,8 +1,8 @@
 class Elm.Flipselector_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_flipselector_item;
-   properties {
-        selected {
+   methods {
+        @property selected {
              get {
                  /*@
                   Get whether a given flip selector widget's item is the currently
@@ -32,8 +32,6 @@ class Elm.Flipselector_Item(Elm.Widget_Item)
                  Eina_Bool selected; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
              }
         }
-   }
-   methods {
       prev_get @const {
             /*@
              Get the item before @p item in a flip selector widget's internal list of

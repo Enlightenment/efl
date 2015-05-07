@@ -1,8 +1,8 @@
 class Elm.Clock (Elm.Layout)
 {
    eo_prefix: elm_obj_clock;
-   properties {
-      show_am_pm {
+   methods {
+      @property show_am_pm {
          set {
             /*@
             Set if the given clock widget must show hours in military or
@@ -37,7 +37,7 @@ class Elm.Clock (Elm.Layout)
             to military mode */
          }
       }
-      first_interval {
+      @property first_interval {
          set {
             /*@
             Set the first interval on time updates for a user mouse button hold
@@ -77,7 +77,7 @@ class Elm.Clock (Elm.Layout)
             double interval; /*@ The first interval value in seconds */
          }
       }
-      show_seconds {
+      @property show_seconds {
          set {
             /*@
             Set if the given clock widget must show time with seconds or not
@@ -107,7 +107,7 @@ class Elm.Clock (Elm.Layout)
             bool seconds; /*@ @c EINA_TRUE to show seconds, @c EINA_FALSE otherwise */
          }
       }
-      edit {
+      @property edit {
          set {
             /*@
             Set whether a given clock widget is under <b>edition mode</b> or
@@ -145,7 +145,7 @@ class Elm.Clock (Elm.Layout)
             put it back to "displaying only" mode */
          }
       }
-      pause {
+      @property pause {
          set {
             /*@
             Set whether the given clock widget should be paused or not.
@@ -174,7 +174,7 @@ class Elm.Clock (Elm.Layout)
             bool paused; /*@ @c EINA_TRUE to pause clock, @c EINA_FALSE otherwise */
          }
       }
-      time {
+      @property time {
          set {
             /*@
             Set a clock widget's time, programmatically
@@ -212,7 +212,7 @@ class Elm.Clock (Elm.Layout)
             int sec; /*@ The seconds to set */
          }
       }
-      edit_mode {
+      @property edit_mode {
          set {
             /*@
             Set what digits of the given clock widget should be editable

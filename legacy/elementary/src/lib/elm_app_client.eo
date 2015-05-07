@@ -2,8 +2,8 @@ class Elm_App_Client (Eo.Base)
 {
    legacy_prefix: null;
    eo_prefix: elm_app_client;
-   properties {
-      views {
+   methods {
+      @property views {
          get {
             /*@ Return a iterator with all views of application. */
          }
@@ -11,7 +11,7 @@ class Elm_App_Client (Eo.Base)
             free(own(iterator<Elm_App_Client_View *> *), eina_iterator_free) ret; /*@ The iterator with all views, must be freed after use */
          }
       }
-      package {
+      @property package {
          get {
             /*@ Return the application package. */
          }
@@ -19,8 +19,6 @@ class Elm_App_Client (Eo.Base)
             const(char)* ret; /*@ application package */
          }
       }
-   }
-   methods {
       constructor {
          /*@ Class constructor of elm_app_client. */
          legacy: null;

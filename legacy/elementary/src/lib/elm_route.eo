@@ -1,8 +1,8 @@
 class Elm.Route (Elm.Widget)
 {
    eo_prefix: elm_obj_route;
-   properties {
-      emap {
+   methods {
+      @property emap {
          set {
             /*@ No description supplied by the EAPI. */
          }
@@ -10,7 +10,7 @@ class Elm.Route (Elm.Widget)
             void *emap;
          }
       }
-      longitude_min_max {
+      @property longitude_min_max {
          get {
             /*@
             Get the minimum and maximum values along the longitude.
@@ -25,7 +25,7 @@ class Elm.Route (Elm.Widget)
             double max; /*@ Pointer to store the maximum value. */
          }
       }
-      latitude_min_max {
+      @property latitude_min_max {
          get {
             /*@
             Get the minimum and maximum values along the latitude.

@@ -3,8 +3,8 @@ mixin Elm_Interface_Atspi_Component ()
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_component;
    data: null;
-   properties {
-      size @protected {
+   methods {
+      @property size @protected {
          set {
             /*@ Sets size of accessible widget. */
             return: bool;
@@ -17,7 +17,7 @@ mixin Elm_Interface_Atspi_Component ()
             int h;
          }
       }
-      layer @protected {
+      @property layer @protected {
          get {
             /*@ Sets evas layer of accessible widget. */
          }
@@ -25,7 +25,7 @@ mixin Elm_Interface_Atspi_Component ()
             int layer;
          }
       }
-      alpha @protected {
+      @property alpha @protected {
          get {
             /*@ Gets alpha of accessible widget. */
          }
@@ -33,7 +33,7 @@ mixin Elm_Interface_Atspi_Component ()
             double alpha; /*@ alpha value in [0, 1] range. */
          }
       }
-      z_order @protected {
+      @property z_order @protected {
          get {
             /*@ Gets the depth at which the component is shown in relation to
             other components in the same container. */
@@ -42,7 +42,7 @@ mixin Elm_Interface_Atspi_Component ()
             int z_order;
          }
       }
-      extents @protected {
+      @property extents @protected {
          get {
             /*@ Gets geometry of accessible widget. */
          }
@@ -62,7 +62,7 @@ mixin Elm_Interface_Atspi_Component ()
             int h;
          }
       }
-      position @protected {
+      @property position @protected {
          set {
             /*@ Sets position of accessible widget. */
             return: bool;
@@ -80,8 +80,6 @@ mixin Elm_Interface_Atspi_Component ()
             int y;
          }
       }
-   }
-   methods {
       contains @protected {
          params {
             bool screen_coords; /*@ If true x and y values will be relative

@@ -2,8 +2,8 @@ class Elm.Scroller (Elm.Layout, Elm_Interface_Scrollable,
                     Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_scroller;
-   properties {
-      propagate_events {
+   methods {
+      @property propagate_events {
          set {
             /*@
             @brief Set event propagation on a scroller
@@ -30,7 +30,7 @@ class Elm.Scroller (Elm.Layout, Elm_Interface_Scrollable,
             bool propagation; /*@ If propagation is enabled or not */
          }
       }
-      custom_widget_base_theme {
+      @property custom_widget_base_theme {
          set {
             /*@ Set custom theme elements for the scroller */
          }
@@ -39,8 +39,6 @@ class Elm.Scroller (Elm.Layout, Elm_Interface_Scrollable,
             const(char)* group;
          }
       }
-   }
-   methods {
       page_scroll_limit_set @const {
          /*@
          @brief Set the maximum of the movable page at a flicking.

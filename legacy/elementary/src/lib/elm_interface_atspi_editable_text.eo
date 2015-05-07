@@ -2,8 +2,8 @@ interface Elm_Interface_Atspi_Editable_Text ()
 {
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_editable_text;
-   properties {
-      content @protected {
+   methods {
+      @property content @protected {
          set {
             return: bool;
          }
@@ -11,8 +11,6 @@ interface Elm_Interface_Atspi_Editable_Text ()
             const(char)* string;
          }
       }
-   }
-   methods {
       insert @protected {
          params {
             @in const(char)* string;

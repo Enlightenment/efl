@@ -2,8 +2,8 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
                         Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_diskselector;
-   properties {
-      side_text_max_length {
+   methods {
+      @property side_text_max_length {
          set {
             /*@
             Set the side labels max length.
@@ -42,7 +42,7 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             int len; /*@ The max length defined for side labels. */
          }
       }
-      round_enabled {
+      @property round_enabled {
          set {
             /*@
             Enable or disable round mode.
@@ -71,7 +71,7 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             disable it. */
          }
       }
-      display_item_num {
+      @property display_item_num {
          set {
             /*@
             Set the number of items to be displayed.
@@ -100,7 +100,7 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             int num; /*@ The number of items the diskselector will display. */
          }
       }
-      first_item {
+      @property first_item {
          get {
             /*@
             Get the first item of the diskselector.
@@ -117,7 +117,7 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             return: Elm_Object_Item *;
          }
       }
-      items {
+      @property items {
          get {
             /*@
             Get a list of all the diskselector items.
@@ -133,7 +133,7 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             return: const(list)*;
          }
       }
-      last_item {
+      @property last_item {
          get {
             /*@
             Get the last item of the diskselector.
@@ -150,7 +150,7 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             return: Elm_Object_Item *;
          }
       }
-      selected_item {
+      @property selected_item {
          get {
             /*@
             Get the selected item.
@@ -170,8 +170,6 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             return: Elm_Object_Item *;
          }
       }
-   }
-   methods {
       item_append {
          /*@
          Appends a new item to the diskselector object.

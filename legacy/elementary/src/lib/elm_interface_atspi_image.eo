@@ -3,8 +3,8 @@ mixin Elm_Interface_Atspi_Image ()
    legacy_prefix: null;
    eo_prefix: elm_interface_atspi_image;
    data: null;
-   properties {
-      extents @protected {
+   methods {
+      @property extents @protected {
          get {
             /*@ Gets an image extents. */
          }
@@ -18,7 +18,7 @@ mixin Elm_Interface_Atspi_Image ()
             int height;
          }
       }
-      description @protected {
+      @property description @protected {
          get {
             /* Gets textual description of image */
          }
@@ -28,7 +28,7 @@ mixin Elm_Interface_Atspi_Image ()
             const(char)* description;
          }
       }
-      locale @protected {
+      @property locale @protected {
          get {
             /* Gets locale of the image description. */
          }

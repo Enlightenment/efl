@@ -1,8 +1,8 @@
 class Elm.Notify (Elm.Container)
 {
    eo_prefix: elm_obj_notify;
-   properties {
-      align {
+   methods {
+      @property align {
          set {
             /*@
             @brief Set the alignment of the notify object
@@ -28,7 +28,7 @@ class Elm.Notify (Elm.Container)
             double vertical; /*@ The vertical alignment of the notification */
          }
       }
-      allow_events {
+      @property allow_events {
          set {
             /*@
             @brief Sets whether events should be passed to by a click outside
@@ -52,7 +52,7 @@ class Elm.Notify (Elm.Container)
             bool allow; /*@ EINA_TRUE If events are allowed, otherwise not */
          }
       }
-      timeout {
+      @property timeout {
          set {
             /*@
             @brief Set the time interval after which the notify window is going to be

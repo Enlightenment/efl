@@ -1,8 +1,8 @@
 class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_radio;
-   properties {
-      state_value {
+   methods {
+      @property state_value {
          set {
             /*@
             @brief Set the integer value that this radio object represents
@@ -26,7 +26,7 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             int value; /*@ The value to use if this radio object is selected */
          }
       }
-      value {
+      @property value {
          set {
             /*@
             @brief Set the value of the radio group.
@@ -48,7 +48,7 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             int value; /*@ The value to use for the group */
          }
       }
-      value_pointer {
+      @property value_pointer {
          set {
             /*@
             @brief Set a convenience pointer to a integer to change when radio group
@@ -67,7 +67,7 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             int *valuep @nullable; /*@ Pointer to the integer to modify */
          }
       }
-      selected_object {
+      @property selected_object {
          get {
             /*@
             @brief Get the selected radio object.
@@ -78,8 +78,6 @@ class Elm.Radio (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: Evas_Object *;
          }
       }
-   }
-   methods {
       group_add {
          /*@
          @brief Add this radio to a group of other radio objects

@@ -2,8 +2,8 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
                    Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_genlist;
-   properties {
-      homogeneous {
+   methods {
+      @property homogeneous {
          set {
             /*@
             Enable/disable homogeneous mode.
@@ -40,7 +40,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             EINA_FALSE. */
          }
       }
-      select_mode {
+      @property select_mode {
          set {
             /*@
             Set the genlist select mode.
@@ -74,7 +74,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             Elm_Object_Select_Mode mode(4); /*@ The select mode */
          }
       }
-      focus_on_selection {
+      @property focus_on_selection {
          set {
             /*@
             Set focus upon items selection mode
@@ -100,7 +100,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             (EINA_TRUE = enabled, EINA_FALSE = disabled) */
          }
       }
-      longpress_timeout {
+      @property longpress_timeout {
          set {
             /*@
             Set the timeout in seconds for the longpress event.
@@ -131,7 +131,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             double timeout; /*@ timeout in seconds. Default is elm config value(1.0) */
          }
       }
-      multi_select {
+      @property multi_select {
          set {
             /*@
             Enable or disable multi-selection in the genlist
@@ -160,7 +160,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             bool multi; /*@ Multi-select enable/disable. Default is disabled. */
          }
       }
-      reorder_mode {
+      @property reorder_mode {
          set {
             /*@
             Set reorder mode
@@ -185,7 +185,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             (EINA_TRUE = on, EINA_FALSE = off) */
          }
       }
-      decorate_mode {
+      @property decorate_mode {
          set {
             /*@
             Set Genlist decorate mode
@@ -208,7 +208,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             (EINA_TRUE = decorate mode, EINA_FALSE = normal mode */
          }
       }
-      multi_select_mode {
+      @property multi_select_mode {
          set {
             /*@
             Set the genlist multi select mode.
@@ -242,7 +242,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             Elm_Object_Multi_Select_Mode mode(2); /*@ The multi select mode */
          }
       }
-      block_count {
+      @property block_count {
          set {
             /*@
             Set the maximum number of items within an item block
@@ -278,7 +278,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             int count; /*@ Maximum number of items within an item block. Default is 32. */
          }
       }
-      tree_effect_enabled {
+      @property tree_effect_enabled {
          set {
             /*@
             Set Genlist tree effect
@@ -299,7 +299,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             (EINA_TRUE = enabled, EINA_FALSE = disabled */
          }
       }
-      highlight_mode {
+      @property highlight_mode {
          set {
             /*@
             Set whether the genlist items should be highlighted on item selection.
@@ -329,7 +329,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             disable it. */
          }
       }
-      mode {
+      @property mode {
          set {
             /*@
             This sets the horizontal stretching mode.
@@ -373,7 +373,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             Elm_List_Mode mode(4); /*@ The mode to use (one of #ELM_LIST_SCROLL or #ELM_LIST_LIMIT). */
          }
       }
-      decorated_item {
+      @property decorated_item {
          get {
             /*@
             Get active genlist mode item
@@ -391,7 +391,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             return: Elm_Object_Item *;
          }
       }
-      selected_item {
+      @property selected_item {
          get {
             /*@
             Get the selected item in the genlist.
@@ -411,7 +411,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             return: Elm_Object_Item *;
          }
       }
-      first_item {
+      @property first_item {
          get {
             /*@
             Get the first item in the genlist
@@ -424,7 +424,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             return: Elm_Object_Item *;
          }
       }
-      realized_items {
+      @property realized_items {
          get {
             /*@
             Get a list of realized items in genlist
@@ -443,7 +443,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             return: free(own(list<Elm_Gen_Item *> *), eina_list_free) @warn_unused;
          }
       }
-      selected_items {
+      @property selected_items {
          get {
             /*@
             Get a list of selected items in the genlist.
@@ -467,7 +467,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             return: const(list<Elm_Object_Item *>)*;
          }
       }
-      last_item {
+      @property last_item {
          get {
             /*@
             Get the last item in the genlist
@@ -480,8 +480,6 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             return: Elm_Object_Item *;
          }
       }
-   }
-   methods {
       item_insert_before {
          /*@
          Insert an item before another in a genlist widget

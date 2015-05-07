@@ -1,8 +1,8 @@
 class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_spinner;
-   properties {
-      min_max {
+   methods {
+      @property min_max {
          set {
             /*@
             Set the minimum and maximum values for the spinner.
@@ -37,7 +37,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             double max; /*@ The maximum value. */
          }
       }
-      step {
+      @property step {
          set {
             /*@
             Set the step used to increment or decrement the spinner value.
@@ -69,7 +69,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             double step; /*@ The step value. */
          }
       }
-      wrap {
+      @property wrap {
          set {
             /*@
             Set whether the spinner should wrap when it reaches its
@@ -119,7 +119,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             disable it. */
          }
       }
-      interval {
+      @property interval {
          set {
             /*@
             Set the interval on time updates for an user mouse button hold
@@ -158,7 +158,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             double interval; /*@ The (first) interval value in seconds. */
          }
       }
-      round {
+      @property round {
          set {
             /*@
             Set the round value for rounding
@@ -187,7 +187,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             int rnd; /*@ The rounding value */
          }
       }
-      editable {
+      @property editable {
          set {
             /*@
             Set whether the spinner can be directly edited by the user or not.
@@ -222,7 +222,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             don't allow users to edit it directly. */
          }
       }
-      base {
+      @property base {
          set {
             /*@
             Set the base for rounding
@@ -264,7 +264,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             double base; /*@ The base value */
          }
       }
-      value {
+      @property value {
          set {
             /*@
             Set the value the spinner displays.
@@ -295,7 +295,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             double val; /*@ The value to be displayed. */
          }
       }
-      label_format {
+      @property label_format {
          set {
             /*@
             Set the format string of the displayed label.
@@ -328,8 +328,6 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             const(char)* fmt @nullable; /*@ The format string for the label display. */
          }
       }
-   }
-   methods {
       special_value_add {
          /*@
          Set a special string to display in the place of the numerical value.

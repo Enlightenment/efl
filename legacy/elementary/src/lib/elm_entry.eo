@@ -2,8 +2,8 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
                  Elm_Interface_Atspi_Text, Elm_Interface_Atspi_Editable_Text)
 {
    eo_prefix: elm_obj_entry;
-   properties {
-      scrollable {
+   methods {
+      @property scrollable {
          set {
             /*@
             Enable or disable scrolling in entry
@@ -27,7 +27,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             bool scroll; /*@ EINA_TRUE if it is to be scrollable, EINA_FALSE otherwise */
          }
       }
-      input_panel_show_on_demand {
+      @property input_panel_show_on_demand {
          set {
             /*@
             Set the attribute to show the input panel in case of only an user's explicit Mouse Up event.
@@ -50,7 +50,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @since 1.9 */
          }
       }
-      context_menu_disabled {
+      @property context_menu_disabled {
          set {
             /*@
             This disables the entry's contextual (longpress) menu.
@@ -70,7 +70,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             bool disabled; /*@ If true, the menu is disabled */
          }
       }
-      cnp_mode {
+      @property cnp_mode {
          set {
             /*@
             Control pasting of text and images for the widget.
@@ -98,7 +98,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             Elm_Cnp_Mode cnp_mode; /*@ One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP, #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT. */
          }
       }
-      input_panel_language {
+      @property input_panel_language {
          set {
             /*@
             Set the language mode of the input panel.
@@ -121,7 +121,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             Elm_Input_Panel_Lang lang; /*@ language to be set to the input panel. */
          }
       }
-      selection_handler_disabled {
+      @property selection_handler_disabled {
          set {
             /*@
             This disabled the entry's selection handlers.
@@ -136,7 +136,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             bool disabled; /*@ If true, the selection handlers are disabled. */
          }
       }
-      input_panel_layout_variation {
+      @property input_panel_layout_variation {
          set {
             /*@
             Set the input panel layout variation of the entry
@@ -159,7 +159,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             int variation; /*@ layout variation type */
          }
       }
-      autocapital_type {
+      @property autocapital_type {
          set {
             /*@
             Set the autocapitalization type on the immodule.
@@ -178,7 +178,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             Elm_Autocapital_Type autocapital_type; /*@ The type of autocapitalization */
          }
       }
-      editable {
+      @property editable {
          set {
             /*@
             Sets if the entry is to be editable or not.
@@ -210,7 +210,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             if not, the entry is read-only and no user input is allowed. */
          }
       }
-      anchor_hover_style {
+      @property anchor_hover_style {
          set {
             /*@
             Set the style that the hover should use
@@ -240,7 +240,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             const(char)* style @nullable; /*@ The style to use for the underlying hover */
          }
       }
-      single_line {
+      @property single_line {
          set {
             /*@
             Sets the entry to single line mode.
@@ -271,7 +271,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             will be on a single line. */
          }
       }
-      password {
+      @property password {
          set {
             /*@
             Sets the entry to password mode.
@@ -296,7 +296,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             bool password; /*@ If true, password mode is enabled. */
          }
       }
-      file {
+      @property file {
          set {
             /*@
             This sets the file (and implicitly loads it) for the text to display and
@@ -326,7 +326,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             Elm_Text_Format format; /*@ The file format */
          }
       }
-      input_panel_return_key_disabled {
+      @property input_panel_return_key_disabled {
          set {
             /*@
             Set the return key on the input panel to be disabled.
@@ -346,7 +346,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             disabled, @c EINA_FALSE for enabled */
          }
       }
-      autosave {
+      @property autosave {
          set {
             /*@
             This sets the entry object to 'autosave' the loaded text file or not.
@@ -369,7 +369,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             bool auto_save; /*@ Autosave the loaded file or not */
          }
       }
-      anchor_hover_parent {
+      @property anchor_hover_parent {
          set {
             /*@
             Set the parent of the hover popup
@@ -395,7 +395,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             Evas_Object *parent @nullable; /*@ The object to use as parent for the hover */
          }
       }
-      prediction_allow {
+      @property prediction_allow {
          set {
             /*@
             Set whether the entry should allow to use the text prediction.
@@ -414,7 +414,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             bool prediction; /*@ Whether the entry should allow to use the text prediction. */
          }
       }
-      input_hint {
+      @property input_hint {
          set {
             /*@
             Sets the input hint which allows input methods to fine-tune their behavior.
@@ -435,7 +435,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             Elm_Input_Hints hints; /*@ input hint. */
          }
       }
-      input_panel_layout {
+      @property input_panel_layout {
          set {
             /*@
             Set the input panel layout of the entry
@@ -456,7 +456,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             Elm_Input_Panel_Layout layout(8); /*@ layout type */
          }
       }
-      input_panel_return_key_type {
+      @property input_panel_return_key_type {
          set {
             /*@
             Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
@@ -479,7 +479,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             Elm_Input_Panel_Return_Key_Type return_key_type; /*@ The type of "return" key on the input panel */
          }
       }
-      input_panel_enabled {
+      @property input_panel_enabled {
          set {
             /*@
             Sets the attribute to show the input panel automatically.
@@ -498,7 +498,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             bool enabled; /*@ If true, the input panel is appeared when entry is clicked or has a focus */
          }
       }
-      line_wrap {
+      @property line_wrap {
          set {
             /*@
             Set the line wrap type to use on multi-line entries.
@@ -527,7 +527,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             Elm_Wrap_Type wrap; /*@ The wrap mode to use. See Elm_Wrap_Type for details on them */
          }
       }
-      cursor_pos {
+      @property cursor_pos {
          set {
             /*@
             Sets the cursor position in the entry to the given value
@@ -549,7 +549,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             int pos; /*@ The position of the cursor */
          }
       }
-      icon_visible {
+      @property icon_visible {
          set {
             /*@
             Sets the visibility of the left-side widget of the entry,
@@ -562,7 +562,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             EINA_FALSE if not. */
          }
       }
-      cursor_line_end {
+      @property cursor_line_end {
          set {
             /*@
             This moves the cursor to the end of the current line.
@@ -570,7 +570,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
       }
-      select_region {
+      @property select_region {
          set {
             /*@
             This selects a region of text within the entry.
@@ -583,7 +583,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             int end; /*@ The end position */
          }
       }
-      input_panel_return_key_autoenabled {
+      @property input_panel_return_key_autoenabled {
          set {
             /*@
             Set whether the return key on the input panel is disabled automatically when entry has no text.
@@ -598,7 +598,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             bool enabled; /*@ If @p enabled is EINA_TRUE, the return key is automatically disabled when the entry has no text. */
          }
       }
-      end_visible {
+      @property end_visible {
          set {
             /*@
             Sets the visibility of the end widget of the entry, set by
@@ -611,7 +611,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             EINA_FALSE if not. */
          }
       }
-      cursor_begin {
+      @property cursor_begin {
          set {
             /*@
             This moves the cursor to the beginning of the entry.
@@ -619,7 +619,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
       }
-      cursor_line_begin {
+      @property cursor_line_begin {
          set {
             /*@
             This moves the cursor to the beginning of the current line.
@@ -627,7 +627,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
       }
-      cursor_end {
+      @property cursor_end {
          set {
             /*@
             This moves the cursor to the end of the entry.
@@ -635,7 +635,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             @ingroup Entry */
          }
       }
-      textblock {
+      @property textblock {
          get {
             /*@
             Returns the actual textblock object of the entry.
@@ -667,7 +667,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             return: Evas_Object *;
          }
       }
-      cursor_geometry {
+      @property cursor_geometry {
          get {
             /*@
             This function returns the geometry of the cursor.
@@ -688,7 +688,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             Evas_Coord h; /*@ returned geometry */
          }
       }
-      imf_context {
+      @property imf_context {
          get {
             /*@
             Returns the input method context of the entry.
@@ -704,7 +704,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             return: void *;
          }
       }
-      cursor_is_format {
+      @property cursor_is_format {
          get {
             /*@
             Get whether a format node exists at the current cursor position.
@@ -724,7 +724,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             return: bool;
          }
       }
-      cursor_content {
+      @property cursor_content {
          get {
             /*@
             Get the character pointed by the cursor at its current position.
@@ -740,7 +740,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             return: own(char *) @warn_unused;
          }
       }
-      selection {
+      @property selection {
          get {
             /*@
             Get any selected text within the entry.
@@ -759,7 +759,7 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             return: const(char)*;
          }
       }
-      cursor_is_visible_format {
+      @property cursor_is_visible_format {
          get {
             /*@
             Get if the current cursor position holds a visible format node.
@@ -773,8 +773,6 @@ class Elm.Entry (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interface,
             return: bool;
          }
       }
-   }
-   methods {
       cursor_prev {
          /*@
          This moves the cursor one place to the left within the entry.

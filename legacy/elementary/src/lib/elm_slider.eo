@@ -2,8 +2,8 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
                   Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_slider;
-   properties {
-      horizontal {
+   methods {
+      @property horizontal {
          set {
             /*@
             Set the orientation of a given slider widget.
@@ -33,7 +33,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @b horizontal, @c EINA_FALSE to make it @b vertical. */
          }
       }
-      value {
+      @property value {
          set {
             /*@
             Set the value the slider displays.
@@ -66,7 +66,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             double val; /*@ The value to be displayed. */
          }
       }
-      indicator_format {
+      @property indicator_format {
          set {
             /*@
             Set the format string for the indicator label.
@@ -108,7 +108,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             const(char)* indicator @nullable; /*@ The format string for the indicator display. */
          }
       }
-      inverted {
+      @property inverted {
          set {
             /*@
             Invert a given slider widget's displaying values order
@@ -140,7 +140,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @c EINA_FALSE to bring it back to default, non-inverted values. */
          }
       }
-      indicator_show {
+      @property indicator_show {
          set {
             /*@
             Set whether to enlarge slider indicator (augmented knob) or not.
@@ -168,7 +168,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             let the knob always at default size. */
          }
       }
-      min_max {
+      @property min_max {
          set {
             /*@
             Set the minimum and maximum values for the slider.
@@ -204,7 +204,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             double max; /*@ The maximum value. */
          }
       }
-      unit_format {
+      @property unit_format {
          set {
             /*@
             Set the format string for the unit label.
@@ -244,7 +244,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             const(char)* units @nullable; /*@ The format string for the unit display. */
          }
       }
-      indicator_show_on_focus {
+      @property indicator_show_on_focus {
          set {
             /*@
             Show the indicator of slider on focus
@@ -264,7 +264,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             bool flag; /*@ @ EINA_TRUE sets the indicator visible */
          }
       }
-      span_size {
+      @property span_size {
          set {
             /*@
             Set the (exact) length of the bar region of a given slider widget.
@@ -300,7 +300,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             Evas_Coord size; /*@ The length of the slider's bar region. */
          }
       }
-      step {
+      @property step {
          set {
             /*@
             Set the step by which slider indicator will move.
@@ -330,7 +330,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             double step; /*@ The step value. */
          }
       }
-      indicator_visible_mode {
+      @property indicator_visible_mode {
          set {
             /*@
             Set the visible mode of indicator.
@@ -355,7 +355,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             Elm_Slider_Indicator_Visible_Mode indicator_visible_mode; /*@ The indicator visible mode. */
          }
       }
-      indicator_format_function {
+      @property indicator_format_function {
          set {
             /*@
             Set the format function pointer for the indicator label
@@ -371,7 +371,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             slider_freefunc_type free_func @nullable; /*@ The freeing function for the format string. */
          }
       }
-      units_format_function {
+      @property units_format_function {
          set {
             /*@
             Set the format function pointer for the units label

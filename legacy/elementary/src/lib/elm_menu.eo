@@ -1,8 +1,8 @@
 class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_menu;
-   properties {
-      selected_item {
+   methods {
+      @property selected_item {
          get {
             /*@
             @brief Get the selected item in the menu
@@ -16,7 +16,7 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
             return: Elm_Object_Item *;
          }
       }
-      items {
+      @property items {
          get {
             /*@
             @brief Returns a list of @p item's items.
@@ -27,7 +27,7 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
             return: const(list<Elm_Object_Item *>)*;
          }
       }
-      first_item {
+      @property first_item {
          get {
             /*@
             @brief Get the first item in the menu
@@ -38,7 +38,7 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
             return: Elm_Object_Item *;
          }
       }
-      last_item {
+      @property last_item {
          get {
             /*@
             @brief Get the last item in the menu
@@ -49,8 +49,6 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
             return: Elm_Object_Item *;
          }
       }
-   }
-   methods {
       move {
          /*@
          @brief Move the menu to a new position

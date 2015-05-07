@@ -2,8 +2,8 @@ class Elm.Genlist_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_genlist_item;
       data: Elm_Gen_Item;
-      properties {
-           prev {
+      methods {
+           @property prev {
                 get {
                      /*@
                       Get the @b previous item in a genlist widget's internal list of items,
@@ -21,7 +21,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      Elm_Object_Item *item; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
                 }
            }
-           next {
+           @property next {
                 get {
                      /*@
                       Get the @b next item in a genlist widget's internal list of items,
@@ -39,7 +39,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      Elm_Object_Item *item; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
                 }
            }
-           parent {
+           @property parent {
                 get {
                      /*@
                       Get the parent item of the given item
@@ -54,7 +54,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      Elm_Object_Item *item; /*@ @return The parent of the item or @c NULL if it has no parent. */
                 }
            }
-           subitems {
+           @property subitems {
                 get {
                      /*@
                       Get the list of subitems of a given item
@@ -69,7 +69,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      const (list<Elm_Object_Item *>) *subitems; /*@ @return The list of subitems, @c NULL on error */
                 }
            }
-           selected {
+           @property selected {
                 get {
                      /*@
                       Get whether a given genlist item is selected or not
@@ -101,7 +101,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      Eina_Bool selected; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
                 }
            }
-           expanded {
+           @property expanded {
                 get {
                      /*@
                       Get the expanded state of an item
@@ -137,7 +137,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      Eina_Bool expanded; /*@ The expanded state (@c EINA_TRUE expanded, @c EINA_FALSE not expanded). */
                 }
            }
-           expanded_depth {
+           @property expanded_depth {
                 get {
                      /*@
                       Get the depth of expanded item
@@ -149,7 +149,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      int depth; /*@ @return The depth of expanded item */
                 }
            }
-           item_class {
+           @property item_class {
                 get {
                      /*@
                       Get the Genlist Item class for the given Genlist Item.
@@ -164,7 +164,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      const (Elm_Genlist_Item_Class) *itc; /*@ Genlist Item class for the given item */
                 }
            }
-           index {
+           @property index {
                 get {
                      /*@
                       Get the index of the item. It is only valid once displayed.
@@ -178,7 +178,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      int index(-1); /*@ @return the position inside the list of item. */
                 }
            }
-           decorate_mode {
+           @property decorate_mode {
                 get {
                      /*@
                       Get the item's decorate mode.
@@ -195,7 +195,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      const(char)* decorate_it_type; /*@ name of the item's decorate mode. */
                 }
            }
-           flip {
+           @property flip {
                 get {
                      /*@
                       Get the flip state of a given genlist item.
@@ -228,7 +228,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      Eina_Bool flip; /*@ The flip mode */
                 }
            }
-           select_mode {
+           @property select_mode {
                 get {
                      /*@
                       Get the genlist item's select mode.
@@ -270,7 +270,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      Elm_Object_Select_Mode mode(4); /*@ The selected mode */
                 }
            }
-           type {
+           @property type {
                 get {
                      /*@
                       Get the Item's Type
@@ -287,8 +287,6 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                      Elm_Genlist_Item_Type type(4); /*@ Item tupe */
                 }
            }
-      }
-      methods {
            /*      init { FIXME
                    params {
                    Evas_Smart_Cb func;

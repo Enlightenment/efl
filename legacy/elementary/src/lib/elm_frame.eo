@@ -1,8 +1,8 @@
 class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_frame;
-   properties {
-      collapse {
+   methods {
+      @property collapse {
          set {
             /*@
             @brief Manually collapse a frame without animations
@@ -23,7 +23,7 @@ class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
             bool collapse; /*@ true to collapse, false to expand */
          }
       }
-      autocollapse {
+      @property autocollapse {
          set {
             /*@
             @brief Toggle autocollapsing of a frame
@@ -48,8 +48,6 @@ class Elm.Frame (Elm.Layout, Evas.Clickable_Interface)
             bool autocollapse; /*@ Whether to enable autocollapse */
          }
       }
-   }
-   methods {
       collapse_go {
          /*@
          @brief Manually collapse a frame with animations

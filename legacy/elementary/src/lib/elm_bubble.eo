@@ -1,8 +1,8 @@
 class Elm.Bubble (Elm.Layout)
 {
    eo_prefix: elm_obj_bubble;
-   properties {
-      pos {
+   methods {
+      @property pos {
          set {
             /*@
             Set the corner of the bubble

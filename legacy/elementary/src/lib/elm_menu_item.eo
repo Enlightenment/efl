@@ -1,8 +1,8 @@
 class Elm.Menu_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_menu_item;
-   properties {
-        icon_name {
+   methods {
+        @property icon_name {
              get {
                  /*@
                   Get the string representation from the icon of a menu item
@@ -28,7 +28,7 @@ class Elm.Menu_Item(Elm.Widget_Item)
                  const (char)* icon; /*@ The name of icon object */
              }
         }
-        selected {
+        @property selected {
              get {
                  /*@
                   Get the selected state of @p item.
@@ -49,8 +49,6 @@ class Elm.Menu_Item(Elm.Widget_Item)
                  bool selected; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
              }
         }
-   }
-   methods {
       prev_get @const {
             /*@
              Get the previous item in the menu.

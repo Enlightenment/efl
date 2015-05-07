@@ -2,8 +2,8 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
                Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_map;
-   properties {
-      zoom {
+   methods {
+      @property zoom {
          set {
             /*@
             Set the zoom level of the map.
@@ -43,7 +43,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             int zoom; /*@ The zoom level to set. */
          }
       }
-      paused {
+      @property paused {
          set {
             /*@
             Pause or unpause the map.
@@ -78,7 +78,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             to unpause it. */
          }
       }
-      wheel_disabled {
+      @property wheel_disabled {
          set {
             /*@
             Enable or disable mouse wheel to be used to zoom in / out the map.
@@ -109,7 +109,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             to enable it. */
          }
       }
-      zoom_min {
+      @property zoom_min {
          set {
             /*@
             Set the minimum zoom of the source.
@@ -133,7 +133,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             int zoom(-1); /*@ New minimum zoom value to be used. */
          }
       }
-      rotate {
+      @property rotate {
          set {
             /*@
             Rotate the map.
@@ -156,7 +156,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             Evas_Coord cy; /*@ Rotation's center vertical position. */
          }
       }
-      user_agent {
+      @property user_agent {
          set {
             /*@
             Set the user agent used by the map object to access routing services.
@@ -185,7 +185,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             const(char)* user_agent; /*@ The user agent to be used by the map. */
          }
       }
-      zoom_max {
+      @property zoom_max {
          set {
             /*@
             Set the maximum zoom of the source.
@@ -209,7 +209,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             int zoom(-1); /*@ New maximum zoom value to be used. */
          }
       }
-      zoom_mode {
+      @property zoom_mode {
          set {
             /*@
             Set the zoom mode used by the map object.
@@ -249,7 +249,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             (default), #ELM_MAP_ZOOM_MODE_AUTO_FIT, or #ELM_MAP_ZOOM_MODE_AUTO_FILL. */
          }
       }
-      region {
+      @property region {
          get {
             /*@
             Get the current geographic coordinates of the map.
@@ -267,7 +267,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             double lat; /*@ Pointer to store latitude. */
          }
       }
-      overlays {
+      @property overlays {
          get {
             /*@
             Return all overlays in the map object.
@@ -283,7 +283,7 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             return: list<Elm_Map_Overlay *> *;
          }
       }
-      tile_load_status {
+      @property tile_load_status {
          get {
             /*@
             Get the information of tile load status.
@@ -297,8 +297,6 @@ class Elm.Map (Elm.Widget, Elm_Interface_Scrollable,
             int finish_num; /*@ Pointer to store number of tiles successfully downloaded. */
          }
       }
-   }
-   methods {
       source_set {
          /*@
          Set the current source of the map for a specific type.

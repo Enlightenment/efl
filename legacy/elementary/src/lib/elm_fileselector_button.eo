@@ -1,8 +1,8 @@
 class Elm.Fileselector_Button (Elm.Button, Elm_Interface_Fileselector)
 {
    eo_prefix: elm_obj_fileselector_button;
-   properties {
-      inwin_mode {
+   methods {
+      @property inwin_mode {
          set {
             /*@
             Set whether a given file selector button widget's internal file
@@ -33,7 +33,7 @@ class Elm.Fileselector_Button (Elm.Button, Elm_Interface_Fileselector)
             EINA_FALSE to make it use a dedicated window */
          }
       }
-      window_size {
+      @property window_size {
          set {
             /*@
             Set the size of a given file selector button widget's window,
@@ -64,7 +64,7 @@ class Elm.Fileselector_Button (Elm.Button, Elm_Interface_Fileselector)
             Evas_Coord height; /*@ The window's height */
          }
       }
-      window_title {
+      @property window_title {
          set {
             /*@
             Set the title for a given file selector button widget's window

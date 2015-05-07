@@ -2,8 +2,8 @@ class Elm.Grid (Elm.Widget)
 {
    eo_prefix: elm_obj_grid;
    data: null;
-   properties {
-      size {
+   methods {
+      @property size {
          set {
             /*@
             Set the virtual size of the grid
@@ -21,7 +21,7 @@ class Elm.Grid (Elm.Widget)
             Evas_Coord h; /*@ The virtual height of the grid */
          }
       }
-      children {
+      @property children {
          get {
             /*@
             Get the list of the children for the grid.
@@ -35,8 +35,6 @@ class Elm.Grid (Elm.Widget)
             return: free(own(list<Evas_Object *> *), eina_list_free) @warn_unused;
          }
       }
-   }
-   methods {
       clear {
          /*@
          Faster way to remove all child objects from a grid object.

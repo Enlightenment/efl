@@ -1,8 +1,8 @@
 class Elm.Panes (Elm.Layout)
 {
    eo_prefix: elm_obj_panes;
-   properties {
-      content_left_size {
+   methods {
+      @property content_left_size {
          set {
             /*@
             Set the size proportion of panes widget's left side.
@@ -39,7 +39,7 @@ class Elm.Panes (Elm.Layout)
             of left side. */
          }
       }
-      horizontal {
+      @property horizontal {
          set {
             /*@
             Set how to split and dispose each content.
@@ -72,7 +72,7 @@ class Elm.Panes (Elm.Layout)
             vertically ("left" and "right" contents) */
          }
       }
-      fixed {
+      @property fixed {
          set {
             /*@
             Set whether the left and right panes can be resized by user interaction.
@@ -103,7 +103,7 @@ class Elm.Panes (Elm.Layout)
             resizable. */
          }
       }
-      content_right_size {
+      @property content_right_size {
          set {
             /*@
             Set the size proportion of panes widget's right side.
@@ -140,7 +140,7 @@ class Elm.Panes (Elm.Layout)
             of right side. */
          }
       }
-      content_left_min_relative_size {
+      @property content_left_min_relative_size {
          set {
             /*@
              Set the relative minimum size of panes widget's left side.
@@ -173,7 +173,7 @@ class Elm.Panes (Elm.Layout)
                            of minimum size of left side. */
          }
       }
-      content_right_min_relative_size {
+      @property content_right_min_relative_size {
          set {
             /*@
              Set the relative minimum size of panes widget's right side.
@@ -205,7 +205,7 @@ class Elm.Panes (Elm.Layout)
                            of minimum size of right side. */
          }
       }
-      content_left_min_size {
+      @property content_left_min_size {
          set {
             /*@
             Set the absolute minimum size of panes widget's left side.
@@ -235,7 +235,7 @@ class Elm.Panes (Elm.Layout)
                                in pixels. */
          }
       }
-      content_right_min_size {
+      @property content_right_min_size {
          set {
             /*@
             Set the absolute minimum size of panes widget's right side.

@@ -1,8 +1,8 @@
 class Elm.Segment_Control (Elm.Layout)
 {
    eo_prefix: elm_obj_segment_control;
-   properties {
-      item_count {
+   methods {
+      @property item_count {
          get {
             /*@
             Get the Segment items count from segment control.
@@ -15,7 +15,7 @@ class Elm.Segment_Control (Elm.Layout)
             return: int;
          }
       }
-      item_selected {
+      @property item_selected {
          get {
             /*@
             Get the selected item.
@@ -32,8 +32,6 @@ class Elm.Segment_Control (Elm.Layout)
             return: Elm_Object_Item *;
          }
       }
-   }
-   methods {
       item_label_get @const {
          /*@
          Get the label of item.

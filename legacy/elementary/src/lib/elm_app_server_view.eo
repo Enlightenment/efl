@@ -2,8 +2,8 @@ class Elm_App_Server_View (Eo.Base)
 {
    legacy_prefix: null;
    eo_prefix: elm_app_server_view;
-   properties {
-      progress {
+   methods {
+      @property progress {
          set {
          }
          get {
@@ -12,7 +12,7 @@ class Elm_App_Server_View (Eo.Base)
             short progress;
          }
       }
-      new_events {
+      @property new_events {
          set {
          }
          get {
@@ -21,7 +21,7 @@ class Elm_App_Server_View (Eo.Base)
             int events;
          }
       }
-      icon {
+      @property icon {
          set {
          }
          get {
@@ -30,7 +30,7 @@ class Elm_App_Server_View (Eo.Base)
             const(char)* icon;
          }
       }
-      title {
+      @property title {
          set {
          }
          get {
@@ -39,35 +39,35 @@ class Elm_App_Server_View (Eo.Base)
             const(char)* title @nullable;
          }
       }
-      window {
+      @property window {
          set {
          }
          values {
             Evas_Object *win;
          }
       }
-      id {
+      @property id {
          get {
          }
          values {
             Eina_Stringshare *ret;
          }
       }
-      state {
+      @property state {
          get {
          }
          values {
             Elm_App_View_State ret;
          }
       }
-      path {
+      @property path {
          get {
          }
          values {
             const(char)* ret;
          }
       }
-      pixels {
+      @property pixels {
          get {
             /*@ Get application raw icon. */
          }
@@ -81,8 +81,6 @@ class Elm_App_Server_View (Eo.Base)
             const(ubyte)* pixels;
          }
       }
-   }
-   methods {
       constructor {
          /*@ Class constructor of elm_app_server_view */
          legacy: null;

@@ -1,8 +1,8 @@
 class Elm.Hoversel_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_hoversel_item;
-   properties {
-        icon {
+   methods {
+        @property icon {
              get {
                  /*@
                   @brief This sets the icon for the given hoversel item.
@@ -30,8 +30,6 @@ class Elm.Hoversel_Item(Elm.Widget_Item)
                 Elm_Icon_Type icon_type; /*@ The icon type */
              }
         }
-   }
-   methods {
    }
    implements {
         Eo.Base.constructor;

@@ -1,8 +1,8 @@
 class Elm.Toolbar_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_toolbar_item;
-      properties {
-           prev {
+      methods {
+           @property prev {
                 get {
                      /*@
                       Get the item before @p item in toolbar.
@@ -18,7 +18,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      Elm_Object_Item *item; /*@ The item before @p item, or @c NULL if none or on failure. */
                 }
            }
-           next {
+           @property next {
                 get {
                      /*@
                       Get the item after @p item in toolbar.
@@ -34,7 +34,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      Elm_Object_Item *item; /*@ The item after @p item, or @c NULL if none or on failure. */
                 }
            }
-           priority {
+           @property priority {
                 get {
                      /*@
                       Get the priority of a toolbar item.
@@ -64,7 +64,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      int priority; /* The @p item priority. The default is zero for set and 0 is returned on failure. */
                 }
            }
-           selected {
+           @property selected {
                 get {
                      /*@
                       Get whether the @p item is selected or not.
@@ -101,7 +101,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      bool selected; /*@ The selected state */
                 }
            }
-           icon {
+           @property icon {
                 get {
                      /*@
                       Get the string used to set the icon of @p item.
@@ -135,7 +135,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      const (char) *icon;
                 }
            }
-           object {
+           @property object {
                 get {
                      /*@
                       Get the real Evas(Edje) object created to implement the view of a given
@@ -148,7 +148,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      Evas_Object *obj; /*@ The base Edje object associated with @p it. */
                 }
            }
-           icon_object {
+           @property icon_object {
                 get {
                      /*@
                       Get the icon object of @p item.
@@ -163,7 +163,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      Evas_Object *obj; /*@ The icon object */
                 }
            }
-           separator {
+           @property separator {
                 get {
                      /*@
                       Get a value whether item is a separator or not.
@@ -197,7 +197,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      bool separator;
                 }
            }
-           menu {
+           @property menu {
                 get {
                      /*@
                       Get toolbar item's menu.
@@ -214,7 +214,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      Evas_Object *menu; /*@ Item's menu object or @c NULL on failure. */
                 }
            }
-           state {
+           @property state {
                 get {
                      /*@
                       Get the current state of @p it.
@@ -249,8 +249,6 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                      Elm_Toolbar_Item_State *state @nullable;
                 }
            }
-      }
-      methods {
            /*      init { FIXME
                    params {
                    Evas_Smart_Cb func;

@@ -1,8 +1,8 @@
 class Elm.Mapbuf (Elm.Container)
 {
    eo_prefix: elm_obj_mapbuf;
-   properties {
-      auto {
+   methods {
+      @property auto {
          set {
             /*@
             Set or unset auto flag for map rendering.
@@ -35,7 +35,7 @@ class Elm.Mapbuf (Elm.Container)
             to disable it. */
          }
       }
-      smooth {
+      @property smooth {
          set {
             /*@
             Enable or disable smooth map rendering.
@@ -64,7 +64,7 @@ class Elm.Mapbuf (Elm.Container)
             to disable it. */
          }
       }
-      alpha {
+      @property alpha {
          set {
             /*@
             Set or unset alpha flag for map rendering.
@@ -94,7 +94,7 @@ class Elm.Mapbuf (Elm.Container)
             to disable it. */
          }
       }
-      enabled {
+      @property enabled {
          set {
             /*@
             Enable or disable the map.
@@ -132,8 +132,6 @@ class Elm.Mapbuf (Elm.Container)
             bool enabled; /*@ @c EINA_TRUE to enable map or @c EINA_FALSE to disable it. */
          }
       }
-   }
-   methods {
       point_color_set {
          /*@
          Set the color of a vertex in the mapbuf

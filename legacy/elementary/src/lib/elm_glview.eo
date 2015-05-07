@@ -9,9 +9,7 @@ class Elm.Glview (Elm.Widget)
             @in Evas_GL_Context_Version version;
          }
       }
-   }
-   properties {
-      size {
+      @property size {
          set {
             /*@
             Sets the size of the glview
@@ -34,7 +32,7 @@ class Elm.Glview (Elm.Widget)
             int h; /*@ height of the glview object */
          }
       }
-      resize_policy {
+      @property resize_policy {
          set {
             /*@
             Set the resize policy for the glview object.
@@ -52,7 +50,7 @@ class Elm.Glview (Elm.Widget)
             Elm_GLView_Resize_Policy policy; /*@ The scaling policy. */
          }
       }
-      changed {
+      @property changed {
          set {
             /*@
             Notifies that there has been changes in the GLView.
@@ -60,7 +58,7 @@ class Elm.Glview (Elm.Widget)
             @ingroup GLView */
          }
       }
-      resize_func {
+      @property resize_func {
          set {
             /*@
             Set the resize function that gets called when resize happens.
@@ -76,7 +74,7 @@ class Elm.Glview (Elm.Widget)
             Elm_GLView_Func_Cb func; /*@ The resize function to be registered. */
          }
       }
-      del_func {
+      @property del_func {
          set {
             /*@
             Set the render function that runs in the main loop.
@@ -92,7 +90,7 @@ class Elm.Glview (Elm.Widget)
             Elm_GLView_Func_Cb func @nullable; /*@ The delete function to be registered. */
          }
       }
-      init_func {
+      @property init_func {
          set {
             /*@
             Set the init function that runs once in the main loop.
@@ -108,7 +106,7 @@ class Elm.Glview (Elm.Widget)
             Elm_GLView_Func_Cb func @nullable; /*@ The init function to be registered. */
          }
       }
-      render_policy {
+      @property render_policy {
          set {
             /*@
             Set the render policy for the glview object.
@@ -126,7 +124,7 @@ class Elm.Glview (Elm.Widget)
             Elm_GLView_Render_Policy policy; /*@ The render policy. */
          }
       }
-      mode {
+      @property mode {
          set {
             /*@
             Set the mode of the GLView. Supports alpha, depth, stencil.
@@ -145,7 +143,7 @@ class Elm.Glview (Elm.Widget)
             Elm_GLView_Mode mode; /*@ The mode Options OR'ed enabling Alpha, Depth, Stencil, Direct. */
          }
       }
-      render_func {
+      @property render_func {
          set {
             /*@
             Set the render function that runs in the main loop.
@@ -160,7 +158,7 @@ class Elm.Glview (Elm.Widget)
             Elm_GLView_Func_Cb func @nullable; /*@ The render function to be registered. */
          }
       }
-      gl_api {
+      @property gl_api {
          get {
             /*@
             Get the gl api struct for gl rendering
@@ -171,7 +169,7 @@ class Elm.Glview (Elm.Widget)
             return: Evas_GL_API *;
          }
       }
-      evas_gl {
+      @property evas_gl {
          get {
             /*@
             Get the internal Evas GL attached to this view.
@@ -188,7 +186,7 @@ class Elm.Glview (Elm.Widget)
             return: Evas_GL *;
          }
       }
-      rotation {
+      @property rotation {
          get {
             /*@
             Get the current GL view's rotation when using direct rendering

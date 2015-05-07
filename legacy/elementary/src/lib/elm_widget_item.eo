@@ -2,8 +2,8 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
 {
       eo_prefix: elm_wdg_item;
       legacy_prefix: elm_object_item;
-      properties {
-           tooltip_window_mode {
+      methods {
+           @property tooltip_window_mode {
                 get {
                      /**
                        @brief Get size restriction state of an object's tooltip
@@ -26,7 +26,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                      Eina_Bool disable; /*@ If @c EINA_TRUE, size restrictions are disabled */
                 }
            }
-           tooltip_style {
+           @property tooltip_style {
                 get {
                      /**
                        Get the style for this item tooltip.
@@ -54,7 +54,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                      const (char)* style; /*@ the theme style used/to use (default, transparent, ...) */ 
                 }
            }
-           cursor {
+           @property cursor {
                 get {
                      /*
                         Get the type of mouse pointer/cursor decoration set to be shown,
@@ -92,7 +92,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                      const (char) *cursor; /*@ the cursor type's name */
                 }
            }
-           cursor_style {
+           @property cursor_style {
                 get {
                      /**
                        Get the current @b style set for a given item's custom
@@ -128,7 +128,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                      const (char) *style; /*@ the <b>theme style</b> to use/in use (e.g. @c "default", @c "transparent", etc) */
                 }
            }
-           cursor_engine_only {
+           @property cursor_engine_only {
                 get {
                      /**
                        Get if the (custom) cursor for a given item is being
@@ -165,7 +165,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                                           to have them searched on the widget's theme, as well. */
                 }
            }
-           part_content {
+           @property part_content {
                 get {
                      /**
                        Get a content of an object item
@@ -197,7 +197,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                      Evas_Object *content; /*@ The content of the object item */
                 }
            }
-           part_text {
+           @property part_text {
                 get {
                      /**
                        Get a label of an object item
@@ -223,7 +223,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                      const (char) *label; /*@ Text of the label */
                 }
            }
-           part_text_custom @protected {
+           @property part_text_custom @protected {
                 get {
                      /*@ Get additional text part content */
                      legacy: null;
@@ -239,7 +239,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                      const (char) *label;
                 }
            }
-           focus {
+           @property focus {
                 get {
                      /**
                        Get whether the @p it is focused or not.
@@ -264,7 +264,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                      bool focused; /*@ The focused state */
                 }
            }
-           style {
+           @property style {
                 get {
                      /**
                        Get the style of an object item
@@ -287,7 +287,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                      const (char) *style; /*@ The style of object item */
                 }
            }
-           disabled {
+           @property disabled {
                 get {
                      /**
                        Get the disabled state of an widget item.
@@ -317,8 +317,6 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible)
                      bool disable; /*@ @c EINA_TRUE, if the widget item is disabled, @c EINA_FALSE if it's enabled (or on errors) */
                 }
            }
-      }
-      methods {
            access_order_get {
                 /**
                   @brief Get highlight order

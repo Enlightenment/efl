@@ -1,8 +1,8 @@
 class Elm.Diskselector_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_diskselector_item;
-      properties {
-           prev {
+      methods {
+           @property prev {
                 get {
                      /*@
                       Get the item before @p item in diskselector.
@@ -23,7 +23,7 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
                      Elm_Object_Item *item; /*@ The item before @p item, or @c NULL if none or on failure. */
                 }
            }
-           next {
+           @property next {
                 get {
                      /*@
                       Get the item after @p item in diskselector.
@@ -44,7 +44,7 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
                      Elm_Object_Item *item; /*@ The item after @p item, or @c NULL if none or on failure. */
                 }
            }
-           selected {
+           @property selected {
                 get {
                      /*@
                       Get whether the @p item is selected or not.
@@ -84,8 +84,6 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
                      Eina_Bool selected; /*@ The selected state */
                 }
            }
-      }
-      methods {
            /*      init { FIXME
                    params {
                    Evas_Smart_Cb func;

@@ -2,8 +2,8 @@ class Elm.Table (Elm.Widget)
 {
    eo_prefix: elm_obj_table;
    data: null;
-   properties {
-      homogeneous {
+   methods {
+      @property homogeneous {
          set {
             /*@
             @brief Set the homogeneous layout in the table
@@ -24,7 +24,7 @@ class Elm.Table (Elm.Widget)
             table (EINA_TRUE = homogeneous, EINA_FALSE = no homogeneous) */
          }
       }
-      padding {
+      @property padding {
          set {
             /*@
             @brief Set padding between cells.
@@ -44,7 +44,7 @@ class Elm.Table (Elm.Widget)
             Evas_Coord vertical; /*@ set the vertical padding. */
          }
       }
-      align {
+      @property align {
          set {
             /*@
             @brief Set alignment of table
@@ -66,8 +66,6 @@ class Elm.Table (Elm.Widget)
             double vertical; /*@ the vertical alignment. */
          }
       }
-   }
-   methods {
       clear {
          /*@
          @brief Faster way to remove all child objects from a table object.

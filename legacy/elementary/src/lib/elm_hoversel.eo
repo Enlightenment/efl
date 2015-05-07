@@ -2,8 +2,8 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
                     Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_hoversel;
-   properties {
-      horizontal {
+   methods {
+      @property horizontal {
          set {
             /*@
             @brief This sets the hoversel to expand horizontally.
@@ -28,7 +28,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             right. */
          }
       }
-      hover_parent {
+      @property hover_parent {
          set {
             /*@
             @brief Set the Hover parent
@@ -55,7 +55,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             Evas_Object *parent @nullable; /*@ The parent to use */
          }
       }
-      expanded {
+      @property expanded {
          get {
             /*@
             @brief Returns whether the hoversel is expanded.
@@ -67,7 +67,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             return: bool;
          }
       }
-      items {
+      @property items {
          get {
             /*@
             @brief Get the list of items within the given hoversel.
@@ -80,8 +80,6 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             return: const(list<Elm_Object_Item *>)*;
          }
       }
-   }
-   methods {
       hover_begin {
          /*@
          @brief This triggers the hoversel popup from code, the same as if the user

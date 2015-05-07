@@ -1,8 +1,8 @@
 class Elm.Datetime (Elm.Layout)
 {
    eo_prefix: elm_obj_datetime;
-   properties {
-      format {
+   methods {
+      @property format {
          set {
             /*@
             Set the datetime format. Format is a combination of allowed Libc date format
@@ -85,8 +85,6 @@ class Elm.Datetime (Elm.Layout)
             const(char)* fmt @nullable; /*@ The datetime format */
          }
       }
-   }
-   methods {
       field_limit_set {
          /*@
          @brief Set the field limits of a field.

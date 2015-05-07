@@ -2,8 +2,8 @@ class Elm_App_Server (Eo.Base)
 {
    legacy_prefix: null;
    eo_prefix: elm_app_server;
-   properties {
-      icon {
+   methods {
+      @property icon {
          set {
          }
          get {
@@ -12,7 +12,7 @@ class Elm_App_Server (Eo.Base)
             Eina_Stringshare *icon; /*@ title of icon */
          }
       }
-      views {
+      @property views {
          get {
             /*@ Return a iterator with all views of application */
          }
@@ -20,21 +20,21 @@ class Elm_App_Server (Eo.Base)
             free(own(iterator<Elm_App_Server_View *> *), eina_iterator_free) ret; /*@ Iterator with all views of application, you must free iterator after use */
          }
       }
-      path {
+      @property path {
          get {
          }
          values {
             const(char)* ret;
          }
       }
-      package {
+      @property package {
          get {
          }
          values {
             Eina_Stringshare *ret;
          }
       }
-      pixels {
+      @property pixels {
          get {
             /*@ Get application raw icon. */
          }
@@ -48,8 +48,6 @@ class Elm_App_Server (Eo.Base)
             const(ubyte)* pixels;
          }
       }
-   }
-   methods {
       constructor {
          /*@ Class constructor of elm_app_server */
          legacy: null;

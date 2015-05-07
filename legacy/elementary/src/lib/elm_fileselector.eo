@@ -2,8 +2,8 @@ class Elm.Fileselector (Elm.Layout, Elm_Interface_Fileselector,
                         Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_fileselector;
-   properties {
-      buttons_ok_cancel {
+   methods {
+      @property buttons_ok_cancel {
          set {
             /*@
             Enable/disable the "ok" and "cancel" buttons on a given file

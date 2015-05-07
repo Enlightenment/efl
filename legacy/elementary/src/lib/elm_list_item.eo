@@ -1,8 +1,8 @@
 class Elm.List_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_list_item;
-      properties {
-           separator {
+      methods {
+           @property separator {
                 get {
                      /*@
                       Get a value whether item is a separator or not.
@@ -29,7 +29,7 @@ class Elm.List_Item(Elm.Widget_Item)
                                     indicates it's not. */
                 }
            }
-           selected {
+           @property selected {
                 get {
                      /*
                       Get whether the @p item is selected or not.
@@ -65,7 +65,7 @@ class Elm.List_Item(Elm.Widget_Item)
                      bool selected; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
                 }
            }
-           object {
+           @property object {
                 get {
                      /*@
                       Get the real Evas(Edje) object created to implement the view of a given
@@ -80,7 +80,7 @@ class Elm.List_Item(Elm.Widget_Item)
                      Evas_Object *obj; /*@ The base Edje object associated with @p it. */
                 }
            }
-           prev {
+           @property prev {
                 get {
                      /*@
                       Get the item before @p it in list.
@@ -98,7 +98,7 @@ class Elm.List_Item(Elm.Widget_Item)
                      Elm_Object_Item *item; /*@ The item before @p it, or @c NULL if none or on failure. */
                 }
            }
-           next {
+           @property next {
                 get {
                      /*@
                       Get the item after @p it in list.
@@ -116,8 +116,6 @@ class Elm.List_Item(Elm.Widget_Item)
                      Elm_Object_Item *item; /*@ The item after @p it, or @c NULL if none or on failure. */
                 }
            }
-      }
-      methods {
            /*      init { FIXME
                    params {
                    Evas_Smart_Cb func;

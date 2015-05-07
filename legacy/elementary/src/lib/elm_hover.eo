@@ -1,8 +1,8 @@
 class Elm.Hover (Elm.Layout, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_hover;
-   properties {
-      target {
+   methods {
+      @property target {
          set {
             /*@
             @brief Sets the target object for the hover.
@@ -25,8 +25,6 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface)
             Evas_Object *target; /*@ The object to center the hover onto. */
          }
       }
-   }
-   methods {
       best_content_location_get @const {
          /*@
          @brief Returns the best swallow location for content in the hover.

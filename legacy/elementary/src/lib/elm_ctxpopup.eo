@@ -1,8 +1,8 @@
 class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_ctxpopup;
-   properties {
-      horizontal {
+   methods {
+      @property horizontal {
          set {
             /*@
             @brief Change the ctxpopup's orientation to horizontal or vertical.
@@ -23,7 +23,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             bool horizontal; /*@ @c EINA_TRUE for horizontal mode, @c EINA_FALSE for vertical */
          }
       }
-      auto_hide_disabled {
+      @property auto_hide_disabled {
          set {
             /*@
             @brief Set ctxpopup auto hide mode triggered by ctxpopup policy.
@@ -56,7 +56,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             bool disabled; /*@ auto hide enable/disable. */
          }
       }
-      hover_parent {
+      @property hover_parent {
          set {
             /*@
             @brief Set the Ctxpopup's parent
@@ -83,7 +83,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             Evas_Object *parent; /*@ The parent to use */
          }
       }
-      direction_priority {
+      @property direction_priority {
          set {
             /*@
             @brief Set the direction priority of a ctxpopup.
@@ -111,7 +111,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             Elm_Ctxpopup_Direction fourth; /*@ 4th priority of direction */
          }
       }
-      direction {
+      @property direction {
          get {
             /*@
             @brief Get the current direction of a ctxpopup.
@@ -125,7 +125,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: Elm_Ctxpopup_Direction(4);
          }
       }
-      items {
+      @property items {
          get {
             /*@
             @brief Get the internal list of items in a given ctxpopup widget.
@@ -148,7 +148,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: const(list)*;
          }
       }
-      first_item {
+      @property first_item {
          get {
             /*@
             Get the first item in the given ctxpopup widget's list of
@@ -165,7 +165,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: Elm_Object_Item *;
          }
       }
-      last_item {
+      @property last_item {
          get {
             /*@
             Get the last item in the given ctxpopup widget's list of
@@ -182,8 +182,6 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: Elm_Object_Item *;
          }
       }
-   }
-   methods {
       dismiss {
          /*@
          @brief Dismiss a ctxpopup object

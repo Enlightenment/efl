@@ -1,8 +1,8 @@
 class Elm.Progressbar (Elm.Layout)
 {
    eo_prefix: elm_obj_progressbar;
-   properties {
-      span_size {
+   methods {
+      @property span_size {
          set {
             /*@
             Set the (exact) length of the bar region of a given progress bar
@@ -39,7 +39,7 @@ class Elm.Progressbar (Elm.Layout)
             Evas_Coord size; /*@ The length of the progress bar's bar region */
          }
       }
-      pulse {
+      @property pulse {
          set {
             /*@
             Set whether a given progress bar widget is at "pulsing mode" or
@@ -75,7 +75,7 @@ class Elm.Progressbar (Elm.Layout)
             @c EINA_FALSE to put it back to its default one */
          }
       }
-      value {
+      @property value {
          set {
             /*@
             Set the progress value (in percentage) on a given progress bar
@@ -105,7 +105,7 @@ class Elm.Progressbar (Elm.Layout)
             1.0) */
          }
       }
-      inverted {
+      @property inverted {
          set {
             /*@
             Invert a given progress bar widget's displaying values order
@@ -137,7 +137,7 @@ class Elm.Progressbar (Elm.Layout)
             @c EINA_FALSE to bring it back to default, non-inverted values. */
          }
       }
-      horizontal {
+      @property horizontal {
          set {
             /*@
             Set the orientation of a given progress bar widget
@@ -165,7 +165,7 @@ class Elm.Progressbar (Elm.Layout)
             @b horizontal, @c EINA_FALSE to make it @b vertical */
          }
       }
-      unit_format {
+      @property unit_format {
          set {
             /*@
             Set the format string for a given progress bar widget's units
@@ -202,7 +202,7 @@ class Elm.Progressbar (Elm.Layout)
             const(char)* units @nullable; /*@ The format string for @p obj's units label */
          }
       }
-      unit_format_function {
+      @property unit_format_function {
          set {
             /*@
             Set the format function pointer for the units label
@@ -220,8 +220,6 @@ class Elm.Progressbar (Elm.Layout)
             progressbar_freefunc_type free_func @optional; /*@ The freeing function for the format string. */
          }
       }
-   }
-   methods {
       part_value_set {
          /*@
          Set the progress value (in percentage) on a given progress bar

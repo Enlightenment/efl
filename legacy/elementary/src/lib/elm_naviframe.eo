@@ -1,8 +1,8 @@
 class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_naviframe;
-   properties {
-      event_enabled {
+   methods {
+      @property event_enabled {
          set {
             /*@
             @brief Set the event enabled when pushing/popping items
@@ -34,7 +34,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             ignored otherwise. */
          }
       }
-      content_preserve_on_pop {
+      @property content_preserve_on_pop {
          set {
             /*@
             @brief preserve the content objects when items are popped.
@@ -57,7 +57,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             bool preserve; /*@ Enable the preserve mode if @c EINA_TRUE, disable otherwise */
          }
       }
-      prev_btn_auto_pushed {
+      @property prev_btn_auto_pushed {
          set {
             /*@
             @brief Set creating prev button automatically or not
@@ -84,7 +84,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             parameter in elm_naviframe_item_push */
          }
       }
-      items {
+      @property items {
          get {
             /*@
             @brief Get a list of all the naviframe items.
@@ -97,7 +97,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: free(own(list<Elm_Object_Item *> *), eina_list_free) @warn_unused;
          }
       }
-      top_item {
+      @property top_item {
          get {
             /*@
             @brief Get a top item on the naviframe stack
@@ -109,7 +109,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: Elm_Object_Item *;
          }
       }
-      bottom_item {
+      @property bottom_item {
          get {
             /*@
             @brief Get a bottom item on the naviframe stack
@@ -121,8 +121,6 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: Elm_Object_Item *;
          }
       }
-   }
-   methods {
       item_pop {
          /*@
          @brief Pop an item that is on top of the stack

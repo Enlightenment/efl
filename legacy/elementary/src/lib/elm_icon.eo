@@ -1,8 +1,8 @@
 class Elm.Icon (Elm.Image)
 {
    eo_prefix: elm_obj_icon;
-   properties {
-      order_lookup {
+   methods {
+      @property order_lookup {
          set {
             /*@
             Sets the icon lookup order used by elm_icon_standard_set().
@@ -30,7 +30,7 @@ class Elm.Icon (Elm.Image)
             or #ELM_ICON_LOOKUP_THEME) */
          }
       }
-      standard {
+      @property standard {
          set {
             /*@
             Set the icon by icon standards names.
@@ -74,7 +74,7 @@ class Elm.Icon (Elm.Image)
             const(char)* name; /*@ The icon name */
          }
       }
-      thumb {
+      @property thumb {
          set {
             /*@
             Set the file that will be used, but use a generated thumbnail.

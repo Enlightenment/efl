@@ -1,8 +1,8 @@
 class Elm.Flip (Elm.Container)
 {
    eo_prefix: elm_obj_flip;
-   properties {
-      interaction {
+   methods {
+      @property interaction {
          set {
             /*@
             @brief Set the interactive flip mode
@@ -40,7 +40,7 @@ class Elm.Flip (Elm.Container)
             Elm_Flip_Interaction mode; /*@ The interactive flip mode to use */
          }
       }
-      front_visible {
+      @property front_visible {
          get {
             /*@
             @brief Get flip front visibility state
@@ -52,8 +52,6 @@ class Elm.Flip (Elm.Container)
             return: bool;
          }
       }
-   }
-   methods {
       interaction_direction_hitsize_set {
          /*@
          @brief Set the amount of the flip that is sensitive to interactive flip

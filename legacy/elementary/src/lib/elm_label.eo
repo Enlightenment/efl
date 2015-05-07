@@ -1,8 +1,8 @@
 class Elm.Label (Elm.Layout)
 {
    eo_prefix: elm_obj_label;
-   properties {
-      wrap_width {
+   methods {
+      @property wrap_width {
          set {
             /*@
             @brief Set wrap width of the label
@@ -27,7 +27,7 @@ class Elm.Label (Elm.Layout)
             Evas_Coord w; /*@ The wrap width in pixels at a minimum where words need to wrap */
          }
       }
-      slide_speed {
+      @property slide_speed {
          set {
             /*@
             @brief Set the slide speed of the label
@@ -54,7 +54,7 @@ class Elm.Label (Elm.Layout)
             double speed; /*@ The speed of the slide animation in px per seconds */
          }
       }
-      slide_mode {
+      @property slide_mode {
          set {
             /*@
             @brief Set the slide mode of the label widget.
@@ -92,7 +92,7 @@ class Elm.Label (Elm.Layout)
             Elm_Label_Slide_Mode mode; /*@ The slide mode */
          }
       }
-      slide_duration {
+      @property slide_duration {
          set {
             /*@
             @brief Set the slide duration of the label
@@ -120,7 +120,7 @@ class Elm.Label (Elm.Layout)
             to slide end position */
          }
       }
-      line_wrap {
+      @property line_wrap {
          set {
             /*@
             @brief Set the wrapping behavior of the label
@@ -147,7 +147,7 @@ class Elm.Label (Elm.Layout)
             Elm_Wrap_Type wrap; /*@ To wrap text or not */
          }
       }
-      ellipsis {
+      @property ellipsis {
          set {
             /*@
             @brief Set the ellipsis behavior of the label
@@ -174,8 +174,6 @@ class Elm.Label (Elm.Layout)
             bool ellipsis; /*@ To ellipsis text or not */
          }
       }
-   }
-   methods {
       slide_go {
          /*@
          @brief Start slide effect.

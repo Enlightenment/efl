@@ -1,8 +1,8 @@
 class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_colorselector;
-   properties {
-      color {
+   methods {
+      @property color {
          set {
             /*@
             Set color to colorselector
@@ -22,7 +22,7 @@ class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             int a; /*@ a-value of color */
          }
       }
-      palette_name {
+      @property palette_name {
          set {
             /*@
             Set current palette's name
@@ -48,7 +48,7 @@ class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             const(char)* palette_name; /*@ Name of palette */
          }
       }
-      mode {
+      @property mode {
          set {
             /*@
             Set Colorselector's mode.
@@ -69,7 +69,7 @@ class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             Elm_Colorselector_Mode mode; /*@ Elm_Colorselector_Mode */
          }
       }
-      palette_items {
+      @property palette_items {
          get {
             /*@
             Get list of palette items.
@@ -85,7 +85,7 @@ class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: const(list)*;
          }
       }
-      palette_selected_item {
+      @property palette_selected_item {
          get {
             /*@
             Get the selected item in colorselector palette.
@@ -97,8 +97,6 @@ class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             return: Elm_Object_Item *;
          }
       }
-   }
-   methods {
       palette_color_add {
          /*@
          Add a new color item to palette.

@@ -1,8 +1,8 @@
 class Elm.Naviframe_Item(Elm.Widget_Item)
 {
    eo_prefix: elm_obj_naviframe_item;
-   properties {
-        style {
+   methods {
+        @property style {
              get {
                  /*@
                   Get an item style
@@ -28,8 +28,6 @@ class Elm.Naviframe_Item(Elm.Widget_Item)
                  const (char) *style @nullable; /*@ The current item style name. @c NULL would be default */
              }
         }
-   }
-   methods {
       pop_to {
             /*@
              Pop the top item and delete the items between the top and the above

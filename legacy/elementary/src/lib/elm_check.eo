@@ -1,8 +1,8 @@
 class Elm.Check (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 {
    eo_prefix: elm_obj_check;
-   properties {
-      state {
+   methods {
+      @property state {
          set {
             /*@
             @brief Set the on/off state of the check object
@@ -25,7 +25,7 @@ class Elm.Check (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             bool state; /*@ The state to use (1 == on, 0 == off) */
          }
       }
-      state_pointer {
+      @property state_pointer {
          set {
             /*@
             @brief Set a convenience pointer to a boolean to change
