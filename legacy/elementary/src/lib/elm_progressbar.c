@@ -403,7 +403,8 @@ _elm_progressbar_part_value_set(Eo *obj EINA_UNUSED, Elm_Progressbar_Data *sd, c
 
    _val_set(obj);
    _units_set(obj);
-   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+   eo_do(obj, eo_event_callback_call
+     (ELM_PROGRESSBAR_EVENT_CHANGED, NULL));
 }
 
 EOLIAN static double
@@ -435,7 +436,8 @@ _elm_progressbar_value_set(Eo *obj, Elm_Progressbar_Data *sd, double val)
    sd->progress_status = eina_list_append(sd->progress_status, ps);
    _val_set(obj);
    _units_set(obj);
-   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+   eo_do(obj, eo_event_callback_call
+     (ELM_PROGRESSBAR_EVENT_CHANGED, NULL));
 }
 
 EOLIAN static double
