@@ -281,6 +281,10 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
 
    DBG("Opened Device %s : %d", dev->drm.name, dev->drm.fd);
 
+   /* set client capabilities to 'universal planes' so drm core will expose
+    * the full universal plane list (including primary & cursor planes) */
+   drmSetClientCap(dev->drm.fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1);
+
    if (!drmGetCap(dev->drm.fd, DRM_CAP_TIMESTAMP_MONOTONIC, &caps))
      {
         if (caps == 1)
@@ -527,6 +531,33 @@ ecore_drm_device_output_find(Ecore_Drm_Device *dev, int x, int y)
         if (INSIDE(x, y, ox, oy, ow, oh))
           return output;
      }
+
+   return NULL;
+}
+
+EAPI void
+ecore_drm_screen_size_range_get(Ecore_Drm_Device *dev, int *minw, int *minh, int *maxw, int *maxh)
+{
+   EINA_SAFETY_ON_NULL_RETURN(dev);
+
+   if (minw) *minw = dev->min_width;
+   if (minh) *minh = dev->min_height;
+   if (maxw) *maxw = dev->max_width;
+   if (maxh) *maxh = dev->max_height;
+}
+
+EAPI Ecore_Drm_Output *
+ecore_drm_device_output_name_find(Ecore_Drm_Device *dev, const char *name)
+{
+   Ecore_Drm_Output *output;
+   Eina_List *l;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
+
+   EINA_LIST_FOREACH(dev->outputs, l, output)
+     if ((output->name) && (!strcmp(name, output->name)))
+       return output;
 
    return NULL;
 }

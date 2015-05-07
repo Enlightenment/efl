@@ -29,9 +29,9 @@
 #  endif // ifdef __GNUC__
 # endif // ifdef _MSC_VER
 
-#ifdef __cplusplus
+# ifdef __cplusplus
 extern "C" {
-#endif
+# endif
 
 typedef enum _Ecore_Drm_Evdev_Capabilities
 {
@@ -153,8 +153,14 @@ struct _Ecore_Drm_Event_Output
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm_Device Ecore_Drm_Device;
 
-/* opaque structure to represent a drm output mode */
-typedef struct _Ecore_Drm_Output_Mode Ecore_Drm_Output_Mode;
+/* structure to represent a drm output mode */
+typedef struct _Ecore_Drm_Output_Mode
+{
+   unsigned int flags;
+   int width, height;
+   unsigned int refresh;
+   drmModeModeInfo info;
+} Ecore_Drm_Output_Mode;
 
 /* opaque structure to represent a drm output */
 typedef struct _Ecore_Drm_Output Ecore_Drm_Output;
@@ -709,6 +715,19 @@ EAPI Eina_Stringshare *ecore_drm_output_model_get(Ecore_Drm_Output *output);
 EAPI Eina_Stringshare *ecore_drm_output_make_get(Ecore_Drm_Output *output);
 
 /**
+ * Get the name of Ecore_Drm_Output
+ *
+ * This function will give the name of Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to get name for
+ * @return The name. Caller should free this return.
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI char *ecore_drm_output_name_get(Ecore_Drm_Output *output);
+
+/**
  * Set the dpms level of an Ecore_Drm_Output
  *
  * This function will set the DPMS level of an Ecore_Drm_Output
@@ -761,11 +780,137 @@ EAPI void ecore_drm_device_pointer_xy_get(Ecore_Drm_Device *dev, int *x, int *y)
  */
 EAPI const Eina_List *ecore_drm_devices_get(void);
 
-#ifdef __cplusplus
-}
-#endif
+/**
+ * Get the minimum and maximum screen size range
+ *
+ * @param dev The Ecore_Drm_Device to get screen size range from
+ * @param *minw The parameter in which smallest width is stored
+ * @param *minh The parameter in which smallest height is stored
+ * @param *maxw The parameter in which largest width is stored
+ * @param *maxh The parameter in which largest height is stored
+ *
+ * @ingroup Ecore_Drm_Device_Group
+ * @since 1.15
+ */
+EAPI void ecore_drm_screen_size_range_get(Ecore_Drm_Device *dev, int *minw, int *minh, int *maxw, int *maxh);
 
-#undef EAPI
-#define EAPI
+/**
+ * Get if a given output is connected
+ *
+ * @param output The Ecore_Drm_Output to get the connected status of
+ *
+ * @return EINA_TRUE if output is connected, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI Eina_Bool ecore_drm_output_connected_get(Ecore_Drm_Output *output);
+
+/**
+ * Get the connector type of a given Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to get the connector type of
+ *
+ * @return An unsigned integer representing the type of connector for this output
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI unsigned int ecore_drm_output_connector_type_get(Ecore_Drm_Output *output);
+
+/**
+ * Get if a given output has a backlight
+ *
+ * @param output The Ecore_Drm_Output to get the backlight of
+ *
+ * @return EINA_TRUE if this output has a backlight, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI Eina_Bool ecore_drm_output_backlight_get(Ecore_Drm_Output *output);
+
+/**
+ * Get the edid of a given output
+ *
+ * @param output The Ecore_Drm_Output to get the backlight of
+ *
+ * @return A string representing the edid
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI char *ecore_drm_output_edid_get(Ecore_Drm_Output *output);
+
+/**
+ * Get a list of the modes supported on a given output
+ *
+ * @param output The Ecore_Drm_Output to get the modes for
+ *
+ * @return An Eina_List of the modes supported for this output
+ *
+ * @note The returned list should not be freed
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI Eina_List *ecore_drm_output_modes_get(Ecore_Drm_Output *output);
+
+/**
+ * Get the output which is marked as primary
+ *
+ * @param dev The Ecore_Drm_Device to get the primary output from
+ *
+ * @return The primary Ecore_Drm_Output or NULL if no primary output is set
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI Ecore_Drm_Output *ecore_drm_output_primary_get(Ecore_Drm_Device *dev);
+
+/**
+ * Set a given output as primary
+ *
+ * @param output The Ecore_Drm_Output to set as primary
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI void ecore_drm_output_primary_set(Ecore_Drm_Output *output);
+
+/**
+ * Get the size of the crtc for a given output
+ *
+ * @param output The Ecore_Drm_Output to get the crtc size of
+ * @param *width The parameter in which width is stored
+ * @param *height The parameter in which height is stored
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI void ecore_drm_output_crtc_size_get(Ecore_Drm_Output *output, int *width, int *height);
+
+/**
+ * Find an Ecore_Drm_Output which has the given name
+ *
+ * This function will loop all the existing outputs in Ecore_Drm_Device and 
+ * return an output if one exists that matches the given name.
+ *
+ * @param dev The Ecore_Drm_Device to search
+ * @param name The Ecore_Drm_Output matching this name
+ *
+ * @return An Ecore_Drm_Output if one exists at these coordinates or NULL
+ *
+ * @ingroup Ecore_Drm_Device_Group
+ * @since 1.15
+ */
+EAPI Ecore_Drm_Output *ecore_drm_device_output_name_find(Ecore_Drm_Device *dev, const char *name);
+
+# ifdef __cplusplus
+}
+# endif
+
+# undef EAPI
+# define EAPI
 
 #endif

@@ -87,14 +87,6 @@ typedef struct _Ecore_Drm_Pageflip_Callback
    int count;
 } Ecore_Drm_Pageflip_Callback;
 
-struct _Ecore_Drm_Output_Mode
-{
-   unsigned int flags;
-   int width, height;
-   unsigned int refresh;
-   drmModeModeInfo info;
-};
-
 typedef enum _Ecore_Drm_Backlight_Type
 {
    ECORE_DRM_BACKLIGHT_RAW,
@@ -117,6 +109,7 @@ struct _Ecore_Drm_Output
    Ecore_Drm_Device *dev;
    unsigned int crtc_id;
    unsigned int conn_id;
+   unsigned int conn_type;
    drmModeCrtcPtr crtc;
    drmModePropertyPtr dpms;
 
@@ -130,6 +123,8 @@ struct _Ecore_Drm_Output
    Ecore_Drm_Output_Mode *current_mode;
    Eina_List *modes;
 
+   char *edid_blob;
+
    struct
      {
         char eisa[13];
@@ -140,6 +135,8 @@ struct _Ecore_Drm_Output
 
    Ecore_Drm_Backlight *backlight;   
 
+   Eina_Bool primary : 1;
+   Eina_Bool connected : 1;
    Eina_Bool enabled : 1;
    Eina_Bool cloned : 1;
    Eina_Bool need_repaint : 1;

@@ -160,9 +160,12 @@ _ecore_drm_output_edid_find(Ecore_Drm_Output *output, drmModeConnector *conn)
                                            conn->prop_values[i]);
           }
         drmModeFreeProperty(prop);
+        if (blob) break;
      }
 
    if (!blob) return;
+
+   output->edid_blob = (char *)eina_memdup(blob->data, blob->length, 1);
 
    ret = _ecore_drm_output_edid_parse(output, blob->data, blob->length);
    if (!ret)
@@ -419,6 +422,8 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    output->model = eina_stringshare_add("UNKNOWN");
    output->name = eina_stringshare_add("UNKNOWN");
 
+   output->connected = (conn->connection == DRM_MODE_CONNECTED);
+   output->conn_type = conn->connector_type;
    if (conn->connector_type < ALEN(conn_types))
      type = conn_types[conn->connector_type];
    else
@@ -502,6 +507,13 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
 
    dev->outputs = eina_list_append(dev->outputs, output);
 
+   /* NB: 'primary' output property is not supported in HW, so we need to
+    * implement it via software. As such, the First output which gets
+    * listed via libdrm will be assigned 'primary' until user changes
+    * it via config */
+   if (eina_list_count(dev->outputs) == 1)
+     output->primary = EINA_TRUE;
+
    DBG("Created New Output At %d,%d", output->x, output->y);
    DBG("\tCrtc Pos: %d %d", output->crtc->x, output->crtc->y);
    DBG("\tCrtc: %d", output->crtc_id);
@@ -510,6 +522,7 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    DBG("\tModel: %s", output->model);
    DBG("\tName: %s", output->name);
    DBG("\tCloned: %d", output->cloned);
+   DBG("\tPrimary: %d", output->primary);
 
    EINA_LIST_FOREACH(output->modes, l, mode)
      {
@@ -702,6 +715,95 @@ next:
      }
 }
 
+static void
+_ecore_drm_output_planes_get(Ecore_Drm_Device *dev)
+{
+   drmModePlaneRes *pres;
+   unsigned int i = 0, j = 0;
+   int k = 0;
+
+   pres = drmModeGetPlaneResources(dev->drm.fd);
+   if (!pres) return;
+
+   for (; i < pres->count_planes; i++)
+     {
+        drmModePlane *plane;
+        drmModeObjectPropertiesPtr props;
+        int type = -1;
+
+        plane = drmModeGetPlane(dev->drm.fd, pres->planes[i]);
+        if (!plane) continue;
+
+        props = drmModeObjectGetProperties(dev->drm.fd, plane->plane_id,
+                                           DRM_MODE_OBJECT_PLANE);
+        if (!props) goto free_plane;
+
+        DBG("Plane %u Properties:", plane->plane_id);
+
+        for (j = 0; type == -1 && j < props->count_props; j++)
+          {
+             drmModePropertyPtr prop;
+
+             prop = drmModeGetProperty(dev->drm.fd, props->props[j]);
+             if (!prop) continue;
+
+             if (!strcmp(prop->name, "type"))
+               type = props->prop_values[j];
+
+             drmModeFreeProperty(prop);
+          }
+
+        DBG("\tFormats:");
+        for (j = 0; j < plane->count_formats; j++)
+          DBG("\t\t%4.4s", (char *)&plane->formats[j]);
+
+        for (j = 0; j < props->count_props; j++ )
+          {
+             drmModePropertyPtr prop;
+
+             prop = drmModeGetProperty(dev->drm.fd, props->props[j]);
+             if (!prop) continue;
+
+             DBG("\tProperty Name: %s", prop->name);
+
+             if (prop->flags & DRM_MODE_PROP_RANGE)
+               {
+                  DBG("\t\tRange Property");
+                  for (k = 0; k < prop->count_values; k++)
+                    DBG("\t\t\t%"PRIu64, prop->values[k]);
+               }
+             if (prop->flags & DRM_MODE_PROP_ENUM)
+               {
+                  DBG("\t\tEnum Property");
+                  for (k = 0; k < prop->count_enums; k++)
+                    DBG("\t\t\t%s=%llu", prop->enums[k].name,
+                        prop->enums[k].value);
+               }
+             if (prop->flags & DRM_MODE_PROP_BITMASK)
+               {
+                  DBG("\t\tBitmask Property");
+                  for (k = 0; k < prop->count_enums; k++)
+                    DBG("\t\t\t%s=0x%llx", prop->enums[k].name,
+                        (1LL << prop->enums[k].value));
+               }
+
+             DBG("\t\tValue: %"PRIu64, props->prop_values[j]);
+
+             drmModeFreeProperty(prop);
+          }
+
+        DBG("\tCurrent Crtc: %d", plane->crtc_id);
+        DBG("\tPossible Crtcs: 0x%08x", plane->possible_crtcs);
+
+        drmModeFreeObjectProperties(props);
+
+free_plane:
+        drmModeFreePlane(plane);
+     }
+
+   drmModeFreePlaneResources(pres);
+}
+
 /* public functions */
 
 /**
@@ -748,13 +850,19 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
    dev->max_width = res->max_width;
    dev->max_height = res->max_height;
 
+   /* DBG("Dev Size"); */
+   /* DBG("\tMin Width: %u", res->min_width); */
+   /* DBG("\tMin Height: %u", res->min_height); */
+   /* DBG("\tMax Width: %u", res->max_width); */
+   /* DBG("\tMax Height: %u", res->max_height); */
+
    for (i = 0; i < res->count_connectors; i++)
      {
         /* get the connector */
         if (!(conn = drmModeGetConnector(dev->drm.fd, res->connectors[i])))
           continue;
 
-        if (conn->connection != DRM_MODE_CONNECTED) goto next;
+        /* if (conn->connection != DRM_MODE_CONNECTED) goto next; */
 
         /* create output for this connector */
         if (!(output =
@@ -769,6 +877,7 @@ next:
      }
 
    /* TODO: Planes */
+   _ecore_drm_output_planes_get(dev);
 
    ret = EINA_TRUE;
    if (eina_list_count(dev->outputs) < 1) 
@@ -1090,4 +1199,95 @@ ecore_drm_output_connector_id_get(Ecore_Drm_Output *output)
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);
 
    return output->conn_id;
+}
+
+EAPI char *
+ecore_drm_output_name_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+
+   return strdup(output->name);
+}
+
+EAPI Eina_Bool
+ecore_drm_output_connected_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+
+   return output->connected;
+}
+
+EAPI unsigned int
+ecore_drm_output_connector_type_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);
+
+   return output->conn_type;
+}
+
+EAPI Eina_Bool
+ecore_drm_output_backlight_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+   return (output->backlight != NULL);
+}
+
+EAPI char *
+ecore_drm_output_edid_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->edid_blob, NULL);
+
+   return strdup(output->edid_blob);
+}
+
+EAPI Eina_List *
+ecore_drm_output_modes_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->modes, NULL);
+
+   return output->modes;
+}
+
+EAPI Ecore_Drm_Output *
+ecore_drm_output_primary_get(Ecore_Drm_Device *dev)
+{
+   Ecore_Drm_Output *ret;
+   const Eina_List *l;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
+
+   EINA_LIST_FOREACH(dev->outputs, l, ret)
+     if (ret->primary) return ret;
+
+   return NULL;
+}
+
+EAPI void
+ecore_drm_output_primary_set(Ecore_Drm_Output *output)
+{
+   const Eina_List *l;
+   Ecore_Drm_Output *out;
+
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   /* unmark all outputs as primary */
+   EINA_LIST_FOREACH(output->dev->outputs, l, out)
+     out->primary = EINA_FALSE;
+
+   /* mark this output as primary */
+   output->primary = EINA_TRUE;
+}
+
+EAPI void
+ecore_drm_output_crtc_size_get(Ecore_Drm_Output *output, int *width, int *height)
+{
+   if (width) *width = 0;
+   if (height) *height = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   if (width) *width = output->crtc->width;
+   if (height) *height = output->crtc->height;
 }
