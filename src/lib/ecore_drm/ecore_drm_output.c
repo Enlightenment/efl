@@ -766,6 +766,7 @@ ecore_drm_outputs_create(Ecore_Drm_Device *dev)
      {
         ret = EINA_FALSE;
         free(dev->crtcs);
+        dev->crtcs = NULL;
      }
 
    /* free resources */
