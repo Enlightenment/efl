@@ -1,5 +1,7 @@
 class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
-                    Elm_Interface_Atspi_Widget_Action, Efl.File)
+                    Elm_Interface_Atspi_Widget_Action, Efl.File,
+                    Evas.Clickable_Interface, Evas.Scrollable_Interface,
+                    Evas.Zoomable_Interface)
 {
    eo_prefix: elm_obj_photocam;
    methods {
@@ -237,22 +239,11 @@ class Elm.Photocam (Elm.Widget, Elm_Interface_Scrollable,
       Efl.File.file.get;
    }
    events {
-      clicked;
       press;
-      longpressed;
-      clicked,double;
       load;
       loaded;
       load,detail;
       loaded,detail;
-      zoom,start;
-      zoom,stop;
-      zoom,change;
-      scroll;
-      scroll,anim,start;
-      scroll,anim,stop;
-      scroll,drag,start;
-      scroll,drag,stop;
       download,start;
       download,progress;
       download,done;
