@@ -675,6 +675,7 @@ class Elm.Web (Elm.Widget)
       url,changed; [[s]]
       focused;
       unfocused;
+      windows,close,request;
    }
 
 }

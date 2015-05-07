@@ -78,7 +78,7 @@ _view_smart_window_close(Ewk_View_Smart_Data *sd)
 
    ELM_WEB_CHECK(obj);
 
-   evas_object_smart_callback_call(obj, "windows,close,request", NULL);
+   eo_do(obj, eo_event_callback_call(ELM_WEB_EVENT_WINDOWS_CLOSE_REQUEST, NULL);
 }
 
 static void
@@ -194,8 +194,8 @@ _view_smart_popup_menu_show(Ewk_View_Smart_Data *sd,
 
    evas_object_data_set(sd->self, "_select_popup", notify);
 
-   evas_object_smart_callback_add
-     (notify, "block,clicked", _popup_dismiss_cb, menu);
+   eo_do(notify, eo_event_callback_add
+     (ELM_NOTIFY_EVENT_BLOCK_CLICKED, _popup_dismiss_cb, menu));
 
    return EINA_TRUE;
 }
@@ -212,19 +212,25 @@ _view_smart_popup_menu_hide(Ewk_View_Smart_Data *sd)
    return EINA_TRUE;
 }
 
-static void
-_fullscreen_accept(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
+static Eina_Bool
+_fullscreen_accept(void *data,
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *ewk = data;
    evas_object_del(evas_object_data_get(ewk, "_fullscreen_permission_popup"));
+
+   return EINA_TRUE;
 }
 
-static void
-_fullscreen_deny(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
+static Eina_Bool
+_fullscreen_deny(void *data,
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *ewk = data;
    ewk_view_fullscreen_exit(ewk);
    evas_object_del(evas_object_data_get(ewk, "_fullscreen_permission_popup"));
+
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -252,12 +258,14 @@ _view_smart_fullscreen_enter(Ewk_View_Smart_Data *sd, Ewk_Security_Origin *origi
    btn = elm_button_add(popup);
    elm_object_text_set(btn, "Accept");
    elm_object_part_content_set(popup, "button1", btn);
-   evas_object_smart_callback_add(btn, "clicked", _fullscreen_accept, sd->self);
+   eo_do(btn, eo_event_callback_add
+     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _fullscreen_accept, sd->self));
 
    btn = elm_button_add(popup);
    elm_object_text_set(btn, "Deny");
    elm_object_part_content_set(popup, "button2", btn);
-   evas_object_smart_callback_add(btn, "clicked", _fullscreen_deny, sd->self);
+   eo_do(btn, eo_event_callback_add
+     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _fullscreen_deny, sd->self));
 
    evas_object_data_set(sd->self, "_fullscreen_permission_popup", popup);
    evas_object_show(popup);
@@ -278,10 +286,9 @@ _view_smart_fullscreen_exit(Ewk_View_Smart_Data *sd)
    return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _bt_close(void *data,
-          Evas_Object *obj,
-          void *event_info EINA_UNUSED)
+      Eo *obj, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Dialog_Data *d = data;
 
@@ -296,6 +303,8 @@ _bt_close(void *data,
 end:
    evas_object_del(d->dialog);
    free(d);
+
+   return EINA_TRUE;
 }
 
 static Dialog_Data *
@@ -311,8 +320,8 @@ _dialog_new(Evas_Object *web, Eina_Bool inwin_mode)
         Evas_Object *bg;
 
         d->dialog = elm_win_add(NULL, "elm-web-popup", ELM_WIN_DIALOG_BASIC);
-        evas_object_smart_callback_add
-          (d->dialog, "delete,request", _bt_close, d);
+        eo_do(d->dialog, eo_event_callback_add
+          (ELM_WIN_EVENT_DELETE_REQUEST, _bt_close, d));
 
         bg = elm_bg_add(d->dialog);
         evas_object_size_hint_weight_set
@@ -361,7 +370,8 @@ _dialog_ok_cancel_buttons_add(Dialog_Data *dialog_data)
    elm_box_pack_end(bx, bt);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_smart_callback_add(bt, "clicked", _bt_close, dialog_data);
+   eo_do(bt, eo_event_callback_add
+     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _bt_close, dialog_data));
    evas_object_show(bt);
 
    dialog_data->bt_ok = bt = elm_button_add(bx);
@@ -369,7 +379,8 @@ _dialog_ok_cancel_buttons_add(Dialog_Data *dialog_data)
    elm_box_pack_end(bx, bt);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_smart_callback_add(bt, "clicked", _bt_close, dialog_data);
+   eo_do(bt, eo_event_callback_add
+     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _bt_close, dialog_data));
    evas_object_show(bt);
 }
 
@@ -417,8 +428,8 @@ _view_smart_run_javascript_alert(Ewk_View_Smart_Data *vsd, const char *message)
         elm_box_pack_end(dialog_data->box, dialog_data->bt_ok);
         evas_object_size_hint_align_set
           (dialog_data->bt_ok, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        evas_object_smart_callback_add
-          (dialog_data->bt_ok, "clicked", _bt_close, dialog_data);
+        eo_do(dialog_data->bt_ok, eo_event_callback_add
+          (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _bt_close, dialog_data));
         evas_object_show(dialog_data->bt_ok);
 
         evas_object_show(dialog);
@@ -569,19 +580,21 @@ _view_add(Evas_Object *parent)
    return view;
 }
 
-static void
+static Eina_Bool
 _view_smart_url_changed_cb(void *data,
-                           Evas_Object *obj EINA_UNUSED,
-                           void *event_info)
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   evas_object_smart_callback_call(data, SIG_URI_CHANGED, event_info);
-   evas_object_smart_callback_call(data, SIG_URL_CHANGED, event_info);
+   eo_do(data, eo_event_callback_call(ELM_WEB_EVENT_URI_CHANGED, event_info));
+   eo_do(data, eo_event_callback_call(ELM_WEB_EVENT_URL_CHANGED, event_info));
+
+   return EINA_TRUE;
 }
 
 static void
 _view_smart_callback_proxy(Evas_Object *view, Evas_Object *parent)
 {
-   evas_object_smart_callback_add(view, SIG_URL_CHANGED, _view_smart_url_changed_cb, parent);
+   eo_do(view, eo_event_callback_add
+     (ELM_WEB_EVENT_URL_CHANGED, _view_smart_url_changed_cb, parent));
 }
 
 static Eina_Bool _elm_need_web = EINA_FALSE;
