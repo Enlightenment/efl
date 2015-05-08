@@ -271,12 +271,20 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
         if (scope == EOLIAN_SCOPE_PRIVATE)
           continue;
 
+        if (eolian_event_is_beta(event))
+          {
+             eina_strbuf_append_printf(str_ev, "\n#ifdef %s_BETA\n", class_env.upper_classname);
+             eina_strbuf_append_printf(str_extrn_ev, "#ifdef %s_BETA\n", class_env.upper_classname);
+          }
         if (scope == EOLIAN_SCOPE_PROTECTED)
           {
-             eina_strbuf_append_printf(str_ev, "\n#ifdef %s_PROTECTED\n", class_env.upper_classname);
+             if (!eolian_event_is_beta(event))
+               eina_strbuf_append_char(str_ev, '\n');
+             eina_strbuf_append_printf(str_ev, "#ifdef %s_PROTECTED\n", class_env.upper_classname);
              eina_strbuf_append_printf(str_extrn_ev, "#ifdef %s_PROTECTED\n", class_env.upper_classname);
           }
-        else
+
+        if (!eolian_event_is_beta(event) && scope == EOLIAN_SCOPE_PUBLIC)
           eina_strbuf_append_char(str_ev, '\n');
 
         if (!evdesc) evdesc = "No description";
@@ -291,6 +299,11 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
         eina_stringshare_del(evname);
 
         if (scope == EOLIAN_SCOPE_PROTECTED)
+          {
+             eina_strbuf_append(str_ev, "#endif\n");
+             eina_strbuf_append(str_extrn_ev, "#endif\n");
+          }
+        if (eolian_event_is_beta(event))
           {
              eina_strbuf_append(str_ev, "#endif\n");
              eina_strbuf_append(str_extrn_ev, "#endif\n");
