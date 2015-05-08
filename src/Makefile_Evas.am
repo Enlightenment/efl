@@ -376,7 +376,7 @@ EXTRA_DIST += \
 static_libs/libunibreak/LICENCE \
 static_libs/libunibreak/AUTHORS \
 static_libs/libunibreak/NEWS \
-static_libs/libunibreak/README \
+static_libs/libunibreak/README.md \
 static_libs/libunibreak/ChangeLog
 
 # Engines
