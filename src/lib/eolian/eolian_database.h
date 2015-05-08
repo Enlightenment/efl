@@ -187,6 +187,7 @@ struct _Eolian_Event
    Eolian_Type *type;
    Eolian_Class *klass;
    int scope;
+   Eina_Bool is_beta :1;
 };
 
 struct _Eolian_Struct_Type_Field

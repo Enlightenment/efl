@@ -1617,6 +1617,11 @@ parse_event(Eo_Lexer *ls)
         ev->scope = EOLIAN_SCOPE_PROTECTED;
         eo_lexer_get(ls);
      }
+   if (ls->t.kw == KW_at_beta)
+     {
+        ev->is_beta = EINA_TRUE;
+        eo_lexer_get(ls);
+     }
    if (ls->t.token == ':')
      {
         eo_lexer_get(ls);
