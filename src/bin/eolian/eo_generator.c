@@ -105,6 +105,8 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
         eina_iterator_free(itr);
      }
    Eina_Strbuf *str_func = eina_strbuf_new();
+   if (eolian_function_is_beta(func))
+      eina_strbuf_append_printf(str_func, "#ifdef %s_BETA\n");
    if (scope == EOLIAN_SCOPE_PROTECTED)
       eina_strbuf_append_printf(str_func, "#ifdef %s_PROTECTED\n", class_env.upper_classname);
 
@@ -112,6 +114,8 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
    eina_strbuf_append_printf(str_func, "EOAPI @#rettype %s(@#full_params);\n", func_env.lower_eo_func);
 
    if (scope == EOLIAN_SCOPE_PROTECTED)
+      eina_strbuf_append_printf(str_func, "#endif\n");
+   if (eolian_function_is_beta(func))
       eina_strbuf_append_printf(str_func, "#endif\n");
    eina_strbuf_append_printf(str_func, "\n");
 
