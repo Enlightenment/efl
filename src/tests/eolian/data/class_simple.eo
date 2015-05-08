@@ -4,7 +4,7 @@ class Class_Simple {
    eo_prefix: evas_obj_simple;
    data: Evas_Simple_Data;
    methods {
-      @property a {
+      @property a @beta {
          /*@ Common desc for a */
          set {
             /*@
@@ -22,7 +22,7 @@ class Class_Simple {
            eo: null;
         }
       }
-      foo {
+      foo @beta {
          /*@ comment foo */
          params {
             @in int a; /*@ a */

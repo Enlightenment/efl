@@ -565,6 +565,7 @@ START_TEST(eolian_simple_parsing)
    /* Property */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "a", EOLIAN_PROPERTY)));
    fail_if(strcmp(eolian_function_name_get(fid), "a"));
+   fail_if(!eolian_function_is_beta(fid));
    string = eolian_function_description_get(fid, EOLIAN_PROPERTY);
    fail_if(!string);
    fail_if(strcmp(string, "Common desc for a"));
@@ -611,9 +612,11 @@ START_TEST(eolian_simple_parsing)
    fail_if(eolian_function_is_legacy_only(fid, EOLIAN_PROP_GET));
    fail_if(!eolian_function_is_legacy_only(fid, EOLIAN_PROP_SET));
    fail_if(!eolian_function_is_c_only(fid));
+   fail_if(eolian_function_is_beta(fid));
 
    /* Method */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
+   fail_if(!eolian_function_is_beta(fid));
    string = eolian_function_description_get(fid, EOLIAN_METHOD);
    fail_if(!string);
    fail_if(strcmp(string, "comment foo"));
@@ -663,6 +666,7 @@ START_TEST(eolian_simple_parsing)
    fail_if(!(fid = eolian_class_function_get_by_name(class, "bar", EOLIAN_METHOD)));
    fail_if(!eolian_function_is_legacy_only(fid, EOLIAN_METHOD));
    fail_if(!eolian_function_is_c_only(fid));
+   fail_if(eolian_function_is_beta(fid));
 
    eolian_shutdown();
 }
