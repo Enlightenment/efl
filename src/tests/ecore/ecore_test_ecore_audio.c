@@ -515,8 +515,6 @@ START_TEST(ecore_test_ecore_audio_obj_in)
   eo_do(in, length = ecore_audio_obj_in_length_get());
   fail_if(length != 0);
 
-  eo_do(in, ecore_audio_obj_in_length_set(10.0));
-
   eo_do(in, length = ecore_audio_obj_in_remaining_get());
   fail_if(length != -1);
 
