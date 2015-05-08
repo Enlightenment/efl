@@ -1327,6 +1327,16 @@ EAPI Eina_Stringshare *eolian_event_description_get(const Eolian_Event *event);
 EAPI Eolian_Object_Scope eolian_event_scope_get(const Eolian_Event *event);
 
 /*
+ * @brief Get whether an event is beta.
+ *
+ * @param[in] event the event handle
+ * @return EINA_TRUE and EINA_FALSE respectively
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_event_is_beta(const Eolian_Event *event);
+
+/*
  * @brief Returns the C name of an event
  *
  * @param[in] event the event handle
