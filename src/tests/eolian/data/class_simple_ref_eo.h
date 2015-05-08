@@ -20,6 +20,7 @@ typedef Eo Class_Simple;
 
 EAPI const Eo_Class *class_simple_class_get(void) EINA_CONST;
 
+#ifdef CLASS_SIMPLE_BETA
 /**
  *
  * Common desc for a
@@ -29,7 +30,9 @@ EAPI const Eo_Class *class_simple_class_get(void) EINA_CONST;
  *
  */
 EOAPI Eina_Bool  evas_obj_simple_a_set(int value);
+#endif
 
+#ifdef CLASS_SIMPLE_BETA
 /**
  *
  * Common desc for a
@@ -38,6 +41,7 @@ EOAPI Eina_Bool  evas_obj_simple_a_set(int value);
  *
  */
 EOAPI int  evas_obj_simple_a_get(void);
+#endif
 
 /**
  *
@@ -47,6 +51,7 @@ EOAPI int  evas_obj_simple_a_get(void);
  */
 EOAPI void  evas_obj_simple_b_set(void);
 
+#ifdef CLASS_SIMPLE_BETA
 /**
  *
  * comment foo
@@ -58,6 +63,7 @@ EOAPI void  evas_obj_simple_b_set(void);
  *
  */
 EOAPI char * evas_obj_simple_foo(int a, char *b, double *c);
+#endif
 
 /**
  *
