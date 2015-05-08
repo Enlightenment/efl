@@ -245,10 +245,6 @@ if HAVE_ECORE_AUDIO
 tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_audio.c
 endif
 
-if HAVE_ECORE_WAYLAND
-tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_wayland.c
-endif
-
 if HAVE_ECORE_DRM
 tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_drm.c
 endif
