@@ -3,16 +3,17 @@
 
 #ifdef EINA_HAVE_DEBUG
 
+// access external thread data store in eina_debug_thread.c
 extern pthread_t     _eina_debug_thread_mainloop;
 extern pthread_t    *_eina_debug_thread_active;
 extern int           _eina_debug_thread_active_num;
-
 
 // yes - a global debug spinlock. i expect contention to be low for now, and
 // when needed we can split this up into mroe locks to reduce contention when
 // and if that day comes
 Eina_Spinlock _eina_debug_lock;
 
+// only init once
 static Eina_Bool _inited = EINA_FALSE;
 
 Eina_Bool
@@ -20,12 +21,16 @@ eina_debug_init(void)
 {
    pthread_t self;
 
+   // if already inbitted simply release our lock that we may have locked on
+   // shutdown if we are re-initted again in the same process
    if (_inited)
      {
         eina_spinlock_release(&_eina_debug_thread_lock);
         return EINA_TRUE;
      }
+   // mark as initted
    _inited = EINA_TRUE;
+   // set up thread things
    eina_spinlock_new(&_eina_debug_lock);
    eina_spinlock_new(&_eina_debug_thread_lock);
    eina_semaphore_new(&_eina_debug_monitor_return_sem, 0);
@@ -35,12 +40,19 @@ eina_debug_init(void)
    // if we are setuid - don't debug!
    if (getuid() != geteuid()) return EINA_TRUE;
 #endif
+   // if someone uses the EFL_NODEBUG env var - do not do debugging. handy
+   // for when this debug code is buggy itself
    if (getenv("EFL_NODEBUG")) return EINA_TRUE;
+   // connect to our debug daemon
    _eina_debug_monitor_service_connect();
+   // if we connected - set up the debug monitor properly
    if (_eina_debug_monitor_service_fd >= 0)
      {
+        // say hello to the debug daemon
         _eina_debug_monitor_service_greet();
+        // set up our profile signal handler
         _eina_debug_monitor_signal_init();
+        // start the monitor thread
         _eina_debug_monitor_thread_start();
      }
    return EINA_TRUE;
