@@ -226,6 +226,10 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
    // FIXME: for now the walking Evas_VG_Node tree doesn't trigger any damage
    // So just forcing it here if necessary
    rnd = eo_data_scope_get(vd->root, EFL_VG_BASE_CLASS);
+
+   //FIXME find the reason for NULL Base Class in some case?
+   if (!rnd) return;
+
    if (rnd->changed)
      {
         rnd->changed = EINA_FALSE;
