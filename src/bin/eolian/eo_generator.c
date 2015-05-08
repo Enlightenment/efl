@@ -106,7 +106,7 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
      }
    Eina_Strbuf *str_func = eina_strbuf_new();
    if (eolian_function_is_beta(func))
-      eina_strbuf_append_printf(str_func, "#ifdef %s_BETA\n");
+      eina_strbuf_append_printf(str_func, "#ifdef %s_BETA\n", class_env.upper_classname);
    if (scope == EOLIAN_SCOPE_PROTECTED)
       eina_strbuf_append_printf(str_func, "#ifdef %s_PROTECTED\n", class_env.upper_classname);
 
