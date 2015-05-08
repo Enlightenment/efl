@@ -20,6 +20,7 @@ static int                *_bt_buf_len;
 static struct timespec    *_bt_ts;
 static int                *_bt_cpu;
 
+// a backtracer that uses libunwind to do the job
 static inline int
 _eina_debug_unwind_bt(void **bt, int max)
 {
@@ -28,16 +29,24 @@ _eina_debug_unwind_bt(void **bt, int max)
    unw_word_t p;
    int total;
 
+   // create a context for unwinding
    unw_getcontext(&uc);
+   // begin our work
    unw_init_local(&cursor, &uc);
+   // walk up each stack frame until there is no more, storing it
    for (total = 0; (unw_step(&cursor) > 0) && (total < max); total++)
      {
         unw_get_reg(&cursor, UNW_REG_IP, &p);
         bt[total] = (void *)p;
      }
+   // return our total backtrace stack size
    return total;
 }
 
+// this signal handler is called inside each and every thread when the
+// thread gets a signal via pthread_kill(). this causes the thread to
+// stop here inside this handler and "do something" then when this returns
+// resume whatever it was doing like any signal handler
 static void
 _eina_debug_signal(int sig EINA_UNUSED,
                    siginfo_t *si EINA_UNUSED,
@@ -46,16 +55,9 @@ _eina_debug_signal(int sig EINA_UNUSED,
    int i, slot = 0;
    pthread_t self = pthread_self();
    clockid_t cid;
-   // XXX: use pthread_getcpuclockid() to get cpu time used since last poll
-   // 
-   // clockid_t cid;
-   // struct timespec ts ts;
-   // pthread_getcpuclockid(pthread_self(), &cid);
-   // clock_gettime(cid, &ts);
-   // printf("%4ld.%03ld\n", ts.tv_sec, ts.tv_nsec / 1000000);
-   //
-   // also get current cpu with:
-   // getcpu()
+
+   // find which slot in the array of threads we have so we store info
+   // in the correct slot for us
    if (self != _eina_debug_thread_mainloop)
      {
         for (i = 0; i < _eina_debug_thread_active_num; i++)
@@ -66,23 +68,31 @@ _eina_debug_signal(int sig EINA_UNUSED,
                   goto found;
                }
           }
+        // we couldn't find out thread reference! help!
         fprintf(stderr, "EINA DEBUG ERROR: can't find thread slot!\n");
         eina_semaphore_release(&_eina_debug_monitor_return_sem, 1);
         return;
      }
 found:
-//   printf("dump into slot %i for %p\n", slot, (void *)self);
+   // store thread info like what cpu core we are on now (not reliable
+   // but hey - better than nothing), the amount of cpu time total
+   // we have consumed (it's cumulative so subtracing deltas can give
+   // you an average amount of cpu time consumed between now and the
+   // previous time we looked) and also a full backtrace
    _bt_cpu[slot] = sched_getcpu();
    pthread_getcpuclockid(self, &cid);
    clock_gettime(cid, &(_bt_ts[slot]));
-//   _bt_buf_len[slot] = backtrace(_bt_buf[slot], EINA_MAX_BT);
    _bt_buf_len[slot] = _eina_debug_unwind_bt(_bt_buf[slot], EINA_MAX_BT);
+   // now wake up the monitor to let them know we are done collecting our
+   // backtrace info
    eina_semaphore_release(&_eina_debug_monitor_return_sem, 1);
 }
 
+// we shall sue SIGPROF as out signal for pausing threads and having them
+// dump a backtrace for polling based profiling
 #define SIG SIGPROF
-//#define SIG ((SIGRTMIN + SIGRTMAX) / 2)
 
+// a quick and dirty local time point getter func - not portable
 static inline double
 get_time(void)
 {
@@ -110,19 +120,26 @@ _eina_debug_monitor(void *data EINA_UNUSED)
    double t0, t;
    fd_set rfds, wfds, exfds;
    struct timeval tv = { 0 };
+   // some state for debugging
    unsigned int poll_time = 1000;
    Eina_Bool poll_on = EINA_FALSE;
 
    t0 = get_time();
+   // sit forever processing commands or timeouts in the debug monitor
+   // thread - this is separate to the rest of the app so it shouldn't
+   // impact the application specifically
    for (;;)
      {
         int i;
 
+        // set up data for select like read fd's
         FD_ZERO(&rfds);
         FD_ZERO(&wfds);
         FD_ZERO(&exfds);
+        // the only fd we care about - out debug daemon connection
         FD_SET(_eina_debug_monitor_service_fd, &rfds);
         max_fd = _eina_debug_monitor_service_fd;
+        // if we are in a polling mode then set up a timeout and wait for it
         if (poll_on)
           {
              if ((tv.tv_sec == 0) && (tv.tv_usec == 0))
@@ -132,59 +149,42 @@ _eina_debug_monitor(void *data EINA_UNUSED)
                }
              ret = select(max_fd + 1, &rfds, &wfds, &exfds, &tv);
           }
+        // we have no timeout - so wait forever for a message from debugd
         else ret = select(max_fd + 1, &rfds, &wfds, &exfds, NULL);
+        // if the fd for debug daemon says it's alive, process it
         if ((ret == 1) && (FD_ISSET(_eina_debug_monitor_service_fd, &rfds)))
           {
-             unsigned int size;
-             int rret;
+             // collect a single op on the debug daemon control fd
+             char op[5];
+             int size;
+             unsigned char *data;
 
-             // XXX: handle protocol
-             rret = read(_eina_debug_monitor_service_fd, &size, 4);
-             if ((rret == 4) && (size > 0) && (size < 63356))
+             // get the opcode and stor in op - guarantee its 0 byte terminated
+             data = NULL;
+             size = _eina_debug_monitor_service_read(op, &data);
+             // if not negative - we have a real message
+             if (size >= 0)
                {
-                  char *buf = alloca(size);
-
-                  rret = read(_eina_debug_monitor_service_fd, buf, size);
-                  if ((rret == (int)size) && (size >= 4))
+                  // profiling on with poll time gap as uint payload
+                  if (!strcmp(op, "PLON"))
                     {
-                       if (!strncmp(buf, "PLON", 4))
-                         {
-                            if (size >= 8) memcpy(&poll_time, buf + 4, 4);
-                            poll_on = EINA_TRUE;
-                         }
-                       else if (!strncmp(buf, "PLOF", 4))
-                         {
-                            poll_time = 1000;
-                            poll_on = EINA_FALSE;
-                         }
-                       else
-                         fprintf(stderr, "EINA DEBUG ERROR: Uunknown command\n");
+                       if (size >= 4) memcpy(&poll_time, data, 4);
+                       poll_on = EINA_TRUE;
                     }
-                  else
+                  // profiling off with no payload
+                  else if (!strcmp(op, "PLOF"))
                     {
-                       if (rret <= 0)
-                         {
-                            fprintf(stderr, "EINA DEBUG ERROR: Lost debug daemon!\n");
-                            goto fail;
-                         }
-                       else
-                         {
-                         }
+                       poll_time = 1000;
+                       poll_on = EINA_FALSE;
                     }
+                  // something we don't understand
+                  else fprintf(stderr,
+                               "EINA DEBUG ERROR: "
+                               "Uunknown command %s\n", op);
+                  free(data);
                }
-             else
-               {
-                  if (rret <= 0)
-                    {
-                       fprintf(stderr, "EINA_DEBUG ERROR: Lost debug daemon!\n");
-                       goto fail;
-                    }
-                  else
-                    {
-                       fprintf(stderr, "EINA DEBUG ERROR: Invalid message size %i\n", size);
-                       goto fail;
-                    }
-               }
+             // major failure on debug daemon control fd - get out of here
+             else goto fail;
           }
 
         if (poll_on)
@@ -195,15 +195,15 @@ _eina_debug_monitor(void *data EINA_UNUSED)
              _eina_debug_chunk_tmp_reset();
              // get an array of pointers for the backtrace array for main + th
              _bt_buf = _eina_debug_chunk_tmp_push
-             ((1 + _eina_debug_thread_active_num) * sizeof(void *));
+               ((1 + _eina_debug_thread_active_num) * sizeof(void *));
              if (!_bt_buf) goto err;
              // get an array of pointers for the timespec array for mainloop + th
              _bt_ts = _eina_debug_chunk_tmp_push
-             ((1 + _eina_debug_thread_active_num) * sizeof(struct timespec));
+               ((1 + _eina_debug_thread_active_num) * sizeof(struct timespec));
              if (!_bt_ts) goto err;
              // get an array of pointers for the cpuid array for mainloop + th
              _bt_cpu = _eina_debug_chunk_tmp_push
-             ((1 + _eina_debug_thread_active_num) * sizeof(int));
+               ((1 + _eina_debug_thread_active_num) * sizeof(int));
              if (!_bt_cpu) goto err;
              // now get an array of void pts for mainloop bt
              _bt_buf[0] = _eina_debug_chunk_tmp_push(EINA_MAX_BT * sizeof(void *));
@@ -216,24 +216,26 @@ _eina_debug_monitor(void *data EINA_UNUSED)
                }
              // get an array of ints to stor the bt len for mainloop + threads
              _bt_buf_len = _eina_debug_chunk_tmp_push
-             ((1 + _eina_debug_thread_active_num) * sizeof(int));
+               ((1 + _eina_debug_thread_active_num) * sizeof(int));
              // collect bt from the mainloop - always there
              _eina_debug_collect_bt(_eina_debug_thread_mainloop);
              // now collect per thread
              for (i = 0; i < _eina_debug_thread_active_num; i++)
-             _eina_debug_collect_bt(_eina_debug_thread_active[i]);
+               _eina_debug_collect_bt(_eina_debug_thread_active[i]);
              // we're done probing. now collec all the "i'm done" msgs on the
              // semaphore for every thread + mainloop
              for (i = 0; i < (_eina_debug_thread_active_num + 1); i++)
-             eina_semaphore_lock(&_eina_debug_monitor_return_sem);
+               eina_semaphore_lock(&_eina_debug_monitor_return_sem);
              // we now have gotten all the data from all threadd + mainloop.
              // we can process it now as we see fit, so release thread lock
+//// XXX: some debug so we can see the bt's we collect - will go
 //             for (i = 0; i < (_eina_debug_thread_active_num + 1); i++)
 //               {
 //                  _eina_debug_dump_fhandle_bt(stderr, _bt_buf[i], _bt_buf_len[i]);
 //               }
 err:
              eina_spinlock_release(&_eina_debug_thread_lock);
+//// XXX: some debug just to see how well we perform - will go
              bts++;
              if (bts >= 10000)
                {
@@ -245,6 +247,7 @@ err:
           }
      }
 fail:
+   // we failed - get out of here and disconnect to debugd
    close(_eina_debug_monitor_service_fd);
    _eina_debug_monitor_service_fd = -1;
    return NULL;
@@ -256,9 +259,9 @@ _eina_debug_monitor_thread_start(void)
 {
    int err;
 
+   // if it's already running - we're good.
    if (_monitor_thread_runs) return;
-   // XXX: set up socket conn to debug daemon and then have thread deal with
-   // it from there on
+   // create debug monitor thread
    err = pthread_create(&_monitor_thread, NULL, _eina_debug_monitor, NULL);
    if (err != 0)
      {
@@ -273,6 +276,8 @@ _eina_debug_monitor_signal_init(void)
 {
    struct sigaction sa;
 
+   // set up signal handler for our profiling signal - eevery thread should
+   // obey this (this is the case on linux - other OSs may vary)
    sa.sa_sigaction = _eina_debug_signal;
    sa.sa_flags = SA_RESTART | SA_SIGINFO;
    sigemptyset(&sa.sa_mask);
@@ -283,6 +288,7 @@ _eina_debug_monitor_signal_init(void)
 static const char *
 _socket_home_get()
 {
+   // get possible debug daemon socket directory base
    const char *dir = getenv("XDG_RUNTIME_DIR");
    if (!dir) dir = getenv("HOME");
    if (!dir) dir = getenv("TMPDIR");

@@ -71,7 +71,10 @@ void _eina_debug_monitor_thread_start(void);
 void _eina_debug_monitor_signal_init(void);
 void _eina_debug_monitor_service_connect(void);
 
+int  _eina_debug_monitor_service_send(int fd, const char op[4],
+                                      unsigned char *data, int size);
 void _eina_debug_monitor_service_greet(void);
+int  _eina_debug_monitor_service_read(char *op, unsigned char **data);
 
 #  define EINA_BT(file) \
    do { \
