@@ -49,23 +49,23 @@ _server_add(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server
         else if ((!strcmp(my_argv[i], "pon")) &&
                  (i < (my_argc - 2)))
           {
-             unsigned char buf[8];
+             unsigned char tmp[8];
              int pid = atoi(my_argv[i + 1]);
              unsigned int freq = atoi(my_argv[i + 2]);
              i += 2;
-             store_val(buf, 0, pid);
-             store_val(buf, 4, freq);
-             send_svr(svr, "PLON", buf, sizeof(buf));
+             store_val(tmp, 0, pid);
+             store_val(tmp, 4, freq);
+             send_svr(svr, "PLON", tmp, sizeof(tmp));
              ecore_main_loop_quit();
           }
         else if ((!strcmp(my_argv[i], "poff")) &&
                  (i < (my_argc - 1)))
           {
-             unsigned char buf[4];
+             unsigned char tmp[4];
              int pid = atoi(my_argv[i + 1]);
              i++;
-             store_val(buf, 0, pid);
-             send_svr(svr, "PLOF", buf, sizeof(buf));
+             store_val(tmp, 0, pid);
+             send_svr(svr, "PLOF", tmp, sizeof(tmp));
              ecore_main_loop_quit();
           }
      }
