@@ -131,7 +131,7 @@ START_TEST(ecore_test_ecore_file_operations)
    const char *src_dir, *src_file, *dest_file;
    const char *not_exist_file;
    const char *tmpdir = NULL;
-   char *dup_dir, *path;
+   char *dup_dir;
    char *random_text = "This is random test String";
    char *escaped_text = "This\\ is\\ random\\ test\\ String";
    char *exe_cmd = "test.sh --opt1=a --opt2=b";
@@ -141,7 +141,7 @@ START_TEST(ecore_test_ecore_file_operations)
    int fd;
    int i;
    Eina_Bool res;
-   Eina_List *list, *l;
+   Eina_List *list;
 
 #ifndef HAVE_EVIL
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
@@ -262,42 +262,6 @@ START_TEST(ecore_test_ecore_file_operations)
    dest_file = basename(dup_dir);
    dup_dir = strdup(src_file);
 
-   src_dir = getenv("PATH");
-   fail_if(!src_dir);
-   path = malloc(strlen(src_dir) + strlen(dup_dir) + 1);
-   strcat(path, src_dir);
-   strcat(path, ":");
-   strcat(path, dirname(dup_dir));
-   ret = setenv("PATH", path, 1);
-   fail_if(ret != 0);
-   free(dup_dir);
-   free(path);
-   ret = ecore_file_shutdown();
-   fail_if(ret != 0);
-   ret = ecore_file_init();
-   fail_if(ret != 1);
-
-   res = ecore_file_app_installed(dest_file);
-   fail_if(res != EINA_TRUE);
-   res = ecore_file_app_installed(src_file);
-   fail_if(res != EINA_TRUE);
-   list = NULL;
-   list = ecore_file_app_list();
-   fd = 0;
-   EINA_LIST_FOREACH(list, l, path)
-     {
-        if (strcmp(path, src_file) == 0)
-          {
-             fd = 1;
-             break;
-          }
-     }
-   fail_if(fd == 0);
-   EINA_LIST_FREE(list, dup_dir)
-     free(dup_dir);
-   ret = setenv("PATH", src_dir, 1);
-   fail_if(ret != 0);
-
    src_dir = get_tmp_dir();
    fail_if(!src_dir);
    strcpy(dir, src_dir);
@@ -387,6 +351,63 @@ START_TEST(ecore_test_ecore_file_operations)
    ret = ecore_file_shutdown();
    fail_if(ret != 0);
 
+}
+END_TEST
+
+START_TEST(ecore_test_ecore_file_path)
+{
+   const char *src_dir, *src_file, *dest_file;
+   char *dup_dir, *path;
+   unsigned int ret;
+   int fd;
+   Eina_Bool res;
+   Eina_List *list, *l;
+
+   src_file = get_tmp_file();
+   fail_if(!src_file);
+   fail_if(ecore_file_remove(src_file) != EINA_TRUE);
+   fd = open(src_file, O_RDWR|O_CREAT, 0700);
+   fail_if(fd < 0);
+   fail_if(close(fd) != 0);
+   fail_if(ecore_file_can_exec(src_file) != EINA_TRUE);
+   dup_dir = strdup(src_file);
+   fail_if(!dup_dir);
+   dest_file = basename(dup_dir);
+   dup_dir = strdup(src_file);
+
+   src_dir = getenv("PATH");
+   fail_if(!src_dir);
+   path = malloc(strlen(src_dir) + strlen(dup_dir) + 1);
+   strcat(path, src_dir);
+   strcat(path, ":");
+   strcat(path, dirname(dup_dir));
+   ret = setenv("PATH", path, 1);
+   fail_if(ret != 0);
+   free(dup_dir);
+   free(path);
+
+   ret = ecore_file_init();
+
+   res = ecore_file_app_installed(dest_file);
+   fail_if(res != EINA_TRUE);
+   res = ecore_file_app_installed(src_file);
+   fail_if(res != EINA_TRUE);
+   list = NULL;
+   list = ecore_file_app_list();
+   fd = 0;
+   EINA_LIST_FOREACH(list, l, path)
+     {
+        if (strcmp(path, src_file) == 0)
+          {
+             fd = 1;
+             break;
+          }
+     }
+   fail_if(fd == 0);
+   EINA_LIST_FREE(list, dup_dir)
+     free(dup_dir);
+   ret = setenv("PATH", src_dir, 1);
+   fail_if(ret != 0);
 }
 END_TEST
 
@@ -516,4 +537,5 @@ void ecore_test_ecore_file(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_file_operations);
    tcase_add_test(tc, ecore_test_ecore_file_monitor);
    tcase_add_test(tc, ecore_test_ecore_file_download);
+   tcase_add_test(tc, ecore_test_ecore_file_path);
 }
