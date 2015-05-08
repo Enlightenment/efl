@@ -7,9 +7,7 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
          set {
             /*@
              Sets the transformation matrix to be used for this node object.
-             
              @note Pass @c NULL to cancel the applied transformation.
-  
              @since 1.14
             */
          }
