@@ -132,7 +132,7 @@ DIST_SUBDIRS += $(EXAMPLES_SUBDIRS)
 
 if EFL_ENABLE_TESTS
 check-build:
-	make $(check_PROGRAMS)
+	@$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 endif
 
 examples: all-am
