@@ -5,129 +5,85 @@ typedef struct _Client Client;
 struct _Client
 {
    Ecore_Con_Client *client;
-   int version;
-   pid_t pid;
-   unsigned char *buf;
-   unsigned int   buf_size;
+   unsigned char    *buf;
+   unsigned int      buf_size;
+
+   int               version;
+   pid_t             pid;
 };
 
 static Ecore_Con_Server *svr = NULL;
 static Eina_List *clients = NULL;
 
-static void
-_proto(Client *c, unsigned char *d, unsigned int size)
+static Client *
+_client_pid_find(int pid)
 {
-   if (size >= 4)
+   Client *c;
+   Eina_List *l;
+
+   if (pid <= 0) return NULL;
+   EINA_LIST_FOREACH(clients, l, c)
      {
-        char *cmd = (char *)d;
+        if (c->pid == pid) return c;
+     }
+   return NULL;
+}
 
-        if (!strncmp(cmd, "HELO", 4))
+static void
+_do(Client *c, char *op, unsigned char *d, int size)
+{
+   Client *c2;
+   Eina_List *l;
+
+   if ((!strcmp(op, "HELO")) && (size >= 8))
+     {
+        int version;
+        int pid;
+
+        fetch_val(version, d, 0);
+        fetch_val(pid, d, 4);
+        c->version = version;
+        c->pid = pid;
+     }
+   else if (!strcmp(op, "LIST"))
+     {
+        int n = eina_list_count(clients);
+        unsigned int *pids = malloc(n * sizeof(int));
+        if (pids)
           {
-             int version;
-             int pid;
+             int i = 0;
 
-             memcpy(&version, d + 4, 4);
-             memcpy(&pid, d + 8, 4);
-             c->version = version;
-             c->pid = pid;
-          }
-        else if (!strncmp(cmd, "LIST", 4))
-          {
-             int n = eina_list_count(clients), i;
-             unsigned int *pids, size2;
-             Client *c2;
-             Eina_List *l;
-             char *head = "CLST";
-
-             pids = malloc(n * sizeof(int));
-             i = 0;
-             size2 = 4 + (n * sizeof(int));
              EINA_LIST_FOREACH(clients, l, c2)
                {
                   pids[i] = c2->pid;
                   i++;
                }
-             ecore_con_client_send(c->client, &size2, 4);
-             ecore_con_client_send(c->client, head, 4);
-             ecore_con_client_send(c->client, pids, n * sizeof(int));
+             send_cli(c->client, "CLST", pids, n * sizeof(int));
              free(pids);
           }
-        else if (!strncmp(cmd, "PLON", 4))
+     }
+   else if ((!strcmp(op, "PLON")) && (size >= 8))
+     {
+        int pid;
+        unsigned int freq = 1000;
+        fetch_val(pid, d, 0);
+        fetch_val(freq, d, 4);
+        if ((c2 = _client_pid_find(pid)))
           {
-             int pid;
-             unsigned int freq = 1000;
-             Client *c2;
-             Eina_List *l;
-
-             memcpy(&pid, d + 4, 4);
-             memcpy(&freq, d + 8, 4);
-             if (pid > 0)
-               {
-                  EINA_LIST_FOREACH(clients, l, c2)
-                    {
-                       if (c2->pid == pid)
-                         {
-                            unsigned int size2 = 8;
-
-                            ecore_con_client_send(c2->client, &size2, 4);
-                            ecore_con_client_send(c2->client, d, 4);
-                            ecore_con_client_send(c2->client, &freq, 4);
-                            break;
-                         }
-                    }
-               }
-          }
-        else if (!strncmp(cmd, "PLOF", 4))
-          {
-             int pid;
-             Client *c2;
-             Eina_List *l;
-
-             memcpy(&pid, d + 4, 4);
-             if (pid > 0)
-               {
-                  EINA_LIST_FOREACH(clients, l, c2)
-                    {
-                       if (c2->pid == pid)
-                         {
-                            unsigned int size2 = 4;
-
-                            ecore_con_client_send(c2->client, &size2, 4);
-                            ecore_con_client_send(c2->client, d, 4);
-                            break;
-                         }
-                    }
-               }
+             unsigned char buf[4];
+             store_val(buf, 0, freq);
+             send_cli(c2->client, "PLON", buf, sizeof(buf));
           }
      }
-}
-
-static Eina_Bool
-_client_proto(Client *c)
-{
-   unsigned int size, newsize;
-   unsigned char *b;
-   if (!c->buf) return EINA_FALSE;
-   if (c->buf_size < 4) return EINA_FALSE;
-   memcpy(&size, c->buf, 4);
-   if (c->buf_size < (size + 4)) return EINA_FALSE;
-   _proto(c, c->buf + 4, size);
-   newsize = c->buf_size - (size + 4);
-   if (c->buf_size == newsize)
+   else if (!strcmp(op, "PLOF"))
      {
-        free(c->buf);
-        c->buf = NULL;
-        c->buf_size = 0;
+        int pid;
+        fetch_val(pid, d, 0);
+        if ((c2 = _client_pid_find(pid)))
+          {
+             send_cli(c2->client, "PLOF", NULL, 0);
+          }
      }
-   else
-     {
-        b = malloc(newsize);
-        memcpy(b, c->buf + size + 4, newsize);
-        free(c->buf);
-        c->buf = b;
-        c->buf_size = newsize;
-     }
-   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -161,26 +117,17 @@ _client_data(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Clien
    Client *c = ecore_con_client_data_get(ev->client);
    if (c)
      {
-        if (!c->buf)
+        char op[5];
+        unsigned char *d = NULL;
+        int size;
+
+        _protocol_collect(&(c->buf), &(c->buf_size), ev->data, ev->size);
+        while ((size = _proto_read(&(c->buf), &(c->buf_size), op, &d)) >= 0)
           {
-             c->buf = malloc(ev->size);
-             if (c->buf)
-               {
-                  c->buf_size = ev->size;
-                  memcpy(c->buf, ev->data, ev->size);
-               }
+             _do(c, op, d, size);
+             free(d);
+             d = NULL;
           }
-        else
-          {
-             unsigned char *b = realloc(c->buf, c->buf_size + ev->size);
-             if (b)
-               {
-                  c->buf = b;
-                  memcpy(c->buf + c->buf_size, ev->data, ev->size);
-                  c->buf_size += ev->size;
-               }
-          }
-        while (_client_proto(c));
      }
    return ECORE_CALLBACK_RENEW;
 }
