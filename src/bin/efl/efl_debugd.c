@@ -1,10 +1,4 @@
-#include <Eina.h>
-#include <Ecore.h>
-#include <Ecore_Con.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
+#include "efl_debug_common.h"
 
 typedef struct _Client Client;
 
