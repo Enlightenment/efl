@@ -296,6 +296,7 @@ _socket_home_get()
    return dir;
 }
 
+// connect to efl_debugd
 void
 _eina_debug_monitor_service_connect(void)
 {
@@ -303,24 +304,37 @@ _eina_debug_monitor_service_connect(void)
    int fd, socket_unix_len, curstate = 0;
    struct sockaddr_un socket_unix;
 
+   // try this socket file - it will likely be:
+   //   ~/.ecore/efl_debug/0
+   // or maybe
+   //   /var/run/UID/.ecore/efl_debug/0
+   // either way a 4k buffer should be ebough ( if it's not we're on an
+   // insane system)
    snprintf(buf, sizeof(buf), "%s/%s", _socket_home_get(), DEBUG_SERVER);
+   // create the socket
    fd = socket(AF_UNIX, SOCK_STREAM, 0);
    if (fd < 0) goto err;
+   // set the socket to close when we exec things so they don't inherit it
    if (fcntl(fd, F_SETFD, FD_CLOEXEC) < 0) goto err;
+   // set up some socket options on addr re-use
    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate,
                   sizeof(curstate)) < 0)
      goto err;
+   // sa that it's a unix socket and where the path is
    socket_unix.sun_family = AF_UNIX;
    strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
 #define LENGTH_OF_SOCKADDR_UN(s) \
    (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
    socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
+   // actually conenct to efl_debugd service
    if (connect(fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
      goto err;
+   // we succeeded - store fd
    _eina_debug_monitor_service_fd = fd;
    return;
 err:
-   close(fd);
-   return;
+   // some kind of connection failure here, so close a valid socket and
+   // get out of here
+   if (fd >= 0) close(fd);
 }
 #endif
