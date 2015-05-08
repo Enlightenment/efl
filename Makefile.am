@@ -432,6 +432,9 @@ endif
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) $(AM_MAKEFLAGS) lcov-report
 endif
+
+check-build:
+	@$(MAKE) $(AM_MAKEFLAGS) -C src check-build
 endif
 
 # benchmark

@@ -130,6 +130,11 @@ endif
 
 DIST_SUBDIRS += $(EXAMPLES_SUBDIRS)
 
+if EFL_ENABLE_TESTS
+check-build:
+	make $(check_PROGRAMS)
+endif
+
 examples: all-am
 	@for d in $(EXAMPLES_SUBDIRS); do \
 	   echo "Making examples in $$d"; \
