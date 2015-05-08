@@ -8,7 +8,7 @@
 
 #include <Eina.h>
 
-#define EO_BASE_PROTECTED
+#define EO_BASE_BETA
 
 #include "Eo.h"
 #include "eo_ptr_indirection.h"
