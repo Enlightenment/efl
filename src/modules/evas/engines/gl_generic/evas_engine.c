@@ -2388,6 +2388,7 @@ eng_ector_begin(void *data EINA_UNUSED, void *context EINA_UNUSED, void *surface
    w = gl_context->w; h = gl_context->h;
 
    software_buffer = realloc(software_buffer, sizeof (unsigned int) * w * h);
+   memset(software_buffer, 0, sizeof (unsigned int) * w * h);
    if (use_cairo)
      {
         eo_do(_software_ector,
