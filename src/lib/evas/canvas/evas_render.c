@@ -496,6 +496,7 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
                                    Eina_Array *restack_objects,
                                    Eina_Array *delete_objects,
                                    Eina_Array *render_objects,
+                                   Eina_Array *snapshot_objects,
                                    int restack,
                                    int *redraw_all,
                                    Eina_Bool mapped_parent,
@@ -538,6 +539,8 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
 
    if ((!mapped_parent) && ((is_active) || (obj->delete_me != 0)))
       OBJ_ARRAY_PUSH(active_objects, obj);
+   if (is_active && obj->cur->snapshot)
+     OBJ_ARRAY_PUSH(snapshot_objects, obj);
 
 #ifdef REND_DBG
    if (!is_active)
@@ -596,6 +599,7 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                                restack_objects,
                                                                delete_objects,
                                                                render_objects,
+                                                               snapshot_objects,
                                                                obj->restack,
                                                                redraw_all,
                                                                EINA_TRUE,
@@ -653,6 +657,7 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                      restack_objects,
                                                      delete_objects,
                                                      render_objects,
+                                                     snapshot_objects,
                                                      obj->restack,
                                                      redraw_all,
                                                      mapped_parent,
@@ -731,6 +736,7 @@ _evas_render_phase1_object_process(Evas_Public_Data *e, Evas_Object *eo_obj,
                                                              restack_objects,
                                                              delete_objects,
                                                              render_objects,
+                                                             snapshot_objects,
                                                              restack,
                                                              redraw_all,
                                                              mapped_parent,
@@ -798,6 +804,7 @@ _evas_render_phase1_process(Evas_Public_Data *e,
                             Eina_Array *restack_objects,
                             Eina_Array *delete_objects,
                             Eina_Array *render_objects,
+                            Eina_Array *snapshot_objects,
                             int *redraw_all)
 {
    Evas_Layer *lay;
@@ -812,7 +819,8 @@ _evas_render_phase1_process(Evas_Public_Data *e,
           {
              clean_them |= _evas_render_phase1_object_process
                 (e, obj->object, active_objects, restack_objects, delete_objects,
-                 render_objects, 0, redraw_all, EINA_FALSE, EINA_FALSE, 2);
+                 render_objects, snapshot_objects, 0, redraw_all,
+                 EINA_FALSE, EINA_FALSE, 2);
           }
      }
    RD(0, "  ---]\n");
@@ -891,6 +899,7 @@ clean_stuff:
              OBJS_ARRAY_CLEAN(&e->render_objects);
              OBJS_ARRAY_CLEAN(&e->restack_objects);
              OBJS_ARRAY_CLEAN(&e->delete_objects);
+             OBJS_ARRAY_CLEAN(&e->snapshot_objects);
              e->invalidate = EINA_TRUE;
              return;
           }
@@ -934,7 +943,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj)
    Evas_Object *video_parent = NULL;
    Eina_Rectangle zone;
    Evas_Coord xc1, yc1, xc2, yc2;
-   unsigned int i;
+   int i;
    Eina_Bool nooverlay;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Object_Protected_Data *tmp = NULL;
@@ -2124,13 +2133,13 @@ _cb_always_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
 static Eina_Bool
 evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
                                   void *surface,
+                                  Evas_Object_Protected_Data *top,
                                   int ux, int uy, int uw, int uh,
                                   int cx, int cy, int cw, int ch,
                                   int fx, int fy,
                                   Eina_Bool alpha,
                                   Eina_Bool make_updates,
                                   Eina_Bool do_async,
-                                  Evas_Render_Mode render_mode,
                                   unsigned int *offset)
 {
    Evas_Object *eo_obj;
@@ -2210,6 +2219,8 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
         obj = eina_array_data_get(&e->active_objects, i);
         eo_obj = obj->object;
 
+        if (obj == top) break;
+
         /* if it's in our outpout rect and it doesn't clip anything */
         RD(0, "    OBJ: [%p", obj);
         IFRD(0, " '%s'", obj->name);
@@ -2279,6 +2290,9 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
 
                        obj2 = (Evas_Object_Protected_Data *)eina_array_data_get
                          (&e->temporary_objects, j);
+
+                       if (obj2 == top) break;
+
                        _evas_render_cutout_add(e, obj2, off_x + fx, off_y + fy);
                     }
 #endif
@@ -2302,14 +2316,6 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *e,
      }
 
    eina_evlog("-render_objects", eo_e, 0.0, NULL);
-
-   eina_evlog("+render_push", eo_e, 0.0, NULL);
-   e->engine.func->output_redraws_next_update_push(e->engine.data.output,
-                                                   surface,
-                                                   ux, uy, uw, uh,
-                                                   render_mode);
-   eina_evlog("-render_push", eo_e, 0.0, NULL);
-
    /* free obscuring objects list */
    OBJS_ARRAY_CLEAN(&e->temporary_objects);
    RD(0, "  ---]\n");
@@ -2394,6 +2400,7 @@ evas_render_updates_internal(Evas *eo_e,
                                                  &e->restack_objects,
                                                  &e->delete_objects,
                                                  &e->render_objects,
+                                                 &e->snapshot_objects,
                                                  &redraw_all);
         eina_evlog("-render_phase1", eo_e, 0.0, NULL);
      }
@@ -2569,6 +2576,7 @@ evas_render_updates_internal(Evas *eo_e,
         unsigned int offset = 0;
         int fx = e->framespace.x;
         int fy = e->framespace.y;
+        int j;
         Eina_Bool haveup = EINA_FALSE;
 
         if (do_async) _evas_render_busy_begin();
@@ -2581,13 +2589,59 @@ evas_render_updates_internal(Evas *eo_e,
           {
              haveup = EINA_TRUE;
 
+             /* phase 6.1 render every snapshot that needs to be updated
+                for this part of the screen */
+             for (j = e->snapshot_objects.count - 1; j >= 0; j--)
+               {
+                  Eina_Rectangle output, cr, ur;
+
+                  obj = (Evas_Object_Protected_Data *)eina_array_data_get(&e->snapshot_objects, j);
+
+                  EINA_RECTANGLE_SET(&output,
+                                     obj->cur->geometry.x,
+                                     obj->cur->geometry.y,
+                                     obj->cur->geometry.w,
+                                     obj->cur->geometry.h);
+                  EINA_RECTANGLE_SET(&ur, ux, uy, uw, uh);
+
+                  if (eina_rectangle_intersection(&ur, &output))
+                    {
+                       void *pseudo_canvas;
+                       unsigned int restore_offset = offset;
+
+                       EINA_RECTANGLE_SET(&cr,
+                                          ur.x - output.x, ur.y - output.y,
+                                          ur.w, ur.h);
+
+                       pseudo_canvas = _evas_object_image_surface_get(obj->object, obj);
+
+                       clean_them |= evas_render_updates_internal_loop(eo_e, e, pseudo_canvas,
+                                                                       obj,
+                                                                       ur.x, ur.y, ur.w, ur.h,
+                                                                       cr.x, cr.y, cr.w, cr.h,
+                                                                       fx, fy, alpha,
+                                                                       make_updates, do_async,
+                                                                       &offset);
+
+                       offset = restore_offset;
+                    }
+               }
+
+             /* phase 6.2 render all the object on the target surface */
              clean_them |= evas_render_updates_internal_loop(eo_e, e, surface,
+                                                             NULL,
                                                              ux, uy, uw, uh,
                                                              cx, cy, cw, ch,
                                                              fx, fy, alpha,
                                                              make_updates, do_async,
-                                                             render_mode,
                                                              &offset);
+
+             eina_evlog("+render_push", eo_e, 0.0, NULL);
+             e->engine.func->output_redraws_next_update_push(e->engine.data.output,
+                                                             surface,
+                                                             ux, uy, uw, uh,
+                                                             render_mode);
+             eina_evlog("-render_push", eo_e, 0.0, NULL);
           }
 
         eina_evlog("+render_output_flush", eo_e, 0.0, NULL);
@@ -2725,6 +2779,7 @@ evas_render_updates_internal(Evas *eo_e,
         OBJS_ARRAY_CLEAN(&e->render_objects);
         OBJS_ARRAY_CLEAN(&e->restack_objects);
         OBJS_ARRAY_CLEAN(&e->temporary_objects);
+        OBJS_ARRAY_CLEAN(&e->snapshot_objects);
         eina_array_foreach(&e->clip_changes, _evas_clip_changes_free, NULL);
         eina_array_clean(&e->clip_changes);
 /* we should flush here and have a mempool system for this        
@@ -3130,6 +3185,8 @@ evas_render_invalidate(Evas *eo_e)
 
    OBJS_ARRAY_FLUSH(&e->restack_objects);
    OBJS_ARRAY_FLUSH(&e->delete_objects);
+
+   OBJS_ARRAY_FLUSH(&e->snapshot_objects);
 
    e->invalidate = EINA_TRUE;
 }

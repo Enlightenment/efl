@@ -175,7 +175,7 @@ _evas_canvas_eo_base_constructor(Eo *eo_obj, Evas_Public_Data *e)
 
 #define EVAS_ARRAY_SET(E, Array) \
    eina_array_step_set(&E->Array, sizeof (E->Array), \
-		       ((1024 * sizeof (void*)) - sizeof (E->Array)) / sizeof (void*));
+                       ((1024 * sizeof (void*)) - sizeof (E->Array)) / sizeof (void*));
 
    EVAS_ARRAY_SET(e, delete_objects);
    EVAS_ARRAY_SET(e, active_objects);
@@ -184,6 +184,7 @@ _evas_canvas_eo_base_constructor(Eo *eo_obj, Evas_Public_Data *e)
    EVAS_ARRAY_SET(e, pending_objects);
    EVAS_ARRAY_SET(e, obscuring_objects);
    EVAS_ARRAY_SET(e, temporary_objects);
+   EVAS_ARRAY_SET(e, snapshot_objects);
    EVAS_ARRAY_SET(e, clip_changes);
    EVAS_ARRAY_SET(e, scie_unref_queue);
    EVAS_ARRAY_SET(e, image_unref_queue);
@@ -300,6 +301,7 @@ _evas_canvas_eo_base_destructor(Eo *eo_e, Evas_Public_Data *e)
    eina_array_flush(&e->pending_objects);
    eina_array_flush(&e->obscuring_objects);
    eina_array_flush(&e->temporary_objects);
+   eina_array_flush(&e->snapshot_objects);
    eina_array_flush(&e->clip_changes);
    eina_array_flush(&e->scie_unref_queue);
    eina_array_flush(&e->image_unref_queue);
