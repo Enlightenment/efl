@@ -102,12 +102,12 @@ extern "C" {
  * @section eio_main_intro Introduction
  *
  * The Eio library is a library that implements an API for asynchronous
- * input/output operation. Most operation are done in a separated thread
+ * input/output operation. Most operations are done in a separate thread
  * to prevent lock. See @ref Eio_Group. Some helper to work on data
  * received in Eio callback are also provided see @ref Eio_Helper.
  * It is also possible to work asynchronously on Eina_File with @ref Eio_Map
- * or on Eet_File with @ref Eio_Eet. It come with way to manipulate
- * eXtended attribute assynchronously with @ref Eio_Xattr.
+ * or on Eet_File with @ref Eio_Eet. It comes with way to manipulate
+ * eXtended attribute asynchronous with @ref Eio_Xattr.
  *
  * This library is cross-platform and can be compiled and used on
  * Linux, BSD, Opensolaris and Windows (XP and CE). It is heavily
@@ -136,8 +136,8 @@ extern "C" {
  *
  * @section eio_main_next_steps Next Steps
  *
- * After you understood what Eio is and installed it in your system
- * you should proceed understanding the programming interface.
+ * After you understand what Eio is and installed it on your system
+ * you should proceed understand the programming interface.
  *
  * Recommended reading:
  *
@@ -369,8 +369,8 @@ EAPI Eio_File *eio_file_direct_stat(const char *path,
 				    const void *data);
 
 /**
- * @brief Change right of a path.
- * @param path The directory path to change access right.
+ * @brief Change rights of a path.
+ * @param path The directory path to change access rights.
  * @param mode The permission to set, follow (mode & ~umask & 0777).
  * @param done_cb Callback called when the operation is completed.
  * @param error_cb Callback called from if something goes wrong.
@@ -452,7 +452,7 @@ EAPI Eio_File *eio_file_mkdir(const char *path,
  *
  * This function will copy a file from source to dest. It will try to use splice
  * if possible, if not it will fallback to mmap/write. It will try to preserve
- * access right, but not user/group identification.
+ * access rights, but not user/group identification.
  */
 EAPI Eio_File *eio_file_move(const char *source,
 			     const char *dest,
@@ -474,7 +474,7 @@ EAPI Eio_File *eio_file_move(const char *source,
  *
  * This function will copy a file from source to dest. It will try to use splice
  * if possible, if not it will fallback to mmap/write. It will try to preserve
- * access right, but not user/group identification.
+ * access rights, but not user/group identification.
  */
 EAPI Eio_File *eio_file_copy(const char *source,
 			     const char *dest,
@@ -499,12 +499,12 @@ EAPI Eio_File *eio_file_copy(const char *source,
  * This function will move a directory and all its content from source to dest.
  * It will try first to rename the directory, if not it will try to use splice
  * if possible, if not it will fallback to mmap/write.
- * It will try to preserve access right, but not user/group identity.
+ * It will try to preserve access rights, but not user/group identity.
  * Every file will be passed to the filter_cb, so it's your job to decide if you
  * want to pass the file to the main_cb or not. Return EINA_TRUE to pass it to
  * the main_cb or EINA_FALSE to ignore it.
  *
- * @note if a rename occur, the filter callback will not be called.
+ * @note if a rename occurs, the filter callback will not be called.
  */
 EAPI Eio_File *eio_dir_move(const char *source,
 			    const char *dest,
@@ -529,7 +529,7 @@ EAPI Eio_File *eio_dir_move(const char *source,
  *
  * This function will copy a directory and all its content from source to dest.
  * It will try to use splice if possible, if not it will fallback to mmap/write.
- * It will try to preserve access right, but not user/group identity.
+ * It will try to preserve access rights, but not user/group identity.
  * Every file will be passed to the filter_cb, so it's your job to decide if you
  * want to pass the file to the main_cb or not. Return EINA_TRUE to pass it to
  * the main_cb or EINA_FALSE to ignore it.
@@ -582,7 +582,7 @@ EAPI Eio_File *eio_dir_unlink(const char *path,
  */
 
 /**
- * @brief Assynchronously list all eXtended attribute
+ * @brief Asynchronously list all eXtended attribute
  * @param path The path to get the eXtended attribute from.
  * @param filter_cb Callback called in the thread to validate the eXtended attribute.
  * @param main_cb Callback called in the main loop for each accepted eXtended attribute.
@@ -610,7 +610,7 @@ EAPI Eio_File *eio_file_xattr(const char *path,
  * @return A reference to the I/O operation.
  *
  * eio_file_xattr_int_set calls eina_xattr_int_set from another thread. This prevents blocking in your apps. If
- * the writing succeeded, the done_cb will be called even if a cancel was requested, but came to late.
+ * the writing succeeded, the done_cb will be called even if a cancel was requested, but came too late.
  */
 EAPI Eio_File *eio_file_xattr_int_set(const char *path,
 				      const char *attribute,
@@ -632,7 +632,7 @@ EAPI Eio_File *eio_file_xattr_int_set(const char *path,
  * @return A reference to the I/O operation.
  *
  * eio_file_xattr_double_set calls eina_xattr_double_set from another thread. This prevents blocking in your apps. If
- * the writing succeeded, the done_cb will be called even if a cancel was requested, but came to late.
+ * the writing succeeded, the done_cb will be called even if a cancel was requested, but came too late.
  */
 EAPI Eio_File *eio_file_xattr_double_set(const char *path,
 					 const char *attribute,
@@ -653,7 +653,7 @@ EAPI Eio_File *eio_file_xattr_double_set(const char *path,
  * @return A reference to the I/O operation.
  *
  * eio_file_xattr_string_set calls eina_xattr_string_set from another thread. This prevents blocking in your apps. If
- * the writing succeeded, the done_cb will be called even if a cancel was requested, but came to late.
+ * the writing succeeded, the done_cb will be called even if a cancel was requested, but came too late.
  */
 EAPI Eio_File *eio_file_xattr_string_set(const char *path,
 					 const char *attribute,
@@ -675,7 +675,7 @@ EAPI Eio_File *eio_file_xattr_string_set(const char *path,
  * @return A reference to the I/O operation.
  *
  * eio_file_xattr_set calls setxattr from another thread. This prevents blocking in your apps. If
- * the writing succeeded, the done_cb will be called even if a cancel was requested, but came to late.
+ * the writing succeeded, the done_cb will be called even if a cancel was requested, but came too late.
  */
 EAPI Eio_File *eio_file_xattr_set(const char *path,
 				  const char *attribute,
@@ -929,16 +929,16 @@ static inline Eina_Bool eio_file_is_lnk(const Eina_Stat *stat);
  * @defgroup Eio_Map Manipulate an Eina_File asynchronously
  * @ingroup Eio
  *
- * @brief This function help manipulating file asynchronously.
+ * @brief This function helps when manipulating a file asynchronously.
  *
- * This set of function work on top of Eina_File and Ecore_Thread to
- * do basic operations in a file, like openning, closing and mapping a file to
+ * These set of functions work on top of Eina_File and Ecore_Thread to
+ * do basic operations on a file, like opening, closing and mapping a file to
  * memory.
  * @{
  */
 
 /**
- * @brief Assynchronously open a file.
+ * @brief Asynchronously open a file.
  * @param name The file to open.
  * @param shared If it's a shared memory file.
  * @param open_cb Callback called in the main loop when the file has been successfully opened.
@@ -953,7 +953,7 @@ EAPI Eio_File *eio_file_open(const char *name, Eina_Bool shared,
                              const void *data);
 
 /**
- * @brief Assynchronously close a file.
+ * @brief Asynchronously close a file.
  * @param f The file to close.
  * @param done_cb Callback called in the main loop when the file has been successfully closed.
  * @param error_cb Callback called in the main loop when the file couldn't be closed.
@@ -966,7 +966,7 @@ EAPI Eio_File *eio_file_close(Eina_File *f,
                               const void *data);
 
 /**
- * @brief Assynchronously map a file in memory.
+ * @brief Asynchronously map a file in memory.
  * @param f The file to map.
  * @param rule The rule to apply to the map.
  * @param filter_cb Callback called in the thread to validate the content of the map.
@@ -985,7 +985,7 @@ EAPI Eio_File *eio_file_map_all(Eina_File *f,
                                 const void *data);
 
 /**
- * @brief Assynchronously map a part of a file in memory.
+ * @brief Asynchronously map a part of a file in memory.
  * @param f The file to map.
  * @param rule The rule to apply to the map.
  * @param offset The offset inside the file
