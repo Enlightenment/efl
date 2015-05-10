@@ -11,7 +11,6 @@ struct _Client
    Ecore_Timer      *evlog_fetch_timer;
    int               evlog_on;
    FILE             *evlog_file;
-   int               evlog_inset;
 
    int               version;
    pid_t             pid;
@@ -110,10 +109,9 @@ _do(Client *c, char *op, unsigned char *d, int size)
 
                   send_cli(c2->client, "EVON", NULL, 0);
                   c2->evlog_fetch_timer = ecore_timer_add(0.2, _cb_evlog, c2);
-                  snprintf(buf, sizeof(buf), "%s/efl_debug_evlog-%i.txt",
+                  snprintf(buf, sizeof(buf), "%s/efl_debug_evlog-%i.log",
                            getenv("HOME"), c->pid);
                   c2->evlog_file = fopen(buf, "w");
-                  c->evlog_inset = 0;
                }
           }
      }
@@ -144,42 +142,23 @@ _do(Client *c, char *op, unsigned char *d, int size)
      }
    else if (!strcmp(op, "EVLG"))
      {
-//        unsigned int *overflow = (unsigned int *)(d + 0);
+        unsigned int *overflow = (unsigned int *)(d + 0);
         unsigned char *end = d + size;
-        unsigned char *p = d + 8;
-        char *event_str, *detail_str;
-        Eina_Evlog_Item *item;
-        int i, inset;
+        unsigned char *p = d + 4;
+        Eina_Evlog_Item hitem;
 
-        printf("EVLG!!!! %i\n", size);
-        inset = c->evlog_inset;
         if (c->evlog_file)
           {
-             printf("  have out file\n");
-             while (p < end)
-               {
-                  item = (Eina_Evlog_Item *)p;
-                  printf("    have item %p\n", p);
-                  if ((item->event_next > item->detail_offset) &&
-                      ((p + item->event_next) < end))
-                    {
-                       detail_str = "";
-                       event_str = (char *)(p + item->event_offset);
-                       if (event_str[0] == '+') inset++;
-                       if (item->detail_offset)
-                         detail_str = (char *)(p + item->detail_offset);
-                       for (i = 0; i < inset; i++) fprintf(c->evlog_file, " ");
-                       fprintf(c->evlog_file,
-                               "%1.10f [%s] %1.10f 0x%llx 0x%llx %s\n",
-                               item->tim, event_str, item->srctim,
-                               item->thread, item->obj,
-                               detail_str);
-                       if (event_str[0] == '-') inset--;
-                    }
-                  p += item->event_next;
-               }
+             hitem.tim = 0.0;
+             hitem.srctim = 0.0;
+             hitem.thread = 0;
+             hitem.obj = *overflow;
+             hitem.event_offset = 0;
+             hitem.detail_offset = 0;
+             hitem.event_next = sizeof(Eina_Evlog_Item);
+             fwrite(&hitem, sizeof(Eina_Evlog_Item), 1, c->evlog_file);
+             fwrite(p, end - p, 1, c->evlog_file);
           }
-        c->evlog_inset = inset;
      }
 }
 
