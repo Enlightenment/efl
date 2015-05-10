@@ -2,11 +2,12 @@
 # include <config.h>
 #endif
 
+#include <Ecore_Input.h>
+
 #include <Ecore.h>
 #include <Ecore_Cocoa.h>
-#include "ecore_cocoa_private.h"
 #import "ecore_cocoa_window.h"
-#include <Ecore_Input.h>
+#include "ecore_cocoa_private.h"
 
 @implementation EcoreCocoaWindow
 

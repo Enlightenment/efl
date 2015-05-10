@@ -1,4 +1,6 @@
 #import "ecore_cocoa_app.h"
+#import "ecore_cocoa_window.h"
+#include "ecore_cocoa_private.h"
 
 static Eina_Bool
 _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)

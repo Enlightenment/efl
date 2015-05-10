@@ -9,12 +9,11 @@
 #include <Eina.h>
 
 #include <Ecore.h>
-#include <ecore_cocoa_private.h>
 #include <Ecore_Input.h>
 
 #include "Ecore_Cocoa.h"
 #include "Ecore_Cocoa_Keys.h"
-
+#include "ecore_cocoa_private.h"
 
 EAPI int ECORE_COCOA_EVENT_GOT_FOCUS = 0;
 EAPI int ECORE_COCOA_EVENT_LOST_FOCUS = 0;
