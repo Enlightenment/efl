@@ -37,7 +37,8 @@ enum Elm.Scroller.Movement_Block
 }
 
 class Elm.Scroller (Elm.Layout, Elm_Interface_Scrollable,
-                    Elm_Interface_Atspi_Widget_Action)
+                    Elm_Interface_Atspi_Widget_Action,
+                    Evas.Scrollable_Interface)
 {
    eo_prefix: elm_obj_scroller;
    methods {
@@ -118,6 +119,21 @@ class Elm.Scroller (Elm.Layout, Elm_Interface_Scrollable,
    events {
       focused;
       unfocused;
+      scroll,page,changed;
+      hbar,unpress;
+      hbar,press;
+      hbar,drag;
+      vbar,unpress;
+      vbar,press;
+      vbar,drag;
+      scroll,left;
+      scroll,right;
+      scroll,up;
+      scroll,down;
+      edge,left;
+      edge,right;
+      edge,top;
+      edge,bottom;
    }
 
 }
