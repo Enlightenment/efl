@@ -145,7 +145,6 @@ _do(Client *c, char *op, unsigned char *d, int size)
    else if (!strcmp(op, "EVLG"))
      {
 //        unsigned int *overflow = (unsigned int *)(d + 0);
-//        unsigned int *stolen = (unsigned int *)(d + 4);
         unsigned char *end = d + size;
         unsigned char *p = d + 8;
         char *event_str, *detail_str;

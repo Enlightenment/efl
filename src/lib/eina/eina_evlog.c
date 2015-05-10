@@ -42,7 +42,6 @@ alloc_buf(Eina_Evlog_Buf *b, unsigned int size)
    b->buf = malloc(size);
 # endif
    b->overflow = 0;
-   b->stolen = 0;
 }
 
 static void
@@ -127,15 +126,15 @@ eina_evlog_steal(void)
      {
         buf = &(buffers[1]);
         buf->top = 0;
+        buf->overflow--;
         stolen = &(buffers[0]);
-        stolen->stolen++;
      }
    else
      {
         buf = &(buffers[0]);
         buf->top = 0;
+        buf->overflow--;
         stolen = &(buffers[1]);
-        stolen->stolen++;
      }
    eina_spinlock_release(&_evlog_lock);
    return stolen;

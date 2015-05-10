@@ -31,8 +31,7 @@ struct _Eina_Evlog_Buf
    unsigned char *buf; // current buffer we fill with event logs
    unsigned int size; // the max size of the evlog buffer
    unsigned int top; // the current top byte for a new evlog item
-   unsigned int overflow; // how many times this biffer has overflown
-   unsigned int stolen; // how many times this buffer has been stolen
+   unsigned int overflow; // how many times this buffer has overflown
 };
 
 /**
