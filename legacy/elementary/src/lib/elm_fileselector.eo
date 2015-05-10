@@ -1,5 +1,6 @@
 class Elm.Fileselector (Elm.Layout, Elm_Interface_Fileselector,
-                        Elm_Interface_Atspi_Widget_Action)
+                        Elm_Interface_Atspi_Widget_Action,
+                        Evas.Clickable_Interface, Evas.Selectable_Interface)
 {
    eo_prefix: elm_obj_fileselector;
    methods {
@@ -59,8 +60,10 @@ class Elm.Fileselector (Elm.Layout, Elm_Interface_Fileselector,
       Elm_Interface_Atspi_Widget_Action.elm_actions.get;
    }
    events {
-      focused;
-      unfocused;
+      done;
+      activated;
+      selected,invalid;
+      directory,open;
    }
 
 }

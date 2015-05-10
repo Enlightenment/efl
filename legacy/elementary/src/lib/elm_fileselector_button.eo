@@ -102,8 +102,7 @@ class Elm.Fileselector_Button (Elm.Button, Elm_Interface_Fileselector)
    events {
       language,changed;
       access,changed;
-      focused;
-      unfocused;
+      file,chosen;
    }
 
 }

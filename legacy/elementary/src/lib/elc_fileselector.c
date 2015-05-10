@@ -58,8 +58,10 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
-static void _ok(void *data, Evas_Object *obj, void *event_info);
-static void _canc(void *data, Evas_Object *obj, void *event_info);
+static Eina_Bool _ok(void *data,
+      Eo *obj, const Eo_Event_Description *desc, void *event_info);
+static Eina_Bool _canc(void *data,
+      Eo *obj, const Eo_Event_Description *desc, void *event_info);
 
 /* final routine on deletion */
 static void
@@ -158,14 +160,14 @@ _elm_fileselector_elm_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
 static Eina_Bool
 _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   _ok(obj, NULL, NULL);
+   _ok(obj, NULL, NULL, NULL);
    return EINA_TRUE;
 }
 
 static Eina_Bool
 _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   _canc(obj, NULL, NULL);
+   _canc(obj, NULL, NULL, NULL);
    return EINA_TRUE;
 }
 
@@ -546,8 +548,8 @@ _signal_first(Listing_Request *lreq)
         EINA_LIST_FREE(sd->paths, path) free(path);
      }
 
-   evas_object_smart_callback_call
-     (lreq->obj, SIG_DIRECTORY_OPEN, (void *)lreq->path);
+   eo_do(lreq->obj, eo_event_callback_call
+     (ELM_FILESELECTOR_EVENT_DIRECTORY_OPEN, (void *)lreq->path));
 
    if (!lreq->parent_it)
      {
@@ -705,45 +707,53 @@ _populate(Evas_Object *obj,
 
 }
 
-static void
+static Eina_Bool
 _on_list_expanded(void *data,
-                  Evas_Object *obj EINA_UNUSED,
+                  Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                   void *event_info)
 {
    Elm_Object_Item *it = event_info;
    const char *path = elm_object_item_data_get(it);
 
    _populate(data, path, it, NULL);
+
+   return EINA_TRUE;
 }
 
-static void
-_on_list_contracted(void *data       EINA_UNUSED,
-                    Evas_Object *obj EINA_UNUSED,
+static Eina_Bool
+_on_list_contracted(void *data EINA_UNUSED,
+                    Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                     void *event_info)
 {
    Elm_Object_Item *it = event_info;
 
    elm_genlist_item_subitems_clear(it);
+
+   return EINA_TRUE;
 }
 
-static void
-_on_list_expand_req(void *data       EINA_UNUSED,
-                    Evas_Object *obj EINA_UNUSED,
+static Eina_Bool
+_on_list_expand_req(void *data EINA_UNUSED,
+                    Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                     void *event_info)
 {
    Elm_Object_Item *it = event_info;
 
    elm_genlist_item_expanded_set(it, EINA_TRUE);
+
+   return EINA_TRUE;
 }
 
-static void
-_on_list_contract_req(void *data       EINA_UNUSED,
-                      Evas_Object *obj EINA_UNUSED,
+static Eina_Bool
+_on_list_contract_req(void *data EINA_UNUSED,
+                      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                       void *event_info)
 {
    Elm_Object_Item *it = event_info;
 
    elm_genlist_item_expanded_set(it, EINA_FALSE);
+
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -787,9 +797,9 @@ _schedule_populate(Evas_Object *fs,
    sd->populate_idler = ecore_idler_add(_populate_do, sdata);
 }
 
-static void
+static Eina_Bool
 _on_item_activated(void *data,
-                   Evas_Object *obj EINA_UNUSED,
+                   Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                    void *event_info)
 {
    //This event_info could be a list or gengrid item
@@ -800,18 +810,21 @@ _on_item_activated(void *data,
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
    path = elm_object_item_data_get(it);
-   if (!path) return;
+   if (!path) return EINA_TRUE;
 
    is_dir = ecore_file_is_dir(path);
    if (!is_dir)
      {
-        evas_object_smart_callback_call(data, SIG_ACTIVATED, (void *)path);
-        return;
+        eo_do(data, eo_event_callback_call
+          (ELM_FILESELECTOR_EVENT_ACTIVATED, (void *)path));
+        return EINA_TRUE;
      }
 
-   if (!sd->double_tap_navigation) return;
+   if (!sd->double_tap_navigation) return EINA_TRUE;
 
    _schedule_populate(data, sd, eina_stringshare_add(path), NULL);
+
+   return EINA_TRUE;
 }
 
 static void
@@ -842,9 +855,9 @@ _clear_selections(Elm_Fileselector_Data *sd, Elm_Object_Item *last_selected)
      }
 }
 
-static void
+static Eina_Bool
 _on_item_selected(void *data,
-                  Evas_Object *obj EINA_UNUSED,
+                  Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                   void *event_info)
 {
    //This event_info could be a list or gengrid item
@@ -856,7 +869,7 @@ _on_item_selected(void *data,
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
    path = elm_object_item_data_get(it);
-   if (!path) return;
+   if (!path) return EINA_TRUE;
 
    is_dir = ecore_file_is_dir(path);
 
@@ -893,7 +906,8 @@ _on_item_selected(void *data,
         else
           elm_object_text_set(sd->name_entry, ecore_file_file_get(path));
 
-        evas_object_smart_callback_call(data, SIG_SELECTED, (void *)path);
+        eo_do(data, eo_event_callback_call
+          (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (void *)path));
      }
    else if (sd->multi && is_dir && sd->double_tap_navigation)
      {
@@ -905,7 +919,7 @@ _on_item_selected(void *data,
     * - mode is GRID;
     * - mode is LIST and 'not expand mode';
     *   in other cases update anchors. */
-   if (!is_dir) return;
+   if (!is_dir) return EINA_TRUE;
 
    if (sd->expand && sd->mode == ELM_FILESELECTOR_LIST)
      {
@@ -921,17 +935,19 @@ _on_item_selected(void *data,
              eina_stringshare_replace(&sd->path, path);
              _anchors_do(data, path);
           }
-       return;
+        return EINA_TRUE;
      }
 
-   if (sd->double_tap_navigation) return;
+   if (sd->double_tap_navigation) return EINA_TRUE;
 
    _schedule_populate(data, sd, eina_stringshare_add(path), NULL);
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _on_item_unselected(void *data,
-                    Evas_Object *obj EINA_UNUSED,
+                    Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                     void *event_info)
 {
    Eina_List *li, *l;
@@ -943,10 +959,10 @@ _on_item_unselected(void *data,
 
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
-   if (!sd->multi) return;
+   if (!sd->multi) return EINA_TRUE;
 
    unselected_path = elm_object_item_data_get(it);
-   if (!unselected_path) return;
+   if (!unselected_path) return EINA_TRUE;
 
    buf = eina_strbuf_new();
    EINA_LIST_FOREACH_SAFE(sd->paths, li, l, path)
@@ -969,11 +985,13 @@ _on_item_unselected(void *data,
 
    elm_object_text_set(sd->name_entry, eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _on_dir_up(void *data,
-           Evas_Object *obj EINA_UNUSED,
+           Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
            void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
@@ -984,11 +1002,13 @@ _on_dir_up(void *data,
    parent = ecore_file_dir_get(sd->path);
    _populate(fs, parent, NULL, NULL);
    free(parent);
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _home(void *data,
-      Evas_Object *obj EINA_UNUSED,
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
       void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
@@ -1002,6 +1022,8 @@ _home(void *data,
 
 
    _populate(fs, path, NULL, NULL);
+
+   return EINA_TRUE;
 }
 
 static void
@@ -1019,9 +1041,9 @@ _current_filter_changed(void *data,
    _populate(filter->sd->obj, filter->sd->path, NULL, NULL);
 }
 
-static void
+static Eina_Bool
 _ok(void *data,
-    Evas_Object *obj EINA_UNUSED,
+    Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
     void *event_info EINA_UNUSED)
 {
    const char *name;
@@ -1031,8 +1053,8 @@ _ok(void *data,
 
    if (!sd->path)
      {
-        evas_object_smart_callback_call(fs, SIG_DONE, NULL);
-        return;
+        eo_do(fs, eo_event_callback_call(ELM_FILESELECTOR_EVENT_DONE, NULL));
+         return EINA_TRUE;
      }
 
    name = elm_object_text_get(sd->name_entry);
@@ -1047,23 +1069,28 @@ _ok(void *data,
    else
      selection = eina_stringshare_add(elm_fileselector_selected_get(fs));
 
-   evas_object_smart_callback_call(fs, SIG_DONE, (void *)selection);
+   eo_do(fs, eo_event_callback_call
+     (ELM_FILESELECTOR_EVENT_DONE, (void *)selection));
    eina_stringshare_del(selection);
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _canc(void *data,
-      Evas_Object *obj EINA_UNUSED,
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
       void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
 
-   evas_object_smart_callback_call(fs, SIG_DONE, NULL);
+   eo_do(fs, eo_event_callback_call(ELM_FILESELECTOR_EVENT_DONE, NULL));
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _on_text_activated(void *data,
-                   Evas_Object *obj,
+                   Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                    void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
@@ -1076,8 +1103,10 @@ _on_text_activated(void *data,
 
    if (!ecore_file_exists(path))
      {
-        evas_object_smart_callback_call(fs, SIG_SELECTED, (void *)path);
-        evas_object_smart_callback_call(fs, SIG_SELECTED_INVALID, (void *)path);
+        eo_do(fs, eo_event_callback_call
+          (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (void *)path));
+        eo_do(fs, eo_event_callback_call
+          (ELM_FILESELECTOR_EVENT_SELECTED_INVALID, (void *)path));
         goto end;
      }
 
@@ -1089,7 +1118,8 @@ _on_text_activated(void *data,
         eina_stringshare_del(p);
 
         if (sd->only_folder)
-          evas_object_smart_callback_call(fs, SIG_SELECTED, (void *)path);
+          eo_do(fs, eo_event_callback_call
+            (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (void *)path));
 
         goto end;
      }
@@ -1102,7 +1132,8 @@ _on_text_activated(void *data,
         _populate(fs, dir, NULL, path);
 
         if (sd->only_folder)
-          evas_object_smart_callback_call(fs, SIG_SELECTED, (void *)path);
+          eo_do(fs, eo_event_callback_call
+            (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, (void *)path));
      }
    else
      {
@@ -1143,6 +1174,8 @@ _on_text_activated(void *data,
 
 end:
    elm_object_focus_set(obj, EINA_FALSE);
+
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -1158,28 +1191,33 @@ _anchors_undo(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-static void
+static Eina_Bool
 _on_text_focused(void *data,
-                 Evas_Object *obj EINA_UNUSED,
+                 Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                  void *event_info EINA_UNUSED)
 {
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
    if (!sd->path_entry_idler)
        sd->path_entry_idler = ecore_idler_add(_anchors_undo, data);
+
+   return EINA_TRUE;
 }
-static void
+
+static Eina_Bool
 _on_text_unfocused(void *data,
-                   Evas_Object *obj EINA_UNUSED,
+                   Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                    void *event_info EINA_UNUSED)
 {
    ELM_FILESELECTOR_DATA_GET(data, sd);
    _anchors_do(data, sd->path);
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _anchor_clicked(void *data,
-                Evas_Object *obj EINA_UNUSED,
+                Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                 void *event_info)
 {
    Elm_Entry_Anchor_Info *info = event_info;
@@ -1200,10 +1238,13 @@ _anchor_clicked(void *data,
        ecore_idler_del(sd->path_entry_idler);
        sd->path_entry_idler = NULL;
    }
+
+   return EINA_TRUE;
 }
 
-static void
-_files_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+static Eina_Bool
+_files_key_down(void *data,
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
      Evas_Event_Key_Down *ev = event_info;
      Evas_Object *par, *searchbar;
@@ -1211,7 +1252,7 @@ _files_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
      par = data;
      searchbar = evas_object_data_get(par, "search");
 
-     if (!searchbar) return;
+     if (!searchbar) return EINA_TRUE;
 
      if (((ev->string) && *(ev->string) &&
                (isalpha(*ev->string) ||
@@ -1234,6 +1275,8 @@ _files_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
                elm_entry_entry_set(searchbar, buf);
             }
        }
+
+   return EINA_TRUE;
 }
 
 static Evas_Object *
@@ -1248,16 +1291,22 @@ _files_list_add(Evas_Object *obj)
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_min_set(li, 100, 100);
 
-   evas_object_smart_callback_add(li, "selected", _on_item_selected, obj);
-   evas_object_smart_callback_add(li, "unselected", _on_item_unselected, obj);
-   evas_object_smart_callback_add(li, "activated", _on_item_activated, obj);
-   evas_object_smart_callback_add
-     (li, "expand,request", _on_list_expand_req, obj);
-   evas_object_smart_callback_add
-     (li, "contract,request", _on_list_contract_req, obj);
-   evas_object_smart_callback_add(li, "expanded", _on_list_expanded, obj);
-   evas_object_smart_callback_add(li, "contracted", _on_list_contracted, obj);
-   evas_object_event_callback_add(li, EVAS_CALLBACK_KEY_DOWN, _files_key_down, obj);
+   eo_do(li, eo_event_callback_add
+     (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, _on_item_selected, obj));
+   eo_do(li, eo_event_callback_add
+     (EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, _on_item_unselected, obj));
+   eo_do(li, eo_event_callback_add
+     (ELM_GENLIST_EVENT_ACTIVATED, _on_item_activated, obj));
+   eo_do(li, eo_event_callback_add
+     (ELM_GENLIST_EVENT_EXPAND_REQUEST, _on_list_expand_req, obj));
+   eo_do(li, eo_event_callback_add
+     (ELM_GENLIST_EVENT_CONTRACT_REQUEST, _on_list_contract_req, obj));
+   eo_do(li, eo_event_callback_add
+     (ELM_GENLIST_EVENT_EXPANDED, _on_list_expanded, obj));
+   eo_do(li, eo_event_callback_add
+     (ELM_GENLIST_EVENT_CONTRACTED, _on_list_contracted, obj));
+   eo_do(li, eo_event_callback_add
+     (EVAS_OBJECT_EVENT_KEY_DOWN, _files_key_down, obj));
 
    elm_widget_sub_object_add(obj, li);
 
@@ -1281,10 +1330,14 @@ _files_grid_add(Evas_Object *obj)
 
    elm_gengrid_align_set(grid, 0.0, 0.0);
 
-   evas_object_smart_callback_add(grid, "selected", _on_item_selected, obj);
-   evas_object_smart_callback_add(grid, "unselected", _on_item_unselected, obj);
-   evas_object_smart_callback_add(grid, "activated", _on_item_activated, obj);
-   evas_object_event_callback_add(grid, EVAS_CALLBACK_KEY_DOWN, _files_key_down, obj);
+   eo_do(grid, eo_event_callback_add
+     (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, _on_item_selected, obj));
+   eo_do(grid, eo_event_callback_add
+     (EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, _on_item_unselected, obj));
+   eo_do(grid, eo_event_callback_add
+     (ELM_GENGRID_EVENT_ACTIVATED, _on_item_activated, obj));
+   eo_do(grid, eo_event_callback_add
+     (EVAS_OBJECT_EVENT_KEY_DOWN, _files_key_down, obj));
 
    elm_widget_sub_object_add(obj, grid);
 
@@ -1422,8 +1475,9 @@ _resource_deleted(void *data, int type EINA_UNUSED, void *ev)
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static void _preedit_cb(void *data, Evas_Object *obj,
-                        void *event_info EINA_UNUSED)
+static Eina_Bool
+_preedit_cb(void *data,
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    ELM_FILESELECTOR_DATA_GET(data, sd);
 
@@ -1431,6 +1485,8 @@ static void _preedit_cb(void *data, Evas_Object *obj,
 
    if (sd->search_string && sd->path)
      _populate(data, sd->path, NULL, NULL);
+
+   return EINA_TRUE;
 }
 
 EOLIAN static void
@@ -1460,7 +1516,8 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
    elm_object_part_content_set(bt, "icon", ic);
    elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Up"));
    evas_object_size_hint_align_set(bt, 0.0, 0.0);
-   evas_object_smart_callback_add(bt, "clicked", _on_dir_up, obj);
+   eo_do(bt, eo_event_callback_add
+     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _on_dir_up, obj));
 
    elm_widget_sub_object_add(obj, bt);
 
@@ -1475,9 +1532,9 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
    elm_object_part_content_set(bt, "icon", ic);
    elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Home"));
    evas_object_size_hint_align_set(bt, 0.0, 0.0);
-   evas_object_smart_callback_add(bt, "clicked", _home, obj);
+   eo_do(bt, eo_event_callback_add
+     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _home, obj));
 
-   elm_widget_sub_object_add(obj, bt);
    priv->home_button = bt;
 
    // spinner
@@ -1504,10 +1561,14 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   evas_object_smart_callback_add(en, "anchor,clicked", _anchor_clicked, obj);
-   evas_object_smart_callback_add(en, "focused", _on_text_focused, obj);
-   evas_object_smart_callback_add(en, "unfocused", _on_text_unfocused, obj);
-   evas_object_smart_callback_add(en, "activated", _on_text_activated, obj);
+   eo_do(en, eo_event_callback_add
+     (ELM_ENTRY_EVENT_ANCHOR_CLICKED, _anchor_clicked, obj));
+   eo_do(en, eo_event_callback_add
+     (ELM_LAYOUT_EVENT_FOCUSED, _on_text_focused, obj));
+   eo_do(en, eo_event_callback_add
+     (ELM_LAYOUT_EVENT_UNFOCUSED, _on_text_unfocused, obj));
+   eo_do(en, eo_event_callback_add
+     (ELM_ENTRY_EVENT_ACTIVATED, _on_text_activated, obj));
 
    elm_widget_sub_object_add(obj, en);
    priv->path_entry = en;
@@ -1541,7 +1602,8 @@ _elm_fileselector_evas_object_smart_add(Eo *obj, Elm_Fileselector_Data *priv)
    elm_entry_icon_visible_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_smart_callback_add(en, "changed", _preedit_cb, obj);
+   eo_do(en, eo_event_callback_add
+     (ELM_ENTRY_EVENT_CHANGED, _preedit_cb, obj));
    evas_object_data_set(obj, "search", en);
 
    elm_widget_sub_object_add(obj, en);
@@ -1706,7 +1768,8 @@ _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *sd, Eina
         elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
         elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Cancel"));
 
-        evas_object_smart_callback_add(bt, "clicked", _canc, obj);
+        eo_do(bt, eo_event_callback_add
+          (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _canc, obj));
 
         sd->cancel_button = bt;
 
@@ -1715,7 +1778,8 @@ _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *sd, Eina
         elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
         elm_object_domain_translatable_text_set(bt, PACKAGE, N_("OK"));
 
-        evas_object_smart_callback_add(bt, "clicked", _ok, obj);
+        eo_do(bt, eo_event_callback_add
+          (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, _ok, obj));
 
         sd->ok_button = bt;
 
