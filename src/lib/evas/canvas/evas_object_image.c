@@ -2780,7 +2780,7 @@ evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, 
                               (!obj->map->cur.map))
                              ) && (!direct_force_off) )
                          {
-                            if (ENFN->gl_get_pixels_set)
+                            if ((ENFN->gl_get_pixels_set) && (o->pixels->func.get_pixels))
                               ENFN->gl_get_pixels_set(output, o->pixels->func.get_pixels, o->pixels->func.get_pixels_data, eo_obj);
                             o->direct_render = EINA_TRUE;
                          }
@@ -2921,7 +2921,7 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
    ENFN->context_render_op_set(output, context, obj->cur->render_op);
 
    // Clear out the pixel get stuff..
-   if (ENFN->gl_get_pixels_set)
+   if ((ENFN->gl_get_pixels_set) && (o->pixels->func.get_pixels))
      {
         ENFN->gl_get_pixels_set(output, NULL, NULL, NULL);
      }
