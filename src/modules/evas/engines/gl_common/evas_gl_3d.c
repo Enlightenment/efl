@@ -99,7 +99,7 @@ e3d_texture_set(Evas_Engine_GL_Context *gc,
 
    texture->surface = im;
    evas_gl_common_image_ref(im);
-
+   im->disable_atlas = !texture->atlas_enable;
    evas_gl_common_image_update(gc, im);
 
    texture->tex = im->tex->pt->texture;
@@ -107,16 +107,18 @@ e3d_texture_set(Evas_Engine_GL_Context *gc,
    texture->h = im->h;
    texture->x = im->tex->x;
    texture->y = im->tex->y;
+   if (texture->atlas_enable)
+     {
+        pt_x = im->tex->pt->w ? (im->tex->x/(Evas_Real)im->tex->pt->w) : 0;
+        pt_y = im->tex->pt->h ? (im->tex->y/(Evas_Real)im->tex->pt->h) : 0;
 
-   pt_x = im->tex->pt->w ? (im->tex->x/(Evas_Real)im->tex->pt->w) : 0;
-   pt_y = im->tex->pt->h ? (im->tex->y/(Evas_Real)im->tex->pt->h) : 0;
-
-   st_x = im->tex->pt->w ? (im->w/(Evas_Real)im->tex->pt->w) : 1.0;
-   st_y = im->tex->pt->h ? (im->h/(Evas_Real)im->tex->pt->h) : 1.0;
-   /*Build adjusting matrix for texture unit coordinates*/
-   evas_mat3_set_position_transform(&pt, pt_x, pt_y);
-   evas_mat3_set_scale_transform(&st, st_x, st_y);
-   evas_mat3_multiply(&texture->trans, &st, &pt);
+        st_x = im->tex->pt->w ? (im->w/(Evas_Real)im->tex->pt->w) : 1.0;
+        st_y = im->tex->pt->h ? (im->h/(Evas_Real)im->tex->pt->h) : 1.0;
+        /*Build adjusting matrix for texture unit coordinates*/
+        evas_mat3_set_position_transform(&pt, pt_x, pt_y);
+        evas_mat3_set_scale_transform(&st, st_x, st_y);
+        evas_mat3_multiply(&texture->trans, &st, &pt);
+     }
 }
 
 Evas_GL_Image *

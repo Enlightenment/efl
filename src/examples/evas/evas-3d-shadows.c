@@ -247,6 +247,7 @@ _fence_setup(Body_3D *fence)
 {
 
    Eo *texture = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
+   eo_do(texture, evas_3d_texture_atlas_enable_set(EINA_FALSE));
    eo_do(texture,
          evas_3d_texture_file_set(PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/grid.png", NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
@@ -254,6 +255,7 @@ _fence_setup(Body_3D *fence)
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
                                   EVAS_3D_WRAP_MODE_REPEAT));
    Eo *texture1 = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
+   eo_do(texture1, evas_3d_texture_atlas_enable_set(EINA_FALSE));
    eo_do(texture1,
          evas_3d_texture_file_set(PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/grid_n.png", NULL),
          evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
