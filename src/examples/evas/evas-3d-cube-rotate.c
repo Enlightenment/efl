@@ -48,15 +48,8 @@ Ecore_Evas       *ecore_evas  = NULL;
 Evas             *evas        = NULL;
 Eo               *background  = NULL;
 Eo               *image       = NULL;
-static float     angle        = 0.0f;
+static float     angle        = 0.0;
 float            d_angle      = 0.5;
-float            diff_angle_x = 1;
-float            diff_angle_y = 1;
-int              mouse_diff_x = 0;
-int              mouse_diff_y = 0;
-int              mouse_old_x  = 0;
-int              mouse_old_y  = 0;
-int              indicator    = 0;
 
 static void
 _on_delete(Ecore_Evas *ee EINA_UNUSED)
@@ -238,6 +231,10 @@ _scene_setup(Scene_Data *data)
    eo_do(scene,
          evas_3d_scene_root_node_set(data->root_node),
          evas_3d_scene_camera_node_set(data->camera_node));
+
+   data.mouse_old_x = 0;
+   data.mouse_diff_x = 0;
+   data.mouse_indicator = 0;
 }
 
 int
@@ -258,11 +255,6 @@ main(void)
    evas = ecore_evas_get(ecore_evas);
 
    _scene_setup(&data);
-
-   data.angle = 0.5;
-   data.mouse_old_x = 0;
-   data.mouse_diff_x = 0;
-   data.mouse_indicator = 0;
 
    /* Add a background rectangle objects. */
    background = evas_object_rectangle_add(evas);
@@ -286,8 +278,6 @@ main(void)
 
    evas_object_event_callback_add(image, EVAS_CALLBACK_MOUSE_DOWN, _play_scene, &data);
    evas_object_event_callback_add(image, EVAS_CALLBACK_MOUSE_UP, _stop_scene, &data);
-
-   evas_event_feed_mouse_down(evas, 1, EVAS_BUTTON_NONE, 0, &data);
 
    /* Add animation timer callback. */
    ecore_timer_add(0.016, _animate_scene, &data);
