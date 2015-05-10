@@ -110,7 +110,7 @@ _do(Client *c, char *op, unsigned char *d, int size)
                   send_cli(c2->client, "EVON", NULL, 0);
                   c2->evlog_fetch_timer = ecore_timer_add(0.2, _cb_evlog, c2);
                   snprintf(buf, sizeof(buf), "%s/efl_debug_evlog-%i.log",
-                           getenv("HOME"), c->pid);
+                           getenv("HOME"), c2->pid);
                   c2->evlog_file = fopen(buf, "w");
                }
           }
@@ -147,7 +147,7 @@ _do(Client *c, char *op, unsigned char *d, int size)
         unsigned char *p = d + 4;
         Eina_Evlog_Item hitem;
 
-        if (c->evlog_file)
+        if ((c->evlog_file) && (end > p))
           {
              hitem.tim = 0.0;
              hitem.srctim = 0.0;
