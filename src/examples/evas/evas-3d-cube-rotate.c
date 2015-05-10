@@ -232,9 +232,9 @@ _scene_setup(Scene_Data *data)
          evas_3d_scene_root_node_set(data->root_node),
          evas_3d_scene_camera_node_set(data->camera_node));
 
-   data.mouse_old_x = 0;
-   data.mouse_diff_x = 0;
-   data.mouse_indicator = 0;
+   data->mouse_old_x = 0;
+   data->mouse_diff_x = 0;
+   data->mouse_indicator = 0;
 }
 
 int

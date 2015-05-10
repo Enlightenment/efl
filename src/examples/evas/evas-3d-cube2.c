@@ -182,11 +182,9 @@ _mesh_setup(Scene_Data *data)
    data->texture_normal = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
 
    eo_do(data->texture0,
-         evas_3d_texture_data_set(EVAS_3D_COLOR_FORMAT_RGBA,
-                                  EVAS_3D_PIXEL_FORMAT_8888, 4, 4, &pixels0[0]));
+         evas_3d_texture_data_set(EVAS_COLORSPACE_ARGB8888, 4, 4, &pixels0[0]));
    eo_do(data->texture1,
-         evas_3d_texture_data_set(EVAS_3D_COLOR_FORMAT_RGBA,
-                                  EVAS_3D_PIXEL_FORMAT_8888, 4, 4, &pixels1[0]));
+         evas_3d_texture_data_set(EVAS_COLORSPACE_ARGB8888, 4, 4, &pixels1[0]));
    eo_do(data->texture_normal,
          evas_3d_texture_file_set(normal_map_path, NULL));
 
