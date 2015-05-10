@@ -67,6 +67,7 @@
 #include "eina_inlist.h"
 #include "eina_inarray.h"
 #include "eina_value.h"
+#include "eina_evlog.h"
 /* no model for now
 #include "eina_model.h"
  */
@@ -121,6 +122,7 @@ EAPI Eina_Inlist *_eina_tracking = NULL;
 #define S(x) extern Eina_Bool eina_ ## x ## _init(void); \
    extern Eina_Bool eina_ ## x ## _shutdown(void)
    S(debug);
+   S(evlog);
    S(log);
    S(error);
    S(safety_checks);
@@ -167,6 +169,7 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
 #define S(x) {# x, eina_ ## x ## _init, eina_ ## x ## _shutdown}
    /* log is a special case as it needs printf */
    S(debug),
+   S(evlog),
    S(stringshare),
    S(error),
    S(safety_checks),
@@ -299,6 +302,7 @@ eina_init(void)
    eina_log_timing(_eina_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
 
    _eina_main_count = 1;
+   eina_evlog("-eina_init", NULL, 0.0, NULL);
    return 1;
 }
 

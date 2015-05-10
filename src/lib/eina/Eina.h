@@ -264,6 +264,7 @@ extern "C" {
 #include <eina_thread_queue.h>
 #include <eina_matrix.h>
 #include <eina_crc.h>
+#include <eina_evlog.h>
 
 #undef EAPI
 #define EAPI

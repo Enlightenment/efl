@@ -1,4 +1,5 @@
 #include "eina_debug.h"
+#include "eina_evlog.h"
 
 #ifdef EINA_HAVE_DEBUG
 
@@ -176,6 +177,38 @@ _eina_debug_monitor(void *data EINA_UNUSED)
                     {
                        poll_time = 1000;
                        poll_on = EINA_FALSE;
+                    }
+                  // enable evlog
+                  else if (!strcmp(op, "EVON"))
+                    {
+                       eina_evlog_start();
+                    }
+                  // stop evlog
+                  else if (!strcmp(op, "EVOF"))
+                    {
+                       eina_evlog_stop();
+                    }
+                  // fetch the evlog
+                  else if (!strcmp(op, "EVLG"))
+                    {
+                       Eina_Evlog_Buf *evlog = eina_evlog_steal();
+                       if ((evlog) && (evlog->buf))
+                         {
+                            char          tmp[16];
+                            unsigned int *size     = (unsigned int *)(tmp + 0);
+                            char         *op2 = "EVLG";
+                            unsigned int *overflow = (unsigned int *)(tmp + 8);
+                            unsigned int *stolen   = (unsigned int *)(tmp + 12);
+
+                            *size = (sizeof(tmp) - 4) + evlog->top;
+                            memcpy(tmp + 4, op2, 4);
+                            *overflow = evlog->overflow;
+                            *stolen = evlog->stolen;
+                            write(_eina_debug_monitor_service_fd,
+                                  tmp, 16);
+                            write(_eina_debug_monitor_service_fd,
+                                  evlog->buf, evlog->top);
+                         }
                     }
                   // something we don't understand
                   else fprintf(stderr,

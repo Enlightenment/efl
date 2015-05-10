@@ -174,10 +174,12 @@ _ecore_idle_enterer_call(void)
         if (!ie->delete_me)
           {
              ie->references++;
+             eina_evlog("+idle_enterer", ie, 0.0, NULL);
              if (!_ecore_call_task_cb(ie->func, ie->data))
                {
                   if (!ie->delete_me) _ecore_idle_enterer_del(ie->obj);
                }
+             eina_evlog("-idle_enterer", ie, 0.0, NULL);
              ie->references--;
           }
         if (idle_enterer_current) /* may have changed in recursive main loops */

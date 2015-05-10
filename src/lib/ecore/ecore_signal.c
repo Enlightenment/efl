@@ -152,6 +152,7 @@ _ecore_signal_call(void)
    int tot;
 
    if (sig_count == 0) return;
+   eina_evlog("+signals", NULL, 0.0, NULL);
    sigemptyset(&newset);
    sigaddset(&newset, SIGPIPE);
    sigaddset(&newset, SIGALRM);
@@ -456,6 +457,7 @@ _ecore_signal_call(void)
    sig_count = 0;
    
    sigprocmask(SIG_SETMASK, &oldset, NULL);
+   eina_evlog("-signals", NULL, 0.0, NULL);
 }
 
 static void

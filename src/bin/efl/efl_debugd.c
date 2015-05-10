@@ -8,6 +8,11 @@ struct _Client
    unsigned char    *buf;
    unsigned int      buf_size;
 
+   Ecore_Timer      *evlog_fetch_timer;
+   int               evlog_on;
+   FILE             *evlog_file;
+   int               evlog_inset;
+
    int               version;
    pid_t             pid;
 };
@@ -27,6 +32,14 @@ _client_pid_find(int pid)
         if (c->pid == pid) return c;
      }
    return NULL;
+}
+
+static Eina_Bool
+_cb_evlog(void *data)
+{
+   Client *c = data;
+   send_cli(c->client, "EVLG", NULL, 0);
+   return EINA_TRUE;
 }
 
 static void
@@ -84,6 +97,91 @@ _do(Client *c, char *op, unsigned char *d, int size)
              send_cli(c2->client, "PLOF", NULL, 0);
           }
      }
+   else if (!strcmp(op, "EVON"))
+     {
+        int pid;
+        fetch_val(pid, d, 0);
+        if ((c2 = _client_pid_find(pid)))
+          {
+             c2->evlog_on++;
+             if (c2->evlog_on == 1)
+               {
+                  char buf[4096];
+
+                  send_cli(c2->client, "EVON", NULL, 0);
+                  c2->evlog_fetch_timer = ecore_timer_add(0.2, _cb_evlog, c2);
+                  snprintf(buf, sizeof(buf), "%s/efl_debug_evlog-%i.txt",
+                           getenv("HOME"), c->pid);
+                  c2->evlog_file = fopen(buf, "w");
+                  c->evlog_inset = 0;
+               }
+          }
+     }
+   else if (!strcmp(op, "EVOF"))
+     {
+        int pid;
+        fetch_val(pid, d, 0);
+        if ((c2 = _client_pid_find(pid)))
+          {
+             c2->evlog_on--;
+             if (c2->evlog_on == 0)
+               {
+                  send_cli(c2->client, "EVOF", NULL, 0);
+                  if (c2->evlog_fetch_timer)
+                    {
+                       ecore_timer_del(c2->evlog_fetch_timer);
+                       c2->evlog_fetch_timer = NULL;
+                    }
+                  if (c2->evlog_file)
+                    {
+                       fclose(c2->evlog_file);
+                       c2->evlog_file = NULL;
+                    }
+               }
+             else if (c2->evlog_on < 0)
+               c2->evlog_on = 0;
+          }
+     }
+   else if (!strcmp(op, "EVLG"))
+     {
+//        unsigned int *overflow = (unsigned int *)(d + 0);
+//        unsigned int *stolen = (unsigned int *)(d + 4);
+        unsigned char *end = d + size;
+        unsigned char *p = d + 8;
+        char *event_str, *detail_str;
+        Eina_Evlog_Item *item;
+        int i, inset;
+
+        printf("EVLG!!!! %i\n", size);
+        inset = c->evlog_inset;
+        if (c->evlog_file)
+          {
+             printf("  have out file\n");
+             while (p < end)
+               {
+                  item = (Eina_Evlog_Item *)p;
+                  printf("    have item %p\n", p);
+                  if ((item->event_next > item->detail_offset) &&
+                      ((p + item->event_next) < end))
+                    {
+                       detail_str = "";
+                       event_str = (char *)(p + item->event_offset);
+                       if (event_str[0] == '+') inset++;
+                       if (item->detail_offset)
+                         detail_str = (char *)(p + item->detail_offset);
+                       for (i = 0; i < inset; i++) fprintf(c->evlog_file, " ");
+                       fprintf(c->evlog_file,
+                               "%1.10f [%s] %1.10f 0x%llx 0x%llx %s\n",
+                               item->tim, event_str, item->srctim,
+                               item->thread, item->obj,
+                               detail_str);
+                       if (event_str[0] == '-') inset--;
+                    }
+                  p += item->event_next;
+               }
+          }
+        c->evlog_inset = inset;
+     }
 }
 
 static Eina_Bool
@@ -106,6 +204,16 @@ _client_del(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Client
    if (c)
      {
         clients = eina_list_remove(clients, c);
+        if (c->evlog_fetch_timer)
+          {
+             ecore_timer_del(c->evlog_fetch_timer);
+             c->evlog_fetch_timer = NULL;
+          }
+        if (c->evlog_file)
+          {
+             fclose(c->evlog_file);
+             c->evlog_file = NULL;
+          }
         free(c);
      }
    return ECORE_CALLBACK_RENEW;

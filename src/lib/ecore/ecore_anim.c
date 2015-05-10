@@ -125,11 +125,13 @@ _do_tick(void)
             (!animator->just_added))
           {
              animator_ran = EINA_TRUE;
+             eina_evlog("+animator", animator, 0.0, NULL);
              if (!_ecore_call_task_cb(animator->func, animator->data))
                {
                   animator->delete_me = EINA_TRUE;
                   animators_delete_me++;
                }
+             eina_evlog("-animator", animator, 0.0, NULL);
           }
         else animator->just_added = EINA_FALSE;
      }

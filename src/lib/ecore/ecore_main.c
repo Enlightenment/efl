@@ -972,6 +972,7 @@ EAPI void
 ecore_main_loop_begin(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
+   eina_evlog("+mainloop", NULL, 0.0, NULL);
 #ifdef HAVE_SYSTEMD
    sd_notify(0, "READY=1");
 #endif
@@ -992,6 +993,7 @@ ecore_main_loop_begin(void)
      }
    do_quit = 0;
 #endif
+   eina_evlog("-mainloop", NULL, 0.0, NULL);
 }
 
 EAPI void
@@ -1453,7 +1455,9 @@ _ecore_main_select(double timeout)
    if (_ecore_signal_count_get()) return -1;
 
    _ecore_unlock();
+   eina_evlog("!SLEEP", NULL, 0.0, t ? "timeout" : "forever");
    ret = main_loop_select(max_fd + 1, &rfds, &wfds, &exfds, t);
+   eina_evlog("!WAKE", NULL, 0.0, NULL);
    _ecore_lock();
 
    _ecore_time_loop_time = ecore_time_get();
@@ -1646,6 +1650,9 @@ _ecore_main_fd_handlers_call(void)
          fd_handlers_to_call = NULL;
       }
 
+   if (!fd_handlers_to_call_current) return;
+   eina_evlog("+fd_handlers", NULL, 0.0, NULL);
+
     while (fd_handlers_to_call_current)
       {
          Ecore_Fd_Handler *fdh = fd_handlers_to_call_current;
@@ -1685,6 +1692,7 @@ _ecore_main_fd_handlers_call(void)
          fd_handlers_to_call_current = fdh->next_ready;
          fdh->next_ready = NULL;
       }
+   eina_evlog("-fd_handlers", NULL, 0.0, NULL);
 }
 
 static int
@@ -1694,6 +1702,8 @@ _ecore_main_fd_handlers_buf_call(void)
    Eina_List *l, *l2;
    int ret;
 
+   if (!fd_handlers_with_buffer) return 0;
+   eina_evlog("+fd_handlers_buf", NULL, 0.0, NULL);
    ret = 0;
    EINA_LIST_FOREACH_SAFE(fd_handlers_with_buffer, l, l2, fdh)
      {
@@ -1716,6 +1726,7 @@ _ecore_main_fd_handlers_buf_call(void)
         else
           fd_handlers_with_buffer = eina_list_remove_list(fd_handlers_with_buffer, l);
      }
+   eina_evlog("-fd_handlers_buf", NULL, 0.0, NULL);
    return ret;
 }
 

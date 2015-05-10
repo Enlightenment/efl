@@ -720,10 +720,12 @@ _ecore_timer_expired_call(double when)
           }
 
         timer->references++;
+        eina_evlog("+timer", timer, 0.0, NULL);
         if (!_ecore_call_task_cb(timer->func, timer->data))
           {
              if (!timer->delete_me) _ecore_timer_del(timer->obj);
           }
+        eina_evlog("-timer", timer, 0.0, NULL);
         timer->references--;
 
         if (timer_current) /* may have changed in recursive main loops */

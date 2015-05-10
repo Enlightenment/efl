@@ -436,7 +436,8 @@ _ecore_event_filters_apply()
         /* recursive main loop, continue from where we were */
          event_filter_current = (Ecore_Event_Filter *)EINA_INLIST_GET(event_filter_current)->next;
      }
-
+   if ((!event_filter_current) && (!event_filters_delete_me) && (!purge_events)) return;
+   eina_evlog("+event_filter", NULL, 0.0, NULL);
    while (event_filter_current)
      {
         Ecore_Event_Filter *ef = event_filter_current;
@@ -481,6 +482,7 @@ _ecore_event_filters_apply()
         if (event_filter_current) /* may have changed in recursive main loops */
           event_filter_current = (Ecore_Event_Filter *)EINA_INLIST_GET(event_filter_current)->next;
      }
+   eina_evlog("-event_filter", NULL, 0.0, NULL);
    if (event_filters_delete_me)
      {
         int deleted_in_use = 0;
@@ -521,7 +523,8 @@ _ecore_event_call(void)
          event_current = events;
          event_handler_current = NULL;
      }
-
+   if ((!event_current) && (!event_handlers_delete_list)) return;
+   eina_evlog("+events", NULL, 0.0, NULL);
    while (event_current)
      {
         Ecore_Event *e = event_current;
@@ -589,6 +592,7 @@ _ecore_event_call(void)
         if (event_current) /* may have changed in recursive main loops */
           event_current = (Ecore_Event *)EINA_INLIST_GET(event_current)->next;
      }
+   eina_evlog("-events", NULL, 0.0, NULL);
 
    ecore_raw_event_type = ECORE_EVENT_NONE;
    ecore_raw_event_event = NULL;

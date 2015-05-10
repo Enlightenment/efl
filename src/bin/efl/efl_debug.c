@@ -44,7 +44,6 @@ _server_add(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server
           {
              send_svr(svr, "LIST", NULL, 0);
              expect = "CLST";
-             printf("send... expect %s\n", expect);
           }
         else if ((!strcmp(my_argv[i], "pon")) &&
                  (i < (my_argc - 2)))
@@ -66,6 +65,26 @@ _server_add(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Server
              i++;
              store_val(tmp, 0, pid);
              send_svr(svr, "PLOF", tmp, sizeof(tmp));
+             ecore_main_loop_quit();
+          }
+        else if ((!strcmp(my_argv[i], "evlogon")) &&
+                 (i < (my_argc - 1)))
+          {
+             unsigned char tmp[4];
+             int pid = atoi(my_argv[i + 1]);
+             i++;
+             store_val(tmp, 0, pid);
+             send_svr(svr, "EVON", tmp, sizeof(tmp));
+             ecore_main_loop_quit();
+          }
+        else if ((!strcmp(my_argv[i], "evlogoff")) &&
+                 (i < (my_argc - 1)))
+          {
+             unsigned char tmp[4];
+             int pid = atoi(my_argv[i + 1]);
+             i++;
+             store_val(tmp, 0, pid);
+             send_svr(svr, "EVOF", tmp, sizeof(tmp));
              ecore_main_loop_quit();
           }
      }
