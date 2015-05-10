@@ -137,7 +137,7 @@ _on_clicked(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
-   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
+   eo_do(data, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
 }
 
 static void
@@ -157,7 +157,7 @@ _on_pressed(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
-   evas_object_smart_callback_call(data, SIG_PRESS, NULL);
+   eo_do(data, eo_event_callback_call(ELM_PANES_EVENT_PRESS, NULL));
 }
 
 static void
@@ -167,11 +167,11 @@ _on_unpressed(void *data,
               const char *source EINA_UNUSED)
 {
    ELM_PANES_DATA_GET(data, sd);
-   evas_object_smart_callback_call(data, SIG_UNPRESS, NULL);
+   eo_do(data, eo_event_callback_call(ELM_PANES_EVENT_UNPRESS, NULL));
 
    if (sd->double_clicked)
      {
-        evas_object_smart_callback_call(data, SIG_DOUBLE_CLICKED, NULL);
+        eo_do(data, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, NULL));
         sd->double_clicked = EINA_FALSE;
      }
 }

@@ -1,4 +1,4 @@
-class Elm.Panes (Elm.Layout)
+class Elm.Panes (Elm.Layout, Evas.Clickable_Interface)
 {
    eo_prefix: elm_obj_panes;
    methods {
@@ -276,10 +276,8 @@ class Elm.Panes (Elm.Layout)
       Elm.Layout.content_aliases.get;
    }
    events {
-      clicked;
       press;
       unpress;
-      clicked,double;
    }
 
 }
