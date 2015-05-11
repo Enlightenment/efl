@@ -1592,7 +1592,7 @@ rg_etc1_solution_coordinates_get_scaled_color(color_quad_u8 *color, const Etc1_S
    rg_etc1_color_quad_u8_init(color, br, bg, bb, 255);
 }
 
-#if 0
+#ifdef RG_ETC1_BUILD_DEBUG
 static inline void
 rg_etc1_solution_coordinates_block_colors_get(const Etc1_Solution_Coordinates *coords, color_quad_u8 colors[4])
 {
