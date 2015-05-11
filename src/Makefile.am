@@ -131,7 +131,7 @@ endif
 DIST_SUBDIRS += $(EXAMPLES_SUBDIRS)
 
 if EFL_ENABLE_TESTS
-check-build:
+check-build: all
 	@$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 endif
 
