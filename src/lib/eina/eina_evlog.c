@@ -126,14 +126,14 @@ eina_evlog_steal(void)
      {
         buf = &(buffers[1]);
         buf->top = 0;
-        buf->overflow--;
+        buf->overflow = 0;
         stolen = &(buffers[0]);
      }
    else
      {
         buf = &(buffers[0]);
         buf->top = 0;
-        buf->overflow--;
+        buf->overflow = 0;
         stolen = &(buffers[1]);
      }
    eina_spinlock_release(&_evlog_lock);
