@@ -5,8 +5,8 @@ interface Elm_Interface_Atspi_Window ()
       window,destroyed; /*@ Called when window has been destroyed. */
       window,activated; /*@ Called when window has been activated. (unfocused) */
       window,deactivated; /*@ Called when window has been deactivated (unfocused). */
-      window,maximized; /* @ Called when window has been maximmized */
-      window,minimized; /* @ Called when window has been minimized */
-      window,restored; /* @ Called when window has been restored */
+      window,maximized; /*@ Called when window has been maximmized */
+      window,minimized; /*@ Called when window has been minimized */
+      window,restored; /*@ Called when window has been restored */
    }
 }

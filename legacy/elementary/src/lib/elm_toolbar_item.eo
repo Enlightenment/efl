@@ -61,7 +61,7 @@ class Elm.Toolbar_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     int priority; /* The @p item priority. The default is zero for set and 0 is returned on failure. */
+                     int priority; /*@ The @p item priority. The default is zero for set and 0 is returned on failure. */
                 }
            }
            @property selected {

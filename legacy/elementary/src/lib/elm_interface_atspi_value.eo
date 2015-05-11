@@ -19,7 +19,7 @@ interface Elm_Interface_Atspi_Value ()
       }
       @property range @protected {
          get {
-            /* Gets a range of all possible values and its description */
+            /*@ Gets a range of all possible values and its description */
          }
          values {
             double lower_limit;
@@ -29,7 +29,7 @@ interface Elm_Interface_Atspi_Value ()
       }
       @property increment @protected {
          get {
-            /* Gets an minimal incrementation value */
+            /*@ Gets an minimal incrementation value */
          }
          values {
             double increment;

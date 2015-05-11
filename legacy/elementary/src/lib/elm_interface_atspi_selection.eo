@@ -5,12 +5,12 @@ interface Elm_Interface_Atspi_Selection ()
    methods {
       @property selected_children_count @protected {
          get {
-            /* Gets the number of currently selected children */
+            /*@ Gets the number of currently selected children */
             return: int;
          }
       }
       @property selected_child @protected {
-         /* Gets child for given child index */
+         /*@ Gets child for given child index */
          get {
             return: Eo *;
          }
@@ -19,36 +19,36 @@ interface Elm_Interface_Atspi_Selection ()
          }
       }
       child_select @protected {
-         /* Adds selection for given child index */
+         /*@ Adds selection for given child index */
          params {
             @in int child_index;
          }
          return: bool;
       }
       selected_child_deselect @protected {
-         /* Removes selection for given child index */
+         /*@ Removes selection for given child index */
          params {
             @in int child_index;
          }
          return: bool;
       }
       is_child_selected @protected {
-         /* Determines if child specified by index is selected */
+         /*@ Determines if child specified by index is selected */
          params {
             @in int child_index;
          }
          return: bool;
       }
       all_children_select @protected {
-         /* Adds selection for all children */
+         /*@ Adds selection for all children */
          return: bool;
       }
       clear @protected {
-         /* Clears the current selection */
+         /*@ Clears the current selection */
          return: bool;
       }
       child_deselect @protected {
-         /* Removes selection for given child index */
+         /*@ Removes selection for given child index */
          params {
             @in int child_index;
          }

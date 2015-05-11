@@ -73,12 +73,12 @@ interface Elm_Interface_Atspi_Text ()
                                     is set. */
          }
          values {
-            own(char *) value; /* Value of text attribute. Should be free() */
+            own(char *) value; /*@ Value of text attribute. Should be free() */
          }
       }
       @property attributes @protected {
          get {
-            /* Gets list of all text attributes. */
+            /*@ Gets list of all text attributes. */
          }
          keys {
             int *start_offset @nonull;

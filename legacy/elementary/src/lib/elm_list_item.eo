@@ -31,7 +31,7 @@ class Elm.List_Item(Elm.Widget_Item)
            }
            @property selected {
                 get {
-                     /*
+                     /*@
                       Get whether the @p item is selected or not.
 
                       @see elm_list_selected_item_set() for details.
