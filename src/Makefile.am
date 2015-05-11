@@ -91,7 +91,7 @@ benchmarks/eo \
 benchmarks/evas
 DIST_SUBDIRS += $(BENCHMARK_SUBDIRS)
 
-benchmark: all-am
+benchmark: all
 	@for d in $(BENCHMARK_SUBDIRS); do \
 	   echo "Making benchmark in $$d"; \
 	   $(MAKE) $(AM_MAKEFLAGS) -C $$d benchmark; \
@@ -135,7 +135,7 @@ check-build: all
 	@$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 endif
 
-examples: all-am
+examples: all
 	@for d in $(EXAMPLES_SUBDIRS); do \
 	   echo "Making examples in $$d"; \
 	   $(MAKE) $(AM_MAKEFLAGS) -C $$d examples || exit 1; \
