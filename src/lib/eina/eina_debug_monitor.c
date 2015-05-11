@@ -1,4 +1,5 @@
 #include "eina_debug.h"
+#include "eina_types.h"
 #include "eina_evlog.h"
 
 #ifdef EINA_HAVE_DEBUG
