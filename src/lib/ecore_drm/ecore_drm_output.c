@@ -1291,3 +1291,67 @@ ecore_drm_output_crtc_size_get(Ecore_Drm_Output *output, int *width, int *height
    if (width) *width = output->crtc->width;
    if (height) *height = output->crtc->height;
 }
+
+EAPI Eina_Bool
+ecore_drm_output_possible_crtc_get(Ecore_Drm_Output *output, unsigned int crtc)
+{
+   Ecore_Drm_Device *dev;
+   drmModeRes *res;
+   drmModeConnector *conn;
+   drmModeEncoder *enc;
+   int i, j;
+   unsigned int p;
+   Eina_Bool ret = EINA_FALSE;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->dev, EINA_FALSE);
+
+   dev = output->dev;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(dev->drm.fd < 0, EINA_FALSE);
+
+   /* get the resources */
+   if (!(res = drmModeGetResources(dev->drm.fd)))
+     {
+        ERR("Could not get resources for drm card: %m");
+        return EINA_FALSE;
+     }
+
+   for (i = 0; i < res->count_connectors; i++)
+     {
+        /* get the connector */
+        if (!(conn = drmModeGetConnector(dev->drm.fd, res->connectors[i])))
+          continue;
+
+        for (j = 0; j < conn->count_encoders; j++)
+          {
+             /* get the encoder on this connector */
+             if (!(enc = drmModeGetEncoder(dev->drm.fd, conn->encoders[j])))
+               {
+                  WRN("Failed to get encoder: %m");
+                  continue;
+               }
+
+             /* get the encoder for given crtc */
+             if (enc->crtc_id != crtc) goto next;
+
+             p = enc->possible_crtcs;
+
+             /* Does the CRTC match the list of possible CRTCs from the encoder? */
+             if (p & (1 << output->crtc_id))
+               ret = EINA_TRUE;
+
+next:
+             drmModeFreeEncoder(enc);
+             if (ret) break;
+          }
+
+        /* free the connector */
+        drmModeFreeConnector(conn);
+        if (ret) break;
+     }
+
+   /* free resources */
+   drmModeFreeResources(res);
+
+   return ret;
+}

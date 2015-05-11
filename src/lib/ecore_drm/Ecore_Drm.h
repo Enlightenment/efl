@@ -906,6 +906,22 @@ EAPI void ecore_drm_output_crtc_size_get(Ecore_Drm_Output *output, int *width, i
  */
 EAPI Ecore_Drm_Output *ecore_drm_device_output_name_find(Ecore_Drm_Device *dev, const char *name);
 
+/**
+ * Get if an Ecore_Drm_Output can be used on a given crtc
+ *
+ * This function will loop the possible crtcs of an encoder to determine if
+ * a given output can be assigned to a given crtc
+ *
+ * @param output The Ecore_Drm_Output to test if can be used on crtc
+ * @param crtc The crtc to test an Ecore_Drm_Output against
+ *
+ * @return EINA_TRUE if the output can be assigned to given crtc, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI Eina_Bool ecore_drm_output_possible_crtc_get(Ecore_Drm_Output *output, unsigned int crtc);
+
 # ifdef __cplusplus
 }
 # endif
