@@ -1,4 +1,4 @@
-class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
+class Elm_Code_Widget (Elm.Layout, Elm_Interface_Atspi_Text)
 {
    eo_prefix: elm_code_widget;
    methods {
