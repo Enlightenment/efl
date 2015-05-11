@@ -143,21 +143,18 @@ _do(Client *c, char *op, unsigned char *d, int size)
    else if (!strcmp(op, "EVLG"))
      {
         unsigned int *overflow = (unsigned int *)(d + 0);
-        unsigned char *end = d + size;
         unsigned char *p = d + 4;
-        Eina_Evlog_Item hitem;
+        unsigned int blocksize = size - 4;
 
-        if ((c->evlog_file) && (end > p))
+        if ((c->evlog_file) && (blocksize > 0))
           {
-             hitem.tim = 0.0;
-             hitem.srctim = 0.0;
-             hitem.thread = 0;
-             hitem.obj = *overflow;
-             hitem.event_offset = 0;
-             hitem.detail_offset = 0;
-             hitem.event_next = sizeof(Eina_Evlog_Item);
-             fwrite(&hitem, sizeof(Eina_Evlog_Item), 1, c->evlog_file);
-             fwrite(p, end - p, 1, c->evlog_file);
+             unsigned int header[3];
+
+             header[0] = 0xffee211;
+             header[1] = blocksize;
+             header[2] = *overflow;
+             fwrite(header, 12, 1, c->evlog_file);
+             fwrite(p, blocksize, 1, c->evlog_file);
           }
      }
 }
