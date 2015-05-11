@@ -11,7 +11,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          }
       }
       type_get @const {
-         /*
+         /*@
            Get the type of the given node.
 
            @return     The type of the given node.
@@ -23,7 +23,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          return: Evas_3D_Node_Type ;
       }
       member_add {
-         /*
+         /*@
            Add a member node to the given node.
 
            Nodes can be constructed into N-ary tree structure like other ordinary scene
@@ -39,7 +39,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          }
       }
       member_del {
-         /*
+         /*@
            Delete a member node from the given node.
 
            @see evas_3d_node_member_add()
@@ -53,7 +53,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
       }
 
       parent_get @const {
-         /*
+         /*@
            Get the parent node of the given node.
 
            @return        The parent node of the given node.
@@ -66,7 +66,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
       }
 
       member_list_get @const {
-         /*
+         /*@
            Get the list of member nodes of the given node.
 
            @return        The list of member nodes if any or @c NULL if there are none.
@@ -78,8 +78,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          return: const(list<Evas_3D_Node *>)*;
       }
       position_set {
-
-         /*
+         /*@
            Set the position of the given node.
 
            According to the inheritance flag, (x, y, z) can be a world space position or
@@ -98,7 +97,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          }
       }
       orientation_set {
-         /*
+         /*@
            Set the orientation of the given node using quaternion.
 
            According the the inheritance flag, (w, x, y, z) can be a world space
@@ -119,7 +118,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
       }
 
       orientation_angle_axis_set {
-         /*
+         /*@
            Set the orientation of the given node using axis-angle.
 
            @param node    The given node.
@@ -141,7 +140,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
       }
 
       scale_set {
-         /*
+         /*@
            Set the scale of the given node.
 
            @param node    The given node.
@@ -167,7 +166,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
       }
 
       position_get @const {
-         /*
+         /*@
            Get the position of the given node.
 
            @param node    The given node.
@@ -188,7 +187,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
       }
 
       orientation_get @const {
-         /*
+         /*@
            Get the orientation of the given node as quaternion.
 
            @param node    The given node.
@@ -211,7 +210,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
       }
 
       scale_get @const {
-         /*
+         /*@
            Get the scale of the given node.
 
            @param node    The given node.
@@ -232,7 +231,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
       }
 
       look_at_set {
-         /*
+         /*@
            Rotate the given node to look at desired position.
 
            @param node          The given node.
@@ -267,7 +266,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
       }
 
       mesh_add {
-         /*
+         /*@
            Add a mesh to the given node.
 
            @param node          The given node.
@@ -286,7 +285,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
       }
 
       mesh_del {
-         /*
+         /*@
            Delete a mesh from the given node.
 
            @param node          The given node.
@@ -305,7 +304,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
       }
 
       mesh_list_get @const {
-         /*
+         /*@
            Get the list of meshes of the given node.
 
            @param node          The given node.
@@ -323,7 +322,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
       }
 
       bounding_box_get{
-         /*
+         /*@
            Get axis-aligned bounding box (AABB) of the given node.
           *
           * @param node     The given node.
@@ -347,7 +346,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
       }
 
       bounding_sphere_get {
-         /*
+         /*@
           Get bounding sphere of the given node.
           *
           * @param node     The given node.
@@ -370,7 +369,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
       @property position_inherit {
          set {
-            /*
+            /*@
               Set the position inheritance flag of the given node.
 
               @param node    The given node.
@@ -384,7 +383,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          get {
-            /*
+            /*@
               Get the position inheritance flag of the given node.
 
               @param node    The given node.
@@ -402,7 +401,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
       @property orientation_inherit {
          set {
-            /*
+            /*@
               Set the orientation inheritance flag of the given node.
 
               @param node    The given node.
@@ -417,7 +416,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
             */
          }
          get {
-            /*
+            /*@
               Get the orientation inheritance flag of the given node.
 
               @param node    The given node.
@@ -435,7 +434,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
       @property scale_inherit {
          set {
-            /*
+            /*@
               Set the scale inheritance flag of the given node.
 
               @param node    The given node.
@@ -449,7 +448,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          get {
-            /*
+            /*@
               Get the scale inheritance flag of the given node.
 
               @param node    The given node.
@@ -467,7 +466,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
       @property camera {
          set {
-            /*
+            /*@
               Set a camera to the given node.
 
               @param node          The given node.
@@ -482,7 +481,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          get {
-            /*
+            /*@
               Get the camera of the given node.
 
               @param node          The given node.
@@ -500,7 +499,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
       @property light {
          set {
-            /*
+            /*@
               Set the light of the given node.
 
               @param node          The given node.
@@ -515,7 +514,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          get {
-            /*
+            /*@
               Get the light of the given node.
 
               @param node          The given node.
@@ -533,7 +532,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
       @property mesh_frame {
          set {
-            /*
+            /*@
               Set the animation frame number of the given node for the given mesh.
 
               @param node          The given node.
@@ -551,7 +550,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          get {
-            /*
+            /*@
               Set the animation frame number of the given node for the given mesh.
 
               @param node          The given node.
@@ -576,7 +575,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
 
       @property billboard_target {
          set {
-            /*
+            /*@
               Set behavior of node like billboard object.
 
               @param node          The given node.
@@ -586,7 +585,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          get {
-            /*
+            /*@
               Get the target node for billboard object.
 
               @param node          The given node.

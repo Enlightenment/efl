@@ -18,7 +18,7 @@ class Ecore_Audio_In (Ecore_Audio)
             @since 1.8 */
          }
          values {
-            double speed; /*The speed, 1.0 is the default*/
+            double speed; /*@ The speed, 1.0 is the default*/
          }
       }
       @property samplerate {
@@ -35,7 +35,7 @@ class Ecore_Audio_In (Ecore_Audio)
             @since 1.8 */
          }
          values {
-            int samplerate; /*The samplerate in Hz*/
+            int samplerate; /*@ The samplerate in Hz*/
          }
       }
       @property channels {
@@ -52,7 +52,7 @@ class Ecore_Audio_In (Ecore_Audio)
             @since 1.8 */
          }
          values {
-            int channels; /*The number of channels*/
+            int channels; /*@ The number of channels*/
          }
       }
       @property preloaded {
@@ -69,7 +69,7 @@ class Ecore_Audio_In (Ecore_Audio)
             @since 1.8 */
          }
          values {
-            bool preloaded; /*EINA_TRUE if the input should be cached, EINA_FALSE otherwise*/
+            bool preloaded; /*@ EINA_TRUE if the input should be cached, EINA_FALSE otherwise*/
          }
       }
       @property looped {
@@ -90,7 +90,7 @@ class Ecore_Audio_In (Ecore_Audio)
             @since 1.8 */
          }
          values {
-            bool looped; /*EINA_TRUE if the input should be looped, EINA_FALSE otherwise*/
+            bool looped; /*@ EINA_TRUE if the input should be looped, EINA_FALSE otherwise*/
          }
       }
       @property length {
@@ -110,7 +110,7 @@ class Ecore_Audio_In (Ecore_Audio)
             @since 1.8 */
          }
          values {
-            double length; /*The length of the input in seconds*/
+            double length; /*@ The length of the input in seconds*/
          }
       }
       @property output {
@@ -121,7 +121,7 @@ class Ecore_Audio_In (Ecore_Audio)
             @since 1.8 */
          }
          values {
-            Eo *output; /*The output*/
+            Eo *output; /*@ The output*/
          }
       }
       @property remaining {
@@ -132,7 +132,7 @@ class Ecore_Audio_In (Ecore_Audio)
             @since 1.8 */
          }
          values {
-            double remaining; /*The amount of time in seconds left to play*/
+            double remaining; /*@ The amount of time in seconds left to play*/
          }
       }
       read {
@@ -140,10 +140,10 @@ class Ecore_Audio_In (Ecore_Audio)
          Read from the input
 
          @since 1.8 */
-         return: ssize; /*The amount of samples written to buf*/
+         return: ssize; /*@ The amount of samples written to buf*/
          params {
-            @in void *buf; /*The buffer to read into*/
-            @in size len; /*The amount of samples to read*/
+            @in void *buf; /*@ The buffer to read into*/
+            @in size len; /*@ The amount of samples to read*/
          }
       }
       read_internal {
@@ -151,10 +151,10 @@ class Ecore_Audio_In (Ecore_Audio)
          Internal read function
 
          @since 1.8 */
-         return: ssize; /*The amount of samples written to buf*/
+         return: ssize; /*@ The amount of samples written to buf*/
          params {
-            @in void *buf; /*The buffer to read into*/
-            @in size len; /*The amount of samples to read*/
+            @in void *buf; /*@ The buffer to read into*/
+            @in size len; /*@ The amount of samples to read*/
          }
       }
       seek {
@@ -162,10 +162,10 @@ class Ecore_Audio_In (Ecore_Audio)
          Seek within the input
 
          @since 1.8 */
-         return: double; /*The current absolute position in seconds within the input*/
+         return: double; /*@ The current absolute position in seconds within the input*/
          params {
-            @in double offs; /*The offset in seconds*/
-            @in int mode; /*mode The seek mode. Is absolute with SEEK_SET, relative to the
+            @in double offs; /*@ The offset in seconds*/
+            @in int mode; /*@ mode The seek mode. Is absolute with SEEK_SET, relative to the
                             current position with SEEK_CUR and relative to the end with SEEK_END.*/
          }
       }

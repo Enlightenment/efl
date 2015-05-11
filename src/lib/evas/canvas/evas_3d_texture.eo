@@ -5,7 +5,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
    methods {
       @property source_visible {
          set {
-            /*
+            /*@
               Set the visibility flag of the source evas object of the given texture.
 
               Recommend to call evas_object_show() on the source object and controll the
@@ -19,7 +19,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          get {
-            /*
+            /*@
               Get the visibility flag of the source evas object of the given texture.
 
               @see evas_3d_texture_source_visible_set()
@@ -33,7 +33,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
       }
       @property atlas_enable {
          set {
-            /*
+            /*@
               Set enable flag to generation texture unit with support atlas.
 
               Use this flag only in case not normalize texture coordinates.
@@ -44,7 +44,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          get {
-            /*
+            /*@
               Get enable flag of generation texture unit with support atlas.
 
               @ingroup Evas_3D_Texture
@@ -55,7 +55,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
          }
       }
       data_set {
-         /*
+         /*@
            Set the data of the given texture.
 
            @see evas_3d_texture_file_set()
@@ -72,7 +72,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
       }
 
       file_set {
-         /*
+         /*@
            Set the data of the given texture from file.
 
            @ingroup Evas_3D_Texture
@@ -85,7 +85,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
       }
 
       source_set {
-         /*
+         /*@
            Set the data of the given texture from an evas object.
 
            Evas 3D support using existing evas object as a texture source. This feature
@@ -102,7 +102,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
       }
 
       color_format_get @const {
-         /*
+         /*@
            Get the color format of the given texture.
 
            EVAS_3D_COLOR_FORMAT_RGBA will be returned if the texture has source object.
@@ -118,7 +118,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
       }
 
       size_get @const {
-         /*
+         /*@
            Get the size of the given texture.
 
            If the texture has source object, the size of the source object will be
@@ -137,7 +137,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
       }
 
       wrap_set {
-         /*
+         /*@
            Set the wrap mode of the given texture.
            If the texture coordinate exceed range [0.0, 1.0] the values are modified
            according to the wrap mode.
@@ -153,7 +153,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
       }
 
       wrap_get {
-         /*
+         /*@
            Get the wrap mode of the given texture.
 
            @see evas_3d_texture_wrap_set()
@@ -168,7 +168,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
       }
 
       filter_set {
-         /*
+         /*@
            Set the filter of the given texture.
 
            Default filters are both EVAS_3D_TEXTURE_FILTER_NEAREST for s and t.
@@ -183,7 +183,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
       }
 
       filter_get @const {
-         /*
+         /*@
            Get the filter of the given texture.
 
            @param texture       The given texture.

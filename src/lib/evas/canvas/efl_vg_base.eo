@@ -36,8 +36,8 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
             */
          }
          values {
-            double x; /* @origin x position */
-            double y; /* @origin y position */
+            double x; /*@ @origin x position */
+            double y; /*@ @origin y position */
          }
       }
       @property mask {

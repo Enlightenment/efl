@@ -4,7 +4,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
    data: Evas_3D_Scene_Data;
    methods {
       size_set {
-         /*
+         /*@
            Set the resolution of a scene.
 
            A scene should be rendered to be displayed through an image objects. The
@@ -19,7 +19,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
       }
 
       size_get @const {
-         /*
+         /*@
            Get the internal resolution of a scene.
 
            @ingroup Evas_3D_Scene
@@ -31,7 +31,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
       }
 
       background_color_set {
-         /*
+         /*@
            Set the background color of a scene.
 
            Background color defines initial color of pixels before a scene is rendered.
@@ -51,7 +51,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
       }
 
       background_color_get @const {
-         /*
+         /*@
            Get the background color of a scene.
 
            @ingroup Evas_3D_Scene
@@ -65,7 +65,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
       }
 
       pick @const {
-         /*
+         /*@
            Get information on the most front visible mesh for the given position.
 
            (x, y) is the screen coordinate of the given scene. That is, left-top is
@@ -86,7 +86,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
       }
 
       exist @const {
-         /*
+         /*@
            Search given node in the given position.
 
            @ingroup Evas_3D_Scene
@@ -100,7 +100,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
       }
 
       pick_member_list_get @const {
-         /*
+         /*@
            Get list of the all root members from scene in the given position.
 
            @ingroup Evas_3D_Scene
@@ -112,7 +112,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          }
       }
       shadows_enable_set {
-         /*
+         /*@
            Enable or disable shadows on given scene
 
            If shadows_enabled @c EINA_TRUE, the objects in the scene can throw shadow to another objects located behind them.
@@ -126,7 +126,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
       }
 
       shadows_enable_get @const {
-         /*
+         /*@
            Get shadows enabled status for given scene.
            @return The shadows enabled status.
 
@@ -137,7 +137,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          }
       }
       color_pick_enable_get @const {
-         /*
+         /*@
            Get status of color picking of the scene.
 
            @ingroup Evas_3D_Scene
@@ -147,7 +147,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          }
       }
       color_pick_enable_set {
-         /*
+         /*@
            Set posibility color picking.
 
            @ingroup Evas_3D_Scene
@@ -160,14 +160,14 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
 
       @property root_node {
          set {
-            /*
+            /*@
               Set the root node of a scene.
 
               @ingroup Evas_3D_Scene
              */
          }
          get {
-            /*
+            /*@
               Get the root node of a scene.
 
               @return        The root node of the given scene.
@@ -182,14 +182,14 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
 
       @property camera_node {
          set {
-            /*
+            /*@
               Set the camera node of a scene.
 
               @ingroup Evas_3D_Scene
              */
          }
          get {
-            /*
+            /*@
               Get the camera node of a scene.
 
               @return        The camera node of the given scene.

@@ -35,7 +35,7 @@ class Ecore_Audio (Eo.Base)
             @since 1.8 */
          }
          values {
-            bool paused; /*ret EINA_TRUE if object is paused, EINA_FALSE if not*/
+            bool paused; /*@ ret EINA_TRUE if object is paused, EINA_FALSE if not*/
          }
       }
       @property volume {
@@ -52,7 +52,7 @@ class Ecore_Audio (Eo.Base)
             @since 1.8 */
          }
          values {
-            double volume; /*The volume*/
+            double volume; /*@ The volume */
          }
       }
       @property source {
@@ -64,7 +64,7 @@ class Ecore_Audio (Eo.Base)
             the libsndfile class accepts WAV, OGG, FLAC files as source.
             
             @since 1.8 */
-            return: bool; /*EINA_TRUE if the source was set correctly (i.e. the file was opened), EINA_FALSE otherwise*/
+            return: bool; /*@ EINA_TRUE if the source was set correctly (i.e. the file was opened), EINA_FALSE otherwise*/
          }
          get {
             /*@
@@ -73,7 +73,7 @@ class Ecore_Audio (Eo.Base)
             @since 1.8 */
          }
          values {
-            const(char)* source; /*The source to set to (i.e. file, URL, device)*/
+            const(char)* source; /*@ The source to set to (i.e. file, URL, device)*/
          }
       }
       @property format {
@@ -85,7 +85,7 @@ class Ecore_Audio (Eo.Base)
             ECORE_AUDIO_FORMAT_AUTO
             
             @since 1.8 */
-            return: bool; /*EINA_TRUE if the format was supported, EINA_FALSE otherwise*/
+            return: bool; /*@ EINA_TRUE if the format was supported, EINA_FALSE otherwise*/
          }
          get {
             /*@
@@ -97,7 +97,7 @@ class Ecore_Audio (Eo.Base)
             @since 1.8 */
          }
          values {
-            Ecore_Audio_Format format; /*The format of the object*/
+            Ecore_Audio_Format format; /*@ The format of the object*/
          }
       }
       vio_set {
@@ -106,9 +106,9 @@ class Ecore_Audio (Eo.Base)
          
          @since 1.8 */
          params {
-              Ecore_Audio_Vio *vio; /*The @ref Ecore_Audio_Vio struct with the function callbacks*/
-              void *data; /*User data to pass to the VIO functions*/
-              eo_key_data_free_func free_func; /*This function takes care to clean up @ref data when he VIO is destroyed. NULL means do nothing.*/
+              Ecore_Audio_Vio *vio; /*@ The @ref Ecore_Audio_Vio struct with the function callbacks*/
+              void *data; /*@ User data to pass to the VIO functions*/
+              eo_key_data_free_func free_func; /*@ This function takes care to clean up @ref data when he VIO is destroyed. NULL means do nothing.*/
          }
       }
    }

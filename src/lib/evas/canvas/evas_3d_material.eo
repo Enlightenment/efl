@@ -4,7 +4,7 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
    data: Evas_3D_Material_Data;
    methods {
       color_set {
-         /*
+         /*@
            Set the material attribute color of the given material.
 
            Material color is used also when texture map is enabled. The colors will be
@@ -33,7 +33,7 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
       }
 
       color_get @const {
-         /*
+         /*@
            Get the material attribute color of the given material.
 
            @see evas_3d_material_color_set()
@@ -51,7 +51,7 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
 
       @property enable {
          set {
-            /*
+            /*@
               Set the material attribute enable flag of the given material.
 
               You might want to disable some material reflection contribution. For
@@ -64,7 +64,7 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          get {
-            /*
+            /*@
               Get the material attribute enable flag of the given material.
 
               @see evas_3d_material_enable_set()
@@ -83,7 +83,7 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
 
       @property shininess {
          set {
-            /*
+            /*@
               Set the shininess of the given material.
 
               Shininess is only used when specular attribute is enabled. Higher shininess
@@ -97,7 +97,7 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          get {
-            /*
+            /*@
               Get the shininess of the given material.
 
               @see evas_3d_material_shininess_set()
@@ -124,7 +124,7 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          get {
-            /*
+            /*@
               Get the texture of the given material.
 
               @see evas_3d_material_texture_set()
