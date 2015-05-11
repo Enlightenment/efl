@@ -96,8 +96,9 @@ ethumbframes_DATA = ethumb/frames/default.edj
 CLEANFILES += ethumb/frames/default.edj
 
 ethumb/frames/default.edj: ethumb/frames/default.edc
-	$(MKDIR_P) ethumb/frames/
-	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(srcdir)/ethumb/frames/ $< $@
+	$(AM_V_EDJ) \
+	$(MKDIR_P) ethumb/frames/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(srcdir)/ethumb/frames/ $< $@
 
 
 EXTRA_DIST += \
