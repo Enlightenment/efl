@@ -1,8 +1,8 @@
 class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
 {
    eo_prefix: elm_code_widget;
-   properties {
-      code {
+   methods {
+      @property code {
          set {
             /*@
             Set the underlying code object that this widget renders.
@@ -21,7 +21,7 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
             Elm_Code *code; /*@ Our underlying Elm_Code object */
          }
       }
-      font_size {
+      @property font_size {
          set {
             /*@
             Set the font size that this widget uses, the font will always be a system monospaced font
@@ -38,7 +38,7 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
             Evas_Font_Size font_size; /*@ The font size of the widgget */
          }
       }
-      gravity {
+      @property gravity {
          set {
             /*@
             Set how this widget's scroller should respond to new lines being added.
@@ -59,7 +59,7 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
             double y; /*@ The vertical gravity of the widget's scroller - valid values are 0.0 and 1.0 */
          }
       }
-      tabstop {
+      @property tabstop {
          set {
             /*@
             Set the width of a tab stop, used purely for visual layout of tab characters.
@@ -79,7 +79,7 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
             uint tabstop; /*@ Maximum width of a tab character */
          }
       }
-      editable {
+      @property editable {
          set {
             /*@
             Set whether this widget allows editing
@@ -105,7 +105,7 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
             Eina_Bool editable; /*@ The editable state of the widget */
          }
       }
-      line_numbers {
+      @property line_numbers {
          set {
             /*@
             Set whether line numbers should be displayed in the left gutter.
@@ -125,7 +125,7 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
             Eina_Bool line_numbers; /*@ Whether or not line numbers (or their placeholder) should be shown */
          }
       }
-      line_width_marker {
+      @property line_width_marker {
          set {
             /*@
             Set where the line width market should be shown.
@@ -145,7 +145,7 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
             uint line_width_marker; /*@ Where to display a line width marker, if at all */
          }
       }
-      show_whitespace {
+      @property show_whitespace {
          set {
             /*@
             Set where white space should be shown.
@@ -162,7 +162,7 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
             Eina_Bool show_whitespace; /*@ Whether or not we show whitespace characters */
          }
       }
-      cursor_position {
+      @property cursor_position {
          set {
             /*@
             Set the current location of the text cursor.
@@ -180,8 +180,6 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
             uint line; /*@ The vertical position of the cursor - the top row is 1 an */
          }
       }
-   }
-   methods {
       line_refresh {
          params {
             Elm_Code_Line *line; /*@ @in The line to refresh. */
@@ -207,9 +205,9 @@ class Elm_Code_Widget (Elm_Layout, Elm_Interface_Atspi_Text)
       Eo.Base.constructor;
       Eo.Base.finalize;
       Evas.Object_Smart.add;
-      Elm_Widget.event;
-      Elm_Widget.focus_next_manager_is;
-      Elm_Widget.focus_direction_manager_is;
+      Elm.Widget.event;
+      Elm.Widget.focus_next_manager_is;
+      Elm.Widget.focus_direction_manager_is;
    }
    events {
       line,clicked;
