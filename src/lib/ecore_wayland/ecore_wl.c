@@ -374,6 +374,9 @@ ecore_wl_dpi_get(void)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!_ecore_wl_disp) return 0;
+
+   _ecore_wl_init_wait();
+
    if (!_ecore_wl_disp->output) return 75;
 
    mw = _ecore_wl_disp->output->mw;
