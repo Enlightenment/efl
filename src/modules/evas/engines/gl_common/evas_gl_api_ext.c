@@ -311,9 +311,71 @@ evgl_evasglQueryWaylandBuffer(Evas_GL *evas_gl EINA_UNUSED,
    return EXT_FUNC_EGL(eglQueryWaylandBufferWL)(dpy, buffer, attribute, value);
 }
 
-
 #else
 #endif
+
+static void
+evgl_glDiscardFramebufferEXT(GLenum target, GLsizei numAttachments, const GLenum* attachments)
+{
+   EVGL_Resource *rsc;
+   EVGL_Context *ctx;
+   Eina_Bool target_is_fbo = EINA_FALSE;
+
+   if (!(rsc=_evgl_tls_resource_get()))
+     {
+        ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   if (!rsc->current_eng)
+     {
+        ERR("Unable to retrive Current Engine");
+        return;
+     }
+
+   ctx = rsc->current_ctx;
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return;
+     }
+
+   if (!_evgl_direct_enabled())
+     {
+        if (ctx->current_fbo == 0)
+          target_is_fbo = EINA_TRUE;
+     }
+
+   if (target_is_fbo && numAttachments)
+     {
+        GLenum *att;
+        int i = 0;
+        att = (GLenum *)calloc(1, numAttachments * sizeof(GLenum));
+        if (!att)
+          return;
+
+        memcpy(att, attachments, numAttachments * sizeof(GLenum));
+        while (i < numAttachments)
+          {
+             if (att[i] == GL_COLOR_EXT)
+               att[i] = GL_COLOR_ATTACHMENT0;
+             else if (att[i] == GL_DEPTH_EXT)
+               att[i] = GL_DEPTH_ATTACHMENT;
+             else if (att[i] == GL_STENCIL_EXT)
+               att[i] = GL_STENCIL_ATTACHMENT;
+             i++;
+          }
+        EXT_FUNC(glDiscardFramebuffer)(target, numAttachments, att);
+        free(att);
+     }
+   else
+     {
+        EXT_FUNC(glDiscardFramebuffer)(target, numAttachments, attachments);
+     }
+}
+
+
+
 
 //  0: not initialized,
 //  1: GLESv2 initialized,
