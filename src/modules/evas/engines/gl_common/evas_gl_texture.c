@@ -1047,7 +1047,10 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
      {
         glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
      }
-   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+   if ((bytes_count == 1) || (bytes_count == 2))
+     glPixelStorei(GL_UNPACK_ALIGNMENT, bytes_count);
+   else
+     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
 //   printf("tex upload %ix%i\n", im->cache_entry.w, im->cache_entry.h);
    //  +-+
@@ -1370,7 +1373,10 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
           {
              glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
           }
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+        if ((bytes_count == 1) || (bytes_count == 2))
+          glPixelStorei(GL_UNPACK_ALIGNMENT, bytes_count);
+        else
+          glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
         _tex_sub_2d(tex->gc, u, tex->ty, EVAS_GL_TILE_SIZE, EVAS_GL_TILE_SIZE, fmt, tex->ptt->dataformat, out);
 
