@@ -3,7 +3,7 @@ class Emotion.Object (Evas.Object_Smart, Efl.File, Efl.Player, Efl.Image) {
    methods {
         @property option {
              set {
-                  /**
+                  /*@
                    * @brief Set the specified option for the current module.
                    *
                    * This function allows one to mute the video or audio of the emotion object.
@@ -25,7 +25,7 @@ class Emotion.Object (Evas.Object_Smart, Efl.File, Efl.Player, Efl.Image) {
         }
         @property engine {
              set {
-                  /**
+                  /*@
                    * @brief Initializes an emotion object with the specified module.
                    *
                    * This function is required after creating the emotion object, in order to

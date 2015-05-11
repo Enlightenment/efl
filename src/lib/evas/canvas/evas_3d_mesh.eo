@@ -75,7 +75,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       }
 
       frame_vertex_data_unmap {
-         /*
+         /*@
            Unmap the vertex buffer of the key frame of the given mesh.
 
            @see evas_3d_mesh_frame_vertex_data_map()
@@ -90,7 +90,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       }
 
       frame_vertex_stride_get @const {
-         /*
+         /*@
            Get the vertex buffer stride of the key frame of the given mesh.
 
            This function returns valid stride only when the vertex buffer is mapped.
@@ -111,7 +111,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       }
 
       index_data_set {
-         /*
+         /*@
            Set the vertex index data of the given mesh.
 
            When the index data is set, Evas 3D assembles vertices using the index data.
@@ -133,7 +133,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
 
 
       index_data_copy_set {
-         /*
+         /*@
            Set the vertex index data of the given mesh by copying from a buffer.
 
            This function allocates internal index buffer any copy data from the given
@@ -151,7 +151,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       }
 
       index_format_get @const {
-         /*
+         /*@
            Get the format of the index data of the given mesh.
 
 
@@ -171,7 +171,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       }
 
       index_count_get @const {
-         /*
+         /*@
            Get the count of the index data of the given mesh.
 
            This function returns the index count of the last called data_set function.
@@ -187,7 +187,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       }
 
       index_data_map {
-         /*
+         /*@
            Map the index buffer of the given mesh.
 
            evas_3d_mesh_index_data_unmap() should be called after modifications. If the
@@ -205,7 +205,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       }
 
       index_data_unmap {
-         /*
+         /*@
            Unmap the index buffer of the given mesh.
 
            @see evas_3d_mesh_index_data_map()
@@ -215,7 +215,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       }
 
       frame_add {
-         /*
+         /*@
            Add a key frame to the given mesh.
 
            @param mesh    The given mesh.
@@ -231,7 +231,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       }
 
       frame_del {
-         /*
+         /*@
            Delete a key frame from the given mesh.
 
            @param mesh    The given mesh.
@@ -247,7 +247,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       }
 
       fog_color_set {
-         /*
+         /*@
            Set the fog color and density for the given mesh.
            @ingroup Evas_3D_Mesh
           */
@@ -259,7 +259,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
          }
       }
       fog_color_get {
-         /*
+         /*@
            Set the fog color and density for the given mesh.
            @ingroup Evas_3D_Mesh
           */
@@ -271,7 +271,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
          }
       }
       blending_func_set {
-         /*
+         /*@
           Set the blending function for given mesh
           @ingroup Evas_3D_Mesh
          */
@@ -281,7 +281,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
          }
       }
       blending_func_get {
-         /*
+         /*@
           Get blending blending function for given mesh
           @see eavs_3d_mesh_blending_func_set()
           @ingroup Evas_3D_Mesh
@@ -294,7 +294,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
 
       @property shade_mode {
          set {
-            /**
+            /*@
              * Set the shade mode of the given mesh.
              *
              * Default shade mode is EVAS_3D_SHADE_MODE_VERTEX_COLOR.
@@ -303,7 +303,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              */
          }
          get {
-            /**
+            /*@
              * Get the shade mode of the given mesh.
              *
              * @see eavs_3d_mesh_shade_mode_set()
@@ -317,14 +317,14 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       }
       @property color_pick_enable {
         set {
-            /**
+            /*@
              * Set posibility color picking.
              *
              * @ingroup Evas_3D_Mesh
              */
          }
          get {
-             /**
+             /*@
               * Get status of color picking of the mesh.
               *
               * @see color_pick_enable_set()
@@ -338,7 +338,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       }
       @property vertex_count {
         set {
-              /**
+              /*@
                * Set the vertex count of the given mesh.
                *
                * Each key frame should have same vertex count to be properly interpolated.
@@ -351,7 +351,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
                */
          }
          get {
-               /**
+               /*@
                * Get the vertex count of the given mesh.
                *
                * @see evas_3d_mesh_vertex_count_set()
@@ -365,7 +365,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       }
       @property fog_enable {
         set {
-            /**
+            /*@
              * Enable or disable fog effect for given mesh.
              *
              * Default fog is disabled.
@@ -374,7 +374,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              */
          }
          get {
-             /**
+             /*@
               * Get the enable status of fog effect for given mesh
               *
               * @see fog_enable_set()
@@ -389,7 +389,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
  
       @property alpha_test_enable {
         set {
-            /**
+            /*@
              * Get the enable status of alpha test for given mesh
              *
              * Default alpha test disabled.
@@ -398,7 +398,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              */
          }
          get {
-             /**
+             /*@
               * Get the enable status of alpha test for given mesh
               *
               * @see alpha_test_enable_set()
@@ -413,7 +413,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
 
       @property alpha_func {
         set {
-            /*
+            /*@
              * The alpha test discards fragments depending on the outcome of a comparison
              * between an incoming fragment's alpha value and a constant reference value
              * This func specifies the reference value and the comparison function.
@@ -422,7 +422,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              */
         }
         get {
-            /*
+            /*@
              * Get the reference value and the comparison function for alpha testing
              *
              * @see eavs_3d_mesh_alpha_test_param_set()
@@ -438,7 +438,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
 
       @property blending_enable {
         set {
-            /**
+            /*@
              * Enable or disable blending for given mesh.
              *
              * Default blending disabled.
@@ -447,7 +447,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              */
          }
          get {
-            /**
+            /*@
              * Get blending enable status for given mesh.
              *
              * @see eavs_3d_mesh_blending_enable_set()
@@ -462,7 +462,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
 
       @property frame_material {
          set {
-            /**
+            /*@
               Set the material of the key frame of the given mesh.
 
               Setting different materials for each key frame is useful for doing animations
@@ -472,7 +472,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              */
          }
          get {
-            /**
+            /*@
               Get the material of the key frame of the given mesh.
 
               @see evas_3d_mesh_frame_material_set()
@@ -490,7 +490,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
 
       @property vertex_assembly {
          set {
-            /*
+            /*@
               Set the vertex assembly of the given mesh.
 
               Vertex assembly defines how the engine organizes vertices into geometric
@@ -502,7 +502,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              */
          }
          get {
-            /*
+            /*@
               Get the vertex assembly of the given mesh.
 
               @see evas_3d_mesh_vertex_assembly_set()

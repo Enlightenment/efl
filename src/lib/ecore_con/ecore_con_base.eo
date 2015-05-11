@@ -4,7 +4,7 @@ abstract Ecore.Con.Base (Eo.Base) {
    data: null;
    methods {
       @property ip {
-         /**
+         /*@
           * Control the IP address of a server that has been connected to.
           *
           * The param is a pointer to an internal string that contains the IP address of
@@ -108,7 +108,7 @@ abstract Ecore.Con.Base (Eo.Base) {
          legacy: null;
       }
       send {
-         /**
+         /*@
           * Sends the given data to the given server.
           *
           * This function will send the given data to the server as soon as the program

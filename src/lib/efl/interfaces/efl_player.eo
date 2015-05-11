@@ -61,7 +61,7 @@ interface Efl.Player {
              }
         }
         @property play_speed {
-             /**
+             /*@
               * @brief Control the play speed of the media file.
               *
               * This function control the speed with which the media file will be played. 1.0
@@ -77,7 +77,7 @@ interface Efl.Player {
              }
         }
         @property audio_volume {
-             /**
+             /*@
               * @brief Control the audio volume.
               *
               * Controls the audio volume of the stream being played. This has nothing to do with
@@ -94,7 +94,7 @@ interface Efl.Player {
              }
         }
         @property audio_mute {
-             /**
+             /*@
               * @brief This property controls the audio mute state.
               */
              set {
@@ -106,7 +106,7 @@ interface Efl.Player {
              }
         }
         @property length {
-             /**
+             /*@
               * @brief Get the length of play for the media file.
               *
               * This function returns the length of the media file in seconds.
@@ -118,7 +118,7 @@ interface Efl.Player {
              }
         }
         @property seekable {
-             /**
+             /*@
               * @brief Get whether the media file is seekable.
               */
              get {
