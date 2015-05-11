@@ -196,11 +196,11 @@ _eina_debug_monitor(void *data EINA_UNUSED)
                        if ((evlog) && (evlog->buf))
                          {
                             char          tmp[12];
-                            unsigned int *size     = (unsigned int *)(tmp + 0);
+                            unsigned int *tmpsize  = (unsigned int *)(tmp + 0);
                             char         *op2 = "EVLG";
                             unsigned int *overflow = (unsigned int *)(tmp + 8);
 
-                            *size = (sizeof(tmp) - 4) + evlog->top;
+                            *tmpsize = (sizeof(tmp) - 4) + evlog->top;
                             memcpy(tmp + 4, op2, 4);
                             *overflow = evlog->overflow;
                             write(_eina_debug_monitor_service_fd,
