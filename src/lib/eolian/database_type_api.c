@@ -4,6 +4,7 @@
 
 #include <Eina.h>
 #include "eolian_database.h"
+#include "eo_lexer.h"
 
 EAPI const Eolian_Type *
 eolian_type_alias_get_by_name(const char *name)
@@ -233,15 +234,20 @@ eolian_type_base_type_get(const Eolian_Type *tp)
      {
         /* for regular types, try looking up if it belongs to a struct,
          * enum or an alias... otherwise return NULL
+         * but first check for builtins
          */
-       Eolian_Type *rtp;
-       rtp = eina_hash_find(_aliases, tp->full_name);
-       if (rtp) return rtp;
-       rtp = eina_hash_find(_structs, tp->full_name);
-       if (rtp) return rtp;
-       rtp = eina_hash_find(_enums, tp->full_name);
-       if (rtp) return rtp;
-       return NULL;
+        int  kw = eo_lexer_keyword_str_to_id(tp->full_name);
+        if (!kw || kw < KW_byte || kw > KW_list)
+          {
+             Eolian_Type *rtp;
+             rtp = eina_hash_find(_aliases, tp->full_name);
+             if (rtp) return rtp;
+             rtp = eina_hash_find(_structs, tp->full_name);
+             if (rtp) return rtp;
+             rtp = eina_hash_find(_enums, tp->full_name);
+             if (rtp) return rtp;
+          }
+        return NULL;
      }
    return tp->base_type;
 }
