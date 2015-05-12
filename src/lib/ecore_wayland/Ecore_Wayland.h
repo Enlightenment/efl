@@ -567,6 +567,7 @@ EAPI void ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y);
 EAPI void ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location);
 EAPI void ecore_wl_window_damage(Ecore_Wl_Window *win, int x, int y, int w, int h);
 EAPI void ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, int x, int y);
+EAPI struct wl_compositor *ecore_wl_compositor_get(void);
 
 /* @since 1.8 */
 EAPI void ecore_wl_window_commit(Ecore_Wl_Window *win);

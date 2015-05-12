@@ -211,7 +211,9 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
 
    if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
      {
+        struct wl_compositor *temp_comp = NULL;
         einfo->info.display = ecore_wl_display_get();
+        einfo->info.compositor = ecore_wl_compositor_get();
         einfo->info.destination_alpha = EINA_TRUE;
         einfo->info.rotation = ee->rotation;
         einfo->info.depth = 32;

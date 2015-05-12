@@ -54,6 +54,7 @@ struct _Outbuf
    struct wl_display *disp;
    struct wl_egl_window *win;
    struct wl_surface *surface;
+   struct wl_compositor *compositor;
    int w, h;
    int depth, screen, rot, alpha;
 

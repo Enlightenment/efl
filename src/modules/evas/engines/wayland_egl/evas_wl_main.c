@@ -31,6 +31,7 @@ eng_window_new(Evas *evas, Evas_Engine_Info_Wayland_Egl *einfo, int w, int h, Re
    gw->disp = einfo->info.display;
    gw->surface = einfo->info.surface;
    gw->screen = einfo->info.screen;
+   gw->compositor = einfo->info.compositor;
    gw->depth = einfo->info.depth;
    gw->alpha = einfo->info.destination_alpha;
    gw->rot = einfo->info.rotation;

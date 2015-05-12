@@ -301,6 +301,12 @@ ecore_wl_registry_get(void)
    return _ecore_wl_disp->wl.registry;
 }
 
+EAPI struct wl_compositor *
+ecore_wl_compositor_get(void)
+{
+   return _ecore_wl_compositor_get();
+}
+
 struct wl_compositor *
 _ecore_wl_compositor_get(void)
 {

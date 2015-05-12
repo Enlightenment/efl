@@ -36,6 +36,14 @@ struct _Native
    void *egl_surface;
 };
 
+/* Evas GL wl_surface & wl_egl_window */
+typedef struct _Evgl_wl_Surface Evgl_wl_Surface;
+struct _Evgl_wl_Surface
+{
+   struct wl_surface *wl_surf;
+   struct wl_egl_window *egl_win;
+};
+
 /* local function prototypes */
 typedef void (*_eng_fn) (void);
 typedef _eng_fn (*glsym_func_eng_fn) ();
@@ -257,33 +265,43 @@ evgl_eng_evas_surface_get(void *data)
 static void *
 evgl_eng_native_window_create(void *data)
 {
+   Evgl_wl_Surface* surface = NULL;
    Render_Engine *re;
    Outbuf *ob;
-   struct wl_egl_window *win;
 
    if (!(re = (Render_Engine *)data)) return NULL;
    if (!(ob = eng_get_ob(re))) return NULL;
 
-   if (!(win = wl_egl_window_create(ob->info->info.surface, 1, 1)))
+   if (!(surface = calloc(1, sizeof(Evgl_wl_Surface))))
+     return NULL;
+   surface->wl_surf =  wl_compositor_create_surface(ob->compositor);
+   if (!surface->wl_surf)
+     {
+        ERR("Could not create wl_surface: %m");
+        return NULL;
+     }
+   surface->egl_win = wl_egl_window_create(surface->wl_surf, 1, 1);
+   if (!surface->egl_win)
      {
         ERR("Could not create wl_egl window: %m");
         return NULL;
      }
-
-   return (void *)win;
+   return (void *)surface;
 }
 
 static int 
 evgl_eng_native_window_destroy(void *data, void *win)
 {
-   Render_Engine *re;
+   Evgl_wl_Surface* surface = NULL;
 
-   if (!(re = (Render_Engine *)data)) return 0;
    if (!win) return 0;
+   surface = (Evgl_wl_Surface*)win;
+   if (surface->egl_win)
+     wl_egl_window_destroy((struct wl_egl_window *)surface->egl_win);
+   if (surface->wl_surf)
+      wl_surface_destroy(surface->wl_surf);
 
-   wl_egl_window_destroy((struct wl_egl_window *)win);
-   win = NULL;
-
+   free(surface);
    return 1;
 }
 
