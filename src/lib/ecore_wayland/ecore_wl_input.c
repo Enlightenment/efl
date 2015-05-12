@@ -601,9 +601,8 @@ _ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer EINA_UN
                                         0, button, timestamp);
 
         input->grab_count--;
-        if (input->grab_count < 0)
-            input->grab_count = 0;
-        if ((input->grab) && (input->grab_button == button) && (!state) && (!input->grab_count))
+        if ((input->grab) && (input->grab_button == button) && 
+            (!state) && (!input->grab_count))
           ecore_wl_input_ungrab(input);
      }
 
@@ -1110,9 +1109,8 @@ _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch EINA_UNUSED, unsi
 
    _ecore_wl_input_mouse_up_send(input, input->touch_focus, id, BTN_LEFT, timestamp);
    input->grab_count--;
-   if (input->grab_count < 0)
-     input->grab_count = 0;
-   if ((input->grab) && (input->grab_button == BTN_LEFT) && (!input->grab_count))
+   if ((input->grab) && (input->grab_button == BTN_LEFT) && 
+       (!input->grab_count))
      ecore_wl_input_ungrab(input);
 }
 
