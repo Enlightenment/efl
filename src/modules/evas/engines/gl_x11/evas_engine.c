@@ -1201,25 +1201,24 @@ evgl_eng_gles_context_create(void *data,
 #endif
 }
 
-static Eina_Bool
-evgl_eng_native_win_surface_config_check(void *data, int evgl_depth,
-                                         int evgl_stencil, int evgl_msaa)
+static void
+evgl_eng_native_win_surface_config_get(void *data, int *win_depth,
+                                         int *win_stencil, int *win_msaa)
 {
    Render_Engine *re = data;
-   if (!re) return EINA_FALSE;
+   if (!re) return;
 
-   if ((eng_get_ob(re)->detected.depth_buffer_size >= evgl_depth)
-       && (eng_get_ob(re)->detected.stencil_buffer_size >= evgl_stencil)
-       && (eng_get_ob(re)->detected.msaa >= evgl_msaa))
-     {
-        DBG("Win cfg can support the Req Evas GL's config successfully");
-        return EINA_TRUE;
-     }
-   DBG("Win cfg can't support Evas GL DR win (depth %d, stencil %d, msaa %d)",
+   if (win_depth)
+     *win_depth = eng_get_ob(re)->detected.depth_buffer_size;
+   if (win_stencil)
+     *win_stencil = eng_get_ob(re)->detected.stencil_buffer_size;
+   if (win_msaa)
+     *win_msaa = eng_get_ob(re)->detected.msaa;
+
+   DBG("Window config(depth %d, stencil %d, msaa %d)",
        eng_get_ob(re)->detected.depth_buffer_size,
        eng_get_ob(re)->detected.stencil_buffer_size,
        eng_get_ob(re)->detected.msaa);
-   return EINA_FALSE;
 }
 
 static const EVGL_Interface evgl_funcs =
@@ -1241,7 +1240,7 @@ static const EVGL_Interface evgl_funcs =
    evgl_eng_indirect_surface_create,
    evgl_eng_indirect_surface_destroy,
    evgl_eng_gles_context_create,
-   evgl_eng_native_win_surface_config_check,
+   evgl_eng_native_win_surface_config_get,
 };
 
 //----------------------------------------------------------//

@@ -1262,6 +1262,7 @@ _internal_config_set(void *eng_data, EVGL_Surface *sfc, Evas_GL_Config *cfg)
    int i = 0, cfg_index = -1;
    int color_bit = 0, depth_bit = 0, stencil_bit = 0, msaa_samples = 0;
    int depth_size = 0;
+   int native_win_depth = 0, native_win_stencil = 0, native_win_msaa = 0;
    Eina_Bool support_win_cfg = 1;
 
    // Check if engine is valid
@@ -1316,11 +1317,20 @@ try_again:
              sfc->msaa_samples      = evgl_engine->caps.fbo_fmts[i].samples;
 
              // Direct Rendering Option
-             if (((depth_bit > 0) || (stencil_bit > 0) || (msaa_samples > 0))
-                  && (evgl_engine->funcs->native_win_surface_config_check))
+             if (evgl_engine->funcs->native_win_surface_config_get)
+               evgl_engine->funcs->native_win_surface_config_get(eng_data, &native_win_depth, &native_win_stencil, &native_win_msaa);
+             if ((native_win_depth >= depth_size)
+                 && (native_win_stencil >= stencil_bit)
+                 && (native_win_msaa >= msaa_samples))
                {
-                  DBG("request to check win cfg with depth %d, stencil %d, msaa %d", depth_size, stencil_bit, msaa_samples);
-                  support_win_cfg = evgl_engine->funcs->native_win_surface_config_check(eng_data, depth_size, stencil_bit, msaa_samples);
+                  DBG("Win cfg can support the Req Evas GL's config successfully");
+                  support_win_cfg = EINA_TRUE;
+               }
+             else
+               {
+                  ERR("Win cfg can't support Evas GL DR win (depth %d, stencil %d, msaa %d)",
+                      native_win_depth, native_win_stencil, native_win_msaa);
+                  support_win_cfg = EINA_FALSE;
                }
 
              if ((sfc->direct_override) || support_win_cfg)
@@ -1335,6 +1345,21 @@ try_again:
                       "the accel_preference to \"opengl%s%s%s\".",
                       depth_size, stencil_bit, msaa_samples,
                       s1[cfg->depth_bits], s2[cfg->stencil_bits], s3[cfg->multisample_bits]);
+               }
+
+             // When direct rendering is enabled, FBO configuration should match
+             // window surface configuration as FBO will be used in fallback cases.
+             // So we search again for the formats that match window surface's.
+             if (sfc->direct_fb_opt &&
+                 ((native_win_depth != depth_size) ||
+                  (native_win_stencil != stencil_bit) ||
+                  (native_win_msaa != msaa_samples)))
+               {
+                  depth_bit = (1 << ((native_win_depth / 8) - 1));
+                  depth_size = native_win_depth;
+                  stencil_bit = native_win_stencil;
+                  msaa_samples = native_win_msaa;
+                  goto try_again;
                }
 
              // Extra flags for direct rendering
