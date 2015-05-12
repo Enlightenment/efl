@@ -1350,7 +1350,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @ingroup Win */
          }
          values {
-            Elm.Win.Type type(enum Elm.Win.Type.unknown);
+            Elm.Win.Type type(Elm.Win.Type.unknown);
          }
       }
       @property noblank {

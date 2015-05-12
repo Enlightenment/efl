@@ -146,7 +146,7 @@ class Elm.Datetime (Elm.Layout)
 
          return: bool;
          params {
-            @in const(struct tm)* mintime; /*@ Time structure containing the minimum time value. */
+            @in const(Elm_Datetime_Time)* mintime; /*@ Time structure containing the minimum time value. */
          }
       }
       value_min_get @const {
@@ -170,7 +170,7 @@ class Elm.Datetime (Elm.Layout)
          @ingroup Datepicker */
          return: bool;
          params {
-            @inout struct tm mintime; /*@ Time structure. */
+            @inout Elm_Datetime_Time mintime; /*@ Time structure. */
          }
       }
       value_set {
@@ -195,7 +195,7 @@ class Elm.Datetime (Elm.Layout)
 
          return: bool;
          params {
-            @in const(struct tm)* newtime; /*@ Time structure filled with values to be set. */
+            @in const(Elm_Datetime_Time)* newtime; /*@ Time structure filled with values to be set. */
          }
       }
       value_get @const {
@@ -219,7 +219,7 @@ class Elm.Datetime (Elm.Layout)
          @ingroup Datetime */
          return: bool;
          params {
-            @inout struct tm currtime; /*@ Time structure. */
+            @inout Elm_Datetime_Time currtime; /*@ Time structure. */
          }
       }
       field_visible_set {
@@ -277,7 +277,7 @@ class Elm.Datetime (Elm.Layout)
 
          return: bool;
          params {
-            @in const(struct tm)* maxtime; /*@ Time structure containing the maximum time value. */
+            @in const(Elm_Datetime_Time)* maxtime; /*@ Time structure containing the maximum time value. */
          }
       }
       value_max_get @const {
@@ -301,7 +301,7 @@ class Elm.Datetime (Elm.Layout)
          @ingroup Datetime */
          return: bool;
          params {
-            @inout struct tm maxtime; /*@ Time structure containing the maximum time value. */
+            @inout Elm_Datetime_Time maxtime; /*@ Time structure containing the maximum time value. */
          }
       }
    }

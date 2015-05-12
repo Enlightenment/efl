@@ -133,6 +133,9 @@ EAPI void                 elm_calendar_weekdays_names_set(Evas_Object *obj, cons
  */
 EAPI void                 elm_calendar_mark_del(Elm_Calendar_Mark *mark);
 
+/* temporary until better solution is found: is here because of eolian */
+typedef struct tm Elm_Calendar_Time;
+
 /**
  * @}
  */
