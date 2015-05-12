@@ -2324,6 +2324,83 @@ ecore_evas_aux_hint_val_set(Ecore_Evas *ee, const int id, const char *val)
    return EINA_TRUE;
 }
 
+EAPI const char *
+ecore_evas_aux_hint_val_get(const Ecore_Evas *ee, const int id)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_aux_hint_val_get");
+        return NULL;
+     }
+
+   Eina_List *ll;
+   Ecore_Evas_Aux_Hint *aux;
+   EINA_LIST_FOREACH(ee->prop.aux_hint.hints, ll, aux)
+     {
+        if (id == aux->id) return aux->val;
+     }
+
+   return NULL;
+}
+
+EAPI Eina_Bool
+ecore_evas_aux_hint_string_val_set(Ecore_Evas *ee, const char *hint, const char *val)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_aux_hint_string_val_set");
+        return EINA_FALSE;
+     }
+
+   Eina_List *ll;
+   Ecore_Evas_Aux_Hint *aux;
+   EINA_LIST_FOREACH(ee->prop.aux_hint.hints, ll, aux)
+     {
+        if (!strcmp(hint,aux->hint))
+          {
+             eina_stringshare_del(aux->val);
+             aux->val = eina_stringshare_add(val);
+             aux->allowed = 0;
+             aux->notified = 0;
+
+             Eina_Strbuf *buf = _ecore_evas_aux_hints_string_get(ee);
+             if (buf)
+               {
+                  if (ee->engine.func->fn_aux_hints_set)
+                    ee->engine.func->fn_aux_hints_set(ee, eina_strbuf_string_get(buf));
+
+                  eina_strbuf_free(buf);
+
+                  return EINA_TRUE;
+               }
+          }
+     }
+
+   return EINA_FALSE;
+}
+
+EAPI const char *
+ecore_evas_aux_hint_string_val_get(const Ecore_Evas *ee, const char *hint)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_aux_hint_string_val_get");
+        return NULL;
+     }
+
+   Eina_List *ll;
+   Ecore_Evas_Aux_Hint *aux;
+   EINA_LIST_FOREACH(ee->prop.aux_hint.hints, ll, aux)
+     {
+        if (!strcmp(hint,aux->hint)) return aux->val;
+     }
+
+   return NULL;
+}
+
 EAPI void
 ecore_evas_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
