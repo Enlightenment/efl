@@ -36,11 +36,17 @@ _eval_type(const Eolian_Expression *expr, const Eolian_Type *type)
         }
       case EOLIAN_TYPE_CLASS:
         return database_expr_eval(expr, EOLIAN_MASK_NULL);
+      case EOLIAN_TYPE_ENUM:
+        return database_expr_eval(expr, EOLIAN_MASK_INT);
       case EOLIAN_TYPE_REGULAR:
         {
            int  kw = eo_lexer_keyword_str_to_id(type->name);
            if (!kw || kw < KW_byte || kw >= KW_void)
-             return err;
+             {
+                const Eolian_Type *base = eolian_type_base_type_get(type);
+                if (base) return _eval_type(expr, base);
+                return err;
+             }
            switch (kw)
              {
               case KW_byte:
@@ -249,10 +255,7 @@ _expr_serialize(const Eolian_Expression *expr, Eina_Strbuf *buf, Eina_Bool outer
         eina_strbuf_append(buf, expr->value.b ? "true" : "false");
         break;
       case EOLIAN_EXPR_NAME:
-      case EOLIAN_EXPR_ENUM:
         {
-           if (expr->type == EOLIAN_EXPR_ENUM)
-             eina_strbuf_append(buf, "enum ");
            eina_strbuf_append(buf, expr->value.s);
            break;
         }

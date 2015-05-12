@@ -721,20 +721,9 @@ START_TEST(eolian_struct)
    fail_if(!(ftype = eolian_type_struct_field_type_get(field)));
    fail_if(!(type_name = eolian_type_name_get(ftype)));
    fail_if(strcmp(type_name, "Named"));
-   fail_if(eolian_type_type_get(ftype) != EOLIAN_TYPE_REGULAR_STRUCT);
-
-   /* typedef */
-   fail_if(!(atype = eolian_type_alias_get_by_name("Foo")));
-   fail_if(!(type = eolian_type_base_type_get(atype)));
-   fail_if(!(type_name = eolian_type_name_get(type)));
-   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
-   fail_if(strcmp(type_name, "_Foo"));
-
-   /* typedef - anon */
-   fail_if(!(atype = eolian_type_alias_get_by_name("Bar")));
-   fail_if(!(type = eolian_type_base_type_get(atype)));
-   fail_if(!!(type_name = eolian_type_name_get(type)));
-   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
+   fail_if(eolian_type_type_get(ftype) != EOLIAN_TYPE_REGULAR);
+   fail_if(eolian_type_type_get(eolian_type_base_type_get(ftype))
+       != EOLIAN_TYPE_STRUCT);
 
    /* opaque struct */
    fail_if(!(type = eolian_type_struct_get_by_name("Opaque")));
@@ -980,14 +969,6 @@ START_TEST(eolian_free_func)
    fail_if(eolian_type_free_func_get(type));
    fail_if(!(type = eolian_type_alias_get_by_name("Typedef2")));
    fail_if(strcmp(eolian_type_free_func_get(type), "def_free"));
-
-   /* anon struct */
-   fail_if(!(type = eolian_type_alias_get_by_name("Anon1")));
-   fail_if(!(type = eolian_type_base_type_get(type)));
-   fail_if(eolian_type_free_func_get(type));
-   fail_if(!(type = eolian_type_alias_get_by_name("Anon2")));
-   fail_if(!(type = eolian_type_base_type_get(type)));
-   fail_if(strcmp(eolian_type_free_func_get(type), "anon_free"));
 
    /* opaque struct */
    fail_if(!(type = eolian_type_struct_get_by_name("Opaque1")));

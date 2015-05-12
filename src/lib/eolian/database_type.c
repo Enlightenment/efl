@@ -188,8 +188,6 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
      }
    if ((tp->type == EOLIAN_TYPE_REGULAR
      || tp->type == EOLIAN_TYPE_COMPLEX
-     || tp->type == EOLIAN_TYPE_REGULAR_STRUCT
-     || tp->type == EOLIAN_TYPE_REGULAR_ENUM
      || tp->type == EOLIAN_TYPE_VOID
      || tp->type == EOLIAN_TYPE_CLASS)
      && tp->is_const)
@@ -198,20 +196,10 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
      }
    if (tp->type == EOLIAN_TYPE_REGULAR
     || tp->type == EOLIAN_TYPE_COMPLEX
-    || tp->type == EOLIAN_TYPE_CLASS
-    || tp->type == EOLIAN_TYPE_REGULAR_STRUCT
-    || tp->type == EOLIAN_TYPE_REGULAR_ENUM)
+    || tp->type == EOLIAN_TYPE_CLASS)
      {
         Eina_List *l;
         const char *sp;
-        if (tp->type == EOLIAN_TYPE_REGULAR_STRUCT)
-          {
-             eina_strbuf_append(buf, "struct ");
-          }
-        else if (tp->type == EOLIAN_TYPE_REGULAR_ENUM)
-          {
-             eina_strbuf_append(buf, "enum ");
-          }
         EINA_LIST_FOREACH(tp->namespaces, l, sp)
           {
              eina_strbuf_append(buf, sp);
@@ -273,11 +261,8 @@ database_type_print(Eolian_Type *tp)
      printf("%s", tp->full_name);
    else if (tp->type == EOLIAN_TYPE_VOID)
      printf("void");
-   else if (tp->type == EOLIAN_TYPE_REGULAR_STRUCT
-         || tp->type == EOLIAN_TYPE_STRUCT_OPAQUE)
+   else if (tp->type == EOLIAN_TYPE_STRUCT_OPAQUE)
      printf("struct %s", tp->full_name);
-   else if (tp->type == EOLIAN_TYPE_REGULAR_ENUM)
-     printf("enum %s", tp->full_name);
    else if (tp->type == EOLIAN_TYPE_POINTER)
      {
         database_type_print(tp->base_type);

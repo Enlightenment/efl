@@ -6,7 +6,7 @@ enum Foo {
 }
 
 enum Bar {
-    foo = enum Foo.baz
+    foo = Foo.baz
 }
 
 enum Baz {
@@ -15,7 +15,7 @@ enum Baz {
     flag3 = 1 << 2
 }
 
-const Bah: int = enum Baz.flag1;
+const Bah: int = Baz.flag1;
 
 class Enum {
     methods {

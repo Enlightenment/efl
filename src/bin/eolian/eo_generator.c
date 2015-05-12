@@ -468,7 +468,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
                                  eina_strbuf_append_printf(params_init,
                                        "   if (%s) *%s = %s;",
                                        pname, pname, val_str);
-                                 if (eolian_expression_type_get(dflt_value) == EOLIAN_EXPR_ENUM)
+                                 if (eolian_expression_type_get(dflt_value) == EOLIAN_EXPR_NAME)
                                    {
                                       Eina_Stringshare *string = eolian_expression_serialize(dflt_value);
                                       eina_strbuf_append_printf(params_init, " /* %s */", string);
@@ -586,7 +586,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
              eina_strbuf_append_printf(eo_func_decl, ", %s%s, %s",
                    ret_const ? "const " : "", rettype,
                    val_str?val_str:"0");
-             if (val_str && eolian_expression_type_get(default_ret_val) == EOLIAN_EXPR_ENUM)
+             if (val_str && eolian_expression_type_get(default_ret_val) == EOLIAN_EXPR_NAME)
                {
                   Eina_Stringshare *string = eolian_expression_serialize(default_ret_val);
                   eina_strbuf_append_printf(eo_func_decl, " /* %s */", string);

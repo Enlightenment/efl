@@ -91,8 +91,7 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef, Eina_Bool full)
                    free(name);
                    break;
                 }
-              eina_strbuf_append_printf(buf, "struct%s%s {\n", name?" ":"", name?name:"");
-              free(name);
+              eina_strbuf_append_printf(buf, "typedef struct\n{\n");
               Eina_Iterator *members = eolian_type_struct_fields_get(tp);
               EINA_ITERATOR_FOREACH(members, member)
                 {
@@ -106,7 +105,8 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef, Eina_Bool full)
                    eina_strbuf_append(buf, "\n");
                 }
               eina_iterator_free(members);
-              eina_strbuf_append(buf, "}");
+              eina_strbuf_append_printf(buf, "} %s", name);
+              free(name);
               break;
            }
       case EOLIAN_TYPE_ENUM:

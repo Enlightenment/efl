@@ -52,37 +52,11 @@ _validate_type(const Eolian_Type *tp)
            if (id)
              return eo_lexer_is_type_keyword(id);
            /* user defined */
-           tpp = eolian_type_alias_get_by_name(tp->full_name);
+           tpp = eolian_type_base_type_get(tp);
            if (!tpp)
              {
                 char buf[256];
-                snprintf(buf, sizeof(buf), "undefined alias %s", tp->full_name);
-                _type_error(tp, buf);
-                return EINA_TRUE; /* for now only warn */
-             }
-           return _validate_type(tpp);
-        }
-      case EOLIAN_TYPE_REGULAR_STRUCT:
-        {
-           const Eolian_Type *tpp;
-           tpp = eolian_type_struct_get_by_name(tp->full_name);
-           if (!tpp)
-             {
-                char buf[256];
-                snprintf(buf, sizeof(buf), "undefined struct %s", tp->full_name);
-                _type_error(tp, buf);
-                return EINA_TRUE; /* for now only warn */
-             }
-           return _validate_type(tpp);
-        }
-      case EOLIAN_TYPE_REGULAR_ENUM:
-        {
-           const Eolian_Type *tpp;
-           tpp = eolian_type_enum_get_by_name(tp->full_name);
-           if (!tpp)
-             {
-                char buf[256];
-                snprintf(buf, sizeof(buf), "undefined enum %s", tp->full_name);
+                snprintf(buf, sizeof(buf), "undefined type %s", tp->full_name);
                 _type_error(tp, buf);
                 return EINA_TRUE; /* for now only warn */
              }

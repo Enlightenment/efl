@@ -380,18 +380,11 @@ parse_expr_simple(Eo_Lexer *ls)
                    eo_lexer_get(ls);
                    break;
                 }
-              case KW_enum:
               default:
                 {
                    Eina_Strbuf *buf = push_strbuf(ls);
-                   Eolian_Expression_Type tp = EOLIAN_EXPR_NAME;
-                   if (ls->t.kw == KW_enum)
-                     {
-                        eo_lexer_get(ls);
-                        tp = EOLIAN_EXPR_ENUM;
-                     }
                    expr = push_expr(ls);
-                   expr->type = tp;
+                   expr->type = EOLIAN_EXPR_NAME;
                    parse_name(ls, buf);
                    expr->value.s = eina_stringshare_add(eina_strbuf_string_get
                        (buf));
@@ -453,7 +446,6 @@ parse_expr(Eo_Lexer *ls)
 }
 
 static Eolian_Type *parse_type_void(Eo_Lexer *ls);
-static Eolian_Type *parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named);
 
 static Eolian_Type *
 parse_type(Eo_Lexer *ls)
@@ -461,21 +453,6 @@ parse_type(Eo_Lexer *ls)
    Eolian_Type *ret;
    eo_lexer_context_push(ls);
    ret = parse_type_void(ls);
-   if (ret->type == EOLIAN_TYPE_VOID)
-     {
-        eo_lexer_context_restore(ls);
-        eo_lexer_syntax_error(ls, "non-void type expected");
-     }
-   eo_lexer_context_pop(ls);
-   return ret;
-}
-
-static Eolian_Type *
-parse_type_named(Eo_Lexer *ls, Eina_Bool allow_named)
-{
-   Eolian_Type *ret;
-   eo_lexer_context_push(ls);
-   ret = parse_type_named_void(ls, allow_named);
    if (ret->type == EOLIAN_TYPE_VOID)
      {
         eo_lexer_context_restore(ls);
@@ -642,8 +619,8 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
 }
 
 static void
-parse_struct_attrs(Eo_Lexer *ls, Eina_Bool is_enum, Eina_Bool allow_named,
-                        Eina_Bool *is_extern, const char **freefunc)
+parse_struct_attrs(Eo_Lexer *ls, Eina_Bool is_enum, Eina_Bool *is_extern,
+                   const char **freefunc)
 {
    Eina_Bool has_extern = EINA_FALSE, has_free = EINA_FALSE;
    *freefunc = NULL;
@@ -652,15 +629,6 @@ parse_struct_attrs(Eo_Lexer *ls, Eina_Bool is_enum, Eina_Bool allow_named,
      {
       case KW_at_extern:
         CASE_LOCK(ls, extern, "@extern qualifier")
-        if (!allow_named)
-          {
-             if (is_enum)
-               eo_lexer_syntax_error(ls,
-                   "only enum declarations can be extern");
-             else
-               eo_lexer_syntax_error(ls,
-                   "only named structs can be extern");
-          }
         eo_lexer_get(ls);
         *is_extern = EINA_TRUE;
         break;
@@ -695,7 +663,7 @@ _append_dep(Eo_Lexer *ls, const char *fname, const char *name, int line, int col
 }
 
 static Eolian_Type *
-parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
+parse_type_void(Eo_Lexer *ls)
 {
    Eolian_Type *def;
    const char *ctype;
@@ -758,57 +726,6 @@ parse_type_named_void(Eo_Lexer *ls, Eina_Bool allow_named)
            eo_lexer_get(ls);
            FILL_BASE(def->base, ls, line, col);
            check_match(ls, ')', '(', pline, pcolumn);
-           goto parse_ptr;
-        }
-      case KW_struct:
-      case KW_enum:
-        {
-           const char *freefunc;
-           Eina_Bool has_extern;
-           Eina_Bool is_enum = (ls->t.kw == KW_enum);
-           eo_lexer_get(ls);
-           parse_struct_attrs(ls, is_enum, allow_named, &has_extern, &freefunc);
-           if (freefunc && !allow_named)
-             check(ls, '{');
-           if (!is_enum && (ls->t.token == '{'))
-             {
-                if (has_extern)
-                  eo_lexer_syntax_error(ls, "extern anonymous struct");
-                return parse_struct(ls, NULL, EINA_FALSE, line, col, freefunc);
-             }
-           buf = push_strbuf(ls);
-           eo_lexer_context_push(ls);
-           line = ls->line_number;
-           col = ls->column;
-           parse_name(ls, buf);
-           sname = push_str(ls, eina_strbuf_string_get(buf));
-           pop_strbuf(ls);
-           /* if we're extern and allow structs, gotta enforce it */
-           if (allow_named && (has_extern || freefunc))
-             check(ls, '{');
-           if (allow_named && ls->t.token == '{')
-             {
-                Eolian_Type *tp = (Eolian_Type*)eina_hash_find(_structs,
-                                                               sname);
-                if (tp)
-                  {
-                     eo_lexer_context_restore(ls);
-                     redef_error(ls, is_enum ? EOLIAN_TYPE_ENUM
-                                             : EOLIAN_TYPE_STRUCT, tp);
-                  }
-                eo_lexer_context_pop(ls);
-                pop_str(ls);
-                if (is_enum)
-                  return parse_enum(ls, sname, has_extern, line, col);
-                return parse_struct(ls, sname, has_extern, line, col, freefunc);
-             }
-           eo_lexer_context_pop(ls);
-           def = push_type(ls);
-           def->type = is_enum ? EOLIAN_TYPE_REGULAR_ENUM
-                               : EOLIAN_TYPE_REGULAR_STRUCT;
-           FILL_BASE(def->base, ls, line, col);
-           pop_str(ls);
-           _fill_name(sname, &def->full_name, &def->name, &def->namespaces);
            goto parse_ptr;
         }
       default:
@@ -902,12 +819,6 @@ parse_ptr:
 }
 
 static Eolian_Type *
-parse_type_void(Eo_Lexer *ls)
-{
-   return parse_type_named_void(ls, EINA_FALSE);
-}
-
-static Eolian_Type *
 parse_typedef(Eo_Lexer *ls)
 {
    Eolian_Type *def = push_type(ls);
@@ -915,7 +826,7 @@ parse_typedef(Eo_Lexer *ls)
    const char *freefunc;
    Eina_Strbuf *buf;
    eo_lexer_get(ls);
-   parse_struct_attrs(ls, EINA_FALSE, EINA_TRUE, &has_extern, &freefunc);
+   parse_struct_attrs(ls, EINA_FALSE, &has_extern, &freefunc);
    def->freefunc = freefunc;
    pop_str(ls);
    def->type = EOLIAN_TYPE_ALIAS;
@@ -934,7 +845,7 @@ parse_typedef(Eo_Lexer *ls)
      }
    eo_lexer_context_pop(ls);
    check_next(ls, ':');
-   def->base_type = parse_type_named(ls, EINA_TRUE);
+   def->base_type = parse_type(ls);
    pop_type(ls);
    check_next(ls, ';');
    if (ls->t.token == TOK_COMMENT)
@@ -1858,7 +1769,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            const char *freefunc;
            Eina_Strbuf *buf;
            eo_lexer_get(ls);
-           parse_struct_attrs(ls, is_enum, EINA_TRUE, &has_extern, &freefunc);
+           parse_struct_attrs(ls, is_enum, &has_extern, &freefunc);
            buf = push_strbuf(ls);
            eo_lexer_context_push(ls);
            line = ls->line_number;

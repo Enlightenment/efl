@@ -4,20 +4,8 @@ struct Named {
 }
 
 struct Another {
-    field: struct Named;
+    field: Named;
 }
-
-/* named typedef'd */
-type Foo: struct _Foo {
-    field: int;
-    another: float;
-};
-
-/* anonymous */
-type Bar: struct {
-    a: Foo;
-    b: struct _Foo;
-};
 
 /* opaque struct */
 struct Opaque;

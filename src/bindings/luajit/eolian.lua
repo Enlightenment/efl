@@ -61,8 +61,6 @@ ffi.cdef [[
         EOLIAN_TYPE_UNKNOWN_TYPE,
         EOLIAN_TYPE_VOID,
         EOLIAN_TYPE_REGULAR,
-        EOLIAN_TYPE_REGULAR_STRUCT,
-        EOLIAN_TYPE_REGULAR_ENUM,
         EOLIAN_TYPE_COMPLEX,
         EOLIAN_TYPE_POINTER,
         EOLIAN_TYPE_FUNCTION,
@@ -88,7 +86,6 @@ ffi.cdef [[
         EOLIAN_EXPR_NULL,
         EOLIAN_EXPR_BOOL,
         EOLIAN_EXPR_NAME,
-        EOLIAN_EXPR_ENUM,
         EOLIAN_EXPR_UNARY,
         EOLIAN_EXPR_BINARY
     } Eolian_Expression_Type;
@@ -431,16 +428,14 @@ M.type_type = {
     UNKNOWN        = 0,
     VOID           = 1,
     REGULAR        = 2,
-    REGULAR_STRUCT = 3,
-    REGULAR_ENUM   = 4,
-    COMPLEX        = 5,
-    POINTER        = 6,
-    FUNCTION       = 7,
-    STRUCT         = 8,
-    STRUCT_OPAQUE  = 9,
-    ENUM           = 10,
-    ALIAS          = 11,
-    CLASS          = 12
+    COMPLEX        = 3,
+    POINTER        = 4,
+    FUNCTION       = 5,
+    STRUCT         = 6,
+    STRUCT_OPAQUE  = 7,
+    ENUM           = 8,
+    ALIAS          = 9,
+    CLASS          = 10
 }
 
 ffi.metatype("Eolian_Struct_Type_Field", {
@@ -1059,7 +1054,6 @@ M.expression_type = {
     NULL    = 11,
     BOOL    = 12,
     NAME    = 13,
-    ENUM    = 14,
     UNARY   = 15,
     BINARY  = 16
 }
