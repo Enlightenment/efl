@@ -30,6 +30,7 @@ _ecore_drm_output_event_free(void *data EINA_UNUSED, void *event)
 
    eina_stringshare_del(e->make);
    eina_stringshare_del(e->model);
+   eina_stringshare_del(e->name);
    free(event);
 }
 
@@ -51,6 +52,7 @@ _ecore_drm_output_event_send(const Ecore_Drm_Output *output, Eina_Bool plug)
    e->subpixel_order = output->subpixel;
    e->make = eina_stringshare_ref(output->make);
    e->model = eina_stringshare_ref(output->model);
+   e->name = eina_stringshare_ref(output->name);
    e->transform = 0;
    ecore_event_add(ECORE_DRM_EVENT_OUTPUT, e,
                    _ecore_drm_output_event_free, NULL);

@@ -147,6 +147,7 @@ struct _Ecore_Drm_Event_Output
    int transform;
    const char *make;
    const char *model;
+   const char *name; /** @since 1.15 */
    Eina_Bool plug : 1;
 };
 
