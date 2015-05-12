@@ -859,6 +859,68 @@ _elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
    _elm_code_widget_cursor_move(widget, pd, pd->cursor_col+1, pd->cursor_line, EINA_TRUE);
 }
 
+static unsigned int
+_elm_code_widget_cursor_move_page_height_get(Elm_Code_Widget *widget)
+{
+   unsigned int lines;
+
+   eo_do(widget, lines = elm_code_widget_lines_visible_get());
+   return lines * 0.85;
+}
+
+static void
+_elm_code_widget_cursor_move_pageup(Elm_Code_Widget *widget)
+{
+   Elm_Code_Widget_Data *pd;
+   Elm_Code_Line *line;
+   unsigned int row, col, column_width;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   row = pd->cursor_line;
+   col = pd->cursor_col;
+
+   if (pd->cursor_line <= 1)
+     return;
+
+   if (row > _elm_code_widget_cursor_move_page_height_get(widget))
+     row -= _elm_code_widget_cursor_move_page_height_get(widget);
+   else
+     row = 1;
+
+   line = elm_code_file_line_get(pd->code->file, row);
+   column_width = elm_code_line_text_column_width(line, pd->tabstop);
+   if (col > column_width + 1)
+     col = column_width + 1;
+
+   _elm_code_widget_cursor_move(widget, pd, col, row, EINA_TRUE);
+}
+
+static void
+_elm_code_widget_cursor_move_pagedown(Elm_Code_Widget *widget)
+{
+   Elm_Code_Widget_Data *pd;
+   Elm_Code_Line *line;
+   unsigned int row, col, column_width;
+
+   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   row = pd->cursor_line;
+   col = pd->cursor_col;
+
+   if (pd->cursor_line >= elm_code_file_lines_get(pd->code->file))
+     return;
+
+   row += _elm_code_widget_cursor_move_page_height_get(widget);
+   if (row > elm_code_file_lines_get(pd->code->file))
+     row = elm_code_file_lines_get(pd->code->file);
+
+   line = elm_code_file_line_get(pd->code->file, row);
+   column_width = elm_code_line_text_column_width(line, pd->tabstop);
+   if (col > column_width + 1)
+     col = column_width + 1;
+
+   _elm_code_widget_cursor_move(widget, pd, col, row, EINA_TRUE);
+}
+
 static Eina_Bool
 _elm_code_widget_delete_selection(Elm_Code_Widget *widget)
 {
@@ -1102,6 +1164,10 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
      _elm_code_widget_cursor_move_home(widget);
    else if (!strcmp(ev->key, "End"))
      _elm_code_widget_cursor_move_end(widget);
+   else if (!strcmp(ev->key, "Prior"))
+     _elm_code_widget_cursor_move_pageup(widget);
+   else if (!strcmp(ev->key, "Next"))
+     _elm_code_widget_cursor_move_pagedown(widget);
 
    else if (!strcmp(ev->key, "KP_Enter") || !strcmp(ev->key, "Return"))
      _elm_code_widget_newline(widget);
@@ -1195,6 +1261,17 @@ _elm_code_widget_line_visible_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
      return EINA_FALSE;
 
    return EINA_TRUE;;
+}
+
+EOAPI unsigned int
+_elm_code_widget_lines_visible_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+{
+   Evas_Coord cellh, viewh;
+
+   elm_scroller_region_get(pd->scroller, NULL, NULL, NULL, &viewh);
+   evas_object_textgrid_cell_size_get(pd->grid, NULL, &cellh);
+
+   return viewh / cellh;
 }
 
 EOLIAN static void

@@ -191,6 +191,9 @@ class Elm_Code_Widget (Elm.Layout, Elm_Interface_Atspi_Text)
          }
          return: bool; /*@ true if the line specified is currently visible within the scroll region. */
       }
+      lines_visible_get {
+         return: uint; /*@ the number of lines currently visible in the widget. */
+      }
 
       /* text functions */
       text_left_gutter_width_get {
