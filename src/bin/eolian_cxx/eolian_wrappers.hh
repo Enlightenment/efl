@@ -204,6 +204,12 @@ function_is_constructor(Eolian_Class const& cls, Eolian_Function const& func)
    return ::eolian_function_is_constructor(&func, &cls);
 }
 
+inline bool
+function_is_beta(Eolian_Function const& func)
+{
+   return ::eolian_function_is_beta(&func);
+}
+
 inline efl::eolian::eolian_scope
 function_scope(Eolian_Function const& func)
 {
@@ -403,6 +409,7 @@ event_create(Eolian_Class const& klass, const Eolian_Event *event_)
         std::transform(name_.begin(), name_.end(), name_.begin(),
                        [](int c) { return c != ',' ? c : '_'; });
         event.scope = eolian_scope_cxx(::eolian_event_scope_get(event_));
+        event.is_beta = (::eolian_event_is_beta(event_) != EINA_FALSE);
         event.name = normalize_spaces(name_);
         event.eo_name = safe_upper
           (find_replace(class_full_name(klass), ".", "_") + "_EVENT_" + event.name);

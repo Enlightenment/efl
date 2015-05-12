@@ -29,6 +29,8 @@ operator<<(std::ostream& out, _scope_guard_head<T> const& x)
    assert(x._e.scope != eolian_scope::private_);
    if (x._e.scope == eolian_scope::protected_)
      out << "#ifdef " << name_upper(x._cls) << "_PROTECTED" << endl;
+   if (x._e.is_beta)
+     out << "#ifdef " << name_upper(x._cls) << "_BETA" << endl;
    return out;
 }
 
@@ -52,6 +54,8 @@ inline std::ostream&
 operator<<(std::ostream& out, _scope_guard_tail<T> const& x)
 {
    if (x._e.scope == eolian_scope::protected_)
+     out << "#endif" << endl;
+   if (x._e.is_beta)
      out << "#endif" << endl;
    return out;
 }
