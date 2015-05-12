@@ -1564,6 +1564,18 @@ EAPI const Eolian_Enum_Type_Field *eolian_type_enum_field_get(const Eolian_Type 
 EAPI Eina_Stringshare *eolian_type_enum_field_name_get(const Eolian_Enum_Type_Field *fl);
 
 /*
+ * @brief Get the C name of a field of an enum type.
+ *
+ * The user of the API is responsible for the resulting stringshare.
+ *
+ * @param[in] fl the field.
+ * @return the name.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_type_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl);
+
+/*
  * @brief Get the description of a field of an enum type.
  *
  * @param[in] fl the field.

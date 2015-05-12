@@ -578,6 +578,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         def->field_list = eina_list_append(def->field_list, fdef);
         eo_lexer_get(ls);
         FILL_BASE(fdef->base, ls, fline, fcol);
+        fdef->base_enum = def;
         fdef->name = eina_stringshare_ref(fname);
         if (ls->t.token != '=')
           {

@@ -155,6 +155,28 @@ eolian_type_enum_field_name_get(const Eolian_Enum_Type_Field *fl)
 }
 
 EAPI Eina_Stringshare *
+eolian_type_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl)
+{
+   Eina_Stringshare *ret;
+   Eina_Strbuf *buf;
+   char *bufp;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
+   buf = eina_strbuf_new();
+   if (fl->base_enum->legacy)
+     eina_strbuf_append(buf, fl->base_enum->legacy);
+   else
+     eina_strbuf_append(buf, fl->base_enum->full_name);
+   eina_strbuf_append_char(buf, '_');
+   eina_strbuf_append(buf, fl->name);
+   bufp = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+   eina_str_toupper(&bufp);
+   ret = eina_stringshare_add(bufp);
+   free(bufp);
+   return ret;
+}
+
+EAPI Eina_Stringshare *
 eolian_type_enum_field_description_get(const Eolian_Enum_Type_Field *fl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);

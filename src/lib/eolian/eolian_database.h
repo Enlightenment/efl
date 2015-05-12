@@ -200,6 +200,7 @@ struct _Eolian_Struct_Type_Field
 
 struct _Eolian_Enum_Type_Field
 {
+   Eolian_Type       *base_enum;
    Eina_Stringshare  *name;
    Eolian_Object      base;
    Eolian_Expression *value;

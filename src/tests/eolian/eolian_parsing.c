@@ -838,6 +838,7 @@ START_TEST(eolian_enum)
    const Eolian_Type *type = NULL;
    const Eolian_Class *class;
    const Eolian_Expression *exp;
+   Eina_Stringshare *cname;
    const char *name;
    Eolian_Value v;
 
@@ -868,12 +869,17 @@ START_TEST(eolian_enum)
    fail_if(v.value.i != 15);
 
    fail_if(!(type = eolian_type_enum_get_by_name("Bar")));
+   fail_if(strcmp(eolian_type_enum_legacy_prefix_get(type), "test"));
 
    fail_if(!(field = eolian_type_enum_field_get(type, "foo")));
    fail_if(!(exp = eolian_type_enum_field_value_get(field)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 15);
+
+   cname = eolian_type_enum_field_c_name_get(field);
+   fail_if(strcmp(cname, "TEST_FOO"));
+   eina_stringshare_del(cname);
 
    fail_if(!(type = eolian_type_enum_get_by_name("Baz")));
 
@@ -888,6 +894,10 @@ START_TEST(eolian_enum)
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 1));
+
+   cname = eolian_type_enum_field_c_name_get(field);
+   fail_if(strcmp(cname, "BAZ_FLAG2"));
+   eina_stringshare_del(cname);
 
    fail_if(!(field = eolian_type_enum_field_get(type, "flag3")));
    fail_if(!(exp = eolian_type_enum_field_value_get(field)));
