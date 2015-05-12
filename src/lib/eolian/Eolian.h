@@ -1619,7 +1619,10 @@ EAPI Eina_Stringshare *eolian_type_description_get(const Eolian_Type *tp);
 EAPI Eina_Stringshare *eolian_type_file_get(const Eolian_Type *tp);
 
 /*
- * @brief Get the base type of a pointer or alias type.
+ * @brief Get the base type of a pointer, alias or regular type.
+ *
+ * For pointers and aliases, it's a simple lookup. For regular types, it
+ * tries to look up alias, struct and enum in that order.
  *
  * @param[in] tp the type.
  * @return the base type when @c tp is a pointer or alias, NULL otherwise.

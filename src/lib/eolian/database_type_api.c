@@ -204,7 +204,23 @@ eolian_type_base_type_get(const Eolian_Type *tp)
    Eolian_Type_Type tpt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    tpt = eolian_type_type_get(tp);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_POINTER || tpt == EOLIAN_TYPE_ALIAS, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpt == EOLIAN_TYPE_POINTER
+                                || tpt == EOLIAN_TYPE_ALIAS
+                                || tpt == EOLIAN_TYPE_REGULAR, NULL);
+   if (tpt == EOLIAN_TYPE_REGULAR)
+     {
+        /* for regular types, try looking up if it belongs to a struct,
+         * enum or an alias... otherwise return NULL
+         */
+       Eolian_Type *rtp;
+       rtp = eina_hash_find(_aliases, tp->full_name);
+       if (rtp) return rtp;
+       rtp = eina_hash_find(_structs, tp->full_name);
+       if (rtp) return rtp;
+       rtp = eina_hash_find(_enums, tp->full_name);
+       if (rtp) return rtp;
+       return NULL;
+     }
    return tp->base_type;
 }
 
