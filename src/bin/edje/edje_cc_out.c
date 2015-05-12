@@ -485,20 +485,20 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
    /* FIXME: check image set and sort them. */
    if (!ep->default_desc)
      error_and_abort(ef, "Collection %i: default description missing "
-		     "for part \"%s\"", pc->id, ep->name);
+                         "for part \"%s\"", pc->id, ep->name);
 
    for (i = 0; i < ep->other.desc_count; ++i)
      check_state(pc, ep, ep->other.desc[i], ef);
 
    if (ep->type == EDJE_PART_TYPE_IMAGE)
      {
-	check_image_part_desc(pc, ep, (Edje_Part_Description_Image*) ep->default_desc, ef);
+        check_image_part_desc(pc, ep, (Edje_Part_Description_Image*) ep->default_desc, ef);
 
-	for (i = 0; i < ep->other.desc_count; ++i)
-	  check_image_part_desc (pc, ep, (Edje_Part_Description_Image*) ep->other.desc[i], ef);
+        for (i = 0; i < ep->other.desc_count; ++i)
+          check_image_part_desc(pc, ep, (Edje_Part_Description_Image*) ep->other.desc[i], ef);
      }
    else if ((ep->type == EDJE_PART_TYPE_BOX) ||
-	    (ep->type == EDJE_PART_TYPE_TABLE))
+            (ep->type == EDJE_PART_TYPE_TABLE))
      check_packed_items(pc, ep, ef);
    else if (ep->type == EDJE_PART_TYPE_GROUP)
      check_source_links(pc, ep, ef, group_path);

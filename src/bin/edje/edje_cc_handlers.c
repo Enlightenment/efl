@@ -258,6 +258,7 @@ static void st_collections_group_parts_part_pointer_mode(void);
 static void st_collections_group_parts_part_precise_is_inside(void);
 static void st_collections_group_parts_part_use_alternate_font_metrics(void);
 static void st_collections_group_parts_part_clip_to_id(void);
+static void st_collections_group_parts_part_no_render(void);
 static void st_collections_group_parts_part_source(void);
 static void st_collections_group_parts_part_source2(void);
 static void st_collections_group_parts_part_source3(void);
@@ -693,6 +694,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.precise_is_inside", st_collections_group_parts_part_precise_is_inside},
      {"collections.group.parts.part.use_alternate_font_metrics", st_collections_group_parts_part_use_alternate_font_metrics},
      {"collections.group.parts.part.clip_to", st_collections_group_parts_part_clip_to_id},
+     {"collections.group.parts.part.no_render", st_collections_group_parts_part_no_render},
      {"collections.group.parts.part.source", st_collections_group_parts_part_source},
      {"collections.group.parts.part.source2", st_collections_group_parts_part_source2},
      {"collections.group.parts.part.source3", st_collections_group_parts_part_source3},
@@ -4417,6 +4419,7 @@ st_collections_group_parts_alias(void)
                     source:  "groupname";
                     pointer_mode: AUTOGRAB;
                     use_alternate_font_metrics: 0;
+                    no_render: 0;
 
                     dragable { }
                     items { }
@@ -4469,6 +4472,7 @@ edje_cc_handlers_part_make(int id)
    ep->use_alternate_font_metrics = 0;
    ep->access = 0;
    ep->clip_to_id = -1;
+   ep->no_render = 0;
    ep->dragable.confine_id = -1;
    ep->dragable.threshold_id = -1;
    ep->dragable.event_id = -1;
@@ -5391,6 +5395,29 @@ st_collections_group_parts_part_clip_to_id(void)
         data_queue_part_lookup(pc, name, &(current_part->clip_to_id));
         free(name);
      }
+}
+
+/**
+    @page edcref
+    @property
+        no_render
+    @parameters
+        [1 or 0]
+    @effect
+        Setting the no_render flag on an object will make it never render
+        directly on the canvas, regardless of the visible and color properties.
+        But the object will still be rendered in a dedicated surface when
+        required if it is a proxy source or a mask (clipper).
+        Strongly recommended for use with mask objects and proxy sources
+        (instead of setting "source_visible" on the proxy itself).
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_no_render(void)
+{
+   check_arg_count(1);
+
+   current_part->no_render = parse_bool(0);
 }
 
 /**

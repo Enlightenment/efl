@@ -491,3 +491,14 @@ _evas_object_clipees_has(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj
    return (obj->clip.clipees ? EINA_TRUE : EINA_FALSE);
 }
 
+EOLIAN void
+_evas_object_no_render_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Bool enable)
+{
+   obj->no_render = enable;
+}
+
+EOLIAN Eina_Bool
+_evas_object_no_render_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+{
+   return obj->no_render;
+}

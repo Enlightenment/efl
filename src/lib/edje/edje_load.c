@@ -774,6 +774,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                             nested_smart = NULL;
                          }
 
+                       if (ep->no_render)
+                         eo_do(rp->object, evas_obj_no_render_set(1));
+
                        if (st_nested && st_nested->nested_children_count) /* Add this to list of children */
                          {
                             evas_object_smart_member_add(rp->object,

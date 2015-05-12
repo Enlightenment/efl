@@ -1105,6 +1105,7 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   child_has_map : 1;
    Eina_Bool                   eo_del_called : 1;
    Eina_Bool                   is_smart : 1;
+   Eina_Bool                   no_render : 1; // since 1.15
 };
 
 struct _Evas_Data_Node

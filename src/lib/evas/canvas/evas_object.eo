@@ -1280,6 +1280,41 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @in type: const(char)* @nonull; /*@ The type (name string) to check for. Must be the name */
          }
       }
+      @property no_render {
+         get {
+            /*@
+            Returns the state of the "no-render" flag, which means, when true,
+            that an object should never be rendered on the canvas.
+
+            This flag can be used to avoid rendering visible clippers on the
+            canvas, even if they currently don't clip any object.
+
+            @since 1.15 */
+            legacy: null;
+         }
+         set {
+            /*@
+            Disable all rendering on the canvas.
+
+            This flag will be used to indicate to Evas that this object should
+            never be rendered on the canvas under any circurmstances. In
+            particular, this is useful to avoid drawing clipper objects (or masks)
+            even when they don't clip any object. This can also be used to replace
+            the old source_visible flag with proxy objects.
+
+            This is different to the visible property, as even visible objects
+            marked as "no-render" will never appear on screen. But those objects
+            can still be used as proxy sources or clippers. When hidden, all
+            "no-render" objects will completely disappear from the canvas, and
+            hide their clippees or be invisible when used as proxy sources.
+
+            @since 1.15 */
+            legacy: null;
+         }
+         values {
+            enable: bool; /*@ Enable "no-render" mode. */
+         }
+      }
    }
    implements {
       Eo.Base.constructor;

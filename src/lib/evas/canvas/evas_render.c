@@ -227,7 +227,8 @@ _evas_render_is_relevant(Evas_Object *eo_obj)
 static Eina_Bool
 _evas_render_can_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   return (evas_object_is_visible(eo_obj, obj) && (!obj->cur->have_clipees));
+   return (evas_object_is_visible(eo_obj, obj) && (!obj->cur->have_clipees) &&
+           !obj->no_render);
 }
 
 static void
@@ -1232,7 +1233,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
    else RD(0, "\n");
    if (obj->cur->clipper)
      {
-        RD(level, "  clipper: '%s'%s%s %p (mask %p) %d,%d %dx%d\n",
+        RD(level, "  clipper: '%s'%s%s %p (mask: %p) %d,%d %dx%d\n",
            obj->cur->clipper->type,
            obj->cur->clipper->name ? ":" : "",
            obj->cur->clipper->name ? obj->cur->clipper->name : "",
@@ -1263,14 +1264,16 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
                   return clean_them;
                }
           }
-        else
-          {
-             if (!evas_object_is_proxy_visible(eo_obj, obj) ||
+        else if (!evas_object_is_proxy_visible(eo_obj, obj) ||
                  (obj->clip.clipees) || (obj->cur->have_clipees))
-               {
-                  RD(level, "}\n");
-                  return clean_them;
-               }
+          {
+             RD(level, "}\n");
+             return clean_them;
+          }
+        else if (obj->no_render)
+          {
+             RD(level, "  no render\n}\n");
+             return clean_them;
           }
      }
    else if (!(((evas_object_is_active(eo_obj, obj) && (!obj->clip.clipees) &&

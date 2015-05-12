@@ -66,7 +66,7 @@ evas_common_draw_context_cutouts_add(Cutout_Rects* rects,
 static inline int
 evas_object_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   if (obj->is_smart) return 0;
+   if (obj->is_smart || obj->no_render) return 0;
    /* If clipped: Assume alpha */
    if (obj->cur->cache.clip.a == 255)
      {
