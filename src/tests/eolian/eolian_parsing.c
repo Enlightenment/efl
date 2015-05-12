@@ -677,7 +677,7 @@ END_TEST
 START_TEST(eolian_struct)
 {
    const Eolian_Struct_Type_Field *field = NULL;
-   const Eolian_Type *atype = NULL, *type = NULL, *ftype = NULL;
+   const Eolian_Type *type = NULL, *ftype = NULL;
    const Eolian_Class *class;
    const char *type_name;
    const char *file;

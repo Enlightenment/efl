@@ -668,7 +668,6 @@ parse_type_void(Eo_Lexer *ls)
 {
    Eolian_Type *def;
    const char *ctype;
-   const char *sname = NULL;
    Eina_Strbuf *buf;
    int line = ls->line_number, col = ls->column;
    switch (ls->t.kw)
