@@ -1318,7 +1318,7 @@ ecore_drm_output_possible_crtc_get(Ecore_Drm_Output *output, unsigned int crtc)
    drmModeRes *res;
    drmModeConnector *conn;
    drmModeEncoder *enc;
-   int i, j;
+   int i, j, k;
    unsigned int p;
    Eina_Bool ret = EINA_FALSE;
 
@@ -1355,9 +1355,15 @@ ecore_drm_output_possible_crtc_get(Ecore_Drm_Output *output, unsigned int crtc)
 
              p = enc->possible_crtcs;
 
-             /* Does the CRTC match the list of possible CRTCs from the encoder? */
-             if (p & (1 << output->crtc_id))
-               ret = EINA_TRUE;
+             for (k = 0; k < res->count_crtcs; k++)
+               {
+                  if (res->crtcs[k] != output->crtc_id) continue;
+                  if (p & (1 << k))
+                    {
+                       ret = EINA_TRUE;
+                       break;
+                    }
+               }
 
 next:
              drmModeFreeEncoder(enc);
