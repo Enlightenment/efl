@@ -165,7 +165,7 @@ _ecore_drm_output_edid_find(Ecore_Drm_Output *output, drmModeConnector *conn)
 
    if (!blob) return;
 
-   output->edid_blob = (char *)eina_memdup(blob->data, blob->length, 1);
+   output->edid_blob = eina_memdup(blob->data, blob->length, 1);
 
    ret = _ecore_drm_output_edid_parse(output, blob->data, blob->length);
    if (!ret)
@@ -1235,10 +1235,27 @@ ecore_drm_output_backlight_get(Ecore_Drm_Output *output)
 EAPI char *
 ecore_drm_output_edid_get(Ecore_Drm_Output *output)
 {
+   char *edid_str = NULL;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(output->edid_blob, NULL);
 
-   return strdup(output->edid_blob);
+   edid_str = malloc((128 * 2) + 1);
+   if (edid_str)
+     {
+        unsigned int k, kk;
+        const char *hexch = "0123456789abcdef";
+
+        for (kk = 0, k = 0; k < 128; k++)
+          {
+             edid_str[kk] = hexch[(output->edid_blob[k] >> 4) & 0xf];
+             edid_str[kk + 1] = hexch[output->edid_blob[k] & 0xf];
+             kk += 2;
+          }
+        edid_str[kk] = 0;
+     }
+
+   return edid_str;
 }
 
 EAPI Eina_List *
