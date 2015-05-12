@@ -285,6 +285,7 @@ struct eo_function
      };
    eo_function_type type;
    eolian_scope scope;
+   bool is_beta;
    std::string name;
    std::string impl;
    eolian_type_instance ret;
@@ -297,6 +298,7 @@ struct eo_event
    eo_event() : scope(eolian_scope::public_) {}
   
    eolian_scope scope;
+   bool is_beta;
    std::string name;
    std::string eo_name;
    //parameters_container_type params; // XXX desirable.
