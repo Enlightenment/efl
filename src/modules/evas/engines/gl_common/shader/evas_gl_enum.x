@@ -1,5 +1,4 @@
-/* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED
- * See: ./modules/evas/engines/gl_common/shader/gen_shaders.sh */
+/* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED */
 
 typedef enum {
    SHADER_RECT,

@@ -35,6 +35,14 @@ precision mediump float;
 #endif
 "
 
+# Skip generation if there is no diff (or no git)
+if ! git rev-parse 2>> /dev/null >> /dev/null ; then exit 0 ; fi
+if git diff --quiet --exit-code -- "$DIR"
+then
+  touch "${OUTPUT}" "${OUTPUT_ENUM}"
+  exit 0
+fi
+
 function upper() {
   echo $@ |tr '[:lower:]' '[:upper:]'
 }
@@ -50,7 +58,7 @@ IFS=$'\n' SHADERS=(`cat ${DIR}/shaders.txt`)
 IFS=$OIFS
 
 # Write header
-printf "/* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED\n * See: $0 */\n\n" > ${OUTPUT}
+printf "/* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED */\n\n" > ${OUTPUT}
 
 # Including private for hilights and stuff :)
 printf "#include \"../evas_gl_private.h\"\n\n" >> ${OUTPUT}
@@ -164,7 +172,7 @@ static const struct {
 
 printf "${shaders_source}};\n\n" >> ${OUTPUT}
 
-printf "/* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED\n * See: $0 */
+printf "/* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED */
 
 typedef enum {
 ${shaders_enum}   SHADER_LAST

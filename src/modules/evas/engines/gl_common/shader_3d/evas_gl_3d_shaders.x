@@ -1,5 +1,4 @@
-/* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED
- * See: modules/evas/engines/gl_common/shader_3d/gen_shaders_3d.sh */
+/* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED */
 
 static const char vertex_color_vert_glsl[] =
    "#ifdef GL_ES\n"
