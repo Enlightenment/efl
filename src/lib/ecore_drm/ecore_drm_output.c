@@ -100,7 +100,7 @@ _ecore_drm_output_edid_parse_string(const uint8_t *data, char text[])
           }
      }
 
-   if (rep > 4) text[i] = '\0';
+   if (rep > 4) text[0] = '\0';
 }
 
 static int 
