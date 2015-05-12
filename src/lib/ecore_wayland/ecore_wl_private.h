@@ -209,6 +209,7 @@ struct _Ecore_Wl_Input
    Ecore_Wl_Window *grab;
    unsigned int grab_button;
    unsigned int grab_timestamp;
+   unsigned int grab_count;
 
    Ecore_Wl_Dnd_Source *drag_source;
    Ecore_Wl_Dnd_Source *selection_source;
