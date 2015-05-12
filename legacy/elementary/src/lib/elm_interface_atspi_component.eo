@@ -106,7 +106,7 @@ mixin Elm_Interface_Atspi_Component ()
             @in int x;
             @in int y;
          }
-         return: Evas_Object *;
+         return: Eo*;
       }
    }
 }

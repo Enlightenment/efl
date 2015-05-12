@@ -3,6 +3,7 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_COMPONENT_PROTECTED
+#define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
 
 #include <Elementary.h>
 
@@ -65,33 +66,29 @@ _elm_interface_atspi_component_alpha_get(Eo *obj, void *_pd EINA_UNUSED)
    return (double)alpha / 255.0;
 }
 
-EOLIAN static Evas_Object *
+EOLIAN static Eo *
 _elm_interface_atspi_component_accessible_at_point_get(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool screen_coords, int x, int y)
 {
-   Evas_Object *evobj;
-   int ee_x, ee_y;
-   Eina_List *l, *objs;
-   Evas_Object *ret = NULL;
+   Eina_List *l, *children;
+   Eo *ret = NULL, *child;
 
-   if (screen_coords)
+   eo_do(obj, children = elm_interface_atspi_accessible_children_get());
+
+   EINA_LIST_FOREACH(children, l, child)
      {
-        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-        if (!ee) return NULL;
-        ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
-        x -= ee_x;
-        y -= ee_y;
-     }
-   objs = evas_objects_at_xy_get(evas_object_evas_get(obj), x, y, EINA_TRUE, EINA_TRUE);
-   EINA_LIST_FOREACH(objs, l, evobj)
-     {
-        // return first only, test if there is atspi interface for eo
-        if (eo_isa(evobj, ELM_INTERFACE_ATSPI_ACCESSIBLE_MIXIN))
+        Eina_Bool contains;
+        if (eo_isa(child, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN))
           {
-             ret = evobj;
-             break;
+              eo_do(child, contains = elm_interface_atspi_component_contains(screen_coords, x, y));
+              if (contains)
+                {
+                   ret = child;
+                   break;
+                }
           }
      }
-   eina_list_free(objs);
+
+   eina_list_free(children);
    return ret;
 }
 
