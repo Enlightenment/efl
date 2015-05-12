@@ -886,8 +886,7 @@ START_TEST(eolian_enum)
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 15);
 
-   fail_if(!(type = eolian_type_alias_get_by_name("Baz")));
-   fail_if(!(type = eolian_type_base_type_get(type)));
+   fail_if(!(type = eolian_type_enum_get_by_name("Baz")));
 
    fail_if(!(field = eolian_type_enum_field_get(type, "flag1")));
    fail_if(!(exp = eolian_type_enum_field_value_get(field)));
