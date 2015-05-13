@@ -2716,6 +2716,26 @@ EAPI void                                  ecore_x_e_virtual_keyboard_on_prepare
 EAPI void                                  ecore_x_e_virtual_keyboard_off_prepare_request_send(Ecore_X_Window win);
 EAPI void                                  ecore_x_e_virtual_keyboard_off_prepare_done_send(Ecore_X_Window root, Ecore_X_Window win);
 
+//this enum and API for keyrouter and client window side
+//keycode (8~255)
+typedef enum
+{
+   ECORE_X_WIN_KEYGRAB_UNKNOWN = 0, /**< Unknown keygrab mode */
+   ECORE_X_WIN_KEYGRAB_SHARED  = (1 << 8), /**< Getting the grabbed-key together with the other client windows */
+   ECORE_X_WIN_KEYGRAB_TOPMOST = (1 << 9), /**< Getting the grabbed-key only when window is top of the stack */
+   ECORE_X_WIN_KEYGRAB_EXCLUSIVE = (1 << 10), /**< Getting the grabbed-key exclusively regardless of window's position */
+   ECORE_X_WIN_KEYGRAB_OVERRIDE_EXCLUSIVE = (1 << 11) /**< Getting the grabbed-key exclusively regardless of window's position. Being overrided the grab by the other client window  */
+} Ecore_X_Win_Keygrab_Mode;
+
+//add mod, anymod, priority for the future.
+//we will support modifier and priority feature later.
+EAPI Eina_Bool                             ecore_x_window_keygrab_set(Ecore_X_Window win, const char *key, int mod, int any_mod, int priority, Ecore_X_Win_Keygrab_Mode grab_mode);
+EAPI Eina_Bool                             ecore_x_window_keygrab_unset(Ecore_X_Window win, const char *key, int mod, int any_mod);
+
+//this API for keyrouter protocol
+EAPI void                                  ecore_x_e_keyrouter_set(Ecore_X_Window root, Eina_Bool on); //Key router set keyrouter flag using this
+EAPI Eina_Bool                             ecore_x_e_keyrouter_get(Ecore_X_Window root); //Client check the existance of keyrouter using this
+
 #ifdef __cplusplus
 }
 #endif // ifdef __cplusplus
