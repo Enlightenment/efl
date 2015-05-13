@@ -16,6 +16,8 @@ enum Baz {
     flag3 = 1 << 2
 }
 
+const Bah: Baz = Baz.flag1;
+
 enum Value {
     foo,
     bar,
@@ -25,9 +27,7 @@ enum Value {
     pants
 }
 
-const Pants: int = Value.pants;
-
-const Bah: int = Baz.flag1;
+const Pants: Value = Value.pants;
 
 class Enum {
     methods {

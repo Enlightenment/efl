@@ -910,7 +910,7 @@ START_TEST(eolian_enum)
    fail_if(eolian_variable_is_extern(var));
    fail_if(!(type = eolian_variable_base_type_get(var)));
    fail_if(!(name = eolian_type_name_get(type)));
-   fail_if(strcmp(name, "int"));
+   fail_if(strcmp(name, "Baz"));
    fail_if(!(exp = eolian_variable_value_get(var)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
