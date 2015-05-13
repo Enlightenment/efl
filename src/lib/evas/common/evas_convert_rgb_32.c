@@ -308,27 +308,32 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_270 (DATA32 *src, DATA8 *dst, int
 void
 evas_common_convert_rgba_to_32bpp_rgb_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x EINA_UNUSED, int dith_y EINA_UNUSED, DATA8 *pal EINA_UNUSED)
 {
-# ifndef BUILD_NEON
-#  ifdef TILE_ROTATE
+#ifdef TILE_ROTATE
    blt_rotated_90_8888((DATA8 *)dst,  dst_jump+w, (const DATA8 *)src, src_jump+h, w, h) ;
-#  else
+#else
+# ifndef BUILD_NEON
    DATA32 *src_ptr;
    DATA32 *dst_ptr;
    int x, y;
-   
+
    dst_ptr = (DATA32 *)dst;
    CONVERT_LOOP_START_ROT_90();
 
    *dst_ptr = *src_ptr;
 
    CONVERT_LOOP_END_ROT_90();
-#  endif
-   
+# elif defined BUILD_NEON_INTRINSICS
+   DATA32 *src_ptr;
+   DATA32 *dst_ptr;
+   int x, y;
+
+   dst_ptr = (DATA32 *)dst;
+   CONVERT_LOOP_START_ROT_90();
+
+   *dst_ptr = *src_ptr;
+
+   CONVERT_LOOP_END_ROT_90();
 # else
-   
-#  ifdef TILE_ROTATE
-   blt_rotated_90_8888((DATA8 *)dst,  dst_jump+w, (const DATA8 *)src, src_jump+h, w, h) ;
-#  else
    if ((w & 1) || (h & 1))
      {
         /* Rarely (if ever) if ever: so slow path is fine */
@@ -345,7 +350,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_90 (DATA32 *src, DATA8 *dst, int 
      }
    else
      {
-#   define AP  "convert_rgba32_rot_90_"
+#  define AP  "convert_rgba32_rot_90_"
         asm volatile (
         ".fpu neon                      \n\t"
         "   mov     %[s1],  %[src]          \n\t"
@@ -417,9 +422,9 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_90 (DATA32 *src, DATA8 *dst, int 
 
         );
      }
-#   undef AP
-#  endif
+#  undef AP
 # endif
+#endif
    return;
 }
 
