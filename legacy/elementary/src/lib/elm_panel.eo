@@ -1,3 +1,16 @@
+enum Elm.Panel.Orient
+{
+   /*@
+   Panel orientation mode
+
+   @ingroup Panel */
+
+   top, /*@< Panel (dis)appears from the top */
+   bottom, /*@< Panel (dis)appears from the bottom */
+   left, /*@< Panel (dis)appears from the left */
+   right /*@< Panel (dis)appears from the right */
+}
+
 class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
                  Elm_Interface_Atspi_Widget_Action)
 {
@@ -21,7 +34,7 @@ class Elm.Panel (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Panel */
          }
          values {
-            Elm_Panel_Orient orient(2); /*@ The panel orientation. Can be one of the following:
+            Elm.Panel.Orient orient(Elm.Panel.Orient.left); /*@ The panel orientation. Can be one of the following:
             @li #ELM_PANEL_ORIENT_TOP
             @li #ELM_PANEL_ORIENT_LEFT
             @li #ELM_PANEL_ORIENT_RIGHT */
