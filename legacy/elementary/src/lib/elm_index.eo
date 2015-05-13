@@ -1,4 +1,4 @@
-class Elm.Index (Elm.Layout)
+class Elm.Index (Elm.Layout, Evas.Clickable_Interface, Evas.Selectable_Interface)
 {
    eo_prefix: elm_obj_index;
    methods {

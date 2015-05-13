@@ -509,7 +509,8 @@ _delay_change_cb(void *data)
 
    sd->delay = NULL;
    item = elm_index_selected_item_get(data, sd->level);
-   if (item) evas_object_smart_callback_call(data, SIG_DELAY_CHANGED, item);
+   if (item) eo_do(data, eo_event_callback_call
+               (ELM_INDEX_EVENT_DELAY_CHANGED, item));
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -667,12 +668,12 @@ _sel_eval(Evas_Object *obj,
                        _elm_access_say(ret);
                     }
 
-                  if (om_closest)
-                    evas_object_smart_callback_call
-                       (obj, SIG_CHANGED, EO_OBJ(om_closest));
+                  if (om_closest) 
+                    eo_do(obj, eo_event_callback_call
+                      (ELM_INDEX_EVENT_CHANGED, EO_OBJ(om_closest)));
                   else
-                    evas_object_smart_callback_call
-                       (obj, SIG_CHANGED, EO_OBJ(it));
+                    eo_do(obj, eo_event_callback_call
+                      (ELM_INDEX_EVENT_CHANGED, EO_OBJ(it)));
                   ecore_timer_del(sd->delay);
                   sd->delay = ecore_timer_add(sd->delay_change_time,
                                               _delay_change_cb, obj);
@@ -763,7 +764,8 @@ _on_mouse_up(void *data,
    eo_item = elm_index_selected_item_get(data, sd->level);
    if (eo_item)
      {
-        evas_object_smart_callback_call(data, SIG_SELECTED, eo_item);
+        eo_do(data, eo_event_callback_call
+          (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, eo_item));
         eo_id_item = eo_item;
         ELM_INDEX_ITEM_DATA_GET(eo_id_item, id_item);
         if (id_item->func)
@@ -811,7 +813,8 @@ _on_mouse_move(void *data,
                   sd->level = 1;
                   snprintf(buf, sizeof(buf), "elm,state,level,%i", sd->level);
                   elm_layout_signal_emit(data, buf, "elm");
-                  evas_object_smart_callback_call(data, SIG_LEVEL_UP, NULL);
+                  eo_do(data, eo_event_callback_call
+                    (ELM_INDEX_EVENT_LEVEL_UP, NULL));
                }
           }
         else
@@ -821,7 +824,8 @@ _on_mouse_move(void *data,
                   sd->level = 0;
                   snprintf(buf, sizeof(buf), "elm,state,level,%i", sd->level);
                   elm_layout_signal_emit(data, buf, "elm");
-                  evas_object_smart_callback_call(data, SIG_LEVEL_DOWN, NULL);
+                  eo_do(data, eo_event_callback_call
+                    (ELM_INDEX_EVENT_LEVEL_DOWN, NULL));
                }
           }
      }
@@ -1216,10 +1220,10 @@ _elm_index_item_selected_set(Eo *eo_it,
         edje_object_signal_emit(VIEW(it_active), "elm,state,active", "elm");
         edje_object_message_signal_process(VIEW(it_active));
 
-        evas_object_smart_callback_call
-           (obj, SIG_CHANGED, eo_it);
-        evas_object_smart_callback_call
-           (obj, SIG_SELECTED, eo_it);
+        eo_do(obj, eo_event_callback_call
+          (ELM_INDEX_EVENT_CHANGED, eo_it));
+        eo_do(obj, eo_event_callback_call
+          (EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, eo_it));
         ecore_timer_del(sd->delay);
         sd->delay = ecore_timer_add(sd->delay_change_time,
                                     _delay_change_cb, obj);
