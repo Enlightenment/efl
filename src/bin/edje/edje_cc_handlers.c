@@ -12390,10 +12390,20 @@ st_collections_group_programs_program_transition(void)
            FROM_DOUBLE(parse_float_range(2, -999999999.0, 999999999.0));
         current_program->tween.v2 =
            FROM_DOUBLE(parse_float_range(3, -999999999.0, 999999999.0));
-        current_program->tween.v3 =
-           FROM_DOUBLE(parse_float_range(4, -999999999.0, 999999999.0));
-        current_program->tween.v4 =
-           FROM_DOUBLE(parse_float_range(5, -999999999.0, 999999999.0));
+        if (get_arg_count() == 7)
+          {
+             current_program->tween.v3 =
+                FROM_DOUBLE(parse_float_range(5, -999999999.0, 999999999.0));
+             current_program->tween.v4 =
+                FROM_DOUBLE(parse_float_range(6, -999999999.0, 999999999.0));
+          }
+        else
+          {
+             current_program->tween.v3 =
+                FROM_DOUBLE(parse_float_range(4, -999999999.0, 999999999.0));
+             current_program->tween.v4 =
+                FROM_DOUBLE(parse_float_range(5, -999999999.0, 999999999.0));
+          }
      }
 }
 
