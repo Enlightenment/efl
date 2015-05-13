@@ -11,18 +11,18 @@ typedef Eo Struct;
 #ifndef _STRUCT_EO_TYPES
 #define _STRUCT_EO_TYPES
 
-typedef struct
+typedef struct _Named
 {
   int field;
   const char *something;
 } Named;
 
-typedef struct
+typedef struct _Another
 {
   Named field;
 } Another;
 
-struct Opaque;
+typedef struct _Opaque Opaque;
 
 
 #endif

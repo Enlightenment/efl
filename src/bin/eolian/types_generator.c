@@ -87,11 +87,11 @@ _type_generate(const Eolian_Type *tp, Eina_Bool in_typedef, Eina_Bool full)
               char *name = _concat_name(tp);
               if ((in_typedef && name) || tp_type == EOLIAN_TYPE_STRUCT_OPAQUE || !full)
                 {
-                   eina_strbuf_append_printf(buf, "struct %s", name);
+                   eina_strbuf_append_printf(buf, "typedef struct _%s %s", name, name);
                    free(name);
                    break;
                 }
-              eina_strbuf_append_printf(buf, "typedef struct\n{\n");
+              eina_strbuf_append_printf(buf, "typedef struct _%s\n{\n", name);
               Eina_Iterator *members = eolian_type_struct_fields_get(tp);
               EINA_ITERATOR_FOREACH(members, member)
                 {
