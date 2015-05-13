@@ -383,7 +383,7 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
 #ifdef USE_IVI_SHELL
           }
 #endif
-        if (!win->tz_visibility)
+        if ((!win->tz_visibility) && (_ecore_wl_disp->wl.tz_policy))
           {
              win->tz_visibility =
                tizen_policy_get_visibility(_ecore_wl_disp->wl.tz_policy,
