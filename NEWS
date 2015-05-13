@@ -1,6 +1,26 @@
 ==========
-EFL 1.13.2
+EFL 1.13.3
 ==========
+
+Changes since 1.13.2:
+---------------------
+
+Fixes:
+
+   * eina: eina_unicode_utf8_next_get should return 0 when one of the parameters is NULL to avoid null pointer access. it also corresponds to the description in doc.
+   * eina: Add NULL check for eina_threadqueue_free
+   * Evas GL: reset current surface to NULL when it is destroyed
+   * Evas GL: Add missing dlopen for GLX 1.x version
+   * Evas image: Return proper path even with mmap
+   * evas_object_box: add MAGIC_CHECK when it is added.
+   * Evas object: verify the parent is valid and fail if not.
+   * Evas GL: Fallback to indirect rendering if mul_col != 0xFFFFFFFF
+   * Evas textblock: remove freed item from the line list
+   * ecore_timer: fix the default return value.
+   * evas_text: fix default return value.
+   * Edje embryo: Fix invalid check for get_state_val (text str)
+   * Eina: fix eina_file_split on Windows and update unit test
+   * Evas filters: Fix glReadPixels usage for EGL
 
 Changes since 1.13.1:
 ---------------------
