@@ -499,7 +499,7 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
            if (!var)
              {
                 const Eolian_Type *etp;
-                Eolian_Enum_Type_Field *fl;
+                const Eolian_Enum_Type_Field *fl;
 
                 /* try aliases, hoping it'll be enum */
                 char *fulln = NULL, *memb = NULL;

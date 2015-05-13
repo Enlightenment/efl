@@ -563,7 +563,8 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
               check_next(ls, ';');
            }
      }
-   Eolian_Expression *prev_exp = NULL;
+   Eolian_Enum_Type_Field *prev_fl = NULL;
+   int fl_nadd = 0;
    for (;;)
      {
         const char *fname;
@@ -582,15 +583,35 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         fdef->name = eina_stringshare_ref(fname);
         if (ls->t.token != '=')
           {
-             if (!prev_exp)
+             if (!prev_fl)
                {
-                  prev_exp = push_expr(ls);
-                  FILL_BASE(prev_exp->base, ls, -1, -1);
-                  prev_exp->type = EOLIAN_EXPR_INT;
-                  prev_exp->value.i = 0;
-                  fdef->value = prev_exp;
+                  Eolian_Expression *eexp = push_expr(ls);
+                  FILL_BASE(eexp->base, ls, -1, -1);
+                  eexp->type = EOLIAN_EXPR_INT;
+                  eexp->value.i = 0;
+                  fdef->value = eexp;
                   fdef->is_public_value = EINA_TRUE;
                   pop_expr(ls);
+                  prev_fl = fdef;
+                  fl_nadd = 0;
+               }
+             else
+               {
+                  Eolian_Expression *rhs = push_expr(ls),
+                                    *bin = push_expr(ls);
+                  FILL_BASE(rhs->base, ls, -1, -1);
+                  FILL_BASE(bin->base, ls, -1, -1);
+
+                  rhs->type = EOLIAN_EXPR_INT;
+                  rhs->value.i = ++fl_nadd;
+
+                  bin->type = EOLIAN_EXPR_BINARY;
+                  bin->binop = EOLIAN_BINOP_ADD;
+                  bin->lhs = prev_fl->value;
+                  bin->rhs = rhs;
+                  bin->weak_lhs = EINA_TRUE;
+
+                  fdef->value = bin;
                }
           }
         else
@@ -600,8 +621,8 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
              fdef->value = parse_expr(ls);
              fdef->is_public_value = EINA_TRUE;
              ls->expr_mode = EINA_FALSE;
-             if (!prev_exp)
-               prev_exp = fdef->value;
+             prev_fl = fdef;
+             fl_nadd = 0;
              pop_expr(ls);
           }
         Eina_Bool want_next = (ls->t.token == ',');

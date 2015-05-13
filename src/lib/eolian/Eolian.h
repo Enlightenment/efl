@@ -1551,7 +1551,7 @@ EAPI Eina_Iterator *eolian_type_enum_fields_get(const Eolian_Type *tp);
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Enum_Type_Field *eolian_type_enum_field_get(const Eolian_Type *tp, const char *field);
+EAPI const Eolian_Enum_Type_Field *eolian_type_enum_field_get(const Eolian_Type *tp, const char *field);
 
 /*
  * @brief Get the name of a field of an enum type.
@@ -1589,10 +1589,8 @@ EAPI Eina_Stringshare *eolian_type_enum_field_description_get(const Eolian_Enum_
  * @brief Get the value of a field of an enum type.
  *
  * When the @c force parameter is EINA_FALSE, this will only return values for
- * fields which are explicitly specified in the eo file. Otherwise, it will
- * create the field (if not already there) and return it. Keep in mind that
- * no matter if the field is already cached or not, you always have to force
- * retrieval if you want to be sure that a valid expr is returned.
+ * fields which are explicitly specified in the eo file, otherwise it will
+ * return a valid expression for any field.
  *
  * @param[in] fl the field.
  * @param[in] force force the value retrieval.
@@ -1600,7 +1598,7 @@ EAPI Eina_Stringshare *eolian_type_enum_field_description_get(const Eolian_Enum_
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Expression *eolian_type_enum_field_value_get(Eolian_Enum_Type_Field *fl, Eina_Bool force);
+EAPI const Eolian_Expression *eolian_type_enum_field_value_get(const Eolian_Enum_Type_Field *fl, Eina_Bool force);
 
 /*
  * @brief Get the legacy prefix of enum field names. When not specified,

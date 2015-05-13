@@ -94,7 +94,7 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full)
            }
       case EOLIAN_TYPE_ENUM:
            {
-              Eolian_Enum_Type_Field *member;
+              const Eolian_Enum_Type_Field *member;
               char *name;
               if (!full)
                 break;
