@@ -183,9 +183,14 @@ ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb)
         return;
      }
 
+   if (!dev->next) dev->next = fb;
+   if (!dev->next) return;
+
    EINA_LIST_FOREACH(dev->outputs, l, output)
      {
         int x = 0, y = 0;
+
+        if ((!output->enabled) || (!output->current_mode)) continue;
 
         if (!output->cloned)
           {
@@ -193,12 +198,24 @@ ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb)
              y = output->y;
           }
 
-        if (drmModeSetCrtc(dev->drm.fd, output->crtc_id, fb->id, x, y,
-                           &output->conn_id, 1, &output->current_mode->info))
+        if ((!dev->current) ||
+            (dev->current->stride != dev->next->stride))
           {
-             ERR("Failed to set Mode %dx%d for Output %s: %m",
-                 output->current_mode->width, output->current_mode->height,
-                 output->name);
+             DBG("Set Framebuffer %d For Output %s - %d %d",
+                 dev->next->id, output->name, x, y);
+             DBG("\tOutput Geom: %d %d", output->x, output->y);
+             DBG("\tOutput Crtc Buffer: %d", output->crtc->buffer_id);
+
+             if (drmModeSetCrtc(dev->drm.fd, output->crtc_id, dev->next->id,
+                                x, y, &output->conn_id, 1,
+                                &output->current_mode->info))
+               {
+                  ERR("Failed to set Mode %dx%d for Output %s: %m",
+                      output->current_mode->width, output->current_mode->height,
+                      output->name);
+               }
+
+             /* TODO: set dpms on ?? */
           }
      }
 }
@@ -219,12 +236,19 @@ ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb
    if (!(cb = calloc(1, sizeof(Ecore_Drm_Pageflip_Callback))))
      return;
 
+   cb->dev = dev;
    cb->func = func;
    cb->data = data;
-   cb->count = eina_list_count(dev->outputs);
+
+   EINA_LIST_FOREACH(dev->outputs, l, output)
+     if (output->enabled) cb->count++;
+
+   /* cb->count = eina_list_count(dev->outputs); */
 
    EINA_LIST_FOREACH(dev->outputs, l, output)
      {
+        if ((!output->enabled) || (!output->current_mode)) continue;
+
         if (drmModePageFlip(dev->drm.fd, output->crtc_id, fb->id,
                             DRM_MODE_PAGE_FLIP_EVENT, cb) < 0)
           {

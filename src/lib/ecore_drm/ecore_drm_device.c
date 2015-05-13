@@ -24,6 +24,9 @@ _ecore_drm_device_cb_page_flip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSE
    flip_count++;
    if (flip_count < cb->count) return;
 
+   cb->dev->current = cb->dev->next;
+   cb->dev->next = NULL;
+
    flip_count = 0;
    if (cb->func) cb->func(cb->data);
    /* free(cb); */

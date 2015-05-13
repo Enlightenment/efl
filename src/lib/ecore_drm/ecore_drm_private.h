@@ -82,6 +82,7 @@ extern int _ecore_drm_log_dom;
 
 typedef struct _Ecore_Drm_Pageflip_Callback
 {
+   Ecore_Drm_Device *dev;
    Ecore_Drm_Pageflip_Cb func;
    void *data;
    int count;
