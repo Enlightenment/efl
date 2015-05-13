@@ -425,6 +425,7 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    output->name = eina_stringshare_add("UNKNOWN");
 
    output->connected = (conn->connection == DRM_MODE_CONNECTED);
+   output->enabled = output->connected;
    output->conn_type = conn->connector_type;
    if (conn->connector_type < ALEN(conn_types))
      type = conn_types[conn->connector_type];
@@ -534,8 +535,6 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
             (mode->flags & DRM_MODE_TYPE_DEFAULT) ? ", current" : "",
             (conn->count_modes == 0) ? ", built-in" : "");
      }
-
-   _ecore_drm_output_event_send(output, EINA_TRUE);
 
    return output;
 
@@ -963,6 +962,9 @@ ecore_drm_output_enable(Ecore_Drm_Output *output)
    if (output->enabled) return EINA_TRUE;
 
    output->enabled = EINA_TRUE;
+   ecore_drm_output_dpms_set(output, DRM_MODE_DPMS_ON);
+
+   _ecore_drm_output_event_send(output, EINA_TRUE);
 
    return EINA_TRUE;
 }
@@ -975,6 +977,9 @@ ecore_drm_output_disable(Ecore_Drm_Output *output)
    if (!output->enabled) return;
 
    output->enabled = EINA_FALSE;
+   ecore_drm_output_dpms_set(output, DRM_MODE_DPMS_OFF);
+
+   _ecore_drm_output_event_send(output, EINA_FALSE);
 }
 
 EAPI void 
@@ -996,6 +1001,8 @@ ecore_drm_output_repaint(Ecore_Drm_Output *output)
    EINA_SAFETY_ON_NULL_RETURN(output);
    EINA_SAFETY_ON_NULL_RETURN(output->dev);
    EINA_SAFETY_ON_TRUE_RETURN(output->pending_destroy);
+
+   if (!output->enabled) return;
 
    dev = output->dev;
 
@@ -1101,7 +1108,7 @@ ecore_drm_outputs_geometry_get(Ecore_Drm_Device *dev, int *x, int *y, int *w, in
 
    EINA_LIST_FOREACH(dev->outputs, l, output)
      {
-        if (!output->connected) continue;
+        if ((!output->connected) || (!output->enabled)) continue;
         if (output->cloned) continue;
         ow += MAX(ow, output->current_mode->width);
         oh = MAX(oh, output->current_mode->height);
