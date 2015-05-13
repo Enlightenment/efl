@@ -854,16 +854,16 @@ START_TEST(eolian_enum)
    fail_if(!(type = eolian_type_enum_get_by_name("Foo")));
 
    fail_if(!(field = eolian_type_enum_field_get(type, "first")));
-   fail_if(!(exp = eolian_type_enum_field_value_get(field)));
+   fail_if(!(exp = eolian_type_enum_field_value_get(field, EINA_FALSE)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 0);
 
    fail_if(!(field = eolian_type_enum_field_get(type, "bar")));
-   fail_if(eolian_type_enum_field_value_get(field));
+   fail_if(eolian_type_enum_field_value_get(field, EINA_FALSE));
 
    fail_if(!(field = eolian_type_enum_field_get(type, "baz")));
-   fail_if(!(exp = eolian_type_enum_field_value_get(field)));
+   fail_if(!(exp = eolian_type_enum_field_value_get(field, EINA_FALSE)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 15);
@@ -872,7 +872,7 @@ START_TEST(eolian_enum)
    fail_if(strcmp(eolian_type_enum_legacy_prefix_get(type), "test"));
 
    fail_if(!(field = eolian_type_enum_field_get(type, "foo")));
-   fail_if(!(exp = eolian_type_enum_field_value_get(field)));
+   fail_if(!(exp = eolian_type_enum_field_value_get(field, EINA_FALSE)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 15);
@@ -884,13 +884,13 @@ START_TEST(eolian_enum)
    fail_if(!(type = eolian_type_enum_get_by_name("Baz")));
 
    fail_if(!(field = eolian_type_enum_field_get(type, "flag1")));
-   fail_if(!(exp = eolian_type_enum_field_value_get(field)));
+   fail_if(!(exp = eolian_type_enum_field_value_get(field, EINA_FALSE)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 0));
 
    fail_if(!(field = eolian_type_enum_field_get(type, "flag2")));
-   fail_if(!(exp = eolian_type_enum_field_value_get(field)));
+   fail_if(!(exp = eolian_type_enum_field_value_get(field, EINA_FALSE)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 1));
@@ -900,7 +900,7 @@ START_TEST(eolian_enum)
    eina_stringshare_del(cname);
 
    fail_if(!(field = eolian_type_enum_field_get(type, "flag3")));
-   fail_if(!(exp = eolian_type_enum_field_value_get(field)));
+   fail_if(!(exp = eolian_type_enum_field_value_get(field, EINA_FALSE)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 2));

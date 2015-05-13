@@ -205,6 +205,7 @@ struct _Eolian_Enum_Type_Field
    Eolian_Object      base;
    Eolian_Expression *value;
    Eina_Stringshare  *comment;
+   Eina_Bool is_public_value :1;
 };
 
 struct _Eolian_Expression
@@ -226,6 +227,8 @@ struct _Eolian_Expression
       };
       Eolian_Value_Union value;
    };
+   Eina_Bool weak_lhs :1;
+   Eina_Bool weak_rhs :1;
 };
 
 struct _Eolian_Variable

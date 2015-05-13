@@ -495,12 +495,11 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
            const Eolian_Variable *var = eolian_variable_constant_get_by_name
              (expr->value.s);
            const Eolian_Expression *exp = NULL;
-           int fl_nadd = 0;
 
            if (!var)
              {
                 const Eolian_Type *etp;
-                const Eolian_Enum_Type_Field *fl;
+                Eolian_Enum_Type_Field *fl;
 
                 /* try aliases, hoping it'll be enum */
                 char *fulln = NULL, *memb = NULL;
@@ -525,31 +524,7 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
                   }
 
                 fl = eolian_type_enum_field_get(etp, memb);
-                if (fl)
-                  {
-                     /* we have the field, but the value might not exist
-                      * we should search for last valid enum field, use that */
-                     exp = fl->value;
-                     if (!exp)
-                       {
-                          Eina_List *flist = fl->base_enum->field_list;
-                          Eolian_Enum_Type_Field *lfl = eina_list_data_get(flist);
-                          while (lfl && lfl->name != fl->name)
-                            {
-                               flist = eina_list_next(flist);
-                               lfl = eina_list_data_get(flist);
-                            }
-                          /* we've found our list item, now let's go backwards */
-                          while (!lfl->value)
-                            {
-                               ++fl_nadd;
-                               flist = eina_list_prev(flist);
-                               lfl = eina_list_data_get(flist);
-                            }
-                          /* we've found our first reachable value */
-                          exp = lfl->value;
-                       }
-                  }
+                if (fl) exp = eolian_type_enum_field_value_get(fl, EINA_TRUE);
                 free(fulln);
 
                 if (!exp)
@@ -560,25 +535,6 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
 
            if (!exp)
              return expr_error(expr, "undefined variable");
-
-           if (fl_nadd)
-             {
-                Eolian_Expression eexp, vexp;
-                eexp.base.file = exp->base.file;
-                eexp.base.line = eexp.base.column = -1;
-                vexp.base.file = exp->base.file;
-                vexp.base.line = vexp.base.column = -1;
-
-                vexp.type = EOLIAN_EXPR_INT;
-                vexp.value.i = fl_nadd;
-
-                eexp.type = EOLIAN_EXPR_BINARY;
-                eexp.binop = EOLIAN_BINOP_ADD;
-                eexp.lhs = (Eolian_Expression *)exp;
-                eexp.rhs = &vexp;
-
-                return eval_exp(&eexp, mask, out);
-             }
 
            return eval_exp(exp, mask, out);
         }
@@ -616,12 +572,12 @@ database_expr_del(Eolian_Expression *expr)
    if (expr->base.file) eina_stringshare_del(expr->base.file);
    if (expr->type == EOLIAN_EXPR_BINARY)
      {
-        database_expr_del(expr->lhs);
-        database_expr_del(expr->rhs);
+        if (!expr->weak_lhs) database_expr_del(expr->lhs);
+        if (!expr->weak_rhs) database_expr_del(expr->rhs);
      }
    else if (expr->type == EOLIAN_EXPR_UNARY)
      {
-        database_expr_del(expr->expr);
+        if (!expr->weak_lhs) database_expr_del(expr->expr);
      }
    else if (expr->type == EOLIAN_EXPR_STRING)
      {

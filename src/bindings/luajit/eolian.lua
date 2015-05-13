@@ -270,10 +270,10 @@ ffi.cdef [[
     const char *eolian_type_struct_field_description_get(const Eolian_Struct_Type_Field *fl);
     const Eolian_Type *eolian_type_struct_field_type_get(const Eolian_Struct_Type_Field *fl);
     Eina_Iterator *eolian_type_enum_fields_get(const Eolian_Type *tp);
-    const Eolian_Enum_Type_Field *eolian_type_enum_field_get(const Eolian_Type *tp, const char *field);
+    Eolian_Enum_Type_Field *eolian_type_enum_field_get(const Eolian_Type *tp, const char *field);
     const char *eolian_type_enum_field_name_get(const Eolian_Enum_Type_Field *fl);
     const char *eolian_type_enum_field_description_get(const Eolian_Enum_Type_Field *fl);
-    const Eolian_Expression *eolian_type_enum_field_value_get(const Eolian_Enum_Type_Field *fl);
+    const Eolian_Expression *eolian_type_enum_field_value_get(Eolian_Enum_Type_Field *fl, Eina_Bool force);
     const char *eolian_type_enum_legacy_prefix_get(const Eolian_Type *tp);
     const char *eolian_type_description_get(const Eolian_Type *tp);
     const char *eolian_type_file_get(const Eolian_Type *tp);
@@ -474,8 +474,8 @@ ffi.metatype("Eolian_Enum_Type_Field", {
             return ffi.string(v)
         end,
 
-        value_get = function(self)
-            local v = eolian.eolian_type_enum_field_value_get(self)
+        value_get = function(self, force)
+            local v = eolian.eolian_type_enum_field_value_get(self, force and 1 or 0)
             if v == nil then return nil end
             return v
         end
@@ -510,7 +510,7 @@ M.Type = ffi.metatype("Eolian_Type", {
         end,
 
         enum_fields_get = function(self)
-            return Ptr_Iterator("const Eolian_Enum_Type_Field*",
+            return Ptr_Iterator("Eolian_Enum_Type_Field*",
                 eolian.eolian_type_enum_fields_get(self))
         end,
 

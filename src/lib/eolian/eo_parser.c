@@ -589,6 +589,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
                   prev_exp->type = EOLIAN_EXPR_INT;
                   prev_exp->value.i = 0;
                   fdef->value = prev_exp;
+                  fdef->is_public_value = EINA_TRUE;
                   pop_expr(ls);
                }
           }
@@ -597,6 +598,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
              ls->expr_mode = EINA_TRUE;
              eo_lexer_get(ls);
              fdef->value = parse_expr(ls);
+             fdef->is_public_value = EINA_TRUE;
              ls->expr_mode = EINA_FALSE;
              if (!prev_exp)
                prev_exp = fdef->value;

@@ -94,7 +94,7 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full)
            }
       case EOLIAN_TYPE_ENUM:
            {
-              const Eolian_Enum_Type_Field *member;
+              Eolian_Enum_Type_Field *member;
               char *name;
               if (!full)
                 break;
@@ -112,7 +112,7 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full)
               while (next)
                 {
                    const char *desc = eolian_type_enum_field_description_get(member);
-                   const Eolian_Expression *value = eolian_type_enum_field_value_get(member);
+                   const Eolian_Expression *value = eolian_type_enum_field_value_get(member, EINA_FALSE);
                    char *memb_u = strdup(eolian_type_enum_field_name_get(member));
                    eina_str_toupper(&memb_u);
                    eina_strbuf_reset(membuf);

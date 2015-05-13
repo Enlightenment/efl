@@ -136,7 +136,7 @@ eolian_type_enum_fields_get(const Eolian_Type *tp)
    return eina_list_iterator_new(tp->field_list);
 }
 
-EAPI const Eolian_Enum_Type_Field *
+EAPI Eolian_Enum_Type_Field *
 eolian_type_enum_field_get(const Eolian_Type *tp, const char *field)
 {
    Eolian_Enum_Type_Field *ef = NULL;
@@ -185,9 +185,55 @@ eolian_type_enum_field_description_get(const Eolian_Enum_Type_Field *fl)
 }
 
 EAPI const Eolian_Expression *
-eolian_type_enum_field_value_get(const Eolian_Enum_Type_Field *fl)
+eolian_type_enum_field_value_get(Eolian_Enum_Type_Field *fl, Eina_Bool force)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
+   if (!force && !fl->is_public_value) return NULL;
+   if (force && !fl->value)
+     {
+        Eolian_Expression *exp = NULL;
+        Eolian_Expression *rhs = calloc(1, sizeof(Eolian_Expression)),
+                          *bin = calloc(1, sizeof(Eolian_Expression));
+
+        int fl_nadd = 0;
+
+        Eina_List *flist = fl->base_enum->field_list;
+        Eolian_Enum_Type_Field *lfl = eina_list_data_get(flist);
+
+        /* first find our own node */
+        while (lfl && lfl->name != fl->name)
+          {
+             flist = eina_list_next(flist);
+             lfl = eina_list_data_get(flist);
+          }
+
+        /* we've found our list item, now let's go backwards */
+        while (!lfl->value)
+          {
+             ++fl_nadd;
+             flist = eina_list_prev(flist);
+             lfl = eina_list_data_get(flist);
+          }
+
+        /* we've found our first reachable value */
+        exp = lfl->value;
+
+        rhs->base.file = eina_stringshare_ref(exp->base.file);
+        bin->base.file = eina_stringshare_ref(exp->base.file);
+        rhs->base.line = rhs->base.column = -1;
+        bin->base.line = bin->base.column = -1;
+
+        rhs->type = EOLIAN_EXPR_INT;
+        rhs->value.i = fl_nadd;
+
+        bin->type = EOLIAN_EXPR_BINARY;
+        bin->binop = EOLIAN_BINOP_ADD;
+        bin->lhs = exp;
+        bin->rhs = rhs;
+        bin->weak_lhs = EINA_TRUE;
+
+        fl->value = bin;
+     }
    return fl->value;
 }
 
