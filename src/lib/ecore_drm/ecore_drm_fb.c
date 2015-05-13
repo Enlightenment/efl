@@ -201,11 +201,6 @@ ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb)
         if ((!dev->current) ||
             (dev->current->stride != dev->next->stride))
           {
-             DBG("Set Framebuffer %d For Output %s - %d %d",
-                 dev->next->id, output->name, x, y);
-             DBG("\tOutput Geom: %d %d", output->x, output->y);
-             DBG("\tOutput Crtc Buffer: %d", output->crtc->buffer_id);
-
              if (drmModeSetCrtc(dev->drm.fd, output->crtc_id, dev->next->id,
                                 x, y, &output->conn_id, 1,
                                 &output->current_mode->info))
