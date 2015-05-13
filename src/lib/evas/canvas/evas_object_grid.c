@@ -209,7 +209,8 @@ _evas_object_grid_smart_calculate(Evas_Object *o)
    Eina_List *l;
    Evas_Object_Grid_Option *opt;
    Evas *e;
-   Evas_Coord x, y, w, h, vw, vh;
+   Evas_Coord x, y, w, h;
+   long long xl, yl, wl, hl, vwl, vhl;
    Eina_Bool mirror;
 
    EVAS_OBJECT_GRID_DATA_GET_OR_RETURN(o, priv);
@@ -219,25 +220,29 @@ _evas_object_grid_smart_calculate(Evas_Object *o)
    evas_event_freeze(e);
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
+   xl = x;
+   yl = y;
+   wl = w;
+   hl = h;
    mirror = priv->is_mirrored;
-   vw = priv->size.w;
-   vh = priv->size.h;
+   vwl = priv->size.w;
+   vhl = priv->size.h;
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
-        Evas_Coord x1, y1, x2, y2;
+        long long x1, y1, x2, y2;
 
         if (!mirror)
           {
-             x1 = x + ((w * opt->x) / vw);
-             x2 = x + ((w * (opt->x + opt->w)) / vw);
+             x1 = xl + ((wl * (long long)opt->x) / vwl);
+             x2 = xl + ((wl * (long long)(opt->x + opt->w)) / vwl);
           }
         else
           {
-             x1 = x + ((w * (vw - (opt->x + opt->w))) / vw);
-             x2 = x + ((w * (vw - opt->x)) / vw);
+             x1 = xl + ((wl * (vwl - (long long)(opt->x + opt->w))) / vwl);
+             x2 = xl + ((wl * (vwl - (long long)opt->x)) / vwl);
           }
-        y1 = y + ((h * opt->y) / vh);
-        y2 = y + ((h * (opt->y + opt->h)) / vh);
+        y1 = yl + ((hl * (long long)opt->y) / vhl);
+        y2 = yl + ((hl * (long long)(opt->y + opt->h)) / vhl);
         evas_object_move(opt->obj, x1, y1);
         evas_object_resize(opt->obj, x2 - x1, y2 - y1);
      }
