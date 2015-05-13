@@ -916,6 +916,13 @@ START_TEST(eolian_enum)
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 0));
 
+   fail_if(!(var = eolian_variable_constant_get_by_name("Pants")));
+   fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_CONSTANT);
+   fail_if(!(exp = eolian_variable_value_get(var)));
+   v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
+   fail_if(v.type != EOLIAN_EXPR_INT);
+   fail_if(v.value.i != 5);
+
    eolian_shutdown();
 }
 END_TEST

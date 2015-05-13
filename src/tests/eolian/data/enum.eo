@@ -16,6 +16,17 @@ enum Baz {
     flag3 = 1 << 2
 }
 
+enum Value {
+    foo,
+    bar,
+    baz = 2,
+    bah,
+    bam,
+    pants
+}
+
+const Pants: int = Value.pants;
+
 const Bah: int = Baz.flag1;
 
 class Enum {

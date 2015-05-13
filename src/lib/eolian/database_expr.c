@@ -495,6 +495,7 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
            const Eolian_Variable *var = eolian_variable_constant_get_by_name
              (expr->value.s);
            const Eolian_Expression *exp = NULL;
+           int fl_nadd = 0;
 
            if (!var)
              {
@@ -506,6 +507,10 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
 
                 if (!split_enum_name(expr->value.s, &fulln, &memb))
                   return expr_error(expr, "undefined variable");
+
+                /* assert int here, as we're clearly dealing with enum */
+                if (!(mask & EOLIAN_MASK_INT))
+                  return expr_type_error(expr, EOLIAN_MASK_INT, mask);
 
                 etp = eolian_type_alias_get_by_name(fulln);
                 while (etp && (etp->type == EOLIAN_TYPE_ALIAS
@@ -520,7 +525,31 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
                   }
 
                 fl = eolian_type_enum_field_get(etp, memb);
-                if (fl) exp = eolian_type_enum_field_value_get(fl);
+                if (fl)
+                  {
+                     /* we have the field, but the value might not exist
+                      * we should search for last valid enum field, use that */
+                     exp = fl->value;
+                     if (!exp)
+                       {
+                          Eina_List *flist = fl->base_enum->field_list;
+                          Eolian_Enum_Type_Field *lfl = eina_list_data_get(flist);
+                          while (lfl && lfl->name != fl->name)
+                            {
+                               flist = eina_list_next(flist);
+                               lfl = eina_list_data_get(flist);
+                            }
+                          /* we've found our list item, now let's go backwards */
+                          while (!lfl->value)
+                            {
+                               ++fl_nadd;
+                               flist = eina_list_prev(flist);
+                               lfl = eina_list_data_get(flist);
+                            }
+                          /* we've found our first reachable value */
+                          exp = lfl->value;
+                       }
+                  }
                 free(fulln);
 
                 if (!exp)
@@ -531,6 +560,25 @@ eval_exp(const Eolian_Expression *expr, Eolian_Expression_Mask mask,
 
            if (!exp)
              return expr_error(expr, "undefined variable");
+
+           if (fl_nadd)
+             {
+                Eolian_Expression eexp, vexp;
+                eexp.base.file = exp->base.file;
+                eexp.base.line = eexp.base.column = -1;
+                vexp.base.file = exp->base.file;
+                vexp.base.line = vexp.base.column = -1;
+
+                vexp.type = EOLIAN_EXPR_INT;
+                vexp.value.i = fl_nadd;
+
+                eexp.type = EOLIAN_EXPR_BINARY;
+                eexp.binop = EOLIAN_BINOP_ADD;
+                eexp.lhs = (Eolian_Expression *)exp;
+                eexp.rhs = &vexp;
+
+                return eval_exp(&eexp, mask, out);
+             }
 
            return eval_exp(exp, mask, out);
         }
