@@ -1044,7 +1044,10 @@ _elm_win_focus_in(Ecore_Evas *ee)
      }
 
    if (_elm_config->atspi_mode)
-     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED, NULL));
+     {
+        eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_ACTIVATED, NULL));
+        elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_ACTIVE, EINA_TRUE);
+     }
 
    /* do nothing */
    /* else if (sd->img_obj) */
@@ -1076,7 +1079,10 @@ _elm_win_focus_out(Ecore_Evas *ee)
    _elm_access_object_highlight_disable(evas_object_evas_get(obj));
 
    if (_elm_config->atspi_mode)
-     eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED, NULL));
+     {
+        eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_DEACTIVATED, NULL));
+        elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_ACTIVE, EINA_FALSE);
+     }
 
    /* do nothing */
    /* if (sd->img_obj) */
@@ -5415,6 +5421,18 @@ _elm_win_elm_interface_atspi_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, 
           { NULL, NULL, NULL, NULL }
    };
    return &atspi_actions[0];
+}
+
+EOLIAN static Elm_Atspi_State_Set
+_elm_win_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Win_Data *sd EINA_UNUSED)
+{
+   Elm_Atspi_State_Set ret;
+   eo_do_super(obj, MY_CLASS, ret = elm_interface_atspi_accessible_state_set_get());
+
+   if (elm_win_focus_get(obj))
+     STATE_TYPE_SET(ret, ELM_ATSPI_STATE_ACTIVE);
+
+   return ret;
 }
 
 #include "elm_win.eo.c"
