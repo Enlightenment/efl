@@ -621,7 +621,6 @@ _rotate_image_data(void *data, void *img)
    evas_common_draw_context_free(dc);
 
    glsym_glBindFramebuffer(GL_FRAMEBUFFER, im2->tex->pt->fb);
-   GLERRV("glsym_glBindFramebuffer");
 
    // Rely on Evas_GL_Image infrastructure to allocate pixels
    im2->im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
@@ -652,7 +651,6 @@ _rotate_image_data(void *data, void *img)
      }
 
    glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
-   GLERRV("glsym_glBindFramebuffer");
 
    return im2;
 }
@@ -725,7 +723,6 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
         if (!im->tex->pt->dyn.data)
           {
              if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-             GLERRV("secsym_eglMapImageSEC");
              return im;
           }
         im->tex->pt->dyn.checked_out++;
@@ -1600,12 +1597,10 @@ eng_gl_get_pixels_post(void *data EINA_UNUSED)
 }
 
 static Eina_Bool
-eng_gl_surface_lock(void *data, void *surface)
+eng_gl_surface_lock(void *data EINA_UNUSED, void *surface)
 {
-   Render_Engine_GL_Generic *re = data;
    Evas_GL_Image *im = surface;
 
-   EVGLINIT(re, EINA_FALSE);
    if (!im->tex || !im->tex->pt)
      {
         ERR("Can not lock image that is not a surface!");
@@ -1618,27 +1613,25 @@ eng_gl_surface_lock(void *data, void *surface)
 }
 
 static Eina_Bool
-eng_gl_surface_unlock(void *data, void *surface)
+eng_gl_surface_unlock(void *data EINA_UNUSED, void *surface)
 {
-   Render_Engine_GL_Generic *re = data;
    Evas_GL_Image *im = surface;
 
-   EVGLINIT(re, EINA_FALSE);
    im->locked = EINA_FALSE;
    return EINA_TRUE;
 }
 
 static Eina_Bool
-eng_gl_surface_read_pixels(void *data, void *surface,
+eng_gl_surface_read_pixels(void *data EINA_UNUSED, void *surface,
                            int x, int y, int w, int h,
                            Evas_Colorspace cspace, void *pixels)
 {
-   Render_Engine_GL_Generic *re = data;
    Evas_GL_Image *im = surface;
+   GLint fmt = GL_BGRA;
+   int done = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pixels, EINA_FALSE);
 
-   EVGLINIT(re, EINA_FALSE);
    if (!im->locked)
      {
         // For now, this is useless, but let's force clients to lock :)
@@ -1657,10 +1650,20 @@ eng_gl_surface_read_pixels(void *data, void *surface,
     */
 
    glsym_glBindFramebuffer(GL_FRAMEBUFFER, im->tex->pt->fb);
-   GLERRV("glsym_glBindFramebuffer");
-   if (im->tex->pt->format == GL_BGRA)
-     glReadPixels(x, y, w, h, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
-   else
+   glPixelStorei(GL_PACK_ALIGNMENT, 4);
+
+   // With GLX we will try to read BGRA even if the driver reports RGBA
+#if defined(GL_GLES) && defined(GL_IMPLEMENTATION_COLOR_READ_FORMAT)
+   glGetIntegerv(GL_IMPLEMENTATION_COLOR_READ_FORMAT, &fmt);
+#endif
+
+   if ((im->tex->pt->format == GL_BGRA) && (fmt == GL_BGRA))
+     {
+        glReadPixels(x, y, w, h, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+        done = (glGetError() == GL_NO_ERROR);
+     }
+
+   if (!done)
      {
         DATA32 *ptr = pixels;
         int k;
@@ -1674,8 +1677,8 @@ eng_gl_surface_read_pixels(void *data, void *surface,
                    | ((v & 0x000000FF) << 16);
           }
      }
+
    glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
-   GLERRV("glsym_glBindFramebuffer");
 
    return EINA_TRUE;
 }
