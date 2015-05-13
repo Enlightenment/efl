@@ -4231,6 +4231,7 @@ EFL_INTERNAL_DEPEND_PKG([EDJE], [ecore-imf-evas])
 EFL_INTERNAL_DEPEND_PKG([EDJE], [embryo])
 EFL_INTERNAL_DEPEND_PKG([EDJE], [eio])
 EFL_INTERNAL_DEPEND_PKG([EDJE], [emile])
+EFL_INTERNAL_DEPEND_PKG([EDJE], [efreet])
 
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EDJE], [${want_physics}], [ephysics])
 EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EDJE], [${want_multisense}], [ecore-audio])
