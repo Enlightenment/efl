@@ -1414,3 +1414,51 @@ next:
 
    return ret;
 }
+
+EAPI Eina_Bool
+ecore_drm_output_mode_set(Ecore_Drm_Output *output, Ecore_Drm_Output_Mode *mode, int x, int y)
+{
+   Ecore_Drm_Device *dev;
+   Eina_Bool ret = EINA_TRUE;
+   unsigned int buffer = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->dev, EINA_FALSE);
+
+   dev = output->dev;
+
+   output->x = x;
+   output->y = y;
+   output->current_mode = mode;
+
+   if ((mode) && (output->enabled))
+     {
+        if (dev->current)
+          buffer = dev->current->id;
+        else if (dev->next)
+          buffer = dev->next->id;
+        else
+          buffer = output->crtc->buffer_id;
+
+        if (drmModeSetCrtc(dev->drm.fd, output->crtc_id, buffer,
+                           output->x, output->y,
+                           &output->conn_id, 1, &mode->info) < 0)
+          {
+             ERR("Failed to set Mode %dx%d for Output %s: %m",
+                 mode->width, mode->height, output->name);
+             ret = EINA_FALSE;
+          }
+     }
+   else
+     {
+        if (drmModeSetCrtc(dev->drm.fd, output->crtc_id,
+                           0, 0, 0, 0, 0, NULL) < 0)
+          {
+             ERR("Failed to set Mode %dx%d for Output %s: %m",
+                 mode->width, mode->height, output->name);
+             ret = EINA_FALSE;
+          }
+     }
+
+   return ret;
+}

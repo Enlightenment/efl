@@ -923,6 +923,23 @@ EAPI Ecore_Drm_Output *ecore_drm_device_output_name_find(Ecore_Drm_Device *dev, 
  */
 EAPI Eina_Bool ecore_drm_output_possible_crtc_get(Ecore_Drm_Output *output, unsigned int crtc);
 
+/**
+ * Set a given mode to be used on an Ecore_Drm_Output
+ *
+ * This function will set the given mode to be used on a given Ecore_Drm_Output
+ *
+ * @param output The Ecore_Drm_Output to set the mode on
+ * @param mode A valid Ecore_Drm_Output_Mode to set or NULL to disable the output
+ * @param X The X position to set this output to
+ * @param Y The Y position to set this output to
+ *
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ *
+ * @ingroup Ecore_Drm_Output_Group
+ * @since 1.15
+ */
+EAPI Eina_Bool ecore_drm_output_mode_set(Ecore_Drm_Output *output, Ecore_Drm_Output_Mode *mode, int x, int y);
+
 # ifdef __cplusplus
 }
 # endif
