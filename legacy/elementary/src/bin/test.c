@@ -215,6 +215,7 @@ void test_store(void *data, Evas_Object *obj, void *event_info);
 void test_sys_notify(void *data, Evas_Object *obj, void *event_info);
 void test_systray(void *data, Evas_Object *obj, void *event_info);
 void test_win_inline(void *data, Evas_Object *obj, void *event_info);
+void test_win_keygrab(void *data, Evas_Object *obj, void *event_info);
 void test_win_socket(void *data, Evas_Object *obj, void *event_info);
 void test_win_plug(void *data, Evas_Object *obj, void *event_info);
 void test_win_wm_rotation(void *data, Evas_Object *obj, void *event_info);
@@ -538,6 +539,7 @@ add_tests:
    ADD_TEST(NULL, "Window / Background", "Window Plug", test_win_plug);
    ADD_TEST(NULL, "Window / Background", "Window WM Rotation", test_win_wm_rotation);
    ADD_TEST(NULL, "Window / Background", "Window Standard/Dialog", test_win_dialog);
+   ADD_TEST(NULL, "Window / Background", "Window Keygrab Set", test_win_keygrab);
 
    //------------------------------//
    ADD_TEST(NULL, "Images", "Icon", test_icon);

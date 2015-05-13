@@ -138,6 +138,26 @@ enum Elm.Win.Indicator_Opacity_Mode
    transparent /*@ Transparentizes the indicator */
 }
 
+/**
+ */
+enum Elm.Win.Keygrab_Mode
+{
+   /*@
+   Define the keygrab modes of window.
+   A window may send commands to the Keyrouter according this mode,
+   and perform different actions.
+
+   @ingroup Win */
+
+   legacy: elm_win_keygrab;
+
+   unknown = 0, /*@ Unknown keygrab mode */
+   shared = (1 << 8), /*@ Getting the grabbed-key together with the other client windows */
+   topmost = (1 << 9), /*@ Getting the grabbed-key only when window is top of the stack */
+   exclusive = (1 << 10), /*@ Getting the grabbed-key exclusively regardless of window's position */
+   override_exclusive = (1 << 11) /*@ Getting the grabbed-key exclusively regardless of window's position. Being overrided the grab by the other client window  */
+}
+
 enum Elm.Illume_Command
 {
    /*@
@@ -1549,6 +1569,36 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
          params {
             @in bool h; /*@ If true, center horizontally. If false, do not change horizontal location. */
             @in bool v; /*@ If true, center vertically. If false, do not change vertical location. */
+         }
+      }
+      keygrab_set {
+         /*@
+         Set keygrab value of the window
+
+         This function grabs the @p key of window using @p grab_mode.
+         @ingroup Win */
+
+         return: bool;
+         params {
+            @in const(char)* key; /*@ This string is the keyname to grab. */
+            @in Evas_Modifier_Mask modifiers; /*@ This is for the keymask feature. Currently this feature is not supported. */
+            @in Evas_Modifier_Mask not_modifiers; /*@ This is for the keymask feature. Currently this feature is not supported. */
+            @in int proirity; /*@ This is for the priority of keygrab. Currently this feature is not supported. */
+            @in Elm_Win_Keygrab_Mode grab_mode; /*@  According to the grabmode, it can grab key differently */
+         }
+      }
+      keygrab_unset {
+         /*@
+         Unset keygrab value of the window
+
+         This function unset keygrab value. Ungrab @p key of window.
+         @ingroup Win */
+
+         return: bool;
+         params {
+            @in const(char)* key; /*@ This string is the keyname to grab. */
+            @in Evas_Modifier_Mask modifiers; /*@ This is for the keymask feature. Currently this feature is not supported. */
+            @in Evas_Modifier_Mask not_modifiers; /*@ This is for the keymask feature. Currently this feature is not supported. */
          }
       }
    }

@@ -5011,6 +5011,43 @@ _elm_win_illume_command_send(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Elm_Illume_C
 #endif
 }
 
+EOLIAN static Eina_Bool
+_elm_win_keygrab_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *key, Evas_Modifier_Mask modifiers EINA_UNUSED, Evas_Modifier_Mask not_modifiers EINA_UNUSED, int priority EINA_UNUSED, Elm_Win_Keygrab_Mode grab_mode)
+{
+   Eina_Bool ret = EINA_FALSE;
+#ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     {
+        if (grab_mode == ELM_WIN_KEYGRAB_SHARED)
+          ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, ECORE_X_WIN_KEYGRAB_SHARED);
+        else if (grab_mode == ELM_WIN_KEYGRAB_TOPMOST)
+          ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, ECORE_X_WIN_KEYGRAB_TOPMOST);
+        else if (grab_mode == ELM_WIN_KEYGRAB_EXCLUSIVE)
+          ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, ECORE_X_WIN_KEYGRAB_EXCLUSIVE);
+        else if (grab_mode == ELM_WIN_KEYGRAB_OVERRIDE_EXCLUSIVE)
+          ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, ECORE_X_WIN_KEYGRAB_EXCLUSIVE);
+     }
+   return ret;
+#else
+   return ret;
+#endif
+}
+
+EOLIAN static Eina_Bool
+_elm_win_keygrab_unset(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *key, Evas_Modifier_Mask modifiers EINA_UNUSED, Evas_Modifier_Mask not_modifiers EINA_UNUSED)
+{
+   Eina_Bool ret = EINA_FALSE;
+#ifdef HAVE_ELEMENTARY_X
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     ret = ecore_x_window_keygrab_unset(sd->x.xwin, key, 0, 0);
+   return ret;
+#else
+   return ret;
+#endif
+}
+
 EOLIAN static Evas_Object*
 _elm_win_inlined_image_object_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd)
 {
