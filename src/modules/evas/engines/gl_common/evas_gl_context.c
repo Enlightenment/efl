@@ -271,6 +271,39 @@ __evas_gl_err(int err, const char *file, const char *func, int line, const char 
      case GL_OUT_OF_MEMORY:
         errmsg = "GL_OUT_OF_MEMORY";
         break;
+#ifdef GL_INVALID_FRAMEBUFFER_OPERATION
+     case GL_INVALID_FRAMEBUFFER_OPERATION:
+        {
+           GLenum e = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+           switch (e)
+             {
+#ifdef GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+              case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+                errmsg = "GL_INVALID_FRAMEBUFFER_OPERATION: GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
+                break;
+#endif
+#ifdef GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS
+              case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+                errmsg = "GL_INVALID_FRAMEBUFFER_OPERATION: GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS";
+                break;
+#endif
+#ifdef GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
+              case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+                errmsg = "GL_INVALID_FRAMEBUFFER_OPERATION: GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
+                break;
+#endif
+#ifdef GL_FRAMEBUFFER_UNSUPPORTED
+              case GL_FRAMEBUFFER_UNSUPPORTED:
+                errmsg = "GL_INVALID_FRAMEBUFFER_OPERATION: GL_FRAMEBUFFER_UNSUPPORTED";
+                break;
+#endif
+              default:
+                errmsg = "GL_INVALID_FRAMEBUFFER_OPERATION";
+                break;
+             }
+           break;
+        }
+#endif
      default:
         snprintf(buf, sizeof(buf), "%#x", err);
         errmsg = buf;
@@ -1204,15 +1237,9 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
 # endif
 #endif
    if (gc->pipe[0].shader.surface == gc->def_surface)
-     {
-        glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        GLERRV("glsym_glBindFramebuffer");
-     }
+     glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
    else
-     {
-        glsym_glBindFramebuffer(GL_FRAMEBUFFER, surface->tex->pt->fb);
-        GLERRV("glsym_glBindFramebuffer");
-     }
+      glsym_glBindFramebuffer(GL_FRAMEBUFFER, surface->tex->pt->fb);
    _evas_gl_common_viewport_set(gc);
 }
 
@@ -3174,7 +3201,6 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              gc->pipe[i].array.buffer_use++;
 
              x = glsym_glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-             GLERRV("glsym_glMapBuffer");
              if (x)
                {
                   if (gc->pipe[i].array.use_vertex)
@@ -3209,7 +3235,6 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                           gc->pipe[i].array.use_texm);
  */
                   glsym_glUnmapBuffer(GL_ARRAY_BUFFER);
-                  GLERRV("glsym_glUnmapBuffer");
                }
           }
         else

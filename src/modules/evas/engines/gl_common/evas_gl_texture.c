@@ -604,15 +604,15 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    ok = _tex_2d(gc, pt->intformat, w, h, pt->format, pt->dataformat);
 
-   glsym_glGenFramebuffers(1, &(pt->fb));
-   GLERRV("glsym_glGenFramebuffers");
-   glsym_glBindFramebuffer(GL_FRAMEBUFFER, pt->fb);
-   GLERRV("glsym_glBindFramebuffer");
-   glsym_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pt->texture, 0);
-   GLERRV("glsym_glFramebufferTexture2D");
-   glsym_glBindFramebuffer(GL_FRAMEBUFFER, fnum);
-   GLERRV("glsym_glBindFramebuffer");
+   if (ok)
+     {
+        glsym_glGenFramebuffers(1, &(pt->fb));
+        glsym_glBindFramebuffer(GL_FRAMEBUFFER, pt->fb);
+        glsym_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pt->texture, 0);
+        // note: should check fbo completeness
+     }
 
+   glsym_glBindFramebuffer(GL_FRAMEBUFFER, fnum);
    glBindTexture(GL_TEXTURE_2D, gc->pipe[0].shader.cur_tex);
 
    if (!ok)
@@ -798,7 +798,6 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
                                             EGL_NO_CONTEXT,
                                             EGL_MAP_GL_TEXTURE_2D_SEC,
                                             0, attr);
-        GLERRV("secsym_eglCreateImage");
         if (!pt->dyn.img) goto error;
 
         if (secsym_eglGetImageAttribSEC(egldisplay,
@@ -842,7 +841,6 @@ error:
   if (pt->dyn.img)
     {
        secsym_eglDestroyImage(egldisplay, pt->dyn.img);
-       GLERRV("secsym_eglDestroyImage");
        pt->dyn.img = NULL;
     }
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -923,7 +921,6 @@ evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
    if (pt->fb)
      {
         glsym_glDeleteFramebuffers(1, &(pt->fb));
-        GLERRV("glsym_glDeleteFramebuffers");
         pt->fb = 0;
      }
     EINA_LIST_FREE(pt->allocations, apt)
@@ -1044,9 +1041,7 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
    fmt = tex->pt->format;
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
    if (tex->gc->shared->info.unpack_row_length)
-     {
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-     }
+     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
    glPixelStorei(GL_UNPACK_ALIGNMENT, bytes_count);
 
 //   printf("tex upload %ix%i\n", im->cache_entry.w, im->cache_entry.h);
@@ -1117,6 +1112,7 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
                     1, im->cache_entry.h,
                     fmt, tex->pt->dataformat,
                     im->image.data8 + (im->cache_entry.w - 1) * bytes_count);
+        //glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
      }
    else
      {
@@ -1155,6 +1151,7 @@ evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int
                     fmt, tex->pt->dataformat,
                     tpix);
      }
+   //glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
    if (tex->pt->texture != tex->gc->pipe[0].shader.cur_tex)
      glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
 }

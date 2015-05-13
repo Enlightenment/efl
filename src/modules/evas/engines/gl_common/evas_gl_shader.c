@@ -70,7 +70,6 @@ _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
    glAttachShader(p->prog, p->frag);
 #endif
    glsym_glProgramBinary(p->prog, formats[0], data, length);
-   GLERRV("glsym_glProgramBinary");
 
    glBindAttribLocation(p->prog, SHAD_VERTEX, "vertex");
    glBindAttribLocation(p->prog, SHAD_COLOR,  "color");
@@ -120,7 +119,6 @@ _evas_gl_common_shader_program_binary_save(Evas_GL_Program *p,
    if (!data) return 0;
 
    glsym_glGetProgramBinary(p->prog, length, &size, &format, data);
-   GLERRV("glsym_glGetProgramBinary");
 
    if (length != size)
      {
@@ -178,7 +176,6 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
      {
         glsym_glProgramParameteri(p->prog, GL_PROGRAM_BINARY_RETRIEVABLE_HINT,
                                   GL_TRUE);
-        GLERRV("glsym_glProgramParameteri");
      }
 #endif
    glAttachShader(p->prog, p->vert);
@@ -340,10 +337,7 @@ evas_gl_common_shader_program_init_done(void)
    glReleaseShaderCompiler();
 #else
    if (glsym_glReleaseShaderCompiler)
-     {
-        glsym_glReleaseShaderCompiler();
-        GLERRV("glsym_glReleaseShaderCompiler");
-     }
+     glsym_glReleaseShaderCompiler();
 #endif
 }
 
