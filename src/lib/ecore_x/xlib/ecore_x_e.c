@@ -2305,3 +2305,41 @@ ecore_x_e_window_rotation_change_done_send(Ecore_X_Window root,
               SubstructureRedirectMask | SubstructureNotifyMask,
               &xev);
 }
+
+/*
+ * Does keyrouter exist?
+ */
+EAPI void
+ecore_x_e_keyrouter_set(Ecore_X_Window win EINA_UNUSED,
+                        Eina_Bool on)
+{
+   //key router call this api when it start running
+   unsigned int val;
+   Ecore_X_Window root;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   root = DefaultRootWindow(_ecore_x_disp);
+
+   val = (on) ? 1 : 0;
+   ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_E_KEYROUTER_SUPPORTED,
+                                  &val, 1);
+}
+
+EAPI Eina_Bool
+ecore_x_e_keyrouter_get(Ecore_X_Window win EINA_UNUSED)
+{
+   //check the existance of keyrouter
+   int ret;
+   unsigned int val;
+   Ecore_X_Window root;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   root = DefaultRootWindow(_ecore_x_disp);
+
+   ret = ecore_x_window_prop_card32_get(root, ECORE_X_ATOM_E_KEYROUTER_SUPPORTED,
+                                        &val, 1);
+   if (ret != 1) return EINA_FALSE;
+
+   return val == 1 ? EINA_TRUE : EINA_FALSE;
+}

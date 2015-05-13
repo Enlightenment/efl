@@ -82,6 +82,7 @@ lib/ecore_x/xlib/ecore_x_composite.c \
 lib/ecore_x/xlib/ecore_x_error.c \
 lib/ecore_x/xlib/ecore_x_events.c \
 lib/ecore_x/xlib/ecore_x_icccm.c \
+lib/ecore_x/xlib/ecore_x_keygrab.c \
 lib/ecore_x/xlib/ecore_x_netwm.c \
 lib/ecore_x/xlib/ecore_x_mwm.c \
 lib/ecore_x/xlib/ecore_x_e.c \

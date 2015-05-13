@@ -333,4 +333,8 @@ EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT_SUPPORTED_LIST; /**< @si
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT_SUPPORT; /**< @since 1.10 */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT; /**< @since 1.10 */
 EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT_ALLOWED; /**< @since 1.10 */
+
+/* E keyrouter protocol */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_KEYROUTER_SUPPORTED; /**< @since 1.15 */
+EAPI extern Ecore_X_Atom ECORE_X_ATOM_E_KEYROUTER_WINDOW_KEYTABLE; /**< @since 1.15 */
 #endif /* _ECORE_X_ATOMS_H */

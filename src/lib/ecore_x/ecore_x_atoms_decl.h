@@ -363,6 +363,10 @@ EAPI Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT_SUPPORT = 0;
 EAPI Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT = 0;
 EAPI Ecore_X_Atom ECORE_X_ATOM_E_WINDOW_AUX_HINT_ALLOWED = 0;
 
+/* E keyrouter protocol */
+EAPI Ecore_X_Atom ECORE_X_ATOM_E_KEYROUTER_SUPPORTED = 0;
+EAPI Ecore_X_Atom ECORE_X_ATOM_E_KEYROUTER_WINDOW_KEYTABLE = 0;
+
 typedef struct _Atom_Item Atom_Item;
 
 struct _Atom_Item
