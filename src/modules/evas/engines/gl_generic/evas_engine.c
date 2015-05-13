@@ -1343,9 +1343,13 @@ eng_gl_surface_read_pixels(void *data, void *surface,
     */
 
    glsym_glBindFramebuffer(GL_FRAMEBUFFER, im->tex->pt->fb);
+
+#ifndef GL_GLES
    if (im->tex->pt->format == GL_BGRA)
      glReadPixels(x, y, w, h, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
    else
+#endif
+
      {
         DATA32 *ptr = pixels;
         int k;
