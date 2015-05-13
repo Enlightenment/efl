@@ -1,16 +1,11 @@
 varying  vec3        vLightVector;
 varying  vec3        vLightHalfVector;
-uniform  sampler2D   uTextureNormal0;
 varying  vec3        vEyeVector;
 
 FRAGMENT_SHADER_USE_TEX_COORD
 FRAGMENT_SHADER_USE_FOG
 FRAGMENT_SHADER_USE_SHADOWS
-
-#ifdef NORMAL_TEXTURE_BLEND
-uniform  sampler2D  uTextureNormal1;
-uniform  float      uTextureNormalWeight;
-#endif //NORMAL_TEXTURE_BLEND
+FRAGMENT_SHADER_USE_TEXTURE(NORMAL, Normal)
 
 #ifndef VERTEX_TANGENT
 varying  vec3        vNormal;
@@ -52,11 +47,11 @@ void fragmentNormalMap()
    vec4  color;
 
 #ifdef NORMAL_TEXTURE_BLEND
-   normal = texture2D(uTextureNormal0, vTexCoord).rgb * uTextureNormalWeight / texture2D(uTextureNormal0, vTexCoord).a;
-   normal += texture2D(uTextureNormal1, vTexCoord).rgb / texture2D(uTextureNormal1, vTexCoord).a *
+   normal = texture2D(uTextureNormal0, vec2(Tex0CoordNormal)).rgb * uTextureNormalWeight / texture2D(uTextureNormal0, vec2(Tex0CoordNormal)).a;
+   normal += texture2D(uTextureNormal1, vec2(Tex1CoordNormal)).rgb / texture2D(uTextureNormal1, vec2(Tex1CoordNormal)).a *
    (1.0 - uTextureNormalWeight);
 #else
-   normal = texture2D(uTextureNormal0, vTexCoord).rgb / texture2D(uTextureNormal0, vTexCoord).a;
+   normal = texture2D(uTextureNormal0, vec2(Tex0CoordNormal)).rgb / texture2D(uTextureNormal0, vec2(Tex0CoordNormal)).a;
 #endif //NORMAL_TEXTURE_BLEND
 
    normal = 2.0 * normal - 1.0;
