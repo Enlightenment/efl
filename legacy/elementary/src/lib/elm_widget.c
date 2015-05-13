@@ -4457,7 +4457,6 @@ _elm_widget_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_item EINA_U
      STATE_TYPE_SET(states, ELM_ATSPI_STATE_FOCUSED);
    if (!elm_object_item_disabled_get(eo_item))
      {
-        STATE_TYPE_SET(states, ELM_ATSPI_STATE_ACTIVE);
         STATE_TYPE_SET(states, ELM_ATSPI_STATE_ENABLED);
         STATE_TYPE_SET(states, ELM_ATSPI_STATE_SENSITIVE);
      }
@@ -5640,7 +5639,6 @@ _elm_widget_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Widget_Sma
    if (!elm_object_disabled_get(obj))
      {
         STATE_TYPE_SET(states, ELM_ATSPI_STATE_ENABLED);
-        STATE_TYPE_SET(states, ELM_ATSPI_STATE_ACTIVE);
         STATE_TYPE_SET(states, ELM_ATSPI_STATE_SENSITIVE);
      }
 
