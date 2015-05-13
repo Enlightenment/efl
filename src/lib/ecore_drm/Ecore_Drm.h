@@ -482,7 +482,7 @@ EAPI void ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle,
 /**
  * Enable a Ecore_Drm_Output
  *
- * This function will enable rendering on an Ecore_Drm_Output
+ * This function will enable an Ecore_Drm_Output
  *
  * @param output The Ecore_Drm_Output to enable
  *
@@ -494,7 +494,7 @@ EAPI Eina_Bool ecore_drm_output_enable(Ecore_Drm_Output *output);
 /**
  * Disable a Ecore_Drm_Output
  *
- * This function will disable rendering on an Ecore_Drm_Output
+ * This function will disable an Ecore_Drm_Output
  *
  * @param output The Ecore_Drm_Output to disable
  *

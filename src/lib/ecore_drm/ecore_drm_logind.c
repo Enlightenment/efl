@@ -150,7 +150,7 @@ _ecore_drm_logind_cb_activate(void *data, int type EINA_UNUSED, void *event)
      {
         /* set output mode */
         EINA_LIST_FOREACH(dev->outputs, l, output)
-           ecore_drm_output_enable(output);
+          _ecore_drm_output_render_enable(output);
 
         /* enable inputs */
         EINA_LIST_FOREACH(dev->inputs, l, input)
@@ -166,7 +166,7 @@ _ecore_drm_logind_cb_activate(void *data, int type EINA_UNUSED, void *event)
 
         /* disable hardware cursor */
         EINA_LIST_FOREACH(dev->outputs, l, output)
-          ecore_drm_output_disable(output);
+          _ecore_drm_output_render_disable(output);
 
         /* disable sprites */
         EINA_LIST_FOREACH(dev->sprites, l, sprite)

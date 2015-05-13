@@ -717,6 +717,57 @@ next:
      }
 }
 
+void
+_ecore_drm_output_render_enable(Ecore_Drm_Output *output)
+{
+   Ecore_Drm_Device *dev;
+   Ecore_Drm_Output_Mode *mode;
+   /* int x = 0, y = 0; */
+
+   EINA_SAFETY_ON_NULL_RETURN(output);
+   EINA_SAFETY_ON_NULL_RETURN(output->dev);
+   EINA_SAFETY_ON_NULL_RETURN(output->current_mode);
+
+   if (!output->enabled) return;
+
+   dev = output->dev;
+
+   if (!dev->current)
+     {
+        /* schedule repaint */
+        /* NB: this will trigger a redraw at next idle */
+        output->need_repaint = EINA_TRUE;
+        return;
+     }
+
+   ecore_drm_output_dpms_set(output, DRM_MODE_DPMS_ON);
+
+   /* if (!output->cloned) */
+   /*   { */
+   /*      x = output->x; */
+   /*      y = output->y; */
+   /*   } */
+
+   mode = output->current_mode;
+   if (drmModeSetCrtc(dev->drm.fd, output->crtc_id, dev->current->id,
+                      output->x, output->y,
+                      &output->conn_id, 1, &mode->info) < 0)
+     {
+        ERR("Failed to set Mode %dx%d for Output %s: %m",
+            mode->width, mode->height, output->name);
+     }
+}
+
+void
+_ecore_drm_output_render_disable(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   output->need_repaint = EINA_FALSE;
+   ecore_drm_output_cursor_size_set(output, 0, 0, 0);
+   ecore_drm_output_dpms_set(output, DRM_MODE_DPMS_OFF);
+}
+
 static void
 _ecore_drm_output_planes_get(Ecore_Drm_Device *dev)
 {
@@ -907,41 +958,11 @@ ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle, int w, in
 EAPI Eina_Bool 
 ecore_drm_output_enable(Ecore_Drm_Output *output)
 {
-   Ecore_Drm_Device *dev;
-   Ecore_Drm_Output_Mode *mode;
-   int x = 0, y = 0;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(output->dev, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(output->current_mode, EINA_FALSE);
 
-   dev = output->dev;
+   if (output->enabled) return EINA_TRUE;
 
    output->enabled = EINA_TRUE;
-   if (!dev->current)
-     {
-        /* schedule repaint */
-        /* NB: this will trigger a redraw at next idle */
-        output->need_repaint = EINA_TRUE;
-        return EINA_TRUE;
-     }
-
-   ecore_drm_output_dpms_set(output, DRM_MODE_DPMS_ON);
-
-   if (!output->cloned)
-     {
-        x = output->x;
-        y = output->y;
-     }
-
-   mode = output->current_mode;
-   if (drmModeSetCrtc(dev->drm.fd, output->crtc_id, dev->current->id, x, y, 
-                      &output->conn_id, 1, &mode->info) < 0)
-     {
-        ERR("Failed to set Mode %dx%d for Output %s: %m",
-            mode->width, mode->height, output->name);
-        return EINA_FALSE;
-     }
 
    return EINA_TRUE;
 }
@@ -951,10 +972,9 @@ ecore_drm_output_disable(Ecore_Drm_Output *output)
 {
    EINA_SAFETY_ON_NULL_RETURN(output);
 
+   if (!output->enabled) return;
+
    output->enabled = EINA_FALSE;
-   output->need_repaint = EINA_FALSE;
-   ecore_drm_output_cursor_size_set(output, 0, 0, 0);
-   ecore_drm_output_dpms_set(output, DRM_MODE_DPMS_OFF);
 }
 
 EAPI void 
