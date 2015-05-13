@@ -907,6 +907,12 @@ eo_source_end_generate(const Eolian_Class *class, Eina_Strbuf *buf)
      {
         const Eolian_Class *inherit_class = eolian_class_get_by_name(inherit_name);
         _eolian_class_vars inherit_env;
+        if (!inherit_class)
+          {
+             ERR("Class %s has an unknown inherit %s", class_env.full_classname, inherit_name);
+             eina_iterator_free(itr);
+             goto end;
+          }
         _class_env_create(inherit_class, NULL, &inherit_env);
         eina_strbuf_append_printf(tmpbuf, "%s_%s, ", inherit_env.upper_classname,
                                   inherit_env.upper_classtype);
