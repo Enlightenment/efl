@@ -1,3 +1,4 @@
+#include "elm_scroller.eo.legacy.h"
 /**
  * @brief Add a new scroller to the parent
  *
@@ -524,5 +525,3 @@ EAPI void                          elm_scroller_loop_set(Evas_Object *obj, Eina_
  * @ingroup Scroller
  */
 EAPI void                          elm_scroller_loop_get(const Evas_Object *obj, Eina_Bool *loop_h, Eina_Bool *loop_v);
-
-#include "elm_scroller.eo.legacy.h"

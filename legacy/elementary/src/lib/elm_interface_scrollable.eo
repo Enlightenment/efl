@@ -139,8 +139,8 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
          get {
          }
          values {
-            Elm_Scroller_Policy hbar; /*@ Horizontal scrollbar policy */
-            Elm_Scroller_Policy vbar; /*@ Vertical scrollbar policy */
+            Elm.Scroller.Policy hbar; /*@ Horizontal scrollbar policy */
+            Elm.Scroller.Policy vbar; /*@ Vertical scrollbar policy */
          }
       }
       @property content_region {

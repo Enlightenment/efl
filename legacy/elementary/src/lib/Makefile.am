@@ -337,7 +337,6 @@ elm_route_legacy.h \
 elm_scale.h \
 elm_scroll.h \
 elm_scroller.h \
-elm_scroller_common.h \
 elm_scroller_eo.h \
 elm_scroller_legacy.h \
 elm_segment_control.h \
