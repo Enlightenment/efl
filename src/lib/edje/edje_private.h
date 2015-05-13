@@ -14,6 +14,10 @@
 # endif
 #endif
 
+#ifdef ENABLE_NLS
+# include <libintl.h>
+#endif
+
 #include <locale.h>
 #include <libgen.h>
 #include <string.h>
@@ -48,6 +52,7 @@
 # include <Ecore_IMF_Evas.h>
 #endif
 #include <Embryo.h>
+#include <Efreet.h>
 
 #ifdef HAVE_EIO
 # include <Eio.h>
@@ -277,6 +282,7 @@ struct _Edje_Aspect
 struct _Edje_String
 {
    const char *str;
+   const char *translated;
    unsigned int id;
 };
 
@@ -324,6 +330,9 @@ typedef struct _Edje_Plugin                          Edje_Plugin;
 typedef struct _Edje_Sound_Sample                    Edje_Sound_Sample;
 typedef struct _Edje_Sound_Tone                      Edje_Sound_Tone;
 typedef struct _Edje_Sound_Directory                 Edje_Sound_Directory;
+typedef struct _Edje_Mo                              Edje_Mo;
+typedef struct _Edje_Mo_Directory                    Edje_Mo_Directory;
+
 typedef struct _Edje_Vibration_Sample                Edje_Vibration_Sample;
 typedef struct _Edje_Vibration_Directory             Edje_Vibration_Directory;
 typedef struct _Edje_Program                         Edje_Program;
@@ -527,6 +536,7 @@ struct _Edje_File
    Edje_Model_Directory           *model_dir;
    Edje_Sound_Directory           *sound_dir;
    Edje_Vibration_Directory       *vibration_dir;
+   Edje_Mo_Directory              *mo_dir;
 
    Eina_List                      *styles;
 
@@ -550,6 +560,7 @@ struct _Edje_File
 
    Eet_File                       *ef;
    Eina_File                      *f;
+   char                            fid[8+8+8+2];
 
    unsigned char                   free_strings : 1;
    unsigned char                   dangling : 1;
@@ -685,6 +696,19 @@ struct _Edje_Sound_Directory
 
    Edje_Sound_Tone *tones;  /* an array of Edje_Sound_Tone entries */
    unsigned int tones_count;
+};
+
+struct _Edje_Mo /*Mo Sample*/
+{
+   const char *locale; /* the nominal name of the Mo */
+   const char *mo_src;  /* Mo source file */
+   int   id; /* the id no. of the Mo file */
+};
+
+struct _Edje_Mo_Directory
+{
+   Edje_Mo *mo_entries;  /* an array of Edje_Mo entries */
+   unsigned int mo_entries_count;
 };
 
 struct _Edje_Vibration_Sample
@@ -1281,6 +1305,7 @@ struct _Edje_Part_Description_Spec_Proxy
 struct _Edje_Part_Description_Spec_Text
 {
    Edje_String    text; /* if "" or NULL, then leave text unchanged */
+   char          *domain;
    char          *text_class; /* how to apply/modify the font */
    Edje_String    style; /* the text style if a textblock */
    Edje_String    font; /* if a specific font is asked for */
@@ -2155,6 +2180,9 @@ extern Eina_Cow *_edje_calc_params_map_cow;
 extern Eina_Cow *_edje_calc_params_physics_cow;
 
 extern Eina_Hash       *_edje_file_hash;
+
+extern const char      *_edje_language;
+extern const char      *_edje_cache_path;
 
 EAPI extern Eina_Mempool *_emp_RECTANGLE;
 EAPI extern Eina_Mempool *_emp_TEXT;

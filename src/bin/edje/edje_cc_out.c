@@ -116,6 +116,7 @@ typedef struct _Head_Write Head_Write;
 typedef struct _Fonts_Write Fonts_Write;
 typedef struct _Image_Write Image_Write;
 typedef struct _Sound_Write Sound_Write;
+typedef struct _Mo_Write Mo_Write;
 typedef struct _Vibration_Write Vibration_Write;
 typedef struct _Group_Write Group_Write;
 typedef struct _License_Write License_Write;
@@ -162,6 +163,13 @@ struct _Sound_Write
    Eet_File *ef;
    Edje_Sound_Sample *sample;
    int i;
+};
+
+struct _Mo_Write
+{
+   Eet_File *ef;
+   Edje_Mo *mo_entry;
+   char *errstr;
 };
 
 struct _Vibration_Write
@@ -1170,6 +1178,109 @@ data_write_sounds(Eet_File *ef, int *sound_num)
 }
 
 static void
+data_thread_mo(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Mo_Write *mw = data;
+   char buf[PATH_MAX];
+   Eina_List *ll;
+
+   char *dir_path = NULL;
+   char mo_path[PATH_MAX];
+   char moid_str[50];
+   Eina_File *f = NULL;
+   void *m = NULL;
+   int bytes = 0;
+
+   // Search the mo file in all the -md ( mo directory )
+   EINA_LIST_FOREACH(mo_dirs, ll, dir_path)
+     {
+        snprintf((char *)mo_path, sizeof(mo_path), "%s/%s/%s", dir_path, mw->mo_entry->locale, mw->mo_entry->mo_src);
+        f = eina_file_open(mo_path, 0);
+        if (f) break;
+     }
+   if (!f)
+     {
+        snprintf((char *)mo_path, sizeof(mo_path), "%s", mw->mo_entry->mo_src);
+        f = eina_file_open(mo_path, 0);
+     }
+
+   if (f) using_file(mo_path, 'S');
+
+   if (!f)
+     {
+         snprintf(buf, sizeof(buf), "Unable to load mo data of: %s", mo_path);
+         ERR("%s", buf);
+         mw->errstr = strdup(buf);
+         exit(-1);
+     }
+
+   snprintf(moid_str, sizeof(moid_str), "edje/mo/%i/%s/LC_MESSAGES", mw->mo_entry->id, mw->mo_entry->locale);
+   m = eina_file_map_all(f, EINA_FILE_WILLNEED);
+   if (m)
+     {
+         bytes = eet_write(mw->ef, moid_str, m, eina_file_size_get(f), EET_COMPRESSION_NONE);
+         if (eina_file_map_faulted(f, m))
+           {
+              snprintf(buf, sizeof(buf), "File access error when reading '%s'",
+              eina_file_filename_get(f));
+              ERR("%s", buf);
+              mw->errstr = strdup(buf);
+              eina_file_close(f);
+              exit(-1);
+           }
+         eina_file_map_free(f, m);
+     }
+   eina_file_close(f);
+
+   INF("Wrote %9i bytes (%4iKb) for \"%s\" %s mo entry \"%s\"",
+	   bytes, (bytes + 512) / 1024, moid_str, "RAW PCM", mw->mo_entry->locale);
+
+}
+
+static void
+data_thread_mo_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+{
+   Mo_Write *mw = data;
+   pending_threads--;
+   if (pending_threads <= 0) ecore_main_loop_quit();
+   if (mw->errstr)
+     {
+       error_and_abort(mw->ef, mw->errstr);
+       free(mw->errstr);
+     }
+   free(mw);
+}
+
+
+static void
+data_write_mo(Eet_File *ef, int *mo_num)
+{
+   if ((edje_file) && (edje_file->mo_dir))
+     {
+        int i;
+
+        for (i = 0; i < (int)edje_file->mo_dir->mo_entries_count; i++)
+          {
+             Mo_Write *mw;
+
+             mw = calloc(1, sizeof(Mo_Write));
+             if (!mw) continue;
+             mw->ef = ef;
+             mw->mo_entry = &edje_file->mo_dir->mo_entries[i];
+             *mo_num += 1;
+             pending_threads++;
+             if (threads)
+               ecore_thread_run(data_thread_mo, data_thread_mo_end, NULL, mw);
+             else
+               {
+                  data_thread_mo(mw, NULL);
+                  data_thread_mo_end(mw, NULL);
+               }
+          }
+     }
+}
+
+static void
 data_thread_vibrations(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Vibration_Write *vw = data;
@@ -1986,6 +2097,7 @@ data_write(void)
    Eet_Error err;
    int image_num = 0;
    int sound_num = 0;
+   int mo_num = 0;
    int vibration_num = 0;
    int font_num = 0;
    int collection_num = 0;
@@ -2047,6 +2159,8 @@ data_write(void)
    INF("fonts: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_write_sounds(ef, &sound_num);
    INF("sounds: %3.5f", ecore_time_get() - t); t = ecore_time_get();
+   data_write_mo(ef, &mo_num);
+   INF("mo: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_write_vibrations(ef, &vibration_num);
    INF("vibrations: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_write_license(ef);

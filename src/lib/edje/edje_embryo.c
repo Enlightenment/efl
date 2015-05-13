@@ -1922,6 +1922,8 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
         text_desc->text.text_class = DUP(text_desc->text.text_class);
         text_desc->text.text.str = DUP(edje_string_get(&text_desc->text.text));
         text_desc->text.text.id = 0;
+        text_desc->text.text.translated = NULL;
+        text_desc->text.domain = DUP(text_desc->text.domain);
         text_desc->text.font.str = DUP(edje_string_get(&text_desc->text.font));
         text_desc->text.font.id = 0;
         text_desc->text.style.str = DUP(edje_string_get(&text_desc->text.style));

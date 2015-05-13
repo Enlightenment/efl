@@ -9,6 +9,8 @@ if ENABLE_MULTISENSE
 SND_DIR = -sd $(srcdir)
 endif
 
+MO_DIR = -md $(srcdir)
+
 #put here all EDCs one needs to the examples
 EDCS = \
 edje-group.edc \
@@ -67,7 +69,7 @@ endif
 DIST_EDCS += $(PHYSICS_EDCS)
 
 .edc.edj:
-	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $(SND_DIR) $< $(builddir)/$(@F)
+	$(AM_V_EDJ)$(EDJE_CC) $(EDJE_CC_FLAGS) $(SND_DIR) $(MO_DIR) $< $(builddir)/$(@F)
 
 
 EDJS = $(EDCS:%.edc=%.edj)

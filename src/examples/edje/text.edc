@@ -18,11 +18,40 @@ collections {
       name: "example_group";
       max: 500 500;
       min: 50 50;
-
+     translation {
+        file {
+           locale: en_IN;
+           source: domain_name.mo;
+        }
+        file {
+           locale: hi_IN;
+           source: domain_name.mo;
+        }
+       file {
+          locale: ta_IN;
+          source: domain_name.mo;
+       }
+    }
       styles {
          style {
-            name: "textblock_style";
-            base: "font=Sans font_size=22 color=#600 wrap=word";
+            name: "textblock_style_en";
+            base: "font=Sans font_size=22 color=#f00 wrap=word";
+            tag:  "br" "\n";
+            tag:  "hilight" "+ font_weight=Bold";
+            tag:  "b" "+ font_weight=Bold";
+            tag:  "tab" "\t";
+         }
+         style {
+            name: "textblock_style_ta";
+            base: "font=Sans font_size=22 color=#000 wrap=word";
+            tag:  "br" "\n";
+            tag:  "hilight" "+ font_weight=Bold";
+            tag:  "b" "+ font_weight=Bold";
+            tag:  "tab" "\t";
+         }
+        style {
+            name: "textblock_style_hi";
+            base: "font=Sans font_size=22 color=#00f wrap=word";
             tag:  "br" "\n";
             tag:  "hilight" "+ font_weight=Bold";
             tag:  "b" "+ font_weight=Bold";
@@ -40,6 +69,8 @@ collections {
                rel1.relative: 0.0 0.0;
                rel2.relative: 1.0 0.5;
                text {
+                  text : "LOADING";
+                  domain: "domain_name";
                   font: "arial";
                   size: 22;
                   min: 1 1;
@@ -58,9 +89,48 @@ collections {
                rel1.relative: 0.0 0.5;
                rel2.relative: 1.0 1.0;
                text {
-                  style: "textblock_style";
+                  style: "textblock_style_en";
                   min: 1 1;
                }
+            }
+            description {
+               inherit: "default" 0.0;
+               state: "one" 0.0;
+               text {
+                  style: "textblock_style_hi";
+                  min: 1 1;
+               }
+            }
+            description {
+               inherit: "default" 0.0;
+               state: "two" 0.0;
+               text {
+                  style: "textblock_style_ta";
+                  min: 1 1;
+               }
+            }
+         }
+      }
+       programs {
+         program {
+            signal: "edje,language,hi_IN";
+            source: "edje";
+            script {
+               set_state(PART:"part_two", "one", 1.0);
+            }
+         }
+        program {
+            signal: "edje,language,ta_IN";
+            source: "edje";
+            script {
+               set_state(PART:"part_two", "two", 1.0);
+            }
+         }
+      program {
+            signal: "edje,language,en_IN";
+            source: "edje";
+            script {
+               set_state(PART:"part_two", "default", 1.0);
             }
          }
       }

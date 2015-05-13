@@ -50,6 +50,83 @@ _edje_smart_nested_smart_class_new(void)
    return smart;
 }
 
+void
+_edje_extract_mo_files(Edje *ed)
+{
+   Eina_Strbuf *mo_id_str;
+   const void *data;
+   const char *cache_path;
+   const char *filename;
+   unsigned int crc;
+   time_t t;
+   size_t sz;
+   unsigned int i;
+   int len;
+
+   cache_path = efreet_cache_home_get();
+
+   t = eina_file_mtime_get(ed->file->f);
+   sz = eina_file_size_get(ed->file->f);
+   filename = eina_file_filename_get(ed->file->f);
+   crc = eina_crc(filename, strlen(filename), 0xffffffff, EINA_TRUE);
+
+   snprintf(ed->file->fid, sizeof(ed->file->fid), "%lld-%lld-%x",
+            (long long int)t,
+            (long long int)sz,
+            crc);
+
+   mo_id_str = eina_strbuf_new();
+
+   for (i = 0; i < ed->file->mo_dir->mo_entries_count; i++)
+     {
+        Edje_Mo *mo_entry;
+        char out[PATH_MAX];
+        char outdir[PATH_MAX];
+
+        mo_entry = &ed->file->mo_dir->mo_entries[i];
+
+        eina_strbuf_append_printf(mo_id_str,
+                                  "edje/mo/%i/%s/LC_MESSAGES",
+                                  mo_entry->id,
+                                  mo_entry->locale);
+        data = eet_read_direct(ed->file->ef,
+                               eina_strbuf_string_get(mo_id_str),
+                               &len);
+
+        if (data)
+          {
+             snprintf(outdir, sizeof(outdir),
+                      "%s/edje/%s/LC_MESSAGES",
+                      cache_path, mo_entry->locale);
+             ecore_file_mkpath(outdir);
+             snprintf(out, sizeof(out), "%s/%s-%s",
+                      outdir, ed->file->fid, mo_entry->mo_src);
+             if (ecore_file_exists(out))
+               {
+                  if (ed->file->mtime > ecore_file_mod_time(out))
+                    ecore_file_remove(out);
+               }
+             if (!ecore_file_exists(out))
+               {
+                  FILE *f;
+
+                  f = fopen(out, "wb");
+                  if (f)
+                    {
+                       if (fwrite(data, len, 1, f) != 1)
+                         ERR("Could not write mo: %s: %s", out, strerror(errno));
+                       fclose(f);
+                    }
+                  else
+                    ERR("Could not open for writing mo: %s: %s", out, strerror(errno));
+               }
+          }
+
+        eina_strbuf_reset(mo_id_str);
+     }
+
+   eina_strbuf_free(mo_id_str);
+}
 
 Evas_Object *
 edje_smart_nested_add(Evas *evas)
@@ -389,6 +466,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
    Eina_Array parts;
    int group_path_started = 0;
    Evas_Object *nested_smart = NULL;
+   char lang[PATH_MAX];
 
    /* Get data pointer of top-of-stack */
    int idx = eina_array_count(nested) - 1;
@@ -441,6 +519,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
    _edje_textblock_style_all_update(ed);
 
    ed->has_entries = EINA_FALSE;
+   if (ed->file && ed->file->mo_dir)
+     _edje_extract_mo_files(ed);
 
    if (ed->collection)
      {
@@ -1103,6 +1183,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                       }
                  }
 
+               snprintf(lang, sizeof(lang), "edje,language,%s", _edje_language);
+               edje_object_signal_emit(obj, lang, "edje");
+
                if (edje_object_mirrored_get(obj))
                  edje_object_signal_emit(obj, "edje,state,rtl", "edje");
                else
@@ -1591,6 +1674,21 @@ _edje_file_free(Edje_File *edf)
         free(edf->vibration_dir);
      }
 
+   if (edf->mo_dir)
+     {
+        unsigned int i;
+        if (edf->free_strings)
+          {
+             for (i = 0; i < edf->mo_dir->mo_entries_count; ++i)
+               {
+                  eina_stringshare_del(edf->mo_dir->mo_entries[i].locale);
+                  eina_stringshare_del(edf->mo_dir->mo_entries[i].mo_src);
+               }
+          }
+        free(edf->mo_dir->mo_entries);
+        free(edf->mo_dir);
+   }
+
    if (edf->external_dir)
      {
         if (edf->external_dir->entries) free(edf->external_dir->entries);
@@ -1773,6 +1871,7 @@ _edje_collection_free_part_description_clean(int type, Edje_Part_Description_Com
               text = (Edje_Part_Description_Text *) desc;
 
               eina_stringshare_del(text->text.text.str);
+              eina_stringshare_del(text->text.domain);
               eina_stringshare_del(text->text.text_class);
               eina_stringshare_del(text->text.style.str);
               eina_stringshare_del(text->text.font.str);

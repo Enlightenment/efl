@@ -17,8 +17,10 @@ Eet_Data_Descriptor *_edje_edd_edje_image_directory_set_entry = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_limit = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_limit_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_sound_sample = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_translation_file = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_sound_tone = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_sound_directory = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_mo_directory = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_vibration_sample = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_vibration_directory = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_program = NULL;
@@ -204,8 +206,10 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_limit);
    FREED(_edje_edd_edje_limit_pointer);
    FREED(_edje_edd_edje_sound_sample);
+   FREED(_edje_edd_edje_translation_file);
    FREED(_edje_edd_edje_sound_tone);
    FREED(_edje_edd_edje_sound_directory);
+   FREED(_edje_edd_edje_mo_directory);
    FREED(_edje_edd_edje_vibration_sample);
    FREED(_edje_edd_edje_vibration_directory);
    FREED(_edje_edd_edje_program);
@@ -334,6 +338,18 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_image_directory, Edje_Image_Directory, "entries", entries, _edje_edd_edje_image_directory_entry);
    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_image_directory, Edje_Image_Directory, "sets", sets, _edje_edd_edje_image_directory_set);
 
+   /*MO*/
+
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Mo);
+   _edje_edd_edje_translation_file = eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_translation_file, Edje_Mo, "locale", locale, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_translation_file, Edje_Mo, "mo_src", mo_src, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_translation_file, Edje_Mo, "id", id, EET_T_INT);
+
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Mo_Directory);
+   _edje_edd_edje_mo_directory = eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_mo_directory, Edje_Mo_Directory, "mo_entries", mo_entries, _edje_edd_edje_translation_file);
+
    /* Sound */
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Sound_Sample);
    _edje_edd_edje_sound_sample =
@@ -432,6 +448,8 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "external_dir", external_dir, _edje_edd_edje_external_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "image_dir", image_dir, _edje_edd_edje_image_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "sound_dir", sound_dir, _edje_edd_edje_sound_directory);
+   EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "mo_dir", mo_dir, _edje_edd_edje_mo_directory);
+
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "vibration_dir", vibration_dir, _edje_edd_edje_vibration_directory);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "styles", styles, _edje_edd_edje_style);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "color_classes", color_classes, _edje_edd_edje_color_class);
@@ -815,6 +833,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.color3.b", text.color3.b, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.color3.a", text.color3.a, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.text", text.text, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.domain", text.domain, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.text_class", text.text_class, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.style", text.style, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.font", text.font, EET_T_STRING);
@@ -849,6 +868,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.color3.b", text.color3.b, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.color3.a", text.color3.a, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.text", text.text, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.domain", text.domain, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.text_class", text.text_class, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.style", text.style, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.font", text.font, EET_T_STRING);

@@ -27,6 +27,8 @@ static const Edje_Calc_Params_Physics default_calc_physics = {
 EAPI int
 edje_init(void)
 {
+   Eina_Strbuf *str;
+
    if (++_edje_init_count != 1)
      return _edje_init_count;
 
@@ -64,7 +66,13 @@ edje_init(void)
    if (!evas_init())
      {
 	ERR("Evas init failed");
-	goto shutdown_embryo;
+	goto shutdown_eet;
+     }
+
+   if (!efreet_init())
+     {
+        ERR("Efreet init failed");
+        goto shutdown_evas;
      }
 
    _edje_scale = FROM_DOUBLE(1.0);
@@ -99,6 +107,13 @@ edje_init(void)
    _edje_calc_params_map_cow = eina_cow_add("Edje Calc Params Map", sizeof (Edje_Calc_Params_Map), 8, &default_calc_map, EINA_TRUE);
    _edje_calc_params_physics_cow= eina_cow_add("Edje Calc Params Physics", sizeof (Edje_Calc_Params_Physics), 8, &default_calc_physics, EINA_TRUE);
 
+   _edje_language = eina_stringshare_add(getenv("LANGUAGE"));
+
+   str = eina_strbuf_new();
+   eina_strbuf_append_printf(str, "%s/edje", efreet_cache_home_get());
+   _edje_cache_path = eina_stringshare_add(eina_strbuf_string_get(str));
+   eina_strbuf_free(str);
+
    eina_log_timing(_edje_default_log_dom,
 		   EINA_LOG_STATE_STOP,
 		   EINA_LOG_STATE_INIT);
@@ -117,6 +132,10 @@ edje_init(void)
    _edje_text_class_members_free();
    _edje_text_class_hash_free();
    _edje_edd_shutdown();
+   efreet_shutdown();
+ shutdown_evas:
+   evas_shutdown();
+ shutdown_eet:
    eet_shutdown();
  shutdown_embryo:
    embryo_shutdown();
@@ -145,6 +164,11 @@ _edje_shutdown_core(void)
    _edje_color_class_members_free();
    _edje_color_class_hash_free();
 
+   eina_stringshare_del(_edje_cache_path);
+   eina_stringshare_del(_edje_language);
+   _edje_cache_path = NULL;
+   _edje_language = NULL;
+
    eina_mempool_del(_edje_real_part_state_mp);
    eina_mempool_del(_edje_real_part_mp);
    _edje_real_part_state_mp = NULL;
@@ -170,6 +194,7 @@ _edje_shutdown_core(void)
      ecore_imf_shutdown();
 #endif
 
+   efreet_shutdown();
    evas_shutdown();
    eet_shutdown();
    embryo_shutdown();

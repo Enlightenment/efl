@@ -14,6 +14,7 @@
  * function everywhere instead of calling evas_object_geometry_get()
  * directly.
  */
+
 static inline void
 part_get_geometry(Edje_Real_Part *rp, Evas_Coord *w, Evas_Coord *h)
 {
@@ -24,6 +25,38 @@ part_get_geometry(Edje_Real_Part *rp, Evas_Coord *w, Evas_Coord *h)
         if (w) *w = evas_object_text_horiz_advance_get(rp->object);
         if (h) *h = evas_object_text_vert_advance_get(rp->object);
      }
+}
+
+const char *
+_set_translated_string(Edje *ed, Edje_Real_Part *ep)
+{
+   const char *domain = NULL;
+   const char *text = NULL;
+   Edje_Part_Description_Text *chosen_desc;
+
+   chosen_desc = (Edje_Part_Description_Text*)ep->chosen_description;
+   domain = chosen_desc->text.domain;
+   text = edje_string_get(&chosen_desc->text.text);
+
+   if (domain && text)
+     {
+#ifdef ENABLE_NLS
+        char p[PATH_MAX];
+        char *curpath;
+        char *curlocale;
+
+        snprintf(p, sizeof(p), "%s-%s", ed->file->fid, domain);
+
+        curlocale = setlocale(LC_ALL, "");
+        curpath = bindtextdomain(p, _edje_cache_path);
+
+        text = dgettext(p, text);
+
+        bindtextdomain(p, curpath);
+        setlocale(LC_ALL, curlocale);
+#endif
+     }
+   return text;
 }
 
 void
@@ -162,18 +195,18 @@ void
 _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                         Edje_Calc_Params *params,
                         Edje_Part_Description_Text *chosen_desc,
-			Eina_Bool calc_only)
+                        Eina_Bool calc_only)
 {
-   const char	*text = NULL;
-   const char	*font;
-   char		*font2 = NULL;
+   const char   *text = NULL;
+   const char   *font;
+   char         *font2 = NULL;
    char         *sfont = NULL;
-   int		 size;
+   int           size;
    const char   *filter, *source_name;
    Eina_List    *filter_sources = NULL, *prev_sources = NULL, *li;
-   Evas_Coord	 tw, th;
-   Evas_Coord	 sw, sh;
-   int		 inlined_font = 0, free_text = 0;
+   Evas_Coord    tw, th;
+   Evas_Coord    sw, sh;
+   int           inlined_font = 0, free_text = 0;
    Eina_Bool     same_text = EINA_FALSE;
    FLOAT_T       sc;
 
@@ -181,7 +214,17 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
        (!ep->typedata.text)) return;
    sc = DIV(ed->scale, ed->file->base_scale);
    if (sc == ZERO) sc = DIV(_edje_scale, ed->file->base_scale);
-   text = edje_string_get(&chosen_desc->text.text);
+
+   if (chosen_desc->text.domain)
+     {
+        if (!chosen_desc->text.text.translated)
+          chosen_desc->text.text.translated = _set_translated_string(ed, ep);
+        if (chosen_desc->text.text.translated)
+          text = chosen_desc->text.text.translated;
+     }
+
+   if (!text)
+     text = edje_string_get(&chosen_desc->text.text);
    font = _edje_text_class_font_get(ed, chosen_desc, &size, &sfont);
    filter = chosen_desc->text.filter.str;
 

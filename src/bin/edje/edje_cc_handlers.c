@@ -343,6 +343,7 @@ static void st_collections_group_parts_part_description_color(void);
 static void st_collections_group_parts_part_description_color2(void);
 static void st_collections_group_parts_part_description_color3(void);
 static void st_collections_group_parts_part_description_text_text(void);
+static void st_collections_group_parts_part_description_text_domain(void);
 static void st_collections_group_parts_part_description_text_text_class(void);
 static void st_collections_group_parts_part_description_text_font(void);
 static void st_collections_group_parts_part_description_text_style(void);
@@ -460,6 +461,8 @@ static void st_collections_group_sound_tone(void);
 static void st_collections_group_vibration_sample_name(void);
 static void st_collections_group_vibration_sample_source(void);
 
+static void st_collections_group_translation_file_locale(void);
+static void st_collections_group_translation_file_source(void);
 #ifdef HAVE_EPHYSICS
 static void st_collections_group_physics_world_gravity(void);
 static void st_collections_group_physics_world_rate(void);
@@ -620,6 +623,10 @@ New_Statement_Handler statement_handlers[] =
      {"collections.font", st_fonts_font}, /* dup */
      FONT_STYLE_CC_STATEMENTS("collections.")
      {"collections.base_scale", st_collections_base_scale},
+     {"collections.translation.file.locale", st_collections_group_translation_file_locale},
+     {"collections.translation.file.source", st_collections_group_translation_file_source},
+     {"collections.group.translation.file.locale", st_collections_group_translation_file_locale},
+     {"collections.group.translation.file.source", st_collections_group_translation_file_source},
 
      {"collections.sounds.sample.name", st_collections_group_sound_sample_name},
      {"collections.sounds.sample.source", st_collections_group_sound_sample_source},
@@ -783,6 +790,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.color2", st_collections_group_parts_part_description_color2},
      {"collections.group.parts.part.description.color3", st_collections_group_parts_part_description_color3},
      {"collections.group.parts.part.description.text.text", st_collections_group_parts_part_description_text_text},
+     {"collections.group.parts.part.description.text.domain", st_collections_group_parts_part_description_text_domain},
      {"collections.group.parts.part.description.text.text_class", st_collections_group_parts_part_description_text_text_class},
      {"collections.group.parts.part.description.text.font", st_collections_group_parts_part_description_text_font},
      {"collections.group.parts.part.description.text.style", st_collections_group_parts_part_description_text_style},
@@ -1095,6 +1103,10 @@ New_Object_Handler object_handlers[] =
      {"collections.sounds", NULL},
      {"collections.group.sounds", NULL}, /* dup */
      {"collections.sounds.sample", NULL},
+     {"collections.translation", NULL},
+     {"collections.translation.file", NULL},
+     {"collections.group.translation", NULL},/*dup*/
+     {"collections.group.translation.file", NULL},/*dup*/
      {"collections.group.sounds.sample", NULL}, /* dup */
      {"collections.vibrations", NULL},
      {"collections.group.vibrations", NULL}, /* dup */
@@ -3030,6 +3042,109 @@ st_collections_group_vibration_sample_source(void)
      edje_file->vibration_dir->samples_count - 1;
    sample->src = parse_str(0);
    check_arg_count(1);
+}
+
+/** @edcsubsection{collections_translation_file,
+ *                 translation.file} */
+
+/**
+    @page edcref
+    @block
+        file
+    @context
+        translation {
+            ..
+            file {
+                locale: "en_IN";
+                source: "domain_name.mo";
+            }
+            file {
+                locale: "en_US";
+                source: "domain_name.mo";
+            }
+        }
+    @description
+        The file block defines the mo file.
+    @endblock
+    @property
+        name
+    @parameters
+        [locale name] 
+    @effect
+        Used to include each mo file. The full path to the directory holding
+        the mo file can be defined later with edje_cc's "-md" option.
+
+    @since 1.15
+    @endproperty
+ */
+static void
+st_collections_group_translation_file_locale(void)
+{
+   Edje_Mo *mo_entry;
+   const char *tmp;
+   unsigned int i;
+
+   check_arg_count(1);
+
+   if (!edje_file->mo_dir)
+      edje_file->mo_dir = mem_alloc(SZ(Edje_Mo_Directory));
+
+   tmp = parse_str(0);
+
+   for (i = 0; i < edje_file->mo_dir->mo_entries_count; i++)
+     {
+        if (!strcmp(edje_file->mo_dir->mo_entries[i].locale, tmp))
+          {
+             free((char *)tmp);
+             return;
+          }
+     }
+
+   edje_file->mo_dir->mo_entries_count++;
+   mo_entry = realloc(edje_file->mo_dir->mo_entries, sizeof(Edje_Mo) * edje_file->mo_dir->mo_entries_count);
+
+   if (!mo_entry)
+     {
+        ERR("No enough memory.");
+        exit(-1);
+     }
+   edje_file->mo_dir->mo_entries = mo_entry;
+
+   mo_entry = edje_file->mo_dir->mo_entries + edje_file->mo_dir->mo_entries_count - 1;
+   memset(mo_entry, 0, sizeof (Edje_Mo));
+
+   mo_entry->locale = tmp;
+   mo_entry->id = edje_file->mo_dir->mo_entries_count - 1;
+}
+
+/**
+    @page edcref
+    @property
+        source
+    @parameters
+        [mo file name]
+    @effect
+        The mo source file name (Source should be a valid mo file.
+        Only mo files are supported now)
+    @since 1.15
+    @endproperty
+ */
+
+static void
+st_collections_group_translation_file_source(void)
+{
+   Edje_Mo *mo_entry;
+
+   check_arg_count(1);
+
+   if (!edje_file->mo_dir->mo_entries)
+     {
+        ERR("Invalid mo source definition.");
+        exit(-1);
+     }
+
+   mo_entry = edje_file->mo_dir->mo_entries + edje_file->mo_dir->mo_entries_count - 1;
+   mo_entry->mo_src = parse_str(0);
 }
 
 static void
@@ -6540,6 +6655,7 @@ st_collections_group_parts_part_description_inherit(void)
               ted->text = tparent->text;
 
               ted->text.text.str = STRDUP(ted->text.text.str);
+              ted->text.domain = STRDUP(ted->text.domain);
               ted->text.text_class = STRDUP(ted->text.text_class);
               ted->text.font.str = STRDUP(ted->text.font.str);
               ted->text.filter.str = STRDUP(ted->text.filter.str);
@@ -8247,6 +8363,7 @@ st_collections_group_parts_part_description_fill_size_offset(void)
                 ..
                 text {
                     text:        "some string of text to display";
+                    domain:      "domain_name";
                     font:        "font_name";
                     size:         SIZE;
                     text_class:  "class_name";
@@ -8308,6 +8425,38 @@ st_collections_group_parts_part_description_text_text(void)
    ed->text.text.str = str;
 }
 
+/** @edcsubsection{collections_group_parts_description_domain,
+ *                 Group.Parts.Part.Description.Domain} */
+
+/**
+    @page edcref
+
+    @property
+        domain
+    @parameters
+        [domain name]
+    @effect
+        This is the domain name of the .mo file which has to be checked
+        for translation.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_text_domain(void)
+{
+   Edje_Part_Description_Text *ed;
+
+   if ((current_part->type != EDJE_PART_TYPE_TEXT) &&
+       (current_part->type != EDJE_PART_TYPE_TEXTBLOCK))
+     {
+        ERR("parse error %s:%i. text attributes in non-TEXT part.",
+        file_in, line - 1);
+        exit(-1);
+     }
+
+   ed = (Edje_Part_Description_Text*) current_desc;
+
+   ed->text.domain = parse_str(0);
+}
 /**
     @page edcref
 

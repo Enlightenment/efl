@@ -1913,7 +1913,8 @@ typedef enum _Edje_Action_Type
    EDJE_ACTION_TYPE_PHYSICS_STOP             = 22, /**< @since 1.8 @brief Physics stop action value */
    EDJE_ACTION_TYPE_PHYSICS_ROT_SET          = 23, /**< @since 1.8 @brief Physics rotation set action value */
    EDJE_ACTION_TYPE_VIBRATION_SAMPLE         = 24, /**< @since 1.10 @brief vibration sample action value */
-   EDJE_ACTION_TYPE_LAST                     = 25  /**< Last action value */
+   EDJE_ACTION_TYPE_MO                       = 25, /**< @since 1.15 @brief Mo action value */
+   EDJE_ACTION_TYPE_LAST                     = 26  /**< Last action value */
 } Edje_Action_Type;
 
 /**
@@ -1967,6 +1968,17 @@ EAPI void         edje_freeze                     (void);
  *
  */
 EAPI void         edje_thaw                       (void);
+
+/**
+ * @brief Set's Edje language.
+ *
+ * This function sets the given language.
+ *
+ * @note: emits signal edje,language,"locale".
+ *
+ *
+ */
+EAPI void         edje_language_set               (const char *locale);
 
 /**
  * @}

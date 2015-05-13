@@ -28,6 +28,9 @@ int _edje_util_freeze_val = 0;
 int _edje_util_freeze_calc_count = 0;
 Eina_List *_edje_util_freeze_calc_list = NULL;
 
+const char *_edje_language = NULL;
+const char *_edje_cache_path = NULL;
+
 typedef struct _Edje_List_Foreach_Data Edje_List_Foreach_Data;
 struct _Edje_List_Foreach_Data
 {
@@ -295,6 +298,66 @@ _edje_util_thaw_edje(Edje *ed)
    if ((ed->recalc) && (ed->freeze <= 0)) _edje_recalc_do(ed);
 }
 #endif
+
+EAPI void
+edje_language_set(const char *locale)
+{
+   Evas_Object *obj;
+   Eina_List *l;
+   const char *lookup;
+   char *signal;
+   char *loc;
+   int length;
+
+   lookup = strstr(locale, ".");
+   length = lookup ? lookup - locale : (int) strlen(locale);
+   loc = alloca(length + 1);
+   memcpy(loc, locale, length);
+   loc[length] = '\0';
+
+   eina_stringshare_replace(&_edje_language, loc);
+
+   signal = alloca(length + 15);
+   snprintf(signal, length + 15, "edje,language,%s", loc);
+
+   EINA_LIST_FOREACH(_edje_edjes, l, obj)
+     {
+        Edje *ed = eo_data_scope_get(obj, EDJE_OBJECT_CLASS);
+        unsigned int i;
+
+        for (i = 0; i < ed->table_parts_size; i++)
+          {
+             Edje_Real_Part *rp = ed->table_parts[i];
+
+             if (rp->part->type == EDJE_PART_TYPE_TEXT ||
+                 rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+               {
+                  Edje_Part_Description_Text *text;
+
+                  text = (Edje_Part_Description_Text *) rp->param1.description;
+                  if (text->text.text.translated)
+                    text->text.text.translated = NULL;
+
+                  if (rp->param2)
+                    {
+                       text = (Edje_Part_Description_Text *) rp->param2->description;
+                       if (text->text.text.translated)
+                         text->text.text.translated = NULL;
+                    }
+
+                  if (rp->custom)
+                    {
+                       text = (Edje_Part_Description_Text *) rp->custom->description;
+                       if (text->text.text.translated)
+                         text->text.text.translated = NULL;
+                    }
+               }
+          }
+
+        edje_object_signal_emit(obj, signal, "edje");
+        edje_object_calc_force(obj);
+     }
+}
 
 EAPI void
 edje_thaw(void)
