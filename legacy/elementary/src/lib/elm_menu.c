@@ -419,14 +419,17 @@ _menu_hide(void *data,
      }
 }
 
-static void
+static Eina_Bool
 _hover_dismissed_cb(void *data,
-                    Evas_Object *obj,
+                    Eo *obj, const Eo_Event_Description *desc EINA_UNUSED,
                     void *event_info)
 {
    _menu_hide(data, obj, event_info);
-   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
-   evas_object_smart_callback_call(data, SIG_DISMISSED, NULL);
+   eo_do(data, eo_event_callback_call
+     (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
+   eo_do(data, eo_event_callback_call(ELM_MENU_EVENT_DISMISSED, NULL));
+
+   return EINA_TRUE;
 }
 
 static void
@@ -509,8 +512,9 @@ _menu_item_inactivate_cb(void *data,
    if (item->submenu.open) _submenu_hide(item);
 }
 
-static void
-_block_menu(void *_sd, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool
+_block_menu(void *_sd,
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    const Eina_List *l;
    Elm_Object_Item *eo_current;
@@ -524,10 +528,13 @@ _block_menu(void *_sd, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSE
         current->blocked = EINA_TRUE;
         elm_object_item_disabled_set(eo_current, EINA_TRUE);
      }
+
+   return EINA_TRUE;
 }
 
-static void
-_unblock_menu(void *_sd, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static Eina_Bool
+_unblock_menu(void *_sd,
+      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    const Eina_List *l;
    Elm_Object_Item *eo_current;
@@ -539,6 +546,8 @@ _unblock_menu(void *_sd, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNU
         elm_object_item_disabled_set(eo_current, !current->was_enabled);
         current->blocked = EINA_FALSE;
      }
+
+   return EINA_TRUE;
 }
 
 EOLIAN static void
@@ -605,8 +614,8 @@ _item_submenu_obj_create(Elm_Menu_Item_Data *item)
      {
         snprintf(style, sizeof(style), "main_menu_submenu/%s", elm_widget_style_get(WIDGET(item)));
         elm_object_style_set(hv, style);
-        evas_object_smart_callback_add(hv, "dismissed",
-                                       _hover_dismissed_cb, WIDGET(item));
+        eo_do(hv, eo_event_callback_add
+          (ELM_HOVER_EVENT_DISMISSED, _hover_dismissed_cb, WIDGET(item)));
      }
    else
      {
@@ -667,8 +676,8 @@ _elm_menu_evas_object_smart_add(Eo *obj, Elm_Menu_Data *priv)
    elm_widget_mirrored_set(priv->hv, EINA_FALSE);
 
    elm_object_style_set(priv->hv, "menu/default");
-   evas_object_smart_callback_add(priv->hv, "dismissed",
-                                  _hover_dismissed_cb, obj);
+   eo_do(priv->hv, eo_event_callback_add
+     (ELM_HOVER_EVENT_DISMISSED, _hover_dismissed_cb, obj));
 
    priv->bx = elm_box_add(obj);
    elm_widget_mirrored_set(priv->bx, EINA_FALSE);
@@ -741,16 +750,17 @@ _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
 
         if (menu_bar)
           {
-             evas_object_smart_callback_add(item->submenu.hv, "clicked",
-                                            _hover_dismissed_cb, WIDGET(item));
+             eo_do(item->submenu.hv, eo_event_callback_add
+               (EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED,
+                _hover_dismissed_cb, WIDGET(item)));
              snprintf(style, sizeof(style), "main_menu_submenu//%s", elm_widget_style_get(obj));
              elm_object_style_set(item->submenu.hv, style);
           }
         else
           {
-             evas_object_smart_callback_del_full(item->submenu.hv, "clicked",
-                                                 _hover_dismissed_cb,
-                                                 WIDGET(item));
+             eo_do(item->submenu.hv, eo_event_callback_del(
+               EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED,
+               _hover_dismissed_cb, WIDGET(item)));
              snprintf(style, sizeof(style), "submenu/%s", elm_widget_style_get(obj));
              elm_object_style_set(item->submenu.hv, style);
           }
@@ -786,10 +796,10 @@ _elm_menu_eo_base_constructor(Eo *obj, Elm_Menu_Data *sd)
        (sd->hv, ELM_HOVER_AXIS_VERTICAL), sd->bx);
 
    _sizing_eval(obj);
-   evas_object_smart_callback_add(obj, "elm,action,block_menu",
-                                  _block_menu, sd);
-   evas_object_smart_callback_add(obj, "elm,action,unblock_menu",
-                                  _unblock_menu, sd);
+   eo_do(obj, eo_event_callback_add
+     (ELM_MENU_EVENT_ELM_ACTION_BLOCK_MENU, _block_menu, sd));
+   eo_do(obj, eo_event_callback_add
+     (ELM_MENU_EVENT_ELM_ACTION_UNBLOCK_MENU, _unblock_menu, sd));
 
    return obj;
 }

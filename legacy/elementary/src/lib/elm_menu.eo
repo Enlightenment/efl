@@ -124,6 +124,9 @@ class Elm.Menu (Elm.Widget, Evas.Clickable_Interface)
    events {
       language,changed;
       access,changed;
+      dismissed;
+      elm,action,block_menu;
+      elm,action,unblock_menu;
    }
 
 }
