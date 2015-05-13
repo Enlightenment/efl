@@ -253,6 +253,7 @@ ecore_evas_wayland_egl_new_internal(const char *disp_name, unsigned int parent,
 
  err:
    ecore_evas_free(ee);
+   return NULL;
 
  ee_err:
    ecore_wl_shutdown();
