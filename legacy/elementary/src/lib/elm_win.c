@@ -67,8 +67,8 @@ static const Elm_Win_Trap *trap = NULL;
          {                                                      \
             edje_object_signal_emit(cursd->edje, \
                         "elm,action,hide_blocker", "elm");      \
-            evas_object_smart_callback_call(cursd->main_menu, \
-                        "elm,action,unblock_menu", NULL);       \
+            eo_do(cursd->main_menu, eo_event_callback_call      \
+              (ELM_MENU_EVENT_ELM_ACTION_UNBLOCK_MENU, NULL));  \
          }                                                      \
     }
 
@@ -84,8 +84,8 @@ static const Elm_Win_Trap *trap = NULL;
          {                                                      \
             edje_object_signal_emit(cursd->edje, \
                              "elm,action,show_blocker", "elm"); \
-            evas_object_smart_callback_call(cursd->main_menu, \
-                             "elm,action,block_menu", NULL);    \
+            eo_do(cursd->main_menu, eo_event_callback_call      \
+              (ELM_WIN_EVENT_ELM_ACTION_BLOCK_MENU, NULL));     \
          }                                                      \
     }
 
@@ -812,7 +812,7 @@ _elm_win_move(Ecore_Evas *ee)
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
    sd->screen.x = x;
    sd->screen.y = y;
-   evas_object_smart_callback_call(sd->obj, SIG_MOVED, NULL);
+   eo_do(sd->obj, eo_event_callback_call(ELM_WIN_EVENT_MOVED, NULL));
    evas_nochange_push(evas_object_evas_get(sd->obj));
    evas_object_move(sd->obj, x, y);
    evas_nochange_pop(evas_object_evas_get(sd->obj));
@@ -1080,7 +1080,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
         else
           elm_widget_focus_restore(obj);
      }
-   evas_object_smart_callback_call(obj, SIG_FOCUS_IN, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_FOCUSED, NULL));
    sd->focus_highlight.cur.visible = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
    if (sd->frame_obj)
@@ -1112,7 +1112,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
 
    elm_object_focus_set(obj, EINA_FALSE);
    _elm_widget_top_win_focused_set(obj, EINA_FALSE);
-   evas_object_smart_callback_call(obj, SIG_FOCUS_OUT, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_UNFOCUSED, NULL));
    sd->focus_highlight.cur.visible = EINA_FALSE;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
    if (sd->frame_obj)
@@ -1218,7 +1218,7 @@ _elm_win_profile_update(Elm_Win_Data *sd)
    EINA_LIST_FOREACH(sub, l, ee2)
      ecore_evas_window_profile_set(ee2, sd->profile.name);
 
-   evas_object_smart_callback_call(sd->obj, SIG_PROFILE_CHANGED, NULL);
+   eo_do(sd->obj, eo_event_callback_call(ELM_WIN_EVENT_PROFILE_CHANGED, NULL));
 }
 
 static void
@@ -1320,26 +1320,28 @@ _elm_win_state_change(Ecore_Evas *ee)
    if ((ch_withdrawn) || (ch_iconified))
      {
         if (sd->withdrawn)
-          evas_object_smart_callback_call(obj, SIG_WITHDRAWN, NULL);
+          eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_WITHDRAWN, NULL));
         else if (sd->iconified)
           {
-             evas_object_smart_callback_call(obj, SIG_ICONIFIED, NULL);
+             eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_ICONIFIED, NULL));
              if (_elm_config->atspi_mode)
-               eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MINIMIZED, NULL));
+               eo_do(obj, eo_event_callback_call
+                 (ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MINIMIZED, NULL));
           }
         else
           {
-             evas_object_smart_callback_call(obj, SIG_NORMAL, NULL);
+             eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_NORMAL, NULL));
              if (_elm_config->atspi_mode)
-               eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_RESTORED, NULL));
+               eo_do(obj, eo_event_callback_call
+                 (ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_RESTORED, NULL));
           }
      }
    if (ch_sticky)
      {
         if (sd->sticky)
-          evas_object_smart_callback_call(obj, SIG_STICK, NULL);
+          eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_STICK, NULL));
         else
-          evas_object_smart_callback_call(obj, SIG_UNSTICK, NULL);
+          eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_UNSTICK, NULL));
      }
    if (ch_fullscreen)
      {
@@ -1348,7 +1350,8 @@ _elm_win_state_change(Ecore_Evas *ee)
           {
              int w, h;
 
-             evas_object_smart_callback_call(obj, SIG_FULLSCREEN, NULL);
+             eo_do(obj, eo_event_callback_call
+               (ELM_WIN_EVENT_FULLSCREEN, NULL));
              if (sd->frame_obj)
                evas_object_hide(sd->frame_obj);
              ecore_evas_geometry_get(sd->ee, NULL, NULL, &w, &h);
@@ -1356,7 +1359,8 @@ _elm_win_state_change(Ecore_Evas *ee)
           }
         else
           {
-             evas_object_smart_callback_call(obj, SIG_UNFULLSCREEN, NULL);
+             eo_do(obj, eo_event_callback_call
+               (ELM_WIN_EVENT_UNFULLSCREEN, NULL));
              if (sd->frame_obj)
                evas_object_show(sd->frame_obj);
           }
@@ -1365,15 +1369,17 @@ _elm_win_state_change(Ecore_Evas *ee)
      {
         if (sd->maximized)
           {
-             evas_object_smart_callback_call(obj, SIG_MAXIMIZED, NULL);
+             eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_MAXIMIZED, NULL));
              if (_elm_config->atspi_mode)
-               eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MAXIMIZED, NULL));
+               eo_do(obj, eo_event_callback_call
+                 (ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_MAXIMIZED, NULL));
           }
         else
           {
-             evas_object_smart_callback_call(obj, SIG_UNMAXIMIZED, NULL);
+             eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_UNMAXIMIZED, NULL));
              if (_elm_config->atspi_mode)
-               eo_do(obj, eo_event_callback_call(ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_RESTORED, NULL));
+               eo_do(obj, eo_event_callback_call
+                 (ELM_INTERFACE_ATSPI_WINDOW_EVENT_WINDOW_RESTORED, NULL));
           }
      }
    if (ch_profile)
@@ -1388,8 +1394,10 @@ _elm_win_state_change(Ecore_Evas *ee)
         _elm_win_xwin_update(sd);
 #endif
         elm_widget_orientation_set(obj, sd->rot);
-        evas_object_smart_callback_call(obj, SIG_ROTATION_CHANGED, NULL);
-        evas_object_smart_callback_call(obj, SIG_WM_ROTATION_CHANGED, NULL);
+        eo_do(obj, eo_event_callback_call
+          (ELM_WIN_EVENT_ROTATION_CHANGED, NULL));
+        eo_do(obj, eo_event_callback_call
+          (ELM_WIN_EVENT_WM_ROTATION_CHANGED, NULL));
      }
 }
 
@@ -1955,7 +1963,7 @@ _elm_win_evas_object_smart_move(Eo *obj, Elm_Win_Data *sd, Evas_Coord x, Evas_Co
           {
              sd->screen.x = x;
              sd->screen.y = y;
-             evas_object_smart_callback_call(obj, SIG_MOVED, NULL);
+             eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_MOVED, NULL));
           }
         return;
      }
@@ -1971,7 +1979,7 @@ _elm_win_evas_object_smart_move(Eo *obj, Elm_Win_Data *sd, Evas_Coord x, Evas_Co
      {
         sd->screen.x = x;
         sd->screen.y = y;
-        evas_object_smart_callback_call(obj, SIG_MOVED, NULL);
+        eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_MOVED, NULL));
      }
    if (sd->frame_obj)
      {
@@ -2025,7 +2033,7 @@ _elm_win_delete_request(Ecore_Evas *ee)
    int autodel = sd->autodel;
    sd->autodel_clear = &autodel;
    evas_object_ref(obj);
-   evas_object_smart_callback_call(obj, SIG_DELETE_REQUEST, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_DELETE_REQUEST, NULL));
    if (sd->autohide)
      evas_object_hide(obj);
    // FIXME: if above callback deletes - then the below will be invalid
@@ -2497,7 +2505,8 @@ _elm_win_property_change(void *data,
         if (e->win == sd->x.xwin)
           {
              sd->indmode = (Elm_Win_Indicator_Mode)ecore_x_e_illume_indicator_state_get(e->win);
-             evas_object_smart_callback_call(sd->obj, SIG_INDICATOR_PROP_CHANGED, NULL);
+             eo_do(sd->obj, eo_event_callback_call
+               (ELM_WIN_EVENT_INDICATOR_PROP_CHANGED, NULL));
           }
      }
    return ECORE_CALLBACK_PASS_ON;
@@ -2830,7 +2839,7 @@ _elm_win_frame_cb_close(void *data,
    int autodel = sd->autodel;
    sd->autodel_clear = &autodel;
    evas_object_ref(win);
-   evas_object_smart_callback_call(win, SIG_DELETE_REQUEST, NULL);
+   eo_do(win, eo_event_callback_call(ELM_WIN_EVENT_DELETE_REQUEST, NULL));
    if (sd->autohide)
      evas_object_hide(win);
    // FIXME: if above callback deletes - then the below will be invalid
@@ -3051,7 +3060,7 @@ _elm_x_io_err(void *data EINA_UNUSED)
    Evas_Object *obj;
 
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
-     evas_object_smart_callback_call(obj, SIG_IOERR, NULL);
+     eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_IOERR, NULL));
    elm_exit();
 }
 #endif
@@ -4631,7 +4640,8 @@ _win_rotate(Evas_Object *obj, Elm_Win_Data *sd, int rotation, Eina_Bool resize)
 #endif
    _elm_win_frame_obj_update(sd);
    elm_widget_orientation_set(obj, rotation);
-   evas_object_smart_callback_call(obj, SIG_ROTATION_CHANGED, NULL);
+   eo_do(obj, eo_event_callback_call
+     (ELM_WIN_EVENT_ROTATION_CHANGED, NULL));
 }
 
 EOLIAN static void
@@ -4850,7 +4860,8 @@ _elm_win_indicator_mode_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Elm_Win_Indic
             (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
      }
 #endif
-   evas_object_smart_callback_call(obj, SIG_INDICATOR_PROP_CHANGED, NULL);
+   eo_do(obj, eo_event_callback_call
+     (ELM_WIN_EVENT_INDICATOR_PROP_CHANGED, NULL));
 }
 
 EOLIAN static Elm_Win_Indicator_Mode
@@ -4879,7 +4890,8 @@ _elm_win_indicator_opacity_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, Elm_Win_In
             (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_TRANSPARENT);
      }
 #endif
-   evas_object_smart_callback_call(obj, SIG_INDICATOR_PROP_CHANGED, NULL);
+   eo_do(obj, eo_event_callback_call
+     (ELM_WIN_EVENT_INDICATOR_PROP_CHANGED, NULL));
 }
 
 EOLIAN static Elm_Win_Indicator_Opacity_Mode
@@ -5184,7 +5196,7 @@ _elm_win_theme_internal(Eo *obj, Elm_Win_Data *sd)
    edje_object_scale_set(sd->edje,
                          elm_widget_scale_get(obj) * elm_config_scale_get());
 
-   evas_object_smart_callback_call(obj, SIG_THEME_CHANGED, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_WIN_EVENT_THEME_CHANGED, NULL));
    eo_do(obj, ret = elm_obj_widget_disable());
 
    if (!sd->theme_alpha && !sd->application_alpha)

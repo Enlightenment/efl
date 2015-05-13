@@ -1,7 +1,8 @@
 import elm_general;
 
 class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
-                Elm_Interface_Atspi_Widget_Action, Elm_Interface_Atspi_Selection)
+                Elm_Interface_Atspi_Widget_Action, Elm_Interface_Atspi_Selection,
+                Evas.Clickable_Interface, Evas.Selectable_Interface)
 {
    eo_prefix: elm_obj_list;
    methods {
@@ -621,10 +622,6 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
    }
    events {
       activated;
-      clicked,double;
-      selected;
-      unselected;
-      longpressed;
       edge,top;
       edge,bottom;
       edge,left;
@@ -638,8 +635,6 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
       item,reorder,anim,stop;
       language,changed;
       access,changed;
-      focused;
-      unfocused;
    }
 
 }
