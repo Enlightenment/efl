@@ -1,21 +1,21 @@
 /*
- * type Efl_Model_Load_Status: enum _Efl_Model_Load_Status
+ * enum Efl_Model_Load_Status
  * {
- *    EFL_MODEL_LOAD_STATUS_ERROR = 0, /*@ Error in Load Model *
- *    EFL_MODEL_LOAD_STATUS_LOADING_PROPERTIES = (1 << 0), /*@ properties load in progress *
- *    EFL_MODEL_LOAD_STATUS_LOADING_CHILDREN =   (1 << 1), /*@ children load in progress *
- *    EFL_MODEL_LOAD_STATUS_LOADING = (1 << 0) | (1 << 1), /*@ children and properties load in progress *
+ *    error = 0, /*@ Error in Load Model *
+ *    properties = (1 << 0), /*@ properties load in progress *
+ *    children   = (1 << 1), /*@ children load in progress *
+ *    loading    = (1 << 0) | (1 << 1), /*@ children and properties load in progress *
  *
- *    EFL_MODEL_LOAD_STATUS_LOADED_PROPERTIES = (1 << 2), /*@ Model as ready to fetch properties *
- *    EFL_MODEL_LOAD_STATUS_LOADED_CHILDREN =   (1 << 3), /*@ Model as ready to fetch children *
- *    EFL_MODEL_LOAD_STATUS_LOADED = (1 << 2) | (1 << 3), /*@ Model as ready to fetch properties and children *
+ *    loaded_properties = (1 << 2), /*@ Model as ready to fetch properties *
+ *    loaded_children   = (1 << 3), /*@ Model as ready to fetch children *
+ *    loaded = (1 << 2) | (1 << 3), /*@ Model as ready to fetch properties and children *
  *
- *    EFL_MODEL_LOAD_STATUS_UNLOADING = (1 << 4), /*@ Model Unload in progress *
- *    EFL_MODEL_LOAD_STATUS_UNLOADED =  (1 << 5)  /*@ Model Unloaded *
+ *    unloading = (1 << 4), /*@ Model Unload in progress *
+ *    unloaded  = (1 << 5)  /*@ Model Unloaded *
  * }
  *
  *
- * type Efl_Model_Property_Event: struct _Efl_Model_Property_Event
+ * struct Efl_Model_Property_Event
  * {
  *  changed_properties: Eina_Array* <const(char)*>; /*@ List of changed properties *
  *  invalidated_properties: Eina_Array* <const(char)*>; /*@ Removed properties identified by name *
