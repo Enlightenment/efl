@@ -2120,7 +2120,9 @@ evas_render_updates_internal(Evas *eo_e,
               WRN("Mixing render sync as already doing async "
                   "render! Syncing! e=%p [%s]", e,
                   e->engine.module->definition->name);
-              evas_render_rendering_wait(e);
+             eina_evlog("+render_wait", eo_e, 0.0, NULL);
+             evas_render_rendering_wait(e);
+             eina_evlog("-render_wait", eo_e, 0.0, NULL);
           }
      }
 
@@ -2132,7 +2134,9 @@ evas_render_updates_internal(Evas *eo_e,
    if (evas_cserve2_use_get())
       evas_cserve2_dispatch();
 #endif
+   eina_evlog("+render_calc", eo_e, 0.0, NULL);
    evas_call_smarts_calculate(eo_e);
+   eina_evlog("-render_calc", eo_e, 0.0, NULL);
 
    RD(0, "[--- RENDER EVAS (size: %ix%i): %p (eo %p)\n", e->viewport.w, e->viewport.h, e, eo_e);
 
@@ -2140,16 +2144,24 @@ evas_render_updates_internal(Evas *eo_e,
 
    /* Check if the modified object mean recalculating every thing */
    if (!e->invalidate)
-     _evas_render_check_pending_objects(&e->pending_objects, eo_e, e);
+     {
+        eina_evlog("+render_pending", eo_e, 0.0, NULL);
+        _evas_render_check_pending_objects(&e->pending_objects, eo_e, e);
+        eina_evlog("-render_pending", eo_e, 0.0, NULL);
+     }
 
    /* phase 1. add extra updates for changed objects */
    if (e->invalidate || e->render_objects.count <= 0)
-     clean_them = _evas_render_phase1_process(e,
-                                              &e->active_objects,
-                                              &e->restack_objects,
-                                              &e->delete_objects,
-                                              &e->render_objects,
-                                              &redraw_all);
+     {
+        eina_evlog("+render_phase1", eo_e, 0.0, NULL);
+        clean_them = _evas_render_phase1_process(e,
+                                                 &e->active_objects,
+                                                 &e->restack_objects,
+                                                 &e->delete_objects,
+                                                 &e->render_objects,
+                                                 &redraw_all);
+        eina_evlog("-render_phase1", eo_e, 0.0, NULL);
+     }
 
    if (!strncmp(e->engine.module->definition->name, "wayland", 7))
      {
@@ -2214,11 +2226,14 @@ evas_render_updates_internal(Evas *eo_e,
         else
           _evas_object_image_video_overlay_hide(eo_obj);
      }
+   eina_evlog("+render_phase1_direct", eo_e, 0.0, NULL);
    /* phase 1.8. pre render for proxy */
    _evas_render_phase1_direct(e, &e->active_objects, &e->restack_objects,
                               &e->delete_objects, &e->render_objects);
+   eina_evlog("-render_phase1_direct", eo_e, 0.0, NULL);
 
    /* phase 2. force updates for restacks */
+   eina_evlog("+render_phase2", eo_e, 0.0, NULL);
    for (i = 0; i < e->restack_objects.count; ++i)
      {
         obj = eina_array_data_get(&e->restack_objects, i);
@@ -2228,16 +2243,20 @@ evas_render_updates_internal(Evas *eo_e,
         _evas_render_prev_cur_clip_cache_add(e, obj);
      }
    OBJS_ARRAY_CLEAN(&e->restack_objects);
+   eina_evlog("-render_phase2", eo_e, 0.0, NULL);
 
    /* phase 3. add exposes */
+   eina_evlog("+render_phase3", eo_e, 0.0, NULL);
    EINA_LIST_FREE(e->damages, r)
      {
         e->engine.func->output_redraws_rect_add(e->engine.data.output,
                                                 r->x, r->y, r->w, r->h);
         eina_rectangle_free(r);
      }
+   eina_evlog("-render_phase3", eo_e, 0.0, NULL);
 
    /* phase 4. framespace, output & viewport changes */
+   eina_evlog("+render_phase4", eo_e, 0.0, NULL);
    if (e->viewport.changed)
      {
         e->engine.func->output_redraws_rect_add(e->engine.data.output,
@@ -2273,8 +2292,10 @@ evas_render_updates_internal(Evas *eo_e,
         e->engine.func->output_redraws_rect_add(e->engine.data.output, 0, 0,
                                                 e->output.w, e->output.h);
      }
+   eina_evlog("-render_phase4", eo_e, 0.0, NULL);
 
    /* phase 5. add obscures */
+   eina_evlog("+render_phase5", eo_e, 0.0, NULL);
    EINA_LIST_FOREACH(e->obscures, ll, r)
      {
         e->engine.func->output_redraws_rect_del(e->engine.data.output,
@@ -2298,17 +2319,20 @@ evas_render_updates_internal(Evas *eo_e,
           /*	  obscuring_objects = eina_list_append(obscuring_objects, obj); */
           OBJ_ARRAY_PUSH(&e->obscuring_objects, obj);
      }
+   eina_evlog("-render_phase5", eo_e, 0.0, NULL);
 
    /* save this list */
    /*    obscuring_objects_orig = obscuring_objects; */
    /*    obscuring_objects = NULL; */
    /* phase 6. go thru each update rect and render objects in it*/
+   eina_evlog("+render_phase6", eo_e, 0.0, NULL);
    if (do_draw)
      {
         unsigned int offset = 0;
         int fx = e->framespace.x;
         int fy = e->framespace.y;
 
+        eina_evlog("+render_surface", eo_e, 0.0, NULL);
         while ((surface =
                 e->engine.func->output_redraws_next_update_get
                 (e->engine.data.output,
@@ -2318,6 +2342,7 @@ evas_render_updates_internal(Evas *eo_e,
              int off_x, off_y;
              Render_Updates *ru;
 
+             eina_evlog("+render_setup", eo_e, 0.0, NULL);
              RD(0, "  [--- UPDATE %i %i %ix%i\n", ux, uy, uw, uh);
              if (do_async)
                {
@@ -2378,7 +2403,9 @@ evas_render_updates_internal(Evas *eo_e,
                   e->engine.func->context_clip_unset(e->engine.data.output,
                                                      e->engine.data.context);
                }
+             eina_evlog("-render_setup", eo_e, 0.0, NULL);
 
+             eina_evlog("+render_objects", eo_e, 0.0, NULL);
              /* render all object that intersect with rect */
              for (i = 0; i < e->active_objects.count; ++i)
                {
@@ -2474,20 +2501,24 @@ evas_render_updates_internal(Evas *eo_e,
                          }
                     }
                }
+             eina_evlog("-render_objects", eo_e, 0.0, NULL);
 
              if (!do_async) render_mode = EVAS_RENDER_MODE_SYNC;
              else render_mode = EVAS_RENDER_MODE_ASYNC_INIT;
 
+             eina_evlog("+render_push", eo_e, 0.0, NULL);
              e->engine.func->output_redraws_next_update_push(e->engine.data.output,
                                                              surface,
                                                              ux, uy, uw, uh,
                                                              render_mode);
+             eina_evlog("-render_push", eo_e, 0.0, NULL);
 
              /* free obscuring objects list */
              OBJS_ARRAY_CLEAN(&e->temporary_objects);
              RD(0, "  ---]\n");
           }
 
+        eina_evlog("+render_output_flush", eo_e, 0.0, NULL);
         if (do_async)
           {
              eo_ref(eo_e);
@@ -2507,15 +2538,21 @@ evas_render_updates_internal(Evas *eo_e,
                                           EVAS_RENDER_MODE_SYNC);
              _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
           }
+        eina_evlog("-render_output_flush", eo_e, 0.0, NULL);
+        eina_evlog("-render_surface", eo_e, 0.0, NULL);
      }
+   eina_evlog("-render_phase6", eo_e, 0.0, NULL);
 
+   eina_evlog("+render_clear", eo_e, 0.0, NULL);
    if (!do_async)
      {
         /* clear redraws */
         e->engine.func->output_redraws_clear(e->engine.data.output);
      }
+   eina_evlog("-render_clear", eo_e, 0.0, NULL);
 
    /* and do a post render pass */
+   eina_evlog("+render_post", eo_e, 0.0, NULL);
    if (e->active_objects.count) RD(0, "  [--- POST RENDER\n");
    for (i = 0; i < e->active_objects.count; ++i)
      {
@@ -2542,6 +2579,7 @@ evas_render_updates_internal(Evas *eo_e,
            else if (obj->delete_me != 0) obj->delete_me++;
          */
      }
+   eina_evlog("-render_post", eo_e, 0.0, NULL);
    if (e->active_objects.count) RD(0, "  ---]\n");
 
    /* free our obscuring object list */
@@ -2772,15 +2810,26 @@ evas_render_updates_free(Eina_List *updates)
 EOLIAN Eina_Bool
 _evas_canvas_render2(Eo *eo_e, Evas_Public_Data *e)
 {
-   return _evas_render2(eo_e, e);
+   Eina_Bool ret;
+
+   eina_evlog("+render2", eo_e, 0.0, NULL);
+   ret = _evas_render2(eo_e, e);
+   eina_evlog("-render2", eo_e, 0.0, NULL);
+   return ret;
 }
 
 EOLIAN Eina_Bool
 _evas_canvas_render_async(Eo *eo_e, Evas_Public_Data *e)
 {
+   Eina_Bool ret;
+   eina_evlog("+render_block", eo_e, 0.0, NULL);
    evas_canvas_async_block(e);
-   return evas_render_updates_internal(eo_e, 1, 1, evas_render_pipe_wakeup,
-                                       e, EINA_TRUE);
+   eina_evlog("-render_block", eo_e, 0.0, NULL);
+   eina_evlog("+render", eo_e, 0.0, NULL);
+   ret = evas_render_updates_internal(eo_e, 1, 1, evas_render_pipe_wakeup,
+                                      e, EINA_TRUE);
+   eina_evlog("-render", eo_e, 0.0, NULL);
+   return ret;
 }
 
 static Eina_List *
@@ -2807,17 +2856,27 @@ evas_render_updates_internal_wait(Evas *eo_e,
 EOLIAN Eina_List*
 _evas_canvas_render_updates(Eo *eo_e, Evas_Public_Data *e)
 {
+   Eina_List *ret;
    if (!e->changed) return NULL;
+   eina_evlog("+render_block", eo_e, 0.0, NULL);
    evas_canvas_async_block(e);
-   return evas_render_updates_internal_wait(eo_e, 1, 1);
+   eina_evlog("-render_block", eo_e, 0.0, NULL);
+   eina_evlog("+render", eo_e, 0.0, NULL);
+   ret = evas_render_updates_internal_wait(eo_e, 1, 1);
+   eina_evlog("-render", eo_e, 0.0, NULL);
+   return ret;
 }
 
 EOLIAN void
 _evas_canvas_render(Eo *eo_e, Evas_Public_Data *e)
 {
    if (!e->changed) return;
+   eina_evlog("+render_block", eo_e, 0.0, NULL);
    evas_canvas_async_block(e);
+   eina_evlog("-render_block", eo_e, 0.0, NULL);
+   eina_evlog("+render", eo_e, 0.0, NULL);
    evas_render_updates_internal_wait(eo_e, 0, 1);
+   eina_evlog("-render", eo_e, 0.0, NULL);
 }
 
 EOLIAN void
@@ -2864,12 +2923,14 @@ _evas_canvas_render_idle_flush(Eo *eo_e, Evas_Public_Data *e)
 EOLIAN void
 _evas_canvas_sync(Eo *eo_e, Evas_Public_Data *e)
 {
+   eina_evlog("+render_sync", eo_e, 0.0, NULL);
    if (e->render2) _evas_render2_sync(eo_e, e);
    else
      {
         evas_canvas_async_block(e);
         evas_render_rendering_wait(e);
      }
+   eina_evlog("-render_sync", eo_e, 0.0, NULL);
 }
 
 void

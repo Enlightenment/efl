@@ -118,6 +118,7 @@ _do_tick(void)
      {
         animator->just_added = EINA_FALSE;
      }
+   if (animators) eina_evlog("!FRAME", NULL, ecore_loop_time_get(), NULL);
    EINA_INLIST_FOREACH(animators, animator)
      {
         if ((!animator->delete_me) && 
