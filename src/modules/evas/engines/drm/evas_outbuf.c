@@ -32,11 +32,11 @@ _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
 
    buff = ob->priv.buffer[ob->priv.curr];
 
-   /* if this buffer is not valid, we need to set it */
-   ecore_drm_fb_set(ob->info->info.dev, buff);
-
    /* mark the fb as dirty */
    ecore_drm_fb_dirty(buff, rects, count);
+
+   /* if this buffer is not valid, we need to set it */
+   ecore_drm_fb_set(ob->info->info.dev, buff);
 
    /* send this buffer to the crtc */
    ecore_drm_fb_send(ob->info->info.dev, buff, _evas_outbuf_cb_pageflip, ob);
