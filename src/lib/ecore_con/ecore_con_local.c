@@ -37,20 +37,11 @@
 
 static int _ecore_con_local_init_count = 0;
 
-static inline const char *_ecore_con_get_tmpdir()
-{
-   const char *tmpdir = "/tmp";
-   const char *dir = getenv("TMPDIR");
-
-   if (!dir) return tmpdir;
-   return dir;
-}
-
 static const char *_ecore_con_local_path_get()
 {
    const char *homedir = getenv("XDG_RUNTIME_DIR");
-   if (!homedir) homedir = getenv("HOME");
-   if (!homedir) homedir = _ecore_con_get_tmpdir();
+   if (!homedir) homedir = eina_environment_home_get();
+   if (!homedir) homedir = eina_environment_tmp_get();
 
    return homedir;
 }
@@ -124,7 +115,7 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
                }
              else
                {
-                  homedir = _ecore_con_get_tmpdir();
+                  homedir = eina_environment_tmp_get();
                   snprintf(buf, sizeof(buf), "%s/.ecore_service|%s",
                            homedir, svr->name);
                }
@@ -135,7 +126,7 @@ ecore_con_local_connect(Ecore_Con_Server *obj,
                snprintf(buf, sizeof(buf), "%s|%i", svr->name, svr->port);
              else
                {
-                  homedir = _ecore_con_get_tmpdir();
+                  homedir = eina_environment_tmp_get();
                   snprintf(buf, sizeof(buf), "%s/.ecore_service|%s|%i",
                            homedir, svr->name, svr->port);
                }
@@ -285,7 +276,7 @@ ecore_con_local_listen(
                }
              else
                {
-                  homedir = _ecore_con_get_tmpdir();
+                  homedir = eina_environment_tmp_get();
                   snprintf(buf, sizeof(buf), "%s/.ecore_service|%s",
                            homedir, svr->name);
                }
@@ -296,7 +287,7 @@ ecore_con_local_listen(
                snprintf(buf, sizeof(buf), "%s|%i", svr->name, svr->port);
              else
                {
-                  homedir = _ecore_con_get_tmpdir();
+                  homedir = eina_environment_tmp_get();
                   snprintf(buf, sizeof(buf), "%s/.ecore_service|%s|%i",
                            homedir, svr->name, svr->port);
                }
