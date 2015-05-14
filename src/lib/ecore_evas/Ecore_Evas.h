@@ -836,6 +836,29 @@ EAPI Eina_Bool        ecore_evas_aux_hint_del(Ecore_Evas *ee, const int id);
  */
 EAPI Eina_Bool        ecore_evas_aux_hint_val_set(Ecore_Evas *ee, const int id, const char *val);
 /**
+ * @brief Get a value of the auxiliary hint.
+ *
+ * @param ee The Ecore_Evas
+ * @param id The auxiliary hint ID.
+ * @return The string value of the auxiliary hint ID, or NULL if none exists
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * @since 1.15
+ */
+EAPI const char      *ecore_evas_aux_hint_val_get(const Ecore_Evas *ee, int id);
+/**
+ * @brief Get a ID of the auxiliary hint string.
+ *
+ * @param ee The Ecore_Evas
+ * @param hint The auxiliary hint string.
+ * @return The ID of the auxiliary hint string, or -1 if none exists
+ * @warning Support for this depends on the underlying windowing system.
+ *
+ * @since 1.15
+ */
+EAPI int              ecore_evas_aux_hint_id_get(const Ecore_Evas *ee, const char *hint);
+
+/**
  * @brief Send message to parent ecore
  *
  * @param ee The Ecore_Evas to set
