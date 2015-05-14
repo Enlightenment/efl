@@ -3065,6 +3065,15 @@ EAPI double ecore_timer_precision_get(void);
  */
 EAPI void ecore_timer_precision_set(double precision);
 
+/**
+ * This function returns a human readable text-based log for Ecore_Timer events.
+ *
+ * @return a heap allocated string or NULL. It MUST be freed manually by the
+ * caller using `free`.
+ *
+ * It only contains an useful implementation if EFL is built in debug build
+ * profile, but it's safe to call it for any build profile.
+ */
 EAPI char *ecore_timer_dump(void);
 
 /**
