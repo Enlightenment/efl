@@ -959,6 +959,9 @@ _evas_table_evas_object_smart_calculate(Eo *o, Evas_Table_Data *priv)
 EAPI Evas_Object *
 evas_object_table_add(Evas *evas)
 {
+   MAGIC_CHECK(evas, Evas, MAGIC_EVAS);
+   return NULL;
+   MAGIC_CHECK_END();
    Evas_Object *obj = eo_add(MY_CLASS, evas);
    return obj;
 }
