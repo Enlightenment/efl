@@ -42,13 +42,23 @@ _ecore_drm_output_event_send(const Ecore_Drm_Output *output, Eina_Bool plug)
    if (!(e = calloc(1, sizeof(Ecore_Drm_Event_Output)))) return;
    e->plug = plug;
    e->id = output->crtc_id;
-   e->w = output->current_mode->width;
-   e->h = output->current_mode->height;
+
+   if (output->current_mode)
+     {
+        e->w = output->current_mode->width;
+        e->h = output->current_mode->height;
+        e->refresh = output->current_mode->refresh;
+     }
+   else if (output->crtc)
+     {
+        e->w = output->crtc->width;
+        e->h = output->crtc->height;
+     }
+
    e->x = output->x;
    e->y = output->y;
    e->phys_width = output->phys_width;
    e->phys_height = output->phys_height;
-   e->refresh = output->current_mode->refresh;
    e->subpixel_order = output->subpixel;
    e->make = eina_stringshare_ref(output->make);
    e->model = eina_stringshare_ref(output->model);
