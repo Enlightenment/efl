@@ -113,11 +113,11 @@ _icon_thumb_display(Elm_Icon_Data *sd)
          (sd->obj, sd->thumb.thumb.path, sd->thumb.thumb.key);
 
    if (ret)
-     evas_object_smart_callback_call
-       (sd->obj, SIG_THUMB_DONE, NULL);
+     eo_do(sd->obj, eo_event_callback_call
+       (ELM_ICON_EVENT_THUMB_DONE, NULL));
    else
-     evas_object_smart_callback_call
-       (sd->obj, SIG_THUMB_ERROR, NULL);
+     eo_do(sd->obj, eo_event_callback_call
+       (ELM_ICON_EVENT_THUMB_ERROR, NULL));
 
    return ret;
 }
@@ -219,7 +219,7 @@ _icon_thumb_error(Ethumb_Client *client,
    ERR("could not generate thumbnail for %s (key: %s)",
        sd->thumb.file.path, sd->thumb.file.key);
 
-   evas_object_smart_callback_call(sd->obj, SIG_THUMB_ERROR, NULL);
+   eo_do(sd->obj, eo_event_callback_call(ELM_ICON_EVENT_THUMB_ERROR, NULL));
 
    _icon_thumb_cleanup(client);
 }
