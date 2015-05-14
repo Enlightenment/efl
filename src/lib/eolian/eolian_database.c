@@ -185,7 +185,7 @@ database_class_name_validate(const char *class_name, const Eolian_Class **cl)
           {
              if (found_class)
                {
-                  ERR("Name clash between class %s and class %s",
+                  fprintf(stderr, "eolian: name clash between classes '%s' and '%s'\n",
                         candidate->full_name,
                         found_class->full_name);
                   free(name);
@@ -238,7 +238,7 @@ eolian_eo_file_parse(const char *filepath)
         class = eolian_class_get_by_file(bfilename);
         if (!class)
           {
-             ERR("No class for file %s", bfilename);
+             fprintf(stderr, "eolian: no class for file '%s'\n", bfilename);
              free(bfiledup);
              goto error;
           }
@@ -255,9 +255,8 @@ eolian_eo_file_parse(const char *filepath)
         if (!eolian_class_get_by_name(dep->name) &&
             !eolian_eo_file_parse(dep->filename))
           {
-             eina_log_print(_eolian_log_dom, EINA_LOG_LEVEL_ERR,
-                 dep->base.file, "", dep->base.line, "failed to parse "
-                   "dependency '%s' at column %d", dep->name, dep->base.column);
+             fprintf(stderr, "eolian:%s:%d:%d: failed to parse dependency '%s'\n",
+                     dep->base.file, dep->base.line, dep->base.column, dep->name);
              failed_dep = EINA_TRUE; /* do not parse anymore stuff */
           }
 free:
@@ -280,7 +279,8 @@ inherits:
              free(filename);
              if (!filepath)
                {
-                  ERR("Unable to find a file for class %s", inherit_name);
+                  fprintf(stderr, "eolian: unable to find a file for class '%s'\n",
+                          inherit_name);
                   goto error;
                }
              if (!eolian_eo_file_parse(filepath)) goto error;
@@ -294,7 +294,8 @@ inherits:
         const Eolian_Function *impl_func = eolian_implement_function_get(impl, &impl_type);
         if (!impl_func)
           {
-             ERR("Unable to find function %s", eolian_implement_full_name_get(impl));
+             fprintf(stderr, "eolian: unable to find function '%s'\n",
+                     eolian_implement_full_name_get(impl));
              goto error;
           }
         else
@@ -307,7 +308,8 @@ inherits:
         const Eolian_Function *ctor_func = eolian_constructor_function_get(ctor);
         if (!ctor_func)
           {
-             ERR("Unable to find function %s", eolian_constructor_full_name_get(ctor));
+             fprintf(stderr, "eolian: unable to find function '%s'\n",
+                     eolian_constructor_full_name_get(ctor));
              goto error;
           }
         else

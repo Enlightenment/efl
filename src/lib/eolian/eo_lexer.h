@@ -186,33 +186,4 @@ void eo_lexer_context_pop    (Eo_Lexer *ls);
 void eo_lexer_context_restore(Eo_Lexer *ls);
 void eo_lexer_context_clear  (Eo_Lexer *ls);
 
-extern int _eo_lexer_log_dom;
-#ifdef CRITICAL
-#undef CRITICAL
-#endif
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_eo_lexer_log_dom, __VA_ARGS__)
-
-#ifdef ERR
-#undef ERR
-#endif
-#define ERR(...) EINA_LOG_DOM_ERR(_eo_lexer_log_dom, __VA_ARGS__)
-
-#ifdef WRN
-#undef WRN
-#endif
-#define WRN(...) EINA_LOG_DOM_WARN(_eo_lexer_log_dom, __VA_ARGS__)
-
-#define INF_ENABLED EINA_FALSE
-#ifdef INF
-#undef INF
-#endif
-#define INF(...) if (INF_ENABLED) EINA_LOG_DOM_INFO(_eo_lexer_log_dom, __VA_ARGS__)
-
-#define DBG_ENABLED EINA_FALSE
-#ifdef DBG
-#undef DBG
-#endif
-#define DBG(...) if (DBG_ENABLED) EINA_LOG_DOM_DBG(_eo_lexer_log_dom, __VA_ARGS__)
-
-
 #endif /* __EO_LEXER_H__ */

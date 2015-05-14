@@ -136,7 +136,7 @@ eolian_class_function_get_by_name(const Eolian_Class *cl, const char *func_name,
           }
      }
 
-   ERR("Function %s not found in class %s", func_name, cl->name);
+   fprintf(stderr, "eolian: function '%s' not found in class '%s'\n", func_name, cl->name);
    return NULL;
 }
 

@@ -10,8 +10,7 @@
 static Eina_Bool
 node_error(const Eolian_Object *obj, const char *msg)
 {
-   eina_log_print(_eolian_log_dom, EINA_LOG_LEVEL_ERR, obj->file, "",
-                  obj->line, "%s at column %d", msg, obj->column);
+   fprintf(stderr, "eolian:%s:%d:%d: %s\n", obj->file, obj->line, obj->column, msg);
    return EINA_FALSE;
 }
 

@@ -11,8 +11,6 @@
 
 #include "eo_lexer.h"
 
-int _eo_lexer_log_dom = -1;
-
 static int lastbytes = 0;
 
 static void
@@ -101,8 +99,8 @@ throw(Eo_Lexer *ls, const char *fmt, ...)
    for (i = 0; i < ls->column; ++i)
      eina_strbuf_append_char(buf, ' ');
    eina_strbuf_append(buf, "^\n");
-   eina_log_print(_eo_lexer_log_dom, EINA_LOG_LEVEL_ERR, ls->source, "",
-                  ls->line_number, "%s", eina_strbuf_string_get(buf));
+   fprintf(stderr, "eolian:%s:%d: %s\n", ls->source, ls->line_number,
+           eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    longjmp(ls->err_jmp, EINA_TRUE);
 }
@@ -649,7 +647,7 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
    Eina_File *f = eina_file_open(source, EINA_FALSE);
    if (!f)
      {
-        ERR("%s", strerror(errno));
+        fprintf(stderr, "eolian: %s\n", strerror(errno));
         longjmp(ls->err_jmp, EINA_TRUE);
      }
    ls->lookahead.token = -1;
@@ -837,8 +835,6 @@ eo_lexer_init()
      {
         eina_init();
         init_hash();
-        eina_log_color_disable_set(EINA_FALSE);
-        _eo_lexer_log_dom = eina_log_domain_register("eo_lexer", EINA_COLOR_CYAN);
      }
    return _init_counter++;
 }
@@ -850,8 +846,6 @@ eo_lexer_shutdown()
    _init_counter--;
    if (!_init_counter)
      {
-        eina_log_domain_unregister(_eo_lexer_log_dom);
-        _eo_lexer_log_dom = -1;
         destroy_hash();
         eina_shutdown();
      }

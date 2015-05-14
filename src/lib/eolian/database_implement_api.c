@@ -74,9 +74,8 @@ eolian_implement_function_get(const Eolian_Implement *impl,
    if (fid && tp == EOLIAN_UNRESOLVED && (fid->type == EOLIAN_PROP_GET
                                        || fid->type == EOLIAN_PROP_SET))
      {
-        eina_log_print(_eolian_log_dom, EINA_LOG_LEVEL_ERR,
-            impl->base.file, "", impl->base.line, "both get and set required "
-              "for property '%s' at column %d", func_name, impl->base.column);
+        fprintf(stderr, "eolian:%s:%d:%d: both get and set required for property '%s'\n",
+                impl->base.file, impl->base.line, impl->base.column, func_name);
         return NULL;
      }
 

@@ -7,11 +7,10 @@
 static Eina_Bool
 _func_error(Eolian_Class *cl, Eolian_Implement *impl)
 {
-   eina_log_print(_eolian_log_dom, EINA_LOG_LEVEL_ERR, impl->base.file, "",
-                  impl->base.line, "%s%s not known in class %s at column %d",
-                  impl->full_name, (impl->is_prop_get ? ".get"
-                      : (impl->is_prop_set ? ".set" : "")),
-                  eolian_class_name_get(cl), impl->base.column);
+   fprintf(stderr, "eolian:%s:%d:%d: '%s%s' not known in class '%s'\n",
+           impl->base.file, impl->base.line, impl->base.column, impl->full_name,
+           (impl->is_prop_get ? ".get" : (impl->is_prop_set ? ".set" : "")),
+           eolian_class_name_get(cl));
    return EINA_FALSE;
 }
 
@@ -218,7 +217,7 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
    Eo_Lexer *ls = eo_lexer_new(filename);
    if (!ls)
      {
-        ERR("unable to create lexer for file %s", filename);
+        fprintf(stderr, "eolian: unable to create lexer for file '%s'\n", filename);
         return EINA_FALSE;
      }
 
@@ -235,7 +234,7 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
 
    if (!eina_list_count(ls->tmp.classes))
      {
-        ERR("No classes for file %s", filename);
+        fprintf(stderr, "eolian: no classes for file '%s'\n", filename);
         eo_lexer_free(ls);
         return EINA_FALSE;
      }
