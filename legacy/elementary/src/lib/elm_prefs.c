@@ -136,8 +136,8 @@ _elm_prefs_save(void *data)
      {
         elm_prefs_data_save(sd->prefs_data, NULL, NULL);
 
-        evas_object_smart_callback_call
-          (wd->obj, SIG_PAGE_SAVED, (char *)sd->root->name);
+        eo_do(wd->obj, eo_event_callback_call
+          (ELM_PREFS_EVENT_PAGE_SAVED, (char *)sd->root->name));
      }
 
    sd->dirty = EINA_FALSE;
@@ -300,8 +300,8 @@ _elm_prefs_item_changed_report(Eo *obj,
 
    snprintf(buf, sizeof(buf), "%s:%s", it->page->name, it->name);
 
-   evas_object_smart_callback_call
-     (wd->obj, SIG_ITEM_CHANGED, buf);
+   eo_do(wd->obj, eo_event_callback_call
+     (ELM_PREFS_EVENT_ITEM_CHANGED, buf));
 }
 
 static Elm_Prefs_Item_Node *
@@ -400,8 +400,8 @@ _prefs_data_autosaved_cb(void *cb_data,
    ELM_PREFS_DATA_GET(cb_data, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(cb_data, wd);
 
-   evas_object_smart_callback_call
-     (wd->obj, SIG_PAGE_SAVED, event_info);
+   eo_do(wd->obj, eo_event_callback_call
+     (ELM_PREFS_EVENT_PAGE_SAVED, event_info));
 
    sd->dirty = EINA_FALSE;
 }
@@ -556,8 +556,8 @@ _item_changed_cb(Evas_Object *it_obj)
    /* we use the changed cb on ACTION/RESET/SAVE items specially */
    if (it->type == ELM_PREFS_TYPE_ACTION)
      {
-        evas_object_smart_callback_call
-          (wd->obj, SIG_ACTION, buf);
+        eo_do(wd->obj, eo_event_callback_call
+          (ELM_PREFS_EVENT_ACTION, buf));
 
         return;
      }
@@ -1175,8 +1175,8 @@ _elm_prefs_efl_file_file_set(Eo *obj, Elm_Prefs_Data *sd, const char *file, cons
 
    _elm_prefs_values_get_default(sd->root, EINA_FALSE);
 
-   evas_object_smart_callback_call
-      (obj, SIG_PAGE_LOADED, (char *)sd->root->name);
+   eo_do(obj, eo_event_callback_call
+     (ELM_PREFS_EVENT_PAGE_LOADED, (char *)sd->root->name));
 
    return EINA_TRUE;
 }
@@ -1220,8 +1220,8 @@ _elm_prefs_data_set(Eo *obj, Elm_Prefs_Data *sd, Elm_Prefs_Data *prefs_data)
    sd->values_fetching = EINA_FALSE;
 
 end:
-   evas_object_smart_callback_call
-     (obj, SIG_PAGE_CHANGED, (char *)sd->root->name);
+   eo_do(obj, eo_event_callback_call
+     (ELM_PREFS_EVENT_PAGE_CHANGED, (char *)sd->root->name));
 
    return EINA_TRUE;
 }
