@@ -260,6 +260,7 @@ void ecore_con_socks_shutdown(void);
 Eina_Bool ecore_con_socks_svr_init(Ecore_Con_Server *svr);
 void ecore_con_socks_read(Ecore_Con_Server *svr, unsigned char *buf, int num);
 void ecore_con_socks_dns_cb(const char *canonname, const char *ip, struct sockaddr *addr, int addrlen, Ecore_Con_Server *svr);
+
 /* from ecore_con.c */
 void ecore_con_server_infos_del(Ecore_Con_Server *svr, void *info);
 void ecore_con_event_proxy_bind(Ecore_Con_Server *svr);
@@ -273,6 +274,9 @@ void ecore_con_event_client_del(Ecore_Con_Client *cl);
 void ecore_con_event_client_error(Ecore_Con_Client *cl, const char *error);
 void _ecore_con_server_kill(Ecore_Con_Server *svr);
 void _ecore_con_client_kill(Ecore_Con_Client *cl);
+
+int ecore_con_local_init(void);
+int ecore_con_local_shutdown(void);
 /* from ecore_local_win32.c */
 #ifdef _WIN32
 Eina_Bool ecore_con_local_listen(Ecore_Con_Server *svr);
@@ -285,8 +289,6 @@ void      ecore_con_local_win32_server_del(Ecore_Con_Server *svr);
 void      ecore_con_local_win32_client_del(Ecore_Con_Client *cl);
 #else
 /* from ecore_local.c */
-int ecore_con_local_init(void);
-int ecore_con_local_shutdown(void);
 int ecore_con_local_connect(Ecore_Con_Server *svr,
                             Eina_Bool (*cb_done)(
                                void *data,
