@@ -288,14 +288,8 @@ efreet_dirs_init(void)
       }
     else
 #endif
-      efreet_home_dir = getenv("HOME");
+      efreet_home_dir = eina_environment_home_get();
 
-#ifdef _WIN32
-    if (!efreet_home_dir || efreet_home_dir[0] == '\0')
-      {
-         efreet_home_dir = getenv("USERPROFILE");
-      }
-#endif
     if (!efreet_home_dir || efreet_home_dir[0] == '\0')
       efreet_home_dir = "/tmp";
 
