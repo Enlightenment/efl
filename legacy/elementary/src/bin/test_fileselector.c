@@ -518,9 +518,6 @@ test_fileselector(void *data       EINA_UNUSED,
 {
    Evas_Object *win, *fs, *box, *vbox, *sep;
    char * home_env;
-#ifdef _WIN32
-   char win_home_env[PATH_MAX];
-#endif
 
    /* Set the locale according to the system pref.
     * If you don't do so the file selector will order the files list in
@@ -552,14 +549,7 @@ test_fileselector(void *data       EINA_UNUSED,
    /* make the file list a tree with dir expandable in place */
    elm_fileselector_expandable_set(fs, EINA_FALSE);
    /* start the fileselector in the home dir */
-   home_env = getenv("HOME");
-#ifdef _WIN32
-   if (!home_env)
-          {
-             snprintf(win_home_env, sizeof(win_home_env), "%s%s", getenv("HOMEDRIVE"), getenv("HOMEPATH"));
-             home_env = strdup(win_home_env);
-          }
-#endif
+   home_env = eina_environment_home_get();
    elm_fileselector_path_set(fs, home_env);
 
    /* provides suggested name (just for showing) */

@@ -547,7 +547,7 @@ _track_add(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSE
    fs = elm_fileselector_add(fs_win);
    elm_fileselector_is_save_set(fs, EINA_TRUE);
    elm_fileselector_expandable_set(fs, EINA_FALSE);
-   path = getenv("HOME");
+   path = eina_environment_home_get();
    //if "HOME" is not available, set current dir. path
    if (!path)
      path = ".";

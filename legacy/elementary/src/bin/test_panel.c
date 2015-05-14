@@ -92,21 +92,11 @@ _fill_list(Evas_Object *obj, Elm_Genlist_Item_Class *itc)
    Eina_List *l;
    char *real;
    char *home_env = NULL;
-#ifdef _WIN32
-   char win_home_env[PATH_MAX];
-#endif
    unsigned int x = 0;
 
    if (!dirs)
      {
-        home_env = getenv("HOME");
-#ifdef _WIN32
-        if(!home_env)
-          {
-             snprintf(win_home_env, sizeof(win_home_env), "%s%s", getenv("HOMEDRIVE"), getenv("HOMEPATH"));
-             home_env = strdup(win_home_env);
-          }
-#endif
+        home_env = eina_environment_home_get();
         if (!home_env) return;
         if (!(d = opendir(home_env))) return;
         while ((de = readdir(d)) && (x < LIST_ITEM_MAX))
