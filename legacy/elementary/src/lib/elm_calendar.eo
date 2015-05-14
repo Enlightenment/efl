@@ -245,7 +245,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_calendar_marks_clear()
 
             @ingroup Calendar */
-            return: const(list)*;
+            return: const(list<Elm.Calendar.Mark*>)*;
          }
       }
       selected_time_set {

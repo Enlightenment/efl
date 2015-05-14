@@ -130,7 +130,7 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             @see elm_diskselector_clear()
 
             @ingroup Diskselector */
-            return: const(list)*;
+            return: const(list<Elm.Object.Item*>)*;
          }
       }
       @property last_item {

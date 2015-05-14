@@ -615,7 +615,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          return: bool;
          params {
             @in const(Evas_Object)* base;
-            @in const(list)* items;
+            @in const(list<Eo.Base*>)* items;
             @in list_data_get_func_type list_data_get;
             @in double degree;
             @out Evas_Object *direction;
@@ -720,7 +720,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          /*@ No description supplied by the EAPI. */
          return: bool;
          params {
-            @in const(list)* items;
+            @in const(list<Eo.Base*>)* items;
             @in list_data_get_func_type list_data_get;
             @in Elm_Focus_Direction dir;
             @out Evas_Object *next;

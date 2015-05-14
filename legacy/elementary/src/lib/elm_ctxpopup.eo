@@ -145,7 +145,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             call to this function when changes happen.
 
             @ingroup Ctxpopup */
-            return: const(list)*;
+            return: const(list<Elm.Object.Item*>)*;
          }
       }
       @property first_item {

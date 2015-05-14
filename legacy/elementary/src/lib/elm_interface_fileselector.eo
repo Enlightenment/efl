@@ -120,7 +120,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get a list of selected paths in the fileselector. */
          }
          values {
-            const(list)* ret;
+            const(list<const(char)*>)* ret;
          }
       }
       @property current_name {
