@@ -150,12 +150,23 @@ _eina_inarray_get(const Eina_Inarray *array, unsigned int position)
 static int
 _eina_inarray_search(const Eina_Inarray *array, const void *data, Eina_Compare_Cb compare)
 {
-   const unsigned char *start, *found;
-   start = array->members;
-   found = bsearch(data, start, array->len, array->member_size, compare);
-   if (!found)
+   unsigned int found, pos=-1;
+   void *p;
+
+   if (array->len == 0)
      return -1;
-   return (found - start) / array->member_size;
+
+   for (pos = 0; pos < array->len; ++pos)
+     {
+        p = _eina_inarray_get(array, pos);
+        found = compare(data, p);
+        if (found == 0)
+          break;
+     }
+   if (pos < array->len)
+     return pos;
+   else
+     return -1;
 }
 
 static unsigned int
