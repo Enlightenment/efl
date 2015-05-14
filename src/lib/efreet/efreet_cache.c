@@ -1131,7 +1131,7 @@ on_send_register(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pendi
     {
         Efreet_Event_Cache_Update *ev = NULL;
 
-        ERR("%s %s", errname, errmsg);
+        WRN("%s %s", errname, errmsg);
 
         ev = NEW(Efreet_Event_Cache_Update, 1);
         if (ev)
