@@ -40,6 +40,10 @@
  *                                   API                                      *
  *============================================================================*/
 
+#ifdef _WIN32
+static char home_storage[PATH_MAX];
+#endif
+
 EAPI const char *
 eina_environment_home_get(void)
 {
@@ -48,6 +52,13 @@ eina_environment_home_get(void)
 
    home = getenv("USERPROFILE");
    if (!home) home = getenv("WINDIR");
+   if (!home &&
+       (getenv("HOMEDRIVE") && getenv("HOMEPATH")))
+     {
+        snprintf(home_storage, sizeof(home_storage), "%s%s",
+                 getenv("HOMEDRIVE"), getenv("HOMEPATH"));
+        home = home_storage;
+     }
    if (!home) home = "C:\\";
 
    return home;
