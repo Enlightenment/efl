@@ -132,12 +132,12 @@ _socket_path_set(char *path)
         env = getenv("XDG_RUNTIME_DIR");
         if (!env || !env[0])
           {
-             env = getenv("HOME");
+             env = eina_environment_home_get();
              if (!env || !env[0])
                {
-                  env = getenv("TMPDIR");
+                  env = eina_environment_tmp_get();
                   if (!env || !env[0])
-                  env = "/tmp";
+                    env = "/tmp";
                }
           }
 
@@ -887,9 +887,10 @@ _build_absolute_path(const char *path, char buf[], int size)
      len = eina_strlcpy(p, path, size);
    else if (path[0] == '~')
      {
-        const char *home = getenv("HOME");
-        if (!home)
-          return 0;
+        const char *home = eina_environment_home_get();
+
+        if (!home) return 0;
+
         len = eina_strlcpy(p, home, size);
         size -= len + 1;
         p += len;
