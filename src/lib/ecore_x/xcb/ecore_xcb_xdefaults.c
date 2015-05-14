@@ -18,8 +18,8 @@ _ecore_xcb_xdefaults_init(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (getenv("HOME"))
-     snprintf(buff, sizeof(buff), "%s/.Xdefaults", getenv("HOME"));
+   if (eina_environment_home_get())
+     snprintf(buff, sizeof(buff), "%s/.Xdefaults", eina_environment_home_get());
    else return;
    if ((_ecore_xcb_xdefaults_file = eina_file_open(buff, EINA_FALSE)))
      {

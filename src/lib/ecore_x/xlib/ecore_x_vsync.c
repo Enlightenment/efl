@@ -837,8 +837,8 @@ ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
         const char *home;
         struct stat st;
 
-        home = getenv("HOME");
-        if (!home) home = "/tmp";
+        home = eina_environment_home_get();
+        if (!home) eina_environment_tmp_get();
         snprintf(buf, sizeof(buf), "%s/.ecore-no-vsync", home);
         if (getenv("ECORE_NO_VSYNC")) vsync_veto = 1;
         else if (stat(buf, &st) == 0) vsync_veto = 1;
