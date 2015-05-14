@@ -1441,7 +1441,7 @@ ecore_drm_output_mode_set(Ecore_Drm_Output *output, Ecore_Drm_Output_Mode *mode,
    output->y = y;
    output->current_mode = mode;
 
-   if ((mode) && (output->enabled))
+   if (mode)
      {
         if (dev->current)
           buffer = dev->current->id;
