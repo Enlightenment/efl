@@ -955,6 +955,15 @@ ecore_con_client_ip_get(const Ecore_Con *obj)
 EOLIAN static int
 _ecore_con_client_ecore_con_base_port_get(Eo *obj EINA_UNUSED, Ecore_Con_Client_Data *cl)
 {
+   Ecore_Con_Server_Data *sd = eo_data_scope_get(cl->host_server, ECORE_CON_SERVER_CLASS);
+
+   if (sd->type != ECORE_CON_REMOTE_TCP &&
+       sd->type != ECORE_CON_REMOTE_MCAST &&
+       sd->type != ECORE_CON_REMOTE_UDP &&
+       sd->type != ECORE_CON_REMOTE_BROADCAST &&
+       sd->type != ECORE_CON_REMOTE_NODELAY)
+     return -1;
+
    if (cl->client_addr->sa_family == AF_INET)
      return ((struct sockaddr_in *)cl->client_addr)->sin_port;
 #ifdef HAVE_IPV6
