@@ -875,7 +875,7 @@ elm_widget_access(Evas_Object *obj,
      }
 
    eo_do(obj, elm_obj_widget_access(is_access));
-   evas_object_smart_callback_call(obj, SIG_WIDGET_ACCESS_CHANGED, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_WIDGET_EVENT_ACCESS_CHANGED, NULL));
 
    return ret;
 }
@@ -3462,7 +3462,7 @@ _elm_widget_translate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSE
         sd->on_translate = EINA_FALSE;
      }
 #endif
-   evas_object_smart_callback_call(obj, SIG_WIDGET_LANG_CHANGED, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_WIDGET_EVENT_LANGUAGE_CHANGED, NULL));
    return EINA_TRUE;
 }
 
@@ -5547,7 +5547,8 @@ _elm_widget_on_focus(Eo *obj, Elm_Widget_Smart_Data *sd)
           {
              if (!sd->resize_obj)
                evas_object_focus_set(obj, EINA_TRUE);
-             evas_object_smart_callback_call(obj, SIG_WIDGET_FOCUSED, NULL);
+              eo_do(obj, eo_event_callback_call
+               (ELM_WIDGET_EVENT_FOCUSED, NULL));
              if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
                elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
           }
@@ -5555,10 +5556,11 @@ _elm_widget_on_focus(Eo *obj, Elm_Widget_Smart_Data *sd)
           {
              if (!sd->resize_obj)
                evas_object_focus_set(obj, EINA_FALSE);
-             evas_object_smart_callback_call(obj, SIG_WIDGET_UNFOCUSED, NULL);
+             eo_do(obj, eo_event_callback_call
+               (ELM_WIDGET_EVENT_UNFOCUSED, NULL));
              if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
                elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
-          }
+    }
      }
    else
      return EINA_FALSE;

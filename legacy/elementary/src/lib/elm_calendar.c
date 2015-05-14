@@ -681,9 +681,9 @@ _update_data(Evas_Object *obj, Eina_Bool month,
           sd->selected_time.tm_mday = maxdays;
 
         _fix_selected_time(sd);
-        evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+        eo_do(obj, eo_event_callback_call(ELM_CALENDAR_EVENT_CHANGED, NULL));
      }
-   evas_object_smart_callback_call(obj, SIG_DISPLAY_CHANGED, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_CALENDAR_EVENT_DISPLAY_CHANGED, NULL));
 
    return EINA_TRUE;
 }
@@ -841,7 +841,7 @@ _update_sel_it(Evas_Object *obj,
    sd->selected_time.tm_mday = day;
    _fix_selected_time(sd);
    _select(obj, sel_it);
-   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_CALENDAR_EVENT_CHANGED, NULL));
 }
 
 static void
