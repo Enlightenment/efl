@@ -19,6 +19,7 @@
 #include "eina_debug.h"
 #include "eina_types.h"
 #include "eina_evlog.h"
+#include "eina_util.h"
 
 #ifdef EINA_HAVE_DEBUG
 
@@ -340,9 +341,8 @@ _socket_home_get()
 {
    // get possible debug daemon socket directory base
    const char *dir = getenv("XDG_RUNTIME_DIR");
-   if (!dir) dir = getenv("HOME");
-   if (!dir) dir = getenv("TMPDIR");
-   if (!dir) dir = "/tmp";
+   if (!dir) dir = eina_environment_home_get();
+   if (!dir) dir = eina_environment_tmp_get();
    return dir;
 }
 
