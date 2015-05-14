@@ -259,7 +259,7 @@ ethumb_init(void)
    if (getuid() == geteuid())
 #endif
      {
-        home = getenv("HOME");
+        home = eina_environment_home_get();
         snprintf(buf, sizeof(buf), "%s/.thumbnails", home);
      }
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
@@ -713,7 +713,7 @@ _ethumb_build_absolute_path(const char *path, char buf[PATH_MAX])
         if (getuid() == geteuid())
 #endif
           {
-             const char *home = getenv("HOME");
+             const char *home = eina_environment_home_get();
              if (!home) return NULL;
              strncpy(p, home, PATH_MAX - 1);
              p[PATH_MAX - 1] = 0;
