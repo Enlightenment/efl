@@ -2324,6 +2324,46 @@ ecore_evas_aux_hint_val_set(Ecore_Evas *ee, const int id, const char *val)
    return EINA_TRUE;
 }
 
+EAPI const char *
+ecore_evas_aux_hint_val_get(const Ecore_Evas *ee, int id)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_aux_hint_val_get");
+        return NULL;
+     }
+
+   Eina_List *ll;
+   Ecore_Evas_Aux_Hint *aux;
+   EINA_LIST_FOREACH(ee->prop.aux_hint.hints, ll, aux)
+     {
+        if (id == aux->id) return aux->val;
+     }
+
+   return NULL;
+}
+
+EAPI int
+ecore_evas_aux_hint_id_get(const Ecore_Evas *ee, const char *hint)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_aux_hint_id_get");
+        return -1;
+     }
+
+   Eina_List *ll;
+   Ecore_Evas_Aux_Hint *aux;
+   EINA_LIST_FOREACH(ee->prop.aux_hint.hints, ll, aux)
+     {
+        if (!strcmp(hint,aux->hint)) return aux->id;
+     }
+
+   return -1;
+}
+
 EAPI void
 ecore_evas_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
