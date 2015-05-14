@@ -869,7 +869,7 @@ ecore_file_app_exe_get(const char *app)
    p = app;
    if ((p[0] == '~') && (p[1] == '/'))
      {
-        const char *home = getenv("HOME");
+        const char *home = eina_environment_home_get();
         if (home) eina_strbuf_append(buf, home);
         p++;
      }
