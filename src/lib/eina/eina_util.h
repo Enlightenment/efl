@@ -32,7 +32,7 @@
  * @note The result of this call is highly system dependent and you better use
  * it instead of the naive getenv("HOME").
  */
-EAPI Eina_Tmpstr *eina_environment_home_get(void);
+EAPI const char *eina_environment_home_get(void);
 
 /**
  * @brief Return the content of the environment refered as TMPDIR on this system.
@@ -41,6 +41,6 @@ EAPI Eina_Tmpstr *eina_environment_home_get(void);
  * @note The result of this call is highly system dependent and you better use
  * it instead of the naive getenv("TMPDIR").
  */
-EAPI Eina_Tmpstr *eina_environment_tmp_get(void);
+EAPI const char *eina_environment_tmp_get(void);
 
 #endif

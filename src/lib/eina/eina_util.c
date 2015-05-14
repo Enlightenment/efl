@@ -40,7 +40,7 @@
  *                                   API                                      *
  *============================================================================*/
 
-EAPI Eina_Tmpstr *
+EAPI const char *
 eina_environment_home_get(void)
 {
 #ifdef _WIN32
@@ -50,13 +50,13 @@ eina_environment_home_get(void)
    if (!home) home = getenv("WINDIR");
    if (!home) home = "C:\\";
 
-   return eina_tmpstr_add(home);
+   return home;
 #else
-   return eina_tmpstr_add(getenv("HOME"));
+   return getenv("HOME");
 #endif
 }
 
-EAPI Eina_Tmpstr *
+EAPI const char *
 eina_environment_tmp_get(void)
 {
    char *tmp;
@@ -68,12 +68,12 @@ eina_environment_tmp_get(void)
    if (!tmp) tmp = getenv("WINDIR");
    if (!tmp) tmp = "C:\\";
 
-   return eina_tmpstr_add(tmp);
+   return tmp;
 #else
    tmp = getenv("TMPDIR");
    if (!tmp) tmp = getenv("XDG_RUNTIME_DIR");
    if (!tmp) tmp = "/tmp";
 
-   return eina_tmpstr_add(tmp);
+   return tmp;
 #endif
 }
