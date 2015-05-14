@@ -175,7 +175,7 @@ interface Efl.Model.Base ()
                 unsigned count; /*@ Range size. If count and start are 0 slice is ignored.*/
             }
             values {
-                accessor<list*>* children_accessor;
+                accessor<list<Eo.Base*>*>* children_accessor;
             }
          }
          @property children_count {

@@ -774,23 +774,20 @@ parse_type_void(Eo_Lexer *ls)
              eo_lexer_get(ls);
              if (tpid >= KW_accessor)
                {
+                  int bline = ls->line_number, bcol = ls->column;
                   def->type = EOLIAN_TYPE_COMPLEX;
-                  if (ls->t.token == '<')
+                  check_next(ls, '<');
+                  def->subtypes = eina_list_append(def->subtypes,
+                                                   parse_type(ls));
+                  pop_type(ls);
+                  if (tpid == KW_hash)
                     {
-                       int bline = ls->line_number, bcol = ls->column;
-                       eo_lexer_get(ls);
+                       check_next(ls, ',');
                        def->subtypes = eina_list_append(def->subtypes,
                                                         parse_type(ls));
                        pop_type(ls);
-                       if (tpid == KW_hash)
-                         {
-                            check_next(ls, ',');
-                            def->subtypes = eina_list_append(def->subtypes,
-                                                             parse_type(ls));
-                            pop_type(ls);
-                         }
-                       check_match(ls, '>', '<', bline, bcol);
                     }
+                  check_match(ls, '>', '<', bline, bcol);
                }
           }
         else
