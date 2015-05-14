@@ -1556,6 +1556,17 @@ AC_ARG_ENABLE([tile-rotate],
   ],
   [have_tile_rotate="no"])
 
+# Ecore_Buffer
+AC_ARG_ENABLE([ecore-buffer],
+   [AS_HELP_STRING([--enable-ecore-buffer],[Enable ecore-buffer. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_ecore_buffer="yes"
+    else
+       want_ecore_buffer="no"
+    fi
+  ],
+  [want_ecore_buffer="no"])
 
 # Image Loaders
 
@@ -4486,6 +4497,77 @@ AC_ARG_ENABLE([i-really-know-what-i-am-doing-and-that-this-will-probably-break-t
    ],
    [ BARF_OK="xno" ])
 
+#### Ecore_Buffer
+build_ecore_buffer_x11_dri2="no"
+build_ecore_buffer_x11_dri3="no"
+build_ecore_buffer_tbm="no"
+EFL_LIB_START_OPTIONAL([Ecore_Buffer], [test "${want_ecore_buffer}" = "yes"])
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([ECORE_BUFFER], [eina])
+EFL_INTERNAL_DEPEND_PKG([ECORE_BUFFER], [ecore])
+EFL_INTERNAL_DEPEND_PKG([ECORE_BUFFER], [eo])
+EFL_INTERNAL_DEPEND_PKG([ECORE_BUFFER], [ecore-x])
+EFL_DEPEND_PKG([ECORE_BUFFER], [WAYLAND],
+               [wayland-client >= 1.5.0])
+EFL_EVAL_PKGS([ECORE_BUFFER])
+
+tbm_version="1.1.0"
+drm_version="2.4.35"
+PKG_CHECK_MODULES([X11_DRI_COMMON],
+   [
+      libtbm >= ${tbm_version},
+      libdrm >= ${drm_version}
+   ],
+   [have_x11_dri_common_pkgs="yes"],
+   [have_x11_dri_common_pkgs="no"]
+)
+
+if test "x$have_x11_dri_common_pkgs" = "xyes" ; then
+   PKG_CHECK_MODULES([X11_DRI2], [libdri2],
+                     [have_x11_dri2_pkgs="yes"],
+                     [have_x11_dri2_pkgs="no"])
+
+   PKG_CHECK_MODULES([X11_DRI3],
+      [
+         xshmfence,
+         xcb,
+         x11-xcb,
+         xcb-sync,
+         xcb-dri3
+      ],
+      [have_x11_dri3_pkgs="yes"],
+      [have_x11_dri3_pkgs="no"])
+fi
+
+PKG_CHECK_MODULES([TBM], [libtbm >= ${tbm_version}],
+                  [have_tbm="yes"],
+                  [have_tbm="no"])
+
+if test "x${have_x11_dri2_pkgs}" = "xyes" ; then
+   build_ecore_buffer_x11_dri2="yes"
+   AC_DEFINE(BUILD_ECORE_BUFFER_X11_DRI2, 1, [Support for X11_DRI2 Backend in Ecore_Buffer])
+fi
+EFL_ADD_FEATURE([ECORE_BUFFER], [x11_dri2], [${build_ecore_buffer_x11_dri2}])
+
+if test "x${have_x11_dri3_pkgs}" = "xyes" ; then
+   build_ecore_buffer_x11_dri3="yes"
+   AC_DEFINE(BUILD_ECORE_BUFFER_X11_DRI3, 1, [Support for X11_DRI3 Backend in Ecore_Buffer])
+fi
+EFL_ADD_FEATURE([ECORE_BUFFER], [x11_dri3], [${build_ecore_buffer_x11_dri3}])
+
+if test "x${have_tbm}" = "xyes" ; then
+   build_ecore_buffer_tbm="yes"
+   AC_DEFINE(BUILD_ECORE_BUFFER_TBM, 1, [Support for TBM Backend in Ecore_Buffer])
+fi
+EFL_ADD_FEATURE([ECORE_BUFFER], [tbm], [${build_ecore_buffer_tbm}])
+
+EFL_LIB_END_OPTIONAL([Ecore_Buffer])
+
+AM_CONDITIONAL([BUILD_ECORE_BUFFER_X11_DRI2], [test "${build_ecore_buffer_x11_dri2}" = "yes"])
+AM_CONDITIONAL([BUILD_ECORE_BUFFER_X11_DRI3], [test "${build_ecore_buffer_x11_dri3}" = "yes"])
+AM_CONDITIONAL([BUILD_ECORE_BUFFER_TBM], [test "${build_ecore_buffer_tbm}" = "yes"])
+
+#### End of Ecore_Buffer
 
 AC_CONFIG_FILES([
 Makefile
@@ -4565,6 +4647,7 @@ pc/ecore-imf-evas.pc
 pc/ecore-audio.pc
 pc/ecore-audio-cxx.pc
 pc/ecore-avahi.pc
+pc/ecore-buffer.pc
 pc/embryo.pc
 pc/eio.pc
 pc/eldbus.pc
@@ -4715,6 +4798,7 @@ echo "Ecore_X.........: ${with_x11} (${features_ecore_x})"
 echo "Ecore_SDL.......: $want_sdl"
 echo "Ecore_Wayland...: $want_wayland"
 echo "IVI-Shell.......: $want_wayland_ivi_shell"
+echo "Ecore_Buffer....: $want_ecore_buffer (${features_ecore_buffer})"
 if test "${have_linux}" = "yes"; then
 echo "Ecore_FB........: $want_fb (${features_ecore_fb})"
 elif test "${have_ps3}" = "yes"; then

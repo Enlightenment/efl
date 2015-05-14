@@ -60,6 +60,7 @@ include Makefile_Ecore_Audio.am
 include Makefile_Ecore_IMF.am
 include Makefile_Ecore_IMF_Evas.am
 include Makefile_Ecore_Evas.am
+include Makefile_Ecore_Buffer.am
 include Makefile_EPhysics.am
 include Makefile_Edje.am
 include Makefile_Emotion.am

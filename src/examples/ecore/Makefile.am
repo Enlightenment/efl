@@ -14,6 +14,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_srcdir)/src/lib/ecore_audio \
+-I$(top_srcdir)/src/lib/ecore_buffer \
 -I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eo \
 -I$(top_builddir)/src/lib/evas \
@@ -27,6 +28,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore_evas \
 -I$(top_builddir)/src/lib/ecore_audio \
 -DPACKAGE_EXAMPLES_DIR=\".\" \
+-I$(top_builddir)/src/lib/ecore_buffer \
 @ECORE_CFLAGS@
 
 EXTRA_PROGRAMS = \
@@ -65,7 +67,8 @@ ecore_server_bench \
 ecore_thread_example \
 ecore_time_functions_example \
 ecore_timer_example \
-ecore_getopt_example
+ecore_getopt_example \
+ecore_buffer_example
 
 ECORE_COMMON_LDADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
@@ -100,6 +103,10 @@ $(ECORE_COMMON_LDADD)
 
 ECORE_CON_COMMON_LDADD = \
 $(top_builddir)/src/lib/ecore_con/libecore_con.la \
+$(ECORE_COMMON_LDADD)
+
+ECORE_BUFFER_COMMON_LDADD = \
+$(top_builddir)/src/lib/ecore_buffer/libecore_buffer.la \
 $(ECORE_COMMON_LDADD)
 
 ecore_animator_example_SOURCES = ecore_animator_example.c
@@ -234,6 +241,9 @@ ecore_timer_example_LDADD = $(ECORE_COMMON_LDADD)
 ecore_getopt_example_SOURCES = ecore_getopt_example.c
 ecore_getopt_example_LDADD = $(ECORE_COMMON_LDADD)
 
+ecore_buffer_example_SOURCES = ecore_buffer_example.c
+ecore_buffer_example_LDADD = $(ECORE_BUFFER_COMMON_LDADD)
+
 SRCS = \
 ecore_animator_example.c \
 ecore_client_bench.c \
@@ -273,7 +283,8 @@ ecore_server_bench.c \
 ecore_thread_example.c \
 ecore_time_functions_example.c \
 ecore_timer_example.c \
-ecore_getopt_example.c
+ecore_getopt_example.c \
+ecore_buffer_example.c
 
 if HAVE_ECORE_AUDIO
 #SRCS += \

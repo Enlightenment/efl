@@ -83,6 +83,20 @@ BuildRequires:  libudev-devel
 BuildRequires:  libmount-devel
 BuildRequires:  pkgconfig(dlog)
 
+#ecore_buffer
+%if %{with x}
+BuildRequires:  pkgconfig(libdri2)
+BuildRequires:  pkgconfig(xshmfence)
+BuildRequires:  pkgconfig(x11)
+BuildRequires:  pkgconfig(xcb)
+BuildRequires:  pkgconfig(xcb-sync)
+BuildRequires:  pkgconfig(xcb-dri3)
+%endif
+BuildRequires:  pkgconfig(libtbm)
+BuildRequires:  pkgconfig(libdrm)
+BuildRequires:  pkgconfig(wayland-client)
+BuildRequires:  pkgconfig(wayland-server)
+
 ############ efl
 Provides: efl-data
 Obsoletes: efl-data
@@ -596,6 +610,7 @@ CFLAGS+=" -DMESA_EGL_NO_X11_HEADERS "
     --enable-always-build-examples \
     --enable-systemd \
     --enable-lua-old \
+    --enable-ecore-buffer \
     --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba
 
 
@@ -804,6 +819,7 @@ grep --silent ECORE_IMF_MODULE "$f" \
 %{_libdir}/libecore_input_evas.so.*
 %{_libdir}/libecore_ipc.so.*
 %{_libdir}/libecore_fb.so.*
+%{_libdir}/libecore_buffer.so.*
 %if %{with wayland}
 %{_libdir}/libecore_wayland.so.*
 %{_libdir}/libecore_drm.so.*
@@ -815,6 +831,7 @@ grep --silent ECORE_IMF_MODULE "$f" \
 %{_libdir}/ecore_evas/engines/*/*/module.so
 %{_libdir}/ecore_imf/modules/*/*/module.so
 %{_libdir}/ecore/system/systemd/v-*/module.so
+%{_libdir}/ecore_buffer/modules/*/*/module.so
 %{_datadir}/ecore/checkme
 %{_datadir}/ecore_*/checkme
 
@@ -842,6 +859,7 @@ grep --silent ECORE_IMF_MODULE "$f" \
 %{_libdir}/libecore_input_evas.so
 %{_libdir}/libecore_ipc.so
 %{_libdir}/libecore_fb.so
+%{_libdir}/libecore_buffer.so
 %if %{with wayland}
 %{_libdir}/libecore_wayland.so
 %{_libdir}/libecore_drm.so
