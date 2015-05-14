@@ -389,6 +389,110 @@ START_TEST(eina_inarray_test_itr)
 }
 END_TEST
 
+int
+cmp(const void *a, const void *b)
+{
+   return *(int *)a - *(int *)b;
+}
+
+int
+compare(const void *a, const void *b)
+{
+   return *(int *)a > *(int *)b;
+}
+
+static Eina_Bool
+match_cb(const void *array EINA_UNUSED, void *p, void *user_data)
+{
+   int *member = p;
+   int *i = user_data;
+
+   if (*i == *member)
+     return EINA_TRUE;
+   else
+     return EINA_FALSE;
+}
+
+START_TEST(eina_inarray_test_search)
+{
+   Eina_Inarray *iarr;
+   int i, ret, temp=92, ret1;
+   int arr[] = {91, 95, 97, 93, 92, 94};
+   int arr_size = sizeof(arr)/sizeof(arr[0]);
+   unsigned int curr_len;
+   Eina_Bool rval;
+
+   eina_init();
+
+   iarr = eina_inarray_new(sizeof(int), 0);
+
+   //search in empty array
+   ret = eina_inarray_search(iarr, &temp, cmp);
+   fail_if(ret != -1);
+
+   //search in single element array
+   temp = 91;
+   eina_inarray_push(iarr, &arr[0]);
+   ret = eina_inarray_search(iarr, &temp, cmp);
+   fail_if(ret != 0);
+
+   temp = 92;
+   ret = eina_inarray_search(iarr, &temp, cmp);
+   fail_if(ret != -1);
+
+   for (i = 1; i < arr_size; ++i)
+     {
+        ret = eina_inarray_push(iarr, &arr[i]);
+        fail_unless(ret == i);
+     }
+   temp = 92;
+   ret = eina_inarray_search(iarr, &temp, cmp);
+   fail_if(ret != 4);
+
+   temp = 100;
+   ret = eina_inarray_search(iarr, &temp, cmp);
+   fail_if(ret != -1);
+
+   rval = eina_inarray_replace_at(iarr, 3, &temp);
+   fail_if(rval != EINA_TRUE);
+   ret = eina_inarray_search(iarr, &temp, cmp);
+   fail_if(ret != 3);
+
+   rval = eina_inarray_replace_at(iarr, arr_size+1, &temp);
+   fail_if(rval != EINA_FALSE);
+
+   ret = eina_inarray_remove(iarr, &temp);
+   fail_if(ret != 3);
+
+   temp = 101;
+   ret = eina_inarray_remove(iarr, &temp);
+   fail_if(ret != -1);
+
+   eina_inarray_sort(iarr, compare);
+
+   temp = 92;
+   ret = eina_inarray_search(iarr, &temp, cmp);
+   ret1 = eina_inarray_search_sorted(iarr, &temp, cmp);
+   fail_if(ret != ret1);
+
+   temp = 100;
+   ret = eina_inarray_search(iarr, &temp, cmp);
+   ret1 = eina_inarray_search_sorted(iarr, &temp, cmp);
+   fail_if(ret != ret1);
+
+   temp = 105;
+   ret = eina_inarray_push(iarr, &temp);
+   ret = eina_inarray_push(iarr, &temp);
+   ret = eina_inarray_push(iarr, &temp);
+   curr_len = iarr->len;
+   rval = eina_inarray_foreach_remove(iarr, match_cb, &temp);
+   fail_if(iarr->len != curr_len-3);
+
+   eina_inarray_free(iarr);
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_inarray(TCase *tc)
 {
@@ -398,4 +502,5 @@ eina_test_inarray(TCase *tc)
    tcase_add_test(tc, eina_inarray_test_sort);
    tcase_add_test(tc, eina_inarray_test_reverse);
    tcase_add_test(tc, eina_inarray_test_itr);
+   tcase_add_test(tc, eina_inarray_test_search);
 }
