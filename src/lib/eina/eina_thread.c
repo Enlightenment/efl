@@ -102,14 +102,16 @@ _eina_internal_call(void *context)
 {
    Eina_Thread_Call *c = context;
    void *r;
+#ifdef EINA_HAVE_DEBUG
    pthread_t self;
+#endif
 
    if (c->prio == EINA_THREAD_BACKGROUND ||
        c->prio == EINA_THREAD_IDLE)
      eina_sched_prio_drop();
 
-   self = pthread_self();
 #ifdef EINA_HAVE_DEBUG
+   self = pthread_self();
    _eina_debug_thread_add(&self);
 #endif
    r = c->func((void*) c->data, eina_thread_self());
