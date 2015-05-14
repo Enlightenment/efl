@@ -89,7 +89,8 @@ lib/eina/eina_thread_queue.h \
 lib/eina/eina_matrix.h \
 lib/eina/eina_quad.h \
 lib/eina/eina_crc.h \
-lib/eina/eina_evlog.h
+lib/eina/eina_evlog.h \
+lib/eina/eina_util.h
 
 lib_eina_libeina_la_SOURCES = \
 lib/eina/eina_abi.c \
@@ -150,6 +151,7 @@ lib/eina/eina_tmpstr.c \
 lib/eina/eina_unicode.c \
 lib/eina/eina_ustrbuf.c \
 lib/eina/eina_ustringshare.c \
+lib/eina/eina_util.c \
 lib/eina/eina_value.c \
 lib/eina/eina_value_util.c \
 lib/eina/eina_xattr.c \
