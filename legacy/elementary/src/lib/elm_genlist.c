@@ -7037,6 +7037,12 @@ elm_genlist_item_tooltip_style_get(const Elm_Object_Item *it)
    return eo_do_ret(it, ret, elm_wdg_item_tooltip_style_get());
 }
 
+EOLIAN static const char *
+_elm_genlist_item_elm_widget_item_tooltip_style_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
+{
+   return it->tooltip.style;
+}
+
 EAPI Eina_Bool
 elm_genlist_item_tooltip_window_mode_set(Elm_Object_Item *item,
                                          Eina_Bool disable)
