@@ -102,15 +102,16 @@ lib/eina/eina_convert.c \
 lib/eina/eina_counter.c \
 lib/eina/eina_cow.c \
 lib/eina/eina_cpu.c \
-lib/eina/eina_debug.h \
+lib/eina/eina_crc.c \
 lib/eina/eina_debug.c \
-lib/eina/eina_debug_chunk.c \
 lib/eina/eina_debug_bt.c \
 lib/eina/eina_debug_bt_file.c \
-lib/eina/eina_debug_thread.c \
+lib/eina/eina_debug_chunk.c \
 lib/eina/eina_debug_monitor.c \
 lib/eina/eina_debug_proto.c \
+lib/eina/eina_debug_thread.c \
 lib/eina/eina_error.c \
+lib/eina/eina_evlog.c \
 lib/eina/eina_file_common.h \
 lib/eina/eina_file_common.c \
 lib/eina/eina_fp.c \
@@ -124,11 +125,13 @@ lib/eina/eina_list.c \
 lib/eina/eina_log.c \
 lib/eina/eina_magic.c \
 lib/eina/eina_main.c \
+lib/eina/eina_matrix.c \
 lib/eina/eina_matrixsparse.c \
 lib/eina/eina_mempool.c \
 lib/eina/eina_mmap.c \
 lib/eina/eina_module.c \
 lib/eina/eina_prefix.c \
+lib/eina/eina_quad.c \
 lib/eina/eina_quadtree.c \
 lib/eina/eina_rbtree.c \
 lib/eina/eina_rectangle.c \
@@ -140,8 +143,9 @@ lib/eina/eina_str.c \
 lib/eina/eina_strbuf.c \
 lib/eina/eina_strbuf_common.c \
 lib/eina/eina_stringshare.c \
-lib/eina/eina_tiler.c \
 lib/eina/eina_thread.c \
+lib/eina/eina_thread_queue.c \
+lib/eina/eina_tiler.c \
 lib/eina/eina_tmpstr.c \
 lib/eina/eina_unicode.c \
 lib/eina/eina_ustrbuf.c \
@@ -149,18 +153,10 @@ lib/eina/eina_ustringshare.c \
 lib/eina/eina_value.c \
 lib/eina/eina_value_util.c \
 lib/eina/eina_xattr.c \
-lib/eina/eina_share_common.h \
+lib/eina/eina_debug.h \
 lib/eina/eina_private.h \
-lib/eina/eina_strbuf_common.h \
-lib/eina/eina_thread_queue.c \
-lib/eina/eina_matrix.c \
-lib/eina/eina_quad.c \
-lib/eina/eina_crc.c \
-lib/eina/eina_evlog.c
-
-# Will be back for developper after 1.2
-# lib/eina/eina_model.c \
-# lib/eina/eina_object.c
+lib/eina/eina_share_common.h \
+lib/eina/eina_strbuf_common.h
 
 if HAVE_WIN32
 lib_eina_libeina_la_SOURCES += lib/eina/eina_file_win32.c
