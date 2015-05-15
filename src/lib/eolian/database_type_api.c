@@ -240,13 +240,10 @@ eolian_type_base_type_get(const Eolian_Type *tp)
         int  kw = eo_lexer_keyword_str_to_id(tp->full_name);
         if (!kw || kw < KW_byte || kw > KW_list)
           {
-             Eolian_Type *rtp;
-             rtp = eina_hash_find(_aliases, tp->full_name);
-             if (rtp) return rtp;
-             rtp = eina_hash_find(_structs, tp->full_name);
-             if (rtp) return rtp;
-             rtp = eina_hash_find(_enums, tp->full_name);
-             if (rtp) return rtp;
+             Eolian_Declaration *decl = eina_hash_find(_decls, tp->full_name);
+             if (decl && decl->type != EOLIAN_DECL_CLASS
+                      && decl->type != EOLIAN_DECL_VAR)
+               return decl->data;
           }
         return NULL;
      }
