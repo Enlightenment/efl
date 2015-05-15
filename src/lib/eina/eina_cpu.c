@@ -228,9 +228,7 @@ _eina_cpu_count_internal(void)
    for (i = 0; i < TH_MAX; i++)
      {
         if (CPU_ISSET(i, &cpu))
-           cpus = i + 1;
-        else
-           break;
+           cpus++;
      }
    return cpus;
 
