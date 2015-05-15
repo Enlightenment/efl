@@ -49,6 +49,9 @@ extern Eina_Hash *_tfilenames;
 /* a hash holding lists of deps */
 extern Eina_Hash *_depclasses;
 
+/* a hash holding all declarations, for redef checking etc */
+extern Eina_Hash *_decls;
+
 typedef struct _Eolian_Object
 {
    const char *file;
@@ -62,6 +65,21 @@ typedef struct _Eolian_Dependency
    Eina_Stringshare *filename;
    Eina_Stringshare *name;
 } Eolian_Dependency;
+
+typedef enum {
+    EOLIAN_DECL_CLASS,
+    EOLIAN_DECL_ALIAS,
+    EOLIAN_DECL_STRUCT,
+    EOLIAN_DECL_ENUM,
+    EOLIAN_DECL_VAR
+} Eolian_Declaration_Type;
+
+typedef struct _Eolian_Declaration
+{
+   Eolian_Declaration_Type type;
+   Eina_Stringshare *name;
+   void *data;
+} Eolian_Declaration;
 
 struct _Eolian_Class
 {
@@ -250,6 +268,8 @@ int database_shutdown();
 char *database_class_to_filename(const char *cname);
 Eina_Bool database_validate(void);
 Eina_Bool database_class_name_validate(const char *class_name, const Eolian_Class **cl);
+
+void database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type, void *ptr);
 
 /* types */
 

@@ -135,20 +135,27 @@ compare_class_file(const char *fn1, const char *fn2)
    return !strcmp(fn1, fn2);
 }
 
+static const char *declnames[] = {
+    "class", "type alias", "struct", "enum", "variable"
+};
+
 static void
-redef_error(Eo_Lexer *ls, Eolian_Type_Type type, Eolian_Type *old)
+redef_error(Eo_Lexer *ls, Eolian_Declaration *decl, Eolian_Declaration_Type newt)
 {
-   char  buf[256];
-   char fbuf[256] = { '\0' };
-   const char *file = eina_stringshare_ref(ls->filename);
-   if (file != old->base.file)
-     snprintf(fbuf, sizeof(fbuf), " in file '%s'", old->base.file);
-   eina_stringshare_del(file);
-   snprintf(buf, sizeof(buf),
-            "%s '%s' redefined (originally at line %d, column %d%s)",
-            (type == EOLIAN_TYPE_ENUM) ? "enum" : ((type == EOLIAN_TYPE_STRUCT)
-                ? "struct" : "type alias"),
-            old->full_name, old->base.line, old->base.column, fbuf);
+   Eolian_Object *obj = (Eolian_Object *)decl->data;
+   char buf[256], fbuf[256] = { '\0' };
+   if (ls->filename != obj->file)
+     snprintf(fbuf, sizeof(fbuf), "%s:%d:%d", obj->file, obj->line, obj->column);
+   else
+     snprintf(fbuf, sizeof(fbuf), "%d:%d", obj->line, obj->column);
+
+   if (newt != decl->type)
+     snprintf(buf, sizeof(buf), "%s '%s' redefined as %s (originally at %s)",
+              declnames[decl->type], decl->name, declnames[newt], fbuf);
+   else
+     snprintf(buf, sizeof(buf), "%s '%s' redefined (originally at %s)",
+              declnames[decl->type], decl->name, fbuf);
+
    eo_lexer_syntax_error(ls, buf);
 }
 
@@ -841,6 +848,7 @@ parse_ptr:
 static Eolian_Type *
 parse_typedef(Eo_Lexer *ls)
 {
+   Eolian_Declaration *decl;
    Eolian_Type *def = push_type(ls);
    Eina_Bool has_extern;
    const char *freefunc;
@@ -857,11 +865,11 @@ parse_typedef(Eo_Lexer *ls)
    parse_name(ls, buf);
    _fill_name(eina_stringshare_add(eina_strbuf_string_get(buf)),
               &def->full_name, &def->name, &def->namespaces);
-   Eolian_Type *tp = (Eolian_Type*)eina_hash_find(_aliases, def->full_name);
-   if (tp)
+   decl = (Eolian_Declaration *)eina_hash_find(_decls, def->full_name);
+   if (decl)
      {
         eo_lexer_context_restore(ls);
-        redef_error(ls, EOLIAN_TYPE_ALIAS, tp);
+        redef_error(ls, decl, EOLIAN_DECL_ALIAS);
      }
    eo_lexer_context_pop(ls);
    check_next(ls, ':');
@@ -879,6 +887,7 @@ parse_typedef(Eo_Lexer *ls)
 static Eolian_Variable *
 parse_variable(Eo_Lexer *ls, Eina_Bool global)
 {
+   Eolian_Declaration *decl;
    Eolian_Variable *def = calloc(1, sizeof(Eolian_Variable));
    Eina_Bool has_extern = EINA_FALSE;
    Eina_Strbuf *buf;
@@ -899,6 +908,13 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
    parse_name(ls, buf);
    _fill_name(eina_stringshare_add(eina_strbuf_string_get(buf)),
               &def->full_name, &def->name, &def->namespaces);
+   decl = (Eolian_Declaration *)eina_hash_find(_decls, def->full_name);
+   if (decl)
+     {
+        eo_lexer_context_restore(ls);
+        redef_error(ls, decl, EOLIAN_DECL_VAR);
+     }
+   eo_lexer_context_pop(ls);
    check_next(ls, ':');
    def->base_type = parse_type(ls);
    pop_type(ls);
@@ -1702,6 +1718,7 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
 static void
 parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
 {
+   Eolian_Declaration *decl;
    const char *bnm;
    char *fnm;
    Eina_Bool same;
@@ -1723,10 +1740,16 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
         eo_lexer_context_restore(ls);
         eo_lexer_syntax_error(ls, "class and file names differ");
      }
-   eo_lexer_context_pop(ls);
    _fill_name(eina_stringshare_add(eina_strbuf_string_get(buf)),
               &ls->tmp.kls->full_name, &ls->tmp.kls->name,
               &ls->tmp.kls->namespaces);
+   decl = (Eolian_Declaration *)eina_hash_find(_decls, ls->tmp.kls->full_name);
+   if (decl)
+     {
+        eo_lexer_context_restore(ls);
+        redef_error(ls, decl, EOLIAN_DECL_CLASS);
+     }
+   eo_lexer_context_pop(ls);
    pop_strbuf(ls);
    if (ls->t.token != '{')
      {
@@ -1784,7 +1807,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            Eina_Bool is_enum = (ls->t.kw == KW_enum);
            const char *name;
            int line, col;
-           Eolian_Type *tp;
+           Eolian_Declaration *decl;
            Eina_Bool has_extern;
            const char *freefunc;
            Eina_Strbuf *buf;
@@ -1796,14 +1819,12 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            col = ls->column;
            parse_name(ls, buf);
            name = eina_stringshare_add(eina_strbuf_string_get(buf));
-           tp = (Eolian_Type*)eina_hash_find(is_enum ? _enums
-                                                     : _structs, name);
-           if (tp)
+           decl = (Eolian_Declaration *)eina_hash_find(_decls, name);
+           if (decl)
              {
                 eina_stringshare_del(name);
                 eo_lexer_context_restore(ls);
-                redef_error(ls, is_enum ? EOLIAN_TYPE_ENUM
-                                        : EOLIAN_TYPE_STRUCT, tp);
+                redef_error(ls, decl, is_enum ? EOLIAN_DECL_ENUM : EOLIAN_DECL_STRUCT);
              }
            eo_lexer_context_pop(ls);
            pop_strbuf(ls);
@@ -1840,6 +1861,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
      }
    return EINA_FALSE;
 found_class:
+   database_decl_add(ls->tmp.kls->full_name, EOLIAN_DECL_CLASS, ls->tmp.kls);
    ls->tmp.classes = eina_list_append(ls->tmp.classes, ls->tmp.kls);
    ls->tmp.kls = NULL;
    return EINA_TRUE;

@@ -22,6 +22,7 @@ Eina_Hash *_constantsf = NULL;
 Eina_Hash *_filenames  = NULL;
 Eina_Hash *_tfilenames = NULL;
 Eina_Hash *_depclasses = NULL;
+Eina_Hash *_decls      = NULL;
 
 static int _database_init_count = 0;
 
@@ -64,6 +65,7 @@ database_init()
    _filenames  = eina_hash_string_small_new(free);
    _tfilenames = eina_hash_string_small_new(free);
    _depclasses = eina_hash_stringshared_new(EINA_FREE_CB(_deplist_free));
+   _decls      = eina_hash_stringshared_new(free);
    return ++_database_init_count;
 }
 
@@ -94,9 +96,20 @@ database_shutdown()
         eina_hash_free(_filenames ); _filenames  = NULL;
         eina_hash_free(_tfilenames); _tfilenames = NULL;
         eina_hash_free(_depclasses); _depclasses = NULL;
+        eina_hash_free(_decls     ); _decls      = NULL;
         eina_shutdown();
      }
    return _database_init_count;
+}
+
+void
+database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type, void *ptr)
+{
+   Eolian_Declaration *decl = calloc(1, sizeof(Eolian_Declaration));
+   decl->type = type;
+   decl->name = name;
+   decl->data = ptr;
+   eina_hash_set(_decls, name, decl);
 }
 
 #define EO_SUFFIX ".eo"

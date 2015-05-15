@@ -92,15 +92,15 @@ throw(Eo_Lexer *ls, const char *fmt, ...)
    va_start(ap, fmt);
    eina_strbuf_append_vprintf(buf, fmt, ap);
    va_end(ap);
-   eina_strbuf_append_char(buf, ' ');
+   eina_strbuf_append(buf, "\n ");
    while (ln != end && !is_newline(*ln))
      eina_strbuf_append_char(buf,*(ln++));
    eina_strbuf_append_char(buf, '\n');
    for (i = 0; i < ls->column; ++i)
      eina_strbuf_append_char(buf, ' ');
    eina_strbuf_append(buf, "^\n");
-   fprintf(stderr, "eolian:%s:%d: %s\n", ls->source, ls->line_number,
-           eina_strbuf_string_get(buf));
+   fprintf(stderr, "eolian:%s:%d:%d: %s\n", ls->source, ls->line_number,
+           ls->column, eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    longjmp(ls->err_jmp, EINA_TRUE);
 }
@@ -767,10 +767,10 @@ eo_lexer_lex_error(Eo_Lexer *ls, const char *msg, int token)
      {
         char buf[256];
         txt_token(ls, token, buf);
-        throw(ls, "%s at column %d near '%s'\n", msg, ls->column, buf);
+        throw(ls, "%s near '%s'", msg, buf);
      }
    else
-     throw(ls, "%s at column %d\n", msg, ls->column);
+     throw(ls, "%s", msg);
 }
 
 void
