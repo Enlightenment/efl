@@ -46,6 +46,7 @@ struct _Entry
    Eina_Bool had_sel : 1;
    Eina_Bool input_panel_enable : 1;
    Eina_Bool prediction_allow : 1;
+   Eina_Bool anchors_updated : 1;
 
 #ifdef HAVE_ECORE_IMF
    Eina_Bool have_preedit : 1;
@@ -865,7 +866,7 @@ _edje_anchor_mouse_out_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 }
 
 static void
-_anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o EINA_UNUSED, Entry *en)
+_anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
 {
    Eina_List *l, *ll, *range = NULL;
    Evas_Coord x, y, w, h;
@@ -873,6 +874,9 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o EINA_UNUSED
    Sel *sel;
    Anchor *an;
    Edje *ed = en->ed;
+
+   /* Better not to update anchors outside the view port. */
+   if (en->anchors_updated) return;
 
    smart = evas_object_smart_parent_get(o);
    clip = evas_object_clip_get(o);
@@ -1010,6 +1014,43 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o EINA_UNUSED
                }
           }
      }
+}
+
+static void
+_anchors_update_check(Edje *ed, Edje_Real_Part *rp)
+{
+   Evas_Coord x, y, w, h;
+   Evas_Coord vx, vy, vw, vh;
+   Eina_Bool anchors_updated = EINA_FALSE;
+   Entry *en;
+
+   en = rp->typedata.text->entry_data;
+   x = y = w = h = -1;
+   vx = vy = vw = vh = -1;
+   evas_object_geometry_get(rp->object, &x, &y, &w, &h);
+   evas_output_viewport_get(ed->base->evas, &vx, &vy, &vw, &vh);
+   if (((y + h) <= vy) || (y >= (vy + vh)))
+     anchors_updated = EINA_TRUE;
+   else if (((x + w) <= vx) || (x >= (vx + vw)))
+     anchors_updated = EINA_TRUE;
+
+   if (en->anchors_updated)
+     en->anchors_updated = anchors_updated;
+   _anchors_update(en->cursor, rp->object, en);
+   en->anchors_updated = anchors_updated;
+}
+
+static void
+_anchors_need_update(Edje_Real_Part *rp)
+{
+   Entry *en;
+   Eina_Bool anchors_updated;
+
+   en = rp->typedata.text->entry_data;
+   anchors_updated = en->anchors_updated;
+   en->anchors_updated = EINA_FALSE;
+   _anchors_update(en->cursor, rp->object, en);
+   en->anchors_updated = anchors_updated;
 }
 
 static void
@@ -2671,7 +2712,7 @@ _edje_entry_real_part_configure(Edje *ed, Edje_Real_Part *rp)
      }
 
    _sel_update(ed, en->cursor, rp->object, en);
-   _anchors_update(en->cursor, rp->object, en);
+   _anchors_update_check(ed, rp);
    x = y = w = h = -1;
    xx = yy = ww = hh = -1;
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);
@@ -2914,6 +2955,9 @@ _edje_entry_anchor_geometry_get(Edje_Real_Part *rp, const char *anchor)
        (!rp->typedata.text)) return NULL;
    en = rp->typedata.text->entry_data;
    if (!en) return NULL;
+   /* Update the anchors first in case entry is not inside the canvas
+    * viewport */
+   _anchors_need_update(rp);
    EINA_LIST_FOREACH(en->anchors, l, an)
      {
         const char *n = an->name;
@@ -2935,6 +2979,9 @@ _edje_entry_anchors_list(Edje_Real_Part *rp)
        (!rp->typedata.text)) return NULL;
    en = rp->typedata.text->entry_data;
    if (!en) return NULL;
+   /* Update the anchors first in case entry is not inside the canvas
+    * viewport */
+   _anchors_need_update(rp);
    if (!en->anchorlist)
      {
         EINA_LIST_FOREACH(en->anchors, l, an)
@@ -2984,6 +3031,9 @@ _edje_entry_items_list(Edje_Real_Part *rp)
        (!rp->typedata.text)) return NULL;
    en = rp->typedata.text->entry_data;
    if (!en) return NULL;
+   /* Update the anchors first in case entry is not inside the canvas
+    * viewport */
+   _anchors_need_update(rp);
    if (!en->itemlist)
      {
         EINA_LIST_FOREACH(en->anchors, l, an)
@@ -4294,8 +4344,7 @@ _edje_entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx E
 
    evas_textblock_cursor_range_delete(del_start, del_end);
    _anchors_get(en->cursor, rp->object, en);
-   _anchors_update(en->cursor, rp->object, en);
-
+   _anchors_update_check(ed, rp);
    info = calloc(1, sizeof(*info));
    info->insert = EINA_FALSE;
    info->change.del.start = start;
