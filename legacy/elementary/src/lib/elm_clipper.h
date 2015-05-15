@@ -2,8 +2,8 @@
  * @defgroup Clipper Clipper
  * @ingroup Elementary
  *
- * This widget display a clipped object.
- * For this widget, need a clipper object and a content object.
+ * This widget displays a clipped(masked) object.
+ * For this widget, you need one clipper and one content objects.
  * The content would be clipped out by the clipper.
  * If clipper is not set, you would see the content without cuts
  *
