@@ -417,6 +417,7 @@ _elm_layout_elm_widget_on_focus(Eo *obj, Elm_Layout_Smart_Data *_pd EINA_UNUSED)
         if (_elm_config->atspi_mode && !elm_widget_child_can_focus_get(obj))
           elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_FOCUSED, EINA_FALSE);
      }
+   edje_object_message_signal_process(wd->resize_obj);
 
    return EINA_TRUE;
 }
