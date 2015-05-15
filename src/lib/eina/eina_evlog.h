@@ -23,7 +23,10 @@
  * @addtogroup Eina_Evlog Event Log Debugging
  * @ingroup Eina
  *
- * @brief These functions are use internally by EFL in general for profiling
+ * @brief These functions are use internally by EFL in general for profiling.
+ * This API is not considered stable or intended for use outside of EFL
+ * itself at this stage, so do not use this unless you wish to keep up. The
+ * format of debug logs may and likely will change as this feature matures.
  *
  * @{
  *
