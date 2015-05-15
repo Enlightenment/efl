@@ -37,7 +37,7 @@
 # endif
 # include <pthread.h>
 
-# define TH_MAX 8
+# define TH_MAX 32
 #endif
 
 #include <stdlib.h>
