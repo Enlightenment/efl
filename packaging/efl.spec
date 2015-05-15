@@ -904,6 +904,7 @@ grep --silent ECORE_IMF_MODULE "$f" \
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
 %{_includedir}/eio-1/*
+%{_includedir}/eio-cxx-1/*
 %{_libdir}/libeio.so
 %{_libdir}/pkgconfig/eio*.pc
 

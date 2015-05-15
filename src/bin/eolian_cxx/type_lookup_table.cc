@@ -23,7 +23,7 @@ type_lookup_table
   {"Eina_List *", eolian_type::complex_, false, true, true, "::efl::eina::list", {"eina-cxx/eina_list.hh"}},
   {"const Eina_List *", eolian_type::complex_, true, false, true, "::efl::eina::crange_list", {"eina-cxx/eina_list.hh"}},
   {"Eio_Filter_Direct_Cb", eolian_type::callback_, {"Eio.h"}},
-  {"Emodel *", eolian_type::simple_, false, false, true, "::emodel", {"Emodel.hh"}},
+  {"Efl_Model_Base *", eolian_type::simple_, false, false, true, "::efl::model::base", {"Efl.hh"}},
   {"Eo *", eolian_type::simple_, false, true, true, "::efl::eo::concrete", {"eo_concrete.hh"}},
   {"Eo *", eolian_type::simple_, false, false, true, "::efl::eo::concrete", {"eo_concrete.hh"}},
   //{"Evas_Object_Box_Layout", eolian_type::callback_, {"Evas.h"}},
