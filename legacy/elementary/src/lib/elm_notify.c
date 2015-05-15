@@ -163,6 +163,18 @@ _elm_notify_elm_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
    return EINA_TRUE;
 }
 
+EOLIAN static void
+_elm_notify_elm_widget_part_text_set(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const char *part, const char *label)
+{
+   edje_object_part_text_set(sd->notify, part, label);
+}
+
+EOLIAN static const char*
+_elm_notify_elm_widget_part_text_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const char *part)
+{
+   return edje_object_part_text_get(sd->notify, part);
+}
+
 static void
 _calc(Evas_Object *obj)
 {

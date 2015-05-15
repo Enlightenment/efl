@@ -99,6 +99,8 @@ class Elm.Notify (Elm.Container)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_next;
       Elm.Widget.sub_object_del;
+      Elm_Widget.part_text.set;
+      Elm_Widget.part_text.get;
       Elm.Container.content_get;
       Elm.Container.content_set;
       Elm.Container.content_unset;
