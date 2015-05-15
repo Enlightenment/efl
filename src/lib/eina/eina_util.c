@@ -41,7 +41,7 @@
  *============================================================================*/
 
 #ifdef _WIN32
-static char home_storage[PATH_MAX];
+static char home_storage[8];
 #endif
 
 EAPI const char *
@@ -55,8 +55,9 @@ eina_environment_home_get(void)
    if (!home &&
        (getenv("HOMEDRIVE") && getenv("HOMEPATH")))
      {
-        snprintf(home_storage, sizeof(home_storage), "%s%s",
-                 getenv("HOMEDRIVE"), getenv("HOMEPATH"));
+        memcpy(home_storage, getenv("HOMEDRIVE"), strlen(getenv("HOMEDRIVE")));
+        memcpy(home_storage + strlen(getenv("HOMEDRIVE")),
+               getenv("HOMEPATH"), strlen(getenv("HOMEPATH")) + 1);
         home = home_storage;
      }
    if (!home) home = "C:\\";
