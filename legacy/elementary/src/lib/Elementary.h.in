@@ -195,6 +195,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_cache.h>
 #include <elm_calendar.h>
 #include <elm_check.h>
+#include <elm_clipper.h>
 #include <elm_clock.h>
 #include <elm_cnp.h>
 #include <elm_colorselector.h>
