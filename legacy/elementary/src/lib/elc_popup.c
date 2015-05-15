@@ -132,8 +132,6 @@ _scroller_size_calc(Evas_Object *obj)
 
    ELM_POPUP_DATA_GET(obj, sd);
 
-   if (!sd->items) return;
-
    sd->scr_size_recalc = EINA_FALSE;
    sd->max_sc_h = -1;
    sd->max_sc_w = -1;
@@ -345,7 +343,6 @@ _elm_popup_elm_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
                      elm_layout_edje_get(VIEW(it)));
                }
           }
-        _scroller_size_calc(obj);
      }
    if (sd->title_text)
      {
@@ -356,6 +353,7 @@ _elm_popup_elm_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
      elm_layout_signal_emit(sd->main_layout, "elm,state,title,icon,visible", "elm");
 
    _visuals_set(obj);
+   _scroller_size_calc(obj);
    elm_layout_sizing_eval(obj);
 
    /* access */
@@ -399,11 +397,31 @@ _elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
         evas_object_size_hint_min_get(sd->scr, &minw, &minh);
         evas_object_size_hint_max_get(sd->scr, &minw, &minh);
      }
+   else if (sd->content || sd->text_content_obj)
+     {
+        double horizontal, vertical;
+        Evas_Coord w, h;
 
-   edje_object_size_min_calc(elm_layout_edje_get(sd->main_layout), &minw, &minh);
+        edje_object_message_signal_process(elm_layout_edje_get(sd->content_area));
 
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
+        elm_popup_align_get(obj, &horizontal, &vertical);
+        evas_object_geometry_get(elm_widget_parent_get(obj), NULL, NULL, &w, &h);
+
+        if (horizontal == ELM_NOTIFY_ALIGN_FILL)
+          minw = w;
+
+        if (vertical == ELM_NOTIFY_ALIGN_FILL)
+          minh = h;
+
+        edje_object_size_min_restricted_calc(elm_layout_edje_get(sd->content_area),
+                                             &minw, &minh, minw, minh);
+        evas_object_size_hint_min_set(sd->content_area, minw, minh);
+
+        if (minh > sd->max_sc_h)
+          evas_object_size_hint_min_set(sd->spacer, minw, sd->max_sc_h);
+        else
+          evas_object_size_hint_min_set(sd->spacer, minw, minh);
+      }
 }
 
 EOLIAN static Eina_Bool
@@ -560,35 +578,7 @@ _layout_change_cb(void *data EINA_UNUSED,
 static void
 _list_add(Evas_Object *obj)
 {
-   char style[1024];
-
    ELM_POPUP_DATA_GET(obj, sd);
-
-   //Table
-   sd->tbl = elm_table_add(sd->main_layout);
-   evas_object_event_callback_add(sd->tbl, EVAS_CALLBACK_DEL,
-                                  _on_table_del, obj);
-   eo_do(sd->main_layout, elm_obj_container_content_set(CONTENT_PART, sd->tbl));
-   evas_object_show(sd->tbl);
-
-   //Spacer
-   sd->spacer = evas_object_rectangle_add(evas_object_evas_get(obj));
-   evas_object_color_set(sd->spacer, 0, 0, 0, 0);
-   elm_table_pack(sd->tbl, sd->spacer, 0, 0, 1, 1);
-
-   //Scroller
-   snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));
-   sd->scr = elm_scroller_add(sd->tbl);
-   elm_widget_style_set(sd->scr, style);
-   elm_scroller_content_min_limit(sd->scr, EINA_TRUE, EINA_FALSE);
-   elm_scroller_bounce_set(sd->scr, EINA_FALSE, EINA_TRUE);
-   evas_object_size_hint_weight_set(sd->scr,
-                                    EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(sd->scr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_event_callback_add(sd->scr, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                  _size_hints_changed_cb, sd->main_layout);
-   elm_table_pack(sd->tbl, sd->scr, 0, 0, 1, 1);
-   evas_object_show(sd->scr);
 
    //Box
    sd->box = elm_box_add(sd->scr);
@@ -864,6 +854,7 @@ _title_text_set(Evas_Object *obj,
    if (title_visibility_old != title_visibility_current)
      _visuals_set(obj);
 
+   _scroller_size_calc(obj);
    elm_layout_sizing_eval(obj);
 
    return EINA_TRUE;
@@ -883,7 +874,7 @@ _content_text_set(Evas_Object *obj,
         _items_remove(sd);
         _list_del(sd);
      }
-   else eo_do(sd->main_layout, elm_obj_container_content_set(CONTENT_PART, sd->content_area));
+   else elm_object_content_set(sd->scr, sd->content_area);
    if (!text) goto end;
 
    if (sd->text_content_obj)
@@ -927,6 +918,7 @@ _content_text_set(Evas_Object *obj,
      }
 
 end:
+   _scroller_size_calc(obj);
    elm_layout_sizing_eval(obj);
 
    return EINA_TRUE;
@@ -1022,8 +1014,7 @@ _content_set(Evas_Object *obj,
    sd->content = content;
    if (content)
      {
-        eo_do(sd->main_layout, elm_obj_container_content_set
-           (CONTENT_PART, sd->content_area));
+        elm_object_content_set(sd->scr, sd->content_area);
 
         eo_do(sd->content_area, elm_obj_container_content_set
           (CONTENT_PART, content));
@@ -1097,8 +1088,7 @@ _action_button_set(Evas_Object *obj,
    elm_object_part_content_set
      (sd->action_area, buf, sd->buttons[idx]->btn);
 
-   if (sd->items) _scroller_size_calc(obj);
-
+   _scroller_size_calc(obj);
    elm_layout_sizing_eval(obj);
 }
 
@@ -1368,6 +1358,35 @@ _elm_popup_elm_widget_event(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED, Evas_Objec
    return EINA_TRUE;
 }
 
+static void
+_create_scroller(Evas_Object *obj)
+{
+   ELM_POPUP_DATA_GET(obj, sd);
+
+   //table
+   sd->tbl = elm_table_add(sd->main_layout);
+   evas_object_event_callback_add(sd->tbl, EVAS_CALLBACK_DEL,
+                                  _on_table_del, obj);
+
+   //spacer
+   sd->spacer = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_color_set(sd->spacer, 0, 0, 0, 0);
+   elm_table_pack(sd->tbl, sd->spacer, 0, 0, 1, 1);
+
+   //Scroller
+   sd->scr = elm_scroller_add(sd->tbl);
+   elm_object_style_set(sd->scr, "popup/no_inset_shadow");
+   evas_object_size_hint_weight_set(sd->scr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(sd->scr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_scroller_policy_set(sd->scr, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
+   elm_scroller_content_min_limit(sd->scr, EINA_TRUE, EINA_FALSE);
+   elm_scroller_bounce_set(sd->scr, EINA_FALSE, EINA_TRUE);
+   evas_object_event_callback_add(sd->scr, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _size_hints_changed_cb, obj);
+   elm_table_pack(sd->tbl, sd->scr, 0, 0, 1, 1);
+   evas_object_show(sd->scr);
+}
+
 EOLIAN static void
 _elm_popup_evas_object_smart_add(Eo *obj, Elm_Popup_Data *priv)
 {
@@ -1393,6 +1412,9 @@ _elm_popup_evas_object_smart_add(Eo *obj, Elm_Popup_Data *priv)
                              elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
 
+   _create_scroller(obj);
+   elm_layout_content_set(priv->main_layout, "elm.swallow.content", priv->tbl);
+
    elm_object_content_set(priv->notify, priv->main_layout);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _on_show, NULL);
@@ -1412,7 +1434,7 @@ _elm_popup_evas_object_smart_add(Eo *obj, Elm_Popup_Data *priv)
    else
      evas_object_event_callback_add
         (priv->content_area, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-         _size_hints_changed_cb, priv->main_layout);
+         _size_hints_changed_cb, obj);
 
    priv->content_text_wrap_type = ELM_WRAP_MIXED;
    evas_object_smart_callback_add
