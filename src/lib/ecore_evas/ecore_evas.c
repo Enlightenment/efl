@@ -3779,6 +3779,34 @@ ecore_evas_extn_socket_listen(Ecore_Evas *ee, const char *svcname, int svcnum, E
 }
 
 EAPI void
+ecore_evas_extn_socket_events_block_set(Ecore_Evas *ee, Eina_Bool events_block)
+{
+   void (*set)(Ecore_Evas*, Eina_Bool);
+   Eina_Module *m = _ecore_evas_engine_load("extn");
+   EINA_SAFETY_ON_NULL_RETURN(m);
+
+   set = eina_module_symbol_get(m,
+         "ecore_evas_extn_socket_events_block_set_internal");
+   EINA_SAFETY_ON_NULL_RETURN(set);
+
+   set(ee, events_block);
+}
+
+EAPI Eina_Bool
+ecore_evas_extn_socket_events_block_get(Ecore_Evas *ee)
+{
+   Eina_Bool (*get)(Ecore_Evas*);
+   Eina_Module *m = _ecore_evas_engine_load("extn");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(m, EINA_FALSE);
+
+   get = eina_module_symbol_get(m,
+         "ecore_evas_extn_socket_events_block_get_internal");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(get, EINA_FALSE);
+
+   return get(ee);
+}
+
+EAPI void
 ecore_evas_extn_plug_object_data_lock(Evas_Object *obj)
 {
    Ecore_Evas_Interface_Extn *iface;

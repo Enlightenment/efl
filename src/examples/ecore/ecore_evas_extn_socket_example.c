@@ -6,7 +6,7 @@
  * You can check functions of ecore extn socket if you use ecore extn plug together.
  *
  * @verbatim
- * gcc -o ecore_evas_extn_socket_example ecore_evas_extn_socket_example.c `pkg-config --libs --cflags ecore-evas`
+ * gcc -o ecore_evas_extn_socket_example ecore_evas_extn_socket_example.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
 
@@ -192,6 +192,8 @@ main(void)
    evas_object_move(sock_bg, 0, 0);
    evas_object_show(sock_bg);
    ecore_evas_data_set(ee_socket, "bg", sock_bg);
+
+   ecore_evas_extn_socket_events_block_set(ee_socket, EINA_FALSE);
 
    ecore_main_loop_begin();
 

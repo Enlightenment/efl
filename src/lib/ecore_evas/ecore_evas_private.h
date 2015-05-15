@@ -190,6 +190,7 @@ struct _Ecore_Evas
    Eina_Bool   alpha  : 1;
    Eina_Bool   transparent  : 1;
    Eina_Bool   in  : 1;
+   Eina_Bool   events_block  : 1; /* @since 1.14 */
 
    Eina_Hash  *data;
 

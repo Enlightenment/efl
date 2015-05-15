@@ -2651,6 +2651,31 @@ EAPI Ecore_Evas *ecore_evas_extn_socket_new(int w, int h);
 EAPI Eina_Bool ecore_evas_extn_socket_listen(Ecore_Evas *ee, const char *svcname, int svcnum, Eina_Bool svcsys);
 
 /**
+ * @brief Set the blocking about mouse events to Ecore Evas.
+ *
+ * @param ee The Ecore_Evas.
+ * @param events_block The blocking about mouse events.
+ *
+ * @see ecore_evas_extn_socket_events_block_get()
+ *
+ * @since 1.15
+ */
+EAPI void ecore_evas_extn_socket_events_block_set(Ecore_Evas *ee, Eina_Bool events_block);
+
+/**
+ * @brief Get the blocking about mouse events to Ecore Evas.
+ *
+ * @param ee The Ecore_Evas.
+
+ * @return The blocking about mouse events.
+ *
+ * @see ecore_evas_extn_socket_events_block_set()
+ *
+ * @since 1.15
+ */
+EAPI Eina_Bool ecore_evas_extn_socket_events_block_get(Ecore_Evas *ee);
+
+/**
  * @brief Lock the pixel data so the socket cannot change it
  *
  * @param obj The image object returned by ecore_evas_extn_plug_new() to lock

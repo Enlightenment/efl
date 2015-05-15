@@ -4,7 +4,7 @@
  * For checking with ecore evas extn socket, please run with ecore_evas_extn_socket_example.
  *
  * @verbatim
- * gcc -o ecore_evas_extn_plug_example ecore_evas_extn_plug_example.c `pkg-config --libs --cflags ecore-evas`
+ * gcc -o ecore_evas_extn_plug_example ecore_evas_extn_plug_example.c `pkg-config --libs --cflags evas ecore ecore-evas`
  * @endverbatim
  */
 
