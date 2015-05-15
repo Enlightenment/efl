@@ -91,7 +91,7 @@ _fill_list(Evas_Object *obj, Elm_Genlist_Item_Class *itc)
    struct dirent *de;
    Eina_List *l;
    char *real;
-   char *home_env = NULL;
+   const char *home_env = NULL;
    unsigned int x = 0;
 
    if (!dirs)

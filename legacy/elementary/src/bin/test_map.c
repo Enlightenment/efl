@@ -534,7 +534,7 @@ static void
 _track_add(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *fs, *vbox, *hbox, *sep;
-   char *path = NULL;
+   const char *path = NULL;
 
    fs_win = elm_win_util_standard_add("fileselector", "File Selector");
    elm_win_autodel_set(fs_win, EINA_TRUE);
