@@ -302,11 +302,9 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
                   _evas_event_havemap_adjust(eo_child, child, &ev->cur.canvas.x,
                                              &ev->cur.canvas.y,
                                              child->mouse_grabbed);
-                  if ((e->pointer.x != ev->cur.canvas.x) ||
-                      (e->pointer.y != ev->cur.canvas.y))
-                    evas_object_event_callback_call(eo_child, child,
-                                                    EVAS_CALLBACK_MOUSE_MOVE,
-                                                    ev, event_id);
+                  evas_object_event_callback_call(eo_child, child,
+                                                  EVAS_CALLBACK_MOUSE_MOVE,
+                                                  ev, event_id);
                }
              else
                outs = eina_list_append(outs, eo_child);
@@ -374,11 +372,9 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e, Evas_Event
                   _evas_event_havemap_adjust(eo_child, child, &ev->cur.canvas.x,
                                              &ev->cur.canvas.y,
                                              child->mouse_grabbed);
-                  if ((e->pointer.x != ev->cur.canvas.x) ||
-                      (e->pointer.y != ev->cur.canvas.y))
-                    evas_object_event_callback_call(eo_child, child,
-                                                    EVAS_CALLBACK_MOUSE_MOVE,
-                                                    ev, event_id);
+                  evas_object_event_callback_call(eo_child, child,
+                                                  EVAS_CALLBACK_MOUSE_MOVE,
+                                                  ev, event_id);
                }
              else if (child->mouse_in)
                {
