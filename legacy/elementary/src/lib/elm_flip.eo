@@ -1,3 +1,45 @@
+enum Elm.Flip.Mode
+{
+  /*@
+    @ingroup Flip
+   */
+   legacy: elm_flip;
+   rotate_y_center_axis,
+   rotate_x_center_axis,
+   rotate_xz_center_axis,
+   rotate_yz_center_axis,
+   cube_left,
+   cube_right,
+   cube_up,
+   cube_down,
+   page_left,
+   page_right,
+   page_up,
+   page_down
+}
+
+enum Elm.Flip.Interaction
+{
+  /*@
+    @ingroup Flip
+   */
+   none,
+   rotate,
+   cube,
+   page
+}
+
+enum Elm.Flip.Direction
+{
+  /*@
+    @ingroup Flip
+   */
+   up = 0, /*@< Allows interaction with the top of the widget */
+   down, /*@< Allows interaction with the bottom of the widget */
+   left, /*@< Allows interaction with the left portion of the widget */
+   right /*@< Allows interaction with the right portion of the widget */
+}
+
 class Elm.Flip (Elm.Container)
 {
    eo_prefix: elm_obj_flip;
@@ -37,7 +79,7 @@ class Elm.Flip (Elm.Container)
             @ingroup Flip */
          }
          values {
-            Elm_Flip_Interaction mode; /*@ The interactive flip mode to use */
+            Elm.Flip.Interaction mode; /*@ The interactive flip mode to use */
          }
       }
       @property front_visible {
@@ -74,7 +116,7 @@ class Elm.Flip (Elm.Container)
          @ingroup Flip */
 
          params {
-            @in Elm_Flip_Direction dir; /*@ The hit area to set */
+            @in Elm.Flip.Direction dir; /*@ The hit area to set */
             @in double hitsize; /*@ The amount of that dimension (0.0 to 1.0) to use */
          }
       }
@@ -91,7 +133,7 @@ class Elm.Flip (Elm.Container)
 
          return: double;
          params {
-            @in Elm_Flip_Direction dir; /*@ The direction to check */
+            @in Elm.Flip.Direction dir; /*@ The direction to check */
          }
       }
       interaction_direction_enabled_set {
@@ -111,7 +153,7 @@ class Elm.Flip (Elm.Container)
          @ingroup Flip */
 
          params {
-            @in Elm_Flip_Direction dir; /*@ The direction to change */
+            @in Elm.Flip.Direction dir; /*@ The direction to change */
             @in bool enabled; /*@ If that direction is enabled or not */
          }
       }
@@ -129,7 +171,7 @@ class Elm.Flip (Elm.Container)
 
          return: bool;
          params {
-            @in Elm_Flip_Direction dir; /*@ The direction to check */
+            @in Elm.Flip.Direction dir; /*@ The direction to check */
          }
       }
       go {
@@ -181,7 +223,7 @@ class Elm.Flip (Elm.Container)
          @ingroup Flip */
 
          params {
-            @in Elm_Flip_Mode mode; /*@ The mode type */
+            @in Elm.Flip.Mode mode; /*@ The mode type */
          }
       }
       go_to {
@@ -234,7 +276,7 @@ class Elm.Flip (Elm.Container)
 
          params {
             @in bool front; /*@ if @c EINA_TRUE, makes front visible, otherwise makes back. */
-            @in Elm_Flip_Mode mode; /*@ The mode type */
+            @in Elm.Flip.Mode mode; /*@ The mode type */
          }
       }
    }

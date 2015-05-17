@@ -217,7 +217,6 @@ elm_entry_eo.h \
 elm_entry_legacy.h \
 elm_finger.h \
 elm_flip.h \
-elm_flip_common.h \
 elm_flip_eo.h \
 elm_flip_legacy.h \
 elm_flipselector.h \

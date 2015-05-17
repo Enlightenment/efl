@@ -38,7 +38,6 @@
  * @{
  */
 
-#include "elm_flip_common.h"
 #ifdef EFL_EO_API_SUPPORT
 #include "elm_flip_eo.h"
 #endif
