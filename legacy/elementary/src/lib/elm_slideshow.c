@@ -238,6 +238,7 @@ _item_realize(Elm_Slideshow_Item_Data *item)
         if (item->itc->func.del)
           item->itc->func.del(elm_object_item_data_get(EO_OBJ(item)), VIEW(item));
         ELM_SAFE_FREE(VIEW(item), evas_object_del);
+        item->l_built = NULL;
      }
 }
 
@@ -628,19 +629,13 @@ _elm_slideshow_loop_get(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 EOLIAN static void
 _elm_slideshow_clear(Eo *obj EINA_UNUSED, Elm_Slideshow_Data *sd)
 {
-   Elm_Slideshow_Item_Data *item;
    Eo *eo_item;
-
+   Eina_List *itr, *itr2;
    sd->previous = NULL;
    sd->current = NULL;
-   EINA_LIST_FREE(sd->items_built, item)
-     {
-        if (item->itc->func.del)
-          item->itc->func.del(elm_object_item_data_get(EO_OBJ(item)), VIEW(item));
-     }
 
-   EINA_LIST_FREE(sd->items, eo_item)
-     eo_del(eo_item);
+   EINA_LIST_FOREACH_SAFE(sd->items, itr, itr2, eo_item)
+      eo_del(eo_item);
 }
 
 EOLIAN static const Eina_List*
