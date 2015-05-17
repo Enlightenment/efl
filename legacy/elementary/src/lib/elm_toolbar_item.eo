@@ -1,10 +1,9 @@
 enum Elm.Toolbar_Item.Scrollto_Type
 {
-/**
-   Defines where to position the item in the toolbar.
-
-   @ingroup Toolbar
- */
+   /*@
+     Defines where to position the item in the toolbar.
+     @ingroup Toolbar
+   */
 
    legacy: elm_toolbar_item_scrollto;
 

@@ -1,6 +1,6 @@
 enum Elm.Toolbar.Shrink_Mode
 {
-/**
+/*@
    Set toolbar's items display behavior, it can be scrollable,
    show a menu with exceeding items, or simply hide them.
 
