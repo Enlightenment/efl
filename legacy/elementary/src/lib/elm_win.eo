@@ -1584,7 +1584,7 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @in Evas_Modifier_Mask modifiers; /*@ This is for the keymask feature. Currently this feature is not supported. */
             @in Evas_Modifier_Mask not_modifiers; /*@ This is for the keymask feature. Currently this feature is not supported. */
             @in int proirity; /*@ This is for the priority of keygrab. Currently this feature is not supported. */
-            @in Elm_Win_Keygrab_Mode grab_mode; /*@  According to the grabmode, it can grab key differently */
+            @in Elm.Win.Keygrab_Mode grab_mode; /*@  According to the grabmode, it can grab key differently */
          }
       }
       keygrab_unset {
