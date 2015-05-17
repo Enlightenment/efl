@@ -1,3 +1,30 @@
+enum Elm.Toolbar.Shrink_Mode
+{
+/**
+   Set toolbar's items display behavior, it can be scrollable,
+   show a menu with exceeding items, or simply hide them.
+
+   @note Default value is #ELM_TOOLBAR_SHRINK_MENU. It reads value
+   from elm config.
+
+   Values <b> don't </b> work as bitmask, only one can be chosen.
+
+   @see elm_toolbar_shrink_mode_set()
+   @see elm_toolbar_shrink_mode_get()
+
+   @ingroup Toolbar
+ */
+
+   legacy: elm_toolbar_shrink;
+
+   none, /*@< Set toolbar minimum size to fit all the items. */
+   hide, /*@< Hide exceeding items. */
+   scroll, /*@< Allow accessing exceeding items through a scroller. */
+   menu, /*@< Inserts a button to pop up a menu with exceeding items. */
+   expand, /*@< Expand all items according the size of the toolbar. */
+   last /*@< Indicates error if returned by elm_toolbar_shrink_mode_get() */
+}
+
 class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
                    Elm_Interface_Atspi_Widget_Action)
 {
@@ -193,7 +220,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Toolbar */
          }
          values {
-            Elm_Toolbar_Shrink_Mode shrink_mode; /*@ Toolbar's items display behavior */
+            Elm.Toolbar.Shrink_Mode shrink_mode; /*@ Toolbar's items display behavior */
          }
       }
       @property menu_parent {
