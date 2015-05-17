@@ -70,7 +70,7 @@ _on_mouse_up(void *data,
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      return;
 
-   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
+   eo_do(data, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, NULL));
 }
 
 /* overriding layout's focus_next() in order to just cycle through the

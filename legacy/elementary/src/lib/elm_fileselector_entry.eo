@@ -1,4 +1,5 @@
-class Elm.Fileselector_Entry (Elm.Layout, Elm_Interface_Fileselector)
+class Elm.Fileselector_Entry (Elm.Layout, Elm_Interface_Fileselector,
+                              Evas.Clickable_Interface, Evas.Selectable_Interface)
 {
    eo_prefix: elm_obj_fileselector_entry;
    methods {
@@ -122,6 +123,9 @@ class Elm.Fileselector_Entry (Elm.Layout, Elm_Interface_Fileselector)
       language,changed;
       access,changed;
       changed;
+      activated;
+      file,chosen;
+      press;
    }
 
 }

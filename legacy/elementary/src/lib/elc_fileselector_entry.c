@@ -43,28 +43,31 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
 };
 #undef ELM_PRIV_FILESELECTOR_ENTRY_SIGNALS
 
-#define SIG_FWD(name)                                                       \
-  static void                                                               \
-  _##name##_fwd(void *data, Evas_Object * obj EINA_UNUSED, void *event_info) \
+#define SIG_FWD(name, event)                                                      \
+  static Eina_Bool                                                               \
+  _##name##_fwd(void *data,                                          \
+    Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)\
   {                                                                         \
-     evas_object_smart_callback_call(data, SIG_##name, event_info);         \
+     eo_do(data, eo_event_callback_call(event, event_info));          \
+                                                                      \
+     return EINA_TRUE;                                                \
   }
-SIG_FWD(CHANGED)
-SIG_FWD(PRESS)
-SIG_FWD(LONGPRESSED)
-SIG_FWD(CLICKED)
-SIG_FWD(CLICKED_DOUBLE)
-SIG_FWD(FOCUSED)
-SIG_FWD(UNFOCUSED)
-SIG_FWD(SELECTION_PASTE)
-SIG_FWD(SELECTION_COPY)
-SIG_FWD(SELECTION_CUT)
-SIG_FWD(UNPRESSED)
+SIG_FWD(CHANGED, ELM_FILESELECTOR_ENTRY_EVENT_CHANGED)
+SIG_FWD(PRESS, ELM_FILESELECTOR_ENTRY_EVENT_PRESS)
+SIG_FWD(LONGPRESSED, EVAS_CLICKABLE_INTERFACE_EVENT_LONGPRESSED)
+SIG_FWD(CLICKED, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED)
+SIG_FWD(CLICKED_DOUBLE, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE)
+SIG_FWD(FOCUSED, ELM_LAYOUT_EVENT_FOCUSED)
+SIG_FWD(UNFOCUSED, ELM_LAYOUT_EVENT_UNFOCUSED)
+SIG_FWD(SELECTION_PASTE, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_PASTE)
+SIG_FWD(SELECTION_COPY, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_COPY)
+SIG_FWD(SELECTION_CUT, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_CUT)
+SIG_FWD(UNPRESSED, EVAS_CLICKABLE_INTERFACE_EVENT_UNPRESSED)
 #undef SIG_FWD
 
-static void
+static Eina_Bool
 _FILE_CHOSEN_fwd(void *data,
-                 Evas_Object *obj EINA_UNUSED,
+                 Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                  void *event_info)
 {
    const char *file = event_info;
@@ -73,15 +76,18 @@ _FILE_CHOSEN_fwd(void *data,
    ELM_FILESELECTOR_ENTRY_DATA_GET(data, sd);
 
    s = elm_entry_utf8_to_markup(file);
-   if (!s) return;
+   if (!s) return EINA_TRUE;
    elm_object_text_set(sd->entry, s);
    free(s);
-   evas_object_smart_callback_call(data, SIG_FILE_CHOSEN, event_info);
+   eo_do(data, eo_event_callback_call
+     (ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, event_info));
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _ACTIVATED_fwd(void *data,
-               Evas_Object *obj EINA_UNUSED,
+               Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                void *event_info)
 {
    const char *file;
@@ -90,7 +96,10 @@ _ACTIVATED_fwd(void *data,
 
    file = elm_object_text_get(sd->entry);
    elm_fileselector_path_set(sd->button, file);
-   evas_object_smart_callback_call(data, SIG_ACTIVATED, event_info);
+   eo_do(data, eo_event_callback_call
+     (ELM_FILESELECTOR_ENTRY_EVENT_ACTIVATED, event_info));
+
+   return EINA_TRUE;
 }
 
 EOLIAN static void
@@ -284,11 +293,11 @@ _elm_fileselector_entry_evas_object_smart_add(Eo *obj, Elm_Fileselector_Entry_Da
    elm_fileselector_expandable_set
      (priv->button, _elm_config->fileselector_expand_enable);
 
-#define SIG_FWD(name) \
-  evas_object_smart_callback_add(priv->button, SIG_##name, _##name##_fwd, obj)
-   SIG_FWD(CLICKED);
-   SIG_FWD(UNPRESSED);
-   SIG_FWD(FILE_CHOSEN);
+#define SIG_FWD(name, event) \
+  eo_do(priv->button, eo_event_callback_add(event, _##name##_fwd, obj))
+   SIG_FWD(CLICKED, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED);
+   SIG_FWD(UNPRESSED, EVAS_CLICKABLE_INTERFACE_EVENT_UNPRESSED);
+   SIG_FWD(FILE_CHOSEN, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN);
 #undef SIG_FWD
 
    priv->entry = elm_entry_add(obj);
@@ -298,19 +307,19 @@ _elm_fileselector_entry_evas_object_smart_add(Eo *obj, Elm_Fileselector_Entry_Da
    elm_entry_single_line_set(priv->entry, EINA_TRUE);
    elm_entry_editable_set(priv->entry, EINA_TRUE);
 
-#define SIG_FWD(name) \
-  evas_object_smart_callback_add(priv->entry, SIG_##name, _##name##_fwd, obj)
-   SIG_FWD(CHANGED);
-   SIG_FWD(ACTIVATED);
-   SIG_FWD(PRESS);
-   SIG_FWD(LONGPRESSED);
-   SIG_FWD(CLICKED);
-   SIG_FWD(CLICKED_DOUBLE);
-   SIG_FWD(FOCUSED);
-   SIG_FWD(UNFOCUSED);
-   SIG_FWD(SELECTION_PASTE);
-   SIG_FWD(SELECTION_COPY);
-   SIG_FWD(SELECTION_CUT);
+#define SIG_FWD(name, event) \
+  eo_do(priv->entry, eo_event_callback_add(event, _##name##_fwd, obj))
+   SIG_FWD(CHANGED, ELM_FILESELECTOR_ENTRY_EVENT_CHANGED);
+   SIG_FWD(ACTIVATED, ELM_FILESELECTOR_ENTRY_EVENT_ACTIVATED);
+   SIG_FWD(PRESS, ELM_FILESELECTOR_ENTRY_EVENT_PRESS);
+   SIG_FWD(LONGPRESSED, EVAS_CLICKABLE_INTERFACE_EVENT_LONGPRESSED);
+   SIG_FWD(CLICKED, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED);
+   SIG_FWD(CLICKED_DOUBLE, EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE);
+   SIG_FWD(FOCUSED, ELM_LAYOUT_EVENT_FOCUSED);
+   SIG_FWD(UNFOCUSED, ELM_LAYOUT_EVENT_UNFOCUSED);
+   SIG_FWD(SELECTION_PASTE, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_PASTE);
+   SIG_FWD(SELECTION_COPY, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_COPY);
+   SIG_FWD(SELECTION_CUT, EVAS_SELECTABLE_INTERFACE_EVENT_SELECTION_CUT);
 #undef SIG_FWD
 
    if (!elm_layout_theme_set

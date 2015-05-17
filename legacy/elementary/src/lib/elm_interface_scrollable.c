@@ -3731,15 +3731,15 @@ _elm_scroll_pan_resized_cb(void *data,
 }
 
 /* even external pan objects get this */
-static void
+static Eina_Bool
 _elm_scroll_pan_changed_cb(void *data,
-                           Evas_Object *obj EINA_UNUSED,
+                           Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                            void *event_info EINA_UNUSED)
 {
    Evas_Coord w = 0, h = 0;
    Elm_Scrollable_Smart_Interface_Data *sid = data;
 
-   if (!sid->pan_obj) return;
+   if (!sid->pan_obj) return EINA_TRUE;
 
    eo_do(sid->pan_obj, elm_obj_pan_content_size_get(&w, &h));
    if ((w != sid->content_info.w) || (h != sid->content_info.h))
@@ -3753,6 +3753,8 @@ _elm_scroll_pan_changed_cb(void *data,
         sid->content_info.resized = EINA_TRUE;
         _elm_scroll_wanted_region_set(sid->obj);
      }
+
+   return EINA_TRUE;
 }
 
 static void
@@ -3794,8 +3796,8 @@ _elm_interface_scrollable_content_set(Eo *obj, Elm_Scrollable_Smart_Interface_Da
      {
         o = _elm_pan_add(evas_object_evas_get(obj));
         sid->pan_obj = o;
-        evas_object_smart_callback_add
-          (o, SIG_CHANGED, _elm_scroll_pan_changed_cb, sid);
+        eo_do(o, eo_event_callback_add
+          (ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid));
         evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE,
                                        _elm_scroll_pan_resized_cb, sid);
         edje_object_part_swallow(sid->edje_obj, "elm.swallow.content", o);
@@ -3822,8 +3824,8 @@ _elm_interface_scrollable_extern_pan_set(Eo *obj, Elm_Scrollable_Smart_Interface
 
    if (sid->pan_obj)
      {
-        evas_object_smart_callback_del
-          (sid->pan_obj, SIG_CHANGED, _elm_scroll_pan_changed_cb);
+        eo_do(sid->pan_obj, eo_event_callback_del(
+           ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid));
         evas_object_event_callback_del(sid->pan_obj, EVAS_CALLBACK_RESIZE,
                                        _elm_scroll_pan_resized_cb);
      }
@@ -3850,8 +3852,8 @@ _elm_interface_scrollable_extern_pan_set(Eo *obj, Elm_Scrollable_Smart_Interface
    sid->pan_obj = pan;
 
    sid->extern_pan = EINA_TRUE;
-   evas_object_smart_callback_add
-     (sid->pan_obj, SIG_CHANGED, _elm_scroll_pan_changed_cb, sid);
+   eo_do(sid->pan_obj, eo_event_callback_add
+     (ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid));
    evas_object_event_callback_add(sid->pan_obj, EVAS_CALLBACK_RESIZE,
                                   _elm_scroll_pan_resized_cb, sid);
    edje_object_part_swallow
