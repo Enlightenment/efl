@@ -5401,6 +5401,13 @@ _elm_genlist_focus_highlight_move_up_end_cb(void *data,
       _elm_widget_focus_highlight_signal_emit(gl, "elm,action,focus,move,home,down", "elm");
 }
 
+static void
+_evas_viewport_resize_cb(void *d, Evas *e EINA_UNUSED, void *ei EINA_UNUSED)
+{
+   Elm_Genlist_Data *priv = d;
+   evas_object_smart_changed(priv->pan_obj);
+}
+
 EOLIAN static void
 _elm_genlist_evas_object_smart_add(Eo *obj, Elm_Genlist_Data *priv)
 {
@@ -5481,6 +5488,9 @@ _elm_genlist_evas_object_smart_add(Eo *obj, Elm_Genlist_Data *priv)
 
    edje_object_signal_callback_add(wd->resize_obj, "elm,looping,up,done", "elm", _elm_genlist_looping_up_cb, obj);
    edje_object_signal_callback_add(wd->resize_obj, "elm,looping,down,done", "elm", _elm_genlist_looping_down_cb, obj);
+   evas_event_callback_add(evas_object_evas_get(obj),
+                           EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE,
+                           _evas_viewport_resize_cb, priv);
 }
 
 EOLIAN static void
@@ -5491,6 +5501,10 @@ _elm_genlist_evas_object_smart_del(Eo *obj, Elm_Genlist_Data *sd)
    elm_genlist_clear(obj);
    for (i = 0; i < 2; i++)
      ELM_SAFE_FREE(sd->stack[i], evas_object_del);
+
+   evas_event_callback_del_full(evas_object_evas_get(obj),
+                                EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE,
+                                _evas_viewport_resize_cb, sd);
    ELM_SAFE_FREE(sd->pan_obj, evas_object_del);
 
    _item_cache_zero(sd);
