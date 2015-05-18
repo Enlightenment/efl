@@ -695,6 +695,7 @@ elementaryeolianfiles_DATA = \
 	     elm_button.eo \
 	     elm_calendar.eo \
 	     elm_check.eo \
+	     elm_clipper.eo \
 	     elm_clock.eo \
 	     elm_colorselector.eo \
 	     elm_conformant.eo \
