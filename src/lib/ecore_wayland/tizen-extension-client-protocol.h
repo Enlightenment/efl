@@ -62,7 +62,6 @@ tizen_resource_destroy(struct tizen_resource *tizen_resource)
 }
 
 #define TIZEN_SURFACE_EXTENSION_GET_TIZEN_RESOURCE	0
-#define TIZEN_SURFACE_EXTENSION_PLACE_BELOW_PARENT	1
 
 static inline void
 tizen_surface_extension_set_user_data(struct tizen_surface_extension *tizen_surface_extension, void *user_data)
@@ -91,13 +90,6 @@ tizen_surface_extension_get_tizen_resource(struct tizen_surface_extension *tizen
 			 TIZEN_SURFACE_EXTENSION_GET_TIZEN_RESOURCE, &tizen_resource_interface, NULL, surface);
 
 	return (struct tizen_resource *) id;
-}
-
-static inline void
-tizen_surface_extension_place_below_parent(struct tizen_surface_extension *tizen_surface_extension, struct wl_subsurface *subsurface)
-{
-	wl_proxy_marshal((struct wl_proxy *) tizen_surface_extension,
-			 TIZEN_SURFACE_EXTENSION_PLACE_BELOW_PARENT, subsurface);
 }
 
 struct tizen_transient_for_listener {
