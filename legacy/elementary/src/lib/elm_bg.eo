@@ -28,7 +28,7 @@ class Elm.Bg (Elm.Layout, Efl.File)
             @ingroup Bg */
          }
          values {
-            Elm_Bg_Option option; /*@ The desired background option (see #Elm_Bg_Option) */
+            option: Elm_Bg_Option; /*@ The desired background option (see #Elm_Bg_Option) */
          }
       }
       @property color {
@@ -63,10 +63,10 @@ class Elm.Bg (Elm.Layout, Efl.File)
             legacy: null; /* legacy doesn't have 'a' param */
          }
          values {
-            int r; /*@ The red color component's value */
-            int g; /*@ The green color component's value */
-            int b; /*@ The blue color component's value */
-            int a; /*@ The blue color component's value */
+            r: int; /*@ The red color component's value */
+            g: int; /*@ The green color component's value */
+            b: int; /*@ The blue color component's value */
+            a: int; /*@ The blue color component's value */
          }
       }
       @property load_size {
@@ -91,8 +91,8 @@ class Elm.Bg (Elm.Layout, Efl.File)
             @ingroup Bg */
          }
          values {
-            Evas_Coord w; /*@ The new width of the image pixmap representation. */
-            Evas_Coord h; /*@ The new height of the image pixmap representation. */
+            w: Evas_Coord; /*@ The new width of the image pixmap representation. */
+            h: Evas_Coord; /*@ The new height of the image pixmap representation. */
          }
       }
    }

@@ -26,7 +26,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @ingroup Image */
          }
          values {
-            bool set; /*@ Turn on or off editability. Default is @c EINA_FALSE. */
+            set: bool; /*@ Turn on or off editability. Default is @c EINA_FALSE. */
          }
       }
       @property resize_down {
@@ -49,7 +49,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             legacy: null;
          }
          values {
-            bool resize_down; /*@ whether resizing down is allowed */
+            resize_down: bool; /*@ whether resizing down is allowed */
          }
       }
       @property animated_play {
@@ -92,7 +92,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @since 1.7 */
          }
          values {
-            bool play; /*@ @c EINA_TRUE to start the animation, @c EINA_FALSE
+            play: bool; /*@ @c EINA_TRUE to start the animation, @c EINA_FALSE
             otherwise. Default is @c EINA_FALSE. */
          }
       }
@@ -116,7 +116,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             legacy: null;
          }
          values {
-            bool resize_up; /*@ whether resizing up is allowed */
+            resize_up: bool; /*@ whether resizing up is allowed */
          }
       }
       @property smooth {
@@ -147,7 +147,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @ingroup Image */
          }
          values {
-            bool smooth; /*@ @c EINA_TRUE if smooth scaling should be used, @c EINA_FALSE
+            smooth: bool; /*@ @c EINA_TRUE if smooth scaling should be used, @c EINA_FALSE
             otherwise. Default is @c EINA_TRUE. */
          }
       }
@@ -178,7 +178,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @ingroup Image */
          }
          values {
-            bool no_scale; /*@ @c EINA_TRUE if the object is not scalable, @c EINA_FALSE
+            no_scale: bool; /*@ @c EINA_TRUE if the object is not scalable, @c EINA_FALSE
             otherwise. Default is @c EINA_FALSE. */
          }
       }
@@ -213,7 +213,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @since 1.7 */
          }
          values {
-            bool anim; /*@ @c EINA_TRUE if the object is to animate itself,
+            anim: bool; /*@ @c EINA_TRUE if the object is to animate itself,
             @c EINA_FALSE otherwise. Default is @c EINA_FALSE. */
          }
       }
@@ -237,7 +237,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             legacy: null;
          }
          values {
-            double scale; /*@ Object's image scale. */
+            scale: double; /*@ Object's image scale. */
          }
       }
       @property fill_inside {
@@ -274,7 +274,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             legacy: null;
          }
          values {
-            bool fill_inside; /*@ Resize method for the object's internal image. */
+            fill_inside: bool; /*@ Resize method for the object's internal image. */
          }
       }
       @property aspect_fixed {
@@ -302,7 +302,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @ingroup Image */
          }
          values {
-            bool fixed; /*@ @c EINA_TRUE if the image should retain the aspect,
+            fixed: bool; /*@ @c EINA_TRUE if the image should retain the aspect,
             @c EINA_FALSE otherwise. */
          }
       }
@@ -330,7 +330,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @ingroup Image */
          }
          values {
-            Elm_Image_Orient orient; /*@ The image orientation @ref Elm_Image_Orient
+            orient: Elm_Image_Orient; /*@ The image orientation @ref Elm_Image_Orient
             Default is #ELM_IMAGE_ORIENT_NONE. */
          }
       }
@@ -368,7 +368,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @ingroup Image */
          }
          values {
-            bool fill_outside; /*@ @c EINA_TRUE if the object is filled outside,
+            fill_outside: bool; /*@ @c EINA_TRUE if the object is filled outside,
             @c EINA_FALSE otherwise. Default is @c EINA_FALSE. */
          }
       }
@@ -394,9 +394,9 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @ingroup Image */
          }
          values {
-            bool up; /*@ A bool to set if the object is resizable up. Default is
+            up: bool; /*@ A bool to set if the object is resizable up. Default is
             @c EINA_TRUE. */
-            bool down; /*@ A bool to set if the object is resizable down. Default
+            down: bool; /*@ A bool to set if the object is resizable down. Default
             is @c EINA_TRUE. */
          }
       }
@@ -408,7 +408,7 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @ingroup Image */
          }
          values {
-            bool disabled; /*@ If EINA_TRUE, preloading will be disabled */
+            disabled: bool; /*@ If EINA_TRUE, preloading will be disabled */
          }
       }
       @property mmap {
@@ -434,8 +434,8 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             legacy: null;
          }
          values {
-            const(Eina_File)* file; /*@ The handler to an Eina_File that will be used as image source */
-            const(char)* group @optional; /*@ The group that the image belongs to, in case it's an
+            file: const(Eina_File)*; /*@ The handler to an Eina_File that will be used as image source */
+            group: const(char)* @optional; /*@ The group that the image belongs to, in case it's an
             EET (including Edje case) file. This can be used as a key inside
             evas image cache if this is a normal image file not eet file. */
          }
@@ -463,10 +463,10 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             return: bool;
          }
          values {
-            const(void)* img; /*@ The binary data that will be used as image source */
-            size size; /*@ The size of binary data blob @p img */
-            const(char)* format @optional; /*@ (Optional) expected format of @p img bytes */
-            const(char)* key @optional; /*@ Optional indexing key of @p img to be passed to the
+            img: const(void)*; /*@ The binary data that will be used as image source */
+            size: size; /*@ The size of binary data blob @p img */
+            format: const(char)* @optional; /*@ (Optional) expected format of @p img bytes */
+            key: const(char)* @optional; /*@ Optional indexing key of @p img to be passed to the
             image loader (eg. if @p img is a memory-mapped EET file) */
          }
       }
@@ -518,8 +518,8 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             @ingroup Image */
          }
          values {
-            int w; /*@ Pointer to store width, or NULL. */
-            int h; /*@ Pointer to store height, or NULL. */
+            w: int; /*@ Pointer to store width, or NULL. */
+            h: int; /*@ Pointer to store height, or NULL. */
          }
       }
       sizing_eval {

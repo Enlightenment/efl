@@ -9,10 +9,10 @@ mixin Elm_Interface_Atspi_Action ()
             /*@ Gets action name for given id */
          }
          values {
-            const(char)* name;
+            name: const(char)*;
          }
          keys {
-            int id;
+            id: int;
          }
       }
       @property localized_name @protected {
@@ -20,10 +20,10 @@ mixin Elm_Interface_Atspi_Action ()
             /*@ Gets localized action name for given id */
          }
          values {
-            const(char)* name;
+            name: const(char)*;
          }
          keys {
-            int id;
+            id: int;
          }
       }
       @property description @protected {
@@ -35,10 +35,10 @@ mixin Elm_Interface_Atspi_Action ()
             return: bool;
          }
          values {
-            const(char)* description;
+            description: const(char)*;
          }
          keys {
-            int id;
+            id: int;
          }
       }
       @property actions @protected {
@@ -46,13 +46,13 @@ mixin Elm_Interface_Atspi_Action ()
             /*@ Get list of available widget actions */
          }
          values {
-            list<Elm_Atspi_Action> *actions; /*@ contains statically allocated strings */
+            actions: list<Elm_Atspi_Action> *; /*@ contains statically allocated strings */
          }
       }
       action_do @protected {
          /*@ Performs action on given widget. */
          params {
-            @in int id;
+            @in id: int;
          }
          return: bool;
       }
@@ -60,7 +60,7 @@ mixin Elm_Interface_Atspi_Action ()
          /*@ Gets configured keybinding for specific action and widget.
              returned pointer should be free by a user.*/
          params {
-            @in  int id;
+            @in id: int;
          }
          return: own(char *) @warn_unused;
       }

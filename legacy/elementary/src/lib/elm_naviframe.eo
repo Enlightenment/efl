@@ -30,7 +30,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Naviframe */
          }
          values {
-            bool enabled; /*@ Events are received when enabled is @c EINA_TRUE, and
+            enabled: bool; /*@ Events are received when enabled is @c EINA_TRUE, and
             ignored otherwise. */
          }
       }
@@ -54,7 +54,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Naviframe */
          }
          values {
-            bool preserve; /*@ Enable the preserve mode if @c EINA_TRUE, disable otherwise */
+            preserve: bool; /*@ Enable the preserve mode if @c EINA_TRUE, disable otherwise */
          }
       }
       @property prev_btn_auto_pushed {
@@ -79,7 +79,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Naviframe */
          }
          values {
-            bool auto_pushed; /*@ If @c EINA_TRUE, the previous button(back button) will
+            auto_pushed: bool; /*@ If @c EINA_TRUE, the previous button(back button) will
             be created internally when you pass the @c NULL to the prev_btn
             parameter in elm_naviframe_item_push */
          }
@@ -159,18 +159,18 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in Elm_Object_Item *before; /*@ The naviframe item to insert before. */
-            @in const(char)* title_label @optional; /*@ The label in the title area. The name of the title
+            @in before: Elm_Object_Item *; /*@ The naviframe item to insert before. */
+            @in title_label: const(char)* @optional; /*@ The label in the title area. The name of the title
             label part is "elm.text.title" */
-            @in Evas_Object *prev_btn @nullable; /*@ The button to go to the previous item. If it is NULL,
+            @in prev_btn: Evas_Object * @nullable; /*@ The button to go to the previous item. If it is NULL,
             then naviframe will create a back button automatically. The name of
             the prev_btn part is "elm.swallow.prev_btn" */
-            @in Evas_Object *next_btn @nullable; /*@ The button to go to the next item. Or It could be just an
+            @in next_btn: Evas_Object * @nullable; /*@ The button to go to the next item. Or It could be just an
             extra function button. The name of the next_btn part is
             "elm.swallow.next_btn" */
-            @in Evas_Object *content; /*@ The main content object. The name of content part is
+            @in content: Evas_Object *; /*@ The main content object. The name of content part is
             "elm.swallow.content" */
-            @in const(char)* item_style @nullable; /*@ The current item style name. @c NULL would be default. */
+            @in item_style: const(char)* @nullable; /*@ The current item style name. @c NULL would be default. */
          }
       }
       item_push {
@@ -193,17 +193,17 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* title_label @optional; /*@ The label in the title area. The name of the title
+            @in title_label: const(char)* @optional; /*@ The label in the title area. The name of the title
             label part is "elm.text.title" */
-            @in Evas_Object *prev_btn @nullable; /*@ The button to go to the previous item. If it is NULL,
+            @in prev_btn: Evas_Object * @nullable; /*@ The button to go to the previous item. If it is NULL,
             then naviframe will create a back button automatically. The name of
             the prev_btn part is "elm.swallow.prev_btn" */
-            @in Evas_Object *next_btn @nullable; /*@ The button to go to the next item. Or It could be just an
+            @in next_btn: Evas_Object * @nullable; /*@ The button to go to the next item. Or It could be just an
             extra function button. The name of the next_btn part is
             "elm.swallow.next_btn" */
-            @in Evas_Object *content; /*@ The main content object. The name of content part is
+            @in content: Evas_Object *; /*@ The main content object. The name of content part is
             "elm.swallow.content" */
-            @in const(char)* item_style @nullable; /*@ The current item style name. @c NULL would be default. */
+            @in item_style: const(char)* @nullable; /*@ The current item style name. @c NULL would be default. */
          }
       }
       item_simple_promote {
@@ -213,7 +213,7 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          @see elm_naviframe_item_promote */
 
          params {
-            @in Evas_Object *content;
+            @in content: Evas_Object *;
          }
       }
       item_insert_after {
@@ -236,18 +236,18 @@ class Elm.Naviframe (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in Elm_Object_Item *after; /*@ The naviframe item to insert after. */
-            @in const(char)* title_label @optional; /*@ The label in the title area. The name of the title
+            @in after: Elm_Object_Item *; /*@ The naviframe item to insert after. */
+            @in title_label: const(char)* @optional; /*@ The label in the title area. The name of the title
             label part is "elm.text.title" */
-            @in Evas_Object *prev_btn @nullable; /*@ The button to go to the previous item. If it is NULL,
+            @in prev_btn: Evas_Object * @nullable; /*@ The button to go to the previous item. If it is NULL,
             then naviframe will create a back button automatically. The name of
             the prev_btn part is "elm.swallow.prev_btn" */
-            @in Evas_Object *next_btn @nullable; /*@ The button to go to the next item. Or It could be just an
+            @in next_btn: Evas_Object * @nullable; /*@ The button to go to the next item. Or It could be just an
             extra function button. The name of the next_btn part is
             "elm.swallow.next_btn" */
-            @in Evas_Object *content; /*@ The main content object. The name of content part is
+            @in content: Evas_Object *; /*@ The main content object. The name of content part is
             "elm.swallow.content" */
-            @in const(char)* item_style @nullable; /*@ The current item style name. @c NULL would be default. */
+            @in item_style: const(char)* @nullable; /*@ The current item style name. @c NULL would be default. */
          }
       }
    }

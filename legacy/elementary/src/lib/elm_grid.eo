@@ -17,8 +17,8 @@ class Elm.Grid (Elm.Widget)
             @ingroup Grid */
          }
          values {
-            Evas_Coord w; /*@ The virtual width of the grid */
-            Evas_Coord h; /*@ The virtual height of the grid */
+            w: Evas_Coord; /*@ The virtual width of the grid */
+            h: Evas_Coord; /*@ The virtual height of the grid */
          }
       }
       @property children {
@@ -42,7 +42,7 @@ class Elm.Grid (Elm.Widget)
          @ingroup Grid */
 
          params {
-            @in bool clear; /*@ If true, it will delete just removed children */
+            @in clear: bool; /*@ If true, it will delete just removed children */
          }
       }
       unpack {
@@ -52,7 +52,7 @@ class Elm.Grid (Elm.Widget)
          @ingroup Grid */
 
          params {
-            @in Evas_Object *subobj; /*@ The child to unpack */
+            @in subobj: Evas_Object *; /*@ The child to unpack */
          }
       }
       pack {
@@ -62,11 +62,11 @@ class Elm.Grid (Elm.Widget)
          @ingroup Grid */
 
          params {
-            @in Evas_Object *subobj; /*@ The child to pack */
-            @in Evas_Coord x; /*@ The virtual x coord at which to pack it */
-            @in Evas_Coord y; /*@ The virtual y coord at which to pack it */
-            @in Evas_Coord w; /*@ The virtual width at which to pack it */
-            @in Evas_Coord h; /*@ The virtual height at which to pack it */
+            @in subobj: Evas_Object *; /*@ The child to pack */
+            @in x: Evas_Coord; /*@ The virtual x coord at which to pack it */
+            @in y: Evas_Coord; /*@ The virtual y coord at which to pack it */
+            @in w: Evas_Coord; /*@ The virtual width at which to pack it */
+            @in h: Evas_Coord; /*@ The virtual height at which to pack it */
          }
       }
    }

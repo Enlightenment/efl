@@ -18,7 +18,7 @@ class Elm.Multibuttonentry_Item(Elm.Widget_Item)
                  */
              }
              values {
-                 bool selected; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
+                 selected: bool; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
              }
         }
       prev_get @const {

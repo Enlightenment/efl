@@ -29,7 +29,7 @@ class Elm.Fileselector_Button (Elm.Button, Elm_Interface_Fileselector)
             @ingroup File_Selector_Button */
          }
          values {
-            bool value; /*@ @c EINA_TRUE to make it use an inner window, @c
+            value: bool; /*@ @c EINA_TRUE to make it use an inner window, @c
             EINA_FALSE to make it use a dedicated window */
          }
       }
@@ -60,8 +60,8 @@ class Elm.Fileselector_Button (Elm.Button, Elm_Interface_Fileselector)
             @ingroup File_Selector_Button */
          }
          values {
-            Evas_Coord width; /*@ The window's width */
-            Evas_Coord height; /*@ The window's height */
+            width: Evas_Coord; /*@ The window's width */
+            height: Evas_Coord; /*@ The window's height */
          }
       }
       @property window_title {
@@ -92,7 +92,7 @@ class Elm.Fileselector_Button (Elm.Button, Elm_Interface_Fileselector)
             @ingroup File_Selector_Button */
          }
          values {
-            const(char)* title; /*@ The title string */
+            title: const(char)*; /*@ The title string */
          }
       }
    }

@@ -15,7 +15,7 @@ class Elm.Ctxpopup_Item(Elm.Widget_Item)
              */
          }
          values {
-              Elm_Object_Item *item; /*@ The item before the object in its parent's list. If there is no
+              item: Elm_Object_Item *; /*@ The item before the object in its parent's list. If there is no
                                        previous item for @p it or there's an error, @c NULL is returned. */
          }
       }
@@ -32,14 +32,14 @@ class Elm.Ctxpopup_Item(Elm.Widget_Item)
              */
          }
          values {
-              Elm_Object_Item *item; /*@ The item after the object in its parent's list. If there is no
+              item: Elm_Object_Item *; /*@ The item after the object in its parent's list. If there is no
                                        previous item for @p it or there's an error, @c NULL is returned. */
          }
       }
       init {
          params {
-            Evas_Smart_Cb func @nullable;
-            const(void) * data @optional;
+            func: Evas_Smart_Cb @nullable;
+            data: const(void) * @optional;
          }
       }
    }

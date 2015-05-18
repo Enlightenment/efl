@@ -33,7 +33,7 @@ class Elm.Clock (Elm.Layout)
             @ingroup Clock */
          }
          values {
-            bool am_pm; /*@ @c EINA_TRUE to put it in am/pm mode, @c EINA_FALSE
+            am_pm: bool; /*@ @c EINA_TRUE to put it in am/pm mode, @c EINA_FALSE
             to military mode */
          }
       }
@@ -74,7 +74,7 @@ class Elm.Clock (Elm.Layout)
             @ingroup Clock */
          }
          values {
-            double interval; /*@ The first interval value in seconds */
+            interval: double; /*@ The first interval value in seconds */
          }
       }
       @property show_seconds {
@@ -104,7 +104,7 @@ class Elm.Clock (Elm.Layout)
             @ingroup Clock */
          }
          values {
-            bool seconds; /*@ @c EINA_TRUE to show seconds, @c EINA_FALSE otherwise */
+            seconds: bool; /*@ @c EINA_TRUE to show seconds, @c EINA_FALSE otherwise */
          }
       }
       @property edit {
@@ -141,7 +141,7 @@ class Elm.Clock (Elm.Layout)
             @ingroup Clock */
          }
          values {
-            bool edit; /*@ @c EINA_TRUE to put it in edition, @c EINA_FALSE to
+            edit: bool; /*@ @c EINA_TRUE to put it in edition, @c EINA_FALSE to
             put it back to "displaying only" mode */
          }
       }
@@ -171,7 +171,7 @@ class Elm.Clock (Elm.Layout)
             @since 1.9 */
          }
          values {
-            bool paused; /*@ @c EINA_TRUE to pause clock, @c EINA_FALSE otherwise */
+            paused: bool; /*@ @c EINA_TRUE to pause clock, @c EINA_FALSE otherwise */
          }
       }
       @property time {
@@ -207,9 +207,9 @@ class Elm.Clock (Elm.Layout)
             @ingroup Clock */
          }
          values {
-            int hrs; /*@ The hours to set */
-            int min; /*@ The minutes to set */
-            int sec; /*@ The seconds to set */
+            hrs: int; /*@ The hours to set */
+            min: int; /*@ The minutes to set */
+            sec: int; /*@ The seconds to set */
          }
       }
       @property edit_mode {
@@ -235,7 +235,7 @@ class Elm.Clock (Elm.Layout)
             @ingroup Clock */
          }
          values {
-            Elm_Clock_Edit_Mode digedit; /*@ Bit mask indicating the digits to be editable
+            digedit: Elm_Clock_Edit_Mode; /*@ Bit mask indicating the digits to be editable
             (values in #Elm_Clock_Edit_Mode). */
          }
       }

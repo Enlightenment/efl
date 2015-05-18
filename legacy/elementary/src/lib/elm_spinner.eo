@@ -33,8 +33,8 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            double min; /*@ The minimum value. */
-            double max; /*@ The maximum value. */
+            min: double; /*@ The minimum value. */
+            max: double; /*@ The maximum value. */
          }
       }
       @property step {
@@ -66,7 +66,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            double step; /*@ The step value. */
+            step: double; /*@ The step value. */
          }
       }
       @property wrap {
@@ -115,7 +115,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            bool wrap; /*@ @c EINA_TRUE to enable wrap or @c EINA_FALSE to
+            wrap: bool; /*@ @c EINA_TRUE to enable wrap or @c EINA_FALSE to
             disable it. */
          }
       }
@@ -155,7 +155,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            double interval; /*@ The (first) interval value in seconds. */
+            interval: double; /*@ The (first) interval value in seconds. */
          }
       }
       @property round {
@@ -184,7 +184,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            int rnd; /*@ The rounding value */
+            rnd: int; /*@ The rounding value */
          }
       }
       @property editable {
@@ -218,7 +218,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            bool editable; /*@ @c EINA_TRUE to allow users to edit it or @c EINA_FALSE to
+            editable: bool; /*@ @c EINA_TRUE to allow users to edit it or @c EINA_FALSE to
             don't allow users to edit it directly. */
          }
       }
@@ -261,7 +261,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            double base; /*@ The base value */
+            base: double; /*@ The base value */
          }
       }
       @property value {
@@ -292,7 +292,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            double val; /*@ The value to be displayed. */
+            val: double; /*@ The value to be displayed. */
          }
       }
       @property label_format {
@@ -325,7 +325,7 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
             @ingroup Spinner */
          }
          values {
-            const(char)* fmt @nullable; /*@ The format string for the label display. */
+            fmt: const(char)* @nullable; /*@ The format string for the label display. */
          }
       }
       special_value_add {
@@ -354,8 +354,8 @@ class Elm.Spinner (Elm.Layout, Elm_Interface_Atspi_Value, Elm_Interface_Atspi_Wi
          @ingroup Spinner */
 
          params {
-            @in double value; /*@ The value to be replaced. */
-            @in const(char)* label; /*@ The label to be used. */
+            @in value: double; /*@ The value to be replaced. */
+            @in label: const(char)*; /*@ The label to be used. */
          }
       }
    }

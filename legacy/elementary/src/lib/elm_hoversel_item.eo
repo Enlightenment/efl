@@ -25,9 +25,9 @@ class Elm.Hoversel_Item(Elm.Widget_Item)
                  */
              }
              values {
-                const (char) *icon_file @nullable; /*@ An image file path on disk to use for the icon or standard icon name */
-                const (char) *icon_group @nullable; /*@ The edje group to use if @p icon_file is an edje file. Set this to NULL if the icon is not an edje file */
-                Elm_Icon_Type icon_type; /*@ The icon type */
+                icon_file: const (char) * @nullable; /*@ An image file path on disk to use for the icon or standard icon name */
+                icon_group: const (char) * @nullable; /*@ The edje group to use if @p icon_file is an edje file. Set this to NULL if the icon is not an edje file */
+                icon_type: Elm_Icon_Type; /*@ The icon type */
              }
         }
    }

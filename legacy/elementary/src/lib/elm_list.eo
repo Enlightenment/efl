@@ -32,7 +32,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup List */
          }
          values {
-            bool horizontal; /*@ @c EINA_TRUE to enable horizontal or @c EINA_FALSE to
+            horizontal: bool; /*@ @c EINA_TRUE to enable horizontal or @c EINA_FALSE to
             disable it, i.e., to enable vertical mode. */
          }
       }
@@ -67,7 +67,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup List */
          }
          values {
-            Elm_Object_Select_Mode mode(4); /*@ The select mode */
+            mode: Elm_Object_Select_Mode(4); /*@ The select mode */
          }
       }
       @property focus_on_selection {
@@ -92,7 +92,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup List */
          }
          values {
-            bool enabled; /*@ The tree effect status
+            enabled: bool; /*@ The tree effect status
             (EINA_TRUE = enabled, EINA_FALSE = disabled) */
          }
       }
@@ -124,7 +124,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup List */
          }
          values {
-            bool multi; /*@ @c EINA_TRUE to enable multi selection or @c EINA_FALSE to
+            multi: bool; /*@ @c EINA_TRUE to enable multi selection or @c EINA_FALSE to
             disable it. */
          }
       }
@@ -159,7 +159,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             @since 1.8 */
          }
          values {
-            Elm_Object_Multi_Select_Mode mode(2); /*@ The multi select mode */
+            mode: Elm_Object_Multi_Select_Mode(2); /*@ The multi select mode */
          }
       }
       @property mode {
@@ -195,7 +195,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup List */
          }
          values {
-            Elm_List_Mode mode(4); /*@ One of #Elm_List_Mode: #ELM_LIST_COMPRESS,
+            mode: Elm_List_Mode(4); /*@ One of #Elm_List_Mode: #ELM_LIST_COMPRESS,
             #ELM_LIST_SCROLL, #ELM_LIST_LIMIT or #ELM_LIST_EXPAND. */
          }
       }
@@ -313,15 +313,15 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in Elm_Object_Item *before; /*@ The list item to insert before. */
-            @in const(char)* label; /*@ The label of the list item. */
-            @in Evas_Object *icon @optional; /*@ The icon object to use for the left side of the item. An
+            @in before: Elm_Object_Item *; /*@ The list item to insert before. */
+            @in label: const(char)*; /*@ The label of the list item. */
+            @in icon: Evas_Object * @optional; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). */
-            @in Evas_Object *end @optional; /*@ The icon object to use for the right side of the item. An
+            @in end: Evas_Object * @optional; /*@ The icon object to use for the right side of the item. An
             icon can be any Evas object. */
-            @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is clicked. */
-            @in const(void)* data @optional; /*@ The data to associate with the item for related callbacks. */
+            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
+            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
          }
       }
       go {
@@ -378,15 +378,15 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in Elm_Object_Item *after; /*@ The list item to insert after. */
-            @in const(char)* label; /*@ The label of the list item. */
-            @in Evas_Object *icon @optional; /*@ The icon object to use for the left side of the item. An
+            @in after: Elm_Object_Item *; /*@ The list item to insert after. */
+            @in label: const(char)*; /*@ The label of the list item. */
+            @in icon: Evas_Object * @optional; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). */
-            @in Evas_Object *end @optional; /*@ The icon object to use for the right side of the item. An
+            @in end: Evas_Object * @optional; /*@ The icon object to use for the right side of the item. An
             icon can be any Evas object. */
-            @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is clicked. */
-            @in const(void)* data @optional; /*@ The data to associate with the item for related callbacks. */
+            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
+            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
          }
       }
       at_xy_item_get @const {
@@ -409,9 +409,9 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
          @ingroup List */
          return: Elm_Object_Item *;
          params {
-            @in Evas_Coord x; /*@ The input x coordinate */
-            @in Evas_Coord y; /*@ The input y coordinate */
-            @out int posret; /*@ The position relative to the item returned here */
+            @in x: Evas_Coord; /*@ The input x coordinate */
+            @in y: Evas_Coord; /*@ The input y coordinate */
+            @out posret: int; /*@ The position relative to the item returned here */
          }
       }
       item_append {
@@ -460,14 +460,14 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* label; /*@ The label of the list item. */
-            @in Evas_Object *icon @optional; /*@ The icon object to use for the left side of the item. An
+            @in label: const(char)*; /*@ The label of the list item. */
+            @in icon: Evas_Object * @optional; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). */
-            @in Evas_Object *end @optional; /*@ The icon object to use for the right side of the item. An
+            @in end: Evas_Object * @optional; /*@ The icon object to use for the right side of the item. An
             icon can be any Evas object. */
-            @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is clicked. */
-            @in const(void)* data @optional; /*@ The data to associate with the item for related callbacks. */
+            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
+            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
          }
       }
       item_prepend {
@@ -506,14 +506,14 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* label; /*@ The label of the list item. */
-            @in Evas_Object *icon @optional; /*@ The icon object to use for the left side of the item. An
+            @in label: const(char)*; /*@ The label of the list item. */
+            @in icon: Evas_Object * @optional; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). */
-            @in Evas_Object *end @optional; /*@ The icon object to use for the right side of the item. An
+            @in end: Evas_Object * @optional; /*@ The icon object to use for the right side of the item. An
             icon can be any Evas object. */
-            @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is clicked. */
-            @in const(void)* data @optional; /*@ The data to associate with the item for related callbacks. */
+            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
+            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
          }
       }
       clear {
@@ -566,15 +566,15 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* label; /*@ The label of the list item. */
-            @in Evas_Object *icon @optional; /*@ The icon object to use for the left side of the item. An
+            @in label: const(char)*; /*@ The label of the list item. */
+            @in icon: Evas_Object * @optional; /*@ The icon object to use for the left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). */
-            @in Evas_Object *end @optional; /*@ The icon object to use for the right side of the item. An
+            @in end: Evas_Object * @optional; /*@ The icon object to use for the right side of the item. An
             icon can be any Evas object. */
-            @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is clicked. */
-            @in const(void)* data @optional; /*@ The data to associate with the item for related callbacks. */
-            @in Eina_Compare_Cb cmp_func; /*@ The comparing function to be used to sort list
+            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
+            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
+            @in cmp_func: Eina_Compare_Cb; /*@ The comparing function to be used to sort list
             items <b>by #Elm_Object_Item item handles</b>. This function will
             receive two items and compare them, returning a non-negative integer
             if the second item should be place after the first, or negative value

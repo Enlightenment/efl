@@ -25,7 +25,7 @@ class Elm.Icon (Elm.Image)
             @ingroup Icon */
          }
          values {
-            Elm_Icon_Lookup_Order order(1); /*@ The icon lookup order (can be one of
+            order: Elm_Icon_Lookup_Order(1); /*@ The icon lookup order (can be one of
             #ELM_ICON_LOOKUP_FDO_THEME, #ELM_ICON_LOOKUP_THEME_FDO, #ELM_ICON_LOOKUP_FDO
             or #ELM_ICON_LOOKUP_THEME) */
          }
@@ -71,7 +71,7 @@ class Elm.Icon (Elm.Image)
             @ingroup Icon */
          }
          values {
-            const(char)* name; /*@ The icon name */
+            name: const(char)*; /*@ The icon name */
          }
       }
       @property thumb {
@@ -90,8 +90,8 @@ class Elm.Icon (Elm.Image)
             @ingroup Icon */
          }
          values {
-            const(char)* file @nullable; /*@ The path to file that will be used as icon image */
-            const(char)* group @optional; /*@ The group that the icon belongs to an edje file */
+            file: const(char)* @nullable; /*@ The path to file that will be used as icon image */
+            group: const(char)* @optional; /*@ The group that the icon belongs to an edje file */
          }
       }
    }

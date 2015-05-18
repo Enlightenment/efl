@@ -36,7 +36,7 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            Evas_Coord size; /*@ The length of the progress bar's bar region */
+            size: Evas_Coord; /*@ The length of the progress bar's bar region */
          }
       }
       @property pulse {
@@ -71,7 +71,7 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            bool pulse; /*@ @c EINA_TRUE to put @p obj in pulsing mode,
+            pulse: bool; /*@ @c EINA_TRUE to put @p obj in pulsing mode,
             @c EINA_FALSE to put it back to its default one */
          }
       }
@@ -101,7 +101,7 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            double val; /*@ The progress value (@b must be between @c 0.0 and @c
+            val: double; /*@ The progress value (@b must be between @c 0.0 and @c
             1.0) */
          }
       }
@@ -133,7 +133,7 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            bool inverted; /*@ Use @c EINA_TRUE to make @p obj inverted,
+            inverted: bool; /*@ Use @c EINA_TRUE to make @p obj inverted,
             @c EINA_FALSE to bring it back to default, non-inverted values. */
          }
       }
@@ -161,7 +161,7 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            bool horizontal; /*@ Use @c EINA_TRUE to make @p obj to be
+            horizontal: bool; /*@ Use @c EINA_TRUE to make @p obj to be
             @b horizontal, @c EINA_FALSE to make it @b vertical */
          }
       }
@@ -199,7 +199,7 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            const(char)* units @nullable; /*@ The format string for @p obj's units label */
+            units: const(char)* @nullable; /*@ The format string for @p obj's units label */
          }
       }
       @property unit_format_function {
@@ -216,8 +216,8 @@ class Elm.Progressbar (Elm.Layout)
             @ingroup Progressbar */
          }
          values {
-            progressbar_func_type func @nullable; /*@ The unit format function */
-            progressbar_freefunc_type free_func @optional; /*@ The freeing function for the format string. */
+            func: progressbar_func_type @nullable; /*@ The unit format function */
+            free_func: progressbar_freefunc_type @optional; /*@ The freeing function for the format string. */
          }
       }
       part_value_set {
@@ -232,8 +232,8 @@ class Elm.Progressbar (Elm.Layout)
          @ingroup Progressbar */
 
          params {
-            @in const(char)* part; /*@ The partname to which val have to set */
-            @in double val; /*@ The progress value (@b must be between @c 0.0 and @c
+            @in part: const(char)*; /*@ The partname to which val have to set */
+            @in val: double; /*@ The progress value (@b must be between @c 0.0 and @c
             1.0) */
          }
       }
@@ -251,7 +251,7 @@ class Elm.Progressbar (Elm.Layout)
          @ingroup Progressbar */
          return: double;
          params {
-            @in const(char)* part; /*@ The part name of the progress bar */
+            @in part: const(char)*; /*@ The part name of the progress bar */
          }
       }
       pulse {
@@ -266,7 +266,7 @@ class Elm.Progressbar (Elm.Layout)
          @ingroup Progressbar */
 
          params {
-            @in bool state; /*@ @c EINA_TRUE, to @b start the pulsing animation,
+            @in state: bool; /*@ @c EINA_TRUE, to @b start the pulsing animation,
             @c EINA_FALSE to @b stop it */
          }
       }

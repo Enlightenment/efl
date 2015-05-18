@@ -22,7 +22,7 @@ class Elm.Index (Elm.Layout)
             @ingroup Index */
          }
          values {
-            bool disabled; /*@ @c EINA_TRUE to disable auto hiding, @c EINA_FALSE to enable */
+            disabled: bool; /*@ @c EINA_TRUE to disable auto hiding, @c EINA_FALSE to enable */
          }
       }
       @property omit_enabled {
@@ -49,7 +49,7 @@ class Elm.Index (Elm.Layout)
             @ingroup Index */
          }
          values {
-            bool enabled; /*@ @c EINA_TRUE to enable omit feature, @c EINA_FALSE to disable */
+            enabled: bool; /*@ @c EINA_TRUE to enable omit feature, @c EINA_FALSE to disable */
          }
       }
       @property horizontal {
@@ -79,7 +79,7 @@ class Elm.Index (Elm.Layout)
             @ingroup Index */
          }
          values {
-            bool horizontal; /*@ @c EINA_TRUE to enable horizontal or @c EINA_FALSE to
+            horizontal: bool; /*@ @c EINA_TRUE to enable horizontal or @c EINA_FALSE to
             disable it, i.e., to enable vertical mode. it's an area one @ref Fingers
             "finger" wide on the bottom side of the index widget's container. */
          }
@@ -106,7 +106,7 @@ class Elm.Index (Elm.Layout)
             @ingroup Index */
          }
          values {
-            double dtime; /*@ The delay change time to set. */
+            dtime: double; /*@ The delay change time to set. */
          }
       }
       @property indicator_disabled {
@@ -131,7 +131,7 @@ class Elm.Index (Elm.Layout)
             @ingroup Index */
          }
          values {
-            bool disabled; /*@ @c EINA_TRUE to disable it, @c EINA_FALSE to enable it */
+            disabled: bool; /*@ @c EINA_TRUE to disable it, @c EINA_FALSE to enable it */
          }
       }
       @property item_level {
@@ -154,7 +154,7 @@ class Elm.Index (Elm.Layout)
             @ingroup Index */
          }
          values {
-            int level; /*@ @c 0 or @c 1, the currently implemented levels. */
+            level: int; /*@ @c 0 or @c 1, the currently implemented levels. */
          }
       }
       level_go {
@@ -170,7 +170,7 @@ class Elm.Index (Elm.Layout)
          @ingroup Index */
 
          params {
-            @in int level; /*@ The index level (one of @c 0 or @c 1) where changes were made */
+            @in level: int; /*@ The index level (one of @c 0 or @c 1) where changes were made */
          }
       }
       item_prepend {
@@ -190,9 +190,9 @@ class Elm.Index (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* letter; /*@ Letter under which the item should be indexed */
-            @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is selected. */
-            @in const(void)* data @optional; /*@ The item data to set for the index's item */
+            @in letter: const(char)*; /*@ Letter under which the item should be indexed */
+            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is selected. */
+            @in data: const(void)* @optional; /*@ The item data to set for the index's item */
          }
       }
       item_clear {
@@ -225,10 +225,10 @@ class Elm.Index (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in Elm_Object_Item *after; /*@ The index item to insert after. */
-            @in const(char)* letter; /*@ Letter under which the item should be indexed */
-            @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is clicked. */
-            @in const(void)* data @optional; /*@ The item data to set for the index's item */
+            @in after: Elm_Object_Item *; /*@ The index item to insert after. */
+            @in letter: const(char)*; /*@ Letter under which the item should be indexed */
+            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
+            @in data: const(void)* @optional; /*@ The item data to set for the index's item */
          }
       }
       item_find {
@@ -241,7 +241,7 @@ class Elm.Index (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in const(void)* data; /*@ The item data pointed to by the desired index item */
+            @in data: const(void)*; /*@ The item data pointed to by the desired index item */
          }
       }
       item_insert_before {
@@ -264,10 +264,10 @@ class Elm.Index (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in Elm_Object_Item *before; /*@ The index item to insert after. */
-            @in const(char)* letter; /*@ Letter under which the item should be indexed */
-            @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is clicked. */
-            @in const(void)* data @optional; /*@ The item data to set for the index's item */
+            @in before: Elm_Object_Item *; /*@ The index item to insert after. */
+            @in letter: const(char)*; /*@ Letter under which the item should be indexed */
+            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
+            @in data: const(void)* @optional; /*@ The item data to set for the index's item */
          }
       }
       item_append {
@@ -287,9 +287,9 @@ class Elm.Index (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* letter; /*@ Letter under which the item should be indexed */
-            @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is selected. */
-            @in const(void)* data @optional; /*@ The item data to set for the index's item */
+            @in letter: const(char)*; /*@ Letter under which the item should be indexed */
+            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is selected. */
+            @in data: const(void)* @optional; /*@ The item data to set for the index's item */
          }
       }
       selected_item_get @const {
@@ -301,7 +301,7 @@ class Elm.Index (Elm.Layout)
          @ingroup Index */
          return: Elm_Object_Item *;
          params {
-            @in int level; /*@ @c 0 or @c 1, the currently implemented levels. */
+            @in level: int; /*@ @c 0 or @c 1, the currently implemented levels. */
          }
       }
       item_sorted_insert {
@@ -322,12 +322,12 @@ class Elm.Index (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* letter; /*@ Letter under which the item should be indexed */
-            @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is clicked. */
-            @in const(void)* data @optional; /*@ The item data to set for the index's item */
-            @in Eina_Compare_Cb cmp_func; /*@ The comparing function to be used to sort index
+            @in letter: const(char)*; /*@ Letter under which the item should be indexed */
+            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
+            @in data: const(void)* @optional; /*@ The item data to set for the index's item */
+            @in cmp_func: Eina_Compare_Cb; /*@ The comparing function to be used to sort index
             items <b>by index item handles</b> */
-            @in Eina_Compare_Cb cmp_data_func @optional; /*@ A @b fallback function to be called for the
+            @in cmp_data_func: Eina_Compare_Cb @optional; /*@ A @b fallback function to be called for the
             sorting of index items <b>by item data</b>). It will be used
             when @p cmp_func returns @c 0 (equality), which means an index
             item with provided item data already exists. To decide which

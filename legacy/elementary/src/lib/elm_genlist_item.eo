@@ -18,7 +18,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Elm_Object_Item *item; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
+                     item: Elm_Object_Item *; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
                 }
            }
            @property next {
@@ -36,7 +36,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Elm_Object_Item *item; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
+                     item: Elm_Object_Item *; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
                 }
            }
            @property parent {
@@ -51,7 +51,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Elm_Object_Item *item; /*@ @return The parent of the item or @c NULL if it has no parent. */
+                     item: Elm_Object_Item *; /*@ @return The parent of the item or @c NULL if it has no parent. */
                 }
            }
            @property subitems {
@@ -66,7 +66,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     const (list<Elm_Object_Item *>) *subitems; /*@ @return The list of subitems, @c NULL on error */
+                     subitems: const (list<Elm_Object_Item *>) *; /*@ @return The list of subitems, @c NULL on error */
                 }
            }
            @property selected {
@@ -98,7 +98,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Eina_Bool selected; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
+                     selected: Eina_Bool; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
                 }
            }
            @property expanded {
@@ -134,7 +134,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Eina_Bool expanded; /*@ The expanded state (@c EINA_TRUE expanded, @c EINA_FALSE not expanded). */
+                     expanded: Eina_Bool; /*@ The expanded state (@c EINA_TRUE expanded, @c EINA_FALSE not expanded). */
                 }
            }
            @property expanded_depth {
@@ -146,7 +146,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     int depth; /*@ @return The depth of expanded item */
+                     depth: int; /*@ @return The depth of expanded item */
                 }
            }
            @property item_class {
@@ -161,7 +161,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     const (Elm_Genlist_Item_Class) *itc; /*@ Genlist Item class for the given item */
+                     itc: const (Elm_Genlist_Item_Class) *; /*@ Genlist Item class for the given item */
                 }
            }
            @property index {
@@ -175,7 +175,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     int index(-1); /*@ @return the position inside the list of item. */
+                     index: int(-1); /*@ @return the position inside the list of item. */
                 }
            }
            @property decorate_mode {
@@ -192,7 +192,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     const(char)* decorate_it_type; /*@ name of the item's decorate mode. */
+                     decorate_it_type: const(char)*; /*@ name of the item's decorate mode. */
                 }
            }
            @property flip {
@@ -225,7 +225,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Eina_Bool flip; /*@ The flip mode */
+                     flip: Eina_Bool; /*@ The flip mode */
                 }
            }
            @property select_mode {
@@ -267,7 +267,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Elm_Object_Select_Mode mode(4); /*@ The selected mode */
+                     mode: Elm_Object_Select_Mode(4); /*@ The selected mode */
                 }
            }
            @property type {
@@ -284,7 +284,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Elm_Genlist_Item_Type type(4); /*@ Item tupe */
+                     type: Elm_Genlist_Item_Type(4); /*@ Item tupe */
                 }
            }
            /*      init { FIXME
@@ -350,7 +350,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  @ingroup Genlist
                  */
                 params {
-                     @in Elm_Genlist_Item_Scrollto_Type type; /*@ The position to bring in, the given item to.
+                     @in type: Elm_Genlist_Item_Scrollto_Type; /*@ The position to bring in, the given item to.
                                                                 @ref Elm_Genlist_Item_Scrollto_Type */
                 }
            }
@@ -368,7 +368,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  @ingroup Genlist
                  */
                 params {
-                     @in Elm_Genlist_Item_Scrollto_Type type; /*@ The position to bring in, the given item to.
+                     @in type: Elm_Genlist_Item_Scrollto_Type; /*@ The position to bring in, the given item to.
                                                                 @ref Elm_Genlist_Item_Scrollto_Type */
                 }
            }
@@ -384,7 +384,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  @ingroup Genlist
                  */
                 params {
-                     @out own(list<own(Evas_Object *)> *) l; /*@ The contents list to return */
+                     @out l: own(list<own(Evas_Object *)> *); /*@ The contents list to return */
                 }
            }
            update {
@@ -426,8 +426,8 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  @ingroup Genlist
                  */
                 params {
-                     @in const (char) *parts; /*@ The name of item's part */
-                     @in Elm_Genlist_Item_Field_Type itf; /*@ The type of item's part type */
+                     @in parts: const (char) *; /*@ The name of item's part */
+                     @in itf: Elm_Genlist_Item_Field_Type; /*@ The type of item's part type */
                 }
            }
            item_class_update {
@@ -441,7 +441,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  @ingroup Genlist
                  */
                 params {
-                     @in const (Elm_Genlist_Item_Class) *itc; /*@ The item class for the item */
+                     @in itc: const (Elm_Genlist_Item_Class) *; /*@ The item class for the item */
                 }
            }
            decorate_mode_set {
@@ -482,8 +482,8 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  @ingroup Genlist
                  */
                 params {
-                     @in const(char)* decorate_it_type; /*@ Mode name */
-                     @in Eina_Bool decorate_it_set; /*@ Boolean to define set or unset mode. */
+                     @in decorate_it_type: const(char)*; /*@ Mode name */
+                     @in decorate_it_set: Eina_Bool; /*@ Boolean to define set or unset mode. */
                 }
            }
       }
@@ -509,4 +509,3 @@ class Elm.Genlist_Item(Elm.Widget_Item)
            Elm_Interface_Atspi_Accessible.children.get;
       }
 }
-

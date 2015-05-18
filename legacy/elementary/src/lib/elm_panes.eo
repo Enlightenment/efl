@@ -35,7 +35,7 @@ class Elm.Panes (Elm.Layout)
             @ingroup Panes */
          }
          values {
-            double size; /*@ Value between 0.0 and 1.0 representing size proportion
+            size: double; /*@ Value between 0.0 and 1.0 representing size proportion
             of left side. */
          }
       }
@@ -67,7 +67,7 @@ class Elm.Panes (Elm.Layout)
             @ingroup Panes */
          }
          values {
-            bool horizontal; /*@ Use @c EINA_TRUE to make @p obj to split panes
+            horizontal: bool; /*@ Use @c EINA_TRUE to make @p obj to split panes
             horizontally ("top" and "bottom" contents). @c EINA_FALSE to make it
             vertically ("left" and "right" contents) */
          }
@@ -98,7 +98,7 @@ class Elm.Panes (Elm.Layout)
             @ingroup Panes */
          }
          values {
-            bool fixed; /*@ Use @c EINA_TRUE to fix the left and right panes sizes and make
+            fixed: bool; /*@ Use @c EINA_TRUE to fix the left and right panes sizes and make
             them not to be resized by user interaction. Use @c EINA_FALSE to make them
             resizable. */
          }
@@ -136,7 +136,7 @@ class Elm.Panes (Elm.Layout)
             @ingroup Panes */
          }
          values {
-            double size; /*@ Value between 0.0 and 1.0 representing size proportion
+            size: double; /*@ Value between 0.0 and 1.0 representing size proportion
             of right side. */
          }
       }
@@ -169,7 +169,7 @@ class Elm.Panes (Elm.Layout)
              @ingroup Panes */
          }
          values {
-            double size; /*@ value between 0.0 and 1.0 representing size proportion
+            size: double; /*@ value between 0.0 and 1.0 representing size proportion
                            of minimum size of left side. */
          }
       }
@@ -201,7 +201,7 @@ class Elm.Panes (Elm.Layout)
              @ingroup Panes */
          }
          values {
-            double size; /*@ value between 0.0 and 1.0 representing size proportion
+            size: double; /*@ value between 0.0 and 1.0 representing size proportion
                            of minimum size of right side. */
          }
       }
@@ -231,7 +231,7 @@ class Elm.Panes (Elm.Layout)
             @ingroup Panes */
          }
          values {
-            Evas_Coord size; /*@ value representing minimum size of left side
+            size: Evas_Coord; /*@ value representing minimum size of left side
                                in pixels. */
          }
       }
@@ -261,7 +261,7 @@ class Elm.Panes (Elm.Layout)
             @ingroup Panes */
          }
          values {
-            Evas_Coord size; /*@ value representing minimum size of right side
+            size: Evas_Coord; /*@ value representing minimum size of right side
                                in pixels. */
          }
       }

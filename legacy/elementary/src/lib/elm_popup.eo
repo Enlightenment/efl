@@ -22,8 +22,8 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Popup */
          }
          values {
-            double horizontal; /*@ The horizontal alignment of the popup */
-            double vertical; /*@ The vertical alignment of the popup */
+            horizontal: double; /*@ The horizontal alignment of the popup */
+            vertical: double; /*@ The vertical alignment of the popup */
          }
       }
       @property allow_events {
@@ -49,7 +49,7 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @note By default the Blocked event area is present */
          }
          values {
-            bool allow; /*@ @c EINA_TRUE Events are passed to lower objects, else not */
+            allow: bool; /*@ @c EINA_TRUE Events are passed to lower objects, else not */
          }
       }
       @property content_text_wrap_type {
@@ -72,7 +72,7 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_popup_content_text_wrap_type_set */
          }
          values {
-            Elm_Wrap_Type wrap; /*@ wrapping type of type Elm_Wrap_Type */
+            wrap: Elm_Wrap_Type; /*@ wrapping type of type Elm_Wrap_Type */
          }
       }
       @property orient {
@@ -97,7 +97,7 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @see Elm_Popup_Orient */
          }
          values {
-            Elm_Popup_Orient orient; /*@ the orientation of the popup */
+            orient: Elm_Popup_Orient; /*@ the orientation of the popup */
          }
       }
       @property timeout {
@@ -128,7 +128,7 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @see elm_popup_timeout_set() */
          }
          values {
-            double timeout; /*@ The timeout in seconds */
+            timeout: double; /*@ The timeout in seconds */
          }
       }
       item_append {
@@ -147,10 +147,10 @@ class Elm.Popup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* label; /*@ The Label of the new item */
-            @in Evas_Object *icon @optional; /*@ Icon to be set on new item */
-            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when item selected */
-            @in const(void)* data @optional; /*@ Data passed to @p func above */
+            @in label: const(char)*; /*@ The Label of the new item */
+            @in icon: Evas_Object * @optional; /*@ Icon to be set on new item */
+            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when item selected */
+            @in data: const(void)* @optional; /*@ Data passed to @p func above */
          }
       }
    }

@@ -11,7 +11,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get whether folder-only view is set for a given file selector */
          }
          values {
-            bool only;
+            only: bool;
          }
       }
       @property selected {
@@ -23,7 +23,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get the currently selected item's (full) path, in the given file the given file selector widget */
          }
          values {
-            const(char)* path;
+            path: const(char)*;
          }
       }
       @property thumbnail_size {
@@ -34,8 +34,8 @@ interface Elm_Interface_Fileselector ()
             /*@ Get the size for the thumbnail of a given file selector widget */
          }
          values {
-            Evas_Coord w;
-            Evas_Coord h;
+            w: Evas_Coord;
+            h: Evas_Coord;
          }
       }
       @property hidden_visible {
@@ -46,7 +46,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get if hiden files/directories in the file selector are visible or not. */
          }
          values {
-            bool multi;
+            multi: bool;
          }
       }
       @property sort_method {
@@ -57,7 +57,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get the sort method of the file selector widget. */
          }
          values {
-            Elm_Fileselector_Sort sort;
+            sort: Elm_Fileselector_Sort;
          }
       }
       @property multi_select {
@@ -68,7 +68,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Gets if multi-selection in fileselector is enabled or disabled. */
          }
          values {
-            bool multi;
+            multi: bool;
          }
       }
       @property expandable {
@@ -79,7 +79,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get whether tree view is enabled for the given file selector */
          }
          values {
-            bool expand;
+            expand: bool;
          }
       }
       @property path {
@@ -90,7 +90,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get the parent directory's path that a given file selector selector widget will display contents from */
          }
          values {
-            const(char)* path;
+            path: const(char)*;
          }
       }
       @property mode {
@@ -101,7 +101,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get the mode in which a given file selector widget is displaying */
          }
          values {
-            Elm_Fileselector_Mode mode;
+            mode: Elm_Fileselector_Mode;
          }
       }
       @property is_save {
@@ -112,7 +112,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get whether the given file selector is in "saving dialog" mode */
          }
          values {
-            bool is_save;
+            is_save: bool;
          }
       }
       @property selected_paths {
@@ -120,7 +120,7 @@ interface Elm_Interface_Fileselector ()
             /*@ Get a list of selected paths in the fileselector. */
          }
          values {
-            const(list<const(char)*>)* ret;
+            ret: const(list<const(char)*>)*;
          }
       }
       @property current_name {
@@ -131,15 +131,15 @@ interface Elm_Interface_Fileselector ()
             /*@ Get */
          }
          values {
-            const(char)* name;
+            name: const(char)*;
          }
       }
       custom_filter_append {
          /*@ Append custom filter into filter list */
          params {
-            @in Elm_Fileselector_Filter_Func func; /*@ function */
-            @in void *data;
-            @in const(char)* filter_name;
+            @in func: Elm_Fileselector_Filter_Func; /*@ function */
+            @in data: void *;
+            @in filter_name: const(char)*;
          }
          return: bool;
       }
@@ -149,8 +149,8 @@ interface Elm_Interface_Fileselector ()
       mime_types_filter_append {
          /*@ Append mime type based filter into filter list */
          params {
-            @in const(char)* mime_types;
-            @in const(char)* filter_name;
+            @in mime_types: const(char)*;
+            @in filter_name: const(char)*;
          }
          return: bool;
       }

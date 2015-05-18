@@ -20,7 +20,7 @@ class Elm.Separator (Elm.Layout)
             @ingroup Separator */
          }
          values {
-            bool horizontal; /*@ If true, the separator is horizontal */
+            horizontal: bool; /*@ If true, the separator is horizontal */
          }
       }
    }

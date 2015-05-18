@@ -9,28 +9,28 @@ class Elm.Container (Elm.Widget)
             /*@ Get the list of swallow parts in the object. */
          }
          values {
-            free(own(list<Evas_Object *> *), eina_list_free) ret; /*@ list */
+            ret: free(own(list<Evas_Object *> *), eina_list_free); /*@ list */
          }
       }
       content_set {
          /*@ Swallow the given object into the given part of the container. */
          params {
-            @in const(char)* name; /*@ the part in which to swallow the object */
-            @in Evas_Object *content; /*@ the object to swallow */
+            @in name: const(char)*; /*@ the part in which to swallow the object */
+            @in content: Evas_Object *; /*@ the object to swallow */
          }
          return: bool;
       }
       content_get {
          /*@ Get the object swallowed in the given part of the container. */
          params {
-            @in const(char)* name @nullable; /*@ the part in which the object is swallowed */
+            @in name: const(char)* @nullable; /*@ the part in which the object is swallowed */
          }
          return: Evas_Object *;
       }
       content_unset {
          /*@ Unswallow the object in the given part of the container and return it. */
          params {
-            @in const(char)* name @nullable;
+            @in name: const(char)* @nullable;
          }
          return: Evas_Object *;
       }

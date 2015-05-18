@@ -25,7 +25,7 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            bool highlight; /*@ Whether to highlight the marks or not */
+            highlight: bool; /*@ Whether to highlight the marks or not */
          }
       }
       @property useragent {
@@ -44,7 +44,7 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            const(char)* user_agent; /*@ String for useragent */
+            user_agent: const(char)*; /*@ String for useragent */
          }
       }
       @property url {
@@ -73,7 +73,7 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            const(char)* url; /*@ The URL to set */
+            url: const(char)*; /*@ The URL to set */
          }
       }
       @property bg_color {
@@ -96,10 +96,10 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            int r; /*@ Red component */
-            int g; /*@ Green component */
-            int b; /*@ Blue component */
-            int a; /*@ Alpha component */
+            r: int; /*@ Red component */
+            g: int; /*@ Green component */
+            b: int; /*@ Blue component */
+            a: int; /*@ Alpha component */
          }
       }
       @property inwin_mode {
@@ -122,7 +122,7 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            bool value; /*@ @c EINA_TRUE to use Inwin, @c EINA_FALSE to use a normal window */
+            value: bool; /*@ @c EINA_TRUE to use Inwin, @c EINA_FALSE to use a normal window */
          }
       }
       @property tab_propagate {
@@ -149,7 +149,7 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            bool propagate; /*@ Whether to propagate Tab keys to Elementary or not */
+            propagate: bool; /*@ Whether to propagate Tab keys to Elementary or not */
          }
       }
       @property history_enabled {
@@ -168,7 +168,7 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            bool enable; /*@ Whether to enable or disable the browsing history */
+            enable: bool; /*@ Whether to enable or disable the browsing history */
          }
       }
       @property zoom_mode {
@@ -199,7 +199,7 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            Elm_Web_Zoom_Mode mode; /*@ The mode to set */
+            mode: Elm_Web_Zoom_Mode; /*@ The mode to set */
          }
       }
       @property zoom {
@@ -229,7 +229,7 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            double zoom; /*@ The zoom level to set */
+            zoom: double; /*@ The zoom level to set */
          }
       }
       @property console_message_hook {
@@ -243,8 +243,8 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            Elm_Web_Console_Message func; /*@ The callback function to be used */
-            void *data; /*@ User data */
+            func: Elm_Web_Console_Message; /*@ The callback function to be used */
+            data: void *; /*@ User data */
          }
       }
       @property window_create_hook {
@@ -261,8 +261,8 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            Elm_Web_Window_Open func @nullable; /*@ The hook function to be called when a window is requested */
-            void *data @optional; /*@ User data */
+            func: Elm_Web_Window_Open @nullable; /*@ The hook function to be called when a window is requested */
+            data: void * @optional; /*@ User data */
          }
       }
       @property dialog_file_selector_hook {
@@ -280,8 +280,8 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            Elm_Web_Dialog_File_Selector func @nullable; /*@ The callback function to be used */
-            void *data @optional; /*@ User data */
+            func: Elm_Web_Dialog_File_Selector @nullable; /*@ The callback function to be used */
+            data: void * @optional; /*@ User data */
          }
       }
       @property dialog_confirm_hook {
@@ -298,8 +298,8 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            Elm_Web_Dialog_Confirm func @nullable; /*@ The callback function to be used */
-            void *data @optional; /*@ User data */
+            func: Elm_Web_Dialog_Confirm @nullable; /*@ The callback function to be used */
+            data: void * @optional; /*@ User data */
          }
       }
       @property popup_selected {
@@ -316,7 +316,7 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            int idx; /*@ The index selected */
+            idx: int; /*@ The index selected */
          }
       }
       @property dialog_prompt_hook {
@@ -333,8 +333,8 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            Elm_Web_Dialog_Prompt func @nullable; /*@ The callback function to be used */
-            void *data @optional; /*@ User data */
+            func: Elm_Web_Dialog_Prompt @nullable; /*@ The callback function to be used */
+            data: void * @optional; /*@ User data */
          }
       }
       @property dialog_alert_hook {
@@ -351,8 +351,8 @@ class Elm.Web (Elm.Widget)
             @ingroup Web */
          }
          values {
-            Elm_Web_Dialog_Alert func @nullable; /*@ The callback function to be used */
-            void *data @optional; /*@ User data */
+            func: Elm_Web_Dialog_Alert @nullable; /*@ The callback function to be used */
+            data: void * @optional; /*@ User data */
          }
       }
       @property forward_possible {
@@ -462,7 +462,7 @@ class Elm.Web (Elm.Widget)
 
          return: bool;
          params {
-            @in int steps; /*@ The number of steps to jump */
+            @in steps: int; /*@ The number of steps to jump */
          }
       }
       back {
@@ -500,9 +500,9 @@ class Elm.Web (Elm.Widget)
 
          return: bool;
          params {
-            @in const(char)* html; /*@ HTML data to load */
-            @in const(char)* base_url @optional; /*@ Base URL used for relative paths to external objects (optional) */
-            @in const(char)* unreachable_url @optional; /*@ URL that could not be reached (optional) */
+            @in html: const(char)*; /*@ HTML data to load */
+            @in base_url: const(char)* @optional; /*@ Base URL used for relative paths to external objects (optional) */
+            @in unreachable_url: const(char)* @optional; /*@ URL that could not be reached (optional) */
          }
       }
       text_search @const {
@@ -515,10 +515,10 @@ class Elm.Web (Elm.Widget)
          @ingroup Web */
          return: bool;
          params {
-            @in const(char)* string; /*@ String to search */
-            @in bool case_sensitive; /*@ If search should be case sensitive or not */
-            @in bool forward; /*@ If search is from cursor and on or backwards */
-            @in bool wrap; /*@ If search should wrap at the end */
+            @in string: const(char)*; /*@ String to search */
+            @in case_sensitive: bool; /*@ If search should be case sensitive or not */
+            @in forward: bool; /*@ If search is from cursor and on or backwards */
+            @in wrap: bool; /*@ If search should wrap at the end */
          }
       }
       popup_destroy {
@@ -544,10 +544,10 @@ class Elm.Web (Elm.Widget)
          @ingroup Web */
 
          params {
-            @in int x; /*@ The x coordinate of the region to show */
-            @in int y; /*@ The y coordinate of the region to show */
-            @in int w; /*@ The width of the region to show */
-            @in int h; /*@ The height of the region to show */
+            @in x: int; /*@ The x coordinate of the region to show */
+            @in y: int; /*@ The y coordinate of the region to show */
+            @in w: int; /*@ The width of the region to show */
+            @in h: int; /*@ The height of the region to show */
          }
       }
       forward {
@@ -577,10 +577,10 @@ class Elm.Web (Elm.Widget)
 
          return: uint;
          params {
-            @in const(char)* string; /*@ String to match */
-            @in bool case_sensitive; /*@ If match should be case sensitive or not */
-            @in bool highlight; /*@ If matches should be highlighted */
-            @in uint limit; /*@ Maximum amount of matches, or zero to unlimited */
+            @in string: const(char)*; /*@ String to match */
+            @in case_sensitive: bool; /*@ If match should be case sensitive or not */
+            @in highlight: bool; /*@ If matches should be highlighted */
+            @in limit: uint; /*@ Maximum amount of matches, or zero to unlimited */
          }
       }
       region_bring_in {
@@ -593,10 +593,10 @@ class Elm.Web (Elm.Widget)
          @ingroup Web */
 
          params {
-            @in int x; /*@ The x coordinate of the region to show */
-            @in int y; /*@ The y coordinate of the region to show */
-            @in int w; /*@ The width of the region to show */
-            @in int h; /*@ The height of the region to show */
+            @in x: int; /*@ The x coordinate of the region to show */
+            @in y: int; /*@ The y coordinate of the region to show */
+            @in w: int; /*@ The width of the region to show */
+            @in h: int; /*@ The height of the region to show */
          }
       }
       stop {
@@ -627,7 +627,7 @@ class Elm.Web (Elm.Widget)
 
          return: bool;
          params {
-            @in int steps; /*@ The number of steps to check for */
+            @in steps: int; /*@ The number of steps to check for */
          }
       }
       reload_full {

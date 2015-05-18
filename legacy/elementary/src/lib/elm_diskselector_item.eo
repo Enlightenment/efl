@@ -20,7 +20,7 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Elm_Object_Item *item; /*@ The item before @p item, or @c NULL if none or on failure. */
+                     item: Elm_Object_Item *; /*@ The item before @p item, or @c NULL if none or on failure. */
                 }
            }
            @property next {
@@ -41,7 +41,7 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Elm_Object_Item *item; /*@ The item after @p item, or @c NULL if none or on failure. */
+                     item: Elm_Object_Item *; /*@ The item after @p item, or @c NULL if none or on failure. */
                 }
            }
            @property selected {
@@ -81,7 +81,7 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Eina_Bool selected; /*@ The selected state */
+                     selected: Eina_Bool; /*@ The selected state */
                 }
            }
            /*      init { FIXME

@@ -18,7 +18,7 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
             @ingroup Video */
          }
          values {
-            double volume; /*@ The new audio volume. */
+            volume: double; /*@ The new audio volume. */
          }
       }
       @property remember_position {
@@ -42,7 +42,7 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
             @ingroup Video */
          }
          values {
-            bool remember; /*@ the last played position of the Elm_Video object. */
+            remember: bool; /*@ the last played position of the Elm_Video object. */
          }
       }
       @property play_position {
@@ -63,7 +63,7 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
             @ingroup Video */
          }
          values {
-            double position; /*@ The time (in seconds) since the beginning of the media file. */
+            position: double; /*@ The time (in seconds) since the beginning of the media file. */
          }
       }
       @property audio_mute {
@@ -82,7 +82,7 @@ class Elm.Video (Elm.Layout, Efl.File, Elm_Interface_Atspi_Widget_Action)
             @ingroup Video */
          }
          values {
-            bool mute; /*@ The new mute state. */
+            mute: bool; /*@ The new mute state. */
          }
       }
       @property is_playing {

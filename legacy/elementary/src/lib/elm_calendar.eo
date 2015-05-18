@@ -21,7 +21,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Calendar */
          }
          values {
-            Elm_Calendar_Weekday day; /*@ An int which correspond to the first day of the week (Sunday = 0, Monday = 1,
+            day: Elm_Calendar_Weekday; /*@ An int which correspond to the first day of the week (Sunday = 0, Monday = 1,
             ..., Saturday = 6) */
          }
       }
@@ -50,7 +50,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @since 1.8 */
          }
          values {
-            Elm_Calendar_Selectable selectable; /*@ A bitmask of Elm_Calendar_Selectable */
+            selectable: Elm_Calendar_Selectable; /*@ A bitmask of Elm_Calendar_Selectable */
          }
       }
       @property interval {
@@ -89,7 +89,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Calendar */
          }
          values {
-            double interval; /*@ The (first) interval value in seconds */
+            interval: double; /*@ The (first) interval value in seconds */
          }
       }
       @property weekdays_names {
@@ -135,7 +135,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Calendar */
          }
          values {
-            const(char)** weekdays; /*@ Array of seven strings to be used as weekday names.
+            weekdays: const(char)**; /*@ Array of seven strings to be used as weekday names.
             @warning It must have 7 elements, or it will access invalid memory.
             @warning The strings must be NULL terminated ('@\0'). */
          }
@@ -162,7 +162,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Calendar */
          }
          values {
-            Elm_Calendar_Select_Mode mode; /*@ The select mode to use. */
+            mode: Elm_Calendar_Select_Mode; /*@ The select mode to use. */
          }
       }
       @property min_max_year {
@@ -196,8 +196,8 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Calendar */
          }
          values {
-            int min; /*@ The minimum year, greater than 1901; */
-            int max; /*@ The maximum year; */
+            min: int; /*@ The minimum year, greater than 1901; */
+            max: int; /*@ The maximum year; */
          }
       }
       @property format_function {
@@ -229,7 +229,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Calendar */
          }
          values {
-            Elm_Calendar_Format_Cb format_function; /*@ Function to set the month-year string given
+            format_function: Elm_Calendar_Format_Cb; /*@ Function to set the month-year string given
             the selected date */
          }
       }
@@ -263,7 +263,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          @ingroup Calendar */
 
          params {
-            @in Elm_Calendar_Time *selected_time; /*@ A @b tm struct to represent the selected date. */
+            @in selected_time: Elm_Calendar_Time *; /*@ A @b tm struct to represent the selected date. */
          }
       }
       selected_time_get @const {
@@ -285,7 +285,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          @ingroup Calendar */
          return: bool;
          params {
-            @inout Elm_Calendar_Time selected_time; /*@ A @b tm struct to point to selected date */
+            @inout selected_time: Elm_Calendar_Time; /*@ A @b tm struct to point to selected date */
          }
       }
       mark_add {
@@ -331,13 +331,13 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Calendar_Mark *;
          params {
-            @in const(char)* mark_type; /*@ A string used to define the type of mark. It will be
+            @in mark_type: const(char)*; /*@ A string used to define the type of mark. It will be
             emitted to the theme, that should display a related modification on these
             days representation. */
-            @in Elm_Calendar_Time *mark_time; /*@ A time struct to represent the date of inclusion of the
+            @in mark_time: Elm_Calendar_Time *; /*@ A time struct to represent the date of inclusion of the
             mark. For marks that repeats it will just be displayed after the inclusion
             date in the calendar. */
-            @in Elm_Calendar_Mark_Repeat_Type repeat; /*@ Repeat the event following this periodicity. Can be a unique
+            @in repeat: Elm_Calendar_Mark_Repeat_Type; /*@ Repeat the event following this periodicity. Can be a unique
             mark (that don't repeat), daily, weekly, monthly or annually. */
          }
       }
@@ -383,7 +383,7 @@ class Elm.Calendar (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          @since 1.8 */
          return: bool;
          params {
-            @inout Elm_Calendar_Time displayed_time; /*@ A @b tm struct to point to displayed date */
+            @inout displayed_time: Elm_Calendar_Time; /*@ A @b tm struct to point to displayed date */
          }
       }
    }

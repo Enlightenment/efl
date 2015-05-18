@@ -22,7 +22,7 @@ class Elm.Multibuttonentry (Elm.Layout)
             @since 1.7 */
          }
          values {
-            bool editable; /*@ If @c EINA_TRUE, user can add/delete item in multibuttonentry, if not, the multibuttonentry is non-editable. */
+            editable: bool; /*@ If @c EINA_TRUE, user can add/delete item in multibuttonentry, if not, the multibuttonentry is non-editable. */
          }
       }
       @property expanded {
@@ -45,7 +45,7 @@ class Elm.Multibuttonentry (Elm.Layout)
             @ingroup Multibuttonentry */
          }
          values {
-            bool expanded; /*@ the value of expanded state.
+            expanded: bool; /*@ the value of expanded state.
             Set this to @c EINA_TRUE for expanded state.
             Set this to EINA_FALSE for single line state. */
          }
@@ -65,8 +65,8 @@ class Elm.Multibuttonentry (Elm.Layout)
             @ingroup Multibuttonentry */
          }
          values {
-            Elm_Multibuttonentry_Format_Cb format_function @nullable; /*@ format_function The actual format function */
-            const(void)* data @optional; /*@ data User data to passed to @a format_function */
+            format_function: Elm_Multibuttonentry_Format_Cb @nullable; /*@ format_function The actual format function */
+            data: const(void)* @optional; /*@ data User data to passed to @a format_function */
          }
       }
       @property items {
@@ -136,9 +136,9 @@ class Elm.Multibuttonentry (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* label; /*@ The label of new item */
-            @in Evas_Smart_Cb func @optional; /*@ The callback function to be invoked when this item is pressed. */
-            @in void *data @optional; /*@ The pointer to the data to be attached */
+            @in label: const(char)*; /*@ The label of new item */
+            @in func: Evas_Smart_Cb @optional; /*@ The callback function to be invoked when this item is pressed. */
+            @in data: void * @optional; /*@ The pointer to the data to be attached */
          }
       }
       clear {
@@ -158,8 +158,8 @@ class Elm.Multibuttonentry (Elm.Layout)
          @ingroup Multibuttonentry */
 
          params {
-            @in Elm_Multibuttonentry_Item_Filter_Cb func; /*@ The filter function to remove */
-            @in void *data; /*@ The user data passed when adding the function */
+            @in func: Elm_Multibuttonentry_Item_Filter_Cb; /*@ The filter function to remove */
+            @in data: void *; /*@ The user data passed when adding the function */
          }
       }
       item_insert_before {
@@ -175,10 +175,10 @@ class Elm.Multibuttonentry (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in Elm_Object_Item *before; /*@ The item before which to add it */
-            @in const(char)* label; /*@ The label of new item */
-            @in Evas_Smart_Cb func @optional; /*@ The callback function to be invoked when this item is pressed. */
-            @in void *data @optional; /*@ The pointer to the data to be attached */
+            @in before: Elm_Object_Item *; /*@ The item before which to add it */
+            @in label: const(char)*; /*@ The label of new item */
+            @in func: Evas_Smart_Cb @optional; /*@ The callback function to be invoked when this item is pressed. */
+            @in data: void * @optional; /*@ The pointer to the data to be attached */
          }
       }
       item_append {
@@ -193,9 +193,9 @@ class Elm.Multibuttonentry (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* label; /*@ The label of new item */
-            @in Evas_Smart_Cb func @optional; /*@ The callback function to be invoked when this item is pressed. */
-            @in void *data @optional; /*@ The pointer to the data to be attached */
+            @in label: const(char)*; /*@ The label of new item */
+            @in func: Evas_Smart_Cb @optional; /*@ The callback function to be invoked when this item is pressed. */
+            @in data: void * @optional; /*@ The pointer to the data to be attached */
          }
       }
       item_filter_prepend {
@@ -208,8 +208,8 @@ class Elm.Multibuttonentry (Elm.Layout)
          @ingroup Multibuttonentry */
 
          params {
-            @in Elm_Multibuttonentry_Item_Filter_Cb func; /*@ The function to use as text filter */
-            @in void *data; /*@ User data to pass to @p func */
+            @in func: Elm_Multibuttonentry_Item_Filter_Cb; /*@ The function to use as text filter */
+            @in data: void *; /*@ User data to pass to @p func */
          }
       }
       item_filter_append {
@@ -227,8 +227,8 @@ class Elm.Multibuttonentry (Elm.Layout)
          @ingroup Multibuttonentry */
 
          params {
-            @in Elm_Multibuttonentry_Item_Filter_Cb func; /*@ The function to use as item filter */
-            @in void *data; /*@ User data to pass to @p func */
+            @in func: Elm_Multibuttonentry_Item_Filter_Cb; /*@ The function to use as item filter */
+            @in data: void *; /*@ User data to pass to @p func */
          }
       }
       item_insert_after {
@@ -243,10 +243,10 @@ class Elm.Multibuttonentry (Elm.Layout)
 
          return: Elm_Object_Item *;
          params {
-            @in Elm_Object_Item *after; /*@ The item after which to add it */
-            @in const(char)* label; /*@ The label of new item */
-            @in Evas_Smart_Cb func @optional; /*@ The callback function to be invoked when this item is pressed. */
-            @in void *data @optional; /*@ The pointer to the data to be attached */
+            @in after: Elm_Object_Item *; /*@ The item after which to add it */
+            @in label: const(char)*; /*@ The label of new item */
+            @in func: Evas_Smart_Cb @optional; /*@ The callback function to be invoked when this item is pressed. */
+            @in data: void * @optional; /*@ The pointer to the data to be attached */
          }
       }
    }

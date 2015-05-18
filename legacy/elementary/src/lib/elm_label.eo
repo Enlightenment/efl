@@ -24,7 +24,7 @@ class Elm.Label (Elm.Layout)
             @ingroup Label */
          }
          values {
-            Evas_Coord w; /*@ The wrap width in pixels at a minimum where words need to wrap */
+            w: Evas_Coord; /*@ The wrap width in pixels at a minimum where words need to wrap */
          }
       }
       @property slide_speed {
@@ -51,7 +51,7 @@ class Elm.Label (Elm.Layout)
             @ingroup Label */
          }
          values {
-            double speed; /*@ The speed of the slide animation in px per seconds */
+            speed: double; /*@ The speed of the slide animation in px per seconds */
          }
       }
       @property slide_mode {
@@ -89,7 +89,7 @@ class Elm.Label (Elm.Layout)
             @ingroup Label */
          }
          values {
-            Elm_Label_Slide_Mode mode; /*@ The slide mode */
+            mode: Elm_Label_Slide_Mode; /*@ The slide mode */
          }
       }
       @property slide_duration {
@@ -116,7 +116,7 @@ class Elm.Label (Elm.Layout)
             @ingroup Label */
          }
          values {
-            double duration; /*@ The duration in seconds in moving text from slide begin position
+            duration: double; /*@ The duration in seconds in moving text from slide begin position
             to slide end position */
          }
       }
@@ -144,7 +144,7 @@ class Elm.Label (Elm.Layout)
             @ingroup Label */
          }
          values {
-            Elm_Wrap_Type wrap; /*@ To wrap text or not */
+            wrap: Elm_Wrap_Type; /*@ To wrap text or not */
          }
       }
       @property ellipsis {
@@ -171,7 +171,7 @@ class Elm.Label (Elm.Layout)
             @ingroup Label */
          }
          values {
-            bool ellipsis; /*@ To ellipsis text or not */
+            ellipsis: bool; /*@ To ellipsis text or not */
          }
       }
       slide_go {

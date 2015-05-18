@@ -52,7 +52,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Toolbar */
          }
          values {
-            bool homogeneous; /*@ Assume the items within the toolbar are of the
+            homogeneous: bool; /*@ Assume the items within the toolbar are of the
             same size (EINA_TRUE = on, EINA_FALSE = off). Default is @c EINA_FALSE. */
          }
       }
@@ -83,7 +83,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Toolbar */
          }
          values {
-            double align; /*@ The new alignment, a float between <tt> 0.0 </tt>
+            align: double; /*@ The new alignment, a float between <tt> 0.0 </tt>
             and <tt> 1.0 </tt>. */
          }
       }
@@ -118,7 +118,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Toolbar */
          }
          values {
-            Elm_Object_Select_Mode mode(4); /*@ The select mode */
+            mode: Elm_Object_Select_Mode(4); /*@ The select mode */
          }
       }
       @property icon_size {
@@ -143,7 +143,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Toolbar */
          }
          values {
-            int icon_size; /*@ The icon size in pixels */
+            icon_size: int; /*@ The icon size in pixels */
          }
       }
       @property horizontal {
@@ -161,7 +161,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Toolbar */
          }
          values {
-            bool horizontal; /*@ If @c EINA_TRUE, the toolbar is horizontal */
+            horizontal: bool; /*@ If @c EINA_TRUE, the toolbar is horizontal */
          }
       }
       @property icon_order_lookup {
@@ -188,7 +188,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Toolbar */
          }
          values {
-            Elm_Icon_Lookup_Order order(1); /*@ The icon lookup order. */
+            order: Elm_Icon_Lookup_Order(1); /*@ The icon lookup order. */
          }
       }
       @property shrink_mode {
@@ -220,7 +220,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Toolbar */
          }
          values {
-            Elm.Toolbar.Shrink_Mode shrink_mode; /*@ Toolbar's items display behavior */
+            shrink_mode: Elm.Toolbar.Shrink_Mode; /*@ Toolbar's items display behavior */
          }
       }
       @property menu_parent {
@@ -249,7 +249,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Toolbar */
          }
          values {
-            Evas_Object *parent; /*@ The parent of the menu objects. */
+            parent: Evas_Object *; /*@ The parent of the menu objects. */
          }
       }
       @property standard_priority {
@@ -275,7 +275,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Toolbar */
          }
          values {
-            int priority; /*@ The standard_priority of visible items */
+            priority: int; /*@ The standard_priority of visible items */
          }
       }
       @property selected_item {
@@ -375,11 +375,11 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in Elm_Object_Item *before; /*@ The toolbar item to insert before. */
-            @in const(char)* icon @optional; /*@ A string with icon name or the absolute path of an image file. */
-            @in const(char)* label; /*@ The label of the item. */
-            @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is clicked. */
-            @in const(void)* data @optional; /*@ The data to associate with the item for related callbacks. */
+            @in before: Elm_Object_Item *; /*@ The toolbar item to insert before. */
+            @in icon: const(char)* @optional; /*@ A string with icon name or the absolute path of an image file. */
+            @in label: const(char)*; /*@ The label of the item. */
+            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
+            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
          }
       }
       item_insert_after {
@@ -415,11 +415,11 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in Elm_Object_Item *after; /*@ The toolbar item to insert after. */
-            @in const(char)* icon @optional; /*@ A string with icon name or the absolute path of an image file. */
-            @in const(char)* label; /*@ The label of the item. */
-            @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is clicked. */
-            @in const(void)* data @optional; /*@ The data to associate with the item for related callbacks. */
+            @in after: Elm_Object_Item *; /*@ The toolbar item to insert after. */
+            @in icon: const(char)* @optional; /*@ A string with icon name or the absolute path of an image file. */
+            @in label: const(char)*; /*@ The label of the item. */
+            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
+            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
          }
       }
       item_append {
@@ -455,10 +455,10 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* icon @optional; /*@ A string with icon name or the absolute path of an image file. */
-            @in const(char)* label; /*@ The label of the item. */
-            @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is clicked. */
-            @in const(void)* data @optional; /*@ The data to associate with the item for related callbacks. */
+            @in icon: const(char)* @optional; /*@ A string with icon name or the absolute path of an image file. */
+            @in label: const(char)*; /*@ The label of the item. */
+            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
+            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
          }
       }
       items_count @const {
@@ -501,10 +501,10 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* icon @optional; /*@ A string with icon name or the absolute path of an image file. */
-            @in const(char)* label; /*@ The label of the item. */
-            @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is clicked. */
-            @in const(void)* data @optional; /*@ The data to associate with the item for related callbacks. */
+            @in icon: const(char)* @optional; /*@ A string with icon name or the absolute path of an image file. */
+            @in label: const(char)*; /*@ The label of the item. */
+            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is clicked. */
+            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
          }
       }
       item_find_by_label @const {
@@ -517,7 +517,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
          @ingroup Toolbar */
          return: Elm_Object_Item *;
          params {
-            @in const(char)* label; /*@ The label of the item to find. */
+            @in label: const(char)*; /*@ The label of the item to find. */
          }
       }
    }

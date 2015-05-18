@@ -18,10 +18,10 @@ class Elm.Color_Item(Elm.Widget_Item)
                  */
              }
              values {
-                 int r; /*@ red-value of color   */
-                 int g; /*@ green-value of color */
-                 int b; /*@ blue-value of color  */
-                 int a; /*@ alpha-value of color */
+                 r: int; /*@ red-value of color   */
+                 g: int; /*@ green-value of color */
+                 b: int; /*@ blue-value of color  */
+                 a: int; /*@ alpha-value of color */
              }
         }
         @property selected {
@@ -42,7 +42,7 @@ class Elm.Color_Item(Elm.Widget_Item)
                  */
              }
              values {
-                 Eina_Bool selected; /*@ @c EINA_TRUE if selected @c EINA_FALSE otherwise */
+                 selected: Eina_Bool; /*@ @c EINA_TRUE if selected @c EINA_FALSE otherwise */
              }
         }
    }

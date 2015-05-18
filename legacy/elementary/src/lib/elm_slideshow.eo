@@ -27,7 +27,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Slideshow */
          }
          values {
-            int count; /*@ Number of items to cache after the current one */
+            count: int; /*@ Number of items to cache after the current one */
          }
       }
       @property cache_before {
@@ -55,7 +55,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Slideshow */
          }
          values {
-            int count; /*@ Number of items to cache before the current one */
+            count: int; /*@ Number of items to cache before the current one */
          }
       }
       @property layout {
@@ -82,7 +82,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Slideshow */
          }
          values {
-            const(char)* layout; /*@ The new layout's name string */
+            layout: const(char)*; /*@ The new layout's name string */
          }
       }
       @property transition {
@@ -112,7 +112,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Slideshow */
          }
          values {
-            const(char)* transition @nullable; /*@ The new transition's name string */
+            transition: const(char)* @nullable; /*@ The new transition's name string */
          }
       }
       @property loop {
@@ -143,7 +143,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Slideshow */
          }
          values {
-            bool loop; /*@ Use @c EINA_TRUE to make it cycle through items or
+            loop: bool; /*@ Use @c EINA_TRUE to make it cycle through items or
             @c EINA_FALSE for it to stop at the end of @p obj's internal
             list of items */
          }
@@ -181,7 +181,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Slideshow */
          }
          values {
-            double timeout; /*@ The new displaying timeout for images */
+            timeout: double; /*@ The new displaying timeout for images */
          }
       }
       @property items {
@@ -330,7 +330,7 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
          @ingroup Slideshow */
          return: Elm_Object_Item *;
          params {
-            @in uint nth; /*@ The number of the item to grab a handle to (0 being
+            @in nth: uint; /*@ The number of the item to grab a handle to (0 being
             the first) */
          }
       }
@@ -380,8 +380,8 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in const(Elm_Slideshow_Item_Class)* itc; /*@ The item class for the item */
-            @in const(void)* data; /*@ The item's data */
+            @in itc: const(Elm_Slideshow_Item_Class)*; /*@ The item class for the item */
+            @in data: const(void)*; /*@ The item's data */
          }
       }
       item_sorted_insert {
@@ -406,9 +406,9 @@ class Elm.Slideshow (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in const(Elm_Slideshow_Item_Class)* itc; /*@ The item class for the item */
-            @in const(void)* data; /*@ The item's data */
-            @in Eina_Compare_Cb func; /*@ The comparing function to be used to sort slideshow
+            @in itc: const(Elm_Slideshow_Item_Class)*; /*@ The item class for the item */
+            @in data: const(void)*; /*@ The item's data */
+            @in func: Eina_Compare_Cb; /*@ The comparing function to be used to sort slideshow
             items <b>by #Elm_Slideshow_Item_Class item handles</b> */
          }
       }

@@ -25,7 +25,7 @@ class Elm.List_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     bool setting; /*@ @c EINA_TRUE means item @p it is a separator. @c EINA_FALSE
+                     setting: bool; /*@ @c EINA_TRUE means item @p it is a separator. @c EINA_FALSE
                                     indicates it's not. */
                 }
            }
@@ -62,7 +62,7 @@ class Elm.List_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     bool selected; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
+                     selected: bool; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
                 }
            }
            @property object {
@@ -77,7 +77,7 @@ class Elm.List_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Evas_Object *obj; /*@ The base Edje object associated with @p it. */
+                     obj: Evas_Object *; /*@ The base Edje object associated with @p it. */
                 }
            }
            @property prev {
@@ -95,7 +95,7 @@ class Elm.List_Item(Elm.Widget_Item)
                      legacy: elm_list_item_prev;
                 }
                 values {
-                     Elm_Object_Item *item; /*@ The item before @p it, or @c NULL if none or on failure. */
+                     item: Elm_Object_Item *; /*@ The item before @p it, or @c NULL if none or on failure. */
                 }
            }
            @property next {
@@ -113,7 +113,7 @@ class Elm.List_Item(Elm.Widget_Item)
                      legacy: elm_list_item_next;
                 }
                 values {
-                     Elm_Object_Item *item; /*@ The item after @p it, or @c NULL if none or on failure. */
+                     item: Elm_Object_Item *; /*@ The item after @p it, or @c NULL if none or on failure. */
                 }
            }
            /*      init { FIXME
@@ -164,5 +164,4 @@ class Elm.List_Item(Elm.Widget_Item)
            Elm_Interface_Atspi_Accessible.children.get;
       }
 }
-
 

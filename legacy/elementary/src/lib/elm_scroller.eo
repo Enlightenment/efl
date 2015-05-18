@@ -71,7 +71,7 @@ class Elm.Scroller (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup Scroller */
          }
          values {
-            bool propagation; /*@ If propagation is enabled or not */
+            propagation: bool; /*@ If propagation is enabled or not */
          }
       }
       @property custom_widget_base_theme {
@@ -79,8 +79,8 @@ class Elm.Scroller (Elm.Layout, Elm_Interface_Scrollable,
             /*@ Set custom theme elements for the scroller */
          }
          values {
-            const(char)* klass;
-            const(char)* group;
+            klass: const(char)*;
+            group: const(char)*;
          }
       }
       page_scroll_limit_set @const {
@@ -95,8 +95,8 @@ class Elm.Scroller (Elm.Layout, Elm_Interface_Scrollable,
 
          @ingroup Scroller */
          params {
-            @in int page_limit_h; /*@ The maximum of the movable horizontal page */
-            @in int page_limit_v; /*@ The maximum of the movable vertical page */
+            @in page_limit_h: int; /*@ The maximum of the movable horizontal page */
+            @in page_limit_v: int; /*@ The maximum of the movable vertical page */
          }
       }
       page_scroll_limit_get @const {
@@ -109,8 +109,8 @@ class Elm.Scroller (Elm.Layout, Elm_Interface_Scrollable,
 
          @ingroup Scroller */
          params {
-            @in int *page_limit_h; /*@ The maximum of the movable horizontal page */
-            @in int *page_limit_v; /*@ The maximum of the movable vertical page */
+            @in page_limit_h: int *; /*@ The maximum of the movable horizontal page */
+            @in page_limit_v: int *; /*@ The maximum of the movable vertical page */
          }
       }
    }

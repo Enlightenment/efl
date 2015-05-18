@@ -15,27 +15,27 @@ interface Elm_Interface_Atspi_Selection ()
             return: Eo *;
          }
          keys {
-            int selected_child_index; /*@ index of selected child */
+            selected_child_index: int; /*@ index of selected child */
          }
       }
       child_select @protected {
          /*@ Adds selection for given child index */
          params {
-            @in int child_index;
+            @in child_index: int;
          }
          return: bool;
       }
       selected_child_deselect @protected {
          /*@ Removes selection for given child index */
          params {
-            @in int child_index;
+            @in child_index: int;
          }
          return: bool;
       }
       is_child_selected @protected {
          /*@ Determines if child specified by index is selected */
          params {
-            @in int child_index;
+            @in child_index: int;
          }
          return: bool;
       }
@@ -50,7 +50,7 @@ interface Elm_Interface_Atspi_Selection ()
       child_deselect @protected {
          /*@ Removes selection for given child index */
          params {
-            @in int child_index;
+            @in child_index: int;
          }
          return: bool;
       }

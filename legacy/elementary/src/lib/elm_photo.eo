@@ -15,7 +15,7 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
             /*@ Get editability of the photo. */
          }
          values {
-            bool set; /*@ To set of clear editability. */
+            set: bool; /*@ To set of clear editability. */
          }
       }
       @property fill_inside {
@@ -29,7 +29,7 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
             /*@ Get if the photo should be completely visible or not. */
          }
          values {
-            bool fill; /*@ if true the photo will be completely visible */
+            fill: bool; /*@ if true the photo will be completely visible */
          }
       }
       @property aspect_fixed {
@@ -56,7 +56,7 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
             @ingroup Photo */
          }
          values {
-            bool fixed; /*@ @c EINA_TRUE if the photo should fix the aspect,
+            fixed: bool; /*@ @c EINA_TRUE if the photo should fix the aspect,
             @c EINA_FALSE otherwise. */
          }
       }
@@ -71,7 +71,7 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
             /*@ Get the size that will be used on the photo */
          }
          values {
-            int size; /*@ The size of the photo */
+            size: int; /*@ The size of the photo */
          }
       }
       thumb_set @const {
@@ -80,8 +80,8 @@ class Elm.Photo (Elm.Widget, Efl.File, Evas.Clickable_Interface, Evas.Draggable_
 
            @ingroup Photo */
          params {
-            @in const(char)* file @nullable; /*@ The path to file that will be used as thumbnail. */
-            @in const(char)* group @optional; /*@ The key used in case of an EET file. */
+            @in file: const(char)* @nullable; /*@ The path to file that will be used as thumbnail. */
+            @in group: const(char)* @optional; /*@ The key used in case of an EET file. */
          }
       }
    }

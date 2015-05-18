@@ -39,7 +39,7 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Diskselector */
          }
          values {
-            int len; /*@ The max length defined for side labels. */
+            len: int; /*@ The max length defined for side labels. */
          }
       }
       @property round_enabled {
@@ -67,7 +67,7 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Diskselector */
          }
          values {
-            bool enabled; /*@ @c EINA_TRUE to enable round mode or @c EINA_FALSE to
+            enabled: bool; /*@ @c EINA_TRUE to enable round mode or @c EINA_FALSE to
             disable it. */
          }
       }
@@ -97,7 +97,7 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Diskselector */
          }
          values {
-            int num; /*@ The number of items the diskselector will display. */
+            num: int; /*@ The number of items the diskselector will display. */
          }
       }
       @property first_item {
@@ -212,12 +212,12 @@ class Elm.Diskselector (Elm.Widget, Elm_Interface_Scrollable,
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* label; /*@ The label of the diskselector item. */
-            @in Evas_Object *icon @optional; /*@ The icon object to use at left side of the item. An
+            @in label: const(char)*; /*@ The label of the diskselector item. */
+            @in icon: Evas_Object * @optional; /*@ The icon object to use at left side of the item. An
             icon can be any Evas object, but usually it is an icon created
             with elm_icon_add(). */
-            @in Evas_Smart_Cb func @optional; /*@ The function to call when the item is selected. */
-            @in const(void)* data @optional; /*@ The data to associate with the item for related callbacks. */
+            @in func: Evas_Smart_Cb @optional; /*@ The function to call when the item is selected. */
+            @in data: const(void)* @optional; /*@ The data to associate with the item for related callbacks. */
          }
       }
       clear {

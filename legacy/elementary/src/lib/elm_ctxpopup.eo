@@ -20,7 +20,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Ctxpopup */
          }
          values {
-            bool horizontal; /*@ @c EINA_TRUE for horizontal mode, @c EINA_FALSE for vertical */
+            horizontal: bool; /*@ @c EINA_TRUE for horizontal mode, @c EINA_FALSE for vertical */
          }
       }
       @property auto_hide_disabled {
@@ -53,7 +53,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Ctxpopup */
          }
          values {
-            bool disabled; /*@ auto hide enable/disable. */
+            disabled: bool; /*@ auto hide enable/disable. */
          }
       }
       @property hover_parent {
@@ -80,7 +80,7 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Ctxpopup */
          }
          values {
-            Evas_Object *parent; /*@ The parent to use */
+            parent: Evas_Object *; /*@ The parent to use */
          }
       }
       @property direction_priority {
@@ -105,10 +105,10 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Ctxpopup */
          }
          values {
-            Elm_Ctxpopup_Direction first; /*@ 1st priority of direction */
-            Elm_Ctxpopup_Direction second; /*@ 2nd priority of direction */
-            Elm_Ctxpopup_Direction third; /*@ 3th priority of direction */
-            Elm_Ctxpopup_Direction fourth; /*@ 4th priority of direction */
+            first: Elm_Ctxpopup_Direction; /*@ 1st priority of direction */
+            second: Elm_Ctxpopup_Direction; /*@ 2nd priority of direction */
+            third: Elm_Ctxpopup_Direction; /*@ 3th priority of direction */
+            fourth: Elm_Ctxpopup_Direction; /*@ 4th priority of direction */
          }
       }
       @property direction {
@@ -213,10 +213,10 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* label; /*@ The Label of the new item */
-            @in Evas_Object *icon @optional; /*@ Icon to be set on new item */
-            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when item selected */
-            @in const(void)* data @optional; /*@ Data passed to @p func */
+            @in label: const(char)*; /*@ The Label of the new item */
+            @in icon: Evas_Object * @optional; /*@ Icon to be set on new item */
+            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when item selected */
+            @in data: const(void)* @optional; /*@ Data passed to @p func */
          }
       }
       item_prepend {
@@ -235,10 +235,10 @@ class Elm.Ctxpopup (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* label; /*@ The Label of the new item */
-            @in Evas_Object *icon @optional; /*@ Icon to be set on new item */
-            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when item selected */
-            @in const(void)* data @optional; /*@ Data passed to @p func */
+            @in label: const(char)*; /*@ The Label of the new item */
+            @in icon: Evas_Object * @optional; /*@ Icon to be set on new item */
+            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when item selected */
+            @in data: const(void)* @optional; /*@ Data passed to @p func */
          }
       }
    }

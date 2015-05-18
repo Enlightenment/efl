@@ -79,7 +79,7 @@ class Elm.Flip (Elm.Container)
             @ingroup Flip */
          }
          values {
-            Elm.Flip.Interaction mode; /*@ The interactive flip mode to use */
+            mode: Elm.Flip.Interaction; /*@ The interactive flip mode to use */
          }
       }
       @property front_visible {
@@ -116,8 +116,8 @@ class Elm.Flip (Elm.Container)
          @ingroup Flip */
 
          params {
-            @in Elm.Flip.Direction dir; /*@ The hit area to set */
-            @in double hitsize; /*@ The amount of that dimension (0.0 to 1.0) to use */
+            @in dir: Elm.Flip.Direction; /*@ The hit area to set */
+            @in hitsize: double; /*@ The amount of that dimension (0.0 to 1.0) to use */
          }
       }
       interaction_direction_hitsize_get {
@@ -133,7 +133,7 @@ class Elm.Flip (Elm.Container)
 
          return: double;
          params {
-            @in Elm.Flip.Direction dir; /*@ The direction to check */
+            @in dir: Elm.Flip.Direction; /*@ The direction to check */
          }
       }
       interaction_direction_enabled_set {
@@ -153,8 +153,8 @@ class Elm.Flip (Elm.Container)
          @ingroup Flip */
 
          params {
-            @in Elm.Flip.Direction dir; /*@ The direction to change */
-            @in bool enabled; /*@ If that direction is enabled or not */
+            @in dir: Elm.Flip.Direction; /*@ The direction to change */
+            @in enabled: bool; /*@ If that direction is enabled or not */
          }
       }
       interaction_direction_enabled_get {
@@ -171,7 +171,7 @@ class Elm.Flip (Elm.Container)
 
          return: bool;
          params {
-            @in Elm.Flip.Direction dir; /*@ The direction to check */
+            @in dir: Elm.Flip.Direction; /*@ The direction to check */
          }
       }
       go {
@@ -223,7 +223,7 @@ class Elm.Flip (Elm.Container)
          @ingroup Flip */
 
          params {
-            @in Elm.Flip.Mode mode; /*@ The mode type */
+            @in mode: Elm.Flip.Mode; /*@ The mode type */
          }
       }
       go_to {
@@ -275,8 +275,8 @@ class Elm.Flip (Elm.Container)
          @ingroup Flip */
 
          params {
-            @in bool front; /*@ if @c EINA_TRUE, makes front visible, otherwise makes back. */
-            @in Elm.Flip.Mode mode; /*@ The mode type */
+            @in front: bool; /*@ if @c EINA_TRUE, makes front visible, otherwise makes back. */
+            @in mode: Elm.Flip.Mode; /*@ The mode type */
          }
       }
    }

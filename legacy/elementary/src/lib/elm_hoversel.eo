@@ -24,7 +24,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             @ingroup Hoversel */
          }
          values {
-            bool horizontal; /*@ If true, the hover will expand horizontally to the
+            horizontal: bool; /*@ If true, the hover will expand horizontally to the
             right. */
          }
       }
@@ -52,7 +52,7 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
             @ingroup Hoversel */
          }
          values {
-            Evas_Object *parent @nullable; /*@ The parent to use */
+            parent: Evas_Object * @nullable; /*@ The parent to use */
          }
       }
       @property expanded {
@@ -126,13 +126,13 @@ class Elm.Hoversel (Elm.Button, Evas.Selectable_Interface,
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* label @optional; /*@ The text label to use for the item (NULL if not desired) */
-            @in const(char)* icon_file @optional; /*@ An image file path on disk to use for the icon or standard
+            @in label: const(char)* @optional; /*@ The text label to use for the item (NULL if not desired) */
+            @in icon_file: const(char)* @optional; /*@ An image file path on disk to use for the icon or standard
             icon name (NULL if not desired) */
-            @in Elm_Icon_Type icon_type; /*@ The icon type if relevant */
-            @in Evas_Smart_Cb func @optional; /*@ Convenience function to call when this item is selected. The last
+            @in icon_type: Elm_Icon_Type; /*@ The icon type if relevant */
+            @in func: Evas_Smart_Cb @optional; /*@ Convenience function to call when this item is selected. The last
             parameter @p event_info of @c func is the selected item pointer. */
-            @in const(void)* data @optional; /*@ Data to pass to item-related functions */
+            @in data: const(void)* @optional; /*@ Data to pass to item-related functions */
          }
       }
    }

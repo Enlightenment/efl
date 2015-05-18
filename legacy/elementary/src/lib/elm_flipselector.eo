@@ -39,7 +39,7 @@ class Elm.Flipselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Flipselector */
          }
          values {
-            double interval; /*@ The (first) interval value in seconds */
+            interval: double; /*@ The (first) interval value in seconds */
          }
       }
       @property items {
@@ -132,10 +132,10 @@ class Elm.Flipselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* label; /*@ The (text) label of the new item */
-            @in Evas_Smart_Cb func @optional; /*@ Convenience callback function to take place when
+            @in label: const(char)*; /*@ The (text) label of the new item */
+            @in func: Evas_Smart_Cb @optional; /*@ Convenience callback function to take place when
             item is selected */
-            @in void *data @optional; /*@ Data passed to @p func, above */
+            @in data: void * @optional; /*@ Data passed to @p func, above */
          }
       }
       flip_next {
@@ -171,10 +171,10 @@ class Elm.Flipselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in const(char)* label; /*@ The (text) label of the new item */
-            @in Evas_Smart_Cb func @optional; /*@ Convenience callback function to take place when
+            @in label: const(char)*; /*@ The (text) label of the new item */
+            @in func: Evas_Smart_Cb @optional; /*@ Convenience callback function to take place when
             item is selected */
-            @in const(void)* data @optional; /*@ Data passed to @p func, above */
+            @in data: const(void)* @optional; /*@ Data passed to @p func, above */
          }
       }
       flip_prev {

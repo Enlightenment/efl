@@ -35,7 +35,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            bool homogeneous; /*@ Assume the items within the genlist are of the
+            homogeneous: bool; /*@ Assume the items within the genlist are of the
             same height and width (EINA_TRUE = on, EINA_FALSE = off). Default is @c
             EINA_FALSE. */
          }
@@ -71,7 +71,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            Elm_Object_Select_Mode mode(4); /*@ The select mode */
+            mode: Elm_Object_Select_Mode(4); /*@ The select mode */
          }
       }
       @property focus_on_selection {
@@ -96,7 +96,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            bool enabled; /*@ The tree effect status
+            enabled: bool; /*@ The tree effect status
             (EINA_TRUE = enabled, EINA_FALSE = disabled) */
          }
       }
@@ -128,7 +128,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            double timeout; /*@ timeout in seconds. Default is elm config value(1.0) */
+            timeout: double; /*@ timeout in seconds. Default is elm config value(1.0) */
          }
       }
       @property multi_select {
@@ -157,7 +157,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            bool multi; /*@ Multi-select enable/disable. Default is disabled. */
+            multi: bool; /*@ Multi-select enable/disable. Default is disabled. */
          }
       }
       @property reorder_mode {
@@ -181,7 +181,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            bool reorder_mode; /*@ The reorder mode
+            reorder_mode: bool; /*@ The reorder mode
             (EINA_TRUE = on, EINA_FALSE = off) */
          }
       }
@@ -204,7 +204,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            bool decorated; /*@ The decorate mode status
+            decorated: bool; /*@ The decorate mode status
             (EINA_TRUE = decorate mode, EINA_FALSE = normal mode */
          }
       }
@@ -239,7 +239,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @since 1.8 */
          }
          values {
-            Elm_Object_Multi_Select_Mode mode(2); /*@ The multi select mode */
+            mode: Elm_Object_Multi_Select_Mode(2); /*@ The multi select mode */
          }
       }
       @property block_count {
@@ -275,7 +275,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            int count; /*@ Maximum number of items within an item block. Default is 32. */
+            count: int; /*@ Maximum number of items within an item block. Default is 32. */
          }
       }
       @property tree_effect_enabled {
@@ -295,7 +295,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            bool enabled; /*@ The tree effect status
+            enabled: bool; /*@ The tree effect status
             (EINA_TRUE = enabled, EINA_FALSE = disabled */
          }
       }
@@ -325,7 +325,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            bool highlight; /*@ @c EINA_TRUE to enable highlighting or @c EINA_FALSE to
+            highlight: bool; /*@ @c EINA_TRUE to enable highlighting or @c EINA_FALSE to
             disable it. */
          }
       }
@@ -370,7 +370,7 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
             @ingroup Genlist */
          }
          values {
-            Elm_List_Mode mode(4); /*@ The mode to use (one of #ELM_LIST_SCROLL or #ELM_LIST_LIMIT). */
+            mode: Elm_List_Mode(4); /*@ The mode to use (one of #ELM_LIST_SCROLL or #ELM_LIST_LIMIT). */
          }
       }
       @property decorated_item {
@@ -498,13 +498,13 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          return: Elm_Object_Item *;
          params {
-            @in const(Elm_Genlist_Item_Class)* itc; /*@ The item class for the item */
-            @in const(void)* data; /*@ The item data */
-            @in Elm_Object_Item *parent @nullable; /*@ The parent item, or NULL if none */
-            @in Elm_Object_Item *before_it; /*@ The item to place this new one before. */
-            @in Elm_Genlist_Item_Type type; /*@ Item type */
-            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when the item is selected */
-            @in const(void)* func_data @optional; /*@ Data passed to @p func above. */
+            @in itc: const(Elm_Genlist_Item_Class)*; /*@ The item class for the item */
+            @in data: const(void)*; /*@ The item data */
+            @in parent: Elm_Object_Item * @nullable; /*@ The parent item, or NULL if none */
+            @in before_it: Elm_Object_Item *; /*@ The item to place this new one before. */
+            @in type: Elm_Genlist_Item_Type; /*@ Item type */
+            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when the item is selected */
+            @in func_data: const(void)* @optional; /*@ Data passed to @p func above. */
          }
       }
       realized_items_update {
@@ -541,13 +541,13 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          return: Elm_Object_Item *;
          params {
-            @in const(Elm_Genlist_Item_Class)* itc; /*@ The item class for the item */
-            @in const(void)* data; /*@ The item data */
-            @in Elm_Object_Item *parent @nullable; /*@ The parent item, or NULL if none */
-            @in Elm_Object_Item *after_it; /*@ The item to place this new one after. */
-            @in Elm_Genlist_Item_Type type; /*@ Item type */
-            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when the item is selected */
-            @in const(void)* func_data @optional; /*@ Data passed to @p func above. */
+            @in itc: const(Elm_Genlist_Item_Class)*; /*@ The item class for the item */
+            @in data: const(void)*; /*@ The item data */
+            @in parent: Elm_Object_Item * @nullable; /*@ The parent item, or NULL if none */
+            @in after_it: Elm_Object_Item *; /*@ The item to place this new one after. */
+            @in type: Elm_Genlist_Item_Type; /*@ Item type */
+            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when the item is selected */
+            @in func_data: const(void)* @optional; /*@ Data passed to @p func above. */
          }
       }
       at_xy_item_get @const {
@@ -569,9 +569,9 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
          @ingroup Genlist */
          return: Elm_Object_Item *;
          params {
-            @in Evas_Coord x; /*@ The input x coordinate */
-            @in Evas_Coord y; /*@ The input y coordinate */
-            @out int posret; /*@ The position relative to the item returned here */
+            @in x: Evas_Coord; /*@ The input x coordinate */
+            @in y: Evas_Coord; /*@ The input y coordinate */
+            @out posret: int; /*@ The position relative to the item returned here */
          }
       }
       items_count @const {
@@ -603,12 +603,12 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          return: Elm_Object_Item *;
          params {
-            @in const(Elm_Genlist_Item_Class)* itc; /*@ The item class for the item */
-            @in const(void)* data; /*@ The item data */
-            @in Elm_Object_Item *parent @nullable; /*@ The parent item, or NULL if none */
-            @in Elm_Genlist_Item_Type type; /*@ Item type */
-            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when the item is selected */
-            @in const(void)* func_data @optional; /*@ Data passed to @p func above. */
+            @in itc: const(Elm_Genlist_Item_Class)*; /*@ The item class for the item */
+            @in data: const(void)*; /*@ The item data */
+            @in parent: Elm_Object_Item * @nullable; /*@ The parent item, or NULL if none */
+            @in type: Elm_Genlist_Item_Type; /*@ Item type */
+            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when the item is selected */
+            @in func_data: const(void)* @optional; /*@ Data passed to @p func above. */
          }
       }
       clear {
@@ -640,12 +640,12 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          return: Elm_Object_Item *;
          params {
-            @in const(Elm_Genlist_Item_Class)* itc; /*@ The item class for the item */
-            @in const(void)* data; /*@ The item data */
-            @in Elm_Object_Item *parent @nullable; /*@ The parent item, or NULL if none */
-            @in Elm_Genlist_Item_Type type; /*@ Item type */
-            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when the item is selected */
-            @in const(void)* func_data @optional; /*@ Data passed to @p func above. */
+            @in itc: const(Elm_Genlist_Item_Class)*; /*@ The item class for the item */
+            @in data: const(void)*; /*@ The item data */
+            @in parent: Elm_Object_Item * @nullable; /*@ The parent item, or NULL if none */
+            @in type: Elm_Genlist_Item_Type; /*@ Item type */
+            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when the item is selected */
+            @in func_data: const(void)* @optional; /*@ Data passed to @p func above. */
          }
       }
       item_sorted_insert {
@@ -667,13 +667,13 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          return: Elm_Object_Item *;
          params {
-            @in const(Elm_Genlist_Item_Class)* itc; /*@ The item class for the item */
-            @in const(void)* data; /*@ The item data */
-            @in Elm_Object_Item *parent @nullable; /*@ The parent item, or NULL if none */
-            @in Elm_Genlist_Item_Type type; /*@ Item type */
-            @in Eina_Compare_Cb comp; /*@ The function called for the sort */
-            @in Evas_Smart_Cb func @optional; /*@ Convenience function called when item selected */
-            @in const(void)* func_data @optional; /*@ Data passed to @p func above. */
+            @in itc: const(Elm_Genlist_Item_Class)*; /*@ The item class for the item */
+            @in data: const(void)*; /*@ The item data */
+            @in parent: Elm_Object_Item * @nullable; /*@ The parent item, or NULL if none */
+            @in type: Elm_Genlist_Item_Type; /*@ Item type */
+            @in comp: Eina_Compare_Cb; /*@ The function called for the sort */
+            @in func: Evas_Smart_Cb @optional; /*@ Convenience function called when item selected */
+            @in func_data: const(void)* @optional; /*@ Data passed to @p func above. */
          }
       }
       search_by_text_item_get {
@@ -694,10 +694,10 @@ class Elm.Genlist (Elm.Layout, Elm_Interface_Scrollable, Evas.Clickable_Interfac
 
          return: Elm_Object_Item *;
          params {
-            @in Elm_Object_Item * item_to_search_from @optional; /*@ Pointer to item to start search from. If NULL search will be started from the first item of the genlist. */
-            @in const(char)* part_name; /*@ Name of the TEXT part of genlist item to search string in. */
-            @in const(char)* pattern; /*@ The search pattern. */
-            @in Elm_Glob_Match_Flags flags; /*@ Search flags */
+            @in item_to_search_from: Elm_Object_Item * @optional; /*@ Pointer to item to start search from. If NULL search will be started from the first item of the genlist. */
+            @in part_name: const(char)*; /*@ Name of the TEXT part of genlist item to search string in. */
+            @in pattern: const(char)*; /*@ The search pattern. */
+            @in flags: Elm_Glob_Match_Flags; /*@ Search flags */
          }
       }
    }

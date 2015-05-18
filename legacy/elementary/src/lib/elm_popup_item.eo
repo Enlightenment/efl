@@ -13,4 +13,3 @@ class Elm.Popup_Item(Elm.Widget_Item)
            Elm.Widget_Item.part_content_unset;
       }
 }
-

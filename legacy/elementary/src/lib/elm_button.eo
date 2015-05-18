@@ -29,7 +29,7 @@ class Elm.Button (Elm.Layout, Evas.Clickable_Interface,
             @ingroup Button */
          }
          values {
-            double t; /*@ Timeout in seconds */
+            t: double; /*@ Timeout in seconds */
          }
       }
       @property autorepeat_gap_timeout {
@@ -53,7 +53,7 @@ class Elm.Button (Elm.Layout, Evas.Clickable_Interface,
             @ingroup Button */
          }
          values {
-            double t; /*@ Interval in seconds */
+            t: double; /*@ Interval in seconds */
          }
       }
       @property autorepeat {
@@ -83,7 +83,7 @@ class Elm.Button (Elm.Layout, Evas.Clickable_Interface,
             @ingroup Button */
          }
          values {
-            bool on; /*@ A bool to turn on/off the event */
+            on: bool; /*@ A bool to turn on/off the event */
          }
       }
       @property admits_autorepeat {
@@ -92,7 +92,7 @@ class Elm.Button (Elm.Layout, Evas.Clickable_Interface,
             legacy: null;
          }
          values {
-            bool ret;
+            ret: bool;
          }
       }
    }

@@ -24,7 +24,7 @@ class Elm.Dayselector (Elm.Layout)
             @ingroup Dayselector */
          }
          values {
-            Elm_Dayselector_Day day; /*@ Dayselector_Day the first day that the user wants to display. */
+            day: Elm_Dayselector_Day; /*@ Dayselector_Day the first day that the user wants to display. */
          }
       }
       @property weekend_length {
@@ -48,7 +48,7 @@ class Elm.Dayselector (Elm.Layout)
             @ingroup Dayselector */
          }
          values {
-            uint length; /*@ Weekend length, number of days as an integer. */
+            length: uint; /*@ Weekend length, number of days as an integer. */
          }
       }
       @property weekend_start {
@@ -73,7 +73,7 @@ class Elm.Dayselector (Elm.Layout)
             @ingroup Dayselector */
          }
          values {
-            Elm_Dayselector_Day day; /*@ Dayselector_Day the first day from where weekend starts. */
+            day: Elm_Dayselector_Day; /*@ Dayselector_Day the first day from where weekend starts. */
          }
       }
       weekdays_names_set {
@@ -103,7 +103,7 @@ class Elm.Dayselector (Elm.Layout)
          @ingroup Dayselector */
 
          params {
-            @in const(char)* *weekdays @nullable; /*@ Array of seven strings to be used as weekday names.
+            @in weekdays: const(char)* * @nullable; /*@ Array of seven strings to be used as weekday names.
             @warning It must have 7 elements, or it will access invalid memory.
             @warning The strings must be NULL terminated ('@\0'). */
          }
@@ -135,8 +135,8 @@ class Elm.Dayselector (Elm.Layout)
          @ingroup Dayselector */
 
          params {
-            @in Elm_Dayselector_Day day; /*@ Dayselector_Day that the user want to set state. */
-            @in bool selected; /*@ state of the day. @c EINA_TRUE is selected. */
+            @in day: Elm_Dayselector_Day; /*@ Dayselector_Day that the user want to set state. */
+            @in selected: bool; /*@ state of the day. @c EINA_TRUE is selected. */
          }
       }
       day_selected_get @const {
@@ -151,7 +151,7 @@ class Elm.Dayselector (Elm.Layout)
          @ingroup Dayselector */
          return: bool;
          params {
-            @in Elm_Dayselector_Day day; /*@ Dayselector_Day that the user want to know state. */
+            @in day: Elm_Dayselector_Day; /*@ Dayselector_Day that the user want to know state. */
          }
       }
    }

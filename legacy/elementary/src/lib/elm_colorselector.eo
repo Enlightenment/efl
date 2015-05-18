@@ -16,10 +16,10 @@ class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Colorselector */
          }
          values {
-            int r; /*@ r-value of color */
-            int g; /*@ g-value of color */
-            int b; /*@ b-value of color */
-            int a; /*@ a-value of color */
+            r: int; /*@ r-value of color */
+            g: int; /*@ g-value of color */
+            b: int; /*@ b-value of color */
+            a: int; /*@ a-value of color */
          }
       }
       @property palette_name {
@@ -45,7 +45,7 @@ class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Colorselector */
          }
          values {
-            const(char)* palette_name; /*@ Name of palette */
+            palette_name: const(char)*; /*@ Name of palette */
          }
       }
       @property mode {
@@ -66,7 +66,7 @@ class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
             @ingroup Colorselector */
          }
          values {
-            Elm_Colorselector_Mode mode; /*@ Elm_Colorselector_Mode */
+            mode: Elm_Colorselector_Mode; /*@ Elm_Colorselector_Mode */
          }
       }
       @property palette_items {
@@ -107,10 +107,10 @@ class Elm.Colorselector (Elm.Layout, Elm_Interface_Atspi_Widget_Action)
 
          return: Elm_Object_Item *;
          params {
-            @in int r; /*@ r-value of color */
-            @in int g; /*@ g-value of color */
-            @in int b; /*@ b-value of color */
-            @in int a; /*@ a-value of color */
+            @in r: int; /*@ r-value of color */
+            @in g: int; /*@ g-value of color */
+            @in b: int; /*@ b-value of color */
+            @in a: int; /*@ a-value of color */
          }
       }
       palette_clear {

@@ -9,7 +9,7 @@ class Elm_App_Server_View (Eo.Base)
          get {
          }
          values {
-            short progress;
+            progress: short;
          }
       }
       @property new_events {
@@ -18,7 +18,7 @@ class Elm_App_Server_View (Eo.Base)
          get {
          }
          values {
-            int events;
+            events: int;
          }
       }
       @property icon {
@@ -27,7 +27,7 @@ class Elm_App_Server_View (Eo.Base)
          get {
          }
          values {
-            const(char)* icon;
+            icon: const(char)*;
          }
       }
       @property title {
@@ -36,35 +36,35 @@ class Elm_App_Server_View (Eo.Base)
          get {
          }
          values {
-            const(char)* title @nullable;
+            title: const(char)* @nullable;
          }
       }
       @property window {
          set {
          }
          values {
-            Evas_Object *win;
+            win: Evas_Object *;
          }
       }
       @property id {
          get {
          }
          values {
-            Eina_Stringshare *ret;
+            ret: Eina_Stringshare *;
          }
       }
       @property state {
          get {
          }
          values {
-            Elm_App_View_State ret;
+            ret: Elm_App_View_State;
          }
       }
       @property path {
          get {
          }
          values {
-            const(char)* ret;
+            ret: const(char)*;
          }
       }
       @property pixels {
@@ -75,17 +75,17 @@ class Elm_App_Server_View (Eo.Base)
             /*@ Set icon to application, using the raw pixels of image. */
          }
          values {
-            uint w;
-            uint h;
-            bool has_alpha;
-            const(ubyte)* pixels;
+            w: uint;
+            h: uint;
+            has_alpha: bool;
+            pixels: const(ubyte)*;
          }
       }
       constructor {
          /*@ Class constructor of elm_app_server_view */
          legacy: null;
          params {
-            @in const(char)* id @nullable; /*@ identifier of view */
+            @in id: const(char)* @nullable; /*@ identifier of view */
          }
       }
       pause {

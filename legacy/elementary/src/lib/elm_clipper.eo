@@ -27,7 +27,7 @@ class Elm.Clipper (Elm.Container)
             @ingroup Clipper */
          }
          values {
-            Evas_Object *clip;
+            clip: Evas_Object *;
          }
       }
    }

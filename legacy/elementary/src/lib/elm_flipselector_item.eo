@@ -29,7 +29,7 @@ class Elm.Flipselector_Item(Elm.Widget_Item)
                  */
              }
              values {
-                 Eina_Bool selected; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
+                 selected: Eina_Bool; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
              }
         }
       prev_get @const {

@@ -25,7 +25,7 @@ class Elm.Menu_Item(Elm.Widget_Item)
                  */
              }
              values {
-                 const (char)* icon; /*@ The name of icon object */
+                 icon: const (char)*; /*@ The name of icon object */
              }
         }
         @property selected {
@@ -46,7 +46,7 @@ class Elm.Menu_Item(Elm.Widget_Item)
                  */
              }
              values {
-                 bool selected; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
+                 selected: bool; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
              }
         }
       prev_get @const {

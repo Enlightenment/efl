@@ -18,7 +18,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Elm_Object_Item *item; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
+                     item: Elm_Object_Item *; /*@ @return The item before @p item, or @c NULL if there's none (and on errors) */
                 }
            }
            @property next {
@@ -36,7 +36,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Elm_Object_Item *item; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
+                     item: Elm_Object_Item *; /*@ @return The item after @p item, or @c NULL if there's none (and on errors) */
                 }
            }
            @property selected {
@@ -66,7 +66,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Eina_Bool selected; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
+                     selected: Eina_Bool; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
                 }
            }
            @property item_class {
@@ -81,7 +81,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     const (Elm_Gengrid_Item_Class) *itc; /*@ Gengrid Item class for the given item */
+                     itc: const (Elm_Gengrid_Item_Class) *; /*@ Gengrid Item class for the given item */
                 }
            }
            @property index {
@@ -93,7 +93,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     int index(-1); /*@ @return the position inside the list of item. */
+                     index: int(-1); /*@ @return the position inside the list of item. */
                 }
            }
            @property pos {
@@ -110,8 +110,8 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     uint x; /*@ Pointer to variable to store the item's <b>row number</b>. */
-                     uint y; /*@ Pointer to variable to store the item's <b>column number</b>. */
+                     x: uint; /*@ Pointer to variable to store the item's <b>row number</b>. */
+                     y: uint; /*@ Pointer to variable to store the item's <b>column number</b>. */
                 }
            }
            @property select_mode {
@@ -152,7 +152,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     Elm_Object_Select_Mode mode(4); /*@ The selected mode */
+                     mode: Elm_Object_Select_Mode(4); /*@ The selected mode */
                 }
            }
            /*      init { FIXME
@@ -175,7 +175,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                  @ingroup Gengrid
                  */
                 params {
-                     @in Elm_Gengrid_Item_Scrollto_Type type; /*@ Where to position the item in the viewport. */
+                     @in type: Elm_Gengrid_Item_Scrollto_Type; /*@ Where to position the item in the viewport. */
                 }
            }
            bring_in {
@@ -192,7 +192,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                  @ingroup Gengrid
                  */
                 params {
-                     @in Elm_Gengrid_Item_Scrollto_Type type; /*@ Where to position the item in the viewport. */
+                     @in type: Elm_Gengrid_Item_Scrollto_Type; /*@ Where to position the item in the viewport. */
                 }
            }
            update {
@@ -218,7 +218,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                  @ingroup Gengrid
                  */
                 params {
-                     @in const (Elm_Gengrid_Item_Class) *itc; /*@ The gengrid item class describing the function pointers and the item style. */
+                     @in itc: const (Elm_Gengrid_Item_Class) *; /*@ The gengrid item class describing the function pointers and the item style. */
                 }
            }
       }
@@ -245,4 +245,3 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
            Elm_Interface_Atspi_Accessible.children.get;
       }
 }
-

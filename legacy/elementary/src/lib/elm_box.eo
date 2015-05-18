@@ -23,7 +23,7 @@ class Elm.Box (Elm.Widget)
             @ingroup Box */
          }
          values {
-            bool homogeneous; /*@ The homogeneous flag */
+            homogeneous: bool; /*@ The homogeneous flag */
          }
       }
       @property align {
@@ -46,8 +46,8 @@ class Elm.Box (Elm.Widget)
             @ingroup Box */
          }
          values {
-            double horizontal; /*@ The horizontal alignment of elements */
-            double vertical; /*@ The vertical alignment of elements */
+            horizontal: double; /*@ The horizontal alignment of elements */
+            vertical: double; /*@ The vertical alignment of elements */
          }
       }
       @property horizontal {
@@ -73,7 +73,7 @@ class Elm.Box (Elm.Widget)
             @ingroup Box */
          }
          values {
-            bool horizontal; /*@ The horizontal flag (@c EINA_TRUE = horizontal,
+            horizontal: bool; /*@ The horizontal flag (@c EINA_TRUE = horizontal,
             @c EINA_FALSE = vertical) */
          }
       }
@@ -98,8 +98,8 @@ class Elm.Box (Elm.Widget)
             @ingroup Box */
          }
          values {
-            Evas_Coord horizontal; /*@ The horizontal space between elements */
-            Evas_Coord vertical; /*@ The vertical space between elements */
+            horizontal: Evas_Coord; /*@ The horizontal space between elements */
+            vertical: Evas_Coord; /*@ The vertical space between elements */
          }
       }
       @property layout {
@@ -135,9 +135,9 @@ class Elm.Box (Elm.Widget)
             @ingroup Box */
          }
          values {
-            Evas_Object_Box_Layout cb @nullable; /*@ The callback function used for layout */
-            const(void)* data @optional; /*@ Data that will be passed to layout function */
-            Ecore_Cb free_data @optional; /*@ Function called to free @p data */
+            cb: Evas_Object_Box_Layout @nullable; /*@ The callback function used for layout */
+            data: const(void)* @optional; /*@ Data that will be passed to layout function */
+            free_data: Ecore_Cb @optional; /*@ Function called to free @p data */
          }
       }
       @property children {
@@ -174,7 +174,7 @@ class Elm.Box (Elm.Widget)
          @ingroup Box */
 
          params {
-            @in Evas_Object *subobj; /*@ The object to add to the box */
+            @in subobj: Evas_Object *; /*@ The object to add to the box */
          }
       }
       unpack_all {
@@ -206,7 +206,7 @@ class Elm.Box (Elm.Widget)
          @ingroup Box */
 
          params {
-            @in Evas_Object *subobj; /*@ The object to unpack */
+            @in subobj: Evas_Object *; /*@ The object to unpack */
          }
       }
       pack_after {
@@ -228,8 +228,8 @@ class Elm.Box (Elm.Widget)
          @ingroup Box */
 
          params {
-            @in Evas_Object *subobj; /*@ The object to add to the box */
-            @in Evas_Object *after; /*@ The object after which to add it */
+            @in subobj: Evas_Object *; /*@ The object to add to the box */
+            @in after: Evas_Object *; /*@ The object after which to add it */
          }
       }
       pack_start {
@@ -252,7 +252,7 @@ class Elm.Box (Elm.Widget)
          @ingroup Box */
 
          params {
-            @in Evas_Object *subobj; /*@ The object to add to the box */
+            @in subobj: Evas_Object *; /*@ The object to add to the box */
          }
       }
       recalculate {
@@ -287,8 +287,8 @@ class Elm.Box (Elm.Widget)
          @ingroup Box */
 
          params {
-            @in Evas_Object *subobj; /*@ The object to add to the box */
-            @in Evas_Object *before; /*@ The object before which to add it */
+            @in subobj: Evas_Object *; /*@ The object to add to the box */
+            @in before: Evas_Object *; /*@ The object before which to add it */
          }
       }
       clear {

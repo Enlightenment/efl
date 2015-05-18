@@ -22,7 +22,7 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface)
             @ingroup Hover */
          }
          values {
-            Evas_Object *target; /*@ The object to center the hover onto. */
+            target: Evas_Object *; /*@ The object to center the hover onto. */
          }
       }
       best_content_location_get @const {
@@ -53,7 +53,7 @@ class Elm.Hover (Elm.Layout, Evas.Clickable_Interface)
          @ingroup Hover */
          return: const(char)*;
          params {
-            @in Elm_Hover_Axis pref_axis; /*@ The preferred orientation axis for the hover object to use */
+            @in pref_axis: Elm_Hover_Axis; /*@ The preferred orientation axis for the hover object to use */
          }
       }
       dismiss {

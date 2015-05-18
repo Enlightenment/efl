@@ -31,7 +31,7 @@ class Elm.Layout (Elm.Container, Efl.File)
             @ingroup Layout */
          }
          values {
-            bool can_access; /*@ makes all textblock(text) parts in the layout @p obj possible
+            can_access: bool; /*@ makes all textblock(text) parts in the layout @p obj possible
             to have accessibility. @c EINA_TRUE means textblock(text) parts can be accessible */
          }
       }
@@ -49,9 +49,9 @@ class Elm.Layout (Elm.Container, Efl.File)
             return: bool;
          }
          values {
-            const(char)* klass; /*@ the class of the group */
-            const(char)* group; /*@ the group */
-            const(char)* style; /*@ the style to used */
+            klass: const(char)*; /*@ the class of the group */
+            group: const(char)*; /*@ the group */
+            style: const(char)*; /*@ the style to used */
          }
       }
       @property text_aliases {
@@ -60,7 +60,7 @@ class Elm.Layout (Elm.Container, Efl.File)
             legacy: null;
          }
          values {
-            const(Elm.Layout_Part_Alias_Description)* aliases;
+            aliases: const(Elm.Layout_Part_Alias_Description)*;
          }
       }
       @property content_aliases {
@@ -69,7 +69,7 @@ class Elm.Layout (Elm.Container, Efl.File)
             legacy: null;
          }
          values {
-            const(Elm.Layout_Part_Alias_Description)* aliases;
+            aliases: const(Elm.Layout_Part_Alias_Description)*;
          }
       }
       @property edje {
@@ -119,8 +119,8 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: bool;
          params {
-            @in const(char)* part; /*@ The box part name to remove child. */
-            @in bool clear; /*@ If EINA_TRUE, then all objects will be deleted as
+            @in part: const(char)*; /*@ The box part name to remove child. */
+            @in clear: bool; /*@ If EINA_TRUE, then all objects will be deleted as
             well, otherwise they will just be removed and will be
             dangling on the canvas. */
          }
@@ -141,8 +141,8 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: bool;
          params {
-            @in const(char)* part_name; /*@ a part from loaded edje group. */
-            @in bool engine_only; /*@ if cursors should be just provided by the engine (EINA_TRUE)
+            @in part_name: const(char)*; /*@ a part from loaded edje group. */
+            @in engine_only: bool; /*@ if cursors should be just provided by the engine (EINA_TRUE)
             or should also search on widget's theme as well (EINA_FALSE) */
          }
       }
@@ -155,7 +155,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          @ingroup Layout */
          return: bool;
          params {
-            @in const(char)* part_name; /*@ a part from loaded edje group. */
+            @in part_name: const(char)*; /*@ a part from loaded edje group. */
          }
       }
       table_unpack {
@@ -175,8 +175,8 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: Evas_Object *;
          params {
-            @in const(char)* part; /*@ The table part name to remove child. */
-            @in Evas_Object *child; /*@ The object to remove from table. */
+            @in part: const(char)*; /*@ The table part name to remove child. */
+            @in child: Evas_Object *; /*@ The object to remove from table. */
          }
       }
       freeze {
@@ -235,8 +235,8 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: Evas_Object *;
          params {
-            @in const(char)* part; /*@ The box part name to remove child. */
-            @in Evas_Object *child; /*@ The object to remove from box. */
+            @in part: const(char)*; /*@ The box part name to remove child. */
+            @in child: Evas_Object *; /*@ The object to remove from box. */
          }
       }
       sizing_restricted_eval {
@@ -253,8 +253,8 @@ class Elm.Layout (Elm.Container, Efl.File)
          @ingroup Layout */
 
          params {
-            @in bool width; /*@ Restrict minimum size to the current width */
-            @in bool height; /*@ Restrict minimum size ot the current height */
+            @in width: bool; /*@ Restrict minimum size to the current width */
+            @in height: bool; /*@ Restrict minimum size ot the current height */
          }
       }
       part_cursor_style_set {
@@ -268,8 +268,8 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: bool;
          params {
-            @in const(char)* part_name; /*@ a part from loaded edje group. */
-            @in const(char)* style; /*@ the theme style to use (default, transparent, ...) */
+            @in part_name: const(char)*; /*@ a part from loaded edje group. */
+            @in style: const(char)*; /*@ the theme style to use (default, transparent, ...) */
          }
       }
       part_cursor_style_get @const {
@@ -282,7 +282,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          @ingroup Layout */
          return: const(char)*;
          params {
-            @in const(char)* part_name; /*@ a part from loaded edje group. */
+            @in part_name: const(char)*; /*@ a part from loaded edje group. */
          }
       }
       text_set {
@@ -295,8 +295,8 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: bool;
          params {
-            @in const(char)* part @nullable; /*@ The TEXT part where to set the text */
-            @in const(char)* text @nullable; /*@ The text to set */
+            @in part: const(char)* @nullable; /*@ The TEXT part where to set the text */
+            @in text: const(char)* @nullable; /*@ The text to set */
          }
       }
       text_get @const {
@@ -308,7 +308,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          @ingroup Layout */
          return: const(char)*;
          params {
-            @in const(char)* part; /*@ The TEXT part to retrieve the text off */
+            @in part: const(char)*; /*@ The TEXT part to retrieve the text off */
          }
       }
       signal_callback_add {
@@ -324,11 +324,11 @@ class Elm.Layout (Elm.Container, Efl.File)
          @ingroup Layout */
 
          params {
-            @in const(char)* emission; /*@ The signal's name string */
-            @in const(char)* source; /*@ The signal's source string */
-            @in Edje_Signal_Cb func; /*@ The callback function to be executed when the signal is
+            @in emission: const(char)*; /*@ The signal's name string */
+            @in source: const(char)*; /*@ The signal's source string */
+            @in func: Edje_Signal_Cb; /*@ The callback function to be executed when the signal is
             emitted. */
-            @in void *data @optional; /*@ A pointer to data to pass in to the callback function. */
+            @in data: void * @optional; /*@ A pointer to data to pass in to the callback function. */
          }
       }
       part_cursor_set {
@@ -342,8 +342,8 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: bool;
          params {
-            @in const(char)* part_name; /*@ a part from loaded edje group. */
-            @in const(char)* cursor; /*@ cursor name to use, see Elementary_Cursor.h */
+            @in part_name: const(char)*; /*@ a part from loaded edje group. */
+            @in cursor: const(char)*; /*@ cursor name to use, see Elementary_Cursor.h */
          }
       }
       part_cursor_get @const {
@@ -355,7 +355,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          @ingroup Layout */
          return: const(char)*;
          params {
-            @in const(char)* part_name; /*@ a part from loaded edje group. */
+            @in part_name: const(char)*; /*@ a part from loaded edje group. */
          }
       }
       box_insert_before {
@@ -378,9 +378,9 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: bool;
          params {
-            @in const(char)* part; /*@ the box part to insert. */
-            @in own(Evas_Object *) child; /*@ the child object to insert into box. */
-            @in const(Evas_Object)* reference; /*@ another reference object to insert before in box. */
+            @in part: const(char)*; /*@ the box part to insert. */
+            @in child: own(Evas_Object *); /*@ the child object to insert into box. */
+            @in reference: const(Evas_Object)*; /*@ another reference object to insert before in box. */
          }
       }
       box_insert_at {
@@ -403,9 +403,9 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: bool;
          params {
-            @in const(char)* part; /*@ the box part to insert. */
-            @in own(Evas_Object *) child; /*@ the child object to insert into box. */
-            @in uint pos; /*@ the numeric position >=0 to insert the child. */
+            @in part: const(char)*; /*@ the box part to insert. */
+            @in child: own(Evas_Object *); /*@ the child object to insert into box. */
+            @in pos: uint; /*@ the numeric position >=0 to insert the child. */
          }
       }
       sub_object_add_enable {
@@ -440,7 +440,7 @@ class Elm.Layout (Elm.Container, Efl.File)
          @ingroup Layout */
          return: const(char)*;
          params {
-            @in const(char)* key; /*@ The data key */
+            @in key: const(char)*; /*@ The data key */
          }
       }
       box_append {
@@ -463,8 +463,8 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: bool;
          params {
-            @in const(char)* part; /*@ the box part to which the object will be appended. */
-            @in own(Evas_Object *) child; /*@ the child object to append to box. */
+            @in part: const(char)*; /*@ the box part to which the object will be appended. */
+            @in child: own(Evas_Object *); /*@ the child object to append to box. */
          }
       }
       signal_callback_del {
@@ -484,9 +484,9 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: void *;
          params {
-            @in const(char)* emission; /*@ The signal's name string */
-            @in const(char)* source; /*@ The signal's source string */
-            @in Edje_Signal_Cb func; /*@ The callback function being executed when the signal
+            @in emission: const(char)*; /*@ The signal's name string */
+            @in source: const(char)*; /*@ The signal's source string */
+            @in func: Edje_Signal_Cb; /*@ The callback function being executed when the signal
             was emitted. */
          }
       }
@@ -525,8 +525,8 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: bool;
          params {
-            @in const(char)* part; /*@ the box part to prepend. */
-            @in own(Evas_Object *) child; /*@ the child object to prepend to box. */
+            @in part: const(char)*; /*@ the box part to prepend. */
+            @in child: own(Evas_Object *); /*@ the child object to prepend to box. */
          }
       }
       signal_emit {
@@ -541,8 +541,8 @@ class Elm.Layout (Elm.Container, Efl.File)
          @ingroup Layout */
 
          params {
-            @in const(char)* emission; /*@ The signal's name string */
-            @in const(char)* source; /*@ The signal's source string */
+            @in emission: const(char)*; /*@ The signal's name string */
+            @in source: const(char)*; /*@ The signal's source string */
          }
       }
       table_pack {
@@ -574,13 +574,13 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: bool;
          params {
-            @in const(char)* part; /*@ the box part to pack child. */
-            @in own(Evas_Object *) child; /*@ the child object to pack into table. */
-            @in ushort col; /*@ the column to which the child should be added. (>= 0) */
-            @in ushort row; /*@ the row to which the child should be added. (>= 0) */
-            @in ushort colspan; /*@ how many columns should be used to store this object. (>=
+            @in part: const(char)*; /*@ the box part to pack child. */
+            @in child: own(Evas_Object *); /*@ the child object to pack into table. */
+            @in col: ushort; /*@ the column to which the child should be added. (>= 0) */
+            @in row: ushort; /*@ the row to which the child should be added. (>= 0) */
+            @in colspan: ushort; /*@ how many columns should be used to store this object. (>=
             1) */
-            @in ushort rowspan; /*@ how many rows should be used to store this object. (>= 1) */
+            @in rowspan: ushort; /*@ how many rows should be used to store this object. (>= 1) */
          }
       }
       part_cursor_unset {
@@ -593,7 +593,7 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: bool;
          params {
-            @in const(char)* part_name; /*@ a part from loaded edje group, that had a cursor set
+            @in part_name: const(char)*; /*@ a part from loaded edje group, that had a cursor set
             with elm_layout_part_cursor_set(). */
          }
       }
@@ -614,8 +614,8 @@ class Elm.Layout (Elm.Container, Efl.File)
 
          return: bool;
          params {
-            @in const(char)* part; /*@ The table part name to remove child. */
-            @in bool clear; /*@ If EINA_TRUE, then all objects will be deleted as
+            @in part: const(char)*; /*@ The table part name to remove child. */
+            @in clear: bool; /*@ If EINA_TRUE, then all objects will be deleted as
             well, otherwise they will just be removed and will be
             dangling on the canvas. */
          }

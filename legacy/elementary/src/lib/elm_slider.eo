@@ -29,7 +29,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            bool horizontal; /*@ Use @c EINA_TRUE to make @p obj to be
+            horizontal: bool; /*@ Use @c EINA_TRUE to make @p obj to be
             @b horizontal, @c EINA_FALSE to make it @b vertical. */
          }
       }
@@ -63,7 +63,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            double val; /*@ The value to be displayed. */
+            val: double; /*@ The value to be displayed. */
          }
       }
       @property indicator_format {
@@ -105,7 +105,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            const(char)* indicator @nullable; /*@ The format string for the indicator display. */
+            indicator: const(char)* @nullable; /*@ The format string for the indicator display. */
          }
       }
       @property inverted {
@@ -136,7 +136,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            bool inverted; /*@ Use @c EINA_TRUE to make @p obj inverted,
+            inverted: bool; /*@ Use @c EINA_TRUE to make @p obj inverted,
             @c EINA_FALSE to bring it back to default, non-inverted values. */
          }
       }
@@ -164,7 +164,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            bool show; /*@ @c EINA_TRUE will make it enlarge, @c EINA_FALSE will
+            show: bool; /*@ @c EINA_TRUE will make it enlarge, @c EINA_FALSE will
             let the knob always at default size. */
          }
       }
@@ -200,8 +200,8 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            double min; /*@ The minimum value. */
-            double max; /*@ The maximum value. */
+            min: double; /*@ The minimum value. */
+            max: double; /*@ The maximum value. */
          }
       }
       @property unit_format {
@@ -241,7 +241,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            const(char)* units @nullable; /*@ The format string for the unit display. */
+            units: const(char)* @nullable; /*@ The format string for the unit display. */
          }
       }
       @property indicator_show_on_focus {
@@ -261,7 +261,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            bool flag; /*@ @ EINA_TRUE sets the indicator visible */
+            flag: bool; /*@ @ EINA_TRUE sets the indicator visible */
          }
       }
       @property span_size {
@@ -297,7 +297,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            Evas_Coord size; /*@ The length of the slider's bar region. */
+            size: Evas_Coord; /*@ The length of the slider's bar region. */
          }
       }
       @property step {
@@ -327,7 +327,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @since 1.8 */
          }
          values {
-            double step; /*@ The step value. */
+            step: double; /*@ The step value. */
          }
       }
       @property indicator_visible_mode {
@@ -352,7 +352,7 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             */
          }
          values {
-            Elm_Slider_Indicator_Visible_Mode indicator_visible_mode; /*@ The indicator visible mode. */
+            indicator_visible_mode: Elm_Slider_Indicator_Visible_Mode; /*@ The indicator visible mode. */
          }
       }
       @property indicator_format_function {
@@ -367,8 +367,8 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            slider_func_type func @nullable; /*@ The indicator format function. */
-            slider_freefunc_type free_func @nullable; /*@ The freeing function for the format string. */
+            func: slider_func_type @nullable; /*@ The indicator format function. */
+            free_func: slider_freefunc_type @nullable; /*@ The freeing function for the format string. */
          }
       }
       @property units_format_function {
@@ -383,8 +383,8 @@ class Elm.Slider (Elm.Layout, Elm_Interface_Atspi_Value,
             @ingroup Slider */
          }
          values {
-            slider_func_type func @nullable; /*@ The units format function. */
-            slider_freefunc_type free_func @nullable; /*@ The freeing function for the format string. */
+            func: slider_func_type @nullable; /*@ The units format function. */
+            free_func: slider_freefunc_type @nullable; /*@ The freeing function for the format string. */
          }
       }
    }

@@ -25,7 +25,7 @@ class Elm.Bubble (Elm.Layout)
             @ingroup Bubble */
          }
          values {
-            Elm_Bubble_Pos pos; /*@ The given corner for the bubble. */
+            pos: Elm_Bubble_Pos; /*@ The given corner for the bubble. */
          }
       }
    }

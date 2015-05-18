@@ -22,7 +22,7 @@ class Elm.Index_Item(Elm.Widget_Item)
                   */
              }
              values {
-                 Eina_Bool selected; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
+                 selected: Eina_Bool; /*@ EINA_TRUE if selected EINA_FALSE otherwise */
              }
         }
       letter_get @const {

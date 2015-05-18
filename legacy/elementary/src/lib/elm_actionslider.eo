@@ -18,7 +18,7 @@ class Elm.Actionslider (Elm.Layout)
             @ingroup Actionslider */
          }
          values {
-            Elm_Actionslider_Pos pos; /*@ The position of the indicator. */
+            pos: Elm_Actionslider_Pos; /*@ The position of the indicator. */
          }
       }
       @property magnet_pos {
@@ -38,7 +38,7 @@ class Elm.Actionslider (Elm.Layout)
             @ingroup Actionslider */
          }
          values {
-            Elm_Actionslider_Pos pos; /*@ Bit mask indicating the magnet positions. */
+            pos: Elm_Actionslider_Pos; /*@ Bit mask indicating the magnet positions. */
          }
       }
       @property enabled_pos {
@@ -60,7 +60,7 @@ class Elm.Actionslider (Elm.Layout)
             @ingroup Actionslider */
          }
          values {
-            Elm_Actionslider_Pos pos; /*@ Bit mask indicating the enabled positions. */
+            pos: Elm_Actionslider_Pos; /*@ Bit mask indicating the enabled positions. */
          }
       }
       @property selected_label {

@@ -9,10 +9,10 @@ interface Elm_Interface_Atspi_Text ()
                 at given offset. */
          }
          keys {
-            int offset; /*@ Position in text. */
+            offset: int; /*@ Position in text. */
          }
          values {
-            Eina_Unicode character; /*@ Character at offset. 0 when out-of
+            character: Eina_Unicode; /*@ Character at offset. 0 when out-of
                                       bounds offset has been given.
                                       Codepoints between DC80 and DCFF indicates
                                       that string includes invalid UTF8 chars. */
@@ -24,15 +24,15 @@ interface Elm_Interface_Atspi_Text ()
               given initial offset and granulatity. */
          }
          keys {
-            Elm_Atspi_Text_Granularity granularity;
-            int *start_offset @nonull; /*@ Offset indicating start of string
+            granularity: Elm_Atspi_Text_Granularity;
+            start_offset: int * @nonull; /*@ Offset indicating start of string
                                                 according to given granularity.
                                                 -1 in case of error. */
-            int *end_offset; /*@ Offset indicating end of string according
+            end_offset: int *; /*@ Offset indicating end of string according
                                    to given granularity. -1 in case of error. */
          }
          values {
-            own(char *) string; /*@ Newly allocated UTF-8 encoded string.
+            string: own(char *); /*@ Newly allocated UTF-8 encoded string.
                                   Must be free by a user. */
          }
       }
@@ -41,11 +41,11 @@ interface Elm_Interface_Atspi_Text ()
             /*@ Gets text of accessible widget. */
          }
          keys {
-            int start_offset; /*@ Position in text. */
-            int end_offset; /*@ End offset of text. */
+            start_offset: int; /*@ Position in text. */
+            end_offset: int; /*@ End offset of text. */
          }
          values {
-            own(char *) text; /*@ UTF-8 encoded text. */
+            text: own(char *); /*@ UTF-8 encoded text. */
          }
       }
       @property caret_offset @protected {
@@ -57,7 +57,7 @@ interface Elm_Interface_Atspi_Text ()
                                EINA_FASLE otherwise. */
          }
          values {
-            int offset;
+            offset: int;
          }
       }
       @property attribute @protected {
@@ -66,14 +66,14 @@ interface Elm_Interface_Atspi_Text ()
             return: bool;
          }
          keys {
-            const(char)* name @nonull; /*@ text attribute name */
-            int *start_offset @nonull; /*@ Position in text from which
+            name: const(char)* @nonull; /*@ text attribute name */
+            start_offset: int * @nonull; /*@ Position in text from which
                                                 given attribute is set. */
-            int *end_offset; /*@ Position in text to which given attribute
+            end_offset: int *; /*@ Position in text to which given attribute
                                     is set. */
          }
          values {
-            own(char *) value; /*@ Value of text attribute. Should be free() */
+            value: own(char *); /*@ Value of text attribute. Should be free() */
          }
       }
       @property attributes @protected {
@@ -81,18 +81,18 @@ interface Elm_Interface_Atspi_Text ()
             /*@ Gets list of all text attributes. */
          }
          keys {
-            int *start_offset @nonull;
-            int *end_offset;
+            start_offset: int * @nonull;
+            end_offset: int *;
          }
          values {
-            own(list<own(Elm_Atspi_Text_Attribute *)> *) attributes;
+            attributes: own(list<own(Elm_Atspi_Text_Attribute *)> *);
          }
       }
       @property default_attributes @protected {
          get {
          }
          values {
-            own(list<own(Elm_Atspi_Text_Attribute *)>*) attributes;
+            attributes: own(list<own(Elm_Atspi_Text_Attribute *)>*);
          }
       }
       @property character_extents @protected {
@@ -100,43 +100,43 @@ interface Elm_Interface_Atspi_Text ()
             return: bool;
          }
          keys {
-            int offset;
-            bool screen_coords;
+            offset: int;
+            screen_coords: bool;
          }
          values {
-            Eina_Rectangle rect;
+            rect: Eina_Rectangle;
          }
       }
       @property character_count @protected {
          get {
          }
          values {
-            int count;
+            count: int;
          }
       }
       @property offset_at_point @protected {
          get {
          }
          keys {
-            bool screen_coords;
-            int x;
-            int y;
+            screen_coords: bool;
+            x: int;
+            y: int;
          }
          values {
-            int offset;
+            offset: int;
          }
       }
       @property bounded_ranges @protected {
          get {
          }
          keys {
-            bool screen_coords;
-            Eina_Rectangle rect;
-            Elm_Atspi_Text_Clip_Type xclip;
-            Elm_Atspi_Text_Clip_Type yclip;
+            screen_coords: bool;
+            rect: Eina_Rectangle;
+            xclip: Elm_Atspi_Text_Clip_Type;
+            yclip: Elm_Atspi_Text_Clip_Type;
          }
          values {
-            own(list<own(Elm_Atspi_Text_Range *)> *) ranges;
+            ranges: own(list<own(Elm_Atspi_Text_Range *)> *);
          }
       }
       @property range_extents @protected {
@@ -144,21 +144,21 @@ interface Elm_Interface_Atspi_Text ()
             return: bool;
          }
          keys {
-            bool screen_coords; /*@ If true x and y values will be relative
+            screen_coords: bool; /*@ If true x and y values will be relative
                                        to screen origin, otherwise relative to
                                        canvas */
-            int start_offset;
-            int end_offset;
+            start_offset: int;
+            end_offset: int;
          }
          values {
-            Eina_Rectangle rect;
+            rect: Eina_Rectangle;
          }
       }
       @property selections_count @protected {
          get {
          }
          values {
-            int count;
+            count: int;
          }
       }
       @property selection @protected {
@@ -168,23 +168,23 @@ interface Elm_Interface_Atspi_Text ()
             return: bool;
          }
          keys {
-            int selection_number;
+            selection_number: int;
          }
          values {
-            int start_offset;
-            int end_offset;
+            start_offset: int;
+            end_offset: int;
          }
       }
       selection_add @protected {
          params {
-            @in int start_offset;
-            @in int end_offset;
+            @in start_offset: int;
+            @in end_offset: int;
          }
          return: bool;
       }
       selection_remove @protected {
          params {
-            @in int selection_number;
+            @in selection_number: int;
          }
          return: bool;
       }

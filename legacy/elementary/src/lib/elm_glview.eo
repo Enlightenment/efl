@@ -6,7 +6,7 @@ class Elm.Glview (Elm.Widget)
          /*@ Constructor with context version number. */
          legacy: null;
          params {
-            @in Evas_GL_Context_Version version;
+            @in version: Evas_GL_Context_Version;
          }
       }
       @property size {
@@ -28,8 +28,8 @@ class Elm.Glview (Elm.Widget)
             @ingroup GLView */
          }
          values {
-            int w; /*@ width of the glview object */
-            int h; /*@ height of the glview object */
+            w: int; /*@ width of the glview object */
+            h: int; /*@ height of the glview object */
          }
       }
       @property resize_policy {
@@ -47,7 +47,7 @@ class Elm.Glview (Elm.Widget)
             return: bool;
          }
          values {
-            Elm_GLView_Resize_Policy policy; /*@ The scaling policy. */
+            policy: Elm_GLView_Resize_Policy; /*@ The scaling policy. */
          }
       }
       @property changed {
@@ -71,7 +71,7 @@ class Elm.Glview (Elm.Widget)
             @ingroup GLView */
          }
          values {
-            Elm_GLView_Func_Cb func; /*@ The resize function to be registered. */
+            func: Elm_GLView_Func_Cb; /*@ The resize function to be registered. */
          }
       }
       @property del_func {
@@ -87,7 +87,7 @@ class Elm.Glview (Elm.Widget)
             @ingroup GLView */
          }
          values {
-            Elm_GLView_Func_Cb func @nullable; /*@ The delete function to be registered. */
+            func: Elm_GLView_Func_Cb @nullable; /*@ The delete function to be registered. */
          }
       }
       @property init_func {
@@ -103,7 +103,7 @@ class Elm.Glview (Elm.Widget)
             @ingroup GLView */
          }
          values {
-            Elm_GLView_Func_Cb func @nullable; /*@ The init function to be registered. */
+            func: Elm_GLView_Func_Cb @nullable; /*@ The init function to be registered. */
          }
       }
       @property render_policy {
@@ -121,7 +121,7 @@ class Elm.Glview (Elm.Widget)
             return: bool;
          }
          values {
-            Elm_GLView_Render_Policy policy; /*@ The render policy. */
+            policy: Elm_GLView_Render_Policy; /*@ The render policy. */
          }
       }
       @property mode {
@@ -140,7 +140,7 @@ class Elm.Glview (Elm.Widget)
             return: bool;
          }
          values {
-            Elm_GLView_Mode mode; /*@ The mode Options OR'ed enabling Alpha, Depth, Stencil, Direct. */
+            mode: Elm_GLView_Mode; /*@ The mode Options OR'ed enabling Alpha, Depth, Stencil, Direct. */
          }
       }
       @property render_func {
@@ -155,7 +155,7 @@ class Elm.Glview (Elm.Widget)
             @ingroup GLView */
          }
          values {
-            Elm_GLView_Func_Cb func @nullable; /*@ The render function to be registered. */
+            func: Elm_GLView_Func_Cb @nullable; /*@ The render function to be registered. */
          }
       }
       @property gl_api {

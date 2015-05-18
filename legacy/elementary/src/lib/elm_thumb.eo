@@ -25,7 +25,7 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             return: void; /*@ Force the return type to be sure the argument doesn't become the return */
          }
          values {
-            int compress; /*@ The compression of the thumb. */
+            compress: int; /*@ The compression of the thumb. */
          }
       }
       @property format {
@@ -50,7 +50,7 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            Ethumb_Thumb_Format format; /*@ The format setting. */
+            format: Ethumb_Thumb_Format; /*@ The format setting. */
          }
       }
       @property animate {
@@ -76,7 +76,7 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            Elm_Thumb_Animation_Setting setting; /*@ The animation setting. */
+            setting: Elm_Thumb_Animation_Setting; /*@ The animation setting. */
          }
       }
       @property fdo_size {
@@ -101,7 +101,7 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            Ethumb_Thumb_FDO_Size size; /*@ The FDO size setting. */
+            size: Ethumb_Thumb_FDO_Size; /*@ The FDO size setting. */
          }
       }
       @property orientation {
@@ -126,7 +126,7 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            Ethumb_Thumb_Orientation orient; /*@ The orientation setting. */
+            orient: Ethumb_Thumb_Orientation; /*@ The orientation setting. */
          }
       }
       @property editable {
@@ -156,7 +156,7 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            bool edit; /*@ Turn on or off editability. Default is @c EINA_FALSE. */
+            edit: bool; /*@ Turn on or off editability. Default is @c EINA_FALSE. */
          }
       }
       @property aspect {
@@ -181,7 +181,7 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            Ethumb_Thumb_Aspect aspect; /*@ The aspect setting. */
+            aspect: Ethumb_Thumb_Aspect; /*@ The aspect setting. */
          }
       }
       @property quality {
@@ -207,7 +207,7 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             return: void; /*@ Force the return type to be sure the argument doesn't become the return */
          }
          values {
-            int quality; /*@ The quality of the thumb. */
+            quality: int; /*@ The quality of the thumb. */
          }
       }
       @property size {
@@ -232,8 +232,8 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            int tw; /*@ The width of the thumb. */
-            int th; /*@ The height of the thumb. */
+            tw: int; /*@ The width of the thumb. */
+            th: int; /*@ The height of the thumb. */
          }
       }
       @property crop_align {
@@ -258,8 +258,8 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            double cropx; /*@ The x coordinate of the crop. */
-            double cropy; /*@ The y coordinate of the crop. */
+            cropx: double; /*@ The x coordinate of the crop. */
+            cropy: double; /*@ The y coordinate of the crop. */
          }
       }
       @property path {
@@ -276,8 +276,8 @@ class Elm.Thumb (Elm.Layout, Efl.File, Evas.Clickable_Interface)
             @ingroup Thumb */
          }
          values {
-            const(char)* file @optional; /*@ Pointer to thumb path. */
-            const(char)* key @optional; /*@ Pointer to thumb key. */
+            file: const(char)* @optional; /*@ Pointer to thumb path. */
+            key: const(char)* @optional; /*@ Pointer to thumb key. */
          }
       }
       reload {

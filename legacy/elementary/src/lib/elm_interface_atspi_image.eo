@@ -9,13 +9,13 @@ mixin Elm_Interface_Atspi_Image ()
             /*@ Gets an image extents. */
          }
          keys {
-            bool screen_coords;
+            screen_coords: bool;
          }
          values {
-            int x;
-            int y;
-            int width;
-            int height;
+            x: int;
+            y: int;
+            width: int;
+            height: int;
          }
       }
       @property description @protected {
@@ -25,7 +25,7 @@ mixin Elm_Interface_Atspi_Image ()
          set {
          }
          values {
-            const(char)* description;
+            description: const(char)*;
          }
       }
       @property locale @protected {
@@ -33,7 +33,7 @@ mixin Elm_Interface_Atspi_Image ()
             /*@ Gets locale of the image description. */
          }
          values {
-            const(char)* locale;
+            locale: const(char)*;
          }
       }
    }
