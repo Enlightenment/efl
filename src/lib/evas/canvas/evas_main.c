@@ -401,6 +401,7 @@ _evas_canvas_output_viewport_set(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e, Evas
    e->viewport.changed = 1;
    e->output_validity++;
    e->changed = 1;
+   evas_event_callback_call(e->evas, EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE, NULL);
 }
 
 EOLIAN static void
