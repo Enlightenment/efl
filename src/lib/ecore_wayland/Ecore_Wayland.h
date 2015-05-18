@@ -176,6 +176,7 @@ struct _Ecore_Wl_Event_Window_Show
    unsigned int win;
    unsigned int parent_win;
    unsigned int event_win;
+   unsigned int data[4];
 };
 
 struct _Ecore_Wl_Event_Window_Hide

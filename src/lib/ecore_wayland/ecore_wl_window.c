@@ -5,6 +5,7 @@
 #include "ecore_wl_private.h"
 #include "xdg-shell-client-protocol.h"
 #include "tizen-policy-client-protocol.h"
+#include "tizen-extension-client-protocol.h"
 
 /* local function prototypes */
 static void _ecore_wl_window_cb_ping(void *data EINA_UNUSED, struct wl_shell_surface *shell_surface, unsigned int serial);
@@ -20,6 +21,7 @@ static void _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *
 static void _ecore_xdg_handle_surface_delete(void *data, struct xdg_surface *xdg_surface);
 static void _ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup, unsigned int serial);
 static void _ecore_wl_window_cb_visibility_change(void *data, struct tizen_visibility *tizen_visibility, uint32_t visibility);
+static void _ecore_wl_window_cb_resource_id(void *data, struct tizen_resource *tizen_resource, uint32_t id);
 
 /* local variables */
 static Eina_Hash *_windows = NULL;
@@ -52,6 +54,11 @@ static const struct xdg_popup_listener _ecore_xdg_popup_listener =
 static const struct tizen_visibility_listener _ecore_tizen_visibility_listener =
 {
    _ecore_wl_window_cb_visibility_change,
+};
+
+static const struct tizen_resource_listener _ecore_tizen_resource_listener =
+{
+   _ecore_wl_window_cb_resource_id,
 };
 
 /* internal functions */
@@ -391,6 +398,15 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
              if (!win->tz_visibility) return;
              tizen_visibility_add_listener(win->tz_visibility,
                                            &_ecore_tizen_visibility_listener, win);
+          }
+        if ((!win->tz_resource) && (_ecore_wl_disp->wl.tz_surf_ext))
+          {
+             win->tz_resource =
+               tizen_surface_extension_get_tizen_resource(_ecore_wl_disp->wl.tz_surf_ext,
+                                                          win->surface);
+             if (!win->tz_resource) return;
+             tizen_resource_add_listener(win->tz_resource,
+                                         &_ecore_tizen_resource_listener, win);
           }
      }
 
@@ -1161,6 +1177,29 @@ _ecore_wl_window_cb_visibility_change(void *data,
      ev->fully_obscured = 0;
 
    ecore_event_add(ECORE_WL_EVENT_WINDOW_VISIBILITY_CHANGE, ev, NULL, NULL);
+}
+
+static void
+_ecore_wl_window_cb_resource_id(void *data,
+                                struct tizen_resource *tizen_resource,
+                                uint32_t id)
+{
+   Ecore_Wl_Window *win;
+   Ecore_Wl_Event_Window_Show *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(win = data)) return;
+   if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Window_Show)))) return;
+   ev->win = win->id;
+   if (win->parent)
+       ev->parent_win = win->parent->id;
+   else
+       ev->parent_win = 0;
+   ev->event_win = win->id;
+   ev->data[0] = (unsigned int)id;
+   win->resource_id = (unsigned int)id;
+   ecore_event_add(ECORE_WL_EVENT_WINDOW_SHOW, ev, NULL, NULL);
 }
 
 static void

@@ -518,6 +518,8 @@ _ecore_wl_shutdown(Eina_Bool close)
           wl_data_device_manager_destroy(_ecore_wl_disp->wl.data_device_manager);
         if (_ecore_wl_disp->wl.tz_policy)
           tizen_policy_destroy(_ecore_wl_disp->wl.tz_policy);
+        if (_ecore_wl_disp->wl.tz_surf_ext)
+          tizen_surface_extension_destroy(_ecore_wl_disp->wl.tz_surf_ext);
         if (_ecore_wl_disp->wl.compositor)
           wl_compositor_destroy(_ecore_wl_disp->wl.compositor);
         if (_ecore_wl_disp->wl.subcompositor)
@@ -700,6 +702,11 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
      {
         ewd->wl.tz_policy =
           wl_registry_bind(registry, id, &tizen_policy_interface, 1);
+     }
+   else if (!strcmp(interface, "tizen_surface_extension"))
+     {
+        ewd->wl.tz_surf_ext =
+          wl_registry_bind(registry, id, &tizen_surface_extension_interface, 1);
      }
 
    if ((ewd->wl.compositor) && (ewd->wl.shm) && 

@@ -13,6 +13,7 @@
 # endif
 
 # include "tizen-policy-client-protocol.h"
+# include "tizen-extension-client-protocol.h"
 
 //# define LOGFNS 1
 
@@ -79,6 +80,7 @@ struct _Ecore_Wl_Display
         struct wl_shm *shm;
         struct wl_data_device_manager *data_device_manager;
         struct tizen_policy *tz_policy;
+        struct tizen_surface_extension *tz_surf_ext;
      } wl;
 
    int fd;
@@ -120,6 +122,8 @@ struct _Ecore_Wl_Window
    int ivi_surface_id;
 # endif
    struct tizen_visibility *tz_visibility;
+   struct tizen_resource *tz_resource;
+   unsigned int resource_id;
 
    struct wl_region *opaque_region;
    struct wl_region *input_region;
