@@ -31,6 +31,9 @@ EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT =
 EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_DEVICE_CHANGED =
   EO_HOT_EVENT_DESCRIPTION("Device changed",
                            "Devices added, removed or changed to the canvas");
+EAPI const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE =
+  EO_HOT_EVENT_DESCRIPTION("Canvas viewport resize",
+                           "Canvas viewport is resized");
 /**
  * Evas events descriptions for Eo.
  */
@@ -65,6 +68,7 @@ static const Eo_Event_Description *_legacy_evas_callback_table[EVAS_CALLBACK_LAS
    EVAS_CANVAS_EVENT_RENDER_FLUSH_POST,
    EVAS_CANVAS_EVENT_OBJECT_FOCUS_IN,
    EVAS_CANVAS_EVENT_OBJECT_FOCUS_OUT,
+   EVAS_CANVAS_EVENT_VIEWPORT_RESIZE,
    EVAS_OBJECT_EVENT_IMAGE_UNLOADED,
    EVAS_CANVAS_EVENT_RENDER_PRE,
    EVAS_CANVAS_EVENT_RENDER_POST,

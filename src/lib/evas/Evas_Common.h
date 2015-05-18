@@ -118,6 +118,7 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_RENDER_FLUSH_POST, /**< Called just after rendering is updated on the canvas target */
    EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN, /**< Canvas object got focus */
    EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT, /**< Canvas object lost focus */
+   EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE, /**< Canvas viewport resized @since 1.15 */
 
    /*
     * More Evas object event types - see evas_object_event_callback_add():
