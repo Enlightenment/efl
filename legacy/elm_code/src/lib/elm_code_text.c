@@ -32,7 +32,7 @@ elm_code_line_text_set(Elm_Code_Line *line, const char *chars, unsigned int leng
    if (line->modified)
      free(line->modified);
 
-   newtext = malloc(sizeof(char) * length + 1);
+   newtext = malloc(sizeof(char) * length);
    strncpy(newtext, chars, length);
    line->modified = newtext;
    line->length = length;
@@ -144,7 +144,7 @@ elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, const char
    if (!line)
      return;
 
-   inserted = malloc(sizeof(char) * line->length + length + 1);
+   inserted = malloc(sizeof(char) * line->length + length);
    if (position > 0)
      position--;
    if (position > line->length)
@@ -183,7 +183,7 @@ elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length
    if (!line)
      return;
 
-   removed = malloc(sizeof(char) * line->length - length + 1);
+   removed = malloc(sizeof(char) * line->length - length);
    if (position > 0)
      position--;
    if (position > line->length)

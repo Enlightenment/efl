@@ -117,8 +117,9 @@ _elm_code_widget_selection_delete_single(Elm_Code_Widget_Data *pd)
 
    line = elm_code_file_line_get(pd->code->file, pd->selection->start_line);
    old = elm_code_line_text_get(line, &old_length);
-   length = line->length - (pd->selection->end_col - pd->selection->start_col);
-   content = malloc(sizeof(char) * (length + 1));
+   length = line->length - (pd->selection->end_col - pd->selection->start_col + 1);
+   content = malloc(sizeof(char) * length);
+
    snprintf(content, pd->selection->start_col, old);
    snprintf(content + pd->selection->start_col - 1, old_length - pd->selection->end_col + 1,
             old + pd->selection->end_col);
