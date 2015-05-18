@@ -260,6 +260,8 @@ static struct
    { "stretch_xy", EVAS_FILTER_FILL_MODE_STRETCH_XY }
 };
 
+static const char *_lua_buffer_meta = "Filter.buffer";
+
 static Evas_Filter_Fill_Mode _fill_mode_get(Evas_Filter_Instruction *instr);
 
 typedef enum
@@ -291,7 +293,14 @@ typedef struct _Instruction_Param
    EINA_INLIST;
    Eina_Stringshare *name;
    Value_Type type;
-   Eina_Value *value;
+   union {
+      Eina_Bool b;
+      int i;
+      double f;
+      char *s;
+      unsigned int c;
+      Buffer *buf;
+   } value;
    Eina_Bool set : 1;
    Eina_Bool allow_seq : 1;
    Eina_Bool allow_any_string : 1;
@@ -327,6 +336,7 @@ struct _Evas_Filter_Program
    Eina_Bool padding_calc : 1; // Padding has been calculated
    Eina_Bool padding_set : 1; // Padding has been forced
    Eina_Bool changed : 1; // State (w,h) changed, needs re-run of Lua
+   Eina_Bool input_alpha : 1;
 };
 
 /* Instructions */
@@ -345,36 +355,38 @@ static Eina_Bool
 _instruction_param_addv(Evas_Filter_Instruction *instr, const char *name,
                         Value_Type format, Eina_Bool sequential, va_list args)
 {
-   const Eina_Value_Type *type = NULL;
    Instruction_Param *param;
+   char *s;
 
+   param = calloc(1, sizeof(Instruction_Param));
+   param->name = eina_stringshare_add(name);
+   param->type = format;
    switch (format)
      {
       case VT_BOOL:
+        param->value.b = (va_arg(args, unsigned int) != 0);
+        break;
       case VT_INT:
-        type = EINA_VALUE_TYPE_INT;
+        param->value.i = va_arg(args, int);
         break;
       case VT_REAL:
-        type = EINA_VALUE_TYPE_DOUBLE;
+        param->value.f = va_arg(args, double);
         break;
       case VT_STRING:
+        s = va_arg(args, char *);
+        param->value.s = s ? strdup(s) : NULL;
+        break;
       case VT_BUFFER:
-        type = EINA_VALUE_TYPE_STRING;
+        param->value.buf = va_arg(args, Buffer *);
         break;
       case VT_COLOR:
-        type = EINA_VALUE_TYPE_UINT;
+        param->value.c = va_arg(args, DATA32);
         break;
       case VT_NONE:
       default:
         return EINA_FALSE;
      }
-
-   param = calloc(1, sizeof(Instruction_Param));
-   param->name = eina_stringshare_add(name);
-   param->type = format;
-   param->value = eina_value_new(type);
    param->allow_seq = sequential;
-   eina_value_vset(param->value, args);
    instr->params = eina_inlist_append(instr->params, EINA_INLIST_GET(param));
 
    return EINA_TRUE;
@@ -405,7 +417,8 @@ _instruction_del(Evas_Filter_Instruction *instr)
    if (!instr) return;
    EINA_INLIST_FREE(instr->params, param)
      {
-        eina_value_free(param->value);
+        if (param->type == VT_STRING)
+          free(param->value.s);
         eina_stringshare_del(param->name);
         instr->params = eina_inlist_remove(instr->params, EINA_INLIST_GET(param));
         free(param);
@@ -431,17 +444,12 @@ _instruction_param_geti(Evas_Filter_Instruction *instr, const char *name,
                         Eina_Bool *isset)
 {
    Instruction_Param *param;
-   int i = 0;
 
    EINA_INLIST_FOREACH(instr->params, param)
      if (!strcasecmp(name, param->name))
        {
-          if (eina_value_get(param->value, &i))
-            {
-               if (isset) *isset = param->set;
-               return i;
-            }
-          else return -1;
+          if (isset) *isset = param->set;
+          return param->value.i;
        }
 
    if (isset) *isset = EINA_FALSE;
@@ -453,17 +461,12 @@ _instruction_param_getd(Evas_Filter_Instruction *instr, const char *name,
                         Eina_Bool *isset)
 {
    Instruction_Param *param;
-   double i = 0;
 
    EINA_INLIST_FOREACH(instr->params, param)
      if (!strcasecmp(name, param->name))
        {
-          if (eina_value_get(param->value, &i))
-            {
-               if (isset) *isset = param->set;
-               return i;
-            }
-          else return 0.0;
+          if (isset) *isset = param->set;
+          return param->value.f;
        }
 
    if (isset) *isset = EINA_FALSE;
@@ -475,17 +478,12 @@ _instruction_param_getc(Evas_Filter_Instruction *instr, const char *name,
                         Eina_Bool *isset)
 {
    Instruction_Param *param;
-   DATA32 i = 0;
 
    EINA_INLIST_FOREACH(instr->params, param)
      if (!strcasecmp(name, param->name))
        {
-          if (eina_value_get(param->value, &i))
-            {
-               if (isset) *isset = param->set;
-               return i;
-            }
-          else return 0;
+          if (isset) *isset = param->set;
+          return param->value.c;
        }
 
    if (isset) *isset = EINA_FALSE;
@@ -497,17 +495,29 @@ _instruction_param_gets(Evas_Filter_Instruction *instr, const char *name,
                         Eina_Bool *isset)
 {
    Instruction_Param *param;
-   const char *str = NULL;
 
    EINA_INLIST_FOREACH(instr->params, param)
      if (!strcasecmp(name, param->name))
        {
-          if (eina_value_get(param->value, &str))
-            {
-               if (isset) *isset = param->set;
-               return str;
-            }
-          else return NULL;
+          if (isset) *isset = param->set;
+          return param->value.s;
+       }
+
+   if (isset) *isset = EINA_FALSE;
+   return NULL;
+}
+
+static Buffer *
+_instruction_param_getbuf(Evas_Filter_Instruction *instr, const char *name,
+                          Eina_Bool *isset)
+{
+   Instruction_Param *param;
+
+   EINA_INLIST_FOREACH(instr->params, param)
+     if (!strcasecmp(name, param->name))
+       {
+          if (isset) *isset = param->set;
+          return param->value.buf;
        }
 
    if (isset) *isset = EINA_FALSE;
@@ -620,6 +630,101 @@ _buffer_get(Evas_Filter_Program *pgm, const char *name)
 }
 
 static Eina_Bool
+_lua_buffer_push(lua_State *L, Buffer *buf)
+{
+   Buffer **ptr;
+
+   lua_getglobal(L, buf->name);
+   if (lua_isnil(L, -1))
+     {
+        ptr = lua_newuserdata(L, sizeof(Buffer **));
+        *ptr = buf;
+        luaL_getmetatable(L, _lua_buffer_meta);
+        lua_setmetatable(L, -2);
+        lua_setglobal(L, buf->name);
+     }
+   else
+     {
+        ERR("to do");
+     }
+
+   return EINA_TRUE;
+}
+
+static int
+_lua_buffer_tostring(lua_State *L)
+{
+   Buffer *buf, **pbuf;
+   pbuf = lua_touserdata(L, 1);
+   buf = pbuf ? *pbuf : NULL;
+   if (!buf)
+     lua_pushstring(L, "nil");
+   else
+     lua_pushfstring(L, "Buffer[#%d %dx%d %s%s%s]", buf->cid, buf->w, buf->h,
+                     buf->alpha ? "alpha" : "rgba",
+                     buf->proxy ? " src: " : "", buf->proxy ? buf->proxy : "");
+   return 1;
+}
+
+static int
+_lua_buffer_width(lua_State *L)
+{
+   Buffer *buf, **pbuf;
+   pbuf = lua_touserdata(L, 1);
+   buf = pbuf ? *pbuf : NULL;
+   if (!buf) return 0;
+   lua_pushnumber(L, buf->w);
+   return 1;
+}
+
+static int
+_lua_buffer_height(lua_State *L)
+{
+   Buffer *buf, **pbuf;
+   pbuf = lua_touserdata(L, 1);
+   buf = pbuf ? *pbuf : NULL;
+   if (!buf) return 0;
+   lua_pushnumber(L, buf->h);
+   return 1;
+}
+
+static int
+_lua_buffer_type(lua_State *L)
+{
+   Buffer *buf, **pbuf;
+   pbuf = lua_touserdata(L, 1);
+   buf = pbuf ? *pbuf : NULL;
+   if (!buf) return 0;
+   lua_pushstring(L, buf->alpha ? "alpha" : "rgba");
+   return 1;
+}
+
+static int
+_lua_buffer_name(lua_State *L)
+{
+   Buffer *buf, **pbuf;
+   pbuf = lua_touserdata(L, 1);
+   buf = pbuf ? *pbuf : NULL;
+   if (!buf) return 0;
+   lua_pushstring(L, buf->name);
+   return 1;
+}
+
+static int
+_lua_buffer_source(lua_State *L)
+{
+   Buffer *buf, **pbuf;
+   pbuf = lua_touserdata(L, 1);
+   buf = pbuf ? *pbuf : NULL;
+   if (!buf) return 0;
+   if (!buf->proxy)
+     lua_pushnil(L);
+   else
+     lua_pushstring(L, buf->proxy);
+   return 1;
+}
+
+static Buffer *
 _buffer_add(Evas_Filter_Program *pgm, const char *name, Eina_Bool alpha,
             const char *src)
 {
@@ -628,24 +733,27 @@ _buffer_add(Evas_Filter_Program *pgm, const char *name, Eina_Bool alpha,
    if (_buffer_get(pgm, name))
      {
         ERR("Buffer '%s' already exists", name);
-        return EINA_FALSE;
+        return NULL;
      }
 
    if (alpha && src)
      {
         ERR("Can not set proxy buffer as alpha!");
-        return EINA_FALSE;
+        return NULL;
      }
 
    buf = calloc(1, sizeof(Buffer));
-   if (!buf) return EINA_FALSE;
+   if (!buf) return NULL;
 
    buf->name = eina_stringshare_add(name);
    buf->proxy = eina_stringshare_add(src);
    buf->alpha = alpha;
+   buf->w = pgm->w;
+   buf->h = pgm->h;
    pgm->buffers = eina_inlist_append(pgm->buffers, EINA_INLIST_GET(buf));
+   _lua_buffer_push(pgm->L, buf);
 
-   return EINA_TRUE;
+   return buf;
 }
 
 static void
@@ -716,18 +824,19 @@ _buffer_instruction_parse_run(lua_State *L,
 
    cnt = (pgm->buffers ? eina_inlist_count(pgm->buffers) : 0) + 1;
    snprintf(bufname, sizeof(bufname), "__buffer%02d", cnt);
-   ok = _buffer_add(pgm, bufname, alpha, src);
+   ok = (_buffer_add(pgm, bufname, alpha, src) != NULL);
 
    if (!ok) return EINA_FALSE;
 
-   lua_pushstring(L, bufname);
+   lua_getglobal(L, bufname);
    instr->return_count = 1;
 
    return ok;
 }
 
 static Eina_Bool
-_buffer_instruction_prepare(Evas_Filter_Instruction *instr)
+_buffer_instruction_prepare(Evas_Filter_Program *pgm EINA_UNUSED,
+                            Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
@@ -735,7 +844,7 @@ _buffer_instruction_prepare(Evas_Filter_Instruction *instr)
 
    instr->type = EVAS_FILTER_MODE_BUFFER;
    instr->parse_run = _buffer_instruction_parse_run;
-   _instruction_param_seq_add(instr, "type", VT_BUFFER, "rgba");
+   _instruction_param_seq_add(instr, "type", VT_STRING, "rgba");
    _instruction_param_seq_add(instr, "src", VT_BUFFER, NULL);
 
    return EINA_TRUE;
@@ -827,7 +936,7 @@ _blend_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
  */
 
 static Eina_Bool
-_blend_instruction_prepare(Evas_Filter_Instruction *instr)
+_blend_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
@@ -835,8 +944,8 @@ _blend_instruction_prepare(Evas_Filter_Instruction *instr)
 
    instr->type = EVAS_FILTER_MODE_BLEND;
    instr->pad.update = _blend_padding_update;
-   _instruction_param_seq_add(instr, "src", VT_BUFFER, "input");
-   _instruction_param_seq_add(instr, "dst", VT_BUFFER, "output");
+   _instruction_param_seq_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
+   _instruction_param_seq_add(instr, "dst", VT_BUFFER, _buffer_get(pgm, "output"));
    _instruction_param_seq_add(instr, "ox", VT_INT, 0);
    _instruction_param_seq_add(instr, "oy", VT_INT, 0);
    _instruction_param_name_add(instr, "color", VT_COLOR, 0xFFFFFFFF);
@@ -947,7 +1056,7 @@ _blur_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
  */
 
 static Eina_Bool
-_blur_instruction_prepare(Evas_Filter_Instruction *instr)
+_blur_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
@@ -961,8 +1070,8 @@ _blur_instruction_prepare(Evas_Filter_Instruction *instr)
    _instruction_param_seq_add(instr, "ox", VT_INT, 0);
    _instruction_param_seq_add(instr, "oy", VT_INT, 0);
    _instruction_param_name_add(instr, "color", VT_COLOR, 0xFFFFFFFF);
-   _instruction_param_name_add(instr, "src", VT_BUFFER, "input");
-   _instruction_param_name_add(instr, "dst", VT_BUFFER, "output");
+   _instruction_param_name_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
+   _instruction_param_name_add(instr, "dst", VT_BUFFER, _buffer_get(pgm, "output"));
    _instruction_param_name_add(instr, "count", VT_INT, 0);
 
    return EINA_TRUE;
@@ -1009,7 +1118,7 @@ _blur_instruction_prepare(Evas_Filter_Instruction *instr)
  */
 
 static Eina_Bool
-_bump_instruction_prepare(Evas_Filter_Instruction *instr)
+_bump_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
@@ -1023,8 +1132,8 @@ _bump_instruction_prepare(Evas_Filter_Instruction *instr)
    _instruction_param_seq_add(instr, "specular", VT_REAL, 0.0);
    _instruction_param_name_add(instr, "color", VT_COLOR, 0xFFFFFFFF);
    _instruction_param_name_add(instr, "compensate", VT_BOOL, EINA_FALSE);
-   _instruction_param_name_add(instr, "src", VT_BUFFER, "input");
-   _instruction_param_name_add(instr, "dst", VT_BUFFER, "output");
+   _instruction_param_name_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
+   _instruction_param_name_add(instr, "dst", VT_BUFFER, _buffer_get(pgm, "output"));
    _instruction_param_name_add(instr, "black", VT_COLOR, 0xFF000000);
    _instruction_param_name_add(instr, "white", VT_COLOR, 0xFFFFFFFF);
    _instruction_param_name_add(instr, "fillmode", VT_STRING, "repeat");
@@ -1078,7 +1187,7 @@ _bump_instruction_prepare(Evas_Filter_Instruction *instr)
  */
 
 static Eina_Bool
-_curve_instruction_prepare(Evas_Filter_Instruction *instr)
+_curve_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr)
 {
    Instruction_Param *param;
 
@@ -1096,8 +1205,8 @@ _curve_instruction_prepare(Evas_Filter_Instruction *instr)
 
    _instruction_param_seq_add(instr, "interpolation", VT_STRING, "linear");
    _instruction_param_seq_add(instr, "channel", VT_STRING, "rgb");
-   _instruction_param_name_add(instr, "src", VT_BUFFER, "input");
-   _instruction_param_name_add(instr, "dst", VT_BUFFER, "output");
+   _instruction_param_name_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
+   _instruction_param_name_add(instr, "dst", VT_BUFFER, _buffer_get(pgm, "output"));
 
    return EINA_TRUE;
 }
@@ -1187,7 +1296,7 @@ _displace_padding_update(Evas_Filter_Program *pgm,
  */
 
 static Eina_Bool
-_displace_instruction_prepare(Evas_Filter_Instruction *instr)
+_displace_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
@@ -1198,8 +1307,8 @@ _displace_instruction_prepare(Evas_Filter_Instruction *instr)
    _instruction_param_seq_add(instr, "map", VT_BUFFER, NULL);
    _instruction_param_seq_add(instr, "intensity", VT_INT, 10);
    _instruction_param_seq_add(instr, "flags", VT_STRING, "default");
-   _instruction_param_name_add(instr, "src", VT_BUFFER, "input");
-   _instruction_param_name_add(instr, "dst", VT_BUFFER, "output");
+   _instruction_param_name_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
+   _instruction_param_name_add(instr, "dst", VT_BUFFER, _buffer_get(pgm, "output"));
    _instruction_param_name_add(instr, "fillmode", VT_STRING, "repeat");
 
    return EINA_TRUE;
@@ -1234,14 +1343,14 @@ _displace_instruction_prepare(Evas_Filter_Instruction *instr)
  */
 
 static Eina_Bool
-_fill_instruction_prepare(Evas_Filter_Instruction *instr)
+_fill_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcasecmp(instr->name, "fill"), EINA_FALSE);
 
    instr->type = EVAS_FILTER_MODE_FILL;
-   _instruction_param_seq_add(instr, "dst", VT_BUFFER, "output");
+   _instruction_param_seq_add(instr, "dst", VT_BUFFER, _buffer_get(pgm, "output"));
    _instruction_param_seq_add(instr, "color", VT_COLOR, 0x0);
    _instruction_param_seq_add(instr, "l", VT_INT, 0);
    _instruction_param_seq_add(instr, "r", VT_INT, 0);
@@ -1318,7 +1427,7 @@ _grow_padding_update(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr,
  */
 
 static Eina_Bool
-_grow_instruction_prepare(Evas_Filter_Instruction *instr)
+_grow_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
@@ -1328,8 +1437,8 @@ _grow_instruction_prepare(Evas_Filter_Instruction *instr)
    instr->pad.update = _grow_padding_update;
    _instruction_param_seq_add(instr, "radius", VT_INT, 0);
    _instruction_param_name_add(instr, "smooth", VT_BOOL, EINA_TRUE);
-   _instruction_param_name_add(instr, "src", VT_BUFFER, "input");
-   _instruction_param_name_add(instr, "dst", VT_BUFFER, "output");
+   _instruction_param_name_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
+   _instruction_param_name_add(instr, "dst", VT_BUFFER, _buffer_get(pgm, "output"));
 
    return EINA_TRUE;
 }
@@ -1368,7 +1477,7 @@ _grow_instruction_prepare(Evas_Filter_Instruction *instr)
  */
 
 static Eina_Bool
-_mask_instruction_prepare(Evas_Filter_Instruction *instr)
+_mask_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
@@ -1376,8 +1485,8 @@ _mask_instruction_prepare(Evas_Filter_Instruction *instr)
 
    instr->type = EVAS_FILTER_MODE_MASK;
    _instruction_param_seq_add(instr, "mask", VT_BUFFER, NULL);
-   _instruction_param_seq_add(instr, "src", VT_BUFFER, "input");
-   _instruction_param_seq_add(instr, "dst", VT_BUFFER, "output");
+   _instruction_param_seq_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
+   _instruction_param_seq_add(instr, "dst", VT_BUFFER, _buffer_get(pgm, "output"));
    _instruction_param_name_add(instr, "color", VT_COLOR, 0xFFFFFFFF);
    _instruction_param_name_add(instr, "fillmode", VT_STRING, "repeat");
 
@@ -1453,7 +1562,7 @@ _transform_padding_update(Evas_Filter_Program *pgm,
  */
 
 static Eina_Bool
-_transform_instruction_prepare(Evas_Filter_Instruction *instr)
+_transform_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
@@ -1463,7 +1572,7 @@ _transform_instruction_prepare(Evas_Filter_Instruction *instr)
    instr->pad.update = _transform_padding_update;
    _instruction_param_seq_add(instr, "dst", VT_BUFFER, NULL);
    _instruction_param_seq_add(instr, "op", VT_STRING, "vflip");
-   _instruction_param_seq_add(instr, "src", VT_BUFFER, "input");
+   _instruction_param_seq_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
    //_instruction_param_name_add(instr, "ox", VT_INT, 0);
    _instruction_param_name_add(instr, "oy", VT_INT, 0);
 
@@ -1543,7 +1652,8 @@ _padding_set_padding_update(Evas_Filter_Program *pgm,
  */
 
 static Eina_Bool
-_padding_set_instruction_prepare(Evas_Filter_Instruction *instr)
+_padding_set_instruction_prepare(Evas_Filter_Program *pgm EINA_UNUSED,
+                                 Evas_Filter_Instruction *instr)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
@@ -1605,10 +1715,9 @@ _lua_program_get(lua_State *L)
 }
 
 static Eina_Bool
-_lua_parameter_parse(lua_State *L, Instruction_Param *param, int i)
+_lua_parameter_parse(Evas_Filter_Program *pgm, lua_State *L,
+                     Instruction_Param *param, int i)
 {
-   Eina_Bool ok;
-
    if (!param) return EINA_FALSE;
    if (param->set)
      {
@@ -1622,27 +1731,33 @@ _lua_parameter_parse(lua_State *L, Instruction_Param *param, int i)
       case VT_BOOL:
         if (lua_type(L, i) == LUA_TSTRING)
           {
-             ok = EINA_FALSE;
+             Eina_Bool ok = EINA_FALSE;
              const char *str = lua_tostring(L, i);
              Eina_Bool val = _bool_parse(str, &ok);
-             if (!ok) goto fail;
-             eina_value_set(param->value, val);
+             if (!ok)
+               goto fail;
+             param->value.b = val;
           }
         else if (lua_isboolean(L, i) || lua_isnumber(L, i))
-          eina_value_set(param->value, lua_toboolean(L, i));
-        else goto fail;
+          param->value.b = lua_toboolean(L, i);
+        else
+          goto fail;
         break;
       case VT_INT:
-        if (!lua_isnumber(L, i)) goto fail;
-        eina_value_set(param->value, lua_tointeger(L, i));
+        if (!lua_isnumber(L, i))
+          goto fail;
+        param->value.i = lua_tointeger(L, i);
         break;
       case VT_REAL:
-        if (!lua_isnumber(L, i)) goto fail;
-        eina_value_set(param->value, lua_tonumber(L, i));
+        if (!lua_isnumber(L, i))
+          goto fail;
+        param->value.f = lua_tonumber(L, i);
         break;
       case VT_STRING:
-        if (lua_type(L, i) != LUA_TSTRING) goto fail;
-        eina_value_set(param->value, lua_tostring(L, i));
+        if (lua_type(L, i) != LUA_TSTRING)
+          goto fail;
+        free(param->value.s);
+        param->value.s = strdup(lua_tostring(L, i));
         break;
       case VT_COLOR:
         if (lua_isnumber(L, i))
@@ -1654,21 +1769,33 @@ _lua_parameter_parse(lua_State *L, Instruction_Param *param, int i)
              int B = B_VAL(&color);
              if (!A && (R || B || G)) A = 0xFF;
              evas_color_argb_premul(A, &R, &G, &B);
-             eina_value_set(param->value, ARGB_JOIN(A, R, G, B));
+             param->value.c = ARGB_JOIN(A, R, G, B);
           }
         else if (lua_type(L, i) == LUA_TSTRING)
           {
-             DATA32 color;
-             ok = _color_parse(lua_tostring(L, i), &color);
-             if (!ok) goto fail;
-             eina_value_set(param->value, color);
+             if (!_color_parse(lua_tostring(L, i), &param->value.c))
+               goto fail;
           }
-        else goto fail;
+        else
+          goto fail;
         break;
       case VT_BUFFER:
-        if (lua_type(L, i) != LUA_TSTRING) goto fail;
-        eina_value_set(param->value, lua_tostring(L, i));
-        break;
+        {
+           if (lua_type(L, i) == LUA_TSTRING)
+             {
+                param->value.buf = _buffer_get(pgm, lua_tostring(L, i));
+                if (!param->value.buf)
+                  goto fail;
+             }
+           else
+             {
+                Buffer **pbuf;
+                luaL_checkudata(L, i, _lua_buffer_meta);
+                pbuf = lua_touserdata(L, i);
+                param->value.buf = pbuf ? *pbuf : NULL;
+             }
+           break;
+        }
       case VT_NONE:
       default:
         // This should not happen
@@ -1761,7 +1888,7 @@ _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
                   goto fail;
                }
 
-             if (!_lua_parameter_parse(L, param, -1))
+             if (!_lua_parameter_parse(pgm, L, param, -1))
                goto fail;
              lua_pop(L, 1);
           }
@@ -1771,7 +1898,7 @@ _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
         EINA_INLIST_FOREACH(instr->params, param)
           {
              if ((++i) > argc) break;
-             if (!_lua_parameter_parse(L, param, i))
+             if (!_lua_parameter_parse(pgm, L, param, i))
                goto fail;
           }
      }
@@ -1795,14 +1922,14 @@ fail:
 
 static int
 _lua_generic_function(lua_State *L, const char *name,
-                      Eina_Bool (* prepare) (Evas_Filter_Instruction *))
+                      Eina_Bool (* prepare) (Evas_Filter_Program *pgm, Evas_Filter_Instruction *))
 {
    Evas_Filter_Program *pgm = _lua_program_get(L);
    Evas_Filter_Instruction *instr;
    Eina_Bool ok;
 
    instr = _instruction_new(name);
-   prepare(instr);
+   prepare(pgm, instr);
    ok = _lua_instruction_run(L, instr);
 
    if (!ok)
@@ -1848,6 +1975,20 @@ _lua_print(lua_State *L)
              else
                eina_strbuf_append_printf(s, "%f", d);
           }
+        else if (luaL_checkudata(L, i, _lua_buffer_meta))
+          {
+             Buffer *buf, **pbuf;
+             pbuf = lua_touserdata(L, i);
+             buf = pbuf ? *pbuf : NULL;
+             if (!buf)
+               eina_strbuf_append(s, "Buffer[null]");
+             else
+               eina_strbuf_append_printf(s, "Buffer[#%d %dx%d %s%s%s]",
+                                         buf->cid, buf->w, buf->h,
+                                         buf->alpha ? "alpha" : "rgba",
+                                         buf->proxy ? " src: " : "",
+                                         buf->proxy ? buf->proxy : "");
+          }
         else
           eina_strbuf_append(s, "<>");
         eina_strbuf_append_char(s, ' ');
@@ -1887,12 +2028,27 @@ LUA_GENERIC_FUNCTION(mask)
 LUA_GENERIC_FUNCTION(padding_set)
 LUA_GENERIC_FUNCTION(transform)
 
+static const luaL_Reg buffer_methods[] = {
+   { "width", _lua_buffer_width },
+   { "height", _lua_buffer_height },
+   { "type", _lua_buffer_type },
+   { "name", _lua_buffer_name },
+   { "source", _lua_buffer_source },
+   { NULL, NULL }
+};
+
+static const luaL_Reg buffer_meta[] = {
+   { "__tostring", _lua_buffer_tostring },
+   { NULL, NULL }
+};
+
 static lua_State *
 _lua_state_create(Evas_Filter_Program *pgm)
 {
    lua_State *L;
+   Buffer *buf;
 
-   L = luaL_newstate();
+   pgm->L = L = luaL_newstate();
    if (!L)
      {
         ERR("Could not create a new Lua state");
@@ -1967,16 +2123,20 @@ _lua_state_create(Evas_Filter_Program *pgm)
         lua_setglobal(L, booleans[k].name);
      }
 
-   // Buffers. Should be input & output only.
-   {
-      Buffer *buf;
+   // Register buffer meta stuff
+   luaL_openlib(L, _lua_buffer_meta, buffer_methods, 0);
+   luaL_newmetatable(L, _lua_buffer_meta);
+   luaL_openlib(L, NULL, buffer_meta, 0);
+   lua_pushliteral(L, "__index");
+   lua_pushvalue(L, -3);
+   lua_rawset(L, -3);
+   lua_pushliteral(L, "__metatable");
+   lua_pushvalue(L, -3);
+   lua_rawset(L, -3);
+   lua_pop(L, 1);
 
-      EINA_INLIST_FOREACH(pgm->buffers, buf)
-        {
-           lua_pushstring(L, buf->name);
-           lua_setglobal(L, buf->name);
-        }
-   }
+   _buffer_add(pgm, "input", pgm->input_alpha, NULL);
+   _buffer_add(pgm, "output", EINA_FALSE, NULL);
 
    // Register proxies
    if (pgm->proxies)
@@ -1985,12 +2145,16 @@ _lua_state_create(Evas_Filter_Program *pgm)
         const char *source;
 
         EINA_ITERATOR_FOREACH(it, source)
-          if (_buffer_get(pgm, source))
-            {
-               lua_pushstring(L, source);
-               lua_setglobal(L, source);
-            }
+          {
+             buf = calloc(1, sizeof(Buffer));
+             if (!buf) break;
 
+             buf->name = eina_stringshare_add(source);
+             buf->proxy = eina_stringshare_ref(buf->name);
+             buf->alpha = EINA_FALSE;
+             pgm->buffers = eina_inlist_append(pgm->buffers, EINA_INLIST_GET(buf));
+             _lua_buffer_push(L, buf);
+          }
         eina_iterator_free(it);
      }
 
@@ -2149,14 +2313,20 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
    if (ok)
      ok = !lua_pcall(L, 0, LUA_MULTRET, 0);
 
-   if (!ok || !pgm->instructions)
+   if (!ok)
      {
         const char *msg = lua_tostring(L, -1);
         ERR("Lua parsing failed: %s", msg);
         lua_close(L);
+        pgm->L = NULL;
      }
-   else
-     pgm->L = L;
+   else if (!pgm->instructions)
+     {
+        ERR("No instructions found in Lua script");
+        lua_close(L);
+        ok = EINA_FALSE;
+        pgm->L = NULL;
+     }
    pgm->valid = ok;
    pgm->padding_calc = EINA_FALSE;
 
@@ -2258,8 +2428,7 @@ evas_filter_program_new(const char *name, Eina_Bool input_alpha)
    pgm = calloc(1, sizeof(Evas_Filter_Program));
    if (!pgm) return NULL;
    pgm->name = eina_stringshare_add(name);
-   _buffer_add(pgm, "input", input_alpha, NULL);
-   _buffer_add(pgm, "output", EINA_FALSE, NULL);
+   pgm->input_alpha = input_alpha;
 
    return pgm;
 }
@@ -2304,6 +2473,10 @@ evas_filter_program_source_set_all(Evas_Filter_Program *pgm,
    ENFN->context_clip_set(ENDT, dc, l, r, t, b); } while (0)
 #define RESETCLIP() do { ENFN->context_clip_set(ENDT, dc, _l, _r, _t, _b); } while (0)
 
+#define INSTR_PARAM_CHECK(a) do { if (!(a)) { \
+   ERR("Argument %s can not be nil in %s!", #a, instr->name); return -1; } \
+   } while (0)
+
 static Evas_Filter_Fill_Mode
 _fill_mode_get(Evas_Filter_Instruction *instr)
 {
@@ -2324,29 +2497,26 @@ _fill_mode_get(Evas_Filter_Instruction *instr)
 }
 
 static int
-_instr2cmd_blend(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
+_instr2cmd_blend(Evas_Filter_Context *ctx,
                  Evas_Filter_Instruction *instr, void *dc)
 {
    Eina_Bool isset = EINA_FALSE;
-   const char *src, *dst;
    DATA32 color;
-   Buffer *in, *out;
+   Buffer *src, *dst;
    Evas_Filter_Fill_Mode fillmode;
    int cmdid, ox, oy, A, R, G, B;
 
-   src = _instruction_param_gets(instr, "src", NULL);
-   dst = _instruction_param_gets(instr, "dst", NULL);
    ox = _instruction_param_geti(instr, "ox", NULL);
    oy = _instruction_param_geti(instr, "oy", NULL);
    color = _instruction_param_getc(instr, "color", &isset);
    fillmode = _fill_mode_get(instr);
-   in = _buffer_get(pgm, src);
-   out = _buffer_get(pgm, dst);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
+   src = _instruction_param_getbuf(instr, "src", NULL);
+   dst = _instruction_param_getbuf(instr, "dst", NULL);
+   INSTR_PARAM_CHECK(src);
+   INSTR_PARAM_CHECK(dst);
 
    if (isset) SETCOLOR(color);
-   cmdid = evas_filter_command_blend_add(ctx, dc, in->cid, out->cid, ox, oy,
+   cmdid = evas_filter_command_blend_add(ctx, dc, src->cid, dst->cid, ox, oy,
                                          fillmode);
    if (isset) RESETCOLOR();
    if (cmdid < 0) return cmdid;
@@ -2355,18 +2525,16 @@ _instr2cmd_blend(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 }
 
 static int
-_instr2cmd_blur(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
+_instr2cmd_blur(Evas_Filter_Context *ctx,
                 Evas_Filter_Instruction *instr, void *dc)
 {
    Eina_Bool colorset = EINA_FALSE, yset = EINA_FALSE, cntset = EINA_FALSE;
    Evas_Filter_Blur_Type type = EVAS_FILTER_BLUR_DEFAULT;
-   const char *src, *dst, *typestr;
+   const char *typestr;
    DATA32 color;
-   Buffer *in, *out;
+   Buffer *src, *dst;
    int cmdid, ox, oy, rx, ry, A, R, G, B, count;
 
-   src = _instruction_param_gets(instr, "src", NULL);
-   dst = _instruction_param_gets(instr, "dst", NULL);
    ox = _instruction_param_geti(instr, "ox", NULL);
    oy = _instruction_param_geti(instr, "oy", NULL);
    rx = _instruction_param_geti(instr, "rx", NULL);
@@ -2374,10 +2542,10 @@ _instr2cmd_blur(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    color = _instruction_param_getc(instr, "color", &colorset);
    typestr = _instruction_param_gets(instr, "type", NULL);
    count = _instruction_param_geti(instr, "count", &cntset);
-   in = _buffer_get(pgm, src);
-   out = _buffer_get(pgm, dst);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
+   src = _instruction_param_getbuf(instr, "src", NULL);
+   dst = _instruction_param_getbuf(instr, "dst", NULL);
+   INSTR_PARAM_CHECK(src);
+   INSTR_PARAM_CHECK(dst);
 
    if (typestr)
      {
@@ -2408,7 +2576,7 @@ _instr2cmd_blur(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 
    if (!yset) ry = rx;
    if (colorset) SETCOLOR(color);
-   cmdid = evas_filter_command_blur_add(ctx, dc, in->cid, out->cid, type,
+   cmdid = evas_filter_command_blur_add(ctx, dc, src->cid, dst->cid, type,
                                         rx, ry, ox, oy, count);
    if (colorset) RESETCOLOR();
 
@@ -2416,20 +2584,16 @@ _instr2cmd_blur(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 }
 
 static int
-_instr2cmd_bump(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
+_instr2cmd_bump(Evas_Filter_Context *ctx,
                 Evas_Filter_Instruction *instr, void *dc)
 {
    Evas_Filter_Bump_Flags flags = EVAS_FILTER_BUMP_NORMAL;
    Evas_Filter_Fill_Mode fillmode;
-   const char *src, *dst, *map;
    DATA32 color, black, white;
-   Buffer *in, *out, *bump;
+   Buffer *src, *dst, *map;
    double azimuth, elevation, depth, specular;
    int cmdid, compensate;
 
-   src = _instruction_param_gets(instr, "src", NULL);
-   dst = _instruction_param_gets(instr, "dst", NULL);
-   map = _instruction_param_gets(instr, "map", NULL);
    color = _instruction_param_getc(instr, "color", NULL);
    white = _instruction_param_getc(instr, "white", NULL);
    black = _instruction_param_getc(instr, "black", NULL);
@@ -2441,14 +2605,14 @@ _instr2cmd_bump(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    fillmode = _fill_mode_get(instr);
    if (compensate) flags |= EVAS_FILTER_BUMP_COMPENSATE;
 
-   in = _buffer_get(pgm, src);
-   out = _buffer_get(pgm, dst);
-   bump = _buffer_get(pgm, map);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(bump, -1);
+   src = _instruction_param_getbuf(instr, "src", NULL);
+   dst = _instruction_param_getbuf(instr, "dst", NULL);
+   map = _instruction_param_getbuf(instr, "map", NULL);
+   INSTR_PARAM_CHECK(src);
+   INSTR_PARAM_CHECK(dst);
+   INSTR_PARAM_CHECK(map);
 
-   cmdid = evas_filter_command_bump_map_add(ctx, dc, in->cid, bump->cid, out->cid,
+   cmdid = evas_filter_command_bump_map_add(ctx, dc, src->cid, map->cid, dst->cid,
                                             azimuth, elevation, depth, specular,
                                             black, color, white, flags,
                                             fillmode);
@@ -2457,23 +2621,26 @@ _instr2cmd_bump(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 }
 
 static int
-_instr2cmd_displace(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
+_instr2cmd_displace(Evas_Filter_Context *ctx,
                     Evas_Filter_Instruction *instr, void *dc)
 {
    Evas_Filter_Fill_Mode fillmode;
    Evas_Filter_Displacement_Flags flags =
          EVAS_FILTER_DISPLACE_STRETCH | EVAS_FILTER_DISPLACE_LINEAR;
-   const char *src, *dst, *map, *flagsstr;
-   Buffer *in, *out, *mask;
+   const char *flagsstr;
+   Buffer *src, *dst, *map;
    int cmdid, intensity;
    Eina_Bool isset = EINA_FALSE;
 
-   src = _instruction_param_gets(instr, "src", NULL);
-   dst = _instruction_param_gets(instr, "dst", NULL);
-   map = _instruction_param_gets(instr, "map", NULL);
+   src = _instruction_param_getbuf(instr, "src", NULL);
+   dst = _instruction_param_getbuf(instr, "dst", NULL);
+   map = _instruction_param_getbuf(instr, "map", NULL);
    intensity = _instruction_param_geti(instr, "intensity", NULL);
    flagsstr = _instruction_param_gets(instr, "flags", &isset);
    fillmode = _fill_mode_get(instr);
+   INSTR_PARAM_CHECK(src);
+   INSTR_PARAM_CHECK(dst);
+   INSTR_PARAM_CHECK(map);
 
    if (!flagsstr) flagsstr = "default";
    if (!strcasecmp(flagsstr, "nearest"))
@@ -2487,44 +2654,34 @@ _instr2cmd_displace(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
    else if (isset)
      WRN("Invalid flags '%s' in displace operation. Using default instead", flagsstr);
 
-   in = _buffer_get(pgm, src);
-   out = _buffer_get(pgm, dst);
-   mask = _buffer_get(pgm, map);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(mask, -1);
-
-   cmdid = evas_filter_command_displacement_map_add(ctx, dc, in->cid, out->cid,
-                                                    mask->cid, flags, intensity,
+   cmdid = evas_filter_command_displacement_map_add(ctx, dc, src->cid, dst->cid,
+                                                    map->cid, flags, intensity,
                                                     fillmode);
 
    return cmdid;
 }
 
 static int
-_instr2cmd_fill(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
+_instr2cmd_fill(Evas_Filter_Context *ctx,
                 Evas_Filter_Instruction *instr, void *dc)
 {
-   const char *bufname;
-   Buffer *buf;
+   Buffer *dst;
    int R, G, B, A, l, r, t, b;
    Evas_Filter_Command *cmd;
    Eina_Inlist *il;
    DATA32 color;
    int cmdid;
 
-   bufname = _instruction_param_gets(instr, "dst", NULL);
+   dst = _instruction_param_getbuf(instr, "dst", NULL);
    color = _instruction_param_getc(instr, "color", NULL);
    l = _instruction_param_geti(instr, "l", NULL);
    r = _instruction_param_geti(instr, "r", NULL);
    t = _instruction_param_geti(instr, "t", NULL);
    b = _instruction_param_geti(instr, "b", NULL);
-
-   buf = _buffer_get(pgm, bufname);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, -1);
+   INSTR_PARAM_CHECK(dst);
 
    SETCOLOR(color);
-   cmdid = evas_filter_command_fill_add(ctx, dc, buf->cid);
+   cmdid = evas_filter_command_fill_add(ctx, dc, dst->cid);
    RESETCOLOR();
 
    if (cmdid < 0) return -1;
@@ -2542,26 +2699,22 @@ _instr2cmd_fill(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 }
 
 static int
-_instr2cmd_grow(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
+_instr2cmd_grow(Evas_Filter_Context *ctx,
                 Evas_Filter_Instruction *instr, void *dc)
 {
    Evas_Filter_Command *cmd;
-   const char *src, *dst;
-   Buffer *in, *out;
+   Buffer *src, *dst;
    Eina_Bool smooth;
    int cmdid, radius;
 
-   src = _instruction_param_gets(instr, "src", NULL);
-   dst = _instruction_param_gets(instr, "dst", NULL);
+   src = _instruction_param_getbuf(instr, "src", NULL);
+   dst = _instruction_param_getbuf(instr, "dst", NULL);
    radius = _instruction_param_geti(instr, "radius", NULL);
    smooth = _instruction_param_geti(instr, "smooth", NULL);
+   INSTR_PARAM_CHECK(src);
+   INSTR_PARAM_CHECK(dst);
 
-   in = _buffer_get(pgm, src);
-   out = _buffer_get(pgm, dst);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
-
-   cmdid = evas_filter_command_grow_add(ctx, dc, in->cid, out->cid,
+   cmdid = evas_filter_command_grow_add(ctx, dc, src->cid, dst->cid,
                                         radius, smooth);
 
    cmd = _evas_filter_command_get(ctx, cmdid);
@@ -2571,34 +2724,29 @@ _instr2cmd_grow(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 }
 
 static int
-_instr2cmd_mask(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
+_instr2cmd_mask(Evas_Filter_Context *ctx,
                 Evas_Filter_Instruction *instr, void *dc)
 {
    Evas_Filter_Fill_Mode fillmode;
-   const char *src, *dst, *msk;
-   Buffer *in, *out, *mask;
+   Buffer *src, *dst, *mask;
    DATA32 color;
    int R, G, B, A, cmdid;
 
-   src = _instruction_param_gets(instr, "src", NULL);
-   dst = _instruction_param_gets(instr, "dst", NULL);
-   msk = _instruction_param_gets(instr, "mask", NULL);
+   src = _instruction_param_getbuf(instr, "src", NULL);
+   dst = _instruction_param_getbuf(instr, "dst", NULL);
+   mask = _instruction_param_getbuf(instr, "mask", NULL);
    color = _instruction_param_getc(instr, "color", NULL);
    fillmode = _fill_mode_get(instr);
-
-   in = _buffer_get(pgm, src);
-   out = _buffer_get(pgm, dst);
-   mask = _buffer_get(pgm, msk);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(mask, -1);
+   INSTR_PARAM_CHECK(src);
+   INSTR_PARAM_CHECK(dst);
+   INSTR_PARAM_CHECK(mask);
 
    SETCOLOR(color);
-   cmdid = evas_filter_command_mask_add(ctx, dc, in->cid, mask->cid, out->cid, fillmode);
+   cmdid = evas_filter_command_mask_add(ctx, dc, src->cid, mask->cid, dst->cid, fillmode);
    RESETCOLOR();
    if (cmdid < 0) return cmdid;
 
-   if (!in->alpha && !mask->alpha && !out->alpha)
+   if (!src->alpha && !mask->alpha && !dst->alpha)
      {
         Evas_Filter_Command *cmd;
 
@@ -2610,23 +2758,25 @@ _instr2cmd_mask(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
 }
 
 static int
-_instr2cmd_curve(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
+_instr2cmd_curve(Evas_Filter_Context *ctx,
                  Evas_Filter_Instruction *instr, void *dc)
 {
    Evas_Filter_Interpolation_Mode mode = EVAS_FILTER_INTERPOLATION_MODE_LINEAR;
    Evas_Filter_Channel channel = EVAS_FILTER_CHANNEL_RGB;
-   const char *src, *dst, *points_str, *interpolation, *channel_name;
+   const char *points_str, *interpolation, *channel_name;
    DATA8 values[256] = {0}, points[512];
    int cmdid, point_count = 0;
    char *token, *copy = NULL;
-   Buffer *in, *out;
+   Buffer *src, *dst;
    Eina_Bool parse_ok = EINA_FALSE;
 
-   src = _instruction_param_gets(instr, "src", NULL);
-   dst = _instruction_param_gets(instr, "dst", NULL);
+   src = _instruction_param_getbuf(instr, "src", NULL);
+   dst = _instruction_param_getbuf(instr, "dst", NULL);
    points_str = _instruction_param_gets(instr, "points", NULL);
    interpolation = _instruction_param_gets(instr, "interpolation", NULL);
    channel_name = _instruction_param_gets(instr, "channel", NULL);
+   INSTR_PARAM_CHECK(src);
+   INSTR_PARAM_CHECK(dst);
 
    if (channel_name)
      {
@@ -2677,30 +2827,27 @@ interpolated:
           values[x] = x;
      }
 
-   in = _buffer_get(pgm, src);
-   out = _buffer_get(pgm, dst);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
-
-   cmdid = evas_filter_command_curve_add(ctx, dc, in->cid, out->cid, values, channel);
+   cmdid = evas_filter_command_curve_add(ctx, dc, src->cid, dst->cid, values, channel);
 
    return cmdid;
 }
 
 static int
-_instr2cmd_transform(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
+_instr2cmd_transform(Evas_Filter_Context *ctx,
                      Evas_Filter_Instruction *instr, void *dc)
 {
    Evas_Filter_Transform_Flags flags;
-   const char *src, *dst, *op;
-   Buffer *in, *out;
+   const char *op;
+   Buffer *src, *dst;
    int ox = 0, oy;
 
    op = _instruction_param_gets(instr, "op", NULL);
-   src = _instruction_param_gets(instr, "src", NULL);
-   dst = _instruction_param_gets(instr, "dst", NULL);
+   src = _instruction_param_getbuf(instr, "src", NULL);
+   dst = _instruction_param_getbuf(instr, "dst", NULL);
    // ox = _instruction_param_geti(instr, "ox", NULL);
    oy = _instruction_param_geti(instr, "oy", NULL);
+   INSTR_PARAM_CHECK(src);
+   INSTR_PARAM_CHECK(dst);
 
    if (!strcasecmp(op, "vflip"))
      flags = EVAS_FILTER_TRANSFORM_VFLIP;
@@ -2710,20 +2857,14 @@ _instr2cmd_transform(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
         return -1;
      }
 
-   in = _buffer_get(pgm, src);
-   out = _buffer_get(pgm, dst);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(in, -1);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(out, -1);
-
-   return evas_filter_command_transform_add(ctx, dc, in->cid, out->cid, flags, ox, oy);
+   return evas_filter_command_transform_add(ctx, dc, src->cid, dst->cid, flags, ox, oy);
 }
 
 static int
-_command_from_instruction(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
+_command_from_instruction(Evas_Filter_Context *ctx,
                           Evas_Filter_Instruction *instr, void *dc)
 {
-   int (* instr2cmd) (Evas_Filter_Context *, Evas_Filter_Program *,
-                      Evas_Filter_Instruction *, void *);
+   int (* instr2cmd) (Evas_Filter_Context *, Evas_Filter_Instruction *, void *);
 
    switch (instr->type)
      {
@@ -2762,7 +2903,7 @@ _command_from_instruction(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm,
         return -1;
      }
 
-   return instr2cmd(ctx, pgm, instr, dc);
+   return instr2cmd(ctx, instr, dc);
 }
 
 #ifdef FILTERS_DEBUG
@@ -2780,31 +2921,37 @@ _instruction_dump(Evas_Filter_Instruction *instr)
    eina_strbuf_append(str, "({ ");
    EINA_INLIST_FOREACH(instr->params, param)
      {
-        int i;
-        DATA32 c;
-        const char *s;
-        double d;
-
         switch (param->type)
           {
            case VT_BOOL:
            case VT_INT:
-             eina_value_get(param->value, &i);
-             eina_strbuf_append_printf(str, "%s%s = %d", comma, param->name, i);
+             eina_strbuf_append_printf(str, "%s%s = %d", comma, param->name, param->value.i);
              break;
            case VT_COLOR:
-             eina_value_get(param->value, &c);
-             eina_strbuf_append_printf(str, "%s%s = 0x%08x", comma, param->name, c);
+             eina_strbuf_append_printf(str, "%s%s = 0x%08x", comma, param->name, param->value.c);
              break;
            case VT_REAL:
-             eina_value_get(param->value, &d);
-             eina_strbuf_append_printf(str, "%s%s = %f", comma, param->name, d);
+             eina_strbuf_append_printf(str, "%s%s = %f", comma, param->name, param->value.f);
              break;
            case VT_STRING:
+             if (param->value.s)
+               eina_strbuf_append_printf(str, "%s%s = \"%s\"", comma, param->name, param->value.s);
+             else
+               eina_strbuf_append_printf(str, "%s%s = nil", comma, param->name);
+             break;
            case VT_BUFFER:
-             eina_value_get(param->value, &s);
-             if (s) eina_strbuf_append_printf(str, "%s%s = \"%s\"", comma, param->name, s);
-             else eina_strbuf_append_printf(str, "%s%s = nil", comma, param->name);
+             if (param->value.buf)
+               {
+                  Buffer *buf = param->value.buf;
+                  eina_strbuf_append_printf(str, "%s%s = Buffer[#%d %dx%d %s%s%s]",
+                                            comma, param->name,
+                                            buf->cid, buf->w, buf->h,
+                                            buf->alpha ? "alpha" : "rgba",
+                                            buf->proxy ? " src: " : "",
+                                            buf->proxy ? buf->proxy : "");
+               }
+             else
+               eina_strbuf_append_printf(str, "%s%s = nil", comma, param->name);
              break;
            case VT_NONE:
            default:
@@ -2883,7 +3030,7 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
    EINA_INLIST_FOREACH(pgm->instructions, instr)
      {
         _instruction_dump(instr);
-        cmdid = _command_from_instruction(ctx, pgm, instr, dc);
+        cmdid = _command_from_instruction(ctx, instr, dc);
         if (cmdid <= 0)
           goto end;
      }
