@@ -118,6 +118,8 @@ enum _Evas_Filter_Transform_Flags
 
 /* Parser stuff (high level API) */
 EAPI Evas_Filter_Program *evas_filter_program_new(const char *name, Eina_Bool input_alpha);
+EAPI Eina_Bool           evas_filter_program_run(Evas_Filter_Program *pgm);
+EAPI void                evas_filter_program_state_set(Evas_Filter_Program *pgm, int w, int h);
 EAPI Eina_Bool           evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str);
 EAPI void                evas_filter_program_del(Evas_Filter_Program *pgm);
 Eina_Bool                evas_filter_context_program_use(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm);
@@ -130,7 +132,7 @@ Evas_Filter_Context     *evas_filter_context_new(Evas_Public_Data *evas, Eina_Bo
 void                     evas_filter_context_destroy(Evas_Filter_Context *ctx);
 void                     evas_filter_context_post_run_callback_set(Evas_Filter_Context *ctx, Evas_Filter_Cb cb, void *data);
 #define                  evas_filter_context_autodestroy(ctx) evas_filter_context_post_run_callback_set(ctx, ((Evas_Filter_Cb) evas_filter_context_destroy), ctx)
-Eina_Bool                evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx, unsigned w, unsigned h);
+Eina_Bool                evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx);
 
 int                      evas_filter_buffer_empty_new(Evas_Filter_Context *ctx, Eina_Bool alpha_only);
 int                      evas_filter_buffer_image_new(Evas_Filter_Context *ctx, void *image);

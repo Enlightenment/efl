@@ -1760,7 +1760,6 @@ evas_object_text_render(Evas_Object *eo_obj,
          * image to GL.
          */
 
-
         W = obj->cur->geometry.w;
         H = obj->cur->geometry.h;
         X = obj->cur->geometry.x;
@@ -1837,6 +1836,7 @@ evas_object_text_render(Evas_Object *eo_obj,
           }
 
         filter = evas_filter_context_new(obj->layer->evas, do_async);
+        evas_filter_program_run(fcow->chain);
         ok = evas_filter_context_program_use(filter, fcow->chain);
         if (!filter || !ok)
           {
@@ -1856,7 +1856,7 @@ evas_object_text_render(Evas_Object *eo_obj,
         ENFN->context_color_set(ENDT, filter_ctx, 255, 255, 255, 255);
 
         // Allocate all buffers now
-        evas_filter_context_buffers_allocate_all(filter, W, H);
+        evas_filter_context_buffers_allocate_all(filter);
         evas_filter_target_set(filter, context, surface, X + x, Y + y);
 
         // Steal output and release previous
@@ -2379,7 +2379,6 @@ EOLIAN static void
 _evas_text_filter_program_set(Eo *eo_obj, Evas_Text_Data *o, const char *arg)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-
    Evas_Filter_Program *pgm = NULL;
 
    if (!o) return;
@@ -2393,8 +2392,9 @@ _evas_text_filter_program_set(Eo *eo_obj, Evas_Text_Data *o, const char *arg)
         evas_filter_program_del(fcow->chain);
         if (arg)
           {
-             pgm = evas_filter_program_new("Evas_Text: Filter Program", EINA_TRUE);
+             pgm = evas_filter_program_new("Evas_Text", EINA_TRUE);
              evas_filter_program_source_set_all(pgm, fcow->sources);
+             evas_filter_program_state_set(pgm, obj->cur->geometry.w, obj->cur->geometry.h);
              if (!evas_filter_program_parse(pgm, arg))
                {
                   ERR("Parsing failed!");

@@ -22,6 +22,8 @@
 # include "evas_cs2_private.h"
 #endif
 
+#define _assert(a) if (!(a)) CRI("Failed on %s", #a);
+
 static void _buffer_free(Evas_Filter_Buffer *fb);
 static void _command_del(Evas_Filter_Context *ctx, Evas_Filter_Command *cmd);
 static RGBA_Image *_rgba_image_alloc(Evas_Filter_Buffer const *fb, void *data);
@@ -205,13 +207,13 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
        {
           // TODO: Lock current object as proxyrendering (see image obj)
           source = eo_data_scope_get(fb->source, EVAS_OBJECT_CLASS);
+          _assert(fb->w == source->cur->geometry.w);
+          _assert(fb->h == source->cur->geometry.h);
           if (source->proxy->surface && !source->proxy->redraw)
             {
                DBG("Source already rendered: '%s' of type '%s'",
                    fb->source_name, eo_class_name_get(eo_class_get(fb->source)));
                _filter_buffer_backing_free(fb);
-               fb->w = source->cur->geometry.w;
-               fb->h = source->cur->geometry.h;
                if (!ctx->gl_engine)
                  {
                     fb->backing = source->proxy->surface;
@@ -232,8 +234,6 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
                    source->proxy->redraw ? "redraw" : "no surface");
                evas_render_proxy_subrender(ctx->evas->evas, fb->source, eo_obj, obj, do_async);
                _filter_buffer_backing_free(fb);
-               fb->w = source->cur->geometry.w;
-               fb->h = source->cur->geometry.h;
                if (!ctx->gl_engine)
                  {
                     fb->backing = source->proxy->surface;
@@ -355,16 +355,16 @@ _rgba_image_alloc(Evas_Filter_Buffer const *fb, void *data)
 }
 
 Eina_Bool
-evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx,
-                                         unsigned w, unsigned h)
+evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
 {
    Evas_Filter_Command *cmd;
    Evas_Filter_Buffer *fb;
    Eina_List *li;
+   unsigned w, h;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
-   ctx->w = w;
-   ctx->h = h;
+   w = ctx->w;
+   h = ctx->w;
 
    //DBG("Allocating all buffers based on output size %ux%u", w, h);
 

@@ -282,6 +282,7 @@ typedef struct _Buffer
    struct {
       int l, r, t, b; // Used for padding calculation. Can change over time.
    } pad;
+   int w, h;
    Eina_Bool alpha : 1;
 } Buffer;
 
@@ -320,9 +321,12 @@ struct _Evas_Filter_Program
    struct {
       int l, r, t, b;
    } pad;
+   int w, h;
+   lua_State *L;
    Eina_Bool valid : 1;
    Eina_Bool padding_calc : 1; // Padding has been calculated
    Eina_Bool padding_set : 1; // Padding has been forced
+   Eina_Bool changed : 1; // State (w,h) changed, needs re-run of Lua
 };
 
 /* Instructions */
@@ -1568,6 +1572,9 @@ evas_filter_program_del(Evas_Filter_Program *pgm)
 
    if (!pgm) return;
 
+   if (pgm->L)
+     lua_close(pgm->L);
+
    EINA_INLIST_FREE(pgm->buffers, buf)
      {
         pgm->buffers = eina_inlist_remove(pgm->buffers, EINA_INLIST_GET(buf));
@@ -1679,7 +1686,7 @@ fail:
 }
 
 static Instruction_Param *
-_paramameter_get_by_id(Evas_Filter_Instruction *instr, int id)
+_parameter_get_by_id(Evas_Filter_Instruction *instr, int id)
 {
    Instruction_Param *param;
    int i = 0;
@@ -1734,7 +1741,7 @@ _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
              else if (lua_isnumber(L, -2))
                {
                   int idx = (int) lua_tonumber(L, -2);
-                  param = _paramameter_get_by_id(instr, idx - 1);
+                  param = _parameter_get_by_id(instr, idx - 1);
                   if (!param)
                     {
                        ERR("Too many parameters for the function %s", instr->name);
@@ -2092,16 +2099,44 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
 
    if (ok)
      ok = !lua_pcall(L, 0, LUA_MULTRET, 0);
-   else
+
+   if (!ok || !pgm->instructions)
      {
         const char *msg = lua_tostring(L, -1);
         ERR("Lua parsing failed: %s", msg);
+        lua_close(L);
      }
-   lua_close(L);
-
-   ok &= (pgm->instructions != NULL);
+   else
+     pgm->L = L;
    pgm->valid = ok;
    pgm->padding_calc = EINA_FALSE;
+
+   return ok;
+}
+
+/** Run a program, must be already loaded */
+
+EAPI Eina_Bool
+evas_filter_program_run(Evas_Filter_Program *pgm)
+{
+   Eina_Bool ok;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, EINA_FALSE);
+   if (!pgm->L)
+     {
+        ERR("Lua state is not set. Something is wrong.");
+        return EINA_FALSE;
+     }
+
+   if (!pgm->changed)
+     return EINA_TRUE;
+
+   ok = !lua_pcall(pgm->L, 0, LUA_MULTRET, 0);
+   if (!ok)
+     {
+        const char *msg = lua_tostring(pgm->L, -1);
+        ERR("Lua execution failed: %s", msg);
+     }
 
    return ok;
 }
@@ -2178,6 +2213,21 @@ evas_filter_program_new(const char *name, Eina_Bool input_alpha)
    _buffer_add(pgm, "output", EINA_FALSE, NULL);
 
    return pgm;
+}
+
+EAPI void
+evas_filter_program_state_set(Evas_Filter_Program *pgm, int w, int h)
+{
+   Eina_Bool changed = EINA_FALSE;
+#define SET(a) do { if (pgm->a != a) { changed = 1; pgm->a = a; } } while (0)
+
+   EINA_SAFETY_ON_NULL_RETURN(pgm);
+
+   SET(w);
+   SET(h);
+   pgm->changed |= changed;
+
+#undef SET
 }
 
 /** Bind objects for proxy rendering */
@@ -2739,6 +2789,10 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
 
    DBG("Using program '%s' for context %p", pgm->name, ctx);
 
+   // Copy current state (size, edje state val, color class, etc...)
+   ctx->w = pgm->w;
+   ctx->h = pgm->h;
+
    // Create empty context with all required buffers
    evas_filter_context_clear(ctx);
    EINA_INLIST_FOREACH(pgm->buffers, buf)
@@ -2746,6 +2800,7 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
         buf->cid = evas_filter_buffer_empty_new(ctx, buf->alpha);
         if (buf->proxy)
           {
+             Evas_Object_Protected_Data *source;
              Evas_Filter_Proxy_Binding *pb;
              Evas_Filter_Buffer *fb;
 
@@ -2757,6 +2812,15 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
              fb->source = pb->eo_source;
              fb->source_name = eina_stringshare_ref(pb->name);
              fb->ctx->has_proxies = EINA_TRUE;
+
+             source = eo_data_scope_get(fb->source, EVAS_OBJECT_CLASS);
+             fb->w = source->cur->geometry.w;
+             fb->h = source->cur->geometry.h;
+          }
+        else
+          {
+             buf->w = ctx->w;
+             buf->h = ctx->h;
           }
      }
 

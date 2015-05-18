@@ -3315,7 +3315,7 @@ start_draw:
                   if (!ok) goto state_write;
 
                   evas_filter_context_proxy_render_all(filter, eo_obj, EINA_FALSE);
-                  ok = evas_filter_context_buffers_allocate_all(filter, W, H);
+                  ok = evas_filter_context_buffers_allocate_all(filter);
                   if (!ok) goto state_write;
 
                   if (ENFN->gl_surface_read_pixels)
