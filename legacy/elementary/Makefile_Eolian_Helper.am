@@ -10,10 +10,13 @@ AM_V_EOL = $(am__v_EOL_@AM_V@)
 am__v_EOL_ = $(am__v_EOL_@AM_DEFAULT_V@)
 am__v_EOL_0 = @echo "  EOLIAN  " $@;
 
-SUFFIXES = .eo .eo.c .eo.h .eo.legacy.h
+SUFFIXES = .eo .eot .eo.c .eo.h .eo.legacy.h
 
 %.eo.c: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL)$(EOLIAN_GEN) --eo --legacy $(EOLIAN_FLAGS) --gc -o $@ $<
+
+%.eot.h: %.eot ${_EOLIAN_GEN_DEP}
+	$(AM_V_EOL)$(EOLIAN_GEN) $(EOLIAN_FLAGS) --gh -o $@ $<
 
 %.eo.h: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL)$(EOLIAN_GEN) --eo $(EOLIAN_FLAGS) --gh -o $@ $<

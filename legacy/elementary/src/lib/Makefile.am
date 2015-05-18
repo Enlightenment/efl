@@ -647,7 +647,7 @@ elm_diskselector_item.eo \
 elm_popup_item.eo
 
 elm_eolian_c = $(elm_eolian_files:%.eo=%.eo.c)
-elm_eolian_h = $(elm_eolian_files:%.eo=%.eo.h)
+elm_eolian_h = $(elm_eolian_files:%.eo=%.eo.h) $(elm_eolian_files:%.eot=%.eot.h)
 elm_eolian_legacy_h = $(elm_eolian_files:%.eo=%.eo.legacy.h)
 elm_eolian_hh = $(elm_eolian_files:%.eo=%.eo.hh)
 
