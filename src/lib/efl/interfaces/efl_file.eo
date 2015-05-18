@@ -27,8 +27,8 @@ interface Efl.File {
             @since 1.10 */
          }
          values {
-            const(Eina.File)* f; /*@ The mmaped file */
-            const(char)* key; /*@ The image key in @p file (if its an Eet one), or @c
+            f: const(Eina.File)*; /*@ The mmaped file */
+            key: const(char)*; /*@ The image key in @p file (if its an Eet one), or @c
             NULL, otherwise. */
          }
       }
@@ -73,8 +73,8 @@ interface Efl.File {
             interested in: they'll be ignored by the function. */
          }
          values {
-            const(char)* file; /*@ The image file path. */
-            const(char)* key; /*@ The image key in @p file (if its an Eet one), or @c
+            file: const(char)*; /*@ The image file path. */
+            key: const(char)*; /*@ The image key in @p file (if its an Eet one), or @c
             NULL, otherwise. */
          }
       }
@@ -95,7 +95,7 @@ interface Efl.File {
             enabled and supported by the object. */
          }
          values {
-            bool async; /*@ Flag for asynchronous open. */
+            async: bool; /*@ Flag for asynchronous open. */
          }
       }
       save @const {
@@ -113,11 +113,11 @@ interface Efl.File {
 
          return: bool;
          params {
-            @in const(char)* file @nonull; /*@ The filename to be used to save the image (extension
+            @in file: const(char)* @nonull; /*@ The filename to be used to save the image (extension
             obligatory). */
-            @in const(char)* key; /*@ The image key in the file (if an Eet one), or @c NULL,
+            @in key: const(char)*; /*@ The image key in the file (if an Eet one), or @c NULL,
             otherwise. */
-            @in const(char)* flags; /*@ String containing the flags to be used (@c NULL for
+            @in flags: const(char)*; /*@ String containing the flags to be used (@c NULL for
             none). */
          }
       }

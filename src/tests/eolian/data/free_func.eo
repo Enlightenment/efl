@@ -22,7 +22,7 @@ class Free_Func {
    methods {
       foo {
          params {
-            int idx;
+            idx: int;
          }
          return: own(char*);
       }

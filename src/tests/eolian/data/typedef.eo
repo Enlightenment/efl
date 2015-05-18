@@ -22,7 +22,7 @@ class Typedef {
    methods {
       foo {
          params {
-            int idx;
+            idx: int;
          }
          return: own(char*); /*@ comment for method return */
       }

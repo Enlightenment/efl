@@ -11,13 +11,13 @@ class ColourableSquare (Colourable)
                 /*@ Gets size. */
             }
             values {
-                int size; /*@ The size. */
+                size: int; /*@ The size. */
             }
         }
       size_constructor {
            legacy: null;
            params {
-              @in int size;
+              @in size: int;
            }
        }
         size_print { /*@ Show the square. */ }

@@ -10,7 +10,7 @@ interface Efl.Image {
              */
          }
          values {
-              bool is_animated; /*@ If it's animated or not. */
+              is_animated: bool; /*@ If it's animated or not. */
          }
       }
       @property load_size {
@@ -24,8 +24,8 @@ interface Efl.Image {
          get {
          }
          values {
-            int w; /*@ The new width of the image's load size. */
-            int h; /*@ The new height of the image's load size. */
+            w: int; /*@ The new width of the image's load size. */
+            h: int; /*@ The new height of the image's load size. */
          }
       }
       @property smooth_scale {
@@ -49,7 +49,7 @@ interface Efl.Image {
             */
          }
          values {
-            bool smooth_scale; /*@ Whether to use smooth scale or not. */
+            smooth_scale: bool; /*@ Whether to use smooth scale or not. */
          }
       }
       @property ratio {
@@ -59,7 +59,7 @@ interface Efl.Image {
             */
          }
          values {
-            double ratio; /*@ The image's ratio */
+            ratio: double; /*@ The image's ratio */
          }
       }
    }

@@ -10,7 +10,7 @@ interface Efl.Control {
              get {
              }
              values {
-                  int priority; /*@ The priority of the object */
+                  priority: int; /*@ The priority of the object */
              }
         }
         @property suspend {
@@ -20,7 +20,7 @@ interface Efl.Control {
              get {
              }
              values {
-                  bool suspend; /*@ Controls whether the object is suspended or not. */
+                  suspend: bool; /*@ Controls whether the object is suspended or not. */
              }
         }
    }

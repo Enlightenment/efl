@@ -9,9 +9,9 @@ class Ector.Cairo_Software.Surface (Ector.Cairo.Surface)
 	 get {
 	 }
 	 values {
-	    void *pixels;
-	    uint width;
-	    uint height;
+	    pixels: void *;
+	    width: uint;
+	    height: uint;
 	 }
       }
    }

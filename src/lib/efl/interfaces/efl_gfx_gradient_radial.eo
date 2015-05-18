@@ -14,8 +14,8 @@ interface Efl.Gfx.Gradient.Radial (Efl.Gfx.Gradient.Base)
             */
          }
          values {
-            double x; /*@ x co-ordinate of center point */
-            double y; /*@ y co-ordinate of center point */
+            x: double; /*@ x co-ordinate of center point */
+            y: double; /*@ y co-ordinate of center point */
          }
       }
       @property radius {
@@ -30,7 +30,7 @@ interface Efl.Gfx.Gradient.Radial (Efl.Gfx.Gradient.Base)
             */
          }
          values {
-            double r; /*@ center radius */
+            r: double; /*@ center radius */
          }
       }
       @property focal {
@@ -45,8 +45,8 @@ interface Efl.Gfx.Gradient.Radial (Efl.Gfx.Gradient.Base)
             */
          }
          values {
-            double x; /*@ x co-ordinate of focal point */
-            double y; /*@ y co-ordinate of focal point */
+            x: double; /*@ x co-ordinate of focal point */
+            y: double; /*@ y co-ordinate of focal point */
          }
       }
    }

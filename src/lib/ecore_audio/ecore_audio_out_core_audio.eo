@@ -9,4 +9,3 @@ class Ecore_Audio_Out_Core_Audio (Ecore_Audio_Out)
       Ecore_Audio_Out.input_detach;
    }
 }
-

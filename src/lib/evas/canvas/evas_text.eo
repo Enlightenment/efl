@@ -34,10 +34,10 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             @see evas_object_text_shadow_color_set() for more details. */
          }
          values {
-            int r; /*@ The red component of the given color. */
-            int g; /*@ The green component of the given color. */
-            int b; /*@ The blue component of the given color. */
-            int a; /*@ The alpha component of the given color. */
+            r: int; /*@ The red component of the given color. */
+            g: int; /*@ The green component of the given color. */
+            b: int; /*@ The blue component of the given color. */
+            a: int; /*@ The alpha component of the given color. */
          }
       }
       @property ellipsis {
@@ -63,7 +63,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             @since 1.8 */
          }
          values {
-            double ellipsis(-1); /*@ the ellipsis. */
+            ellipsis: double(-1); /*@ the ellipsis. */
          }
       }
       @property bidi_delimiters {
@@ -89,7 +89,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             @since 1.1 */
          }
          values {
-            const(char)* delim; /*@ A null terminated string of delimiters, e.g ",|". */
+            delim: const(char)*; /*@ A null terminated string of delimiters, e.g ",|". */
          }
       }
       @property outline_color {
@@ -116,10 +116,10 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             @see evas_object_text_outline_color_set() for more details. */
          }
          values {
-            int r; /*@ The red component of the given color. */
-            int g; /*@ The green component of the given color. */
-            int b; /*@ The blue component of the given color. */
-            int a; /*@ The alpha component of the given color. */
+            r: int; /*@ The red component of the given color. */
+            g: int; /*@ The green component of the given color. */
+            b: int; /*@ The blue component of the given color. */
+            a: int; /*@ The alpha component of the given color. */
          }
       }
       @property glow2_color {
@@ -144,10 +144,10 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             @see evas_object_text_glow2_color_set() for more details. */
          }
          values {
-            int r; /*@ The red component of the given color. */
-            int g; /*@ The green component of the given color. */
-            int b; /*@ The blue component of the given color. */
-            int a; /*@ The alpha component of the given color. */
+            r: int; /*@ The red component of the given color. */
+            g: int; /*@ The green component of the given color. */
+            b: int; /*@ The blue component of the given color. */
+            a: int; /*@ The alpha component of the given color. */
          }
       }
       @property style {
@@ -184,7 +184,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             @see evas_object_text_style_set() for more details. */
          }
          values {
-            Evas_Text_Style_Type style; /*@ a style type. */
+            style: Evas_Text_Style_Type; /*@ a style type. */
          }
       }
       @property glow_color {
@@ -213,10 +213,10 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             @see evas_object_text_glow_color_set() for more details. */
          }
          values {
-            int r; /*@ The red component of the given color. */
-            int g; /*@ The green component of the given color. */
-            int b; /*@ The blue component of the given color. */
-            int a; /*@ The alpha component of the given color. */
+            r: int; /*@ The red component of the given color. */
+            g: int; /*@ The green component of the given color. */
+            b: int; /*@ The blue component of the given color. */
+            a: int; /*@ The alpha component of the given color. */
          }
       }
       @property filter_program {
@@ -236,7 +236,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             legacy: null;
          }
          values {
-            const(char)* program; /*@ The program code, as defined
+            program: const(char)*; /*@ The program code, as defined
               by the @ref evasfiltersref "Evas filters script language".
               Pass NULL to remove the former program and switch back
               to the standard text effect */
@@ -256,8 +256,8 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             legacy: null;
          }
          values {
-            const(char)* name; /*@ Object name as used in the program code */
-            Eo* eobj; /*@ Eo object to use through proxy rendering */
+            name: const(char)*; /*@ Object name as used in the program code */
+            eobj: Eo*; /*@ Eo object to use through proxy rendering */
          }
       }
       @property max_descent {
@@ -271,10 +271,10 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             Gets the text style pad of a text object. */
          }
          values {
-            int l; /*@ The left pad (or @c NULL). */
-            int r; /*@ The right pad (or @c NULL). */
-            int t; /*@ The top pad (or @c NULL). */
-            int b; /*@ The bottom pad (or @c NULL). */
+            l: int; /*@ The left pad (or @c NULL). */
+            r: int; /*@ The right pad (or @c NULL). */
+            t: int; /*@ The top pad (or @c NULL). */
+            b: int; /*@ The bottom pad (or @c NULL). */
          }
       }
       @property direction {
@@ -320,19 +320,19 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
          /*@ Returns the logical position of the last char in the text up to the pos given. this is NOT the position of the last char because of the possibility of RTL in the text. */
          return: int(-1);
          params {
-            @in Evas_Coord x; /*@ in */
-            @in Evas_Coord y; /*@ in */
+            @in x: Evas_Coord; /*@ in */
+            @in y: Evas_Coord; /*@ in */
          }
       }
       char_coords_get @const {
          return: int;
          params {
-            @in Evas_Coord x; /*@ in */
-            @in Evas_Coord y; /*@ in */
-            @out Evas_Coord cx; /*@ out */
-            @out Evas_Coord cy; /*@ out */
-            @out Evas_Coord cw; /*@ out */
-            @out Evas_Coord ch; /*@ out */
+            @in x: Evas_Coord; /*@ in */
+            @in y: Evas_Coord; /*@ in */
+            @out cx: Evas_Coord; /*@ out */
+            @out cy: Evas_Coord; /*@ out */
+            @out cw: Evas_Coord; /*@ out */
+            @out ch: Evas_Coord; /*@ out */
          }
       }
       char_pos_get @const {
@@ -348,11 +348,11 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
          @return @c EINA_FALSE on success, @c EINA_TRUE on error. */
          return: bool;
          params {
-            @in int pos; /*@ The character position to request co-ordinates for. */
-            @out Evas_Coord cx; /*@ A pointer to an @c Evas_Coord to store the X value in (can be NULL). */
-            @out Evas_Coord cy; /*@ A pointer to an @c Evas_Coord to store the Y value in (can be NULL). */
-            @out Evas_Coord cw; /*@ A pointer to an @c Evas_Coord to store the Width value in (can be NULL). */
-            @out Evas_Coord ch; /*@ A pointer to an @c Evas_Coord to store the Height value in (can be NULL). */
+            @in pos: int; /*@ The character position to request co-ordinates for. */
+            @out cx: Evas_Coord; /*@ A pointer to an @c Evas_Coord to store the X value in (can be NULL). */
+            @out cy: Evas_Coord; /*@ A pointer to an @c Evas_Coord to store the Y value in (can be NULL). */
+            @out cw: Evas_Coord; /*@ A pointer to an @c Evas_Coord to store the Width value in (can be NULL). */
+            @out ch: Evas_Coord; /*@ A pointer to an @c Evas_Coord to store the Height value in (can be NULL). */
          }
       }
    }

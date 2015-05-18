@@ -12,12 +12,12 @@ class Override (Base) {
          get {
          }
          keys {
-              int idx;
+              idx: int;
          }
          values {
-              float a;
-              char b;
-              int c;
+              a: float;
+              b: char;
+              c: int;
          }
       }
       @property c {
@@ -26,19 +26,19 @@ class Override (Base) {
          get {
          }
          keys {
-              int idx;
+              idx: int;
          }
          values {
-              int c(50);
+              c: int(50);
          }
       }
       foo {
       }
       bar {
            params {
-                @in int idx;
-                @out int a (250);
-                @out char *str (null);
+                @in idx: int;
+                @out a: int (250);
+                @out str: char * (null);
            }
       }
    }

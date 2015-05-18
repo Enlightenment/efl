@@ -9,7 +9,7 @@ class Ector.Software.Surface (Ector.Generic.Surface)
 	 get {
 	 }
 	 values {
-	    Software_Rasterizer *ctx;
+	    ctx: Software_Rasterizer *;
 	 }
       }
       @property surface {
@@ -18,9 +18,9 @@ class Ector.Software.Surface (Ector.Generic.Surface)
 	 get {
 	 }
 	 values {
-	    void *pixels;
-	    uint width;
-	    uint height;
+	    pixels: void *;
+	    width: uint;
+	    height: uint;
 	 }
       }
    }

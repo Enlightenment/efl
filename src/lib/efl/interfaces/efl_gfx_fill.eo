@@ -15,7 +15,7 @@ interface Efl.Gfx.Fill {
             @return  The current spread mode of the image object. */
          }
          values {
-            Efl_Gfx_Fill_Spread spread; /*@ One of EVAS_TEXTURE_REFLECT, EVAS_TEXTURE_REPEAT, */
+            spread: Efl_Gfx_Fill_Spread; /*@ One of EVAS_TEXTURE_REFLECT, EVAS_TEXTURE_REPEAT, */
          }
       }
       @property fill {
@@ -60,12 +60,12 @@ interface Efl.Gfx.Fill {
             See @ref evas_object_image_fill_set() for more details. */
          }
          values {
-            int x; /*@ The x coordinate (from the top left corner of the bound
+            x: int; /*@ The x coordinate (from the top left corner of the bound
             image) to start drawing from. */
-            int y; /*@ The y coordinate (from the top left corner of the bound
+            y: int; /*@ The y coordinate (from the top left corner of the bound
             image) to start drawing from. */
-            int w; /*@ The width the bound image will be displayed at. */
-            int h; /*@ The height the bound image will be displayed at. */
+            w: int; /*@ The width the bound image will be displayed at. */
+            h: int; /*@ The height the bound image will be displayed at. */
          }
       }
    }

@@ -19,8 +19,8 @@ interface Efl.Gfx.View {
             See @ref evas_object_image_size_set() for more details. */
          }
          values {
-            int w; /*@ The new width of the image. */
-            int h; /*@ The new height of the image. */
+            w: int; /*@ The new width of the image. */
+            h: int; /*@ The new height of the image. */
          }
       }
    }

@@ -2,9 +2,9 @@ class Base {
    methods {
       @property z {
            values {
-                int a;
-                char b;
-                float c;
+                a: int;
+                b: char;
+                c: float;
            }
       }
       constructor {

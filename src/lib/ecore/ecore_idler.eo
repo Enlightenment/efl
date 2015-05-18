@@ -6,8 +6,8 @@ class Ecore.Idler (Eo.Base)
          /*@ Constructor. */
          legacy: null;
          params {
-            @in Ecore_Task_Cb func;
-            @in const(void)* data;
+            @in func: Ecore_Task_Cb;
+            @in data: const(void)*;
          }
       }
    }

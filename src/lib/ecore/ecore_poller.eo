@@ -5,10 +5,10 @@ class Ecore.Poller (Eo.Base)
          /*@ Constructor with parameters for Ecore Poller. */
          legacy: null;
          params {
-            @in Ecore_Poller_Type type;
-            @in int interval;
-            @in Ecore_Task_Cb func;
-            @in const(void)* data;
+            @in type: Ecore_Poller_Type;
+            @in interval: int;
+            @in func: Ecore_Task_Cb;
+            @in data: const(void)*;
          }
       }
       @property interval {
@@ -31,7 +31,7 @@ class Ecore.Poller (Eo.Base)
             legacy: ecore_poller_poller_interval_get;
          }
          values {
-            int interval; /*@ The tick interval to set; must be a power of 2 and <= 32768. */
+            interval: int; /*@ The tick interval to set; must be a power of 2 and <= 32768. */
          }
       }
    }

@@ -8,7 +8,7 @@ class Efl.VG.Shape (Efl.VG.Base, Efl.Gfx.Shape)
 	 get {
 	 }
 	 values {
-	    Efl_VG *f;
+	    f: Efl_VG *;
 	 }
       }
       @property stroke_fill {
@@ -17,7 +17,7 @@ class Efl.VG.Shape (Efl.VG.Base, Efl.Gfx.Shape)
 	 get {
 	 }
 	 values {
-	    Efl_VG *f;
+	    f: Efl_VG *;
 	 }
       }
       @property stroke_marker {
@@ -26,7 +26,7 @@ class Efl.VG.Shape (Efl.VG.Base, Efl.Gfx.Shape)
 	 get {
 	 }
 	 values {
-	    Efl_VG *m;
+	    m: Efl_VG *;
 	 }
       }
    }

@@ -1006,14 +1006,15 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
         else
            par->param_dir = EOLIAN_IN_PARAM;
      }
+   check(ls, TOK_VALUE);
+   par->name = eina_stringshare_ref(ls->t.value.s);
+   eo_lexer_get(ls);
+   check_next(ls, ':');
    if (par->param_dir == EOLIAN_OUT_PARAM || par->param_dir == EOLIAN_INOUT_PARAM)
      par->type = parse_type_void(ls);
    else
      par->type = parse_type(ls);
    pop_type(ls);
-   check(ls, TOK_VALUE);
-   par->name = eina_stringshare_ref(ls->t.value.s);
-   eo_lexer_get(ls);
    if ((is_vals || (par->param_dir == EOLIAN_OUT_PARAM)) && (ls->t.token == '('))
      {
         int line = ls->line_number, col = ls->column;

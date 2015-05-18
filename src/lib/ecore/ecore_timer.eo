@@ -19,7 +19,7 @@ class Ecore.Timer (Eo.Base)
             /*@ Get the interval the timer ticks on. */
          }
          values {
-            double in(-1); /*@ The new interval in seconds */
+            in: double(-1); /*@ The new interval in seconds */
          }
       }
       @property pending {
@@ -32,18 +32,18 @@ class Ecore.Timer (Eo.Base)
          /*@ Create a timer to call in a given time from now */
          legacy: null;
          params {
-            @in double in; /*@ The time, in seconds, from now when to go off */
-            @in Ecore_Task_Cb func; /*@ The callback function to call when the timer goes off */
-            @in const(void)* data; /*@ A pointer to pass to the callback function as its data pointer */
+            @in in: double; /*@ The time, in seconds, from now when to go off */
+            @in func: Ecore_Task_Cb; /*@ The callback function to call when the timer goes off */
+            @in data: const(void)*; /*@ A pointer to pass to the callback function as its data pointer */
          }
       }
       constructor {
          /*@ Create a timer to call in a given time from when the mainloop woke up from sleep */
          legacy: null;
          params {
-            @in double in; /*@ The time, in seconds, from when the main loop woke up, to go off */
-            @in Ecore_Task_Cb func; /*@ The callback function to call when the timer goes off */
-            @in const(void)* data; /*@ A pointer to pass to the callback function as its data pointer */
+            @in in: double; /*@ The time, in seconds, from when the main loop woke up, to go off */
+            @in func: Ecore_Task_Cb; /*@ The callback function to call when the timer goes off */
+            @in data: const(void)*; /*@ A pointer to pass to the callback function as its data pointer */
          }
       }
       reset {
@@ -61,7 +61,7 @@ class Ecore.Timer (Eo.Base)
           * This doesn't affect the interval of a timer.
           */
          params {
-            @in double add; /*@ The amount of time to delay the timer by in seconds */
+            @in add: double; /*@ The amount of time to delay the timer by in seconds */
          }
       }
    }

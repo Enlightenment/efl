@@ -16,7 +16,7 @@ interface Efl.Player {
                    */
              }
              values {
-                  bool play; /*@ true if playing, false otherwise. */
+                  play: bool; /*@ true if playing, false otherwise. */
              }
         }
         @property position {
@@ -44,7 +44,7 @@ interface Efl.Player {
                    */
              }
              values {
-                  double second; /*@ The position (in seconds). */
+                  second: double; /*@ The position (in seconds). */
              }
         }
         @property progress {
@@ -57,7 +57,7 @@ interface Efl.Player {
                    */
              }
              values {
-                  double progress; /*@ The progress within the [0, 1] range. */
+                  progress: double; /*@ The progress within the [0, 1] range. */
              }
         }
         @property play_speed {
@@ -73,7 +73,7 @@ interface Efl.Player {
              get {
              }
              values {
-                  double speed; /*@ The play speed in the [0, infinity) range. */
+                  speed: double; /*@ The play speed in the [0, infinity) range. */
              }
         }
         @property audio_volume {
@@ -90,7 +90,7 @@ interface Efl.Player {
              get {
              }
              values {
-                  double volume; /*@ The volume level */
+                  volume: double; /*@ The volume level */
              }
         }
         @property audio_mute {
@@ -102,7 +102,7 @@ interface Efl.Player {
              get {
              }
              values {
-                  bool mute; /*@ The mute state. True or false. */
+                  mute: bool; /*@ The mute state. True or false. */
              }
         }
         @property length {
@@ -114,7 +114,7 @@ interface Efl.Player {
              get {
              }
              values {
-                  double length; /*@ The length of the stream in seconds. */
+                  length: double; /*@ The length of the stream in seconds. */
              }
         }
         @property seekable {
@@ -124,7 +124,7 @@ interface Efl.Player {
              get {
              }
              values {
-                  bool seekable; /*@ True if seekable. */
+                  seekable: bool; /*@ True if seekable. */
              }
         }
    }

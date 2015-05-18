@@ -8,7 +8,7 @@ interface Evas.Common_Interface ()
             legacy: evas_object_evas_get;
          }
          values {
-            Evas *ret;
+            ret: Evas *;
          }
       }
    }

@@ -33,7 +33,7 @@ class Enum {
     methods {
         foo {
             params {
-                int idx;
+                idx: int;
             }
             return: own(char*);
         }

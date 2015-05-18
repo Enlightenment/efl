@@ -29,8 +29,8 @@ class Evas.Box (Evas.Smart_Clipped)
             @see evas_object_box_align_set() for more information */
          }
          values {
-            double horizontal; /*@ The horizontal alignment, in pixels */
-            double vertical; /*@ the vertical alignment, in pixels */
+            horizontal: double; /*@ The horizontal alignment, in pixels */
+            vertical: double; /*@ the vertical alignment, in pixels */
          }
       }
       @property padding {
@@ -49,8 +49,8 @@ class Evas.Box (Evas.Smart_Clipped)
             @see evas_object_box_padding_set() */
          }
          values {
-            Evas_Coord horizontal; /*@ The horizontal padding, in pixels */
-            Evas_Coord vertical; /*@ the vertical padding, in pixels */
+            horizontal: Evas_Coord; /*@ The horizontal padding, in pixels */
+            vertical: Evas_Coord; /*@ the vertical padding, in pixels */
          }
       }
       @property layout {
@@ -77,9 +77,9 @@ class Evas.Box (Evas.Smart_Clipped)
             'calculate' smart callback of the box's smart class. */
          }
          values {
-            Evas_Object_Box_Layout cb @nonull; /*@ The new layout function to set on @p o. */
-            const(void)* data; /*@ Data pointer to be passed to @p cb. */
-            Eina.Free_Cb free_data; /*@ Function to free @p data, if need be. */
+            cb: Evas_Object_Box_Layout @nonull; /*@ The new layout function to set on @p o. */
+            data: const(void)*; /*@ Data pointer to be passed to @p cb. */
+            free_data: Eina.Free_Cb; /*@ Function to free @p data, if need be. */
          }
       }
       layout_horizontal {
@@ -132,8 +132,8 @@ class Evas.Box (Evas.Smart_Clipped)
          be set, by the <c>evas_object_size_hint_{min,max}_set()</c>
          functions. */
          params {
-              Evas_Object_Box_Data *priv;
-              void *data;
+              priv: Evas_Object_Box_Data *;
+              data: void *;
          }
       }
       layout_vertical {
@@ -144,8 +144,8 @@ class Evas.Box (Evas.Smart_Clipped)
          evas_object_box_layout_horizontal(). The description of its
          behaviour can be derived from that function's documentation. */
          params {
-              Evas_Object_Box_Data *priv;
-              void *data;
+              priv: Evas_Object_Box_Data *;
+              data: void *;
          }
       }
       layout_homogeneous_max_size_horizontal {
@@ -191,8 +191,8 @@ class Evas.Box (Evas.Smart_Clipped)
          try to resize this child element to the exact height of its parent
          (respecting the max hint on the child's height). */
          params {
-              Evas_Object_Box_Data *priv;
-              void *data;
+              priv: Evas_Object_Box_Data *;
+              data: void *;
          }
 
       }
@@ -201,7 +201,7 @@ class Evas.Box (Evas.Smart_Clipped)
          return: Evas_Object *;
          legacy: null;
          params {
-            @in Evas_Object *child;
+            @in child: Evas_Object *;
          }
       }
       layout_flow_vertical {
@@ -212,15 +212,15 @@ class Evas.Box (Evas.Smart_Clipped)
          evas_object_box_layout_flow_horizontal(). The description of its
          behaviour can be derived from that function's documentation. */
          params {
-              Evas_Object_Box_Data *priv;
-              void *data;
+              priv: Evas_Object_Box_Data *;
+              data: void *;
          }
       }
       internal_option_free {
          /*@ No description supplied by the EAPI. */
          legacy: null;
          params {
-            @in Evas_Object_Box_Option *opt;
+            @in opt: Evas_Object_Box_Option *;
          }
       }
       insert_after {
@@ -244,8 +244,8 @@ class Evas.Box (Evas.Smart_Clipped)
 
          return: Evas_Object_Box_Option *;
          params {
-            @in Evas_Object *child @nonull; /*@ A child Evas object to be made a member of @p o */
-            @in const(Evas_Object)* reference @nonull; /*@ The child object to place this new one after */
+            @in child: Evas_Object * @nonull; /*@ A child Evas object to be made a member of @p o */
+            @in reference: const(Evas_Object)* @nonull; /*@ The child object to place this new one after */
          }
       }
       remove_all {
@@ -261,7 +261,7 @@ class Evas.Box (Evas.Smart_Clipped)
 
          return: bool;
          params {
-            @in bool clear; /*@ if true, it will delete just removed children. */
+            @in clear: bool; /*@ if true, it will delete just removed children. */
          }
       }
       iterator_new @const {
@@ -308,7 +308,7 @@ class Evas.Box (Evas.Smart_Clipped)
 
          return: Evas_Object_Box_Option *;
          params {
-            @in Evas_Object *child @nonull; /*@ A child Evas object to be made a member of @p o */
+            @in child: Evas_Object * @nonull; /*@ A child Evas object to be made a member of @p o */
          }
       }
       option_property_id_get @const {
@@ -327,7 +327,7 @@ class Evas.Box (Evas.Smart_Clipped)
          box, which is originally set to @c NULL. */
          return: int @warn_unused;
          params {
-            @in const(char)* name @nonull; /*@ The name string of the option being searched, for
+            @in name: const(char)* @nonull; /*@ The name string of the option being searched, for
             its ID */
          }
       }
@@ -350,7 +350,7 @@ class Evas.Box (Evas.Smart_Clipped)
 
          return: Evas_Object_Box_Option *;
          params {
-            @in Evas_Object *child @nonull; /*@ A child Evas object to be made a member of @p o */
+            @in child: Evas_Object * @nonull; /*@ A child Evas object to be made a member of @p o */
          }
       }
       accessor_new @const {
@@ -370,7 +370,7 @@ class Evas.Box (Evas.Smart_Clipped)
          legacy: null;
          return: Evas_Object_Box_Option *;
          params {
-            @in Evas_Object *child;
+            @in child: Evas_Object *;
          }
       }
       option_property_vset {
@@ -386,10 +386,10 @@ class Evas.Box (Evas.Smart_Clipped)
 
          return: bool;
          params {
-            @in Evas_Object_Box_Option *opt @nonull; /*@ The box option structure bound to the child box element
+            @in opt: Evas_Object_Box_Option * @nonull; /*@ The box option structure bound to the child box element
             to set a property on */
-            @in int property; /*@ The numerical ID of the given property */
-            @in va_list *args; /*@ The variable argument list implementing the value to
+            @in property: int; /*@ The numerical ID of the given property */
+            @in args: va_list *; /*@ The variable argument list implementing the value to
             be set for this property. It @b must be of the same type the user has
             defined for it. */
          }
@@ -400,7 +400,7 @@ class Evas.Box (Evas.Smart_Clipped)
          legacy: null;
          return: Evas_Object *;
          params {
-            @in uint pos;
+            @in pos: uint;
          }
       }
       remove_at {
@@ -423,7 +423,7 @@ class Evas.Box (Evas.Smart_Clipped)
 
          return: bool;
          params {
-            @in uint pos; /*@ The numeric position (starting from @c 0) of the child
+            @in pos: uint; /*@ The numeric position (starting from @c 0) of the child
             object to be removed */
          }
       }
@@ -439,10 +439,10 @@ class Evas.Box (Evas.Smart_Clipped)
          more details. */
          return: bool;
          params {
-            @in Evas_Object_Box_Option *opt @nonull; /*@ The box option structure bound to the child box element
+            @in opt: Evas_Object_Box_Option * @nonull; /*@ The box option structure bound to the child box element
             to get a property from */
-            @in int property; /*@ The numerical ID of the given property */
-            @in va_list *args; /*@ The variable argument list with pointers to where to
+            @in property: int; /*@ The numerical ID of the given property */
+            @in args: va_list *; /*@ The variable argument list with pointers to where to
             store the values of this property. They @b must point to variables
             of the same type the user has defined for them. */
          }
@@ -453,8 +453,8 @@ class Evas.Box (Evas.Smart_Clipped)
          legacy: null;
          return: Evas_Object_Box_Option *;
          params {
-            @in Evas_Object *child;
-            @in uint pos;
+            @in child: Evas_Object *;
+            @in pos: uint;
          }
       }
       insert_before {
@@ -478,8 +478,8 @@ class Evas.Box (Evas.Smart_Clipped)
 
          return: Evas_Object_Box_Option *;
          params {
-            @in Evas_Object *child @nonull; /*@ A child Evas object to be made a member of @p o */
-            @in const(Evas_Object)* reference @nonull; /*@ The child object to place this new one before */
+            @in child: Evas_Object * @nonull; /*@ A child Evas object to be made a member of @p o */
+            @in reference: const(Evas_Object)* @nonull; /*@ The child object to place this new one before */
          }
       }
       option_property_name_get @const {
@@ -497,7 +497,7 @@ class Evas.Box (Evas.Smart_Clipped)
          box, which is originally set to @c NULL. */
          return: const(char)* @warn_unused;
          params {
-            @in int property; /*@ The numerical identifier of the option being searched,
+            @in property: int; /*@ The numerical identifier of the option being searched,
             for its name */
          }
       }
@@ -506,8 +506,8 @@ class Evas.Box (Evas.Smart_Clipped)
          legacy: null;
          return: Evas_Object_Box_Option *;
          params {
-            @in Evas_Object *child;
-            @in const(Evas_Object)* reference;
+            @in child: Evas_Object *;
+            @in reference: const(Evas_Object)*;
          }
       }
       layout_homogeneous_horizontal {
@@ -544,8 +544,8 @@ class Evas.Box (Evas.Smart_Clipped)
          try to resize this child element to the exact height of its parent
          (respecting the maximum size hint on the child's height). */
          params {
-            @in  Evas_Object_Box_Data *priv;
-            @in  void *data;
+            @in priv: Evas_Object_Box_Data *;
+            @in data: void *;
          }
       }
       internal_option_new {
@@ -553,7 +553,7 @@ class Evas.Box (Evas.Smart_Clipped)
          legacy: null;
          return: Evas_Object_Box_Option*;
          params {
-            @in Evas_Object *child;
+            @in child: Evas_Object *;
          }
       }
       layout_homogeneous_max_size_vertical {
@@ -566,8 +566,8 @@ class Evas.Box (Evas.Smart_Clipped)
          description of its behaviour can be derived from that function's
          documentation. */
          params {
-            @in Evas_Object_Box_Data *priv;
-            @in void *data;
+            @in priv: Evas_Object_Box_Data *;
+            @in data: void *;
          }
       }
       internal_insert_after {
@@ -575,8 +575,8 @@ class Evas.Box (Evas.Smart_Clipped)
          legacy: null;
          return: Evas_Object_Box_Option *;
          params {
-            @in Evas_Object *child;
-            @in const(Evas_Object)* reference;
+            @in child: Evas_Object *;
+            @in reference: const(Evas_Object)*;
          }
       }
       insert_at {
@@ -600,8 +600,8 @@ class Evas.Box (Evas.Smart_Clipped)
 
          return: Evas_Object_Box_Option *;
          params {
-            @in Evas_Object *child @nonull; /*@ A child Evas object to be made a member of @p o */
-            @in uint pos; /*@ The numeric position (starting from @c 0) to place the
+            @in child: Evas_Object * @nonull; /*@ A child Evas object to be made a member of @p o */
+            @in pos: uint; /*@ The numeric position (starting from @c 0) to place the
             new child object at */
          }
       }
@@ -610,7 +610,7 @@ class Evas.Box (Evas.Smart_Clipped)
          legacy: null;
          return: Evas_Object_Box_Option*;
          params {
-            @in Evas_Object *child;
+            @in child: Evas_Object *;
          }
       }
       remove {
@@ -630,7 +630,7 @@ class Evas.Box (Evas.Smart_Clipped)
 
          return: bool;
          params {
-            @in Evas_Object *child @nonull; /*@ The handle to the child object to be removed */
+            @in child: Evas_Object * @nonull; /*@ The handle to the child object to be removed */
          }
       }
       layout_stack {
@@ -655,8 +655,8 @@ class Evas.Box (Evas.Smart_Clipped)
          width and accounting for its horizontal padding properties). The
          same applies to the vertical axis. */
          params {
-            @in  Evas_Object_Box_Data *priv;
-            @in  void *data;
+            @in priv: Evas_Object_Box_Data *;
+            @in data: void *;
          }
       }
       layout_homogeneous_vertical {
@@ -668,8 +668,8 @@ class Evas.Box (Evas.Smart_Clipped)
          evas_object_box_layout_homogeneous_horizontal().  The description
          of its behaviour can be derived from that function's documentation. */
          params {
-              Evas_Object_Box_Data *priv;
-              void *data;
+              priv: Evas_Object_Box_Data *;
+              data: void *;
          }
       }
       layout_flow_horizontal {
@@ -708,8 +708,8 @@ class Evas.Box (Evas.Smart_Clipped)
          @c align_y dictates positioning relative to the <b>largest
          height</b> required by a child object in the actual row. */
          params {
-              Evas_Object_Box_Data *priv;
-              void *data;
+              priv: Evas_Object_Box_Data *;
+              data: void *;
          }
 
       }

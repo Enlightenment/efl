@@ -10,7 +10,7 @@ class Ecore.Con.Client (Ecore.Con.Base) {
          get {
          }
          values {
-            Ecore.Con.Server *svr; /*@ The server the client is connected to. */
+            svr: Ecore.Con.Server *; /*@ The server the client is connected to. */
          }
       }
    }

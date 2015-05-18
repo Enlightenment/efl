@@ -24,11 +24,11 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
           */
 
          params {
-            @in Evas_3D_Material_Attrib attrib; /*@ Material attribute ID. */
-            @in Evas_Real r; /*@ Red component of the color. */
-            @in Evas_Real g; /*@ Green component of the color. */
-            @in Evas_Real b; /*@ Blue component of the color. */
-            @in Evas_Real a; /*@ Alpha component of the color. */
+            @in attrib: Evas_3D_Material_Attrib; /*@ Material attribute ID. */
+            @in r: Evas_Real; /*@ Red component of the color. */
+            @in g: Evas_Real; /*@ Green component of the color. */
+            @in b: Evas_Real; /*@ Blue component of the color. */
+            @in a: Evas_Real; /*@ Alpha component of the color. */
          }
       }
 
@@ -41,11 +41,11 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Material
           */
          params {
-            @in Evas_3D_Material_Attrib attrib; /*@ Material attribute ID. */
-            @out Evas_Real r; /*@ Pointer to receive red component of the color. */
-            @out Evas_Real g; /*@ Pointer to receive green component of the color. */
-            @out Evas_Real b; /*@ Pointer to receive blue component of the color. */
-            @out Evas_Real a; /*@ Pointer to receive alpha component of the color. */
+            @in attrib: Evas_3D_Material_Attrib; /*@ Material attribute ID. */
+            @out r: Evas_Real; /*@ Pointer to receive red component of the color. */
+            @out g: Evas_Real; /*@ Pointer to receive green component of the color. */
+            @out b: Evas_Real; /*@ Pointer to receive blue component of the color. */
+            @out a: Evas_Real; /*@ Pointer to receive alpha component of the color. */
          }
       }
 
@@ -74,10 +74,10 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
             */
          }
          keys {
-            Evas_3D_Material_Attrib attrib;  /*@ Material attribute ID. */
+            attrib: Evas_3D_Material_Attrib;  /*@ Material attribute ID. */
          }
          values {
-            bool enable; /*@ Whether to enable the attribute (@c EINA_TRUE), or not (@c EINA_FALSE). */
+            enable: bool; /*@ Whether to enable the attribute (@c EINA_TRUE), or not (@c EINA_FALSE). */
          }
       }
 
@@ -107,7 +107,7 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            Evas_Real shininess; /*@ Shininess value. */
+            shininess: Evas_Real; /*@ Shininess value. */
          }
       }
 
@@ -136,10 +136,10 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
          }
 
          keys {
-            Evas_3D_Material_Attrib attrib; /*@ Material attribute ID. */
+            attrib: Evas_3D_Material_Attrib; /*@ Material attribute ID. */
          }
          values {
-            Evas_3D_Texture *texture;
+            texture: Evas_3D_Texture *;
          }
       }
    }

@@ -29,8 +29,8 @@ interface Efl.Text_Properties {
             @see evas_object_text_font_set() */
          }
          values {
-            const(char) *font; /*@ The font family name or filename. */
-            Efl_Font_Size size; /*@ The font size, in points. */
+            font: const(char) *; /*@ The font family name or filename. */
+            size: Efl_Font_Size; /*@ The font size, in points. */
          }
       }
       @property font_source {
@@ -54,7 +54,7 @@ interface Efl.Text_Properties {
             @see evas_object_text_font_get() for more details */
          }
          values {
-            const(char)* font_source; /*@ The font file's path. */
+            font_source: const(char)*; /*@ The font file's path. */
          }
       }
    }

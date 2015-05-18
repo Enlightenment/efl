@@ -22,10 +22,10 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
            @ingroup Evas_3D_Mesh
           */
          params {
-            @in int frame; /*@ The number of the key frame. */
-            @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
-            @in int stride; /*@ Stride to go to the next vertex (in bytes). */
-            @in const(void)* data; /*@ Pointer to the vertex data buffer. */
+            @in frame: int; /*@ The number of the key frame. */
+            @in attrib: Evas_3D_Vertex_Attrib; /*@ Vertex attribute ID. */
+            @in stride: int; /*@ Stride to go to the next vertex (in bytes). */
+            @in data: const(void)*; /*@ Pointer to the vertex data buffer. */
          }
       }
 
@@ -44,10 +44,10 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
            @ingroup Evas_3D_Mesh
           */
          params {
-            @in int frame; /*@ The number of the key frame. */
-            @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
-            @in int stride; /*@ Stride to go to the next vertex (in bytes). */
-            @in const(void)* data; /*@ Pointer to the vertex data buffer. */
+            @in frame: int; /*@ The number of the key frame. */
+            @in attrib: Evas_3D_Vertex_Attrib; /*@ Vertex attribute ID. */
+            @in stride: int; /*@ Stride to go to the next vertex (in bytes). */
+            @in data: const(void)*; /*@ Pointer to the vertex data buffer. */
          }
       }
 
@@ -69,8 +69,8 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
 
          return: void *;
          params {
-            @in int frame; /*@ The number of the key frame. */
-            @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
+            @in frame: int; /*@ The number of the key frame. */
+            @in attrib: Evas_3D_Vertex_Attrib; /*@ Vertex attribute ID. */
          }
       }
 
@@ -84,8 +84,8 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
           */
 
          params {
-            @in int frame; /*@ The number of the key frame. */
-            @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
+            @in frame: int; /*@ The number of the key frame. */
+            @in attrib: Evas_3D_Vertex_Attrib; /*@ Vertex attribute ID. */
          }
       }
 
@@ -105,8 +105,8 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
           */
          return: int;
          params {
-            @in int frame; /*@ The number of the key frame. */
-            @in Evas_3D_Vertex_Attrib attrib; /*@ Vertex attribute ID. */
+            @in frame: int; /*@ The number of the key frame. */
+            @in attrib: Evas_3D_Vertex_Attrib; /*@ Vertex attribute ID. */
          }
       }
 
@@ -125,9 +125,9 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
            @ingroup Evas_3D_Mesh
           */
          params {
-            @in Evas_3D_Index_Format format; /*@ Vertex index data format. */
-            @in int count; /*@ Vertex index count. */
-            @in const(void)* indices; /*@ Pointer to the index data. */
+            @in format: Evas_3D_Index_Format; /*@ Vertex index data format. */
+            @in count: int; /*@ Vertex index count. */
+            @in indices: const(void)*; /*@ Pointer to the index data. */
          }
       }
 
@@ -144,9 +144,9 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
            @ingroup Evas_3D_Mesh
           */
          params {
-            @in Evas_3D_Index_Format format; /*@ Vertex index data format. */
-            @in int count; /*@ Vertex index count. */
-            @in const(void)* indices; /*@ Pointer to the index data. */
+            @in format: Evas_3D_Index_Format; /*@ Vertex index data format. */
+            @in count: int; /*@ Vertex index count. */
+            @in indices: const(void)*; /*@ Pointer to the index data. */
          }
       }
 
@@ -226,7 +226,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
            @ingroup Evas_3D_Mesh
           */
          params {
-            @in int frame; /*@ The number of the key frame to be added. */
+            @in frame: int; /*@ The number of the key frame to be added. */
          }
       }
 
@@ -242,7 +242,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
            @ingroup Evas_3D_Mesh
           */
          params {
-            @in int frame; /*@ The number of the key frame to be added. */
+            @in frame: int; /*@ The number of the key frame to be added. */
          }
       }
 
@@ -252,10 +252,10 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
            @ingroup Evas_3D_Mesh
           */
          params {
-            @in Evas_Real r; /*@ The red component of the fog color.*/
-            @in Evas_Real g; /*@ The green component of the fog color.*/
-            @in Evas_Real b; /*@ The blue component of the fog color.*/
-            @in Evas_Real a; /*@ The transparency of fog.*/
+            @in r: Evas_Real; /*@ The red component of the fog color.*/
+            @in g: Evas_Real; /*@ The green component of the fog color.*/
+            @in b: Evas_Real; /*@ The blue component of the fog color.*/
+            @in a: Evas_Real; /*@ The transparency of fog.*/
          }
       }
       fog_color_get {
@@ -264,10 +264,10 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
            @ingroup Evas_3D_Mesh
           */
          params {
-            @out Evas_Real r; /*@ Pointer to receive red component of the fog color.*/
-            @out Evas_Real g; /*@ Pointer to receive green component of the fog color.*/
-            @out Evas_Real b; /*@ Pointer to receive blue component of the fog color.*/
-            @out Evas_Real a; /*@ Pointer to receive transparency of fog.*/
+            @out r: Evas_Real; /*@ Pointer to receive red component of the fog color.*/
+            @out g: Evas_Real; /*@ Pointer to receive green component of the fog color.*/
+            @out b: Evas_Real; /*@ Pointer to receive blue component of the fog color.*/
+            @out a: Evas_Real; /*@ Pointer to receive transparency of fog.*/
          }
       }
       blending_func_set {
@@ -276,8 +276,8 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
           @ingroup Evas_3D_Mesh
          */
          params {
-            @in Evas_3D_Blend_Func sfactor; /*@ Specifies how the red, green, blue, and alpha source blending factors are computed.*/
-            @in Evas_3D_Blend_Func dfactor; /*@ Specifies how the red, green, blue, and alpha destination blending factors are computed.*/
+            @in sfactor: Evas_3D_Blend_Func; /*@ Specifies how the red, green, blue, and alpha source blending factors are computed.*/
+            @in dfactor: Evas_3D_Blend_Func; /*@ Specifies how the red, green, blue, and alpha destination blending factors are computed.*/
          }
       }
       blending_func_get {
@@ -287,8 +287,8 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
           @ingroup Evas_3D_Mesh
          */
          params {
-            @out Evas_3D_Blend_Func sfactor; /*@ Pointer to receive source blendin factors key.*/
-            @out Evas_3D_Blend_Func dfactor; /*@ Pointer to receive destination blendin factors key.*/
+            @out sfactor: Evas_3D_Blend_Func; /*@ Pointer to receive source blendin factors key.*/
+            @out dfactor: Evas_3D_Blend_Func; /*@ Pointer to receive destination blendin factors key.*/
          }
       }
 
@@ -312,7 +312,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              */
          }
          values {
-            Evas_3D_Shade_Mode mode; /*@ The shade mode.*/
+            mode: Evas_3D_Shade_Mode; /*@ The shade mode.*/
          }
       }
       @property color_pick_enable {
@@ -333,7 +333,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
               */
          }
          values {
-            Eina_Bool enabled; /*@ Posibility flag */
+            enabled: Eina_Bool; /*@ Posibility flag */
          }
       }
       @property vertex_count {
@@ -360,7 +360,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
                */
          }
          values {
-            uint count; /*@ Vertex count.*/
+            count: uint; /*@ Vertex count.*/
          }
       }
       @property fog_enable {
@@ -383,7 +383,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
               */
          }
          values {
-            Eina_Bool enabled; /*@ Fog enabled status.*/
+            enabled: Eina_Bool; /*@ Fog enabled status.*/
          }
       }
  
@@ -407,7 +407,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
               */
          }
          values {
-            Eina_Bool enabled; /*@ Alpha test status.*/
+            enabled: Eina_Bool; /*@ Alpha test status.*/
          }
       }
 
@@ -431,8 +431,8 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              */
         }
         values {
-           Evas_3D_Comparison comparison_func; /*@ Specifies the alpha comparison function.*/
-           Evas_Real ref_value; /*@ Specifies the reference value that incoming alpha values are compared to.*/
+           comparison_func: Evas_3D_Comparison; /*@ Specifies the alpha comparison function.*/
+           ref_value: Evas_Real; /*@ Specifies the reference value that incoming alpha values are compared to.*/
         }
       }
 
@@ -456,7 +456,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              */
          }
          values {
-            Eina_Bool blending; /*@ The blending state.*/
+            blending: Eina_Bool; /*@ The blending state.*/
          }
       }
 
@@ -481,10 +481,10 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              */
          }
          keys {
-            int frame; /*@ The number of the key frame.*/
+            frame: int; /*@ The number of the key frame.*/
          }
          values {
-            Evas_3D_Material *material; /*@ The material to be set to the key frame.*/
+            material: Evas_3D_Material *; /*@ The material to be set to the key frame.*/
          }
       }
 
@@ -513,7 +513,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              */
          }
          values {
-            Evas_3D_Vertex_Assembly assembly; /*@ Vertex assembly.*/
+            assembly: Evas_3D_Vertex_Assembly; /*@ Vertex assembly.*/
          }
       }
 

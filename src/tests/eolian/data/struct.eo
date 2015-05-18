@@ -14,7 +14,7 @@ class Struct {
    methods {
       foo {
          params {
-            int idx;
+            idx: int;
          }
          return: own(char*);
       }

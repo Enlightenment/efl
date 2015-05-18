@@ -42,8 +42,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_size_hint_max_set() */
          }
          values {
-            Evas_Coord w; /*@ Integer to use as the maximum width hint. */
-            Evas_Coord h; /*@ Integer to use as the maximum height hint. */
+            w: Evas_Coord; /*@ Integer to use as the maximum width hint. */
+            h: Evas_Coord; /*@ Integer to use as the maximum height hint. */
          }
       }
       @property size_hint_request {
@@ -76,8 +76,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_size_hint_request_set() */
          }
          values {
-            Evas_Coord w; /*@ Integer to use as the preferred width hint. */
-            Evas_Coord h; /*@ Integer to use as the preferred height hint. */
+            w: Evas_Coord; /*@ Integer to use as the preferred width hint. */
+            h: Evas_Coord; /*@ Integer to use as the preferred height hint. */
          }
       }
       @property type {
@@ -114,7 +114,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             See the full @ref Example_Evas_Object_Manipulation "example". */
          }
          values {
-            const(char)* type; /*@ in */
+            type: const(char)*; /*@ in */
          }
       }
       @property size_hint_min {
@@ -156,8 +156,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_size_hint_min_set() for an example */
          }
          values {
-            Evas_Coord w; /*@ Integer to use as the minimum width hint. */
-            Evas_Coord h; /*@ Integer to use as the minimum height hint. */
+            w: Evas_Coord; /*@ Integer to use as the minimum width hint. */
+            h: Evas_Coord; /*@ Integer to use as the minimum height hint. */
          }
       }
       @property pointer_mode {
@@ -187,7 +187,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @ingroup Evas_Object_Group_Extras */
          }
          values {
-            Evas_Object_Pointer_Mode pointer_mode; /*@ desired behavior. */
+            pointer_mode: Evas_Object_Pointer_Mode; /*@ desired behavior. */
          }
       }
       @property render_op {
@@ -203,7 +203,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @ingroup Evas_Object_Group_Extras */
          }
          values {
-            Evas_Render_Op render_op; /*@ one of the Evas_Render_Op values. */
+            render_op: Evas_Render_Op; /*@ one of the Evas_Render_Op values. */
          }
       }
       @property freeze_events {
@@ -243,7 +243,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @since 1.1 */
          }
          values {
-            bool freeze; /*@ pass whether @p obj is to freeze events (@c EINA_TRUE) or not
+            freeze: bool; /*@ pass whether @p obj is to freeze events (@c EINA_TRUE) or not
             (@c EINA_FALSE) */
          }
       }
@@ -308,7 +308,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_map_set() */
          }
          values {
-            const(Evas_Map)* map; /*@ new map to use */
+            map: const(Evas_Map)*; /*@ new map to use */
          }
       }
       @property size_hint_aspect {
@@ -376,9 +376,9 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_size_hint_aspect_set() */
          }
          values {
-            Evas_Aspect_Control aspect; /*@ The policy/type of aspect ratio to apply to @p obj. */
-            Evas_Coord w; /*@ Integer to use as aspect width ratio term. */
-            Evas_Coord h; /*@ Integer to use as aspect height ratio term. */
+            aspect: Evas_Aspect_Control; /*@ The policy/type of aspect ratio to apply to @p obj. */
+            w: Evas_Coord; /*@ Integer to use as aspect width ratio term. */
+            h: Evas_Coord; /*@ Integer to use as aspect height ratio term. */
          }
       }
       @property clip {
@@ -454,7 +454,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             See the full @ref Example_Evas_Object_Manipulation "example". */
          }
          values {
-            Evas_Object *clip @nonull; /*@ The object to clip @p obj by */
+            clip: Evas_Object * @nonull; /*@ The object to clip @p obj by */
          }
       }
       @property size_hint_padding {
@@ -500,10 +500,10 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_size_hint_padding_set() */
          }
          values {
-            Evas_Coord l; /*@ Integer to specify left padding. */
-            Evas_Coord r; /*@ Integer to specify right padding. */
-            Evas_Coord t; /*@ Integer to specify top padding. */
-            Evas_Coord b; /*@ Integer to specify bottom padding. */
+            l: Evas_Coord; /*@ Integer to specify left padding. */
+            r: Evas_Coord; /*@ Integer to specify right padding. */
+            t: Evas_Coord; /*@ Integer to specify top padding. */
+            b: Evas_Coord; /*@ Integer to specify bottom padding. */
          }
       }
       @property repeat_events {
@@ -543,7 +543,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_freeze_events_get() */
          }
          values {
-            bool repeat; /*@ whether @p obj is to repeat events (@c EINA_TRUE) or not
+            repeat: bool; /*@ whether @p obj is to repeat events (@c EINA_TRUE) or not
             (@c EINA_FALSE) */
          }
       }
@@ -599,8 +599,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_size_hint_weight_set() for an example */
          }
          values {
-            double x; /*@ Nonnegative double value to use as horizontal weight hint. */
-            double y; /*@ Nonnegative double value to use as vertical weight hint. */
+            x: double; /*@ Nonnegative double value to use as horizontal weight hint. */
+            y: double; /*@ Nonnegative double value to use as vertical weight hint. */
          }
       }
       @property name {
@@ -633,7 +633,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             See the full @ref Example_Evas_Events "example". */
          }
          values {
-            const(char)* name; /*@ The given name. */
+            name: const(char)*; /*@ The given name. */
          }
       }
       @property scale {
@@ -664,7 +664,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_scale_set() */
          }
          values {
-            double scale; /*@ The scaling factor. <c>1.0</c> means no scaling,
+            scale: double; /*@ The scaling factor. <c>1.0</c> means no scaling,
             default size. */
          }
       }
@@ -695,7 +695,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @ingroup Evas_Object_Group_Extras */
          }
          values {
-            bool is_static_clip; /*@ @c EINA_TRUE if it's to be used as a static
+            is_static_clip: bool; /*@ @c EINA_TRUE if it's to be used as a static
             clipper, @c EINA_FALSE otherwise. */
          }
       }
@@ -745,7 +745,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_key_ungrab */
          }
          values {
-            bool focus; /*@ @c EINA_TRUE, to set it as focused or @c EINA_FALSE,
+            focus: bool; /*@ @c EINA_TRUE, to set it as focused or @c EINA_FALSE,
             to take away the focus from it. */
          }
       }
@@ -757,7 +757,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             /*@             @since 1.2 */
          }
          values {
-            bool is_frame; /*@ in */
+            is_frame: bool; /*@ in */
          }
       }
       @property map_enable {
@@ -784,7 +784,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @return the map enabled state */
          }
          values {
-            bool enabled; /*@ enabled state */
+            enabled: bool; /*@ enabled state */
          }
       }
       @property precise_is_inside {
@@ -824,7 +824,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @ingroup Evas_Object_Group_Extras */
          }
          values {
-            bool precise; /*@ Whether to use precise point collision detection or
+            precise: bool; /*@ Whether to use precise point collision detection or
             not. The default value is false. */
          }
       }
@@ -887,9 +887,9 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_size_hint_align_set() for more information */
          }
          values {
-            double x; /*@ Double, ranging from @c 0.0 to @c 1.0 or with the
+            x: double; /*@ Double, ranging from @c 0.0 to @c 1.0 or with the
             special value #EVAS_HINT_FILL, to use as horizontal alignment hint. */
-            double y; /*@ Double, ranging from @c 0.0 to @c 1.0 or with the
+            y: double; /*@ Double, ranging from @c 0.0 to @c 1.0 or with the
             special value #EVAS_HINT_FILL, to use as vertical alignment hint. */
          }
       }
@@ -926,7 +926,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_freeze_events_get() */
          }
          values {
-            bool propagate; /*@ whether to propagate events (@c EINA_TRUE) or not
+            propagate: bool; /*@ whether to propagate events (@c EINA_TRUE) or not
             (@c EINA_FALSE) */
          }
       }
@@ -967,7 +967,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_freeze_events_get() */
          }
          values {
-            bool pass; /*@ whether @p obj is to pass events (@c EINA_TRUE) or not
+            pass: bool; /*@ whether @p obj is to pass events (@c EINA_TRUE) or not
             (@c EINA_FALSE) */
          }
       }
@@ -985,7 +985,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @ingroup Evas_Object_Group_Extras */
          }
          values {
-            bool anti_alias; /*@ (@c EINA_TRUE) if the object is to be anti_aliased, (@c EINA_FALSE) otherwise. */
+            anti_alias: bool; /*@ (@c EINA_TRUE) if the object is to be anti_aliased, (@c EINA_FALSE) otherwise. */
          }
       }
       @property smart_data {
@@ -1089,7 +1089,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             can be used whenever appropriate.*/
          }
          values {
-            Evas_Display_Mode dispmode; /*@ display mode hint */
+            dispmode: Evas_Display_Mode; /*@ display mode hint */
          }
       }
       clipees_has @const {
@@ -1143,12 +1143,12 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
 
          return: bool @warn_unused;
          params {
-            @in const(char)* keyname @nonull; /*@ the key to request events for. */
-            @in Evas_Modifier_Mask modifiers; /*@ a mask of modifiers that must be present to
+            @in keyname: const(char)* @nonull; /*@ the key to request events for. */
+            @in modifiers: Evas_Modifier_Mask; /*@ a mask of modifiers that must be present to
             trigger the event. */
-            @in Evas_Modifier_Mask not_modifiers; /*@ a mask of modifiers that must @b not be present
+            @in not_modifiers: Evas_Modifier_Mask; /*@ a mask of modifiers that must @b not be present
             to trigger the event. */
-            @in bool exclusive; /*@ request that the @p obj is the only object
+            @in exclusive: bool; /*@ request that the @p obj is the only object
             receiving the @p keyname events. */
          }
       }
@@ -1178,7 +1178,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          @ingroup Evas_Smart_Object_Group */
          return: bool @warn_unused;
          params {
-            @in const(char)* type @nonull; /*@ The @b name (type) of the smart class to check for */
+            @in type: const(char)* @nonull; /*@ The @b name (type) of the smart class to check for */
          }
       }
       name_child_find @const {
@@ -1199,8 +1199,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          @ingroup Evas_Object_Group_Find */
          return: Evas_Object * @warn_unused;
          params {
-            @in const(char)* name; /*@ The given name. */
-            @in int recurse; /*@ Set to the number of child levels to recurse (0 == don't recurse, 1 == only look at the children of @p obj or their immediate children, but no further etc.). */
+            @in name: const(char)*; /*@ The given name. */
+            @in recurse: int; /*@ Set to the number of child levels to recurse (0 == don't recurse, 1 == only look at the children of @p obj or their immediate children, but no further etc.). */
          }
       }
       key_ungrab {
@@ -1223,10 +1223,10 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          @see evas_focus_get */
 
          params {
-            @in const(char)* keyname @nonull; /*@ the key the grab is set for. */
-            @in Evas_Modifier_Mask modifiers; /*@ a mask of modifiers that must be present to
+            @in keyname: const(char)* @nonull; /*@ the key the grab is set for. */
+            @in modifiers: Evas_Modifier_Mask; /*@ a mask of modifiers that must be present to
             trigger the event. */
-            @in Evas_Modifier_Mask not_modifiers; /*@ a mask of modifiers that must not not be
+            @in not_modifiers: Evas_Modifier_Mask; /*@ a mask of modifiers that must not not be
             present to trigger the event. */
          }
       }
@@ -1257,8 +1257,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          their @c move() smart function definition. */
 
          params {
-            @in Evas_Coord dx; /*@ horizontal offset (delta). */
-            @in Evas_Coord dy; /*@ vertical offset (delta). */
+            @in dx: Evas_Coord; /*@ horizontal offset (delta). */
+            @in dy: Evas_Coord; /*@ vertical offset (delta). */
          }
       }
       smart_type_check_ptr @const {
@@ -1275,7 +1275,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          @ingroup Evas_Smart_Object_Group */
          return: bool @warn_unused;
          params {
-            @in const(char)* type @nonull; /*@ The type (name string) to check for. Must be the name */
+            @in type: const(char)* @nonull; /*@ The type (name string) to check for. Must be the name */
          }
       }
    }

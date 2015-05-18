@@ -7,16 +7,16 @@ class Consts {
          get {
          }
          values {
-            int value; /*@ Value description */
-            char *buffer @const_get;
+            value: int; /*@ Value description */
+            buffer: char * @const_get;
          }
       }
       foo @const {
          /*@ comment foo */
          params {
-            @in int a; /*@ a */
-            @inout char b;
-            @out double c;
+            @in a: int; /*@ a */
+            @inout b: char;
+            @out c: double;
          }
          return: char * (null); /*@ comment for method return */
       }

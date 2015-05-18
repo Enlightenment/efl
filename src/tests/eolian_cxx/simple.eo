@@ -8,7 +8,7 @@ class Simple (Eo.Base)
       }
       name_get {
          params {
-            @out const(char)* name;
+            @out name: const(char)*;
          }
          return: bool;
       }

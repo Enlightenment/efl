@@ -11,8 +11,8 @@ class Ecore.Exe (Eo.Base, Efl.Control)
                   legacy: null;
              }
              values {
-                  const(char) *exe_cmd; /*@ The command to execute. */
-                  Ecore_Exe_Flags flags; /*@ The execution flags. */
+                  exe_cmd: const(char) *; /*@ The command to execute. */
+                  flags: Ecore_Exe_Flags; /*@ The execution flags. */
              }
         }
    }

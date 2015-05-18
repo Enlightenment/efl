@@ -7,10 +7,10 @@ class Object_Impl (Base) {
          get {
          }
          keys {
-            const(char)* part;
+            part: const(char)*;
          }
          values {
-            own(list<int>*) value @const_set;
+            value: own(list<int>*) @const_set;
          }
       }
       @property b {
@@ -20,13 +20,13 @@ class Object_Impl (Base) {
             /* set as virtual pure - no implementation expected */
          }
          values {
-            own(list<int>*) value;
+            value: own(list<int>*);
          }
       }
       constructor_1 {
          params {
-            @in int a;
-            @in char b;
+            @in a: int;
+            @in b: char;
          }
       }
       constructor_2 {
@@ -34,17 +34,17 @@ class Object_Impl (Base) {
       foo1 {
          /*@ comment foo */
          params {
-            @in int a; /*@ a */
-            @inout char b;
-            @out double c;
+            @in a: int; /*@ a */
+            @inout b: char;
+            @out c: double;
          }
          return: char * (null); /*@ comment for method return */
       }
       foo2 @const {
          /*@ comment foo */
          params {
-            @in int a;
-            @in const(char)* b;
+            @in a: int;
+            @in b: const(char)*;
          }
       }
       pure_foo3 {

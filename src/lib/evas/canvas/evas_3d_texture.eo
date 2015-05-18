@@ -28,7 +28,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            bool visible; /*@ @c EINA_TRUE for visible, @c EINA_FALSE for invisible.*/
+            visible: bool; /*@ @c EINA_TRUE for visible, @c EINA_FALSE for invisible.*/
          }
       }
       @property atlas_enable {
@@ -51,7 +51,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            bool use_atlas; /*@ @c EINA_TRUE for enable, @c EINA_FALSE for disable.*/
+            use_atlas: bool; /*@ @c EINA_TRUE for enable, @c EINA_FALSE for disable.*/
          }
       }
       data_set {
@@ -64,10 +64,10 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
           */
 
          params {
-            @in Evas_Colorspace color_format; /*@ Color format of the texture. */
-            @in int w; /*@ Width of the data. */
-            @in int h; /*@ Height of the data. */
-            @in const(void)* data; /*@ Pointer to the data. */
+            @in color_format: Evas_Colorspace; /*@ Color format of the texture. */
+            @in w: int; /*@ Width of the data. */
+            @in h: int; /*@ Height of the data. */
+            @in data: const(void)*; /*@ Pointer to the data. */
          }
       }
 
@@ -79,8 +79,8 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
           */
 
          params {
-            @in const(char)* file; /*@ Path to the image file. */
-            @in const(char)* key; /*@ Key in the image file. */
+            @in file: const(char)*; /*@ Path to the image file. */
+            @in key: const(char)*; /*@ Key in the image file. */
          }
       }
 
@@ -97,7 +97,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
           */
 
          params {
-            @in Evas_Object *source; /*@ Source evas object to be used as the texture data. */
+            @in source: Evas_Object *; /*@ Source evas object to be used as the texture data. */
          }
       }
 
@@ -131,8 +131,8 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Texture
           */
          params {
-            @out int w; /*@ Pointer to receive the width of the texture size. */
-            @out int h; /*@ Pointer to receive the height of the texture size. */
+            @out w: int; /*@ Pointer to receive the width of the texture size. */
+            @out h: int; /*@ Pointer to receive the height of the texture size. */
          }
       }
 
@@ -147,8 +147,8 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Texture
           */
          params {
-            @in Evas_3D_Wrap_Mode s; /*@ Wrap mode for S-axis. */
-            @in Evas_3D_Wrap_Mode t; /*@ Wrap mode for T-axis. */
+            @in s: Evas_3D_Wrap_Mode; /*@ Wrap mode for S-axis. */
+            @in t: Evas_3D_Wrap_Mode; /*@ Wrap mode for T-axis. */
          }
       }
 
@@ -162,8 +162,8 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
           */
 
          params {
-            @out Evas_3D_Wrap_Mode s; /*@ Pointer to receive S-axis wrap mode. */
-            @out Evas_3D_Wrap_Mode t; /*@ Pointer to receive T-axis wrap mode. */
+            @out s: Evas_3D_Wrap_Mode; /*@ Pointer to receive S-axis wrap mode. */
+            @out t: Evas_3D_Wrap_Mode; /*@ Pointer to receive T-axis wrap mode. */
          }
       }
 
@@ -177,8 +177,8 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
           */
 
          params {
-            @in Evas_3D_Texture_Filter min; /*@ Minification filter used when down-scaling. */
-            @in Evas_3D_Texture_Filter mag; /*@ Magnification filter used when up-scaling. */
+            @in min: Evas_3D_Texture_Filter; /*@ Minification filter used when down-scaling. */
+            @in mag: Evas_3D_Texture_Filter; /*@ Magnification filter used when up-scaling. */
          }
       }
 
@@ -195,8 +195,8 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Texture
           */
          params {
-            @out Evas_3D_Texture_Filter min; /*@ Pointer to receive the minification filter. */
-            @out Evas_3D_Texture_Filter mag; /*@ Pointer to receive the magnification filter. */
+            @out min: Evas_3D_Texture_Filter; /*@ Pointer to receive the minification filter. */
+            @out mag: Evas_3D_Texture_Filter; /*@ Pointer to receive the magnification filter. */
          }
       }
    }

@@ -7,7 +7,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
          /*@ Constructor. */
          legacy: null;
          params {
-            @in Evas_3D_Node_Type type;
+            @in type: Evas_3D_Node_Type;
          }
       }
       type_get @const {
@@ -35,7 +35,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
           */
 
          params {
-            @in Evas_3D_Node *member;  /*@ Node object to be added. */
+            @in member: Evas_3D_Node *;  /*@ Node object to be added. */
          }
       }
       member_del {
@@ -48,7 +48,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
           */
 
          params {
-            @in Evas_3D_Node *member;  /*@ Member node to be deleted from the given node. */
+            @in member: Evas_3D_Node *;  /*@ Member node to be deleted from the given node. */
          }
       }
 
@@ -91,9 +91,9 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Node_Transform
           */
          params {
-            @in Evas_Real x;  /*@ X coordinate of the position. */
-            @in Evas_Real y;  /*@ Y coordinate of the position. */
-            @in Evas_Real z;  /*@ Z coordinate of the position. */
+            @in x: Evas_Real;  /*@ X coordinate of the position. */
+            @in y: Evas_Real;  /*@ Y coordinate of the position. */
+            @in z: Evas_Real;  /*@ Z coordinate of the position. */
          }
       }
       orientation_set {
@@ -110,10 +110,10 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Node_Transform
           */
          params {
-            @in Evas_Real x;  /*@ X term of the orientation quaternion (w, x, y, z) */
-            @in Evas_Real y;  /*@ Y term of the orientation quaternion (w, x, y, z) */
-            @in Evas_Real z;  /*@ Z term of the orientation quaternion (w, x, y, z) */
-            @in Evas_Real w;  /*@ W term of the orientation quaternion (w, x, y, z) */
+            @in x: Evas_Real;  /*@ X term of the orientation quaternion (w, x, y, z) */
+            @in y: Evas_Real;  /*@ Y term of the orientation quaternion (w, x, y, z) */
+            @in z: Evas_Real;  /*@ Z term of the orientation quaternion (w, x, y, z) */
+            @in w: Evas_Real;  /*@ W term of the orientation quaternion (w, x, y, z) */
          }
       }
 
@@ -132,10 +132,10 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Node_Transform
           */
          params {
-            @in Evas_Real angle;  /*@ Rotation angle.*/
-            @in Evas_Real x;      /*@ X term of the rotation axis.*/
-            @in Evas_Real y;      /*@ Y term of the rotation axis.*/
-            @in Evas_Real z;      /*@ Z term of the rotation axis.*/
+            @in angle: Evas_Real;  /*@ Rotation angle.*/
+            @in x: Evas_Real;      /*@ X term of the rotation axis.*/
+            @in y: Evas_Real;      /*@ Y term of the rotation axis.*/
+            @in z: Evas_Real;      /*@ Z term of the rotation axis.*/
          }
       }
 
@@ -159,9 +159,9 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Node_Transform
           */
          params {
-            @in Evas_Real x;      /*@ Scale factor along X-axis.*/
-            @in Evas_Real y;      /*@ Scale factor along Y-axis.*/
-            @in Evas_Real z;      /*@ Scale factor along Z-axis.*/
+            @in x: Evas_Real;      /*@ Scale factor along X-axis.*/
+            @in y: Evas_Real;      /*@ Scale factor along Y-axis.*/
+            @in z: Evas_Real;      /*@ Scale factor along Z-axis.*/
          }
       }
 
@@ -179,10 +179,10 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Node_Transform
           */
          params {
-            @in Evas_3D_Space space; /*@  */
-            @out Evas_Real x;      /*@ Pointer to receive X coordinate of the position.*/
-            @out Evas_Real y;      /*@ Pointer to receive Y coordinate of the position.*/
-            @out Evas_Real z;      /*@ Pointer to receive Z coordinate of the position.*/
+            @in space: Evas_3D_Space; /*@  */
+            @out x: Evas_Real;      /*@ Pointer to receive X coordinate of the position.*/
+            @out y: Evas_Real;      /*@ Pointer to receive Y coordinate of the position.*/
+            @out z: Evas_Real;      /*@ Pointer to receive Z coordinate of the position.*/
          }
       }
 
@@ -201,11 +201,11 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Node_Transform
           */
          params {
-            @in Evas_3D_Space space; /*@  */
-            @out Evas_Real x;      /*@ Pointer to receive X term of the orientation quaternion.*/
-            @out Evas_Real y;      /*@ Pointer to receive Y term of the orientation quaternion.*/
-            @out Evas_Real z;      /*@ Pointer to receive Z term of the orientation quaternion.*/
-            @out Evas_Real w;      /*@ Pointer to receive W term of the orientation quaternion.*/
+            @in space: Evas_3D_Space; /*@  */
+            @out x: Evas_Real;      /*@ Pointer to receive X term of the orientation quaternion.*/
+            @out y: Evas_Real;      /*@ Pointer to receive Y term of the orientation quaternion.*/
+            @out z: Evas_Real;      /*@ Pointer to receive Z term of the orientation quaternion.*/
+            @out w: Evas_Real;      /*@ Pointer to receive W term of the orientation quaternion.*/
          }
       }
 
@@ -223,10 +223,10 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Node_Transform
           */
          params {
-            @in Evas_3D_Space space; /*@  */
-            @out Evas_Real x;      /*@ Pointer to receive Scale factor along X-axis.*/
-            @out Evas_Real y;      /*@ Pointer to receive Scale factor along X-axis.*/
-            @out Evas_Real z;      /*@ Pointer to receive Scale factor along X-axis.*/
+            @in space: Evas_3D_Space; /*@  */
+            @out x: Evas_Real;      /*@ Pointer to receive Scale factor along X-axis.*/
+            @out y: Evas_Real;      /*@ Pointer to receive Scale factor along X-axis.*/
+            @out z: Evas_Real;      /*@ Pointer to receive Scale factor along X-axis.*/
          }
       }
 
@@ -254,14 +254,14 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
           */
 
          params {
-            @in Evas_3D_Space target_space;  /*@ Space where the target position belongs to. */
-            @in Evas_Real x;                 /*@ X coordinate of the target position. */
-            @in Evas_Real y;                 /*@ Y coordinate of the target position. */
-            @in Evas_Real z;                 /*@ Z coordinate of the target position. */
-            @in Evas_3D_Space up_space;      /*@ Space where the up vector belongs to. */
-            @in Evas_Real ux;                /*@ X term of the up vector. */
-            @in Evas_Real uy;                /*@ Y term of the up vector. */
-            @in Evas_Real uz;                /*@ Z term of the up vector. */
+            @in target_space: Evas_3D_Space;  /*@ Space where the target position belongs to. */
+            @in x: Evas_Real;                 /*@ X coordinate of the target position. */
+            @in y: Evas_Real;                 /*@ Y coordinate of the target position. */
+            @in z: Evas_Real;                 /*@ Z coordinate of the target position. */
+            @in up_space: Evas_3D_Space;      /*@ Space where the up vector belongs to. */
+            @in ux: Evas_Real;                /*@ X term of the up vector. */
+            @in uy: Evas_Real;                /*@ Y term of the up vector. */
+            @in uz: Evas_Real;                /*@ Z term of the up vector. */
          }
       }
 
@@ -280,7 +280,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Node
           */
          params {
-            @in Evas_3D_Mesh *mesh;      /*@ The mesh to be added.*/
+            @in mesh: Evas_3D_Mesh *;      /*@ The mesh to be added.*/
          }
       }
 
@@ -299,7 +299,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Node
           */
          params {
-            @in Evas_3D_Mesh *mesh;      /*@ The mesh to be deleted.*/
+            @in mesh: Evas_3D_Mesh *;      /*@ The mesh to be deleted.*/
          }
       }
 
@@ -336,12 +336,12 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Node
           */
          params {
-            @in Evas_Real *x;      /*@ Coordinates of vector.*/
-            @in Evas_Real *y;
-            @in Evas_Real *z;
-            @in Evas_Real *x2;
-            @in Evas_Real *y2;
-            @in Evas_Real *z2;
+            @in x: Evas_Real *;      /*@ Coordinates of vector.*/
+            @in y: Evas_Real *;
+            @in z: Evas_Real *;
+            @in x2: Evas_Real *;
+            @in y2: Evas_Real *;
+            @in z2: Evas_Real *;
          }
       }
 
@@ -360,10 +360,10 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
           */
          params {
 
-            @in Evas_Real *x;      /*@ Coordinates of vector.*/
-            @in Evas_Real *y;
-            @in Evas_Real *z;
-            @in Evas_Real *r;
+            @in x: Evas_Real *;      /*@ Coordinates of vector.*/
+            @in y: Evas_Real *;
+            @in z: Evas_Real *;
+            @in r: Evas_Real *;
          }
       }
 
@@ -395,7 +395,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            bool inherit; /*@ Whether to inherit parent position*/
+            inherit: bool; /*@ Whether to inherit parent position*/
          }
       }
 
@@ -428,7 +428,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            bool inherit; /*@ Whether to inherit parent orientation*/
+            inherit: bool; /*@ Whether to inherit parent orientation*/
          }
       }
 
@@ -460,7 +460,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            bool inherit; /*@ Whether to inherit parent scale*/
+            inherit: bool; /*@ Whether to inherit parent scale*/
          }
       }
 
@@ -493,7 +493,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            Evas_3D_Camera *camera; /*@ The camera */
+            camera: Evas_3D_Camera *; /*@ The camera */
          }
       }
 
@@ -526,7 +526,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            Evas_3D_Light *light; /*@ The light */
+            light: Evas_3D_Light *; /*@ The light */
          }
       }
 
@@ -566,10 +566,10 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          keys {
-            Evas_3D_Mesh *mesh; /*@ The given mesh.*/
+            mesh: Evas_3D_Mesh *; /*@ The given mesh.*/
          }
          values {
-            int frame; /*@ The animation frame number.*/
+            frame: int; /*@ The animation frame number.*/
          }
       }
 
@@ -598,7 +598,7 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            Eo *target;      /*@ Target node.*/
+            target: Eo *;      /*@ Target node.*/
          }
       }
    }

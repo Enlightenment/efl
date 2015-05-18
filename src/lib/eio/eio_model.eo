@@ -16,8 +16,8 @@ class Eio.Model (Eo.Base, Efl.Model.Base)
               @in filter_cb
               @in userdata */
              params {
-                 Eio_Filter_Direct_Cb filter_cb; /*@  Filter callback */
-                 void *userdata; /*@  User's private data */
+                 filter_cb: Eio_Filter_Direct_Cb; /*@  Filter callback */
+                 userdata: void *; /*@  User's private data */
              }
        }
        path_set {
@@ -26,7 +26,7 @@ class Eio.Model (Eo.Base, Efl.Model.Base)
             @since 1.11
             @in path */
           params {
-             @in const(char)* path; /*@ Root path provided by caller */
+             @in path: const(char)*; /*@ Root path provided by caller */
           }
        }
     }

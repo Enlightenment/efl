@@ -14,7 +14,7 @@ class Class_Simple {
          get {
          }
          values {
-            int value (100); /*@ Value description */
+            value: int (100); /*@ Value description */
          }
       }
       @property b @c_only {
@@ -25,16 +25,16 @@ class Class_Simple {
       foo @beta {
          /*@ comment foo */
          params {
-            @in int a; /*@ a */
-            @inout char b;
-            @out double c (1337.6);
+            @in a: int; /*@ a */
+            @inout b: char;
+            @out c: double (1337.6);
          }
          return: char * (null); /*@ comment for method return */
       }
       bar @c_only {
          eo: null;
          params {
-            int x;
+            x: int;
          }
          return: int;
       }

@@ -8,14 +8,14 @@ class Colourable (Eo.Base)
             /*@ RGB Constructor. */
             legacy: null;
             params {
-                @in int rgb; /*@ 24-bit RGB Component. */
+                @in rgb: int; /*@ 24-bit RGB Component. */
             }
         }
         print_colour { /*@ Print the RGB colour. */ }
         colour_mask {
             /*@ The masked RGB value. */
             params {
-                @in int mask; /*@ The colour mask to be applied to current RGB value. */
+                @in mask: int; /*@ The colour mask to be applied to current RGB value. */
             }
             return: int; /*@ The RGB colour. */
         }
@@ -27,7 +27,7 @@ class Colourable (Eo.Base)
                 /*@ Gets the 24-bit RGB colour. */
             }
             values {
-                int rgb; /*@ The RGB colour value. */
+                rgb: int; /*@ The RGB colour value. */
             }
         }
         @property composite_colour {
@@ -38,9 +38,9 @@ class Colourable (Eo.Base)
                 /*@ Gets the composite RGB colour. */
             }
             values {
-                int r; /*@ The red component. */
-                int g; /*@ The green component. */
-                int b; /*@ The blue component. */
+                r: int; /*@ The red component. */
+                g: int; /*@ The green component. */
+                b: int; /*@ The blue component. */
             }
         }
     }

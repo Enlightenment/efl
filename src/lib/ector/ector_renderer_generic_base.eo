@@ -9,7 +9,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	 get {
 	 }
 	 values {
-	    const(Eina_Matrix3) *m;
+	    m: const(Eina_Matrix3) *;
 	 }
       }
       @property origin {
@@ -18,8 +18,8 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	 get {
 	 }
 	 values {
-	    double x;
-	    double y;
+	    x: double;
+	    y: double;
 	 }
       }
       @property visibility {
@@ -30,7 +30,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
             /*@ Retrieves whether or not the given Ector renderer is visible. */
 	 }
 	 values {
-	    bool v; /*@ @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise */
+	    v: bool; /*@ @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise */
 	 }
       }
       @property color {
@@ -47,7 +47,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
             /*@
             Retrieves the general/main color of the given Ector renderer.
 
-            Retrieves the “main” color's RGB component (and alpha channel)
+            Retrieves the main color's RGB component (and alpha channel)
             values, <b>which range from 0 to 255</b>. For the alpha channel,
             which defines the object's transparency level, 0 means totally
             transparent, while 255 means opaque. These color values are
@@ -59,10 +59,10 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
             @ingroup Ector_Renderer_Group_Basic */
 	 }
 	 values {
-            int r; /*@ The red component of the given color. */
-            int g; /*@ The green component of the given color. */
-            int b; /*@ The blue component of the given color. */
-            int a; /*@ The alpha component of the given color. */
+            r: int; /*@ The red component of the given color. */
+            g: int; /*@ The green component of the given color. */
+            b: int; /*@ The blue component of the given color. */
+            a: int; /*@ The alpha component of the given color. */
 	 }
       }
       @property mask {
@@ -71,7 +71,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	 get {
 	 }
 	 values {
-	    Ector_Renderer *r;
+	    r: Ector_Renderer *;
 	 }
       }
       @property quality {
@@ -80,20 +80,20 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
 	 get {
 	 }
 	 values {
-	    Ector_Quality q;
+	    q: Ector_Quality;
 	 }
       }
       bounds_get {
 	 params {
-	    @out Eina_Rectangle r;
+	    @out r: Eina_Rectangle;
 	 }
       }
       draw {
          return: bool @warn_unused;
 	 params {
-	    @in Ector_Rop op;
-	    @in array<Eina_Rectangle *> *clips; /*@ array of Eina_Rectangle clip */
-	    @in uint mul_col;
+	    @in op: Ector_Rop;
+	    @in clips: array<Eina_Rectangle *> *; /*@ array of Eina_Rectangle clip */
+	    @in mul_col: uint;
 	 }
       }
       prepare {

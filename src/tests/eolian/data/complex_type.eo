@@ -7,12 +7,12 @@ class Complex_Type {
          get {
          }
          values {
-            own(list<int>*) value;
+            value: own(list<int>*);
          }
       }
       foo {
          params {
-            own(char*) buf;
+            buf: own(char*);
          }
          return: own(list<Eina.Stringshare*>*); /*@ comment for method return */
       }

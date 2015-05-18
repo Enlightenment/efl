@@ -14,7 +14,7 @@ class Evas.Textgrid (Evas.Object, Efl.Text_Properties)
             @return EVAS_TEXTGRID_FONT_STYLE_NORMAL */
          }
          values {
-            Evas_Textgrid_Font_Style styles;
+            styles: Evas_Textgrid_Font_Style;
          }
       }
       @property size {
@@ -41,8 +41,8 @@ class Evas.Textgrid (Evas.Object, Efl.Text_Properties)
             @since 1.7 */
          }
          values {
-            int w; /*@ The number of columns (width in cells) of the grid. */
-            int h; /*@ The number of rows (height in cells) of the grid. */
+            w: int; /*@ The number of columns (width in cells) of the grid. */
+            h: int; /*@ The number of rows (height in cells) of the grid. */
          }
       }
       @property cell_size {
@@ -63,8 +63,8 @@ class Evas.Textgrid (Evas.Object, Efl.Text_Properties)
             @since 1.7 */
          }
          values {
-            int width; /*@ A pointer to the location to store the width in pixels of a cell. */
-            int height; /*@ A pointer to the location to store the height in
+            width: int; /*@ A pointer to the location to store the width in pixels of a cell. */
+            height: int; /*@ A pointer to the location to store the height in
             pixels of a cell. */
          }
       }
@@ -93,10 +93,10 @@ class Evas.Textgrid (Evas.Object, Efl.Text_Properties)
          @since 1.7 */
    
          params {
-            @in int x; /*@ The rect region of cells top-left x (column) */
-            @in int y; /*@ The rect region of cells top-left y (row) */
-            @in int w; /*@ The rect region size in number of cells (columns) */
-            @in int h; /*@ The rect region size in number of cells (rows) */
+            @in x: int; /*@ The rect region of cells top-left x (column) */
+            @in y: int; /*@ The rect region of cells top-left y (row) */
+            @in w: int; /*@ The rect region size in number of cells (columns) */
+            @in h: int; /*@ The rect region size in number of cells (rows) */
          }
       }
       cellrow_set {
@@ -115,8 +115,8 @@ class Evas.Textgrid (Evas.Object, Efl.Text_Properties)
          @since 1.7 */
 
          params {
-            @in int y; /*@ The row index of the grid. */
-            @in const(Evas_Textgrid_Cell)* row; /*@ The string as a sequence of #Evas_Textgrid_Cell. */
+            @in y: int; /*@ The row index of the grid. */
+            @in row: const(Evas_Textgrid_Cell)*; /*@ The string as a sequence of #Evas_Textgrid_Cell. */
          }
       }
       cellrow_get @const {
@@ -136,7 +136,7 @@ class Evas.Textgrid (Evas.Object, Efl.Text_Properties)
          @since 1.7 */
          return: Evas_Textgrid_Cell*;
          params {
-            @in int y; /*@ The row index of the grid. */
+            @in y: int; /*@ The row index of the grid. */
          }
       }
       palette_set {
@@ -159,12 +159,12 @@ class Evas.Textgrid (Evas.Object, Efl.Text_Properties)
          @since 1.7 */
 
          params {
-            @in Evas_Textgrid_Palette pal; /*@ The type of the palette to set the color. */
-            @in int idx; /*@ The index of the paletter to which the color is stored. */
-            @in int r; /*@ The red component of the color. */
-            @in int g; /*@ The green component of the color. */
-            @in int b; /*@ The blue component of the color. */
-            @in int a; /*@ The alpha component of the color. */
+            @in pal: Evas_Textgrid_Palette; /*@ The type of the palette to set the color. */
+            @in idx: int; /*@ The index of the paletter to which the color is stored. */
+            @in r: int; /*@ The red component of the color. */
+            @in g: int; /*@ The green component of the color. */
+            @in b: int; /*@ The blue component of the color. */
+            @in a: int; /*@ The alpha component of the color. */
          }
       }
       palette_get @const {
@@ -183,12 +183,12 @@ class Evas.Textgrid (Evas.Object, Efl.Text_Properties)
 
          @since 1.7 */
          params {
-            @in Evas_Textgrid_Palette pal; /*@ The type of the palette to set the color. */
-            @in int idx; /*@ The index of the palette to which the color is stored. */
-            @out int r; /*@ A pointer to the red component of the color. */
-            @out int g; /*@ A pointer to the green component of the color. */
-            @out int b; /*@ A pointer to the blue component of the color. */
-            @out int a; /*@ A pointer to the alpha component of the color. */
+            @in pal: Evas_Textgrid_Palette; /*@ The type of the palette to set the color. */
+            @in idx: int; /*@ The index of the palette to which the color is stored. */
+            @out r: int; /*@ A pointer to the red component of the color. */
+            @out g: int; /*@ A pointer to the green component of the color. */
+            @out b: int; /*@ A pointer to the blue component of the color. */
+            @out a: int; /*@ A pointer to the alpha component of the color. */
          }
       }
    }

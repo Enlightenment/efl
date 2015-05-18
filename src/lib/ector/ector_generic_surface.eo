@@ -10,8 +10,8 @@ abstract Ector.Generic.Surface (Eo.Base)
             /*@ Retrieves the (rectangular) size of the given Evas object. */
          }
          values {
-            int w; /*@ in */
-            int h; /*@ in */
+            w: int; /*@ in */
+            h: int; /*@ in */
          }
       }
       @property reference_point {
@@ -19,14 +19,14 @@ abstract Ector.Generic.Surface (Eo.Base)
 	    /*@ This define where is (0,0) in pixels coordinate inside the surface */
 	 }
 	 values {
-	    int x;
-	    int y;
+	    x: int;
+	    y: int;
 	 }
       }
       renderer_factory_new {
          return: Ector_Renderer *;
 	 params {
-	    @in const(Eo_Class) * type @nonull;
+	    @in type: const(Eo_Class) * @nonull;
 	 }
       }
    }

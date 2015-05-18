@@ -17,7 +17,7 @@ abstract Ecore.Con.Base (Eo.Base) {
              legacy: null;
          }
          values {
-            const(char)* ip; /*@ The IP address */
+            ip: const(char)*; /*@ The IP address */
          }
       }
       @property uptime {
@@ -30,7 +30,7 @@ abstract Ecore.Con.Base (Eo.Base) {
              legacy: null;
          }
          values {
-            double uptime; /*@ The total time, in seconds, that the object has been connected. */
+            uptime: double; /*@ The total time, in seconds, that the object has been connected. */
          }
       }
       @property port {
@@ -45,7 +45,7 @@ abstract Ecore.Con.Base (Eo.Base) {
              legacy: null;
          }
          values {
-            int port; /*@ The The port that obj is connected to, or -1 on error. */
+            port: int; /*@ The The port that obj is connected to, or -1 on error. */
          }
       }
       @property fd {
@@ -62,7 +62,7 @@ abstract Ecore.Con.Base (Eo.Base) {
              legacy: null;
          }
          values {
-            int fd; /*@ The fd, or -1 on failure. */
+            fd: int; /*@ The fd, or -1 on failure. */
          }
       }
       @property connected {
@@ -73,7 +73,7 @@ abstract Ecore.Con.Base (Eo.Base) {
              legacy: null;
          }
          values {
-            bool connected; /*@ Returns True if connected, False otherwise. */
+            connected: bool; /*@ Returns True if connected, False otherwise. */
          }
       }
       @property timeout {
@@ -96,7 +96,7 @@ abstract Ecore.Con.Base (Eo.Base) {
              legacy: null;
          }
          values {
-            double timeout; /*@ The timeout, in seconds, to disconnect after. */
+            timeout: double; /*@ The timeout, in seconds, to disconnect after. */
          }
       }
       flush {
@@ -122,8 +122,8 @@ abstract Ecore.Con.Base (Eo.Base) {
          legacy: null;
 
          params {
-            const(void)* data; /*@ The given data */
-            int size; /*@ Length of the data, in bytes. */
+            data: const(void)*; /*@ The given data */
+            size: int; /*@ Length of the data, in bytes. */
          }
          return: int; /*@ The number of bytes sent.  @c 0 will be returned if there is an error. */
       }
@@ -147,9 +147,9 @@ abstract Ecore.Con.Base (Eo.Base) {
           * @li @c data - the data pointer given as parameter to ecore_con_lookup()
           */
          params {
-            const(char)* name @nonull; /*@ Hostname to lookup. */
-            Ecore_Con_Dns_Cb done_cb; /*@ The callback to be called wehn lookup is done. */
-            const(void)* data; /*@ User data for the callback. */
+            name: const(char)* @nonull; /*@ Hostname to lookup. */
+            done_cb: Ecore_Con_Dns_Cb; /*@ The callback to be called wehn lookup is done. */
+            data: const(void)*; /*@ User data for the callback. */
          }
          return: bool;
       }

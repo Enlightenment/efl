@@ -19,7 +19,7 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Camera
           */
          params {
-           @in const(Evas_Real)* matrix; /*@ Projection Matrix */
+           @in matrix: const(Evas_Real)*; /*@ Projection Matrix */
          }
       }
 
@@ -35,7 +35,7 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
           @ingroup Evas_3D_Camera
          */
          params {
-           @out Evas_Real matrix; /*@ Projection Matrix */
+           @out matrix: Evas_Real; /*@ Projection Matrix */
          }
       }
 
@@ -55,10 +55,10 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
           */
 
          params {
-            Evas_Real fovy; /*@ Field of view angle in Y direction. */
-            Evas_Real aspect; /*@ Aspect ratio.*/
-            Evas_Real dnear; /*@ Distance to near clipping plane. */
-            Evas_Real dfar; /*@ Distance to far clipping plane. */
+            fovy: Evas_Real; /*@ Field of view angle in Y direction. */
+            aspect: Evas_Real; /*@ Aspect ratio.*/
+            dnear: Evas_Real; /*@ Distance to near clipping plane. */
+            dfar: Evas_Real; /*@ Distance to far clipping plane. */
          }
       }
 
@@ -71,12 +71,12 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Camera
           */
          params {
-            Evas_Real left; /*@ Left X coordinate of the near clipping plane. */
-            Evas_Real right; /*@ Right X coordinate of the near clipping plane..*/
-            Evas_Real bottom; /*@ Bottom Y coordinate of the near clipping plane. */
-            Evas_Real top; /*@ Top Y coordinate of the near clipping plane */
-            Evas_Real dnear; /*@ Distance to near clipping plane. */
-            Evas_Real dfar; /*@ Distance to far clipping plane. */
+            left: Evas_Real; /*@ Left X coordinate of the near clipping plane. */
+            right: Evas_Real; /*@ Right X coordinate of the near clipping plane..*/
+            bottom: Evas_Real; /*@ Bottom Y coordinate of the near clipping plane. */
+            top: Evas_Real; /*@ Top Y coordinate of the near clipping plane */
+            dnear: Evas_Real; /*@ Distance to near clipping plane. */
+            dfar: Evas_Real; /*@ Distance to far clipping plane. */
          }
       }
       projection_ortho_set {
@@ -88,12 +88,12 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Camera
           */
          params {
-            Evas_Real left; /*@ Left X coordinate of the near clipping plane. */
-            Evas_Real right; /*@ Right X coordinate of the near clipping plane..*/
-            Evas_Real bottom; /*@ Bottom Y coordinate of the near clipping plane. */
-            Evas_Real top; /*@ Top Y coordinate of the near clipping plane */
-            Evas_Real dnear; /*@ Distance to near clipping plane. */
-            Evas_Real dfar; /*@ Distance to far clipping plane. */
+            left: Evas_Real; /*@ Left X coordinate of the near clipping plane. */
+            right: Evas_Real; /*@ Right X coordinate of the near clipping plane..*/
+            bottom: Evas_Real; /*@ Bottom Y coordinate of the near clipping plane. */
+            top: Evas_Real; /*@ Top Y coordinate of the near clipping plane */
+            dnear: Evas_Real; /*@ Distance to near clipping plane. */
+            dfar: Evas_Real; /*@ Distance to far clipping plane. */
          }
       }
       node_visible_get {
@@ -110,9 +110,9 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
           */
          return: bool;
          params {
-            @in Evas_3D_Node *camera_node;
-            @in Evas_3D_Node *node;
-            @in Evas_3D_Frustum_Mode key;
+            @in camera_node: Evas_3D_Node *;
+            @in node: Evas_3D_Node *;
+            @in key: Evas_3D_Frustum_Mode;
          }
       }
    }

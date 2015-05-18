@@ -21,7 +21,7 @@ class Evas.Grid (Evas.Smart_Clipped)
             @since 1.1 */
          }
          values {
-            bool mirrored; /*@ the mirrored mode to set */
+            mirrored: bool; /*@ the mirrored mode to set */
          }
       }
       @property size {
@@ -39,8 +39,8 @@ class Evas.Grid (Evas.Smart_Clipped)
             @since 1.1 */
          }
          values {
-            int w; /*@ The virtual horizontal size (resolution) in integer units */
-            int h; /*@ The virtual vertical size (resolution) in integer units */
+            w: int; /*@ The virtual horizontal size (resolution) in integer units */
+            h: int; /*@ The virtual vertical size (resolution) in integer units */
          }
       }
       @property children {
@@ -72,7 +72,7 @@ class Evas.Grid (Evas.Smart_Clipped)
          @since 1.1 */
 
          params {
-            @in bool clear; /*@ if true, it will delete just removed children. */
+            @in clear: bool; /*@ if true, it will delete just removed children. */
          }
       }
       iterator_new @const {
@@ -106,7 +106,7 @@ class Evas.Grid (Evas.Smart_Clipped)
 
          return: bool;
          params {
-            @in Evas_Object *child @nonull;
+            @in child: Evas_Object * @nonull;
          }
       }
       pack_get @const {
@@ -119,11 +119,11 @@ class Evas.Grid (Evas.Smart_Clipped)
          @since 1.1 */
          return: bool;
          params {
-            @in Evas_Object *child; /*@ The grid child to query for coordinates */
-            @out int x; /*@ The pointer to where the x coordinate will be returned */
-            @out int y; /*@ The pointer to where the y coordinate will be returned */
-            @out int w; /*@ The pointer to where the width will be returned */
-            @out int h; /*@ The pointer to where the height will be returned */
+            @in child: Evas_Object *; /*@ The grid child to query for coordinates */
+            @out x: int; /*@ The pointer to where the x coordinate will be returned */
+            @out y: int; /*@ The pointer to where the y coordinate will be returned */
+            @out w: int; /*@ The pointer to where the width will be returned */
+            @out h: int; /*@ The pointer to where the height will be returned */
          }
       }
       pack {
@@ -135,11 +135,11 @@ class Evas.Grid (Evas.Smart_Clipped)
 
          return: bool;
          params {
-            @in Evas_Object *child @nonull; /*@ The child object to add. */
-            @in int x; /*@ The virtual x coordinate of the child */
-            @in int y; /*@ The virtual y coordinate of the child */
-            @in int w; /*@ The virtual width of the child */
-            @in int h; /*@ The virtual height of the child */
+            @in child: Evas_Object * @nonull; /*@ The child object to add. */
+            @in x: int; /*@ The virtual x coordinate of the child */
+            @in y: int; /*@ The virtual y coordinate of the child */
+            @in w: int; /*@ The virtual width of the child */
+            @in h: int; /*@ The virtual height of the child */
          }
       }
    }

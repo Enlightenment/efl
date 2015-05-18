@@ -17,7 +17,7 @@ mixin Efl.Gfx.Shape
             */
          }
          values {
-            double s; /*@ stroke scale value */
+            s: double; /*@ stroke scale value */
          }
       }
       @property stroke_color {
@@ -34,10 +34,10 @@ mixin Efl.Gfx.Shape
             */
          }
          values {
-            int r; /*@ The red component of the given color. */
-            int g; /*@ The green component of the given color. */
-            int b; /*@ The blue component of the given color. */
-            int a; /*@ The alpha component of the given color. */
+            r: int; /*@ The red component of the given color. */
+            g: int; /*@ The green component of the given color. */
+            b: int; /*@ The blue component of the given color. */
+            a: int; /*@ The alpha component of the given color. */
          }
       }
       @property stroke_width {
@@ -54,7 +54,7 @@ mixin Efl.Gfx.Shape
             */
          }
          values {
-            double w; /*@ stroke width to be used */
+            w: double; /*@ stroke width to be used */
          }
       }
       @property stroke_location {
@@ -69,7 +69,7 @@ mixin Efl.Gfx.Shape
             */
          }
          values {
-            double centered; /*@  */
+            centered: double; /*@  */
          }
       }
       @property stroke_dash {
@@ -84,8 +84,8 @@ mixin Efl.Gfx.Shape
             */
          }
          values {
-            const(Efl_Gfx_Dash) *dash; /*@  */
-            uint length; /*@  */
+            dash: const(Efl_Gfx_Dash) *; /*@  */
+            length: uint; /*@  */
          }
       }
       @property stroke_cap {
@@ -106,7 +106,7 @@ mixin Efl.Gfx.Shape
             */
          }
          values {
-            Efl_Gfx_Cap c; /*@ cap style to use , default is EFL_GFX_CAP_BUTT */
+            c: Efl_Gfx_Cap; /*@ cap style to use , default is EFL_GFX_CAP_BUTT */
          }
       }
       @property stroke_join {
@@ -127,7 +127,7 @@ mixin Efl.Gfx.Shape
             */
          }
          values {
-            Efl_Gfx_Join j; /*@ join style to use , default is
+            j: Efl_Gfx_Join; /*@ join style to use , default is
                               EFL_GFX_JOIN_MITER */
          }
       }
@@ -149,32 +149,32 @@ mixin Efl.Gfx.Shape
             */
          }
          values {
-            const(Efl_Gfx_Path_Command) *op; /*@ command list */
-            const(double) *points; /*@ point list */
+            op: const(Efl_Gfx_Path_Command) *; /*@ command list */
+            points: const(double) *; /*@ point list */
          }
       }
       @property path_length {
         get {
         }
         values {
-          uint commands;
-          uint points;
+          commands: uint;
+          points: uint;
         }
       }
       @property current {
         get {
         }
         values {
-          double x;
-          double y;
+          x: double;
+          y: double;
         }
       }
       @property current_ctrl {
         get {
         }
         values {
-          double x;
-          double y;
+          x: double;
+          y: double;
         }
       }
       dup {
@@ -184,7 +184,7 @@ mixin Efl.Gfx.Shape
             @since 1.14
           */
         params {
-          @in Eo *dup_from; /*@ Shape object from where data will be copied.*/
+          @in dup_from: Eo *; /*@ Shape object from where data will be copied.*/
         }
       }
       bounds_get {
@@ -194,7 +194,7 @@ mixin Efl.Gfx.Shape
           @since 1.14
 	*/
         params {
-	  @out Eina_Rectangle r; /*@ Contain the bounding box of the currently set path */
+	  @out r: Eina_Rectangle; /*@ Contain the bounding box of the currently set path */
 	}
       }
       reset {
@@ -213,8 +213,8 @@ mixin Efl.Gfx.Shape
           @since 1.14
         */
         params {
-          @in double x; /*@ X co-ordinate of the current point.*/
-          @in double y; /*@ Y co-ordinate of the current point.*/
+          @in x: double; /*@ X co-ordinate of the current point.*/
+          @in y: double; /*@ Y co-ordinate of the current point.*/
         }
       }
       append_line_to {
@@ -230,8 +230,8 @@ mixin Efl.Gfx.Shape
           @since 1.14
         */
         params {
-          @in double x; /*@ X co-ordinate of end point of the line.*/
-          @in double y; /*@ Y co-ordinate of end point of the line.*/
+          @in x: double; /*@ X co-ordinate of end point of the line.*/
+          @in y: double; /*@ Y co-ordinate of end point of the line.*/
         }
       }
       append_quadratic_to {
@@ -244,10 +244,10 @@ mixin Efl.Gfx.Shape
           @since 1.14
         */
         params {
-          @in double x; /*@ X co-ordinate of end point of the line.*/
-          @in double y; /*@ Y co-ordinate of end point of the line.*/
-          @in double ctrl_x; /*@ X co-ordinate of control point.*/
-          @in double ctrl_y; /*@ Y co-ordinate of control point.*/
+          @in x: double; /*@ X co-ordinate of end point of the line.*/
+          @in y: double; /*@ Y co-ordinate of end point of the line.*/
+          @in ctrl_x: double; /*@ X co-ordinate of control point.*/
+          @in ctrl_y: double; /*@ Y co-ordinate of control point.*/
         }
       }
       append_squadratic_to {
@@ -259,8 +259,8 @@ mixin Efl.Gfx.Shape
           @since 1.14
         */
         params {
-          @in double x; /*@ X co-ordinate of end point of the line.*/
-          @in double y; /*@ Y co-ordinate of end point of the line.*/
+          @in x: double; /*@ X co-ordinate of end point of the line.*/
+          @in y: double; /*@ Y co-ordinate of end point of the line.*/
         }
       }
       append_cubic_to {
@@ -273,12 +273,12 @@ mixin Efl.Gfx.Shape
           @since 1.14
         */
         params {
-          @in double x; /*@ X co-ordinate of end point of the line.*/
-          @in double y; /*@ Y co-ordinate of end point of the line.*/
-          @in double ctrl_x0; /*@ X co-ordinate of 1st control point.*/
-          @in double ctrl_y0; /*@ Y co-ordinate of 1st control point.*/
-          @in double ctrl_x1; /*@ X co-ordinate of 2nd control point.*/
-          @in double ctrl_y1; /*@ Y co-ordinate of 2nd control point.*/
+          @in x: double; /*@ X co-ordinate of end point of the line.*/
+          @in y: double; /*@ Y co-ordinate of end point of the line.*/
+          @in ctrl_x0: double; /*@ X co-ordinate of 1st control point.*/
+          @in ctrl_y0: double; /*@ Y co-ordinate of 1st control point.*/
+          @in ctrl_x1: double; /*@ X co-ordinate of 2nd control point.*/
+          @in ctrl_y1: double; /*@ Y co-ordinate of 2nd control point.*/
         }
       }
       append_scubic_to {
@@ -291,10 +291,10 @@ mixin Efl.Gfx.Shape
         @since 1.14
         */
         params {
-          @in double x; /*@ X co-ordinate of end point of the line.*/
-          @in double y; /*@ Y co-ordinate of end point of the line.*/
-          @in double ctrl_x; /*@ X co-ordinate of 2nd control point.*/
-          @in double ctrl_y; /*@ Y co-ordinate of 2nd control point.*/
+          @in x: double; /*@ X co-ordinate of end point of the line.*/
+          @in y: double; /*@ Y co-ordinate of end point of the line.*/
+          @in ctrl_x: double; /*@ X co-ordinate of 2nd control point.*/
+          @in ctrl_y: double; /*@ Y co-ordinate of 2nd control point.*/
         }
       }
       append_arc_to {
@@ -310,13 +310,13 @@ mixin Efl.Gfx.Shape
           @since 1.14
         */
         params {
-          @in double x; /*@ X co-ordinate of end point of the arc.*/
-          @in double y; /*@ Y co-ordinate of end point of the arc.*/
-          @in double rx; /*@ radius of arc in x direction.*/
-          @in double ry; /*@ radius of arc in y direction.*/
-          @in double angle; /*@ x-axis rotation , normally 0.*/
-          @in bool large_arc; /*@ Defines whether to draw the larger arc or smaller arc joining two point.*/
-          @in bool sweep; /*@ Defines whether the arc will be drawn counter-clockwise or clockwise from current point to the end point taking into account the large_arc property.*/
+          @in x: double; /*@ X co-ordinate of end point of the arc.*/
+          @in y: double; /*@ Y co-ordinate of end point of the arc.*/
+          @in rx: double; /*@ radius of arc in x direction.*/
+          @in ry: double; /*@ radius of arc in y direction.*/
+          @in angle: double; /*@ x-axis rotation , normally 0.*/
+          @in large_arc: bool; /*@ Defines whether to draw the larger arc or smaller arc joining two point.*/
+          @in sweep: bool; /*@ Defines whether the arc will be drawn counter-clockwise or clockwise from current point to the end point taking into account the large_arc property.*/
         }
       }
       append_close {
@@ -337,9 +337,9 @@ mixin Efl.Gfx.Shape
           @since 1.14
         */
         params {
-          @in double x; /*@ X co-ordinate of the center of the circle.*/
-          @in double y; /*@ Y co-ordinate of the center of the circle.*/
-          @in double radius; /*@ radius of the circle.*/
+          @in x: double; /*@ X co-ordinate of the center of the circle.*/
+          @in y: double; /*@ Y co-ordinate of the center of the circle.*/
+          @in radius: double; /*@ radius of the circle.*/
         }
       }
       append_rect {
@@ -356,31 +356,31 @@ mixin Efl.Gfx.Shape
           @since 1.14
         */
         params {
-            @in double x; /*@ X co-ordinate of the rectangle.*/
-            @in double y; /*@ Y co-ordinate of the rectangle.*/
-            @in double w; /*@ Width of the rectangle.*/
-            @in double h; /*@ Height of the rectangle.*/
-            @in double rx; /*@ The x radius of the rounded corner and should be in range [ 0 to w/2 ]*/
-            @in double ry; /*@ The y radius of the rounded corner and should be in range [ 0 to h/2 ]*/
+            @in x: double; /*@ X co-ordinate of the rectangle.*/
+            @in y: double; /*@ Y co-ordinate of the rectangle.*/
+            @in w: double; /*@ Width of the rectangle.*/
+            @in h: double; /*@ Height of the rectangle.*/
+            @in rx: double; /*@ The x radius of the rounded corner and should be in range [ 0 to w/2 ]*/
+            @in ry: double; /*@ The y radius of the rounded corner and should be in range [ 0 to h/2 ]*/
         }
       }
       append_svg_path {
         params {
-          @in const(char)* svg_path_data;
+          @in svg_path_data: const(char)*;
         }
       }
       interpolate {
         return: bool;
         params {
-          @in const(Eo)* from;
-          @in const(Eo)* to;
-          @in double pos_map;
+          @in from: const(Eo)*;
+          @in to: const(Eo)*;
+          @in pos_map: double;
         }
       }
       equal_commands {
         return: bool;
         params {
-          @in const(Eo)* with;
+          @in with: const(Eo)*;
         }
       }
    }

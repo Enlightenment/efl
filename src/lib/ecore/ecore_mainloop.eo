@@ -9,7 +9,7 @@ class Ecore_Mainloop (Eo.Base)
          get {
          }
          values {
-            Ecore_Select_Function select_func;
+            select_func: Ecore_Select_Function;
          }
       }
       iterate {
@@ -17,7 +17,7 @@ class Ecore_Mainloop (Eo.Base)
       iterate_may_block {
          return: int;
          params {
-            int may_block;
+            may_block: int;
          }
       }
       begin {

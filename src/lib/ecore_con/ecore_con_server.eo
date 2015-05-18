@@ -13,7 +13,7 @@ class Ecore.Con.Server (Ecore.Con.Base) {
          get {
          }
          values {
-            const(char) *name; /*@ The name of the server. */
+            name: const(char) *; /*@ The name of the server. */
          }
       }
       @property client_limit {
@@ -34,8 +34,8 @@ class Ecore.Con.Server (Ecore.Con.Base) {
             legacy: null;
          }
          values {
-            int client_limit; /*@ The maximum number of clients to handle concurrently.  -1 means unlimited (default). 0 effectively disables the server. */
-            char reject_excess_clients; /*@ Set to 1 to automatically disconnect excess clients as soon as they connect if you are already handling client_limit clients.  Set to 0 (default) to just hold off on the "accept()" system call until the number of active clients drops. This causes the kernel to queue up to 4096 connections (or your kernel's limit, whichever is lower). */
+            client_limit: int; /*@ The maximum number of clients to handle concurrently.  -1 means unlimited (default). 0 effectively disables the server. */
+            reject_excess_clients: char; /*@ Set to 1 to automatically disconnect excess clients as soon as they connect if you are already handling client_limit clients.  Set to 0 (default) to just hold off on the "accept()" system call until the number of active clients drops. This causes the kernel to queue up to 4096 connections (or your kernel's limit, whichever is lower). */
          }
       }
       /* FIXME: Should this return an iterator? */
@@ -51,7 +51,7 @@ class Ecore.Con.Server (Ecore.Con.Base) {
          get {
          }
          values {
-            const(list<const(Ecore.Con.Client) *>) *clients; /*@ The list of clients on this server. */
+            clients: const(list<const(Ecore.Con.Client) *>) *; /*@ The list of clients on this server. */
          }
       }
       @property connection_type {
@@ -62,7 +62,7 @@ class Ecore.Con.Server (Ecore.Con.Base) {
             legacy: null;
         }
         values {
-            Ecore_Con_Type conn_type;
+            conn_type: Ecore_Con_Type;
         }
       }
    }

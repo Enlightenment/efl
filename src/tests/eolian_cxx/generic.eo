@@ -7,36 +7,36 @@ class Generic (Eo.Base)
          get {
          }
          values {
-            int value;
+            value: int;
          }
       }
       @property opt_ctor_a_value {
          get {
          }
          values {
-            int value;
+            value: int;
          }
       }
       required_ctor_a {
          params {
-            @in int value;
+            @in value: int;
          }
       }
       required_ctor_b {
          params {
-            @in Ecore_Cb cb;
-            @in void* data;
+            @in cb: Ecore_Cb;
+            @in data: void*;
          }
       }
       optional_ctor_a {
          params {
-            @in int value;
+            @in value: int;
          }
       }
       optional_ctor_b {
          params {
-            @in Ecore_Cb cb;
-            @in void* data;
+            @in cb: Ecore_Cb;
+            @in data: void*;
          }
       }
       call_req_ctor_b_callback {

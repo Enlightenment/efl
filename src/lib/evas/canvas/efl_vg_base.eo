@@ -18,7 +18,7 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
             */
          }
          values {
-            const(Eina_Matrix3) *m; /*@ transformation matrix */
+            m: const(Eina_Matrix3) *; /*@ transformation matrix */
          }
       }
       @property origin {
@@ -36,8 +36,8 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
             */
          }
          values {
-            double x; /*@ @origin x position */
-            double y; /*@ @origin y position */
+            x: double; /*@ @origin x position */
+            y: double; /*@ @origin y position */
          }
       }
       @property mask {
@@ -46,7 +46,7 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
 	 get {
 	 }
 	 values {
-	    Efl_VG *m;
+	    m: Efl_VG *;
 	 }
       }
 /*      quality {
@@ -66,7 +66,7 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
           @since 1.14
          */
          params {
-            @out Eina_Rectangle r; /*@ bounding box to be returned */
+            @out r: Eina_Rectangle; /*@ bounding box to be returned */
          }
       }
    }

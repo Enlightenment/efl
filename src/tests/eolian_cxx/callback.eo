@@ -5,21 +5,21 @@ class Callback (Eo.Base)
    methods {
       onecallback {
          params {
-           @in Ecore_Cb cb;
-           @in void* data;
+           @in cb: Ecore_Cb;
+           @in data: void*;
          }
       }
       twocallback {
          params {
-           @in Ecore_Cb cb;
-           @in void* data;
-           @in Ecore_Cb cb2;
+           @in cb: Ecore_Cb;
+           @in data: void*;
+           @in cb2: Ecore_Cb;
          }
       }
       test_global_callbacks @class {
          params {
-           @in Ecore_Cb cb;
-           @in void* data;
+           @in cb: Ecore_Cb;
+           @in data: void*;
          }
       }
    }

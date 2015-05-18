@@ -62,7 +62,7 @@ interface Efl.Model.Base ()
                 return: Efl_Model_Load_Status;
          }
          values {
-               const(array<const(char*)>*) properties; /*@ array of current properties */
+               properties: const(array<const(char*)>*); /*@ array of current properties */
             }
         }
          @property property {
@@ -108,10 +108,10 @@ interface Efl.Model.Base ()
                 return: Efl_Model_Load_Status;
             }
             keys {
-               const(char)* property; /*@ Property name */
+               property: const(char)*; /*@ Property name */
             }
             values {
-               const(Eina_Value)* value; /*@ New value */
+               value: const(Eina_Value)*; /*@ New value */
             }
          }
          @property children_slice {
@@ -171,11 +171,11 @@ interface Efl.Model.Base ()
                return: Efl_Model_Load_Status;
             }
             keys {
-                unsigned start; /*@ Range begin - start from here. If start and count are 0 slice is ignored.*/
-                unsigned count; /*@ Range size. If count and start are 0 slice is ignored.*/
+                start: unsigned; /*@ Range begin - start from here. If start and count are 0 slice is ignored.*/
+                count: unsigned; /*@ Range size. If count and start are 0 slice is ignored.*/
             }
             values {
-                accessor<list<Eo.Base*>*>* children_accessor;
+                children_accessor: accessor<list<Eo.Base*>*>*;
             }
          }
          @property children_count {
@@ -199,7 +199,7 @@ interface Efl.Model.Base ()
                 return: Efl_Model_Load_Status;
              }
             values {
-                unsigned children_count;
+                children_count: unsigned;
             }
          }
          load {
@@ -304,7 +304,7 @@ interface Efl.Model.Base ()
               return: Efl_Model_Load_Status;
 
             params {
-               @in Eo* child; /*@ Child to be removed */
+               @in child: Eo*; /*@ Child to be removed */
             }
          }
       }
@@ -317,4 +317,3 @@ interface Efl.Model.Base ()
       children,count,changed; /*@ Event dispatched when children count is finished. */
    }
 }
-

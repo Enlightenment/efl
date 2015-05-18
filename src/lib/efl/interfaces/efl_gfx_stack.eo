@@ -30,7 +30,7 @@ interface Efl.Gfx.Stack {
             @see evas_object_layer_set() */
          }
          values {
-            short l; /*@ The number of the layer to place the object on.
+            l: short; /*@ The number of the layer to place the object on.
             Must be between #EVAS_LAYER_MIN and #EVAS_LAYER_MAX. */
          }
       }
@@ -93,7 +93,7 @@ interface Efl.Gfx.Stack {
          @see evas_object_stack_below() */
 
          params {
-            @in Efl_Gfx_Stack *below @nonull; /*@ the object below which to stack */
+            @in below: Efl_Gfx_Stack * @nonull; /*@ the object below which to stack */
          }
       }
       raise {
@@ -133,7 +133,7 @@ interface Efl.Gfx.Stack {
          @see evas_object_stack_below() */
 
          params {
-            @in Efl_Gfx_Stack *above @nonull; /*@ the object above which to stack */
+            @in above: Efl_Gfx_Stack * @nonull; /*@ the object above which to stack */
          }
       }
       lower {

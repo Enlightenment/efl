@@ -13,8 +13,8 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Scene
           */
          params {
-            @in int w;  /*@ Width of the resolution. */
-            @in int h; /*@ Height of the resolution. */
+            @in w: int;  /*@ Width of the resolution. */
+            @in h: int; /*@ Height of the resolution. */
          }
       }
 
@@ -25,8 +25,8 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Scene
           */
          params {
-            @out int w;  /*@ Pointer to receive width of the resolution. */
-            @out int h; /*@ Pointer to receive height of the resolution. */
+            @out w: int;  /*@ Pointer to receive width of the resolution. */
+            @out h: int; /*@ Pointer to receive height of the resolution. */
          }
       }
 
@@ -43,10 +43,10 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Scene
           */
          params {
-            @in Evas_Real r; /*@ Red component of the background color. */
-            @in Evas_Real g; /*@ Green component of the background color. */
-            @in Evas_Real b; /*@ Blue component of the background color. */
-            @in Evas_Real a; /*@ Alpha component of the background color. */
+            @in r: Evas_Real; /*@ Red component of the background color. */
+            @in g: Evas_Real; /*@ Green component of the background color. */
+            @in b: Evas_Real; /*@ Blue component of the background color. */
+            @in a: Evas_Real; /*@ Alpha component of the background color. */
          }
       }
 
@@ -57,10 +57,10 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Scene
           */
          params {
-            @out Evas_Real r; /*@ Pointer to receive red component of the background color.*/
-            @out Evas_Real g; /*@ Pointer to receive green component of the background color. */
-            @out Evas_Real b; /*@ Pointer to receive blue component of the background color. */
-            @out Evas_Real a; /*@ Pointer to receive alpha component of the background color. */
+            @out r: Evas_Real; /*@ Pointer to receive red component of the background color.*/
+            @out g: Evas_Real; /*@ Pointer to receive green component of the background color. */
+            @out b: Evas_Real; /*@ Pointer to receive blue component of the background color. */
+            @out a: Evas_Real; /*@ Pointer to receive alpha component of the background color. */
          }
       }
 
@@ -76,12 +76,12 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
           */
          return: bool;
          params {
-            @in Evas_Real x;         /*@ X coordinate of the picking position. */
-            @in Evas_Real y;         /*@ Y coordinate of the picking position. */
-            @out Evas_3D_Node *node; /*@ Pointer to receive the node contains the picked mesh. */
-            @out Evas_3D_Mesh *mesh; /*@ Pointer to receive the picked mesh. */
-            @out Evas_Real s;        /*@ Pointer to receive the texture "s" coordinate. */
-            @out Evas_Real t;        /*@ Pointer to receive the texture "t" coordinate. */
+            @in x: Evas_Real;         /*@ X coordinate of the picking position. */
+            @in y: Evas_Real;         /*@ Y coordinate of the picking position. */
+            @out node: Evas_3D_Node *; /*@ Pointer to receive the node contains the picked mesh. */
+            @out mesh: Evas_3D_Mesh *; /*@ Pointer to receive the picked mesh. */
+            @out s: Evas_Real;        /*@ Pointer to receive the texture "s" coordinate. */
+            @out t: Evas_Real;        /*@ Pointer to receive the texture "t" coordinate. */
          }
       }
 
@@ -93,9 +93,9 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          */
          return: Evas_3D_Node *;
          params {
-            @in Evas_Real x;         /*@ X coordinate of the picking position. */
-            @in Evas_Real y;         /*@ Y coordinate of the picking position. */
-            @in Evas_3D_Node *node;  /*@ Node for search. */
+            @in x: Evas_Real;         /*@ X coordinate of the picking position. */
+            @in y: Evas_Real;         /*@ Y coordinate of the picking position. */
+            @in node: Evas_3D_Node *;  /*@ Node for search. */
          }
       }
 
@@ -107,8 +107,8 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          */
          return: list<Evas_3D_Node *> *;
          params {
-            @in Evas_Real x;         /*@ X coordinate of the picking position. */
-            @in Evas_Real y;         /*@ Y coordinate of the picking position. */
+            @in x: Evas_Real;         /*@ X coordinate of the picking position. */
+            @in y: Evas_Real;         /*@ Y coordinate of the picking position. */
          }
       }
       shadows_enable_set {
@@ -121,7 +121,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Scene
           */
          params {
-            @in bool shadows_enabled;  /*@ shadows enabled status. */
+            @in shadows_enabled: bool;  /*@ shadows enabled status. */
          }
       }
 
@@ -154,7 +154,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
           */
          return: bool;
          params {
-            @in bool color_pick;  /*@ Posibility flag */
+            @in color_pick: bool;  /*@ Posibility flag */
          }
       }
 
@@ -176,7 +176,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            Evas_3D_Node *node; /*@ A node which will be used as a root node for the scene. */
+            node: Evas_3D_Node *; /*@ A node which will be used as a root node for the scene. */
          }
       }
 
@@ -198,7 +198,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            Evas_3D_Node *node; /*@ A node which will be used as a camera node for the scene. */
+            node: Evas_3D_Node *; /*@ A node which will be used as a camera node for the scene. */
          }
       }
    }

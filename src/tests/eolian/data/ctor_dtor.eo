@@ -2,8 +2,8 @@ class Ctor_Dtor (Base) {
    methods {
       custom_constructor_1 {
          params {
-            @in int a;
-            @in char b;
+            @in a: int;
+            @in b: char;
          }
       }
       custom_constructor_2 {

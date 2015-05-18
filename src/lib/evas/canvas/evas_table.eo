@@ -54,7 +54,7 @@ class Evas.Table (Evas.Smart_Clipped)
             @see evas_object_table_homogeneous_set() */
          }
          values {
-            Evas_Object_Table_Homogeneous_Mode homogeneous;
+            homogeneous: Evas_Object_Table_Homogeneous_Mode;
          }
       }
       @property align {
@@ -67,8 +67,8 @@ class Evas.Table (Evas.Smart_Clipped)
             Get alignment of the whole bounding box of contents. */
          }
          values {
-            double horizontal;
-            double vertical;
+            horizontal: double;
+            vertical: double;
          }
       }
       @property padding {
@@ -81,8 +81,8 @@ class Evas.Table (Evas.Smart_Clipped)
             Get padding between cells. */
          }
          values {
-            Evas_Coord horizontal;
-            Evas_Coord vertical;
+            horizontal: Evas_Coord;
+            vertical: Evas_Coord;
          }
       }
       @property mirrored {
@@ -103,7 +103,7 @@ class Evas.Table (Evas.Smart_Clipped)
             @see evas_object_table_mirrored_set() */
          }
          values {
-            bool mirrored; /*@ the mirrored mode to set */
+            mirrored: bool; /*@ the mirrored mode to set */
          }
       }
       @property col_row_size {
@@ -117,8 +117,8 @@ class Evas.Table (Evas.Smart_Clipped)
             accounted proportionally. */
          }
          values {
-            int cols;
-            int rows;
+            cols: int;
+            rows: int;
          }
       }
       @property children {
@@ -141,11 +141,11 @@ class Evas.Table (Evas.Smart_Clipped)
             @note This does not take into account col/row spanning*/
          }
          keys {
-            ushort col;
-            ushort row;
+            col: ushort;
+            row: ushort;
          }
          values {
-            Evas_Object *child;
+            child: Evas_Object *;
          }
       }
       clear {
@@ -153,7 +153,7 @@ class Evas.Table (Evas.Smart_Clipped)
          Faster way to remove all child objects from a table object. */
 
          params {
-            @in bool clear; /*@ if true, it will delete just removed children. */
+            @in clear: bool; /*@ if true, it will delete just removed children. */
          }
       }
       accessor_new @const {
@@ -188,11 +188,11 @@ class Evas.Table (Evas.Smart_Clipped)
          @since 1.1 */
          return: bool;
          params {
-            @in Evas_Object *child; /*@ The child object to add. */
-            @out ushort col; /*@ pointer to store relative-horizontal position to place child. */
-            @out ushort row; /*@ pointer to store relative-vertical position to place child. */
-            @out ushort colspan; /*@ pointer to store how many relative-horizontal position to use for this child. */
-            @out ushort rowspan; /*@ pointer to store how many relative-vertical position to use for this child. */
+            @in child: Evas_Object *; /*@ The child object to add. */
+            @out col: ushort; /*@ pointer to store relative-horizontal position to place child. */
+            @out row: ushort; /*@ pointer to store relative-vertical position to place child. */
+            @out colspan: ushort; /*@ pointer to store how many relative-horizontal position to use for this child. */
+            @out rowspan: ushort; /*@ pointer to store how many relative-vertical position to use for this child. */
          }
       }
       pack {
@@ -209,11 +209,11 @@ class Evas.Table (Evas.Smart_Clipped)
 
          return: bool;
          params {
-            @in Evas_Object *child @nonull; /*@ The child object to add. */
-            @in ushort col; /*@ relative-horizontal position to place child. */
-            @in ushort row; /*@ relative-vertical position to place child. */
-            @in ushort colspan; /*@ how many relative-horizontal position to use for this child. */
-            @in ushort rowspan; /*@ how many relative-vertical position to use for this child. */
+            @in child: Evas_Object * @nonull; /*@ The child object to add. */
+            @in col: ushort; /*@ relative-horizontal position to place child. */
+            @in row: ushort; /*@ relative-vertical position to place child. */
+            @in colspan: ushort; /*@ how many relative-horizontal position to use for this child. */
+            @in rowspan: ushort; /*@ how many relative-vertical position to use for this child. */
          }
       }
       unpack {
@@ -228,7 +228,7 @@ class Evas.Table (Evas.Smart_Clipped)
 
          return: bool;
          params {
-            @in Evas_Object *child @nonull;
+            @in child: Evas_Object * @nonull;
          }
       }
    }

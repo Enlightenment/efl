@@ -20,7 +20,7 @@ interface Efl.Text {
             @see evas_object_text_text_set() */
          }
          values {
-            const(char)* text; /*@ Text string to display on it. */
+            text: const(char)*; /*@ Text string to display on it. */
          }
       }
    }

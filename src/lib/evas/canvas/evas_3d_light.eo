@@ -30,7 +30,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            bool directional; /*@ Whether the light is directional (@c EINA_TRUE), or not (@c EINA_FALSE).*/
+            directional: bool; /*@ Whether the light is directional (@c EINA_TRUE), or not (@c EINA_FALSE).*/
          }
       }
 
@@ -61,7 +61,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            Evas_Real exponent; /*@ Spot exponent value..*/
+            exponent: Evas_Real; /*@ Spot exponent value..*/
          }
       }
 
@@ -88,7 +88,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            Evas_Real cutoff; /*@ Cutoff angle in degree..*/
+            cutoff: Evas_Real; /*@ Cutoff angle in degree..*/
          }
       }
 
@@ -114,7 +114,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            bool enable; /*@ Whether to enable attenuation (@c EINA_TRUE), or not (@c EINA_FALSE)..*/
+            enable: bool; /*@ Whether to enable attenuation (@c EINA_TRUE), or not (@c EINA_FALSE)..*/
          }
       }
 
@@ -127,10 +127,10 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Light
           */
          params {
-           @in Evas_Real r; /*@ Red component of the ambient color between [0.0, 1.0]. */
-           @in Evas_Real g; /*@ Green component of the ambient color between [0.0, 1.0]. */
-           @in Evas_Real b; /*@ Blue component of the ambient color between [0.0, 1.0]. */
-           @in Evas_Real a; /*@ Alpha component of the ambient color between [0.0, 1.0]. */
+           @in r: Evas_Real; /*@ Red component of the ambient color between [0.0, 1.0]. */
+           @in g: Evas_Real; /*@ Green component of the ambient color between [0.0, 1.0]. */
+           @in b: Evas_Real; /*@ Blue component of the ambient color between [0.0, 1.0]. */
+           @in a: Evas_Real; /*@ Alpha component of the ambient color between [0.0, 1.0]. */
          }
       }
       ambient_get @const {
@@ -142,10 +142,10 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Light
           */
          params {
-           @out Evas_Real r; /*@ Red component of the ambient color between [0.0, 1.0]. */
-           @out Evas_Real g; /*@ Green component of the ambient color between [0.0, 1.0]. */
-           @out Evas_Real b; /*@ Blue component of the ambient color between [0.0, 1.0]. */
-           @out Evas_Real a; /*@ Alpha component of the ambient color between [0.0, 1.0]. */
+           @out r: Evas_Real; /*@ Red component of the ambient color between [0.0, 1.0]. */
+           @out g: Evas_Real; /*@ Green component of the ambient color between [0.0, 1.0]. */
+           @out b: Evas_Real; /*@ Blue component of the ambient color between [0.0, 1.0]. */
+           @out a: Evas_Real; /*@ Alpha component of the ambient color between [0.0, 1.0]. */
          }
       }
 
@@ -158,10 +158,10 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Light
           */
          params {
-           @in Evas_Real r; /*@ Red component of the diffuse color between [0.0, 1.0]. */
-           @in Evas_Real g; /*@ Green component of the diffuse color between [0.0, 1.0]. */
-           @in Evas_Real b; /*@ Blue component of the diffuse color between [0.0, 1.0]. */
-           @in Evas_Real a; /*@ Alpha component of the diffuse color between [0.0, 1.0]. */
+           @in r: Evas_Real; /*@ Red component of the diffuse color between [0.0, 1.0]. */
+           @in g: Evas_Real; /*@ Green component of the diffuse color between [0.0, 1.0]. */
+           @in b: Evas_Real; /*@ Blue component of the diffuse color between [0.0, 1.0]. */
+           @in a: Evas_Real; /*@ Alpha component of the diffuse color between [0.0, 1.0]. */
          }
       }
       diffuse_get @const {
@@ -173,10 +173,10 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Light
           */
          params {
-           @out Evas_Real r; /*@ Red component of the diffuse color between [0.0, 1.0]. */
-           @out Evas_Real g; /*@ Green component of the diffuse color between [0.0, 1.0]. */
-           @out Evas_Real b; /*@ Blue component of the diffuse color between [0.0, 1.0]. */
-           @out Evas_Real a; /*@ Alpha component of the diffuse color between [0.0, 1.0]. */
+           @out r: Evas_Real; /*@ Red component of the diffuse color between [0.0, 1.0]. */
+           @out g: Evas_Real; /*@ Green component of the diffuse color between [0.0, 1.0]. */
+           @out b: Evas_Real; /*@ Blue component of the diffuse color between [0.0, 1.0]. */
+           @out a: Evas_Real; /*@ Alpha component of the diffuse color between [0.0, 1.0]. */
          }
       }
 
@@ -189,10 +189,10 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Light
           */
          params {
-           @in Evas_Real r; /*@ Red component of the specular color between [0.0, 1.0]. */
-           @in Evas_Real g; /*@ Green component of the specular color between [0.0, 1.0]. */
-           @in Evas_Real b; /*@ Blue component of the specular color between [0.0, 1.0]. */
-           @in Evas_Real a; /*@ Alpha component of the specular color between [0.0, 1.0]. */
+           @in r: Evas_Real; /*@ Red component of the specular color between [0.0, 1.0]. */
+           @in g: Evas_Real; /*@ Green component of the specular color between [0.0, 1.0]. */
+           @in b: Evas_Real; /*@ Blue component of the specular color between [0.0, 1.0]. */
+           @in a: Evas_Real; /*@ Alpha component of the specular color between [0.0, 1.0]. */
          }
       }
       specular_get @const {
@@ -204,10 +204,10 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Light
           */
          params {
-           @out Evas_Real r; /*@ Red component of the specular color between [0.0, 1.0]. */
-           @out Evas_Real g; /*@ Green component of the specular color between [0.0, 1.0]. */
-           @out Evas_Real b; /*@ Blue component of the specular color between [0.0, 1.0]. */
-           @out Evas_Real a; /*@ Alpha component of the specular color between [0.0, 1.0]. */
+           @out r: Evas_Real; /*@ Red component of the specular color between [0.0, 1.0]. */
+           @out g: Evas_Real; /*@ Green component of the specular color between [0.0, 1.0]. */
+           @out b: Evas_Real; /*@ Blue component of the specular color between [0.0, 1.0]. */
+           @out a: Evas_Real; /*@ Alpha component of the specular color between [0.0, 1.0]. */
          }
       }
 
@@ -228,9 +228,9 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Light
           */
          params {
-            @in Evas_Real constant; /*@ Constant attenuation term..*/
-            @in Evas_Real linear; /*@ Linear attenuation term..*/
-            @in Evas_Real quadratic; /*@ Quadratic attenuation term..*/
+            @in constant: Evas_Real; /*@ Constant attenuation term..*/
+            @in linear: Evas_Real; /*@ Linear attenuation term..*/
+            @in quadratic: Evas_Real; /*@ Quadratic attenuation term..*/
          }
       }
 
@@ -243,9 +243,9 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Light
           */
          params {
-            @out Evas_Real constant; /*@ Constant attenuation term..*/
-            @out Evas_Real linear; /*@ Linear attenuation term..*/
-            @out Evas_Real quadratic; /*@ Quadratic attenuation term..*/
+            @out constant: Evas_Real; /*@ Constant attenuation term..*/
+            @out linear: Evas_Real; /*@ Linear attenuation term..*/
+            @out quadratic: Evas_Real; /*@ Quadratic attenuation term..*/
          }
       }
 
@@ -265,7 +265,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Light
           */
          params {
-           @in const(Evas_Real) *matrix; /*@ Projection Matrix */
+           @in matrix: const(Evas_Real) *; /*@ Projection Matrix */
          }
       }
 
@@ -281,7 +281,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
           @ingroup Evas_3D_Light
          */
          params {
-           @out Evas_Real matrix; /*@ Projection Matrix */
+           @out matrix: Evas_Real; /*@ Projection Matrix */
          }
       }
 
@@ -301,10 +301,10 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
           */
 
          params {
-            Evas_Real fovy; /*@ Field of view angle in Y direction. */
-            Evas_Real aspect; /*@ Aspect ratio.*/
-            Evas_Real dnear; /*@ Distance to near clipping plane. */
-            Evas_Real dfar; /*@ Distance to far clipping plane. */
+            fovy: Evas_Real; /*@ Field of view angle in Y direction. */
+            aspect: Evas_Real; /*@ Aspect ratio.*/
+            dnear: Evas_Real; /*@ Distance to near clipping plane. */
+            dfar: Evas_Real; /*@ Distance to far clipping plane. */
          }
       }
 
@@ -317,12 +317,12 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Light
           */
          params {
-            Evas_Real left; /*@ Left X coordinate of the near clipping plane. */
-            Evas_Real right; /*@ Right X coordinate of the near clipping plane..*/
-            Evas_Real bottom; /*@ Bottom Y coordinate of the near clipping plane. */
-            Evas_Real top; /*@ Top Y coordinate of the near clipping plane */
-            Evas_Real dnear; /*@ Distance to near clipping plane. */
-            Evas_Real dfar; /*@ Distance to far clipping plane. */
+            left: Evas_Real; /*@ Left X coordinate of the near clipping plane. */
+            right: Evas_Real; /*@ Right X coordinate of the near clipping plane..*/
+            bottom: Evas_Real; /*@ Bottom Y coordinate of the near clipping plane. */
+            top: Evas_Real; /*@ Top Y coordinate of the near clipping plane */
+            dnear: Evas_Real; /*@ Distance to near clipping plane. */
+            dfar: Evas_Real; /*@ Distance to far clipping plane. */
          }
       }
       projection_ortho_set {
@@ -334,12 +334,12 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
            @ingroup Evas_3D_Light
           */
          params {
-            Evas_Real left; /*@ Left X coordinate of the near clipping plane. */
-            Evas_Real right; /*@ Right X coordinate of the near clipping plane..*/
-            Evas_Real bottom; /*@ Bottom Y coordinate of the near clipping plane. */
-            Evas_Real top; /*@ Top Y coordinate of the near clipping plane */
-            Evas_Real dnear; /*@ Distance to near clipping plane. */
-            Evas_Real dfar; /*@ Distance to far clipping plane. */
+            left: Evas_Real; /*@ Left X coordinate of the near clipping plane. */
+            right: Evas_Real; /*@ Right X coordinate of the near clipping plane..*/
+            bottom: Evas_Real; /*@ Bottom Y coordinate of the near clipping plane. */
+            top: Evas_Real; /*@ Top Y coordinate of the near clipping plane */
+            dnear: Evas_Real; /*@ Distance to near clipping plane. */
+            dfar: Evas_Real; /*@ Distance to far clipping plane. */
          }
       }
    }

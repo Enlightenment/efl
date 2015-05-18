@@ -25,10 +25,10 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @since 1.1 */
          }
          values {
-            Evas_Coord x; /*@ The left coordinate in output units, usually pixels. */
-            Evas_Coord y; /*@ The top coordinate in output units, usually pixels. */
-            Evas_Coord w; /*@ The width in output units, usually pixels. */
-            Evas_Coord h; /*@ The height in output units, usually pixels. */
+            x: Evas_Coord; /*@ The left coordinate in output units, usually pixels. */
+            y: Evas_Coord; /*@ The top coordinate in output units, usually pixels. */
+            w: Evas_Coord; /*@ The width in output units, usually pixels. */
+            h: Evas_Coord; /*@ The height in output units, usually pixels. */
          }
       }
       @property output_viewport {
@@ -65,10 +65,10 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @endcode */
          }
          values {
-            Evas_Coord x; /*@ The top-left corner x value of the viewport. */
-            Evas_Coord y; /*@ The top-left corner y value of the viewport. */
-            Evas_Coord w; /*@ The width of the viewport.  Must be greater than 0. */
-            Evas_Coord h; /*@ The height of the viewport.  Must be greater than 0. */
+            x: Evas_Coord; /*@ The top-left corner x value of the viewport. */
+            y: Evas_Coord; /*@ The top-left corner y value of the viewport. */
+            w: Evas_Coord; /*@ The width of the viewport.  Must be greater than 0. */
+            h: Evas_Coord; /*@ The height of the viewport.  Must be greater than 0. */
          }
       }
       @property image_cache {
@@ -85,7 +85,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             This function returns the image cache size of canvas in bytes. */
          }
          values {
-            int size; /*@ The cache size. */
+            size: int; /*@ The cache size. */
          }
       }
       @property event_default_flags {
@@ -111,7 +111,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @since 1.2 */
          }
          values {
-            Evas_Event_Flags flags; /*@ The default flags to use */
+            flags: Evas_Event_Flags; /*@ The default flags to use */
          }
       }
       @property output_method {
@@ -136,7 +136,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @ingroup Evas_Output_Method */
          }
          values {
-            int render_method; /*@ The numeric engine value to use. */
+            render_method: int; /*@ The numeric engine value to use. */
          }
       }
       @property font_cache {
@@ -155,7 +155,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @ingroup Evas_Font_Group */
          }
          values {
-            int size; /*@ The size, in bytes. */
+            size: int; /*@ The size, in bytes. */
          }
       }
       @property output_size {
@@ -185,8 +185,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @ingroup Evas_Output_Size */
          }
          values {
-            int w; /*@ The width in output units, usually pixels. */
-            int h; /*@ The height in output units, usually pixels. */
+            w: int; /*@ The width in output units, usually pixels. */
+            h: int; /*@ The height in output units, usually pixels. */
          }
       }
       @property data_attach {
@@ -204,7 +204,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @ingroup Evas_Canvas */
          }
          values {
-            void *data; /*@ The pointer to attach */
+            data: void *; /*@ The pointer to attach */
          }
       }
       @property font_hinting {
@@ -224,7 +224,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @ingroup Evas_Font_Group */
          }
          values {
-            Evas_Font_Hinting_Flags hinting; /*@ The hinting to use, one of #EVAS_FONT_HINTING_NONE, */
+            hinting: Evas_Font_Hinting_Flags; /*@ The hinting to use, one of #EVAS_FONT_HINTING_NONE, */
          }
       }
       @property engine_info {
@@ -262,7 +262,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @ingroup Evas_Output_Method */
          }
          values {
-            Evas_Engine_Info *info; /*@ The pointer to the Engine Info to use */
+            info: Evas_Engine_Info *; /*@ The pointer to the Engine Info to use */
          }
       }
       @property focus {
@@ -366,8 +366,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @endcode */
          }
          values {
-            Evas_Coord x; /*@ The pointer to a Evas_Coord to be filled in */
-            Evas_Coord y; /*@ The pointer to a Evas_Coord to be filled in
+            x: Evas_Coord; /*@ The pointer to a Evas_Coord to be filled in */
+            y: Evas_Coord; /*@ The pointer to a Evas_Coord to be filled in
             @ingroup Evas_Pointer_Group */
          }
       }
@@ -443,8 +443,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @endcode */
          }
          values {
-            int x; /*@ The pointer to an integer to be filled in */
-            int y; /*@ The pointer to an integer to be filled in
+            x: int; /*@ The pointer to an integer to be filled in */
+            y: int; /*@ The pointer to an integer to be filled in
             @ingroup Evas_Pointer_Group */
          }
       }
@@ -494,8 +494,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             return: bool;
          }
          values {
-            int maxw; /*@ Pointer to hold the return value in pixels of the maximum width */
-            int maxh; /*@ Pointer to hold the return value in pixels of the maximum height */
+            maxw: int; /*@ Pointer to hold the return value in pixels of the maximum width */
+            maxh: int; /*@ Pointer to hold the return value in pixels of the maximum height */
          }
       }
       @property object_bottom {
@@ -592,9 +592,9 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          return: list<Evas.Object *> * @warn_unused;
          params {
-            @in Evas_Object *stop; /*@ An Evas Object where to stop searching. */
-            @in int x; /*@ The horizontal coordinate of the position. */
-            @in int y; /*@ The vertical coordinate of the position. */
+            @in stop: Evas_Object *; /*@ An Evas Object where to stop searching. */
+            @in x: int; /*@ The horizontal coordinate of the position. */
+            @in y: int; /*@ The vertical coordinate of the position. */
          }
       }
       event_feed_mouse_wheel {
@@ -606,10 +606,10 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          be treated by the callback function. */
 
          params {
-            @in int direction; /*@ The wheel mouse direction. */
-            @in int z; /*@ How much mouse wheel was scrolled up or down. */
-            @in uint timestamp; /*@ The timestamp of the mouse up event. */
-            @in const(void)* data; /*@ The data for canvas. */
+            @in direction: int; /*@ The wheel mouse direction. */
+            @in z: int; /*@ How much mouse wheel was scrolled up or down. */
+            @in timestamp: uint; /*@ The timestamp of the mouse up event. */
+            @in data: const(void)*; /*@ The data for canvas. */
          }
       }
       key_lock_on {
@@ -626,7 +626,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_key_lock_off */
 
          params {
-            @in const(char)* keyname @nonull; /*@ The name of the lock to enable. */
+            @in keyname: const(char)* @nonull; /*@ The name of the lock to enable. */
          }
       }
       event_feed_key_down {
@@ -638,12 +638,12 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          callback function. */
 
          params {
-            @in const(char)* keyname; /*@ Name of the key */
-            @in const(char)* key; /*@ The key pressed. */
-            @in const(char)* string; /*@ A String */
-            @in const(char)* compose; /*@ The compose string */
-            @in uint timestamp; /*@ Timestamp of the mouse up event */
-            @in const(void)* data; /*@ Data for canvas. */
+            @in keyname: const(char)*; /*@ Name of the key */
+            @in key: const(char)*; /*@ The key pressed. */
+            @in string: const(char)*; /*@ A String */
+            @in compose: const(char)*; /*@ The compose string */
+            @in timestamp: uint; /*@ Timestamp of the mouse up event */
+            @in data: const(void)*; /*@ Data for canvas. */
          }
       }
       key_modifier_mask_get @const {
@@ -668,7 +668,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_object_key_ungrab */
          return: Evas_Modifier_Mask @warn_unused;
          params {
-            @in const(char)* keyname @nonull; /*@ The name of the modifier key to create the mask for. */
+            @in keyname: const(char)* @nonull; /*@ The name of the modifier key to create the mask for. */
          }
       }
       key_modifier_add {
@@ -698,7 +698,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          "Control", "Alt", "Meta", "Hyper", "Super". */
 
          params {
-            @in const(char)* keyname @nonull; /*@ The name of the modifier key to add to the list of
+            @in keyname: const(char)* @nonull; /*@ The name of the modifier key to add to the list of
             Evas modifiers. */
          }
       }
@@ -713,7 +713,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_key_modifier_is_set */
 
          params {
-            @in const(char)* keyname @nonull; /*@ The name of the modifier to disable. */
+            @in keyname: const(char)* @nonull; /*@ The name of the modifier to disable. */
          }
       }
       event_feed_hold {
@@ -723,9 +723,9 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          This function makes the object to stop sending events. */
 
          params {
-            @in int hold; /*@ The hold. */
-            @in uint timestamp; /*@ The timestamp of the mouse up event. */
-            @in const(void)* data; /*@ The data for canvas. */
+            @in hold: int; /*@ The hold. */
+            @in timestamp: uint; /*@ The timestamp of the mouse up event. */
+            @in data: const(void)*; /*@ The data for canvas. */
          }
       }
       event_feed_mouse_move {
@@ -737,10 +737,10 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          to be treated by the callback function. */
 
          params {
-            @in int x; /*@ The horizontal position of the mouse pointer. */
-            @in int y; /*@ The vertical position of the mouse pointer. */
-            @in uint timestamp; /*@ The timestamp of the mouse up event. */
-            @in const(void)* data; /*@ The data for canvas. */
+            @in x: int; /*@ The horizontal position of the mouse pointer. */
+            @in y: int; /*@ The vertical position of the mouse pointer. */
+            @in timestamp: uint; /*@ The timestamp of the mouse up event. */
+            @in data: const(void)*; /*@ The data for canvas. */
          }
       }
       event_feed_key_up {
@@ -752,12 +752,12 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          callback function. */
 
          params {
-            @in const(char)* keyname; /*@ Name of the key */
-            @in const(char)* key; /*@ The key released. */
-            @in const(char)* string; /*@ string */
-            @in const(char)* compose; /*@ compose */
-            @in uint timestamp; /*@ Timestamp of the mouse up event */
-            @in const(void)* data; /*@ Data for canvas. */
+            @in keyname: const(char)*; /*@ Name of the key */
+            @in key: const(char)*; /*@ The key released. */
+            @in string: const(char)*; /*@ string */
+            @in compose: const(char)*; /*@ compose */
+            @in timestamp: uint; /*@ Timestamp of the mouse up event */
+            @in data: const(void)*; /*@ Data for canvas. */
          }
       }
       event_feed_mouse_out {
@@ -769,25 +769,25 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          by the callback function. */
 
          params {
-            @in uint timestamp; /*@ Timestamp of the mouse up event. */
-            @in const(void)* data; /*@ The data for canvas. */
+            @in timestamp: uint; /*@ Timestamp of the mouse up event. */
+            @in data: const(void)*; /*@ The data for canvas. */
          }
       }
       event_input_multi_move {
          /*@ No description supplied by the EAPI. */
          params {
-            @in int d;
-            @in int x;
-            @in int y;
-            @in double rad;
-            @in double radx;
-            @in double rady;
-            @in double pres;
-            @in double ang;
-            @in double fx;
-            @in double fy;
-            @in uint timestamp;
-            @in const(void)* data;
+            @in d: int;
+            @in x: int;
+            @in y: int;
+            @in rad: double;
+            @in radx: double;
+            @in rady: double;
+            @in pres: double;
+            @in ang: double;
+            @in fx: double;
+            @in fy: double;
+            @in timestamp: uint;
+            @in data: const(void)*;
          }
       }
       objects_at_xy_get @const {
@@ -808,48 +808,48 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          object parenting. */
          return: list<Evas.Object *> * @warn_unused;
          params {
-            @in Evas_Coord x; /*@ The horizontal coordinate of the position */
-            @in Evas_Coord y; /*@ The vertical coordinate of the position */
-            @in bool include_pass_events_objects; /*@ Boolean flag to include or not
+            @in x: Evas_Coord; /*@ The horizontal coordinate of the position */
+            @in y: Evas_Coord; /*@ The vertical coordinate of the position */
+            @in include_pass_events_objects: bool; /*@ Boolean flag to include or not
             objects which pass events in this calculation */
-            @in bool include_hidden_objects; /*@ Boolean flag to include or not hidden
+            @in include_hidden_objects: bool; /*@ Boolean flag to include or not hidden
             objects in this calculation */
          }
       }
       event_input_multi_up {
          /*@ No description supplied by the EAPI. */
          params {
-            @in int d;
-            @in int x;
-            @in int y;
-            @in double rad;
-            @in double radx;
-            @in double rady;
-            @in double pres;
-            @in double ang;
-            @in double fx;
-            @in double fy;
-            @in Evas_Button_Flags flags;
-            @in uint timestamp;
-            @in const(void)* data;
+            @in d: int;
+            @in x: int;
+            @in y: int;
+            @in rad: double;
+            @in radx: double;
+            @in rady: double;
+            @in pres: double;
+            @in ang: double;
+            @in fx: double;
+            @in fy: double;
+            @in flags: Evas_Button_Flags;
+            @in timestamp: uint;
+            @in data: const(void)*;
          }
       }
       event_feed_multi_down {
          /*@ No description supplied by the EAPI. */
          params {
-            @in int d;
-            @in int x;
-            @in int y;
-            @in double rad;
-            @in double radx;
-            @in double rady;
-            @in double pres;
-            @in double ang;
-            @in double fx;
-            @in double fy;
-            @in Evas_Button_Flags flags;
-            @in uint timestamp;
-            @in const(void)* data;
+            @in d: int;
+            @in x: int;
+            @in y: int;
+            @in rad: double;
+            @in radx: double;
+            @in rady: double;
+            @in pres: double;
+            @in ang: double;
+            @in fx: double;
+            @in fy: double;
+            @in flags: Evas_Button_Flags;
+            @in timestamp: uint;
+            @in data: const(void)*;
          }
       }
       render_async {
@@ -912,12 +912,12 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_event_feed_mouse_move */
 
          params {
-            @in int x; /*@ The horizontal position of the mouse pointer relative to the 0,0 of
+            @in x: int; /*@ The horizontal position of the mouse pointer relative to the 0,0 of
             the window/surface. */
-            @in int y; /*@ The vertical position of the mouse pointer relative to the 0,0 of
+            @in y: int; /*@ The vertical position of the mouse pointer relative to the 0,0 of
             the window/surface. */
-            @in uint timestamp; /*@ The timestamp of the mouse move event. */
-            @in const(void)* data; /*@ The data for canvas. */
+            @in timestamp: uint; /*@ The timestamp of the mouse move event. */
+            @in data: const(void)*; /*@ The data for canvas. */
          }
       }
       norender {
@@ -961,19 +961,19 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
       event_input_multi_down {
          /*@ No description supplied by the EAPI. */
          params {
-            @in int d;
-            @in int x;
-            @in int y;
-            @in double rad;
-            @in double radx;
-            @in double rady;
-            @in double pres;
-            @in double ang;
-            @in double fx;
-            @in double fy;
-            @in Evas_Button_Flags flags;
-            @in uint timestamp;
-            @in const(void)* data;
+            @in d: int;
+            @in x: int;
+            @in y: int;
+            @in rad: double;
+            @in radx: double;
+            @in rady: double;
+            @in pres: double;
+            @in ang: double;
+            @in fx: double;
+            @in fy: double;
+            @in flags: Evas_Button_Flags;
+            @in timestamp: uint;
+            @in data: const(void)*;
          }
       }
       nochange_pop {
@@ -1003,7 +1003,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_key_lock_on */
 
          params {
-            @in const(char)* keyname @nonull; /*@ The name of the lock to disable. */
+            @in keyname: const(char)* @nonull; /*@ The name of the lock to disable. */
          }
       }
       nochange_push {
@@ -1035,7 +1035,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Font_Group */
          return: bool @warn_unused;
          params {
-            @in Evas_Font_Hinting_Flags hinting; /*@ The hinting to use, one of #EVAS_FONT_HINTING_NONE, */
+            @in hinting: Evas_Font_Hinting_Flags; /*@ The hinting to use, one of #EVAS_FONT_HINTING_NONE, */
          }
       }
       object_top_at_xy_get @const {
@@ -1056,11 +1056,11 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          object parenting. */
          return: Evas_Object * @warn_unused;
          params {
-            @in Evas_Coord x; /*@ The horizontal coordinate of the position */
-            @in Evas_Coord y; /*@ The vertical coordinate of the position */
-            @in bool include_pass_events_objects; /*@ Boolean flag to include or not
+            @in x: Evas_Coord; /*@ The horizontal coordinate of the position */
+            @in y: Evas_Coord; /*@ The vertical coordinate of the position */
+            @in include_pass_events_objects: bool; /*@ Boolean flag to include or not
             objects which pass events in this calculation */
-            @in bool include_hidden_objects; /*@ Boolean flag to include or not hidden
+            @in include_hidden_objects: bool; /*@ Boolean flag to include or not hidden
             objects in this calculation */
          }
       }
@@ -1078,7 +1078,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_key_modifier_is_set */
 
          params {
-            @in const(char)* keyname @nonull; /*@ The name of the modifier to enable. */
+            @in keyname: const(char)* @nonull; /*@ The name of the modifier to enable. */
          }
       }
       event_feed_mouse_up {
@@ -1090,10 +1090,10 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          by the callback function. */
 
          params {
-            @in int b; /*@ The button number. */
-            @in Evas_Button_Flags flags; /*@ evas button flags. */
-            @in uint timestamp; /*@ The timestamp of the mouse up event. */
-            @in const(void)* data; /*@ The data for canvas. */
+            @in b: int; /*@ The button number. */
+            @in flags: Evas_Button_Flags; /*@ evas button flags. */
+            @in timestamp: uint; /*@ The timestamp of the mouse up event. */
+            @in data: const(void)*; /*@ The data for canvas. */
          }
       }
       event_feed_mouse_down {
@@ -1105,10 +1105,10 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          by the callback function. */
 
          params {
-            @in int b; /*@ The button number. */
-            @in Evas_Button_Flags flags; /*@ The evas button flags. */
-            @in uint timestamp; /*@ The timestamp of the mouse down event. */
-            @in const(void)* data; /*@ The data for canvas. */
+            @in b: int; /*@ The button number. */
+            @in flags: Evas_Button_Flags; /*@ The evas button flags. */
+            @in timestamp: uint; /*@ The timestamp of the mouse down event. */
+            @in data: const(void)*; /*@ The data for canvas. */
          }
       }
       event_refeed_event {
@@ -1121,8 +1121,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          cause havoc if not used wisely. Please use it responsibly. */
 
          params {
-            @in void *event_copy; /*@ the event to refeed */
-            @in Evas_Callback_Type event_type; /*@ Event type */
+            @in event_copy: void *; /*@ the event to refeed */
+            @in event_type: Evas_Callback_Type; /*@ Event type */
          }
       }
       font_available_list @const {
@@ -1143,12 +1143,12 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
       objects_in_rectangle_get @const {
          return: list<Evas.Object *> * @warn_unused;
          params {
-            @in Evas_Coord x;
-            @in Evas_Coord y;
-            @in Evas_Coord w;
-            @in Evas_Coord h;
-            @in bool include_pass_events_objects;
-            @in bool include_hidden_objects;
+            @in x: Evas_Coord;
+            @in y: Evas_Coord;
+            @in w: Evas_Coord;
+            @in h: Evas_Coord;
+            @in include_pass_events_objects: bool;
+            @in include_hidden_objects: bool;
          }
       }
       object_name_find @const {
@@ -1165,7 +1165,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Object_Group_Find */
          return: Evas_Object * @warn_unused;
          params {
-            @in const(char)* name; /*@ The given name. */
+            @in name: const(char)*; /*@ The given name. */
          }
       }
       font_path_append {
@@ -1174,7 +1174,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Font_Path_Group */
 
          params {
-            @in const(char)* path @nonull; /*@ The new font path. */
+            @in path: const(char)* @nonull; /*@ The new font path. */
          }
       }
       touch_point_list_nth_id_get {
@@ -1205,7 +1205,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          return: int;
          params {
-            @in uint n; /*@ The number of the touched point (0 being the first). */
+            @in n: uint; /*@ The number of the touched point (0 being the first). */
          }
       }
       font_path_clear {
@@ -1249,9 +1249,9 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_touch_point_list_nth_state_get() */
 
          params {
-            @in uint n; /*@ The number of the touched point (0 being the first). */
-            @out Evas_Coord x; /*@ The pointer to a Evas_Coord to be filled in. */
-            @out Evas_Coord y; /*@ The pointer to a Evas_Coord to be filled in. */
+            @in n: uint; /*@ The number of the touched point (0 being the first). */
+            @out x: Evas_Coord; /*@ The pointer to a Evas_Coord to be filled in. */
+            @out y: Evas_Coord; /*@ The pointer to a Evas_Coord to be filled in. */
          }
       }
       key_lock_del {
@@ -1265,7 +1265,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_key_lock_off */
 
          params {
-            @in const(char)* keyname @nonull; /*@ The name of the key to remove from the locks list. */
+            @in keyname: const(char)* @nonull; /*@ The name of the key to remove from the locks list. */
          }
       }
       damage_rectangle_add {
@@ -1280,10 +1280,10 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Canvas */
 
          params {
-            @in int x; /*@ The rectangle's left position. */
-            @in int y; /*@ The rectangle's top position. */
-            @in int w; /*@ The rectangle's width. */
-            @in int h; /*@ The rectangle's height. */
+            @in x: int; /*@ The rectangle's left position. */
+            @in y: int; /*@ The rectangle's top position. */
+            @in w: int; /*@ The rectangle's width. */
+            @in h: int; /*@ The rectangle's height. */
          }
       }
       sync {
@@ -1325,24 +1325,24 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @endcode */
          return: int @warn_unused;
          params {
-            @in Evas_Coord x; /*@ The canvas x co-ordinate */
+            @in x: Evas_Coord; /*@ The canvas x co-ordinate */
          }
       }
       event_feed_multi_move {
          /*@ No description supplied by the EAPI. */
          params {
-            @in int d;
-            @in int x;
-            @in int y;
-            @in double rad;
-            @in double radx;
-            @in double rady;
-            @in double pres;
-            @in double ang;
-            @in double fx;
-            @in double fy;
-            @in uint timestamp;
-            @in const(void)* data;
+            @in d: int;
+            @in x: int;
+            @in y: int;
+            @in rad: double;
+            @in radx: double;
+            @in rady: double;
+            @in pres: double;
+            @in ang: double;
+            @in fx: double;
+            @in fy: double;
+            @in timestamp: uint;
+            @in data: const(void)*;
          }
       }
       render_updates {
@@ -1406,7 +1406,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @endcode */
          return: Evas_Coord @warn_unused;
          params {
-            @in int y; /*@ The screen/output y co-ordinate */
+            @in y: int; /*@ The screen/output y co-ordinate */
          }
       }
       key_modifier_del {
@@ -1421,7 +1421,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_key_modifier_is_set */
 
          params {
-            @in const(char)* keyname @nonull; /*@ The name of the key to remove from the modifiers list. */
+            @in keyname: const(char)* @nonull; /*@ The name of the key to remove from the modifiers list. */
          }
       }
       touch_point_list_nth_state_get {
@@ -1454,7 +1454,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          return: Evas_Touch_Point_State;
          params {
-            @in uint n; /*@ The number of the touched point (0 being the first). */
+            @in n: uint; /*@ The number of the touched point (0 being the first). */
          }
       }
       focus_in {
@@ -1516,10 +1516,10 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Canvas */
 
          params {
-            @in int x; /*@ The rectangle's top left corner's horizontal coordinate. */
-            @in int y; /*@ The rectangle's top left corner's vertical coordinate */
-            @in int w; /*@ The rectangle's width. */
-            @in int h; /*@ The rectangle's height. */
+            @in x: int; /*@ The rectangle's top left corner's horizontal coordinate. */
+            @in y: int; /*@ The rectangle's top left corner's vertical coordinate */
+            @in w: int; /*@ The rectangle's width. */
+            @in h: int; /*@ The rectangle's height. */
          }
       }
       render_dump {
@@ -1545,8 +1545,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          by the callback function. */
 
          params {
-            @in uint timestamp; /*@ The timestamp of the mouse up event. */
-            @in const(void)* data; /*@ The data for canvas. */
+            @in timestamp: uint; /*@ The timestamp of the mouse up event. */
+            @in data: const(void)*; /*@ The data for canvas. */
          }
       }
       object_top_in_rectangle_get @const {
@@ -1568,15 +1568,15 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          object parenting. */
          return: Evas_Object * @warn_unused;
          params {
-            @in Evas_Coord x; /*@ The top left corner's horizontal coordinate for the
+            @in x: Evas_Coord; /*@ The top left corner's horizontal coordinate for the
             rectangular region */
-            @in Evas_Coord y; /*@ The top left corner's vertical coordinate for the
+            @in y: Evas_Coord; /*@ The top left corner's vertical coordinate for the
             rectangular region */
-            @in Evas_Coord w; /*@ The width of the rectangular region */
-            @in Evas_Coord h; /*@ The height of the rectangular region */
-            @in bool include_pass_events_objects; /*@ Boolean flag to include or not
+            @in w: Evas_Coord; /*@ The width of the rectangular region */
+            @in h: Evas_Coord; /*@ The height of the rectangular region */
+            @in include_pass_events_objects: bool; /*@ Boolean flag to include or not
             objects which pass events in this calculation */
-            @in bool include_hidden_objects; /*@ Boolean flag to include or not hidden
+            @in include_hidden_objects: bool; /*@ Boolean flag to include or not hidden
             objects in this calculation */
          }
       }
@@ -1590,19 +1590,19 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
       event_feed_multi_up {
          /*@ No description supplied by the EAPI. */
          params {
-            @in int d;
-            @in int x;
-            @in int y;
-            @in double rad;
-            @in double radx;
-            @in double rady;
-            @in double pres;
-            @in double ang;
-            @in double fx;
-            @in double fy;
-            @in Evas_Button_Flags flags;
-            @in uint timestamp;
-            @in const(void)* data;
+            @in d: int;
+            @in x: int;
+            @in y: int;
+            @in rad: double;
+            @in radx: double;
+            @in rady: double;
+            @in pres: double;
+            @in ang: double;
+            @in fx: double;
+            @in fy: double;
+            @in flags: Evas_Button_Flags;
+            @in timestamp: uint;
+            @in data: const(void)*;
          }
       }
       font_path_prepend {
@@ -1611,7 +1611,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Font_Path_Group */
 
          params {
-            @in const(char)* path @nonull; /*@ The new font path. */
+            @in path: const(char)* @nonull; /*@ The new font path. */
          }
       }
       obscured_clear {
@@ -1645,8 +1645,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          mouse cancel event happens. */
 
          params {
-            @in uint timestamp; /*@ The timestamp of the mouse up event. */
-            @in const(void)* data; /*@ The data for canvas. */
+            @in timestamp: uint; /*@ The timestamp of the mouse up event. */
+            @in data: const(void)*; /*@ The data for canvas. */
          }
       }
       coord_screen_x_to_world @const {
@@ -1671,7 +1671,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @endcode */
          return: Evas_Coord @warn_unused;
          params {
-            @in int x; /*@ The screen/output x co-ordinate */
+            @in x: int; /*@ The screen/output x co-ordinate */
          }
       }
       key_lock_add {
@@ -1702,7 +1702,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          "Num_Lock", "Scroll_Lock". */
 
          params {
-            @in const(char)* keyname @nonull; /*@ The name of the key to add to the locks list. */
+            @in keyname: const(char)* @nonull; /*@ The name of the key to add to the locks list. */
          }
       }
       render_idle_flush {
@@ -1738,7 +1738,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @endcode */
          return: int @warn_unused;
          params {
-            @in Evas_Coord y; /*@ The canvas y co-ordinate */
+            @in y: Evas_Coord; /*@ The canvas y co-ordinate */
          }
       }
       event_feed_key_down_with_keycode {
@@ -1752,13 +1752,13 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @since 1.10 */
 
          params {
-            @in const(char)* keyname; /*@ Name of the key */
-            @in const(char)* key; /*@ The key pressed. */
-            @in const(char)* string; /*@ A String */
-            @in const(char)* compose; /*@ The compose string */
-            @in uint timestamp; /*@ Timestamp of the mouse up event */
-            @in const(void)* data; /*@ Data for canvas. */
-            @in uint keycode; /*@ Key scan code numeric value for canvas. */
+            @in keyname: const(char)*; /*@ Name of the key */
+            @in key: const(char)*; /*@ The key pressed. */
+            @in string: const(char)*; /*@ A String */
+            @in compose: const(char)*; /*@ The compose string */
+            @in timestamp: uint; /*@ Timestamp of the mouse up event */
+            @in data: const(void)*; /*@ Data for canvas. */
+            @in keycode: uint; /*@ Key scan code numeric value for canvas. */
          }
       }
       event_feed_key_up_with_keycode {
@@ -1772,13 +1772,13 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @since 1.10 */
 
          params {
-            @in const(char)* keyname; /*@ Name of the key */
-            @in const(char)* key; /*@ The key released. */
-            @in const(char)* string; /*@ string */
-            @in const(char)* compose; /*@ compose */
-            @in uint timestamp; /*@ Timestamp of the mouse up event */
-            @in const(void)* data; /*@ Data for canvas. */
-            @in uint keycode; /*@ Key scan code numeric value for canvas. */
+            @in keyname: const(char)*; /*@ Name of the key */
+            @in key: const(char)*; /*@ The key released. */
+            @in string: const(char)*; /*@ string */
+            @in compose: const(char)*; /*@ compose */
+            @in timestamp: uint; /*@ Timestamp of the mouse up event */
+            @in data: const(void)*; /*@ Data for canvas. */
+            @in keycode: uint; /*@ Key scan code numeric value for canvas. */
          }
       }
       event_feed_axis_update {
@@ -1792,12 +1792,12 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @since 1.13 */
 
          params {
-            @in uint timestamp; /*@ Timestamp of the axis event */
-            @in int device; /*@ System-provided device identifier */
-            @in int toolid; /*@ Type of tool currently being used */
-            @in int naxes; /*@ Number of elements in the \p axis array */
-            @in const(Evas_Axis)* axis; /*@ Array containing the current value of all updated axes */
-            @in const(void)* data; /*@ Data for canvas. */
+            @in timestamp: uint; /*@ Timestamp of the axis event */
+            @in device: int; /*@ System-provided device identifier */
+            @in toolid: int; /*@ Type of tool currently being used */
+            @in naxes: int; /*@ Number of elements in the \p axis array */
+            @in axis: const(Evas_Axis)*; /*@ Array containing the current value of all updated axes */
+            @in data: const(void)*; /*@ Data for canvas. */
          }
       }
    }

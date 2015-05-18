@@ -8,4 +8,3 @@ interface Evas.Scrollable_Interface (Evas.Signal_Interface)
       scroll,drag,stop;
    }
 }
-

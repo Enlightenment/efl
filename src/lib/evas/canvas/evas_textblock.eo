@@ -19,7 +19,7 @@ class Evas.Textblock (Evas.Object)
             @return the markup text of the object. */
          }
          values {
-            const(char)* text; /*@ the markup text to use. */
+            text: const(char)*; /*@ the markup text to use. */
          }
       }
       @property valign {
@@ -42,7 +42,7 @@ class Evas.Textblock (Evas.Object)
             @since 1.1 */
          }
          values {
-            double align; /*@ A value between @c 0.0 and @c 1.0. */
+            align: double; /*@ A value between @c 0.0 and @c 1.0. */
          }
       }
       @property bidi_delimiters {
@@ -69,7 +69,7 @@ class Evas.Textblock (Evas.Object)
             @since 1.1 */
          }
          values {
-            const(char)* delim; /*@ A null terminated string of delimiters, e.g ",|". */
+            delim: const(char)*; /*@ A null terminated string of delimiters, e.g ",|". */
          }
       }
       @property replace_char {
@@ -78,7 +78,7 @@ class Evas.Textblock (Evas.Object)
             @brief Set the "replacement character" to use for the given textblock object. */
          }
          values {
-            const(char)* ch; /*@ The charset name. */
+            ch: const(char)*; /*@ The charset name. */
          }
       }
       @property legacy_newline {
@@ -98,7 +98,7 @@ class Evas.Textblock (Evas.Object)
             @since 1.1 */
          }
          values {
-            bool mode; /*@ @c EINA_TRUE for legacy mode, @c EINA_FALSE otherwise. */
+            mode: bool; /*@ @c EINA_TRUE for legacy mode, @c EINA_FALSE otherwise. */
          }
       }
       @property style {
@@ -113,7 +113,7 @@ class Evas.Textblock (Evas.Object)
             @return the style of the object. */
          }
          values {
-            const(Evas_Textblock_Style)* ts; /*@ the style to set. */
+            ts: const(Evas_Textblock_Style)*; /*@ the style to set. */
          }
       }
       @property node_format_first {
@@ -122,7 +122,7 @@ class Evas.Textblock (Evas.Object)
             legacy: evas_textblock_node_format_first_get;
          }
          values {
-            const(Evas_Object_Textblock_Node_Format)* format;
+            format: const(Evas_Object_Textblock_Node_Format)*;
          }
       }
       @property size_formatted {
@@ -146,8 +146,8 @@ class Evas.Textblock (Evas.Object)
             @see evas_object_textblock_size_native_get */
          }
          values {
-            Evas_Coord w; /*@ the width of the object. */
-            Evas_Coord h; /*@ the height of the object */
+            w: Evas_Coord; /*@ the width of the object. */
+            h: Evas_Coord; /*@ the height of the object */
          }
       }
       @property node_format_last {
@@ -156,7 +156,7 @@ class Evas.Textblock (Evas.Object)
             legacy: evas_textblock_node_format_last_get;
          }
          values {
-            const(Evas_Object_Textblock_Node_Format)* format;
+            format: const(Evas_Object_Textblock_Node_Format)*;
          }
       }
       @property cursor {
@@ -187,8 +187,8 @@ class Evas.Textblock (Evas.Object)
             @return Returns no value. */
          }
          values {
-            Evas_Coord w; /*@ the width returned */
-            Evas_Coord h; /*@ the height returned */
+            w: Evas_Coord; /*@ the width returned */
+            h: Evas_Coord; /*@ the height returned */
          }
       }
       @property style_insets {
@@ -196,10 +196,10 @@ class Evas.Textblock (Evas.Object)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            Evas_Coord l;
-            Evas_Coord r;
-            Evas_Coord t;
-            Evas_Coord b;
+            l: Evas_Coord;
+            r: Evas_Coord;
+            t: Evas_Coord;
+            b: Evas_Coord;
          }
       }
       line_number_geometry_get @const {
@@ -209,11 +209,11 @@ class Evas.Textblock (Evas.Object)
          @return @c EINA_TRUE on success, @c EINA_FALSE otherwise. */
          return: bool;
          params {
-            @in int line; /*@ the line number. */
-            @out Evas_Coord cx; /*@ x coord of the line. */
-            @out Evas_Coord cy; /*@ y coord of the line. */
-            @out Evas_Coord cw; /*@ w coord of the line. */
-            @out Evas_Coord ch; /*@ h coord of the line. */
+            @in line: int; /*@ the line number. */
+            @out cx: Evas_Coord; /*@ x coord of the line. */
+            @out cy: Evas_Coord; /*@ y coord of the line. */
+            @out cw: Evas_Coord; /*@ w coord of the line. */
+            @out ch: Evas_Coord; /*@ h coord of the line. */
          }
       }
       replace_char_get {
@@ -249,7 +249,7 @@ class Evas.Textblock (Evas.Object)
          legacy: evas_textblock_node_format_list_get;
          return: const(list<Evas.Object*>)*;
          params {
-            @in const(char)* anchor;
+            @in anchor: const(char)*;
          }
       }
       style_user_peek @const {
@@ -265,7 +265,7 @@ class Evas.Textblock (Evas.Object)
          /*@ Remove a format node and its match. */
          legacy: evas_textblock_node_format_remove_pair;
          params {
-            @in Evas_Object_Textblock_Node_Format *n;
+            @in n: Evas_Object_Textblock_Node_Format *;
          }
       }
       clear {
@@ -290,7 +290,7 @@ class Evas.Textblock (Evas.Object)
          @since 1.2 */
 
          params {
-            @in Evas_Textblock_Style *ts; /*@ the style to set. */
+            @in ts: Evas_Textblock_Style *; /*@ the style to set. */
          }
       }
    }

@@ -15,8 +15,8 @@ interface Efl.Gfx.Gradient.Base
             */
          }
          values {
-            const(Efl_Gfx_Gradient_Stop) *colors; /*@ color stops list*/
-            uint length; /*@ length of the list */
+            colors: const(Efl_Gfx_Gradient_Stop) *; /*@ color stops list*/
+            length: uint; /*@ length of the list */
          }
       }
       @property spread {
@@ -31,7 +31,7 @@ interface Efl.Gfx.Gradient.Base
             */
          }
          values {
-            Efl_Gfx_Gradient_Spread s; /*@ spread type to be used */
+            s: Efl_Gfx_Gradient_Spread; /*@ spread type to be used */
          }
       }
    }

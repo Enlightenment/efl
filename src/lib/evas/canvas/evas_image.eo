@@ -24,7 +24,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @see evas_object_image_load_dpi_set() for more details */
          }
          values {
-            double dpi; /*@ The new DPI resolution. */
+            dpi: double; /*@ The new DPI resolution. */
          }
       }
 
@@ -49,7 +49,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @since 1.8 */
          }
          values {
-            bool source_clip; /*@ whether @p obj is clipped by the source clipper.
+            source_clip: bool; /*@ whether @p obj is clipped by the source clipper.
             (@c EINA_TRUE) or not (@c EINA_FALSE) */
          }
       }
@@ -88,7 +88,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @see evas_object_image_source_set() for more details */
          }
          values {
-            Evas_Object *src; /*@ Source object to use for the proxy. */
+            src: Evas_Object *; /*@ Source object to use for the proxy. */
          }
       }
       @property filled {
@@ -116,7 +116,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @see evas_object_image_filled_set() for more information */
          }
          values {
-            bool filled; /*@ @c EINA_TRUE, to make the fill property follow
+            filled: bool; /*@ @c EINA_TRUE, to make the fill property follow
             object size or @c EINA_FALSE, otherwise. */
          }
       }
@@ -147,7 +147,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @see evas_object_image_content_hint_set() */
          }
          values {
-            Evas_Image_Content_Hint hint; /*@ The content hint value, one of the
+            hint: Evas_Image_Content_Hint; /*@ The content hint value, one of the
             #Evas_Image_Content_Hint ones. */
          }
       }
@@ -177,10 +177,10 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @see evas_object_image_load_region_get() */
          }
          values {
-            int x; /*@ X-offset of the region to be loaded. */
-            int y; /*@ Y-offset of the region to be loaded. */
-            int w; /*@ Width of the region to be loaded. */
-            int h; /*@ Height of the region to be loaded. */
+            x: int; /*@ X-offset of the region to be loaded. */
+            y: int; /*@ Y-offset of the region to be loaded. */
+            w: int; /*@ Width of the region to be loaded. */
+            h: int; /*@ Height of the region to be loaded. */
          }
       }
       @property alpha {
@@ -210,7 +210,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             See @ref evas_object_image_alpha_set() for more details. */
          }
          values {
-            bool alpha; /*@ Whether to use alpha channel (@c EINA_TRUE) data
+            alpha: bool; /*@ Whether to use alpha channel (@c EINA_TRUE) data
             or not (@c EINA_FALSE). */
          }
       }
@@ -263,10 +263,10 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             See @ref evas_object_image_border_set() for more details. */
          }
          values {
-            int l; /*@ The border's left width. */
-            int r; /*@ The border's right width. */
-            int t; /*@ The border's top width. */
-            int b; /*@ The border's bottom width. */
+            l: int; /*@ The border's left width. */
+            r: int; /*@ The border's right width. */
+            t: int; /*@ The border's top width. */
+            b: int; /*@ The border's bottom width. */
          }
       }
       @property border_scale {
@@ -289,7 +289,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @see evas_object_image_border_scale_set() */
          }
          values {
-            double scale; /*@ The scale factor (default is @c 1.0 - i.e. no scaling) */
+            scale: double; /*@ The scale factor (default is @c 1.0 - i.e. no scaling) */
          }
       }
       @property pixels_dirty {
@@ -310,7 +310,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @return Whether the image is dirty. */
          }
          values {
-            bool dirty; /*@ Whether the image is dirty. */
+            dirty: bool; /*@ Whether the image is dirty. */
          }
       }
       @property video_surface {
@@ -330,7 +330,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             This function returns the video surface linked to a given canvas image. */
          }
          values {
-            Evas_Video_Surface *surf @const_get; /*@ The new video surface.
+            surf: Evas_Video_Surface * @const_get; /*@ The new video surface.
             @since 1.1 */
          }
       }
@@ -342,7 +342,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             /*@ Get the video surface capabilities to a given image of the canvas */
          }
          values {
-            uint caps; /*@ in */
+            caps: uint; /*@ in */
          }
       }
       @property load_orientation {
@@ -359,7 +359,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @since 1.1 */
          }
          values {
-            bool enable; /*@ @c EINA_TRUE means that it should honor the orientation information */
+            enable: bool; /*@ @c EINA_TRUE means that it should honor the orientation information */
          }
       }
       @property border_center_fill {
@@ -389,7 +389,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             See @ref evas_object_image_fill_set() for more details. */
          }
          values {
-            Evas_Border_Fill_Mode fill; /*@ Fill mode of the center region of @p obj (a value in
+            fill: Evas_Border_Fill_Mode; /*@ Fill mode of the center region of @p obj (a value in
             #Evas_Border_Fill_Mode). */
          }
       }
@@ -431,7 +431,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @since 1.8 */
          }
          values {
-            bool visible; /*@ @c EINA_TRUE is source object to be shown, @c EINA_FALSE
+            visible: bool; /*@ @c EINA_TRUE is source object to be shown, @c EINA_FALSE
             otherwise. */
          }
       }
@@ -453,7 +453,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             This function returns the native surface of a given canvas image. */
          }
          values {
-            Evas_Native_Surface *surf/* @const_get*/ @nonull; /*@ The new native surface. */
+            surf: Evas_Native_Surface */* @const_get*/ @nonull; /*@ The new native surface. */
          }
       }
       @property load_scale_down {
@@ -475,7 +475,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @see evas_object_image_load_scale_down_set() for more details */
          }
          values {
-            int scale_down; /*@ The scale down factor. */
+            scale_down: int; /*@ The scale down factor. */
          }
       }
       @property scale_hint {
@@ -502,7 +502,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @see evas_object_image_scale_hint_set() for more details. */
          }
          values {
-            Evas_Image_Scale_Hint hint; /*@ The scale hint, a value in
+            hint: Evas_Image_Scale_Hint; /*@ The scale hint, a value in
             #Evas_Image_Scale_Hint. */
          }
       }
@@ -538,7 +538,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @since 1.8 */
          }
          values {
-            bool source; /*@ whether @p obj is to pass events (@c EINA_TRUE) or not
+            source: bool; /*@ whether @p obj is to pass events (@c EINA_TRUE) or not
             (@c EINA_FALSE) */
          }
       }
@@ -558,7 +558,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             This function returns the colorspace of given canvas image. */
          }
          values {
-            Evas_Colorspace cspace; /*@ The new color space. */
+            cspace: Evas_Colorspace; /*@ The new color space. */
          }
       }
       @property pixels_get_callback {
@@ -570,8 +570,8 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             pixels from a image of the canvas. */
          }
          values {
-            Evas_Object_Image_Pixels_Get_Cb func @nonull; /*@ The callback function. */
-            void *data; /*@ The data pointer to be passed to @a func. */
+            func: Evas_Object_Image_Pixels_Get_Cb @nonull; /*@ The callback function. */
+            data: void *; /*@ The data pointer to be passed to @a func. */
          }
       }
       @property data_copy {
@@ -596,7 +596,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             See @ref evas_object_image_data_get() for more details. */
          }
          values {
-            void *data; /*@ The raw data to replace. */
+            data: void *; /*@ The raw data to replace. */
          }
       }
       @property animated_frame {
@@ -616,7 +616,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @since 1.1 */
          }
          values {
-            int frame_index; /*@ The index of current frame */
+            frame_index: int; /*@ The index of current frame */
          }
       }
       @property region_support {
@@ -749,7 +749,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
 	    legacy: null;
          }
          values {
-            Evas_3D_Scene *scene; /*@ 3D scene on an image object. */
+            scene: Evas_3D_Scene *; /*@ 3D scene on an image object. */
          }
       }
       @property filter_program {
@@ -769,7 +769,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             legacy: null;
          }
          values {
-            const(char)* program; /*@ The program code, as defined
+            program: const(char)*; /*@ The program code, as defined
               by the @ref evasfiltersref "Evas filters script language".
               Pass NULL to remove the former program and switch back
               to the standard text effect
@@ -790,8 +790,8 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             legacy: null;
          }
          values {
-            const(char)* name; /*@ Object name as used in the program code */
-            Eo* eobj; /*@ Eo object to use through proxy rendering */
+            name: const(char)*; /*@ Object name as used in the program code */
+            eobj: Eo*; /*@ Eo object to use through proxy rendering */
          }
       }
       @property filter_padding {
@@ -801,10 +801,10 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             legacy: null;
          }
          values {
-            int l; /*@ Left padding in pixels */
-            int r; /*@ Right padding in pixels */
-            int t; /*@ Top padding in pixels */
-            int b; /*@ Bottom padding in pixels */
+            l: int; /*@ Left padding in pixels */
+            r: int; /*@ Right padding in pixels */
+            t: int; /*@ Top padding in pixels */
+            b: int; /*@ Bottom padding in pixels */
          }
       }
       @property orient {
@@ -831,7 +831,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @since 1.14*/
          }
          values {
-            Evas_Image_Orient orient; /*@ The image orientation @ref Evas_Image_Orient
+            orient: Evas_Image_Orient; /*@ The image orientation @ref Evas_Image_Orient
             Default is #EVAS_IMAGE_ORIENT_NONE. */
          }
       }
@@ -847,10 +847,10 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
          object to be updated (redrawn) at the next rendering cycle. */
 
          params {
-            @in int x; /*@ X-offset of the region to be updated. */
-            @in int y; /*@ Y-offset of the region to be updated. */
-            @in int w; /*@ Width of the region to be updated. */
-            @in int h; /*@ Height of the region to be updated. */
+            @in x: int; /*@ X-offset of the region to be updated. */
+            @in y: int; /*@ Y-offset of the region to be updated. */
+            @in w: int; /*@ Width of the region to be updated. */
+            @in h: int; /*@ Height of the region to be updated. */
          }
       }
       animated_frame_duration_get @const {
@@ -873,8 +873,8 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
          @since 1.1 */
          return: double;
          params {
-            @in int start_frame; /*@ The first frame */
-            @in int frame_num; /*@ Number of frames in the sequence */
+            @in start_frame: int; /*@ The first frame */
+            @in frame_num: int; /*@ Number of frames in the sequence */
          }
       }
       data_set {
@@ -891,7 +891,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
          @see evas_object_image_data_get() */
 
          params {
-            @in void *data; /*@ The raw data, or @c NULL. */
+            @in data: void *; /*@ The raw data, or @c NULL. */
          }
       }
       data_get @const {
@@ -922,7 +922,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
          @see evas_object_image_data_set() */
          return: void * @warn_unused;
          params {
-            @in bool for_writing; /*@ Whether the data being retrieved will be
+            @in for_writing: bool; /*@ Whether the data being retrieved will be
             modified (@c EINA_TRUE) or not (@c EINA_FALSE). */
          }
       }
@@ -947,7 +947,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
 
          return: void * @warn_unused;
          params {
-            @in Evas_Colorspace to_cspace; /*@ The colorspace to which the image raw data will be converted. */
+            @in to_cspace: Evas_Colorspace; /*@ The colorspace to which the image raw data will be converted. */
          }
       }
       pixels_import {
@@ -958,7 +958,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
 
          return: bool;
          params {
-            @in Evas_Pixel_Import_Source *pixels @nonull; /*@ The pixel's source to be imported. */
+            @in pixels: Evas_Pixel_Import_Source * @nonull; /*@ The pixel's source to be imported. */
          }
       }
       reload {
