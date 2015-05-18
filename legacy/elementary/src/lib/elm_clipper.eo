@@ -30,36 +30,6 @@ class Elm.Clipper (Elm.Container)
             Evas_Object *clip;
          }
       }
-      @property region {
-         set {
-            /*@
-            @brief Set the region of the clipper
-
-            Sets the position and the size of the clipper on clipper object
-
-            @note The value should be normalized. (0 ~ 1)
-
-            @since 1.15
-
-            @ingroup Clipper */
-         }
-         get {
-            /*@
-            @brief Get the region of the clipper
-
-            @see elm_clipper_region_align_set()
-
-            @since 1.15
-
-            @ingroup Clipper */
-         }
-         values {
-            double x1; /*@ left edge of the clipper on elm_clipper widget */
-            double y1; /*@ top edge of the clipper on elm_clipper widget */
-            double x2; /*@ right edge of the clipper on elm_clipper widget */
-            double y2; /*@ bottom edge of the clipper on elm_clipper widget */
-         }
-      }
    }
    implements {
       class.constructor;

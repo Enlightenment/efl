@@ -64,6 +64,7 @@ _elm_clipper_clip_get(Eo *obj EINA_UNUSED, Elm_Clipper_Data *sd)
    return sd->clipper;
 }
 
+#if 0
 EOLIAN static void
 _elm_clipper_region_set(Eo *obj, Elm_Clipper_Data *sd, double x1, double y1, double x2, double y2)
 {
@@ -89,6 +90,7 @@ _elm_clipper_region_get(Eo *obj EINA_UNUSED, Elm_Clipper_Data *sd, double *x1, d
    if (x2) *x2 = sd->region_x2;
    if (y2) *y2 = sd->region_y2;
 }
+#endif
 
 EOLIAN static Eina_Bool
 _elm_clipper_elm_widget_sub_object_del(Eo *obj, Elm_Clipper_Data *sd, Evas_Object *sobj)
