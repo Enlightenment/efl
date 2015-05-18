@@ -98,7 +98,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     selected: Eina_Bool; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
+                     selected: bool; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
                 }
            }
            @property expanded {
@@ -134,7 +134,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     expanded: Eina_Bool; /*@ The expanded state (@c EINA_TRUE expanded, @c EINA_FALSE not expanded). */
+                     expanded: bool; /*@ The expanded state (@c EINA_TRUE expanded, @c EINA_FALSE not expanded). */
                 }
            }
            @property expanded_depth {
@@ -225,7 +225,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     flip: Eina_Bool; /*@ The flip mode */
+                     flip: bool; /*@ The flip mode */
                 }
            }
            @property select_mode {
@@ -483,7 +483,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
                  */
                 params {
                      @in decorate_it_type: const(char)*; /*@ Mode name */
-                     @in decorate_it_set: Eina_Bool; /*@ Boolean to define set or unset mode. */
+                     @in decorate_it_set: bool; /*@ Boolean to define set or unset mode. */
                 }
            }
       }

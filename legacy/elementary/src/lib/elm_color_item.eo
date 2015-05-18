@@ -42,7 +42,7 @@ class Elm.Color_Item(Elm.Widget_Item)
                  */
              }
              values {
-                 selected: Eina_Bool; /*@ @c EINA_TRUE if selected @c EINA_FALSE otherwise */
+                 selected: bool; /*@ @c EINA_TRUE if selected @c EINA_FALSE otherwise */
              }
         }
    }

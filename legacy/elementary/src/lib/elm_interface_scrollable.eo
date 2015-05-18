@@ -328,8 +328,8 @@ mixin Elm_Interface_Scrollable(Evas.Scrollable_Interface, Evas.Object_Smart)
              */
          }
          values {
-            loop_h: Eina_Bool; /*@ The scrolling horizontal loop */
-            loop_v: Eina_Bool; /*@ The scrolling vertical loop */
+            loop_h: bool; /*@ The scrolling horizontal loop */
+            loop_v: bool; /*@ The scrolling vertical loop */
          }
       }
       @property scroll_up_cb {

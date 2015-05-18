@@ -24,7 +24,7 @@ class Elm.Widget_Item(Eo.Base, Elm_Interface_Atspi_Accessible,
                      return: bool; /*@ @c EINA_FALSE on failure, @c EINA_TRUE on success */
                 }
                 values {
-                     disable: Eina_Bool; /*@ If @c EINA_TRUE, size restrictions are disabled */
+                     disable: bool; /*@ If @c EINA_TRUE, size restrictions are disabled */
                 }
            }
            @property tooltip_style {

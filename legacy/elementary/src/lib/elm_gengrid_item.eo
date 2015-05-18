@@ -66,7 +66,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     selected: Eina_Bool; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
+                     selected: bool; /*@ the selected state (@c EINA_TRUE selected, @c EINA_FALSE not selected) */
                 }
            }
            @property item_class {

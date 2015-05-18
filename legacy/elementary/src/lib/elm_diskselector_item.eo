@@ -81,7 +81,7 @@ class Elm.Diskselector_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     selected: Eina_Bool; /*@ The selected state */
+                     selected: bool; /*@ The selected state */
                 }
            }
            /*      init { FIXME
