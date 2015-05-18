@@ -3014,13 +3014,7 @@ _access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
    txt = elm_widget_access_info_get(obj);
 
    if (!txt)
-     {
-        char *ret, *ret2;
-        ret = _elm_util_mkup_to_text(elm_entry_entry_get(obj));
-        ret2 = strdup(ret);
-        free(ret);
-        return ret2;
-     }
+     return _elm_util_mkup_to_text(elm_entry_entry_get(obj));
    else return strdup(txt);
 }
 
