@@ -47,7 +47,7 @@ table.edc \
 text.edc \
 toggle_using_filter.edc \
 box_example.edc \
-embryo_tween_anim.edc \
+embryo_tween_anim.edc
 
 DIST_EDCS = $(EDCS)
 
