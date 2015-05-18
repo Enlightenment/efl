@@ -5,6 +5,7 @@
 #include "elm_code_suite.h"
 
 #include "widget/elm_code_widget.c"
+#include "widget/elm_code_widget_tooltip.c"
 
 static void _assert_cell_type(Evas_Textgrid_Cell cell, Elm_Code_Token_Type type, int id)
 {

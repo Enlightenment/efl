@@ -83,11 +83,14 @@ END_TEST
 
 START_TEST (elm_code_text_newline_position_test)
 {
+   short nllen;
    const char *unixtext = "a test\nwith newline";
    const char *wintext = "a windows\r\nnewline";
 
-   ck_assert_int_eq(6, elm_code_text_newlinenpos(unixtext, strlen(unixtext)));
-   ck_assert_int_eq(9, elm_code_text_newlinenpos(wintext, strlen(wintext)));
+   ck_assert_int_eq(6, elm_code_text_newlinenpos(unixtext, strlen(unixtext), &nllen));
+   ck_assert_int_eq(1, nllen);
+   ck_assert_int_eq(9, elm_code_text_newlinenpos(wintext, strlen(wintext), &nllen));
+   ck_assert_int_eq(2, nllen);
 }
 END_TEST
 
