@@ -1820,6 +1820,50 @@ _lua_generic_function(lua_State *L, const char *name,
    return instr->return_count;
 }
 
+static int
+_lua_print(lua_State *L)
+{
+   Eina_Strbuf *s;
+   int nargs = lua_gettop(L);
+   int i;
+
+   if (nargs < 1)
+     {
+        DBG("LUA: (nothing)");
+        return 0;
+     }
+
+   s = eina_strbuf_new();
+
+   for (i = 1; i <= nargs; i++)
+     {
+        if (lua_isstring(L, i))
+          eina_strbuf_append(s, lua_tostring(L, i));
+        else if (lua_isnumber(L, i))
+          {
+             double d = lua_tonumber(L, i);
+
+             if (fabs(d - floor(d)) < 0.000001)
+               eina_strbuf_append_printf(s, "%d", (int) d);
+             else
+               eina_strbuf_append_printf(s, "%f", d);
+          }
+        else
+          eina_strbuf_append(s, "<>");
+        eina_strbuf_append_char(s, ' ');
+     }
+
+   INF("LUA: %s", eina_strbuf_string_get(s));
+   eina_strbuf_free(s);
+
+   return 0;
+}
+
+static const struct luaL_Reg printlib[] = {
+  { "print", _lua_print },
+  { NULL, NULL }
+};
+
 #define LUA_GENERIC_FUNCTION(name) \
 static int \
 _lua_##name(lua_State *L) \
@@ -1859,6 +1903,11 @@ _lua_state_create(Evas_Filter_Program *pgm)
    luaopen_table(L);
    luaopen_string(L);
    luaopen_math(L);
+
+   // Implement print
+   lua_getglobal(L, "_G");
+   luaL_register(L, NULL, printlib);
+   lua_pop(L, 1);
 
    // Store program
    lua_pushlightuserdata(L, (void *) &this_is_not_a_cat);
