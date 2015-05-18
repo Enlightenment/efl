@@ -50,7 +50,7 @@ struct _Bt
 static void
 path_split(const char *path, char **dir, char **file)
 {
-   const char *p = strrchr(path, '/');
+   const char *p;
 
    if (!path)
      {
@@ -58,6 +58,7 @@ path_split(const char *path, char **dir, char **file)
         *file = NULL;
         return;
      }
+   p = strrchr(path, '/');
    if (!p)
      {
         *dir = NULL;
