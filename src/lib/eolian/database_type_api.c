@@ -160,7 +160,7 @@ eolian_type_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl)
 {
    Eina_Stringshare *ret;
    Eina_Strbuf *buf;
-   char *bufp;
+   char *bufp, *p;
    EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
    buf = eina_strbuf_new();
    if (fl->base_enum->legacy)
@@ -172,6 +172,7 @@ eolian_type_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl)
    bufp = eina_strbuf_string_steal(buf);
    eina_strbuf_free(buf);
    eina_str_toupper(&bufp);
+   while ((p = strchr(bufp, '.'))) *p = '_';
    ret = eina_stringshare_add(bufp);
    free(bufp);
    return ret;

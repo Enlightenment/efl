@@ -895,15 +895,18 @@ START_TEST(eolian_enum)
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 1));
 
-   cname = eolian_type_enum_field_c_name_get(field);
-   fail_if(strcmp(cname, "BAZ_FLAG2"));
-   eina_stringshare_del(cname);
-
    fail_if(!(field = eolian_type_enum_field_get(type, "flag3")));
    fail_if(!(exp = eolian_type_enum_field_value_get(field, EINA_FALSE)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 2));
+
+   fail_if(!(type = eolian_type_enum_get_by_name("Name.Spaced")));
+   fail_if(!(field = eolian_type_enum_field_get(type, "pants")));
+
+   cname = eolian_type_enum_field_c_name_get(field);
+   fail_if(strcmp(cname, "NAME_SPACED_PANTS"));
+   eina_stringshare_del(cname);
 
    fail_if(!(var = eolian_variable_constant_get_by_name("Bah")));
    fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_CONSTANT);

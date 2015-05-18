@@ -16,6 +16,10 @@ enum Baz {
     flag3 = 1 << 2
 }
 
+enum Name.Spaced {
+    pants
+}
+
 const Bah: Baz = Baz.flag1;
 
 enum Value {
