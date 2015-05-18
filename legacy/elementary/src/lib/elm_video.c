@@ -134,43 +134,51 @@ _on_size_hints_changed(void *data EINA_UNUSED,
    elm_layout_sizing_eval(obj);
 }
 
-static void
+static Eina_Bool
 _on_open_done(void *data,
-              Evas_Object *obj EINA_UNUSED,
+              Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
               void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,video,open", "elm");
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _on_playback_started(void *data,
-                     Evas_Object *obj EINA_UNUSED,
+                     Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                      void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,video,play", "elm");
-}
 
-static void
+   return EINA_TRUE;
+
+}
+static Eina_Bool
 _on_playback_finished(void *data,
-                      Evas_Object *obj EINA_UNUSED,
+                      Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                       void *event_info EINA_UNUSED)
 {
    ELM_VIDEO_DATA_GET(data, sd);
    emotion_object_play_set(sd->emotion, EINA_FALSE);
    elm_layout_signal_emit(data, "elm,video,end", "elm");
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _on_aspect_ratio_updated(void *data,
-                         Evas_Object *obj EINA_UNUSED,
+                         Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                          void *event_info EINA_UNUSED)
 {
    elm_layout_sizing_eval(data);
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _on_title_changed(void *data,
-                  Evas_Object *obj EINA_UNUSED,
+                  Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                   void *event_info EINA_UNUSED)
 {
    const char *title;
@@ -180,14 +188,18 @@ _on_title_changed(void *data,
    title = emotion_object_title_get(sd->emotion);
    elm_layout_text_set(data, "elm,title", title);
    elm_layout_signal_emit(data, "elm,video,title", "elm");
+
+   return EINA_TRUE;
 }
 
-static void
+static Eina_Bool
 _on_audio_level_changed(void *data,
-                        Evas_Object *obj EINA_UNUSED,
+                        Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED,
                         void *event_info EINA_UNUSED)
 {
    (void)data;
+
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -238,18 +250,18 @@ _elm_video_evas_object_smart_add(Eo *obj, Elm_Video_Data *priv)
 
    elm_layout_content_set(obj, "elm.swallow.video", priv->emotion);
 
-   evas_object_smart_callback_add
-     (priv->emotion, "open_done", _on_open_done, obj);
-   evas_object_smart_callback_add
-     (priv->emotion, "playback_started", _on_playback_started, obj);
-   evas_object_smart_callback_add
-     (priv->emotion, "playback_finished", _on_playback_finished, obj);
-   evas_object_smart_callback_add
-     (priv->emotion, "frame_resize", _on_aspect_ratio_updated, obj);
-   evas_object_smart_callback_add
-     (priv->emotion, "title_change", _on_title_changed, obj);
-   evas_object_smart_callback_add
-     (priv->emotion, "audio_level_change", _on_audio_level_changed, obj);
+   eo_do(priv->emotion, eo_event_callback_add
+     (EMOTION_OBJECT_EVENT_OPEN_DONE, _on_open_done, obj));
+   eo_do(priv->emotion, eo_event_callback_add
+     (EMOTION_OBJECT_EVENT_PLAYBACK_STARTED, _on_playback_started, obj));
+   eo_do(priv->emotion, eo_event_callback_add
+     (EMOTION_OBJECT_EVENT_PLAYBACK_FINISHED, _on_playback_finished, obj));
+   eo_do(priv->emotion, eo_event_callback_add
+     (EMOTION_OBJECT_EVENT_FRAME_RESIZE, _on_aspect_ratio_updated, obj));
+   eo_do(priv->emotion, eo_event_callback_add
+     (EMOTION_OBJECT_EVENT_TITLE_CHANGE, _on_title_changed, obj));
+   eo_do(priv->emotion, eo_event_callback_add
+     (EMOTION_OBJECT_EVENT_AUDIO_LEVEL_CHANGE, _on_audio_level_changed, obj));
 
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, NULL);
