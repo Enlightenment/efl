@@ -1392,6 +1392,7 @@ typedef enum _Ecore_X_Illume_Window_State
 #define ECORE_X_PROP_LIST_TOGGLE    2
 
 EAPI int                       ecore_x_init(const char *name);
+EAPI int                       ecore_x_init_from_display(Ecore_X_Display *display); /**< @since 1.15 */
 EAPI int                       ecore_x_shutdown(void);
 EAPI int                       ecore_x_disconnect(void);
 EAPI Ecore_X_Display          *ecore_x_display_get(void);

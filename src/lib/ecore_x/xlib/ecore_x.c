@@ -339,23 +339,41 @@ _ecore_x_modifiers_get(void)
    ECORE_X_LOCK_SHIFT = _ecore_x_key_mask_get(XK_Shift_Lock);
 }
 
-/**
- * @defgroup Ecore_X_Init_Group X Library Init and Shutdown Functions
- *
- * Functions that start and shut down the Ecore X Library.
- */
+static Eina_Bool
+_ecore_x_init1(void)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+#ifdef LOGRT
+   _logrt_init();
+#endif /* ifdef LOGRT */
 
-/**
- * Initialize the X display connection to the given display.
- *
- * @param   name Display target name.  If @c NULL, the default display is
- *               assumed.
- * @return  The number of times the library has been initialized without
- *          being shut down.  0 is returned if an error occurs.
- * @ingroup Ecore_X_Init_Group
- */
-EAPI int
-ecore_x_init(const char *name)
+   eina_init();
+   _ecore_xlib_log_dom = eina_log_domain_register
+       ("ecore_x", ECORE_XLIB_DEFAULT_LOG_COLOR);
+   if (_ecore_xlib_log_dom < 0)
+     {
+        EINA_LOG_ERR(
+          "Impossible to create a log domain for the Ecore Xlib module.");
+        return EINA_FALSE;
+     }
+
+   if (!ecore_init())
+     goto shutdown_eina;
+   if (!ecore_event_init())
+     goto shutdown_ecore;
+
+   return EINA_TRUE;
+shutdown_ecore:
+   ecore_shutdown();
+shutdown_eina:
+   eina_log_domain_unregister(_ecore_xlib_log_dom);
+   _ecore_xlib_log_dom = -1;
+   eina_shutdown();
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_ecore_x_init2(void)
 {
    int shape_base = 0;
    int shape_err_base = 0;
@@ -384,35 +402,6 @@ ecore_x_init(const char *name)
 #ifdef ECORE_XKB
    int xkb_base = 0;
 #endif /* ifdef ECORE_XKB */
-   if (++_ecore_x_init_count != 1)
-     return _ecore_x_init_count;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-#ifdef LOGRT
-   _logrt_init();
-#endif /* ifdef LOGRT */
-
-   eina_init();
-   _ecore_xlib_log_dom = eina_log_domain_register
-       ("ecore_x", ECORE_XLIB_DEFAULT_LOG_COLOR);
-   if (_ecore_xlib_log_dom < 0)
-     {
-        EINA_LOG_ERR(
-          "Impossible to create a log domain for the Ecore Xlib module.");
-        return --_ecore_x_init_count;
-     }
-
-   if (!ecore_init())
-     goto shutdown_eina;
-   if (!ecore_event_init())
-     goto shutdown_ecore;
-
-#ifdef EVAS_FRAME_QUEUING
-   XInitThreads();
-#endif /* ifdef EVAS_FRAME_QUEUING */
-   _ecore_x_disp = XOpenDisplay((char *)name);
-   if (!_ecore_x_disp)
-     goto shutdown_ecore_event;
 
    _ecore_x_error_handler_init();
    _ecore_x_event_handlers_num = LASTEvent;
@@ -703,7 +692,7 @@ ecore_x_init(const char *name)
    _ecore_x_private_win = ecore_x_window_override_new(0, -77, -777, 123, 456);
    _ecore_xlib_sync = !!getenv("ECORE_X_SYNC");
 
-   return _ecore_x_init_count;
+   return EINA_TRUE;
 
 free_event_handlers:
    free(_ecore_x_event_handlers);
@@ -712,15 +701,72 @@ close_display:
    XCloseDisplay(_ecore_x_disp);
    _ecore_x_fd_handler_handle = NULL;
    _ecore_x_disp = NULL;
-shutdown_ecore_event:
    ecore_event_shutdown();
-shutdown_ecore:
    ecore_shutdown();
-shutdown_eina:
    eina_log_domain_unregister(_ecore_xlib_log_dom);
    _ecore_xlib_log_dom = -1;
    eina_shutdown();
+   return EINA_FALSE;
+}
 
+/**
+ * @defgroup Ecore_X_Init_Group X Library Init and Shutdown Functions
+ *
+ * Functions that start and shut down the Ecore X Library.
+ */
+
+/**
+ * Initialize the X display connection to the given display.
+ *
+ * @param   name Display target name.  If @c NULL, the default display is
+ *               assumed.
+ * @return  The number of times the library has been initialized without
+ *          being shut down.  0 is returned if an error occurs.
+ * @ingroup Ecore_X_Init_Group
+ */
+EAPI int
+ecore_x_init(const char *name)
+{
+   if (++_ecore_x_init_count != 1)
+     return _ecore_x_init_count;
+
+   if (!_ecore_x_init1())
+     return --_ecore_x_init_count;
+
+#ifdef EVAS_FRAME_QUEUING
+   XInitThreads();
+#endif /* ifdef EVAS_FRAME_QUEUING */
+   _ecore_x_disp = XOpenDisplay((char *)name);
+   if (!_ecore_x_disp)
+     goto shutdown_ecore_event;
+   if (_ecore_x_init2())
+     return _ecore_x_init_count;
+shutdown_ecore_event:
+   ecore_event_shutdown();
+   ecore_shutdown();
+   eina_log_domain_unregister(_ecore_xlib_log_dom);
+   _ecore_xlib_log_dom = -1;
+   eina_shutdown();
+   return --_ecore_x_init_count;
+}
+
+EAPI int
+ecore_x_init_from_display(Ecore_X_Display *display)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(display, 0);
+   if (++_ecore_x_init_count != 1)
+     return _ecore_x_init_count;
+
+   if (!_ecore_x_init1())
+     return --_ecore_x_init_count;
+   _ecore_x_disp = display;
+   if (_ecore_x_init2())
+     return _ecore_x_init_count;
+   ecore_event_shutdown();
+   ecore_shutdown();
+   eina_log_domain_unregister(_ecore_xlib_log_dom);
+   _ecore_xlib_log_dom = -1;
+   eina_shutdown();
    return --_ecore_x_init_count;
 }
 
