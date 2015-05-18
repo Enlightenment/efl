@@ -338,7 +338,7 @@ _embryo_fp_asin(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
    f = EMBRYO_CELL_TO_FLOAT(params[1]);
-   f = sinf(f);
+   f = asinf(f);
    f = _embryo_fp_degrees_to_radians(f, params[2]);
    return EMBRYO_FLOAT_TO_CELL(f);
 }
@@ -352,7 +352,7 @@ _embryo_fp_acos(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
    f = EMBRYO_CELL_TO_FLOAT(params[1]);
-   f = cosf(f);
+   f = acosf(f);
    f = _embryo_fp_degrees_to_radians(f, params[2]);
    return EMBRYO_FLOAT_TO_CELL(f);
 }
@@ -366,7 +366,7 @@ _embryo_fp_atan(Embryo_Program *ep EINA_UNUSED, Embryo_Cell *params)
 
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
    f = EMBRYO_CELL_TO_FLOAT(params[1]);
-   f = tanf(f);
+   f = atanf(f);
    f = _embryo_fp_degrees_to_radians(f, params[2]);
    return EMBRYO_FLOAT_TO_CELL(f);
 }
