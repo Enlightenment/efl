@@ -290,3 +290,28 @@ native       physics_stop             (part_id);
 
 native       physics_set_rotation     (part_id, Float:w, Float:x, Float:y, Float:z);
 native       physics_get_rotation     (part_id, &Float:w, &Float:x, &Float:y, &Float:z);
+
+enum Anim_Param
+{
+    LIN = 1,
+    LINEAR = 1,
+    SIN = 2,
+    SINUSOIDAL = 2,
+    ACCEL = 3,
+    ACCELERATE = 3,
+    DECEL = 4,
+    DECELERATE = 4,
+    ACCEL_FAC = 5,
+    ACCELERATE_FACTOR = 5,
+    DECEL_FAC = 6,
+    DECELERATE_FACTOR = 6,
+    SIN_FAC = 7,
+    SINUSOIDAL_FACTOR = 7,
+    DIVIS = 8,
+    DIVISOR_INTERP = 8,
+    BOUNCE = 9,
+    SPRING = 10,
+    CUBIC_BEZIER = 11,
+};
+
+native       set_tween_state_anim  (part_id, state1[], Float:state1_val, state2[], Float:state2_val, Anim_Param:p, Float:tween, ...);
