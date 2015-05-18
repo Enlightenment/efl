@@ -2,4 +2,4 @@
 #include "ecore_con_server.eo.h"
 #include "ecore_con_connector.eo.h"
 #include "ecore_con_client.eo.h"
-#include "ecore_con_url.eo.h"
+#include "efl_network_url.eo.h"

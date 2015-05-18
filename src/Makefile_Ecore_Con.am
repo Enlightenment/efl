@@ -6,7 +6,7 @@ ecore_con_eolian_files = \
 	lib/ecore_con/ecore_con_client.eo \
 	lib/ecore_con/ecore_con_server.eo \
 	lib/ecore_con/ecore_con_connector.eo \
-	lib/ecore_con/ecore_con_url.eo
+	lib/ecore_con/efl_network_url.eo
 
 ecore_con_eolian_c = $(ecore_con_eolian_files:%.eo=%.eo.c)
 ecore_con_eolian_h = $(ecore_con_eolian_files:%.eo=%.eo.h) \

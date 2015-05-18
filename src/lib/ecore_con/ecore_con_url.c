@@ -30,7 +30,7 @@
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
 
-#define MY_CLASS ECORE_CON_URL_CLASS
+#define MY_CLASS EFL_NETWORK_URL_CLASS
 
 // all the types, defines, enums etc. from curl that we actually USE.
 // we have to add to this if we use more things from curl not already
@@ -260,6 +260,7 @@ struct _Ecore_Con_Url_Data
 };
 
 typedef struct _Ecore_Con_Url_Data Ecore_Con_Url_Data;
+typedef struct _Ecore_Con_Url_Data Efl_Network_Url_Data;
 
 #define CURL_MIN_TIMEOUT 100
 
@@ -446,14 +447,14 @@ EAPI Ecore_Con_Url *
 ecore_con_url_new(const char *url)
 {
    Ecore_Con_Url *url_obj;
-   url_obj = eo_add(ECORE_CON_URL_CLASS, NULL,
-         ecore_con_url_obj_url_set(url));
+   url_obj = eo_add(EFL_NETWORK_URL_CLASS, NULL,
+         efl_network_url_set(url));
 
    return url_obj;
 }
 
 EOLIAN static void
-_ecore_con_url_eo_base_constructor(Ecore_Con_Url *url_obj, Ecore_Con_Url_Data *url_con EINA_UNUSED)
+_efl_network_url_eo_base_constructor(Efl_Network_Url *url_obj, Efl_Network_Url_Data *url_con EINA_UNUSED)
 {
    eo_do_super(url_obj, MY_CLASS, eo_constructor());
 
@@ -474,7 +475,7 @@ _ecore_con_url_eo_base_constructor(Ecore_Con_Url *url_obj, Ecore_Con_Url_Data *u
 }
 
 EOLIAN static Eo *
-_ecore_con_url_eo_base_finalize(Ecore_Con_Url *url_obj, Ecore_Con_Url_Data *url_con)
+_efl_network_url_eo_base_finalize(Efl_Network_Url *url_obj, Efl_Network_Url_Data *url_con)
 {
    CURLcode ret;
 
@@ -586,14 +587,14 @@ ecore_con_url_custom_new(const char *url,
 EAPI void
 ecore_con_url_free(Ecore_Con_Url *url_obj)
 {
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
 
    eo_del(url_obj);
 }
 
 EOLIAN static void
-_ecore_con_url_eo_base_destructor(Ecore_Con_Url *url_obj, Ecore_Con_Url_Data *url_con)
+_efl_network_url_eo_base_destructor(Efl_Network_Url *url_obj, Efl_Network_Url_Data *url_con)
 {
    char *s;
 
@@ -633,7 +634,7 @@ _ecore_con_url_eo_base_destructor(Ecore_Con_Url *url_obj, Ecore_Con_Url_Data *ur
 }
 
 EOLIAN static const char *
-_ecore_con_url_url_get(Ecore_Con_Url *url_obj EINA_UNUSED, Ecore_Con_Url_Data *url_con)
+_efl_network_url_url_get(Efl_Network_Url *url_obj EINA_UNUSED, Efl_Network_Url_Data *url_con)
 {
    return url_con->url;
 }
@@ -642,7 +643,7 @@ EAPI int
 ecore_con_url_status_code_get(Ecore_Con_Url *url_obj)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return 0;
    if (url_con->status) return url_con->status;
    _ecore_con_url_status_get(url_obj);
@@ -650,7 +651,7 @@ ecore_con_url_status_code_get(Ecore_Con_Url *url_obj)
 }
 
 EOLIAN static Eina_Bool
-_ecore_con_url_url_set(Ecore_Con_Url *url_obj EINA_UNUSED, Ecore_Con_Url_Data *url_con, const char *url)
+_efl_network_url_url_set(Efl_Network_Url *url_obj EINA_UNUSED, Efl_Network_Url_Data *url_con, const char *url)
 {
    if (!_c) return EINA_FALSE;
    if (url_con->dead) return EINA_FALSE;
@@ -667,7 +668,7 @@ EAPI void
 ecore_con_url_data_set(Ecore_Con_Url *url_obj, void *data)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
    url_con->data = data;
 }
@@ -676,7 +677,7 @@ EAPI void
 ecore_con_url_additional_header_add(Ecore_Con_Url *url_obj, const char *key, const char *value)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
    char *tmp;
 
@@ -692,7 +693,7 @@ EAPI void
 ecore_con_url_additional_headers_clear(Ecore_Con_Url *url_obj)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
    char *s;
 
@@ -704,7 +705,7 @@ EAPI void *
 ecore_con_url_data_get(Ecore_Con_Url *url_obj)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return NULL;
    return url_con->data;
 }
@@ -713,7 +714,7 @@ EAPI void
 ecore_con_url_time(Ecore_Con_Url *url_obj, Ecore_Con_Url_Time condition, double timestamp)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
    if (url_con->dead) return;
    url_con->time_condition = condition;
@@ -724,7 +725,7 @@ EAPI void
 ecore_con_url_fd_set(Ecore_Con_Url *url_obj, int fd)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
    if (url_con->dead) return;
    url_con->write_fd = fd;
@@ -734,7 +735,7 @@ EAPI int
 ecore_con_url_received_bytes_get(Ecore_Con_Url *url_obj)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return -1;
    return url_con->received;
 }
@@ -743,7 +744,7 @@ EAPI const Eina_List *
 ecore_con_url_response_headers_get(Ecore_Con_Url *url_obj)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return NULL;
    return url_con->response_headers;
 }
@@ -752,7 +753,7 @@ EAPI Eina_Bool
 ecore_con_url_httpauth_set(Ecore_Con_Url *url_obj, const char *username, const char *password, Eina_Bool safe)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return EINA_FALSE;
    CURLcode ret;
    curl_version_info_data *vers = NULL;
@@ -800,7 +801,7 @@ _ecore_con_url_send(Ecore_Con_Url *url_obj, Ecore_Con_Url_Mode mode,
                     const void *data, long length, const char *content_type)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return EINA_FALSE;
    Eina_List *l;
    const char *s;
@@ -962,7 +963,7 @@ EAPI void
 ecore_con_url_cookies_init(Ecore_Con_Url *url_obj)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
    if (!_c) return;
    if (url_con->dead) return;
@@ -973,7 +974,7 @@ EAPI void
 ecore_con_url_cookies_ignore_old_session_set(Ecore_Con_Url *url_obj, Eina_Bool ignore)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
    if (!_c) return;
    if (url_con->dead) return;
@@ -984,7 +985,7 @@ EAPI void
 ecore_con_url_cookies_clear(Ecore_Con_Url *url_obj)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
    if (!_c) return;
    if (url_con->dead) return;
@@ -995,7 +996,7 @@ EAPI void
 ecore_con_url_cookies_session_clear(Ecore_Con_Url *url_obj)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
    if (!_c) return;
    if (url_con->dead) return;
@@ -1006,7 +1007,7 @@ EAPI void
 ecore_con_url_cookies_file_add(Ecore_Con_Url *url_obj, const char *const file_name)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
    if (!_c) return;
    if (url_con->dead) return;
@@ -1017,7 +1018,7 @@ EAPI Eina_Bool
 ecore_con_url_cookies_jar_file_set(Ecore_Con_Url *url_obj, const char *const cookiejar_file)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return EINA_FALSE;
    CURLcode ret;
 
@@ -1038,7 +1039,7 @@ EAPI void
 ecore_con_url_cookies_jar_write(Ecore_Con_Url *url_obj)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
    if (!_c) return;
 
@@ -1050,7 +1051,7 @@ EAPI void
 ecore_con_url_verbose_set(Ecore_Con_Url *url_obj, Eina_Bool verbose)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
    if (!_c) return;
    if (!url_con->url) return;
@@ -1062,7 +1063,7 @@ EAPI void
 ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_obj, Eina_Bool use_epsv)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
    if (!_c) return;
    if (!url_con->url) return;
@@ -1087,7 +1088,7 @@ EAPI void
 ecore_con_url_ssl_verify_peer_set(Ecore_Con_Url *url_obj, Eina_Bool verify)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
    if (!_c) return;
    if (!url_con->url) return;
@@ -1118,7 +1119,7 @@ EAPI int
 ecore_con_url_ssl_ca_set(Ecore_Con_Url *url_obj, const char *ca_path)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return -1;
    int res = -1;
 
@@ -1142,7 +1143,7 @@ EAPI Eina_Bool
 ecore_con_url_http_version_set(Ecore_Con_Url *url_obj, Ecore_Con_Url_Http_Version version)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return EINA_FALSE;
    int res = -1;
 
@@ -1177,7 +1178,7 @@ EAPI Eina_Bool
 ecore_con_url_proxy_set(Ecore_Con_Url *url_obj, const char *proxy)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return EINA_FALSE;
    int res = -1;
    curl_version_info_data *vers = NULL;
@@ -1229,7 +1230,7 @@ EAPI void
 ecore_con_url_timeout_set(Ecore_Con_Url *url_obj, double timeout)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
    if (url_con->dead) return;
    if (!url_con->url || timeout < 0) return;
@@ -1242,7 +1243,7 @@ EAPI Eina_Bool
 ecore_con_url_proxy_username_set(Ecore_Con_Url *url_obj, const char *username)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return EINA_FALSE;
    int res = -1;
 
@@ -1270,7 +1271,7 @@ EAPI Eina_Bool
 ecore_con_url_proxy_password_set(Ecore_Con_Url *url_obj, const char *password)
 {
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return EINA_FALSE;
    int res = -1;
 
@@ -1398,7 +1399,7 @@ _ecore_con_url_data_cb(void *buffer, size_t size, size_t nitems, void *userp)
    size_t real_size = size * nitems;
 
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return -1;
 
    url_con->received += real_size;
@@ -1449,7 +1450,7 @@ _ecore_con_url_header_cb(void *ptr, size_t size, size_t nitems, void *stream)
    size_t real_size = size * nitems;
    Ecore_Con_Url *url_obj = stream;
    Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   if (!eo_isa(url_obj, ECORE_CON_URL_CLASS))
+   if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return 0;
 
    char *header = malloc(sizeof(char) * (real_size + 1));
@@ -1702,4 +1703,5 @@ _ecore_con_event_url_free(Ecore_Con_Url *url_obj, void *ev)
    if (url_con->dead && (!url_con->event_count)) ecore_con_url_free(url_obj);
 }
 
-#include "ecore_con_url.eo.c"
+#include "efl_network_url.eo.c"
+#include "ecore_con_legacy.c"

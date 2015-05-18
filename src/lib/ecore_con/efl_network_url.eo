@@ -1,5 +1,6 @@
-class Ecore.Con.Url (Eo.Base) {
-   eo_prefix: ecore_con_url_obj;
+class Efl.Network.Url (Eo.Base) {
+   legacy_prefix: null;
+   eo_prefix: efl_network_url;
    methods {
       @property url {
          /*@
