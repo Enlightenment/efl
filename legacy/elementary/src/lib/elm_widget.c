@@ -4218,7 +4218,7 @@ _eo_del_cb(void *data EINA_UNUSED, Eo *eo_item, const Eo_Event_Description *desc
    Elm_Widget_Item_Data *item = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_TRUE);
    if (item->del_func)
-      item->del_func((void *) WIDGET_ITEM_DATA_GET(item->eo_obj), item->widget, item->eo_obj);
+      item->del_func((void *) WIDGET_ITEM_DATA_GET(eo_item), item->widget, item->eo_obj);
    return EINA_TRUE;
 }
 
@@ -4358,11 +4358,11 @@ _elm_widget_item_del_pre(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item EIN
  * @ingroup Widget
  */
 EOLIAN static void
-_elm_widget_item_pre_notify_del(Eo *eo_item EINA_UNUSED, Elm_Widget_Item_Data *item)
+_elm_widget_item_pre_notify_del(Eo *eo_item, Elm_Widget_Item_Data *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    if (!item->del_func) return;
-   item->del_func((void *)item->data, item->widget, item->eo_obj);
+   item->del_func((void *)WIDGET_ITEM_DATA_GET(eo_item), item->widget, item->eo_obj);
    item->del_func = NULL;
 }
 

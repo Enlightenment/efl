@@ -606,8 +606,6 @@ struct _Elm_Widget_Item_Data
    Eo                            *eo_obj;
    /**< the base view object */
    Evas_Object                   *view;
-   /**< item specific data. used for del callback */
-   const void                    *data;
    /**< user delete callback function */
    Evas_Smart_Cb                  del_func;
    /**< widget delete callback function. don't expose this callback call */
