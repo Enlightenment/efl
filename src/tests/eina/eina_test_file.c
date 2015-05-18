@@ -30,6 +30,7 @@
 #include "eina_suite.h"
 #include "Eina.h"
 #include "eina_safety_checks.h"
+#include "eina_file_common.h"
 
 static int default_dir_rights = 0777;
 const int file_min_offset = 1;
@@ -580,6 +581,72 @@ START_TEST(eina_test_file_xattr)
 END_TEST
 #endif
 
+START_TEST(eina_test_file_copy)
+{
+   const char *test_file1_name = "EinaCopyFromXXXXXX.txt";
+   const char *test_file2_name = "EinaCopyToXXXXXX.txt";
+   Eina_Tmpstr *test_file1_path, *test_file2_path;
+   const char *data = "abcdefghijklmnopqrstuvwxyz";
+   Eina_File *e_file1, *e_file2;
+   int fd1, fd2, rval;
+   size_t file1_len, file2_len;
+   Eina_Bool ret;
+   void *content1, *content2;
+
+   eina_init();
+
+   fd1 = eina_file_mkstemp(test_file1_name, &test_file1_path);
+   fail_if(fd1 <= 0);
+
+   fd2 = eina_file_mkstemp(test_file2_name, &test_file2_path);
+   fail_if(fd2 <= 0);
+
+   fail_if(write(fd1, data, strlen(data)) != (ssize_t) strlen(data));
+
+   close(fd1);
+   close(fd2);
+
+   //Copy file data
+   ret = eina_file_copy(test_file1_path, test_file2_path, EINA_FILE_COPY_DATA, NULL, NULL);
+   fail_if(ret != EINA_TRUE);
+
+   e_file1 = eina_file_open(test_file1_path, EINA_FALSE);
+   fail_if(!e_file1);
+   file1_len = eina_file_size_get(e_file1);
+
+   e_file2 = eina_file_open(test_file2_path, EINA_FALSE);
+   fail_if(!e_file2);
+   file2_len = eina_file_size_get(e_file2);
+
+   //Check if both the files are same
+   fail_if(e_file1 == e_file2);
+
+   fail_if(file1_len != strlen(data));
+   fail_if(file1_len != file2_len);
+
+   //Check the contents of both the file
+   content1 = eina_file_map_all(e_file1, EINA_FILE_POPULATE);
+   fail_if(content1 == NULL);
+
+   content2 = eina_file_map_all(e_file2, EINA_FILE_POPULATE);
+   fail_if(content2 == NULL);
+
+   rval = memcmp(content1, content2, strlen(data));
+   fail_if(rval != 0);
+
+   eina_file_map_free(e_file1, content1);
+   eina_file_map_free(e_file2, content2);
+   eina_file_close(e_file1);
+   eina_file_close(e_file2);
+   unlink(test_file1_path);
+   unlink(test_file2_path);
+   eina_tmpstr_del(test_file1_path);
+   eina_tmpstr_del(test_file2_path);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_file(TCase *tc)
 {
@@ -593,4 +660,5 @@ eina_test_file(TCase *tc)
 #ifdef XATTR_TEST_DIR
    tcase_add_test(tc, eina_test_file_xattr);
 #endif
+   tcase_add_test(tc, eina_test_file_copy);
 }
