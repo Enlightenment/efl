@@ -333,7 +333,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
               */
          }
          values {
-            enabled: Eina_Bool; /*@ Posibility flag */
+            enabled: bool; /*@ Posibility flag */
          }
       }
       @property vertex_count {
@@ -383,7 +383,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
               */
          }
          values {
-            enabled: Eina_Bool; /*@ Fog enabled status.*/
+            enabled: bool; /*@ Fog enabled status.*/
          }
       }
  
@@ -407,7 +407,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
               */
          }
          values {
-            enabled: Eina_Bool; /*@ Alpha test status.*/
+            enabled: bool; /*@ Alpha test status.*/
          }
       }
 
@@ -456,7 +456,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              */
          }
          values {
-            blending: Eina_Bool; /*@ The blending state.*/
+            blending: bool; /*@ The blending state.*/
          }
       }
 
