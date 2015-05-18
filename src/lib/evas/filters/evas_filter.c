@@ -1566,6 +1566,8 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
 
         fb = _filter_buffer_get(ctx, EVAS_FILTER_BUFFER_OUTPUT_ID);
         EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
+        if (!fb->backing)
+          return EINA_FALSE;
 
         fb->glimage = ENFN->image_new_from_data
           (ENDT, fb->w, fb->h, fb->backing->image.data, EINA_TRUE,
