@@ -1065,6 +1065,111 @@ _edje_embryo_fn_set_state(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
+static Embryo_Cell
+_edje_embryo_fn_set_state_anim(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *state = NULL;
+   int part_id = 0;
+   float f = 0.0;
+   double value = 0.0;
+   char *tmp = NULL;
+   Edje_Real_Part *rp;
+   int anim_type = 0;
+   double tween = 0.0, value1 = 0.0, value2 = 0.0, v1 = 0.0, v2 = 0.0, v3 = 0.0, v4 = 0.0;
+
+   if (HASNPARAMS(4)) return -1;
+
+   ed = embryo_program_data_get(ep);
+   GETSTR(state, params[2]);
+   if ((!state)) return 0;
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   f = EMBRYO_CELL_TO_FLOAT(params[3]);
+   value = (double)f;
+   anim_type = params[4];
+   f = EMBRYO_CELL_TO_FLOAT(params[5]);
+   tween = (double)f;
+   if ((anim_type >= EDJE_TWEEN_MODE_LINEAR) &&
+       (anim_type <= EDJE_TWEEN_MODE_DECELERATE))
+     {
+        if (HASNPARAMS(6))
+          {
+             GETSTR(tmp, params[6]);
+             if (!strcmp(tmp, "CURRENT"))
+               anim_type |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+          }
+     }
+   else if ((anim_type >= EDJE_TWEEN_MODE_ACCELERATE_FACTOR) &&
+            (anim_type <= EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR))
+     {
+        if (HASNPARAMS(7))
+          {
+             GETSTR(tmp, params[7]);
+             if (!strcmp(tmp, "CURRENT"))
+               anim_type |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+          }
+        else if (HASNPARAMS(5))
+          {
+             ERR("parse error. Need 6th parameter to set factor");
+             return -1;
+          }
+        GETFLOAT_T(v1, params[6]);
+     }
+   else if ((anim_type >= EDJE_TWEEN_MODE_DIVISOR_INTERP) &&
+            (anim_type <= EDJE_TWEEN_MODE_SPRING))
+     {
+        if (HASNPARAMS(8))
+          {
+             GETSTR(tmp, params[8]);
+             if (!strcmp(tmp, "CURRENT"))
+               anim_type |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+          }
+        else if (HASNPARAMS(5))
+          {
+             ERR("parse error.Need 6th and 7th parameters to set factor and counts");
+             return -1;
+          }
+        GETFLOAT_T(v1, params[6]);
+        GETFLOAT_T(v2, params[7]);
+     }
+   else if (anim_type == EDJE_TWEEN_MODE_CUBIC_BEZIER)
+     {
+        if (HASNPARAMS(12))
+          {
+             GETSTR(tmp, params[8]);
+             if (!strcmp(tmp, "CURRENT"))
+               anim_type |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+          }
+        else if (HASNPARAMS(5))
+          {
+             ERR("parse error.Need 6th, 7th, 9th and 10th parameters to set x1, y1, x2 and y2");
+             return -1;
+          }
+        if (HASNPARAMS(10))
+          {
+             GETFLOAT_T(v1, params[6]);
+             GETFLOAT_T(v2, params[7]);
+             GETFLOAT_T(v3, params[9]);
+             GETFLOAT_T(v4, params[10]);
+          }
+        else
+          {
+             GETFLOAT_T(v1, params[6]);
+             GETFLOAT_T(v2, params[7]);
+             GETFLOAT_T(v3, params[8]);
+             GETFLOAT_T(v4, params[9]);
+         }
+     }
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if (!rp) return 0;
+   _edje_part_description_apply(ed, rp, NULL, 0.0, state, value);
+   _edje_part_pos_set(ed, rp, anim_type, FROM_DOUBLE(tween), v1, v2,
+                       v3, v4);
+   _edje_recalc(ed);
+   return 0;
+}
+
 /* get_state(part_id, dst[], maxlen, &Float:val) */
 static Embryo_Cell
 _edje_embryo_fn_get_state(Embryo_Program *ep, Embryo_Cell *params)
@@ -3949,6 +4054,7 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
    embryo_program_native_call_add(ep, "custom_state", _edje_embryo_fn_custom_state);
    embryo_program_native_call_add(ep, "set_state_val", _edje_embryo_fn_set_state_val);
    embryo_program_native_call_add(ep, "get_state_val", _edje_embryo_fn_get_state_val);
+   embryo_program_native_call_add(ep, "set_state_anim", _edje_embryo_fn_set_state_anim);
 
    embryo_program_native_call_add(ep, "part_swallow", _edje_embryo_fn_part_swallow);
 
