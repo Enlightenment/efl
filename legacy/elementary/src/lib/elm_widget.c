@@ -4218,7 +4218,7 @@ _eo_del_cb(void *data EINA_UNUSED, Eo *eo_item, const Eo_Event_Description *desc
    Elm_Widget_Item_Data *item = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_TRUE);
    if (item->del_func)
-      item->del_func((void *)item->data, item->widget, item->eo_obj);
+      item->del_func((void *) WIDGET_ITEM_DATA_GET(item->eo_obj), item->widget, item->eo_obj);
    return EINA_TRUE;
 }
 
