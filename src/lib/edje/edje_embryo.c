@@ -1076,7 +1076,7 @@ _edje_embryo_fn_set_state_anim(Embryo_Program *ep, Embryo_Cell *params)
    char *tmp = NULL;
    Edje_Real_Part *rp;
    int anim_type = 0;
-   double tween = 0.0, value1 = 0.0, value2 = 0.0, v1 = 0.0, v2 = 0.0, v3 = 0.0, v4 = 0.0;
+   double tween = 0.0, v1 = 0.0, v2 = 0.0, v3 = 0.0, v4 = 0.0;
 
    if (HASNPARAMS(4)) return -1;
 
