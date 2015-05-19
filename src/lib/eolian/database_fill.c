@@ -218,6 +218,8 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
    if (eot && eina_hash_find(_parsedeots, filename))
      return EINA_TRUE;
 
+   if (eot) eina_hash_set(_parsingeots, filename, (void *)EINA_TRUE);
+
    ls = eo_lexer_new(filename);
    if (!ls)
      {
@@ -254,12 +256,16 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
 
 done:
    if (eot)
-     eina_hash_set(_parsedeots, filename, (void *)EINA_TRUE);
+     {
+        eina_hash_set(_parsedeots, filename, (void *)EINA_TRUE);
+        eina_hash_set(_parsingeots, filename, (void *)EINA_FALSE);
+     }
 
    eo_lexer_free(ls);
    return EINA_TRUE;
 
 error:
+   if (eot) eina_hash_set(_parsingeots, filename, (void *)EINA_FALSE);
    eo_lexer_free(ls);
    return EINA_FALSE;
 }
