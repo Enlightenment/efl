@@ -2222,7 +2222,6 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
 
    // Check the input validity. If either sfc or ctx is NULL, it's also error.
    if ( (!evgl_engine) ||
-        ((!sfc) && ctx) ||
         (sfc && (!ctx)) )
      {
         ERR("Invalid Inputs. Engine: %p  Surface: %p   Context: %p!", evgl_engine, sfc, ctx);
@@ -2295,7 +2294,6 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
         evas_gl_common_error_set(eng_data, EVAS_GL_BAD_CONTEXT);
         return 0;
      }
-   sfc->current_ctx = ctx;
    rsc->current_ctx = ctx;
    rsc->current_eng = eng_data;
 
@@ -2316,6 +2314,16 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
              evas_gl_common_error_set(eng_data, EVAS_GL_NOT_INITIALIZED);
              return 0;
           }
+     }
+
+   if (sfc) sfc->current_ctx = ctx;
+   else
+     {
+        DBG("Performing surfaceless make current");
+        glViewport(0, 0, 0, 0);
+        glScissor(0, 0, 0, 0);
+        rsc->direct.rendered = 0;
+        goto finish;
      }
 
    if (!sfc->buffers_skip_allocate)
@@ -2539,9 +2547,8 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
           }
      }
 
+finish:
    ctx->current_sfc = sfc;
-   rsc->current_ctx = ctx;
-   rsc->current_eng = eng_data;
 
    _surface_context_list_print();
 

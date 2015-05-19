@@ -424,6 +424,8 @@ evas_gl_make_current(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *c
      ret = (Eina_Bool)evas_gl->evas->engine.func->gl_make_current(evas_gl->evas->engine.data.output, surf->data, ctx->data);
    else if ((!surf) && (!ctx))
      ret = (Eina_Bool)evas_gl->evas->engine.func->gl_make_current(evas_gl->evas->engine.data.output, NULL, NULL);
+   else if ((!surf) && (ctx)) // surfaceless make current
+     ret = (Eina_Bool)evas_gl->evas->engine.func->gl_make_current(evas_gl->evas->engine.data.output, NULL, ctx->data);
    else
      {
         ERR("Bad match between surface: %p and context: %p", surf, ctx);
