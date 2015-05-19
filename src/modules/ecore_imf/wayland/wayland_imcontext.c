@@ -656,8 +656,13 @@ wayland_im_context_focus_out(Ecore_IMF_Context *ctx)
    if (!imcontext->input) return;
 
    if (imcontext->text_input)
-     wl_text_input_deactivate(imcontext->text_input,
-                              ecore_wl_input_seat_get(imcontext->input));
+     {
+        if (ecore_imf_context_input_panel_enabled_get(ctx))
+          wl_text_input_hide_input_panel(imcontext->text_input);
+
+        wl_text_input_deactivate(imcontext->text_input,
+                                 ecore_wl_input_seat_get(imcontext->input));
+     }
 
    imcontext->input = NULL;
 }
