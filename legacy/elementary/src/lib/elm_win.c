@@ -3589,7 +3589,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
    sd->type = type;
    sd->parent = parent;
    sd->modal_count = 0;
-   sd->withdrawn = EINA_TRUE;
+   sd->withdrawn = ecore_evas_withdrawn_get(sd->ee);
 
    if (sd->parent)
      evas_object_event_callback_add
