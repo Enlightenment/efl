@@ -253,11 +253,6 @@ struct _Edje_Color
    unsigned char  r, g, b, a;
 };
 
-struct _Edje_Float_Color
-{
-   FLOAT_T  r, g, b, a;
-};
-
 struct _Edje_Map_Color
 {
    int idx;
@@ -304,7 +299,6 @@ typedef struct _Edje_Position                        Edje_Position;
 typedef struct _Edje_Size                            Edje_Size;
 typedef struct _Edje_Rectangle                       Edje_Rectangle;
 typedef struct _Edje_Color                           Edje_Color;
-typedef struct _Edje_Float_Color                     Edje_Float_Color;
 typedef struct _Edje_Map_Color                       Edje_Map_Color;
 typedef struct _Edje_Aspect_Prefer                   Edje_Aspect_Prefer;
 typedef struct _Edje_Aspect                          Edje_Aspect;
@@ -1386,9 +1380,9 @@ struct _Edje_Part_Description_Spec_Mesh_Node
    } texture;
 
    struct {
-      Edje_Float_Color      ambient;
-      Edje_Float_Color      diffuse;
-      Edje_Float_Color      specular;
+      Edje_Color            ambient;
+      Edje_Color            diffuse;
+      Edje_Color            specular;
       Eina_Bool             normal;
       FLOAT_T               shininess;
       Evas_3D_Shade_Mode    shade;
@@ -1415,9 +1409,9 @@ struct _Edje_Part_Description_Spec_Mesh_Node
 struct _Edje_Part_Description_Spec_Light
 {
    struct {
-      Edje_Float_Color      ambient;
-      Edje_Float_Color      diffuse;
-      Edje_Float_Color      specular;
+      Edje_Color            ambient;
+      Edje_Color            diffuse;
+      Edje_Color            specular;
    } properties;
 
    struct {
