@@ -582,10 +582,10 @@ _item_new(Evas_Object *obj,
    return eo_item;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_segment_control_item_eo_base_constructor(Eo *obj, Elm_Segment_Control_Item_Data *it)
 {
-   eo_do_super(obj, ELM_SEGMENT_CONTROL_ITEM_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, ELM_SEGMENT_CONTROL_ITEM_CLASS, obj, eo_constructor());
    it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
 
    Evas_Object *parent;
@@ -600,6 +600,8 @@ _elm_segment_control_item_eo_base_constructor(Eo *obj, Elm_Segment_Control_Item_
    elm_widget_theme_object_set
      (parent, VIEW(it), "segment_control", "item", elm_object_style_get(parent));
    edje_object_mirrored_set(VIEW(it), elm_widget_mirrored_get(WIDGET(it)));
+
+   return obj;
 }
 
 EOLIAN static void
@@ -695,16 +697,18 @@ elm_segment_control_add(Evas_Object *parent)
    return obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_segment_control_eo_base_constructor(Eo *obj, Elm_Segment_Control_Data *sd)
 {
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    sd->obj = obj;
 
-   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_LIST));
+
+   return obj;
 }
 
 EOLIAN static Elm_Object_Item*

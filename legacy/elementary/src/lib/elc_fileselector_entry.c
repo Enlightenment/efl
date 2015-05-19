@@ -343,14 +343,16 @@ elm_fileselector_entry_add(Evas_Object *parent)
    return obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_fileselector_entry_eo_base_constructor(Eo *obj, Elm_Fileselector_Entry_Data *sd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_GROUPING));
+
+   return obj;
 }
 
 EINA_DEPRECATED EAPI void

@@ -4241,7 +4241,7 @@ _eo_del_cb(void *data EINA_UNUSED, Eo *eo_item, const Eo_Event_Description *desc
  * @see elm_widget_item_del() to release memory.
  * @ingroup Widget
  */
-EOLIAN static void
+EOLIAN static Eo *
 _elm_widget_item_eo_base_constructor(Eo *eo_item, Elm_Widget_Item_Data *item)
 {
    Evas_Object *widget;
@@ -4250,16 +4250,18 @@ _elm_widget_item_eo_base_constructor(Eo *eo_item, Elm_Widget_Item_Data *item)
    if (!_elm_widget_is(widget))
      {
         eo_error_set(eo_item);
-        return;
+        return NULL;
      }
 
-   eo_do_super(eo_item, ELM_WIDGET_ITEM_CLASS, eo_constructor());
+   eo_item = eo_do_super_ret(eo_item, ELM_WIDGET_ITEM_CLASS, eo_item, eo_constructor());
 
    EINA_MAGIC_SET(item, ELM_WIDGET_ITEM_MAGIC);
 
    item->widget = widget;
    item->eo_obj = eo_item;
    eo_do(eo_item, eo_event_callback_add(EO_BASE_EVENT_DEL, _eo_del_cb, NULL));
+
+   return eo_item;
 }
 
 EOLIAN static void
@@ -5484,13 +5486,13 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 #endif
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
    Eo *parent = NULL;
 
    sd->on_create = EINA_TRUE;
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
@@ -5499,6 +5501,8 @@ _elm_widget_eo_base_constructor(Eo *obj, Elm_Widget_Smart_Data *sd)
    sd->on_create = EINA_FALSE;
 
    sd->role = ELM_ATSPI_ROLE_UNKNOWN;
+
+   return obj;
 }
 
 EOLIAN static void

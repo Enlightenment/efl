@@ -767,12 +767,12 @@ elm_menu_add(Evas_Object *parent)
    return obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_menu_eo_base_constructor(Eo *obj, Elm_Menu_Data *sd)
 {
    Eo *parent = NULL;
 
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
@@ -790,6 +790,8 @@ _elm_menu_eo_base_constructor(Eo *obj, Elm_Menu_Data *sd)
                                   _block_menu, sd);
    evas_object_smart_callback_add(obj, "elm,action,unblock_menu",
                                   _unblock_menu, sd);
+
+   return obj;
 }
 
 EOLIAN static void
@@ -982,11 +984,13 @@ _elm_menu_item_eo_base_destructor(Eo *eo_item, Elm_Menu_Item_Data *item)
    eo_do_super(eo_item, ELM_MENU_ITEM_CLASS, eo_destructor());
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_menu_item_eo_base_constructor(Eo *eo_item, Elm_Menu_Item_Data *item)
 {
-   eo_do_super(eo_item, ELM_MENU_ITEM_CLASS, eo_constructor());
+   eo_item = eo_do_super_ret(eo_item, ELM_MENU_ITEM_CLASS, eo_item, eo_constructor());
    item->base = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
+
+   return eo_item;
 }
 
 EOLIAN static Elm_Object_Item*

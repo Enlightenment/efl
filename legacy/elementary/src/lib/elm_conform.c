@@ -944,12 +944,12 @@ elm_conformant_add(Evas_Object *parent)
    return obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_conformant_eo_base_constructor(Eo *obj, Elm_Conformant_Data *sd)
 {
    Evas_Object *top;
 
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
@@ -968,6 +968,8 @@ _elm_conformant_eo_base_constructor(Eo *obj, Elm_Conformant_Data *sd)
      (top, "indicator,prop,changed", _on_indicator_mode_changed, obj);
    evas_object_smart_callback_add
      (top, "rotation,changed", _on_rotation_changed, obj);
+
+   return obj;
 }
 
 static void

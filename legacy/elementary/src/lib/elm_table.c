@@ -218,13 +218,15 @@ elm_table_add(Evas_Object *parent)
    return obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_table_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_FILLER));
+
+   return obj;
 }
 
 EOLIAN static void

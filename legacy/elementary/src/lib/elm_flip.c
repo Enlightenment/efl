@@ -1859,16 +1859,18 @@ elm_flip_add(Evas_Object *parent)
    return obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_flip_eo_base_constructor(Eo *obj, Elm_Flip_Data *sd)
 {
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    sd->obj = obj;
 
-   eo_do_super(obj, MY_CLASS, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_PAGE_TAB_LIST));
+
+   return obj;
 }
 
 EOLIAN static Eina_Bool

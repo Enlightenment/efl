@@ -3816,11 +3816,13 @@ elm_gesture_layer_add(Evas_Object *parent)
    return obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_gesture_layer_eo_base_constructor(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME_LEGACY));
+
+   return obj;
 }
 
 EOLIAN static Eina_Bool

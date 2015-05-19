@@ -370,11 +370,13 @@ _elm_app_server_view_eo_base_destructor(Eo *obj, Elm_App_Server_View_Data *data)
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_app_server_view_eo_base_constructor(Eo *obj, Elm_App_Server_View_Data *_pd EINA_UNUSED)
 {
    eo_error_set(obj);
    ERR("Only custom constructor can be used with '%s' class", MY_CLASS_NAME);
+
+   return NULL;
 }
 
 #include "elm_app_server_view.eo.c"

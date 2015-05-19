@@ -3741,17 +3741,21 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
          eo_event_callback_add(EO_EV_CALLBACK_DEL, _cb_deled, sd));
 }
 
-EOLIAN static void
-_elm_win_eo_base_constructor(Eo *obj EINA_UNUSED, Elm_Win_Data *_pd EINA_UNUSED)
-{
-   /* Do nothing. */
-}
-
 EOLIAN static Eo *
 _elm_win_eo_base_finalize(Eo *obj, Elm_Win_Data *_pd)
 {
    _elm_win_finalize_internal(obj, _pd, _pd->name, _pd->type);
    eo_do_super(obj, MY_CLASS, obj = eo_finalize());
+   return obj;
+}
+
+EOLIAN static Eo *
+_elm_win_eo_base_constructor(Eo *obj, Elm_Win_Data *_pd EINA_UNUSED)
+{
+   /* Do nothing. */
+   /* XXX: We are calling the constructor chain from the finalizer. It's
+    * really bad and hacky. Needs fixing. */
+
    return obj;
 }
 

@@ -182,12 +182,14 @@ elm_route_add(Evas_Object *parent)
    return obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_route_eo_base_constructor(Eo *obj, Elm_Route_Data *_pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY));
+
+   return obj;
 }
 
 EOLIAN static void

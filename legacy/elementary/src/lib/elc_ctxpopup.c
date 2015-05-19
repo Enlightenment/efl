@@ -1180,14 +1180,16 @@ elm_ctxpopup_add(Evas_Object *parent)
    return obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_ctxpopup_eo_base_constructor(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_POPUP_MENU));
+
+   return obj;
 }
 
 EOLIAN static void
@@ -1259,11 +1261,13 @@ _item_wrap_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
    item->wcb.org_func_cb((void *)item->wcb.org_data, item->wcb.cobj, EO_OBJ(item));
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_ctxpopup_item_eo_base_constructor(Eo *obj, Elm_Ctxpopup_Item_Data *it)
 {
-   eo_do_super(obj, ELM_CTXPOPUP_ITEM_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, ELM_CTXPOPUP_ITEM_CLASS, obj, eo_constructor());
    it->base = eo_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
+
+   return obj;
 }
 
 EOLIAN static Elm_Object_Item*

@@ -305,12 +305,6 @@ elm_glview_version_add(Evas_Object *parent, Evas_GL_Context_Version version)
 }
 
 EOLIAN static void
-_elm_glview_eo_base_constructor(Eo *obj, Elm_Glview_Data *sd EINA_UNUSED)
-{
-   eo_do_super(obj, MY_CLASS, eo_constructor());
-}
-
-EOLIAN static void
 _elm_glview_version_constructor(Eo *obj, Elm_Glview_Data *sd,
                                 Evas_GL_Context_Version version)
 {

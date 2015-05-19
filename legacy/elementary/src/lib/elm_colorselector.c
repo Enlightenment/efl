@@ -1454,10 +1454,10 @@ _elm_color_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED, Elm_Color_Ite
    elm_object_signal_emit(VIEW(it), emission, source);
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_color_item_eo_base_constructor(Eo *eo_item, Elm_Color_Item_Data *item)
 {
-   eo_do_super(eo_item, ELM_COLOR_ITEM_CLASS, eo_constructor());
+   eo_item = eo_do_super_ret(eo_item, ELM_COLOR_ITEM_CLASS, eo_item, eo_constructor());
    item->base = eo_data_scope_get(eo_item, ELM_WIDGET_ITEM_CLASS);
 
    Evas_Object *obj;
@@ -1493,6 +1493,8 @@ _elm_color_item_eo_base_constructor(Eo *eo_item, Elm_Color_Item_Data *item)
    // ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      eo_do(eo_item, elm_wdg_item_access_register());
+
+   return eo_item;
 }
 
 EOLIAN static void
@@ -1972,14 +1974,16 @@ elm_colorselector_add(Evas_Object *parent)
    return obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_colorselector_eo_base_constructor(Eo *obj, Elm_Colorselector_Data *_pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_COLOR_CHOOSER));
+
+   return obj;
 }
 
 EOLIAN static void

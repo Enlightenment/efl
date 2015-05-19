@@ -2315,12 +2315,14 @@ _access_widget_item_register(Elm_List_Item_Data *it, Eina_Bool is_access)
      }
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_list_item_eo_base_constructor(Eo *eo_it, Elm_List_Item_Data *it)
 {
-   eo_do_super(eo_it, ELM_LIST_ITEM_CLASS, eo_constructor());
+   eo_it = eo_do_super_ret(eo_it, ELM_LIST_ITEM_CLASS, eo_it, eo_constructor());
    it->base = eo_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
    eo_do(eo_it, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_LIST_ITEM));
+
+   return eo_it;
 }
 
 static Elm_List_Item_Data *
@@ -2586,14 +2588,16 @@ elm_list_add(Evas_Object *parent)
    return obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_list_eo_base_constructor(Eo *obj, Elm_List_Data *sd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_LIST));
+
+   return obj;
 }
 
 EOLIAN static void

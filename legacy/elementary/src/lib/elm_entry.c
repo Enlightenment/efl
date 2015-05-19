@@ -3727,16 +3727,18 @@ _cb_deled(void *data EINA_UNUSED,
 
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_entry_eo_base_constructor(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_ENTRY),
          eo_event_callback_add(EO_EV_CALLBACK_ADD, _cb_added, NULL),
          eo_event_callback_add(EO_EV_CALLBACK_DEL, _cb_deled, NULL));
+
+   return obj;
 }
 
 EOLIAN static void

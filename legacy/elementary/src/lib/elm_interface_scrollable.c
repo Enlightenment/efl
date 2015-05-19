@@ -212,13 +212,15 @@ _elm_pan_add(Evas *evas)
    return obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_pan_eo_base_constructor(Eo *obj, Elm_Pan_Smart_Data *_pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_PAN_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_PAN_CLASS, obj, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_PAN_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks));
+
+   return obj;
 }
 
 static void
@@ -4429,12 +4431,6 @@ _elm_interface_scrollable_evas_object_smart_del(Eo *obj, Elm_Scrollable_Smart_In
    ecore_animator_del(sid->down.bounce_y_animator);
    ecore_animator_del(sid->scrollto.x.animator);
    ecore_animator_del(sid->scrollto.y.animator);
-}
-
-EOLIAN static void
-_elm_interface_scrollable_eo_base_constructor(Eo *obj, Elm_Scrollable_Smart_Interface_Data *class_data EINA_UNUSED)
-{
-   eo_do_super(obj, MY_SCROLLABLE_INTERFACE, eo_constructor());
 }
 
 EOLIAN static void

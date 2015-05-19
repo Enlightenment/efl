@@ -785,11 +785,13 @@ _item_unfocused_cb(void *data,
    evas_object_smart_callback_call(WIDGET(it), SIG_ITEM_UNFOCUSED, EO_OBJ(it));
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_popup_item_eo_base_constructor(Eo *eo_it, Elm_Popup_Item_Data *it)
 {
-   eo_do_super(eo_it, ELM_POPUP_ITEM_CLASS, eo_constructor());
+   eo_it = eo_do_super_ret(eo_it, ELM_POPUP_ITEM_CLASS, eo_it, eo_constructor());
    it->base = eo_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
+
+   return eo_it;
 }
 
 static void
@@ -1503,14 +1505,16 @@ elm_popup_add(Evas_Object *parent)
    return obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _elm_popup_eo_base_constructor(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_POPUP_MENU));
+
+   return obj;
 }
 
 EOLIAN static void
