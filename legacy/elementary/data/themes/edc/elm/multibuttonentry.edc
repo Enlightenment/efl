@@ -1,5 +1,4 @@
 group { name: "elm/multibuttonentry/base/default";
-   data.item: "closed_height" 0;
    parts {
       part { name: "box.swallow"; type: SWALLOW;
          description { state: "default" 0.0;
