@@ -325,7 +325,7 @@ EAPI Eina_Bool eina_module_load(Eina_Module *m)
 
    if (!dl_handle)
      {
-        WRN("could not dlopen(\"%s\", %s): %s", m->file, dlerror(), 
+        ERR("could not dlopen(\"%s\", %s): %s", m->file, dlerror(),
             (flag == RTLD_NOW) ? "RTLD_NOW" : "RTLD_LAZY");
         return EINA_FALSE;
      }
@@ -337,7 +337,7 @@ EAPI Eina_Bool eina_module_load(Eina_Module *m)
    if ((*initcall)() == EINA_TRUE)
       goto ok;
 
-   WRN("could not find eina's entry symbol %s inside module %s, or the init function failed",
+   ERR("could not find eina's entry symbol %s inside module %s, or the init function failed",
        EINA_MODULE_SYMBOL_INIT, m->file);
    dlclose(dl_handle);
    return EINA_FALSE;
