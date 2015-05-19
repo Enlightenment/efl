@@ -52,6 +52,10 @@ extern Eina_Hash *_depclasses;
 /* a hash holding all declarations, for redef checking etc */
 extern Eina_Hash *_decls;
 
+/* holds parsed/currently parsing eot files to keep track */
+extern Eina_Hash *_parsedeots;
+extern Eina_Hash *_parsingeots;
+
 typedef struct _Eolian_Object
 {
    const char *file;

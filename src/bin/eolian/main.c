@@ -391,8 +391,6 @@ int main(int argc, char **argv)
         goto end;
      }
 
-   eolian_all_eot_files_parse();
-
    if (!eolian_eo_file_parse(eo_filename))
      {
         ERR("Error during parsing file %s\n", eo_filename);

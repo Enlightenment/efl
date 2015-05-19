@@ -213,8 +213,12 @@ Eina_Bool
 eo_parser_database_fill(const char *filename, Eina_Bool eot)
 {
    Eolian_Class *cl;
+   Eo_Lexer *ls;
 
-   Eo_Lexer *ls = eo_lexer_new(filename);
+   if (eot && eina_hash_find(_parsedeots, filename))
+     return EINA_TRUE;
+
+   ls = eo_lexer_new(filename);
    if (!ls)
      {
         fprintf(stderr, "eolian: unable to create lexer for file '%s'\n", filename);
@@ -249,6 +253,9 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
      }
 
 done:
+   if (eot)
+     eina_hash_set(_parsedeots, filename, (void *)EINA_TRUE);
+
    eo_lexer_free(ls);
    return EINA_TRUE;
 

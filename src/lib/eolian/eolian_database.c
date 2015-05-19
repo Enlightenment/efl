@@ -24,6 +24,9 @@ Eina_Hash *_tfilenames = NULL;
 Eina_Hash *_depclasses = NULL;
 Eina_Hash *_decls      = NULL;
 
+Eina_Hash *_parsedeots = NULL;
+Eina_Hash *_parsingeots = NULL;
+
 static int _database_init_count = 0;
 
 static void
@@ -66,6 +69,8 @@ database_init()
    _tfilenames = eina_hash_string_small_new(free);
    _depclasses = eina_hash_stringshared_new(EINA_FREE_CB(_deplist_free));
    _decls      = eina_hash_stringshared_new(free);
+   _parsedeots = eina_hash_string_small_new(NULL);
+   _parsingeots = eina_hash_string_small_new(NULL);
    return ++_database_init_count;
 }
 
@@ -97,6 +102,8 @@ database_shutdown()
         eina_hash_free(_tfilenames); _tfilenames = NULL;
         eina_hash_free(_depclasses); _depclasses = NULL;
         eina_hash_free(_decls     ); _decls      = NULL;
+        eina_hash_free(_parsedeots); _parsedeots = NULL;
+        eina_hash_free(_parsingeots); _parsingeots = NULL;
         eina_shutdown();
      }
    return _database_init_count;

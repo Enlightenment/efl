@@ -1791,8 +1791,39 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
         goto found_class;
       case KW_import:
         {
+           Eina_Strbuf *buf = push_strbuf(ls);
+           const char *found = NULL;
+           char errbuf[PATH_MAX];
            eo_lexer_get(ls);
-           check_next(ls, TOK_VALUE);
+           check(ls, TOK_VALUE);
+           eina_strbuf_append(buf, ls->t.value.s);
+           eina_strbuf_append(buf, ".eot");
+           if (eina_hash_find(_parsingeots, ls->t.value.s))
+             {
+                pop_strbuf(ls);
+                snprintf(errbuf, sizeof(errbuf),
+                         "cyclic import '%s'", ls->t.value.s);
+                eo_lexer_syntax_error(ls, errbuf);
+             }
+           if (!(found = eina_hash_find(_tfilenames, eina_strbuf_string_get(buf))))
+             {
+                pop_strbuf(ls);
+                snprintf(errbuf, sizeof(errbuf),
+                         "unknown import '%s'", ls->t.value.s);
+                eo_lexer_syntax_error(ls, errbuf);
+             }
+           pop_strbuf(ls);
+           eina_hash_set(_parsingeots, ls->t.value.s, (void *)EINA_TRUE);
+           if (!eo_parser_database_fill(found, EINA_TRUE))
+             {
+                pop_strbuf(ls);
+                snprintf(errbuf, sizeof(errbuf),
+                         "error while parsing import '%s'", ls->t.value.s);
+                eo_lexer_syntax_error(ls, errbuf);
+             }
+           eina_hash_set(_parsingeots, ls->t.value.s, (void *)EINA_FALSE);
+           pop_strbuf(ls);
+           eo_lexer_get(ls);
            check_next(ls, ';');
            break;
         }

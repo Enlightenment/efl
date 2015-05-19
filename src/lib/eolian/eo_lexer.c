@@ -659,7 +659,7 @@ eo_lexer_set_input(Eo_Lexer *ls, const char *source)
    ls->source          = eina_stringshare_add(source);
    ls->filename        = get_filename(ls);
    ls->line_number     = 1;
-   ls->icolumn         = ls->column = 0;
+   ls->icolumn         = ls->column = -1;
    next_char(ls);
    if (ls->current != 0xEF)
      return;
