@@ -45,6 +45,7 @@ Return event freeze count. */
       constructor {
          /*@ Call the object's constructor.
 Should not be used with #eo_do. Only use it with #eo_do_super. */
+         return: Eo *; /*@ The new object created, can be NULL if aborting */
       }
       destructor {
          /*@ Call the object's destructor.

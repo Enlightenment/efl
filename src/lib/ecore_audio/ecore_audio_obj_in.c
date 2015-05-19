@@ -170,12 +170,14 @@ _ecore_audio_in_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Input *obj, Ecore_Au
   obj->seekable = (vio->seek != NULL);
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _ecore_audio_in_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Input *obj)
 {
-  eo_do_super(eo_obj, MY_CLASS, eo_constructor());
+  eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
 
   obj->speed = 1.0;
+
+  return eo_obj;
 }
 
 EOLIAN static void

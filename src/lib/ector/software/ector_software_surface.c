@@ -65,17 +65,19 @@ _ector_software_surface_surface_get(Eo *obj EINA_UNUSED,
    *height = pd->software->fill_data.raster_buffer.height;
 }
 
-static void
+static Eo *
 _ector_software_surface_eo_base_constructor(Eo *obj,
                                             Ector_Software_Surface_Data *pd EINA_UNUSED)
 {
-  eo_do_super(obj, ECTOR_SOFTWARE_SURFACE_CLASS, eo_constructor());
+  obj = eo_do_super_ret(obj, ECTOR_SOFTWARE_SURFACE_CLASS, obj, eo_constructor());
   if(_software_count == 0)
     {
        pd->software = (Software_Rasterizer *) calloc(1, sizeof(Software_Rasterizer));
        ector_software_rasterizer_init(pd->software);
     }
   _software_count++;
+
+  return obj;
 }
 
 static void

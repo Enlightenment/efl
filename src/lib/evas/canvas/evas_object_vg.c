@@ -98,13 +98,13 @@ _evas_vg_eo_base_destructor(Eo *eo_obj, Evas_VG_Data *pd)
    eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 
-void
+Eo *
 _evas_vg_eo_base_constructor(Eo *eo_obj, Evas_VG_Data *pd)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Eo *parent = NULL;
 
-   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
+   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
 
    /* set up methods (compulsory) */
    obj->func = &object_func;
@@ -117,6 +117,8 @@ _evas_vg_eo_base_constructor(Eo *eo_obj, Evas_VG_Data *pd)
 
    eo_do(eo_obj, parent = eo_parent_get());
    evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
+
+   return eo_obj;
 }
 
 static void

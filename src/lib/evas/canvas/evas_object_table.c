@@ -966,11 +966,13 @@ evas_object_table_add(Evas *evas)
    return obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _evas_table_eo_base_constructor(Eo *obj, Evas_Table_Data *class_data EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME_LEGACY));
+
+   return obj;
 }
 
 EOLIAN static Evas_Object*

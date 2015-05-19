@@ -28,13 +28,15 @@ static Eina_Bool _callback_callback_added(void* data EINA_UNUSED, Eo* obj EINA_U
   return EINA_TRUE;
 }
 
-static void _callback_eo_base_constructor(Eo *obj EINA_UNUSED, Callback_Data *pd EINA_UNUSED)
+static Eo *_callback_eo_base_constructor(Eo *obj, Callback_Data *pd EINA_UNUSED)
 {
   pd->callbacks = 0;
-  eo_do_super(obj, MY_CLASS, eo_constructor());
+  obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 
   eo_event_callback_priority_add(EO_BASE_EVENT_CALLBACK_ADD, EO_CALLBACK_PRIORITY_DEFAULT
                                  , &_callback_callback_added, pd);
+
+  return obj;
 }
 
 static void _callback_onecallback(Eo *obj EINA_UNUSED, Callback_Data *pd EINA_UNUSED, Ecore_Cb cb, void *data)

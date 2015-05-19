@@ -23,7 +23,7 @@ evas_out_add(Evas *e)
    return eo_obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _evas_out_eo_base_constructor(Eo *eo_obj, Evas_Out_Data *eo_dat)
 {
    Eo *eo_parent = NULL;
@@ -33,14 +33,16 @@ _evas_out_eo_base_constructor(Eo *eo_obj, Evas_Out_Data *eo_dat)
    e = eo_data_scope_get(eo_parent, EVAS_CANVAS_CLASS);
    evas_canvas_async_block(e);
 
-   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
+   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
 
-   if (!e) return;
+   if (!e) return NULL;
    e->outputs = eina_list_append(e->outputs, eo_obj);
    if (e->engine.func->info) eo_dat->info = e->engine.func->info(eo_parent);
    // XXX: context and output are currently held in the core engine and are
    // allocated by engine specific internal code. this all needs a new engine
    // api to make it work
+
+   return eo_obj;
 }
 
 EAPI void

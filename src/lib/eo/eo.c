@@ -920,6 +920,18 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
           }
      }
 
+   /* eo_id can change here. Freeing is done on the resolved object. */
+   eo_do(eo_id, eo_id = eo_constructor());
+   if (!eo_id)
+     {
+        ERR("Object of class '%s' - Error while constructing object",
+            klass->desc->name);
+        /* Unref twice, once for the ref in _eo_add_internal_start, and once for the basic object ref. */
+        _eo_unref(obj);
+        _eo_unref(obj);
+        return NULL;
+     }
+
    return eo_id;
 }
 

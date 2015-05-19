@@ -255,14 +255,14 @@ static void _state_job(void *data EINA_UNUSED)
    class_vars.state_job = NULL;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _ecore_audio_out_pulse_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Out_Pulse_Data *_pd EINA_UNUSED)
 {
   int argc;
   char **argv;
   Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
 
-  eo_do_super(eo_obj, MY_CLASS, eo_constructor());
+  eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
 
   out_obj->need_writer = EINA_FALSE;
 
@@ -281,6 +281,8 @@ _ecore_audio_out_pulse_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Out_Pulse_Dat
   class_vars.outputs = eina_list_append(class_vars.outputs, eo_obj);
   if (class_vars.state_job) eo_del(class_vars.state_job);
   class_vars.state_job = ecore_job_add(_state_job, NULL);
+
+  return eo_obj;
 }
 
 EOLIAN static void

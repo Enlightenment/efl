@@ -639,8 +639,8 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
 #define _eo_add_common(klass, parent, is_ref, ...) \
    ( \
      _eo_do_start(_eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref), \
-        klass, EINA_FALSE, __FILE__, __FUNCTION__, __LINE__), \
-     eo_constructor(), ##__VA_ARGS__, \
+        klass, EINA_FALSE, __FILE__, __FUNCTION__, __LINE__) \
+     , ##__VA_ARGS__, \
      (Eo *) _eo_add_end() \
    )
 

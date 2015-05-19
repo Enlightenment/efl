@@ -365,10 +365,10 @@ evas_object_text_add(Evas *e)
    return eo_obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _evas_text_eo_base_constructor(Eo *eo_obj, Evas_Text_Data *o)
 {
-   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
+   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
    evas_object_text_init(eo_obj);
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Eo *parent = NULL;
@@ -377,6 +377,8 @@ _evas_text_eo_base_constructor(Eo *eo_obj, Evas_Text_Data *o)
    evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
 
    o->cur.filter = eina_cow_alloc(evas_object_filter_cow);
+
+   return eo_obj;
 }
 
 EOLIAN static void

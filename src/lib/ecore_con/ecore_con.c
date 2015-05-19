@@ -372,15 +372,17 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    return obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _ecore_con_server_eo_base_constructor(Ecore_Con_Server *obj, Ecore_Con_Server_Data *svr)
 {
-   eo_do_super(obj, ECORE_CON_SERVER_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, ECORE_CON_SERVER_CLASS, obj, eo_constructor());
 
    svr->fd = -1;
    svr->reject_excess_clients = EINA_FALSE;
    svr->client_limit = -1;
    svr->clients = NULL;
+
+   return obj;
 }
 
 EOLIAN static Eo *

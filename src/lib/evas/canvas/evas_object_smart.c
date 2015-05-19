@@ -545,7 +545,7 @@ evas_object_smart_add(Evas *eo_e, Evas_Smart *s)
    return eo_obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _evas_object_smart_eo_base_constructor(Eo *eo_obj, Evas_Smart_Data *class_data EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj;
@@ -555,7 +555,7 @@ _evas_object_smart_eo_base_constructor(Eo *eo_obj, Evas_Smart_Data *class_data E
    smart = class_data;
    smart->object = eo_obj;
 
-   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
+   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
    evas_object_smart_init(eo_obj);
 
    obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
@@ -564,6 +564,8 @@ _evas_object_smart_eo_base_constructor(Eo *eo_obj, Evas_Smart_Data *class_data E
    eo_do(eo_obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_add());
+
+   return eo_obj;
 }
 
 EOLIAN static void

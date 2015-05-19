@@ -107,12 +107,12 @@ _ecore_audio_in_tone_eo_base_key_data_get(Eo *eo_obj, Ecore_Audio_In_Tone_Data *
   }
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _ecore_audio_in_tone_eo_base_constructor(Eo *eo_obj, Ecore_Audio_In_Tone_Data *obj)
 {
   Ecore_Audio_Input *in_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_IN_CLASS);
 
-  eo_do_super(eo_obj, MY_CLASS, eo_constructor());
+  eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
 
   in_obj->channels = 1;
   in_obj->samplerate = 44100;
@@ -120,6 +120,8 @@ _ecore_audio_in_tone_eo_base_constructor(Eo *eo_obj, Ecore_Audio_In_Tone_Data *o
   in_obj->seekable = EINA_TRUE;
 
   obj->freq = 1000;
+
+  return eo_obj;
 }
 
 #include "ecore_audio_in_tone.eo.c"

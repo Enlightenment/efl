@@ -19,12 +19,12 @@ extern "C"
 
 static efl::eina::log_domain domain("colourable");
 
-void
+Eo *
 _colourable_eo_base_constructor(Eo *obj, Colourable_Data *self)
 {
    EINA_CXX_DOM_LOG_DBG(domain) << __func__ << std::endl;
    self->r = self->g = self->b = 0;
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 }
 
 void

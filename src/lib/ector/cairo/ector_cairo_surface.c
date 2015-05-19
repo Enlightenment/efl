@@ -121,14 +121,16 @@ _ector_cairo_surface_ector_generic_surface_reference_point_set(Eo *obj EINA_UNUS
    pd->current.y = y;
 }
 
-static void
+static Eo *
 _ector_cairo_surface_eo_base_constructor(Eo *obj,
                                          Ector_Cairo_Surface_Data *pd)
 {
-   eo_do_super(obj, ECTOR_CAIRO_SURFACE_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, ECTOR_CAIRO_SURFACE_CLASS, obj, eo_constructor());
    _cairo_count++;
 
    _ector_cairo_surface_context_set(obj, pd, NULL);
+
+   return obj;
 }
 
 static void

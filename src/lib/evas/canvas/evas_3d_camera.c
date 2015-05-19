@@ -62,12 +62,14 @@ evas_3d_camera_node_del(Evas_3D_Camera *camera, Evas_3D_Node *node)
    else eina_hash_set(pd->nodes, &node, (const void *)(uintptr_t)(count - 1));
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _evas_3d_camera_eo_base_constructor(Eo *obj,
                                        Evas_3D_Camera_Data *pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj, evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_CAMERA));
+
+   return obj;
 }
 
 EOLIAN static void

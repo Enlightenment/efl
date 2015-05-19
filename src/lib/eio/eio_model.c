@@ -623,15 +623,15 @@ _eio_model_efl_model_base_children_slice_get(Eo *obj EINA_UNUSED, Eio_Model_Data
 /**
  * Class definitions
  */
-static void
+static Eo *
 _eio_model_eo_base_constructor(Eo *obj, Eio_Model_Data *priv)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    unsigned int i;
    priv->obj = obj;
 
    priv->properties_name = eina_array_new(EIO_MODEL_PROP_LAST);
-   EINA_SAFETY_ON_NULL_RETURN(priv->properties_name);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(priv->properties_name, NULL);
    for (i = 0; i < EIO_MODEL_PROP_LAST; ++i)
      eina_array_push(priv->properties_name, _eio_model_prop_names[i]);
 
@@ -645,6 +645,8 @@ _eio_model_eo_base_constructor(Eo *obj, Eio_Model_Data *priv)
    priv->load.status = EFL_MODEL_LOAD_STATUS_UNLOADED;
    priv->monitor = NULL;
    eina_spinlock_new(&priv->filter_lock);
+
+   return obj;
 }
 
 static void

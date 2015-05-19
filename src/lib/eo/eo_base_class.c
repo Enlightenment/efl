@@ -967,12 +967,14 @@ EAPI const Eina_Value_Type *EO_DBG_INFO_TYPE = &_EO_DBG_INFO_TYPE;
 /* EO_BASE_CLASS stuff */
 #define MY_CLASS EO_BASE_CLASS
 
-EOLIAN static void
+EOLIAN static Eo *
 _eo_base_constructor(Eo *obj, Eo_Base_Data *pd EINA_UNUSED)
 {
    DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
 
    _eo_condtor_done(obj);
+
+   return obj;
 }
 
 EOLIAN static void

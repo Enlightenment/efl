@@ -3,15 +3,17 @@
 
 #define MY_CLASS EVAS_3D_OBJECT_CLASS
 
-EOLIAN static void
+EOLIAN static Eo *
 _evas_3d_object_eo_base_constructor(Eo *obj, Evas_3D_Object_Data *pd)
 {
    Eo *e = NULL;
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj, e = eo_parent_get());
    pd->evas = e;
    pd->type = EVAS_3D_OBJECT_TYPE_INVALID;
    memset(&pd->dirty[0], 0x00, sizeof(Eina_Bool) * EVAS_3D_STATE_MAX);
+
+   return obj;
 }
 
 EOLIAN static Evas *

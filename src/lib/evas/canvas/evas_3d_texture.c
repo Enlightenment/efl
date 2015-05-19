@@ -319,13 +319,15 @@ evas_3d_texture_add(Evas *e)
 }
 
 
-EOLIAN static void
+EOLIAN static Eo *
 _evas_3d_texture_eo_base_constructor(Eo *obj, Evas_3D_Texture_Data *pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    pd->atlas_enable = EINA_TRUE;
 
    eo_do(obj, evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_TEXTURE));
+
+   return obj;
 }
 
 EOLIAN static void

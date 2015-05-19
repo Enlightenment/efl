@@ -342,7 +342,7 @@ _init_cow(Eo *eo_obj)
    return EINA_TRUE;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _evas_image_eo_base_constructor(Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
@@ -350,7 +350,7 @@ _evas_image_eo_base_constructor(Eo *eo_obj, Evas_Image_Data *o)
    Eo *parent = NULL;
    Evas_Colorspace cspace;
 
-   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
+   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
 
    eo_do(eo_obj, parent = eo_parent_get());
    eo_e = evas_object_evas_get(parent);
@@ -359,7 +359,7 @@ _evas_image_eo_base_constructor(Eo *eo_obj, Evas_Image_Data *o)
    evas_object_inject(eo_obj, obj, eo_e);
 
    if (!_init_cow(eo_obj))
-     return;
+     return NULL;
 
    o->load_opts = eina_cow_alloc(evas_object_image_load_opts_cow);
    o->pixels = eina_cow_alloc(evas_object_image_pixels_cow);
@@ -377,6 +377,8 @@ _evas_image_eo_base_constructor(Eo *eo_obj, Evas_Image_Data *o)
             state_write->filter = eina_cow_alloc(evas_object_filter_cow);
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
      }
+
+   return eo_obj;
 }
 
 EAPI Evas_Object *

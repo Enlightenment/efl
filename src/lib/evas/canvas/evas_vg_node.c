@@ -238,20 +238,22 @@ _efl_vg_base_parent_checked_get(Eo *obj,
    return EINA_FALSE;
 }
 
-static void
+static Eo *
 _efl_vg_base_eo_base_constructor(Eo *obj,
                                  Efl_VG_Base_Data *pd)
 {
    Efl_VG_Container_Data *cd = NULL;
    Eo *parent;
 
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 
    if (!_efl_vg_base_parent_checked_get(obj, &parent, &cd))
      eo_error_set(obj);
 
    eo_do(obj, eo_event_callback_add(EFL_GFX_CHANGED, _efl_vg_base_property_changed, pd));
    pd->changed = EINA_TRUE;
+
+   return obj;
 }
 
 static void

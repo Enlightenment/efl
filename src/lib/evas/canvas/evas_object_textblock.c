@@ -5782,14 +5782,14 @@ evas_object_textblock_add(Evas *e)
    return eo_obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _evas_textblock_eo_base_constructor(Eo *eo_obj, Evas_Textblock_Data *class_data EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Textblock_Data *o;
    Eo *eo_parent = NULL;
 
-   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
+   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
 
    /* set up methods (compulsory) */
    obj->func = &object_func;
@@ -5803,6 +5803,8 @@ _evas_textblock_eo_base_constructor(Eo *eo_obj, Evas_Textblock_Data *class_data 
 
    eo_do(eo_obj, eo_parent = eo_parent_get());
    evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent));
+
+   return eo_obj;
 }
 
 EAPI Evas_Textblock_Style *

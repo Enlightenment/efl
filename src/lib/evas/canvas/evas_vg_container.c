@@ -25,17 +25,19 @@ _efl_vg_container_render_pre(Eo *obj EINA_UNUSED,
      _evas_vg_render_pre(child, s, current);
 }
 
-static void
+static Eo *
 _efl_vg_container_eo_base_constructor(Eo *obj,
                                       Efl_VG_Container_Data *pd)
 {
    Efl_VG_Base_Data *nd;
 
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 
    nd = eo_data_scope_get(obj, EFL_VG_BASE_CLASS);
    nd->render_pre = _efl_vg_container_render_pre;
    nd->data = pd;
+
+   return obj;
 }
 
 static void

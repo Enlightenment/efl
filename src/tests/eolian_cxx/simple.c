@@ -12,9 +12,9 @@
 
 #define MY_CLASS SIMPLE_CLASS
 
-static void _simple_eo_base_constructor(Eo *obj, void *pd EINA_UNUSED)
+static Eo *_simple_eo_base_constructor(Eo *obj, void *pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 }
 
 static Eina_Bool _simple_simple_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)

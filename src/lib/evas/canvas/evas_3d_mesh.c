@@ -252,12 +252,14 @@ evas_3d_mesh_add(Evas *e)
    return eo_obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _evas_3d_mesh_eo_base_constructor(Eo *obj, Evas_3D_Mesh_Data *pd)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do (obj, evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_MESH));
    _mesh_init(pd);
+
+   return obj;
 }
 
 EOLIAN static void

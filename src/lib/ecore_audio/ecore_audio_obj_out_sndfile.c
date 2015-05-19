@@ -158,17 +158,18 @@ _ecore_audio_out_sndfile_ecore_audio_format_get(Eo *eo_obj, Ecore_Audio_Out_Sndf
   return obj->format;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _ecore_audio_out_sndfile_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Out_Sndfile_Data *_pd EINA_UNUSED)
 {
   Ecore_Audio_Output *out_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
 
-  eo_do_super(eo_obj, MY_CLASS, eo_constructor());
+  eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
 
   eo_do(eo_obj, ecore_audio_obj_format_set(ECORE_AUDIO_FORMAT_OGG));
 
   // FIXME: Use writer from output
   out_obj->need_writer = EINA_FALSE;
+  return eo_obj;
 }
 
 EOLIAN static void

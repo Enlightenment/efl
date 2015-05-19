@@ -18,9 +18,9 @@ typedef struct _D_Data D_Data;
 
 #define MY_CLASS D_CLASS
 
-static void _d_eo_base_constructor(Eo *obj EINA_UNUSED, D_Data *pd EINA_UNUSED)
+static Eo *_d_eo_base_constructor(Eo *obj EINA_UNUSED, D_Data *pd EINA_UNUSED)
 {
-  eo_do_super(obj, MY_CLASS, eo_constructor());
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 }
 
 #include "d.eo.c"

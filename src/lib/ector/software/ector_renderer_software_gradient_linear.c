@@ -71,13 +71,15 @@ _ector_renderer_software_gradient_linear_ector_renderer_software_base_fill(Eo *o
    return EINA_TRUE;
 }
 
-void
+Eo *
 _ector_renderer_software_gradient_linear_eo_base_constructor(Eo *obj,
                                                              Ector_Renderer_Software_Gradient_Data *pd)
 {
-   eo_do_super(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, obj, eo_constructor());
    pd->gd  = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_GRADIENT_MIXIN, obj);
    pd->gld = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_GRADIENT_LINEAR_MIXIN, obj);
+
+   return obj;
 }
 
 void

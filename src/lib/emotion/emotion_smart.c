@@ -263,11 +263,13 @@ emotion_object_add(Evas *evas)
    return e;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _emotion_object_eo_base_constructor(Eo *obj, Emotion_Object_Data *pd EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj, evas_obj_type_set(E_OBJ_NAME));
+
+   return obj;
 }
 
 EAPI Evas_Object *

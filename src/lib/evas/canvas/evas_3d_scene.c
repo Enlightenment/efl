@@ -64,16 +64,18 @@ evas_3d_scene_add(Evas *e)
    return eo_obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _evas_3d_scene_eo_base_constructor(Eo *obj, Evas_3D_Scene_Data *pd)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj, evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_SCENE));
    evas_color_set(&pd->bg_color, 0.0, 0.0, 0.0, 0.0);
    pd->shadows_enabled = EINA_FALSE;
    pd->color_pick_enabled = EINA_FALSE;
    pd->node_mesh_colors = NULL;
    pd->colors_node_mesh = NULL;
+
+   return obj;
 }
 
 EOLIAN static void

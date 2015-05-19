@@ -88,10 +88,10 @@ evas_3d_material_add(Evas *e)
    return eo_obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _evas_3d_material_eo_base_constructor(Eo *obj EINA_UNUSED, Evas_3D_Material_Data *pd)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj, evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_MATERIAL));
 
    evas_color_set(&pd->attribs[EVAS_3D_MATERIAL_AMBIENT].color, 0.2, 0.2, 0.2, 1.0);
@@ -99,6 +99,8 @@ _evas_3d_material_eo_base_constructor(Eo *obj EINA_UNUSED, Evas_3D_Material_Data
    evas_color_set(&pd->attribs[EVAS_3D_MATERIAL_SPECULAR].color, 1.0, 1.0, 1.0, 1.0);
    evas_color_set(&pd->attribs[EVAS_3D_MATERIAL_EMISSION].color, 0.0, 0.0, 0.0, 1.0);
    pd->shininess = 150.0;
+
+   return obj;
 }
 
 EOLIAN static void

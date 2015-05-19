@@ -129,12 +129,14 @@ _ecore_audio_out_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_Output *_pd EINA_UN
   ea_obj->vio->free_func = free_func;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _ecore_audio_out_eo_base_constructor(Eo *eo_obj, Ecore_Audio_Output *obj)
 {
-  eo_do_super(eo_obj, MY_CLASS, eo_constructor());
+  eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
 
   obj->need_writer = EINA_TRUE;
+
+  return eo_obj;
 }
 
 EOLIAN static void

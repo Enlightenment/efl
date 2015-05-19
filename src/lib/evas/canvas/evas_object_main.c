@@ -82,12 +82,12 @@ _init_cow(void)
    return EINA_TRUE;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _evas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    Eo *parent = NULL;
 
-   eo_do_super(eo_obj, MY_CLASS, eo_constructor());
+   eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
    eo_do(eo_obj, evas_obj_type_set(MY_CLASS_NAME));
    eo_manual_free_set(eo_obj, EINA_TRUE);
 
@@ -96,7 +96,7 @@ _evas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    if (!obj || !_init_cow() || !eo_isa(parent, EVAS_COMMON_INTERFACE_INTERFACE))
      {
         eo_error_set(eo_obj);
-        return;
+        return NULL;
      }
 
    obj->is_frame = EINA_FALSE;
@@ -107,6 +107,8 @@ _evas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    obj->prev = eina_cow_alloc(evas_object_state_cow);
    obj->data_3d = eina_cow_alloc(evas_object_3d_cow);
    obj->mask = eina_cow_alloc(evas_object_mask_cow);
+
+   return eo_obj;
 }
 
 void

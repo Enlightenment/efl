@@ -76,10 +76,10 @@ evas_3d_light_add(Evas *e)
    return eo_obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _evas_3d_light_eo_base_constructor(Eo *obj, Evas_3D_Light_Data *pd)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj, evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_LIGHT));
    evas_color_set(&pd->ambient, 0.0, 0.0, 0.0, 1.0);
    evas_color_set(&pd->diffuse, 1.0, 1.0, 1.0, 1.0);
@@ -92,6 +92,8 @@ _evas_3d_light_eo_base_constructor(Eo *obj, Evas_3D_Light_Data *pd)
    pd->atten_const = 1.0;
    pd->atten_linear = 0.0;
    pd->atten_quad = 0.0;
+
+   return obj;
 }
 
 EOLIAN static void

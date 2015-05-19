@@ -239,12 +239,12 @@ edje_edit_object_add(Evas *evas)
    return e;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _edje_edit_eo_base_constructor(Eo *obj, Edje_Edit *eed)
 {
    eed->base = eo_data_ref(obj, EDJE_OBJECT_CLASS);
 
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 }
 
 EOLIAN static void

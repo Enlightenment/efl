@@ -244,15 +244,17 @@ _ector_renderer_cairo_shape_ector_renderer_generic_base_bounds_get(Eo *obj,
    r->y += bd->generic->origin.y;
 }
 
-void
+Eo *
 _ector_renderer_cairo_shape_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Shape_Data *pd)
 {
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS, obj, eo_constructor());
    pd->shape = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_SHAPE_MIXIN, obj);
    pd->base = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
 
    eo_do(obj,
          eo_event_callback_add(EFL_GFX_PATH_CHANGED, _ector_renderer_cairo_shape_path_changed, pd));
+
+   return obj;
 }
 
 void

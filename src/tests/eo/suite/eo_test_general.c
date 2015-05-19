@@ -296,12 +296,12 @@ static Eina_Bool _man_should_con = EINA_TRUE;
 static Eina_Bool _man_should_des = EINA_TRUE;
 static const Eo_Class *cur_klass = NULL;
 
-static void
+static Eo *
 _man_con(Eo *obj, void *data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    if (_man_should_con)
       eo_manual_free_set(obj, EINA_TRUE);
-   eo_do_super(obj, cur_klass, eo_constructor());
+   return eo_do_super_ret(obj, cur_klass, obj, eo_constructor());
 }
 
 static void

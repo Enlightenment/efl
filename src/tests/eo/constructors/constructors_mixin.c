@@ -18,12 +18,12 @@ _add_and_print_set(Eo *obj, void *class_data EINA_UNUSED, int x)
 
 extern int my_init_count;
 
-static void
+static Eo *
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
-
    my_init_count++;
+
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 }
 
 static void

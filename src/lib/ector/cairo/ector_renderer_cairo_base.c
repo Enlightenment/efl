@@ -190,16 +190,18 @@ _ector_renderer_cairo_base_ector_renderer_generic_base_draw(Eo *obj,
    return EINA_TRUE;
 }
 
-static void
+static Eo *
 _ector_renderer_cairo_base_eo_base_constructor(Eo *obj, Ector_Renderer_Cairo_Base_Data *pd EINA_UNUSED)
 {
-   eo_do_super(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS, eo_constructor());
+   obj = eo_do_super_ret(obj, ECTOR_RENDERER_CAIRO_BASE_CLASS, obj, eo_constructor());
 
    pd->generic = eo_data_xref(obj, ECTOR_RENDERER_GENERIC_BASE_CLASS, obj);
 
-   USE(obj, cairo_matrix_init_identity, );
+   USE(obj, cairo_matrix_init_identity, NULL);
 
    cairo_matrix_init_identity(&identity);
+
+   return obj;
 }
 
 static void

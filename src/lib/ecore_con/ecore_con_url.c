@@ -453,25 +453,26 @@ ecore_con_url_new(const char *url)
    return url_obj;
 }
 
-EOLIAN static void
+EOLIAN static Eo *
 _efl_network_url_eo_base_constructor(Efl_Network_Url *url_obj, Efl_Network_Url_Data *url_con EINA_UNUSED)
 {
-   eo_do_super(url_obj, MY_CLASS, eo_constructor());
+   url_obj = eo_do_super_ret(url_obj, MY_CLASS, url_obj, eo_constructor());
 
    if (!_init_count) eo_error_set(url_obj);
    if (!_c_init())
      {
         eo_error_set(url_obj);
-        return;
+        return NULL;
      }
 
    url_con->curl_easy = _c->curl_easy_init();
    if (!url_con->curl_easy)
      {
         eo_error_set(url_obj);
-        return;
+        return NULL;
      }
 
+   return url_obj;
 }
 
 EOLIAN static Eo *
