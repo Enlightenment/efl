@@ -1789,6 +1789,13 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
         if (eot) goto def;
         parse_class(ls, EOLIAN_CLASS_INTERFACE);
         goto found_class;
+      case KW_import:
+        {
+           eo_lexer_get(ls);
+           check_next(ls, TOK_VALUE);
+           check_next(ls, ';');
+           break;
+        }
       case KW_type:
         {
            database_type_add(parse_typedef(ls));
