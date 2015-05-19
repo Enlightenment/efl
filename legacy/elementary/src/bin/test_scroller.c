@@ -473,3 +473,144 @@ test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
+
+static Ecore_Timer *timer = NULL;
+static int append = 0;
+static int count = 0;
+
+void
+del_item(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   evas_object_del(obj);
+}
+
+void
+append_item(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *bx = data, *bt;
+   char buf[PATH_MAX];
+
+   bt = elm_button_add(bx);
+   snprintf(buf, sizeof(buf), "Item %d", ++count);
+   elm_object_text_set(bt, buf);
+   elm_box_pack_end(bx, bt);
+   evas_object_smart_callback_add(bt, "clicked", del_item, NULL);
+   evas_object_show(bt);
+}
+
+void
+prepend_item(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *bx = data, *bt;
+   char buf[PATH_MAX];
+
+   bt = elm_button_add(bx);
+   snprintf(buf, sizeof(buf), "Item %d", ++count);
+   elm_object_text_set(bt, buf);
+   elm_box_pack_start(bx, bt);
+   evas_object_smart_callback_add(bt, "clicked", del_item, NULL);
+   evas_object_show(bt);
+}
+
+static Eina_Bool
+append_cb(void *data)
+{
+   Evas_Object *bx = data, *bt;
+   char buf[PATH_MAX];
+
+   bt = elm_button_add(bx);
+   snprintf(buf, sizeof(buf), "Item %d", ++count);
+   elm_object_text_set(bt, buf);
+   elm_box_pack_end(bx, bt);
+   evas_object_smart_callback_add(bt, "clicked", del_item, NULL);
+   evas_object_show(bt);
+
+   append--;
+
+   if (append <= 0)
+     {
+        timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
+   else
+     return ECORE_CALLBACK_RENEW;
+}
+
+static void
+append_items(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   append += 10;
+   timer = ecore_timer_add(0.3, append_cb, data);
+}
+
+static void
+win_del_cb(void *data EINA_UNUSED,
+		Evas *e EINA_UNUSED,
+		Evas_Object *obj EINA_UNUSED,
+		void *event_info EINA_UNUSED)
+{
+	ecore_timer_del(timer);
+	timer = NULL;
+}
+
+void
+test_scroller3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bt, *bt2, *bt3, *bx, *bx2, *bx3, *bx4, *sc;
+
+   win = elm_win_util_standard_add("scroller3", "Scroller 3");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, win_del_cb, NULL);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   bx2 = elm_box_add(bx);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.1);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   bt = elm_button_add(bx2);
+   elm_object_text_set(bt, "Append Item");
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt2 = elm_button_add(bx2);
+   elm_object_text_set(bt2, "Prepend Item");
+   elm_box_pack_end(bx2, bt2);
+   evas_object_show(bt2);
+
+   bt3 = elm_button_add(bx2);
+   elm_object_text_set(bt3, "Append 10 Items in 3s");
+   elm_box_pack_end(bx2, bt3);
+   evas_object_show(bt3);
+
+   bx3 = elm_box_add(bx);
+   evas_object_size_hint_align_set(bx3, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bx3, EVAS_HINT_EXPAND, 0.9);
+   elm_box_pack_end(bx, bx3);
+   evas_object_show(bx3);
+
+   sc = elm_scroller_add(bx3);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx3, sc);
+   evas_object_show(sc);
+
+   bx4 = elm_box_add(sc);
+   elm_box_padding_set(bx4, 0, 5);
+   evas_object_size_hint_weight_set(bx4, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_object_content_set(sc, bx4);
+   evas_object_show(bx4);
+
+   evas_object_smart_callback_add(bt, "clicked", append_item, bx4);
+   evas_object_smart_callback_add(bt2, "clicked", prepend_item, bx4);
+   evas_object_smart_callback_add(bt3, "clicked", append_items, bx4);
+
+   evas_object_resize(win, 500, 500);
+   evas_object_show(win);
+}
