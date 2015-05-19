@@ -195,13 +195,6 @@ _ecore_audio_in_sndfile_ecore_audio_vio_set(Eo *eo_obj, Ecore_Audio_In_Sndfile_D
 }
 
 EOLIAN static void
-_ecore_audio_in_sndfile_eo_base_constructor(Eo *eo_obj, Ecore_Audio_In_Sndfile_Data *_pd EINA_UNUSED)
-{
-  eo_do_super(eo_obj, MY_CLASS, eo_constructor());
-
-}
-
-EOLIAN static void
 _ecore_audio_in_sndfile_eo_base_destructor(Eo *eo_obj, Ecore_Audio_In_Sndfile_Data *obj)
 {
   Ecore_Audio_Object *ea_obj = eo_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);

@@ -216,18 +216,6 @@ _audio_io_proc_cb(AudioObjectID          obj_id         EINA_UNUSED,
  *============================================================================*/
 
 EOLIAN static void
-_ecore_audio_out_core_audio_eo_base_constructor(Eo *obj, Ecore_Audio_Out_Core_Audio_Data *sd EINA_UNUSED)
-{
-   eo_do_super(obj, MY_CLASS, eo_constructor());
-}
-
-EOLIAN static void
-_ecore_audio_out_core_audio_eo_base_destructor(Eo *obj, Ecore_Audio_Out_Core_Audio_Data *sd EINA_UNUSED)
-{
-   eo_do_super(obj, MY_CLASS, eo_destructor());
-}
-
-EOLIAN static void
 _ecore_audio_out_core_audio_ecore_audio_volume_set(Eo *obj, Ecore_Audio_Out_Core_Audio_Data *sd EINA_UNUSED, double volume)
 {
    // TODO Change volume of playing inputs
