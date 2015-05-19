@@ -1410,6 +1410,16 @@ _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
    return ret;
 }
 
+static void
+_access_activate_cb(void *data EINA_UNUSED,
+                    Evas_Object *part_obj EINA_UNUSED,
+                    Elm_Object_Item *eo_item)
+{
+   ELM_COLOR_ITEM_DATA_GET(eo_item, item);
+   elm_object_item_signal_emit(eo_item, "elm,state,selected", "elm");
+   _on_color_released(item, NULL, NULL, NULL);
+}
+
 EOLIAN static Evas_Object*
 _elm_color_item_elm_widget_item_access_register(Eo *eo_it, Elm_Color_Item_Data *it)
 {
@@ -1421,7 +1431,8 @@ _elm_color_item_elm_widget_item_access_register(Eo *eo_it, Elm_Color_Item_Data *
    ai = _elm_access_info_get(it->base->access_obj);
 
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("color selector palette item"));
-   _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, eo_it);
+   _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, it);
+   _elm_access_activate_callback_set(ai, _access_activate_cb,  EO_OBJ(it));
 
    return res;
 }
@@ -1481,7 +1492,7 @@ _elm_color_item_eo_base_constructor(Eo *eo_item, Elm_Color_Item_Data *item)
 
    // ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
-     eo_do(obj, elm_wdg_item_access_register());
+     eo_do(eo_item, elm_wdg_item_access_register());
 }
 
 EOLIAN static void
