@@ -38,5 +38,7 @@ class Elm.Hoversel_Item(Elm.Widget_Item)
         Elm.Widget_Item.part_text.get;
         Elm.Widget_Item.style.get;
         Elm.Widget_Item.style.set;
+        Elm.Widget_Item.focus.set;
+        Elm.Widget_Item.focus.get;
    }
 }

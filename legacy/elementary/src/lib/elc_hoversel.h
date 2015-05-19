@@ -50,6 +50,8 @@
  * @li elm_object_item_signal_emit - this works only when the item is created.
  * @li elm_object_item_style_set - this works only when the item is created.
  * @li elm_object_item_style_get - this works only when the item is created.
+ * @li elm_object_item_focus_set - this works only when the item is created.
+ * @li elm_object_item_focus_get - this works only when the item is created.
  *
  * See @ref tutorial_hoversel for an example.
  * @{

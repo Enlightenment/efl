@@ -268,6 +268,21 @@ _elm_hoversel_item_elm_widget_item_style_get(Eo *eo_it EINA_UNUSED,
 }
 
 EOLIAN static void
+_elm_hoversel_item_elm_widget_item_focus_set(Eo *eo_it EINA_UNUSED,
+                                             Elm_Hoversel_Item_Data *it,
+                                             Eina_Bool focused)
+{
+   elm_widget_focus_set(VIEW(it), focused);
+}
+
+EOLIAN static Eina_Bool
+_elm_hoversel_item_elm_widget_item_focus_get(Eo *eo_it EINA_UNUSED,
+                                             Elm_Hoversel_Item_Data *it)
+{
+   return elm_widget_focus_get(VIEW(it));
+}
+
+EOLIAN static void
 _elm_hoversel_item_eo_base_destructor(Eo *eo_item, Elm_Hoversel_Item_Data *item)
 {
    ELM_HOVERSEL_DATA_GET_OR_RETURN(WIDGET(item), sd);
