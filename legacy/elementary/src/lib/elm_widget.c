@@ -4445,8 +4445,60 @@ _elm_widget_item_elm_interface_atspi_accessible_role_set(Eo *eo_item EINA_UNUSED
    item->role = role;
 }
 
+EAPI Eina_Bool
+_elm_widget_onscreen_is(Evas_Object *widget)
+{
+   Evas_Object *parent = widget;
+   Evas_Coord x, y, w, h, wx, wy, ww, wh;
+
+   Evas *evas = evas_object_evas_get(widget);
+   if (!evas) return EINA_FALSE;
+
+   // check if on canvas
+   evas_output_viewport_get(evas, &x, &y, &w, &h);
+   evas_object_geometry_get(widget, &wx, &wy, &ww, &wh);
+   if (((wx < x) && (wx + ww < x)) || ((wx > x + w) && (wx + ww > x + w)) ||
+       ((wy < y) && (wy + wh < y)) || ((wy > y+ h) && (wy + wh > y + h)))
+     return EINA_FALSE;
+
+   // check if inside scrollable parent viewport
+   do {
+      parent = elm_widget_parent_get(parent);
+      if (parent && !evas_object_visible_get(parent))
+        return EINA_FALSE;
+      if (parent && eo_isa(parent, ELM_INTERFACE_SCROLLABLE_MIXIN))
+        {
+           evas_object_geometry_get(parent, &x, &y, &w, &h);
+           if (((wx < x) && (wx + ww < x)) || ((wx > x + w) && (wx + ww > x + w)) ||
+               ((wy < y) && (wy + wh < y)) || ((wy > y+ h) && (wy + wh > y + h)))
+             return EINA_FALSE;
+        }
+   } while (parent && (parent != elm_widget_top_get(widget)));
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+_elm_widget_item_onscreen_is(Elm_Object_Item *item)
+{
+   Evas_Coord x, y, w, h, wx, wy, ww, wh;
+   Elm_Widget_Item_Data *id = eo_data_scope_get(item, ELM_WIDGET_ITEM_CLASS);
+   if (!id || !id->view) return EINA_FALSE;
+
+   if (!_elm_widget_onscreen_is(id->widget))
+     return EINA_FALSE;
+
+   evas_object_geometry_get(id->view, &x, &y, &w, &h);
+   evas_object_geometry_get(id->widget, &wx, &wy, &ww, &wh);
+   if (((wx < x) && (wx + ww < x)) || ((wx > x + w) && (wx + ww > x + w)) ||
+       ((wy < y) && (wy + wh < y)) || ((wy > y+ h) && (wy + wh > y + h)))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
 EOLIAN static Elm_Atspi_State_Set
-_elm_widget_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_item EINA_UNUSED,
+_elm_widget_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_item,
                                                               Elm_Widget_Item_Data *item EINA_UNUSED)
 {
    Elm_Atspi_State_Set states = 0;
@@ -4459,7 +4511,10 @@ _elm_widget_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_item EINA_U
      {
         STATE_TYPE_SET(states, ELM_ATSPI_STATE_ENABLED);
         STATE_TYPE_SET(states, ELM_ATSPI_STATE_SENSITIVE);
+        STATE_TYPE_SET(states, ELM_ATSPI_STATE_VISIBLE);
      }
+   if (_elm_widget_item_onscreen_is(eo_item))
+     STATE_TYPE_SET(states, ELM_ATSPI_STATE_SHOWING);
 
    return states;
 }
@@ -5615,21 +5670,13 @@ EOLIAN static Elm_Atspi_State_Set
 _elm_widget_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    Elm_Atspi_State_Set states = 0;
-   Evas *evas = NULL;
 
    eo_do_super(obj, ELM_WIDGET_CLASS, states = elm_interface_atspi_accessible_state_set_get());
 
    if (evas_object_visible_get(obj))
-     STATE_TYPE_SET(states, ELM_ATSPI_STATE_VISIBLE);
-   evas = evas_object_evas_get(obj);
-   if (evas)
      {
-        Evas_Coord x, y, w, h, wx, wy, ww, wh;
-
-        evas_output_viewport_get(evas, &x, &y, &w, &h);
-        evas_object_geometry_get(obj, &wx, &wy, &ww, &wh);
-        if (!(((wx < x) && (wx + ww < x)) || ((wx > x + w) && (wx + ww > x + w)) ||
-              ((wy < y) && (wy + wh < y)) || ((wy > y+ h) && (wy + wh > y + h))))
+        STATE_TYPE_SET(states, ELM_ATSPI_STATE_VISIBLE);
+        if (_elm_widget_onscreen_is(obj))
           STATE_TYPE_SET(states, ELM_ATSPI_STATE_SHOWING);
      }
    if (!elm_widget_child_can_focus_get(obj))

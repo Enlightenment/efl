@@ -785,6 +785,8 @@ EAPI Eina_List       *elm_widget_scrollable_children_get(const Evas_Object *obj)
 /* debug function. don't use it unless you are tracking parenting issues */
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);
 EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *output);
+EAPI Eina_Bool        _elm_widget_onscreen_is(Evas_Object *widget);
+EAPI Eina_Bool        _elm_widget_item_onscreen_is(Elm_Object_Item *item);
 
 #define ELM_WIDGET_DATA_GET_OR_RETURN(o, ptr, ...)   \
   Elm_Widget_Smart_Data *ptr;                        \
