@@ -47,7 +47,9 @@ table.edc \
 text.edc \
 toggle_using_filter.edc \
 box_example.edc \
-embryo_tween_anim.edc
+embryo_tween_anim.edc \
+embryo_set_state_anim.edc \
+bezier-transition-example.edc
 
 DIST_EDCS = $(EDCS)
 
