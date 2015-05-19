@@ -216,7 +216,6 @@ test_hover3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    hv = elm_hover_add(win);
    elm_hover_parent_set(hv, win);
    elm_hover_target_set(hv, fake_obj);
-   elm_object_style_set(hv, "transparent");
 
    evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN,
                                   _hover_show_cb, hv);
