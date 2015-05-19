@@ -3647,7 +3647,8 @@ _elm_entry_evas_object_smart_resize(Eo *obj, Elm_Entry_Data *sd, Evas_Coord w, E
    eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
 
    evas_object_resize(sd->hit_rect, w, h);
-
+   if (sd->have_selection)
+     _update_selection_handler(obj);
 }
 
 EOLIAN static void
