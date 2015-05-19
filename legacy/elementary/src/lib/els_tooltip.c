@@ -735,8 +735,9 @@ _tooltip_label_style_set(Evas_Object *obj, Evas_Object *label)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
    char buf[100] = {0};
+   const char *style = tt->style ? tt->style : "default";
 
-   sprintf(buf, "tooltip/%s", tt->style);
+   sprintf(buf, "tooltip/%s", style);
    if (!elm_object_style_set(label, buf))
      {
         WRN("Failed to set tooltip label style: %s, reverting to old style",
