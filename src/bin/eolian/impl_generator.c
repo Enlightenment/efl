@@ -216,7 +216,6 @@ impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
    Eina_Iterator *itr;
    const Eolian_Function *foo;
    Eina_Strbuf *begin = eina_strbuf_new();
-   const char *class_name = eolian_class_name_get(class);
    char core_incl[PATH_MAX];
 
    _class_env_create(class, NULL, &class_env);
@@ -241,7 +240,7 @@ impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
            eina_strbuf_append_printf(data_type_buf, "%s", data_type);
      }
    else
-      eina_strbuf_append_printf(data_type_buf, "%s_Data", class_name);
+      eina_strbuf_append_printf(data_type_buf, "%s_Data", class_env.full_classname);
 
    /* Definition of the structure */
    const char *data_type_str = eina_strbuf_string_get(data_type_buf);
