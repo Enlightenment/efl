@@ -123,6 +123,7 @@ struct _EVGL_Surface
    unsigned direct_mem_opt : 1;
 
    // Init Flag
+   unsigned buffers_skip_allocate : 1;
    unsigned buffers_allocated : 1;
 
    void   *cfg;

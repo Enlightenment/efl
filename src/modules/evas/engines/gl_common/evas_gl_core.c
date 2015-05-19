@@ -1911,7 +1911,10 @@ evgl_pbuffer_surface_create(void *eng_data, Evas_GL_Config *cfg,
    sfc->pbuffer.is_pbuffer = EINA_TRUE;
 
    // If the surface is defined as RGB or RGBA, then create an FBO
-   if (sfc->pbuffer.color_fmt != EVAS_GL_NO_FBO)
+   if (sfc->pbuffer.color_fmt == EVAS_GL_NO_FBO)
+      sfc->buffers_skip_allocate = 1;
+
+   if (!sfc->buffers_skip_allocate)
      {
         // Set the internal config value
         if (!_internal_config_set(eng_data, sfc, cfg))
@@ -2009,20 +2012,26 @@ evgl_surface_destroy(void *eng_data, EVGL_Surface *sfc)
           }
      }
 
-   // Destroy PBuffer surfaces
+   // Destroy PBuffer surface
    if (sfc->pbuffer.native_surface)
      {
         int ret;
         if (dbg) DBG("Surface sfc %p is a pbuffer: %p", sfc, sfc->pbuffer.native_surface);
 
-        ret = evgl_engine->funcs->pbuffer_surface_destroy(eng_data, sfc->pbuffer.native_surface);
-        LKL(evgl_engine->resource_lock);
-        evgl_engine->surfaces = eina_list_remove(evgl_engine->surfaces, sfc);
-        LKU(evgl_engine->resource_lock);
-        free(sfc);
+        if (!evgl_engine->funcs->pbuffer_surface_destroy)
+          {
+             ERR("Error destroying PBuffer surface");
+             return 0;
+          }
 
-        if (!ret) ERR("Engine failed to destroy a PBuffer.");
-        return ret;
+        DBG("Destroying PBuffer surface");
+        ret = evgl_engine->funcs->pbuffer_surface_destroy(eng_data, sfc->pbuffer.native_surface);
+
+        if (!ret)
+          {
+             ERR("Engine failed to destroy the PBuffer.");
+             return ret;
+          }
      }
 
    if ((rsc->current_ctx) && (rsc->current_ctx->current_sfc == sfc) )
@@ -2309,67 +2318,70 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
           }
      }
 
-   if (!sfc->color_buf && !_surface_buffers_create(sfc))
+   if (!sfc->buffers_skip_allocate)
      {
-        ERR("Unable to create specified surfaces.");
-        evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ALLOC);
-        return 0;
-     };
-
-   // Allocate or free resources depending on what mode (direct of fbo) it's
-   // running only if the env var EVAS_GL_DIRECT_MEM_OPT is set.
-   if (sfc->direct_mem_opt)
-     {
-        if (_evgl_direct_renderable(rsc, sfc))
+        if (!sfc->color_buf && !_surface_buffers_create(sfc))
           {
-             if (dbg) DBG("sfc %p is direct renderable (has buffers: %d).", sfc, (int) sfc->buffers_allocated);
+             ERR("Unable to create specified surfaces.");
+             evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ALLOC);
+             return 0;
+          }
 
-             // Destroy created resources
-             if (sfc->buffers_allocated)
+        // Allocate or free resources depending on what mode (direct of fbo) it's
+        // running only if the env var EVAS_GL_DIRECT_MEM_OPT is set.
+        if (sfc->direct_mem_opt)
+          {
+             if (_evgl_direct_renderable(rsc, sfc))
                {
-                  if (!_surface_buffers_allocate(eng_data, sfc, 0, 0, 0))
+                  if (dbg) DBG("sfc %p is direct renderable (has buffers: %d).", sfc, (int) sfc->buffers_allocated);
+
+                  // Destroy created resources
+                  if (sfc->buffers_allocated)
                     {
-                       ERR("Unable to destroy surface buffers!");
-                       evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ALLOC);
-                       return 0;
+                       if (!_surface_buffers_allocate(eng_data, sfc, 0, 0, 0))
+                         {
+                            ERR("Unable to destroy surface buffers!");
+                            evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ALLOC);
+                            return 0;
+                         }
+                       sfc->buffers_allocated = 0;
                     }
-                  sfc->buffers_allocated = 0;
+               }
+             else
+               {
+                  if (sfc->direct_override)
+                    {
+                       DBG("Not creating fallback surfaces even though it should. Use at OWN discretion!");
+                    }
+                  else
+                    {
+                       // Create internal buffers if not yet created
+                       if (!sfc->buffers_allocated)
+                         {
+                            if (dbg) DBG("Allocating buffers for sfc %p", sfc);
+                            if (!_surface_buffers_allocate(eng_data, sfc, sfc->w, sfc->h, 0))
+                              {
+                                 ERR("Unable Create Specificed Surfaces.  Unsupported format!");
+                                 evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ALLOC);
+                                 return 0;
+                              }
+                            sfc->buffers_allocated = 1;
+                         }
+                    }
                }
           }
         else
           {
-             if (sfc->direct_override)
+             if (!sfc->buffers_allocated)
                {
-                  DBG("Not creating fallback surfaces even though it should. Use at OWN discretion!");
-               }
-             else
-               {
-                  // Create internal buffers if not yet created
-                  if (!sfc->buffers_allocated)
+                  if (!_surface_buffers_allocate(eng_data, sfc, sfc->w, sfc->h, 0))
                     {
-                       if (dbg) DBG("Allocating buffers for sfc %p", sfc);
-                       if (!_surface_buffers_allocate(eng_data, sfc, sfc->w, sfc->h, 0))
-                         {
-                            ERR("Unable Create Specificed Surfaces.  Unsupported format!");
-                            evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ALLOC);
-                            return 0;
-                         }
-                       sfc->buffers_allocated = 1;
+                       ERR("Unable Create Allocate Memory for Surface.");
+                       evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ALLOC);
+                       return 0;
                     }
+                  sfc->buffers_allocated = 1;
                }
-          }
-     }
-   else
-     {
-        if (!sfc->buffers_allocated)
-          {
-             if (!_surface_buffers_allocate(eng_data, sfc, sfc->w, sfc->h, 0))
-               {
-                  ERR("Unable Create Allocate Memory for Surface.");
-                  evas_gl_common_error_set(eng_data, EVAS_GL_BAD_ALLOC);
-                  return 0;
-               }
-             sfc->buffers_allocated = 1;
           }
      }
 
@@ -2474,7 +2486,7 @@ evgl_make_current(void *eng_data, EVGL_Surface *sfc, EVGL_Context *ctx)
 
              // Call end tiling
              if (rsc->direct.partial.enabled)
-                evgl_direct_partial_render_end();
+               evgl_direct_partial_render_end();
 
              if (sfc->color_buf)
                {
