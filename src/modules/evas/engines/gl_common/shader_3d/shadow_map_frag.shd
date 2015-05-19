@@ -1,5 +1,6 @@
 #ifdef ALPHA_TEST_ENABLED
 FRAGMENT_SHADER_USE_TEX_COORD
+FRAGMENT_SHADER_USE_ALPHA_TEST_GLES
 
 #ifdef DIFFUSE
 
@@ -23,26 +24,30 @@ vec3 Tex1CoordDiffuse =
 #endif //ALPHA_TEST_ENABLED
 
 void main() {
+
+   vec4 color;
 #ifndef NEED_TEX_COORD
    gl_FragColor = vec4(1);
 #endif
+
 #ifdef ALPHA_TEST_ENABLED
 
 #ifdef DIFFUSE_TEXTURE_BLEND
-   gl_FragColor = (texture2D(uTextureDiffuse0, vec2(Tex0CoordDiffuse)) *
+   color = (texture2D(uTextureDiffuse0, vec2(Tex0CoordDiffuse)) *
    uTextureDiffuseWeight + texture2D(uTextureDiffuse1, vec2(Tex1CoordDiffuse)) *
    (1.0 - uTextureDiffuseWeight));
 #else
 
 #ifdef DIFFUSE_TEXTURE
-   gl_FragColor = texture2D(uTextureDiffuse0, vec2(Tex0CoordDiffuse)) ;
+   color = texture2D(uTextureDiffuse0, vec2(Tex0CoordDiffuse)) ;
 #else
-   gl_FragColor = vec4(1);
+   color = vec4(1);
 #endif //DIFFUSE_TEXTURE
 
 #endif //DIFFUSE_TEXTURE_BLEND
 
-#endif //ALPHA_TEST_ENABLED
+   FRAGMENT_SHADER_ALPHA_TEST_GLES_APPLY(color)
 
+#endif //ALPHA_TEST_ENABLED
    gl_FragColor.r = gl_FragCoord.z;
 }

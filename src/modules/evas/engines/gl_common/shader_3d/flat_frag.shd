@@ -7,51 +7,58 @@ FRAGMENT_SHADER_USE_DIFFUSE_TERM
 FRAGMENT_SHADER_USE_SPECULAR_TERM
 FRAGMENT_SHADER_USE_AMBIENT_TERM
 FRAGMENT_SHADER_USE_EMISSION_TERM
+FRAGMENT_SHADER_USE_ALPHA_TEST_GLES
 
-void fragmentFlat()
+vec4 fragmentFlat()
 {
    vec4 color;
-
+   vec4 fragcolor;
 #ifdef DIFFUSE
 
    FRAGMENT_SHADER_TEXTURE_BLEND(DIFFUSE, Diffuse)
-   gl_FragColor = uLightDiffuse * color * vFactor.x;
+   fragcolor = uLightDiffuse * color * vFactor.x;
 #else
-   gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+   fragcolor = vec4(0.0, 0.0, 0.0, 0.0);
 #endif //DIFFUSE
 
 #ifdef SPECULAR
 
    FRAGMENT_SHADER_TEXTURE_BLEND(SPECULAR, Specular)
-   gl_FragColor += uLightSpecular * color * vFactor.y;
+   fragcolor += uLightSpecular * color * vFactor.y;
 
 #endif //SPECULAR
 
 #ifdef SHADOWED
-   gl_FragColor *= shadow;
+   fragcolor *= shadow;
 #endif //SHADOWED
 
 #ifdef AMBIENT
 
    FRAGMENT_SHADER_TEXTURE_BLEND(AMBIENT, Ambient)
-   gl_FragColor += uLightAmbient * color;
+   fragcolor += uLightAmbient * color;
 #endif //AMBIENT
 
 #ifdef  EMISSION
 
    FRAGMENT_SHADER_TEXTURE_BLEND(EMISSION, Emission)
-   gl_FragColor += color;
+   fragcolor += color;
 #endif //EMISSION
-
+   return fragcolor;
 }
 
 void main() {
-
+   vec4 color;
 #ifdef SHADOWED
    shadow = pcf(vLightPosition, 1.0 / 200.0);
 #endif //SHADOWED
 
-   fragmentFlat();
+   color = fragmentFlat();
+
+#ifdef ALPHA_TEST_ENABLED
+   FRAGMENT_SHADER_ALPHA_TEST_GLES_APPLY(color)
+#else
+   gl_FragColor = color;
+#endif //ALPHA_TEST_ENABLED
 
    FRAGMENT_SHADER_FOG_APPLY
 }

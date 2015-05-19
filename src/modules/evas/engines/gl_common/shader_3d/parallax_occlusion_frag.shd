@@ -2,30 +2,30 @@ varying  vec3        vLightVector;
 varying  vec3        vLightHalfVector;
 varying  vec3        vEyeVector;
 uniform  sampler2D   uTextureNormal0;
-uniform  mat3 uTextureMatrixTransformNormal0;
+uniform  mat3        uTextureMatrixTransformNormal0;
 
 #ifdef NEED_TEX_COORD
 varying vec2   vTexCoord;
-vec3 Tex0CoordNormal = 
+vec3 Tex0CoordNormal =
    vec3(vTexCoord, 1.0) * uTextureMatrixTransformNormal0;
 #endif //TEX_COORD
-
-FRAGMENT_SHADER_USE_FOG
-FRAGMENT_SHADER_USE_SHADOWS
 
 #ifdef NORMAL_TEXTURE_BLEND
 uniform  sampler2D  uTextureNormal1;
 uniform  float      uTextureNormalWeight;
 uniform mat3 uTextureMatrixTransformNormal1;
-vec3 Tex1CoordNormal = 
+vec3 Tex1CoordNormal =
    vec3(vTexCoord, 1.0) * uTextureMatrixTransformNormal1;
 #endif //NORMAL_TEXTURE_BLEND
 
+FRAGMENT_SHADER_USE_FOG
+FRAGMENT_SHADER_USE_SHADOWS
 FRAGMENT_SHADER_USE_DIFFUSE_TERM
 FRAGMENT_SHADER_USE_SPECULAR_TERM
 FRAGMENT_SHADER_USE_AMBIENT_TERM
 FRAGMENT_SHADER_USE_EMISSION_TERM
 FRAGMENT_SHADER_USE_LIGHT
+FRAGMENT_SHADER_USE_ALPHA_TEST_GLES
 
 const float parallaxScale = 0.2;
 
@@ -82,12 +82,12 @@ vec2 parallaxMapping(in vec3 view, in vec2 tex, out float parallaxHeight)
    return finalTexCoords;
 }
 
-void fragmentParallaxMap()
+vec4 fragmentParallaxMap()
 {
    float factor;
    vec3  normal;
    vec4  color;
-
+   vec4 fragcolor;
    float parallaxHeight;
    vec2 tex = parallaxMapping(vEyeVector, vec2(Tex0CoordNormal), parallaxHeight);
 
@@ -134,10 +134,10 @@ void fragmentParallaxMap()
 
 #endif //DIFFUSE_TEXTURE_BLEND
 
-        gl_FragColor = uLightDiffuse * color * factor;
+        fragcolor = uLightDiffuse * color * factor;
 
 #else
-        gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+        fragcolor = vec4(0.0, 0.0, 0.0, 0.0);
 #endif //DIFFUSE
 
 #ifdef SPECULAR
@@ -159,18 +159,18 @@ void fragmentParallaxMap()
 
 #endif //SPECULAR_TEXTURE_BLEND
 
-             gl_FragColor += uLightSpecular * color * factor;
+             fragcolor += uLightSpecular * color * factor;
           }
 
 #endif //SPECULAR
 
 #ifdef SHADOWED
-        gl_FragColor *= shadow;
+        fragcolor *= shadow;
 #endif //SHADOWED
 
      }
    else
-     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+     fragcolor = vec4(0.0, 0.0, 0.0, 0.0);
 
 #ifdef AMBIENT
 #ifdef AMBIENT_TEXTURE_BLEND
@@ -186,11 +186,11 @@ void fragmentParallaxMap()
 
 #endif //AMBIENT_TEXTURE_BLEND
 
-   gl_FragColor += uLightAmbient * color;
+   fragcolor += uLightAmbient * color;
 #endif //AMBIENT
 
 #ifdef LIGHT_ATTENUATION
-   gl_FragColor /= dot(uLightAtten, vec3(1.0, vLightDist, vLightDist * vLightDist));
+   fragcolor /= dot(uLightAtten, vec3(1.0, vLightDist, vLightDist * vLightDist));
 #endif //LIGHT_ATTENUATION
 
 #ifdef EMISSION
@@ -208,18 +208,24 @@ void fragmentParallaxMap()
 
 #endif //EMISSION_TEXTURE_BLEND
 
-   gl_FragColor += color;
+   fragcolor += color;
 #endif //EMISSION
-
+   return fragcolor;
 }
 
 void main() {
-
+   vec4 color;
 #ifdef SHADOWED
    shadow = pcf(vLightPosition, 1.0 / 200.0);
 #endif //SHADOWED
 
-   fragmentParallaxMap();
+   color = fragmentParallaxMap();
+
+#ifdef ALPHA_TEST_ENABLED
+   FRAGMENT_SHADER_ALPHA_TEST_GLES_APPLY(color)
+#else
+   gl_FragColor = color;
+#endif //ALPHA_TEST_ENABLED
 
    FRAGMENT_SHADER_FOG_APPLY
 

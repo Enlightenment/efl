@@ -63,6 +63,8 @@ typedef enum _E3D_Uniform
    E3D_UNIFORM_FOG_FACTOR,
    E3D_UNIFORM_FOG_COLOR,
    E3D_UNIFORM_COLOR_PICK,
+   E3D_UNIFORM_ALPHATEST_COMPARISON,
+   E3D_UNIFORM_ALPHATEST_REFVALUE,
 
    E3D_UNIFORM_COUNT,
 } E3D_Uniform;
@@ -350,7 +352,9 @@ static const char *uniform_names[] =
    "uMaterialShininess",
    "uFogFactor",
    "uFogColor",
-   "uColorPick"
+   "uColorPick",
+   "uAlphaTestComparison",
+   "uAlphaTestRefValue",
 };
 
 static inline void
@@ -578,6 +582,13 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
          break;
       case E3D_UNIFORM_COLOR_PICK:
          glUniform1f(loc, data->color_pick_key);
+         break;
+      case E3D_UNIFORM_ALPHATEST_COMPARISON:
+         glUniform1i(loc,
+                    (data->alpha_comparison ? data->alpha_comparison : EVAS_3D_COMPARISON_GREATER));
+         break;
+      case E3D_UNIFORM_ALPHATEST_REFVALUE:
+         glUniform1f(loc, (data->alpha_ref_value ? data->alpha_ref_value : 0.0));
          break;
       default:
          ERR("Invalid uniform ID.");

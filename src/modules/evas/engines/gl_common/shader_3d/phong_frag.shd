@@ -10,13 +10,15 @@ FRAGMENT_SHADER_USE_SPECULAR_TERM
 FRAGMENT_SHADER_USE_AMBIENT_TERM
 FRAGMENT_SHADER_USE_EMISSION_TERM
 FRAGMENT_SHADER_USE_LIGHT
+FRAGMENT_SHADER_USE_ALPHA_TEST_GLES
 
-void fragmentPhong()
+vec4 fragmentPhong()
 {
    vec3  normal = normalize(vNormal);
    vec3  lv = normalize(vLightVector);
    float factor = dot(lv, normal);
    vec4  color;
+   vec4 fragcolor;
 
 #ifdef  LIGHT_SPOT
    float f = dot(-lv, normalize(uLightSpotDir));
@@ -35,9 +37,9 @@ void fragmentPhong()
 
         FRAGMENT_SHADER_TEXTURE_BLEND(DIFFUSE, Diffuse)
 
-        gl_FragColor = uLightDiffuse * color * factor;
+        fragcolor = uLightDiffuse * color * factor;
 #else
-        gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+        fragcolor = vec4(0.0, 0.0, 0.0, 0.0);
 #endif //DIFFUSE
 
    /* Specular term. */
@@ -49,46 +51,52 @@ void fragmentPhong()
 
              FRAGMENT_SHADER_TEXTURE_BLEND(SPECULAR, Specular)
 
-             gl_FragColor += uLightSpecular * color * factor;
+             fragcolor += uLightSpecular * color * factor;
           }
 #endif
 
      }
    else
-     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+     fragcolor = vec4(0.0, 0.0, 0.0, 0.0);
 
 #ifdef  SHADOWED
-   gl_FragColor *= shadow;
+   fragcolor *= shadow;
 #endif //SHADOWED
 
 #ifdef AMBIENT
    FRAGMENT_SHADER_TEXTURE_BLEND(AMBIENT, Ambient)
 
-   gl_FragColor += uLightAmbient * color;
+   fragcolor += uLightAmbient * color;
 #endif
 
    /* Light attenuation. */
 #ifdef  LIGHT_ATTENUATION
-   gl_FragColor /= dot(uLightAtten, vec3(1.0, vLightDist, vLightDist * vLightDist));
+   fragcolor /= dot(uLightAtten, vec3(1.0, vLightDist, vLightDist * vLightDist));
 #endif
 
    /* Emission term. */
 #ifdef  EMISSION
 
    FRAGMENT_SHADER_TEXTURE_BLEND(EMISSION, Emission)
-   gl_FragColor += color;
+   fragcolor += color;
 #endif
-
+   return fragcolor;
 }
 
 void main()
 {
-
+   vec4 color;
 #ifdef SHADOWED
    shadow = pcf(vLightPosition, 1.0 / 300.0);
 #endif //SHADOWED
 
-   fragmentPhong();
+   color = fragmentPhong();
+
+#ifdef ALPHA_TEST_ENABLED
+   FRAGMENT_SHADER_ALPHA_TEST_GLES_APPLY(color)
+#else
+   gl_FragColor = color;
+#endif //ALPHA_TEST_ENABLED
 
    FRAGMENT_SHADER_FOG_APPLY
 }

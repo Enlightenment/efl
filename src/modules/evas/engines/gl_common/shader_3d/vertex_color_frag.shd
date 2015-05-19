@@ -1,10 +1,17 @@
 varying  vec4        vColor;
 
 FRAGMENT_SHADER_USE_FOG
+FRAGMENT_SHADER_USE_ALPHA_TEST_GLES
 
 void main()
 {
+
+#ifdef ALPHA_TEST_ENABLED
+   FRAGMENT_SHADER_ALPHA_TEST_GLES_APPLY(vColor)
+#else
    gl_FragColor = vColor;
+#endif //ALPHA_TEST_ENABLED
+
    FRAGMENT_SHADER_FOG_APPLY
 }
 

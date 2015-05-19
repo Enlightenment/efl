@@ -6,6 +6,7 @@ FRAGMENT_SHADER_USE_TEX_COORD
 FRAGMENT_SHADER_USE_FOG
 FRAGMENT_SHADER_USE_SHADOWS
 FRAGMENT_SHADER_USE_TEXTURE(NORMAL, Normal)
+FRAGMENT_SHADER_USE_ALPHA_TEST_GLES
 
 #ifndef VERTEX_TANGENT
 varying  vec3        vNormal;
@@ -40,12 +41,12 @@ vec3 perturb_normal(vec3 normal)
 }
 #endif //VERTEX_TANGENT
 
-void fragmentNormalMap()
+vec4 fragmentNormalMap()
 {
    float factor;
    vec3  normal;
    vec4  color;
-
+   vec4 fragcolor;
 #ifdef NORMAL_TEXTURE_BLEND
    normal = texture2D(uTextureNormal0, vec2(Tex0CoordNormal)).rgb * uTextureNormalWeight / texture2D(uTextureNormal0, vec2(Tex0CoordNormal)).a;
    normal += texture2D(uTextureNormal1, vec2(Tex1CoordNormal)).rgb / texture2D(uTextureNormal1, vec2(Tex1CoordNormal)).a *
@@ -80,10 +81,10 @@ void fragmentNormalMap()
 #ifdef DIFFUSE
 
         FRAGMENT_SHADER_TEXTURE_BLEND(DIFFUSE, Diffuse)
-        gl_FragColor = uLightDiffuse * color * factor;
+        fragcolor = uLightDiffuse * color * factor;
 
 #else
-        gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+        fragcolor = vec4(0.0, 0.0, 0.0, 0.0);
 #endif //DIFFUSE
 
 #ifdef SPECULAR
@@ -93,44 +94,49 @@ void fragmentNormalMap()
           {
              factor = pow(factor, uMaterialShininess);
              FRAGMENT_SHADER_TEXTURE_BLEND(SPECULAR, Specular)
-             gl_FragColor += uLightSpecular * color * factor;
+             fragcolor += uLightSpecular * color * factor;
           }
 
 #endif //SPECULAR
 
 #ifdef SHADOWED
-        gl_FragColor *= shadow;
+        fragcolor *= shadow;
 #endif //SHADOWED
 
      }
    else
-     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+     fragcolor = vec4(0.0, 0.0, 0.0, 0.0);
 
 #ifdef AMBIENT
      FRAGMENT_SHADER_TEXTURE_BLEND(AMBIENT, Ambient)
-     gl_FragColor += uLightAmbient * color;
+     fragcolor += uLightAmbient * color;
 #endif //AMBIENT
 
 #ifdef LIGHT_ATTENUATION
-   gl_FragColor /= dot(uLightAtten, vec3(1.0, vLightDist, vLightDist * vLightDist));
+   fragcolor /= dot(uLightAtten, vec3(1.0, vLightDist, vLightDist * vLightDist));
 #endif //LIGHT_ATTENUATION
 
 #ifdef EMISSION
 
    FRAGMENT_SHADER_TEXTURE_BLEND(EMISSION, Emission)
-   gl_FragColor += color;
+   fragcolor += color;
 
 #endif //EMISSION
-
+   return fragcolor;
 }
 
 void main() {
-
+   vec4 color;
 #ifdef SHADOWED
    shadow = pcf(vLightPosition, 1.0 / 200.0);
 #endif //SHADOWED
 
-   fragmentNormalMap();
+   color = fragmentNormalMap();
+#ifdef ALPHA_TEST_ENABLED
+   FRAGMENT_SHADER_ALPHA_TEST_GLES_APPLY(color)
+#else
+   gl_FragColor = color;
+#endif //ALPHA_TEST_ENABLED
 
 FRAGMENT_SHADER_FOG_APPLY
 
