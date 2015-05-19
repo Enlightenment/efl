@@ -927,6 +927,21 @@ _elm_ctxpopup_item_elm_widget_item_signal_emit(Eo *eo_ctxpopup_it EINA_UNUSED,
    elm_object_item_signal_emit(ctxpopup_it->list_item, emission, source);
 }
 
+EOLIAN static void
+_elm_ctxpopup_item_elm_widget_item_focus_set(Eo *eo_ctxpopup_it EINA_UNUSED,
+                                             Elm_Ctxpopup_Item_Data *ctxpopup_it,
+                                             Eina_Bool focused)
+{
+   elm_object_item_focus_set(ctxpopup_it->list_item, focused);
+}
+
+EOLIAN static Eina_Bool
+_elm_ctxpopup_item_elm_widget_item_focus_get(Eo *eo_ctxpopup_it EINA_UNUSED,
+                                             Elm_Ctxpopup_Item_Data *ctxpopup_it)
+{
+   return elm_object_item_focus_get(ctxpopup_it->list_item);
+}
+
 static void
 _bg_clicked_cb(void *data,
                Evas_Object *obj EINA_UNUSED,

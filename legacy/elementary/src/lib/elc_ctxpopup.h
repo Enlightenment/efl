@@ -53,6 +53,8 @@
  * @li @ref elm_object_item_part_content_set
  * @li @ref elm_object_item_part_content_get
  * @li @ref elm_object_item_signal_emit
+ * @li @ref elm_object_item_focus_set
+ * @li @ref elm_object_item_focus_get
  *
  * @ref tutorial_ctxpopup shows the usage of a good deal of the API.
  * @{
