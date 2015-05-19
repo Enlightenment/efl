@@ -80,6 +80,13 @@
    fail_if(eina_str_has_extension("xab", "xYz"));
    fail_if(eina_str_has_extension("", "x"));
 
+   fail_if(eina_streq("xab", NULL));
+   fail_if(eina_streq(NULL, "xab"));
+   fail_if(eina_streq("x", "xab"));
+   fail_if(eina_streq("xab", "XAB"));
+   fail_if(eina_streq("x", "x "));
+   fail_if(!eina_streq("xab", "xab"));
+
    fail_if(eina_strlen_bounded("abc", 1024) != strlen("abc"));
    fail_if(eina_strlen_bounded("abc", 2) != (size_t)-1);
 
