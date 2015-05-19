@@ -1,0 +1,8 @@
+import import_types;
+
+class Import {
+   methods {
+      foo {
+      }
+   }
+}

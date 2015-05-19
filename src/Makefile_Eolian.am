@@ -93,7 +93,9 @@ tests/eolian/data/nmsp1_class1.eo \
 tests/eolian/data/nmsp1_nmsp11_class2.eo \
 tests/eolian/data/nmsp2_class1.eo \
 tests/eolian/data/null.eo \
-tests/eolian/data/no_nmsp.eo
+tests/eolian/data/no_nmsp.eo \
+tests/eolian/data/import.eo \
+tests/eolian/data/import_types.eot
 
 EOLIAN_TESTS_EOS_GENERATED = \
 $(EOLIAN_TESTS_EOS:%.eo=%.eo.c)\

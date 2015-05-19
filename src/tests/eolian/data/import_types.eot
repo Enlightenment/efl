@@ -1,0 +1,5 @@
+type Imported: int;
+
+struct Imported_Struct {
+    foo: float;
+}

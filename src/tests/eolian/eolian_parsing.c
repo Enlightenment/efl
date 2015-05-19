@@ -1046,6 +1046,28 @@ START_TEST(eolian_null)
 }
 END_TEST
 
+START_TEST(eolian_import)
+{
+   const Eolian_Class *class;
+   const Eolian_Type *type;
+
+   eolian_init();
+
+   fail_if(!eolian_directory_scan(PACKAGE_DATA_DIR"/data"));
+
+   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/import.eo"));
+   fail_if(!(class = eolian_class_get_by_name("Import")));
+
+   fail_if(!(type = eolian_type_alias_get_by_name("Imported")));
+   fail_if(strcmp(eolian_type_file_get(type), "import_types.eot"));
+
+   fail_if(!(type = eolian_type_struct_get_by_name("Imported_Struct")));
+   fail_if(strcmp(eolian_type_file_get(type), "import_types.eot"));
+
+   eolian_shutdown();
+}
+END_TEST
+
 void eolian_parsing_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_simple_parsing);
@@ -1064,5 +1086,6 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_class_funcs);
    tcase_add_test(tc, eolian_free_func);
    tcase_add_test(tc, eolian_null);
+   tcase_add_test(tc, eolian_import);
 }
 
