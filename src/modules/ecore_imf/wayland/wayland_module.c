@@ -64,7 +64,7 @@ static Ecore_IMF_Context_Class wayland_imf_class =
    NULL,                                      /* autocapital_type_set */
    NULL,                                      /* control panel show */
    NULL,                                      /* control panel hide */
-   NULL,                                      /* input_panel_layout_set */
+   wayland_im_context_input_panel_layout_set, /* input_panel_layout_set */
    NULL,                                      /* input_panel_layout_get, */
    NULL,                                      /* input_panel_language_set, */
    NULL,                                      /* input_panel_language_get, */

@@ -75,6 +75,7 @@ struct _WaylandIMContext
 
    uint32_t serial;
    uint32_t reset_serial;
+   uint32_t content_purpose;
 };
 
 static unsigned int
@@ -643,6 +644,10 @@ wayland_im_context_focus_in(Ecore_IMF_Context *ctx)
         wl_text_input_show_input_panel(imcontext->text_input);
         wl_text_input_activate(imcontext->text_input, seat,
                                ecore_wl_window_surface_get(imcontext->window));
+
+        wl_text_input_set_content_type(imcontext->text_input,
+                                       WL_TEXT_INPUT_CONTENT_HINT_NONE,
+                                       imcontext->content_purpose);
      }
 }
 
@@ -813,6 +818,47 @@ wayland_im_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int
      }
 }
 
+EAPI void
+wayland_im_context_input_panel_layout_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Layout layout)
+{
+   WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
+
+   switch (layout) {
+      case ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBER:
+         imcontext->content_purpose = WL_TEXT_INPUT_CONTENT_PURPOSE_NUMBER;
+         break;
+      case ECORE_IMF_INPUT_PANEL_LAYOUT_EMAIL:
+         imcontext->content_purpose = WL_TEXT_INPUT_CONTENT_PURPOSE_EMAIL;
+         break;
+      case ECORE_IMF_INPUT_PANEL_LAYOUT_URL:
+         imcontext->content_purpose = WL_TEXT_INPUT_CONTENT_PURPOSE_URL;
+         break;
+      case ECORE_IMF_INPUT_PANEL_LAYOUT_PHONENUMBER:
+         imcontext->content_purpose = WL_TEXT_INPUT_CONTENT_PURPOSE_PHONE;
+         break;
+      case ECORE_IMF_INPUT_PANEL_LAYOUT_IP:
+         imcontext->content_purpose = WL_TEXT_INPUT_CONTENT_PURPOSE_NUMBER;
+         break;
+      case ECORE_IMF_INPUT_PANEL_LAYOUT_MONTH:
+         imcontext->content_purpose = WL_TEXT_INPUT_CONTENT_PURPOSE_DATE;
+         break;
+      case ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY:
+        imcontext->content_purpose = WL_TEXT_INPUT_CONTENT_PURPOSE_DIGITS;
+        break;
+      case ECORE_IMF_INPUT_PANEL_LAYOUT_TERMINAL:
+        imcontext->content_purpose = WL_TEXT_INPUT_CONTENT_PURPOSE_TERMINAL;
+        break;
+      case ECORE_IMF_INPUT_PANEL_LAYOUT_PASSWORD:
+        imcontext->content_purpose = WL_TEXT_INPUT_CONTENT_PURPOSE_PASSWORD;
+        break;
+      case ECORE_IMF_INPUT_PANEL_LAYOUT_DATETIME:
+        imcontext->content_purpose = WL_TEXT_INPUT_CONTENT_PURPOSE_DATETIME;
+        break;
+      default:
+        imcontext->content_purpose = WL_TEXT_INPUT_CONTENT_PURPOSE_NORMAL;
+        break;
+   }
+}
 
 WaylandIMContext *wayland_im_context_new (struct wl_text_input_manager *text_input_manager)
 {
