@@ -294,6 +294,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             ingroup Win
             @since 1.9 */
             legacy: elm_win_wm_rotation_available_rotations_set;
+            values {
+               rotations: const(int)*; /*@ The array of rotation value. */
+               count: uint; /*@ The size of the @param rotations array. */
+            }
          }
          get {
             /*@
@@ -306,11 +310,11 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             ingroup Win
             @since 1.9 */
             legacy: elm_win_wm_rotation_available_rotations_get;
+            values {
+               rotations: int*; /*@ The array of rotation value. */
+               count: uint; /*@ The size of the @param rotations array. */
+            }
             return: bool;
-         }
-         values {
-            rotations: int * @const_set; /*@ The array of rotation value. */
-            count: uint; /*@ The size of the @param rotations array. */
          }
       }
       @property quickpanel_zone {
@@ -536,6 +540,10 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
 
             @ingroup Win
             @since 1.8 */
+            values {
+               profiles: const(char)**; /*@ The string array of available profiles */
+               count: uint; /*@ The number of members in profiles */
+            }
          }
          get {
             /*@
@@ -545,11 +553,11 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
 
             @ingroup Win
             @since 1.8 */
+            values {
+               profiles: char**; /*@ The string array of available profiles */
+               count: uint; /*@ The number of members in profiles */
+            }
             return: bool;
-         }
-         values {
-            profiles: char ** @const_set; /*@ The string array of available profiles */
-            count: uint; /*@ The number of members in profiles */
          }
       }
       @property focus_highlight_enabled {
@@ -701,6 +709,9 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @endcode
 
             @ingroup Win */
+            values {
+               icon: Evas_Object* @nullable; /*@ The Evas image object to use for an icon */
+            }
          }
          get {
             /*@
@@ -712,9 +723,9 @@ class Elm.Win (Elm.Widget, Elm_Interface_Atspi_Window,
             @return The icon object set
 
             @ingroup Win */
-         }
-         values {
-            icon: Evas_Object * @const_get @nullable; /*@ The Evas image object to use for an icon */
+            values {
+               icon: const(Evas_Object)* @nullable; /*@ The Evas image object to use for an icon */
+            }
          }
       }
       @property quickpanel_priority_minor {

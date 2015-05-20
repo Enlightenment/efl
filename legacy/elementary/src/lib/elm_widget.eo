@@ -140,12 +140,15 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       @property focus_custom_chain {
          set {
             /*@ No description supplied by the EAPI. */
+            values {
+               objs: list<Evas_Object*>*;
+            }
          }
          get {
             /*@ No description supplied by the EAPI. */
-         }
-         values {
-            objs: list<Evas_Object *> * @const_get;
+            values {
+               objs: const(list<Evas_Object*>)*;
+            }
          }
       }
       @property can_focus {
