@@ -1,3 +1,5 @@
+import elm_general;
+
 class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
                 Elm_Interface_Atspi_Widget_Action, Elm_Interface_Atspi_Selection)
 {
@@ -67,7 +69,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             @ingroup List */
          }
          values {
-            mode: Elm_Object_Select_Mode(4); /*@ The select mode */
+            mode: Elm.Object.Select_Mode(Elm.Object.Select_Mode.max); /*@ The select mode */
          }
       }
       @property focus_on_selection {
@@ -159,7 +161,7 @@ class Elm.List (Elm.Layout, Elm_Interface_Scrollable,
             @since 1.8 */
          }
          values {
-            mode: Elm_Object_Multi_Select_Mode(2); /*@ The multi select mode */
+            mode: Elm.Object.Multi_Select_Mode(Elm.Object.Multi_Select_Mode.max); /*@ The multi select mode */
          }
       }
       @property mode {

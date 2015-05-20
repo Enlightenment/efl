@@ -1,3 +1,5 @@
+import elm_general;
+
 enum Elm.Toolbar.Shrink_Mode
 {
 /*@
@@ -118,7 +120,7 @@ class Elm.Toolbar (Elm.Widget, Elm_Interface_Scrollable,
             @ingroup Toolbar */
          }
          values {
-            mode: Elm_Object_Select_Mode(4); /*@ The select mode */
+            mode: Elm.Object.Select_Mode(Elm.Object.Select_Mode.max); /*@ The select mode */
          }
       }
       @property icon_size {

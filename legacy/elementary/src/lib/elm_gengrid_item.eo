@@ -1,3 +1,5 @@
+import elm_general;
+
 class Elm.Gengrid_Item(Elm.Widget_Item)
 {
       eo_prefix: elm_obj_gengrid_item;
@@ -152,7 +154,7 @@ class Elm.Gengrid_Item(Elm.Widget_Item)
                       */
                 }
                 values {
-                     mode: Elm_Object_Select_Mode(4); /*@ The selected mode */
+                     mode: Elm.Object.Select_Mode(Elm.Object.Select_Mode.max); /*@ The selected mode */
                 }
            }
            /*      init { FIXME
