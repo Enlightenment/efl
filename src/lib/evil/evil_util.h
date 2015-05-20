@@ -84,7 +84,7 @@ EAPI char *evil_last_error_get(void);
  *
  * @ingroup Evil
  */
-EAPI const char *evil_tmpdir_get(void);
+__attribute__ ((__deprecated__)) EAPI const char *evil_tmpdir_get(void);
 
 /**
  * @brief Return a dir to store personal files.
@@ -106,7 +106,7 @@ EAPI const char *evil_tmpdir_get(void);
  *
  * @ingroup Evil
  */
-EAPI const char *evil_homedir_get(void);
+__attribute__ ((__deprecated__)) EAPI const char *evil_homedir_get(void);
 
 /**
  * @brief check if the given path is absolute.
