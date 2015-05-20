@@ -1845,7 +1845,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                          "unknown import '%s'", ls->t.value.s);
                 eo_lexer_syntax_error(ls, errbuf);
              }
-           if (eina_hash_find(_parsingeots, found))
+           if (eina_hash_find(_parsingeos, found))
              {
                 pop_strbuf(ls);
                 snprintf(errbuf, sizeof(errbuf),

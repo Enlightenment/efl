@@ -54,7 +54,7 @@ extern Eina_Hash *_decls;
 
 /* holds parsed/currently parsing eot files to keep track */
 extern Eina_Hash *_parsedeots;
-extern Eina_Hash *_parsingeots;
+extern Eina_Hash *_parsingeos;
 
 typedef struct _Eolian_Object
 {
