@@ -175,6 +175,23 @@ START_TEST(eolian_functions_descriptions)
 }
 END_TEST
 
+START_TEST(eolian_import)
+{
+   char output_filepath[PATH_MAX] = "";
+   snprintf(output_filepath, PATH_MAX, "%s/eolian_import_types.h",
+#ifdef HAVE_EVIL
+         (char *)evil_tmpdir_get()
+#else
+         "/tmp"
+#endif
+         );
+   remove(output_filepath);
+   fail_if(0 != _eolian_gen_execute(PACKAGE_DATA_DIR"/data/import_types.eot", "--gh", output_filepath));
+   fail_if(!_files_compare(PACKAGE_DATA_DIR"/data/import_types_ref.h", output_filepath));
+   remove(output_filepath);
+}
+END_TEST
+
 void eolian_generation_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_types_generation);
@@ -182,5 +199,6 @@ void eolian_generation_test(TCase *tc)
    tcase_add_test(tc, eolian_override_generation);
    tcase_add_test(tc, eolian_dev_impl_code);
    tcase_add_test(tc, eolian_functions_descriptions);
+   tcase_add_test(tc, eolian_import);
 }
 

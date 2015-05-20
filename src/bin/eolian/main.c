@@ -304,6 +304,9 @@ static int gen_opt = NO_WAY_GEN;
 static int eo_needed = 0;
 static int legacy_support = 0;
 
+#define EO_SUFFIX ".eo"
+#define EOT_SUFFIX ".eot"
+
 int main(int argc, char **argv)
 {
    int ret = 1;
@@ -311,6 +314,7 @@ int main(int argc, char **argv)
    const char *eo_filename = NULL;
    char *output_filename = NULL; /* if NULL, have to generate, otherwise use the name stored there */
    char *eo_filename_copy = NULL, *eo_file_basename;
+   Eina_Bool is_eo = EINA_FALSE;
 
    eina_init();
    eolian_init();
@@ -391,7 +395,16 @@ int main(int argc, char **argv)
         goto end;
      }
 
-   if (!eolian_eo_file_parse(eo_filename))
+   is_eo = eina_str_has_suffix(eo_filename, EO_SUFFIX);
+
+   if (!is_eo && !eina_str_has_suffix(eo_filename, EOT_SUFFIX))
+     {
+        ERR("The input file %s doesn't have a correct extension (.eo/.eot).\n", eo_filename);
+        goto end;
+     }
+
+   if ((is_eo && !eolian_eo_file_parse(eo_filename)) ||
+      (!is_eo && !eolian_eot_file_parse(eo_filename)))
      {
         ERR("Error during parsing file %s\n", eo_filename);
         goto end;
@@ -411,7 +424,8 @@ int main(int argc, char **argv)
         if (class) eolian_show_class(class);
      }
 
-   if (!eo_needed && !(gen_opt == H_GEN && legacy_support))
+   /* Only needed for .eo files */
+   if (is_eo && !eo_needed && !(gen_opt == H_GEN && legacy_support))
      {
         ERR("Eo flag is not specified (use --eo). Aborting eo generation.\n");
         goto end;
