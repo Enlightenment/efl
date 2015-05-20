@@ -89,12 +89,13 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
    const char *rettype = NULL;
    Eina_Bool ret_const = EINA_FALSE;
    Eolian_Object_Scope scope = eolian_function_scope_get(func);
+   Eina_Bool is_prop = (ftype == EOLIAN_PROP_GET || ftype == EOLIAN_PROP_SET);
 
    _class_func_env_create(class, eolian_function_name_get(func), ftype, &func_env);
    rettypet = eolian_function_return_type_get(func, ftype);
    if (ftype == EOLIAN_PROP_GET && !rettypet)
      {
-        itr = eolian_function_parameters_get(func);
+        itr = eolian_property_values_get(func);
         /* We want to check if there is only one parameter */
         if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
           {
@@ -164,7 +165,7 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
 
    if (!var_as_ret)
      {
-        itr = eolian_function_parameters_get(func);
+        itr = is_prop ? eolian_property_values_get(func) : eolian_function_parameters_get(func);
         EINA_ITERATOR_FOREACH(itr, data)
           {
              Eolian_Function_Parameter *param = data;
@@ -366,6 +367,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    Eina_Bool is_empty = impl ? eolian_implement_is_empty(impl) : eolian_function_is_empty(funcid, ftype);
    Eina_Bool is_auto = impl ? eolian_implement_is_auto(impl) : eolian_function_is_auto(funcid, ftype);
    if (ftype != EOLIAN_PROP_GET && ftype != EOLIAN_PROP_SET) ftype = eolian_function_type_get(funcid);
+   Eina_Bool is_prop = (ftype == EOLIAN_PROP_GET || ftype == EOLIAN_PROP_SET);
 
    Eina_Bool need_implementation = EINA_TRUE;
    if (!impl_env && eolian_function_is_virtual_pure(funcid, ftype)) need_implementation = EINA_FALSE;
@@ -388,7 +390,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
         add_star = EINA_TRUE;
         if (!rettypet)
           {
-             itr = eolian_function_parameters_get(funcid);
+             itr = eolian_property_values_get(funcid);
              /* We want to check if there is only one parameter */
              if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
                {
@@ -424,7 +426,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
    eina_iterator_free(itr);
    if (!var_as_ret)
      {
-        itr = eolian_function_parameters_get(funcid);
+        itr = is_prop ? eolian_property_values_get(funcid) : eolian_function_parameters_get(funcid);
         EINA_ITERATOR_FOREACH(itr, data)
           {
              Eolian_Function_Parameter *param = data;
@@ -563,7 +565,7 @@ eo_bind_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, 
 
         if (!has_params && !var_as_ret)
           {
-             itr = eolian_function_parameters_get(funcid);
+             itr = is_prop ? eolian_property_values_get(funcid) : eolian_function_parameters_get(funcid);
              has_params |= (eina_iterator_next(itr, &data));
              eina_iterator_free(itr);
           }

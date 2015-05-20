@@ -16,6 +16,7 @@ _params_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina_Bo
 {
    Eina_Iterator *itr;
    Eolian_Function_Parameter *param;
+   Eina_Bool is_prop = (ftype == EOLIAN_PROP_GET || ftype == EOLIAN_PROP_SET);
    eina_strbuf_reset(params);
    eina_strbuf_reset(short_params);
    itr = eolian_property_keys_get(foo);
@@ -42,7 +43,7 @@ _params_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina_Bo
    if (!var_as_ret)
      {
         Eina_Bool add_star = (ftype == EOLIAN_PROP_GET);
-        itr = eolian_function_parameters_get(foo);
+        itr = is_prop ? eolian_property_values_get(foo) : eolian_function_parameters_get(foo);
         EINA_ITERATOR_FOREACH(itr, param)
           {
              const Eolian_Type *ptypet = eolian_parameter_type_get(param);
@@ -147,7 +148,7 @@ _prototype_generate(const Eolian_Function *foo, Eolian_Function_Type ftype, Eina
    const Eolian_Type *rettypet = eolian_function_return_type_get(foo, ftype);
    if (ftype == EOLIAN_PROP_GET && !rettypet)
      {
-        Eina_Iterator *itr = eolian_function_parameters_get(foo);
+        Eina_Iterator *itr = eolian_property_values_get(foo);
         void *data, *data2;
         /* We want to check if there is only one parameter */
         if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
