@@ -4,6 +4,7 @@ interface Evas.Clickable_Interface (Evas.Signal_Interface)
       clicked;
       clicked,double;
       clicked,triple;
+      clicked,right;
       pressed;
       unpressed;
       longpressed;
