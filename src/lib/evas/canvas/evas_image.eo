@@ -319,6 +319,10 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             Set the video surface linked to a given image of the canvas
 
             This function links a video surface to a given canvas image. */
+            values {
+               surf: Evas_Video_Surface*; /*@ The new video surface.
+               @since 1.1 */
+            }
          }
          get {
             /*@
@@ -328,10 +332,10 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @since 1.1
 
             This function returns the video surface linked to a given canvas image. */
-         }
-         values {
-            surf: Evas_Video_Surface * @const_get; /*@ The new video surface.
-            @since 1.1 */
+            values {
+               surf: const(Evas_Video_Surface)*; /*@ The new video surface.
+               @since 1.1 */
+            }
          }
       }
       @property video_surface_caps {
@@ -453,7 +457,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             This function returns the native surface of a given canvas image. */
          }
          values {
-            surf: Evas_Native_Surface */* @const_get*/ @nonull; /*@ The new native surface. */
+            surf: Evas_Native_Surface* @nonull; /*@ The new native surface. */
          }
       }
       @property load_scale_down {
