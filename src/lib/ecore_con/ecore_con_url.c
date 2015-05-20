@@ -598,6 +598,7 @@ EOLIAN static void
 _efl_network_url_eo_base_destructor(Efl_Network_Url *url_obj, Efl_Network_Url_Data *url_con)
 {
    char *s;
+   eo_do_super(url_obj, MY_CLASS, eo_destructor());
 
    if (!_c) return;
    if (url_con->curl_easy)
