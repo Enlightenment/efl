@@ -997,7 +997,7 @@ _eo_base_destructor(Eo *obj, Eo_Base_Data *pd)
 EOLIAN static Eo *
 _eo_base_finalize(Eo *obj, Eo_Base_Data *pd EINA_UNUSED)
 {
-   return _eo_add_internal_end(obj);
+   return obj;
 }
 
 EOLIAN static void

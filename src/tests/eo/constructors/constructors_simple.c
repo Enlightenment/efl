@@ -53,9 +53,12 @@ _finalize(Eo *obj, void *class_data EINA_UNUSED)
    Eo *ret;
    Private_Data *pd = class_data;
 
-   if (pd->a < 0) eo_error_set(obj);
-
    eo_do_super(obj, MY_CLASS, ret = eo_finalize());
+
+   if (pd->a < 0)
+     {
+        return NULL;
+     }
 
    return ret;
 }

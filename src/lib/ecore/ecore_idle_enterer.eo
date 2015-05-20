@@ -21,6 +21,7 @@ class Ecore.Idle.Enterer (Eo.Base)
    }
    implements {
       Eo.Base.destructor;
+      Eo.Base.finalize;
    }
    constructors {
       .before_constructor;

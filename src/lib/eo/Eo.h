@@ -623,19 +623,6 @@ EAPI Eo * _eo_add_end(void);
  */
 EAPI const Eo_Class *eo_class_get(const Eo *obj);
 
-/**
- * @def eo_error_set
- * @brief Notify eo that there was an error when constructing, destructing or calling a function of the object.
- * @param obj the object to work on.
- *
- * @see eo_error_get()
- */
-#define eo_error_set(obj) eo_error_set_internal(obj, __FILE__, __LINE__)
-
-/* @cond 0 */
-EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
-/* @endcond */
-
 #define _eo_add_common(klass, parent, is_ref, ...) \
    ( \
      _eo_do_start(_eo_add_internal_start(__FILE__, __LINE__, klass, parent, is_ref), \

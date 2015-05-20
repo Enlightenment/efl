@@ -22,6 +22,7 @@ class Ecore.Animator (Eo.Base)
    }
    implements {
       Eo.Base.destructor;
+      Eo.Base.finalize;
       Eo.Base.event_freeze;
       Eo.Base.event_thaw;
    }

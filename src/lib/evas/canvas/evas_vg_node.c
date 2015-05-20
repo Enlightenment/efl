@@ -247,8 +247,10 @@ _efl_vg_base_eo_base_constructor(Eo *obj,
 
    obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 
-   if (!_efl_vg_base_parent_checked_get(obj, &parent, &cd))
-     eo_error_set(obj);
+   if (!_efl_vg_base_parent_checked_get(obj, &parent, &cd)) {
+        ERR("Failed");
+        return NULL;
+   }
 
    eo_do(obj, eo_event_callback_add(EFL_GFX_CHANGED, _efl_vg_base_property_changed, pd));
    pd->changed = EINA_TRUE;
@@ -309,7 +311,6 @@ _efl_vg_base_eo_base_parent_set(Eo *obj,
    return ;
 
  on_error:
-   eo_error_set(obj);
    return ;
 }
 
@@ -338,7 +339,7 @@ _efl_vg_base_efl_gfx_stack_raise(Eo *obj, Efl_VG_Base_Data *pd EINA_UNUSED)
    return ;
 
  on_error:
-   eo_error_set(obj);
+   ERR("Err");
 }
 
 static void
@@ -368,7 +369,7 @@ _efl_vg_base_efl_gfx_stack_stack_above(Eo *obj,
    return ;
 
  on_error:
-   eo_error_set(obj);
+   ERR("Err");
 }
 
 static void
@@ -398,7 +399,7 @@ _efl_vg_base_efl_gfx_stack_stack_below(Eo *obj,
    return ;
 
  on_error:
-   eo_error_set(obj);
+   ERR("Err");
 }
 
 static void
@@ -426,7 +427,7 @@ _efl_vg_base_efl_gfx_stack_lower(Eo *obj, Efl_VG_Base_Data *pd EINA_UNUSED)
    return ;
 
  on_error:
-   eo_error_set(obj);
+   ERR("Err");
 }
 
 static Eo *

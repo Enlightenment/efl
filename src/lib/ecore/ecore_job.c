@@ -58,14 +58,12 @@ _ecore_job_constructor(Eo *obj, Ecore_Job_Data *job, Ecore_Cb func, const void *
 {
    if (EINA_UNLIKELY(!eina_main_loop_is()))
      {
-        eo_error_set(obj);
         EINA_MAIN_LOOP_CHECK_RETURN;
      }
    eo_manual_free_set(obj, EINA_TRUE);
 
    if (!func)
      {
-        eo_error_set(obj);
         ERR("callback function must be set up for an object of class: '%s'", MY_CLASS_NAME);
         return;
      }
@@ -73,7 +71,6 @@ _ecore_job_constructor(Eo *obj, Ecore_Job_Data *job, Ecore_Cb func, const void *
    job->event = ecore_event_add(ecore_event_job_type, job, _ecore_job_event_free, obj);
    if (!job->event)
      {
-        eo_error_set(obj);
         ERR("no event was assigned to object '%p' of class '%s'", obj, MY_CLASS_NAME);
         return;
      }
@@ -100,6 +97,17 @@ _ecore_job_eo_base_destructor(Eo *obj, Ecore_Job_Data *_pd EINA_UNUSED)
 {
    /*FIXME: check if ecore_event_del should be called from here*/
    eo_do_super(obj, MY_CLASS, eo_destructor());
+}
+
+EOLIAN static Eo *
+_ecore_job_eo_base_finalize(Eo *obj, Ecore_Job_Data *pd)
+{
+   if (!pd->func)
+     {
+        return NULL;
+     }
+
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
 }
 
 static Eina_Bool

@@ -251,7 +251,6 @@ _ecore_poller_constructor(Eo *obj, Ecore_Poller_Data *poller, Ecore_Poller_Type 
 
     if (EINA_UNLIKELY(!eina_main_loop_is()))
       {
-         eo_error_set(obj);
          EINA_MAIN_LOOP_CHECK_RETURN;
       }
 
@@ -259,7 +258,6 @@ _ecore_poller_constructor(Eo *obj, Ecore_Poller_Data *poller, Ecore_Poller_Type 
 
    if (!func)
      {
-        eo_error_set(obj);
         ERR("callback function must be set up for an object of class: '%s'", MY_CLASS_NAME);
         return;
      }
@@ -374,6 +372,17 @@ _ecore_poller_eo_base_destructor(Eo *obj, Ecore_Poller_Data *pd)
    }
 
    eo_do_super(obj, MY_CLASS, eo_destructor());
+}
+
+EOLIAN static Eo *
+_ecore_poller_eo_base_finalize(Eo *obj, Ecore_Poller_Data *pd)
+{
+   if (!pd->func)
+   {
+      return NULL;
+   }
+
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
 }
 
 void

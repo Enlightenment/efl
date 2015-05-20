@@ -67,6 +67,7 @@ class Ecore.Timer (Eo.Base)
    }
    implements {
       Eo.Base.destructor;
+      Eo.Base.finalize;
       Eo.Base.event_freeze;
       /* XXX: can't document overriden methods
        * Pauses a running timer.

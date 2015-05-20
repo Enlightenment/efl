@@ -95,7 +95,7 @@ _evas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 
    if (!obj || !_init_cow() || !eo_isa(parent, EVAS_COMMON_INTERFACE_INTERFACE))
      {
-        eo_error_set(eo_obj);
+        ERR("Failed");
         return NULL;
      }
 

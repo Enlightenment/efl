@@ -13,6 +13,7 @@ class Ecore.Idler (Eo.Base)
    }
    implements {
       Eo.Base.destructor;
+      Eo.Base.finalize;
    }
    constructors {
       .constructor;

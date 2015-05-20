@@ -37,6 +37,7 @@ class Ecore.Poller (Eo.Base)
    }
    implements {
       Eo.Base.destructor;
+      Eo.Base.finalize;
    }
    constructors {
       .constructor;

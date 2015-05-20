@@ -50,7 +50,6 @@ _ecore_idler_constructor(Eo *obj, Ecore_Idler_Data *ie, Ecore_Task_Cb func, cons
 {
     if (EINA_UNLIKELY(!eina_main_loop_is()))
       {
-         eo_error_set(obj);
          EINA_MAIN_LOOP_CHECK_RETURN;
       }
 
@@ -59,7 +58,6 @@ _ecore_idler_constructor(Eo *obj, Ecore_Idler_Data *ie, Ecore_Task_Cb func, cons
 
    if (!func)
      {
-        eo_error_set(obj);
         ERR("callback function must be set up for an object of class: '%s'", MY_CLASS_NAME);
         return;
      }
@@ -101,6 +99,17 @@ _ecore_idler_eo_base_destructor(Eo *obj, Ecore_Idler_Data *idler)
    idlers_delete_me = 1;
 
    eo_do_super(obj, MY_CLASS, eo_destructor());
+}
+
+EOLIAN static Eo *
+_ecore_idler_eo_base_finalize(Eo *obj, Ecore_Idler_Data *idler)
+{
+   if (!idler->func)
+     {
+        return NULL;
+     }
+
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
 }
 
 void

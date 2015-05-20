@@ -458,17 +458,16 @@ _efl_network_url_eo_base_constructor(Efl_Network_Url *url_obj, Efl_Network_Url_D
 {
    url_obj = eo_do_super_ret(url_obj, MY_CLASS, url_obj, eo_constructor());
 
-   if (!_init_count) eo_error_set(url_obj);
-   if (!_c_init())
+   if (!_init_count || !_c_init())
      {
-        eo_error_set(url_obj);
+        ERR("Failed");
         return NULL;
      }
 
    url_con->curl_easy = _c->curl_easy_init();
    if (!url_con->curl_easy)
      {
-        eo_error_set(url_obj);
+        ERR("Failed");
         return NULL;
      }
 

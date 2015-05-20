@@ -935,7 +935,7 @@ _eo_add_internal_start(const char *file, int line, const Eo_Class *klass_id, Eo 
    return eo_id;
 }
 
-Eo *
+static Eo *
 _eo_add_internal_end(Eo *eo_id)
 {
    Eo_Stack_Frame *fptr;
@@ -943,7 +943,7 @@ _eo_add_internal_end(Eo *eo_id)
 
    fptr = stack->frame_ptr;
 
-   if ((fptr == NULL) || (fptr->eo_id != eo_id))
+   if ((fptr == NULL) || (eo_id && (fptr->eo_id != eo_id)))
      {
         ERR("Something very wrong happend to the call stack.");
         return NULL;
@@ -955,16 +955,23 @@ _eo_add_internal_end(Eo *eo_id)
         return NULL;
      }
 
-   if (!fptr->o.obj->condtor_done || fptr->o.obj->do_error)
      {
         const _Eo_Class *klass = (fptr->cur_klass) ?
            fptr->cur_klass : fptr->o.obj->klass;
-        ERR("Object of class '%s' - Not all of the object constructors have been executed.",
-            klass->desc->name);
-        /* Unref twice, once for the ref in _eo_add_internal_start, and once for the basic object ref. */
-        _eo_unref(fptr->o.obj);
-        _eo_unref(fptr->o.obj);
-        return NULL;
+
+        if (!fptr->o.obj->condtor_done)
+          {
+             ERR("Object of class '%s' - Not all of the object constructors have been executed.",
+                   klass->desc->name);
+             goto cleanup;
+          }
+
+        if (!eo_id)
+          {
+             ERR("Object of class '%s' - Finalizing the object failed.",
+                   klass->desc->name);
+             goto cleanup;
+          }
      }
 
    fptr->o.obj->finalized = EINA_TRUE;
@@ -972,12 +979,19 @@ _eo_add_internal_end(Eo *eo_id)
    _eo_unref(fptr->o.obj);
 
    return (Eo *)eo_id;
+
+cleanup:
+   /* Unref twice, once for the ref in _eo_add_internal_start, and once for the basic object ref. */
+   _eo_unref(fptr->o.obj);
+   _eo_unref(fptr->o.obj);
+   return NULL;
 }
 
 EAPI Eo *
 _eo_add_end(void)
 {
    Eo *ret = eo_finalize();
+   ret = _eo_add_internal_end(ret);
    _eo_do_end();
    return ret;
 }
@@ -1586,16 +1600,6 @@ eo_ref_get(const Eo *obj_id)
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, 0);
 
    return obj->refcount;
-}
-
-EAPI void
-eo_error_set_internal(const Eo *obj_id, const char *file, int line)
-{
-   EO_OBJ_POINTER_RETURN(obj_id, obj);
-
-   ERR("Error with obj '%p' at %s:%d.", obj, file, line);
-
-   obj->do_error = EINA_TRUE;
 }
 
 void

@@ -47,7 +47,6 @@ _ecore_idle_exiter_constructor(Eo *obj, Ecore_Idle_Exiter_Data *ie, Ecore_Task_C
    _ecore_lock();
     if (EINA_UNLIKELY(!eina_main_loop_is()))
       {
-         eo_error_set(obj);
          EINA_MAIN_LOOP_CHECK_RETURN;
       }
 
@@ -57,7 +56,6 @@ _ecore_idle_exiter_constructor(Eo *obj, Ecore_Idle_Exiter_Data *ie, Ecore_Task_C
 
    if (!func)
      {
-        eo_error_set(obj);
         ERR("callback function must be set up for an object of class: '%s'", MY_CLASS_NAME);
         return;
      }
@@ -93,6 +91,16 @@ _ecore_idle_exiter_del(Ecore_Idle_Exiter *obj)
    return idle_exiter->data;
 }
 
+EOLIAN static Eo *
+_ecore_idle_exiter_eo_base_finalize(Eo *obj, Ecore_Idle_Exiter_Data *idle_exiter)
+{
+   if (!idle_exiter)
+     {
+        return NULL;
+     }
+
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
+}
 
 EOLIAN static void
 _ecore_idle_exiter_eo_base_destructor(Eo *obj, Ecore_Idle_Exiter_Data *idle_exiter)

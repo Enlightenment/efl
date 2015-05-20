@@ -683,8 +683,6 @@ START_TEST(eo_magic_checks)
         fail_if(wref);
         fail_if(parent);
 
-        eo_error_set((Eo *) buf);
-
         fail_if(eo_data_scope_get((Eo *) buf, SIMPLE_CLASS));
 
         eo_do(obj, eo_composite_attach((Eo *) buf));

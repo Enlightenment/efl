@@ -309,7 +309,7 @@ _evas_object_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
 }
 
 static Eina_Bool
-_init_cow(Eo *eo_obj)
+_init_cow(void)
 {
    if (!evas_object_image_load_opts_cow ||
        !evas_object_image_pixels_cow ||
@@ -335,7 +335,7 @@ _init_cow(Eo *eo_obj)
        !evas_object_image_pixels_cow ||
        !evas_object_image_state_cow)
      {
-        eo_error_set(eo_obj);
+        ERR("Failed to init cow.");
         return EINA_FALSE;
      }
 
@@ -358,7 +358,7 @@ _evas_image_eo_base_constructor(Eo *eo_obj, Evas_Image_Data *o)
    evas_object_image_init(eo_obj);
    evas_object_inject(eo_obj, obj, eo_e);
 
-   if (!_init_cow(eo_obj))
+   if (!_init_cow())
      return NULL;
 
    o->load_opts = eina_cow_alloc(evas_object_image_load_opts_cow);
