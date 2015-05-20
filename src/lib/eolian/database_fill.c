@@ -224,25 +224,21 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
    if (!ls)
      {
         fprintf(stderr, "eolian: unable to create lexer for file '%s'\n", filename);
-        return EINA_FALSE;
+        goto error;
      }
 
    /* read first token */
    eo_lexer_get(ls);
 
    if (!eo_parser_walk(ls, eot))
-     {
-        eo_lexer_free(ls);
-        return EINA_FALSE;
-     }
+     goto error;
 
    if (eot) goto done;
 
    if (!eina_list_count(ls->tmp.classes))
      {
         fprintf(stderr, "eolian: no classes for file '%s'\n", filename);
-        eo_lexer_free(ls);
-        return EINA_FALSE;
+        goto error;
      }
 
    while (ls->tmp.classes)
