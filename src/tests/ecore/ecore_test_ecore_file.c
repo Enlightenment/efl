@@ -378,6 +378,7 @@ START_TEST(ecore_test_ecore_file_path)
    src_dir = getenv("PATH");
    fail_if(!src_dir);
    path = malloc(strlen(src_dir) + strlen(dup_dir) + 1);
+   *path = '\0';
    strcat(path, src_dir);
    strcat(path, ":");
    strcat(path, dirname(dup_dir));
