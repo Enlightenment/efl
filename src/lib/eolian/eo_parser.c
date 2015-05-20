@@ -181,22 +181,6 @@ parse_name(Eo_Lexer *ls, Eina_Strbuf *buf)
 }
 
 static void
-parse_name_list(Eo_Lexer *ls, Eina_List **out)
-{
-   Eina_Strbuf *buf = push_strbuf(ls);
-   parse_name(ls, buf);
-   *out = eina_list_append(*out,
-       eina_stringshare_add(eina_strbuf_string_get(buf)));
-   while (test_next(ls, ','))
-     {
-        parse_name(ls, buf);
-        *out = eina_list_append(*out,
-            eina_stringshare_add(eina_strbuf_string_get(buf)));
-     }
-   pop_strbuf(ls);
-}
-
-static void
 _fill_name(const char *input, Eina_Stringshare **full_name,
            Eina_Stringshare **name, Eina_List **namespaces)
 {
@@ -830,8 +814,7 @@ parse_type_void(Eo_Lexer *ls)
                   free(fnm);
                   if (fname)
                     {
-                       if (!eolian_class_get_by_name(nm))
-                         _append_dep(ls, fname, nm, dline, dcol);
+                       _append_dep(ls, fname, nm, dline, dcol);
                        def->type = EOLIAN_TYPE_CLASS;
                     }
                }
@@ -1733,6 +1716,41 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
 }
 
 static void
+_inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
+{
+   int dline = ls->line_number, dcol = ls->column;
+   const char *fname, *iname;
+   char *fnm;
+   eina_strbuf_reset(buf);
+   eo_lexer_context_push(ls);
+   parse_name(ls, buf);
+   iname = eina_strbuf_string_get(buf);
+   fnm = database_class_to_filename(iname);
+   if (compare_class_file(fnm, ls->filename))
+     {
+        char ebuf[PATH_MAX];
+        free(fnm);
+        eo_lexer_context_restore(ls);
+        snprintf(ebuf, sizeof(ebuf), "class '%s' cannot inherit from itself",
+                 iname);
+        eo_lexer_syntax_error(ls, ebuf);
+     }
+   fname = eina_hash_find(_filenames, fnm);
+   free(fnm);
+   if (!fname)
+     {
+        char ebuf[PATH_MAX];
+        eo_lexer_context_restore(ls);
+        snprintf(ebuf, sizeof(ebuf), "unknown inherit '%s'", iname);
+        eo_lexer_syntax_error(ls, ebuf);
+     }
+   _append_dep(ls, fname, iname, dline, dcol);
+   ls->tmp.kls->inherits = eina_list_append(ls->tmp.kls->inherits,
+                                            eina_stringshare_add(iname));
+   eo_lexer_context_pop(ls);
+}
+
+static void
 parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
 {
    Eolian_Declaration *decl;
@@ -1774,7 +1792,13 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
         col = ls->column;
         check_next(ls, '(');
         if (ls->t.token != ')')
-          parse_name_list(ls, &ls->tmp.kls->inherits);
+          {
+              Eina_Strbuf *ibuf = push_strbuf(ls);
+              _inherit_dep(ls, ibuf);
+              while (test_next(ls, ','))
+                _inherit_dep(ls, ibuf);
+              pop_strbuf(ls);
+          }
         check_match(ls, ')', '(', line, col);
      }
    line = ls->line_number;

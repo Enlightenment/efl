@@ -264,10 +264,10 @@ eolian_eo_file_parse(const char *filepath)
           }
      }
    free(bfiledup);
-   /* parse dependencies first */
+   /* parse dependencies first (that includes inherits) */
    depl = eina_hash_find(_depclasses, eolian_class_file_get(class));
    if (!depl)
-     goto inherits;
+     goto impls;
    eina_hash_set(_depclasses, eolian_class_file_get(class), NULL);
    EINA_LIST_FREE(depl, dep)
      {
@@ -287,26 +287,7 @@ free:
      }
    if (failed_dep)
      goto error;
-   /* and then inherits */
-inherits:
-   itr = eolian_class_inherits_get(class);
-   EINA_ITERATOR_FOREACH(itr, inherit_name)
-     {
-        if (!eolian_class_get_by_name(inherit_name))
-          {
-             char *filename = database_class_to_filename(inherit_name);
-             filepath = eina_hash_find(_filenames, filename);
-             free(filename);
-             if (!filepath)
-               {
-                  fprintf(stderr, "eolian: unable to find a file for class '%s'\n",
-                          inherit_name);
-                  goto error;
-               }
-             if (!eolian_eo_file_parse(filepath)) goto error;
-          }
-     }
-   eina_iterator_free(itr);
+impls:
    itr = eolian_class_implements_get(class);
    EINA_ITERATOR_FOREACH(itr, impl)
      {
