@@ -293,6 +293,7 @@ ecore_drm_device_open(Ecore_Drm_Device *dev)
         return EINA_FALSE;
      }
 
+   if (!getenv("ECORE_DRM_DEVICE_USER_HANDLER"))
    dev->drm.hdlr = 
      ecore_main_fd_handler_add(dev->drm.fd, ECORE_FD_READ, 
                                _ecore_drm_device_cb_event, dev, NULL, NULL);
