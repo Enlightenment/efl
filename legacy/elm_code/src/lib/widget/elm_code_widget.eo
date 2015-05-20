@@ -212,6 +212,9 @@ class Elm_Code_Widget (Elm.Layout, Elm_Interface_Atspi_Text)
       Elm.Widget.focus_next_manager_is;
       Elm.Widget.focus_direction_manager_is;
    }
+   constructors {
+      .code;
+   }
    events {
       line,clicked;
       line,gutter,clicked;
