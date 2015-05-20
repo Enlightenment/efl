@@ -21,7 +21,7 @@ typedef struct _Generic_Data Generic_Data;
 
 #define MY_CLASS GENERIC_CLASS
 
-static void _generic_eo_base_constructor(Eo *obj, Generic_Data *pd)
+static Eo *_generic_eo_base_constructor(Eo *obj, Generic_Data *pd)
 {
    pd->req_ctor_a_val = 0;
    pd->req_ctor_b_cb = NULL;
@@ -29,7 +29,7 @@ static void _generic_eo_base_constructor(Eo *obj, Generic_Data *pd)
    pd->opt_ctor_a_val = 0;
    pd->opt_ctor_b_cb = NULL;
    pd->opt_ctor_b_data = NULL;
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 }
 
 static void _generic_required_ctor_a(Eo *obj EINA_UNUSED, Generic_Data *pd, int value)
