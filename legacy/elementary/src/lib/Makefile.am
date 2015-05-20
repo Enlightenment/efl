@@ -564,6 +564,7 @@ elm_fileselector_entry.eo \
 elm_flip.eo \
 elm_flipselector.eo \
 elm_frame.eo \
+elm_general.eot \
 elm_gengrid.eo \
 elm_gengrid_pan.eo \
 elm_genlist.eo \
@@ -709,6 +710,7 @@ elementaryeolianfiles_DATA = \
 	     elm_fileselector_entry.eo \
 	     elm_flipselector.eo \
 	     elm_flip.eo \
+	     elm_general.eot \
 	     elm_gengrid.eo \
 	     elm_gengrid_pan.eo \
 	     elm_genlist.eo \

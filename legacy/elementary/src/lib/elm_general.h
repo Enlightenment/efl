@@ -18,6 +18,8 @@
  * @{
  */
 
+#include "elm_general.eot.h"
+
 /**
  * Defines couple of standard Evas_Object layers to be used
  * with evas_object_layer_set().
@@ -62,101 +64,6 @@ EAPI extern int ELM_EVENT_PROCESS_BACKGROUND;
  * @since 1.12
  */
 EAPI extern int ELM_EVENT_PROCESS_FOREGROUND;
-
-/**
- * @typedef Elm_Event_Policy_Changed
- *
- * Data on the event when an Elementary policy has changed
- */
-typedef struct _Elm_Event_Policy_Changed Elm_Event_Policy_Changed;
-
-/**
- * @struct _Elm_Event_Policy_Changed
- *
- * Data on the event when an Elementary policy has changed
- */
-struct _Elm_Event_Policy_Changed
-{
-   unsigned int policy; /**< the policy identifier */
-   int          new_value; /**< value the policy had before the change */
-   int          old_value; /**< new value the policy got */
-};
-
-/**
- * Policy identifiers.
- */
-typedef enum
-{
-   ELM_POLICY_QUIT, /**< under which circumstances the application
-                     * should quit automatically. @see
-                     * Elm_Policy_Quit.
-                     */
-   ELM_POLICY_EXIT, /**< defines elm_exit() behaviour. @see Elm_Policy_Exit.
-                     * @since 1.8
-                     */
-   ELM_POLICY_THROTTLE, /**< defines how throttling should work @see Elm_Policy_Throttle
-                         * @since 1.8
-                         */
-   ELM_POLICY_LAST
-} Elm_Policy; /**< Elementary policy identifiers/groups enumeration.  @see elm_policy_set() */
-
-/**
- * Possible values for the #ELM_POLICY_QUIT policy
- */
-typedef enum
-{
-   ELM_POLICY_QUIT_NONE = 0, /**< never quit the application
-                              * automatically */
-   ELM_POLICY_QUIT_LAST_WINDOW_CLOSED /**< quit when the
-                                       * application's last
-                                       * window is closed */
-} Elm_Policy_Quit;
-
-/**
- * Possible values for the #ELM_POLICY_EXIT policy.
- * @since 1.8
- */
-typedef enum
-{
-   ELM_POLICY_EXIT_NONE = 0, /**< just quit the main loop on elm_exit() */
-   ELM_POLICY_EXIT_WINDOWS_DEL /**< delete all the windows after quitting
-                                * the main loop */
-} Elm_Policy_Exit;
-
-/**
- * Possible values for the #ELM_POLICY_THROTTLE policy.
- * @since 1.8
- */
-typedef enum
-{
-   ELM_POLICY_THROTTLE_CONFIG = 0, /**< do whatever elementary config is configured to do */
-   ELM_POLICY_THROTTLE_HIDDEN_ALWAYS, /**< always throttle when all windows are no longer visible */
-   ELM_POLICY_THROTTLE_NEVER /**< never throttle when windows are all hidden, regardless of config settings */
-} Elm_Policy_Throttle;
-
-/**
- * Possible values for the #ELM_OBJECT_SELECT_MODE policy.
- * @since 1.7
- */
-typedef enum
-{
-   ELM_OBJECT_SELECT_MODE_DEFAULT = 0, /**< default select mode. Once an item is selected, it would stay highlighted and not going to call selected callback again even it was clicked. Items can get focus. */
-   ELM_OBJECT_SELECT_MODE_ALWAYS, /**< always select mode. Item selected callbacks will be called every time for click events, even after the item was already selected. Items can get focus. */
-   ELM_OBJECT_SELECT_MODE_NONE, /**< no select mode. Items will never be highlighted and selected but the size will be adjusted by the finger size configuration. Items can't get focus. */
-   ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY, /**< no select mode with no finger size rule. Items will never be highlighted and selected and ignore the finger size. So the item size can be reduced below than the finger size configuration. Items can't get focus. */
-   ELM_OBJECT_SELECT_MODE_MAX /**< canary value: any value greater or equal to ELM_OBJECT_SELECT_MODE_MAX is forbidden. */
-} Elm_Object_Select_Mode;
-
-/**
- * Possible values for the #ELM_OBJECT_MULTI_SELECT_MODE policy.
- * @since 1.8
- */
-typedef enum
-{
-   ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT = 0, /**< default multiple select mode */
-   ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL, /**< disallow mutiple selection when clicked without control key pressed */
-   ELM_OBJECT_MULTI_SELECT_MODE_MAX /**< canary value: any value greater or equal to ELM_OBJECT_MULTI_SELECT_MODE_MAX is forbidden. */
-} Elm_Object_Multi_Select_Mode;
 
 typedef Eina_Bool             (*Elm_Event_Cb)(void *data, Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, void *event_info); /**< Function prototype definition for callbacks on input events happening on Elementary widgets. @a data will receive the user data pointer passed to elm_object_event_callback_add(). @a src will be a pointer to the widget on which the input event took place. @a type will get the type of this event and @a event_info, the struct with details on this event. */
 
