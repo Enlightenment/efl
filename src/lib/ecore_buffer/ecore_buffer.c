@@ -82,9 +82,9 @@ _ecore_buffer_get_backend(const char *name)
                    (eina_iterator_next(backend_name_itr, (void **)&bm)));
              eina_iterator_free(backend_name_itr);
           }
-        else
-          bm = eina_hash_find(_backends, backend_name);
      }
+   else
+     bm = eina_hash_find(_backends, backend_name);
 
    if ((!bm) || (!bm->be))
      return NULL;
