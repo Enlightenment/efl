@@ -247,6 +247,14 @@ ecore_buffer_new(const char* engine, unsigned int width, unsigned int height, Ec
         return NULL;
      }
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(bm->be, NULL);
+
+   if (!bm->be->buffer_alloc)
+     {
+        ERR("Not supported create buffer");
+        return NULL;
+     }
+
    bo_data = bm->be->buffer_alloc(bm->data, width, height, format, flags);
    if (!bo_data)
      return NULL;
@@ -282,6 +290,12 @@ ecore_buffer_new_with_tbm_surface(const char *engine, void *tbm_surface, unsigne
      }
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(bm->be, NULL);
+
+   if (!bm->be->buffer_alloc_with_tbm_surface)
+     {
+        ERR("Not supported create buffer with tbm_surface");
+        return NULL;
+     }
 
    bo_data = bm->be->buffer_alloc_with_tbm_surface(bm->data, tbm_surface,
                                                    &w, &h, &format, flags);
@@ -474,6 +488,12 @@ _ecore_buffer_import(const char* engine, int width, int height, Ecore_Buffer_For
      }
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(bm->be, NULL);
+
+   if (!bm->be->buffer_import)
+     {
+        ERR("Not supported import buffer");
+        return NULL;
+     }
 
    bo_data = bm->be->buffer_import(bm->data, width, height, format, type, export_id, flags);
    if (!bo_data)
