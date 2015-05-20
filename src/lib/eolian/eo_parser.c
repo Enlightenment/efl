@@ -1024,20 +1024,6 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
         pop_expr(ls);
         check_match(ls, ')', '(', line, col);
      }
-   /* XXX: remove this fugly bit - temporary */
-   if (is_vals)
-     {
-        if (ls->t.kw == KW_at_const_get)
-          {
-             par->is_const_on_get = EINA_TRUE;
-             eo_lexer_get(ls);
-          }
-        else if (ls->t.kw == KW_at_const_set)
-          {
-             par->is_const_on_set = EINA_TRUE;
-             eo_lexer_get(ls);
-          }
-     }
    for (;;) switch (ls->t.kw)
      {
       case KW_at_nonull:

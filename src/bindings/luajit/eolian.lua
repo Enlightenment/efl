@@ -221,7 +221,6 @@ ffi.cdef [[
     const Eolian_Expression *eolian_parameter_default_value_get(const Eolian_Function_Parameter *param);
     const char *eolian_parameter_name_get(const Eolian_Function_Parameter *param);
     const char *eolian_parameter_description_get(const Eolian_Function_Parameter *param);
-    Eina_Bool eolian_parameter_const_attribute_get(const Eolian_Function_Parameter *param_desc, Eina_Bool is_get);
     Eina_Bool eolian_parameter_is_nonull(const Eolian_Function_Parameter *param_desc);
     Eina_Bool eolian_parameter_is_nullable(const Eolian_Function_Parameter *param_desc);
     Eina_Bool eolian_parameter_is_optional(const Eolian_Function_Parameter *param_desc);
@@ -748,10 +747,6 @@ ffi.metatype("Eolian_Function_Parameter", {
             local v = eolian.eolian_parameter_description_get(self)
             if v == nil then return nil end
             return ffi.string(v)
-        end,
-
-        const_attribute_get = function(self, get)
-            return eolian.eolian_parameter_const_attribute_get(self, get) ~= 0
         end,
 
         is_nonull = function(self)

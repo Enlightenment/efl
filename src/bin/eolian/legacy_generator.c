@@ -54,7 +54,6 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
    const char *rettype = NULL;
    Eina_Bool var_as_ret = EINA_FALSE;
    Eina_Bool add_star = EINA_FALSE;
-   Eina_Bool ret_const = EINA_FALSE;
    Eina_Bool is_prop = (ftype == EOLIAN_PROP_GET || ftype == EOLIAN_PROP_SET);
    Eina_Iterator *itr;
    void *data, *data2;
@@ -78,7 +77,6 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
                {
                   rettypet = eolian_parameter_type_get((Eolian_Function_Parameter*)data);
                   var_as_ret = EINA_TRUE;
-                  ret_const = eolian_parameter_const_attribute_get(data, EINA_TRUE);
                }
              eina_iterator_free(itr);
           }
@@ -124,9 +122,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
         const char *pdesc = eolian_parameter_description_get(param);
         leg_param_idx++;
         if (eina_strbuf_length_get(fparam)) eina_strbuf_append(fparam, ", ");
-        eina_strbuf_append_printf(fparam, "%s%s %s",
-              eolian_parameter_const_attribute_get(data, ftype == EOLIAN_PROP_GET)?"const":"",
-              ptype, pname);
+        eina_strbuf_append_printf(fparam, "%s %s", ptype, pname);
         eina_stringshare_del(ptype);
         eina_strbuf_append_printf(descparam, " * @param[in] %s %s\n", pname, pdesc?pdesc:"No description supplied.");
         if (eolian_parameter_is_nonull((Eolian_Function_Parameter*)data))
@@ -159,8 +155,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
             if (ftype == EOLIAN_PROP_SET) pdir = EOLIAN_IN_PARAM;
             leg_param_idx++;
             if (eina_strbuf_length_get(fparam)) eina_strbuf_append(fparam, ", ");
-            eina_strbuf_append_printf(fparam, "%s%s%s%s%s",
-                  eolian_parameter_const_attribute_get(data, ftype == EOLIAN_PROP_GET)?"const ":"",
+            eina_strbuf_append_printf(fparam, "%s%s%s%s",
                   ptype, had_star?"":" ", add_star?"*":"", pname);
             eina_stringshare_del(ptype);
             const char *dir_str = str_dir[(int)pdir];
@@ -186,8 +181,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
    eina_strbuf_replace_all(fbody, "@#params", eina_strbuf_string_get(fparam));
    eina_strbuf_replace_all(fbody, "@#list_desc_param", eina_strbuf_string_get(descparam));
    eina_strbuf_reset(fparam);
-   eina_strbuf_append_printf(fparam, "%s%s%s",
-         ret_const ? "const " : "",
+   eina_strbuf_append_printf(fparam, "%s%s",
          rettype ? rettype : "void",
          rettype && strchr(rettype, '*')?"":" ");
    eina_strbuf_replace_all(fbody, "@#type_return", eina_strbuf_string_get(fparam));
@@ -220,7 +214,6 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
    const Eolian_Type *rettypet = NULL;
    const char *rettype = NULL;
    const char *retname = NULL;
-   Eina_Bool ret_const = EINA_FALSE;
    Eina_Bool add_star = EINA_FALSE;
    Eina_Bool ret_is_void = EINA_FALSE;
    Eina_Bool is_prop = (ftype == EOLIAN_PROP_GET || ftype == EOLIAN_PROP_SET);
@@ -250,7 +243,6 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
                   rettypet = eolian_parameter_type_get(param);
                   retname = eolian_parameter_name_get(param);
                   var_as_ret = EINA_TRUE;
-                  ret_const = eolian_parameter_const_attribute_get(data, EINA_TRUE);
                }
              eina_iterator_free(itr);
           }
@@ -294,9 +286,7 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
         const char *pname = eolian_parameter_name_get(param);
         const char *ptype = eolian_type_c_type_get(ptypet);
         if (eina_strbuf_length_get(fparam)) eina_strbuf_append(fparam, ", ");
-        eina_strbuf_append_printf(fparam, "%s%s %s",
-              eolian_parameter_const_attribute_get(data, ftype == EOLIAN_PROP_GET)?"const ":"",
-              ptype, pname);
+        eina_strbuf_append_printf(fparam, "%s %s", ptype, pname);
         eina_stringshare_del(ptype);
         if (eina_strbuf_length_get(eoparam)) eina_strbuf_append(eoparam, ", ");
         eina_strbuf_append_printf(eoparam, "%s", pname);
@@ -315,8 +305,7 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
             Eina_Bool had_star = !!strchr(ptype, '*');
             if (ftype == EOLIAN_UNRESOLVED || ftype == EOLIAN_METHOD) add_star = (pdir == EOLIAN_OUT_PARAM || pdir == EOLIAN_INOUT_PARAM);
             if (eina_strbuf_length_get(fparam)) eina_strbuf_append(fparam, ", ");
-            eina_strbuf_append_printf(fparam, "%s%s%s%s%s",
-                  eolian_parameter_const_attribute_get(data, ftype == EOLIAN_PROP_GET)?"const ":"",
+            eina_strbuf_append_printf(fparam, "%s%s%s%s",
                   ptype, had_star?"":" ", add_star?"*":"", pname);
             eina_stringshare_del(ptype);
             if (eina_strbuf_length_get(eoparam)) eina_strbuf_append(eoparam, ", ");
@@ -329,7 +318,7 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
    if (rettype && (!ret_is_void))
      {
         char tmp_ret_str[0xFF];
-        sprintf (tmp_ret_str, "%s%s", ret_const?"const ":"", rettype);
+        sprintf (tmp_ret_str, "%s", rettype);
              const Eolian_Expression *default_ret_val =
                 eolian_function_return_default_value_get(funcid, ftype);
              const char *val_str = NULL;
@@ -341,8 +330,8 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
                     val_str = eolian_expression_value_to_literal(&val);
                }
              Eina_Bool had_star = !!strchr(rettype, '*');
-             sprintf (tmpstr, "   %s%s%s%s = %s;\n",
-                   ret_const?"const ":"", rettype, had_star?"":" ", retname,
+             sprintf (tmpstr, "   %s%s%s = %s;\n",
+                   rettype, had_star?"":" ", retname,
                    val_str?val_str:"0");
 
              eina_strbuf_replace_all(fbody, "@#ret_type", tmp_ret_str);

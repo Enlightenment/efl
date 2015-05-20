@@ -995,20 +995,6 @@ EAPI Eina_Stringshare *eolian_parameter_name_get(const Eolian_Function_Parameter
 EAPI Eina_Stringshare *eolian_parameter_description_get(const Eolian_Function_Parameter *param);
 
 /*
- * @brief Indicates if a parameter has a const attribute.
- *
- * This function is relevant for properties, to know if a parameter is a const
- * parameter in the get operation.
- *
- * @param[in] param_desc parameter handle
- * @param[in] is_get indicates if the information needed is for get or set.
- * @return EINA_TRUE if const in get, EINA_FALSE otherwise
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_parameter_const_attribute_get(const Eolian_Function_Parameter *param_desc, Eina_Bool is_get);
-
-/*
  * @brief Indicates if a parameter cannot be NULL.
  *
  * @param[in] param_desc parameter handle
