@@ -2422,6 +2422,7 @@ _ecore_xcb_event_key_press(xcb_generic_event_t *event)
         e->same_screen = xevent->same_screen;
         e->root_window = xevent->root;
         e->keycode = keycode;
+        e->keysym = sym;
 
         DBG("Sending Key Down Event: %s", e->keyname);
         ecore_event_add(ECORE_EVENT_KEY_DOWN, e, NULL, NULL);

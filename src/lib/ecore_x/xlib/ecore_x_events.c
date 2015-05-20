@@ -393,6 +393,7 @@ _ecore_key_press(int event,
    e->same_screen = xevent->same_screen;
    e->root_window = xevent->root;
    e->keycode = xevent->keycode;
+   e->keysym = sym;
 
    ecore_event_add(event, e, NULL, NULL);
 
