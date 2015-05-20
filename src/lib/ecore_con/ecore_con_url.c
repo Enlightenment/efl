@@ -472,6 +472,8 @@ _efl_network_url_eo_base_constructor(Efl_Network_Url *url_obj, Efl_Network_Url_D
         return NULL;
      }
 
+   eo_manual_free_set(url_obj, EINA_TRUE);
+
    return url_obj;
 }
 
@@ -484,7 +486,6 @@ _efl_network_url_eo_base_finalize(Efl_Network_Url *url_obj, Efl_Network_Url_Data
 
    if (!url_con->url)
      {
-        ecore_con_url_free(url_obj);
         return NULL;
      }
 
@@ -555,7 +556,7 @@ _efl_network_url_eo_base_finalize(Efl_Network_Url *url_obj, Efl_Network_Url_Data
     */
    _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_CONNECTTIMEOUT, 30);
    _c->curl_easy_setopt(url_con->curl_easy, CURLOPT_FOLLOWLOCATION, 1);
-   return url_obj;
+   return eo_do_super_ret(url_obj, MY_CLASS, url_obj, eo_finalize());
 }
 
 EAPI Ecore_Con_Url *
@@ -594,10 +595,24 @@ ecore_con_url_free(Ecore_Con_Url *url_obj)
    eo_del(url_obj);
 }
 
+static void
+_ecore_con_url_free_internal(Ecore_Con_Url *url_obj)
+{
+   Efl_Network_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
+   char *s;
+
+   if (_c) _c->curl_slist_free_all(url_con->headers);
+   EINA_LIST_FREE(url_con->additional_headers, s)
+     free(s);
+   EINA_LIST_FREE(url_con->response_headers, s)
+     free(s);
+   eina_stringshare_del(url_con->url);
+   if (url_con->post_data) free(url_con->post_data);
+}
+
 EOLIAN static void
 _efl_network_url_eo_base_destructor(Efl_Network_Url *url_obj, Efl_Network_Url_Data *url_con)
 {
-   char *s;
    eo_do_super(url_obj, MY_CLASS, eo_destructor());
 
    if (!_c) return;
@@ -626,13 +641,8 @@ _efl_network_url_eo_base_destructor(Efl_Network_Url *url_obj, Efl_Network_Url_Da
    url_con->dead = EINA_TRUE;
    if (url_con->event_count) return;
 
-   if (_c) _c->curl_slist_free_all(url_con->headers);
-   EINA_LIST_FREE(url_con->additional_headers, s)
-     free(s);
-   EINA_LIST_FREE(url_con->response_headers, s)
-     free(s);
-   eina_stringshare_del(url_con->url);
-   if (url_con->post_data) free(url_con->post_data);
+   eo_manual_free_set(url_obj, EINA_FALSE);
+   _ecore_con_url_free_internal(url_obj);
 }
 
 EOLIAN static const char *
@@ -1702,7 +1712,11 @@ _ecore_con_event_url_free(Ecore_Con_Url *url_obj, void *ev)
 
    free(ev);
    url_con->event_count--;
-   if (url_con->dead && (!url_con->event_count)) ecore_con_url_free(url_obj);
+   if (url_con->dead && (!url_con->event_count))
+     {
+        _ecore_con_url_free_internal(url_obj);
+        eo_manual_free(url_obj);
+     }
 }
 
 #include "efl_network_url.eo.c"
