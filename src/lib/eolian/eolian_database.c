@@ -242,7 +242,6 @@ eolian_eo_file_parse(const char *filepath)
    char *bfiledup = strdup(filepath);
    char *bfilename = basename(bfiledup);
    const Eolian_Class *class = eolian_class_get_by_file(bfilename);
-   const char *inherit_name;
    Eolian_Implement *impl;
    Eolian_Constructor *ctor;
    Eina_Bool failed_dep = EINA_FALSE;
