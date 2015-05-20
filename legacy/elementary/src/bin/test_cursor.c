@@ -15,6 +15,7 @@ typedef struct _Testitem
 } Testitem;
 
 static Elm_Gengrid_Item_Class gic;
+static Eina_Bool cursor_setted = EINA_FALSE;
 
 char *
 grd_lbl_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
@@ -94,6 +95,23 @@ glt_text_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNU
    return strdup(buf);
 }
 
+static void
+bt_clicked(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   if (cursor_setted)
+     {
+        elm_object_cursor_unset(obj);
+        cursor_setted = EINA_FALSE;
+        elm_object_text_set(obj, "Cursor set on click");
+     }
+   else
+     {
+        elm_object_cursor_set(obj, ELM_CURSOR_HAND1);
+        cursor_setted = EINA_TRUE;
+        elm_object_text_set(obj, "Cursor unset on click");
+     }
+}
+
 void
 test_cursor(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -130,6 +148,12 @@ test_cursor(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_cursor_set(bt, ELM_CURSOR_CLOCK);
    elm_object_text_set(bt, "Cursor unset");
    elm_object_cursor_unset(bt);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Cursor set on click");
+   evas_object_smart_callback_add(bt, "clicked", bt_clicked, NULL);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 

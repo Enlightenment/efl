@@ -164,6 +164,10 @@ extern const char *_elm_engines[];
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #undef CEIL
 #define CEIL(a)   (((a) % 2 != 0) ? ((a) / 2 + 1) : ((a) / 2))
+#undef IS_INSIDE
+#define IS_INSIDE(x, y, xx, yy, ww, hh) \
+  (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && \
+  ((x) >= (xx)) && ((y) >= (yy)))
 
 
 #define ELM_SAFE_FREE(_h, _fn) do { _fn((void*)_h); _h = NULL; } while (0)
