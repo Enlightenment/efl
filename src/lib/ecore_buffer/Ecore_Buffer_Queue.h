@@ -38,7 +38,7 @@ extern "C" {
  * @defgroup Ecore_Buffer_Queue_Group Ecore Buffer Queue functions
  * @ingroup Ecore_Buffer_Group
  *
- * Ecore Buffer Queue is a queue which conntects different processes for sharing
+ * Ecore Buffer Queue is a queue which conntects processes for sharing
  * Ecore_Buffer.
  * one process (related object is Ecore_Buffer_Provider) has rear terminal
  * position of Ecore_Buffer Queue which can enqueue the Ecore_Buffer,
@@ -357,8 +357,8 @@ EAPI void                      ecore_buffer_provider_free(Ecore_Buffer_Provider 
  * @li ECORE_BUFFER_RETURN_SUCCESS, means success to dequeue, therefore ret_buf is valid.
  * @li ECORE_BUFFER_RETURN_EMPTY, means queue is empty, not available slot in Queue.
  *  in other words, there is no free drawable buffer in Queue.
- * @lib @c ECORE_BUFFER_RETURN_NEED_ALLOC, means that there is available slot, but not allocated.
- *  so, You may create new Ecore_Buffer, and then just submit the Ecore_Buffer.
+ * @li ECORE_BUFFER_RETURN_NEED_ALLOC, means that there is available slot, but not allocated.
+ *  so, You may create new Ecore_Buffer, and then just enqueue the Ecore_Buffer.
  *
  * @see ecore_buffer_new(), ecore_buffer_provider_buffer_enqueue()
  */
@@ -391,7 +391,7 @@ EAPI Eina_Bool                 ecore_buffer_provider_buffer_enqueue(Ecore_Buffer
  * @li ECORE_BUFFER_RETURN_EMPTY, means queue is empty, not available slot in Queue.
  *  in other words, there is no free drawable buffer in Queue.
  * @li ECORE_BUFFER_RETURN_NEED_ALLOC, means that there is available slot, but not allocated.
- *  so, You may create new Ecore_Buffer, and then just submit the Ecore_Buffer.
+ *  so, You may create new Ecore_Buffer, and then just enqueue the Ecore_Buffer.
  *
  * @return @c EINA_TRUE means queue is empty, @c EINA_FALSE otherwise.
  */
