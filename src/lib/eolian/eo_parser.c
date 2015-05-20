@@ -685,12 +685,28 @@ parse_struct_attrs(Eo_Lexer *ls, Eina_Bool is_enum, Eina_Bool *is_extern,
 static void
 _append_dep(Eo_Lexer *ls, const char *fname, const char *name, int line, int col)
 {
-   Eolian_Dependency *dep = calloc(1, sizeof(Eolian_Dependency));
+   Eina_Stringshare *cname = eina_stringshare_add(name);
+   Eolian_Dependency *dep;
+
+   Eina_List *deps = eina_hash_find(_depclasses, ls->filename);
+   Eina_List *l;
+   void *data;
+
+   /* check for possible duplicates while building the deplist */
+   EINA_LIST_FOREACH(deps, l, data)
+     if (data == cname)
+       {
+          eina_stringshare_del(cname);
+          return;
+       }
+
+   dep = calloc(1, sizeof(Eolian_Dependency));
    FILL_BASE(dep->base, ls, line, col);
    dep->filename = eina_stringshare_add(fname);
-   dep->name     = eina_stringshare_add(name);
-   eina_hash_set(_depclasses, ls->filename, eina_list_append((Eina_List*)
-       eina_hash_find(_depclasses, ls->filename), dep));
+   dep->name     = cname;
+
+   deps = eina_list_append(deps, dep);
+   eina_hash_set(_depclasses, ls->filename, deps);
 }
 
 static Eolian_Type *
