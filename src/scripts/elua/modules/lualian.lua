@@ -260,8 +260,8 @@ local Property = Method:clone {
         if self.cached_proto then return self.cached_proto end
 
         local prop = self.property
-        local keys = prop:property_keys_get():to_array()
-        local vals = prop:property_values_get():to_array()
+        local keys = prop:property_keys_get(self.ftype):to_array()
+        local vals = prop:property_values_get(self.ftype):to_array()
         local rett = prop:return_type_get(self.ftype)
 
         local proto = {
@@ -486,11 +486,14 @@ end
             or tp == func_type.METHOD then
                 cfuncs[#cfuncs + 1] = cfunc
                 if tp ~= func_type.METHOD then
-                    for par in cfunc:property_keys_get() do
+                    for par in cfunc:property_keys_get(func_type.PROP_SET) do
                         parnames[#parnames + 1] = build_pn(cn, par:name_get())
                     end
                 end
-                for par in cfunc:parameters_get() do
+                local iter = (tp ~= func_type.METHOD)
+                    and cfunc:property_values_get(func_type.PROP_SET)
+                    or  cfunc:parameters_get()
+                for par in iter do
                     if par:direction_get() ~= param_dir.OUT then
                         parnames[#parnames + 1] = build_pn(cn, par:name_get())
                     end
@@ -507,19 +510,23 @@ end
         -- write ctor body
         local j = 1
         for i, cfunc in ipairs(cfuncs) do
+            local tp = cfunc:type_get()
             s:write("        self:", cfunc:name_get())
             if cfunc:type_get() ~= func_type.METHOD then
                 s:write("_set")
             end
             s:write("(")
             local fpars = {}
-            if cfunc:type_get() ~= func_type.METHOD then
-                for par in cfunc:property_keys_get() do
+            if tp ~= func_type.METHOD then
+                for par in cfunc:property_keys_get(func_type.PROP_SET) do
                     fpars[#fpars + 1] = parnames[j]
                     j = j + 1
                 end
             end
-            for par in cfunc:parameters_get() do
+            local iter = (tp ~= func_type.METHOD)
+                and cfunc:property_values_get(func_type.PROP_SET)
+                or  cfunc:parameters_get()
+            for par in iter do
                 if par:direction_get() ~= param_dir.OUT then
                     fpars[#fpars + 1] = parnames[j]
                     j = j + 1

@@ -450,7 +450,7 @@ START_TEST(eolian_complex_type)
    eina_stringshare_del(type_name);
    eina_iterator_free(iter);
    /* Properties parameter type */
-   fail_if(!(iter = eolian_function_parameters_get(fid)));
+   fail_if(!(iter = eolian_property_values_get(fid, EOLIAN_PROP_GET)));
    fail_if(!(eina_iterator_next(iter, (void**)&param)));
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
@@ -595,8 +595,8 @@ START_TEST(eolian_simple_parsing)
    fail_if(string);
 
    /* Function parameters */
-   fail_if(eolian_property_keys_get(fid) != NULL);
-   fail_if(!(iter = eolian_property_values_get(fid)));
+   fail_if(eolian_property_keys_get(fid, EOLIAN_PROP_GET) != NULL);
+   fail_if(!(iter = eolian_property_values_get(fid, EOLIAN_PROP_GET)));
    fail_if(!(eina_iterator_next(iter, (void**)&param)));
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
@@ -639,7 +639,7 @@ START_TEST(eolian_simple_parsing)
    fail_if(eolian_function_is_legacy_only(fid, EOLIAN_METHOD));
 
    /* Function parameters */
-   fail_if(!(iter = eolian_property_values_get(fid)));
+   fail_if(!(iter = eolian_function_parameters_get(fid)));
    fail_if(!(eina_iterator_next(iter, (void**)&param)));
    fail_if(eolian_parameter_direction_get(param) != EOLIAN_IN_PARAM);
    fail_if(strcmp(eolian_type_name_get(eolian_parameter_type_get(param)), "int"));

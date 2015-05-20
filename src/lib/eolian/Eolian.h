@@ -926,21 +926,23 @@ EAPI Eina_Iterator *eolian_function_parameters_get(const Eolian_Function *functi
  * @brief Returns an iterator to the keys params of a given function.
  *
  * @param[in] function_id Id of the function
+ * @param[in] ftype The function type, for property get/set distinction.
  * @return the iterator
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id);
+EAPI Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Returns an iterator to the values params of a given function.
  *
  * @param[in] function_id Id of the function
+ * @param[in] ftype The function type, for property get/set distinction.
  * @return the iterator
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_property_values_get(const Eolian_Function *foo_id);
+EAPI Eina_Iterator *eolian_property_values_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Get direction of a parameter

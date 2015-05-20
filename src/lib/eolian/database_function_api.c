@@ -178,22 +178,29 @@ eolian_function_parameter_get_by_name(const Eolian_Function *fid, const char *pa
 }
 
 EAPI Eina_Iterator *
-eolian_property_keys_get(const Eolian_Function *fid)
+eolian_property_keys_get(const Eolian_Function *fid, Eolian_Function_Type ftype)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
+   if (ftype != EOLIAN_PROP_GET && ftype != EOLIAN_PROP_SET)
+     return NULL;
    return (fid->keys ? eina_list_iterator_new(fid->keys) : NULL);
 }
 
 EAPI Eina_Iterator *
-eolian_property_values_get(const Eolian_Function *fid)
+eolian_property_values_get(const Eolian_Function *fid, Eolian_Function_Type ftype)
 {
-   return eolian_function_parameters_get(fid);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
+   if (ftype != EOLIAN_PROP_GET && ftype != EOLIAN_PROP_SET)
+     return NULL;
+   return (fid->params ? eina_list_iterator_new(fid->params) : NULL);
 }
 
 EAPI Eina_Iterator *
 eolian_function_parameters_get(const Eolian_Function *fid)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
+   if (fid->type != EOLIAN_METHOD)
+     return NULL;
    return (fid->params ? eina_list_iterator_new(fid->params) : NULL);
 }
 

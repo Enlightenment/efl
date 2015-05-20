@@ -214,8 +214,8 @@ ffi.cdef [[
     Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
     Eina_Bool eolian_function_is_c_only(const Eolian_Function *function_id);
     const Eolian_Function_Parameter *eolian_function_parameter_get_by_name(const Eolian_Function *function_id, const char *param_name);
-    Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id);
-    Eina_Iterator *eolian_property_values_get(const Eolian_Function *foo_id);
+    Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
+    Eina_Iterator *eolian_property_values_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Iterator *eolian_function_parameters_get(const Eolian_Function *function_id);
     Eolian_Parameter_Dir eolian_parameter_direction_get(const Eolian_Function_Parameter *param);
     const Eolian_Type *eolian_parameter_type_get(const Eolian_Function_Parameter *param);
@@ -677,14 +677,14 @@ M.Function = ffi.metatype("Eolian_Function", {
             return v
         end,
 
-        property_keys_get = function(self)
+        property_keys_get = function(self, ftype)
             return Ptr_Iterator("const Eolian_Function_Parameter*",
-                eolian.eolian_property_keys_get(self))
+                eolian.eolian_property_keys_get(self, ftype))
         end,
 
-        property_values_get = function(self)
+        property_values_get = function(self, ftype)
             return Ptr_Iterator("const Eolian_Function_Parameter*",
-                eolian.eolian_property_values_get(self))
+                eolian.eolian_property_values_get(self, ftype))
         end,
 
         parameters_get = function(self)

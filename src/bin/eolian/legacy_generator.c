@@ -72,7 +72,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
         add_star = EINA_TRUE;
         if (!rettypet)
           {
-             itr = eolian_property_values_get(funcid);
+             itr = eolian_property_values_get(funcid, ftype);
              /* We want to check if there is only one parameter */
              if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
                {
@@ -114,7 +114,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
    eina_strbuf_replace_all(fbody, "@#desc", eina_strbuf_string_get(linedesc));
    eina_strbuf_free(linedesc);
 
-   itr = eolian_property_keys_get(funcid);
+   itr = eolian_property_keys_get(funcid, ftype);
    EINA_ITERATOR_FOREACH(itr, data)
      {
         Eolian_Function_Parameter *param = data;
@@ -143,7 +143,7 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
    eina_iterator_free(itr);
    if (!var_as_ret)
      {
-       itr = is_prop ? eolian_property_values_get(funcid) : eolian_function_parameters_get(funcid);
+       itr = is_prop ? eolian_property_values_get(funcid, ftype) : eolian_function_parameters_get(funcid);
        EINA_ITERATOR_FOREACH(itr, data)
          {
             Eolian_Function_Parameter *param = data;
@@ -242,7 +242,7 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
         add_star = EINA_TRUE;
         if (!rettypet)
           {
-             itr = eolian_property_values_get(funcid);
+             itr = eolian_property_values_get(funcid, ftype);
              /* We want to check if there is only one parameter */
              if (eina_iterator_next(itr, &data) && !eina_iterator_next(itr, &data2))
                {
@@ -286,7 +286,7 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
 
    tmpstr[0] = '\0';
 
-   itr = eolian_property_keys_get(funcid);
+   itr = eolian_property_keys_get(funcid, ftype);
    EINA_ITERATOR_FOREACH(itr, data)
      {
         Eolian_Function_Parameter *param = data;
@@ -304,7 +304,7 @@ _eapi_func_generate(const Eolian_Class *class, const Eolian_Function *funcid, Eo
    eina_iterator_free(itr);
    if (!var_as_ret)
    {
-      itr = is_prop ? eolian_property_values_get(funcid) : eolian_function_parameters_get(funcid);
+      itr = is_prop ? eolian_property_values_get(funcid, ftype) : eolian_function_parameters_get(funcid);
       EINA_ITERATOR_FOREACH(itr, data)
         {
             Eolian_Function_Parameter *param = data;
