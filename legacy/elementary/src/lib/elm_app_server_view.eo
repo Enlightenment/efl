@@ -47,10 +47,12 @@ class Elm_App_Server_View (Eo.Base)
          }
       }
       @property id {
+         set {
+         }
          get {
          }
          values {
-            ret: Eina_Stringshare *;
+            ret: const(char) *;
          }
       }
       @property state {
@@ -81,13 +83,6 @@ class Elm_App_Server_View (Eo.Base)
             pixels: const(ubyte)*;
          }
       }
-      constructor {
-         /*@ Class constructor of elm_app_server_view */
-         legacy: null;
-         params {
-            @in id: const(char)* @nullable; /*@ identifier of view */
-         }
-      }
       pause {
       }
       resume {
@@ -98,11 +93,8 @@ class Elm_App_Server_View (Eo.Base)
       }
    }
    implements {
-      Eo.Base.constructor;
       Eo.Base.destructor;
-   }
-   constructors {
-      .constructor;
+      Eo.Base.finalize;
    }
    events {
       resumed; /*@ Called when view must be resumed */

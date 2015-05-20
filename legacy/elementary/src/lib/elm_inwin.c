@@ -110,7 +110,7 @@ _elm_inwin_eo_base_constructor(Eo *obj, void *_pd EINA_UNUSED)
 
    if (parent && !eo_isa(parent, ELM_WIN_CLASS))
      {
-        eo_error_set(obj);  /* *has* to have a parent window */
+        ERR("Failed");
         return NULL;
      }
 

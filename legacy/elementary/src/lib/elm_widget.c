@@ -4249,7 +4249,7 @@ _elm_widget_item_eo_base_constructor(Eo *eo_item, Elm_Widget_Item_Data *item)
 
    if (!_elm_widget_is(widget))
      {
-        eo_error_set(eo_item);
+        ERR("Failed");
         return NULL;
      }
 

@@ -299,16 +299,18 @@ _elm_app_server_view_path_get(Eo *obj EINA_UNUSED, Elm_App_Server_View_Data *dat
 }
 
 EOLIAN static void
-_elm_app_server_view_constructor(Eo *obj, Elm_App_Server_View_Data *data, const char *id)
+_elm_app_server_view_id_set(Eo *obj EINA_UNUSED, Elm_App_Server_View_Data *data, const char *id)
 {
    Elm_App_Server *server = NULL;
-   const char *server_path = NULL;
-   char view_path[PATH_MAX];
 
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   if (eo_finalized_get())
+     {
+        ERR("Can't set id after object has been created.");
+        return;
+     }
 
    eo_do(obj, server = eo_parent_get());
-   EINA_SAFETY_ON_TRUE_GOTO(!server || !eo_isa(server, ELM_APP_SERVER_CLASS), error);
+   EINA_SAFETY_ON_TRUE_RETURN(!server || !eo_isa(server, ELM_APP_SERVER_CLASS));
 
    if (!id)
      {
@@ -334,8 +336,24 @@ _elm_app_server_view_constructor(Eo *obj, Elm_App_Server_View_Data *data, const 
         if (valid)
           data->id = eina_stringshare_add(id);
      }
+}
 
-   EINA_SAFETY_ON_NULL_GOTO(data->id, error);
+EOLIAN static Eo *
+_elm_app_server_view_eo_base_finalize(Eo *obj, Elm_App_Server_View_Data *data)
+{
+   const char *server_path = NULL;
+   char view_path[PATH_MAX];
+   Elm_App_Server *server = NULL;
+
+   eo_do(obj, server = eo_parent_get());
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!server || !eo_isa(server, ELM_APP_SERVER_CLASS), NULL);
+
+
+   if (!data->id)
+     {
+        ERR("Failed");
+        return NULL;
+     }
 
    eo_do(server, server_path = elm_app_server_path_get());
    snprintf(view_path, sizeof(view_path), "%s/%s", server_path, data->id);
@@ -350,10 +368,7 @@ _elm_app_server_view_constructor(Eo *obj, Elm_App_Server_View_Data *data, const 
    data->title = eina_stringshare_add("");
    data->icon_name = eina_stringshare_add("");
 
-   return;
-
-error:
-   eo_error_set(obj);
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
 }
 
 EOLIAN static void
@@ -368,15 +383,6 @@ _elm_app_server_view_eo_base_destructor(Eo *obj, Elm_App_Server_View_Data *data)
    eldbus_shutdown();
 
    eo_do_super(obj, MY_CLASS, eo_destructor());
-}
-
-EOLIAN static Eo *
-_elm_app_server_view_eo_base_constructor(Eo *obj, Elm_App_Server_View_Data *_pd EINA_UNUSED)
-{
-   eo_error_set(obj);
-   ERR("Only custom constructor can be used with '%s' class", MY_CLASS_NAME);
-
-   return NULL;
 }
 
 #include "elm_app_server_view.eo.c"

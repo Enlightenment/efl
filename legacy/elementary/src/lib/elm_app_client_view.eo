@@ -38,12 +38,17 @@ class Elm_App_Client_View (Eo.Base)
             pixels: const(ubyte)*; /*@ uchar array, with all bytes of icon */
          }
       }
+      path_set {
+        params {
+            path: const(char) *;
+        }
+      }
       @property path {
          get {
             /*@ Get DBus path of view */
          }
          values {
-            ret: const(char)*; /*@ DBus path of view */
+            ret: Eina_Stringshare *; /*@ DBus path of view */
          }
       }
       @property package {
@@ -78,13 +83,6 @@ class Elm_App_Client_View (Eo.Base)
             ret: const(char)*; /*@ title of view */
          }
       }
-      constructor {
-         /*@ Class constructor of elm_app_client_view */
-         legacy: null;
-         params {
-            @in path: const(char)*; /*@ DBus path of view */
-         }
-      }
       pause {
          /*@ Pause view */
          params {
@@ -108,11 +106,8 @@ class Elm_App_Client_View (Eo.Base)
       }
    }
    implements {
-      Eo.Base.constructor;
       Eo.Base.destructor;
-   }
-   constructors {
-      .constructor;
+      Eo.Base.finalize;
    }
    events {
       state,changed; /*@ State of view changed. */

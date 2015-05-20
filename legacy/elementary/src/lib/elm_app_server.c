@@ -202,8 +202,8 @@ _elm_app_server_constructor(Eo *obj, Elm_App_Server_Data *data, const char *pkg,
 
    data->create_view_cb = create_view_cb;
 
-   EINA_SAFETY_ON_NULL_GOTO(data->create_view_cb, error);
-   EINA_SAFETY_ON_TRUE_GOTO(!pkg, error);
+   EINA_SAFETY_ON_NULL_RETURN(data->create_view_cb);
+   EINA_SAFETY_ON_TRUE_RETURN(!pkg);
 
    data->views = eina_hash_string_small_new(NULL);
    data->PID = getpid();
@@ -256,7 +256,7 @@ _elm_app_server_constructor(Eo *obj, Elm_App_Server_Data *data, const char *pkg,
              progress = elm_app_server_view_props_progress_get(view_eet_props);
 
              view = eo_add(ELM_APP_SERVER_VIEW_CLASS, obj,
-                                  elm_app_server_view_constructor(view_id));
+                                  elm_app_server_view_id_set(view_id));
              if (!view)
                continue;
 
@@ -277,9 +277,6 @@ free_views_eet:
    app_server_views_eet_shutdown();
 
    return;
-
-error:
-   eo_error_set(obj);
 }
 
 EOLIAN static void
@@ -415,6 +412,14 @@ EOLIAN static void
 _elm_app_server_view_add(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data, Elm_App_Server_View *view)
 {
    _view_append(data, view);
+}
+
+EOLIAN static Eo *
+_elm_app_server_eo_base_finalize(Eo *obj, Elm_App_Server_Data *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data->pkg, NULL);
+
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
 }
 
 EOLIAN static void

@@ -3160,7 +3160,7 @@ _cb_deled(void *_data,
    return EO_CALLBACK_CONTINUE;
 }
 
-static void
+static Eo *
 _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_Type type)
 {
    sd->obj = obj; // in ctor
@@ -3501,8 +3501,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
    if (!tmp_sd.ee)
      {
         ERR("Cannot create window.");
-        eo_error_set(obj);
-        return;
+        return NULL;
      }
 
    eo_do(obj, eo_parent_set(ecore_evas_get(tmp_sd.ee)));
@@ -3660,7 +3659,7 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 #endif
 
    /* do not append to list; all windows render as black rects */
-   if (type == ELM_WIN_FAKE) return;
+   if (type == ELM_WIN_FAKE) return obj;
    _elm_win_list = eina_list_append(_elm_win_list, obj);
    _elm_win_count++;
 
@@ -3739,13 +3738,18 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
 
    eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_ADD, _cb_added, sd),
          eo_event_callback_add(EO_EV_CALLBACK_DEL, _cb_deled, sd));
+
+   return obj;
 }
 
 EOLIAN static Eo *
 _elm_win_eo_base_finalize(Eo *obj, Elm_Win_Data *_pd)
 {
-   _elm_win_finalize_internal(obj, _pd, _pd->name, _pd->type);
-   eo_do_super(obj, MY_CLASS, obj = eo_finalize());
+   obj = _elm_win_finalize_internal(obj, _pd, _pd->name, _pd->type);
+   if (obj)
+     {
+        eo_do_super(obj, MY_CLASS, obj = eo_finalize());
+     }
    return obj;
 }
 

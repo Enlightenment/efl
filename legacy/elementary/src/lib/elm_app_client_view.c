@@ -13,6 +13,7 @@ typedef struct
 {
    Eldbus_Proxy *view_proxy;
    Elm_App_View_State state;
+   Eina_Stringshare *path;
 } Elm_App_Client_View_Data;
 
 static const char *_string_prop_get(const Eina_Value *v)
@@ -126,26 +127,25 @@ elm_app_client_view_internal_state_set(Eo *eo, Elm_App_View_State state)
                                     (void *)(uintptr_t)cdata->state));
 }
 
-EOLIAN static void
-_elm_app_client_view_constructor(Eo *eo, Elm_App_Client_View_Data *data, const char *path)
+EOLIAN static Eo *
+_elm_app_client_view_eo_base_finalize(Eo *eo, Elm_App_Client_View_Data *data)
 {
    Elm_App_Client *parent = NULL;
-   const char *package = path;
+   const char *package = data->path;
    Eldbus_Connection *conn;
    Eldbus_Object *obj;
 
-   EINA_SAFETY_ON_NULL_GOTO(path, error);
-   eo_do_super(eo, MY_CLASS, eo_constructor());
-
    eo_do(eo, parent = eo_parent_get());
-   EINA_SAFETY_ON_TRUE_GOTO((!parent) ||
-                            (!eo_isa(parent, ELM_APP_CLIENT_CLASS)), error);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((!parent) ||
+                            (!eo_isa(parent, ELM_APP_CLIENT_CLASS)), NULL);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data->path, NULL);
 
    eo_do(parent, package = elm_app_client_package_get());
 
    eldbus_init();
    conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
-   obj = eldbus_object_get(conn, package, path);
+   obj = eldbus_object_get(conn, package, data->path);
    data->view_proxy = eldbus_proxy_get(obj,
                                        "org.enlightenment.ApplicationView1");
    eldbus_proxy_properties_monitor(data->view_proxy, EINA_TRUE);
@@ -156,10 +156,7 @@ _elm_app_client_view_constructor(Eo *eo, Elm_App_Client_View_Data *data, const c
                                    ELDBUS_PROXY_EVENT_PROPERTY_LOADED,
                                    _props_loaded, eo);
 
-   return;
-
-error:
-   eo_error_set(eo);
+   return eo_do_super_ret(eo, MY_CLASS, eo, eo_finalize());
 }
 
 static void
@@ -272,6 +269,18 @@ _elm_app_client_view_window_get(Eo *eo EINA_UNUSED, Elm_App_Client_View_Data *da
    return _int_prop_get(v);
 }
 
+EOLIAN static void
+_elm_app_client_view_path_set(Eo *eo EINA_UNUSED, Elm_App_Client_View_Data *data, const char *path)
+{
+   if (eo_finalized_get())
+     {
+        ERR("Can't set id after object has been created.");
+        return;
+     }
+
+   data->path = eina_stringshare_add(path);
+}
+
 EOLIAN static const char*
 _elm_app_client_view_path_get(Eo *eo EINA_UNUSED, Elm_App_Client_View_Data *data)
 {
@@ -305,16 +314,9 @@ _elm_app_client_view_eo_base_destructor(Eo *eo, Elm_App_Client_View_Data *data)
    eldbus_connection_unref(conn);
    eldbus_shutdown();
 
+   eina_stringshare_del(data->path);
+
    eo_do_super(eo, MY_CLASS, eo_destructor());
-}
-
-EOLIAN static Eo *
-_elm_app_client_view_eo_base_constructor(Eo *obj, Elm_App_Client_View_Data *_pd EINA_UNUSED)
-{
-   eo_error_set(obj);
-   ERR("Only custom constructor can be used with '%s' class", MY_CLASS_NAME);
-
-   return NULL;
 }
 
 #include "elm_app_client_view.eo.c"

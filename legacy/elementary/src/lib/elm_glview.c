@@ -316,12 +316,18 @@ _elm_glview_version_constructor(Eo *obj, Elm_Glview_Data *sd,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_callbacks_descriptions_set(_smart_callbacks),
          elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_ANIMATION));
+}
 
+EOLIAN static Eo *
+_elm_glview_eo_base_finalize(Eo *obj, Elm_Glview_Data *sd)
+{
    if (!sd->evasgl)
      {
-        eo_error_set(obj);
-        return;
+        ERR("Failed");
+        return NULL;
      }
+
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
 }
 
 EOLIAN static Evas_GL_API*

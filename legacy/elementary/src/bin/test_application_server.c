@@ -101,7 +101,7 @@ _create_view_cb(Elm_App_Server *app_server, const Eina_Value *args EINA_UNUSED, 
      }
 
    view = eo_add(ELM_APP_SERVER_VIEW_CLASS, app_server,
-                        elm_app_server_view_constructor(NULL));
+                        elm_app_server_view_id_set(NULL));
 
    eo_do(view, id = elm_app_server_view_id_get());
    eo_do(app_server, pkg = elm_app_server_package_get());

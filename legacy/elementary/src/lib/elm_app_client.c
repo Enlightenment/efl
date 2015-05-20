@@ -38,7 +38,7 @@ _sub_path_process(Elm_App_Client *eo, Eldbus_Message_Iter *obj_iter, Elm_App_Cli
           continue;
 
         view = eo_add(ELM_APP_CLIENT_VIEW_CLASS, eo,
-                             elm_app_client_view_constructor(obj_path));
+                             elm_app_client_view_path_set(obj_path));
         eina_hash_add(data->views, obj_path, view);
         if (!loading_list)
           eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EVENT_VIEW_CREATED, view));
@@ -160,7 +160,7 @@ _elm_app_client_constructor(Eo *eo, Elm_App_Client_Data *data, const char *pkg)
    Eldbus_Object *obj;
    char *path;
 
-   EINA_SAFETY_ON_NULL_GOTO(pkg, error);
+   EINA_SAFETY_ON_NULL_RETURN(pkg);
 
    data->views = eina_hash_string_small_new(NULL);
 
@@ -177,10 +177,6 @@ _elm_app_client_constructor(Eo *eo, Elm_App_Client_Data *data, const char *pkg)
                                           eo, EINA_FALSE);
 
    free(path);
-
-   return;
-error:
-   eo_error_set(eo);
 }
 
 static void
@@ -220,7 +216,7 @@ _create_view_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
    if (!view)
      {
         view = eo_add(ELM_APP_CLIENT_VIEW_CLASS, eo,
-                             elm_app_client_view_constructor(view_path));
+                             elm_app_client_view_path_set(view_path));
         eina_hash_add(cdata->views, view_path, view);
         eo_do(eo, eo_event_callback_call(ELM_APP_CLIENT_EVENT_VIEW_CREATED,
                                          view));
@@ -303,6 +299,14 @@ EOLIAN static void
 _elm_app_client_view_open_cancel(Eo *eo EINA_UNUSED, Elm_App_Client_Data *_pd EINA_UNUSED, Elm_App_Client_Pending *pending)
 {
    eldbus_pending_cancel(pending);
+}
+
+EOLIAN static Eo *
+_elm_app_client_eo_base_finalize(Eo *obj, Elm_App_Client_Data *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data->views, NULL);
+
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_finalize());
 }
 
 EOLIAN static void

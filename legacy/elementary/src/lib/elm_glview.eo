@@ -209,6 +209,7 @@ class Elm.Glview (Elm.Widget)
    }
    implements {
       class.constructor;
+      Eo.Base.finalize;
       Evas.Object_Smart.add;
       Evas.Object_Smart.del;
       Evas.Object_Smart.resize;
