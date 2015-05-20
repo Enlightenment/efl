@@ -111,8 +111,17 @@ struct _Eolian_Function
    Eolian_Object base;
    Eolian_Object set_base;
    Eina_Stringshare *name;
-   Eina_List *keys; /* list of Eolian_Function_Parameter */
-   Eina_List *params; /* list of Eolian_Function_Parameter */
+   union { /* lists of Eolian_Function_Parameter */
+       Eina_List *params;
+       struct {
+           Eina_List *prop_values;
+           Eina_List *prop_values_get;
+           Eina_List *prop_values_set;
+           Eina_List *prop_keys;
+           Eina_List *prop_keys_get;
+           Eina_List *prop_keys_set;
+       };
+   };
    Eolian_Function_Type type;
    Eolian_Object_Scope scope;
    Eolian_Type *get_ret_type;

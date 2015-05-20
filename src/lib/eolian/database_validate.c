@@ -145,13 +145,19 @@ _validate_function(const Eolian_Function *func)
                                             func->set_ret_type, 0))
      return EINA_FALSE;
 
-   EINA_LIST_FOREACH(func->keys, l, param)
-     if (!_validate_param(param))
+#define EOLIAN_PARAMS_VALIDATE(params) \
+   EINA_LIST_FOREACH(params, l, param) \
+     if (!_validate_param(param)) \
        return EINA_FALSE;
 
-   EINA_LIST_FOREACH(func->params, l, param)
-     if (!_validate_param(param))
-       return EINA_FALSE;
+   EOLIAN_PARAMS_VALIDATE(func->prop_values);
+   EOLIAN_PARAMS_VALIDATE(func->prop_values_get);
+   EOLIAN_PARAMS_VALIDATE(func->prop_values_set);
+   EOLIAN_PARAMS_VALIDATE(func->prop_keys);
+   EOLIAN_PARAMS_VALIDATE(func->prop_keys_get);
+   EOLIAN_PARAMS_VALIDATE(func->prop_keys_set);
+
+#undef EOLIAN_PARAMS_VALIDATE
 
    return EINA_TRUE;
 }

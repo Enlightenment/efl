@@ -1083,11 +1083,25 @@ parse_legacy(Eo_Lexer *ls, const char **out)
 }
 
 static void
+parse_params(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
+             Eina_Bool is_vals)
+{
+   int line, col;
+   eo_lexer_get(ls);
+   line = ls->line_number, col = ls->column;
+   check_next(ls, '{');
+   while (ls->t.token != '}')
+     parse_param(ls, params, allow_inout, is_vals);
+   check_match(ls, '}', '{', line, col);
+}
+
+static void
 parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
 {
    int line, col;
    Eina_Bool has_return = EINA_FALSE, has_legacy = EINA_FALSE,
-             has_eo     = EINA_FALSE;
+             has_eo     = EINA_FALSE, has_keys   = EINA_FALSE,
+             has_values = EINA_FALSE;
    Eina_Bool is_get = (ls->t.kw == KW_get);
    if (is_get)
      {
@@ -1160,23 +1174,26 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
         else
           prop->set_only_legacy = EINA_TRUE;
         break;
+      case KW_keys:
+        {
+           Eina_List **stor;
+           CASE_LOCK(ls, keys, "keys definition")
+           stor = is_get ? &prop->prop_keys_get : &prop->prop_keys_set;
+           parse_params(ls, stor, EINA_FALSE, EINA_FALSE);
+           break;
+        }
+      case KW_values:
+        {
+           Eina_List **stor;
+           CASE_LOCK(ls, values, "values definition")
+           stor = is_get ? &prop->prop_values_get : &prop->prop_values_set;
+           parse_params(ls, stor, EINA_FALSE, EINA_TRUE);
+           break;
+        }
       default:
         goto end;
      }
 end:
-   check_match(ls, '}', '{', line, col);
-}
-
-static void
-parse_params(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
-             Eina_Bool is_vals)
-{
-   int line, col;
-   eo_lexer_get(ls);
-   line = ls->line_number, col = ls->column;
-   check_next(ls, '{');
-   while (ls->t.token != '}')
-     parse_param(ls, params, allow_inout, is_vals);
    check_match(ls, '}', '{', line, col);
 }
 
@@ -1257,11 +1274,11 @@ body:
         break;
       case KW_keys:
         CASE_LOCK(ls, keys, "keys definition")
-        parse_params(ls, &prop->keys, EINA_FALSE, EINA_FALSE);
+        parse_params(ls, &prop->prop_keys, EINA_FALSE, EINA_FALSE);
         break;
       case KW_values:
         CASE_LOCK(ls, values, "values definition")
-        parse_params(ls, &prop->params, EINA_FALSE, EINA_TRUE);
+        parse_params(ls, &prop->prop_values, EINA_FALSE, EINA_TRUE);
         break;
       default:
         goto end;

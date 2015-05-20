@@ -265,12 +265,6 @@ START_TEST(eolian_consts)
    fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/consts.eo"));
    fail_if(!(class = eolian_class_get_by_name("Consts")));
 
-   /* Property */
-   fail_if(!(fid = eolian_class_function_get_by_name(class, "a", EOLIAN_PROPERTY)));
-   fail_if(!(param = eolian_function_parameter_get_by_name(fid, "buffer")));
-   fail_if(eolian_parameter_const_attribute_get(param, EINA_FALSE));
-   fail_if(!eolian_parameter_const_attribute_get(param, EINA_TRUE));
-
    /* Method */
    fail_if(!(fid = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
    fail_if(EINA_FALSE == eolian_function_object_is_const(fid));
@@ -1013,6 +1007,7 @@ START_TEST(eolian_null)
    const Eolian_Class *class;
    const Eolian_Function *func;
    const Eolian_Function_Parameter *param;
+   Eina_Iterator *iter;
 
    eolian_init();
 
@@ -1022,25 +1017,34 @@ START_TEST(eolian_null)
    fail_if(!(class = eolian_class_get_by_name("Null")));
    fail_if(!(func = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
 
+   fail_if(!(iter = eolian_function_parameters_get(func)));
+
    /* no qualifiers */
-   fail_if(!(param = eolian_function_parameter_get_by_name(func, "x")));
+   fail_if(!(eina_iterator_next(iter, (void**)&param)));
+   fail_if(strcmp(eolian_parameter_name_get(param), "x"));
    fail_if(eolian_parameter_is_nullable(param));
    fail_if(eolian_parameter_is_optional(param));
 
    /* nullable */
-   fail_if(!(param = eolian_function_parameter_get_by_name(func, "y")));
+   fail_if(!(eina_iterator_next(iter, (void**)&param)));
+   fail_if(strcmp(eolian_parameter_name_get(param), "y"));
    fail_if(!eolian_parameter_is_nullable(param));
    fail_if(eolian_parameter_is_optional(param));
 
    /* optional */
-   fail_if(!(param = eolian_function_parameter_get_by_name(func, "z")));
+   fail_if(!(eina_iterator_next(iter, (void**)&param)));
+   fail_if(strcmp(eolian_parameter_name_get(param), "z"));
    fail_if(eolian_parameter_is_nullable(param));
    fail_if(!eolian_parameter_is_optional(param));
 
    /* both */
-   fail_if(!(param = eolian_function_parameter_get_by_name(func, "w")));
+   fail_if(!(eina_iterator_next(iter, (void**)&param)));
+   fail_if(strcmp(eolian_parameter_name_get(param), "w"));
    fail_if(!eolian_parameter_is_nullable(param));
    fail_if(!eolian_parameter_is_optional(param));
+
+   fail_if(eina_iterator_next(iter, (void**)&param));
+   eina_iterator_free(iter);
 
    eolian_shutdown();
 }

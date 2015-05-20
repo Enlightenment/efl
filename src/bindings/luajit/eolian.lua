@@ -213,7 +213,6 @@ ffi.cdef [[
     Eina_Bool eolian_function_is_legacy_only(const Eolian_Function *function_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
     Eina_Bool eolian_function_is_c_only(const Eolian_Function *function_id);
-    const Eolian_Function_Parameter *eolian_function_parameter_get_by_name(const Eolian_Function *function_id, const char *param_name);
     Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Iterator *eolian_property_values_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Iterator *eolian_function_parameters_get(const Eolian_Function *function_id);
@@ -669,12 +668,6 @@ M.Function = ffi.metatype("Eolian_Function", {
 
         is_c_only = function(self)
             return eolian.eolian_function_is_c_only(self) ~= 0
-        end,
-
-        parameter_get_by_name = function(self, pname)
-            local v = eolian.eolian_function_parameter_get_by_name(self, pname)
-            if v == nil then return nil end
-            return v
         end,
 
         property_keys_get = function(self, ftype)

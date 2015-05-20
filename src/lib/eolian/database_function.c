@@ -14,8 +14,12 @@ database_function_del(Eolian_Function *fid)
 
    if (fid->base.file) eina_stringshare_del(fid->base.file);
    eina_stringshare_del(fid->name);
-   EINA_LIST_FREE(fid->keys, param) database_parameter_del(param);
-   EINA_LIST_FREE(fid->params, param) database_parameter_del(param);
+   EINA_LIST_FREE(fid->prop_values, param) database_parameter_del(param);
+   EINA_LIST_FREE(fid->prop_values_get, param) database_parameter_del(param);
+   EINA_LIST_FREE(fid->prop_values_set, param) database_parameter_del(param);
+   EINA_LIST_FREE(fid->prop_keys, param) database_parameter_del(param);
+   EINA_LIST_FREE(fid->prop_keys_get, param) database_parameter_del(param);
+   EINA_LIST_FREE(fid->prop_keys_set, param) database_parameter_del(param);
    EINA_LIST_FREE(fid->ctor_of, cls_name) eina_stringshare_del(cls_name);
    database_type_del(fid->get_ret_type);
    database_type_del(fid->set_ret_type);

@@ -1,16 +1,5 @@
 class Consts {
    methods {
-      @property a {
-         set {
-            return: bool (true); /*@ comment for property set return */
-         }
-         get {
-         }
-         values {
-            value: int; /*@ Value description */
-            buffer: char * @const_get;
-         }
-      }
       foo @const {
          /*@ comment foo */
          params {

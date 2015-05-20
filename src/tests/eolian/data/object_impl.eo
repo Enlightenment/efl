@@ -2,6 +2,9 @@ class Object_Impl (Base) {
    methods {
       @property a {
          set {
+            values {
+                value: const(list<int>)*;
+            }
             return: bool (false);
          }
          get {
@@ -10,7 +13,7 @@ class Object_Impl (Base) {
             part: const(char)*;
          }
          values {
-            value: own(list<int>*) @const_set;
+            value: own(list<int>*);
          }
       }
       @property b {
