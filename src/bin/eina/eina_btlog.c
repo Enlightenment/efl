@@ -159,7 +159,7 @@ bt_append(Eina_List *btl, const char *btline)
 }
 
 int
-main(int argc, char **argv)
+main(void)
 {
    Eina_List *btl = NULL, *l;
    char buf[4096];
