@@ -498,19 +498,6 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
 
    output->current_mode->flags |= DRM_MODE_TYPE_DEFAULT;
 
-   if (output->connected)
-     {
-        if (drmModeSetCrtc(output->dev->drm.fd, output->crtc_id,
-                           output->crtc->buffer_id, 0, 0,
-                           &output->conn_id, 1, &output->current_mode->info) < 0)
-          {
-             ERR("Failed to set Mode %dx%d for Output %s: %m",
-                 output->current_mode->width, output->current_mode->height,
-                 output->name);
-             goto err;
-          }
-     }
-
    /* try to init backlight */
    output->backlight = 
      _ecore_drm_output_backlight_init(output, conn->connector_type);
