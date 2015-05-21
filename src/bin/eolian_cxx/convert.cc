@@ -99,7 +99,7 @@ _convert_eolian_parameters(Eina_Iterator *parameters,
           (static_cast<const Eolian_Function_Parameter*>(curr));
         list.push_back
           ({
-             parameter_type(*id, func_type),
+             parameter_type(*id),
              parameter_name(*id)
           });
      }
@@ -146,12 +146,12 @@ _convert_property_set_to_function(Eolian_Class const& klass,
        function_name(prop_) + "_set",
        function_impl(prop_) + "_set",
        function_return_type(prop_, eolian_cxx::setter),
-       _convert_eolian_parameters(::eolian_function_parameters_get(&prop_),
+       _convert_eolian_parameters(::eolian_property_values_get(&prop_, EOLIAN_PROP_SET),
                                   eolian_cxx::setter),
        convert_comments_function(klass, prop_, eolian_cxx::setter)
      };
    efl::eolian::parameters_container_type keys =
-     _convert_eolian_parameters(::eolian_property_keys_get(&prop_),
+     _convert_eolian_parameters(::eolian_property_keys_get(&prop_, EOLIAN_PROP_SET),
                                 eolian_cxx::setter);
    if (!keys.empty())
      {
@@ -175,7 +175,8 @@ _convert_property_get_to_function(Eolian_Class const& klass,
        function_name(prop_) + "_get",
        function_impl(prop_) + "_get",
        function_return_type(prop_, eolian_cxx::getter),
-       _convert_eolian_parameters(prop_, eolian_cxx::getter),
+       _convert_eolian_parameters(::eolian_property_values_get(&prop_, EOLIAN_PROP_GET),
+                                  eolian_cxx::getter),
        convert_comments_function(klass, prop_, eolian_cxx::getter)
      };
 
@@ -202,7 +203,7 @@ _convert_property_get_to_function(Eolian_Class const& klass,
            });
      }
    efl::eolian::parameters_container_type keys =
-     _convert_eolian_parameters(::eolian_property_keys_get(&prop_),
+     _convert_eolian_parameters(::eolian_property_keys_get(&prop_, EOLIAN_PROP_GET),
                                 eolian_cxx::getter);
    if (!keys.empty())
      {

@@ -328,42 +328,8 @@ parameter_is_out(Eolian_Function_Parameter const& parameter)
    return direction == EOLIAN_OUT_PARAM || direction == EOLIAN_INOUT_PARAM;
 }
 
-inline bool
-parameter_is_const(Eolian_Function_Parameter const& parameter,
-                   Eolian_Function_Type func_type)
-{
-   return ::eolian_parameter_const_attribute_get
-     (&parameter, property_is_getter(func_type));
-}
-
-inline bool
-parameter_is_const(Eolian_Function_Parameter const& parameter,
-                   getter_t func_type)
-{
-   return ::eolian_parameter_const_attribute_get
-     (&parameter, property_is_getter(func_type.value));
-}
-
-inline bool
-parameter_is_const(Eolian_Function_Parameter const& parameter,
-                   setter_t func_type)
-{
-   return ::eolian_parameter_const_attribute_get
-     (&parameter, property_is_getter(func_type.value));
-}
-
-inline bool
-parameter_is_const(Eolian_Function_Parameter const& parameter,
-                   Eolian_Function const& func)
-{
-   assert(function_op_type(func) != EOLIAN_PROPERTY);
-   return ::eolian_parameter_const_attribute_get
-     (&parameter, property_is_getter(func));
-}
-
 inline efl::eolian::eolian_type_instance
-parameter_type(Eolian_Function_Parameter const& parameter,
-               Eolian_Function_Type func_type = method_t::value)
+parameter_type(Eolian_Function_Parameter const& parameter)
 {
    efl::eolian::eolian_type_instance type
      (type_lookup(::eolian_parameter_type_get(&parameter)));
@@ -375,27 +341,9 @@ parameter_type(Eolian_Function_Parameter const& parameter,
         type.is_out = true;
         type.front().native += "*";
      }
-   if (parameter_is_const(parameter, func_type))
-     {
-        type.front().native.insert(0, "const ");
-        if (!type.front().binding.empty())
-          type.front().binding.insert(0, "const ");
-     }
    type.is_optional = ::eolian_parameter_is_optional(&parameter) ||
                       ::eolian_parameter_is_nullable(&parameter);
    return type;
-}
-
-inline efl::eolian::eolian_type_instance
-parameter_type(Eolian_Function_Parameter const& parameter, getter_t func_type)
-{
-   return parameter_type(parameter, func_type.value);
-}
-
-inline efl::eolian::eolian_type_instance
-parameter_type(Eolian_Function_Parameter const& parameter, setter_t func_type)
-{
-   return parameter_type(parameter, func_type.value);
 }
 
 inline efl::eolian::eo_event
