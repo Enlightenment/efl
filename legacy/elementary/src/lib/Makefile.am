@@ -564,7 +564,6 @@ elm_fileselector_entry.eo \
 elm_flip.eo \
 elm_flipselector.eo \
 elm_frame.eo \
-elm_general.eot \
 elm_gengrid.eo \
 elm_gengrid_pan.eo \
 elm_genlist.eo \
@@ -647,21 +646,27 @@ elm_toolbar_item.eo \
 elm_diskselector_item.eo \
 elm_popup_item.eo
 
+elm_eolian_type_files = \
+elm_general.eot
+
 elm_eolian_c = $(elm_eolian_files:%.eo=%.eo.c)
-elm_eolian_h = $(elm_eolian_files:%.eo=%.eo.h) $(elm_eolian_files:%.eot=%.eot.h)
+elm_eolian_h = $(elm_eolian_files:%.eo=%.eo.h)
 elm_eolian_legacy_h = $(elm_eolian_files:%.eo=%.eo.legacy.h)
 elm_eolian_hh = $(elm_eolian_files:%.eo=%.eo.hh)
+
+elm_eolian_eot_h = $(elm_eolian_type_files:%.eot=%.eot.h)
 
 BUILT_SOURCES = \
 	$(elm_eolian_c)	\
 	$(elm_eolian_h)	\
+	$(elm_eolian_eot_h) \
 	$(elm_eolian_legacy_h)
 
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
 elementaryeolianfiles_DATA = $(elm_eolian_files)
 EXTRA_DIST += ${elementaryeolianfiles_DATA}
 
-nodist_includesunstable_HEADERS = $(elm_eolian_h) $(elm_eolian_legacy_h)
+nodist_includesunstable_HEADERS = $(elm_eolian_h) $(elm_eolian_legacy_h) $(elm_eolian_eot_h)
 CLEANFILES += $(nodist_includesunstable_HEADERS)
 
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
