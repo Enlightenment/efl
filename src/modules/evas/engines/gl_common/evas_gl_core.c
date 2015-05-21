@@ -1341,8 +1341,9 @@ try_again:
                   const char *s2[] = { "", ":stencil1", ":stencil2", ":stencil4", ":stencil8", ":stencil16" };
                   const char *s3[] = { "", ":msaa_low", ":msaa_mid", ":msaa_high" };
                   INF("Can not enable direct rendering with depth %d, stencil %d "
-                      "and MSAA %d. When using Elementary GLView, try to set "
-                      "the accel_preference to \"opengl%s%s%s\".",
+                      "and MSAA %d. When using Elementary GLView, try to call "
+                      "elm_config_accel_preference_set(\"opengl%s%s%s\") before "
+                      "creating any window.",
                       depth_size, stencil_bit, msaa_samples,
                       s1[cfg->depth_bits], s2[cfg->stencil_bits], s3[cfg->multisample_bits]);
                }
