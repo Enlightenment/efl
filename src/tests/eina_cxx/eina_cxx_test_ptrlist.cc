@@ -16,10 +16,10 @@
 const Eo_Class *simple_class_get(void);
 #define MY_CLASS simple_class_get()
 
-static void
+static Eo *
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eo_do_super(obj, MY_CLASS, eo_constructor());
+   return eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 }
 
 static void
