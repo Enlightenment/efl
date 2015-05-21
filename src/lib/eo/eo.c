@@ -950,7 +950,7 @@ _eo_add_internal_end(Eo *eo_id)
 
    if (EINA_UNLIKELY(!fptr->o.obj))
      {
-        ERR("Corrupt call stuck, shouldn't happen, please report!");
+        ERR("Corrupt call stack, shouldn't happen, please report!");
         return NULL;
      }
 
