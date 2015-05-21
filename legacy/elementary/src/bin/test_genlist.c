@@ -2287,7 +2287,6 @@ test_genlist12(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    api->itc1 = elm_genlist_item_class_new();
    api->itc1->item_style = "message";
    api->itc1->func.text_get = gl12_text_get;
-   api->itc1->func.content_get = gl_content_get;
    api->itc1->func.state_get = gl_state_get;
    api->itc1->func.del = NULL;
 
