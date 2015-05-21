@@ -502,6 +502,7 @@ class Elm.Genlist_Item(Elm.Widget_Item)
            Elm.Widget_Item.tooltip_style.set;
            Elm.Widget_Item.tooltip_style.get;
            Elm.Widget_Item.tooltip_window_mode.set;
+           Elm.Widget_Item.tooltip_window_mode.get;
            Elm.Widget_Item.tooltip_content_cb_set;
            Elm.Widget_Item.tooltip_unset;
            Elm.Widget_Item.cursor.set;

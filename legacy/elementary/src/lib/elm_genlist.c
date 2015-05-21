@@ -7094,6 +7094,12 @@ elm_genlist_item_tooltip_window_mode_get(const Elm_Object_Item *eo_it)
    return eo_do_ret(eo_it, ret, elm_wdg_item_tooltip_window_mode_get());
 }
 
+EOLIAN static Eina_Bool
+_elm_genlist_item_elm_widget_item_tooltip_window_mode_get(Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
+{
+   return it->tooltip.free_size;
+}
+
 EAPI void
 elm_genlist_item_cursor_set(Elm_Object_Item *item,
                             const char *cursor)
