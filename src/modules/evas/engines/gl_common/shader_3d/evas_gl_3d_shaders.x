@@ -1,4 +1,5 @@
 /* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED */
+/* IF IT IS CHANGED PLEASE COMMIT THE CHANGES */
 
 static const char vertex_color_vert_glsl[] =
    "#ifdef GL_ES\n"

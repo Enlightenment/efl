@@ -22,7 +22,9 @@ vert_shaders_source=""
 frag_shaders_source=""
 
 # Write header
-printf "/* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED */\n\n"
+printf "/* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED */\n"
+printf "/* IF IT IS CHANGED PLEASE COMMIT THE CHANGES */\n\n"
+
 for shd in ${SHADERS} ; do
   lname=`basename ${shd} .shd`
 

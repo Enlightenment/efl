@@ -58,7 +58,8 @@ IFS=$'\n' SHADERS=(`cat ${DIR}/shaders.txt`)
 IFS=$OIFS
 
 # Write header
-printf "/* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED */\n\n" > ${OUTPUT}
+printf "/* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED */\n" > ${OUTPUT}
+printf "/* IF IT IS CHANGED PLEASE COMMIT THE CHANGES */\n\n" >> ${OUTPUT}
 
 # Including private for hilights and stuff :)
 printf "#include \"../evas_gl_private.h\"\n\n" >> ${OUTPUT}
@@ -173,6 +174,7 @@ static const struct {
 printf "${shaders_source}};\n\n" >> ${OUTPUT}
 
 printf "/* DO NOT MODIFY THIS FILE AS IT IS AUTO-GENERATED */
+/* IF IT IS CHANGED PLEASE COMMIT THE CHANGES */
 
 typedef enum {
 ${shaders_enum}   SHADER_LAST
