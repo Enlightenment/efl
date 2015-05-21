@@ -316,7 +316,6 @@ void database_parameter_del(Eolian_Function_Parameter *pdesc);
 
 /* implements */
 void database_implement_del(Eolian_Implement *impl);
-void database_implement_constructor_add(Eolian_Implement *impl, const Eolian_Class *klass);
 
 /* constructors */
 void database_constructor_del(Eolian_Constructor *ctor);

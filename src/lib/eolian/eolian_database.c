@@ -298,8 +298,8 @@ impls:
                      eolian_implement_full_name_get(impl));
              goto error;
           }
-        else
-          database_implement_constructor_add(impl, class);
+        else if (eolian_function_is_constructor(impl->foo_id, impl->klass))
+          database_function_constructor_add((Eolian_Function*)impl->foo_id, class);
      }
    eina_iterator_free(itr);
    itr = eolian_class_constructors_get(class);
