@@ -7163,9 +7163,9 @@ evas_textblock_cursor_free(Evas_Textblock_Cursor *cur)
 EAPI Eina_Bool
 evas_textblock_cursor_is_format(const Evas_Textblock_Cursor *cur)
 {
+   if ((!cur) || (!cur->node)) return EINA_FALSE;
    Evas_Object_Protected_Data *obj = eo_data_scope_get(cur->obj, EVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
-   if (!cur || !cur->node) return EINA_FALSE;
    return (_evas_textblock_cursor_node_format_at_pos_get(cur)) ?
       EINA_TRUE : EINA_FALSE;
 }
