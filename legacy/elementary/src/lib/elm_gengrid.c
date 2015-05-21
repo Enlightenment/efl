@@ -1932,25 +1932,34 @@ static Eina_Bool
 _item_single_select_down(Elm_Gengrid_Data *sd)
 {
    unsigned int i;
-   Elm_Object_Item *eo_next;
+   unsigned int idx;
+   Elm_Object_Item *eo_next, *eo_orig;
 
    if (!sd->selected)
      eo_next = EO_OBJ(ELM_GEN_ITEM_FROM_INLIST(sd->items));
    else
      eo_next = sd->last_selected_item;
+   eo_orig = eo_next;
 
    while (eo_next)
      {
         for (i = 0; i < sd->nmax; i++)
           {
              eo_next = elm_gengrid_item_next_get(eo_next);
-             if (!eo_next) return EINA_FALSE;
+             if (!eo_next) break;
           }
 
-        if (!elm_object_item_disabled_get(eo_next)) break;
+        if (eo_next && !elm_object_item_disabled_get(eo_next)) break;
      }
 
-   if (!eo_next) return EINA_FALSE;
+   if (!eo_next)
+     {
+        idx = elm_gengrid_item_index_get(eo_orig);
+        if ((idx == sd->item_count) || ((sd->item_count) % (sd->nmax) == 0))
+           return EINA_FALSE;
+        else
+           eo_next = elm_gengrid_last_item_get(sd->obj);
+     }
 
    _all_items_deselect(sd);
    elm_gengrid_item_selected_set(eo_next, EINA_TRUE);
