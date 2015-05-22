@@ -2658,7 +2658,8 @@ _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
           return EINA_FALSE;
 
         while ((next) &&
-               (eo_do_ret(EO_OBJ(next), tmp, elm_wdg_item_disabled_get())))
+               ((eo_do_ret(EO_OBJ(next), tmp, elm_wdg_item_disabled_get())) ||
+               (_is_no_select(next))))
           next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
      }
    else
@@ -2671,7 +2672,9 @@ _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
              eo_next = elm_genlist_item_prev_get(sd->focused_item);
              next = eo_data_scope_get(eo_next, ELM_GENLIST_ITEM_CLASS);
 
-             while (eo_do_ret(eo_next, tmp, elm_wdg_item_disabled_get()))
+             while ((next) &&
+                    ((eo_do_ret(eo_next, tmp, elm_wdg_item_disabled_get())) ||
+                    (_is_no_select(next))))
                {
                   eo_next = elm_genlist_item_prev_get(eo_next);
                   next = eo_data_scope_get(eo_next, ELM_GENLIST_ITEM_CLASS);
@@ -2684,7 +2687,9 @@ _item_focused_next(Evas_Object *obj, Elm_Focus_Direction dir)
              eo_next = elm_genlist_item_next_get(sd->focused_item);
              next = eo_data_scope_get(eo_next, ELM_GENLIST_ITEM_CLASS);
 
-             while (eo_do_ret(eo_next, tmp, elm_wdg_item_disabled_get()))
+             while ((next) &&
+                    ((eo_do_ret(eo_next, tmp, elm_wdg_item_disabled_get())) ||
+                    (_is_no_select(next))))
                {
                   eo_next = elm_genlist_item_next_get(eo_next);
                   next = eo_data_scope_get(eo_next, ELM_GENLIST_ITEM_CLASS);
