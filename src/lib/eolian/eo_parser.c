@@ -1827,6 +1827,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
         goto found_class;
       case KW_import:
         {
+           Eina_Bool is_eo = EINA_FALSE;
            Eina_Strbuf *buf = push_strbuf(ls);
            const char *found = NULL;
            char errbuf[PATH_MAX];
@@ -1836,10 +1837,16 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            eina_strbuf_append(buf, ".eot");
            if (!(found = eina_hash_find(_tfilenames, eina_strbuf_string_get(buf))))
              {
-                pop_strbuf(ls);
-                snprintf(errbuf, sizeof(errbuf),
-                         "unknown import '%s'", ls->t.value.s);
-                eo_lexer_syntax_error(ls, errbuf);
+                size_t buflen = eina_strbuf_length_get(buf);
+                eina_strbuf_remove(buf, buflen - 1, buflen);
+                if (!(found = eina_hash_find(_filenames, eina_strbuf_string_get(buf))))
+                  {
+                     pop_strbuf(ls);
+                     snprintf(errbuf, sizeof(errbuf),
+                              "unknown import '%s'", ls->t.value.s);
+                     eo_lexer_syntax_error(ls, errbuf);
+                  }
+                else is_eo = EINA_TRUE;
              }
            if (eina_hash_find(_parsingeos, found))
              {
@@ -1849,7 +1856,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                 eo_lexer_syntax_error(ls, errbuf);
              }
            pop_strbuf(ls);
-           if (!eo_parser_database_fill(found, EINA_TRUE))
+           if (!(is_eo ? eolian_eo_file_parse(found) : eolian_eot_file_parse(found)))
              {
                 pop_strbuf(ls);
                 snprintf(errbuf, sizeof(errbuf),
