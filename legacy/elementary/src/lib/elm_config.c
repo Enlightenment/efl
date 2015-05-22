@@ -3264,9 +3264,12 @@ _elm_config_sub_shutdown(void)
 void
 _elm_config_sub_init(void)
 {
-#ifdef HAVE_ELEMENTARY_X
-   Eina_Bool init_x;
+#if defined(HAVE_ELEMENTARY_X) || defined(HAVE_ELEMENTARY_WAYLAND)
    const char *ev = getenv("ELM_DISPLAY");
+#endif
+
+#ifdef HAVE_ELEMENTARY_X
+   Eina_Bool init_x = EINA_FALSE;
    Eina_Bool have_display = !!getenv("DISPLAY");
 
    if (ev) /* If ELM_DISPLAY is specified */
@@ -3344,6 +3347,37 @@ _elm_config_sub_init(void)
                }
           }
         else ERR("Cannot connect to X11 display. check $DISPLAY variable");
+     }
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   Eina_Bool init_wl = EINA_FALSE;
+   Eina_Bool have_wl_display = !!getenv("WAYLAND_DISPLAY");
+
+   if (ev) /* If ELM_DISPLAY is specified */
+     {
+        if (!strcmp(ev, "wl")) /* and it is X11 */
+          {
+             if (!have_wl_display) /* if there is no $DISPLAY */
+               {
+                  ERR("$ELM_DISPLAY is set to wl but $WAYLAND_DISPLAY is not set");
+                  init_wl = EINA_FALSE;
+               }
+             else /* if there is */
+               init_wl = EINA_TRUE;
+          }
+        else /* not wl */
+          init_wl = EINA_FALSE;
+     }
+   else /* ELM_DISPLAY not specified */
+     {
+        if (have_wl_display) /* If there is a $WAYLAND_DISPLAY */
+          init_wl = EINA_TRUE;
+        else /* No $WAYLAND_DISPLAY */
+          init_wl = EINA_FALSE;
+     }
+   if (init_wl)
+     {
+        ecore_wl_init(NULL);
      }
 #endif
    _config_sub_apply();
