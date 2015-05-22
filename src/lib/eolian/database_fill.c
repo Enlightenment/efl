@@ -235,20 +235,15 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
 
    if (eot) goto done;
 
-   if (!eina_list_count(ls->tmp.classes))
+   if (!(cl = ls->tmp.kls))
      {
-        fprintf(stderr, "eolian: no classes for file '%s'\n", filename);
+        fprintf(stderr, "eolian: no class for file '%s'\n", filename);
         goto error;
      }
+   ls->tmp.kls = NULL;
 
-   while (ls->tmp.classes)
-     {
-        cl = eina_list_data_get(ls->tmp.classes);
-        if (!_db_fill_class(cl))
-          goto error;
-        ls->tmp.classes = eina_list_remove_list(ls->tmp.classes,
-                                                ls->tmp.classes);
-     }
+   if (!_db_fill_class(cl))
+     goto error;
 
 done:
    if (eot)

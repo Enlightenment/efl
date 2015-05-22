@@ -677,7 +677,6 @@ _temps_free(Eo_Lexer_Temps *tmp)
 {
    Eina_Strbuf *buf;
    Eolian_Type *tp;
-   Eolian_Class *cl;
    const char *s;
 
    if (tmp->kls)
@@ -697,9 +696,6 @@ _temps_free(Eo_Lexer_Temps *tmp)
 
    EINA_LIST_FREE(tmp->strs, s)
      if (s) eina_stringshare_del(s);
-
-   EINA_LIST_FREE(tmp->classes, cl)
-     database_class_del(cl);
 }
 
 void

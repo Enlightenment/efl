@@ -228,20 +228,17 @@ eolian_eo_file_parse(const char *filepath)
    Eolian_Constructor *ctor;
    if (!class)
      {
-        const char *full_filepath = eina_hash_find(_filenames, bfilename);
-        if (!full_filepath) full_filepath = filepath;
-        if (!eo_parser_database_fill(full_filepath, EINA_FALSE))
+        if (!eo_parser_database_fill(filepath, EINA_FALSE))
           {
              free(bfiledup);
              goto error;
           }
         class = eolian_class_get_by_file(bfilename);
-        if (!class)
-          {
-             fprintf(stderr, "eolian: no class for file '%s'\n", bfilename);
-             free(bfiledup);
-             goto error;
-          }
+     }
+   else
+     {
+        free(bfiledup);
+        return EINA_TRUE;
      }
    free(bfiledup);
    itr = eolian_class_implements_get(class);

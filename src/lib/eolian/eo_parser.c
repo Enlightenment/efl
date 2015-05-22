@@ -1942,8 +1942,6 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
    return EINA_FALSE;
 found_class:
    database_decl_add(ls->tmp.kls->full_name, EOLIAN_DECL_CLASS, ls->tmp.kls);
-   ls->tmp.classes = eina_list_append(ls->tmp.classes, ls->tmp.kls);
-   ls->tmp.kls = NULL;
    return EINA_TRUE;
 }
 
