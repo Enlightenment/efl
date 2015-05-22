@@ -212,6 +212,9 @@ _db_fill_class(Eolian_Class *cl)
 Eina_Bool
 eo_parser_database_fill(const char *filename, Eina_Bool eot)
 {
+   Eolian_Constructor *ctor;
+   Eolian_Implement *impl;
+   Eina_Iterator *itr;
    Eolian_Class *cl;
    Eo_Lexer *ls;
 
@@ -244,6 +247,36 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
 
    if (!_db_fill_class(cl))
      goto error;
+
+   itr = eolian_class_implements_get(cl);
+   EINA_ITERATOR_FOREACH(itr, impl)
+     {
+        Eolian_Function_Type impl_type = EOLIAN_UNRESOLVED;
+        const Eolian_Function *impl_func = eolian_implement_function_get(impl, &impl_type);
+        if (!impl_func)
+          {
+             fprintf(stderr, "eolian: unable to find function '%s'\n",
+                     eolian_implement_full_name_get(impl));
+             goto error;
+          }
+        else if (eolian_function_is_constructor(impl->foo_id, impl->klass))
+          database_function_constructor_add((Eolian_Function*)impl->foo_id, cl);
+     }
+   eina_iterator_free(itr);
+   itr = eolian_class_constructors_get(cl);
+   EINA_ITERATOR_FOREACH(itr, ctor)
+     {
+        const Eolian_Function *ctor_func = eolian_constructor_function_get(ctor);
+        if (!ctor_func)
+          {
+             fprintf(stderr, "eolian: unable to find function '%s'\n",
+                     eolian_constructor_full_name_get(ctor));
+             goto error;
+          }
+        else
+          database_function_constructor_add((Eolian_Function*)ctor_func, ctor->klass);
+     }
+   eina_iterator_free(itr);
 
 done:
    if (eot)
