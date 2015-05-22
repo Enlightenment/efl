@@ -1737,6 +1737,7 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
         snprintf(ebuf, sizeof(ebuf), "class '%s' cannot inherit from itself",
                  iname);
         eo_lexer_syntax_error(ls, ebuf);
+        return; /* unreachable (longjmp above), make static analysis shut up */
      }
    fname = eina_hash_find(_filenames, fnm);
    free(fnm);
