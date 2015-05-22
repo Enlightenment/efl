@@ -303,27 +303,13 @@ typedef enum
 } Eolian_Unary_Operator;
 
 /*
- * @brief Parse a given .eo file and fill the database.
+ * @brief Parse the given .eo or .eot file and fill the database.
  *
- * During parsing, the class described into the .eo file is created with
- * all the information related to this class.
- *
- * @param[in] filename Name of the file to parse.
- * @see eolian_eot_file_parse
+ * @param[in] filepath Path to the file to parse.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_eo_file_parse(const char *filename);
-
-/*
- * @brief Parse a given .eot file and fill the database.
- *
- * @param[in] filename Name of the file to parse.
- * @see eolian_eo_file_parse
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_eot_file_parse(const char *filepath);
+EAPI Eina_Bool eolian_file_parse(const char *filepath);
 
 /*
  * @brief Get an iterator to all .eo file names with paths.

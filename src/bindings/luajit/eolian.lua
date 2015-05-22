@@ -166,8 +166,7 @@ ffi.cdef [[
         EOLIAN_UNOP_BNOT, /* ~ int */
     } Eolian_Unary_Operator;
 
-    Eina_Bool eolian_eo_file_parse(const char *filename);
-    Eina_Bool eolian_eot_file_parse(const char *filepath);
+    Eina_Bool eolian_file_parse(const char *filepath);
     Eina_Iterator *eolian_all_eo_file_paths_get(void);
     Eina_Iterator *eolian_all_eot_file_paths_get(void);
     Eina_Iterator *eolian_all_eo_files_get(void);
@@ -358,12 +357,12 @@ M.system_directory_scan = function()
     return eolian.eolian_system_directory_scan() ~= 0
 end
 
-M.all_eo_files_parse = function()
-    return eolian.eolian_all_eo_files_parse() ~= 0
+M.file_parse = function(fpath)
+    return eolian.eolian_file_parse(fpath) ~= 0
 end
 
-M.eo_file_parse = function(fname)
-    return eolian.eolian_eo_file_parse(fname) ~= 0
+M.all_eo_files_parse = function()
+    return eolian.eolian_all_eo_files_parse() ~= 0
 end
 
 M.all_eot_files_parse = function()
@@ -388,10 +387,6 @@ end
 
 M.database_validate = function()
     return eolian.eolian_database_validate() ~= 0
-end
-
-M.eot_file_parse = function(fname)
-    return eolian.eolian_eot_file_parse(fname) ~= 0
 end
 
 M.show_class = function(klass)

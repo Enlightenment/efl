@@ -206,25 +206,24 @@ database_class_name_validate(const char *class_name, const Eolian_Class **cl)
 }
 
 EAPI Eina_Bool
-eolian_eot_file_parse(const char *filepath)
+eolian_file_parse(const char *filepath)
 {
+   Eina_Bool is_eo;
    if (_database_init_count <= 0)
      return EINA_FALSE;
-   return eo_parser_database_fill(filepath, EINA_TRUE);
-}
-
-EAPI Eina_Bool
-eolian_eo_file_parse(const char *filepath)
-{
-   if (_database_init_count <= 0)
-     return EINA_FALSE;
-   return eo_parser_database_fill(filepath, EINA_FALSE);
+   is_eo = eina_str_has_suffix(filepath, EO_SUFFIX);
+   if (!is_eo && !eina_str_has_suffix(filepath, EOT_SUFFIX))
+     {
+        fprintf(stderr, "eolian: file '%s' doesn't have a correct extension\n", filepath);
+        return EINA_FALSE;
+     }
+   return eo_parser_database_fill(filepath, !is_eo);
 }
 
 static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    Eina_Bool *ret = fdata;
-   if (*ret) *ret = eolian_eot_file_parse(data);
+   if (*ret) *ret = eo_parser_database_fill(data, EINA_TRUE);
    return *ret;
 }
 
@@ -243,7 +242,7 @@ eolian_all_eot_files_parse()
 static Eina_Bool _file_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
 {
    Eina_Bool *ret = fdata;
-   if (*ret) *ret = eolian_eo_file_parse(data);
+   if (*ret) *ret = eo_parser_database_fill(data, EINA_FALSE);
    return *ret;
 }
 

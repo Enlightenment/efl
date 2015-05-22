@@ -22,7 +22,7 @@ START_TEST(eolian_namespaces)
    eolian_init();
    /* Parsing */
    fail_if(!eolian_directory_scan(PACKAGE_DATA_DIR"/data"));
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/nmsp1_class1.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/nmsp1_class1.eo"));
 
    /* Classes existence  */
    fail_if(!(class11 = eolian_class_get_by_name("nmsp1.class1")));
@@ -105,7 +105,7 @@ START_TEST(eolian_events)
 
    eolian_init();
    /* Parsing */
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/events.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/events.eo"));
 
    /* Class */
    fail_if(!(class = eolian_class_get_by_name("Events")));
@@ -151,7 +151,7 @@ START_TEST(eolian_override)
    eolian_init();
    /* Parsing */
    fail_if(!eolian_directory_scan(PACKAGE_DATA_DIR"/data"));
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/override.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/override.eo"));
 
    /* Class */
    fail_if(!(class = eolian_class_get_by_name("Override")));
@@ -257,12 +257,11 @@ END_TEST
 START_TEST(eolian_consts)
 {
    const Eolian_Function *fid = NULL;
-   const Eolian_Function_Parameter *param = NULL;
    const Eolian_Class *class;
 
    eolian_init();
    /* Parsing */
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/consts.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/consts.eo"));
    fail_if(!(class = eolian_class_get_by_name("Consts")));
 
    /* Method */
@@ -286,7 +285,7 @@ START_TEST(eolian_ctor_dtor)
    eolian_init();
    /* Parsing */
    fail_if(!eolian_directory_scan(PACKAGE_DATA_DIR"/data"));
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/ctor_dtor.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/ctor_dtor.eo"));
    fail_if(!(class = eolian_class_get_by_name("Ctor_Dtor")));
    fail_if(!(base = eolian_class_get_by_name("Base")));
 
@@ -348,7 +347,7 @@ START_TEST(eolian_typedef)
 
    eolian_init();
    /* Parsing */
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/typedef.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/typedef.eo"));
 
    /* Check that the class Dummy is still readable */
    fail_if(!(class = eolian_class_get_by_name("Typedef")));
@@ -417,7 +416,7 @@ START_TEST(eolian_complex_type)
 
    eolian_init();
    /* Parsing */
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/complex_type.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/complex_type.eo"));
    fail_if(!(class = eolian_class_get_by_name("Complex_Type")));
 
    /* Properties return type */
@@ -501,7 +500,7 @@ START_TEST(eolian_scope)
 
    eolian_init();
    /* Parsing */
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/scope.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/scope.eo"));
    fail_if(!(class = eolian_class_get_by_name("Scope")));
 
    /* Property scope */
@@ -538,7 +537,7 @@ START_TEST(eolian_simple_parsing)
 
    eolian_init();
    /* Parsing */
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/class_simple.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/class_simple.eo"));
    fail_if(!(class = eolian_class_get_by_name("Class_Simple")));
    fail_if(eolian_class_get_by_file("class_simple.eo") != class);
    fail_if(strcmp(eolian_class_file_get(class), "class_simple.eo"));
@@ -679,7 +678,7 @@ START_TEST(eolian_struct)
    eolian_init();
 
    /* Parsing */
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/struct.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/struct.eo"));
 
    /* Check that the class Dummy is still readable */
    fail_if(!(class = eolian_class_get_by_name("Struct")));
@@ -735,7 +734,7 @@ START_TEST(eolian_extern)
    eolian_init();
 
    /* Parsing */
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/extern.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/extern.eo"));
 
    /* Check that the class Dummy is still readable */
    fail_if(!(class = eolian_class_get_by_name("Extern")));
@@ -773,7 +772,7 @@ START_TEST(eolian_var)
    eolian_init();
 
    /* Parsing */
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/var.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/var.eo"));
 
    /* Check that the class Dummy is still readable */
    fail_if(!(class = eolian_class_get_by_name("Var")));
@@ -839,7 +838,7 @@ START_TEST(eolian_enum)
    eolian_init();
 
    /* Parsing */
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/enum.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/enum.eo"));
 
    /* Check that the class Dummy is still readable */
    fail_if(!(class = eolian_class_get_by_name("Enum")));
@@ -931,7 +930,7 @@ START_TEST(eolian_class_funcs)
 
    eolian_init();
    /* Parsing */
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/class_funcs.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/class_funcs.eo"));
    fail_if(!(class = eolian_class_get_by_name("Class_Funcs")));
 
    /* Class properties */
@@ -966,7 +965,7 @@ START_TEST(eolian_free_func)
    eolian_init();
 
    /* Parsing */
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/free_func.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/free_func.eo"));
 
    /* Check that the class Dummy is still readable */
    fail_if(!(class = eolian_class_get_by_name("Free_Func")));
@@ -1012,7 +1011,7 @@ START_TEST(eolian_null)
    eolian_init();
 
    /* Parsing */
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/null.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/null.eo"));
 
    fail_if(!(class = eolian_class_get_by_name("Null")));
    fail_if(!(func = eolian_class_function_get_by_name(class, "foo", EOLIAN_METHOD)));
@@ -1059,7 +1058,7 @@ START_TEST(eolian_import)
 
    fail_if(!eolian_directory_scan(PACKAGE_DATA_DIR"/data"));
 
-   fail_if(!eolian_eo_file_parse(PACKAGE_DATA_DIR"/data/import.eo"));
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/import.eo"));
    fail_if(!(class = eolian_class_get_by_name("Import")));
 
    fail_if(!(type = eolian_type_alias_get_by_name("Imported")));

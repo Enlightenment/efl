@@ -230,7 +230,7 @@ database_load(options_type const& opts)
      }
    if (!opts.in_file.empty())
      {
-        if (!::eolian_eo_file_parse(opts.in_file.c_str()))
+        if (!::eolian_file_parse(opts.in_file.c_str()))
           {
              EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
                << "Failed parsing: " << opts.in_file << ".";

@@ -397,14 +397,7 @@ int main(int argc, char **argv)
 
    is_eo = eina_str_has_suffix(eo_filename, EO_SUFFIX);
 
-   if (!is_eo && !eina_str_has_suffix(eo_filename, EOT_SUFFIX))
-     {
-        ERR("The input file %s doesn't have a correct extension (.eo/.eot).\n", eo_filename);
-        goto end;
-     }
-
-   if ((is_eo && !eolian_eo_file_parse(eo_filename)) ||
-      (!is_eo && !eolian_eot_file_parse(eo_filename)))
+   if (!eolian_file_parse(eo_filename))
      {
         ERR("Error during parsing file %s\n", eo_filename);
         goto end;
