@@ -493,7 +493,8 @@ class Evas_3D_Node (Evas_3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            camera: Evas_3D_Camera *; /*@ The camera */
+            // FIXME: Evas_3D_Camera is necessary, but that introduces a cycle
+            camera: Evas_3D_Object *; /*@ The camera */
          }
       }
 

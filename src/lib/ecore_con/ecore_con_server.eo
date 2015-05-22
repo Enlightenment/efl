@@ -51,7 +51,8 @@ class Ecore.Con.Server (Ecore.Con.Base) {
          get {
          }
          values {
-            clients: const(list<const(Ecore.Con.Client) *>) *; /*@ The list of clients on this server. */
+            // FIXME: Ecore.Con.Client is needed, but that introduces a cycle
+            clients: const(list<const(Ecore.Con.Base) *>) *; /*@ The list of clients on this server. */
          }
       }
       @property connection_type {

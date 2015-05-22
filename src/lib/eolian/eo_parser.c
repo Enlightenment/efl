@@ -667,30 +667,22 @@ parse_struct_attrs(Eo_Lexer *ls, Eina_Bool is_enum, Eina_Bool *is_extern,
 }
 
 static void
-_append_dep(Eo_Lexer *ls, const char *fname, const char *name, int line, int col)
+_parse_dep(Eo_Lexer *ls, const char *fname, const char *name)
 {
-   Eina_Stringshare *cname = eina_stringshare_add(name);
-   Eolian_Dependency *dep;
-
-   Eina_List *deps = eina_hash_find(_depclasses, ls->filename);
-   Eina_List *l;
-   void *data;
-
-   /* check for possible duplicates while building the deplist */
-   EINA_LIST_FOREACH(deps, l, data)
-     if (data == cname)
-       {
-          eina_stringshare_del(cname);
-          return;
-       }
-
-   dep = calloc(1, sizeof(Eolian_Dependency));
-   FILL_BASE(dep->base, ls, line, col);
-   dep->filename = eina_stringshare_add(fname);
-   dep->name     = cname;
-
-   deps = eina_list_append(deps, dep);
-   eina_hash_set(_depclasses, ls->filename, deps);
+   if (eina_hash_find(_parsingeos, fname))
+     {
+        char buf[PATH_MAX];
+        eo_lexer_context_restore(ls);
+        snprintf(buf, sizeof(buf), "cyclic dependency '%s'", name);
+        eo_lexer_syntax_error(ls, buf);
+     }
+   if (!eolian_eo_file_parse(fname))
+     {
+        char buf[PATH_MAX];
+        eo_lexer_context_restore(ls);
+        snprintf(buf, sizeof(buf), "error parsing dependency '%s'", name);
+        eo_lexer_syntax_error(ls, buf);
+     }
 }
 
 static Eolian_Type *
@@ -799,10 +791,10 @@ parse_type_void(Eo_Lexer *ls)
           }
         else
           {
-             int dline = ls->line_number, dcol = ls->column;
              const char *bnm, *nm;
              char *fnm;
              buf = push_strbuf(ls);
+             eo_lexer_context_push(ls);
              parse_name(ls, buf);
              nm = eina_strbuf_string_get(buf);
              bnm = eina_stringshare_ref(ls->filename);
@@ -814,7 +806,7 @@ parse_type_void(Eo_Lexer *ls)
                   free(fnm);
                   if (fname)
                     {
-                       _append_dep(ls, fname, nm, dline, dcol);
+                       _parse_dep(ls, fname, nm);
                        def->type = EOLIAN_TYPE_CLASS;
                     }
                }
@@ -826,6 +818,7 @@ parse_type_void(Eo_Lexer *ls)
                }
              _fill_name(eina_stringshare_add(nm), &def->full_name, &def->name,
                         &def->namespaces);
+             eo_lexer_context_pop(ls);
              pop_strbuf(ls);
           }
      }
@@ -1721,7 +1714,6 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
 static void
 _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
 {
-   int dline = ls->line_number, dcol = ls->column;
    const char *fname, *iname;
    char *fnm;
    eina_strbuf_reset(buf);
@@ -1748,7 +1740,7 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
         snprintf(ebuf, sizeof(ebuf), "unknown inherit '%s'", iname);
         eo_lexer_syntax_error(ls, ebuf);
      }
-   _append_dep(ls, fname, iname, dline, dcol);
+   _parse_dep(ls, fname, iname);
    ls->tmp.kls->inherits = eina_list_append(ls->tmp.kls->inherits,
                                             eina_stringshare_add(iname));
    eo_lexer_context_pop(ls);

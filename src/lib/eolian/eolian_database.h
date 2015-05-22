@@ -46,9 +46,6 @@ extern Eina_Hash *_constantsf;
 extern Eina_Hash *_filenames; /* Hash: filename without extension -> full path */
 extern Eina_Hash *_tfilenames;
 
-/* a hash holding lists of deps */
-extern Eina_Hash *_depclasses;
-
 /* a hash holding all declarations, for redef checking etc */
 extern Eina_Hash *_decls;
 
@@ -62,13 +59,6 @@ typedef struct _Eolian_Object
    int line;
    int column;
 } Eolian_Object;
-
-typedef struct _Eolian_Dependency
-{
-   Eolian_Object base;
-   Eina_Stringshare *filename;
-   Eina_Stringshare *name;
-} Eolian_Dependency;
 
 typedef enum {
     EOLIAN_DECL_CLASS,

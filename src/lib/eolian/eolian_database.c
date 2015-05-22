@@ -21,7 +21,6 @@ Eina_Hash *_globalsf   = NULL;
 Eina_Hash *_constantsf = NULL;
 Eina_Hash *_filenames  = NULL;
 Eina_Hash *_tfilenames = NULL;
-Eina_Hash *_depclasses = NULL;
 Eina_Hash *_decls      = NULL;
 
 Eina_Hash *_parsedeots = NULL;
@@ -33,19 +32,6 @@ static void
 _hashlist_free(void *data)
 {
    eina_list_free((Eina_List*)data);
-}
-
-static void
-_deplist_free(Eina_List *data)
-{
-   Eolian_Dependency *dep;
-   EINA_LIST_FREE(data, dep)
-     {
-        eina_stringshare_del(dep->base.file);
-        eina_stringshare_del(dep->filename);
-        eina_stringshare_del(dep->name);
-        free(dep);
-     }
 }
 
 int
@@ -67,7 +53,6 @@ database_init()
    _constantsf = eina_hash_stringshared_new(_hashlist_free);
    _filenames  = eina_hash_string_small_new(free);
    _tfilenames = eina_hash_string_small_new(free);
-   _depclasses = eina_hash_stringshared_new(EINA_FREE_CB(_deplist_free));
    _decls      = eina_hash_stringshared_new(free);
    _parsedeots = eina_hash_string_small_new(NULL);
    _parsingeos = eina_hash_string_small_new(NULL);
@@ -100,7 +85,6 @@ database_shutdown()
         eina_hash_free(_constantsf); _constantsf = NULL;
         eina_hash_free(_filenames ); _filenames  = NULL;
         eina_hash_free(_tfilenames); _tfilenames = NULL;
-        eina_hash_free(_depclasses); _depclasses = NULL;
         eina_hash_free(_decls     ); _decls      = NULL;
         eina_hash_free(_parsedeots); _parsedeots = NULL;
         eina_hash_free(_parsingeos); _parsingeos = NULL;
@@ -233,8 +217,6 @@ EAPI Eina_Bool
 eolian_eo_file_parse(const char *filepath)
 {
    Eina_Iterator *itr;
-   Eina_List *depl;
-   Eolian_Dependency *dep;
 
    if (_database_init_count <= 0)
      return EINA_FALSE;
@@ -244,7 +226,6 @@ eolian_eo_file_parse(const char *filepath)
    const Eolian_Class *class = eolian_class_get_by_file(bfilename);
    Eolian_Implement *impl;
    Eolian_Constructor *ctor;
-   Eina_Bool failed_dep = EINA_FALSE;
    if (!class)
      {
         const char *full_filepath = eina_hash_find(_filenames, bfilename);
@@ -263,30 +244,6 @@ eolian_eo_file_parse(const char *filepath)
           }
      }
    free(bfiledup);
-   /* parse dependencies first (that includes inherits) */
-   depl = eina_hash_find(_depclasses, eolian_class_file_get(class));
-   if (!depl)
-     goto impls;
-   eina_hash_set(_depclasses, eolian_class_file_get(class), NULL);
-   EINA_LIST_FREE(depl, dep)
-     {
-        if (failed_dep) goto free;
-        if (!eolian_class_get_by_name(dep->name) &&
-            !eolian_eo_file_parse(dep->filename))
-          {
-             fprintf(stderr, "eolian:%s:%d:%d: failed to parse dependency '%s'\n",
-                     dep->base.file, dep->base.line, dep->base.column, dep->name);
-             failed_dep = EINA_TRUE; /* do not parse anymore stuff */
-          }
-free:
-        eina_stringshare_del(dep->base.file);
-        eina_stringshare_del(dep->filename);
-        eina_stringshare_del(dep->name);
-        free(dep);
-     }
-   if (failed_dep)
-     goto error;
-impls:
    itr = eolian_class_implements_get(class);
    EINA_ITERATOR_FOREACH(itr, impl)
      {
