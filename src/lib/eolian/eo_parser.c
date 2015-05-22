@@ -1856,7 +1856,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                 eo_lexer_syntax_error(ls, errbuf);
              }
            pop_strbuf(ls);
-           if (!(is_eo ? eolian_eo_file_parse(found) : eolian_eot_file_parse(found)))
+           if (!eo_parser_database_fill(found, !is_eo))
              {
                 pop_strbuf(ls);
                 snprintf(errbuf, sizeof(errbuf),
