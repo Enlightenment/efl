@@ -74,9 +74,8 @@ _evas_gl_image_cache_trim(Evas_Engine_GL_Context *gc)
 
         if (!removed || !gc->shared->images)
           {
-             ERR("Preventing infinite loop.");
-//             printf("EEK %i > %i, no imgs\n",
-//                    gc->shared->images_size, size);
+             // still have referenced images - need to let others release
+             // refs on their own
              break;
           }
      }
