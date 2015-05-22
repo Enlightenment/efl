@@ -218,7 +218,7 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
    Eolian_Class *cl;
    Eo_Lexer *ls;
 
-   if (eot && eina_hash_find(_parsedeots, filename))
+   if (eina_hash_find(_parsedeos, filename))
      return EINA_TRUE;
 
    eina_hash_set(_parsingeos, filename, (void *)EINA_TRUE);
@@ -279,8 +279,7 @@ eo_parser_database_fill(const char *filename, Eina_Bool eot)
    eina_iterator_free(itr);
 
 done:
-   if (eot)
-     eina_hash_set(_parsedeots, filename, (void *)EINA_TRUE);
+   eina_hash_set(_parsedeos, filename, (void *)EINA_TRUE);
    eina_hash_set(_parsingeos, filename, (void *)EINA_FALSE);
 
    eo_lexer_free(ls);

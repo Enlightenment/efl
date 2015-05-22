@@ -23,7 +23,7 @@ Eina_Hash *_filenames  = NULL;
 Eina_Hash *_tfilenames = NULL;
 Eina_Hash *_decls      = NULL;
 
-Eina_Hash *_parsedeots = NULL;
+Eina_Hash *_parsedeos  = NULL;
 Eina_Hash *_parsingeos = NULL;
 
 static int _database_init_count = 0;
@@ -54,7 +54,7 @@ database_init()
    _filenames  = eina_hash_string_small_new(free);
    _tfilenames = eina_hash_string_small_new(free);
    _decls      = eina_hash_stringshared_new(free);
-   _parsedeots = eina_hash_string_small_new(NULL);
+   _parsedeos  = eina_hash_string_small_new(NULL);
    _parsingeos = eina_hash_string_small_new(NULL);
    return ++_database_init_count;
 }
@@ -86,7 +86,7 @@ database_shutdown()
         eina_hash_free(_filenames ); _filenames  = NULL;
         eina_hash_free(_tfilenames); _tfilenames = NULL;
         eina_hash_free(_decls     ); _decls      = NULL;
-        eina_hash_free(_parsedeots); _parsedeots = NULL;
+        eina_hash_free(_parsedeos ); _parsedeos  = NULL;
         eina_hash_free(_parsingeos); _parsingeos = NULL;
         eina_shutdown();
      }
@@ -216,23 +216,9 @@ eolian_eot_file_parse(const char *filepath)
 EAPI Eina_Bool
 eolian_eo_file_parse(const char *filepath)
 {
-   char *bfiledup, *bfilename;
-
    if (_database_init_count <= 0)
      return EINA_FALSE;
-
-   bfiledup = strdup(filepath);
-   bfilename = basename(bfiledup);
-   if (!eolian_class_get_by_file(bfilename) && !eo_parser_database_fill(filepath, EINA_FALSE))
-     {
-        free(bfiledup);
-        goto error;
-     }
-   free(bfiledup);
-   return EINA_TRUE;
-
-error:
-   return EINA_FALSE;
+   return eo_parser_database_fill(filepath, EINA_FALSE);
 }
 
 static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)
