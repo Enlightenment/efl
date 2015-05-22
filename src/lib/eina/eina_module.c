@@ -72,6 +72,11 @@ static int EINA_MODULE_LOG_DOM = -1;
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(EINA_MODULE_LOG_DOM, __VA_ARGS__)
 
+#ifdef INF
+#undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(EINA_MODULE_LOG_DOM, __VA_ARGS__)
+
 #ifdef DBG
 #undef DBG
 #endif
@@ -337,8 +342,7 @@ EAPI Eina_Bool eina_module_load(Eina_Module *m)
    if ((*initcall)() == EINA_TRUE)
       goto ok;
 
-   ERR("could not find eina's entry symbol %s inside module %s, or the init function failed",
-       EINA_MODULE_SYMBOL_INIT, m->file);
+   INF("init function returned false for %s", m->file);
    dlclose(dl_handle);
    return EINA_FALSE;
 ok:
