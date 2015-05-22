@@ -74,7 +74,7 @@ void proxy_call_impl2(Eldbus_Proxy* proxy, const char* method, double timeout
   _detail::init_signature_array<Args...>
     (signature, eina::make_index_sequence<signature_size<tuple_args>::value +1>());
 
-  Callback* c = new Callback(std::move(callback));
+  Callback* c = new Callback(std::forward<Callback>(callback));
 
   eldbus_proxy_call(proxy, method, &_on_call<R, Callback>, c, timeout, signature
                     , _detail::to_raw(args)...);
@@ -85,7 +85,7 @@ void proxy_call_impl(tag<R>, Eldbus_Proxy* proxy, const char* method, double tim
                      , Callback&& callback, Args const&... args)
 {
   typedef std::tuple<R> reply_tuple;
-  _detail::proxy_call_impl2<reply_tuple>(proxy, method, timeout, std::move(callback), args...);
+  _detail::proxy_call_impl2<reply_tuple>(proxy, method, timeout, std::forward<Callback>(callback), args...);
 }
 
 template <typename... R, typename Callback, typename... Args>
@@ -93,7 +93,7 @@ void proxy_call_impl(tag<std::tuple<R...> >, Eldbus_Proxy* proxy, const char* me
                      , Callback&& callback, Args const&... args)
 {
   typedef std::tuple<R...> reply_tuple;
-  _detail::proxy_call_impl2<reply_tuple>(proxy, method, timeout, std::move(callback), args...);
+  _detail::proxy_call_impl2<reply_tuple>(proxy, method, timeout, std::forward<Callback>(callback), args...);
 }
 
 template <typename Callback, typename... Args>
@@ -101,14 +101,14 @@ void proxy_call_impl(tag<void>, Eldbus_Proxy* proxy, const char* method, double 
                      , Callback&& callback, Args const&... args)
 {
   typedef std::tuple<> reply_tuple;
-  _detail::proxy_call_impl2<reply_tuple>(proxy, method, timeout, std::move(callback), args...);
+  _detail::proxy_call_impl2<reply_tuple>(proxy, method, timeout, std::forward<Callback>(callback), args...);
 }
 
 template <typename R, typename Callback, typename... Args>
 void proxy_call(Eldbus_Proxy* proxy, const char* method, double timeout
                 , Callback&& callback, Args const&... args)
 {
-  return proxy_call_impl(tag<R>(), proxy, method, timeout, std::move(callback), args...);
+  return proxy_call_impl(tag<R>(), proxy, method, timeout, std::forward<Callback>(callback), args...);
 }
 
 } } }

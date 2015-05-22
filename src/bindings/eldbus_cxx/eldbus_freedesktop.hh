@@ -61,7 +61,7 @@ void _free_cb(void* data, const void*)
 template <typename... Ins, typename F>
 pending name_request(connection& c, const char* bus, unsigned int flags, F&& function)
 {
-  F* f = new F(std::move(function));
+  F* f = new F(std::forward<F>(function));
   pending r = ::eldbus_name_request(c.native_handle(), bus, flags
                                     , &_detail::_callback_wrapper<F, Ins...>, f);
   eldbus_pending_free_cb_add(r.native_handle(), &_detail::_free_cb<F>, f);

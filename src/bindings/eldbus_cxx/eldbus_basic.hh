@@ -43,13 +43,13 @@ struct proxy
   template <typename R, typename Callback, typename... Args>
   void call(const char* method, double timeout, Callback&& callback, Args... args) const
   {
-    eldbus::_detail::proxy_call<R>(_proxy, method, timeout, std::move(callback), args...);
+    eldbus::_detail::proxy_call<R>(_proxy, method, timeout, std::forward<Callback>(callback), args...);
   }
 
   template <typename Callback, typename... Args>
   void call(const char* method, double timeout, Callback&& callback, Args... args) const
   {
-    eldbus::_detail::proxy_call<void>(_proxy, method, timeout, std::move(callback), args...);
+    eldbus::_detail::proxy_call<void>(_proxy, method, timeout, std::forward<Callback>(callback), args...);
   }
 
   native_handle_type native_handle() { return _proxy; }
