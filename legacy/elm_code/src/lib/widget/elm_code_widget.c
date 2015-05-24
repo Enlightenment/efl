@@ -1277,16 +1277,28 @@ _elm_code_widget_lines_visible_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd
 }
 
 EOLIAN static void
-_elm_code_widget_font_size_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, Evas_Font_Size font_size)
+_elm_code_widget_font_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, char *name,
+                          Evas_Font_Size size)
 {
-   evas_object_textgrid_font_set(pd->grid, "Mono", font_size * elm_config_scale_get());
-   pd->font_size = font_size;
+   char *face = name;
+   if (!face)
+     face = "Mono";
+
+   evas_object_textgrid_font_set(pd->grid, face, size * elm_config_scale_get());
+   if (pd->font_name)
+     free((char *)pd->font_name);
+   pd->font_name = strdup(face);
+   pd->font_size = size;
 }
 
-EOLIAN static Evas_Font_Size
-_elm_code_widget_font_size_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+EOLIAN static void
+_elm_code_widget_font_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, char **name,
+                          Evas_Font_Size *size)
 {
-   return pd->font_size;
+   if (name)
+     *name = strdup((const char *)pd->font_name);
+   if (size)
+     *size = pd->font_size;
 }
 
 EOLIAN static void
@@ -1517,7 +1529,7 @@ _elm_code_widget_evas_object_smart_add(Eo *obj, Elm_Code_Widget_Data *pd)
          eo_event_callback_add(ELM_CODE_WIDGET_EVENT_SELECTION_CHANGED, _elm_code_widget_selection_cb, obj),
          eo_event_callback_add(ELM_CODE_WIDGET_EVENT_SELECTION_CLEARED, _elm_code_widget_selection_cb, obj));
 
-   _elm_code_widget_font_size_set(obj, pd, 10);
+   _elm_code_widget_font_set(obj, pd, NULL, 10);
 }
 
 #include "elm_code_widget_text.c"

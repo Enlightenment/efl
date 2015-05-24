@@ -15,6 +15,7 @@ typedef struct
    Elm_Code *code;
    Evas_Object *grid, *scroller;
 
+   const char *font_name;
    Evas_Font_Size font_size;
    double gravity_x, gravity_y;
 

@@ -71,7 +71,7 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    widget = eo_add(ELM_CODE_WIDGET_CLASS, parent,
                    elm_code_widget_code_set(code));
    eo_do(widget,
-         elm_code_widget_font_size_set(12),
+         elm_code_widget_font_set(NULL, 12),
          eo_event_callback_add(&ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_test_line_done_cb, NULL);
          eo_event_callback_add(ELM_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_clicked_cb, code));
 
@@ -101,7 +101,7 @@ _elm_code_test_editor_setup(Evas_Object *parent)
    widget = eo_add(ELM_CODE_WIDGET_CLASS, parent,
                    elm_code_widget_code_set(code));
    eo_do(widget,
-         elm_code_widget_font_size_set(14),
+         elm_code_widget_font_set(NULL, 14),
          elm_code_widget_editable_set(EINA_TRUE),
          elm_code_widget_show_whitespace_set(EINA_TRUE),
          elm_code_widget_line_numbers_set(EINA_TRUE));
@@ -123,14 +123,14 @@ _elm_code_test_editor_setup(Evas_Object *parent)
 }
 
 static Evas_Object *
-_elm_code_test_mirror_setup(Elm_Code *code, Evas_Object *parent)
+_elm_code_test_mirror_setup(Elm_Code *code, char *font_name, Evas_Object *parent)
 {
    Elm_Code_Widget *widget;
 
    widget = eo_add(ELM_CODE_WIDGET_CLASS, parent,
                    elm_code_widget_code_set(code));
    eo_do(widget,
-         elm_code_widget_font_size_set(11),
+         elm_code_widget_font_set(font_name, 11),
          elm_code_widget_line_numbers_set(EINA_TRUE));
 
    evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -212,8 +212,8 @@ _elm_code_test_welcome_mirror_cb(void *data, Evas_Object *obj EINA_UNUSED, void 
          code = elm_code_widget_code_get());
    elm_box_pack_end(screen, widget);
 
-   elm_box_pack_end(screen, _elm_code_test_mirror_setup(code, screen));
-   elm_box_pack_end(screen, _elm_code_test_mirror_setup(code, screen));
+   elm_box_pack_end(screen, _elm_code_test_mirror_setup(code, "Mono:style=Oblique", screen));
+   elm_box_pack_end(screen, _elm_code_test_mirror_setup(code, "Nimbus Mono", screen));
 
    evas_object_show(screen);
    elm_naviframe_item_push(naviframe, "Mirrored editor",

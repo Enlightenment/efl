@@ -21,21 +21,24 @@ class Elm_Code_Widget (Elm.Layout, Elm_Interface_Atspi_Text)
             code: Elm_Code *; /*@ Our underlying Elm_Code object */
          }
       }
-      @property font_size {
+      @property font {
          set {
             /*@
-            Set the font size that this widget uses, the font will always be a system monospaced font
+            Set the font that this widget uses, the font should be a monospaced scalable font.
+            Passing NULL will load the default system monospaced font.
 
             @ingroup Style */
          }
          get {
             /*@
-            Get the font size currently in use
+            Get the font currently in use.
+            The font name is a copy ad should be freed once it is no longer needed
 
             @ingroup Style */
          }
          values {
-            font_size: Evas_Font_Size; /*@ The font size of the widgget */
+            name: char *; /*@ The name of the font to load */
+            size: Evas_Font_Size; /*@ The font size for the widget */
          }
       }
       @property gravity {

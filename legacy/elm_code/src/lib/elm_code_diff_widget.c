@@ -121,13 +121,13 @@ elm_code_diff_widget_add(Evas_Object *parent, Elm_Code *code)
 }
 
 EAPI void
-elm_code_diff_widget_font_size_set(Evas_Object *widget, int size)
+elm_code_diff_widget_font_set(Evas_Object *widget, char *name, int size)
 {
    Elm_Code_Widget *child;
 
    child = (Elm_Code_Widget *) evas_object_data_get(widget, _ELM_CODE_DIFF_WIDGET_LEFT);
-   eo_do(child, elm_code_widget_font_size_set(size));
+   eo_do(child, elm_code_widget_font_set(name, size));
    child = (Elm_Code_Widget *) evas_object_data_get(widget, _ELM_CODE_DIFF_WIDGET_RIGHT);
-   eo_do(child, elm_code_widget_font_size_set(size));
+   eo_do(child, elm_code_widget_font_set(name, size));
 }
 
