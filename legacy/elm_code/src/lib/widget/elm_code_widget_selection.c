@@ -120,9 +120,9 @@ _elm_code_widget_selection_delete_single(Elm_Code_Widget_Data *pd)
    length = line->length - (pd->selection->end_col - pd->selection->start_col + 1);
    content = malloc(sizeof(char) * length);
 
-   snprintf(content, pd->selection->start_col, old);
-   snprintf(content + pd->selection->start_col - 1, old_length - pd->selection->end_col + 1,
-            old + pd->selection->end_col);
+   strncpy(content, old, pd->selection->start_col - 1);
+   strncpy(content + pd->selection->start_col - 1, old + pd->selection->end_col,
+           old_length - pd->selection->end_col);
    elm_code_line_text_set(line, content, length);
    free(content);
 }
@@ -143,10 +143,10 @@ _elm_code_widget_selection_delete_multi(Elm_Code_Widget_Data *pd)
    line = elm_code_file_line_get(pd->code->file, pd->selection->end_line);
    last = elm_code_line_text_get(line, &last_length);
    length = pd->selection->start_col + last_length - pd->selection->end_col + 1;
-   content = malloc(sizeof(char) * (length + 1));
-   snprintf(content, pd->selection->start_col, first);
-   snprintf(content + pd->selection->start_col - 1, last_length - pd->selection->end_col + 1,
-            last + pd->selection->end_col);
+   content = malloc(sizeof(char) * length);
+   strncpy(content, first, pd->selection->start_col - 1);
+   strncpy(content + pd->selection->start_col - 1, last + pd->selection->end_col,
+           last_length - pd->selection->end_col);
 
    for (i = line->number; i > pd->selection->start_line; i--)
      elm_code_file_line_remove(pd->code->file, i);
