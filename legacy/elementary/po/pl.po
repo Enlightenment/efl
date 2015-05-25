@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # Konrad Makowski <poczta@konradmakowski.pl>, 2013.
 #
-#: src/lib/elm_config.c:3176
+#: src/lib/elm_config.c:3213
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-02-11 10:42+0900\n"
+"POT-Creation-Date: 2015-05-25 11:47+0900\n"
 "PO-Revision-Date: 2013-11-23 14:48+0100\n"
 "Last-Translator: Konrad Makowski <poczta@konradmakowski.pl>\n"
 "Language-Team: General\n"
@@ -16,36 +16,36 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/elc_fileselector.c:1449
+#: src/lib/elc_fileselector.c:1461
 msgid "Up"
 msgstr "Do góry"
 
-#: src/lib/elc_fileselector.c:1464
+#: src/lib/elc_fileselector.c:1476
 msgid "Home"
 msgstr "Początek"
 
-#: src/lib/elc_fileselector.c:1527
+#: src/lib/elc_fileselector.c:1539
 msgid "Search"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1693 src/lib/elm_entry.c:1487
-#: src/lib/elm_entry.c:1512
+#: src/lib/elc_fileselector.c:1707 src/lib/elm_entry.c:1512
+#: src/lib/elm_entry.c:1537
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: src/lib/elc_fileselector.c:1702
+#: src/lib/elc_fileselector.c:1716
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elc_multibuttonentry.c:615
+#: src/lib/elc_multibuttonentry.c:629
 msgid "multi button entry label"
 msgstr "etykietka przycisku wyboru"
 
-#: src/lib/elc_multibuttonentry.c:637
+#: src/lib/elc_multibuttonentry.c:651
 msgid "multi button entry item"
 msgstr "wartość pozycji przycisku wyboru"
 
-#: src/lib/elc_multibuttonentry.c:1496
+#: src/lib/elc_multibuttonentry.c:1508
 msgid "multi button entry"
 msgstr "przycisk wyboru"
 
@@ -53,19 +53,19 @@ msgstr "przycisk wyboru"
 msgid "Title"
 msgstr "Tytuł"
 
-#: src/lib/elc_naviframe.c:957 src/lib/elc_naviframe.c:1156
+#: src/lib/elc_naviframe.c:965 src/lib/elc_naviframe.c:1164
 msgid "Back"
 msgstr "Cofnij"
 
-#: src/lib/elc_naviframe.c:1249
+#: src/lib/elc_naviframe.c:1259
 msgid "Next"
 msgstr "Następny"
 
-#: src/lib/elc_popup.c:261 src/lib/elc_popup.c:865
+#: src/lib/elc_popup.c:262 src/lib/elc_popup.c:844
 msgid "Popup Title"
 msgstr "Tytuł okienka"
 
-#: src/lib/elc_popup.c:271 src/lib/elc_popup.c:930
+#: src/lib/elc_popup.c:272 src/lib/elc_popup.c:917
 msgid "Popup Body Text"
 msgstr "Treść główna okienka"
 
@@ -77,14 +77,14 @@ msgstr "Bąbelek"
 msgid "Clicked"
 msgstr "Kliknięty"
 
-#: src/lib/elm_button.c:271 src/lib/elm_check.c:235 src/lib/elm_gengrid.c:814
-#: src/lib/elm_genlist.c:1572 src/lib/elm_list.c:2182 src/lib/elm_radio.c:256
-#: src/lib/elm_segment_control.c:525 src/lib/elm_spinner.c:578
+#: src/lib/elm_button.c:270 src/lib/elm_check.c:234 src/lib/elm_gengrid.c:816
+#: src/lib/elm_genlist.c:1621 src/lib/elm_list.c:2221 src/lib/elm_radio.c:264
+#: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:785
 #: src/lib/elm_toolbar.c:2226
 msgid "State: Disabled"
 msgstr "Statuj: wyłączony"
 
-#: src/lib/elm_button.c:296
+#: src/lib/elm_button.c:295
 msgid "Button"
 msgstr "Przycisk"
 
@@ -128,20 +128,20 @@ msgstr "kalendarz z miesiącami"
 msgid "calendar year"
 msgstr "kalendarz roczny"
 
-#: src/lib/elm_check.c:62 src/lib/elm_check.c:248 src/lib/elm_radio.c:102
-#: src/lib/elm_radio.c:257
+#: src/lib/elm_check.c:62 src/lib/elm_check.c:247 src/lib/elm_radio.c:111
+#: src/lib/elm_radio.c:265
 msgid "State: On"
 msgstr "Stan: włączony"
 
-#: src/lib/elm_check.c:68 src/lib/elm_check.c:260 src/lib/elm_radio.c:259
+#: src/lib/elm_check.c:68 src/lib/elm_check.c:259 src/lib/elm_radio.c:267
 msgid "State: Off"
 msgstr "Stan: wyłączony"
 
-#: src/lib/elm_check.c:244 src/lib/elm_check.c:257
+#: src/lib/elm_check.c:243 src/lib/elm_check.c:256
 msgid "State"
 msgstr "Stan"
 
-#: src/lib/elm_check.c:335
+#: src/lib/elm_check.c:334
 msgid "Check"
 msgstr "Sprawdzony"
 
@@ -153,51 +153,71 @@ msgstr "przycisk poganiający czas am,pm"
 msgid "clock decrement button for am,pm"
 msgstr "przycik cofający czas am,pm"
 
-#: src/lib/elm_clock.c:649
+#: src/lib/elm_clock.c:647
 msgid "State: Editable"
 msgstr "Stan: edytowalny"
 
-#: src/lib/elm_clock.c:684
+#: src/lib/elm_clock.c:682
 msgid "Clock"
 msgstr "Zegar"
 
-#: src/lib/elm_colorselector.c:1391
+#: src/lib/elm_colorselector.c:718
+msgid "Pick a color"
+msgstr ""
+
+#: src/lib/elm_colorselector.c:754
+msgid "R:"
+msgstr ""
+
+#: src/lib/elm_colorselector.c:756
+msgid "G:"
+msgstr ""
+
+#: src/lib/elm_colorselector.c:758
+msgid "B:"
+msgstr ""
+
+#: src/lib/elm_colorselector.c:760
+msgid "A:"
+msgstr ""
+
+#: src/lib/elm_colorselector.c:1433
 msgid "color selector palette item"
 msgstr "paleta wyboru kolorów"
 
-#: src/lib/elm_config.c:3192
+#: src/lib/elm_config.c:3229
 msgid "default:LTR"
 msgstr "default:RTL"
 
-#: src/lib/elm_dayselector.c:404
+#: src/lib/elm_dayselector.c:405
 msgid "day selector item"
 msgstr "wybór dni"
 
-#: src/lib/elm_diskselector.c:693
+#: src/lib/elm_diskselector.c:698
 msgid "diskselector item"
 msgstr "wybór dysków"
 
-#: src/lib/elm_entry.c:1474
+#: src/lib/elm_entry.c:1499
 msgid "Copy"
 msgstr "Kopiuj"
 
-#: src/lib/elm_entry.c:1479
+#: src/lib/elm_entry.c:1504
 msgid "Cut"
 msgstr "Wytnij"
 
-#: src/lib/elm_entry.c:1483 src/lib/elm_entry.c:1506
+#: src/lib/elm_entry.c:1508 src/lib/elm_entry.c:1531
 msgid "Paste"
 msgstr "Wklej"
 
-#: src/lib/elm_entry.c:1499
+#: src/lib/elm_entry.c:1524
 msgid "Select"
 msgstr "Wybór"
 
-#: src/lib/elm_entry.c:3488
+#: src/lib/elm_entry.c:3515
 msgid "Entry"
 msgstr "Pozycja"
 
-#: src/lib/elm_gengrid.c:844
+#: src/lib/elm_gengrid.c:846
 msgid "Gengrid Item"
 msgstr ""
 
@@ -209,27 +229,27 @@ msgstr "Indeks"
 msgid "Index Item"
 msgstr "Indeks"
 
-#: src/lib/elm_label.c:393
+#: src/lib/elm_label.c:392
 msgid "Label"
 msgstr "Etykieta"
 
-#: src/lib/elm_panel.c:69
+#: src/lib/elm_panel.c:71
 msgid "state: opened"
 msgstr "stan: otwarty"
 
-#: src/lib/elm_panel.c:70
+#: src/lib/elm_panel.c:72
 msgid "state: closed"
 msgstr "stan: zamknięty"
 
-#: src/lib/elm_panel.c:110
+#: src/lib/elm_panel.c:112
 msgid "A panel is open"
 msgstr ""
 
-#: src/lib/elm_panel.c:112
+#: src/lib/elm_panel.c:114
 msgid "Double tap to close panel menu"
 msgstr ""
 
-#: src/lib/elm_panel.c:182
+#: src/lib/elm_panel.c:166
 msgid "panel button"
 msgstr "panel przycisków"
 
@@ -237,39 +257,52 @@ msgstr "panel przycisków"
 msgid "progressbar"
 msgstr "pasek postępu"
 
-#: src/lib/elm_radio.c:285
+#: src/lib/elm_radio.c:293
 msgid "Radio"
 msgstr ""
 
-#: src/lib/elm_segment_control.c:528 src/lib/elm_toolbar.c:2228
+#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2228
 msgid "State: Selected"
 msgstr "Stan: wybrany"
 
-#: src/lib/elm_segment_control.c:530
+#: src/lib/elm_segment_control.c:529
 msgid "State: Unselected"
 msgstr "Stan: nie wybrany"
 
-#: src/lib/elm_segment_control.c:544
+#: src/lib/elm_segment_control.c:543
 msgid "Segment Control Item"
 msgstr "Kontrola Segmentami"
 
-#: src/lib/elm_slider.c:889
+#: src/lib/elm_slider.c:888
 msgid "slider"
 msgstr "slajder"
 
-#: src/lib/elm_spinner.c:667
-msgid "spinner increment button"
-msgstr "przycisk zwiększający typu spinner"
+#: src/lib/elm_spinner.c:816
+msgid "incremented"
+msgstr ""
 
-#: src/lib/elm_spinner.c:676
-msgid "spinner decrement button"
-msgstr "przycisk zmniejszający typu spinner"
+#: src/lib/elm_spinner.c:822
+msgid "decremented"
+msgstr ""
 
-#: src/lib/elm_spinner.c:684
+#: src/lib/elm_spinner.c:856 src/lib/elm_spinner.c:923
 msgid "spinner"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1688 src/lib/elm_toolbar.c:2284
+#: src/lib/elm_spinner.c:865 src/lib/elm_spinner.c:906
+msgid "spinner increment button"
+msgstr "przycisk zwiększający typu spinner"
+
+#: src/lib/elm_spinner.c:868 src/lib/elm_spinner.c:915
+msgid "spinner decrement button"
+msgstr "przycisk zmniejszający typu spinner"
+
+#: src/lib/elm_spinner.c:870
+#, fuzzy
+msgid "spinner text"
+msgstr "spinner"
+
+#: src/lib/elm_toolbar.c:1686 src/lib/elm_toolbar.c:2285
 msgid "Selected"
 msgstr "Wybrany"
 
@@ -281,10 +314,10 @@ msgstr "Separator"
 msgid "Has menu"
 msgstr "Posiada menu"
 
-#: src/lib/elm_toolbar.c:2279
+#: src/lib/elm_toolbar.c:2280
 msgid "Unselected"
 msgstr "Nie wybrany"
 
-#: src/lib/elm_toolbar.c:2296
+#: src/lib/elm_toolbar.c:2297
 msgid "Toolbar Item"
 msgstr "Pasek narzędzi"
