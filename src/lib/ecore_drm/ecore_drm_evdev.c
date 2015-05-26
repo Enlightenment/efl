@@ -868,3 +868,21 @@ cont:
         continue;
      }
 }
+
+EAPI const char *
+ecore_drm_evdev_name_get(Ecore_Drm_Evdev *evdev)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(evdev, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(evdev->device, NULL);
+
+   return libinput_device_get_name(evdev->device);
+}
+
+EAPI const char *
+ecore_drm_evdev_sysname_get(Ecore_Drm_Evdev *evdev)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(evdev, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(evdev->device, NULL);
+
+   return libinput_device_get_sysname(evdev->device);
+}

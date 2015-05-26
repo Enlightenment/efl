@@ -148,6 +148,22 @@ struct _Ecore_Drm_Event_Output
    Eina_Bool plug : 1;
 };
 
+struct _Ecore_Drm_Event_Input_Device_Add
+{
+   const char *name; /* descriptive device name */
+   const char *sysname; /* system name of the input device */
+   const char *seatname; /* logical name of the seat */
+   Ecore_Drm_Seat_Capabilities caps; /* capabilities on a device */
+};
+
+struct _Ecore_Drm_Event_Input_Device_Del
+{
+   const char *name; /* descriptive device name */
+   const char *sysname; /* system name of the input device */
+   const char *seatname; /* logical name of the seat */
+   Ecore_Drm_Seat_Capabilities caps; /* capabilities on a device */
+};
+
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm_Device Ecore_Drm_Device;
 
@@ -178,6 +194,12 @@ typedef struct _Ecore_Drm_Event_Page_Flip Ecore_Drm_Event_Page_Flip;
 /* sturcture to inform drm vblank */
 typedef struct _Ecore_Drm_Event_Vblank Ecore_Drm_Event_Vblank;
 
+/* sturcture to inform new input device added */
+typedef struct _Ecore_Drm_Event_Input_Device_Add Ecore_Drm_Event_Input_Device_Add;
+
+/* sturcture to inform old input device deleted */
+typedef struct _Ecore_Drm_Event_Input_Device_Del Ecore_Drm_Event_Input_Device_Del;
+
 /* structure to inform drm output plug events */
 /** @since 1.14 */
 typedef struct _Ecore_Drm_Event_Output Ecore_Drm_Event_Output;
@@ -185,6 +207,8 @@ typedef struct _Ecore_Drm_Event_Output Ecore_Drm_Event_Output;
 EAPI extern int ECORE_DRM_EVENT_ACTIVATE;
 EAPI extern int ECORE_DRM_EVENT_PAGE_FLIP;
 EAPI extern int ECORE_DRM_EVENT_VBLANK;
+EAPI extern int ECORE_DRM_EVENT_INPUT_DEVICE_ADD;
+EAPI extern int ECORE_DRM_EVENT_INPUT_DEVICE_DEL;
 
 EAPI extern int ECORE_DRM_EVENT_OUTPUT; /**< @since 1.14 */
 
@@ -351,5 +375,12 @@ EAPI Eina_Stringshare *ecore_drm_output_model_get(Ecore_Drm_Output *output);
  * @since 1.14
  */
 EAPI Eina_Stringshare *ecore_drm_output_make_get(Ecore_Drm_Output *output);
+
+/**
+ * @since tizen 3.0
+ */
+EAPI Eina_List *ecore_drm_seat_evdev_list_get(Ecore_Drm_Seat *seat);
+EAPI const char *ecore_drm_evdev_name_get(Ecore_Drm_Evdev *evdev);
+EAPI const char *ecore_drm_evdev_sysname_get(Ecore_Drm_Evdev *evdev);
 
 #endif

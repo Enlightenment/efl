@@ -81,6 +81,32 @@ _seat_get(Ecore_Drm_Input *input, const char *seat)
    return s;
 }
 
+static void
+_ecore_drm_event_input_device_add_free(void *data EINA_UNUSED, void *ev)
+{
+   Ecore_Drm_Event_Input_Device_Add *e;
+
+   e = ev;
+   eina_stringshare_del(e->name);
+   eina_stringshare_del(e->sysname);
+   eina_stringshare_del(e->seatname);
+
+   free(e);
+}
+
+static void
+_ecore_drm_event_input_device_del_free(void *data EINA_UNUSED, void *ev)
+{
+   Ecore_Drm_Event_Input_Device_Del *e;
+
+   e = ev;
+   eina_stringshare_del(e->name);
+   eina_stringshare_del(e->sysname);
+   eina_stringshare_del(e->seatname);
+
+   free(e);
+}
+
 static void 
 _device_added(Ecore_Drm_Input *input, struct libinput_device *device)
 {
@@ -88,6 +114,7 @@ _device_added(Ecore_Drm_Input *input, struct libinput_device *device)
    const char *seat_name;
    Ecore_Drm_Seat *seat;
    Ecore_Drm_Evdev *edev;
+   Ecore_Drm_Event_Input_Device_Add *ev;
 
    libinput_seat = libinput_device_get_seat(device);
    seat_name = libinput_seat_get_logical_name(libinput_seat);
@@ -108,16 +135,43 @@ _device_added(Ecore_Drm_Input *input, struct libinput_device *device)
 
    /* append this device to the seat */
    seat->devices = eina_list_append(seat->devices, edev);
+
+   ev = calloc(1, sizeof(Ecore_Drm_Event_Input_Device_Add));
+   if (!ev) return;
+
+   ev->name = eina_stringshare_add(libinput_device_get_name(device));
+   ev->sysname = eina_stringshare_add(edev->path);
+   ev->seatname = eina_stringshare_add(edev->seat->name);
+   ev->caps = edev->seat_caps;
+
+   ecore_event_add(ECORE_DRM_EVENT_INPUT_DEVICE_ADD,
+                   ev,
+                   _ecore_drm_event_input_device_add_free,
+                   NULL);
 }
 
 static void 
-_device_removed(Ecore_Drm_Input *input EINA_UNUSED, struct libinput_device *device)
+_device_removed(Ecore_Drm_Input *input, struct libinput_device *device)
 {
    Ecore_Drm_Evdev *edev;
+   Ecore_Drm_Event_Input_Device_Del *ev;
 
    /* try to get the evdev structure */
    if (!(edev = libinput_device_get_user_data(device)))
      return;
+
+   ev = calloc(1, sizeof(Ecore_Drm_Event_Input_Device_Del));
+   if (!ev) return;
+
+   ev->name = eina_stringshare_add(libinput_device_get_name(device));
+   ev->sysname = eina_stringshare_add(edev->path);
+   ev->seatname = eina_stringshare_add(edev->seat->name);
+   ev->caps = edev->seat_caps;
+
+   ecore_event_add(ECORE_DRM_EVENT_INPUT_DEVICE_DEL,
+                   ev,
+                   _ecore_drm_event_input_device_del_free,
+                   NULL);
 
    /* remove this evdev from the seat's list of devices */
    edev->seat->devices = eina_list_remove(edev->seat->devices, edev);
@@ -348,4 +402,11 @@ ecore_drm_inputs_disable(Ecore_Drm_Input *input)
    _input_events_process(input);
 
    input->suspended = EINA_TRUE;
+}
+
+EAPI Eina_List *
+ecore_drm_seat_evdev_list_get(Ecore_Drm_Seat *seat)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
+   return seat->devices;
 }
