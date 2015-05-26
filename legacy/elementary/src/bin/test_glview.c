@@ -344,22 +344,22 @@ static void
 _print_gl_log(Evas_GL_API *gl, GLuint id)
 {
    GLint log_len = 0;
-   char *log;
+   char *log_info;
 
    if (gl->glIsShader(id))
      gl->glGetShaderiv(id, GL_INFO_LOG_LENGTH, &log_len);
    else if (gl->glIsProgram(id))
      gl->glGetProgramiv(id, GL_INFO_LOG_LENGTH, &log_len);
 
-   log = malloc(log_len * sizeof(char));
+   log_info = malloc(log_len * sizeof(char));
 
    if (gl->glIsShader(id))
-     gl->glGetShaderInfoLog(id, log_len, NULL, log);
+     gl->glGetShaderInfoLog(id, log_len, NULL, log_info);
    else if (gl->glIsProgram(id))
-     gl->glGetProgramInfoLog(id, log_len, NULL, log);
+     gl->glGetProgramInfoLog(id, log_len, NULL, log_info);
 
-   printf("%s", log);
-   free(log);
+   printf("%s", log_info);
+   free(log_info);
 }
 
 static void
