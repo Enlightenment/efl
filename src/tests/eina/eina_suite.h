@@ -65,5 +65,6 @@ void eina_test_abi(TCase *tc);
 void eina_test_trash(TCase *tc);
 void eina_test_xattr(TCase *tc);
 void eina_test_crc(TCase *tc);
+void eina_test_quad(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */

@@ -80,6 +80,7 @@ static const Eina_Test_Case etc[] = {
    { "Xattr", eina_test_xattr },
 #endif
    {"Crc", eina_test_crc },
+   {"Quad", eina_test_quad },
    { NULL, NULL }
 };
 
