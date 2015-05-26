@@ -13,6 +13,8 @@
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
 #define ENDT obj->layer->evas->engine.data.output
+#define COL_OBJECT(obj, sub) ARGB_JOIN(obj->sub->color.a, obj->sub->color.r, obj->sub->color.g, obj->sub->color.b)
+#define COL_JOIN(o, sub, color) ARGB_JOIN(o->sub.color.a, o->sub.color.r, o->sub.color.g, o->sub.color.b)
 
 /* private magic number for text objects */
 static const char o_type[] = "text";
@@ -1766,16 +1768,15 @@ evas_object_text_render(Evas_Object *eo_obj,
         Y = obj->cur->geometry.y;
 
         // Prepare color multiplier
-        ENFN->context_color_set(ENDT, context, 255, 255, 255, 255);
-        if ((obj->cur->cache.clip.r == 255) && (obj->cur->cache.clip.g == 255) &&
-            (obj->cur->cache.clip.b == 255) && (obj->cur->cache.clip.a == 255))
-          ENFN->context_multiplier_unset(ENDT, context);
+        COLOR_ONLY_SET(obj, cur->cache, clip);
+        if (obj->cur->clipper)
+          ENFN->context_multiplier_set(output, context,
+                                       obj->cur->clipper->cur->cache.clip.r,
+                                       obj->cur->clipper->cur->cache.clip.g,
+                                       obj->cur->clipper->cur->cache.clip.b,
+                                       obj->cur->clipper->cur->cache.clip.a);
         else
-           ENFN->context_multiplier_set(ENDT, context,
-                                        obj->cur->cache.clip.r,
-                                        obj->cur->cache.clip.g,
-                                        obj->cur->cache.clip.b,
-                                        obj->cur->cache.clip.a);
+          ENFN->context_multiplier_unset(output, context);
 
         if (!fcow->chain)
           {
@@ -1794,10 +1795,15 @@ evas_object_text_render(Evas_Object *eo_obj,
                }
              fcow->chain = pgm;
              fcow->invalid = EINA_FALSE;
+             evas_filter_program_state_set(fcow->chain, eo_obj, obj);
           }
-        else if (previous)
+        else if (previous && !fcow->changed)
           {
-             Eina_Bool redraw = fcow->changed;
+             Eina_Bool redraw;
+
+             redraw = evas_filter_program_state_set(fcow->chain, eo_obj, obj);
+             if (redraw)
+               DBG("Filter redraw by state change!");
 
              // Scan proxies to find if any changed
              if (!redraw && fcow->sources)
@@ -1834,8 +1840,12 @@ evas_object_text_render(Evas_Object *eo_obj,
                   return;
                }
           }
+        else
+          evas_filter_program_state_set(fcow->chain, eo_obj, obj);
 
         filter = evas_filter_context_new(obj->layer->evas, do_async);
+
+        // Run script
         ok = evas_filter_context_program_use(filter, fcow->chain);
         if (!filter || !ok)
           {
@@ -2372,8 +2382,6 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
    o->last_computed.h = obj->cur->geometry.h;
 }
 
-/* EXPERIMENTAL CODE BEGIN */
-
 EOLIAN static void
 _evas_text_filter_program_set(Eo *eo_obj, Evas_Text_Data *o, const char *arg)
 {
@@ -2393,7 +2401,7 @@ _evas_text_filter_program_set(Eo *eo_obj, Evas_Text_Data *o, const char *arg)
           {
              pgm = evas_filter_program_new("Evas_Text", EINA_TRUE);
              evas_filter_program_source_set_all(pgm, fcow->sources);
-             evas_filter_program_state_set(pgm, obj->cur->geometry.w, obj->cur->geometry.h);
+             evas_filter_program_state_set(pgm, eo_obj, obj);
              if (!evas_filter_program_parse(pgm, arg))
                {
                   ERR("Parsing failed!");
@@ -2542,8 +2550,6 @@ update:
    evas_object_coords_recalc(eo_obj, obj);
    evas_object_inform_call_resize(eo_obj);
 }
-
-/* EXPERIMENTAL CODE END */
 
 EAPI void
 evas_object_text_font_source_set(Eo *obj, const char *font_source)

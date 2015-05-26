@@ -493,6 +493,7 @@ evas_filter_buffer_empty_new(Evas_Filter_Context *ctx, Eina_Bool alpha_only)
 
    fb->transient = EINA_FALSE;
 
+   DBG("Created context buffer %d", fb->id);
    return fb->id;
 }
 
@@ -741,12 +742,8 @@ evas_filter_temporary_buffer_get(Evas_Filter_Context *ctx, int w, int h,
    Evas_Filter_Buffer *buf = NULL;
    Eina_List *l;
 
-   DBG("Want temp buffer: %dx%d %s", w, h, alpha_only ? "alpha" : "rgba");
    EINA_LIST_FOREACH(ctx->buffers, l, buf)
      {
-        DBG("Try buffer #%d: temp:%d %dx%d %s (lock:%d)",
-            buf->id, buf->transient,
-            buf->w, buf->h, buf->alpha_only ? "alpha" : "rgba", buf->locked);
         if (buf->transient && !buf->locked && (buf->alpha_only == alpha_only))
           {
              if ((!w || (w == buf->w))
@@ -766,7 +763,6 @@ evas_filter_temporary_buffer_get(Evas_Filter_Context *ctx, int w, int h,
 
    buf = _buffer_new(ctx, w, h, alpha_only);
    buf->locked = EINA_TRUE;
-   DBG("Created temporary buffer: %d (%s)", buf->id, alpha_only ? "Alpha" : "RGBA");
    return buf;
 }
 
