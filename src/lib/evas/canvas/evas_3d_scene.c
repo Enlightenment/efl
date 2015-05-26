@@ -635,7 +635,7 @@ _evas_3d_scene_pick(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
    Evas_3D_Object_Data *pd_parent;
    Evas_Public_Data *e;
    int tex = 0, px, py;;
-   double redcomponent;
+   Evas_Color color = {0.0, 0.0, 0.0};
    Eina_Stringshare *tmp;
    Eina_Array *arr = NULL;
    Eina_Bool update_scene = EINA_FALSE;
@@ -694,8 +694,8 @@ _evas_3d_scene_pick(Eo *obj, Evas_3D_Scene_Data *pd, Evas_Real x, Evas_Real y,
                     tex = e->engine.func->drawable_texture_color_pick_id_get(pd->surface);
                   if (e->engine.func->drawable_texture_pixel_color_get)
                     {
-                       redcomponent = e->engine.func->drawable_texture_pixel_color_get(tex, px, py, pd->surface);
-                       tmp = eina_stringshare_printf("%f %f %f", redcomponent, 0.0, 0.0);
+                       e->engine.func->drawable_texture_pixel_color_get(tex, px, py, &color, pd->surface);
+                       tmp = eina_stringshare_printf("%f %f %f", color.r, color.g, color.b);
                        arr = (Eina_Array *)eina_hash_find(pd->colors_node_mesh, tmp);
                        if (arr)
                          {

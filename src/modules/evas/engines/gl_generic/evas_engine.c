@@ -2182,10 +2182,11 @@ eng_drawable_texture_color_pick_id_get(void *drawable)
    return e3d_drawable_texture_color_pick_id_get((E3D_Drawable *)drawable);
 }
 
-static double
-eng_drawable_texture_pixel_color_get(GLuint tex EINA_UNUSED, int x, int y, void *drawable)
+static void
+eng_drawable_texture_pixel_color_get(GLuint tex EINA_UNUSED, int x, int y,
+                                     Evas_Color *color, void *drawable)
 {
-   return e3d_drawable_texture_pixel_color_get(tex, x, y, drawable);
+   return e3d_drawable_texture_pixel_color_get(tex, x, y, color, drawable);
 }
 
 static Eina_Bool

@@ -14,6 +14,7 @@ static Eina_Stringshare *
 _generate_unic_color_key(Evas_Color *color, Evas_Color *bg_color, Evas_3D_Node *node, Evas_3D_Mesh *mesh,
                          Eina_Bool init)
 {
+#ifndef GL_GLES
    static unsigned short red = USHRT_MAX;
 
    if (init) red = USHRT_MAX;
@@ -26,8 +27,52 @@ _generate_unic_color_key(Evas_Color *color, Evas_Color *bg_color, Evas_3D_Node *
 
    red--;
 
-   if (red < 1) red = USHRT_MAX;
+   if (red == 0)
+     {
+        ERR("Overfill number of color. %d %s", __LINE__, __FILE__);
+        red = USHRT_MAX;
+     }
 
+#else
+   static unsigned char red = 0;
+   static unsigned char green = 0;
+   static unsigned char blue = 0;
+   if (init) red = green = blue = 0;
+
+#define GET_NEXT_COLOR    \
+   red++;                 \
+   if (red == 255)        \
+     {                    \
+        red = 0;          \
+        green++;          \
+        if (green == 255) \
+         {                \
+            green = 0;    \
+            blue++;       \
+         }                \
+     }
+
+   GET_NEXT_COLOR
+   /*Get another color if color equal with background color*/
+   if ((bg_color->r == (double)red) &&
+       (bg_color->g == (double)green) &&
+       (bg_color->b == (double)blue))
+     {
+        GET_NEXT_COLOR
+     }
+
+   if ((red == 255) && (green == 255) && (blue == 255))
+     {
+        ERR("Overfill number of color. %d %s", __LINE__, __FILE__);
+        red = green = blue = 0;
+     }
+
+   color->r = (double)red / 255;
+   color->g = (double)green / 255;
+   color->b = (double)blue / 255;
+
+#undef GET_NEXT_COLOR
+#endif
    return eina_stringshare_printf("%p %p", node, mesh);
 }
 

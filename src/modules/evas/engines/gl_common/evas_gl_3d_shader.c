@@ -580,9 +580,16 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
       case E3D_UNIFORM_FOG_COLOR:
          glUniform4f(loc, data->fog_color.r, data->fog_color.g, data->fog_color.b, 1);
          break;
+#ifndef GL_GLES
       case E3D_UNIFORM_COLOR_PICK:
          glUniform1f(loc, data->color_pick_key);
          break;
+#else
+      case E3D_UNIFORM_COLOR_PICK:
+         glUniform4f(loc, data->color_pick_key.r, data->color_pick_key.g,
+                     data->color_pick_key.b, 1.0);
+         break;
+#endif
       case E3D_UNIFORM_ALPHATEST_COMPARISON:
          glUniform1i(loc,
                     (data->alpha_comparison ? data->alpha_comparison : EVAS_3D_COMPARISON_GREATER));

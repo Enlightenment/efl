@@ -382,8 +382,11 @@ struct _Evas_3D_Mesh
 
    Evas_Color              fog_color;
    Eina_Bool               fog_enabled :1;
-
+#ifndef GL_GLES
    double                  color_pick_key;
+#else
+   Evas_Color              color_pick_key;
+#endif
    Eina_Bool               color_pick_enabled :1;
 };
 
@@ -1398,7 +1401,7 @@ struct _Evas_Func
    Eina_Bool (*drawable_scene_render_to_texture) (void *data, void *drawable, void *scene_data);
 
    int (*drawable_texture_color_pick_id_get) (void *drawable);
-   double (*drawable_texture_pixel_color_get) (unsigned int tex EINA_UNUSED, int x, int y, void *drawable);
+   void (*drawable_texture_pixel_color_get) (unsigned int tex EINA_UNUSED, int x, int y, Evas_Color *color, void *drawable);
 
    void *(*texture_new)                  (void *data, Eina_Bool use_atlas);
    void  (*texture_free)                 (void *data, void *texture);

@@ -124,8 +124,13 @@ _mesh_init(Evas_3D_Mesh_Data *pd)
    pd->alpha_comparison = EVAS_3D_COMPARISON_ALWAYS;
    pd->alpha_ref_value = 0.0f;
    pd->alpha_test_enabled = EINA_FALSE;
-
+#ifndef GL_GLES
    pd->color_pick_key = -1.0;
+#else
+   pd->color_pick_key.r = 0.0;
+   pd->color_pick_key.g = 0.0;
+   pd->color_pick_key.b = 0.0;
+#endif
    pd->color_pick_enabled = EINA_FALSE;
 }
 

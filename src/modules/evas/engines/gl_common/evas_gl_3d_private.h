@@ -106,7 +106,11 @@ struct _E3D_Draw_Data
         Evas_Color  specular;
    } light;
    Evas_Color fog_color;
+#ifndef GL_GLES
    double color_pick_key;
+#else
+   Evas_Color color_pick_key;
+#endif
 };
 
 struct _E3D_Texture

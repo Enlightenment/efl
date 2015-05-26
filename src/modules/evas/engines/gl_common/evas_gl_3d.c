@@ -316,6 +316,8 @@ e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_fo
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 #ifndef GL_GLES
    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, w, h, 0, GL_RED, GL_UNSIGNED_SHORT, 0);
+#else
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 #endif
 
    glGenFramebuffers(1, &fbo);
@@ -394,8 +396,6 @@ e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_fo
    drawable->tex = tex;
    drawable->fbo = fbo;
    drawable->depth_stencil_buf = depth_stencil_buf;
-   drawable->texcolorpick = texcolorpick;
-   drawable->color_pick_fb_id = color_pick_fb_id;
    drawable->depth_buf = depth_buf;
    drawable->stencil_buf = stencil_buf;
    drawable->texDepth = texDepth;
@@ -1317,13 +1317,13 @@ e3d_drawable_scene_render_to_texture(E3D_Drawable *drawable, E3D_Renderer *rende
    Eina_Iterator *itmn;
    void *ptrmn;
    Eina_List *repeat_node = NULL;
-   Evas_Color c = {0, 0, 0, 0}, *unic_color = NULL;
+   Evas_Color c = {0.0, 0.0, 0.0, 0.0}, *unic_color = NULL;
 
    glBindFramebuffer(GL_FRAMEBUFFER, drawable->color_pick_fb_id);
    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                           GL_TEXTURE_2D, drawable->texcolorpick, 0);
 #ifdef GL_GLES
-   glBindTexture(GL_TEXTURE_2D, drawable->depth_stencil_buf);
+   glBindRenderbuffer(GL_RENDERBUFFER, drawable->depth_stencil_buf);
    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                                GL_TEXTURE_2D, drawable->depth_stencil_buf, 0);
 #else
@@ -1366,7 +1366,13 @@ e3d_drawable_scene_render_to_texture(E3D_Drawable *drawable, E3D_Renderer *rende
                   unic_color = (Evas_Color *)eina_hash_find(data->node_mesh_colors, tmp);
                   if (unic_color)
                     {
+#ifndef GL_GLES
                        pdmesh->color_pick_key = unic_color->r;
+#else
+                       pdmesh->color_pick_key.r = unic_color->r;
+                       pdmesh->color_pick_key.g = unic_color->g;
+                       pdmesh->color_pick_key.b = unic_color->b;
+#endif
                        shade_mode = pdmesh->shade_mode;
                        pdmesh->shade_mode = EVAS_3D_SHADE_MODE_COLOR_PICK;
                        _mesh_draw(renderer, nm->mesh, nm->frame, NULL, matrix_eye, &matrix_mv,
@@ -1385,25 +1391,26 @@ e3d_drawable_scene_render_to_texture(E3D_Drawable *drawable, E3D_Renderer *rende
    return EINA_TRUE;
 }
 
-double
+void
 e3d_drawable_texture_pixel_color_get(GLuint tex EINA_UNUSED, int x, int y,
-                            void *drawable)
+                                     Evas_Color *color, void *drawable)
 {
    E3D_Drawable *d = (E3D_Drawable *)drawable;
-   GLuint pixel;
 
    glBindFramebuffer(GL_FRAMEBUFFER, d->color_pick_fb_id);
-   /*TODO Bottle neck - get more effective getting pixels from openGL*/
 #ifndef GL_GLES
+   GLuint pixel = 0;
    glReadPixels(x, y, 1, 1, GL_RED, GL_UNSIGNED_SHORT, &pixel);
-   glBindFramebuffer(GL_FRAMEBUFFER, d->fbo);
-   return (double)pixel / USHRT_MAX;
+   color->r = (double)pixel / USHRT_MAX;
 #else
-   // FIXME: Verify this logic. UNTESTED! (build fix was required)
-   glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
-   glBindFramebuffer(GL_FRAMEBUFFER, d->fbo);
-   return ((double)R_VAL(&pixel)) / 255.0;
+   GLubyte pixel[4] = {0, 0, 0, 0};
+   glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel);
+   color->r = (double)pixel[0] / 255;
+   color->g = (double)pixel[1] / 255;
+   color->b = (double)pixel[2] / 255;
 #endif
+
+   glBindFramebuffer(GL_FRAMEBUFFER, d->fbo);
 }
 
 #undef RENDER_MESH_NODE_ITERATE_BEGIN
