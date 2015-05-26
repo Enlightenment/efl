@@ -1048,6 +1048,7 @@ data_write_images(Eet_File *ef, int *image_num)
                     }
                   else
                     {
+                       if (iw) free(iw);
                        error_and_abort_image_load_error
                          (ef, img->entry, load_err);
                        exit(1); // ensure static analysis tools know we exit
