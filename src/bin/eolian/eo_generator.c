@@ -305,6 +305,7 @@ eo_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
              eina_strbuf_append(str_extrn_ev, "#endif\n");
           }
      }
+   eina_iterator_free(itr);
 
    if ((itr = eolian_class_implements_get(class)))
      {
