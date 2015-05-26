@@ -125,7 +125,6 @@ enum _Evas_Filter_Transform_Flags
 
 /* Parser stuff (high level API) */
 EAPI Evas_Filter_Program *evas_filter_program_new(const char *name, Eina_Bool input_alpha);
-EAPI Eina_Bool           evas_filter_program_run(Evas_Filter_Program *pgm);
 EAPI void                evas_filter_program_state_set(Evas_Filter_Program *pgm, int w, int h);
 EAPI Eina_Bool           evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str);
 EAPI void                evas_filter_program_del(Evas_Filter_Program *pgm);

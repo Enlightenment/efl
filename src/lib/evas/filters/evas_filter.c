@@ -364,7 +364,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
    w = ctx->w;
-   h = ctx->w;
+   h = ctx->h;
 
    //DBG("Allocating all buffers based on output size %ux%u", w, h);
 
@@ -409,7 +409,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
                   if (fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
                     sh = h;
 
-                  //DBG("Allocating temporary buffer of size %ux%u", sw, sh);
+                  //DBG("Allocating temporary buffer of size %ux%u %s", sw, sh, in->alpha_only ? "alpha" : "rgba");
                   fb = evas_filter_buffer_alloc_new(ctx, sw, sh, in->alpha_only);
                   if (!fb) goto alloc_fail;
                   fb->transient = EINA_TRUE;
@@ -424,7 +424,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
              if (in->w) sw = in->w;
              if (in->h) sh = in->h;
 
-             //DBG("Allocating temporary buffer of size %ux%u", sw, sh);
+             //DBG("Allocating temporary buffer of size %ux%u %s", sw, sh, in->alpha_only ? "alpha" : "rgba");
              fb = evas_filter_buffer_alloc_new(ctx, sw, sh, in->alpha_only);
              if (!fb) goto alloc_fail;
              fb->transient = EINA_TRUE;
@@ -464,7 +464,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
              continue;
           }
 
-        //DBG("Allocating buffer of size %ux%u alpha %d", fb->w, fb->h, fb->alpha_only);
+        //DBG("Allocating buffer of size %ux%u %s", fb->w, fb->h, fb->alpha_only ? "alpha" : "rgba");
         im = _rgba_image_alloc(fb, NULL);
         if (!im) goto alloc_fail;
 
@@ -741,8 +741,12 @@ evas_filter_temporary_buffer_get(Evas_Filter_Context *ctx, int w, int h,
    Evas_Filter_Buffer *buf = NULL;
    Eina_List *l;
 
+   DBG("Want temp buffer: %dx%d %s", w, h, alpha_only ? "alpha" : "rgba");
    EINA_LIST_FOREACH(ctx->buffers, l, buf)
      {
+        DBG("Try buffer #%d: temp:%d %dx%d %s (lock:%d)",
+            buf->id, buf->transient,
+            buf->w, buf->h, buf->alpha_only ? "alpha" : "rgba", buf->locked);
         if (buf->transient && !buf->locked && (buf->alpha_only == alpha_only))
           {
              if ((!w || (w == buf->w))

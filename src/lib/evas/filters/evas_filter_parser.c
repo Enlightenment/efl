@@ -332,6 +332,7 @@ struct _Evas_Filter_Program
    } pad;
    int w, h;
    lua_State *L;
+   int       lua_func;
    Eina_Bool valid : 1;
    Eina_Bool padding_calc : 1; // Padding has been calculated
    Eina_Bool padding_set : 1; // Padding has been forced
@@ -2311,7 +2312,11 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
 #endif
 
    if (ok)
-     ok = !lua_pcall(L, 0, LUA_MULTRET, 0);
+     {
+        pgm->lua_func = luaL_ref(L, LUA_REGISTRYINDEX);
+        lua_rawgeti(L, LUA_REGISTRYINDEX, pgm->lua_func);
+        ok = !lua_pcall(L, 0, LUA_MULTRET, 0);
+     }
 
    if (!ok)
      {
@@ -2335,29 +2340,45 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
 
 /** Run a program, must be already loaded */
 
-EAPI Eina_Bool
-evas_filter_program_run(Evas_Filter_Program *pgm)
+static void
+_buffers_update(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm)
 {
-   Eina_Bool ok;
+   Evas_Object_Protected_Data *source;
+   Evas_Filter_Proxy_Binding *pb;
+   Evas_Filter_Buffer *fb;
+   Buffer *buf;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, EINA_FALSE);
-   if (!pgm->L)
+   EINA_INLIST_FOREACH(pgm->buffers, buf)
      {
-        ERR("Lua state is not set. Something is wrong.");
-        return EINA_FALSE;
+        if (buf->proxy)
+          {
+             pb = eina_hash_find(pgm->proxies, buf->proxy);
+             if (!pb) continue;
+
+             buf->cid = evas_filter_buffer_empty_new(ctx, buf->alpha);
+             fb = _filter_buffer_get(ctx, buf->cid);
+             fb->proxy = pb->eo_proxy;
+             fb->source = pb->eo_source;
+             fb->source_name = eina_stringshare_ref(pb->name);
+             fb->ctx->has_proxies = EINA_TRUE;
+
+             source = eo_data_scope_get(fb->source, EVAS_OBJECT_CLASS);
+             if ((source->cur->geometry.w != buf->w) ||
+                 (source->cur->geometry.h != buf->h))
+               pgm->changed = EINA_TRUE;
+             buf->w = fb->w = source->cur->geometry.w;
+             buf->h = fb->h = source->cur->geometry.h;
+          }
+        else
+          {
+             if ((buf->w != pgm->w) || (buf->h != pgm->h))
+               pgm->changed = EINA_TRUE;
+             buf->cid = evas_filter_buffer_empty_new(ctx, buf->alpha);
+             fb = _filter_buffer_get(ctx, buf->cid);
+             fb->w = buf->w = pgm->w;
+             fb->h = buf->h = pgm->h;
+          }
      }
-
-   if (!pgm->changed)
-     return EINA_TRUE;
-
-   ok = !lua_pcall(pgm->L, 0, LUA_MULTRET, 0);
-   if (!ok)
-     {
-        const char *msg = lua_tostring(pgm->L, -1);
-        ERR("Lua execution failed: %s", msg);
-     }
-
-   return ok;
 }
 
 /** Evaluate required padding to correctly apply an effect */
@@ -2973,7 +2994,6 @@ Eina_Bool
 evas_filter_context_program_use(Evas_Filter_Context *ctx,
                                 Evas_Filter_Program *pgm)
 {
-   Buffer *buf;
    Evas_Filter_Instruction *instr;
    Eina_Bool success = EINA_FALSE;
    void *dc = NULL;
@@ -2991,34 +3011,20 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
 
    // Create empty context with all required buffers
    evas_filter_context_clear(ctx);
-   EINA_INLIST_FOREACH(pgm->buffers, buf)
+   _buffers_update(ctx, pgm);
+
+   if (pgm->changed)
      {
-        buf->cid = evas_filter_buffer_empty_new(ctx, buf->alpha);
-        if (buf->proxy)
+        lua_rawgeti(pgm->L, LUA_REGISTRYINDEX, pgm->lua_func);
+        success = !lua_pcall(pgm->L, 0, LUA_MULTRET, 0);
+        if (!success)
           {
-             Evas_Object_Protected_Data *source;
-             Evas_Filter_Proxy_Binding *pb;
-             Evas_Filter_Buffer *fb;
-
-             pb = eina_hash_find(pgm->proxies, buf->proxy);
-             if (!pb) continue;
-
-             fb = _filter_buffer_get(ctx, buf->cid);
-             fb->proxy = pb->eo_proxy;
-             fb->source = pb->eo_source;
-             fb->source_name = eina_stringshare_ref(pb->name);
-             fb->ctx->has_proxies = EINA_TRUE;
-
-             source = eo_data_scope_get(fb->source, EVAS_OBJECT_CLASS);
-             fb->w = source->cur->geometry.w;
-             fb->h = source->cur->geometry.h;
-          }
-        else
-          {
-             buf->w = ctx->w;
-             buf->h = ctx->h;
+             const char *msg = lua_tostring(pgm->L, -1);
+             ERR("Lua execution failed: %s", msg);
+             goto end;
           }
      }
+   pgm->changed = EINA_FALSE;
 
    // Compute and save padding info
    evas_filter_program_padding_get(pgm, &ctx->padl, &ctx->padr, &ctx->padt, &ctx->padb);
@@ -3036,6 +3042,7 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
      }
 
    success = EINA_TRUE;
+   pgm->changed = EINA_FALSE;
 
 end:
    if (!success) evas_filter_context_clear(ctx);

@@ -1836,7 +1836,6 @@ evas_object_text_render(Evas_Object *eo_obj,
           }
 
         filter = evas_filter_context_new(obj->layer->evas, do_async);
-        evas_filter_program_run(fcow->chain);
         ok = evas_filter_context_program_use(filter, fcow->chain);
         if (!filter || !ok)
           {
