@@ -291,7 +291,16 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
             @out dfactor: Evas_3D_Blend_Func; /*@ Pointer to receive destination blendin factors key.*/
          }
       }
-
+      from_primitive_set {
+         /*@
+          Set the data of given mesh frame from the given primitive
+          @ingroup Evas_3D_Mesh
+         */
+         params {
+            @in frame: int; /*@ Specifies data of which frame of given mesh will be set.*/
+            @in primitive: Evas_3D_Primitive *; /*@ Specifies which data will be set.*/
+         }
+      }
       @property shade_mode {
          set {
             /*@

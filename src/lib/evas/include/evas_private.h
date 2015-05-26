@@ -100,6 +100,7 @@ typedef struct _Evas_3D_Camera           Evas_3D_Camera_Data;
 typedef struct _Evas_3D_Light            Evas_3D_Light_Data;
 typedef struct _Evas_3D_Material         Evas_3D_Material_Data;
 typedef struct _Evas_3D_Texture          Evas_3D_Texture_Data;
+typedef struct _Evas_3D_Primitive        Evas_3D_Primitive_Data;
 
 /* Structs for mesh eet saver/loader */
 typedef struct _Evas_3D_Vec2_Eet         Evas_3D_Vec2_Eet;
@@ -413,6 +414,17 @@ struct _Evas_3D_Material
    Evas_Real         shininess;
 
    Eina_Hash        *meshes;
+};
+
+struct _Evas_3D_Primitive
+{
+   Evas_3D_Mesh_Primitive  form;
+   Evas_3D_Primitive_Mode  mode;
+   Evas_Real               ratio;
+   int                     precision;
+   Evas_3D_Surface_Func   *surface;
+
+   Evas_Vec2 tex_scale;
 };
 
 struct _Evas_3D_Scene_Public_Data
@@ -1745,6 +1757,17 @@ void evas_model_load_file_ply(Evas_3D_Mesh *mesh, Eina_File *file);
 void evas_model_save_file_eet(Evas_3D_Mesh *mesh, const char *file, Evas_3D_Mesh_Frame *f);
 void evas_model_save_file_obj(Evas_3D_Mesh *mesh, const char *file, Evas_3D_Mesh_Frame *f);
 void evas_model_save_file_ply(Evas_3D_Mesh *mesh, const char *file, Evas_3D_Mesh_Frame *f);
+
+/* Primitives functions */
+void evas_common_set_model_from_primitive(Evas_3D_Mesh *model, int frame, Evas_3D_Primitive_Data *primitive);
+void evas_model_set_from_square_primitive(Evas_3D_Mesh *mesh, int frame);
+void evas_model_set_from_cube_primitive(Evas_3D_Mesh *mesh, int frame);
+void evas_model_set_from_cylinder_primitive(Evas_3D_Mesh *mesh, int frame, Evas_3D_Primitive_Mode mode, int precision, Evas_Vec2 tex_scale);
+void evas_model_set_from_cone_primitive(Evas_3D_Mesh *mesh, int frame, Evas_3D_Primitive_Mode mode, int precision, Evas_Vec2 tex_scale);
+void evas_model_set_from_sphere_primitive(Evas_3D_Mesh *mesh, int frame, Evas_3D_Primitive_Mode mode, int precision, Evas_Vec2 tex_scale);
+void evas_model_set_from_torus_primitive(Evas_3D_Mesh *mesh, int frame, Evas_Real ratio, int precision, Evas_Vec2 tex_scale);
+void evas_model_set_from_surface_primitive(Evas_3D_Mesh *mesh, int frame, Evas_3D_Surface_Func func, int precision, Evas_Vec2 tex_scale);
+void evas_model_set_from_terrain_primitive(Evas_3D_Mesh *mesh, int frame, int precision, Evas_Vec2 tex_scale);
 
 extern int _evas_alloc_error;
 extern int _evas_event_counter;

@@ -893,6 +893,19 @@ _evas_3d_mesh_efl_file_save(Eo *obj, Evas_3D_Mesh_Data *pd,
    return EINA_TRUE;
 }
 
+EOLIAN static void
+_evas_3d_mesh_from_primitive_set(Eo *obj,
+                                 Evas_3D_Mesh_Data *pd EINA_UNUSED,
+                                 int frame,
+                                 Eo *primitive)
+{
+   if ((primitive == NULL) || (obj == NULL)) return;
+
+   Evas_3D_Primitive_Data *ppd = eo_data_scope_get(primitive, EVAS_3D_PRIMITIVE_CLASS);
+
+   evas_common_set_model_from_primitive(obj, frame, ppd);
+}
+
 static inline void
 _mesh_frame_find(Evas_3D_Mesh_Data *mesh, int frame,
                  Eina_List **l, Eina_List **r)

@@ -29,6 +29,7 @@ evas_eolian_files = \
 	lib/evas/canvas/evas_3d_material.eo\
 	lib/evas/canvas/evas_3d_light.eo\
 	lib/evas/canvas/evas_3d_mesh.eo\
+	lib/evas/canvas/evas_3d_primitive.eo\
 	lib/evas/canvas/evas_3d_node.eo\
 	lib/evas/canvas/evas_3d_scene.eo\
 	lib/evas/canvas/evas_3d_object.eo \
@@ -202,6 +203,7 @@ lib/evas/canvas/evas_3d_light.c \
 lib/evas/canvas/evas_3d_mesh.c \
 lib/evas/canvas/evas_3d_texture.c \
 lib/evas/canvas/evas_3d_material.c \
+lib/evas/canvas/evas_3d_primitive.c \
 lib/evas/canvas/evas_3d_node_callback.h
 
 # Model savers/loaders (will be replaced to modules in next commits)
@@ -214,6 +216,18 @@ modules/evas/model_savers/eet/evas_model_save_eet.c \
 modules/evas/model_savers/obj/evas_model_save_obj.c \
 modules/evas/model_savers/ply/evas_model_save_ply.c \
 lib/evas/canvas/evas_3d_eet.c
+
+# 3d primitives
+lib_evas_libevas_la_SOURCES += \
+lib/evas/common3d/primitives/tabulated_primitives/square.c \
+lib/evas/common3d/primitives/tabulated_primitives/cube.c \
+lib/evas/common3d/primitives/solids_of_revolution/sphere.c \
+lib/evas/common3d/primitives/solids_of_revolution/torus.c \
+lib/evas/common3d/primitives/solids_of_revolution/cylinder.c \
+lib/evas/common3d/primitives/solids_of_revolution/cone.c \
+lib/evas/common3d/primitives/surfaces/surface.c \
+lib/evas/common3d/primitives/surfaces/terrain.c \
+lib/evas/common3d/primitives/primitive_common.c
 
 # Evas_VG
 lib_evas_libevas_la_SOURCES += \

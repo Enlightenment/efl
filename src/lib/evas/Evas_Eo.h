@@ -304,6 +304,15 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
  */
 
 /**
+ * @defgroup Evas_3D_Primitive Primitive Object
+ * @ingroup Evas_3D
+ *
+ * A primitive object is an object with necessary data for creating meshes with ptimitive shapes.
+ * Data from a primitive can be set to Evas_3D_Mesh by using evas_3d_mesh_from_primitive_set()
+ * function.
+ */
+
+/**
  * @defgroup Evas_3D_Texture Texture Object
  * @ingroup Evas_3D
  *
@@ -435,6 +444,33 @@ typedef Eo     Evas_3D_Material;
 #define _EVAS_3D_MATERIAL_EO_CLASS_TYPE
 
 /**
+ * @typedef Evas_3D_Primitive
+ *
+ * Primitive object handle
+ *
+ * @since 1.15
+ * @ingroup Evas_3D_Primitive
+ */
+typedef Eo     Evas_3D_Primitive;
+
+#define _EVAS_3D_PRIMITIVE_EO_CLASS_TYPE
+
+/**
+ * @typedef Evas_3D_Surface_Func
+ *
+ * User-defined parametric surface function.
+ * Used for easy creation of custom surfaces as a primitive.
+ *
+ * @since 1.15
+ * @ingroup Evas_3D_Primitive
+ */
+typedef void (Evas_3D_Surface_Func)(Evas_Real *out_x,
+                                    Evas_Real *out_y,
+                                    Evas_Real *out_z,
+                                    Evas_Real a,
+                                    Evas_Real b);
+
+/**
  * Type of 3D Object
  *
  * @since 1.10
@@ -451,6 +487,7 @@ typedef enum _Evas_3D_Object_Type
    EVAS_3D_OBJECT_TYPE_MESH,
    EVAS_3D_OBJECT_TYPE_TEXTURE,
    EVAS_3D_OBJECT_TYPE_MATERIAL,
+   EVAS_3D_OBJECT_TYPE_PRIMITIVE,
 } Evas_3D_Object_Type;
 
 /**
@@ -716,7 +753,7 @@ typedef enum _Evas_3D_Wrap_Mode
 } Evas_3D_Wrap_Mode;
 
 /**
- * Mesh Primitive
+ * Mesh primitive
  *
  * @since 1.12
  * @ingroup Evas_3D_Types
@@ -740,8 +777,26 @@ typedef enum _Evas_3D_Mesh_Primitive
    /**< Custom surface (can use pointer to users function, precision and texture scale) */
    EVAS_3D_MESH_PRIMITIVE_SURFACE,
    /**< Terrain as surface with pointer to Perlin's noise function */
-   EVAS_3D_MESH_PRIMITIVE_TERRAIN
+   EVAS_3D_MESH_PRIMITIVE_TERRAIN,
+   /**< Count of supported primitives */
+   EVAS_3D_MESH_PRIMITIVE_COUNT
 } Evas_3D_Mesh_Primitive;
+
+/**
+ * Mode of mesh primitive
+ *
+ * @since 1.15
+ * @ingroup Evas_3D_Types
+ */
+typedef enum _Evas_3D_Primitive_Mode
+{
+   /**< Default mode of primitive */
+   EVAS_3D_PRIMITIVE_MODE_DEFAULT = 0,
+   /**< Primitive without base (supported for cylinder and cone) */
+   EVAS_3D_PRIMITIVE_MODE_WITHOUT_BASE,
+   /**< Ptimitive with alternative UV (supported for sphere)*/
+   EVAS_3D_PRIMITIVE_MODE_ALTERNATIVE_UV
+} Evas_3D_Primitive_Mode;
 
 /**
  * Texture filters
@@ -817,6 +872,8 @@ typedef enum _Evas_3D_Material_Attrib
 #include "canvas/evas_3d_light.eo.h"
 
 #include "canvas/evas_3d_mesh.eo.h"
+
+#include "canvas/evas_3d_primitive.eo.h"
 
 #include "canvas/evas_3d_node.eo.h"
 

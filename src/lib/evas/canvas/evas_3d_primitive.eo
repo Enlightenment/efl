@@ -1,0 +1,179 @@
+class Evas_3D_Primitive (Evas_3D_Object, Evas.Common_Interface)
+{
+   legacy_prefix: null;
+   data: Evas_3D_Primitive_Data;
+
+   methods {
+      @property form {
+         set {
+             /*
+              *Set the form of the given primitive.
+              *
+              *Form defines which function will be chosen to set data to mesh
+              *on call of evas_3d_mesh_primitive_set.
+              *
+              *Now avaliable next forms of primitives:
+              *-tabulated primitives: SQUARE and CUBE;
+              *-solids of revolution: CYLINDER, CONE, SPHERE and TORUS;
+              *-surfaces: SURFACE and TERRAIN.
+              *
+              *Default form is EVAS_3D_MESH_PRIMITIVE_NONE
+              *
+              *@ingroup Evas_3D_Primitive
+              */
+         }
+         get {
+             /*
+              *Get the form of the given primitive.
+              *@see evas_3d_primitive_form_set()
+              *@return The form of primitive.
+              *@ingroup Evas_3D_Primitive
+              */
+         }
+         values {
+            form: Evas_3D_Mesh_Primitive; /*@ Form of primitive.*/
+         }
+      }
+      @property mode {
+         set {
+             /*
+              *Set the mode of the given primitive.
+              *
+              *Mode defines which function will be chosen to set data to mesh
+              *on call of evas_3d_mesh_primitive_set. It helps to choose
+              *alternative algorithm for primitive with given form
+              *(like cone without base or sphere textured in alternative way).
+              *
+              *Now avaliable next mods of primitives:
+              *-witout base (bases): supported for cylinder and cone;
+              *-with alternative UV: supported by sphere;
+              *
+              *Default form is EVAS_3D_PRIMITIVE_MODE_DEFAULT
+              *
+              *@ingroup Evas_3D_Primitive
+              */
+         }
+         get {
+             /*
+              *Get the mode of the given primitive.
+              *@see evas_3d_primitive_mode_set()
+              *@return The mode of primitive.
+              *@ingroup Evas_3D_Primitive
+              */
+         }
+         values {
+            mode: Evas_3D_Primitive_Mode; /*@ Mode of primitive.*/
+         }
+      }
+      @property ratio {
+         set {
+             /*
+              *Set the ratio of the given primitive.
+              *
+              *Now ratio uses only in torus as the ratio of the
+              *major radius and minor radius. For this usage 
+              *Avaliable values is from 1.0 to infinity.
+              *If ratio for torus has a bad value,
+              *will be used 3.0 as ratio. Like ratio of usual doughnut.
+              *
+              *Default ratio is 3.0
+              *
+              *@ingroup Evas_3D_Primitive
+              */
+         }
+         get {
+             /*
+              *Get the ratio of the given primitive.
+              *@see evas_3d_primitive_ratio_set()
+              *@return The ratio of primitive.
+              *@ingroup Evas_3D_Primitive
+              */
+         }
+         values {
+            ratio: Evas_Real; /*@ Ratio of primitive.*/
+         }
+      }
+      @property precision {
+         set {
+             /*
+              *Set the precision of the given primitive.
+              *
+              *Precision uses in all non tabulated primitives and defines
+              *precision of created primitives.
+              *Avaliable values is from 3 to infinity.
+              *But if value will be more than 100, should be a warning
+              *about possibility of incorrect or slow work.
+              *
+              *Default ratio is 10
+              *
+              *@ingroup Evas_3D_Primitive
+              */
+         }
+         get {
+             /*
+              *Get the precision of the given primitive.
+              *@see evas_3d_primitive_precision_set()
+              *@return The precision of primitive.
+              *@ingroup Evas_3D_Primitive
+              */
+         }
+         values {
+            precision: int; /*@ Precision of primitive.*/
+         }
+      }
+      @property surface {
+         set {
+             /*
+              *Set the surface of the given primitive.
+              *
+              *Surface uses only in surface primitive and defines
+              *equation of filling mesh data on call of
+              *evas_3d_mesh_primitive_set.
+              *
+              *It gives possibility to create customers primitives like
+              *shell, heart, hyperbolic paraboloid etc. See _shell_func in
+              *examples/evas/evas-3d-visual-test.c or _perlin_terrain in
+              *modules/evas/primitives/surfaces/terrain.c as an example of usage.
+              *
+              *Default surface is NULL
+              *
+              *@ingroup Evas_3D_Primitive
+              */
+         }
+         values {
+            surface: Evas_3D_Surface_Func *; /*@ Pointer to customers surface function.*/
+         }
+      }
+      @property tex_scale {
+         set {
+             /*
+              *Set the texture scale of the given primitive.
+              *
+              *Texture scale uses in all non tabulated primitives
+              *and defines scale of texture coords or primitives.
+              *
+              *It uses to create periodical textured meshes.
+              *
+              *Default tex_scale is {1.0, 1.0}
+              *
+              *@ingroup Evas_3D_Primitive
+              */
+         }
+         get {
+             /*
+              *Get the texture scale of the given primitive.
+              *@see evas_3d_primitive_tex_scale_set()
+              *@ingroup Evas_3D_Primitive
+              */
+         }
+         values {
+            tex_scale_x: Evas_Real;
+            tex_scale_y: Evas_Real;
+         }
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+   }
+}
