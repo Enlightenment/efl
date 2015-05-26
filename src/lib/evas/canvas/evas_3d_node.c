@@ -557,30 +557,28 @@ _update_node_shapes(Evas_3D_Node *node)
         _pack_meshes_vertex_data(node, &vertices, &count);
         if (count > 0)
           {
-             _scale_vertices(&pd->scale_world, count, vertices);
-             if (mesh_geom_dirty)
-               _calculate_box(&pd->local_obb, count, vertices);
-
-             if (transform_scale_dirty || mesh_geom_dirty)
-               {
-                  _calculate_sphere(&pd->local_bsphere, count, vertices);
-               }
-             if (transform_orientation_dirty || mesh_geom_dirty)
-               {
-                  _rotate_vertices(&pd->orientation_world, count, vertices);
-                  _calculate_box(&pd->local_aabb, count, vertices);
-               }
+            //For aabb calculate to need all transformations(scale, orientation, position) of primary data of vertices.
+            _scale_vertices(&pd->scale_world, count, vertices);
+            _calculate_box(&pd->local_obb, count, vertices);
+            _rotate_vertices(&pd->orientation_world, count, vertices);
+            _calculate_box(&pd->local_aabb, count, vertices);
+            if (transform_scale_dirty || mesh_geom_dirty)
+              {
+                 _calculate_sphere(&pd->local_bsphere, count, vertices);
+              }
           }
         free(vertices);
      }
 
    pd->bsphere.radius = pd->local_bsphere.radius;
    evas_vec3_quaternion_rotate(&pd->bsphere.center, &pd->local_bsphere.center, &pd->orientation_world);
+   evas_vec3_quaternion_rotate(&pd->obb.p0, &pd->local_obb.p0, &pd->orientation_world);
+   evas_vec3_quaternion_rotate(&pd->obb.p1, &pd->local_obb.p1, &pd->orientation_world);
    evas_vec3_add(&pd->obb.p0, &position, &pd->local_obb.p0);
    evas_vec3_add(&pd->obb.p1, &position, &pd->local_obb.p1);
    evas_vec3_add(&pd->aabb.p0, &position, &pd->local_aabb.p0);
    evas_vec3_add(&pd->aabb.p1, &position, &pd->local_aabb.p1);
-   evas_vec3_add(&pd->bsphere.center, &position, &pd->bsphere.center);
+   evas_vec3_add(&pd->bsphere.center, &position, &pd->local_bsphere.center);
 }
 
 static Eina_Bool
@@ -612,9 +610,9 @@ _node_aabb_update(Evas_3D_Node *node, void *data EINA_UNUSED)
         Evas_3D_Node_Data *datapd = eo_data_scope_get(datanode, EVAS_3D_NODE_CLASS);
         evas_box3_union(&pd->obb, &pd->obb, &datapd->obb);
         evas_box3_union(&pd->aabb, &pd->aabb, &datapd->aabb);
-        evas_build_sphere(&pd->aabb, &pd->bsphere);
      }
 
+   evas_build_sphere(&pd->aabb, &pd->bsphere);
    eo_desc = eo_base_legacy_only_event_description_get("collision,private");
    eo_do(node, eo_event_callback_call(eo_desc, (void *)node));
 
