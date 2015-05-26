@@ -1,5 +1,5 @@
 uniform mat4  uMatrixMvp;
-
+varying vec4 shadowmapposition;
 VERTEX_SHADER_USE_POSITION
 
 #ifdef ALPHA_TEST_ENABLED
@@ -17,4 +17,5 @@ VERTEX_SHADER_POSITION
 #endif //ALPHA_TEST_ENABLED
 
    gl_Position = uMatrixMvp * position;
+   shadowmapposition = gl_Position;
 }

@@ -1,3 +1,4 @@
+varying vec4 shadowmapposition;
 #ifdef ALPHA_TEST_ENABLED
 FRAGMENT_SHADER_USE_TEX_COORD
 FRAGMENT_SHADER_USE_ALPHA_TEST_GLES
@@ -39,7 +40,7 @@ void main() {
 #else
 
 #ifdef DIFFUSE_TEXTURE
-   color = texture2D(uTextureDiffuse0, vec2(Tex0CoordDiffuse)) ;
+   color = texture2D(uTextureDiffuse0, vec2(Tex0CoordDiffuse));
 #else
    color = vec4(1);
 #endif //DIFFUSE_TEXTURE
@@ -49,5 +50,16 @@ void main() {
    FRAGMENT_SHADER_ALPHA_TEST_GLES_APPLY(color)
 
 #endif //ALPHA_TEST_ENABLED
+#ifndef GL_ES
    gl_FragColor.r = gl_FragCoord.z;
+#else
+   const vec4 pack = vec4(256.0 * 256.0 * 256.0, 256.0 * 256.0, 256.0, 1.0);
+   const vec4 mask = vec4(0.0, 1.0 / 256.0, 1.0 / 256.0, 1.0 / 256.0);
+   vec4 depthcolor;
+   float normdist = shadowmapposition.z / shadowmapposition.w;
+   normdist = ((normdist + 1.0) / 2.0);
+   depthcolor = vec4(fract(pack * normdist));
+   depthcolor -= depthcolor.xxyz * mask;
+   gl_FragColor = depthcolor;
+#endif
 }

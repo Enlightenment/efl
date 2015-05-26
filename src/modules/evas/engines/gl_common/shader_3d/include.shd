@@ -42,19 +42,25 @@ varying vec4 vLightPosition;
 uniform sampler2D uShadowMap;
 float shadow;
 float pcf(vec4 lpos, float size)
-  {
+{
+   vec3 smcoord = lpos.xyz / lpos.w * 0.5 + 0.5;
+   float i, j, shadow;
+   shadow = 0.0;
 `#ifndef GL_ES'
-     vec3 smcoord = lpos.xyz / lpos.w * 0.5 + 0.5;
-     float i, j, randx, randy, shadow;
-     shadow = 0.0;
-     for (i = -4.0; i < 4.0; i++)
-       for (j = -4.0; j < 4.0; j++)
-         shadow += float(smcoord.z <= texture2D(uShadowMap, smcoord.xy + vec2(i / 8.0, j / 8.0) * size).x);
-     return shadow / 64.0;
+   for (i = -4.0; i < 4.0; i++)
+     for (j = -4.0; j < 4.0; j++)
+       shadow += float(smcoord.z <= texture2D(uShadowMap, smcoord.xy + vec2(i / 8.0, j / 8.0) * size).x);
 `#else'
-   /*TODO Add algorithm generate shadow*/
-   return 1.0;
+   const vec4 unpack = vec4(1.0 / (256.0 * 256.0 * 256.0), 1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0);
+   const float bias = 0.00015 /*TODO Optimizate set of offset*/;
+   for (i = -4.0; i < 4.0; i++)
+     for (j = -4.0; j < 4.0; j++)
+       {
+          vec4 zvalue = texture2D(uShadowMap, smcoord.xy + vec2(i / 8.0, j / 8.0) * size);
+          shadow += float(smcoord.z < dot(zvalue, unpack) + bias);
+       }
 `#endif //GL_ES'
+   return shadow / 64.0;
 }
 #endif //SHADOWED')
 

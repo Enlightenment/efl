@@ -276,6 +276,9 @@ e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_fo
    GLuint         depth_stencil_buf = 0;
    GLuint         depth_buf = 0;
    GLuint         stencil_buf = 0;
+#ifdef GL_GLES
+   GLuint         shadow_fbo, depth_render_buf;
+#endif
    Eina_Bool      depth_stencil = EINA_FALSE;
 
    glGenTextures(1, &tex);
@@ -298,8 +301,13 @@ e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_fo
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 #ifndef GL_GLES
    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, w, h, 0, GL_RED, GL_UNSIGNED_SHORT, 0);
+#else
+   glGenFramebuffers(1, &shadow_fbo);
+   glGenFramebuffers(1, &depth_render_buf);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 #endif
 
+   glGenFramebuffers(1, &color_pick_fb_id);
    glGenTextures(1, &texcolorpick);
    glBindTexture(GL_TEXTURE_2D, texcolorpick);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -309,8 +317,6 @@ e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_fo
 #ifndef GL_GLES
    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, w, h, 0, GL_RED, GL_UNSIGNED_SHORT, 0);
 #endif
-
-   glGenFramebuffers(1, &color_pick_fb_id);
 
    glGenFramebuffers(1, &fbo);
    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -393,7 +399,10 @@ e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_fo
    drawable->depth_buf = depth_buf;
    drawable->stencil_buf = stencil_buf;
    drawable->texDepth = texDepth;
-
+#ifdef GL_GLES
+   drawable->shadow_fbo = shadow_fbo;
+   drawable->depth_render_buf = depth_render_buf;
+#endif
    return drawable;
 
 error:
@@ -403,6 +412,8 @@ error:
      glDeleteTextures(1, &tex);
    if (texcolorpick)
      glDeleteTextures(1, &texcolorpick);
+   if (texDepth)
+     glDeleteTextures(1, &texDepth);
 
    if (fbo)
      glDeleteFramebuffers(1, &fbo);
@@ -423,6 +434,13 @@ error:
 
    if (stencil_buf)
      glDeleteRenderbuffers(1, &stencil_buf);
+
+#ifdef GL_GLES
+   if (shadow_fbo)
+     glDeleteFramebuffers(1, &shadow_fbo);
+   if (depth_render_buf)
+     glDeleteFramebuffers(1, &depth_render_buf);
+#endif
 
    return NULL;
 }
@@ -1146,7 +1164,9 @@ _mesh_draw(E3D_Renderer *renderer, Evas_3D_Mesh *mesh, int frame, Evas_3D_Node *
      e3d_renderer_draw(renderer, &data);
 }
 
-void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3D_Scene_Public_Data *data, Evas_Mat4 *matrix_light_eye, Evas_3D_Node *light)
+void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer,
+                       Evas_3D_Scene_Public_Data *data, Evas_Mat4 *matrix_light_eye,
+                       Evas_3D_Node *light)
 {
    Eina_List        *l;
    Evas_3D_Node     *n;
@@ -1157,12 +1177,24 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3D_S
 
    glEnable(GL_POLYGON_OFFSET_FILL);
    glPolygonOffset(4.0, 100.0);
-   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, drawable->texDepth, 0);
+#ifdef GL_GLES
+   glBindFramebuffer(GL_FRAMEBUFFER, drawable->shadow_fbo);
+   glBindRenderbuffer(GL_RENDERBUFFER, drawable->depth_render_buf);
+#endif
+   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                          drawable->texDepth, 0);
+#ifdef GL_GLES
+   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, drawable->w,
+                         drawable->h);
+   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+                             drawable->depth_render_buf);
+#endif
    e3d_renderer_target_set(renderer, drawable);
    e3d_renderer_clear(renderer, &c);
 
    Evas_3D_Node_Data *pd_light_node = eo_data_scope_get(light, EVAS_3D_NODE_CLASS);
-   Evas_3D_Light_Data *pd = eo_data_scope_get(pd_light_node->data.light.light, EVAS_3D_LIGHT_CLASS);
+   Evas_3D_Light_Data *pd = eo_data_scope_get(pd_light_node->data.light.light,
+                                              EVAS_3D_LIGHT_CLASS);
 
    Evas_Vec4 planes[6];
    evas_mat4_multiply(&matrix_vp, &pd->projection, matrix_light_eye);
@@ -1180,7 +1212,8 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3D_S
                   blend_enabled = pdmesh->blending;
                   pdmesh->blending = EINA_FALSE;
                   pdmesh->shade_mode = EVAS_3D_SHADE_MODE_SHADOW_MAP_RENDER;
-                  _mesh_draw(renderer, nm->mesh, nm->frame, light, matrix_light_eye, &matrix_mv, &matrix_mvp, &matrix_mvp);
+                  _mesh_draw(renderer, nm->mesh, nm->frame, light, matrix_light_eye,
+                             &matrix_mv, &matrix_mvp, &matrix_mvp);
                   pdmesh->shade_mode = shade_mode;
                   pdmesh->blending = blend_enabled;
                }
@@ -1189,6 +1222,9 @@ void _shadowmap_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3D_S
      }
 
      glDisable(GL_POLYGON_OFFSET_FILL);
+#ifdef GL_GLES
+     glBindFramebuffer(GL_FRAMEBUFFER, drawable->fbo);
+#endif
      glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, drawable->tex, 0);
 }
 

@@ -147,6 +147,10 @@ struct _E3D_Drawable
    GLuint   texDepth;
    GLuint texcolorpick;
    GLuint color_pick_fb_id;
+#ifdef GL_GLES
+   GLuint   shadow_fbo;
+   GLuint   depth_render_buf;
+#endif
 };
 
 /* Texture internal functions. */
