@@ -238,6 +238,9 @@
 #ifndef EGL_IMAGE_PRESERVED_KHR
 #define EGL_IMAGE_PRESERVED_KHR 0x30D2
 #endif
+#ifndef EGL_OPENGL_ES3_BIT_KHR
+#define EGL_OPENGL_ES3_BIT_KHR            0x00000040
+#endif
 
 // Evas_3d require GL_BGR, but that's an extention and will not be necessary once we move to Evas_GL_Image
 #ifndef GL_BGR
