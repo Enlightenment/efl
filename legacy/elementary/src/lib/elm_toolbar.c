@@ -3,6 +3,7 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 
@@ -3825,6 +3826,100 @@ _elm_toolbar_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Toolbar_D
    STATE_TYPE_SET(ret, ELM_ATSPI_STATE_MANAGES_DESCENDANTS);
 
    return ret;
+}
+
+EOLIAN int
+_elm_toolbar_elm_interface_atspi_selection_selected_children_count_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd)
+{
+   return pd->selected_item ? 1 : 0;
+}
+
+EOLIAN Eo*
+_elm_toolbar_elm_interface_atspi_selection_selected_child_get(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_idx)
+{
+   if (child_idx != 0)
+     return NULL;
+
+   return pd->selected_item;
+}
+
+EOLIAN Eina_Bool
+_elm_toolbar_elm_interface_atspi_selection_child_select(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_index)
+{
+   Elm_Toolbar_Item_Data *item;
+   if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
+     {
+        EINA_INLIST_FOREACH(pd->items, item)
+          {
+             if (child_index-- == 0)
+               {
+                  elm_toolbar_item_selected_set(EO_OBJ(item), EINA_TRUE);
+                  return EINA_TRUE;
+               }
+          }
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN Eina_Bool
+_elm_toolbar_elm_interface_atspi_selection_selected_child_deselect(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_index)
+{
+   if (child_index != 0)
+     return EINA_FALSE;
+
+   if (!pd->selected_item)
+     return EINA_FALSE;
+
+   elm_toolbar_item_selected_set(pd->selected_item, EINA_FALSE);
+
+   return EINA_TRUE;
+}
+
+EOLIAN Eina_Bool
+_elm_toolbar_elm_interface_atspi_selection_is_child_selected(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_index)
+{
+   Elm_Toolbar_Item_Data *item;
+
+   EINA_INLIST_FOREACH(pd->items, item)
+     {
+        if (child_index-- == 0)
+          {
+             return elm_toolbar_item_selected_get(EO_OBJ(item));
+          }
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN Eina_Bool
+_elm_toolbar_elm_interface_atspi_selection_all_children_select(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN Eina_Bool
+_elm_toolbar_elm_interface_atspi_selection_clear(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd)
+{
+   if (pd->selected_item)
+     elm_toolbar_item_selected_set(pd->selected_item, EINA_FALSE);
+   return EINA_TRUE;
+}
+
+EOLIAN Eina_Bool
+_elm_toolbar_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *pd, int child_index)
+{
+   Elm_Toolbar_Item_Data *item;
+   if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
+     {
+        EINA_INLIST_FOREACH(pd->items, item)
+          {
+             if (child_index-- == 0)
+               {
+                  elm_toolbar_item_selected_set(EO_OBJ(item), EINA_FALSE);
+                  return EINA_TRUE;
+               }
+          }
+     }
+   return EINA_FALSE;
 }
 
 #include "elm_toolbar.eo.c"
