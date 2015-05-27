@@ -61,7 +61,7 @@ static Ecore_IMF_Context_Class wayland_imf_class =
    wayland_im_context_filter_event,           /* filter_event */
    wayland_im_context_preedit_string_with_attributes_get, /* preedit_string_with_attribute_get */
    NULL,                                      /* prediction_allow_set */
-   NULL,                                      /* autocapital_type_set */
+   wayland_im_context_autocapital_type_set,   /* autocapital_type_set */
    NULL,                                      /* control panel show */
    NULL,                                      /* control panel hide */
    wayland_im_context_input_panel_layout_set, /* input_panel_layout_set */
