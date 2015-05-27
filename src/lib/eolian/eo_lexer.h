@@ -92,6 +92,7 @@ typedef struct _Lexer_Ctx
 {
    int line, column;
    const char *linestr;
+   Eo_Token token;
 } Lexer_Ctx;
 
 typedef struct _Eo_Lexer_Temps

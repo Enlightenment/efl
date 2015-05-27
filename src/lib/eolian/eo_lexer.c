@@ -131,10 +131,7 @@ static void
 txt_token(Eo_Lexer *ls, int token, char *buf)
 {
    if (token == TOK_VALUE)
-     {
-        const char *str = eina_strbuf_string_get(ls->buff);
-        memcpy(buf, str, strlen(str) + 1);
-     }
+     memcpy(buf, ls->t.value.s, strlen(ls->t.value.s) + 1);
    else
      return eo_lexer_token_to_str(token, buf);
 }
@@ -848,6 +845,11 @@ eo_lexer_shutdown()
    return _init_counter;
 }
 
+static Eina_Bool
+_eo_is_tokstr(int t) {
+    return (t == TOK_COMMENT) || (t == TOK_STRING) || (t == TOK_VALUE);
+}
+
 void
 eo_lexer_context_push(Eo_Lexer *ls)
 {
@@ -855,6 +857,9 @@ eo_lexer_context_push(Eo_Lexer *ls)
    ctx->line = ls->line_number;
    ctx->column = ls->column;
    ctx->linestr = ls->stream_line;
+   ctx->token = ls->t;
+   if (_eo_is_tokstr(ctx->token.token))
+     eina_stringshare_ref(ctx->token.value.s);
    ls->saved_ctxs = eina_list_prepend(ls->saved_ctxs, ctx);
 }
 
@@ -862,6 +867,8 @@ void
 eo_lexer_context_pop(Eo_Lexer *ls)
 {
    Lexer_Ctx *ctx = (Lexer_Ctx*)eina_list_data_get(ls->saved_ctxs);
+   if (_eo_is_tokstr(ctx->token.token))
+     eina_stringshare_del(ctx->token.value.s);
    free(ctx);
    ls->saved_ctxs = eina_list_remove_list(ls->saved_ctxs, ls->saved_ctxs);
 }
@@ -874,6 +881,11 @@ eo_lexer_context_restore(Eo_Lexer *ls)
    ls->line_number = ctx->line;
    ls->column      = ctx->column;
    ls->stream_line = ctx->linestr;
+   if (_eo_is_tokstr(ls->t.token))
+     eina_stringshare_del(ls->t.value.s);
+   ls->t = ctx->token;
+   if (_eo_is_tokstr(ls->t.token))
+     eina_stringshare_ref(ls->t.value.s);
 }
 
 void
