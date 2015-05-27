@@ -398,7 +398,6 @@
    EFM_MIME_ICON_SIMPLE("inode/blockdevice","efm_generic_icon_content_inode_block.png", (81/114), (81/114), 240, 0.5);
    EFM_MIME_ICON_SIMPLE("inode/fifo","efm_generic_icon_content_inode_fifo.png", (87/114), (87/114), 240, 0.5);
    EFM_MIME_ICON_SIMPLE("inode/socket","efm_generic_icon_content_inode_socket.png", (114/114), (114/114), 240, 0.5);
-/* EFM_MIME_ICON_SIMPLE("inode/directory","efm_generic_icon_content_inode_dir.png", (114/86), (114/86), 240, 0.5);*/
    EFM_MIME_ICON_SIMPLE("inode/file","efm_generic_icon_content_inode_file.png", (83/114), (83/114), 240, 0.5);
 
 #undefine EFM_MIME_ICON
@@ -464,12 +463,6 @@
    MIMEICON("application/x-compressed-tar","icon_mime_package.png",128);
    MIMEICON("application/x-tar","icon_mime_package.png", 128);
    MIMEICON("application/x-rar","icon_mime_package.png", 128);
-   //MIMEICON("inode/chardevice","icon_efm_file.png", 128);
-   //MIMEICON("inode/blockdevice","icon_efm_file.png", 128);
-   //MIMEICON("inode/fifo","icon_efm_file.png", 128);
-   //MIMEICON("inode/socket","icon_efm_file.png", 128);
-   //MIMEICON("inode/directory","icon_efm_folder.png", 128);
-   //MIMEICON("inode/file","icon_efm_file.png", 128);
 
    MIMEICON("application/x-7z-compressed","icon_mime_package.png", 128);
    MIMEICON("application/vnd.ms-cab-compressed","icon_mime_package.png", 128);
