@@ -209,6 +209,7 @@ EAPI Eina_Bool
 eolian_file_parse(const char *filepath)
 {
    Eina_Bool is_eo;
+   const char *eopath;
    if (_database_init_count <= 0)
      return EINA_FALSE;
    is_eo = eina_str_has_suffix(filepath, EO_SUFFIX);
@@ -217,7 +218,9 @@ eolian_file_parse(const char *filepath)
         fprintf(stderr, "eolian: file '%s' doesn't have a correct extension\n", filepath);
         return EINA_FALSE;
      }
-   return eo_parser_database_fill(filepath, !is_eo);
+   if (!(eopath = eina_hash_find(is_eo ? _filenames : _tfilenames, filepath)))
+     eopath = filepath;
+   return eo_parser_database_fill(eopath, !is_eo);
 }
 
 static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata)

@@ -305,7 +305,13 @@ typedef enum
 /*
  * @brief Parse the given .eo or .eot file and fill the database.
  *
+ * The input can be either a full path to the file or only a filename.
+ * If it's a filename, it must be scanned for first.
+ *
  * @param[in] filepath Path to the file to parse.
+ * @return EINA_TRUE on success, EINA_FALSE on failure.
+ *
+ * @see eolian_directory_scan
  *
  * @ingroup Eolian
  */
