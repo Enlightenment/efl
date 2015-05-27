@@ -111,3 +111,18 @@ nv12_nomul:tex,nv12,nomul
 nv12_mask:tex,nv12,mask
 nv12_mask_nomul:tex,nv12,mask,nomul
 
+yuv_709:tex,yuv,yuv_709
+yuv_709_nomul:tex,yuv,yuv_709,nomul
+yuv_709_mask:tex,yuv,yuv_709,mask
+yuv_709_mask_nomul:tex,yuv,yuv_709,mask,nomul
+
+yuy2_709:tex,yuy2,yuv_709
+yuy2_709_nomul:tex,yuy2,yuv_709,nomul
+yuy2_709_mask:tex,yuy2,yuv_709,mask
+yuy2_709_mask_nomul:tex,yuy2,yuv_709,mask,nomul
+
+nv12_709:tex,nv12,yuv_709
+nv12_709_nomul:tex,nv12,yuv_709,nomul
+nv12_709_mask:tex,nv12,yuv_709,mask
+nv12_709_mask_nomul:tex,nv12,yuv_709,mask,nomul
+

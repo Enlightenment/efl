@@ -1548,11 +1548,13 @@ evas_gl_common_shader_select(Evas_Engine_GL_Context *gc,
      {
         if (tex->pt->dyn.img)
           {
+             printf("a... %i\n", (int)tex->alpha);
              afill = !tex->alpha;
              bgra = 1;
           }
         else if (tex->im && tex->im->native.target == GL_TEXTURE_EXTERNAL_OES)
           {
+             printf("b... %i\n", (int)tex->alpha);
              type = SHD_TEX_EXTERNAL;
              afill = !tex->alpha;
           }
@@ -1571,6 +1573,9 @@ evas_gl_common_shader_select(Evas_Engine_GL_Context *gc,
            SHADER_YUV_NOMUL, SHADER_YUV, SHADER_YUV_MASK_NOMUL, SHADER_YUV_MASK,
            SHADER_YUY2_NOMUL, SHADER_YUY2, SHADER_YUY2_MASK_NOMUL, SHADER_YUY2_MASK,
            SHADER_NV12_NOMUL, SHADER_NV12, SHADER_NV12_MASK_NOMUL, SHADER_NV12_MASK,
+           SHADER_YUV_709_NOMUL, SHADER_YUV_709, SHADER_YUV_709_MASK_NOMUL, SHADER_YUV_709_MASK,
+           SHADER_YUY2_709_NOMUL, SHADER_YUY2_709, SHADER_YUY2_709_MASK_NOMUL, SHADER_YUY2_709_MASK,
+           SHADER_NV12_709_NOMUL, SHADER_NV12_709, SHADER_NV12_709_MASK_NOMUL, SHADER_NV12_709_MASK,
            // RGB+A could support extra sampling
            SHADER_RGB_A_PAIR_NOMUL, SHADER_RGB_A_PAIR, SHADER_RGB_A_PAIR_MASK_NOMUL, SHADER_RGB_A_PAIR_MASK,
            // TEX_EXTERNAL could support extra sampling
@@ -1584,8 +1589,11 @@ evas_gl_common_shader_select(Evas_Engine_GL_Context *gc,
            case SHD_YUV: k = 0; break;
            case SHD_YUY2: k = 4; break;
            case SHD_NV12: k = 8; break;
-           case SHD_RGB_A_PAIR: k = 12; break;
-           case SHD_TEX_EXTERNAL: k = 16; break;
+           case SHD_YUV_709: k = 12; break;
+           case SHD_YUY2_709: k = 16; break;
+           case SHD_NV12_709: k = 20; break;
+           case SHD_RGB_A_PAIR: k = 24; break;
+           case SHD_TEX_EXTERNAL: k = 28; break;
            default:
              CRI("Unknown shader type requested!");
              return SHADER_RECT;
@@ -2343,10 +2351,89 @@ evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
    tx2 = (sx + sw) / (double)tex->pt->w;
    ty2 = (sy + sh) / (double)tex->pt->h;
 
-   t2x1 = ((sx) / 2) / (double)tex->ptu->w;
-   t2y1 = ((sy) / 2) / (double)tex->ptu->h;
-   t2x2 = ((sx + sw) / 2) / (double)tex->ptu->w;
-   t2y2 = ((sy + sh) / 2) / (double)tex->ptu->h;
+   t2x1 = ((sx) / 2.0) / (double)tex->ptu->w;
+   t2y1 = ((sy) / 2.0) / (double)tex->ptu->h;
+   t2x2 = ((sx + sw) / 2.0) / (double)tex->ptu->w;
+   t2y2 = ((sy + sh) / 2.0) / (double)tex->ptu->h;
+
+   PUSH_6_VERTICES(pn, x, y, w, h);
+   PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
+   PUSH_6_TEXUV2(pn, t2x1, t2y1, t2x2, t2y2);
+   PUSH_6_TEXUV3(pn, t2x1, t2y1, t2x2, t2y2);
+   PUSH_MASK(pn, mtex, mx, my, mw, mh);
+   if (!nomul)
+     PUSH_6_COLORS(pn, r, g, b, a);
+}
+
+void
+evas_gl_common_context_yuv_709_push(Evas_Engine_GL_Context *gc,
+                                    Evas_GL_Texture *tex,
+                                    double sx, double sy, double sw, double sh,
+                                    int x, int y, int w, int h,
+                                    Evas_GL_Texture *mtex, int mx, int my, int mw, int mh, Eina_Bool mask_smooth,
+                                    int r, int g, int b, int a,
+                                    Eina_Bool smooth)
+{
+   GLfloat tx1, tx2, ty1, ty2, t2x1, t2x2, t2y1, t2y2;
+   Eina_Bool blend = 0;
+   Evas_GL_Shader shader;
+   GLuint prog;
+   int pn = 0, nomul = 0;
+
+   if ((a < 255) || (!!mtex))
+     blend = 1;
+
+   shader = evas_gl_common_shader_select(gc, SHD_YUV_709, NULL, 0, r, g, b, a,
+                                         w, h, w, h, smooth, tex, 0, mtex,
+                                         NULL, &nomul);
+   prog = gc->shared->shader[shader].prog;
+
+   pn = _evas_gl_common_context_push(SHD_YUV_709,
+                                     gc, tex, mtex,
+                                     prog,
+                                     x, y, w, h,
+                                     blend,
+                                     smooth,
+                                     0, 0, 0, 0, 0,
+                                     mask_smooth);
+
+   gc->pipe[pn].region.type = SHD_YUV_709;
+   gc->pipe[pn].shader.id = shader;
+   gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+   gc->pipe[pn].shader.cur_texu = tex->ptu->texture;
+   gc->pipe[pn].shader.cur_texv = tex->ptv->texture;
+   gc->pipe[pn].shader.cur_texm = mtex ? mtex->pt->texture : 0;
+   gc->pipe[pn].shader.cur_prog = prog;
+   gc->pipe[pn].shader.smooth = smooth;
+   gc->pipe[pn].shader.blend = blend;
+   gc->pipe[pn].shader.render_op = gc->dc->render_op;
+   gc->pipe[pn].shader.mask_smooth = mask_smooth;
+   gc->pipe[pn].shader.clip = 0;
+   gc->pipe[pn].shader.cx = 0;
+   gc->pipe[pn].shader.cy = 0;
+   gc->pipe[pn].shader.cw = 0;
+   gc->pipe[pn].shader.ch = 0;
+   gc->pipe[pn].array.line = 0;
+   gc->pipe[pn].array.use_vertex = 1;
+   gc->pipe[pn].array.use_color = !nomul;
+   gc->pipe[pn].array.use_texuv = 1;
+   gc->pipe[pn].array.use_texuv2 = 1;
+   gc->pipe[pn].array.use_texuv3 = 1;
+   gc->pipe[pn].array.use_mask = !!mtex;
+   gc->pipe[pn].array.use_texsam = 0;
+
+   pipe_region_expand(gc, pn, x, y, w, h);
+   PIPE_GROW(gc, pn, 6);
+
+   tx1 = (sx) / (double)tex->pt->w;
+   ty1 = (sy) / (double)tex->pt->h;
+   tx2 = (sx + sw) / (double)tex->pt->w;
+   ty2 = (sy + sh) / (double)tex->pt->h;
+
+   t2x1 = ((sx) / 2.0) / (double)tex->ptu->w;
+   t2y1 = ((sy) / 2.0) / (double)tex->ptu->h;
+   t2x2 = ((sx + sw) / 2.0) / (double)tex->ptu->w;
+   t2y2 = ((sy + sh) / 2.0) / (double)tex->ptu->h;
 
    PUSH_6_VERTICES(pn, x, y, w, h);
    PUSH_6_TEXUV(pn, tx1, ty1, tx2, ty2);
@@ -2643,8 +2730,11 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    switch (cspace)
      {
       case EVAS_COLORSPACE_YCBCR422P601_PL:
-      case EVAS_COLORSPACE_YCBCR422P709_PL:
         type = SHD_YUV;
+        utexture = EINA_TRUE;
+        break;
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+        type = SHD_YUV_709;
         utexture = EINA_TRUE;
         break;
       case EVAS_COLORSPACE_YCBCR422601_PL:

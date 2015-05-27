@@ -69,32 +69,35 @@ void main()
 {
    vec4 c;
 
-#if defined(SHD_YUV)
-   float r, g, b, y, u, v;
+#if defined(SHD_YUV) || defined(SHD_NV12) || defined(SHD_YUY2)
+   float r, g, b, y, u, v, vmu;
+# if defined(SHD_YUV)
    y = texture2D(tex, tex_c).r;
    u = texture2D(texu, tex_c2).r;
    v = texture2D(texv, tex_c3).r;
-   y = (y - 0.0625) * 1.164;
-   u = u - 0.5;
-   v = v - 0.5;
-   r = y + (1.402   * v);
-   g = y - (0.34414 * u) - (0.71414 * v);
-   b = y + (1.772   * u);
-   c = vec4(r, g, b, 1.0);
-
-#elif defined(SHD_NV12) || defined(SHD_YUY2)
-   float y, u, v, vmu, r, g, b;
+# elif defined(SHD_NV12) || defined(SHD_YUY2)
    y = texture2D(tex, tex_c).g;
    u = texture2D(texuv, tex_c2).g;
    v = texture2D(texuv, tex_c2).a;
+# endif
+// center u and v around 0 for uv and y (with 128/255 for u + v, 16/255 for y)
    u = u - 0.5;
    v = v - 0.5;
-   vmu = v * 0.813 + u * 0.391;
-   u = u * 2.018;
-   v = v * 1.596;
-# ifdef SHD_NV12
+
+# if defined (SHD_YUV_709)
+// 709 yuv colorspace for hd content
    y = (y - 0.062) * 1.164;
+   vmu = (v * 0.534) + (u * 0.213);
+   v = v * 1.793;
+   u = u * 2.115;
+# else
+// 601 colorspace constants (older yuv content)
+   y = (y - 0.062) * 1.164;
+   vmu = (v * 0.813) + (u * 0.391);
+   v = v * 1.596;
+   u = u * 2.018;
 # endif
+// common yuv
    r = y + v;
    g = y - vmu;
    b = y + u;

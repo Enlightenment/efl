@@ -794,13 +794,13 @@ evas_common_image_colorspace_normalize(RGBA_Image *im)
       case EVAS_COLORSPACE_ARGB8888:
       case EVAS_COLORSPACE_GRY8:
       case EVAS_COLORSPACE_AGRY88:
-	if (im->image.data != im->cs.data)
-	  {
+        if (im->image.data != im->cs.data)
+          {
 #ifdef EVAS_CSERVE2
              // if (((Image_Entry *)im)->data1) evas_cserve2_image_free(&im->cache_entry);
              if (((Image_Entry *)im)->data1) ERR("Shouldn't reach this point since we are using cache2.");
 #endif
-	     if (!im->image.no_free)
+             if (!im->image.no_free)
                {
                   _evas_common_rgba_image_surface_munmap(im->image.data,
                                                          im->cache_entry.allocated.w,
@@ -808,19 +808,19 @@ evas_common_image_colorspace_normalize(RGBA_Image *im)
                                                          im->cache_entry.space);
 #ifdef SURFDBG
                   surfs = eina_list_remove(surfs, im);
-#endif                  
+#endif
                   ((Image_Entry *)im)->allocated.w = 0;
                   ((Image_Entry *)im)->allocated.h = 0;
                }
-	     im->image.data = im->cs.data;
-	     im->cs.no_free = im->image.no_free;
-	  }
-	break;
+             im->image.data = im->cs.data;
+             im->cs.no_free = im->image.no_free;
+          }
+        break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
-	if ((im->image.data) && (*((unsigned char **)im->cs.data)))
-	  evas_common_convert_yuv_420p_601_rgba(im->cs.data, (DATA8*) im->image.data,
-						im->cache_entry.w, im->cache_entry.h);
-	break;
+        if ((im->image.data) && (*((unsigned char **)im->cs.data)))
+          evas_common_convert_yuv_422p_601_rgba(im->cs.data, (DATA8*) im->image.data,
+                                                im->cache_entry.w, im->cache_entry.h);
+        break;
       case EVAS_COLORSPACE_YCBCR422601_PL:
         if ((im->image.data) && (*((unsigned char **)im->cs.data)))
           evas_common_convert_yuv_422_601_rgba(im->cs.data, (DATA8*) im->image.data,
@@ -836,13 +836,18 @@ evas_common_image_colorspace_normalize(RGBA_Image *im)
           evas_common_convert_yuv_420T_601_rgba(im->cs.data, (DATA8*) im->image.data,
                                                 im->cache_entry.w, im->cache_entry.h);
          break;
+      case EMILE_COLORSPACE_YCBCR422P709_PL:
+        if ((im->image.data) && (*((unsigned char **)im->cs.data)))
+          evas_common_convert_yuv_422p_709_rgba(im->cs.data, (DATA8*) im->image.data,
+                                                im->cache_entry.w, im->cache_entry.h);
+        break;
       default:
-	break;
+        break;
      }
    im->cs.dirty = 0;
 #ifdef SURFDBG
    surf_debug();
-#endif   
+#endif
 }
 
 EAPI void

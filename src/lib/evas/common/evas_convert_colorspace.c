@@ -131,7 +131,7 @@ evas_common_convert_yuv_422P_601_to(void *data, int w, int h, Evas_Colorspace cs
            dst = malloc(sizeof (unsigned int) * w * h);
            if (!dst) return NULL;
 
-           evas_common_convert_yuv_420p_601_rgba(data, dst, w, h);
+           evas_common_convert_yuv_422p_601_rgba(data, dst, w, h);
            return dst;
         }
       default:

@@ -1684,7 +1684,7 @@ evas_gl_common_texture_yuv_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigne
    tex = evas_gl_common_texture_alloc(gc, w, h, EINA_FALSE);
    if (!tex) return NULL;
 
-   tex->ptu = _pool_tex_new(gc, w / 2 + 1, h / 2 + 1, lum_ifmt, lum_fmt);
+   tex->ptu = _pool_tex_new(gc, (w + 1) / 2, (h + 1) / 2, lum_ifmt, lum_fmt);
    if (!tex->ptu)
      {
         evas_gl_common_texture_light_free(tex);

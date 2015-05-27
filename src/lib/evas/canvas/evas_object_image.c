@@ -1697,7 +1697,7 @@ _evas_image_pixels_import(Eo *eo_obj, Evas_Image_Data *o, Evas_Pixel_Import_Sour
 
                   o->engine_data = ENFN->image_data_get(ENDT, o->engine_data, 1, &image_pixels,&o->load_error);
                   if (image_pixels)
-                    evas_common_convert_yuv_420p_601_rgba((DATA8 **) pixels->rows, (DATA8 *) image_pixels, o->cur->image.w, o->cur->image.h);
+                    evas_common_convert_yuv_422p_601_rgba((DATA8 **) pixels->rows, (DATA8 *) image_pixels, o->cur->image.w, o->cur->image.h);
                   if (o->engine_data)
                     o->engine_data = ENFN->image_data_put(ENDT, o->engine_data, image_pixels);
                   if (o->engine_data)

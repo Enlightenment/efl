@@ -16,12 +16,17 @@
 #endif
 
 static void _evas_yuv_init         (void);
+// Broken atm - the sse and mmx get math.. wrong :(
+//static void _evas_yv12_709torgb_sse(unsigned char **yuv, unsigned char *rgb, int w, int h);
 static void _evas_yv12torgb_sse    (unsigned char **yuv, unsigned char *rgb, int w, int h);
+// Broken atm - the sse and mmx get math.. wrong :(
+//static void _evas_yv12_709torgb_mmx(unsigned char **yuv, unsigned char *rgb, int w, int h);
 static void _evas_yv12torgb_mmx    (unsigned char **yuv, unsigned char *rgb, int w, int h);
 #ifdef BUILD_ALTIVEC
 static void _evas_yv12torgb_altivec(unsigned char **yuv, unsigned char *rgb, int w, int h);
 static void _evas_yv12torgb_diz    (unsigned char **yuv, unsigned char *rgb, int w, int h);
 #endif
+static void _evas_yv12_709torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h);
 static void _evas_yv12torgb_raster (unsigned char **yuv, unsigned char *rgb, int w, int h);
 static void _evas_yuy2torgb_raster (unsigned char **yuv, unsigned char *rgb, int w, int h);
 static void _evas_nv12torgb_raster (unsigned char **yuv, unsigned char *rgb, int w, int h);
@@ -31,9 +36,16 @@ static void _evas_nv12tiledtorgb_raster(unsigned char **yuv, unsigned char *rgb,
 #define CBU    132251
 #define CGU    25624
 #define CGV    53280
+
 #define YMUL   76283
 #define OFF    32768
 #define BITRES 16
+
+#define CRV709 117504
+#define CBU709 138607
+#define CGU709  13959
+#define CGV709  34996
+
 
 /* calculation float resolution in bits */
 /* ie RES = 6 is 10.6 fixed point */
@@ -56,6 +68,11 @@ __attribute__ ((aligned (8))) const volatile unsigned short _const_32    [4] = F
 __attribute__ ((aligned (8))) const volatile unsigned short _const_16    [4] = FOUR(16);
 __attribute__ ((aligned (8))) const volatile unsigned short _const_ff    [4] = FOUR(-1);
 
+__attribute__ ((aligned (8))) const volatile unsigned short _const_crvcrv709[4] = FOUR(RZ(CRV709));
+__attribute__ ((aligned (8))) const volatile unsigned short _const_cbucbu709[4] = FOUR(RZ(CBU709));
+__attribute__ ((aligned (8))) const volatile unsigned short _const_cgucgu709[4] = FOUR(RZ(CGU709));
+__attribute__ ((aligned (8))) const volatile unsigned short _const_cgvcgv709[4] = FOUR(RZ(CGV709));
+
 #define CONST_CRVCRV *_const_crvcrv
 #define CONST_CBUCBU *_const_cbucbu
 #define CONST_CGUCGU *_const_cgucgu
@@ -66,11 +83,21 @@ __attribute__ ((aligned (8))) const volatile unsigned short _const_ff    [4] = F
 #define CONST_16     *_const_16
 #define CONST_FF     *_const_ff
 
+#define CONST_CRVCRV709 *_const_crvcrv709
+#define CONST_CBUCBU709 *_const_cbucbu709
+#define CONST_CGUCGU709 *_const_cgucgu709
+#define CONST_CGVCGV709 *_const_cgvcgv709
+
 /* for C non aligned cleanup */
 const int _crv = RZ(CRV);   /* 1.596 */
 const int _cbu = RZ(CBU);   /* 2.018 */
 const int _cgu = RZ(CGU);   /* 0.391 */
 const int _cgv = RZ(CGV);   /* 0.813 */
+
+const int _crv709 = RZ(CRV709);   /* 1.793 */
+const int _cbu709 = RZ(CBU709);   /* 2.115 */
+const int _cgu709 = RZ(CGU709);   /* 0.213 */
+const int _cgv709 = RZ(CGV709);   /* 0.534 */
 
 #endif
 
@@ -113,6 +140,11 @@ static short _v813[256];
 static short _v391[256];
 static short _v2018[256];
 
+static short _v1793[256];
+static short _v534[256];
+static short _v213[256];
+static short _v2115[256];
+
 static unsigned char _clip_lut[1024];
 #define LUT_CLIP(i) ((_clip_lut+384)[(i)])
 
@@ -121,8 +153,26 @@ static unsigned char _clip_lut[1024];
 static int initted = 0;
 
 void
-evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
+evas_common_convert_yuv_422p_709_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 {
+   if (!initted) _evas_yuv_init();
+   initted = 1;
+/* Broken atm - the sse and mmx get math.. wrong :(
+   if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
+     _evas_yv12_709torgb_sse(src, dst, w, h);
+   else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+     _evas_yv12_709torgb_mmx(src, dst, w, h);
+   else
+ */
+     _evas_yv12_709torgb_raster(src, dst, w, h);
+}
+
+
+void
+evas_common_convert_yuv_422p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
+{
+   if (!initted) _evas_yuv_init();
+   initted = 1;
    if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
      _evas_yv12torgb_sse(src, dst, w, h);
    else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
@@ -132,12 +182,7 @@ evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
      _evas_yv12torgb_altivec(src, dst, w, h);
 #endif
    else
-     {
-	if (!initted) _evas_yuv_init();
-	initted = 1;
-	/* FIXME: diz may be faster sometimes */
-	_evas_yv12torgb_raster(src, dst, w, h);
-     }
+     _evas_yv12torgb_raster(src, dst, w, h);
 }
 
 /* Thanks to Diz for this code. i've munged it a little and turned it into */
@@ -156,6 +201,169 @@ evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 /* does a few extra memory accesses that this one doesn't, so in theory */
 /* this code should be faster. In the end it's all just an mmx version of */
 /* the reference implimentation done with fixed point math */
+
+/*
+static void
+_evas_yv12_709torgb_sse(unsigned char **yuv, unsigned char *rgb, int w, int h)
+{
+#ifdef BUILD_MMX
+   int xx, yy;
+   register unsigned char *yp1, *up, *vp;
+   unsigned char *dp1;
+
+   dp1 = rgb;
+
+   for (yy = 0; yy < h; yy++)
+     {
+	yp1 = yuv[yy];
+	up = yuv[h + (yy / 2)];
+	vp = yuv[h + (h / 2) + (yy / 2)];
+	for (xx = 0; xx < (w - 807); xx += 8)
+	  {
+	     movd_m2r(*up, mm3);
+	     movd_m2r(*vp, mm2);
+	     movq_m2r(*yp1, mm0);
+
+	     pxor_r2r(mm7, mm7);
+	     punpcklbw_r2r(mm7, mm2);
+	     punpcklbw_r2r(mm7, mm3);
+
+	     movq_r2r(mm0, mm1);
+	     psrlw_i2r(8, mm0);
+	     psllw_i2r(8, mm1);
+	     psrlw_i2r(8, mm1);
+
+	     movq_m2r(CONST_16, mm4);
+	     psubsw_r2r(mm4, mm0);
+	     psubsw_r2r(mm4, mm1);
+
+	     movq_m2r(CONST_128, mm5);
+	     psubsw_r2r(mm5, mm2);
+	     psubsw_r2r(mm5, mm3);
+
+	     movq_m2r(CONST_YMUL, mm4);
+	     pmullw_r2r(mm4, mm0);
+	     pmullw_r2r(mm4, mm1);
+
+	     movq_m2r(CONST_CRVCRV709, mm7);
+	     pmullw_r2r(mm3, mm7);
+	     movq_m2r(CONST_CBUCBU709, mm6);
+	     pmullw_r2r(mm2, mm6);
+	     movq_m2r(CONST_CGUCGU709, mm5);
+	     pmullw_r2r(mm2, mm5);
+	     movq_m2r(CONST_CGVCGV709, mm4);
+	     pmullw_r2r(mm3, mm4);
+
+	     movq_r2r(mm0, mm2);
+	     paddsw_r2r(mm7, mm2);
+	     paddsw_r2r(mm1, mm7);
+
+	     psraw_i2r(RES, mm2);
+	     psraw_i2r(RES, mm7);
+	     packuswb_r2r(mm7, mm2);
+
+	     pxor_r2r(mm7, mm7);
+	     movq_r2r(mm2, mm3);
+	     punpckhbw_r2r(mm7, mm2);
+	     punpcklbw_r2r(mm3, mm7);
+	     por_r2r(mm7, mm2);
+
+	     movq_r2r(mm0, mm3);
+	     psubsw_r2r(mm5, mm3);
+	     psubsw_r2r(mm4, mm3);
+	     paddsw_m2r(CONST_32, mm3);
+
+	     movq_r2r(mm1, mm7);
+	     psubsw_r2r(mm5, mm7);
+	     psubsw_r2r(mm4, mm7);
+	     paddsw_m2r(CONST_32, mm7);
+
+	     psraw_i2r(RES, mm3);
+	     psraw_i2r(RES, mm7);
+	     packuswb_r2r(mm7, mm3);
+
+	     pxor_r2r(mm7, mm7);
+	     movq_r2r(mm3, mm4);
+	     punpckhbw_r2r(mm7, mm3);
+	     punpcklbw_r2r(mm4, mm7);
+	     por_r2r(mm7, mm3);
+
+	     movq_m2r(CONST_32, mm4);
+	     paddsw_r2r(mm6, mm0);
+	     paddsw_r2r(mm6, mm1);
+	     paddsw_r2r(mm4, mm0);
+	     paddsw_r2r(mm4, mm1);
+	     psraw_i2r(RES, mm0);
+	     psraw_i2r(RES, mm1);
+	     packuswb_r2r(mm1, mm0);
+
+	     pxor_r2r(mm7, mm7);
+	     movq_r2r(mm0, mm5);
+	     punpckhbw_r2r(mm7, mm0);
+	     punpcklbw_r2r(mm5, mm7);
+	     por_r2r(mm7, mm0);
+
+	     movq_m2r(CONST_FF, mm1);
+	     movq_r2r(mm0, mm5);
+	     movq_r2r(mm3, mm6);
+	     movq_r2r(mm2, mm7);
+	     punpckhbw_r2r(mm3, mm2);
+	     punpcklbw_r2r(mm6, mm7);
+	     punpckhbw_r2r(mm1, mm0);
+	     punpcklbw_r2r(mm1, mm5);
+
+	     movq_r2r(mm7, mm1);
+	     punpckhwd_r2r(mm5, mm7);
+	     punpcklwd_r2r(mm5, mm1);
+
+	     movq_r2r(mm2, mm4);
+	     punpckhwd_r2r(mm0, mm2);
+	     punpcklwd_r2r(mm0, mm4);
+
+	     movntq_r2m(mm1, *(dp1));
+	     movntq_r2m(mm7, *(dp1 + 8));
+	     movntq_r2m(mm4, *(dp1 + 16));
+	     movntq_r2m(mm2, *(dp1 + 24));
+
+	     yp1 += 8;
+	     up += 4;
+	     vp += 4;
+	     dp1 += 8 * 4;
+	  }
+
+	if (xx < w)
+	  {
+	     int y, u, v, r, g, b;
+
+	     for (; xx < w; xx += 2)
+	       {
+		  u = (*up++) - 128;
+		  v = (*vp++) - 128;
+
+		  y = RZ(YMUL) * ((*yp1++) - 16);
+		  r = LUT_CLIP((y + (_crv709 * v)) >> RES);
+		  g = LUT_CLIP((y - (_cgu709 * u) - (_cgv709 * v) + RZ(OFF)) >> RES);
+		  b = LUT_CLIP((y + (_cbu709 * u) + RZ(OFF)) >> RES);
+		  *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
+
+		  dp1 += 4;
+
+		  y = RZ(YMUL) * ((*yp1++) - 16);
+		  r = LUT_CLIP((y + (_crv709 * v)) >> RES);
+		  g = LUT_CLIP((y - (_cgu709 * u) - (_cgv709 * v) + RZ(OFF)) >> RES);
+		  b = LUT_CLIP((y + (_cbu709 * u) + RZ(OFF)) >> RES);
+		  *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
+
+		  dp1 += 4;
+	       }
+	  }
+     }
+   emms();
+#else
+   _evas_yv12_709torgb_mmx(yuv, rgb, w, h);
+#endif
+}
+*/
 
 static void
 _evas_yv12torgb_sse(unsigned char **yuv, unsigned char *rgb, int w, int h)
@@ -319,6 +527,168 @@ _evas_yv12torgb_sse(unsigned char **yuv, unsigned char *rgb, int w, int h)
    _evas_yv12torgb_mmx(yuv, rgb, w, h);
 #endif
 }
+
+/*
+static void
+_evas_yv12_709torgb_mmx(unsigned char **yuv, unsigned char *rgb, int w, int h)
+{
+#ifdef BUILD_MMX
+   int xx, yy;
+   register unsigned char *yp1, *up, *vp;
+   unsigned char *dp1;
+
+   dp1 = rgb;
+
+   for (yy = 0; yy < h; yy++)
+     {
+	yp1 = yuv[yy];
+	up = yuv[h + (yy / 2)];
+	vp = yuv[h + (h / 2) + (yy / 2)];
+	for (xx = 0; xx < (w - 7); xx += 8)
+	  {
+	     movd_m2r(*up, mm3);
+	     movd_m2r(*vp, mm2);
+	     movq_m2r(*yp1, mm0);
+
+	     pxor_r2r(mm7, mm7);
+	     punpcklbw_r2r(mm7, mm2);
+	     punpcklbw_r2r(mm7, mm3);
+
+	     movq_r2r(mm0, mm1);
+	     psrlw_i2r(8, mm0);
+	     psllw_i2r(8, mm1);
+	     psrlw_i2r(8, mm1);
+
+	     movq_m2r(CONST_16, mm4);
+	     psubsw_r2r(mm4, mm0);
+	     psubsw_r2r(mm4, mm1);
+
+	     movq_m2r(CONST_128, mm5);
+	     psubsw_r2r(mm5, mm2);
+	     psubsw_r2r(mm5, mm3);
+
+	     movq_m2r(CONST_YMUL, mm4);
+	     pmullw_r2r(mm4, mm0);
+	     pmullw_r2r(mm4, mm1);
+
+	     movq_m2r(CONST_CRVCRV709, mm7);
+	     pmullw_r2r(mm3, mm7);
+	     movq_m2r(CONST_CBUCBU709, mm6);
+	     pmullw_r2r(mm2, mm6);
+	     movq_m2r(CONST_CGUCGU709, mm5);
+	     pmullw_r2r(mm2, mm5);
+	     movq_m2r(CONST_CGVCGV709, mm4);
+	     pmullw_r2r(mm3, mm4);
+
+	     movq_r2r(mm0, mm2);
+	     paddsw_r2r(mm7, mm2);
+	     paddsw_r2r(mm1, mm7);
+
+	     psraw_i2r(RES, mm2);
+	     psraw_i2r(RES, mm7);
+	     packuswb_r2r(mm7, mm2);
+
+	     pxor_r2r(mm7, mm7);
+	     movq_r2r(mm2, mm3);
+	     punpckhbw_r2r(mm7, mm2);
+	     punpcklbw_r2r(mm3, mm7);
+	     por_r2r(mm7, mm2);
+
+	     movq_r2r(mm0, mm3);
+	     psubsw_r2r(mm5, mm3);
+	     psubsw_r2r(mm4, mm3);
+	     paddsw_m2r(CONST_32, mm3);
+
+	     movq_r2r(mm1, mm7);
+	     psubsw_r2r(mm5, mm7);
+	     psubsw_r2r(mm4, mm7);
+	     paddsw_m2r(CONST_32, mm7);
+
+	     psraw_i2r(RES, mm3);
+	     psraw_i2r(RES, mm7);
+	     packuswb_r2r(mm7, mm3);
+
+	     pxor_r2r(mm7, mm7);
+	     movq_r2r(mm3, mm4);
+	     punpckhbw_r2r(mm7, mm3);
+	     punpcklbw_r2r(mm4, mm7);
+	     por_r2r(mm7, mm3);
+
+	     movq_m2r(CONST_32, mm4);
+	     paddsw_r2r(mm6, mm0);
+	     paddsw_r2r(mm6, mm1);
+	     paddsw_r2r(mm4, mm0);
+	     paddsw_r2r(mm4, mm1);
+	     psraw_i2r(RES, mm0);
+	     psraw_i2r(RES, mm1);
+	     packuswb_r2r(mm1, mm0);
+
+	     pxor_r2r(mm7, mm7);
+	     movq_r2r(mm0, mm5);
+	     punpckhbw_r2r(mm7, mm0);
+	     punpcklbw_r2r(mm5, mm7);
+	     por_r2r(mm7, mm0);
+
+	     movq_m2r(CONST_FF, mm1);
+	     movq_r2r(mm0, mm5);
+	     movq_r2r(mm3, mm6);
+	     movq_r2r(mm2, mm7);
+	     punpckhbw_r2r(mm3, mm2);
+	     punpcklbw_r2r(mm6, mm7);
+	     punpckhbw_r2r(mm1, mm0);
+	     punpcklbw_r2r(mm1, mm5);
+
+	     movq_r2r(mm7, mm1);
+	     punpckhwd_r2r(mm5, mm7);
+	     punpcklwd_r2r(mm5, mm1);
+
+	     movq_r2r(mm2, mm4);
+	     punpckhwd_r2r(mm0, mm2);
+	     punpcklwd_r2r(mm0, mm4);
+
+	     movq_r2m(mm1, *(dp1));
+	     movq_r2m(mm7, *(dp1 + 8));
+	     movq_r2m(mm4, *(dp1 + 16));
+	     movq_r2m(mm2, *(dp1 + 24));
+
+	     yp1 += 8;
+	     up += 4;
+	     vp += 4;
+	     dp1 += 8 * 4;
+	  }
+	if (xx < w)
+	  {
+	     int y, u, v, r, g, b;
+
+	     for (; xx < w; xx += 2)
+	       {
+		  u = (*up++) - 128;
+		  v = (*vp++) - 128;
+
+		  y = RZ(YMUL) * ((*yp1++) - 16);
+		  r = LUT_CLIP((y + (_crv709 * v)) >> RES);
+		  g = LUT_CLIP((y - (_cgu709 * u) - (_cgv709 * v) + RZ(OFF)) >> RES);
+		  b = LUT_CLIP((y + (_cbu709 * u) + RZ(OFF)) >> RES);
+		  *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
+
+		  dp1 += 4;
+
+		  y = RZ(YMUL) * ((*yp1++) - 16);
+		  r = LUT_CLIP((y + (_crv709 * v)) >> RES);
+		  g = LUT_CLIP((y - (_cgu709 * u) - (_cgv709 * v) + RZ(OFF)) >> RES);
+		  b = LUT_CLIP((y + (_cbu709 * u) + RZ(OFF)) >> RES);
+		  *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(r,g,b);
+
+		  dp1 += 4;
+	       }
+	  }
+     }
+   emms();
+#else
+   _evas_yv12torgb_raster(yuv, rgb, w, h);
+#endif
+}
+*/
 
 static void
 _evas_yv12torgb_mmx(unsigned char **yuv, unsigned char *rgb, int w, int h)
@@ -715,6 +1085,12 @@ _evas_yuv_init(void)
 
 	_v391[i]  = (int)(((float)(i - 128)) * 0.391);
 	_v2018[i] = (int)(((float)(i - 128)) * 2.018);
+
+//////////////////////////////////////////////////////////////////////////
+        _v1793[i] = (int)(((float)(i - 128)) * 1.793);
+        _v534[i]  = (int)(((float)(i - 128)) * 0.534);
+        _v213[i]  = (int)(((float)(i - 128)) * 0.213);
+        _v2115[i] = (int)(((float)(i - 128)) * 2.115);
      }
 
    for (i = -384; i < 640; i++)
@@ -799,6 +1175,70 @@ _evas_yv12torgb_diz(unsigned char **yuv, unsigned char *rgb, int w, int h)
      }
 }
 #endif
+
+static void
+_evas_yv12_709torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
+{
+   int xx, yy;
+   int y, u, v;
+   unsigned char *yp1, *yp2, *up, *vp;
+   unsigned char *dp1, *dp2;
+
+   /* destination pointers */
+   dp1 = rgb;
+   dp2 = rgb + (w * 4);
+
+   for (yy = 0; yy < h; yy += 2)
+     {
+	/* plane pointers */
+	yp1 = yuv[yy];
+	yp2 = yuv[yy + 1];
+	up = yuv[h + (yy / 2)];
+	vp = yuv[h + (h / 2) + (yy / 2)];
+	for (xx = 0; xx < w; xx += 2)
+	  {
+	     int vmu;
+
+	     /* collect u & v for 2x2 pixel block */
+	     u = *up++;
+	     v = *vp++;
+
+	     /* save lookups */
+	     vmu = _v534[v] + _v213[u];
+	     u = _v2115[u];
+	     v = _v1793[v];
+
+             /* do the top 2 pixels of the 2x2 block which shared u & v */
+	     /* yuv to rgb */
+	     y = _v1164[*yp1++];
+	     *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+
+	     dp1 += 4;
+
+	     /* yuv to rgb */
+	     y = _v1164[*yp1++];
+	     *((DATA32 *) dp1) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+
+	     dp1 += 4;
+
+	     /* do the bottom 2 pixels */
+	     /* yuv to rgb */
+	     y = _v1164[*yp2++];
+	     *((DATA32 *) dp2) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+
+	     dp2 += 4;
+
+	     /* yuv to rgb */
+	     y = _v1164[*yp2++];
+	     *((DATA32 *) dp2) = 0xff000000 + RGB_JOIN(LUT_CLIP(y + v), LUT_CLIP(y - vmu), LUT_CLIP(y + u));
+
+	     dp2 += 4;
+	  }
+	/* jump down one line since we are doing 2 at once */
+	dp1 += (w * 4);
+	dp2 += (w * 4);
+     }
+}
 
 static void
 _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
