@@ -3,6 +3,7 @@
 #endif
 
 #define ELM_INTERFACE_ATSPI_ACCESSIBLE_PROTECTED
+#define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
 #define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 
@@ -5165,6 +5166,106 @@ _elm_gengrid_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Gengrid_D
    STATE_TYPE_SET(ret, ELM_ATSPI_STATE_MANAGES_DESCENDANTS);
 
    return ret;
+}
+
+EOLIAN int
+_elm_gengrid_elm_interface_atspi_selection_selected_children_count_get(Eo *objm EINA_UNUSED, Elm_Gengrid_Data *pd)
+{
+   return eina_list_count(pd->selected);
+}
+
+EOLIAN Eo*
+_elm_gengrid_elm_interface_atspi_selection_selected_child_get(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *pd, int child_idx)
+{
+   return eina_list_nth(pd->selected, child_idx);
+}
+
+EOLIAN Eina_Bool
+_elm_gengrid_elm_interface_atspi_selection_child_select(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *pd, int child_index)
+{
+   Elm_Gen_Item *item;
+   if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
+     {
+        EINA_INLIST_FOREACH(pd->items, item)
+          {
+             if (child_index-- == 0)
+               {
+                  elm_gengrid_item_selected_set(EO_OBJ(item), EINA_TRUE);
+                  return EINA_TRUE;
+               }
+          }
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN Eina_Bool
+_elm_gengrid_elm_interface_atspi_selection_selected_child_deselect(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *pd, int child_index)
+{
+   Eo *item;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(pd->selected, l, item)
+     {
+        if (child_index-- == 0)
+          {
+             elm_gengrid_item_selected_set(item, EINA_FALSE);
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN Eina_Bool
+_elm_gengrid_elm_interface_atspi_selection_is_child_selected(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *pd, int child_index)
+{
+   Elm_Gen_Item *item;
+
+   EINA_INLIST_FOREACH(pd->items, item)
+     {
+        if (child_index-- == 0)
+          {
+             return elm_gengrid_item_selected_get(EO_OBJ(item));
+          }
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN Eina_Bool
+_elm_gengrid_elm_interface_atspi_selection_all_children_select(Eo *obj, Elm_Gengrid_Data *pd)
+{
+   Elm_Gen_Item *item;
+
+   if (!elm_gengrid_multi_select_get(obj))
+     return EINA_FALSE;
+
+   EINA_INLIST_FOREACH(pd->items, item)
+      elm_gengrid_item_selected_set(EO_OBJ(item), EINA_TRUE);
+
+   return EINA_TRUE;
+}
+
+EOLIAN Eina_Bool
+_elm_gengrid_elm_interface_atspi_selection_clear(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *pd)
+{
+   return _all_items_deselect(pd);
+}
+
+EOLIAN Eina_Bool
+_elm_gengrid_elm_interface_atspi_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_Gengrid_Data *pd, int child_index)
+{
+   Elm_Gen_Item *item;
+   if (pd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
+     {
+        EINA_INLIST_FOREACH(pd->items, item)
+          {
+             if (child_index-- == 0)
+               {
+                  elm_gengrid_item_selected_set(EO_OBJ(item), EINA_FALSE);
+                  return EINA_TRUE;
+               }
+          }
+     }
+   return EINA_FALSE;
 }
 
 #include "elm_gengrid.eo.c"
