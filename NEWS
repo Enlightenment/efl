@@ -1,6 +1,19 @@
 ==========
-EFL 1.14.0
+EFL 1.14.1
 ==========
+
+Changes since 1.14.0:
+---------------------
+
+Fixes:
+
+   * Eolian/Generator: fix enums generation (T2400)
+   * rg_etc: Correct ifdef to keep function available for debug build
+   * Evas GL common: Skip shaders generation if there is no change
+   * Evas filters: Fix glReadPixels usage for EGL
+   * evas canvas: add exceptional handling in invalid input case.
+   * edje: fix back edje_watch.
+   * evas canvas: fix insane mouse move events on proxy source.
 
 Changes since 1.13.0:
 ---------------------
