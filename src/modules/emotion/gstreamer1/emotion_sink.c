@@ -181,17 +181,21 @@ gboolean emotion_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
    priv->info = info;
    priv->eheight = info.height;
 
-   for (i = 0; colorspace_format_convertion[i].name != NULL; ++i)
-     if (info.finfo->format == colorspace_format_convertion[i].format)
-       {
-          DBG("Found '%s'", colorspace_format_convertion[i].name);
-          priv->eformat = colorspace_format_convertion[i].eformat;
-          priv->func = colorspace_format_convertion[i].func;
-          if (colorspace_format_convertion[i].force_height)
-            {
-               priv->eheight = (priv->eheight >> 1) << 1;
-            }
-          return TRUE;
+   for (i = 0; colorspace_format_convertion[i].name; i++)
+     {
+        if ((info.finfo->format == colorspace_format_convertion[i].format) &&
+            ((colorspace_format_convertion[i].colormatrix == GST_VIDEO_COLOR_MATRIX_UNKNOWN) ||
+             (colorspace_format_convertion[i].colormatrix == info.colorimetry.matrix)))
+          {
+             DBG("Found '%s'", colorspace_format_convertion[i].name);
+             priv->eformat = colorspace_format_convertion[i].eformat;
+             priv->func = colorspace_format_convertion[i].func;
+             if (colorspace_format_convertion[i].force_height)
+               {
+                  priv->eheight = (priv->eheight >> 1) << 1;
+               }
+             return TRUE;
+          }
        }
 
    ERR("unsupported : %s\n", gst_video_format_to_string(info.finfo->format));

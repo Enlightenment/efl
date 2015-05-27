@@ -220,6 +220,7 @@ struct _ColorSpace_Format_Convertion
 {
    const char *name;
    GstVideoFormat format;
+   GstVideoColorMatrix colormatrix;
    Evas_Colorspace eformat;
    Evas_Video_Convert_Cb func;
    Eina_Bool force_height;
