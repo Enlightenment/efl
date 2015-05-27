@@ -444,6 +444,7 @@ struct _Evas_Object_Textblock_Format
    int                  linegap;  /**< Value to set the line gap in text. */
    int                  underline_dash_width;  /**< Valule to set the width of the underline dash. */
    int                  underline_dash_gap;  /**< Value to set the gap of the underline dash. */
+   double               underline_height;  /**< Value to set the height of the single underline. */
    double               linerelsize;  /**< Value to set the size of line of text. */
    double               linerelgap;  /**< Value for setting line gap. */
    double               linefill;  /**< The value must be a percentage. */
@@ -1130,6 +1131,7 @@ static const char *ellipsisstr = NULL;
 static const char *passwordstr = NULL;
 static const char *underline_dash_widthstr = NULL;
 static const char *underline_dash_gapstr = NULL;
+static const char *underline_heightstr = NULL;
 
 /**
  * @page evas_textblock_style_page Evas Textblock Style Options
@@ -1190,6 +1192,7 @@ _format_command_init(void)
          * @li @ref evas_textblock_style_password
          * @li @ref evas_textblock_style_underline_dash_width
          * @li @ref evas_textblock_style_underline_dash_gap
+         * @li @ref evas_textblock_style_underline_height
          *
          * @section evas_textblock_style_contents Contents
          */
@@ -1231,6 +1234,7 @@ _format_command_init(void)
         passwordstr = eina_stringshare_add("password");
         underline_dash_widthstr = eina_stringshare_add("underline_dash_width");
         underline_dash_gapstr = eina_stringshare_add("underline_dash_gap");
+        underline_heightstr = eina_stringshare_add("underline_height");
      }
    format_refcount++;
 }
@@ -1282,6 +1286,7 @@ _format_command_shutdown(void)
    eina_stringshare_del(passwordstr);
    eina_stringshare_del(underline_dash_widthstr);
    eina_stringshare_del(underline_dash_gapstr);
+   eina_stringshare_del(underline_heightstr);
 }
 
 /**
@@ -2317,6 +2322,21 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
         fmt->underline_dash_gap = atoi(param);
         if (fmt->underline_dash_gap <= 0) fmt->underline_dash_gap = 1;
      }
+   else if (cmd == underline_heightstr)
+     {
+        /**
+         * @page evas_textblock_style_page Evas Textblock Style Options
+         *
+         * @subsection evas_textblock_style_underline_height Underline height
+         *
+         * Sets the height of the single underline. The value should be a floating number.
+         * @code
+         * underline_height=<floatingnumber>
+         * @endcode
+         */
+        fmt->underline_height = atof(param);
+        if (fmt->underline_height <= 0.0) fmt->underline_height = 1.0;
+     }
 }
 
 /**
@@ -3000,6 +3020,7 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         fmt->linegap = 0;
         fmt->underline_dash_width = 6;
         fmt->underline_dash_gap = 2;
+        fmt->underline_height = 1.0;
         fmt->linerelgap = 0.0;
         fmt->password = 1;
         fmt->ellipsis = -1;
@@ -11699,7 +11720,8 @@ evas_object_textblock_render(Evas_Object *eo_obj EINA_UNUSED,
         DRAW_FORMAT(strikethrough, (ln->h / 2), line_thickness);
 
         /* UNDERLINE */
-        DRAW_FORMAT(underline, ln->baseline + line_position, line_thickness);
+        DRAW_FORMAT(underline, ln->baseline + line_position,
+                               line_thickness * itr->format->underline_height);
 
         /* UNDERLINE DASHED */
         DRAW_FORMAT_DASHED(underline_dash, ln->baseline + line_position,

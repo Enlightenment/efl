@@ -2842,6 +2842,7 @@ START_TEST(evas_textblock_formats)
          "<font_size=40>font_size=40</><ps/>"
          "<color=#F210B3FF>color=#F210B3FF</><ps/>"
          "<underline=single underline_color=#A2B3C4>underline=single underline_color=#A2B3C4</><ps/>"
+         "<underline=single underline_color=#F2D006 underline_height=5.5>underline=single underline_color=#F2D006 underline_height=5.5</><ps/>"
          "<underline=double underline_color=#F00 underline2_color=#00F>underline=double underline_color=#F00 underline2_color=#00F</><ps/>"
          "<underline=dashed underline_dash_color=#0F0 underline_dash_width=2 underline_dash_gap=1>underline=dashed underline_dash_color=#0F0 underline_dash_width=2 underline_dash_gap=1</><ps/>"
          "<style=outline outline_color=#F0FA>style=outline outline_color=#F0FA</><ps/>"
