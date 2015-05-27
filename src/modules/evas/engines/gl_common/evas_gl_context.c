@@ -482,7 +482,6 @@ _evas_gl_common_version_check(int *gles_ver)
 static void
 _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
 {
-   GLfloat proj[16];
    unsigned int i;
    int w = 1, h = 1, m = 1, rot = 1, foc = 0;
 
@@ -539,14 +538,14 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
            glViewport(0, 0, h, w);
         // std matrix
         if (m == 1)
-           matrix_ortho(proj,
+           matrix_ortho(gc->shared->proj,
                         0, w, 0, h,
                         -1000000.0, 1000000.0,
                         rot, w, h,
                         1, 1.0);
         // v flipped matrix for render-to-texture
         else
-           matrix_ortho(proj,
+           matrix_ortho(gc->shared->proj,
                         0, w, h, 0,
                         -1000000.0, 1000000.0,
                         rot, w, h,
@@ -602,12 +601,12 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
         else
            glViewport(-2 * vy, -2 * vx, vh, vw);
         if (m == 1)
-           matrix_ortho(proj, 0, vw, 0, vh,
+           matrix_ortho(gc->shared->proj, 0, vw, 0, vh,
                         -1000000.0, 1000000.0,
                         rot, vw, vh,
                         foc, 0.0);
         else
-           matrix_ortho(proj, 0, vw, vh, 0,
+           matrix_ortho(gc->shared->proj, 0, vw, vh, 0,
                         -1000000.0, 1000000.0,
                         rot, vw, vh,
                         foc, 0.0);
@@ -617,13 +616,20 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
 
    for (i = 0; i < SHADER_LAST; ++i)
      {
-        glUseProgram(gc->shared->shader[i].prog);
-        glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader[i].prog, "mvp"), 1, GL_FALSE, proj);
+        gc->shared->shader[i].reset = EINA_TRUE;
      }
 
    if (gc->state.current.cur_prog == PRG_INVALID)
-      glUseProgram(gc->shared->shader[0].prog);
-   else glUseProgram(gc->state.current.cur_prog);
+     {
+        glUseProgram(gc->shared->shader[0].prog);
+        glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader[0].prog, "mvp"), 1, GL_FALSE, gc->shared->proj);
+        gc->shared->shader[0].reset = EINA_FALSE;
+     }
+   else
+     {
+        glUseProgram(gc->state.current.cur_prog);
+        glUniformMatrix4fv(glGetUniformLocation(gc->state.current.cur_prog, "mvp"), 1, GL_FALSE, gc->shared->proj);
+     }
 }
 
 EAPI Evas_Engine_GL_Context *
@@ -3044,6 +3050,11 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         if (gc->pipe[i].shader.cur_prog != gc->state.current.cur_prog)
           {
              glUseProgram(gc->pipe[i].shader.cur_prog);
+             if (gc->shared->shader[gc->pipe[i].shader.id].reset)
+               {
+                  glUniformMatrix4fv(glGetUniformLocation(gc->pipe[i].shader.cur_prog, "mvp"), 1, GL_FALSE, gc->shared->proj);
+                  gc->shared->shader[gc->pipe[i].shader.id].reset = EINA_FALSE;
+               }
           }
 
         if (gc->pipe[i].shader.cur_tex != gc->state.current.cur_tex)

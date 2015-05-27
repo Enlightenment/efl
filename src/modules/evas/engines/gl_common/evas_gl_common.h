@@ -343,6 +343,7 @@ struct _Evas_GL_Program
    GLuint vert, frag, prog;
 
    int tex_count;
+   Eina_Bool reset;
 };
 
 struct _Evas_GL_Program_Source
@@ -444,6 +445,7 @@ struct _Evas_GL_Shared
    // persp map
    int foc, z0, px, py;
    int ax, ay;
+   GLfloat proj[16];
 };
 
 typedef enum _Shader_Sampling Shader_Sampling;
@@ -492,7 +494,7 @@ struct _Evas_Engine_GL_Context
    struct {
       int                top_pipe;
       struct {
-         Evas_GL_Shader  id; // debug info
+         Evas_GL_Shader  id;
          GLuint          cur_prog;
          GLuint          cur_tex, cur_texu, cur_texv, cur_texa, cur_texm;
          int             render_op;
@@ -520,7 +522,7 @@ struct _Evas_Engine_GL_Context
          Eina_Bool       active : 1;
       } clip;
       struct {
-         Evas_GL_Shader  id; // debug info
+         Evas_GL_Shader  id;
          Evas_GL_Image  *surface;
          GLuint          cur_prog;
          GLuint          cur_tex, cur_texu, cur_texv, cur_texa, cur_texm;
