@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2015-05-25 11:47+0900\n"
-"PO-Revision-Date: 2014-08-14 00:50+0900\n"
+"PO-Revision-Date: 2015-05-27 01:50+0900\n"
 "Last-Translator: Daniel Juyung Seo <seojuyung2@gmail.com>\n"
 "Language-Team: General\n"
 "Language: ko_KR\n"
@@ -30,7 +30,7 @@ msgstr "홈"
 
 #: src/lib/elc_fileselector.c:1539
 msgid "Search"
-msgstr ""
+msgstr "검색"
 
 #: src/lib/elc_fileselector.c:1707 src/lib/elm_entry.c:1512
 #: src/lib/elm_entry.c:1537
@@ -167,23 +167,23 @@ msgstr "시계"
 
 #: src/lib/elm_colorselector.c:718
 msgid "Pick a color"
-msgstr ""
+msgstr "색상 선택"
 
 #: src/lib/elm_colorselector.c:754
 msgid "R:"
-msgstr ""
+msgstr "빨:"
 
 #: src/lib/elm_colorselector.c:756
 msgid "G:"
-msgstr ""
+msgstr "녹:"
 
 #: src/lib/elm_colorselector.c:758
 msgid "B:"
-msgstr ""
+msgstr "파:"
 
 #: src/lib/elm_colorselector.c:760
 msgid "A:"
-msgstr ""
+msgstr "투명:"
 
 #: src/lib/elm_colorselector.c:1433
 msgid "color selector palette item"
@@ -283,11 +283,11 @@ msgstr "슬라이더"
 
 #: src/lib/elm_spinner.c:816
 msgid "incremented"
-msgstr ""
+msgstr "증가"
 
 #: src/lib/elm_spinner.c:822
 msgid "decremented"
-msgstr ""
+msgstr "감소"
 
 #: src/lib/elm_spinner.c:856 src/lib/elm_spinner.c:923
 msgid "spinner"
@@ -302,9 +302,8 @@ msgid "spinner decrement button"
 msgstr "스피너 감소 버튼"
 
 #: src/lib/elm_spinner.c:870
-#, fuzzy
 msgid "spinner text"
-msgstr "스피너"
+msgstr "스피너 텍스트"
 
 #: src/lib/elm_toolbar.c:1686 src/lib/elm_toolbar.c:2285
 msgid "Selected"
