@@ -686,7 +686,7 @@ _parse_dep(Eo_Lexer *ls, const char *fname, const char *name)
 }
 
 static Eolian_Type *
-parse_type_void(Eo_Lexer *ls)
+parse_type_void_base(Eo_Lexer *ls, Eina_Bool noptr)
 {
    Eolian_Type *def;
    const char *ctype;
@@ -701,7 +701,7 @@ parse_type_void(Eo_Lexer *ls)
            pline = ls->line_number;
            pcol = ls->column;
            check_next(ls, '(');
-           def = parse_type_void(ls);
+           def = parse_type_void_base(ls, EINA_TRUE);
            FILL_BASE(def->base, ls, line, col);
            def->is_const = EINA_TRUE;
            check_match(ls, ')', '(', pline, pcol);
@@ -715,7 +715,7 @@ parse_type_void(Eo_Lexer *ls)
            pcolumn = ls->column;
            check_next(ls, '(');
            eo_lexer_context_push(ls);
-           def = parse_type_void(ls);
+           def = parse_type_void_base(ls, EINA_TRUE);
            if (def->type != EOLIAN_TYPE_POINTER)
              {
                 eo_lexer_context_restore(ls);
@@ -735,7 +735,7 @@ parse_type_void(Eo_Lexer *ls)
            pcolumn = ls->column;
            check_next(ls, '(');
            eo_lexer_context_push(ls);
-           def = parse_type_void(ls);
+           def = parse_type_void_base(ls, EINA_TRUE);
            if (def->type != EOLIAN_TYPE_POINTER)
              {
                 eo_lexer_context_restore(ls);
@@ -823,6 +823,9 @@ parse_type_void(Eo_Lexer *ls)
           }
      }
 parse_ptr:
+   /* check: complex/class type must always be behind a pointer */
+   if (!noptr && ((def->type == EOLIAN_TYPE_CLASS) || (def->type == EOLIAN_TYPE_COMPLEX)))
+     check(ls, '*');
    while (ls->t.token == '*')
      {
         Eolian_Type *pdef;
@@ -835,6 +838,12 @@ parse_ptr:
         eo_lexer_get(ls);
      }
    return def;
+}
+
+static Eolian_Type *
+parse_type_void(Eo_Lexer *ls)
+{
+   return parse_type_void_base(ls, EINA_FALSE);
 }
 
 static Eolian_Type *
