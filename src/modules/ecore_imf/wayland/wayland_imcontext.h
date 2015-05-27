@@ -60,6 +60,9 @@ EAPI void wayland_im_context_cursor_location_set(Ecore_IMF_Context    *ctx,
                                                  int                   width,
                                                  int                   height);
 
+EAPI void wayland_im_context_autocapital_type_set(Ecore_IMF_Context *ctx,
+                                                  Ecore_IMF_Autocapital_Type autocapital_type);
+
 EAPI void wayland_im_context_input_panel_layout_set(Ecore_IMF_Context *ctx,
                                                     Ecore_IMF_Input_Panel_Layout layout);
 

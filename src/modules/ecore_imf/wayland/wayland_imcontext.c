@@ -76,6 +76,7 @@ struct _WaylandIMContext
    uint32_t serial;
    uint32_t reset_serial;
    uint32_t content_purpose;
+   uint32_t content_hint;
 };
 
 static unsigned int
@@ -646,7 +647,7 @@ wayland_im_context_focus_in(Ecore_IMF_Context *ctx)
                                ecore_wl_window_surface_get(imcontext->window));
 
         wl_text_input_set_content_type(imcontext->text_input,
-                                       WL_TEXT_INPUT_CONTENT_HINT_NONE,
+                                       imcontext->content_hint,
                                        imcontext->content_purpose);
      }
 }
@@ -816,6 +817,23 @@ wayland_im_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int
 
         update_state(imcontext);
      }
+}
+
+EAPI void wayland_im_context_autocapital_type_set(Ecore_IMF_Context *ctx,
+                                                  Ecore_IMF_Autocapital_Type autocapital_type)
+{
+   WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
+
+   imcontext->content_hint &= ~(WL_TEXT_INPUT_CONTENT_HINT_AUTO_CAPITALIZATION |
+                                WL_TEXT_INPUT_CONTENT_HINT_UPPERCASE |
+                                WL_TEXT_INPUT_CONTENT_HINT_LOWERCASE);
+
+   if (autocapital_type == ECORE_IMF_AUTOCAPITAL_TYPE_SENTENCE)
+     imcontext->content_hint |= WL_TEXT_INPUT_CONTENT_HINT_AUTO_CAPITALIZATION;
+   else if (autocapital_type == ECORE_IMF_AUTOCAPITAL_TYPE_ALLCHARACTER)
+     imcontext->content_hint |= WL_TEXT_INPUT_CONTENT_HINT_UPPERCASE;
+   else
+     imcontext->content_hint |= WL_TEXT_INPUT_CONTENT_HINT_LOWERCASE;
 }
 
 EAPI void
