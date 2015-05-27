@@ -242,7 +242,7 @@ _stop_scene(void *data,
 
    if (ev->button == 1)
      {
-        Eina_Bool ret;
+        Evas_3D_Node *ret;
 
         if (eo_do_ret(d->scene, ret,
                       evas_3d_scene_exist((ev->canvas.x - (d_w / 2)),
