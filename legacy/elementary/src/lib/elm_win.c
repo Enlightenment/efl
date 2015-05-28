@@ -1146,6 +1146,8 @@ _internal_elm_win_profile_set(Elm_Win_Data *sd, const char *profile)
 static void
 _elm_win_profile_update(Elm_Win_Data *sd)
 {
+   if (getenv("ELM_PROFILE")) return;
+
    if (sd->profile.available_list)
      {
         Eina_Bool found = EINA_FALSE;
