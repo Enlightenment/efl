@@ -239,7 +239,7 @@ Evas_Filter_Buffer *_filter_buffer_data_new(Evas_Filter_Context *ctx, void *data
 #define             evas_filter_buffer_alloc_new(ctx, w, h, a) _filter_buffer_data_new(ctx, NULL, w, h, a)
 Evas_Filter_Buffer *evas_filter_temporary_buffer_get(Evas_Filter_Context *ctx, int w, int h, Eina_Bool alpha_only);
 Evas_Filter_Buffer *evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx, Evas_Filter_Buffer *src, unsigned w, unsigned h);
-Eina_Bool evas_filter_interpolate(DATA8* output /* 256 values */, DATA8* points /* pairs x + y */, int point_count, Evas_Filter_Interpolation_Mode mode);
+Eina_Bool           evas_filter_interpolate(DATA8* output /* 256 values */, int *points /* 256 values */, Evas_Filter_Interpolation_Mode mode);
 Evas_Filter_Command *_evas_filter_command_get(Evas_Filter_Context *ctx, int cmdid);
 int evas_filter_smallest_pow2_larger_than(int val);
 

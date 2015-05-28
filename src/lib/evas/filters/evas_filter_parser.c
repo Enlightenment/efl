@@ -276,7 +276,8 @@ typedef enum
    VT_REAL,
    VT_STRING,
    VT_COLOR,
-   VT_BUFFER
+   VT_BUFFER,
+   VT_SPECIAL
 } Value_Type;
 
 typedef struct _Buffer
@@ -293,7 +294,8 @@ typedef struct _Buffer
    Eina_Bool manual : 1; // created by "buffer" instruction
 } Buffer;
 
-typedef struct _Instruction_Param
+typedef struct _Instruction_Param Instruction_Param;
+struct _Instruction_Param
 {
    EINA_INLIST;
    Eina_Stringshare *name;
@@ -305,11 +307,15 @@ typedef struct _Instruction_Param
       char *s;
       unsigned int c;
       Buffer *buf;
+      struct {
+         void *data;
+         Eina_Bool (*func)(lua_State *L, int i, Evas_Filter_Program *, Evas_Filter_Instruction *, Instruction_Param *);
+      } special;
    } value;
    Eina_Bool set : 1;
    Eina_Bool allow_seq : 1;
    Eina_Bool allow_any_string : 1;
-} Instruction_Param;
+};
 
 struct _Evas_Filter_Instruction
 {
@@ -402,6 +408,10 @@ _instruction_param_addv(Evas_Filter_Instruction *instr, const char *name,
       case VT_COLOR:
         param->value.c = va_arg(args, DATA32);
         break;
+      case VT_SPECIAL:
+        param->value.special.func = va_arg(args, typeof(param->value.special.func));
+        param->value.special.data = va_arg(args, void *);
+        break;
       case VT_NONE:
       default:
         return EINA_FALSE;
@@ -426,8 +436,8 @@ _instruction_param_adda(Evas_Filter_Instruction *instr, const char *name,
 
    return ok;
 }
-#define _instruction_param_seq_add(a,b,c,d) _instruction_param_adda((a),(b),(c),1,(d))
-#define _instruction_param_name_add(a,b,c,d) _instruction_param_adda((a),(b),(c),0,(d))
+#define _instruction_param_seq_add(a,b,c,...) _instruction_param_adda((a),(b),(c),1,__VA_ARGS__)
+#define _instruction_param_name_add(a,b,c,...) _instruction_param_adda((a),(b),(c),0,__VA_ARGS__)
 
 static void
 _instruction_del(Evas_Filter_Instruction *instr)
@@ -439,6 +449,8 @@ _instruction_del(Evas_Filter_Instruction *instr)
      {
         if (param->type == VT_STRING)
           free(param->value.s);
+        else if (param->type == VT_SPECIAL)
+          free(param->value.special.data);
         eina_stringshare_del(param->name);
         instr->params = eina_inlist_remove(instr->params, EINA_INLIST_GET(param));
         free(param);
@@ -504,6 +516,23 @@ _instruction_param_getc(Evas_Filter_Instruction *instr, const char *name,
        {
           if (isset) *isset = param->set;
           return param->value.c;
+       }
+
+   if (isset) *isset = EINA_FALSE;
+   return 0;
+}
+
+static void *
+_instruction_param_getspecial(Evas_Filter_Instruction *instr, const char *name,
+                              Eina_Bool *isset)
+{
+   Instruction_Param *param;
+
+   EINA_INLIST_FOREACH(instr->params, param)
+     if (!strcasecmp(name, param->name))
+       {
+          if (isset) *isset = param->set;
+          return param->value.special.data;
        }
 
    if (isset) *isset = EINA_FALSE;
@@ -1200,6 +1229,138 @@ _bump_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *ins
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_lua_curve_points_func(lua_State *L, int i, Evas_Filter_Program *pgm EINA_UNUSED,
+                       Evas_Filter_Instruction *instr, Instruction_Param *param)
+{
+   int values[256];
+   char *token, *copy = NULL;
+   const char *points_str;
+   lua_Number n;
+   int k;
+
+   switch (lua_type(L, i))
+     {
+      case LUA_TTABLE:
+        // FIXME: indices start from 0 here. Lua prefers starting with 1.
+        for (k = 0; k < 256; k++)
+          {
+             lua_rawgeti(L, i, k);
+             if (lua_isnil(L, -1))
+               {
+                  lua_pop(L, 1);
+                  values[k] = -1;
+               }
+             else if (lua_isnumber(L, -1))
+               {
+                  n = lua_tonumber(L, -1);
+                  if ((n < -1) || (n > 255))
+                    {
+                       WRN("Value out of range in argument '%s' of function '%s' (got %d, expected 0-255)",
+                           param->name, instr->name, (int) n);
+                       if (n < -1) n = 0;
+                       if (n > 255) n = 255;
+                    }
+                  lua_pop(L, 1);
+                  values[k] = (int) n;
+               }
+             else
+               {
+                  lua_pop(L, 1);
+                  ERR("Invalid value type '%s' (expected number) in table for argument '%s' of function '%s'",
+                      lua_typename(L, -1), param->name, instr->name);
+                  return EINA_FALSE;
+               }
+          }
+        break;
+
+      case LUA_TSTRING:
+        for (k = 0; k < 256; k++)
+          values[k] = -1;
+        points_str = lua_tostring(L, i);
+        copy = strdup(points_str);
+        if (!copy) return EINA_FALSE;
+        token = strtok(copy, "-");
+        if (!token)
+          {
+             ERR("Invalid string format for argument '%s' of function '%s'",
+                 param->name, instr->name);
+             free(copy);
+             return EINA_FALSE;
+          }
+        while (token)
+          {
+             int x, y, r, minx = 0;
+             r = sscanf(token, "%i:%i", &x, &y);
+             if ((r != 2) || (x < minx) || (x >= 256))
+               {
+                  ERR("Invalid string format for argument '%s' of function '%s'",
+                      param->name, instr->name);
+                  free(copy);
+                  return EINA_FALSE;
+               }
+             minx = x + 1;
+             if ((y < -1) || (y > 255))
+               {
+                  WRN("Value out of range in argument '%s' of function '%s' (got %d, expected 0-255)",
+                      param->name, instr->name, y);
+                  if (y < -1) y = 0;
+                  if (y > 255) y = 255;
+               }
+             values[x] = y;
+             token = strtok(NULL, "-");
+          }
+        free(copy);
+        break;
+
+      case LUA_TFUNCTION:
+        for (k = 0; k < 256; k++)
+          {
+             lua_pushvalue(L, i);
+             lua_pushinteger(L, k);
+             if (!lua_pcall(L, 1, 1, 0))
+               {
+                  if (!lua_isnumber(L, -1))
+                    {
+                       ERR("Function returned an invalid type '%s' (expected number) "
+                           "in argument '%s' of function '%s'",
+                           lua_typename(L, -1), param->name, instr->name);
+                       return EINA_FALSE;
+                    }
+                  n = lua_tonumber(L, -1);
+                  if ((n < -1) || (n > 255))
+                    {
+                       WRN("Value out of range in argument '%s' of function '%s' (got %d, expected 0-255)",
+                           param->name, instr->name, (int) n);
+                       if (n < -1) n = 0;
+                       if (n > 255) n = 255;
+                    }
+                  lua_pop(L, 1);
+                  values[k] = (int) n;
+               }
+             else
+               {
+                  ERR("Failed to call function for argument '%s' of function '%s': %s",
+                      param->name, instr->name, lua_tostring(L, -1));
+                  return EINA_FALSE;
+               }
+          }
+        break;
+
+      default:
+        ERR("Invalid type '%s' for argument '%s' of function '%s'",
+            lua_typename(L, i), param->name, instr->name);
+        return EINA_FALSE;
+     }
+
+   free(param->value.special.data);
+   param->value.special.data = malloc(sizeof(values));
+   if (!param->value.special.data) return EINA_FALSE;
+   memcpy(param->value.special.data, values, sizeof(values));
+
+   return EINA_TRUE;
+}
+
 /**
   @page evasfiltersref
 
@@ -1258,7 +1419,7 @@ _curve_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *in
 
    // TODO: Allow passing an array of 256 values as points.
    // It could be easily computed from another function in the script.
-   _instruction_param_seq_add(instr, "points", VT_STRING, NULL);
+   _instruction_param_seq_add(instr, "points", VT_SPECIAL, _lua_curve_points_func, NULL);
    param = EINA_INLIST_CONTAINER_GET(eina_inlist_last(instr->params), Instruction_Param);
    param->allow_any_string = EINA_TRUE;
 
@@ -1865,6 +2026,11 @@ _lua_parameter_parse(Evas_Filter_Program *pgm, lua_State *L,
              }
            break;
         }
+      case VT_SPECIAL:
+        if (!param->value.special.func ||
+            !param->value.special.func(L, i, pgm, instr, param))
+          goto fail;
+        break;
       case VT_NONE:
       default:
         // This should not happen
@@ -2369,6 +2535,11 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
 #define JOINC(k) ARGB_JOIN(pgm->state.k.a, pgm->state.k.r, pgm->state.k.g, pgm->state.k.b)
 #define SETFIELD(name, val) do { lua_pushinteger(L, val); lua_setfield(L, -2, name); } while(0)
 
+   // TODO: Mark program as dependent on some values so we can improve
+   // the changed flag (ie. re-run the filter only when required)
+   // eg. edje state_val changed but it is not used by the filter --> no redraw
+   // --> this needs a metatable with __index
+
    lua_newtable(L); // "state"
    {
       SETFIELD("color", JOINC(color));
@@ -2434,6 +2605,10 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
    if (!L) return EINA_FALSE;
 
    ok = !luaL_loadstring(L, str);
+   if (!ok)
+     {
+        ERR("Failed to load Lua program: %s", lua_tostring(L, -1));
+     }
 
 #ifdef FILTERS_LEGACY_COMPAT
    if (!ok)
@@ -2954,18 +3129,18 @@ _instr2cmd_curve(Evas_Filter_Context *ctx,
 {
    Evas_Filter_Interpolation_Mode mode = EVAS_FILTER_INTERPOLATION_MODE_LINEAR;
    Evas_Filter_Channel channel = EVAS_FILTER_CHANNEL_RGB;
-   const char *points_str, *interpolation, *channel_name;
-   DATA8 values[256] = {0}, points[512];
-   int cmdid, point_count = 0;
-   char *token, *copy = NULL;
+   const char *interpolation, *channel_name;
    Buffer *src, *dst;
-   Eina_Bool parse_ok = EINA_FALSE;
+   DATA8 values[256];
+   int *points;
+   int cmdid;
 
    src = _instruction_param_getbuf(instr, "src", NULL);
    dst = _instruction_param_getbuf(instr, "dst", NULL);
-   points_str = _instruction_param_gets(instr, "points", NULL);
+   points = _instruction_param_getspecial(instr, "points", NULL);
    interpolation = _instruction_param_gets(instr, "interpolation", NULL);
    channel_name = _instruction_param_gets(instr, "channel", NULL);
+   INSTR_PARAM_CHECK(points);
    INSTR_PARAM_CHECK(src);
    INSTR_PARAM_CHECK(dst);
 
@@ -2989,28 +3164,7 @@ _instr2cmd_curve(Evas_Filter_Context *ctx,
    if (interpolation && !strcasecmp(interpolation, "none"))
      mode = EVAS_FILTER_INTERPOLATION_MODE_NONE;
 
-   if (!points_str) goto interpolated;
-   copy = strdup(points_str);
-   token = strtok(copy, "-");
-   if (!token) goto interpolated;
-
-   while (token)
-     {
-        int x, y, r, maxx = 0;
-        r = sscanf(token, "%u:%u", &x, &y);
-        if (r != 2) goto interpolated;
-        if (x < maxx || x >= 256) goto interpolated;
-        points[point_count * 2 + 0] = x;
-        points[point_count * 2 + 1] = y;
-        point_count++;
-        token = strtok(NULL, "-");
-     }
-
-   parse_ok = evas_filter_interpolate(values, points, point_count, mode);
-
-interpolated:
-   free(copy);
-   if (!parse_ok)
+   if (!evas_filter_interpolate(values, points, mode))
      {
         int x;
         ERR("Failed to parse the interpolation chain");

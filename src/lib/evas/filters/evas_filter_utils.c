@@ -84,60 +84,52 @@ evas_filter_buffer_scaled_get(Evas_Filter_Context *ctx,
 }
 
 static Eina_Bool
-_interpolate_none(DATA8 *output, DATA8 *points, int point_count)
+_interpolate_none(DATA8 *output, int *points)
 {
-   int j, k, val, x1, x2;
-   for (j = 0; j < point_count; j++)
+   DATA8 val = 0;
+   int j;
+   for (j = 0; j < 256; j++)
      {
-        x1 = points[j * 2];
-        val = points[j * 2 + 1];
-        if (j < (point_count - 1))
-          x2 = points[(j + 1) * 2];
+        if (points[j] == -1)
+          output[j] = val;
         else
-          x2 = 256;
-        if (x2 < x1) return EINA_FALSE;
-        for (k = x1; k < x2; k++)
-          output[k] = val;
+          val = output[j] = (DATA8) points[j];
      }
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_interpolate_linear(DATA8 *output, DATA8 *points, int point_count)
+_interpolate_linear(DATA8 *output, int *points)
 {
-   int j, k, val1, val2, x1, x2;
-   for (j = 0; j < point_count; j++)
+   DATA8 val = 0;
+   int j, k, last_idx = 0;
+   for (j = 0; j < 256; j++)
      {
-        x1 = points[j * 2];
-        val1 = points[j * 2 + 1];
-        if (j < (point_count - 1))
+        if (points[j] != -1)
           {
-             x2 = points[(j + 1) * 2];
-             val2 = points[(j + 1) * 2 + 1];
+             output[j] = (DATA8) points[j];
+             for (k = last_idx + 1; k < j; k++)
+               output[k] = (DATA8) (points[j] + ((k - last_idx) * (points[j] - points[last_idx]) / (j - last_idx)));
+             last_idx = j;
           }
-        else
-          {
-             x2 = 256;
-             val2 = val1;
-          }
-        if (x2 < x1) return EINA_FALSE;
-        for (k = x1; k < x2; k++)
-          output[k] = val1 + ((val2 - val1) * (k - x1)) / (x2 - x1);
      }
+   val = (DATA8) points[last_idx];
+   for (j = last_idx + 1; j < 256; j++)
+     output[j] = val;
    return EINA_TRUE;
 }
 
 Eina_Bool
-evas_filter_interpolate(DATA8 *output, DATA8 *points, int point_count,
+evas_filter_interpolate(DATA8 *output, int *points,
                         Evas_Filter_Interpolation_Mode mode)
 {
    switch (mode)
      {
       case EVAS_FILTER_INTERPOLATION_MODE_NONE:
-        return _interpolate_none(output, points, point_count);
+        return _interpolate_none(output, points);
       case EVAS_FILTER_INTERPOLATION_MODE_LINEAR:
       default:
-        return _interpolate_linear(output, points, point_count);
+        return _interpolate_linear(output, points);
      }
 }
 
