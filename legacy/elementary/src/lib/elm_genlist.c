@@ -3556,6 +3556,7 @@ _elm_genlist_item_del_serious(Elm_Gen_Item *it)
 {
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
+   sd->item_count--;
    _elm_genlist_item_del_not_serious(it);
 
    //(it->walking == -1) means it's already removed from the list.
@@ -3570,8 +3571,6 @@ _elm_genlist_item_del_serious(Elm_Gen_Item *it)
    ELM_SAFE_FREE(sd->state, eina_inlist_sorted_state_free);
    ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job, sd->obj);
-
-   sd->item_count--;
 
    ELM_SAFE_FREE(it->item, free);
 }
