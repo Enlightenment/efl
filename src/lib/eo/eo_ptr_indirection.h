@@ -60,28 +60,28 @@
    _Eo_Object *obj; \
    do { \
         obj = _eo_obj_pointer_get((Eo_Id)obj_id); \
-        EO_MAGIC_RETURN_VAL((Eo_Base *) obj, EO_EINA_MAGIC, ret);  \
+        EO_MAGIC_RETURN_VAL((Eo_Header *) obj, EO_EINA_MAGIC, ret);  \
    } while (0)
 
 #define EO_OBJ_POINTER_RETURN(obj_id, obj)   \
    _Eo_Object *obj; \
    do { \
         obj = _eo_obj_pointer_get((Eo_Id)obj_id);   \
-        EO_MAGIC_RETURN((Eo_Base *) obj, EO_EINA_MAGIC);  \
+        EO_MAGIC_RETURN((Eo_Header *) obj, EO_EINA_MAGIC);  \
    } while (0)
 
 #define EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, ret) \
    _Eo_Class *klass; \
    do { \
         klass = _eo_class_pointer_get(klass_id); \
-        EO_MAGIC_RETURN_VAL((Eo_Base *) klass, EO_CLASS_EINA_MAGIC, ret);  \
+        EO_MAGIC_RETURN_VAL((Eo_Header *) klass, EO_CLASS_EINA_MAGIC, ret);  \
    } while (0)
 
 #define EO_CLASS_POINTER_RETURN(klass_id, klass)   \
    _Eo_Class *klass; \
    do { \
         klass = _eo_class_pointer_get(klass_id); \
-        EO_MAGIC_RETURN((Eo_Base *) klass, EO_CLASS_EINA_MAGIC);  \
+        EO_MAGIC_RETURN((Eo_Header *) klass, EO_CLASS_EINA_MAGIC);  \
    } while (0)
 
 #endif
