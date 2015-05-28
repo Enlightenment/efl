@@ -890,6 +890,23 @@ wayland_im_context_input_mode_set(Ecore_IMF_Context *ctx,
      imcontext->content_hint &= ~WL_TEXT_INPUT_CONTENT_HINT_PASSWORD;
 }
 
+EAPI void
+wayland_im_context_input_hint_set(Ecore_IMF_Context *ctx,
+                                            Ecore_IMF_Input_Hints input_hints)
+{
+   WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
+
+   if (input_hints & ECORE_IMF_INPUT_HINT_AUTO_COMPLETE)
+     imcontext->content_hint |= WL_TEXT_INPUT_CONTENT_HINT_AUTO_COMPLETION;
+   else
+     imcontext->content_hint &= ~WL_TEXT_INPUT_CONTENT_HINT_AUTO_COMPLETION;
+
+   if (input_hints & ECORE_IMF_INPUT_HINT_SENSITIVE_DATA)
+     imcontext->content_hint |= WL_TEXT_INPUT_CONTENT_HINT_SENSITIVE_DATA;
+   else
+     imcontext->content_hint &= ~WL_TEXT_INPUT_CONTENT_HINT_SENSITIVE_DATA;
+}
+
 WaylandIMContext *wayland_im_context_new (struct wl_text_input_manager *text_input_manager)
 {
    WaylandIMContext *context = calloc(1, sizeof(WaylandIMContext));
