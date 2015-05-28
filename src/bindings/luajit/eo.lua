@@ -344,14 +344,18 @@ end
 
 local prop_proxy_meta = {
     __index = function(self, key)
-        if self.nkeys > 1 and type(key) == "table" then
-            if self.nvals > 1 then
+        local ngkeys = self.ngkeys
+        if ngkeys <= 0 then
+            error("property '" .. self.key .. "' has no getter keys", 2)
+        end
+        if ngkeys > 1 and type(key) == "table" then
+            if self.ngvals > 1 then
                 return { self(unpack(key)) }
             else
                 return self(unpack(key))
             end
         else
-            if self.nvals > 1 then
+            if self.ngvals > 1 then
                 return { self(key) }
             else
                 return self(key)
@@ -360,8 +364,11 @@ local prop_proxy_meta = {
     end,
 
     __newindex = function(self, key, val)
-        local nkeys = self.nkeys
-        if nkeys > 1 then
+        local nskeys = self.nskeys
+        if nskeys <= 0 then
+            error("property '" .. self.key .. "' has no setter keys", 2)
+        end
+        if nskeys > 1 then
             -- ultra slow path, q66 failed optimizing this
             -- if you ever get to touch this, increment this
             -- counter to let others know you failed too.
@@ -375,14 +382,14 @@ local prop_proxy_meta = {
             else
                 atbl = { key }
             end
-            if self.nvals > 1 and type(val) == "table" then
-                for i, v in ipairs(val) do atbl[nkeys + i] = v end
+            if self.nsvals > 1 and type(val) == "table" then
+                for i, v in ipairs(val) do atbl[nskeys + i] = v end
             else
-                atbl[nkeys + 1] = val
+                atbl[nskeys + 1] = val
             end
             self.mt[self.key .. "_set"](self.obj, unpack(atbl))
         else
-            if self.nvals > 1 and type(val) == "table" then
+            if self.nsvals > 1 and type(val) == "table" then
                 -- somewhat less slow but still slow path
                 self.mt[self.key .. "_set"](self.obj, key, unpack(val))
             else
@@ -403,11 +410,11 @@ local prop_proxy_meta = {
 
 -- each __properties field looks like this:
 --
--- { NUMBER_OF_KEYS, NUMBER_OF_VALUES, GETTABLE, SETTABLE }
+-- { NUM_GET_KEYS, NUM_SET_KEYS, NUM_GET_VALS, NUM_SET_VALS, GETTABLE, SETTABLE }
 --
 -- the last two are booleans (determining if the property can be get and set).
 ffi.metatype("Eo", {
-    -- handles property getting with no keys and also property setting with keys
+    -- handles property getting with no keys and also properties with keys
     __index = function(self, key)
         local mt = get_obj_mt(self)
         if mt == nil then return nil end
@@ -416,18 +423,19 @@ ffi.metatype("Eo", {
         if not pp then
             return mt[key]
         end
-        local nkeys, nvals = pp[1], pp[2]
-        if nkeys ~= 0 then
+        local ngkeys, nskeys = pp[1], pp[2]
+        if ngkeys ~= 0 or nskeys ~= 0 then
             -- proxy - slow path, but no way around it
             -- basically the proxy is needed because we want nice syntax and
             -- lua can't do it by default. so we help ourselves a bit with this
-            return setmetatable({ nkeys = nkeys, nvals = nvals,
-                obj = self, key = key, mt = mt }, prop_proxy_meta)
+            return setmetatable({ ngkeys = ngkeys, nskeys = nskeys,
+                ngvals = pp[3], nsvals = pp[4], obj = self, key = key,
+                mt = mt }, prop_proxy_meta)
         end
-        if not pp[3] then
+        if not pp[5] then
             error("property '" .. key .. "' is not gettable", 2)
         end
-        if nvals > 1 then
+        if pp[3] > 1 then
             return { mt[key .. "_get"](self) }
         else
             return mt[key .. "_get"](self)
@@ -443,13 +451,14 @@ ffi.metatype("Eo", {
         if not pp then
             error("no such property '" .. key .. "'", 2)
         end
-        if not pp[4] then
+        if not pp[6] then
             error("property '" .. key .. "' is not settable", 2)
         end
-        if pp[1] ~= 0 then
-            error("property '" .. key .. "' requires " .. pp[1] .. " keys", 2)
+        local nkeys = pp[2]
+        if nkeys ~= 0 then
+            error("property '" .. key .. "' requires " .. nkeys .. " keys", 2)
         end
-        local nvals = pp[2]
+        local nvals = pp[4]
         if nvals > 1 and type(val) == "table" then
             mt[key .. "_set"](self, unpack(val))
         else
