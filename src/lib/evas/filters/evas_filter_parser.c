@@ -342,6 +342,7 @@ struct _Evas_Filter_Program_State
    } text;
    struct { int a, r, g, b; } color;
    int w, h;
+   double scale;
 };
 
 struct _Evas_Filter_Program
@@ -2533,7 +2534,7 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
     */
 
 #define JOINC(k) ARGB_JOIN(pgm->state.k.a, pgm->state.k.r, pgm->state.k.g, pgm->state.k.b)
-#define SETFIELD(name, val) do { lua_pushinteger(L, val); lua_setfield(L, -2, name); } while(0)
+#define SETFIELD(name, val) do { lua_pushnumber(L, val); lua_setfield(L, -2, name); } while(0)
 
    // TODO: Mark program as dependent on some values so we can improve
    // the changed flag (ie. re-run the filter only when required)
@@ -2543,6 +2544,7 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
    lua_newtable(L); // "state"
    {
       SETFIELD("color", JOINC(color));
+      SETFIELD("scale", pgm->state.scale);
       lua_newtable(L); // "text"
       {
          SETFIELD("outline", JOINC(text.outline));
@@ -2765,6 +2767,7 @@ evas_filter_program_new(const char *name, Eina_Bool input_alpha)
    pgm->state.color.g = 255;
    pgm->state.color.b = 255;
    pgm->state.color.a = 255;
+   pgm->state.scale = 1.0;
 
    return pgm;
 }
@@ -2781,6 +2784,7 @@ evas_filter_program_state_set(Evas_Filter_Program *pgm, Evas_Object *eo_obj,
 
    pgm->state.w = obj->cur->geometry.w;
    pgm->state.h = obj->cur->geometry.h;
+   pgm->state.scale = obj->cur->scale;
 
    eo_do(eo_obj,
          efl_gfx_color_get(&pgm->state.color.r,
