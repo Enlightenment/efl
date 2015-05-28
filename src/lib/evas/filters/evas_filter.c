@@ -1905,7 +1905,7 @@ _filter_command_run(Evas_Filter_Command *cmd)
 
    if (!func)
      {
-        CRI("No function to process this filter!");
+        ERR("No function to process this filter!");
         return EINA_FALSE;
      }
 

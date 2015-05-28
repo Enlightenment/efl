@@ -663,6 +663,62 @@ _lua_buffer_tostring(lua_State *L)
 }
 
 static int
+_lua_buffer_index(lua_State *L)
+{
+   Buffer *buf, **pbuf;
+   const char *key;
+
+   pbuf = lua_touserdata(L, 1);
+   buf = pbuf ? *pbuf : NULL;
+   if (!buf) return 0;
+
+   key = lua_tostring(L, 2);
+   if (!key) return 0;
+
+   if (!strcmp(key, "width"))
+     {
+        lua_pushinteger(L, buf->w);
+        return 1;
+     }
+   else if (!strcmp(key, "height"))
+     {
+        lua_pushinteger(L, buf->h);
+        return 1;
+     }
+   else if (!strcmp(key, "type"))
+     {
+        lua_pushstring(L, buf->alpha ? "alpha" : "rgba");
+        return 1;
+     }
+   else if (!strcmp(key, "alpha"))
+     {
+        lua_pushboolean(L, buf->alpha);
+        return 1;
+     }
+   else if (!strcmp(key, "rgba"))
+     {
+        lua_pushboolean(L, !buf->alpha);
+        return 1;
+     }
+   else if (!strcmp(key, "name"))
+     {
+        lua_pushstring(L, buf->name);
+        return 1;
+     }
+   else if (!strcmp(key, "source"))
+     {
+        if (!buf->proxy) return 0;
+        lua_pushstring(L, buf->proxy);
+        return 1;
+     }
+   else
+     {
+        DBG("Unknown index '%s' for a buffer", key);
+        return 0;
+     }
+}
+
+static int
 _lua_buffer_width(lua_State *L)
 {
    Buffer *buf, **pbuf;
@@ -2052,6 +2108,7 @@ static const luaL_Reg buffer_methods[] = {
 
 static const luaL_Reg buffer_meta[] = {
    { "__tostring", _lua_buffer_tostring },
+   { "__index", _lua_buffer_index },
    { NULL, NULL }
 };
 
@@ -2159,9 +2216,6 @@ _lua_state_create(Evas_Filter_Program *pgm)
    luaL_openlib(L, _lua_buffer_meta, buffer_methods, 0);
    luaL_newmetatable(L, _lua_buffer_meta);
    luaL_openlib(L, NULL, buffer_meta, 0);
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
    lua_pushliteral(L, "__metatable");
    lua_pushvalue(L, -3);
    lua_rawset(L, -3);

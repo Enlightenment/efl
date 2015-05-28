@@ -1783,6 +1783,7 @@ evas_object_text_render(Evas_Object *eo_obj,
              Evas_Filter_Program *pgm;
              pgm = evas_filter_program_new("Evas_Text", EINA_TRUE);
              evas_filter_program_source_set_all(pgm, fcow->sources);
+             evas_filter_program_state_set(pgm, eo_obj, obj);
              if (!evas_filter_program_parse(pgm, fcow->code))
                {
                   ERR("Filter program parsing failed");
@@ -1795,7 +1796,6 @@ evas_object_text_render(Evas_Object *eo_obj,
                }
              fcow->chain = pgm;
              fcow->invalid = EINA_FALSE;
-             evas_filter_program_state_set(fcow->chain, eo_obj, obj);
           }
         else if (previous && !fcow->changed)
           {
