@@ -18,6 +18,8 @@
 #ifndef EINA_QUAD_H_
 #define EINA_QUAD_H_
 
+#include <eina_rectangle.h>
+
 /**
  * @file
  * @ender_group{Eina_Quad}
