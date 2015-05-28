@@ -80,7 +80,7 @@ static Ecore_IMF_Context_Class wayland_imf_class =
    NULL,                                      /* input_panel_event_callback_del */
    NULL,                                      /* input_panel_language_locale_get */
    NULL,                                      /* candidate_window_geometry_get */
-   NULL,                                      /* input_hint_set */
+   wayland_im_context_input_hint_set,         /* input_hint_set */
    NULL                                       /* bidi_direction_set */
 };
 
