@@ -5656,6 +5656,11 @@ _internal_elm_genlist_clear(Evas_Object *obj)
    elm_layout_sizing_eval(sd->obj);
    eo_do(obj, elm_interface_scrollable_content_region_show(0, 0, 0, 0));
 
+   ELM_SAFE_FREE(sd->multi_timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->update_job, ecore_job_del);
+   ELM_SAFE_FREE(sd->queue_idle_enterer, ecore_idle_enterer_del);
+   ELM_SAFE_FREE(sd->must_recalc_idler, ecore_idler_del);
+   ELM_SAFE_FREE(sd->tree_effect_animator, ecore_animator_del);
    ELM_SAFE_FREE(sd->event_block_rect, evas_object_del);
    ELM_SAFE_FREE(sd->scr_hold_timer, ecore_timer_del);
    ELM_SAFE_FREE(sd->queue, eina_list_free);
