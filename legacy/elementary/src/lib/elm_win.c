@@ -286,7 +286,7 @@ static int _elm_win_count = 0;
 
 static Eina_Bool _elm_win_auto_throttled = EINA_FALSE;
 
-static Ecore_Job *_elm_win_state_eval_job = NULL;
+static Ecore_Timer *_elm_win_state_eval_timer = NULL;
 
 static void
 _elm_win_on_resize_obj_changed_size_hints(void *data,
@@ -395,7 +395,7 @@ _elm_win_apply_alpha(Eo *obj, Elm_Win_Data *sd)
      }
 }
 
-static void
+static Eina_Bool
 _elm_win_state_eval(void *data EINA_UNUSED)
 {
    Eina_List *l;
@@ -405,11 +405,11 @@ _elm_win_state_eval(void *data EINA_UNUSED)
    int _elm_win_count_withdrawn = 0;
    Eina_Bool throttle = EINA_FALSE;
 
-   _elm_win_state_eval_job = NULL;
+   _elm_win_state_eval_timer = NULL;
 
-   if (_elm_config->auto_norender_withdrawn)
+   EINA_LIST_FOREACH(_elm_win_list, l, obj)
      {
-        EINA_LIST_FOREACH(_elm_win_list, l, obj)
+        if (_elm_config->auto_norender_withdrawn)
           {
              if ((elm_win_withdrawn_get(obj)) ||
                  ((elm_win_iconified_get(obj) &&
@@ -442,6 +442,14 @@ _elm_win_state_eval(void *data EINA_UNUSED)
                        elm_win_norender_pop(obj);
                        evas_object_data_del(obj, "__win_auto_norender");
                     }
+               }
+          }
+        else
+          {
+             if (evas_object_data_get(obj, "__win_auto_norender"))
+               {
+                  elm_win_norender_pop(obj);
+                  evas_object_data_del(obj, "__win_auto_norender");
                }
           }
      }
@@ -492,13 +500,14 @@ _elm_win_state_eval(void *data EINA_UNUSED)
           }
      }
    _win_noblank_eval();
+   return EINA_FALSE;
 }
 
 static void
 _elm_win_state_eval_queue(void)
 {
-   ecore_job_del(_elm_win_state_eval_job);
-   _elm_win_state_eval_job = ecore_job_add(_elm_win_state_eval, NULL);
+   if (_elm_win_state_eval_timer) ecore_timer_del(_elm_win_state_eval_timer);
+   _elm_win_state_eval_timer = ecore_timer_add(0.5, _elm_win_state_eval, NULL);
 }
 
 // example shot spec (wait 0.1 sec then save as my-window.png):
@@ -2262,7 +2271,7 @@ _elm_win_shutdown(void)
              _elm_win_list = eina_list_remove_list(_elm_win_list, _elm_win_list);
           }
      }
-   ELM_SAFE_FREE(_elm_win_state_eval_job, ecore_job_del);
+   ELM_SAFE_FREE(_elm_win_state_eval_timer, ecore_timer_del);
 }
 
 void
