@@ -907,6 +907,18 @@ wayland_im_context_input_hint_set(Ecore_IMF_Context *ctx,
      imcontext->content_hint &= ~WL_TEXT_INPUT_CONTENT_HINT_SENSITIVE_DATA;
 }
 
+EAPI void
+wayland_im_context_input_panel_language_set(Ecore_IMF_Context *ctx,
+                                            Ecore_IMF_Input_Panel_Lang lang)
+{
+   WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
+
+   if (lang == ECORE_IMF_INPUT_PANEL_LANG_ALPHABET)
+     imcontext->content_hint |= WL_TEXT_INPUT_CONTENT_HINT_LATIN;
+   else
+     imcontext->content_hint &= ~WL_TEXT_INPUT_CONTENT_HINT_LATIN;
+}
+
 WaylandIMContext *wayland_im_context_new (struct wl_text_input_manager *text_input_manager)
 {
    WaylandIMContext *context = calloc(1, sizeof(WaylandIMContext));
