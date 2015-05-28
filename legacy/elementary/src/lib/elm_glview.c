@@ -169,6 +169,8 @@ _set_render_policy_callback(Evas_Object *obj)
    switch (sd->render_policy)
      {
       case ELM_GLVIEW_RENDER_POLICY_ON_DEMAND:
+         if (sd->render_idle_enterer)
+              evas_object_image_pixels_dirty_set(wd->resize_obj, EINA_TRUE);
          // Delete idle_enterer if it for some reason is around
          ELM_SAFE_FREE(sd->render_idle_enterer, ecore_idle_enterer_del);
 
@@ -180,6 +182,8 @@ _set_render_policy_callback(Evas_Object *obj)
         break;
 
       case ELM_GLVIEW_RENDER_POLICY_ALWAYS:
+        if (evas_object_image_pixels_dirty_get(wd->resize_obj))
+          sd->render_idle_enterer = ecore_idle_enterer_before_add((Ecore_Task_Cb)_render_cb, obj);
         // Unset the pixel getter callback if set already
         evas_object_image_pixels_get_callback_set
           (wd->resize_obj, NULL, NULL);
