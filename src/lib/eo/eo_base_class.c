@@ -34,15 +34,12 @@ typedef struct
    EINA_INLIST;
    Eina_Stringshare *key;
    void *data;
-   eo_key_data_free_func free_func;
 } Eo_Generic_Data_Node;
 
 static void
 _eo_generic_data_node_free(Eo_Generic_Data_Node *node)
 {
    eina_stringshare_del(node->key);
-   if (node->free_func)
-      node->free_func(node->data);
    free(node);
 }
 
@@ -63,7 +60,7 @@ _eo_generic_data_del_all(Eo_Base_Data *pd)
 
 EOLIAN static void
 _eo_base_key_data_set(Eo *obj, Eo_Base_Data *pd,
-          const char *key, const void *data, eo_key_data_free_func free_func)
+          const char *key, const void *data)
 {
    Eo_Generic_Data_Node *node;
 
@@ -75,7 +72,6 @@ _eo_base_key_data_set(Eo *obj, Eo_Base_Data *pd,
    if (!node) return;
    node->key = eina_stringshare_add(key);
    node->data = (void *) data;
-   node->free_func = free_func;
    pd->generic_data = eina_inlist_prepend(pd->generic_data,
          EINA_INLIST_GET(node));
 }

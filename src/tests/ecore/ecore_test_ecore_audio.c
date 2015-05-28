@@ -116,7 +116,7 @@ START_TEST(ecore_test_ecore_audio_cleanup)
 
    in = eo_add(ECORE_AUDIO_IN_TONE_CLASS, NULL);
    fail_if(!in);
-   eo_do(in, eo_key_data_set(ECORE_AUDIO_ATTR_TONE_FREQ, &freq, NULL));
+   eo_do(in, eo_key_data_set(ECORE_AUDIO_ATTR_TONE_FREQ, &freq));
    eo_do(in, ecore_audio_obj_in_length_set(2));
 
    out = eo_add(ECORE_AUDIO_OUT_SNDFILE_CLASS, NULL);
@@ -170,12 +170,12 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
    fail_if(freq != 1000);
 
    freq = 2000;
-   eo_do(in, eo_key_data_set(ECORE_AUDIO_ATTR_TONE_FREQ, &freq, NULL));
+   eo_do(in, eo_key_data_set(ECORE_AUDIO_ATTR_TONE_FREQ, &freq));
 
    eo_do(in, freq = (intptr_t) eo_key_data_get(ECORE_AUDIO_ATTR_TONE_FREQ));
    fail_if(freq != 2000);
 
-   eo_do(in, eo_key_data_set("foo", "bar", NULL));
+   eo_do(in, eo_key_data_set("foo", "bar"));
    eo_do(in, tmp = eo_key_data_get("foo"));
    ck_assert_str_eq(tmp, "bar");
 

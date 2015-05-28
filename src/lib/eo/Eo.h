@@ -891,6 +891,7 @@ EAPI Eina_Bool eo_destructed_is(const Eo *obj);
 /**
  * @typedef eo_key_data_free_func
  * Data free func prototype.
+ * XXX: DO NOT USE, only here for legacy.
  */
 typedef void (*eo_key_data_free_func)(void *);
 

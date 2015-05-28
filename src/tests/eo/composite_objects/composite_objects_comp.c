@@ -34,7 +34,7 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
    fail_if(eo_do_ret(obj, tmp, eo_composite_part_is()));
    fail_if(!eo_do_ret(simple, tmp, eo_composite_part_is()));
 
-   eo_do(obj, eo_key_data_set("simple-obj", simple, NULL));
+   eo_do(obj, eo_key_data_set("simple-obj", simple));
 
    return obj;
 }

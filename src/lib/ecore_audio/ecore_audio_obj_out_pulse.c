@@ -136,7 +136,7 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
 
   eo_do(in, eo_event_callback_add(ECORE_AUDIO_IN_EVENT_IN_SAMPLERATE_CHANGED, _update_samplerate_cb, eo_obj));
 
-  eo_do(in, eo_key_data_set("pulse_data", stream, NULL));
+  eo_do(in, eo_key_data_set("pulse_data", stream));
 
 
   pa_stream_set_write_callback(stream, _write_cb, in);

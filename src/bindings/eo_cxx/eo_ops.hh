@@ -68,7 +68,7 @@ inline void
 base_data_set(const Eo *obj, const char *key, const void *data,
               eo_key_data_free_func free_func = NULL)
 {
-   eo_do(obj, eo_key_data_set(key, data, free_func));
+   eo_do(obj, eo_key_data_set(key, data));
 }
 
 inline void*

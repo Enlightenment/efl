@@ -303,7 +303,7 @@ _ecore_audio_out_core_audio_ecore_audio_out_input_attach(Eo *obj, Ecore_Audio_Ou
      }
 
    /* Keep track of data for deallocation */
-   eo_do(input, eo_key_data_set("coreaudio_data", helper, NULL));
+   eo_do(input, eo_key_data_set("coreaudio_data", helper));
 
    /* Start playing */
    helper->is_playing = EINA_TRUE;

@@ -69,11 +69,11 @@ This function registers the object handle pointed by wref to obj so when obj is 
          }
       }
       key_data_set {
-         /*@ Set generic data to object. */
+         /*@ Set generic data to object.
+          The user is in change to free the data. */
          params {
             @in key: const(char)*; /*@ the key associated with the data */
             @in data: const(void)*; /*@ the data to set */
-            @in free_func: eo_key_data_free_func; /*@ the func to free data with (NULL means */
          }
       }
       key_data_get {
