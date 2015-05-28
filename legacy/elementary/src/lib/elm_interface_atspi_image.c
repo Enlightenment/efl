@@ -8,10 +8,12 @@
 #include "elm_widget.h"
 #include "elm_priv.h"
 
-static void
-_free_desc(void *data)
+static Eina_Bool
+_free_desc_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    eina_stringshare_del(data);
+
+   return EINA_TRUE;
 }
 
 EOLIAN static const char*
@@ -26,8 +28,20 @@ _elm_interface_atspi_image_description_get(Eo *obj, void *sd EINA_UNUSED)
 EOLIAN static void
 _elm_interface_atspi_image_description_set(Eo *obj, void *sd EINA_UNUSED, const char *description)
 {
+   const char *key = "atspi_image_description";
    const char *descr = eina_stringshare_add(description);
-   eo_do(obj, eo_key_data_set("atspi_image_description", descr, _free_desc));
+   char *old_descr;
+   if (eo_do_ret(obj, old_descr, eo_key_data_get(key)))
+     {
+        eina_stringshare_del(old_descr);
+        eo_do(obj, eo_event_callback_del(EO_BASE_EVENT_DEL, _free_desc_cb, old_descr));
+     }
+
+   if (descr)
+     {
+        eo_do(obj, eo_key_data_set(key, descr),
+              eo_event_callback_add(EO_BASE_EVENT_DEL, _free_desc_cb, descr));
+     }
 }
 
 EOLIAN static const char*

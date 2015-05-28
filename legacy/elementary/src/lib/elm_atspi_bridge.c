@@ -3136,7 +3136,7 @@ static void _object_register(Eo *obj, char *path)
         eldbus_service_interface_register(_a11y_bus, path, &accessible_iface_desc);
 
         event_infc = eldbus_service_interface_register(_a11y_bus, path, &event_iface_desc);
-        eo_do(obj, eo_key_data_set("event_interface", event_infc, NULL));
+        eo_do(obj, eo_key_data_set("event_interface", event_infc));
         eo_do(obj, eo_event_callback_array_add(_events_cb(), event_infc));
 
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_COMPONENT_MIXIN))
@@ -3144,7 +3144,7 @@ static void _object_register(Eo *obj, char *path)
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_WINDOW_INTERFACE))
           {
              infc = eldbus_service_interface_register(_a11y_bus, path, &window_iface_desc);
-             eo_do(obj, eo_key_data_set("window_interface", infc, NULL));
+             eo_do(obj, eo_key_data_set("window_interface", infc));
              eo_do(obj, eo_event_callback_array_add(_window_cb(), infc));
           }
         if (eo_isa(obj, ELM_INTERFACE_ATSPI_ACTION_MIXIN))
@@ -3176,7 +3176,7 @@ static void _object_unregister(void *obj)
    if (_a11y_bus && event_infc)
      {
         eldbus_service_object_unregister(event_infc);
-        eo_do(obj, eo_key_data_set("event_interface", NULL, NULL));
+        eo_do(obj, eo_key_data_set("event_interface", NULL));
      }
 
    eo_do(obj, eo_event_callback_del(EO_EV_DEL, _on_cache_item_del, NULL));

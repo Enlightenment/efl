@@ -2129,7 +2129,7 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
         drops = eina_list_append(drops, dropable);
         if (!drops) goto error;
         dropable->obj = obj;
-        eo_do(obj, eo_key_data_set("__elm_dropable", dropable, NULL));
+        eo_do(obj, eo_key_data_set("__elm_dropable", dropable));
      }
    dropable->cbs_list = eina_inlist_append(dropable->cbs_list, EINA_INLIST_GET(cbs));
 
@@ -2857,7 +2857,7 @@ _wl_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format, Elm_Drag_State 
         drops = eina_list_append(drops, dropable);
         if (!drops) goto error;
         dropable->obj = obj;
-        eo_do(obj, eo_key_data_set("__elm_dropable", dropable, NULL));
+        eo_do(obj, eo_key_data_set("__elm_dropable", dropable));
      }
    dropable->cbs_list = eina_inlist_append(dropable->cbs_list, EINA_INLIST_GET(cbs));
 

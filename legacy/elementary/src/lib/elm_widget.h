@@ -588,7 +588,7 @@ struct _Elm_Widget_Item_Signal_Data
 
 #define WIDGET_ITEM_DATA_SET(eo_obj, data) \
 { \
-    eo_do(eo_obj, eo_key_data_set("__elm_widget_item_data", data, NULL)); \
+    eo_do(eo_obj, eo_key_data_set("__elm_widget_item_data", data)); \
 }
 
 struct _Elm_Widget_Item_Data
