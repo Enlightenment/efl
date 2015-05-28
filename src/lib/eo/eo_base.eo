@@ -13,7 +13,7 @@ Parents keep references to their children so in order to delete objects that hav
             /*@ Get the parent of an object */
          }
          values {
-            parent: Eo*; /*@ the new parent */
+            parent: Eo.Base*; /*@ the new parent */
          }
       }
       @property event_global_freeze_count @class {
@@ -45,7 +45,7 @@ Return event freeze count. */
       constructor {
          /*@ Call the object's constructor.
 Should not be used with #eo_do. Only use it with #eo_do_super. */
-         return: Eo *; /*@ The new object created, can be NULL if aborting */
+         return: Eo.Base *; /*@ The new object created, can be NULL if aborting */
       }
       destructor {
          /*@ Call the object's destructor.
@@ -53,19 +53,19 @@ Should not be used with #eo_do. Only use it with #eo_do_super. */
       }
       finalize {
          /*@ Called at the end of #eo_add. Should not be called, just overridden. */
-         return: Eo *; /*@ The new object created, can be NULL if aborting */
+         return: Eo.Base *; /*@ The new object created, can be NULL if aborting */
       }
       wref_add {
          /*@ Add a new weak reference to obj.
 This function registers the object handle pointed by wref to obj so when obj is deleted it'll be updated to NULL. This functions should be used when you want to keep track of an object in a safe way, but you don't want to prevent it from being freed. */
          params {
-            @out wref: Eo*;
+            @out wref: Eo.Base *;
          }
       }
       wref_del {
          /*@ Delete the weak reference passed. */
          params {
-            @in wref: Eo**;
+            @in wref: Eo.Base **;
          }
       }
       key_data_set {
@@ -151,14 +151,14 @@ callbacks of the same priority are called in reverse order of creation. */
          /*@ Add an event callback forwarder for an event and an object. */
          params {
             @in desc: const(Eo_Event_Description)*; /*@ The description of the event to listen to */
-            @in new_obj: Eo*; /*@ The object to emit events from */
+            @in new_obj: Eo.Base *; /*@ The object to emit events from */
          }
       }
       event_callback_forwarder_del {
          /*@ Remove an event callback forwarder for an event and an object. */
          params {
             @in desc: const(Eo_Event_Description)*; /*@ The description of the event to listen to */
-            @in new_obj: Eo*; /*@ The object to emit events from */
+            @in new_obj: Eo.Base *; /*@ The object to emit events from */
          }
       }
       dbg_info_get {
@@ -169,7 +169,7 @@ callbacks of the same priority are called in reverse order of creation. */
       }
       children_iterator_new {
          /*@ Get an iterator on all childrens */
-         return: free(own(iterator<Eo *> *), eina_iterator_free) @warn_unused;
+         return: free(own(iterator<Eo.Base *> *), eina_iterator_free) @warn_unused;
       }
       composite_attach @beta {
            /*@
@@ -184,7 +184,7 @@ callbacks of the same priority are called in reverse order of creation. */
             * @ingroup Eo_Composite_Objects
             */
            params {
-                @in comp_obj: Eo *; /*@ the object that will be used to composite the parent. */
+                @in comp_obj: Eo.Base *; /*@ the object that will be used to composite the parent. */
            }
            return: bool; /*@ EINA_TRUE if successfull. EINA_FALSE otherwise. */
       }
@@ -199,7 +199,7 @@ callbacks of the same priority are called in reverse order of creation. */
             * @ingroup Eo_Composite_Objects
             */
            params {
-                @in comp_obj: Eo *; /*@ the object that will be removed from the parent. */
+                @in comp_obj: Eo.Base *; /*@ the object that will be removed from the parent. */
            }
            return: bool; /*@ EINA_TRUE if successfull. EINA_FALSE otherwise. */
       }
