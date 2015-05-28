@@ -332,18 +332,22 @@ local Property = Method:clone {
     generate_prop = function(self, props)
         local proto = self:gen_proto()
         local prop = props[proto.name]
-        if prop then
-            if self.isget then
-                prop[3] = "true"
-            else
-                prop[4] = "true"
-            end
-            return false
-        else
-            props[proto.name] = { proto.nkeys, math.max(proto.nvals, 1),
-                tostring(self.isget), tostring(not self.isget) }
-            return true
+        local hasprop = true
+        if not prop then
+            prop = { 0, 0, 0, 0, "false", "false" }
+            props[proto.name] = prop
+            hasprop = false
         end
+        if self.isget then
+            prop[1] = proto.nkeys
+            prop[3] = math.max(proto.nvals, 1)
+            prop[5] = "true"
+        else
+            prop[2] = proto.nkeys
+            prop[4] = math.max(proto.nvals, 1)
+            prop[6] = "true"
+        end
+        return not hasprop
     end
 }
 
