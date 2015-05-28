@@ -1158,12 +1158,47 @@ evas_object_image_size_get(const Evas_Image *obj, int *w, int *h)
 }
 
 EOLIAN static void
-_evas_image_efl_gfx_view_size_get(Eo *eo_obj EINA_UNUSED,
+_evas_image_efl_gfx_view_size_get(Eo *eo_obj,
                                   Evas_Image_Data *o,
                                   int *w, int *h)
 {
-   if (w) *w = o->cur->image.w;
-   if (h) *h = o->cur->image.h;
+   int uvw, uvh;
+   Evas_Object_Protected_Data *source = NULL;
+   Evas_Object_Protected_Data *obj;
+
+   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   if (o->cur->source)
+     source = eo_data_scope_get(o->cur->source, EVAS_OBJECT_CLASS);
+
+   if (o->cur->scene)
+     {
+        uvw = obj->data_3d->w;
+        uvh = obj->data_3d->h;
+     }
+   else if (!o->cur->source)
+     {
+        uvw = o->cur->image.w;
+        uvh = o->cur->image.h;
+     }
+   else if (source->proxy->surface && !source->proxy->redraw)
+     {
+        uvw = source->proxy->w;
+        uvh = source->proxy->h;
+     }
+   else if (source->type == o_type &&
+            ((Evas_Image_Data *)eo_data_scope_get(o->cur->source, MY_CLASS))->engine_data)
+     {
+        uvw = source->cur->geometry.w;
+        uvh = source->cur->geometry.h;
+     }
+   else
+     {
+        uvw = source->proxy->w;
+        uvh = source->proxy->h;
+     }
+
+   if (w) *w = uvw;
+   if (h) *h = uvh;
 }
 
 EOLIAN static int
