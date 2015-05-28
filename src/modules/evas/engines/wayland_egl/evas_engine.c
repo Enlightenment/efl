@@ -265,7 +265,7 @@ evgl_eng_evas_surface_get(void *data)
 static void *
 evgl_eng_native_window_create(void *data)
 {
-   Evgl_wl_Surface* surface = NULL;
+   Evgl_wl_Surface* surface;
    Render_Engine *re;
    Outbuf *ob;
 
@@ -274,7 +274,7 @@ evgl_eng_native_window_create(void *data)
 
    if (!(surface = calloc(1, sizeof(Evgl_wl_Surface))))
      return NULL;
-   surface->wl_surf =  wl_compositor_create_surface(ob->compositor);
+   surface->wl_surf = wl_compositor_create_surface(ob->compositor);
    if (!surface->wl_surf)
      {
         ERR("Could not create wl_surface: %m");
@@ -289,10 +289,10 @@ evgl_eng_native_window_create(void *data)
    return (void *)surface;
 }
 
-static int 
+static int
 evgl_eng_native_window_destroy(void *data, void *win)
 {
-   Evgl_wl_Surface* surface = NULL;
+   Evgl_wl_Surface* surface;
 
    if (!win) return 0;
    surface = (Evgl_wl_Surface*)win;
@@ -311,12 +311,15 @@ evgl_eng_window_surface_create(void *data, void *win)
    Render_Engine *re;
    Outbuf *ob;
    EGLSurface surface = EGL_NO_SURFACE;
+   Evgl_wl_Surface* evgl_surface;
 
    if (!(re = (Render_Engine *)data)) return NULL;
    if (!(ob = eng_get_ob(re))) return NULL;
+   if (!(evgl_surface = (Evgl_wl_Surface *)win)) return NULL;
+   if (!(evgl_surface->egl_win)) return NULL;
 
-   surface = eglCreateWindowSurface(ob->egl_disp, ob->egl_config, 
-                                    (EGLNativeWindowType)win, NULL);
+   surface = eglCreateWindowSurface(ob->egl_disp, ob->egl_config,
+                                    (EGLNativeWindowType)evgl_surface->egl_win, NULL);
    if (!surface)
      {
         ERR("Could not create egl window surface: %#x", eglGetError());
@@ -326,7 +329,7 @@ evgl_eng_window_surface_create(void *data, void *win)
    return (void *)surface;
 }
 
-static int 
+static int
 evgl_eng_window_surface_destroy(void *data, void *surface)
 {
    Render_Engine *re;
