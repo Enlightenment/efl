@@ -57,7 +57,7 @@ static Ecore_IMF_Context_Class wayland_imf_class =
    wayland_im_context_reset,                  /* reset */
    wayland_im_context_cursor_position_set,    /* cursor_position_set */
    wayland_im_context_use_preedit_set,        /* use_preedit_set */
-   NULL,                                      /* input_mode_set */
+   wayland_im_context_input_mode_set,         /* input_mode_set */
    wayland_im_context_filter_event,           /* filter_event */
    wayland_im_context_preedit_string_with_attributes_get, /* preedit_string_with_attribute_get */
    NULL,                                      /* prediction_allow_set */
@@ -74,12 +74,14 @@ static Ecore_IMF_Context_Class wayland_imf_class =
    NULL,                                      /* input_panel_return_key_type_set */
    NULL,                                      /* input_panel_return_key_disabled_set */
    NULL,                                      /* input_panel_caps_lock_mode_set */
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL
+   NULL,                                      /* input_panel_geometry_get */
+   NULL,                                      /* input_panel_state_get */
+   NULL,                                      /* input_panel_event_callback_add */
+   NULL,                                      /* input_panel_event_callback_del */
+   NULL,                                      /* input_panel_language_locale_get */
+   NULL,                                      /* candidate_window_geometry_get */
+   NULL,                                      /* input_hint_set */
+   NULL                                       /* bidi_direction_set */
 };
 
 static struct wl_text_input_manager *text_input_manager = NULL;
