@@ -878,6 +878,18 @@ wayland_im_context_input_panel_layout_set(Ecore_IMF_Context *ctx, Ecore_IMF_Inpu
    }
 }
 
+EAPI void
+wayland_im_context_input_mode_set(Ecore_IMF_Context *ctx,
+                                            Ecore_IMF_Input_Mode input_mode)
+{
+   WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
+
+   if (input_mode & ECORE_IMF_INPUT_MODE_INVISIBLE)
+     imcontext->content_hint |= WL_TEXT_INPUT_CONTENT_HINT_PASSWORD;
+   else
+     imcontext->content_hint &= ~WL_TEXT_INPUT_CONTENT_HINT_PASSWORD;
+}
+
 WaylandIMContext *wayland_im_context_new (struct wl_text_input_manager *text_input_manager)
 {
    WaylandIMContext *context = calloc(1, sizeof(WaylandIMContext));

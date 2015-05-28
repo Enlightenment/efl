@@ -66,6 +66,9 @@ EAPI void wayland_im_context_autocapital_type_set(Ecore_IMF_Context *ctx,
 EAPI void wayland_im_context_input_panel_layout_set(Ecore_IMF_Context *ctx,
                                                     Ecore_IMF_Input_Panel_Layout layout);
 
+EAPI void wayland_im_context_input_mode_set(Ecore_IMF_Context *ctx,
+                                            Ecore_IMF_Input_Mode input_mode);
+
 WaylandIMContext *wayland_im_context_new        (struct wl_text_input_manager *text_input_manager);
 
 extern int _ecore_imf_wayland_log_dom;
