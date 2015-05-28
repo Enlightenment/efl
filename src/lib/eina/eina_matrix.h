@@ -398,5 +398,140 @@ EAPI Eina_Bool eina_matrix3_quad_square_map(Eina_Matrix3 *m,
 
 /**
  * @}
+ * @defgroup Eina_Matrix4 Matrices in floating point
+ * @ingroup Eina_Basic
+ * @brief Matrix definition and operations
+ * @{
+ */
+
+typedef struct _Eina_Matrix4 Eina_Matrix4;
+struct _Eina_Matrix4
+{
+   double xx; /**< xx in x' = (x * xx) + (y * xy) + (z * xz) + xw */
+   double xy; /**< xy in x' = (x * xx) + (y * xy) + (z * xz) + xw */
+   double xz; /**< xz in x' = (x * xx) + (y * xy) + (z * xz) + xw */
+   double xw; /**< xw in x' = (x * xx) + (y * xy) + (z * xz) + xw */
+
+   double yx; /**< yx in y' = (x * yx) + (y * yy) + (z * yz) + yw */
+   double yy; /**< yy in y' = (x * yx) + (y * yy) + (z * yz) + yw */
+   double yz; /**< yz in y' = (x * yx) + (y * yy) + (z * yz) + yw */
+   double yw; /**< yw in y' = (x * yx) + (y * yy) + (z * yz) + yw */
+
+   double zx; /**< zx in z' = (x * zx) + (y * zy) + (z * zz) + zw */
+   double zy; /**< zy in z' = (x * zx) + (y * zy) + (z * zz) + zw */
+   double zz; /**< zz in z' = (x * zx) + (y * zy) + (z * zz) + zw */
+   double zw; /**< zw in z' = (x * zx) + (y * zy) + (z * zz) + zw */
+
+   double wx; /**< wx in w' = (x * wx) + (y * wy) + (z * wz) + ww */
+   double wy; /**< wy in w' = (x * wx) + (y * wy) + (z * wz) + ww */
+   double wz; /**< wz in w' = (x * wx) + (y * wy) + (z * wz) + ww */
+   double ww; /**< ww in w' = (x * wx) + (y * wy) + (z * wz) + ww */
+};
+
+/**
+ * @brief Return the type of the given floating point matrix.
+ *
+ * @param m The floating point matrix.
+ * @return The type of the matrix.
+ *
+ * This function returns the type of the matrix @p m. No check is done
+ * on @p m.
+ *
+ * @since 1.15
+ */
+EAPI Eina_Matrix_Type eina_matrix4_type_get(const Eina_Matrix4 *m);
+
+/**
+ * @brief Set the values of the coefficients of the given floating
+ * point matrix.
+ *
+ * @param m The floating point matrix.
+ * @param xx The first coefficient value.
+ * @param xy The second coefficient value.
+ * @param xz The third coefficient value.
+ * @param xw The fourth coefficient value.
+ * @param yx The fifth coefficient value.
+ * @param yy The sixth coefficient value.
+ * @param yz The seventh coefficient value.
+ * @param yw The heighth coefficient value.
+ * @param zx The nineth coefficient value.
+ * @param zy The tenth coefficient value.
+ * @param zz The eleventh coefficient value.
+ * @param zw The twelfth coefficient value.
+ * @param wx The thirteenth coefficient value.
+ * @param wy The fourteenth coefficient value.
+ * @param wz The fifteenth coefficient value.
+ * @param ww The sizteenth coefficient value.
+ *
+ * This function sets the values of the coefficients of the matrix
+ * @p m. No check is done on @p m.
+ *
+ * @see eina_matrix4_values_get()
+ *
+ * @since 1.15
+ */
+EAPI void eina_matrix4_values_set(Eina_Matrix4 *m,
+                                  double xx, double xy, double xz, double xw,
+                                  double yx, double yy, double yz, double yw,
+                                  double zx, double zy, double zz, double zw,
+                                  double wx, double wy, double wz, double ww);
+
+/**
+ * @brief Get the values of the coefficients of the given floating
+ * point matrix.
+ *
+ * @param m The floating point matrix.
+ * @param xx The first coefficient value.
+ * @param xy The second coefficient value.
+ * @param xz The third coefficient value.
+ * @param xw The fourth coefficient value.
+ * @param yx The fifth coefficient value.
+ * @param yy The sixth coefficient value.
+ * @param yz The seventh coefficient value.
+ * @param yw The heighth coefficient value.
+ * @param zx The nineth coefficient value.
+ * @param zy The tenth coefficient value.
+ * @param zz The eleventh coefficient value.
+ * @param zw The twelfth coefficient value.
+ * @param wx The thirteenth coefficient value.
+ * @param wy The fourteenth coefficient value.
+ * @param wz The fifteenth coefficient value.
+ * @param ww The sizteenth coefficient value.
+ *
+ * This function gets the values of the coefficients of the matrix
+ * @p m. No check is done on @p m.
+ *
+ * @see eina_matrix4_values_set()
+ *
+ * @since 1.15
+ */
+EAPI void eina_matrix4_values_get(const Eina_Matrix4 *m,
+                                  double *xx, double *xy, double *xz, double *xw,
+                                  double *yx, double *yy, double *yz, double *yw,
+                                  double *zx, double *zy, double *zz, double *zw,
+                                  double *wx, double *wy, double *wz, double *ww);
+
+/**
+ * @brief Convert an Eina_Matrix4 into an Eina_Matrix3.
+ *
+ * @param m3 The destination Eina_Matrix3.
+ * @param m4 The source Eina_Matrix4.
+ *
+ * @since 1.15
+ */
+EAPI void eina_matrix4_matrix3_to(Eina_Matrix3 *m3, const Eina_Matrix4 *m4);
+
+/**
+ * @brief Convert an Eina_Matrix3 into an Eina_Matrix4.
+ *
+ * @param m3 The destination Eina_Matrix3.
+ * @param m4 The source Eina_Matrix4.
+ *
+ * @since 1.15
+ */
+EAPI void eina_matrix3_matrix4_to(Eina_Matrix4 *m4, const Eina_Matrix3 *m3);
+
+/**
+ * @}
  */
 #endif /*EINA_MATRIX3_H_*/

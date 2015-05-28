@@ -32,12 +32,19 @@
 #define MATRIX_XX(m) (m)->xx
 #define MATRIX_XY(m) (m)->xy
 #define MATRIX_XZ(m) (m)->xz
+#define MATRIX_XW(m) (m)->xw
 #define MATRIX_YX(m) (m)->yx
 #define MATRIX_YY(m) (m)->yy
 #define MATRIX_YZ(m) (m)->yz
+#define MATRIX_YW(m) (m)->yw
 #define MATRIX_ZX(m) (m)->zx
 #define MATRIX_ZY(m) (m)->zy
 #define MATRIX_ZZ(m) (m)->zz
+#define MATRIX_ZW(m) (m)->zw
+#define MATRIX_WX(m) (m)->wx
+#define MATRIX_WY(m) (m)->wy
+#define MATRIX_WZ(m) (m)->wz
+#define MATRIX_WW(m) (m)->ww
 #define MATRIX_SIZE 9
 
 #define QUAD_X0(q) q->x0
@@ -109,6 +116,17 @@ eina_matrix3_type_get(const Eina_Matrix3 *m)
 }
 
 EAPI Eina_Matrix_Type
+eina_matrix4_type_get(const Eina_Matrix4 *m)
+{
+   if ((MATRIX_XX(m) == 1) && (MATRIX_XY(m) == 0) && (MATRIX_XZ(m) == 0) && (MATRIX_XW(m) == 0) &&
+       (MATRIX_YX(m) == 0) && (MATRIX_YY(m) == 1) && (MATRIX_YZ(m) == 0) && (MATRIX_YW(m) == 0) &&
+       (MATRIX_ZX(m) == 0) && (MATRIX_ZY(m) == 0) && (MATRIX_ZZ(m) == 1) && (MATRIX_ZW(m) == 0) &&
+       (MATRIX_WX(m) == 0) && (MATRIX_WY(m) == 0) && (MATRIX_WZ(m) == 0) && (MATRIX_WW(m) == 1))
+     return EINA_MATRIX_TYPE_IDENTITY;
+   return EINA_MATRIX_TYPE_AFFINE;
+}
+
+EAPI Eina_Matrix_Type
 eina_matrix3_f16p16_type_get(const Eina_Matrix3_F16p16 *m)
 {
    if ((MATRIX_ZX(m) != 0) || (MATRIX_ZY(m) != 0) || (MATRIX_ZZ(m) != 65536))
@@ -155,6 +173,56 @@ eina_matrix3_values_get(const Eina_Matrix3 *m,
    if (zx) *zx = MATRIX_ZX(m);
    if (zy) *zy = MATRIX_ZY(m);
    if (zz) *zz = MATRIX_ZZ(m);
+}
+
+EAPI void
+eina_matrix4_values_set(Eina_Matrix4 *m,
+                        double xx, double xy, double xz, double xw,
+                        double yx, double yy, double yz, double yw,
+                        double zx, double zy, double zz, double zw,
+                        double wx, double wy, double wz, double ww)
+{
+   MATRIX_XX(m) = xx;
+   MATRIX_XY(m) = xy;
+   MATRIX_XZ(m) = xz;
+   MATRIX_XW(m) = xw;
+   MATRIX_YX(m) = yx;
+   MATRIX_YY(m) = yy;
+   MATRIX_YZ(m) = yz;
+   MATRIX_YW(m) = yw;
+   MATRIX_ZX(m) = zx;
+   MATRIX_ZY(m) = zy;
+   MATRIX_ZZ(m) = zz;
+   MATRIX_ZW(m) = zw;
+   MATRIX_WX(m) = wx;
+   MATRIX_WY(m) = wy;
+   MATRIX_WZ(m) = wz;
+   MATRIX_WW(m) = ww;
+}
+
+EAPI void
+eina_matrix4_values_get(const Eina_Matrix4 *m,
+                        double *xx, double *xy, double *xz, double *xw,
+                        double *yx, double *yy, double *yz, double *yw,
+                        double *zx, double *zy, double *zz, double *zw,
+                        double *wx, double *wy, double *wz, double *ww)
+{
+   if (xx) *xx = MATRIX_XX(m);
+   if (xy) *xy = MATRIX_XY(m);
+   if (xz) *xz = MATRIX_XZ(m);
+   if (xw) *xw = MATRIX_XW(m);
+   if (yx) *yx = MATRIX_YX(m);
+   if (yy) *yy = MATRIX_YY(m);
+   if (yz) *yz = MATRIX_YZ(m);
+   if (yw) *yw = MATRIX_YW(m);
+   if (zx) *zx = MATRIX_ZX(m);
+   if (zy) *zy = MATRIX_ZY(m);
+   if (zz) *zz = MATRIX_ZZ(m);
+   if (zw) *zw = MATRIX_ZW(m);
+   if (wx) *wx = MATRIX_WX(m);
+   if (wy) *wy = MATRIX_WY(m);
+   if (wz) *wz = MATRIX_WZ(m);
+   if (ww) *ww = MATRIX_WW(m);
 }
 
 EAPI void
@@ -589,4 +657,39 @@ eina_matrix3_quad_quad_map(Eina_Matrix3 *m,
    eina_matrix3_compose(&tmp, m, m);
 
    return EINA_TRUE;
+}
+
+EAPI void
+eina_matrix4_matrix3_to(Eina_Matrix3 *m3, const Eina_Matrix4 *m4)
+{
+   MATRIX_XX(m3) = MATRIX_XX(m4);
+   MATRIX_XY(m3) = MATRIX_XY(m4);
+   MATRIX_XZ(m3) = MATRIX_XZ(m4);
+   MATRIX_YX(m3) = MATRIX_YX(m4);
+   MATRIX_YY(m3) = MATRIX_YY(m4);
+   MATRIX_YZ(m3) = MATRIX_YZ(m4);
+   MATRIX_ZX(m3) = MATRIX_ZX(m4);
+   MATRIX_ZY(m3) = MATRIX_ZY(m4);
+   MATRIX_ZZ(m3) = MATRIX_ZZ(m4);
+}
+
+EAPI void
+eina_matrix3_matrix4_to(Eina_Matrix4 *m4, const Eina_Matrix3 *m3)
+{
+   MATRIX_XX(m4) = MATRIX_XX(m3);
+   MATRIX_XY(m4) = MATRIX_XY(m3);
+   MATRIX_XZ(m4) = MATRIX_XZ(m3);
+   MATRIX_XW(m4) = 0;
+   MATRIX_YX(m4) = MATRIX_YX(m3);
+   MATRIX_YY(m4) = MATRIX_YY(m3);
+   MATRIX_YZ(m4) = MATRIX_YZ(m3);
+   MATRIX_YW(m4) = 0;
+   MATRIX_ZX(m4) = MATRIX_ZX(m3);
+   MATRIX_ZY(m4) = MATRIX_ZY(m3);
+   MATRIX_ZZ(m4) = MATRIX_ZZ(m3);
+   MATRIX_ZW(m4) = 0;
+   MATRIX_WX(m4) = 0;
+   MATRIX_WY(m4) = 0;
+   MATRIX_WZ(m4) = 0;
+   MATRIX_WW(m4) = 1;
 }
