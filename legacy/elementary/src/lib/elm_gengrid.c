@@ -1252,7 +1252,7 @@ _item_place(Elm_Gen_Item *it,
                                                   * mode */
           {
              evas_object_geometry_get(WIDGET(it), NULL, NULL, &ww, NULL);
-             x = ww - x - wsd->item_width - wsd->pan_x - wsd->pan_x;
+             x = ww - x - wsd->item_width - wsd->pan_x - wsd->pan_x + ox + ox;
           }
         iw = wsd->item_width;
         ih = wsd->item_height;
@@ -1590,10 +1590,11 @@ EOLIAN static void
 _elm_gengrid_pan_elm_pan_pos_min_get(Eo *obj, Elm_Gengrid_Pan_Data *psd, Evas_Coord *x, Evas_Coord *y)
 {
    Evas_Coord mx = 0, my = 0;
+   Eina_Bool mirrored = elm_widget_mirrored_get(psd->wsd->obj);
 
    eo_do(obj, elm_obj_pan_pos_max_get(&mx, &my));
    if (x)
-     *x = -mx * psd->wsd->align_x;
+     *x = -mx * (mirrored ? 1 - psd->wsd->align_x : psd->wsd->align_x);
    if (y)
      *y = -my * psd->wsd->align_y;
 }
