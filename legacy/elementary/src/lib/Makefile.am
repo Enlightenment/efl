@@ -48,7 +48,6 @@ elm_widget_bubble.h \
 elm_widget_button.h \
 elm_widget_calendar.h \
 elm_widget_check.h \
-elm_widget_clipper.h \
 elm_widget_clock.h \
 elm_widget_colorselector.h \
 elm_widget_conform.h \
@@ -178,9 +177,6 @@ elm_calendar_common.h \
 elm_check.h \
 elm_check_eo.h \
 elm_check_legacy.h \
-elm_clipper.h \
-elm_clipper_eo.h \
-elm_clipper_legacy.h \
 elm_clock.h \
 elm_clock_eo.h \
 elm_clock_legacy.h \
@@ -426,7 +422,6 @@ elm_bubble.c \
 elm_button.c \
 elm_calendar.c \
 elm_check.c \
-elm_clipper.c \
 elm_clock.c \
 elm_cnp.c \
 elm_colorselector.c \
@@ -548,7 +543,6 @@ elm_bubble.eo \
 elm_button.eo \
 elm_calendar.eo \
 elm_check.eo \
-elm_clipper.eo \
 elm_clock.eo \
 elm_colorselector.eo \
 elm_conformant.eo \
@@ -701,7 +695,6 @@ elementaryeolianfiles_DATA = \
 	     elm_button.eo \
 	     elm_calendar.eo \
 	     elm_check.eo \
-	     elm_clipper.eo \
 	     elm_clock.eo \
 	     elm_colorselector.eo \
 	     elm_conformant.eo \
