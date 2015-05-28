@@ -340,9 +340,20 @@ struct _Evas_Filter_Program_State
       struct { int a, r, g, b; } glow;
       struct { int a, r, g, b; } glow2;
    } text;
-   struct { int a, r, g, b; } color;
+   struct {
+      int a, r, g, b;
+   } color;
+   struct {
+      const char *name;
+      double value;
+   } cur;
+   struct {
+      const char *name;
+      double value;
+   } next;
    int w, h;
    double scale;
+   double pos;
 };
 
 struct _Evas_Filter_Program
@@ -2545,6 +2556,24 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
    {
       SETFIELD("color", JOINC(color));
       SETFIELD("scale", pgm->state.scale);
+      SETFIELD("pos", pgm->state.pos);
+      lua_newtable(L); // "cur"
+      {
+         SETFIELD("value", pgm->state.cur.value);
+         lua_pushstring(L, pgm->state.cur.name);
+         lua_setfield(L, -2, "name");
+         lua_setfield(L, -2, "cur");
+      }
+      lua_newtable(L); // "next"
+      {
+         if (pgm->state.next.name)
+           {
+              SETFIELD("value", pgm->state.next.value);
+              lua_pushstring(L, pgm->state.next.name);
+              lua_setfield(L, -2, "name");
+           }
+         lua_setfield(L, -2, "next");
+      }
       lua_newtable(L); // "text"
       {
          SETFIELD("outline", JOINC(text.outline));
@@ -2774,7 +2803,10 @@ evas_filter_program_new(const char *name, Eina_Bool input_alpha)
 
 EAPI Eina_Bool
 evas_filter_program_state_set(Evas_Filter_Program *pgm, Evas_Object *eo_obj,
-                              Evas_Object_Protected_Data *obj)
+                              Evas_Object_Protected_Data *obj,
+                              const char *cur_state, double cur_val,
+                              const char *next_state, double next_val,
+                              double pos)
 {
    Evas_Filter_Program_State old_state;
 
@@ -2785,6 +2817,11 @@ evas_filter_program_state_set(Evas_Filter_Program *pgm, Evas_Object *eo_obj,
    pgm->state.w = obj->cur->geometry.w;
    pgm->state.h = obj->cur->geometry.h;
    pgm->state.scale = obj->cur->scale;
+   pgm->state.pos = pos;
+   pgm->state.cur.name = cur_state;
+   pgm->state.cur.value = cur_val;
+   pgm->state.next.name = next_state;
+   pgm->state.next.value = next_val;
 
    eo_do(eo_obj,
          efl_gfx_color_get(&pgm->state.color.r,

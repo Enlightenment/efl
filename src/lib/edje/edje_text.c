@@ -197,7 +197,7 @@ void
 _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                         Edje_Calc_Params *params,
                         Edje_Part_Description_Text *chosen_desc,
-                        Eina_Bool calc_only)
+                        Eina_Bool calc_only, double state_val)
 {
    const char *text = NULL;
    const char *font;
@@ -529,16 +529,32 @@ arrange_text:
    part_get_geometry(ep, &tw, &th);
 
    /* filters */
-   eo_do(ep->object,
-         EINA_LIST_FOREACH(prev_sources, li, source_name)
-           evas_obj_text_filter_source_set(source_name, NULL);
+   if (filter)
+     {
+        eo_do(ep->object,
+              EINA_LIST_FOREACH(prev_sources, li, source_name)
+                evas_obj_text_filter_source_set(source_name, NULL);
 
-         EINA_LIST_FOREACH(filter_sources, li, source_name)
-           {
-              Edje_Real_Part *rp = _edje_real_part_get(ed, source_name);
-              evas_obj_text_filter_source_set(source_name, rp ? rp->object : NULL);
-           }
-         evas_obj_text_filter_program_set(filter));
+              EINA_LIST_FOREACH(filter_sources, li, source_name)
+                {
+                  Edje_Real_Part *rp = _edje_real_part_get(ed, source_name);
+                  evas_obj_text_filter_source_set(source_name, rp ? rp->object : NULL);
+                };
+              if (ep->param2)
+                {
+                   evas_obj_text_filter_state_set(chosen_desc->common.state.name, chosen_desc->common.state.value,
+                                                  ep->param2->description->state.name, ep->param2->description->state.value,
+                                                  state_val);
+                }
+              else
+                {
+                   evas_obj_text_filter_state_set(chosen_desc->common.state.name, chosen_desc->common.state.value,
+                                                  NULL, 0.0, state_val);
+                }
+              evas_obj_text_filter_program_set(filter));
+     }
+   else
+     eo_do(ep->object, evas_obj_text_filter_program_set(NULL));
 
    /* Handle alignment */
    {

@@ -1178,6 +1178,17 @@ struct _Evas_Object_Filter_Data
    Evas_Filter_Program *chain;
    Eina_Hash           *sources; // Evas_Filter_Proxy_Binding
    void                *output;
+   struct {
+      struct {
+         const char    *name;
+         double         value;
+      } cur;
+      struct {
+         const char    *name;
+         double         value;
+      } next;
+      double            pos;
+   } state;
    Eina_Bool            changed : 1;
    Eina_Bool            invalid : 1; // Code parse failed
 };

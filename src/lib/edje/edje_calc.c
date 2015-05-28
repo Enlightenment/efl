@@ -1603,7 +1603,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
                               Edje_Part_Description_Text *chosen_desc,
                               Edje_Calc_Params *params,
                               int *minw, int *minh,
-                              int *maxw, int *maxh)
+                              int *maxw, int *maxh, double pos)
 #define RECALC_SINGLE_TEXT_USING_APPLY 1
 #if RECALC_SINGLE_TEXT_USING_APPLY
 /*
@@ -1634,7 +1634,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
    free(sfont);
    params->type.text.size = size; /* XXX TODO used by further calcs, go inside recalc_apply? */
 
-   _edje_text_recalc_apply(ed, ep, params, chosen_desc, EINA_TRUE);
+   _edje_text_recalc_apply(ed, ep, params, chosen_desc, EINA_TRUE, pos);
 
    if ((!chosen_desc) ||
        ((!chosen_desc->text.min_x) && (!chosen_desc->text.min_y) &&
@@ -2564,7 +2564,7 @@ _edje_part_recalc_single(Edje *ed,
    if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
      _edje_part_recalc_single_textblock(sc, ed, ep, (Edje_Part_Description_Text *)chosen_desc, params, &minw, &minh, &maxw, &maxh);
    else if (ep->part->type == EDJE_PART_TYPE_TEXT)
-     _edje_part_recalc_single_text(sc, ed, ep, (Edje_Part_Description_Text *)desc, (Edje_Part_Description_Text *)chosen_desc, params, &minw, &minh, &maxw, &maxh);
+     _edje_part_recalc_single_text(sc, ed, ep, (Edje_Part_Description_Text*) desc, (Edje_Part_Description_Text*) chosen_desc, params, &minw, &minh, &maxw, &maxh, pos);
 
    if ((ep->part->type == EDJE_PART_TYPE_TABLE) &&
        (((((Edje_Part_Description_Table *)chosen_desc)->table.min.h) ||
@@ -4358,7 +4358,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         switch (ep->part->type)
           {
            case EDJE_PART_TYPE_TEXT:
-             _edje_text_recalc_apply(ed, ep, pf, (Edje_Part_Description_Text *)chosen_desc, EINA_FALSE);
+             _edje_text_recalc_apply(ed, ep, pf, (Edje_Part_Description_Text*) chosen_desc, EINA_FALSE, pos);
              break;
 
            case EDJE_PART_TYPE_PROXY:

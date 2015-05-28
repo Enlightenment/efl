@@ -260,6 +260,23 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             eobj: Evas.Object *; /*@ Eo object to use through proxy rendering */
          }
       }
+      @property filter_state {
+         set {
+            /*@ Set the current state of the filter (for use from Edje)
+
+            @internal
+            @since 1.15
+            */
+            legacy: null;
+         }
+         values {
+            cur_state: const(char)*;
+            cur_val: double(0.0);
+            next_state: const(char)*;
+            next_val: double(0.0);
+            animpos: double(0.0);
+         }
+      }
       @property max_descent {
          get {
             return: Evas.Coord;

@@ -3268,7 +3268,8 @@ start_draw:
                   W = obj->cur->geometry.w;
                   H = obj->cur->geometry.h;
 
-                  if (pgm && evas_filter_program_state_set(pgm, eo_obj, obj))
+#warning implement state_set from edje
+                  if (pgm && evas_filter_program_state_set(pgm, eo_obj, obj, NULL, 0.0, NULL, 0.0, 0.0))
                     redraw = EINA_TRUE;
 
                   if (!redraw && o->cur->filter->output)
@@ -3309,7 +3310,7 @@ start_draw:
                     {
                        pgm = evas_filter_program_new("Image", EINA_FALSE);
                        evas_filter_program_source_set_all(pgm, o->cur->filter->sources);
-                       evas_filter_program_state_set(pgm, eo_obj, obj);
+                       evas_filter_program_state_set(pgm, eo_obj, obj, NULL, 0.0, NULL, 0.0, 0.0);
                        ok = evas_filter_program_parse(pgm, o->cur->filter->code);
                        if (!ok) goto state_write;
                     }
@@ -4840,7 +4841,7 @@ _evas_image_filter_program_set(Eo *eo_obj, Evas_Image_Data *o, const char *arg)
           {
              pgm = evas_filter_program_new("Evas_Text: Filter Program", EINA_FALSE);
              evas_filter_program_source_set_all(pgm, fcow->sources);
-             evas_filter_program_state_set(pgm, eo_obj, obj);
+             evas_filter_program_state_set(pgm, eo_obj, obj, NULL, 0.0, NULL, 0.0, 0.0);
              if (!evas_filter_program_parse(pgm, arg))
                {
                   ERR("Parsing failed!");

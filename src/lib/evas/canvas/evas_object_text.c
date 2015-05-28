@@ -1783,7 +1783,10 @@ evas_object_text_render(Evas_Object *eo_obj,
              Evas_Filter_Program *pgm;
              pgm = evas_filter_program_new("Evas_Text", EINA_TRUE);
              evas_filter_program_source_set_all(pgm, fcow->sources);
-             evas_filter_program_state_set(pgm, eo_obj, obj);
+             evas_filter_program_state_set(pgm, eo_obj, obj,
+                                           fcow->state.cur.name, fcow->state.cur.value,
+                                           fcow->state.next.name, fcow->state.next.value,
+                                           fcow->state.pos);
              if (!evas_filter_program_parse(pgm, fcow->code))
                {
                   ERR("Filter program parsing failed");
@@ -1801,7 +1804,10 @@ evas_object_text_render(Evas_Object *eo_obj,
           {
              Eina_Bool redraw;
 
-             redraw = evas_filter_program_state_set(fcow->chain, eo_obj, obj);
+             redraw = evas_filter_program_state_set(fcow->chain, eo_obj, obj,
+                                                    fcow->state.cur.name, fcow->state.cur.value,
+                                                    fcow->state.next.name, fcow->state.next.value,
+                                                    fcow->state.pos);
              if (redraw)
                DBG("Filter redraw by state change!");
 
@@ -1841,7 +1847,10 @@ evas_object_text_render(Evas_Object *eo_obj,
                }
           }
         else
-          evas_filter_program_state_set(fcow->chain, eo_obj, obj);
+           evas_filter_program_state_set(fcow->chain, eo_obj, obj,
+                                         fcow->state.cur.name, fcow->state.cur.value,
+                                         fcow->state.next.name, fcow->state.next.value,
+                                         fcow->state.pos);
 
         filter = evas_filter_context_new(obj->layer->evas, do_async);
 
@@ -2401,7 +2410,10 @@ _evas_text_filter_program_set(Eo *eo_obj, Evas_Text_Data *o, const char *arg)
           {
              pgm = evas_filter_program_new("Evas_Text", EINA_TRUE);
              evas_filter_program_source_set_all(pgm, fcow->sources);
-             evas_filter_program_state_set(pgm, eo_obj, obj);
+             evas_filter_program_state_set(pgm, eo_obj, obj,
+                                           fcow->state.cur.name, fcow->state.cur.value,
+                                           fcow->state.next.name, fcow->state.next.value,
+                                           fcow->state.pos);
              if (!evas_filter_program_parse(pgm, arg))
                {
                   ERR("Parsing failed!");
@@ -2549,6 +2561,48 @@ update:
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_coords_recalc(eo_obj, obj);
    evas_object_inform_call_resize(eo_obj);
+}
+
+EOLIAN static void
+_evas_text_filter_state_set(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o,
+                            const char *cur_state, double cur_val,
+                            const char *next_state, double next_val, double pos)
+{
+   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+
+   evas_object_async_block(obj);
+   if ((cur_state != o->cur.filter->state.cur.name) || (cur_val != o->cur.filter->state.cur.value) ||
+       (next_state != o->cur.filter->state.next.name) || (next_val != o->cur.filter->state.next.value) ||
+       (pos != o->cur.filter->state.pos))
+     {
+        EINA_COW_WRITE_BEGIN(evas_object_filter_cow, o->cur.filter, Evas_Object_Filter_Data, fcow)
+          {
+             fcow->changed = 1;
+             fcow->state.cur.name = cur_state;
+             fcow->state.cur.value = cur_val;
+             fcow->state.next.name = next_state;
+             fcow->state.next.value = next_val;
+             fcow->state.pos = pos;
+
+             if (o->cur.filter->chain)
+               {
+                  evas_filter_program_state_set(o->cur.filter->chain, eo_obj, obj,
+                                                fcow->state.cur.name, fcow->state.cur.value,
+                                                fcow->state.next.name, fcow->state.next.value,
+                                                fcow->state.pos);
+               }
+          }
+        EINA_COW_WRITE_END(evas_object_filter_cow, o->cur.filter, fcow);
+
+        // Mark as changed
+        _evas_object_text_items_clear(o);
+        o->changed = 1;
+        _evas_object_text_recalc(eo_obj, o->cur.text);
+        evas_object_change(eo_obj, obj);
+        evas_object_clip_dirty(eo_obj, obj);
+        evas_object_coords_recalc(eo_obj, obj);
+        evas_object_inform_call_resize(eo_obj);
+     }
 }
 
 EAPI void
