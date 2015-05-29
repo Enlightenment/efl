@@ -338,7 +338,6 @@ typedef struct _Evas_Video_Surface Evas_Video_Surface;
 
 typedef unsigned long long         Evas_Modifier_Mask;  /**< An Evas modifier mask type */
 
-typedef int                        Evas_Coord;/**< A type for coordinates */;
 typedef int                        Evas_Font_Size; /**< A type for font size */
 typedef int                        Evas_Angle; /**< A type for angle */
 

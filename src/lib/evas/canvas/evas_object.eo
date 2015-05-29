@@ -1,3 +1,5 @@
+import evas_types;
+
 abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stack)
 {
    eo_prefix: evas_obj;
@@ -42,8 +44,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_size_hint_max_set() */
          }
          values {
-            w: Evas_Coord; /*@ Integer to use as the maximum width hint. */
-            h: Evas_Coord; /*@ Integer to use as the maximum height hint. */
+            w: Evas.Coord; /*@ Integer to use as the maximum width hint. */
+            h: Evas.Coord; /*@ Integer to use as the maximum height hint. */
          }
       }
       @property size_hint_request {
@@ -76,8 +78,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_size_hint_request_set() */
          }
          values {
-            w: Evas_Coord; /*@ Integer to use as the preferred width hint. */
-            h: Evas_Coord; /*@ Integer to use as the preferred height hint. */
+            w: Evas.Coord; /*@ Integer to use as the preferred width hint. */
+            h: Evas.Coord; /*@ Integer to use as the preferred height hint. */
          }
       }
       @property type {
@@ -156,8 +158,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_size_hint_min_set() for an example */
          }
          values {
-            w: Evas_Coord; /*@ Integer to use as the minimum width hint. */
-            h: Evas_Coord; /*@ Integer to use as the minimum height hint. */
+            w: Evas.Coord; /*@ Integer to use as the minimum width hint. */
+            h: Evas.Coord; /*@ Integer to use as the minimum height hint. */
          }
       }
       @property pointer_mode {
@@ -377,8 +379,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          }
          values {
             aspect: Evas_Aspect_Control; /*@ The policy/type of aspect ratio to apply to @p obj. */
-            w: Evas_Coord; /*@ Integer to use as aspect width ratio term. */
-            h: Evas_Coord; /*@ Integer to use as aspect height ratio term. */
+            w: Evas.Coord; /*@ Integer to use as aspect width ratio term. */
+            h: Evas.Coord; /*@ Integer to use as aspect height ratio term. */
          }
       }
       @property clip {
@@ -500,10 +502,10 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_size_hint_padding_set() */
          }
          values {
-            l: Evas_Coord; /*@ Integer to specify left padding. */
-            r: Evas_Coord; /*@ Integer to specify right padding. */
-            t: Evas_Coord; /*@ Integer to specify top padding. */
-            b: Evas_Coord; /*@ Integer to specify bottom padding. */
+            l: Evas.Coord; /*@ Integer to specify left padding. */
+            r: Evas.Coord; /*@ Integer to specify right padding. */
+            t: Evas.Coord; /*@ Integer to specify top padding. */
+            b: Evas.Coord; /*@ Integer to specify bottom padding. */
          }
       }
       @property repeat_events {
@@ -1257,8 +1259,8 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          their @c move() smart function definition. */
 
          params {
-            @in dx: Evas_Coord; /*@ horizontal offset (delta). */
-            @in dy: Evas_Coord; /*@ vertical offset (delta). */
+            @in dx: Evas.Coord; /*@ horizontal offset (delta). */
+            @in dy: Evas.Coord; /*@ vertical offset (delta). */
          }
       }
       smart_type_check_ptr @const {
