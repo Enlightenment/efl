@@ -414,6 +414,16 @@ typedef struct _Ecore_Con_Event_Server_Write Ecore_Con_Event_Server_Write;
  */
 typedef struct _Ecore_Con_Event_Proxy_Bind Ecore_Con_Event_Proxy_Bind;
 
+#ifdef EFL_EO_API_SUPPORT
+/**
+ * @typedef Efl_Network_Event_Url_Data
+ * Used as the @p data param for the corresponding event
+ * EFL_NETWORK_EVENT_URL_DATA
+ * @ingroup Ecore_Con_Url_Group
+ */
+typedef struct _Efl_Network_Event_Url_Data Efl_Network_Event_Url_Data;
+#endif
+
 /**
  * @typedef Ecore_Con_Event_Url_Data
  * Used as the @p data param for the corresponding event
@@ -428,12 +438,32 @@ typedef struct _Ecore_Con_Event_Url_Data Ecore_Con_Event_Url_Data;
  */
 typedef struct _Ecore_Con_Event_Url_Complete Ecore_Con_Event_Url_Complete;
 
+#ifdef EFL_EO_API_SUPPORT
+/**
+ * @typedef Efl_Network_Event_Url_Complete
+ * Used as the @p data param for the corresponding event
+ * EFL_NETWORK_EVENT_URL_COMPLETE
+ * @ingroup Ecore_Con_Url_Group
+ */
+typedef struct _Ecore_Con_Event_Url_Complete Efl_Network_Event_Url_Complete;
+#endif
+
 /**
  * @typedef Ecore_Con_Event_Url_Progress
  * Used as the @p data param for the corresponding event
  * @ingroup Ecore_Con_Url_Group
  */
 typedef struct _Ecore_Con_Event_Url_Progress Ecore_Con_Event_Url_Progress;
+
+#ifdef EFL_EO_API_SUPPORT
+/**
+ * @typedef Efl_Network_Event_Url_Progress
+ * Used as the @p data param for the corresponding event
+ * EFL_NETWORK_EVENT_URL_PROGRESS
+ * @ingroup Ecore_Con_Url_Group
+ */
+typedef struct _Ecore_Con_Event_Url_Progress Efl_Network_Event_Url_Progress;
+#endif
 
 /**
  * @struct _Ecore_Con_Event_Client_Add
@@ -565,6 +595,20 @@ struct _Ecore_Con_Event_Proxy_Bind
    const char *ip;           /**< the proxy-bound ip address */
    int port;                 /**< the proxy-bound port */
 };
+
+#ifdef EFL_EO_API_SUPPORT
+/**
+ * @struct _Efl_Network_Event_Url_Data
+ * Used as the @p data param for the @ref EFL_NETWORK_EVENT_URL_DATA event
+ * @ingroup Ecore_Con_Url_Group
+ */
+struct _Efl_Network_Event_Url_Data
+{
+   Efl_Network_Url *url_con; /**< a pointer to the connection object */
+   int size; /**< the size of the current received data (in bytes) */
+   unsigned char *data; /**< pointer to the data received on this event */
+};
+#endif
 
 /**
  * @struct _Ecore_Con_Event_Url_Data

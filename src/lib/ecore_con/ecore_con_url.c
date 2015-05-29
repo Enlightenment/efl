@@ -443,12 +443,76 @@ ecore_con_url_pipeline_get(void)
 
 extern Ecore_Con_Socks *_ecore_con_proxy_global;
 
+static Eina_Bool
+_efl_network_url_event_complete_cb(void *data EINA_UNUSED, Eo *child, const Eo_Event_Description *desc EINA_UNUSED, void *einfo)
+{
+   Ecore_Con_Event_Url_Complete *e, *f = einfo;
+
+   e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
+   if (!e) return EO_CALLBACK_STOP;
+
+   e->status = f->status;
+   e->url_con = f->url_con;
+   ecore_event_add(ECORE_CON_EVENT_URL_COMPLETE, e,
+                   (Ecore_End_Cb)_ecore_con_event_url_free, child);
+
+   return EO_CALLBACK_STOP;
+}
+
+static Eina_Bool
+_efl_network_url_event_data_cb(void *data EINA_UNUSED, Eo *child, const Eo_Event_Description *desc EINA_UNUSED, void *einfo)
+{
+   Ecore_Con_Event_Url_Data *e;
+   Efl_Network_Event_Url_Data *f = einfo;
+
+   e = malloc(sizeof(Ecore_Con_Event_Url_Data) + sizeof(unsigned char) * f->size);
+
+   if (!e) return EO_CALLBACK_CONTINUE;
+
+   e->url_con = f->url_con;
+   e->size = f->size;
+   memcpy(e->data, f->data, f->size);
+   ecore_event_add(ECORE_CON_EVENT_URL_DATA, e,
+                   (Ecore_End_Cb)_ecore_con_event_url_free, child);
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+static Eina_Bool
+_efl_network_url_event_progress_cb(void *data EINA_UNUSED, Eo *child, const Eo_Event_Description *desc EINA_UNUSED, void *einfo)
+{
+   Ecore_Con_Event_Url_Progress *e, *f = einfo;
+
+   e = malloc(sizeof(Ecore_Con_Event_Url_Progress));
+   if (!e) return EO_CALLBACK_CONTINUE;
+
+   e->url_con = f->url_con;
+   e->down.total = f->down.total;
+   e->down.now = f->down.now;
+   e->up.total = f->up.total;
+   e->up.now = f->up.now;
+   ecore_event_add(ECORE_CON_EVENT_URL_PROGRESS, e,
+                   (Ecore_End_Cb)_ecore_con_event_url_free, child);
+
+   return EO_CALLBACK_CONTINUE;
+}
+
+EO_CALLBACKS_ARRAY_DEFINE(efl_network_url_event_table_callbacks,
+  { EFL_NETWORK_URL_EVENT_DATA, _efl_network_url_event_data_cb },
+  { EFL_NETWORK_URL_EVENT_PROGRESS, _efl_network_url_event_progress_cb },
+  { EFL_NETWORK_URL_EVENT_COMPLETE, _efl_network_url_event_complete_cb }
+);
+
 EAPI Ecore_Con_Url *
 ecore_con_url_new(const char *url)
 {
    Ecore_Con_Url *url_obj;
    url_obj = eo_add(EFL_NETWORK_URL_CLASS, NULL,
          efl_network_url_set(url));
+
+   eo_do(url_obj,
+         eo_event_callback_array_add(efl_network_url_event_table_callbacks(),
+                                     NULL));
 
    return url_obj;
 }
@@ -590,6 +654,10 @@ ecore_con_url_free(Ecore_Con_Url *url_obj)
 {
    if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return;
+
+   eo_do(url_obj,
+         eo_event_callback_array_del(efl_network_url_event_table_callbacks(),
+                                     NULL));
 
    eo_del(url_obj);
 }
@@ -1326,13 +1394,11 @@ _ecore_con_url_status_get(Ecore_Con_Url *url_obj)
 static void
 _ecore_con_url_event_url_complete(Ecore_Con_Url *url_obj, CURLMsg *curlmsg)
 {
-   Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
-   Ecore_Con_Event_Url_Complete *e;
+   Efl_Network_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
+   Efl_Network_Event_Url_Complete e;
    int status = url_con->status;
 
    if (!_c) return;
-   e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
-   if (!e) return;
 
    if (!curlmsg)
      ERR("Event completed without CURL message handle. Shouldn't happen");
@@ -1356,11 +1422,10 @@ _ecore_con_url_event_url_complete(Ecore_Con_Url *url_obj, CURLMsg *curlmsg)
         ERR("Curl message have errors: %d (%s)",
             curlmsg->data.result, _c->curl_easy_strerror(curlmsg->data.result));
      }
-   e->status = status;
-   e->url_con = url_obj;
+   e.status = status;
+   e.url_con = url_obj;
    url_con->event_count++;
-   ecore_event_add(ECORE_CON_EVENT_URL_COMPLETE, e,
-                   (Ecore_End_Cb)_ecore_con_event_url_free, url_obj);
+   eo_do(url_obj, eo_event_callback_call(EFL_NETWORK_URL_EVENT_COMPLETE, &e));
 }
 
 static void
@@ -1405,11 +1470,11 @@ _ecore_con_url_timeout_cb(void *data)
 static size_t
 _ecore_con_url_data_cb(void *buffer, size_t size, size_t nitems, void *userp)
 {
-   Ecore_Con_Url *url_obj = (Ecore_Con_Url *)userp;
-   Ecore_Con_Event_Url_Data *e;
+   Efl_Network_Url *url_obj = (Efl_Network_Url *)userp;
+   Efl_Network_Event_Url_Data e;
    size_t real_size = size * nitems;
 
-   Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
+   Efl_Network_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
    if (!eo_isa(url_obj, EFL_NETWORK_URL_CLASS))
       return -1;
 
@@ -1417,18 +1482,11 @@ _ecore_con_url_data_cb(void *buffer, size_t size, size_t nitems, void *userp)
    INF("reading from %s", url_con->url);
    if (url_con->write_fd < 0)
      {
-        e =
-          malloc(sizeof(Ecore_Con_Event_Url_Data) + sizeof(unsigned char) *
-                 (real_size - 1));
-        if (e)
-          {
-             e->url_con = url_obj;
-             e->size = real_size;
-             memcpy(e->data, buffer, real_size);
-             url_con->event_count++;
-             ecore_event_add(ECORE_CON_EVENT_URL_DATA, e,
-                             (Ecore_End_Cb)_ecore_con_event_url_free, url_obj);
-          }
+        e.url_con = url_obj;
+        e.size = real_size;
+        e.data = buffer;
+        url_con->event_count++;
+        eo_do(url_obj, eo_event_callback_call(EFL_NETWORK_URL_EVENT_DATA, &e));
      }
    else
      {
@@ -1476,23 +1534,19 @@ _ecore_con_url_header_cb(void *ptr, size_t size, size_t nitems, void *stream)
 static int
 _ecore_con_url_progress_cb(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow)
 {
-   Ecore_Con_Event_Url_Progress *e;
-   Ecore_Con_Url *url_obj = clientp;
+   Efl_Network_Event_Url_Progress e;
+   Efl_Network_Url *url_obj = clientp;
 
-   Ecore_Con_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
+   Efl_Network_Url_Data *url_con = eo_data_scope_get(url_obj, MY_CLASS);
 
-   e = malloc(sizeof(Ecore_Con_Event_Url_Progress));
-   if (e)
-     {
-        e->url_con = url_obj;
-        e->down.total = dltotal;
-        e->down.now = dlnow;
-        e->up.total = ultotal;
-        e->up.now = ulnow;
-        url_con->event_count++;
-        ecore_event_add(ECORE_CON_EVENT_URL_PROGRESS, e,
-                        (Ecore_End_Cb)_ecore_con_event_url_free, url_obj);
-     }
+   e.url_con = url_obj;
+   e.down.total = dltotal;
+   e.down.now = dlnow;
+   e.up.total = ultotal;
+   e.up.now = ulnow;
+   url_con->event_count++;
+   eo_do(url_obj, eo_event_callback_call(EFL_NETWORK_URL_EVENT_PROGRESS, &e));
+
    return 0;
 }
 
