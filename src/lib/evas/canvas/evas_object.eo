@@ -378,7 +378,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_size_hint_aspect_set() */
          }
          values {
-            aspect: Evas_Aspect_Control; /*@ The policy/type of aspect ratio to apply to @p obj. */
+            aspect: Evas.Aspect_Control; /*@ The policy/type of aspect ratio to apply to @p obj. */
             w: Evas.Coord; /*@ Integer to use as aspect width ratio term. */
             h: Evas.Coord; /*@ Integer to use as aspect height ratio term. */
          }

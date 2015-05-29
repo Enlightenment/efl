@@ -396,15 +396,6 @@ struct _Evas_Precision_Position /** A position with precision*/
    Evas_Coord_Precision_Point canvas; /**< position on the canvas */
 };
 
-typedef enum _Evas_Aspect_Control
-{
-   EVAS_ASPECT_CONTROL_NONE = 0, /**< Preference on scaling unset */
-   EVAS_ASPECT_CONTROL_NEITHER = 1, /**< Same effect as unset preference on scaling */
-   EVAS_ASPECT_CONTROL_HORIZONTAL = 2, /**< Use all horizontal container space to place an object, using the given aspect */
-   EVAS_ASPECT_CONTROL_VERTICAL = 3, /**< Use all vertical container space to place an object, using the given aspect */
-   EVAS_ASPECT_CONTROL_BOTH = 4 /**< Use all horizontal @b and vertical container spaces to place an object (never growing it out of those bounds), using the given aspect */
-} Evas_Aspect_Control; /**< Aspect types/policies for scaling size hints, used for evas_object_size_hint_aspect_set() */
-
 typedef enum _Evas_Display_Mode
 {
    EVAS_DISPLAY_MODE_NONE = 0, /**<Default mode */
