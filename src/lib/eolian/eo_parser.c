@@ -771,7 +771,7 @@ parse_type_void_base(Eo_Lexer *ls, Eina_Bool noptr)
              _fill_name(eina_stringshare_ref(ls->t.value.s), &def->full_name,
                         &def->name, &def->namespaces);
              eo_lexer_get(ls);
-             if (tpid >= KW_accessor)
+             if (tpid >= KW_accessor && tpid <= KW_list)
                {
                   int bline = ls->line_number, bcol = ls->column;
                   def->type = EOLIAN_TYPE_COMPLEX;
