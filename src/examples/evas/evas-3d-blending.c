@@ -4,7 +4,7 @@
  * For more detailes see https://www.opengl.org/sdk/docs/man2/xhtml/glBlendFunc.xml
  *
  * @verbatim
- * gcc -o evas-3d-blending evas-3d-blending.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`-lm
+ * gcc -o evas-3d-blending evas-3d-blending.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`-lm
  * @endverbatim
  */
 
@@ -15,7 +15,6 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
-#include "evas-3d-primitives.h"
 
 #define  WIDTH          1024
 #define  HEIGHT         1024
@@ -67,11 +66,10 @@ typedef struct _Scene_Data
    Eo     *light;
    Eo     *mesh;
    Eo     *mesh1;
+   Eo     *sphere;
    Eo     *material;
    Eo     *material1;
 } Scene_Data;
-
-static const vec2 tex_scale = {1, 1};
 
 Evas             *evas        = NULL;
 Eo               *background  = NULL;
@@ -185,11 +183,10 @@ _light_setup(Scene_Data *data)
 }
 
 static void
-_set_ball(Eo *mesh, int p, Evas_3D_Material *material)
+_set_ball(Eo *mesh, Eo *sphere, Evas_3D_Material *material)
 {
-
-   evas_3d_add_sphere_frame(mesh, 0, p, tex_scale);
    eo_do(mesh,
+         evas_3d_mesh_from_primitive_set(0, sphere),
          evas_3d_mesh_frame_material_set(0, material),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 }
@@ -221,11 +218,16 @@ _mesh_setup(Scene_Data *data)
          evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 0.2),
          evas_3d_material_shininess_set(100.0));
 
+   data->sphere = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   eo_do(data->sphere,
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_SPHERE),
+         evas_3d_primitive_precision_set(50));
+
    data->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
    data->mesh1 = eo_add(EVAS_3D_MESH_CLASS, evas);
 
-   _set_ball(data->mesh, 50, data->material);
-   _set_ball(data->mesh1, 50, data->material1);
+   _set_ball(data->mesh, data->sphere, data->material);
+   _set_ball(data->mesh1, data->sphere, data->material1);
 
    data->mesh_node =
       eo_add(EVAS_3D_NODE_CLASS, evas,
@@ -245,12 +247,10 @@ _mesh_setup(Scene_Data *data)
       evas_3d_mesh_blending_func_set(func1, func2));
 
    eo_do(data->mesh_node,
-         evas_3d_node_scale_set(2.0, 2.0, 2.0),
-         evas_3d_node_orientation_angle_axis_set(90.0, 1.0, 0.0, 0.0));
+         evas_3d_node_scale_set(2.0, 2.0, 2.0));
 
    eo_do(data->mesh_node1,
-         evas_3d_node_scale_set(5.0, 5.0, 5.0),
-         evas_3d_node_orientation_angle_axis_set(90.0, 1.0, 0.0, 0.0));
+         evas_3d_node_scale_set(5.0, 5.0, 5.0));
 }
 
 static void

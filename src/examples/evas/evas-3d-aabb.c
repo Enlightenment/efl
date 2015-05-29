@@ -5,7 +5,7 @@
  * Rotate axises (keys 1-4) for model and bounding box view from another angle.
  *
  * @verbatim
- * gcc -o evas-3d-aabb evas-3d-aabb.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
+ * gcc -o evas-3d-aabb evas-3d-aabb.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
  * @endverbatim
  */
 
@@ -22,7 +22,6 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include "evas-common.h"
-#include "evas-3d-primitives.h"
 
 #define  WIDTH 400
 #define  HEIGHT 400
@@ -34,7 +33,7 @@ Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
 Eo *background = NULL;
 Eo *image = NULL;
-
+Eo *cube = NULL;
 Eo *scene = NULL;
 Eo *root_node = NULL;
 Eo *camera_node = NULL;
@@ -218,12 +217,16 @@ main(void)
    material_box = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
    eo_do(material_box, evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE));
 
+   cube = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   eo_do(cube,
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_CUBE));
+
    mesh_box = eo_add(EVAS_3D_MESH_CLASS, evas);
-   evas_3d_add_cube_frame(mesh_box, 0);
    eo_do(mesh_box,
-          evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_LINES),
-          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
-          evas_3d_mesh_frame_material_set(0, material_box));
+         evas_3d_mesh_from_primitive_set(0, cube),
+         evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_LINES),
+         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_VERTEX_COLOR),
+         evas_3d_mesh_frame_material_set(0, material_box));
     _redraw_aabb();
 
    eo_do(root_node,

@@ -9,7 +9,7 @@
  * p - precision of the spheres, t - path for a texture.
  *
  * @verbatim
- * gcc -o evas-3d-colorpick evas-3d-colorpick.c evas-3d-primitives.c `pkg-config --libs --cflags evas ecore ecore-evas eo eina efl` -lm
+ * gcc -o evas-3d-colorpick evas-3d-colorpick.c `pkg-config --libs --cflags evas ecore ecore-evas eo eina efl` -lm
  * @endverbatim
  */
 
@@ -27,7 +27,6 @@
 #include <Ecore_Evas.h>
 #include <Ecore_Getopt.h>
 #include <math.h>
-#include "evas-3d-primitives.h"
 #include "evas-common.h"
 
 #define  WIDTH 800
@@ -40,7 +39,6 @@
 #define SCALE_UNIT 0.5
 #define VEC_3(value) value, value, value
 
-static const vec2 tex_scale = {1, 1};
 static const char *image_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/wood.jpg";
 
 Ecore_Evas *ecore_evas = NULL;
@@ -68,6 +66,7 @@ Ecore_Getopt optdesc = {
 
  typedef struct _Object
  {
+   Eo *primitive;
    Eo *node;
    Eo *mesh;
    Eo *material;
@@ -243,10 +242,14 @@ Eina_Bool
 _init_sphere(void *this, const char *texture)
 {
    Test_object *sphere  = (Test_object *)this;
+   sphere->primitive = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
    sphere->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
    sphere->material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
-   evas_3d_add_sphere_frame(sphere->mesh, 0, globalscene.precision, tex_scale);
+   eo_do(sphere->primitive,
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_SPHERE),
+         evas_3d_primitive_precision_set(50));
    eo_do(sphere->mesh,
+         evas_3d_mesh_from_primitive_set(0, sphere->primitive),
          evas_3d_mesh_frame_material_set(0, sphere->material),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG));
 

@@ -6,7 +6,7 @@
  * and parameters which can be got from this function.
  *
  * @verbatim
- * gcc -o evas-3d-pick evas-3d-pick.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
+ * gcc -o evas-3d-pick evas-3d-pick.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
  * @endverbatim
  */
 
@@ -24,7 +24,6 @@
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include "evas-common.h"
-#include "evas-3d-primitives.h"
 
 #define  WIDTH          400
 #define  HEIGHT         400
@@ -43,7 +42,7 @@ static Eo *mesh_node = NULL;
 static Eo *mesh = NULL;
 static Eo *material = NULL;
 static Eo *texture_diffuse = NULL;
-static const vec2 tex_scale = {1, 1};
+static Eo *sphere = NULL;
 
 static Eina_Bool
 _animate_scene(void *data)
@@ -155,10 +154,13 @@ main(void)
                                   EVAS_3D_SPACE_PARENT, 0.0, 1.0, 0.0));
    eo_do(root_node, evas_3d_node_member_add(camera_node));
 
-   /* Add the cube mesh. */
+   sphere = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   eo_do(sphere,
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_SPHERE),
+         evas_3d_primitive_precision_set(50));
 
    mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   evas_3d_add_sphere_frame(mesh, 0, 100, tex_scale);
+   eo_do(mesh, evas_3d_mesh_from_primitive_set(0, sphere));
 
    material = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
 

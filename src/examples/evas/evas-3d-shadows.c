@@ -8,7 +8,7 @@
  * @see evas_3d_billboard_set/get
  *
  * @verbatim
- * gcc -o evas-3d-shadows evas-3d-shadows.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo eina` -lm
+ * gcc -o evas-3d-shadows evas-3d-shadows.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo eina` -lm
  * @endverbatim
  */
 
@@ -26,7 +26,6 @@
 #include <Ecore_Evas.h>
 #include <Eina.h>
 #include <math.h>
-#include "evas-3d-primitives.h"
 #include "evas-common.h"
 
 #define  WIDTH 1024
@@ -41,8 +40,6 @@
 static const char *model_path = PACKAGE_EXAMPLES_DIR EVAS_MODEL_FOLDER "/sonic.md2";
 static const char *image_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/sonic.png";
 static const char *b_image_path = PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/billboard.png";
-static const vec2 tex_scale = {1, 1};
-static const vec2 fence_tex_scale = {160, 12};
 
 Ecore_Evas *ecore_evas = NULL;
 Evas *evas = NULL;
@@ -52,6 +49,7 @@ Evas_3D_Node *choosed_node = NULL;
 
 typedef struct _Body_3D
 {
+   Eo     *primitive;
    Eo     *material;
    Eo     *mesh;
    Eo     *node;
@@ -201,22 +199,35 @@ _body_material_set(Body_3D *body, float r, float g, float b)
 static void
 _sphere_setup(Body_3D *sphere)
 {
+   sphere->primitive = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   eo_do(sphere->primitive,
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_SPHERE),
+         evas_3d_primitive_precision_set(50));
+
    sphere->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   evas_3d_add_sphere_frame(sphere->mesh, 0, 50, tex_scale);
+   eo_do(sphere->mesh,
+         evas_3d_mesh_from_primitive_set(0, sphere->primitive));
+
    _body_material_set(sphere, 1, 0.0, 0.0);
 
-   sphere->node =
-      eo_add(EVAS_3D_NODE_CLASS, evas,
-                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH),
-                    evas_3d_node_position_set(3.0, 3.0, 0.0));
+   sphere->node = eo_add(EVAS_3D_NODE_CLASS, evas,
+                         evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH),
+                         evas_3d_node_position_set(3.0, 3.0, 0.0));
    eo_do(sphere->node, evas_3d_node_mesh_add(sphere->mesh));
 }
 
 static void
 _cone_setup(Body_3D *cone)
 {
+   cone->primitive = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   eo_do(cone->primitive,
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_CONE),
+         evas_3d_primitive_precision_set(50));
+
    cone->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   evas_3d_add_cone_frame(cone->mesh, 0, 100, tex_scale);
+   eo_do(cone->mesh,
+         evas_3d_mesh_from_primitive_set(0, cone->primitive));
+
    _body_material_set(cone, 0.8, 0.5, 0.5);
 
    cone->node =
@@ -230,8 +241,15 @@ _cone_setup(Body_3D *cone)
 static void
 _cylinder_setup(Body_3D *cylinder)
 {
+   cylinder->primitive = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   eo_do(cylinder->primitive,
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_CYLINDER),
+         evas_3d_primitive_precision_set(50));
+
    cylinder->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   evas_3d_add_cylinder_frame(cylinder->mesh, 0, 50, tex_scale);
+   eo_do(cylinder->mesh,
+         evas_3d_mesh_from_primitive_set(0, cylinder->primitive));
+
    _body_material_set(cylinder, 0.0, 0.0, 1.0);
 
    cylinder->node =
@@ -276,8 +294,17 @@ _fence_setup(Body_3D *fence)
          evas_3d_material_color_set(EVAS_3D_MATERIAL_DIFFUSE, 1.0, 1.0, 1.0, 1.0),
          evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
          evas_3d_material_shininess_set(100.0));
+
+   fence->primitive = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   eo_do(fence->primitive,
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_CYLINDER),
+         evas_3d_primitive_mode_set(EVAS_3D_PRIMITIVE_MODE_WITHOUT_BASE),
+         evas_3d_primitive_tex_scale_set(160.0, 12.0),
+         evas_3d_primitive_precision_set(50));
+
    fence->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   evas_3d_add_cylinder_frame(fence->mesh, 0, 50, fence_tex_scale);
+   eo_do(fence->mesh,
+         evas_3d_mesh_from_primitive_set(0, fence->primitive));
 
    eo_do(fence->mesh,
          evas_3d_mesh_frame_material_set(0, fence->material),
@@ -296,8 +323,13 @@ _fence_setup(Body_3D *fence)
 static void
 _square_setup(Body_3D *square)
 {
+   square->primitive = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   eo_do(square->primitive,
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_SQUARE));
+
    square->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   evas_3d_add_square_frame(square->mesh, 0);
+   eo_do(square->mesh,
+         evas_3d_mesh_from_primitive_set(0, square->primitive));
 
    _body_material_set(square, 0.4, 0.4, 0.4);
 
@@ -313,8 +345,13 @@ _square_setup(Body_3D *square)
 static void
 _box_setup(Body_3D *box)
 {
+   box->primitive = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   eo_do(box->primitive,
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_CUBE));
+
    box->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   evas_3d_add_cube_frame(box->mesh, 0);
+   eo_do(box->mesh,
+         evas_3d_mesh_from_primitive_set(0, box->primitive));
 
    _body_material_set(box, 0, 1, 0);
 
@@ -370,8 +407,13 @@ _billboard_setup(Scene_Data *data)
          evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT,
                                   EVAS_3D_WRAP_MODE_REPEAT));
 
+   data->billboard.primitive = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   eo_do(data->billboard.primitive,
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_SQUARE));
+
    data->billboard.mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   evas_3d_add_square_frame(data->billboard.mesh, 0);
+   eo_do(data->billboard.mesh,
+         evas_3d_mesh_from_primitive_set(0, data->billboard.primitive));
 
    _body_material_set(&(data->billboard), 1.0, 1.0, 1.0);
 

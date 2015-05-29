@@ -14,7 +14,6 @@
 #include <Evas.h>
 #include "Eo.h"
 #include "evas-3d-shooter-macros.h"
-#include "../evas-3d-primitives.h"
 #include "../evas-common.h"
 
 #define LOCAL_IMAGE_FOLDER PACKAGE_EXAMPLES_DIR "" EVAS_PROJECT_IMAGE_FOLDER
@@ -22,6 +21,7 @@
 
 typedef struct _Scene_Data
 {
+   Eo      *cylinder_primitive;
    Eo      *texture_diffuse_eagle;
    Eo      *texture_diffuse_world;
    Eo      *texture_diffuse_grass;

@@ -10,7 +10,7 @@
  * @see evas_3d_camera_node_visible_get.
  *
  * @verbatim
- * gcc -o evas-3d-frustum evas-3d-frustum.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
+ * gcc -o evas-3d-frustum evas-3d-frustum.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
  * @endverbatim
  */
 
@@ -28,7 +28,6 @@
 #include <Eo.h>
 #include <math.h>
 #include "evas-common.h"
-#include "evas-3d-primitives.h"
 
 #define  WIDTH          800
 #define  HEIGHT         600
@@ -47,6 +46,8 @@ typedef struct _Scene_Data
    Eo *camera;
    Eo *light;
    Eo *mesh_model;
+   Eo *sphere;
+   Eo *cube;
    Eo *mesh_sphere;
    Eo *mesh_aabb;
    Eo *material_model;
@@ -60,7 +61,6 @@ Evas_Real obj_x = 0.0, obj_y = 0.0, obj_z = 0.0, obj_sc_x = 10.0, obj_sc_y = 10.
 Evas_Real fleft = -5, fright = 5, fbottom = -5, fup = 5, fnear = 20, ffar = 1000;
 Evas_Real radius = 0;
 Evas_3D_Frustum_Mode key = EVAS_3D_FRUSTUM_MODE_AABB;
-static const vec2 tex_scale = {1, 1};
 
 static void
 _show_help()
@@ -343,19 +343,28 @@ _mesh_setup(Scene_Data *data)
          evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
          evas_3d_material_shininess_set(100.0));
 
+   data->cube = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   eo_do(data->cube,
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_CUBE));
+
+   data->sphere = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   eo_do(data->sphere,
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_SPHERE),
+         evas_3d_primitive_precision_set(20));
+
    data->mesh_aabb = eo_add(EVAS_3D_MESH_CLASS, evas);
-   evas_3d_add_cube_frame(data->mesh_aabb, 0);
    eo_do(data->mesh_aabb,
-          evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_LINES),
-          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
-          evas_3d_mesh_frame_material_set(0, data->material));
+         evas_3d_mesh_from_primitive_set(0, data->cube),
+         evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_LINES),
+         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
+         evas_3d_mesh_frame_material_set(0, data->material));
 
    data->mesh_sphere = eo_add(EVAS_3D_MESH_CLASS, evas);
-   evas_3d_add_sphere_frame(data->mesh_sphere, 0, 20, tex_scale);
    eo_do(data->mesh_sphere,
-          evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_LINES),
-          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
-          evas_3d_mesh_frame_material_set(0, data->material));
+         evas_3d_mesh_from_primitive_set(0, data->sphere),
+         evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_LINES),
+         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
+         evas_3d_mesh_frame_material_set(0, data->material));
 
    data->mesh_node =
       eo_add(EVAS_3D_NODE_CLASS, evas, evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));

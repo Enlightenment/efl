@@ -2,7 +2,7 @@
  * Example illustrating usage of fog effect.
  *
  * @verbatim
- * gcc -o evas-3d-fog evas-3d-fog.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`-lm
+ * gcc -o evas-3d-fog evas-3d-fog.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo`-lm
  * @endverbatim
  */
 
@@ -14,7 +14,6 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
-#include "evas-3d-primitives.h"
 
 #define  WIDTH          1024
 #define  HEIGHT         1024
@@ -32,6 +31,7 @@ typedef struct _Scene_Data
    Eo     *mesh_node;
    Eo     *mesh_node1;
    Eo     *animation_node;
+   Eo     *sphere;
 
    Eo     *camera;
    Eo     *light;
@@ -39,8 +39,6 @@ typedef struct _Scene_Data
    Eo     *mesh1;
    Eo     *material;
 } Scene_Data;
-
-static const vec2 tex_scale = {1, 1};
 
 Ecore_Evas       *ecore_evas  = NULL;
 Evas             *evas        = NULL;
@@ -95,7 +93,7 @@ _camera_setup(Scene_Data *data)
 
   eo_do(data->camera_node,
          evas_3d_node_camera_set(data->camera),
-         evas_3d_node_position_set(0.0, 0.0, 10.0),
+         evas_3d_node_position_set(0.0, 0.0, 7.0),
          evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0,
                                   EVAS_3D_SPACE_PARENT, 0.0, 1.0, 0.0));
 
@@ -123,12 +121,12 @@ _light_setup(Scene_Data *data)
 }
 
 static void
-_set_ball(Eo *mesh, int p, Evas_3D_Material *material)
+_set_ball(Eo *mesh, Eo *sphere, Evas_3D_Material *material)
 {
-   evas_3d_add_sphere_frame(mesh, 0, p, tex_scale);
-
-   eo_do(mesh, evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG),
-               evas_3d_mesh_frame_material_set(0, material));
+   eo_do(mesh, 
+         evas_3d_mesh_from_primitive_set(0, sphere),
+         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG),
+         evas_3d_mesh_frame_material_set(0, material));
 }
 
 
@@ -147,11 +145,16 @@ _mesh_setup(Scene_Data *data)
          evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
          evas_3d_material_shininess_set(100.0));
 
+   data->sphere = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   eo_do(data->sphere,
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_SPHERE),
+         evas_3d_primitive_precision_set(50));
+
    data->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
    data->mesh1 = eo_add(EVAS_3D_MESH_CLASS, evas);
 
-   _set_ball(data->mesh, 100, data->material);
-   _set_ball(data->mesh1, 100, data->material);
+   _set_ball(data->mesh, data->sphere, data->material);
+   _set_ball(data->mesh1, data->sphere, data->material);
 
    data->animation_node =
       eo_add(EVAS_3D_NODE_CLASS, evas,

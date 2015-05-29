@@ -3,7 +3,7 @@
  * by interpolation between frames.
  *
  * @verbatim
- * gcc -o evas-3d-cube2 evas-3d-cube2.c evas-3d-primitives.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
+ * gcc -o evas-3d-cube2 evas-3d-cube2.c `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm
  * @endverbatim
  */
 
@@ -19,7 +19,6 @@
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
-#include "evas-3d-primitives.h"
 #include "evas-common.h"
 
 #define  WIDTH          400
@@ -37,6 +36,7 @@ typedef struct _Scene_Data
 
    Eo *camera;
    Eo *light;
+   Eo *cube;
    Eo *mesh;
    Eo *material0;
    Eo *material1;
@@ -195,10 +195,15 @@ _mesh_setup(Scene_Data *data)
    eo_do(data->material1,
          evas_3d_material_texture_set(EVAS_3D_MATERIAL_NORMAL, data->texture_normal));
 
+   /* Set data of primitive */
+   data->cube = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   eo_do(data->cube,
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_CUBE));
+
    /* Setup mesh. */
    data->mesh = eo_add(EVAS_3D_MESH_CLASS, evas);
-   evas_3d_add_cube_frame(data->mesh, 0);
    eo_do(data->mesh,
+         evas_3d_mesh_from_primitive_set(0, data->cube),
          evas_3d_mesh_frame_material_set(0, data->material0),
          evas_3d_mesh_frame_add(20),
          evas_3d_mesh_frame_material_set(20, data->material1),

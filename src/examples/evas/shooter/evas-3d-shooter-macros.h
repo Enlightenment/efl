@@ -49,6 +49,18 @@
 #define  SNAKE_FRAME_Z1   -59
 #define  SNAKE_FRAME_Z2   32
 
+typedef struct _vec3
+{
+    float   x;
+    float   y;
+    float   z;
+} vec3;
+
+typedef struct _vec2
+{
+    float   x;
+    float   y;
+} vec2;
 
 #define KEY_MOTION(lateral, camera)               \
    {                                              \

@@ -9,7 +9,7 @@
 * which fixes the rocket entry. The warrior isn't passable for camera,
 * neither is wall, stairs and columns. There is a possibility to go upstairs and break down.
 *
-* Compile with "gcc -g evas-3d-shooter.c evas-3d-shooter-header.c ../evas-3d-primitives.c -o evas-3d-shooter `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm"
+* Compile with "gcc -g evas-3d-shooter.c evas-3d-shooter-header.c -o evas-3d-shooter `pkg-config --libs --cflags efl evas ecore ecore-evas eo` -lm"
 *
 * Run program with flag "-s=TRUE" to turn on shadows, with "-f=TRUE" to turn on the fog, with "-b=TRUE" to turn on the blending.
 */
@@ -1008,9 +1008,6 @@ _mesh_setup_gun_planet(Scene_Data *data)
    MATERIAL_TEXTURE_SET(carpet, carpet, gazebo_top_path, gazebo_t_path)
    NORMAL_SET(carpet, carpet, gazebo_t_n_path)
 
-
-
-
    if (data->blending)
      {
         eo_do(data->texture_diffuse_carpet,
@@ -1138,9 +1135,8 @@ _mesh_setup_column(Scene_Data *data, int index)
 
    SETUP_MESH_NODE(column[index])
 
-   evas_3d_add_cylinder_frame(data->mesh_column[index], 0, 50, tex_scale);
-
    eo_do(data->mesh_column[index],
+         evas_3d_mesh_from_primitive_set(0, data->cylinder_primitive),
          evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
          evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES),
          evas_3d_mesh_frame_material_set(0, data->material_column),
@@ -1273,8 +1269,16 @@ _scene_setup(Scene_Data *data)
    _light_setup(data);
    _mesh_setup_gun_planet(data);
    _mesh_setup_snake(data);
+
    for (i = 0; i < 10; i++)
      _mesh_setup_rocket(data, i);
+
+   data->cylinder_primitive = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   eo_do(data->cylinder_primitive,
+         evas_3d_primitive_mode_set(EVAS_3D_PRIMITIVE_MODE_WITHOUT_BASE),
+         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_CYLINDER),
+         evas_3d_primitive_tex_scale_set(1.0, 1.0),
+         evas_3d_primitive_precision_set(50));
 
    for ( i = 0; i < 4; i++)
      _mesh_setup_column(data, i);
