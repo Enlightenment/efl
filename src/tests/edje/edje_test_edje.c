@@ -151,6 +151,25 @@ START_TEST(edje_test_complex_layout)
 }
 END_TEST
 
+START_TEST(edje_test_calculate_parens)
+{
+   int x, y, w, h;
+   int r, g, b, a;
+   Evas *evas = EDJE_TEST_INIT_EVAS();
+   Evas_Object *obj;
+   const Evas_Object *bg;
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_parens.edj"), "test_group"));
+
+   evas_object_resize(obj, 100, 100);
+   edje_object_part_geometry_get(obj, "background", &x, &y, &w, &h);
+   fail_if(x != 0 || y != 0 || w != 100 || h != 100);
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 void edje_test_edje(TCase *tc)
 {    
    tcase_add_test(tc, edje_test_edje_init);
@@ -158,4 +177,5 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_edje_load);
    tcase_add_test(tc, edje_test_simple_layout_geometry);
    tcase_add_test(tc, edje_test_complex_layout);
+   tcase_add_test(tc, edje_test_calculate_parens);
 }

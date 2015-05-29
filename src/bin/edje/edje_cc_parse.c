@@ -387,10 +387,18 @@ next_token(char *p, char *end, char **new_p, int *delim)
                        else if (is_escaped)
                          is_escaped = 0;
                     }
-                  else if (in_parens)
+                  else if (in_parens != 0 && (!is_escaped))
                     {
-                       if (((*p) == ')') && (!is_escaped))
+                       if (*p == '(')
+                         in_parens++;
+                       else if (*p == ')')
                          in_parens--;
+                       else if (isdelim(*p))
+                         {
+                            ERR("check pair of parens %s:%i.", file_in, line - 1);
+                            err_show();
+                            exit(-1);
+                         }
                     }
                   else
                     {
@@ -401,6 +409,8 @@ next_token(char *p, char *end, char **new_p, int *delim)
                          }
                        else if (*p == '(')
                          in_parens++;
+                       else if (*p == ')')
+                         in_parens--;
 
                        /* check for end-of-token */
                        if (

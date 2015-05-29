@@ -1,0 +1,24 @@
+collections {
+   group {
+      name: "test_group";
+
+      parts {
+         part {
+            name: "background";
+            type: RECT;
+            mouse_events: 0;
+
+            description {
+               state: "default" 0.0;
+               min: ((1000 + 100) - 1000) 100;
+
+              rel1 {
+                  relative: 0.0 0.0;                  
+               }
+               rel2 {
+                  relative: 1.0 1.0;                  
+               }
+            }
+         }
+   }
+}
