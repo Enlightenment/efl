@@ -158,21 +158,52 @@ static void next_line(Eo_Lexer *ls)
    ls->icolumn = ls->column = 0;
 }
 
-/* go to next line and strip leading whitespace */
-static void next_line_ws(Eo_Lexer *ls)
+static void skip_ws(Eo_Lexer *ls)
 {
-   next_line(ls);
    while (isspace(ls->current) && !is_newline(ls->current))
      next_char(ls);
 }
 
-static void
-read_long_comment(Eo_Lexer *ls, Eo_Token *tok)
+/* go to next line and strip leading whitespace */
+static void next_line_ws(Eo_Lexer *ls)
 {
+   next_line(ls);
+   skip_ws(ls);
+}
+
+static Eina_Bool
+should_skip_star(Eo_Lexer *ls, int ccol, Eina_Bool *term)
+{
+   Eina_Bool had_star = EINA_FALSE;
+   if (ls->column == ccol && ls->current == '*')
+     {
+        had_star = EINA_TRUE;
+        next_char(ls);
+        if (ls->current == '/')
+          {
+             next_char(ls);
+             *term = EINA_TRUE;
+             return EINA_FALSE;
+          }
+        skip_ws(ls);
+     }
+   return had_star;
+}
+
+static void
+read_long_comment(Eo_Lexer *ls, Eo_Token *tok, int ccol)
+{
+   Eina_Bool had_star = EINA_FALSE, had_nl = EINA_FALSE;
    eina_strbuf_reset(ls->buff);
 
    if (is_newline(ls->current))
-     next_line_ws(ls);
+     {
+        Eina_Bool term = EINA_FALSE;
+        had_nl = EINA_TRUE;
+        next_line_ws(ls);
+        had_star = should_skip_star(ls, ccol, &term);
+        if (term) goto cend;
+     }
 
    for (;;)
      {
@@ -192,6 +223,23 @@ read_long_comment(Eo_Lexer *ls, Eo_Token *tok)
           {
              eina_strbuf_append_char(ls->buff, '\n');
              next_line_ws(ls);
+             if (!had_nl)
+               {
+                  Eina_Bool term = EINA_FALSE;
+                  had_nl = EINA_TRUE;
+                  had_star = should_skip_star(ls, ccol, &term);
+                  if (term) break;
+               }
+             else if (had_star && ls->column == ccol && ls->current == '*')
+               {
+                  next_char(ls);
+                  if (ls->current == '/')
+                    {
+                       next_char(ls);
+                       break;
+                    }
+                  skip_ws(ls);
+                }
           }
         else
           {
@@ -199,6 +247,7 @@ read_long_comment(Eo_Lexer *ls, Eo_Token *tok)
              next_char(ls);
           }
      }
+cend:
    eina_strbuf_trim(ls->buff);
    if (tok) tok->value.s = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
 }
@@ -472,10 +521,11 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
            next_char(ls);
            if (ls->current == '*')
              {
+                int ccol = ls->column;
                 next_char(ls);
                 if ((doc = (ls->current == '@')))
                   next_char(ls);
-                read_long_comment(ls, doc ? tok : NULL);
+                read_long_comment(ls, doc ? tok : NULL, ccol);
                 if (doc)
                   return TOK_COMMENT;
                 else
