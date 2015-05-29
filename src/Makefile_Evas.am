@@ -42,9 +42,13 @@ evas_eolian_files = \
 	lib/evas/canvas/efl_vg_gradient_radial.eo \
 	lib/evas/canvas/efl_vg_gradient_linear.eo
 
+evas_eolian_type_files = \
+    lib/evas/evas_types.eot
+
 evas_eolian_c = $(evas_eolian_files:%.eo=%.eo.c)
 evas_eolian_h = $(evas_eolian_files:%.eo=%.eo.h) \
-                $(evas_eolian_files:%.eo=%.eo.legacy.h)
+                $(evas_eolian_files:%.eo=%.eo.legacy.h) \
+                $(evas_eolian_type_files:%.eot=%.eot.h)
 
 BUILT_SOURCES += \
                  $(evas_eolian_c) \
@@ -56,7 +60,8 @@ CLEANFILES += \
 
 evaseolianfilesdir = $(datadir)/eolian/include/evas-@VMAJ@
 evaseolianfiles_DATA = \
-              $(evas_eolian_files)
+              $(evas_eolian_files) \
+              $(evas_eolian_type_files)
 
 EXTRA_DIST += \
               ${evaseolianfiles_DATA}

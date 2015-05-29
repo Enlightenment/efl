@@ -2,6 +2,8 @@
 # error You shall not include this header directly
 #endif
 
+#include "evas_types.eot.h"
+
 /**
  * @def EVAS_VERSION_MAJOR
  * The major number of evas version
