@@ -142,7 +142,7 @@ _elm_code_widget_selection_delete_multi(Elm_Code_Widget_Data *pd)
    first = elm_code_line_text_get(line, NULL);
    line = elm_code_file_line_get(pd->code->file, pd->selection->end_line);
    last = elm_code_line_text_get(line, &last_length);
-   length = pd->selection->start_col + last_length - pd->selection->end_col + 1;
+   length = pd->selection->start_col + last_length - (pd->selection->end_col + 1);
    content = malloc(sizeof(char) * length);
    strncpy(content, first, pd->selection->start_col - 1);
    strncpy(content + pd->selection->start_col - 1, last + pd->selection->end_col,
