@@ -165,6 +165,8 @@ types_header_generate(const char *eo_filename, Eina_Strbuf *buf, Eina_Bool full)
    Eina_Iterator *itr = eolian_type_aliases_get_by_file(eo_filename);
    EINA_ITERATOR_FOREACH(itr, tp)
      {
+        if (eolian_type_is_extern(tp))
+          continue;
         Eina_Strbuf *type_buf = _type_generate(tp, full);
         if (type_buf)
           {
@@ -179,6 +181,8 @@ types_header_generate(const char *eo_filename, Eina_Strbuf *buf, Eina_Bool full)
    itr = eolian_type_structs_get_by_file(eo_filename);
    EINA_ITERATOR_FOREACH(itr, tp)
      {
+        if (eolian_type_is_extern(tp))
+          continue;
         Eina_Strbuf *type_buf = _type_generate(tp, full);
         if (type_buf)
           {
@@ -196,6 +200,8 @@ types_header_generate(const char *eo_filename, Eina_Strbuf *buf, Eina_Bool full)
    itr = eolian_type_enums_get_by_file(eo_filename);
    EINA_ITERATOR_FOREACH(itr, tp)
      {
+        if (eolian_type_is_extern(tp))
+          continue;
         Eina_Strbuf *type_buf = _type_generate(tp, EINA_TRUE);
         if (type_buf)
           {
