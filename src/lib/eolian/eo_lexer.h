@@ -52,6 +52,8 @@ enum Tokens
     \
     KW(accessor), KW(array), KW(iterator), KW(hash), KW(list), \
     \
+    KW(__builtin_event_cb), \
+    \
     KW(true), KW(false), KW(null)
 
 /* "regular" keyword and @ prefixed keyword */

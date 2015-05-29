@@ -803,7 +803,7 @@ eo_lexer_keyword_str_get(int kw)
 Eina_Bool
 eo_lexer_is_type_keyword(int kw)
 {
-   return (kw >= KW_byte && kw <= KW_list);
+   return (kw >= KW_byte && kw <= KW_true);
 }
 
 int

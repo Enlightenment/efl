@@ -239,7 +239,7 @@ eolian_type_base_type_get(const Eolian_Type *tp)
          * but first check for builtins
          */
         int  kw = eo_lexer_keyword_str_to_id(tp->full_name);
-        if (!kw || kw < KW_byte || kw > KW_list)
+        if (!kw || kw < KW_byte || kw >= KW_true)
           {
              Eolian_Declaration *decl = eina_hash_find(_decls, tp->full_name);
              if (decl && decl->type != EOLIAN_DECL_CLASS
