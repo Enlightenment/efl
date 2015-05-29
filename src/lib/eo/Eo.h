@@ -113,18 +113,6 @@ typedef struct _Eo_Opaque Eo;
 typedef Eo Eo_Class;
 
 /**
- * @typedef Eo_Callback_Priority
- *
- * Callback priority value. Range is -32k - 32k. The lower the number, the
- * higher the priority.
- *
- * @see EO_CALLBACK_PRIORITY_AFTER
- * @see EO_CALLBACK_PRIORITY_BEFORE
- * @see EO_CALLBACK_PRIORITY_DEFAULT
- */
-typedef short Eo_Callback_Priority;
-
-/**
  * @var _eo_class_creation_lock
  * This variable is used for locking purposes in the class_get function
  * defined in #EO_DEFINE_CLASS.
@@ -153,32 +141,34 @@ enum _Eo_Op_Type
  */
 typedef enum _Eo_Op_Type Eo_Op_Type;
 
+/** XXX: Hack until fixed in Eolian */
+typedef struct _Eo_Event_Description Eo_Event_Description2;
+/**
+ * @typedef Eo_Event_Cb
+ *
+ * An event callback prototype.
+ *
+ * @param data The user data registered with the callback.
+ * @param obj The object which initiated the event.
+ * @param desc The event's description.
+ * @param event_info additional data passed with the event.
+ * @return #EO_CALLBACK_STOP to stop calling additional callbacks for the event, #EO_CALLBACK_CONTINUE to continue.
+ */
+typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description2 *desc, void *event_info);
+
+#include "eo_base.eo.h"
+#define EO_CLASS EO_BASE_CLASS
+
 /**
  * @addtogroup Eo_Debug_Information Eo's Debug information helper.
  * @{
  */
 
 /**
- * @struct _Eo_Dbg_Info
- * The structure for the debug info used by Eo.
- */
-struct _Eo_Dbg_Info
-{
-   Eina_Stringshare *name; /**< The name of the part (stringshare). */
-   Eina_Value value; /**< The value. */
-};
-
-/**
  * @var EO_DBG_INFO_TYPE
  * The Eina_Value_Type for the debug info.
  */
 EAPI extern const Eina_Value_Type *EO_DBG_INFO_TYPE;
-
-/**
- * @typedef Eo_Dbg_Info
- * A convenience typedef for #_Eo_Dbg_Info
- */
-typedef struct _Eo_Dbg_Info Eo_Dbg_Info;
 
 /**
  * Creates a list inside debug info list.
@@ -246,24 +236,6 @@ typedef unsigned int Eo_Op;
  * @addtogroup Eo_Events Eo's Event Handling
  * @{
  */
-
-/**
- * @struct _Eo_Event_Description
- * This struct holds the description of a specific event.
- */
-struct _Eo_Event_Description
-{
-   const char *name; /**< name of the event. */
-   const char *doc; /**< Explanation about the event. */
-
-   Eina_Bool   unfreezable; /**< Eina_True if the event cannot be frozen */
-};
-
-/**
- * @typedef Eo_Event_Description
- * A convenience typedef for #_Eo_Event_Description
- */
-typedef struct _Eo_Event_Description Eo_Event_Description;
 
 /**
  * @def EO_EVENT_DESCRIPTION(name, doc)
@@ -984,36 +956,6 @@ EAPI const Eo_Event_Description *eo_base_legacy_only_event_description_get(const
 #define EO_CALLBACK_CONTINUE EINA_TRUE
 
 /**
- * @typedef Eo_Event_Cb
- *
- * An event callback prototype.
- *
- * @param data The user data registered with the callback.
- * @param obj The object which initiated the event.
- * @param desc The event's description.
- * @param event_info additional data passed with the event.
- * @return #EO_CALLBACK_STOP to stop calling additional callbacks for the event, #EO_CALLBACK_CONTINUE to continue.
- */
-typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
-
-/**
- * @typedef Eo_Callback_Array_Item
- * A convenience typedef for #_Eo_Callback_Array_Item
- */
-typedef struct _Eo_Callback_Array_Item Eo_Callback_Array_Item;
-
-/**
- * @struct _Eo_Callback_Array_Item
- * An item in an array of callback desc/func.
- * @see eo_event_callback_array_add()
- */
-struct _Eo_Callback_Array_Item
-{
-   const Eo_Event_Description *desc; /**< The event description. */
-   Eo_Event_Cb func; /**< The callback function. */
-};
-
-/**
  * Helper for creating global callback arrays.
  * The problem is on windows where you can't declare a static array with
  * external symbols in it, because the addresses are only known at runtime.
@@ -1076,10 +1018,6 @@ struct _Eo_Callback_Array_Item
 /**
  * @}
  */
-
-#include "eo_base.eo.h"
-
-#define EO_CLASS EO_BASE_CLASS
 
 /**
  * @}
