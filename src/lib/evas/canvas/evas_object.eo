@@ -454,7 +454,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             See the full @ref Example_Evas_Object_Manipulation "example". */
          }
          values {
-            clip: Evas_Object * @nonull; /*@ The object to clip @p obj by */
+            clip: Evas.Object * @nonull; /*@ The object to clip @p obj by */
          }
       }
       @property size_hint_padding {
@@ -1014,7 +1014,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             properties, like colors.
 
             @see evas_object_smart_clipped_smart_add() */
-            return: Evas_Object * @warn_unused;
+            return: Evas.Object * @warn_unused;
          }
       }
       @property clipees {
@@ -1068,7 +1068,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             obj is not a smart member of any
 
             @ingroup Evas_Smart_Object_Group */
-            return: Evas_Object * @warn_unused;
+            return: Evas.Object * @warn_unused;
          }
       }
       @property size_hint_display_mode {
@@ -1197,7 +1197,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          @since 1.2
 
          @ingroup Evas_Object_Group_Find */
-         return: Evas_Object * @warn_unused;
+         return: Evas.Object * @warn_unused;
          params {
             @in name: const(char)*; /*@ The given name. */
             @in recurse: int; /*@ Set to the number of child levels to recurse (0 == don't recurse, 1 == only look at the children of @p obj or their immediate children, but no further etc.). */
