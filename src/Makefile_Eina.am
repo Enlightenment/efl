@@ -90,7 +90,8 @@ lib/eina/eina_matrix.h \
 lib/eina/eina_quad.h \
 lib/eina/eina_crc.h \
 lib/eina/eina_evlog.h \
-lib/eina/eina_util.h
+lib/eina/eina_util.h \
+lib/eina/eina_quaternion.h
 
 lib_eina_libeina_la_SOURCES = \
 lib/eina/eina_abi.c \
@@ -158,7 +159,8 @@ lib/eina/eina_xattr.c \
 lib/eina/eina_debug.h \
 lib/eina/eina_private.h \
 lib/eina/eina_share_common.h \
-lib/eina/eina_strbuf_common.h
+lib/eina/eina_strbuf_common.h \
+lib/eina/eina_quaternion.c
 
 if HAVE_WIN32
 lib_eina_libeina_la_SOURCES += lib/eina/eina_file_win32.c
@@ -311,7 +313,8 @@ tests/eina/eina_test_lock.c \
 tests/eina/eina_test_xattr.c \
 tests/eina/eina_test_crc.c \
 tests/eina/eina_test_quad.c \
-tests/eina/eina_test_matrix.c
+tests/eina/eina_test_matrix.c \
+tests/eina/eina_test_quaternion.c
 
 tests_eina_eina_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
