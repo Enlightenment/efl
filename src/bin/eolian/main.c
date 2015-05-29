@@ -61,20 +61,20 @@ _read_file(char *filename, Eina_Strbuf *buffer)
         file_size = ftell(fd);
         if (file_size <= 0)
           {
-             ERR("Couldnt determine length for file %s", filename);
+             fprintf(stderr, "eolian: could not get length of '%s'\n", filename);
              goto end;
           }
         fseek(fd, 0, SEEK_SET);
         char *content = malloc(file_size + 1);
         if (!content)
           {
-             ERR("Couldnt allocate memory for file %s", filename);
+             fprintf(stderr, "eolian: could not allocate memory for '%s'\n", filename);
              goto end;
           }
         long actual_size = (long)fread(content, 1, file_size, fd);
         if (actual_size != file_size)
           {
-             ERR("Couldnt read the %ld bytes of file %s (read %ld bytes)",
+             fprintf(stderr, "eolian: could not read %ld bytes from '%s' (read %ld bytes)\n",
                  file_size, filename, actual_size);
              free(content);
              goto end;
@@ -103,8 +103,8 @@ _write_file(char *filename, const Eina_Strbuf *buffer, Eina_Bool append)
    FILE* fd = fopen(filename, append ? "ab" : "wb");
    if (!fd)
      {
-        const char *err = strerror(errno);
-        ERR ("Couldn't open file %s for writing. Reason: '%s'", filename, err);
+        fprintf(stderr, "eolian: could not open '%s' for writing (%s)\n",
+                filename, strerror(errno));
         return EINA_FALSE;
      }
 
@@ -122,7 +122,7 @@ _generate_eo_header_file(char *filename, const char *eo_filename)
 
    if (!types_header_generate(eo_filename, buffer, EINA_TRUE))
      {
-        ERR("Failed to generate types of file %s", eo_filename);
+        fprintf(stderr, "eolian: could not generate types of '%s'\n", eo_filename);
         goto end;
      }
    else
@@ -144,7 +144,8 @@ _generate_eo_header_file(char *filename, const char *eo_filename)
      {
         if (!eo_header_generate(class, buffer))
           {
-             ERR("Failed to generate header for %s", eolian_class_name_get(class));
+             fprintf(stderr, "eolian: could not generate header for '%s'\n",
+                     eolian_class_name_get(class));
              goto end;
           }
      }
@@ -167,7 +168,7 @@ _generate_stub_header_file(char *filename, const char *eo_filename)
 
    if (!types_header_generate(eo_filename, buffer, EINA_FALSE))
      {
-        ERR("Failed to generate types of file %s", eo_filename);
+        fprintf(stderr, "eolian: could not generate types of '%s'\n", eo_filename);
         goto end;
      }
 
@@ -201,14 +202,16 @@ _generate_c_file(char *filename, const char *eo_filename, Eina_Bool legacy_suppo
      {
         if (!eo_source_generate(class, eo_buf))
           {
-             ERR("Failed to generate source for %s", eolian_class_name_get(class));
+             fprintf(stderr, "eolian: could not generate source for '%s'\n",
+                     eolian_class_name_get(class));
              goto end;
           }
 
         if (legacy_support)
            if (!legacy_source_generate(class, legacy_buf))
              {
-                ERR("Failed to generate source for %s", eolian_class_name_get(class));
+                fprintf(stderr, "eolian: could not generate source for '%s'\n",
+                        eolian_class_name_get(class));
                 goto end;
              }
      }
@@ -235,7 +238,8 @@ _generate_impl_c_file(char *filename, const char *eo_filename)
 
         if (!impl_source_generate(class, buffer))
           {
-             ERR("Failed to generate source for %s", eolian_class_name_get(class));
+             fprintf(stderr, "eolian: could not generate source for '%s'\n",
+                     eolian_class_name_get(class));
              goto end;
           }
 
@@ -257,7 +261,7 @@ _generate_legacy_header_file(char *filename, const char *eo_filename)
 
    if (!types_header_generate(eo_filename, buffer, EINA_TRUE))
      {
-        ERR("Failed to generate types of file %s", eo_filename);
+        fprintf(stderr, "eolian: could not generate types of '%s'\n", eo_filename);
         goto end;
      }
    else
@@ -279,7 +283,8 @@ _generate_legacy_header_file(char *filename, const char *eo_filename)
      {
         if (!legacy_header_generate(class, buffer))
           {
-             ERR("Failed to generate header for %s", eolian_class_name_get(class));
+             fprintf(stderr, "eolian: could not generate header for '%s'\n",
+                     eolian_class_name_get(class));
              goto end;
           }
 
@@ -363,7 +368,7 @@ int main(int argc, char **argv)
                         const char *dir = optarg;
                         if (!eolian_directory_scan(dir))
                           {
-                             ERR("Failed to scan %s", dir);
+                             fprintf(stderr, "eolian: could not scan '%s'\n", dir);
                              goto end;
                           }
                         break;
@@ -391,7 +396,7 @@ int main(int argc, char **argv)
 
    if (!eo_filename)
      {
-        ERR("No input file specified.\nTerminating.\n");
+        fprintf(stderr, "eolian: no input file specified\n");
         goto end;
      }
 
@@ -399,13 +404,13 @@ int main(int argc, char **argv)
 
    if (!eolian_file_parse(eo_filename))
      {
-        ERR("Error during parsing file %s\n", eo_filename);
+        fprintf(stderr, "eolian: error parsing file '%s'\n", eo_filename);
         goto end;
      }
 
    if (!eolian_database_validate())
      {
-        ERR("Error validating database.\n");
+        fprintf(stderr, "eolian: error validating database\n");
         goto end;
      }
 
@@ -420,7 +425,8 @@ int main(int argc, char **argv)
    /* Only needed for .eo files */
    if (is_eo && !eo_needed && !(gen_opt == H_GEN && legacy_support))
      {
-        ERR("Eo flag is not specified (use --eo). Aborting eo generation.\n");
+        /* FIXME: perhaps ditch this completely */
+        fprintf(stderr, "eolian: --eo not specified\n");
         goto end;
      }
 
@@ -428,7 +434,7 @@ int main(int argc, char **argv)
      {
         if (!output_filename)
           {
-             ERR("You must use -o argument for files generation.");
+             fprintf(stderr, "eolian: no output file specified\n");
              goto end;
           }
         switch (gen_opt)

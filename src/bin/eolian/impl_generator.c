@@ -262,8 +262,8 @@ impl_source_generate(const Eolian_Class *class, Eina_Strbuf *buffer)
                {
                   const char *name = names[eolian_implement_is_prop_get(impl_desc)
                                         | (eolian_implement_is_prop_set(impl_desc) << 1)];
-                  ERR ("Failed to generate implementation of %s%s - missing from class",
-                        name, eolian_implement_full_name_get(impl_desc));
+                  fprintf(stderr, "eolian: failed to generate implementation of '%s%s' - missing from class\n",
+                          name, eolian_implement_full_name_get(impl_desc));
                   goto end;
                }
              switch (ftype)
