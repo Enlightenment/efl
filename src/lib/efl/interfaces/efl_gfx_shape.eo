@@ -1,3 +1,5 @@
+import eina_types;
+
 mixin Efl.Gfx.Shape
 {
    legacy_prefix: null;
@@ -184,7 +186,7 @@ mixin Efl.Gfx.Shape
             @since 1.14
           */
         params {
-          @in dup_from: Eo *; /*@ Shape object from where data will be copied.*/
+          @in dup_from: Eo.Base *; /*@ Shape object from where data will be copied.*/
         }
       }
       bounds_get {
@@ -372,15 +374,15 @@ mixin Efl.Gfx.Shape
       interpolate {
         return: bool;
         params {
-          @in from: const(Eo)*;
-          @in to: const(Eo)*;
+          @in from: const(Eo.Base)*;
+          @in to: const(Eo.Base)*;
           @in pos_map: double;
         }
       }
       equal_commands {
         return: bool;
         params {
-          @in with: const(Eo)*;
+          @in with: const(Eo.Base)*;
         }
       }
    }
