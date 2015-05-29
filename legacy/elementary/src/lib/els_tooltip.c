@@ -415,6 +415,11 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    TTDBG("SCREEN:  cw=%d,ch=%d\n", cw, ch);
 
    evas_object_geometry_get(tt->eventarea, &ox, &oy, &ow, &oh);
+   /* win reports its screen position for x/y;
+    * reset to 0 since we expect canvas coords here
+    */
+   if (eo_isa(tt->eventarea, ELM_WIN_CLASS))
+     ox = oy = 0;
    TTDBG("EVENTAREA:  ox=%d,oy=%d,ow=%d,oh=%d\n", ox, oy, ow, oh);
 
    if (tt->tt_win)
