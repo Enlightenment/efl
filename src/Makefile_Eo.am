@@ -39,7 +39,8 @@ lib_eo_libeo_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 eoeolianfilesdir = $(datadir)/eolian/include/eo-@VMAJ@
 eoeolianfiles_DATA = \
-					 $(eo_eolian_files)
+					 $(eo_eolian_files) \
+					 lib/eo/eina_types.eot # We don't generate .c/.h on purpose
 
 EXTRA_DIST += \
               ${eoeolianfiles_DATA}

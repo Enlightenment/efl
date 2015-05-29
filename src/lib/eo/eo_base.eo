@@ -1,3 +1,5 @@
+import eina_types;
+
 /* XXX: Hack until Eolian is ready. */
 type @extern Eo.Event_Cb: __builtin_event_cb;
 
