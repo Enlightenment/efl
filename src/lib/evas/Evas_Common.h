@@ -274,19 +274,6 @@ typedef struct _Evas_Smart_Interface         Evas_Smart_Interface;
 typedef struct _Evas_Smart_Cb_Description Evas_Smart_Cb_Description;
 
 /**
- * @typedef Evas_Map
- *
- * An opaque handle to map points
- *
- * @see evas_map_new()
- * @see evas_map_free()
- * @see evas_map_dup()
- *
- * @ingroup Evas_Object_Group_Map
- */
-typedef struct _Evas_Map Evas_Map;
-
-/**
  * @typedef Evas
  *
  * An opaque handle to an Evas canvas.

@@ -7,3 +7,11 @@ enum Evas.Aspect_Control {
    vertical = 3, /**< Use all vertical container space to place an object, using the given aspect */
    both = 4 /**< Use all horizontal @b and vertical container spaces to place an object (never growing it out of those bounds), using the given aspect */
 }
+struct Evas.Map; /*@ An opaque handle to map points
+                  *
+                  * @see evas_map_new()
+                  * @see evas_map_free()
+                  * @see evas_map_dup()
+                  *
+                  * @ingroup Evas_Object_Group_Map
+                  */

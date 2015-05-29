@@ -310,7 +310,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @see evas_object_map_set() */
          }
          values {
-            map: const(Evas_Map)*; /*@ new map to use */
+            map: const(Evas.Map)*; /*@ new map to use */
          }
       }
       @property size_hint_aspect {
