@@ -624,6 +624,7 @@ EAPI void ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_surface *s
 EAPI void ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char *cursor_name);
 EAPI void ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent);
+EAPI void ecore_wl_window_position_set(Ecore_Wl_Window *win, int x, int y);
 
 /**
  * Iconify a window

@@ -844,6 +844,7 @@ _ecore_evas_wl_common_move(Ecore_Evas *ee, int x, int y)
           ecore_wl_window_update_location(wdata->win, x, y);
         if (ee->func.fn_move) ee->func.fn_move(ee);
      }
+   ecore_wl_window_position_set(wdata->win, x, y);
 }
 
 /* Frame border:

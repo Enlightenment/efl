@@ -408,6 +408,10 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
              tizen_resource_add_listener(win->tz_resource,
                                          &_ecore_tizen_resource_listener, win);
           }
+        if ((win->surface) && (_ecore_wl_disp->wl.tz_policy))
+          {
+             tizen_policy_position_set(_ecore_wl_disp->wl.tz_policy, win->surface, win->allocation.x, win->allocation.y);
+          }
      }
 
    /* trap for valid shell surface */
@@ -807,6 +811,15 @@ ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    win->parent = parent;
+}
+
+EAPI void
+ecore_wl_window_position_set(Ecore_Wl_Window *win, int x, int y)
+{
+   if ((win->surface) && (_ecore_wl_disp->wl.tz_policy))
+     {
+        tizen_policy_position_set(_ecore_wl_disp->wl.tz_policy, win->surface, win->allocation.x, win->allocation.y);
+     }
 }
 
 /* @since 1.12 */
