@@ -48,7 +48,7 @@ interface Efl.Gfx.Stack {
             @see evas_object_layer_get()
             @see evas_object_layer_set()
             @see evas_object_below_get() */
-            return: Efl_Gfx_Stack * @warn_unused;
+            return: Efl.Gfx.Stack * @warn_unused;
          }
       }
       @property above {
@@ -65,7 +65,7 @@ interface Efl.Gfx.Stack {
             @see evas_object_layer_get()
             @see evas_object_layer_set()
             @see evas_object_below_get() */
-            return: Efl_Gfx_Stack * @warn_unused;
+            return: Efl.Gfx.Stack * @warn_unused;
          }
       }
       stack_below {
@@ -93,7 +93,7 @@ interface Efl.Gfx.Stack {
          @see evas_object_stack_below() */
 
          params {
-            @in below: Efl_Gfx_Stack * @nonull; /*@ the object below which to stack */
+            @in below: Efl.Gfx.Stack * @nonull; /*@ the object below which to stack */
          }
       }
       raise {
@@ -133,7 +133,7 @@ interface Efl.Gfx.Stack {
          @see evas_object_stack_below() */
 
          params {
-            @in above: Efl_Gfx_Stack * @nonull; /*@ the object above which to stack */
+            @in above: Efl.Gfx.Stack * @nonull; /*@ the object above which to stack */
          }
       }
       lower {
