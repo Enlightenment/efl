@@ -1,3 +1,2 @@
 /* FIXME: Move to Eina when we decide they are handled properly. */
 type @extern Eina_Stringshare: const(char) *;
-type @extern Eina_Value: void *;

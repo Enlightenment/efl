@@ -50,7 +50,7 @@ enum Tokens
     \
     KW(void), \
     \
-    KW(accessor), KW(array), KW(iterator), KW(hash), KW(list), \
+    KW(accessor), KW(array), KW(iterator), KW(hash), KW(list), KW(generic_value), \
     \
     KW(__builtin_event_cb), \
     \

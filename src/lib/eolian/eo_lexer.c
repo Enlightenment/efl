@@ -72,7 +72,10 @@ static const char * const ctypes[] =
 
    "void",
 
-   "Eina_Accessor", "Eina_Array", "Eina_Iterator", "Eina_Hash", "Eina_List"
+   "Eina_Accessor", "Eina_Array", "Eina_Iterator", "Eina_Hash", "Eina_List",
+   "Eina_Value",
+
+   "Eo_Event_Cb"
 };
 
 #undef KW

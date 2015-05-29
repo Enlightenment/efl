@@ -111,7 +111,7 @@ interface Efl.Model.Base ()
                property: const(char)*; /*@ Property name */
             }
             values {
-               value: const(Eina_Value)*; /*@ New value */
+               value: const(generic_value)*; /*@ New value */
             }
          }
          @property children_slice {
