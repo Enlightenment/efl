@@ -61,12 +61,8 @@ EAPI const Eo_Class *@#klasstype_get(void) EINA_CONST;\n\
 static const char
 tmpl_eo_funcdef_doxygen[] = "\
 /**\n\
- *\n\
 @#desc\n\
- *\n\
 @#list_desc_param\
-@#ret_desc\
- *\n\
  */\n";
 
 static const char
@@ -142,8 +138,6 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
 
    Eina_Strbuf *str_par = eina_strbuf_new();
    Eina_Strbuf *str_pardesc = eina_strbuf_new();
-   Eina_Strbuf *str_retdesc = eina_strbuf_new();
-   Eina_Strbuf *str_typecheck = eina_strbuf_new();
 
    itr = eolian_property_keys_get(func, ftype);
    EINA_ITERATOR_FOREACH(itr, data)
@@ -154,6 +148,8 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
         const char *ptype = eolian_type_c_type_get(ptypet);
         const char *pdesc = eolian_parameter_description_get(param);
 
+        if (!eina_strbuf_length_get(str_pardesc))
+          eina_strbuf_append(str_pardesc, " *\n");
         eina_strbuf_append_printf(str_pardesc, tmpl_eo_pardesc, "in", pname, pdesc?pdesc:"No description supplied.");
 
         if (eina_strbuf_length_get(str_par)) eina_strbuf_append(str_par, ", ");
@@ -185,6 +181,8 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
 
              const char *dir_str = str_dir[(int)pdir];
 
+             if (!eina_strbuf_length_get(str_pardesc))
+               eina_strbuf_append(str_pardesc, " *\n");
              eina_strbuf_append_printf(str_pardesc, tmpl_eo_pardesc, dir_str, pname, pdesc?pdesc:"No description supplied.");
 
              if (eina_strbuf_length_get(str_par)) eina_strbuf_append(str_par, ", ");
@@ -208,16 +206,12 @@ eo_fundef_generate(const Eolian_Class *class, const Eolian_Function *func, Eolia
    if (!eina_strbuf_length_get(str_par)) eina_strbuf_append(str_par, "void");
    eina_strbuf_replace_all(str_func, "@#full_params", eina_strbuf_string_get(str_par));
    eina_strbuf_replace_all(str_func, "@#list_desc_param", eina_strbuf_string_get(str_pardesc));
-   eina_strbuf_replace_all(str_func, "@#ret_desc", eina_strbuf_string_get(str_retdesc));
-   eina_strbuf_replace_all(str_func, "@#list_typecheck", eina_strbuf_string_get(str_typecheck));
 
    if (rettype) eina_stringshare_del(rettype);
 
    free(tmpstr);
    eina_strbuf_free(str_par);
-   eina_strbuf_free(str_retdesc);
    eina_strbuf_free(str_pardesc);
-   eina_strbuf_free(str_typecheck);
 
    eina_strbuf_append(functext, eina_strbuf_string_get(str_func));
    eina_strbuf_free(str_func);

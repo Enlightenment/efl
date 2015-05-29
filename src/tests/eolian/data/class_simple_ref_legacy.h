@@ -18,7 +18,6 @@ typedef Eo Class_Simple;
  */
 
 /**
- *
  * Common desc for a
  * comment a.set
  *
@@ -27,22 +26,17 @@ typedef Eo Class_Simple;
 EAPI Eina_Bool evas_object_simple_a_set(Class_Simple *obj, int value);
 
 /**
- *
  * Common desc for a
  * 
- *
  */
 EAPI int evas_object_simple_a_get(const Class_Simple *obj);
 
 /**
- *
  * No description supplied.
- *
  */
 EAPI void evas_object_simple_b_set(Class_Simple *obj);
 
 /**
- *
  * comment foo
  * 
  *
@@ -53,7 +47,6 @@ EAPI void evas_object_simple_b_set(Class_Simple *obj);
 EAPI char *evas_object_simple_foo(Class_Simple *obj, int a, char *b, double *c);
 
 /**
- *
  * No description supplied.
  *
  * @param[in] x No description supplied.

@@ -22,55 +22,43 @@ EAPI const Eo_Class *class_simple_class_get(void) EINA_CONST;
 
 #ifdef CLASS_SIMPLE_BETA
 /**
- *
  * Common desc for a
  * comment a.set
  *
  * @param[in] value Value description
- *
  */
 EOAPI Eina_Bool  evas_obj_simple_a_set(int value);
 #endif
 
 #ifdef CLASS_SIMPLE_BETA
 /**
- *
  * Common desc for a
  * 
- *
- *
  */
 EOAPI int  evas_obj_simple_a_get(void);
 #endif
 
 /**
- *
  * No description supplied.
- *
- *
  */
 EOAPI void  evas_obj_simple_b_set(void);
 
 #ifdef CLASS_SIMPLE_BETA
 /**
- *
  * comment foo
  * 
  *
  * @param[in] a a
  * @param[inout] b No description supplied.
  * @param[out] c No description supplied.
- *
  */
 EOAPI char * evas_obj_simple_foo(int a, char *b, double *c);
 #endif
 
 /**
- *
  * No description supplied.
  *
  * @param[in] x No description supplied.
- *
  */
 EOAPI int  evas_obj_simple_bar(int x);
 

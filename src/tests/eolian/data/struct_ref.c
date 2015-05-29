@@ -31,11 +31,9 @@ typedef struct _Opaque Opaque;
 EAPI const Eo_Class *struct_class_get(void) EINA_CONST;
 
 /**
- *
  * No description supplied.
  *
  * @param[in] idx No description supplied.
- *
  */
 EOAPI char * struct_foo(int idx);
 

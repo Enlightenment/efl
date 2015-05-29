@@ -38,11 +38,9 @@ typedef enum
 EAPI const Eo_Class *typedef_class_get(void) EINA_CONST;
 
 /**
- *
  * No description supplied.
  *
  * @param[in] idx No description supplied.
- *
  */
 EOAPI char * typedef_foo(int idx);
 

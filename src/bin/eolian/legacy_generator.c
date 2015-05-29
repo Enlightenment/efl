@@ -15,9 +15,7 @@ static _eolian_class_vars class_env;
 static const char
 tmpl_eapi_funcdef[] = "\n\
 /**\n\
- *\n\
 @#desc\n\
- *\n\
 @#list_desc_param\
  */\n\
 EAPI @#type_return%s(@#params)@#flags;\n\
@@ -124,6 +122,8 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
         if (eina_strbuf_length_get(fparam)) eina_strbuf_append(fparam, ", ");
         eina_strbuf_append_printf(fparam, "%s %s", ptype, pname);
         eina_stringshare_del(ptype);
+        if (!eina_strbuf_length_get(descparam))
+          eina_strbuf_append(descparam, " *\n");
         eina_strbuf_append_printf(descparam, " * @param[in] %s %s\n", pname, pdesc?pdesc:"No description supplied.");
         if (eolian_parameter_is_nonull((Eolian_Function_Parameter*)data))
           {
@@ -159,6 +159,8 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
                   ptype, had_star?"":" ", add_star?"*":"", pname);
             eina_stringshare_del(ptype);
             const char *dir_str = str_dir[(int)pdir];
+            if (!eina_strbuf_length_get(descparam))
+              eina_strbuf_append(descparam, " *\n");
             eina_strbuf_append_printf(descparam, " * @param[%s] %s %s\n", dir_str, pname, pdesc?pdesc:"No description supplied.");
             if (eolian_parameter_is_nonull((Eolian_Function_Parameter*)data))
               {
