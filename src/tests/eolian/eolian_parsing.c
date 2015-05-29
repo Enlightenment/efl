@@ -398,6 +398,8 @@ START_TEST(eolian_typedef)
    fail_if(!eina_iterator_next(iter, (void**)&atype));
    fail_if(!(type_name = eolian_type_name_get(atype)));
    fail_if(strcmp(type_name, "List_Objects"));
+   /* not generated extern, skip */
+   fail_if(!eina_iterator_next(iter, (void**)&atype));
    fail_if(eina_iterator_next(iter, (void**)&atype));
 
    eolian_shutdown();
