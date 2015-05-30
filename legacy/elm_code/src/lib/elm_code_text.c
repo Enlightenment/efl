@@ -303,12 +303,12 @@ elm_code_line_text_position_for_column_get(Elm_Code_Line *line, unsigned int col
    else
      chars = line->content;
 
-   while ((unsigned int) count < column && index <= (int) line->length)
+   while ((unsigned int) count < column && index < (int) line->length)
      {
         unicode = eina_unicode_utf8_next_get(chars, &index);
 
         if (unicode == 0)
-          return line->length + 1;
+          return line->length;
         else if (unicode == '\t')
           count += elm_code_text_tabwidth_at_position(count, tabstop);
         else

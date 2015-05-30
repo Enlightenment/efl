@@ -109,7 +109,7 @@ _elm_code_widget_selection_delete_single(Elm_Code_Widget_Data *pd)
 {
    Elm_Code_Line *line;
    const char *old;
-   unsigned int old_length, length;
+   unsigned int old_length, start, end, length;
    char *content;
 
    if (pd->selection->end_col < pd->selection->start_col)
@@ -117,12 +117,16 @@ _elm_code_widget_selection_delete_single(Elm_Code_Widget_Data *pd)
 
    line = elm_code_file_line_get(pd->code->file, pd->selection->start_line);
    old = elm_code_line_text_get(line, &old_length);
-   length = line->length - (pd->selection->end_col - pd->selection->start_col + 1);
-   content = malloc(sizeof(char) * length);
+   start = elm_code_line_text_position_for_column_get(line, pd->selection->start_col,
+                                                      pd->tabstop) - 1;
+   end = elm_code_line_text_position_for_column_get(line, pd->selection->end_col,
+                                                    pd->tabstop) - 1;
+   length = line->length - (end - start + 1);
 
-   strncpy(content, old, pd->selection->start_col - 1);
-   strncpy(content + pd->selection->start_col - 1, old + pd->selection->end_col,
-           old_length - pd->selection->end_col);
+   content = malloc(sizeof(char) * length);
+   strncpy(content, old, start);
+   strncpy(content + start, old + end + 1,
+           old_length - (end + 1));
    elm_code_line_text_set(line, content, length);
    free(content);
 }
@@ -132,7 +136,7 @@ _elm_code_widget_selection_delete_multi(Elm_Code_Widget_Data *pd)
 {
    Elm_Code_Line *line;
    const char *first, *last;
-   unsigned int last_length, length, i;
+   unsigned int last_length, start, end, length, i;
    char *content;
 
    if (pd->selection->end_line <= pd->selection->start_line)
@@ -140,13 +144,19 @@ _elm_code_widget_selection_delete_multi(Elm_Code_Widget_Data *pd)
 
    line = elm_code_file_line_get(pd->code->file, pd->selection->start_line);
    first = elm_code_line_text_get(line, NULL);
+   start = elm_code_line_text_position_for_column_get(line, pd->selection->start_col,
+                                                      pd->tabstop) - 1;
+
    line = elm_code_file_line_get(pd->code->file, pd->selection->end_line);
    last = elm_code_line_text_get(line, &last_length);
-   length = pd->selection->start_col + last_length - (pd->selection->end_col + 1);
+   end = elm_code_line_text_position_for_column_get(line, pd->selection->end_col,
+                                                    pd->tabstop) - 1;
+
+   length = start + last_length - (end + 1);
    content = malloc(sizeof(char) * length);
-   strncpy(content, first, pd->selection->start_col - 1);
-   strncpy(content + pd->selection->start_col - 1, last + pd->selection->end_col,
-           last_length - pd->selection->end_col);
+   strncpy(content, first, start);
+   strncpy(content + start, last + end + 1,
+           last_length - (end + 1));
 
    for (i = line->number; i > pd->selection->start_line; i--)
      elm_code_file_line_remove(pd->code->file, i);
