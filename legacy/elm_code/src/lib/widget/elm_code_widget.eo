@@ -62,6 +62,24 @@ class Elm_Code_Widget (Elm.Layout, Elm_Interface_Atspi_Text)
             y: double; /*@ The vertical gravity of the widget's scroller - valid values are 0.0 and 1.0 */
          }
       }
+      @property policy {
+         set {
+           /*@
+           Set the policy for scrollbar visibility.
+
+           @ingroup Layout */
+         }
+         get {
+           /*@
+           Get the widget's policy for scrollbar visibility.
+
+           @ingroup Layout */
+         }
+         values {
+            policy_h: Elm_Scroller_Policy; /*@ The horizontal scrollbar visibility policy */
+            policy_v: Elm_Scroller_Policy; /*@ The vertical scrollbar visibility policy */
+         }
+      }
       @property tabstop {
          set {
             /*@

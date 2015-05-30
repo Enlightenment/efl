@@ -1340,6 +1340,18 @@ _elm_code_widget_gravity_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, doub
 }
 
 EOLIAN static void
+_elm_code_widget_policy_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
+{
+   elm_scroller_policy_set(pd->scroller, policy_h, policy_v);
+}
+
+EOLIAN static void
+_elm_code_widget_policy_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v)
+{
+   elm_scroller_policy_get(pd->scroller, policy_h, policy_v);
+}
+
+EOLIAN static void
 _elm_code_widget_tabstop_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, unsigned int tabstop)
 {
    pd->tabstop = tabstop;
