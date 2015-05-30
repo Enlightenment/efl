@@ -14,9 +14,12 @@ _elm_code_widget_tooltip_text_set(Evas_Object *widget, const char *text)
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (!text)
-     elm_object_tooltip_hide(widget);
-   else
-     elm_object_tooltip_show(widget);
+     {
+        elm_object_tooltip_hide(widget);
+        return;
+     }
+
+   elm_object_tooltip_show(widget);
 
    if (pd->tooltip) // will have been created by the callback below...
      elm_object_text_set(pd->tooltip, text);
