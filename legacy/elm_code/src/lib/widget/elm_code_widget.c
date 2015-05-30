@@ -1124,11 +1124,19 @@ _elm_code_widget_control_key_down_cb(Elm_Code_Widget *widget, const char *key)
      return;
 
    if (!strcmp("c", key))
-     elm_code_widget_selection_copy(widget);
-   else if (!strcmp("v", key))
+     {
+        elm_code_widget_selection_copy(widget);
+        return;
+     }
+
+   if (!strcmp("v", key))
      elm_code_widget_selection_paste(widget);
    else if (!strcmp("x", key))
      elm_code_widget_selection_cut(widget);
+
+   eo_do(widget,
+// TODO construct and pass a change object
+         eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
 }
 
 static void
