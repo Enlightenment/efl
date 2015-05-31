@@ -91,7 +91,8 @@ lib/evas/include/evas_mmx.h \
 lib/evas/include/evas_common_private.h \
 lib/evas/include/evas_blend_ops.h \
 lib/evas/include/evas_filter.h \
-lib/evas/canvas/evas_vg_private.h
+lib/evas/canvas/evas_vg_private.h \
+lib/evas/common3d/primitives/primitive_common.h
 
 # Linebreak
 
