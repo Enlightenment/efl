@@ -40,7 +40,7 @@ widget/elm_code_widget.c \
 elm_code_diff_widget.c \
 elm_code.c \
 elm_code_private.h \
-elm_code_widget_private.h
+widget/elm_code_widget_private.h
 
 libelm_code_la_LIBADD = @EFL_LIBS@ -lm
 libelm_code_la_LDFLAGS = -no-undefined @EFL_LTLIBRARY_FLAGS@
