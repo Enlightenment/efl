@@ -37,7 +37,7 @@ class Elm_Code_Widget (Elm.Layout, Elm_Interface_Atspi_Text)
             @ingroup Style */
          }
          values {
-            name: char *; /*@ The name of the font to load */
+            name: const(char) *; /*@ The name of the font to load */
             size: Evas_Font_Size; /*@ The font size for the widget */
          }
       }

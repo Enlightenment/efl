@@ -1285,23 +1285,23 @@ _elm_code_widget_lines_visible_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd
 }
 
 EOLIAN static void
-_elm_code_widget_font_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, char *name,
-                          Evas_Font_Size size)
+_elm_code_widget_font_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
+                          const char *name, Evas_Font_Size size)
 {
-   char *face = name;
+   const char *face = name;
    if (!face)
      face = "Mono";
 
    evas_object_textgrid_font_set(pd->grid, face, size * elm_config_scale_get());
    if (pd->font_name)
-     free((char *)pd->font_name);
-   pd->font_name = strdup(face);
+     eina_stringshare_del((char *)pd->font_name);
+   pd->font_name = eina_stringshare_add(face);
    pd->font_size = size;
 }
 
 EOLIAN static void
-_elm_code_widget_font_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, char **name,
-                          Evas_Font_Size *size)
+_elm_code_widget_font_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
+                          const char **name, Evas_Font_Size *size)
 {
    if (name)
      *name = strdup((const char *)pd->font_name);
