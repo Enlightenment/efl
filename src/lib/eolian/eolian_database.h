@@ -60,14 +60,6 @@ typedef struct _Eolian_Object
    int column;
 } Eolian_Object;
 
-typedef enum {
-    EOLIAN_DECL_CLASS,
-    EOLIAN_DECL_ALIAS,
-    EOLIAN_DECL_STRUCT,
-    EOLIAN_DECL_ENUM,
-    EOLIAN_DECL_VAR
-} Eolian_Declaration_Type;
-
 typedef struct _Eolian_Declaration
 {
    Eolian_Declaration_Type type;
@@ -270,7 +262,8 @@ char *database_class_to_filename(const char *cname);
 Eina_Bool database_validate(void);
 Eina_Bool database_class_name_validate(const char *class_name, const Eolian_Class **cl);
 
-void database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type, void *ptr);
+void database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type,
+                       Eina_Stringshare *file, void *ptr);
 
 /* types */
 

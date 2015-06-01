@@ -22,6 +22,7 @@ Eina_Hash *_constantsf = NULL;
 Eina_Hash *_filenames  = NULL;
 Eina_Hash *_tfilenames = NULL;
 Eina_Hash *_decls      = NULL;
+Eina_Hash *_declsf     = NULL;
 
 Eina_Hash *_parsedeos  = NULL;
 Eina_Hash *_parsingeos = NULL;
@@ -54,6 +55,7 @@ database_init()
    _filenames  = eina_hash_string_small_new(free);
    _tfilenames = eina_hash_string_small_new(free);
    _decls      = eina_hash_stringshared_new(free);
+   _declsf     = eina_hash_stringshared_new(_hashlist_free);
    _parsedeos  = eina_hash_string_small_new(NULL);
    _parsingeos = eina_hash_string_small_new(NULL);
    return ++_database_init_count;
@@ -86,6 +88,7 @@ database_shutdown()
         eina_hash_free(_filenames ); _filenames  = NULL;
         eina_hash_free(_tfilenames); _tfilenames = NULL;
         eina_hash_free(_decls     ); _decls      = NULL;
+        eina_hash_free(_declsf    ); _declsf     = NULL;
         eina_hash_free(_parsedeos ); _parsedeos  = NULL;
         eina_hash_free(_parsingeos); _parsingeos = NULL;
         eina_shutdown();
@@ -94,13 +97,27 @@ database_shutdown()
 }
 
 void
-database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type, void *ptr)
+database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type,
+                  Eina_Stringshare *file, void *ptr)
 {
    Eolian_Declaration *decl = calloc(1, sizeof(Eolian_Declaration));
    decl->type = type;
    decl->name = name;
    decl->data = ptr;
    eina_hash_set(_decls, name, decl);
+   eina_hash_set(_declsf, file, eina_list_append
+                 ((Eina_List*)eina_hash_find(_declsf, file), decl));
+}
+
+EAPI Eina_Iterator *
+eolian_declarations_get_by_file(const char *fname)
+{
+   if (!_declsf) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(fname);
+   Eina_List *l = eina_hash_find(_declsf, shr);
+   eina_stringshare_del(shr);
+   if (!l) return NULL;
+   return eina_list_iterator_new(l);
 }
 
 #define EO_SUFFIX ".eo"

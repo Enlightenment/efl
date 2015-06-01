@@ -154,6 +154,12 @@ typedef struct _Eolian_Struct_Type_Field Eolian_Struct_Type_Field;
  */
 typedef struct _Eolian_Enum_Type_Field Eolian_Enum_Type_Field;
 
+/* Declaration information
+ *
+ * @ingroup Eolian
+ */
+typedef struct _Eolian_Declaration Eolian_Declaration;
+
 typedef enum
 {
    EOLIAN_UNRESOLVED,
@@ -301,6 +307,15 @@ typedef enum
    EOLIAN_UNOP_NOT,  /* ! int, float, bool */
    EOLIAN_UNOP_BNOT, /* ~ int */
 } Eolian_Unary_Operator;
+
+typedef enum
+{
+   EOLIAN_DECL_CLASS,
+   EOLIAN_DECL_ALIAS,
+   EOLIAN_DECL_STRUCT,
+   EOLIAN_DECL_ENUM,
+   EOLIAN_DECL_VAR
+} Eolian_Declaration_Type;
 
 /*
  * @brief Parse the given .eo or .eot file and fill the database.
@@ -2039,6 +2054,21 @@ EAPI Eina_Iterator *eolian_variable_namespaces_get(const Eolian_Variable *var);
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_variable_is_extern(const Eolian_Variable *var);
+
+/*
+ * @brief Get a list of declarations in a file.
+ *
+ * This function gets an iterator to a list of declarations in a particular
+ * file. Declarations are either a class, a type alias, a struct, an enum
+ * or a variable. This way you can get them all in the original order they
+ * were declared in, which is useful during generation.
+ *
+ * @param[in] fname the filename.
+ * @return the iterator or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_declarations_get_by_file(const char *fname);
 
 #endif
 
