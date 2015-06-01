@@ -8,7 +8,8 @@ interface Evas.Common_Interface ()
             legacy: evas_object_evas_get;
          }
          values {
-            ret: Evas *;
+            /* FIXME: This is actually wrong, should return Evas. */
+            ret: Evas.Common_Interface *;
          }
       }
    }
