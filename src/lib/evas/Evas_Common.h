@@ -3990,44 +3990,6 @@ EAPI Eina_Bool                                evas_textblock_cursor_eol_get(cons
  */
 
 /**
- * @typedef Evas_Textgrid_Palette
- *
- * The palette to use for the foreground and background colors.
- *
- * @since 1.7
- */
-typedef enum
-{
-   EVAS_TEXTGRID_PALETTE_NONE,     /**< No palette is used */
-   EVAS_TEXTGRID_PALETTE_STANDARD, /**< standard palette (around 16 colors) */
-   EVAS_TEXTGRID_PALETTE_EXTENDED, /**< extended palette (at max 256 colors) */
-   EVAS_TEXTGRID_PALETTE_LAST      /**< ignore it */
-} Evas_Textgrid_Palette;
-
-/**
- * @typedef Evas_Textgrid_Font_Style
- *
- * The style to give to each character of the grid.
- *
- * @since 1.7
- */
-typedef enum
-{
-   EVAS_TEXTGRID_FONT_STYLE_NORMAL = (1 << 0), /**< Normal style */
-   EVAS_TEXTGRID_FONT_STYLE_BOLD   = (1 << 1), /**< Bold style */
-   EVAS_TEXTGRID_FONT_STYLE_ITALIC = (1 << 2)  /**< Oblique style */
-} Evas_Textgrid_Font_Style;
-
-/**
- * @typedef Evas_Textgrid_Cell
- *
- * The values that describes each cell.
- *
- * @since 1.7
- */
-typedef struct _Evas_Textgrid_Cell Evas_Textgrid_Cell;
-
-/**
  * @struct _Evas_Textgrid_Cell
  *
  * The values that describes each cell.
