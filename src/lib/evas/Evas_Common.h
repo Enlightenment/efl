@@ -57,16 +57,6 @@ EAPI extern Evas_Version * evas_version;
  * @todo finish api documentation
  */
 
-/* BiDi exposed stuff */
-/*FIXME: document */
-typedef enum _Evas_BiDi_Direction
-{
-   EVAS_BIDI_DIRECTION_NATURAL,
-   EVAS_BIDI_DIRECTION_NEUTRAL = EVAS_BIDI_DIRECTION_NATURAL,
-   EVAS_BIDI_DIRECTION_LTR,
-   EVAS_BIDI_DIRECTION_RTL
-} Evas_BiDi_Direction;
-
 /**
  * Identifier of callbacks to be set for Evas canvases or Evas
  * objects.
@@ -3211,36 +3201,6 @@ EAPI Eina_Bool                     evas_object_image_extension_can_load_fast_get
 #define EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(x, s) \
   do { x = ((x) & ~EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION) | (s); } while (0)
 
-/**
- * @typedef Evas_Text_Style_Type
- *
- * Types of styles to be applied on text objects. The @c
- * EVAS_TEXT_STYLE_SHADOW_DIRECTION_* ones are to be ORed together with others
- * imposing shadow, to change shadow's direction
- */
-typedef enum _Evas_Text_Style_Type
-{
-   EVAS_TEXT_STYLE_PLAIN,      /**< plain, standard text */
-   EVAS_TEXT_STYLE_SHADOW,      /**< text with shadow underneath */
-   EVAS_TEXT_STYLE_OUTLINE,      /**< text with an outline */
-   EVAS_TEXT_STYLE_SOFT_OUTLINE,      /**< text with a soft outline */
-   EVAS_TEXT_STYLE_GLOW,      /**< text with a glow effect */
-   EVAS_TEXT_STYLE_OUTLINE_SHADOW,      /**< text with both outline and shadow effects */
-   EVAS_TEXT_STYLE_FAR_SHADOW,      /**< text with (far) shadow underneath */
-   EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW,      /**< text with outline and soft shadow effects combined */
-   EVAS_TEXT_STYLE_SOFT_SHADOW,      /**< text with (soft) shadow underneath */
-   EVAS_TEXT_STYLE_FAR_SOFT_SHADOW,      /**< text with (far soft) shadow underneath */
-
-   /* OR these to modify shadow direction (3 bits needed) */
-   EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT = (0x0 << 4),      /**< shadow growing to bottom right */
-   EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM = (0x1 << 4),            /**< shadow growing to the bottom */
-   EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT = (0x2 << 4),       /**< shadow growing to bottom left */
-   EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT = (0x3 << 4),              /**< shadow growing to the left */
-   EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT = (0x4 << 4),          /**< shadow growing to top left */
-   EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP = (0x5 << 4),               /**< shadow growing to the top */
-   EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT = (0x6 << 4),         /**< shadow growing to top right */
-   EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT = (0x7 << 4)             /**< shadow growing to the right */
-} Evas_Text_Style_Type;
 /**
  * @}
  */

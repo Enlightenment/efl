@@ -184,7 +184,7 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             @see evas_object_text_style_set() for more details. */
          }
          values {
-            style: Evas_Text_Style_Type; /*@ a style type. */
+            style: Evas.Text_Style_Type; /*@ a style type. */
          }
       }
       @property glow_color {
@@ -257,12 +257,12 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
          }
          values {
             name: const(char)*; /*@ Object name as used in the program code */
-            eobj: Eo*; /*@ Eo object to use through proxy rendering */
+            eobj: Evas.Object *; /*@ Eo object to use through proxy rendering */
          }
       }
       @property max_descent {
          get {
-            return: Evas_Coord;
+            return: Evas.Coord;
          }
       }
       @property style_pad {
@@ -283,56 +283,56 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             Retrieves the direction of the text currently being displayed in the
             text object.
             @return the direction of the text */
-            return: Evas_BiDi_Direction;
+            return: Evas.BiDi_Direction;
          }
       }
       @property ascent {
          get {
-            return: Evas_Coord;
+            return: Evas.Coord;
          }
       }
       @property horiz_advance {
          get {
-            return: Evas_Coord;
+            return: Evas.Coord;
          }
       }
       @property inset {
          get {
-            return: Evas_Coord;
+            return: Evas.Coord;
          }
       }
       @property max_ascent {
          get {
-            return: Evas_Coord;
+            return: Evas.Coord;
          }
       }
       @property vert_advance {
          get {
-            return: Evas_Coord;
+            return: Evas.Coord;
          }
       }
       @property descent {
          get {
-            return: Evas_Coord;
+            return: Evas.Coord;
          }
       }
       last_up_to_pos @const {
          /*@ Returns the logical position of the last char in the text up to the pos given. this is NOT the position of the last char because of the possibility of RTL in the text. */
          return: int(-1);
          params {
-            @in x: Evas_Coord; /*@ in */
-            @in y: Evas_Coord; /*@ in */
+            @in x: Evas.Coord; /*@ in */
+            @in y: Evas.Coord; /*@ in */
          }
       }
       char_coords_get @const {
          return: int;
          params {
-            @in x: Evas_Coord; /*@ in */
-            @in y: Evas_Coord; /*@ in */
-            @out cx: Evas_Coord; /*@ out */
-            @out cy: Evas_Coord; /*@ out */
-            @out cw: Evas_Coord; /*@ out */
-            @out ch: Evas_Coord; /*@ out */
+            @in x: Evas.Coord; /*@ in */
+            @in y: Evas.Coord; /*@ in */
+            @out cx: Evas.Coord; /*@ out */
+            @out cy: Evas.Coord; /*@ out */
+            @out cw: Evas.Coord; /*@ out */
+            @out ch: Evas.Coord; /*@ out */
          }
       }
       char_pos_get @const {
@@ -349,10 +349,10 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
          return: bool;
          params {
             @in pos: int; /*@ The character position to request co-ordinates for. */
-            @out cx: Evas_Coord; /*@ A pointer to an @c Evas_Coord to store the X value in (can be NULL). */
-            @out cy: Evas_Coord; /*@ A pointer to an @c Evas_Coord to store the Y value in (can be NULL). */
-            @out cw: Evas_Coord; /*@ A pointer to an @c Evas_Coord to store the Width value in (can be NULL). */
-            @out ch: Evas_Coord; /*@ A pointer to an @c Evas_Coord to store the Height value in (can be NULL). */
+            @out cx: Evas.Coord; /*@ A pointer to an @c Evas_Coord to store the X value in (can be NULL). */
+            @out cy: Evas.Coord; /*@ A pointer to an @c Evas_Coord to store the Y value in (can be NULL). */
+            @out cw: Evas.Coord; /*@ A pointer to an @c Evas_Coord to store the Width value in (can be NULL). */
+            @out ch: Evas.Coord; /*@ A pointer to an @c Evas_Coord to store the Height value in (can be NULL). */
          }
       }
    }
