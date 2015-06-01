@@ -15,6 +15,8 @@
 # include "tizen-policy-client-protocol.h"
 # include "tizen-extension-client-protocol.h"
 
+# include "keyrouter-client-protocol.h"
+
 //# define LOGFNS 1
 
 # ifdef LOGFNS
@@ -81,6 +83,7 @@ struct _Ecore_Wl_Display
         struct wl_data_device_manager *data_device_manager;
         struct tizen_policy *tz_policy;
         struct tizen_surface_extension *tz_surf_ext;
+        struct wl_keyrouter *keyrouter;
      } wl;
 
    int fd;

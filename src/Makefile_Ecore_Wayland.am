@@ -22,6 +22,8 @@ lib/ecore_wayland/ivi-application-protocol.c \
 lib/ecore_wayland/ivi-application-client-protocol.h \
 lib/ecore_wayland/xdg-shell-client-protocol.h \
 lib/ecore_wayland/xdg-shell-protocol.c \
+lib/ecore_wayland/keyrouter-client-protocol.h \
+lib/ecore_wayland/keyrouter-protocol.c \
 lib/ecore_wayland/tizen-policy-client-protocol.h \
 lib/ecore_wayland/tizen-policy-protocol.c \
 lib/ecore_wayland/tizen-extension-client-protocol.h \

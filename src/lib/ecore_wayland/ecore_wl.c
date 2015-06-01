@@ -18,6 +18,7 @@
 
 #include "xdg-shell-client-protocol.h"
 #define XDG_VERSION 4
+#include "keyrouter-client-protocol.h"
 
 /* local function prototypes */
 static int _ecore_wl_shutdown(Eina_Bool close);
@@ -36,12 +37,14 @@ static Eina_Bool _ecore_wl_animator_window_add(const Eina_Hash *hash EINA_UNUSED
 static void _ecore_wl_signal_exit(void);
 static void _ecore_wl_signal_exit_free(void *data EINA_UNUSED, void *event);
 static void _ecore_wl_init_callback(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED);
+static void _ecore_wl_cb_keygrab_notify(void *data, struct wl_keyrouter *wl_keyrouter, struct wl_surface *surface, uint32_t key, uint32_t mode, uint32_t error);
 
 /* local variables */
 static int _ecore_wl_init_count = 0;
 static Eina_Bool _ecore_wl_animator_busy = EINA_FALSE;
 static Eina_Bool _ecore_wl_fatal_error = EINA_FALSE;
 static Eina_Bool _ecore_wl_server_mode = EINA_FALSE;
+static int _ecore_wl_keygrab_error = -1;
 
 static const struct wl_registry_listener _ecore_wl_registry_listener =
 {
@@ -62,6 +65,11 @@ static const struct wl_callback_listener _ecore_wl_init_sync_listener =
 static const struct wl_callback_listener _ecore_wl_anim_listener =
 {
    _ecore_wl_animator_callback
+};
+
+static const struct wl_keyrouter_listener _ecore_wl_keyrouter_listener =
+{
+   _ecore_wl_cb_keygrab_notify
 };
 
 static void 
@@ -524,6 +532,8 @@ _ecore_wl_shutdown(Eina_Bool close)
           wl_compositor_destroy(_ecore_wl_disp->wl.compositor);
         if (_ecore_wl_disp->wl.subcompositor)
           wl_subcompositor_destroy(_ecore_wl_disp->wl.subcompositor);
+        if (_ecore_wl_disp->wl.keyrouter)
+          wl_keyrouter_destroy(_ecore_wl_disp->wl.keyrouter);
         if (_ecore_wl_disp->wl.display)
           {
              wl_registry_destroy(_ecore_wl_disp->wl.registry);
@@ -708,8 +718,15 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
         ewd->wl.tz_surf_ext =
           wl_registry_bind(registry, id, &tizen_surface_extension_interface, 1);
      }
+   else if (!strcmp(interface, "wl_keyrouter"))
+     {
+        ewd->wl.keyrouter =
+          wl_registry_bind(registry, id, &wl_keyrouter_interface, 1);
+        if (ewd->wl.keyrouter)
+          wl_keyrouter_add_listener(_ecore_wl_disp->wl.keyrouter, &_ecore_wl_keyrouter_listener, ewd->wl.display);
+     }
 
-   if ((ewd->wl.compositor) && (ewd->wl.shm) && 
+   if ((ewd->wl.compositor) && (ewd->wl.shm) &&
        ((ewd->wl.shell) || (ewd->wl.xdg_shell)))
      {
         Ecore_Wl_Event_Interfaces_Bound *ev;
@@ -744,7 +761,7 @@ _ecore_wl_cb_handle_global_remove(void *data, struct wl_registry *registry EINA_
    EINA_INLIST_FOREACH_SAFE(ewd->globals, tmp, global)
      {
         if (global->id != id) continue;
-        ewd->globals = 
+        ewd->globals =
           eina_inlist_remove(ewd->globals, EINA_INLIST_GET(global));
         free(global->interface);
         free(global);
@@ -863,3 +880,132 @@ _ecore_wl_signal_exit_free(void *data EINA_UNUSED, void *event)
 {
    free(event);
 }
+
+//Currently we cannot change keyname to keycode.
+//we need wl function like XStringToKeysym and XKeysymToKeycode function.
+
+static unsigned int
+_ecore_wl_keystring_to_keycode(const char *key)
+{
+   unsigned int keycode;
+
+   /* xkb rules reflect X broken keycodes, so offset by 8 */
+   keycode = (unsigned)atoi(key) + 8;
+   return keycode;
+}
+
+//Currently this function is only used in sink call, so use global value(_ecore_wl_keygrab_error) and just check the error is ok.
+static void
+_ecore_wl_cb_keygrab_notify(void *data EINA_UNUSED, struct wl_keyrouter *wl_keyrouter EINA_UNUSED, struct wl_surface *surface EINA_UNUSED, uint32_t key, uint32_t mode, uint32_t error)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   _ecore_wl_keygrab_error = error;
+   INF("[PID:%d] key=%d, mode=%d, error=%d", getpid(), key, mode, error);
+}
+
+//I'm not sure that keygrab function should be changed to Ecore_evas_XXX.
+//In the future, keyrouter feature can be added upstream or finish stabilizing.
+//After that time, we maybe change API name or other thing.
+//So do not use this API if you have trouble catch keyrouter feature or rule changes.
+
+//Keyrouter support the situation when wl_win is not exist.
+//But keyrouter also can be meet situation when there are several surfaces.
+//So I decided to add keygrab feature into ecore_wl_window side like x system.
+
+//Mod, not_mod, priority will be used future.
+//But now we are not support, so just use 0 for this parameter.
+//win can be NULL
+
+EAPI Eina_Bool
+ecore_wl_window_keygrab_set(Ecore_Wl_Window *win, const char *key, int mod EINA_UNUSED, int not_mod EINA_UNUSED, int priority EINA_UNUSED, Ecore_Wl_Window_Keygrab_Mode grab_mode)
+{
+   Eina_Bool ret = EINA_FALSE;
+   unsigned int keycode = 0;
+   struct wl_surface *surface = NULL;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!key) return EINA_FALSE;
+   if ((grab_mode < ECORE_WL_WINDOW_KEYGRAB_UNKNOWN) || (grab_mode > ECORE_WL_WINDOW_KEYGRAB_OVERRIDE_EXCLUSIVE))
+     return EINA_FALSE;
+
+   INF("win=%p key=%s mod=%d", win, key, grab_mode);
+
+   keycode = _ecore_wl_keystring_to_keycode(key);
+   if (keycode == 0)
+     {
+        WRN("Keycode of key(\"%s\") doesn't exist", key);
+        return EINA_FALSE;
+     }
+
+   /* Request to grab a key */
+   if (win)
+     surface = ecore_wl_window_surface_get(win);
+
+   INF("Before keygrab _ecore_wl_keygrab_error = %d", _ecore_wl_keygrab_error);
+   wl_keyrouter_set_keygrab(_ecore_wl_disp->wl.keyrouter, surface, keycode, grab_mode);
+
+   /* Send sync to wayland compositor and register sync callback to exit while dispatch loop below */
+   ecore_wl_sync();
+
+   INF("After keygrab _ecore_wl_keygrab_error = %d", _ecore_wl_keygrab_error);
+   if (!_ecore_wl_keygrab_error)
+     {
+        INF("[PID:%d]Succeed to get return value !", getpid());
+        ret = EINA_TRUE;
+     }
+   else
+     {
+        WRN("[PID:%d]Failed to get return value ! ret=%d)", getpid(), _ecore_wl_keygrab_error);
+        ret = EINA_FALSE;
+     }
+   _ecore_wl_keygrab_error = -1;
+   return ret;
+}
+
+EAPI Eina_Bool
+ecore_wl_window_keygrab_unset(Ecore_Wl_Window *win, const char *key, int mod EINA_UNUSED, int any_mod EINA_UNUSED)
+{
+   Eina_Bool ret = EINA_FALSE;
+   unsigned int keycode = 0;
+   struct wl_surface *surface = NULL;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!key) return EINA_FALSE;
+   INF("win=%p key=%s ", win, key);
+
+   keycode = _ecore_wl_keystring_to_keycode(key);
+   if (keycode == 0)
+     {
+        WRN("Keycode of key(\"%s\") doesn't exist", key);
+        return EINA_FALSE;
+     }
+
+   /* Request to ungrab a key */
+   if (win)
+     surface = ecore_wl_window_surface_get(win);
+
+   INF("Before keyungrab _ecore_wl_keygrab_error = %d", _ecore_wl_keygrab_error);
+
+   wl_keyrouter_unset_keygrab(_ecore_wl_disp->wl.keyrouter, surface, keycode);
+
+   /* Send sync to wayland compositor and register sync callback to exit while dispatch loop below */
+   ecore_wl_sync();
+
+   INF("After keygrab _ecore_wl_keygrab_error = %d", _ecore_wl_keygrab_error);
+   if (!_ecore_wl_keygrab_error)
+     {
+        ret = EINA_TRUE;
+        INF("[PID:%d] Succeed to get return value ! ", getpid());
+     }
+   else
+     {
+        ret = EINA_FALSE;
+        WRN("[PID:%d] Failed to get return value ! (ret=%d)", getpid(), _ecore_wl_keygrab_error);
+     }
+   _ecore_wl_keygrab_error = -1;
+   return ret;
+}
+
