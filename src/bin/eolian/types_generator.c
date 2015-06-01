@@ -159,55 +159,30 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full)
 Eina_Bool
 types_header_generate(const char *eo_filename, Eina_Strbuf *buf, Eina_Bool full)
 {
-   const Eolian_Type *tp;
+   const Eolian_Declaration *decl;
 
-   /* Generation of typedefs */
-   Eina_Iterator *itr = eolian_type_aliases_get_by_file(eo_filename);
-   EINA_ITERATOR_FOREACH(itr, tp)
+   Eina_Iterator *itr = eolian_declarations_get_by_file(eo_filename);
+   EINA_ITERATOR_FOREACH(itr, decl)
      {
-        if (eolian_type_is_extern(tp))
+        Eolian_Declaration_Type dt = eolian_declaration_type_get(decl);
+        if (dt != EOLIAN_DECL_ALIAS &&
+            dt != EOLIAN_DECL_STRUCT &&
+            dt != EOLIAN_DECL_ENUM)
           continue;
-        Eina_Strbuf *type_buf = _type_generate(tp, full);
-        if (type_buf)
-          {
-             eina_strbuf_append(buf, eina_strbuf_string_get(type_buf));
-             eina_strbuf_append(buf, ";\n\n");
-             eina_strbuf_free(type_buf);
-          }
-     }
-   eina_iterator_free(itr);
 
-   /* Generation of structs */
-   itr = eolian_type_structs_get_by_file(eo_filename);
-   EINA_ITERATOR_FOREACH(itr, tp)
-     {
-        if (eolian_type_is_extern(tp))
+        if (dt == EOLIAN_DECL_ENUM && !full)
           continue;
-        Eina_Strbuf *type_buf = _type_generate(tp, full);
-        if (type_buf)
-          {
-             eina_strbuf_append(buf, eina_strbuf_string_get(type_buf));
-             eina_strbuf_append(buf, ";\n\n");
-             eina_strbuf_free(type_buf);
-          }
-     }
-   eina_iterator_free(itr);
 
-   if (!full)
-     return EINA_TRUE;
-
-   /* Generation of enums */
-   itr = eolian_type_enums_get_by_file(eo_filename);
-   EINA_ITERATOR_FOREACH(itr, tp)
-     {
-        if (eolian_type_is_extern(tp))
+        const Eolian_Type *tp = eolian_declaration_data_type_get(decl);
+        if (!tp || eolian_type_is_extern(tp))
           continue;
-        Eina_Strbuf *type_buf = _type_generate(tp, EINA_TRUE);
-        if (type_buf)
+
+        Eina_Strbuf *tbuf = _type_generate(tp, full);
+        if (tbuf)
           {
-             eina_strbuf_append(buf, eina_strbuf_string_get(type_buf));
+             eina_strbuf_append(buf, eina_strbuf_string_get(tbuf));
              eina_strbuf_append(buf, ";\n\n");
-             eina_strbuf_free(type_buf);
+             eina_strbuf_free(tbuf);
           }
      }
    eina_iterator_free(itr);
