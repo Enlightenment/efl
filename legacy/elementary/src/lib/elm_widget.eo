@@ -141,13 +141,13 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          set {
             /*@ No description supplied by the EAPI. */
             values {
-               objs: list<Evas_Object*>*;
+               objs: list<Evas.Object*>*;
             }
          }
          get {
             /*@ No description supplied by the EAPI. */
             values {
-               objs: const(list<Evas_Object*>)*;
+               objs: const(list<Evas.Object*>)*;
             }
          }
       }
@@ -181,7 +181,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
             /*@ No description supplied by the EAPI. */
          }
          values {
-            parent: Evas_Object * @nullable;
+            parent: Evas.Object * @nullable;
          }
       }
       @property access_info {
@@ -231,7 +231,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
             return: bool;
          }
          values {
-            edj: Evas_Object *;
+            edj: Evas.Object *;
             wname: const(char)*;
             welement: const(char)*;
             wstyle: const(char)*;
@@ -242,7 +242,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
             /*@ No description supplied by the EAPI. */
          }
          values {
-            sobj: Evas_Object * @nullable;
+            sobj: Evas.Object * @nullable;
          }
       }
       @property display_mode {
@@ -285,7 +285,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
             /*@ No description supplied by the EAPI. */
          }
          values {
-            sobj: Evas_Object * @nullable;
+            sobj: Evas.Object * @nullable;
             sub_obj: bool;
          }
       }
@@ -304,7 +304,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
             /*@
             Function to operate on a given widget's scrollabe children when necessary.
             @warning free the returned list with eina_list_free(). */
-            return: free(own(list<Evas_Object *> *), eina_list_free) @warn_unused;
+            return: free(own(list<Evas.Object *> *), eina_list_free) @warn_unused;
          }
       }
       @property scroll_hold {
@@ -348,16 +348,16 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
             return: bool;
          }
          values {
-            x: Evas_Coord;
-            y: Evas_Coord;
-            w: Evas_Coord;
-            h: Evas_Coord;
+            x: Evas.Coord;
+            y: Evas.Coord;
+            w: Evas.Coord;
+            h: Evas.Coord;
          }
       }
       @property top {
          get {
             /*@ No description supplied by the EAPI. */
-            return: Evas_Object *;
+            return: Evas.Object *;
          }
       }
       @property focus_order {
@@ -375,7 +375,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       @property can_focus_child_list {
          get {
             /*@ No description supplied by the EAPI. */
-            return: free(own(list<Evas_Object *> *), eina_list_free) @warn_unused;
+            return: free(own(list<Evas.Object *> *), eina_list_free) @warn_unused;
          }
       }
       @property focused_item {
@@ -396,7 +396,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       @property parent_widget {
          get {
             /*@ No description supplied by the EAPI. */
-            return: Evas_Object *;
+            return: Evas.Object *;
             legacy: null;
          }
       }
@@ -409,7 +409,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       @property focused_object {
          get {
             /*@ No description supplied by the EAPI. */
-            return: Evas_Object *;
+            return: Evas.Object *;
          }
       }
       @property parent2 {
@@ -420,7 +420,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
             /*@ No description supplied by the EAPI. */
          }
          values {
-            parent: Evas_Object * @nullable;
+            parent: Evas.Object * @nullable;
          }
       }
       @property part_text {
@@ -439,7 +439,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       newest_focus_order_get @const {
          /*@ No description supplied by the EAPI. */
-         return: Evas_Object *;
+         return: Evas.Object *;
          params {
             @out newest_focus_order: uint;
             @in can_focus_only: bool;
@@ -457,13 +457,13 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       focus_next_object_set {
          /*@ No description supplied by the EAPI. */
          params {
-            @in next: Evas_Object * @nullable;
+            @in next: Evas.Object * @nullable;
             @in dir: Elm_Focus_Direction;
          }
       }
       focus_next_object_get @const {
          /*@ No description supplied by the EAPI. */
-         return: Evas_Object *;
+         return: Evas.Object *;
          params {
             @in dir: Elm_Focus_Direction;
          }
@@ -474,8 +474,8 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       focus_custom_chain_prepend {
          /*@ No description supplied by the EAPI. */
          params {
-            @in child: Evas_Object *;
-            @in relative_child: Evas_Object * @optional;
+            @in child: Evas.Object *;
+            @in relative_child: Evas.Object * @optional;
          }
       }
       part_text_translate {
@@ -489,10 +489,10 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       focus_highlight_geometry_get @const {
          /*@ Get the focus highlight geometry of widget. */
          params {
-            @in x: Evas_Coord *;
-            @in y: Evas_Coord *;
-            @in w: Evas_Coord *;
-            @in h: Evas_Coord *;
+            @in x: Evas.Coord *;
+            @in y: Evas.Coord *;
+            @in w: Evas.Coord *;
+            @in h: Evas.Coord *;
          }
       }
       activate {
@@ -507,7 +507,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          /*@ 'Virtual' function handling sub objects being added. */
          return: bool;
          params {
-            @in sobj: Evas_Object *;
+            @in sobj: Evas.Object *;
          }
       }
       focus_direction_manager_is {
@@ -518,7 +518,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       event {
          /*@ 'Virtual' function handling input events on the widget. */
          params {
-            @in source: Evas_Object *;
+            @in source: Evas.Object *;
             @in type: Evas_Callback_Type;
             @in event_info: void *;
          }
@@ -560,10 +560,10 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       on_focus_region {
          /*@ 'Virtual' function returning an inner area of a widget that should be brought into the visible area of a broader viewport, may this context arise. */
          params {
-            @out x: Evas_Coord;
-            @out y: Evas_Coord;
-            @out w: Evas_Coord;
-            @out h: Evas_Coord;
+            @out x: Evas.Coord;
+            @out y: Evas.Coord;
+            @out w: Evas.Coord;
+            @out h: Evas.Coord;
          }
          return: bool;
       }
@@ -576,9 +576,9 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       focus_direction {
          /*@ 'Virtual' function handling passing focus to sub-objects given a direction, in degrees. */
          params {
-            @in base: const(Evas_Object)*;
+            @in base: const(Evas.Object)*;
             @in degree: double;
-            @out direction: Evas_Object *;
+            @out direction: Evas.Object *;
             @out weight: double;
          }
          return: bool;
@@ -607,7 +607,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       name_find @const {
          /*@ No description supplied by the EAPI. */
-         return: Evas_Object *;
+         return: Evas.Object *;
          params {
             @in name: const(char)*;
             @in recurse: int;
@@ -617,11 +617,11 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          /*@ No description supplied by the EAPI. */
          return: bool;
          params {
-            @in base: const(Evas_Object)*;
+            @in base: const(Evas.Object)*;
             @in items: const(list<Eo.Base*>)*;
             @in list_data_get: list_data_get_func_type;
             @in degree: double;
-            @out direction: Evas_Object *;
+            @out direction: Evas.Object *;
             @out weight: double;
          }
       }
@@ -638,20 +638,20 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       show_region_set {
          /*@ No description supplied by the EAPI. */
          params {
-            @in x: Evas_Coord;
-            @in y: Evas_Coord;
-            @in w: Evas_Coord;
-            @in h: Evas_Coord;
+            @in x: Evas.Coord;
+            @in y: Evas.Coord;
+            @in w: Evas.Coord;
+            @in h: Evas.Coord;
             @in forceshow: bool;
          }
       }
       show_region_get @const {
          /*@ No description supplied by the EAPI. */
          params {
-            @out x: Evas_Coord @optional;
-            @out y: Evas_Coord @optional;
-            @out w: Evas_Coord @optional;
-            @out h: Evas_Coord @optional;
+            @out x: Evas.Coord @optional;
+            @out y: Evas.Coord @optional;
+            @out w: Evas.Coord @optional;
+            @out h: Evas.Coord @optional;
          }
       }
       scroll_freeze_pop {
@@ -668,7 +668,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          return: bool;
          params {
             @in dir: Elm_Focus_Direction;
-            @out next: Evas_Object *;
+            @out next: Evas.Object *;
          }
       }
       translatable_part_text_get @const {
@@ -715,7 +715,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          /*@ 'Virtual' function handling passing focus to sub-objects. */
          params {
             @in dir: Elm_Focus_Direction;
-            @out next: Evas_Object *;
+            @out next: Evas.Object *;
          }
          return: bool;
       }
@@ -726,7 +726,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
             @in items: const(list<Eo.Base*>)*;
             @in list_data_get: list_data_get_func_type;
             @in dir: Elm_Focus_Direction;
-            @out next: Evas_Object *;
+            @out next: Evas.Object *;
          }
       }
       focus_mouse_up_handle {
@@ -741,9 +741,9 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          /*@ No description supplied by the EAPI. */
          return: bool;
          params {
-            @in base: const(Evas_Object)*;
+            @in base: const(Evas.Object)*;
             @in degree: double;
-            @out direction: Evas_Object *;
+            @out direction: Evas.Object *;
             @out weight: double;
          }
       }
@@ -771,7 +771,7 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
          /*@ 'Virtual' function handling sub objects being removed. */
          return: bool;
          params {
-            @in sobj: Evas_Object *;
+            @in sobj: Evas.Object *;
          }
       }
       tooltip_add {
@@ -789,8 +789,8 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       focus_custom_chain_append {
          /*@ No description supplied by the EAPI. */
          params {
-            @in child: Evas_Object *;
-            @in relative_child: Evas_Object * @optional;
+            @in child: Evas.Object *;
+            @in relative_child: Evas.Object * @optional;
          }
       }
    }
