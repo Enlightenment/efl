@@ -56,9 +56,6 @@ bin_eolian_cxx_eolian_cxx_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
 
 if EFL_ENABLE_TESTS
 
-EOLIAN_FLAGS += \
-  -I$(srcdir)
-
 check_PROGRAMS += tests/eolian_cxx/eolian_cxx_suite
 TESTS += tests/eolian_cxx/eolian_cxx_suite
 

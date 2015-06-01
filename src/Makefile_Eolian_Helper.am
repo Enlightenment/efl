@@ -15,21 +15,21 @@ SUFFIXES = .eo .eo.c .eo.h .eo.legacy.h .eot .eot.h
 %.eo.c: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
 	$(MKDIR_P) $(dir $@); \
-	$(EOLIAN_GEN) --eo --legacy $(EOLIAN_FLAGS) --gc -o $@ $<
+	$(EOLIAN_GEN) --eo --legacy -I$(srcdir) --gc -o $@ $<
 
 %.eo.h: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
 	$(MKDIR_P) $(dir $@); \
-	$(EOLIAN_GEN) --eo $(EOLIAN_FLAGS) --gh -o $@ $<
+	$(EOLIAN_GEN) --eo -I$(srcdir) --gh -o $@ $<
 
 %.eot.h: %.eot ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
 	$(MKDIR_P) $(dir $@); \
-	$(EOLIAN_GEN) --eo $(EOLIAN_FLAGS) --gh -o $@ $<
+	$(EOLIAN_GEN) --eo -I$(srcdir) --gh -o $@ $<
 
 %.eo.legacy.h: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
 	$(MKDIR_P) $(dir $@); \
-	$(EOLIAN_GEN) --legacy $(EOLIAN_FLAGS) --gh -o $@ $<
+	$(EOLIAN_GEN) --legacy -I$(srcdir) --gh -o $@ $<
 
 CLEANFILES += $(BUILT_SOURCES)

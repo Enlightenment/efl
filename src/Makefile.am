@@ -2,17 +2,6 @@ MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES =
 BUILT_SOURCES =
 
-EOLIAN_FLAGS = -I$(srcdir)\
-	       -I$(srcdir)/lib/eo \
-	       -I$(srcdir)/lib/ector \
-	       -I$(srcdir)/lib/evas/canvas \
-	       -I$(srcdir)/lib/edje \
-	       -I$(srcdir)/lib/efl/interfaces \
-	       -I$(srcdir)/lib/ecore_audio \
-	       -I$(srcdir)/lib/ecore \
-	       -I$(srcdir)/lib/ecore_con \
-	       -I$(srcdir)/lib/eio
-
 DIST_SUBDIRS =
 SUBDIRS =
 

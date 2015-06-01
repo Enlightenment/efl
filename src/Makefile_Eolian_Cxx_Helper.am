@@ -15,6 +15,6 @@ SUFFIXES += .eo.hh
 %.eo.impl.hh %.eo.hh: %.eo $(_EOLIAN_CXX_DEP)
 	$(AM_V_EOLCXX) \
 	$(MKDIR_P) $(dir $@); \
-	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -o $@ $<
+	$(EOLIAN_CXX) -I$(srcdir) -o $@ $<
 
 CLEANFILES += $(BUILT_SOURCES)
