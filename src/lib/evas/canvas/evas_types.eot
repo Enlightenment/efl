@@ -1,3 +1,4 @@
+type Evas.Modifier_Mask: ullong;  /*@ An Evas modifier mask type */
 type Evas.Coord: int; /*@ A type for coordinates */
 enum Evas.Aspect_Control {
    /**< Aspect types/policies for scaling size hints, used for evas_object_size_hint_aspect_set() */
@@ -7,6 +8,56 @@ enum Evas.Aspect_Control {
    vertical = 3, /**< Use all vertical container space to place an object, using the given aspect */
    both = 4 /**< Use all horizontal @b and vertical container spaces to place an object (never growing it out of those bounds), using the given aspect */
 }
+
+enum Evas.Render_Op {
+   /*@
+    * How the object should be rendered to output.
+    * @ingroup Evas_Object_Group_Extras
+    */
+   legacy: Evas_Render;
+
+   blend = 0, /**< default op: d = d*(1-sa) + s */
+   blend_rel = 1, /**< d = d*(1 - sa) + s*da */
+   copy = 2, /**< d = s */
+   copy_rel = 3, /**< d = s*da */
+   add = 4, /* d = d + s */
+   add_rel = 5, /**< d = d + s*da */
+   sub = 6, /**< d = d - s */
+   sub_rel = 7, /* d = d - s*da */
+   tint = 8, /**< d = d*s + d*(1 - sa) + s*(1 - da) */
+   tint_rel = 9, /**< d = d*(1 - sa + s) */
+   mask = 10, /**< d = d*sa */
+   mul = 11 /**< d = d*s */
+}
+
+enum Evas.Object_Pointer_Mode {
+   /**
+    * How the mouse pointer should be handled by Evas.
+    *
+    * In the mode #EVAS_OBJECT_POINTER_MODE_AUTOGRAB, when a mouse button
+    * is pressed down over an object and held, with the mouse pointer
+    * being moved outside of it, the pointer still behaves as being bound
+    * to that object, albeit out of its drawing region. When the button
+    * is released, the event will be fed to the object, that may check if
+    * the final position is over it or not and do something about it.
+    *
+    * In the mode #EVAS_OBJECT_POINTER_MODE_NOGRAB, the pointer will
+    * always be bound to the object right below it.
+    *
+    * @ingroup Evas_Object_Group_Extras
+    */
+   autograb, /**< default, X11-like */
+   nograb, /**< pointer always bound to the object right below it */
+   nograb_no_repeat_updown /**< useful on object with "repeat events" enabled, where mouse/touch up and down events WONT be repeated to objects and these objects wont be auto-grabbed. @since 1.2 */
+}
+
+enum Evas.Display_Mode {
+   none = 0, /**<Default mode */
+   compress = 1, /**< Use this mode when you want to give compress display mode hint to an object */
+   expand = 2, /**< Use this mode when you want to give expand display mode hint to an object */
+   dont_change = 3 /**< Use this mode when an object should not change its display mode */
+}
+
 struct Evas.Map; /*@ An opaque handle to map points
                   *
                   * @see evas_map_new()

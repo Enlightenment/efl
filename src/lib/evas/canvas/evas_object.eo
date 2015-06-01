@@ -189,7 +189,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @ingroup Evas_Object_Group_Extras */
          }
          values {
-            pointer_mode: Evas_Object_Pointer_Mode; /*@ desired behavior. */
+            pointer_mode: Evas.Object_Pointer_Mode; /*@ desired behavior. */
          }
       }
       @property render_op {
@@ -205,7 +205,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             @ingroup Evas_Object_Group_Extras */
          }
          values {
-            render_op: Evas_Render_Op; /*@ one of the Evas_Render_Op values. */
+            render_op: Evas.Render_Op; /*@ one of the Evas_Render_Op values. */
          }
       }
       @property freeze_events {
@@ -1091,7 +1091,7 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
             can be used whenever appropriate.*/
          }
          values {
-            dispmode: Evas_Display_Mode; /*@ display mode hint */
+            dispmode: Evas.Display_Mode; /*@ display mode hint */
          }
       }
       clipees_has @const {
@@ -1146,9 +1146,9 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
          return: bool @warn_unused;
          params {
             @in keyname: const(char)* @nonull; /*@ the key to request events for. */
-            @in modifiers: Evas_Modifier_Mask; /*@ a mask of modifiers that must be present to
+            @in modifiers: Evas.Modifier_Mask; /*@ a mask of modifiers that must be present to
             trigger the event. */
-            @in not_modifiers: Evas_Modifier_Mask; /*@ a mask of modifiers that must @b not be present
+            @in not_modifiers: Evas.Modifier_Mask; /*@ a mask of modifiers that must @b not be present
             to trigger the event. */
             @in exclusive: bool; /*@ request that the @p obj is the only object
             receiving the @p keyname events. */
@@ -1226,9 +1226,9 @@ abstract Evas.Object (Eo.Base, Evas.Common_Interface, Efl.Gfx.Base, Efl.Gfx.Stac
 
          params {
             @in keyname: const(char)* @nonull; /*@ the key the grab is set for. */
-            @in modifiers: Evas_Modifier_Mask; /*@ a mask of modifiers that must be present to
+            @in modifiers: Evas.Modifier_Mask; /*@ a mask of modifiers that must be present to
             trigger the event. */
-            @in not_modifiers: Evas_Modifier_Mask; /*@ a mask of modifiers that must not not be
+            @in not_modifiers: Evas.Modifier_Mask; /*@ a mask of modifiers that must not not be
             present to trigger the event. */
          }
       }

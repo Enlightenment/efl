@@ -323,8 +323,6 @@ typedef struct _Evas_Native_Surface Evas_Native_Surface; /**< A generic datatype
  */
 typedef struct _Evas_Video_Surface Evas_Video_Surface;
 
-typedef unsigned long long         Evas_Modifier_Mask;  /**< An Evas modifier mask type */
-
 typedef int                        Evas_Font_Size; /**< A type for font size */
 typedef int                        Evas_Angle; /**< A type for angle */
 
@@ -382,14 +380,6 @@ struct _Evas_Precision_Position /** A position with precision*/
    Evas_Point                 output; /**< position on the output */
    Evas_Coord_Precision_Point canvas; /**< position on the canvas */
 };
-
-typedef enum _Evas_Display_Mode
-{
-   EVAS_DISPLAY_MODE_NONE = 0, /**<Default mode */
-   EVAS_DISPLAY_MODE_COMPRESS = 1, /**< Use this mode when you want to give compress display mode hint to an object */
-   EVAS_DISPLAY_MODE_EXPAND = 2, /**< Use this mode when you want to give expand display mode hint to an object */
-   EVAS_DISPLAY_MODE_DONT_CHANGE = 3 /**< Use this mode when an object should not change its display mode */
-} Evas_Display_Mode; /**< object's display mode type related with compress/expand or etc mode */
 
 typedef struct _Evas_Pixel_Import_Source Evas_Pixel_Import_Source; /**< A source description of pixels for importing pixels */
 typedef struct _Evas_Engine_Info         Evas_Engine_Info; /**< A generic Evas Engine information structure */
@@ -578,26 +568,6 @@ typedef enum _Evas_Video_Surface_Caps
 #define evas_object_size_hint_fill_get   evas_object_size_hint_align_get /**< Convenience macro to make it easier to understand that align is also used for fill properties (as fill is mutually exclusive to align) */
 #define evas_object_size_hint_expand_set evas_object_size_hint_weight_set /**< Convenience macro to make it easier to understand that weight is also used for expand properties */
 #define evas_object_size_hint_expand_get evas_object_size_hint_weight_get /**< Convenience macro to make it easier to understand that weight is also used for expand properties */
-
-/**
- * How the object should be rendered to output.
- * @ingroup Evas_Object_Group_Extras
- */
-typedef enum _Evas_Render_Op
-{
-   EVAS_RENDER_BLEND = 0, /**< default op: d = d*(1-sa) + s */
-   EVAS_RENDER_BLEND_REL = 1, /**< d = d*(1 - sa) + s*da */
-   EVAS_RENDER_COPY = 2, /**< d = s */
-   EVAS_RENDER_COPY_REL = 3, /**< d = s*da */
-   EVAS_RENDER_ADD = 4, /* d = d + s */
-   EVAS_RENDER_ADD_REL = 5, /**< d = d + s*da */
-   EVAS_RENDER_SUB = 6, /**< d = d - s */
-   EVAS_RENDER_SUB_REL = 7, /* d = d - s*da */
-   EVAS_RENDER_TINT = 8, /**< d = d*s + d*(1 - sa) + s*(1 - da) */
-   EVAS_RENDER_TINT_REL = 9, /**< d = d*(1 - sa + s) */
-   EVAS_RENDER_MASK = 10, /**< d = d*sa */
-   EVAS_RENDER_MUL = 11 /**< d = d*s */
-} Evas_Render_Op; /**< How the object should be rendered to output. */
 
 typedef enum _Evas_Border_Fill_Mode
 {
@@ -908,28 +878,6 @@ struct _Evas_Event_Axis_Update
    Evas_Axis *axis;
    Evas_Device *dev;
 };
-
-/**
- * How the mouse pointer should be handled by Evas.
- *
- * In the mode #EVAS_OBJECT_POINTER_MODE_AUTOGRAB, when a mouse button
- * is pressed down over an object and held, with the mouse pointer
- * being moved outside of it, the pointer still behaves as being bound
- * to that object, albeit out of its drawing region. When the button
- * is released, the event will be fed to the object, that may check if
- * the final position is over it or not and do something about it.
- *
- * In the mode #EVAS_OBJECT_POINTER_MODE_NOGRAB, the pointer will
- * always be bound to the object right below it.
- *
- * @ingroup Evas_Object_Group_Extras
- */
-typedef enum _Evas_Object_Pointer_Mode
-{
-   EVAS_OBJECT_POINTER_MODE_AUTOGRAB, /**< default, X11-like */
-   EVAS_OBJECT_POINTER_MODE_NOGRAB, /**< pointer always bound to the object right below it */
-   EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN /**< useful on object with "repeat events" enabled, where mouse/touch up and down events WONT be repeated to objects and these objects wont be auto-grabbed. @since 1.2 */
-} Evas_Object_Pointer_Mode; /**< How the mouse pointer should be handled by Evas. */
 
 typedef void      (*Evas_Smart_Cb)(void *data, Evas_Object *obj, void *event_info);  /**< Evas smart objects' "smart callback" function signature */
 typedef void      (*Evas_Event_Cb)(void *data, Evas *e, void *event_info);  /**< Evas event callback function signature */
