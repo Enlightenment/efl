@@ -35,6 +35,7 @@ elm_code_suite_DEPENDENCIES = $(top_builddir)/elm_code/src/lib/libelm_code.la
 testdir = $(PACKAGE_TESTS_DIR)
 test_DATA = \
 testfile.txt \
+testfile-windows.txt \
 testfile-withblanks.txt \
 testdiff.diff
 
