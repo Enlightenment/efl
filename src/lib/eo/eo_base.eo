@@ -25,7 +25,7 @@ struct Eo.Dbg_Info {
      /*@
       * The structure for the debug info used by Eo.
       */
-     name: Eina_Stringshare *; /*@< The name of the part (stringshare). */
+     name: Eina.Stringshare *; /*@< The name of the part (stringshare). */
      value: generic_value; /*@< The value. */
 }
 
