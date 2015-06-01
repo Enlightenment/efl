@@ -127,15 +127,15 @@ struct _Outbuf
 
    struct
      {
-      int fd;
-      unsigned int conn, crtc, fb;
-      Buffer buffer[NUM_BUFFERS];
-      int curr, num;
-      drmModeModeInfo mode;
-      drmEventContext ctx;
-      Eina_List *pending_writes;
-      Eina_List *planes;
-      Eina_Bool pending_flip : 1;
+        int fd;
+        unsigned int conn, crtc, fb;
+        Buffer buffer[NUM_BUFFERS];
+        int curr, num;
+        drmModeModeInfo mode;
+        drmEventContext ctx;
+        Eina_List *pending_writes;
+        Eina_List *planes;
+        Eina_Bool pending_flip : 1;
      } priv;
 };
 
