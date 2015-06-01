@@ -203,20 +203,6 @@ typedef enum _Evas_Font_Hinting_Flags
    EVAS_FONT_HINTING_BYTECODE /**< Bytecode font hinting */
 } Evas_Font_Hinting_Flags; /**< Flags for Font Hinting */
 
-/**
- * How to pack items into cells in a table.
- * @ingroup Evas_Object_Table
- *
- * @see evas_object_table_homogeneous_set() for an explanation of the function of
- * each one.
- */
-typedef enum _Evas_Object_Table_Homogeneous_Mode
-{
-   EVAS_OBJECT_TABLE_HOMOGENEOUS_NONE = 0,
-   EVAS_OBJECT_TABLE_HOMOGENEOUS_TABLE = 1,
-   EVAS_OBJECT_TABLE_HOMOGENEOUS_ITEM = 2
-} Evas_Object_Table_Homogeneous_Mode; /**< Table cell pack mode. */
-
 typedef struct _Evas_Coord_Rectangle       Evas_Coord_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Point                 Evas_Point;   /**< integer point */
 

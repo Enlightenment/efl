@@ -1,3 +1,18 @@
+/* XXX: Remove the Object_ part once the relevant Eolian bugs are fixed. */
+enum Evas.Object_Table.Homogeneous_Mode {
+     /**
+      * How to pack items into cells in a table.
+      * @ingroup Evas_Object_Table
+      *
+      * @see evas_object_table_homogeneous_set() for an explanation of the function of
+      * each one.
+      */
+     legacy: Evas_Object_Table_Homogeneous;
+     none = 0,
+     table = 1,
+     item = 2
+}
+
 class Evas.Table (Evas.Smart_Clipped)
 {
    legacy_prefix: evas_object_table;
@@ -54,7 +69,7 @@ class Evas.Table (Evas.Smart_Clipped)
             @see evas_object_table_homogeneous_set() */
          }
          values {
-            homogeneous: Evas_Object_Table_Homogeneous_Mode;
+            homogeneous: Evas.Object_Table.Homogeneous_Mode;
          }
       }
       @property align {
@@ -81,8 +96,8 @@ class Evas.Table (Evas.Smart_Clipped)
             Get padding between cells. */
          }
          values {
-            horizontal: Evas_Coord;
-            vertical: Evas_Coord;
+            horizontal: Evas.Coord;
+            vertical: Evas.Coord;
          }
       }
       @property mirrored {
@@ -145,7 +160,7 @@ class Evas.Table (Evas.Smart_Clipped)
             row: ushort;
          }
          values {
-            child: Evas_Object *;
+            child: Evas.Object *;
          }
       }
       clear {
@@ -178,7 +193,7 @@ class Evas.Table (Evas.Smart_Clipped)
 
          @see evas_object_table_add() */
 
-         return: Evas_Object * @warn_unused;
+         return: Evas.Object * @warn_unused;
       }
       pack_get @const {
          /*@
@@ -188,7 +203,7 @@ class Evas.Table (Evas.Smart_Clipped)
          @since 1.1 */
          return: bool;
          params {
-            @in child: Evas_Object *; /*@ The child object to add. */
+            @in child: Evas.Object *; /*@ The child object to add. */
             @out col: ushort; /*@ pointer to store relative-horizontal position to place child. */
             @out row: ushort; /*@ pointer to store relative-vertical position to place child. */
             @out colspan: ushort; /*@ pointer to store how many relative-horizontal position to use for this child. */
@@ -209,7 +224,7 @@ class Evas.Table (Evas.Smart_Clipped)
 
          return: bool;
          params {
-            @in child: Evas_Object * @nonull; /*@ The child object to add. */
+            @in child: Evas.Object * @nonull; /*@ The child object to add. */
             @in col: ushort; /*@ relative-horizontal position to place child. */
             @in row: ushort; /*@ relative-vertical position to place child. */
             @in colspan: ushort; /*@ how many relative-horizontal position to use for this child. */
@@ -228,7 +243,7 @@ class Evas.Table (Evas.Smart_Clipped)
 
          return: bool;
          params {
-            @in child: Evas_Object * @nonull;
+            @in child: Evas.Object * @nonull;
          }
       }
    }
