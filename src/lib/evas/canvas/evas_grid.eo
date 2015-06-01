@@ -91,7 +91,7 @@ class Evas.Grid (Evas.Smart_Clipped)
          @see evas_object_grid_add()
          @since 1.1 */
 
-         return: Evas_Object * @warn_unused;
+         return: Evas.Object * @warn_unused;
       }
       unpack {
          /*@
@@ -106,7 +106,7 @@ class Evas.Grid (Evas.Smart_Clipped)
 
          return: bool;
          params {
-            @in child: Evas_Object * @nonull;
+            @in child: Evas.Object * @nonull;
          }
       }
       pack_get @const {
@@ -119,7 +119,7 @@ class Evas.Grid (Evas.Smart_Clipped)
          @since 1.1 */
          return: bool;
          params {
-            @in child: Evas_Object *; /*@ The grid child to query for coordinates */
+            @in child: Evas.Object *; /*@ The grid child to query for coordinates */
             @out x: int; /*@ The pointer to where the x coordinate will be returned */
             @out y: int; /*@ The pointer to where the y coordinate will be returned */
             @out w: int; /*@ The pointer to where the width will be returned */
@@ -135,7 +135,7 @@ class Evas.Grid (Evas.Smart_Clipped)
 
          return: bool;
          params {
-            @in child: Evas_Object * @nonull; /*@ The child object to add. */
+            @in child: Evas.Object * @nonull; /*@ The child object to add. */
             @in x: int; /*@ The virtual x coordinate of the child */
             @in y: int; /*@ The virtual y coordinate of the child */
             @in w: int; /*@ The virtual width of the child */
