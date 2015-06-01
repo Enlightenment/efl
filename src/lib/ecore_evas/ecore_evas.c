@@ -328,7 +328,7 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
         return EINA_FALSE;
 #endif
      case ECORE_EVAS_ENGINE_OPENGL_DRM:
-#ifdef BUILD_ECORE_EVAS_OPENGL_DRM
+#ifdef BUILD_ECORE_EVAS_GL_DRM
         return EINA_TRUE;
 #else
         return EINA_FALSE;
@@ -773,7 +773,7 @@ static const struct ecore_evas_engine _engines[] = {
   {"wayland_shm", _ecore_evas_constructor_wayland_shm},
   {"wayland_egl", _ecore_evas_constructor_wayland_egl},
   {"drm", _ecore_evas_constructor_drm},
-  {"opengl_drm", _ecore_evas_constructor_opengl_drm},
+  {"gl_drm", _ecore_evas_constructor_opengl_drm},
   {"opengl_sdl", _ecore_evas_constructor_opengl_sdl},
   {"sdl", _ecore_evas_constructor_sdl},
   {"buffer", _ecore_evas_constructor_buffer},
