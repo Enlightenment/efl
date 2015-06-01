@@ -8,8 +8,8 @@ class Evas.Polygon (Evas.Object)
          Adds the given point to the given evas polygon object.
          @ingroup Evas_Polygon_Group */
          params {
-            @in x: Evas_Coord; /*@ The X coordinate of the given point. */
-            @in y: Evas_Coord; /*@ The Y coordinate of the given point. */
+            @in x: Evas.Coord; /*@ The X coordinate of the given point. */
+            @in y: Evas.Coord; /*@ The Y coordinate of the given point. */
          }
       }
       points_clear {
