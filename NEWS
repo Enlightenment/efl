@@ -14,6 +14,7 @@ Fixes:
    * evas canvas: add exceptional handling in invalid input case.
    * edje: fix back edje_watch.
    * evas canvas: fix insane mouse move events on proxy source.
+   * evas: make image_size_get() return the actual image size
 
 Changes since 1.13.0:
 ---------------------
