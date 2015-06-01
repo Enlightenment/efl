@@ -154,10 +154,8 @@ END_TEST
 START_TEST(edje_test_calculate_parens)
 {
    int x, y, w, h;
-   int r, g, b, a;
    Evas *evas = EDJE_TEST_INIT_EVAS();
    Evas_Object *obj;
-   const Evas_Object *bg;
 
    obj = edje_object_add(evas);
    fail_unless(edje_object_file_set(obj, test_layout_get("test_parens.edj"), "test_group"));
