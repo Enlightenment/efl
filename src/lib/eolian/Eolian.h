@@ -310,6 +310,7 @@ typedef enum
 
 typedef enum
 {
+   EOLIAN_DECL_UNKNOWN = -1,
    EOLIAN_DECL_CLASS,
    EOLIAN_DECL_ALIAS,
    EOLIAN_DECL_STRUCT,
@@ -2069,6 +2070,58 @@ EAPI Eina_Bool eolian_variable_is_extern(const Eolian_Variable *var);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_declarations_get_by_file(const char *fname);
+
+/*
+ * @brief Get the type of a declaration
+ *
+ * @param[in] decl the declaration
+ * @return the declaration type
+ *
+ * @ingroup Eolian
+ */
+EAPI Eolian_Declaration_Type eolian_declaration_type_get(const Eolian_Declaration *decl);
+
+/*
+ * @brief Get the name of a declaration
+ *
+ * This matches the full namespaced name of the data it's holding.
+ *
+ * @param[in] decl the declaration
+ * @return the declaration name
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_declaration_name_get(const Eolian_Declaration *decl);
+
+/*
+ * @brief Get the class of a class declaration.
+ *
+ * @param[in] decl the declaration
+ * @return the class
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Class *eolian_declaration_class_get(const Eolian_Declaration *decl);
+
+/*
+ * @brief Get the type of a type (alias, struct, enum) declaration.
+ *
+ * @param[in] decl the declaration
+ * @return the type
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Type *eolian_declaration_data_type_get(const Eolian_Declaration *decl);
+
+/*
+ * @brief Get the variable of a variable (constant, global) declaration.
+ *
+ * @param[in] decl the declaration
+ * @return the class
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Variable *eolian_declaration_variable_get(const Eolian_Declaration *decl);
 
 #endif
 

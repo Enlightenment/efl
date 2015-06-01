@@ -120,6 +120,48 @@ eolian_declarations_get_by_file(const char *fname)
    return eina_list_iterator_new(l);
 }
 
+EAPI Eolian_Declaration_Type
+eolian_declaration_type_get(const Eolian_Declaration *decl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(decl, EOLIAN_DECL_UNKNOWN);
+   return decl->type;
+}
+
+EAPI Eina_Stringshare *
+eolian_declaration_name_get(const Eolian_Declaration *decl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(decl, NULL);
+   return decl->name;
+}
+
+EAPI const Eolian_Class *
+eolian_declaration_class_get(const Eolian_Declaration *decl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(decl, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(decl->type == EOLIAN_DECL_CLASS, NULL);
+   return (const Eolian_Class *)decl->data;
+}
+
+EAPI const Eolian_Type *
+eolian_declaration_data_type_get(const Eolian_Declaration *decl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(decl, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(decl->type == EOLIAN_DECL_ALIAS ||
+                                   decl->type == EOLIAN_DECL_STRUCT ||
+                                   decl->type == EOLIAN_DECL_ENUM, NULL);
+   return (const Eolian_Type *)decl->data;
+}
+
+
+EAPI const Eolian_Variable *
+eolian_declaration_variable_get(const Eolian_Declaration *decl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(decl, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(decl->type == EOLIAN_DECL_VAR, NULL);
+   return (const Eolian_Variable *)decl->data;
+}
+
+
 #define EO_SUFFIX ".eo"
 #define EOT_SUFFIX ".eot"
 
