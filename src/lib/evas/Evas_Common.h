@@ -3358,8 +3358,10 @@ typedef struct _Evas_Textblock_Cursor             Evas_Textblock_Cursor;
 /**
  * @typedef Evas_Object_Textblock_Node_Format
  * A format node.
+ *
+ * XXX: Adapter for legacy.
  */
-typedef struct _Evas_Object_Textblock_Node_Format Evas_Object_Textblock_Node_Format;
+typedef struct _Evas_Textblock_Node_Format Evas_Object_Textblock_Node_Format;
 
 typedef struct _Evas_Textblock_Rectangle          Evas_Textblock_Rectangle;
 struct _Evas_Textblock_Rectangle

@@ -1,3 +1,7 @@
+struct @extern Evas.Textblock.Cursor;
+struct @extern Evas.Textblock.Style;
+struct Evas.Textblock.Node_Format;
+
 class Evas.Textblock (Evas.Object)
 {
    legacy_prefix: evas_object_textblock;
@@ -113,7 +117,7 @@ class Evas.Textblock (Evas.Object)
             @return the style of the object. */
          }
          values {
-            ts: const(Evas_Textblock_Style)*; /*@ the style to set. */
+            ts: const(Evas.Textblock.Style)*; /*@ the style to set. */
          }
       }
       @property node_format_first {
@@ -122,7 +126,7 @@ class Evas.Textblock (Evas.Object)
             legacy: evas_textblock_node_format_first_get;
          }
          values {
-            format: const(Evas_Object_Textblock_Node_Format)*;
+            format: const(Evas.Textblock.Node_Format)*;
          }
       }
       @property size_formatted {
@@ -146,8 +150,8 @@ class Evas.Textblock (Evas.Object)
             @see evas_object_textblock_size_native_get */
          }
          values {
-            w: Evas_Coord; /*@ the width of the object. */
-            h: Evas_Coord; /*@ the height of the object */
+            w: Evas.Coord; /*@ the width of the object. */
+            h: Evas.Coord; /*@ the height of the object */
          }
       }
       @property node_format_last {
@@ -156,7 +160,7 @@ class Evas.Textblock (Evas.Object)
             legacy: evas_textblock_node_format_last_get;
          }
          values {
-            format: const(Evas_Object_Textblock_Node_Format)*;
+            format: const(Evas.Textblock.Node_Format)*;
          }
       }
       @property cursor {
@@ -165,7 +169,7 @@ class Evas.Textblock (Evas.Object)
             Return the object's main cursor.
 
             @return The @p obj's main cursor. */
-            return: Evas_Textblock_Cursor *;
+            return: Evas.Textblock.Cursor *;
          }
       }
       @property size_native {
@@ -187,8 +191,8 @@ class Evas.Textblock (Evas.Object)
             @return Returns no value. */
          }
          values {
-            w: Evas_Coord; /*@ the width returned */
-            h: Evas_Coord; /*@ the height returned */
+            w: Evas.Coord; /*@ the width returned */
+            h: Evas.Coord; /*@ the height returned */
          }
       }
       @property style_insets {
@@ -196,10 +200,10 @@ class Evas.Textblock (Evas.Object)
             /*@ No description supplied by the EAPI. */
          }
          values {
-            l: Evas_Coord;
-            r: Evas_Coord;
-            t: Evas_Coord;
-            b: Evas_Coord;
+            l: Evas.Coord;
+            r: Evas.Coord;
+            t: Evas.Coord;
+            b: Evas.Coord;
          }
       }
       line_number_geometry_get @const {
@@ -210,10 +214,10 @@ class Evas.Textblock (Evas.Object)
          return: bool;
          params {
             @in line: int; /*@ the line number. */
-            @out cx: Evas_Coord; /*@ x coord of the line. */
-            @out cy: Evas_Coord; /*@ y coord of the line. */
-            @out cw: Evas_Coord; /*@ w coord of the line. */
-            @out ch: Evas_Coord; /*@ h coord of the line. */
+            @out cx: Evas.Coord; /*@ x coord of the line. */
+            @out cy: Evas.Coord; /*@ y coord of the line. */
+            @out cw: Evas.Coord; /*@ w coord of the line. */
+            @out ch: Evas.Coord; /*@ h coord of the line. */
          }
       }
       replace_char_get {
@@ -242,7 +246,7 @@ class Evas.Textblock (Evas.Object)
          @note if you need speed and you know what you are doing, it's slightly faster to just allocate the cursor yourself and not associate it. (only people developing the actual object, and not users of the object).
 
          @return the new cursor. */
-         return: Evas_Textblock_Cursor *;
+         return: Evas.Textblock.Cursor *;
       }
       node_format_list_get @const {
          /*@ No description supplied by the EAPI. */
@@ -259,13 +263,13 @@ class Evas.Textblock (Evas.Object)
          @return the style of the object.
          @see evas_object_textblock_style_get
          @since 1.2 */
-         return: const(Evas_Textblock_Style)*;
+         return: const(Evas.Textblock.Style)*;
       }
       node_format_remove_pair {
          /*@ Remove a format node and its match. */
          legacy: evas_textblock_node_format_remove_pair;
          params {
-            @in n: Evas_Object_Textblock_Node_Format *;
+            @in n: Evas.Textblock.Node_Format *;
          }
       }
       clear {
@@ -290,7 +294,7 @@ class Evas.Textblock (Evas.Object)
          @since 1.2 */
 
          params {
-            @in ts: Evas_Textblock_Style *; /*@ the style to set. */
+            @in ts: Evas.Textblock.Style *; /*@ the style to set. */
          }
       }
    }

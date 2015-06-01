@@ -292,7 +292,7 @@ struct _Evas_Object_Textblock_Node_Text
    Eina_Bool                           is_new : 1;  /**< EINA_TRUE if its a new paragraph, else EINA_FALSE. */
 };
 
-struct _Evas_Object_Textblock_Node_Format
+struct _Evas_Textblock_Node_Format
 {
    EINA_INLIST;
    const char                         *format;  /**< Cached, parsed and translated version of orig_format. */
