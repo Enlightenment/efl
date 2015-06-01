@@ -1525,6 +1525,7 @@ struct _Edje
    const char           *path;
    const char           *group;
    const char           *parent;
+   const char           *language;
 
    Evas_Object          *obj; /* the smart object */
    Edje_File            *file; /* the file the data comes form */
@@ -2663,6 +2664,8 @@ void _edje_object_orientation_inform(Evas_Object *obj);
 
 void _edje_lib_ref(void);
 void _edje_lib_unref(void);
+
+void _edje_language_signal_emit(Edje *ed, Evas_Object *obj, char *signal);
 
 void _edje_subobj_register(Edje *ed, Evas_Object *ob);
 void _edje_subobj_unregister(Edje *ed, Evas_Object *ob);

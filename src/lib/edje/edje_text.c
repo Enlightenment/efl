@@ -48,8 +48,10 @@ _set_translated_string(Edje *ed, Edje_Real_Part *ep)
         snprintf(p, sizeof(p), "%s-%s", ed->file->fid, domain);
 
         curlocale = setlocale(LC_ALL, "");
-        curpath = bindtextdomain(p, _edje_cache_path);
+        if (ed->language)
+          setlocale(LC_ALL, ed->language);
 
+        curpath = bindtextdomain(p, _edje_cache_path);
         text = dgettext(p, text);
 
         bindtextdomain(p, curpath);

@@ -299,6 +299,71 @@ _edje_util_thaw_edje(Edje *ed)
 }
 #endif
 
+void
+_edje_language_signal_emit(Edje *ed, Evas_Object *obj, char *signal)
+{
+   int i;
+
+   for (i = 0; i < (int)ed->table_parts_size; i++)
+     {
+        Edje_Real_Part *rp = ed->table_parts[i];
+
+        if (rp->part->type == EDJE_PART_TYPE_TEXT ||
+            rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+          {
+              Edje_Part_Description_Text *text;
+
+              text = (Edje_Part_Description_Text *) rp->param1.description;
+              if (text->text.text.translated)
+                text->text.text.translated = NULL;
+
+              if (rp->param2)
+                {
+                   text = (Edje_Part_Description_Text *) rp->param2->description;
+                   if (text->text.text.translated)
+                     text->text.text.translated = NULL;
+                }
+
+              if (rp->custom)
+                {
+                   text = (Edje_Part_Description_Text *) rp->custom->description;
+                   if (text->text.text.translated)
+                     text->text.text.translated = NULL;
+                }
+          }
+     }
+   edje_object_signal_emit(obj, signal, "edje");
+   edje_object_calc_force(obj);
+}
+
+EOLIAN void
+_edje_object_language_set(Eo *obj, Edje *ed, const char *locale)
+{
+   const char *lookup;
+   char *signal;
+   size_t length;
+
+   lookup = strstr(locale, ".");
+   length = lookup ? (size_t)(lookup - locale) : strlen(locale);
+
+   eina_stringshare_replace_length(&ed->language, locale, length);
+
+   signal = alloca(length + 15);
+   snprintf(signal, length + 15, "edje,language,%s", ed->language);
+
+   _edje_language_signal_emit(ed, obj, signal);
+}
+
+EOLIAN const char*
+_edje_object_language_get(Eo *obj EINA_UNUSED, Edje *ed)
+{
+   if (!ed->language)
+     return _edje_language;
+
+   return ed->language;
+}
+
+
 EAPI void
 edje_language_set(const char *locale)
 {
@@ -323,39 +388,12 @@ edje_language_set(const char *locale)
    EINA_LIST_FOREACH(_edje_edjes, l, obj)
      {
         Edje *ed = eo_data_scope_get(obj, EDJE_OBJECT_CLASS);
-        unsigned int i;
 
-        for (i = 0; i < ed->table_parts_size; i++)
-          {
-             Edje_Real_Part *rp = ed->table_parts[i];
+        if (ed->language)
+          continue;
 
-             if (rp->part->type == EDJE_PART_TYPE_TEXT ||
-                 rp->part->type == EDJE_PART_TYPE_TEXTBLOCK)
-               {
-                  Edje_Part_Description_Text *text;
-
-                  text = (Edje_Part_Description_Text *) rp->param1.description;
-                  if (text->text.text.translated)
-                    text->text.text.translated = NULL;
-
-                  if (rp->param2)
-                    {
-                       text = (Edje_Part_Description_Text *) rp->param2->description;
-                       if (text->text.text.translated)
-                         text->text.text.translated = NULL;
-                    }
-
-                  if (rp->custom)
-                    {
-                       text = (Edje_Part_Description_Text *) rp->custom->description;
-                       if (text->text.text.translated)
-                         text->text.text.translated = NULL;
-                    }
-               }
-          }
-
-        edje_object_signal_emit(obj, signal, "edje");
-        edje_object_calc_force(obj);
+        _edje_language_signal_emit(ed, obj, signal);
+        
      }
 }
 

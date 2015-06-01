@@ -5,7 +5,7 @@
  * buffer one). See stdout/stderr for output.
  *
  * @verbatim
- * edje_cc -md ~/efl/src/examples/edje/ text.edc && gcc -o edje-text edje-text.c `pkg-config --libs --cflags ecore-evas edje evas ecore`
+ * edje_cc -md . text.edc && gcc -o edje-text edje-text.c `pkg-config --libs --cflags ecore-evas edje evas ecore eo`
  * @endverbatim
  */
 
@@ -23,9 +23,10 @@
 #include <Ecore_Evas.h>
 #include <Edje.h>
 #include <locale.h>
+#include "Eo.h"
 
-#define WIDTH  (300)
-#define HEIGHT (300)
+#define WIDTH  (500)
+#define HEIGHT (500)
 
 static int lang_idx = 0;
 static const char *lang[] = {
@@ -49,6 +50,18 @@ _on_text_change(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
 static void
 _on_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
+   char *env;
+   lang_idx = (lang_idx + 1) % (sizeof (lang) / sizeof (lang[0]));
+   fprintf(stderr, "Setting lang of this edje object to '%s'\n", lang[lang_idx]);
+   env = getenv("LANGUAGE");
+   setenv("LANGUAGE", lang[lang_idx], 1);
+   eo_do(o, edje_obj_language_set(lang[lang_idx]));
+   setenv("LANGUAGE", env, 1);
+}
+
+static void
+_on_mouse_down_text(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
+{
    lang_idx = (lang_idx + 1) % (sizeof (lang)/ sizeof (lang[0]));
    fprintf(stderr, "Setting lang to '%s'\n", lang[lang_idx]);
    setenv("LANGUAGE", lang[lang_idx], 1);
@@ -62,6 +75,9 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    Evas        *evas;
    Evas_Object *bg;
    Evas_Object *edje_obj;
+   Evas_Object *edje_obj_one;
+   Evas_Object *edje_obj_two;
+   Evas_Object *edje_obj_three;
 
    if (!ecore_evas_init())
      return EXIT_FAILURE;
@@ -87,23 +103,66 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    ecore_evas_object_associate(ee, bg, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
 
    edje_obj = edje_object_add(evas);
-
    edje_object_file_set(edje_obj, edje_file, "example_group");
-   evas_object_move(edje_obj, 20, 20);
+   evas_object_move(edje_obj, 0, 20);
    evas_object_resize(edje_obj, WIDTH - 40, HEIGHT - 40);
    evas_object_show(edje_obj);
-
-   edje_language_set("en_IN");
+   setenv("LANGUAGE", "en_IN", 1);
+   eo_do(edje_obj, edje_obj_language_set("en_IN"));
    edje_object_text_change_cb_set(edje_obj, _on_text_change, NULL);
    edje_object_part_text_set(edje_obj, "part_two", "<b>Click here");
-
    edje_object_part_text_select_allow_set(edje_obj, "part_two", EINA_TRUE);
    edje_object_part_text_select_all(edje_obj, "part_two");
    printf("selection: %s\n", edje_object_part_text_selection_get(edje_obj, "part_two"));
    edje_object_part_text_select_none(edje_obj, "part_two");
    printf("selection: %s\n", edje_object_part_text_selection_get(edje_obj, "part_two"));
-
    evas_object_event_callback_add(edje_obj, EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down, NULL);
+
+   edje_obj_one = edje_object_add(evas);
+   edje_object_file_set(edje_obj_one, edje_file, "example_group1");
+   evas_object_move(edje_obj_one, 0, 50);
+   evas_object_resize(edje_obj_one, WIDTH - 40, HEIGHT - 40);
+   evas_object_show(edje_obj_one);
+   eo_do(edje_obj_one, edje_obj_language_set("en_IN"));
+   edje_object_text_change_cb_set(edje_obj_one, _on_text_change, NULL);
+   edje_object_part_text_set(edje_obj_one, "part_two", "<b>Click here");
+   edje_object_part_text_select_allow_set(edje_obj_one, "part_two", EINA_TRUE);
+   edje_object_part_text_select_all(edje_obj_one, "part_two");
+   printf("selection: %s\n", edje_object_part_text_selection_get(edje_obj_one, "part_two"));
+   edje_object_part_text_select_none(edje_obj_one, "part_two");
+   printf("selection: %s\n", edje_object_part_text_selection_get(edje_obj_one, "part_two"));
+   evas_object_event_callback_add(edje_obj_one, EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down, NULL);
+
+   //Generic Language change
+   edje_obj_two = edje_object_add(evas);
+   edje_object_file_set(edje_obj_two, edje_file, "example_group2");
+   evas_object_move(edje_obj_two, 0, 250);
+   evas_object_resize(edje_obj_two, WIDTH - 40, HEIGHT - 40);
+   evas_object_show(edje_obj_two);
+   edje_language_set("en_IN");
+   edje_object_text_change_cb_set(edje_obj_two, _on_text_change, NULL);
+   edje_object_part_text_set(edje_obj_two, "part_two", "<b>Click here");
+   edje_object_part_text_select_allow_set(edje_obj_two, "part_two", EINA_TRUE);
+   edje_object_part_text_select_all(edje_obj_two, "part_two");
+   printf("selection: %s\n", edje_object_part_text_selection_get(edje_obj_two, "part_two"));
+   edje_object_part_text_select_none(edje_obj_two, "part_two");
+   printf("selection: %s\n", edje_object_part_text_selection_get(edje_obj_two, "part_two"));
+   evas_object_event_callback_add(edje_obj_two, EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down_text, NULL);
+
+   edje_obj_three = edje_object_add(evas);
+   edje_object_file_set(edje_obj_three, edje_file, "example_group3");
+   evas_object_move(edje_obj_three, 0, 350);
+   evas_object_resize(edje_obj_three, WIDTH - 40, HEIGHT - 40);
+   evas_object_show(edje_obj_three);
+   edje_object_text_change_cb_set(edje_obj_three, _on_text_change, NULL);
+   edje_object_part_text_set(edje_obj_three, "part_two", "<b>Click here");
+   edje_object_part_text_select_allow_set(edje_obj_three, "part_two", EINA_TRUE);
+   edje_object_part_text_select_all(edje_obj_three, "part_two");
+   printf("selection: %s\n", edje_object_part_text_selection_get(edje_obj_three, "part_two"));
+   edje_object_part_text_select_none(edje_obj_three, "part_two");
+   printf("selection: %s\n", edje_object_part_text_selection_get(edje_obj_three, "part_two"));
+   evas_object_event_callback_add(edje_obj_three, EVAS_CALLBACK_MOUSE_DOWN, _on_mouse_down_text, NULL);
+
    ecore_evas_show(ee);
 
    ecore_main_loop_begin();

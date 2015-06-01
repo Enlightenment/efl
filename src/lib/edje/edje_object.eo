@@ -44,6 +44,24 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             rtl: bool; /*@ new value of flag EINA_TRUE/EINA_FALSE */
          }
       }
+      @property language {
+         set {
+            /*@
+            @brief Set the language for this object.
+
+            @since 1.1.0 */
+         }
+         get {
+            /*@
+            @brief Get the language for this object.
+
+            @return @c language.
+            @since 1.1.0 */
+         }
+         values {
+            language: const(char)*; /*@ The language value */
+          }
+      }
       @property animation {
          set {
             /*@
