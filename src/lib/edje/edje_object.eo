@@ -248,8 +248,8 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          values {
             part: const(char)*; /*@ The part containing the object. */
             cur: Edje_Cursor; /*@ The cursor to adjust. */
-            x: Evas_Coord; /*@ X Coordinate. */
-            y: Evas_Coord; /*@ Y Coordinate. */
+            x: Evas.Coord; /*@ X Coordinate. */
+            y: Evas.Coord; /*@ Y Coordinate. */
          }
       }
       @property part_text_cursor_end {
@@ -360,8 +360,8 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             @see edje_object_size_max_get() */
          }
          values {
-            minw: Evas_Coord; /*@ Pointer to a variable where to store the minimum width */
-            minh: Evas_Coord; /*@ Pointer to a variable where to store the minimum height */
+            minw: Evas.Coord; /*@ Pointer to a variable where to store the minimum width */
+            minh: Evas.Coord; /*@ Pointer to a variable where to store the minimum height */
          }
       }
       @property access_part_list {
@@ -435,8 +435,8 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             @see edje_object_size_min_get() */
          }
          values {
-            maxw: Evas_Coord; /*@ Pointer to a variable where to store the maximum width */
-            maxh: Evas_Coord; /*@ Pointer to a variable where to store the maximum height */
+            maxw: Evas.Coord; /*@ Pointer to a variable where to store the maximum width */
+            maxh: Evas.Coord; /*@ Pointer to a variable where to store the maximum height */
          }
       }
       part_table_clear {
@@ -661,12 +661,12 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The Edje part's name */
-            @out x: Evas_Coord; /*@ A pointer to a variable where to store the part's x
+            @out x: Evas.Coord; /*@ A pointer to a variable where to store the part's x
             coordinate */
-            @out y: Evas_Coord; /*@ A pointer to a variable where to store the part's y
+            @out y: Evas.Coord; /*@ A pointer to a variable where to store the part's y
             coordinate */
-            @out w: Evas_Coord; /*@ A pointer to a variable where to store the part's width */
-            @out h: Evas_Coord; /*@ A pointer to a variable where to store the part's height */
+            @out w: Evas.Coord; /*@ A pointer to a variable where to store the part's width */
+            @out h: Evas.Coord; /*@ A pointer to a variable where to store the part's height */
          }
       }
       part_text_input_panel_hide @const {
@@ -694,10 +694,10 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          params {
             @in part: const(char)*; /*@ The part name */
             @in item: const(char)*; /*@ The item name */
-            @out cx: Evas_Coord; /*@ Item x return (relative to entry part) */
-            @out cy: Evas_Coord; /*@ Item y return (relative to entry part) */
-            @out cw: Evas_Coord; /*@ Item width return */
-            @out ch: Evas_Coord; /*@ Item height return */
+            @out cx: Evas.Coord; /*@ Item x return (relative to entry part) */
+            @out cy: Evas.Coord; /*@ Item y return (relative to entry part) */
+            @out cw: Evas.Coord; /*@ Item width return */
+            @out ch: Evas.Coord; /*@ Item height return */
          }
       }
       part_table_unpack {
@@ -711,7 +711,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in child_obj: Evas_Object *; /*@ The object to pack in */
+            @in child_obj: Evas.Object *; /*@ The object to pack in */
          }
       }
       part_text_select_abort @const {
@@ -802,7 +802,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          @see edje_object_part_box_remove()
          @see edje_object_part_box_remove_all() */
 
-         return: Evas_Object *;
+         return: Evas.Object *;
          params {
             @in part: const(char)*; /*@ The part name */
             @in pos: uint; /*@ The position index of the object (starts counting from 0) */
@@ -838,13 +838,13 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          return: bool;
          params {
-            @out x: Evas_Coord; /*@ A pointer to a variable where to store the parts region's
+            @out x: Evas.Coord; /*@ A pointer to a variable where to store the parts region's
             x coordinate */
-            @out y: Evas_Coord; /*@ A pointer to a variable where to store the parts region's
+            @out y: Evas.Coord; /*@ A pointer to a variable where to store the parts region's
             y coordinate */
-            @out w: Evas_Coord; /*@ A pointer to a variable where to store the parts region's
+            @out w: Evas.Coord; /*@ A pointer to a variable where to store the parts region's
             width */
-            @out h: Evas_Coord; /*@ A pointer to a variable where to store the parts region's
+            @out h: Evas.Coord; /*@ A pointer to a variable where to store the parts region's
             height */
          }
       }
@@ -989,7 +989,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in child_obj: Evas_Object *; /*@ The object to pack in */
+            @in child_obj: Evas.Object *; /*@ The object to pack in */
             @in col: ushort; /*@ The column to place it in */
             @in row: ushort; /*@ The row to place it in */
             @in colspan: ushort; /*@ Columns the child will take */
@@ -1053,7 +1053,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          @return The externally created object, or NULL if there is none or
          part is not an external. */
-         return: Evas_Object *;
+         return: Evas.Object *;
          params {
             @in part: const(char)*; /*@ The part name */
          }
@@ -1064,7 +1064,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          The @p content string must not be NULL. Its actual value depends on the
          code providing the EXTERNAL. */
-         return: Evas_Object *;
+         return: Evas.Object *;
          params {
             @in part: const(char)*; /*@ The name of the part holding the EXTERNAL */
             @out content: const(char); /*@ A string identifying which content from the EXTERNAL to get */
@@ -1138,7 +1138,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in child: Evas_Object *; /*@ The object to insert */
+            @in child: Evas.Object *; /*@ The object to insert */
             @in pos: uint; /*@ The position where to insert child */
          }
       }
@@ -1216,7 +1216,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in child: Evas_Object *; /*@ The object to prepend */
+            @in child: Evas.Object *; /*@ The object to prepend */
          }
       }
       signal_emit {
@@ -1328,7 +1328,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          query information about its current state (with @c
          evas_object_visible_get() or @c evas_object_color_get() for
          example), though. */
-         return: const(Evas_Object)*;
+         return: const(Evas.Object)*;
          params {
             @in part: const(char)*; /*@ The Edje part's name */
          }
@@ -1559,7 +1559,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          it got unswallowed. Make sure you delete it or hide it if you do not want it to. */
 
          params {
-            @in obj_swallow: Evas_Object *; /*@ The swallowed object */
+            @in obj_swallow: Evas.Object *; /*@ The swallowed object */
          }
       }
       part_text_prediction_allow_set {
@@ -1677,10 +1677,10 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          @see edje_object_part_box_remove_at()
          @see edje_object_part_box_remove_all() */
 
-         return: Evas_Object *;
+         return: Evas.Object *;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in child: Evas_Object *; /*@ The object to remove */
+            @in child: Evas.Object *; /*@ The object to remove */
          }
       }
       thaw {
@@ -1703,7 +1703,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          @brief Get the object currently swallowed by a part.
 
          @return The swallowed object, or NULL if there is none. */
-         return: Evas_Object *;
+         return: Evas.Object *;
          params {
             @in part: const(char)*; /*@ The part name */
          }
@@ -1749,8 +1749,8 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          /*@
          @brief Retrieve a child from a table
 
-         @return The child Evas_Object */
-         return: Evas_Object *;
+         @return The child Evas.Object */
+         return: Evas.Object *;
          params {
             @in part: const(char)*; /*@ The part name */
             @in col: uint; /*@ The column of the child to get */
@@ -1774,8 +1774,8 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in child: Evas_Object *; /*@ The object to insert */
-            @in reference: const(Evas_Object)*; /*@ The object to be used as reference */
+            @in child: Evas.Object *; /*@ The object to insert */
+            @in reference: const(Evas.Object)*; /*@ The object to be used as reference */
          }
       }
       part_external_param_set {
@@ -1849,9 +1849,9 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          documentation, then. */
 
          params {
-            @out minw: Evas_Coord; /*@ Pointer to a variable where to store the minimum
+            @out minw: Evas.Coord; /*@ Pointer to a variable where to store the minimum
             required width */
-            @out minh: Evas_Coord; /*@ Pointer to a variable where to store the minimum
+            @out minh: Evas.Coord; /*@ Pointer to a variable where to store the minimum
             required height */
          }
       }
@@ -1871,7 +1871,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in child: Evas_Object *; /*@ The object to append */
+            @in child: Evas.Object *; /*@ The object to append */
          }
       }
       size_min_restricted_calc {
@@ -1893,13 +1893,13 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          into account in this calculation. */
 
          params {
-            @out minw: Evas_Coord; /*@ Pointer to a variable where to store the minimum
+            @out minw: Evas.Coord; /*@ Pointer to a variable where to store the minimum
             required width */
-            @out minh: Evas_Coord; /*@ Pointer to a variable where to store the minimum
+            @out minh: Evas.Coord; /*@ Pointer to a variable where to store the minimum
             required height */
-            @in restrictedw: Evas_Coord; /*@ Do not allow object's calculated (minimum) width
+            @in restrictedw: Evas.Coord; /*@ Do not allow object's calculated (minimum) width
             to be less than this value */
-            @in restrictedh: Evas_Coord; /*@ Do not allow object's calculated (minimum)
+            @in restrictedh: Evas.Coord; /*@ Do not allow object's calculated (minimum)
             height to be less than this value */
          }
       }
@@ -2172,10 +2172,10 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          object. */
          params {
             @in part: const(char)*; /*@ The part name */
-            @out x: Evas_Coord; /*@ Cursor X position */
-            @out y: Evas_Coord; /*@ Cursor Y position */
-            @out w: Evas_Coord; /*@ Cursor width */
-            @out h: Evas_Coord; /*@ Cursor height */
+            @out x: Evas.Coord; /*@ Cursor X position */
+            @out y: Evas.Coord; /*@ Cursor Y position */
+            @out w: Evas.Coord; /*@ Cursor width */
+            @out h: Evas.Coord; /*@ Cursor height */
          }
       }
       part_text_anchor_list_get @const {
@@ -2361,7 +2361,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The swallow part's name */
-            @in obj_swallow: Evas_Object *; /*@ The object to occupy that part */
+            @in obj_swallow: Evas.Object *; /*@ The object to occupy that part */
          }
       }
    }
