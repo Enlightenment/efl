@@ -6,3 +6,4 @@ struct @extern Eina.Rectangle {
     w: int;
     h: int;
 }
+struct @extern Eina.File;
