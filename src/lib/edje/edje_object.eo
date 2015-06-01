@@ -250,7 +250,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          values {
             text_class: const(char)*; /*@ The text class name */
             font: const(char)*; /*@ Font name */
-            size: Evas_Font_Size; /*@ Font Size */
+            size: Evas.Font.Size; /*@ Font Size */
          }
       }
       @property part_text_cursor_coord {
@@ -2071,7 +2071,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          params {
             @in text_class: const(char)*; /*@ The text class name */
             @out font: const(char)*; /*@ Font name */
-            @out size: Evas_Font_Size; /*@ Font Size */
+            @out size: Evas.Font.Size; /*@ Font Size */
          }
       }
       color_class_set {

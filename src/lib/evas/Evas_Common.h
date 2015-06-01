@@ -299,7 +299,6 @@ typedef struct _Evas_Native_Surface Evas_Native_Surface; /**< A generic datatype
  */
 typedef struct _Evas_Video_Surface Evas_Video_Surface;
 
-typedef int                        Evas_Font_Size; /**< A type for font size */
 typedef int                        Evas_Angle; /**< A type for angle */
 
 struct _Evas_Coord_Rectangle /** A rectangle in Evas_Coord */

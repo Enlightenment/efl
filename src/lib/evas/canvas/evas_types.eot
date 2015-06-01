@@ -97,6 +97,8 @@ enum Evas.Text_Style_Type {
    shadow_direction_right = (0x7 << 4)             /**< shadow growing to the right */
 }
 
+type Evas.Font.Size: int; /**< A type for font size */
+
 struct Evas.Map; /*@ An opaque handle to map points
                   *
                   * @see evas_map_new()
