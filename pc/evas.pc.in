@@ -5,7 +5,7 @@ includedir=@includedir@
 datarootdir=@datarootdir@
 datadir=@datadir@
 eoincludedir=@datadir@/eolian/include
-eolian_flags=-I${pc_sysrootdir}/${eoincludedir}/evas-@VMAJ@
+eolian_flags=-I${pc_sysrootdir}${eoincludedir}/evas-@VMAJ@
 
 Name: evas
 Description: Evas canvas display library
