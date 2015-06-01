@@ -95,6 +95,7 @@ tests/eolian/data/nmsp2_class1.eo \
 tests/eolian/data/null.eo \
 tests/eolian/data/no_nmsp.eo \
 tests/eolian/data/import.eo \
+tests/eolian/data/decl.eo \
 tests/eolian/data/import_types.eot
 
 EOLIAN_TESTS_EOS_GENERATED = \

@@ -1073,6 +1073,61 @@ START_TEST(eolian_import)
 }
 END_TEST
 
+START_TEST(eolian_decl)
+{
+   const Eolian_Declaration *decl;
+   const Eolian_Type *type;
+   const Eolian_Class *class;
+   const Eolian_Variable *var;
+   Eina_Iterator *itr;
+
+   eolian_init();
+
+   fail_if(!eolian_directory_scan(PACKAGE_DATA_DIR"/data"));
+
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/decl.eo"));
+   fail_if(!(class = eolian_class_get_by_name("Decl")));
+
+   fail_if(!(itr = eolian_declarations_get_by_file("decl.eo")));
+
+   fail_if(!eina_iterator_next(itr, (void**)&decl));
+   fail_if(eolian_declaration_type_get(decl) == EOLIAN_DECL_UNKNOWN);
+   fail_if(strcmp(eolian_declaration_name_get(decl), "A"));
+   fail_if(!(type = eolian_declaration_data_type_get(decl)));
+   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_STRUCT);
+   fail_if(strcmp(eolian_type_name_get(type), "A"));
+
+   fail_if(!eina_iterator_next(itr, (void**)&decl));
+   fail_if(eolian_declaration_type_get(decl) == EOLIAN_DECL_UNKNOWN);
+   fail_if(strcmp(eolian_declaration_name_get(decl), "B"));
+   fail_if(!(type = eolian_declaration_data_type_get(decl)));
+   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_ENUM);
+   fail_if(strcmp(eolian_type_name_get(type), "B"));
+
+   fail_if(!eina_iterator_next(itr, (void**)&decl));
+   fail_if(eolian_declaration_type_get(decl) == EOLIAN_DECL_UNKNOWN);
+   fail_if(strcmp(eolian_declaration_name_get(decl), "C"));
+   fail_if(!(type = eolian_declaration_data_type_get(decl)));
+   fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_ALIAS);
+   fail_if(strcmp(eolian_type_name_get(type), "C"));
+
+   fail_if(!eina_iterator_next(itr, (void**)&decl));
+   fail_if(eolian_declaration_type_get(decl) == EOLIAN_DECL_UNKNOWN);
+   fail_if(strcmp(eolian_declaration_name_get(decl), "pants"));
+   fail_if(!(var = eolian_declaration_variable_get(decl)));
+   fail_if(strcmp(eolian_variable_name_get(var), "pants"));
+
+   fail_if(!eina_iterator_next(itr, (void**)&decl));
+   fail_if(eolian_declaration_type_get(decl) == EOLIAN_DECL_UNKNOWN);
+   fail_if(strcmp(eolian_declaration_name_get(decl), "Decl"));
+   fail_if(eolian_declaration_class_get(decl) != class);
+
+   fail_if(eina_iterator_next(itr, (void**)&decl));
+
+   eolian_shutdown();
+}
+END_TEST
+
 void eolian_parsing_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_simple_parsing);
@@ -1092,5 +1147,6 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_free_func);
    tcase_add_test(tc, eolian_null);
    tcase_add_test(tc, eolian_import);
+   tcase_add_test(tc, eolian_decl);
 }
 

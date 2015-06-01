@@ -1,0 +1,22 @@
+struct A {
+    foo: int;
+}
+
+enum B {
+    x
+}
+
+type C: A;
+
+var pants: B.x;
+
+class Decl {
+   methods {
+      foo {
+         params {
+            idx: int;
+         }
+         return: own(char*);
+      }
+   }
+}
