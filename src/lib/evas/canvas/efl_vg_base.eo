@@ -66,7 +66,7 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
           @since 1.14
          */
          params {
-            @out r: Eina_Rectangle; /*@ bounding box to be returned */
+            @out r: Eina.Rectangle; /*@ bounding box to be returned */
          }
       }
    }
