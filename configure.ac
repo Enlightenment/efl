@@ -1113,6 +1113,33 @@ EFL_EVAL_PKGS([EINA_JS])
 EFL_LIB_END([Eina_Js])
 #### End of Eina JS
 
+#### Ecore JS
+EFL_LIB_START([Ecore_Js])
+
+AC_LANG_PUSH([C++])
+case "$want_js" in
+     nodejs)
+        ;;
+     libv8)
+        EFL_DEPEND_PKG([ECORE_JS], [V8], [v8 >= 3.25.28])
+        ;;
+     libuv)
+        EFL_DEPEND_PKG([ECORE_JS], [V8], [v8 >= 3.25.28])
+        EFL_DEPEND_PKG([ECORE_JS], [UV], [v8 >= 1.1.0])
+        ;;
+     none)
+        ;;
+     *) AC_MSG_ERROR([Invalid javascript dependency (${want_js}): must be none, nodejs, libv8 or libuv]) ;;
+esac
+AC_LANG_POP([C++])
+
+EFL_INTERNAL_DEPEND_PKG([ECORE_JS], [ecore])
+EFL_ADD_CFLAGS([ECORE_JS], [${EFL_PTHREAD_CFLAGS}])
+EFL_EVAL_PKGS([ECORE_JS])
+
+EFL_LIB_END([Ecore_Js])
+#### End of Ecore JS
+
 #### Eina JS
 EFL_LIB_START([Eo_Js])
 
