@@ -345,7 +345,7 @@ struct compatibility_persistent<T, true> : v8::UniquePersistent<T>
     return *handle();
   }
 
-  v8::Local<T> handle() const { return v8::Local<T>::New(v8::Isolate::GetCurrent(), *this); }
+  v8::Handle<T> handle() const { return v8::Local<T>::New(v8::Isolate::GetCurrent(), *this); }
 };
 
 template <typename T>

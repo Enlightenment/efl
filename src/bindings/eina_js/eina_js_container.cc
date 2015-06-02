@@ -380,7 +380,7 @@ EAPI void eina_container_register(v8::Handle<v8::Object>, v8::Isolate* isolate)
                                 , "eina_array", &efl::eina::js::new_eina_array);
 }
 
-EAPI v8::Local<v8::Function> get_list_instance_template()
+EAPI v8::Handle<v8::Function> get_list_instance_template()
 {
   return efl::eina::js::instance_templates[efl::eina::js::list_container_type]->handle();
 }
