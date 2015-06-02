@@ -253,7 +253,7 @@ _ecore_buffer_x11_dri2_init(const char *context EINA_UNUSED, const char *options
    if (fd < 0)
      goto on_error;
 
-   if (!(drmGetMagic(fd, &magic)))
+   if (drmGetMagic(fd, &magic) < 0)
      goto on_error;
 
    if (!(DRI2Authenticate(xdpy, root, magic)))

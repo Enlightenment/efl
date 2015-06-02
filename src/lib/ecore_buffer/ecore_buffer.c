@@ -86,11 +86,10 @@ _ecore_buffer_get_backend(const char *name)
    else
      bm = eina_hash_find(_backends, backend_name);
 
-   if ((!bm) || (!bm->be))
+   if ((!bm) || (!bm->be) || (!bm->be->init))
      return NULL;
 
-   if ((!bm->data) && (bm->be->init))
-     bm->data = bm->be->init(NULL, NULL);
+   bm->data = bm->be->init(NULL, NULL);
 
    return bm;
 }
