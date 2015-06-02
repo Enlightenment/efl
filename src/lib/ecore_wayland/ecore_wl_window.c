@@ -833,6 +833,11 @@ ecore_wl_window_focus_skip_set(Ecore_Wl_Window *win, Eina_Bool focus_skip)
         if ((win->surface) && (_ecore_wl_disp->wl.tz_policy))
           tizen_policy_focus_skip_set(_ecore_wl_disp->wl.tz_policy, win->surface);
       }
+   else
+     {
+        if ((win->surface) && (_ecore_wl_disp->wl.tz_policy))
+          tizen_policy_focus_skip_unset(_ecore_wl_disp->wl.tz_policy, win->surface);
+     }
  }
 
 /* @since 1.12 */
