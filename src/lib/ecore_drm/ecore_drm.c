@@ -73,9 +73,6 @@ ecore_drm_init(void)
         return --_ecore_drm_init_count;
      }
 
-   /* set logging level */
-   eina_log_level_set(EINA_LOG_LEVEL_DBG);
-
    /* try to create logging domain */
    _ecore_drm_log_dom = 
      eina_log_domain_register("ecore_drm", ECORE_DRM_DEFAULT_LOG_COLOR);
