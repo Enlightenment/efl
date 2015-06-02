@@ -23,6 +23,22 @@ _evas_drm_crtc_buffer_get(int fd, int crtc_id)
    return id;
 }
 
+static Ecore_Drm_Output*
+_evas_drm_output_find(unsigned int crtc_id)
+{
+   Ecore_Drm_Device *dev;
+   Ecore_Drm_Output *output;
+   Eina_List *devs = ecore_drm_devices_get();
+   Eina_List *l, *ll;
+
+   EINA_LIST_FOREACH(devs, l, dev)
+     EINA_LIST_FOREACH(dev->outputs, ll, output)
+       if (ecore_drm_output_crtc_id_get(output) == crtc_id)
+         return output;
+
+   return NULL;
+}
+
 void
 evas_drm_outbuf_event_flip(int fd EINA_UNUSED, unsigned int seq EINA_UNUSED, unsigned int sec EINA_UNUSED, unsigned int usec EINA_UNUSED, void *data)
 {
@@ -320,6 +336,22 @@ evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer)
 
    if (ob->vsync)
      {
+        uint32_t width, height;
+        uint32_t format;
+
+        if (!ob->output)
+          {
+             ob->output = _evas_drm_output_find(ob->priv.crtc);
+             EINA_SAFETY_ON_NULL_RETURN_VAL(ob->output, EINA_FALSE);
+          }
+
+        width = gbm_bo_get_width(buffer->bo);
+        height = gbm_bo_get_height(buffer->bo);
+        format = gbm_bo_get_format(buffer->bo);
+
+        ecore_drm_output_current_fb_info_set(ob->output, buffer->handle,
+                                             width, height, format);
+
         if (drmModePageFlip(ob->priv.fd, ob->priv.crtc,
                             buffer->fb, DRM_MODE_PAGE_FLIP_EVENT, ob) < 0)
           {

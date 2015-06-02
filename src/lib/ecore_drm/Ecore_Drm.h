@@ -259,6 +259,11 @@ EAPI void ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb
 EAPI void ecore_drm_output_repaint(Ecore_Drm_Output *output);
 EAPI void ecore_drm_output_size_get(Ecore_Drm_Device *dev, int output, int *w, int *h);
 
+/* This is ugly, will remove after rebaseing on 1.14 */
+EAPI unsigned int ecore_drm_output_crtc_id_get(Ecore_Drm_Output *output);
+EAPI void ecore_drm_output_current_fb_info_set(Ecore_Drm_Output *output, unsigned int handle, int w, int h, unsigned int format);
+EAPI void ecore_drm_output_current_fb_info_get(Ecore_Drm_Output *output, unsigned int *handle, int *w, int *h, unsigned int *format);
+
 /**
  * @since 1.12
  */

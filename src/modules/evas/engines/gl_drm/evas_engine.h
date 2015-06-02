@@ -137,6 +137,8 @@ struct _Outbuf
       Eina_List *planes;
       Eina_Bool pending_flip : 1;
      } priv;
+
+   Ecore_Drm_Output *output;
 };
 
 struct _Context_3D

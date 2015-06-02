@@ -136,6 +136,12 @@ struct _Ecore_Drm_Output
    Ecore_Drm_Fb *current, *next;
    Ecore_Drm_Fb *dumb[NUM_FRAME_BUFFERS];
    Ecore_Drm_Backlight *backlight;   
+
+   /* this is ugly */
+   unsigned int curr_fb_handle;
+   int curr_fb_w;
+   int curr_fb_h;
+   int curr_fb_format;
 };
 
 struct _Ecore_Drm_Seat

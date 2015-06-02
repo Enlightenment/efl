@@ -77,6 +77,22 @@ _evas_drm_outbuf_planes_setup(Outbuf *ob, drmModePlaneResPtr pres)
    return EINA_TRUE;
 }
 
+static Ecore_Drm_Output*
+_evas_drm_output_find(unsigned int crtc_id)
+{
+   Ecore_Drm_Device *dev;
+   Ecore_Drm_Output *output;
+   Eina_List *devs = ecore_drm_devices_get();
+   Eina_List *l, *ll;
+
+   EINA_LIST_FOREACH(devs, l, dev)
+     EINA_LIST_FOREACH(dev->outputs, ll, output)
+       if (ecore_drm_output_crtc_id_get(output) == crtc_id)
+         return output;
+
+   return NULL;
+}
+
 Eina_Bool 
 evas_drm_outbuf_setup(Outbuf *ob)
 {
@@ -339,6 +355,16 @@ evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer)
 
    if (ob->vsync)
      {
+        if (!ob->output)
+          {
+             ob->output = _evas_drm_output_find(ob->priv.crtc);
+             EINA_SAFETY_ON_NULL_RETURN_VAL(ob->output, EINA_FALSE);
+          }
+
+        ecore_drm_output_current_fb_info_set(ob->output, buffer->handle,
+                                             buffer->w, buffer->h,
+                                             DRM_FORMAT_ARGB8888);
+
         if (drmModePageFlip(ob->priv.fd, ob->priv.crtc, 
                             buffer->fb, DRM_MODE_PAGE_FLIP_EVENT, ob) < 0)
           {

@@ -1033,3 +1033,37 @@ ecore_drm_output_make_get(Ecore_Drm_Output *output)
 
    return output->make;
 }
+
+EAPI unsigned int
+ecore_drm_output_crtc_id_get(Ecore_Drm_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);
+
+   return output->crtc_id;
+}
+
+EAPI void
+ecore_drm_output_current_fb_info_set(Ecore_Drm_Output *output, unsigned int handle, int w, int h, unsigned int format)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   output->curr_fb_handle = handle;
+   output->curr_fb_w = w;
+   output->curr_fb_h = h;
+   output->curr_fb_format = format;
+}
+
+EAPI void
+ecore_drm_output_current_fb_info_get(Ecore_Drm_Output *output, unsigned int *handle, int *w, int *h, unsigned int *format)
+{
+   EINA_SAFETY_ON_NULL_RETURN(output);
+
+   if (handle)
+     *handle = output->curr_fb_handle;
+   if (w)
+     *w = output->curr_fb_w;
+   if (h)
+     *h = output->curr_fb_h;
+   if (format)
+     *format = output->curr_fb_format;
+}

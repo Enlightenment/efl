@@ -113,6 +113,8 @@ struct _Outbuf
       Eina_Bool pending_flip : 1;
    } priv;
 
+   Ecore_Drm_Output *output;
+
    Eina_Bool destination_alpha : 1;
    Eina_Bool vsync : 1;
 };
