@@ -537,7 +537,7 @@ static Ecore_Pixmap
 _ecore_buffer_x11_dri3_pixmap_get(Ecore_Buffer_Module_Data bmdata EINA_UNUSED, Ecore_Buffer_Data data)
 {
    Ecore_Buffer_X11_Dri3_Data *buf = data;
-   Ecore_X_Display* xdpy;
+   Ecore_X_Display *xdpy;
    Ecore_X_Window root;
    tbm_surface_info_s info;
    tbm_bo bo;

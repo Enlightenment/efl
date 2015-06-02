@@ -25,12 +25,12 @@ struct _Ecore_Buffer_Consumer
 
 static void       _ecore_buffer_consumer_cb_provider_connected(void *data, struct bq_consumer *bq_consumer);
 static void       _ecore_buffer_consumer_cb_provider_disconnected(void *data, struct bq_consumer *bq_consumer);
-static void       _ecore_buffer_consumer_cb_buffer_attached(void *data, struct bq_consumer *bq_consumer, struct bq_buffer *id, const char* engine, int32_t width, int32_t height, int32_t format, uint32_t flags);
+static void       _ecore_buffer_consumer_cb_buffer_attached(void *data, struct bq_consumer *bq_consumer, struct bq_buffer *id, const char *engine, int32_t width, int32_t height, int32_t format, uint32_t flags);
 static void       _ecore_buffer_consumer_cb_buffer_id_set(void *data, struct bq_consumer *bq_consumer, struct bq_buffer *buffer, int32_t id, int32_t offset0, int32_t stride0, int32_t offset1, int32_t stride1, int32_t offset2, int32_t stride2);
 static void       _ecore_buffer_consumer_cb_buffer_fd_set(void *data, struct bq_consumer *bq_consumer, struct bq_buffer *buffer, int32_t fd, int32_t offset0, int32_t stride0, int32_t offset1, int32_t stride1, int32_t offset2, int32_t stride2);
 static void       _ecore_buffer_consumer_cb_buffer_detached(void *data, struct bq_consumer *bq_consumer, struct bq_buffer *id);
 static void       _ecore_buffer_consumer_cb_add_buffer(void *data, struct bq_consumer *bq_consumer, struct bq_buffer *buffer, uint32_t serial);
-static void       _ecore_buffer_consumer_cb_buffer_free(Ecore_Buffer* buf, void *data);
+static void       _ecore_buffer_consumer_cb_buffer_free(Ecore_Buffer *buf, void *data);
 static Eina_Bool  _ecore_buffer_consumer_buffer_import(Ecore_Buffer_Consumer *csmr, Shared_Buffer *sb, int32_t seed, Ecore_Export_Type export_type);
 
 struct bq_consumer_listener _ecore_buffer_consumer_listener =
@@ -253,7 +253,7 @@ _ecore_buffer_consumer_cb_provider_disconnected(void *data, struct bq_consumer *
 }
 
 static void
-_ecore_buffer_consumer_cb_buffer_attached(void *data, struct bq_consumer *bq_consumer EINA_UNUSED, struct bq_buffer *id, const char* engine, int32_t width, int32_t height, int32_t format, uint32_t flags)
+_ecore_buffer_consumer_cb_buffer_attached(void *data, struct bq_consumer *bq_consumer EINA_UNUSED, struct bq_buffer *id, const char *engine, int32_t width, int32_t height, int32_t format, uint32_t flags)
 {
    Ecore_Buffer_Consumer *csmr = data;
    Shared_Buffer *sb;
@@ -274,7 +274,7 @@ _ecore_buffer_consumer_cb_buffer_attached(void *data, struct bq_consumer *bq_con
 }
 
 static void
-_ecore_buffer_consumer_cb_buffer_free(Ecore_Buffer* buf, void *data EINA_UNUSED)
+_ecore_buffer_consumer_cb_buffer_free(Ecore_Buffer *buf, void *data EINA_UNUSED)
 {
    Shared_Buffer *sb = _ecore_buffer_user_data_get(buf, "shared-buffer");
 

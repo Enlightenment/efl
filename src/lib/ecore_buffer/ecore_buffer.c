@@ -28,7 +28,7 @@ struct _Ecore_Buffer
    unsigned int flags;
 
    Ecore_Buffer_Data buffer_data;
-   Ecore_Buffer_Module* bm;
+   Ecore_Buffer_Module *bm;
 
    Eina_Hash *data;
    Eina_Inlist *free_callbacks;
@@ -38,7 +38,7 @@ struct _Ecore_Buffer_Cb_Data
 {
    EINA_INLIST;
    Ecore_Buffer_Cb cb;
-   void* data;
+   void *data;
 };
 
 static Eina_Hash *_backends;
@@ -112,7 +112,7 @@ _ecore_buffer_backends_free(const Eina_Hash *hash EINA_UNUSED, const void *key E
 EAPI Eina_Bool
 ecore_buffer_register(Ecore_Buffer_Backend *be)
 {
-   Ecore_Buffer_Module* bm;
+   Ecore_Buffer_Module *bm;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(be, 0);
 
@@ -234,10 +234,10 @@ ecore_buffer_shutdown(void)
 }
 
 EAPI Ecore_Buffer*
-ecore_buffer_new(const char* engine, unsigned int width, unsigned int height, Ecore_Buffer_Format format, unsigned int flags)
+ecore_buffer_new(const char *engine, unsigned int width, unsigned int height, Ecore_Buffer_Format format, unsigned int flags)
 {
-   Ecore_Buffer_Module* bm;
-   Ecore_Buffer* bo;
+   Ecore_Buffer_Module *bm;
+   Ecore_Buffer *bo;
    void *bo_data;
 
    bm = _ecore_buffer_get_backend(engine);
@@ -323,9 +323,9 @@ ecore_buffer_new_with_tbm_surface(const char *engine, void *tbm_surface, unsigne
 }
 
 EAPI void
-ecore_buffer_free(Ecore_Buffer* buf)
+ecore_buffer_free(Ecore_Buffer *buf)
 {
-   Ecore_Buffer_Cb_Data* free_cb;
+   Ecore_Buffer_Cb_Data *free_cb;
 
    EINA_SAFETY_ON_NULL_RETURN(buf);
 
@@ -409,12 +409,12 @@ ecore_buffer_flags_get(Ecore_Buffer *buf)
 }
 
 EAPI void
-ecore_buffer_free_callback_add(Ecore_Buffer* buf, Ecore_Buffer_Cb func, void* data)
+ecore_buffer_free_callback_add(Ecore_Buffer *buf, Ecore_Buffer_Cb func, void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN(buf);
    EINA_SAFETY_ON_NULL_RETURN(func);
 
-   Ecore_Buffer_Cb_Data* free_cb;
+   Ecore_Buffer_Cb_Data *free_cb;
 
    free_cb = calloc(sizeof(Ecore_Buffer_Cb_Data), 1);
    if (!free_cb)
@@ -426,9 +426,9 @@ ecore_buffer_free_callback_add(Ecore_Buffer* buf, Ecore_Buffer_Cb func, void* da
 }
 
 EAPI void
-ecore_buffer_free_callback_remove(Ecore_Buffer* buf, Ecore_Buffer_Cb func, void* data)
+ecore_buffer_free_callback_remove(Ecore_Buffer *buf, Ecore_Buffer_Cb func, void *data)
 {
-   Ecore_Buffer_Cb_Data* free_cb;
+   Ecore_Buffer_Cb_Data *free_cb;
 
    EINA_SAFETY_ON_NULL_RETURN(buf);
    EINA_SAFETY_ON_NULL_RETURN(func);
@@ -450,7 +450,7 @@ ecore_buffer_free_callback_remove(Ecore_Buffer* buf, Ecore_Buffer_Cb func, void*
 }
 
 const char *
-_ecore_buffer_engine_name_get(Ecore_Buffer* buf)
+_ecore_buffer_engine_name_get(Ecore_Buffer *buf)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(buf, 0);
    EINA_SAFETY_ON_NULL_RETURN_VAL(buf->bm, 0);
@@ -480,10 +480,10 @@ _ecore_buffer_export(Ecore_Buffer *buf, int *id)
 }
 
 Ecore_Buffer *
-_ecore_buffer_import(const char* engine, int width, int height, Ecore_Buffer_Format format, Ecore_Export_Type type, int export_id, unsigned int flags)
+_ecore_buffer_import(const char *engine, int width, int height, Ecore_Buffer_Format format, Ecore_Export_Type type, int export_id, unsigned int flags)
 {
-   Ecore_Buffer_Module* bm;
-   Ecore_Buffer* bo;
+   Ecore_Buffer_Module *bm;
+   Ecore_Buffer *bo;
    void *bo_data;
 
    bm = _ecore_buffer_get_backend(engine);

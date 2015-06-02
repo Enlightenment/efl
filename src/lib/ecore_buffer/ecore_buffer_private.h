@@ -33,9 +33,9 @@ do {                                         \
 
 extern int _ecore_buffer_queue_log_dom;
 
-const char        *_ecore_buffer_engine_name_get(Ecore_Buffer* buf);
+const char        *_ecore_buffer_engine_name_get(Ecore_Buffer *buf);
 Ecore_Export_Type  _ecore_buffer_export(Ecore_Buffer *buf, int *id);
-Ecore_Buffer      *_ecore_buffer_import(const char* engine, int width, int height, Ecore_Buffer_Format format, Ecore_Export_Type type, int export_id, unsigned int flags);
+Ecore_Buffer      *_ecore_buffer_import(const char *engine, int width, int height, Ecore_Buffer_Format format, Ecore_Export_Type type, int export_id, unsigned int flags);
 void               _ecore_buffer_user_data_set(Ecore_Buffer *buf, const void *key, const void *data);
 void              *_ecore_buffer_user_data_get(Ecore_Buffer *buf, const void *key);
 

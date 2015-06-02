@@ -29,7 +29,7 @@ static void           _ecore_buffer_provider_cb_consumer_disconnected(void *data
 static void           _ecore_buffer_provider_cb_add_buffer(void *data, struct bq_provider *bq_provider, struct bq_buffer *buffer, uint32_t serial);
 static Shared_Buffer *_ecore_buffer_provider_shared_buffer_new(Ecore_Buffer_Provider *pvdr, Ecore_Buffer *buffer);
 static void           _ecore_buffer_provider_shared_buffer_free(Ecore_Buffer_Provider *pvdr, Shared_Buffer *sb);
-static void           _ecore_buffer_provider_cb_buffer_free(Ecore_Buffer* buf, void *data);
+static void           _ecore_buffer_provider_cb_buffer_free(Ecore_Buffer *buf, void *data);
 
 struct bq_provider_listener _ecore_buffer_provider_listener =
 {
@@ -291,7 +291,7 @@ _ecore_buffer_provider_cb_add_buffer(void *data, struct bq_provider *bq_provider
 }
 
 static void
-_ecore_buffer_provider_cb_buffer_free(Ecore_Buffer* buf, void *data)
+_ecore_buffer_provider_cb_buffer_free(Ecore_Buffer *buf, void *data)
 {
    Ecore_Buffer_Provider *pvdr = data;
    Shared_Buffer *sb = _ecore_buffer_user_data_get(buf, "shared-buffer");
@@ -311,7 +311,7 @@ _ecore_buffer_provider_shared_buffer_new(Ecore_Buffer_Provider *pvdr, Ecore_Buff
    unsigned int w = 0, h = 0, format = 0;
    Ecore_Export_Type export_type;
    int export_id;
-   const char* engine;
+   const char *engine;
    unsigned int flags;
 
    if (!pvdr)

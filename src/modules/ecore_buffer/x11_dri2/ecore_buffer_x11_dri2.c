@@ -227,7 +227,7 @@ _ecore_buffer_x11_dri2_init(const char *context EINA_UNUSED, const char *options
    char *device_name;
    int fd = 0;
    drm_magic_t magic;
-   Ecore_Buffer_Module_X11_Dri2_Data* mdata = NULL;
+   Ecore_Buffer_Module_X11_Dri2_Data *mdata = NULL;
 
    if (!ecore_x_init(NULL))
      return NULL;
@@ -293,11 +293,11 @@ _ecore_buffer_x11_dri2_shutdown(Ecore_Buffer_Module_Data bmdata)
 static Ecore_Buffer_Data
 _ecore_buffer_x11_dri2_buffer_alloc(Ecore_Buffer_Module_Data bmdata, int width, int height, Ecore_Buffer_Format format, unsigned int flags EINA_UNUSED)
 {
-   Ecore_X_Display* xdpy;
+   Ecore_X_Display *xdpy;
    Ecore_X_Pixmap pixmap;
    Ecore_Buffer_X11_Dri2_Data *buf;
    Ecore_Buffer_Module_X11_Dri2_Data *bm = bmdata;
-   DRI2Buffer* bufs = NULL;
+   DRI2Buffer *bufs = NULL;
    tbm_bo bo = NULL;
    int bpp;
    int num_plane;
@@ -425,11 +425,11 @@ static void *
 _ecore_buffer_x11_dri2_buffer_import(Ecore_Buffer_Module_Data bmdata EINA_UNUSED, int w, int h, Ecore_Buffer_Format format, Ecore_Export_Type type, int export_id, unsigned int flags EINA_UNUSED)
 {
    Ecore_Buffer_Module_X11_Dri2_Data *bm = bmdata;
-   Ecore_X_Display* xdpy;
+   Ecore_X_Display *xdpy;
    Ecore_X_Pixmap pixmap = (Ecore_X_Pixmap)export_id;
    Ecore_Buffer_X11_Dri2_Data *buf;
    int rw, rh, rx, ry;
-   DRI2Buffer* bufs = NULL;
+   DRI2Buffer *bufs = NULL;
    tbm_bo bo = NULL;
    int rcount;
    unsigned int attachment = DRI2BufferFrontLeft;
