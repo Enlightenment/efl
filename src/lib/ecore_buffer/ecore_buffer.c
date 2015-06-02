@@ -255,13 +255,16 @@ ecore_buffer_new(const char* engine, unsigned int width, unsigned int height, Ec
         return NULL;
      }
 
-   bo_data = bm->be->buffer_alloc(bm->data, width, height, format, flags);
-   if (!bo_data)
-     return NULL;
-
    bo = calloc(1, sizeof(Ecore_Buffer));
    if (!bo)
      return NULL;
+
+   bo_data = bm->be->buffer_alloc(bm->data, width, height, format, flags);
+   if (!bo_data)
+     {
+        free(bo);
+        return NULL;
+     }
 
    bo->bm = bm;
    bo->width = width;
@@ -297,14 +300,17 @@ ecore_buffer_new_with_tbm_surface(const char *engine, void *tbm_surface, unsigne
         return NULL;
      }
 
-   bo_data = bm->be->buffer_alloc_with_tbm_surface(bm->data, tbm_surface,
-                                                   &w, &h, &format, flags);
-   if (!bo_data)
-     return NULL;
-
    bo = calloc(1, sizeof(Ecore_Buffer));
    if (!bo)
      return NULL;
+
+   bo_data = bm->be->buffer_alloc_with_tbm_surface(bm->data, tbm_surface,
+                                                   &w, &h, &format, flags);
+   if (!bo_data)
+     {
+        free(bo);
+        return NULL;
+     }
 
    bo->bm = bm;
    bo->flags = flags;
@@ -495,13 +501,16 @@ _ecore_buffer_import(const char* engine, int width, int height, Ecore_Buffer_For
         return NULL;
      }
 
-   bo_data = bm->be->buffer_import(bm->data, width, height, format, type, export_id, flags);
-   if (!bo_data)
-     return NULL;
-
    bo = calloc(1, sizeof(Ecore_Buffer));
    if (!bo)
      return NULL;
+
+   bo_data = bm->be->buffer_import(bm->data, width, height, format, type, export_id, flags);
+   if (!bo_data)
+     {
+        free(bo);
+        return NULL;
+     }
 
    bo->bm = bm;
    bo->width = width;
