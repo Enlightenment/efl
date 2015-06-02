@@ -491,6 +491,8 @@ _ecore_buffer_x11_dri3_buffer_import(Ecore_Buffer_Module_Data bmdata, int w, int
    Ecore_Buffer_Module_X11_Dri3_Data *bm = bmdata;
    Ecore_Buffer_X11_Dri3_Data *buf;
    tbm_bo bo;
+   tbm_surface_info_s info;
+   int i, num_plane;
 
    if (!bm)
      return NULL;
@@ -519,8 +521,21 @@ _ecore_buffer_x11_dri3_buffer_import(Ecore_Buffer_Module_Data bmdata, int w, int
         return NULL;
      }
 
-   buf->tbm_surface =
-      tbm_surface_internal_create_with_bos(buf->w, buf->h, format, &bo, 1);
+   num_plane = _buf_get_num_planes(format);
+   info.width = w;
+   info.height = h;
+   info.format = format;
+   info.bpp = _buf_get_bpp(format);
+   info.size = w * h * info.bpp;
+   info.num_planes = num_plane;
+   for ( i = 0 ; i < num_plane ; i++)
+   {
+      info.planes[i].size = w * h * info.bpp;
+      info.planes[i].stride = w * info.bpp;
+      info.planes[i].offset = 0;
+   }
+
+   buf->tbm_surface = tbm_surface_internal_create_with_bos(&info, &bo, 1);
    if (!buf->tbm_surface)
      {
         tbm_bo_unref(bo);
