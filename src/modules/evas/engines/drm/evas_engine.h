@@ -50,8 +50,6 @@ struct _Outbuf
 
         Eina_List *pending_writes;
 
-        unsigned int crtc_id, conn_id, buffer_id;
-
         int curr, last, num;
      } priv;
 

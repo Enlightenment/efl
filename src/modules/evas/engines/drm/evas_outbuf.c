@@ -62,10 +62,6 @@ evas_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
    ob->destination_alpha = info->info.destination_alpha;
    ob->vsync = info->info.vsync;
 
-   ob->priv.crtc_id = info->info.crtc_id;
-   ob->priv.conn_id = info->info.conn_id;
-   ob->priv.buffer_id = info->info.buffer_id;
-
    /* default to double-buffer */
    ob->priv.num = 2;
 
