@@ -335,3 +335,39 @@ EAPI const char  *elm_object_focus_highlight_style_get(const Evas_Object *obj);
  * @since 1.10
  */
 EAPI Elm_Object_Item             *elm_object_focused_item_get(const Evas_Object *obj);
+
+/**
+ * Set the focus movement policy to a given Elementary object.
+ *
+ * @param obj The Elementary object to operate on
+ * @param policy A policy to apply for the focus movement
+ *
+ * @see elm_object_focus_move_policy_get
+ *
+ * @since 1.15
+ *
+ * @ingroup Focus
+ */
+EAPI void                 elm_object_focus_move_policy_set(Evas_Object *obj, Elm_Focus_Move_Policy policy);
+
+/**
+ * Get the focus movement policy from a given Elementary objet.
+ *
+ * @param obj The Elementary widget to get the information from
+ * @return The focus movement policy
+ *
+ * Get how the focus is moved to the give Elemenray object. It can be
+ * #ELM_FOCUS_MOVE_POLICY_CLICK, #ELM_FOCUS_MOVE_POLICY_IN,
+ * or #ELM_FOCUS_MOVE_POLICY_KEY_ONLY.
+ * The first means elementary focus is moved on elementary object click.
+ * The second means elementary focus is moved on elementary object mouse in.
+ * The last means elementary focus is moved only by key input like Left,
+ * Right, Up, Down, Tab, or Shift+Tab.
+ *
+ * @see elm_object_focus_move_policy_set
+ *
+ * @since 1.15
+ *
+ * @ingroup Focus
+ */
+EAPI Elm_Focus_Move_Policy  elm_object_focus_move_policy_get(Evas_Object *obj);

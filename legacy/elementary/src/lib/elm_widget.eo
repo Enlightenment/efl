@@ -793,6 +793,17 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
             @in relative_child: Evas.Object * @optional;
          }
       }
+      @property focus_move_policy {
+         set {
+            /*@ No description supplied by the EAPI. */
+         }
+         get {
+            /*@ No description supplied by the EAPI. */
+         }
+         values {
+            policy: Elm_Focus_Move_Policy;
+         }
+      }
    }
    implements {
       class.constructor;

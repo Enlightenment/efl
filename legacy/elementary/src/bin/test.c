@@ -206,6 +206,7 @@ void test_focus_style(void *data, Evas_Object *obj, void *event_info);
 void test_focus_part(void *data, Evas_Object *obj, void *event_info);
 void test_focus3(void *data, Evas_Object *obj, void *event_info);
 void test_focus_object_style(void *data, Evas_Object *obj, void *event_info);
+void test_focus_object_policy(void *data, Evas_Object *obj, void *event_info);
 void test_flipselector(void *data, Evas_Object *obj, void *event_info);
 void test_diskselector(void *data, Evas_Object *obj, void *event_info);
 void test_colorselector(void *data, Evas_Object *obj, void *event_info);
@@ -804,6 +805,7 @@ add_tests:
    ADD_TEST(NULL, "Focus", "Focus On Part", test_focus_part);
    ADD_TEST(NULL, "Focus", "Focus 3", test_focus3);
    ADD_TEST(NULL, "Focus", "Focus Object Style", test_focus_object_style);
+   ADD_TEST(NULL, "Focus", "Focus Object Policy", test_focus_object_policy);
 
    //------------------------------//
    ADD_TEST(NULL, "Naviframe", "Naviframe", test_naviframe);

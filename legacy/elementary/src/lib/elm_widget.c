@@ -352,19 +352,20 @@ _obj_mouse_up(void *data,
 {
    ELM_WIDGET_DATA_GET(data, sd);
    if (sd->still_in &&
-       (_elm_config->focus_move_policy == ELM_FOCUS_MOVE_POLICY_CLICK))
+       (sd->focus_move_policy == ELM_FOCUS_MOVE_POLICY_CLICK))
      elm_widget_focus_mouse_up_handle(obj);
 
    sd->still_in = EINA_FALSE;
 }
 
 static void
-_obj_mouse_in(void *data EINA_UNUSED,
+_obj_mouse_in(void *data,
               Evas *e EINA_UNUSED,
               Evas_Object *obj,
               void *event_info EINA_UNUSED)
 {
-   if (_elm_config->focus_move_policy == ELM_FOCUS_MOVE_POLICY_IN)
+   ELM_WIDGET_DATA_GET(data, sd);
+   if (sd->focus_move_policy == ELM_FOCUS_MOVE_POLICY_IN)
      elm_widget_focus_mouse_up_handle(obj);
 }
 
@@ -377,6 +378,7 @@ _elm_widget_evas_object_smart_add(Eo *obj, Elm_Widget_Smart_Data *priv)
                                           * settings */
    elm_widget_can_focus_set(obj, EINA_TRUE);
    priv->is_mirrored = elm_config_mirrored_get();
+   priv->focus_move_policy = _elm_config->focus_move_policy;
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN,
                                   _obj_mouse_down, obj);
@@ -4108,6 +4110,36 @@ _elm_widget_orientation_set(Eo *obj, Elm_Widget_Smart_Data *sd, int orient_mode)
      }
 }
 
+/**
+ * @internal
+ *
+ * Returns the widget's focus move policy.
+ *
+ * @param obj The widget.
+ * @return focus move policy of the object.
+ *
+ **/
+EOLIAN static Elm_Focus_Move_Policy
+_elm_widget_focus_move_policy_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+{
+   return sd->focus_move_policy;
+}
+
+/**
+ * @internal
+ *
+ * Sets the widget's focus move policy.
+ *
+ * @param obj The widget.
+ * @param policy Elm_Focus_Momve_Policy to set object's focus move policy.
+ */
+
+EOLIAN static void
+_elm_widget_focus_move_policy_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Elm_Focus_Move_Policy policy)
+{
+   if (sd->focus_move_policy == policy) return;
+   sd->focus_move_policy = policy;
+}
 static void
 _track_obj_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 

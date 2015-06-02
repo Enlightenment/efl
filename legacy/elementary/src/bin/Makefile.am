@@ -65,6 +65,7 @@ test_flipselector.c \
 test_floating.c \
 test_focus.c \
 test_focus_custom_chain.c \
+test_focus_policy.c \
 test_focus_style.c \
 test_gengrid.c \
 test_genlist.c \

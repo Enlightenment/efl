@@ -1422,7 +1422,8 @@ EAPI void elm_config_focus_highlight_clip_disabled_set(Eina_Bool disable);
 typedef enum
 {
    ELM_FOCUS_MOVE_POLICY_CLICK, /**< move focus by mouse click or touch. Elementary focus is set on mouse click and this is checked at mouse up time. (default) */
-   ELM_FOCUS_MOVE_POLICY_IN /**< move focus by mouse in. Elementary focus is set on mouse move when the mouse pointer is moved into an object. */
+   ELM_FOCUS_MOVE_POLICY_IN, /**< move focus by mouse in. Elementary focus is set on mouse move when the mouse pointer is moved into an object. */
+   ELM_FOCUS_MOVE_POLICY_KEY_ONLY /**< move focus by key. Elementary focus is set on key input like Left, Right, Up, Down, Tab, or Shift+Tab.*/
 } Elm_Focus_Move_Policy;
 
 /**
