@@ -795,13 +795,13 @@ abstract Elm.Widget (Evas.Object_Smart, Elm_Interface_Atspi_Accessible, Elm_Inte
       }
       @property focus_move_policy {
          set {
-            /*@ No description supplied by the EAPI. */
+            /*@ Sets the widget's focus move policy. */
          }
          get {
-            /*@ No description supplied by the EAPI. */
+            /*@ Returns the widget's focus move policy. */
          }
          values {
-            policy: Elm_Focus_Move_Policy;
+            policy: Elm_Focus_Move_Policy; /*@ Object's focus move policy. */
          }
       }
    }

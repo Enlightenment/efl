@@ -4131,7 +4131,7 @@ _elm_widget_focus_move_policy_get(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd
  * Sets the widget's focus move policy.
  *
  * @param obj The widget.
- * @param policy Elm_Focus_Momve_Policy to set object's focus move policy.
+ * @param policy Elm_Focus_Move_Policy to set object's focus move policy.
  */
 
 EOLIAN static void
