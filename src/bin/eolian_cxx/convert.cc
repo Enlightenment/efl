@@ -108,13 +108,6 @@ _convert_eolian_parameters(Eina_Iterator *parameters,
 }
 
 static efl::eolian::parameters_container_type
-_convert_eolian_parameters(Eolian_Function const& func, getter_t func_type)
-{
-   return _convert_eolian_parameters
-     (::eolian_function_parameters_get(&func), func_type.value);
-}
-
-static efl::eolian::parameters_container_type
 _convert_eolian_parameters(Eina_Iterator *parameters, getter_t func_type)
 {
    return _convert_eolian_parameters(parameters, func_type.value);
