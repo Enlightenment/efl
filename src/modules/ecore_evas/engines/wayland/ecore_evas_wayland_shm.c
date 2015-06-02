@@ -72,7 +72,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // urgent set
    NULL, // modal set
    NULL, // demand attention set
-   NULL, // focus skip set
+   _ecore_evas_wl_common_focus_skip_set,
    NULL, //_ecore_evas_wl_common_render,
    _ecore_evas_wl_common_screen_geometry_get,
    _ecore_evas_wl_common_screen_dpi_get,

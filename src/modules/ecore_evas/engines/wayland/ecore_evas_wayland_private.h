@@ -70,6 +70,7 @@ void _ecore_evas_wl_common_iconified_set(Ecore_Evas *ee, Eina_Bool on);
 void _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, Eina_Bool on);
 void _ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, Eina_Bool on);
 void _ecore_evas_wl_common_ignore_events_set(Ecore_Evas *ee, int ignore);
+void _ecore_evas_wl_common_focus_skip_set(Ecore_Evas *ee, Eina_Bool on);
 int  _ecore_evas_wl_common_pre_render(Ecore_Evas *ee);
 /* int  _ecore_evas_wl_common_render_updates(Ecore_Evas *ee); */
 void _ecore_evas_wl_common_post_render(Ecore_Evas *ee);

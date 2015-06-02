@@ -1383,6 +1383,19 @@ _ecore_evas_wl_common_ignore_events_set(Ecore_Evas *ee, int ignore)
    /* NB: Hmmm, may need to pass this to ecore_wl_window in the future */
 }
 
+void
+_ecore_evas_wl_common_focus_skip_set(Ecore_Evas *ee, Eina_Bool on)
+{
+   Ecore_Evas_Engine_Wl_Data *wdata;
+
+   wdata = ee->engine.data;
+
+   if (ee->prop.focus_skip == on) return;
+
+   ee->prop.focus_skip = on;
+   ecore_wl_window_focus_skip_set(wdata->win, on);
+}
+
 int
 _ecore_evas_wl_common_pre_render(Ecore_Evas *ee)
 {

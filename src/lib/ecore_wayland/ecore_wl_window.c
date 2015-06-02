@@ -822,6 +822,19 @@ ecore_wl_window_position_set(Ecore_Wl_Window *win, int x, int y)
      }
 }
 
+EAPI void
+ecore_wl_window_focus_skip_set(Ecore_Wl_Window *win, Eina_Bool focus_skip)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return;
+   if (focus_skip)
+     {
+        if ((win->surface) && (_ecore_wl_disp->wl.tz_policy))
+          tizen_policy_focus_skip_set(_ecore_wl_disp->wl.tz_policy, win->surface);
+      }
+ }
+
 /* @since 1.12 */
 EAPI void 
 ecore_wl_window_iconified_set(Ecore_Wl_Window *win, Eina_Bool iconified)

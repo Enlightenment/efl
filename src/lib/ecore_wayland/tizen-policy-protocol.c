@@ -13,17 +13,19 @@ static const struct wl_interface *types[] = {
 	&wl_surface_interface,
 	NULL,
 	NULL,
+	&wl_surface_interface,
 };
 
 static const struct wl_message tizen_policy_requests[] = {
 	{ "get_visibility", "no", types + 1 },
 	{ "activate", "o", types + 3 },
 	{ "position_set", "oii", types + 4 },
+	{ "focus_skip_set", "o", types + 7 },
 };
 
 WL_EXPORT const struct wl_interface tizen_policy_interface = {
 	"tizen_policy", 1,
-	3, tizen_policy_requests,
+	4, tizen_policy_requests,
 	0, NULL,
 };
 
