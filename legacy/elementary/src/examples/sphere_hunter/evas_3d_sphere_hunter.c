@@ -854,7 +854,7 @@ elm_main(int argc, char **argv)
    Scene_Data data;
    Eina_Bool r = EINA_TRUE;
 
-   setenv("ELM_ENGINE", "opengl_x11", 1);
+   setenv("ELM_ACCEL", "3d", 1);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    win = elm_win_util_standard_add("__WIN__", "Sphere Hunter");

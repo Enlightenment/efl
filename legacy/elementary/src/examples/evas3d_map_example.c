@@ -1185,7 +1185,7 @@ elm_main(int argc, char **argv)
 
    elm_app_info_set(elm_main, "elementary", "examples/evas3d_map_example.edj");
 
-   elm_config_preferred_engine_set("opengl_x11");
+   elm_config_accel_preference_set("3d");
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 

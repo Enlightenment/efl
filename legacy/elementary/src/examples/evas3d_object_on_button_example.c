@@ -296,7 +296,7 @@ elm_main(int argc, char **argv)
 {
    Scene_Data data;
 
-   elm_config_preferred_engine_set("opengl_x11");
+   elm_config_accel_preference_set("3d");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    win = elm_win_util_standard_add("evas3d-object-button", "A button on the 3d object");
