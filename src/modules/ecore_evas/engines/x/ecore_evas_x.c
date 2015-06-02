@@ -759,6 +759,7 @@ _ecore_evas_x_render(Ecore_Evas *ee)
    Eina_List *ll;
    Ecore_Evas *ee2;
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
+   static int render2 = -1;
 
    if ((!ee->no_comp_sync) && (_ecore_evas_app_comp_sync) &&
        (edata->sync_counter) && (!edata->sync_began) &&
@@ -780,20 +781,42 @@ _ecore_evas_x_render(Ecore_Evas *ee)
      }
 
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
-   if (!ee->can_async_render)
+   if (render2 == -1)
      {
-        Eina_List *updates = evas_render_updates(ee->evas);
-        rend = _render_updates_process(ee, updates);
-        evas_render_updates_free(updates);
+        if (getenv("RENDER2")) render2 = 1;
+        else render2 = 0;
      }
-   else if (evas_render_async(ee->evas))
+   if (render2)
      {
-        EDBG("ee=%p started asynchronous render.", ee);
-        ee->in_async_render = EINA_TRUE;
-        rend = 1;
+        if (!ee->can_async_render)
+          {
+             Eina_List *updates = evas_render2_updates(ee->evas);
+             rend = _render_updates_process(ee, updates);
+             evas_render_updates_free(updates);
+          }
+        else
+          {
+             ee->in_async_render = EINA_TRUE;
+             if (evas_render2(ee->evas)) rend = 1;
+             else ee->in_async_render = EINA_FALSE;
+          }
      }
-   else if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-
+   else
+     {
+        if (!ee->can_async_render)
+          {
+             Eina_List *updates = evas_render_updates(ee->evas);
+             rend = _render_updates_process(ee, updates);
+             evas_render_updates_free(updates);
+          }
+        else if (evas_render_async(ee->evas))
+          {
+             EDBG("ee=%p started asynchronous render.", ee);
+             ee->in_async_render = EINA_TRUE;
+             rend = 1;
+          }
+        else if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+     }
    return rend;
 }
 

@@ -2818,6 +2818,17 @@ _evas_canvas_render2(Eo *eo_e, Evas_Public_Data *e)
    return ret;
 }
 
+EOLIAN Eina_List *
+_evas_canvas_render2_updates(Eo *eo_e, Evas_Public_Data *e)
+{
+   Eina_List *updates = NULL;
+
+   eina_evlog("+render2_updates", eo_e, 0.0, NULL);
+   updates = _evas_render2_updates(eo_e, e);
+   eina_evlog("-render2_updates", eo_e, 0.0, NULL);
+   return updates;
+}
+
 EOLIAN Eina_Bool
 _evas_canvas_render_async(Eo *eo_e, Evas_Public_Data *e)
 {

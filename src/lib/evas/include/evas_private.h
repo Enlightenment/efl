@@ -1216,6 +1216,15 @@ struct _Evas_Object_Func
                            Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
    int (*can_map) (Evas_Object *obj);
+
+// new render2 functions
+
+   void (*render2_walk) (Evas_Object *obj, Evas_Object_Protected_Data *pd,
+                         void *type_private_data, void *updates,
+                         int offx, int offy);
+//   void (*render2) (Evas_Object *obj, Evas_Object_Protected_Data *pd,
+//                    void *type_private_data, void *output, void *context,
+//                    void *surface, int x, int y);
 };
 
 struct _Evas_Func

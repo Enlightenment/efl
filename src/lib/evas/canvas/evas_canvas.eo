@@ -892,6 +892,22 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          return: bool;
       }
+      render2_updates {
+         /*@
+         Render the given Evas canvas using the new rendering infra.
+
+         This is experimental and will change over time until noted here.
+
+         @return A newly allocated list of updated rectangles of thecanvas
+         (@c Eina.Rectangle structs). Free this list with
+         evas_render_updates_free().
+
+         @ingroup Evas_Canvas
+         @since 1.15 */
+
+         return: free(own(list<Eina.Rectangle *> *), evas_render_updates_free)
+            @warn_unused;
+      }
       focus_out {
          /*@
          Inform to the evas that it lost the focus.

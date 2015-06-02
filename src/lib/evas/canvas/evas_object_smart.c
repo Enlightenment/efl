@@ -434,7 +434,6 @@ _evas_object_smart_members_get(Eo *eo_obj, Evas_Smart_Data *o)
    Eina_List *members = NULL;
    Eina_Inlist *member;
 
-   evas_object_async_block(obj);
    for (member = o->contained; member; member = member->next)
      members = eina_list_append(members, ((Evas_Object_Protected_Data *)member)->object);
 
@@ -448,7 +447,6 @@ evas_object_smart_members_get_direct(const Evas_Object *eo_obj)
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   evas_object_async_block(obj);
    if (!eo_isa(eo_obj, MY_CLASS)) return NULL;
    Evas_Smart_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
    return o->contained;

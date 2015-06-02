@@ -1,6 +1,5 @@
 #include "evas_render2.h"
 
-#ifdef EVAS_RENDER_DEBUG_TIMING
 #include <sys/time.h>
 
 #ifndef _WIN32
@@ -23,12 +22,8 @@ static inline void
 out_time(double t)
 {
    double b = (t * 100.0) / (1.0 / 60.0);
-   printf("%1.8fs (%1.2f%% 60fps budget)\n", t, b);
+   printf("%1.2f%% / 60fps\n", b);
 }
-#endif
-
-// a list of canvases currently rendering
-static Eina_List *_rendering = NULL;
 
 static void
 _always_call(Eo *eo_e, Evas_Callback_Type type, void *event_info)
@@ -41,10 +36,31 @@ _always_call(Eo *eo_e, Evas_Callback_Type type, void *event_info)
    for (i = 0; i < freeze_num; i++) eo_do(eo_e, eo_event_freeze());
 }
 
+// a list of canvases currently rendering
+static Eina_List *_rendering = NULL;
+
+// just put the thread code inlined here for now as opposed to separate files
+#include "evas_render2_th_main.c"
+
+// init all relevant render threads if needed
+static void
+_evas_render2_th_init(void)
+{
+   static Eina_Bool initted = EINA_FALSE;
+
+   if (initted) return;
+   initted = EINA_TRUE;
+   _th_main_queue = eina_thread_queue_new();
+   if (!eina_thread_create(&_th_main, EINA_THREAD_URGENT, 0,
+                           _evas_render2_th_main, NULL))
+     ERR("Cannot create render2 thread");
+}
 
 Eina_Bool
 _evas_render2(Eo *eo_e, Evas_Public_Data *e)
 {
+   double t;
+
    // if nothing changed at all since last render - skip this frame
    if (!e->changed) return EINA_FALSE;
    // we are still rendering while being asked to render - skip this
@@ -55,58 +71,58 @@ _evas_render2(Eo *eo_e, Evas_Public_Data *e)
    if ((e->output.w != e->viewport.w) || (e->output.h != e->viewport.h))
      ERR("viewport size != output size!");
 
+   // if render threads not initted - init them - maybe move this later?
+   _evas_render2_th_init();
+
+   printf("------------------------------------------------ %p %p\n", eo_e, e);
    // wait for any previous render pass to do its thing
+   t = get_time();
    evas_canvas_async_block(e);
+   t = get_time() - t;
+   printf("T: block wait: "); out_time(t);
    // we have to calculate smare objects before render so do that here
+   t = get_time();
    evas_call_smarts_calculate(eo_e);
+   t = get_time() - t;
+   printf("T: smart calc: "); out_time(t);
    // call canvas callbacks saying we are in the pre-render state
    _always_call(eo_e, EVAS_CALLBACK_RENDER_PRE, NULL);
    // bock any susbequent rneders from doing this walk
    eina_lock_take(&(e->lock_objects));
-   // XXX: gain a reference
+   // gain a reference
    eo_ref(eo_e);
-   // XXX: put into the "i'm rendering" pool
+   // put into the "i'm rendering" pool
    e->rendering = EINA_TRUE;
    _rendering = eina_list_append(_rendering, eo_e);
-   // XXX; should wake up thread here to begin doing it's work
 
-
-
-   // XXX: call this from object walk thread
-   eina_lock_release(&(e->lock_objects));
-   // XXX: remove from the "i'm rendering" pool - do back in mainloop
-   e->rendering = EINA_FALSE;
-   _rendering = eina_list_remove(_rendering, eo_e);
-
-
-
-   // XXX: like below - call from thread messages - figure out if they just
-   // should be dumbly called before render post anyway
+   // call our flush pre at this point before rendering begins...
    _always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
-   _always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
-   // XXX: call render post - should be a result from thread message called
-   // from mainloop - also fill in post struct
-   Evas_Event_Render_Post post;
-   _always_call(eo_e, EVAS_CALLBACK_RENDER_POST, &post);
 
-   // XXX: release our reference
-   eo_unref(eo_e);
+   // tell main render thread to wake up and begin processing this canvas
+   _evas_render2_th_main_msg_render(eo_e, e);
 
-   printf("%p %p\n", eo_e, e);
    return EINA_FALSE;
 }
 
-void
-_evas_norender2(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+Eina_List *
+_evas_render2_updates(Eo *eo_e, Evas_Public_Data *e)
 {
-   evas_canvas_async_block(e);
+   if (!_evas_render2(eo_e, e)) return NULL;
+   return _evas_render2_updates_wait(eo_e, e);
 }
 
 Eina_List *
 _evas_render2_updates_wait(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    evas_canvas_async_block(e);
+   while (e->rendering) evas_async_events_process_blocking();
    return NULL;
+}
+
+void
+_evas_norender2(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+{
+   evas_canvas_async_block(e);
 }
 
 void
