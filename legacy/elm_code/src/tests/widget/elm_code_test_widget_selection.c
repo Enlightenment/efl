@@ -19,8 +19,7 @@ START_TEST (elm_code_test_widget_selection_set)
    elm_code_file_line_append(file, "test", 4, NULL);
 
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
-   widget = eo_add(ELM_CODE_WIDGET_CLASS, win,
-                   elm_code_widget_code_set(code));
+   widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_start(widget, 1, 2);
    elm_code_widget_selection_end(widget, 1, 3);
@@ -45,8 +44,7 @@ START_TEST (elm_code_test_widget_selection_text_get)
    elm_code_file_line_append(file, "test", 4, NULL);
 
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
-   widget = eo_add(ELM_CODE_WIDGET_CLASS, win,
-                   elm_code_widget_code_set(code));
+   widget = elm_code_widget_add(win, code);
 
    ck_assert_str_eq("", elm_code_widget_selection_text_get(widget));
 
@@ -80,8 +78,7 @@ START_TEST (elm_code_test_widget_selection_text_get_twoline)
    elm_code_file_line_append(file, "test", 4, NULL);
 
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
-   widget = eo_add(ELM_CODE_WIDGET_CLASS, win,
-                   elm_code_widget_code_set(code));
+   widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_start(widget, 1, 3);
    elm_code_widget_selection_end(widget, 2, 2);
@@ -111,8 +108,7 @@ START_TEST (elm_code_test_widget_selection_text_get_multiline)
    elm_code_file_line_append(file, "test", 4, NULL);
 
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
-   widget = eo_add(ELM_CODE_WIDGET_CLASS, win,
-                   elm_code_widget_code_set(code));
+   widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_start(widget, 1, 3);
    elm_code_widget_selection_end(widget, 3, 2);
@@ -141,8 +137,7 @@ START_TEST (elm_code_test_widget_selection_delete)
    elm_code_file_line_append(file, "text", 4, NULL);
 
    win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
-   widget = eo_add(ELM_CODE_WIDGET_CLASS, win,
-                   elm_code_widget_code_set(code));
+   widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, NULL);
    ck_assert_str_eq("text", text);
@@ -176,8 +171,7 @@ START_TEST (elm_code_test_widget_selection_delete_twoline)
    elm_code_file_line_append(file, "TEXT", 4, NULL);
 
    win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
-   widget = eo_add(ELM_CODE_WIDGET_CLASS, win,
-                   elm_code_widget_code_set(code));
+   widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, NULL);
    ck_assert_str_eq("text", text);
@@ -214,8 +208,7 @@ START_TEST (elm_code_test_widget_selection_delete_multiline)
    elm_code_file_line_append(file, "TEXT", 4, NULL);
 
    win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
-   widget = eo_add(ELM_CODE_WIDGET_CLASS, win,
-                   elm_code_widget_code_set(code));
+   widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, NULL);
    ck_assert_str_eq("text", text);

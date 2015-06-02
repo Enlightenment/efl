@@ -24,6 +24,7 @@ elm_code_text.h \
 elm_code_file.h \
 elm_code_parse.h \
 widget/elm_code_widget.eo.h \
+widget/elm_code_widget.eo.legacy.h \
 widget/elm_code_widget_selection.h \
 elm_code_diff_widget.h \
 Elm_Code.h
@@ -51,10 +52,12 @@ widget/elm_code_widget.eo
 
 elm_code_eolian_c = $(elm_code_eolian_files:%.eo=%.eo.c)
 elm_code_eolian_h = $(elm_code_eolian_files:%.eo=%.eo.h)
+elm_code_eolian_legacy_h =  $(elm_code_eolian_files:%.eo=%.eo.legacy.h)
 
 BUILT_SOURCES = \
         $(elm_code_eolian_c) \
-        $(elm_code_eolian_h)
+        $(elm_code_eolian_h) \
+        $(elm_code_eolian_legacy_h)
 
 elmcodeeolianfilesdir = $(datadir)/eolian/include/elm_code-@VMAJ@
 elmcodeeolianfiles_DATA = $(elm_code_eolian_files)

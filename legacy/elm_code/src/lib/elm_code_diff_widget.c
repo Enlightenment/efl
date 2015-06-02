@@ -96,7 +96,7 @@ elm_code_diff_widget_add(Evas_Object *parent, Elm_Code *code)
    wcode1 = elm_code_create();
    elm_code_parser_standard_add(wcode1, ELM_CODE_PARSER_STANDARD_DIFF);
    widget_left = eo_add(ELM_CODE_WIDGET_CLASS, parent,
-                        elm_code_widget_code_set(wcode1));
+                        elm_obj_code_widget_code_set(wcode1));
 
    evas_object_size_hint_weight_set(widget_left, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget_left, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -108,7 +108,7 @@ elm_code_diff_widget_add(Evas_Object *parent, Elm_Code *code)
    wcode2 = elm_code_create();
    elm_code_parser_standard_add(wcode2, ELM_CODE_PARSER_STANDARD_DIFF);
    widget_right = eo_add(ELM_CODE_WIDGET_CLASS, parent,
-                         elm_code_widget_code_set(wcode2));
+                         elm_obj_code_widget_code_set(wcode2));
 
    evas_object_size_hint_weight_set(widget_right, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(widget_right, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -126,8 +126,8 @@ elm_code_diff_widget_font_set(Evas_Object *widget, const char *name, int size)
    Elm_Code_Widget *child;
 
    child = (Elm_Code_Widget *) evas_object_data_get(widget, _ELM_CODE_DIFF_WIDGET_LEFT);
-   eo_do(child, elm_code_widget_font_set(name, size));
+   eo_do(child, elm_obj_code_widget_font_set(name, size));
    child = (Elm_Code_Widget *) evas_object_data_get(widget, _ELM_CODE_DIFF_WIDGET_RIGHT);
-   eo_do(child, elm_code_widget_font_set(name, size));
+   eo_do(child, elm_obj_code_widget_font_set(name, size));
 }
 

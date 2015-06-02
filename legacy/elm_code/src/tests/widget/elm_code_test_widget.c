@@ -28,8 +28,7 @@ START_TEST (elm_code_widget_token_render_simple_test)
    code = elm_code_create();
 
    win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
-   widget = eo_add(ELM_CODE_WIDGET_CLASS, win,
-                   elm_code_widget_code_set(code));
+   widget = elm_code_widget_add(win, code);
 
    file = code->file;
    elm_code_file_line_append(file, "some \"test content\", 45", 23, NULL);
@@ -62,8 +61,7 @@ START_TEST (elm_code_widget_construct)
    code = elm_code_create();
 
    win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
-   widget = eo_add(ELM_CODE_WIDGET_CLASS, win,
-                   elm_code_widget_code_set(code));
+   widget = elm_code_widget_add(win, code);
 
    ck_assert(!!widget);
    elm_code_free(code);

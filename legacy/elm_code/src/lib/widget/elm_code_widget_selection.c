@@ -62,7 +62,7 @@ elm_code_widget_selection_start(Evas_Object *widget,
    pd->selection->start_col = col;
    eo_do(widget,
          eo_event_callback_call(ELM_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget),
-         elm_code_widget_cursor_position_set(col, line));
+         elm_obj_code_widget_cursor_position_set(col, line));
 }
 
 EAPI void
@@ -311,7 +311,7 @@ _selection_paste_single(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, Elm_C
 
    newcol = elm_code_line_text_column_width_to_position(line, position + len, pd->tabstop);
    eo_do(widget,
-         elm_code_widget_cursor_position_set(newcol + 1, row));
+         elm_obj_code_widget_cursor_position_set(newcol + 1, row));
 }
 
 static void
@@ -364,8 +364,8 @@ _selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data
      return EINA_TRUE;
 
    eo_do(widget,
-         code = elm_code_widget_code_get(),
-         elm_code_widget_cursor_position_get(&col, &row));
+         code = elm_obj_code_widget_code_get(),
+         elm_obj_code_widget_cursor_position_get(&col, &row));
 
    if (elm_code_text_newlinenpos(ev->data, ev->len, NULL) == ELM_CODE_TEXT_NOT_FOUND)
      _selection_paste_single(widget, pd, code, col, row, ev->data, ev->len - 1);
