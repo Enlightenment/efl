@@ -60,6 +60,13 @@ typedef struct _Eolian_Object
    int column;
 } Eolian_Object;
 
+typedef struct _Eolian_Documentation
+{
+   Eolian_Object base;
+   Eina_Stringshare *summary;
+   Eina_Stringshare *description;
+} Eolian_Documentation;
+
 typedef struct _Eolian_Declaration
 {
    Eolian_Declaration_Type type;

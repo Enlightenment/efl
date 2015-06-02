@@ -253,9 +253,13 @@ cend:
 }
 
 static void
-read_doc(Eo_Lexer *ls, Eo_Token *tok)
+read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
 {
-   Eo_Doc *doc = calloc(1, sizeof(Eo_Doc));
+   Eolian_Documentation *doc = calloc(1, sizeof(Eolian_Documentation));
+   doc->base.file = ls->filename;
+   doc->base.line = line;
+   doc->base.column = column;
+
    eina_strbuf_reset(ls->buff);
 
    skip_ws(ls);
@@ -651,11 +655,14 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
            continue;
         }
       case '[':
-        next_char(ls);
-        if (ls->current != '[') return '[';
-        next_char(ls);
-        read_doc(ls, tok);
-        return TOK_DOC;
+        {
+           int dline = ls->line_number, dcol = ls->column;
+           next_char(ls);
+           if (ls->current != '[') return '[';
+           next_char(ls);
+           read_doc(ls, tok, dline, dcol);
+           return TOK_DOC;
+        }
       case '\0':
         return -1;
       case '=':

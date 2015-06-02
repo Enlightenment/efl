@@ -81,12 +81,6 @@ enum Numbers
    NUM_DOUBLE
 };
 
-typedef struct _Eo_Doc
-{
-   Eina_Stringshare *summary;
-   Eina_Stringshare *description;
-} Eo_Doc;
-
 typedef union
 {
    char               c;
@@ -99,7 +93,7 @@ typedef union
    unsigned long long ull;
    float              f;
    double             d;
-   Eo_Doc            *doc;
+   Eolian_Documentation *doc;
 } Eo_Token_Union;
 
 /* a token - "token" is the actual token id, "value" is the value of a token
