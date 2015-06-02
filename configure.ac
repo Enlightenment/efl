@@ -4506,60 +4506,62 @@ EFL_LIB_START_OPTIONAL([Ecore_Buffer], [test "${want_ecore_buffer}" = "yes"])
 EFL_INTERNAL_DEPEND_PKG([ECORE_BUFFER], [eina])
 EFL_INTERNAL_DEPEND_PKG([ECORE_BUFFER], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_BUFFER], [eo])
-EFL_INTERNAL_DEPEND_PKG([ECORE_BUFFER], [ecore-x])
 EFL_DEPEND_PKG([ECORE_BUFFER], [WAYLAND],
                [wayland-client >= 1.5.0])
 EFL_EVAL_PKGS([ECORE_BUFFER])
 
 tbm_version="1.1.0"
-drm_version="2.4.35"
-PKG_CHECK_MODULES([X11_DRI_COMMON],
-   [
-      libtbm >= ${tbm_version},
-      libdrm >= ${drm_version}
-   ],
-   [have_x11_dri_common_pkgs="yes"],
-   [have_x11_dri_common_pkgs="no"]
-)
-
-if test "x$have_x11_dri_common_pkgs" = "xyes" ; then
-   PKG_CHECK_MODULES([X11_DRI2], [libdri2],
-                     [have_x11_dri2_pkgs="yes"],
-                     [have_x11_dri2_pkgs="no"])
-
-   PKG_CHECK_MODULES([X11_DRI3],
-      [
-         xshmfence,
-         xcb,
-         x11-xcb,
-         xcb-sync,
-         xcb-dri3
-      ],
-      [have_x11_dri3_pkgs="yes"],
-      [have_x11_dri3_pkgs="no"])
-fi
-
 PKG_CHECK_MODULES([TBM], [libtbm >= ${tbm_version}],
                   [have_tbm="yes"],
                   [have_tbm="no"])
-
-if test "x${have_x11_dri2_pkgs}" = "xyes" ; then
-   build_ecore_buffer_x11_dri2="yes"
-   AC_DEFINE(BUILD_ECORE_BUFFER_X11_DRI2, 1, [Support for X11_DRI2 Backend in Ecore_Buffer])
-fi
-EFL_ADD_FEATURE([ECORE_BUFFER], [x11_dri2], [${build_ecore_buffer_x11_dri2}])
-
-if test "x${have_x11_dri3_pkgs}" = "xyes" ; then
-   build_ecore_buffer_x11_dri3="yes"
-   AC_DEFINE(BUILD_ECORE_BUFFER_X11_DRI3, 1, [Support for X11_DRI3 Backend in Ecore_Buffer])
-fi
-EFL_ADD_FEATURE([ECORE_BUFFER], [x11_dri3], [${build_ecore_buffer_x11_dri3}])
 
 if test "x${have_tbm}" = "xyes" ; then
    build_ecore_buffer_tbm="yes"
    AC_DEFINE(BUILD_ECORE_BUFFER_TBM, 1, [Support for TBM Backend in Ecore_Buffer])
 fi
 EFL_ADD_FEATURE([ECORE_BUFFER], [tbm], [${build_ecore_buffer_tbm}])
+
+if test "x$want_x11_any" = "xyes" ; then
+   drm_version="2.4.35"
+   PKG_CHECK_MODULES([X11_DRI_COMMON],
+      [
+         libtbm >= ${tbm_version},
+         libdrm >= ${drm_version}
+         ecore-x
+      ],
+      [have_x11_dri_common_pkgs="yes"],
+      [have_x11_dri_common_pkgs="no"]
+   )
+
+   if test "x$have_x11_dri_common_pkgs" = "xyes" ; then
+      PKG_CHECK_MODULES([X11_DRI2], [libdri2],
+                        [have_x11_dri2_pkgs="yes"],
+                        [have_x11_dri2_pkgs="no"])
+
+      PKG_CHECK_MODULES([X11_DRI3],
+         [
+            xshmfence,
+            xcb,
+            x11-xcb,
+            xcb-sync,
+            xcb-dri3
+         ],
+         [have_x11_dri3_pkgs="yes"],
+         [have_x11_dri3_pkgs="no"])
+   fi
+
+   if test "x${have_x11_dri2_pkgs}" = "xyes" ; then
+      build_ecore_buffer_x11_dri2="yes"
+      AC_DEFINE(BUILD_ECORE_BUFFER_X11_DRI2, 1, [Support for X11_DRI2 Backend in Ecore_Buffer])
+   fi
+   EFL_ADD_FEATURE([ECORE_BUFFER], [x11_dri2], [${build_ecore_buffer_x11_dri2}])
+
+   if test "x${have_x11_dri3_pkgs}" = "xyes" ; then
+      build_ecore_buffer_x11_dri3="yes"
+      AC_DEFINE(BUILD_ECORE_BUFFER_X11_DRI3, 1, [Support for X11_DRI3 Backend in Ecore_Buffer])
+   fi
+   EFL_ADD_FEATURE([ECORE_BUFFER], [x11_dri3], [${build_ecore_buffer_x11_dri3}])
+fi
 
 EFL_LIB_END_OPTIONAL([Ecore_Buffer])
 
