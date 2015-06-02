@@ -17,6 +17,7 @@
 #include <ecore_js_mainloop.hh>
 #include <ecore_js_timer.hh>
 #include <ecore_js_event.hh>
+#include <ecore_js_job.hh>
 
 const char* ToCString(const v8::String::Utf8Value& value) {
   return *value ? *value : "<string conversion failed>";
@@ -245,6 +246,10 @@ void test_setup(v8::Handle<v8::Object> exports)
                                              (isolate,
                                               "ecore_event_signal_realtime"
                                               "_handler_add"));
+
+  // job
+  register_job_add(isolate, exports,
+                   compatibility_new<String>(isolate, "ecore_job_add"));
 
   std::cerr << __LINE__ << std::endl;
 }

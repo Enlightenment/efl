@@ -71,7 +71,7 @@ suite.ecore_timer_add(1, function() {
         return true;
 
     captured = true;
-    suite.ecore_mainloop_thread_safe_call_async(suite.ecore_mainloop_quit);
+    suite.ecore_job_add(suite.ecore_mainloop_quit);
     return false;
 });
 
@@ -87,7 +87,7 @@ suite.ecore_timer_loop_add(1, function() {
         return true;
 
     captured = true;
-    suite.ecore_mainloop_thread_safe_call_async(suite.ecore_mainloop_quit);
+    suite.ecore_job_add(suite.ecore_mainloop_quit);
     return false;
 });
 
@@ -114,7 +114,7 @@ assert(timer.freeze_get() === false);
 timer.del();
 
 suite.ecore_timer_add(2, function() {
-    suite.ecore_mainloop_thread_safe_call_async(suite.ecore_mainloop_quit);
+    suite.ecore_job_add(suite.ecore_mainloop_quit);
     return false;
 });
 
@@ -190,6 +190,28 @@ suite.ecore_event_add(myevent);
 suite.ecore_timer_add(1, suite.ecore_mainloop_quit);
 suite.ecore_mainloop_begin();
 assert(captured[1] === 8);
+
+// Ecore job
+
+captured = false;
+
+suite.ecore_job_add(function() {
+    captured = true;
+    suite.ecore_mainloop_quit();
+});
+
+assert(captured === false);
+suite.ecore_mainloop_begin();
+assert(captured === true);
+
+captured = false;
+var job = suite.ecore_job_add(function() {
+    captured = true;
+});
+suite.ecore_job_add(suite.ecore_mainloop_quit);
+job.del();
+suite.ecore_mainloop_begin();
+assert(captured === false);
 
 // Ecore shutdown
 
