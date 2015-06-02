@@ -1078,8 +1078,36 @@ case "$want_js" in
                                                               )
                                             ])
                           ],
-                          [AC_MSG_ERROR([Could not find include headers from nodejs.])]
-                          )
+                          [
+                            AC_CHECK_HEADER([nodejs/deps/v8/include/v8.h],
+                            [
+                              AC_DEFINE_UNQUOTED([V8_INCLUDE_HEADER], [nodejs/deps/v8/include/v8.h], [Include header for libv8])
+                              AC_DEFINE_UNQUOTED([NODE_INCLUDE_HEADER], [nodejs/src/node.h], [Include header for nodejs])
+                              V8_INCLUDE_HEADER=nodejs/deps/v8/include/v8.h
+                              NODE_INCLUDE_HEADER=nodejs/src/node.h
+                              AC_SUBST([V8_INCLUDE_HEADER])
+                              AC_SUBST([NODE_INCLUDE_HEADER])
+
+                              AC_CHECK_HEADER([nodejs/deps/uv/include/uv.h],
+                                              [
+                                                AC_DEFINE_UNQUOTED([UV_INCLUDE_HEADER], [nodejs/deps/uv/include/uv.h], [Include header for libuv])
+                                                UV_INCLUDE_HEADER=node/deps/uv/include/uv.h
+                                                AC_SUBST([UV_INCLUDE_HEADER])
+                                              ],
+                                              [
+                                                AC_CHECK_HEADER([uv.h],
+                                                                [
+                                                                  AC_DEFINE_UNQUOTED([UV_INCLUDE_HEADER], [uv.h], [Include header for libuv])
+                                                                  UV_INCLUDE_HEADER=uv.h
+                                                                  AC_SUBST([UV_INCLUDE_HEADER])
+                                                                ],
+                                                                [AC_MSG_ERROR([Could not find include headers from nodejs.])]
+                                                                )
+                                              ])
+                            ],
+                            [AC_MSG_ERROR([Could not find include headers from nodejs.])]
+                            )
+                          ])
                         ])
         ;;
      libv8)
