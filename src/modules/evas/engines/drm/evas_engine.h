@@ -45,15 +45,15 @@ struct _Outbuf
    unsigned int depth;
 
    struct
-   {
-      Ecore_Drm_Fb *buffer[4];
+     {
+        Ecore_Drm_Fb *buffer[4];
 
-      Eina_List *pending_writes;
+        Eina_List *pending_writes;
 
-      unsigned int crtc_id, conn_id, buffer_id;
+        unsigned int crtc_id, conn_id, buffer_id;
 
-      int curr, last, num;
-   } priv;
+        int curr, last, num;
+     } priv;
 
    Eina_Bool destination_alpha : 1;
    Eina_Bool vsync : 1;
