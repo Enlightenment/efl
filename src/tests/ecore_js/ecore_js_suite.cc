@@ -15,6 +15,7 @@
 
 #include <ecore_js_init.hh>
 #include <ecore_js_mainloop.hh>
+#include <ecore_js_timer.hh>
 
 const char* ToCString(const v8::String::Utf8Value& value) {
   return *value ? *value : "<string conversion failed>";
@@ -145,6 +146,23 @@ void test_setup(v8::Handle<v8::Object> exports)
                                           (isolate,
                                            "ecore_mainloop_thread_safe_call"
                                            "_sync"));
+
+  // timer
+  register_timer_precision_get(isolate, exports,
+                               compatibility_new<String>(isolate,
+                                                         "ecore_timer_precision"
+                                                         "_get"));
+  register_timer_precision_set(isolate, exports,
+                               compatibility_new<String>(isolate,
+                                                         "ecore_timer_precision"
+                                                         "_set"));
+  register_timer_dump(isolate, exports,
+                      compatibility_new<String>(isolate, "ecore_timer_dump"));
+  register_timer_add(isolate, exports,
+                     compatibility_new<String>(isolate, "ecore_timer_add"));
+  register_timer_loop_add(isolate, exports,
+                          compatibility_new<String>(isolate,
+                                                    "ecore_timer_loop_add"));
 
   std::cerr << __LINE__ << std::endl;
 }
