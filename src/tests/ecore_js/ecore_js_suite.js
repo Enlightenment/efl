@@ -213,6 +213,49 @@ job.del();
 suite.ecore_mainloop_begin();
 assert(captured === false);
 
+// Ecore idle
+var counter = 1;
+captured = [0, 0, 0, 0, 0];
+
+suite.ecore_idler_add(function() {
+    captured[0] = counter;
+    counter += 1;
+    suite.ecore_job_add(function() {});
+    return suite.ECORE_CALLBACK_DONE;
+});
+
+suite.ecore_idle_enterer_add(function() {
+    captured[1] = counter;
+    counter += 1;
+    return suite.ECORE_CALLBACK_DONE;
+});
+
+suite.ecore_idle_enterer_add(function() {
+    captured[2] = counter;
+    counter += 1;
+    return suite.ECORE_CALLBACK_DONE;
+});
+
+suite.ecore_idle_enterer_before_add(function() {
+    captured[3] = counter;
+    counter += 1;
+    return suite.ECORE_CALLBACK_DONE;
+});
+
+suite.ecore_idle_exiter_add(function() {
+    captured[4] = counter;
+    counter += 1;
+    suite.ecore_mainloop_quit();
+    return suite.ECORE_CALLBACK_DONE;
+});
+
+suite.ecore_mainloop_begin();
+assert(captured[0] === 4);
+assert(captured[1] === 2);
+assert(captured[2] === 3);
+assert(captured[3] === 1);
+assert(captured[4] === 5);
+
 // Ecore shutdown
 
 suite.ecore_shutdown();

@@ -18,6 +18,7 @@
 #include <ecore_js_timer.hh>
 #include <ecore_js_event.hh>
 #include <ecore_js_job.hh>
+#include <ecore_js_idle.hh>
 
 const char* ToCString(const v8::String::Utf8Value& value) {
   return *value ? *value : "<string conversion failed>";
@@ -250,6 +251,22 @@ void test_setup(v8::Handle<v8::Object> exports)
   // job
   register_job_add(isolate, exports,
                    compatibility_new<String>(isolate, "ecore_job_add"));
+
+  // idle
+  register_idler_add(isolate, exports,
+                     compatibility_new<String>(isolate, "ecore_idler_add"));
+  register_idle_enterer_add(isolate, exports,
+                            compatibility_new<String>(isolate,
+                                                      "ecore_idle_enterer"
+                                                      "_add"));
+  register_idle_enterer_before_add(isolate, exports,
+                                   compatibility_new<String>(isolate,
+                                                             "ecore_idle"
+                                                             "_enterer_before"
+                                                             "_add"));
+  register_idle_exiter_add(isolate, exports,
+                           compatibility_new<String>(isolate,
+                                                     "ecore_idle_exiter_add"));
 
   std::cerr << __LINE__ << std::endl;
 }
