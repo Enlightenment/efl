@@ -49,7 +49,7 @@ static const char * const tokens[] =
 {
    "==", "!=", ">=", "<=", "&&", "||", "<<", ">>",
 
-   "<comment>", "<string>", "<char>", "<number>", "<value>",
+   "<comment>", "<doc>", "<string>", "<char>", "<number>", "<value>",
 
    KEYWORDS
 };
@@ -114,7 +114,7 @@ init_hash(void)
    unsigned int i, u;
    if (keyword_map) return;
    keyword_map = eina_hash_string_superfast_new(NULL);
-   for (i = u = 13; i < (sizeof(tokens) / sizeof(const char*)); ++i)
+   for (i = u = 14; i < (sizeof(tokens) / sizeof(const char*)); ++i)
      {
          eina_hash_add(keyword_map, tokens[i], (void*)(size_t)(i - u + 1));
      }
@@ -250,6 +250,107 @@ read_long_comment(Eo_Lexer *ls, Eo_Token *tok, int ccol)
 cend:
    eina_strbuf_trim(ls->buff);
    if (tok) tok->value.s = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
+}
+
+static void
+read_doc(Eo_Lexer *ls, Eo_Token *tok)
+{
+   Eo_Doc *doc = calloc(1, sizeof(Eo_Doc));
+   eina_strbuf_reset(ls->buff);
+
+   skip_ws(ls);
+   while (is_newline(ls->current))
+     next_line_ws(ls);
+
+   for (;;)
+     {
+        if (!ls->current)
+          {
+             free(doc);
+             eo_lexer_lex_error(ls, "unfinished documentation", -1);
+          }
+        if (is_newline(ls->current))
+          {
+             while (is_newline(ls->current))
+               next_line_ws(ls);
+             break;
+          }
+        else
+          {
+             if (ls->current == ']')
+               {
+                  next_char(ls);
+                  if (ls->current != ']')
+                    eina_strbuf_append_char(ls->buff, ']');
+                  else
+                    {
+                       next_char(ls);
+                       eina_strbuf_trim(ls->buff);
+                       doc->summary = eina_stringshare_add(
+                           eina_strbuf_string_get(ls->buff));
+                       tok->value.doc = doc;
+                       return;
+                    }
+               }
+             eina_strbuf_append_char(ls->buff, ls->current);
+             next_char(ls);
+          }
+     }
+
+   eina_strbuf_trim(ls->buff);
+   doc->summary = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
+
+   Eina_Strbuf *rbuf = eina_strbuf_new();
+   for (;;)
+     {
+        if (!ls->current)
+          {
+             eina_stringshare_del(doc->summary);
+             free(doc);
+             eina_strbuf_free(rbuf);
+             eo_lexer_lex_error(ls, "unfinished documentation", -1);
+          }
+
+        eina_strbuf_reset(ls->buff);
+        while (ls->current && !is_newline(ls->current))
+          {
+             if (ls->current == ']')
+               {
+                  next_char(ls);
+                  if (ls->current != ']')
+                    eina_strbuf_append_char(ls->buff, ']');
+                  else
+                    {
+                       next_char(ls);
+                       eina_strbuf_trim(ls->buff);
+                       eina_strbuf_append(rbuf, eina_strbuf_string_get(ls->buff));
+                       eina_strbuf_trim(rbuf);
+                       if (eina_strbuf_string_get(rbuf)[0])
+                         doc->description = eina_stringshare_add(
+                             eina_strbuf_string_get(rbuf));
+                       eina_strbuf_free(rbuf);
+                       tok->value.doc = doc;
+                       return;
+                    }
+               }
+             eina_strbuf_append_char(ls->buff, ls->current);
+             next_char(ls);
+          }
+        eina_strbuf_trim(ls->buff);
+        eina_strbuf_append(rbuf, eina_strbuf_string_get(ls->buff));
+
+        if (is_newline(ls->current))
+          {
+             next_line_ws(ls);
+             /* new paragraph */
+             if (is_newline(ls->current))
+               eina_strbuf_append(rbuf, "\n\n");
+             else
+               eina_strbuf_append_char(rbuf, ' ');
+             while (is_newline(ls->current))
+               next_line_ws(ls);
+          }
+     }
 }
 
 static void
@@ -549,6 +650,12 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
              }
            continue;
         }
+      case '[':
+        next_char(ls);
+        if (ls->current != '[') return '[';
+        next_char(ls);
+        read_doc(ls, tok);
+        return TOK_DOC;
       case '\0':
         return -1;
       case '=':
@@ -748,6 +855,25 @@ _temps_free(Eo_Lexer_Temps *tmp)
      if (s) eina_stringshare_del(s);
 }
 
+static void
+_free_tok(Eo_Token *tok)
+{
+   if (tok->token < START_CUSTOM || tok->token == TOK_NUMBER ||
+                                    tok->token == TOK_CHAR)
+     return;
+   if (tok->token == TOK_DOC)
+     {
+        /* free doc */
+        eina_stringshare_del(tok->value.doc->summary);
+        eina_stringshare_del(tok->value.doc->description);
+        free(tok->value.doc);
+        tok->value.doc = NULL;
+        return;
+     }
+   eina_stringshare_del(tok->value.s);
+   tok->value.s = NULL;
+}
+
 void
 eo_lexer_free(Eo_Lexer *ls)
 {
@@ -757,6 +883,7 @@ eo_lexer_free(Eo_Lexer *ls)
    if (ls->buff    ) eina_strbuf_free    (ls->buff);
    if (ls->handle  ) eina_file_close     (ls->handle);
 
+   _free_tok(&ls->t);
    eo_lexer_context_clear(ls);
    _temps_free(&ls->tmp);
    free(ls);
@@ -778,12 +905,7 @@ eo_lexer_new(const char *source)
 int
 eo_lexer_get(Eo_Lexer *ls)
 {
-   if (ls->t.token >= START_CUSTOM && ls->t.token != TOK_NUMBER
-                                   && ls->t.token != TOK_CHAR)
-     {
-        eina_stringshare_del(ls->t.value.s);
-        ls->t.value.s = NULL;
-     }
+   _free_tok(&ls->t);
    if (ls->lookahead.token >= 0)
      {
         ls->t               = ls->lookahead;
@@ -850,7 +972,7 @@ eo_lexer_token_to_str(int token, char *buf)
 const char *
 eo_lexer_keyword_str_get(int kw)
 {
-   return tokens[kw + 12];
+   return tokens[kw + 13];
 }
 
 Eina_Bool

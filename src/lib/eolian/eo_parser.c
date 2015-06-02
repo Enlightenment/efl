@@ -326,7 +326,7 @@ parse_expr_simple(Eo_Lexer *ls)
            expr = push_expr(ls);
            FILL_BASE(expr->base, ls, line, col);
            expr->type = ls->t.kw + 1; /* map Numbers from lexer to expr type */
-           expr->value = ls->t.value;
+           memcpy(&expr->value, &ls->t.value, sizeof(expr->value));
            eo_lexer_get(ls);
            break;
         }

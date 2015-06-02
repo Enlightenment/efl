@@ -17,7 +17,7 @@ enum Tokens
    TOK_EQ = START_CUSTOM, TOK_NQ, TOK_GE, TOK_LE,
    TOK_AND, TOK_OR, TOK_LSH, TOK_RSH,
 
-   TOK_COMMENT, TOK_STRING, TOK_CHAR, TOK_NUMBER, TOK_VALUE
+   TOK_COMMENT, TOK_DOC, TOK_STRING, TOK_CHAR, TOK_NUMBER, TOK_VALUE
 };
 
 /* all keywords in eolian, they can still be used as names (they're TOK_VALUE)
@@ -81,13 +81,34 @@ enum Numbers
    NUM_DOUBLE
 };
 
+typedef struct _Eo_Doc
+{
+   Eina_Stringshare *summary;
+   Eina_Stringshare *description;
+} Eo_Doc;
+
+typedef union
+{
+   char               c;
+   const    char     *s;
+   signed   int       i;
+   unsigned int       u;
+   signed   long      l;
+   unsigned long      ul;
+   signed   long long ll;
+   unsigned long long ull;
+   float              f;
+   double             d;
+   Eo_Doc            *doc;
+} Eo_Token_Union;
+
 /* a token - "token" is the actual token id, "value" is the value of a token
  * if needed - NULL otherwise - for example the value of a TOK_VALUE, "kw"
  * is the keyword id if this is a keyword, it's 0 when not a keyword */
 typedef struct _Eo_Token
 {
    int token, kw;
-   Eolian_Value_Union value;
+   Eo_Token_Union value;
 } Eo_Token;
 
 typedef struct _Lexer_Ctx
