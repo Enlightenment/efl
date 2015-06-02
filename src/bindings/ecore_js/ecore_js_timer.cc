@@ -61,8 +61,9 @@ static v8::Local<v8::Object> wrap_timer(Ecore_Timer *timer,
             return compatibility_return();
 
         auto ret = ecore_timer_freeze_get(extract_timer(info.This()));
-        info.GetReturnValue().Set(compatibility_new<Boolean>
-                                  (info.GetIsolate(), bool(ret)));
+        return compatibility_return(compatibility_new<Boolean>
+                                    (info.GetIsolate(), bool(ret)),
+                                    info);
     };
 
     auto thaw = [](compatibility_callback_info_type info)
