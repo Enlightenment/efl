@@ -363,8 +363,8 @@ EAPI void *
 ecore_buffer_tbm_surface_get(Ecore_Buffer *buf)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(buf, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(buf->bm, 0);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(buf->bm->be, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf->bm, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf->bm->be, NULL);
 
    if (!buf->bm->be->tbm_surface_get)
      {
