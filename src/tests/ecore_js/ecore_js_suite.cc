@@ -14,6 +14,7 @@
 #include <Eo.hh>
 
 #include <ecore_js_init.hh>
+#include <ecore_js_mainloop.hh>
 
 const char* ToCString(const v8::String::Utf8Value& value) {
   return *value ? *value : "<string conversion failed>";
@@ -87,15 +88,63 @@ efl::eina::js::compatibility_return_type Print(efl::eina::js::compatibility_call
 
 void test_setup(v8::Handle<v8::Object> exports)
 {
+  using namespace efl::ecore::js;
+  using efl::eina::js::compatibility_new;
+  using v8::String;
+
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
 
+  // init
   efl::ecore::js::register_init(isolate, exports,
                                 efl::eina::js::compatibility_new<v8::String>
                                 (isolate, "ecore_init"));
-
   efl::ecore::js::register_shutdown(isolate, exports,
                                     efl::eina::js::compatibility_new<v8::String>
                                     (isolate, "ecore_shutdown"));
+
+  // mainloop
+  register_callback_cancel(isolate, exports,
+                           compatibility_new<String>
+                           (isolate, "ECORE_CALLBACK_CANCEL"));
+  register_callback_renew(isolate, exports,
+                          compatibility_new<String>
+                          (isolate, "ECORE_CALLBACK_RENEW"));
+  register_callback_pass_on(isolate, exports,
+                            compatibility_new<String>
+                            (isolate, "ECORE_CALLBACK_PASS_ON"));
+  register_callback_done(isolate, exports,
+                         compatibility_new<String>
+                         (isolate, "ECORE_CALLBACK_DONE"));
+  register_mainloop_iterate(isolate, exports,
+                            compatibility_new<String>
+                            (isolate, "ecore_mainloop_iterate"));
+  register_mainloop_iterate_may_block(isolate, exports,
+                                      compatibility_new<String>
+                                      (isolate,
+                                       "ecore_mainloop_iterate_may_block"));
+  register_mainloop_begin(isolate, exports,
+                          compatibility_new<String>
+                          (isolate, "ecore_mainloop_begin"));
+  register_mainloop_quit(isolate, exports,
+                         compatibility_new<String>
+                         (isolate, "ecore_mainloop_quit"));
+  register_mainloop_animator_ticked_get(isolate, exports,
+                                        compatibility_new<String>
+                                        (isolate,
+                                         "ecore_mainlop_animator_ticked_get"));
+  register_mainloop_nested_get(isolate, exports,
+                               compatibility_new<String>
+                               (isolate, "ecore_mainloop_nested_get"));
+  register_mainloop_thread_safe_call_async(isolate, exports,
+                                           compatibility_new<String>
+                                           (isolate,
+                                            "ecore_mainloop_thread_safe_call"
+                                            "_async"));
+  register_mainloop_thread_safe_call_sync(isolate, exports,
+                                          compatibility_new<String>
+                                          (isolate,
+                                           "ecore_mainloop_thread_safe_call"
+                                           "_sync"));
 
   std::cerr << __LINE__ << std::endl;
 }

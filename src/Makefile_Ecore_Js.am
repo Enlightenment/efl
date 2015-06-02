@@ -21,7 +21,8 @@ lib_ecore_js_libecore_js_la_DEPENDENCIES = @ECORE_INTERNAL_LIBS@ @DL_INTERNAL_LI
 lib_ecore_js_libecore_js_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 lib_ecore_js_libecore_js_la_SOURCES = \
-bindings/ecore_js/ecore_js_init.cc
+bindings/ecore_js/ecore_js_init.cc \
+bindings/ecore_js/ecore_js_mainloop.cc
 
 ECORE_JS_TEST_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
@@ -38,7 +39,8 @@ ECORE_JS_TEST_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
 
 installed_ecorejsheadersdir = $(includedir)/ecore-js-@VMAJ@
 dist_installed_ecorejsheaders_DATA = \
-bindings/ecore_js/ecore_js_init.hh
+bindings/ecore_js/ecore_js_init.hh \
+bindings/ecore_js/ecore_js_mainloop.hh
 
 ### Unit tests
 
