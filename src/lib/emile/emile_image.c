@@ -1048,7 +1048,7 @@ _rotate_region(unsigned int *r_x, unsigned int *r_y,
         else
           {
              *r_x = y;
-             *r_y = output_h - (x + y);
+             *r_y = output_h - (x + w);
              *r_w = h;
              *r_h = w;
           }
@@ -2124,7 +2124,7 @@ done:
         uint16_t *to16;
         int hw;
 
-        hw = w * h;
+        hw = ie_w * ie_h;
         to = pixels;
         to8 = pixels;
         to16 = pixels;
@@ -2135,23 +2135,23 @@ done:
              if (prop->cspace == EMILE_COLORSPACE_GRY8)
                {
                   if (prop->flipped)
-                    _rotate_change_wh8(to8 + hw - 1, ptrg_rotate, w, h, hw - 1, -h);
+                    _rotate_change_wh8(to8 + hw - 1, ptrg_rotate, ie_w, ie_h, hw - 1, -ie_h);
                   else
-                    _rotate_change_wh8(to8 + h - 1, ptrg_rotate, w, h, -hw - 1, h);
+                    _rotate_change_wh8(to8 + ie_h - 1, ptrg_rotate, ie_w, ie_h, -hw - 1, ie_h);
                }
              else if (prop->cspace == EMILE_COLORSPACE_AGRY88)
                {
                   if (prop->flipped)
-                    _rotate_change_wh16(to16 + hw - 1, ptrag_rotate, w, h, hw - 1, -h);
+                    _rotate_change_wh16(to16 + hw - 1, ptrag_rotate, ie_w, ie_h, hw - 1, -ie_h);
                   else
-                    _rotate_change_wh16(to16 + h - 1, ptrag_rotate, w, h, -hw - 1, h);
+                    _rotate_change_wh16(to16 + ie_h - 1, ptrag_rotate, ie_w, ie_h, -hw - 1, ie_h);
                }
              else
                {
                   if (prop->flipped)
-                    _rotate_change_wh(to + hw - 1, ptr_rotate, w, h, hw - 1, -h);
+                    _rotate_change_wh(to + hw - 1, ptr_rotate, ie_w, ie_h, hw - 1, -ie_h);
                   else
-                    _rotate_change_wh(to + h - 1, ptr_rotate, w, h, -hw - 1, h);
+                    _rotate_change_wh(to + ie_h - 1, ptr_rotate, ie_w, ie_h, -hw - 1, ie_h);
                }
              break;
 
@@ -2159,23 +2159,23 @@ done:
              if (prop->cspace == EMILE_COLORSPACE_GRY8)
                {
                   if (prop->flipped)
-                    _flip_vertical8(to8, w, h);
+                    _flip_vertical8(to8, ie_w, ie_h);
                   else
-                    _rotate8_180(to8, w, h);
+                    _rotate8_180(to8, ie_w, ie_h);
                }
              else if (prop->cspace == EMILE_COLORSPACE_AGRY88)
                {
                   if (prop->flipped)
-                    _flip_vertical16(to16, w, h);
+                    _flip_vertical16(to16, ie_w, ie_h);
                   else
-                    _rotate16_180(to16, w, h);
+                    _rotate16_180(to16, ie_w, ie_h);
                }
              else
                {
                   if (prop->flipped)
-                    _flip_vertical(to, w, h);
+                    _flip_vertical(to, ie_w, ie_h);
                   else
-                    _rotate_180(to, w, h);
+                    _rotate_180(to, ie_w, ie_h);
                }
              break;
 
@@ -2183,23 +2183,23 @@ done:
              if (prop->cspace == EMILE_COLORSPACE_GRY8)
                {
                   if (prop->flipped)
-                    _rotate_change_wh8(to8, ptrg_rotate, w, h, -hw + 1, h);
+                    _rotate_change_wh8(to8, ptrg_rotate, ie_w, ie_h, -hw + 1, ie_h);
                   else
-                    _rotate_change_wh8(to8 + hw - h, ptrg_rotate, w, h, hw + 1, -h);
+                    _rotate_change_wh8(to8 + hw - ie_h, ptrg_rotate, ie_w, ie_h, hw + 1, -ie_h);
                }
              else if (prop->cspace == EMILE_COLORSPACE_AGRY88)
                {
                   if (prop->flipped)
                     _rotate_change_wh16(to16, ptrag_rotate, w, h, -hw + 1, h);
                   else
-                    _rotate_change_wh16(to16 + hw - h, ptrag_rotate, w, h, hw + 1, -h);
+                    _rotate_change_wh16(to16 + hw - ie_h, ptrag_rotate, ie_w, ie_h, hw + 1, -ie_h);
                }
              else
                {
                   if (prop->flipped)
-                    _rotate_change_wh(to, ptr_rotate, w, h, -hw + 1, h);
+                    _rotate_change_wh(to, ptr_rotate, ie_w, ie_h, -hw + 1, ie_h);
                   else
-                    _rotate_change_wh(to + hw - h, ptr_rotate, w, h, hw + 1, -h);
+                    _rotate_change_wh(to + hw - ie_h, ptr_rotate, ie_w, ie_h, hw + 1, -ie_h);
                }
              break;
 
@@ -2207,11 +2207,11 @@ done:
              if (prop->flipped)
                {
                   if (prop->cspace == EMILE_COLORSPACE_GRY8)
-                    _flip_horizontal8(to8, w, h);
+                    _flip_horizontal8(to8, ie_w, ie_h);
                   else if (prop->cspace == EMILE_COLORSPACE_AGRY88)
-                    _flip_horizontal16(to16, w, h);
+                    _flip_horizontal16(to16, ie_w, ie_h);
                   else
-                    _flip_horizontal(to, w, h);
+                    _flip_horizontal(to, ie_w, ie_h);
                }
              break;
           }

@@ -100,11 +100,13 @@ START_TEST(evas_object_image_loader)
 }
 END_TEST
 
-typedef struct _orientation_Test_Res {
+typedef struct _Orientation_Test_Res Orientation_Test_Res;
+struct _Orientation_Test_Res {
    const char *img;
    const char *desc;
+   Evas_Image_Orient orient;
    int (*compare_func)(const uint32_t *d1, const uint32_t *d2, int w2, int h2);
-} Orientation_Test_Res;
+};
 
 typedef struct _orient_Test {
    Evas_Image_Orient orient;
@@ -247,16 +249,16 @@ START_TEST(evas_object_image_loader_orientation)
 {
    Evas *e = _setup_evas();
    Evas_Object *orig, *rot;
-   Orientation_Test_Res res[] = {
-       {TESTS_IMG_DIR"/Light_exif.jpg", "Original", _compare_img},
-       {TESTS_IMG_DIR"/Light_exif_flip_h.jpg", "Flip horizontally", _compare_img_flip_h},
-       {TESTS_IMG_DIR"/Light_exif_180.jpg", "Rotate 180° CW", _compare_img_180},
-       {TESTS_IMG_DIR"/Light_exif_flip_v.jpg", "Flip vertically", _compare_img_flip_v},
-       {TESTS_IMG_DIR"/Light_exif_transpose.jpg", "Transpose", _compare_img_transpose},
-       {TESTS_IMG_DIR"/Light_exif_90.jpg", "Rotate 90° CW", _compare_img_90},
-       {TESTS_IMG_DIR"/Light_exif_transverse.jpg", "Transverse", _compare_img_transverse},
-       {TESTS_IMG_DIR"/Light_exif_270.jpg", "Rotate 90° CCW", _compare_img_270},
-       {NULL, NULL, NULL}
+   static const Orientation_Test_Res res[] = {
+     { TESTS_IMG_DIR"/Light_exif.jpg", "Original", EVAS_IMAGE_ORIENT_NONE, _compare_img },
+     { TESTS_IMG_DIR"/Light_exif_flip_h.jpg", "Flip horizontally", EVAS_IMAGE_FLIP_HORIZONTAL, _compare_img_flip_h },
+     { TESTS_IMG_DIR"/Light_exif_180.jpg", "Rotate 180° CW", EVAS_IMAGE_ORIENT_180, _compare_img_180 },
+     { TESTS_IMG_DIR"/Light_exif_flip_v.jpg", "Flip vertically", EVAS_IMAGE_FLIP_VERTICAL, _compare_img_flip_v },
+     { TESTS_IMG_DIR"/Light_exif_transpose.jpg", "Transpose", EVAS_IMAGE_FLIP_TRANSPOSE, _compare_img_transpose },
+     { TESTS_IMG_DIR"/Light_exif_90.jpg", "Rotate 90° CW", EVAS_IMAGE_ORIENT_90, _compare_img_90 },
+     { TESTS_IMG_DIR"/Light_exif_transverse.jpg", "Transverse", EVAS_IMAGE_FLIP_TRANSVERSE, _compare_img_transverse },
+     { TESTS_IMG_DIR"/Light_exif_270.jpg", "Rotate 90° CCW", EVAS_IMAGE_ORIENT_270, _compare_img_270 },
+     { NULL, NULL, EVAS_IMAGE_ORIENT_NONE, NULL }
    };
    int w, h, r_w, r_h;
    const uint32_t *d, *r_d;
@@ -528,6 +530,117 @@ START_TEST(evas_object_image_buggy)
 }
 END_TEST
 
+static void check_rotate_region(Evas_Image_Orient orientation, int *r_x, int *r_y, int *r_w, int *r_h, int w, int h)
+{
+   int tmp;
+
+   switch (orientation)
+     {
+      case EVAS_IMAGE_FLIP_HORIZONTAL:
+         *r_x = w - *r_w;
+         break;
+      case EVAS_IMAGE_FLIP_VERTICAL:
+         *r_y = h - *r_h;
+         break;
+      case EVAS_IMAGE_ORIENT_180:
+        *r_x = w - *r_w;
+        *r_y = h - *r_h;
+        break;
+      case EVAS_IMAGE_ORIENT_90:
+        tmp = *r_x;
+        *r_x = w - (*r_y + *r_h);
+        *r_y = tmp;
+        tmp = *r_w;
+        *r_w = *r_h;
+        *r_h = tmp;
+        break;
+      case EVAS_IMAGE_ORIENT_270:
+        tmp = *r_y;
+        *r_y = h - (*r_x + *r_w);
+        *r_x = tmp;
+        tmp = *r_w;
+        *r_w = *r_h;
+        *r_h = tmp;
+        break;
+      case EVAS_IMAGE_FLIP_TRANSPOSE:
+        tmp = *r_x;
+        *r_x = *r_y;
+        *r_y = tmp;
+        tmp = *r_w;
+        *r_w = *r_h;
+        *r_h = tmp;
+        break;
+      case EVAS_IMAGE_FLIP_TRANSVERSE:
+        tmp = *r_x;
+        *r_x = w - (*r_y + *r_h);
+        *r_y = h - (tmp + *r_w);
+        tmp = *r_w;
+        *r_w = *r_h;
+        *r_h = tmp;
+        break;
+      case EVAS_IMAGE_ORIENT_0:
+         break;
+     }
+}
+
+
+START_TEST(evas_object_image_partially_load_orientation)
+{
+   static const Orientation_Test_Res res[] = {
+     { TESTS_IMG_DIR"/Light_exif.jpg", "Original", EVAS_IMAGE_ORIENT_NONE, _compare_img },
+     { TESTS_IMG_DIR"/Light_exif_flip_h.jpg", "Flip horizontally", EVAS_IMAGE_FLIP_HORIZONTAL, _compare_img_flip_h },
+     { TESTS_IMG_DIR"/Light_exif_180.jpg", "Rotate 180° CW", EVAS_IMAGE_ORIENT_180, _compare_img_180 },
+     { TESTS_IMG_DIR"/Light_exif_flip_v.jpg", "Flip vertically", EVAS_IMAGE_FLIP_VERTICAL, _compare_img_flip_v },
+     { TESTS_IMG_DIR"/Light_exif_transpose.jpg", "Transpose", EVAS_IMAGE_FLIP_TRANSPOSE, _compare_img_transpose },
+     { TESTS_IMG_DIR"/Light_exif_90.jpg", "Rotate 90° CW", EVAS_IMAGE_ORIENT_90, _compare_img_90 },
+     { TESTS_IMG_DIR"/Light_exif_transverse.jpg", "Transverse", EVAS_IMAGE_FLIP_TRANSVERSE, _compare_img_transverse },
+     { TESTS_IMG_DIR"/Light_exif_270.jpg", "Rotate 90° CCW", EVAS_IMAGE_ORIENT_270, _compare_img_270 },
+     { NULL, NULL, EVAS_IMAGE_ORIENT_NONE, NULL }
+   };
+
+   Evas *e = _setup_evas();
+   Evas_Object *orig, *rot;
+   int x, y, w, h, r_w, r_h;
+   int region_x, region_y, region_w, region_h;
+   const uint32_t *d, *r_d;
+   int i;
+
+   orig = evas_object_image_add(e);
+   evas_object_image_file_set(orig, TESTS_IMG_DIR"/Light.jpg", NULL);
+   fail_if(evas_object_image_load_error_get(orig) != EVAS_LOAD_ERROR_NONE);
+   evas_object_image_size_get(orig, &w, &h);
+   x = 0; y = 0; w = w / 2; h = h / 2;;
+   evas_object_image_load_region_set(orig, x, y, w, h);
+   evas_object_image_size_get(orig, &w, &h);
+   d = evas_object_image_data_get(orig, EINA_FALSE);
+   for (i = 0; res[i].img; i++)
+     {
+        region_x = x;
+        region_y = y;
+        region_w = w;
+        region_h = h;
+        rot = evas_object_image_add(e);
+        evas_object_image_load_orientation_set(rot, EINA_TRUE);
+        evas_object_image_file_set(rot, res[i].img, NULL);
+        fail_if(evas_object_image_load_error_get(rot) != EVAS_LOAD_ERROR_NONE);
+        evas_object_image_size_get(rot, &r_w, &r_h);
+        check_rotate_region(res[i].orient, &region_x, &region_y, &region_w, &region_h, r_w, r_h);
+        evas_object_image_load_region_set(rot, region_x, region_y, region_w, region_h);
+        evas_object_image_size_get(rot, &r_w, &r_h);
+        fail_if(w * h != r_w * r_h);
+        r_d = evas_object_image_data_get(rot, EINA_FALSE);
+        fail_if(res[i].compare_func(d, r_d, r_w, r_h),
+                "Image orientation partially load test failed: exif orientation flag: %s\n", res[i].desc);
+        evas_object_del(rot);
+     }
+
+   evas_object_del(orig);
+
+   evas_free(e);
+   evas_shutdown();
+}
+END_TEST
+
 void evas_test_image_object(TCase *tc)
 {
    tcase_add_test(tc, evas_object_image_loader);
@@ -540,4 +653,5 @@ void evas_test_image_object(TCase *tc)
    tcase_add_test(tc, evas_object_image_all_loader_data);
    tcase_add_test(tc, evas_object_image_buggy);
 #endif
+   tcase_add_test(tc, evas_object_image_partially_load_orientation);
 }
