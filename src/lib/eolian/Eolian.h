@@ -937,17 +937,6 @@ EAPI Eina_Bool eolian_function_is_beta(const Eolian_Function *function_id);
 EAPI Eina_Bool eolian_function_is_constructor(const Eolian_Function *function_id, const Eolian_Class *klass);
 
 /*
- * @brief Returns a parameter of a function pointed by its id.
- *
- * @param[in] function_id Id of the function
- * @param[in] param_name Name of the parameter
- * @return a handle to this parameter.
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Function_Parameter *eolian_function_parameter_get_by_name(const Eolian_Function *function_id, const char *param_name);
-
-/*
  * @brief Returns an iterator to the parameter handles for a method/ctor/dtor.
  *
  * @param[in] function_id Id of the function
