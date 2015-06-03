@@ -14,13 +14,6 @@ _primitive_init(Evas_3D_Primitive_Data *pd)
    pd->tex_scale.y = 1.0;
 }
 
-static inline void
-_primitive_fini(Evas_3D_Primitive_Data *pd)
-{
-   if (pd->surface)
-     free(pd->surface);
-}
-
 EAPI Evas_3D_Primitive *
 evas_3d_primitive_add(Evas *e)
 {
@@ -44,7 +37,6 @@ _evas_3d_primitive_eo_base_constructor(Eo *obj, Evas_3D_Primitive_Data *pd)
 EOLIAN static void
 _evas_3d_primitive_eo_base_destructor(Eo *obj, Evas_3D_Primitive_Data *pd)
 {
-   _primitive_fini(pd);
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
