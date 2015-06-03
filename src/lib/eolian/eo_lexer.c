@@ -871,6 +871,7 @@ _free_tok(Eo_Token *tok)
    if (tok->token == TOK_DOC)
      {
         /* free doc */
+        if (!tok->value.doc) return;
         eina_stringshare_del(tok->value.doc->summary);
         eina_stringshare_del(tok->value.doc->description);
         free(tok->value.doc);

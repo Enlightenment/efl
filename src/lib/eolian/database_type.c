@@ -25,6 +25,7 @@ database_type_del(Eolian_Type *tp)
    if (tp->comment) eina_stringshare_del(tp->comment);
    if (tp->legacy) eina_stringshare_del(tp->legacy);
    if (tp->freefunc) eina_stringshare_del(tp->freefunc);
+   database_doc_del(tp->doc);
    free(tp);
 }
 

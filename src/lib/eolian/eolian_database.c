@@ -161,6 +161,13 @@ eolian_declaration_variable_get(const Eolian_Declaration *decl)
    return (const Eolian_Variable *)decl->data;
 }
 
+void database_doc_del(Eolian_Documentation *doc)
+{
+   if (!doc) return;
+   eina_stringshare_del(doc->summary);
+   eina_stringshare_del(doc->description);
+   free(doc);
+}
 
 #define EO_SUFFIX ".eo"
 #define EOT_SUFFIX ".eot"

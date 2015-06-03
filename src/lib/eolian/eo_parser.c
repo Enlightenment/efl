@@ -14,6 +14,14 @@
    (exp).line = l; \
    (exp).column = c;
 
+#define FILL_DOC(ls, def, docf) \
+   if (ls->t.token == TOK_DOC) \
+     { \
+        def->docf = ls->t.value.doc; \
+        ls->t.value.doc = NULL; \
+        eo_lexer_get(ls); \
+     }
+
 static void
 error_expected(Eo_Lexer *ls, int token)
 {
@@ -460,6 +468,7 @@ _struct_field_free(Eolian_Struct_Type_Field *def)
    if (def->name) eina_stringshare_del(def->name);
    database_type_del(def->type);
    if (def->comment) eina_stringshare_del(def->comment);
+   database_doc_del(def->doc);
    free(def);
 }
 
@@ -481,7 +490,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         def->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
-   test_next(ls, TOK_DOC);
+   FILL_DOC(ls, def, doc);
    while (ls->t.token != '}')
      {
         const char *fname;
@@ -508,7 +517,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
              fdef->comment = eina_stringshare_ref(ls->t.value.s);
              eo_lexer_get(ls);
           }
-        test_next(ls, TOK_DOC);
+        FILL_DOC(ls, fdef, doc);
      }
    check_match(ls, '}', '{', bline, bcolumn);
    FILL_BASE(def->base, ls, line, column);
@@ -523,6 +532,7 @@ _enum_field_free(Eolian_Enum_Type_Field *def)
    if (def->name) eina_stringshare_del(def->name);
    database_expr_del(def->value);
    if (def->comment) eina_stringshare_del(def->comment);
+   database_doc_del(def->doc);
    free(def);
 }
 
@@ -542,7 +552,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         def->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
-   test_next(ls, TOK_DOC);
+   FILL_DOC(ls, def, doc);
    if (ls->t.token == TOK_VALUE && ls->t.kw == KW_legacy)
      {
          if (eo_lexer_lookahead(ls) == ':')
@@ -627,7 +637,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
              fdef->comment = eina_stringshare_ref(ls->t.value.s);
              eo_lexer_get(ls);
           }
-        test_next(ls, TOK_DOC);
+        FILL_DOC(ls, fdef, doc);
         if (!want_next)
           break;
      }
@@ -886,7 +896,7 @@ parse_typedef(Eo_Lexer *ls)
         def->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
-   test_next(ls, TOK_DOC);
+   FILL_DOC(ls, def, doc);
    return def;
 }
 
@@ -938,7 +948,7 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
         def->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
-   test_next(ls, TOK_DOC);
+   FILL_DOC(ls, def, doc);
    return def;
 }
 
@@ -946,6 +956,7 @@ typedef struct _Eo_Ret_Def
 {
    Eolian_Type *type;
    Eina_Stringshare *comment;
+   Eolian_Documentation *doc;
    Eolian_Expression *default_ret_val;
    Eina_Bool warn_unused:1;
 } Eo_Ret_Def;
@@ -960,6 +971,7 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void)
    else
      ret->type = parse_type(ls);
    ret->comment = NULL;
+   ret->doc = NULL;
    ret->default_ret_val = NULL;
    ret->warn_unused = EINA_FALSE;
    if (ls->t.token == '(')
@@ -982,7 +994,7 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void)
         ret->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
-   test_next(ls, TOK_DOC);
+   FILL_DOC(ls, ret, doc);
 }
 
 static void
@@ -1064,7 +1076,7 @@ end:
         par->description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
-   test_next(ls, TOK_DOC);
+   FILL_DOC(ls, par, doc);
 }
 
 static void
@@ -1129,7 +1141,14 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
           prop->set_description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
-   test_next(ls, TOK_DOC);
+   if (is_get)
+     {
+        FILL_DOC(ls, prop, get_doc);
+     }
+   else
+     {
+        FILL_DOC(ls, prop, set_doc);
+     }
    for (;;) switch (ls->t.kw)
      {
       case KW_return:
@@ -1142,6 +1161,7 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
           {
              prop->get_ret_type = ret.type;
              prop->get_return_comment = ret.comment;
+             prop->get_return_doc = ret.doc;
              prop->get_ret_val = ret.default_ret_val;
              prop->get_return_warn_unused = ret.warn_unused;
           }
@@ -1149,6 +1169,7 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
           {
              prop->set_ret_type = ret.type;
              prop->set_return_comment = ret.comment;
+             prop->set_return_doc = ret.doc;
              prop->set_ret_val = ret.default_ret_val;
              prop->set_return_warn_unused = ret.warn_unused;
           }
@@ -1259,7 +1280,7 @@ body:
         prop->common_description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
-   test_next(ls, TOK_DOC);
+   FILL_DOC(ls, prop, common_doc);
    for (;;) switch (ls->t.kw)
      {
       case KW_get:
@@ -1345,7 +1366,7 @@ body:
         meth->common_description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
-   test_next(ls, TOK_DOC);
+   FILL_DOC(ls, meth, common_doc);
    for (;;) switch (ls->t.kw)
      {
       case KW_return:
@@ -1356,6 +1377,7 @@ body:
         if (ret.default_ret_val) pop_expr(ls);
         meth->get_ret_type = ret.type;
         meth->get_return_comment = ret.comment;
+        meth->get_return_doc = ret.doc;
         meth->get_ret_val = ret.default_ret_val;
         meth->get_return_warn_unused = ret.warn_unused;
         break;
@@ -1598,7 +1620,7 @@ parse_event(Eo_Lexer *ls)
         ev->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
-   test_next(ls, TOK_DOC);
+   FILL_DOC(ls, ev, doc);
    ev->klass = ls->tmp.kls;
 }
 
@@ -1675,7 +1697,7 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
         ls->tmp.kls->description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
-   test_next(ls, TOK_DOC);
+   FILL_DOC(ls, ls->tmp.kls, doc);
    if (type == EOLIAN_CLASS_INTERFACE)
      {
         ls->tmp.kls->data_type = eina_stringshare_add("null");
@@ -1944,7 +1966,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                      def->comment = eina_stringshare_ref(ls->t.value.s);
                      eo_lexer_get(ls);
                   }
-                test_next(ls, TOK_DOC);
+                FILL_DOC(ls, def, doc);
                 FILL_BASE(def->base, ls, line, col);
                 database_struct_add(def);
                 pop_type(ls);

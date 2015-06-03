@@ -284,6 +284,8 @@ Eina_Bool database_class_name_validate(const char *class_name, const Eolian_Clas
 void database_decl_add(Eina_Stringshare *name, Eolian_Declaration_Type type,
                        Eina_Stringshare *file, void *ptr);
 
+void database_doc_del(Eolian_Documentation *doc);
+
 /* types */
 
 void database_type_add(Eolian_Type *def);

@@ -32,6 +32,11 @@ database_function_del(Eolian_Function *fid)
    if (fid->common_description) eina_stringshare_del(fid->common_description);
    if (fid->get_return_comment) eina_stringshare_del(fid->get_return_comment);
    if (fid->set_return_comment) eina_stringshare_del(fid->set_return_comment);
+   database_doc_del(fid->common_doc);
+   database_doc_del(fid->get_doc);
+   database_doc_del(fid->set_doc);
+   database_doc_del(fid->get_return_doc);
+   database_doc_del(fid->set_return_doc);
    free(fid);
 }
 

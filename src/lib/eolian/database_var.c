@@ -19,6 +19,7 @@ database_var_del(Eolian_Variable *var)
       eina_stringshare_del(sp);
    if (var->value) database_expr_del(var->value);
    if (var->comment) eina_stringshare_del(var->comment);
+   database_doc_del(var->doc);
    free(var);
 }
 
