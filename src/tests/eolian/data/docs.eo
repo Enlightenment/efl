@@ -1,0 +1,63 @@
+struct Foo {
+    [[This is struct Foo.
+
+      This is a longer description for struct Foo.
+    ]]
+    field1: int; [[Field documentation.]]
+    field2: float;
+    field3: short; [[Another field documentation.]]
+}
+
+enum Bar {
+    [[Docs for enum Bar.]]
+    blah = 0,
+    foo = 1, [[Docs for foo.]]
+    bar = 2 [[Docs for bar.]]
+}
+
+type Alias: Bar; [[Docs for typedef.
+
+                   More docs for typedef.
+                   See @Bar.
+                 ]]
+
+var pants: int = 150; [[Docs for var.]]
+
+struct Opaque; [[Opaque struct docs. See @Foo for another struct.]]
+
+class Docs {
+    [[Docs for class.
+
+      More docs for class.
+      @Foo
+      @Bar
+      @Alias
+      @pants
+    ]]
+    methods {
+        meth {
+            [[Method documentation.]]
+            params {
+                @in a: int; [[Param documentation.]]
+                @out b: float;
+                @out c: long; [[Another param documentation.]]
+            }
+            return: int; [[Return documentation.]]
+        }
+        @property prop {
+            [[Property common documentation.]]
+            get {
+                [[Get documentation.]]
+            }
+            set {
+                [[Set documentation.]]
+            }
+            values {
+                val: int; [[Value documentation.]]
+            }
+        }
+    }
+    events {
+        clicked; [[Event docs.]]
+    }
+}

@@ -1128,6 +1128,19 @@ START_TEST(eolian_decl)
 }
 END_TEST
 
+START_TEST(eolian_docs)
+{
+   eolian_init();
+
+   fail_if(!eolian_directory_scan(PACKAGE_DATA_DIR"/data"));
+
+   fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/docs.eo"));
+   fail_if(!eolian_class_get_by_name("Docs"));
+
+   eolian_shutdown();
+}
+END_TEST
+
 void eolian_parsing_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_simple_parsing);
@@ -1148,5 +1161,6 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_null);
    tcase_add_test(tc, eolian_import);
    tcase_add_test(tc, eolian_decl);
+   tcase_add_test(tc, eolian_docs);
 }
 
