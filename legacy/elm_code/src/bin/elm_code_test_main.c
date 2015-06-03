@@ -54,7 +54,7 @@ _elm_code_test_line_done_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED,
    line = (Elm_Code_Line *)event_info;
 
    if (line->number == 1)
-     elm_code_line_token_add(line, 18, 25, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
+     elm_code_line_token_add(line, 17, 24, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
    else if (line->number == 4)
      line->status = ELM_CODE_STATUS_TYPE_ERROR;
 
@@ -112,7 +112,7 @@ _elm_code_test_editor_setup(Evas_Object *parent)
    _append_line(code->file, "...Please?");
 
    line = elm_code_file_line_get(code->file, 1);
-   elm_code_line_token_add(line, 6, 7, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
+   elm_code_line_token_add(line, 5, 6, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
    elm_code_callback_fire(code, &ELM_CODE_EVENT_LINE_LOAD_DONE, line);
 
    evas_object_size_hint_weight_set(widget, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

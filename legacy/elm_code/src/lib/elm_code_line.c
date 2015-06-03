@@ -83,7 +83,7 @@ EAPI void elm_code_line_token_add(Elm_Code_Line *line, int start, int end, int l
    if (end_line > line->number)
      {
         next_line = elm_code_file_line_get(line->file, line->number + 1);
-        elm_code_line_token_add(next_line, 1, end, lines - 1, type);
+        elm_code_line_token_add(next_line, 0, end, lines - 1, type);
      }
 }
 

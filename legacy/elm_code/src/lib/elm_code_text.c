@@ -145,12 +145,10 @@ elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, const char
      return;
 
    inserted = malloc(sizeof(char) * line->length + length);
-   if (position > 0)
-     position--;
    if (position > line->length)
      position = line->length;
 
-   _elm_code_line_tokens_move_right(line, position + 1, length);
+   _elm_code_line_tokens_move_right(line, position, length);
 
    if (line->modified)
      {
@@ -184,12 +182,10 @@ elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length
      return;
 
    removed = malloc(sizeof(char) * line->length - length);
-   if (position > 0)
-     position--;
    if (position > line->length)
      position = line->length;
 
-   _elm_code_line_tokens_move_left(line, position + 1, length);
+   _elm_code_line_tokens_move_left(line, position, length);
 
    if (line->modified)
      {
@@ -248,72 +244,3 @@ elm_code_text_newlinenpos(const char *text, unsigned int length, short *nllen)
    return crpos;
 }
 
-EAPI unsigned int
-elm_code_line_text_column_width_to_position(Elm_Code_Line *line, unsigned int position, unsigned int tabstop)
-{
-   Eina_Unicode unicode;
-   unsigned int count = 0;
-   int index = 0;
-   const char *chars;
-
-   if (line->length == 0)
-     return 0;
-
-   if (line->modified)
-     chars = line->modified;
-   else
-     chars = line->content;
-   if (position > line->length)
-     position = line->length;
-
-   while ((unsigned int) index < position)
-     {
-        unicode = eina_unicode_utf8_next_get(chars, &index);
-        if (unicode == 0)
-          break;
-
-        if (unicode == '\t')
-          count += elm_code_text_tabwidth_at_position(count, tabstop);
-        else
-          count++;
-     }
-
-   return count;
-}
-
-EAPI unsigned int
-elm_code_line_text_column_width(Elm_Code_Line *line, unsigned int tabstop)
-{
-   return elm_code_line_text_column_width_to_position(line, line->length, tabstop);
-}
-
-EAPI unsigned int
-elm_code_line_text_position_for_column_get(Elm_Code_Line *line, unsigned int column, unsigned int tabstop)
-{
-   Eina_Unicode unicode;
-   unsigned int count = 0;
-   int index = 0;
-   const char *chars;
-
-   if (line->length == 0)
-     return 0;
-
-   if (line->modified)
-     chars = line->modified;
-   else
-     chars = line->content;
-
-   while ((unsigned int) count < column && index < (int) line->length)
-     {
-        unicode = eina_unicode_utf8_next_get(chars, &index);
-
-        if (unicode == 0)
-          return line->length;
-        else if (unicode == '\t')
-          count += elm_code_text_tabwidth_at_position(count, tabstop);
-        else
-          count++;
-     }
-
-   return (unsigned int) index;
-}

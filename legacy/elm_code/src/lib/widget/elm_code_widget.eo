@@ -199,7 +199,7 @@ class Elm.Code_Widget (Elm.Layout, Elm_Interface_Atspi_Text)
          }
          values {
             col: uint; /*@ The horizontal position of the cursor, starting from column 1 */
-            line: uint; /*@ The vertical position of the cursor - the top row is 1 an */
+            line: uint; /*@ The vertical position of the cursor - the top row is 1 */
          }
       }
       line_refresh {
@@ -223,6 +223,27 @@ class Elm.Code_Widget (Elm.Layout, Elm_Interface_Atspi_Text)
       }
       text_line_number_width_get {
          return: int; /*@ the column width required to represent the number of lines in the widget. */
+      }
+
+      line_text_column_width_to_position {
+         params {
+            line: Elm_Code_Line *;
+            position: uint;
+         }
+         return: uint;
+      }
+      line_text_column_width_get {
+         params {
+            line: Elm_Code_Line *;
+         }
+         return: uint;
+      }
+      line_text_position_for_column_get {
+         params {
+            line: Elm_Code_Line *;
+            column: uint;
+         }
+         return: uint;
       }
    }
    implements {

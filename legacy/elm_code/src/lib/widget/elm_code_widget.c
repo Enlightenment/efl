@@ -126,7 +126,7 @@ _elm_code_widget_resize(Elm_Code_Widget *widget)
    h = elm_code_file_lines_get(pd->code->file);
    EINA_LIST_FOREACH(pd->code->file->lines, item, line)
      {
-        line_width = elm_code_line_text_column_width(line, pd->tabstop);
+        line_width = elm_code_widget_line_text_column_width_get(widget, line);
         if ((int) line_width + gutter + 1 > w)
           w = (int) line_width + gutter + 1;
      }
@@ -152,7 +152,7 @@ _elm_code_widget_fill_line_token(Evas_Textgrid_Cell *cells, int count, int start
 
    for (x = start; x <= end && x < count; x++)
      {
-        cells[x].fg = type;
+        cells[x - 1].fg = type;
      }
 }
 
@@ -176,21 +176,19 @@ static void
 _elm_code_widget_fill_line_tokens(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
                                   unsigned int count, Elm_Code_Line *line)
 {
-   Elm_Code_Widget_Data *pd;
    Eina_List *item;
    Elm_Code_Token *token;
    unsigned int start, end, length, offset;
    unsigned int token_start_col, token_end_col;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    eo_do(widget, offset = elm_obj_code_widget_text_left_gutter_width_get());
    start = offset;
-   length = elm_code_line_text_column_width(line, pd->tabstop) + offset;
+   length = elm_code_widget_line_text_column_width_get(widget, line) + offset;
 
    EINA_LIST_FOREACH(line->tokens, item, token)
      {
-        token_start_col = elm_code_line_text_column_width_to_position(line, token->start - 1, pd->tabstop) + offset;
-        token_end_col = elm_code_line_text_column_width_to_position(line, token->end - 1, pd->tabstop) + offset;
+        token_start_col = elm_code_widget_line_text_column_width_to_position(widget, line, token->start) + offset;
+        token_end_col = elm_code_widget_line_text_column_width_to_position(widget, line, token->end) + offset;
 
         if (token_start_col > start)
           _elm_code_widget_fill_line_token(cells, count, start, token_start_col, ELM_CODE_TOKEN_TYPE_DEFAULT);
@@ -339,7 +337,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
    _elm_code_widget_fill_gutter(widget, cells, line->status, line->number);
    _elm_code_widget_fill_line_tokens(widget, cells, w, line);
 
-   length = elm_code_line_text_column_width(line, pd->tabstop);
+   length = elm_code_widget_line_text_column_width_get(widget, line);
    chrpos = 0;
    chr = (char *)elm_code_line_text_get(line, NULL);
 
@@ -499,7 +497,7 @@ _elm_code_widget_cursor_key_will_move(Elm_Code_Widget *widget, const char *key)
    else if (!strcmp(key, "Left"))
      return pd->cursor_col > 1 || pd->cursor_line > 1;
    else if (!strcmp(key, "Right"))
-     return pd->cursor_col < elm_code_line_text_column_width(line, pd->tabstop) + 1 ||
+     return pd->cursor_col < elm_code_widget_line_text_column_width_get(widget, line) + 1 ||
         pd->cursor_line < elm_code_file_lines_get(pd->code->file);
    else
      return EINA_FALSE;
@@ -637,7 +635,7 @@ _elm_code_widget_clicked_editable_cb(Elm_Code_Widget *widget, unsigned int row, 
    line = elm_code_file_line_get(pd->code->file, row);
    if (!line)
      return;
-   column_width = elm_code_line_text_column_width(line, pd->tabstop);
+   column_width = elm_code_widget_line_text_column_width_get(widget, line);
 
    if (col > column_width + 1)
      col = column_width + 1;
@@ -777,7 +775,7 @@ _elm_code_widget_cursor_move_end(Elm_Code_Widget *widget)
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
-   lastcol = elm_code_line_text_column_width(line, pd->tabstop);
+   lastcol = elm_code_widget_line_text_column_width_get(widget, line);
    if (pd->cursor_col > lastcol + 1)
      return;
 
@@ -800,7 +798,7 @@ _elm_code_widget_cursor_move_up(Elm_Code_Widget *widget)
 
    row--;
    line = elm_code_file_line_get(pd->code->file, row);
-   column_width = elm_code_line_text_column_width(line, pd->tabstop);
+   column_width = elm_code_widget_line_text_column_width_get(widget, line);
    if (col > column_width + 1)
      col = column_width + 1;
 
@@ -823,7 +821,7 @@ _elm_code_widget_cursor_move_down(Elm_Code_Widget *widget)
 
    row++;
    line = elm_code_file_line_get(pd->code->file, row);
-   column_width = elm_code_line_text_column_width(line, pd->tabstop);
+   column_width = elm_code_widget_line_text_column_width_get(widget, line);
    if (col > column_width + 1)
      col = column_width + 1;
 
@@ -859,7 +857,7 @@ _elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
-   if (pd->cursor_col > elm_code_line_text_column_width(line, pd->tabstop))
+   if (pd->cursor_col > elm_code_widget_line_text_column_width_get(widget, line))
      {
         if (pd->cursor_line < elm_code_file_lines_get(pd->code->file))
           {
@@ -901,7 +899,7 @@ _elm_code_widget_cursor_move_pageup(Elm_Code_Widget *widget)
      row = 1;
 
    line = elm_code_file_line_get(pd->code->file, row);
-   column_width = elm_code_line_text_column_width(line, pd->tabstop);
+   column_width = elm_code_widget_line_text_column_width_get(widget, line);
    if (col > column_width + 1)
      col = column_width + 1;
 
@@ -927,7 +925,7 @@ _elm_code_widget_cursor_move_pagedown(Elm_Code_Widget *widget)
      row = elm_code_file_lines_get(pd->code->file);
 
    line = elm_code_file_line_get(pd->code->file, row);
-   column_width = elm_code_line_text_column_width(line, pd->tabstop);
+   column_width = elm_code_widget_line_text_column_width_get(widget, line);
    if (col > column_width + 1)
      col = column_width + 1;
 
@@ -953,10 +951,7 @@ _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text
 {
    Elm_Code *code;
    Elm_Code_Line *line;
-   Elm_Code_Widget_Data *pd;
    unsigned int row, col, position, col_width;
-
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    _elm_code_widget_delete_selection(widget);
    eo_do(widget,
@@ -964,10 +959,10 @@ _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text
          elm_obj_code_widget_cursor_position_get(&col, &row));
    line = elm_code_file_line_get(code->file, row);
 
-   position = elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
-   elm_code_line_text_insert(line, position + 1, text, length);
-   col_width = elm_code_line_text_column_width_to_position(line, position + length, pd->tabstop) -
-               elm_code_line_text_column_width_to_position(line, position, pd->tabstop);
+   position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
+   elm_code_line_text_insert(line, position, text, length);
+   col_width = elm_code_widget_line_text_column_width_to_position(widget, line, position + length) -
+               elm_code_widget_line_text_column_width_to_position(widget, line, position);
 
    eo_do(widget,
          elm_obj_code_widget_cursor_position_set(col + col_width, row),
@@ -980,17 +975,15 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
 {
    Elm_Code *code;
    Elm_Code_Line *line;
-   Elm_Code_Widget_Data *pd;
    unsigned int row, col, position;
 
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    _elm_code_widget_delete_selection(widget);
    eo_do(widget,
          code = elm_obj_code_widget_code_get(),
          elm_obj_code_widget_cursor_position_get(&col, &row));
    line = elm_code_file_line_get(code->file, row);
 
-   position = elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
+   position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
    elm_code_line_split_at(line, position);
 
    eo_do(widget,
@@ -1004,7 +997,6 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
 {
    Elm_Code *code;
    Elm_Code_Line *line, *otherline;
-   Elm_Code_Widget_Data *pd;
    unsigned int row, col, position;
 
    const char *text1, *text2;
@@ -1040,11 +1032,10 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
    free(newtext);
    if (!nextline)
      {
-        pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-        position = elm_code_line_text_column_width_to_position(line, length1, pd->tabstop);
+        position = elm_code_widget_line_text_column_width_to_position(widget, line, length1);
 
         eo_do(widget,
-              elm_obj_code_widget_cursor_position_set(position + 1, row - 1));
+              elm_obj_code_widget_cursor_position_set(position, row - 1));
      }
 // TODO construct and pass a change object
    eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
@@ -1055,7 +1046,6 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
 {
    Elm_Code *code;
    Elm_Code_Line *line;
-   Elm_Code_Widget_Data *pd;
    unsigned int row, col, position, start_col, char_width;
 
    if (_elm_code_widget_delete_selection(widget))
@@ -1064,7 +1054,6 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
    eo_do(widget,
          code = elm_obj_code_widget_code_get(),
          elm_obj_code_widget_cursor_position_get(&col, &row));
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (col <= 1)
      {
@@ -1077,14 +1066,13 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
 
    line = elm_code_file_line_get(code->file, row);
 
-   position = elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
-   char_width = elm_code_line_text_position_for_column_get(line, col, pd->tabstop) -
-                elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
-   start_col = elm_code_line_text_column_width_to_position(line, position - 1, pd->tabstop);
+   position = elm_code_widget_line_text_position_for_column_get(widget, line, col - 1);
+   char_width = elm_code_widget_line_text_position_for_column_get(widget, line, col) - position;
+   start_col = elm_code_widget_line_text_column_width_to_position(widget, line, position);
 
    elm_code_line_text_remove(line, position, char_width?char_width:1);
    eo_do(widget,
-         elm_obj_code_widget_cursor_position_set(start_col + 1, row));
+         elm_obj_code_widget_cursor_position_set(start_col, row));
 
 // TODO construct and pass a change object
    eo_do(widget, eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
@@ -1096,9 +1084,6 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
    Elm_Code *code;
    Elm_Code_Line *line;
    unsigned int row, col, position, char_width, start_col;
-   Elm_Code_Widget_Data *pd;
-
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (_elm_code_widget_delete_selection(widget))
      return;
@@ -1107,7 +1092,7 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
          code = elm_obj_code_widget_code_get(),
          elm_obj_code_widget_cursor_position_get(&col, &row));
    line = elm_code_file_line_get(code->file, row);
-   if (col > elm_code_line_text_column_width(line, pd->tabstop))
+   if (col > elm_code_widget_line_text_column_width_get(widget, line))
      {
         if (row == elm_code_file_lines_get(code->file))
           return;
@@ -1116,14 +1101,13 @@ _elm_code_widget_delete(Elm_Code_Widget *widget)
         return;
      }
 
-   position = elm_code_line_text_position_for_column_get(line, col, pd->tabstop);
-   char_width = elm_code_line_text_position_for_column_get(line, col, pd->tabstop) -
-                elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
-   start_col = elm_code_line_text_column_width_to_position(line, position - 1, pd->tabstop);
+   position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
+   char_width = elm_code_widget_line_text_position_for_column_get(widget, line, col + 1) - position;
+   start_col = elm_code_widget_line_text_column_width_to_position(widget, line, position);
 
    elm_code_line_text_remove(line, position, char_width?char_width:1);
    eo_do(widget,
-         elm_obj_code_widget_cursor_position_set(start_col + 1, row),
+         elm_obj_code_widget_cursor_position_set(start_col, row),
 // TODO construct and pass a change object
          eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
 }

@@ -35,8 +35,8 @@ START_TEST (elm_code_widget_token_render_simple_test)
    line = elm_code_file_line_get(file, 1);
    length = line->length;
 
-   elm_code_line_token_add(line, 6+1, 17+1, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
-   elm_code_line_token_add(line, 21+1, 22+1, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
+   elm_code_line_token_add(line, 6, 17, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
+   elm_code_line_token_add(line, 21, 22, 1, ELM_CODE_TOKEN_TYPE_COMMENT);
 
    _elm_code_widget_fill_line_tokens(widget, cells, length+1, line);
    _assert_cell_type(cells[1], ELM_CODE_TOKEN_TYPE_DEFAULT, 1);

@@ -32,7 +32,7 @@ START_TEST (elm_code_text_insert_test)
    elm_code_file_line_append(file, "test", 4, NULL);
    line = elm_code_file_line_get(file, 1);
 
-   elm_code_line_text_insert(line, 5, "ing", 3);
+   elm_code_line_text_insert(line, 4, "ing", 3);
    ck_assert_str_eq("testing", elm_code_line_text_get(line, NULL));
 }
 END_TEST

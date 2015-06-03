@@ -30,7 +30,7 @@ _elm_code_widget_selection_limit(Evas_Object *widget EINA_UNUSED, Elm_Code_Widge
      *row = elm_code_file_lines_get(file);
 
    line = elm_code_file_line_get(file, *row);
-   width = elm_code_line_text_column_width(line, pd->tabstop);
+   width = elm_code_widget_line_text_column_width_get(widget, line);
 
    if (*col > width + 1)
      *col = width + 1;
@@ -105,7 +105,7 @@ elm_code_widget_selection_clear(Evas_Object *widget)
 }
 
 static void
-_elm_code_widget_selection_delete_single(Elm_Code_Widget_Data *pd)
+_elm_code_widget_selection_delete_single(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
 {
    Elm_Code_Line *line;
    const char *old;
@@ -117,10 +117,8 @@ _elm_code_widget_selection_delete_single(Elm_Code_Widget_Data *pd)
 
    line = elm_code_file_line_get(pd->code->file, pd->selection->start_line);
    old = elm_code_line_text_get(line, &old_length);
-   start = elm_code_line_text_position_for_column_get(line, pd->selection->start_col,
-                                                      pd->tabstop) - 1;
-   end = elm_code_line_text_position_for_column_get(line, pd->selection->end_col,
-                                                    pd->tabstop) - 1;
+   start = elm_code_widget_line_text_position_for_column_get(widget, line, pd->selection->start_col);
+   end = elm_code_widget_line_text_position_for_column_get(widget, line, pd->selection->end_col);
    length = line->length - (end - start + 1);
 
    content = malloc(sizeof(char) * length);
@@ -132,7 +130,7 @@ _elm_code_widget_selection_delete_single(Elm_Code_Widget_Data *pd)
 }
 
 static void
-_elm_code_widget_selection_delete_multi(Elm_Code_Widget_Data *pd)
+_elm_code_widget_selection_delete_multi(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
 {
    Elm_Code_Line *line;
    const char *first, *last;
@@ -144,13 +142,11 @@ _elm_code_widget_selection_delete_multi(Elm_Code_Widget_Data *pd)
 
    line = elm_code_file_line_get(pd->code->file, pd->selection->start_line);
    first = elm_code_line_text_get(line, NULL);
-   start = elm_code_line_text_position_for_column_get(line, pd->selection->start_col,
-                                                      pd->tabstop) - 1;
+   start = elm_code_widget_line_text_position_for_column_get(widget, line, pd->selection->start_col);
 
    line = elm_code_file_line_get(pd->code->file, pd->selection->end_line);
    last = elm_code_line_text_get(line, &last_length);
-   end = elm_code_line_text_position_for_column_get(line, pd->selection->end_col,
-                                                    pd->tabstop) - 1;
+   end = elm_code_widget_line_text_position_for_column_get(widget, line, pd->selection->end_col);
 
    length = start + last_length - (end + 1);
    content = malloc(sizeof(char) * length);
@@ -177,9 +173,9 @@ elm_code_widget_selection_delete(Evas_Object *widget)
      return;
 
    if (pd->selection->start_line == pd->selection->end_line)
-     _elm_code_widget_selection_delete_single(pd);
+     _elm_code_widget_selection_delete_single(widget, pd);
    else
-     _elm_code_widget_selection_delete_multi(pd);
+     _elm_code_widget_selection_delete_multi(widget, pd);
 
    free(pd->selection);
    pd->selection = NULL;
@@ -187,34 +183,37 @@ elm_code_widget_selection_delete(Evas_Object *widget)
 }
 
 static char *
-_elm_code_widget_selection_text_single_get(Elm_Code_Widget_Data *pd)
+_elm_code_widget_selection_text_single_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
 {
    Elm_Code_Line *line;
+   unsigned int start, end;
 
    line = elm_code_file_line_get(pd->code->file, pd->selection->start_line);
+   start = elm_code_widget_line_text_position_for_column_get(widget, line, pd->selection->start_col);
+   end = elm_code_widget_line_text_position_for_column_get(widget, line, pd->selection->end_col + 1);
 
-   return elm_code_line_text_substr(line, pd->selection->start_col - 1,
-                                    pd->selection->end_col - pd->selection->start_col + 1);
+   return elm_code_line_text_substr(line, start, end - start);
 }
 
 static char *
-_elm_code_widget_selection_text_multi_get(Elm_Code_Widget_Data *pd)
+_elm_code_widget_selection_text_multi_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
 {
    Elm_Code_Line *line;
    char *first, *last, *ret, *ptr;
    const char *newline;
    short newline_len;
    int ret_len;
-   unsigned int row;
+   unsigned int row, start, end;
 
    newline = elm_code_file_line_ending_chars_get(pd->code->file, &newline_len);
 
    line = elm_code_file_line_get(pd->code->file, pd->selection->start_line);
-   first = elm_code_line_text_substr(line, pd->selection->start_col - 1,
-                                     line->length - pd->selection->start_col + 1);
+   start = elm_code_widget_line_text_position_for_column_get(widget, line, pd->selection->start_col);
+   first = elm_code_line_text_substr(line, start, line->length - start + 1);
 
    line = elm_code_file_line_get(pd->code->file, pd->selection->end_line);
-   last = elm_code_line_text_substr(line, 0, pd->selection->end_col);
+   end = elm_code_widget_line_text_position_for_column_get(widget, line, pd->selection->end_col + 1);
+   last = elm_code_line_text_substr(line, 0, end);
 
    ret_len = strlen(first) + strlen(last) + newline_len;
 
@@ -259,9 +258,9 @@ elm_code_widget_selection_text_get(Evas_Object *widget)
      return strdup("");
 
    if (pd->selection->start_line == pd->selection->end_line)
-     return _elm_code_widget_selection_text_single_get(pd);
+     return _elm_code_widget_selection_text_single_get(widget, pd);
    else
-     return _elm_code_widget_selection_text_multi_get(pd);
+     return _elm_code_widget_selection_text_multi_get(widget, pd);
 }
 
 static void
@@ -299,23 +298,23 @@ elm_code_widget_selection_copy(Evas_Object *widget)
 }
 
 static void
-_selection_paste_single(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, Elm_Code *code,
+_selection_paste_single(Elm_Code_Widget *widget, Elm_Code *code,
                         unsigned int col, unsigned int row, const char *text, unsigned int len)
 {
    Elm_Code_Line *line;
    unsigned int position, newcol;
 
    line = elm_code_file_line_get(code->file, row);
-   position = elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
-   elm_code_line_text_insert(line, position + 1, text, len);
+   position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
+   elm_code_line_text_insert(line, position, text, len);
 
-   newcol = elm_code_line_text_column_width_to_position(line, position + len, pd->tabstop);
+   newcol = elm_code_widget_line_text_column_width_to_position(widget, line, position + len);
    eo_do(widget,
-         elm_obj_code_widget_cursor_position_set(newcol + 1, row));
+         elm_obj_code_widget_cursor_position_set(newcol, row));
 }
 
 static void
-_selection_paste_multi(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, Elm_Code *code,
+_selection_paste_multi(Elm_Code_Widget *widget, Elm_Code *code,
                        unsigned int col, unsigned int row, const char *text, unsigned int len)
 {
    Elm_Code_Line *line;
@@ -325,7 +324,7 @@ _selection_paste_multi(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, Elm_Co
    char *ptr;
 
    line = elm_code_file_line_get(code->file, row);
-   position = elm_code_line_text_position_for_column_get(line, col - 1, pd->tabstop);
+   position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
    elm_code_line_split_at(line, position);
 
    newrow = row;
@@ -334,7 +333,7 @@ _selection_paste_multi(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, Elm_Co
    while ((nlpos = elm_code_text_newlinenpos(ptr, remain, &nllen)) != ELM_CODE_TEXT_NOT_FOUND)
      {
         if (newrow == row)
-          _selection_paste_single(widget, pd, code, col, row, text, nlpos);
+          _selection_paste_single(widget, code, col, row, text, nlpos);
         else
           elm_code_file_line_insert(code->file, newrow, ptr, nlpos, NULL);
 
@@ -343,7 +342,7 @@ _selection_paste_multi(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, Elm_Co
         newrow++;
      }
 
-   _selection_paste_single(widget, pd, code, 1, newrow, ptr, len - (ptr - text));
+   _selection_paste_single(widget, code, 1, newrow, ptr, len - (ptr - text));
 }
 
 static Eina_Bool
@@ -351,15 +350,12 @@ _selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data
 {
    Elm_Code *code;
    Elm_Code_Widget *widget;
-   Elm_Code_Widget_Data *pd;
    unsigned int row, col;
 
    widget = (Elm_Code_Widget *)data;
-   pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (ev->format != ELM_SEL_FORMAT_TEXT)
      return EINA_TRUE;
-
    if (ev->len <= 0)
      return EINA_TRUE;
 
@@ -368,9 +364,9 @@ _selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data
          elm_obj_code_widget_cursor_position_get(&col, &row));
 
    if (elm_code_text_newlinenpos(ev->data, ev->len, NULL) == ELM_CODE_TEXT_NOT_FOUND)
-     _selection_paste_single(widget, pd, code, col, row, ev->data, ev->len - 1);
+     _selection_paste_single(widget, code, col, row, ev->data, ev->len - 1);
    else
-     _selection_paste_multi(widget, pd, code, col, row, ev->data, ev->len - 1);
+     _selection_paste_multi(widget, code, col, row, ev->data, ev->len - 1);
 
    return EINA_TRUE;
 }

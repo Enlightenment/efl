@@ -54,12 +54,6 @@ EAPI int elm_code_text_strnpos(const char *text, unsigned int length, const char
 
 EAPI int elm_code_text_newlinenpos(const char *text, unsigned int length, short *nllen);
 
-EAPI unsigned int elm_code_line_text_column_width_to_position(Elm_Code_Line *line, unsigned int length, unsigned int tabstop);
-
-EAPI unsigned int elm_code_line_text_column_width(Elm_Code_Line *line, unsigned int tabstop);
-
-EAPI unsigned int elm_code_line_text_position_for_column_get(Elm_Code_Line *line, unsigned int column, unsigned int tabstop);
-
 /**
  * @}
  */
