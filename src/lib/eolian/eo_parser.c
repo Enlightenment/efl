@@ -1930,7 +1930,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
              }
            eo_lexer_context_pop(ls);
            pop_strbuf(ls);
-           if (ls->t.token == ';')
+           if (!is_enum && ls->t.token == ';')
              {
                 Eolian_Type *def = push_type(ls);
                 def->is_extern = has_extern;
