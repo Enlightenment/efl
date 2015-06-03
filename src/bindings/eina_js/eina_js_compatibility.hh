@@ -337,6 +337,7 @@ struct compatibility_persistent<T, true> : v8::UniquePersistent<T>
   compatibility_persistent() {}
   compatibility_persistent(v8::Isolate* isolate, v8::Handle<T> v)
     : _base(isolate, v)
+    , isolate(isolate)
   {
   }
   
@@ -345,7 +346,12 @@ struct compatibility_persistent<T, true> : v8::UniquePersistent<T>
     return *handle();
   }
 
-  v8::Handle<T> handle() const { return v8::Local<T>::New(v8::Isolate::GetCurrent(), *this); }
+  v8::Handle<T> handle() const { return v8::Local<T>::New(isolate, *this); }
+
+  v8::Isolate* GetIsolate() { return isolate; }
+
+private:
+  v8::Isolate *isolate;
 };
 
 template <typename T>
@@ -354,13 +360,19 @@ struct compatibility_persistent<T, false> : v8::Persistent<T>
   typedef v8::Persistent<T> _base;
 
   compatibility_persistent() {}
-  compatibility_persistent(v8::Isolate*, v8::Handle<T> v)
+  compatibility_persistent(v8::Isolate *isolate, v8::Handle<T> v)
     : _base(v)
+    , isolate(isolate)
   {
   }
 
   v8::Handle<T>& handle() { return *this; }
   v8::Handle<T> const& handle() const { return *this; }
+
+  v8::Isolate* GetIsolate() { return isolate; }
+
+private:
+  v8::Isolate *isolate;
 };
       
 template <typename T = std::integral_constant<bool, v8_uses_isolate> >
