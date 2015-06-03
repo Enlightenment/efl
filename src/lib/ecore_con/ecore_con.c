@@ -541,8 +541,6 @@ _ecore_con_connector_eo_base_finalize(Ecore_Con_Server *obj, void *pd EINA_UNUSE
    return obj;
 
 error:
-   if (svr->delete_me) return NULL;
-   _ecore_con_server_kill(obj);
    return NULL;
 }
 
