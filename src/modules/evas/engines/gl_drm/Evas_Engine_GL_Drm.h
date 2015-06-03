@@ -29,6 +29,13 @@ struct _Evas_Engine_Info_GL_Drm
         unsigned char swap_mode : 4;
      } info;
 
+   struct
+     {
+        void (*pre_swap)(void *data, Evas *evas);
+        void (*post_swap)(void *data, Evas *evas);
+        void *data;
+     } callback;
+
    /* non-blocking or blocking mode */
    Evas_Engine_Render_Mode render_mode;
 };

@@ -214,7 +214,7 @@ evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_
    ob->depth = info->info.depth;
    ob->rotation = info->info.rotation;
    ob->destination_alpha = info->info.destination_alpha;
-   ob->vsync = info->info.vsync;
+   /* ob->vsync = info->info.vsync; */
    ob->gbm = info->info.gbm;
    ob->surface = info->info.surface;
    ob->swap_mode = swap_mode;
@@ -528,8 +528,8 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode 
         ob->vsync = 1;
      }
 
-   /* if (ob->info->callback.pre_swap) */
-   /*   ob->info->callback.pre_swap(ob->info->callback.data, ob->evas); */
+   if (ob->info->callback.pre_swap)
+     ob->info->callback.pre_swap(ob->info->callback.data, ob->evas);
 
 // TODO: Check eglSwapBuffersWithDamage for gl_drm and apply
 #if 0
@@ -592,8 +592,8 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode 
 #endif
       eglSwapBuffers(ob->egl.disp, ob->egl.surface[0]);
 
-   /* if (ob->info->callback.post_swap) */
-   /*   ob->info->callback.post_swap(ob->info->callback.data, ob->evas); */
+   if (ob->info->callback.post_swap)
+     ob->info->callback.post_swap(ob->info->callback.data, ob->evas);
 
    //Flush GL Surface data to Framebuffer
    _evas_outbuf_buffer_swap(ob, NULL, 0);

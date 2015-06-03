@@ -794,6 +794,8 @@ eng_setup(Evas *evas, void *in)
              return 0;
           }
 
+        ob->evas = evas;
+
         if (!evas_render_engine_gl_generic_init(&re->generic, ob,
                                                 evas_outbuf_buffer_state_get,
                                                 evas_outbuf_rot_get,
@@ -861,6 +863,8 @@ eng_setup(Evas *evas, void *in)
                   evas_outbuf_use(ob);
                   if (ob)
                     {
+                       ob->evas = evas;
+
                        evas_render_engine_software_generic_update(&re->generic.software, ob,
                                                                   epd->output.w, epd->output.h);
 
@@ -889,6 +893,8 @@ eng_setup(Evas *evas, void *in)
                   evas_outbuf_use(ob);
                   if (ob)
                     {
+                       ob->evas = evas;
+
                        evas_render_engine_software_generic_update(&re->generic.software, ob,
                                                                   epd->output.w, epd->output.h);
 
