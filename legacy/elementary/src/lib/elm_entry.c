@@ -1454,6 +1454,9 @@ _menu_call(Evas_Object *obj)
    ELM_ENTRY_DATA_GET(obj, sd);
 
    if (sd->anchor_hover.hover) return;
+
+   eo_do(obj, eo_event_callback_call(ELM_ENTRY_EVENT_CONTEXT_OPEN, NULL));
+
    if ((sd->api) && (sd->api->obj_longpress))
      {
         sd->api->obj_longpress(obj);

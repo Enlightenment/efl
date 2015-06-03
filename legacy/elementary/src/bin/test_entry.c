@@ -301,6 +301,16 @@ _end_hide_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNU
    elm_entry_end_visible_set(en, EINA_FALSE);
 }
 
+static Eina_Bool
+_context_menu_show_cb(void *data EINA_UNUSED, Eo *obj,
+                const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   elm_entry_context_menu_clear(obj);
+   elm_entry_context_menu_item_add(obj, "MenuD1", NULL, ELM_ICON_NONE, _item_cb, NULL);
+   elm_entry_context_menu_item_add(obj, "MenuD2", NULL, ELM_ICON_NONE, _item_cb, NULL);
+   return EO_CALLBACK_CONTINUE;
+}
+
 void
 test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -533,6 +543,7 @@ test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
+   eo_do(en, eo_event_callback_add(ELM_ENTRY_EVENT_CONTEXT_OPEN, _context_menu_show_cb, NULL));
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
