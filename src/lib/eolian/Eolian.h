@@ -160,6 +160,12 @@ typedef struct _Eolian_Enum_Type_Field Eolian_Enum_Type_Field;
  */
 typedef struct _Eolian_Declaration Eolian_Declaration;
 
+/* Documentation information
+ *
+ * @ingroup Eolian
+ */
+typedef struct _Eolian_Documentation Eolian_Documentation;
+
 typedef enum
 {
    EOLIAN_UNRESOLVED,
