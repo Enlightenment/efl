@@ -933,7 +933,7 @@ evgl_eng_indirect_surface_create(EVGL_Engine *evgl EINA_UNUSED, void *data,
    int msaa = 0, depth = 0, stencil = 0;
    Visual *visual = NULL;
    Eina_Bool retried = EINA_FALSE;
-   int val;
+   EGLint val = 0;
 
    /* Now we need to iterate over all EGL configurations to check the compatible
     * ones and finally check their visual ID. */
@@ -1010,7 +1010,6 @@ try_again:
    DBG("Found %d potential configurations", num);
    for (i = 0; (i < num) && !found; i++)
      {
-        EGLint val = 0;
         VisualID visid = 0;
         XVisualInfo *xvi, vi_in;
         XRenderPictFormat *fmt;
