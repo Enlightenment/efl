@@ -35,7 +35,7 @@ _evas_3d_primitive_eo_base_constructor(Eo *obj, Evas_3D_Primitive_Data *pd)
 }
 
 EOLIAN static void
-_evas_3d_primitive_eo_base_destructor(Eo *obj, Evas_3D_Primitive_Data *pd)
+_evas_3d_primitive_eo_base_destructor(Eo *obj, Evas_3D_Primitive_Data *pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }

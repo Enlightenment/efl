@@ -920,9 +920,9 @@ evas_3d_mesh_interpolate_position_get(Evas_Vec3 *out, const Evas_3D_Vertex_Buffe
         float *ptr;
 
         if (pos0->stride != 0.0)
-          ptr = (char *)pos0->data + pos0->stride * index;
+          ptr = (float *)((char *)pos0->data + pos0->stride * index);
         else
-          ptr = (char *)pos0->data + (3 * sizeof(float)) * index;
+          ptr = (float *)pos0->data + 3 * index;
 
         out->x = ptr[0];
         out->y = ptr[1];
@@ -933,14 +933,14 @@ evas_3d_mesh_interpolate_position_get(Evas_Vec3 *out, const Evas_3D_Vertex_Buffe
         float *ptr0, *ptr1;
 
         if (pos0->stride != 0.0)
-          ptr0 = (char *)pos0->data + pos0->stride * index;
+          ptr0 = (float *)((char *)pos0->data + pos0->stride * index);
         else
-          ptr0 = (char *)pos0->data + (3 * sizeof(float)) * index;
+          ptr0 = (float *)pos0->data + 3 * index;
 
         if (pos1->stride != 0.0)
-          ptr1 = (char *)pos1->data + pos1->stride * index;
+          ptr1 = (float *)((char *)pos1->data + pos1->stride * index);
         else
-          ptr1 = (char *)pos1->data + (3 * sizeof(float)) * index;
+          ptr1 = (float *)pos1->data + 3 * index;
 
         out->x = ptr0[0] * weight + ptr1[0] * (1.0 - weight);
         out->y = ptr0[1] * weight + ptr1[1] * (1.0 - weight);
