@@ -2,7 +2,7 @@
 #include <config.h>
 #endif
 
-#include <ecore_js_init.hh>
+#include <ecore_js_event.hh>
 #include <Ecore.h>
 
 namespace efl { namespace ecore { namespace js {
