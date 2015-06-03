@@ -2782,49 +2782,62 @@ _elm_scroll_post_event_move(void *data,
    elm_widget_parents_bounce_get(sid->obj, &horiz, &vert);
    if (sid->down.hold_parent)
      {
-        if ((sid->down.dir_x) && horiz &&
+        if ((sid->down.dir_x) && (horiz || !sid->bounce_horiz) &&
             !_elm_scroll_can_scroll(sid, sid->down.hdir))
           {
              sid->down.dir_x = EINA_FALSE;
           }
-        if ((sid->down.dir_y) && vert &&
+        if ((sid->down.dir_y) && (vert || !sid->bounce_vert) &&
             !_elm_scroll_can_scroll(sid, sid->down.vdir))
           {
              sid->down.dir_y = EINA_FALSE;
           }
+        sid->down.dragged_began = EINA_TRUE;
      }
    if (sid->down.dir_x)
      {
         if ((!sid->obj) ||
             (!elm_widget_drag_child_locked_x_get(sid->obj)))
           {
-             sid->down.want_dragged = EINA_FALSE;
-             sid->down.dragged = EINA_TRUE;
-             if (sid->obj)
+             if (sid->down.dragged_began)
                {
-                  elm_widget_drag_lock_x_set(sid->obj, 1);
+                  sid->down.want_dragged = EINA_FALSE;
+                  sid->down.dragged = EINA_TRUE;
+                  if (sid->obj)
+                    {
+                       elm_widget_drag_lock_x_set(sid->obj, 1);
+                    }
+                  start = 1;
                }
-             start = 1;
           }
         else
-          sid->down.dir_x = EINA_FALSE;
+          {
+             sid->down.dragged_began = EINA_TRUE;
+             sid->down.dir_x = EINA_FALSE;
+          }
      }
    if (sid->down.dir_y)
      {
         if ((!sid->obj) ||
             (!elm_widget_drag_child_locked_y_get(sid->obj)))
           {
-             sid->down.want_dragged = EINA_FALSE;
-             sid->down.dragged = EINA_TRUE;
-             if (sid->obj)
+             if (sid->down.dragged_began)
                {
-                  elm_widget_drag_lock_y_set
-                    (sid->obj, EINA_TRUE);
+                  sid->down.want_dragged = EINA_FALSE;
+                  sid->down.dragged = EINA_TRUE;
+                  if (sid->obj)
+                    {
+                       elm_widget_drag_lock_y_set
+                          (sid->obj, EINA_TRUE);
+                    }
+                  start = 1;
                }
-             start = 1;
           }
         else
-          sid->down.dir_y = EINA_FALSE;
+          {
+             sid->down.dragged_began = EINA_TRUE;
+             sid->down.dir_y = EINA_FALSE;
+          }
      }
    if ((!sid->down.dir_x) && (!sid->down.dir_y))
      {
@@ -3137,10 +3150,9 @@ _elm_scroll_mouse_move_event_cb(void *data,
 
         if (sid->one_direction_at_a_time)
           {
-             if (!((sid->down.dir_x) || (sid->down.dir_y)) &&
-                 (((x * x) + (y * y)) >
-                  (_elm_config->thumbscroll_threshold *
-                   _elm_config->thumbscroll_threshold)))
+             if (((x * x) + (y * y)) >
+                 (_elm_config->thumbscroll_threshold *
+                  _elm_config->thumbscroll_threshold))
                {
                   if (sid->one_direction_at_a_time ==
                       ELM_SCROLLER_SINGLE_DIRECTION_SOFT)
@@ -3236,13 +3248,19 @@ _elm_scroll_mouse_move_event_cb(void *data,
                   sid->down.dragged_began_timestamp = ecore_loop_time_get();
 #endif
                }
-             sid->down.dragged_began = EINA_TRUE;
+
              if (!sid->down.dragged)
                {
                   sid->down.want_dragged = EINA_TRUE;
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                }
-             if (sid->down.dragged)
+             if ((((_elm_scroll_can_scroll(sid, LEFT) || _elm_scroll_can_scroll(sid, RIGHT)) && sid->down.dir_x) ||
+                  ((_elm_scroll_can_scroll(sid, UP) || _elm_scroll_can_scroll(sid, DOWN)) && sid->down.dir_y)) &&
+                 !sid->down.dragged_began)
+               {
+                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+                  sid->down.dragged_began = EINA_TRUE;
+               }
+             else if (sid->down.dragged_began)
                {
                   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                }
@@ -3309,7 +3327,11 @@ _elm_scroll_mouse_move_event_cb(void *data,
           {
              if (sid->down.dragged_began)
                {
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+                  if ((_elm_scroll_can_scroll(sid, sid->down.hdir) && sid->down.dir_x) ||
+                      (_elm_scroll_can_scroll(sid, sid->down.vdir) && sid->down.dir_y))
+                    {
+                       ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+                    }
                   if (!sid->down.hold)
                     {
                        sid->down.hold = EINA_TRUE;
