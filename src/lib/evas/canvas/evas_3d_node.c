@@ -509,55 +509,60 @@ _calculate_box(Evas_Box3 *box3, int vertex_count, Evas_Vec3 *vertex_position)
 static void
 _pack_meshes_vertex_data(Evas_3D_Node *node, Evas_Vec3 **vertices, int *count)
 {
-   const Eina_List *m, *l;
-   Evas_3D_Mesh *mesh;
-   Evas_3D_Mesh_Frame *f;
-   int j;
-   int frame;
-   Evas_3D_Mesh_Data *mpd;
-   Evas_Vec3 *it;
+    const Eina_List *m, *l;
+    Evas_3D_Mesh *mesh;
+    int j;
+    int frame;
+    Evas_Vec3 *it;
+    Evas_3D_Vertex_Buffer   pos0, pos1;
+    Evas_Real               pos_weight;
 
-   *count = 0;
-   eo_do(node, m = (Eina_List *)evas_3d_node_mesh_list_get());
-   EINA_LIST_FOREACH(m, l, mesh)
-     {
-        eo_do(node, frame = evas_3d_node_mesh_frame_get(mesh));
-        mpd = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
-        f = evas_3d_mesh_frame_find(mpd, frame);
-        if (f)
-          if (f->vertices[EVAS_3D_VERTEX_POSITION].data)
-            *count += mpd->vertex_count;
-     }
+    *count = 0;
+    eo_do(node, m = (Eina_List *)evas_3d_node_mesh_list_get());
+    EINA_LIST_FOREACH(m, l, mesh)
+      {
+         eo_do(node, frame = evas_3d_node_mesh_frame_get(mesh));
+         evas_3d_mesh_interpolate_vertex_buffer_get(mesh, frame, EVAS_3D_VERTEX_POSITION,
+                                                    &pos0, &pos1, &pos_weight);
+         if(!pos0.data) continue;
+         if(!pos0.stride)
+           {
+             *count += pos0.size / (sizeof(float) * 3);
+           }
+         else
+           {
+             *count += pos0.size / pos0.stride;
+           }
+      }
+    *vertices = (Evas_Vec3*)malloc(*count * sizeof(Evas_Vec3));
+    it = *vertices;
+    if(!*vertices)
+      {
+         ERR("Not enough memory.");
+         return;
+      }
 
-   *vertices = (Evas_Vec3*)malloc(*count * sizeof(Evas_Vec3));
-   it = *vertices;
-   if (!*vertices)
-     {
-        ERR("Not enough memory.");
-        return;
-     }
-
-   EINA_LIST_FOREACH(m, l, mesh)
-     {
-        eo_do(node, frame = evas_3d_node_mesh_frame_get(mesh));
-        mpd = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
-        f = evas_3d_mesh_frame_find(mpd, frame);
-        if (f)
+    EINA_LIST_FOREACH(m, l, mesh)
+      {
+         eo_do(node, frame = evas_3d_node_mesh_frame_get(mesh));
+         evas_3d_mesh_interpolate_vertex_buffer_get(mesh, frame, EVAS_3D_VERTEX_POSITION,
+                                                    &pos0, &pos1, &pos_weight);
+         if(!pos0.data) continue;
+         int stride = 0;
+         if(!pos0.stride)
+           {
+             stride = sizeof(float) * 3;
+           }
+         else
           {
-             float *src = (float *)f->vertices[EVAS_3D_VERTEX_POSITION].data;
-             if (!src) continue;
-             int stride = f->vertices[EVAS_3D_VERTEX_POSITION].stride;
-             if (!stride) stride = sizeof(float) * 3;
-             for (j = 0; j < mpd->vertex_count; j++)
-               {
-                  it->x = src[0];
-                  it->y = src[1];
-                  it->z = src[2];
-                  it++;
-                  src = (float *)((char *)src + stride);
-               }
+            stride = pos0.stride;
           }
-     }
+         for (j = 0; j < pos0.size / stride; j++)
+           {
+             evas_3d_mesh_interpolate_position_get(it, &pos0, &pos1, pos_weight, j);
+             it++;
+           }
+      }
 }
 
 static void

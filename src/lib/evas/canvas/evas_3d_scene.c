@@ -225,43 +225,6 @@ _pick_data_triangle_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
 }
 
 static inline void
-_position_get(Evas_Vec3 *out, const Evas_3D_Vertex_Buffer *pos0, const Evas_3D_Vertex_Buffer *pos1,
-              Evas_Real weight, int index)
-{
-   if (pos1->data == NULL)
-     {
-        float *ptr;
-
-        if (pos0->stride != 0.0)
-          ptr = (float *)((char *)pos0->data + pos0->stride * index);
-        else
-          ptr = (float *)((char *)pos0->data + (3 * sizeof(float)) * index);
-
-        out->x = ptr[0];
-        out->y = ptr[1];
-        out->z = ptr[2];
-     }
-   else
-     {
-        float *ptr0, *ptr1;
-
-        if (pos0->stride != 0.0)
-          ptr0 = (float *)((char *)pos0->data + pos0->stride * index);
-        else
-          ptr0 = (float *)((char *)pos0->data + (3 * sizeof(float)) * index);
-
-        if (pos1->stride != 0.0)
-          ptr1 = (float *)((char *)pos1->data + pos1->stride * index);
-        else
-          ptr1 = (float *)((char *)pos1->data + (3 * sizeof(float)) * index);
-
-        out->x = ptr0[0] * weight + ptr1[0] * (1.0 - weight);
-        out->y = ptr0[1] * weight + ptr1[1] * (1.0 - weight);
-        out->z = ptr0[2] * weight + ptr1[2] * (1.0 - weight);
-     }
-}
-
-static inline void
 _pick_data_texcoord_update(Evas_3D_Pick_Data *data,
                            const Evas_3D_Vertex_Buffer *tex0, const Evas_3D_Vertex_Buffer *tex1,
                            Evas_Real weight, unsigned int i0, unsigned int i1, unsigned int i2)
@@ -357,9 +320,9 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
                        i2 = ((unsigned char *)pdmesh->indices)[i + 2];
                     }
 
-                  _position_get(&tri.p0, &pos0, &pos1, pos_weight, i0);
-                  _position_get(&tri.p1, &pos0, &pos1, pos_weight, i1);
-                  _position_get(&tri.p2, &pos0, &pos1, pos_weight, i2);
+                  evas_3d_mesh_interpolate_position_get(&tri.p0, &pos0, &pos1, pos_weight, i0);
+                  evas_3d_mesh_interpolate_position_get(&tri.p1, &pos0, &pos1, pos_weight, i1);
+                  evas_3d_mesh_interpolate_position_get(&tri.p2, &pos0, &pos1, pos_weight, i2);
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
@@ -383,8 +346,8 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
                   i2 = ((unsigned char *)pdmesh->indices)[1];
                }
 
-             _position_get(&tri.p1, &pos0, &pos1, pos_weight, i1);
-             _position_get(&tri.p2, &pos0, &pos1, pos_weight, i2);
+             evas_3d_mesh_interpolate_position_get(&tri.p1, &pos0, &pos1, pos_weight, i1);
+             evas_3d_mesh_interpolate_position_get(&tri.p2, &pos0, &pos1, pos_weight, i2);
 
              for (i = 0; i < pdmesh->index_count - 2; i++)
                {
@@ -396,7 +359,7 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
                   else
                     i2 = ((unsigned char *)pdmesh->indices)[i + 2];
 
-                  _position_get(&tri.p2, &pos0, &pos1, pos_weight, i2);
+                  evas_3d_mesh_interpolate_position_get(&tri.p2, &pos0, &pos1, pos_weight, i2);
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
@@ -431,8 +394,8 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
                   i2 = ((unsigned char *)pdmesh->indices)[1];
                }
 
-             _position_get(&tri.p0, &pos0, &pos1, pos_weight, i0);
-             _position_get(&tri.p2, &pos0, &pos1, pos_weight, i2);
+             evas_3d_mesh_interpolate_position_get(&tri.p0, &pos0, &pos1, pos_weight, i0);
+             evas_3d_mesh_interpolate_position_get(&tri.p2, &pos0, &pos1, pos_weight, i2);
 
              for (i = 1; i < pdmesh->index_count - 1; i++)
                {
@@ -443,7 +406,7 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
                   else
                     i2 = ((unsigned char *)pdmesh->indices)[i + 1];
 
-                  _position_get(&tri.p2, &pos0, &pos1, pos_weight, i2);
+                  evas_3d_mesh_interpolate_position_get(&tri.p2, &pos0, &pos1, pos_weight, i2);
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
@@ -466,9 +429,9 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
           {
              for (i = 0; i < pdmesh->index_count; i += 3)
                {
-                  _position_get(&tri.p0, &pos0, &pos1, pos_weight, i);
-                  _position_get(&tri.p1, &pos0, &pos1, pos_weight, i + 1);
-                  _position_get(&tri.p2, &pos0, &pos1, pos_weight, i + 2);
+                  evas_3d_mesh_interpolate_position_get(&tri.p0, &pos0, &pos1, pos_weight, i);
+                  evas_3d_mesh_interpolate_position_get(&tri.p1, &pos0, &pos1, pos_weight, i + 1);
+                  evas_3d_mesh_interpolate_position_get(&tri.p2, &pos0, &pos1, pos_weight, i + 2);
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
@@ -481,15 +444,15 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
           }
         else if (pdmesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP)
           {
-             _position_get(&tri.p1, &pos0, &pos1, pos_weight, 0);
-             _position_get(&tri.p2, &pos0, &pos1, pos_weight, 1);
+             evas_3d_mesh_interpolate_position_get(&tri.p1, &pos0, &pos1, pos_weight, 0);
+             evas_3d_mesh_interpolate_position_get(&tri.p2, &pos0, &pos1, pos_weight, 1);
 
              for (i = 0; i < pdmesh->index_count - 2; i++)
                {
                   tri.p0 = tri.p1;
                   tri.p1 = tri.p2;
 
-                  _position_get(&tri.p2, &pos0, &pos1, pos_weight, i + 2);
+                  evas_3d_mesh_interpolate_position_get(&tri.p2, &pos0, &pos1, pos_weight, i + 2);
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
@@ -502,14 +465,14 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
           }
         else if (pdmesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_FAN)
           {
-             _position_get(&tri.p0, &pos0, &pos1, pos_weight, 0);
-             _position_get(&tri.p2, &pos0, &pos1, pos_weight, 1);
+             evas_3d_mesh_interpolate_position_get(&tri.p0, &pos0, &pos1, pos_weight, 0);
+             evas_3d_mesh_interpolate_position_get(&tri.p2, &pos0, &pos1, pos_weight, 1);
 
              for (i = 1; i < pdmesh->index_count - 1; i++)
                {
                   tri.p1 = tri.p2;
 
-                  _position_get(&tri.p2, &pos0, &pos1, pos_weight, i + 1);
+                  evas_3d_mesh_interpolate_position_get(&tri.p2, &pos0, &pos1, pos_weight, i + 1);
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
@@ -527,9 +490,9 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
           {
              for (i = 0; i < pdmesh->vertex_count; i += 3)
                {
-                  _position_get(&tri.p0, &pos0, &pos1, pos_weight, i);
-                  _position_get(&tri.p1, &pos0, &pos1, pos_weight, i + 1);
-                  _position_get(&tri.p2, &pos0, &pos1, pos_weight, i + 2);
+                  evas_3d_mesh_interpolate_position_get(&tri.p0, &pos0, &pos1, pos_weight, i);
+                  evas_3d_mesh_interpolate_position_get(&tri.p1, &pos0, &pos1, pos_weight, i + 1);
+                  evas_3d_mesh_interpolate_position_get(&tri.p2, &pos0, &pos1, pos_weight, i + 2);
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
@@ -542,15 +505,15 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
           }
         else if (pdmesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP)
           {
-             _position_get(&tri.p1, &pos0, &pos1, pos_weight, 0);
-             _position_get(&tri.p2, &pos0, &pos1, pos_weight, 1);
+             evas_3d_mesh_interpolate_position_get(&tri.p1, &pos0, &pos1, pos_weight, 0);
+             evas_3d_mesh_interpolate_position_get(&tri.p2, &pos0, &pos1, pos_weight, 1);
 
              for (i = 0; i < pdmesh->vertex_count - 2; i++)
                {
                   tri.p0 = tri.p1;
                   tri.p1 = tri.p2;
 
-                  _position_get(&tri.p2, &pos0, &pos1, pos_weight, i + 2);
+                  evas_3d_mesh_interpolate_position_get(&tri.p2, &pos0, &pos1, pos_weight, i + 2);
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {
@@ -563,14 +526,14 @@ _pick_data_mesh_add(Evas_3D_Pick_Data *data, const Evas_Ray3 *ray,
           }
         else if (pdmesh->assembly == EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_FAN)
           {
-             _position_get(&tri.p0, &pos0, &pos1, pos_weight, 0);
-             _position_get(&tri.p2, &pos0, &pos1, pos_weight, 1);
+             evas_3d_mesh_interpolate_position_get(&tri.p0, &pos0, &pos1, pos_weight, 0);
+             evas_3d_mesh_interpolate_position_get(&tri.p2, &pos0, &pos1, pos_weight, 1);
 
              for (i = 1; i < pdmesh->vertex_count - 1; i++)
                {
                   tri.p1 = tri.p2;
 
-                  _position_get(&tri.p2, &pos0, &pos1, pos_weight, i + 1);
+                  evas_3d_mesh_interpolate_position_get(&tri.p2, &pos0, &pos1, pos_weight, i + 1);
 
                   if (_pick_data_triangle_add(data, ray, &tri))
                     {

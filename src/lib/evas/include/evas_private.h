@@ -1720,6 +1720,7 @@ void evas_3d_light_node_del(Evas_3D_Light *light, Evas_3D_Node *node);
 /* Mesh functions. */
 void evas_3d_mesh_node_add(Evas_3D_Mesh *mesh, Evas_3D_Node *node);
 void evas_3d_mesh_node_del(Evas_3D_Mesh *mesh, Evas_3D_Node *node);
+void evas_3d_mesh_interpolate_position_get(Evas_Vec3 *out, const Evas_3D_Vertex_Buffer *pos0, const Evas_3D_Vertex_Buffer *pos1, Evas_Real weight, int index);
 void evas_3d_mesh_interpolate_vertex_buffer_get(Evas_3D_Mesh *mesh, int frame, Evas_3D_Vertex_Attrib attrib, Evas_3D_Vertex_Buffer *buffer0, Evas_3D_Vertex_Buffer *buffer1, Evas_Real *weight);
 void evas_3d_mesh_file_md2_set(Evas_3D_Mesh *mesh, const char *file);
 void evas_3d_mesh_save_obj(Evas_3D_Mesh *mesh, const char *file, Evas_3D_Mesh_Frame *f);

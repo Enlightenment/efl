@@ -911,14 +911,52 @@ _evas_3d_mesh_from_primitive_set(Eo *obj,
    evas_common_set_model_from_primitive(obj, frame, ppd);
 }
 
+void
+evas_3d_mesh_interpolate_position_get(Evas_Vec3 *out, const Evas_3D_Vertex_Buffer *pos0, const Evas_3D_Vertex_Buffer *pos1,
+              Evas_Real weight, int index)
+{
+   if (pos1->data == NULL)
+     {
+        float *ptr;
+
+        if (pos0->stride != 0.0)
+          ptr = (char *)pos0->data + pos0->stride * index;
+        else
+          ptr = (char *)pos0->data + (3 * sizeof(float)) * index;
+
+        out->x = ptr[0];
+        out->y = ptr[1];
+        out->z = ptr[2];
+     }
+   else
+     {
+        float *ptr0, *ptr1;
+
+        if (pos0->stride != 0.0)
+          ptr0 = (char *)pos0->data + pos0->stride * index;
+        else
+          ptr0 = (char *)pos0->data + (3 * sizeof(float)) * index;
+
+        if (pos1->stride != 0.0)
+          ptr1 = (char *)pos1->data + pos1->stride * index;
+        else
+          ptr1 = (char *)pos1->data + (3 * sizeof(float)) * index;
+
+        out->x = ptr0[0] * weight + ptr1[0] * (1.0 - weight);
+        out->y = ptr0[1] * weight + ptr1[1] * (1.0 - weight);
+        out->z = ptr0[2] * weight + ptr1[2] * (1.0 - weight);
+     }
+}
+
 static inline void
-_mesh_frame_find(Evas_3D_Mesh_Data *mesh, int frame,
+_mesh_frame_find(Evas_3D_Mesh *mesh, int frame,
                  Eina_List **l, Eina_List **r)
 {
    Eina_List *left, *right;
    Evas_3D_Mesh_Frame *f0 = NULL, *f1;
+   Evas_3D_Mesh_Data *pdmesh = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
 
-   left = mesh->frames;
+   left = pdmesh->frames;
    right = eina_list_next(left);
 
    while (right)
@@ -945,6 +983,7 @@ _mesh_frame_find(Evas_3D_Mesh_Data *mesh, int frame,
              *l = left;
              *r = NULL;
           }
+        return;
      }
 
    *l = left;
@@ -960,8 +999,7 @@ evas_3d_mesh_interpolate_vertex_buffer_get(Evas_3D_Mesh *mesh, int frame,
 {
    Eina_List *l, *r;
    const Evas_3D_Mesh_Frame *f0 = NULL, *f1 = NULL;
-   Evas_3D_Mesh_Data *pd = eo_data_scope_get(mesh, MY_CLASS);
-   _mesh_frame_find(pd, frame, &l, &r);
+   _mesh_frame_find(mesh, frame, &l, &r);
 
    while (l)
      {
