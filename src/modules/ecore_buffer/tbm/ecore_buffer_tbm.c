@@ -229,8 +229,6 @@ _ecore_buffer_tbm_buffer_import(Ecore_Buffer_Module_Data bmdata, int w, int h, E
    Ecore_Buffer_Module_Tbm_Data *bm = bmdata;
    Ecore_Buffer_Tbm_Data *buf;
    tbm_bo bo;
-   tbm_surface_info_s info;
-   int i, num_plane;
 
    if (type != EXPORT_TYPE_FD) return NULL;
    if (export_id < 1) return NULL;
@@ -246,34 +244,14 @@ _ecore_buffer_tbm_buffer_import(Ecore_Buffer_Module_Data bmdata, int w, int h, E
    buf->is_imported = EINA_TRUE;
 
    bo = tbm_bo_import_fd(bm->tbm_mgr, export_id);
-   if (!bo)
-     {
-        free(buf);
-        return NULL;
-     }
+   buf->tbm_surface = tbm_surface_internal_create_with_bos(buf->w, buf->h, format, &bo, 1);
+   tbm_bo_unref(bo);
 
-   num_plane = _buf_get_num_planes(format);
-   info.width = w;
-   info.height = h;
-   info.format = format;
-   info.bpp = _buf_get_bpp(format);
-   info.size = w * h * info.bpp;
-   for ( i = 0 ; i < num_plane ; i++)
-   {
-      info.planes[i].size = w * h * info.bpp;
-      info.planes[i].stride = w * info.bpp;
-      info.planes[i].offset = 0;
-   }
-
-   buf->tbm_surface = tbm_surface_internal_create_with_bos(&info, &bo, 1);
    if (!buf->tbm_surface)
      {
-        tbm_bo_unref(bo);
         free(buf);
         return NULL;
      }
-
-   tbm_bo_unref(bo);
 
    return buf;
 }
