@@ -1190,6 +1190,13 @@ eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
        (dst->w == dst_w) && (dst->h == dst_h))
      return dst;
 
+   evas_gl_common_image_update(gc, src);
+   if (!src->tex)
+     {
+        ERR("No source texture.");
+        return NULL;
+     }
+
    if (dst)
      {
         if (dst->scaled.origin == src)
@@ -1205,12 +1212,6 @@ eng_image_scaled_update(void *data EINA_UNUSED, void *scaled, void *image,
              reffed = EINA_TRUE;
           }
         evas_gl_common_image_free(dst);
-     }
-   evas_gl_common_image_update(gc, src);
-   if (!src->tex)
-     {
-        ERR("No source texture.");
-        return NULL;
      }
 
    dst = calloc(1, sizeof(Evas_GL_Image));
