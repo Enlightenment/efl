@@ -346,7 +346,7 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
    Ecore_Evas_Interface_Drm *iface;
    Ecore_Evas_Engine_Drm_Data *edata;
    int method;
-   uint32_t format = GBM_FORMAT_ARGB8888;
+   uint32_t format = GBM_FORMAT_XRGB8888;
    uint32_t flags  = GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING;
    char *num;
 
