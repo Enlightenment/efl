@@ -59,6 +59,8 @@
 
 ELM_PRIV_ENTRY_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
 
+#define ENTRY_PASSWORD_MASK_CHARACTER 0x002A
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    ELM_PRIV_ENTRY_SIGNALS(ELM_PRIV_SMART_CALLBACKS_DESC)
    {SIG_WIDGET_LANG_CHANGED, ""}, /**< handled by elm_widget */
@@ -3813,6 +3815,7 @@ _elm_entry_password_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool password)
         sd->line_wrap = ELM_WRAP_NONE;
         elm_entry_input_hint_set(obj, ((sd->input_hints & ~ELM_INPUT_HINT_AUTO_COMPLETE) | ELM_INPUT_HINT_SENSITIVE_DATA));
         _entry_selection_callbacks_unregister(obj);
+        elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_PASSWORD_TEXT);
      }
    else
      {
@@ -3825,6 +3828,7 @@ _elm_entry_password_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool password)
 
         elm_entry_input_hint_set(obj, ((sd->input_hints | ELM_INPUT_HINT_AUTO_COMPLETE) & ~ELM_INPUT_HINT_SENSITIVE_DATA));
         _entry_selection_callbacks_register(obj);
+        elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_ENTRY);
      }
 
    eo_do(obj, elm_obj_widget_theme_apply());
@@ -5112,6 +5116,9 @@ _elm_entry_elm_interface_atspi_text_character_get(Eo *obj, Elm_Entry_Data *_pd E
 
    free(txt);
 
+   if (_pd->password)
+     ret = ENTRY_PASSWORD_MASK_CHARACTER;
+
    return ret;
 }
 
@@ -5198,6 +5205,13 @@ _elm_entry_elm_interface_atspi_text_string_get(Eo *obj, Elm_Entry_Data *_pd EINA
    evas_textblock_cursor_free(cur);
    evas_textblock_cursor_free(cur2);
 
+   if (ret && _pd->password)
+     {
+        int i = 0;
+        while (ret[i] != '\0')
+         ret[i++] = ENTRY_PASSWORD_MASK_CHARACTER;
+     }
+
    return ret;
 
 fail:
@@ -5232,6 +5246,13 @@ _elm_entry_elm_interface_atspi_text_text_get(Eo *obj, Elm_Entry_Data *_pd EINA_U
 
    evas_textblock_cursor_free(cur);
    evas_textblock_cursor_free(cur2);
+
+   if (ret && _pd->password)
+     {
+        int i = 0;
+        while (ret[i] != '\0')
+         ret[i++] = ENTRY_PASSWORD_MASK_CHARACTER;
+     }
 
    return ret;
 
@@ -5645,6 +5666,13 @@ _elm_entry_elm_interface_atspi_accessible_state_set_get(Eo *obj, Elm_Entry_Data 
      STATE_TYPE_SET(ret, ELM_ATSPI_STATE_EDITABLE);
 
    return ret;
+}
+
+EOLIAN static char*
+_elm_entry_elm_interface_atspi_accessible_name_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+{
+   const char *ret = edje_object_part_text_get(sd->entry_edje, "elm.guide");
+   return ret ? strdup(ret) : NULL;
 }
 
 #include "elm_entry.eo.c"
