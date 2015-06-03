@@ -1199,8 +1199,7 @@ endif
 if BUILD_ENGINE_GL_DRM
 dist_installed_evasmainheaders_DATA += modules/evas/engines/gl_drm/Evas_Engine_GL_Drm.h
 GL_DRM_SOURCES = \
-modules/evas/engines/gl_drm/evas_drm.c \
-modules/evas/engines/gl_drm/evas_drm_main.c \
+modules/evas/engines/gl_drm/evas_outbuf.c \
 modules/evas/engines/gl_drm/evas_engine.c \
 modules/evas/engines/gl_drm/evas_engine.h \
 modules/evas/engines/gl_drm/Evas_Engine_GL_Drm.h
