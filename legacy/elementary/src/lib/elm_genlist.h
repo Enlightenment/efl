@@ -132,7 +132,7 @@
  * "states", respectively. For each of those properties, if more than one
  * part is provided, they must have names listed separated by spaces in the
  * data fields. For the default genlist item theme, we have @b one text
- * part (@c "elm.text"), @b two content parts (@c "elm.swalllow.icon" and @c
+ * part (@c "elm.text"), @b two content parts (@c "elm.swallow.icon" and @c
  * "elm.swallow.end") and @b no state parts.
  *
  * A genlist item may be at one of several styles. Elementary provides one
@@ -218,7 +218,7 @@
  * fill the width of the viewport of the scroller. If it is
  * ELM_LIST_LIMIT, items will be expanded to the viewport width
  * if larger than the item, but genlist widget witdh is
- * limited to the largest item. Do not use ELM_LIST_LIMIT mode with homogenous
+ * limited to the largest item. Do not use ELM_LIST_LIMIT mode with homogeneous
  * mode turned on. ELM_LIST_COMPRESS can be combined with a different style
  * that uses edjes' ellipsis feature (cutting text off like this: "tex...").
  *
@@ -380,7 +380,7 @@
  *   was unhighlighted.
  * - @c "focused" - When the genlist has received focus. (since 1.8)
  * - @c "unfocused" - When the genlist has lost focus. (since 1.8)
- * - @c "item,focused" - When the genlist item has recieved focus. (since 1.10)
+ * - @c "item,focused" - When the genlist item has received focus. (since 1.10)
  * - @c "item,unfocused" - When the genlist item has lost focus. (since 1.10)
  *
  *
