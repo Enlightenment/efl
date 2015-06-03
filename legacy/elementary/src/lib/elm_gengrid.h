@@ -58,7 +58,7 @@
  * than one part is provided, they must have names listed separated
  * by spaces in the data fields. For the default gengrid item
  * theme, we have @b one text part (@c "elm.text"), @b two content
- * parts (@c "elm.swalllow.icon" and @c "elm.swallow.end") and @b
+ * parts (@c "elm.swallow.icon" and @c "elm.swallow.end") and @b
  * no state parts.
  *
  * A gengrid item may be at one of several styles. Elementary
