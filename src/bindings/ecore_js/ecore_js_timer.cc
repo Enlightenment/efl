@@ -175,7 +175,7 @@ void register_timer_add(v8::Isolate *isolate, v8::Handle<v8::Object> global,
                 = reinterpret_cast<compatibility_persistent<Value>*>(data);
             auto closure = Function::Cast(*persistent->handle());
 
-            auto ret = closure->Call(Undefined(persistent->GetIsolate()), 0,
+            auto ret = closure->Call(Undefined(v8::Isolate::GetCurrent()), 0,
                                      NULL);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
@@ -219,7 +219,7 @@ void register_timer_loop_add(v8::Isolate *isolate,
                 = reinterpret_cast<compatibility_persistent<Value>*>(d);
             auto closure = Function::Cast(*persistent->handle());
 
-            auto ret = closure->Call(Undefined(persistent->GetIsolate()), 0,
+            auto ret = closure->Call(Undefined(v8::Isolate::GetCurrent()), 0,
                                      NULL);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 

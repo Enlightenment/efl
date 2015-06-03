@@ -197,7 +197,7 @@ void register_mainloop_thread_safe_call_async(v8::Isolate *isolate,
                     = reinterpret_cast<compatibility_persistent<Value>*>(data);
                 auto closure = Function::Cast(*persistent->handle());
 
-                closure->Call(Undefined(persistent->GetIsolate()), 0, NULL);
+                closure->Call(Undefined(v8::Isolate::GetCurrent()), 0, NULL);
 
                 delete persistent;
             }, f);
@@ -229,7 +229,7 @@ void register_mainloop_thread_safe_call_sync(v8::Isolate *isolate,
         void *data = ecore_main_loop_thread_safe_call_sync([](void *data) {
                 compatibility_persistent<Value> *persistent
                     = reinterpret_cast<compatibility_persistent<Value>*>(data);
-                auto isolate = persistent->GetIsolate();
+                auto isolate = v8::Isolate::GetCurrent();
                 auto closure = Function::Cast(*persistent->handle());
                 auto res = closure->Call(Undefined(isolate), 0, NULL);
                 void *ret = new compatibility_persistent<Value>(isolate, res);

@@ -62,7 +62,7 @@ void register_job_add(v8::Isolate *isolate, v8::Handle<v8::Object> global,
                     = reinterpret_cast<compatibility_persistent<Value>*>(data);
                 auto closure = Function::Cast(*persistent->handle());
 
-                closure->Call(Undefined(persistent->GetIsolate()), 0, NULL);
+                closure->Call(Undefined(v8::Isolate::GetCurrent()), 0, NULL);
 
                 delete persistent;
             }, f);

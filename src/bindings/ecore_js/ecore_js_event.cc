@@ -294,7 +294,7 @@ void register_event_handler_add(v8::Isolate *isolate,
                 = reinterpret_cast<compatibility_persistent<Value>*>(d);
             auto closure = Function::Cast(*persistent->handle());
 
-            auto isolate = persistent->GetIsolate();
+            auto isolate = v8::Isolate::GetCurrent();
             Handle<Value> args = compatibility_new<Integer>(isolate, type);
 
             auto ret = closure->Call(Undefined(isolate), 1, &args);
@@ -338,7 +338,7 @@ void register_event_filter_add(v8::Isolate *isolate,
 
         auto start_cb = [](void *data) -> void* {
             auto p = reinterpret_cast<compatibility_persistent<Value>*>(data);
-            auto isolate = p->GetIsolate();
+            auto isolate = v8::Isolate::GetCurrent();
             auto closure = Function::Cast(*p->handle());
 
             auto ret = closure->Call(Undefined(isolate), 0, NULL);
@@ -350,7 +350,7 @@ void register_event_filter_add(v8::Isolate *isolate,
             typedef compatibility_persistent<Value> p_t;
 
             auto p = reinterpret_cast<p_t*>(data) + 1;
-            auto isolate = p->GetIsolate();
+            auto isolate = v8::Isolate::GetCurrent();
             auto closure = Function::Cast(*p->handle());
 
             Handle<Value> args[2]{
@@ -374,7 +374,7 @@ void register_event_filter_add(v8::Isolate *isolate,
 
             Handle<Value> args = p->handle();
 
-            closure->Call(Undefined(p->GetIsolate()), 1, &args);
+            closure->Call(Undefined(v8::Isolate::GetCurrent()), 1, &args);
         };
 
         auto ret = ecore_event_filter_add(start_cb, filter_cb, end_cb, p);
@@ -529,7 +529,7 @@ void register_event_signal_user_handler_add(v8::Isolate *isolate,
 
         auto cb = [](void *d, int type, void *event) -> Eina_Bool {
             auto p = reinterpret_cast<compatibility_persistent<Value>*>(d);
-            auto isolate = p->GetIsolate();
+            auto isolate = v8::Isolate::GetCurrent();
             auto closure = Function::Cast(*p->handle());
 
             auto wrapped_event = compatibility_new<Object>(isolate);
@@ -586,7 +586,7 @@ void register_event_signal_exit_handler_add(v8::Isolate *isolate,
 
         auto cb = [](void *d, int type, void *ev) -> Eina_Bool {
             auto p = reinterpret_cast<compatibility_persistent<Value>*>(d);
-            auto isolate = p->GetIsolate();
+            auto isolate = v8::Isolate::GetCurrent();
             auto closure = Function::Cast(*p->handle());
 
             auto wrapped_event = compatibility_new<Object>(isolate);
@@ -653,7 +653,7 @@ void register_event_signal_realtime_handler_add(v8::Isolate *isolate,
 
         auto cb = [](void *d, int type, void *ev) -> Eina_Bool {
             auto p = reinterpret_cast<compatibility_persistent<Value>*>(d);
-            auto isolate = p->GetIsolate();
+            auto isolate = v8::Isolate::GetCurrent();
             auto closure = Function::Cast(*p->handle());
 
             auto wrapped_event = compatibility_new<Object>(isolate);
