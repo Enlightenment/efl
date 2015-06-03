@@ -1771,6 +1771,10 @@ void _evas_canvas3d_eet_file_init(void);
 void _evas_canvas3d_eet_descriptor_shutdown(void);
 void _evas_canvas3d_eet_file_free(void);
 
+/* Filters */
+void evas_filter_init(void);
+void evas_filter_shutdown(void);
+
 /* Temporary save/load functions */
 void evas_common_load_model_from_file(Evas_Canvas3D_Mesh *model, const char *file);
 void evas_common_load_model_from_eina_file(Evas_Canvas3D_Mesh *model, const Eina_File *file);

@@ -1,8 +1,8 @@
-#include "evas_filter.h"
-#include "evas_filter_private.h"
-
 #include <math.h>
 #include <time.h>
+
+#include "evas_filter.h"
+#include "evas_filter_private.h"
 
 static int
 _box_blur_auto_radius(int *radii, int r)

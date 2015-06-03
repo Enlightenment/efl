@@ -1,10 +1,9 @@
 /* Simple bump map algorithms for the software engine */
 
-#include "evas_filter_private.h"
-#include "evas_blend_private.h"
-
 #include <math.h>
 
+#include "evas_filter_private.h"
+#include "evas_blend_private.h"
 
 #ifdef CLAMP
 # undef CLAMP

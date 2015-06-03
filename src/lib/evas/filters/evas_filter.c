@@ -15,12 +15,12 @@
  */
 
 #include "evas_filter.h"
-#include "evas_private.h"
-#include "evas_filter_private.h"
 
 #ifdef EVAS_CSERVE2
 # include "evas_cs2_private.h"
 #endif
+
+#include "evas_filter_private.h"
 
 #define _assert(a) if (!(a)) CRI("Failed on %s", #a);
 
@@ -1983,4 +1983,25 @@ evas_filter_run(Evas_Filter_Context *ctx)
    if (ctx->post_run.cb)
      ctx->post_run.cb(ctx, ctx->post_run.data, ret);
    return ret;
+}
+
+
+/* Logging */
+
+static int init_cnt = 0;
+int _evas_filter_log_dom = 0;
+
+void
+evas_filter_init()
+{
+   if ((init_cnt++) > 0) return;
+   _evas_filter_log_dom = eina_log_domain_register("evas_filter", EVAS_FILTER_LOG_COLOR);
+}
+
+void
+evas_filter_shutdown()
+{
+   if ((--init_cnt) > 0) return;
+   eina_log_domain_unregister(_evas_filter_log_dom);
+   _evas_filter_log_dom = 0;
 }

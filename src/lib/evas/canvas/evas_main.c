@@ -62,6 +62,7 @@ evas_init(void)
    }
 #endif
    _evas_preload_thread_init();
+   evas_filter_init();
 
    evas_thread_init();
 
@@ -118,6 +119,12 @@ evas_shutdown(void)
    evas_object_image_pixels_cow = NULL;
    evas_object_image_load_opts_cow = NULL;
    evas_object_image_state_cow = NULL;
+
+   evas_filter_shutdown();
+   eina_cow_del(evas_object_filter_cow);
+   eina_cow_del(evas_object_mask_cow);
+   evas_object_filter_cow = NULL;
+   evas_object_mask_cow = NULL;
 
    evas_thread_shutdown();
    _evas_preload_thread_shutdown();
