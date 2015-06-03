@@ -2063,7 +2063,7 @@ _elm_scroll_momentum_animator(void *data)
         if (!_elm_config->thumbscroll_bounce_enable || !sid->bounce_vert)
           {
              if (y <= miny) no_bounce_y_end = EINA_TRUE;
-             if (sid->loop_v && (y - miny) >= maxy) no_bounce_y_end = EINA_TRUE;
+             if (!sid->loop_v && (y - miny) >= maxy) no_bounce_y_end = EINA_TRUE;
           }
         if ((dt >= 1.0) ||
             ((sid->down.bounce_x_hold) && (sid->down.bounce_y_hold)) ||
