@@ -481,6 +481,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         def->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
+   test_next(ls, TOK_DOC);
    while (ls->t.token != '}')
      {
         const char *fname;
@@ -507,6 +508,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
              fdef->comment = eina_stringshare_ref(ls->t.value.s);
              eo_lexer_get(ls);
           }
+        test_next(ls, TOK_DOC);
      }
    check_match(ls, '}', '{', bline, bcolumn);
    FILL_BASE(def->base, ls, line, column);
@@ -540,6 +542,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         def->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
+   test_next(ls, TOK_DOC);
    if (ls->t.token == TOK_VALUE && ls->t.kw == KW_legacy)
      {
          if (eo_lexer_lookahead(ls) == ':')
@@ -624,6 +627,7 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
              fdef->comment = eina_stringshare_ref(ls->t.value.s);
              eo_lexer_get(ls);
           }
+        test_next(ls, TOK_DOC);
         if (!want_next)
           break;
      }
@@ -882,6 +886,7 @@ parse_typedef(Eo_Lexer *ls)
         def->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
+   test_next(ls, TOK_DOC);
    return def;
 }
 
@@ -933,6 +938,7 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
         def->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
+   test_next(ls, TOK_DOC);
    return def;
 }
 
@@ -976,6 +982,7 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void)
         ret->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
+   test_next(ls, TOK_DOC);
 }
 
 static void
@@ -1057,6 +1064,7 @@ end:
         par->description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
+   test_next(ls, TOK_DOC);
 }
 
 static void
@@ -1121,6 +1129,7 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
           prop->set_description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
+   test_next(ls, TOK_DOC);
    for (;;) switch (ls->t.kw)
      {
       case KW_return:
@@ -1250,6 +1259,7 @@ body:
         prop->common_description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
+   test_next(ls, TOK_DOC);
    for (;;) switch (ls->t.kw)
      {
       case KW_get:
@@ -1335,6 +1345,7 @@ body:
         meth->common_description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
+   test_next(ls, TOK_DOC);
    for (;;) switch (ls->t.kw)
      {
       case KW_return:
@@ -1587,6 +1598,7 @@ parse_event(Eo_Lexer *ls)
         ev->comment = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
+   test_next(ls, TOK_DOC);
    ev->klass = ls->tmp.kls;
 }
 
@@ -1663,6 +1675,7 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
         ls->tmp.kls->description = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
      }
+   test_next(ls, TOK_DOC);
    if (type == EOLIAN_CLASS_INTERFACE)
      {
         ls->tmp.kls->data_type = eina_stringshare_add("null");
@@ -1931,6 +1944,7 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                      def->comment = eina_stringshare_ref(ls->t.value.s);
                      eo_lexer_get(ls);
                   }
+                test_next(ls, TOK_DOC);
                 FILL_BASE(def->base, ls, line, col);
                 database_struct_add(def);
                 pop_type(ls);
