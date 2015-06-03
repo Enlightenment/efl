@@ -7,18 +7,6 @@
 
 namespace efl { namespace ecore { namespace js {
 
-struct persistent_with_isolate_t
-{
-    template<class S>
-    persistent_with_isolate_t(v8::Isolate *isolate, v8::Handle<S> that)
-        : isolate(isolate)
-        , persistent(isolate, that)
-    {}
-
-    v8::Isolate *isolate;
-    v8::Persistent<v8::Value> persistent;
-};
-
 static Ecore_Event *extract_event(v8::Local<v8::Object> object)
 {
     return compatibility_get_pointer_internal_field<Ecore_Event*>(object, 0);
@@ -63,6 +51,7 @@ static v8::Local<v8::Object> wrap_event_handler(Ecore_Event_Handler *handler,
     using v8::String;
     using v8::ObjectTemplate;
     using v8::FunctionTemplate;
+    using v8::Value;
 
     auto obj_tpl = compatibility_new<ObjectTemplate>(isolate);
     obj_tpl->SetInternalFieldCount(1);
@@ -75,7 +64,7 @@ static v8::Local<v8::Object> wrap_event_handler(Ecore_Event_Handler *handler,
 
         auto p = ecore_event_handler_del(extract_event_handler(info.This()));
 
-        delete reinterpret_cast<persistent_with_isolate_t*>(p);
+        delete reinterpret_cast<compatibility_persistent<Value>*>(p);
     };
 
     ret->Set(compatibility_new<String>(isolate, "del"),
@@ -98,6 +87,7 @@ static v8::Local<v8::Object> wrap_event_filter(Ecore_Event_Filter *filter,
     using v8::String;
     using v8::ObjectTemplate;
     using v8::FunctionTemplate;
+    using v8::Value;
 
     auto obj_tpl = compatibility_new<ObjectTemplate>(isolate);
     obj_tpl->SetInternalFieldCount(1);
@@ -109,7 +99,7 @@ static v8::Local<v8::Object> wrap_event_filter(Ecore_Event_Filter *filter,
             return compatibility_return();
 
         auto p = ecore_event_filter_del(extract_event_filter(info.This()));
-        delete[] reinterpret_cast<persistent_with_isolate_t*>(p);
+        delete[] reinterpret_cast<compatibility_persistent<Value>*>(p);
     };
 
     ret->Set(compatibility_new<String>(isolate, "del"),
@@ -297,18 +287,17 @@ void register_event_handler_add(v8::Isolate *isolate,
 
         auto isolate = args.GetIsolate();
 
-        auto p = new persistent_with_isolate_t(isolate, args[1]);
+        auto p = new compatibility_persistent<Value>(isolate, args[1]);
 
         auto cb = [](void *d, int type, void */*event*/) -> Eina_Bool {
-            auto persistent = reinterpret_cast<persistent_with_isolate_t*>(d);
-            auto value = Local<Value>::New(persistent->isolate,
-                                           persistent->persistent);
-            auto closure = Function::Cast(*value);
+            auto persistent
+                = reinterpret_cast<compatibility_persistent<Value>*>(d);
+            auto closure = Function::Cast(*persistent->handle());
 
-            Handle<Value> args = compatibility_new<Integer>(persistent->isolate,
-                                                            type);
+            auto isolate = persistent->GetIsolate();
+            Handle<Value> args = compatibility_new<Integer>(isolate, type);
 
-            auto ret = closure->Call(Undefined(persistent->isolate), 1, &args);
+            auto ret = closure->Call(Undefined(isolate), 1, &args);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             return bret ? EINA_TRUE : EINA_FALSE;
@@ -343,54 +332,49 @@ void register_event_filter_add(v8::Isolate *isolate,
 
         auto isolate = args.GetIsolate();
 
-        auto p = new persistent_with_isolate_t[3]{{isolate, args[0]},
-                                                  {isolate, args[1]},
-                                                  {isolate, args[2]}};
+        auto p = new compatibility_persistent<Value>[3]{{isolate, args[0]},
+                                                        {isolate, args[1]},
+                                                        {isolate, args[2]}};
 
         auto start_cb = [](void *data) -> void* {
-            auto p = reinterpret_cast<persistent_with_isolate_t*>(data);
-            auto value = Local<Value>::New(p->isolate, p->persistent);
-            auto closure = Function::Cast(*value);
+            auto p = reinterpret_cast<compatibility_persistent<Value>*>(data);
+            auto isolate = p->GetIsolate();
+            auto closure = Function::Cast(*p->handle());
 
-            auto ret = closure->Call(Undefined(p->isolate), 0, NULL);
-            return new persistent_with_isolate_t{p->isolate, ret};
+            auto ret = closure->Call(Undefined(isolate), 0, NULL);
+            return new compatibility_persistent<Value>{isolate, ret};
         };
 
         auto filter_cb = [](void *data, void *loop_data, int type,
                             void */*event*/) -> Eina_Bool {
-            typedef persistent_with_isolate_t p_t;
+            typedef compatibility_persistent<Value> p_t;
 
             auto p = reinterpret_cast<p_t*>(data) + 1;
-            auto value = Local<Value>::New(p->isolate, p->persistent);
-            auto closure = Function::Cast(*value);
+            auto isolate = p->GetIsolate();
+            auto closure = Function::Cast(*p->handle());
 
             Handle<Value> args[2]{
-                [loop_data]() {
-                    auto ret = reinterpret_cast<p_t*>(loop_data);
-                    return Local<Value>::New(ret->isolate, ret->persistent);
-                }(),
-                compatibility_new<Integer>(p->isolate, type)
+                reinterpret_cast<p_t*>(loop_data)->handle(),
+                compatibility_new<Integer>(isolate, type)
             };
 
-            auto ret = closure->Call(Undefined(p->isolate), 2, args);
+            auto ret = closure->Call(Undefined(isolate), 2, args);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             return bret ? EINA_TRUE : EINA_FALSE;
         };
 
         auto end_cb = [](void *user_data, void *func_data) -> void {
-            typedef persistent_with_isolate_t p_t;
+            typedef compatibility_persistent<Value> p_t;
 
             auto loop_data = std::unique_ptr<p_t>(reinterpret_cast<p_t*>
                                                   (func_data));
             auto p = reinterpret_cast<p_t*>(user_data) + 2;
-            auto value = Local<Value>::New(p->isolate, p->persistent);
-            auto closure = Function::Cast(*value);
+            auto closure = Function::Cast(*p->handle());
 
-            Handle<Value> args = Local<Value>::New(loop_data->isolate,
-                                                   loop_data->persistent);
+            Handle<Value> args = p->handle();
 
-            closure->Call(Undefined(p->isolate), 1, &args);
+            closure->Call(Undefined(p->GetIsolate()), 1, &args);
         };
 
         auto ret = ecore_event_filter_add(start_cb, filter_cb, end_cb, p);
@@ -541,29 +525,28 @@ void register_event_signal_user_handler_add(v8::Isolate *isolate,
 
         auto isolate = args.GetIsolate();
 
-        auto p = new persistent_with_isolate_t(isolate, args[0]);
+        auto p = new compatibility_persistent<Value>(isolate, args[0]);
 
         auto cb = [](void *d, int type, void *event) -> Eina_Bool {
-            auto p = reinterpret_cast<persistent_with_isolate_t*>(d);
-            auto value = Local<Value>::New(p->isolate, p->persistent);
-            auto closure = Function::Cast(*value);
+            auto p = reinterpret_cast<compatibility_persistent<Value>*>(d);
+            auto isolate = p->GetIsolate();
+            auto closure = Function::Cast(*p->handle());
 
-            auto wrapped_event = compatibility_new<Object>(p->isolate);
+            auto wrapped_event = compatibility_new<Object>(isolate);
 
             {
                 auto n
                     = reinterpret_cast<Ecore_Event_Signal_User*>(event)->number;
-                wrapped_event->Set(compatibility_new<String>(p->isolate,
-                                                             "number"),
-                                   compatibility_new<Integer>(p->isolate, n));
+                wrapped_event->Set(compatibility_new<String>(isolate, "number"),
+                                   compatibility_new<Integer>(isolate, n));
             }
 
             Handle<Value> args[2]{
-                compatibility_new<Integer>(p->isolate, type),
+                compatibility_new<Integer>(isolate, type),
                 wrapped_event
             };
 
-            auto ret = closure->Call(Undefined(p->isolate), 2, args);
+            auto ret = closure->Call(Undefined(isolate), 2, args);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             return bret ? EINA_TRUE : EINA_FALSE;
@@ -599,14 +582,14 @@ void register_event_signal_exit_handler_add(v8::Isolate *isolate,
 
         auto isolate = args.GetIsolate();
 
-        auto p = new persistent_with_isolate_t(isolate, args[0]);
+        auto p = new compatibility_persistent<Value>(isolate, args[0]);
 
         auto cb = [](void *d, int type, void *ev) -> Eina_Bool {
-            auto p = reinterpret_cast<persistent_with_isolate_t*>(d);
-            auto value = Local<Value>::New(p->isolate, p->persistent);
-            auto closure = Function::Cast(*value);
+            auto p = reinterpret_cast<compatibility_persistent<Value>*>(d);
+            auto isolate = p->GetIsolate();
+            auto closure = Function::Cast(*p->handle());
 
-            auto wrapped_event = compatibility_new<Object>(p->isolate);
+            auto wrapped_event = compatibility_new<Object>(isolate);
 
             {
                 auto event = reinterpret_cast<Ecore_Event_Signal_Exit*>(ev);
@@ -614,26 +597,24 @@ void register_event_signal_exit_handler_add(v8::Isolate *isolate,
                 auto quit = event->quit;
                 auto terminate = event->terminate;
 
-                wrapped_event->Set(compatibility_new<String>(p->isolate,
+                wrapped_event->Set(compatibility_new<String>(isolate,
                                                              "interrupt"),
-                                   compatibility_new<Boolean>(p->isolate,
+                                   compatibility_new<Boolean>(isolate,
                                                               interrupt));
-                wrapped_event->Set(compatibility_new<String>(p->isolate,
-                                                             "quit"),
-                                   compatibility_new<Boolean>(p->isolate,
-                                                              quit));
-                wrapped_event->Set(compatibility_new<String>(p->isolate,
+                wrapped_event->Set(compatibility_new<String>(isolate, "quit"),
+                                   compatibility_new<Boolean>(isolate, quit));
+                wrapped_event->Set(compatibility_new<String>(isolate,
                                                              "terminate"),
-                                   compatibility_new<Boolean>(p->isolate,
+                                   compatibility_new<Boolean>(isolate,
                                                               terminate));
             }
 
             Handle<Value> args[2]{
-                compatibility_new<Integer>(p->isolate, type),
+                compatibility_new<Integer>(isolate, type),
                 wrapped_event
             };
 
-            auto ret = closure->Call(Undefined(p->isolate), 2, args);
+            auto ret = closure->Call(Undefined(isolate), 2, args);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             return bret ? EINA_TRUE : EINA_FALSE;
@@ -668,28 +649,28 @@ void register_event_signal_realtime_handler_add(v8::Isolate *isolate,
 
         auto isolate = args.GetIsolate();
 
-        auto p = new persistent_with_isolate_t(isolate, args[0]);
+        auto p = new compatibility_persistent<Value>(isolate, args[0]);
 
         auto cb = [](void *d, int type, void *ev) -> Eina_Bool {
-            auto p = reinterpret_cast<persistent_with_isolate_t*>(d);
-            auto value = Local<Value>::New(p->isolate, p->persistent);
-            auto closure = Function::Cast(*value);
+            auto p = reinterpret_cast<compatibility_persistent<Value>*>(d);
+            auto isolate = p->GetIsolate();
+            auto closure = Function::Cast(*p->handle());
 
-            auto wrapped_event = compatibility_new<Object>(p->isolate);
+            auto wrapped_event = compatibility_new<Object>(isolate);
 
             {
                 auto n
                     = reinterpret_cast<Ecore_Event_Signal_Realtime*>(ev)->num;
-                wrapped_event->Set(compatibility_new<String>(p->isolate, "num"),
-                                   compatibility_new<Integer>(p->isolate, n));
+                wrapped_event->Set(compatibility_new<String>(isolate, "num"),
+                                   compatibility_new<Integer>(isolate, n));
             }
 
             Handle<Value> args[2]{
-                compatibility_new<Integer>(p->isolate, type),
+                compatibility_new<Integer>(isolate, type),
                 wrapped_event
             };
 
-            auto ret = closure->Call(Undefined(p->isolate), 2, args);
+            auto ret = closure->Call(Undefined(isolate), 2, args);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             return bret ? EINA_TRUE : EINA_FALSE;

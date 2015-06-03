@@ -7,18 +7,6 @@
 
 namespace efl { namespace ecore { namespace js {
 
-struct persistent_with_isolate_t
-{
-    template<class S>
-    persistent_with_isolate_t(v8::Isolate *isolate, v8::Handle<S> that)
-        : isolate(isolate)
-        , persistent(isolate, that)
-    {}
-
-    v8::Isolate *isolate;
-    v8::Persistent<v8::Value> persistent;
-};
-
 EAPI
 void register_callback_cancel(v8::Isolate *isolate,
                               v8::Handle<v8::Object> global,
@@ -202,16 +190,14 @@ void register_mainloop_thread_safe_call_async(v8::Isolate *isolate,
         if (args.Length() != 1 || !args[0]->IsFunction())
             return compatibility_return();
 
-        persistent_with_isolate_t *f
-            = new persistent_with_isolate_t(args.GetIsolate(), args[0]);
+        compatibility_persistent<Value> *f
+            = new compatibility_persistent<Value>(args.GetIsolate(), args[0]);
         ecore_main_loop_thread_safe_call_async([](void *data) {
-                persistent_with_isolate_t *persistent
-                    = reinterpret_cast<persistent_with_isolate_t *>(data);
-                auto value = Local<Value>::New(persistent->isolate,
-                                               persistent->persistent);
-                auto closure = Function::Cast(*value);
+                compatibility_persistent<Value> *persistent
+                    = reinterpret_cast<compatibility_persistent<Value>*>(data);
+                auto closure = Function::Cast(*persistent->handle());
 
-                closure->Call(Undefined(persistent->isolate), 0, NULL);
+                closure->Call(Undefined(persistent->GetIsolate()), 0, NULL);
 
                 delete persistent;
             }, f);
@@ -238,25 +224,23 @@ void register_mainloop_thread_safe_call_sync(v8::Isolate *isolate,
         if (args.Length() != 1 || !args[0]->IsFunction())
             return compatibility_return();
 
-        auto f = new persistent_with_isolate_t(args.GetIsolate(), args[0]);
+        auto f = new compatibility_persistent<Value>(args.GetIsolate(),
+                                                     args[0]);
         void *data = ecore_main_loop_thread_safe_call_sync([](void *data) {
-                persistent_with_isolate_t *persistent
-                    = reinterpret_cast<persistent_with_isolate_t*>(data);
-                auto value = Local<Value>::New(persistent->isolate,
-                                                       persistent->persistent);
-                auto closure = Function::Cast(*value);
-                auto res = closure->Call(Undefined(persistent->isolate), 0,
-                                         NULL);
-                void *ret = new persistent_with_isolate_t(persistent->isolate,
-                                                          res);
+                compatibility_persistent<Value> *persistent
+                    = reinterpret_cast<compatibility_persistent<Value>*>(data);
+                auto isolate = persistent->GetIsolate();
+                auto closure = Function::Cast(*persistent->handle());
+                auto res = closure->Call(Undefined(isolate), 0, NULL);
+                void *ret = new compatibility_persistent<Value>(isolate, res);
 
                 delete persistent;
 
                 return ret;
             }, f);
 
-        auto ret = reinterpret_cast<persistent_with_isolate_t*>(data);
-        auto value = Local<Value>::New(ret->isolate, ret->persistent);
+        auto ret = reinterpret_cast<compatibility_persistent<Value>*>(data);
+        auto value = ret->handle();
 
         delete ret;
 

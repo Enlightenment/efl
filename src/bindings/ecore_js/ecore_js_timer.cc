@@ -9,18 +9,6 @@
 
 namespace efl { namespace ecore { namespace js {
 
-struct persistent_with_isolate_t
-{
-    template<class S>
-    persistent_with_isolate_t(v8::Isolate *isolate, v8::Handle<S> that)
-        : isolate(isolate)
-        , persistent(isolate, that)
-    {}
-
-    v8::Isolate *isolate;
-    v8::Persistent<v8::Value> persistent;
-};
-
 static Ecore_Timer* extract_timer(v8::Local<v8::Object> object)
 {
     auto ptr = v8::External::Cast(*object->GetInternalField(0))->Value();
@@ -179,17 +167,16 @@ void register_timer_add(v8::Isolate *isolate, v8::Handle<v8::Object> global,
             return compatibility_return();
         }
 
-        persistent_with_isolate_t *f
-            = new persistent_with_isolate_t(args.GetIsolate(), args[1]);
+        compatibility_persistent<Value> *f
+            = new compatibility_persistent<Value>(args.GetIsolate(), args[1]);
 
         auto cb = [](void *data) -> Eina_Bool {
             auto persistent
-            = reinterpret_cast<persistent_with_isolate_t *>(data);
-            auto value = Local<Value>::New(persistent->isolate,
-                                                   persistent->persistent);
-            auto closure = Function::Cast(*value);
+                = reinterpret_cast<compatibility_persistent<Value>*>(data);
+            auto closure = Function::Cast(*persistent->handle());
 
-            auto ret = closure->Call(Undefined(persistent->isolate), 0, NULL);
+            auto ret = closure->Call(Undefined(persistent->GetIsolate()), 0,
+                                     NULL);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             if (!bret)
@@ -224,17 +211,16 @@ void register_timer_loop_add(v8::Isolate *isolate,
             return compatibility_return();
         }
 
-        persistent_with_isolate_t *f
-            = new persistent_with_isolate_t(args.GetIsolate(), args[1]);
+        compatibility_persistent<Value> *f
+            = new compatibility_persistent<Value>(args.GetIsolate(), args[1]);
 
         auto cb = [](void *d) -> Eina_Bool {
             auto persistent
-            = reinterpret_cast<persistent_with_isolate_t *>(d);
-            auto value = Local<Value>::New(persistent->isolate,
-                                                   persistent->persistent);
-            auto closure = Function::Cast(*value);
+                = reinterpret_cast<compatibility_persistent<Value>*>(d);
+            auto closure = Function::Cast(*persistent->handle());
 
-            auto ret = closure->Call(Undefined(persistent->isolate), 0, NULL);
+            auto ret = closure->Call(Undefined(persistent->GetIsolate()), 0,
+                                     NULL);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             if (!bret)

@@ -7,18 +7,6 @@
 
 namespace efl { namespace ecore { namespace js {
 
-struct persistent_with_isolate_t
-{
-    template<class S>
-    persistent_with_isolate_t(v8::Isolate *isolate, v8::Handle<S> that)
-        : isolate(isolate)
-        , persistent(isolate, that)
-    {}
-
-    v8::Isolate *isolate;
-    v8::Persistent<v8::Value> persistent;
-};
-
 static Ecore_Job* extract_job(v8::Local<v8::Object> object)
 {
     auto ptr = v8::External::Cast(*object->GetInternalField(0))->Value();
@@ -67,16 +55,14 @@ void register_job_add(v8::Isolate *isolate, v8::Handle<v8::Object> global,
         if (args.Length() != 1 || !args[0]->IsFunction())
             return compatibility_return();
 
-        persistent_with_isolate_t *f
-            = new persistent_with_isolate_t(args.GetIsolate(), args[0]);
+        compatibility_persistent<Value> *f
+            = new compatibility_persistent<Value>(args.GetIsolate(), args[0]);
         auto ret = ecore_job_add([](void *data) {
-                persistent_with_isolate_t *persistent
-                    = reinterpret_cast<persistent_with_isolate_t *>(data);
-                auto value = Local<Value>::New(persistent->isolate,
-                                               persistent->persistent);
-                auto closure = Function::Cast(*value);
+                compatibility_persistent<Value> *persistent
+                    = reinterpret_cast<compatibility_persistent<Value>*>(data);
+                auto closure = Function::Cast(*persistent->handle());
 
-                closure->Call(Undefined(persistent->isolate), 0, NULL);
+                closure->Call(Undefined(persistent->GetIsolate()), 0, NULL);
 
                 delete persistent;
             }, f);

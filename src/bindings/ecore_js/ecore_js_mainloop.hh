@@ -14,6 +14,7 @@ using ::efl::eina::js::compatibility_callback_info_type;
 using ::efl::eina::js::compatibility_return;
 using ::efl::eina::js::compatibility_get_pointer_internal_field;
 using ::efl::eina::js::compatibility_set_pointer_internal_field;
+using ::efl::eina::js::compatibility_persistent;
 
 void register_callback_cancel(v8::Isolate *isolate,
                               v8::Handle<v8::Object> global,
