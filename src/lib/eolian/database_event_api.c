@@ -26,6 +26,13 @@ eolian_event_description_get(const Eolian_Event *event)
    return event->comment;
 }
 
+EAPI const Eolian_Documentation *
+eolian_event_documentation_get(const Eolian_Event *event)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(event, NULL);
+   return event->doc;
+}
+
 EAPI Eolian_Object_Scope
 eolian_event_scope_get(const Eolian_Event *event)
 {

@@ -169,6 +169,20 @@ void database_doc_del(Eolian_Documentation *doc)
    free(doc);
 }
 
+EAPI Eina_Stringshare *
+eolian_documentation_summary_get(const Eolian_Documentation *doc)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(doc, NULL);
+   return doc->summary;
+}
+
+EAPI Eina_Stringshare *
+eolian_documentation_description_get(const Eolian_Documentation *doc)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(doc, NULL);
+   return doc->description;
+}
+
 #define EO_SUFFIX ".eo"
 #define EOT_SUFFIX ".eot"
 

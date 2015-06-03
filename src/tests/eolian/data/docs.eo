@@ -2,6 +2,8 @@ struct Foo {
     [[This is struct Foo.
 
       This is a longer description for struct Foo.
+
+      This is another paragraph.
     ]]
     field1: int; [[Field documentation.]]
     field2: float;

@@ -1130,12 +1130,154 @@ END_TEST
 
 START_TEST(eolian_docs)
 {
+   const Eolian_Type *type;
+   const Eolian_Class *class;
+   const Eolian_Event *event;
+   const Eolian_Variable *var;
+   const Eolian_Function *fid;
+   const Eolian_Documentation *doc;
+   const Eolian_Function_Parameter *par;
+   const Eolian_Struct_Type_Field *sfl;
+   const Eolian_Enum_Type_Field *efl;
+   Eina_Iterator *itr;
+
    eolian_init();
 
    fail_if(!eolian_directory_scan(PACKAGE_DATA_DIR"/data"));
 
    fail_if(!eolian_file_parse(PACKAGE_DATA_DIR"/data/docs.eo"));
-   fail_if(!eolian_class_get_by_name("Docs"));
+
+   fail_if(!(type = eolian_type_struct_get_by_name("Foo")));
+   fail_if(!(doc = eolian_type_documentation_get(type)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "This is struct Foo."));
+   fail_if(strcmp(eolian_documentation_description_get(doc),
+                  "This is a longer description for struct Foo.\n\n"
+                  "This is another paragraph."));
+
+   fail_if(!(sfl = eolian_type_struct_field_get(type, "field1")));
+   fail_if(!(doc = eolian_type_struct_field_documentation_get(sfl)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Field documentation."));
+   fail_if(eolian_documentation_description_get(doc));
+
+   fail_if(!(sfl = eolian_type_struct_field_get(type, "field2")));
+   fail_if(eolian_type_struct_field_documentation_get(sfl));
+
+   fail_if(!(sfl = eolian_type_struct_field_get(type, "field3")));
+   fail_if(!(doc = eolian_type_struct_field_documentation_get(sfl)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Another field documentation."));
+   fail_if(eolian_documentation_description_get(doc));
+
+   fail_if(!(type = eolian_type_enum_get_by_name("Bar")));
+   fail_if(!(doc = eolian_type_documentation_get(type)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Docs for enum Bar."));
+   fail_if(eolian_documentation_description_get(doc));
+
+   fail_if(!(efl = eolian_type_enum_field_get(type, "blah")));
+   fail_if(eolian_type_enum_field_documentation_get(efl));
+
+   fail_if(!(efl = eolian_type_enum_field_get(type, "foo")));
+   fail_if(!(doc = eolian_type_enum_field_documentation_get(efl)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Docs for foo."));
+   fail_if(eolian_documentation_description_get(doc));
+
+   fail_if(!(efl = eolian_type_enum_field_get(type, "bar")));
+   fail_if(!(doc = eolian_type_enum_field_documentation_get(efl)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Docs for bar."));
+   fail_if(eolian_documentation_description_get(doc));
+
+   fail_if(!(type = eolian_type_alias_get_by_name("Alias")));
+   fail_if(!(doc = eolian_type_documentation_get(type)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Docs for typedef."));
+   fail_if(strcmp(eolian_documentation_description_get(doc),
+                  "More docs for typedef. See @Bar."));
+
+   fail_if(!(var = eolian_variable_global_get_by_name("pants")));
+   fail_if(!(doc = eolian_variable_documentation_get(var)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Docs for var."));
+   fail_if(eolian_documentation_description_get(doc));
+
+   fail_if(!(type = eolian_type_struct_get_by_name("Opaque")));
+   fail_if(!(doc = eolian_type_documentation_get(type)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Opaque struct docs. See @Foo for another struct."));
+   fail_if(eolian_documentation_description_get(doc));
+
+   fail_if(!(class = eolian_class_get_by_name("Docs")));
+   fail_if(!(doc = eolian_class_documentation_get(class)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Docs for class."));
+   fail_if(strcmp(eolian_documentation_description_get(doc),
+                  "More docs for class. @Foo @Bar @Alias @pants"));
+
+   fail_if(!(fid = eolian_class_function_get_by_name(class, "meth", EOLIAN_METHOD)));
+   fail_if(!(doc = eolian_function_documentation_get(fid, EOLIAN_METHOD)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Method documentation."));
+   fail_if(eolian_documentation_description_get(doc));
+
+   fail_if(!(itr = eolian_function_parameters_get(fid)));
+
+   fail_if(!eina_iterator_next(itr, (void**)&par));
+   fail_if(!(doc = eolian_parameter_documentation_get(par)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Param documentation."));
+   fail_if(eolian_documentation_description_get(doc));
+
+   fail_if(!eina_iterator_next(itr, (void**)&par));
+   fail_if(eolian_parameter_documentation_get(par));
+
+   fail_if(!eina_iterator_next(itr, (void**)&par));
+   fail_if(!(doc = eolian_parameter_documentation_get(par)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Another param documentation."));
+   fail_if(eolian_documentation_description_get(doc));
+
+   fail_if(eina_iterator_next(itr, (void**)&par));
+   eina_iterator_free(itr);
+
+   fail_if(!(doc = eolian_function_return_documentation_get(fid, EOLIAN_METHOD)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Return documentation."));
+   fail_if(eolian_documentation_description_get(doc));
+
+   fail_if(!(fid = eolian_class_function_get_by_name(class, "prop", EOLIAN_PROPERTY)));
+   fail_if(!(doc = eolian_function_documentation_get(fid, EOLIAN_PROPERTY)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Property common documentation."));
+   fail_if(eolian_documentation_description_get(doc));
+   fail_if(!(doc = eolian_function_documentation_get(fid, EOLIAN_PROP_GET)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Get documentation."));
+   fail_if(eolian_documentation_description_get(doc));
+   fail_if(!(doc = eolian_function_documentation_get(fid, EOLIAN_PROP_SET)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Set documentation."));
+   fail_if(eolian_documentation_description_get(doc));
+
+   fail_if(!(itr = eolian_property_values_get(fid, EOLIAN_PROP_GET)));
+
+   fail_if(!eina_iterator_next(itr, (void**)&par));
+   fail_if(!(doc = eolian_parameter_documentation_get(par)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Value documentation."));
+   fail_if(eolian_documentation_description_get(doc));
+
+   fail_if(eina_iterator_next(itr, (void**)&par));
+   eina_iterator_free(itr);
+
+   fail_if(!(event = eolian_class_event_get_by_name(class, "clicked")));
+   fail_if(!(doc = eolian_event_documentation_get(event)));
+   fail_if(strcmp(eolian_documentation_summary_get(doc),
+                  "Event docs."));
+   fail_if(eolian_documentation_description_get(doc));
 
    eolian_shutdown();
 }
