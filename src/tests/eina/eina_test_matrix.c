@@ -92,9 +92,60 @@ START_TEST(eina_matrix4_2_3)
 }
 END_TEST
 
+START_TEST(eina_matrix3)
+{
+   Eina_Bool ret;
+   Eina_Matrix3 m, m1, m2;
+   double xx, xy, xz,
+          yx, yy, yz,
+          zx, zy, zz;
+
+          eina_init();
+
+   eina_matrix3_values_set(&m,
+                           1, 0, 0,
+                           0, 1, 0,
+                           0, 0, 1);
+
+   eina_matrix3_values_set(&m1,
+                           1, 0, 0,
+                           0, 1, 0,
+                           0, 0, 1);
+
+   eina_matrix3_values_set(&m2,
+                           1, 1, 1,
+                           0, 1, 0,
+                           0, 0, 1);
+   fail_if(eina_matrix3_type_get(&m) != EINA_MATRIX_TYPE_IDENTITY);
+
+   eina_matrix3_values_get(&m,
+                           &xx, &xy, &xz,
+                           &yx, &yy, &yz,
+                           &zx, &zy, &zz);
+
+   fail_if(xx != yy ||
+           yy != zz ||
+           zz != 1);
+
+   fail_if(xy != xz ||
+           yx != yz ||
+           zx != zy ||
+           zy != 0);
+
+   ret = eina_matrix3_equal(&m, &m1);
+   fail_if(ret != EINA_TRUE);
+
+   ret = eina_matrix3_equal(&m1, &m2);
+   fail_if(ret != EINA_FALSE);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_matrix(TCase *tc)
 {
    tcase_add_test(tc, eina_matrix4);
    tcase_add_test(tc, eina_matrix4_2_3);
+   tcase_add_test(tc, eina_matrix3);
 }
