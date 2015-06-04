@@ -322,11 +322,6 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
 
-   evas_event_feed_mouse_in(ee->evas,
-                            (unsigned int)((unsigned long long)
-                                           (ecore_time_get() * 1000.0) &
-                                           0xffffffff), NULL);
-
    return ee;
 
 eng_err:
@@ -500,11 +495,6 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-
-   evas_event_feed_mouse_in(ee->evas,
-                            (unsigned int)((unsigned long long)
-                                           (ecore_time_get() * 1000.0) &
-                                           0xffffffff), NULL);
 
    return ee;
 
