@@ -88,7 +88,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             @see evas_object_image_source_set() for more details */
          }
          values {
-            src: Evas_Object *; /*@ Source object to use for the proxy. */
+            src: Evas.Object *; /*@ Source object to use for the proxy. */
          }
       }
       @property filled {
