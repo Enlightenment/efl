@@ -25,10 +25,10 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @since 1.1 */
          }
          values {
-            x: Evas_Coord; /*@ The left coordinate in output units, usually pixels. */
-            y: Evas_Coord; /*@ The top coordinate in output units, usually pixels. */
-            w: Evas_Coord; /*@ The width in output units, usually pixels. */
-            h: Evas_Coord; /*@ The height in output units, usually pixels. */
+            x: Evas.Coord; /*@ The left coordinate in output units, usually pixels. */
+            y: Evas.Coord; /*@ The top coordinate in output units, usually pixels. */
+            w: Evas.Coord; /*@ The width in output units, usually pixels. */
+            h: Evas.Coord; /*@ The height in output units, usually pixels. */
          }
       }
       @property output_viewport {
@@ -65,10 +65,10 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @endcode */
          }
          values {
-            x: Evas_Coord; /*@ The top-left corner x value of the viewport. */
-            y: Evas_Coord; /*@ The top-left corner y value of the viewport. */
-            w: Evas_Coord; /*@ The width of the viewport.  Must be greater than 0. */
-            h: Evas_Coord; /*@ The height of the viewport.  Must be greater than 0. */
+            x: Evas.Coord; /*@ The top-left corner x value of the viewport. */
+            y: Evas.Coord; /*@ The top-left corner y value of the viewport. */
+            w: Evas.Coord; /*@ The width of the viewport.  Must be greater than 0. */
+            h: Evas.Coord; /*@ The height of the viewport.  Must be greater than 0. */
          }
       }
       @property image_cache {
@@ -302,7 +302,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             focused rectangle. See the full @ref Example_Evas_Events "example".
 
             @ingroup Evas_Object_Group_Find */
-            return: Evas_Object * @warn_unused;
+            return: Evas.Object * @warn_unused;
          }
       }
       @property object_top {
@@ -325,7 +325,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @warning This function will @b skip objects parented by smart
             objects, acting only on the ones at the "top level", with regard to
             object parenting. */
-            return: Evas_Object * @warn_unused;
+            return: Evas.Object * @warn_unused;
          }
       }
       @property key_lock {
@@ -366,8 +366,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @endcode */
          }
          values {
-            x: Evas_Coord; /*@ The pointer to a Evas_Coord to be filled in */
-            y: Evas_Coord; /*@ The pointer to a Evas_Coord to be filled in
+            x: Evas.Coord; /*@ The pointer to a Evas_Coord to be filled in */
+            y: Evas.Coord; /*@ The pointer to a Evas_Coord to be filled in
             @ingroup Evas_Pointer_Group */
          }
       }
@@ -517,7 +517,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @warning This function will @b skip objects parented by smart
             objects, acting only on the ones at the "top level", with regard to
             object parenting. */
-            return: Evas_Object * @warn_unused;
+            return: Evas.Object * @warn_unused;
          }
       }
       @property key_modifier {
@@ -592,7 +592,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          return: list<Evas.Object *> * @warn_unused;
          params {
-            @in stop: Evas_Object *; /*@ An Evas Object where to stop searching. */
+            @in stop: Evas.Object *; /*@ An Evas Object where to stop searching. */
             @in x: int; /*@ The horizontal coordinate of the position. */
             @in y: int; /*@ The vertical coordinate of the position. */
          }
@@ -808,8 +808,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          object parenting. */
          return: list<Evas.Object *> * @warn_unused;
          params {
-            @in x: Evas_Coord; /*@ The horizontal coordinate of the position */
-            @in y: Evas_Coord; /*@ The vertical coordinate of the position */
+            @in x: Evas.Coord; /*@ The horizontal coordinate of the position */
+            @in y: Evas.Coord; /*@ The vertical coordinate of the position */
             @in include_pass_events_objects: bool; /*@ Boolean flag to include or not
             objects which pass events in this calculation */
             @in include_hidden_objects: bool; /*@ Boolean flag to include or not hidden
@@ -1054,10 +1054,10 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @warning This function will @b skip objects parented by smart
          objects, acting only on the ones at the "top level", with regard to
          object parenting. */
-         return: Evas_Object * @warn_unused;
+         return: Evas.Object * @warn_unused;
          params {
-            @in x: Evas_Coord; /*@ The horizontal coordinate of the position */
-            @in y: Evas_Coord; /*@ The vertical coordinate of the position */
+            @in x: Evas.Coord; /*@ The horizontal coordinate of the position */
+            @in y: Evas.Coord; /*@ The vertical coordinate of the position */
             @in include_pass_events_objects: bool; /*@ Boolean flag to include or not
             objects which pass events in this calculation */
             @in include_hidden_objects: bool; /*@ Boolean flag to include or not hidden
@@ -1143,10 +1143,10 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
       objects_in_rectangle_get @const {
          return: list<Evas.Object *> * @warn_unused;
          params {
-            @in x: Evas_Coord;
-            @in y: Evas_Coord;
-            @in w: Evas_Coord;
-            @in h: Evas_Coord;
+            @in x: Evas.Coord;
+            @in y: Evas.Coord;
+            @in w: Evas.Coord;
+            @in h: Evas.Coord;
             @in include_pass_events_objects: bool;
             @in include_hidden_objects: bool;
          }
@@ -1163,7 +1163,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          the object name is unique.
 
          @ingroup Evas_Object_Group_Find */
-         return: Evas_Object * @warn_unused;
+         return: Evas.Object * @warn_unused;
          params {
             @in name: const(char)*; /*@ The given name. */
          }
@@ -1250,8 +1250,8 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          params {
             @in n: uint; /*@ The number of the touched point (0 being the first). */
-            @out x: Evas_Coord; /*@ The pointer to a Evas_Coord to be filled in. */
-            @out y: Evas_Coord; /*@ The pointer to a Evas_Coord to be filled in. */
+            @out x: Evas.Coord; /*@ The pointer to a Evas_Coord to be filled in. */
+            @out y: Evas.Coord; /*@ The pointer to a Evas_Coord to be filled in. */
          }
       }
       key_lock_del {
@@ -1325,7 +1325,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @endcode */
          return: int @warn_unused;
          params {
-            @in x: Evas_Coord; /*@ The canvas x co-ordinate */
+            @in x: Evas.Coord; /*@ The canvas x co-ordinate */
          }
       }
       event_feed_multi_move {
@@ -1404,7 +1404,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          canvas_y = evas_coord_screen_y_to_world(evas, screen_y);
          @endcode */
-         return: Evas_Coord @warn_unused;
+         return: Evas.Coord @warn_unused;
          params {
             @in y: int; /*@ The screen/output y co-ordinate */
          }
@@ -1566,14 +1566,14 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @warning This function will @b skip objects parented by smart
          objects, acting only on the ones at the "top level", with regard to
          object parenting. */
-         return: Evas_Object * @warn_unused;
+         return: Evas.Object * @warn_unused;
          params {
-            @in x: Evas_Coord; /*@ The top left corner's horizontal coordinate for the
+            @in x: Evas.Coord; /*@ The top left corner's horizontal coordinate for the
             rectangular region */
-            @in y: Evas_Coord; /*@ The top left corner's vertical coordinate for the
+            @in y: Evas.Coord; /*@ The top left corner's vertical coordinate for the
             rectangular region */
-            @in w: Evas_Coord; /*@ The width of the rectangular region */
-            @in h: Evas_Coord; /*@ The height of the rectangular region */
+            @in w: Evas.Coord; /*@ The width of the rectangular region */
+            @in h: Evas.Coord; /*@ The height of the rectangular region */
             @in include_pass_events_objects: bool; /*@ Boolean flag to include or not
             objects which pass events in this calculation */
             @in include_hidden_objects: bool; /*@ Boolean flag to include or not hidden
@@ -1669,7 +1669,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          canvas_x = evas_coord_screen_x_to_world(evas, screen_x);
          @endcode */
-         return: Evas_Coord @warn_unused;
+         return: Evas.Coord @warn_unused;
          params {
             @in x: int; /*@ The screen/output x co-ordinate */
          }
@@ -1738,7 +1738,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @endcode */
          return: int @warn_unused;
          params {
-            @in y: Evas_Coord; /*@ The canvas y co-ordinate */
+            @in y: Evas.Coord; /*@ The canvas y co-ordinate */
          }
       }
       event_feed_key_down_with_keycode {
