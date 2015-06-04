@@ -2002,6 +2002,7 @@ void
 evas_filter_shutdown()
 {
    if ((--init_cnt) > 0) return;
+   evas_filter_parser_shutdown();
    eina_log_domain_unregister(_evas_filter_log_dom);
    _evas_filter_log_dom = 0;
 }

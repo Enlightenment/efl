@@ -215,35 +215,6 @@
   @since 1.9
  */
 
-// Map of the most common HTML color names
-static struct
-{
-   const char *name;
-   DATA32 value;
-} color_map[] =
-{
-   { "white", 0xFFFFFFFF },
-   { "black", 0xFF000000 },
-   { "red", 0xFFFF0000 },
-   { "green", 0xFF008000 },
-   { "blue", 0xFF0000FF },
-   { "darkblue", 0xFF0000A0 },
-   { "yellow", 0xFFFFFF00 },
-   { "magenta", 0xFFFF00FF },
-   { "cyan", 0xFF00FFFF },
-   { "orange", 0xFFFFA500 },
-   { "purple", 0xFF800080 },
-   { "brown", 0xFFA52A2A },
-   { "maroon", 0xFF800000 },
-   { "lime", 0xFF00FF00 },
-   { "gray", 0xFF808080 },
-   { "grey", 0xFF808080 },
-   { "silver", 0xFFC0C0C0 },
-   { "olive", 0xFF808000 },
-   { "invisible", 0x00000000 },
-   { "transparent", 0x00000000 }
-};
-
 static struct
 {
    const char *name;
@@ -265,9 +236,15 @@ static struct
    { "stretch_xy", EVAS_FILTER_FILL_MODE_STRETCH_XY }
 };
 
-static const char *_lua_buffer_meta = "Filter.buffer";
+static const char *_lua_buffer_meta = "buffer";
+static const char *_lua_color_meta = "color";
+#define _lua_methods_table "__methods"
+#define _lua_register_func "__register"
+#define _lua_errfunc_name "__backtrace"
 
 static Evas_Filter_Fill_Mode _fill_mode_get(Evas_Filter_Instruction *instr);
+static Eina_Bool _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr);
+static int _lua_backtrace(lua_State *L);
 
 typedef enum
 {
@@ -618,46 +595,6 @@ _bool_parse(const char *str, Eina_Bool *b)
 
 #define PARSE_CHECK(a) do { if (!(a)) { ERR("Parsing failed because '%s' is false at %s:%d", #a, __FUNCTION__, __LINE__); PARSE_ABORT(); goto end; } } while (0)
 
-static Eina_Bool
-_color_parse(const char *word, DATA32 *color)
-{
-   DATA32 value;
-   Eina_Bool success = EINA_FALSE;
-
-   PARSE_CHECK(word && *word);
-
-   errno = 0;
-   if (*word == '#')
-     {
-        unsigned char a, r, g, b;
-        int slen = strlen(word);
-        PARSE_CHECK(evas_common_format_color_parse(word, slen, &r, &g, &b, &a));
-        value = ARGB_JOIN(a, r, g, b);
-     }
-   else
-     {
-        unsigned int k;
-        for (k = 0; k < (sizeof(color_map) / sizeof(color_map[0])); k++)
-          {
-             if (!strcasecmp(word, color_map[k].name))
-               {
-                  if (color) *color = color_map[k].value;
-                  return EINA_TRUE;
-               }
-          }
-        PARSE_CHECK(!"color name not found");
-     }
-
-   if ((value & 0xFF000000) == 0 && (value != 0))
-     value |= 0xFF000000;
-
-   if (color) *color = value;
-   success = EINA_TRUE;
-
-end:
-   return success;
-}
-
 /* Buffers */
 static Buffer *
 _buffer_get(Evas_Filter_Program *pgm, const char *name)
@@ -679,15 +616,18 @@ _lua_buffer_push(lua_State *L, Buffer *buf)
 {
    Buffer **ptr;
 
-   lua_getglobal(L, buf->name);
-   ptr = lua_newuserdata(L, sizeof(Buffer **));
+   lua_getglobal(L, buf->name);//+1
+   ptr = lua_newuserdata(L, sizeof(Buffer **));//+1
    *ptr = buf;
-   luaL_getmetatable(L, _lua_buffer_meta);
-   lua_setmetatable(L, -2);
-   lua_setglobal(L, buf->name);
+   luaL_getmetatable(L, _lua_buffer_meta);//+1
+   lua_setmetatable(L, -2);//-1
+   lua_setglobal(L, buf->name);//-1
+   lua_pop(L, 1);
 
    return EINA_TRUE;
 }
+
+// Begin of Lua metamethods and stuff
 
 static int
 _lua_buffer_tostring(lua_State *L)
@@ -717,12 +657,12 @@ _lua_buffer_index(lua_State *L)
    key = lua_tostring(L, 2);
    if (!key) return 0;
 
-   if (!strcmp(key, "width"))
+   if (!strcmp(key, "w") || !strcmp(key, "width"))
      {
         lua_pushinteger(L, buf->w);
         return 1;
      }
-   else if (!strcmp(key, "height"))
+   else if (!strcmp(key, "h") || !strcmp(key, "height"))
      {
         lua_pushinteger(L, buf->h);
         return 1;
@@ -754,69 +694,30 @@ _lua_buffer_index(lua_State *L)
         return 1;
      }
    else
+     return luaL_error(L, "Unknown index '%s' for a buffer", key);
+
+   return 0;
+}
+
+// remove metatable from first argument if this is a __call metafunction
+static inline int
+_lua_implicit_metatable_drop(lua_State *L, const char *name)
+{
+   int ret = 0;
+   if (lua_istable(L, 1) && lua_getmetatable(L, 1))
      {
-        DBG("Unknown index '%s' for a buffer", key);
-        return 0;
+        luaL_getmetatable(L, name);
+        if (lua_equal(L, -1, -2))
+          {
+             lua_remove(L, 1);
+             ret = 1;
+          }
+        lua_pop(L, 2);
      }
+   return ret;
 }
 
-static int
-_lua_buffer_width(lua_State *L)
-{
-   Buffer *buf, **pbuf;
-   pbuf = lua_touserdata(L, 1);
-   buf = pbuf ? *pbuf : NULL;
-   if (!buf) return 0;
-   lua_pushnumber(L, buf->w);
-   return 1;
-}
-
-static int
-_lua_buffer_height(lua_State *L)
-{
-   Buffer *buf, **pbuf;
-   pbuf = lua_touserdata(L, 1);
-   buf = pbuf ? *pbuf : NULL;
-   if (!buf) return 0;
-   lua_pushnumber(L, buf->h);
-   return 1;
-}
-
-static int
-_lua_buffer_type(lua_State *L)
-{
-   Buffer *buf, **pbuf;
-   pbuf = lua_touserdata(L, 1);
-   buf = pbuf ? *pbuf : NULL;
-   if (!buf) return 0;
-   lua_pushstring(L, buf->alpha ? "alpha" : "rgba");
-   return 1;
-}
-
-static int
-_lua_buffer_name(lua_State *L)
-{
-   Buffer *buf, **pbuf;
-   pbuf = lua_touserdata(L, 1);
-   buf = pbuf ? *pbuf : NULL;
-   if (!buf) return 0;
-   lua_pushstring(L, buf->name);
-   return 1;
-}
-
-static int
-_lua_buffer_source(lua_State *L)
-{
-   Buffer *buf, **pbuf;
-   pbuf = lua_touserdata(L, 1);
-   buf = pbuf ? *pbuf : NULL;
-   if (!buf) return 0;
-   if (!buf->proxy)
-     lua_pushnil(L);
-   else
-     lua_pushstring(L, buf->proxy);
-   return 1;
-}
+// End of all lua metamethods and stuff
 
 static Buffer *
 _buffer_add(Evas_Filter_Program *pgm, const char *name, Eina_Bool alpha,
@@ -866,6 +767,19 @@ _buffer_del(Buffer *buf)
    eina_stringshare_del(buf->name);
    eina_stringshare_del(buf->proxy);
    free(buf);
+}
+
+static const int this_is_not_a_cat = 42;
+
+static Evas_Filter_Program *
+_lua_program_get(lua_State *L)
+{
+   Evas_Filter_Program *pgm;
+   lua_pushlightuserdata(L, (void *) &this_is_not_a_cat);
+   lua_gettable(L, LUA_REGISTRYINDEX);
+   pgm = lua_touserdata(L, -1);
+   lua_pop(L, 1);
+   return pgm;
 }
 
 /* Instruction definitions */
@@ -935,20 +849,33 @@ _buffer_instruction_parse_run(lua_State *L,
    return ok;
 }
 
-static Eina_Bool
-_buffer_instruction_prepare(Evas_Filter_Program *pgm EINA_UNUSED,
-                            Evas_Filter_Instruction *instr)
+static int
+_lua_buffer_new(lua_State *L)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(!strcmp(instr->name, "buffer"), EINA_FALSE);
+   // Reuse old "buffer" instruction code
+   Evas_Filter_Program *pgm = _lua_program_get(L);
+   Evas_Filter_Instruction *instr;
 
+   instr = _instruction_new(_lua_buffer_meta);
    instr->type = EVAS_FILTER_MODE_BUFFER;
    instr->parse_run = _buffer_instruction_parse_run;
    _instruction_param_seq_add(instr, "type", VT_STRING, "rgba");
    _instruction_param_seq_add(instr, "src", VT_BUFFER, NULL);
 
-   return EINA_TRUE;
+   // drop "buffer" metatable
+   _lua_implicit_metatable_drop(L, _lua_buffer_meta);
+
+   if (!_lua_instruction_run(L, instr))
+     {
+        _instruction_del(instr);
+        return luaL_error(L, "buffer instanciation failed");
+     }
+   else
+     {
+        pgm->instructions = eina_inlist_append(pgm->instructions, EINA_INLIST_GET(instr));
+     }
+
+   return instr->return_count;
 }
 
 static int
@@ -1329,9 +1256,10 @@ _lua_curve_points_func(lua_State *L, int i, Evas_Filter_Program *pgm EINA_UNUSED
       case LUA_TFUNCTION:
         for (k = 0; k < 256; k++)
           {
+             lua_getglobal(L, _lua_errfunc_name);
              lua_pushvalue(L, i);
              lua_pushinteger(L, k);
-             if (!lua_pcall(L, 1, 1, 0))
+             if (!lua_pcall(L, 1, 1, -3))
                {
                   if (!lua_isnumber(L, -1))
                     {
@@ -1932,17 +1860,21 @@ evas_filter_program_del(Evas_Filter_Program *pgm)
    free(pgm);
 }
 
-static const int this_is_not_a_cat = 42;
-
-static Evas_Filter_Program *
-_lua_program_get(lua_State *L)
+// [-1, +1, e] -- converts the top of the stack to a valid 'color' object
+static Eina_Bool
+_lua_convert_color(lua_State *L)
 {
-   Evas_Filter_Program *pgm;
-   lua_pushlightuserdata(L, (void *) &this_is_not_a_cat);
-   lua_gettable(L, LUA_REGISTRYINDEX);
-   pgm = lua_touserdata(L, -1);
-   lua_pop(L, 1);
-   return pgm;
+   int top = lua_gettop(L);
+   lua_getglobal(L, _lua_errfunc_name); //+1
+   lua_getglobal(L, _lua_color_meta); //+1 (mt)
+   lua_getfield(L, -1, "__call"); //+1 (func)
+   lua_pushvalue(L, -2); //+1 (mt)
+   lua_pushvalue(L, top); //+1 (argument)
+   if (lua_pcall(L, 2, 1, top + 1) != 0)
+     return EINA_FALSE;
+   lua_insert(L, top);
+   lua_settop(L, top);
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -1954,9 +1886,11 @@ _lua_parameter_parse(Evas_Filter_Program *pgm, lua_State *L,
    if (param->set)
      {
         ERR("Parameter %s has already been set", param->name);
-        luaL_error(L, "Parameter %s has already been set", param->name);
-        return 0;
+        return luaL_error(L, "Parameter %s has already been set", param->name);
      }
+
+   if (i < 0)
+     i = lua_gettop(L) + i + 1;
 
    switch (param->type)
      {
@@ -1992,35 +1926,45 @@ _lua_parameter_parse(Evas_Filter_Program *pgm, lua_State *L,
         param->value.s = strdup(lua_tostring(L, i));
         break;
       case VT_COLOR:
-        if ((lua_isnumber(L, i)) || (lua_type(L, i) == LUA_TSTRING))
-          {
-             int A, R, G, B;
-             DATA32 color;
-
-             if (lua_isnumber(L, i))
-               color = (DATA32) lua_tonumber(L, i);
-             else
-               {
-                  if (!_color_parse(lua_tostring(L, i), &color))
-                    goto fail;
-               }
-
-             A = A_VAL(&color);
-             R = R_VAL(&color);
-             G = G_VAL(&color);
-             B = B_VAL(&color);
-             if (!A && (R || G || B)) A = 0xFF;
-             if ((A < R) || (A < G) || (A < B))
-               {
-                  ERR("Argument '%s' of function '%s' is not a valid premultiplied RGBA value!",
-                      param->name, instr->name);
-                  evas_color_argb_premul(A, &R, &G, &B);
-                  //goto fail;
-               }
-             param->value.c = ARGB_JOIN(A, R, G, B);
-          }
-        else
-          goto fail;
+        {
+           // Auto convert values to a color() if they aren't one already
+           int cid = 0, pop = 0, A, R, G, B;
+           if (lua_istable(L, i))
+             {
+                luaL_getmetatable(L, _lua_color_meta);
+                lua_getmetatable(L, i);
+                if (!lua_isnil(L, -1) && lua_equal(L, -2, -1))
+                  {
+                     // this is a color already
+                     cid = i;
+                  }
+                lua_pop(L, 2);
+             }
+           if (!cid)
+             {
+                lua_pushvalue(L, i); //+1 (arg)
+                if (!_lua_convert_color(L)) //-1/+1
+                  {
+                     ERR("Failed to convert color: %s", lua_tostring(L, -1));
+                     goto fail;
+                  }
+                cid = lua_gettop(L);
+                pop = 1;
+             }
+           if (!lua_istable(L, cid))
+             goto fail;
+           lua_getfield(L, cid, "a");
+           A = lua_tointeger(L, -1);
+           lua_getfield(L, cid, "r");
+           R = lua_tointeger(L, -1);
+           lua_getfield(L, cid, "g");
+           G = lua_tointeger(L, -1);
+           lua_getfield(L, cid, "b");
+           B = lua_tointeger(L, -1);
+           lua_pop(L, pop + 4);
+           evas_color_argb_premul(A, &R, &G, &B);
+           param->value.c = ARGB_JOIN(A, R, G, B);
+        }
         break;
       case VT_BUFFER:
         {
@@ -2051,13 +1995,15 @@ _lua_parameter_parse(Evas_Filter_Program *pgm, lua_State *L,
         goto fail;
      }
 
+   if (i != lua_gettop(L))
+     ERR("something is wrong");
+
    param->set = EINA_TRUE;
    return EINA_TRUE;
 
 fail:
    ERR("Invalid value for parameter %s", param->name);
-   luaL_error(L, "Invalid value for parameter %s", param->name);
-   return EINA_FALSE;
+   return luaL_error(L, "Invalid value for parameter %s", param->name);
 }
 
 static Instruction_Param *
@@ -2089,7 +2035,7 @@ _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
    if (eina_inlist_count(instr->params) < argc)
      {
         ERR("Too many arguments passed to the instruction %s", instr->name);
-        goto fail;
+        return EINA_FALSE;
      }
 
    if (lua_istable(L, 1))
@@ -2097,7 +2043,7 @@ _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
         if (argc > 1)
           {
              ERR("Too many arguments passed to the instruction %s (in table mode)", instr->name);
-             goto fail;
+             return EINA_FALSE;
           }
 
         lua_pushnil(L);
@@ -2110,7 +2056,7 @@ _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
                   if (!param)
                     {
                        ERR("Parameter %s does not exist", name);
-                       goto fail;
+                       return EINA_FALSE;
                     }
                }
              else if (lua_isnumber(L, -2))
@@ -2120,24 +2066,24 @@ _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
                   if (!param)
                     {
                        ERR("Too many parameters for the function %s", instr->name);
-                       goto fail;
+                       return EINA_FALSE;
                     }
 
                   if (!param->allow_seq)
                     {
                        ERR("The parameter %s must be referred to by name in function %s",
                            param->name, instr->name);
-                       goto fail;
+                       return EINA_FALSE;
                     }
                }
              else
                {
                   ERR("Invalid type for the parameter key in function %s", instr->name);
-                  goto fail;
+                  return EINA_FALSE;
                }
 
              if (!_lua_parameter_parse(pgm, L, instr, param, -1))
-               goto fail;
+               return EINA_FALSE;
              lua_pop(L, 1);
           }
      }
@@ -2147,7 +2093,7 @@ _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
           {
              if ((++i) > argc) break;
              if (!_lua_parameter_parse(pgm, L, instr, param, i))
-               goto fail;
+               return EINA_FALSE;
           }
      }
 
@@ -2161,11 +2107,6 @@ _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
      }
 
    return EINA_TRUE;
-
-fail:
-   ERR("Invalid parameters for instruction %s", instr->name);
-   luaL_error(L, "Invalid parameters for instruction %s", instr->name);
-   return EINA_FALSE;
 }
 
 static int
@@ -2174,18 +2115,14 @@ _lua_generic_function(lua_State *L, const char *name,
 {
    Evas_Filter_Program *pgm = _lua_program_get(L);
    Evas_Filter_Instruction *instr;
-   Eina_Bool ok;
 
    instr = _instruction_new(name);
    prepare(pgm, instr);
-   ok = _lua_instruction_run(L, instr);
 
-   if (!ok)
+   if (!_lua_instruction_run(L, instr))
      {
-        ERR("Instruction parsing failed");
         _instruction_del(instr);
-        lua_error(L);
-        return 0;
+        return luaL_error(L, "Instruction parsing failed");
      }
    else
      {
@@ -2212,33 +2149,14 @@ _lua_print(lua_State *L)
 
    for (i = 1; i <= nargs; i++)
      {
-        if (lua_isstring(L, i))
-          eina_strbuf_append(s, lua_tostring(L, i));
-        else if (lua_isnumber(L, i))
-          {
-             double d = lua_tonumber(L, i);
-
-             if (fabs(d - floor(d)) < 0.000001)
-               eina_strbuf_append_printf(s, "%d", (int) d);
-             else
-               eina_strbuf_append_printf(s, "%f", d);
-          }
-        else if (luaL_checkudata(L, i, _lua_buffer_meta))
-          {
-             Buffer *buf, **pbuf;
-             pbuf = lua_touserdata(L, i);
-             buf = pbuf ? *pbuf : NULL;
-             if (!buf)
-               eina_strbuf_append(s, "Buffer[null]");
-             else
-               eina_strbuf_append_printf(s, "Buffer[#%d %dx%d %s%s%s]",
-                                         buf->cid, buf->w, buf->h,
-                                         buf->alpha ? "alpha" : "rgba",
-                                         buf->proxy ? " src: " : "",
-                                         buf->proxy ? buf->proxy : "");
-          }
-        else
-          eina_strbuf_append(s, "<>");
+        const char *str;
+        lua_getglobal(L, _lua_errfunc_name);
+        lua_getglobal(L, "tostring"); //+1
+        lua_pushvalue(L, i); //+1
+        lua_pcall(L, 1, 1, -3); //-2/+1
+        str = lua_tostring(L, -1);
+        eina_strbuf_append(s, str ? str : "(nil)");
+        lua_pop(L, 2);
         eina_strbuf_append_char(s, ' ');
      }
 
@@ -2264,7 +2182,6 @@ _lua_##name(lua_State *L) \
    lua_pushcfunction(L, _lua_##name); \
    lua_setglobal(L, #name);
 
-LUA_GENERIC_FUNCTION(buffer)
 LUA_GENERIC_FUNCTION(blend)
 LUA_GENERIC_FUNCTION(blur)
 LUA_GENERIC_FUNCTION(bump)
@@ -2276,20 +2193,97 @@ LUA_GENERIC_FUNCTION(mask)
 LUA_GENERIC_FUNCTION(padding_set)
 LUA_GENERIC_FUNCTION(transform)
 
-static const luaL_Reg buffer_methods[] = {
-   { "width", _lua_buffer_width },
-   { "height", _lua_buffer_height },
-   { "type", _lua_buffer_type },
-   { "name", _lua_buffer_name },
-   { "source", _lua_buffer_source },
-   { NULL, NULL }
-};
-
-static const luaL_Reg buffer_meta[] = {
+static const luaL_Reg _lua_buffer_metamethods[] = {
+   { "__call", _lua_buffer_new },
    { "__tostring", _lua_buffer_tostring },
    { "__index", _lua_buffer_index },
    { NULL, NULL }
 };
+
+static char *_lua_color_code = NULL;
+
+static inline void
+_lua_import_path_get(char *path, size_t len, const char *name)
+{
+   const char *pfx = _evas_module_datadir_get();
+   struct stat st;
+   size_t r;
+
+//#ifdef FILTERS_DEBUG
+   // This is a hack to fetch the most recent file from source
+   if (stat(path, &st) == -1)
+     {
+        char *sep = evas_file_path_join("", "");
+        char *src = strdup(__FILE__);
+        char *slash = strrchr(src, *sep);
+        if (slash)
+          {
+             *slash = '\0';
+             if (*src == '/')
+               r = snprintf(path, len - 1, "%s/lua/%s.lua", src, name);
+             else // abs_srcdir is unknown here
+                r =  snprintf(path, len - 1, "%s/src/%s/lua/%s.lua", PACKAGE_BUILD_DIR, src, name);
+             if (r >= len) path[len - 1] = '\0';
+          }
+        free(sep);
+        free(src);
+        if (!stat(path, &st)) return;
+     }
+//#endif
+
+   r = snprintf(path, len - 1, "%s/filters/lua/%s.lua", pfx ? pfx : ".", name);
+   if (r >= len) path[len - 1] = '\0';
+}
+
+static Eina_Bool
+_lua_import_class(lua_State *L, const char *name, char **code)
+{
+   // Load code from file
+   if (!*code)
+     {
+        char path[PATH_MAX];
+        Eina_File *f;
+        void *map;
+        size_t sz;
+
+        _lua_import_path_get(path, PATH_MAX, name);
+        f = eina_file_open(path, EINA_FALSE);
+        if (!f) return EINA_FALSE;
+        sz = eina_file_size_get(f);
+        *code = malloc(sz);
+        if (!*code) return EINA_FALSE;
+        map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+        if (!map) return EINA_FALSE;
+        memcpy(*code, map, sz);
+        eina_file_map_free(f, map);
+        eina_file_close(f);
+     }
+
+   if (!luaL_dostring(L, *code)) //+1
+     {
+        lua_getglobal(L, _lua_errfunc_name); //+1
+        lua_pushliteral(L, _lua_register_func); //+1
+        lua_rawget(L, -3); //-1/+1
+        if (lua_isfunction(L, -1))
+          {
+             lua_getglobal(L, "_G"); //+1
+             if (lua_pcall(L, 1, 0, -3) != 0) //-2
+               {
+                  ERR("Failed to register globals for '%s': %s", name, lua_tostring(L, -1));
+                  lua_pop(L, 1);
+               }
+          }
+        else lua_pop(L, 1);
+        lua_pop(L, 1); // -1 (errfunc)
+        lua_setglobal(L, name); //-1
+     }
+   else
+     {
+        ERR("Lua class '%s' could not be loaded: %s", name, lua_tostring(L, -1));
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
 
 static void
 _filter_program_buffers_set(Evas_Filter_Program *pgm)
@@ -2311,6 +2305,27 @@ _filter_program_buffers_set(Evas_Filter_Program *pgm)
      }
 }
 
+static inline void
+_lua_class_create(lua_State *L, const char *name,
+                  const luaL_Reg *meta, const luaL_Reg *methods)
+{
+   luaL_newmetatable(L, name);
+   luaL_register(L, NULL, meta);
+   lua_pushliteral(L, "__metatable");
+   lua_pushvalue(L, -2);
+   lua_rawset(L, -3);
+   if (methods)
+     {
+        lua_pushliteral(L, _lua_methods_table);
+        lua_newtable(L);
+        luaL_register(L, NULL, methods);
+        lua_rawset(L, -3);
+     }
+   lua_pushvalue(L, -1);
+   lua_setmetatable(L, -2);
+   lua_setglobal(L, name);
+}
+
 static lua_State *
 _lua_state_create(Evas_Filter_Program *pgm)
 {
@@ -2327,11 +2342,17 @@ _lua_state_create(Evas_Filter_Program *pgm)
    luaopen_table(L);
    luaopen_string(L);
    luaopen_math(L);
+   luaopen_debug(L);
+   lua_settop(L, 0);
 
    // Implement print
    lua_getglobal(L, "_G");
    luaL_register(L, NULL, printlib);
    lua_pop(L, 1);
+
+   // Add backtrace error function
+   lua_pushcfunction(L, _lua_backtrace);
+   lua_setglobal(L, _lua_errfunc_name);
 
    // Store program
    lua_pushlightuserdata(L, (void *) &this_is_not_a_cat);
@@ -2339,7 +2360,6 @@ _lua_state_create(Evas_Filter_Program *pgm)
    lua_settable(L, LUA_REGISTRYINDEX);
 
    // Register functions
-   PUSH_LUA_FUNCTION(buffer)
    PUSH_LUA_FUNCTION(blend)
    PUSH_LUA_FUNCTION(blur)
    PUSH_LUA_FUNCTION(bump)
@@ -2350,13 +2370,6 @@ _lua_state_create(Evas_Filter_Program *pgm)
    PUSH_LUA_FUNCTION(mask)
    PUSH_LUA_FUNCTION(padding_set)
    PUSH_LUA_FUNCTION(transform)
-
-   // Register special variables
-   for (unsigned k = 0; k < (sizeof(color_map) / sizeof(color_map[0])); k++)
-     {
-        lua_pushnumber(L, color_map[k].value);
-        lua_setglobal(L, color_map[k].name);
-     }
 
    for (unsigned k = 0; k < (sizeof(fill_modes) / sizeof(fill_modes[0])); k++)
      {
@@ -2391,16 +2404,38 @@ _lua_state_create(Evas_Filter_Program *pgm)
         lua_setglobal(L, booleans[k].name);
      }
 
-   // Register buffer meta stuff
-   luaL_openlib(L, _lua_buffer_meta, buffer_methods, 0);
-   luaL_newmetatable(L, _lua_buffer_meta);
-   luaL_openlib(L, NULL, buffer_meta, 0);
-   lua_pushliteral(L, "__metatable");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
-   lua_pop(L, 1);
+   // Create buffer class based on userdata
+   _lua_class_create(L, _lua_buffer_meta, _lua_buffer_metamethods, NULL);
+
+   // Load color class
+   if (!_lua_import_class(L, _lua_color_meta, &_lua_color_code))
+     ERR("Could not load color class!");
 
    return L;
+}
+
+static int
+_lua_backtrace(lua_State *L)
+{
+   if (!lua_isstring(L, 1))  /* 'message' not a string? */
+     return 1;  /* keep it intact */
+   ERR("Lua error: %s", lua_tolstring(L, 1, NULL));
+   lua_getfield(L, LUA_GLOBALSINDEX, "debug");
+   if (!lua_istable(L, -1))
+     {
+        lua_pop(L, 1);
+        return 1;
+     }
+   lua_getfield(L, -1, "traceback");
+   if (!lua_isfunction(L, -1))
+     {
+        lua_pop(L, 2);
+        return 1;
+     }
+   lua_pushvalue(L, 1);  /* pass error message */
+   lua_pushinteger(L, 2);  /* skip this function and traceback */
+   lua_call(L, 2, 1);  /* call debug.traceback */
+   return 1;
 }
 
 #ifdef FILTERS_LEGACY_COMPAT
@@ -2545,8 +2580,10 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
     * }
     */
 
-#define JOINC(k) ARGB_JOIN(pgm->state.k.a, pgm->state.k.r, pgm->state.k.g, pgm->state.k.b)
+#define JOINC(k) (double) ({ DATA32 d; int A = pgm->state.k.a, R = pgm->state.k.r, G = pgm->state.k.g, B = pgm->state.k.b; \
+   evas_color_argb_unpremul(A, &R, &G, &B); d = ARGB_JOIN(A, R, G, B); d; })
 #define SETFIELD(name, val) do { lua_pushnumber(L, val); lua_setfield(L, -2, name); } while(0)
+#define SETCOLOR(name, val) do { lua_pushnumber(L, val); _lua_convert_color(L); lua_setfield(L, -2, name); } while(0)
 
    // TODO: Mark program as dependent on some values so we can improve
    // the changed flag (ie. re-run the filter only when required)
@@ -2555,7 +2592,7 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
 
    lua_newtable(L); // "state"
    {
-      SETFIELD("color", JOINC(color));
+      SETCOLOR("color", JOINC(color));
       SETFIELD("scale", pgm->state.scale);
       SETFIELD("pos", pgm->state.pos);
       lua_newtable(L); // "cur"
@@ -2577,10 +2614,10 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
       }
       lua_newtable(L); // "text"
       {
-         SETFIELD("outline", JOINC(text.outline));
-         SETFIELD("shadow",  JOINC(text.shadow));
-         SETFIELD("glow",    JOINC(text.glow));
-         SETFIELD("glow2",   JOINC(text.glow2));
+         SETCOLOR("outline", JOINC(text.outline));
+         SETCOLOR("shadow",  JOINC(text.shadow));
+         SETCOLOR("glow",    JOINC(text.glow));
+         SETCOLOR("glow2",   JOINC(text.glow2));
          lua_setfield(L, -2, "text");
       }
    }
@@ -2588,6 +2625,7 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
 
 #undef JOINC
 #undef SETFIELD
+#undef SETCOLOR
 }
 
 static void
@@ -2656,8 +2694,9 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
      {
         pgm->lua_func = luaL_ref(L, LUA_REGISTRYINDEX);
         _filter_program_reset(pgm);
+        lua_getglobal(L, _lua_errfunc_name);
         lua_rawgeti(L, LUA_REGISTRYINDEX, pgm->lua_func);
-        ok = !lua_pcall(L, 0, LUA_MULTRET, 0);
+        ok = !lua_pcall(L, 0, LUA_MULTRET, -2);
      }
 
    if (!ok)
@@ -3382,8 +3421,9 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
      {
         pgm->changed = EINA_FALSE;
         _filter_program_reset(pgm);
+        lua_getglobal(pgm->L, _lua_errfunc_name);
         lua_rawgeti(pgm->L, LUA_REGISTRYINDEX, pgm->lua_func);
-        success = !lua_pcall(pgm->L, 0, LUA_MULTRET, 0);
+        success = !lua_pcall(pgm->L, 0, LUA_MULTRET, -2);
         if (!success)
           {
              const char *msg = lua_tostring(pgm->L, -1);
@@ -3415,4 +3455,11 @@ end:
    if (!success) evas_filter_context_clear(ctx);
    if (dc) ENFN->context_free(ENDT, dc);
    return success;
+}
+
+void
+evas_filter_parser_shutdown(void)
+{
+   free(_lua_color_code);
+   _lua_color_code = NULL;
 }

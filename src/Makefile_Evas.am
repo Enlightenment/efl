@@ -2204,3 +2204,11 @@ installed_evasluadir = $(datadir)/elua/modules/evas
 nodist_installed_evaslua_DATA = $(generated_evas_lua_all)
 
 endif
+
+# Evas filters Lua stuff
+evas_filters_lua = \
+lib/evas/filters/lua/color.lua \
+$(NULL)
+
+installed_evasfiltersdir = $(datadir)/evas/filters/lua
+dist_installed_evasfilters_DATA = $(evas_filters_lua)

@@ -680,6 +680,16 @@ _evas_module_libdir_get(void)
    return eina_prefix_lib_get(pfx);
 }
 
+const char *
+_evas_module_datadir_get(void)
+{
+   if (!pfx) pfx = eina_prefix_new
+      (NULL, _evas_module_libdir_get, "EVAS", "evas", "checkme",
+       PACKAGE_BIN_DIR, PACKAGE_LIB_DIR, PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
+   if (!pfx) return NULL;
+   return eina_prefix_data_get(pfx);
+}
+
 EAPI const char *
 evas_cserve_path_get(void)
 {

@@ -268,4 +268,6 @@ Eina_Bool           evas_filter_interpolate(DATA8* output /* 256 values */, int 
 Evas_Filter_Command *_evas_filter_command_get(Evas_Filter_Context *ctx, int cmdid);
 int evas_filter_smallest_pow2_larger_than(int val);
 
+void evas_filter_parser_shutdown(void);
+
 #endif // EVAS_FILTER_PRIVATE_H
