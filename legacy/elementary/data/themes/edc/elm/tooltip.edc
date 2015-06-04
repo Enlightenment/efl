@@ -3,7 +3,7 @@ group { name: "elm/label/base/tooltip/default";
    alias: "elm/label/base/tooltip/transparent";
    styles {
       style { name: "tooltip_style";
-         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=word text_class=bubble";
+         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 text_class=bubble";
          tag:  "br" "\n";
          tag: "hilight" "+ font="FN" text_class=bubble";
          tag: "b" "+ font="FN" text_class=bubble";
