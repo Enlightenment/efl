@@ -383,12 +383,6 @@ typedef struct _Ecore_Buffer Ecore_Buffer;
  */
 typedef struct _Ecore_Buffer_Backend Ecore_Buffer_Backend;
 /**
- * @typedef Ecore_Export_Type
- * Types for export buffer.
- * @since_tizen 2.4
- */
-typedef enum _Ecore_Export_Type Ecore_Export_Type;
-/**
  * @typedef Ecore_Buffer_Format
  * The format of Ecore_Buffer.
  * @since_tizen 2.4
@@ -424,12 +418,12 @@ typedef void (*Ecore_Buffer_Cb)(Ecore_Buffer* buf, void* data);
  * Types for export buffer.
  * @since_tizen 2.4
  */
-enum _Ecore_Export_Type
+typedef enum _Ecore_Export_Type
 {
    EXPORT_TYPE_INVALID,
    EXPORT_TYPE_ID,
    EXPORT_TYPE_FD
-};
+} Ecore_Export_Type;
 
 /**
  * @struct _Ecore_Buffer_Backend
