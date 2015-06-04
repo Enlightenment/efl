@@ -19,6 +19,7 @@
 #include <ecore_js_event.hh>
 #include <ecore_js_job.hh>
 #include <ecore_js_idle.hh>
+#include <ecore_js_animator.hh>
 
 const char* ToCString(const v8::String::Utf8Value& value) {
   return *value ? *value : "<string conversion failed>";
@@ -267,6 +268,105 @@ void test_setup(v8::Handle<v8::Object> exports)
   register_idle_exiter_add(isolate, exports,
                            compatibility_new<String>(isolate,
                                                      "ecore_idle_exiter_add"));
+
+  // animator
+  register_pos_map_linear(isolate, exports,
+                          compatibility_new<String>(isolate,
+                                                    "ECORE_POS_MAP_LINEAR"));
+  register_pos_map_accelerate(isolate, exports,
+                              compatibility_new<String>(isolate,
+                                                        "ECORE_POS_MAP"
+                                                        "_ACCELERATE"));
+  register_pos_map_decelerate(isolate, exports,
+                              compatibility_new<String>(isolate,
+                                                        "ECORE_POS_MAP"
+                                                        "_DECELERATE"));
+  register_pos_map_sinusoidal(isolate, exports,
+                              compatibility_new<String>(isolate,
+                                                        "ECORE_POS_MAP"
+                                                        "_SINUSOIDAL"));
+  register_pos_map_accelerate_factor(isolate, exports,
+                                     compatibility_new<String>(isolate,
+                                                               "ECORE_POS_MAP"
+                                                               "_ACCELERATE"
+                                                               "_FACTOR"));
+  register_pos_map_decelerate_factor(isolate, exports,
+                                     compatibility_new<String>(isolate,
+                                                               "ECORE_POS_MAP"
+                                                               "_DECELERATE"
+                                                               "_FACTOR"));
+  register_pos_map_sinusoidal_factor(isolate, exports,
+                                     compatibility_new<String>(isolate,
+                                                               "ECORE_POS_MAP"
+                                                               "_SINUSOIDAL"
+                                                               "_FACTOR"));
+  register_pos_map_divisor_interp(isolate, exports,
+                                  compatibility_new<String>(isolate,
+                                                            "ECORE_POS_MAP"
+                                                            "_DIVISOR_INTERP"));
+  register_pos_map_bounce(isolate, exports,
+                          compatibility_new<String>(isolate,
+                                                    "ECORE_POS_MAP_BOUNCE"));
+  register_pos_map_spring(isolate, exports,
+                          compatibility_new<String>(isolate,
+                                                    "ECORE_POS_MAP_SPRING"));
+  register_pos_map_cubic_bezier(isolate, exports,
+                                compatibility_new<String>(isolate,
+                                                          "ECORE_POS_MAP_CUBIC"
+                                                          "_BEZIER"));
+  register_animator_source_timer(isolate, exports,
+                                 compatibility_new<String>(isolate,
+                                                           "ECORE_ANIMATOR"
+                                                           "_SOURCE_TIMER"));
+  register_animator_source_custom(isolate, exports,
+                                  compatibility_new<String>(isolate,
+                                                            "ECORE_ANIMATOR"
+                                                            "_SOURCE_CUSTOM"));
+  register_animator_frametime_set(isolate, exports,
+                                  compatibility_new<String>(isolate,
+                                                            "ecore_animator"
+                                                            "_frametime_set"));
+  register_animator_frametime_get(isolate, exports,
+                                  compatibility_new<String>(isolate,
+                                                            "ecore_animator"
+                                                            "_frametime_get"));
+  register_animator_pos_map(isolate, exports,
+                            compatibility_new<String>(isolate,
+                                                      "ecore_animator_pos"
+                                                      "_map"));
+  register_animator_pos_map_n(isolate, exports,
+                              compatibility_new<String>(isolate,
+                                                        "ecore_animator_pos_map"
+                                                        "_n"));
+  register_animator_source_set(isolate, exports,
+                               compatibility_new<String>(isolate,
+                                                         "ecore_animator_source"
+                                                         "_set"));
+  register_animator_source_get(isolate, exports,
+                               compatibility_new<String>(isolate,
+                                                         "ecore_animator_source"
+                                                         "_get"));
+  register_animator_custom_source_tick_begin_callback_set
+      (isolate, exports,
+       compatibility_new<String>(isolate,
+                                 "ecore_animator_custom_source_tick_begin"
+                                 "_callback_set"));
+  register_animator_custom_source_tick_end_callback_set
+      (isolate, exports,
+       compatibility_new<String>(isolate,
+                                 "ecore_animator_custom_source_tick_end"
+                                 "_callback_set"));
+  register_animator_custom_tick(isolate, exports,
+                                compatibility_new<String>(isolate,
+                                                          "ecore_animator"
+                                                          "_custom_tick"));
+  register_animator_add(isolate, exports,
+                        compatibility_new<String>(isolate,
+                                                  "ecore_animator_add"));
+  register_animator_timeline_add(isolate, exports,
+                                 compatibility_new<String>(isolate,
+                                                           "ecore_animator"
+                                                           "_timeline_add"));
 
   std::cerr << __LINE__ << std::endl;
 }

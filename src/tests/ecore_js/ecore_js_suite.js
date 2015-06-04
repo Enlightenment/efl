@@ -256,6 +256,22 @@ assert(captured[2] === 3);
 assert(captured[3] === 1);
 assert(captured[4] === 5);
 
+// Ecore animator
+
+suite.ecore_animator_frametime_set(1);
+assert(suite.ecore_animator_frametime_get() === 1);
+suite.ecore_animator_frametime_set(1 / 50);
+assert(suite.ecore_animator_frametime_get() === (1 / 50));
+
+assert(suite.ecore_animator_pos_map(0.5, suite.ECORE_POS_MAP_LINEAR, 0, 0)
+       === 0.5);
+
+suite.ecore_animator_source_set(suite.ECORE_ANIMATOR_SOURCE_CUSTOM);
+assert(suite.ecore_animator_source_get()
+       === suite.ECORE_ANIMATOR_SOURCE_CUSTOM);
+suite.ecore_animator_source_set(suite.ECORE_ANIMATOR_SOURCE_TIMER);
+assert(suite.ecore_animator_source_get() === suite.ECORE_ANIMATOR_SOURCE_TIMER);
+
 // Ecore shutdown
 
 suite.ecore_shutdown();
