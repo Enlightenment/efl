@@ -8,6 +8,10 @@
 # error gl_drm should not get compiled if dlsym is not found on the system!
 #endif
 
+#ifdef EVAS_CSERVE2
+# include "evas_cs2_private.h"
+#endif
+
 #define EVAS_GL_NO_GL_H_CHECK 1
 #include "Evas_GL.h"
 
@@ -40,6 +44,15 @@ struct _Native
    void *egl_surface;
 };
 
+/* local function prototype types */
+typedef void (*_eng_fn)(void);
+typedef _eng_fn (*glsym_func_eng_fn)();
+typedef void (*glsym_func_void)();
+typedef void *(*glsym_func_void_ptr)();
+typedef int (*glsym_func_int)();
+typedef unsigned int (*glsym_func_uint)();
+typedef const char *(*glsym_func_const_char_ptr)();
+
 /* external dynamic loaded Evas_GL function pointers */
 Evas_GL_Common_Image_Call glsym_evas_gl_common_image_ref = NULL;
 Evas_GL_Common_Image_Call glsym_evas_gl_common_image_unref = NULL;
@@ -51,6 +64,7 @@ Evas_GL_Common_Context_Call glsym_evas_gl_common_image_all_unload = NULL;
 Evas_GL_Preload glsym_evas_gl_preload_init = NULL;
 Evas_GL_Preload glsym_evas_gl_preload_shutdown = NULL;
 EVGL_Engine_Call glsym_evgl_engine_shutdown = NULL;
+EVGL_Current_Native_Context_Get_Call glsym_evgl_current_native_context_get = NULL;
 Evas_Gl_Symbols glsym_evas_gl_symbols = NULL;
 
 Evas_GL_Common_Context_New glsym_evas_gl_common_context_new = NULL;
@@ -65,14 +79,7 @@ Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_relax = NULL;
 
-/* local function prototype types */
-typedef void (*_eng_fn)(void);
-typedef _eng_fn (*glsym_func_eng_fn)();
-typedef void (*glsym_func_void)();
-typedef void *(*glsym_func_void_ptr)();
-typedef int (*glsym_func_int)();
-typedef unsigned int (*glsym_func_uint)();
-typedef const char *(*glsym_func_const_char_ptr)();
+glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
 
 /* dynamic loaded local egl function pointers */
 _eng_fn (*glsym_eglGetProcAddress)(const char *a) = NULL;
@@ -163,7 +170,9 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_preload_init);
    LINK2GENERIC(evas_gl_preload_shutdown);
    LINK2GENERIC(evgl_engine_shutdown);
+   LINK2GENERIC(evgl_current_native_context_get);
    LINK2GENERIC(evas_gl_symbols);
+   LINK2GENERIC(evas_gl_common_current_context_get);
 
 #define FINDSYM(dst, sym, typ) \
    if (glsym_eglGetProcAddress) { \
@@ -248,7 +257,7 @@ evgl_eng_display_get(void *data)
      }
 
    if (eng_get_ob(re))
-     return (void*)eng_get_ob(re)->egl.disp;
+     return (void *)eng_get_ob(re)->egl.disp;
    else
      return NULL;
 }
@@ -266,7 +275,7 @@ evgl_eng_evas_surface_get(void *data)
      }
 
    if (eng_get_ob(re))
-     return (void*)eng_get_ob(re)->egl.surface[0];
+     return (void *)eng_get_ob(re)->egl.surface[0];
    else
      return NULL;
 }
@@ -371,6 +380,9 @@ evgl_eng_native_window_destroy(void *data, void *native_window)
      }
 
    gbm_surface_destroy((struct gbm_surface *)native_window);
+
+   native_window = NULL;
+
    return 1;
 }
 
@@ -468,7 +480,7 @@ evgl_eng_context_create(void *data, void *share_ctx, Evas_GL_Context_Version ver
 
    if (!context)
      {
-        ERR("Engine Context Creations Failed. Error: %#x.", eglGetError());
+        ERR("eglMakeCurrent() failed! Error Code=%#x", eglGetError());
         return NULL;
      }
 
@@ -596,6 +608,8 @@ _native_cb_bind(void *data EINA_UNUSED, void *image)
      }
    else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
      glBindTexture(GL_TEXTURE_2D, n->ns.data.opengl.texture_id);
+
+   /* TODO: NATIVE_SURFACE_TBM and NATIVE_SURFACE_EVASGL */
 }
 
 static void
@@ -613,6 +627,8 @@ _native_cb_unbind(void *data EINA_UNUSED, void *image)
      }
    else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
      glBindTexture(GL_TEXTURE_2D, 0);
+
+   /* TODO: NATIVE_SURFACE_TBM and NATIVE_SURFACE_EVASGL */
 }
 
 static void
@@ -669,7 +685,6 @@ eng_gbm_init(Evas_Engine_Info_GL_Drm *info, int w, int h)
    if (!info) return EINA_FALSE;
    if (!(dev = info->info.dev)) return EINA_FALSE;
 
-   DBG("Create GBM Device");
    if (!(info->info.gbm = gbm_create_device(dev->drm.fd)))
      {
         ERR("Coult not create gbm device: %m");
@@ -769,7 +784,7 @@ eng_setup(Evas *evas, void *in)
    if (!(re = epd->engine.data.output))
      {
         Outbuf *ob;
-        Render_Engine_Merge_Mode merge_mode = MERGE_FULL;
+        Render_Engine_Merge_Mode merge_mode = MERGE_BOUNDING;
 
         if (!initted)
           {
@@ -850,57 +865,45 @@ eng_setup(Evas *evas, void *in)
                  (info->info.depth != eng_get_ob(re)->depth) ||
                  (info->info.destination_alpha != eng_get_ob(re)->destination_alpha))
                {
-                  Outbuf *ob;
+                  Outbuf *ob, *ob_old;
 
-                  eng_get_ob(re)->gl_context->references++;
+                  ob_old = re->generic.software.ob;
+                  re->generic.software.ob = NULL;
                   gl_wins--;
 
                   ob = evas_outbuf_new(info, epd->output.w, epd->output.h, swap_mode);
-
-                  evas_outbuf_free(eng_get_ob(re));
-                  re->generic.software.ob = NULL;
+                  if (!ob)
+                    {
+                       if (ob_old) evas_outbuf_free(ob_old);
+                       free(re);
+                       return 0;
+                    }
 
                   evas_outbuf_use(ob);
-                  if (ob)
-                    {
-                       ob->evas = evas;
+                  if (ob_old) evas_outbuf_free(ob_old);
 
-                       evas_render_engine_software_generic_update(&re->generic.software, ob,
-                                                                  epd->output.w, epd->output.h);
+                  ob->evas = evas;
 
-                       gl_wins++;
-                       eng_get_ob(re)->gl_context->references--;
-                    }
+                  evas_render_engine_software_generic_update(&re->generic.software, ob,
+                                                             epd->output.w, epd->output.h);
+
+                  gl_wins++;
                }
              else if ((eng_get_ob(re)->w != epd->output.w) ||
                       (eng_get_ob(re)->h != epd->output.h) ||
                       (info->info.rotation != eng_get_ob(re)->rotation))
                {
-                  Outbuf *ob;
-
-                  eng_get_ob(re)->gl_context->references++;
-                  gl_wins--;
-
-                  evas_outbuf_free(eng_get_ob(re));
-                  re->generic.software.ob = NULL;
-
-                  eng_gbm_shutdown(eng_get_ob(re)->info);
-                  if (!eng_gbm_init(info, epd->output.w, epd->output.h))
-                    return 0;
-
-                  ob = evas_outbuf_new(info, epd->output.w, epd->output.h, swap_mode);
-
-                  evas_outbuf_use(ob);
-                  if (ob)
-                    {
-                       ob->evas = evas;
-
-                       evas_render_engine_software_generic_update(&re->generic.software, ob,
-                                                                  epd->output.w, epd->output.h);
-
-                       gl_wins++;
-                       eng_get_ob(re)->gl_context->references--;
-                    }
+                  evas_outbuf_reconfigure(eng_get_ob(re),
+                                          epd->output.w, epd->output.h,
+                                          info->info.rotation,
+                                          info->info.depth);
+                  if (re->generic.software.tb)
+                    evas_common_tilebuf_free(re->generic.software.tb);
+                  re->generic.software.tb =
+                    evas_common_tilebuf_new(epd->output.w, epd->output.h);
+                  if (re->generic.software.tb)
+                    evas_common_tilebuf_set_tile_size(re->generic.software.tb,
+                                                      TILESIZE, TILESIZE);
                }
           }
      }
@@ -923,7 +926,8 @@ eng_setup(Evas *evas, void *in)
         return 0;
      }
 
-   evas_render_engine_software_generic_tile_strict_set(&re->generic.software, EINA_TRUE);
+   if (re->generic.software.tb)
+     evas_render_engine_software_generic_tile_strict_set(&re->generic.software, EINA_TRUE);
 
    if (!epd->engine.data.context)
      {
@@ -1208,7 +1212,24 @@ eng_image_native_set(void *data, void *image, void *native)
           }
      }
 
+   /* TODO: NATIVE_SURFACE_TBM and NATIVE_SURFACE_EVASGL */
+
    return img;
+}
+
+static void *
+eng_gl_current_context_get(void *data EINA_UNUSED)
+{
+   EVGL_Context *ctx;
+   EVGLNative_Context context;
+
+   ctx = glsym_evas_gl_common_current_context_get();
+   if (!ctx) return NULL;
+
+   context = glsym_evgl_current_native_context_get(ctx);
+   if (eglGetCurrentContext() == context) return ctx;
+
+   return NULL;
 }
 
 /* module api functions */
@@ -1246,10 +1267,12 @@ module_open(Evas_Module *em)
    EVAS_API_OVERRIDE(output_free, &func, eng_);
    EVAS_API_OVERRIDE(output_dump, &func, eng_);
    EVAS_API_OVERRIDE(image_native_set, &func, eng_);
+   EVAS_API_OVERRIDE(gl_current_context_get, &func, eng_);
 
    /* Mesa's EGL driver loads wayland egl by default. (called by eglGetProcaddr() )
     * implicit env set (EGL_PLATFORM=drm) prevent that. */
    setenv("EGL_PLATFORM", "drm", 1);
+
    gl_symbols();
 
    /* now advertise out own api */

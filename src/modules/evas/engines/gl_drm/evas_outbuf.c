@@ -6,18 +6,74 @@ static EGLContext context = EGL_NO_CONTEXT;
 static int win_count = 0;
 
 static void
+_evas_outbuf_fb_cb_destroy(struct gbm_bo *bo, void *data)
+{
+   Ecore_Drm_Fb *fb;
+
+   fb = data;
+   if (fb)
+     {
+        struct gbm_device *gbm;
+
+        gbm = gbm_bo_get_device(bo);
+        drmModeRmFB(gbm_device_get_fd(gbm), fb->id);
+        free(fb);
+     }
+}
+
+static Ecore_Drm_Fb *
+_evas_outbuf_fb_get(Ecore_Drm_Device *dev, struct gbm_bo *bo)
+{
+   int ret;
+   Ecore_Drm_Fb *fb;
+   uint32_t format;
+   uint32_t handles[4], pitches[4], offsets[4];
+
+   fb = gbm_bo_get_user_data(bo);
+   if (fb) return fb;
+
+   if (!(fb = calloc(1, sizeof(Ecore_Drm_Fb)))) return NULL;
+
+   format = gbm_bo_get_format(bo);
+
+   fb->w = gbm_bo_get_width(bo);
+   fb->h = gbm_bo_get_height(bo);
+   fb->hdl = gbm_bo_get_handle(bo).u32;
+   fb->stride = gbm_bo_get_stride(bo);
+   fb->size = fb->stride * fb->h;
+
+   handles[0] = fb->hdl;
+   pitches[0] = fb->stride;
+   offsets[0] = 0;
+
+   ret = drmModeAddFB2(dev->drm.fd, fb->w, fb->h, format,
+                       handles, pitches, offsets, &(fb->id), 0);
+   if (ret)
+     ret = drmModeAddFB(dev->drm.fd, fb->w, fb->h, 24, 32,
+                        fb->stride, fb->hdl, &(fb->id));
+
+   if (ret) ERR("FAILED TO ADD FB: %m");
+
+   gbm_bo_set_user_data(bo, fb, _evas_outbuf_fb_cb_destroy);
+
+   return fb;
+}
+
+static void
 _evas_outbuf_cb_pageflip(void *data)
 {
    Outbuf *ob;
    Ecore_Drm_Fb *fb;
+   struct gbm_bo *bo;
 
    if (!(ob = data)) return;
 
-   if ((fb = ob->priv.buffer[ob->priv.curr]))
-     {
-        fb->pending_flip = EINA_FALSE;
-        gbm_surface_release_buffer(ob->surface, ob->priv.bo[ob->priv.curr]);
-     }
+   bo = ob->priv.bo[ob->priv.curr];
+
+   fb = _evas_outbuf_fb_get(ob->info->info.dev, bo);
+   if (fb) fb->pending_flip = EINA_FALSE;
+
+   gbm_surface_release_buffer(ob->surface, bo);
 
    ob->priv.last = ob->priv.curr;
    ob->priv.curr = (ob->priv.curr + 1) % ob->priv.num;
@@ -26,15 +82,17 @@ _evas_outbuf_cb_pageflip(void *data)
 static void
 _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
 {
-   Ecore_Drm_Fb *buff;
-
-   buff = ob->priv.buffer[ob->priv.curr];
+   Ecore_Drm_Fb *fb;
 
    ob->priv.bo[ob->priv.curr] = gbm_surface_lock_front_buffer(ob->surface);
 
-   ecore_drm_fb_dirty(buff, rects, count);
-   ecore_drm_fb_set(ob->info->info.dev, buff);
-   ecore_drm_fb_send(ob->info->info.dev, buff, _evas_outbuf_cb_pageflip, ob);
+   fb = _evas_outbuf_fb_get(ob->info->info.dev, ob->priv.bo[ob->priv.curr]);
+   if (fb)
+     {
+        ecore_drm_fb_dirty(fb, rects, count);
+        ecore_drm_fb_set(ob->info->info.dev, fb);
+        ecore_drm_fb_send(ob->info->info.dev, fb, _evas_outbuf_cb_pageflip, ob);
+     }
 }
 
 static Eina_Bool
@@ -117,16 +175,6 @@ _evas_outbuf_egl_setup(Outbuf *ob)
         return EINA_FALSE;
      }
 
-   ob->egl.context[0] =
-     eglCreateContext(ob->egl.disp, ob->egl.config, context, ctx_attr);
-   if (ob->egl.context[0] == EGL_NO_CONTEXT)
-     {
-        ERR("eglCreateContext() fail. code=%#x", eglGetError());
-        return EINA_FALSE;
-     }
-
-   if (context == EGL_NO_CONTEXT) context = ob->egl.context[0];
-
    ob->egl.surface[0] =
      eglCreateWindowSurface(ob->egl.disp, ob->egl.config,
                             (EGLNativeWindowType)ob->surface, NULL);
@@ -136,6 +184,16 @@ _evas_outbuf_egl_setup(Outbuf *ob)
             ob->surface, eglGetError());
         return EINA_FALSE;
      }
+
+   ob->egl.context[0] =
+     eglCreateContext(ob->egl.disp, ob->egl.config, context, ctx_attr);
+   if (ob->egl.context[0] == EGL_NO_CONTEXT)
+     {
+        ERR("eglCreateContext() fail. code=%#x", eglGetError());
+        return EINA_FALSE;
+     }
+
+   if (context == EGL_NO_CONTEXT) context = ob->egl.context[0];
 
    if (eglMakeCurrent(ob->egl.disp, ob->egl.surface[0],
                       ob->egl.surface[0], ob->egl.context[0]) == EGL_FALSE)
@@ -179,6 +237,8 @@ _evas_outbuf_egl_setup(Outbuf *ob)
         return EINA_FALSE;
      }
 
+   /* eng_gl_symbols(); */
+
    ob->gl_context = glsym_evas_gl_common_context_new();
    if (!ob->gl_context) return EINA_FALSE;
 
@@ -201,7 +261,6 @@ evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_
 {
    Outbuf *ob;
    char *num;
-   int i = 0;
 
    /* try to allocate space for outbuf */
    if (!(ob = calloc(1, sizeof(Outbuf)))) return NULL;
@@ -236,30 +295,13 @@ evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_
         return NULL;
      }
 
-   for (; i < ob->priv.num; i++)
-     {
-        ob->priv.buffer[i] = 
-          ecore_drm_fb_create(ob->info->info.dev, ob->w, ob->h);
-        if (!ob->priv.buffer[i]) break;
-
-        DBG("Evas Engine Created Dumb Buffer");
-        DBG("\tFb: %d", ob->priv.buffer[i]->id);
-        DBG("\tHandle: %d", ob->priv.buffer[i]->hdl);
-        DBG("\tStride: %d", ob->priv.buffer[i]->stride);
-        DBG("\tSize: %d", ob->priv.buffer[i]->size);
-        DBG("\tW: %d\tH: %d",
-            ob->priv.buffer[i]->w, ob->priv.buffer[i]->h);
-     }
-
-   ecore_drm_fb_set(info->info.dev, ob->priv.buffer[0]);
-
    return ob;
 }
 
 void
 evas_outbuf_free(Outbuf *ob)
 {
-   int i = 0, ref = 0;
+   int ref = 0;
 
    win_count--;
    evas_outbuf_use(ob);
@@ -295,9 +337,6 @@ evas_outbuf_free(Outbuf *ob)
         eglReleaseThread();
         context = EGL_NO_CONTEXT;
      }
-
-   for (; i < ob->priv.num; i++)
-     ecore_drm_fb_destroy(ob->priv.buffer[i]);
 
    free(ob);
 }
@@ -390,38 +429,19 @@ evas_outbuf_unsurf(Outbuf *ob)
 void
 evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
 {
-   int i = 0;
-
-   if (depth == OUTBUF_DEPTH_INHERIT) depth = ob->depth;
+   /* if (depth == OUTBUF_DEPTH_INHERIT) depth = ob->depth; */
 
    /* check for changes */
-   if ((ob->w == w) && (ob->h == h) &&
-       (ob->destination_alpha == ob->info->info.destination_alpha) &&
-       ((int)ob->rotation == rot) && (ob->depth == depth))
-     return;
+   /* if ((ob->w == w) && (ob->h == h) && */
+   /*     (ob->destination_alpha == ob->info->info.destination_alpha) && */
+   /*     ((int)ob->rotation == rot) && (ob->depth == depth)) */
+   /*   return; */
 
    ob->w = w;
    ob->h = h;
    ob->depth = depth;
    ob->rotation = rot;
-
-   /* destroy the old buffers */
-   for (; i < ob->priv.num; i++)
-     ecore_drm_fb_destroy(ob->priv.buffer[i]);
-
-   for (i = 0; i < ob->priv.num; i++)
-     {
-        ob->priv.buffer[i] = 
-          ecore_drm_fb_create(ob->info->info.dev, ob->w, ob->h);
-        if (!ob->priv.buffer[i])
-          {
-             ERR("Failed to create buffer %d", i);
-             break;
-          }
-     }
-
    evas_outbuf_use(ob);
-
    glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot);
 
    //TODO: need drm gbm surface destroy & re-create.?
@@ -532,7 +552,7 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode 
      ob->info->callback.pre_swap(ob->info->callback.data, ob->evas);
 
 // TODO: Check eglSwapBuffersWithDamage for gl_drm and apply
-#if 0
+//#if 0
    if ((glsym_eglSwapBuffersWithDamage) && (ob->swap_mode != MODE_FULL))
      {
         EGLint num = 0, *result = NULL, i = 0;
@@ -549,7 +569,7 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode 
 
                   gw = ob->gl_context->w;
                   gh = ob->gl_context->h;
-                  switch (ob->rot)
+                  switch (ob->rotation)
                     {
                      case 0:
                        result[i + 0] = r->x;
@@ -589,7 +609,7 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode 
           }
      }
    else
-#endif
+//#endif
       eglSwapBuffers(ob->egl.disp, ob->egl.surface[0]);
 
    if (ob->info->callback.post_swap)
@@ -600,7 +620,7 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *rects EINA_UNUSED, Evas_Render_Mode 
 
    ob->priv.frame_cnt++;
 
- end:
+end:
    //TODO: Need render unlock after drm page flip?
    glsym_evas_gl_preload_render_unlock(_evas_outbuf_make_current, ob);
 }

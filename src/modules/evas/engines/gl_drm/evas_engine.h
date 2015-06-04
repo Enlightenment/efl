@@ -87,7 +87,6 @@ struct _Outbuf
      {
         int prev_age, frame_cnt;
         int curr, last, num;
-        Ecore_Drm_Fb *buffer[4];
         struct gbm_bo *bo[4];
         Eina_List *pending_writes;
      } priv;
@@ -126,5 +125,7 @@ _re_wincheck(Outbuf *ob)
    if (!ob->surf) ERR("GL engine can't re-create window surface!");
    return EINA_FALSE;
 }
+
+extern unsigned int (*glsym_eglSwapBuffersWithDamage)(EGLDisplay a, void *b, const EGLint *d, EGLint c);
 
 #endif
