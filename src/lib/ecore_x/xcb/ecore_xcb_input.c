@@ -279,3 +279,17 @@ ecore_x_input_raw_select(Ecore_X_Window win EINA_UNUSED)
    /* NB: FIXME: This is just a placeholder. XCB does not have XInput2 yet */
    return EINA_FALSE;
 }
+
+EAPI Eina_Bool
+ecore_x_input_touch_devices_grab(Ecore_X_Window win EINA_UNUSED)
+{
+   /* NB: FIXME: This is just a placeholder. XCB does not have XInput2 yet */
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+ecore_x_input_touch_devices_ungrab(void)
+{
+   /* NB: FIXME: This is just a placeholder. XCB does not have XInput2 yet */
+   return EINA_FALSE;
+}

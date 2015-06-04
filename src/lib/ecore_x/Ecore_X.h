@@ -2533,6 +2533,8 @@ EAPI Eina_Bool      ecore_x_image_to_argb_convert(void *src, int sbpp, int sbpl,
 
 EAPI Eina_Bool      ecore_x_input_multi_select(Ecore_X_Window win); /**< @since 1.13 */
 EAPI Eina_Bool	    ecore_x_input_raw_select(Ecore_X_Window win); /**< @since 1.8 */
+EAPI Eina_Bool      ecore_x_input_touch_devices_grab(Ecore_X_Window win); /**< @since 1.15 */
+EAPI Eina_Bool      ecore_x_input_touch_devices_ungrab(void); /**< @since 1.15 */
 
 EAPI Eina_Bool      ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win);
 

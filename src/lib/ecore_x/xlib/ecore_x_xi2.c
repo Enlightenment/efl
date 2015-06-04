@@ -41,6 +41,7 @@ static int _ecore_x_xi2_num = 0;
 #ifdef ECORE_XI2_2
 static Eina_Inlist *_ecore_x_xi2_touch_info_list = NULL;
 #endif /* ifdef ECORE_XI2_2 */
+static Eina_List *_ecore_x_xi2_grabbed_devices_list;
 #endif /* ifdef ECORE_XI2 */
 
 void
@@ -140,6 +141,10 @@ _ecore_x_input_shutdown(void)
 
    _ecore_x_xi2_num = 0;
    _ecore_x_xi2_opcode = -1;
+
+   if (_ecore_x_xi2_grabbed_devices_list)
+     eina_list_free(_ecore_x_xi2_grabbed_devices_list);
+   _ecore_x_xi2_grabbed_devices_list = NULL;
 #endif /* ifdef ECORE_XI2 */
 }
 
@@ -271,6 +276,23 @@ _ecore_x_input_raw_handler(XEvent *xevent)
 #endif /* ifdef ECORE_XI2 */
 }
 
+static Eina_Bool
+_ecore_x_input_grabbed_is(int deviceId)
+{
+#ifdef ECORE_XI2
+   void *id;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(_ecore_x_xi2_grabbed_devices_list, l, id)
+     {
+        if (deviceId == (intptr_t)id)
+          return EINA_TRUE;
+     }
+#endif /* ifdef ECORE_XI2 */
+
+   return EINA_FALSE;
+}
+
 void
 _ecore_x_input_mouse_handler(XEvent *xevent)
 {
@@ -282,6 +304,9 @@ _ecore_x_input_mouse_handler(XEvent *xevent)
 
    switch (xevent->xcookie.evtype)
      {
+      case XI_TouchUpdate:
+         if (!_ecore_x_input_grabbed_is(devid))
+           break;
       case XI_Motion:
         INF("Handling XI_Motion");
         _ecore_mouse_move
@@ -300,6 +325,9 @@ _ecore_x_input_mouse_handler(XEvent *xevent)
           evd->root_x, evd->root_y);
         break;
 
+      case XI_TouchBegin:
+         if (!_ecore_x_input_grabbed_is(devid))
+           break;
       case XI_ButtonPress:
         INF("ButtonEvent:multi press time=%u x=%d y=%d devid=%d", (unsigned int)evd->time, (int)evd->event_x, (int)evd->event_y, devid);
         _ecore_mouse_button
@@ -320,6 +348,9 @@ _ecore_x_input_mouse_handler(XEvent *xevent)
           evd->root_x, evd->root_y);
         break;
 
+      case XI_TouchEnd:
+         if (!_ecore_x_input_grabbed_is(devid))
+           break;
       case XI_ButtonRelease:
         INF("ButtonEvent:multi release time=%u x=%d y=%d devid=%d", (unsigned int)evd->time, (int)evd->event_x, (int)evd->event_y, devid);
         _ecore_mouse_button
@@ -623,7 +654,12 @@ _ecore_x_input_handler(XEvent *xevent)
 
              if ((dev->use == XISlavePointer) &&
                  !(evd->flags & XIPointerEmulated))
-               _ecore_x_input_multi_handler(xevent);
+               {
+                  if (evd->flags & XITouchEmulatingPointer)
+                    _ecore_x_input_mouse_handler(xevent);
+                  else
+                    _ecore_x_input_multi_handler(xevent);
+               }
              else if (dev->use == XIFloatingSlave)
                _ecore_x_input_mouse_handler(xevent);
 
@@ -738,3 +774,82 @@ ecore_x_input_raw_select(Ecore_X_Window win)
 #endif
 }
 
+EAPI Eina_Bool
+_ecore_x_input_touch_devices_grab(Ecore_X_Window grab_win, Eina_Bool grab)
+{
+#ifdef ECORE_XI2
+   int i;
+
+   if (!_ecore_x_xi2_devs)
+     return EINA_FALSE;
+
+   Eina_Bool status = EINA_FALSE;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   for (i = 0; i < _ecore_x_xi2_num; i++)
+     {
+        XIDeviceInfo *dev = &(_ecore_x_xi2_devs[i]);
+        int update = 0;
+        XIEventMask eventmask;
+        unsigned char mask[4] = { 0 };
+
+        eventmask.deviceid = XISlavePointer;
+        eventmask.mask_len = sizeof(mask);
+        eventmask.mask = mask;
+
+        if (dev->use == XISlavePointer)
+          {
+#ifdef ECORE_XI2_2
+             Eina_Inlist *l = _ecore_x_xi2_touch_info_list;
+             Ecore_X_Touch_Device_Info *info;
+             info = _ecore_x_input_touch_info_get(dev);
+
+             if (info)
+               {
+                  XISetMask(mask, XI_TouchUpdate);
+                  XISetMask(mask, XI_TouchBegin);
+                  XISetMask(mask, XI_TouchEnd);
+                  update = 1;
+                  free(info);
+               }
+#endif /* #ifdef ECORE_XI2_2 */
+
+#if !defined (ECORE_XI2_2) && defined (XI_TouchUpdate) && defined (XI_TouchBegin) && defined (XI_TouchEnd)
+             XISetMask(mask, XI_TouchUpdate);
+             XISetMask(mask, XI_TouchBegin);
+             XISetMask(mask, XI_TouchEnd);
+             update = 1;
+#endif
+          }
+
+        if (update)
+          {
+             if (grab) {
+                status |= (XIGrabDevice(_ecore_x_disp, dev->deviceid, grab_win, CurrentTime,
+                           None, GrabModeAsync, GrabModeAsync, False, &eventmask) == GrabSuccess);
+                _ecore_x_xi2_grabbed_devices_list = eina_list_append(_ecore_x_xi2_grabbed_devices_list, (void*)(intptr_t)dev->deviceid);
+             }
+             else {
+                status |= (XIUngrabDevice(_ecore_x_disp, dev->deviceid, CurrentTime) == Success);
+                _ecore_x_xi2_grabbed_devices_list = eina_list_remove(_ecore_x_xi2_grabbed_devices_list, (void*)(intptr_t)dev->deviceid);
+             }
+             if (_ecore_xlib_sync) ecore_x_sync();
+          }
+     }
+
+   return status;
+#endif
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+ecore_x_input_touch_devices_grab(Ecore_X_Window grab_win)
+{
+   return _ecore_x_input_touch_devices_grab(grab_win, EINA_TRUE);
+}
+
+EAPI Eina_Bool
+ecore_x_input_touch_devices_ungrab(void)
+{
+   return _ecore_x_input_touch_devices_grab(0, EINA_FALSE);
+}
