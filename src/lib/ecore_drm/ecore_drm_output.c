@@ -710,7 +710,6 @@ next:
                {
                   disconnects &= ~(1 << output->conn_id);
                   _ecore_drm_output_event_send(output, EINA_FALSE);
-                  ecore_drm_output_free(output);
                }
           }
      }
