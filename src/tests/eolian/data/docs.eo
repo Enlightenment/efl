@@ -1,5 +1,6 @@
 struct Foo {
     [[This is struct Foo.
+      It does stuff.
 
       This is a longer description for struct Foo.
 

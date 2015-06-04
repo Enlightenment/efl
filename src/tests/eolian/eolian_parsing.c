@@ -1150,7 +1150,7 @@ START_TEST(eolian_docs)
    fail_if(!(type = eolian_type_struct_get_by_name("Foo")));
    fail_if(!(doc = eolian_type_documentation_get(type)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
-                  "This is struct Foo."));
+                  "This is struct Foo. It does stuff."));
    fail_if(strcmp(eolian_documentation_description_get(doc),
                   "This is a longer description for struct Foo.\n\n"
                   "This is another paragraph."));

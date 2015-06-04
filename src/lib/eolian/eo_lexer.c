@@ -275,9 +275,15 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
           }
         if (is_newline(ls->current))
           {
-             while (is_newline(ls->current))
-               next_line_ws(ls);
-             break;
+             next_line_ws(ls);
+             if (is_newline(ls->current))
+               {
+                  while (is_newline(ls->current))
+                    next_line_ws(ls);
+                  break;
+               }
+             else
+               eina_strbuf_append_char(ls->buff, ' ');
           }
         else
           {
