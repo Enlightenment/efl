@@ -117,16 +117,6 @@ _evas_outbuf_egl_setup(Outbuf *ob)
         return EINA_FALSE;
      }
 
-   ob->egl.surface[0] =
-     eglCreateWindowSurface(ob->egl.disp, ob->egl.config,
-                            (EGLNativeWindowType)ob->surface, NULL);
-   if (ob->egl.surface[0] == EGL_NO_SURFACE)
-     {
-        ERR("eglCreateWindowSurface() fail for %p. code=%#x",
-            ob->surface, eglGetError());
-        return EINA_FALSE;
-     }
-
    ob->egl.context[0] =
      eglCreateContext(ob->egl.disp, ob->egl.config, context, ctx_attr);
    if (ob->egl.context[0] == EGL_NO_CONTEXT)
@@ -136,6 +126,16 @@ _evas_outbuf_egl_setup(Outbuf *ob)
      }
 
    if (context == EGL_NO_CONTEXT) context = ob->egl.context[0];
+
+   ob->egl.surface[0] =
+     eglCreateWindowSurface(ob->egl.disp, ob->egl.config,
+                            (EGLNativeWindowType)ob->surface, NULL);
+   if (ob->egl.surface[0] == EGL_NO_SURFACE)
+     {
+        ERR("eglCreateWindowSurface() fail for %p. code=%#x",
+            ob->surface, eglGetError());
+        return EINA_FALSE;
+     }
 
    if (eglMakeCurrent(ob->egl.disp, ob->egl.surface[0],
                       ob->egl.surface[0], ob->egl.context[0]) == EGL_FALSE)
