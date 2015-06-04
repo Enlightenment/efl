@@ -97,7 +97,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
           */
 
          params {
-            @in source: Evas_Object *; /*@ Source evas object to be used as the texture data. */
+            @in source: Evas.Object *; /*@ Source evas object to be used as the texture data. */
          }
       }
 
