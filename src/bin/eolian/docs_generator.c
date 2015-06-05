@@ -263,19 +263,19 @@ docs_generate_function(const Eolian_Function *fid, Eolian_Function_Type ftype, i
 
    if (pdoc)
      {
-        const char *desc = eolian_documentation_description_get(pdoc);
+        const char *pdesc = eolian_documentation_description_get(pdoc);
         curl = _indent_line(buf, indent);
         eina_strbuf_append(buf, " * ");
         _append_section(eolian_documentation_summary_get(pdoc), indent,
             curl + 3, buf, wbuf);
         eina_strbuf_append_char(buf, '\n');
-        if (desc)
+        if (pdesc)
           {
              _indent_line(buf, indent);
              eina_strbuf_append(buf, " *\n");
              curl = _indent_line(buf, indent);
              eina_strbuf_append(buf, " * ");
-             _append_section(desc, indent, curl + 3, buf, wbuf);
+             _append_section(pdesc, indent, curl + 3, buf, wbuf);
              eina_strbuf_append_char(buf, '\n');
           }
         if (par || rdoc)
