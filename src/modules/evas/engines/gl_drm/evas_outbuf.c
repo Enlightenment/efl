@@ -450,6 +450,9 @@ evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
 Render_Engine_Swap_Mode
 evas_outbuf_buffer_state_get(Outbuf *ob)
 {
+   /* check for valid output buffer */
+   if (!ob) return MODE_FULL;
+
    if (ob->swap_mode == MODE_AUTO && _extn_have_buffer_age)
      {
         Render_Engine_Swap_Mode swap_mode;
@@ -468,6 +471,29 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
         ob->priv.prev_age = age;
 
         return swap_mode;
+     }
+   else
+     {
+        int delta;
+
+        delta = (ob->priv.last - ob->priv.curr +
+                 (ob->priv.last > ob->priv.last ?
+                     0 : ob->priv.num)) % ob->priv.num;
+
+        /* This is the number of frame since last frame */
+        switch (delta)
+          {
+           case 0:
+             return MODE_COPY;
+           case 1:
+             return MODE_DOUBLE;
+           case 2:
+             return MODE_TRIPLE;
+           case 3:
+             return MODE_QUADRUPLE;
+           default:
+             return MODE_FULL;
+          }
      }
 
    return ob->swap_mode;
