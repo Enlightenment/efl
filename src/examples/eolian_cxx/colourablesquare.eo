@@ -5,22 +5,22 @@ class ColourableSquare (Colourable)
     methods {
         @property size {
             set {
-                /*@ Sets size. */
+                [[Sets size.]]
             }
             get {
-                /*@ Gets size. */
+                [[Gets size.]]
             }
             values {
-                size: int; /*@ The size. */
+                size: int; [[The size.]]
             }
         }
-      size_constructor {
-           legacy: null;
-           params {
-              @in size: int;
-           }
-       }
-        size_print { /*@ Show the square. */ }
+        size_constructor {
+            legacy: null;
+            params {
+                @in size: int;
+            }
+        }
+        size_print { [[Show the square.]] }
     }
     constructors {
         .size_constructor;

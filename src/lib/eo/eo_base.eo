@@ -4,39 +4,35 @@ import eina_types;
 type @extern Eo.Event_Cb: __builtin_event_cb;
 
 struct Eo.Event_Description {
-    /*@
-     * This struct holds the description of a specific event.
-     */
-    name: const(char) *; /*@< name of the event. */
-    doc: const(char) *; /*@< Explanation about the event. */
-    unfreezable: bool; /*@< Eina_True if the event cannot be frozen */
+    [[This struct holds the description of a specific event.]]
+    name: const(char) *; [[name of the event.]]
+    doc: const(char) *; [[Explanation about the event.]]
+    unfreezable: bool; [[Eina_True if the event cannot be frozen.]]
 }
 
 struct Eo.Callback_Array_Item {
-    /*@
-     * An item in an array of callback desc/func.
-     * @see eo_event_callback_array_add()
-     */
-    desc: const(Eo.Event_Description) *; /*@< The event description. */
-    func: Eo.Event_Cb; /*@< The callback function. */
+    [[An item in an array of callback desc/func.
+
+      See also @eo_event_callback_array_add.
+    ]]
+    desc: const(Eo.Event_Description) *; [[The event description.]]
+    func: Eo.Event_Cb; [[The callback function.]]
 }
 
 struct Eo.Dbg_Info {
-     /*@
-      * The structure for the debug info used by Eo.
-      */
-     name: Eina.Stringshare *; /*@< The name of the part (stringshare). */
-     value: generic_value; /*@< The value. */
+     [[The structure for the debug info used by Eo.]]
+     name: Eina.Stringshare *; [[The name of the part (stringshare).]]
+     value: generic_value; [[The value.]]
 }
 
 
-type Eo.Callback_Priority: short; /*@ * Callback priority value. Range is -32k - 32k.
-                                     *The lower the number, the higher the priority.
-                                     *
-                                     * @see EO_CALLBACK_PRIORITY_AFTER
-                                     * @see EO_CALLBACK_PRIORITY_BEFORE
-                                     * @see EO_CALLBACK_PRIORITY_DEFAULT
-                                     */
+type Eo.Callback_Priority: short; [[Callback priority value. Range is -32k - 32k.
+                                    The lower the number, the higher the priority.
+
+                                    See @EO_CALLBACK_PRIORITY_AFTER,
+                                    @EO_CALLBACK_PRIORITY_BEFORE
+                                    @EO_CALLBACK_PRIORITY_DEFAULT
+                                  ]]
 
 abstract Eo.Base ()
 {
@@ -46,36 +42,45 @@ abstract Eo.Base ()
    methods {
       @property parent {
          set {
-            /*@ Set the parent of an object
-Parents keep references to their children so in order to delete objects that have parents you need to set parent to NULL or use eo_del() that does that for you (and also unrefs the object). */
+            [[Set the parent of an object.
+
+              Parents keep references to their children so in order to
+              delete objects that have parents you need to set parent to
+              NULL or use eo_del() that does that for you (and also unrefs
+              the object).
+            ]]
          }
          get {
-            /*@ Get the parent of an object */
+            [[Get the parent of an object]]
          }
          values {
-            parent: Eo.Base*; /*@ the new parent */
+            parent: Eo.Base*; [[the new parent]]
          }
       }
       @property event_global_freeze_count @class {
          get {
-            /*@ return freeze events of object.
-Return event freeze count. */
+            [[Return freeze events of object.
+
+              Return event freeze count.
+            ]]
          }
          values {
-            fcount: int; /*@ The event freeze count of the object */
+            fcount: int; [[The event freeze count of the object]]
          }
       }
       @property event_freeze_count {
          get {
-            /*@ return freeze events of object.
-Return event freeze count. */
+            [[Return freeze events of object.
+
+              Return event freeze count.
+            ]]
          }
          values {
-            fcount: int; /*@ The event freeze count of the object */
+            fcount: int; [[The event freeze count of the object]]
          }
       }
       @property finalized {
-         /*@ True if the object is already finalized, false otherwise. */
+         [[True if the object is already finalized, false otherwise.]]
          get {
          }
          values {
@@ -83,175 +88,196 @@ Return event freeze count. */
          }
       }
       constructor {
-         /*@ Call the object's constructor.
-Should not be used with #eo_do. Only use it with #eo_do_super. */
-         return: Eo.Base *; /*@ The new object created, can be NULL if aborting */
+         [[Call the object's constructor.
+
+           Should not be used with #eo_do. Only use it with #eo_do_super.
+         ]]
+         return: Eo.Base *; [[The new object created, can be NULL if aborting]]
       }
       destructor {
-         /*@ Call the object's destructor.
-Should not be used with #eo_do. Only use it with #eo_do_super. */
+         [[Call the object's destructor.
+
+           Should not be used with #eo_do. Only use it with #eo_do_super.
+         ]]
       }
       finalize {
-         /*@ Called at the end of #eo_add. Should not be called, just overridden. */
-         return: Eo.Base *; /*@ The new object created, can be NULL if aborting */
+         [[Called at the end of #eo_add. Should not be called, just overridden.]]
+         return: Eo.Base *; [[The new object created, can be NULL if aborting]]
       }
       wref_add {
-         /*@ Add a new weak reference to obj.
-This function registers the object handle pointed by wref to obj so when obj is deleted it'll be updated to NULL. This functions should be used when you want to keep track of an object in a safe way, but you don't want to prevent it from being freed. */
+         [[Add a new weak reference to obj.
+
+           This function registers the object handle pointed by wref to
+           obj so when obj is deleted it'll be updated to NULL. This
+           functions should be used when you want to keep track of an
+           object in a safe way, but you don't want to prevent it from
+           being freed.
+         ]]
          params {
             @out wref: Eo.Base *;
          }
       }
       wref_del {
-         /*@ Delete the weak reference passed. */
+         [[Delete the weak reference passed.]]
          params {
             @in wref: Eo.Base **;
          }
       }
       key_data_set {
-         /*@ Set generic data to object.
-          The user is in change to free the data. */
+         [[Set generic data to object.
+
+           The user is in change to free the data.
+         ]]
          params {
-            @in key: const(char)*; /*@ the key associated with the data */
-            @in data: const(void)*; /*@ the data to set */
+            @in key: const(char)*; [[the key associated with the data]]
+            @in data: const(void)*; [[the data to set]]
          }
       }
       key_data_get {
-         /*@ Get generic data from object. */
+         [[Get generic data from object.]]
          params {
-            @in key: const(char)*; /*@ the key associated with the data */
+            @in key: const(char)*; [[the key associated with the data]]
          }
-         return: void *; /*@ the data for the key */
+         return: void *; [[the data for the key]]
       }
       key_data_del {
-         /*@ Del generic data from object. */
+         [[Del generic data from object.]]
          params {
-            @in key: const(char)*; /*@ the key associated with the data */
+            @in key: const(char)*; [[the key associated with the data]]
          }
       }
       event_thaw {
-         /*@ thaw events of object.
-Lets event callbacks be called for the object. */
+         [[thaw events of object.
+
+           Lets event callbacks be called for the object.
+         ]]
       }
       event_freeze {
-         /*@ freeze events of object.
-Prevents event callbacks from being called for the object. */
+         [[freeze events of object.
+
+           Prevents event callbacks from being called for the object.
+         ]]
       }
       event_global_thaw @class {
-         /*@ thaw events of object.
-Lets event callbacks be called for the object. */
+         [[thaw events of object.
+
+           Lets event callbacks be called for the object.
+         ]]
       }
       event_global_freeze @class {
-         /*@ freeze events of object.
-Prevents event callbacks from being called for the object. */
+         [[freeze events of object.
+
+           Prevents event callbacks from being called for the object.
+         ]]
       }
       event_callback_priority_add {
-         /*@ Add a callback for an event with a specific priority.
-callbacks of the same priority are called in reverse order of creation. */
+         [[Add a callback for an event with a specific priority.
+
+           callbacks of the same priority are called in reverse order of
+           creation.
+         ]]
          params {
-            @in desc: const(Eo.Event_Description)*; /*@ The description of the event to listen to */
-            @in priority: Eo.Callback_Priority; /*@ The priority of the callback */
-            @in cb: Eo.Event_Cb; /*@ the callback to call */
-            @in data: const(void)*; /*@ additional data to pass to the callback */
+            @in desc: const(Eo.Event_Description)*; [[The description of the event to listen to]]
+            @in priority: Eo.Callback_Priority; [[The priority of the callback]]
+            @in cb: Eo.Event_Cb; [[the callback to call]]
+            @in data: const(void)*; [[additional data to pass to the callback]]
          }
       }
       event_callback_del {
-         /*@ Del a callback with a specific data associated to it for an event. */
+         [[Del a callback with a specific data associated to it for an event.]]
          params {
-            @in desc: const(Eo.Event_Description)*; /*@ The description of the event to listen to */
-            @in func: Eo.Event_Cb; /*@ the callback to delete */
-            @in user_data: const(void)*; /*@ The data to compare */
+            @in desc: const(Eo.Event_Description)*; [[The description of the event to listen to]]
+            @in func: Eo.Event_Cb; [[the callback to delete]]
+            @in user_data: const(void)*; [[The data to compare]]
          }
       }
       event_callback_array_priority_add {
-         /*@ Add a callback array for an event with a specific priority.
-callbacks of the same priority are called in reverse order of creation. */
+         [[Add a callback array for an event with a specific priority.
+
+           callbacks of the same priority are called in reverse order of
+           creation.
+         ]]
          params {
-            @in array: const(Eo.Callback_Array_Item)*; /*@ an #Eo_Callback_Array_Item of events to listen to */
-            @in priority: Eo.Callback_Priority; /*@ The priority of the callback */
-            @in data: const(void)*; /*@ additional data to pass to the callback */
+            @in array: const(Eo.Callback_Array_Item)*; [[an #Eo_Callback_Array_Item of events to listen to]]
+            @in priority: Eo.Callback_Priority; [[The priority of the callback]]
+            @in data: const(void)*; [[additional data to pass to the callback]]
          }
       }
       event_callback_array_del {
-         /*@ Del a callback array with a specific data associated to it for an event. */
+         [[Del a callback array with a specific data associated to it for an
+           event.
+         ]]
          params {
-            @in array: const(Eo.Callback_Array_Item)*; /*@ an #Eo_Callback_Array_Item of events to listen to */
-            @in user_data: const(void)*; /*@ The data to compare */
+            @in array: const(Eo.Callback_Array_Item)*; [[an #Eo_Callback_Array_Item of events to listen to]]
+            @in user_data: const(void)*; [[The data to compare]]
          }
       }
       event_callback_call {
-         /*@ Call the callbacks for an event of an object. */
+         [[Call the callbacks for an event of an object.]]
          params {
-            @in desc: const(Eo.Event_Description)*; /*@ The description of the event to call */
-            @in event_info: void *; /*@ Extra event info to pass to the callbacks */
+            @in desc: const(Eo.Event_Description)*; [[The description of the event to call]]
+            @in event_info: void *; [[Extra event info to pass to the callbacks]]
          }
-         return: bool; /*@ @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise */
+         return: bool; [[@c EINA_TRUE if one of the callbacks aborted the call,
+                         @c EINA_FALSE otherwise
+                       ]]
       }
       event_callback_forwarder_add {
-         /*@ Add an event callback forwarder for an event and an object. */
+         [[Add an event callback forwarder for an event and an object.]]
          params {
-            @in desc: const(Eo.Event_Description)*; /*@ The description of the event to listen to */
-            @in new_obj: Eo.Base *; /*@ The object to emit events from */
+            @in desc: const(Eo.Event_Description)*; [[The description of the event to listen to]]
+            @in new_obj: Eo.Base *; [[The object to emit events from]]
          }
       }
       event_callback_forwarder_del {
-         /*@ Remove an event callback forwarder for an event and an object. */
+         [[Remove an event callback forwarder for an event and an object.]]
          params {
-            @in desc: const(Eo.Event_Description)*; /*@ The description of the event to listen to */
-            @in new_obj: Eo.Base *; /*@ The object to emit events from */
+            @in desc: const(Eo.Event_Description)*; [[The description of the event to listen to]]
+            @in new_obj: Eo.Base *; [[The object to emit events from]]
          }
       }
       dbg_info_get {
-         /*@ Get dbg information from the object. */
+         [[Get dbg information from the object.]]
          params {
-            @in root_node: Eo.Dbg_Info*; /*@ node of the tree */
+            @in root_node: Eo.Dbg_Info*; [[node of the tree]]
          }
       }
       children_iterator_new {
-         /*@ Get an iterator on all childrens */
+         [[Get an iterator on all childrens]]
          return: free(own(iterator<Eo.Base *> *), eina_iterator_free) @warn_unused;
       }
       composite_attach @beta {
-           /*@
-            * @brief Make an object a composite object of another.
-            *
-            * The class of comp_obj must be part of the extensions of the class of the parent.
-            * It is not possible to attach more then 1 composite of the same class.
-            * This functions also sets the parent of comp_obj to parent.
-            *
-            * @see eo_composite_detach()
-            * @see eo_composite_part_is()
-            * @ingroup Eo_Composite_Objects
-            */
+           [[Make an object a composite object of another.
+
+             The class of comp_obj must be part of the extensions of the class of the parent.
+             It is not possible to attach more then 1 composite of the same class.
+             This functions also sets the parent of comp_obj to parent.
+
+             See @eo_composite_detach, @eo_composite_part_is.
+           ]]
            params {
-                @in comp_obj: Eo.Base *; /*@ the object that will be used to composite the parent. */
+                @in comp_obj: Eo.Base *; [[the object that will be used to composite the parent.]]
            }
-           return: bool; /*@ EINA_TRUE if successfull. EINA_FALSE otherwise. */
+           return: bool; [[EINA_TRUE if successfull. EINA_FALSE otherwise.]]
       }
       composite_detach @beta {
-           /*@
-            * @brief Detach a composite object from another object.
-            *
-            * This functions also sets the parent of comp_obj to @c NULL.
-            *
-            * @see eo_composite_attach()
-            * @see eo_composite_part_is()
-            * @ingroup Eo_Composite_Objects
-            */
+           [[Detach a composite object from another object.
+
+             This functions also sets the parent of comp_obj to @c NULL.
+
+             See @eo_composite_attach, @eo_composite_part_is.
+           ]]
            params {
-                @in comp_obj: Eo.Base *; /*@ the object that will be removed from the parent. */
+                @in comp_obj: Eo.Base *; [[the object that will be removed from the parent.]]
            }
-           return: bool; /*@ EINA_TRUE if successfull. EINA_FALSE otherwise. */
+           return: bool; [[EINA_TRUE if successfull. EINA_FALSE otherwise.]]
       }
       composite_part_is @beta {
-           /*@
-            * @brief Check if an object is part of a composite object.
-            *
-            * @see eo_composite_attach()
-            * @see eo_composite_part_is()
-            * @ingroup Eo_Composite_Objects
-            */
-           return: bool; /*@ EINA_TRUE if it is. EINA_FALSE otherwise. */
+           [[Check if an object is part of a composite object.
+
+             See @eo_composite_attach, @eo_composite_part_is.
+           ]]
+           return: bool; [[EINA_TRUE if it is. EINA_FALSE otherwise.]]
       }
    }
    implements {
@@ -259,8 +285,8 @@ callbacks of the same priority are called in reverse order of creation. */
         class.destructor;
    }
    events {
-      callback,add; /*@ A callback was added. */
-      callback,del; /*@ A callback was deleted. */
-      del; /*@ Obj is being deleted. */
+      callback,add; [[A callback was added.]]
+      callback,del; [[A callback was deleted.]]
+      del; [[Obj is being deleted.]]
    }
 }

@@ -1,46 +1,46 @@
 class Colourable (Eo.Base)
 {
-    /*@ Colourable class. */
+    [[Colourable class.]]
     legacy_prefix: legacy;
     data: Colourable_Data;
     methods {
         rgb_24bits_constructor {
-            /*@ RGB Constructor. */
+            [[RGB Constructor.]]
             legacy: null;
             params {
-                @in rgb: int; /*@ 24-bit RGB Component. */
+                @in rgb: int; [[24-bit RGB Component.]]
             }
         }
-        print_colour { /*@ Print the RGB colour. */ }
+        print_colour { [[Print the RGB colour.]] }
         colour_mask {
-            /*@ The masked RGB value. */
+            [[The masked RGB value.]]
             params {
-                @in mask: int; /*@ The colour mask to be applied to current RGB value. */
+                @in mask: int; [[The colour mask to be applied to current RGB value.]]
             }
-            return: int; /*@ The RGB colour. */
+            return: int; [[The RGB colour.]]
         }
         @property colour {
             set {
-                /*@ Sets a 24-bit RGB colour. */
+                [[Sets a 24-bit RGB colour.]]
             }
             get {
-                /*@ Gets the 24-bit RGB colour. */
+                [[Gets the 24-bit RGB colour.]]
             }
             values {
-                rgb: int; /*@ The RGB colour value. */
+                rgb: int; [[The RGB colour value.]]
             }
         }
         @property composite_colour {
             set {
-                /*@ Sets a composite RGB colour. */
+                [[Sets a composite RGB colour.]]
             }
             get {
-                /*@ Gets the composite RGB colour. */
+                [[Gets the composite RGB colour.]]
             }
             values {
-                r: int; /*@ The red component. */
-                g: int; /*@ The green component. */
-                b: int; /*@ The blue component. */
+                r: int; [[The red component.]]
+                g: int; [[The green component.]]
+                b: int; [[The blue component.]]
             }
         }
     }
