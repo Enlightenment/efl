@@ -603,7 +603,7 @@ eina_quaternion_rotation_matrix3_get(Eina_Matrix3 *m,
 }
 
 EAPI void
-eina_matrix3_quaternion_get(Eina_Quaternion *q,
-                            const Eina_Matrix3 *m)
+eina_matrix3_quaternion_get(Eina_Quaternion *q EINA_UNUSED,
+                            const Eina_Matrix3 *m EINA_UNUSED)
 {
 }
