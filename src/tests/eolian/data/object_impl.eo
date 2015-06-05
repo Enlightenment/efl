@@ -35,16 +35,16 @@ class Object_Impl (Base) {
       constructor_2 {
       }
       foo1 {
-         /*@ comment foo */
+         [[comment foo]]
          params {
-            @in a: int; /*@ a */
+            @in a: int; [[a]]
             @inout b: char;
             @out c: double;
          }
-         return: char * (null); /*@ comment for method return */
+         return: char * (null); [[comment for method return]]
       }
       foo2 @const {
-         /*@ comment foo */
+         [[comment foo]]
          params {
             @in a: int;
             @in b: const(char)*;

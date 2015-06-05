@@ -1,13 +1,13 @@
 class Consts {
    methods {
       foo @const {
-         /*@ comment foo */
+         [[comment foo]]
          params {
-            @in a: int; /*@ a */
+            @in a: int; [[a]]
             @inout b: char;
             @out c: double;
          }
-         return: char * (null); /*@ comment for method return */
+         return: char * (null); [[comment for method return]]
       }
    }
 }

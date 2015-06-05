@@ -26,7 +26,7 @@ class Typedef {
          params {
             idx: int;
          }
-         return: own(char*); /*@ comment for method return */
+         return: own(char*); [[comment for method return]]
       }
    }
 }

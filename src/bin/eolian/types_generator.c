@@ -8,6 +8,7 @@
 
 #include "Eolian.h"
 #include "types_generator.h"
+#include "docs_generator.h"
 #include "common_funcs.h"
 
 static char *
@@ -48,8 +49,19 @@ _desc_generate(const char *desc, Eina_Strbuf *buf)
 static Eina_Strbuf *
 _type_generate(const Eolian_Type *tp, Eina_Bool full)
 {
-   Eina_Strbuf *buf = eina_strbuf_new();
-   _desc_generate(eolian_type_description_get(tp), buf);
+   const char *cdesc = eolian_type_description_get(tp);
+   Eina_Strbuf *buf;
+   if (cdesc)
+     {
+        buf = eina_strbuf_new();
+        _desc_generate(cdesc, buf);
+     }
+   else
+     {
+        buf = docs_generate_full(eolian_type_documentation_get(tp), 0);
+        if (!buf) buf = eina_strbuf_new();
+        else eina_strbuf_append_char(buf, '\n');
+     }
    Eolian_Type_Type tp_type = eolian_type_type_get(tp);
    switch(tp_type)
      {
@@ -78,13 +90,24 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full)
               Eina_Iterator *members = eolian_type_struct_fields_get(tp);
               EINA_ITERATOR_FOREACH(members, member)
                 {
-                   const char *desc = eolian_type_struct_field_description_get(member);
                    const Eolian_Type *type = eolian_type_struct_field_type_get(member);
                    Eina_Stringshare *c_type = eolian_type_c_type_get(type);
                    eina_strbuf_append_printf(buf, "  %s%s%s;",
                          c_type, strchr(c_type, '*')?"":" ",
                          eolian_type_struct_field_name_get(member));
-                   if (desc) eina_strbuf_append_printf(buf, " /** %s */", desc);
+                   const char *fdesc = eolian_type_struct_field_description_get(member);
+                   const Eolian_Documentation *fdoc
+                       = eolian_type_struct_field_documentation_get(member);
+                   if (fdesc) eina_strbuf_append_printf(buf, " /** %s */", fdesc);
+                   else if (fdoc)
+                     {
+                        const char *obuf = eina_strbuf_string_get(buf);
+                        Eina_Strbuf *fbuf = docs_generate_full(fdoc,
+                            strrchr(obuf, '\n') - obuf + 1);
+                        if (fbuf) eina_strbuf_append_printf(buf, " %s",
+                            eina_strbuf_string_get(fbuf));
+                        eina_strbuf_free(fbuf);
+                     }
                    eina_strbuf_append(buf, "\n");
                 }
               eina_iterator_free(members);
@@ -111,7 +134,6 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full)
               Eina_Strbuf *membuf = eina_strbuf_new();
               while (next)
                 {
-                   const char *desc = eolian_type_enum_field_description_get(member);
                    const Eolian_Expression *value = eolian_type_enum_field_value_get(member, EINA_FALSE);
                    char *memb_u = strdup(eolian_type_enum_field_name_get(member));
                    eina_str_toupper(&memb_u);
@@ -138,7 +160,19 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full)
                    next = eina_iterator_next(members, (void**)&member);
                    if (next)
                      eina_strbuf_append(buf, ",");
-                   if (desc) eina_strbuf_append_printf(buf, " /** %s */", desc);
+                   const char *fdesc = eolian_type_enum_field_description_get(member);
+                   const Eolian_Documentation *fdoc
+                       = eolian_type_enum_field_documentation_get(member);
+                   if (fdesc) eina_strbuf_append_printf(buf, " /** %s */", fdesc);
+                   else if (fdoc)
+                     {
+                        const char *obuf = eina_strbuf_string_get(buf);
+                        Eina_Strbuf *fbuf = docs_generate_full(fdoc,
+                            strrchr(obuf, '\n') - obuf + 1);
+                        if (fbuf) eina_strbuf_append_printf(buf, " %s",
+                            eina_strbuf_string_get(fbuf));
+                        eina_strbuf_free(fbuf);
+                     }
                    eina_strbuf_append(buf, "\n");
                 }
               eina_strbuf_append_printf(buf, "} %s", name);

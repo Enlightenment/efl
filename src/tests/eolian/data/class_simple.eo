@@ -1,20 +1,19 @@
 class Class_Simple {
-   /*@ Class Desc Simple */
+   [[Class Desc Simple]]
    legacy_prefix: evas_object_simple;
    eo_prefix: evas_obj_simple;
    data: Evas_Simple_Data;
    methods {
       @property a @beta {
-         /*@ Common desc for a */
+         [[Common desc for a]]
          set {
-            /*@
-            comment a.set */
-            return: bool (true); /*@ comment for property set return */
+            [[comment a.set]]
+            return: bool (true); [[comment for property set return]]
          }
          get {
          }
          values {
-            value: int (100); /*@ Value description */
+            value: int (100); [[Value description]]
          }
       }
       @property b @c_only {
@@ -23,13 +22,13 @@ class Class_Simple {
         }
       }
       foo @beta {
-         /*@ comment foo */
+         [[comment foo]]
          params {
-            @in a: int; /*@ a */
+            @in a: int; [[a]]
             @inout b: char;
             @out c: double (1337.6);
          }
-         return: char * (null); /*@ comment for method return */
+         return: char * (null); [[comment for method return]]
       }
       bar @c_only {
          eo: null;

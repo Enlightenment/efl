@@ -8,18 +8,20 @@
 #include "Eolian.h"
 
 #include "legacy_generator.h"
+#include "docs_generator.h"
 #include "common_funcs.h"
 
 static _eolian_class_vars class_env;
 
 static const char
-tmpl_eapi_funcdef[] = "\n\
+tmpl_eapi_funcdef_doxygen[] = "\n\
 /**\n\
 @#desc\n\
 @#list_desc_param\
- */\n\
-EAPI @#type_return%s(@#params)@#flags;\n\
-";
+ */\n";
+
+static const char
+tmpl_eapi_funcdef[] = "EAPI @#type_return%s(@#params)@#flags;\n";
 
 /*@#CLASS_CHECK(obj) @#check_ret;\n\*/
 static const char
@@ -81,6 +83,27 @@ _eapi_decl_func_generate(const Eolian_Class *class, const Eolian_Function *funci
      }
 
    if (func_env.legacy_func[0] == '\0') goto end;
+
+   Eina_Bool hasnewdocs = eolian_function_documentation_get(funcid, EOLIAN_UNRESOLVED) ||
+                          eolian_function_documentation_get(funcid, ftype);
+
+   if (!hasnewdocs)
+     {
+        /* it will still try to generate, but it'll have nothing to replace
+         * this is ugly, but i CBA to find a better way (it wouldn't make a
+         * difference anyway) and it'll be removed asap (when docs are replaced)
+         */
+        eina_strbuf_append(fbody, tmpl_eapi_funcdef_doxygen);
+     }
+   else
+     {
+        Eina_Strbuf *dbuf = docs_generate_function(funcid, ftype, 0);
+        eina_strbuf_append_char(fbody, '\n');
+        eina_strbuf_append(fbody, eina_strbuf_string_get(dbuf));
+        eina_strbuf_append_char(fbody, '\n');
+        eina_strbuf_free(dbuf);
+     }
+
    eina_strbuf_append_printf(fbody, tmpl_eapi_funcdef, func_env.legacy_func);
 
    if (!eolian_function_is_class(funcid))
@@ -361,7 +384,18 @@ legacy_header_generate(const Eolian_Class *class, Eina_Strbuf *buf)
    _class_env_create(class, NULL, &class_env);
 
    const char *desc = eolian_class_description_get(class);
-   if (desc)
+   const Eolian_Documentation *doc = eolian_class_documentation_get(class);
+   if (doc)
+     {
+        Eina_Strbuf *cdoc = docs_generate_full(doc, 0);
+        if (cdoc)
+          {
+             eina_strbuf_append(buf, eina_strbuf_string_get(cdoc));
+             eina_strbuf_append_char(buf, '\n');
+             eina_strbuf_free(cdoc);
+          }
+     }
+   else if (desc)
      {
         Eina_Strbuf *linedesc = eina_strbuf_new();
         eina_strbuf_append(linedesc, "/**\n");

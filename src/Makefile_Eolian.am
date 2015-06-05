@@ -59,6 +59,8 @@ bin_eolian_eolian_gen_SOURCES = \
                 bin/eolian/legacy_generator.h \
                 bin/eolian/types_generator.c \
                 bin/eolian/types_generator.h \
+                bin/eolian/docs_generator.c \
+                bin/eolian/docs_generator.h \
                 bin/eolian/main.c
 
 bin_eolian_eolian_gen_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@
