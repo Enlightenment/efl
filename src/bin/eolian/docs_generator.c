@@ -31,6 +31,21 @@ _append_section(const char *desc, int ind, int curl, Eina_Strbuf *buf,
         eina_strbuf_reset(wbuf);
         while (*desc && isspace(*desc) && (*desc != '\n'))
           eina_strbuf_append_char(wbuf, *desc++);
+        if (*desc == '\\')
+          {
+             desc++;
+             if (*desc != '@')
+               eina_strbuf_append_char(wbuf, '\\');
+             eina_strbuf_append_char(wbuf, *desc++);
+          }
+        else if (*desc == '@')
+          {
+             desc++;
+             if (isalpha(*desc))
+               eina_strbuf_append(wbuf, "@ref ");
+             else
+               eina_strbuf_append_char(wbuf, '@');
+          }
         while (*desc && !isspace(*desc))
           eina_strbuf_append_char(wbuf, *desc++);
         int limit = DOC_LIMIT(ind);
