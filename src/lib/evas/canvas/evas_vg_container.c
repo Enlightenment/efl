@@ -31,6 +31,8 @@ _efl_vg_container_eo_base_constructor(Eo *obj,
 {
    Efl_VG_Base_Data *nd;
 
+   pd->names = eina_hash_stringshared_new(NULL);
+
    obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
 
    nd = eo_data_scope_get(obj, EFL_VG_BASE_CLASS);
@@ -45,6 +47,9 @@ _efl_vg_container_eo_base_destructor(Eo *obj,
                                      Efl_VG_Container_Data *pd EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, eo_destructor());
+
+   eina_hash_free(pd->names);
+   pd->names = NULL;
 }
 
 static void
@@ -72,6 +77,24 @@ _efl_vg_container_efl_vg_base_bounds_get(Eo *obj EINA_UNUSED,
              eina_rectangle_union(r, &s);
           }
      }
+}
+
+static Efl_VG_Base *
+_efl_vg_container_child_get(Eo *obj EINA_UNUSED, Efl_VG_Container_Data *pd, const char *name)
+{
+   const char *tmp = eina_stringshare_add(name);
+   Efl_VG_Base *r;
+
+   r = eina_hash_find(pd->names, tmp);
+   eina_stringshare_del(tmp);
+
+   return r;
+}
+
+static Eina_Iterator *
+_efl_vg_container_children_get(Eo *obj EINA_UNUSED, Efl_VG_Container_Data *pd)
+{
+   return eina_list_iterator_new(pd->children);
 }
 
 EAPI Efl_VG*

@@ -73,16 +73,21 @@ _efl_vg_root_node_eo_base_constructor(Eo *obj,
    Efl_VG_Base_Data *nd;
    Eo *parent;
 
+   // We are copying here the code of the vg container to make it possible to
+   // enforce that the root node is the only one to attach to an Evas_Object_VG
+   cd = eo_data_scope_get(obj, EFL_VG_CONTAINER_CLASS);
+   cd->children = NULL;
+   cd->names = eina_hash_stringshared_new(NULL);
+
    // Nice little hack, jump over parent constructor in Efl_VG_Root
    obj = eo_do_super_ret(obj, EFL_VG_BASE_CLASS, obj, eo_constructor());
-   eo_do(obj, parent = eo_parent_get());
+   eo_do(obj,
+         parent = eo_parent_get(),
+         efl_vg_name_set("root"));
    if (!eo_isa(parent, EVAS_VG_CLASS)) {
         ERR("Parent of VG_ROOT_NODE must be a VG_CLASS");
         return NULL;
    }
-
-   cd = eo_data_scope_get(obj, EFL_VG_CONTAINER_CLASS);
-   cd->children = NULL;
 
    nd = eo_data_scope_get(obj, EFL_VG_BASE_CLASS);
    nd->render_pre = _evas_vg_root_node_render_pre;

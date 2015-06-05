@@ -1,6 +1,17 @@
 class Efl.VG.Container (Efl.VG.Base)
 {
    legacy_prefix: evas_vg_container;
+   methods {
+      child_get {
+         params {
+            @in name: const(char)*;
+         }
+         return: Efl.VG.Base *;
+      }
+      children_get {
+         return: free(own(iterator<Efl.VG.Base *>*), eina_iterator_free) @warn_unused;
+      }
+   }
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;

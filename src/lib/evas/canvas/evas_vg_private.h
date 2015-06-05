@@ -9,6 +9,8 @@ typedef struct _Efl_VG_Gradient_Data Efl_VG_Gradient_Data;
 
 struct _Efl_VG_Base_Data
 {
+   const char *name;
+
    Eina_Matrix3 *m;
    Efl_VG *mask;
    Ector_Renderer *renderer;
@@ -26,6 +28,8 @@ struct _Efl_VG_Base_Data
 struct _Efl_VG_Container_Data
 {
    Eina_List *children;
+
+   Eina_Hash *names;
 };
 
 struct _Efl_VG_Gradient_Data
