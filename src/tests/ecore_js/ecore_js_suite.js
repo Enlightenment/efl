@@ -272,6 +272,13 @@ assert(suite.ecore_animator_source_get()
 suite.ecore_animator_source_set(suite.ECORE_ANIMATOR_SOURCE_TIMER);
 assert(suite.ecore_animator_source_get() === suite.ECORE_ANIMATOR_SOURCE_TIMER);
 
+// Ecore poller
+
+suite.ecore_poller_poll_interval_set(suite.ECORE_POLLER_CORE, 42);
+assert(suite.ecore_poller_poll_interval_get(suite.ECORE_POLLER_CORE) === 42);
+suite.ecore_poller_poll_interval_set(suite.ECORE_POLLER_CORE, 2);
+assert(suite.ecore_poller_poll_interval_get(suite.ECORE_POLLER_CORE) === 2);
+
 // Ecore shutdown
 
 suite.ecore_shutdown();

@@ -20,6 +20,7 @@
 #include <ecore_js_job.hh>
 #include <ecore_js_idle.hh>
 #include <ecore_js_animator.hh>
+#include <ecore_js_poller.hh>
 
 const char* ToCString(const v8::String::Utf8Value& value) {
   return *value ? *value : "<string conversion failed>";
@@ -367,6 +368,22 @@ void test_setup(v8::Handle<v8::Object> exports)
                                  compatibility_new<String>(isolate,
                                                            "ecore_animator"
                                                            "_timeline_add"));
+
+  // poller
+  register_poller_core(isolate, exports,
+                       compatibility_new<String>(isolate, "ECORE_POLLER_CORE"));
+  register_poller_poll_interval_set(isolate, exports,
+                                    compatibility_new<String>(isolate,
+                                                              "ecore_poller"
+                                                              "_poll_interval"
+                                                              "_set"));
+  register_poller_poll_interval_get(isolate, exports,
+                                    compatibility_new<String>(isolate,
+                                                              "ecore_poller"
+                                                              "_poll_interval"
+                                                              "_get"));
+  register_poller_add(isolate, exports,
+                      compatibility_new<String>(isolate, "ecore_poller_add"));
 
   std::cerr << __LINE__ << std::endl;
 }
