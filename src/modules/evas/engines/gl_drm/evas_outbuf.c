@@ -69,6 +69,7 @@ _evas_outbuf_cb_pageflip(void *data)
    if (!(ob = data)) return;
 
    bo = ob->priv.bo[ob->priv.curr];
+   if (!bo) return;
 
    fb = _evas_outbuf_fb_get(ob->info->info.dev, bo);
    if (fb) fb->pending_flip = EINA_FALSE;
@@ -85,6 +86,11 @@ _evas_outbuf_buffer_swap(Outbuf *ob, Eina_Rectangle *rects, unsigned int count)
    Ecore_Drm_Fb *fb;
 
    ob->priv.bo[ob->priv.curr] = gbm_surface_lock_front_buffer(ob->surface);
+   if (!ob->priv.bo[ob->priv.curr])
+     {
+        WRN("Could not lock front buffer: %m");
+        return;
+     }
 
    fb = _evas_outbuf_fb_get(ob->info->info.dev, ob->priv.bo[ob->priv.curr]);
    if (fb)
