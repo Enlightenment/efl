@@ -550,6 +550,8 @@ _elm_widget_evas_object_smart_show(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUS
         Eo *parent;
         eo_do(obj, parent = elm_interface_atspi_accessible_parent_get());
         elm_interface_atspi_accessible_children_changed_added_signal_emit(parent, obj);
+        if (_elm_widget_onscreen_is(obj))
+           elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_TRUE);
      }
 
    it = evas_object_smart_iterator_new(obj);
@@ -574,6 +576,9 @@ _elm_widget_evas_object_smart_hide(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUS
         evas_object_hide(o);
      }
    eina_iterator_free(it);
+
+   if (_elm_config->atspi_mode)
+     elm_interface_atspi_accessible_state_changed_signal_emit(obj, ELM_ATSPI_STATE_SHOWING, EINA_FALSE);
 }
 
 EOLIAN static void
