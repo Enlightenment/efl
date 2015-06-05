@@ -279,6 +279,13 @@ assert(suite.ecore_poller_poll_interval_get(suite.ECORE_POLLER_CORE) === 42);
 suite.ecore_poller_poll_interval_set(suite.ECORE_POLLER_CORE, 2);
 assert(suite.ecore_poller_poll_interval_get(suite.ECORE_POLLER_CORE) === 2);
 
+// Ecore throttle
+
+suite.ecore_throttle_adjust(3);
+assert(suite.ecore_throttle_get() === 3);
+suite.ecore_throttle_adjust(-3);
+assert(suite.ecore_throttle_get() === 0);
+
 // Ecore shutdown
 
 suite.ecore_shutdown();

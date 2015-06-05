@@ -28,7 +28,8 @@ bindings/ecore_js/ecore_js_event.cc \
 bindings/ecore_js/ecore_js_job.cc \
 bindings/ecore_js/ecore_js_idle.cc \
 bindings/ecore_js/ecore_js_animator.cc \
-bindings/ecore_js/ecore_js_poller.cc
+bindings/ecore_js/ecore_js_poller.cc \
+bindings/ecore_js/ecore_js_throttle.cc
 
 ECORE_JS_TEST_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
@@ -52,7 +53,8 @@ bindings/ecore_js/ecore_js_event.hh \
 bindings/ecore_js/ecore_js_job.hh \
 bindings/ecore_js/ecore_js_idle.hh \
 bindings/ecore_js/ecore_js_animator.hh \
-bindings/ecore_js/ecore_js_poller.hh
+bindings/ecore_js/ecore_js_poller.hh \
+bindings/ecore_js/ecore_js_throttle.hh
 
 ### Unit tests
 

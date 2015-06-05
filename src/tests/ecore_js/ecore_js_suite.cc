@@ -21,6 +21,7 @@
 #include <ecore_js_idle.hh>
 #include <ecore_js_animator.hh>
 #include <ecore_js_poller.hh>
+#include <ecore_js_throttle.hh>
 
 const char* ToCString(const v8::String::Utf8Value& value) {
   return *value ? *value : "<string conversion failed>";
@@ -384,6 +385,14 @@ void test_setup(v8::Handle<v8::Object> exports)
                                                               "_get"));
   register_poller_add(isolate, exports,
                       compatibility_new<String>(isolate, "ecore_poller_add"));
+
+  // throttle
+  register_throttle_adjust(isolate, exports,
+                           compatibility_new<String>(isolate,
+                                                     "ecore_throttle_adjust"));
+  register_throttle_get(isolate, exports,
+                        compatibility_new<String>(isolate,
+                                                  "ecore_throttle_get"));
 
   std::cerr << __LINE__ << std::endl;
 }
