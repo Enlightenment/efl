@@ -49,7 +49,7 @@ EOAPI void  evas_obj_simple_b_set(void);
 /**
  * @brief comment foo
  *
- * @param[inout] b
+ * @param[in,out] b
  * @param[out] c
  *
  * @return comment for method return
