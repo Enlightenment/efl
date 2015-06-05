@@ -242,8 +242,11 @@ docs_generate_function(const Eolian_Function *fid, Eolian_Function_Type ftype, i
                    indent, curl, buf, wbuf);
 
    eina_strbuf_append_char(buf, '\n');
-   _indent_line(buf, indent);
-   eina_strbuf_append(buf, " *\n");
+   if (desc || par || rdoc || pdoc)
+     {
+        _indent_line(buf, indent);
+        eina_strbuf_append(buf, " *\n");
+     }
 
    if (desc)
      {
@@ -275,7 +278,7 @@ docs_generate_function(const Eolian_Function *fid, Eolian_Function_Type ftype, i
              _append_section(desc, indent, curl + 3, buf, wbuf);
              eina_strbuf_append_char(buf, '\n');
           }
-        if (par)
+        if (par || rdoc)
           {
              _indent_line(buf, indent);
              eina_strbuf_append(buf, " *\n");
@@ -334,13 +337,17 @@ docs_generate_function(const Eolian_Function *fid, Eolian_Function_Type ftype, i
                     force_out = EINA_TRUE;
                }
           }
+
+        if (!par && rdoc)
+          {
+             _indent_line(buf, indent);
+             eina_strbuf_append(buf, " *\n");
+          }
      }
    eina_iterator_free(itr);
 
    if (rdoc)
      {
-        _indent_line(buf, indent);
-        eina_strbuf_append(buf, " *\n");
         curl = _indent_line(buf, indent);
         eina_strbuf_append(buf, " * @return ");
         curl += sizeof(" * @return ") - 1;

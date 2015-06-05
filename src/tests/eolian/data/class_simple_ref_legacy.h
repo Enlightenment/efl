@@ -29,7 +29,6 @@ EAPI Eina_Bool evas_object_simple_a_set(Class_Simple *obj, int value);
 /**
  * @brief Common desc for a
  *
- *
  * @return Value description
  */
 EAPI int evas_object_simple_a_get(const Class_Simple *obj);

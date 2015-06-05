@@ -35,7 +35,6 @@ EOAPI Eina_Bool  evas_obj_simple_a_set(int value);
 /**
  * @brief Common desc for a
  *
- *
  * @return Value description
  */
 EOAPI int  evas_obj_simple_a_get(void);
