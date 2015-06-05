@@ -101,9 +101,8 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full)
                    if (fdesc) eina_strbuf_append_printf(buf, " /** %s */", fdesc);
                    else if (fdoc)
                      {
-                        const char *obuf = eina_strbuf_string_get(buf);
                         Eina_Strbuf *fbuf = docs_generate_full(fdoc,
-                            strrchr(obuf, '\n') - obuf + 1);
+                            strlen(strrchr(eina_strbuf_string_get(buf), '\n')));
                         if (fbuf) eina_strbuf_append_printf(buf, " %s",
                             eina_strbuf_string_get(fbuf));
                         eina_strbuf_free(fbuf);
@@ -166,9 +165,8 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full)
                    if (fdesc) eina_strbuf_append_printf(buf, " /** %s */", fdesc);
                    else if (fdoc)
                      {
-                        const char *obuf = eina_strbuf_string_get(buf);
                         Eina_Strbuf *fbuf = docs_generate_full(fdoc,
-                            strrchr(obuf, '\n') - obuf + 1);
+                            strlen(strrchr(eina_strbuf_string_get(buf), '\n')));
                         if (fbuf) eina_strbuf_append_printf(buf, " %s",
                             eina_strbuf_string_get(fbuf));
                         eina_strbuf_free(fbuf);
