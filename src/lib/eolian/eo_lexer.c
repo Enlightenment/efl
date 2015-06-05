@@ -628,10 +628,10 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
         continue;
       case '/':
         {
-           Eina_Bool doc = EINA_FALSE;
            next_char(ls);
            if (ls->current == '*')
              {
+                Eina_Bool doc = EINA_FALSE;
                 int ccol = ls->column;
                 next_char(ls);
                 if ((doc = (ls->current == '@')))
@@ -644,20 +644,8 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
              }
            else if (ls->current != '/') return '/';
            next_char(ls);
-           if ((doc = (ls->current == '@')))
-             next_char(ls);
-           eina_strbuf_reset(ls->buff);
            while (ls->current && !is_newline(ls->current))
-             {
-                eina_strbuf_append_char(ls->buff, ls->current);
-                next_char(ls);
-             }
-           eina_strbuf_trim(ls->buff);
-           if (doc)
-             {
-                tok->value.s = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
-                return TOK_COMMENT;
-             }
+             next_char(ls);
            continue;
         }
       case '[':
