@@ -710,7 +710,6 @@ next:
                {
                   disconnects &= ~(1 << output->conn_id);
                   _ecore_drm_output_event_send(output, EINA_FALSE);
-                  ecore_drm_output_free(output);
                }
           }
      }
@@ -763,6 +762,7 @@ _ecore_drm_output_render_disable(Ecore_Drm_Output *output)
    EINA_SAFETY_ON_NULL_RETURN(output);
 
    output->need_repaint = EINA_FALSE;
+   if (!output->enabled) return;
    ecore_drm_output_cursor_size_set(output, 0, 0, 0);
    ecore_drm_output_dpms_set(output, DRM_MODE_DPMS_OFF);
 }
@@ -951,6 +951,7 @@ EAPI void
 ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle, int w, int h)
 {
    EINA_SAFETY_ON_NULL_RETURN(output);
+   if (!output->enabled) return;
    drmModeSetCursor(output->dev->drm.fd, output->crtc_id, handle, w, h);
 }
 

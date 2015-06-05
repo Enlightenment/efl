@@ -141,8 +141,8 @@ EAPI void
 ecore_drm_fb_dirty(Ecore_Drm_Fb *fb, Eina_Rectangle *rects, unsigned int count)
 {
    EINA_SAFETY_ON_NULL_RETURN(fb);
-   EINA_SAFETY_ON_NULL_RETURN(rects);
-   EINA_SAFETY_ON_TRUE_RETURN(!count);
+
+   if ((!rects) || (!count)) return;
 
 #ifdef DRM_MODE_FEATURE_DIRTYFB
    drmModeClip *clip;
@@ -237,8 +237,6 @@ ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb
 
    EINA_LIST_FOREACH(dev->outputs, l, output)
      if (output->enabled) cb->count++;
-
-   /* cb->count = eina_list_count(dev->outputs); */
 
    EINA_LIST_FOREACH(dev->outputs, l, output)
      {

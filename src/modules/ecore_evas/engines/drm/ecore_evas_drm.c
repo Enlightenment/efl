@@ -322,11 +322,6 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
 
-   evas_event_feed_mouse_in(ee->evas,
-                            (unsigned int)((unsigned long long)
-                                           (ecore_time_get() * 1000.0) &
-                                           0xffffffff), NULL);
-
    return ee;
 
 eng_err:
@@ -346,7 +341,7 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
    Ecore_Evas_Interface_Drm *iface;
    Ecore_Evas_Engine_Drm_Data *edata;
    int method;
-   uint32_t format = GBM_FORMAT_ARGB8888;
+   uint32_t format = GBM_FORMAT_XRGB8888;
    uint32_t flags  = GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING;
    char *num;
 
@@ -359,6 +354,12 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
 
    /* try to init drm */
    if (_ecore_evas_drm_init(device) < 1) return NULL;
+
+   if (!ecore_drm_device_software_setup(dev))
+     {
+        ERR("Could not setup device for software");
+        goto soft_err;
+     }
 
    /* try to load gl libary, gbm libary */
    /* Typically, gbm loads the dri driver However some versions of Mesa
@@ -427,9 +428,16 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
    evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, method);
 
-   /* FIXME: Support initial rotation ?? */
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
+   if ((ee->rotation == 90) || (ee->rotation == 270))
+     {
+        evas_output_size_set(ee->evas, h, w);
+        evas_output_viewport_set(ee->evas, 0, 0, h, w);
+     }
+   else
+     {
+        evas_output_size_set(ee->evas, w, h);
+        evas_output_viewport_set(ee->evas, 0, 0, w, h);
+     }
 
    if (ee->can_async_render)
      evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
@@ -437,6 +445,8 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
 
    if ((einfo = (Evas_Engine_Info_GL_Drm *)evas_engine_info_get(ee->evas)))
      {
+        Ecore_Drm_Output *output;
+
         einfo->info.depth = 32;
         einfo->info.destination_alpha = ee->alpha;
         einfo->info.rotation = ee->rotation;
@@ -444,24 +454,22 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
         if ((num = getenv("EVAS_DRM_VSYNC")))
           {
              if (!atoi(num)) 
-               einfo->vsync = EINA_FALSE;
+               einfo->info.vsync = EINA_FALSE;
              else 
-               einfo->vsync = EINA_TRUE;
+               einfo->info.vsync = EINA_TRUE;
           }
         else 
-          einfo->vsync = EINA_TRUE;
+          einfo->info.vsync = EINA_TRUE;
 
-        einfo->info.fd = ecore_drm_device_fd_get(dev);
         einfo->info.dev = dev;
         einfo->info.format = format;
         einfo->info.flags = flags;
 
-        if (einfo->info.fd) 
-          einfo->info.gbm = gbm_create_device(einfo->info.fd);
-        if (einfo->info.gbm)
+        if ((output = ecore_drm_device_output_find(dev, x, y)))
           {
-             einfo->info.surface = 
-               gbm_surface_create(einfo->info.gbm, w, h, format, flags);
+             einfo->info.conn_id = ecore_drm_output_connector_id_get(output);
+             einfo->info.crtc_id = ecore_drm_output_crtc_id_get(output);
+             einfo->info.buffer_id = ecore_drm_output_crtc_buffer_get(output);
           }
 
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
@@ -476,7 +484,7 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
         goto eng_err;
      }
 
-   ee->prop.window = einfo->info.output;
+   ee->prop.window = einfo->info.buffer_id;
 
    _ecore_evas_register(ee);
    ecore_evas_input_event_register(ee);
@@ -488,18 +496,13 @@ ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUS
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
 
-   evas_event_feed_mouse_in(ee->evas,
-                            (unsigned int)((unsigned long long)
-                                           (ecore_time_get() * 1000.0) &
-                                           0xffffffff), NULL);
-
    return ee;
 
 eng_err:
    ecore_evas_free(ee);
+soft_err:
 ee_err:
    _ecore_evas_drm_shutdown();
-
    return NULL;
 }
 #endif
