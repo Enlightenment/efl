@@ -244,3 +244,21 @@ elm_code_text_newlinenpos(const char *text, unsigned int length, short *nllen)
    return crpos;
 }
 
+EAPI unsigned int
+elm_code_text_leading_whitespace_length(const char *text, unsigned int length)
+{
+   unsigned int count = 0;
+   char *ptr = (char *)text;
+
+   while (count < length)
+     {
+        if (!(*ptr == ' ' || *ptr == '\t'))
+          break;
+
+        count++;
+        ptr++;
+     }
+
+   return count;
+}
+

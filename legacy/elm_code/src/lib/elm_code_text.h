@@ -54,6 +54,8 @@ EAPI int elm_code_text_strnpos(const char *text, unsigned int length, const char
 
 EAPI int elm_code_text_newlinenpos(const char *text, unsigned int length, short *nllen);
 
+EAPI unsigned int elm_code_text_leading_whitespace_length(const char *text, unsigned int length);
+
 /**
  * @}
  */

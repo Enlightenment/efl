@@ -975,19 +975,26 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
 {
    Elm_Code *code;
    Elm_Code_Line *line;
-   unsigned int row, col, position;
+   unsigned int row, col, position, oldlen, leading;
+   const char *oldtext;
 
    _elm_code_widget_delete_selection(widget);
    eo_do(widget,
          code = elm_obj_code_widget_code_get(),
          elm_obj_code_widget_cursor_position_get(&col, &row));
    line = elm_code_file_line_get(code->file, row);
+   oldtext = elm_code_line_text_get(line, &oldlen);
 
    position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
    elm_code_line_split_at(line, position);
 
+   line = elm_code_file_line_get(code->file, row + 1);
+   leading = elm_code_text_leading_whitespace_length(oldtext, oldlen);
+   elm_code_line_text_insert(line, 0, oldtext, leading);
+
    eo_do(widget,
-         elm_obj_code_widget_cursor_position_set(1, row + 1),
+         elm_obj_code_widget_cursor_position_set(
+            elm_obj_code_widget_line_text_column_width_to_position(line, leading), row + 1),
 // TODO construct and pass a change object
          eo_event_callback_call(ELM_CODE_WIDGET_EVENT_CHANGED_USER, NULL));
 }
