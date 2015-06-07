@@ -758,6 +758,7 @@ _elm_code_widget_cursor_move_home(Elm_Code_Widget *widget)
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   elm_code_widget_selection_clear(widget);
 
    if (pd->cursor_col <= 1)
      return;
@@ -773,6 +774,7 @@ _elm_code_widget_cursor_move_end(Elm_Code_Widget *widget)
    unsigned int lastcol;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   elm_code_widget_selection_clear(widget);
 
    line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
    lastcol = elm_code_widget_line_text_column_width_get(widget, line);
@@ -792,6 +794,7 @@ _elm_code_widget_cursor_move_up(Elm_Code_Widget *widget)
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    row = pd->cursor_line;
    col = pd->cursor_col;
+   elm_code_widget_selection_clear(widget);
 
    if (pd->cursor_line <= 1)
      return;
@@ -815,6 +818,7 @@ _elm_code_widget_cursor_move_down(Elm_Code_Widget *widget)
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    row = pd->cursor_line;
    col = pd->cursor_col;
+   elm_code_widget_selection_clear(widget);
 
    if (pd->cursor_line >= elm_code_file_lines_get(pd->code->file))
      return;
@@ -834,6 +838,7 @@ _elm_code_widget_cursor_move_left(Elm_Code_Widget *widget)
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   elm_code_widget_selection_clear(widget);
 
    if (pd->cursor_col <= 1)
      {
@@ -855,6 +860,7 @@ _elm_code_widget_cursor_move_right(Elm_Code_Widget *widget)
    Elm_Code_Line *line;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   elm_code_widget_selection_clear(widget);
 
    line = elm_code_file_line_get(pd->code->file, pd->cursor_line);
    if (pd->cursor_col > elm_code_widget_line_text_column_width_get(widget, line))
@@ -890,6 +896,7 @@ _elm_code_widget_cursor_move_pageup(Elm_Code_Widget *widget)
    row = pd->cursor_line;
    col = pd->cursor_col;
 
+   elm_code_widget_selection_clear(widget);
    if (pd->cursor_line <= 1)
      return;
 
@@ -917,6 +924,7 @@ _elm_code_widget_cursor_move_pagedown(Elm_Code_Widget *widget)
    row = pd->cursor_line;
    col = pd->cursor_col;
 
+   elm_code_widget_selection_clear(widget);
    if (pd->cursor_line >= elm_code_file_lines_get(pd->code->file))
      return;
 
