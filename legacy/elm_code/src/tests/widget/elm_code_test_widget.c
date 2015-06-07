@@ -41,10 +41,10 @@ START_TEST (elm_code_widget_token_render_simple_test)
    _elm_code_widget_fill_line_tokens(widget, cells, length+1, line);
    _assert_cell_type(cells[1], ELM_CODE_TOKEN_TYPE_DEFAULT, 1);
    _assert_cell_type(cells[4], ELM_CODE_TOKEN_TYPE_DEFAULT, 4);
-   _assert_cell_type(cells[6], ELM_CODE_TOKEN_TYPE_DEFAULT, 6);
+   _assert_cell_type(cells[5], ELM_CODE_TOKEN_TYPE_DEFAULT, 5);
    _assert_cell_type(cells[16], ELM_CODE_TOKEN_TYPE_COMMENT, 16);
    _assert_cell_type(cells[20], ELM_CODE_TOKEN_TYPE_DEFAULT, 20);
-   _assert_cell_type(cells[23], ELM_CODE_TOKEN_TYPE_COMMENT, 23);
+   _assert_cell_type(cells[22], ELM_CODE_TOKEN_TYPE_COMMENT, 22);
 
    elm_code_free(code);
    elm_shutdown();
