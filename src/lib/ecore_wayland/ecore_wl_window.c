@@ -15,7 +15,7 @@ static void _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, 
 static char *_ecore_wl_window_id_str_get(unsigned int win_id);
 static void _ecore_xdg_handle_surface_configure(void *data, struct xdg_surface *xdg_surface, int32_t width, int32_t height,struct wl_array *states, uint32_t serial);
 static void _ecore_xdg_handle_surface_delete(void *data, struct xdg_surface *xdg_surface);
-static void _ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup, unsigned int serial);
+static void _ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup);
 
 /* local variables */
 static Eina_Hash *_windows = NULL;
@@ -368,7 +368,7 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
         break;
       case ECORE_WL_WINDOW_TYPE_TRANSIENT:
         if (win->xdg_surface)
-          xdg_surface_set_parent(win->xdg_surface, win->parent->surface);
+          xdg_surface_set_parent(win->xdg_surface, win->parent->xdg_surface);
         else if (win->shell_surface)
           wl_shell_surface_set_transient(win->shell_surface,
                                          win->parent->surface,
@@ -384,8 +384,7 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
                                        win->parent->surface,
                                        _ecore_wl_disp->input->seat,
                                        _ecore_wl_disp->serial,
-                                       win->allocation.x,
-                                       win->allocation.y, 0);
+                                       win->allocation.x, win->allocation.y);
              if (!win->xdg_popup) return;
              xdg_popup_set_user_data(win->xdg_popup, win);
              xdg_popup_add_listener(win->xdg_popup,
@@ -1052,7 +1051,7 @@ _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surfac
 }
 
 static void
-_ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup, unsigned int serial EINA_UNUSED)
+_ecore_xdg_handle_popup_done(void *data, struct xdg_popup *xdg_popup)
 {
    Ecore_Wl_Window *win;
 

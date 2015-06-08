@@ -17,7 +17,7 @@
 #endif
 
 #include "xdg-shell-client-protocol.h"
-#define XDG_VERSION 4
+#define XDG_VERSION 5
 
 /* local function prototypes */
 static int _ecore_wl_shutdown(Eina_Bool close);
