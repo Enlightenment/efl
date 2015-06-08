@@ -370,4 +370,4 @@ EAPI void                 elm_object_focus_move_policy_set(Evas_Object *obj, Elm
  *
  * @ingroup Focus
  */
-EAPI Elm_Focus_Move_Policy  elm_object_focus_move_policy_get(Evas_Object *obj);
+EAPI Elm_Focus_Move_Policy  elm_object_focus_move_policy_get(const Evas_Object *obj);

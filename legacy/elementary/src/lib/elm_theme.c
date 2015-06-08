@@ -519,7 +519,7 @@ elm_theme_ref_set(Elm_Theme *th, Elm_Theme *thref)
 }
 
 EAPI Elm_Theme *
-elm_theme_ref_get(Elm_Theme *th)
+elm_theme_ref_get(const Elm_Theme *th)
 {
    if (!th) th = &(theme_default);
    return th->ref_theme;

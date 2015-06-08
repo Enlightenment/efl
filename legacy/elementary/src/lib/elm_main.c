@@ -1492,7 +1492,7 @@ elm_object_focus_move_policy_set(Evas_Object *obj,
 }
 
 EAPI Elm_Focus_Move_Policy
-elm_object_focus_move_policy_get(Evas_Object *obj)
+elm_object_focus_move_policy_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    return elm_widget_focus_move_policy_get(obj);

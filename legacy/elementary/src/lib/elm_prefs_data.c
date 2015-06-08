@@ -385,7 +385,7 @@ elm_prefs_data_new(const char *data_file,
 }
 
 EAPI unsigned int
-elm_prefs_data_version_get(Elm_Prefs_Data *prefs_data)
+elm_prefs_data_version_get(const Elm_Prefs_Data *prefs_data)
 {
    ELM_PREFS_DATA_CHECK_OR_RETURN_VAL(prefs_data, -1);
 

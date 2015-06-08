@@ -237,7 +237,7 @@ EAPI Eina_Bool elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
  *
  * @ingroup CopyPaste
  */
-EAPI Eina_Bool elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
+EAPI Eina_Bool elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection,
                                      Elm_Sel_Format format,
                                      Elm_Drop_Cb datacb, void *udata);
 

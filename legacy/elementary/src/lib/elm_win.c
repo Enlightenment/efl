@@ -4538,7 +4538,7 @@ elm_win_norender_pop(Evas_Object *obj)
 }
 
 EAPI int
-elm_win_norender_get(Evas_Object *obj)
+elm_win_norender_get(const Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj) - 1;
    ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, -1);

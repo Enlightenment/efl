@@ -146,7 +146,7 @@ EAPI Eina_Bool       elm_prefs_data_version_set(Elm_Prefs_Data *prefs_data,
  *
  * @since 1.8
  */
-EAPI unsigned int    elm_prefs_data_version_get(Elm_Prefs_Data *prefs_data);
+EAPI unsigned int    elm_prefs_data_version_get(const Elm_Prefs_Data *prefs_data);
 
 /**
  * Increment reference count on a given prefs data handle.

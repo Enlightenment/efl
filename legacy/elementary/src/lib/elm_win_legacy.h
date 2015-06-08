@@ -161,7 +161,7 @@ EAPI void                  elm_win_norender_pop(Evas_Object *obj);
  * @ingroup Win
  * @since 1.7
  */
-EAPI int                   elm_win_norender_get(Evas_Object *obj);
+EAPI int                   elm_win_norender_get(const Evas_Object *obj);
 
 /**
  * This manually asks evas to render the window now

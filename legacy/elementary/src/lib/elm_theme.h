@@ -148,7 +148,7 @@ EAPI void             elm_theme_ref_set(Elm_Theme *th, Elm_Theme *thref);
  *
  * @ingroup Theme
  */
-EAPI Elm_Theme       *elm_theme_ref_get(Elm_Theme *th);
+EAPI Elm_Theme       *elm_theme_ref_get(const Elm_Theme *th);
 
 /**
  * Return the default theme

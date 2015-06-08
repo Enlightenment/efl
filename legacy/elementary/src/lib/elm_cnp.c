@@ -234,7 +234,7 @@ static Eina_Bool _x11_elm_cnp_init                       (void);
 static Eina_Bool _x11_elm_cnp_selection_set              (Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, const void *selbuf, size_t buflen);
 static void      _x11_elm_cnp_selection_loss_callback_set(Evas_Object *obj EINA_UNUSED, Elm_Sel_Type selection, Elm_Selection_Loss_Cb func, const void *data);
 static Eina_Bool _x11_elm_object_cnp_selection_clear     (Evas_Object *obj, Elm_Sel_Type selection);
-static Eina_Bool _x11_elm_cnp_selection_get              (Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata);
+static Eina_Bool _x11_elm_cnp_selection_get              (Ecore_X_Window xwin, const Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata);
 static Eina_Bool _x11_elm_drop_target_add                (Evas_Object *obj, Elm_Sel_Format format,
                                                           Elm_Drag_State entercb, void *enterdata,
                                                           Elm_Drag_State leavecb, void *leavedata,
@@ -1939,7 +1939,7 @@ _x11_elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
 }
 
 static Eina_Bool
-_x11_elm_cnp_selection_get(Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type selection,
+_x11_elm_cnp_selection_get(Ecore_X_Window xwin, const Evas_Object *obj, Elm_Sel_Type selection,
                            Elm_Sel_Format format, Elm_Drop_Cb datacb,
                            void *udata)
 {
@@ -1955,7 +1955,7 @@ _x11_elm_cnp_selection_get(Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type s
    sel->requestwidget = NULL;
 
    sel->requestformat = format;
-   sel->requestwidget = obj;
+   sel->requestwidget = (Evas_Object *)obj;
    sel->xwin = xwin;
    sel->request(xwin, ECORE_X_SELECTION_TARGET_TARGETS);
    sel->datacb = datacb;
@@ -3465,7 +3465,7 @@ static Eina_Bool  _local_elm_cnp_init(void);
 static Eina_Bool  _local_elm_cnp_selection_set(Evas_Object *obj EINA_UNUSED, Elm_Sel_Type selection, Elm_Sel_Format format, const void *selbuf, size_t buflen);
 static void       _local_elm_cnp_selection_loss_callback_set(Evas_Object *obj EINA_UNUSED, Elm_Sel_Type selection EINA_UNUSED, Elm_Selection_Loss_Cb func EINA_UNUSED, const void *data EINA_UNUSED);
 static Eina_Bool  _local_elm_object_cnp_selection_clear(Evas_Object *obj EINA_UNUSED, Elm_Sel_Type selection);
-static Eina_Bool  _local_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format EINA_UNUSED, Elm_Drop_Cb datacb, void *udata);
+static Eina_Bool  _local_elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format EINA_UNUSED, Elm_Drop_Cb datacb, void *udata);
 static  Eina_Bool _local_elm_drop_target_add(Evas_Object *obj EINA_UNUSED, Elm_Sel_Format format EINA_UNUSED,
                                              Elm_Drag_State entercb EINA_UNUSED, void *enterdata EINA_UNUSED,
                                              Elm_Drag_State leavecb EINA_UNUSED, void *leavedata EINA_UNUSED,
@@ -3555,7 +3555,7 @@ _local_elm_object_cnp_selection_clear(Evas_Object *obj EINA_UNUSED,
 }
 
 static Eina_Bool
-_local_elm_cnp_selection_get(Evas_Object *obj,
+_local_elm_cnp_selection_get(const Evas_Object *obj,
                              Elm_Sel_Type selection,
                              Elm_Sel_Format format EINA_UNUSED,
                              Elm_Drop_Cb datacb, void *udata)
@@ -3563,7 +3563,7 @@ _local_elm_cnp_selection_get(Evas_Object *obj,
    _local_elm_cnp_init();
    if (_local_selinfo[selection].get.job)
      ecore_job_del(_local_selinfo[selection].get.job);
-   _local_selinfo[selection].get.obj = obj;
+   _local_selinfo[selection].get.obj = (Evas_Object *)obj;
    _local_selinfo[selection].get.func = datacb;
    _local_selinfo[selection].get.data = udata;
    _local_selinfo[selection].get.job =
@@ -3852,7 +3852,7 @@ elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
 }
 
 EAPI Eina_Bool
-elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
+elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection,
                       Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata)
 {
    if (selection > ELM_SEL_TYPE_CLIPBOARD) return EINA_FALSE;
