@@ -1,7 +1,7 @@
 #include "edje_private.h"
 
-EAPI Eet_Data_Descriptor *_edje_edd_edje_file = NULL;
-EAPI Eet_Data_Descriptor *_edje_edd_edje_part_collection = NULL;
+EAPI Eet_Data_Descriptor * _edje_edd_edje_file = NULL;
+EAPI Eet_Data_Descriptor * _edje_edd_edje_part_collection = NULL;
 
 Eet_Data_Descriptor *_edje_edd_edje_string = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_style = NULL;
@@ -75,23 +75,23 @@ Eet_Data_Descriptor *_edje_edd_edje_physics_face = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_map_colors = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_map_colors_pointer = NULL;
 
-#define EMP(Type, Minus)				\
-  EAPI Eina_Mempool *_emp_##Type = NULL;		\
-							\
-  static void *						\
-  mem_alloc_##Minus(size_t size)			\
-  {							\
-     void *data;					\
-     							\
-     data = eina_mempool_malloc(_emp_##Type, size);	\
-     memset(data, 0, size);				\
-     return data;					\
-  }							\
-							\
-  static void						\
-  mem_free_##Minus(void *data)				\
-  {							\
-     eina_mempool_free(_emp_##Type, data);		\
+#define EMP(Type, Minus)                            \
+  EAPI Eina_Mempool *_emp_##Type = NULL;            \
+                                                    \
+  static void *                                     \
+  mem_alloc_##Minus(size_t size)                    \
+  {                                                 \
+     void *data;                                    \
+                                                    \
+     data = eina_mempool_malloc(_emp_##Type, size); \
+     memset(data, 0, size);                         \
+     return data;                                   \
+  }                                                 \
+                                                    \
+  static void                                       \
+    mem_free_##Minus(void *data)                    \
+  {                                                 \
+     eina_mempool_free(_emp_##Type, data);          \
   }
 
 EMP(RECTANGLE, rectangle);
@@ -114,47 +114,48 @@ EAPI Eina_Mempool *_emp_part = NULL;
 static void *
 mem_alloc_part(size_t size)
 {
-  Edje_Part *ep;
+   Edje_Part *ep;
 
-  ep = eina_mempool_malloc(_emp_part, size);
-  memset(ep, 0, size);
-  // This value need to be defined for older file that didn't provide it
-  // as it should -1 by default instead of 0.
-  ep->dragable.threshold_id = -1;
-  return ep;
+   ep = eina_mempool_malloc(_emp_part, size);
+   memset(ep, 0, size);
+   // This value need to be defined for older file that didn't provide it
+   // as it should -1 by default instead of 0.
+   ep->dragable.threshold_id = -1;
+   return ep;
 }
 
 static void
 mem_free_part(void *data)
 {
-  eina_mempool_free(_emp_part, data);
+   eina_mempool_free(_emp_part, data);
 }
 
-#define FREED(eed) \
-   if (eed) \
-   { \
-      eet_data_descriptor_free((eed)); \
-      (eed) = NULL; \
-   }
+#define FREED(eed)                      \
+  if (eed)                              \
+    {                                   \
+       eet_data_descriptor_free((eed)); \
+       (eed) = NULL;                    \
+    }
 
-struct {
+struct
+{
    Edje_Part_Type type;
-   const char *name;
+   const char    *name;
 } variant_convertion[] = {
-  { EDJE_PART_TYPE_RECTANGLE, "rectangle" },
-  { EDJE_PART_TYPE_SWALLOW,   "swallow" },
-  { EDJE_PART_TYPE_GROUP,     "group" },
-  { EDJE_PART_TYPE_IMAGE,     "image" },
-  { EDJE_PART_TYPE_TEXT,      "text" },
-  { EDJE_PART_TYPE_TEXTBLOCK, "textblock" },
-  { EDJE_PART_TYPE_BOX,       "box" },
-  { EDJE_PART_TYPE_TABLE,     "table" },
-  { EDJE_PART_TYPE_EXTERNAL,  "external" },
-  { EDJE_PART_TYPE_PROXY,     "proxy" },
-  { EDJE_PART_TYPE_SPACER,    "spacer" },
-  { EDJE_PART_TYPE_MESH_NODE, "mesh_node" },
-  { EDJE_PART_TYPE_LIGHT,     "light" },
-  { EDJE_PART_TYPE_CAMERA,    "camera" }
+   { EDJE_PART_TYPE_RECTANGLE, "rectangle" },
+   { EDJE_PART_TYPE_SWALLOW, "swallow" },
+   { EDJE_PART_TYPE_GROUP, "group" },
+   { EDJE_PART_TYPE_IMAGE, "image" },
+   { EDJE_PART_TYPE_TEXT, "text" },
+   { EDJE_PART_TYPE_TEXTBLOCK, "textblock" },
+   { EDJE_PART_TYPE_BOX, "box" },
+   { EDJE_PART_TYPE_TABLE, "table" },
+   { EDJE_PART_TYPE_EXTERNAL, "external" },
+   { EDJE_PART_TYPE_PROXY, "proxy" },
+   { EDJE_PART_TYPE_SPACER, "spacer" },
+   { EDJE_PART_TYPE_MESH_NODE, "mesh_node" },
+   { EDJE_PART_TYPE_LIGHT, "light" },
+   { EDJE_PART_TYPE_CAMERA, "camera" }
 };
 
 static const char *
@@ -183,17 +184,17 @@ _edje_description_variant_type_set(const char *type, void *data, Eina_Bool unkno
    for (i = 0; i < (sizeof (variant_convertion) / sizeof (variant_convertion[0])); ++i)
      if (!strcmp(variant_convertion[i].name, type))
        {
-	  *dt = variant_convertion[i].type;
-	  return EINA_TRUE;
+          *dt = variant_convertion[i].type;
+          return EINA_TRUE;
        }
 
    return EINA_FALSE;
 }
 
 static Eina_Hash *
-_edje_eina_hash_add_alloc(Eina_Hash  *hash,
-			  const char *key,
-			  void       *data)
+_edje_eina_hash_add_alloc(Eina_Hash *hash,
+                          const char *key,
+                          void *data)
 {
    if (!hash)
      hash = eina_hash_string_small_new(free);
@@ -285,19 +286,19 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_part_collection);
 }
 
-#define EDJE_DEFINE_POINTER_TYPE(Type, Name)				\
-   {									\
-     typedef struct _Edje_##Type##_Pointer Edje_##Type##_Pointer;	\
-     struct _Edje_##Type##_Pointer					\
-     {									\
-	Edje_##Type *pointer;						\
-     };									\
-									\
-     EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_##Type##_Pointer); \
-     _edje_edd_edje_##Name##_pointer =					\
-       eet_data_descriptor_file_new(&eddc);				\
+#define EDJE_DEFINE_POINTER_TYPE(Type, Name)                                                                                         \
+  {                                                                                                                                  \
+     typedef struct _Edje_##Type##_Pointer Edje_##Type## _Pointer;                                                                   \
+     struct _Edje_##Type##_Pointer                                                                                                   \
+     {                                                                                                                               \
+        Edje_##Type * pointer;                                                                                                       \
+     };                                                                                                                              \
+                                                                                                                                     \
+     EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_##Type##_Pointer);                                                          \
+     _edje_edd_edje_##Name##_pointer =                                                                                               \
+       eet_data_descriptor_file_new(&eddc);                                                                                          \
      EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_##Name##_pointer, Edje_##Type##_Pointer, "pointer", pointer, _edje_edd_edje_##Name); \
-   }
+  }
 
 // FIXME: remove EAPI when edje_convert goes
 EAPI void
@@ -357,7 +358,7 @@ _edje_edd_init(void)
    _edje_edd_edje_image_directory_set =
      eet_data_descriptor_file_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_image_directory_set, Edje_Image_Directory_Set, "name", name, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_image_directory_set, Edje_Image_Directory_Set,  "id", id, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_image_directory_set, Edje_Image_Directory_Set, "id", id, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_image_directory_set, Edje_Image_Directory_Set, "entries", entries, _edje_edd_edje_image_directory_set_entry);
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Image_Directory);
@@ -451,7 +452,6 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_3d_vec, Edje_3D_Vec, "y", y, EDJE_T_FLOAT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_3d_vec, Edje_3D_Vec, "z", z, EDJE_T_FLOAT);
 
-
    /* collection directory */
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Collection_Directory_Entry);
    _edje_edd_edje_part_collection_directory_entry =
@@ -507,7 +507,7 @@ _edje_edd_init(void)
 
    /* the main file directory */
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_File);
-   eddc.func.hash_add = (void * (*)(void *, const char *, void *)) _edje_eina_hash_add_alloc;
+   eddc.func.hash_add = (void * (*)(void *, const char *, void *))_edje_eina_hash_add_alloc;
    _edje_edd_edje_file = eet_data_descriptor_file_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "compiler", compiler, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "version", version, EET_T_INT);
@@ -559,8 +559,8 @@ _edje_edd_init(void)
 
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "sample_name", sample_name, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "tone_name", tone_name, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program ,"duration", duration, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program ,"speed", speed, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "duration", duration, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "speed", speed, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "vibration_name", vibration_name, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "vibration_repeat", vibration_repeat, EET_T_INT);
 
@@ -625,198 +625,198 @@ _edje_edd_init(void)
 
    EDJE_DEFINE_POINTER_TYPE(Map_Color, map_colors);
 
-#define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_FIELDS(Edd, Type) \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "state.name", state.name, EET_T_STRING); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "state.value", state.value, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "visible", visible, EET_T_CHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "limit", limit, EET_T_CHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "align.x", align.x, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "align.y", align.y, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(Edd, Type, "align_3d", align_3d, _edje_edd_edje_part_description_3d_vec); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.w", fixed.w, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.h", fixed.h, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "minmul.have", minmul.have, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "minmul.w", minmul.w, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "minmul.h", minmul.h, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "min.w", min.w, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "min.h", min.h, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "min.limit", min.limit, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "max.w", max.w, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "max.h", max.h, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "max.limit", max.limit, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "step.x", step.x, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "step.y", step.y, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "aspect.min", aspect.min, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "aspect.max", aspect.max, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "aspect.prefer", aspect.prefer, EET_T_CHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.relative_x", rel1.relative_x, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.relative_y", rel1.relative_y, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.offset_x", rel1.offset_x, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.offset_y", rel1.offset_y, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.id_x", rel1.id_x, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.id_y", rel1.id_y, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.relative_x", rel2.relative_x, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.relative_y", rel2.relative_y, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.offset_x", rel2.offset_x, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.offset_y", rel2.offset_y, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_x", rel2.id_x, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_y", rel2.id_y, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color_class", color_class, EET_T_STRING); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.r", color.r, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.g", color.g, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.b", color.b, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.a", color.a, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.r", color2.r, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.g", color2.g, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.b", color2.b, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.a", color2.a, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.id_persp", map.id_persp, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.id_light", map.id_light, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.id_center", map.rot.id_center, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.x", map.rot.x, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.y", map.rot.y, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.z", map.rot.z, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.on", map.on, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.smooth", map.smooth, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.alpha", map.alpha, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.persp_on", map.persp_on, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.backcull", map.backcull, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(Edd, Type, "map.color", map.colors, _edje_edd_edje_map_colors_pointer); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.x", map.zoom.x, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.y", map.zoom.y, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.zplane", persp.zplane, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.focal", persp.focal, EET_T_INT);
+#define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_FIELDS(Edd, Type)                                              \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "state.name", state.name, EET_T_STRING);                            \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "state.value", state.value, EET_T_DOUBLE);                          \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "visible", visible, EET_T_CHAR);                                    \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "limit", limit, EET_T_CHAR);                                        \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "align.x", align.x, EDJE_T_FLOAT);                                  \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "align.y", align.y, EDJE_T_FLOAT);                                  \
+  EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(Edd, Type, "align_3d", align_3d, _edje_edd_edje_part_description_3d_vec); \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.w", fixed.w, EET_T_UCHAR);                                   \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.h", fixed.h, EET_T_UCHAR);                                   \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "minmul.have", minmul.have, EET_T_UCHAR);                           \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "minmul.w", minmul.w, EDJE_T_FLOAT);                                \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "minmul.h", minmul.h, EDJE_T_FLOAT);                                \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "min.w", min.w, EET_T_INT);                                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "min.h", min.h, EET_T_INT);                                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "min.limit", min.limit, EET_T_UCHAR);                               \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "max.w", max.w, EET_T_INT);                                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "max.h", max.h, EET_T_INT);                                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "max.limit", max.limit, EET_T_UCHAR);                               \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "step.x", step.x, EET_T_INT);                                       \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "step.y", step.y, EET_T_INT);                                       \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "aspect.min", aspect.min, EDJE_T_FLOAT);                            \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "aspect.max", aspect.max, EDJE_T_FLOAT);                            \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "aspect.prefer", aspect.prefer, EET_T_CHAR);                        \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.relative_x", rel1.relative_x, EDJE_T_FLOAT);                  \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.relative_y", rel1.relative_y, EDJE_T_FLOAT);                  \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.offset_x", rel1.offset_x, EET_T_INT);                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.offset_y", rel1.offset_y, EET_T_INT);                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.id_x", rel1.id_x, EET_T_INT);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.id_y", rel1.id_y, EET_T_INT);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.relative_x", rel2.relative_x, EDJE_T_FLOAT);                  \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.relative_y", rel2.relative_y, EDJE_T_FLOAT);                  \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.offset_x", rel2.offset_x, EET_T_INT);                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.offset_y", rel2.offset_y, EET_T_INT);                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_x", rel2.id_x, EET_T_INT);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_y", rel2.id_y, EET_T_INT);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color_class", color_class, EET_T_STRING);                          \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.r", color.r, EET_T_UCHAR);                                   \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.g", color.g, EET_T_UCHAR);                                   \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.b", color.b, EET_T_UCHAR);                                   \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.a", color.a, EET_T_UCHAR);                                   \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.r", color2.r, EET_T_UCHAR);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.g", color2.g, EET_T_UCHAR);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.b", color2.b, EET_T_UCHAR);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.a", color2.a, EET_T_UCHAR);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.id_persp", map.id_persp, EET_T_INT);                           \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.id_light", map.id_light, EET_T_INT);                           \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.id_center", map.rot.id_center, EET_T_INT);                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.x", map.rot.x, EDJE_T_FLOAT);                              \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.y", map.rot.y, EDJE_T_FLOAT);                              \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.z", map.rot.z, EDJE_T_FLOAT);                              \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.on", map.on, EET_T_UCHAR);                                     \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.smooth", map.smooth, EET_T_UCHAR);                             \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.alpha", map.alpha, EET_T_UCHAR);                               \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.persp_on", map.persp_on, EET_T_UCHAR);                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.backcull", map.backcull, EET_T_UCHAR);                         \
+  EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(Edd, Type, "map.color", map.colors, _edje_edd_edje_map_colors_pointer);    \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.x", map.zoom.x, EDJE_T_FLOAT);                            \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.y", map.zoom.y, EDJE_T_FLOAT);                            \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.zplane", persp.zplane, EET_T_INT);                           \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.focal", persp.focal, EET_T_INT);
 
 #ifdef HAVE_EPHYSICS
-#define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON(Edd, Type)	\
-   {								\
-      EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_FIELDS(Edd, Type) \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mass", physics.mass, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.restitution", physics.restitution, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.friction", physics.friction, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.damping.linear", physics.damping.linear, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.damping.angular", physics.damping.angular, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.sleep.linear", physics.sleep.linear, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.sleep.angular", physics.sleep.angular, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.material", physics.material, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.density", physics.density, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.hardness", physics.hardness, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.z", physics.z, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.depth", physics.depth, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.ignore_part_pos", physics.ignore_part_pos, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.light_on", physics.light_on, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.backcull", physics.backcull, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.x", physics.mov_freedom.lin.x, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.y", physics.mov_freedom.lin.y, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.z", physics.mov_freedom.lin.z, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.x", physics.mov_freedom.ang.x, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.y", physics.mov_freedom.ang.y, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.z", physics.mov_freedom.ang.z, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_LIST(Edd, Type, "physics.faces", physics.faces, _edje_edd_edje_physics_face); \
-   }
+#define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON(Edd, Type)                                                          \
+  {                                                                                                                 \
+     EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_FIELDS(Edd, Type)                                                      \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mass", physics.mass, EET_T_DOUBLE);                          \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.restitution", physics.restitution, EET_T_DOUBLE);            \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.friction", physics.friction, EET_T_DOUBLE);                  \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.damping.linear", physics.damping.linear, EET_T_DOUBLE);      \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.damping.angular", physics.damping.angular, EET_T_DOUBLE);    \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.sleep.linear", physics.sleep.linear, EET_T_DOUBLE);          \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.sleep.angular", physics.sleep.angular, EET_T_DOUBLE);        \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.material", physics.material, EET_T_UCHAR);                   \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.density", physics.density, EET_T_DOUBLE);                    \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.hardness", physics.hardness, EET_T_DOUBLE);                  \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.z", physics.z, EET_T_INT);                                   \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.depth", physics.depth, EET_T_INT);                           \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.ignore_part_pos", physics.ignore_part_pos, EET_T_UCHAR);     \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.light_on", physics.light_on, EET_T_UCHAR);                   \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.backcull", physics.backcull, EET_T_UCHAR);                   \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.x", physics.mov_freedom.lin.x, EET_T_UCHAR); \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.y", physics.mov_freedom.lin.y, EET_T_UCHAR); \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.z", physics.mov_freedom.lin.z, EET_T_UCHAR); \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.x", physics.mov_freedom.ang.x, EET_T_UCHAR); \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.y", physics.mov_freedom.ang.y, EET_T_UCHAR); \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.z", physics.mov_freedom.ang.z, EET_T_UCHAR); \
+     EET_DATA_DESCRIPTOR_ADD_LIST(Edd, Type, "physics.faces", physics.faces, _edje_edd_edje_physics_face);          \
+  }
 #else
-#define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON(Edd, Type)	\
-   {								\
-      EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_FIELDS(Edd, Type) \
-   }
+#define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON(Edd, Type)     \
+  {                                                            \
+     EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_FIELDS(Edd, Type) \
+  }
 #endif
 
-#define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB_FIELDS(Edd, Type, Dec) \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "state.name", Dec.state.name, EET_T_STRING); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "state.value", Dec.state.value, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "visible", Dec.visible, EET_T_CHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "align.x", Dec.align.x, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "align.y", Dec.align.y, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(Edd, Type, "align_3d", Dec.align_3d, _edje_edd_edje_part_description_3d_vec); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.w", Dec.fixed.w, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.h", Dec.fixed.h, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "min.w", Dec.min.w, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "min.h", Dec.min.h, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "max.w", Dec.max.w, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "max.h", Dec.max.h, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "step.x", Dec.step.x, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "step.y", Dec.step.y, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "aspect.min", Dec.aspect.min, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "aspect.max", Dec.aspect.max, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "aspect.prefer", Dec.aspect.prefer, EET_T_CHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.relative_x", Dec.rel1.relative_x, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.relative_y", Dec.rel1.relative_y, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.offset_x", Dec.rel1.offset_x, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.offset_y", Dec.rel1.offset_y, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.id_x", Dec.rel1.id_x, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.id_y", Dec.rel1.id_y, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.relative_x", Dec.rel2.relative_x, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.relative_y", Dec.rel2.relative_y, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.offset_x", Dec.rel2.offset_x, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.offset_y", Dec.rel2.offset_y, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_x", Dec.rel2.id_x, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_y", Dec.rel2.id_y, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color_class", Dec.color_class, EET_T_STRING); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.r", Dec.color.r, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.g", Dec.color.g, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.b", Dec.color.b, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.a", Dec.color.a, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.r", Dec.color2.r, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.g", Dec.color2.g, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.b", Dec.color2.b, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.a", Dec.color2.a, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.id_persp", Dec.map.id_persp, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.id_light", Dec.map.id_light, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.id_center", Dec.map.rot.id_center, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.x", Dec.map.rot.x, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.y", Dec.map.rot.y, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.z", Dec.map.rot.z, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.on", Dec.map.on, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.smooth", Dec.map.smooth, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.alpha", Dec.map.alpha, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.persp_on", Dec.map.persp_on, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.backcull", Dec.map.backcull, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(Edd, Type, "map.color", Dec.map.colors, _edje_edd_edje_map_colors_pointer); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.x", Dec.map.zoom.x, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.y", Dec.map.zoom.y, EDJE_T_FLOAT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.zplane", Dec.persp.zplane, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.focal", Dec.persp.focal, EET_T_INT); \
+#define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB_FIELDS(Edd, Type, Dec)                                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "state.name", Dec.state.name, EET_T_STRING);                            \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "state.value", Dec.state.value, EET_T_DOUBLE);                          \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "visible", Dec.visible, EET_T_CHAR);                                    \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "align.x", Dec.align.x, EDJE_T_FLOAT);                                  \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "align.y", Dec.align.y, EDJE_T_FLOAT);                                  \
+  EET_DATA_DESCRIPTOR_ADD_SUB_NESTED(Edd, Type, "align_3d", Dec.align_3d, _edje_edd_edje_part_description_3d_vec); \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.w", Dec.fixed.w, EET_T_UCHAR);                                   \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "fixed.h", Dec.fixed.h, EET_T_UCHAR);                                   \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "min.w", Dec.min.w, EET_T_INT);                                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "min.h", Dec.min.h, EET_T_INT);                                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "max.w", Dec.max.w, EET_T_INT);                                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "max.h", Dec.max.h, EET_T_INT);                                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "step.x", Dec.step.x, EET_T_INT);                                       \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "step.y", Dec.step.y, EET_T_INT);                                       \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "aspect.min", Dec.aspect.min, EDJE_T_FLOAT);                            \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "aspect.max", Dec.aspect.max, EDJE_T_FLOAT);                            \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "aspect.prefer", Dec.aspect.prefer, EET_T_CHAR);                        \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.relative_x", Dec.rel1.relative_x, EDJE_T_FLOAT);                  \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.relative_y", Dec.rel1.relative_y, EDJE_T_FLOAT);                  \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.offset_x", Dec.rel1.offset_x, EET_T_INT);                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.offset_y", Dec.rel1.offset_y, EET_T_INT);                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.id_x", Dec.rel1.id_x, EET_T_INT);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel1.id_y", Dec.rel1.id_y, EET_T_INT);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.relative_x", Dec.rel2.relative_x, EDJE_T_FLOAT);                  \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.relative_y", Dec.rel2.relative_y, EDJE_T_FLOAT);                  \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.offset_x", Dec.rel2.offset_x, EET_T_INT);                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.offset_y", Dec.rel2.offset_y, EET_T_INT);                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_x", Dec.rel2.id_x, EET_T_INT);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "rel2.id_y", Dec.rel2.id_y, EET_T_INT);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color_class", Dec.color_class, EET_T_STRING);                          \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.r", Dec.color.r, EET_T_UCHAR);                                   \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.g", Dec.color.g, EET_T_UCHAR);                                   \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.b", Dec.color.b, EET_T_UCHAR);                                   \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color.a", Dec.color.a, EET_T_UCHAR);                                   \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.r", Dec.color2.r, EET_T_UCHAR);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.g", Dec.color2.g, EET_T_UCHAR);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.b", Dec.color2.b, EET_T_UCHAR);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "color2.a", Dec.color2.a, EET_T_UCHAR);                                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.id_persp", Dec.map.id_persp, EET_T_INT);                           \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.id_light", Dec.map.id_light, EET_T_INT);                           \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.id_center", Dec.map.rot.id_center, EET_T_INT);                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.x", Dec.map.rot.x, EDJE_T_FLOAT);                              \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.y", Dec.map.rot.y, EDJE_T_FLOAT);                              \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.z", Dec.map.rot.z, EDJE_T_FLOAT);                              \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.on", Dec.map.on, EET_T_UCHAR);                                     \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.smooth", Dec.map.smooth, EET_T_UCHAR);                             \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.alpha", Dec.map.alpha, EET_T_UCHAR);                               \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.persp_on", Dec.map.persp_on, EET_T_UCHAR);                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.backcull", Dec.map.backcull, EET_T_UCHAR);                         \
+  EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(Edd, Type, "map.color", Dec.map.colors, _edje_edd_edje_map_colors_pointer);    \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.x", Dec.map.zoom.x, EDJE_T_FLOAT);                            \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.y", Dec.map.zoom.y, EDJE_T_FLOAT);                            \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.zplane", Dec.persp.zplane, EET_T_INT);                           \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "persp.focal", Dec.persp.focal, EET_T_INT);                             \
 
 #ifdef HAVE_EPHYSICS
-#define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(Edd, Type, Dec)	 \
-   {									 \
-      EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB_FIELDS(Edd, Type, Dec) \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mass", Dec.physics.mass, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.restitution", Dec.physics.restitution, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.friction", Dec.physics.friction, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.damping.linear", Dec.physics.damping.linear, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.damping.angular", Dec.physics.damping.angular, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.sleep.linear", Dec.physics.sleep.linear, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.sleep.angular", Dec.physics.sleep.angular, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.material", Dec.physics.material, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.density", Dec.physics.density, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.hardness", Dec.physics.hardness, EET_T_DOUBLE); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.z", Dec.physics.z, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.depth", Dec.physics.depth, EET_T_INT); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.ignore_part_pos", Dec.physics.ignore_part_pos, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.light_on", Dec.physics.light_on, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.backcull", Dec.physics.backcull, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.x", Dec.physics.mov_freedom.lin.x, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.y", Dec.physics.mov_freedom.lin.y, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.z", Dec.physics.mov_freedom.lin.z, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.x", Dec.physics.mov_freedom.ang.x, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.y", Dec.physics.mov_freedom.ang.y, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.z", Dec.physics.mov_freedom.ang.z, EET_T_UCHAR); \
-      EET_DATA_DESCRIPTOR_ADD_LIST(Edd, Type, "physics.faces", Dec.physics.faces, _edje_edd_edje_physics_face); \
-   }
+#define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(Edd, Type, Dec)                                                     \
+  {                                                                                                                     \
+     EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB_FIELDS(Edd, Type, Dec)                                                 \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mass", Dec.physics.mass, EET_T_DOUBLE);                          \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.restitution", Dec.physics.restitution, EET_T_DOUBLE);            \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.friction", Dec.physics.friction, EET_T_DOUBLE);                  \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.damping.linear", Dec.physics.damping.linear, EET_T_DOUBLE);      \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.damping.angular", Dec.physics.damping.angular, EET_T_DOUBLE);    \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.sleep.linear", Dec.physics.sleep.linear, EET_T_DOUBLE);          \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.sleep.angular", Dec.physics.sleep.angular, EET_T_DOUBLE);        \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.material", Dec.physics.material, EET_T_UCHAR);                   \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.density", Dec.physics.density, EET_T_DOUBLE);                    \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.hardness", Dec.physics.hardness, EET_T_DOUBLE);                  \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.z", Dec.physics.z, EET_T_INT);                                   \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.depth", Dec.physics.depth, EET_T_INT);                           \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.ignore_part_pos", Dec.physics.ignore_part_pos, EET_T_UCHAR);     \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.light_on", Dec.physics.light_on, EET_T_UCHAR);                   \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.backcull", Dec.physics.backcull, EET_T_UCHAR);                   \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.x", Dec.physics.mov_freedom.lin.x, EET_T_UCHAR); \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.y", Dec.physics.mov_freedom.lin.y, EET_T_UCHAR); \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.lin.z", Dec.physics.mov_freedom.lin.z, EET_T_UCHAR); \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.x", Dec.physics.mov_freedom.ang.x, EET_T_UCHAR); \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.y", Dec.physics.mov_freedom.ang.y, EET_T_UCHAR); \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "physics.mov_freedom.ang.z", Dec.physics.mov_freedom.ang.z, EET_T_UCHAR); \
+     EET_DATA_DESCRIPTOR_ADD_LIST(Edd, Type, "physics.faces", Dec.physics.faces, _edje_edd_edje_physics_face);          \
+  }
 #else
-#define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(Edd, Type, Dec)	 \
-   {									 \
-      EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB_FIELDS(Edd, Type, Dec) \
-   }
+#define EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(Edd, Type, Dec)     \
+  {                                                                     \
+     EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB_FIELDS(Edd, Type, Dec) \
+  }
 #endif
 
-#define EET_DATA_DESCRIPTOR_ADD_SUB_NESTED_LOOK(Edd, Type, Dec)								 \
-   {															 \
-      EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(Edd, Type, "Dec##.orientation.look1", Dec.orientation.data, EDJE_T_FLOAT);	 \
-      EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(Edd, Type, "Dec##.orientation.look2", Dec.orientation.data, EDJE_T_FLOAT);	 \
-      EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "Dec##.orientation.look_to", Dec.orientation.look_to, EET_T_INT);	 \
-   }
+#define EET_DATA_DESCRIPTOR_ADD_SUB_NESTED_LOOK(Edd, Type, Dec)                                                     \
+  {                                                                                                                 \
+     EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(Edd, Type, "Dec##.orientation.look1", Dec.orientation.data, EDJE_T_FLOAT); \
+     EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(Edd, Type, "Dec##.orientation.look2", Dec.orientation.data, EDJE_T_FLOAT); \
+     EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "Dec##.orientation.look_to", Dec.orientation.look_to, EET_T_INT);     \
+  }
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Common);
    eddc.func.mem_free = mem_free_rectangle;
@@ -1097,53 +1097,52 @@ _edje_edd_init(void)
    eddc.func.type_set = _edje_description_variant_type_set;
    _edje_edd_edje_part_description_variant = eet_data_descriptor_file_new(&eddc);
 
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "spacer",    _edje_edd_edje_part_description_spacer);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "spacer", _edje_edd_edje_part_description_spacer);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "rectangle", _edje_edd_edje_part_description_rectangle);
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "swallow",   _edje_edd_edje_part_description_swallow);
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "group",     _edje_edd_edje_part_description_group);
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "image",     _edje_edd_edje_part_description_image);
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "proxy",     _edje_edd_edje_part_description_proxy);
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "text",      _edje_edd_edje_part_description_text);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "swallow", _edje_edd_edje_part_description_swallow);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "group", _edje_edd_edje_part_description_group);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "image", _edje_edd_edje_part_description_image);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "proxy", _edje_edd_edje_part_description_proxy);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "text", _edje_edd_edje_part_description_text);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "textblock", _edje_edd_edje_part_description_textblock);
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "box",       _edje_edd_edje_part_description_box);
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "table",     _edje_edd_edje_part_description_table);
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "external",  _edje_edd_edje_part_description_external);
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "mesh_node",  _edje_edd_edje_part_description_mesh_node);
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "light",  _edje_edd_edje_part_description_light);
-   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "camera",  _edje_edd_edje_part_description_camera);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "box", _edje_edd_edje_part_description_box);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "table", _edje_edd_edje_part_description_table);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "external", _edje_edd_edje_part_description_external);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "mesh_node", _edje_edd_edje_part_description_mesh_node);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "light", _edje_edd_edje_part_description_light);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "camera", _edje_edd_edje_part_description_camera);
 
-
-#define EDJE_ADD_ARRAY_MAPPING(Variant, Type, Minus)			\
-   {									\
-     Edje_Part_Description_List tmp;					\
-									\
-     eet_data_descriptor_element_add(Variant, Type,			\
-				     EET_T_UNKNOW, EET_G_VAR_ARRAY,	\
-				     0, (char*)(&tmp.desc_count) - (char*)(&tmp), \
-				     NULL,				\
-				     _edje_edd_edje_part_description_##Minus##_pointer); \
-   }
+#define EDJE_ADD_ARRAY_MAPPING(Variant, Type, Minus)                                     \
+  {                                                                                      \
+     Edje_Part_Description_List tmp;                                                     \
+                                                                                         \
+     eet_data_descriptor_element_add(Variant, Type,                                      \
+                                     EET_T_UNKNOW, EET_G_VAR_ARRAY,                      \
+                                     0, (char *)(&tmp.desc_count) - (char *)(&tmp),      \
+                                     NULL,                                               \
+                                     _edje_edd_edje_part_description_##Minus##_pointer); \
+  }
 
    _edje_edd_edje_part_description_variant_list = eet_data_descriptor_file_new(&eddc);
 
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "rectangle", rectangle);
-   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "spacer",    spacer);
-   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "swallow",   swallow);
-   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "group",     group);
-   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "image",     image);
-   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "proxy",     proxy);
-   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "text",      text);
+   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "spacer", spacer);
+   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "swallow", swallow);
+   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "group", group);
+   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "image", image);
+   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "proxy", proxy);
+   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "text", text);
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "textblock", textblock);
-   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "box",       box);
-   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "table",     table);
-   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "external",  external);
+   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "box", box);
+   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "table", table);
+   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "external", external);
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "mesh_node", mesh_node);
-   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "light",    light);
-   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "camera",    camera);
+   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "light", light);
+   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "camera", camera);
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Pack_Element);
    _edje_edd_edje_pack_element =
-      eet_data_descriptor_file_new(&eddc);
+     eet_data_descriptor_file_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_pack_element, Edje_Pack_Element, "type", type, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_pack_element, Edje_Pack_Element, "name", name, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_pack_element, Edje_Pack_Element, "source", source, EET_T_STRING);
@@ -1229,7 +1228,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_limit, Edje_Part_Limit, "part", part, EET_T_INT);
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Collection);
-   _edje_edd_edje_part_collection  =
+   _edje_edd_edje_part_collection =
      eet_data_descriptor_file_new(&eddc);
 
    EDJE_DEFINE_POINTER_TYPE(Program, program);
@@ -1275,21 +1274,22 @@ _edje_edd_init(void)
 
 EAPI void
 _edje_data_font_list_desc_make(Eet_Data_Descriptor **_font_list_edd,
-			       Eet_Data_Descriptor **_font_edd)
+                               Eet_Data_Descriptor **_font_edd)
 {  /* User have to free: _font_list_edd, _font_edd */
-   Eet_Data_Descriptor_Class eddc;
+  Eet_Data_Descriptor_Class eddc;
 
-   eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc),
-                                             "font", sizeof (Edje_Font));
-   *_font_edd = eet_data_descriptor_stream_new(&eddc);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(*_font_edd, Edje_Font,
-                                 "file", file, EET_T_INLINED_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(*_font_edd, Edje_Font,
-                                 "name", name, EET_T_INLINED_STRING);
+  eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc),
+                                            "font", sizeof (Edje_Font));
+  *_font_edd = eet_data_descriptor_stream_new(&eddc);
+  EET_DATA_DESCRIPTOR_ADD_BASIC(*_font_edd, Edje_Font,
+                                "file", file, EET_T_INLINED_STRING);
+  EET_DATA_DESCRIPTOR_ADD_BASIC(*_font_edd, Edje_Font,
+                                "name", name, EET_T_INLINED_STRING);
 
-   eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc),
-                                             "font_list", sizeof (Edje_Font_List));
-   *_font_list_edd = eet_data_descriptor_stream_new(&eddc);
-   EET_DATA_DESCRIPTOR_ADD_LIST(*_font_list_edd, Edje_Font_List,
-                                "list", list, *_font_edd);
+  eet_eina_stream_data_descriptor_class_set(&eddc, sizeof (eddc),
+                                            "font_list", sizeof (Edje_Font_List));
+  *_font_list_edd = eet_data_descriptor_stream_new(&eddc);
+  EET_DATA_DESCRIPTOR_ADD_LIST(*_font_list_edd, Edje_Font_List,
+                               "list", list, *_font_edd);
 }
+

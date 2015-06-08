@@ -1,7 +1,7 @@
 #include "edje_private.h"
 
 static Edje_Version _version = { VMAJ, VMIN, VMIC, VREV };
-EAPI Edje_Version *edje_version = &_version;
+EAPI Edje_Version * edje_version = &_version;
 
 static int _edje_init_count = 0;
 static Eina_Bool _need_imf = EINA_FALSE;
@@ -14,16 +14,16 @@ Eina_Cow *_edje_calc_params_map_cow = NULL;
 Eina_Cow *_edje_calc_params_physics_cow = NULL;
 
 static const Edje_Calc_Params_Map default_calc_map = {
-  { 0, 0, 0 }, { 0.0, 0.0, 0.0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0.0, 0.0 }, NULL, 0
+   { 0, 0, 0 }, { 0.0, 0.0, 0.0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0.0, 0.0 }, NULL, 0
 };
 
 static const Edje_Calc_Params_Physics default_calc_physics = {
-  0.0, 0.0, 0.0, 0.0, 0.0, { 0.0, 0.0 }, { 0.0, 0.0 }, 0, 0, { { 0, 0, 0 }, { 0, 0, 0 } }, 0, 0, 0, 0
+   0.0, 0.0, 0.0, 0.0, 0.0, { 0.0, 0.0 }, { 0.0, 0.0 }, 0, 0, { { 0, 0, 0 }, { 0, 0, 0 } }, 0, 0, 0, 0
 };
 
 /*============================================================================*
- *                                   API                                      *
- *============================================================================*/
+*                                   API                                      *
+*============================================================================*/
 EAPI int
 edje_init(void)
 {
@@ -38,7 +38,7 @@ edje_init(void)
      return --_edje_init_count;
 
    _edje_default_log_dom = eina_log_domain_register
-     ("edje", EDJE_DEFAULT_LOG_COLOR);
+       ("edje", EDJE_DEFAULT_LOG_COLOR);
    if (_edje_default_log_dom < 0)
      {
         EINA_LOG_ERR("Edje Can not create a general log domain.");
@@ -59,14 +59,14 @@ edje_init(void)
 
    if (!eet_init())
      {
-	ERR("Eet init failed");
-	goto shutdown_embryo;
+        ERR("Eet init failed");
+        goto shutdown_embryo;
      }
 
    if (!evas_init())
      {
-	ERR("Evas init failed");
-	goto shutdown_eet;
+        ERR("Evas init failed");
+        goto shutdown_eet;
      }
 
    if (!efreet_init())
@@ -87,25 +87,25 @@ edje_init(void)
    edje_signal_init();
 
    _edje_real_part_mp = eina_mempool_add("chained_mempool",
-					 "Edje_Real_Part", NULL,
-					 sizeof (Edje_Real_Part), 256);
+                                         "Edje_Real_Part", NULL,
+                                         sizeof (Edje_Real_Part), 256);
    if (!_edje_real_part_mp)
      {
-	ERR("Mempool for Edje_Real_Part cannot be allocated.");
-	goto shutdown_all;
+        ERR("Mempool for Edje_Real_Part cannot be allocated.");
+        goto shutdown_all;
      }
 
    _edje_real_part_state_mp = eina_mempool_add("chained_mempool",
-					       "Edje_Real_Part_State", NULL,
-					       sizeof (Edje_Real_Part_State), 64);
+                                               "Edje_Real_Part_State", NULL,
+                                               sizeof (Edje_Real_Part_State), 64);
    if (!_edje_real_part_state_mp)
      {
-	ERR("Mempool for Edje_Real_Part_State cannot be allocated.");
-	goto shutdown_all;
+        ERR("Mempool for Edje_Real_Part_State cannot be allocated.");
+        goto shutdown_all;
      }
 
    _edje_calc_params_map_cow = eina_cow_add("Edje Calc Params Map", sizeof (Edje_Calc_Params_Map), 8, &default_calc_map, EINA_TRUE);
-   _edje_calc_params_physics_cow= eina_cow_add("Edje Calc Params Physics", sizeof (Edje_Calc_Params_Physics), 8, &default_calc_physics, EINA_TRUE);
+   _edje_calc_params_physics_cow = eina_cow_add("Edje Calc Params Physics", sizeof (Edje_Calc_Params_Physics), 8, &default_calc_physics, EINA_TRUE);
 
    _edje_language = eina_stringshare_add(getenv("LANGUAGE"));
 
@@ -115,12 +115,12 @@ edje_init(void)
    eina_strbuf_free(str);
 
    eina_log_timing(_edje_default_log_dom,
-		   EINA_LOG_STATE_STOP,
-		   EINA_LOG_STATE_INIT);
+                   EINA_LOG_STATE_STOP,
+                   EINA_LOG_STATE_INIT);
 
    return _edje_init_count;
 
- shutdown_all:
+shutdown_all:
    eina_mempool_del(_edje_real_part_state_mp);
    eina_mempool_del(_edje_real_part_mp);
    _edje_real_part_state_mp = NULL;
@@ -133,18 +133,18 @@ edje_init(void)
    _edje_text_class_hash_free();
    _edje_edd_shutdown();
    efreet_shutdown();
- shutdown_evas:
+shutdown_evas:
    evas_shutdown();
- shutdown_eet:
+shutdown_eet:
    eet_shutdown();
- shutdown_embryo:
+shutdown_embryo:
    embryo_shutdown();
- shutdown_ecore:
+shutdown_ecore:
    ecore_shutdown();
- unregister_log_domain:
+unregister_log_domain:
    eina_log_domain_unregister(_edje_default_log_dom);
    _edje_default_log_dom = -1;
- shutdown_eina:
+shutdown_eina:
    eina_shutdown();
    return --_edje_init_count;
 }
@@ -157,8 +157,8 @@ _edje_shutdown_core(void)
    if (_edje_users > 0) return;
 
    eina_log_timing(_edje_default_log_dom,
-		   EINA_LOG_STATE_START,
-		   EINA_LOG_STATE_SHUTDOWN);
+                   EINA_LOG_STATE_START,
+                   EINA_LOG_STATE_SHUTDOWN);
 
    _edje_file_cache_shutdown();
    _edje_color_class_members_free();
@@ -251,8 +251,8 @@ _edje_del(Edje *ed)
 
    if (ed->processing_messages)
      {
-	ed->delete_me = EINA_TRUE;
-	return;
+        ed->delete_me = EINA_TRUE;
+        return;
      }
    _edje_message_del(ed);
    _edje_signal_callback_free(ed->callbacks);
@@ -264,7 +264,7 @@ _edje_del(Edje *ed)
    ed->group = NULL;
    if ((ed->actions) || (ed->pending_actions))
      {
-	_edje_animators = eina_list_remove(_edje_animators, ed);
+        _edje_animators = eina_list_remove(_edje_animators, ed);
      }
    EINA_LIST_FREE(ed->actions, runp)
      free(runp);
@@ -273,9 +273,9 @@ _edje_del(Edje *ed)
    eina_hash_free(ed->color_classes);
    EINA_LIST_FREE(ed->text_classes, tc)
      {
-	if (tc->name) eina_stringshare_del(tc->name);
-	if (tc->font) eina_stringshare_del(tc->font);
-	free(tc);
+        if (tc->name) eina_stringshare_del(tc->name);
+        if (tc->font) eina_stringshare_del(tc->font);
+        free(tc);
      }
    EINA_LIST_FREE(ed->text_insert_filter_callbacks, cb)
      {
@@ -324,3 +324,4 @@ _edje_need_imf(void)
    ecore_imf_init();
 #endif
 }
+

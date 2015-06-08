@@ -22,7 +22,7 @@ _edje_signal_match_key_cmp(const void *key1, int key1_length EINA_UNUSED, const 
      {
         if (a->matches[i].signal != b->matches[i].signal) return a->matches[i].signal - b->matches[i].signal;
         if (a->matches[i].source != b->matches[i].source) return a->matches[i].source - b->matches[i].source;
-        if (a->matches[i].func != b->matches[i].func) return (unsigned char*) a->matches[i].func - (unsigned char*) b->matches[i].func;
+        if (a->matches[i].func != b->matches[i].func) return (unsigned char *)a->matches[i].func - (unsigned char *)b->matches[i].func;
      }
    return 0;
 }
@@ -37,13 +37,13 @@ _edje_signal_match_key_hash(const void *key, int key_length EINA_UNUSED)
    for (i = 0; i < a->matches_count; ++i)
      {
 #ifdef EFL64
-        hash ^= eina_hash_int64((const unsigned long long int*) &a->matches[i].signal, sizeof (char *));
-        hash ^= eina_hash_int64((const unsigned long long int*) &a->matches[i].source, sizeof (char *));
-        hash ^= eina_hash_int64((const unsigned long long int*) &a->matches[i].func, sizeof (Edje_Signal_Cb));
+        hash ^= eina_hash_int64((const unsigned long long int *)&a->matches[i].signal, sizeof (char *));
+        hash ^= eina_hash_int64((const unsigned long long int *)&a->matches[i].source, sizeof (char *));
+        hash ^= eina_hash_int64((const unsigned long long int *)&a->matches[i].func, sizeof (Edje_Signal_Cb));
 #else
-        hash ^= eina_hash_int32((const unsigned int*) a->matches[i].signal, sizeof (char *));
-        hash ^= eina_hash_int32((const unsigned int*) a->matches[i].source, sizeof (char *));
-        hash ^= eina_hash_int32((const unsigned int*) a->matches[i].func, sizeof (Edje_Signal_Cb));
+        hash ^= eina_hash_int32((const unsigned int *)a->matches[i].signal, sizeof (char *));
+        hash ^= eina_hash_int32((const unsigned int *)a->matches[i].source, sizeof (char *));
+        hash ^= eina_hash_int32((const unsigned int *)a->matches[i].func, sizeof (Edje_Signal_Cb));
 #endif
      }
    return hash;
@@ -66,9 +66,9 @@ _edje_signal_callback_matches_dup(const Edje_Signal_Callback_Matches *src)
 
    for (i = 0; i < src->matches_count; i++)
      {
-       result->matches[i].signal = eina_stringshare_ref(src->matches[i].signal);
-       result->matches[i].source = eina_stringshare_ref(src->matches[i].source);
-       result->matches[i].func = src->matches[i].func;
+        result->matches[i].signal = eina_stringshare_ref(src->matches[i].signal);
+        result->matches[i].source = eina_stringshare_ref(src->matches[i].source);
+        result->matches[i].func = src->matches[i].func;
      }
 
    return result;
@@ -80,7 +80,7 @@ _edje_callbacks_patterns_clean(Edje_Signal_Callback_Group *gp)
    Edje_Signal_Callback_Matches *tmp;
 
    assert(EINA_REFCOUNT_GET(gp->matches) == 1);
-   tmp = (Edje_Signal_Callback_Matches*) gp->matches;
+   tmp = (Edje_Signal_Callback_Matches *)gp->matches;
 
    _edje_signal_callback_patterns_unref(tmp->patterns);
    tmp->patterns = NULL;
@@ -94,15 +94,15 @@ _edje_callbacks_patterns_init(Edje_Signal_Callback_Group *gp)
 
    if (gp->matches->patterns) return;
 
-   tmp = (Edje_Signal_Callback_Matches*) gp->matches;
+   tmp = (Edje_Signal_Callback_Matches *)gp->matches;
    tmp->patterns = calloc(1, sizeof (Edje_Signals_Sources_Patterns));
    if (!gp->matches->patterns) return;
 
    ssp = gp->matches->patterns;
    edje_match_callback_hash_build(gp->matches->matches,
-				  gp->matches->matches_count,
-				  &ssp->exact_match,
-				  &ssp->u.callbacks.globing);
+                                  gp->matches->matches_count,
+                                  &ssp->exact_match,
+                                  &ssp->u.callbacks.globing);
 
    ssp->signals_patterns = edje_match_callback_signal_init(&ssp->u.callbacks.globing, tmp->matches);
    ssp->sources_patterns = edje_match_callback_source_init(&ssp->u.callbacks.globing, tmp->matches);
@@ -160,10 +160,10 @@ _edje_signal_callback_grow(Edje_Signal_Callback_Group *gp)
 {
    Edje_Signal_Callback_Matches *tmp;
 
-   tmp = (Edje_Signal_Callback_Matches*) gp->matches;
+   tmp = (Edje_Signal_Callback_Matches *)gp->matches;
    tmp->matches_count++;
    tmp->matches = realloc(tmp->matches, sizeof (Edje_Signal_Callback_Match) * tmp->matches_count);
-   gp->custom_data = realloc(gp->custom_data, sizeof (void*) * tmp->matches_count);
+   gp->custom_data = realloc(gp->custom_data, sizeof (void *) * tmp->matches_count);
    gp->flags = realloc(gp->flags, sizeof (Edje_Signal_Callback_Flags) * tmp->matches_count);
 
    return gp;
@@ -174,7 +174,7 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
                            const char *sig, const char *src,
                            Edje_Signal_Cb func, void *data, Eina_Bool propagate)
 {
-   Edje_Signal_Callback_Group *gp = (Edje_Signal_Callback_Group*) cgp;
+   Edje_Signal_Callback_Group *gp = (Edje_Signal_Callback_Group *)cgp;
    unsigned int i;
    Edje_Signal_Callback_Flags flags;
 
@@ -200,7 +200,7 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
      {
         Edje_Signal_Callback_Matches *tmp;
 
-        tmp = (Edje_Signal_Callback_Matches*) gp->matches;
+        tmp = (Edje_Signal_Callback_Matches *)gp->matches;
 
         if (EINA_REFCOUNT_GET(tmp) == 1)
           {
@@ -210,7 +210,7 @@ _edje_signal_callback_push(const Edje_Signal_Callback_Group *cgp,
         else
           {
              Edje_Signal_Callback_Matches *tmp_dup;
-             tmp_dup = (Edje_Signal_Callback_Matches*) _edje_signal_callback_matches_dup(tmp);
+             tmp_dup = (Edje_Signal_Callback_Matches *)_edje_signal_callback_matches_dup(tmp);
              if (!tmp_dup) return;
              EINA_REFCOUNT_UNREF(tmp)
                (void) 0; // Nothing to do because the case where refcount == 1 was already handle above.
@@ -264,32 +264,32 @@ void
 _edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m)
 {
    EINA_REFCOUNT_UNREF(m)
-     {
-        unsigned int i;
+   {
+      unsigned int i;
 
-        _edje_signal_callback_patterns_unref(m->patterns);
+      _edje_signal_callback_patterns_unref(m->patterns);
 
-        if (m->hashed)
-          eina_hash_del(signal_match, m, m);
-      
-        for (i = 0; i < m->matches_count; ++i)
-          {
-             eina_stringshare_del(m->matches[i].signal);
-             eina_stringshare_del(m->matches[i].source);
-          }
-        free(m->matches);
-        free(m);
-     }
+      if (m->hashed)
+        eina_hash_del(signal_match, m, m);
+
+      for (i = 0; i < m->matches_count; ++i)
+        {
+           eina_stringshare_del(m->matches[i].signal);
+           eina_stringshare_del(m->matches[i].source);
+        }
+      free(m->matches);
+      free(m);
+   }
 }
 
 void
 _edje_signal_callback_free(const Edje_Signal_Callback_Group *cgp)
 {
-   Edje_Signal_Callback_Group *gp = (Edje_Signal_Callback_Group*) cgp;
+   Edje_Signal_Callback_Group *gp = (Edje_Signal_Callback_Group *)cgp;
 
    if (!gp) return;
 
-   _edje_signal_callback_matches_unref((Edje_Signal_Callback_Matches*) gp->matches);
+   _edje_signal_callback_matches_unref((Edje_Signal_Callback_Matches *)gp->matches);
    gp->matches = NULL;
    free(gp->flags);
    free(gp->custom_data);
@@ -301,7 +301,7 @@ _edje_signal_callback_disable(const Edje_Signal_Callback_Group *cgp,
                               const char *sig, const char *src,
                               Edje_Signal_Cb func, void *data)
 {
-   Edje_Signal_Callback_Group *gp = (Edje_Signal_Callback_Group*) cgp;
+   Edje_Signal_Callback_Group *gp = (Edje_Signal_Callback_Group *)cgp;
    unsigned int i;
 
    if (!gp || !gp->matches) return NULL;
@@ -343,7 +343,7 @@ _edje_signal_callback_move_last(Edje_Signal_Callback_Group *gp,
    Edje_Signal_Callback_Matches *m;
    unsigned int j;
 
-   m = (Edje_Signal_Callback_Matches*) gp->matches;
+   m = (Edje_Signal_Callback_Matches *)gp->matches;
 
    for (j = --m->matches_count; j > i; --j)
      {
@@ -364,7 +364,7 @@ const Edje_Signals_Sources_Patterns *
 _edje_signal_callback_patterns_ref(const Edje_Signal_Callback_Group *gp)
 {
    const Edje_Signal_Callback_Matches *m;
-   Edje_Signal_Callback_Matches *tmp;     
+   Edje_Signal_Callback_Matches *tmp;
 
    if (gp->matches->hashed)
      goto got_it;
@@ -372,7 +372,7 @@ _edje_signal_callback_patterns_ref(const Edje_Signal_Callback_Group *gp)
    m = eina_hash_find(signal_match, gp->matches);
    if (!m)
      {
-        tmp = (Edje_Signal_Callback_Matches*) gp->matches;
+        tmp = (Edje_Signal_Callback_Matches *)gp->matches;
         if (!(tmp->patterns && (EINA_REFCOUNT_GET(tmp->patterns) > 1)))
           {
              // Let compact it and remove uneeded pattern before building it
@@ -382,31 +382,30 @@ _edje_signal_callback_patterns_ref(const Edje_Signal_Callback_Group *gp)
              for (i = 0; i < tmp->matches_count; i++)
                {
                   if (gp->flags[i].delete_me)
-                    _edje_signal_callback_move_last((Edje_Signal_Callback_Group*) gp, i);
+                    _edje_signal_callback_move_last((Edje_Signal_Callback_Group *)gp, i);
                }
-
           }
 
         _edje_signal_callback_patterns_unref(tmp->patterns);
         tmp->patterns = NULL;
 
-        _edje_callbacks_patterns_init((Edje_Signal_Callback_Group*) gp);
-	eina_hash_add(signal_match, tmp, tmp);
-	// We should be able to use direct_add, but if I do so valgrind stack explode and
-	// it bagain to be a pain to debug efl apps. I can't understand what is going on.
+        _edje_callbacks_patterns_init((Edje_Signal_Callback_Group *)gp);
+        eina_hash_add(signal_match, tmp, tmp);
+        // We should be able to use direct_add, but if I do so valgrind stack explode and
+        // it bagain to be a pain to debug efl apps. I can't understand what is going on.
         // eina_hash_direct_add(signal_match, tmp, tmp);
         tmp->hashed = EINA_TRUE;
      }
    else
      {
-        _edje_signal_callback_matches_unref((Edje_Signal_Callback_Matches*) gp->matches);
-        ((Edje_Signal_Callback_Group*)gp)->matches = m;
-        tmp = (Edje_Signal_Callback_Matches*) gp->matches;
+        _edje_signal_callback_matches_unref((Edje_Signal_Callback_Matches *)gp->matches);
+        ((Edje_Signal_Callback_Group *)gp)->matches = m;
+        tmp = (Edje_Signal_Callback_Matches *)gp->matches;
         EINA_REFCOUNT_REF(tmp);
      }
 
- got_it:
-   tmp = (Edje_Signal_Callback_Matches*) gp->matches;
+got_it:
+   tmp = (Edje_Signal_Callback_Matches *)gp->matches;
 
    EINA_REFCOUNT_REF(tmp->patterns);
    return gp->matches->patterns;
@@ -419,7 +418,7 @@ _edje_signal_callback_patterns_unref(const Edje_Signals_Sources_Patterns *essp)
 
    if (!essp) return;
 
-   ssp = (Edje_Signals_Sources_Patterns*) essp;
+   ssp = (Edje_Signals_Sources_Patterns *)essp;
 
    EINA_REFCOUNT_UNREF(ssp)
    {

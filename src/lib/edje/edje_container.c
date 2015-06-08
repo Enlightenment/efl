@@ -14,7 +14,8 @@ _edje_container_relayout(Smart_Data *sd)
    if (!sd->need_layout) return;
 
    if (sd->w < sd->min_w) sw = sd->min_w;
-   else if (sd->w > sd->max_w) sw = sd->max_w;
+   else if (sd->w > sd->max_w)
+     sw = sd->max_w;
    else sw = sd->w;
 
    y = 0;
@@ -24,10 +25,10 @@ _edje_container_relayout(Smart_Data *sd)
 
    EINA_LIST_FOREACH(sd->children, l, ei)
      {
-	if (sd->homogenous) h = sd->min_row_h;
+        if (sd->homogenous) h = sd->min_row_h;
 
-	ei->y = y;
-	ei->h = h;
+        ei->y = y;
+        ei->h = h;
 //	ei->w = w;
 //	ei->h = h;
      }
@@ -57,16 +58,16 @@ _edje_container_recalc(Smart_Data *sd)
 
    for (i = 0; i < sd->cols; i++)
      {
-	sd->min_w += sd->colinfo[i].minw;
-	if (sd->colinfo[i].maxw >= 0)
-	  {
-	     if (sd->max_w >= 0)
-	       sd->max_w += sd->colinfo[i].maxw;
-	     else
-	       sd->max_w = sd->colinfo[i].maxw;
-	  }
-	else
-	  any_max_w = 1;
+        sd->min_w += sd->colinfo[i].minw;
+        if (sd->colinfo[i].maxw >= 0)
+          {
+             if (sd->max_w >= 0)
+               sd->max_w += sd->colinfo[i].maxw;
+             else
+               sd->max_w = sd->colinfo[i].maxw;
+          }
+        else
+          any_max_w = 1;
      }
    if (any_max_w) sd->max_w = -1;
 
@@ -77,37 +78,37 @@ _edje_container_recalc(Smart_Data *sd)
 
    EINA_LIST_FOREACH(sd->children, l, ei)
      {
-	if (ei->minh > sd->min_row_h)
-	  sd->min_row_h = ei->minh;
-	if (sd->max_row_h >= 0)
-	  {
-	     if (ei->maxh >= 0)
-	       {
-		  if (sd->max_row_h > ei->maxh)
-		    sd->max_row_h = ei->maxh;
-	       }
-	     else
-	       any_max_h = 1;
-	  }
-	sd->min_h += ei->minh;
-	if (ei->maxh >= 0)
-	  {
-	     if (sd->max_h >= 0)
-	       sd->max_h += ei->maxh;
-	     else
-	       sd->max_h = ei->maxh;
-	  }
-	else
-	  any_max_h = 1;
+        if (ei->minh > sd->min_row_h)
+          sd->min_row_h = ei->minh;
+        if (sd->max_row_h >= 0)
+          {
+             if (ei->maxh >= 0)
+               {
+                  if (sd->max_row_h > ei->maxh)
+                    sd->max_row_h = ei->maxh;
+               }
+             else
+               any_max_h = 1;
+          }
+        sd->min_h += ei->minh;
+        if (ei->maxh >= 0)
+          {
+             if (sd->max_h >= 0)
+               sd->max_h += ei->maxh;
+             else
+               sd->max_h = ei->maxh;
+          }
+        else
+          any_max_h = 1;
      }
    if (any_max_h)
      {
-	sd->max_h = -1;
-	sd->max_row_h = -1;
+        sd->max_h = -1;
+        sd->max_row_h = -1;
      }
    if (sd->homogenous)
      {
-	sd->min_h = eina_list_count(sd->children) * sd->min_row_h;
+        sd->min_h = eina_list_count(sd->children) * sd->min_row_h;
      }
 
    sd->changed = 0;
@@ -132,29 +133,29 @@ _edje_item_recalc(Edje_Item *ei)
    ei->maxh = -1;
    for (i = 0; i < ((Smart_Data *)(ei->sd))->cols; i++)
      {
-	if (ei->cells[i].minh > ei->minh) ei->minh = ei->cells[i].minh;
-	if (ei->cells[i].maxh >= 0)
-	  {
-	     if (ei->maxh >= 0)
-	       {
-		  if (ei->cells[i].maxh < ei->maxh)
-		    ei->maxh = ei->cells[i].maxh;
-	       }
-	     else
-	       ei->maxh = ei->cells[i].maxh;
-	  }
-	if (((Smart_Data *)(ei->sd))->colinfo[i].minw < ei->cells[i].minw)
-	  ((Smart_Data *)(ei->sd))->colinfo[i].minw = ei->cells[i].minw;
-	if (((Smart_Data *)(ei->sd))->colinfo[i].maxw >= 0)
-	  {
-	     if (ei->cells[i].maxw >= 0)
-	       {
-		  if (((Smart_Data *)(ei->sd))->colinfo[i].maxw > ei->cells[i].maxw)
-		    ((Smart_Data *)(ei->sd))->colinfo[i].maxw = ei->cells[i].maxw;
-	       }
-	  }
-	else
-	  ((Smart_Data *)(ei->sd))->colinfo[i].maxw = ei->cells[i].maxw;
+        if (ei->cells[i].minh > ei->minh) ei->minh = ei->cells[i].minh;
+        if (ei->cells[i].maxh >= 0)
+          {
+             if (ei->maxh >= 0)
+               {
+                  if (ei->cells[i].maxh < ei->maxh)
+                    ei->maxh = ei->cells[i].maxh;
+               }
+             else
+               ei->maxh = ei->cells[i].maxh;
+          }
+        if (((Smart_Data *)(ei->sd))->colinfo[i].minw < ei->cells[i].minw)
+          ((Smart_Data *)(ei->sd))->colinfo[i].minw = ei->cells[i].minw;
+        if (((Smart_Data *)(ei->sd))->colinfo[i].maxw >= 0)
+          {
+             if (ei->cells[i].maxw >= 0)
+               {
+                  if (((Smart_Data *)(ei->sd))->colinfo[i].maxw > ei->cells[i].maxw)
+                    ((Smart_Data *)(ei->sd))->colinfo[i].maxw = ei->cells[i].maxw;
+               }
+          }
+        else
+          ((Smart_Data *)(ei->sd))->colinfo[i].maxw = ei->cells[i].maxw;
      }
 
    ei->recalc = EINA_FALSE;
@@ -162,19 +163,18 @@ _edje_item_recalc(Edje_Item *ei)
    _edje_container_recalc(ei->sd);
 }
 
-
 /*****************************/
 /**
  * @endcond
  */
 
 /*============================================================================*
- *                                 Global                                     *
- *============================================================================*/
+*                                 Global                                     *
+*============================================================================*/
 
 /*============================================================================*
- *                                   API                                      *
- *============================================================================*/
+*                                   API                                      *
+*============================================================================*/
 
 /**
  * @addtogroup Edje_container_Group Container
@@ -311,14 +311,12 @@ edje_item_overlay_object_set(Edje_Item *ei, Evas_Object *obj)
 {
    if (ei->overlay_object)
      {
-	/* FIXME: if it changed - remove...*/
+        /* FIXME: if it changed - remove...*/
      }
    ei->overlay_object = obj;
    if (ei->sd)
      evas_object_smart_member_add(((Smart_Data *)(ei->sd))->smart_obj, obj);
 }
-
-
 
 Evas_Object *
 edje_item_overlay_object_get(Edje_Item *ei)
@@ -332,7 +330,7 @@ edje_item_object_set(Edje_Item *ei, Evas_Object *obj)
 {
    if (ei->object)
      {
-	/* FIXME: if it changed - remove...*/
+        /* FIXME: if it changed - remove...*/
      }
    ei->object = obj;
    if (ei->sd)
@@ -351,9 +349,9 @@ edje_item_object_column_set(Edje_Item *ei, int col, Evas_Object *obj)
 {
    if (ei->cells_num <= (col + 1))
      {
-	/* FIXME: unsafe realloc */
-	ei->cells = realloc(ei->cells, sizeof(Edje_Item_Cell) * col);
-	ei->cells_num = col + 1;
+        /* FIXME: unsafe realloc */
+        ei->cells = realloc(ei->cells, sizeof(Edje_Item_Cell) * col);
+        ei->cells_num = col + 1;
      }
    ei->cells[col].obj = obj;
 }
@@ -371,11 +369,11 @@ edje_item_geometry_get(Edje_Item *ei, Evas_Coord *x, Evas_Coord *y, Evas_Coord *
 {
    if (!ei->sd)
      {
-	if (x) *x = 0;
-	if (y) *y = 0;
-	if (w) *w = 0;
-	if (h) *h = 0;
-	return;
+        if (x) *x = 0;
+        if (y) *y = 0;
+        if (w) *w = 0;
+        if (h) *h = 0;
+        return;
      }
    if (x) *x = ((Smart_Data *)(ei->sd))->x;
    if (y) *y = ((Smart_Data *)(ei->sd))->y + ei->y;
@@ -407,9 +405,9 @@ edje_item_column_size_set(Edje_Item *ei, int col, Evas_Coord minw, Evas_Coord ma
 {
    if (ei->cells_num <= (col + 1))
      {
-	/* FIXME: unsafe realloc */
-	ei->cells = realloc(ei->cells, sizeof(Edje_Item_Cell) * col);
-	ei->cells_num = col + 1;
+        /* FIXME: unsafe realloc */
+        ei->cells = realloc(ei->cells, sizeof(Edje_Item_Cell) * col);
+        ei->cells_num = col + 1;
      }
    if ((ei->cells[col].minw == minw) &&
        (ei->cells[col].minh == minh) &&
@@ -422,8 +420,8 @@ edje_item_column_size_set(Edje_Item *ei, int col, Evas_Coord minw, Evas_Coord ma
    ei->recalc = EINA_TRUE;
    if (ei->sd)
      {
-	((Smart_Data *)(ei->sd))->changed = 1;
-	((Smart_Data *)(ei->sd))->change_child = 1;
+        ((Smart_Data *)(ei->sd))->changed = 1;
+        ((Smart_Data *)(ei->sd))->change_child = 1;
      }
    _edje_item_recalc(ei);
 }
@@ -433,10 +431,10 @@ edje_item_column_size_get(Edje_Item *ei, int col, Evas_Coord *minw, Evas_Coord *
 {
    if (ei->cells_num <= (col + 1))
      {
-	if (minw) *minw = 0;
-	if (minh) *minh = 0;
-	if (maxw) *maxw = -1;
-	if (maxh) *maxh = -1;
+        if (minw) *minw = 0;
+        if (minh) *minh = 0;
+        if (maxw) *maxw = -1;
+        if (maxh) *maxh = -1;
      }
    if (minw) *minw = ei->cells[col].minw;
    if (minh) *minh = ei->cells[col].minh;
@@ -629,13 +627,13 @@ edje_container_columns_set(Evas_Object *obj, int cols)
    sd->colinfo = realloc(sd->colinfo, cols * sizeof(Smart_Data_Colinfo));
    if (cols > sd->cols)
      {
-	int i;
+        int i;
 
-	for (i = sd->cols; i < cols; i++)
-	  {
-	     sd->colinfo[i].minw = 0;
-	     sd->colinfo[i].maxw = -1;
-	  }
+        for (i = sd->cols; i < cols; i++)
+          {
+             sd->colinfo[i].minw = 0;
+             sd->colinfo[i].maxw = -1;
+          }
      }
    sd->cols = cols;
    sd->changed = 1;
@@ -662,12 +660,12 @@ edje_container_min_size_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh
    if (!sd) return;
    if (sd->changed)
      {
-	int freeze;
+        int freeze;
 
-	freeze = sd->freeze;
-	sd->freeze = 0;
-	_edje_container_recalc(sd);
-	sd->freeze = freeze;
+        freeze = sd->freeze;
+        sd->freeze = 0;
+        _edje_container_recalc(sd);
+        sd->freeze = freeze;
      }
    if (minw) *minw = sd->min_w;
    if (minh) *minh = sd->min_h;
@@ -682,12 +680,12 @@ edje_container_max_size_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh
    if (!sd) return;
    if (sd->changed)
      {
-	int freeze;
+        int freeze;
 
-	freeze = sd->freeze;
-	sd->freeze = 0;
-	_edje_container_recalc(sd);
-	sd->freeze = freeze;
+        freeze = sd->freeze;
+        sd->freeze = 0;
+        _edje_container_recalc(sd);
+        sd->freeze = freeze;
      }
    if (maxw) *maxw = sd->max_w;
    if (maxh) *maxh = sd->max_h;
@@ -811,17 +809,17 @@ edje_container_scroll_get(Evas_Object *obj, double *pos, double *shift)
 }
 
 static void _smart_init(void);
-static void _smart_add(Evas_Object * obj);
-static void _smart_del(Evas_Object * obj);
-static void _smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y);
-static void _smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h);
-static void _smart_show(Evas_Object * obj);
-static void _smart_hide(Evas_Object * obj);
-static void _smart_color_set(Evas_Object * obj, int r, int g, int b, int a);
-static void _smart_clip_set(Evas_Object * obj, Evas_Object * clip);
-static void _smart_clip_unset(Evas_Object * obj);
+static void _smart_add(Evas_Object *obj);
+static void _smart_del(Evas_Object *obj);
+static void _smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+static void _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+static void _smart_show(Evas_Object *obj);
+static void _smart_hide(Evas_Object *obj);
+static void _smart_color_set(Evas_Object *obj, int r, int g, int b, int a);
+static void _smart_clip_set(Evas_Object *obj, Evas_Object *clip);
+static void _smart_clip_unset(Evas_Object *obj);
 
-static Evas_Smart  *smart = NULL;
+static Evas_Smart *smart = NULL;
 
 Evas_Object *
 edje_container_object_add(Evas *evas)
@@ -837,25 +835,25 @@ static void
 _smart_init(void)
 {
    if (smart) return;
-     {
-	static const Evas_Smart_Class sc =
-	  {
-	     E_OBJ_NAME,
-	       _smart_add,
-	       _smart_del,
-	       _smart_move,
-	       _smart_resize,
-	       _smart_show,
-	       _smart_hide,
-	       _smart_color_set,
-	       _smart_clip_set,
-	       _smart_clip_unset,
-	       NULL,
-	       NULL,
-	       NULL
-	  };
-        smart = evas_smart_class_new(&sc);
-     }
+   {
+      static const Evas_Smart_Class sc =
+      {
+         E_OBJ_NAME,
+         _smart_add,
+         _smart_del,
+         _smart_move,
+         _smart_resize,
+         _smart_show,
+         _smart_hide,
+         _smart_color_set,
+         _smart_clip_set,
+         _smart_clip_unset,
+         NULL,
+         NULL,
+         NULL
+      };
+      smart = evas_smart_class_new(&sc);
+   }
 }
 
 static void

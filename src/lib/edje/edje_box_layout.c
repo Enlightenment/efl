@@ -17,21 +17,21 @@ struct _Edje_Part_Box_Animation
    struct
    {
       Evas_Object_Box_Layout layout;
-      void *data;
-      void(*free_data)(void *data);
-      Edje_Alignment align;
-      Evas_Point padding;
+      void                  *data;
+      void                   (*free_data)(void *data);
+      Edje_Alignment         align;
+      Evas_Point             padding;
    } start, end;
-   Eina_List *objs;
-   Eina_Bool recalculate:1;
+   Eina_List   *objs;
+   Eina_Bool    recalculate : 1;
    Evas_Object *box;
-   double progress;
-   double start_progress;
-   int box_start_w, box_start_h;
+   double       progress;
+   double       start_progress;
+   int          box_start_w, box_start_h;
 };
 
 static void
-_edje_box_layout_find_all(const char *name, const char *name_alt, Evas_Object_Box_Layout *cb, void **data, void (**free_data)(void *data))
+_edje_box_layout_find_all(const char *name, const char *name_alt, Evas_Object_Box_Layout *cb, void **data, void(**free_data) (void *data))
 {
    if (!_edje_box_layout_find(name, cb, data, free_data))
      {
@@ -58,7 +58,7 @@ _edje_box_layout_calculate_coords(Evas_Object *obj, Evas_Object_Box_Data *priv, 
    EINA_LIST_FOREACH(anim->objs, l, tad)
      {
         evas_object_geometry_get(tad->obj, &tad->start.x, &tad->start.y,
-              &tad->start.w, &tad->start.h);
+                                 &tad->start.w, &tad->start.h);
         tad->start.x = tad->start.x - x;
         tad->start.y = tad->start.y - y;
      }
@@ -72,7 +72,7 @@ _edje_box_layout_calculate_coords(Evas_Object *obj, Evas_Object_Box_Data *priv, 
    EINA_LIST_FOREACH(anim->objs, l, tad)
      {
         evas_object_geometry_get(tad->obj, &tad->end.x, &tad->end.y,
-              &tad->end.w, &tad->end.h);
+                                 &tad->end.w, &tad->end.h);
         tad->end.x = tad->end.x - x;
         tad->end.y = tad->end.y - y;
      }
@@ -124,7 +124,7 @@ _edje_box_layout(Evas_Object *obj, Evas_Object_Box_Data *priv, void *data)
      }
 
    if ((anim->progress > 0) && (anim->start_progress < 1))
-      _edje_box_layout_exec(obj, anim);
+     _edje_box_layout_exec(obj, anim);
 }
 
 void
@@ -133,11 +133,11 @@ _edje_box_layout_free_data(void *data)
    Edje_Transition_Animation_Data *tad;
    Edje_Part_Box_Animation *anim = data;
    if (anim->start.free_data && anim->start.data)
-      anim->start.free_data(anim->start.data);
+     anim->start.free_data(anim->start.data);
    if (anim->end.free_data && anim->end.data)
-      anim->end.free_data(anim->end.data);
+     anim->end.free_data(anim->end.data);
    EINA_LIST_FREE(anim->objs, tad)
-      free(tad);
+     free(tad);
    free(data);
 }
 
@@ -146,7 +146,7 @@ _edje_box_layout_anim_new(Evas_Object *box)
 {
    Edje_Part_Box_Animation *anim = calloc(1, sizeof(Edje_Part_Box_Animation));
    if (!anim)
-      return NULL;
+     return NULL;
 
    anim->box = box;
    evas_object_box_layout_set(box, _edje_box_layout, anim, NULL);
@@ -163,7 +163,7 @@ _edje_box_recalc_apply(Edje *ed EINA_UNUSED, Edje_Real_Part *ep, Edje_Calc_Param
 #endif
    if ((ep->type != EDJE_RP_TYPE_CONTAINER) ||
        (!ep->typedata.container)) return;
-     
+
    if ((ep->param2) && (ep->description_pos != ZERO))
      {
         Edje_Part_Description_Box *param2_desc = (Edje_Part_Description_Box *)ep->param2->description;
@@ -177,7 +177,7 @@ _edje_box_recalc_apply(Edje *ed EINA_UNUSED, Edje_Real_Part *ep, Edje_Calc_Param
 
              priv = eo_data_scope_get(ep->object, EVAS_BOX_CLASS);
              if (priv == NULL)
-                return;
+               return;
 
              evas_object_box_padding_set(ep->object, ep->typedata.container->anim->start.padding.x, ep->typedata.container->anim->start.padding.y);
              evas_object_box_align_set(ep->object, TO_DOUBLE(ep->typedata.container->anim->start.align.x), TO_DOUBLE(ep->typedata.container->anim->start.align.y));
@@ -206,8 +206,8 @@ _edje_box_recalc_apply(Edje *ed EINA_UNUSED, Edje_Real_Part *ep, Edje_Calc_Param
 
    if (evas_object_smart_need_recalculate_get(ep->object))
      {
-	evas_object_smart_need_recalculate_set(ep->object, 0);
-	evas_object_smart_calculate(ep->object);
+        evas_object_smart_need_recalculate_set(ep->object, 0);
+        evas_object_smart_calculate(ep->object);
      }
 #if 0 /* Why the hell do we affect part size after resize ??? */
    evas_object_size_hint_min_get(ep->object, &min_w, &min_h);
@@ -222,7 +222,7 @@ Eina_Bool
 _edje_box_layout_add_child(Edje_Real_Part *rp, Evas_Object *child_obj)
 {
    Edje_Transition_Animation_Data *tad;
-   
+
    if ((rp->type != EDJE_RP_TYPE_CONTAINER) ||
        (!rp->typedata.container)) return EINA_FALSE;
    tad = calloc(1, sizeof(Edje_Transition_Animation_Data));
@@ -253,3 +253,4 @@ _edje_box_layout_remove_child(Edje_Real_Part *rp, Evas_Object *child_obj)
      }
    rp->typedata.container->anim->recalculate = EINA_TRUE;
 }
+

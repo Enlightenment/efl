@@ -6,9 +6,9 @@
 # undef MY_CLASS
 #endif
 
-#define MY_CLASS EDJE_OBJECT_CLASS
+#define MY_CLASS             EDJE_OBJECT_CLASS
 
-#define MY_CLASS_NAME "Edje"
+#define MY_CLASS_NAME        "Edje"
 #define MY_CLASS_NAME_LEGACY "edje"
 
 Eina_List *_edje_edjes = NULL;
@@ -59,7 +59,7 @@ _edje_object_eo_base_dbg_info_get(Eo *eo_obj, Edje *_pd EINA_UNUSED, Eo_Dbg_Info
    if (error != EDJE_LOAD_ERROR_NONE)
      {
         EO_DBG_INFO_APPEND(group, "Error", EINA_VALUE_TYPE_STRING,
-              edje_load_error_str(error));
+                           edje_load_error_str(error));
      }
 }
 
@@ -71,7 +71,6 @@ _edje_color_class_free(void *data)
    if (cc->name) eina_stringshare_del(cc->name);
    free(cc);
 }
-
 
 /* Private Routines */
 EOLIAN static void
@@ -93,7 +92,7 @@ _edje_object_evas_object_smart_add(Eo *obj, Edje *ed)
    ed->obj = obj;
    _edje_edjes = eina_list_append(_edje_edjes, obj);
    /*
-     {
+      {
         Eina_List *l;
         const void *data;
 
@@ -104,8 +103,8 @@ _edje_object_evas_object_smart_add(Eo *obj, Edje *ed)
              printf("EDJE: %80s | %80s\n", ed->path, ed->part);
           }
         printf("--- EDJE DUMP [%i]\n", eina_list_count(_edje_edjes));
-     }
-   */
+      }
+    */
    evas_event_thaw(tev);
    evas_event_thaw_eval(tev);
 }
@@ -168,9 +167,9 @@ _edje_object_evas_object_smart_move(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord x,
                {
                   if (ep->typedata.swallow->swallowed_object)
                     evas_object_move
-                       (ep->typedata.swallow->swallowed_object,
-                        ed->x + ep->x,
-                        ed->y + ep->y);
+                      (ep->typedata.swallow->swallowed_object,
+                      ed->x + ep->x,
+                      ed->y + ep->y);
                }
           }
         if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
@@ -236,9 +235,9 @@ _edje_object_evas_object_smart_resize(Eo *obj EINA_UNUSED, Edje *ed, Evas_Coord 
    ed->h = h;
 #ifdef HAVE_EPHYSICS
    if ((ed->collection) && (ed->world))
-        ephysics_world_render_geometry_set(
-           ed->world, ed->x, ed->y, ed->collection->physics.world.z,
-           ed->w, ed->h, ed->collection->physics.world.depth);
+     ephysics_world_render_geometry_set(
+       ed->world, ed->x, ed->y, ed->collection->physics.world.z,
+       ed->w, ed->h, ed->collection->physics.world.depth);
 #endif
 #ifdef EDJE_CALC_CACHE
    ed->all_part_change = EINA_TRUE;
@@ -318,7 +317,7 @@ _edje_object_efl_file_file_set(Eo *obj, Edje *_pd EINA_UNUSED, const char *file,
    if (file)
      {
         f = eina_file_open(file, EINA_FALSE);
-        if (!f) 
+        if (!f)
           {
              Edje *ed;
 
@@ -386,7 +385,7 @@ edje_object_file_set(Edje_Object *obj, const char *file, const char *group)
 EAPI void
 edje_object_file_get(const Edje_Object *obj, const char **file, const char **group)
 {
-   eo_do((Edje_Object *) obj, efl_file_get(file, group));
+   eo_do((Edje_Object *)obj, efl_file_get(file, group));
 }
 
 #include "edje_object.eo.c"
