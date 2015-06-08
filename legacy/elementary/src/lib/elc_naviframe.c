@@ -1377,10 +1377,10 @@ _elm_naviframe_evas_object_smart_add(Eo *obj, Elm_Naviframe_Data *priv)
 }
 
 static void
-_send_signal(Elm_Naviframe_Item_Data *it, const char *signal)
+_send_signal(Elm_Naviframe_Item_Data *it, const char *sig)
 {
    if (!it) return ;
-   elm_object_signal_emit(VIEW(it), signal, "elm");
+   elm_object_signal_emit(VIEW(it), sig, "elm");
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
 }
 

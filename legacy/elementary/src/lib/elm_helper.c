@@ -13,12 +13,12 @@ struct _Elm_Validator_Regexp
 };
 
 EAPI Elm_Validator_Regexp *
-elm_validator_regexp_new(const char *pattern, const char *signal)
+elm_validator_regexp_new(const char *pattern, const char *sig)
 {
    Elm_Validator_Regexp *validator;
 
    validator = calloc(1, sizeof(Elm_Validator_Regexp));
-   validator->signal = eina_stringshare_add(signal ? signal : "default");
+   validator->signal = eina_stringshare_add(sig ? sig : "default");
    validator->status = regcomp(&validator->regex, pattern, REG_EXTENDED | REG_NOSUB) ? ELM_REG_BADPAT : ELM_REG_NOERROR;
 
    return validator;
