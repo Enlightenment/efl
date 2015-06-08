@@ -112,9 +112,9 @@ struct _Elm_Scrollable_Smart_Interface_Data
       Ecore_Idle_Enterer *hold_enterer;
       Ecore_Animator *hold_animator;
       Ecore_Animator *onhold_animator;
-      Ecore_Animator *momentum_animator;
-      Ecore_Animator *bounce_x_animator;
-      Ecore_Animator *bounce_y_animator;
+      Ecore_Animator *momentum_animator; /**< an animator which is called whenever a scroller is moving due to a flick action(mouse down, move, up) */
+      Ecore_Animator *bounce_x_animator; /**< an animator to express the bouncing animation on x axis. */
+      Ecore_Animator *bounce_y_animator; /**< an animator to express the bouncing animation on y axis. */
 
       Eina_Bool       bounce_x_hold : 1;
       Eina_Bool       bounce_y_hold : 1;
