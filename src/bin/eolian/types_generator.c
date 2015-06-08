@@ -101,11 +101,15 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full)
                    if (fdesc) eina_strbuf_append_printf(buf, " /** %s */", fdesc);
                    else if (fdoc)
                      {
-                        Eina_Strbuf *fbuf = docs_generate_full(fdoc,
-                            strlen(strrchr(eina_strbuf_string_get(buf), '\n')));
-                        if (fbuf) eina_strbuf_append_printf(buf, " %s",
-                            eina_strbuf_string_get(fbuf));
-                        eina_strbuf_free(fbuf);
+                        const char *nl = strrchr(eina_strbuf_string_get(buf), '\n');
+                        if (nl)
+                          {
+                             Eina_Strbuf *fbuf = docs_generate_full(fdoc, strlen(nl));
+                             if (fbuf)
+                               eina_strbuf_append_printf(buf, " %s",
+                                                         eina_strbuf_string_get(fbuf));
+                             eina_strbuf_free(fbuf);
+                          }
                      }
                    eina_strbuf_append(buf, "\n");
                 }
@@ -165,11 +169,15 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full)
                    if (fdesc) eina_strbuf_append_printf(buf, " /** %s */", fdesc);
                    else if (fdoc)
                      {
-                        Eina_Strbuf *fbuf = docs_generate_full(fdoc,
-                            strlen(strrchr(eina_strbuf_string_get(buf), '\n')));
-                        if (fbuf) eina_strbuf_append_printf(buf, " %s",
-                            eina_strbuf_string_get(fbuf));
-                        eina_strbuf_free(fbuf);
+                        const char *nl = strrchr(eina_strbuf_string_get(buf), '\n');
+                        if (nl)
+                          {
+                             Eina_Strbuf *fbuf = docs_generate_full(fdoc, strlen(nl));
+                             if (fbuf)
+                               eina_strbuf_append_printf(buf, " %s",
+                                                         eina_strbuf_string_get(fbuf));
+                             eina_strbuf_free(fbuf);
+                          }
                      }
                    eina_strbuf_append(buf, "\n");
                 }
