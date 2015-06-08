@@ -45,8 +45,7 @@ _evas_3d_primitive_form_set(Eo *obj EINA_UNUSED,
                             Evas_3D_Primitive_Data *pd,
                             Evas_3D_Mesh_Primitive form)
 {
-   if ((form < EVAS_3D_MESH_PRIMITIVE_NONE) ||
-       (form >= EVAS_3D_MESH_PRIMITIVE_COUNT))
+   if (form >= EVAS_3D_MESH_PRIMITIVE_COUNT)
      {
         ERR("Wrong form of primitive.");
         return;
