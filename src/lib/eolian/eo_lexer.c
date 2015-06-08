@@ -272,6 +272,7 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
           {
              free(doc);
              eo_lexer_lex_error(ls, "unfinished documentation", -1);
+             return; /* unreachable, for static analysis */
           }
         if (is_newline(ls->current))
           {
@@ -319,6 +320,7 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
              free(doc);
              eina_strbuf_free(rbuf);
              eo_lexer_lex_error(ls, "unfinished documentation", -1);
+             return; /* unreachable, for static analysis */
           }
 
         eina_strbuf_reset(ls->buff);
