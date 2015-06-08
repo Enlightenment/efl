@@ -2239,6 +2239,19 @@ EAPI Eina_Stringshare *eolian_documentation_summary_get(const Eolian_Documentati
  */
 EAPI Eina_Stringshare *eolian_documentation_description_get(const Eolian_Documentation *doc);
 
+/*
+ * @brief Get the "since" tag of the documentation.
+ *
+ * This can return NULL if the tag wasn't specified or
+ * if the input is wrong.
+ *
+ * @param[in] doc the documentation
+ * @return the description or NULL
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_documentation_since_get(const Eolian_Documentation *doc);
+
 #endif
 
 /**

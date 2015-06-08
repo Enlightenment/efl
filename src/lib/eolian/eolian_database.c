@@ -166,6 +166,7 @@ void database_doc_del(Eolian_Documentation *doc)
    if (!doc) return;
    eina_stringshare_del(doc->summary);
    eina_stringshare_del(doc->description);
+   eina_stringshare_del(doc->since);
    free(doc);
 }
 
@@ -181,6 +182,13 @@ eolian_documentation_description_get(const Eolian_Documentation *doc)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(doc, NULL);
    return doc->description;
+}
+
+EAPI Eina_Stringshare *
+eolian_documentation_since_get(const Eolian_Documentation *doc)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(doc, NULL);
+   return doc->since;
 }
 
 #define EO_SUFFIX ".eo"

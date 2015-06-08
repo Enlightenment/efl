@@ -252,6 +252,15 @@ cend:
    if (tok) tok->value.s = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
 }
 
+void doc_error(Eo_Lexer *ls, const char *msg, Eolian_Documentation *doc, Eina_Strbuf *buf)
+{
+   eina_stringshare_del(doc->summary);
+   eina_stringshare_del(doc->description);
+   free(doc);
+   eina_strbuf_free(buf);
+   eo_lexer_lex_error(ls, msg, -1);
+}
+
 static void
 read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
 {
@@ -270,8 +279,7 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
      {
         if (!ls->current)
           {
-             free(doc);
-             eo_lexer_lex_error(ls, "unfinished documentation", -1);
+             doc_error(ls, "unfinished documentation", doc, NULL);
              return; /* unreachable, for static analysis */
           }
         if (is_newline(ls->current))
@@ -312,18 +320,79 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
    doc->summary = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
 
    Eina_Strbuf *rbuf = eina_strbuf_new();
+   Eina_Bool had_nl = EINA_TRUE;
+
    for (;;)
      {
         if (!ls->current)
           {
-             eina_stringshare_del(doc->summary);
-             free(doc);
-             eina_strbuf_free(rbuf);
-             eo_lexer_lex_error(ls, "unfinished documentation", -1);
+             doc_error(ls, "unfinished documentation", doc, NULL);
              return; /* unreachable, for static analysis */
           }
 
         eina_strbuf_reset(ls->buff);
+
+        if (had_nl && ls->current == '@')
+          {
+#define LEX_SINCE(c, failure) \
+        next_char(ls); \
+        if (ls->current != c) \
+          { \
+             eina_strbuf_append(ls->buff, failure); \
+             goto normal; \
+          }
+
+             LEX_SINCE('s', "@");
+             LEX_SINCE('i', "@s");
+             LEX_SINCE('n', "@si");
+             LEX_SINCE('c', "@sin");
+             LEX_SINCE('e', "@sinc");
+             LEX_SINCE(' ', "@since");
+
+#undef LEX_SINCE
+
+             skip_ws(ls);
+
+             /* gotta have a value */
+             if (!ls->current || is_newline(ls->current) || ls->current == ']')
+               goto docerr;
+
+             /* append the since string */
+             while (ls->current && ls->current != ']' && !is_newline(ls->current))
+               {
+                  eina_strbuf_append_char(ls->buff, ls->current);
+                  next_char(ls);
+               }
+
+             /* trigger "unfinished documentation" if things end early */
+             if (!ls->current)
+               continue;
+
+             /* strip final whitespace */
+             while (isspace(ls->current))
+               {
+                  if (is_newline(ls->current))
+                    next_line(ls);
+                  else
+                    next_char(ls);
+               }
+
+             if (ls->current != ']') goto docerr;
+             next_char(ls);
+             if (ls->current != ']') goto docerr;
+             next_char(ls);
+
+             eina_strbuf_trim(ls->buff);
+             doc->since = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
+
+             goto done;
+docerr:
+             doc_error(ls, "mangled documentation", doc, rbuf);
+             return;
+          }
+
+normal:
+        had_nl = EINA_FALSE;
         while (ls->current && !is_newline(ls->current))
           {
              if (ls->current == ']')
@@ -336,13 +405,7 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
                        next_char(ls);
                        eina_strbuf_trim(ls->buff);
                        eina_strbuf_append(rbuf, eina_strbuf_string_get(ls->buff));
-                       eina_strbuf_trim(rbuf);
-                       if (eina_strbuf_string_get(rbuf)[0])
-                         doc->description = eina_stringshare_add(
-                             eina_strbuf_string_get(rbuf));
-                       eina_strbuf_free(rbuf);
-                       tok->value.doc = doc;
-                       return;
+                       goto done;
                     }
                }
              eina_strbuf_append_char(ls->buff, ls->current);
@@ -361,8 +424,16 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
                eina_strbuf_append_char(rbuf, ' ');
              while (is_newline(ls->current))
                next_line_ws(ls);
+             had_nl = EINA_TRUE;
           }
      }
+
+done:
+   eina_strbuf_trim(rbuf);
+   if (eina_strbuf_string_get(rbuf)[0])
+     doc->description = eina_stringshare_add(eina_strbuf_string_get(rbuf));
+   eina_strbuf_free(rbuf);
+   tok->value.doc = doc;
 }
 
 static void

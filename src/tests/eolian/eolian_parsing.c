@@ -1125,6 +1125,8 @@ START_TEST(eolian_docs)
    fail_if(strcmp(eolian_documentation_description_get(doc),
                   "This is a longer description for struct Foo.\n\n"
                   "This is another paragraph."));
+   fail_if(strcmp(eolian_documentation_since_get(doc),
+                  "1.66"));
 
    fail_if(!(sfl = eolian_type_struct_field_get(type, "field1")));
    fail_if(!(doc = eolian_type_struct_field_documentation_get(sfl)));
@@ -1146,6 +1148,7 @@ START_TEST(eolian_docs)
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Docs for enum Bar."));
    fail_if(eolian_documentation_description_get(doc));
+   fail_if(eolian_documentation_since_get(doc));
 
    fail_if(!(efl = eolian_type_enum_field_get(type, "blah")));
    fail_if(eolian_type_enum_field_documentation_get(efl));
@@ -1168,6 +1171,8 @@ START_TEST(eolian_docs)
                   "Docs for typedef."));
    fail_if(strcmp(eolian_documentation_description_get(doc),
                   "More docs for typedef. See @Bar."));
+   fail_if(strcmp(eolian_documentation_since_get(doc),
+                  "2.0"));
 
    fail_if(!(var = eolian_variable_global_get_by_name("pants")));
    fail_if(!(doc = eolian_variable_documentation_get(var)));
@@ -1224,6 +1229,8 @@ START_TEST(eolian_docs)
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Property common documentation."));
    fail_if(eolian_documentation_description_get(doc));
+   fail_if(strcmp(eolian_documentation_since_get(doc),
+                  "1.18"));
    fail_if(!(doc = eolian_function_documentation_get(fid, EOLIAN_PROP_GET)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Get documentation."));

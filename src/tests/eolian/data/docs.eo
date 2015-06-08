@@ -5,6 +5,8 @@ struct Foo {
       This is a longer description for struct Foo.
 
       This is another paragraph.
+
+      @since 1.66
     ]]
     field1: int; [[Field documentation.]]
     field2: float;
@@ -22,6 +24,8 @@ type Alias: Bar; [[Docs for typedef.
 
                    More docs for typedef.
                    See @Bar.
+
+                   @since 2.0
                  ]]
 
 var pants: int = 150; [[Docs for var.]]
@@ -48,7 +52,10 @@ class Docs {
             return: int; [[Return documentation.]]
         }
         @property prop {
-            [[Property common documentation.]]
+            [[Property common documentation.
+
+              @since 1.18
+            ]]
             get {
                 [[Get documentation.]]
             }

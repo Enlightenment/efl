@@ -65,6 +65,7 @@ struct _Eolian_Documentation
    Eolian_Object base;
    Eina_Stringshare *summary;
    Eina_Stringshare *description;
+   Eina_Stringshare *since;
 };
 
 struct _Eolian_Declaration
