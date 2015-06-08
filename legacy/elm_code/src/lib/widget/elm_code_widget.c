@@ -350,7 +350,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
 
         charwidth = 1;
         if (unichr == '\t')
-          charwidth = elm_code_text_tabwidth_at_position(x - gutter, pd->tabstop);
+          charwidth = elm_code_widget_text_tabwidth_at_column_get(widget, x - gutter + 1);
         for (i = x + 1; i < x + charwidth; i++)
           {
              cells[i].codepoint = 0;
@@ -1081,11 +1081,12 @@ _elm_code_widget_backspace(Elm_Code_Widget *widget)
 
    line = elm_code_file_line_get(code->file, row);
 
-   position = elm_code_widget_line_text_position_for_column_get(widget, line, col - 1);
-   char_width = elm_code_widget_line_text_position_for_column_get(widget, line, col) - position;
-   start_col = elm_code_widget_line_text_column_width_to_position(widget, line, position);
+   position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
+   start_col = elm_code_widget_line_text_column_width_to_position(widget, line,
+      elm_code_widget_line_text_position_for_column_get(widget, line, col - 1));
+   char_width = position - elm_code_widget_line_text_position_for_column_get(widget, line, start_col);
 
-   elm_code_line_text_remove(line, position, char_width?char_width:1);
+   elm_code_line_text_remove(line, position - char_width, char_width);
    eo_do(widget,
          elm_obj_code_widget_cursor_position_set(start_col, row));
 

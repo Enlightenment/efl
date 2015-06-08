@@ -35,7 +35,7 @@ _elm_code_widget_text_left_gutter_width_get(Eo *obj, Elm_Code_Widget_Data *pd)
 }
 
 static unsigned int
-_elm_code_widget_line_text_column_width_to_position(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, Elm_Code_Line *line, unsigned int position)
+_elm_code_widget_line_text_column_width_to_position(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSED, Elm_Code_Line *line, unsigned int position)
 {
    Eina_Unicode unicode;
    unsigned int count = 1;
@@ -59,7 +59,7 @@ _elm_code_widget_line_text_column_width_to_position(Eo *obj EINA_UNUSED, Elm_Cod
           break;
 
         if (unicode == '\t')
-          count += elm_code_text_tabwidth_at_position(count, pd->tabstop);
+          count += elm_code_widget_text_tabwidth_at_column_get(obj, count);
         else
           count++;
      }
@@ -74,10 +74,10 @@ _elm_code_widget_line_text_column_width_get(Eo *obj, Elm_Code_Widget_Data *pd, E
 }
 
 static unsigned int
-_elm_code_widget_line_text_position_for_column_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, Elm_Code_Line *line, unsigned int column)
+_elm_code_widget_line_text_position_for_column_get(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSED, Elm_Code_Line *line, unsigned int column)
 {
    Eina_Unicode unicode;
-   unsigned int count = 1;
+   unsigned int count = 1, position = 0;
    int index = 0;
    const char *chars;
 
@@ -89,17 +89,25 @@ _elm_code_widget_line_text_position_for_column_get(Eo *obj EINA_UNUSED, Elm_Code
    else
      chars = line->content;
 
-   while ((unsigned int) count < column && index < (int) line->length)
+   while ((unsigned int) count <= column && index <= (int) line->length)
      {
+        position = (unsigned int) index;
         unicode = eina_unicode_utf8_next_get(chars, &index);
 
         if (unicode == 0)
           return line->length;
         else if (unicode == '\t')
-          count += elm_code_text_tabwidth_at_position(count, pd->tabstop);
+          count += elm_code_widget_text_tabwidth_at_column_get(obj, count);
         else
           count++;
      }
 
-   return (unsigned int) index;
+   return position;
 }
+
+static unsigned int
+_elm_code_widget_text_tabwidth_at_column_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, unsigned int column)
+{
+   return pd->tabstop - ((column - 1) % pd->tabstop);
+}
+

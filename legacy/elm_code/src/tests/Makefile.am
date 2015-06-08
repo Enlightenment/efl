@@ -13,6 +13,7 @@ elm_code_test_line.c \
 elm_code_test_parse.c \
 elm_code_test_text.c \
 widget/elm_code_test_widget.c \
+widget/elm_code_test_widget_text.c \
 widget/elm_code_test_widget_selection.c \
 elm_code_suite.c
 

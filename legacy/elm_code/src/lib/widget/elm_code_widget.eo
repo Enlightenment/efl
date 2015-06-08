@@ -245,6 +245,12 @@ class Elm.Code_Widget (Elm.Layout, Elm_Interface_Atspi_Text)
          }
          return: uint;
       }
+      text_tabwidth_at_column_get {
+         params {
+            column: uint;
+         }
+         return: uint;
+      }
    }
    implements {
       class.constructor;

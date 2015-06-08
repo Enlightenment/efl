@@ -209,12 +209,6 @@ elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length
 
 /* generic text functions */
 
-EAPI unsigned int
-elm_code_text_tabwidth_at_position(unsigned int position, unsigned int tabstop)
-{
-   return tabstop - (position % tabstop);
-}
-
 EAPI int
 elm_code_text_newlinenpos(const char *text, unsigned int length, short *nllen)
 {
