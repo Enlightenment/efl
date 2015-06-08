@@ -701,7 +701,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                             externals = eina_list_append(externals, rp);
                           rp->object = evas_object_rectangle_add(ed->base->evas);
                           evas_object_color_set(rp->object, 0, 0, 0, 0);
-                          evas_object_pass_events_set(rp->object, 1);
+                          evas_object_pass_events_set(rp->object, !ep->mouse_events);
                           evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
                           _edje_callbacks_focus_add(rp->object, ed, rp);
                           break;
