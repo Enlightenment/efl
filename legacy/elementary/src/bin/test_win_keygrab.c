@@ -58,7 +58,7 @@ _entry_changed_cb(void *data , Evas_Object *obj, void *event_info EINA_UNUSED)
    api_data *api = data;
    const char *str = elm_entry_entry_get(obj);
    if (!str) return;
-   strcpy(api->keyname, str);
+   strncpy(api->keyname, str, PATH_MAX);
    printf("entry: %s\n",str);
 }
 
