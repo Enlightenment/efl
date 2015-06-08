@@ -186,6 +186,7 @@ docs_generate_function(const Eolian_Function *fid, Eolian_Function_Type ftype, i
      {
         doc = eolian_function_documentation_get(fid, EOLIAN_PROPERTY);
         pdoc = eolian_function_documentation_get(fid, ftype);
+        if (!doc && pdoc) doc = pdoc;
         if (pdoc == doc) pdoc = NULL;
      }
 
