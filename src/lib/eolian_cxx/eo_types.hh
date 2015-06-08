@@ -295,8 +295,10 @@ struct eo_function
 
 struct eo_event
 {
-   eo_event() : scope(eolian_scope::public_) {}
-  
+   eo_event() : scope(eolian_scope::public_), is_beta(false), name(),
+                eo_name(), comment()
+   {}
+
    eolian_scope scope;
    bool is_beta;
    std::string name;
