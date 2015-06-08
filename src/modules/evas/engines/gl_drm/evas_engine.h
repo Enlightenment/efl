@@ -192,6 +192,8 @@ void evas_drm_outbuf_framebuffer_set(Outbuf *ob, Buffer *buffer);
 Eina_Bool evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer);
 void evas_drm_outbuf_event_flip(int fd, unsigned int seq, unsigned int sec, unsigned int usec, void *data);
 void evas_drm_outbuf_event_vblank(int fd, unsigned int seq, unsigned int sec, unsigned int usec, void *data);
+Ecore_Drm_Output* evas_drm_output_find(unsigned int crtc_id);
+void eng_outbuf_copy(Outbuf *ob, void *buffer, int stride, int width, int height, uint format, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh);
 
 static inline Outbuf *
 eng_get_ob(Render_Engine *re)

@@ -1,5 +1,8 @@
 #include "evas_engine.h"
 
+#include <sys/mman.h>
+#include <fcntl.h>
+
 /* local variables */
 static Outbuf *_evas_gl_drm_window = NULL;
 static EGLContext context = EGL_NO_CONTEXT;
@@ -677,4 +680,40 @@ void *
 eng_outbuf_egl_display_get(Outbuf *ob)
 {
    return ob->egl_disp;
+}
+
+void
+eng_outbuf_copy(Outbuf *ob, void *buffer, int stride, int width EINA_UNUSED, int height, uint format EINA_UNUSED,
+                int sx EINA_UNUSED, int sy EINA_UNUSED, int sw EINA_UNUSED, int sh EINA_UNUSED,
+                int dx EINA_UNUSED, int dy EINA_UNUSED, int dw EINA_UNUSED, int dh EINA_UNUSED)
+{
+   Ecore_Drm_Output *output;
+   uint fb_handle, fb_fmt;
+   int fb_w, fb_h;
+   void *data;
+   struct drm_mode_map_dumb arg = {0,};
+
+   output = evas_drm_output_find(ob->priv.crtc);
+
+   /* TODO: should find the better way to find current framebuffer */
+   ecore_drm_output_current_fb_info_get(output, &fb_handle, &fb_w, &fb_h, &fb_fmt);
+
+   arg.handle = fb_handle;
+   if (drmIoctl(ob->priv.fd, DRM_IOCTL_MODE_MAP_DUMB, &arg))
+     {
+        DBG("dump map failed");
+        return;
+     }
+
+   data = mmap(NULL, fb_w * fb_h * 4, PROT_READ|PROT_WRITE, MAP_SHARED,
+               ob->priv.fd, arg.offset);
+   if (data == MAP_FAILED)
+     {
+        DBG("mmap failed");
+        return;
+     }
+
+   memcpy(buffer, data, stride * height);
+
+   munmap(data, fb_w * fb_h * 4);
 }

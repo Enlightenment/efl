@@ -868,6 +868,20 @@ eng_output_dump(void *data)
 }
 
 static void
+eng_output_copy(void *data, void *buffer, int stride, int width, int height, uint format, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh)
+{
+   Render_Engine *re;
+   Outbuf *ob;
+
+   if (!(re = (Render_Engine *)data)) return;
+
+   ob = eng_get_ob(re);
+   EINA_SAFETY_ON_NULL_RETURN(ob);
+
+   eng_outbuf_copy(ob, buffer, stride, width, height, format, sx, sy, sw, sh, dx, dy, dw, dh);
+}
+
+static void
 _native_cb_bind(void *data EINA_UNUSED, void *image)
 {
    Evas_GL_Image *img;
@@ -1213,6 +1227,7 @@ module_open(Evas_Module *em)
    ORD(output_free);
    ORD(output_dump);
    ORD(image_native_set);
+   ORD(output_copy);
 
    /* Mesa's EGL driver loads wayland egl by default. (called by eglGetProcaddr() )
     * implicit env set (EGL_PLATFORM=drm) prevent that. */

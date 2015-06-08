@@ -23,8 +23,8 @@ _evas_drm_crtc_buffer_get(int fd, int crtc_id)
    return id;
 }
 
-static Ecore_Drm_Output*
-_evas_drm_output_find(unsigned int crtc_id)
+Ecore_Drm_Output*
+evas_drm_output_find(unsigned int crtc_id)
 {
    Ecore_Drm_Device *dev;
    Ecore_Drm_Output *output;
@@ -341,7 +341,7 @@ evas_drm_framebuffer_send(Outbuf *ob, Buffer *buffer)
 
         if (!ob->output)
           {
-             ob->output = _evas_drm_output_find(ob->priv.crtc);
+             ob->output = evas_drm_output_find(ob->priv.crtc);
              EINA_SAFETY_ON_NULL_RETURN_VAL(ob->output, EINA_FALSE);
           }
 
