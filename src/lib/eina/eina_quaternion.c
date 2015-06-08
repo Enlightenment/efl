@@ -82,7 +82,7 @@ eina_quaternion_f16p16_mul(Eina_Quaternion_F16p16 *out,
    out->z = eina_f16p16_add(eina_f16p16_add(eina_f16p16_mul(a->w, b->z),
                                             eina_f16p16_mul(a->x, b->y)),
                             eina_f16p16_sub(eina_f16p16_mul(a->z, b->w),
-                                            eina_f16p16_mul(a->y, b->y)));
+                                            eina_f16p16_mul(a->y, b->x)));
 }
 
 EAPI void
@@ -377,7 +377,7 @@ eina_quaternion_mul(Eina_Quaternion *out,
    out->w = a->w * b->w - a->x * b->x - a->y * b->y - a->z * b->z;
    out->x = a->w * b->x + a->x * b->w + a->y * b->z - a->z * b->y;
    out->y = a->w * b->y - a->x * b->z + a->y * b->w + a->z * b->x;
-   out->z = a->w * b->z + a->x * b->y - a->y * b->y + a->z * b->w;
+   out->z = a->w * b->z + a->x * b->y - a->y * b->x + a->z * b->w;
 }
 
 EAPI void
