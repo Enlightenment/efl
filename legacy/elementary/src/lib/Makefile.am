@@ -532,6 +532,7 @@ elm_color_class.c: $(COLORCLASS_GEN)
 elm_eolian_files = \
 elm_access.eo \
 elm_actionslider.eo \
+elm_atspi_bridge.eo \
 elm_app_client.eo \
 elm_app_client_view.eo \
 elm_app_server.eo \
@@ -679,6 +680,7 @@ elementaryeolianfiles_DATA = \
 	     elm_app_server.eo \
 	     elm_app_server_view.eo \
 	     elm_atspi_app_object.eo \
+	     elm_atspi_bridge.eo \
 	     elm_interface_atspi_accessible.eo \
 	     elm_interface_atspi_action.eo \
 	     elm_interface_atspi_component.eo \

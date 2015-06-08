@@ -3759,7 +3759,9 @@ _elm_win_finalize_internal(Eo *obj, Elm_Win_Data *sd, const char *name, Elm_Win_
    eo_do(obj, elm_interface_atspi_accessible_role_set(ELM_ATSPI_ROLE_WINDOW));
    if (_elm_config->atspi_mode == ELM_ATSPI_MODE_ON)
      {
-        elm_interface_atspi_accessible_children_changed_added_signal_emit(_elm_atspi_bridge_root_get(), obj);
+        Eo *bridge = _elm_atspi_bridge_get();
+        if (bridge)
+           elm_interface_atspi_accessible_children_changed_added_signal_emit(elm_atspi_bridge_root_get(bridge), obj);
      }
 
    evas_object_show(sd->edje);
@@ -5419,7 +5421,8 @@ EOLIAN static Eo*
 _elm_win_elm_interface_atspi_accessible_parent_get(Eo *obj EINA_UNUSED, Elm_Win_Data *sd EINA_UNUSED)
 {
    // attach all kinds of windows directly to ATSPI application root object
-   return _elm_atspi_bridge_root_get();
+   Eo *bridge = _elm_atspi_bridge_get();
+   return elm_atspi_bridge_root_get(bridge);
 }
 
 EOLIAN static const Elm_Atspi_Action*

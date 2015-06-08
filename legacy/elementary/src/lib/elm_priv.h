@@ -341,7 +341,7 @@ struct _Elm_Module
    int          references;
 };
 
-Eo                   *_elm_atspi_bridge_root_get(void);
+Eo                   *_elm_atspi_bridge_get(void);
 void                 _elm_atspi_bridge_init(void);
 void                 _elm_atspi_bridge_shutdown(void);
 
