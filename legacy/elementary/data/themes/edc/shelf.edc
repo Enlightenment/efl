@@ -76,7 +76,7 @@ group { name: "e/shelf/default/base"; nomouse;
             FIXED_SIZE(14, 4)
          }
       }
-      part { name: "e.swallow.content"; type: SWALLOW; mouse;
+      spacer { "sizer";
          description { state: "default" 0.0;
             rel1.offset: 1 0;
             rel1.relative: 1.0 0.0;
@@ -92,6 +92,16 @@ group { name: "e/shelf/default/base"; nomouse;
             rel2.offset: -1 -2;
             rel2.to_y: "dots_end";
             rel2.relative: 1.0 0.0;
+         }
+      }
+      part { name: "e.swallow.content"; type: SWALLOW; mouse;
+         desc {
+            rel.to: "sizer";
+            link.base: "e,state,visible" "e";
+         }
+         desc { "hidden"; hid;
+            rel.to: "sizer";
+            link.base: "e,state,hidden" "e";
          }
       }
       part { name: "shine";
@@ -112,7 +122,7 @@ group { name: "e/shelf/default/base"; nomouse;
             signal: "e,state,orientation,"_ORIENT; source: "e"; \
             action: STATE_SET _STATE 0.0; \
             target: "bg"; \
-            target: "e.swallow.content"; \
+            target: "sizer"; \
             target: "dots_start"; \
             target: "dots_end"; \
          }
@@ -160,8 +170,7 @@ group { name: "e/shelf/default/inset"; nomouse;
             color: 255 255 255 255;
          }
       }
-      part { name: "e.swallow.content"; type: SWALLOW; mouse;
-         clip_to: "clip";
+      spacer { "sizer";
          description { state: "default" 0.0;
             rel1.offset: 4 1;
             rel2.offset: -5 -2;
@@ -169,6 +178,17 @@ group { name: "e/shelf/default/inset"; nomouse;
          description { state: "vert" 0.0;
             rel1.offset: 1 4;
             rel2.offset: -2 -5;
+         }
+      }
+      part { name: "e.swallow.content"; type: SWALLOW; mouse;
+         clip_to: "clip";
+         desc {
+            rel.to: "sizer";
+            link.base: "e,state,visible" "e";
+         }
+         desc { "hidden"; hid;
+            rel.to: "sizer";
+            link.base: "e,state,hidden" "e";
          }
       }
       part { name: "inset";
@@ -198,7 +218,7 @@ group { name: "e/shelf/default/inset"; nomouse;
          program { \
             signal: "e,state,orientation,"_ORIENT; source: "e"; \
             action: STATE_SET _STATE 0.0; \
-            target: "e.swallow.content"; \
+            target: "sizer"; \
             target: "inset"; \
             target: "clip"; \
          }
@@ -322,11 +342,21 @@ group { name: "e/shelf/default/plain"; nomouse;
             color: 255 255 255 255;
          }
       }
-      part { name: "e.swallow.content"; type: SWALLOW; mouse;
-         clip_to: "clip";
-         description { state: "default" 0.0;
+      spacer { "sizer";
+         desc {
             rel1.offset: 1 1;
             rel2.offset: -2 -2;
+         }
+      }
+      part { name: "e.swallow.content"; type: SWALLOW; mouse;
+         clip_to: "clip";
+         desc {
+            rel.to: "sizer";
+            link.base: "e,state,visible" "e";
+         }
+         desc { "hidden"; hid;
+            rel.to: "sizer";
+            link.base: "e,state,hidden" "e";
          }
       }
       rect { "events"; repeat; mouse;
