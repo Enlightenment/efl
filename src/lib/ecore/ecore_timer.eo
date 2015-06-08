@@ -1,67 +1,78 @@
 class Ecore.Timer (Eo.Base)
 {
-   /*@ Timers are objects that will call a given callback at some point
-    *  in the future. They may also optionall repeat themselves if the
-    *  timer callback returns true. If it does not they will be
-    *  automatically deleted and never called again. Timers require the
-    *  ecore mainloop to be running and functioning properly. They do not
-    *  guarantee exact timing, but try to work on a "best effort basis.
-    */
+   [[Timers are objects that will call a given callback at some point
+     in the future.
+
+     They may also optionall repeat themselves if the timer callback returns
+     true. If it does not they will be automatically deleted and never called
+     again. Timers require the ecore mainloop to be running and functioning
+     properly. They do not guarantee exact timing, but try to work on a "best
+     effort basis.
+   ]]
    eo_prefix: ecore_obj_timer;
    methods {
       @property interval {
          set {
-            /*@ Change the interval the timer ticks off. If set during
-             * a timer call, this will affect the next interval.
-             */
+            [[Change the interval the timer ticks off. If set during
+              a timer call, this will affect the next interval.
+            ]]
          }
          get {
-            /*@ Get the interval the timer ticks on. */
+            [[Get the interval the timer ticks on.]]
          }
          values {
-            in: double(-1); /*@ The new interval in seconds */
+            in: double(-1); [[The new interval in seconds]]
          }
       }
       @property pending {
          get {
-            /*@ Get the pending time regarding a timer. */
+            [[Get the pending time regarding a timer.]]
             return: double;
          }
       }
       loop_constructor {
-         /*@ Create a timer to call in a given time from now */
+         [[Create a timer to call in a given time from now]]
          legacy: null;
          params {
-            @in in: double; /*@ The time, in seconds, from now when to go off */
-            @in func: Ecore_Task_Cb; /*@ The callback function to call when the timer goes off */
-            @in data: const(void)*; /*@ A pointer to pass to the callback function as its data pointer */
+            @in in: double; [[The time, in seconds, from now when to go off]]
+            @in func: Ecore_Task_Cb; [[The callback function to call when the
+                                       timer goes off]]
+            @in data: const(void)*; [[A pointer to pass to the callback function
+                                      as its data pointer]]
          }
       }
       constructor {
-         /*@ Create a timer to call in a given time from when the mainloop woke up from sleep */
+         [[Create a timer to call in a given time from when the mainloop woke
+           up from sleep]]
          legacy: null;
          params {
-            @in in: double; /*@ The time, in seconds, from when the main loop woke up, to go off */
-            @in func: Ecore_Task_Cb; /*@ The callback function to call when the timer goes off */
-            @in data: const(void)*; /*@ A pointer to pass to the callback function as its data pointer */
+            @in in: double; [[The time, in seconds, from when the main loop
+                              woke up, to go off]]
+            @in func: Ecore_Task_Cb; [[The callback function to call when the
+                                       timer goes off]]
+            @in data: const(void)*; [[A pointer to pass to the callback
+                                      function as its data pointer]]
          }
       }
       reset {
-         /*@ Reset a timer to its full interval. This effectively makes
-          *  the timer start ticking off from zero now.
-          *  @note This is equivalent to (but faster than)
+         /* FIXME-doc:
+          * @note This is equivalent to (but faster than)
           * @code
           * ecore_timer_delay(timer, ecore_timer_interval_get(timer) - ecore_timer_pending_get(timer));
           * @endcode
-          * @since 1.2
           */
+          [[Reset a timer to its full interval. This effectively makes the
+            timer start ticking off from zero now.
+
+            @since 1.2
+          ]]
       }
       delay {
-         /*@ Add some delay for the next occurrence of a timer.
-          * This doesn't affect the interval of a timer.
-          */
+         [[Add some delay for the next occurrence of a timer.
+           This doesn't affect the interval of a timer.
+         ]]
          params {
-            @in add: double; /*@ The amount of time to delay the timer by in seconds */
+            @in add: double; [[The amount of time to delay the timer by in seconds]]
          }
       }
    }

@@ -3,7 +3,7 @@ class Ecore.Exe (Eo.Base, Efl.Control)
    eo_prefix: ecore_obj_exe;
    methods {
         @property command {
-             /*@ Control the command that's executed. FIXME: May need a split/rename. */
+             [[Control the command that's executed. FIXME: May need a split/rename.]]
              set {
                   legacy: null;
              }
@@ -11,8 +11,8 @@ class Ecore.Exe (Eo.Base, Efl.Control)
                   legacy: null;
              }
              values {
-                  exe_cmd: const(char) *; /*@ The command to execute. */
-                  flags: Ecore_Exe_Flags; /*@ The execution flags. */
+                  exe_cmd: const(char) *; [[The command to execute.]]
+                  flags: Ecore_Exe_Flags; [[The execution flags.]]
              }
         }
    }

@@ -3,7 +3,7 @@ class Ecore.Idler (Eo.Base)
    eo_prefix: ecore_idler;
    methods {
       constructor {
-         /*@ Constructor. */
+         [[Constructor.]]
          legacy: null;
          params {
             @in func: Ecore_Task_Cb;

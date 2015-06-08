@@ -3,7 +3,7 @@ class Ecore.Animator (Eo.Base)
    eo_prefix: ecore_animator;
    methods {
       timeline_constructor {
-         /*@ Constructor. */
+         [[Constructor.]]
          legacy: null;
          params {
             @in runtime: double;
@@ -12,7 +12,7 @@ class Ecore.Animator (Eo.Base)
          }
       }
       constructor {
-         /*@ Constructor. */
+         [[Constructor.]]
          legacy: null;
          params {
             @in func: Ecore_Task_Cb;
