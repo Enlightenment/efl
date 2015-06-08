@@ -100,6 +100,10 @@ group { name: "e/modules/pager16/desk";
             rel1.to: "base";
             rel2.to: "base";
             rel2.offset: -2 -1;
+            link.base: "e,state,visible" "e";
+         }
+         desc { "hid"; inherit; hid;
+            link.base: "e,state,hidden" "e";
          }
       }
       part { name: "shadow"; mouse_events: 0;
