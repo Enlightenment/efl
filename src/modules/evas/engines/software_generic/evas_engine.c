@@ -1555,9 +1555,7 @@ eng_image_orient_set(void *data EINA_UNUSED, void *image, Evas_Image_Orient orie
 
    if (!pixels_out || !pixels_in) goto on_error;
 
-   if ((im->orient >= EVAS_IMAGE_ORIENT_0) &&
-       (im->orient <= EVAS_IMAGE_ORIENT_270) &&
-       (orient >= EVAS_IMAGE_ORIENT_0) &&
+   if ((im->orient <= EVAS_IMAGE_ORIENT_270) &&
        (orient <= EVAS_IMAGE_ORIENT_270))
      {
         // we are rotating from one anglee to another, so figure out delta
