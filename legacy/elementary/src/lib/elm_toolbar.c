@@ -159,7 +159,7 @@ _item_unselect(Elm_Toolbar_Item_Data *item)
    edje_object_signal_emit(VIEW(item), "elm,state,unselected", "elm");
    if (item->icon)
      elm_widget_signal_emit(item->icon, "elm,state,unselected", "elm");
-   evas_object_smart_callback_call(WIDGET(item), SIG_UNSELECTED, EO_OBJ(item));
+   eo_do(WIDGET(item), eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_UNSELECTED, EO_OBJ(item)));
 }
 
 static void
@@ -632,8 +632,8 @@ _elm_toolbar_item_focused(Elm_Object_Item *eo_it)
    focus_raise = edje_object_data_get(VIEW(it), "focusraise");
    if ((focus_raise) && (!strcmp(focus_raise, "on")))
      evas_object_raise(VIEW(it));
-   evas_object_smart_callback_call
-      (obj, SIG_ITEM_FOCUSED, EO_OBJ(it));
+   eo_do(obj, eo_event_callback_call
+     (ELM_TOOLBAR_EVENT_ITEM_FOCUSED, EO_OBJ(it)));
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_state_changed_signal_emit(EO_OBJ(it), ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
 }
@@ -659,8 +659,8 @@ _elm_toolbar_item_unfocused(Elm_Object_Item *eo_it)
    edje_object_signal_emit
       (VIEW(it), "elm,highlight,off", "elm");
    sd->focused_item = NULL;
-   evas_object_smart_callback_call
-      (obj, SIG_ITEM_UNFOCUSED, eo_it);
+   eo_do(obj, eo_event_callback_call
+     (ELM_TOOLBAR_EVENT_ITEM_UNFOCUSED, eo_it));
    if (_elm_config->atspi_mode)
      elm_interface_atspi_accessible_state_changed_signal_emit(eo_it, ELM_ATSPI_STATE_FOCUSED, EINA_TRUE);
 }
@@ -1159,8 +1159,8 @@ _item_select(Elm_Toolbar_Item_Data *it)
      {
         if (it->func) it->func((void *)(WIDGET_ITEM_DATA_GET(EO_OBJ(it))), WIDGET(it), EO_OBJ(it));
      }
-   evas_object_smart_callback_call(obj, SIG_CLICKED, EO_OBJ(it));
-   evas_object_smart_callback_call(obj, SIG_SELECTED, EO_OBJ(it));
+   eo_do(obj, eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED, EO_OBJ(it)));
+   eo_do(obj, eo_event_callback_call(EVAS_SELECTABLE_INTERFACE_EVENT_SELECTED, EO_OBJ(it)));
 }
 
 static void
@@ -2057,7 +2057,7 @@ _long_press_cb(void *data)
    if (sd->reorder_mode)
      _item_reorder_start(it);
 
-   evas_object_smart_callback_call(WIDGET(it), SIG_LONGPRESSED, EO_OBJ(it));
+   eo_do(WIDGET(it), eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_LONGPRESSED, EO_OBJ(it)));
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -2090,7 +2090,7 @@ _mouse_down_cb(Elm_Toolbar_Item_Data *it,
 
    if (ev->button != 1) return;
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, EO_OBJ(it));
+     eo_do(WIDGET(it), eo_event_callback_call(EVAS_CLICKABLE_INTERFACE_EVENT_CLICKED_DOUBLE, EO_OBJ(it)));
    sd->mouse_down = EINA_TRUE;
    sd->long_press = EINA_FALSE;
    if (sd->long_timer)
@@ -2157,21 +2157,21 @@ static void
 _scroll_cb(Evas_Object *obj,
            void *data EINA_UNUSED)
 {
-   evas_object_smart_callback_call(obj, SIG_SCROLL, NULL);
+   eo_do(obj, eo_event_callback_call(EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL, NULL));
 }
 
 static void
 _scroll_anim_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
-   evas_object_smart_callback_call(obj, SIG_SCROLL_ANIM_START, NULL);
+   eo_do(obj, eo_event_callback_call(EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_ANIM_START, NULL));
 }
 
 static void
 _scroll_anim_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   evas_object_smart_callback_call(obj, SIG_SCROLL_ANIM_STOP, NULL);
+   eo_do(obj, eo_event_callback_call(EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_ANIM_STOP, NULL));
 }
 
 static void
@@ -2181,14 +2181,14 @@ _scroll_drag_start_cb(Evas_Object *obj,
    ELM_TOOLBAR_DATA_GET(obj, sd);
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
 
-   evas_object_smart_callback_call(obj, SIG_SCROLL_DRAG_START, NULL);
+   eo_do(obj, eo_event_callback_call(EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_DRAG_START, NULL));
 }
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   evas_object_smart_callback_call(obj, SIG_SCROLL_DRAG_STOP, NULL);
+   eo_do(obj, eo_event_callback_call(EVAS_SCROLLABLE_INTERFACE_EVENT_SCROLL_DRAG_STOP, NULL));
 }
 
 static void
