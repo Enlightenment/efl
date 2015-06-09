@@ -55,7 +55,7 @@ _blend_color_argb(int count, const SW_FT_Span *spans, void *user_data)
      }
 }
 
-int buffer_size = 2048;
+#define BLEND_GRADIENT_BUFFER_SIZE 2048
 
 typedef void (*src_fetch) (unsigned int *buffer, Span_Data *data, int y, int x, int length);
 
@@ -68,7 +68,7 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
     if(data->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
     if(data->type == RadialGradient) fetchfunc = &fetch_radial_gradient;
 
-    unsigned int buffer[buffer_size];
+    unsigned int buffer[BLEND_GRADIENT_BUFFER_SIZE];
 
     // move to the offset location
     unsigned int *destbuffer = data->raster_buffer.buffer + (data->raster_buffer.width * data->offy + data->offx);
@@ -79,9 +79,11 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
          int length = spans->len;
          while (length)
            {
-              int l = MIN(length, buffer_size);
+              int l = MIN(length, BLEND_GRADIENT_BUFFER_SIZE);
               if (fetchfunc)
                 fetchfunc(buffer, data, spans->y, spans->x, l);
+              else
+                memset(buffer, 0, sizeof(buffer));
               if (data->mul_col == 0xffffffff)
                 _ector_comp_func_source_over(target, buffer, l, spans->coverage); // TODO use proper composition func
               else
