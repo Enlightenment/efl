@@ -784,14 +784,31 @@ eina_semaphore_free(Eina_Semaphore *sem)
 static inline Eina_Bool
 eina_semaphore_lock(Eina_Semaphore *sem)
 {
+   Eina_Bool ok = EINA_FALSE;
+
    if (!sem)
      return EINA_FALSE;
 
+   for (;;)
+     {
+        if (
 #if defined(EINA_HAVE_OSX_SEMAPHORE)
-   return (sem_wait(sem->sema) == 0) ? EINA_TRUE : EINA_FALSE;
+            sem_wait(sem->sema)
 #else
-   return (sem_wait(sem) == 0) ? EINA_TRUE : EINA_FALSE;
+            sem_wait(sem)
 #endif
+            == 0)
+          {
+             ok = EINA_TRUE;
+             break;
+          }
+        else
+          {
+             if (errno != EINTR)
+               break;
+          }
+     }
+   return ok;
 }
 
 static inline Eina_Bool
