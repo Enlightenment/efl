@@ -272,6 +272,40 @@ commit_preedit(WaylandIMContext *imcontext)
                                          (void *)imcontext->preedit_commit);
 }
 
+static Eina_Bool
+show_input_panel(Ecore_IMF_Context *ctx)
+{
+   WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
+   Ecore_Wl_Input *input;
+   struct wl_seat *seat;
+
+   if ((!imcontext) || (!imcontext->window) || (!imcontext->text_input))
+     return EINA_FALSE;
+
+   input = ecore_wl_window_keyboard_get(imcontext->window);
+   if (!input)
+     return EINA_FALSE;
+
+   seat = ecore_wl_input_seat_get(input);
+   if (!seat)
+     return EINA_FALSE;
+
+   imcontext->input = input;
+
+   if (ecore_imf_context_input_panel_enabled_get(ctx))
+     {
+        wl_text_input_show_input_panel(imcontext->text_input);
+        wl_text_input_activate(imcontext->text_input, seat,
+                               ecore_wl_window_surface_get(imcontext->window));
+
+        wl_text_input_set_content_type(imcontext->text_input,
+                                       imcontext->content_hint,
+                                       imcontext->content_purpose);
+     }
+
+   return EINA_TRUE;
+}
+
 static void
 text_input_preedit_string(void                 *data,
                           struct wl_text_input *text_input EINA_UNUSED,
@@ -621,35 +655,10 @@ wayland_im_context_reset(Ecore_IMF_Context *ctx)
 EAPI void
 wayland_im_context_focus_in(Ecore_IMF_Context *ctx)
 {
-   WaylandIMContext *imcontext = (WaylandIMContext *)ecore_imf_context_data_get(ctx);
-   Ecore_Wl_Input *input;
-   struct wl_seat *seat;
-
    EINA_LOG_DOM_INFO(_ecore_imf_wayland_log_dom, "focus-in");
 
-   if (!imcontext->window) return;
-
-   input = ecore_wl_window_keyboard_get(imcontext->window);
-   if (!input)
-     return;
-
-   seat = ecore_wl_input_seat_get(input);
-   if (!seat)
-     return;
-
-   imcontext->input = input;
-
-   if ((imcontext->text_input) && 
-       (ecore_imf_context_input_panel_enabled_get(ctx)))
-     {
-        wl_text_input_show_input_panel(imcontext->text_input);
-        wl_text_input_activate(imcontext->text_input, seat,
-                               ecore_wl_window_surface_get(imcontext->window));
-
-        wl_text_input_set_content_type(imcontext->text_input,
-                                       imcontext->content_hint,
-                                       imcontext->content_purpose);
-     }
+   if (!ecore_imf_context_input_panel_show_on_demand_get (ctx))
+     show_input_panel(ctx);
 }
 
 EAPI void
@@ -791,10 +800,14 @@ wayland_im_context_hide(Ecore_IMF_Context *ctx)
 }
 
 EAPI Eina_Bool
-wayland_im_context_filter_event(Ecore_IMF_Context    *ctx EINA_UNUSED,
-                                Ecore_IMF_Event_Type  type EINA_UNUSED,
+wayland_im_context_filter_event(Ecore_IMF_Context    *ctx,
+                                Ecore_IMF_Event_Type  type,
                                 Ecore_IMF_Event      *event EINA_UNUSED)
 {
+
+   if (type == ECORE_IMF_EVENT_MOUSE_UP)
+     show_input_panel(ctx);
+
    return EINA_FALSE;
 }
 
