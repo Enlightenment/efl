@@ -136,7 +136,6 @@ add_gfx_span_func_cpu(int s, int m, int c, int d)
 #endif
    cpu = CPU_C;
    func = op_add_span_funcs[s][m][c][d][cpu];
-   if (func) return func;
    return func;
 }
 
@@ -229,7 +228,6 @@ add_gfx_pt_func_cpu(int s, int m, int c, int d)
 #endif
    cpu = CPU_C;
    func = op_add_pt_funcs[s][m][c][d][cpu];
-   if (func) return func;
    return func;
 }
 
@@ -360,7 +358,6 @@ add_rel_gfx_span_func_cpu(int s, int m, int c, int d)
 #endif
    cpu = CPU_C;
    func = op_add_rel_span_funcs[s][m][c][d][cpu];
-   if (func) return func;
    return func;
 }
 
@@ -453,7 +450,6 @@ add_rel_gfx_pt_func_cpu(int s, int m, int c, int d)
 #endif
    cpu = CPU_C;
    func = op_add_rel_pt_funcs[s][m][c][d][cpu];
-   if (func) return func;
    return func;
 }
 
