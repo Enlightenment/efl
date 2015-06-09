@@ -323,17 +323,18 @@ _mapped_blend(void *data, void *drawctx,
    int right = 0, bottom = 0, left = 0, top = 0;
    int row, col, rows, cols;
    Eina_Bool ret = EINA_TRUE;
+   Eina_Bool debug = eina_log_domain_level_check(_evas_filter_log_dom, 6);
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL((sx == 0) && (sy == 0), EINA_FALSE);
 
    if (fillmode == EVAS_FILTER_FILL_MODE_NONE)
      {
         _clip_to_target(&sx, &sy, sw, sh, dx, dy, dw, dh, &dx, &dy, &rows, &cols);
-        /*
-        DBG("blend: %d,%d,%d,%d --> %d,%d,%d,%d (from %dx%d to %dx%d +%d,%d)",
-            0, 0, sw, sh, dx, dy, cols, rows, sw, sh, dw, dh, dx, dy);
-        */
-
+        if (debug)
+          {
+             XDBG("blend: %d,%d,%d,%d --> %d,%d,%d,%d (from %dx%d to %dx%d +%d,%d)",
+                  0, 0, sw, sh, dx, dy, cols, rows, sw, sh, dw, dh, dx, dy);
+          }
         image_draw(data, drawctx, out, in,
                    sx, sy, cols, rows, // src
                    dx, dy, cols, rows, // dst
@@ -467,13 +468,14 @@ _mapped_blend(void *data, void *drawctx,
                }
              if (src_w <= 0 || dst_w <= 0) break;
 
-             /*
-             DBG("blend: [%d,%d] %d,%d,%dx%d --> %d,%d,%dx%d "
-                 "(src %dx%d, dst %dx%d)",
-                 col, row, src_x, src_y, src_w, src_h,
-                 dst_x, dst_y, dst_w, dst_h,
-                 sw, sh, dw, dh);
-             */
+             if (debug)
+               {
+                  XDBG("blend: [%d,%d] %d,%d,%dx%d --> %d,%d,%dx%d "
+                       "(src %dx%d, dst %dx%d)",
+                       col, row, src_x, src_y, src_w, src_h,
+                       dst_x, dst_y, dst_w, dst_h,
+                       sw, sh, dw, dh);
+               }
              image_draw(data, drawctx, out, in,
                         src_x, src_y, src_w, src_h,
                         dst_x, dst_y, dst_w, dst_h,

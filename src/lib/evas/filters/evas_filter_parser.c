@@ -10,10 +10,6 @@
 # define LUA52 1
 #endif
 
-#ifdef DEBUG
-# define FILTERS_DEBUG
-#endif
-
 #define FILTERS_LEGACY_COMPAT
 
 #define EVAS_FILTER_MODE_GROW   (EVAS_FILTER_MODE_LAST+1)
@@ -1753,7 +1749,7 @@ _padding_set_padding_update(Evas_Filter_Program *pgm,
    b = _instruction_param_geti(instr, "b", &bset);
 
    if (!lset && !rset && !bset && !tset)
-     DBG("padding_set() called without specifying any of l,r,t,b resets to 0");
+     INF("padding_set() called without specifying any of l,r,t,b resets to 0");
 
    if (l < 0 || r < 0 || t < 0 || b < 0)
      {
@@ -2141,7 +2137,7 @@ _lua_print(lua_State *L)
 
    if (nargs < 1)
      {
-        DBG("LUA: (nothing)");
+        INF("(nothing)");
         return 0;
      }
 
@@ -2160,7 +2156,7 @@ _lua_print(lua_State *L)
         eina_strbuf_append_char(s, ' ');
      }
 
-   INF("LUA: %s", eina_strbuf_string_get(s));
+   INF("%s", eina_strbuf_string_get(s));
    eina_strbuf_free(s);
 
    return 0;
@@ -2250,11 +2246,12 @@ _lua_import_class(lua_State *L, const char *name, char **code)
         f = eina_file_open(path, EINA_FALSE);
         if (!f) return EINA_FALSE;
         sz = eina_file_size_get(f);
-        *code = malloc(sz);
+        *code = malloc(sz + 1);
         if (!*code) return EINA_FALSE;
         map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
         if (!map) return EINA_FALSE;
         memcpy(*code, map, sz);
+        (*code)[sz] = '\0';
         eina_file_map_free(f, map);
         eina_file_close(f);
      }
@@ -3388,7 +3385,7 @@ _instruction_dump(Evas_Filter_Instruction *instr)
         comma = ", ";
      }
    eina_strbuf_append(str, "})");
-   DBG("%s", eina_strbuf_string_get(str));
+   XDBG("%s", eina_strbuf_string_get(str));
    eina_strbuf_free(str);
 }
 #else
@@ -3408,7 +3405,7 @@ evas_filter_context_program_use(Evas_Filter_Context *ctx,
    EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(pgm->valid, EINA_FALSE);
 
-   DBG("Using program '%s' for context %p", pgm->name, ctx);
+   XDBG("Using program '%s' for context %p", pgm->name, ctx);
 
    // Copy current state (size, edje state val, color class, etc...)
    ctx->w = pgm->state.w;

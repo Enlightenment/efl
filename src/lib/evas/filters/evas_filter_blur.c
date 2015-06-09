@@ -19,7 +19,7 @@ _box_blur_auto_radius(int *radii, int r)
         radii[0] = r / 2;
         radii[1] = r - radii[0] - 1;
         radii[2] = 0;
-        DBG("Using auto radius for %d: %d %d", r, radii[0], radii[1]);
+        XDBG("Using auto radius for %d: %d %d", r, radii[0], radii[1]);
         return 2;
      }
    else
@@ -28,7 +28,7 @@ _box_blur_auto_radius(int *radii, int r)
         radii[1] = (r + 2) / 3;
         radii[2] = r - radii[0] - radii[1];
         radii[3] = 0;
-        DBG("Using auto radius for %d: %d %d %d", r, radii[0], radii[1], radii[2]);
+        XDBG("Using auto radius for %d: %d %d %d", r, radii[0], radii[1], radii[2]);
         return 3;
      }
 }

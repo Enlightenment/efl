@@ -72,9 +72,6 @@ evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async)
     * better and implement filters direcly with shaders.
     */
    ctx->gl_engine = (evas->engine.func->gl_surface_read_pixels != NULL);
-   if (ctx->gl_engine)
-     DBG("Detected GL engine. All filters will still run in software (SLOW).");
-
    return ctx;
 }
 
@@ -211,7 +208,7 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
           _assert(fb->h == source->cur->geometry.h);
           if (source->proxy->surface && !source->proxy->redraw)
             {
-               DBG("Source already rendered: '%s' of type '%s'",
+               XDBG("Source already rendered: '%s' of type '%s'",
                    fb->source_name, eo_class_name_get(eo_class_get(fb->source)));
                _filter_buffer_backing_free(fb);
                if (!ctx->gl_engine)
@@ -229,7 +226,7 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
             }
           else
             {
-               DBG("Source needs to be rendered: '%s' of type '%s' (%s)",
+               XDBG("Source needs to be rendered: '%s' of type '%s' (%s)",
                    fb->source_name, eo_class_name_get(eo_class_get(fb->source)),
                    source->proxy->redraw ? "redraw" : "no surface");
                evas_render_proxy_subrender(ctx->evas->evas, fb->source, eo_obj, obj, do_async);
@@ -247,7 +244,7 @@ evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj,
                  }
                fb->alpha_only = EINA_FALSE;
             }
-          DBG("Source has dimensions %dx%d (buffer %d)", fb->w, fb->h, fb->id);
+          XDBG("Source has dimensions %dx%d (buffer %d)", fb->w, fb->h, fb->id);
        }
 }
 
@@ -366,7 +363,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
    w = ctx->w;
    h = ctx->h;
 
-   //DBG("Allocating all buffers based on output size %ux%u", w, h);
+   XDBG("Allocating all buffers based on output size %ux%u", w, h);
 
    EINA_INLIST_FOREACH(ctx->commands, cmd)
      {
@@ -409,7 +406,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
                   if (fillmode & EVAS_FILTER_FILL_MODE_STRETCH_Y)
                     sh = h;
 
-                  //DBG("Allocating temporary buffer of size %ux%u %s", sw, sh, in->alpha_only ? "alpha" : "rgba");
+                  XDBG("Allocating temporary buffer of size %ux%u %s", sw, sh, in->alpha_only ? "alpha" : "rgba");
                   fb = evas_filter_buffer_alloc_new(ctx, sw, sh, in->alpha_only);
                   if (!fb) goto alloc_fail;
                   fb->transient = EINA_TRUE;
@@ -424,7 +421,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
              if (in->w) sw = in->w;
              if (in->h) sh = in->h;
 
-             //DBG("Allocating temporary buffer of size %ux%u %s", sw, sh, in->alpha_only ? "alpha" : "rgba");
+             XDBG("Allocating temporary buffer of size %ux%u %s", sw, sh, in->alpha_only ? "alpha" : "rgba");
              fb = evas_filter_buffer_alloc_new(ctx, sw, sh, in->alpha_only);
              if (!fb) goto alloc_fail;
              fb->transient = EINA_TRUE;
@@ -464,7 +461,7 @@ evas_filter_context_buffers_allocate_all(Evas_Filter_Context *ctx)
              continue;
           }
 
-        //DBG("Allocating buffer of size %ux%u %s", fb->w, fb->h, fb->alpha_only ? "alpha" : "rgba");
+        XDBG("Allocating buffer of size %ux%u %s", fb->w, fb->h, fb->alpha_only ? "alpha" : "rgba");
         im = _rgba_image_alloc(fb, NULL);
         if (!im) goto alloc_fail;
 
@@ -493,7 +490,7 @@ evas_filter_buffer_empty_new(Evas_Filter_Context *ctx, Eina_Bool alpha_only)
 
    fb->transient = EINA_FALSE;
 
-   DBG("Created context buffer %d", fb->id);
+   XDBG("Created context buffer %d", fb->id);
    return fb->id;
 }
 
@@ -827,7 +824,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
    if (dy < 0) dy = 0;
    if (!dx && !dy)
      {
-        DBG("Changing 0px blur into simple blend");
+        XDBG("Changing 0px blur into simple blend");
         return evas_filter_command_blend_add(ctx, drawctx, inbuf, outbuf, ox, oy, EVAS_FILTER_FILL_MODE_NONE);
      }
 
@@ -943,7 +940,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
    else if ((blend || (in->alpha_only && !out->alpha_only)) ||
             (!blend && !in->alpha_only && !out->alpha_only && (color != 0xFFFFFFFF)))
      {
-        DBG("Adding extra blending step %d --> %d (%s --> %s)", in->id, out->id,
+        XDBG("Adding extra blending step %d --> %d (%s --> %s)", in->id, out->id,
             in->alpha_only ? "Alpha" : "RGBA",
             out->alpha_only ? "Alpha" : "RGBA");
         Eina_Bool wasl = in->locked;
@@ -1022,7 +1019,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
    if (dx)
      {
-        DBG("Add horizontal blur %d -> %d (%dpx)", in->id, out_dx->id, dx);
+        XDBG("Add horizontal blur %d -> %d (%dpx)", in->id, out_dx->id, dx);
         cmd = _command_new(ctx, EVAS_FILTER_MODE_BLUR, in, NULL, out_dx);
         if (!cmd) goto fail;
         cmd->blur.type = type;
@@ -1036,7 +1033,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
    if (dy)
      {
-        DBG("Add vertical blur %d -> %d (%dpx)", in_dy->id, out_dy->id, dy);
+        XDBG("Add vertical blur %d -> %d (%dpx)", in_dy->id, out_dy->id, dy);
         cmd = _command_new(ctx, EVAS_FILTER_MODE_BLUR, in_dy, NULL, out_dy);
         if (!cmd) goto fail;
         cmd->blur.type = type;
@@ -1053,7 +1050,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         int render_op;
 
         if (!cmd) goto fail;
-        DBG("Add copy %d -> %d", copybuf->id, blur_out->id);
+        XDBG("Add copy %d -> %d", copybuf->id, blur_out->id);
         cmd->ENFN->context_color_set(cmd->ENDT, drawctx, 255, 255, 255, 255);
         render_op = cmd->ENFN->context_render_op_get(cmd->ENDT, drawctx);
         cmd->ENFN->context_render_op_set(cmd->ENDT, drawctx, EVAS_RENDER_COPY);
@@ -1066,7 +1063,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
    if (blend)
      {
-        DBG("Add blend %d (%s) -> %d (%s)",
+        XDBG("Add blend %d (%s) -> %d (%s)",
             blur_out->id, blur_out->alpha_only ? "Alpha" : "RGBA",
             out->id, out->alpha_only ? "Alpha" : "RGBA");
         id = evas_filter_command_blend_add(ctx, drawctx, blur_out->id, out->id, ox, oy, EVAS_FILTER_FILL_MODE_NONE);
@@ -1096,7 +1093,7 @@ evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *drawctx,
 
    if (inbuf == outbuf)
      {
-        DBG("Skipping NOP blend operation %d --> %d", inbuf, outbuf);
+        XDBG("Skipping NOP blend operation %d --> %d", inbuf, outbuf);
         return -1;
      }
 
@@ -1129,7 +1126,7 @@ evas_filter_command_blend_add(Evas_Filter_Context *ctx, void *drawctx,
                                 &cmd->draw.clip.w, &cmd->draw.clip.h);
 
    if (cmd->draw.clip_use)
-     DBG("Draw clip: %d,%d,%d,%d", cmd->draw.clip.x, cmd->draw.clip.y,
+     XDBG("Draw clip: %d,%d,%d,%d", cmd->draw.clip.x, cmd->draw.clip.y,
          cmd->draw.clip.w, cmd->draw.clip.h);
 
    out->dirty = EINA_TRUE;
@@ -1149,7 +1146,7 @@ evas_filter_command_grow_add(Evas_Filter_Context *ctx, void *draw_context,
 
    if (!radius)
      {
-        DBG("Changing 0px grow into simple blend");
+        XDBG("Changing 0px grow into simple blend");
         return evas_filter_command_blend_add(ctx, draw_context, inbuf, outbuf, 0, 0, EVAS_FILTER_FILL_MODE_NONE);
      }
 
@@ -1573,7 +1570,7 @@ evas_filter_target_set(Evas_Filter_Context *ctx, void *draw_context,
           (ENDT, fb->w, fb->h, fb->backing->image.data, EINA_TRUE,
            fb->backing->cache_entry.space);
 
-        DBG("Set target as #%d (%p) and output #%d (%p, gl %p)",
+        XDBG("Set target as #%d (%p) and output #%d (%p, gl %p)",
             ctx->target.bufid, surface, fb->id, fb->backing, fb->glimage);
      }
 
@@ -1607,7 +1604,7 @@ _filter_target_render(Evas_Filter_Context *ctx)
         surface = dst->glimage;
         if (src->glimage)
           {
-             DBG("Using glimage from output buffer.");
+             XDBG("Using glimage from output buffer.");
              if (src->backing)
                ENFN->image_data_put(ENDT, src->glimage, src->backing->image.data);
           }
@@ -1615,7 +1612,7 @@ _filter_target_render(Evas_Filter_Context *ctx)
           {
              RGBA_Image *im = src->backing;
 
-             DBG("Creating glimage from output buffer.");
+             XDBG("Creating glimage from output buffer.");
              src->glimage = ENFN->image_new_from_data(ENDT, src->w, src->h,
                                                im->image.data, EINA_TRUE,
                                                EVAS_COLORSPACE_ARGB8888);
@@ -1824,6 +1821,7 @@ _clip_to_target(int *sx /* OUT */, int *sy /* OUT */, int sw, int sh,
      }
 }
 
+#ifdef FILTERS_DEBUG
 static const char *
 _filter_name_get(int mode)
 {
@@ -1841,6 +1839,7 @@ _filter_name_get(int mode)
      }
 #undef FNAME
 }
+#endif
 
 static Eina_Bool
 _filter_command_run(Evas_Filter_Command *cmd)
@@ -1850,14 +1849,16 @@ _filter_command_run(Evas_Filter_Command *cmd)
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->output, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cmd->input, EINA_FALSE);
 
-   DBG("Command %d (%s): %d [%d] --> %d",
+#ifdef FILTERS_DEBUG
+   XDBG("Command %d (%s): %d [%d] --> %d",
        cmd->id, _filter_name_get(cmd->mode),
        cmd->input->id, cmd->mask ? cmd->mask->id : 0, cmd->output->id);
+#endif
 
    if (!cmd->input->w && !cmd->input->h
        && (cmd->mode != EVAS_FILTER_MODE_FILL))
      {
-        DBG("Skipping processing of empty input buffer (size 0x0)");
+        XDBG("Skipping processing of empty input buffer (size 0x0)");
         return EINA_TRUE;
      }
 
@@ -1962,6 +1963,7 @@ _filter_thread_run_cb(void *data)
 Eina_Bool
 evas_filter_run(Evas_Filter_Context *ctx)
 {
+   static int warned = 0;
    Eina_Bool ret;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_FALSE);
@@ -1969,8 +1971,11 @@ evas_filter_run(Evas_Filter_Context *ctx)
    if (!ctx->commands)
      return EINA_TRUE;
 
-   if (ctx->gl_engine)
-     INF("EXPERIMENTAL OpenGL support! The text filters will be very slow!");
+   if (ctx->gl_engine && !warned)
+     {
+        DBG("OpenGL support through SW functions, expect low performance!");
+        warned = 1;
+     }
 
    if (ctx->async)
      {

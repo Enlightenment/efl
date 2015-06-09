@@ -8,6 +8,10 @@
 extern int _evas_filter_log_dom;
 #define EVAS_FILTER_LOG_COLOR EINA_COLOR_LIGHTBLUE
 
+#ifdef DEBUG
+# define FILTERS_DEBUG
+#endif
+
 #ifdef ERR
 # undef ERR
 #endif
@@ -28,6 +32,12 @@ extern int _evas_filter_log_dom;
 # undef DBG
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_evas_filter_log_dom, __VA_ARGS__)
+
+#ifdef FILTERS_DEBUG
+# define XDBG(...) DBG(__VA_ARGS__)
+#else
+# define XDBG(...) do {} while (0)
+#endif
 
 // This is a potential optimization.
 #define DIV_USING_BITSHIFT 1
@@ -82,8 +92,8 @@ extern int _evas_filter_log_dom;
 # define DEBUG_TIME_END() \
    clock_gettime(CLOCK_MONOTONIC, &ts2); \
    long long int t = 1000000LL * (ts2.tv_sec - ts1.tv_sec) \
-   + (ts2.tv_nsec - ts1.tv_nsec) / 1000LL; \
-   INF("TIME SPENT: %lldus", t);
+   + (ts2.tv_nsec - ts1.tv_nsec) / 1000LL; (void) t; \
+   XDBG("TIME SPENT: %lldus", t);
 #else
 # define DEBUG_TIME_BEGIN() do {} while(0)
 # define DEBUG_TIME_END() do {} while(0)
