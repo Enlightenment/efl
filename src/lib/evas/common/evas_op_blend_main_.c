@@ -185,7 +185,6 @@ blend_gfx_span_func_cpu(int s, int m, int c, int d)
 #endif
    cpu = CPU_C;
    func = op_blend_span_funcs[s][m][c][d][cpu];
-   if (func) return func;
    return func;
 }
 
@@ -307,7 +306,6 @@ blend_gfx_pt_func_cpu(int s, int m, int c, int d)
 #endif
    cpu = CPU_C;
    func = op_blend_pt_funcs[s][m][c][d][cpu];
-   if (func) return func;
    return func;
 }
 
@@ -470,7 +468,6 @@ blend_rel_gfx_span_func_cpu(int s, int m, int c, int d)
 #endif
    cpu = CPU_C;
    func = op_blend_rel_span_funcs[s][m][c][d][cpu];
-   if (func) return func;
    return func;
 }
 
@@ -587,7 +584,6 @@ blend_rel_gfx_pt_func_cpu(int s, int m, int c, int d)
 #endif
    cpu = CPU_C;
    func = op_blend_rel_pt_funcs[s][m][c][d][cpu];
-   if (func) return func;
    return func;
 }
 
