@@ -137,7 +137,6 @@ sub_gfx_span_func_cpu(int s, int m, int c, int d)
 #endif
    cpu = CPU_C;
    func = op_sub_span_funcs[s][m][c][d][cpu];
-   if (func) return func;
    return func;
 }
 
@@ -230,7 +229,6 @@ sub_gfx_pt_func_cpu(int s, int m, int c, int d)
 #endif
    cpu = CPU_C;
    func = op_sub_pt_funcs[s][m][c][d][cpu];
-   if (func) return func;
    return func;
 }
 
@@ -361,7 +359,6 @@ sub_rel_gfx_span_func_cpu(int s, int m, int c, int d)
 #endif
    cpu = CPU_C;
    func = op_sub_rel_span_funcs[s][m][c][d][cpu];
-   if (func) return func;
    return func;
 }
 
@@ -454,7 +451,6 @@ sub_rel_gfx_pt_func_cpu(int s, int m, int c, int d)
 #endif
    cpu = CPU_C;
    func = op_sub_rel_pt_funcs[s][m][c][d][cpu];
-   if (func) return func;
    return func;
 }
 
