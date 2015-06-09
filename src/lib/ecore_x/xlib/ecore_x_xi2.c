@@ -779,7 +779,6 @@ _ecore_x_input_touch_devices_grab(Ecore_X_Window grab_win, Eina_Bool grab)
         if (dev->use == XISlavePointer)
           {
 #ifdef ECORE_XI2_2
-             Eina_Inlist *l = _ecore_x_xi2_touch_info_list;
              Ecore_X_Touch_Device_Info *info;
              info = _ecore_x_input_touch_info_get(dev);
 
