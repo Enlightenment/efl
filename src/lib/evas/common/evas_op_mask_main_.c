@@ -104,7 +104,6 @@ mask_gfx_span_func_cpu(int s, int m, int c, int d)
 #endif
    cpu = CPU_C;
    func = op_mask_span_funcs[s][m][c][d][cpu];
-   if (func) return func;
    return func;
 }
 
@@ -201,7 +200,6 @@ mask_gfx_pt_func_cpu(int s, int m, int c, int d)
 #endif
    cpu = CPU_C;
    func = op_mask_pt_funcs[s][m][c][d][cpu];
-   if (func) return func;
    return func;
 }
 
