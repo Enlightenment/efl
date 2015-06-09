@@ -428,9 +428,8 @@ _evas_object_smart_iterator_new(Eo *eo_obj, Evas_Smart_Data *priv)
 }
 
 EOLIAN static Eina_List*
-_evas_object_smart_members_get(Eo *eo_obj, Evas_Smart_Data *o)
+_evas_object_smart_members_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Eina_List *members = NULL;
    Eina_Inlist *member;
 
@@ -443,7 +442,6 @@ _evas_object_smart_members_get(Eo *eo_obj, Evas_Smart_Data *o)
 const Eina_Inlist *
 evas_object_smart_members_get_direct(const Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
