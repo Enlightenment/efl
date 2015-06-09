@@ -187,6 +187,9 @@ EAPI void elua_state_free(Elua_State *es);
  * split the setting into multiple calls. By the time of state use all need
  * to be set.
  *
+ * Also, all the paths will be sanitized before setting by calling
+ * @ref eina_file_path_sanitize on them.
+ *
  * @param[in] es The Elua state.
  * @param[in] core The core path.
  * @param[in] mods The modules path.
@@ -211,6 +214,9 @@ EAPI void elua_state_dirs_set(Elua_State *es, const char *core,
  * it uses eina prefix of the library to determine the paths. In that case
  * they will expand to DATADIR/core, DATADIR/modules and DATADIR/apps, where
  * DATADIR is typically something like /usr/share/elua.
+ *
+ * Also, all the paths will be sanitized before setting by calling
+ * @ref eina_file_path_sanitize on them.
  *
  * @param[in] es The Elua state.
  * @param[in] ignore_env If set to EINA_TRUE, this ignores the env vars.
@@ -261,6 +267,8 @@ EAPI Eina_Stringshare *elua_state_prog_name_get(const Elua_State *es);
 
 /**
  * @brief Add another path to look up modules in to the state.
+ *
+ * The path will be sanitized using @ref eina_file_path_sanitize.
  *
  * @param[in] es The Elua state.
  *

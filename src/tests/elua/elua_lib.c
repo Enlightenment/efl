@@ -22,6 +22,7 @@ START_TEST(elua_api)
     int quit = 0;
     cargv[0] = arg1;
     cargv[1] = arg2;
+    char *spath = NULL;
 
     fail_if(!elua_init());
 
@@ -33,18 +34,31 @@ START_TEST(elua_api)
     setenv("ELUA_MODULES_DIR", "bar", 1);
     setenv("ELUA_APPS_DIR", "baz", 1);
     elua_state_dirs_fill(st, EINA_FALSE);
-    fail_if(strcmp(elua_state_core_dir_get(st), "foo"));
-    fail_if(strcmp(elua_state_mod_dir_get(st), "bar"));
-    fail_if(strcmp(elua_state_apps_dir_get(st), "baz"));
+
+    spath = eina_file_path_sanitize("foo");
+    fail_if(strcmp(elua_state_core_dir_get(st), spath));
+    free(spath);
+    spath = eina_file_path_sanitize("bar");
+    fail_if(strcmp(elua_state_mod_dir_get(st), spath));
+    free(spath);
+    spath = eina_file_path_sanitize("baz");
+    fail_if(strcmp(elua_state_apps_dir_get(st), spath));
+    free(spath);
     unsetenv("ELUA_CORE_DIR");
     unsetenv("ELUA_MODULES_DIR");
     unsetenv("ELUA_APPS_DIR");
 
     /* now fill it properly */
     elua_state_dirs_set(st, ELUA_CORE_DIR, ELUA_MODULES_DIR, ELUA_APPS_DIR);
-    fail_if(strcmp(elua_state_core_dir_get(st), ELUA_CORE_DIR));
-    fail_if(strcmp(elua_state_mod_dir_get(st), ELUA_MODULES_DIR));
-    fail_if(strcmp(elua_state_apps_dir_get(st), ELUA_APPS_DIR));
+    spath = eina_file_path_sanitize(ELUA_CORE_DIR);
+    fail_if(strcmp(elua_state_core_dir_get(st), spath));
+    free(spath);
+    spath = eina_file_path_sanitize(ELUA_MODULES_DIR);
+    fail_if(strcmp(elua_state_mod_dir_get(st), spath));
+    free(spath);
+    spath = eina_file_path_sanitize(ELUA_APPS_DIR);
+    fail_if(strcmp(elua_state_apps_dir_get(st), spath));
+    free(spath);
 
     /* needed for later setup, but untestable alone */
     elua_state_include_path_add(st, ELUA_BINDINGS_DIR);

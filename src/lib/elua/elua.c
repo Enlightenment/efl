@@ -108,10 +108,29 @@ EAPI void
 elua_state_dirs_set(Elua_State *es, const char *core, const char *mods,
                     const char *apps)
 {
+   char *spath = NULL;
    EINA_SAFETY_ON_NULL_RETURN(es);
-   if (core) es->coredir = eina_stringshare_add(core);
-   if (mods) es->moddir  = eina_stringshare_add(mods);
-   if (apps) es->appsdir = eina_stringshare_add(apps);
+   if (core)
+     {
+        eina_stringshare_del(es->coredir);
+        spath = eina_file_path_sanitize(core);
+        es->coredir = eina_stringshare_add(spath);
+        free(spath);
+     }
+   if (mods)
+     {
+        eina_stringshare_del(es->moddir);
+        spath = eina_file_path_sanitize(mods);
+        es->moddir = eina_stringshare_add(spath);
+        free(spath);
+     }
+   if (apps)
+     {
+        eina_stringshare_del(es->appsdir);
+        spath = eina_file_path_sanitize(apps);
+        es->appsdir = eina_stringshare_add(spath);
+        free(spath);
+     }
 }
 
 EAPI void
@@ -128,7 +147,11 @@ elua_state_dirs_fill(Elua_State *es, Eina_Bool ignore_env)
              snprintf(coredirbuf, sizeof(coredirbuf), "%s/core",
                       eina_prefix_data_get(_elua_pfx));
           }
-        if (coredir) es->coredir = eina_stringshare_add(coredir);
+        if (coredir) {
+            char *sdir = eina_file_path_sanitize(coredir);
+            es->coredir = eina_stringshare_add(sdir);
+            free(sdir);
+        }
      }
    if (!(moddir = es->moddir))
      {
@@ -138,7 +161,11 @@ elua_state_dirs_fill(Elua_State *es, Eina_Bool ignore_env)
              snprintf(moddirbuf, sizeof(moddirbuf), "%s/modules",
                       eina_prefix_data_get(_elua_pfx));
           }
-        if (moddir) es->moddir = eina_stringshare_add(moddir);
+        if (moddir) {
+            char *sdir = eina_file_path_sanitize(moddir);
+            es->moddir = eina_stringshare_add(sdir);
+            free(sdir);
+        }
      }
    if (!(appsdir = es->appsdir))
      {
@@ -148,7 +175,11 @@ elua_state_dirs_fill(Elua_State *es, Eina_Bool ignore_env)
              snprintf(appsdirbuf, sizeof(appsdirbuf), "%s/apps",
                       eina_prefix_data_get(_elua_pfx));
           }
-        if (appsdir) es->appsdir = eina_stringshare_add(appsdir);
+        if (appsdir) {
+            char *sdir = eina_file_path_sanitize(appsdir);
+            es->appsdir = eina_stringshare_add(sdir);
+            free(sdir);
+        }
      }
 }
 
@@ -183,10 +214,13 @@ elua_state_prog_name_get(const Elua_State *es)
 EAPI void
 elua_state_include_path_add(Elua_State *es, const char *path)
 {
+   char *spath = NULL;
    EINA_SAFETY_ON_NULL_RETURN(es);
    EINA_SAFETY_ON_NULL_RETURN(path);
    EINA_SAFETY_ON_FALSE_RETURN(path[0]);
-   es->lincs = eina_list_append(es->lincs, eina_stringshare_add(path));
+   spath = eina_file_path_sanitize(path);
+   es->lincs = eina_list_append(es->lincs, eina_stringshare_add(spath));
+   free(spath);
 }
 
 EAPI Eina_Bool
