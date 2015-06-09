@@ -1026,7 +1026,8 @@ _elm_datetime_field_limit_set(Eo *obj, Elm_Datetime_Data *sd, Elm_Datetime_Field
    _apply_field_limits(obj);
 
    if (!_field_cmp(fieldtype, &old_time, &sd->curr_time))
-     evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+     eo_do(obj, eo_event_callback_call(ELM_DATETIME_EVENT_CHANGED, NULL));
+
 }
 
 EOLIAN static Eina_Bool
@@ -1052,7 +1053,7 @@ _elm_datetime_value_set(Eo *obj, Elm_Datetime_Data *sd, const struct tm *newtime
    _validate_datetime_limits(&sd->max_limit, &sd->curr_time, EINA_TRUE);
    _apply_field_limits(obj);
 
-   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_DATETIME_EVENT_CHANGED, NULL));
 
    return EINA_TRUE;
 }
@@ -1084,7 +1085,7 @@ _elm_datetime_value_min_set(Eo *obj, Elm_Datetime_Data *sd, const struct tm *min
    _apply_field_limits(obj);
 
    if (!_date_cmp(&old_time, &sd->curr_time))
-     evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+     eo_do(obj, eo_event_callback_call(ELM_DATETIME_EVENT_CHANGED, NULL));
 
    return EINA_TRUE;
 }
@@ -1116,7 +1117,7 @@ _elm_datetime_value_max_set(Eo *obj, Elm_Datetime_Data *sd, const struct tm *max
    _apply_field_limits(obj);
 
    if (!_date_cmp(&old_time, &sd->curr_time))
-     evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+     eo_do(obj, eo_event_callback_call(ELM_DATETIME_EVENT_CHANGED, NULL));
 
    return EINA_TRUE;
 }
