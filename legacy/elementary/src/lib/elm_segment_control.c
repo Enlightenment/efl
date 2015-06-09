@@ -314,7 +314,7 @@ _segment_on(Elm_Segment_Control_Item_Data *it)
    edje_object_signal_emit(VIEW(it), "elm,state,segment,selected", "elm");
 
    sd->selected_item = it;
-   evas_object_smart_callback_call(sd->obj, SIG_CHANGED, EO_OBJ(it));
+   eo_do(sd->obj, eo_event_callback_call(ELM_SEGMENT_CONTROL_EVENT_CHANGED, EO_OBJ(it)));
 }
 
 static void
