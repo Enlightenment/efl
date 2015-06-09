@@ -154,6 +154,7 @@ bt_append(Eina_List *btl, const char *btline)
           }
         btl = eina_list_append(btl, bt);
      }
+   else free(bt);
    free(bin);
    return btl;
 }
