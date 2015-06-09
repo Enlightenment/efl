@@ -388,13 +388,13 @@ _ecore_x_input_multi_handler(XEvent *xevent)
 #ifdef ECORE_XI2
    if (xevent->type != GenericEvent) return;
    XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
-   int devid = evd->deviceid;
 
    switch (xevent->xcookie.evtype)
      {
 #ifdef ECORE_XI2_2
       case XI_TouchUpdate:
           {
+             int devid = evd->deviceid;
              int i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchUpdate);
              if ((i == 0) && (evd->flags & XITouchEmulatingPointer)) return;
              INF("Handling XI_TouchUpdate");
@@ -416,6 +416,7 @@ _ecore_x_input_multi_handler(XEvent *xevent)
 
       case XI_TouchBegin:
           {
+             int devid = evd->deviceid;
              int i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchBegin);
              if ((i == 0) && (evd->flags & XITouchEmulatingPointer)) return;
              INF("Handling XI_TouchBegin");
@@ -439,6 +440,7 @@ _ecore_x_input_multi_handler(XEvent *xevent)
 
       case XI_TouchEnd:
           {
+             int devid = evd->deviceid;
              int i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchEnd);
              if ((i == 0) && (evd->flags & XITouchEmulatingPointer))
                {
