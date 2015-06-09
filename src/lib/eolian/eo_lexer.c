@@ -326,7 +326,7 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
      {
         if (!ls->current)
           {
-             doc_error(ls, "unfinished documentation", doc, NULL);
+             doc_error(ls, "unfinished documentation", doc, rbuf);
              return; /* unreachable, for static analysis */
           }
 
