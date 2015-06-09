@@ -63,7 +63,7 @@ _delay_change(void *data)
    ELM_SLIDER_DATA_GET(data, sd);
 
    sd->delay = NULL;
-   evas_object_smart_callback_call(data, SIG_DELAY_CHANGED, NULL);
+   eo_do(data, eo_event_callback_call(ELM_SLIDER_EVENT_DELAY_CHANGED, NULL));
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -94,7 +94,7 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
         sd->val = val;
         if (user_event)
           {
-             evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+             eo_do(obj, eo_event_callback_call(ELM_SLIDER_EVENT_CHANGED, NULL));
              elm_interface_atspi_accessible_value_changed_signal_emit(obj);
              ecore_timer_del(sd->delay);
              sd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
@@ -241,7 +241,7 @@ _drag_start(void *data,
             const char *source EINA_UNUSED)
 {
    _slider_update(data, EINA_TRUE);
-   evas_object_smart_callback_call(data, SIG_DRAG_START, NULL);
+   eo_do(data, eo_event_callback_call(ELM_SLIDER_EVENT_SLIDER_DRAG_START, NULL));
    elm_widget_scroll_freeze_push(data);
 }
 
@@ -252,7 +252,7 @@ _drag_stop(void *data,
            const char *source EINA_UNUSED)
 {
    _slider_update(data, EINA_TRUE);
-   evas_object_smart_callback_call(data, SIG_DRAG_STOP, NULL);
+   eo_do(data, eo_event_callback_call(ELM_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL));
    elm_widget_scroll_freeze_pop(data);
 }
 
@@ -645,7 +645,7 @@ _spacer_down_cb(void *data,
      (wd->resize_obj, "elm.dragable.slider",
      button_x, button_y);
    _slider_update(data, EINA_TRUE);
-   evas_object_smart_callback_call(data, SIG_DRAG_START, NULL);
+   eo_do(data, eo_event_callback_call(ELM_SLIDER_EVENT_SLIDER_DRAG_START, NULL));
    elm_layout_signal_emit(data, "elm,state,indicator,show", "elm");
 }
 
@@ -682,7 +682,8 @@ _spacer_move_cb(void *data,
           {
              if (sd->spacer_down) sd->spacer_down = EINA_FALSE;
              _slider_update(data, EINA_TRUE);
-             evas_object_smart_callback_call(data, SIG_DRAG_STOP, NULL);
+             eo_do(data, eo_event_callback_call
+               (ELM_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL));
              if (sd->frozen)
                {
                   elm_widget_scroll_freeze_pop(data);
@@ -725,7 +726,7 @@ _spacer_up_cb(void *data,
    if (sd->spacer_down) sd->spacer_down = EINA_FALSE;
 
    _slider_update(data, EINA_TRUE);
-   evas_object_smart_callback_call(data, SIG_DRAG_STOP, NULL);
+   eo_do(data, eo_event_callback_call(ELM_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL));
 
    if (sd->frozen)
      {
@@ -1236,12 +1237,12 @@ _elm_slider_elm_interface_atspi_value_value_and_text_set(Eo *obj, Elm_Slider_Dat
    if (sd->val_min > value) return EINA_FALSE;
    if (sd->val_max < value) return EINA_FALSE;
 
-   evas_object_smart_callback_call(obj, SIG_DRAG_START, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_SLIDER_EVENT_SLIDER_DRAG_START, NULL));
    sd->val = value;
    _visuals_refresh(obj);
    sd->val = oldval;
    _slider_update(obj, EINA_TRUE);
-   evas_object_smart_callback_call(obj, SIG_DRAG_STOP, NULL);
+   eo_do(obj, eo_event_callback_call(ELM_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL));
 
    return EINA_TRUE;
 }

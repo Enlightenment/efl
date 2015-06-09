@@ -109,7 +109,9 @@ _activate(Evas_Object *obj)
 
         if (_elm_config->access_mode)
           _elm_access_say(E_("State: On"));
-        evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+        eo_do(obj, eo_event_callback_call
+          (ELM_RADIO_EVENT_CHANGED, NULL));
+
      }
 }
 
