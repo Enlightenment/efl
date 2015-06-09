@@ -632,6 +632,56 @@ _elm_entry_theme_group_get(Evas_Object *obj)
 }
 
 static Eina_Bool
+_selection_data_cb(void *data EINA_UNUSED,
+                   Evas_Object *obj,
+                   Elm_Selection_Data *sel_data)
+{
+   char *buf;
+
+   if (!sel_data->data) return EINA_FALSE;
+   ELM_ENTRY_DATA_GET(obj, sd);
+
+   buf = malloc(sel_data->len + 1);
+   if (!buf)
+     {
+        ERR("Failed to allocate memory, obj: %p", obj);
+        return EINA_FALSE;
+     }
+   memcpy(buf, sel_data->data, sel_data->len);
+   buf[sel_data->len] = '\0';
+
+   if ((sel_data->format & ELM_SEL_FORMAT_IMAGE) &&
+       (sd->cnp_mode != ELM_CNP_MODE_NO_IMAGE))
+     {
+        char *entry_tag;
+        int len;
+        static const char *tag_string =
+           "<item absize=240x180 href=file://%s></item>";
+
+        len = strlen(tag_string) + strlen(buf);
+        entry_tag = alloca(len + 1);
+        snprintf(entry_tag, len + 1, tag_string, buf);
+        elm_entry_entry_insert(obj, entry_tag);
+     }
+   else
+     {
+        char *txt = _elm_util_text_to_mkup(buf);
+        if (txt)
+          {
+             elm_entry_entry_insert(obj, txt);
+             free(txt);
+          }
+        else
+          {
+             ERR("Failed to convert text to markup text!");
+          }
+     }
+   free(buf);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _drag_drop_cb(void *data EINA_UNUSED,
               Evas_Object *obj,
               Elm_Selection_Data *drop)
@@ -1356,7 +1406,7 @@ _paste_cb(void *data,
      formats |= ELM_SEL_FORMAT_IMAGE;
 
    elm_cnp_selection_get
-     (data, ELM_SEL_TYPE_CLIPBOARD, formats, NULL, NULL);
+     (data, ELM_SEL_TYPE_CLIPBOARD, formats, _selection_data_cb, NULL);
 }
 
 static void
@@ -2110,7 +2160,7 @@ _entry_paste_request_signal_cb(void *data,
         else if (sd->cnp_mode != ELM_CNP_MODE_NO_IMAGE)
           formats |= ELM_SEL_FORMAT_IMAGE;
 
-        elm_cnp_selection_get(data, type, formats, NULL, NULL);
+        elm_cnp_selection_get(data, type, formats, _selection_data_cb, NULL);
      }
 }
 
