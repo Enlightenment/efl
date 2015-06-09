@@ -17,34 +17,43 @@
          part { name: "elm.text"; \
             description { state: "default" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             description { state: "selected" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             description { state: "disabled" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
          } \
          part { name: "label2"; \
             description { state: "default" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             description { state: "selected" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             description { state: "disabled" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
          } \
          part { name: "label3"; \
             description { state: "default" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             description { state: "selected" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             description { state: "disabled" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
          } \
       } \
@@ -56,34 +65,43 @@
          part { name: "elm.text"; \
             description { state: "default" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             description { state: "selected" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             description { state: "disabled" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
          } \
          part { name: "label2"; \
             description { state: "default" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             description { state: "selected" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             description { state: "disabled" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
          } \
          part { name: "label3"; \
             description { state: "default" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             description { state: "selected" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             description { state: "disabled" 0.0; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
          } \
          part { name: "base"; \

@@ -820,6 +820,8 @@ _items_fix(Evas_Object *obj)
 
    ELM_LIST_DATA_GET(obj, sd);
 
+   printf("fix....\n");
+
    style = elm_widget_style_get(obj);
    it_plain = sd->h_mode ? "h_item" : "item";
    it_odd = sd->h_mode ? "h_item_odd" : "item_odd";
@@ -864,6 +866,7 @@ _items_fix(Evas_Object *obj)
         redo = 1;
      }
 
+   printf("walk items\n");
    i = 0;
    EINA_LIST_FOREACH(sd->items, l, eo_it)
      {
@@ -883,6 +886,7 @@ _items_fix(Evas_Object *obj)
                      "vertical" : "horizontal", style);
              else if (sd->mode == ELM_LIST_COMPRESS)
                {
+                  printf("fix item to %s\n", it_compress);
                   if (it->even)
                     elm_widget_theme_object_set
                       (obj, VIEW(it), "list", it_compress, style);
@@ -2643,6 +2647,7 @@ _elm_list_mode_set(Eo *obj, Elm_List_Data *sd, Elm_List_Mode mode)
    sd->mode = mode;
 
    _elm_list_mode_set_internal(obj);
+   _items_fix(obj);
 }
 
 EOLIAN static Elm_List_Mode
