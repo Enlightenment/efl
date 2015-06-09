@@ -230,8 +230,8 @@ _on_item_changed(Elm_Flipselector_Data *sd)
 
    if (item->func)
      item->func((void *)WIDGET_ITEM_DATA_GET(eo_item), WIDGET(item), eo_item);
-   evas_object_smart_callback_call
-      (sd->obj, SIG_SELECTED, eo_item);
+   eo_do(sd->obj, eo_event_callback_call
+     (ELM_FLIPSELECTOR_EVENT_SELECTED, eo_item));
 }
 
 static void
@@ -367,8 +367,8 @@ _flip_up(Elm_Flipselector_Data *sd)
    if (sd->current == sd->items)
      {
         sd->current = eina_list_last(sd->items);
-        evas_object_smart_callback_call
-          (sd->obj, SIG_UNDERFLOWED, NULL);
+        eo_do(sd->obj, eo_event_callback_call
+          (ELM_FLIPSELECTOR_EVENT_UNDERFLOWED, NULL));
      }
    else
      sd->current = eina_list_prev(sd->current);
@@ -392,8 +392,8 @@ _flip_down(Elm_Flipselector_Data *sd)
    if (!sd->current)
      {
         sd->current = sd->items;
-        evas_object_smart_callback_call
-          (sd->obj, SIG_OVERFLOWED, NULL);
+        eo_do(sd->obj, eo_event_callback_call
+          (ELM_FLIPSELECTOR_EVENT_OVERFLOWED, NULL));
      }
 
    eo_item = DATA_GET(sd->current);
