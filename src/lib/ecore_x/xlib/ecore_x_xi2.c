@@ -276,10 +276,10 @@ _ecore_x_input_raw_handler(XEvent *xevent)
 #endif /* ifdef ECORE_XI2 */
 }
 
+#ifdef ECORE_XI2_2
 static Eina_Bool
 _ecore_x_input_grabbed_is(int deviceId)
 {
-#ifdef ECORE_XI2
    void *id;
    Eina_List *l;
 
@@ -288,10 +288,10 @@ _ecore_x_input_grabbed_is(int deviceId)
         if (deviceId == (intptr_t)id)
           return EINA_TRUE;
      }
-#endif /* ifdef ECORE_XI2 */
 
    return EINA_FALSE;
 }
+#endif /* ifdef ECORE_XI2_2 */
 
 void
 _ecore_x_input_mouse_handler(XEvent *xevent)
