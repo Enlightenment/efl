@@ -1139,8 +1139,39 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
      }
    else
      {
+        if (sel == (_x11_selections + ELM_SEL_TYPE_XDND))
+          {
+             Dropable *dropable;
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(drops, l, dropable)
+               {
+                  if (dropable->obj == sel->requestwidget) break;
+                  dropable = NULL;
+               }
+             if (dropable)
+               {
+                  Dropable_Cbs *cbs;
+                  Eina_Inlist *itr;
+                  Elm_Selection_Data ddata;
+
+                  dropable = eina_list_data_get(l);
+                  ddata.x = savedtypes.x;
+                  ddata.y = savedtypes.y;
+                  ddata.format = ELM_SEL_FORMAT_IMAGE;
+                  ddata.data = stripstr;
+                  ddata.len = strlen(stripstr);
+                  ddata.action = sel->action;
+                  EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+                     if ((cbs->types & dropable->last.format) && cbs->dropcb)
+                       cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+               }
+          }
+        else
+          {
+             _pasteimage_append(p, sel->requestwidget);
+          }
         savedtypes.imgfile = NULL;
-        _pasteimage_append(p, sel->requestwidget);
         free(stripstr);
      }
    return 0;
@@ -1212,7 +1243,45 @@ _x11_notify_handler_image(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify
    data = notify->data;
 
    cnp_debug("Size if %d\n", data->length);
-   if (sel->datacb)
+   if (sel == (_x11_selections + ELM_SEL_TYPE_XDND))
+     {
+        Eina_List *l;
+        Dropable *dropable;
+
+        tmp = _tempfile_new(data->length);
+        if (!tmp)
+          {
+             ecore_x_dnd_send_finished();
+             return 0;
+          }
+        memcpy(tmp->map, data->data, data->length);
+        munmap(tmp->map, data->length);
+        EINA_LIST_FOREACH(drops, l, dropable)
+          {
+             if (dropable->obj == sel->requestwidget) break;
+             dropable = NULL;
+          }
+        if (dropable)
+          {
+             Dropable_Cbs *cbs;
+             Eina_Inlist *itr;
+             Elm_Selection_Data ddata;
+
+             ddata.x = savedtypes.x;
+             ddata.y = savedtypes.y;
+             ddata.format = ELM_SEL_FORMAT_IMAGE;
+             ddata.data = tmp->filename;
+             ddata.len = strlen(tmp->filename);
+             ddata.action = sel->action;
+             EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+                if ((cbs->types & dropable->last.format) && cbs->dropcb)
+                  cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+          }
+        _tmpinfo_free(tmp);
+        ecore_x_dnd_send_finished();
+        return 0;
+     }
+   else if (sel->datacb)
      {
         Elm_Selection_Data ddata;
 
