@@ -84,6 +84,7 @@ typedef struct _Elm_Layout_Smart_Data
    Eina_Bool             restricted_calc_h : 1;
    Eina_Bool             can_access : 1; /**< This is true when all text(including textblock) parts can be accessible by accessibility. */
    Eina_Bool             destructed_is : 1; /**< This flag indicates if Elm_Layout destructor was called */
+   Eina_Bool             file_set : 1; /**< This flag indicates if Elm_Layout source file is set */
 } Elm_Layout_Smart_Data;
 
 /**

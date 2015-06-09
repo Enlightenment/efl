@@ -359,13 +359,17 @@ _elm_layout_theme_internal(Eo *obj, Elm_Layout_Smart_Data *sd)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    /* function already prints error messages, if any */
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj, sd->klass, sd->group,
-                                    elm_widget_style_get(obj)))
-     return EINA_FALSE;
+   if (!sd->file_set)
+     {
+        ret = elm_widget_theme_object_set
+                (obj, wd->resize_obj, sd->klass, sd->group,
+                 elm_widget_style_get(obj));
+     }
 
-   ret = _visuals_refresh(obj, sd);
+   if (ret)
+     evas_object_smart_callback_call(obj, SIG_THEME_CHANGED, NULL);
 
-   evas_object_smart_callback_call(obj, SIG_THEME_CHANGED, NULL);
+   ret = _visuals_refresh(obj, sd) && ret;
 
    return ret;
 }
@@ -852,7 +856,11 @@ _elm_layout_efl_file_file_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *fi
    int_ret =
      edje_object_file_set(wd->resize_obj, file, group);
 
-   if (int_ret) _visuals_refresh(obj, sd);
+   if (int_ret)
+     {
+        sd->file_set = EINA_TRUE;
+        _visuals_refresh(obj, sd);
+     }
    else
      ERR("failed to set edje file '%s', group '%s': %s",
          file, group,
@@ -874,6 +882,7 @@ _elm_layout_theme_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *klass, con
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
+   if (sd->file_set) sd->file_set = EINA_FALSE;
    eina_stringshare_replace(&(sd->klass), klass);
    eina_stringshare_replace(&(sd->group), group);
    eina_stringshare_replace(&(wd->style), style);

@@ -293,7 +293,6 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
 
    if ((!clas) || (!group) || (!style)) return EINA_FALSE;
    if (!th) th = &(theme_default);
-
    snprintf(buf2, sizeof(buf2), "elm/%s/%s/%s", clas, group, style);
    if (!eina_hash_find(th->cache_style_load_failed, buf2))
      {
