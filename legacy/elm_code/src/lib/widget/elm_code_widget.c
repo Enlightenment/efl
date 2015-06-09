@@ -214,7 +214,7 @@ _elm_code_widget_fill_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *cells,
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-   eo_do(widget, gutter = elm_obj_code_widget_text_left_gutter_width_get());
+   gutter = elm_code_widget_text_left_gutter_width_get(widget);
 
    evas_object_textgrid_size_get(pd->grid, &w, NULL);
 
