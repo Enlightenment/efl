@@ -304,9 +304,11 @@ _ecore_x_input_mouse_handler(XEvent *xevent)
 
    switch (xevent->xcookie.evtype)
      {
+#ifdef ECORE_XI2_2
       case XI_TouchUpdate:
          if (!_ecore_x_input_grabbed_is(devid))
            break;
+#endif
       case XI_Motion:
         INF("Handling XI_Motion");
         _ecore_mouse_move
@@ -325,9 +327,11 @@ _ecore_x_input_mouse_handler(XEvent *xevent)
           evd->root_x, evd->root_y);
         break;
 
+#ifdef ECORE_XI2_2
       case XI_TouchBegin:
          if (!_ecore_x_input_grabbed_is(devid))
            break;
+#endif
       case XI_ButtonPress:
         INF("ButtonEvent:multi press time=%u x=%d y=%d devid=%d", (unsigned int)evd->time, (int)evd->event_x, (int)evd->event_y, devid);
         _ecore_mouse_button
@@ -348,9 +352,11 @@ _ecore_x_input_mouse_handler(XEvent *xevent)
           evd->root_x, evd->root_y);
         break;
 
+#ifdef ECORE_XI2_2
       case XI_TouchEnd:
          if (!_ecore_x_input_grabbed_is(devid))
            break;
+#endif
       case XI_ButtonRelease:
         INF("ButtonEvent:multi release time=%u x=%d y=%d devid=%d", (unsigned int)evd->time, (int)evd->event_x, (int)evd->event_y, devid);
         _ecore_mouse_button
@@ -623,9 +629,11 @@ _ecore_x_input_handler(XEvent *xevent)
       case XI_Motion:
       case XI_ButtonPress:
       case XI_ButtonRelease:
+#ifdef ECORE_XI2_2
       case XI_TouchUpdate:
       case XI_TouchBegin:
       case XI_TouchEnd:
+#endif
           {
              XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
              XIDeviceInfo *dev = _ecore_x_input_device_lookup(evd->deviceid);
@@ -695,13 +703,6 @@ ecore_x_input_multi_select(Ecore_X_Window win)
                   _ecore_x_xi2_touch_info_list = l;
                }
 #endif /* #ifdef ECORE_XI2_2 */
-
-#if !defined (ECORE_XI2_2) && defined (XI_TouchUpdate) && defined (XI_TouchBegin) && defined (XI_TouchEnd)
-             XISetMask(mask, XI_TouchUpdate);
-             XISetMask(mask, XI_TouchBegin);
-             XISetMask(mask, XI_TouchEnd);
-#endif
-
              update = 1;
           }
 
@@ -791,13 +792,6 @@ _ecore_x_input_touch_devices_grab(Ecore_X_Window grab_win, Eina_Bool grab)
                   free(info);
                }
 #endif /* #ifdef ECORE_XI2_2 */
-
-#if !defined (ECORE_XI2_2) && defined (XI_TouchUpdate) && defined (XI_TouchBegin) && defined (XI_TouchEnd)
-             XISetMask(mask, XI_TouchUpdate);
-             XISetMask(mask, XI_TouchBegin);
-             XISetMask(mask, XI_TouchEnd);
-             update = 1;
-#endif
           }
 
         if (update)
