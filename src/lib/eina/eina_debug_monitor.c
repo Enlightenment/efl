@@ -135,7 +135,7 @@ _eina_debug_collect_bt(pthread_t pth)
 // way. this is an alternative to using external debuggers so we can get
 // users or developers to get useful information about an app at all times
 static void *
-_eina_debug_monitor(void *data EINA_UNUSED)
+_eina_debug_monitor(void *_data EINA_UNUSED)
 {
    int bts = 0, ret, max_fd;
    double t0, t;
