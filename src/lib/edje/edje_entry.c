@@ -1684,14 +1684,14 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         _edje_emit(ed, "entry,key,end", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if ((control) && (!shift) && (!strcmp(ev->key, "v")))
+   else if ((control) && (!shift) && (!strcmp(ev->keyname, "v")))
      {
         _compose_seq_reset(en);
         _edje_emit(ed, "entry,paste,request", rp->part->name);
         _edje_emit(ed, "entry,paste,request,3", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if ((control) && (!strcmp(ev->key, "a")))
+   else if ((control) && (!strcmp(ev->keyname, "a")))
      {
         _compose_seq_reset(en);
         if (shift)
@@ -1705,19 +1705,19 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
           }
      }
-   else if ((control) && (((!shift) && !strcmp(ev->key, "c")) || !strcmp(ev->key, "Insert")))
+   else if ((control) && (((!shift) && !strcmp(ev->keyname, "c")) || !strcmp(ev->key, "Insert")))
      {
         _compose_seq_reset(en);
         _edje_emit(ed, "entry,copy,notify", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if ((control) && (!shift) && ((!strcmp(ev->key, "x") || (!strcmp(ev->key, "m")))))
+   else if ((control) && (!shift) && ((!strcmp(ev->keyname, "x") || (!strcmp(ev->keyname, "m")))))
      {
         _compose_seq_reset(en);
         _edje_emit(ed, "entry,cut,notify", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if ((control) && (!strcmp(ev->key, "z")))
+   else if ((control) && (!strcmp(ev->keyname, "z")))
      {
         _compose_seq_reset(en);
         if (shift)
@@ -1732,7 +1732,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
           }
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if ((control) && (!shift) && (!strcmp(ev->key, "y")))
+   else if ((control) && (!shift) && (!strcmp(ev->keyname, "y")))
      {
         _compose_seq_reset(en);
         // redo
