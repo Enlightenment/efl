@@ -186,21 +186,13 @@ enum Evas.Callback_Type
    changed_size_hints, [[Size hints changed event]]
    image_preloaded, [[Image has been preloaded]]
 
-   /*
-    * The following events are only for use with Evas canvases, with
-    * evas_event_callback_add():
-    */
    canvas_focus_in, [[Canvas got focus as a whole]]
    canvas_focus_out, [[Canvas lost focus as a whole]]
    render_flush_pre, [[Called just before rendering is updated on the canvas target]]
    render_flush_post, [[Called just after rendering is updated on the canvas target]]
    canvas_object_focus_in, [[Canvas object got focus]]
    canvas_object_focus_ouT, [[Canvas object lost focus]]
-   canvas_viewport_resize, [[Canvas viewport resized @since 1.15]]
 
-   /*
-    * More Evas object event types - see evas_object_event_callback_add():
-    */
    image_unloaded, [[Image data has been unloaded (by some mechanism in Evas that throw out original image data)]]
 
    render_pre, [[Called just before rendering starts on the canvas target @since 1.2]]
@@ -210,6 +202,8 @@ enum Evas.Callback_Type
    device_changed, [[Devices added, removed or changed on canvas @since 1.8]]
 
    axis_update, [[Input device changed value on some axis @since 1.13]]
+
+   canvas_viewport_resize, [[Canvas viewport resized @since 1.15]]
    last [[kept as last element/sentinel -- not really an event]]
 }
 
