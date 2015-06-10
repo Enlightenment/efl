@@ -41,3 +41,11 @@ enum Edje.Text.Autocapital_Type {
 }
 
 struct Edje.Perspective; [[Perspective info for maps inside edje objects]]
+
+/* FIXME-cb: Ignore cb types that should be fixed. */
+type Edje.Signal_Cb: __undefined_type;
+type Edje.Markup_Filter_Cb: __undefined_type;
+type Edje.Text.Filter_Cb: __undefined_type;
+type Edje.Text.Change_Cb: __undefined_type;
+type Edje.Item_Provider_Cb: __undefined_type;
+type Edje.Message_Handler_Cb: __undefined_type;

@@ -213,7 +213,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             This function sets the callback to be called when the text changes. */
          }
          values {
-            func: Edje_Text_Change_Cb; /*@ The callback function to handle the text change */
+            func: Edje.Text.Change_Cb; /*@ The callback function to handle the text change */
             data: void *; /*@ The data associated to the callback function. */
          }
       }
@@ -311,7 +311,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             Edje object is deleted (or file is set to a new file). */
          }
          values {
-            func: Edje_Item_Provider_Cb; /*@ The function to call (or NULL to disable) to get item objects */
+            func: Edje.Item_Provider_Cb; /*@ The function to call (or NULL to disable) to get item objects */
             data: void *; /*@ The data pointer to pass to the @p func callback */
          }
       }
@@ -342,7 +342,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             @see edje_object_message_send() */
          }
          values {
-            func: Edje_Message_Handler_Cb; /*@ The function to handle messages @b coming from @p obj */
+            func: Edje.Message_Handler_Cb; /*@ The function to handle messages @b coming from @p obj */
             data: void *; /*@ Auxiliary data to be passed to @p func */
          }
       }
@@ -529,7 +529,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: void *;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in func: Edje_Markup_Filter_Cb; /*@ The function callback to remove */
+            @in func: Edje.Markup_Filter_Cb; /*@ The function callback to remove */
             @in data: void *; /*@ The data passed to the callback function */
          }
       }
@@ -622,7 +622,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          params {
             @in emission: const(char)*; /*@ The emission string. */
             @in source: const(char)*; /*@ The source string. */
-            @in func: Edje_Signal_Cb; /*@ The callback function. */
+            @in func: Edje.Signal_Cb; /*@ The callback function. */
             @in data: void *; /*@ The callback function. */
          }
       }
@@ -757,7 +757,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: void *;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in func: Edje_Text_Filter_Cb; /*@ The function callback to remove */
+            @in func: Edje.Text.Filter_Cb; /*@ The function callback to remove */
             @in data: void *; /*@ The data passed to the callback function */
          }
       }
@@ -1400,7 +1400,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: void *;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in func: Edje_Text_Filter_Cb; /*@ The function callback to remove */
+            @in func: Edje.Text.Filter_Cb; /*@ The function callback to remove */
          }
       }
       part_drag_dir_get @const {
@@ -1510,7 +1510,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          params {
             @in emission: const(char)*; /*@ The signal's "emission" string */
             @in source: const(char)*; /*@ The signal's "source" string */
-            @in func: Edje_Signal_Cb; /*@ The callback function to be executed when the signal is
+            @in func: Edje.Signal_Cb; /*@ The callback function to be executed when the signal is
             emitted. */
             @in data: void *; /*@ A pointer to data to pass in to @p func. */
          }
@@ -1673,7 +1673,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          params {
             @in part: const(char)*; /*@ The part name */
-            @in func: Edje_Markup_Filter_Cb; /*@ The callback function that will act as markup filter */
+            @in func: Edje.Markup_Filter_Cb; /*@ The callback function that will act as markup filter */
             @in data: void *; /*@ User provided data to pass to the filter function */
          }
       }
@@ -2244,7 +2244,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          params {
             @in part: const(char)*; /*@ The part name */
-            @in func: Edje_Text_Filter_Cb; /*@ The callback function that will act as filter */
+            @in func: Edje.Text.Filter_Cb; /*@ The callback function that will act as filter */
             @in data: void *; /*@ User provided data to pass to the filter function */
          }
       }
@@ -2295,7 +2295,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: void *;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in func: Edje_Markup_Filter_Cb; /*@ The function callback to remove */
+            @in func: Edje.Markup_Filter_Cb; /*@ The function callback to remove */
          }
       }
       part_text_cursor_is_visible_format_get @const {
