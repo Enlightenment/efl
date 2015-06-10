@@ -40,6 +40,98 @@ enum Edje.Text.Autocapital_Type {
    allcharacter [[All characters mode value]]
 }
 
+enum Edje.Input_Hints {
+   legacy: Edje_Input_Hint;
+
+   none                = 0,        [[No active hints @since 1.12]]
+   auto_complete       = 1 << 0,   [[Suggest word auto completion @since 1.12]]
+   sensitive_data      = 1 << 1    [[Typed text should not be stored. @since 1.12]]
+}
+
+enum Edje.Input_Panel.Lang {
+   automatic,    [[Automatic @since 1.2]]
+   alphabet      [[Alphabet @since 1.2]]
+}
+
+enum Edje.Input_Panel.Return_Key_Type {
+   default, [[Default @since 1.2]]
+   done,    [[Done @since 1.2]]
+   go,      [[Go @since 1.2]]
+   join,    [[Join @since 1.2]]
+   login,   [[Login @since 1.2]]
+   next,    [[Next @since 1.2]]
+   search,  [[Search or magnifier icon @since 1.2]]
+   send,    [[Send @since 1.2]]
+   signin   [[Sign-in @since 1.8]]
+}
+
+enum Edje.Input_Panel.Layout {
+   normal,          [[Default layout]]
+   number,          [[Number layout]]
+   email,           [[Email layout]]
+   url,             [[URL layout]]
+   phonenumber,     [[Phone Number layout]]
+   ip,              [[IP layout]]
+   month,           [[Month layout]]
+   numberonly,      [[Number Only layout]]
+   invalid,         [[Never use this]]
+   hex,             [[Hexadecimal layout @since 1.2]]
+   terminal,        [[Command-line terminal layout including esc, alt, ctrl key, so on (no auto-correct, no auto-capitalization) @since 1.2]]
+   password,        [[Like normal, but no auto-correct, no auto-capitalization etc. @since 1.2]]
+   datetime,        [[Date and time layout @since 1.8]]
+   emoticon         [[Emoticon layout @since 1.10]]
+}
+
+enum Edje.External.Param_Type {
+   [[The possible types the parameters of an EXTERNAL part can be.]]
+
+   int, /**< Parameter value is an integer. */
+   double, /**< Parameter value is a double. */
+   string, /**< Parameter value is a string. */
+   bool, /**< Parameter value is boolean. */
+   choice, /**< Parameter value is one of a set of
+             predefined string choices. */
+   max /**< Sentinel. Don't use. */
+}
+
+struct Edje.External.Param {
+   [[Struct that holds parameters for parts of type EXTERNAL.]]
+   name: const(char) *; [[The name of the parameter.]]
+   type: Edje.External.Param_Type; [[The type of the parameter. This defines
+                                     which of the next three variables holds
+                                     the value for it.]]
+   // XXX these could be in a union, but eet doesn't support them (or does it?)
+   i: int; [[Used by both integer and boolean]]
+   d: double; [[Used by double]]
+   s: const(char) *; [[Used by both string and choice]]
+}
+
+enum Edje.Message_Type {
+   [[Identifiers of Edje message types, which can be sent back and forth code and a given Edje object's theme file/group.
+     @Edje.Object.message_send() @Edje.Object.message_handler_set()
+   ]]
+   legacy: Edje_Message;
+
+   none = 0,
+
+   signal = 1, [[DONT USE THIS]]
+
+   string = 2, [[A message with a string as value. Use #Edje_Message_String structs as message body, for this type.]]
+   int = 3, [[A message with an integer number as value. Use #Edje_Message_Int structs as message body, for this type.]]
+   float = 4, [[A message with a floating pointer number as value. Use #Edje_Message_Float structs as message body, for this type.]]
+
+   string_set = 5, [[A message with a list of strings as value. Use #Edje_Message_String_Set structs as message body, for this type.]]
+   int_set = 6, [[A message with a list of integer numbers as value. Use #Edje_Message_Int_Set structs as message body, for this type.]]
+   float_set = 7, [[A message with a list of floating point numbers as value. Use #Edje_Message_Float_Set structs as message body, for this type.]]
+
+   string_int = 8, [[A message with a struct containing a string and an integer number as value. Use #Edje_Message_String_Int structs as message body, for this type.]]
+   string_float = 9, [[A message with a struct containing a string and a floating point number as value. Use #Edje_Message_String_Float structs as message body, for this type.]]
+
+   string_int_set = 10, [[A message with a struct containing a string and list of integer numbers as value. Use #Edje_Message_String_Int_Set structs as message body, for this type.]]
+   string_float_set = 11 [[A message with a struct containing a string and list of floating point numbers as value. Use #Edje_Message_String_Float_Set structs as message body, for this type.]]
+}
+
+
 struct Edje.Perspective; [[Perspective info for maps inside edje objects]]
 
 /* FIXME-cb: Ignore cb types that should be fixed. */

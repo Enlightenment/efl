@@ -480,7 +480,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          @return @c EDJE_EXTERNAL_PARAM_TYPE_MAX on errors, or another value
          from #Edje_External_Param_Type on success. */
-         return: Edje_External_Param_Type;
+         return: Edje.External.Param_Type;
          params {
             @in part: const(char)*; /*@ The part name */
             @out param: const(char); /*@ the parameter name to use. */
@@ -982,7 +982,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          params {
             @in part: const(char)*; /*@ The part name */
-            @in layout: Edje_Input_Panel_Layout; /*@ layout type */
+            @in layout: Edje.Input_Panel.Layout; /*@ layout type */
          }
       }
       part_text_input_panel_layout_get @const {
@@ -993,7 +993,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          @see edje_object_part_text_input_panel_layout_set
          @since 1.1 */
-         return: Edje_Input_Panel_Layout;
+         return: Edje.Input_Panel.Layout;
          params {
             @in part: const(char)*; /*@ The part name */
          }
@@ -1026,7 +1026,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          params {
             @in part: const(char)*; /*@ The part name */
-            @in lang: Edje_Input_Panel_Lang; /*@ the language to be set to the input panel. */
+            @in lang: Edje.Input_Panel.Lang; /*@ the language to be set to the input panel. */
          }
       }
       part_text_input_panel_language_get @const {
@@ -1037,7 +1037,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          @return input panel language type
          @since 1.2.0 */
-         return: Edje_Input_Panel_Lang;
+         return: Edje.Input_Panel.Lang;
          params {
             @in part: const(char)*; /*@ The part name */
          }
@@ -1317,7 +1317,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          edje_object_message_handler_set(). */
 
          params {
-            @in type: Edje_Message_Type; /*@ The type of message to send to @p obj */
+            @in type: Edje.Message_Type; /*@ The type of message to send to @p obj */
             @in id: int; /*@ A identification number for the message to be sent */
             @in msg: void *; /*@ The message's body, a struct depending on @p type */
          }
@@ -1749,7 +1749,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          params {
             @in part: const(char)*; /*@ The part name */
-            @in return_key_type: Edje_Input_Panel_Return_Key_Type; /*@ The type of "return" key on the input panel */
+            @in return_key_type: Edje.Input_Panel.Return_Key_Type; /*@ The type of "return" key on the input panel */
          }
       }
       part_text_input_panel_return_key_type_get @const {
@@ -1760,7 +1760,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          @return The type of "return" key on the input panel
          @since 1.2.0 */
-         return: Edje_Input_Panel_Return_Key_Type;
+         return: Edje.Input_Panel.Return_Key_Type;
          params {
             @in part: const(char)*; /*@ The part name */
          }
@@ -1823,7 +1823,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in param: const(Edje_External_Param)*; /*@ the parameter details, including its name, type and
+            @in param: const(Edje.External.Param)*; /*@ the parameter details, including its name, type and
             actual value. This pointer should be valid, and the
             parameter must exist in
             #Edje_External_Type.parameters_info, with the exact type,
@@ -1852,7 +1852,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The part name */
-            @out param: Edje_External_Param; /*@ the parameter details. It is used as both input and
+            @out param: Edje.External.Param; /*@ the parameter details. It is used as both input and
             output variable. This pointer should be valid, and the
             parameter must exist in
             #Edje_External_Type.parameters_info, with the exact type,
@@ -2019,7 +2019,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          params {
             @in part: const(char)*; /*@ The part name */
-            @in input_hints: Edje_Input_Hints; /*@ input hints */
+            @in input_hints: Edje.Input_Hints; /*@ input hints */
          }
       }
       part_text_input_hint_get @const {
@@ -2028,7 +2028,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          @return The value of input hint
          @since 1.12.0 */
-         return: Edje_Input_Hints;
+         return: Edje.Input_Hints;
          params {
             @in part: const(char)*; /*@ The part name */
          }

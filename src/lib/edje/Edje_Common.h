@@ -322,20 +322,6 @@ EAPI void         edje_collection_cache_flush     (void);
  */
 
 /**
- * The possible types the parameters of an EXTERNAL part can be.
- */
-typedef enum _Edje_External_Param_Type
-{
-   EDJE_EXTERNAL_PARAM_TYPE_INT, /**< Parameter value is an integer. */
-   EDJE_EXTERNAL_PARAM_TYPE_DOUBLE, /**< Parameter value is a double. */
-   EDJE_EXTERNAL_PARAM_TYPE_STRING, /**< Parameter value is a string. */
-   EDJE_EXTERNAL_PARAM_TYPE_BOOL, /**< Parameter value is boolean. */
-   EDJE_EXTERNAL_PARAM_TYPE_CHOICE, /**< Parameter value is one of a set of
-                                      predefined string choices. */
-   EDJE_EXTERNAL_PARAM_TYPE_MAX /**< Sentinel. Don't use. */
-} Edje_External_Param_Type;
-
-/**
  * Flags that determine how a parameter may be accessed in different
  * circumstances.
  */
@@ -360,25 +346,6 @@ typedef enum _Edje_External_Param_Flags
  * @return the string with the string representation, or @c "(unknown)".
  */
 EAPI const char *edje_external_param_type_str(Edje_External_Param_Type type) EINA_PURE;
-
-/**
- * Struct that holds parameters for parts of type EXTERNAL.
- */
-struct _Edje_External_Param
-{
-   const char               *name; /**< The name of the parameter. */
-   Edje_External_Param_Type  type; /**< The type of the parameter. This defines
-                                     which of the next three variables holds
-                                     the value for it. */
-   // XXX these could be in a union, but eet doesn't support them (or does it?)
-   int                       i; /**< Used by both integer and boolean */
-   double                    d; /**< Used by double */
-   const char               *s; /**< Used by both string and choice */
-};
-/**
- * Struct that holds parameters for parts of type EXTERNAL.
- */
-typedef struct _Edje_External_Param Edje_External_Param;
 
 /**
  * Helper macro to indicate an EXTERNAL's integer parameter is undefined.
@@ -993,62 +960,6 @@ typedef enum _Edje_Text_Filter_Type
    EDJE_TEXT_FILTER_FORMAT = 1, /**< Format type filter */
    EDJE_TEXT_FILTER_MARKUP = 2  /**< Markup type filter */
 } Edje_Text_Filter_Type;
-
-/**
- * @typedef Edje_Input_Panel_Lang
- *
- */
-typedef enum _Edje_Input_Panel_Lang
-{
-   EDJE_INPUT_PANEL_LANG_AUTOMATIC,    /**< Automatic @since 1.2 */
-   EDJE_INPUT_PANEL_LANG_ALPHABET      /**< Alphabet @since 1.2 */
-} Edje_Input_Panel_Lang;
-
-typedef enum _Edje_Input_Panel_Return_Key_Type
-{
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT, /**< Default @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DONE,    /**< Done @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_GO,      /**< Go @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_JOIN,    /**< Join @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN,   /**< Login @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_NEXT,    /**< Next @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH,  /**< Search or magnifier icon @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SEND,    /**< Send @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN   /**< Sign-in @since 1.8 */
-} Edje_Input_Panel_Return_Key_Type;
-
-/**
- * @typedef Edje_Input_Panel_Layout
- * @brief Edje input panel layout
- */
-typedef enum _Edje_Input_Panel_Layout
-{
-   EDJE_INPUT_PANEL_LAYOUT_NORMAL,          /**< Default layout */
-   EDJE_INPUT_PANEL_LAYOUT_NUMBER,          /**< Number layout */
-   EDJE_INPUT_PANEL_LAYOUT_EMAIL,           /**< Email layout */
-   EDJE_INPUT_PANEL_LAYOUT_URL,             /**< URL layout */
-   EDJE_INPUT_PANEL_LAYOUT_PHONENUMBER,     /**< Phone Number layout */
-   EDJE_INPUT_PANEL_LAYOUT_IP,              /**< IP layout */
-   EDJE_INPUT_PANEL_LAYOUT_MONTH,           /**< Month layout */
-   EDJE_INPUT_PANEL_LAYOUT_NUMBERONLY,      /**< Number Only layout */
-   EDJE_INPUT_PANEL_LAYOUT_INVALID,         /**< Never use this */
-   EDJE_INPUT_PANEL_LAYOUT_HEX,             /**< Hexadecimal layout @since 1.2 */
-   EDJE_INPUT_PANEL_LAYOUT_TERMINAL,        /**< Command-line terminal layout including esc, alt, ctrl key, so on (no auto-correct, no auto-capitalization) @since 1.2 */
-   EDJE_INPUT_PANEL_LAYOUT_PASSWORD,        /**< Like normal, but no auto-correct, no auto-capitalization etc. @since 1.2 */
-   EDJE_INPUT_PANEL_LAYOUT_DATETIME,        /**< Date and time layout @since 1.8 */
-   EDJE_INPUT_PANEL_LAYOUT_EMOTICON         /**< Emoticon layout @since 1.10 */
-} Edje_Input_Panel_Layout;
-
-/*
- * @typedef Edje_Input_Hints
- * @brief Edje input hints
- */
-typedef enum
-{
-   EDJE_INPUT_HINT_NONE                = 0,        /**< No active hints @since 1.12 */
-   EDJE_INPUT_HINT_AUTO_COMPLETE       = 1 << 0,   /**< Suggest word auto completion @since 1.12 */
-   EDJE_INPUT_HINT_SENSITIVE_DATA      = 1 << 1,   /**< Typed text should not be stored. @since 1.12 */
-} Edje_Input_Hints;
 
 enum
 {
@@ -1946,34 +1857,6 @@ EAPI void         edje_language_set               (const char *locale);
  *
  * @{
  */
-
-/**
- * Identifiers of Edje message types, which can be sent back and forth
- * code and a given Edje object's theme file/group.
- *
- * @see edje_object_message_send()
- * @see edje_object_message_handler_set()
- */
-typedef enum _Edje_Message_Type
-{
-   EDJE_MESSAGE_NONE = 0,
-
-   EDJE_MESSAGE_SIGNAL = 1, /* DONT USE THIS */
-
-   EDJE_MESSAGE_STRING = 2, /**< A message with a string as value. Use #Edje_Message_String structs as message body, for this type. */
-   EDJE_MESSAGE_INT = 3, /**< A message with an integer number as value. Use #Edje_Message_Int structs as message body, for this type. */
-   EDJE_MESSAGE_FLOAT = 4, /**< A message with a floating pointer number as value. Use #Edje_Message_Float structs as message body, for this type. */
-
-   EDJE_MESSAGE_STRING_SET = 5, /**< A message with a list of strings as value. Use #Edje_Message_String_Set structs as message body, for this type. */
-   EDJE_MESSAGE_INT_SET = 6, /**< A message with a list of integer numbers as value. Use #Edje_Message_Int_Set structs as message body, for this type. */
-   EDJE_MESSAGE_FLOAT_SET = 7, /**< A message with a list of floating point numbers as value. Use #Edje_Message_Float_Set structs as message body, for this type. */
-
-   EDJE_MESSAGE_STRING_INT = 8, /**< A message with a struct containing a string and an integer number as value. Use #Edje_Message_String_Int structs as message body, for this type. */
-   EDJE_MESSAGE_STRING_FLOAT = 9, /**< A message with a struct containing a string and a floating point number as value. Use #Edje_Message_String_Float structs as message body, for this type. */
-
-   EDJE_MESSAGE_STRING_INT_SET = 10, /**< A message with a struct containing a string and list of integer numbers as value. Use #Edje_Message_String_Int_Set structs as message body, for this type. */
-   EDJE_MESSAGE_STRING_FLOAT_SET = 11 /**< A message with a struct containing a string and list of floating point numbers as value. Use #Edje_Message_String_Float_Set structs as message body, for this type. */
-} Edje_Message_Type;
 
 typedef struct _Edje_Message_String           Edje_Message_String;
 typedef struct _Edje_Message_Int              Edje_Message_Int;
