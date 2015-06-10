@@ -217,6 +217,14 @@ types_header_generate(const char *eo_filename, Eina_Strbuf *buf, Eina_Bool full)
         if (!tp || eolian_type_is_extern(tp))
           continue;
 
+        if (eolian_type_type_get(tp) == EOLIAN_TYPE_ALIAS)
+          {
+             const Eolian_Type *btp = eolian_type_base_type_get(tp);
+             if (eolian_type_type_get(btp) == EOLIAN_TYPE_REGULAR)
+               if (!strcmp(eolian_type_full_name_get(btp), "__undefined_type"))
+                 continue;
+          }
+
         Eina_Strbuf *tbuf = _type_generate(tp, full);
         if (tbuf)
           {

@@ -3,6 +3,8 @@ type List_Objects: own(list<Eo *>*); /* A little more complex */
 
 type @extern Evas.Pants: float; /* not generated */
 
+type Undef: __undefined_type; /* not generated */
+
 enum Enum.Bar
 {
    legacy: bar;
