@@ -448,7 +448,8 @@ EAPI Eina_Bool
 ecore_fork_reset_callback_add(Ecore_Cb func, const void *data)
 {
    Ecore_Fork_Cb *fcb;
-   
+
+   if (!func) return EINA_FALSE;
    fcb = calloc(1, sizeof(Ecore_Fork_Cb));
    if (!fcb) return EINA_FALSE;
    fcb->func = func;
