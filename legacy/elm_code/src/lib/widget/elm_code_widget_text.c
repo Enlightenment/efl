@@ -70,6 +70,9 @@ _elm_code_widget_line_text_column_width_to_position(Eo *obj, Elm_Code_Widget_Dat
 static unsigned int
 _elm_code_widget_line_text_column_width_get(Eo *obj, Elm_Code_Widget_Data *pd, Elm_Code_Line *line)
 {
+   if (!line)
+     return 0;
+
    return _elm_code_widget_line_text_column_width_to_position(obj, pd, line, line->length) - 1;
 }
 
