@@ -359,6 +359,7 @@ typedef struct _Edje_Part_Description_Spec_Table     Edje_Part_Description_Spec_
 typedef struct _Edje_Part_Description_Spec_Mesh_Node Edje_Part_Description_Spec_Mesh_Node;
 typedef struct _Edje_Part_Description_Spec_Light     Edje_Part_Description_Spec_Light;
 typedef struct _Edje_Part_Description_Spec_Camera    Edje_Part_Description_Spec_Camera;
+typedef struct _Edje_Part_Description_Spec_Filter    Edje_Part_Description_Spec_Filter;
 typedef struct _Edje_Physics_Face                    Edje_Physics_Face;
 typedef struct _Edje_Patterns                        Edje_Patterns;
 typedef struct _Edje_Part_Box_Animation              Edje_Part_Box_Animation;
@@ -1277,6 +1278,12 @@ struct _Edje_Part_Description_Spec_Border
    FLOAT_T        scale_by; /* when border scale above is enabled, border width OUTPUT is scaled by the object or global scale factor. this value adds another multiplier that the global scale is multiplued by first. if <= 0.0 it is not used, and if 1.0 it i s "ineffective" */
 };
 
+struct _Edje_Part_Description_Spec_Filter
+{
+   const char    *code;
+   Eina_List     *sources;
+};
+
 struct _Edje_Part_Description_Spec_Image
 {
    Edje_Part_Description_Spec_Fill   fill;
@@ -1308,8 +1315,7 @@ struct _Edje_Part_Description_Spec_Text
    Edje_String    style; /* the text style if a textblock */
    Edje_String    font; /* if a specific font is asked for */
    Edje_String    repch; /* replacement char for password mode entry */
-   Edje_String    filter; /* special effects */
-   Eina_List     *filter_sources; /* proxy sources for special effects */
+   Edje_Part_Description_Spec_Filter filter;
 
    Edje_Alignment align; /* text alignment within bounds */
    Edje_Color     color3;
@@ -1451,7 +1457,6 @@ struct _Edje_Part_Description_Spec_Camera
       int                                look_to; /* -1 = whole part collection, or part ID */
    } orientation;
 };
-
 
 struct _Edje_Part_Description_Image
 {
@@ -1784,8 +1789,6 @@ struct _Edje_Real_Part_Text
    const char            *text; // 4
    const char            *font; // 4
    const char            *style; // 4
-   const char            *filter; // 4
-   Eina_List             *filter_sources; // 4
    Edje_Position          offset; // 8
    short                  size; // 2
    struct {
@@ -1799,6 +1802,7 @@ struct _Edje_Real_Part_Text
       const char         *in_font; // 4
       FLOAT_T             align_x, align_y; // 16
    } cache;
+   Edje_Part_Description_Spec_Filter filter; // 8
 }; // 88
 // FIXME make text a potiner to struct and alloc at end
 // if part type is TEXT move common members textblock +

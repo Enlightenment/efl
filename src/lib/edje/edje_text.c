@@ -228,17 +228,17 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (!text)
      text = edje_string_get(&chosen_desc->text.text);
    font = _edje_text_class_font_get(ed, chosen_desc, &size, &sfont);
-   filter = chosen_desc->text.filter.str;
+   filter = chosen_desc->text.filter.code;
 
    if (ep->typedata.text->text) text = ep->typedata.text->text;
    if (ep->typedata.text->font) font = ep->typedata.text->font;
    if (ep->typedata.text->size > 0) size = ep->typedata.text->size;
-   if (ep->typedata.text->filter) filter = ep->typedata.text->filter;
-   if (ep->typedata.text->filter_sources != chosen_desc->text.filter_sources)
+   if (ep->typedata.text->filter.code) filter = ep->typedata.text->filter.code;
+   if (ep->typedata.text->filter.sources != chosen_desc->text.filter.sources)
      {
-        prev_sources = ep->typedata.text->filter_sources;
-        filter_sources = chosen_desc->text.filter_sources;
-        ep->typedata.text->filter_sources = chosen_desc->text.filter_sources;
+        prev_sources = ep->typedata.text->filter.sources;
+        filter_sources = chosen_desc->text.filter.sources;
+        ep->typedata.text->filter.sources = chosen_desc->text.filter.sources;
      }
 
    if (ep->typedata.text->text_source)

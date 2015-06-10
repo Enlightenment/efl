@@ -6696,13 +6696,13 @@ st_collections_group_parts_part_description_inherit(void)
               ted->text.domain = STRDUP(ted->text.domain);
               ted->text.text_class = STRDUP(ted->text.text_class);
               ted->text.font.str = STRDUP(ted->text.font.str);
-              ted->text.filter.str = STRDUP(ted->text.filter.str);
+              ted->text.filter.code = STRDUP(ted->text.filter.code);
               {
                  Eina_List *l;
                  Eina_Stringshare *name;
                  static int part_key = 0;
 
-                 EINA_LIST_FOREACH(ted->text.filter_sources, l, name)
+                 EINA_LIST_FOREACH(ted->text.filter.sources, l, name)
                    data_queue_part_lookup(pc, name, &part_key);
               }
 
@@ -9014,23 +9014,23 @@ st_collections_group_parts_part_description_text_filter(void)
 
    ed = (Edje_Part_Description_Text*) current_desc;
    pc = eina_list_data_get(eina_list_last(edje_collections));
-   if (ed->text.filter.str)
+   if (ed->text.filter.code)
      {
-        EINA_LIST_FREE(ed->text.filter_sources, name)
+        EINA_LIST_FREE(ed->text.filter.sources, name)
           {
              part_lookup_delete(pc, name, &part_key, NULL);
              eina_stringshare_del(name);
           }
-        free((void*)ed->text.filter.str);
+        free((void*)ed->text.filter.code);
      }
-   ed->text.filter_sources = NULL;
+   ed->text.filter.sources = NULL;
 
-   ed->text.filter.str = parse_str(0);
-   if (!ed->text.filter.str) return;
+   ed->text.filter.code = parse_str(0);
+   if (!ed->text.filter.code) return;
 
    // Parse list of buffers that have a source
    // note: does not support comments
-   code = strdup(ed->text.filter.str);
+   code = strdup(ed->text.filter.code);
    for (token = strtok(code, ";"); token; token = strtok(NULL, ";"))
      {
         size_t len;
@@ -9079,7 +9079,7 @@ st_collections_group_parts_part_description_text_filter(void)
      }
    free(code);
 
-   if (valid) ed->text.filter_sources = sources;
+   if (valid) ed->text.filter.sources = sources;
 }
 
 
