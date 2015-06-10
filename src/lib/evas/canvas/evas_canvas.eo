@@ -111,7 +111,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @since 1.2 */
          }
          values {
-            flags: Evas_Event_Flags; /*@ The default flags to use */
+            flags: Evas.Event_Flags; /*@ The default flags to use */
          }
       }
       @property output_method {
@@ -224,7 +224,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @ingroup Evas_Font_Group */
          }
          values {
-            hinting: Evas_Font_Hinting_Flags; /*@ The hinting to use, one of #EVAS_FONT_HINTING_NONE, */
+            hinting: Evas.Font.Hinting_Flags; /*@ The hinting to use, one of #EVAS_FONT_HINTING_NONE, */
          }
       }
       @property engine_info {
@@ -262,7 +262,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @ingroup Evas_Output_Method */
          }
          values {
-            info: Evas_Engine_Info *; /*@ The pointer to the Engine Info to use */
+            info: Evas.Engine_Info *; /*@ The pointer to the Engine Info to use */
          }
       }
       @property focus {
@@ -343,7 +343,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
             @return An .Evas_Lock handle to query Evas' keys subsystem with
             evas_key_lock_is_set(), or @c NULL on error. */
-            return: const(Evas_Lock)* @warn_unused;
+            return: const(Evas.Lock)* @warn_unused;
          }
       }
       @property pointer_canvas_xy {
@@ -535,7 +535,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
             @return An .Evas_Modifier handle to query Evas' keys subsystem
             with evas_key_modifier_is_set(), or @c NULL on error. */
-            return: const(Evas_Modifier)* @warn_unused;
+            return: const(Evas.Modifier)* @warn_unused;
          }
       }
       @property pointer_button_down_mask {
@@ -666,7 +666,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_key_modifier_is_set
          @see evas_object_key_grab
          @see evas_object_key_ungrab */
-         return: Evas_Modifier_Mask @warn_unused;
+         return: Evas.Modifier_Mask @warn_unused;
          params {
             @in keyname: const(char)* @nonull; /*@ The name of the modifier key to create the mask for. */
          }
@@ -829,7 +829,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @in ang: double;
             @in fx: double;
             @in fy: double;
-            @in flags: Evas_Button_Flags;
+            @in flags: Evas.Button_Flags;
             @in timestamp: uint;
             @in data: const(void)*;
          }
@@ -847,7 +847,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @in ang: double;
             @in fx: double;
             @in fy: double;
-            @in flags: Evas_Button_Flags;
+            @in flags: Evas.Button_Flags;
             @in timestamp: uint;
             @in data: const(void)*;
          }
@@ -987,7 +987,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @in ang: double;
             @in fx: double;
             @in fy: double;
-            @in flags: Evas_Button_Flags;
+            @in flags: Evas.Button_Flags;
             @in timestamp: uint;
             @in data: const(void)*;
          }
@@ -1051,7 +1051,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @ingroup Evas_Font_Group */
          return: bool @warn_unused;
          params {
-            @in hinting: Evas_Font_Hinting_Flags; /*@ The hinting to use, one of #EVAS_FONT_HINTING_NONE, */
+            @in hinting: Evas.Font.Hinting_Flags; /*@ The hinting to use, one of #EVAS_FONT_HINTING_NONE, */
          }
       }
       object_top_at_xy_get @const {
@@ -1107,7 +1107,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          params {
             @in b: int; /*@ The button number. */
-            @in flags: Evas_Button_Flags; /*@ evas button flags. */
+            @in flags: Evas.Button_Flags; /*@ evas button flags. */
             @in timestamp: uint; /*@ The timestamp of the mouse up event. */
             @in data: const(void)*; /*@ The data for canvas. */
          }
@@ -1122,7 +1122,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          params {
             @in b: int; /*@ The button number. */
-            @in flags: Evas_Button_Flags; /*@ The evas button flags. */
+            @in flags: Evas.Button_Flags; /*@ The evas button flags. */
             @in timestamp: uint; /*@ The timestamp of the mouse down event. */
             @in data: const(void)*; /*@ The data for canvas. */
          }
@@ -1138,7 +1138,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
 
          params {
             @in event_copy: void *; /*@ the event to refeed */
-            @in event_type: Evas_Callback_Type; /*@ Event type */
+            @in event_type: Evas.Callback_Type; /*@ Event type */
          }
       }
       font_available_list @const {
@@ -1468,7 +1468,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
          @see evas_touch_point_list_nth_xy_get()
          @see evas_touch_point_list_nth_id_get() */
 
-         return: Evas_Touch_Point_State;
+         return: Evas.Touch_Point_State;
          params {
             @in n: uint; /*@ The number of the touched point (0 being the first). */
          }
@@ -1616,7 +1616,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @in ang: double;
             @in fx: double;
             @in fy: double;
-            @in flags: Evas_Button_Flags;
+            @in flags: Evas.Button_Flags;
             @in timestamp: uint;
             @in data: const(void)*;
          }
@@ -1854,7 +1854,7 @@ class Evas.Canvas (Eo.Base, Evas.Common_Interface)
             @in device: int; /*@ System-provided device identifier */
             @in toolid: int; /*@ Type of tool currently being used */
             @in naxes: int; /*@ Number of elements in the \p axis array */
-            @in axis: const(Evas_Axis)*; /*@ Array containing the current value of all updated axes */
+            @in axis: const(Evas.Axis)*; /*@ Array containing the current value of all updated axes */
             @in data: const(void)*; /*@ Data for canvas. */
          }
       }

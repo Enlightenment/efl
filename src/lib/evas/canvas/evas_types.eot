@@ -99,6 +99,15 @@ enum Evas.Text_Style_Type {
 
 type Evas.Font.Size: int; /**< A type for font size */
 
+enum Evas.Font.Hinting_Flags {
+   [[Flags for Font Hinting]]
+   legacy: Evas_Font_Hinting;
+
+   none, [[No font hinting]]
+   auto, [[Automatic font hinting]]
+   bytecode [[Bytecode font hinting]]
+}
+
 struct Evas.Map; /*@ An opaque handle to map points
                   *
                   * @see evas_map_new()
@@ -107,3 +116,104 @@ struct Evas.Map; /*@ An opaque handle to map points
                   *
                   * @ingroup Evas_Object_Group_Map
                   */
+
+enum Evas.Button_Flags {
+   [[Flags for Mouse Button events]]
+   legacy: Evas_Button;
+
+   none = 0, [[No extra mouse button data]]
+   double_click = (1 << 0), [[This mouse button press was the 2nd press of a double click]]
+   triple_click = (1 << 1) [[This mouse button press was the 3rd press of a triple click]]
+}
+
+enum Evas.Event_Flags {
+   [[Flags for Events]]
+   legacy: Evas_Event_Flag;
+
+   none = 0, [[No fancy flags set]]
+   on_hold = (1 << 0), [[This event is being delivered but should be put "on hold" until the on hold flag is unset. The event should be used for informational purposes and maybe some indications visually, but not actually perform anything]]
+   on_scroll = (1 << 1) [[This event flag indicates the event occurs while scrolling; for example, DOWN event occurs during scrolling; the event should be used for informational purposes and maybe some indications visually, but not actually perform anything]]
+}
+
+enum Evas.Touch_Point_State {
+   [[State of Evas_Coord_Touch_Point]]
+   legacy: Evas_Touch_Point;
+
+   down, [[Touch point is pressed down]]
+   up, [[Touch point is released]]
+   move, [[Touch point is moved]]
+   still, [[Touch point is not moved after pressed]]
+   cancel [[Touch point is cancelled]]
+}
+
+enum Evas.Callback_Type
+{
+   [[Identifier of callbacks to be set for Evas canvases or Evas objects.]]
+   legacy: Evas_Callback;
+
+   /** FIXME-doc
+    * The following figure illustrates some Evas callbacks:
+
+    * @image html evas-callbacks.png
+    * @image rtf evas-callbacks.png
+    * @image latex evas-callbacks.eps
+    *
+    * @see evas_object_event_callback_add()
+    * @see evas_event_callback_add()
+    */
+
+   mouse_in, [[Mouse In Event]]
+   mouse_out, [[Mouse Out Event]]
+   mouse_down, [[Mouse Button Down Event]]
+   mouse_up, [[Mouse Button Up Event]]
+   mouse_move, [[Mouse Move Event]]
+   mouse_wheel, [[Mouse Wheel Event]]
+   multi_down, [[Multi-touch Down Event]]
+   multi_up, [[Multi-touch Up Event]]
+   multi_move, [[Multi-touch Move Event]]
+   free, [[Object Being Freed (Called after Del)]]
+   key_down, [[Key Press Event]]
+   key_up, [[Key Release Event]]
+   focus_in, [[Focus In Event]]
+   focus_out, [[Focus Out Event]]
+   show, [[Show Event]]
+   hide, [[Hide Event]]
+   move, [[Move Event]]
+   resize, [[Resize Event]]
+   restack, [[Restack Event]]
+   del, [[Object Being Deleted (called before Free)]]
+   hold, [[Events go on/off hold]]
+   changed_size_hints, [[Size hints changed event]]
+   image_preloaded, [[Image has been preloaded]]
+
+   /*
+    * The following events are only for use with Evas canvases, with
+    * evas_event_callback_add():
+    */
+   canvas_focus_in, [[Canvas got focus as a whole]]
+   canvas_focus_out, [[Canvas lost focus as a whole]]
+   render_flush_pre, [[Called just before rendering is updated on the canvas target]]
+   render_flush_post, [[Called just after rendering is updated on the canvas target]]
+   canvas_object_focus_in, [[Canvas object got focus]]
+   canvas_object_focus_ouT, [[Canvas object lost focus]]
+   canvas_viewport_resize, [[Canvas viewport resized @since 1.15]]
+
+   /*
+    * More Evas object event types - see evas_object_event_callback_add():
+    */
+   image_unloaded, [[Image data has been unloaded (by some mechanism in Evas that throw out original image data)]]
+
+   render_pre, [[Called just before rendering starts on the canvas target @since 1.2]]
+   render_post, [[Called just after rendering stops on the canvas target @since 1.2]]
+
+   image_resize, [[Image size is changed @since 1.8]]
+   device_changed, [[Devices added, removed or changed on canvas @since 1.8]]
+
+   axis_update, [[Input device changed value on some axis @since 1.13]]
+   last [[kept as last element/sentinel -- not really an event]]
+}
+
+struct Evas.Modifier; [[An opaque type containing information on which modifier keys are registered in an Evas canvas]]
+struct Evas.Lock; [[An opaque type containing information on which lock keys are registered in an Evas canvas]]
+struct Evas.Engine_Info; [[A generic Evas Engine information structure]]
+struct Evas.Axis; [[Details for a single device axis state @since 1.13]]
