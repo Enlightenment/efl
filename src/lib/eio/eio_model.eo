@@ -3,30 +3,30 @@ class Eio.Model (Eo.Base, Efl.Model.Base)
     legacy_prefix: null;
     methods {
        children_filter_set {
-            /*@ Set children filter callback.
-              This function sets, along with user's private data userdata,
-              the Eio's Eio_Filter_Direct_Cb which is a mid-step
-              before receiving the real data. Once in filter
-              callback we can decide, by returning either EINA_FALSE, to abort
-              the notification or EINA_TRUE to keep it.
-              @see Eio.h
-              @see emodel_children_slice_fetch
-              @def emodel_children_filter_set
-              @since 1.11
-              @in filter_cb
-              @in userdata */
-             params {
-                 filter_cb: Eio_Filter_Direct_Cb; /*@  Filter callback */
-                 userdata: void *; /*@  User's private data */
-             }
+          [[Set children filter callback.
+
+            This function sets, along with user's private data userdata,
+            the Eio's Eio_Filter_Direct_Cb which is a mid-step before
+            receiving the real data. Once in filter callback we can decide,
+            by returning either EINA_FALSE, to abort the notification or
+            EINA_TRUE to keep it.
+
+            See also @emodel_children_slice_fetch, @emodel_children_filter_set.
+
+            @since 1.11
+          ]]
+          params {
+             filter_cb: Eio_Filter_Direct_Cb; [[Filter callback]]
+             userdata: void *; [[User's private data]]
+          }
        }
        path_set {
-          /*@ Custom Eio_Model constructor.
-            @def eio_model_constructor
+          [[Custom Eio_Model constructor.
+
             @since 1.11
-            @in path */
+          ]]
           params {
-             @in path: const(char)*; /*@ Root path provided by caller */
+             @in path: const(char)*; [[Root path provided by caller]]
           }
        }
     }

@@ -24,45 +24,41 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
       }
       @property visibility {
          set {
-            /*@ Makes the given Ector renderer visible or invisible. */
+            [[Makes the given Ector renderer visible or invisible.]]
 	 }
 	 get {
-            /*@ Retrieves whether or not the given Ector renderer is visible. */
+            [[Retrieves whether or not the given Ector renderer is visible.]]
 	 }
 	 values {
-	    v: bool; /*@ @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise */
+	    v: bool; [[true if to make the object visible, false otherwise]]
 	 }
       }
       @property color {
          set {
-            /*@
-            Sets the general/main color of the given Ector renderer to the given
-            one.
+            [[Sets the general/main color of the given Ector renderer to the
+              given one.
 
-            @note These color values are expected to be premultiplied by @p a.
-
-            @ingroup Ector_Renderer_Group_Basic */
+              These color values are expected to be premultiplied by alpha.
+            ]]
          }
          get {
-            /*@
-            Retrieves the general/main color of the given Ector renderer.
+            [[Retrieves the general/main color of the given Ector renderer.
 
-            Retrieves the main color's RGB component (and alpha channel)
-            values, <b>which range from 0 to 255</b>. For the alpha channel,
-            which defines the object's transparency level, 0 means totally
-            transparent, while 255 means opaque. These color values are
-            premultiplied by the alpha value.
+              Retrieves the main color's RGB component (and alpha channel)
+              values, which range from 0 to 255. For the alpha channel,
+              which defines the object's transparency level, 0 means totally
+              transparent, while 255 means opaque. These color values are
+              premultiplied by the alpha value.
 
-            @note Use @c NULL pointers on the components you're not interested
-            in: they'll be ignored by the function.
-
-            @ingroup Ector_Renderer_Group_Basic */
+              Use null pointers on the components you're not interested in,
+              they'll be ignored by the function.
+            ]]
 	 }
 	 values {
-            r: int; /*@ The red component of the given color. */
-            g: int; /*@ The green component of the given color. */
-            b: int; /*@ The blue component of the given color. */
-            a: int; /*@ The alpha component of the given color. */
+            r: int; [[The red component of the given color.]]
+            g: int; [[The green component of the given color.]]
+            b: int; [[The blue component of the given color.]]
+            a: int; [[The alpha component of the given color.]]
 	 }
       }
       @property mask {
@@ -92,7 +88,7 @@ abstract Ector.Renderer.Generic.Base (Eo.Base)
          return: bool @warn_unused;
 	 params {
 	    @in op: Ector_Rop;
-	    @in clips: array<Eina_Rectangle *> *; /*@ array of Eina_Rectangle clip */
+	    @in clips: array<Eina_Rectangle *> *; [[array of Eina_Rectangle clip]]
 	    @in mul_col: uint;
 	 }
       }

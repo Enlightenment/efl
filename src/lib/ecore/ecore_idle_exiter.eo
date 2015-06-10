@@ -3,7 +3,7 @@ class Ecore.Idle.Exiter (Eo.Base)
    eo_prefix: ecore_idle_exiter;
    methods {
       constructor {
-         /*@ Constructor. */
+         [[Constructor.]]
          legacy: null;
          params {
             @in func: Ecore_Task_Cb;
