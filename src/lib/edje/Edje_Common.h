@@ -1,3 +1,5 @@
+#include "edje_types.eot.h"
+
 /**
  * @internal
  *
@@ -993,20 +995,6 @@ typedef enum _Edje_Text_Filter_Type
 } Edje_Text_Filter_Type;
 
 /**
- * @typedef Edje_Text_Autocapital_Type
- *
- * All Text auto capital mode type values
- *
- */
-typedef enum _Edje_Text_Autocapital_Type
-{
-   EDJE_TEXT_AUTOCAPITAL_TYPE_NONE,        /**< None mode value */
-   EDJE_TEXT_AUTOCAPITAL_TYPE_WORD,        /**< Word mode value */
-   EDJE_TEXT_AUTOCAPITAL_TYPE_SENTENCE,    /**< Sentence mode value */
-   EDJE_TEXT_AUTOCAPITAL_TYPE_ALLCHARACTER /**< All characters mode value */
-} Edje_Text_Autocapital_Type;
-
-/**
  * @typedef Edje_Input_Panel_Lang
  *
  */
@@ -1447,24 +1435,6 @@ typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, c
  */
 
 /**
- * @typedef Edje_Cursor
- *
- * All available cursor states
- *
- */
-typedef enum _Edje_Cursor
-{
-   EDJE_CURSOR_MAIN,            /*< Main cursor state            */
-   EDJE_CURSOR_SELECTION_BEGIN, /*< Selection begin cursor state */
-   EDJE_CURSOR_SELECTION_END,   /*< Selection end cursor state   */
-   EDJE_CURSOR_PREEDIT_START,   /*< Pre-edit start cursor state  */
-   EDJE_CURSOR_PREEDIT_END,     /*< Pre-edit end cursor starge   */
-   EDJE_CURSOR_USER,            /*< User cursor state            */
-   EDJE_CURSOR_USER_EXTRA,      /*< User extra cursor state      */
-   // more later
-} Edje_Cursor;
-
-/**
  * @}
  */
 
@@ -1545,19 +1515,6 @@ typedef enum _Edje_Aspect_Control
  *
  * @{
  */
-
-/**
- * @typedef Edje_Drag_Dir
- *
- * Dragable properties values
- */
-typedef enum _Edje_Drag_Dir
-{
-   EDJE_DRAG_DIR_NONE = 0,  /*< Not dragable value     */
-   EDJE_DRAG_DIR_X = 1,     /*< X dragable value       */
-   EDJE_DRAG_DIR_Y = 2,     /*< Y dragable value       */
-   EDJE_DRAG_DIR_XY = 3     /*< X and Y dragable value */
-} Edje_Drag_Dir;
 
 /**
  * @}
@@ -1739,21 +1696,6 @@ EAPI Eina_List   *edje_text_class_list            (void);
  *
  * @{
  */
-
-typedef enum _Edje_Load_Error
-{
-   EDJE_LOAD_ERROR_NONE = 0, /**< No error happened, the loading was successful */
-   EDJE_LOAD_ERROR_GENERIC = 1, /**< A generic error happened during the loading */
-   EDJE_LOAD_ERROR_DOES_NOT_EXIST = 2, /**< The file pointed to did not exist */
-   EDJE_LOAD_ERROR_PERMISSION_DENIED = 3, /**< Permission to read the given file was denied */
-   EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4, /**< Resource allocation failed during the loading */
-   EDJE_LOAD_ERROR_CORRUPT_FILE = 5, /**< The file pointed to was corrupt */
-   EDJE_LOAD_ERROR_UNKNOWN_FORMAT = 6, /**< The file pointed to had an unknown format */
-   EDJE_LOAD_ERROR_INCOMPATIBLE_FILE = 7, /**< The file pointed to is incompatible, i.e., it doesn't match the library's current version's format */
-   EDJE_LOAD_ERROR_UNKNOWN_COLLECTION = 8, /**< The group/collection set to load from was @b not found in the file */
-   EDJE_LOAD_ERROR_RECURSIVE_REFERENCE = 9 /**< The group/collection set to load from had <b>recursive references</b> on its components */
-} Edje_Load_Error; /**< Edje file loading error codes one can get - see edje_load_error_str() too. */
-
 
 /**
  * Get a list of groups in an edje mapped file
@@ -2136,9 +2078,6 @@ EAPI void         edje_message_signal_process             (void);
  *
  * @{
  */
-
-/* perspective info for maps inside edje objects */
-typedef struct _Edje_Perspective Edje_Perspective;
 
 /**
  * Creates a new perspective in the given canvas.

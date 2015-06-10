@@ -1,0 +1,43 @@
+enum Edje.Cursor {
+   [[All available cursor states]]
+   main,            [[Main cursor state]]
+   selection_begin, [[Selection begin cursor state]]
+   selection_end,   [[Selection end cursor state]]
+   preedit_start,   [[Pre-edit start cursor state]]
+   preedit_end,     [[Pre-edit end cursor starge]]
+   user,            [[User cursor state]]
+   user_extra       [[User extra cursor state]]
+}
+
+enum Edje.Drag_Dir {
+   [[Dragable properties values]]
+   none = 0,  [[Not dragable value]]
+   x = 1,     [[X dragable value]]
+   y = 2,     [[Y dragable value]]
+   xy = 3     [[X and Y dragable value]]
+}
+
+enum Edje.Load_Error {
+   [[Edje file loading error codes one can get - see edje_load_error_str() too.]]
+
+   none = 0, [[No error happened, the loading was successful]]
+   generic = 1, [[A generic error happened during the loading]]
+   does_not_exist = 2, [[The file pointed to did not exist]]
+   permission_denied = 3, [[Permission to read the given file was denied]]
+   resource_allocation_failed = 4, [[Resource allocation failed during the loading]]
+   corrupt_file = 5, [[The file pointed to was corrupt]]
+   unknown_format = 6, [[The file pointed to had an unknown format]]
+   incompatible_file = 7, [[The file pointed to is incompatible, i.e., it doesn't match the library's current version's format]]
+   unknown_collection = 8, [[The group/collection set to load from was @b not found in the file]]
+   recursive_reference = 9 [[The group/collection set to load from had <b>recursive references</b> on its components]]
+}
+
+enum Edje.Text.Autocapital_Type {
+   [[All Text auto capital mode type values]]
+   none,        [[None mode value]]
+   word,        [[Word mode value]]
+   sentence,    [[Sentence mode value]]
+   allcharacter [[All characters mode value]]
+}
+
+struct Edje.Perspective; [[Perspective info for maps inside edje objects]]

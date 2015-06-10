@@ -1,3 +1,5 @@
+import edje_types;
+
 class Edje.Object (Evas.Smart_Clipped, Efl.File)
 {
    legacy_prefix: edje_object;
@@ -138,7 +140,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             @see edje_object_perspective_get()
             @see edje_perspective_set() */
             values {
-                ps: Edje_Perspective*; /*@ The perspective object that will be used. */
+                ps: Edje.Perspective*; /*@ The perspective object that will be used. */
             }
          }
          get {
@@ -150,7 +152,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
             @see edje_object_perspective_set() */
             values {
-                ps: const(Edje_Perspective)*; /*@ The perspective object that will be used. */
+                ps: const(Edje.Perspective)*; /*@ The perspective object that will be used. */
             }
          }
       }
@@ -223,7 +225,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          }
          values {
             part: const(char)*; /*@ The part name */
-            cur: Edje_Cursor; /*@ the edje cursor to work on */
+            cur: Edje.Cursor; /*@ the edje cursor to work on */
          }
       }
       @property part_text_cursor_line_end {
@@ -234,7 +236,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          }
          values {
             part: const(char)*; /*@ The part name */
-            cur: Edje_Cursor; /*@ the edje cursor to work on */
+            cur: Edje.Cursor; /*@ the edje cursor to work on */
          }
       }
       @property text_class {
@@ -265,7 +267,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          }
          values {
             part: const(char)*; /*@ The part containing the object. */
-            cur: Edje_Cursor; /*@ The cursor to adjust. */
+            cur: Edje.Cursor; /*@ The cursor to adjust. */
             x: Evas.Coord; /*@ X Coordinate. */
             y: Evas.Coord; /*@ Y Coordinate. */
          }
@@ -278,7 +280,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          }
          values {
             part: const(char)*; /*@ The part name */
-            cur: Edje_Cursor; /*@ the edje cursor to work on */
+            cur: Edje.Cursor; /*@ the edje cursor to work on */
          }
       }
       @property part_text_escaped {
@@ -321,7 +323,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          }
          values {
             part: const(char)*; /*@ The part name */
-            cur: Edje_Cursor; /*@ the edje cursor to work on */
+            cur: Edje.Cursor; /*@ the edje cursor to work on */
          }
       }
       @property message_handler {
@@ -415,7 +417,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             check for the reason of failure with this one.
 
             @see edje_load_error_str() */
-            return: Edje_Load_Error;
+            return: Edje.Load_Error;
          }
       }
       @property size_max {
@@ -632,7 +634,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in cur: Edje_Cursor; /*@ The edje cursor to advance */
+            @in cur: Edje.Cursor; /*@ The edje cursor to advance */
          }
       }
       part_text_style_user_push {
@@ -832,8 +834,8 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          params {
             @in part: const(char)*; /*@ The part name */
-            @in src: Edje_Cursor; /*@ the cursor to copy from */
-            @in dst: Edje_Cursor; /*@ the cursor to copy to */
+            @in src: Edje.Cursor; /*@ the cursor to copy from */
+            @in dst: Edje.Cursor; /*@ the cursor to copy to */
          }
       }
       parts_extends_calc {
@@ -924,7 +926,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          params {
             @in part: const(char)*; /*@ The part name */
-            @in cur: Edje_Cursor; /*@ The cursor to move */
+            @in cur: Edje.Cursor; /*@ The cursor to move */
             @in pos: int; /*@ the position of the cursor */
          }
       }
@@ -937,7 +939,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: int;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in cur: Edje_Cursor; /*@ The cursor to get the position */
+            @in cur: Edje.Cursor; /*@ The cursor to get the position */
          }
       }
       freeze {
@@ -964,7 +966,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: char *;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in cur: Edje_Cursor; /*@ The cursor to use */
+            @in cur: Edje.Cursor; /*@ The cursor to use */
          }
       }
       part_text_input_panel_layout_set {
@@ -1182,7 +1184,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in cur: Edje_Cursor; /*@ the edje cursor to work on */
+            @in cur: Edje.Cursor; /*@ the edje cursor to work on */
          }
       }
       part_drag_page_set {
@@ -1413,7 +1415,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          #EDJE_DRAG_DIR_X: Dragable in X direction\n
          #EDJE_DRAG_DIR_Y: Dragable in Y direction\n
          #EDJE_DRAG_DIR_XY: Dragable in X & Y directions */
-         return: Edje_Drag_Dir;
+         return: Edje.Drag_Dir;
          params {
             @in part: const(char)*; /*@ The part name */
          }
@@ -1552,7 +1554,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          params {
             @in part: const(char)*; /*@ The part name */
-            @in autocapital_type: Edje_Text_Autocapital_Type; /*@ The type of autocapitalization */
+            @in autocapital_type: Edje.Text.Autocapital_Type; /*@ The type of autocapitalization */
          }
       }
       part_text_autocapital_type_get @const {
@@ -1561,7 +1563,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
 
          @return The autocapitalization type
          @since 1.1.0 */
-         return: Edje_Text_Autocapital_Type;
+         return: Edje.Text.Autocapital_Type;
          params {
             @in part: const(char)*; /*@ The part name */
          }
@@ -2055,7 +2057,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in cur: Edje_Cursor; /*@ The cursor to adjust. */
+            @in cur: Edje.Cursor; /*@ The cursor to adjust. */
          }
       }
       text_class_get @const {
@@ -2181,7 +2183,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in cur: Edje_Cursor; /*@ the edje cursor to work on */
+            @in cur: Edje.Cursor; /*@ the edje cursor to work on */
          }
       }
       part_text_cursor_geometry_get @const {
@@ -2304,7 +2306,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in cur: Edje_Cursor; /*@ The cursor to adjust. */
+            @in cur: Edje.Cursor; /*@ The cursor to adjust. */
          }
       }
       part_text_user_insert @const {
@@ -2328,7 +2330,7 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
          return: bool;
          params {
             @in part: const(char)*; /*@ The part name */
-            @in cur: Edje_Cursor; /*@ the edje cursor to work on */
+            @in cur: Edje.Cursor; /*@ the edje cursor to work on */
          }
       }
       part_text_item_list_get @const {

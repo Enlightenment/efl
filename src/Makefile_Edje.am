@@ -5,9 +5,13 @@ edje_eolian_files = \
 	lib/edje/edje_object.eo \
 	lib/edje/edje_edit.eo
 
+edje_eolian_type_files = \
+    lib/edje/edje_types.eot
+
 edje_eolian_c = $(edje_eolian_files:%.eo=%.eo.c)
 edje_eolian_h = $(edje_eolian_files:%.eo=%.eo.h) \
-                $(edje_eolian_files:%.eo=%.eo.legacy.h)
+                $(edje_eolian_files:%.eo=%.eo.legacy.h) \
+                $(edje_eolian_type_files:%.eot=%.eot.h)
 
 BUILT_SOURCES += \
                  $(edje_eolian_c) \
@@ -19,7 +23,8 @@ CLEANFILES += \
 
 edjeeolianfilesdir = $(datadir)/eolian/include/edje-@VMAJ@
 edjeeolianfiles_DATA = \
-                       $(edje_eolian_files)
+                       $(edje_eolian_files) \
+                       $(edje_eolian_type_files)
 
 EXTRA_DIST += \
               ${edjeeolianfiles_DATA}
