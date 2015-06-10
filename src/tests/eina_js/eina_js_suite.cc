@@ -17,6 +17,7 @@
 #include <eina_js_list.hh>
 #include <eina_js_iterator.hh>
 #include <eina_js_error.hh>
+#include <eina_js_log.cc>
 
 const char* ToCString(const v8::String::Utf8Value& value) {
   return *value ? *value : "<string conversion failed>";
@@ -108,6 +109,35 @@ efl::eina::js::range_eina_list<int> raw_list;
 
 efl::eina::array<int> array;
 
+static void eina_log_print_cb_js_test(const Eina_Log_Domain *d,
+                                      Eina_Log_Level level, const char *file,
+                                      const char *fnc, int line,
+                                      const char */*fmt*/, void */*data*/,
+                                      va_list args)
+{
+    static int index = 0;
+
+    const char *msg = va_arg(args, const char*);
+
+    std::string domains[] = {"", "", "", "mydomain", "mydomain2"};
+    int levels[] = {EINA_LOG_LEVEL_DBG, EINA_LOG_LEVEL_CRITICAL,
+                    EINA_LOG_LEVEL_WARN, EINA_LOG_LEVEL_INFO,
+                    EINA_LOG_LEVEL_ERR};
+    std::string functions[] = {"f1", "", "f2", "f3", ""};
+    int lines[] = {190, 191, 192, 193, 199};
+    std::string messages[] = {"I changed again", "Cool to Hate",
+                              "One Fine Day", "Never Gonna Find Me",
+                              "The Kids Aren't Alright"};
+
+    assert(std::string(d->name, d->namelen) == domains[index]);
+    assert(level == levels[index]);
+    assert(file == std::string("eina_js_suite.js"));
+    assert(fnc == functions[index]);
+    assert(line == lines[index]);
+    assert(msg == messages[index]);
+    ++index;
+}
+
 void test_setup(v8::Handle<v8::Object> exports)
 {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
@@ -165,6 +195,141 @@ void test_setup(v8::Handle<v8::Object> exports)
      , efl::eina::js::compatibility_new<v8::String>(isolate, "value"));
   
   std::cerr << __LINE__ << std::endl;
+
+  // log
+  using namespace efl::eina::js;
+  using v8::String;
+  {
+      int d = eina_log_domain_register("mydomain", "");
+      eina_log_domain_registered_level_set(d, EINA_LOG_LEVEL_DBG);
+      exports->Set(compatibility_new<String>(isolate, "mydomain"),
+                   value_cast<v8::Local<v8::Value>>(d, isolate));
+  }
+  register_log_level_critical(isolate, exports,
+                              compatibility_new<String>(isolate,
+                                                        "LOG_LEVEL_CRITICAL"));
+  register_log_level_err(isolate, exports,
+                         compatibility_new<String>(isolate, "LOG_LEVEL_ERR"));
+  register_log_level_warn(isolate, exports,
+                          compatibility_new<String>(isolate, "LOG_LEVEL_WARN"));
+  register_log_level_info(isolate, exports,
+                          compatibility_new<String>(isolate, "LOG_LEVEL_INFO"));
+  register_log_level_dbg(isolate, exports,
+                         compatibility_new<String>(isolate, "LOG_LEVEL_DBG"));
+  register_log_domain_global(isolate, exports,
+                             compatibility_new<String>(isolate,
+                                                       "LOG_DOMAIN_GLOBAL"));
+  register_log_print(isolate, exports,
+                     compatibility_new<String>(isolate, "log_print"));
+  register_log_domain_register(isolate, exports,
+                               compatibility_new<String>(isolate,
+                                                         "log_domain"
+                                                         "_register"));
+  register_log_domain_unregister(isolate, exports,
+                                 compatibility_new<String>(isolate,
+                                                           "log_domain_unregis"
+                                                           "ter"));
+  register_log_domain_registered_level_get(isolate, exports,
+                                           compatibility_new<String>(isolate,
+                                                                     "log"
+                                                                     "_domain"
+                                                                     "_register"
+                                                                     "ed_level"
+                                                                     "_get"));
+  register_log_domain_registered_level_set(isolate, exports,
+                                           compatibility_new<String>(isolate,
+                                                                     "log"
+                                                                     "_domain"
+                                                                     "_register"
+                                                                     "ed_level"
+                                                                     "_set"));
+  register_log_print_cb_set(isolate, exports,
+                            compatibility_new<String>(isolate,
+                                                      "log_print_cb_set"));
+  register_log_level_set(isolate, exports,
+                         compatibility_new<String>(isolate, "log_level_set"));
+  register_log_level_get(isolate, exports,
+                         compatibility_new<String>(isolate, "log_level_get"));
+  register_log_level_check(isolate, exports,
+                           compatibility_new<String>(isolate,
+                                                     "log_level_check"));
+  register_log_color_disable_set(isolate, exports,
+                                 compatibility_new<String>(isolate,
+                                                           "log_color_disable"
+                                                           "_set"));
+  register_log_color_disable_get(isolate, exports,
+                                 compatibility_new<String>(isolate,
+                                                           "log_color_disable"
+                                                           "_get"));
+  register_log_file_disable_set(isolate, exports,
+                                compatibility_new<String>(isolate,
+                                                          "log_file_disable"
+                                                          "_set"));
+  register_log_file_disable_get(isolate, exports,
+                                compatibility_new<String>(isolate,
+                                                          "log_file_disable"
+                                                          "_get"));
+  register_log_abort_on_critical_set(isolate, exports,
+                                     compatibility_new<String>(isolate,
+                                                               "log_abort_on"
+                                                               "_critical"
+                                                               "_set"));
+  register_log_abort_on_critical_get(isolate, exports,
+                                     compatibility_new<String>(isolate,
+                                                               "log_abort_on"
+                                                               "_critical"
+                                                               "_get"));
+  register_log_function_disable_set(isolate, exports,
+                                    compatibility_new<String>(isolate,
+                                                              "log_function"
+                                                              "_disable_set"));
+  register_log_function_disable_get(isolate, exports,
+                                    compatibility_new<String>(isolate,
+                                                              "log_function"
+                                                              "_disable_get"));
+  register_log_abort_on_critical_set(isolate, exports,
+                                     compatibility_new<String>(isolate,
+                                                               "log_abort_on"
+                                                               "_critical"
+                                                               "_set"));
+  register_log_abort_on_critical_get(isolate, exports,
+                                     compatibility_new<String>(isolate,
+                                                               "log_abort_on"
+                                                               "_critical"
+                                                               "_get"));
+  register_log_abort_on_critical_level_set(isolate, exports,
+                                           compatibility_new<String>(isolate,
+                                                                     "log_abort"
+                                                                     "_on"
+                                                                     "_critical"
+                                                                     "_level"
+                                                                     "_set"));
+  register_log_abort_on_critical_level_get(isolate, exports,
+                                           compatibility_new<String>(isolate,
+                                                                     "log_abort"
+                                                                     "_on"
+                                                                     "_critical"
+                                                                     "_level"
+                                                                     "_get"));
+  register_log_domain_level_set(isolate, exports,
+                                compatibility_new<String>(isolate,
+                                                          "log_domain_level"
+                                                          "_set"));
+  register_log_domain_level_get(isolate, exports,
+                                compatibility_new<String>(isolate,
+                                                          "log_domain_level"
+                                                          "_get"));
+  register_log_state_start(isolate, exports,
+                           compatibility_new<String>(isolate,
+                                                     "LOG_STATE_START"));
+  register_log_state_stop(isolate, exports,
+                          compatibility_new<String>(isolate, "LOG_STATE_STOP"));
+  register_log_timing(isolate, exports,
+                      compatibility_new<String>(isolate, "log_timing"));
+
+  eina_log_print_cb_set(eina_log_print_cb_js_test, NULL);
+  eina_log_level_set(EINA_LOG_LEVEL_DBG);
+  eina_log_abort_on_critical_set(EINA_FALSE);
 }
 
 #ifndef HAVE_NODEJS
@@ -212,7 +377,7 @@ int main(int, char*[])
     // Enter the execution environment before evaluating any code.
     v8::Context::Scope context_scope(context);
     v8::Local<v8::String> name(efl::eina::js::compatibility_new<v8::String>
-                               (nullptr, "(shell)"));
+                               (nullptr, "eina_js_suite.js"));
     v8::Local<v8::Object> global = context->Global();
     v8::Handle<v8::Object> console = efl::eina::js::compatibility_new<v8::Object>(isolate);
     global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "console"), console);

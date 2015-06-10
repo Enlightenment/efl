@@ -186,6 +186,81 @@ console.log("x");
 }
 assert(captured === true, 'value #12');
 
+// log
+
+function f1(){ suite.log_print(suite.LOG_DOMAIN_GLOBAL, suite.LOG_LEVEL_DBG, 'I changed again'); }; f1();
+suite.log_print(suite.LOG_DOMAIN_GLOBAL, suite.LOG_LEVEL_CRITICAL, 'Cool to Hate');
+function f2(){ suite.log_print(suite.LOG_DOMAIN_GLOBAL, suite.LOG_LEVEL_WARN, 'One Fine Day'); }; f2();
+function f3(){ suite.log_print(suite.mydomain, suite.LOG_LEVEL_INFO, 'Never Gonna Find Me'); }; f3();
+
+mydomain2 = suite.log_domain_register('mydomain2', '');
+suite.log_domain_registered_level_set(mydomain2, suite.LOG_LEVEL_DBG);
+assert(suite.log_domain_registered_level_get(mydomain2) === suite.LOG_LEVEL_DBG, '#1');
+
+suite.log_print(mydomain2, suite.LOG_LEVEL_ERR, "The Kids Aren't Alright");
+
+suite.log_domain_unregister(mydomain2);
+mydomain2 = undefined;
+
+suite.log_color_disable_set(true);
+assert(suite.log_color_disable_get() === true, '#2');
+suite.log_color_disable_set(false);
+assert(suite.log_color_disable_get() === false, '#3');
+
+suite.log_file_disable_set(true);
+assert(suite.log_file_disable_get() === true, '#4');
+suite.log_file_disable_set(false);
+assert(suite.log_file_disable_get() === false, '#5');
+
+suite.log_function_disable_set(true);
+assert(suite.log_function_disable_get() === true, '#6');
+suite.log_function_disable_set(false);
+assert(suite.log_function_disable_get() === false, '#7');
+
+suite.log_abort_on_critical_set(true);
+assert(suite.log_abort_on_critical_get() === true, '#8');
+suite.log_abort_on_critical_set(false);
+assert(suite.log_abort_on_critical_get() === false, '#9');
+
+var entered = false;
+suite.log_print_cb_set(function(domain, color, level, file, func, line, msg) {
+  assert(domain === 'mydomain', '#10');
+  assert(color === '', '#11');
+  assert(level === suite.LOG_LEVEL_WARN, '#12');
+  assert(file === 'eina_js_suite.js', '#13');
+  assert(func === 'f4', '#14');
+  assert(line === 236, '#15');
+  assert(msg === 'What Happened To You', '#16');
+  entered = true;
+});
+
+function f4(){ suite.log_print(suite.mydomain, suite.LOG_LEVEL_WARN, 'What Happened To You'); }; f4();
+assert(entered === true, '#17');
+
+assert(suite.log_level_get() === suite.LOG_LEVEL_DBG, '#18');
+assert(suite.log_level_check(suite.LOG_LEVEL_INFO) === true, '#19');
+suite.log_level_set(suite.LOG_LEVEL_CRITICAL);
+assert(suite.log_level_get() === suite.LOG_LEVEL_CRITICAL, '#20');
+assert(suite.log_level_check(suite.LOG_LEVEL_INFO) === false, '#21');
+
+assert(suite.log_abort_on_critical_get() === false, '#22');
+suite.log_abort_on_critical_set(true);
+assert(suite.log_abort_on_critical_get() === true, '#23');
+
+suite.log_abort_on_critical_level_set(suite.LOG_LEVEL_CRITICAL);
+assert(suite.log_abort_on_critical_level_get() == suite.LOG_LEVEL_CRITICAL, '#24');
+suite.log_abort_on_critical_level_set(suite.LOG_LEVEL_ERR);
+assert(suite.log_abort_on_critical_level_get() == suite.LOG_LEVEL_ERR, '#25');
+
+suite.log_domain_level_set('mydomain', suite.LOG_LEVEL_WARN);
+assert(suite.log_domain_level_get('mydomain') === suite.LOG_LEVEL_WARN, '#26');
+suite.log_domain_level_set('mydomain', suite.LOG_LEVEL_INFO);
+assert(suite.log_domain_level_get('mydomain') === suite.LOG_LEVEL_INFO, '#27');
+
+assert(typeof(suite.LOG_STATE_START) === 'number', '#28');
+assert(typeof(suite.LOG_STATE_STOP) === 'number', '#29');
+assert(typeof(suite.log_timing) === 'function', '#30');
+
 // finished tests
 
 console.log ("Test execution with success");
