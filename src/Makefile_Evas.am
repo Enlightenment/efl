@@ -162,6 +162,9 @@ lib/evas/canvas/evas_map.c \
 lib/evas/canvas/evas_gl.c \
 lib/evas/canvas/evas_out.c
 
+EXTRA_DIST += \
+lib/evas/canvas/render2/evas_render2_th_main.c
+
 # Cache
 lib_evas_libevas_la_SOURCES += \
 lib/evas/cache/evas_cache_image.c \
