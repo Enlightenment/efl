@@ -887,11 +887,6 @@ _context_ext_check(EVGL_Context *ctx)
      egl_image_supported = 1;
    if (EXTENSION_SUPPORT_EGL(EGL_KHR_gl_texture_2D_image))
      texture_image_supported = 1;
-#else
-   fbo_supported = 1;
-   egl_image_supported = 0;
-   texture_image_supported = 0;
-#endif
 
    if (egl_image_supported)
      {
@@ -900,6 +895,11 @@ _context_ext_check(EVGL_Context *ctx)
         else
           ctx->pixmap_image_supported = 1;
      }
+#else
+   fbo_supported = 1;
+   egl_image_supported = 0;
+   texture_image_supported = 0;
+#endif
 
    ctx->extension_checked = 1;
 
@@ -1355,7 +1355,8 @@ try_again:
                   (native_win_stencil != stencil_bit) ||
                   (native_win_msaa != msaa_samples)))
                {
-                  depth_bit = (1 << ((native_win_depth / 8) - 1));
+                  if (native_win_depth < 8) depth_bit = 0;
+                  else depth_bit = (1 << ((native_win_depth / 8) - 1));
                   depth_size = native_win_depth;
                   stencil_bit = native_win_stencil;
                   msaa_samples = native_win_msaa;
