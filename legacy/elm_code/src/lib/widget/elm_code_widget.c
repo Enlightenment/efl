@@ -278,14 +278,14 @@ _elm_code_widget_fill_whitespace(Elm_Code_Widget *widget, Eina_Unicode character
 }
 
 static void
-_elm_code_widget_fill_cursor(Elm_Code_Widget *widget, Elm_Code_Line *line, Evas_Textgrid_Cell *cells,
-                             int gutter, int w)
+_elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number,
+                             Evas_Textgrid_Cell *cells, int gutter, int w)
 {
    Elm_Code_Widget_Data *pd;
 
    pd = eo_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   if (pd->editable && pd->focussed && pd->cursor_line == line->number)
+   if (pd->editable && pd->focussed && pd->cursor_line == number)
      {
         if (pd->cursor_col + gutter - 1 < (unsigned int) w)
           cells[pd->cursor_col + gutter - 1].bg = ELM_CODE_WIDGET_COLOR_CURSOR;
@@ -366,7 +366,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
      }
 
    _elm_code_widget_fill_selection(widget, line, cells, gutter, w);
-   _elm_code_widget_fill_cursor(widget, line, cells, gutter, w);
+   _elm_code_widget_fill_cursor(widget, line->number, cells, gutter, w);
    if (line->number < elm_code_file_lines_get(line->file))
      _elm_code_widget_fill_whitespace(widget, '\n', &cells[length + gutter]);
 
@@ -394,6 +394,7 @@ _elm_code_widget_empty_line(Elm_Code_Widget *widget, unsigned int number)
         cells[x].bg = _elm_code_widget_status_type_get(widget, ELM_CODE_STATUS_TYPE_DEFAULT, x - gutter + 1);
      }
 
+   _elm_code_widget_fill_cursor(widget, number, cells, gutter, w);
    evas_object_textgrid_update_add(pd->grid, 0, number - 1, w, 1);
 }
 
@@ -678,7 +679,7 @@ _elm_code_widget_mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
      return;
 
    _elm_code_widget_position_at_coordinates_get(widget, pd, event->canvas.x, event->canvas.y, &row, &col);
-   if (col > 0)
+   if (col > 0 && row <= elm_code_file_lines_get(pd->code->file))
      elm_code_widget_selection_start(widget, row, col);
 }
 
@@ -966,6 +967,12 @@ _elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *widget, const char *text
          code = elm_obj_code_widget_code_get(),
          elm_obj_code_widget_cursor_position_get(&col, &row));
    line = elm_code_file_line_get(code->file, row);
+   if (line == NULL)
+     {
+        elm_code_file_line_append(code->file, "", 0, NULL);
+        row = elm_code_file_lines_get(code->file);
+        line = elm_code_file_line_get(code->file, row);
+     }
 
    position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
    elm_code_line_text_insert(line, position, text, length);
@@ -991,6 +998,12 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
          code = elm_obj_code_widget_code_get(),
          elm_obj_code_widget_cursor_position_get(&col, &row));
    line = elm_code_file_line_get(code->file, row);
+   if (line == NULL)
+     {
+        elm_code_file_line_append(code->file, "", 0, NULL);
+        row = elm_code_file_lines_get(code->file);
+        line = elm_code_file_line_get(code->file, row);
+     }
    oldtext = elm_code_line_text_get(line, &oldlen);
 
    position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
