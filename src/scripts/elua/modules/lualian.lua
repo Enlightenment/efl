@@ -352,10 +352,9 @@ local Property = Method:clone {
 }
 
 local Event = Node:clone {
-    __ctor = function(self, ename, etype, edesc, ecname)
+    __ctor = function(self, ename, etype, ecname)
         self.ename  = ename
         self.etype  = etype
-        self.edesc  = edesc
         self.ecname = ecname
     end,
 
@@ -647,8 +646,7 @@ local gen_contents = function(klass)
     local evs = {}
     local events = klass:events_get():to_array()
     for i, v in ipairs(events) do
-        evs[#evs + 1] = Event(v:name_get(), v:type_get(), v:description_get(),
-            v:c_name_get())
+        evs[#evs + 1] = Event(v:name_get(), v:type_get(), v:c_name_get())
     end
     return cnt, evs
 end
