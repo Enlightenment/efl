@@ -1,26 +1,27 @@
-/*
- * enum Efl_Model_Load_Status
- * {
- *    error = 0, /*@ Error in Load Model *
- *    properties = (1 << 0), /*@ properties load in progress *
- *    children   = (1 << 1), /*@ children load in progress *
- *    loading    = (1 << 0) | (1 << 1), /*@ children and properties load in progress *
- *
- *    loaded_properties = (1 << 2), /*@ Model as ready to fetch properties *
- *    loaded_children   = (1 << 3), /*@ Model as ready to fetch children *
- *    loaded = (1 << 2) | (1 << 3), /*@ Model as ready to fetch properties and children *
- *
- *    unloading = (1 << 4), /*@ Model Unload in progress *
- *    unloaded  = (1 << 5)  /*@ Model Unloaded *
- * }
- *
- *
- * struct Efl_Model_Property_Event
- * {
- *  changed_properties: Eina_Array* <const(char)*>; /*@ List of changed properties *
- *  invalidated_properties: Eina_Array* <const(char)*>; /*@ Removed properties identified by name *
- * }
- */
+enum Efl.Model.Load_Status {
+     error = 0,
+     loading_properties = (1 << 0),
+     loading_children =   (1 << 1),
+     loading = (1 << 0) | (1 << 1),
+
+     loaded_properties = (1 << 2),
+     loaded_children =   (1 << 3),
+     loaded = (1 << 2) | (1 << 3),
+
+     unloading = (1 << 4),
+     unloaded = (1 << 5)
+}
+
+struct Efl.Model.Property_Event {
+     changed_properties: array<const(char) *> *; [[List of changed properties]]
+     invalidated_properties: array<const(char) *> *; [[Removed properties identified by name]]
+}
+
+struct Efl.Model.Load {
+     [[Structure to hold Efl_Model_Load_Status enum (and possible other data) to avoid ABI break.]]
+
+     status: Efl.Model.Load_Status;
+}
 
 interface Efl.Model.Base ()
 {
@@ -41,7 +42,7 @@ interface Efl.Model.Base ()
              @see efl_model_load
 
              @since 1.14 */
-             return: Efl_Model_Load_Status;
+             return: Efl.Model.Load_Status;
             }
          }
          @property properties {
@@ -59,7 +60,7 @@ interface Efl.Model.Base ()
                 @see EFL_MODEL_EVENT_PROPERTIES_CHANGE
                 @since 1.14 */
 
-                return: Efl_Model_Load_Status;
+                return: Efl.Model.Load_Status;
          }
          values {
                properties: const(array<const(char*)>*); /*@ array of current properties */
@@ -86,7 +87,7 @@ interface Efl.Model.Base ()
                 @see EFL_MODEL_EVENT_PROPERTIES_CHANGE
                 @since 1.14 */
 
-                return: Efl_Model_Load_Status;
+                return: Efl.Model.Load_Status;
             }
             get {
                 /*@
@@ -105,7 +106,7 @@ interface Efl.Model.Base ()
                 @see EFL_MODEL_EVENT_PROPERTIES_CHANGE
 
                 @since 1.14 */
-                return: Efl_Model_Load_Status;
+                return: Efl.Model.Load_Status;
             }
             keys {
                property: const(char)*; /*@ Property name */
@@ -168,11 +169,11 @@ interface Efl.Model.Base ()
                @see efl_model_load_status_get
                @since 1.14 */
 
-               return: Efl_Model_Load_Status;
+               return: Efl.Model.Load_Status;
             }
             keys {
-                start: unsigned; /*@ Range begin - start from here. If start and count are 0 slice is ignored.*/
-                count: unsigned; /*@ Range size. If count and start are 0 slice is ignored.*/
+                start: uint; /*@ Range begin - start from here. If start and count are 0 slice is ignored.*/
+                count: uint; /*@ Range size. If count and start are 0 slice is ignored.*/
             }
             values {
                 children_accessor: accessor<list<Eo.Base*>*>*;
@@ -196,10 +197,10 @@ interface Efl.Model.Base ()
                 @see efl_model_load_status_get
                 @since 1.14 */
 
-                return: Efl_Model_Load_Status;
+                return: Efl.Model.Load_Status;
              }
             values {
-                children_count: unsigned;
+                children_count: uint;
             }
          }
          load {
@@ -286,7 +287,7 @@ interface Efl.Model.Base ()
 
               @since 1.14 */
 
-            return: Eo *;
+            return: Eo.Base *;
          }
          child_del {
             /*@
@@ -301,17 +302,17 @@ interface Efl.Model.Base ()
               @see EFL_MODEL_EVENT_CHILD_REMOVED
               @since 1.14 */
 
-              return: Efl_Model_Load_Status;
+              return: Efl.Model.Load_Status;
 
             params {
-               @in child: Eo*; /*@ Child to be removed */
+               @in child: Eo.Base*; /*@ Child to be removed */
             }
          }
       }
 
    events {
-      load,status: Efl_Model_Load_Status; /*@ Event dispatch when load status changes */
-      properties,changed: Efl_Model_Properties_Evt; /*@ Event dispatched when properties list is available. */
+      load,status: Efl.Model.Load_Status; /*@ Event dispatch when load status changes */
+      properties,changed: Efl.Model.Property_Event; /*@ Event dispatched when properties list is available. */
       child,added; /*@ Event dispatched when new child is added. */
       child,removed; /*@ Event dispatched when child is removed. */
       children,count,changed; /*@ Event dispatched when children count is finished. */
