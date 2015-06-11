@@ -219,7 +219,7 @@ static const char *_binops[] = {
 };
 
 static const char *_unops[] = {
-    "+", "-", "!", "~"
+    "-", "+", "!", "~"
 };
 
 static Eina_Bool
