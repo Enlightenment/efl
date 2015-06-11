@@ -180,6 +180,8 @@ static inline Eo_Dbg_Info *
 EO_DBG_INFO_LIST_APPEND(Eo_Dbg_Info *list, const char *name)
 {
    Eo_Dbg_Info *tmp = (Eo_Dbg_Info *)calloc(1, sizeof(*tmp));
+
+   if (!tmp) return NULL;
    tmp->name = eina_stringshare_add(name);
    eina_value_list_setup(&(tmp->value), EO_DBG_INFO_TYPE);
    if (list)
@@ -203,6 +205,8 @@ do { \
    if (List) \
      { \
         Eo_Dbg_Info *Tmp = calloc(1, sizeof(*Tmp)); \
+                                                    \
+        if (!Tmp) break; \
         Tmp->name = eina_stringshare_add(NAME); \
         eina_value_setup(&(Tmp->value), TYPE); \
         eina_value_set(&(Tmp->value), VALUE); \
