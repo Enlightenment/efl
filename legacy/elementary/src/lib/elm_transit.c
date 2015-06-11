@@ -117,6 +117,11 @@ _transit_obj_data_save(Evas_Object *obj)
      }
 
    obj_data = ELM_NEW(Elm_Transit_Obj_Data);
+   if (!obj_data)
+     {
+        ERR("Failed to allocate memory");
+        return;
+     }
 
    evas_object_geometry_get(obj, &obj_data->state.x, &obj_data->state.y,
                             &obj_data->state.w, &obj_data->state.h);
@@ -1119,7 +1124,7 @@ _transit_effect_zoom_op(Elm_Transit_Effect *effect, Elm_Transit *transit , doubl
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
         obj_data = evas_object_data_get(obj, _transit_key);
-        if (obj_data->state.map_enabled)
+        if (obj_data && obj_data->state.map_enabled)
           {
              base_map = obj_data->state.map;
              if (!base_map) return;
@@ -2341,7 +2346,7 @@ _transit_effect_rotation_op(Elm_Transit_Effect *effect, Elm_Transit *transit, do
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
         obj_data = evas_object_data_get(obj, _transit_key);
-        if (obj_data->state.map_enabled)
+        if (obj_data && obj_data->state.map_enabled)
           {
              base_map = obj_data->state.map;
              if (!base_map) return;
