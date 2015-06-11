@@ -154,6 +154,8 @@ Eina_Bool current_group_inherit = EINA_FALSE;
 static Edje_Program *sequencing = NULL;
 static Eina_List *sequencing_lookups = NULL;
 
+Eina_List *po_files;
+
 struct _Edje_Cc_Handlers_Hierarchy_Info
 {  /* Struct that keeps globals value to impl hierarchy */
    Edje_Part_Collection_Directory_Entry *current_de;
@@ -3056,23 +3058,23 @@ st_collections_group_vibration_sample_source(void)
             ..
             file {
                 locale: "en_IN";
-                source: "domain_name.mo";
+                source: "domain_name.po";
             }
             file {
                 locale: "en_US";
-                source: "domain_name.mo";
+                source: "domain_name.po";
             }
         }
     @description
-        The file block defines the mo file.
+        The file block defines the po or mo file.
     @endblock
     @property
         name
     @parameters
         [locale name] 
     @effect
-        Used to include each mo file. The full path to the directory holding
-        the mo file can be defined later with edje_cc's "-md" option.
+        Used to include each po or mo file. The full path to the directory holding
+        the po or mo file can be defined later with edje_cc's "-md" option.
 
     @since 1.15
     @endproperty
@@ -3122,10 +3124,10 @@ st_collections_group_translation_file_locale(void)
     @property
         source
     @parameters
-        [mo file name]
+        [po file name or Mo file name]
     @effect
-        The mo source file name (Source should be a valid mo file.
-        Only mo files are supported now)
+        The po or mo source file name (Source should be a valid po or mo file.
+        Only po or mo files are supported now)
     @since 1.15
     @endproperty
  */
@@ -3134,7 +3136,7 @@ static void
 st_collections_group_translation_file_source(void)
 {
    Edje_Mo *mo_entry;
-
+   char *mo_path_str;
    check_arg_count(1);
 
    if (!edje_file->mo_dir->mo_entries)

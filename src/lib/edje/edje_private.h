@@ -695,7 +695,7 @@ struct _Edje_Sound_Directory
 struct _Edje_Mo /*Mo Sample*/
 {
    const char *locale; /* the nominal name of the Mo */
-   const char *mo_src;  /* Mo source file */
+   char *mo_src;  /* Mo source file */
    int   id; /* the id no. of the Mo file */
 };
 

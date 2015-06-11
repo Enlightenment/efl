@@ -21,15 +21,15 @@ collections {
       translation {
          file {
             locale: en_IN;
-            source: domain_name.mo; /* Can be either .po file or .mo file */
+            source: domain_name.po; /* Can be either .po file or .mo file*/
          }
          file {
             locale: hi_IN;
-            source: domain_name.mo;
+            source: domain_name.po;
          }
          file {
             locale: ta_IN;
-            source: domain_name.mo;
+            source: domain_name.po;
          }
       }
       styles {
@@ -144,11 +144,11 @@ collections {
       translation {
          file {
             locale: en_IN;
-            source: domain_name.mo;
+            source: domain_name.po;
          }
          file {
             locale: hi_IN;
-            source: domain_name.mo;
+            source: domain_name.po;
          }
          file {
             locale: ta_IN;
@@ -267,11 +267,11 @@ collections {
       translation {
          file {
             locale: en_IN;
-            source: domain_name.mo;
+            source: domain_name.po;
          }
          file {
             locale: hi_IN;
-            source: domain_name.mo;
+            source: domain_name.po;
          }
          file {
             locale: ta_IN;
@@ -390,11 +390,11 @@ collections {
       translation {
          file {
             locale: en_IN;
-            source: domain_name.mo;
+            source: domain_name.po;
          }
          file {
             locale: hi_IN;
-            source: domain_name.mo;
+            source: domain_name.po;
          }
          file {
             locale: ta_IN;

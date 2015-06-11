@@ -84,6 +84,8 @@ _edje_extract_mo_files(Edje *ed)
         Edje_Mo *mo_entry;
         char out[PATH_MAX];
         char outdir[PATH_MAX];
+        char *sub_str;
+        char *mo_src;
 
         mo_entry = &ed->file->mo_dir->mo_entries[i];
 
@@ -101,8 +103,14 @@ _edje_extract_mo_files(Edje *ed)
                       "%s/edje/%s/LC_MESSAGES",
                       cache_path, mo_entry->locale);
              ecore_file_mkpath(outdir);
+             mo_src = strdup(mo_entry->mo_src);
+             sub_str = strstr(mo_src, ".po");
+
+             if (sub_str)
+               sub_str[1] = 'm';
+
              snprintf(out, sizeof(out), "%s/%s-%s",
-                      outdir, ed->file->fid, mo_entry->mo_src);
+                      outdir, ed->file->fid, mo_src);
              if (ecore_file_exists(out))
                {
                   if (ed->file->mtime > ecore_file_mod_time(out))
@@ -122,6 +130,7 @@ _edje_extract_mo_files(Edje *ed)
                   else
                     ERR("Could not open for writing mo: %s: %s", out, strerror(errno));
                }
+             free(mo_src);
           }
 
         eina_strbuf_reset(mo_id_str);

@@ -169,6 +169,8 @@ struct _Mo_Write
 {
    Eet_File *ef;
    Edje_Mo *mo_entry;
+   char *mo_path;
+   Ecore_Exe *exe;
    char *errstr;
 };
 
@@ -204,6 +206,8 @@ typedef struct _Image_Unused_Ids Image_Unused_Ids;
 static int pending_threads = 0;
 
 static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char* ptr, int len));
+
+extern Eina_List *po_files;
 
 Edje_File *edje_file = NULL;
 Eina_List *edje_collections = NULL;
@@ -1232,6 +1236,8 @@ data_thread_mo(void *data, Ecore_Thread *thread EINA_UNUSED)
          eina_file_map_free(f, m);
      }
    eina_file_close(f);
+   if (mw->mo_path)
+     ecore_file_remove(mo_path);
 
    INF("Wrote %9i bytes (%4iKb) for \"%s\" %s mo entry \"%s\"",
 	   bytes, (bytes + 512) / 1024, moid_str, "RAW PCM", mw->mo_entry->locale);
@@ -1249,9 +1255,38 @@ data_thread_mo_end(void *data, Ecore_Thread *thread EINA_UNUSED)
        error_and_abort(mw->ef, mw->errstr);
        free(mw->errstr);
      }
+   if (mw->mo_path)
+     free(mw->mo_path);
    free(mw);
 }
 
+Eina_Bool
+_exe_del_cb(void *data EINA_UNUSED, int evtype EINA_UNUSED, void *evinfo)
+{
+   Mo_Write *mw = data;
+   Ecore_Exe_Event_Del *ev = evinfo;
+   if (!ev->exe) return ECORE_CALLBACK_RENEW;
+   if (ecore_exe_data_get(ev->exe) != mw) return ECORE_CALLBACK_RENEW;
+   if (ev->exit_code != 0)
+     {
+        error_and_abort(mw->ef, "Creation of .mo from .po failed.");
+        return ECORE_CALLBACK_CANCEL;
+     }
+   if (ecore_file_exists(mw->mo_path))
+     {
+        if (threads)
+          ecore_thread_run(data_thread_mo, data_thread_mo_end, NULL, mw);
+        else
+          {
+             data_thread_mo(mw, NULL);
+             data_thread_mo_end(mw, NULL);
+          }
+     }
+   else
+     return ECORE_CALLBACK_RENEW;
+   if (pending_threads <= 0) ecore_main_loop_quit();
+   return ECORE_CALLBACK_CANCEL;
+}
 
 static void
 data_write_mo(Eet_File *ef, int *mo_num)
@@ -1259,24 +1294,57 @@ data_write_mo(Eet_File *ef, int *mo_num)
    if ((edje_file) && (edje_file->mo_dir))
      {
         int i;
+        char *po_entry;
+        char *sub_str;
+        char buf[PATH_MAX];
+        Eina_List *ll;
+        char *dir_path = NULL;
+        char mo_path[PATH_MAX];
+        char po_path[PATH_MAX];
 
         for (i = 0; i < (int)edje_file->mo_dir->mo_entries_count; i++)
           {
              Mo_Write *mw;
-
              mw = calloc(1, sizeof(Mo_Write));
              if (!mw) continue;
              mw->ef = ef;
              mw->mo_entry = &edje_file->mo_dir->mo_entries[i];
              *mo_num += 1;
              pending_threads++;
-             if (threads)
-               ecore_thread_run(data_thread_mo, data_thread_mo_end, NULL, mw);
-             else
+
+             po_entry = strdup(mw->mo_entry->mo_src);
+             sub_str = strstr(mw->mo_entry->mo_src, ".po");
+
+             if (sub_str)
                {
-                  data_thread_mo(mw, NULL);
-                  data_thread_mo_end(mw, NULL);
+                  sub_str[1] = 'm';
+                  EINA_LIST_FOREACH(mo_dirs, ll, dir_path)
+                    {
+                       snprintf((char *)mo_path, sizeof(mo_path), "%s/%s/%s", dir_path, mw->mo_entry->locale, mw->mo_entry->mo_src);
+                       snprintf((char *)po_path, sizeof(po_path), "%s/%s/%s", dir_path, mw->mo_entry->locale, po_entry);
+                       if (ecore_file_exists(po_path))
+                         {
+                            snprintf(buf, sizeof(buf), "msgfmt -o %s %s", mo_path, po_path);
+                            mw->mo_path = strdup(mo_path);
+                            mw->exe = ecore_exe_run(buf, mw);
+                            ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
+                                                       _exe_del_cb, mw);
+                         }
+                       else
+                         error_and_abort(mw->ef, "Invalid .po file.");
+                    }
                }
+             else
+               { 
+                  if (threads)
+                    ecore_thread_run(data_thread_mo, data_thread_mo_end, NULL, mw);
+                  else
+                    {
+                       data_thread_mo(mw, NULL);
+                       data_thread_mo_end(mw, NULL);
+                    }
+               }
+             free(po_entry);
           }
      }
 }
