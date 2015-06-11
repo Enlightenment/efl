@@ -1,19 +1,22 @@
 enum Evas.Textgrid.Palette {
-   /*@ The palette to use for the foreground and background colors.
-    @since 1.7 */
-   none,     /**< No palette is used */
-   standard, /**< standard palette (around 16 colors) */
-   extended, /**< extended palette (at max 256 colors) */
-   last      /**< ignore it */
+   [[The palette to use for the foreground and background colors.
+
+     @since 1.7
+   ]]
+   none,     [[No palette is used]]
+   standard, [[standard palette (around 16 colors)]]
+   extended, [[extended palette (at max 256 colors)]]
+   last      [[ignore it]]
 }
 
 enum Evas.Textgrid.Font_Style {
-   /*@ * The style to give to each character of the grid.
-    * @since 1.7
-    */
-   normal = (1 << 0), /**< Normal style */
-   bold   = (1 << 1), /**< Bold style */
-   italic = (1 << 2)  /**< Oblique style */
+   [[The style to give to each character of the grid.
+
+     @since 1.7
+   ]]
+   normal = (1 << 0), [[Normal style]]
+   bold   = (1 << 1), [[Bold style]]
+   italic = (1 << 2)  [[Oblique style]]
 }
 
 /* XXX: Acutal definition is in C. */

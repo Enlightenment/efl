@@ -175,8 +175,8 @@ abstract Ecore.Con.Base (Eo.Base) {
 
 /* FIXME: Should actually be a binbuf. */
 struct Ecore_Con_Event_Data_Received {
-    data: void *; /*@ The data thet got sent. */
-    size: int; /*@ The length of the data sent. */
+    data: void *; [[The data thet got sent.]]
+    size: int; [[The length of the data sent.]]
 }
 
 /* TODO
