@@ -1645,6 +1645,11 @@ _elm_widget_event_callback_add(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, E
    EINA_SAFETY_ON_NULL_RETURN(func);
 
    Elm_Event_Cb_Data *ecb = ELM_NEW(Elm_Event_Cb_Data);
+   if (!ecb)
+     {
+        ERR("Failed to allocate memory");
+        return;
+     }
    ecb->func = func;
    ecb->data = data;
    sd->event_cb = eina_list_append(sd->event_cb, ecb);
@@ -5229,6 +5234,11 @@ _elm_widget_item_part_text_custom_set(Eo *eo_item EINA_UNUSED,
    if (!label)
      {
         label = malloc(sizeof(Elm_Label_Data));
+        if (!label)
+          {
+             ERR("Failed to allocate memory");
+             return;
+          }
         label->part = eina_stringshare_add(part);
         label->text = eina_stringshare_add(text);
         eina_hash_add(item->labels, part, label);
