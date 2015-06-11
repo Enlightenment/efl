@@ -97,11 +97,11 @@ class Elm_App_Server_View (Eo.Base)
       Eo.Base.finalize;
    }
    events {
-      resumed; /*@ Called when view must be resumed */
-      paused; /*@ Called when view must be paused */
-      closed; /*@ Called when view must be closed */
-      shallow; /*@ Called when view state is set to shallow */
-      save; /*@ Called when view state should be saved */
+      resumed; [[Called when view must be resumed]]
+      paused; [[Called when view must be paused]]
+      closed; [[Called when view must be closed]]
+      shallow; [[Called when view state is set to shallow]]
+      save; [[Called when view state should be saved]]
    }
 
 }

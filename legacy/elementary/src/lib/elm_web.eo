@@ -671,8 +671,8 @@ class Elm.Web (Elm.Widget)
       Elm.Widget.event;
    }
    events {
-      uri,changed; /*@ s */
-      url,changed; /*@ s */
+      uri,changed; [[s]]
+      url,changed; [[s]]
       focused;
       unfocused;
    }

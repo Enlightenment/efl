@@ -110,14 +110,14 @@ class Elm_App_Client_View (Eo.Base)
       Eo.Base.finalize;
    }
    events {
-      state,changed; /*@ State of view changed. */
-      title,changed; /*@ Title of view changed. */
-      icon,changed; /*@ Icon of view changed. */
-      icon,pixels,changed; /*@ Icons pixels of view changed. */
-      new_events,changed; /*@ New events of view changed. */
-      progress,changed; /*@ Progress of view changed. */
-      window,changed; /*@ Window of view changed. */
-      property,changed; /*@ One of view properties changed. */
+      state,changed; [[State of view changed.]]
+      title,changed; [[Title of view changed.]]
+      icon,changed; [[Icon of view changed.]]
+      icon,pixels,changed; [[Icons pixels of view changed.]]
+      new_events,changed; [[New events of view changed.]]
+      progress,changed; [[Progress of view changed.]]
+      window,changed; [[Window of view changed.]]
+      property,changed; [[One of view properties changed.]]
    }
 
 }

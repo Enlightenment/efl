@@ -319,12 +319,12 @@ class Elm.Prefs (Elm.Widget, Efl.File)
       Elm.Widget.focus_next;
    }
    events {
-      page,changed; /*@ s */
-      page,saved; /*@ s */
-      page,reset; /*@ s */
-      page,loaded; /*@ s */
-      item,changed; /*@ s */
-      action; /*@ ss */
+      page,changed; [[s]]
+      page,saved; [[s]]
+      page,reset; [[s]]
+      page,loaded; [[s]]
+      item,changed; [[s]]
+      action; [[ss]]
    }
 
 }

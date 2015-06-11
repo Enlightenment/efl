@@ -47,7 +47,7 @@ class Elm.Plug (Elm.Widget)
    events {
       clicked;
       image,deleted;
-      image,resized; /*@ ii */
+      image,resized; [[ii]]
    }
 
 }

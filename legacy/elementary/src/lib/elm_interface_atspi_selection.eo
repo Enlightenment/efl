@@ -56,6 +56,6 @@ interface Elm_Interface_Atspi_Selection ()
       }
    }
    events {
-      selection,changed; /*@ Called when selection has been changed. */
+      selection,changed; [[Called when selection has been changed.]]
    }
 }

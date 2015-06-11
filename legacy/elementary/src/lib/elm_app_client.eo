@@ -56,10 +56,10 @@ class Elm_App_Client (Eo.Base)
       .constructor;
    }
    events {
-      view,created; /*@ Called when a view of this application is created. */
-      view,deleted; /*@ Called when a view of this application is deleted. */
-      view_list,loaded; /*@ Called when list of view is loaded. */
-      application,terminated; /*@ Called when application is terminated. */
+      view,created; [[Called when a view of this application is created.]]
+      view,deleted; [[Called when a view of this application is deleted.]]
+      view_list,loaded; [[Called when list of view is loaded.]]
+      application,terminated; [[Called when application is terminated.]]
    }
 
 }

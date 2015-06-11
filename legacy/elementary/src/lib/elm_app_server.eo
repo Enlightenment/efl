@@ -94,7 +94,7 @@ class Elm_App_Server (Eo.Base)
       .constructor;
    }
    events {
-      terminate; /*@ Called when application must be terminated. */
+      terminate; [[Called when application must be terminated.]]
    }
 
 }
