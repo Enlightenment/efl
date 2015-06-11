@@ -1,0 +1,82 @@
+collections {
+   images {
+      // found in tests/emotion/data
+      image: "e_logo.png" COMP;
+   }
+   group { name: "test_group";
+      parts {
+         part { name: "background";
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 33 32 32 255;
+               rel1.relative: 0 0;
+               rel2.relative: 1 1;
+               max: 200 200;
+            }
+         }
+         part { name: "clip1";
+            type: RECT;
+            no_render: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0 0;
+               rel2.relative: 1 1;
+            }
+         }
+         part { name: "clip2";
+            type: RECT;
+            no_render: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0 0;
+               rel2.relative: 1 1;
+            }
+         }
+         part { name: "mask";
+            type: IMAGE;
+            no_render: 1;
+            description { state: "default" 0.0;
+               rel1.relative: 0 0;
+               rel2.relative: 1 1;
+               rel1.to: "background";
+               rel2.to: "background";
+               image.normal: "e_logo.png";
+            }
+         }
+         part { name: "logo";
+            inherit: "mask";
+            type: IMAGE;
+            no_render: 0;
+         }
+         part { name: "text";
+            inherit: "mask";
+            type: TEXT;
+            description { state: "default" 0.0;
+               text {
+                  text: "HELLO WORLD";
+                  font: "Sans";
+                  size: 16;
+               }
+               color: 255 0 0 255;
+               clip_to: "mask";
+            }
+         }
+         /* test clip_to override from desc */
+         part { name: "noclip";
+            type: TEXT;
+            clip_to: "clip1";
+            description { state: "default" 0.0;
+               text {
+                  text: "HELLO WORLD";
+                  font: "Sans";
+                  size: 16;
+               }
+               rel1.relative: 0 0;
+               rel2.relative: 1 1;
+               rel1.to: "background";
+               rel2.to: "background";
+               color: 0 255 0 64;
+               clip_to: "clip2";
+            }
+         }
+      }
+   }
+}

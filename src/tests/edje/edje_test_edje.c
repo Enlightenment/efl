@@ -168,6 +168,41 @@ START_TEST(edje_test_calculate_parens)
 }
 END_TEST
 
+START_TEST(edje_test_masking)
+{
+   int x, y, w, h;
+   Evas *evas = EDJE_TEST_INIT_EVAS();
+   const Evas_Object *sub, *clip2, *clip;
+   Evas_Object *obj;
+   Eina_Bool b;
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_masking.edj"), "test_group"));
+
+   evas_object_resize(obj, 100, 100);
+   edje_object_part_geometry_get(obj, "background", &x, &y, &w, &h);
+   fail_if(x != 0 || y != 0 || w != 100 || h != 100);
+
+   clip = edje_object_part_object_get(obj, "clip2");
+   fail_if(!clip);
+
+   /* check value of no_render flag as seen from evas land */
+   sub = edje_object_part_object_get(obj, "mask");
+   fail_if(!eo_do_ret(sub, b, evas_obj_no_render_get()));
+
+   /* check that text has a clip (based on description.clip_to) */
+   sub = edje_object_part_object_get(obj, "text");
+   fail_if(!eo_do_ret(sub, clip2, evas_obj_clip_get()));
+
+   /* test description.clip_to override */
+   sub = edje_object_part_object_get(obj, "noclip");
+   clip2 = eo_do_ret(sub, clip2, evas_obj_clip_get());
+   fail_if(clip != clip2);
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 void edje_test_edje(TCase *tc)
 {    
    tcase_add_test(tc, edje_test_edje_init);
@@ -176,4 +211,5 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_simple_layout_geometry);
    tcase_add_test(tc, edje_test_complex_layout);
    tcase_add_test(tc, edje_test_calculate_parens);
+   tcase_add_test(tc, edje_test_masking);
 }
