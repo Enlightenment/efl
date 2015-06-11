@@ -46,10 +46,9 @@ static void
 _event_print(Eolian_Event *ev, int nb_spaces)
 {
    const Eolian_Type *type = eolian_event_type_get(ev);
-   const char *desc = eolian_event_description_get(ev);
    printf("%*s <%s> <",  nb_spaces + 5, "", eolian_event_name_get(ev));
    if (type) database_type_print((Eolian_Type*)type);
-   printf("> <%s>\n", desc ? desc : "");
+   printf(">\n");
 }
 
 static Eina_Bool _function_print(const Eolian_Function *fid, int nb_spaces)

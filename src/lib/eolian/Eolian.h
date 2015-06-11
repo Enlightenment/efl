@@ -1340,16 +1340,6 @@ EAPI Eina_Stringshare *eolian_event_name_get(const Eolian_Event *event);
 EAPI const Eolian_Type *eolian_event_type_get(const Eolian_Event *event);
 
 /*
- * @brief Get the description of an event.
- *
- * @param[in] event the event handle
- * @return the description or NULL
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_event_description_get(const Eolian_Event *event);
-
-/*
  * @brief Get the documentation of an event.
  *
  * @param[in] event the event handle

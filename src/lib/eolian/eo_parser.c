@@ -1583,11 +1583,6 @@ parse_event(Eo_Lexer *ls)
      }
    check(ls, ';');
    eo_lexer_get(ls);
-   if (ls->t.token == TOK_COMMENT)
-     {
-        ev->comment = eina_stringshare_ref(ls->t.value.s);
-        eo_lexer_get(ls);
-     }
    FILL_DOC(ls, ev, doc);
    ev->klass = ls->tmp.kls;
 }

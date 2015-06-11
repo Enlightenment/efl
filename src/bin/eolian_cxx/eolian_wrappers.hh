@@ -361,7 +361,8 @@ event_create(Eolian_Class const& klass, const Eolian_Event *event_)
         event.name = normalize_spaces(name_);
         event.eo_name = safe_upper
           (find_replace(class_full_name(klass), ".", "_") + "_EVENT_" + event.name);
-        event.comment = safe_str(eolian_event_description_get(event_));
+        /* FIXME: use doc api */
+        event.comment = safe_str("");
      }
    return event;
 }

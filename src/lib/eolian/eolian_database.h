@@ -209,7 +209,6 @@ struct _Eolian_Event
 {
    Eolian_Object base;
    Eina_Stringshare *name;
-   Eina_Stringshare *comment;
    Eolian_Documentation *doc;
    Eolian_Type *type;
    Eolian_Class *klass;
