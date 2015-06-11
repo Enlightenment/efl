@@ -104,11 +104,8 @@ evas_object_polygon_add(Evas *e)
 EOLIAN static Eo *
 _evas_polygon_eo_base_constructor(Eo *eo_obj, Evas_Polygon_Data *class_data EINA_UNUSED)
 {
-   Evas_Object_Protected_Data *obj;
-
    eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
 
-   obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    evas_object_polygon_init(eo_obj);
 
    return eo_obj;
