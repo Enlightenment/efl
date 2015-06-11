@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-05-25 11:47+0900\n"
-"PO-Revision-Date: 2015-01-16 12:33+0100\n"
+"POT-Creation-Date: 2015-06-11 12:37+0200\n"
+"PO-Revision-Date: 2015-06-11 14:19+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -27,8 +27,8 @@ msgstr "Home"
 msgid "Search"
 msgstr "Cerca"
 
-#: src/lib/elc_fileselector.c:1707 src/lib/elm_entry.c:1512
-#: src/lib/elm_entry.c:1537
+#: src/lib/elc_fileselector.c:1707 src/lib/elm_entry.c:1517
+#: src/lib/elm_entry.c:1542
 msgid "Cancel"
 msgstr "Annulla"
 
@@ -76,10 +76,10 @@ msgstr "Bolla"
 msgid "Clicked"
 msgstr "Cliccato"
 
-#: src/lib/elm_button.c:270 src/lib/elm_check.c:234 src/lib/elm_gengrid.c:816
-#: src/lib/elm_genlist.c:1621 src/lib/elm_list.c:2221 src/lib/elm_radio.c:264
+#: src/lib/elm_button.c:270 src/lib/elm_check.c:234 src/lib/elm_gengrid.c:817
+#: src/lib/elm_genlist.c:1622 src/lib/elm_list.c:2222 src/lib/elm_radio.c:264
 #: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:785
-#: src/lib/elm_toolbar.c:2226
+#: src/lib/elm_toolbar.c:2227
 msgid "State: Disabled"
 msgstr "Stato: disabilitato"
 
@@ -162,23 +162,23 @@ msgstr "Orologio"
 
 #: src/lib/elm_colorselector.c:718
 msgid "Pick a color"
-msgstr ""
+msgstr "Seleziona un colore"
 
 #: src/lib/elm_colorselector.c:754
 msgid "R:"
-msgstr ""
+msgstr "R:"
 
 #: src/lib/elm_colorselector.c:756
 msgid "G:"
-msgstr ""
+msgstr "G:"
 
 #: src/lib/elm_colorselector.c:758
 msgid "B:"
-msgstr ""
+msgstr "B:"
 
 #: src/lib/elm_colorselector.c:760
 msgid "A:"
-msgstr ""
+msgstr "A:"
 
 #: src/lib/elm_colorselector.c:1433
 msgid "color selector palette item"
@@ -196,27 +196,27 @@ msgstr "oggetto selettore giorno"
 msgid "diskselector item"
 msgstr "selettore disco"
 
-#: src/lib/elm_entry.c:1499
+#: src/lib/elm_entry.c:1504
 msgid "Copy"
 msgstr "Copia"
 
-#: src/lib/elm_entry.c:1504
+#: src/lib/elm_entry.c:1509
 msgid "Cut"
 msgstr "Taglia"
 
-#: src/lib/elm_entry.c:1508 src/lib/elm_entry.c:1531
+#: src/lib/elm_entry.c:1513 src/lib/elm_entry.c:1536
 msgid "Paste"
 msgstr "Incolla"
 
-#: src/lib/elm_entry.c:1524
+#: src/lib/elm_entry.c:1529
 msgid "Select"
 msgstr "Seleziona"
 
-#: src/lib/elm_entry.c:3515
+#: src/lib/elm_entry.c:3520
 msgid "Entry"
 msgstr "Voce"
 
-#: src/lib/elm_gengrid.c:846
+#: src/lib/elm_gengrid.c:847
 msgid "Gengrid Item"
 msgstr "oggetto griglia generica"
 
@@ -260,7 +260,7 @@ msgstr "barra avanzamento"
 msgid "Radio"
 msgstr "Opzione"
 
-#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2228
+#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2229
 msgid "State: Selected"
 msgstr "Stato: selezionato"
 
@@ -278,11 +278,11 @@ msgstr "cursore"
 
 #: src/lib/elm_spinner.c:816
 msgid "incremented"
-msgstr ""
+msgstr "incrementato"
 
 #: src/lib/elm_spinner.c:822
 msgid "decremented"
-msgstr ""
+msgstr "decrementato"
 
 #: src/lib/elm_spinner.c:856 src/lib/elm_spinner.c:923
 msgid "spinner"
@@ -297,26 +297,25 @@ msgid "spinner decrement button"
 msgstr "bottone diminuzione spinner"
 
 #: src/lib/elm_spinner.c:870
-#, fuzzy
 msgid "spinner text"
-msgstr "spinner"
+msgstr "testo spinner"
 
-#: src/lib/elm_toolbar.c:1686 src/lib/elm_toolbar.c:2285
+#: src/lib/elm_toolbar.c:1687 src/lib/elm_toolbar.c:2286
 msgid "Selected"
 msgstr "Selezionato"
 
-#: src/lib/elm_toolbar.c:2224
+#: src/lib/elm_toolbar.c:2225
 msgid "Separator"
 msgstr "Separatore"
 
-#: src/lib/elm_toolbar.c:2230
+#: src/lib/elm_toolbar.c:2231
 msgid "Has menu"
 msgstr "Include menù"
 
-#: src/lib/elm_toolbar.c:2280
+#: src/lib/elm_toolbar.c:2281
 msgid "Unselected"
 msgstr "Non selezionato"
 
-#: src/lib/elm_toolbar.c:2297
+#: src/lib/elm_toolbar.c:2298
 msgid "Toolbar Item"
 msgstr "Oggetto della barra strumenti"
