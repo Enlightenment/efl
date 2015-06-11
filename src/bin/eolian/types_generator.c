@@ -160,12 +160,12 @@ _type_generate(const Eolian_Type *tp, Eina_Bool full)
                           }
                         eina_stringshare_del(lit);
                      }
-                   next = eina_iterator_next(members, (void**)&member);
-                   if (next)
-                     eina_strbuf_append(buf, ",");
                    const char *fdesc = eolian_type_enum_field_description_get(member);
                    const Eolian_Documentation *fdoc
                        = eolian_type_enum_field_documentation_get(member);
+                   next = eina_iterator_next(members, (void**)&member);
+                   if (next)
+                     eina_strbuf_append(buf, ",");
                    if (fdesc) eina_strbuf_append_printf(buf, " /** %s */", fdesc);
                    else if (fdoc)
                      {
