@@ -90,7 +90,7 @@ class Evas_3D_Object (Eo.Base, Evas.Common_Interface)
       @virtual .callback_unregister;
    }
    events {
-      clicked; /*@ Clicked Event */
-      collision; /*@ Collision Event */
+      clicked; [[Clicked Event]]
+      collision; [[Collision Event]]
    }
 }

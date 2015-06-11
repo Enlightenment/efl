@@ -22,9 +22,9 @@ class Efl.Network.Url (Eo.Base) {
         Eo.Base.finalize;
    }
    events {
-      data; /*@ Triggered when data arrives at the socket. */
-      progress; /*@ Triggered when progress is made in upload/download. */
-      complete; /*@ Triggered when the operation is complete. */
+      data; [[Triggered when data arrives at the socket.]]
+      progress; [[Triggered when progress is made in upload/download.]]
+      complete; [[Triggered when the operation is complete.]]
    }
 }
 

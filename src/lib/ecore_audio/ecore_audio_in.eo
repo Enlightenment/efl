@@ -180,8 +180,8 @@ class Ecore_Audio_In (Ecore_Audio)
       @virtual .length.set;
    }
    events {
-      in,looped; /*@ Called when an input has looped. */
-      in,stopped; /*@ Called when an input has stopped playing. */
-      in,samplerate,changed; /*@ Called when the input samplerate has changed. */
+      in,looped; [[Called when an input has looped.]]
+      in,stopped; [[Called when an input has stopped playing.]]
+      in,samplerate,changed; [[Called when the input samplerate has changed.]]
    }
 }

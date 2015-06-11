@@ -2402,6 +2402,6 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
       Efl.File.mmap.get;
    }
    events {
-      recalc; /*@  Edje re-calculated the object. */
+      recalc; [[Edje re-calculated the object.]]
    }
 }

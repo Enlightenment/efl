@@ -311,10 +311,13 @@ interface Efl.Model.Base ()
       }
 
    events {
-      load,status: Efl.Model.Load_Status; /*@ Event dispatch when load status changes */
-      properties,changed: Efl.Model.Property_Event; /*@ Event dispatched when properties list is available. */
-      child,added; /*@ Event dispatched when new child is added. */
-      child,removed; /*@ Event dispatched when child is removed. */
-      children,count,changed; /*@ Event dispatched when children count is finished. */
+      load,status: Efl.Model.Load_Status; [[Event dispatch when load status
+                                            changes]]
+      properties,changed: Efl.Model.Property_Event; [[Event dispatched when
+                                                      properties list is
+                                                      available.]]
+      child,added; [[Event dispatched when new child is added.]]
+      child,removed; [[Event dispatched when child is removed.]]
+      children,count,changed; [[Event dispatched when children count is finished.]]
    }
 }

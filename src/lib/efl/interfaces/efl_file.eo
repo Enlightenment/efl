@@ -141,7 +141,7 @@ interface Efl.File {
       }
    }
    events {
-      async,opened; /*@ The file was successfully opened asynchronously */
-      async,error; /*@ Error occured in asynchronous file operation */
+      async,opened; [[The file was successfully opened asynchronously]]
+      async,error; [[Error occured in asynchronous file operation]]
    }
 }

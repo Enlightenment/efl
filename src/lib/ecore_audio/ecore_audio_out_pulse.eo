@@ -9,7 +9,7 @@ class Ecore_Audio_Out_Pulse (Ecore_Audio_Out)
       Ecore_Audio_Out.input_detach;
    }
    events {
-      context,ready; /*@ Called when the output is ready for playback. */
-      context,fail; /*@ Called when context fails. */
+      context,ready; [[Called when the output is ready for playback.]]
+      context,fail; [[Called when context fails.]]
    }
 }
