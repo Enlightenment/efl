@@ -114,13 +114,6 @@ eolian_type_struct_field_name_get(const Eolian_Struct_Type_Field *fl)
    return fl->name;
 }
 
-EAPI Eina_Stringshare *
-eolian_type_struct_field_description_get(const Eolian_Struct_Type_Field *fl)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
-   return fl->comment;
-}
-
 EAPI const Eolian_Documentation *
 eolian_type_struct_field_documentation_get(const Eolian_Struct_Type_Field *fl)
 {
@@ -185,13 +178,6 @@ eolian_type_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl)
    return ret;
 }
 
-EAPI Eina_Stringshare *
-eolian_type_enum_field_description_get(const Eolian_Enum_Type_Field *fl)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
-   return fl->comment;
-}
-
 EAPI const Eolian_Documentation *
 eolian_type_enum_field_documentation_get(const Eolian_Enum_Type_Field *fl)
 {
@@ -213,17 +199,6 @@ eolian_type_enum_legacy_prefix_get(const Eolian_Type *tp)
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(tp->type == EOLIAN_TYPE_ENUM, NULL);
    return tp->legacy;
-}
-
-EAPI Eina_Stringshare *
-eolian_type_description_get(const Eolian_Type *tp)
-{
-   Eolian_Type_Type tpp;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   tpp = eolian_type_type_get(tp);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(tpp != EOLIAN_TYPE_POINTER
-                                && tpp != EOLIAN_TYPE_VOID, NULL);
-   return tp->comment;
 }
 
 EAPI const Eolian_Documentation *

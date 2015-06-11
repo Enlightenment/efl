@@ -467,7 +467,6 @@ _struct_field_free(Eolian_Struct_Type_Field *def)
    if (def->base.file) eina_stringshare_del(def->base.file);
    if (def->name) eina_stringshare_del(def->name);
    database_type_del(def->type);
-   if (def->comment) eina_stringshare_del(def->comment);
    database_doc_del(def->doc);
    free(def);
 }
@@ -485,11 +484,6 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    def->freefunc = freefunc;
    pop_str(ls);
    check_next(ls, '{');
-   if (ls->t.token == TOK_COMMENT)
-     {
-        def->comment = eina_stringshare_ref(ls->t.value.s);
-        eo_lexer_get(ls);
-     }
    FILL_DOC(ls, def, doc);
    while (ls->t.token != '}')
      {
@@ -512,11 +506,6 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         fdef->name = eina_stringshare_ref(fname);
         pop_type(ls);
         check_next(ls, ';');
-        if (ls->t.token == TOK_COMMENT)
-          {
-             fdef->comment = eina_stringshare_ref(ls->t.value.s);
-             eo_lexer_get(ls);
-          }
         FILL_DOC(ls, fdef, doc);
      }
    check_match(ls, '}', '{', bline, bcolumn);
@@ -531,7 +520,6 @@ _enum_field_free(Eolian_Enum_Type_Field *def)
    if (def->base.file) eina_stringshare_del(def->base.file);
    if (def->name) eina_stringshare_del(def->name);
    database_expr_del(def->value);
-   if (def->comment) eina_stringshare_del(def->comment);
    database_doc_del(def->doc);
    free(def);
 }
@@ -547,11 +535,6 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    def->type = EOLIAN_TYPE_ENUM;
    def->fields = eina_hash_string_small_new(EINA_FREE_CB(_enum_field_free));
    check_next(ls, '{');
-   if (ls->t.token == TOK_COMMENT)
-     {
-        def->comment = eina_stringshare_ref(ls->t.value.s);
-        eo_lexer_get(ls);
-     }
    FILL_DOC(ls, def, doc);
    if (ls->t.token == TOK_VALUE && ls->t.kw == KW_legacy)
      {
@@ -632,11 +615,6 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         Eina_Bool want_next = (ls->t.token == ',');
         if (want_next)
           eo_lexer_get(ls);
-        if (ls->t.token == TOK_COMMENT)
-          {
-             fdef->comment = eina_stringshare_ref(ls->t.value.s);
-             eo_lexer_get(ls);
-          }
         FILL_DOC(ls, fdef, doc);
         if (!want_next)
           break;
@@ -891,11 +869,6 @@ parse_typedef(Eo_Lexer *ls)
    def->base_type = parse_type(ls);
    pop_type(ls);
    check_next(ls, ';');
-   if (ls->t.token == TOK_COMMENT)
-     {
-        def->comment = eina_stringshare_ref(ls->t.value.s);
-        eo_lexer_get(ls);
-     }
    FILL_DOC(ls, def, doc);
    return def;
 }
@@ -943,11 +916,6 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
         pop_expr(ls);
      }
    check_next(ls, ';');
-   if (ls->t.token == TOK_COMMENT)
-     {
-        def->comment = eina_stringshare_ref(ls->t.value.s);
-        eo_lexer_get(ls);
-     }
    FILL_DOC(ls, def, doc);
    return def;
 }
@@ -1961,11 +1929,6 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                 pop_str(ls);
                 _fill_name(name, &def->full_name, &def->name, &def->namespaces);
                 eo_lexer_get(ls);
-                if (ls->t.token == TOK_COMMENT)
-                  {
-                     def->comment = eina_stringshare_ref(ls->t.value.s);
-                     eo_lexer_get(ls);
-                  }
                 FILL_DOC(ls, def, doc);
                 FILL_BASE(def->base, ls, line, col);
                 database_struct_add(def);

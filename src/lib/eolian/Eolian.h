@@ -1555,16 +1555,6 @@ EAPI const Eolian_Struct_Type_Field *eolian_type_struct_field_get(const Eolian_T
 EAPI Eina_Stringshare *eolian_type_struct_field_name_get(const Eolian_Struct_Type_Field *fl);
 
 /*
- * @brief Get the description of a field of a struct type.
- *
- * @param[in] fl the field.
- * @return the description.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_type_struct_field_description_get(const Eolian_Struct_Type_Field *fl);
-
-/*
  * @brief Get the documentation of a field of a struct type.
  *
  * @param[in] fl the field.
@@ -1632,16 +1622,6 @@ EAPI Eina_Stringshare *eolian_type_enum_field_name_get(const Eolian_Enum_Type_Fi
 EAPI Eina_Stringshare *eolian_type_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl);
 
 /*
- * @brief Get the description of a field of an enum type.
- *
- * @param[in] fl the field.
- * @return the description.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_type_enum_field_description_get(const Eolian_Enum_Type_Field *fl);
-
-/*
  * @brief Get the documentation of a field of an enum type.
  *
  * @param[in] fl the field.
@@ -1676,17 +1656,6 @@ EAPI const Eolian_Expression *eolian_type_enum_field_value_get(const Eolian_Enum
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_type_enum_legacy_prefix_get(const Eolian_Type *tp);
-
-/*
- * @brief Get the description of a struct/alias type.
- *
- * @param[in] tp the type.
- * @return the description when @c tp is EOLIAN_TYPE_STRUCT or
- * EOLIAN_TYPE_STRUCT_OPAQUE, NULL otherwise.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_type_description_get(const Eolian_Type *tp);
 
 /*
  * @brief Get the documentation of a struct/alias type.
@@ -2056,16 +2025,6 @@ EAPI Eina_Iterator *eolian_variable_constants_get_by_file(const char *fname);
  * @ingroup Eolian
  */
 EAPI Eolian_Variable_Type eolian_variable_type_get(const Eolian_Variable *var);
-
-/*
- * @brief Get the description of a variable.
- *
- * @param[in] var the variable.
- * @return the description or NULL.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_variable_description_get(const Eolian_Variable *var);
 
 /*
  * @brief Get the documentation of a variable.

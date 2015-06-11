@@ -176,7 +176,6 @@ struct _Eolian_Type
    Eina_List        *namespaces;
    Eina_Hash        *fields;
    Eina_List        *field_list;
-   Eina_Stringshare *comment;
    Eolian_Documentation *doc;
    Eina_Stringshare *legacy;
    Eina_Stringshare *freefunc;
@@ -223,7 +222,6 @@ struct _Eolian_Struct_Type_Field
    Eina_Stringshare *name;
    Eolian_Object     base;
    Eolian_Type      *type;
-   Eina_Stringshare *comment;
    Eolian_Documentation *doc;
 };
 
@@ -233,7 +231,6 @@ struct _Eolian_Enum_Type_Field
    Eina_Stringshare  *name;
    Eolian_Object      base;
    Eolian_Expression *value;
-   Eina_Stringshare  *comment;
    Eolian_Documentation *doc;
    Eina_Bool is_public_value :1;
 };
@@ -270,7 +267,6 @@ struct _Eolian_Variable
    Eina_List            *namespaces;
    Eolian_Type          *base_type;
    Eolian_Expression    *value;
-   Eina_Stringshare     *comment;
    Eolian_Documentation *doc;
    Eina_Bool is_extern :1;
 };
