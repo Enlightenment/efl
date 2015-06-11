@@ -1,85 +1,89 @@
 struct Elm.Event.Policy_Changed
 {
-   /*@
-     @struct _Elm_Event_Policy_Changed
-
-     Data on the event when an Elementary policy has changed
-    */
-   policy: uint; /*@< the policy identifier */
-   new_value: int; /*@< value the policy had before the change */
-   old_value: int; /*@< new value the policy got */
+   [[Data on the event when an Elementary policy has changed]]
+   policy: uint; [[the policy identifier]]
+   new_value: int; [[value the policy had before the change]]
+   old_value: int; [[new value the policy got]]
 }
 
 enum Elm.Policy
 {
-   /*@
-     Policy identifiers.
-    */
-   quit, /*@< under which circumstances the application should quit automatically. @see Elm_Policy_Quit.  */
-   exit, /*@< defines elm_exit() behaviour. @see Elm_Policy_Exit.
+   [[Policy identifiers.]]
+   quit, [[under which circumstances the application should quit automatically.
+           See also @Elm_Policy_Quit.]]
+   exit, [[defines elm_exit() behaviour. See also @Elm_Policy_Exit.
+
            @since 1.8
-          */
-   throttle, /*@< defines how throttling should work @see Elm_Policy_Throttle
+         ]]
+   throttle, [[defines how throttling should work. See also @Elm_Policy_Throttle
+
                @since 1.8
-              */
+             ]]
    last
 }
 
 enum Elm.Policy.Quit
 {
-   /*@
-     Possible values for the #ELM_POLICY_QUIT policy
-    */
-   none = 0, /*@< never quit the application
-               automatically */
-   last_window_closed /*@< quit when the
-                        application's last
-                        window is closed */
+   [[Possible values for the #ELM_POLICY_QUIT policy]]
+   none = 0, [[never quit the application automatically]]
+   last_window_closed [[quit when the application's last window is closed]]
 }
 
 enum Elm.Policy.Exit
 {
-   /*@
-     Possible values for the #ELM_POLICY_EXIT policy.
+   [[Possible values for the #ELM_POLICY_EXIT policy.
+
      @since 1.8
-    */
-   none = 0, /*@< just quit the main loop on elm_exit() */
-   windows_del /*@< delete all the windows after quitting
-                 the main loop */
+   ]]
+   none = 0, [[just quit the main loop on elm_exit()]]
+   windows_del [[delete all the windows after quitting the main loop]]
 }
 
 enum Elm.Policy.Throttle
 {
-   /*@
-     Possible values for the #ELM_POLICY_THROTTLE policy.
+   [[Possible values for the #ELM_POLICY_THROTTLE policy.
+
      @since 1.8
-    */
-   config = 0, /*@< do whatever elementary config is configured to do */
-   hidden_always, /*@< always throttle when all windows are no longer visible */
-   never /*@< never throttle when windows are all hidden, regardless of config settings */
+   ]]
+   config = 0, [[do whatever elementary config is configured to do]]
+   hidden_always, [[always throttle when all windows are no longer visible]]
+   never [[never throttle when windows are all hidden, regardless of config
+           settings]]
 }
 
 enum Elm.Object.Select_Mode
 {
-   /*@
-     Possible values for the #ELM_OBJECT_SELECT_MODE policy.
+   [[Possible values for the #ELM_OBJECT_SELECT_MODE policy.
+
      @since 1.7
-    */
-   default = 0, /*@< default select mode. Once an item is selected, it would stay highlighted and not going to call selected callback again even it was clicked. Items can get focus. */
-   always, /*@< always select mode. Item selected callbacks will be called every time for click events, even after the item was already selected. Items can get focus. */
-   none, /*@< no select mode. Items will never be highlighted and selected but the size will be adjusted by the finger size configuration. Items can't get focus. */
-   display_only, /*@< no select mode with no finger size rule. Items will never be highlighted and selected and ignore the finger size. So the item size can be reduced below than the finger size configuration. Items can't get focus. */
-   max /*@< canary value: any value greater or equal to ELM_OBJECT_SELECT_MODE_MAX is forbidden. */
+   ]]
+   default = 0, [[default select mode. Once an item is selected, it would stay
+                  highlighted and not going to call selected callback again
+                  even it was clicked. Items can get focus.]]
+   always, [[always select mode. Item selected callbacks will be called every
+             time for click events, even after the item was already selected.
+             Items can get focus.]]
+   none, [[no select mode. Items will never be highlighted and selected but
+           the size will be adjusted by the finger size configuration. Items
+           can't get focus.]]
+   display_only, [[no select mode with no finger size rule. Items will never
+                   be highlighted and selected and ignore the finger size. So
+                   the item size can be reduced below than the finger size
+                   configuration. Items can't get focus.]]
+   max [[canary value: any value greater or equal to ELM_OBJECT_SELECT_MODE_MAX
+         is forbidden.]]
 }
 
 enum Elm.Object.Multi_Select_Mode
 {
-   /*@
-     Possible values for the #ELM_OBJECT_MULTI_SELECT_MODE policy.
+   [[Possible values for the #ELM_OBJECT_MULTI_SELECT_MODE policy.
+
      @since 1.8
-    */
-   default = 0, /*@< default multiple select mode */
-   with_control, /*@< disallow mutiple selection when clicked without control key pressed */
-   max /*@< canary value: any value greater or equal to ELM_OBJECT_MULTI_SELECT_MODE_MAX is forbidden. */
+   ]]
+   default = 0, [[default multiple select mode]]
+   with_control, [[disallow mutiple selection when clicked without control key
+                   pressed]]
+   max [[canary value: any value greater or equal to
+         ELM_OBJECT_MULTI_SELECT_MODE_MAX is forbidden.]]
 }
 

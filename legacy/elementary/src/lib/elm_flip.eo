@@ -1,8 +1,6 @@
 enum Elm.Flip.Mode
 {
-  /*@
-    @ingroup Flip
-   */
+   [[]]
    legacy: elm_flip;
    rotate_y_center_axis,
    rotate_x_center_axis,
@@ -20,9 +18,7 @@ enum Elm.Flip.Mode
 
 enum Elm.Flip.Interaction
 {
-  /*@
-    @ingroup Flip
-   */
+   [[]]
    none,
    rotate,
    cube,
@@ -31,13 +27,10 @@ enum Elm.Flip.Interaction
 
 enum Elm.Flip.Direction
 {
-  /*@
-    @ingroup Flip
-   */
-   up = 0, /*@< Allows interaction with the top of the widget */
-   down, /*@< Allows interaction with the bottom of the widget */
-   left, /*@< Allows interaction with the left portion of the widget */
-   right /*@< Allows interaction with the right portion of the widget */
+   up = 0, [[Allows interaction with the top of the widget]]
+   down, [[Allows interaction with the bottom of the widget]]
+   left, [[Allows interaction with the left portion of the widget]]
+   right [[Allows interaction with the right portion of the widget]]
 }
 
 class Elm.Flip (Elm.Container)

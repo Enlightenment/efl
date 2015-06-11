@@ -1,45 +1,39 @@
 enum Elm.Scroller.Policy
 {
-   /*@
-     @brief Type that controls when scrollbars should appear.
-     @see elm_scroller_policy_set()
+   [[Type that controls when scrollbars should appear.
 
-     @ingroup Scroller
-    */
-   auto = 0, /*@< Show scrollbars as needed */
-   on, /*@< Always show scrollbars */
-   off, /*@< Never show scrollbars */
+     See also @elm_scroller_policy_set.
+   ]]
+   auto = 0, [[Show scrollbars as needed]]
+   on, [[Always show scrollbars]]
+   off, [[Never show scrollbars]]
    last
 }
 
 enum Elm.Scroller.Single_Direction
 {
-   /*@
-      @brief Type that controls how the content is scrolled.
+   [[Type that controls how the content is scrolled.
 
-      @see elm_scroller_single_direction_set()
-      @ingroup Scroller
-    */
-   none = 0, /*@< Scroll every direction */
-   soft, /*@< Scroll single direction if the direction is certain*/
-   hard, /*@< Scroll only single direction */
+     See also @elm_scroller_single_direction_set.
+   ]]
+   none = 0, [[Scroll every direction]]
+   soft, [[Scroll single direction if the direction is certain]]
+   hard, [[Scroll only single direction]]
    last
 }
 
 enum Elm.Scroller.Movement_Block
 {
-   /*@
-      @brief Type that blocks the scroll movement in one or more direction.
+   [[Type that blocks the scroll movement in one or more direction.
 
-      @see elm_scroller_movement_block()
+     See also @elm_scroller_movement_block.
 
-      @since 1.8
-      @ingroup Scroller
-    */
-    legacy: elm_scroller_movement;
-    no_block = 1 << 0, /*@< Do not block movements */
-    block_vertical = 1 << 1, /*@< Block vertical movements */
-    block_horizontal = 1 << 2 /*@< Block horizontal movements */
+     @since 1.8
+   ]]
+   legacy: elm_scroller_movement;
+   no_block = 1 << 0, [[Do not block movements]]
+   block_vertical = 1 << 1, [[Block vertical movements]]
+   block_horizontal = 1 << 2 [[Block horizontal movements]]
 }
 
 class Elm.Scroller (Elm.Layout, Elm_Interface_Scrollable,

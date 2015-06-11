@@ -1,17 +1,13 @@
 enum Elm.Toolbar_Item.Scrollto_Type
 {
-   /*@
-     Defines where to position the item in the toolbar.
-     @ingroup Toolbar
-   */
-
+   [[Defines where to position the item in the toolbar.]]
    legacy: elm_toolbar_item_scrollto;
 
-   none = 0,   /*@< no scrollto */
-   in = (1 << 0),   /*@< to the nearest viewport */
-   first = (1 << 1),   /*@< to the first of viewport */
-   middle = (1 << 2),   /*@< to the middle of viewport */
-   last = (1 << 3)   /*@< to the last of viewport */
+   none = 0, [[no scrollto]]
+   in = (1 << 0), [[to the nearest viewport]]
+   first = (1 << 1), [[to the first of viewport]]
+   middle = (1 << 2), [[to the middle of viewport]]
+   last = (1 << 3) [[to the last of viewport]]
 }
 
 class Elm.Toolbar_Item(Elm.Widget_Item)
