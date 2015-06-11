@@ -421,6 +421,64 @@ group { name: "e/comp/effects/auto/grow";
    }
 }
 
+group { name: "e/comp/effects/visibility/vertical";
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+            if (st == 1)
+              set_state(PART:"clip", "hid", 0.0);
+            else
+              set_state(PART:"clip", "default", 0.0);
+         }
+      }
+   }
+   parts {
+      rect { "clip";
+        desc {}
+        desc { "hid"; rel2.relative: 1 0; }
+      }
+      swallow { "e.swallow.content"; clip: "clip"; }
+   }
+   programs {
+      program {
+         name: "show";
+         signal: "e,action,go";
+         source: "e";
+         filter: "clip" "default";
+         action: STATE_SET "hid" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "clip";
+         after: "done";
+      }
+      program {
+         name: "hide";
+         signal: "e,action,go";
+         source: "e";
+         filter: "clip" "hid";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "clip";
+         after: "done";
+      }
+      program {
+         name: "stop";
+         signal: "e,action,stop";
+         source: "e";
+         action: ACTION_STOP;
+         target: "show";
+         target: "hide";
+      }
+      program {
+         name: "done";
+         action: SIGNAL_EMIT "e,action,done" "e";
+      }
+   }
+}
+
 group { name: "e/comp/effects/iconify/default";
    alias: "e/comp/effects/iconify/ibar";
    alias: "e/comp/effects/iconify/ibox";
