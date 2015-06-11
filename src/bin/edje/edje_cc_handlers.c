@@ -3136,7 +3136,7 @@ static void
 st_collections_group_translation_file_source(void)
 {
    Edje_Mo *mo_entry;
-   char *mo_path_str;
+
    check_arg_count(1);
 
    if (!edje_file->mo_dir->mo_entries)
