@@ -346,17 +346,11 @@ EOLIAN static Eo *
 _evas_image_eo_base_constructor(Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   Evas *eo_e;
-   Eo *parent = NULL;
    Evas_Colorspace cspace;
 
    eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
 
-   eo_do(eo_obj, parent = eo_parent_get());
-   eo_e = evas_object_evas_get(parent);
-
    evas_object_image_init(eo_obj);
-   evas_object_inject(eo_obj, obj, eo_e);
 
    if (!_init_cow())
      return NULL;

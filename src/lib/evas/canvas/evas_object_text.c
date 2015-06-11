@@ -370,11 +370,6 @@ _evas_text_eo_base_constructor(Eo *eo_obj, Evas_Text_Data *o)
 {
    eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
    evas_object_text_init(eo_obj);
-   Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   Eo *parent = NULL;
-
-   eo_do(eo_obj, parent = eo_parent_get());
-   evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
 
    o->cur.filter = eina_cow_alloc(evas_object_filter_cow);
 

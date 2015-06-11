@@ -102,7 +102,6 @@ Eo *
 _evas_vg_eo_base_constructor(Eo *eo_obj, Evas_VG_Data *pd)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   Eo *parent = NULL;
 
    eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
 
@@ -114,9 +113,6 @@ _evas_vg_eo_base_constructor(Eo *eo_obj, Evas_VG_Data *pd)
    /* root node */
    pd->root = eo_add(EFL_VG_ROOT_NODE_CLASS, eo_obj);
    eo_ref(pd->root);
-
-   eo_do(eo_obj, parent = eo_parent_get());
-   evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
 
    return eo_obj;
 }

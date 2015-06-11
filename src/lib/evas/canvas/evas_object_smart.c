@@ -546,7 +546,6 @@ _evas_object_smart_eo_base_constructor(Eo *eo_obj, Evas_Smart_Data *class_data E
 {
    Evas_Object_Protected_Data *obj;
    Evas_Smart_Data *smart;
-   Eo *parent = NULL;
 
    smart = class_data;
    smart->object = eo_obj;
@@ -555,8 +554,6 @@ _evas_object_smart_eo_base_constructor(Eo *eo_obj, Evas_Smart_Data *class_data E
    evas_object_smart_init(eo_obj);
 
    obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
-   eo_do(eo_obj, parent = eo_parent_get());
-   evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
    eo_do(eo_obj,
          evas_obj_type_set(MY_CLASS_NAME_LEGACY),
          evas_obj_smart_add());

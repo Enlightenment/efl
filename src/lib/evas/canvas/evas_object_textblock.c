@@ -5808,7 +5808,6 @@ _evas_textblock_eo_base_constructor(Eo *eo_obj, Evas_Textblock_Data *class_data 
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Textblock_Data *o;
-   Eo *eo_parent = NULL;
 
    eo_obj = eo_do_super_ret(eo_obj, MY_CLASS, eo_obj, eo_constructor());
 
@@ -5821,9 +5820,6 @@ _evas_textblock_eo_base_constructor(Eo *eo_obj, Evas_Textblock_Data *class_data 
    o->cursor = calloc(1, sizeof(Evas_Textblock_Cursor));
    _format_command_init();
    evas_object_textblock_init(eo_obj);
-
-   eo_do(eo_obj, eo_parent = eo_parent_get());
-   evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent));
 
    return eo_obj;
 }

@@ -108,6 +108,8 @@ _evas_object_eo_base_constructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    obj->data_3d = eina_cow_alloc(evas_object_3d_cow);
    obj->mask = eina_cow_alloc(evas_object_mask_cow);
 
+   evas_object_inject(eo_obj, obj, evas_object_evas_get(parent));
+
    return eo_obj;
 }
 
