@@ -1,61 +1,69 @@
-type Evas.Modifier_Mask: ullong;  /*@ An Evas modifier mask type */
-type Evas.Coord: int; /*@ A type for coordinates */
+type Evas.Modifier_Mask: ullong;  [[An Evas modifier mask type]]
+type Evas.Coord: int; [[A type for coordinates]]
 enum Evas.Aspect_Control {
-   /**< Aspect types/policies for scaling size hints, used for evas_object_size_hint_aspect_set() */
-   none = 0, /**< Preference on scaling unset */
-   neither = 1, /**< Same effect as unset preference on scaling */
-   horizontal = 2, /**< Use all horizontal container space to place an object, using the given aspect */
-   vertical = 3, /**< Use all vertical container space to place an object, using the given aspect */
-   both = 4 /**< Use all horizontal @b and vertical container spaces to place an object (never growing it out of those bounds), using the given aspect */
+   [[Aspect types/policies for scaling size hints, used for
+     evas_object_size_hint_aspect_set()]]
+   none = 0, [[Preference on scaling unset]]
+   neither = 1, [[Same effect as unset preference on scaling]]
+   horizontal = 2, [[Use all horizontal container space to place an object,
+                     using the given aspect]]
+   vertical = 3, [[Use all vertical container space to place an object, using
+                   the given aspect]]
+   both = 4 [[Use all horizontal @b and vertical container spaces to place an
+              object (never growing it out of those bounds), using the given
+              aspect]]
 }
 
 enum Evas.Render_Op {
-   /*@
-    * How the object should be rendered to output.
-    * @ingroup Evas_Object_Group_Extras
-    */
+   [[How the object should be rendered to output.]]
    legacy: Evas_Render;
 
-   blend = 0, /**< default op: d = d*(1-sa) + s */
-   blend_rel = 1, /**< d = d*(1 - sa) + s*da */
-   copy = 2, /**< d = s */
-   copy_rel = 3, /**< d = s*da */
-   add = 4, /* d = d + s */
-   add_rel = 5, /**< d = d + s*da */
-   sub = 6, /**< d = d - s */
-   sub_rel = 7, /* d = d - s*da */
-   tint = 8, /**< d = d*s + d*(1 - sa) + s*(1 - da) */
-   tint_rel = 9, /**< d = d*(1 - sa + s) */
-   mask = 10, /**< d = d*sa */
-   mul = 11 /**< d = d*s */
+   blend = 0, [[default op: d = d*(1-sa) + s]]
+   blend_rel = 1, [[d = d*(1 - sa) + s*da]]
+   copy = 2, [[d = s]]
+   copy_rel = 3, [[d = s*da]]
+   add = 4, [[d = d + s]]
+   add_rel = 5, [[d = d + s*da]]
+   sub = 6, [[d = d - s]]
+   sub_rel = 7, [[d = d - s*da]]
+   tint = 8, [[d = d*s + d*(1 - sa) + s*(1 - da)]]
+   tint_rel = 9, [[d = d*(1 - sa + s)]]
+   mask = 10, [[d = d*sa]]
+   mul = 11 [[d = d*s]]
 }
 
 enum Evas.Object_Pointer_Mode {
-   /**
-    * How the mouse pointer should be handled by Evas.
-    *
-    * In the mode #EVAS_OBJECT_POINTER_MODE_AUTOGRAB, when a mouse button
-    * is pressed down over an object and held, with the mouse pointer
-    * being moved outside of it, the pointer still behaves as being bound
-    * to that object, albeit out of its drawing region. When the button
-    * is released, the event will be fed to the object, that may check if
-    * the final position is over it or not and do something about it.
-    *
-    * In the mode #EVAS_OBJECT_POINTER_MODE_NOGRAB, the pointer will
-    * always be bound to the object right below it.
-    *
-    * @ingroup Evas_Object_Group_Extras
-    */
-   autograb, /**< default, X11-like */
-   nograb, /**< pointer always bound to the object right below it */
-   nograb_no_repeat_updown /**< useful on object with "repeat events" enabled, where mouse/touch up and down events WONT be repeated to objects and these objects wont be auto-grabbed. @since 1.2 */
+   [[How the mouse pointer should be handled by Evas.
+
+     In the mode #EVAS_OBJECT_POINTER_MODE_AUTOGRAB, when a mouse button
+     is pressed down over an object and held, with the mouse pointer
+     being moved outside of it, the pointer still behaves as being bound
+     to that object, albeit out of its drawing region. When the button
+     is released, the event will be fed to the object, that may check if
+     the final position is over it or not and do something about it.
+
+     In the mode #EVAS_OBJECT_POINTER_MODE_NOGRAB, the pointer will
+     always be bound to the object right below it.
+   ]]
+   autograb, [[default, X11-like]]
+   nograb, [[pointer always bound to the object right below it]]
+   nograb_no_repeat_updown [[useful on object with "repeat events" enabled,
+                             where mouse/touch up and down events WONT be
+                             repeated to objects and these objects wont be
+                             auto-grabbed.
+
+                             @since 1.2
+                           ]]
 }
 
 enum Evas.Display_Mode {
-   none = 0, /**<Default mode */
-   compress = 1, /**< Use this mode when you want to give compress display mode hint to an object */
-   expand = 2, /**< Use this mode when you want to give expand display mode hint to an object */
-   dont_change = 3 /**< Use this mode when an object should not change its display mode */
+   none = 0, [[Default mode]]
+   compress = 1, [[Use this mode when you want to give compress display mode
+                   hint to an object]]
+   expand = 2, [[Use this mode when you want to give expand display mode hint
+                 to an object]]
+   dont_change = 3 [[Use this mode when an object should not change its display
+                     mode]]
 }
 
 enum Evas.BiDi_Direction {
@@ -68,36 +76,35 @@ enum Evas.BiDi_Direction {
 }
 
 enum Evas.Text_Style_Type {
-   /*@
-    * Types of styles to be applied on text objects. The @c
-    * EVAS_TEXT_STYLE_SHADOW_DIRECTION_* ones are to be ORed together with others
-    * imposing shadow, to change shadow's direction
-    */
+   [[Types of styles to be applied on text objects. The
+     EVAS_TEXT_STYLE_SHADOW_DIRECTION_* ones are to be ORed together with
+     others imposing shadow, to change shadow's direction
+   ]]
    legacy: Evas_Text_Style;
 
-   plain,      /**< plain, standard text */
-   shadow,      /**< text with shadow underneath */
-   outline,      /**< text with an outline */
-   soft_outline,      /**< text with a soft outline */
-   glow,      /**< text with a glow effect */
-   outline_shadow,      /**< text with both outline and shadow effects */
-   far_shadow,      /**< text with (far) shadow underneath */
-   outline_soft_shadow,      /**< text with outline and soft shadow effects combined */
-   soft_shadow,      /**< text with (soft) shadow underneath */
-   far_soft_shadow,      /**< text with (far soft) shadow underneath */
+   plain, [[plain, standard text]]
+   shadow, [[text with shadow underneath]]
+   outline, [[text with an outline]]
+   soft_outline, [[text with a soft outline]]
+   glow, [[text with a glow effect]]
+   outline_shadow, [[text with both outline and shadow effects]]
+   far_shadow, [[text with (far) shadow underneath]]
+   outline_soft_shadow, [[text with outline and soft shadow effects combined]]
+   soft_shadow, [[text with (soft) shadow underneath]]
+   far_soft_shadow, [[text with (far soft) shadow underneath]]
 
    /* OR these to modify shadow direction (3 bits needed) */
-   shadow_direction_bottom_right = (0x0 << 4),      /**< shadow growing to bottom right */
-   shadow_direction_bottom = (0x1 << 4),            /**< shadow growing to the bottom */
-   shadow_direction_bottom_left = (0x2 << 4),       /**< shadow growing to bottom left */
-   shadow_direction_left = (0x3 << 4),              /**< shadow growing to the left */
-   shadow_direction_top_left = (0x4 << 4),          /**< shadow growing to top left */
-   shadow_direction_top = (0x5 << 4),               /**< shadow growing to the top */
-   shadow_direction_top_right = (0x6 << 4),         /**< shadow growing to top right */
-   shadow_direction_right = (0x7 << 4)             /**< shadow growing to the right */
+   shadow_direction_bottom_right = (0x0 << 4),      [[shadow growing to bottom right]]
+   shadow_direction_bottom = (0x1 << 4),            [[shadow growing to the bottom]]
+   shadow_direction_bottom_left = (0x2 << 4),       [[shadow growing to bottom left]]
+   shadow_direction_left = (0x3 << 4),              [[shadow growing to the left]]
+   shadow_direction_top_left = (0x4 << 4),          [[shadow growing to top left]]
+   shadow_direction_top = (0x5 << 4),               [[shadow growing to the top]]
+   shadow_direction_top_right = (0x6 << 4),         [[shadow growing to top right]]
+   shadow_direction_right = (0x7 << 4)             [[shadow growing to the right]]
 }
 
-type Evas.Font.Size: int; /**< A type for font size */
+type Evas.Font.Size: int; [[A type for font size]]
 
 enum Evas.Font.Hinting_Flags {
    [[Flags for Font Hinting]]
@@ -108,14 +115,10 @@ enum Evas.Font.Hinting_Flags {
    bytecode [[Bytecode font hinting]]
 }
 
-struct Evas.Map; /*@ An opaque handle to map points
-                  *
-                  * @see evas_map_new()
-                  * @see evas_map_free()
-                  * @see evas_map_dup()
-                  *
-                  * @ingroup Evas_Object_Group_Map
-                  */
+struct Evas.Map; [[An opaque handle to map points
+
+                   See @evas_map_new, @evas_map_free, @evas_map_dup.
+                 ]]
 
 enum Evas.Button_Flags {
    [[Flags for Mouse Button events]]

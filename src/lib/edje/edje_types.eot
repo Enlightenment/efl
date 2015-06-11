@@ -85,13 +85,13 @@ enum Edje.Input_Panel.Layout {
 enum Edje.External.Param_Type {
    [[The possible types the parameters of an EXTERNAL part can be.]]
 
-   int, /**< Parameter value is an integer. */
-   double, /**< Parameter value is a double. */
-   string, /**< Parameter value is a string. */
-   bool, /**< Parameter value is boolean. */
-   choice, /**< Parameter value is one of a set of
-             predefined string choices. */
-   max /**< Sentinel. Don't use. */
+   int, [[Parameter value is an integer.]]
+   double, [[Parameter value is a double.]]
+   string, [[Parameter value is a string.]]
+   bool, [[Parameter value is boolean.]]
+   choice, [[Parameter value is one of a set of
+             predefined string choices.]]
+   max [[Sentinel. Don't use.]]
 }
 
 struct Edje.External.Param {
