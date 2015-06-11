@@ -2170,8 +2170,13 @@ _elm_list_item_elm_interface_atspi_accessible_state_set_get(Eo *eo_it, Elm_List_
    Eina_Bool sel;
 
    eo_do_super(eo_it, ELM_LIST_ITEM_CLASS, ret = elm_interface_atspi_accessible_state_set_get());
-   eo_do(eo_it, sel = elm_obj_list_item_selected_get());
 
+   if (elm_object_item_disabled_get(eo_it))
+     return ret;
+
+   STATE_TYPE_SET(ret, ELM_ATSPI_STATE_SELECTABLE);
+
+   eo_do(eo_it, sel = elm_obj_list_item_selected_get());
    if (sel)
      STATE_TYPE_SET(ret, ELM_ATSPI_STATE_SELECTED);
    else
