@@ -130,6 +130,37 @@ static const EVGL_Interface evgl_funcs =
    NULL, // native_win_surface_config_get
 };
 
+Eina_Bool
+eng_gbm_init(Evas_Engine_Info_GL_Drm *info)
+{
+   Ecore_Drm_Device *dev;
+
+   if (!info) return EINA_FALSE;
+   if (!(dev = info->info.dev)) return EINA_FALSE;
+
+   if (!(info->info.gbm = gbm_create_device(dev->drm.fd)))
+     {
+        ERR("Coult not create gbm device: %m");
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+Eina_Bool
+eng_gbm_shutdown(Evas_Engine_Info_GL_Drm *info)
+{
+   if (!info) return EINA_TRUE;
+
+   if (info->info.gbm)
+     {
+        gbm_device_destroy(info->info.gbm);
+        info->info.gbm = NULL;
+     }
+
+   return EINA_TRUE;
+}
+
 /* local inline functions */
 static inline Outbuf *
 eng_get_ob(Render_Engine *re)
@@ -170,9 +201,7 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_preload_init);
    LINK2GENERIC(evas_gl_preload_shutdown);
    LINK2GENERIC(evgl_engine_shutdown);
-   LINK2GENERIC(evgl_current_native_context_get);
    LINK2GENERIC(evas_gl_symbols);
-   LINK2GENERIC(evas_gl_common_current_context_get);
 
 #define FINDSYM(dst, sym, typ) \
    if (glsym_eglGetProcAddress) { \
@@ -351,8 +380,9 @@ evgl_eng_native_window_create(void *data)
         return NULL;
      }
 
-   surface = gbm_surface_create(info->info.gbm, 1, 1, info->info.format,
-                                info->info.flags);
+   surface = gbm_surface_create(info->info.gbm,
+                                eng_get_ob(re)->w, eng_get_ob(re)->h,
+                                info->info.format, info->info.flags);
    if (!surface)
      {
         ERR("Could not create gl drm window: %m");
@@ -677,52 +707,6 @@ _native_cb_free(void *data, void *image)
    free(n);
 }
 
-static Eina_Bool
-eng_gbm_init(Evas_Engine_Info_GL_Drm *info, int w, int h)
-{
-   Ecore_Drm_Device *dev;
-
-   if (!info) return EINA_FALSE;
-   if (!(dev = info->info.dev)) return EINA_FALSE;
-
-   if (!(info->info.gbm = gbm_create_device(dev->drm.fd)))
-     {
-        ERR("Coult not create gbm device: %m");
-        return EINA_FALSE;
-     }
-
-   if (!(info->info.surface = 
-         gbm_surface_create(info->info.gbm, w, h,
-                            info->info.format, info->info.flags)))
-     {
-        ERR("Could not create gbm surface: %m");
-        gbm_device_destroy(info->info.gbm);
-        info->info.gbm = NULL;
-        return EINA_FALSE;
-     }
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-eng_gbm_shutdown(Evas_Engine_Info_GL_Drm *info)
-{
-   if (!info) return EINA_TRUE;
-
-   if (info->info.surface)
-     {
-        gbm_surface_destroy(info->info.surface);
-        info->info.surface = NULL;
-     }
-   if (info->info.gbm)
-     {
-        gbm_device_destroy(info->info.gbm);
-        info->info.gbm = NULL;
-     }
-
-   return EINA_TRUE;
-}
-
 /* engine specific override functions */
 static void *
 eng_info(Evas *eo_e EINA_UNUSED)
@@ -780,6 +764,42 @@ eng_setup(Evas *evas, void *in)
                  (!strcasecmp(s, "q")) || (!strcasecmp(s, "4")))
           swap_mode = MODE_QUADRUPLE;
      }
+   else
+     {
+// in most gl implementations - egl and glx here that we care about the TEND
+// to either swap or copy backbuffer and front buffer, but strictly that is
+// not true. technically backbuffer content is totally undefined after a swap
+// and thus you MUST re-render all of it, thus MODE_FULL
+        swap_mode = MODE_FULL;
+// BUT... reality is that lmost every implementation copies or swaps so
+// triple buffer mode can be used as it is a superset of double buffer and
+// copy (though using those explicitly is more efficient). so let's play with
+// triple buffer mdoe as a default and see.
+//        re->mode = MODE_TRIPLE;
+// XXX: note - the above seems to break on some older intel chipsets and
+// drivers. it seems we CANT depend on backbuffer staying around. bugger!
+        switch (info->info.swap_mode)
+          {
+           case EVAS_ENGINE_GL_DRM_SWAP_MODE_FULL:
+             swap_mode = MODE_FULL;
+             break;
+           case EVAS_ENGINE_GL_DRM_SWAP_MODE_COPY:
+             swap_mode = MODE_COPY;
+             break;
+           case EVAS_ENGINE_GL_DRM_SWAP_MODE_DOUBLE:
+             swap_mode = MODE_DOUBLE;
+             break;
+           case EVAS_ENGINE_GL_DRM_SWAP_MODE_TRIPLE:
+             swap_mode = MODE_TRIPLE;
+             break;
+           case EVAS_ENGINE_GL_DRM_SWAP_MODE_QUADRUPLE:
+             swap_mode = MODE_QUADRUPLE;
+             break;
+           default:
+             swap_mode = MODE_AUTO;
+             break;
+          }
+     }
 
    if (!(re = epd->engine.data.output))
      {
@@ -794,7 +814,7 @@ eng_setup(Evas *evas, void *in)
 
         if (!(re = calloc(1, sizeof(Render_Engine)))) return 0;
 
-        if (!eng_gbm_init(info, epd->output.w, epd->output.h))
+        if (!eng_gbm_init(info))
           {
              free(re);
              return 0;
@@ -829,9 +849,9 @@ eng_setup(Evas *evas, void *in)
                                                 evas_outbuf_gl_context_use,
                                                 &evgl_funcs, ob->w, ob->h))
           {
-             eng_gbm_shutdown(info);
              /* free outbuf */
              evas_outbuf_free(ob);
+             eng_gbm_shutdown(info);
              free(re);
              return 0;
           }
@@ -860,9 +880,7 @@ eng_setup(Evas *evas, void *in)
      {
         if (eng_get_ob(re) && _re_wincheck(eng_get_ob(re)))
           {
-             if ((info->info.gbm != eng_get_ob(re)->gbm) ||
-                 (info->info.surface != eng_get_ob(re)->surface) ||
-                 (info->info.depth != eng_get_ob(re)->depth) ||
+             if ((info->info.depth != eng_get_ob(re)->depth) ||
                  (info->info.destination_alpha != eng_get_ob(re)->destination_alpha))
                {
                   Outbuf *ob, *ob_old;
@@ -897,13 +915,6 @@ eng_setup(Evas *evas, void *in)
                                           epd->output.w, epd->output.h,
                                           info->info.rotation,
                                           info->info.depth);
-                  if (re->generic.software.tb)
-                    evas_common_tilebuf_free(re->generic.software.tb);
-                  re->generic.software.tb =
-                    evas_common_tilebuf_new(epd->output.w, epd->output.h);
-                  if (re->generic.software.tb)
-                    evas_common_tilebuf_set_tile_size(re->generic.software.tb,
-                                                      TILESIZE, TILESIZE);
                }
           }
      }
@@ -925,6 +936,14 @@ eng_setup(Evas *evas, void *in)
         free(re);
         return 0;
      }
+
+   if (re->generic.software.tb)
+     evas_common_tilebuf_free(re->generic.software.tb);
+   re->generic.software.tb =
+     evas_common_tilebuf_new(epd->output.w, epd->output.h);
+   if (re->generic.software.tb)
+     evas_common_tilebuf_set_tile_size(re->generic.software.tb,
+                                       TILESIZE, TILESIZE);
 
    if (re->generic.software.tb)
      evas_render_engine_software_generic_tile_strict_set(&re->generic.software, EINA_TRUE);
@@ -952,10 +971,10 @@ eng_output_free(void *data)
 
         if (gl_wins == 1) glsym_evgl_engine_shutdown(re);
 
-        eng_gbm_shutdown(eng_get_ob(re)->info);
-
         /* NB: evas_render_engine_software_generic_clean() frees ob */
         evas_render_engine_software_generic_clean(&re->generic.software);
+
+        eng_gbm_shutdown(eng_get_ob(re)->info);
 
         gl_wins--;
 
@@ -1217,21 +1236,6 @@ eng_image_native_set(void *data, void *image, void *native)
    return img;
 }
 
-static void *
-eng_gl_current_context_get(void *data EINA_UNUSED)
-{
-   EVGL_Context *ctx;
-   EVGLNative_Context context;
-
-   ctx = glsym_evas_gl_common_current_context_get();
-   if (!ctx) return NULL;
-
-   context = glsym_evgl_current_native_context_get(ctx);
-   if (eglGetCurrentContext() == context) return ctx;
-
-   return NULL;
-}
-
 /* module api functions */
 static int
 module_open(Evas_Module *em)
@@ -1267,7 +1271,6 @@ module_open(Evas_Module *em)
    EVAS_API_OVERRIDE(output_free, &func, eng_);
    EVAS_API_OVERRIDE(output_dump, &func, eng_);
    EVAS_API_OVERRIDE(image_native_set, &func, eng_);
-   EVAS_API_OVERRIDE(gl_current_context_get, &func, eng_);
 
    /* Mesa's EGL driver loads wayland egl by default. (called by eglGetProcaddr() )
     * implicit env set (EGL_PLATFORM=drm) prevent that. */
