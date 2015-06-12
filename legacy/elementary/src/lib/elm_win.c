@@ -5044,19 +5044,28 @@ _elm_win_keygrab_set(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *key, Eva
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      {
-        if (grab_mode == ELM_WIN_KEYGRAB_SHARED)
-          ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, ECORE_X_WIN_KEYGRAB_SHARED);
-        else if (grab_mode == ELM_WIN_KEYGRAB_TOPMOST)
-          ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, ECORE_X_WIN_KEYGRAB_TOPMOST);
-        else if (grab_mode == ELM_WIN_KEYGRAB_EXCLUSIVE)
-          ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, ECORE_X_WIN_KEYGRAB_EXCLUSIVE);
-        else if (grab_mode == ELM_WIN_KEYGRAB_OVERRIDE_EXCLUSIVE)
-          ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, ECORE_X_WIN_KEYGRAB_EXCLUSIVE);
+        Ecore_X_Win_Keygrab_Mode x_grab_mode;
+        switch (grab_mode)
+          {
+           case ELM_WIN_KEYGRAB_SHARED:
+             x_grab_mode = ECORE_X_WIN_KEYGRAB_SHARED;
+             break;
+           case ELM_WIN_KEYGRAB_TOPMOST:
+             x_grab_mode = ECORE_X_WIN_KEYGRAB_TOPMOST;
+             break;
+           case ELM_WIN_KEYGRAB_EXCLUSIVE:
+             x_grab_mode = ECORE_X_WIN_KEYGRAB_EXCLUSIVE;
+             break;
+           case ELM_WIN_KEYGRAB_OVERRIDE_EXCLUSIVE:
+             x_grab_mode = ECORE_X_WIN_KEYGRAB_OVERRIDE_EXCLUSIVE;
+             break;
+           default:
+             return ret;
+          }
+         ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, x_grab_mode);
      }
-   return ret;
-#else
-   return ret;
 #endif
+   return ret;
 }
 
 EOLIAN static Eina_Bool
@@ -5067,10 +5076,8 @@ _elm_win_keygrab_unset(Eo *obj EINA_UNUSED, Elm_Win_Data *sd, const char *key, E
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      ret = ecore_x_window_keygrab_unset(sd->x.xwin, key, 0, 0);
-   return ret;
-#else
-   return ret;
 #endif
+   return ret;
 }
 
 EOLIAN static Evas_Object*
