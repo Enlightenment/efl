@@ -4,6 +4,16 @@
 # include <Ecore_Drm.h>
 # include <gbm.h>
 
+typedef enum _Evas_Engine_Info_GL_Drm_Swap_Mode
+{
+   EVAS_ENGINE_GL_DRM_SWAP_MODE_AUTO = 0,
+   EVAS_ENGINE_GL_DRM_SWAP_MODE_FULL = 1,
+   EVAS_ENGINE_GL_DRM_SWAP_MODE_COPY = 2,
+   EVAS_ENGINE_GL_DRM_SWAP_MODE_DOUBLE = 3,
+   EVAS_ENGINE_GL_DRM_SWAP_MODE_TRIPLE = 4,
+   EVAS_ENGINE_GL_DRM_SWAP_MODE_QUADRUPLE = 5
+} Evas_Engine_Info_GL_Drm_Swap_Mode;
+
 typedef struct _Evas_Engine_Info_GL_Drm Evas_Engine_Info_GL_Drm;
 
 struct _Evas_Engine_Info_GL_Drm
@@ -15,7 +25,6 @@ struct _Evas_Engine_Info_GL_Drm
    struct 
      {
         struct gbm_device *gbm;
-        struct gbm_surface *surface;
 
         unsigned int rotation, depth;
         unsigned int crtc_id, conn_id, buffer_id;
