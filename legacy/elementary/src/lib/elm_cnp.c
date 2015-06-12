@@ -4339,6 +4339,13 @@ _anim_icons_make(Eina_List *icons)
    EINA_LIST_FOREACH(icons, itr, o)
      {  /* Now add icons to animation window */
         Anim_Icon *st = calloc(1, sizeof(*st));
+
+        if (!st)
+          {
+             ERR("Failed to allocate memory for icon!");
+             continue;
+          }
+
         evas_object_geometry_get(o, &st->start_x, &st->start_y, &st->start_w, &st->start_h);
         evas_object_show(o);
         st->o = o;
