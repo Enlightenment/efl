@@ -282,15 +282,7 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
        (obj->cur->geometry.w != obj->prev->geometry.w) ||
        (obj->cur->geometry.h != obj->prev->geometry.h))
      {
-        evas_rects_return_difference_rects(&obj->layer->evas->clip_changes,
-                                           obj->cur->geometry.x,
-                                           obj->cur->geometry.y,
-                                           obj->cur->geometry.w,
-                                           obj->cur->geometry.h,
-                                           obj->prev->geometry.x,
-                                           obj->prev->geometry.y,
-                                           obj->prev->geometry.w,
-                                           obj->prev->geometry.h);
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
         goto done;
      }
    /* it obviously didn't change - add a NO obscure - this "unupdates"  this */
