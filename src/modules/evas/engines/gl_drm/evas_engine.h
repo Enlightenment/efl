@@ -72,7 +72,7 @@ struct _Outbuf
    unsigned int rotation, depth;
    Render_Engine_Swap_Mode swap_mode;
 
-   struct gbm_device *gbm;
+   /* struct gbm_device *gbm; */
    struct gbm_surface *surface;
 
    struct 
@@ -97,6 +97,9 @@ struct _Outbuf
    Eina_Bool surf : 1;
    Eina_Bool drew : 1;
 };
+
+Eina_Bool eng_gbm_init(Evas_Engine_Info_GL_Drm *info);
+Eina_Bool eng_gbm_shutdown(Evas_Engine_Info_GL_Drm *info);
 
 Outbuf *evas_outbuf_new(Evas_Engine_Info_GL_Drm *info, int w, int h, Render_Engine_Swap_Mode swap_mode);
 void evas_outbuf_free(Outbuf *ob);
