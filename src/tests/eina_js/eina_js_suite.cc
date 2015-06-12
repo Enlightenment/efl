@@ -115,23 +115,32 @@ static void eina_log_print_cb_js_test(const Eina_Log_Domain *d,
                                       const char */*fmt*/, void */*data*/,
                                       va_list args)
 {
+    using std::string;
+
     static int index = 0;
 
     const char *msg = va_arg(args, const char*);
 
-    std::string domains[] = {"", "", "", "mydomain", "mydomain2"};
+    string domains[] = {"", "", "", "mydomain", "mydomain2"};
     int levels[] = {EINA_LOG_LEVEL_DBG, EINA_LOG_LEVEL_CRITICAL,
                     EINA_LOG_LEVEL_WARN, EINA_LOG_LEVEL_INFO,
                     EINA_LOG_LEVEL_ERR};
-    std::string functions[] = {"f1", "", "f2", "f3", ""};
+    string functions[] = {"f1", "", "f2", "f3", ""};
+#ifdef HAVE_NODEJS
+    int lines[] = {191, 192, 193, 194, 200};
+#else
     int lines[] = {190, 191, 192, 193, 199};
-    std::string messages[] = {"I changed again", "Cool to Hate",
-                              "One Fine Day", "Never Gonna Find Me",
-                              "The Kids Aren't Alright"};
+#endif
+    string messages[] = {"I changed again", "Cool to Hate", "One Fine Day",
+                         "Never Gonna Find Me", "The Kids Aren't Alright"};
 
-    assert(std::string(d->name, d->namelen) == domains[index]);
+    assert(string(d->name, d->namelen) == domains[index]);
     assert(level == levels[index]);
-    assert(file == std::string("eina_js_suite.js"));
+    {
+        auto last_component = strrchr(file, '/');
+        assert(last_component);
+        assert(last_component == string("/eina_js_suite.js"));
+    }
     assert(fnc == functions[index]);
     assert(line == lines[index]);
     assert(msg == messages[index]);
@@ -377,7 +386,7 @@ int main(int, char*[])
     // Enter the execution environment before evaluating any code.
     v8::Context::Scope context_scope(context);
     v8::Local<v8::String> name(efl::eina::js::compatibility_new<v8::String>
-                               (nullptr, "eina_js_suite.js"));
+                               (nullptr, TESTS_SRC_DIR "/eina_js_suite.js"));
     v8::Local<v8::Object> global = context->Global();
     v8::Handle<v8::Object> console = efl::eina::js::compatibility_new<v8::Object>(isolate);
     global->Set(efl::eina::js::compatibility_new<v8::String>(isolate, "console"), console);

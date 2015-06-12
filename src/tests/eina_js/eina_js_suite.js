@@ -227,9 +227,9 @@ suite.log_print_cb_set(function(domain, color, level, file, func, line, msg) {
   assert(domain === 'mydomain', '#10');
   assert(color === '', '#11');
   assert(level === suite.LOG_LEVEL_WARN, '#12');
-  assert(file === 'eina_js_suite.js', '#13');
+  assert(function(){ var components = file.split('/'); return components[components.length - 1]; }() === 'eina_js_suite.js', '#13');
   assert(func === 'f4', '#14');
-  assert(line === 236, '#15');
+  assert(line === ((typeof process !== 'undefined') ? 237 : 236), '#15');
   assert(msg === 'What Happened To You', '#16');
   entered = true;
 });
