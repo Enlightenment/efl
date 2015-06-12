@@ -996,6 +996,14 @@ _x11_notify_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify 
         cnp_debug("Notify handler text %d %d %p\n", data->format,
                   data->length, data->data);
         mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
+
+        if (!mkupstr)
+          {
+             ERR("Failed to convert text to markup text!");
+             free(stripstr);
+             goto end;
+          }
+
         cnp_debug("String is %s (from %s)\n", stripstr, data->data);
         /* TODO BUG: should never NEVER assume it's an elm_entry! */
         _elm_entry_entry_paste(sel->requestwidget, mkupstr);
