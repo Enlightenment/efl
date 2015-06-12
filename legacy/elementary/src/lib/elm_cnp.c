@@ -1316,6 +1316,14 @@ _x11_text_converter(char *target, void *data, int size, void **data_ret, int *si
                                    (const char **)data_ret, NULL);
         if (!*data_ret) *data_ret = strdup("No file");
         else *data_ret = strdup(*data_ret);
+
+        if (!*data_ret)
+          {
+             ERR("Failed to allocate memory!");
+             *size_ret = 0;
+             return EINA_FALSE;
+          }
+
         *size_ret = strlen(*data_ret);
      }
    return EINA_TRUE;
