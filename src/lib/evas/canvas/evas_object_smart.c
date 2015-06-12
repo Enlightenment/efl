@@ -496,6 +496,8 @@ _evas_smart_class_ifaces_private_data_alloc(Evas_Object *eo_obj,
           }
      }
 
+   if (!s->interfaces.size && !total_priv_sz) return;
+
    obj = eo_data_scope_get(eo_obj, MY_CLASS);
    obj->interface_privates = malloc(s->interfaces.size * sizeof(void *) + total_priv_sz);
    if (!obj->interface_privates)
