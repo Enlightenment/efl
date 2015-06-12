@@ -1885,7 +1885,8 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                   free(compres);
                   compres = NULL;
                   _compose_seq_reset(en);
-                  if (ev->string && (!ev->string[1]) && (ev->string[0] < 0x20))
+                  if (ev->string && (!ev->string[1]) &&
+                      ((ev->string[0] < 0x20) || (ev->string[0] == 0x7f)))
                     goto end;
                }
              else
