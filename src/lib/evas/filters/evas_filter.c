@@ -817,7 +817,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
    Evas_Filter_Buffer *out_dy = NULL, *out_dx = NULL;
    Evas_Filter_Buffer *copybuf = NULL, *blur_out = NULL;
    Eina_Bool copy_back = EINA_FALSE, blend = EINA_FALSE;
-   int R, G, B, A;
+   int R, G, B, A; DATA32 color;
    int ret = 0, id;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, -1);
@@ -847,6 +847,14 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
    if (in == out) out->dirty = EINA_FALSE;
    blend = (out->dirty && !out->transient);
+
+   ENFN->context_color_get(ENDT, drawctx, &R, &G, &B, &A);
+   color = ARGB_JOIN(A, R, G, B);
+   if (!color)
+     {
+        DBG("Blur with transparent color. Nothing to do.");
+        /* FIXME: return skip; */
+     }
 
    switch (type)
      {
@@ -892,11 +900,15 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
                 else
                   type = EVAS_FILTER_BLUR_BOX;
 
+                if (dy && (color != 0xFFFFFFFF))
+                  ENFN->context_color_set(ENDT, drawctx, 255, 255, 255, 255);
                 id = evas_filter_command_blur_add(ctx, drawctx, inbuf, tmp_out,
                                                   type, dx, 0, tmp_ox, tmp_oy, 0);
                 if (id < 0) goto fail;
                 cmd = _evas_filter_command_get(ctx, id);
                 cmd->blur.auto_count = EINA_TRUE;
+                if (dy && (color != 0xFFFFFFFF))
+                  ENFN->context_color_set(ENDT, drawctx, R, G, B, A);
              }
 
            if (dy)
@@ -924,7 +936,8 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
    if (!in->alpha_only && out->alpha_only)
      {
-        ERR("Output and input don't have the same format");
+        /* FIXME: Add temporary buffer + blend */
+        ERR("Input is RGBA but output is Alpha only. Unsupported config for blur.");
         goto fail;
      }
    else if ((blend || (in->alpha_only && !out->alpha_only)) ||
@@ -933,7 +946,10 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         DBG("Adding extra blending step %d --> %d (%s --> %s)", in->id, out->id,
             in->alpha_only ? "Alpha" : "RGBA",
             out->alpha_only ? "Alpha" : "RGBA");
+        Eina_Bool wasl = in->locked;
+        in->locked = 1;
         blur_out = evas_filter_temporary_buffer_get(ctx, 0, 0, in->alpha_only);
+        in->locked = wasl;
         if (!blur_out) goto fail;
         blend = EINA_TRUE;
      }
@@ -1004,8 +1020,6 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
           }
      }
 
-   ENFN->context_color_get(ENDT, drawctx, &R, &G, &B, &A);
-
    if (dx)
      {
         DBG("Add horizontal blur %d -> %d (%dpx)", in->id, out_dx->id, dx);
@@ -1015,7 +1029,8 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         cmd->blur.dx = dx;
         cmd->blur.dy = 0;
         cmd->blur.count = count;
-        DRAW_COLOR_SET(R, G, B, A);
+        if (!dy && !blend)
+          DRAW_COLOR_SET(R, G, B, A);
         ret = cmd->id;
      }
 
@@ -1028,7 +1043,8 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         cmd->blur.dx = 0;
         cmd->blur.dy = dy;
         cmd->blur.count = count;
-        DRAW_COLOR_SET(R, G, B, A);
+        if (!blend)
+          DRAW_COLOR_SET(R, G, B, A);
         if (ret <= 0) ret = cmd->id;
      }
 
@@ -1038,7 +1054,7 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
 
         if (!cmd) goto fail;
         DBG("Add copy %d -> %d", copybuf->id, blur_out->id);
-        cmd->ENFN->context_color_set(cmd->ENDT, drawctx, 0, 0, 0, 255);
+        cmd->ENFN->context_color_set(cmd->ENDT, drawctx, 255, 255, 255, 255);
         render_op = cmd->ENFN->context_render_op_get(cmd->ENDT, drawctx);
         cmd->ENFN->context_render_op_set(cmd->ENDT, drawctx, EVAS_RENDER_COPY);
         id = evas_filter_command_blend_add(ctx, drawctx, copybuf->id, blur_out->id, ox, oy, EVAS_FILTER_FILL_MODE_NONE);
