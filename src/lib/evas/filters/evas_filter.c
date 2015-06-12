@@ -927,7 +927,8 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         ERR("Output and input don't have the same format");
         goto fail;
      }
-   else if (blend || (in->alpha_only && !out->alpha_only))
+   else if ((blend || (in->alpha_only && !out->alpha_only)) ||
+            (!blend && !in->alpha_only && !out->alpha_only && (color != 0xFFFFFFFF)))
      {
         DBG("Adding extra blending step %d --> %d (%s --> %s)", in->id, out->id,
             in->alpha_only ? "Alpha" : "RGBA",
