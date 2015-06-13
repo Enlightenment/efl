@@ -217,7 +217,6 @@ static Eina_Bool      _x11_general_converter        (char *target, void *data, i
 static Eina_Bool      _x11_image_converter          (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 static Eina_Bool      _x11_vcard_send               (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 static Eina_Bool      _x11_is_uri_type_data         (X11_Cnp_Selection *sel EINA_UNUSED, Ecore_X_Event_Selection_Notify *notify);
-static int            _x11_response_handler_targets (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
 static int            _x11_notify_handler_targets   (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
 static int            _x11_notify_handler_text      (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
 static int            _x11_notify_handler_image     (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
@@ -258,7 +257,6 @@ struct _Cnp_Atom
 #ifdef HAVE_ELEMENTARY_X
    /* Called by ecore to do conversion */
    X11_Converter_Fn_Cb      x_converter;
-   X11_Response_Handler_Cb  x_response;
    X11_Notify_Handler_Cb    x_notify;
    /* Atom */
    Ecore_X_Atom             x_atom;
@@ -440,7 +438,6 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_TARGETS,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_targets_converter,
-        .x_response = _x11_response_handler_targets,
         .x_notify = _x11_notify_handler_targets,
 #endif
    },
@@ -449,7 +446,6 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_TARGETS,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_targets_converter,
-        .x_response = _x11_response_handler_targets,
         .x_notify = _x11_notify_handler_targets,
 #endif
    },
@@ -909,33 +905,6 @@ done:
              _atoms[j].name, (unsigned long long)sel->xwin);
    sel->request(sel->xwin, _atoms[j].name);
    return ECORE_CALLBACK_PASS_ON;
-}
-
-static int
-_x11_response_handler_targets(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
-{
-   Ecore_X_Selection_Data_Targets *targets;
-   Ecore_X_Atom *atomlist;
-   int i, j;
-
-   targets = notify->data;
-   atomlist = (Ecore_X_Atom *)(targets->data.data);
-
-   for (j = (CNP_ATOM_LISTING_ATOMS + 1); j < CNP_N_ATOMS; j++)
-     {
-        if (!(_atoms[j].formats & sel->requestformat)) continue;
-        for (i = 0; i < targets->data.length; i++)
-          {
-             if ((_atoms[j].x_atom == atomlist[i]) &&
-                 (_atoms[j].x_response))
-               goto found;
-          }
-     }
-   cnp_debug("No matching type found\n");
-   return 0;
-found:
-   sel->request(sel->xwin, _atoms[j].name);
-   return 0;
 }
 
 static int
