@@ -2055,6 +2055,7 @@ _filter_add(Elm_Fileselector_Data *sd, const char *filter_name)
 {
    Elm_Fileselector_Filter *ff;
    ff = malloc(sizeof(Elm_Fileselector_Filter));
+   if (!ff) return NULL;
 
    ff->filter_name = eina_stringshare_add(filter_name);
    ff->sd = sd;
@@ -2080,6 +2081,8 @@ _elm_fileselector_elm_interface_fileselector_mime_types_filter_append(Eo *obj, E
    if (!mime_types) return EINA_FALSE;
 
    ff = _filter_add(sd, filter_name ? filter_name : mime_types);
+   if (!ff) return EINA_FALSE;
+
    ff->filter_type = ELM_FILESELECTOR_MIME_FILTER;
 
    ff->filter.mime_types = eina_str_split(mime_types, ",", 0);
@@ -2120,14 +2123,19 @@ EOLIAN static Eina_Bool
 _elm_fileselector_elm_interface_fileselector_custom_filter_append(Eo *obj, Elm_Fileselector_Data *sd, Elm_Fileselector_Filter_Func func, void *data, const char *filter_name)
 {
    Elm_Fileselector_Filter *ff;
+   Elm_Fileselector_Custom_Filter *custom_filter;
    Eina_Bool need_theme = EINA_FALSE;
 
    if (!func) return EINA_FALSE;
 
-   ff = _filter_add(sd, filter_name ? filter_name : "custom");
-   ff->filter_type = ELM_FILESELECTOR_CUSTOM_FILTER;
+   custom_filter = malloc(sizeof(Elm_Fileselector_Custom_Filter));
+   if (!custom_filter) return EINA_FALSE;
 
-   ff->filter.custom = malloc(sizeof(Elm_Fileselector_Custom_Filter));
+   ff = _filter_add(sd, filter_name ? filter_name : "custom");
+   if (!ff) return EINA_FALSE;
+
+   ff->filter_type = ELM_FILESELECTOR_CUSTOM_FILTER;
+   ff->filter.custom = custom_filter;
    ff->filter.custom->func = func;
    ff->filter.custom->data = data;
 
