@@ -205,7 +205,7 @@ typedef struct _X11_Cnp_Selection X11_Cnp_Selection;
 
 typedef Eina_Bool (*X11_Converter_Fn_Cb)     (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 typedef int       (*X11_Response_Handler_Cb) (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
-typedef int       (*X11_Notify_Handler_Cb)   (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
+typedef Eina_Bool (*X11_Notify_Handler_Cb)   (Ecore_X_Event_Selection_Notify *, Elm_Selection_Data *, Tmp_Info **);
 
 static void           _x11_sel_obj_del              (void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 static void           _x11_sel_obj_del2             (void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
@@ -217,12 +217,12 @@ static Eina_Bool      _x11_general_converter        (char *target, void *data, i
 static Eina_Bool      _x11_image_converter          (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 static Eina_Bool      _x11_vcard_send               (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 static Eina_Bool      _x11_is_uri_type_data         (X11_Cnp_Selection *sel EINA_UNUSED, Ecore_X_Event_Selection_Notify *notify);
-static int            _x11_notify_handler_targets   (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
-static int            _x11_notify_handler_text      (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
-static int            _x11_notify_handler_image     (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
-static int            _x11_notify_handler_uri       (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
+static Eina_Bool      _x11_notify_handler_targets   (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
+static Eina_Bool      _x11_notify_handler_text      (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
+static Eina_Bool      _x11_notify_handler_image     (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
+static Eina_Bool      _x11_notify_handler_uri       (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
 //static int            _x11_notify_handler_html      (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
-static int            _x11_vcard_receive            (X11_Cnp_Selection *sed, Ecore_X_Event_Selection_Notify *notify);
+static Eina_Bool      _x11_vcard_receive            (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
 static Eina_Bool      _x11_dnd_enter                (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
 static Eina_Bool      _x11_dnd_drop                 (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
 static Eina_Bool      _x11_dnd_position             (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
@@ -438,7 +438,6 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_TARGETS,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_targets_converter,
-        .x_notify = _x11_notify_handler_targets,
 #endif
    },
    ARRAYINIT(CNP_ATOM_ATOM) {
@@ -446,7 +445,6 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_TARGETS,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_targets_converter,
-        .x_notify = _x11_notify_handler_targets,
 #endif
    },
    ARRAYINIT(CNP_ATOM_XELM)  {
@@ -757,14 +755,58 @@ _x11_selection_notify(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event
      }
    cnp_debug("Target is %s\n", ev->target);
 
+   if (!strcmp(ev->target, "TARGETS") ||
+         !strcmp(ev->target, "ATOMS"))
+     {
+        _x11_notify_handler_targets(sel, ev);
+        return ECORE_CALLBACK_PASS_ON;
+     }
    for (i = 0; i < CNP_N_ATOMS; i++)
      {
         if (!strcmp(ev->target, _atoms[i].name))
           {
              if (_atoms[i].x_notify)
                {
+                  Elm_Selection_Data ddata;
+                  Tmp_Info *tmp_info = NULL;
+                  Eina_Bool success;
+                  ddata.data = NULL;
                   cnp_debug("Found something: %s\n", _atoms[i].name);
-                  _atoms[i].x_notify(sel, ev);
+                  success = _atoms[i].x_notify(ev, &ddata, &tmp_info);
+                  if (_atoms[i].formats == ELM_SEL_FORMAT_IMAGE && savedtypes.imgfile) break;
+                  if (ev->selection == ECORE_X_SELECTION_XDND)
+                    {
+                       if (success)
+                         {
+                            Dropable *dropable;
+                            Eina_List *l;
+                            cnp_debug("drag & drop\n");
+                            EINA_LIST_FOREACH(drops, l, dropable)
+                              {
+                                 if (dropable->obj == sel->requestwidget) break;
+                                 dropable = NULL;
+                              }
+                            if (dropable)
+                              {
+                                 Dropable_Cbs *cbs;
+                                 Eina_Inlist *itr;
+                                 ddata.x = savedtypes.x;
+                                 ddata.y = savedtypes.y;
+                                 EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
+                                    if ((cbs->types & dropable->last.format) && cbs->dropcb)
+                                       cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
+                              }
+                         }
+                       /* We have to finish DnD, no matter what */
+                       ecore_x_dnd_send_finished();
+                    }
+                  else if (sel->datacb && success)
+                    {
+                       ddata.x = ddata.y = 0;
+                       sel->datacb(sel->udata, sel->requestwidget, &ddata);
+                    }
+                  free(ddata.data);
+                  if (tmp_info) _tmpinfo_free(tmp_info);
                }
              else cnp_debug("Ignored: No handler!\n");
              break;
@@ -871,7 +913,7 @@ _x11_is_uri_type_data(X11_Cnp_Selection *sel EINA_UNUSED, Ecore_X_Event_Selectio
  * Callback to handle a targets response on a selection request:
  * So pick the format we'd like; and then request it.
  */
-static int
+static Eina_Bool
 _x11_notify_handler_targets(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
 {
    Ecore_X_Selection_Data_Targets *targets;
@@ -907,65 +949,23 @@ done:
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static int
-_x11_notify_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
+static Eina_Bool
+_x11_notify_handler_text(Ecore_X_Event_Selection_Notify *notify,
+      Elm_Selection_Data *ddata, Tmp_Info **tmp_info EINA_UNUSED)
 {
-   Ecore_X_Selection_Data *data;
-   Eina_List *l;
-   Dropable *dropable;
-
-   data = notify->data;
-   if (sel == (_x11_selections + ELM_SEL_TYPE_XDND))
-     {
-        Elm_Selection_Data ddata;
-
-        cnp_debug("drag & drop\n");
-        /* FIXME: this needs to be generic: Used for all receives */
-        EINA_LIST_FOREACH(drops, l, dropable)
-          {
-             if (dropable->obj == sel->requestwidget) break;
-             dropable = NULL;
-          }
-        if (dropable)
-          {
-             Dropable_Cbs *cbs;
-             Eina_Inlist *itr;
-             ddata.x = savedtypes.x;
-             ddata.y = savedtypes.y;
-             ddata.format = ELM_SEL_FORMAT_TEXT;
-             ddata.data = data->data;
-             ddata.len = data->length;
-             ddata.action = sel->action;
-             EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-                if ((cbs->types & dropable->last.format) && cbs->dropcb)
-                  cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
-             goto end;
-          }
-     }
-   if (sel->datacb)
-     {
-        Elm_Selection_Data ddata;
-
-        ddata.x = ddata.y = 0;
-        ddata.format = ELM_SEL_FORMAT_TEXT;
-        ddata.data = data->data;
-        ddata.len = data->length;
-        ddata.action = sel->action;
-        sel->datacb(sel->udata, sel->requestwidget, &ddata);
-     }
-   else cnp_debug("Paste request\n");
-
-end:
-   if (sel == (_x11_selections + ELM_SEL_TYPE_XDND))
-     ecore_x_dnd_send_finished();
-   return 0;
+   Ecore_X_Selection_Data *data = notify->data;
+   ddata->format = ELM_SEL_FORMAT_TEXT;
+   ddata->data = eina_memdup(data->data, data->length, EINA_TRUE);
+   ddata->len = data->length;
+   return EINA_TRUE;
 }
 
 /**
  * So someone is pasting an image into my entry or widget...
  */
-static int
-_x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
+static Eina_Bool
+_x11_notify_handler_uri(Ecore_X_Event_Selection_Notify *notify,
+      Elm_Selection_Data *ddata, Tmp_Info **tmp_info EINA_UNUSED)
 {
    Ecore_X_Selection_Data *data;
    Ecore_X_Selection_Data_Files *files;
@@ -985,13 +985,13 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
           {
              // Don't handle many items <- this makes mr bigglesworth sad :(
              cnp_debug("more then one file: Bailing\n");
-             return 0;
+             return EINA_FALSE;
           }
         stripstr = p = strdup(files->files[0]);
          */
 
         uri = calloc(1, sizeof(*uri) * files->num_files);
-        if (!uri) return 0;
+        if (!uri) return EINA_FALSE;
 
         for (i = 0; i < files->num_files ; i++)
           {
@@ -1065,7 +1065,7 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
         if (len > 0)
           {
              stripstr = malloc(len + 1);
-             if (!stripstr) return 0;
+             if (!stripstr) return EINA_FALSE;
              memcpy(stripstr, p, len);
              stripstr[len] = 0;
           }
@@ -1074,7 +1074,7 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
    if (!stripstr)
      {
         cnp_debug("Couldn't find a file\n");
-        return 0;
+        return EINA_FALSE;
      }
    free(savedtypes.imgfile);
    if (savedtypes.textreq)
@@ -1084,167 +1084,48 @@ _x11_notify_handler_uri(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *
      }
    else
      {
-        if (sel == (_x11_selections + ELM_SEL_TYPE_XDND))
-          {
-             Dropable *dropable;
-             Eina_List *l;
-
-             EINA_LIST_FOREACH(drops, l, dropable)
-               {
-                  if (dropable->obj == sel->requestwidget) break;
-                  dropable = NULL;
-               }
-             if (dropable)
-               {
-                  Dropable_Cbs *cbs;
-                  Eina_Inlist *itr;
-                  Elm_Selection_Data ddata;
-
-                  dropable = eina_list_data_get(l);
-                  ddata.x = savedtypes.x;
-                  ddata.y = savedtypes.y;
-                  ddata.format = ELM_SEL_FORMAT_IMAGE;
-                  ddata.data = stripstr;
-                  ddata.len = strlen(stripstr);
-                  ddata.action = sel->action;
-                  EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-                     if ((cbs->types & dropable->last.format) && cbs->dropcb)
-                       cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
-               }
-          }
-        else if (sel->datacb)
-          {
-             Elm_Selection_Data ddata;
-             ddata.x = ddata.y = 0;
-             ddata.format = ELM_SEL_FORMAT_IMAGE;
-             ddata.data = stripstr;
-             ddata.len = strlen(stripstr);
-             sel->datacb(sel->udata, sel->requestwidget, &ddata);
-          }
-        else cnp_debug("Paste request\n");
-
+        ddata->format = ELM_SEL_FORMAT_IMAGE;
+        ddata->data = stripstr;
+        ddata->len = strlen(stripstr);
         savedtypes.imgfile = NULL;
-        free(stripstr);
      }
-   return 0;
+   return EINA_TRUE;
 }
 
 /**
  * Just received an vcard, either through cut and paste, or dnd.
  */
-static int
-_x11_vcard_receive(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
+static Eina_Bool
+_x11_vcard_receive(Ecore_X_Event_Selection_Notify *notify,
+      Elm_Selection_Data *ddata, Tmp_Info **tmp_info EINA_UNUSED)
 {
-   Dropable *dropable;
-   Eina_List *l;
-   Ecore_X_Selection_Data *data;
-
-   data = notify->data;
    cnp_debug("vcard receive\n");
-   if (sel == (_x11_selections + ELM_SEL_TYPE_XDND))
-     {
-        Dropable_Cbs *cbs;
-        Eina_Inlist *itr;
-        Elm_Selection_Data ddata;
-
-        cnp_debug("drag & drop\n");
-        /* FIXME: this needs to be generic: Used for all receives */
-        EINA_LIST_FOREACH(drops, l, dropable)
-          {
-             if (dropable->obj == sel->requestwidget) break;
-          }
-        if (!dropable)
-          {
-             cnp_debug("Unable to find drop object");
-             ecore_x_dnd_send_finished();
-             return 0;
-          }
-        dropable = eina_list_data_get(l);
-        ddata.x = savedtypes.x;
-        ddata.y = savedtypes.y;
-        ddata.format = ELM_SEL_FORMAT_VCARD;
-        ddata.data = data->data;
-        ddata.len = data->length;
-        ddata.action = sel->action;
-        EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-           if ((cbs->types & dropable->last.format) && cbs->dropcb)
-             cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
-        ecore_x_dnd_send_finished();
-     }
-   else if (sel->datacb)
-     {
-        Elm_Selection_Data ddata;
-        ddata.x = ddata.y = 0;
-        ddata.format = ELM_SEL_FORMAT_VCARD;
-        ddata.data = data->data;
-        ddata.len = data->length;
-        ddata.action = sel->action;
-        sel->datacb(sel->udata, sel->requestwidget, &ddata);
-     }
-   else cnp_debug("Paste request\n");
-   return 0;
+   Ecore_X_Selection_Data *data = notify->data;
+   ddata->format = ELM_SEL_FORMAT_VCARD;
+   ddata->data = eina_memdup(data->data, data->length, EINA_TRUE);
+   ddata->len = data->length;
+   return EINA_TRUE;
 }
 
-static int
-_x11_notify_handler_image(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
+static Eina_Bool
+_x11_notify_handler_image(Ecore_X_Event_Selection_Notify *notify,
+      Elm_Selection_Data *ddata, Tmp_Info **tmp_info)
 {
-   Ecore_X_Selection_Data *data;
-
+   Ecore_X_Selection_Data *data = notify->data;
    cnp_debug("got a image file!\n");
+   cnp_debug("Size if %d\n", data->length);
+
+   ddata->format = ELM_SEL_FORMAT_IMAGE;
    data = notify->data;
 
-   cnp_debug("Size if %d\n", data->length);
-   if (sel == (_x11_selections + ELM_SEL_TYPE_XDND))
-     {
-        Tmp_Info *tmp;
-        Eina_List *l;
-        Dropable *dropable;
-
-        tmp = _tempfile_new(data->length);
-        if (!tmp)
-          {
-             ecore_x_dnd_send_finished();
-             return 0;
-          }
-        memcpy(tmp->map, data->data, data->length);
-        munmap(tmp->map, data->length);
-        EINA_LIST_FOREACH(drops, l, dropable)
-          {
-             if (dropable->obj == sel->requestwidget) break;
-             dropable = NULL;
-          }
-        if (dropable)
-          {
-             Dropable_Cbs *cbs;
-             Eina_Inlist *itr;
-             Elm_Selection_Data ddata;
-
-             ddata.x = savedtypes.x;
-             ddata.y = savedtypes.y;
-             ddata.format = ELM_SEL_FORMAT_IMAGE;
-             ddata.data = tmp->filename;
-             ddata.len = strlen(tmp->filename);
-             ddata.action = sel->action;
-             EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
-                if ((cbs->types & dropable->last.format) && cbs->dropcb)
-                  cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
-          }
-        _tmpinfo_free(tmp);
-        ecore_x_dnd_send_finished();
-     }
-   else if (sel->datacb)
-     {
-        Elm_Selection_Data ddata;
-
-        ddata.x = ddata.y = 0;
-        ddata.format = ELM_SEL_FORMAT_IMAGE;
-        ddata.data = data->data;
-        ddata.len = data->length;
-        ddata.action = sel->action;
-        sel->datacb(sel->udata, sel->requestwidget, &ddata);
-     }
-   else cnp_debug("Paste request\n");
-   return 0;
+   Tmp_Info *tmp = _tempfile_new(data->length);
+   if (!tmp) return EINA_FALSE;
+   memcpy(tmp->map, data->data, data->length);
+   munmap(tmp->map, data->length);
+   ddata->data = strdup(tmp->filename);
+   ddata->len = strlen(tmp->filename);
+   *tmp_info = tmp;
+   return EINA_TRUE;
 }
 
 /**
