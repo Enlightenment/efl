@@ -243,6 +243,24 @@ tests_emotion_emotion_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 tests_emotion_emotion_test_LDADD = @USE_EDJE_LIBS@ @USE_EMOTION_LIBS@
 tests_emotion_emotion_test_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@ @USE_EMOTION_INTERNAL_LIBS@
 
+bin_PROGRAMS += tests/emotion/emotion_test-eo
+
+tests_emotion_emotion_test_eo_SOURCES = \
+tests/emotion/emotion_test_main-eo.c
+
+tests_emotion_emotion_test_eo_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/emotion\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+@EDJE_CFLAGS@ \
+@EMOTION_CFLAGS@ \
+@EO_CFLAGS@
+
+tests_emotion_emotion_test_eo_LDADD = @USE_EDJE_LIBS@ @USE_EMOTION_LIBS@ @USE_EO_LIBS@
+tests_emotion_emotion_test_eo_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@ @USE_EMOTION_INTERNAL_LIBS@ \
+@USE_EO_INTERNAL_LIBS@
+
 tests/emotion/data/theme.edj: tests/emotion/data/theme.edc bin/edje/edje_cc${EXEEXT}
 	$(AM_V_EDJ) \
 	$(MKDIR_P) tests/emotion/data; \
