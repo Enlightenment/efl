@@ -1047,27 +1047,21 @@ _x11_data_preparer_uri(Ecore_X_Event_Selection_Notify *notify,
    else
      {
         Efreet_Uri *uri;
-        int len = 0;
 
-        p = (char *)data->data;
+        p = (char *)eina_memdup((unsigned char *)data->data, data->length, EINA_TRUE);
+        if (!p) return EINA_FALSE;
         uri = efreet_uri_decode(p);
         if (!uri)
           {
              /* Is there any reason why we care of URI without scheme? */
-             if (p[0] == '/')
-               len = data->length;
+             if (p[0] == '/') stripstr = p;
+             else free(p);
           }
         else
           {
-             p = (char *)uri->path;
-             len = strlen(p);
-          }
-        if (len > 0)
-          {
-             stripstr = malloc(len + 1);
+             free(p);
+             stripstr = (char *)eina_memdup((unsigned char *)uri->path, strlen(uri->path), EINA_TRUE);
              if (!stripstr) return EINA_FALSE;
-             memcpy(stripstr, p, len);
-             stripstr[len] = 0;
           }
      }
 
