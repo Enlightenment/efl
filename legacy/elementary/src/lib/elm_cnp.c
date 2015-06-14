@@ -1533,6 +1533,7 @@ _x11_dnd_position(void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev)
                   _x11_dnd_dropable_handle(NULL, 0, 0, act);
                   // CCCCCCC: call dnd exit on last obj
                }
+             eina_list_free(dropable_list);
           }
         else
           {
@@ -3106,6 +3107,7 @@ _wl_dnd_position(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
                   _wl_dropable_handle(NULL, 0, 0);
                   // CCCCCCC: call dnd exit on last obj
                }
+             eina_list_free(dropable_list);
           }
      }
 
