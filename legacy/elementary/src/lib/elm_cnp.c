@@ -205,7 +205,7 @@ typedef struct _X11_Cnp_Selection X11_Cnp_Selection;
 
 typedef Eina_Bool (*X11_Converter_Fn_Cb)     (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 typedef int       (*X11_Response_Handler_Cb) (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *);
-typedef Eina_Bool (*X11_Notify_Handler_Cb)   (Ecore_X_Event_Selection_Notify *, Elm_Selection_Data *, Tmp_Info **);
+typedef Eina_Bool (*X11_Data_Preparer_Cb)    (Ecore_X_Event_Selection_Notify *, Elm_Selection_Data *, Tmp_Info **);
 
 static void           _x11_sel_obj_del              (void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 static void           _x11_sel_obj_del2             (void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
@@ -218,11 +218,11 @@ static Eina_Bool      _x11_image_converter          (char *target, void *data, i
 static Eina_Bool      _x11_vcard_send               (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 static Eina_Bool      _x11_is_uri_type_data         (X11_Cnp_Selection *sel EINA_UNUSED, Ecore_X_Event_Selection_Notify *notify);
 static Eina_Bool      _x11_notify_handler_targets   (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
-static Eina_Bool      _x11_notify_handler_text      (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
-static Eina_Bool      _x11_notify_handler_image     (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
-static Eina_Bool      _x11_notify_handler_uri       (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
+static Eina_Bool      _x11_data_preparer_text       (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
+static Eina_Bool      _x11_data_preparer_image      (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
+static Eina_Bool      _x11_data_preparer_uri        (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
 //static int            _x11_notify_handler_html      (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
-static Eina_Bool      _x11_vcard_receive            (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
+static Eina_Bool      _x11_data_preparer_vcard      (Ecore_X_Event_Selection_Notify *notify, Elm_Selection_Data *ddata, Tmp_Info **tmp_info);
 static Eina_Bool      _x11_dnd_enter                (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
 static Eina_Bool      _x11_dnd_drop                 (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
 static Eina_Bool      _x11_dnd_position             (void *data EINA_UNUSED, int etype EINA_UNUSED, void *ev);
@@ -257,7 +257,7 @@ struct _Cnp_Atom
 #ifdef HAVE_ELEMENTARY_X
    /* Called by ecore to do conversion */
    X11_Converter_Fn_Cb      x_converter;
-   X11_Notify_Handler_Cb    x_notify;
+   X11_Data_Preparer_Cb     x_data_preparer;
    /* Atom */
    Ecore_X_Atom             x_atom;
 #endif
@@ -459,7 +459,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE, /* Either images or entries */
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_general_converter,
-        .x_notify = _x11_notify_handler_uri,
+        .x_data_preparer = _x11_data_preparer_uri,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_urilist) {
@@ -467,7 +467,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_IMAGE,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_general_converter,
-        .x_notify = _x11_notify_handler_uri,
+        .x_data_preparer = _x11_data_preparer_uri,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_x_vcard) {
@@ -475,7 +475,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_VCARD,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_vcard_send,
-        .x_notify = _x11_vcard_receive,
+        .x_data_preparer = _x11_data_preparer_vcard,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_png) {
@@ -483,7 +483,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_IMAGE,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
-        .x_notify = _x11_notify_handler_image,
+        .x_data_preparer = _x11_data_preparer_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_jpeg) {
@@ -491,7 +491,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_IMAGE,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
-        .x_notify = _x11_notify_handler_image,
+        .x_data_preparer = _x11_data_preparer_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_bmp) {
@@ -499,7 +499,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_IMAGE,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
-        .x_notify = _x11_notify_handler_image,
+        .x_data_preparer = _x11_data_preparer_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_gif) {
@@ -507,7 +507,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_IMAGE,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
-        .x_notify = _x11_notify_handler_image,
+        .x_data_preparer = _x11_data_preparer_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_tiff) {
@@ -515,7 +515,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_IMAGE,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
-        .x_notify = _x11_notify_handler_image,
+        .x_data_preparer = _x11_data_preparer_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_svg) {
@@ -523,7 +523,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_IMAGE,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
-        .x_notify = _x11_notify_handler_image,
+        .x_data_preparer = _x11_data_preparer_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_xpm) {
@@ -531,7 +531,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_IMAGE,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
-        .x_notify = _x11_notify_handler_image,
+        .x_data_preparer = _x11_data_preparer_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_tga) {
@@ -539,7 +539,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_IMAGE,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
-        .x_notify = _x11_notify_handler_image,
+        .x_data_preparer = _x11_data_preparer_image,
 #endif
    },
    ARRAYINIT(CNP_ATOM_image_ppm) {
@@ -547,7 +547,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_IMAGE,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_image_converter,
-        .x_notify = _x11_notify_handler_image,
+        .x_data_preparer = _x11_data_preparer_image,
 #endif
    },
 /*
@@ -573,7 +573,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_text_converter,
-        .x_notify = _x11_notify_handler_text,
+        .x_data_preparer = _x11_data_preparer_text,
 #endif
    },
    ARRAYINIT(CNP_ATOM_STRING) {
@@ -581,7 +581,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_text_converter,
-        .x_notify = _x11_notify_handler_text,
+        .x_data_preparer = _x11_data_preparer_text,
 #endif
    },
    ARRAYINIT(CNP_ATOM_COMPOUND_TEXT) {
@@ -589,7 +589,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_text_converter,
-        .x_notify = _x11_notify_handler_text,
+        .x_data_preparer = _x11_data_preparer_text,
 #endif
    },
    ARRAYINIT(CNP_ATOM_TEXT) {
@@ -597,7 +597,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_text_converter,
-        .x_notify = _x11_notify_handler_text,
+        .x_data_preparer = _x11_data_preparer_text,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_plain_utf8) {
@@ -605,7 +605,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_text_converter,
-        .x_notify = _x11_notify_handler_text,
+        .x_data_preparer = _x11_data_preparer_text,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_plain) {
@@ -613,7 +613,7 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_text_converter,
-        .x_notify = _x11_notify_handler_text,
+        .x_data_preparer = _x11_data_preparer_text,
 #endif
    },
 };
@@ -765,14 +765,14 @@ _x11_selection_notify(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event
      {
         if (!strcmp(ev->target, _atoms[i].name))
           {
-             if (_atoms[i].x_notify)
+             if (_atoms[i].x_data_preparer)
                {
                   Elm_Selection_Data ddata;
                   Tmp_Info *tmp_info = NULL;
                   Eina_Bool success;
                   ddata.data = NULL;
                   cnp_debug("Found something: %s\n", _atoms[i].name);
-                  success = _atoms[i].x_notify(ev, &ddata, &tmp_info);
+                  success = _atoms[i].x_data_preparer(ev, &ddata, &tmp_info);
                   if (_atoms[i].formats == ELM_SEL_FORMAT_IMAGE && savedtypes.imgfile) break;
                   if (ev->selection == ECORE_X_SELECTION_XDND)
                     {
@@ -928,7 +928,7 @@ _x11_notify_handler_targets(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Noti
         if (!(_atoms[j].formats & sel->requestformat)) continue;
         for (i = 0; i < targets->data.length; i++)
           {
-             if ((_atoms[j].x_atom == atomlist[i]) && (_atoms[j].x_notify))
+             if ((_atoms[j].x_atom == atomlist[i]) && (_atoms[j].x_data_preparer))
                {
                   if ((j == CNP_ATOM_text_uri) ||
                       (j == CNP_ATOM_text_urilist))
@@ -950,7 +950,7 @@ done:
 }
 
 static Eina_Bool
-_x11_notify_handler_text(Ecore_X_Event_Selection_Notify *notify,
+_x11_data_preparer_text(Ecore_X_Event_Selection_Notify *notify,
       Elm_Selection_Data *ddata, Tmp_Info **tmp_info EINA_UNUSED)
 {
    Ecore_X_Selection_Data *data = notify->data;
@@ -964,7 +964,7 @@ _x11_notify_handler_text(Ecore_X_Event_Selection_Notify *notify,
  * So someone is pasting an image into my entry or widget...
  */
 static Eina_Bool
-_x11_notify_handler_uri(Ecore_X_Event_Selection_Notify *notify,
+_x11_data_preparer_uri(Ecore_X_Event_Selection_Notify *notify,
       Elm_Selection_Data *ddata, Tmp_Info **tmp_info EINA_UNUSED)
 {
    Ecore_X_Selection_Data *data;
@@ -1096,7 +1096,7 @@ _x11_notify_handler_uri(Ecore_X_Event_Selection_Notify *notify,
  * Just received an vcard, either through cut and paste, or dnd.
  */
 static Eina_Bool
-_x11_vcard_receive(Ecore_X_Event_Selection_Notify *notify,
+_x11_data_preparer_vcard(Ecore_X_Event_Selection_Notify *notify,
       Elm_Selection_Data *ddata, Tmp_Info **tmp_info EINA_UNUSED)
 {
    cnp_debug("vcard receive\n");
@@ -1108,7 +1108,7 @@ _x11_vcard_receive(Ecore_X_Event_Selection_Notify *notify,
 }
 
 static Eina_Bool
-_x11_notify_handler_image(Ecore_X_Event_Selection_Notify *notify,
+_x11_data_preparer_image(Ecore_X_Event_Selection_Notify *notify,
       Elm_Selection_Data *ddata, Tmp_Info **tmp_info)
 {
    Ecore_X_Selection_Data *data = notify->data;
