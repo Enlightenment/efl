@@ -1012,7 +1012,7 @@ _elm_layout_elm_container_content_set(Eo *obj, Elm_Layout_Smart_Data *sd, const 
         if (!sub_d)
           {
              ERR("failed to allocate memory!");
-             edje_object_part_unswallow(wd->resize_obj, part);
+             edje_object_part_unswallow(wd->resize_obj, content);
              elm_widget_sub_object_del(obj, content);
              return EINA_FALSE;
           }
