@@ -817,8 +817,17 @@ _timediff_set(Elm_Clock_Data *sd)
    tt = (time_t)(timev.tv_sec);
    tzset();
    tm = localtime(&tt);
-   sd->timediff = (((sd->hrs - tm->tm_hour) * 60 +
-                    sd->min - tm->tm_min) * 60) + sd->sec - tm->tm_sec;
+
+   if (tm)
+     {
+        sd->timediff = (((sd->hrs - tm->tm_hour) * 60 +
+                         sd->min - tm->tm_min) * 60) + sd->sec - tm->tm_sec;
+     }
+   else
+     {
+        ERR("Failed to get local time!");
+        sd->timediff = 0;
+     }
 }
 
 EOLIAN static void
