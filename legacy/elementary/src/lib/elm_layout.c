@@ -1004,10 +1004,18 @@ _elm_layout_elm_container_content_set(Eo *obj, Elm_Layout_Smart_Data *sd, const 
               (wd->resize_obj, part, content))
           {
              ERR("could not swallow %p into part '%s'", content, part);
+             elm_widget_sub_object_del(obj, content);
              return EINA_FALSE;
           }
 
         sub_d = ELM_NEW(Elm_Layout_Sub_Object_Data);
+        if (!sub_d)
+          {
+             ERR("failed to allocate memory!");
+             edje_object_part_unswallow(wd->resize_obj, part);
+             elm_widget_sub_object_del(obj, content);
+             return EINA_FALSE;
+          }
         sub_d->type = SWALLOW;
         sub_d->part = eina_stringshare_add(part);
         sub_d->obj = content;
@@ -1213,6 +1221,13 @@ _elm_layout_box_append(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Eva
      }
 
    sub_d = ELM_NEW(Elm_Layout_Sub_Object_Data);
+   if (!sub_d)
+     {
+        ERR("failed to allocate memory!");
+        elm_widget_sub_object_del(obj, child);
+        edje_object_part_box_remove(wd->resize_obj, part, child);
+        return EINA_FALSE;
+     }
    sub_d->type = BOX_APPEND;
    sub_d->part = eina_stringshare_add(part);
    sub_d->obj = child;
@@ -1245,6 +1260,13 @@ _elm_layout_box_prepend(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Ev
      }
 
    sub_d = ELM_NEW(Elm_Layout_Sub_Object_Data);
+   if (!sub_d)
+     {
+        ERR("failed to allocate memory!");
+        elm_widget_sub_object_del(obj, child);
+        edje_object_part_box_remove(wd->resize_obj, part, child);
+        return EINA_FALSE;
+     }
    sub_d->type = BOX_PREPEND;
    sub_d->part = eina_stringshare_add(part);
    sub_d->obj = child;
@@ -1278,6 +1300,13 @@ _elm_layout_box_insert_before(Eo *obj, Elm_Layout_Smart_Data *sd, const char *pa
      }
 
    sub_d = ELM_NEW(Elm_Layout_Sub_Object_Data);
+   if (!sub_d)
+     {
+        ERR("failed to allocate memory!");
+        elm_widget_sub_object_del(obj, child);
+        edje_object_part_box_remove(wd->resize_obj, part, child);
+        return EINA_FALSE;
+     }
    sub_d->type = BOX_INSERT_BEFORE;
    sub_d->part = eina_stringshare_add(part);
    sub_d->obj = child;
@@ -1314,6 +1343,13 @@ _elm_layout_box_insert_at(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, 
      }
 
    sub_d = ELM_NEW(Elm_Layout_Sub_Object_Data);
+   if (!sub_d)
+     {
+        ERR("failed to allocate memory!");
+        elm_widget_sub_object_del(obj, child);
+        edje_object_part_box_remove(wd->resize_obj, part, child);
+        return EINA_FALSE;
+     }
    sub_d->type = BOX_INSERT_AT;
    sub_d->part = eina_stringshare_add(part);
    sub_d->obj = child;
@@ -1401,6 +1437,13 @@ _elm_layout_table_pack(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part, Eva
      }
 
    sub_d = ELM_NEW(Elm_Layout_Sub_Object_Data);
+   if (!sub_d)
+     {
+        ERR("failed to allocate memory!");
+        elm_widget_sub_object_del(obj, child);
+        edje_object_part_table_unpack(wd->resize_obj, part, child);
+        return EINA_FALSE;
+     }
    sub_d->type = TABLE_PACK;
    sub_d->part = eina_stringshare_add(part);
    sub_d->obj = child;
