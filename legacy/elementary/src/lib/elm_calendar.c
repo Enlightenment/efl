@@ -1004,17 +1004,23 @@ _elm_calendar_evas_object_smart_add(Eo *obj, Elm_Calendar_Data *priv)
         /* FIXME: I'm not aware of a known max, so if it fails,
          * just make it larger. :| */
         char buf[20];
+        struct tm *info;
+
         /* I don't know of a better way of doing it */
-        if (strftime(buf, sizeof(buf), "%a", gmtime(&weekday)))
+        info = gmtime(&weekday);
+        if (info)
           {
-             priv->weekdays[i] = eina_stringshare_add(buf);
-          }
-        else
-          {
-             /* If we failed getting day, get a default value */
-             priv->weekdays[i] = _days_abbrev[i];
-             WRN("Failed getting weekday name for '%s' from locale.",
-                 _days_abbrev[i]);
+             if (strftime(buf, sizeof(buf), "%a", info))
+               {
+                  priv->weekdays[i] = eina_stringshare_add(buf);
+               }
+             else
+               {
+                  /* If we failed getting day, get a default value */
+                  priv->weekdays[i] = _days_abbrev[i];
+                  WRN("Failed getting weekday name for '%s' from locale.",
+                      _days_abbrev[i]);
+               }
           }
         weekday += 86400; /* Advance by a day */
      }
