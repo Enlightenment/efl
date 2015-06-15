@@ -931,14 +931,9 @@ evas_filter_command_blur_add(Evas_Filter_Context *ctx, void *drawctx,
         goto fail;
      }
 
-   if (!in->alpha_only && out->alpha_only)
-     {
-        /* FIXME: Add temporary buffer + blend */
-        ERR("Input is RGBA but output is Alpha only. Unsupported config for blur.");
-        goto fail;
-     }
-   else if ((blend || (in->alpha_only && !out->alpha_only)) ||
-            (!blend && !in->alpha_only && !out->alpha_only && (color != 0xFFFFFFFF)))
+   if ((blend || (in->alpha_only && !out->alpha_only)) ||
+            (!blend && !in->alpha_only && !out->alpha_only && (color != 0xFFFFFFFF)) ||
+            (!in->alpha_only && out->alpha_only))
      {
         XDBG("Adding extra blending step %d --> %d (%s --> %s)", in->id, out->id,
             in->alpha_only ? "Alpha" : "RGBA",
