@@ -1024,18 +1024,21 @@ _x11_data_preparer_uri(Ecore_X_Event_Selection_Notify *notify,
                   else
                     p = files->files[i];
 
-                  len = strlen(p);
-                  strcpy(s, p);
-                  if (i < (files->num_files - 1))
+                  if (s)
                     {
-                       s[len] = '\n';
-                       s[len + 1] = 0;
-                       s += len + 1;
-                    }
-                  else
-                    {
-                       s[len] = 0;
-                       s += len;
+                       len = strlen(p);
+                       strcpy(s, p);
+                       if (i < (files->num_files - 1))
+                         {
+                            s[len] = '\n';
+                            s[len + 1] = 0;
+                            s += len + 1;
+                         }
+                       else
+                         {
+                            s[len] = 0;
+                            s += len;
+                         }
                     }
 
                   if (uri[i])
