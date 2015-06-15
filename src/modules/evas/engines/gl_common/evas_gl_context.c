@@ -973,6 +973,9 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
 
    if (gc->def_surface) evas_gl_common_image_free(gc->def_surface);
 
+   if (gc->font_surface)
+     evas_cache_image_drop(&gc->font_surface->cache_entry);
+
    if (glsym_glMapBuffer && glsym_glUnmapBuffer)
      {
         for (i = 0; i < MAX_PIPES; i++)

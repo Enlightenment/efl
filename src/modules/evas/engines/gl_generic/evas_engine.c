@@ -1335,13 +1335,10 @@ eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font EINA
    evas_gl_common_context_target_surface_set(gl_context, surface);
    gl_context->dc = context;
      {
-        // FIXME: put im into context so we can free it
-        static RGBA_Image *im = NULL;
-
-        if (!im)
-          im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
-        im->cache_entry.w = gl_context->shared->w;
-        im->cache_entry.h = gl_context->shared->h;
+        if (!gl_context->font_surface)
+          gl_context->font_surface = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
+        gl_context->font_surface->cache_entry.w = gl_context->shared->w;
+        gl_context->font_surface->cache_entry.h = gl_context->shared->h;
 
         evas_common_draw_context_font_ext_set(context,
                                               gl_context,
@@ -1352,7 +1349,7 @@ eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font EINA
                                               evas_gl_image_free,
                                               evas_gl_image_draw);
         evas_common_font_draw_prepare(intl_props);
-        evas_common_font_draw(im, context, x, y, intl_props->glyphs);
+        evas_common_font_draw(gl_context->font_surface, context, x, y, intl_props->glyphs);
         evas_common_draw_context_font_ext_set(context,
                                               NULL,
                                               NULL,

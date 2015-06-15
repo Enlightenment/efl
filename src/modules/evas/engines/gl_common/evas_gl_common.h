@@ -579,6 +579,8 @@ struct _Evas_Engine_GL_Context
 
    GLuint preserve_bit;
    int gles_version;
+
+   RGBA_Image *font_surface;
 };
 
 struct _Evas_GL_Texture_Pool

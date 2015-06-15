@@ -1035,27 +1035,25 @@ eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font EINA
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
      {
-        // FIXME: put im into context so we can free it
-	    static RGBA_Image *im = NULL;
-        
-        if (!im)
-          im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
-        im->cache_entry.w = re->win->gl_context->shared->w;
-        im->cache_entry.h = re->win->gl_context->shared->h;
+        if (!re->win->gl_context->font_surface)
+          re->win->gl_context->font_surface = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
+        re->win->gl_context->font_surface->cache_entry.w = re->win->gl_context->shared->w;
+        re->win->gl_context->font_surface->cache_entry.h = re->win->gl_context->shared->h;
+
         evas_common_draw_context_font_ext_set(context,
-   					      re->win->gl_context,
-   					      evas_gl_font_texture_new,
-   					      evas_gl_font_texture_free,
-   					      evas_gl_font_texture_draw,
+                                              re->win->gl_context,
+                                              evas_gl_font_texture_new,
+                                              evas_gl_font_texture_free,
+                                              evas_gl_font_texture_draw,
                                               NULL,
                                               NULL,
                                               NULL);
-	    evas_common_font_draw_prepare(intl_props);
-	    evas_common_font_draw(im, context, x, y, intl_props->glyphs);
-	    evas_common_draw_context_font_ext_set(context,
-					      NULL,
-					      NULL,
-					      NULL,
+	     evas_common_font_draw_prepare(intl_props);
+	     evas_common_font_draw(re->win->gl_context->font_surface, context, x, y, intl_props->glyphs);
+	     evas_common_draw_context_font_ext_set(context,
+                                              NULL,
+                                              NULL,
+                                              NULL,
                                               NULL,
                                               NULL,
                                               NULL,
