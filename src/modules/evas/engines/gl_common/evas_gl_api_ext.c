@@ -545,7 +545,7 @@ evgl_api_egl_ext_init(void *getproc, const char *glueexts)
    _egl_ext_string = eina_strbuf_string_steal(sb);
    eina_strbuf_free(sb);
 
-  ERR("EGL extension string: %s", _egl_ext_string);
+  INF("EGL extension string: %s", _egl_ext_string);
 
   _evgl_api_ext_status |= EVASGL_API_EGL_EXT_INITIALIZED;
    return EINA_TRUE;
