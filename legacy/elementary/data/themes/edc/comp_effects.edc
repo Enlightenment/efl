@@ -482,6 +482,100 @@ group { name: "e/comp/effects/visibility/vertical";
    }
 }
 
+group { name: "e/comp/effects/visibility/tooltip";
+   data.item: "need_pointer" "1";
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+            if (st == 1)
+              set_state(PART:"mover", "custom", 0.0);
+            else
+              set_state(PART:"mover", "default", 0.0);
+         } else if ((type == MSG_INT_SET) && (id == 1)) {
+            /* absolute object geom[4] / screen size[2] / relative pointer xy[2] */
+            new x, y;
+            new ow, oh;
+            new sx2, sy2;
+            new Float:rx1 = 0.0, Float:rx2 = 1.0, Float:ry1 = 0.0, Float:ry2 = 1.0;
+
+            x = getarg(8);
+            y = getarg(9);
+
+            ow = getarg(4);
+            oh = getarg(5);
+            sx2 = x;
+            sy2 = y;
+            custom_state(PART:"mover", "default", 0.0);
+            if (x <= 0) {
+               rx2 = 0.0;
+            } else {
+               if (x < ow)
+                 sx2 = x - ow;
+               else
+                 rx1 = 1.0;
+            }
+            if (y <= 0) {
+               ry2 = 0.0;
+            } else {
+               if (y < oh)
+                 sy2 = y - oh;
+               else
+                 ry1 = 1.0;
+            }
+            set_state_val(PART:"mover", STATE_ALIGNMENT, 0, 0);
+            set_state_val(PART:"mover", STATE_REL1, rx1, ry1);
+            set_state_val(PART:"mover", STATE_REL2, rx2, ry2);
+            set_state_val(PART:"mover", STATE_REL1_OFFSET, x, y);
+            set_state_val(PART:"mover", STATE_REL2_OFFSET, sx2, sy2);
+         }
+      }
+   }
+   parts {
+      spacer { "mover"; }
+      swallow { "e.swallow.content";
+         desc { rel.to: "mover"; }
+      }
+   }
+   programs {
+      program {
+         name: "hide";
+         signal: "e,action,go";
+         source: "e";
+         filter: "mover" "default";
+         action: STATE_SET "custom" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "mover";
+         after: "done";
+      }
+      program {
+         name: "show";
+         signal: "e,action,go";
+         source: "e";
+         filter: "mover" "custom";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
+         target: "mover";
+         after: "done";
+      }
+      program {
+         name: "stop";
+         signal: "e,action,stop";
+         source: "e";
+         action: ACTION_STOP;
+         target: "show";
+         target: "hide";
+      }
+      program {
+         name: "done";
+         action: SIGNAL_EMIT "e,action,done" "e";
+      }
+   }
+}
+
 group { name: "e/comp/effects/iconify/default";
    alias: "e/comp/effects/iconify/ibar";
    alias: "e/comp/effects/iconify/ibox";
