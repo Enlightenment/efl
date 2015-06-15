@@ -1612,6 +1612,11 @@ _elm_layout_part_cursor_set(Eo *obj, Elm_Layout_Smart_Data *sd, const char *part
    else
      {
         pc = calloc(1, sizeof(*pc));
+        if (!pc)
+          {
+             ERR("failed to allocate memory!");
+             return EINA_FALSE;
+          }
         pc->part = eina_stringshare_add(part_name);
         pc->cursor = eina_stringshare_add(cursor);
         pc->style = eina_stringshare_add("default");
