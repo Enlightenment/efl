@@ -438,8 +438,11 @@ group { name: "e/comp/effects/visibility/vertical";
    }
    parts {
       rect { "clip";
-        desc {}
-        desc { "hid"; rel2.relative: 1 0; }
+        desc { rel2.offset: 10 10; }
+        desc { "hid";
+           rel2.relative: 1 0;
+           rel2.offset: 10 10;
+        }
       }
       swallow { "e.swallow.content"; clip: "clip"; }
    }
