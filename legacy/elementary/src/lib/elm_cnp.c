@@ -1061,6 +1061,7 @@ _x11_data_preparer_uri(Ecore_X_Event_Selection_Notify *notify,
           {
              free(p);
              stripstr = (char *)eina_memdup((unsigned char *)uri->path, strlen(uri->path), EINA_TRUE);
+             efreet_uri_free(uri);
              if (!stripstr) return EINA_FALSE;
           }
      }
