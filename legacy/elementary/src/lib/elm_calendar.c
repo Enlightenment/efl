@@ -1333,6 +1333,7 @@ _elm_calendar_mark_add(Eo *obj, Elm_Calendar_Data *sd, const char *mark_type, st
    Elm_Calendar_Mark *mark;
 
    mark = _mark_new(obj, mark_type, mark_time, repeat);
+   if (!mark) return NULL;
    sd->marks = eina_list_append(sd->marks, mark);
    mark->node = eina_list_last(sd->marks);
 
