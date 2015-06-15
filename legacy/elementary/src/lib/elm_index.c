@@ -137,7 +137,18 @@ _omit_calc(void *data, int num_of_items, int max_num_of_items)
    num_of_extra_items = num_of_items - max_num_of_items;
 
    group_pos = (int *)malloc(sizeof(int) * max_group_num);
+   if (!group_pos)
+     {
+        ERR("failed to allocate memory!");
+        return;
+     }
    omit_info = (int *)malloc(sizeof(int) * max_num_of_items);
+   if (!omit_info)
+     {
+        ERR("failed to allocate memory!");
+        free(group_pos);
+        return;
+     }
 
    if (num_of_extra_items >= max_group_num)
      {
@@ -169,6 +180,11 @@ _omit_calc(void *data, int num_of_items, int max_num_of_items)
         if (omit_info[i] > 1)
           {
              o = (Elm_Index_Omit *)malloc(sizeof(Elm_Index_Omit));
+             if (!o)
+               {
+                  ERR("failed to allocate memory!");
+                  break;
+               }
              o->offset = sum;
              o->count = omit_info[i];
              sd->omit = eina_list_append(sd->omit, o);
