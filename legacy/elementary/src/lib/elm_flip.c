@@ -746,6 +746,7 @@ _state_update(Evas_Object *obj)
              if (!sl)
                {
                   sl = _slice_new(obj, front);
+                  if (!sl) return 0;
                   sd->slices[nn] = sl;
                }
              _slice_xyz(sd, sl,
@@ -766,6 +767,7 @@ _state_update(Evas_Object *obj)
              if (!sl)
                {
                   sl = _slice_new(obj, back);
+                  if (!sl) return 0;
                   sd->slices2[nn] = sl;
                }
 
