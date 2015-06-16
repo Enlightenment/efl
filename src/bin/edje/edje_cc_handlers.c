@@ -9007,12 +9007,15 @@ st_collections_group_parts_part_description_text_ellipsis(void)
     @property
         filter.code
     @parameters
-        [filter program as a string]
+        [filter program] OR [data name]
     @effect
         Applies a series of image filters to a TEXT or IMAGE part. The argument
         to this field is the source code of a Lua program invoking various
         filter operations. For more information, please refer to the page
         "Evas filters reference".
+        The parameter can also be a parameter name as specified in the
+        data section (item or file property). This means external filter files
+        can be easily embedded in an edje file.
         @see evasfiltersref
     @endproperty
 */

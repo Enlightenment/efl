@@ -1282,6 +1282,8 @@ struct _Edje_Part_Description_Spec_Filter
 {
    const char    *code;
    Eina_List     *sources; /* "part" or "buffer:part" */
+   Eina_Bool      checked_data : 1; // checked whether this is a data item or embedded string
+   Eina_Bool      no_free : 1;
 };
 
 struct _Edje_Part_Description_Spec_Image

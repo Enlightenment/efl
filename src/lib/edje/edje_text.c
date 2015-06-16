@@ -193,6 +193,24 @@ _edje_text_class_font_get(Edje *ed, Edje_Part_Description_Text *chosen_desc, int
    return font;
 }
 
+static inline const char *
+_edje_filter_get(Edje *ed, Edje_Part_Description_Spec_Filter *filter)
+{
+   if (EINA_UNLIKELY(!filter->checked_data))
+     {
+        Edje_String *st;
+        filter->checked_data = 1;
+        st = eina_hash_find(ed->file->data, filter->code);
+        if (st)
+          {
+             eina_stringshare_del(filter->code);
+             filter->code = st->str;
+             filter->no_free = 1;
+          }
+     }
+   return filter->code;
+}
+
 void
 _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                         Edje_Calc_Params *params,
@@ -228,12 +246,15 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (!text)
      text = edje_string_get(&chosen_desc->text.text);
    font = _edje_text_class_font_get(ed, chosen_desc, &size, &sfont);
-   filter = chosen_desc->text.filter.code;
 
    if (ep->typedata.text->text) text = ep->typedata.text->text;
    if (ep->typedata.text->font) font = ep->typedata.text->font;
    if (ep->typedata.text->size > 0) size = ep->typedata.text->size;
-   if (ep->typedata.text->filter.code) filter = ep->typedata.text->filter.code;
+
+   if (ep->typedata.text->filter.code)
+     filter = _edje_filter_get(ed, &ep->typedata.text->filter);
+   else
+     filter = _edje_filter_get(ed, &chosen_desc->text.filter);
    if (ep->typedata.text->filter.sources != chosen_desc->text.filter.sources)
      {
         prev_sources = ep->typedata.text->filter.sources;
