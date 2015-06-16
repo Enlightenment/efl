@@ -631,6 +631,17 @@ _elm_entry_theme_group_get(Evas_Object *obj)
      }
 }
 
+static void
+_edje_entry_user_insert(Evas_Object *obj, const char *data)
+{
+   if (!data) return;
+   ELM_ENTRY_DATA_GET(obj, sd);
+
+   sd->changed = EINA_TRUE;
+   edje_object_part_text_user_insert(sd->entry_edje, "elm.text", data);
+   elm_layout_sizing_eval(obj);
+}
+
 static Eina_Bool
 _selection_data_cb(void *data EINA_UNUSED,
                    Evas_Object *obj,
@@ -661,14 +672,14 @@ _selection_data_cb(void *data EINA_UNUSED,
         len = strlen(tag_string) + strlen(buf);
         entry_tag = alloca(len + 1);
         snprintf(entry_tag, len + 1, tag_string, buf);
-        elm_entry_entry_insert(obj, entry_tag);
+        _edje_entry_user_insert(obj, entry_tag);
      }
    else
      {
         char *txt = _elm_util_text_to_mkup(buf);
         if (txt)
           {
-             elm_entry_entry_insert(obj, txt);
+             _edje_entry_user_insert(obj, txt);
              free(txt);
           }
         else
@@ -1373,7 +1384,7 @@ _elm_entry_entry_paste(Evas_Object *obj,
      str = strdup(entry);
    if (!str) str = (char *)entry;
 
-   edje_object_part_text_user_insert(sd->entry_edje, "elm.text", str);
+   _edje_entry_user_insert(obj, str);
 
    if (str != entry) free(str);
 }
@@ -1436,8 +1447,7 @@ _cut_cb(void *data,
      elm_widget_scroll_hold_pop(data);
 
    _selection_store(ELM_SEL_TYPE_CLIPBOARD, data);
-   edje_object_part_text_user_insert(sd->entry_edje, "elm.text", "");
-   elm_layout_sizing_eval(data);
+   _edje_entry_user_insert(data, "");
 }
 
 static void
