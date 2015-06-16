@@ -7368,6 +7368,37 @@ st_collections_group_parts_part_description_color3(void)
    ed->text.color3.a = parse_int_range(3, 0, 255);
 }
 
+/**
+    @page edcref
+    @property
+        clip_to
+    @parameters
+        [another part's name]
+    @effect
+        Overrides the 'clip_to' property of this part. This allows switching
+        clippers (or masks) at runtime by changing this part's state. When
+        transitionning between two states, the switch of the clipper shall
+        happen at the end of the animation, when the new state is finally set
+        (this is similar to the 'visible' flag).
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_clip_to_id(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+     {
+        char *name;
+
+        name = parse_str(0);
+        data_queue_part_lookup(pc, name, &(current_desc->clip_to_id));
+        free(name);
+     }
+}
+
 /** @edcsubsection{collections_group_parts_description_relatives,
  *                 Group.Parts.Part.Description.Relatives (rel1/rel2)} */
 
@@ -7658,23 +7689,6 @@ st_collections_group_parts_part_description_rel2_to_y(void)
       data_queue_part_lookup(pc, name, &(current_desc->rel2.id_y));
       free(name);
    }
-}
-
-static void
-st_collections_group_parts_part_description_clip_to_id(void)
-{
-   Edje_Part_Collection *pc;
-
-   check_arg_count(1);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-     {
-        char *name;
-
-        name = parse_str(0);
-        data_queue_part_lookup(pc, name, &(current_desc->clip_to_id));
-        free(name);
-     }
 }
 
 /** @edcsubsection{collections_group_parts_description_image,
