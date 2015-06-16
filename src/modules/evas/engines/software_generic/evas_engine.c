@@ -3734,7 +3734,16 @@ eng_ector_end(void *data EINA_UNUSED, void *context EINA_UNUSED, void *surface E
      }
    else
      {
-        eo_do(_software_ector, ector_cairo_software_surface_set(NULL, 0, 0));
+        if (use_cairo)
+          {
+             eo_do(_software_ector,
+                   ector_cairo_software_surface_set(NULL, 0, 0));
+          }
+        else
+          {
+             eo_do(_software_ector,
+                   ector_software_surface_set(NULL, 0, 0));
+          }
 
         evas_common_cpu_end_opt();
      }
