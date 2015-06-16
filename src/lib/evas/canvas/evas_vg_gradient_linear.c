@@ -120,6 +120,37 @@ _efl_vg_gradient_linear_efl_vg_base_bounds_get(Eo *obj, Efl_VG_Gradient_Linear_D
                       pd->end.x - pd->start.x, pd->end.y - pd->start.x);
 }
 
+static Eina_Bool
+_efl_vg_gradient_linear_efl_vg_base_interpolate(Eo *obj,
+                                                Efl_VG_Gradient_Linear_Data *pd,
+                                                const Efl_VG_Base *from, const Efl_VG_Base *to,
+                                                double pos_map)
+{
+   Efl_VG_Gradient_Linear_Data *fromd, *tod;
+   double from_map;
+   Eina_Bool r;
+
+   eo_do_super(obj, EFL_VG_GRADIENT_LINEAR_CLASS, r = efl_vg_interpolate(from, to, pos_map));
+
+   if (!r) return EINA_FALSE;
+
+   fromd = eo_data_scope_get(from, EFL_VG_GRADIENT_LINEAR_CLASS);
+   tod = eo_data_scope_get(to, EFL_VG_GRADIENT_LINEAR_CLASS);
+   from_map = 1.0 - pos_map;
+
+#define INTP(Pd, From, To, Member, From_Map, Pos_Map)   \
+   Pd->Member = From->Member * From_Map + To->Member * Pos_Map
+
+   INTP(pd, fromd, tod, start.x, from_map, pos_map);
+   INTP(pd, fromd, tod, start.y, from_map, pos_map);
+   INTP(pd, fromd, tod, end.x, from_map, pos_map);
+   INTP(pd, fromd, tod, end.y, from_map, pos_map);
+
+#undef INTP
+
+   return EINA_TRUE;
+}
+
 EAPI void
 evas_vg_gradient_linear_start_set(Eo *obj, double x, double y)
 {

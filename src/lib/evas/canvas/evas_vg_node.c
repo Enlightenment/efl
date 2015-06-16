@@ -9,6 +9,14 @@
 
 #define MY_CLASS EFL_VG_BASE_CLASS
 
+static const Efl_VG_Interpolation interpolation_identity = {
+  { 0, 0, 0, 1 },
+  { 0, 0, 0, 1 },
+  { 0, 0, 0 },
+  { 1, 1, 1 },
+  { 0, 0, 0 }
+};
+
 static Eina_Bool
 _efl_vg_base_property_changed(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
 {
@@ -28,6 +36,12 @@ _efl_vg_base_transformation_set(Eo *obj,
                                 Efl_VG_Base_Data *pd,
                                 const Eina_Matrix3 *m)
 {
+   if (pd->intp)
+     {
+        free(pd->intp);
+        pd->intp = NULL;
+     }
+
    if (m)
      {
         if (!pd->m)
@@ -271,6 +285,11 @@ _efl_vg_base_eo_base_destructor(Eo *obj, Efl_VG_Base_Data *pd)
      {
         eo_del(pd->renderer);
         pd->renderer = NULL;
+     }
+   if (pd->intp)
+     {
+        free(pd->intp);
+        pd->intp = NULL;
      }
 
    eo_do_super(obj, MY_CLASS, eo_destructor());
@@ -595,6 +614,171 @@ _efl_vg_base_efl_gfx_stack_above_get(Eo *obj, Efl_VG_Base_Data *pd EINA_UNUSED)
    eina_array_flush(&a);
 
    return above;
+}
+
+static Efl_VG_Interpolation *
+_efl_vg_interpolation_get(Efl_VG_Base_Data *pd)
+{
+   Eina_Matrix4 m;
+
+   if (!pd->m) return NULL;
+   if (pd->intp) return pd->intp;
+
+   pd->intp = calloc(1, sizeof (Efl_VG_Interpolation));
+   if (!pd->intp) return NULL;
+
+   eina_matrix3_matrix4_to(&m, pd->m);
+
+   if (eina_matrix4_quaternion_to(&pd->intp->rotation,
+                                  &pd->intp->perspective,
+                                  &pd->intp->translation,
+                                  &pd->intp->scale,
+                                  &pd->intp->skew,
+                                  &m))
+     return pd->intp;
+
+   free(pd->intp);
+   pd->intp = NULL;
+
+   return NULL;
+}
+
+static inline void
+_efl_vg_interpolate_point(Eina_Point_3D *d,
+                          const Eina_Point_3D *a, const Eina_Point_3D *b,
+                          double pos_map, double from_map)
+{
+   d->x = a->x * from_map + b->x * pos_map;
+   d->y = a->y * from_map + b->y * pos_map;
+   d->z = a->z * from_map + b->z * pos_map;
+}
+
+static Eina_Bool
+_efl_vg_base_interpolate(Eo *obj,
+                         Efl_VG_Base_Data *pd, const Efl_VG_Base *from, const Efl_VG_Base *to,
+                         double pos_map)
+{
+   Efl_VG_Base_Data *fromd, *tod;
+   double from_map;
+   Eina_Bool r = EINA_TRUE;
+
+   fromd = eo_data_scope_get(from, EFL_VG_BASE_CLASS);
+   tod = eo_data_scope_get(to, EFL_VG_BASE_CLASS);
+   from_map = 1.0 - pos_map;
+
+   eo_del(pd->renderer);
+   pd->renderer = NULL;
+
+   if (fromd->m || tod->m)
+     {
+        if (!pd->m) pd->m = malloc(sizeof (Eina_Matrix3));
+        if (pd->m)
+          {
+             const Efl_VG_Interpolation *fi, *ti;
+             Efl_VG_Interpolation result;
+             Eina_Matrix4 m;
+
+             fi = _efl_vg_interpolation_get(fromd);
+             if (!fi) fi = &interpolation_identity;
+             ti = _efl_vg_interpolation_get(tod);
+             if (!ti) ti = &interpolation_identity;
+
+             eina_quaternion_slerp(&result.rotation,
+                                   &fi->rotation, &ti->rotation,
+                                   pos_map);
+             _efl_vg_interpolate_point(&result.translation,
+                                       &fi->translation, &ti->translation,
+                                       pos_map, from_map);
+             _efl_vg_interpolate_point(&result.scale,
+                                       &fi->scale, &ti->scale,
+                                       pos_map, from_map);
+             _efl_vg_interpolate_point(&result.skew,
+                                       &fi->skew, &ti->skew,
+                                       pos_map, from_map);
+
+             result.perspective.x = fi->perspective.x * from_map + ti->perspective.x * pos_map;
+             result.perspective.y = fi->perspective.y * from_map + ti->perspective.y * pos_map;
+             result.perspective.z = fi->perspective.z * from_map + ti->perspective.z * pos_map;
+             result.perspective.w = fi->perspective.w * from_map + ti->perspective.w * pos_map;
+
+             eina_quaternion_matrix4_to(&m,
+                                        &result.rotation,
+                                        &result.perspective,
+                                        &result.translation,
+                                        &result.scale,
+                                        &result.skew);
+             eina_matrix4_matrix3_to(pd->m, &m);
+          }
+     }
+
+   pd->x = fromd->x * from_map + tod->x * pos_map;
+   pd->y = fromd->y * from_map + tod->y * pos_map;
+
+   pd->r = fromd->r * from_map + tod->r * pos_map;
+   pd->g = fromd->g * from_map + tod->g * pos_map;
+   pd->b = fromd->b * from_map + tod->b * pos_map;
+   pd->a = fromd->a * from_map + tod->a * pos_map;
+
+   pd->visibility = pos_map >= 0.5 ? tod->visibility : fromd->visibility;
+
+   if (fromd->mask && tod->mask && pd->mask)
+     {
+        eo_do(pd->mask,
+              r &= efl_vg_interpolate(fromd->mask, tod->mask, pos_map));
+     }
+
+   _efl_vg_base_changed(obj);
+
+   return r;
+}
+
+static void
+_efl_vg_base_dup(Eo *obj, Efl_VG_Base_Data *pd, const Efl_VG_Base *from)
+{
+   Efl_VG_Container_Data *cd = NULL;
+   Efl_VG_Base_Data *fromd;
+   Eo *parent = NULL;
+
+   fromd = eo_data_scope_get(from, EFL_VG_BASE_CLASS);
+   pd->name = eina_stringshare_ref(fromd->name);
+
+   _efl_vg_base_parent_checked_get(obj, &parent, &cd);
+   if (cd) _efl_vg_base_name_insert(obj, pd, cd);
+
+   if (pd->intp)
+     {
+        free(pd->intp);
+        pd->intp = NULL;
+     }
+
+   if (fromd->m)
+     {
+        pd->m = pd->m ? pd->m : malloc(sizeof (Eina_Matrix3)) ;
+        if (pd->m) memcpy(pd->m, fromd->m, sizeof (Eina_Matrix3));
+     }
+   else
+     {
+        free(pd->m);
+     }
+
+   // We may come from an already duped/initialized node, clean it first
+   _efl_vg_clean_object(&pd->mask);
+   if (fromd->mask)
+     {
+        pd->mask = eo_add(eo_class_get(fromd->mask),
+                          obj,
+                          efl_vg_dup(pd->mask));
+     }
+
+   pd->x = fromd->x;
+   pd->y = fromd->y;
+   pd->r = fromd->r;
+   pd->g = fromd->g;
+   pd->b = fromd->b;
+   pd->a = fromd->a;
+   pd->visibility = fromd->visibility;
+
+   _efl_vg_base_changed(obj);
 }
 
 EAPI Eina_Bool

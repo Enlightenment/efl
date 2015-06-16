@@ -138,6 +138,38 @@ _efl_vg_gradient_radial_efl_vg_base_bounds_get(Eo *obj, Efl_VG_Gradient_Radial_D
                       pd->radius * 2, pd->radius * 2);
 }
 
+static Eina_Bool
+_efl_vg_gradient_radial_efl_vg_base_interpolate(Eo *obj,
+                                                Efl_VG_Gradient_Radial_Data *pd,
+                                                const Efl_VG_Base *from, const Efl_VG_Base *to,
+                                                double pos_map)
+{
+   Efl_VG_Gradient_Radial_Data *fromd, *tod;
+   double from_map;
+   Eina_Bool r;
+
+   eo_do_super(obj, EFL_VG_GRADIENT_RADIAL_CLASS, r = efl_vg_interpolate(from, to, pos_map));
+
+   if (!r) return EINA_FALSE;
+
+   fromd = eo_data_scope_get(from, EFL_VG_GRADIENT_RADIAL_CLASS);
+   tod = eo_data_scope_get(to, EFL_VG_GRADIENT_RADIAL_CLASS);
+   from_map = 1.0 - pos_map;
+
+#define INTP(Pd, From, To, Member, From_Map, Pos_Map)   \
+   Pd->Member = From->Member * From_Map + To->Member * Pos_Map
+
+   INTP(pd, fromd, tod, focal.x, from_map, pos_map);
+   INTP(pd, fromd, tod, focal.y, from_map, pos_map);
+   INTP(pd, fromd, tod, center.x, from_map, pos_map);
+   INTP(pd, fromd, tod, center.y, from_map, pos_map);
+   INTP(pd, fromd, tod, radius, from_map, pos_map);
+
+#undef INTP
+
+   return EINA_TRUE;
+}
+
 EAPI void
 evas_vg_gradient_radial_center_set(Eo *obj, double x, double y)
 {

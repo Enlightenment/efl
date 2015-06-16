@@ -88,6 +88,14 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
             @out r: Eina.Rectangle; [[bounding box to be returned.]]
          }
       }
+      interpolate {
+        return: bool;
+        params {
+          @in from: const(Efl.VG.Base)*;
+          @in to: const(Efl.VG.Base)*;
+          @in pos_map: double;
+        }
+      }
    }
    implements {
       Eo.Base.parent.set;

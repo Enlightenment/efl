@@ -97,6 +97,44 @@ _efl_vg_container_children_get(Eo *obj EINA_UNUSED, Efl_VG_Container_Data *pd)
    return eina_list_iterator_new(pd->children);
 }
 
+static Eina_Bool
+_efl_vg_container_efl_vg_base_interpolate(Eo *obj,
+                                          Efl_VG_Container_Data *pd,
+                                          const Efl_VG_Base *from, const Efl_VG_Base *to,
+                                          double pos_map)
+{
+   Efl_VG_Container_Data *fd;
+   Efl_VG_Container_Data *td;
+   Eina_Iterator *it;
+   Eina_Hash_Tuple *tuple;
+   Eina_Bool r;
+
+   eo_do_super(obj, EFL_VG_CONTAINER_CLASS, r = efl_vg_interpolate(from, to, pos_map));
+
+   if (!r) return EINA_FALSE;
+
+   fd = eo_data_scope_get(from, EFL_VG_CONTAINER_CLASS);
+   td = eo_data_scope_get(to, EFL_VG_CONTAINER_CLASS);
+
+   it = eina_hash_iterator_tuple_new(pd->names);
+   EINA_ITERATOR_FOREACH(it, tuple)
+     {
+        Eo *fromc, *toc;
+        Eo *cc = tuple->data;
+
+        fromc = eina_hash_find(fd->names, tuple->key);
+        toc = eina_hash_find(td->names, tuple->key);
+
+        if (!toc || !fromc) continue ;
+        if (eo_class_get(toc) != eo_class_get(fromc)) continue ;
+
+        eo_do(cc, r &= efl_vg_interpolate(fromc, toc, pos_map));
+     }
+   eina_iterator_free(it);
+
+   return r;
+}
+
 EAPI Efl_VG*
 evas_vg_container_add(Efl_VG *parent)
 {
