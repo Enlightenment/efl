@@ -1838,7 +1838,7 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
      }
    else
      {
-        if (sd->ee)
+        if (sd->ee && (sd->type != ELM_WIN_FAKE))
           {
              ecore_job_add(_deferred_ecore_evas_free, sd->ee);
              _elm_win_deferred_free++;
