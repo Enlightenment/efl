@@ -1281,7 +1281,7 @@ struct _Edje_Part_Description_Spec_Border
 struct _Edje_Part_Description_Spec_Filter
 {
    const char    *code;
-   Eina_List     *sources;
+   Eina_List     *sources; /* "part" or "buffer:part" */
 };
 
 struct _Edje_Part_Description_Spec_Image

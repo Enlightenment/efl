@@ -2495,6 +2495,12 @@ _evas_text_filter_source_set(Eo *eo_obj, Evas_Text_Data *o, const char *name, Ev
    if (!source && !o->cur.filter->sources)
      return;
 
+   if (o->cur.filter->sources)
+     {
+        pb_old = eina_hash_find(o->cur.filter->sources, name);
+        if (pb_old && (pb_old->eo_source == eo_source)) return;
+     }
+
    fcow = eina_cow_write(evas_object_filter_cow, (const Eina_Cow_Data**)&o->cur.filter);
 
    if (!fcow->sources)
@@ -2502,15 +2508,8 @@ _evas_text_filter_source_set(Eo *eo_obj, Evas_Text_Data *o, const char *name, Ev
         fcow->sources = eina_hash_string_small_new
               (EINA_FREE_CB(_filter_source_hash_free_cb));
      }
-   else
-     {
-        pb_old = eina_hash_find(fcow->sources, name);
-        if (pb_old)
-          {
-             if (pb_old->eo_source == eo_source) goto update;
-             eina_hash_del(fcow->sources, name, pb_old);
-          }
-     }
+   else if (pb_old)
+     eina_hash_del(fcow->sources, name, pb_old);
 
    if (!source)
      {
@@ -2530,16 +2529,19 @@ _evas_text_filter_source_set(Eo *eo_obj, Evas_Text_Data *o, const char *name, Ev
    pb->eo_source = eo_source;
    pb->name = eina_stringshare_add(name);
 
-   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy,
-                        Evas_Object_Proxy_Data, source_write)
-     if (!eina_list_data_find(source_write->proxies, eo_obj))
-       source_write->proxies = eina_list_append(source_write->proxies, eo_obj);
-   EINA_COW_WRITE_END(evas_object_proxy_cow, source->proxy, source_write)
+   if (!eina_list_data_find(source->proxy->proxies, eo_obj))
+     {
+        EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, source->proxy, Evas_Object_Proxy_Data, source_write)
+          source_write->proxies = eina_list_append(source_write->proxies, eo_obj);
+        EINA_COW_WRITE_END(evas_object_proxy_cow, source->proxy, source_write)
+     }
 
-   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy,
-                        Evas_Object_Proxy_Data, proxy_write)
-     proxy_write->is_proxy = EINA_TRUE;
-   EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write)
+   if (!obj->proxy->is_proxy)
+     {
+        EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy, Evas_Object_Proxy_Data, proxy_write)
+          proxy_write->is_proxy = EINA_TRUE;
+        EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write)
+     }
 
    eina_hash_add(fcow->sources, pb->name, pb);
    evas_filter_program_source_set_all(fcow->chain, fcow->sources);

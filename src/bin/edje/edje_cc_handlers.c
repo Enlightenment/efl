@@ -362,6 +362,7 @@ static void st_collections_group_parts_part_description_text_source(void);
 static void st_collections_group_parts_part_description_text_text_source(void);
 static void st_collections_group_parts_part_description_text_ellipsis(void);
 static void st_collections_group_parts_part_description_text_filter(void);
+static void st_collections_group_parts_part_description_text_filter_source(void);
 static void st_collections_group_parts_part_description_box_layout(void);
 static void st_collections_group_parts_part_description_box_align(void);
 static void st_collections_group_parts_part_description_box_padding(void);
@@ -814,6 +815,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.elipsis", st_collections_group_parts_part_description_text_ellipsis},
      {"collections.group.parts.part.description.text.ellipsis", st_collections_group_parts_part_description_text_ellipsis},
      {"collections.group.parts.part.description.text.filter", st_collections_group_parts_part_description_text_filter},
+     {"collections.group.parts.part.description.text.filter.code", st_collections_group_parts_part_description_text_filter}, /* dup */
+     {"collections.group.parts.part.description.text.filter.source", st_collections_group_parts_part_description_text_filter_source},
      {"collections.group.parts.part.description.box.layout", st_collections_group_parts_part_description_box_layout},
      {"collections.group.parts.part.description.box.align", st_collections_group_parts_part_description_box_align},
      {"collections.group.parts.part.description.box.padding", st_collections_group_parts_part_description_box_padding},
@@ -6696,15 +6699,18 @@ st_collections_group_parts_part_description_inherit(void)
               ted->text.domain = STRDUP(ted->text.domain);
               ted->text.text_class = STRDUP(ted->text.text_class);
               ted->text.font.str = STRDUP(ted->text.font.str);
-              ted->text.filter.code = STRDUP(ted->text.filter.code);
-              {
-                 Eina_List *l;
-                 Eina_Stringshare *name;
-                 static int part_key = 0;
 
-                 EINA_LIST_FOREACH(ted->text.filter.sources, l, name)
-                   data_queue_part_lookup(pc, name, &part_key);
-              }
+              /* Filters stuff */
+              ted->text.filter.code = STRDUP(ted->text.filter.code);
+              if (ted->text.filter.code)
+                {
+                   Eina_List *list, *l;
+                   const char *name;
+                   list = ted->text.filter.sources;
+                   ted->text.filter.sources = NULL;
+                   EINA_LIST_FOREACH(list, l, name)
+                     ted->text.filter.sources = eina_list_append(ted->text.filter.sources, STRDUP(name));
+                }
 
               data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_source), &(ted->text.id_source), &ted->text.id_source_part);
               data_queue_copied_part_nest_lookup(pc, &(tparent->text.id_text_source), &(ted->text.id_text_source), &ted->text.id_text_source_part);
@@ -8979,29 +8985,41 @@ st_collections_group_parts_part_description_text_ellipsis(void)
 /**
     @page edcref
 
+    @context
+        part {
+            type: TEXT; // or IMAGE
+            description {
+                ..
+                text {
+                    ..
+                    filter {
+                        code: "blend {} -- ..."
+                        source: "part1" "buf";
+                        source: "part2" "otherbuf";
+                        source: "part3";
+                    }
+                    // or as short form:
+                    filter: "blend {} -- ..."
+                }
+                ..
+            }
+        }
     @property
-        filter
+        filter.code
     @parameters
         [filter program as a string]
     @effect
-        Applies a series of filtering operations to the text.
-        EXPERIMENTAL FEATURE. TO BE DOCUMENTED.
+        Applies a series of image filters to a TEXT or IMAGE part. The argument
+        to this field is the source code of a Lua program invoking various
+        filter operations. For more information, please refer to the page
+        "Evas filters reference".
+        @see evasfiltersref
     @endproperty
 */
 static void
 st_collections_group_parts_part_description_text_filter(void)
 {
    Edje_Part_Description_Text *ed;
-   Eina_List *sources = NULL;
-   Eina_Stringshare *name;
-   char *token, *code;
-   Eina_Bool valid = EINA_TRUE;
-   Edje_Part_Collection *pc;
-
-   static int part_key = 0;
-
-   static const char *allowed_name_chars =
-         "abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ0123456789_";
 
    check_arg_count(1);
 
@@ -9013,73 +9031,101 @@ st_collections_group_parts_part_description_text_filter(void)
      }
 
    ed = (Edje_Part_Description_Text*) current_desc;
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   if (ed->text.filter.code)
-     {
-        EINA_LIST_FREE(ed->text.filter.sources, name)
-          {
-             part_lookup_delete(pc, name, &part_key, NULL);
-             eina_stringshare_del(name);
-          }
-        free((void*)ed->text.filter.code);
-     }
-   ed->text.filter.sources = NULL;
 
+   free((void*) ed->text.filter.code);
    ed->text.filter.code = parse_str(0);
-   if (!ed->text.filter.code) return;
+}
 
-   // Parse list of buffers that have a source
-   // note: does not support comments
-   code = strdup(ed->text.filter.code);
-   for (token = strtok(code, ";"); token; token = strtok(NULL, ";"))
+/**
+    @page edcref
+
+    @property
+        filter.source
+    @parameters
+        [another part's name] [(optional) buffer name for filter program]
+    @effect
+        Binds another part as an image source (like a proxy source) for a
+        text or image filter operation. Optionally, a buffer name may be
+        specified, so the same filter code can be used with different sources.
+        For more information, please refer to the page "Evas filters reference".
+        @see evasfiltersref
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_text_filter_source(void)
+{
+   Edje_Part_Description_Text *ed;
+   Edje_Part_Collection *pc;
+   char *name = NULL, *part, *str;
+   size_t sn = 0, sp;
+   int *part_key;
+
+   static const char *allowed_name_chars =
+         "abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ0123456789_";
+
+   /* 1 or 2 args only */
+   check_min_arg_count(1);
+   if (get_arg_count() > 1)
+     check_arg_count(2);
+
+   if (current_part->type != EDJE_PART_TYPE_TEXT)
      {
-        size_t len;
+        ERR("parse error %s:%i. text attributes in non-TEXT part.",
+            file_in, line - 1);
+        exit(-1);
+     }
 
-        len = strspn(token, " \n\t");
-        token += len;
+   ed = (Edje_Part_Description_Text*) current_desc;
+   pc = eina_list_data_get(eina_list_last(edje_collections));
 
-        if (!strncasecmp("buffer", token, 6))
+   part = parse_str(0);
+   sp = strlen(part);
+
+   if (get_arg_count() > 1)
+     {
+        name = parse_str(1);
+        if (name) sn = strlen(name);
+        if (!name || (strspn(name, allowed_name_chars) != sn))
           {
-             // note: a valid string won't necessary compile at runtime
-
-             token = strchr(token, ':');
-             if (!token)
-               {
-                  valid = EINA_FALSE;
-                  break;
-               }
-             token = strchr(token, '(');
-             if (!token)
-               {
-                  valid = EINA_FALSE;
-                  break;
-               }
-             token = strcasestr(token, "src");
-             if (!token) continue;
-             token += 3;
-             len = strspn(token, " =\n\t");
-             if (!len || !token[len])
-               {
-                  valid = EINA_FALSE;
-                  break;
-               }
-             token += len;
-             len = strspn(token, allowed_name_chars);
-             if (!len || !token[len])
-               {
-                  valid = EINA_FALSE;
-                  break;
-               }
-             token[len] = '\0';
-             name = eina_stringshare_add(token);
-
-             sources = eina_list_append(sources, name);
-             data_queue_part_lookup(pc, name, &part_key);
+             ERR("parse error %s:%i. invalid name for a filter buffer: %s",
+                 file_in, line - 1, name);
+             exit(-1);
           }
      }
-   free(code);
 
-   if (valid) ed->text.filter.sources = sources;
+   if (!name && (strspn(part, allowed_name_chars) == sp))
+     str = strdup(part);
+   else
+     {
+        if (!name)
+          {
+             // name = part so we replace all invalid chars by '_'
+             size_t k;
+             name = strdup(part);
+             sn = strlen(name);
+             for (k = 0; k < sn; k++)
+               {
+                  if (!index(allowed_name_chars, name[k]))
+                    name[k] = '_';
+               }
+          }
+        sn += sp + 1;
+        str = malloc(sn + 1);
+        if (!str) exit(-1);
+        strncpy(str, name, sn);
+        strncat(str, ":", sn);
+        strncat(str, part, sn);
+        str[sn] = '\0';
+     }
+   ed->text.filter.sources = eina_list_append(ed->text.filter.sources, str);
+
+   // note: this is leaked. not a big deal.
+   part_key = malloc(sizeof(int));
+   *part_key = -1;
+   data_queue_part_lookup(pc, part, part_key);
+
+   free(part);
+   free(name);
 }
 
 

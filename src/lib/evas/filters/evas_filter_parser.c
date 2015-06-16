@@ -856,7 +856,7 @@ _lua_buffer_new(lua_State *L)
    instr->type = EVAS_FILTER_MODE_BUFFER;
    instr->parse_run = _buffer_instruction_parse_run;
    _instruction_param_seq_add(instr, "type", VT_STRING, "rgba");
-   _instruction_param_seq_add(instr, "src", VT_BUFFER, NULL);
+   _instruction_param_seq_add(instr, "src", VT_STRING, NULL);
 
    // drop "buffer" metatable
    _lua_implicit_metatable_drop(L, _lua_buffer_meta);
