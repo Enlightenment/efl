@@ -1270,7 +1270,7 @@ evas_render_mapped(Evas_Public_Data *e, Evas_Object *eo_obj,
              RD(level, "}\n");
              return clean_them;
           }
-        else if (obj->no_render)
+        else if (obj->no_render && (!use_mapped_ctx || (surface != obj->proxy->surface)))
           {
              RD(level, "  no render\n}\n");
              return clean_them;
