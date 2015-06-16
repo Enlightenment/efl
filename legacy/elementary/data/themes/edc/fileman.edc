@@ -868,7 +868,7 @@ group { name: "e/fileman/default/icon/fixed";
 group { name: "e/fileman/desktop/icon/fixed";
    inherit: "e/fileman/default/icon/fixed";
    alias: "e/fileman/desktop/icon/variable";
-   images.image: "darken_rounded_square.png" COMP;
+   images.image: "darken_square.png" COMP;
    styles {
       style { name: "fileman_icon_full";
          base: "font="FN" font_size=10 text_class=fileman_icon align=center color=#ff00ffff wrap=mixed style=shadow,bottom shadow_color=#00000080 align=center";
@@ -914,8 +914,8 @@ group { name: "e/fileman/desktop/icon/fixed";
             rel1.to: "e.text.label";
             rel2.offset: 7 7;
             rel2.to: "label_min";
-            image.normal: "darken_rounded_square.png";
-            image.border: 15 15 15 15;
+            image.normal: "darken_square.png";
+            image.border: 6 6 6 6;
             fill.smooth: 0;
             fixed: 1 1;
          }

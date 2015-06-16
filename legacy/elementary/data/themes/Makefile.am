@@ -220,6 +220,7 @@ img/col_sel_end_top.png \
 img/darken_rounded_square_half_h.png \
 img/darken_rounded_square_half.png \
 img/darken_rounded_square.png \
+img/darken_square.png \
 img/day_left_normal.png \
 img/day_left_press.png \
 img/day_left_selected.png \
