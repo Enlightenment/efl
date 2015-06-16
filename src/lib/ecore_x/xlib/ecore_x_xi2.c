@@ -468,6 +468,36 @@ _ecore_x_input_multi_handler(XEvent *xevent)
              _ecore_x_input_touch_index_clear(devid,  i);
           }
         break;
+#ifdef XI_TouchCancel
+      case XI_TouchCancel:
+          {
+             XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
+             int devid = evd->deviceid;
+             int i = _ecore_x_input_touch_index_get(devid, evd->detail, XI_TouchEnd);
+
+             /* X maybe send several cancel events, but ecore_x only deals with cancel event of first touch
+              * But ecore keeps all Xevent info for future */
+             if ((i != 0) || !(evd->flags & XITouchEmulatingPointer)) return;
+
+             INF("ButtonEvent: cancel time=%u x=%d y=%d devid=%d", (unsigned int)evd->time, (int)evd->event_x, (int)evd->event_y, devid);
+             _ecore_mouse_button(ECORE_EVENT_MOUSE_BUTTON_CANCEL,
+                                 evd->time,
+                                 0,   // state
+                                 0,   // button
+                                 evd->event_x, evd->event_y,
+                                 evd->root_x, evd->root_y,
+                                 evd->event,
+                                (evd->child ? evd->child : evd->event),
+                                 evd->root,
+                                 1,   // same_screen
+                                 i, 1, 1,
+                                 1.0,   // pressure
+                                 0.0,   // angle
+                                 evd->event_x, evd->event_y,
+                                 evd->root_x, evd->root_y);
+          }
+        break;
+#endif
 #endif /* ifdef ECORE_XI2_2 */
       default:
         break;
@@ -791,6 +821,9 @@ _ecore_x_input_touch_devices_grab(Ecore_X_Window grab_win, Eina_Bool grab)
                   XISetMask(mask, XI_TouchUpdate);
                   XISetMask(mask, XI_TouchBegin);
                   XISetMask(mask, XI_TouchEnd);
+#ifdef XI_TouchCancel
+                  XISetMask(mask, XI_TouchCancel);
+#endif
                   update = 1;
                   free(info);
                }

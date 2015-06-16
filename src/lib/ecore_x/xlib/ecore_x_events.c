@@ -452,6 +452,18 @@ _ecore_mouse_button(int event,
 
    if (down_info)
      {
+        //If mouse cancel event occred, should reset down info related with double & triple click
+        if (event == ECORE_EVENT_MOUSE_BUTTON_CANCEL)
+          {
+             down_info->last_win = 0;
+             down_info->last_last_win = 0;
+             down_info->last_event_win = 0;
+             down_info->last_last_event_win = 0;
+             down_info->last_time = 0;
+             down_info->last_last_time = 0;
+             down_info->did_double = EINA_FALSE;
+             down_info->did_triple = EINA_FALSE;
+          }
         if ((event == ECORE_EVENT_MOUSE_BUTTON_DOWN) &&
             down_info->did_triple)
           {
@@ -498,7 +510,7 @@ _ecore_mouse_button(int event,
                        down_info->did_triple = EINA_FALSE;
                     }
                }
-             else
+             else if (event == ECORE_EVENT_MOUSE_BUTTON_UP)
                {
                   if (down_info->did_double)
                     e->double_click = 1;

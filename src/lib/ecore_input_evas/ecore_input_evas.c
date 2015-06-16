@@ -29,8 +29,15 @@ typedef enum _Ecore_Input_State {
   ECORE_INPUT_NONE = 0,
   ECORE_INPUT_DOWN,
   ECORE_INPUT_MOVE,
-  ECORE_INPUT_UP
+  ECORE_INPUT_UP,
+  ECORE_INPUT_CANCEL
 } Ecore_Input_State;
+
+typedef enum _Ecore_Input_Action {
+  ECORE_INPUT_CONTINUE = 0,
+  ECORE_INPUT_IGNORE,
+  ECORE_INPUT_FAKE_UP
+} Ecore_Input_Action;
 
 typedef struct _Ecore_Input_Last Ecore_Event_Last;
 struct _Ecore_Input_Last
@@ -46,7 +53,7 @@ struct _Ecore_Input_Last
 };
 
 static int _ecore_event_evas_init_count = 0;
-static Ecore_Event_Handler *ecore_event_evas_handlers[9];
+static Ecore_Event_Handler *ecore_event_evas_handlers[10];
 static Eina_Hash *_window_hash = NULL;
 
 static Eina_List *_last_events = NULL;
@@ -56,6 +63,59 @@ static Eina_Bool _last_events_enable = EINA_FALSE;
 static Eina_Bool _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e,
                                                 Ecore_Event_Press press,
                                                 Eina_Bool faked);
+
+static Ecore_Input_Action
+_ecore_event_last_check(Ecore_Event_Last *eel, Ecore_Event_Press press)
+{
+   switch (eel->state)
+     {
+      case ECORE_INPUT_NONE:
+         /* 1. ECORE_INPUT_NONE => ECORE_UP : impossible
+          * 2. ECORE_INPUT_NONE => ECORE_CANCEL : impossible
+          * 3. ECORE_INPUT_NONE => ECORE_DOWN : ok
+          */
+         return ECORE_INPUT_CONTINUE;
+
+      case ECORE_INPUT_DOWN:
+         /* 1. ECORE_INPUT_DOWN => ECORE_UP : ok
+          * 2. ECORE_INPUT_DOWN => ECORE_CANCEL : ok
+          */
+         if ((press == ECORE_UP) || (press == ECORE_CANCEL))
+           return ECORE_INPUT_CONTINUE;
+
+         /* 3. ECORE_INPUT_DOWN => ECORE_DOWN : emit a faked UP then */
+         INF("Down event occurs twice. device(%d), button(%d)", eel->device, eel->buttons);
+         return ECORE_INPUT_FAKE_UP;
+
+      case ECORE_INPUT_MOVE:
+         /* 1. ECORE_INPUT_MOVE => ECORE_UP : ok
+          *	2. ECORE_INPUT_MOVE => ECORE_CANCEL : ok
+		  */
+         if ((press == ECORE_UP) || (press == ECORE_CANCEL))
+           return ECORE_INPUT_CONTINUE;
+
+         /* 3. ECORE_INPUT_MOVE => ECORE_DOWN : ok
+          * FIXME: handle fake button up and push for more delay here */
+         //TODO: How to deal with down event after move event?
+         INF("Down event occurs after move event. device(%d), button(%d)", eel->device, eel->buttons);
+         return ECORE_INPUT_FAKE_UP;
+
+      case ECORE_INPUT_UP:
+      case ECORE_INPUT_CANCEL:
+          /* 1. ECORE_INPUT_UP     => ECORE_DOWN : ok */
+          /* 2. ECORE_INPUT_CANCEL => ECORE_DOWN : ok */
+         if (press == ECORE_DOWN)
+           return ECORE_INPUT_CONTINUE;
+
+          /* 3. ECORE_INPUT_UP     => ECORE_UP :  ignore */
+          /* 4. ECORE_INPUT_UP     => ECORE_CANCEL : ignore */
+          /* 5. ECORE_INPUT_CANCEL => ECORE_UP : ignore */
+          /* 6. ECORE_INPUT_CANCEL => ECORE_CANCEL : ignore */
+         INF("Up/cancel event occurs after up/cancel event. device(%d), button(%d)", eel->device, eel->buttons);
+         return ECORE_INPUT_IGNORE;
+     }
+  return ECORE_INPUT_IGNORE;
+}
 
 static Ecore_Event_Last *
 _ecore_event_evas_lookup(unsigned int device, unsigned int buttons, Eina_Bool create_new)
@@ -91,6 +151,7 @@ _ecore_event_evas_push_fake(void *data)
      {
       case ECORE_INPUT_NONE:
       case ECORE_INPUT_UP:
+      case ECORE_INPUT_CANCEL:
          /* should not happen */
          break;
       case ECORE_INPUT_DOWN:
@@ -109,48 +170,45 @@ _ecore_event_evas_push_fake(void *data)
    return EINA_FALSE;
 }
 
-static void
+static Eina_Bool
 _ecore_event_evas_push_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press press)
 {
    Ecore_Event_Last *eel;
+   Ecore_Input_Action action;
 
-   if (!_last_events_enable) return;
-
+   //_ecore_event_evas_mouse_button already check press or cancel without history
    eel = _ecore_event_evas_lookup(e->multi.device, e->buttons, EINA_TRUE);
-   if (!eel) return;
+   if (!eel) return EINA_FALSE;
+   INF("dev(%d), button(%d), last_press(%d), press(%d)", e->multi.device, e->buttons, eel->state, press);
 
-   switch (eel->state)
+   action = _ecore_event_last_check(eel, press);
+   INF("action(%d)", action);
+   switch (action)
      {
-      case ECORE_INPUT_NONE:
-         goto fine;
-      case ECORE_INPUT_DOWN:
-         if (press == ECORE_UP)
-           goto fine;
-
-         /* press == ECORE_DOWN => emit a faked UP then */
+      case ECORE_INPUT_FAKE_UP:
          _ecore_event_evas_mouse_button(e, ECORE_UP, EINA_TRUE);
+      case ECORE_INPUT_CONTINUE:
          break;
-      case ECORE_INPUT_MOVE:
-         if (press == ECORE_UP)
-           goto fine;
-
-         /* FIXME: handle fake button up and push for more delay here */
-
-         /* press == ECORE_DOWN */
-         _ecore_event_evas_mouse_button(e, ECORE_DOWN, EINA_TRUE);
-         break;
-      case ECORE_INPUT_UP:
-         if (press == ECORE_DOWN)
-           goto fine;
-
-         /* press == ECORE_UP */
-         _ecore_event_evas_mouse_button(e, ECORE_UP, EINA_TRUE);
-         break;
+      case ECORE_INPUT_IGNORE:
+      default:
+        return EINA_FALSE;
      }
 
- fine:
-   eel->state = (press == ECORE_DOWN) ? ECORE_INPUT_DOWN : ECORE_INPUT_UP;
-   if (_last_events_timeout)
+   switch (press)
+     {
+      case ECORE_DOWN:
+        eel->state = ECORE_INPUT_DOWN;
+        break;
+      case ECORE_UP:
+        eel->state = ECORE_INPUT_UP;
+        break;
+      default:
+        break;
+     }
+
+   //if up event not occurs from under layers of ecore
+   //up event is generated by ecore
+   if (_last_events_enable && _last_events_timeout)
      {
         if (eel->timer) ecore_timer_del(eel->timer);
         eel->timer = NULL;
@@ -158,7 +216,7 @@ _ecore_event_evas_push_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Pre
           {
              /* Save the Ecore_Event somehow */
              if (!eel->ev) eel->ev = malloc(sizeof (Ecore_Event_Mouse_Button));
-             if (!eel->ev) return;
+             if (!eel->ev) return EINA_FALSE;
              memcpy(eel->ev, e, sizeof (Ecore_Event_Mouse_Button));
              eel->timer = ecore_timer_add(_last_events_timeout, _ecore_event_evas_push_fake, eel);
           }
@@ -168,6 +226,7 @@ _ecore_event_evas_push_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Pre
              eel->ev = NULL;
           }
      }
+   return EINA_TRUE;
 }
 
 static void
@@ -183,7 +242,8 @@ _ecore_event_evas_push_mouse_move(Ecore_Event_Mouse_Move *e)
        {
         case ECORE_INPUT_NONE:
         case ECORE_INPUT_UP:
-           /* none or up and moving, sounds fine to me */
+        case ECORE_INPUT_CANCEL:
+           /* (none, up, or cancel) => move, sounds fine to me */
            break;
         case ECORE_INPUT_DOWN:
         case ECORE_INPUT_MOVE:
@@ -355,6 +415,30 @@ _ecore_event_evas_key(Ecore_Event_Key *e, Ecore_Event_Press press)
 }
 
 static Eina_Bool
+_ecore_event_evas_mouse_button_cancel(Ecore_Event_Mouse_Button *e)
+{
+   Ecore_Input_Window *lookup;
+   Ecore_Event_Last *eel;
+   Eina_List *l;
+
+   lookup = _ecore_event_window_match(e->event_window);
+   if (!lookup) return ECORE_CALLBACK_PASS_ON;
+
+   INF("ButtonEvent cancel, device(%d), button(%d)", e->multi.device, e->buttons);
+   evas_event_feed_mouse_cancel(lookup->evas, e->timestamp, NULL);
+
+   //the number of last event is small, simple check is ok.
+   EINA_LIST_FOREACH(_last_events, l, eel)
+     {
+        Ecore_Input_Action act = _ecore_event_last_check(eel, ECORE_CANCEL);
+        INF("ButtonEvent cancel, dev(%d), button(%d), last_press(%d), action(%d)", eel->device, eel->buttons, eel->state, act);
+        if (act == ECORE_INPUT_CONTINUE) eel->state = ECORE_INPUT_CANCEL;
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
 _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press press, Eina_Bool faked)
 {
    Ecore_Event_Last *eel;
@@ -366,21 +450,35 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
    INF("\tButtonEvent:ecore_event_evas press(%d), device(%d), button(%d), fake(%d)", press, e->multi.device, e->buttons, faked);
-   if (_last_events_enable)
+
+   //handle all mouse error from under layers of ecore
+   //error handle
+   // 1. ecore up without ecore down
+   // 2. ecore cancel without ecore down
+   if (press != ECORE_DOWN)
      {
-        //error handle: if ecore up without ecore down
-        if (press == ECORE_UP)
+        //ECORE_UP or ECORE_CANCEL
+        eel = _ecore_event_evas_lookup(e->multi.device, e->buttons, EINA_FALSE);
+        if (!eel)
+   
+        if ((!eel) || (eel->state == ECORE_INPUT_UP) || (eel->state == ECORE_INPUT_CANCEL))
           {
-             eel = _ecore_event_evas_lookup(e->multi.device, e->buttons, EINA_FALSE);
-             if ((!eel) || (eel->state == ECORE_INPUT_UP))
-               {
-                  INF("ButtonEvent: up event without down event.");
-                  return ECORE_CALLBACK_PASS_ON;
-               }
+            if (!eel)
+              WRN("ButtonEvent has no history.");
+            else
+              WRN("ButtonEvent has wrong history. Last state=%d", eel->state);
+            return ECORE_CALLBACK_PASS_ON;
           }
      }
 
-   if (!faked) _ecore_event_evas_push_mouse_button(e, press);
+   if (!faked)
+     {
+        Eina_Bool ret = EINA_FALSE;
+        ret = _ecore_event_evas_push_mouse_button(e, press);
+        /* This ButtonEvent is worng */
+        if (!ret) return ECORE_CALLBACK_PASS_ON;
+     }
+
    if (e->multi.device == 0)
      {
         ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
@@ -479,6 +577,12 @@ EAPI Eina_Bool
 ecore_event_evas_mouse_button_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    return _ecore_event_evas_mouse_button((Ecore_Event_Mouse_Button *)event, ECORE_UP, EINA_FALSE);
+}
+
+EAPI Eina_Bool
+ecore_event_evas_mouse_button_cancel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   return _ecore_event_evas_mouse_button_cancel((Ecore_Event_Mouse_Button *)event);
 }
 
 static Eina_Bool
@@ -608,6 +712,9 @@ ecore_event_evas_init(void)
                                                           NULL);
    ecore_event_evas_handlers[8] = ecore_event_handler_add(ECORE_EVENT_AXIS_UPDATE,
                                                           ecore_event_evas_axis_update,
+                                                          NULL);
+   ecore_event_evas_handlers[9] = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_CANCEL,
+                                                          ecore_event_evas_mouse_button_cancel,
                                                           NULL);
 
    _window_hash = eina_hash_pointer_new(free);
