@@ -302,6 +302,70 @@ START_TEST(eina_matrix3_operations)
 }
 END_TEST
 
+START_TEST(eina_matrix3_f16p16)
+{
+   Eina_Matrix3_F16p16 m1;
+   Eina_Matrix3 m2;
+   Eina_F16p16 xx, xy, xz,
+               yx, yy, yz,
+               zx, zy, zz;
+   Eina_Matrix3_F16p16 m3;
+
+   eina_init();
+
+   eina_matrix3_values_set(&m2,
+                           1, 0, 0,
+                           0, 1, 0,
+                           0, 0, 1);
+   eina_matrix3_matrix3_f16p16_to(&m2, &m1);
+   fail_if (eina_matrix3_f16p16_type_get(&m1) != EINA_MATRIX_TYPE_IDENTITY);
+
+   eina_matrix3_fixed_values_get(&m2,
+                                 &xx, &xy, &xz,
+                                 &yx, &yy, &yz,
+                                 &zx, &zy, &zz);
+   fail_if(xx != yy ||
+           yy != zz ||
+           zz != 65536);
+
+   fail_if(xy != xz ||
+           yx != yz ||
+           zx != zy ||
+           zy != 0);
+
+   eina_matrix3_values_set(&m2,
+                           1, 2, 3,
+                           4, 5, 6,
+                           7, 8, 9);
+   eina_matrix3_matrix3_f16p16_to(&m2, &m1);
+   eina_matrix3_f16p16_identity(&m1);
+   fail_if(m1.xx != m1.yy ||
+           m1.yy != m1.zz ||
+           m1.zz != 65536);
+
+   fail_if(m1.xy != m1.xz ||
+           m1.yx != m1.yz ||
+           m1.zx != m1.zy ||
+           m1.zy != 0);
+
+   eina_matrix3_values_set(&m2,
+                           1, 1, 1,
+                           1, 1, 1,
+                           1, 1, 1);
+   eina_matrix3_matrix3_f16p16_to(&m2, &m1);
+   eina_matrix3_f16p16_compose(&m1, &m1, &m3);
+   fail_if (m3.xx != m3.xy ||
+            m3.xy != m3.xz ||
+            m3.yx != m3.yy ||
+            m3.yy != m3.yz ||
+            m3.zx != m3.zy ||
+            m3.zy != m3.zz ||
+            m3.zz != 196608);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_matrix(TCase *tc)
 {
@@ -309,4 +373,5 @@ eina_test_matrix(TCase *tc)
    tcase_add_test(tc, eina_matrix4_2_3);
    tcase_add_test(tc, eina_matrix3);
    tcase_add_test(tc, eina_matrix3_operations);
+   tcase_add_test(tc, eina_matrix3_f16p16);
 }
