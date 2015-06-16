@@ -29,6 +29,7 @@ static v8::Local<v8::Object> wrap_event(Ecore_Event *event,
             return compatibility_return();
 
         ecore_event_del(extract_event(info.This()));
+        return compatibility_return();
     };
 
     ret->Set(compatibility_new<String>(isolate, "del"),
@@ -65,6 +66,7 @@ static v8::Local<v8::Object> wrap_event_handler(Ecore_Event_Handler *handler,
         auto p = ecore_event_handler_del(extract_event_handler(info.This()));
 
         delete reinterpret_cast<compatibility_persistent<Value>*>(p);
+        return compatibility_return();
     };
 
     ret->Set(compatibility_new<String>(isolate, "del"),
@@ -100,6 +102,7 @@ static v8::Local<v8::Object> wrap_event_filter(Ecore_Event_Filter *filter,
 
         auto p = ecore_event_filter_del(extract_event_filter(info.This()));
         delete[] reinterpret_cast<compatibility_persistent<Value>*>(p);
+        return compatibility_return();
     };
 
     ret->Set(compatibility_new<String>(isolate, "del"),
@@ -292,12 +295,12 @@ void register_event_handler_add(v8::Isolate *isolate,
         auto cb = [](void *d, int type, void */*event*/) -> Eina_Bool {
             auto persistent
                 = reinterpret_cast<compatibility_persistent<Value>*>(d);
-            auto closure = Function::Cast(*persistent->handle());
+	    auto o = persistent->handle();
 
             auto isolate = v8::Isolate::GetCurrent();
             Handle<Value> args = compatibility_new<Integer>(isolate, type);
 
-            auto ret = closure->Call(Undefined(isolate), 1, &args);
+            auto ret = Function::Cast(*o)->Call(o->ToObject(), 1, &args);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             return bret ? EINA_TRUE : EINA_FALSE;
@@ -339,9 +342,9 @@ void register_event_filter_add(v8::Isolate *isolate,
         auto start_cb = [](void *data) -> void* {
             auto p = reinterpret_cast<compatibility_persistent<Value>*>(data);
             auto isolate = v8::Isolate::GetCurrent();
-            auto closure = Function::Cast(*p->handle());
+	    auto o = p->handle();
 
-            auto ret = closure->Call(Undefined(isolate), 0, NULL);
+            auto ret = Function::Cast(*o)->Call(o->ToObject(), 0, NULL);
             return new compatibility_persistent<Value>{isolate, ret};
         };
 
@@ -351,14 +354,14 @@ void register_event_filter_add(v8::Isolate *isolate,
 
             auto p = reinterpret_cast<p_t*>(data) + 1;
             auto isolate = v8::Isolate::GetCurrent();
-            auto closure = Function::Cast(*p->handle());
+	    auto o = p->handle();
 
             Handle<Value> args[2]{
                 reinterpret_cast<p_t*>(loop_data)->handle(),
                 compatibility_new<Integer>(isolate, type)
             };
 
-            auto ret = closure->Call(Undefined(isolate), 2, args);
+            auto ret = Function::Cast(*o)->Call(o->ToObject(), 2, args);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             return bret ? EINA_TRUE : EINA_FALSE;
@@ -370,11 +373,11 @@ void register_event_filter_add(v8::Isolate *isolate,
             auto loop_data = std::unique_ptr<p_t>(reinterpret_cast<p_t*>
                                                   (func_data));
             auto p = reinterpret_cast<p_t*>(user_data) + 2;
-            auto closure = Function::Cast(*p->handle());
+	    auto o = p->handle();
 
             Handle<Value> args = p->handle();
 
-            closure->Call(Undefined(v8::Isolate::GetCurrent()), 1, &args);
+            Function::Cast(*o)->Call(o->ToObject(), 1, &args);
         };
 
         auto ret = ecore_event_filter_add(start_cb, filter_cb, end_cb, p);
@@ -530,7 +533,7 @@ void register_event_signal_user_handler_add(v8::Isolate *isolate,
         auto cb = [](void *d, int type, void *event) -> Eina_Bool {
             auto p = reinterpret_cast<compatibility_persistent<Value>*>(d);
             auto isolate = v8::Isolate::GetCurrent();
-            auto closure = Function::Cast(*p->handle());
+	    auto o = p->handle();
 
             auto wrapped_event = compatibility_new<Object>(isolate);
 
@@ -546,7 +549,7 @@ void register_event_signal_user_handler_add(v8::Isolate *isolate,
                 wrapped_event
             };
 
-            auto ret = closure->Call(Undefined(isolate), 2, args);
+            auto ret = Function::Cast(*o)->Call(o->ToObject(), 2, args);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             return bret ? EINA_TRUE : EINA_FALSE;
@@ -587,7 +590,7 @@ void register_event_signal_exit_handler_add(v8::Isolate *isolate,
         auto cb = [](void *d, int type, void *ev) -> Eina_Bool {
             auto p = reinterpret_cast<compatibility_persistent<Value>*>(d);
             auto isolate = v8::Isolate::GetCurrent();
-            auto closure = Function::Cast(*p->handle());
+	    auto o = p->handle();
 
             auto wrapped_event = compatibility_new<Object>(isolate);
 
@@ -614,7 +617,7 @@ void register_event_signal_exit_handler_add(v8::Isolate *isolate,
                 wrapped_event
             };
 
-            auto ret = closure->Call(Undefined(isolate), 2, args);
+            auto ret = Function::Cast(*o)->Call(o->ToObject(), 2, args);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             return bret ? EINA_TRUE : EINA_FALSE;
@@ -654,7 +657,7 @@ void register_event_signal_realtime_handler_add(v8::Isolate *isolate,
         auto cb = [](void *d, int type, void *ev) -> Eina_Bool {
             auto p = reinterpret_cast<compatibility_persistent<Value>*>(d);
             auto isolate = v8::Isolate::GetCurrent();
-            auto closure = Function::Cast(*p->handle());
+	    auto o = p->handle();
 
             auto wrapped_event = compatibility_new<Object>(isolate);
 
@@ -670,7 +673,7 @@ void register_event_signal_realtime_handler_add(v8::Isolate *isolate,
                 wrapped_event
             };
 
-            auto ret = closure->Call(Undefined(isolate), 2, args);
+            auto ret = Function::Cast(*o)->Call(o->ToObject(), 2, args);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             return bret ? EINA_TRUE : EINA_FALSE;

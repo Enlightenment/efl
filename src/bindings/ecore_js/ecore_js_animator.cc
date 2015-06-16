@@ -31,6 +31,7 @@ static v8::Local<v8::Object> wrap_animator(Ecore_Animator *animator,
             return compatibility_return();
 
         ecore_animator_del(extract_animator(info.This()));
+        return compatibility_return();
     };
 
     auto freeze = [](compatibility_callback_info_type info)
@@ -39,6 +40,7 @@ static v8::Local<v8::Object> wrap_animator(Ecore_Animator *animator,
             return compatibility_return();
 
         ecore_animator_freeze(extract_animator(info.This()));
+        return compatibility_return();
     };
 
     auto thaw = [](compatibility_callback_info_type info)
@@ -47,6 +49,7 @@ static v8::Local<v8::Object> wrap_animator(Ecore_Animator *animator,
             return compatibility_return();
 
         ecore_animator_thaw(extract_animator(info.This()));
+        return compatibility_return();
     };
 
     ret->Set(compatibility_new<String>(isolate, "del"),
@@ -226,6 +229,7 @@ void register_animator_frametime_set(v8::Isolate *isolate,
             return compatibility_return();
 
         ecore_animator_frametime_set(args[0]->NumberValue());
+        return compatibility_return();
     };
 
     global->Set(name,
@@ -428,6 +432,7 @@ void register_animator_source_set(v8::Isolate *isolate,
         }
 
         ecore_animator_source_set(source);
+        return compatibility_return();
     };
 
     global->Set(name,
@@ -484,9 +489,8 @@ register_animator_custom_source_tick_begin_callback_set(v8::Isolate *isolate,
                 using v8::Undefined;
                 using v8::Isolate;
 
-                auto isolate = Isolate::GetCurrent();
-                Function::Cast(*animator_custom_source_tick_begin_cb_data
-                               .handle())->Call(Undefined(isolate), 0, NULL);
+		auto o = animator_custom_source_tick_begin_cb_data.handle();
+                Function::Cast(*o)->Call(o->ToObject(), 0, NULL);
             }, NULL);
     };
 
@@ -516,9 +520,8 @@ register_animator_custom_source_tick_end_callback_set(v8::Isolate *isolate,
                 using v8::Undefined;
                 using v8::Isolate;
 
-                auto isolate = Isolate::GetCurrent();
-                Function::Cast(*animator_custom_source_tick_end_cb_data
-                               .handle())->Call(Undefined(isolate), 0, NULL);
+		auto o = animator_custom_source_tick_end_cb_data.handle();
+                Function::Cast(*o)->Call(o->ToObject(), 0, NULL);
             }, NULL);
     };
 
@@ -567,10 +570,9 @@ void register_animator_add(v8::Isolate *isolate, v8::Handle<v8::Object> global,
         auto cb = [](void *data) -> Eina_Bool {
             auto persistent
                 = reinterpret_cast<compatibility_persistent<Value>*>(data);
-            auto closure = Function::Cast(*persistent->handle());
+	    auto o = persistent->handle();
 
-            auto ret = closure->Call(Undefined(v8::Isolate::GetCurrent()), 0,
-                                     NULL);
+            auto ret = Function::Cast(*o)->Call(o->ToObject(), 0, NULL);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             if (!bret)
@@ -613,12 +615,12 @@ void register_animator_timeline_add(v8::Isolate *isolate,
         auto cb = [](void *data, double pos) -> Eina_Bool {
             auto persistent
                 = reinterpret_cast<compatibility_persistent<Value>*>(data);
-            auto closure = Function::Cast(*persistent->handle());
+	    auto o = persistent->handle();
             auto isolate = v8::Isolate::GetCurrent();
 
             Handle<Value> args = compatibility_new<Number>(isolate, pos);
 
-            auto ret = closure->Call(Undefined(isolate), 1, &args);
+            auto ret = Function::Cast(*o)->Call(o->ToObject(), 1, &args);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             if (!bret)

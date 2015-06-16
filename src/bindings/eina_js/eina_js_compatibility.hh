@@ -477,7 +477,23 @@ inline v8::Local<v8::Object> compatibility_global()
 {
   return _v8_get_current_context<>::GetCurrent()->Global();
 }
-      
+
+template<class T = v8::StackTrace>
+typename std::enable_if<!v8_uses_isolate, v8::Local<T>>::type
+compatibility_current_stack_trace(v8::Isolate*, int frame_limit,
+				  v8::StackTrace::StackTraceOptions options)
+{
+  return T::CurrentStackTrace(frame_limit, options);
+}
+
+template<class T = v8::StackTrace>
+typename std::enable_if<v8_uses_isolate, v8::Local<T>>::type
+compatibility_current_stack_trace(v8::Isolate *isolate, int frame_limit,
+				  v8::StackTrace::StackTraceOptions options)
+{
+  return T::CurrentStackTrace(isolate, frame_limit, options);
+}
+
 } } }
 
 #endif

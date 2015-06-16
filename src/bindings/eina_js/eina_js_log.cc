@@ -42,8 +42,7 @@ static void js_eina_log_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level,
     constexpr unsigned argc = 7;
 
     v8::Handle<v8::Value> argv[argc] = {
-        compatibility_new<String>(isolate, d->name, String::kNormalString,
-                                  d->namelen),
+        compatibility_new<String>(isolate, d->name),
         compatibility_new<String>(isolate, d->color),
         compatibility_new<Integer>(isolate, static_cast<int>(level)),
         compatibility_new<String>(isolate, file),
@@ -53,7 +52,7 @@ static void js_eina_log_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level,
     };
 
     auto o = js_eina_log_print_cb_data.handle();
-    v8::Function::Cast(*o)->Call(v8::Undefined(isolate), argc, argv);
+    v8::Function::Cast(*o)->Call(o->ToObject(), argc, argv);
 }
 
 static bool valid_level_conversion(int src, Eina_Log_Level &dst)
@@ -138,15 +137,15 @@ void register_log_print(v8::Isolate *isolate, v8::Handle<v8::Object> global,
         if (!valid_level_conversion(args[1]->NumberValue(), level))
             return compatibility_return();
 
-        auto frame = StackTrace::CurrentStackTrace(args.GetIsolate(), 1,
-                                                   StackTrace::kDetailed)
-            ->GetFrame(0);
+	auto frame = compatibility_current_stack_trace<>(args.GetIsolate(), 1,
+							 StackTrace::kDetailed)->GetFrame(0);
 
         eina_log_print(args[0]->NumberValue(), level,
                        *String::Utf8Value(frame->GetScriptNameOrSourceURL()),
                        *String::Utf8Value(frame->GetFunctionName()),
                        frame->GetLineNumber(), "%s",
                        *String::Utf8Value(args[2]));
+        return compatibility_return();
     };
 
     global->Set(name,
@@ -193,6 +192,7 @@ void register_log_domain_unregister(v8::Isolate *isolate,
             return compatibility_return();
 
         eina_log_domain_unregister(args[0]->NumberValue());
+        return compatibility_return();
     };
 
     global->Set(name,
@@ -237,6 +237,7 @@ void register_log_domain_registered_level_set(v8::Isolate *isolate,
 
         eina_log_domain_registered_level_set(args[0]->NumberValue(),
                                              args[1]->NumberValue());
+        return compatibility_return();
     };
 
     global->Set(name,
@@ -259,6 +260,7 @@ void register_log_print_cb_set(v8::Isolate *isolate,
         js_eina_log_print_cb_data
             = compatibility_persistent<Value>(args.GetIsolate(), args[0]);
         eina_log_print_cb_set(js_eina_log_print_cb, NULL);
+        return compatibility_return();
     };
 
     global->Set(name,
@@ -278,6 +280,7 @@ void register_log_level_set(v8::Isolate *isolate, v8::Handle<v8::Object> global,
             return compatibility_return();
 
         eina_log_level_set(args[0]->NumberValue());
+        return compatibility_return();
     };
 
     global->Set(name,
@@ -343,6 +346,7 @@ void register_log_color_disable_set(v8::Isolate *isolate,
             return compatibility_return();
 
         eina_log_color_disable_set(args[0]->BooleanValue());
+        return compatibility_return();
     };
 
     global->Set(name,
@@ -386,6 +390,7 @@ void register_log_file_disable_set(v8::Isolate *isolate,
             return compatibility_return();
 
         eina_log_file_disable_set(args[0]->BooleanValue());
+        return compatibility_return();
     };
 
     global->Set(name,
@@ -429,6 +434,7 @@ void register_log_function_disable_set(v8::Isolate *isolate,
             return compatibility_return();
 
         eina_log_function_disable_set(args[0]->BooleanValue());
+        return compatibility_return();
     };
 
     global->Set(name,
@@ -472,6 +478,7 @@ void register_log_abort_on_critical_set(v8::Isolate *isolate,
             return compatibility_return();
 
         eina_log_abort_on_critical_set(args[0]->BooleanValue());
+        return compatibility_return();
     };
 
     global->Set(name,
@@ -515,6 +522,7 @@ void register_log_abort_on_critical_level_set(v8::Isolate *isolate,
             return compatibility_return();
 
         eina_log_abort_on_critical_level_set(args[0]->NumberValue());
+        return compatibility_return();
     };
 
     global->Set(name,
@@ -560,6 +568,7 @@ void register_log_domain_level_set(v8::Isolate *isolate,
 
         eina_log_domain_level_set(*String::Utf8Value(args[0]),
                                   args[1]->NumberValue());
+        return compatibility_return();
     };
 
     global->Set(name,
@@ -626,6 +635,7 @@ void register_log_timing(v8::Isolate *isolate, v8::Handle<v8::Object> global,
         eina_log_timing(args[0]->NumberValue(),
                         static_cast<Eina_Log_State>(args[1]->NumberValue()),
                         *String::Utf8Value(args[2]));
+        return compatibility_return();
     };
 
     global->Set(name,

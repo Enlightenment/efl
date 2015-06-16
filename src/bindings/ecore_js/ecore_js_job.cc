@@ -30,6 +30,7 @@ static v8::Local<v8::Object> wrap_job(Ecore_Job *job, v8::Isolate *isolate)
             return compatibility_return();
 
         ecore_job_del(extract_job(info.This()));
+        return compatibility_return();
     };
 
     ret->Set(compatibility_new<String>(isolate, "del"),
@@ -60,9 +61,9 @@ void register_job_add(v8::Isolate *isolate, v8::Handle<v8::Object> global,
         auto ret = ecore_job_add([](void *data) {
                 compatibility_persistent<Value> *persistent
                     = reinterpret_cast<compatibility_persistent<Value>*>(data);
-                auto closure = Function::Cast(*persistent->handle());
+		auto o = persistent->handle();
 
-                closure->Call(Undefined(v8::Isolate::GetCurrent()), 0, NULL);
+                Function::Cast(*o)->Call(o->ToObject(), 0, NULL);
 
                 delete persistent;
             }, f);

@@ -33,6 +33,7 @@ static v8::Local<v8::Object> wrap_timer(Ecore_Timer *timer,
             return compatibility_return();
 
         ecore_timer_del(extract_timer(info.This()));
+        return compatibility_return();
     };
 
     auto freeze = [](compatibility_callback_info_type info)
@@ -41,6 +42,7 @@ static v8::Local<v8::Object> wrap_timer(Ecore_Timer *timer,
             return compatibility_return();
 
         ecore_timer_freeze(extract_timer(info.This()));
+        return compatibility_return();
     };
 
     auto freeze_get = [](compatibility_callback_info_type info)
@@ -60,6 +62,7 @@ static v8::Local<v8::Object> wrap_timer(Ecore_Timer *timer,
             return compatibility_return();
 
         ecore_timer_thaw(extract_timer(info.This()));
+        return compatibility_return();
     };
 
     ret->Set(compatibility_new<String>(isolate, "del"),
@@ -173,10 +176,9 @@ void register_timer_add(v8::Isolate *isolate, v8::Handle<v8::Object> global,
         auto cb = [](void *data) -> Eina_Bool {
             auto persistent
                 = reinterpret_cast<compatibility_persistent<Value>*>(data);
-            auto closure = Function::Cast(*persistent->handle());
+	    auto o = persistent->handle();
 
-            auto ret = closure->Call(Undefined(v8::Isolate::GetCurrent()), 0,
-                                     NULL);
+            auto ret = Function::Cast(*o)->Call(o->ToObject(), 0, NULL);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             if (!bret)
@@ -217,10 +219,9 @@ void register_timer_loop_add(v8::Isolate *isolate,
         auto cb = [](void *d) -> Eina_Bool {
             auto persistent
                 = reinterpret_cast<compatibility_persistent<Value>*>(d);
-            auto closure = Function::Cast(*persistent->handle());
+	    auto o = persistent->handle();
 
-            auto ret = closure->Call(Undefined(v8::Isolate::GetCurrent()), 0,
-                                     NULL);
+            auto ret = Function::Cast(*o)->Call(o->ToObject(), 0, NULL);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             if (!bret)

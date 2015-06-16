@@ -31,6 +31,7 @@ static v8::Local<v8::Object> wrap_poller(Ecore_Poller *poller,
             return compatibility_return();
 
         ecore_poller_del(extract_poller(info.This()));
+        return compatibility_return();
     };
 
     ret->Set(compatibility_new<String>(isolate, "del"),
@@ -74,6 +75,7 @@ void register_poller_poll_interval_set(v8::Isolate *isolate,
         }
 
         ecore_poller_poll_interval_set(type, args[1]->NumberValue());
+        return compatibility_return();
     };
 
     global->Set(name,
@@ -146,9 +148,9 @@ void register_poller_add(v8::Isolate *isolate, v8::Handle<v8::Object> global,
         auto cb = [](void *data) -> Eina_Bool {
             auto persistent
                 = reinterpret_cast<compatibility_persistent<Value>*>(data);
-            auto closure = Function::Cast(*persistent->handle());
+	    auto o = persistent->handle();
 
-            auto ret = closure->Call(Undefined(Isolate::GetCurrent()), 0, NULL);
+            auto ret = Function::Cast(*o)->Call(o->ToObject(), 0, NULL);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             if (!bret)

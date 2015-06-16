@@ -31,6 +31,7 @@ v8::Local<v8::Object> wrap_idler(Ecore_Idler *idler, v8::Isolate *isolate)
             return compatibility_return();
 
         ecore_idler_del(extract_idler(info.This()));
+        return compatibility_return();
     };
 
     ret->Set(compatibility_new<String>(isolate, "del"),
@@ -66,6 +67,7 @@ static v8::Local<v8::Object> wrap_idle_enterer(Ecore_Idle_Enterer *idle_enterer,
             return compatibility_return();
 
         ecore_idle_enterer_del(extract_idle_enterer(info.This()));
+        return compatibility_return();
     };
 
     ret->Set(compatibility_new<String>(isolate, "del"),
@@ -102,6 +104,7 @@ static v8::Local<v8::Object> wrap_idle_exiter(Ecore_Idle_Exiter *idle_exiter,
             return compatibility_return();
 
         ecore_idle_exiter_del(extract_idle_exiter(info.This()));
+        return compatibility_return();
     };
 
     ret->Set(compatibility_new<String>(isolate, "del"),
@@ -132,10 +135,9 @@ void register_idler_add(v8::Isolate *isolate, v8::Handle<v8::Object> global,
         auto ret = ecore_idler_add([](void *data) -> Eina_Bool {
             compatibility_persistent<Value> *persistent
                 = reinterpret_cast<compatibility_persistent<Value>*>(data);
-            auto closure = Function::Cast(*persistent->handle());
+	    auto o = persistent->handle();
 
-            auto ret = closure->Call(Undefined(v8::Isolate::GetCurrent()), 0,
-                                     NULL);
+            auto ret = Function::Cast(*o)->Call(o->ToObject(), 0, NULL);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             if (!bret)
@@ -172,10 +174,9 @@ void register_idle_enterer_add(v8::Isolate *isolate,
     auto ret = ecore_idle_enterer_add([](void *data) -> Eina_Bool {
             compatibility_persistent<Value> *persistent
                 = reinterpret_cast<compatibility_persistent<Value>*>(data);
-            auto closure = Function::Cast(*persistent->handle());
+	    auto o = persistent->handle();
 
-            auto ret = closure->Call(Undefined(v8::Isolate::GetCurrent()), 0,
-                                     NULL);
+            auto ret = Function::Cast(*o)->Call(o->ToObject(), 0, NULL);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             if (!bret)
@@ -213,10 +214,9 @@ void register_idle_enterer_before_add(v8::Isolate *isolate,
         auto ret = ecore_idle_enterer_before_add([](void *data) -> Eina_Bool {
             compatibility_persistent<Value> *persistent
                 = reinterpret_cast<compatibility_persistent<Value>*>(data);
-            auto closure = Function::Cast(*persistent->handle());
+	    auto o = persistent->handle();
 
-            auto ret = closure->Call(Undefined(v8::Isolate::GetCurrent()), 0,
-                                     NULL);
+            auto ret = Function::Cast(*o)->Call(o->ToObject(), 0, NULL);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             if (!bret)
@@ -254,10 +254,9 @@ void register_idle_exiter_add(v8::Isolate *isolate,
         auto ret = ecore_idle_exiter_add([](void *data) -> Eina_Bool {
             compatibility_persistent<Value> *persistent
                 = reinterpret_cast<compatibility_persistent<Value>*>(data);
-            auto closure = Function::Cast(*persistent->handle());
+	    auto o = persistent->handle();
 
-            auto ret = closure->Call(Undefined(v8::Isolate::GetCurrent()), 0,
-                                     NULL);
+            auto ret = Function::Cast(*o)->Call(o->ToObject(), 0, NULL);
             auto bret = ret->IsBoolean() && ret->BooleanValue();
 
             if (!bret)
