@@ -1,6 +1,16 @@
 interface Efl.Player {
    legacy_prefix: null;
    methods {
+        @property playable {
+             /*@
+              * @brief Whether or not the object data can be played.
+              */
+             get {
+             }
+             values {
+                  play: bool; /*@ true if the object have playable data, false otherwise */
+             }
+        }
         @property play {
              set {
                   /*@
