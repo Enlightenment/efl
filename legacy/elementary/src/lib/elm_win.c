@@ -1799,7 +1799,7 @@ _elm_win_evas_object_smart_del(Eo *obj, Elm_Win_Data *sd)
 
    /* NB: child deletion handled by parent's smart del */
 
-   if ((trap) && (trap->del))
+   if ((sd->type != ELM_WIN_FAKE) && (trap) && (trap->del))
      trap->del(sd->trap_data, obj);
 
    if (sd->parent)
