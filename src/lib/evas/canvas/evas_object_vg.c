@@ -95,6 +95,7 @@ void
 _evas_vg_eo_base_destructor(Eo *eo_obj, Evas_VG_Data *pd)
 {
    eo_unref(pd->root);
+   pd->root = NULL;
    eo_do_super(eo_obj, MY_CLASS, eo_destructor());
 }
 
@@ -229,10 +230,14 @@ evas_object_vg_render_pre(Evas_Object *eo_obj,
    // So just forcing it here if necessary
    rnd = eo_data_scope_get(vd->root, EFL_VG_BASE_CLASS);
 
-   //FIXME find the reason for NULL Base Class in some case?
-   if (!rnd) return;
-
-   if (rnd->changed)
+   // Once the destructor has been called, root node will be zero
+   // and a full redraw is still necessary.
+   if (!rnd)
+     {
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
+        goto done;
+     }
+   else if (rnd->changed)
      {
         rnd->changed = EINA_FALSE;
         evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
