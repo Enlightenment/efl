@@ -386,6 +386,11 @@ _evas_gl_common_version_check(int *gles_ver)
    */
 
    version = (char *)glGetString(GL_VERSION);
+   if (!version)
+     {
+        /* Something is wrong! */
+        return 0;
+     }
 
   /*
    * OpengL ES

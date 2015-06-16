@@ -2890,6 +2890,7 @@ evgl_direct_partial_info_clear()
 void
 evgl_direct_override_get(Eina_Bool *override, Eina_Bool *force_off)
 {
+   if (!evgl_engine) return;
    if (override)  *override  = evgl_engine->direct_override;
    if (force_off) *force_off = evgl_engine->direct_force_off;
 }
