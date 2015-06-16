@@ -30,6 +30,8 @@ Eina_List  *_color_overlays_del = NULL;
 
 static Ecore_Poller *_elm_cache_flush_poller = NULL;
 static void _elm_config_key_binding_hash(void);
+static Ecore_Timer *_config_change_delay_timer = NULL;
+Eio_Monitor *_eio_monitor = NULL;
 
 Eina_Hash *_elm_key_bindings = NULL;
 
@@ -114,6 +116,7 @@ static void        _config_free(Elm_Config *cfg);
 static void        _config_apply(void);
 static void        _config_sub_apply(void);
 static void        _config_update(void);
+static void        _config_get(void);
 static void        _env_get(void);
 static void        _color_overlays_cancel(void);
 
@@ -128,7 +131,6 @@ static Ecore_Timer *_prop_change_delay_timer = NULL;
 static Ecore_X_Window _config_win = 0;
 #define ATOM_COUNT 3
 static Ecore_X_Atom _atom[ATOM_COUNT];
-static Ecore_X_Atom _atom_config = 0;
 static const char *_atom_names[ATOM_COUNT] =
 {
    "ELM_PROFILE",
@@ -138,120 +140,6 @@ static const char *_atom_names[ATOM_COUNT] =
 #define ATOM_E_PROFILE    0
 #define ATOM_E_CONFIG     1
 #define ATOM_E_CONFIG_WIN 2
-
-static Eina_Bool _prop_config_get(void);
-static void      _prop_config_set(void);
-static Eina_Bool _prop_change(void *data  EINA_UNUSED,
-                              int ev_type EINA_UNUSED,
-                              void       *ev);
-
-static void
-_elm_font_overlays_del_free(void)
-{
-   char *text_class;
-   Eina_List *l;
-   EINA_LIST_FOREACH(_font_overlays_del, l, text_class)
-     eina_stringshare_del(text_class);
-   _font_overlays_del = eina_list_free(_font_overlays_del);
-}
-
-static void
-_elm_config_font_overlays_cancel(void)
-{
-   Elm_Font_Overlay *efd;
-   Eina_List *l;
-   EINA_LIST_FOREACH(_elm_config->font_overlays, l, efd)
-     edje_text_class_del(efd->text_class);
-}
-
-static Eina_Bool
-_prop_config_get(void)
-{
-   int size = 0;
-   Ecore_X_Atom atom;
-   char buf[512];
-   unsigned char *data = NULL;
-   Elm_Config *config_data;
-
-   snprintf(buf, sizeof(buf), "ELM_CONFIG_%s", _elm_profile);
-   atom = ecore_x_atom_get(buf);
-   _atom_config = atom;
-   if (!ecore_x_window_prop_property_get(_config_win,
-                                         atom, _atom[ATOM_E_CONFIG],
-                                         8, &data, &size))
-     {
-        if (!ecore_x_window_prop_property_get(_config_win,
-                                              _atom[ATOM_E_CONFIG],
-                                              _atom[ATOM_E_CONFIG],
-                                              8, &data, &size))
-          return EINA_FALSE;
-        else
-          _atom_config = _atom[ATOM_E_CONFIG];
-     }
-   else
-     _atom_config = atom;
-   if (size < 1)
-     {
-        free(data);
-        return EINA_FALSE;
-     }
-   config_data = eet_data_descriptor_decode(_config_edd, data, size);
-   free(data);
-   if (!config_data) return EINA_FALSE;
-
-   /* What do we do on version mismatch when someone changes the
-    * config in the rootwindow? */
-   /* Most obvious case, new version and we are still linked to
-    * whatever was there before, we just ignore until user restarts us */
-   if (config_data->config_version > ELM_CONFIG_VERSION)
-     {
-        _config_free(config_data);
-        return EINA_TRUE;
-     }
-   /* What in the case the version is older? Do we even support those
-    * cases or we only check for equality above? */
-
-   _elm_config_font_overlays_cancel();
-   _color_overlays_cancel();
-   _config_free(_elm_config);
-   _elm_config = config_data;
-   _env_get();
-   _config_apply();
-   _config_sub_apply();
-   evas_font_reinit();
-   _elm_config_font_overlay_apply();
-   _elm_config_color_overlay_apply();
-   _elm_rescale();
-   _elm_recache();
-   _elm_clouseau_reload();
-   _elm_config_key_binding_hash();
-   _elm_win_access(_elm_config->access_mode);
-   ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
-   return EINA_TRUE;
-}
-
-static void
-_prop_config_set(void)
-{
-   unsigned char *config_data = NULL;
-   int size = 0;
-
-   config_data = eet_data_descriptor_encode(_config_edd, _elm_config, &size);
-   if (config_data)
-     {
-        Ecore_X_Atom atom;
-        char buf[512];
-
-        snprintf(buf, sizeof(buf), "ELM_CONFIG_%s", _elm_profile);
-        atom = ecore_x_atom_get(buf);
-        _atom_config = atom;
-
-        ecore_x_window_prop_property_set(_config_win, _atom_config,
-                                         _atom[ATOM_E_CONFIG], 8,
-                                         config_data, size);
-        free(config_data);
-     }
-}
 
 static Eina_Bool
 _prop_change_delay_cb(void *data EINA_UNUSED)
@@ -267,7 +155,7 @@ _prop_change_delay_cb(void *data EINA_UNUSED)
              _elm_profile = s;
           }
      }
-   _prop_config_get();
+   _config_get();
    _prop_change_delay_timer = NULL;
 
    return ECORE_CALLBACK_CANCEL;
@@ -287,17 +175,29 @@ _prop_change(void *data  EINA_UNUSED,
              ecore_timer_del(_prop_change_delay_timer);
              _prop_change_delay_timer = ecore_timer_add(0.1, _prop_change_delay_cb, NULL);
           }
-        else if (((_atom_config > 0) && (event->atom == _atom_config)) ||
-                 (event->atom == _atom[ATOM_E_CONFIG]))
-          {
-             ecore_timer_del(_prop_change_delay_timer);
-             _prop_change_delay_timer = ecore_timer_add(0.1, _prop_change_delay_cb, NULL);
-          }
      }
    return ECORE_CALLBACK_PASS_ON;
 }
-
 #endif
+
+static void
+_elm_font_overlays_del_free(void)
+{
+   char *text_class;
+   Eina_List *l;
+   EINA_LIST_FOREACH(_font_overlays_del, l, text_class)
+     eina_stringshare_del(text_class);
+   _font_overlays_del = eina_list_free(_font_overlays_del);
+}
+
+static void
+_elm_config_font_overlays_cancel(void)
+{
+   Elm_Font_Overlay *efd;
+   Eina_List *l;
+   EINA_LIST_FOREACH(_elm_config->font_overlays, l, efd)
+     edje_text_class_del(efd->text_class);
+}
 
 static void
 _desc_init(void)
@@ -1620,6 +1520,28 @@ _config_load(void)
    _elm_config->gl_depth = 0;
    _elm_config->gl_msaa = 0;
    _elm_config->gl_stencil = 0;
+}
+
+static void
+_config_get(void)
+{
+   _elm_config_font_overlays_cancel();
+   _color_overlays_cancel();
+   _config_free(_elm_config);
+   _elm_config = NULL;
+   _config_load();
+   _env_get();
+   _config_apply();
+   _config_sub_apply();
+   evas_font_reinit();
+   _elm_config_font_overlay_apply();
+   _elm_config_color_overlay_apply();
+   _elm_rescale();
+   _elm_recache();
+   _elm_clouseau_reload();
+   _elm_config_key_binding_hash();
+   _elm_win_access(_elm_config->access_mode);
+   ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
 }
 
 static const char *
@@ -3197,12 +3119,16 @@ elm_config_all_flush(void)
 {
 #ifdef HAVE_ELEMENTARY_X
    if (ecore_x_display_get())
-     {
-        _prop_config_set();
-        ecore_x_window_prop_string_set(_config_win, _atom[ATOM_E_PROFILE],
-                                       _elm_profile);
-     }
+     ecore_x_window_prop_string_set(_config_win, _atom[ATOM_E_PROFILE],
+                                    _elm_profile);
 #endif
+   char buf[PATH_MAX];
+
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s/flush",
+                          _elm_profile);
+   FILE *fp = fopen(buf, "w+");
+   fprintf(fp, "flush");
+   fclose(fp);
 }
 
 static void
@@ -3259,6 +3185,32 @@ _elm_config_sub_shutdown(void)
    ELM_SAFE_FREE(_prop_change_delay_timer, ecore_timer_del);
    if (ecore_x_display_get()) ecore_x_shutdown();
 #endif
+   ELM_SAFE_FREE(_eio_monitor, eio_monitor_del);
+   ELM_SAFE_FREE(_config_change_delay_timer, ecore_timer_del);
+}
+
+static Eina_Bool
+_config_change_delay_cb(void *data EINA_UNUSED)
+{
+   _config_get();
+   _config_change_delay_timer = NULL;
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static Eina_Bool
+_elm_config_file_monitor_cb(void *data EINA_UNUSED,
+                            int type EINA_UNUSED,
+                            void *event)
+{
+   Eio_Monitor_Event *ev = event;
+
+   if (ev->monitor != _eio_monitor) return ECORE_CALLBACK_PASS_ON;
+
+   ecore_timer_del(_config_change_delay_timer);
+   _config_change_delay_timer = ecore_timer_add(0.1, _config_change_delay_cb, NULL);
+
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 void
@@ -3340,7 +3292,7 @@ _elm_config_sub_init(void)
                             free(_elm_profile);
                          }
                        _elm_profile = s;
-                       if (changed) _prop_config_get();
+                       if (changed) _config_get();
                        s = strchr(_elm_profile, '/');
                        if (s) *s = 0;
                     }
@@ -3380,6 +3332,19 @@ _elm_config_sub_init(void)
         ecore_wl_init(NULL);
      }
 #endif
+   char buf[PATH_MAX];
+
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s/flush",
+                          _elm_profile);
+   if (!ecore_file_exists(buf))
+     {
+        FILE *fp = fopen(buf, "w+");
+        fprintf(fp, "flush");
+        fclose(fp);
+     }
+   _eio_monitor = eio_monitor_add(buf);
+   ecore_event_handler_add(EIO_MONITOR_FILE_MODIFIED, _elm_config_file_monitor_cb, NULL);
+
    _config_sub_apply();
 }
 
@@ -3576,9 +3541,7 @@ _elm_config_shutdown(void)
    ELM_SAFE_FREE(_elm_preferred_engine, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_profile, free);
-#ifdef HAVE_ELEMENTARY_X
    _elm_font_overlays_del_free();
-#endif
 
    _desc_shutdown();
 
