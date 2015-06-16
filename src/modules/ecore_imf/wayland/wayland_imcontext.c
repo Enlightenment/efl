@@ -95,7 +95,7 @@ utf8_offset_to_characters(const char *str, int offset)
 static void
 update_state(WaylandIMContext *imcontext)
 {
-   char *surrounding;
+   char *surrounding = NULL;
    int cursor_pos;
    Ecore_Evas *ee;
    int canvas_x = 0, canvas_y = 0;
@@ -109,7 +109,9 @@ update_state(WaylandIMContext *imcontext)
         if (imcontext->text_input)
           wl_text_input_set_surrounding_text(imcontext->text_input, surrounding, 
                                              cursor_pos, cursor_pos);
-        free(surrounding);
+
+        if (surrounding)
+          free(surrounding);
      }
 
    if (imcontext->canvas)
@@ -153,8 +155,12 @@ check_serial(WaylandIMContext *imcontext, uint32_t serial)
         imcontext->pending_commit.anchor = 0;
 
         imcontext->pending_preedit.cursor = 0;
-        EINA_LIST_FREE(imcontext->pending_preedit.attrs, attr) free(attr);
-        imcontext->pending_preedit.attrs = NULL;
+
+        if (imcontext->pending_preedit.attrs)
+          {
+             EINA_LIST_FREE(imcontext->pending_preedit.attrs, attr) free(attr);
+             imcontext->pending_preedit.attrs = NULL;
+          }
 
         return EINA_FALSE;
      }
@@ -165,18 +171,27 @@ check_serial(WaylandIMContext *imcontext, uint32_t serial)
 static void
 clear_preedit(WaylandIMContext *imcontext)
 {
-   Ecore_IMF_Preedit_Attr *attr;
+   Ecore_IMF_Preedit_Attr *attr = NULL;
 
    imcontext->preedit_cursor = 0;
 
-   free(imcontext->preedit_text);
-   imcontext->preedit_text = NULL;
+   if (imcontext->preedit_text)
+     {
+        free(imcontext->preedit_text);
+        imcontext->preedit_text = NULL;
+     }
 
-   free(imcontext->preedit_commit);
-   imcontext->preedit_commit = NULL;
+   if (imcontext->preedit_commit)
+     {
+        free(imcontext->preedit_commit);
+        imcontext->preedit_commit = NULL;
+     }
 
-   EINA_LIST_FREE(imcontext->preedit_attrs, attr)
-     free(attr);
+   if (imcontext->preedit_attrs)
+     {
+        EINA_LIST_FREE(imcontext->preedit_attrs, attr)
+           free(attr);
+     }
 
    imcontext->preedit_attrs = NULL;
 }
@@ -189,7 +204,7 @@ text_input_commit_string(void                 *data,
 {
    WaylandIMContext *imcontext = (WaylandIMContext *)data;
    Eina_Bool old_preedit = EINA_FALSE;
-   char *surrounding;
+   char *surrounding = NULL;
    int cursor_pos, cursor;
    Ecore_IMF_Event_Delete_Surrounding ev;
 
@@ -238,7 +253,8 @@ text_input_commit_string(void                 *data,
                      "delete on commit (text: `%s', offset `%d', length: `%d')",
                      surrounding, ev.offset, ev.n_chars);
 
-             free(surrounding);
+             if (surrounding)
+               free(surrounding);
 
              ecore_imf_context_delete_surrounding_event_add(imcontext->ctx, ev.offset, ev.n_chars);
              ecore_imf_context_event_callback_call(imcontext->ctx, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, &ev);
@@ -314,7 +330,7 @@ text_input_preedit_string(void                 *data,
                                          ECORE_IMF_CALLBACK_PREEDIT_CHANGED, 
                                          NULL);
 
-   if (strlen(imcontext->preedit_text) == 0)
+   if (imcontext->preedit_text && strlen(imcontext->preedit_text) == 0)
      {
         ecore_imf_context_preedit_end_event_add(imcontext->ctx);
         ecore_imf_context_event_callback_call(imcontext->ctx, 
