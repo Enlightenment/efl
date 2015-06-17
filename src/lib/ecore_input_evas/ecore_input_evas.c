@@ -89,8 +89,8 @@ _ecore_event_last_check(Ecore_Event_Last *eel, Ecore_Event_Press press)
 
       case ECORE_INPUT_MOVE:
          /* 1. ECORE_INPUT_MOVE => ECORE_UP : ok
-          *	2. ECORE_INPUT_MOVE => ECORE_CANCEL : ok
-		  */
+          * 2. ECORE_INPUT_MOVE => ECORE_CANCEL : ok
+          */
          if ((press == ECORE_UP) || (press == ECORE_CANCEL))
            return ECORE_INPUT_CONTINUE;
 
@@ -459,8 +459,7 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
      {
         //ECORE_UP or ECORE_CANCEL
         eel = _ecore_event_evas_lookup(e->multi.device, e->buttons, EINA_FALSE);
-        if (!eel)
-   
+
         if ((!eel) || (eel->state == ECORE_INPUT_UP) || (eel->state == ECORE_INPUT_CANCEL))
           {
             if (!eel)
