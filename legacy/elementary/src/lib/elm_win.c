@@ -89,7 +89,7 @@ static const Elm_Win_Trap *trap = NULL;
          }                                                      \
     }
 
-#define ENGINE_GET() (_elm_preferred_engine ? _elm_preferred_engine : "")
+#define ENGINE_GET() (_elm_preferred_engine ? _elm_preferred_engine : _elm_config->engine)
 
 typedef struct _Elm_Win_Data Elm_Win_Data;
 
