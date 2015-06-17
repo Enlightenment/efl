@@ -1374,6 +1374,29 @@ check_min_arg_count(int min_required_args)
      }
 }
 
+int
+check_range_arg_count(int min_required_args, int max_required_args)
+{
+   int num_args = eina_array_count(&params);
+
+   if (num_args < min_required_args)
+     {
+        ERR("%s:%i got %i arguments, but expected at least %i",
+            file_in, line - 1, num_args, min_required_args);
+        err_show();
+        exit(-1);
+     }
+   else if (num_args > max_required_args)
+     {
+        ERR("%s:%i got %i arguments, but expected at most %i",
+            file_in, line - 1, num_args, max_required_args);
+        err_show();
+        exit(-1);
+     }
+
+   return num_args;
+}
+
 /* simple expression parsing stuff */
 
 /*

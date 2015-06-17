@@ -361,8 +361,6 @@ static void st_collections_group_parts_part_description_text_align(void);
 static void st_collections_group_parts_part_description_text_source(void);
 static void st_collections_group_parts_part_description_text_text_source(void);
 static void st_collections_group_parts_part_description_text_ellipsis(void);
-static void st_collections_group_parts_part_description_text_filter(void);
-static void st_collections_group_parts_part_description_text_filter_source(void);
 static void st_collections_group_parts_part_description_box_layout(void);
 static void st_collections_group_parts_part_description_box_align(void);
 static void st_collections_group_parts_part_description_box_padding(void);
@@ -396,6 +394,8 @@ static void st_collections_group_parts_part_description_texture_filter1(void);
 static void st_collections_group_parts_part_description_texture_filter2(void);
 static void st_collections_group_parts_part_description_mesh_assembly(void);
 static void st_collections_group_parts_part_description_mesh_geometry(void);
+static void st_collections_group_parts_part_description_filter_code(void);
+static void st_collections_group_parts_part_description_filter_source(void);
 
 #ifdef HAVE_EPHYSICS
 static void st_collections_group_parts_part_description_physics_mass(void);
@@ -814,9 +814,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.text.elipsis", st_collections_group_parts_part_description_text_ellipsis},
      {"collections.group.parts.part.description.text.ellipsis", st_collections_group_parts_part_description_text_ellipsis},
-     {"collections.group.parts.part.description.text.filter", st_collections_group_parts_part_description_text_filter},
-     {"collections.group.parts.part.description.text.filter.code", st_collections_group_parts_part_description_text_filter}, /* dup */
-     {"collections.group.parts.part.description.text.filter.source", st_collections_group_parts_part_description_text_filter_source},
+     {"collections.group.parts.part.description.text.filter", st_collections_group_parts_part_description_filter_code}, /* dup */
      {"collections.group.parts.part.description.box.layout", st_collections_group_parts_part_description_box_layout},
      {"collections.group.parts.part.description.box.align", st_collections_group_parts_part_description_box_align},
      {"collections.group.parts.part.description.box.padding", st_collections_group_parts_part_description_box_padding},
@@ -849,6 +847,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.texture.filter2", st_collections_group_parts_part_description_texture_filter2},
      {"collections.group.parts.part.description.mesh.assembly", st_collections_group_parts_part_description_mesh_assembly},
      {"collections.group.parts.part.description.mesh.geometry", st_collections_group_parts_part_description_mesh_geometry},
+     {"collections.group.parts.part.description.filter.code", st_collections_group_parts_part_description_filter_code},
+     {"collections.group.parts.part.description.filter.source", st_collections_group_parts_part_description_filter_source},
 
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
@@ -1195,6 +1195,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.orientation", NULL},
      {"collections.group.parts.part.description.texture", ob_collections_group_parts_part_description_texture},
      {"collections.group.parts.part.description.mesh", NULL},
+     {"collections.group.parts.part.description.filter", NULL},
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics", NULL},
      {"collections.group.parts.part.description.physics.movement_freedom", NULL},
@@ -8982,156 +8983,6 @@ st_collections_group_parts_part_description_text_ellipsis(void)
    ed->text.ellipsis = parse_float_range(0, -1.0, 1.0);
 }
 
-/**
-    @page edcref
-
-    @context
-        part {
-            type: TEXT; // or IMAGE
-            description {
-                ..
-                text {
-                    ..
-                    filter {
-                        code: "blend {} -- ..."
-                        source: "part1" "buf";
-                        source: "part2" "otherbuf";
-                        source: "part3";
-                    }
-                    // or as short form:
-                    filter: "blend {} -- ..."
-                }
-                ..
-            }
-        }
-    @property
-        filter.code
-    @parameters
-        [filter program] OR [data name]
-    @effect
-        Applies a series of image filters to a TEXT or IMAGE part. The argument
-        to this field is the source code of a Lua program invoking various
-        filter operations. For more information, please refer to the page
-        "Evas filters reference".
-        The parameter can also be a parameter name as specified in the
-        data section (item or file property). This means external filter files
-        can be easily embedded in an edje file.
-        @see evasfiltersref
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_text_filter(void)
-{
-   Edje_Part_Description_Text *ed;
-
-   check_arg_count(1);
-
-   if (current_part->type != EDJE_PART_TYPE_TEXT)
-     {
-        ERR("parse error %s:%i. text attributes in non-TEXT part.",
-            file_in, line - 1);
-        exit(-1);
-     }
-
-   ed = (Edje_Part_Description_Text*) current_desc;
-
-   free((void*) ed->text.filter.code);
-   ed->text.filter.code = parse_str(0);
-}
-
-/**
-    @page edcref
-
-    @property
-        filter.source
-    @parameters
-        [another part's name] [(optional) buffer name for filter program]
-    @effect
-        Binds another part as an image source (like a proxy source) for a
-        text or image filter operation. Optionally, a buffer name may be
-        specified, so the same filter code can be used with different sources.
-        For more information, please refer to the page "Evas filters reference".
-        @see evasfiltersref
-    @endproperty
-*/
-static void
-st_collections_group_parts_part_description_text_filter_source(void)
-{
-   Edje_Part_Description_Text *ed;
-   Edje_Part_Collection *pc;
-   char *name = NULL, *part, *str;
-   size_t sn = 0, sp;
-   int *part_key;
-
-   static const char *allowed_name_chars =
-         "abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ0123456789_";
-
-   /* 1 or 2 args only */
-   check_min_arg_count(1);
-   if (get_arg_count() > 1)
-     check_arg_count(2);
-
-   if (current_part->type != EDJE_PART_TYPE_TEXT)
-     {
-        ERR("parse error %s:%i. text attributes in non-TEXT part.",
-            file_in, line - 1);
-        exit(-1);
-     }
-
-   ed = (Edje_Part_Description_Text*) current_desc;
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-
-   part = parse_str(0);
-   sp = strlen(part);
-
-   if (get_arg_count() > 1)
-     {
-        name = parse_str(1);
-        if (name) sn = strlen(name);
-        if (!name || (strspn(name, allowed_name_chars) != sn))
-          {
-             ERR("parse error %s:%i. invalid name for a filter buffer: %s",
-                 file_in, line - 1, name);
-             exit(-1);
-          }
-     }
-
-   if (!name && (strspn(part, allowed_name_chars) == sp))
-     str = strdup(part);
-   else
-     {
-        if (!name)
-          {
-             // name = part so we replace all invalid chars by '_'
-             size_t k;
-             name = strdup(part);
-             sn = strlen(name);
-             for (k = 0; k < sn; k++)
-               {
-                  if (!index(allowed_name_chars, name[k]))
-                    name[k] = '_';
-               }
-          }
-        sn += sp + 1;
-        str = malloc(sn + 1);
-        if (!str) exit(-1);
-        strncpy(str, name, sn);
-        strncat(str, ":", sn);
-        strncat(str, part, sn);
-        str[sn] = '\0';
-     }
-   ed->text.filter.sources = eina_list_append(ed->text.filter.sources, str);
-
-   // note: this is leaked. not a big deal.
-   part_key = malloc(sizeof(int));
-   *part_key = -1;
-   data_queue_part_lookup(pc, part, part_key);
-
-   free(part);
-   free(name);
-}
-
-
 /** @edcsubsection{collections_group_parts_description_box,
  *                 Group.Parts.Part.Description.Box} */
 
@@ -11641,6 +11492,161 @@ st_collections_group_parts_part_description_perspective_focal(void)
    check_arg_count(1);
 
    current_desc->persp.focal = parse_int_range(0, 1, 0x7fffffff);
+}
+
+/** @edcsubsection{collections_group_parts_description_filter,
+ *                 Group.Parts.Part.Description.Filter} */
+
+/**
+    @page edcref
+
+    @context
+        part {
+            type: [TEXT or IMAGE];
+            description {
+                ..
+                filter {
+                    code: "blend {} -- ..."
+                    // or:
+                    code: "data name";
+                    source: "part1" "buf";
+                    source: "part2" "otherbuf";
+                    source: "part3";
+                }
+                // or, for TEXT only (legacy):
+                text.filter: "blend {} -- ..."
+                ..
+            }
+        }
+    @property
+        filter.code
+    @parameters
+        [filter program] OR [data name]
+    @effect
+        Applies a series of image filters to a TEXT or IMAGE part. The argument
+        to this field is the source code of a Lua program invoking various
+        filter operations. For more information, please refer to the page
+        "Evas filters reference".
+        The parameter can also be a parameter name as specified in the
+        data section (item or file property). This means external filter files
+        can be easily embedded in an edje file.
+        @see evasfiltersref
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_filter_code(void)
+{
+   Edje_Part_Description_Spec_Filter *filter;
+
+   check_arg_count(1);
+
+   if (current_part->type == EDJE_PART_TYPE_TEXT)
+     filter = &(((Edje_Part_Description_Text *)current_desc)->text.filter);
+   else if (current_part->type == EDJE_PART_TYPE_IMAGE)
+     filter = &(((Edje_Part_Description_Image *)current_desc)->image.filter);
+   else
+     {
+        ERR("parse error %s:%i. filter set for non-TEXT and non-IMAGE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   free((void*) filter->code);
+   filter->code = parse_str(0);
+}
+
+/**
+    @page edcref
+
+    @property
+        filter.source
+    @parameters
+        [another part's name] [(optional) buffer name for filter program]
+    @effect
+        Binds another part as an image source (like a proxy source) for a
+        text or image filter operation. Optionally, a buffer name may be
+        specified, so the same filter code can be used with different sources.
+        For more information, please refer to the page "Evas filters reference".
+        @see evasfiltersref
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_filter_source(void)
+{
+   Edje_Part_Description_Spec_Filter *filter;
+   Edje_Part_Collection *pc;
+   char *name, *part, *str;
+   size_t sn = 0, sp;
+   int *part_key;
+   int args;
+
+   static const char *allowed_name_chars =
+         "abcdefghijklmnopqrstuvwxyzABCDEFGHJIKLMNOPQRSTUVWXYZ0123456789_";
+
+   if (current_part->type == EDJE_PART_TYPE_TEXT)
+     filter = &(((Edje_Part_Description_Text *)current_desc)->text.filter);
+   else if (current_part->type == EDJE_PART_TYPE_IMAGE)
+     filter = &(((Edje_Part_Description_Image *)current_desc)->image.filter);
+   else
+     {
+        ERR("parse error %s:%i. filter set for non-TEXT and non-IMAGE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   args = check_range_arg_count(1, 2);
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+
+   part = parse_str(0);
+   sp = strlen(part);
+
+   if (args > 1)
+     {
+        name = parse_str(1);
+        if (name) sn = strlen(name);
+        if (!name || (strspn(name, allowed_name_chars) != sn))
+          {
+             ERR("parse error %s:%i. invalid name for a filter buffer: %s",
+                 file_in, line - 1, name);
+             exit(-1);
+          }
+     }
+   else
+     name = NULL;
+
+   if (!name && (strspn(part, allowed_name_chars) == sp))
+     str = strdup(part);
+   else
+     {
+        if (!name)
+          {
+             // name = part so we replace all invalid chars by '_'
+             size_t k;
+             name = strdup(part);
+             sn = strlen(name);
+             for (k = 0; k < sn; k++)
+               {
+                  if (!index(allowed_name_chars, name[k]))
+                    name[k] = '_';
+               }
+          }
+        sn += sp + 1;
+        str = malloc(sn + 1);
+        if (!str) exit(-1);
+        strncpy(str, name, sn);
+        strncat(str, ":", sn);
+        strncat(str, part, sn);
+        str[sn] = '\0';
+     }
+   filter->sources = eina_list_append(filter->sources, str);
+
+   // note: this is leaked. not a big deal.
+   part_key = malloc(sizeof(int));
+   *part_key = -1;
+   data_queue_part_lookup(pc, part, part_key);
+
+   free(part);
+   free(name);
 }
 
 

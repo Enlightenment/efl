@@ -1298,6 +1298,7 @@ struct _Edje_Part_Description_Spec_Image
    Eina_Bool      set; /* if image condition it's content */
 
    Edje_Part_Description_Spec_Border border;
+   Edje_Part_Description_Spec_Filter filter;
 };
 
 struct _Edje_Part_Description_Spec_Proxy
