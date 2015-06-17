@@ -84,8 +84,16 @@ external_icon_state_set(void *data EINA_UNUSED, Evas_Object *obj,
         edje = evas_object_smart_parent_get(obj);
         edje_object_file_get(edje, &file, NULL);
 
-        if (!elm_image_file_set(obj, file, p->icon))
-          elm_icon_standard_set(obj, p->icon);
+        if (!edje_file_group_exists(file, p->icon))
+          {
+            if (!elm_icon_standard_set(obj, p->icon))
+              ERR("Failed to set standard icon! (%s)", p->icon);
+          }
+        else if (!elm_image_file_set(obj, file, p->icon))
+          {
+            if (!elm_icon_standard_set(obj, p->icon))
+              ERR("Failed to set standard icon! (%s)", p->icon);
+          }
      }
 }
 
@@ -153,8 +161,16 @@ external_icon_param_set(void *data EINA_UNUSED, Evas_Object *obj,
              edje = evas_object_smart_parent_get(obj);
              edje_object_file_get(edje, &file, NULL);
 
-             if (!elm_image_file_set(obj, file, param->s))
-               elm_icon_standard_set(obj, param->s);
+             if (!edje_file_group_exists(file, param->s))
+               {
+                 if (!elm_icon_standard_set(obj, param->s))
+                   ERR("Failed to set standard icon! (%s)", param->s);
+               }
+             else if (!elm_image_file_set(obj, file, param->s))
+               {
+                 if (!elm_icon_standard_set(obj, param->s))
+                   ERR("Failed to set standard icon as fallback! (%s)", param->s);
+               }
              return EINA_TRUE;
           }
      }
