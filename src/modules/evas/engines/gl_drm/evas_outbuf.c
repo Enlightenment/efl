@@ -152,8 +152,9 @@ _evas_outbuf_egl_setup(Outbuf *ob)
 {
    int ctx_attr[3];
    int cfg_attr[40];
-   int maj = 0, min = 0, n = 0;
+   int maj = 0, min = 0, n = 0, i = 0;
    EGLint ncfg;
+   EGLConfig *cfgs;
    const GLubyte *vendor, *renderer, *version, *glslversion;
    Eina_Bool blacklist = EINA_FALSE;
 
@@ -162,12 +163,16 @@ _evas_outbuf_egl_setup(Outbuf *ob)
    ctx_attr[1] = 2;
    ctx_attr[2] = EGL_NONE;
 
-   /* cfg_attr[n++] = EGL_BUFFER_SIZE; */
-   /* cfg_attr[n++] = 32; */
-   cfg_attr[n++] = EGL_SURFACE_TYPE;
-   cfg_attr[n++] = EGL_WINDOW_BIT;
+   cfg_attr[n++] = EGL_BUFFER_SIZE;
+   cfg_attr[n++] = 32;
+   cfg_attr[n++] = EGL_DEPTH_SIZE;
+   cfg_attr[n++] = EGL_DONT_CARE;
+   cfg_attr[n++] = EGL_STENCIL_SIZE;
+   cfg_attr[n++] = EGL_DONT_CARE;
    cfg_attr[n++] = EGL_RENDERABLE_TYPE;
    cfg_attr[n++] = EGL_OPENGL_ES2_BIT;
+   cfg_attr[n++] = EGL_SURFACE_TYPE;
+   cfg_attr[n++] = EGL_WINDOW_BIT;
 #if 0
    cfg_attr[n++] = EGL_RED_SIZE;
    cfg_attr[n++] = 1;
@@ -182,7 +187,12 @@ _evas_outbuf_egl_setup(Outbuf *ob)
    else cfg_attr[n++] = 0;
    cfg_attr[n++] = EGL_NONE;
 
+#ifdef EGL_MESA_platform_gbm
+   ob->egl.disp =
+     eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_MESA, ob->info->info.gbm, NULL);
+#else
    ob->egl.disp = eglGetDisplay((EGLNativeDisplayType)ob->info->info.gbm);
+#endif
    if (ob->egl.disp  == EGL_NO_DISPLAY)
      {
         ERR("eglGetDisplay() fail. code=%#x", eglGetError());
@@ -202,16 +212,56 @@ _evas_outbuf_egl_setup(Outbuf *ob)
         return EINA_FALSE;
      }
 
-   if (!eglChooseConfig(ob->egl.disp, cfg_attr, &ob->egl.config,
-                        1, &ncfg) || (ncfg != 1))
+   if (!eglGetConfigs(ob->egl.disp, NULL, 0, &ncfg) || (ncfg == 0))
+     {
+        ERR("eglGetConfigs() fail. code=%#x", eglGetError());
+        return EINA_FALSE;
+     }
+
+   cfgs = malloc(ncfg * sizeof(EGLConfig));
+   if (!cfgs)
+     {
+        ERR("Failed to malloc space for egl configs");
+        return EINA_FALSE;
+     }
+
+   if (!eglChooseConfig(ob->egl.disp, cfg_attr, cfgs,
+                        ncfg, &ncfg) || (ncfg == 0))
      {
         ERR("eglChooseConfig() fail. code=%#x", eglGetError());
         return EINA_FALSE;
      }
 
+   for (; i < ncfg; ++i)
+     {
+        EGLint format;
+
+        if (!eglGetConfigAttrib(ob->egl.disp, cfgs[i], EGL_NATIVE_VISUAL_ID,
+                                &format))
+          {
+             ERR("eglGetConfigAttrib() fail. code=%#x", eglGetError());
+             return EINA_FALSE;
+          }
+
+        DBG("Config Format: %d", format);
+        DBG("OB Format: %d", ob->info->info.format);
+
+        if (format == ob->info->info.format)
+          {
+             ob->egl.config = cfgs[i];
+             break;
+          }
+     }
+
+#ifdef EGL_MESA_platform_gbm
+   ob->egl.surface[0] =
+     eglCreatePlatformWindowSurfaceEXT(ob->egl.disp, ob->egl.config,
+                                       ob->surface, NULL);
+#else
    ob->egl.surface[0] =
      eglCreateWindowSurface(ob->egl.disp, ob->egl.config,
                             (EGLNativeWindowType)ob->surface, NULL);
+#endif
    if (ob->egl.surface[0] == EGL_NO_SURFACE)
      {
         ERR("eglCreateWindowSurface() fail for %p. code=%#x",
