@@ -1603,7 +1603,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
                               Edje_Part_Description_Text *chosen_desc,
                               Edje_Calc_Params *params,
                               int *minw, int *minh,
-                              int *maxw, int *maxh, double pos)
+                              int *maxw, int *maxh)
 #define RECALC_SINGLE_TEXT_USING_APPLY 1
 #if RECALC_SINGLE_TEXT_USING_APPLY
 /*
@@ -1634,7 +1634,7 @@ _edje_part_recalc_single_text(FLOAT_T sc EINA_UNUSED,
    free(sfont);
    params->type.text.size = size; /* XXX TODO used by further calcs, go inside recalc_apply? */
 
-   _edje_text_recalc_apply(ed, ep, params, chosen_desc, EINA_TRUE, pos);
+   _edje_text_recalc_apply(ed, ep, params, chosen_desc, EINA_TRUE);
 
    if ((!chosen_desc) ||
        ((!chosen_desc->text.min_x) && (!chosen_desc->text.min_y) &&
@@ -2406,6 +2406,7 @@ _edje_part_recalc_single_map(Edje *ed,
 static inline const char *
 _edje_filter_get(Edje *ed, Edje_Part_Description_Spec_Filter *filter)
 {
+   if (!filter->code) return NULL;
    if (EINA_UNLIKELY(!filter->checked_data))
      {
         Edje_String *st;
@@ -2433,7 +2434,6 @@ _edje_part_recalc_single_filter(Edje *ed,
    const char *src1, *src2, *part, *code;
    Evas_Object *obj = ep->object;
    Eina_List *li1, *li2;
-   Eina_Bool im = 0;
 
    /* handle TEXT and IMAGE part types here */
    if (ep->part->type == EDJE_PART_TYPE_TEXT)
@@ -2446,19 +2446,6 @@ _edje_part_recalc_single_filter(Edje *ed,
              prev_sources = ep->typedata.text->filter.sources;
              filter_sources = edt->text.filter.sources;
           }
-#if 0
-        // old form
-        if (ep->typedata.text->filter.code)
-          filter = &ep->typedata.text->filter;
-        else
-          filter = &chosen_edt->text.filter;
-        if (ep->typedata.text->filter.sources != chosen_edt->text.filter.sources)
-          {
-             prev_sources = ep->typedata.text->filter.sources;
-             filter_sources = chosen_edt->text.filter.sources;
-             //ep->typedata.text->filter.sources = chosen_edt->text.filter.sources;
-          }
-#endif
      }
    else if (ep->part->type == EDJE_PART_TYPE_IMAGE)
      {
@@ -2470,25 +2457,12 @@ _edje_part_recalc_single_filter(Edje *ed,
              prev_sources = edi->image.filter.sources;
              filter_sources = chosen_edi->image.filter.sources;
           }
-        im = 1;
      }
    else
      {
         CRI("Invalid call to filter recalc");
         return;
      }
-
-   // FIXME: Implement proper EO interface/mixin and remove this ugly thing
-#define efl_gfx_filter_program_set(...) do { \
-   if (!im) evas_obj_text_filter_program_set(__VA_ARGS__); \
-   else evas_obj_text_filter_program_set(__VA_ARGS__); } while (0)
-#define efl_gfx_filter_source_set(...) do { \
-   if (!im) evas_obj_text_filter_source_set(__VA_ARGS__); \
-   else evas_obj_image_filter_source_set(__VA_ARGS__); } while (0)
-#define efl_gfx_filter_state_set(...) do { \
-   if (!im) evas_obj_text_filter_state_set(__VA_ARGS__); \
-   /* else evas_obj_image_filter_state_set(__VA_ARGS__); */ } while (0)
-   // End of pure ugliness
 
    /* common code below */
    code = _edje_filter_get(ed, filter);
@@ -2724,7 +2698,7 @@ _edje_part_recalc_single(Edje *ed,
      _edje_part_recalc_single_textblock(sc, ed, ep, (Edje_Part_Description_Text *)chosen_desc, params, &minw, &minh, &maxw, &maxh);
    else if (ep->part->type == EDJE_PART_TYPE_TEXT)
      {
-        _edje_part_recalc_single_text(sc, ed, ep, (Edje_Part_Description_Text*) desc, (Edje_Part_Description_Text*) chosen_desc, params, &minw, &minh, &maxw, &maxh, pos);
+        _edje_part_recalc_single_text(sc, ed, ep, (Edje_Part_Description_Text*) desc, (Edje_Part_Description_Text*) chosen_desc, params, &minw, &minh, &maxw, &maxh);
         _edje_part_recalc_single_filter(ed, ep, desc, chosen_desc, pos);
      }
 
@@ -4522,7 +4496,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         switch (ep->part->type)
           {
            case EDJE_PART_TYPE_TEXT:
-             _edje_text_recalc_apply(ed, ep, pf, (Edje_Part_Description_Text*) chosen_desc, EINA_FALSE, pos);
+             _edje_text_recalc_apply(ed, ep, pf, (Edje_Part_Description_Text*) chosen_desc, EINA_FALSE);
              break;
 
            case EDJE_PART_TYPE_PROXY:

@@ -163,6 +163,7 @@ EAPI extern const Eo_Event_Description _EFL_GFX_PATH_CHANGED;
 #include "interfaces/efl_gfx_gradient_base.eo.h"
 #include "interfaces/efl_gfx_gradient_linear.eo.h"
 #include "interfaces/efl_gfx_gradient_radial.eo.h"
+#include "interfaces/efl_gfx_filter.eo.h"
 
 #endif
 

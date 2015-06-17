@@ -1,0 +1,66 @@
+mixin Evas.Filter (Efl.Gfx.Filter)
+{
+   // Evas internal implementation
+   legacy_prefix: null;
+   methods {
+      @property changed {
+         set {
+            [[Marks this filter as changed.]]
+         }
+         values {
+            val: bool;
+         }
+      }
+      @property invalid {
+         set {
+            [[Marks this filter as invalid.]]
+         }
+         values {
+            val: bool;
+         }
+      }
+      constructor {
+         [[Initialize the Evas.Filter mixin.
+
+           Should be called in a parent's class constructor.
+         ]]
+      }
+      destructor {
+         [[Release all data held by this Evas.Filter.
+
+           This may include image buffers allocated by the Evas engine.
+           This should be called at the beginning of a parent's class destructor.
+         ]]
+      }
+      input_render {
+         [[Called by Evas.Filter when the parent class must render the input.
+         ;
+         ]]
+         params {
+            filter: void*; [[Evas_Filter_Context]]
+            drawctx: void*;
+            l: int;
+            r: int;
+            t: int;
+            b: int;
+            do_async: bool;
+         }
+      }
+      dirty {
+         [[Called when the filter changes must trigger a redraw of the object.
+
+           Virtual, to be implemented in the parent class.
+         ]]
+      }
+   }
+   implements {
+      Efl.Gfx.Filter.program.set;
+      Efl.Gfx.Filter.program.get;
+      Efl.Gfx.Filter.state.set;
+      Efl.Gfx.Filter.padding.get;
+      Efl.Gfx.Filter.source_set;
+      Efl.Gfx.Filter.source_get;
+      @virtual .input_render;
+      @virtual .dirty;
+   }
+}

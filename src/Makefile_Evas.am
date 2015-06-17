@@ -40,7 +40,9 @@ evas_eolian_files = \
 	lib/evas/canvas/efl_vg_root_node.eo \
 	lib/evas/canvas/efl_vg_gradient.eo \
 	lib/evas/canvas/efl_vg_gradient_radial.eo \
-	lib/evas/canvas/efl_vg_gradient_linear.eo
+	lib/evas/canvas/efl_vg_gradient_linear.eo \
+	lib/evas/canvas/evas_filter.eo \
+	$(NULL)
 
 evas_eolian_type_files = \
     lib/evas/canvas/evas_types.eot
@@ -520,7 +522,9 @@ lib/evas/common/evas_op_sub/op_sub_pixel_mask_i386.c
 
 ### Evas filters
 
-lib_evas_libevas_la_SOURCES += lib/evas/filters/evas_filter.c \
+lib_evas_libevas_la_SOURCES += \
+lib/evas/canvas/evas_filter_mixin.c \
+lib/evas/filters/evas_filter.c \
 lib/evas/filters/evas_filter_blend.c \
 lib/evas/filters/evas_filter_blur.c \
 lib/evas/filters/evas_filter_bump.c \

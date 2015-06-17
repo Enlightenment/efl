@@ -20,6 +20,8 @@
 #include "interfaces/efl_gfx_gradient_linear.eo.c"
 #include "interfaces/efl_gfx_gradient_radial.eo.c"
 
+#include "interfaces/efl_gfx_filter.eo.c"
+
 EAPI const Eo_Event_Description _EFL_GFX_CHANGED =
   EO_EVENT_DESCRIPTION("Graphics changed", "The visual representation of the object changed");
 

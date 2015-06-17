@@ -718,7 +718,7 @@ _evas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
         if (eo_isa(proxy, EVAS_IMAGE_CLASS))
           evas_object_image_source_unset(proxy);
         else if (eo_isa(proxy, EVAS_TEXT_CLASS))
-          eo_do(proxy, evas_obj_text_filter_source_set(NULL, eo_obj));
+          eo_do(proxy, efl_gfx_filter_source_set(NULL, eo_obj));
      }
 
    /* Eina_Cow has no way to know if we are going to really change something

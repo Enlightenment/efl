@@ -197,7 +197,7 @@ void
 _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                         Edje_Calc_Params *params,
                         Edje_Part_Description_Text *chosen_desc,
-                        Eina_Bool calc_only, double state_val)
+                        Eina_Bool calc_only)
 {
    const char *text = NULL;
    const char *font;

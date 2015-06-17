@@ -1798,6 +1798,9 @@ void evas_model_set_from_torus_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Ev
 void evas_model_set_from_surface_primitive(Evas_Canvas3D_Mesh *mesh, int frame, Evas_Canvas3D_Surface_Func func, int precision, Evas_Vec2 tex_scale);
 void evas_model_set_from_terrain_primitive(Evas_Canvas3D_Mesh *mesh, int frame, int precision, Evas_Vec2 tex_scale);
 
+/* Filter functions */
+Eina_Bool evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y, Eina_Bool do_async, Eina_Bool alpha);
+
 extern int _evas_alloc_error;
 extern int _evas_event_counter;
 

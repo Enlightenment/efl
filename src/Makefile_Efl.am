@@ -13,7 +13,9 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_gfx_gradient_base.eo \
       lib/efl/interfaces/efl_gfx_gradient_linear.eo \
       lib/efl/interfaces/efl_gfx_gradient_radial.eo \
-      lib/efl/interfaces/efl_model_base.eo
+      lib/efl/interfaces/efl_gfx_filter.eo \
+      lib/efl/interfaces/efl_model_base.eo \
+      $(NULL)
 
 efl_eolian_files_h = $(efl_eolian_files:%.eo=%.eo.h)
 efl_eolian_files_c = $(efl_eolian_files:%.eo=%.eo.c)

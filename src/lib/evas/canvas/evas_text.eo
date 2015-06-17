@@ -1,4 +1,4 @@
-class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
+class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties, Evas.Filter)
 {
    legacy_prefix: evas_object_text;
    eo_prefix: evas_obj_text;
@@ -219,64 +219,6 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
             a: int; /*@ The alpha component of the given color. */
          }
       }
-      @property filter_program {
-         set {
-            /*@ Set an Evas filter program on this Text Object.
-
-            If the program fails to compile (syntax error, invalid
-            buffer name, etc...), the standard text effects will be
-            applied instead (SHADOW, etc...). switch back to the
-            standard text effects.
-
-            @since 1.9
-            @note EXPERIMENTAL FEATURE. This is an unstable API,
-            please use only for testing purposes.
-            @see @ref evasfiltersref "Evas filters reference"
-            */
-            legacy: null;
-         }
-         values {
-            program: const(char)*; /*@ The program code, as defined
-              by the @ref evasfiltersref "Evas filters script language".
-              Pass NULL to remove the former program and switch back
-              to the standard text effect */
-         }
-      }
-      @property filter_source {
-         set {
-            /*@ Bind an object to use as a mask or texture with Evas Filters.
-
-            This will create automatically a new RGBA buffer containing
-            the source object's pixels (as it is rendered).
-
-            @since 1.9
-            @note EXPERIMENTAL FEATURE. This is an unstable API,
-            please use only for testing purposes.
-            @see @ref evasfiltersref "Evas filters reference" */
-            legacy: null;
-         }
-         values {
-            name: const(char)*; /*@ Object name as used in the program code */
-            eobj: Evas.Object *; /*@ Eo object to use through proxy rendering */
-         }
-      }
-      @property filter_state {
-         set {
-            /*@ Set the current state of the filter (for use from Edje)
-
-            @internal
-            @since 1.15
-            */
-            legacy: null;
-         }
-         values {
-            cur_state: const(char)*;
-            cur_val: double(0.0);
-            next_state: const(char)*;
-            next_val: double(0.0);
-            animpos: double(0.0);
-         }
-      }
       @property max_descent {
          get {
             return: Evas.Coord;
@@ -384,5 +326,12 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties)
       Efl.Text_Properties.font.set;
       Efl.Text_Properties.font_source.get;
       Efl.Text_Properties.font_source.set;
+      Efl.Gfx.Filter.program.set;
+      Efl.Gfx.Filter.program.get;
+      Efl.Gfx.Filter.source_set;
+      Efl.Gfx.Filter.source_get;
+      Efl.Gfx.Filter.state.set;
+      Evas.Filter.dirty;
+      Evas.Filter.input_render;
    }
 }
