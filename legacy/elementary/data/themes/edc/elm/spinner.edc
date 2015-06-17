@@ -1,4 +1,5 @@
 group { name: "elm/spinner/base/default";
+   alias: "elm/spinner/base/colorselector/default";
    images.image: "vert_bar_inset.png" COMP;
    parts {
       part { name: "clip"; type: RECT;
