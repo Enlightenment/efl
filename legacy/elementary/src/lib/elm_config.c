@@ -3117,6 +3117,8 @@ elm_config_window_auto_focus_animate_set(Eina_Bool enable)
 EAPI void
 elm_config_all_flush(void)
 {
+   FILE *f;
+
 #ifdef HAVE_ELEMENTARY_X
    if (ecore_x_display_get())
      ecore_x_window_prop_string_set(_config_win, _atom[ATOM_E_PROFILE],
@@ -3126,9 +3128,12 @@ elm_config_all_flush(void)
 
    _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s/flush",
                           _elm_profile);
-   FILE *fp = fopen(buf, "w+");
-   fprintf(fp, "flush");
-   fclose(fp);
+   f = fopen(buf, "w+");
+   if (f)
+     {
+        fprintf(f, "flush");
+        fclose(f);
+     }
 }
 
 static void
