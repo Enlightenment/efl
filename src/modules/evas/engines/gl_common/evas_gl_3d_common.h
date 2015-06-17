@@ -17,17 +17,17 @@ Evas_GL_Image       *e3d_texture_get(E3D_Texture *texture);
 void                 e3d_texture_import(E3D_Texture *texture, GLuint tex);
 Eina_Bool            e3d_texture_is_imported_get(const E3D_Texture *texture);
 
-void                 e3d_texture_wrap_set(E3D_Texture *texture, Evas_3D_Wrap_Mode s, Evas_3D_Wrap_Mode t);
-void                 e3d_texture_wrap_get(const E3D_Texture *texture, Evas_3D_Wrap_Mode *s, Evas_3D_Wrap_Mode *t);
+void                 e3d_texture_wrap_set(E3D_Texture *texture, Evas_Canvas3D_Wrap_Mode s, Evas_Canvas3D_Wrap_Mode t);
+void                 e3d_texture_wrap_get(const E3D_Texture *texture, Evas_Canvas3D_Wrap_Mode *s, Evas_Canvas3D_Wrap_Mode *t);
 
-void                 e3d_texture_filter_set(E3D_Texture *texture, Evas_3D_Texture_Filter min, Evas_3D_Texture_Filter mag);
-void                 e3d_texture_filter_get(const E3D_Texture *texture, Evas_3D_Texture_Filter *min, Evas_3D_Texture_Filter *mag);
+void                 e3d_texture_filter_set(E3D_Texture *texture, Evas_Canvas3D_Texture_Filter min, Evas_Canvas3D_Texture_Filter mag);
+void                 e3d_texture_filter_get(const E3D_Texture *texture, Evas_Canvas3D_Texture_Filter *min, Evas_Canvas3D_Texture_Filter *mag);
 
 /* Drawable */
 E3D_Drawable        *e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_format);
 void                 e3d_drawable_free(E3D_Drawable *drawable);
-void                 e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3D_Scene_Public_Data *data);
-Eina_Bool            e3d_drawable_scene_render_to_texture(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_3D_Scene_Public_Data *data);
+void                 e3d_drawable_scene_render(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_Canvas3D_Scene_Public_Data *data);
+Eina_Bool            e3d_drawable_scene_render_to_texture(E3D_Drawable *drawable, E3D_Renderer *renderer, Evas_Canvas3D_Scene_Public_Data *data);
 void                 e3d_drawable_size_get(E3D_Drawable *drawable, int *w, int *h);
 GLuint               e3d_drawable_texture_id_get(E3D_Drawable *drawable);
 GLuint               e3d_drawable_texture_color_pick_id_get(E3D_Drawable *drawable);

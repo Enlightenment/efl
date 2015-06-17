@@ -1,7 +1,7 @@
-class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
+class Evas_Canvas3D_Texture (Evas_Canvas3D_Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
-   data : Evas_3D_Texture_Data;
+   data : Evas_Canvas3D_Texture_Data;
    methods {
       @property source_visible {
          set {
@@ -13,18 +13,18 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
 
               By default, source object is visible.
 
-              @see evas_3d_texture_source_set()
+              @see evas_canvas3d_texture_source_set()
 
-              @ingroup Evas_3D_Texture
+              @ingroup Evas_Canvas3D_Texture
              */
          }
          get {
             /*@
               Get the visibility flag of the source evas object of the given texture.
 
-              @see evas_3d_texture_source_visible_set()
+              @see evas_canvas3d_texture_source_visible_set()
 
-              @ingroup Evas_3D_Texture
+              @ingroup Evas_Canvas3D_Texture
              */
          }
          values {
@@ -40,14 +40,14 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
 
               By default, is enabled.
 
-              @ingroup Evas_3D_Texture
+              @ingroup Evas_Canvas3D_Texture
              */
          }
          get {
             /*@
               Get enable flag of generation texture unit with support atlas.
 
-              @ingroup Evas_3D_Texture
+              @ingroup Evas_Canvas3D_Texture
              */
          }
          values {
@@ -58,9 +58,9 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Set the data of the given texture.
 
-           @see evas_3d_texture_file_set()
+           @see evas_canvas3d_texture_file_set()
 
-           @ingroup Evas_3D_Texture
+           @ingroup Evas_Canvas3D_Texture
           */
 
          params {
@@ -75,7 +75,7 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Set the data of the given texture from file.
 
-           @ingroup Evas_3D_Texture
+           @ingroup Evas_Canvas3D_Texture
           */
 
          params {
@@ -91,9 +91,9 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
            Evas 3D support using existing evas object as a texture source. This feature
            make it possible using any exisiting evas object inside 3D scene.
 
-           @see evas_3d_texture_source_visible_set
+           @see evas_canvas3d_texture_source_visible_set
 
-           @ingroup Evas_3D_Texture
+           @ingroup Evas_Canvas3D_Texture
           */
 
          params {
@@ -105,14 +105,14 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Get the color format of the given texture.
 
-           EVAS_3D_COLOR_FORMAT_RGBA will be returned if the texture has source object.
+           EVAS_CANVAS3D_COLOR_FORMAT_RGBA will be returned if the texture has source object.
            Otherwise, the color format of the data will be returned.
 
-           @see evas_3d_texture_data_set()
-           @see evas_3d_texture_file_set()
-           @see evas_3d_texture_source_set()
+           @see evas_canvas3d_texture_data_set()
+           @see evas_canvas3d_texture_file_set()
+           @see evas_canvas3d_texture_source_set()
 
-           @ingroup Evas_3D_Texture
+           @ingroup Evas_Canvas3D_Texture
           */
          return: Evas_Colorspace;
       }
@@ -124,11 +124,11 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
            If the texture has source object, the size of the source object will be
            returned. Otherwise, the size of the data (or image file) will be returned.
 
-           @see evas_3d_texture_data_set()
-           @see evas_3d_texture_file_set()
-           @see evas_3d_texture_source_set()
+           @see evas_canvas3d_texture_data_set()
+           @see evas_canvas3d_texture_file_set()
+           @see evas_canvas3d_texture_source_set()
 
-           @ingroup Evas_3D_Texture
+           @ingroup Evas_Canvas3D_Texture
           */
          params {
             @out w: int; /*@ Pointer to receive the width of the texture size. */
@@ -142,13 +142,13 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
            If the texture coordinate exceed range [0.0, 1.0] the values are modified
            according to the wrap mode.
 
-           Default wrap modes are both EVAS_3D_WRAP_MODE_CLAMP for s and t.
+           Default wrap modes are both EVAS_CANVAS3D_WRAP_MODE_CLAMP for s and t.
 
-           @ingroup Evas_3D_Texture
+           @ingroup Evas_Canvas3D_Texture
           */
          params {
-            @in s: Evas_3D_Wrap_Mode; /*@ Wrap mode for S-axis. */
-            @in t: Evas_3D_Wrap_Mode; /*@ Wrap mode for T-axis. */
+            @in s: Evas_Canvas3D_Wrap_Mode; /*@ Wrap mode for S-axis. */
+            @in t: Evas_Canvas3D_Wrap_Mode; /*@ Wrap mode for T-axis. */
          }
       }
 
@@ -156,14 +156,14 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Get the wrap mode of the given texture.
 
-           @see evas_3d_texture_wrap_set()
+           @see evas_canvas3d_texture_wrap_set()
 
-           @ingroup Evas_3D_Texture
+           @ingroup Evas_Canvas3D_Texture
           */
 
          params {
-            @out s: Evas_3D_Wrap_Mode; /*@ Pointer to receive S-axis wrap mode. */
-            @out t: Evas_3D_Wrap_Mode; /*@ Pointer to receive T-axis wrap mode. */
+            @out s: Evas_Canvas3D_Wrap_Mode; /*@ Pointer to receive S-axis wrap mode. */
+            @out t: Evas_Canvas3D_Wrap_Mode; /*@ Pointer to receive T-axis wrap mode. */
          }
       }
 
@@ -171,14 +171,14 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Set the filter of the given texture.
 
-           Default filters are both EVAS_3D_TEXTURE_FILTER_NEAREST for s and t.
+           Default filters are both EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST for s and t.
 
-           @ingroup Evas_3D_Texture
+           @ingroup Evas_Canvas3D_Texture
           */
 
          params {
-            @in min: Evas_3D_Texture_Filter; /*@ Minification filter used when down-scaling. */
-            @in mag: Evas_3D_Texture_Filter; /*@ Magnification filter used when up-scaling. */
+            @in min: Evas_Canvas3D_Texture_Filter; /*@ Minification filter used when down-scaling. */
+            @in mag: Evas_Canvas3D_Texture_Filter; /*@ Magnification filter used when up-scaling. */
          }
       }
 
@@ -190,13 +190,13 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
            @param min           Pointer to receive the minification filter.
            @param mag           Pointer to receive the magnification filter.
 
-           @see evas_3d_texture_filter_set()
+           @see evas_canvas3d_texture_filter_set()
 
-           @ingroup Evas_3D_Texture
+           @ingroup Evas_Canvas3D_Texture
           */
          params {
-            @out min: Evas_3D_Texture_Filter; /*@ Pointer to receive the minification filter. */
-            @out mag: Evas_3D_Texture_Filter; /*@ Pointer to receive the magnification filter. */
+            @out min: Evas_Canvas3D_Texture_Filter; /*@ Pointer to receive the minification filter. */
+            @out mag: Evas_Canvas3D_Texture_Filter; /*@ Pointer to receive the magnification filter. */
          }
       }
    }
@@ -204,8 +204,8 @@ class Evas_3D_Texture (Evas_3D_Object, Evas.Common_Interface)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Evas_3D_Object.update_notify;
-      Evas_3D_Object.change_notify;
+      Evas_Canvas3D_Object.update_notify;
+      Evas_Canvas3D_Object.change_notify;
    }
 
 }

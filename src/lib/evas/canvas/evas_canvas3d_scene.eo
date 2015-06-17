@@ -1,7 +1,7 @@
-class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
+class Evas_Canvas3D_Scene (Evas_Canvas3D_Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
-   data: Evas_3D_Scene_Data;
+   data: Evas_Canvas3D_Scene_Data;
    methods {
       size_set {
          /*@
@@ -10,7 +10,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
            A scene should be rendered to be displayed through an image objects. The
            resolution defines size of the internal surface holding the rendered result.
 
-           @ingroup Evas_3D_Scene
+           @ingroup Evas_Canvas3D_Scene
           */
          params {
             @in w: int;  /*@ Width of the resolution. */
@@ -22,7 +22,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Get the internal resolution of a scene.
 
-           @ingroup Evas_3D_Scene
+           @ingroup Evas_Canvas3D_Scene
           */
          params {
             @out w: int;  /*@ Pointer to receive width of the resolution. */
@@ -40,7 +40,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
 
            Default background color is (0.0, 0.0, 0.0, 0.0).
 
-           @ingroup Evas_3D_Scene
+           @ingroup Evas_Canvas3D_Scene
           */
          params {
             @in r: Evas_Real; /*@ Red component of the background color. */
@@ -54,7 +54,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Get the background color of a scene.
 
-           @ingroup Evas_3D_Scene
+           @ingroup Evas_Canvas3D_Scene
           */
          params {
             @out r: Evas_Real; /*@ Pointer to receive red component of the background color.*/
@@ -72,14 +72,14 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
            (0, 0) and right-bottom is (w, h) where (w, h) is the size of the scene.
            The texture coordinate is useful when using proxy texture source.
 
-           @ingroup Evas_3D_Scene
+           @ingroup Evas_Canvas3D_Scene
           */
          return: bool;
          params {
             @in x: Evas_Real;         /*@ X coordinate of the picking position. */
             @in y: Evas_Real;         /*@ Y coordinate of the picking position. */
-            @out node: Evas_3D_Node *; /*@ Pointer to receive the node contains the picked mesh. */
-            @out mesh: Evas_3D_Mesh *; /*@ Pointer to receive the picked mesh. */
+            @out node: Evas_Canvas3D_Node *; /*@ Pointer to receive the node contains the picked mesh. */
+            @out mesh: Evas_Canvas3D_Mesh *; /*@ Pointer to receive the picked mesh. */
             @out s: Evas_Real;        /*@ Pointer to receive the texture "s" coordinate. */
             @out t: Evas_Real;        /*@ Pointer to receive the texture "t" coordinate. */
          }
@@ -89,13 +89,13 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Search given node in the given position.
 
-           @ingroup Evas_3D_Scene
+           @ingroup Evas_Canvas3D_Scene
          */
-         return: Evas_3D_Node *;
+         return: Evas_Canvas3D_Node *;
          params {
             @in x: Evas_Real;         /*@ X coordinate of the picking position. */
             @in y: Evas_Real;         /*@ Y coordinate of the picking position. */
-            @in node: Evas_3D_Node *;  /*@ Node for search. */
+            @in node: Evas_Canvas3D_Node *;  /*@ Node for search. */
          }
       }
 
@@ -103,9 +103,9 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Get list of the all root members from scene in the given position.
 
-           @ingroup Evas_3D_Scene
+           @ingroup Evas_Canvas3D_Scene
          */
-         return: list<Evas_3D_Node *> *;
+         return: list<Evas_Canvas3D_Node *> *;
          params {
             @in x: Evas_Real;         /*@ X coordinate of the picking position. */
             @in y: Evas_Real;         /*@ Y coordinate of the picking position. */
@@ -118,7 +118,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
            If shadows_enabled @c EINA_TRUE, the objects in the scene can throw shadow to another objects located behind them.
            The depth map used for shading. Directed and projective light sources are supported.
 
-           @ingroup Evas_3D_Scene
+           @ingroup Evas_Canvas3D_Scene
           */
          params {
             @in shadows_enabled: bool;  /*@ shadows enabled status. */
@@ -130,7 +130,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
            Get shadows enabled status for given scene.
            @return The shadows enabled status.
 
-           @ingroup Evas_3D_Scene
+           @ingroup Evas_Canvas3D_Scene
          */
          return: bool;
          params {
@@ -140,7 +140,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Get status of color picking of the scene.
 
-           @ingroup Evas_3D_Scene
+           @ingroup Evas_Canvas3D_Scene
           */
          return: bool;
          params {
@@ -150,7 +150,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Set posibility color picking.
 
-           @ingroup Evas_3D_Scene
+           @ingroup Evas_Canvas3D_Scene
           */
          return: bool;
          params {
@@ -163,7 +163,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
             /*@
               Set the root node of a scene.
 
-              @ingroup Evas_3D_Scene
+              @ingroup Evas_Canvas3D_Scene
              */
          }
          get {
@@ -172,11 +172,11 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
 
               @return        The root node of the given scene.
 
-              @ingroup Evas_3D_Scene
+              @ingroup Evas_Canvas3D_Scene
              */
          }
          values {
-            node: Evas_3D_Node *; /*@ A node which will be used as a root node for the scene. */
+            node: Evas_Canvas3D_Node *; /*@ A node which will be used as a root node for the scene. */
          }
       }
 
@@ -185,7 +185,7 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
             /*@
               Set the camera node of a scene.
 
-              @ingroup Evas_3D_Scene
+              @ingroup Evas_Canvas3D_Scene
              */
          }
          get {
@@ -194,18 +194,18 @@ class Evas_3D_Scene (Evas_3D_Object, Evas.Common_Interface)
 
               @return        The camera node of the given scene.
 
-              @ingroup Evas_3D_Scene
+              @ingroup Evas_Canvas3D_Scene
              */
          }
          values {
-            node: Evas_3D_Node *; /*@ A node which will be used as a camera node for the scene. */
+            node: Evas_Canvas3D_Node *; /*@ A node which will be used as a camera node for the scene. */
          }
       }
    }
    implements {
       Eo.Base.constructor;
-      Evas_3D_Object.update_notify;
-      Evas_3D_Object.change_notify;
+      Evas_Canvas3D_Object.update_notify;
+      Evas_Canvas3D_Object.change_notify;
    }
 
 }

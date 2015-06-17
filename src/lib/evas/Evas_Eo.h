@@ -170,16 +170,16 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
  */
 
 /**
- * @page evas_3d_main Evas 3D
+ * @page evas_canvas3d_main Evas 3D
  *
  * @since 1.10
  *
  * @section toc Table of Contents
  *
- * @li @ref evas_3d_intro
- * @li @ref evas_3d_example
+ * @li @ref evas_canvas3d_intro
+ * @li @ref evas_canvas3d_example
  *
- * @section evas_3d_intro Introduction
+ * @section evas_canvas3d_intro Introduction
  *
  * Evas 3D is an extension to support 3D scene graph rendering into 2D Evas
  * canvas supporting typicall tree-based scene graph manipulation and other 3D
@@ -210,20 +210,20 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
  * evas objects. This can make it possible putting 3D things into existing 2D
  * application layouts.
  *
- * @section evas_3d_example Introductory Example
+ * @section evas_canvas3d_example Introductory Example
  *
  * @include evas-3d-cube.c
  */
 
 /**
- * @defgroup Evas_3D_Types Types & Enums
+ * @defgroup Evas_Canvas3D_Types Types & Enums
  * @ingroup Evas_3D
  *
  * Primitive type definitions and enumations.
  */
 
 /**
- * @defgroup Evas_3D_Object Generic 3D Object Descriptions
+ * @defgroup Evas_Canvas3D_Object Generic 3D Object Descriptions
  * @ingroup Evas_3D
  *
  * Evas 3D object is a generic type of all evas 3D objects like scene, node,
@@ -241,7 +241,7 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
  */
 
 /**
- * @defgroup Evas_3D_Scene Scene Object
+ * @defgroup Evas_Canvas3D_Scene Scene Object
  * @ingroup Evas_3D
  *
  * A scene represents a captured image of a scene graph through its viewing
@@ -250,7 +250,7 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
  */
 
 /**
- * @defgroup Evas_3D_Node Node Object
+ * @defgroup Evas_Canvas3D_Node Node Object
  * @ingroup Evas_3D
  *
  * A node is used for hierarchical construction of a scene graph. Evas 3D
@@ -260,7 +260,7 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
  */
 
 /**
- * @defgroup Evas_3D_Camera Camera Object
+ * @defgroup Evas_Canvas3D_Camera Camera Object
  * @ingroup Evas_3D
  *
  * A camera object is used for taking a picture of a scene graph. A camera
@@ -271,13 +271,13 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
  * camera on a node. If one wants to locate several cameras having same
  * properties, instead of creating multiple cameras, just create one camera and
  * multiple nodes containing the camera and locate them at each desired position
- * and direction. Just for convinience, use evas_3d_node_position_set() to move
- * the camera to desired position and use evas_3d_node_look_at_set() to adjust
+ * and direction. Just for convinience, use evas_canvas3d_node_position_set() to move
+ * the camera to desired position and use evas_canvas3d_node_look_at_set() to adjust
  * the viewing direction of the camera.
  */
 
 /**
- * @defgroup Evas_3D_Light Light Object
+ * @defgroup Evas_Canvas3D_Light Light Object
  * @ingroup Evas_3D
  *
  * A light object represents a set of properties of a light source. Evas 3D
@@ -288,7 +288,7 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
  */
 
 /**
- * @defgroup Evas_3D_Mesh Mesh Object
+ * @defgroup Evas_Canvas3D_Mesh Mesh Object
  * @ingroup Evas_3D
  *
  * A mesh object is a set of information on a visible geometrical object like
@@ -304,26 +304,26 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
  */
 
 /**
- * @defgroup Evas_3D_Primitive Primitive Object
+ * @defgroup Evas_Canvas3D_Primitive Primitive Object
  * @ingroup Evas_3D
  *
  * A primitive object is an object with necessary data for creating meshes with ptimitive shapes.
- * Data from a primitive can be set to Evas_3D_Mesh by using evas_3d_mesh_from_primitive_set()
+ * Data from a primitive can be set to Evas_Canvas3D_Mesh by using evas_canvas3d_mesh_from_primitive_set()
  * function.
  */
 
 /**
- * @defgroup Evas_3D_Texture Texture Object
+ * @defgroup Evas_Canvas3D_Texture Texture Object
  * @ingroup Evas_3D
  *
  * A texture object is an image represents material of surfaces. A texture can
- * be set to a slot of Evas_3D_Material by using evas_3d_material_texture_set()
+ * be set to a slot of Evas_Canvas3D_Material by using evas_canvas3d_material_texture_set()
  * function. The data of a texture can be loaded from memory, file and other
  * Evas_Object.
  */
 
 /**
- * @defgroup Evas_3D_Material Material Object
+ * @defgroup Evas_Canvas3D_Material Material Object
  * @ingroup Evas_3D
  *
  * A material object represents properties of surfaces. Evas 3D defines the
@@ -342,129 +342,129 @@ EAPI extern const Eo_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
  * precision and fixed-point types will be useful but it's not supported yet.
  *
  * @since 1.10
- * @ingroup Evas_3D_Types
+ * @ingroup Evas_Canvas3D_Types
  */
 typedef double   Evas_Real;
 
 
 /**
- * @typedef Evas_3D_Object
+ * @typedef Evas_Canvas3D_Object
  *
  * 3D Object object handle
  *
  * @since 1.10
- * @ingroup Evas_3D_Object
+ * @ingroup Evas_Canvas3D_Object
  */
-typedef Eo    Evas_3D_Object;
+typedef Eo    Evas_Canvas3D_Object;
 
-#define _EVAS_3D_OBJECT_EO_CLASS_TYPE
+#define _EVAS_CANVAS3D_OBJECT_EO_CLASS_TYPE
 
 /**
- * @typedef Evas_3D_Scene
+ * @typedef Evas_Canvas3D_Scene
  *
  * Scene object handle
  *
  * @since 1.10
- * @ingroup Evas_3D_Scene
+ * @ingroup Evas_Canvas3D_Scene
  */
-typedef Eo    Evas_3D_Scene;
+typedef Eo    Evas_Canvas3D_Scene;
 
-#define _EVAS_3D_SCENE_EO_CLASS_TYPE
+#define _EVAS_CANVAS3D_SCENE_EO_CLASS_TYPE
 
 /**
- * @typedef Evas_3D_Node
+ * @typedef Evas_Canvas3D_Node
  *
  * Node object handle
  *
  * @since 1.10
- * @ingroup Evas_3D_Node
+ * @ingroup Evas_Canvas3D_Node
  */
-typedef Eo     Evas_3D_Node;
+typedef Eo     Evas_Canvas3D_Node;
 
-#define _EVAS_3D_NODE_EO_CLASS_TYPE
+#define _EVAS_CANVAS3D_NODE_EO_CLASS_TYPE
 
 /**
- * @typedef Evas_3D_Camera
+ * @typedef Evas_Canvas3D_Camera
  *
  * Camera object handle
  *
  * @since 1.10
- * @ingroup Evas_3D_Camera
+ * @ingroup Evas_Canvas3D_Camera
  */
-typedef Eo   Evas_3D_Camera;
+typedef Eo   Evas_Canvas3D_Camera;
 
-#define _EVAS_3D_CAMERA_EO_CLASS_TYPE
+#define _EVAS_CANVAS3D_CAMERA_EO_CLASS_TYPE
 
 /**
- * @typedef Evas_3D_Light
+ * @typedef Evas_Canvas3D_Light
  *
  * Light object handle
  *
  * @since 1.10
- * @ingroup Evas_3D_Light
+ * @ingroup Evas_Canvas3D_Light
  */
-typedef Eo    Evas_3D_Light;
+typedef Eo    Evas_Canvas3D_Light;
 
-#define _EVAS_3D_LIGHT_EO_CLASS_TYPE
+#define _EVAS_CANVAS3D_LIGHT_EO_CLASS_TYPE
 
 /**
- * @typedef Evas_3D_Mesh
+ * @typedef Evas_Canvas3D_Mesh
  *
  * Mesh object handle
  *
  * @since 1.10
- * @ingroup Evas_3D_Mesh
+ * @ingroup Evas_Canvas3D_Mesh
  */
-typedef Eo     Evas_3D_Mesh;
+typedef Eo     Evas_Canvas3D_Mesh;
 
-#define _EVAS_3D_MESH_EO_CLASS_TYPE
+#define _EVAS_CANVAS3D_MESH_EO_CLASS_TYPE
 
 /**
- * @typedef Evas_3D_Texture
+ * @typedef Evas_Canvas3D_Texture
  *
  * Texture object handle
  *
  * @since 1.10
- * @ingroup Evas_3D_Texture
+ * @ingroup Evas_Canvas3D_Texture
  */
-typedef Eo    Evas_3D_Texture;
+typedef Eo    Evas_Canvas3D_Texture;
 
-#define _EVAS_3D_TEXTURE_EO_CLASS_TYPE
+#define _EVAS_CANVAS3D_TEXTURE_EO_CLASS_TYPE
 
 /**
- * @typedef Evas_3D_Material
+ * @typedef Evas_Canvas3D_Material
  *
  * Material object handle
  *
  * @since 1.10
- * @ingroup Evas_3D_Material
+ * @ingroup Evas_Canvas3D_Material
  */
-typedef Eo     Evas_3D_Material;
+typedef Eo     Evas_Canvas3D_Material;
 
-#define _EVAS_3D_MATERIAL_EO_CLASS_TYPE
+#define _EVAS_CANVAS3D_MATERIAL_EO_CLASS_TYPE
 
 /**
- * @typedef Evas_3D_Primitive
+ * @typedef Evas_Canvas3D_Primitive
  *
  * Primitive object handle
  *
  * @since 1.15
- * @ingroup Evas_3D_Primitive
+ * @ingroup Evas_Canvas3D_Primitive
  */
-typedef Eo     Evas_3D_Primitive;
+typedef Eo     Evas_Canvas3D_Primitive;
 
-#define _EVAS_3D_PRIMITIVE_EO_CLASS_TYPE
+#define _EVAS_CANVAS3D_PRIMITIVE_EO_CLASS_TYPE
 
 /**
- * @typedef Evas_3D_Surface_Func
+ * @typedef Evas_Canvas3D_Surface_Func
  *
  * User-defined parametric surface function.
  * Used for easy creation of custom surfaces as a primitive.
  *
  * @since 1.15
- * @ingroup Evas_3D_Primitive
+ * @ingroup Evas_Canvas3D_Primitive
  */
-typedef void (Evas_3D_Surface_Func)(Evas_Real *out_x,
+typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
                                     Evas_Real *out_y,
                                     Evas_Real *out_z,
                                     Evas_Real a,
@@ -474,179 +474,179 @@ typedef void (Evas_3D_Surface_Func)(Evas_Real *out_x,
  * Type of 3D Object
  *
  * @since 1.10
- * @ingroup Evas_3D_Type
+ * @ingroup Evas_Canvas3D_Type
  */
-typedef enum _Evas_3D_Object_Type
+typedef enum _Evas_Canvas3D_Object_Type
 {
-   EVAS_3D_OBJECT_TYPE_INVALID = 0,
-   EVAS_3D_OBJECT_TYPE_SCENE,
-   EVAS_3D_OBJECT_TYPE_NODE,
-   EVAS_3D_OBJECT_TYPE_CAMERA,
-   EVAS_3D_OBJECT_TYPE_LIGHT,
-   EVAS_3D_OBJECT_TYPE_MODEL,
-   EVAS_3D_OBJECT_TYPE_MESH,
-   EVAS_3D_OBJECT_TYPE_TEXTURE,
-   EVAS_3D_OBJECT_TYPE_MATERIAL,
-   EVAS_3D_OBJECT_TYPE_PRIMITIVE,
-} Evas_3D_Object_Type;
+   EVAS_CANVAS3D_OBJECT_TYPE_INVALID = 0,
+   EVAS_CANVAS3D_OBJECT_TYPE_SCENE,
+   EVAS_CANVAS3D_OBJECT_TYPE_NODE,
+   EVAS_CANVAS3D_OBJECT_TYPE_CAMERA,
+   EVAS_CANVAS3D_OBJECT_TYPE_LIGHT,
+   EVAS_CANVAS3D_OBJECT_TYPE_MODEL,
+   EVAS_CANVAS3D_OBJECT_TYPE_MESH,
+   EVAS_CANVAS3D_OBJECT_TYPE_TEXTURE,
+   EVAS_CANVAS3D_OBJECT_TYPE_MATERIAL,
+   EVAS_CANVAS3D_OBJECT_TYPE_PRIMITIVE,
+} Evas_Canvas3D_Object_Type;
 
 /**
  * State of the Evas 3D
  *
  * @since 1.10
- * @ingroup Evas_3D_Type
+ * @ingroup Evas_Canvas3D_Type
  */
-typedef enum _Evas_3D_State
+typedef enum _Evas_Canvas3D_State
 {
-   EVAS_3D_STATE_MAX = 16,
+   EVAS_CANVAS3D_STATE_MAX = 16,
 
-   EVAS_3D_STATE_ANY = 0,
+   EVAS_CANVAS3D_STATE_ANY = 0,
 
-   EVAS_3D_STATE_SCENE_ROOT_NODE = 1,
-   EVAS_3D_STATE_SCENE_CAMERA_NODE,
-   EVAS_3D_STATE_SCENE_BACKGROUND_COLOR,
-   EVAS_3D_STATE_SCENE_SIZE,
-   EVAS_3D_STATE_SCENE_SHADOWS_ENABLED,
-   EVAS_3D_STATE_SCENE_UPDATED,
+   EVAS_CANVAS3D_STATE_SCENE_ROOT_NODE = 1,
+   EVAS_CANVAS3D_STATE_SCENE_CAMERA_NODE,
+   EVAS_CANVAS3D_STATE_SCENE_BACKGROUND_COLOR,
+   EVAS_CANVAS3D_STATE_SCENE_SIZE,
+   EVAS_CANVAS3D_STATE_SCENE_SHADOWS_ENABLED,
+   EVAS_CANVAS3D_STATE_SCENE_UPDATED,
 
-   EVAS_3D_STATE_TEXTURE_DATA = 1,
-   EVAS_3D_STATE_TEXTURE_WRAP,
-   EVAS_3D_STATE_TEXTURE_FILTER,
+   EVAS_CANVAS3D_STATE_TEXTURE_DATA = 1,
+   EVAS_CANVAS3D_STATE_TEXTURE_WRAP,
+   EVAS_CANVAS3D_STATE_TEXTURE_FILTER,
 
-   EVAS_3D_STATE_MATERIAL_ID = 1,
-   EVAS_3D_STATE_MATERIAL_COLOR,
-   EVAS_3D_STATE_MATERIAL_TEXTURE,
+   EVAS_CANVAS3D_STATE_MATERIAL_ID = 1,
+   EVAS_CANVAS3D_STATE_MATERIAL_COLOR,
+   EVAS_CANVAS3D_STATE_MATERIAL_TEXTURE,
 
-   EVAS_3D_STATE_MESH_VERTEX_COUNT = 1,
-   EVAS_3D_STATE_MESH_FRAME,
-   EVAS_3D_STATE_MESH_MATERIAL,
-   EVAS_3D_STATE_MESH_TRANSFORM,
-   EVAS_3D_STATE_MESH_VERTEX_DATA,
-   EVAS_3D_STATE_MESH_INDEX_DATA,
-   EVAS_3D_STATE_MESH_VERTEX_ASSEMBLY,
-   EVAS_3D_STATE_MESH_SHADE_MODE,
-   EVAS_3D_STATE_MESH_FOG,
-   EVAS_3D_STATE_MESH_BLENDING,
-   EVAS_3D_STATE_MESH_ALPHA_TEST,
-   EVAS_3D_STATE_MESH_COLOR_PICK,
+   EVAS_CANVAS3D_STATE_MESH_VERTEX_COUNT = 1,
+   EVAS_CANVAS3D_STATE_MESH_FRAME,
+   EVAS_CANVAS3D_STATE_MESH_MATERIAL,
+   EVAS_CANVAS3D_STATE_MESH_TRANSFORM,
+   EVAS_CANVAS3D_STATE_MESH_VERTEX_DATA,
+   EVAS_CANVAS3D_STATE_MESH_INDEX_DATA,
+   EVAS_CANVAS3D_STATE_MESH_VERTEX_ASSEMBLY,
+   EVAS_CANVAS3D_STATE_MESH_SHADE_MODE,
+   EVAS_CANVAS3D_STATE_MESH_FOG,
+   EVAS_CANVAS3D_STATE_MESH_BLENDING,
+   EVAS_CANVAS3D_STATE_MESH_ALPHA_TEST,
+   EVAS_CANVAS3D_STATE_MESH_COLOR_PICK,
 
-   EVAS_3D_STATE_CAMERA_PROJECTION = 1,
+   EVAS_CANVAS3D_STATE_CAMERA_PROJECTION = 1,
 
-   EVAS_3D_STATE_LIGHT_AMBIENT = 1,
-   EVAS_3D_STATE_LIGHT_DIFFUSE,
-   EVAS_3D_STATE_LIGHT_SPECULAR,
-   EVAS_3D_STATE_LIGHT_SPOT_DIR,
-   EVAS_3D_STATE_LIGHT_SPOT_EXP,
-   EVAS_3D_STATE_LIGHT_SPOT_CUTOFF,
-   EVAS_3D_STATE_LIGHT_ATTENUATION,
-   EVAS_3D_STATE_LIGHT_PROJECTION,
+   EVAS_CANVAS3D_STATE_LIGHT_AMBIENT = 1,
+   EVAS_CANVAS3D_STATE_LIGHT_DIFFUSE,
+   EVAS_CANVAS3D_STATE_LIGHT_SPECULAR,
+   EVAS_CANVAS3D_STATE_LIGHT_SPOT_DIR,
+   EVAS_CANVAS3D_STATE_LIGHT_SPOT_EXP,
+   EVAS_CANVAS3D_STATE_LIGHT_SPOT_CUTOFF,
+   EVAS_CANVAS3D_STATE_LIGHT_ATTENUATION,
+   EVAS_CANVAS3D_STATE_LIGHT_PROJECTION,
 
-   EVAS_3D_STATE_NODE_TRANSFORM_POSITION = 1,
-   EVAS_3D_STATE_NODE_TRANSFORM_ORIENTATION,
-   EVAS_3D_STATE_NODE_TRANSFORM_SCALE,
-   EVAS_3D_STATE_NODE_MESH_GEOMETRY,
-   EVAS_3D_STATE_NODE_MESH_MATERIAL,
-   EVAS_3D_STATE_NODE_MESH_FRAME,
-   EVAS_3D_STATE_NODE_MESH_SHADE_MODE,
-   EVAS_3D_STATE_NODE_MESH_MATERIAL_ID,
-   EVAS_3D_STATE_NODE_LIGHT,
-   EVAS_3D_STATE_NODE_CAMERA,
-   EVAS_3D_STATE_NODE_PARENT_POSITION,
-   EVAS_3D_STATE_NODE_PARENT_ORIENTATION,
-   EVAS_3D_STATE_NODE_PARENT_SCALE,
-   EVAS_3D_STATE_NODE_MEMBER,
-   EVAS_3D_STATE_NODE_PARENT_BILLBOARD,
-} Evas_3D_State;
+   EVAS_CANVAS3D_STATE_NODE_TRANSFORM_POSITION = 1,
+   EVAS_CANVAS3D_STATE_NODE_TRANSFORM_ORIENTATION,
+   EVAS_CANVAS3D_STATE_NODE_TRANSFORM_SCALE,
+   EVAS_CANVAS3D_STATE_NODE_MESH_GEOMETRY,
+   EVAS_CANVAS3D_STATE_NODE_MESH_MATERIAL,
+   EVAS_CANVAS3D_STATE_NODE_MESH_FRAME,
+   EVAS_CANVAS3D_STATE_NODE_MESH_SHADE_MODE,
+   EVAS_CANVAS3D_STATE_NODE_MESH_MATERIAL_ID,
+   EVAS_CANVAS3D_STATE_NODE_LIGHT,
+   EVAS_CANVAS3D_STATE_NODE_CAMERA,
+   EVAS_CANVAS3D_STATE_NODE_PARENT_POSITION,
+   EVAS_CANVAS3D_STATE_NODE_PARENT_ORIENTATION,
+   EVAS_CANVAS3D_STATE_NODE_PARENT_SCALE,
+   EVAS_CANVAS3D_STATE_NODE_MEMBER,
+   EVAS_CANVAS3D_STATE_NODE_PARENT_BILLBOARD,
+} Evas_Canvas3D_State;
 
 /**
  * Transform space
  *
  * @since 1.10
- * @ingroup Evas_3D_Types
+ * @ingroup Evas_Canvas3D_Types
  */
-typedef enum _Evas_3D_Space
+typedef enum _Evas_Canvas3D_Space
 {
-   EVAS_3D_SPACE_LOCAL = 0, /**< Local coordinate space */
-   EVAS_3D_SPACE_PARENT,    /**< Parent coordinate space */
-   EVAS_3D_SPACE_WORLD,     /**< World coordinate space */
-} Evas_3D_Space;
+   EVAS_CANVAS3D_SPACE_LOCAL = 0, /**< Local coordinate space */
+   EVAS_CANVAS3D_SPACE_PARENT,    /**< Parent coordinate space */
+   EVAS_CANVAS3D_SPACE_WORLD,     /**< World coordinate space */
+} Evas_Canvas3D_Space;
 
 /**
  * Types of a node
  *
  * @since 1.10
- * @ingroup Evas_3D_Types
+ * @ingroup Evas_Canvas3D_Types
  */
-typedef enum _Evas_3D_Node_Type
+typedef enum _Evas_Canvas3D_Node_Type
 {
-   EVAS_3D_NODE_TYPE_NODE = 0, /**< Node with no items */
-   EVAS_3D_NODE_TYPE_CAMERA,   /**< Node which can contain camera object */
-   EVAS_3D_NODE_TYPE_LIGHT,    /**< Node which can contain light object */
-   EVAS_3D_NODE_TYPE_MESH,     /**< Node which can contain mesh objects */
-} Evas_3D_Node_Type;
+   EVAS_CANVAS3D_NODE_TYPE_NODE = 0, /**< Node with no items */
+   EVAS_CANVAS3D_NODE_TYPE_CAMERA,   /**< Node which can contain camera object */
+   EVAS_CANVAS3D_NODE_TYPE_LIGHT,    /**< Node which can contain light object */
+   EVAS_CANVAS3D_NODE_TYPE_MESH,     /**< Node which can contain mesh objects */
+} Evas_Canvas3D_Node_Type;
 
 /**
  * Types of node orientation
  *
  * @since 1.13
- * @ingroup Evas_3D_Types
+ * @ingroup Evas_Canvas3D_Types
  */
-typedef enum _Evas_3D_Node_Orientation_Type
+typedef enum _Evas_Canvas3D_Node_Orientation_Type
 {
    /**< Node with no orientation properties */
-   EVAS_3D_NODE_ORIENTATION_TYPE_NONE = 0,
+   EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE = 0,
    /**< Node orientation is given as a point to look at and a vector
         that indicates the angle at which the subject is looking at the point */
-   EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_AT,
+   EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT,
    /**< Node orientation is given as id of another part to look at and a vector
         that indicates the angle at which the subject is looking at the part */
-   EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_TO,
+   EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_TO,
    /**< Node orientation is given as an angle and an axis to rotate around */
-   EVAS_3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS,
+   EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS,
    /**< Node orientation is given as a quaternion */
-   EVAS_3D_NODE_ORIENTATION_TYPE_QUATERNION,
-} Evas_3D_Node_Orientation_Type;
+   EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_QUATERNION,
+} Evas_Canvas3D_Node_Orientation_Type;
 
 /**
  * Vertex attribute IDs
  *
  * @since 1.10
- * @ingroup Evas_3D_Types
+ * @ingroup Evas_Canvas3D_Types
  */
-typedef enum _Evas_3D_Vertex_Attrib
+typedef enum _Evas_Canvas3D_Vertex_Attrib
 {
-   EVAS_3D_VERTEX_POSITION = 0,   /**< Vertex position */
-   EVAS_3D_VERTEX_NORMAL,         /**< Vertex normal */
-   EVAS_3D_VERTEX_TANGENT,        /**< Vertex tangent (for normal mapping) */
-   EVAS_3D_VERTEX_COLOR,          /**< Vertex color */
-   EVAS_3D_VERTEX_TEXCOORD,       /**< Vertex texture coordinate */
-} Evas_3D_Vertex_Attrib;
+   EVAS_CANVAS3D_VERTEX_POSITION = 0,   /**< Vertex position */
+   EVAS_CANVAS3D_VERTEX_NORMAL,         /**< Vertex normal */
+   EVAS_CANVAS3D_VERTEX_TANGENT,        /**< Vertex tangent (for normal mapping) */
+   EVAS_CANVAS3D_VERTEX_COLOR,          /**< Vertex color */
+   EVAS_CANVAS3D_VERTEX_TEXCOORD,       /**< Vertex texture coordinate */
+} Evas_Canvas3D_Vertex_Attrib;
 
 /**
  * Index formats
  *
  * @since 1.10
- * @ingroup Evas_3D_Types
+ * @ingroup Evas_Canvas3D_Types
  */
-typedef enum _Evas_3D_Index_Format
+typedef enum _Evas_Canvas3D_Index_Format
 {
-   EVAS_3D_INDEX_FORMAT_NONE = 0,       /**< Indexing is not used */
-   EVAS_3D_INDEX_FORMAT_UNSIGNED_BYTE,  /**< Index is of type unsigned byte */
-   EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT  /**< Index is of type unsigned short */
-} Evas_3D_Index_Format;
+   EVAS_CANVAS3D_INDEX_FORMAT_NONE = 0,       /**< Indexing is not used */
+   EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_BYTE,  /**< Index is of type unsigned byte */
+   EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT  /**< Index is of type unsigned short */
+} Evas_Canvas3D_Index_Format;
 
 /**
  * Frustum modes
  *
  * @since 1.12
- * @ingroup Evas_3D_Types
+ * @ingroup Evas_Canvas3D_Types
  */
-typedef enum _Evas_3D_Frustum_Mode
+typedef enum _Evas_Canvas3D_Frustum_Mode
 {
-   EVAS_3D_FRUSTUM_MODE_BSPHERE,
-   EVAS_3D_FRUSTUM_MODE_AABB,
-   EVAS_3D_FRUSTUM_MODE_CENTRAL_POINT
-} Evas_3D_Frustum_Mode;
+   EVAS_CANVAS3D_FRUSTUM_MODE_BSPHERE,
+   EVAS_CANVAS3D_FRUSTUM_MODE_AABB,
+   EVAS_CANVAS3D_FRUSTUM_MODE_CENTRAL_POINT
+} Evas_Canvas3D_Frustum_Mode;
 
 
 /**
@@ -656,230 +656,230 @@ typedef enum _Evas_3D_Frustum_Mode
  * primitives.
  *
  * @since 1.10
- * @ingroup Evas_3D_Types
+ * @ingroup Evas_Canvas3D_Types
  */
-typedef enum _Evas_3D_Vertex_Assembly
+typedef enum _Evas_Canvas3D_Vertex_Assembly
 {
    /**< A vertex is rendered as a point */
-   EVAS_3D_VERTEX_ASSEMBLY_POINTS = 0,
+   EVAS_CANVAS3D_VERTEX_ASSEMBLY_POINTS = 0,
    /**< Two vertices are organized as a line */
-   EVAS_3D_VERTEX_ASSEMBLY_LINES,
+   EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINES,
    /**< Vertices are organized as a connected line path */
-   EVAS_3D_VERTEX_ASSEMBLY_LINE_STRIP,
+   EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINE_STRIP,
    /**< Vertices are organized as a closed line path */
-   EVAS_3D_VERTEX_ASSEMBLY_LINE_LOOP,
+   EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINE_LOOP,
    /**< Three vertices are organized as a triangle */
-   EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES,
+   EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES,
    /**< Vertices are organized as connected triangles */
-   EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP,
+   EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP,
    /**< Vertices are organized as a triangle fan */
-   EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_FAN,
-} Evas_3D_Vertex_Assembly;
+   EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLE_FAN,
+} Evas_Canvas3D_Vertex_Assembly;
 
-typedef enum _Evas_3D_Blend_Func
+typedef enum _Evas_Canvas3D_Blend_Func
 {
    /**< The scale factors for color components is (0, 0, 0, 0)*/
-   EVAS_3D_BLEND_ZERO = 0,
+   EVAS_CANVAS3D_BLEND_ZERO = 0,
    /**< The scale factors for color components is (1, 1, 1, 1)*/
-   EVAS_3D_BLEND_ONE,
+   EVAS_CANVAS3D_BLEND_ONE,
    /**< The scale factors for color components is (Rs/kR, Gs/kG, Bs/kB, As/kA)*/
-   EVAS_3D_BLEND_SRC_COLOR,
+   EVAS_CANVAS3D_BLEND_SRC_COLOR,
    /**< The scale factors for color components is (1, 1, 1, 1) - (Rs/kR, Gs/kG, Bs/kB, As/kA)*/
-   EVAS_3D_BLEND_ONE_MINUS_SRC_COLOR,
+   EVAS_CANVAS3D_BLEND_ONE_MINUS_SRC_COLOR,
    /**< The scale factors for color components is (Rd/kR, Gd/kG, Bd/kB, Ad/kA)*/
-   EVAS_3D_BLEND_DST_COLOR,
+   EVAS_CANVAS3D_BLEND_DST_COLOR,
    /**< The scale factors for color components is (1, 1, 1, 1) - (Rd/kR, Gd/kG, Bd/kB, Ad/kA)*/
-   EVAS_3D_BLEND_ONE_MINUS_DST_COLOR,
+   EVAS_CANVAS3D_BLEND_ONE_MINUS_DST_COLOR,
    /**< The scale factors for color components is (As/kA, As/kA, As/kA, As/kA)*/
-   EVAS_3D_BLEND_SRC_ALPHA,
+   EVAS_CANVAS3D_BLEND_SRC_ALPHA,
    /**< The scale factors for color components is (1, 1, 1, 1) - (As/kA, As/kA, As/kA, As/kA)*/
-   EVAS_3D_BLEND_ONE_MINUS_SRC_ALPHA,
+   EVAS_CANVAS3D_BLEND_ONE_MINUS_SRC_ALPHA,
    /**< The scale factors for color components is (Ad/kA, Ad/kA, Ad/kA, Ad/kA)*/
-   EVAS_3D_BLEND_DST_ALPHA,
+   EVAS_CANVAS3D_BLEND_DST_ALPHA,
    /**< The scale factors for color components is (1, 1, 1, 1) - (Ad/kA, Ad/kA, Ad/kA, Ad/kA)*/
-   EVAS_3D_BLEND_ONE_MINUS_DST_ALPHA,
+   EVAS_CANVAS3D_BLEND_ONE_MINUS_DST_ALPHA,
    /**< The scale factors for color components is (Rc, Gc, Bc, Ac)*/
-   EVAS_3D_BLEND_CONSTANT_COLOR,
+   EVAS_CANVAS3D_BLEND_CONSTANT_COLOR,
    /**< The scale factors for color components is (1, 1, 1, 1) - (Rc, Gc, Bc, Ac)*/
-   EVAS_3D_BLEND_ONE_MINUS_CONSTANT_COLOR,
+   EVAS_CANVAS3D_BLEND_ONE_MINUS_CONSTANT_COLOR,
    /**< The scale factors for color components is (Ac, Ac, Ac, Ac)*/
-   EVAS_3D_BLEND_CONSTANT_ALPHA,
+   EVAS_CANVAS3D_BLEND_CONSTANT_ALPHA,
    /**< The scale factors for color components is (1, 1, 1, 1) - (Ac, Ac, Ac, Ac)*/
-   EVAS_3D_BLEND_ONE_MINUS_CONSTANT_ALPHA,
+   EVAS_CANVAS3D_BLEND_ONE_MINUS_CONSTANT_ALPHA,
    /**< The scale factors for color components is (i, i, i, 1) where i = min(As, kA, Ad)/kA*/
-   EVAS_3D_BLEND_SRC_ALPHA_SATURATE,
-} Evas_3D_Blend_Func;
+   EVAS_CANVAS3D_BLEND_SRC_ALPHA_SATURATE,
+} Evas_Canvas3D_Blend_Func;
 
 /**
  * Comparsion functions for testing(alpha, depth, stencil) in fragment shader.
  *
  * @since 1.14
- * @ingroup Evas_3D_Types
+ * @ingroup Evas_Canvas3D_Types
  */
-typedef enum _Evas_3D_Comparison
+typedef enum _Evas_Canvas3D_Comparison
 {
    /**< Never passes.*/
-   EVAS_3D_COMPARISON_NEVER,
+   EVAS_CANVAS3D_COMPARISON_NEVER,
    /**< Passes if the incoming value is less than the reference value.*/
-   EVAS_3D_COMPARISON_LESS,
+   EVAS_CANVAS3D_COMPARISON_LESS,
    /**< Passes if the incoming value is equal to the reference value.*/
-   EVAS_3D_COMPARISON_EQUAL,
+   EVAS_CANVAS3D_COMPARISON_EQUAL,
    /**< Passes if the incoming value is less than or equal to the reference value.*/
-   EVAS_3D_COMPARISON_LEQUAL,
+   EVAS_CANVAS3D_COMPARISON_LEQUAL,
    /**< Passes if the incoming value is greater than the reference value.*/
-   EVAS_3D_COMPARISON_GREATER,
+   EVAS_CANVAS3D_COMPARISON_GREATER,
    /**< Passes if the incoming value is not equal to the reference value.*/
-   EVAS_3D_COMPARISON_NOTEQUAL,
+   EVAS_CANVAS3D_COMPARISON_NOTEQUAL,
    /**< Passes if the incoming value is greater than or equal to the reference value.*/
-   EVAS_3D_COMPARISON_GEQUAL,
+   EVAS_CANVAS3D_COMPARISON_GEQUAL,
    /**< Always passes (initial value).*/
-   EVAS_3D_COMPARISON_ALWAYS,
-} Evas_3D_Comparison;
+   EVAS_CANVAS3D_COMPARISON_ALWAYS,
+} Evas_Canvas3D_Comparison;
 
 /**
  * Wrap modes
  *
  * @since 1.10
- * @ingroup Evas_3D_Types
+ * @ingroup Evas_Canvas3D_Types
  */
-typedef enum _Evas_3D_Wrap_Mode
+typedef enum _Evas_Canvas3D_Wrap_Mode
 {
    /**< Values will be clamped to be in range [min, max] */
-   EVAS_3D_WRAP_MODE_CLAMP = 0,
+   EVAS_CANVAS3D_WRAP_MODE_CLAMP = 0,
    /**< Values will be repeated */
-   EVAS_3D_WRAP_MODE_REPEAT,
+   EVAS_CANVAS3D_WRAP_MODE_REPEAT,
    /**< Values will be repeated in a reflected manner */
-   EVAS_3D_WRAP_MODE_REFLECT
-} Evas_3D_Wrap_Mode;
+   EVAS_CANVAS3D_WRAP_MODE_REFLECT
+} Evas_Canvas3D_Wrap_Mode;
 
 /**
  * Mesh primitive
  *
  * @since 1.12
- * @ingroup Evas_3D_Types
+ * @ingroup Evas_Canvas3D_Types
  */
-typedef enum _Evas_3D_Mesh_Primitive
+typedef enum _Evas_Canvas3D_Mesh_Primitive
 {
    /**< An empty space */
-   EVAS_3D_MESH_PRIMITIVE_NONE = 0,
+   EVAS_CANVAS3D_MESH_PRIMITIVE_NONE = 0,
    /**< One sided square */
-   EVAS_3D_MESH_PRIMITIVE_SQUARE,
+   EVAS_CANVAS3D_MESH_PRIMITIVE_SQUARE,
    /**< Cube */
-   EVAS_3D_MESH_PRIMITIVE_CUBE,
+   EVAS_CANVAS3D_MESH_PRIMITIVE_CUBE,
    /**< Cylinder (can use precision and texture scale) */
-   EVAS_3D_MESH_PRIMITIVE_CYLINDER,
+   EVAS_CANVAS3D_MESH_PRIMITIVE_CYLINDER,
    /**< Cone (can use precision and texture scale) */
-   EVAS_3D_MESH_PRIMITIVE_CONE,
+   EVAS_CANVAS3D_MESH_PRIMITIVE_CONE,
    /**< Sphere (can use precision and texture scale) */
-   EVAS_3D_MESH_PRIMITIVE_SPHERE,
+   EVAS_CANVAS3D_MESH_PRIMITIVE_SPHERE,
    /**< Torus (can use ratio, precision and texture scale) */
-   EVAS_3D_MESH_PRIMITIVE_TORUS,
+   EVAS_CANVAS3D_MESH_PRIMITIVE_TORUS,
    /**< Custom surface (can use pointer to users function, precision and texture scale) */
-   EVAS_3D_MESH_PRIMITIVE_SURFACE,
+   EVAS_CANVAS3D_MESH_PRIMITIVE_SURFACE,
    /**< Terrain as surface with pointer to Perlin's noise function */
-   EVAS_3D_MESH_PRIMITIVE_TERRAIN,
+   EVAS_CANVAS3D_MESH_PRIMITIVE_TERRAIN,
    /**< Count of supported primitives */
-   EVAS_3D_MESH_PRIMITIVE_COUNT
-} Evas_3D_Mesh_Primitive;
+   EVAS_CANVAS3D_MESH_PRIMITIVE_COUNT
+} Evas_Canvas3D_Mesh_Primitive;
 
 /**
  * Mode of mesh primitive
  *
  * @since 1.15
- * @ingroup Evas_3D_Types
+ * @ingroup Evas_Canvas3D_Types
  */
-typedef enum _Evas_3D_Primitive_Mode
+typedef enum _Evas_Canvas3D_Primitive_Mode
 {
    /**< Default mode of primitive */
-   EVAS_3D_PRIMITIVE_MODE_DEFAULT = 0,
+   EVAS_CANVAS3D_PRIMITIVE_MODE_DEFAULT = 0,
    /**< Primitive without base (supported for cylinder and cone) */
-   EVAS_3D_PRIMITIVE_MODE_WITHOUT_BASE,
+   EVAS_CANVAS3D_PRIMITIVE_MODE_WITHOUT_BASE,
    /**< Ptimitive with alternative UV (supported for sphere)*/
-   EVAS_3D_PRIMITIVE_MODE_ALTERNATIVE_UV
-} Evas_3D_Primitive_Mode;
+   EVAS_CANVAS3D_PRIMITIVE_MODE_ALTERNATIVE_UV
+} Evas_Canvas3D_Primitive_Mode;
 
 /**
  * Texture filters
  *
  * @since 1.10
- * @ingroup Evas_3D_Types
+ * @ingroup Evas_Canvas3D_Types
  */
-typedef enum _Evas_3D_Texture_Filter
+typedef enum _Evas_Canvas3D_Texture_Filter
 {
    /**< Samples nearest texel */
-   EVAS_3D_TEXTURE_FILTER_NEAREST = 0,
+   EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST = 0,
    /**< Lineary interpolate nearby texels */
-   EVAS_3D_TEXTURE_FILTER_LINEAR,
+   EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR,
    /**< Nearest sampling mipmap */
-   EVAS_3D_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST,
+   EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST,
    /**< Nearest sampling mipmap and interpolate */
-   EVAS_3D_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
+   EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
    /**< Linear sampling in nearest mipmap */
-   EVAS_3D_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,
+   EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,
    /**< Linear sampling in mipmap and interpolate */
-   EVAS_3D_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR
-} Evas_3D_Texture_Filter;
+   EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR
+} Evas_Canvas3D_Texture_Filter;
 
 /**
  * Shade modes
  *
  * @since 1.10
- * @ingroup Evas_3D_Types
+ * @ingroup Evas_Canvas3D_Types
  */
-typedef enum _Evas_3D_Shade_Mode
+typedef enum _Evas_Canvas3D_Shade_Mode
 {
    /**< Shaded using vertex color attribute */
-   EVAS_3D_SHADE_MODE_VERTEX_COLOR = 0,
+   EVAS_CANVAS3D_SHADE_MODE_VERTEX_COLOR = 0,
    /**< Shaded using material diffuse term */
-   EVAS_3D_SHADE_MODE_DIFFUSE,
+   EVAS_CANVAS3D_SHADE_MODE_DIFFUSE,
    /**< Per-vertex flat lighting */
-   EVAS_3D_SHADE_MODE_FLAT,
+   EVAS_CANVAS3D_SHADE_MODE_FLAT,
    /**< Per-pixel phong shading */
-   EVAS_3D_SHADE_MODE_PHONG,
+   EVAS_CANVAS3D_SHADE_MODE_PHONG,
    /**< Per-pixel normal map shading */
-   EVAS_3D_SHADE_MODE_NORMAL_MAP,
+   EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP,
    /**< fragment color is defined by its z-coord*/
-   EVAS_3D_SHADE_MODE_SHADOW_MAP_RENDER,
+   EVAS_CANVAS3D_SHADE_MODE_SHADOW_MAP_RENDER,
    /**< rendering to additional frame bufer*/
-   EVAS_3D_SHADE_MODE_COLOR_PICK,
+   EVAS_CANVAS3D_SHADE_MODE_COLOR_PICK,
    /**< Per-pixel parallax occlusion map shading */
-   EVAS_3D_SHADE_MODE_PARALLAX_OCCLUSION,
-} Evas_3D_Shade_Mode;
+   EVAS_CANVAS3D_SHADE_MODE_PARALLAX_OCCLUSION,
+} Evas_Canvas3D_Shade_Mode;
 
 /**
  * Material attributes
  *
  * @since 1.10
- * @ingroup Evas_3D_Types
+ * @ingroup Evas_Canvas3D_Types
  */
-typedef enum _Evas_3D_Material_Attrib
+typedef enum _Evas_Canvas3D_Material_Attrib
 {
-   EVAS_3D_MATERIAL_AMBIENT = 0,     /**< Ambient term */
-   EVAS_3D_MATERIAL_DIFFUSE,         /**< Diffuse term */
-   EVAS_3D_MATERIAL_SPECULAR,        /**< Specular term */
-   EVAS_3D_MATERIAL_EMISSION,        /**< Emission term */
-   EVAS_3D_MATERIAL_NORMAL,          /**< Normal map term */
-} Evas_3D_Material_Attrib;
+   EVAS_CANVAS3D_MATERIAL_AMBIENT = 0,     /**< Ambient term */
+   EVAS_CANVAS3D_MATERIAL_DIFFUSE,         /**< Diffuse term */
+   EVAS_CANVAS3D_MATERIAL_SPECULAR,        /**< Specular term */
+   EVAS_CANVAS3D_MATERIAL_EMISSION,        /**< Emission term */
+   EVAS_CANVAS3D_MATERIAL_NORMAL,          /**< Normal map term */
+} Evas_Canvas3D_Material_Attrib;
 
 #include "canvas/evas_image.eo.h"
 
-#include "canvas/evas_3d_camera.eo.h"
+#include "canvas/evas_canvas3d_camera.eo.h"
 
-#include "canvas/evas_3d_texture.eo.h"
+#include "canvas/evas_canvas3d_texture.eo.h"
 
-#include "canvas/evas_3d_material.eo.h"
+#include "canvas/evas_canvas3d_material.eo.h"
 
-#include "canvas/evas_3d_light.eo.h"
+#include "canvas/evas_canvas3d_light.eo.h"
 
-#include "canvas/evas_3d_mesh.eo.h"
+#include "canvas/evas_canvas3d_mesh.eo.h"
 
-#include "canvas/evas_3d_primitive.eo.h"
+#include "canvas/evas_canvas3d_primitive.eo.h"
 
-#include "canvas/evas_3d_node.eo.h"
+#include "canvas/evas_canvas3d_node.eo.h"
 
-#include "canvas/evas_3d_scene.eo.h"
+#include "canvas/evas_canvas3d_scene.eo.h"
 
-#include "canvas/evas_3d_object.eo.h"
+#include "canvas/evas_canvas3d_object.eo.h"
 
 /**
  * @ingroup Evas_Object_VG

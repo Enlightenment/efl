@@ -8,7 +8,7 @@
 #include "evas_private.h"
 
 void
-_evas_common_load_model(Evas_3D_Mesh *model,
+_evas_common_load_model(Evas_Canvas3D_Mesh *model,
                         Eina_File *file,
                         const char *file_path)
 {
@@ -35,7 +35,7 @@ _evas_common_load_model(Evas_3D_Mesh *model,
 }
 
 void
-evas_common_load_model_from_file(Evas_3D_Mesh *model, const char *file)
+evas_common_load_model_from_file(Evas_Canvas3D_Mesh *model, const char *file)
 {
    Eina_File *tmp_file = eina_file_open(file, 0);
 
@@ -65,7 +65,7 @@ evas_common_load_model_from_file(Evas_3D_Mesh *model, const char *file)
 }
 
 void
-evas_common_load_model_from_eina_file(Evas_3D_Mesh *model, const Eina_File *file)
+evas_common_load_model_from_eina_file(Evas_Canvas3D_Mesh *model, const Eina_File *file)
 {
    Eina_File *e_file = eina_file_dup(file);
 

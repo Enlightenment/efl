@@ -118,7 +118,7 @@ struct _E3D_Program
    GLuint               prog;
 
    E3D_Shader_Flag      flags;
-   Evas_3D_Shade_Mode   mode;
+   Evas_Canvas3D_Shade_Mode   mode;
 
    GLint                uniform_locations[E3D_UNIFORM_COUNT];
 };
@@ -410,103 +410,103 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
          break;
       }
       case E3D_UNIFORM_POSITION_WEIGHT:
-         glUniform1f(loc, data->vertices[EVAS_3D_VERTEX_POSITION].weight);
+         glUniform1f(loc, data->vertices[EVAS_CANVAS3D_VERTEX_POSITION].weight);
          break;
       case E3D_UNIFORM_NORMAL_WEIGHT:
-         glUniform1f(loc, data->vertices[EVAS_3D_VERTEX_NORMAL].weight);
+         glUniform1f(loc, data->vertices[EVAS_CANVAS3D_VERTEX_NORMAL].weight);
          break;
       case E3D_UNIFORM_TANGENT_WEIGHT:
-         glUniform1f(loc, data->vertices[EVAS_3D_VERTEX_TANGENT].weight);
+         glUniform1f(loc, data->vertices[EVAS_CANVAS3D_VERTEX_TANGENT].weight);
          break;
       case E3D_UNIFORM_COLOR_WEIGHT:
-         glUniform1f(loc, data->vertices[EVAS_3D_VERTEX_COLOR].weight);
+         glUniform1f(loc, data->vertices[EVAS_CANVAS3D_VERTEX_COLOR].weight);
          break;
       case E3D_UNIFORM_TEXCOORD_WEIGHT:
-         glUniform1f(loc, data->vertices[EVAS_3D_VERTEX_TEXCOORD].weight);
+         glUniform1f(loc, data->vertices[EVAS_CANVAS3D_VERTEX_TEXCOORD].weight);
          break;
       case E3D_UNIFORM_TEXTURE_WEIGHT_AMBIENT:
-         glUniform1f(loc, data->materials[EVAS_3D_MATERIAL_AMBIENT].texture_weight);
+         glUniform1f(loc, data->materials[EVAS_CANVAS3D_MATERIAL_AMBIENT].texture_weight);
          break;
       case E3D_UNIFORM_TEXTURE_WEIGHT_DIFFUSE:
-         glUniform1f(loc, data->materials[EVAS_3D_MATERIAL_DIFFUSE].texture_weight);
+         glUniform1f(loc, data->materials[EVAS_CANVAS3D_MATERIAL_DIFFUSE].texture_weight);
          break;
       case E3D_UNIFORM_TEXTURE_WEIGHT_SPECULAR:
-         glUniform1f(loc, data->materials[EVAS_3D_MATERIAL_SPECULAR].texture_weight);
+         glUniform1f(loc, data->materials[EVAS_CANVAS3D_MATERIAL_SPECULAR].texture_weight);
          break;
       case E3D_UNIFORM_TEXTURE_WEIGHT_EMISSION:
-         glUniform1f(loc, data->materials[EVAS_3D_MATERIAL_EMISSION].texture_weight);
+         glUniform1f(loc, data->materials[EVAS_CANVAS3D_MATERIAL_EMISSION].texture_weight);
          break;
       case E3D_UNIFORM_TEXTURE_WEIGHT_NORMAL:
-         glUniform1f(loc, data->materials[EVAS_3D_MATERIAL_NORMAL].texture_weight);
+         glUniform1f(loc, data->materials[EVAS_CANVAS3D_MATERIAL_NORMAL].texture_weight);
          break;
       case E3D_UNIFORM_TEXTURE_AMBIENT0:
-         glUniform1i(loc, data->materials[EVAS_3D_MATERIAL_AMBIENT].sampler0);
+         glUniform1i(loc, data->materials[EVAS_CANVAS3D_MATERIAL_AMBIENT].sampler0);
          break;
       case E3D_UNIFORM_TEXTURE_DIFFUSE0:
-         glUniform1i(loc, data->materials[EVAS_3D_MATERIAL_DIFFUSE].sampler0);
+         glUniform1i(loc, data->materials[EVAS_CANVAS3D_MATERIAL_DIFFUSE].sampler0);
          break;
       case E3D_UNIFORM_TEXTURE_SPECULAR0:
-         glUniform1i(loc, data->materials[EVAS_3D_MATERIAL_SPECULAR].sampler0);
+         glUniform1i(loc, data->materials[EVAS_CANVAS3D_MATERIAL_SPECULAR].sampler0);
          break;
       case E3D_UNIFORM_TEXTURE_EMISSION0:
-         glUniform1i(loc, data->materials[EVAS_3D_MATERIAL_EMISSION].sampler0);
+         glUniform1i(loc, data->materials[EVAS_CANVAS3D_MATERIAL_EMISSION].sampler0);
          break;
       case E3D_UNIFORM_TEXTURE_NORMAL0:
-         glUniform1i(loc, data->materials[EVAS_3D_MATERIAL_NORMAL].sampler0);
+         glUniform1i(loc, data->materials[EVAS_CANVAS3D_MATERIAL_NORMAL].sampler0);
          break;
       case E3D_UNIFORM_TEXTURE_AMBIENT1:
-         glUniform1i(loc, data->materials[EVAS_3D_MATERIAL_AMBIENT].sampler1);
+         glUniform1i(loc, data->materials[EVAS_CANVAS3D_MATERIAL_AMBIENT].sampler1);
          break;
       case E3D_UNIFORM_TEXTURE_DIFFUSE1:
-         glUniform1i(loc, data->materials[EVAS_3D_MATERIAL_DIFFUSE].sampler1);
+         glUniform1i(loc, data->materials[EVAS_CANVAS3D_MATERIAL_DIFFUSE].sampler1);
          break;
       case E3D_UNIFORM_TEXTURE_SPECULAR1:
-         glUniform1i(loc, data->materials[EVAS_3D_MATERIAL_SPECULAR].sampler1);
+         glUniform1i(loc, data->materials[EVAS_CANVAS3D_MATERIAL_SPECULAR].sampler1);
          break;
       case E3D_UNIFORM_TEXTURE_EMISSION1:
-         glUniform1i(loc, data->materials[EVAS_3D_MATERIAL_EMISSION].sampler1);
+         glUniform1i(loc, data->materials[EVAS_CANVAS3D_MATERIAL_EMISSION].sampler1);
          break;
       case E3D_UNIFORM_TEXTURE_NORMAL1:
-         glUniform1i(loc, data->materials[EVAS_3D_MATERIAL_NORMAL].sampler1);
+         glUniform1i(loc, data->materials[EVAS_CANVAS3D_MATERIAL_NORMAL].sampler1);
          break;
       case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_AMBIENT0: {
-         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_AMBIENT, 0)
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_CANVAS3D_MATERIAL_AMBIENT, 0)
          break;
       }
       case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_DIFFUSE0: {
-         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_DIFFUSE, 0)
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_CANVAS3D_MATERIAL_DIFFUSE, 0)
          break;
       }
       case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_SPECULAR0: {
-         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_SPECULAR, 0)
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_CANVAS3D_MATERIAL_SPECULAR, 0)
          break;
       }
       case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_EMISSION0: {
-         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_EMISSION, 0)
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_CANVAS3D_MATERIAL_EMISSION, 0)
          break;
       }
       case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_NORMAL0: {
-         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_NORMAL, 0)
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_CANVAS3D_MATERIAL_NORMAL, 0)
          break;
       }
       case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_AMBIENT1: {
-         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_AMBIENT, 1)
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_CANVAS3D_MATERIAL_AMBIENT, 1)
          break;
       }
       case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_DIFFUSE1: {
-         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_DIFFUSE, 1)
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_CANVAS3D_MATERIAL_DIFFUSE, 1)
          break;
       }
       case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_SPECULAR1: {
-         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_SPECULAR, 1)
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_CANVAS3D_MATERIAL_SPECULAR, 1)
          break;
       }
       case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_EMISSION1: {
-         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_EMISSION, 1)
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_CANVAS3D_MATERIAL_EMISSION, 1)
          break;
       }
       case E3D_UNIFORM_TEXTURE_MATRIX_TRANSFORM_NORMAL1: {
-         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_3D_MATERIAL_NORMAL, 1)
+         SET_TEX_COORD_TRANSFORM_MATRIX(EVAS_CANVAS3D_MATERIAL_NORMAL, 1)
          break;
       }
       case E3D_UNIFORM_SHADOWMAP:
@@ -545,31 +545,31 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
          break;
       case E3D_UNIFORM_MATERIAL_AMBIENT:
          glUniform4f(loc,
-                     data->materials[EVAS_3D_MATERIAL_AMBIENT].color.r,
-                     data->materials[EVAS_3D_MATERIAL_AMBIENT].color.g,
-                     data->materials[EVAS_3D_MATERIAL_AMBIENT].color.b,
-                     data->materials[EVAS_3D_MATERIAL_AMBIENT].color.a);
+                     data->materials[EVAS_CANVAS3D_MATERIAL_AMBIENT].color.r,
+                     data->materials[EVAS_CANVAS3D_MATERIAL_AMBIENT].color.g,
+                     data->materials[EVAS_CANVAS3D_MATERIAL_AMBIENT].color.b,
+                     data->materials[EVAS_CANVAS3D_MATERIAL_AMBIENT].color.a);
          break;
       case E3D_UNIFORM_MATERIAL_DIFFUSE:
          glUniform4f(loc,
-                     data->materials[EVAS_3D_MATERIAL_DIFFUSE].color.r,
-                     data->materials[EVAS_3D_MATERIAL_DIFFUSE].color.g,
-                     data->materials[EVAS_3D_MATERIAL_DIFFUSE].color.b,
-                     data->materials[EVAS_3D_MATERIAL_DIFFUSE].color.a);
+                     data->materials[EVAS_CANVAS3D_MATERIAL_DIFFUSE].color.r,
+                     data->materials[EVAS_CANVAS3D_MATERIAL_DIFFUSE].color.g,
+                     data->materials[EVAS_CANVAS3D_MATERIAL_DIFFUSE].color.b,
+                     data->materials[EVAS_CANVAS3D_MATERIAL_DIFFUSE].color.a);
          break;
       case E3D_UNIFORM_MATERIAL_SPECULAR:
          glUniform4f(loc,
-                     data->materials[EVAS_3D_MATERIAL_SPECULAR].color.r,
-                     data->materials[EVAS_3D_MATERIAL_SPECULAR].color.g,
-                     data->materials[EVAS_3D_MATERIAL_SPECULAR].color.b,
-                     data->materials[EVAS_3D_MATERIAL_SPECULAR].color.a);
+                     data->materials[EVAS_CANVAS3D_MATERIAL_SPECULAR].color.r,
+                     data->materials[EVAS_CANVAS3D_MATERIAL_SPECULAR].color.g,
+                     data->materials[EVAS_CANVAS3D_MATERIAL_SPECULAR].color.b,
+                     data->materials[EVAS_CANVAS3D_MATERIAL_SPECULAR].color.a);
          break;
       case E3D_UNIFORM_MATERIAL_EMISSION:
          glUniform4f(loc,
-                     data->materials[EVAS_3D_MATERIAL_EMISSION].color.r,
-                     data->materials[EVAS_3D_MATERIAL_EMISSION].color.g,
-                     data->materials[EVAS_3D_MATERIAL_EMISSION].color.b,
-                     data->materials[EVAS_3D_MATERIAL_EMISSION].color.a);
+                     data->materials[EVAS_CANVAS3D_MATERIAL_EMISSION].color.r,
+                     data->materials[EVAS_CANVAS3D_MATERIAL_EMISSION].color.g,
+                     data->materials[EVAS_CANVAS3D_MATERIAL_EMISSION].color.b,
+                     data->materials[EVAS_CANVAS3D_MATERIAL_EMISSION].color.a);
          break;
       case E3D_UNIFORM_MATERIAL_SHININESS:
          glUniform1f(loc, data->shininess);
@@ -592,7 +592,7 @@ _uniform_upload(E3D_Uniform u, GLint loc, const E3D_Draw_Data *data)
 #endif
       case E3D_UNIFORM_ALPHATEST_COMPARISON:
          glUniform1i(loc,
-                    (data->alpha_comparison ? data->alpha_comparison : EVAS_3D_COMPARISON_GREATER));
+                    (data->alpha_comparison ? data->alpha_comparison : EVAS_CANVAS3D_COMPARISON_GREATER));
          break;
       case E3D_UNIFORM_ALPHATEST_REFVALUE:
          glUniform1f(loc, (data->alpha_ref_value ? data->alpha_ref_value : 0.0));
@@ -618,7 +618,7 @@ e3d_program_uniform_upload(E3D_Program *program, const E3D_Draw_Data *data)
 }
 
 E3D_Program *
-e3d_program_new(Evas_3D_Shade_Mode mode, E3D_Shader_Flag flags)
+e3d_program_new(Evas_Canvas3D_Shade_Mode mode, E3D_Shader_Flag flags)
 {
    E3D_Shader_String vert, frag;
    E3D_Program *program = NULL;
@@ -690,7 +690,7 @@ e3d_program_id_get(const E3D_Program *program)
    return program->prog;
 }
 
-Evas_3D_Shade_Mode
+Evas_Canvas3D_Shade_Mode
 e3d_program_shade_mode_get(const E3D_Program *program)
 {
    return program->mode;

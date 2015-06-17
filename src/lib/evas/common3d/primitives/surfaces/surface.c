@@ -1,6 +1,6 @@
 #include "../primitive_common.h"
 
-Evas_Vec3 _get_func_normal(Evas_3D_Surface_Func *func, Evas_Real x, Evas_Real y)
+Evas_Vec3 _get_func_normal(Evas_Canvas3D_Surface_Func *func, Evas_Real x, Evas_Real y)
 {
    Evas_Vec3 v00, v01, v10, d1, d2, normal;
 
@@ -50,9 +50,9 @@ _normalize(Evas_Vec3 *vertices, Evas_Vec3 *normals, int vcount)
 }
 
 void
-evas_model_set_from_surface_primitive(Evas_3D_Mesh *mesh,
+evas_model_set_from_surface_primitive(Evas_Canvas3D_Mesh *mesh,
                                       int frame,
-                                      Evas_3D_Surface_Func func,
+                                      Evas_Canvas3D_Surface_Func func,
                                       int p,
                                       Evas_Vec2 tex_scale)
 {

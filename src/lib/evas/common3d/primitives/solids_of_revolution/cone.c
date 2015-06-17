@@ -1,7 +1,7 @@
 #include "../primitive_common.h"
 
 void
-_set_default_cone(Evas_3D_Mesh *mesh,
+_set_default_cone(Evas_Canvas3D_Mesh *mesh,
                   int frame,
                   int p,
                   Evas_Vec2 tex_scale)
@@ -63,7 +63,7 @@ _set_default_cone(Evas_3D_Mesh *mesh,
 }
 
 void
-_set_cone_without_base(Evas_3D_Mesh *mesh,
+_set_cone_without_base(Evas_Canvas3D_Mesh *mesh,
                        int frame,
                        int p,
                        Evas_Vec2 tex_scale)
@@ -113,21 +113,21 @@ _set_cone_without_base(Evas_3D_Mesh *mesh,
 }
 
 void
-evas_model_set_from_cone_primitive(Evas_3D_Mesh *mesh,
+evas_model_set_from_cone_primitive(Evas_Canvas3D_Mesh *mesh,
                                    int frame,
-                                   Evas_3D_Primitive_Mode mode,
+                                   Evas_Canvas3D_Primitive_Mode mode,
                                    int p,
                                    Evas_Vec2 tex_scale)
 {
    switch (mode)
      {
-      case EVAS_3D_PRIMITIVE_MODE_DEFAULT:
-      case EVAS_3D_PRIMITIVE_MODE_ALTERNATIVE_UV:
+      case EVAS_CANVAS3D_PRIMITIVE_MODE_DEFAULT:
+      case EVAS_CANVAS3D_PRIMITIVE_MODE_ALTERNATIVE_UV:
         {
            _set_default_cone(mesh, frame, p, tex_scale);
            break;
         }
-      case EVAS_3D_PRIMITIVE_MODE_WITHOUT_BASE:
+      case EVAS_CANVAS3D_PRIMITIVE_MODE_WITHOUT_BASE:
         {
            _set_cone_without_base(mesh, frame, p, tex_scale);
            break;

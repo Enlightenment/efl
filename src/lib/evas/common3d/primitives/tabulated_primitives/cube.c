@@ -51,7 +51,7 @@ const unsigned short indices_of_cube[] =
 };
 
 void
-evas_model_set_from_cube_primitive(Evas_3D_Mesh *mesh, int frame)
+evas_model_set_from_cube_primitive(Evas_Canvas3D_Mesh *mesh, int frame)
 {
    SET_VERTEX_DATA_FROM_ARRAY(mesh, frame, vertices_of_cube, 24, indices_of_cube, 36)
 }

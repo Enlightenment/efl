@@ -1,7 +1,7 @@
-class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
+class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
 {
    legacy_prefix: null;
-   data: Evas_3D_Mesh_Data;
+   data: Evas_Canvas3D_Mesh_Data;
 
    methods {
       frame_vertex_data_set {
@@ -10,20 +10,20 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
 
            This function make evas read from the given buffer whenever it requires.
            If you want to release the buffer after calling this functions, use
-           evas_3d_mesh_frame_vertex_data_copy_set() instead.
+           evas_canvas3d_mesh_frame_vertex_data_copy_set() instead.
 
            After setting the vertex data, further modifications should be protected
            by map/unmap pair.
 
-           @see evas_3d_mesh_frame_vertex_data_copy_set()
-           @see evas_3d_mesh_frame_vertex_data_map()
-           @see evas_3d_mesh_frame_vertex_data_unmap()
+           @see evas_canvas3d_mesh_frame_vertex_data_copy_set()
+           @see evas_canvas3d_mesh_frame_vertex_data_map()
+           @see evas_canvas3d_mesh_frame_vertex_data_unmap()
 
-           @ingroup Evas_3D_Mesh
+           @ingroup Evas_Canvas3D_Mesh
           */
          params {
             @in frame: int; /*@ The number of the key frame. */
-            @in attrib: Evas_3D_Vertex_Attrib; /*@ Vertex attribute ID. */
+            @in attrib: Evas_Canvas3D_Vertex_Attrib; /*@ Vertex attribute ID. */
             @in stride: int; /*@ Stride to go to the next vertex (in bytes). */
             @in data: const(void)*; /*@ Pointer to the vertex data buffer. */
          }
@@ -34,18 +34,18 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
            Set the vertex data of the key frame of the given mesh by copying from a buffer.
            This function allocates internal vertex buffer and copy from the given
            buffer. So you can release the buffer. If you want to modify the vertex data
-           use evas_3d_mesh_frame_vertex_data_map(). After finishing the modifications,
-           you should call evas_3d_mesh_frame_vertex_data_unmap().
+           use evas_canvas3d_mesh_frame_vertex_data_map(). After finishing the modifications,
+           you should call evas_canvas3d_mesh_frame_vertex_data_unmap().
 
-           @see evas_3d_mesh_frame_vertex_data_set()
-           @see evas_3d_mesh_frame_vertex_data_map()
-           @see evas_3d_mesh_frame_vertex_data_unmap()
+           @see evas_canvas3d_mesh_frame_vertex_data_set()
+           @see evas_canvas3d_mesh_frame_vertex_data_map()
+           @see evas_canvas3d_mesh_frame_vertex_data_unmap()
 
-           @ingroup Evas_3D_Mesh
+           @ingroup Evas_Canvas3D_Mesh
           */
          params {
             @in frame: int; /*@ The number of the key frame. */
-            @in attrib: Evas_3D_Vertex_Attrib; /*@ Vertex attribute ID. */
+            @in attrib: Evas_Canvas3D_Vertex_Attrib; /*@ Vertex attribute ID. */
             @in stride: int; /*@ Stride to go to the next vertex (in bytes). */
             @in data: const(void)*; /*@ Pointer to the vertex data buffer. */
          }
@@ -55,22 +55,22 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
          /*@
            Map the vertex buffer of the key frame of the given mesh.
 
-           After manipulating the mapped buffer, evas_3d_mesh_frame_vertex_data_unmap()
+           After manipulating the mapped buffer, evas_canvas3d_mesh_frame_vertex_data_unmap()
            should be called to properly download the data to the engine. If the data
-           was set using evas_3d_mesh_frame_vertex_data_set(), pointer to the original
+           was set using evas_canvas3d_mesh_frame_vertex_data_set(), pointer to the original
            buffer will be returned. Otherwise, the returned pointer can differ every
            time calling this function.
 
-           @see evas_3d_mesh_frame_vertex_data_unmap()
+           @see evas_canvas3d_mesh_frame_vertex_data_unmap()
            @return Starting address of the mapped vertex buffer.
 
-           @ingroup Evas_3D_Mesh
+           @ingroup Evas_Canvas3D_Mesh
           */
 
          return: void *;
          params {
             @in frame: int; /*@ The number of the key frame. */
-            @in attrib: Evas_3D_Vertex_Attrib; /*@ Vertex attribute ID. */
+            @in attrib: Evas_Canvas3D_Vertex_Attrib; /*@ Vertex attribute ID. */
          }
       }
 
@@ -78,14 +78,14 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
          /*@
            Unmap the vertex buffer of the key frame of the given mesh.
 
-           @see evas_3d_mesh_frame_vertex_data_map()
+           @see evas_canvas3d_mesh_frame_vertex_data_map()
 
-           @ingroup Evas_3D_Mesh
+           @ingroup Evas_Canvas3D_Mesh
           */
 
          params {
             @in frame: int; /*@ The number of the key frame. */
-            @in attrib: Evas_3D_Vertex_Attrib; /*@ Vertex attribute ID. */
+            @in attrib: Evas_Canvas3D_Vertex_Attrib; /*@ Vertex attribute ID. */
          }
       }
 
@@ -94,19 +94,19 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
            Get the vertex buffer stride of the key frame of the given mesh.
 
            This function returns valid stride only when the vertex buffer is mapped.
-           If the data was set with evas_3d_mesh_frame_vertex_data_set(), the original
+           If the data was set with evas_canvas3d_mesh_frame_vertex_data_set(), the original
            stride will be returned unchanged.
 
-           @see evas_3d_mesh_frame_vertex_data_map()
+           @see evas_canvas3d_mesh_frame_vertex_data_map()
 
            @return           Stride to go to the next vertex (in bytes).
 
-           @ingroup Evas_3D_Mesh
+           @ingroup Evas_Canvas3D_Mesh
           */
          return: int;
          params {
             @in frame: int; /*@ The number of the key frame. */
-            @in attrib: Evas_3D_Vertex_Attrib; /*@ Vertex attribute ID. */
+            @in attrib: Evas_Canvas3D_Vertex_Attrib; /*@ Vertex attribute ID. */
          }
       }
 
@@ -115,17 +115,17 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
            Set the vertex index data of the given mesh.
 
            When the index data is set, Evas 3D assembles vertices using the index data.
-           If you want to free the data buffer, use evas_3d_mesh_index_data_copy_set().
+           If you want to free the data buffer, use evas_canvas3d_mesh_index_data_copy_set().
            Further modifications should be made within map/unmap pair.
 
-           @see evas_3d_mesh_index_data_copy_set()
-           @see evas_3d_mesh_index_data_map()
-           @see evas_3d_mesh_index_data_unmap()
+           @see evas_canvas3d_mesh_index_data_copy_set()
+           @see evas_canvas3d_mesh_index_data_map()
+           @see evas_canvas3d_mesh_index_data_unmap()
 
-           @ingroup Evas_3D_Mesh
+           @ingroup Evas_Canvas3D_Mesh
           */
          params {
-            @in format: Evas_3D_Index_Format; /*@ Vertex index data format. */
+            @in format: Evas_Canvas3D_Index_Format; /*@ Vertex index data format. */
             @in count: int; /*@ Vertex index count. */
             @in indices: const(void)*; /*@ Pointer to the index data. */
          }
@@ -139,12 +139,12 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
            This function allocates internal index buffer any copy data from the given
            buffer. Futher modifications can be made within map/unmap pair.
 
-           @see evas_3d_mesh_index_data_set()
+           @see evas_canvas3d_mesh_index_data_set()
 
-           @ingroup Evas_3D_Mesh
+           @ingroup Evas_Canvas3D_Mesh
           */
          params {
-            @in format: Evas_3D_Index_Format; /*@ Vertex index data format. */
+            @in format: Evas_Canvas3D_Index_Format; /*@ Vertex index data format. */
             @in count: int; /*@ Vertex index count. */
             @in indices: const(void)*; /*@ Pointer to the index data. */
          }
@@ -157,17 +157,17 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
 
            Returns valid format only when the index buffer is mapped. First map the
            index buffer and then query the properties of the mapped buffer. If the index
-           data was set by evas_3d_mesh_index_data_set(), the original format will be
+           data was set by evas_canvas3d_mesh_index_data_set(), the original format will be
            returned. Otherwise the format can differ every time you call the
-           evas_3d_mesh_index_data_map() function.
+           evas_canvas3d_mesh_index_data_map() function.
 
-           @see evas_3d_mesh_index_data_map()
+           @see evas_canvas3d_mesh_index_data_map()
 
            @return           Format of the index data.
 
-           @ingroup Evas_3D_Mesh
+           @ingroup Evas_Canvas3D_Mesh
           */
-         return: Evas_3D_Index_Format;
+         return: Evas_Canvas3D_Index_Format;
       }
 
       index_count_get @const {
@@ -176,12 +176,12 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
 
            This function returns the index count of the last called data_set function.
 
-           @see evas_3d_mesh_index_data_set()
-           @see evas_3d_mesh_index_data_copy_set()
+           @see evas_canvas3d_mesh_index_data_set()
+           @see evas_canvas3d_mesh_index_data_copy_set()
 
            @return           Index data count.
 
-           @ingroup Evas_3D_Mesh
+           @ingroup Evas_Canvas3D_Mesh
           */
          return: int;
       }
@@ -190,16 +190,16 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
          /*@
            Map the index buffer of the given mesh.
 
-           evas_3d_mesh_index_data_unmap() should be called after modifications. If the
-           data was set using evas_3d_mesh_index_data_set(), the original pointer will
+           evas_canvas3d_mesh_index_data_unmap() should be called after modifications. If the
+           data was set using evas_canvas3d_mesh_index_data_set(), the original pointer will
            be returned, otherwise, the returned pointer may differ every time you call
            this function.
 
-           @see evas_3d_mesh_index_data_unmap()
+           @see evas_canvas3d_mesh_index_data_unmap()
 
            @return           Pointer to the mapped buffer.
 
-           @ingroup Evas_3D_Mesh
+           @ingroup Evas_Canvas3D_Mesh
           */
          return: void *;
       }
@@ -208,9 +208,9 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
          /*@
            Unmap the index buffer of the given mesh.
 
-           @see evas_3d_mesh_index_data_map()
+           @see evas_canvas3d_mesh_index_data_map()
 
-           @ingroup Evas_3D_Mesh
+           @ingroup Evas_Canvas3D_Mesh
           */
       }
 
@@ -223,7 +223,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
 
            If specified frame is already exist, error message will be generated.
 
-           @ingroup Evas_3D_Mesh
+           @ingroup Evas_Canvas3D_Mesh
           */
          params {
             @in frame: int; /*@ The number of the key frame to be added. */
@@ -237,9 +237,9 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
            @param mesh    The given mesh.
            @param frame   The number of the key frame to be deleted.
 
-           @see evas_3d_mesh_frame_add()
+           @see evas_canvas3d_mesh_frame_add()
 
-           @ingroup Evas_3D_Mesh
+           @ingroup Evas_Canvas3D_Mesh
           */
          params {
             @in frame: int; /*@ The number of the key frame to be added. */
@@ -249,7 +249,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       fog_color_set {
          /*@
            Set the fog color and density for the given mesh.
-           @ingroup Evas_3D_Mesh
+           @ingroup Evas_Canvas3D_Mesh
           */
          params {
             @in r: Evas_Real; /*@ The red component of the fog color.*/
@@ -261,7 +261,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       fog_color_get {
          /*@
            Set the fog color and density for the given mesh.
-           @ingroup Evas_3D_Mesh
+           @ingroup Evas_Canvas3D_Mesh
           */
          params {
             @out r: Evas_Real; /*@ Pointer to receive red component of the fog color.*/
@@ -273,32 +273,32 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
       blending_func_set {
          /*@
           Set the blending function for given mesh
-          @ingroup Evas_3D_Mesh
+          @ingroup Evas_Canvas3D_Mesh
          */
          params {
-            @in sfactor: Evas_3D_Blend_Func; /*@ Specifies how the red, green, blue, and alpha source blending factors are computed.*/
-            @in dfactor: Evas_3D_Blend_Func; /*@ Specifies how the red, green, blue, and alpha destination blending factors are computed.*/
+            @in sfactor: Evas_Canvas3D_Blend_Func; /*@ Specifies how the red, green, blue, and alpha source blending factors are computed.*/
+            @in dfactor: Evas_Canvas3D_Blend_Func; /*@ Specifies how the red, green, blue, and alpha destination blending factors are computed.*/
          }
       }
       blending_func_get {
          /*@
           Get blending blending function for given mesh
           @see eavs_3d_mesh_blending_func_set()
-          @ingroup Evas_3D_Mesh
+          @ingroup Evas_Canvas3D_Mesh
          */
          params {
-            @out sfactor: Evas_3D_Blend_Func; /*@ Pointer to receive source blendin factors key.*/
-            @out dfactor: Evas_3D_Blend_Func; /*@ Pointer to receive destination blendin factors key.*/
+            @out sfactor: Evas_Canvas3D_Blend_Func; /*@ Pointer to receive source blendin factors key.*/
+            @out dfactor: Evas_Canvas3D_Blend_Func; /*@ Pointer to receive destination blendin factors key.*/
          }
       }
       from_primitive_set {
          /*@
           Set the data of given mesh frame from the given primitive
-          @ingroup Evas_3D_Mesh
+          @ingroup Evas_Canvas3D_Mesh
          */
          params {
             @in frame: int; /*@ Specifies data of which frame of given mesh will be set.*/
-            @in primitive: Evas_3D_Primitive *; /*@ Specifies which data will be set.*/
+            @in primitive: Evas_Canvas3D_Primitive *; /*@ Specifies which data will be set.*/
          }
       }
       @property shade_mode {
@@ -306,9 +306,9 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
             /*@
              * Set the shade mode of the given mesh.
              *
-             * Default shade mode is EVAS_3D_SHADE_MODE_VERTEX_COLOR.
+             * Default shade mode is EVAS_CANVAS3D_SHADE_MODE_VERTEX_COLOR.
              *
-             * @ingroup Evas_3D_Mesh
+             * @ingroup Evas_Canvas3D_Mesh
              */
          }
          get {
@@ -317,11 +317,11 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              *
              * @see eavs_3d_mesh_shade_mode_set()
              *
-             * @ingroup Evas_3D_Mesh
+             * @ingroup Evas_Canvas3D_Mesh
              */
          }
          values {
-            mode: Evas_3D_Shade_Mode; /*@ The shade mode.*/
+            mode: Evas_Canvas3D_Shade_Mode; /*@ The shade mode.*/
          }
       }
       @property color_pick_enable {
@@ -329,7 +329,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
             /*@
              * Set posibility color picking.
              *
-             * @ingroup Evas_3D_Mesh
+             * @ingroup Evas_Canvas3D_Mesh
              */
          }
          get {
@@ -338,7 +338,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
               *
               * @see color_pick_enable_set()
               *
-              * @ingroup Evas_3D_Mesh
+              * @ingroup Evas_Canvas3D_Mesh
               */
          }
          values {
@@ -356,16 +356,16 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
 
                * Default vertex count is 0.
 
-               * @ingroup Evas_3D_Mesh
+               * @ingroup Evas_Canvas3D_Mesh
                */
          }
          get {
                /*@
                * Get the vertex count of the given mesh.
                *
-               * @see evas_3d_mesh_vertex_count_set()
+               * @see evas_canvas3d_mesh_vertex_count_set()
                *
-               * @ingroup Evas_3D_Mesh
+               * @ingroup Evas_Canvas3D_Mesh
                */
          }
          values {
@@ -379,7 +379,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              *
              * Default fog is disabled.
              *
-             * @ingroup Evas_3D_Mesh
+             * @ingroup Evas_Canvas3D_Mesh
              */
          }
          get {
@@ -388,7 +388,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
               *
               * @see fog_enable_set()
               *
-              * @ingroup Evas_3D_Mesh
+              * @ingroup Evas_Canvas3D_Mesh
               */
          }
          values {
@@ -403,7 +403,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              *
              * Default alpha test disabled.
              *
-             * @ingroup Evas_3D_Mesh
+             * @ingroup Evas_Canvas3D_Mesh
              */
          }
          get {
@@ -412,7 +412,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
               *
               * @see alpha_test_enable_set()
               *
-              * @ingroup Evas_3D_Mesh
+              * @ingroup Evas_Canvas3D_Mesh
               */
          }
          values {
@@ -427,7 +427,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              * between an incoming fragment's alpha value and a constant reference value
              * This func specifies the reference value and the comparison function.
              *
-             * @ingroup Evas_3D_Mesh
+             * @ingroup Evas_Canvas3D_Mesh
              */
         }
         get {
@@ -436,11 +436,11 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              *
              * @see eavs_3d_mesh_alpha_test_param_set()
              *
-             * @ingroup Evas_3D_Mesh
+             * @ingroup Evas_Canvas3D_Mesh
              */
         }
         values {
-           comparison_func: Evas_3D_Comparison; /*@ Specifies the alpha comparison function.*/
+           comparison_func: Evas_Canvas3D_Comparison; /*@ Specifies the alpha comparison function.*/
            ref_value: Evas_Real; /*@ Specifies the reference value that incoming alpha values are compared to.*/
         }
       }
@@ -452,7 +452,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              *
              * Default blending disabled.
              *
-             * @ingroup Evas_3D_Mesh
+             * @ingroup Evas_Canvas3D_Mesh
              */
          }
          get {
@@ -461,7 +461,7 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
              *
              * @see eavs_3d_mesh_blending_enable_set()
              *
-             * @ingroup Evas_3D_Mesh
+             * @ingroup Evas_Canvas3D_Mesh
              */
          }
          values {
@@ -477,23 +477,23 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
               Setting different materials for each key frame is useful for doing animations
               like GIF images or color changing animationas.
 
-              @ingroup Evas_3D_Mesh
+              @ingroup Evas_Canvas3D_Mesh
              */
          }
          get {
             /*@
               Get the material of the key frame of the given mesh.
 
-              @see evas_3d_mesh_frame_material_set()
+              @see evas_canvas3d_mesh_frame_material_set()
 
-              @ingroup Evas_3D_Mesh
+              @ingroup Evas_Canvas3D_Mesh
              */
          }
          keys {
             frame: int; /*@ The number of the key frame.*/
          }
          values {
-            material: Evas_3D_Material *; /*@ The material to be set to the key frame.*/
+            material: Evas_Canvas3D_Material *; /*@ The material to be set to the key frame.*/
          }
       }
 
@@ -505,24 +505,24 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
               Vertex assembly defines how the engine organizes vertices into geometric
               primitives.
 
-              Default vertex assembly is EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES.
+              Default vertex assembly is EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES.
 
-              @ingroup Evas_3D_Mesh
+              @ingroup Evas_Canvas3D_Mesh
              */
          }
          get {
             /*@
               Get the vertex assembly of the given mesh.
 
-              @see evas_3d_mesh_vertex_assembly_set()
+              @see evas_canvas3d_mesh_vertex_assembly_set()
 
               @return  The vertex assembly.
 
-              @ingroup Evas_3D_Mesh
+              @ingroup Evas_Canvas3D_Mesh
              */
          }
          values {
-            assembly: Evas_3D_Vertex_Assembly; /*@ Vertex assembly.*/
+            assembly: Evas_Canvas3D_Vertex_Assembly; /*@ Vertex assembly.*/
          }
       }
 
@@ -530,8 +530,8 @@ class Evas_3D_Mesh (Evas_3D_Object, Evas.Common_Interface, Efl.File)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Evas_3D_Object.update_notify;
-      Evas_3D_Object.change_notify;
+      Evas_Canvas3D_Object.update_notify;
+      Evas_Canvas3D_Object.change_notify;
       Efl.File.file.set;
       Efl.File.mmap.set;
       Efl.File.save;

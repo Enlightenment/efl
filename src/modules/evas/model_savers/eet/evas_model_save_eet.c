@@ -9,23 +9,23 @@
 #define COMPONENT_OF_DEFAULT_GREY_COLOR 0.3
 #define TRANSPARENCY_OF_DEFAULT_GREY_COLOR 0.5
 
-extern Evas_3D_File_Eet* eet_file;
-extern const char EVAS_3D_FILE_CACHE_FILE_ENTRY[];
+extern Evas_Canvas3D_File_Eet* eet_file;
+extern const char EVAS_CANVAS3D_FILE_CACHE_FILE_ENTRY[];
 extern Eet_Data_Descriptor *_file_descriptor;
 
 void
-_set_geometry_to_eet_file_from_mesh(Evas_3D_Mesh_Data *mesh,
-                                    Evas_3D_Mesh_Eet *eet_mesh,
-                                    Evas_3D_Header_Eet *eet_header,
-                                    Evas_3D_Mesh_Frame *f)
+_set_geometry_to_eet_file_from_mesh(Evas_Canvas3D_Mesh_Data *mesh,
+                                    Evas_Canvas3D_Mesh_Eet *eet_mesh,
+                                    Evas_Canvas3D_Header_Eet *eet_header,
+                                    Evas_Canvas3D_Mesh_Frame *f)
 {
-   Evas_3D_Vertex_Buffer *vb;
+   Evas_Canvas3D_Vertex_Buffer *vb;
    int i;
    float *src;
-   Evas_3D_Vertex_Eet *vertices =
-      malloc(sizeof(Evas_3D_Vertex_Eet) * mesh->vertex_count);
-   Evas_3D_Geometry_Eet *geometry =
-      malloc(sizeof(Evas_3D_Geometry_Eet));
+   Evas_Canvas3D_Vertex_Eet *vertices =
+      malloc(sizeof(Evas_Canvas3D_Vertex_Eet) * mesh->vertex_count);
+   Evas_Canvas3D_Geometry_Eet *geometry =
+      malloc(sizeof(Evas_Canvas3D_Geometry_Eet));
    int *geometries = malloc(sizeof(int));
 
    if ((vertices == NULL) || (geometry == NULL))
@@ -59,9 +59,9 @@ _set_geometry_to_eet_file_from_mesh(Evas_3D_Mesh_Data *mesh,
         src += f->vertices[a].element_count;\
      }
    geometry->vertices = vertices;
-   SAVE_GEOMETRICS(EVAS_3D_VERTEX_POSITION, position, vertices[i].position.z = src[2];)
-   SAVE_GEOMETRICS(EVAS_3D_VERTEX_NORMAL, normal, vertices[i].normal.z = src[2];)
-   SAVE_GEOMETRICS(EVAS_3D_VERTEX_TEXCOORD, texcoord,)
+   SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_POSITION, position, vertices[i].position.z = src[2];)
+   SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_NORMAL, normal, vertices[i].normal.z = src[2];)
+   SAVE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_TEXCOORD, texcoord,)
 #undef SAVE_GEOMETRICS
 
    eet_mesh->geometries = geometry;
@@ -69,17 +69,17 @@ _set_geometry_to_eet_file_from_mesh(Evas_3D_Mesh_Data *mesh,
 }
 
 void
-_set_material_to_eet_file_from_mesh(Evas_3D_Mesh_Eet *eet_mesh,
-                                    Evas_3D_Header_Eet *eet_header,
-                                    Evas_3D_Mesh_Frame *f)
+_set_material_to_eet_file_from_mesh(Evas_Canvas3D_Mesh_Eet *eet_mesh,
+                                    Evas_Canvas3D_Header_Eet *eet_header,
+                                    Evas_Canvas3D_Mesh_Frame *f)
 {
    int i;
-   Evas_3D_Material_Data *material =
-      eo_data_scope_get(f->material, EVAS_3D_MATERIAL_CLASS);
-   Evas_3D_Material_Eet *saved_materials =
-      malloc(sizeof(Evas_3D_Material_Eet));
-   Evas_3D_Color_Eet *saved_colors =
-      malloc(sizeof(Evas_3D_Color_Eet) * EVAS_3D_MATERIAL_ATTRIB_COUNT);
+   Evas_Canvas3D_Material_Data *material =
+      eo_data_scope_get(f->material, EVAS_CANVAS3D_MATERIAL_CLASS);
+   Evas_Canvas3D_Material_Eet *saved_materials =
+      malloc(sizeof(Evas_Canvas3D_Material_Eet));
+   Evas_Canvas3D_Color_Eet *saved_colors =
+      malloc(sizeof(Evas_Canvas3D_Color_Eet) * EVAS_CANVAS3D_MATERIAL_ATTRIB_COUNT);
    int *materials = malloc(sizeof(int));
 
    if ((saved_materials == NULL) || (saved_colors == NULL))
@@ -121,8 +121,8 @@ _set_material_to_eet_file_from_mesh(Evas_3D_Mesh_Eet *eet_mesh,
         saved_materials->shininess = material->shininess;
      }
 
-   saved_materials->colors_count = EVAS_3D_MATERIAL_ATTRIB_COUNT;
-   materials[0] = EVAS_3D_MATERIAL_ATTRIB_COUNT;
+   saved_materials->colors_count = EVAS_CANVAS3D_MATERIAL_ATTRIB_COUNT;
+   materials[0] = EVAS_CANVAS3D_MATERIAL_ATTRIB_COUNT;
    saved_materials->id = 1;
    saved_materials->colors = saved_colors;
    eet_mesh->materials = saved_materials;
@@ -130,9 +130,9 @@ _set_material_to_eet_file_from_mesh(Evas_3D_Mesh_Eet *eet_mesh,
 }
 
 void
-_set_frame_to_eet_file_from_mesh(Evas_3D_Mesh_Eet *eet_mesh)
+_set_frame_to_eet_file_from_mesh(Evas_Canvas3D_Mesh_Eet *eet_mesh)
 {
-   eet_mesh->frames = malloc(sizeof(Evas_3D_Frame_Eet));
+   eet_mesh->frames = malloc(sizeof(Evas_Canvas3D_Frame_Eet));
 
    if (eet_mesh->frames == NULL)
      {
@@ -146,18 +146,18 @@ _set_frame_to_eet_file_from_mesh(Evas_3D_Mesh_Eet *eet_mesh)
 }
 
 void
-evas_model_save_file_eet(Evas_3D_Mesh *mesh,
+evas_model_save_file_eet(Evas_Canvas3D_Mesh *mesh,
                          const char *file,
-                         Evas_3D_Mesh_Frame *f)
+                         Evas_Canvas3D_Mesh_Frame *f)
 {
-   Evas_3D_Mesh_Data *pd = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
+   Evas_Canvas3D_Mesh_Data *pd = eo_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
    Eet_File *ef = eet_open(file, EET_FILE_MODE_WRITE);
-   Evas_3D_Mesh_Eet* eet_mesh = malloc(sizeof(Evas_3D_Mesh_Eet));
-   Evas_3D_Header_Eet* eet_header = malloc(sizeof(Evas_3D_Header_Eet));
+   Evas_Canvas3D_Mesh_Eet* eet_mesh = malloc(sizeof(Evas_Canvas3D_Mesh_Eet));
+   Evas_Canvas3D_Header_Eet* eet_header = malloc(sizeof(Evas_Canvas3D_Header_Eet));
 
-   _evas_3d_eet_file_init();
+   _evas_canvas3d_eet_file_init();
 
-   eet_file = _evas_3d_eet_file_new();
+   eet_file = _evas_canvas3d_eet_file_new();
 
    eet_mesh->materials_count = 1;
    eet_header->materials_count = 1;
@@ -176,7 +176,7 @@ evas_model_save_file_eet(Evas_3D_Mesh *mesh,
         ERR("Opening of file is failed.");
         free(eet_mesh);
         free(eet_header);
-        _evas_3d_eet_file_free();
+        _evas_canvas3d_eet_file_free();
         return;
      }
 
@@ -185,11 +185,11 @@ evas_model_save_file_eet(Evas_3D_Mesh *mesh,
 
    eet_data_write(ef,
                   _file_descriptor,
-                  EVAS_3D_FILE_CACHE_FILE_ENTRY,
+                  EVAS_CANVAS3D_FILE_CACHE_FILE_ENTRY,
                   eet_file,
                   EINA_TRUE);
    eet_close(ef);
 
-   _evas_3d_eet_file_free();
+   _evas_canvas3d_eet_file_free();
 }
 

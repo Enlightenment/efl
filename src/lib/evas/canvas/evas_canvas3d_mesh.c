@@ -1,13 +1,13 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#define MY_CLASS EVAS_3D_MESH_CLASS
+#define MY_CLASS EVAS_CANVAS3D_MESH_CLASS
 
-static Evas_3D_Mesh_Frame *
-evas_3d_mesh_frame_new(Evas_3D_Mesh *mesh)
+static Evas_Canvas3D_Mesh_Frame *
+evas_canvas3d_mesh_frame_new(Evas_Canvas3D_Mesh *mesh)
 {
-   Evas_3D_Mesh_Frame *frame = NULL;
-   frame = (Evas_3D_Mesh_Frame *)calloc(1, sizeof(Evas_3D_Mesh_Frame));
+   Evas_Canvas3D_Mesh_Frame *frame = NULL;
+   frame = (Evas_Canvas3D_Mesh_Frame *)calloc(1, sizeof(Evas_Canvas3D_Mesh_Frame));
 
    if (frame == NULL)
      {
@@ -22,14 +22,14 @@ evas_3d_mesh_frame_new(Evas_3D_Mesh *mesh)
 }
 
 static void
-evas_3d_mesh_frame_free(Evas_3D_Mesh_Frame *frame)
+evas_canvas3d_mesh_frame_free(Evas_Canvas3D_Mesh_Frame *frame)
 {
    int i;
 
    if (frame->material)
-     evas_3d_material_mesh_del(frame->material, frame->mesh);
+     evas_canvas3d_material_mesh_del(frame->material, frame->mesh);
 
-   for (i = 0; i < EVAS_3D_VERTEX_ATTRIB_COUNT; i++)
+   for (i = 0; i < EVAS_CANVAS3D_VERTEX_ATTRIB_COUNT; i++)
      {
         if (frame->vertices[i].owns_data)
           free(frame->vertices[i].data);
@@ -38,11 +38,11 @@ evas_3d_mesh_frame_free(Evas_3D_Mesh_Frame *frame)
    free(frame);
 }
 
-Evas_3D_Mesh_Frame *
-evas_3d_mesh_frame_find(Evas_3D_Mesh_Data *pd, int frame)
+Evas_Canvas3D_Mesh_Frame *
+evas_canvas3d_mesh_frame_find(Evas_Canvas3D_Mesh_Data *pd, int frame)
 {
    Eina_List *l;
-   Evas_3D_Mesh_Frame *f;
+   Evas_Canvas3D_Mesh_Frame *f;
 
    EINA_LIST_FOREACH(pd->frames, l, f)
      {
@@ -54,9 +54,9 @@ evas_3d_mesh_frame_find(Evas_3D_Mesh_Data *pd, int frame)
 }
 
 Eina_Bool
-evas_3d_mesh_aabb_add_to_frame(Evas_3D_Mesh_Data *pd, int frame, int stride)
+evas_canvas3d_mesh_aabb_add_to_frame(Evas_Canvas3D_Mesh_Data *pd, int frame, int stride)
 {
-   Evas_3D_Mesh_Frame *curframe = evas_3d_mesh_frame_find(pd, frame);
+   Evas_Canvas3D_Mesh_Frame *curframe = evas_canvas3d_mesh_frame_find(pd, frame);
    int i = 0, j = 0, step = 0, size = 0, max;
    float vxmin, vymin, vzmin, vxmax, vymax, vzmax;
    float *minmaxdata = NULL;
@@ -70,9 +70,9 @@ evas_3d_mesh_aabb_add_to_frame(Evas_3D_Mesh_Data *pd, int frame, int stride)
         return EINA_FALSE;
      }
 
-   step = curframe->vertices[EVAS_3D_VERTEX_POSITION].element_count;
-   size = curframe->vertices[EVAS_3D_VERTEX_POSITION].size;
-   minmaxdata = (float *)curframe->vertices[EVAS_3D_VERTEX_POSITION].data;
+   step = curframe->vertices[EVAS_CANVAS3D_VERTEX_POSITION].element_count;
+   size = curframe->vertices[EVAS_CANVAS3D_VERTEX_POSITION].size;
+   minmaxdata = (float *)curframe->vertices[EVAS_CANVAS3D_VERTEX_POSITION].data;
 
    if (!minmaxdata)
      {
@@ -104,24 +104,24 @@ evas_3d_mesh_aabb_add_to_frame(Evas_3D_Mesh_Data *pd, int frame, int stride)
 }
 
 static inline void
-_mesh_init(Evas_3D_Mesh_Data *pd)
+_mesh_init(Evas_Canvas3D_Mesh_Data *pd)
 {
    pd->vertex_count = 0;
    pd->frame_count = 0;
    pd->frames = NULL;
 
-   pd->index_format = EVAS_3D_INDEX_FORMAT_NONE;
+   pd->index_format = EVAS_CANVAS3D_INDEX_FORMAT_NONE;
    pd->index_count = 0;
    pd->indices = NULL;
    pd->owns_indices = EINA_FALSE;
-   pd->assembly = EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES;
+   pd->assembly = EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES;
 
    pd->nodes = NULL;
-   pd->blend_sfactor = EVAS_3D_BLEND_ONE;
-   pd->blend_dfactor = EVAS_3D_BLEND_ZERO;
+   pd->blend_sfactor = EVAS_CANVAS3D_BLEND_ONE;
+   pd->blend_dfactor = EVAS_CANVAS3D_BLEND_ZERO;
    pd->blending = EINA_FALSE;
 
-   pd->alpha_comparison = EVAS_3D_COMPARISON_ALWAYS;
+   pd->alpha_comparison = EVAS_CANVAS3D_COMPARISON_ALWAYS;
    pd->alpha_ref_value = 0.0f;
    pd->alpha_test_enabled = EINA_FALSE;
 #ifndef GL_GLES
@@ -135,16 +135,16 @@ _mesh_init(Evas_3D_Mesh_Data *pd)
 }
 
 static inline void
-_mesh_fini(Evas_3D_Mesh_Data *pd)
+_mesh_fini(Evas_Canvas3D_Mesh_Data *pd)
 {
    Eina_List           *l;
-   Evas_3D_Mesh_Frame  *f;
+   Evas_Canvas3D_Mesh_Frame  *f;
 
    if (pd->frames)
      {
         EINA_LIST_FOREACH(pd->frames, l, f)
           {
-             evas_3d_mesh_frame_free(f);
+             evas_canvas3d_mesh_frame_free(f);
           }
 
         eina_list_free(pd->frames);
@@ -161,8 +161,8 @@ static Eina_Bool
 _mesh_node_geometry_change_notify(const Eina_Hash *hash EINA_UNUSED, const void *key,
                                   void *data EINA_UNUSED, void *fdata)
 {
-   Evas_3D_Node *n = *(Evas_3D_Node **)key;
-   eo_do(n, evas_3d_object_change(EVAS_3D_STATE_NODE_MESH_GEOMETRY, (Evas_3D_Object *)fdata));
+   Evas_Canvas3D_Node *n = *(Evas_Canvas3D_Node **)key;
+   eo_do(n, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_MESH_GEOMETRY, (Evas_Canvas3D_Object *)fdata));
    return EINA_TRUE;
 }
 
@@ -170,15 +170,15 @@ static Eina_Bool
 _mesh_node_material_change_notify(const Eina_Hash *hash EINA_UNUSED, const void *key,
                                   void *data EINA_UNUSED, void *fdata)
 {
-   Evas_3D_Node *n = *(Evas_3D_Node **)key;
-   eo_do(n, evas_3d_object_change(EVAS_3D_STATE_NODE_MESH_MATERIAL, (Evas_3D_Object *)fdata));
+   Evas_Canvas3D_Node *n = *(Evas_Canvas3D_Node **)key;
+   eo_do(n, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_NODE_MESH_MATERIAL, (Evas_Canvas3D_Object *)fdata));
    return EINA_TRUE;
 }
 
 static void
-_evas_3d_mesh_evas_3d_object_change_notify(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_State state, Evas_3D_Object *ref EINA_UNUSED)
+_evas_canvas3d_mesh_evas_canvas3d_object_change_notify(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Evas_Canvas3D_State state, Evas_Canvas3D_Object *ref EINA_UNUSED)
 {
-   if (state == EVAS_3D_STATE_MESH_MATERIAL)
+   if (state == EVAS_CANVAS3D_STATE_MESH_MATERIAL)
      {
         if (pd->nodes)
           eina_hash_foreach(pd->nodes, _mesh_node_material_change_notify, obj);
@@ -191,26 +191,26 @@ _evas_3d_mesh_evas_3d_object_change_notify(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_
 }
 
 EOLIAN static void
-_evas_3d_mesh_evas_3d_object_update_notify(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_evas_canvas3d_object_update_notify(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    Eina_List *l;
-   Evas_3D_Mesh_Frame *f;
+   Evas_Canvas3D_Mesh_Frame *f;
 
    EINA_LIST_FOREACH(pd->frames, l, f)
      {
         if (f->material)
          {
-            eo_do(f->material, evas_3d_object_update());
+            eo_do(f->material, evas_canvas3d_object_update());
          }
      }
 }
 
 
 void
-evas_3d_mesh_node_add(Evas_3D_Mesh *mesh, Evas_3D_Node *node)
+evas_canvas3d_mesh_node_add(Evas_Canvas3D_Mesh *mesh, Evas_Canvas3D_Node *node)
 {
    int count = 0;
-   Evas_3D_Mesh_Data *pd = eo_data_scope_get(mesh, MY_CLASS);
+   Evas_Canvas3D_Mesh_Data *pd = eo_data_scope_get(mesh, MY_CLASS);
    if (pd->nodes == NULL)
      {
         pd->nodes = eina_hash_pointer_new(NULL);
@@ -228,10 +228,10 @@ evas_3d_mesh_node_add(Evas_3D_Mesh *mesh, Evas_3D_Node *node)
 }
 
 void
-evas_3d_mesh_node_del(Evas_3D_Mesh *mesh, Evas_3D_Node *node)
+evas_canvas3d_mesh_node_del(Evas_Canvas3D_Mesh *mesh, Evas_Canvas3D_Node *node)
 {
    int count = 0;
-   Evas_3D_Mesh_Data *pd = eo_data_scope_get(mesh, MY_CLASS);
+   Evas_Canvas3D_Mesh_Data *pd = eo_data_scope_get(mesh, MY_CLASS);
    if (pd->nodes == NULL)
      {
         ERR("No node to delete.");
@@ -247,8 +247,8 @@ evas_3d_mesh_node_del(Evas_3D_Mesh *mesh, Evas_3D_Node *node)
 }
 
 
-EAPI Evas_3D_Mesh *
-evas_3d_mesh_add(Evas *e)
+EAPI Evas_Canvas3D_Mesh *
+evas_canvas3d_mesh_add(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
@@ -258,55 +258,55 @@ evas_3d_mesh_add(Evas *e)
 }
 
 EOLIAN static Eo *
-_evas_3d_mesh_eo_base_constructor(Eo *obj, Evas_3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_eo_base_constructor(Eo *obj, Evas_Canvas3D_Mesh_Data *pd)
 {
    obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
-   eo_do (obj, evas_3d_object_type_set(EVAS_3D_OBJECT_TYPE_MESH));
+   eo_do (obj, evas_canvas3d_object_type_set(EVAS_CANVAS3D_OBJECT_TYPE_MESH));
    _mesh_init(pd);
 
    return obj;
 }
 
 EOLIAN static void
-_evas_3d_mesh_eo_base_destructor(Eo *obj, Evas_3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_eo_base_destructor(Eo *obj, Evas_Canvas3D_Mesh_Data *pd)
 {
    _mesh_fini(pd);
    eo_do_super(obj, MY_CLASS, eo_destructor());
 }
 
 EOLIAN static void
-_evas_3d_mesh_shade_mode_set(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, Evas_3D_Shade_Mode mode)
+_evas_canvas3d_mesh_shade_mode_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd, Evas_Canvas3D_Shade_Mode mode)
 {
    if (pd->shade_mode != mode)
      {
         pd->shade_mode = mode;
-        eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_SHADE_MODE, NULL));
+        eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_SHADE_MODE, NULL));
      }
 }
 
-EOLIAN static Evas_3D_Shade_Mode
-_evas_3d_mesh_shade_mode_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
+EOLIAN static Evas_Canvas3D_Shade_Mode
+_evas_canvas3d_mesh_shade_mode_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->shade_mode;
 }
 
 EOLIAN static void
-_evas_3d_mesh_vertex_count_set(Eo *obj, Evas_3D_Mesh_Data *pd, unsigned int count)
+_evas_canvas3d_mesh_vertex_count_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, unsigned int count)
 {
    pd->vertex_count = count;
-   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_VERTEX_COUNT, NULL));
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_VERTEX_COUNT, NULL));
 }
 
 EOLIAN static unsigned int
-_evas_3d_mesh_vertex_count_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_vertex_count_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->vertex_count;
 }
 
 EOLIAN static void
-_evas_3d_mesh_frame_add(Eo *obj, Evas_3D_Mesh_Data *pd, int frame)
+_evas_canvas3d_mesh_frame_add(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, int frame)
 {
-   Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, frame);
+   Evas_Canvas3D_Mesh_Frame *f = evas_canvas3d_mesh_frame_find(pd, frame);
 
    if (f != NULL)
      {
@@ -314,20 +314,20 @@ _evas_3d_mesh_frame_add(Eo *obj, Evas_3D_Mesh_Data *pd, int frame)
         return;
      }
 
-   f = evas_3d_mesh_frame_new(obj);
+   f = evas_canvas3d_mesh_frame_new(obj);
 
    if (f == NULL)
      return;
 
    f->frame = frame;
    pd->frames = eina_list_append(pd->frames, f);
-   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_FRAME, NULL));
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_FRAME, NULL));
 }
 
 EOLIAN static void
-_evas_3d_mesh_frame_del(Eo *obj, Evas_3D_Mesh_Data *pd, int frame)
+_evas_canvas3d_mesh_frame_del(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, int frame)
 {
-   Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, frame);
+   Evas_Canvas3D_Mesh_Frame *f = evas_canvas3d_mesh_frame_find(pd, frame);
 
    if (f == NULL)
      {
@@ -336,14 +336,14 @@ _evas_3d_mesh_frame_del(Eo *obj, Evas_3D_Mesh_Data *pd, int frame)
      }
 
    pd->frames = eina_list_remove(pd->frames, f);
-   evas_3d_mesh_frame_free(f);
-   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_FRAME, NULL));
+   evas_canvas3d_mesh_frame_free(f);
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_FRAME, NULL));
 }
 
 EOLIAN static void
-_evas_3d_mesh_frame_material_set(Eo *obj, Evas_3D_Mesh_Data *pd, int frame, Evas_3D_Material *material)
+_evas_canvas3d_mesh_frame_material_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, int frame, Evas_Canvas3D_Material *material)
 {
-   Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, frame);
+   Evas_Canvas3D_Mesh_Frame *f = evas_canvas3d_mesh_frame_find(pd, frame);
 
    if (f == NULL)
      {
@@ -356,20 +356,20 @@ _evas_3d_mesh_frame_material_set(Eo *obj, Evas_3D_Mesh_Data *pd, int frame, Evas
 
    if (f->material)
      {
-        evas_3d_material_mesh_del(f->material, obj);
+        evas_canvas3d_material_mesh_del(f->material, obj);
         eo_unref(f->material);
      }
 
    f->material = material;
    eo_ref(material);
-   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_MATERIAL, NULL));
-   evas_3d_material_mesh_add(material, obj);
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_MATERIAL, NULL));
+   evas_canvas3d_material_mesh_add(material, obj);
 }
 
-EOLIAN static Evas_3D_Material *
-_evas_3d_mesh_frame_material_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, int frame)
+EOLIAN static Evas_Canvas3D_Material *
+_evas_canvas3d_mesh_frame_material_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd, int frame)
 {
-   Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, frame);
+   Evas_Canvas3D_Mesh_Frame *f = evas_canvas3d_mesh_frame_find(pd, frame);
 
    if (f == NULL)
      {
@@ -381,9 +381,9 @@ _evas_3d_mesh_frame_material_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, int
 }
 
 EOLIAN static void
-_evas_3d_mesh_frame_vertex_data_set(Eo *obj, Evas_3D_Mesh_Data *pd, int frame, Evas_3D_Vertex_Attrib attrib, int stride, const void *data)
+_evas_canvas3d_mesh_frame_vertex_data_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, int frame, Evas_Canvas3D_Vertex_Attrib attrib, int stride, const void *data)
 {
-   Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, frame);
+   Evas_Canvas3D_Mesh_Frame *f = evas_canvas3d_mesh_frame_find(pd, frame);
    int element_count;
 
    if (f == NULL)
@@ -398,7 +398,7 @@ _evas_3d_mesh_frame_vertex_data_set(Eo *obj, Evas_3D_Mesh_Data *pd, int frame, E
         return;
      }
 
-   if (attrib == EVAS_3D_VERTEX_POSITION)
+   if (attrib == EVAS_CANVAS3D_VERTEX_POSITION)
      {
         int i = 0, j = 0, size = stride/sizeof(float);
         float vxmin, vymin, vzmin, vxmax, vymax, vzmax;
@@ -434,19 +434,19 @@ _evas_3d_mesh_frame_vertex_data_set(Eo *obj, Evas_3D_Mesh_Data *pd, int frame, E
              ERR("Axis-Aligned Bounding Box wasn't added in frame %d ", frame);
           }
      }
-   else if (attrib == EVAS_3D_VERTEX_NORMAL)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_NORMAL)
      {
         element_count = 3;
      }
-   else if (attrib == EVAS_3D_VERTEX_TANGENT)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_TANGENT)
      {
         element_count = 3;
      }
-   else if (attrib == EVAS_3D_VERTEX_COLOR)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_COLOR)
      {
         element_count = 4;
      }
-   else if (attrib == EVAS_3D_VERTEX_TEXCOORD)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_TEXCOORD)
      {
         element_count = 2;
      }
@@ -465,14 +465,14 @@ _evas_3d_mesh_frame_vertex_data_set(Eo *obj, Evas_3D_Mesh_Data *pd, int frame, E
    f->vertices[attrib].owns_data = EINA_FALSE;
    f->vertices[attrib].element_count = element_count;
 
-   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_VERTEX_DATA, NULL));
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_VERTEX_DATA, NULL));
 }
 
 EOLIAN static void
-_evas_3d_mesh_frame_vertex_data_copy_set(Eo *obj, Evas_3D_Mesh_Data *pd, int frame, Evas_3D_Vertex_Attrib attrib, int stride, const void *data)
+_evas_canvas3d_mesh_frame_vertex_data_copy_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, int frame, Evas_Canvas3D_Vertex_Attrib attrib, int stride, const void *data)
 {
-   Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, frame);
-   Evas_3D_Vertex_Buffer *vb;
+   Evas_Canvas3D_Mesh_Frame *f = evas_canvas3d_mesh_frame_find(pd, frame);
+   Evas_Canvas3D_Vertex_Buffer *vb;
    int size, element_count;
 
    if (f == NULL)
@@ -481,23 +481,23 @@ _evas_3d_mesh_frame_vertex_data_copy_set(Eo *obj, Evas_3D_Mesh_Data *pd, int fra
         return;
      }
 
-   if (attrib == EVAS_3D_VERTEX_POSITION)
+   if (attrib == EVAS_CANVAS3D_VERTEX_POSITION)
      {
         element_count = 3;
      }
-   else if (attrib == EVAS_3D_VERTEX_NORMAL)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_NORMAL)
      {
         element_count = 3;
      }
-   else if (attrib == EVAS_3D_VERTEX_TANGENT)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_TANGENT)
      {
         element_count = 3;
      }
-   else if (attrib == EVAS_3D_VERTEX_COLOR)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_COLOR)
      {
         element_count = 4;
      }
-   else if (attrib == EVAS_3D_VERTEX_TEXCOORD)
+   else if (attrib == EVAS_CANVAS3D_VERTEX_TEXCOORD)
      {
         element_count = 2;
      }
@@ -583,19 +583,19 @@ _evas_3d_mesh_frame_vertex_data_copy_set(Eo *obj, Evas_3D_Mesh_Data *pd, int fra
           }
      }
 
-   if (attrib == EVAS_3D_VERTEX_POSITION &&
-       !evas_3d_mesh_aabb_add_to_frame(pd, frame, stride))
+   if (attrib == EVAS_CANVAS3D_VERTEX_POSITION &&
+       !evas_canvas3d_mesh_aabb_add_to_frame(pd, frame, stride))
      {
         ERR("Axis-Aligned Bounding Box wasn't added in frame %d ", frame);
      }
 
-   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_VERTEX_DATA, NULL));
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_VERTEX_DATA, NULL));
 }
 
 EOLIAN static void *
-_evas_3d_mesh_frame_vertex_data_map(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, int frame, Evas_3D_Vertex_Attrib attrib)
+_evas_canvas3d_mesh_frame_vertex_data_map(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd, int frame, Evas_Canvas3D_Vertex_Attrib attrib)
 {
-   Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, frame);
+   Evas_Canvas3D_Mesh_Frame *f = evas_canvas3d_mesh_frame_find(pd, frame);
 
    if (f == NULL)
      {
@@ -614,9 +614,9 @@ _evas_3d_mesh_frame_vertex_data_map(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, 
 }
 
 EOLIAN static void
-_evas_3d_mesh_frame_vertex_data_unmap(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, int frame, Evas_3D_Vertex_Attrib attrib)
+_evas_canvas3d_mesh_frame_vertex_data_unmap(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd, int frame, Evas_Canvas3D_Vertex_Attrib attrib)
 {
-   Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, frame);
+   Evas_Canvas3D_Mesh_Frame *f = evas_canvas3d_mesh_frame_find(pd, frame);
 
    if (f == NULL)
      {
@@ -634,9 +634,9 @@ _evas_3d_mesh_frame_vertex_data_unmap(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd
 }
 
 EOLIAN static int
-_evas_3d_mesh_frame_vertex_stride_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, int frame, Evas_3D_Vertex_Attrib attrib)
+_evas_canvas3d_mesh_frame_vertex_stride_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd, int frame, Evas_Canvas3D_Vertex_Attrib attrib)
 {
-   Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, frame);
+   Evas_Canvas3D_Mesh_Frame *f = evas_canvas3d_mesh_frame_find(pd, frame);
 
    if (f == NULL)
      {
@@ -648,7 +648,7 @@ _evas_3d_mesh_frame_vertex_stride_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd
 }
 
 EOLIAN static void
-_evas_3d_mesh_index_data_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Index_Format format, int count, const void *indices)
+_evas_canvas3d_mesh_index_data_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Evas_Canvas3D_Index_Format format, int count, const void *indices)
 {
    if (pd->owns_indices && pd->indices)
      free(pd->indices);
@@ -659,19 +659,19 @@ _evas_3d_mesh_index_data_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Index_Forma
    pd->indices = (void *)indices;
    pd->owns_indices = EINA_FALSE;
 
-   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_INDEX_DATA, NULL));
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_INDEX_DATA, NULL));
 }
 
 EOLIAN static void
-_evas_3d_mesh_index_data_copy_set(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, Evas_3D_Index_Format format, int count, const void *indices)
+_evas_canvas3d_mesh_index_data_copy_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd, Evas_Canvas3D_Index_Format format, int count, const void *indices)
 {
    int size;
 
-   if (format == EVAS_3D_INDEX_FORMAT_UNSIGNED_BYTE)
+   if (format == EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_BYTE)
      {
         size = count * sizeof(unsigned char);
      }
-   else if (format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
+   else if (format == EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT)
      {
         size = count * sizeof(unsigned short);
      }
@@ -705,20 +705,20 @@ _evas_3d_mesh_index_data_copy_set(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd, Ev
      memcpy(pd->indices, indices, size);
 }
 
-EOLIAN static Evas_3D_Index_Format
-_evas_3d_mesh_index_format_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
+EOLIAN static Evas_Canvas3D_Index_Format
+_evas_canvas3d_mesh_index_format_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->index_format;
 }
 
 EOLIAN static int
-_evas_3d_mesh_index_count_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_index_count_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->index_count;
 }
 
 EOLIAN static void *
-_evas_3d_mesh_index_data_map(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_index_data_map(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    if (pd->index_mapped)
      {
@@ -731,7 +731,7 @@ _evas_3d_mesh_index_data_map(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 }
 
 EOLIAN static void
-_evas_3d_mesh_index_data_unmap(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_index_data_unmap(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    if (!pd->index_mapped)
      {
@@ -743,27 +743,27 @@ _evas_3d_mesh_index_data_unmap(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
 }
 
 EOLIAN static void
-_evas_3d_mesh_vertex_assembly_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Vertex_Assembly assembly)
+_evas_canvas3d_mesh_vertex_assembly_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Evas_Canvas3D_Vertex_Assembly assembly)
 {
    pd->assembly = assembly;
-   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_VERTEX_ASSEMBLY, NULL));
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_VERTEX_ASSEMBLY, NULL));
 }
 
-EOLIAN static Evas_3D_Vertex_Assembly
-_evas_3d_mesh_vertex_assembly_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
+EOLIAN static Evas_Canvas3D_Vertex_Assembly
+_evas_canvas3d_mesh_vertex_assembly_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->assembly;
 }
 
 EOLIAN static void
-_evas_3d_mesh_fog_color_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_Real r, Evas_Real g, Evas_Real b, Evas_Real a)
+_evas_canvas3d_mesh_fog_color_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Evas_Real r, Evas_Real g, Evas_Real b, Evas_Real a)
 {
    evas_color_set(&pd->fog_color, r, g, b, a);
-   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_FOG, NULL));
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_FOG, NULL));
 }
 
 EOLIAN static void
-_evas_3d_mesh_fog_color_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd,
+_evas_canvas3d_mesh_fog_color_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
                                    Evas_Real *r, Evas_Real *g, Evas_Real *b, Evas_Real *a)
 {
    if (r) *r = pd->fog_color.r;
@@ -773,61 +773,61 @@ _evas_3d_mesh_fog_color_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd,
 }
 
 EOLIAN static void
-_evas_3d_mesh_fog_enable_set(Eo *obj, Evas_3D_Mesh_Data *pd, Eina_Bool enabled)
+_evas_canvas3d_mesh_fog_enable_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Eina_Bool enabled)
 {
    pd->fog_enabled = enabled;
-   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_FOG, NULL));
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_FOG, NULL));
 }
 
 EOLIAN static Eina_Bool
-_evas_3d_mesh_fog_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_fog_enable_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->fog_enabled;
 }
 
 EOLIAN static void
-_evas_3d_mesh_blending_enable_set(Eo *obj, Evas_3D_Mesh_Data *pd, Eina_Bool blending)
+_evas_canvas3d_mesh_blending_enable_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Eina_Bool blending)
 {
    pd->blending = blending;
-   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_BLENDING, NULL));
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_BLENDING, NULL));
 }
 
 EOLIAN static Eina_Bool
-_evas_3d_mesh_blending_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_blending_enable_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->blending;
 }
 
 EOLIAN static void
-_evas_3d_mesh_blending_func_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Blend_Func sfactor, Evas_3D_Blend_Func dfactor)
+_evas_canvas3d_mesh_blending_func_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Evas_Canvas3D_Blend_Func sfactor, Evas_Canvas3D_Blend_Func dfactor)
 {
    pd->blend_sfactor = sfactor;
    pd->blend_dfactor = dfactor;
-   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_BLENDING, NULL));
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_BLENDING, NULL));
 }
 
 EOLIAN static void
-_evas_3d_mesh_blending_func_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd,
-                                   Evas_3D_Blend_Func *sfactor, Evas_3D_Blend_Func *dfactor)
+_evas_canvas3d_mesh_blending_func_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
+                                   Evas_Canvas3D_Blend_Func *sfactor, Evas_Canvas3D_Blend_Func *dfactor)
 {
    if (sfactor) *sfactor = pd->blend_sfactor;
    if (dfactor) *dfactor = pd->blend_dfactor;
 }
 
 EOLIAN static void
-_evas_3d_mesh_alpha_func_set(Eo *obj, Evas_3D_Mesh_Data *pd, Evas_3D_Comparison comparison,
+_evas_canvas3d_mesh_alpha_func_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Evas_Canvas3D_Comparison comparison,
                                     Evas_Real ref_value)
 {
    if (pd->alpha_comparison == comparison && pd->alpha_ref_value == ref_value)
      return;
    pd->alpha_comparison = comparison;
    pd->alpha_ref_value = ref_value;
-   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_ALPHA_TEST, NULL));
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_ALPHA_TEST, NULL));
 }
 
 EOLIAN static void
-_evas_3d_mesh_alpha_func_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd,
-                                   Evas_3D_Comparison *comparison,
+_evas_canvas3d_mesh_alpha_func_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd,
+                                   Evas_Canvas3D_Comparison *comparison,
                                    Evas_Real *ref_value)
 {
    if (comparison) *comparison = pd->alpha_comparison;
@@ -835,21 +835,21 @@ _evas_3d_mesh_alpha_func_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd,
 }
 
 EOLIAN static void
-_evas_3d_mesh_alpha_test_enable_set(Eo *obj, Evas_3D_Mesh_Data *pd, Eina_Bool enabled)
+_evas_canvas3d_mesh_alpha_test_enable_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Eina_Bool enabled)
 {
    pd->alpha_test_enabled = enabled;
-   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_ALPHA_TEST, NULL));
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_ALPHA_TEST, NULL));
 }
 
 EOLIAN static Eina_Bool
-_evas_3d_mesh_alpha_test_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_alpha_test_enable_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->alpha_test_enabled;
 }
 
 EOLIAN static Eina_Bool
-_evas_3d_mesh_efl_file_mmap_set(Eo *obj,
-                                Evas_3D_Mesh_Data *pd,
+_evas_canvas3d_mesh_efl_file_mmap_set(Eo *obj,
+                                Evas_Canvas3D_Mesh_Data *pd,
                                 const Eina_File *f, const char *key EINA_UNUSED)
 {
    _mesh_fini(pd);
@@ -865,7 +865,7 @@ _evas_3d_mesh_efl_file_mmap_set(Eo *obj,
 /* FIXME: Imelemnt mmap_get and file_get. */
 
 EOLIAN static Eina_Bool
-_evas_3d_mesh_efl_file_file_set(Eo *obj, Evas_3D_Mesh_Data *pd,
+_evas_canvas3d_mesh_efl_file_file_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd,
                                 const char *file,
                                 const char *key EINA_UNUSED)
 {
@@ -879,14 +879,14 @@ _evas_3d_mesh_efl_file_file_set(Eo *obj, Evas_3D_Mesh_Data *pd,
 }
 
 EOLIAN static Eina_Bool
-_evas_3d_mesh_efl_file_save(Eo *obj, Evas_3D_Mesh_Data *pd,
+_evas_canvas3d_mesh_efl_file_save(Eo *obj, Evas_Canvas3D_Mesh_Data *pd,
                    const char *file,
                    const char *key EINA_UNUSED,
                    const char *flags EINA_UNUSED)
 {
    if ((file == NULL) || (obj == NULL) || (pd == NULL)) return EINA_FALSE;
 
-   Evas_3D_Mesh_Frame *f = evas_3d_mesh_frame_find(pd, 0);
+   Evas_Canvas3D_Mesh_Frame *f = evas_canvas3d_mesh_frame_find(pd, 0);
 
    if (f == NULL)
      {
@@ -899,20 +899,20 @@ _evas_3d_mesh_efl_file_save(Eo *obj, Evas_3D_Mesh_Data *pd,
 }
 
 EOLIAN static void
-_evas_3d_mesh_from_primitive_set(Eo *obj,
-                                 Evas_3D_Mesh_Data *pd EINA_UNUSED,
+_evas_canvas3d_mesh_from_primitive_set(Eo *obj,
+                                 Evas_Canvas3D_Mesh_Data *pd EINA_UNUSED,
                                  int frame,
                                  Eo *primitive)
 {
    if ((primitive == NULL) || (obj == NULL)) return;
 
-   Evas_3D_Primitive_Data *ppd = eo_data_scope_get(primitive, EVAS_3D_PRIMITIVE_CLASS);
+   Evas_Canvas3D_Primitive_Data *ppd = eo_data_scope_get(primitive, EVAS_CANVAS3D_PRIMITIVE_CLASS);
 
    evas_common_set_model_from_primitive(obj, frame, ppd);
 }
 
 void
-evas_3d_mesh_interpolate_position_get(Evas_Vec3 *out, const Evas_3D_Vertex_Buffer *pos0, const Evas_3D_Vertex_Buffer *pos1,
+evas_canvas3d_mesh_interpolate_position_get(Evas_Vec3 *out, const Evas_Canvas3D_Vertex_Buffer *pos0, const Evas_Canvas3D_Vertex_Buffer *pos1,
               Evas_Real weight, int index)
 {
    if (pos1->data == NULL)
@@ -949,20 +949,20 @@ evas_3d_mesh_interpolate_position_get(Evas_Vec3 *out, const Evas_3D_Vertex_Buffe
 }
 
 static inline void
-_mesh_frame_find(Evas_3D_Mesh *mesh, int frame,
+_mesh_frame_find(Evas_Canvas3D_Mesh *mesh, int frame,
                  Eina_List **l, Eina_List **r)
 {
    Eina_List *left, *right;
-   Evas_3D_Mesh_Frame *f0 = NULL, *f1;
-   Evas_3D_Mesh_Data *pdmesh = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
+   Evas_Canvas3D_Mesh_Frame *f0 = NULL, *f1;
+   Evas_Canvas3D_Mesh_Data *pdmesh = eo_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
 
    left = pdmesh->frames;
    right = eina_list_next(left);
 
    while (right)
      {
-        f0 = (Evas_3D_Mesh_Frame *)eina_list_data_get(left);
-        f1 = (Evas_3D_Mesh_Frame *)eina_list_data_get(right);
+        f0 = (Evas_Canvas3D_Mesh_Frame *)eina_list_data_get(left);
+        f1 = (Evas_Canvas3D_Mesh_Frame *)eina_list_data_get(right);
 
         if (frame >= f0->frame && frame <= f1->frame)
           break;
@@ -991,19 +991,19 @@ _mesh_frame_find(Evas_3D_Mesh *mesh, int frame,
 }
 
 void
-evas_3d_mesh_interpolate_vertex_buffer_get(Evas_3D_Mesh *mesh, int frame,
-                                           Evas_3D_Vertex_Attrib  attrib,
-                                           Evas_3D_Vertex_Buffer *buf0,
-                                           Evas_3D_Vertex_Buffer *buf1,
+evas_canvas3d_mesh_interpolate_vertex_buffer_get(Evas_Canvas3D_Mesh *mesh, int frame,
+                                           Evas_Canvas3D_Vertex_Attrib  attrib,
+                                           Evas_Canvas3D_Vertex_Buffer *buf0,
+                                           Evas_Canvas3D_Vertex_Buffer *buf1,
                                            Evas_Real             *weight)
 {
    Eina_List *l, *r;
-   const Evas_3D_Mesh_Frame *f0 = NULL, *f1 = NULL;
+   const Evas_Canvas3D_Mesh_Frame *f0 = NULL, *f1 = NULL;
    _mesh_frame_find(mesh, frame, &l, &r);
 
    while (l)
      {
-        f0 = (const Evas_3D_Mesh_Frame *)eina_list_data_get(l);
+        f0 = (const Evas_Canvas3D_Mesh_Frame *)eina_list_data_get(l);
 
         if (f0->vertices[attrib].data != NULL)
           break;
@@ -1014,7 +1014,7 @@ evas_3d_mesh_interpolate_vertex_buffer_get(Evas_3D_Mesh *mesh, int frame,
 
    while (r)
      {
-        f1 = (const Evas_3D_Mesh_Frame *)eina_list_data_get(r);
+        f1 = (const Evas_Canvas3D_Mesh_Frame *)eina_list_data_get(r);
 
         if (f1->vertices[attrib].data != NULL)
           break;
@@ -1066,16 +1066,16 @@ evas_3d_mesh_interpolate_vertex_buffer_get(Evas_3D_Mesh *mesh, int frame,
 }
 
 EOLIAN static Eina_Bool
-_evas_3d_mesh_color_pick_enable_get(Eo *obj EINA_UNUSED, Evas_3D_Mesh_Data *pd)
+_evas_canvas3d_mesh_color_pick_enable_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->color_pick_enabled;
 }
 EOLIAN static void
-_evas_3d_mesh_color_pick_enable_set(Eo *obj, Evas_3D_Mesh_Data *pd, Eina_Bool enabled)
+_evas_canvas3d_mesh_color_pick_enable_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd, Eina_Bool enabled)
 {
    if (pd->color_pick_enabled != enabled)
      pd->color_pick_enabled = enabled;
-   eo_do(obj, evas_3d_object_change(EVAS_3D_STATE_MESH_COLOR_PICK, NULL));
+   eo_do(obj, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_MESH_COLOR_PICK, NULL));
 }
 
-#include "canvas/evas_3d_mesh.eo.c"
+#include "canvas/evas_canvas3d_mesh.eo.c"

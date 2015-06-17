@@ -12,9 +12,9 @@ evas_box3_set(Box3 *box, Evas_Real x0, Evas_Real y0, Evas_Real z0, Evas_Real x1,
 }
 
 void
-_scale(Evas_3D_Node *node, Evas_Real scale)
+_scale(Evas_Canvas3D_Node *node, Evas_Real scale)
 {
-   eo_do(node, evas_3d_node_scale_set(1.0 * scale, 1.0 * scale, 1.0 * scale));
+   eo_do(node, evas_canvas3d_node_scale_set(1.0 * scale, 1.0 * scale, 1.0 * scale));
 }
 
 float
@@ -26,50 +26,50 @@ _distance(float x1, float z1, float x2, float z2)
 void
 _camera_setup(Scene_Data *data)
 {
-   data->camera = eo_add(EVAS_3D_CAMERA_CLASS, evas);
+   data->camera = eo_add(EVAS_CANVAS3D_CAMERA_CLASS, evas);
    eo_do(data->camera,
-         evas_3d_camera_projection_perspective_set(65.0, 1.0, 1.0, 300.0));
+         evas_canvas3d_camera_projection_perspective_set(65.0, 1.0, 1.0, 300.0));
 
-   data->mediator_node = eo_add(EVAS_3D_NODE_CLASS, evas,
-                                       evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
-   data->camera_node = eo_add(EVAS_3D_NODE_CLASS, evas,
-                                     evas_3d_node_constructor(EVAS_3D_NODE_TYPE_CAMERA));
+   data->mediator_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+                                       evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_NODE));
+   data->camera_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+                                     evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_CAMERA));
 
-   eo_do(data->root_node, evas_3d_node_member_add(data->mediator_node));
-   eo_do(data->mediator_node, evas_3d_node_member_add(data->camera_node));
+   eo_do(data->root_node, evas_canvas3d_node_member_add(data->mediator_node));
+   eo_do(data->mediator_node, evas_canvas3d_node_member_add(data->camera_node));
 
    eo_do(data->camera_node,
-         evas_3d_node_camera_set(data->camera),
-         evas_3d_node_position_set(20.0, 80.0, 30.0);
-         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_3D_SPACE_PARENT, 0.0, 1.0, 0.0));
+         evas_canvas3d_node_camera_set(data->camera),
+         evas_canvas3d_node_position_set(20.0, 80.0, 30.0);
+         evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0));
 }
 
 void
 _light_setup(Scene_Data *data)
 {
-   data->light = eo_add(EVAS_3D_LIGHT_CLASS, evas);
+   data->light = eo_add(EVAS_CANVAS3D_LIGHT_CLASS, evas);
 
    eo_do(data->light,
-         evas_3d_light_ambient_set(0.2, 0.2, 0.2, 1.0),
-         evas_3d_light_diffuse_set(1.0, 1.0, 1.0, 1.0),
-         evas_3d_light_specular_set(0.2, 0.2, 0.2, 1.0),
-                  evas_3d_light_projection_perspective_set(100.0, 1.0, 1.0, 200.0));
+         evas_canvas3d_light_ambient_set(0.2, 0.2, 0.2, 1.0),
+         evas_canvas3d_light_diffuse_set(1.0, 1.0, 1.0, 1.0),
+         evas_canvas3d_light_specular_set(0.2, 0.2, 0.2, 1.0),
+                  evas_canvas3d_light_projection_perspective_set(100.0, 1.0, 1.0, 200.0));
 
-   data->light_node = eo_add(EVAS_3D_NODE_CLASS, evas,
-                                    evas_3d_node_constructor(EVAS_3D_NODE_TYPE_LIGHT));
+   data->light_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+                                    evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_LIGHT));
 
    eo_do(data->light_node,
-         evas_3d_node_light_set(data->light),
-          evas_3d_node_position_set(-30.0, 70.0, 0.0),
-         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_3D_SPACE_PARENT, 0.0, 0.0, 1.0));
+         evas_canvas3d_node_light_set(data->light),
+          evas_canvas3d_node_position_set(-30.0, 70.0, 0.0),
+         evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 1.0));
 
-   eo_do(data->root_node, evas_3d_node_member_add(data->light_node));
+   eo_do(data->root_node, evas_canvas3d_node_member_add(data->light_node));
 }
 
-Eina_Bool _mesh_aabb(Evas_3D_Mesh **mesh, Scene_Data *scene, int index)
+Eina_Bool _mesh_aabb(Evas_Canvas3D_Mesh **mesh, Scene_Data *scene, int index)
 {
    Evas_Real x0, y0, z0, x1, y1, z1, r;
-   Evas_3D_Node *node = NULL;
+   Evas_Canvas3D_Node *node = NULL;
 
    if (fmod(index, 12) == 0)
      node = scene->mesh_node_warrior;
@@ -97,14 +97,14 @@ Eina_Bool _mesh_aabb(Evas_3D_Mesh **mesh, Scene_Data *scene, int index)
      node = scene->mesh_node_snake;
 
    eo_do(node,
-         evas_3d_node_bounding_sphere_get(&x0, &y0, &z0, &r));
+         evas_canvas3d_node_bounding_sphere_get(&x0, &y0, &z0, &r));
 
    eo_do(scene->mesh_node_ball,
-         evas_3d_node_scale_set(r, r, r),
-         evas_3d_node_position_set(x0, y0, z0));
+         evas_canvas3d_node_scale_set(r, r, r),
+         evas_canvas3d_node_position_set(x0, y0, z0));
 
    eo_do(node,
-         evas_3d_node_bounding_box_get(&x0, &y0, &z0, &x1, &y1, &z1));
+         evas_canvas3d_node_bounding_box_get(&x0, &y0, &z0, &x1, &y1, &z1));
 
    float vertixes[] =
    {
@@ -152,9 +152,9 @@ Eina_Bool _mesh_aabb(Evas_3D_Mesh **mesh, Scene_Data *scene, int index)
    if (*mesh)
      {
         eo_do(*mesh,
-         evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_LINES),
-              evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_POSITION, 6 * sizeof(float), &vertixes[ 0]),
-              evas_3d_mesh_index_data_copy_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT, 48, &indixes[0]));
+         evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINES),
+              evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_POSITION, 6 * sizeof(float), &vertixes[ 0]),
+              evas_canvas3d_mesh_index_data_copy_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, 48, &indixes[0]));
 
         return EINA_TRUE;
      }
@@ -179,12 +179,12 @@ void _on_canvas_resize(Ecore_Evas *ee)
    evas_object_move(image, 0, 0);
 }
 
-Eina_Bool _horizontal_circle_resolution(Evas_3D_Node *node, Evas_Real x, Evas_Real z, Evas_Real r)
+Eina_Bool _horizontal_circle_resolution(Evas_Canvas3D_Node *node, Evas_Real x, Evas_Real z, Evas_Real r)
 {
    Evas_Real x0, y0, z0, x1, y1, z1;
 
    eo_do(node,
-         evas_3d_node_bounding_box_get(&x0, &y0, &z0, &x1, &y1, &z1));
+         evas_canvas3d_node_bounding_box_get(&x0, &y0, &z0, &x1, &y1, &z1));
 
    if (((x0 - x) * (x0 - x)) + ((z0 - z) * (z0 - z)) < r * r) return EINA_FALSE;
    if (((x0 - x) * (x0 - x)) + ((z1 - z) * (z1 - z)) < r * r) return EINA_FALSE;
@@ -203,14 +203,14 @@ Eina_Bool _horizontal_circle_resolution(Evas_3D_Node *node, Evas_Real x, Evas_Re
    return EINA_TRUE;
 }
 
-Eina_Bool _horizontal_circle_object_resolution(Evas_3D_Node *node, Evas_3D_Node *node2, Evas_Real r)
+Eina_Bool _horizontal_circle_object_resolution(Evas_Canvas3D_Node *node, Evas_Canvas3D_Node *node2, Evas_Real r)
 {
    Evas_Real x0, y0, z0, x1, y1, z1, x, y, z;
 
    eo_do(node2,
-         evas_3d_node_position_get(EVAS_3D_SPACE_WORLD, &x, &y, &z));
+         evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_WORLD, &x, &y, &z));
    eo_do(node,
-         evas_3d_node_bounding_box_get(&x0, &y0, &z0, &x1, &y1, &z1));
+         evas_canvas3d_node_bounding_box_get(&x0, &y0, &z0, &x1, &y1, &z1));
 
    if (((x0 - x) * (x0 - x)) + ((z0 - z) * (z0 - z)) < r * r) return EINA_FALSE;
    if (((x0 - x) * (x0 - x)) + ((z1 - z) * (z1 - z)) < r * r) return EINA_FALSE;
@@ -229,24 +229,24 @@ Eina_Bool _horizontal_circle_object_resolution(Evas_3D_Node *node, Evas_3D_Node 
    return EINA_TRUE;
 }
 
-Eina_Bool _horizontal_circle_position_resolution(Evas_3D_Node *node, Evas_Real x, Evas_Real z, Evas_Real r)
+Eina_Bool _horizontal_circle_position_resolution(Evas_Canvas3D_Node *node, Evas_Real x, Evas_Real z, Evas_Real r)
 {
    Evas_Real x0, y0, z0;
 
    eo_do(node,
-         evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x0, &y0, &z0));
+         evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &x0, &y0, &z0));
 
    if (((x0 - x) * (x0 - x)) + ((z0 - z) * (z0 - z)) < r * r) return EINA_FALSE;
 
    return EINA_TRUE;
 }
 
-Eina_Bool _horizontal_position_resolution(Evas_3D_Node *node, Evas_Real x, Evas_Real z)
+Eina_Bool _horizontal_position_resolution(Evas_Canvas3D_Node *node, Evas_Real x, Evas_Real z)
 {
    Evas_Real x0, y0, z0, x1, y1, z1;
 
    eo_do(node,
-         evas_3d_node_bounding_box_get(&x0, &y0, &z0, &x1, &y1, &z1));
+         evas_canvas3d_node_bounding_box_get(&x0, &y0, &z0, &x1, &y1, &z1));
 
    if ((x > x0) && (x < x1) && (z > z0) && (z < z1))
      return EINA_FALSE;
@@ -261,13 +261,13 @@ Eina_Bool _horizontal_position_resolution(Evas_3D_Node *node, Evas_Real x, Evas_
 }
 
 /* Is actual for this example only */
-Eina_Bool _horizontal_object_resolution(Evas_3D_Node *node, Evas_Real x1, Evas_Real z1, Evas_Real x2,
+Eina_Bool _horizontal_object_resolution(Evas_Canvas3D_Node *node, Evas_Real x1, Evas_Real z1, Evas_Real x2,
                                         Evas_Real z2, Evas_Real x_move, Evas_Real z_move)
 {
    Evas_Real x3, y3, z3, x4, y4, z4;
 
    eo_do(node,
-         evas_3d_node_bounding_box_get(&x3, &y3, &z3, &x4, &y4, &z4));
+         evas_canvas3d_node_bounding_box_get(&x3, &y3, &z3, &x4, &y4, &z4));
 
    if ((x4 + x_move < x1) || (x4 + x_move > x2) ||
        (z4 + z_move < z1) || (z4 + z_move > z2))
@@ -277,7 +277,7 @@ Eina_Bool _horizontal_object_resolution(Evas_3D_Node *node, Evas_Real x1, Evas_R
    return EINA_TRUE;
 }
 
-Eina_Bool _horizontal_frame_resolution(Evas_3D_Node *node, Evas_Real x1, Evas_Real z1, Evas_Real x2,
+Eina_Bool _horizontal_frame_resolution(Evas_Canvas3D_Node *node, Evas_Real x1, Evas_Real z1, Evas_Real x2,
                                         Evas_Real z2, Evas_Real *x_move, Evas_Real *z_move)
 {
    Evas_Real x3, y3, z3, x4, y4, z4;
@@ -286,7 +286,7 @@ Eina_Bool _horizontal_frame_resolution(Evas_3D_Node *node, Evas_Real x1, Evas_Re
    *z_move = 0;
 
    eo_do(node,
-         evas_3d_node_bounding_box_get(&x3, &y3, &z3, &x4, &y4, &z4));
+         evas_canvas3d_node_bounding_box_get(&x3, &y3, &z3, &x4, &y4, &z4));
 
    if (x3 < x1)
      *x_move = x1 - x3;
@@ -364,13 +364,13 @@ _set_ball(Eo *mesh, int p)
 
    _generate_square_grid(indices, p);
 
-   eo_do(mesh, evas_3d_mesh_vertex_count_set(vcount),
-         evas_3d_mesh_frame_add(0);
-         evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_POSITION,
+   eo_do(mesh, evas_canvas3d_mesh_vertex_count_set(vcount),
+         evas_canvas3d_mesh_frame_add(0);
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_POSITION,
                                        sizeof(vec3), &vertices[0]);
-         evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_NORMAL,
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_NORMAL,
                                        sizeof(vec3), &normals[0]);
-         evas_3d_mesh_index_data_copy_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT,
+         evas_canvas3d_mesh_index_data_copy_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT,
                                 icount , &indices[0]));
 
    free(vertices);

@@ -24,15 +24,15 @@ evas_eolian_files = \
 	lib/evas/canvas/evas_selectable_interface.eo \
 	lib/evas/canvas/evas_zoomable_interface.eo \
 	lib/evas/canvas/evas_box.eo\
-	lib/evas/canvas/evas_3d_camera.eo\
-	lib/evas/canvas/evas_3d_texture.eo\
-	lib/evas/canvas/evas_3d_material.eo\
-	lib/evas/canvas/evas_3d_light.eo\
-	lib/evas/canvas/evas_3d_mesh.eo\
-	lib/evas/canvas/evas_3d_primitive.eo\
-	lib/evas/canvas/evas_3d_node.eo\
-	lib/evas/canvas/evas_3d_scene.eo\
-	lib/evas/canvas/evas_3d_object.eo \
+	lib/evas/canvas/evas_canvas3d_camera.eo\
+	lib/evas/canvas/evas_canvas3d_texture.eo\
+	lib/evas/canvas/evas_canvas3d_material.eo\
+	lib/evas/canvas/evas_canvas3d_light.eo\
+	lib/evas/canvas/evas_canvas3d_mesh.eo\
+	lib/evas/canvas/evas_canvas3d_primitive.eo\
+	lib/evas/canvas/evas_canvas3d_node.eo\
+	lib/evas/canvas/evas_canvas3d_scene.eo\
+	lib/evas/canvas/evas_canvas3d_object.eo \
 	lib/evas/canvas/evas_vg.eo \
 	lib/evas/canvas/efl_vg_base.eo \
 	lib/evas/canvas/efl_vg_container.eo \
@@ -204,16 +204,16 @@ noinst_HEADERS += \
 lib/evas/include/evas_3d_utils.h
 
 lib_evas_libevas_la_SOURCES += \
-lib/evas/canvas/evas_3d_object.c \
-lib/evas/canvas/evas_3d_scene.c \
-lib/evas/canvas/evas_3d_node.c \
-lib/evas/canvas/evas_3d_camera.c \
-lib/evas/canvas/evas_3d_light.c \
-lib/evas/canvas/evas_3d_mesh.c \
-lib/evas/canvas/evas_3d_texture.c \
-lib/evas/canvas/evas_3d_material.c \
-lib/evas/canvas/evas_3d_primitive.c \
-lib/evas/canvas/evas_3d_node_callback.h
+lib/evas/canvas/evas_canvas3d_object.c \
+lib/evas/canvas/evas_canvas3d_scene.c \
+lib/evas/canvas/evas_canvas3d_node.c \
+lib/evas/canvas/evas_canvas3d_camera.c \
+lib/evas/canvas/evas_canvas3d_light.c \
+lib/evas/canvas/evas_canvas3d_mesh.c \
+lib/evas/canvas/evas_canvas3d_texture.c \
+lib/evas/canvas/evas_canvas3d_material.c \
+lib/evas/canvas/evas_canvas3d_primitive.c \
+lib/evas/canvas/evas_canvas3d_node_callback.h
 
 # Model savers/loaders (will be replaced to modules in next commits)
 lib_evas_libevas_la_SOURCES += \
@@ -224,7 +224,7 @@ modules/evas/model_loaders/ply/evas_model_load_ply.c \
 modules/evas/model_savers/eet/evas_model_save_eet.c \
 modules/evas/model_savers/obj/evas_model_save_obj.c \
 modules/evas/model_savers/ply/evas_model_save_ply.c \
-lib/evas/canvas/evas_3d_eet.c
+lib/evas/canvas/evas_canvas3d_eet.c
 
 # 3d primitives
 lib_evas_libevas_la_SOURCES += \

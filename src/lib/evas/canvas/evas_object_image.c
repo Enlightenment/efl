@@ -82,7 +82,7 @@ struct _Evas_Object_Image_State
 
    Evas_Object   *source;
    Evas_Map      *defmap;
-   Evas_3D_Scene *scene;
+   Evas_Canvas3D_Scene *scene;
 
    union {
       const char    *file;
@@ -190,7 +190,7 @@ static void _proxy_unset(Evas_Object *proxy, Evas_Object_Protected_Data *obj, Ev
 static void _proxy_set(Evas_Object *proxy, Evas_Object *src);
 static void _proxy_error(Evas_Object *proxy, void *context, void *output, void *surface, int x, int y, Eina_Bool do_async);
 
-static void _3d_set(Evas_Object *eo_obj, Evas_3D_Scene *scene);
+static void _3d_set(Evas_Object *eo_obj, Evas_Canvas3D_Scene *scene);
 static void _3d_unset(Evas_Object *eo_obj, Evas_Object_Protected_Data *image, Evas_Image_Data *o);
 
 static const Evas_Object_Func object_func =
@@ -850,7 +850,7 @@ _evas_image_source_visible_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 
 
 EOLIAN static void
-_evas_image_scene_set(Eo *eo_obj, Evas_Image_Data *o, Evas_3D_Scene *scene)
+_evas_image_scene_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Canvas3D_Scene *scene)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Image_Load_Opts lo;
@@ -866,7 +866,7 @@ _evas_image_scene_set(Eo *eo_obj, Evas_Image_Data *o, Evas_3D_Scene *scene)
    else _3d_unset(eo_obj, obj, o);
 }
 
-EOLIAN static Evas_3D_Scene *
+EOLIAN static Evas_Canvas3D_Scene *
 _evas_image_scene_get(Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->cur->scene;
@@ -2464,12 +2464,12 @@ _proxy_error(Evas_Object *eo_proxy, void *context, void *output, void *surface,
 }
 
 static void
-_3d_set(Evas_Object *eo_obj, Evas_3D_Scene *scene)
+_3d_set(Evas_Object *eo_obj, Evas_Canvas3D_Scene *scene)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Image_Data *o = eo_data_scope_get(eo_obj, MY_CLASS);
-   Evas_3D_Scene_Data *pd_scene = eo_data_scope_get(scene,
-                                                    EVAS_3D_SCENE_CLASS);
+   Evas_Canvas3D_Scene_Data *pd_scene = eo_data_scope_get(scene,
+                                                    EVAS_CANVAS3D_SCENE_CLASS);
    EINA_COW_WRITE_BEGIN(evas_object_3d_cow, obj->data_3d, Evas_Object_3D_Data,
                         data)
      {
@@ -2497,8 +2497,8 @@ _3d_unset(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj,
 
    if (!o->cur->scene) return;
 
-   Evas_3D_Scene_Data *pd_scene =
-      eo_data_scope_get(o->cur->scene, EVAS_3D_SCENE_CLASS);
+   Evas_Canvas3D_Scene_Data *pd_scene =
+      eo_data_scope_get(o->cur->scene, EVAS_CANVAS3D_SCENE_CLASS);
 
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
      {
@@ -2536,14 +2536,14 @@ _3d_unset(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj,
 static void
 _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
            Evas_Object_Protected_Data *obj, Evas_Image_Data *o EINA_UNUSED,
-           Evas_3D_Scene *scene)
+           Evas_Canvas3D_Scene *scene)
 {
    Evas_Public_Data *e;
    Eina_Bool need_native_set = EINA_FALSE;
-   Evas_3D_Scene_Public_Data scene_data;
-   Evas_3D_Scene_Data *pd_scene = NULL;
+   Evas_Canvas3D_Scene_Public_Data scene_data;
+   Evas_Canvas3D_Scene_Data *pd_scene = NULL;
 
-   pd_scene = eo_data_scope_get(scene, EVAS_3D_SCENE_CLASS);
+   pd_scene = eo_data_scope_get(scene, EVAS_CANVAS3D_SCENE_CLASS);
 
    if ((pd_scene->w == 0) || (pd_scene->h == 0)) return;
    if (!pd_scene->camera_node)
@@ -2605,24 +2605,24 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
      }
    EINA_COW_WRITE_END(evas_object_3d_cow, obj->data_3d, data);
 
-   evas_3d_scene_data_init(&scene_data);
+   evas_canvas3d_scene_data_init(&scene_data);
 
    scene_data.bg_color = pd_scene->bg_color;
    scene_data.shadows_enabled = pd_scene->shadows_enabled;
    scene_data.camera_node = pd_scene->camera_node;
 
    /* Phase 1 - Update scene graph tree. */
-   eo_do(scene, evas_3d_object_update());
+   eo_do(scene, evas_canvas3d_object_update());
 
    /* Phase 2 - Do frustum culling and get visible model nodes. */
-   evas_3d_node_tree_traverse(pd_scene->root_node,
-                              EVAS_3D_TREE_TRAVERSE_LEVEL_ORDER, EINA_TRUE,
-                              evas_3d_node_mesh_collect, &scene_data);
+   evas_canvas3d_node_tree_traverse(pd_scene->root_node,
+                              EVAS_CANVAS3D_TREE_TRAVERSE_LEVEL_ORDER, EINA_TRUE,
+                              evas_canvas3d_node_mesh_collect, &scene_data);
 
    /* Phase 3 - Collect active light nodes in the scene graph tree. */
-   evas_3d_node_tree_traverse(pd_scene->root_node,
-                              EVAS_3D_TREE_TRAVERSE_ANY_ORDER, EINA_FALSE,
-                              evas_3d_node_light_collect, &scene_data);
+   evas_canvas3d_node_tree_traverse(pd_scene->root_node,
+                              EVAS_CANVAS3D_TREE_TRAVERSE_ANY_ORDER, EINA_FALSE,
+                              evas_canvas3d_node_light_collect, &scene_data);
 
    /* Phase 5 - Draw the scene. */
    if (e->engine.func->drawable_scene_render)
@@ -2631,7 +2631,7 @@ _3d_render(Evas *eo_e, Evas_Object *eo_obj EINA_UNUSED,
                                               pd_scene->surface, &scene_data);
      }
    /* Clean up temporary resources. */
-   evas_3d_scene_data_fini(&scene_data);
+   evas_canvas3d_scene_data_fini(&scene_data);
 }
 
 static void
@@ -3705,10 +3705,10 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
      }
    else if (o->cur->scene)
      {
-        Evas_3D_Scene *scene = o->cur->scene;
+        Evas_Canvas3D_Scene *scene = o->cur->scene;
         Eina_Bool dirty;
 
-        eo_do(scene, dirty = evas_3d_object_dirty_get(EVAS_3D_STATE_ANY));
+        eo_do(scene, dirty = evas_canvas3d_object_dirty_get(EVAS_CANVAS3D_STATE_ANY));
         if (dirty)
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);

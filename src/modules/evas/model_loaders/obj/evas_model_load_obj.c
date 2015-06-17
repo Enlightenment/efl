@@ -217,7 +217,7 @@ _read_point(int *triangles,
 }
 
 void
-evas_model_load_file_obj(Evas_3D_Mesh *mesh, Eina_File *file)
+evas_model_load_file_obj(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
 {
    long i;
    OBJ_Counts counts;//count elements of mesh in .obj
@@ -373,24 +373,24 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, Eina_File *file)
 
    /* prepare of mesh and take pointers to data which must be read */
    eo_do(mesh,
-         evas_3d_mesh_vertex_count_set(counts._triangles_counter * 3),
-         evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES),
-         evas_3d_mesh_frame_add(0),
-         evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_POSITION, 0, NULL),
-         pos = (float *)evas_3d_mesh_frame_vertex_data_map(0, EVAS_3D_VERTEX_POSITION),
-         stride_pos = evas_3d_mesh_frame_vertex_stride_get(0, EVAS_3D_VERTEX_POSITION));
+         evas_canvas3d_mesh_vertex_count_set(counts._triangles_counter * 3),
+         evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES),
+         evas_canvas3d_mesh_frame_add(0),
+         evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_POSITION, 0, NULL),
+         pos = (float *)evas_canvas3d_mesh_frame_vertex_data_map(0, EVAS_CANVAS3D_VERTEX_POSITION),
+         stride_pos = evas_canvas3d_mesh_frame_vertex_stride_get(0, EVAS_CANVAS3D_VERTEX_POSITION));
 
    if (counts.existence_of_normal)
      eo_do(mesh,
-           evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_NORMAL, 0, NULL),
-           nor = (float *)evas_3d_mesh_frame_vertex_data_map(0, EVAS_3D_VERTEX_NORMAL),
-           stride_nor = evas_3d_mesh_frame_vertex_stride_get(0, EVAS_3D_VERTEX_NORMAL));
+           evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_NORMAL, 0, NULL),
+           nor = (float *)evas_canvas3d_mesh_frame_vertex_data_map(0, EVAS_CANVAS3D_VERTEX_NORMAL),
+           stride_nor = evas_canvas3d_mesh_frame_vertex_stride_get(0, EVAS_CANVAS3D_VERTEX_NORMAL));
 
    if (counts.existence_of_tex_point)
      eo_do(mesh,
-           evas_3d_mesh_frame_vertex_data_copy_set(0, EVAS_3D_VERTEX_TEXCOORD, 0, NULL),
-           tex = (float *)evas_3d_mesh_frame_vertex_data_map(0, EVAS_3D_VERTEX_TEXCOORD),
-           stride_tex = evas_3d_mesh_frame_vertex_stride_get(0, EVAS_3D_VERTEX_TEXCOORD));
+           evas_canvas3d_mesh_frame_vertex_data_copy_set(0, EVAS_CANVAS3D_VERTEX_TEXCOORD, 0, NULL),
+           tex = (float *)evas_canvas3d_mesh_frame_vertex_data_map(0, EVAS_CANVAS3D_VERTEX_TEXCOORD),
+           stride_tex = evas_canvas3d_mesh_frame_vertex_stride_get(0, EVAS_CANVAS3D_VERTEX_TEXCOORD));
 
    if (stride_pos == 0) stride_pos = sizeof(float) * 3;
    if ((counts.existence_of_normal) && (stride_nor == 0))
@@ -437,15 +437,15 @@ evas_model_load_file_obj(Evas_3D_Mesh *mesh, Eina_File *file)
    free(_triangles);
 
         /* Unmap vertex buffer. */
-   eo_do(mesh, evas_3d_mesh_frame_vertex_data_unmap(0, EVAS_3D_VERTEX_POSITION));
+   eo_do(mesh, evas_canvas3d_mesh_frame_vertex_data_unmap(0, EVAS_CANVAS3D_VERTEX_POSITION));
    if (counts.existence_of_normal)
-     eo_do(mesh, evas_3d_mesh_frame_vertex_data_unmap(0, EVAS_3D_VERTEX_NORMAL));
+     eo_do(mesh, evas_canvas3d_mesh_frame_vertex_data_unmap(0, EVAS_CANVAS3D_VERTEX_NORMAL));
    if (counts.existence_of_tex_point)
-     eo_do(mesh, evas_3d_mesh_frame_vertex_data_unmap(0, EVAS_3D_VERTEX_TEXCOORD));
+     eo_do(mesh, evas_canvas3d_mesh_frame_vertex_data_unmap(0, EVAS_CANVAS3D_VERTEX_TEXCOORD));
 
-   Evas_3D_Mesh_Data *pd = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
+   Evas_Canvas3D_Mesh_Data *pd = eo_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
 
-   if (!evas_3d_mesh_aabb_add_to_frame(pd, 0, stride_pos))
+   if (!evas_canvas3d_mesh_aabb_add_to_frame(pd, 0, stride_pos))
      {
         ERR("Axis-Aligned Bounding Box wan't added in frame %d ", 0);
      }

@@ -19,23 +19,23 @@ struct _E3D_Renderer
 };
 
 static inline GLenum
-_gl_assembly_get(Evas_3D_Vertex_Assembly assembly)
+_gl_assembly_get(Evas_Canvas3D_Vertex_Assembly assembly)
 {
    switch (assembly)
      {
-      case EVAS_3D_VERTEX_ASSEMBLY_POINTS:
+      case EVAS_CANVAS3D_VERTEX_ASSEMBLY_POINTS:
          return GL_POINTS;
-      case EVAS_3D_VERTEX_ASSEMBLY_LINES:
+      case EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINES:
          return GL_LINES;
-      case EVAS_3D_VERTEX_ASSEMBLY_LINE_STRIP:
+      case EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINE_STRIP:
          return GL_LINE_STRIP;
-      case EVAS_3D_VERTEX_ASSEMBLY_LINE_LOOP:
+      case EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINE_LOOP:
          return GL_LINE_LOOP;
-      case EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES:
+      case EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES:
          return GL_TRIANGLES;
-      case EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP:
+      case EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP:
          return GL_TRIANGLE_STRIP;
-      case EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_FAN:
+      case EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLE_FAN:
          return GL_TRIANGLE_FAN;
       default:
          return GL_NONE;
@@ -43,39 +43,39 @@ _gl_assembly_get(Evas_3D_Vertex_Assembly assembly)
 }
 
 static inline GLenum
-_gl_blend_func_get(Evas_3D_Blend_Func blend_func)
+_gl_blend_func_get(Evas_Canvas3D_Blend_Func blend_func)
 {
    switch (blend_func)
      {
-      case EVAS_3D_BLEND_ZERO:
+      case EVAS_CANVAS3D_BLEND_ZERO:
          return GL_ZERO;
-      case EVAS_3D_BLEND_ONE:
+      case EVAS_CANVAS3D_BLEND_ONE:
          return GL_ONE;
-      case EVAS_3D_BLEND_SRC_COLOR:
+      case EVAS_CANVAS3D_BLEND_SRC_COLOR:
          return GL_SRC_COLOR;
-      case EVAS_3D_BLEND_ONE_MINUS_SRC_COLOR:
+      case EVAS_CANVAS3D_BLEND_ONE_MINUS_SRC_COLOR:
          return GL_ONE_MINUS_SRC_COLOR;
-      case EVAS_3D_BLEND_DST_COLOR:
+      case EVAS_CANVAS3D_BLEND_DST_COLOR:
          return GL_DST_COLOR;
-      case EVAS_3D_BLEND_ONE_MINUS_DST_COLOR:
+      case EVAS_CANVAS3D_BLEND_ONE_MINUS_DST_COLOR:
          return GL_ONE_MINUS_DST_COLOR;
-      case EVAS_3D_BLEND_SRC_ALPHA:
+      case EVAS_CANVAS3D_BLEND_SRC_ALPHA:
          return GL_SRC_ALPHA;
-      case EVAS_3D_BLEND_ONE_MINUS_SRC_ALPHA:
+      case EVAS_CANVAS3D_BLEND_ONE_MINUS_SRC_ALPHA:
          return GL_ONE_MINUS_SRC_ALPHA;
-      case EVAS_3D_BLEND_DST_ALPHA:
+      case EVAS_CANVAS3D_BLEND_DST_ALPHA:
          return GL_DST_ALPHA;
-      case EVAS_3D_BLEND_ONE_MINUS_DST_ALPHA:
+      case EVAS_CANVAS3D_BLEND_ONE_MINUS_DST_ALPHA:
          return GL_ONE_MINUS_DST_ALPHA;
-      case EVAS_3D_BLEND_CONSTANT_COLOR:
+      case EVAS_CANVAS3D_BLEND_CONSTANT_COLOR:
          return GL_CONSTANT_COLOR;
-      case EVAS_3D_BLEND_ONE_MINUS_CONSTANT_COLOR:
+      case EVAS_CANVAS3D_BLEND_ONE_MINUS_CONSTANT_COLOR:
          return GL_ONE_MINUS_CONSTANT_COLOR;
-      case EVAS_3D_BLEND_CONSTANT_ALPHA:
+      case EVAS_CANVAS3D_BLEND_CONSTANT_ALPHA:
          return GL_CONSTANT_ALPHA;
-      case EVAS_3D_BLEND_ONE_MINUS_CONSTANT_ALPHA:
+      case EVAS_CANVAS3D_BLEND_ONE_MINUS_CONSTANT_ALPHA:
          return GL_ONE_MINUS_CONSTANT_ALPHA;
-      case EVAS_3D_BLEND_SRC_ALPHA_SATURATE:
+      case EVAS_CANVAS3D_BLEND_SRC_ALPHA_SATURATE:
          return GL_SRC_ALPHA_SATURATE;
       default:
          return GL_ZERO;
@@ -84,25 +84,25 @@ _gl_blend_func_get(Evas_3D_Blend_Func blend_func)
 
 #ifndef GL_GLES
 static inline GLenum
-_gl_comparison_func_get(Evas_3D_Comparison comparison_func)
+_gl_comparison_func_get(Evas_Canvas3D_Comparison comparison_func)
 {
    switch (comparison_func)
      {
-      case EVAS_3D_COMPARISON_NEVER:
+      case EVAS_CANVAS3D_COMPARISON_NEVER:
          return GL_NEVER;
-      case EVAS_3D_COMPARISON_LESS:
+      case EVAS_CANVAS3D_COMPARISON_LESS:
          return GL_LESS;
-      case EVAS_3D_COMPARISON_EQUAL:
+      case EVAS_CANVAS3D_COMPARISON_EQUAL:
          return GL_EQUAL;
-      case EVAS_3D_COMPARISON_LEQUAL:
+      case EVAS_CANVAS3D_COMPARISON_LEQUAL:
          return GL_LEQUAL;
-      case EVAS_3D_COMPARISON_GREATER:
+      case EVAS_CANVAS3D_COMPARISON_GREATER:
          return GL_GREATER;
-      case EVAS_3D_COMPARISON_NOTEQUAL:
+      case EVAS_CANVAS3D_COMPARISON_NOTEQUAL:
          return GL_NOTEQUAL;
-      case EVAS_3D_COMPARISON_GEQUAL:
+      case EVAS_CANVAS3D_COMPARISON_GEQUAL:
          return GL_GEQUAL;
-      case EVAS_3D_COMPARISON_ALWAYS:
+      case EVAS_CANVAS3D_COMPARISON_ALWAYS:
          return GL_ALWAYS;
       default:
          return GL_ALWAYS;
@@ -132,27 +132,27 @@ _renderer_vertex_attrib_array_disable(E3D_Renderer *renderer, int index)
 
 static inline void
 _renderer_vertex_attrib_pointer_set(E3D_Renderer *renderer EINA_UNUSED, int index,
-                                    const Evas_3D_Vertex_Buffer *buffer)
+                                    const Evas_Canvas3D_Vertex_Buffer *buffer)
 {
    glVertexAttribPointer(index, buffer->element_count, GL_FLOAT,
                          GL_FALSE, buffer->stride, buffer->data);
 }
 
 static inline void
-_renderer_elements_draw(E3D_Renderer *renderer EINA_UNUSED, Evas_3D_Vertex_Assembly assembly,
-                        int count, Evas_3D_Index_Format format, const void *indices)
+_renderer_elements_draw(E3D_Renderer *renderer EINA_UNUSED, Evas_Canvas3D_Vertex_Assembly assembly,
+                        int count, Evas_Canvas3D_Index_Format format, const void *indices)
 {
    GLenum mode = _gl_assembly_get(assembly);
 
-   if (format == EVAS_3D_INDEX_FORMAT_UNSIGNED_BYTE)
+   if (format == EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_BYTE)
      glDrawElements(mode, count, GL_UNSIGNED_BYTE, indices);
-   else if (format == EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT)
+   else if (format == EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT)
      glDrawElements(mode, count, GL_UNSIGNED_SHORT, indices);
 }
 
 static inline void
 _renderer_array_draw(E3D_Renderer *renderer EINA_UNUSED,
-                     Evas_3D_Vertex_Assembly assembly, int count)
+                     Evas_Canvas3D_Vertex_Assembly assembly, int count)
 {
    GLenum mode = _gl_assembly_get(assembly);
 
@@ -176,7 +176,7 @@ _renderer_texture_bind(E3D_Renderer *renderer, E3D_Draw_Data *data)
 {
    int i;
 
-   for (i = 0; i < EVAS_3D_MATERIAL_ATTRIB_COUNT; i++)
+   for (i = 0; i < EVAS_CANVAS3D_MATERIAL_ATTRIB_COUNT; i++)
      {
         if (data->materials[i].tex0)
           {
@@ -317,9 +317,9 @@ e3d_renderer_draw(E3D_Renderer *renderer, E3D_Draw_Data *data)
    /* Set up vertex attrib pointers. */
    index = 0;
 
-   for (i = 0; i < EVAS_3D_VERTEX_ATTRIB_COUNT; i++)
+   for (i = 0; i < EVAS_CANVAS3D_VERTEX_ATTRIB_COUNT; i++)
      {
-        const Evas_3D_Vertex_Buffer *buffer;
+        const Evas_Canvas3D_Vertex_Buffer *buffer;
 
         buffer = &data->vertices[i].vertex0;
 

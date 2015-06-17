@@ -753,7 +753,7 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
 	    legacy: null;
          }
          values {
-            scene: Evas_3D_Scene *; /*@ 3D scene on an image object. */
+            scene: Evas_Canvas3D_Scene *; /*@ 3D scene on an image object. */
          }
       }
       @property filter_program {

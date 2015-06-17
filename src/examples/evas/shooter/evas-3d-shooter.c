@@ -16,7 +16,7 @@
 
 #include "evas-3d-shooter-header.h"
 
-Evas_3D_Scene    *global_scene      = NULL;
+Evas_Canvas3D_Scene    *global_scene      = NULL;
 Ecore_Evas       *ecore_evas        = NULL;
 static float     angle_camera       = 0.0f;
 static float     angle_eagle        = 180.0f;
@@ -149,7 +149,7 @@ _key_down(void *data,
         if (space_move == 0.0)
           {
              eo_do(scene->mesh_node_tommy,
-                   evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
+                   evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &x, &y, &z));
              old_space_position = y;
              space_move = JUMP;
           }
@@ -168,18 +168,18 @@ _key_down(void *data,
           {
              scene->blending = EINA_TRUE;
              eo_do(scene->texture_diffuse_carpet,
-                   evas_3d_texture_file_set(gazebo_t_trans_path, NULL));
+                   evas_canvas3d_texture_file_set(gazebo_t_trans_path, NULL));
              eo_do(scene->mesh_carpet,
-                   evas_3d_mesh_blending_enable_set(EINA_TRUE),
-                   evas_3d_mesh_blending_func_set(EVAS_3D_BLEND_SRC_ALPHA, EVAS_3D_BLEND_ONE_MINUS_SRC_ALPHA));
+                   evas_canvas3d_mesh_blending_enable_set(EINA_TRUE),
+                   evas_canvas3d_mesh_blending_func_set(EVAS_CANVAS3D_BLEND_SRC_ALPHA, EVAS_CANVAS3D_BLEND_ONE_MINUS_SRC_ALPHA));
           }
         else
           {
              scene->blending = EINA_FALSE;
              eo_do(scene->texture_diffuse_carpet,
-                   evas_3d_texture_file_set(gazebo_t_path, NULL));
+                   evas_canvas3d_texture_file_set(gazebo_t_path, NULL));
              eo_do(scene->mesh_carpet,
-                   evas_3d_mesh_blending_enable_set(EINA_FALSE));
+                   evas_canvas3d_mesh_blending_enable_set(EINA_FALSE));
           }
      }
    else if (!strcmp(ev->key, "S"))
@@ -188,13 +188,13 @@ _key_down(void *data,
           {
              scene->blending = EINA_TRUE;
              eo_do(global_scene,
-                   evas_3d_scene_shadows_enable_set(EINA_TRUE));
+                   evas_canvas3d_scene_shadows_enable_set(EINA_TRUE));
           }
         else
           {
              scene->blending = EINA_FALSE;
              eo_do(global_scene,
-                   evas_3d_scene_shadows_enable_set(EINA_FALSE));
+                   evas_canvas3d_scene_shadows_enable_set(EINA_FALSE));
           }
      }
    else if (!strcmp(ev->key, "F"))
@@ -291,12 +291,12 @@ _key_down(void *data,
      }
    else if (!strcmp(ev->key, "F1"))
      eo_do(scene->camera_node,
-           evas_3d_node_position_set(0.0, 80.0, 30.0);
-           evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_3D_SPACE_PARENT, 0.0, 1.0, 0.0));
+           evas_canvas3d_node_position_set(0.0, 80.0, 30.0);
+           evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0));
    else if (!strcmp(ev->key, "F2"))
      eo_do(scene->camera_node,
-           evas_3d_node_position_set(-2.0, 0.0, 4.0),
-           evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, 0.0, -100.0, EVAS_3D_SPACE_PARENT, 0.0, 1.0, 0.0));
+           evas_canvas3d_node_position_set(-2.0, 0.0, 4.0),
+           evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 0.0, 0.0, -100.0, EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0));
    else if (!strcmp(ev->key, "A"))
      aabb_index++;
 }
@@ -335,26 +335,26 @@ _animate_camera(void *data)
    z_move_lateral = camera_move * cos((angle_camera + 90) * TO_RADIAN);
 
    eo_do(scene->mediator_node,
-         evas_3d_node_position_get(EVAS_3D_SPACE_WORLD, &x, &y, &z));
+         evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_WORLD, &x, &y, &z));
 
    eo_do(scene->mesh_node_world,
-         evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x1, &y1, &z1));
+         evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &x1, &y1, &z1));
 
    eo_do(scene->mesh_node_tommy,
-         evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x2, &y2, &z2));
+         evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &x2, &y2, &z2));
 
    if (fall_speed != 0)
      {
         if (y - fall_speed < 0)
           {
              eo_do(scene->mediator_node,
-                   evas_3d_node_position_set(x, 0, z));
+                   evas_canvas3d_node_position_set(x, 0, z));
              fall_speed = 0.0;
           }
         else
           {
              eo_do(scene->mediator_node,
-                   evas_3d_node_position_set(x, y - fall_speed, z));
+                   evas_canvas3d_node_position_set(x, y - fall_speed, z));
              fall_speed += FALL_SPEED_UP;
           }
      }
@@ -381,9 +381,9 @@ _animate_camera(void *data)
             _horizontal_circle_position_resolution(scene->mesh_node_column[3], x + x_move, z + z_move, SOLDIER_RADIUS))
           {
              eo_do(scene->mediator_node,
-                   evas_3d_node_position_set(x + x_move, y, z + z_move));
+                   evas_canvas3d_node_position_set(x + x_move, y, z + z_move));
              eo_do(scene->mesh_node_world,
-                   evas_3d_node_position_set(x1 + x_move, y1, z1 + z_move));
+                   evas_canvas3d_node_position_set(x1 + x_move, y1, z1 + z_move));
           }
      }
    else if ((SOLDIER_FRAME_X1 < x + x_move_lateral) && (x + x_move_lateral < SOLDIER_FRAME_X2) &&
@@ -408,26 +408,26 @@ _animate_camera(void *data)
             _horizontal_circle_position_resolution(scene->mesh_node_column[3], x + x_move_lateral, z + z_move_lateral, SOLDIER_RADIUS))
           {
              eo_do(scene->mediator_node,
-                   evas_3d_node_position_set(x + x_move_lateral, y, z + z_move_lateral));
+                   evas_canvas3d_node_position_set(x + x_move_lateral, y, z + z_move_lateral));
              eo_do(scene->mesh_node_world,
-                   evas_3d_node_position_set(x1 + x_move_lateral, y1, z1 + z_move_lateral));
+                   evas_canvas3d_node_position_set(x1 + x_move_lateral, y1, z1 + z_move_lateral));
           }
      }
 
    eo_do(scene->mediator_node,
-         evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
+         evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &x, &y, &z));
 
    if (!_horizontal_position_resolution(scene->mesh_node_level[step_indicator+1], x, z))
      {
         eo_do(scene->mediator_node,
-              evas_3d_node_position_set(x, y + STEP, z));
+              evas_canvas3d_node_position_set(x, y + STEP, z));
         old_space_position += STEP;
         step_indicator++;
      }
    else if (!_horizontal_position_resolution(scene->mesh_node_level[step_indicator-1], x, z) && step_indicator > 0)
      {
         eo_do(scene->mediator_node,
-              evas_3d_node_position_set(x, y - STEP, z));
+              evas_canvas3d_node_position_set(x, y - STEP, z));
         old_space_position -= STEP;
         step_indicator--;
      }
@@ -438,13 +438,13 @@ _animate_camera(void *data)
      }
 
    eo_do(scene->mediator_node,
-         evas_3d_node_orientation_angle_axis_set(angle_camera, 0, 1.0, 0.0),
-         evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
+         evas_canvas3d_node_orientation_angle_axis_set(angle_camera, 0, 1.0, 0.0),
+         evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &x, &y, &z));
 
    eo_do(scene->mesh_node_warrior,
-         evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x1, &y1, &z1));
+         evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &x1, &y1, &z1));
    eo_do(scene->mesh_node_snake,
-         evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x2, &y2, &z2));
+         evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &x2, &y2, &z2));
 
    float snake_x = (x2 - x) / _distance(x, z, x2, z2);
    float snake_z = (z2 - z) / _distance(x, z, x2, z2);
@@ -459,10 +459,10 @@ _animate_camera(void *data)
             _horizontal_circle_object_resolution(scene->mesh_node_warrior, scene->mesh_node_column[3], COLUMN_RADIUS) &&
             _horizontal_circle_object_resolution(scene->mesh_node_level[0], scene->mesh_node_warrior, COLUMN_RADIUS))
            eo_do(scene->mesh_node_warrior,
-                 evas_3d_node_position_set((x - x1) * WARRIOR_SPEED + x1, y1, (z - z1) * WARRIOR_SPEED + z1));
+                 evas_canvas3d_node_position_set((x - x1) * WARRIOR_SPEED + x1, y1, (z - z1) * WARRIOR_SPEED + z1));
         else
           eo_do(scene->mesh_node_warrior,
-                evas_3d_node_position_set((z - z1) * WARRIOR_SPEED2 + x1, y1, -(x - x1) * WARRIOR_SPEED2 + z1));
+                evas_canvas3d_node_position_set((z - z1) * WARRIOR_SPEED2 + x1, y1, -(x - x1) * WARRIOR_SPEED2 + z1));
      }
 
    /* if soldier is looking at the snake */
@@ -474,11 +474,11 @@ _animate_camera(void *data)
              if ((_horizontal_object_resolution(scene->mesh_node_snake, SNAKE_FRAME_X1, SNAKE_FRAME_Z1,
                                                 SNAKE_FRAME_X2, SNAKE_FRAME_Z2, snake_z * SNAKE_SPEED, -snake_x * SNAKE_SPEED)))
                eo_do(scene->mesh_node_snake,
-                     evas_3d_node_position_set(snake_z * SNAKE_SPEED + x2, y2, -snake_x * SNAKE_SPEED + z2));
+                     evas_canvas3d_node_position_set(snake_z * SNAKE_SPEED + x2, y2, -snake_x * SNAKE_SPEED + z2));
              else if (_horizontal_circle_resolution(scene->mesh_node_snake, (x2 - x) * SNAKE_SPEED2 + x,
                                                     (z2 - z) * SNAKE_SPEED2 + z, SOLDIER_RADIUS)) 
                eo_do(scene->mesh_node_snake,
-                     evas_3d_node_position_set((x - x2) * SNAKE_SPEED2 + x2, y2, (z - z2) * SNAKE_SPEED2 + z2));
+                     evas_canvas3d_node_position_set((x - x2) * SNAKE_SPEED2 + x2, y2, (z - z2) * SNAKE_SPEED2 + z2));
           }
         /* if snake is located at the right hand of the soldier */
         else
@@ -486,31 +486,31 @@ _animate_camera(void *data)
              if ((_horizontal_object_resolution(scene->mesh_node_snake, SNAKE_FRAME_X1, SNAKE_FRAME_Z1,
                                                 SNAKE_FRAME_X2, SNAKE_FRAME_Z2, -snake_z * SNAKE_SPEED, snake_x * SNAKE_SPEED)))
                eo_do(scene->mesh_node_snake,
-                     evas_3d_node_position_set(-snake_z * SNAKE_SPEED + x2, y2, snake_x * SNAKE_SPEED + z2));
+                     evas_canvas3d_node_position_set(-snake_z * SNAKE_SPEED + x2, y2, snake_x * SNAKE_SPEED + z2));
              else if (_horizontal_circle_resolution(scene->mesh_node_snake, (x2 - x) * SNAKE_SPEED2 + x,
                                                     (z2 - z) * SNAKE_SPEED2 + z, SOLDIER_RADIUS))
                eo_do(scene->mesh_node_snake,
-                     evas_3d_node_position_set((x - x2) * SNAKE_SPEED2 + x2, y2, (z - z2) * SNAKE_SPEED2 + z2));
+                     evas_canvas3d_node_position_set((x - x2) * SNAKE_SPEED2 + x2, y2, (z - z2) * SNAKE_SPEED2 + z2));
           }
      }
    else if (_horizontal_circle_resolution(scene->mesh_node_snake, (x2 - x) * SNAKE_SPEED2 + x, (z2 - z) * SNAKE_SPEED2 + z, SOLDIER_RADIUS))
      eo_do(scene->mesh_node_snake,
-           evas_3d_node_position_set((x - x2) * SNAKE_SPEED2 + x2, y2, (z - z2) * SNAKE_SPEED2 + z2));
+           evas_canvas3d_node_position_set((x - x2) * SNAKE_SPEED2 + x2, y2, (z - z2) * SNAKE_SPEED2 + z2));
 
    eo_do(scene->mesh_node_snake,
-         evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x2, &y2, &z2));
+         evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &x2, &y2, &z2));
 
    eo_do(scene->mesh_node_warrior,
-         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, -1000.0, 0.0, EVAS_3D_SPACE_PARENT,
+         evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 0.0, -1000.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT,
                                   (z - z1) / _distance(x, z, x1, z1), 0, (x1 - x) / _distance(x, z, x1, z1)));
 
    eo_do(scene->mesh_node_snake,
-         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 2 * x2 - x, y2, 2 * z2 - z, EVAS_3D_SPACE_PARENT, 0, 1, 0));
+         evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 2 * x2 - x, y2, 2 * z2 - z, EVAS_CANVAS3D_SPACE_PARENT, 0, 1, 0));
 
    if (!_horizontal_frame_resolution(scene->mesh_node_snake, SNAKE_FRAME_X1, SNAKE_FRAME_Z1,
                                                 SNAKE_FRAME_X2, SNAKE_FRAME_Z2, &x_move, &z_move))
      eo_do(scene->mesh_node_snake,
-           evas_3d_node_position_set(x2 + x_move, y2, z2 + z_move));
+           evas_canvas3d_node_position_set(x2 + x_move, y2, z2 + z_move));
 
    return EINA_TRUE;
 }
@@ -536,21 +536,21 @@ _animate_scene_gun(void *data)
    angle_eagle += d_angle_eagle;
 
    eo_do(scene->mesh_node_eagle,
-         frame_eagle = evas_3d_node_mesh_frame_get(scene->mesh_eagle));
+         frame_eagle = evas_canvas3d_node_mesh_frame_get(scene->mesh_eagle));
    if (frame_eagle > 19500) frame_eagle = 0;
    frame_eagle += 150;
 
    eo_do(scene->mesh_node_snake,
-         frame_snake = evas_3d_node_mesh_frame_get(scene->mesh_snake));
+         frame_snake = evas_canvas3d_node_mesh_frame_get(scene->mesh_snake));
    if (frame_snake > 16000) frame_snake = 0;
    frame_snake += 64;
 
    eo_do(scene->mesh_node_eagle,
-         evas_3d_node_orientation_angle_axis_set(angle_eagle, 0.0, 1.0, 0.0),
+         evas_canvas3d_node_orientation_angle_axis_set(angle_eagle, 0.0, 1.0, 0.0),
          /* equation of eagle flight */
-         evas_3d_node_position_set(38 * sin((angle_eagle + 90) * TO_RADIAN), 20 + 20 * sin(angle_eagle * TO_RADIAN),
+         evas_canvas3d_node_position_set(38 * sin((angle_eagle + 90) * TO_RADIAN), 20 + 20 * sin(angle_eagle * TO_RADIAN),
                                    -10 + 20.0 * cos((angle_eagle + 90) * TO_RADIAN)),
-         evas_3d_node_mesh_frame_set(scene->mesh_eagle, frame_eagle));
+         evas_canvas3d_node_mesh_frame_set(scene->mesh_eagle, frame_eagle));
 
    for (i = 0; i < 10; i ++)
      {
@@ -563,14 +563,14 @@ _animate_scene_gun(void *data)
           {
              _scale(scene->mesh_node_rocket[i], 0.2);
              eo_do(scene->material_rocket[i],
-                   evas_3d_material_color_set(EVAS_3D_MATERIAL_AMBIENT, 0.8, 0.8, 0.8, 1.0),
-                   evas_3d_material_color_set(EVAS_3D_MATERIAL_DIFFUSE, 0.2, 0.2, 0.0, 1.0),
-                   evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 0.5, 0.5, 0.5, 1.0));
+                   evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, 0.8, 0.8, 0.8, 1.0),
+                   evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, 0.2, 0.2, 0.0, 1.0),
+                   evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, 0.5, 0.5, 0.5, 1.0));
 
              rocket_indicator[i] = 2;
 
              eo_do(scene->mesh_node_rocket[i],
-                   evas_3d_node_position_set(ROCKET_POS_X, ROCKET_POS_Y, ROCKET_POS_Z));
+                   evas_canvas3d_node_position_set(ROCKET_POS_X, ROCKET_POS_Y, ROCKET_POS_Z));
              rocket_parametr[i] = 0;
           }
         else if (rocket_indicator[i] == 2)
@@ -579,32 +579,32 @@ _animate_scene_gun(void *data)
              /* equation of rocket flight */
 
              eo_do(scene->mesh_node_rocket[i],
-                   evas_3d_node_position_get(EVAS_3D_SPACE_WORLD, &x, &y, &z));
+                   evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_WORLD, &x, &y, &z));
 
              if ((ROCKET_FRAME_X1 < x) && (x < ROCKET_FRAME_X2) && (ROCKET_FRAME_Z1 < z) && (z < ROCKET_FRAME_Z2))
                 eo_do(scene->mesh_node_rocket[i],
-                      evas_3d_node_position_set(ROCKET_POS_X, ROCKET_POS_Y, ROCKET_POS_Z - rocket_parametr[i]));
+                      evas_canvas3d_node_position_set(ROCKET_POS_X, ROCKET_POS_Y, ROCKET_POS_Z - rocket_parametr[i]));
              else
                rocket_indicator[i] = 3;
 
              /* the way to stop the rocket */
              eo_do(scene->mesh_node_warrior,
-                   evas_3d_node_bounding_box_get(&x, &y, &z, &x1, &y1, &z1));
+                   evas_canvas3d_node_bounding_box_get(&x, &y, &z, &x1, &y1, &z1));
              evas_box3_set(&boxy, x, y, z, x1, y1, z1);
 
              eo_do(scene->mesh_node_rocket[i],
-                   evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
+                   evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &x, &y, &z));
 
              eo_do(scene->mediator_node,
-                   evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x1, &y1, &z1));
+                   evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &x1, &y1, &z1));
 
              if (((z * sinus + x * cosinus + x1) >= boxy.p0.x) && ((z * sinus + x * cosinus + x1) <= boxy.p1.x) &&
                  ((z * cosinus - x * sinus + z1) >= boxy.p0.z) && ((z * cosinus - x * sinus + z1) <= boxy.p1.z))
                {
                   eo_do(scene->material_rocket[i],
-                        evas_3d_material_color_set(EVAS_3D_MATERIAL_AMBIENT, 0.8, 0.8, 0.8, 1.0),
-                        evas_3d_material_color_set(EVAS_3D_MATERIAL_DIFFUSE, 0.9, 0.1, 0.1, 1.0),
-                        evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 0.5, 0.5, 0.5, 1.0));
+                        evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, 0.8, 0.8, 0.8, 1.0),
+                        evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, 0.9, 0.1, 0.1, 1.0),
+                        evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, 0.5, 0.5, 0.5, 1.0));
 
                   _scale(scene->mesh_node_rocket[i], 2.3);
                   rocket_indicator[i] = 3;
@@ -616,7 +616,7 @@ _animate_scene_gun(void *data)
      {
         tommy_indicator = 2;
         eo_do(scene->mesh_node_tommy,
-              evas_3d_node_position_set(TOMMY_POS_X, TOMMY_POS_Y, TOMMY_POS_Z));
+              evas_canvas3d_node_position_set(TOMMY_POS_X, TOMMY_POS_Y, TOMMY_POS_Z));
         tommy_parametr = 0.0;
      }
    /* parametric equations of gun movement, (GUN_DIR_X, GUN_DIR_Y, GUN_DIR_Z) is direction vector */
@@ -624,7 +624,7 @@ _animate_scene_gun(void *data)
      {
         tommy_parametr += GUN_SPEED;
         eo_do(scene->mesh_node_tommy,
-              evas_3d_node_position_set(TOMMY_POS_X + GUN_DIR_X * tommy_parametr,
+              evas_canvas3d_node_position_set(TOMMY_POS_X + GUN_DIR_X * tommy_parametr,
                                         TOMMY_POS_Y + GUN_DIR_Y * tommy_parametr,
                                         TOMMY_POS_Z + GUN_DIR_Z * tommy_parametr));
 
@@ -635,12 +635,12 @@ _animate_scene_gun(void *data)
      {
         tommy_parametr-= GUN_SPEED / 2;
         eo_do(scene->mesh_node_tommy,
-              evas_3d_node_position_set(TOMMY_POS_X + GUN_DIR_X * tommy_parametr,
+              evas_canvas3d_node_position_set(TOMMY_POS_X + GUN_DIR_X * tommy_parametr,
                                         TOMMY_POS_Y + GUN_DIR_Y * tommy_parametr,
                                         TOMMY_POS_Z + GUN_DIR_Z * tommy_parametr));
 
         eo_do(scene->mesh_node_tommy,
-              evas_3d_node_position_get(EVAS_3D_SPACE_PARENT, &x, &y, &z));
+              evas_canvas3d_node_position_get(EVAS_CANVAS3D_SPACE_PARENT, &x, &y, &z));
         if (z <= TOMMY_POS_Z)
           {
              tommy_indicator = 4;
@@ -651,58 +651,58 @@ _animate_scene_gun(void *data)
    if (angle_eagle > 360.0) angle -= 360.0f;
 
    eo_do(scene->mesh_node_warrior,
-         evas_3d_node_mesh_frame_set(scene->mesh_warrior, frame));
+         evas_canvas3d_node_mesh_frame_set(scene->mesh_warrior, frame));
 
    eo_do(scene->mesh_node_snake,
-         evas_3d_node_mesh_frame_set(scene->mesh_snake, frame_snake));
+         evas_canvas3d_node_mesh_frame_set(scene->mesh_snake, frame_snake));
 
    if (space_move && (soldier_mode == 0))
      {
         eo_do(scene->mesh_node_soldier,
-              evas_3d_node_mesh_add(scene->mesh_soldier_jump),
-              evas_3d_node_mesh_del(scene->mesh_soldier),
-              evas_3d_node_mesh_frame_set(scene->mesh_soldier_jump, 0));
+              evas_canvas3d_node_mesh_add(scene->mesh_soldier_jump),
+              evas_canvas3d_node_mesh_del(scene->mesh_soldier),
+              evas_canvas3d_node_mesh_frame_set(scene->mesh_soldier_jump, 0));
         soldier_mode = 1;
         eo_do(scene->mesh_node_tommy,
-              evas_3d_node_position_set(TOMMY_JUMP_X, TOMMY_JUMP_Y, TOMMY_JUMP_Z),
-              evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 1000.0, 0.0, 0.0, EVAS_3D_SPACE_PARENT,
+              evas_canvas3d_node_position_set(TOMMY_JUMP_X, TOMMY_JUMP_Y, TOMMY_JUMP_Z),
+              evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 1000.0, 0.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT,
                                   0, 0, 1));
      }
    else if (soldier_mode == 1)
      {
         eo_do(scene->mesh_node_soldier,
-              frame_soldier = evas_3d_node_mesh_frame_get(scene->mesh_soldier_jump));
+              frame_soldier = evas_canvas3d_node_mesh_frame_get(scene->mesh_soldier_jump));
         frame_soldier += 124;
         eo_do(scene->mesh_node_soldier,
-              evas_3d_node_mesh_frame_set(scene->mesh_soldier_jump, frame_soldier));
+              evas_canvas3d_node_mesh_frame_set(scene->mesh_soldier_jump, frame_soldier));
         if (frame_soldier < 2480)
           eo_do(scene->mesh_node_tommy,
-                evas_3d_node_position_set(TOMMY_JUMP_X, TOMMY_JUMP_Y + 4.5 * frame_soldier / 2480, TOMMY_JUMP_Z));
+                evas_canvas3d_node_position_set(TOMMY_JUMP_X, TOMMY_JUMP_Y + 4.5 * frame_soldier / 2480, TOMMY_JUMP_Z));
         else
           eo_do(scene->mesh_node_tommy,
-                evas_3d_node_position_set(TOMMY_JUMP_X, TOMMY_JUMP_Y + 4.5 * (4960 - frame_soldier) / 2480, TOMMY_JUMP_Z));
+                evas_canvas3d_node_position_set(TOMMY_JUMP_X, TOMMY_JUMP_Y + 4.5 * (4960 - frame_soldier) / 2480, TOMMY_JUMP_Z));
         if (frame_soldier > 4960)
           {
              eo_do(scene->mesh_node_soldier,
-                   evas_3d_node_mesh_del(scene->mesh_soldier_jump));
+                   evas_canvas3d_node_mesh_del(scene->mesh_soldier_jump));
              eo_do(scene->mesh_node_soldier,
-                   evas_3d_node_mesh_add(scene->mesh_soldier),
-                   evas_3d_node_mesh_frame_set(scene->mesh_soldier, 0));
+                   evas_canvas3d_node_mesh_add(scene->mesh_soldier),
+                   evas_canvas3d_node_mesh_frame_set(scene->mesh_soldier, 0));
              soldier_mode = 0;
              eo_do(scene->mesh_node_tommy,
-                   evas_3d_node_position_set(TOMMY_POS_X, TOMMY_POS_Y, TOMMY_POS_Z),
-                   evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, -1000.0, 0.0,
-                                            EVAS_3D_SPACE_PARENT, 2, 0, 1.5));
+                   evas_canvas3d_node_position_set(TOMMY_POS_X, TOMMY_POS_Y, TOMMY_POS_Z),
+                   evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 0.0, -1000.0, 0.0,
+                                            EVAS_CANVAS3D_SPACE_PARENT, 2, 0, 1.5));
           }
      }
    else if (camera_move)
      {
         eo_do(scene->mesh_node_soldier,
-              frame_soldier = evas_3d_node_mesh_frame_get(scene->mesh_soldier));
+              frame_soldier = evas_canvas3d_node_mesh_frame_get(scene->mesh_soldier));
         frame_soldier += 124;
         if (frame_soldier > 6200) frame_soldier = 0;
         eo_do(scene->mesh_node_soldier,
-              evas_3d_node_mesh_frame_set(scene->mesh_soldier, frame_soldier));
+              evas_canvas3d_node_mesh_frame_set(scene->mesh_soldier, frame_soldier));
      }
 
    /* create bounding box */
@@ -745,12 +745,12 @@ static void
 _reload_camera(void *data, Evas *e EINA_UNUSED, Evas_Object *eo EINA_UNUSED, void   *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
-   Evas_3D_Node *n;
-   Evas_3D_Mesh *m;
+   Evas_Canvas3D_Node *n;
+   Evas_Canvas3D_Mesh *m;
    Evas_Real s, t;
 
    eo_do(global_scene,
-         evas_3d_scene_pick(ev->canvas.x, ev->canvas.y, &n, &m, &s, &t));
+         evas_canvas3d_scene_pick(ev->canvas.x, ev->canvas.y, &n, &m, &s, &t));
 
    d_angle_camera = 0;
    if (n || m)
@@ -937,22 +937,22 @@ _mesh_setup_gun_planet(Scene_Data *data)
    SETUP_MESH_NODE(world);
 
    eo_do(data->mesh_world,
-         evas_3d_mesh_vertex_count_set(vertex_count),
-         evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_POSITION,
+         evas_canvas3d_mesh_vertex_count_set(vertex_count),
+         evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_POSITION,
                                             sizeof(vertex), &vertices[0].position),
-         evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_NORMAL,
+         evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_NORMAL,
                                             sizeof(vertex), &vertices[0].normal),
-         evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_TANGENT,
+         evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_TANGENT,
                                             sizeof(vertex), &vertices[0].tangent),
-         evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_COLOR,
+         evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_COLOR,
                                             sizeof(vertex), &vertices[0].color);
-         evas_3d_mesh_frame_vertex_data_set(0, EVAS_3D_VERTEX_TEXCOORD,
+         evas_canvas3d_mesh_frame_vertex_data_set(0, EVAS_CANVAS3D_VERTEX_TEXCOORD,
                                             sizeof(vertex), &vertices[0].texcoord),
-         evas_3d_mesh_index_data_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT, index_count, &indices[0]));
+         evas_canvas3d_mesh_index_data_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT, index_count, &indices[0]));
 
    eo_do(data->mesh_node_world,
-         evas_3d_node_scale_set(150, 150, 150),
-         evas_3d_node_position_set(0.0, 0.0, 0.0));
+         evas_canvas3d_node_scale_set(150, 150, 150),
+         evas_canvas3d_node_position_set(0.0, 0.0, 0.0));
 
    /* Setup material and texture for player */
 
@@ -962,13 +962,13 @@ _mesh_setup_gun_planet(Scene_Data *data)
    SETUP_MESH_NODE(soldier)
 
    eo_do(data->mesh_node_soldier,
-         evas_3d_node_position_set(0, -10, 0),
-         evas_3d_node_scale_set(5, 5, 5));
+         evas_canvas3d_node_position_set(0, -10, 0),
+         evas_canvas3d_node_scale_set(5, 5, 5));
 
    eo_do(data->mesh_node_soldier,
-         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, -10.0, -100.0, EVAS_3D_SPACE_PARENT,
+         evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 0.0, -10.0, -100.0, EVAS_CANVAS3D_SPACE_PARENT,
                                   0, 1, 0),
-         evas_3d_node_mesh_frame_set(data->mesh_soldier, 0));
+         evas_canvas3d_node_mesh_frame_set(data->mesh_soldier, 0));
 
    SETUP_MESH(soldier, soldier_jump, 1.0, 1.0, 1.0)
    MATERIAL_TEXTURE_SET(soldier, soldier_jump, soldier_jump_path, soldier_tex_path)
@@ -980,13 +980,13 @@ _mesh_setup_gun_planet(Scene_Data *data)
    eo_do(data->mesh_tommy,
          efl_file_set(gun_path, NULL),
          efl_file_save("try.obj", NULL, NULL),
-         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG),
-         evas_3d_mesh_frame_material_set(0, data->material_tommy));
+         evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_PHONG),
+         evas_canvas3d_mesh_frame_material_set(0, data->material_tommy));
 
    eo_do(data->mesh_node_tommy,
-         evas_3d_node_scale_set(1.5, 1.5, 1.5),
-         evas_3d_node_position_set(TOMMY_POS_X, TOMMY_POS_Y, TOMMY_POS_Z),
-         evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 0.0, -1000.0, 0.0, EVAS_3D_SPACE_PARENT,
+         evas_canvas3d_node_scale_set(1.5, 1.5, 1.5),
+         evas_canvas3d_node_position_set(TOMMY_POS_X, TOMMY_POS_Y, TOMMY_POS_Z),
+         evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 0.0, -1000.0, 0.0, EVAS_CANVAS3D_SPACE_PARENT,
                                   2, 0, 1.5));
 
    /* Setup material and texture for gazebo */
@@ -997,9 +997,9 @@ _mesh_setup_gun_planet(Scene_Data *data)
    NORMAL_SET(gazebo, gazebo, gazebo_b_n_path)
 
    eo_do(data->mesh_node_gazebo,
-         evas_3d_node_scale_set(0.18, 0.18, 0.18),
-         evas_3d_node_orientation_angle_axis_set(180, 0.0, 1.0, 0.0),
-         evas_3d_node_position_set(-20, -10, -35));
+         evas_canvas3d_node_scale_set(0.18, 0.18, 0.18),
+         evas_canvas3d_node_orientation_angle_axis_set(180, 0.0, 1.0, 0.0),
+         evas_canvas3d_node_position_set(-20, -10, -35));
 
    /* Setup material and texture for carpet */
 
@@ -1011,15 +1011,15 @@ _mesh_setup_gun_planet(Scene_Data *data)
    if (data->blending)
      {
         eo_do(data->texture_diffuse_carpet,
-              evas_3d_texture_file_set(gazebo_t_trans_path, NULL));
+              evas_canvas3d_texture_file_set(gazebo_t_trans_path, NULL));
         eo_do(data->mesh_carpet,
-              evas_3d_mesh_blending_enable_set(EINA_TRUE),
-              evas_3d_mesh_blending_func_set(EVAS_3D_BLEND_SRC_ALPHA, EVAS_3D_BLEND_ONE_MINUS_SRC_ALPHA));
+              evas_canvas3d_mesh_blending_enable_set(EINA_TRUE),
+              evas_canvas3d_mesh_blending_func_set(EVAS_CANVAS3D_BLEND_SRC_ALPHA, EVAS_CANVAS3D_BLEND_ONE_MINUS_SRC_ALPHA));
      }
 
    eo_do(data->mesh_node_carpet,
-         evas_3d_node_scale_set(0.18, 0.18, 0.18),
-         evas_3d_node_position_set(-20, -10, -35));
+         evas_canvas3d_node_scale_set(0.18, 0.18, 0.18),
+         evas_canvas3d_node_position_set(-20, -10, -35));
    /* Setup material and texture for eagle. */
 
    SETUP_MESH(eagle, eagle, 0.01, 1.0, 1.0)
@@ -1027,18 +1027,18 @@ _mesh_setup_gun_planet(Scene_Data *data)
    MATERIAL_TEXTURE_SET(eagle, eagle, eagle_path, eagle_tex_path)
 
    eo_do(data->mesh_node_eagle,
-         evas_3d_node_scale_set(0.1, 0.1, 0.1),
-         evas_3d_node_position_set(-20, 20, 0));
+         evas_canvas3d_node_scale_set(0.1, 0.1, 0.1),
+         evas_canvas3d_node_position_set(-20, 20, 0));
    /* Set material for bounding box */
 
    SETUP_MESH(cube, cube, 0.01, 1.0, 1.0)
    SETUP_MESH_NODE(cube)
 
    eo_do(data->mesh_cube,
-         evas_3d_mesh_index_data_set(EVAS_3D_INDEX_FORMAT_UNSIGNED_SHORT,
+         evas_canvas3d_mesh_index_data_set(EVAS_CANVAS3D_INDEX_FORMAT_UNSIGNED_SHORT,
                                      36, &cube_indices[0]),
-         evas_3d_mesh_vertex_count_set(24),
-         evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_LINES));
+         evas_canvas3d_mesh_vertex_count_set(24),
+         evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINES));
 
    /* Setup mesh for column carpet */
 
@@ -1049,29 +1049,29 @@ _mesh_setup_gun_planet(Scene_Data *data)
    NORMAL_SET(column_c, column_c, red_brick_n_path)
 
    eo_do(data->mesh_node_column_c,
-         evas_3d_node_orientation_angle_axis_set(90, 0, 1.0, 0.0),
-         evas_3d_node_scale_set(48.0, 0.8 , 2.4 ),
-         evas_3d_node_position_set(10 , 9.0, -12));
+         evas_canvas3d_node_orientation_angle_axis_set(90, 0, 1.0, 0.0),
+         evas_canvas3d_node_scale_set(48.0, 0.8 , 2.4 ),
+         evas_canvas3d_node_position_set(10 , 9.0, -12));
 
    /* Setup mesh for bounding sphere */
-   data->material_ball = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
+   data->material_ball = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
    eo_do(data->material_ball,
-          evas_3d_material_enable_set(EVAS_3D_MATERIAL_AMBIENT, EINA_TRUE),
-          evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE),
-          evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE),
-          evas_3d_material_color_set(EVAS_3D_MATERIAL_AMBIENT, 1.0, 1.0, 1.0, 1.0),
-          evas_3d_material_color_set(EVAS_3D_MATERIAL_DIFFUSE,  0.0, 5.0, 1.0, 1.0),
-          evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
-          evas_3d_material_shininess_set(50.0));
+          evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, EINA_TRUE),
+          evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, EINA_TRUE),
+          evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, EINA_TRUE),
+          evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, 1.0, 1.0, 1.0, 1.0),
+          evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE,  0.0, 5.0, 1.0, 1.0),
+          evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
+          evas_canvas3d_material_shininess_set(50.0));
 
-   data->mesh_ball = eo_add(EVAS_3D_MESH_CLASS, evas);
+   data->mesh_ball = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
 
    _set_ball(data->mesh_ball, 10);
 
    eo_do(data->mesh_ball,
-         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
-         evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_LINES),
-         evas_3d_mesh_frame_material_set(0, data->material_ball));
+         evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_DIFFUSE),
+         evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINES),
+         evas_canvas3d_mesh_frame_material_set(0, data->material_ball));
 
    SETUP_MESH_NODE(ball)
 
@@ -1092,25 +1092,25 @@ _mesh_setup_wall(Scene_Data *data, int index)
    /* placing of wall carpet on the floor grid */
    if (index == 0)
      eo_do(data->mesh_node_wall[index],
-           evas_3d_node_scale_set(6.7 * 9.75, 10.0 , 1.0 ),
-           evas_3d_node_position_set(-39.7 + 18.6 * 3, 0.0, -60.3));
+           evas_canvas3d_node_scale_set(6.7 * 9.75, 10.0 , 1.0 ),
+           evas_canvas3d_node_position_set(-39.7 + 18.6 * 3, 0.0, -60.3));
    else if (index == 1)
      {
         eo_do(data->mesh_node_wall[index],
-              evas_3d_node_scale_set(5 * 9.75, 10.0 , 1.0 ),
-              evas_3d_node_position_set(81.2, 0.0, -51.5 + 19.5 * 2),
-              evas_3d_node_orientation_angle_axis_set(90, 0, 1.0, 0.0));
+              evas_canvas3d_node_scale_set(5 * 9.75, 10.0 , 1.0 ),
+              evas_canvas3d_node_position_set(81.2, 0.0, -51.5 + 19.5 * 2),
+              evas_canvas3d_node_orientation_angle_axis_set(90, 0, 1.0, 0.0));
      }
    else if (index == 2)
      eo_do(data->mesh_node_wall[index],
-           evas_3d_node_scale_set(6.7 * 9.75, 10.0 , 1.0 ),
-           evas_3d_node_position_set(-39.7 + 18.6*3, 0.0, 35.3));
+           evas_canvas3d_node_scale_set(6.7 * 9.75, 10.0 , 1.0 ),
+           evas_canvas3d_node_position_set(-39.7 + 18.6*3, 0.0, 35.3));
    else if (index == 3)
      {
         eo_do(data->mesh_node_wall[index],
-              evas_3d_node_scale_set(5* 9.75, 10.0 , 1.0 ),
-              evas_3d_node_position_set(-48.4, 0.0, -51.5 + 19.5 * 2),
-              evas_3d_node_orientation_angle_axis_set(90, 0, 1.0, 0.0));
+              evas_canvas3d_node_scale_set(5* 9.75, 10.0 , 1.0 ),
+              evas_canvas3d_node_position_set(-48.4, 0.0, -51.5 + 19.5 * 2),
+              evas_canvas3d_node_orientation_angle_axis_set(90, 0, 1.0, 0.0));
      }
 }
 
@@ -1119,50 +1119,50 @@ _mesh_setup_column(Scene_Data *data, int index)
 {
    /* Setup mesh for column */
 
-   data->material_column = eo_add(EVAS_3D_MATERIAL_CLASS, evas);
+   data->material_column = eo_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
 
    eo_do(data->material_column,
-         evas_3d_material_enable_set(EVAS_3D_MATERIAL_AMBIENT, EINA_TRUE),
-         evas_3d_material_enable_set(EVAS_3D_MATERIAL_DIFFUSE, EINA_TRUE),
-         evas_3d_material_enable_set(EVAS_3D_MATERIAL_SPECULAR, EINA_TRUE),
-         evas_3d_material_enable_set(EVAS_3D_MATERIAL_NORMAL, EINA_TRUE),
-         evas_3d_material_color_set(EVAS_3D_MATERIAL_AMBIENT, 0.4, 0.4, 0.4, 1.0),
-         evas_3d_material_color_set(EVAS_3D_MATERIAL_DIFFUSE,  0.6, 0.6, 0.6, 1.0),
-         evas_3d_material_color_set(EVAS_3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
-         evas_3d_material_shininess_set(50.0));
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, EINA_TRUE),
+         evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_NORMAL, EINA_TRUE),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, 0.4, 0.4, 0.4, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE,  0.6, 0.6, 0.6, 1.0),
+         evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, 1.0, 1.0, 1.0, 1.0),
+         evas_canvas3d_material_shininess_set(50.0));
 
-   data->mesh_column[index] = eo_add(EVAS_3D_MESH_CLASS, evas);
+   data->mesh_column[index] = eo_add(EVAS_CANVAS3D_MESH_CLASS, evas);
 
    SETUP_MESH_NODE(column[index])
 
    eo_do(data->mesh_column[index],
-         evas_3d_mesh_from_primitive_set(0, data->cylinder_primitive),
-         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_DIFFUSE),
-         evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES),
-         evas_3d_mesh_frame_material_set(0, data->material_column),
-         evas_3d_mesh_shade_mode_set(EVAS_3D_SHADE_MODE_PHONG),
-         evas_3d_mesh_frame_material_set(0, data->material_column));
+         evas_canvas3d_mesh_from_primitive_set(0, data->cylinder_primitive),
+         evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_DIFFUSE),
+         evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES),
+         evas_canvas3d_mesh_frame_material_set(0, data->material_column),
+         evas_canvas3d_mesh_shade_mode_set(EVAS_CANVAS3D_SHADE_MODE_PHONG),
+         evas_canvas3d_mesh_frame_material_set(0, data->material_column));
 
-   data->texture_diffuse_column = eo_add(EVAS_3D_TEXTURE_CLASS, evas);
+   data->texture_diffuse_column = eo_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
 
    eo_do(data->texture_diffuse_column,
-         evas_3d_texture_file_set(red_brick_path, NULL),
-         evas_3d_texture_filter_set(EVAS_3D_TEXTURE_FILTER_NEAREST,
-                                    EVAS_3D_TEXTURE_FILTER_NEAREST),
-         evas_3d_texture_wrap_set(EVAS_3D_WRAP_MODE_REPEAT, EVAS_3D_WRAP_MODE_REPEAT));
+         evas_canvas3d_texture_file_set(red_brick_path, NULL),
+         evas_canvas3d_texture_filter_set(EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST,
+                                    EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST),
+         evas_canvas3d_texture_wrap_set(EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT));
 
    eo_do(data->material_column,
-         evas_3d_material_texture_set(EVAS_3D_MATERIAL_DIFFUSE,
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE,
                                       data->texture_diffuse_column),
-         evas_3d_material_texture_set(EVAS_3D_MATERIAL_AMBIENT,
+         evas_canvas3d_material_texture_set(EVAS_CANVAS3D_MATERIAL_AMBIENT,
                                       data->texture_diffuse_column));
 
    NORMAL_SET(column, column[index], red_brick_n_path)
 
    eo_do(data->mesh_node_column[index],
-         evas_3d_node_scale_set(2.2, 2.2, 19.0),
-         evas_3d_node_position_set(10 , 0, -45 + 21.25 * index),
-         evas_3d_node_orientation_angle_axis_set(90, 1.0, 0.0, 0.0));
+         evas_canvas3d_node_scale_set(2.2, 2.2, 19.0),
+         evas_canvas3d_node_position_set(10 , 0, -45 + 21.25 * index),
+         evas_canvas3d_node_orientation_angle_axis_set(90, 1.0, 0.0, 0.0));
 }
 
 void
@@ -1178,8 +1178,8 @@ _mesh_setup_grass(Scene_Data *data)
 
    /* placing of grass carpet on the floor grid */
    eo_do(data->mesh_node_grass,
-         evas_3d_node_scale_set(10.0, 1.0, 12.0),
-         evas_3d_node_position_set(16, -10.0, -12));
+         evas_canvas3d_node_scale_set(10.0, 1.0, 12.0),
+         evas_canvas3d_node_position_set(16, -10.0, -12));
 }
 
 void
@@ -1195,8 +1195,8 @@ _mesh_setup(Scene_Data *data, float h EINA_UNUSED, float w EINA_UNUSED, float d 
         NORMAL_SET(level[0], level[index], red_brick_n_path)
 
         eo_do(data->mesh_node_level[index],
-              evas_3d_node_scale_set(9.75, 10.0, 1.0),
-              evas_3d_node_position_set(50, 0, -15));
+              evas_canvas3d_node_scale_set(9.75, 10.0, 1.0),
+              evas_canvas3d_node_position_set(50, 0, -15));
      }
    else
      {
@@ -1207,8 +1207,8 @@ _mesh_setup(Scene_Data *data, float h EINA_UNUSED, float w EINA_UNUSED, float d 
         NORMAL_SET(level[1], level[index], gray_brick_n_path)
 
         eo_do(data->mesh_node_level[index],
-              evas_3d_node_scale_set(1.0, 1.0, 4.0),
-              evas_3d_node_position_set(40 + (2 * index), -10 + (2 * index), -10));
+              evas_canvas3d_node_scale_set(1.0, 1.0, 4.0),
+              evas_canvas3d_node_position_set(40 + (2 * index), -10 + (2 * index), -10));
      }
 }
 
@@ -1222,8 +1222,8 @@ _mesh_setup_warrior(Scene_Data *data)
    MATERIAL_TEXTURE_SET(warrior, warrior, warrior_path, warrior_tex_path)
 
    eo_do(data->mesh_node_warrior,
-         evas_3d_node_position_set(57, -10, 0),
-         evas_3d_node_scale_set(0.15, 0.15, 0.15));
+         evas_canvas3d_node_position_set(57, -10, 0),
+         evas_canvas3d_node_scale_set(0.15, 0.15, 0.15));
 }
 
 void
@@ -1235,8 +1235,8 @@ _mesh_setup_snake(Scene_Data *data)
    NORMAL_SET(snake, snake, snake_tex_n_path)
 
    eo_do(data->mesh_node_snake,
-         evas_3d_node_position_set(20, -10, 20),
-         evas_3d_node_scale_set(4.0, 4.0, 4.0));
+         evas_canvas3d_node_position_set(20, -10, 20),
+         evas_canvas3d_node_scale_set(4.0, 4.0, 4.0));
 }
 
 void
@@ -1248,22 +1248,22 @@ _mesh_setup_rocket(Scene_Data *data, int index)
    SPHERE_SET(rocket[index])
 
    eo_do(data->mesh_node_rocket[index],
-         evas_3d_node_scale_set(1, 1, 1),
-         evas_3d_node_position_set(ROCKET_POS_X, ROCKET_POS_Y, ROCKET_POS_Z));
+         evas_canvas3d_node_scale_set(1, 1, 1),
+         evas_canvas3d_node_position_set(ROCKET_POS_X, ROCKET_POS_Y, ROCKET_POS_Z));
 }
 
 void
 _scene_setup(Scene_Data *data)
 {
    int i = 0;
-   global_scene = eo_add(EVAS_3D_SCENE_CLASS, evas);
+   global_scene = eo_add(EVAS_CANVAS3D_SCENE_CLASS, evas);
 
    eo_do(global_scene,
-         evas_3d_scene_size_set(WIDTH, HEIGHT),
-         evas_3d_scene_background_color_set(0.5, 0.5, 0.9, 0.0));
+         evas_canvas3d_scene_size_set(WIDTH, HEIGHT),
+         evas_canvas3d_scene_background_color_set(0.5, 0.5, 0.9, 0.0));
 
-   data->root_node = eo_add(EVAS_3D_NODE_CLASS, evas,
-                                   evas_3d_node_constructor(EVAS_3D_NODE_TYPE_NODE));
+   data->root_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+                                   evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_NODE));
 
    _camera_setup(data);
    _light_setup(data);
@@ -1273,12 +1273,12 @@ _scene_setup(Scene_Data *data)
    for (i = 0; i < 10; i++)
      _mesh_setup_rocket(data, i);
 
-   data->cylinder_primitive = eo_add(EVAS_3D_PRIMITIVE_CLASS, evas);
+   data->cylinder_primitive = eo_add(EVAS_CANVAS3D_PRIMITIVE_CLASS, evas);
    eo_do(data->cylinder_primitive,
-         evas_3d_primitive_mode_set(EVAS_3D_PRIMITIVE_MODE_WITHOUT_BASE),
-         evas_3d_primitive_form_set(EVAS_3D_MESH_PRIMITIVE_CYLINDER),
-         evas_3d_primitive_tex_scale_set(1.0, 1.0),
-         evas_3d_primitive_precision_set(50));
+         evas_canvas3d_primitive_mode_set(EVAS_CANVAS3D_PRIMITIVE_MODE_WITHOUT_BASE),
+         evas_canvas3d_primitive_form_set(EVAS_CANVAS3D_MESH_PRIMITIVE_CYLINDER),
+         evas_canvas3d_primitive_tex_scale_set(1.0, 1.0),
+         evas_canvas3d_primitive_precision_set(50));
 
    for ( i = 0; i < 4; i++)
      _mesh_setup_column(data, i);
@@ -1300,11 +1300,11 @@ _scene_setup(Scene_Data *data)
    _mesh_aabb(&data->mesh_cube, data, aabb_index);
 
    eo_do(global_scene,
-         evas_3d_scene_root_node_set(data->root_node),
-         evas_3d_scene_camera_node_set(data->camera_node));
+         evas_canvas3d_scene_root_node_set(data->root_node),
+         evas_canvas3d_scene_camera_node_set(data->camera_node));
 
    if (data->shadow)
-     eo_do(global_scene,evas_3d_scene_shadows_enable_set(EINA_TRUE));
+     eo_do(global_scene,evas_canvas3d_scene_shadows_enable_set(EINA_TRUE));
 
    if (data->fog)
      {
@@ -1330,40 +1330,40 @@ _scene_setup(Scene_Data *data)
           }
      }
 
-   data->carp_mediator_node = eo_add(EVAS_3D_NODE_CLASS, evas,
-                                         evas_3d_node_constructor(EVAS_3D_NODE_TYPE_MESH));
+   data->carp_mediator_node = eo_add(EVAS_CANVAS3D_NODE_CLASS, evas,
+                                         evas_canvas3d_node_constructor(EVAS_CANVAS3D_NODE_TYPE_MESH));
 
    eo_do(data->carp_mediator_node,
-         evas_3d_node_member_add(data->mesh_node_carpet));
+         evas_canvas3d_node_member_add(data->mesh_node_carpet));
 
    eo_do(data->mediator_node,
-         evas_3d_node_member_add(data->mesh_node_soldier),
-         evas_3d_node_member_add(data->mesh_node_tommy));
+         evas_canvas3d_node_member_add(data->mesh_node_soldier),
+         evas_canvas3d_node_member_add(data->mesh_node_tommy));
 
    for (i = 0; i < 10; i++)
         eo_do(data->mediator_node,
-              evas_3d_node_member_add(data->mesh_node_rocket[i]));
+              evas_canvas3d_node_member_add(data->mesh_node_rocket[i]));
 
    eo_do(data->root_node,
-         evas_3d_node_member_add(data->carp_mediator_node),
-         evas_3d_node_member_add(data->mesh_node_world),
-         evas_3d_node_member_add(data->mesh_node_gazebo),
-         evas_3d_node_member_add(data->mesh_node_eagle),
-         evas_3d_node_member_add(data->mesh_node_cube),
-         evas_3d_node_member_add(data->mesh_node_column_c),
-         evas_3d_node_member_add(data->mesh_node_ball),
-         evas_3d_node_member_add(data->mesh_node_grass),
-         evas_3d_node_member_add(data->mesh_node_warrior),
-         evas_3d_node_member_add(data->mesh_node_snake));
+         evas_canvas3d_node_member_add(data->carp_mediator_node),
+         evas_canvas3d_node_member_add(data->mesh_node_world),
+         evas_canvas3d_node_member_add(data->mesh_node_gazebo),
+         evas_canvas3d_node_member_add(data->mesh_node_eagle),
+         evas_canvas3d_node_member_add(data->mesh_node_cube),
+         evas_canvas3d_node_member_add(data->mesh_node_column_c),
+         evas_canvas3d_node_member_add(data->mesh_node_ball),
+         evas_canvas3d_node_member_add(data->mesh_node_grass),
+         evas_canvas3d_node_member_add(data->mesh_node_warrior),
+         evas_canvas3d_node_member_add(data->mesh_node_snake));
 
    for (i = 0; i < 4; i++)
         eo_do(data->root_node,
-              evas_3d_node_member_add(data->mesh_node_wall[i]),
-              evas_3d_node_member_add(data->mesh_node_column[i]));
+              evas_canvas3d_node_member_add(data->mesh_node_wall[i]),
+              evas_canvas3d_node_member_add(data->mesh_node_column[i]));
 
    for (i = 0; i < 10; i++)
         eo_do(data->root_node,
-              evas_3d_node_member_add(data->mesh_node_level[i]));
+              evas_canvas3d_node_member_add(data->mesh_node_level[i]));
 }
 
 int

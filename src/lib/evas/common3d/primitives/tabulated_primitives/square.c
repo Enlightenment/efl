@@ -12,7 +12,7 @@ const float vertices_of_square[] =
 const unsigned short indices_of_square[] = {0, 1, 2, 2, 1, 3};
 
 void
-evas_model_set_from_square_primitive(Evas_3D_Mesh *mesh, int frame)
+evas_model_set_from_square_primitive(Evas_Canvas3D_Mesh *mesh, int frame)
 {
    SET_VERTEX_DATA_FROM_ARRAY(mesh, frame, vertices_of_square, 4, indices_of_square, 6)
 }

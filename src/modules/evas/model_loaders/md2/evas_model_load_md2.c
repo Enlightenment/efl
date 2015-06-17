@@ -318,14 +318,14 @@ error:
 }
 
 void
-evas_model_load_file_md2(Evas_3D_Mesh *mesh, Eina_File *file)
+evas_model_load_file_md2(Evas_Canvas3D_Mesh *mesh, Eina_File *file)
 {
    MD2_Loader           loader;
    int                  i, j, k;
    float               *pos, *nor, *tex;
    int                  stride_pos, stride_nor, stride_tex;
    float                s_scale, t_scale;
-   Evas_3D_Mesh_Data *pd;
+   Evas_Canvas3D_Mesh_Data *pd;
 
    /* Initialize MD2 loader (Open file and read MD2 head ant etc) */
    if (!_md2_loader_init(&loader, file))
@@ -338,8 +338,8 @@ evas_model_load_file_md2(Evas_3D_Mesh *mesh, Eina_File *file)
    t_scale = 1.0 / (float)(loader.skin_height - 1);
 
    eo_do(mesh,
-         evas_3d_mesh_vertex_count_set(loader.triangle_count * 3),
-         evas_3d_mesh_vertex_assembly_set(EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES));
+         evas_canvas3d_mesh_vertex_count_set(loader.triangle_count * 3),
+         evas_canvas3d_mesh_vertex_assembly_set(EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES));
 
    /* Load frames */
    for (i = 0; i < loader.frame_count; i++)
@@ -349,21 +349,21 @@ evas_model_load_file_md2(Evas_3D_Mesh *mesh, Eina_File *file)
 
         eo_do(mesh,
               /* Add a mesh frame. */
-              evas_3d_mesh_frame_add(f),
+              evas_canvas3d_mesh_frame_add(f),
 
               /* Allocate vertex buffer for the frame. */
-              evas_3d_mesh_frame_vertex_data_copy_set(f, EVAS_3D_VERTEX_POSITION, 0, NULL),
-              evas_3d_mesh_frame_vertex_data_copy_set(f, EVAS_3D_VERTEX_NORMAL,   0, NULL),
-              evas_3d_mesh_frame_vertex_data_copy_set(f, EVAS_3D_VERTEX_TEXCOORD, 0, NULL),
+              evas_canvas3d_mesh_frame_vertex_data_copy_set(f, EVAS_CANVAS3D_VERTEX_POSITION, 0, NULL),
+              evas_canvas3d_mesh_frame_vertex_data_copy_set(f, EVAS_CANVAS3D_VERTEX_NORMAL,   0, NULL),
+              evas_canvas3d_mesh_frame_vertex_data_copy_set(f, EVAS_CANVAS3D_VERTEX_TEXCOORD, 0, NULL),
 
               /* Map vertex buffer. */
-              pos = (float *)evas_3d_mesh_frame_vertex_data_map(f, EVAS_3D_VERTEX_POSITION),
-              nor = (float *)evas_3d_mesh_frame_vertex_data_map(f, EVAS_3D_VERTEX_NORMAL),
-              tex = (float *)evas_3d_mesh_frame_vertex_data_map(f, EVAS_3D_VERTEX_TEXCOORD),
+              pos = (float *)evas_canvas3d_mesh_frame_vertex_data_map(f, EVAS_CANVAS3D_VERTEX_POSITION),
+              nor = (float *)evas_canvas3d_mesh_frame_vertex_data_map(f, EVAS_CANVAS3D_VERTEX_NORMAL),
+              tex = (float *)evas_canvas3d_mesh_frame_vertex_data_map(f, EVAS_CANVAS3D_VERTEX_TEXCOORD),
 
-              stride_pos = evas_3d_mesh_frame_vertex_stride_get(f, EVAS_3D_VERTEX_POSITION),
-              stride_nor = evas_3d_mesh_frame_vertex_stride_get(f, EVAS_3D_VERTEX_NORMAL),
-              stride_tex = evas_3d_mesh_frame_vertex_stride_get(f, EVAS_3D_VERTEX_TEXCOORD));
+              stride_pos = evas_canvas3d_mesh_frame_vertex_stride_get(f, EVAS_CANVAS3D_VERTEX_POSITION),
+              stride_nor = evas_canvas3d_mesh_frame_vertex_stride_get(f, EVAS_CANVAS3D_VERTEX_NORMAL),
+              stride_tex = evas_canvas3d_mesh_frame_vertex_stride_get(f, EVAS_CANVAS3D_VERTEX_TEXCOORD));
 
         if (stride_pos == 0)
           stride_pos = sizeof(float) * 3;
@@ -405,13 +405,13 @@ evas_model_load_file_md2(Evas_3D_Mesh *mesh, Eina_File *file)
 
         /* Unmap vertex buffer. */
         eo_do(mesh,
-              evas_3d_mesh_frame_vertex_data_unmap(f, EVAS_3D_VERTEX_POSITION),
-              evas_3d_mesh_frame_vertex_data_unmap(f, EVAS_3D_VERTEX_NORMAL),
-              evas_3d_mesh_frame_vertex_data_unmap(f, EVAS_3D_VERTEX_TEXCOORD));
+              evas_canvas3d_mesh_frame_vertex_data_unmap(f, EVAS_CANVAS3D_VERTEX_POSITION),
+              evas_canvas3d_mesh_frame_vertex_data_unmap(f, EVAS_CANVAS3D_VERTEX_NORMAL),
+              evas_canvas3d_mesh_frame_vertex_data_unmap(f, EVAS_CANVAS3D_VERTEX_TEXCOORD));
 
-        pd = eo_data_scope_get(mesh, EVAS_3D_MESH_CLASS);
+        pd = eo_data_scope_get(mesh, EVAS_CANVAS3D_MESH_CLASS);
 
-        if (!evas_3d_mesh_aabb_add_to_frame(pd, f, stride_pos))
+        if (!evas_canvas3d_mesh_aabb_add_to_frame(pd, f, stride_pos))
           {
              ERR("Axis-Aligned Bounding Box wasn't added in frame %d ", f);
           }

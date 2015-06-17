@@ -188,7 +188,7 @@ void evas_box3_empty_set(Box3 *box);
 
 void evas_box3_set(Box3 *box, Evas_Real x0, Evas_Real y0, Evas_Real z0, Evas_Real x1, Evas_Real y1, Evas_Real z1);
 
-void       _scale(Evas_3D_Node *node, Evas_Real scale);
+void       _scale(Evas_Canvas3D_Node *node, Evas_Real scale);
 
 float      _distance(float x1, float z1, float x2, float z2);
 
@@ -196,24 +196,24 @@ void       _camera_setup(Scene_Data *data);
 
 void       _light_setup(Scene_Data *data);
 
-Eina_Bool  _mesh_aabb(Evas_3D_Mesh **mesh, Scene_Data *scene, int index);
+Eina_Bool  _mesh_aabb(Evas_Canvas3D_Mesh **mesh, Scene_Data *scene, int index);
 
 void       _on_delete(Ecore_Evas *ee EINA_UNUSED);
 
 void       _on_canvas_resize(Ecore_Evas *ee);
 
-Eina_Bool _horizontal_circle_resolution(Evas_3D_Node *node, Evas_Real x, Evas_Real z, Evas_Real r);
+Eina_Bool _horizontal_circle_resolution(Evas_Canvas3D_Node *node, Evas_Real x, Evas_Real z, Evas_Real r);
 
-Eina_Bool _horizontal_circle_position_resolution(Evas_3D_Node *node, Evas_Real x, Evas_Real z, Evas_Real r);
+Eina_Bool _horizontal_circle_position_resolution(Evas_Canvas3D_Node *node, Evas_Real x, Evas_Real z, Evas_Real r);
 
-Eina_Bool _horizontal_circle_object_resolution(Evas_3D_Node *node, Evas_3D_Node *node2, Evas_Real r);
+Eina_Bool _horizontal_circle_object_resolution(Evas_Canvas3D_Node *node, Evas_Canvas3D_Node *node2, Evas_Real r);
 
-Eina_Bool _horizontal_position_resolution(Evas_3D_Node *node, Evas_Real x, Evas_Real z);
+Eina_Bool _horizontal_position_resolution(Evas_Canvas3D_Node *node, Evas_Real x, Evas_Real z);
 
-Eina_Bool _horizontal_object_resolution(Evas_3D_Node *node, Evas_Real x1, Evas_Real z1, Evas_Real x2,
+Eina_Bool _horizontal_object_resolution(Evas_Canvas3D_Node *node, Evas_Real x1, Evas_Real z1, Evas_Real x2,
                                         Evas_Real z2, Evas_Real x_move, Evas_Real z_move);
 
-Eina_Bool _horizontal_frame_resolution(Evas_3D_Node *node, Evas_Real x1, Evas_Real z1, Evas_Real x2,
+Eina_Bool _horizontal_frame_resolution(Evas_Canvas3D_Node *node, Evas_Real x1, Evas_Real z1, Evas_Real x2,
                                         Evas_Real z2, Evas_Real *x_move, Evas_Real *z_move);
 
 void _set_ball(Eo *mesh, int p);

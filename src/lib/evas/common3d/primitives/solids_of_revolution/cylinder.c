@@ -1,7 +1,7 @@
 #include "../primitive_common.h"
 
 void
-_set_default_cylinder(Evas_3D_Mesh *mesh,
+_set_default_cylinder(Evas_Canvas3D_Mesh *mesh,
                       int frame,
                       int p,
                       Evas_Vec2 tex_scale)
@@ -64,7 +64,7 @@ _set_default_cylinder(Evas_3D_Mesh *mesh,
 }
 
 void
-_set_cylinder_without_bases(Evas_3D_Mesh *mesh,
+_set_cylinder_without_bases(Evas_Canvas3D_Mesh *mesh,
                             int frame,
                             int p,
                             Evas_Vec2 tex_scale)
@@ -109,21 +109,21 @@ _set_cylinder_without_bases(Evas_3D_Mesh *mesh,
 }
 
 void
-evas_model_set_from_cylinder_primitive(Evas_3D_Mesh *mesh,
+evas_model_set_from_cylinder_primitive(Evas_Canvas3D_Mesh *mesh,
                                        int frame,
-                                       Evas_3D_Primitive_Mode mode,
+                                       Evas_Canvas3D_Primitive_Mode mode,
                                        int p,
                                        Evas_Vec2 tex_scale)
 {
    switch (mode)
      {
-      case EVAS_3D_PRIMITIVE_MODE_DEFAULT:
-      case EVAS_3D_PRIMITIVE_MODE_ALTERNATIVE_UV:
+      case EVAS_CANVAS3D_PRIMITIVE_MODE_DEFAULT:
+      case EVAS_CANVAS3D_PRIMITIVE_MODE_ALTERNATIVE_UV:
         {
            _set_default_cylinder(mesh, frame, p, tex_scale);
            break;
         }
-      case EVAS_3D_PRIMITIVE_MODE_WITHOUT_BASE:
+      case EVAS_CANVAS3D_PRIMITIVE_MODE_WITHOUT_BASE:
         {
            _set_cylinder_without_bases(mesh, frame, p, tex_scale);
            break;

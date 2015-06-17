@@ -1,7 +1,7 @@
-class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
+class Evas_Canvas3D_Material (Evas_Canvas3D_Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
-   data: Evas_3D_Material_Data;
+   data: Evas_Canvas3D_Material_Data;
    methods {
       color_set {
          /*@
@@ -20,11 +20,11 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
            Emission : (0.0, 0.0, 0.0, 1.0)
            Normal   : Not used
 
-           @ingroup Evas_3D_Material
+           @ingroup Evas_Canvas3D_Material
           */
 
          params {
-            @in attrib: Evas_3D_Material_Attrib; /*@ Material attribute ID. */
+            @in attrib: Evas_Canvas3D_Material_Attrib; /*@ Material attribute ID. */
             @in r: Evas_Real; /*@ Red component of the color. */
             @in g: Evas_Real; /*@ Green component of the color. */
             @in b: Evas_Real; /*@ Blue component of the color. */
@@ -36,12 +36,12 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Get the material attribute color of the given material.
 
-           @see evas_3d_material_color_set()
+           @see evas_canvas3d_material_color_set()
 
-           @ingroup Evas_3D_Material
+           @ingroup Evas_Canvas3D_Material
           */
          params {
-            @in attrib: Evas_3D_Material_Attrib; /*@ Material attribute ID. */
+            @in attrib: Evas_Canvas3D_Material_Attrib; /*@ Material attribute ID. */
             @out r: Evas_Real; /*@ Pointer to receive red component of the color. */
             @out g: Evas_Real; /*@ Pointer to receive green component of the color. */
             @out b: Evas_Real; /*@ Pointer to receive blue component of the color. */
@@ -60,21 +60,21 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
 
               By default, diffuse and specular is enabled.
 
-              @ingroup Evas_3D_Material
+              @ingroup Evas_Canvas3D_Material
              */
          }
          get {
             /*@
               Get the material attribute enable flag of the given material.
 
-              @see evas_3d_material_enable_set()
+              @see evas_canvas3d_material_enable_set()
 
               @return              @c EINA_TRUE if enabled, or @c EINA_FALSE if not.
-              @ingroup Evas_3D_Material
+              @ingroup Evas_Canvas3D_Material
             */
          }
          keys {
-            attrib: Evas_3D_Material_Attrib;  /*@ Material attribute ID. */
+            attrib: Evas_Canvas3D_Material_Attrib;  /*@ Material attribute ID. */
          }
          values {
             enable: bool; /*@ Whether to enable the attribute (@c EINA_TRUE), or not (@c EINA_FALSE). */
@@ -91,19 +91,19 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
 
               Default shininess value is 150.0.
 
-              @see evas_3d_material_enable_set()
+              @see evas_canvas3d_material_enable_set()
 
-              @ingroup Evas_3D_Material
+              @ingroup Evas_Canvas3D_Material
              */
          }
          get {
             /*@
               Get the shininess of the given material.
 
-              @see evas_3d_material_shininess_set()
+              @see evas_canvas3d_material_shininess_set()
 
               @return              The shininess value.
-              @ingroup Evas_3D_Material
+              @ingroup Evas_Canvas3D_Material
              */
          }
          values {
@@ -118,36 +118,36 @@ class Evas_3D_Material (Evas_3D_Object, Evas.Common_Interface)
 
               You have to enable the desired attribute first.
 
-              @see evas_3d_material_enable_set()
+              @see evas_canvas3d_material_enable_set()
 
-              @ingroup Evas_3D_Material
+              @ingroup Evas_Canvas3D_Material
              */
          }
          get {
             /*@
               Get the texture of the given material.
 
-              @see evas_3d_material_texture_set()
+              @see evas_canvas3d_material_texture_set()
 
               @return              The texture that is set to the given material attribute.
 
-              @ingroup Evas_3D_Material
+              @ingroup Evas_Canvas3D_Material
              */
          }
 
          keys {
-            attrib: Evas_3D_Material_Attrib; /*@ Material attribute ID. */
+            attrib: Evas_Canvas3D_Material_Attrib; /*@ Material attribute ID. */
          }
          values {
-            texture: Evas_3D_Texture *;
+            texture: Evas_Canvas3D_Texture *;
          }
       }
    }
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Evas_3D_Object.update_notify;
-      Evas_3D_Object.change_notify;
+      Evas_Canvas3D_Object.update_notify;
+      Evas_Canvas3D_Object.change_notify;
    }
 
 }

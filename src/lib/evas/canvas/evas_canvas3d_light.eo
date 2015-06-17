@@ -1,7 +1,7 @@
-class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
+class Evas_Canvas3D_Light (Evas_Canvas3D_Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
-   data: Evas_3D_Light_Data;
+   data: Evas_Canvas3D_Light_Data;
 
    methods {
       @property directional {
@@ -15,18 +15,18 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
 
               By default, directional is not enabled.
 
-              @see evas_3d_node_look_at_set()
+              @see evas_canvas3d_node_look_at_set()
 
-              @ingroup Evas_3D_Light
+              @ingroup Evas_Canvas3D_Light
              */
          }
          get {
             /*@
               Get the directional flag of the given light.
 
-              @see evas_3d_light_directional_set()
+              @see evas_canvas3d_light_directional_set()
 
-              @ingroup Evas_3D_Light
+              @ingroup Evas_Canvas3D_Light
              */
          }
          values {
@@ -46,18 +46,18 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
 
               Default spot exponent is 0.
 
-              @see evas_3d_light_spot_cutoff_set()
+              @see evas_canvas3d_light_spot_cutoff_set()
 
-              @ingroup Evas_3D_Light
+              @ingroup Evas_Canvas3D_Light
              */
          }
          get {
             /*@
               Get the spot exponent of the given light.
 
-              @see evas_3d_light_spot_exponent_set()
+              @see evas_canvas3d_light_spot_exponent_set()
 
-              @ingroup Evas_3D_Light
+              @ingroup Evas_Canvas3D_Light
              */
          }
          values {
@@ -75,16 +75,16 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
 
               Default spot cutoff angle is 180.
 
-              @ingroup Evas_3D_Light
+              @ingroup Evas_Canvas3D_Light
              */
          }
          get {
             /*@
               Get the spot cutoff angle of the given light.
 
-              @see evas_3d_light_spot_cutoff_set()
+              @see evas_canvas3d_light_spot_cutoff_set()
 
-              @ingroup Evas_3D_Light
+              @ingroup Evas_Canvas3D_Light
              */
          }
          values {
@@ -99,18 +99,18 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
 
               By default, light attenuation is not enabled.
 
-              @see evas_3d_light_attenuation_set()
+              @see evas_canvas3d_light_attenuation_set()
 
-              @ingroup Evas_3D_Light
+              @ingroup Evas_Canvas3D_Light
              */
          }
          get {
             /*@
               Get the attenuation enable flag of the given light.
 
-              @see evas_3d_light_attenuation_enable_set()
+              @see evas_canvas3d_light_attenuation_enable_set()
 
-              @ingroup Evas_3D_Light
+              @ingroup Evas_Canvas3D_Light
              */
          }
          values {
@@ -124,7 +124,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
 
            Default ambient color is (0.0, 0.0, 0.0, 1.0).
 
-           @ingroup Evas_3D_Light
+           @ingroup Evas_Canvas3D_Light
           */
          params {
            @in r: Evas_Real; /*@ Red component of the ambient color between [0.0, 1.0]. */
@@ -137,9 +137,9 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Get the ambient color of the given light.
 
-           @see evas_3d_light_ambient_set()
+           @see evas_canvas3d_light_ambient_set()
 
-           @ingroup Evas_3D_Light
+           @ingroup Evas_Canvas3D_Light
           */
          params {
            @out r: Evas_Real; /*@ Red component of the ambient color between [0.0, 1.0]. */
@@ -155,7 +155,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
 
            Default diffuse color is (1.0, 1.0, 1.0, 1.0).
 
-           @ingroup Evas_3D_Light
+           @ingroup Evas_Canvas3D_Light
           */
          params {
            @in r: Evas_Real; /*@ Red component of the diffuse color between [0.0, 1.0]. */
@@ -168,9 +168,9 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Get the diffuse color of the given light.
 
-           @see evas_3d_light_diffuse_set()
+           @see evas_canvas3d_light_diffuse_set()
 
-           @ingroup Evas_3D_Light
+           @ingroup Evas_Canvas3D_Light
           */
          params {
            @out r: Evas_Real; /*@ Red component of the diffuse color between [0.0, 1.0]. */
@@ -186,7 +186,7 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
 
            Default specular color is (1.0, 1.0, 1.0, 1.0).
 
-           @ingroup Evas_3D_Light
+           @ingroup Evas_Canvas3D_Light
           */
          params {
            @in r: Evas_Real; /*@ Red component of the specular color between [0.0, 1.0]. */
@@ -199,9 +199,9 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Get the specular color of the given light.
 
-           @see evas_3d_light_specular_set()
+           @see evas_canvas3d_light_specular_set()
 
-           @ingroup Evas_3D_Light
+           @ingroup Evas_Canvas3D_Light
           */
          params {
            @out r: Evas_Real; /*@ Red component of the specular color between [0.0, 1.0]. */
@@ -223,9 +223,9 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
 
            Default attenuation is constant = 1.0, linear = 0.0, quadratic = 0.0.
 
-           @see evas_3d_light_attenuation_enable_set()
+           @see evas_canvas3d_light_attenuation_enable_set()
 
-           @ingroup Evas_3D_Light
+           @ingroup Evas_Canvas3D_Light
           */
          params {
             @in constant: Evas_Real; /*@ Constant attenuation term..*/
@@ -238,9 +238,9 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Get the attenuation of the given light.
 
-           @see evas_3d_light_attenuation_set()
+           @see evas_canvas3d_light_attenuation_set()
 
-           @ingroup Evas_3D_Light
+           @ingroup Evas_Canvas3D_Light
           */
          params {
             @out constant: Evas_Real; /*@ Constant attenuation term..*/
@@ -258,11 +258,11 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
 
            Default projection matrix is identity matrix.
 
-           @see evas_3d_light_projection_perspective_set()
-           @see evas_3d_light_projection_ortho_set()
-           @see evas_3d_light_projection_frustum_set()
+           @see evas_canvas3d_light_projection_perspective_set()
+           @see evas_canvas3d_light_projection_ortho_set()
+           @see evas_canvas3d_light_projection_frustum_set()
 
-           @ingroup Evas_3D_Light
+           @ingroup Evas_Canvas3D_Light
           */
          params {
            @in matrix: const(Evas_Real) *; /*@ Projection Matrix */
@@ -276,9 +276,9 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
           @param light The given light source.
           @param matrix Pointer to receive the 16 Evas_Real values in column major order.
 
-          @see evas_3d_light_projection_matrix_set()
+          @see evas_canvas3d_light_projection_matrix_set()
 
-          @ingroup Evas_3D_Light
+          @ingroup Evas_Canvas3D_Light
          */
          params {
            @out matrix: Evas_Real; /*@ Projection Matrix */
@@ -295,9 +295,9 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
            @param dnear Distance to near clipping plane.
            @param dfar Distance to far clipping plane.
 
-           @see evas_3d_light_projection_matrix_set()
+           @see evas_canvas3d_light_projection_matrix_set()
 
-           @ingroup Evas_3D_Light
+           @ingroup Evas_Canvas3D_Light
           */
 
          params {
@@ -312,9 +312,9 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Set the projection matrix of the given light source with frustum projection.
 
-           @see evas_3d_Light_projection_matrix_set()
+           @see evas_canvas3d_Light_projection_matrix_set()
 
-           @ingroup Evas_3D_Light
+           @ingroup Evas_Canvas3D_Light
           */
          params {
             left: Evas_Real; /*@ Left X coordinate of the near clipping plane. */
@@ -329,9 +329,9 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Set the projection matrix of the given light source with orthogonal projection.
 
-           @see evas_3d_light_projection_matrix_set()
+           @see evas_canvas3d_light_projection_matrix_set()
 
-           @ingroup Evas_3D_Light
+           @ingroup Evas_Canvas3D_Light
           */
          params {
             left: Evas_Real; /*@ Left X coordinate of the near clipping plane. */
@@ -347,8 +347,8 @@ class Evas_3D_Light (Evas_3D_Object, Evas.Common_Interface)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Evas_3D_Object.update_notify;
-      Evas_3D_Object.change_notify;
+      Evas_Canvas3D_Object.update_notify;
+      Evas_Canvas3D_Object.change_notify;
    }
 
 }

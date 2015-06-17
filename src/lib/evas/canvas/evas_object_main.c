@@ -252,7 +252,7 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    Evas_Object_Protected_Data *obj2;
    Evas_Object *eo_obj2;
    Eina_Bool movch = EINA_FALSE;
-   Evas_3D_Texture *texture;
+   Evas_Canvas3D_Texture *texture;
 
    if (!obj->layer) return;
    if (!obj->layer->evas) return;
@@ -286,7 +286,7 @@ evas_object_change(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      }
    EINA_LIST_FOREACH(obj->proxy->proxy_textures, l, texture)
      {
-        eo_do(texture, evas_3d_object_change(EVAS_3D_STATE_TEXTURE_DATA, NULL));
+        eo_do(texture, evas_canvas3d_object_change(EVAS_CANVAS3D_STATE_TEXTURE_DATA, NULL));
      }
    if (obj->smart.parent)
      {
@@ -674,7 +674,7 @@ _evas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    MAGIC_CHECK_END();
    Evas_Object *proxy;
    Eina_List *l, *l2;
-   Evas_3D_Texture *texture;
+   Evas_Canvas3D_Texture *texture;
 
    evas_object_hide(eo_obj);
    if (obj->focused)
@@ -729,7 +729,7 @@ _evas_object_eo_base_destructor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
                              Evas_Object_Proxy_Data, proxy_src)
           {
              EINA_LIST_FREE(proxy_src->proxy_textures, texture)
-               eo_do(texture, evas_3d_texture_source_set(NULL));
+               eo_do(texture, evas_canvas3d_texture_source_set(NULL));
           }
         EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_src);
      }

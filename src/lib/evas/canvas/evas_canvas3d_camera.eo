@@ -1,7 +1,7 @@
-class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
+class Evas_Canvas3D_Camera (Evas_Canvas3D_Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
-   data: Evas_3D_Camera_Data;
+   data: Evas_Canvas3D_Camera_Data;
    methods {
       projection_matrix_set {
          /*@
@@ -12,11 +12,11 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
 
            Default projection matrix is identity matrix.
 
-           @see evas_3d_camera_projection_perspective_set()
-           @see evas_3d_camera_projection_ortho_set()
-           @see evas_3d_camera_projection_frustum_set()
+           @see evas_canvas3d_camera_projection_perspective_set()
+           @see evas_canvas3d_camera_projection_ortho_set()
+           @see evas_canvas3d_camera_projection_frustum_set()
 
-           @ingroup Evas_3D_Camera
+           @ingroup Evas_Canvas3D_Camera
           */
          params {
            @in matrix: const(Evas_Real)*; /*@ Projection Matrix */
@@ -30,9 +30,9 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
           @param camera     The given camera.
           @param matrix     Pointer to receive the 16 Evas_Real values in column major order.
 
-          @see evas_3d_camera_projection_matrix_set()
+          @see evas_canvas3d_camera_projection_matrix_set()
 
-          @ingroup Evas_3D_Camera
+          @ingroup Evas_Canvas3D_Camera
          */
          params {
            @out matrix: Evas_Real; /*@ Projection Matrix */
@@ -49,9 +49,9 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
            @param dnear      Distance to near clipping plane.
            @param dfar       Distance to far clipping plane.
 
-           @see evas_3d_camera_projection_matrix_set()
+           @see evas_canvas3d_camera_projection_matrix_set()
 
-           @ingroup Evas_3D_Camera
+           @ingroup Evas_Canvas3D_Camera
           */
 
          params {
@@ -66,9 +66,9 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Set the projection matrix of the given camera with frustum projection.
 
-           @see evas_3d_camera_projection_matrix_set()
+           @see evas_canvas3d_camera_projection_matrix_set()
 
-           @ingroup Evas_3D_Camera
+           @ingroup Evas_Canvas3D_Camera
           */
          params {
             left: Evas_Real; /*@ Left X coordinate of the near clipping plane. */
@@ -83,9 +83,9 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
          /*@
            Set the projection matrix of the given camera with orthogonal projection.
 
-           @see evas_3d_camera_projection_matrix_set()
+           @see evas_canvas3d_camera_projection_matrix_set()
 
-           @ingroup Evas_3D_Camera
+           @ingroup Evas_Canvas3D_Camera
           */
          params {
             left: Evas_Real; /*@ Left X coordinate of the near clipping plane. */
@@ -106,13 +106,13 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
 
           * If the nodes are @ NULL or nodes type mismatch error wrong type of nodes will be generated and returned @ EINA_FALSE.
 
-          * @ingroup Evas_3D_Camera
+          * @ingroup Evas_Canvas3D_Camera
           */
          return: bool;
          params {
-            @in camera_node: Evas_3D_Node *;
-            @in node: Evas_3D_Node *;
-            @in key: Evas_3D_Frustum_Mode;
+            @in camera_node: Evas_Canvas3D_Node *;
+            @in node: Evas_Canvas3D_Node *;
+            @in key: Evas_Canvas3D_Frustum_Mode;
          }
       }
    }
@@ -120,8 +120,8 @@ class Evas_3D_Camera (Evas_3D_Object, Evas.Common_Interface)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Evas_3D_Object.update_notify;
-      Evas_3D_Object.change_notify;
+      Evas_Canvas3D_Object.update_notify;
+      Evas_Canvas3D_Object.change_notify;
    }
 
 }

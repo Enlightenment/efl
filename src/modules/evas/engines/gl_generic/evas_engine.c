@@ -2224,28 +2224,28 @@ eng_texture_size_get(void *data EINA_UNUSED, void *texture, int *w, int *h)
 
 static void
 eng_texture_wrap_set(void *data EINA_UNUSED, void *texture,
-                     Evas_3D_Wrap_Mode s, Evas_3D_Wrap_Mode t)
+                     Evas_Canvas3D_Wrap_Mode s, Evas_Canvas3D_Wrap_Mode t)
 {
    e3d_texture_wrap_set((E3D_Texture *)texture, s, t);
 }
 
 static void
 eng_texture_wrap_get(void *data EINA_UNUSED, void *texture,
-                     Evas_3D_Wrap_Mode *s, Evas_3D_Wrap_Mode *t)
+                     Evas_Canvas3D_Wrap_Mode *s, Evas_Canvas3D_Wrap_Mode *t)
 {
    e3d_texture_wrap_get((E3D_Texture *)texture, s, t);
 }
 
 static void
 eng_texture_filter_set(void *data EINA_UNUSED, void *texture,
-                       Evas_3D_Texture_Filter min, Evas_3D_Texture_Filter mag)
+                       Evas_Canvas3D_Texture_Filter min, Evas_Canvas3D_Texture_Filter mag)
 {
    e3d_texture_filter_set((E3D_Texture *)texture, min, mag);
 }
 
 static void
 eng_texture_filter_get(void *data EINA_UNUSED, void *texture,
-                       Evas_3D_Texture_Filter *min, Evas_3D_Texture_Filter *mag)
+                       Evas_Canvas3D_Texture_Filter *min, Evas_Canvas3D_Texture_Filter *mag)
 {
    e3d_texture_filter_get((E3D_Texture *)texture, min, mag);
 }

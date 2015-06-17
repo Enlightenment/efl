@@ -1,7 +1,7 @@
 #include "../primitive_common.h"
 
 void
-evas_model_set_from_torus_primitive(Evas_3D_Mesh *mesh,
+evas_model_set_from_torus_primitive(Evas_Canvas3D_Mesh *mesh,
                                     int frame,
                                     Evas_Real ratio,
                                     int p,

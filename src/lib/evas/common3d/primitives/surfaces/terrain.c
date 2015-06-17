@@ -76,7 +76,7 @@ _perlin_terrain(Evas_Real *out_x,
 }
 
 void
-evas_model_set_from_terrain_primitive(Evas_3D_Mesh *mesh,
+evas_model_set_from_terrain_primitive(Evas_Canvas3D_Mesh *mesh,
                                       int frame,
                                       int p,
                                       Evas_Vec2 tex_scale)

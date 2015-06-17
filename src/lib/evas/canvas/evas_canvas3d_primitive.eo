@@ -1,7 +1,7 @@
-class Evas_3D_Primitive (Evas_3D_Object, Evas.Common_Interface)
+class Evas_Canvas3D_Primitive (Evas_Canvas3D_Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
-   data: Evas_3D_Primitive_Data;
+   data: Evas_Canvas3D_Primitive_Data;
 
    methods {
       @property form {
@@ -10,28 +10,28 @@ class Evas_3D_Primitive (Evas_3D_Object, Evas.Common_Interface)
               *Set the form of the given primitive.
               *
               *Form defines which function will be chosen to set data to mesh
-              *on call of evas_3d_mesh_primitive_set.
+              *on call of evas_canvas3d_mesh_primitive_set.
               *
               *Now avaliable next forms of primitives:
               *-tabulated primitives: SQUARE and CUBE;
               *-solids of revolution: CYLINDER, CONE, SPHERE and TORUS;
               *-surfaces: SURFACE and TERRAIN.
               *
-              *Default form is EVAS_3D_MESH_PRIMITIVE_NONE
+              *Default form is EVAS_CANVAS3D_MESH_PRIMITIVE_NONE
               *
-              *@ingroup Evas_3D_Primitive
+              *@ingroup Evas_Canvas3D_Primitive
               */
          }
          get {
              /*
               *Get the form of the given primitive.
-              *@see evas_3d_primitive_form_set()
+              *@see evas_canvas3d_primitive_form_set()
               *@return The form of primitive.
-              *@ingroup Evas_3D_Primitive
+              *@ingroup Evas_Canvas3D_Primitive
               */
          }
          values {
-            form: Evas_3D_Mesh_Primitive; /*@ Form of primitive.*/
+            form: Evas_Canvas3D_Mesh_Primitive; /*@ Form of primitive.*/
          }
       }
       @property mode {
@@ -40,7 +40,7 @@ class Evas_3D_Primitive (Evas_3D_Object, Evas.Common_Interface)
               *Set the mode of the given primitive.
               *
               *Mode defines which function will be chosen to set data to mesh
-              *on call of evas_3d_mesh_primitive_set. It helps to choose
+              *on call of evas_canvas3d_mesh_primitive_set. It helps to choose
               *alternative algorithm for primitive with given form
               *(like cone without base or sphere textured in alternative way).
               *
@@ -48,21 +48,21 @@ class Evas_3D_Primitive (Evas_3D_Object, Evas.Common_Interface)
               *-witout base (bases): supported for cylinder and cone;
               *-with alternative UV: supported by sphere;
               *
-              *Default form is EVAS_3D_PRIMITIVE_MODE_DEFAULT
+              *Default form is EVAS_CANVAS3D_PRIMITIVE_MODE_DEFAULT
               *
-              *@ingroup Evas_3D_Primitive
+              *@ingroup Evas_Canvas3D_Primitive
               */
          }
          get {
              /*
               *Get the mode of the given primitive.
-              *@see evas_3d_primitive_mode_set()
+              *@see evas_canvas3d_primitive_mode_set()
               *@return The mode of primitive.
-              *@ingroup Evas_3D_Primitive
+              *@ingroup Evas_Canvas3D_Primitive
               */
          }
          values {
-            mode: Evas_3D_Primitive_Mode; /*@ Mode of primitive.*/
+            mode: Evas_Canvas3D_Primitive_Mode; /*@ Mode of primitive.*/
          }
       }
       @property ratio {
@@ -78,15 +78,15 @@ class Evas_3D_Primitive (Evas_3D_Object, Evas.Common_Interface)
               *
               *Default ratio is 3.0
               *
-              *@ingroup Evas_3D_Primitive
+              *@ingroup Evas_Canvas3D_Primitive
               */
          }
          get {
              /*
               *Get the ratio of the given primitive.
-              *@see evas_3d_primitive_ratio_set()
+              *@see evas_canvas3d_primitive_ratio_set()
               *@return The ratio of primitive.
-              *@ingroup Evas_3D_Primitive
+              *@ingroup Evas_Canvas3D_Primitive
               */
          }
          values {
@@ -106,15 +106,15 @@ class Evas_3D_Primitive (Evas_3D_Object, Evas.Common_Interface)
               *
               *Default ratio is 10
               *
-              *@ingroup Evas_3D_Primitive
+              *@ingroup Evas_Canvas3D_Primitive
               */
          }
          get {
              /*
               *Get the precision of the given primitive.
-              *@see evas_3d_primitive_precision_set()
+              *@see evas_canvas3d_primitive_precision_set()
               *@return The precision of primitive.
-              *@ingroup Evas_3D_Primitive
+              *@ingroup Evas_Canvas3D_Primitive
               */
          }
          values {
@@ -128,7 +128,7 @@ class Evas_3D_Primitive (Evas_3D_Object, Evas.Common_Interface)
               *
               *Surface uses only in surface primitive and defines
               *equation of filling mesh data on call of
-              *evas_3d_mesh_primitive_set.
+              *evas_canvas3d_mesh_primitive_set.
               *
               *It gives possibility to create customers primitives like
               *shell, heart, hyperbolic paraboloid etc. See _shell_func in
@@ -137,11 +137,11 @@ class Evas_3D_Primitive (Evas_3D_Object, Evas.Common_Interface)
               *
               *Default surface is NULL
               *
-              *@ingroup Evas_3D_Primitive
+              *@ingroup Evas_Canvas3D_Primitive
               */
          }
          values {
-            surface: Evas_3D_Surface_Func *; /*@ Pointer to customers surface function.*/
+            surface: Evas_Canvas3D_Surface_Func *; /*@ Pointer to customers surface function.*/
          }
       }
       @property tex_scale {
@@ -156,14 +156,14 @@ class Evas_3D_Primitive (Evas_3D_Object, Evas.Common_Interface)
               *
               *Default tex_scale is {1.0, 1.0}
               *
-              *@ingroup Evas_3D_Primitive
+              *@ingroup Evas_Canvas3D_Primitive
               */
          }
          get {
              /*
               *Get the texture scale of the given primitive.
-              *@see evas_3d_primitive_tex_scale_set()
-              *@ingroup Evas_3D_Primitive
+              *@see evas_canvas3d_primitive_tex_scale_set()
+              *@ingroup Evas_Canvas3D_Primitive
               */
          }
          values {

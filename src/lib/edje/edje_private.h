@@ -1363,8 +1363,8 @@ struct _Edje_Part_Description_Spec_Mesh_Node
 
       Eina_Bool               set;
 
-      Evas_3D_Mesh_Primitive  primitive;
-      Evas_3D_Vertex_Assembly assembly;
+      Evas_Canvas3D_Mesh_Primitive  primitive;
+      Evas_Canvas3D_Vertex_Assembly assembly;
    } mesh;
 
    struct {
@@ -1376,10 +1376,10 @@ struct _Edje_Part_Description_Spec_Mesh_Node
       Eina_Bool              textured;
       Eina_Bool              set;
 
-      Evas_3D_Wrap_Mode wrap1;
-      Evas_3D_Wrap_Mode wrap2;
-      Evas_3D_Texture_Filter filter1;
-      Evas_3D_Texture_Filter filter2;
+      Evas_Canvas3D_Wrap_Mode wrap1;
+      Evas_Canvas3D_Wrap_Mode wrap2;
+      Evas_Canvas3D_Texture_Filter filter1;
+      Evas_Canvas3D_Texture_Filter filter2;
    } texture;
 
    struct {
@@ -1388,16 +1388,16 @@ struct _Edje_Part_Description_Spec_Mesh_Node
       Edje_Color            specular;
       Eina_Bool             normal;
       FLOAT_T               shininess;
-      Evas_3D_Shade_Mode    shade;
+      Evas_Canvas3D_Shade_Mode    shade;
 
-      Evas_3D_Material_Attrib material_attrib;
+      Evas_Canvas3D_Material_Attrib material_attrib;
    } properties;
 
    AABB     aabb1;
    AABB     aabb2;
 
    struct {
-      Evas_3D_Node_Orientation_Type      type;
+      Evas_Canvas3D_Node_Orientation_Type      type;
       FLOAT_T                            data[6];
       int                                look_to; /* -1 = whole part collection, or part ID */
    } orientation;
@@ -1424,7 +1424,7 @@ struct _Edje_Part_Description_Spec_Light
    } position;
 
    struct {
-      Evas_3D_Node_Orientation_Type      type;
+      Evas_Canvas3D_Node_Orientation_Type      type;
       FLOAT_T                            data[6];
       int                                look_to; /* -1 = whole part collection, or part ID */
    } orientation;
@@ -1445,7 +1445,7 @@ struct _Edje_Part_Description_Spec_Camera
    } position;
 
    struct {
-      Evas_3D_Node_Orientation_Type      type;
+      Evas_Canvas3D_Node_Orientation_Type      type;
       FLOAT_T                            data[6];
       int                                look_to; /* -1 = whole part collection, or part ID */
    } orientation;

@@ -54,7 +54,7 @@ _flags_need_tex_coord(E3D_Shader_Flag flags)
 struct _E3D_Draw_Data
 {
    E3D_Shader_Flag      flags;
-   Evas_3D_Shade_Mode   mode;
+   Evas_Canvas3D_Shade_Mode   mode;
 
    Evas_Mat4   matrix_mvp;
    Evas_Mat4   matrix_mv;
@@ -62,15 +62,15 @@ struct _E3D_Draw_Data
    Evas_Mat4   matrix_light;
 
    struct {
-        Evas_3D_Vertex_Buffer vertex0;
-        Evas_3D_Vertex_Buffer vertex1;
+        Evas_Canvas3D_Vertex_Buffer vertex0;
+        Evas_Canvas3D_Vertex_Buffer vertex1;
         Evas_Real             weight;
-   } vertices[EVAS_3D_VERTEX_ATTRIB_COUNT];
+   } vertices[EVAS_CANVAS3D_VERTEX_ATTRIB_COUNT];
 
-   Evas_3D_Vertex_Assembly assembly;
+   Evas_Canvas3D_Vertex_Assembly assembly;
    int                     vertex_count;
    int                     index_count;
-   Evas_3D_Index_Format    index_format;
+   Evas_Canvas3D_Index_Format    index_format;
    const void             *indices;
 
    GLint       texture_count;
@@ -82,16 +82,16 @@ struct _E3D_Draw_Data
         E3D_Texture          *tex0;
         E3D_Texture          *tex1;
         Evas_Real             texture_weight;
-   } materials[EVAS_3D_MATERIAL_ATTRIB_COUNT];
+   } materials[EVAS_CANVAS3D_MATERIAL_ATTRIB_COUNT];
 
    Evas_Real shininess;
 
    GLint                   smap_sampler;
-   Evas_3D_Blend_Func      blend_sfactor;
-   Evas_3D_Blend_Func      blend_dfactor;
+   Evas_Canvas3D_Blend_Func      blend_sfactor;
+   Evas_Canvas3D_Blend_Func      blend_dfactor;
    Eina_Bool               blending : 1;
 
-   Evas_3D_Comparison      alpha_comparison;
+   Evas_Canvas3D_Comparison      alpha_comparison;
    Evas_Real               alpha_ref_value;
    Eina_Bool               alpha_test_enabled :1;
 
@@ -161,10 +161,10 @@ struct _E3D_Drawable
 void                 e3d_texture_param_update(E3D_Texture *texture);
 
 /* Program */
-E3D_Program         *e3d_program_new(Evas_3D_Shade_Mode mode, E3D_Shader_Flag flags);
+E3D_Program         *e3d_program_new(Evas_Canvas3D_Shade_Mode mode, E3D_Shader_Flag flags);
 void                 e3d_program_free(E3D_Program *program);
 GLuint               e3d_program_id_get(const E3D_Program *program);
-Evas_3D_Shade_Mode   e3d_program_shade_mode_get(const E3D_Program *program);
+Evas_Canvas3D_Shade_Mode   e3d_program_shade_mode_get(const E3D_Program *program);
 E3D_Shader_Flag      e3d_program_shader_flags_get(const E3D_Program *program);
 void                 e3d_program_uniform_upload(E3D_Program *program, const E3D_Draw_Data *data);
 

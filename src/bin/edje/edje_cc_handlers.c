@@ -554,24 +554,24 @@ static void st_collections_group_nobroadcast(void);
     Edje_Part_Description_##Type *ed;                                           \
    ed = (Edje_Part_Description_##Type*) current_desc;                           \
                                                                                 \
-   if (ed->type_node.orientation.type <= EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_AT) \
+   if (ed->type_node.orientation.type <= EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT) \
      {                                                                          \
         ed->type_node.orientation.data[0] = FROM_DOUBLE(parse_float(0));        \
         ed->type_node.orientation.data[1] = FROM_DOUBLE(parse_float(1));        \
         ed->type_node.orientation.data[2] = FROM_DOUBLE(parse_float(2));        \
-        ed->type_node.orientation.type = EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_AT; \
+        ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT; \
      }
 
 #define SET_LOOK2(Type, type_node)                                              \
     Edje_Part_Description_##Type *ed;                                           \
    ed = (Edje_Part_Description_##Type*) current_desc;                           \
                                                                                 \
-   if (ed->type_node.orientation.type <= EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_AT) \
+   if (ed->type_node.orientation.type <= EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT) \
      {                                                                          \
         ed->type_node.orientation.data[3] = FROM_DOUBLE(parse_float(0));        \
         ed->type_node.orientation.data[4] = FROM_DOUBLE(parse_float(1));        \
         ed->type_node.orientation.data[5] = FROM_DOUBLE(parse_float(2));        \
-        ed->type_node.orientation.type = EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_AT; \
+        ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT; \
      }
 
 #define SET_LOOK_TO(list, Type, type_node)                                           \
@@ -580,38 +580,38 @@ static void st_collections_group_nobroadcast(void);
                                                                                      \
    ed = (Edje_Part_Description_##Type*) current_desc;                                \
                                                                                      \
-   if (ed->type_node.orientation.type <= EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_TO)      \
+   if (ed->type_node.orientation.type <= EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_TO)      \
      {                                                                               \
         name = parse_str(0);                                                         \
         data_queue_part_lookup(list, name, &(ed->type_node.orientation.look_to));    \
         free(name);                                                                  \
-        ed->type_node.orientation.type = EVAS_3D_NODE_ORIENTATION_TYPE_LOOK_TO;      \
+        ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_TO;      \
      }
 
 #define SET_ANGLE_AXIS(Type, type_node)                                            \
     Edje_Part_Description_##Type *ed;                                              \
    ed = (Edje_Part_Description_##Type*) current_desc;                              \
                                                                                    \
-   if (ed->type_node.orientation.type <= EVAS_3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS) \
+   if (ed->type_node.orientation.type <= EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS) \
      {                                                                             \
         ed->type_node.orientation.data[0] = FROM_DOUBLE(parse_float(0));           \
         ed->type_node.orientation.data[1] = FROM_DOUBLE(parse_float(1));           \
         ed->type_node.orientation.data[2] = FROM_DOUBLE(parse_float(2));           \
         ed->type_node.orientation.data[3] = FROM_DOUBLE(parse_float(3));           \
-        ed->type_node.orientation.type = EVAS_3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS; \
+        ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS; \
      }
 
 #define SET_QUATERNION(Type, type_node)                                            \
     Edje_Part_Description_##Type *ed;                                              \
    ed = (Edje_Part_Description_##Type*) current_desc;                              \
                                                                                    \
-   if (ed->type_node.orientation.type <= EVAS_3D_NODE_ORIENTATION_TYPE_QUATERNION) \
+   if (ed->type_node.orientation.type <= EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_QUATERNION) \
      {                                                                             \
         ed->type_node.orientation.data[1] = FROM_DOUBLE(parse_float(0));           \
         ed->type_node.orientation.data[2] = FROM_DOUBLE(parse_float(1));           \
         ed->type_node.orientation.data[3] = FROM_DOUBLE(parse_float(2));           \
         ed->type_node.orientation.data[0] = FROM_DOUBLE(parse_float(3));           \
-        ed->type_node.orientation.type = EVAS_3D_NODE_ORIENTATION_TYPE_QUATERNION; \
+        ed->type_node.orientation.type = EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_QUATERNION; \
      }
 
 New_Statement_Handler statement_handlers[] =
@@ -9484,9 +9484,9 @@ st_collections_group_parts_part_description_position_space(void)
    check_arg_count(1);
 
    space = parse_enum(0,
-                     "LOCAL", EVAS_3D_SPACE_LOCAL,
-                     "PARENT", EVAS_3D_SPACE_PARENT,
-                     "WORLD", EVAS_3D_SPACE_WORLD,
+                     "LOCAL", EVAS_CANVAS3D_SPACE_LOCAL,
+                     "PARENT", EVAS_CANVAS3D_SPACE_PARENT,
+                     "WORLD", EVAS_CANVAS3D_SPACE_WORLD,
                      NULL);
 
    switch (current_part->type)
@@ -9778,11 +9778,11 @@ st_collections_group_parts_part_description_properties_material(void)
    check_arg_count(1);
 
    material_attrib = parse_enum(0,
-                     "AMBIENT", EVAS_3D_MATERIAL_AMBIENT,
-                     "DIFFUSE", EVAS_3D_MATERIAL_DIFFUSE,
-                     "SPECULAR", EVAS_3D_MATERIAL_SPECULAR,
-                     "EMISSION", EVAS_3D_MATERIAL_EMISSION,
-                     "NORMAL", EVAS_3D_MATERIAL_NORMAL,
+                     "AMBIENT", EVAS_CANVAS3D_MATERIAL_AMBIENT,
+                     "DIFFUSE", EVAS_CANVAS3D_MATERIAL_DIFFUSE,
+                     "SPECULAR", EVAS_CANVAS3D_MATERIAL_SPECULAR,
+                     "EMISSION", EVAS_CANVAS3D_MATERIAL_EMISSION,
+                     "NORMAL", EVAS_CANVAS3D_MATERIAL_NORMAL,
                      NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
@@ -9888,12 +9888,12 @@ st_collections_group_parts_part_description_properties_shade(void)
    check_arg_count(1);
 
    shade = parse_enum(0,
-                     "VERTEX_COLOR", EVAS_3D_SHADE_MODE_VERTEX_COLOR,
-                     "PARENT", EVAS_3D_SHADE_MODE_DIFFUSE,
-                     "WORLD", EVAS_3D_SHADE_MODE_FLAT,
-                     "PHONG", EVAS_3D_SHADE_MODE_PHONG,
-                     "NORMAL_MAP", EVAS_3D_SHADE_MODE_NORMAL_MAP,
-                     "RENDER", EVAS_3D_SHADE_MODE_SHADOW_MAP_RENDER,
+                     "VERTEX_COLOR", EVAS_CANVAS3D_SHADE_MODE_VERTEX_COLOR,
+                     "PARENT", EVAS_CANVAS3D_SHADE_MODE_DIFFUSE,
+                     "WORLD", EVAS_CANVAS3D_SHADE_MODE_FLAT,
+                     "PHONG", EVAS_CANVAS3D_SHADE_MODE_PHONG,
+                     "NORMAL_MAP", EVAS_CANVAS3D_SHADE_MODE_NORMAL_MAP,
+                     "RENDER", EVAS_CANVAS3D_SHADE_MODE_SHADOW_MAP_RENDER,
                      NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
@@ -10256,9 +10256,9 @@ st_collections_group_parts_part_description_texture_wrap1(void)
    check_arg_count(1);
 
    wrap1 = parse_enum(0,
-                     "CLAMP", EVAS_3D_WRAP_MODE_CLAMP,
-                     "REPEAT", EVAS_3D_WRAP_MODE_REPEAT,
-                     "REFLECT", EVAS_3D_WRAP_MODE_REFLECT,
+                     "CLAMP", EVAS_CANVAS3D_WRAP_MODE_CLAMP,
+                     "REPEAT", EVAS_CANVAS3D_WRAP_MODE_REPEAT,
+                     "REFLECT", EVAS_CANVAS3D_WRAP_MODE_REFLECT,
                      NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
@@ -10298,9 +10298,9 @@ st_collections_group_parts_part_description_texture_wrap2(void)
    check_arg_count(1);
 
    wrap2 = parse_enum(0,
-                     "CLAMP", EVAS_3D_WRAP_MODE_CLAMP,
-                     "REPEAT", EVAS_3D_WRAP_MODE_REPEAT,
-                     "REFLECT", EVAS_3D_WRAP_MODE_REFLECT,
+                     "CLAMP", EVAS_CANVAS3D_WRAP_MODE_CLAMP,
+                     "REPEAT", EVAS_CANVAS3D_WRAP_MODE_REPEAT,
+                     "REFLECT", EVAS_CANVAS3D_WRAP_MODE_REFLECT,
                      NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
@@ -10342,12 +10342,12 @@ st_collections_group_parts_part_description_texture_filter1(void)
    check_arg_count(1);
 
    filter1 = parse_enum(0,
-                     "NEAREST", EVAS_3D_TEXTURE_FILTER_NEAREST,
-                     "LINEAR", EVAS_3D_TEXTURE_FILTER_LINEAR,
-                     "NEAREST_NEAREST", EVAS_3D_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST,
-                     "LINEAR_NEAREST", EVAS_3D_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
-                     "NEAREST_LINEAR", EVAS_3D_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,
-                     "LINEAR_LINEAR", EVAS_3D_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,
+                     "NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST,
+                     "LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR,
+                     "NEAREST_NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST,
+                     "LINEAR_NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
+                     "NEAREST_LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,
+                     "LINEAR_LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,
                      NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
@@ -10389,12 +10389,12 @@ st_collections_group_parts_part_description_texture_filter2(void)
    check_arg_count(1);
 
    filter2 = parse_enum(0,
-                     "NEAREST", EVAS_3D_TEXTURE_FILTER_NEAREST,
-                     "LINEAR", EVAS_3D_TEXTURE_FILTER_LINEAR,
-                     "NEAREST_NEAREST", EVAS_3D_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST,
-                     "LINEAR_NEAREST", EVAS_3D_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
-                     "NEAREST_LINEAR", EVAS_3D_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,
-                     "LINEAR_LINEAR", EVAS_3D_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,
+                     "NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST,
+                     "LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR,
+                     "NEAREST_NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST_MIPMAP_NEAREST,
+                     "LINEAR_NEAREST", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR_MIPMAP_NEAREST,
+                     "NEAREST_LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST_MIPMAP_LINEAR,
+                     "LINEAR_LINEAR", EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR_MIPMAP_LINEAR,
                      NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
@@ -10438,13 +10438,13 @@ st_collections_group_parts_part_description_mesh_assembly(void)
    check_arg_count(1);
 
    assembly = parse_enum(0,
-                     "POINTS", EVAS_3D_VERTEX_ASSEMBLY_POINTS,
-                     "LINES", EVAS_3D_VERTEX_ASSEMBLY_LINES,
-                     "LINE_STRIP", EVAS_3D_VERTEX_ASSEMBLY_LINE_STRIP,
-                     "LINE_LOOP", EVAS_3D_VERTEX_ASSEMBLY_LINE_LOOP,
-                     "TRIANGLES", EVAS_3D_VERTEX_ASSEMBLY_TRIANGLES,
-                     "TRIANGLE_STRIP", EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP,
-                     "TRIANGLE_FAN", EVAS_3D_VERTEX_ASSEMBLY_TRIANGLE_FAN,
+                     "POINTS", EVAS_CANVAS3D_VERTEX_ASSEMBLY_POINTS,
+                     "LINES", EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINES,
+                     "LINE_STRIP", EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINE_STRIP,
+                     "LINE_LOOP", EVAS_CANVAS3D_VERTEX_ASSEMBLY_LINE_LOOP,
+                     "TRIANGLES", EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES,
+                     "TRIANGLE_STRIP", EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLE_STRIP,
+                     "TRIANGLE_FAN", EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLE_FAN,
                      NULL);
 
    if (current_part->type == EDJE_PART_TYPE_MESH_NODE)
