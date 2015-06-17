@@ -3338,9 +3338,22 @@ _elm_config_sub_init(void)
      }
 #endif
    char buf[PATH_MAX];
+   size_t len;
+   int ok = 0;
 
-   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s/flush",
-                          _elm_profile);
+   len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/");
+   if (len + 6 >= sizeof(buf)) // the space to add "/flush"
+     goto end;
+
+   ok = ecore_file_mkpath(buf);
+   if (!ok)
+     {
+        ERR("Problem accessing Elementary's user configuration directory: %s",
+            buf);
+        goto end;
+     }
+
+   strcat(buf, "flush");
    if (!ecore_file_exists(buf))
      {
         FILE *f = fopen(buf, "w+");
@@ -3349,11 +3362,13 @@ _elm_config_sub_init(void)
           {
              fprintf(f, "flush");
              fclose(f);
+             goto end;
           }
      }
    _eio_monitor = eio_monitor_add(buf);
    ecore_event_handler_add(EIO_MONITOR_FILE_MODIFIED, _elm_config_file_monitor_cb, NULL);
 
+end:
    _config_sub_apply();
 }
 
