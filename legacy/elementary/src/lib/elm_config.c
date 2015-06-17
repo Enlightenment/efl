@@ -3338,9 +3338,13 @@ _elm_config_sub_init(void)
                           _elm_profile);
    if (!ecore_file_exists(buf))
      {
-        FILE *fp = fopen(buf, "w+");
-        fprintf(fp, "flush");
-        fclose(fp);
+        FILE *f = fopen(buf, "w+");
+
+        if (f)
+          {
+             fprintf(f, "flush");
+             fclose(f);
+          }
      }
    _eio_monitor = eio_monitor_add(buf);
    ecore_event_handler_add(EIO_MONITOR_FILE_MODIFIED, _elm_config_file_monitor_cb, NULL);
