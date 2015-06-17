@@ -1291,7 +1291,10 @@ _text_character_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_
    eo_do(obj, res = elm_interface_atspi_text_character_extents_get(offset, screen_coords, &rect));
 
    if (!res)
-     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Unable to get character extents.");
+     {
+        eldbus_message_unref(ret);
+        return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Unable to get character extents.");
+     }
    eldbus_message_arguments_append(ret, "iiii", rect.x, rect.y, rect.w, rect.h);
 
    return ret;
@@ -1448,7 +1451,10 @@ _text_range_extents_get(const Eldbus_Service_Interface *iface, const Eldbus_Mess
    screen_coords = type == ATSPI_COORD_TYPE_SCREEN ? EINA_TRUE : EINA_FALSE;
    eo_do(obj, res = elm_interface_atspi_text_range_extents_get(screen_coords, start, end, &rect));
    if (!res)
-     return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Can't get range extents.");
+     {
+        eldbus_message_unref(ret);
+        return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.Failed", "Can't get range extents.");
+     }
 
    eldbus_message_arguments_append(ret, "iiii", rect.x, rect.y, rect.w, rect.h);
 
@@ -2871,7 +2877,6 @@ static Eina_Bool
 _selection_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc, void *event_info EINA_UNUSED)
 {
    const char *event_desc;
-   Eldbus_Message *msg;
    Eldbus_Service_Interface *selection = data;
 
    enum _Atspi_Object_Signals type;
@@ -2891,9 +2896,6 @@ _selection_signal_send(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Descripti
         ERR("A11Y connection closed. Unable to send ATSPI event.");
         return EINA_FALSE;
      }
-
-   msg = eldbus_service_signal_new(selection, type);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(msg, EINA_FALSE);
 
    _object_signal_send(selection, type, event_desc, 0, 0, "i", 0);
 
