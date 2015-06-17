@@ -2403,6 +2403,165 @@ _edje_part_recalc_single_map(Edje *ed,
    EINA_COW_CALC_MAP_END(params, params_write);
 }
 
+static inline const char *
+_edje_filter_get(Edje *ed, Edje_Part_Description_Spec_Filter *filter)
+{
+   if (EINA_UNLIKELY(!filter->checked_data))
+     {
+        Edje_String *st;
+        filter->checked_data = 1;
+        st = eina_hash_find(ed->file->data, filter->code);
+        if (st)
+          {
+             eina_stringshare_del(filter->code);
+             filter->code = st->str;
+             filter->no_free = 1;
+          }
+     }
+   return filter->code;
+}
+
+static void
+_edje_part_recalc_single_filter(Edje *ed,
+                                Edje_Real_Part *ep,
+                                Edje_Part_Description_Common *desc,
+                                Edje_Part_Description_Common *chosen_desc,
+                                double pos)
+{
+   Edje_Part_Description_Spec_Filter *filter;
+   Eina_List *filter_sources = NULL, *prev_sources = NULL;
+   const char *src1, *src2, *part, *code;
+   Evas_Object *obj = ep->object;
+   Eina_List *li1, *li2;
+   Eina_Bool im = 0;
+
+   /* handle TEXT and IMAGE part types here */
+   if (ep->part->type == EDJE_PART_TYPE_TEXT)
+     {
+        Edje_Part_Description_Text *chosen_edt = (Edje_Part_Description_Text *) chosen_desc;
+        Edje_Part_Description_Text *edt = (Edje_Part_Description_Text *) desc;
+        filter = &chosen_edt->text.filter;
+        if (edt->text.filter.sources != filter->sources)
+          {
+             prev_sources = ep->typedata.text->filter.sources;
+             filter_sources = edt->text.filter.sources;
+          }
+#if 0
+        // old form
+        if (ep->typedata.text->filter.code)
+          filter = &ep->typedata.text->filter;
+        else
+          filter = &chosen_edt->text.filter;
+        if (ep->typedata.text->filter.sources != chosen_edt->text.filter.sources)
+          {
+             prev_sources = ep->typedata.text->filter.sources;
+             filter_sources = chosen_edt->text.filter.sources;
+             //ep->typedata.text->filter.sources = chosen_edt->text.filter.sources;
+          }
+#endif
+     }
+   else if (ep->part->type == EDJE_PART_TYPE_IMAGE)
+     {
+        Edje_Part_Description_Image *chosen_edi = (Edje_Part_Description_Image *) chosen_desc;
+        Edje_Part_Description_Image *edi = (Edje_Part_Description_Image *) desc;
+        filter = &chosen_edi->image.filter;
+        if (edi->image.filter.sources != filter->sources)
+          {
+             prev_sources = edi->image.filter.sources;
+             filter_sources = chosen_edi->image.filter.sources;
+          }
+        im = 1;
+     }
+   else
+     {
+        CRI("Invalid call to filter recalc");
+        return;
+     }
+
+   // FIXME: Implement proper EO interface/mixin and remove this ugly thing
+#define efl_gfx_filter_program_set(...) do { \
+   if (!im) evas_obj_text_filter_program_set(__VA_ARGS__); \
+   else evas_obj_text_filter_program_set(__VA_ARGS__); } while (0)
+#define efl_gfx_filter_source_set(...) do { \
+   if (!im) evas_obj_text_filter_source_set(__VA_ARGS__); \
+   else evas_obj_image_filter_source_set(__VA_ARGS__); } while (0)
+#define efl_gfx_filter_state_set(...) do { \
+   if (!im) evas_obj_text_filter_state_set(__VA_ARGS__); \
+   /* else evas_obj_image_filter_state_set(__VA_ARGS__); */ } while (0)
+   // End of pure ugliness
+
+   /* common code below */
+   code = _edje_filter_get(ed, filter);
+   if (!code)
+     {
+        eo_do(obj, efl_gfx_filter_program_set(NULL));
+        return;
+     }
+
+   eo_do(obj,
+         efl_gfx_filter_program_set(code);
+         if (prev_sources != filter_sources)
+           {
+              /* remove sources that are not there anymore
+               * this O(n^2) loop assumes a very small number of sources */
+              EINA_LIST_FOREACH(prev_sources, li1, src1)
+                {
+                   Eina_Bool found = 0;
+                   EINA_LIST_FOREACH(filter_sources, li2, src2)
+                     {
+                        if (!strcmp(src1, src2))
+                          {
+                             found = 1;
+                             break;
+                          }
+                     }
+                   if (!found)
+                     {
+                        part = strchr(src1, ':');
+                        if (!part)
+                          efl_gfx_filter_source_set(src1, NULL);
+                        else
+                          {
+                             char *name = strdup(src1);
+                             name[part - src1] = 0;
+                             efl_gfx_filter_source_set(name, NULL);
+                             free(name);
+                          }
+                     }
+                }
+              /* add all sources by part name */
+              EINA_LIST_FOREACH(filter_sources, li1, src1)
+                {
+                   Edje_Real_Part *rp;
+                   char *name = NULL;
+                   if ((part = strchr(src1, ':')) != NULL)
+                     {
+                        name = strdup(src1);
+                        name[part - src1] = 0;
+                        part++;
+                     }
+                   else
+                     part = src1;
+                   rp = _edje_real_part_get(ed, part);
+                   efl_gfx_filter_source_set(name ? name : part, rp ? rp->object : NULL);
+                   free(name);
+                }
+            }
+         /* pass edje state for transitions */
+         if (ep->param2)
+           {
+              efl_gfx_filter_state_set(chosen_desc->state.name, chosen_desc->state.value,
+                                       ep->param2->description->state.name, ep->param2->description->state.value,
+                                       pos);
+           }
+         else
+           {
+              efl_gfx_filter_state_set(chosen_desc->state.name, chosen_desc->state.value,
+                                       NULL, 0.0, pos);
+           }
+         );
+}
+
 static void
 _edje_part_recalc_single(Edje *ed,
                          Edje_Real_Part *ep,
@@ -2564,7 +2723,10 @@ _edje_part_recalc_single(Edje *ed,
    if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
      _edje_part_recalc_single_textblock(sc, ed, ep, (Edje_Part_Description_Text *)chosen_desc, params, &minw, &minh, &maxw, &maxh);
    else if (ep->part->type == EDJE_PART_TYPE_TEXT)
-     _edje_part_recalc_single_text(sc, ed, ep, (Edje_Part_Description_Text*) desc, (Edje_Part_Description_Text*) chosen_desc, params, &minw, &minh, &maxw, &maxh, pos);
+     {
+        _edje_part_recalc_single_text(sc, ed, ep, (Edje_Part_Description_Text*) desc, (Edje_Part_Description_Text*) chosen_desc, params, &minw, &minh, &maxw, &maxh, pos);
+        _edje_part_recalc_single_filter(ed, ep, desc, chosen_desc, pos);
+     }
 
    if ((ep->part->type == EDJE_PART_TYPE_TABLE) &&
        (((((Edje_Part_Description_Table *)chosen_desc)->table.min.h) ||
@@ -2626,6 +2788,8 @@ _edje_part_recalc_single(Edje *ed,
              if ((maxw <= 0) || (w < maxw)) maxw = w;
              if ((maxh <= 0) || (h < maxh)) maxh = h;
           }
+
+        _edje_part_recalc_single_filter(ed, ep, desc, chosen_desc, pos);
      }
 
    /* remember what our size is BEFORE we go limit it */

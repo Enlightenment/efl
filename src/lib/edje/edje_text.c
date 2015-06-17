@@ -193,24 +193,6 @@ _edje_text_class_font_get(Edje *ed, Edje_Part_Description_Text *chosen_desc, int
    return font;
 }
 
-static inline const char *
-_edje_filter_get(Edje *ed, Edje_Part_Description_Spec_Filter *filter)
-{
-   if (EINA_UNLIKELY(!filter->checked_data))
-     {
-        Edje_String *st;
-        filter->checked_data = 1;
-        st = eina_hash_find(ed->file->data, filter->code);
-        if (st)
-          {
-             eina_stringshare_del(filter->code);
-             filter->code = st->str;
-             filter->no_free = 1;
-          }
-     }
-   return filter->code;
-}
-
 void
 _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
                         Edje_Calc_Params *params,
@@ -222,8 +204,6 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    char *font2 = NULL;
    char *sfont = NULL;
    int size;
-   const char *filter;
-   Eina_List *filter_sources = NULL, *prev_sources = NULL;
    Evas_Coord tw, th;
    Evas_Coord sw, sh;
    int inlined_font = 0, free_text = 0;
@@ -250,17 +230,6 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (ep->typedata.text->text) text = ep->typedata.text->text;
    if (ep->typedata.text->font) font = ep->typedata.text->font;
    if (ep->typedata.text->size > 0) size = ep->typedata.text->size;
-
-   if (ep->typedata.text->filter.code)
-     filter = _edje_filter_get(ed, &ep->typedata.text->filter);
-   else
-     filter = _edje_filter_get(ed, &chosen_desc->text.filter);
-   if (ep->typedata.text->filter.sources != chosen_desc->text.filter.sources)
-     {
-        prev_sources = ep->typedata.text->filter.sources;
-        filter_sources = chosen_desc->text.filter.sources;
-        ep->typedata.text->filter.sources = chosen_desc->text.filter.sources;
-     }
 
    if (ep->typedata.text->text_source)
      {
@@ -548,79 +517,6 @@ arrange_text:
          efl_text_properties_font_set(font, size);
          efl_text_set(text));
    part_get_geometry(ep, &tw, &th);
-
-   /* filters */
-   if (filter)
-     {
-        const char *src1, *src2, *part;
-        Eina_List *li1, *li2;
-
-        eo_do(ep->object,
-              evas_obj_text_filter_program_set(filter);
-              /* update sources. really not optimal. lots of strxxx and loops */
-              if (prev_sources != filter_sources)
-                {
-                   /* remove sources that are not there anymore
-                    * this O(n^2) loop assumes a very small number of sources */
-                   EINA_LIST_FOREACH(prev_sources, li1, src1)
-                     {
-                        Eina_Bool found = 0;
-                        EINA_LIST_FOREACH(filter_sources, li2, src2)
-                          {
-                             if (!strcmp(src1, src2))
-                               {
-                                  found = 1;
-                                  break;
-                               }
-                          }
-                        if (!found)
-                          {
-                             part = strchr(src1, ':');
-                             if (!part)
-                               evas_obj_text_filter_source_set(src1, NULL);
-                             else
-                               {
-                                  char *name = strdup(src1);
-                                  name[part - src1] = 0;
-                                  evas_obj_text_filter_source_set(name, NULL);
-                                  free(name);
-                               }
-                          }
-                     }
-                   /* add all sources by part name */
-                   EINA_LIST_FOREACH(filter_sources, li1, src1)
-                     {
-                        Edje_Real_Part *rp;
-                        char *name = NULL;
-                        if ((part = strchr(src1, ':')) != NULL)
-                          {
-                             name = strdup(src1);
-                             name[part - src1] = 0;
-                             part++;
-                          }
-                        else
-                          part = src1;
-                        rp = _edje_real_part_get(ed, part);
-                        evas_obj_text_filter_source_set(name ? name : part, rp ? rp->object : NULL);
-                        free(name);
-                     }
-                 }
-              /* pass edje state for transitions */
-              if (ep->param2)
-                {
-                   evas_obj_text_filter_state_set(chosen_desc->common.state.name, chosen_desc->common.state.value,
-                                                  ep->param2->description->state.name, ep->param2->description->state.value,
-                                                  state_val);
-                }
-              else
-                {
-                   evas_obj_text_filter_state_set(chosen_desc->common.state.name, chosen_desc->common.state.value,
-                                                  NULL, 0.0, state_val);
-                }
-              );
-     }
-   else
-     eo_do(ep->object, evas_obj_text_filter_program_set(NULL));
 
    /* Handle alignment */
    {
