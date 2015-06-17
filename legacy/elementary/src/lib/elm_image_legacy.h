@@ -112,4 +112,104 @@ EAPI int              elm_image_prescale_get(const Evas_Object *obj);
  */
 EAPI Eina_Bool        elm_image_mmap_set(Evas_Object *obj, const Eina_File *file, const char *group);
 
+/**
+ * Start or stop an image object's animation.
+ *
+ * To actually start playing any image object's animation, if it
+ * supports it, one must do something like:
+ *
+ * @code
+ * if (elm_image_animated_available_get(img))
+ * {
+ * elm_image_animated_set(img, EINA_TRUE);
+ * elm_image_animated_play_set(img, EINA_TRUE);
+ * }
+ * @endcode
+ *
+ * elm_image_animated_set() will enable animation on the image, <b>but
+ * not start it yet</b>. This is the function one uses to start and
+ * stop animations on image objects.
+ *
+ * @see elm_image_animated_available_get()
+ * @see elm_image_animated_set()
+ * @see elm_image_animated_play_get()
+ *
+ * @ingroup Image
+ * @since 1.7
+ *
+ * @param[in] play @c EINA_TRUE to start the animation, @c EINA_FALSE
+otherwise. Default is @c EINA_FALSE.
+ */
+EAPI void             elm_image_animated_play_set(Evas_Object *obj, Eina_Bool play);
+
+/**
+ * Get whether an image object is under animation or not.
+ *
+ * @return @c EINA_TRUE, if the image is being animated, @c EINA_FALSE
+ * otherwise.
+ *
+ * @see elm_image_animated_play_get()
+ *
+ * @ingroup Image
+ * @since 1.7
+ */
+EAPI Eina_Bool        elm_image_animated_play_get(const Evas_Object *obj);
+
+/**
+ *
+ * Set whether an image object (which supports animation) is to
+ * animate itself or not.
+ *
+ * An image object, even if it supports animation, will be displayed
+ * by default without animation. Call this function with @a animated
+ * set to @c EINA_TRUE to enable its animation. To start or stop the
+ * animation, actually, use elm_image_animated_play_set().
+ *
+ * @see elm_image_animated_get()
+ * @see elm_image_animated_available_get()
+ * @see elm_image_animated_play_set()
+ *
+ * @ingroup Image
+ * @since 1.7
+ *
+ * @param[in] anim @c EINA_TRUE if the object is to animate itself,
+ * @c EINA_FALSE otherwise. Default is @c EINA_FALSE.
+ */
+EAPI void             elm_image_animated_set(Evas_Object *obj, Eina_Bool anim);
+
+/**
+ *
+ * Get whether an image object has animation enabled or not.
+ *
+ * @return @c EINA_TRUE if the image has animation enabled,
+ * @c EINA_FALSE otherwise.
+ *
+ * @see elm_image_animated_set()
+ *
+ * @ingroup Image
+ * @since 1.7
+ *
+ */
+EAPI Eina_Bool        elm_image_animated_get(const Evas_Object *obj);
+
+/**
+ *
+ * Get whether an image object supports animation or not.
+ *
+ * @return @c EINA_TRUE if the image supports animation,
+ * @c EINA_FALSE otherwise.
+ *
+ * This function returns if this Elementary image object's internal
+ * image can be animated. Currently Evas only supports GIF
+ * animation. If the return value is @b EINA_FALSE, other
+ * @c elm_image_animated_xxx API calls won't work.
+ *
+ * @see elm_image_animated_set()
+ *
+ * @ingroup Image
+ * @since 1.7
+ *
+ */
+EAPI Eina_Bool        elm_image_animated_available_get(const Evas_Object *obj);
+
 #include "elm_image.eo.legacy.h"

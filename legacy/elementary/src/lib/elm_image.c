@@ -1468,16 +1468,24 @@ _elm_image_aspect_fixed_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
    return sd->aspect_fixed;
 }
 
+EAPI Eina_Bool
+elm_image_animated_available_get(const Evas_Object *obj)
+{
+   Eina_Bool ret;
+   eo_do(obj, ret = efl_player_playable_get());
+   return ret;
+}
+
 EOLIAN static Eina_Bool
-_elm_image_animated_available_get(Eo *obj, Elm_Image_Data *sd)
+_elm_image_efl_player_playable_get(Eo *obj, Elm_Image_Data *sd)
 {
    if (sd->edje) return EINA_FALSE;
 
    return evas_object_image_animated_get(elm_image_object_get(obj));
 }
 
-EOLIAN static void
-_elm_image_animated_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool anim)
+static void
+_elm_image_animated_set_internal(Eo *obj, Elm_Image_Data *sd, Eina_Bool anim)
 {
    anim = !!anim;
    if (sd->anim == anim) return;
@@ -1511,16 +1519,32 @@ _elm_image_animated_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool anim)
    return;
 }
 
-EOLIAN static Eina_Bool
-_elm_image_animated_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
+static Eina_Bool
+_elm_image_animated_get_internal(const Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
    if (sd->edje)
      return edje_object_animation_get(sd->img);
    return sd->anim;
 }
 
-EOLIAN static void
-_elm_image_animated_play_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool play)
+EAPI void
+elm_image_animated_set(Evas_Object *obj, Eina_Bool anim)
+{
+   Elm_Image_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   if (!sd) return;
+   _elm_image_animated_set_internal(obj, sd, anim);
+}
+
+EAPI Eina_Bool
+elm_image_animated_get(const Evas_Object *obj)
+{
+   Elm_Image_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   if (!sd) return EINA_FALSE;
+   return _elm_image_animated_get_internal(obj, sd);
+}
+
+static void
+_elm_image_animated_play_set_internal(Eo *obj, Elm_Image_Data *sd, Eina_Bool play)
 {
    if (!sd->anim) return;
    if (sd->play == play) return;
@@ -1541,12 +1565,42 @@ _elm_image_animated_play_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool play)
      }
 }
 
-EOLIAN static Eina_Bool
-_elm_image_animated_play_get(Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
+static Eina_Bool
+_elm_image_animated_play_get_internal(const Eo *obj EINA_UNUSED, Elm_Image_Data *sd)
 {
    if (sd->edje)
      return edje_object_play_get(sd->img);
    return sd->play;
+}
+
+EAPI void
+elm_image_animated_play_set(Elm_Image *obj, Eina_Bool play)
+{
+   Elm_Image_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   if (!sd) return;
+   _elm_image_animated_play_set_internal(obj, sd, play);
+}
+
+EAPI Eina_Bool
+elm_image_animated_play_get(const Elm_Image *obj)
+{
+   Elm_Image_Data *sd = eo_data_scope_get(obj, MY_CLASS);
+   if (!sd) return EINA_FALSE;
+   return _elm_image_animated_play_get_internal(obj, sd);
+}
+
+EOLIAN static void
+_elm_image_efl_player_play_set(Eo *obj, Elm_Image_Data *sd, Eina_Bool play)
+{
+   if (play && !_elm_image_animated_get_internal(obj, sd))
+     _elm_image_animated_set_internal(obj, sd, play);
+   _elm_image_animated_play_set_internal(obj, sd, play);
+}
+
+EOLIAN static Eina_Bool
+_elm_image_efl_player_play_get(Eo *obj, Elm_Image_Data *sd)
+{
+   return _elm_image_animated_play_get_internal(obj, sd);
 }
 
 static void

@@ -1,6 +1,7 @@
 class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
                  Edje.Object,
-                 Elm_Interface_Atspi_Image, Elm_Interface_Atspi_Widget_Action)
+                 Elm_Interface_Atspi_Image, Elm_Interface_Atspi_Widget_Action,
+                 Efl.Player)
 {
    eo_prefix: elm_obj_image;
    methods {
@@ -50,50 +51,6 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
          }
          values {
             resize_down: bool; /*@ whether resizing down is allowed */
-         }
-      }
-      @property animated_play {
-         set {
-            /*@
-            Start or stop an image object's animation.
-
-            To actually start playing any image object's animation, if it
-            supports it, one must do something like:
-
-            @code
-            if (elm_image_animated_available_get(img))
-            {
-            elm_image_animated_set(img, EINA_TRUE);
-            elm_image_animated_play_set(img, EINA_TRUE);
-            }
-            @endcode
-
-            elm_image_animated_set() will enable animation on the image, <b>but
-            not start it yet</b>. This is the function one uses to start and
-            stop animations on image objects.
-
-            @see elm_image_animated_available_get()
-            @see elm_image_animated_set()
-            @see elm_image_animated_play_get()
-
-            @ingroup Image
-            @since 1.7 */
-         }
-         get {
-            /*@
-            Get whether an image object is under animation or not.
-
-            @return @c EINA_TRUE, if the image is being animated, @c EINA_FALSE
-            otherwise.
-
-            @see elm_image_animated_play_get()
-
-            @ingroup Image
-            @since 1.7 */
-         }
-         values {
-            play: bool; /*@ @c EINA_TRUE to start the animation, @c EINA_FALSE
-            otherwise. Default is @c EINA_FALSE. */
          }
       }
       @property resize_up {
@@ -180,41 +137,6 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
          values {
             no_scale: bool; /*@ @c EINA_TRUE if the object is not scalable, @c EINA_FALSE
             otherwise. Default is @c EINA_FALSE. */
-         }
-      }
-      @property animated {
-         set {
-            /*@
-            Set whether an image object (which supports animation) is to
-            animate itself or not.
-
-            An image object, even if it supports animation, will be displayed
-            by default without animation. Call this function with @a animated
-            set to @c EINA_TRUE to enable its animation. To start or stop the
-            animation, actually, use elm_image_animated_play_set().
-
-            @see elm_image_animated_get()
-            @see elm_image_animated_available_get()
-            @see elm_image_animated_play_set()
-
-            @ingroup Image
-            @since 1.7 */
-         }
-         get {
-            /*@
-            Get whether an image object has animation enabled or not.
-
-            @return @c EINA_TRUE if the image has animation enabled,
-            @c EINA_FALSE otherwise.
-
-            @see elm_image_animated_set()
-
-            @ingroup Image
-            @since 1.7 */
-         }
-         values {
-            anim: bool; /*@ @c EINA_TRUE if the object is to animate itself,
-            @c EINA_FALSE otherwise. Default is @c EINA_FALSE. */
          }
       }
       @property scale {
@@ -470,26 +392,6 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
             image loader (eg. if @p img is a memory-mapped EET file) */
          }
       }
-      @property animated_available {
-         get {
-            /*@
-            Get whether an image object supports animation or not.
-
-            @return @c EINA_TRUE if the image supports animation,
-            @c EINA_FALSE otherwise.
-
-            This function returns if this Elementary image object's internal
-            image can be animated. Currently Evas only supports GIF
-            animation. If the return value is @b EINA_FALSE, other
-            @c elm_image_animated_xxx API calls won't work.
-
-            @see elm_image_animated_set()
-
-            @ingroup Image
-            @since 1.7 */
-            return: bool;
-         }
-      }
       @property object {
          get {
             /*@
@@ -544,6 +446,9 @@ class Elm.Image (Elm.Widget, Efl.File, Efl.Image, Evas.Clickable_Interface,
       Efl.Image.load_size.get;
       Efl.Image.smooth_scale.set;
       Efl.Image.smooth_scale.get;
+      Efl.Player.playable.get;
+      Efl.Player.play.set;
+      Efl.Player.play.get;
       Edje.Object.signal_emit;
       Edje.Object.size_min.get;
       Edje.Object.size_max.get;
