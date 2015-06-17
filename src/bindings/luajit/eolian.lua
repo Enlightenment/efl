@@ -189,13 +189,6 @@ ffi.cdef [[
     Eina_Bool eolian_all_eo_files_parse();
     Eina_Bool eolian_all_eot_files_parse();
     Eina_Bool eolian_database_validate(void);
-    Eina_Bool eolian_show_class(const Eolian_Class *klass);
-    Eina_Bool eolian_show_typedef(const char *alias);
-    Eina_Bool eolian_show_struct(const char *name);
-    Eina_Bool eolian_show_enum(const char *name);
-    Eina_Bool eolian_show_global(const char *name);
-    Eina_Bool eolian_show_constant(const char *name);
-    void eolian_show_all();
     const Eolian_Class *eolian_class_get_by_name(const char *class_name);
     const Eolian_Class *eolian_class_get_by_file(const char *file_name);
     const char *eolian_class_file_get(const Eolian_Class *klass);
@@ -407,34 +400,6 @@ end
 
 M.database_validate = function()
     return eolian.eolian_database_validate() ~= 0
-end
-
-M.show_class = function(klass)
-    return eolian.eolian_show_class(klass) ~= 0
-end
-
-M.show_typedef = function(alias)
-    return eolian.eolian_show_typedef(alias) ~= 0
-end
-
-M.show_struct = function(name)
-    return eolian.eolian_show_typedef(name) ~= 0
-end
-
-M.show_enum = function(name)
-    return eolian.eolian_show_enum(name) ~= 0
-end
-
-M.show_global = function(name)
-    return eolian.eolian_show_global(name) ~= 0
-end
-
-M.show_constant = function(name)
-    return eolian.eolian_show_constant(name) ~= 0
-end
-
-M.show_all = function()
-    eolian.eolian_show_all()
 end
 
 M.declaration_type = {

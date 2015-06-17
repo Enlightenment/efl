@@ -315,7 +315,7 @@ static int legacy_support = 0;
 int main(int argc, char **argv)
 {
    int ret = 1;
-   Eina_Bool help = EINA_FALSE, show = EINA_FALSE;
+   Eina_Bool help = EINA_FALSE;
    const char *eo_filename = NULL;
    char *output_filename = NULL; /* if NULL, have to generate, otherwise use the name stored there */
    char *eo_filename_copy = NULL, *eo_file_basename;
@@ -340,7 +340,6 @@ int main(int argc, char **argv)
      {
         /* These options set a flag. */
           {"eo",         no_argument,         &eo_needed, 1},
-          {"verbose",    no_argument,         0, 'v'},
           {"help",       no_argument,         0, 'h'},
           {"gh",         no_argument,         &gen_opt, H_GEN},
           {"gc",         no_argument,         &gen_opt, C_GEN},
@@ -361,7 +360,6 @@ int main(int argc, char **argv)
                       output_filename = strdup(optarg);
                       break;
                    }
-           case 'v': show = EINA_TRUE; break;
            case 'h': help = EINA_TRUE; break;
            case 'I':
                      {
@@ -380,7 +378,7 @@ int main(int argc, char **argv)
 
    if (help)
      {
-        printf("Usage: %s [-h/--help] [-v/--verbose] [-I/--include input_dir] [--legacy] [--gh|--gc|--gi] [--output/-o outfile] file.eo ... \n", argv[0]);
+        printf("Usage: %s [-h/--help] [-I/--include input_dir] [--legacy] [--gh|--gc|--gi] [--output/-o outfile] file.eo ... \n", argv[0]);
         printf("       --help/-h Print that help\n");
         printf("       --include/-I Include 'input_dir' as directory to search .eo files into\n");
         printf("       --output/-o Force output filename to 'outfile'\n");
@@ -416,11 +414,6 @@ int main(int argc, char **argv)
 
    eo_filename_copy = strdup(eo_filename);
    eo_file_basename = basename(eo_filename_copy);
-   if (show)
-     {
-        const Eolian_Class *class = eolian_class_get_by_file(eo_file_basename);
-        if (class) eolian_show_class(class);
-     }
 
    /* Only needed for .eo files */
    if (is_eo && !eo_needed && !(gen_opt == H_GEN && legacy_support))
