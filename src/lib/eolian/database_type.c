@@ -209,8 +209,10 @@ database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name)
              eina_strbuf_append_char(buf, '_');
           }
         int kw = eo_lexer_keyword_str_to_id(tp->name);
-        if (kw) eina_strbuf_append(buf, eo_lexer_get_c_type(kw));
-        else eina_strbuf_append(buf, tp->name);
+        if (kw && eo_lexer_is_type_keyword(kw))
+          eina_strbuf_append(buf, eo_lexer_get_c_type(kw));
+        else
+          eina_strbuf_append(buf, tp->name);
      }
    else if (tp->type == EOLIAN_TYPE_VOID)
      eina_strbuf_append(buf, "void");
