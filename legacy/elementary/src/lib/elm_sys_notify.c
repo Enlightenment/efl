@@ -257,6 +257,11 @@ _on_action_invoked(void *data EINA_UNUSED,
      }
 
    d = calloc(1, sizeof(*d));
+   if (!d)
+     {
+        ERR("Fail to allocate memory");
+        return;
+     }
 
    if (!eldbus_message_arguments_get(msg, "us", &(d->id), &aux))
      {
