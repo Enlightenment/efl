@@ -27,7 +27,7 @@
      {                                                      \
         if ((src1[0] != src2[0]) || (src1[1] != src2[1]))   \
            return 1;                                        \
-        if (a != EVAS_3D_VERTEX_TEXCOORD)                   \
+        if (a != EVAS_CANVAS3D_VERTEX_TEXCOORD)             \
            if (src1[2] != src2[2])                          \
               return 1;                                     \
         src1 += f1->vertices[a].element_count;              \
@@ -38,8 +38,8 @@
   it = eina_file_direct_ls(folder);                                     \
   EINA_ITERATOR_FOREACH(it, file)                                       \
     {                                                                   \
-       mesh = eo_add(EVAS_3D_MESH_CLASS, e);                            \
-       mesh2 = eo_add(EVAS_3D_MESH_CLASS, e);                           \
+       mesh = eo_add(EVAS_CANVAS3D_MESH_CLASS, e);                      \
+       mesh2 = eo_add(EVAS_CANVAS3D_MESH_CLASS, e);                     \
        fail_if(mesh == NULL);                                           \
        fail_if(mesh2 == NULL);                                          \
        snprintf(buffer, PATH_MAX, "%s", ext);                           \
@@ -58,11 +58,11 @@
        unlink(buffer);                                                  \
     }
 
-static Evas_3D_Mesh_Frame *
-return_zero_frame(Evas_3D_Mesh_Data *pd)
+static Evas_Canvas3D_Mesh_Frame *
+return_zero_frame(Evas_Canvas3D_Mesh_Data *pd)
 {
    Eina_List *l;
-   Evas_3D_Mesh_Frame *f;
+   Evas_Canvas3D_Mesh_Frame *f;
 
    EINA_LIST_FOREACH(pd->frames, l, f)
      {
@@ -73,20 +73,20 @@ return_zero_frame(Evas_3D_Mesh_Data *pd)
    return NULL;
 }
 
-static int _compare_meshes(Evas_3D_Mesh *mesh1, Evas_3D_Mesh *mesh2)
+static int _compare_meshes(Evas_Canvas3D_Mesh *mesh1, Evas_Canvas3D_Mesh *mesh2)
 {
-   Evas_3D_Mesh_Data *pd1, *pd2;
-   Evas_3D_Mesh_Frame *f1, *f2;
+   Evas_Canvas3D_Mesh_Data *pd1, *pd2;
+   Evas_Canvas3D_Mesh_Frame *f1, *f2;
    int i;
    float *src1, *src2;
-   Evas_3D_Vertex_Buffer *vb1, *vb2;
+   Evas_Canvas3D_Vertex_Buffer *vb1, *vb2;
 
-   pd1 = eo_data_scope_get(mesh1, EVAS_3D_MESH_CLASS);
+   pd1 = eo_data_scope_get(mesh1, EVAS_CANVAS3D_MESH_CLASS);
    f1 = return_zero_frame(pd1);
    if ((pd1 == NULL) || (f1 == NULL))
       return 1;
 
-   pd2 = eo_data_scope_get(mesh2, EVAS_3D_MESH_CLASS);
+   pd2 = eo_data_scope_get(mesh2, EVAS_CANVAS3D_MESH_CLASS);
    f2 = return_zero_frame(pd2);
    if ((pd2 == NULL) || (f2 == NULL))
       return 1;
@@ -94,9 +94,9 @@ static int _compare_meshes(Evas_3D_Mesh *mesh1, Evas_3D_Mesh *mesh2)
    if ((pd1->vertex_count) != (pd2->vertex_count))
       return 1;
 
-   COMPARE_GEOMETRICS(EVAS_3D_VERTEX_POSITION)
-   COMPARE_GEOMETRICS(EVAS_3D_VERTEX_NORMAL)
-   COMPARE_GEOMETRICS(EVAS_3D_VERTEX_TEXCOORD)
+   COMPARE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_POSITION)
+   COMPARE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_NORMAL)
+   COMPARE_GEOMETRICS(EVAS_CANVAS3D_VERTEX_TEXCOORD)
 
    return 0;
 }
