@@ -258,6 +258,7 @@ main(void)
 
    evas = ecore_evas_get(ecore_evas);
 
+   memset(&data, 0, sizeof(Scene_Data));
    _scene_setup(&data);
 
    /* Add a background rectangle objects. */
