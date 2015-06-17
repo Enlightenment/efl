@@ -28,6 +28,17 @@
 #include "eina_matrix.h"
 #include "eina_quaternion.h"
 
+EAPI void
+eina_quaternion_f16p16_set(Eina_Quaternion *out,
+                           Eina_F16p16 x, Eina_F16p16 y,
+                           Eina_F16p16 z, Eina_F16p16 w)
+{
+   out->w = w;
+   out->x = x;
+   out->y = y;
+   out->z = z;
+}
+
 EAPI Eina_F16p16
 eina_quaternion_f16p16_norm(const Eina_Quaternion_F16p16 *q)
 {
@@ -336,6 +347,16 @@ eina_quaternion_f16p16_rotation_matrix3_get(Eina_Matrix3_F16p16 *m,
    m->zy = eina_f16p16_add(yz, wx);
    m->zz = eina_f16p16_sub(eina_f16p16_int_to(1),
                            eina_f16p16_add(xx, yy));
+}
+
+EAPI void
+eina_quaternion_set(Eina_Quaternion *out, double x,
+                    double y, double z, double w)
+{
+   out->w = w;
+   out->x = x;
+   out->y = y;
+   out->z = z;
 }
 
 EAPI double

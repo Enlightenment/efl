@@ -53,6 +53,9 @@ struct _Eina_Point_3D_F16p16
    Eina_F16p16 z;
 };
 
+EAPI void eina_quaternion_f16p16_set(Eina_Quaternion *out,
+                                     Eina_F16p16 x, Eina_F16p16 y,
+                                     Eina_F16p16 z, Eina_F16p16 w);
 EAPI Eina_F16p16 eina_quaternion_f16p16_norm(const Eina_Quaternion_F16p16 *q);
 EAPI void eina_quaternion_f16p16_negative(Eina_Quaternion_F16p16 *out,
                                           const Eina_Quaternion_F16p16 *in);
@@ -87,6 +90,8 @@ EAPI void eina_quaternion_f16p16_rotate(Eina_Point_3D_F16p16 *p,
 EAPI void eina_quaternion_f16p16_rotation_matri3_get(Eina_Matrix3_F16p16 *m,
                                                      const Eina_Quaternion_F16p16 *q);
 
+EAPI void eina_quaternion_set(Eina_Quaternion *q, double x,
+                              double y, double z, double w);
 EAPI double eina_quaternion_norm(const Eina_Quaternion *q);
 EAPI void eina_quaternion_negative(Eina_Quaternion *out,
                                    const Eina_Quaternion *in);
