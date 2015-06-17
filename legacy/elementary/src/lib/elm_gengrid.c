@@ -996,9 +996,6 @@ _item_realize(Elm_Gen_Item *it)
           edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
         if (eo_do_ret(eo_it, tmp, elm_wdg_item_disabled_get()))
           edje_object_signal_emit(VIEW(it), "elm,state,disabled", "elm");
-        if (it == (Elm_Gen_Item *)sd->focused_item &&
-            elm_widget_focus_highlight_enabled_get(WIDGET(it)))
-          edje_object_signal_emit(VIEW(it), "elm,state,focused", "elm");
      }
    edje_object_message_signal_process(VIEW(it));
    evas_object_show(VIEW(it));
