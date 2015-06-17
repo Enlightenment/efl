@@ -36,7 +36,7 @@ struct Elm_Gen_Item
    Eina_List                *texts, *contents, *states, *content_objs;
    Ecore_Timer              *long_timer;
    int                       walking;
-   int                       generation; /**< a generation of an item. when the item is created, this value is set to the value of genlist generation. this value will be decreased when the item is going to be deleted */
+   int                       generation; /**< a generation of an item. when the item is created, this value is set to the value of genlist/gengrid generation. this value will be decreased when the item is going to be deleted */
    const char               *mouse_cursor;
    Eina_List                *item_focus_chain;
 
