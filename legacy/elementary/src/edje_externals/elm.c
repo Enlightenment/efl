@@ -47,6 +47,9 @@ external_signal(void *data EINA_UNUSED, Evas_Object *obj, const char *sig,
    char *_signal = strdup(sig);
    char *p = _signal;
    Evas_Object *content;
+   Edje_External_Type *type;
+
+   if (!p) goto on_error;
 
    while ((*p!='\0') && (*p!=']'))
      p++;
@@ -55,26 +58,33 @@ external_signal(void *data EINA_UNUSED, Evas_Object *obj, const char *sig,
    if ((*p=='\0') || (*(p+1)!=':'))
      {
         ERR("Invalid External Signal received: '%s' '%s'", sig, source);
-        free(_signal);
-        return ;
+        goto on_error;
      }
 
    *p = '\0';
    p+=2; //jump ']' and ':'
 
-   Edje_External_Type *type = evas_object_data_get(obj, "Edje_External_Type");
+   type = evas_object_data_get(obj, "Edje_External_Type");
+   if (!type)
+     {
+        ERR("no external type for object %p", obj);
+        goto on_error;
+     }
    if (!type->content_get)
      {
         ERR("external type '%s' from module '%s' does not provide content_get()",
             type->module_name, type->module);
-        free(_signal);
-        return ;
+        goto on_error;
      }
 
    content = type->content_get(type->data, obj, _signal);
    free(_signal);
    if (content)
      edje_object_signal_emit(content, sig + (p - _signal), source);
+
+on_error:
+   if (_signal) free(_signal);
+   return;
 }
 
 const char *
