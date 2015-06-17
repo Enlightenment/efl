@@ -4,130 +4,121 @@ interface Efl.Gfx.Base {
    methods {
       @property position {
          set {
-            /*@ Move the given Evas object to the given location inside its canvas' viewport. */
+            [[Move the given Evas object to the given location inside its
+              canvas' viewport.
+            ]]
          }
          get {
-            /*@ Retrieves the position of the given Evas object. */
+            [[Retrieves the position of the given Evas object.]]
          }
          values {
-            x: int; /*@ in */
-            y: int; /*@ in */
+            x: int;
+            y: int;
          }
       }
       @property size {
          set {
-            /*@ Changes the size of the given Evas object. */
+            [[Changes the size of the given Evas object.]]
          }
          get {
-            /*@ Retrieves the (rectangular) size of the given Evas object. */
+            [[Retrieves the (rectangular) size of the given Evas object.]]
          }
          values {
-            w: int; /*@ in */
-            h: int; /*@ in */
+            w: int;
+            h: int;
          }
       }
       @property color {
          set {
-            /*@
-            Sets the general/main color of the given Evas object to the given
-            one.
+            [[Sets the general/main color of the given Evas object to the given
+              one.
 
-            @see evas_object_color_get() (for an example)
-            @note These color values are expected to be premultiplied by @p a.
+              See also @evas_object_color_get (for an example)
 
-            @ingroup Evas_Object_Group_Basic */
+              These color values are expected to be premultiplied by alpha.
+            ]]
          }
          get {
-            /*@
-            Retrieves the general/main color of the given Evas object.
+            [[Retrieves the general/main color of the given Evas object.
 
-            Retrieves the main color's RGB component (and alpha channel)
-            values, <b>which range from 0 to 255</b>. For the alpha channel,
-            which defines the object's transparency level, 0 means totally
-            transparent, while 255 means opaque. These color values are
-            premultiplied by the alpha value.
+              Retrieves the main color's RGB component (and alpha channel)
+              values, which range from 0 to 255. For the alpha channel,
+              which defines the object's transparency level, 0 means totally
+              transparent, while 255 means opaque. These color values are
+              premultiplied by the alpha value.
 
-            Usually youll use this attribute for text and rectangle objects,
-            where the main color is their unique one. If set for objects
-            which themselves have colors, like the images one, those colors get
-            modulated by this one.
+              Usually youll use this attribute for text and rectangle objects,
+              where the main color is their unique one. If set for objects
+              which themselves have colors, like the images one, those colors
+              get modulated by this one.
 
-            @note All newly created Evas rectangles get the default color
-            values of <code>255 255 255 255</code> (opaque white).
+              All newly created Evas rectangles get the default color
+              values of 255 255 255 255 (opaque white).
 
-            @note Use @c NULL pointers on the components you're not interested
-            in: they'll be ignored by the function.
+              Use null pointers on the components you're not interested
+              in: they'll be ignored by the function.
 
-            Example:
-            @dontinclude evas-object-manipulation.c
-            @skip int alpha, r, g, b;
-            @until return
-
-            See the full @ref Example_Evas_Object_Manipulation "example".
-
-            @ingroup Evas_Object_Group_Basic */
+              See the full @Example_Evas_Object_Manipulation "example".
+            ]]
          }
          values {
-            r: int; /*@ The red component of the given color. */
-            g: int; /*@ The green component of the given color. */
-            b: int; /*@ The blue component of the given color. */
-            a: int; /*@ The alpha component of the given color. */
+            r: int; [[The red component of the given color.]]
+            g: int; [[The green component of the given color.]]
+            b: int; [[The blue component of the given color.]]
+            a: int; [[The alpha component of the given color.]]
          }
       }
       @property color_part {
          set {
-            /*@
-            Sets a specifc color of the given Efl.Gfx.Base object to the given
-            one.
+            [[Sets a specifc color of the given Efl.Gfx.Base object to the
+              given one.
 
-            @see evas_object_color_get() (for an example)
-            @note These color values are expected to be premultiplied by @p a.
+              See also @evas_object_color_get (for an example)
 
-            */
-	    return: bool;
+              These color values are expected to be premultiplied by alpha.
+            ]]
+            return: bool;
          }
          get {
-            /*@
-            Retrieves a specific color of the given Evas object.
+            [[Retrieves a specific color of the given Evas object.
 
-            Retrieves a specific color's RGB component (and alpha channel)
-            values, <b>which range from 0 to 255</b>. For the alpha channel,
-            which defines the object's transparency level, 0 means totally
-            transparent, while 255 means opaque. These color values are
-            premultiplied by the alpha value.
+              Retrieves a specific color's RGB component (and alpha channel)
+              values, which range from 0 to 255. For the alpha channel,
+              which defines the object's transparency level, 0 means totally
+              transparent, while 255 means opaque. These color values are
+              premultiplied by the alpha value.
 
-	    The main color being mapped to @c NULL.
+              The main color being mapped to null.
 
-            Usually youll use this attribute for text and rectangle objects,
-            where the main color is their unique one. If set for objects
-            which themselves have colors, like the images one, those colors get
-            modulated by this one.
+              Usually youll use this attribute for text and rectangle objects,
+              where the main color is their unique one. If set for objects
+              which themselves have colors, like the images one, those colors
+              get modulated by this one.
 
-            @note Use @c NULL pointers on the components you're not interested
-            in: they'll be ignored by the function.
-
-            */
-	    return: bool;
+              Use null pointers on the components you're not interested
+              in: they'll be ignored by the function.
+            ]]
+            return: bool;
          }
-	 keys {
-	    part: const (char)*; /*@ The part you are interested in. */
-	 }
+         keys {
+            part: const (char)*; [[The part you are interested in.]]
+         }
          values {
-            r: int; /*@ The red component of the given color. */
-            g: int; /*@ The green component of the given color. */
-            b: int; /*@ The blue component of the given color. */
-            a: int; /*@ The alpha component of the given color. */
+            r: int; [[The red component of the given color.]]
+            g: int; [[The green component of the given color.]]
+            b: int; [[The blue component of the given color.]]
+            a: int; [[The alpha component of the given color.]]
          }
       }
       @property visible {
          set {
-            /*@ Makes the given Evas object visible or invisible. */
+            [[Makes the given Evas object visible or invisible.]]
          }
          get {
-            /*@ Retrieves whether or not the given Evas object is visible. */
+            [[Retrieves whether or not the given Evas object is visible.]]
          }
          values {
-            v: bool; /*@ @c EINA_TRUE if to make the object visible, @c EINA_FALSE otherwise */
+            v: bool; [[true if to make the object visible, false otherwise]]
          }
       }
    }
