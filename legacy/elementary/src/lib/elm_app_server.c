@@ -291,6 +291,8 @@ _elm_app_server_save(Eo *obj EINA_UNUSED, Elm_App_Server_Data *data)
 
    views_eet = elm_app_server_views_eet_new(1, NULL);
 
+   if (!views_eet) return;
+
    iter = eina_hash_iterator_data_new(data->views);
    EINA_ITERATOR_FOREACH(iter, view)
      {
