@@ -3342,7 +3342,7 @@ _elm_config_sub_init(void)
    int ok = 0;
 
    len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/");
-   if (len + 6 >= sizeof(buf)) // the space to add "/flush"
+   if (len + 6 >= sizeof(buf)) // the space to add "flush"
      goto end;
 
    ok = ecore_file_mkpath(buf);
