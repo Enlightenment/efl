@@ -3,24 +3,22 @@ interface Efl.Text {
    methods {
       @property text {
          set {
-            /*@
-            Sets the text string to be displayed by the given text object.
+            [[Sets the text string to be displayed by the given text object.
 
-            @see evas_object_text_text_get() */
+              See also @evas_object_text_text_get.
+            ]]
          }
          get {
-            /*@
-            Retrieves the text string currently being displayed by the given
-            text object.
+            [[Retrieves the text string currently being displayed by the given
+              text object.
 
-            @return The text string currently being displayed on it.
+              Do not free() the return value.
 
-            @note Do not free() the return value.
-
-            @see evas_object_text_text_set() */
+              See also @evas_object_text_text_set.
+            ]]
          }
          values {
-            text: const(char)*; /*@ Text string to display on it. */
+            text: const(char)*; [[Text string to display on it.]]
          }
       }
    }
