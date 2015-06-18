@@ -183,12 +183,15 @@ START_TEST(evas_filter_parser)
       "White"
    };
 
+#if 0
+   // New color class defaults to black
    static const char *colors_bad[] = {
       "newcolor",
       "ABC",
       "#ZZZ",
       "#-10"
    };
+#endif
 
    for (size_t c = 0; c < sizeof(colors) / sizeof(colors[0]); c++)
      {
@@ -197,6 +200,7 @@ START_TEST(evas_filter_parser)
         CHKGOOD(buf);
      }
 
+#if 0
    fprintf(stderr, "Evas filters tests: start invalid cases. Ignore the following ERRs.\n");
    for (size_t c = 0; c < sizeof(colors_bad) / sizeof(colors_bad[0]); c++)
      {
@@ -205,6 +209,7 @@ START_TEST(evas_filter_parser)
         CHKBAAD(buf);
      }
    fprintf(stderr, "Evas filters tests: end of invalid cases.\n");
+#endif
 
    // fillmodes are parsed when converting from instructions to commands
 }
