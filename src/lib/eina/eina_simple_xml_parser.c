@@ -136,9 +136,16 @@ _eina_simple_xml_tag_start_find(const char *itr, const char *itr_end)
 static inline const char *
 _eina_simple_xml_tag_end_find(const char *itr, const char *itr_end)
 {
+   Eina_Bool inside_quote = EINA_FALSE;
    for (; itr < itr_end; itr++)
-     if ((*itr == '>') || (*itr == '<')) /* consider < also ends a tag */
-       return itr;
+     {
+        if (*itr == '"') inside_quote = !inside_quote;
+        if (!inside_quote)
+          {
+             if ((*itr == '>') || (*itr == '<')) /* consider < also ends a tag */
+               return itr;
+          }
+     }
    return NULL;
 }
 
