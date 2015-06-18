@@ -6,16 +6,16 @@ class Ecore_Audio (Eo.Base)
    methods {
       @property name {
          set {
-            /*@
-            Set the name of the object
-            
-            @since 1.8 */
+            [[Set the name of the object
+
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the name of the object
-            
-            @since 1.8 */
+            [[Get the name of the object
+
+              @since 1.8
+            ]]
          }
          values {
             name: const(char)*; 
@@ -23,92 +23,101 @@ class Ecore_Audio (Eo.Base)
       }
       @property paused {
          set {
-            /*@
-            Set the pause state of the object
-            
-            @since 1.8 */
+            [[Set the pause state of the object
+
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the pause state of the object
-            
-            @since 1.8 */
+            [[Get the pause state of the object
+
+              @since 1.8
+            ]]
          }
          values {
-            paused: bool; /*@ ret EINA_TRUE if object is paused, EINA_FALSE if not*/
+            paused: bool; [[true if object is paused, false if not]]
          }
       }
       @property volume {
          set {
-            /*@
-            Set the volume of the object
-            
-            @since 1.8 */
+            [[Set the volume of the object
+
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the volume of the object
-            
-            @since 1.8 */
+            [[Get the volume of the object
+
+              @since 1.8
+            ]]
          }
          values {
-            volume: double; /*@ The volume */
+            volume: double; [[the volume]]
          }
       }
       @property source {
          set {
-            /*@
-            Set the source of the object
-            
-            What sources are supported depends on the actual object. For example,
-            the libsndfile class accepts WAV, OGG, FLAC files as source.
-            
-            @since 1.8 */
-            return: bool; /*@ EINA_TRUE if the source was set correctly (i.e. the file was opened), EINA_FALSE otherwise*/
+            [[Set the source of the object
+
+              What sources are supported depends on the actual object.
+              For example, the libsndfile class accepts WAV, OGG, FLAC
+              files as source.
+
+              @since 1.8
+            ]]
+            return: bool; [[true if the source was set correctly (i.e. the file
+                            was opened), EINA_FALSE otherwise
+                          ]]
          }
          get {
-            /*@
-            Get the source of the object
-            
-            @since 1.8 */
+            [[Get the source of the object
+
+              @since 1.8
+            ]]
          }
          values {
-            source: const(char)*; /*@ The source to set to (i.e. file, URL, device)*/
+            source: const(char)*; [[the source to set to (i.e. file, URL, device)]]
          }
       }
       @property format {
          set {
-            /*@
-            Set the format of the object
-            
-            What formats are supported depends on the actual object. Default is
-            ECORE_AUDIO_FORMAT_AUTO
-            
-            @since 1.8 */
-            return: bool; /*@ EINA_TRUE if the format was supported, EINA_FALSE otherwise*/
+            [[Set the format of the object
+
+              What formats are supported depends on the actual object. Default
+              is ECORE_AUDIO_FORMAT_AUTO
+
+              @since 1.8
+            ]]
+            return: bool; [[true if the format was supported, false otherwise]]
          }
          get {
-            /*@
-            Get the format of the object
-            
-            After setting the source if the format was ECORE_AUDIO_FORMAT_AUTO this
-            function will now return the actual format.
-            
-            @since 1.8 */
+            [[Get the format of the object
+
+              After setting the source if the format was ECORE_AUDIO_FORMAT_AUTO
+              this function will now return the actual format.
+
+              @since 1.8
+            ]]
          }
          values {
-            format: Ecore_Audio_Format; /*@ The format of the object*/
+            format: Ecore_Audio_Format; [[the format of the object]]
          }
       }
       vio_set {
-         /*@
-         Set the virtual IO functions
-         
-         @since 1.8 */
+         [[Set the virtual IO functions
+
+           @since 1.8
+         ]]
          params {
-              vio: Ecore_Audio_Vio *; /*@ The @ref Ecore_Audio_Vio struct with the function callbacks*/
-              data: void *; /*@ User data to pass to the VIO functions*/
-              free_func: eo_key_data_free_func; /*@ This function takes care to clean up @ref data when he VIO is destroyed. NULL means do nothing.*/
+              vio: Ecore_Audio_Vio *; [[the @Ecore_Audio_Vio struct with the
+                                        function callbacks
+                                      ]]
+              data: void *; [[user data to pass to the VIO functions]]
+              free_func: eo_key_data_free_func; [[this function takes care to
+                                                  clean up @data when he VIO is
+                                                  destroyed. NULL means do
+                                                  nothing.
+                                                ]]
          }
       }
    }

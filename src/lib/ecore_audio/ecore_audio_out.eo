@@ -5,31 +5,31 @@ class Ecore_Audio_Out (Ecore_Audio)
    data: Ecore_Audio_Output;
    methods {
       input_attach {
-         /*@
-         Attach an input to an output
+         [[Attach an input to an output
 
-         @since 1.8 */
-         return: bool; /*@ EINA_TRUE if the input was attached, EINA_FALSE otherwise*/
+           @since 1.8
+         ]]
+         return: bool; [[true if the input was attached, false otherwise]]
          params {
-            @in input: Eo *; /*@ The input to attach to the output*/
+            @in input: Eo *; [[The input to attach to the output]]
          }
       }
       input_detach {
-         /*@
-         Detach an input from an output
+         [[Detach an input from an output
 
-         @since 1.8 */
-         return: bool; /*@ EINA_TRUE if the input was detached, EINA_FALSE otherwise*/
+           @since 1.8
+         ]]
+         return: bool; [[true if the input was detached, false otherwise]]
          params {
-            @in input: Eo *; /*@ The input to detach to the output*/
+            @in input: Eo *; [[The input to detach to the output]]
          }
       }
       inputs_get {
-         /*@
-         Returns the list of all attached inputs
+         [[Returns the list of all attached inputs
 
-         @since 1.8 */
-         return: list<Eo*> *; /*@ An @ref Eina_List of the inputs that are attached to the output*/
+           @since 1.8
+         ]]
+         return: list<Eo*> *; [[A list of the inputs that are attached to the output]]
       }
    }
    implements {
