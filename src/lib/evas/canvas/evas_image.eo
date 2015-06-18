@@ -1,4 +1,4 @@
-class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
+class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View, Evas.Filter)
 {
    legacy_prefix: evas_object_image;
    eo_prefix: evas_obj_image;
@@ -756,61 +756,6 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
             scene: Evas.Canvas3D.Scene *; /*@ 3D scene on an image object. */
          }
       }
-      @property filter_program {
-         set {
-            /*@ Set an Evas filter program on this Text Object.
-
-            If the program fails to compile (syntax error, invalid
-            buffer name, etc...), the standard text effects will be
-            applied instead (SHADOW, etc...). switch back to the
-            standard text effects.
-
-            @since 1.9
-            @note EXPERIMENTAL FEATURE. This is an unstable API,
-            please use only for testing purposes.
-            @see @ref evasfiltersref "Evas filters reference"
-            */
-            legacy: null;
-         }
-         values {
-            program: const(char)*; /*@ The program code, as defined
-              by the @ref evasfiltersref "Evas filters script language".
-              Pass NULL to remove the former program and switch back
-              to the standard text effect
-
-              @since 1.9
-              @note EXPERIMENTAL FEATURE. This is an unstable API,
-              please use only for testing purposes.
-              @see @ref evasfiltersref "Evas filters reference"
-              */
-         }
-      }
-      @property filter_source {
-         set {
-            /*@ Bind an object to use as a mask or texture with Evas Filters.
-
-            This will create automatically a new RGBA buffer containing
-            the source object's pixels (as it is rendered). */
-            legacy: null;
-         }
-         values {
-            name: const(char)*; /*@ Object name as used in the program code */
-            eobj: Eo*; /*@ Eo object to use through proxy rendering */
-         }
-      }
-      @property filter_padding {
-         get {
-            /*@ Get the value of the extra padding set when a filter is used. */
-            return: bool; /*@ Returns false if the filter is invalid and padding is 0 */
-            legacy: null;
-         }
-         values {
-            l: int; /*@ Left padding in pixels */
-            r: int; /*@ Right padding in pixels */
-            t: int; /*@ Top padding in pixels */
-            b: int; /*@ Bottom padding in pixels */
-         }
-      }
       @property orient {
          set {
             /*@
@@ -992,5 +937,13 @@ class Evas.Image (Evas.Object, Efl.File, Efl.Image, Efl.Gfx.Fill, Efl.Gfx.View)
       Efl.Gfx.Fill.fill.get;
       Efl.Gfx.View.size.set;
       Efl.Gfx.View.size.get;
+      Efl.Gfx.Filter.program.set;
+      Efl.Gfx.Filter.program.get;
+      Efl.Gfx.Filter.source_set;
+      Efl.Gfx.Filter.source_get;
+      Efl.Gfx.Filter.state.set;
+      Evas.Filter.input_alpha;
+      Evas.Filter.input_render;
+      Evas.Filter.dirty;
    }
 }

@@ -1589,24 +1589,34 @@ _evas_text_evas_filter_dirty(Eo *eo_obj, Evas_Text_Data *o)
    _evas_object_text_recalc(eo_obj, o->cur.text);
 }
 
-EOLIAN void
+EOLIAN Eina_Bool
+_evas_text_evas_filter_input_alpha(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+EOLIAN Eina_Bool
 _evas_text_evas_filter_input_render(Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o,
                                     void *_filter, void *drawctx,
-                                    int l, int r, int t, int b, Eina_Bool do_async)
+                                    int l, int r EINA_UNUSED, int t, int b EINA_UNUSED,
+                                    Eina_Bool do_async)
 {
    Evas_Filter_Context *filter = _filter;
    Evas_Object_Text_Item *it;
-   (void) r; (void) b;
 
    EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
      if ((o->font) && (it->text_props.len > 0))
        {
-          evas_filter_font_draw(filter, drawctx, EVAS_FILTER_BUFFER_INPUT_ID, o->font,
-                                l + it->x,
-                                t + (int) o->max_ascent,
-                                &it->text_props,
-                                do_async);
+          if (!evas_filter_font_draw(filter, drawctx,
+                                     EVAS_FILTER_BUFFER_INPUT_ID, o->font,
+                                     l + it->x,
+                                     t + (int) o->max_ascent,
+                                     &it->text_props,
+                                     do_async))
+            return EINA_FALSE;
        }
+
+   return EINA_TRUE;
 }
 
 static void
@@ -2216,9 +2226,6 @@ evas_object_text_text_get(const Eo *obj)
    return eo_do_ret((Eo *) obj, ret, efl_text_get());
 }
 
-
-/* urgh. why are those needed? */
-
 EOLIAN void
 _evas_text_efl_gfx_filter_program_set(Eo *obj, Evas_Text_Data *pd EINA_UNUSED, const char *code)
 {
@@ -2252,7 +2259,5 @@ _evas_text_efl_gfx_filter_state_set(Eo *obj, Evas_Text_Data *pd EINA_UNUSED,
 {
    eo_do_super(obj, MY_CLASS, efl_gfx_filter_state_set(cur_state, cur_val, next_state, next_val, pos));
 }
-
-
 
 #include "canvas/evas_text.eo.c"

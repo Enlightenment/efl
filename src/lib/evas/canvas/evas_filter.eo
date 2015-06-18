@@ -32,10 +32,15 @@ mixin Evas.Filter (Efl.Gfx.Filter)
            This should be called at the beginning of a parent's class destructor.
          ]]
       }
+      input_alpha {
+         [[Called by Evas.Filter to determine whether the input is alpha or rgba.]]
+         return: bool;
+      }
       input_render {
          [[Called by Evas.Filter when the parent class must render the input.
          ;
          ]]
+         return: bool; [[Indicates success from the object render function.]]
          params {
             filter: void*; [[Evas_Filter_Context]]
             drawctx: void*;
@@ -60,6 +65,7 @@ mixin Evas.Filter (Efl.Gfx.Filter)
       Efl.Gfx.Filter.padding.get;
       Efl.Gfx.Filter.source_set;
       Efl.Gfx.Filter.source_get;
+      @virtual .input_alpha;
       @virtual .input_render;
       @virtual .dirty;
    }

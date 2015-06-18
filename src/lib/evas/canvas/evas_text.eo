@@ -331,7 +331,8 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties, Evas.Filter)
       Efl.Gfx.Filter.source_set;
       Efl.Gfx.Filter.source_get;
       Efl.Gfx.Filter.state.set;
-      Evas.Filter.dirty;
+      Evas.Filter.input_alpha;
       Evas.Filter.input_render;
+      Evas.Filter.dirty;
    }
 }

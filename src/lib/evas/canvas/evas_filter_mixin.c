@@ -222,21 +222,9 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         if (fcow->output != previous)
           evas_filter_buffer_backing_release(filter, previous);
 
+        // Request rendering from the object itself (child class)
         evas_filter_program_padding_get(fcow->chain, &l, &r, &t, &b);
         eo_do(eo_obj, evas_filter_input_render(filter, drawctx, l, r, t, b, do_async));
-#warning TODO: draw text into input buffer
-#if 0
-        // Render text to input buffer
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(pd->items), it)
-          if ((pd->font) && (it->text_props.len > 0))
-            {
-               evas_filter_font_draw(filter, drawctx, EVAS_FILTER_BUFFER_INPUT_ID, pd->font,
-                                     sl + it->x,
-                                     st + (int) pd->max_ascent,
-                                     &it->text_props,
-                                     do_async);
-            }
-#endif
 
         ENFN->context_free(ENDT, drawctx);
 
@@ -268,6 +256,7 @@ _evas_filter_efl_gfx_filter_program_set(Eo *eo_obj, Evas_Filter_Data *pd,
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Filter_Program *pgm = NULL;
+   Eina_Bool alpha;
 
    if (!pd) return;
    if (pd->data->code == code) return;
@@ -280,7 +269,8 @@ _evas_filter_efl_gfx_filter_program_set(Eo *eo_obj, Evas_Filter_Data *pd,
         evas_filter_program_del(fcow->chain);
         if (code)
           {
-             pgm = evas_filter_program_new("Evas_Text", EINA_TRUE);
+             alpha = eo_do_ret(eo_obj, alpha, evas_filter_input_alpha());
+             pgm = evas_filter_program_new("Evas.Filter", alpha);
              evas_filter_program_source_set_all(pgm, fcow->sources);
              evas_filter_program_state_set(pgm, eo_obj, obj,
                                            fcow->state.cur.name, fcow->state.cur.value,
