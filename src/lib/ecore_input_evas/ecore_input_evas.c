@@ -459,14 +459,17 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
      {
         //ECORE_UP or ECORE_CANCEL
         eel = _ecore_event_evas_lookup(e->multi.device, e->buttons, EINA_FALSE);
-
-        if ((!eel) || (eel->state == ECORE_INPUT_UP) || (eel->state == ECORE_INPUT_CANCEL))
+        if (!eel)
           {
-            if (!eel)
-              WRN("ButtonEvent has no history.");
-            else
-              WRN("ButtonEvent has wrong history. Last state=%d", eel->state);
-            return ECORE_CALLBACK_PASS_ON;
+             WRN("ButtonEvent has no history.");
+             return ECORE_CALLBACK_PASS_ON;
+          }
+
+        if ((eel->state == ECORE_INPUT_UP) ||
+            (eel->state == ECORE_INPUT_CANCEL))
+          {
+             WRN("ButtonEvent has wrong history. Last state=%d", eel->state);
+             return ECORE_CALLBACK_PASS_ON;
           }
      }
 
