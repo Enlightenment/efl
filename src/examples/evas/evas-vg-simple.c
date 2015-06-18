@@ -66,7 +66,7 @@ Bezier bezierFromPoints(Point p1, Point p2,
     return b;
 }
 
-inline void
+static inline void
 parameterSplitLeft(Bezier *b, float t, Bezier *left)
 {
     left->x1 = b->x1;
@@ -104,7 +104,7 @@ Bezier bezierOnInterval(Bezier *b, float t0, float t1)
     return result;
 }
 
-inline void
+static inline void
 _bezier_coefficients(float t, float *ap, float *bp, float *cp, float *dp)
 {
     float a,b,c,d;
