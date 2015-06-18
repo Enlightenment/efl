@@ -247,7 +247,8 @@ _evas_render2_th_main(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
    for (;;)
      {
         msg = eina_thread_queue_wait(_th_main_queue, &ref);
-        _evas_render2_th_main_do(msg->eo_e, msg->e);
+        if (msg)
+          _evas_render2_th_main_do(msg->eo_e, msg->e);
         eina_thread_queue_wait_done(_th_main_queue, ref);
      }
    return NULL;
