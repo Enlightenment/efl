@@ -142,7 +142,6 @@ _evas_render2_th_main_obj_process(Evas_Public_Data *e,
    Evas_Object *eo_obj = obj->object;
    const Eina_Inlist *il;
 
-   if (!obj->changed) return;
    il = evas_object_smart_members_get_direct(eo_obj);
    if (il)
      {
@@ -177,7 +176,7 @@ _evas_render2_th_main_do(Eo *eo_e, Evas_Public_Data *e)
    double t;
    Tilebuf *updates = NULL;
    Tilebuf_Rect *rects, *r;
-   Eina_List *updates_list = NULL;
+   Eina_List *updates_list = NULL, *l;
    Eina_Rectangle *rect;
 
    updates = evas_common_tilebuf_new(e->output.w, e->output.h);
@@ -195,6 +194,19 @@ _evas_render2_th_main_do(Eo *eo_e, Evas_Public_Data *e)
                                                0);
           }
      }
+   // add explicitly exposed/damaged regions of the canvas
+   EINA_LIST_FREE(e->damages, rect)
+     {
+        evas_common_tilebuf_add_redraw(updates, rect->x, rect->y,
+                                       rect->w, rect->h);
+        eina_rectangle_free(rect);
+     }
+   // build obscure objects list of active objects that obscure
+   EINA_LIST_FOREACH(e->obscures, l, rect)
+     {
+        evas_common_tilebuf_del_redraw(updates, rect->x, rect->y,
+                                       rect->w, rect->h);
+     }
    t = get_time() - t;
    printf("T: update generation: "); out_time(t);
 
@@ -204,7 +216,7 @@ _evas_render2_th_main_do(Eo *eo_e, Evas_Public_Data *e)
         rect = malloc(sizeof(Eina_Rectangle));
         if (rect)
           {
-             printf(" %i %i %ix%i\n", r->x, r->y, r->w, r->h);
+             printf(" Render Region [ %4i %4i %4ix%4i ]\n", r->x, r->y, r->w, r->h);
              rect->x = r->x; rect->y = r->y;
              rect->w = r->w; rect->h = r->h;
              updates_list = eina_list_append(updates_list, rect);

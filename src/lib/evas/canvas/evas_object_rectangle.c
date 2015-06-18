@@ -137,7 +137,7 @@ evas_object_rectangle_render2_walk(Evas_Object *eo_obj,
    // just became visible or invisible
    if (visible_is != visible_was)
      {
-        printf("       UP1 %p - %i %i %ix%i\n", eo_obj,
+        printf("       UP1 %p - %4i %4i %4ix%4i\n", eo_obj,
                obj->cur->cache.clip.x, obj->cur->cache.clip.y,
                obj->cur->cache.clip.w, obj->cur->cache.clip.h);
         evas_common_tilebuf_add_redraw
@@ -160,7 +160,7 @@ evas_object_rectangle_render2_walk(Evas_Object *eo_obj,
        (obj->restack)
       )
      {
-        printf("       UP2 %p - %i %i %ix%i\n", eo_obj,
+        printf("       UP2 %p - %4i %4i %4ix%4i\n", eo_obj,
                obj->prev->cache.clip.x, obj->prev->cache.clip.y,
                obj->prev->cache.clip.w, obj->prev->cache.clip.h);
         evas_common_tilebuf_add_redraw
@@ -177,7 +177,7 @@ nochange:
    // object hasn't really changed
    if ((visible_is) && (evas_object_is_opaque(eo_obj, obj)))
      {
-        printf("       NO- %p - %i %i %ix%i\n", eo_obj,
+        printf("       NO- %p - %4i %4i %4ix%4i\n", eo_obj,
                obj->cur->cache.clip.x, obj->cur->cache.clip.y,
                obj->cur->cache.clip.w, obj->cur->cache.clip.h);
         evas_common_tilebuf_del_redraw
