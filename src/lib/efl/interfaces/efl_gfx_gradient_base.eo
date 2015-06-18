@@ -5,33 +5,27 @@ interface Efl.Gfx.Gradient.Base
    methods {
       @property stop {
          set {
-            /*@
-              Set the list of color stops for the gradient
-            */
+            [[Set the list of color stops for the gradient]]
          }
          get {
-            /*@
-              get the list of color stops.
-            */
+            [[Get the list of color stops.]]
          }
          values {
-            colors: const(Efl_Gfx_Gradient_Stop) *; /*@ color stops list*/
-            length: uint; /*@ length of the list */
+            colors: const(Efl_Gfx_Gradient_Stop) *; [[color stops list]]
+            length: uint; [[length of the list]]
          }
       }
       @property spread {
          set {
-            /*@
-              Specifies the spread method that should be used for this gradient.
-            */
+            [[Specifies the spread method that should be used for this gradient.]]
          }
          get {
-            /*@
-              Returns the spread method use by this gradient. The default is EFL_GFX_GRADIENT_SPREAD_PAD.
-            */
+            [[Returns the spread method use by this gradient. The default is
+              EFL_GFX_GRADIENT_SPREAD_PAD.
+            ]]
          }
          values {
-            s: Efl_Gfx_Gradient_Spread; /*@ spread type to be used */
+            s: Efl_Gfx_Gradient_Spread; [[spread type to be used]]
          }
       }
    }
