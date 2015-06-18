@@ -125,61 +125,6 @@ static void        _color_overlays_cancel(void);
 #define ELM_CONFIG_LIST(edd, type, member, eddtype) \
   EET_DATA_DESCRIPTOR_ADD_LIST(edd, type, #member, member, eddtype)
 
-#ifdef HAVE_ELEMENTARY_X
-static Ecore_Event_Handler *_prop_change_handler = NULL;
-static Ecore_Timer *_prop_change_delay_timer = NULL;
-static Ecore_X_Window _config_win = 0;
-#define ATOM_COUNT 3
-static Ecore_X_Atom _atom[ATOM_COUNT];
-static const char *_atom_names[ATOM_COUNT] =
-{
-   "ELM_PROFILE",
-   "ELM_CONFIG",
-   "ELM_CONFIG_WIN"
-};
-#define ATOM_E_PROFILE    0
-#define ATOM_E_CONFIG     1
-#define ATOM_E_CONFIG_WIN 2
-
-static Eina_Bool
-_prop_change_delay_cb(void *data EINA_UNUSED)
-{
-   char *s;
-
-   if (!getenv("ELM_PROFILE"))
-     {
-        s = ecore_x_window_prop_string_get(_config_win, _atom[ATOM_E_PROFILE]);
-        if (s)
-          {
-             free(_elm_profile);
-             _elm_profile = s;
-          }
-     }
-   _config_get();
-   _prop_change_delay_timer = NULL;
-
-   return ECORE_CALLBACK_CANCEL;
-}
-
-static Eina_Bool
-_prop_change(void *data  EINA_UNUSED,
-             int ev_type EINA_UNUSED,
-             void       *ev)
-{
-   Ecore_X_Event_Window_Property *event = ev;
-
-   if (event->win == _config_win)
-     {
-        if (event->atom == _atom[ATOM_E_PROFILE])
-          {
-             ecore_timer_del(_prop_change_delay_timer);
-             _prop_change_delay_timer = ecore_timer_add(0.1, _prop_change_delay_cb, NULL);
-          }
-     }
-   return ECORE_CALLBACK_PASS_ON;
-}
-#endif
-
 static void
 _elm_font_overlays_del_free(void)
 {
@@ -3118,12 +3063,6 @@ EAPI void
 elm_config_all_flush(void)
 {
    FILE *f;
-
-#ifdef HAVE_ELEMENTARY_X
-   if (ecore_x_display_get())
-     ecore_x_window_prop_string_set(_config_win, _atom[ATOM_E_PROFILE],
-                                    _elm_profile);
-#endif
    char buf[PATH_MAX];
 
    _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s/flush",
@@ -3187,7 +3126,6 @@ void
 _elm_config_sub_shutdown(void)
 {
 #ifdef HAVE_ELEMENTARY_X
-   ELM_SAFE_FREE(_prop_change_delay_timer, ecore_timer_del);
    if (ecore_x_display_get()) ecore_x_shutdown();
 #endif
    ELM_SAFE_FREE(_eio_monitor, eio_monitor_del);
@@ -3251,59 +3189,9 @@ _elm_config_sub_init(void)
         else /* No $DISPLAY */
           init_x = EINA_FALSE;
      }
-
    if (init_x)
      {
-        if (ecore_x_init(NULL))
-          {
-             Ecore_X_Window win = 0, win2 = 0, root;
-
-             if (!ecore_x_screen_is_composited(0))
-               _elm_config->compositing = 0;
-             ecore_x_atoms_get(_atom_names, ATOM_COUNT, _atom);
-             root = ecore_x_window_root_first_get();
-             if (ecore_x_window_prop_window_get(root,
-                                                _atom[ATOM_E_CONFIG_WIN],
-                                                &win, 1) == 1)
-               {
-                  if (ecore_x_window_prop_window_get(win,
-                                                     _atom[ATOM_E_CONFIG_WIN],
-                                                     &win2, 1) == 1)
-                    {
-                       if (win2 == win) _config_win = win;
-                    }
-               }
-             if (_config_win == 0)
-               _config_win = ecore_x_window_permanent_new
-               (root, _atom[ATOM_E_CONFIG_WIN]);
-
-             ecore_x_event_mask_set(_config_win,
-                                    ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
-             _prop_change_handler = ecore_event_handler_add
-             (ECORE_X_EVENT_WINDOW_PROPERTY, _prop_change, NULL);
-             if (!getenv("ELM_PROFILE"))
-               {
-                  char *s;
-
-                  s = ecore_x_window_prop_string_get(_config_win,
-                                                     _atom[ATOM_E_PROFILE]);
-                  if (s)
-                    {
-                       int changed = 0;
-
-                       if (_elm_profile)
-                         {
-                            if (strcmp(_elm_profile, s)) changed = 1;
-                            free(_elm_profile);
-                         }
-                       _elm_profile = s;
-                       if (changed) _config_get();
-                       s = strchr(_elm_profile, '/');
-                       if (s) *s = 0;
-                    }
-               }
-          }
-        else ERR("Cannot connect to X11 display. check $DISPLAY variable");
+        ecore_x_init(NULL);
      }
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
@@ -3558,9 +3446,6 @@ _elm_config_profile_set(const char *profile)
 void
 _elm_config_shutdown(void)
 {
-#ifdef HAVE_ELEMENTARY_X
-   ELM_SAFE_FREE(_prop_change_handler, ecore_event_handler_del);
-#endif
    ELM_SAFE_FREE(_elm_config, _config_free);
    ELM_SAFE_FREE(_elm_preferred_engine, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
