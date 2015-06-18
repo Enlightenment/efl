@@ -6,167 +6,169 @@ class Ecore_Audio_In (Ecore_Audio)
    methods {
       @property speed {
          set {
-            /*@
-            Set the playback speed of the input.
+            [[Set the playback speed of the input.
 
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the playback speed of the input.
+            [[Get the playback speed of the input.
 
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          values {
-            speed: double; /*@ The speed, 1.0 is the default*/
+            speed: double; [[The speed, 1.0 is the default]]
          }
       }
       @property samplerate {
          set {
-            /*@
-            Set the sample-rate of the input
+            [[Set the sample-rate of the input
 
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the he sample-rate of the input
+            [[Get the he sample-rate of the input
 
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          values {
-            samplerate: int; /*@ The samplerate in Hz*/
+            samplerate: int; [[The samplerate in Hz]]
          }
       }
       @property channels {
          set {
-            /*@
-            Set the amount of channels the input has
+            [[Set the amount of channels the input has
 
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the amount of channels the input has
+            [[Get the amount of channels the input has
 
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          values {
-            channels: int; /*@ The number of channels*/
+            channels: int; [[The number of channels]]
          }
       }
       @property preloaded {
          set {
-            /*@
-            Set the preloaded state of the input
+            [[Set the preloaded state of the input
 
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the the preloaded state of the input
+            [[Get the the preloaded state of the input
 
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          values {
-            preloaded: bool; /*@ EINA_TRUE if the input should be cached, EINA_FALSE otherwise*/
+            preloaded: bool; [[true if the input should be cached, false otherwise]]
          }
       }
       @property looped {
          set {
-            /*@
-            Set the looped state of the input
+            [[Set the looped state of the input
 
-            If the input is looped and reaches the end it will start from the
-            beginning again. At the same time the event @ref ECORE_AUDIO_EV_IN_LOOPED
-            will be emitted
+              If the input is looped and reaches the end it will start from the
+              beginning again. At the same time the event @ECORE_AUDIO_EV_IN_LOOPED
+              will be emitted
 
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the looped state of the input
+            [[Get the looped state of the input
 
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          values {
-            looped: bool; /*@ EINA_TRUE if the input should be looped, EINA_FALSE otherwise*/
+            looped: bool; [[true if the input should be looped, false otherwise]]
          }
       }
       @property length {
          set {
-            /*@
-            Set the length of the input
+            [[Set the length of the input
 
-            This function is only implemented by some classes
-            (i.e. ECORE_AUDIO_OBJ_IN_TONE_CLASS)
+              This function is only implemented by some classes
+              (i.e. ECORE_AUDIO_OBJ_IN_TONE_CLASS)
 
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          get {
-            /*@
-            Get the length of the input
+            [[Get the length of the input
 
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          values {
-            length: double; /*@ The length of the input in seconds*/
+            length: double; [[The length of the input in seconds]]
          }
       }
       @property output {
          get {
-            /*@
-            Get the output that this input is attached to
+            [[Get the output that this input is attached to
 
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          values {
-            output: Eo *; /*@ The output*/
+            output: Eo *; [[The output]]
          }
       }
       @property remaining {
          get {
-            /*@
-            Get the remaining time of the input
+            [[Get the remaining time of the input
 
-            @since 1.8 */
+              @since 1.8
+            ]]
          }
          values {
-            remaining: double; /*@ The amount of time in seconds left to play*/
+            remaining: double; [[The amount of time in seconds left to play]]
          }
       }
       read {
-         /*@
-         Read from the input
+         [[Read from the input
 
-         @since 1.8 */
-         return: ssize; /*@ The amount of samples written to buf*/
+           @since 1.8
+         ]]
+         return: ssize; [[The amount of samples written to buf]]
          params {
-            @in buf: void *; /*@ The buffer to read into*/
-            @in len: size; /*@ The amount of samples to read*/
+            @in buf: void *; [[The buffer to read into]]
+            @in len: size; [[The amount of samples to read]]
          }
       }
       read_internal {
-         /*@
-         Internal read function
+         [[Internal read function
 
-         @since 1.8 */
-         return: ssize; /*@ The amount of samples written to buf*/
+           @since 1.8
+         ]]
+         return: ssize; [[The amount of samples written to buf]]
          params {
-            @in buf: void *; /*@ The buffer to read into*/
-            @in len: size; /*@ The amount of samples to read*/
+            @in buf: void *; [[The buffer to read into]]
+            @in len: size; [[The amount of samples to read]]
          }
       }
       seek {
-         /*@
-         Seek within the input
+         [[Seek within the input
 
-         @since 1.8 */
-         return: double; /*@ The current absolute position in seconds within the input*/
+           @since 1.8
+         ]]
+         return: double; [[The current absolute position in seconds within
+                           the input]]
          params {
-            @in offs: double; /*@ The offset in seconds*/
-            @in mode: int; /*@ mode The seek mode. Is absolute with SEEK_SET, relative to the
-                            current position with SEEK_CUR and relative to the end with SEEK_END.*/
+            @in offs: double; [[The offset in seconds]]
+            @in mode: int; [[The seek mode. Is absolute with SEEK_SET,
+                             relative to the current position with SEEK_CUR
+                             and relative to the end with SEEK_END.]]
          }
       }
    }
