@@ -7,7 +7,9 @@
 # include "Evas.h"
 # include "Evas_Engine_GL_Drm.h"
 
+# define EGL_EGLEXT_PROTOTYPES
 # define GL_GLEXT_PROTOTYPES
+
 # include <EGL/egl.h>
 # include <EGL/eglext.h>
 # include <EGL/eglmesaext.h>

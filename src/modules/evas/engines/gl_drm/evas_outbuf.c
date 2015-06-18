@@ -246,7 +246,7 @@ _evas_outbuf_egl_setup(Outbuf *ob)
         DBG("Config Format: %d", format);
         DBG("OB Format: %d", ob->info->info.format);
 
-        if (format == ob->info->info.format)
+        if (format == (int)ob->info->info.format)
           {
              ob->egl.config = cfgs[i];
              break;
