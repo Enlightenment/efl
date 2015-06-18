@@ -466,13 +466,19 @@ EAPI extern Eo_Hook_Call eo_hook_call_post;
      if (Hook)                                                          \
        Hook(___call.klass, ___call.obj, FuncName, ___call.func, __VA_ARGS__);
 
+#ifdef _WIN32
+#define EO_FUNC_COMMON_OP_FUNC(Name) ((const void *) #Name)
+#else
+#define EO_FUNC_COMMON_OP_FUNC(Name) ((const void *) Name)
+#endif
+
 // cache OP id, get real fct and object data then do the call
 #define EO_FUNC_COMMON_OP(Name, DefRet)                                 \
      Eo_Op_Call_Data ___call;                                           \
      Eina_Bool ___is_main_loop = eina_main_loop_is();                   \
      static Eo_Op ___op = EO_NOOP;                                      \
      if (___op == EO_NOOP)                                              \
-       ___op = _eo_api_op_id_get((void*) Name, ___is_main_loop, __FILE__, __LINE__); \
+       ___op = _eo_api_op_id_get(EO_FUNC_COMMON_OP_FUNC(Name), ___is_main_loop, __FILE__, __LINE__); \
      if (!_eo_call_resolve(#Name, ___op, &___call, ___is_main_loop, __FILE__, __LINE__)) return DefRet; \
      _Eo_##Name##_func _func_ = (_Eo_##Name##_func) ___call.func;       \
 

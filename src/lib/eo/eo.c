@@ -681,11 +681,12 @@ end:
    return EINA_FALSE;
 }
 
-
+/* api_func should be the pointer to the function on all platforms except windows,
+ * in which it should be the the name of the function (string).
+ */
 static inline const Eo_Op_Description *
-_eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class **extns, const char *api_name)
+_eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class **extns)
 {
-   int imin, imax, imid;
    const _Eo_Class *cur_klass;
    const _Eo_Class **kls_itr = NULL;
    const Eo_Op_Description *op_desc;
@@ -696,9 +697,12 @@ _eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class *
         for (kls_itr = klass->mro ; *kls_itr ; kls_itr++)
           {
              cur_klass = *kls_itr;
+             op_descs = cur_klass->desc->ops.descs;
+
+#ifndef _WIN32
+             int imin, imax, imid;
              imin = 0;
              imax = cur_klass->desc->ops.count - 1;
-             op_descs = cur_klass->desc->ops.descs;
 
              while (imax >= imin)
                {
@@ -712,8 +716,8 @@ _eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class *
                   else
                     return op_desc;
                }
-
-#ifdef _WIN32
+#else
+             const char *api_name = api_func; /* We put it here on windows. */
              /* On Windows, DLL API's will be exported using the dllexport flag.
               * When used by another library or executable, they will be declared
               * using the dllimport flag. What happens really is that two symbols are
@@ -739,7 +743,7 @@ _eo_api_desc_get(const void *api_func, const _Eo_Class *klass, const _Eo_Class *
         for (kls_itr = extns ; *kls_itr ; kls_itr++)
           {
              cur_klass = *kls_itr;
-             op_desc = _eo_api_desc_get(api_func, cur_klass, NULL, api_name);
+             op_desc = _eo_api_desc_get(api_func, cur_klass, NULL);
              if (op_desc) return op_desc;
           }
      }
@@ -764,18 +768,19 @@ _eo_api_op_id_get(const void *api_func, Eina_Bool is_main_loop, const char *file
    else
      klass = stack->frame_ptr->o.obj->klass;
 
-   // Win32 compatibility: api_name is NULL because we're assuming the
-   // function pointer is correct (it was referred to using the same
-   // dllimport vs. dllexport flags).
-   desc = _eo_api_desc_get(api_func, klass, klass->extensions, NULL);
+   desc = _eo_api_desc_get(api_func, klass, klass->extensions);
 
    if (desc == NULL)
      {
         const char *fct_name = "unknown";
-#ifdef HAVE_DLADDR
+#ifndef _WIN32
+# ifdef HAVE_DLADDR
         Dl_info info;
         if (dladdr(api_func, &info) != 0)
           fct_name = info.dli_sname;
+# endif
+#else
+        fct_name = api_func; /* Same on windows */
 #endif
         ERR("in %s:%d: unable to resolve %s api func '%s' %p in class '%s'.",
             file, line, (class_ref ? "class" : "regular"),
@@ -839,9 +844,9 @@ _eo_class_funcs_set(_Eo_Class *klass)
         else if (op_desc->op == EO_OP_OVERRIDE)
           {
 #ifdef _WIN32
-             api_desc = _eo_api_desc_get(op_desc->api_func, klass->parent, klass->extensions, op_desc->api_name);
+             api_desc = _eo_api_desc_get(op_desc->api_name, klass->parent, klass->extensions);
 #else
-             api_desc = _eo_api_desc_get(op_desc->api_func, klass->parent, klass->extensions, NULL);
+             api_desc = _eo_api_desc_get(op_desc->api_func, klass->parent, klass->extensions);
 #endif
 
              if (api_desc == NULL)
