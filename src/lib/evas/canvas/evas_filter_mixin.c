@@ -121,7 +121,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
         if (!fcow->chain)
           {
              Evas_Filter_Program *pgm;
-             pgm = evas_filter_program_new(obj->name ? obj->name : obj->type, alpha);
+             pgm = evas_filter_program_new(fcow->name, alpha);
              evas_filter_program_source_set_all(pgm, fcow->sources);
              evas_filter_program_state_set(pgm, eo_obj, obj,
                                            fcow->state.cur.name, fcow->state.cur.value,
@@ -252,25 +252,27 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
 EOLIAN void
 _evas_filter_efl_gfx_filter_program_set(Eo *eo_obj, Evas_Filter_Data *pd,
-                                        const char *code)
+                                        const char *code, const char *name)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
    Evas_Filter_Program *pgm = NULL;
    Eina_Bool alpha;
 
    if (!pd) return;
-   if (pd->data->code == code) return;
-   if (pd->data->code && code && !strcmp(code, pd->data->code)) return;
+   if ((pd->data->code == code) && (!name || (pd->data->name == name))) return;
+   if (pd->data->code && code && !strcmp(code, pd->data->code) &&
+       pd->data->name && name && !strcmp(name, pd->data->name)) return;
 
    evas_object_async_block(obj);
    EINA_COW_WRITE_BEGIN(evas_object_filter_cow, pd->data, Evas_Object_Filter_Data, fcow)
      {
         // Parse filter program
         evas_filter_program_del(fcow->chain);
+        eina_stringshare_replace(&fcow->name, name);
         if (code)
           {
              alpha = eo_do_ret(eo_obj, alpha, evas_filter_input_alpha());
-             pgm = evas_filter_program_new("Evas.Filter", alpha);
+             pgm = evas_filter_program_new(fcow->name, alpha);
              evas_filter_program_source_set_all(pgm, fcow->sources);
              evas_filter_program_state_set(pgm, eo_obj, obj,
                                            fcow->state.cur.name, fcow->state.cur.value,
@@ -298,10 +300,11 @@ _evas_filter_efl_gfx_filter_program_set(Eo *eo_obj, Evas_Filter_Data *pd,
    evas_object_inform_call_resize(eo_obj);
 }
 
-EOLIAN const char *
-_evas_filter_efl_gfx_filter_program_get(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd)
+EOLIAN void
+_evas_filter_efl_gfx_filter_program_get(Eo *eo_obj EINA_UNUSED, Evas_Filter_Data *pd, const char **code, const char **name)
 {
-   return pd->data->code;
+   if (code) *code = pd->data->code;
+   if (name) *name = pd->data->name;
 }
 
 EOLIAN void

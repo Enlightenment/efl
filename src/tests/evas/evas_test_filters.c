@@ -311,7 +311,7 @@ START_TEST(evas_filter_text_padding_test)
         // Don't test proxy cases here.
         if (tc->source) continue;
 
-        eo_do(to, efl_gfx_filter_program_set(tc->code));
+        eo_do(to, efl_gfx_filter_program_set(tc->code, "evas_test_filter"));
         evas_object_text_style_pad_get(to, &l, &r, &t, &b);
         evas_object_geometry_get(to, NULL, NULL, &W, &H);
         //fprintf(stderr, "Case %d: %dx%d for padding %d,%d,%d,%d\n", k, W, H, l, r, t, b);
@@ -400,13 +400,13 @@ START_TEST(evas_filter_text_render_test)
              eo_do(to,
                    efl_gfx_color_set(255, 255, 255, 255),
                    efl_gfx_filter_source_set(tc->source, o),
-                   efl_gfx_filter_program_set(tc->code));
+                   efl_gfx_filter_program_set(tc->code, , "evas_test_filter"));
           }
         else
           {
              eo_do(to,
                    efl_gfx_color_set(255, 255, 255, 255),
-                   efl_gfx_filter_program_set(tc->code));
+                   efl_gfx_filter_program_set(tc->code, , "evas_test_filter"));
           }
 
         evas_object_geometry_get(to, NULL, NULL, &w, &h);

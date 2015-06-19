@@ -4729,17 +4729,16 @@ evas_object_image_smooth_scale_get(const Eo *obj)
 }
 
 EOLIAN void
-_evas_image_efl_gfx_filter_program_set(Eo *obj, Evas_Image_Data *pd EINA_UNUSED, const char *code)
+_evas_image_efl_gfx_filter_program_set(Eo *obj, Evas_Image_Data *pd EINA_UNUSED, const char *code, const char *name)
 {
    pd->has_filter = (code != NULL);
-   eo_do_super(obj, MY_CLASS, efl_gfx_filter_program_set(code));
+   eo_do_super(obj, MY_CLASS, efl_gfx_filter_program_set(code, name));
 }
 
-EOLIAN const char *
-_evas_image_efl_gfx_filter_program_get(Eo *obj, Evas_Image_Data *pd EINA_UNUSED)
+EOLIAN void
+_evas_image_efl_gfx_filter_program_get(Eo *obj, Evas_Image_Data *pd EINA_UNUSED, const char **code, const char **name)
 {
-   const char *code;
-   return eo_do_super_ret(obj, MY_CLASS, code, efl_gfx_filter_program_get());
+   eo_do_super(obj, MY_CLASS, efl_gfx_filter_program_get(code, name));
 }
 
 EOLIAN void

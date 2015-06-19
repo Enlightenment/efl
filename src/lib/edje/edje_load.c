@@ -1507,6 +1507,7 @@ _edje_file_del(Edje *ed)
                   eina_stringshare_del(rp->typedata.text->cache.out_str);
                   if (!rp->typedata.text->filter.no_free)
                     eina_stringshare_del(rp->typedata.text->filter.code);
+                  eina_stringshare_del(rp->typedata.text->filter.name);
                   free(rp->typedata.text);
                }
              else if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
@@ -1932,6 +1933,7 @@ _edje_collection_free_part_description_clean(int type, Edje_Part_Description_Com
              eina_stringshare_del(text->text.font.str);
              if (!text->text.filter.no_free)
                eina_stringshare_del(text->text.filter.code);
+             eina_stringshare_del(text->text.filter.name);
           }
         break;
      }

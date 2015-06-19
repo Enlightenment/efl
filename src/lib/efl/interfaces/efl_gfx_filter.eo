@@ -24,6 +24,7 @@ interface Efl.Gfx.Filter
          }
          values {
             code: const(char)*; [[filter program source code]]
+            name: const(char)*(0); [[filter name (optional)]]
          }
       }
       @property state {

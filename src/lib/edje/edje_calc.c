@@ -2404,7 +2404,7 @@ _edje_part_recalc_single_map(Edje *ed,
 }
 
 static inline const char *
-_edje_filter_get(Edje *ed, Edje_Part_Description_Spec_Filter *filter)
+_edje_filter_get(Edje *ed, Edje_Real_Part *ep, Edje_Part_Description_Spec_Filter *filter)
 {
    if (!filter->code) return NULL;
    if (EINA_UNLIKELY(!filter->checked_data))
@@ -2414,10 +2414,12 @@ _edje_filter_get(Edje *ed, Edje_Part_Description_Spec_Filter *filter)
         st = eina_hash_find(ed->file->data, filter->code);
         if (st)
           {
-             eina_stringshare_del(filter->code);
+             filter->name = filter->code;
              filter->code = st->str;
              filter->no_free = 1;
           }
+        else
+          filter->name = eina_stringshare_add(ep->part->name);
      }
    return filter->code;
 }
@@ -2465,15 +2467,15 @@ _edje_part_recalc_single_filter(Edje *ed,
      }
 
    /* common code below */
-   code = _edje_filter_get(ed, filter);
+   code = _edje_filter_get(ed, ep, filter);
    if (!code)
      {
-        eo_do(obj, efl_gfx_filter_program_set(NULL));
+        eo_do(obj, efl_gfx_filter_program_set(NULL, NULL));
         return;
      }
 
    eo_do(obj,
-         efl_gfx_filter_program_set(code);
+         efl_gfx_filter_program_set(code, filter->name);
          if (prev_sources != filter_sources)
            {
               /* remove sources that are not there anymore
