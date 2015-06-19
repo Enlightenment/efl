@@ -72,19 +72,20 @@ struct _Elm_Layout_Part_Alias_Description
  */
 typedef struct _Elm_Layout_Smart_Data
 {
-   Evas_Object          *obj; /* The object itself */
-   Eina_List            *subs; /**< List of Elm_Layout_Sub_Object_Data structs, to hold the actual sub objects */
-   Eina_List            *edje_signals;
-   Eina_List            *parts_cursors;
-   const char           *klass, *group;
+   Evas_Object          *obj; /**< The object itself */
+   Eina_List            *subs; /**< List of Elm_Layout_Sub_Object_Data structs, to hold the actual sub objects such as text, content and the children of box and table. */
+   Eina_List            *edje_signals; /**< The list of edje signal callbacks. */
+   Eina_List            *parts_cursors; /**< The list of cursor names of layout parts. This is a list of Elm_Layout_Sub_Object_Cursor struct. */
+   const char           *klass; /**< 1st identifier of an edje object group which is used in theme_set. klass and group are used together. */
+   const char           *group; /**< 2nd identifier of an edje object group which is used in theme_set. klass and group are used together. */
    int                   frozen; /**< Layout freeze counter */
 
-   Eina_Bool             needs_size_calc : 1;
-   Eina_Bool             restricted_calc_w : 1;
-   Eina_Bool             restricted_calc_h : 1;
+   Eina_Bool             needs_size_calc : 1; /**< This flas is set true when the layout sizing eval is already requested. This defers sizing evaluation until smart calculation to avoid unnecessary calculation. */
+   Eina_Bool             restricted_calc_w : 1; /**< This is a flag to support edje restricted_calc in w axis. */
+   Eina_Bool             restricted_calc_h : 1; /**< This is a flag to support edje restricted_calc in y axis. */
    Eina_Bool             can_access : 1; /**< This is true when all text(including textblock) parts can be accessible by accessibility. */
-   Eina_Bool             destructed_is : 1; /**< This flag indicates if Elm_Layout destructor was called */
-   Eina_Bool             file_set : 1; /**< This flag indicates if Elm_Layout source file is set */
+   Eina_Bool             destructed_is : 1; /**< This flag indicates if Elm_Layout destructor was called. This is needed to avoid unnecessary calculation of subobject deletion during layout object's deletion. */
+   Eina_Bool             file_set : 1; /**< This flag indicates if Elm_Layout source is set from a file*/
 } Elm_Layout_Smart_Data;
 
 /**
