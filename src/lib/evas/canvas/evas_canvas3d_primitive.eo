@@ -1,4 +1,4 @@
-class Evas_Canvas3D_Primitive (Evas_Canvas3D_Object, Evas.Common_Interface)
+class Evas.Canvas3D.Primitive (Evas.Canvas3D.Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
    data: Evas_Canvas3D_Primitive_Data;
@@ -31,7 +31,7 @@ class Evas_Canvas3D_Primitive (Evas_Canvas3D_Object, Evas.Common_Interface)
               */
          }
          values {
-            form: Evas_Canvas3D_Mesh_Primitive; /*@ Form of primitive.*/
+            form: Evas.Canvas3D.Mesh_Primitive; /*@ Form of primitive.*/
          }
       }
       @property mode {
@@ -62,7 +62,7 @@ class Evas_Canvas3D_Primitive (Evas_Canvas3D_Object, Evas.Common_Interface)
               */
          }
          values {
-            mode: Evas_Canvas3D_Primitive_Mode; /*@ Mode of primitive.*/
+            mode: Evas.Canvas3D.Primitive_Mode; /*@ Mode of primitive.*/
          }
       }
       @property ratio {
@@ -71,7 +71,7 @@ class Evas_Canvas3D_Primitive (Evas_Canvas3D_Object, Evas.Common_Interface)
               *Set the ratio of the given primitive.
               *
               *Now ratio uses only in torus as the ratio of the
-              *major radius and minor radius. For this usage 
+              *major radius and minor radius. For this usage
               *Avaliable values is from 1.0 to infinity.
               *If ratio for torus has a bad value,
               *will be used 3.0 as ratio. Like ratio of usual doughnut.
@@ -141,7 +141,7 @@ class Evas_Canvas3D_Primitive (Evas_Canvas3D_Object, Evas.Common_Interface)
               */
          }
          values {
-            surface: Evas_Canvas3D_Surface_Func *; /*@ Pointer to customers surface function.*/
+            surface: Evas.Canvas3D.Surface_Func *; /*@ Pointer to customers surface function.*/
          }
       }
       @property tex_scale {

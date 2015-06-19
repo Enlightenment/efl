@@ -1,4 +1,4 @@
-class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
+class Evas.Canvas3D.Mesh (Evas.Canvas3D.Object, Evas.Common_Interface, Efl.File)
 {
    legacy_prefix: null;
    data: Evas_Canvas3D_Mesh_Data;
@@ -23,7 +23,7 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
           */
          params {
             @in frame: int; /*@ The number of the key frame. */
-            @in attrib: Evas_Canvas3D_Vertex_Attrib; /*@ Vertex attribute ID. */
+            @in attrib: Evas.Canvas3D.Vertex_Attrib; /*@ Vertex attribute ID. */
             @in stride: int; /*@ Stride to go to the next vertex (in bytes). */
             @in data: const(void)*; /*@ Pointer to the vertex data buffer. */
          }
@@ -45,7 +45,7 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
           */
          params {
             @in frame: int; /*@ The number of the key frame. */
-            @in attrib: Evas_Canvas3D_Vertex_Attrib; /*@ Vertex attribute ID. */
+            @in attrib: Evas.Canvas3D.Vertex_Attrib; /*@ Vertex attribute ID. */
             @in stride: int; /*@ Stride to go to the next vertex (in bytes). */
             @in data: const(void)*; /*@ Pointer to the vertex data buffer. */
          }
@@ -70,7 +70,7 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
          return: void *;
          params {
             @in frame: int; /*@ The number of the key frame. */
-            @in attrib: Evas_Canvas3D_Vertex_Attrib; /*@ Vertex attribute ID. */
+            @in attrib: Evas.Canvas3D.Vertex_Attrib; /*@ Vertex attribute ID. */
          }
       }
 
@@ -85,7 +85,7 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
 
          params {
             @in frame: int; /*@ The number of the key frame. */
-            @in attrib: Evas_Canvas3D_Vertex_Attrib; /*@ Vertex attribute ID. */
+            @in attrib: Evas.Canvas3D.Vertex_Attrib; /*@ Vertex attribute ID. */
          }
       }
 
@@ -106,7 +106,7 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
          return: int;
          params {
             @in frame: int; /*@ The number of the key frame. */
-            @in attrib: Evas_Canvas3D_Vertex_Attrib; /*@ Vertex attribute ID. */
+            @in attrib: Evas.Canvas3D.Vertex_Attrib; /*@ Vertex attribute ID. */
          }
       }
 
@@ -125,7 +125,7 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
            @ingroup Evas_Canvas3D_Mesh
           */
          params {
-            @in format: Evas_Canvas3D_Index_Format; /*@ Vertex index data format. */
+            @in format: Evas.Canvas3D.Index_Format; /*@ Vertex index data format. */
             @in count: int; /*@ Vertex index count. */
             @in indices: const(void)*; /*@ Pointer to the index data. */
          }
@@ -144,7 +144,7 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
            @ingroup Evas_Canvas3D_Mesh
           */
          params {
-            @in format: Evas_Canvas3D_Index_Format; /*@ Vertex index data format. */
+            @in format: Evas.Canvas3D.Index_Format; /*@ Vertex index data format. */
             @in count: int; /*@ Vertex index count. */
             @in indices: const(void)*; /*@ Pointer to the index data. */
          }
@@ -167,7 +167,7 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
 
            @ingroup Evas_Canvas3D_Mesh
           */
-         return: Evas_Canvas3D_Index_Format;
+         return: Evas.Canvas3D.Index_Format;
       }
 
       index_count_get @const {
@@ -276,8 +276,8 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
           @ingroup Evas_Canvas3D_Mesh
          */
          params {
-            @in sfactor: Evas_Canvas3D_Blend_Func; /*@ Specifies how the red, green, blue, and alpha source blending factors are computed.*/
-            @in dfactor: Evas_Canvas3D_Blend_Func; /*@ Specifies how the red, green, blue, and alpha destination blending factors are computed.*/
+            @in sfactor: Evas.Canvas3D.Blend_Func; /*@ Specifies how the red, green, blue, and alpha source blending factors are computed.*/
+            @in dfactor: Evas.Canvas3D.Blend_Func; /*@ Specifies how the red, green, blue, and alpha destination blending factors are computed.*/
          }
       }
       blending_func_get {
@@ -287,8 +287,8 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
           @ingroup Evas_Canvas3D_Mesh
          */
          params {
-            @out sfactor: Evas_Canvas3D_Blend_Func; /*@ Pointer to receive source blendin factors key.*/
-            @out dfactor: Evas_Canvas3D_Blend_Func; /*@ Pointer to receive destination blendin factors key.*/
+            @out sfactor: Evas.Canvas3D.Blend_Func; /*@ Pointer to receive source blendin factors key.*/
+            @out dfactor: Evas.Canvas3D.Blend_Func; /*@ Pointer to receive destination blendin factors key.*/
          }
       }
       from_primitive_set {
@@ -298,7 +298,7 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
          */
          params {
             @in frame: int; /*@ Specifies data of which frame of given mesh will be set.*/
-            @in primitive: Evas_Canvas3D_Primitive *; /*@ Specifies which data will be set.*/
+            @in primitive: Evas.Canvas3D.Primitive *; /*@ Specifies which data will be set.*/
          }
       }
       @property shade_mode {
@@ -321,7 +321,7 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
              */
          }
          values {
-            mode: Evas_Canvas3D_Shade_Mode; /*@ The shade mode.*/
+            mode: Evas.Canvas3D.Shade_Mode; /*@ The shade mode.*/
          }
       }
       @property color_pick_enable {
@@ -395,7 +395,7 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
             enabled: bool; /*@ Fog enabled status.*/
          }
       }
- 
+
       @property alpha_test_enable {
         set {
             /*@
@@ -440,7 +440,7 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
              */
         }
         values {
-           comparison_func: Evas_Canvas3D_Comparison; /*@ Specifies the alpha comparison function.*/
+           comparison_func: Evas.Canvas3D.Comparison; /*@ Specifies the alpha comparison function.*/
            ref_value: Evas_Real; /*@ Specifies the reference value that incoming alpha values are compared to.*/
         }
       }
@@ -493,7 +493,7 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
             frame: int; /*@ The number of the key frame.*/
          }
          values {
-            material: Evas_Canvas3D_Material *; /*@ The material to be set to the key frame.*/
+            material: Evas.Canvas3D.Material *; /*@ The material to be set to the key frame.*/
          }
       }
 
@@ -522,7 +522,7 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
              */
          }
          values {
-            assembly: Evas_Canvas3D_Vertex_Assembly; /*@ Vertex assembly.*/
+            assembly: Evas.Canvas3D.Vertex_Assembly; /*@ Vertex assembly.*/
          }
       }
 
@@ -530,8 +530,8 @@ class Evas_Canvas3D_Mesh (Evas_Canvas3D_Object, Evas.Common_Interface, Efl.File)
    implements {
       Eo.Base.constructor;
       Eo.Base.destructor;
-      Evas_Canvas3D_Object.update_notify;
-      Evas_Canvas3D_Object.change_notify;
+      Evas.Canvas3D.Object.update_notify;
+      Evas.Canvas3D.Object.change_notify;
       Efl.File.file.set;
       Efl.File.mmap.set;
       Efl.File.save;

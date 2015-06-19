@@ -1,4 +1,4 @@
-class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
+class Evas.Canvas3D.Node (Evas.Canvas3D.Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
    data: Evas_Canvas3D_Node_Data;
@@ -7,7 +7,7 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
          /*@ Constructor. */
          legacy: null;
          params {
-            @in type: Evas_Canvas3D_Node_Type;
+            @in type: Evas.Canvas3D.Node_Type;
          }
       }
       type_get @const {
@@ -20,7 +20,7 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_Canvas3D_Node
           */
-         return: Evas_Canvas3D_Node_Type ;
+         return: Evas.Canvas3D.Node_Type ;
       }
       member_add {
          /*@
@@ -35,7 +35,7 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
           */
 
          params {
-            @in member: Evas_Canvas3D_Node *;  /*@ Node object to be added. */
+            @in member: Evas.Canvas3D.Node *;  /*@ Node object to be added. */
          }
       }
       member_del {
@@ -48,7 +48,7 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
           */
 
          params {
-            @in member: Evas_Canvas3D_Node *;  /*@ Member node to be deleted from the given node. */
+            @in member: Evas.Canvas3D.Node *;  /*@ Member node to be deleted from the given node. */
          }
       }
 
@@ -62,7 +62,7 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_Canvas3D_Node
           */
-         return: Evas_Canvas3D_Node *;
+         return: Evas.Canvas3D.Node *;
       }
 
       member_list_get @const {
@@ -75,7 +75,7 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_Canvas3D_Node
           */
-         return: const(list<Evas_Canvas3D_Node *>)*;
+         return: const(list<Evas.Canvas3D.Node *>)*;
       }
       position_set {
          /*@
@@ -179,10 +179,10 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
            @ingroup Evas_Canvas3D_Node_Transform
           */
          params {
-            @in space: Evas_Canvas3D_Space; /*@  */
-            @out x: Evas_Real;      /*@ Pointer to receive X coordinate of the position.*/
-            @out y: Evas_Real;      /*@ Pointer to receive Y coordinate of the position.*/
-            @out z: Evas_Real;      /*@ Pointer to receive Z coordinate of the position.*/
+            @in space: Evas.Canvas3D.Space; /*@  */
+            @out x: Evas_Real;              /*@ Pointer to receive X coordinate of the position.*/
+            @out y: Evas_Real;              /*@ Pointer to receive Y coordinate of the position.*/
+            @out z: Evas_Real;              /*@ Pointer to receive Z coordinate of the position.*/
          }
       }
 
@@ -201,11 +201,11 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
            @ingroup Evas_Canvas3D_Node_Transform
           */
          params {
-            @in space: Evas_Canvas3D_Space; /*@  */
-            @out x: Evas_Real;      /*@ Pointer to receive X term of the orientation quaternion.*/
-            @out y: Evas_Real;      /*@ Pointer to receive Y term of the orientation quaternion.*/
-            @out z: Evas_Real;      /*@ Pointer to receive Z term of the orientation quaternion.*/
-            @out w: Evas_Real;      /*@ Pointer to receive W term of the orientation quaternion.*/
+            @in space: Evas.Canvas3D.Space; /*@  */
+            @out x: Evas_Real;              /*@ Pointer to receive X term of the orientation quaternion.*/
+            @out y: Evas_Real;              /*@ Pointer to receive Y term of the orientation quaternion.*/
+            @out z: Evas_Real;              /*@ Pointer to receive Z term of the orientation quaternion.*/
+            @out w: Evas_Real;              /*@ Pointer to receive W term of the orientation quaternion.*/
          }
       }
 
@@ -223,10 +223,10 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
            @ingroup Evas_Canvas3D_Node_Transform
           */
          params {
-            @in space: Evas_Canvas3D_Space; /*@  */
-            @out x: Evas_Real;      /*@ Pointer to receive Scale factor along X-axis.*/
-            @out y: Evas_Real;      /*@ Pointer to receive Scale factor along X-axis.*/
-            @out z: Evas_Real;      /*@ Pointer to receive Scale factor along X-axis.*/
+            @in space: Evas.Canvas3D.Space; /*@  */
+            @out x: Evas_Real;              /*@ Pointer to receive Scale factor along X-axis.*/
+            @out y: Evas_Real;              /*@ Pointer to receive Scale factor along X-axis.*/
+            @out z: Evas_Real;              /*@ Pointer to receive Scale factor along X-axis.*/
          }
       }
 
@@ -254,14 +254,14 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
           */
 
          params {
-            @in target_space: Evas_Canvas3D_Space;  /*@ Space where the target position belongs to. */
-            @in x: Evas_Real;                 /*@ X coordinate of the target position. */
-            @in y: Evas_Real;                 /*@ Y coordinate of the target position. */
-            @in z: Evas_Real;                 /*@ Z coordinate of the target position. */
-            @in up_space: Evas_Canvas3D_Space;      /*@ Space where the up vector belongs to. */
-            @in ux: Evas_Real;                /*@ X term of the up vector. */
-            @in uy: Evas_Real;                /*@ Y term of the up vector. */
-            @in uz: Evas_Real;                /*@ Z term of the up vector. */
+            @in target_space: Evas.Canvas3D.Space;  /*@ Space where the target position belongs to. */
+            @in x: Evas_Real;                       /*@ X coordinate of the target position. */
+            @in y: Evas_Real;                       /*@ Y coordinate of the target position. */
+            @in z: Evas_Real;                       /*@ Z coordinate of the target position. */
+            @in up_space: Evas.Canvas3D.Space;      /*@ Space where the up vector belongs to. */
+            @in ux: Evas_Real;                      /*@ X term of the up vector. */
+            @in uy: Evas_Real;                      /*@ Y term of the up vector. */
+            @in uz: Evas_Real;                      /*@ Z term of the up vector. */
          }
       }
 
@@ -280,7 +280,7 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
            @ingroup Evas_Canvas3D_Node
           */
          params {
-            @in mesh: Evas_Canvas3D_Mesh *;      /*@ The mesh to be added.*/
+            @in mesh: Evas.Canvas3D.Mesh *;      /*@ The mesh to be added.*/
          }
       }
 
@@ -299,7 +299,7 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
            @ingroup Evas_Canvas3D_Node
           */
          params {
-            @in mesh: Evas_Canvas3D_Mesh *;      /*@ The mesh to be deleted.*/
+            @in mesh: Evas.Canvas3D.Mesh *;      /*@ The mesh to be deleted.*/
          }
       }
 
@@ -318,7 +318,7 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_Canvas3D_Node
           */
-         return: const(list<Evas_Canvas3D_Mesh *>)*;
+         return: const(list<Evas.Canvas3D.Mesh *>)*;
       }
 
       bounding_box_get{
@@ -494,7 +494,7 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
          }
          values {
             // FIXME: Evas_Canvas3D_Camera is necessary, but that introduces a cycle
-            camera: Evas_Canvas3D_Object *; /*@ The camera */
+            camera: Evas.Canvas3D.Object *; /*@ The camera */
          }
       }
 
@@ -527,7 +527,7 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            light: Evas_Canvas3D_Light *; /*@ The light */
+            light: Evas.Canvas3D.Light *; /*@ The light */
          }
       }
 
@@ -567,7 +567,7 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
              */
          }
          keys {
-            mesh: Evas_Canvas3D_Mesh *; /*@ The given mesh.*/
+            mesh: Evas.Canvas3D.Mesh *; /*@ The given mesh.*/
          }
          values {
             frame: int; /*@ The animation frame number.*/
@@ -605,10 +605,10 @@ class Evas_Canvas3D_Node (Evas_Canvas3D_Object, Evas.Common_Interface)
    }
    implements {
       Eo.Base.destructor;
-      Evas_Canvas3D_Object.update_notify;
-      Evas_Canvas3D_Object.change_notify;
-      Evas_Canvas3D_Object.callback_register;
-      Evas_Canvas3D_Object.callback_unregister;
+      Evas.Canvas3D.Object.update_notify;
+      Evas.Canvas3D.Object.change_notify;
+      Evas.Canvas3D.Object.callback_register;
+      Evas.Canvas3D.Object.callback_unregister;
    }
    constructors {
       .constructor;

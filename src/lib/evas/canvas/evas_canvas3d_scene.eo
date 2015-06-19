@@ -1,4 +1,4 @@
-class Evas_Canvas3D_Scene (Evas_Canvas3D_Object, Evas.Common_Interface)
+class Evas.Canvas3D.Scene (Evas.Canvas3D.Object, Evas.Common_Interface)
 {
    legacy_prefix: null;
    data: Evas_Canvas3D_Scene_Data;
@@ -14,7 +14,7 @@ class Evas_Canvas3D_Scene (Evas_Canvas3D_Object, Evas.Common_Interface)
           */
          params {
             @in w: int;  /*@ Width of the resolution. */
-            @in h: int; /*@ Height of the resolution. */
+            @in h: int;  /*@ Height of the resolution. */
          }
       }
 
@@ -26,7 +26,7 @@ class Evas_Canvas3D_Scene (Evas_Canvas3D_Object, Evas.Common_Interface)
           */
          params {
             @out w: int;  /*@ Pointer to receive width of the resolution. */
-            @out h: int; /*@ Pointer to receive height of the resolution. */
+            @out h: int;  /*@ Pointer to receive height of the resolution. */
          }
       }
 
@@ -76,12 +76,12 @@ class Evas_Canvas3D_Scene (Evas_Canvas3D_Object, Evas.Common_Interface)
           */
          return: bool;
          params {
-            @in x: Evas_Real;         /*@ X coordinate of the picking position. */
-            @in y: Evas_Real;         /*@ Y coordinate of the picking position. */
-            @out node: Evas_Canvas3D_Node *; /*@ Pointer to receive the node contains the picked mesh. */
-            @out mesh: Evas_Canvas3D_Mesh *; /*@ Pointer to receive the picked mesh. */
-            @out s: Evas_Real;        /*@ Pointer to receive the texture "s" coordinate. */
-            @out t: Evas_Real;        /*@ Pointer to receive the texture "t" coordinate. */
+            @in x: Evas_Real;                /*@ X coordinate of the picking position. */
+            @in y: Evas_Real;                /*@ Y coordinate of the picking position. */
+            @out node: Evas.Canvas3D.Node *; /*@ Pointer to receive the node contains the picked mesh. */
+            @out mesh: Evas.Canvas3D.Mesh *; /*@ Pointer to receive the picked mesh. */
+            @out s: Evas_Real;               /*@ Pointer to receive the texture "s" coordinate. */
+            @out t: Evas_Real;               /*@ Pointer to receive the texture "t" coordinate. */
          }
       }
 
@@ -91,11 +91,11 @@ class Evas_Canvas3D_Scene (Evas_Canvas3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_Canvas3D_Scene
          */
-         return: Evas_Canvas3D_Node *;
+         return: Evas.Canvas3D.Node *;
          params {
             @in x: Evas_Real;         /*@ X coordinate of the picking position. */
             @in y: Evas_Real;         /*@ Y coordinate of the picking position. */
-            @in node: Evas_Canvas3D_Node *;  /*@ Node for search. */
+            @in node: Evas.Canvas3D.Node *;  /*@ Node for search. */
          }
       }
 
@@ -105,7 +105,7 @@ class Evas_Canvas3D_Scene (Evas_Canvas3D_Object, Evas.Common_Interface)
 
            @ingroup Evas_Canvas3D_Scene
          */
-         return: list<Evas_Canvas3D_Node *> *;
+         return: list<Evas.Canvas3D.Node *> *;
          params {
             @in x: Evas_Real;         /*@ X coordinate of the picking position. */
             @in y: Evas_Real;         /*@ Y coordinate of the picking position. */
@@ -176,7 +176,7 @@ class Evas_Canvas3D_Scene (Evas_Canvas3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            node: Evas_Canvas3D_Node *; /*@ A node which will be used as a root node for the scene. */
+            node: Evas.Canvas3D.Node *; /*@ A node which will be used as a root node for the scene. */
          }
       }
 
@@ -198,14 +198,14 @@ class Evas_Canvas3D_Scene (Evas_Canvas3D_Object, Evas.Common_Interface)
              */
          }
          values {
-            node: Evas_Canvas3D_Node *; /*@ A node which will be used as a camera node for the scene. */
+            node: Evas.Canvas3D.Node *; /*@ A node which will be used as a camera node for the scene. */
          }
       }
    }
    implements {
       Eo.Base.constructor;
-      Evas_Canvas3D_Object.update_notify;
-      Evas_Canvas3D_Object.change_notify;
+      Evas.Canvas3D.Object.update_notify;
+      Evas.Canvas3D.Object.change_notify;
    }
 
 }

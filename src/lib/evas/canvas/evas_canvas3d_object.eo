@@ -1,4 +1,4 @@
-class Evas_Canvas3D_Object (Eo.Base, Evas.Common_Interface)
+class Evas.Canvas3D.Object (Eo.Base, Evas.Common_Interface)
 {
    legacy_prefix: null;
    data: Evas_Canvas3D_Object_Data;
@@ -8,15 +8,15 @@ class Evas_Canvas3D_Object (Eo.Base, Evas.Common_Interface)
            Notify the object regarding its  state change.
           */
          params {
-           @in state: Evas_Canvas3D_State; /*@ State that is changed */
-           @in ref: Evas_Canvas3D_Object *; /*@ The Object that caused the change */
+           @in state: Evas.Canvas3D.State;  /*@ State that is changed */
+           @in ref: Evas.Canvas3D.Object *; /*@ The Object that caused the change */
          }
       }
       type_get @const {
          /*@
            Returns the type of the object.
           */
-          return: Evas_Canvas3D_Object_Type;
+          return: Evas.Canvas3D.Object_Type;
       }
 
       type_set {
@@ -24,7 +24,7 @@ class Evas_Canvas3D_Object (Eo.Base, Evas.Common_Interface)
            Returns the type of the object.
           */
           params{
-            @in type: Evas_Canvas3D_Object_Type;
+            @in type: Evas.Canvas3D.Object_Type;
           }
       }
 
@@ -34,7 +34,7 @@ class Evas_Canvas3D_Object (Eo.Base, Evas.Common_Interface)
           */
           return: bool;
          params {
-           @in state: Evas_Canvas3D_State; /*@ State whose status is being asked */
+           @in state: Evas.Canvas3D.State; /*@ State whose status is being asked */
          }
       }
 
@@ -56,8 +56,8 @@ class Evas_Canvas3D_Object (Eo.Base, Evas.Common_Interface)
            Update request for the object.
           */
          params {
-           @in state: Evas_Canvas3D_State; /*@ State that is changed */
-           @in ref: Evas_Canvas3D_Object *; /*@ The Object that caused the change */
+           @in state: Evas.Canvas3D.State;  /*@ State that is changed */
+           @in ref: Evas.Canvas3D.Object *; /*@ The Object that caused the change */
          }
       }
       callback_register {
@@ -66,7 +66,7 @@ class Evas_Canvas3D_Object (Eo.Base, Evas.Common_Interface)
           */
          params {
            @in event: const(char)*; /*@ Event type */
-           @in data: const(void)*; /*@ User data*/
+           @in data: const(void)*;  /*@ User data*/
          }
       }
       callback_unregister {
