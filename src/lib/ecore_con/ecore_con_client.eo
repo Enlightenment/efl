@@ -2,15 +2,12 @@ class Ecore.Con.Client (Ecore.Con.Base) {
    eo_prefix: ecore_con_client_obj;
    methods {
       @property server {
-         /*@
-          * Controls the server representing the socket the client has
-          * connected to.
-          *
-          */
+         [[Controls the server representing the socket the client has
+           connected to.]]
          get {
          }
          values {
-            svr: Ecore.Con.Server *; /*@ The server the client is connected to. */
+            svr: Ecore.Con.Server *; [[The server the client is connected to.]]
          }
       }
    }

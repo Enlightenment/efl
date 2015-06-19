@@ -3,16 +3,14 @@ class Efl.Network.Url (Eo.Base) {
    eo_prefix: efl_network_url;
    methods {
       @property url {
-         /*@
-          * Controls the URL to send the request to.
-          */
+         [[Controls the URL to send the request to.]]
          set {
-            return: bool (false); /*@ true on success, false on error. */
+            return: bool (false); [[true on success, false on error.]]
          }
          get {
          }
          values {
-            url: const(char) *; /*@ The URL */
+            url: const(char) *; [[The URL]]
          }
       }
    }
