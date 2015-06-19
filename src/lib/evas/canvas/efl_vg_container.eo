@@ -17,5 +17,6 @@ class Efl.VG.Container (Efl.VG.Base)
       Eo.Base.destructor;
       Efl.VG.Base.bounds_get;
       Efl.VG.Base.interpolate;
+      Efl.VG.Base.dup;
    }
 }

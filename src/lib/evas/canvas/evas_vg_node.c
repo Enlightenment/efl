@@ -744,7 +744,11 @@ _efl_vg_base_dup(Eo *obj, Efl_VG_Base_Data *pd, const Efl_VG_Base *from)
    Eo *parent = NULL;
 
    fromd = eo_data_scope_get(from, EFL_VG_BASE_CLASS);
-   pd->name = eina_stringshare_ref(fromd->name);
+   if (pd->name != fromd->name)
+     {
+        eina_stringshare_del(pd->name);
+        pd->name = eina_stringshare_ref(fromd->name);
+     }
 
    _efl_vg_base_parent_checked_get(obj, &parent, &cd);
    if (cd) _efl_vg_base_name_insert(obj, pd, cd);
@@ -753,6 +757,12 @@ _efl_vg_base_dup(Eo *obj, Efl_VG_Base_Data *pd, const Efl_VG_Base *from)
      {
         free(pd->intp);
         pd->intp = NULL;
+     }
+
+   if (pd->renderer)
+     {
+        eo_del(pd->renderer);
+        pd->renderer = NULL;
      }
 
    if (fromd->m)

@@ -73,6 +73,24 @@ _efl_vg_base_changed(Eo *obj)
    eo_do(obj, eo_event_callback_call(EFL_GFX_CHANGED, NULL));
 }
 
+static inline void *
+_efl_vg_realloc(void *from, unsigned int sz)
+{
+   void *result;
+
+   result = sz > 0 ? realloc(from, sz) : NULL;
+   if (!result) free(from);
+
+   return result;
+}
+
+static inline void
+_efl_vg_clean_object(Eo **obj)
+{
+   if (*obj) eo_unref(*obj);
+   *obj = NULL;
+}
+
 #define EFL_VG_COMPUTE_MATRIX(Current, Parent, Nd)                      \
   Eina_Matrix3 *Current = Nd->m;                                        \
   Eina_Matrix3 _matrix_tmp;                                             \

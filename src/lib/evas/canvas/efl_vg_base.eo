@@ -96,6 +96,11 @@ abstract Efl.VG.Base (Eo.Base, Efl.Gfx.Base, Efl.Gfx.Stack)
           @in pos_map: double;
         }
       }
+      dup {
+        params {
+          @in from: const(Efl.VG.Base)*;
+        }
+      }
    }
    implements {
       Eo.Base.parent.set;

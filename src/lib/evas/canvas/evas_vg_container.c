@@ -135,6 +135,32 @@ _efl_vg_container_efl_vg_base_interpolate(Eo *obj,
    return r;
 }
 
+static void
+_efl_vg_container_efl_vg_base_dup(Eo *obj,
+                                  Efl_VG_Container_Data *pd,
+                                  const Efl_VG_Base *from)
+{
+   Efl_VG_Container_Data *fromd;
+   Eina_List *l;
+   Eo *child;
+
+   eo_do_super(obj, EFL_VG_CONTAINER_CLASS, efl_vg_dup(from));
+
+   fromd = eo_data_scope_get(from, EFL_VG_CONTAINER_CLASS);
+
+   EINA_LIST_FREE(pd->children, child)
+     eo_unref(child);
+
+   EINA_LIST_FOREACH(fromd->children, l, child)
+     {
+        // By setting parent, we automatically reference
+        // this new object as a child of obj. Magic at work !
+        eo_add_ref(eo_class_get(child),
+                   obj,
+                   efl_vg_dup(child));
+     }
+}
+
 EAPI Efl_VG*
 evas_vg_container_add(Efl_VG *parent)
 {

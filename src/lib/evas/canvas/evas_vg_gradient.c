@@ -94,6 +94,22 @@ _efl_vg_gradient_efl_vg_base_interpolate(Eo *obj,
    return EINA_TRUE;
 }
 
+static void
+_efl_vg_gradient_efl_vg_base_dup(Eo *obj,
+                                 Efl_VG_Gradient_Data *pd EINA_UNUSED,
+                                 const Efl_VG_Base *from)
+{
+   Efl_VG_Gradient_Data *fromd;
+
+   eo_do_super(obj, EFL_VG_GRADIENT_CLASS, efl_vg_dup(from));
+
+   fromd = eo_data_scope_get(from, EFL_VG_GRADIENT_CLASS);
+
+   eo_do(obj,
+         efl_gfx_gradient_stop_set(fromd->colors, fromd->colors_count),
+         efl_gfx_gradient_spread_set(fromd->s));
+}
+
 EAPI void
 evas_vg_gradient_stop_set(Eo *obj, const Efl_Gfx_Gradient_Stop *colors, unsigned int length)
 {

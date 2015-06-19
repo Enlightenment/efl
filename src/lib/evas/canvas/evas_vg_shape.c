@@ -375,6 +375,47 @@ _efl_vg_shape_efl_vg_base_interpolate(Eo *obj,
    return r;
 }
 
+static void
+_efl_vg_shape_efl_vg_base_dup(Eo *obj, Efl_VG_Shape_Data *pd EINA_UNUSED, const Efl_VG_Base *from)
+{
+   Efl_VG_Shape_Data *fromd;
+   Eo *parent;
+   Eo *fill = NULL, *stroke_fill = NULL, *stroke_marker = NULL;
+
+   eo_do_super(obj, MY_CLASS, efl_vg_dup(from));
+
+   eo_do(obj, parent = eo_parent_get());
+
+   fromd = eo_data_scope_get(from, MY_CLASS);
+
+   if (fromd->fill)
+     {
+        fill = eo_add(eo_class_get(fromd->fill),
+                      parent,
+                      efl_vg_dup(fromd->fill));
+     }
+
+   if (fromd->stroke.fill)
+     {
+        stroke_fill = eo_add(eo_class_get(fromd->stroke.fill),
+                             parent,
+                             efl_vg_dup(fromd->stroke.fill));
+     }
+
+   if (fromd->stroke.marker)
+     {
+        stroke_marker = eo_add(eo_class_get(fromd->stroke.marker),
+                               parent,
+                               efl_vg_dup(fromd->stroke.marker));
+     }
+
+   eo_do(obj,
+         efl_vg_shape_fill_set(fill),
+         efl_vg_shape_stroke_fill_set(stroke_fill),
+         efl_vg_shape_stroke_marker_set(stroke_marker),
+         efl_gfx_shape_dup(from));
+}
+
 EAPI double
 evas_vg_shape_stroke_scale_get(Eo *obj)
 {

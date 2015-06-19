@@ -151,6 +151,22 @@ _efl_vg_gradient_linear_efl_vg_base_interpolate(Eo *obj,
    return EINA_TRUE;
 }
 
+static void
+_efl_vg_gradient_linear_efl_vg_base_dup(Eo *obj,
+                                        Efl_VG_Gradient_Linear_Data *pd EINA_UNUSED,
+                                        const Efl_VG_Base *from)
+{
+   Efl_VG_Gradient_Linear_Data *fromd;
+
+   eo_do_super(obj, EFL_VG_GRADIENT_LINEAR_CLASS, efl_vg_dup(from));
+
+   fromd = eo_data_scope_get(from, EFL_VG_GRADIENT_LINEAR_CLASS);
+
+   eo_do(obj,
+         efl_gfx_gradient_linear_start_set(fromd->start.x, fromd->start.y),
+         efl_gfx_gradient_linear_end_set(fromd->end.x, fromd->end.y));
+}
+
 EAPI void
 evas_vg_gradient_linear_start_set(Eo *obj, double x, double y)
 {
