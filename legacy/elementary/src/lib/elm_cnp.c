@@ -755,8 +755,8 @@ _x11_selection_notify(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event
      }
    cnp_debug("Target is %s\n", ev->target);
 
-   if (!strcmp(ev->target, "TARGETS") ||
-         !strcmp(ev->target, "ATOMS"))
+   if (ev->selection != ECORE_X_SELECTION_XDND &&
+       (!strcmp(ev->target, "TARGETS") || !strcmp(ev->target, "ATOMS")))
      {
         _x11_notify_handler_targets(sel, ev);
         return ECORE_CALLBACK_PASS_ON;
@@ -852,13 +852,13 @@ _x11_targets_converter(char *target EINA_UNUSED, void *data, int size, void **da
         seltype = sel->format;
      }
 
-   for (i = 0, count = 0; i < CNP_N_ATOMS ; i++)
+   for (i = CNP_ATOM_LISTING_ATOMS + 1, count = 0; i < CNP_N_ATOMS ; i++)
      {
         if (seltype & _atoms[i].formats) count++;
      }
    aret = malloc(sizeof(Ecore_X_Atom) * count);
    if (!aret) return EINA_FALSE;
-   for (i = 0, count = 0; i < CNP_N_ATOMS; i++)
+   for (i = CNP_ATOM_LISTING_ATOMS + 1, count = 0; i < CNP_N_ATOMS ; i++)
      {
         if (seltype & _atoms[i].formats)
           aret[count ++] = _atoms[i].x_atom;
@@ -2160,17 +2160,9 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
      }
 
    ecore_x_dnd_types_set(xwin, NULL, 0);
-   for (i = 0; i < CNP_N_ATOMS; i++)
+   for (i = CNP_ATOM_LISTING_ATOMS + 1; i < CNP_N_ATOMS; i++)
      {
-        if (_atoms[i].formats == ELM_SEL_FORMAT_TARGETS)
-          {
-             if (format == ELM_SEL_FORMAT_TARGETS)
-               {
-                  ecore_x_dnd_type_set(xwin, _atoms[i].name, EINA_TRUE);
-                  cnp_debug("set dnd type: %s\n", _atoms[i].name);
-               }
-          }
-        else if (_atoms[i].formats & format)
+        if (format == ELM_SEL_FORMAT_TARGETS || (_atoms[i].formats & format))
           {
              ecore_x_dnd_type_set(xwin, _atoms[i].name, EINA_TRUE);
              cnp_debug("set dnd type: %s\n", _atoms[i].name);
@@ -2850,17 +2842,9 @@ _wl_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    /* if we already have a drag, get out */
    if (dragwin) return EINA_FALSE;
 
-   for (i = 0; i < CNP_N_ATOMS; i++)
+   for (i = CNP_ATOM_LISTING_ATOMS + 1; i < CNP_N_ATOMS; i++)
      {
-        if (_atoms[i].formats == ELM_SEL_FORMAT_TARGETS)
-          {
-             if (format == ELM_SEL_FORMAT_TARGETS)
-               {
-                  types[nb_types++] = _atoms[i].name;
-                  cnp_debug("set dnd type: %s\n", _atoms[i].name);
-               }
-          }
-        else if (_atoms[i].formats & format)
+        if (format == ELM_SEL_FORMAT_TARGETS || (_atoms[i].formats & format))
           {
              types[nb_types++] = _atoms[i].name;
              cnp_debug("set dnd type: %s\n", _atoms[i].name);
