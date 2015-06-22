@@ -3,12 +3,12 @@
 # Daniel Juyung Seo <seojuyung2@gmail.com>, 2011.
 # Seong-ho Cho <darkcircle.0426@gmail.com>, 2013.
 #
-#: src/lib/elm_config.c:3213
+#: src/lib/elm_config.c:3083
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-05-25 11:47+0900\n"
+"POT-Creation-Date: 2015-06-22 11:28+0900\n"
 "PO-Revision-Date: 2015-05-27 01:50+0900\n"
 "Last-Translator: Daniel Juyung Seo <seojuyung2@gmail.com>\n"
 "Language-Team: General\n"
@@ -32,8 +32,8 @@ msgstr "홈"
 msgid "Search"
 msgstr "검색"
 
-#: src/lib/elc_fileselector.c:1707 src/lib/elm_entry.c:1512
-#: src/lib/elm_entry.c:1537
+#: src/lib/elc_fileselector.c:1707 src/lib/elm_entry.c:1568
+#: src/lib/elm_entry.c:1593
 msgid "Cancel"
 msgstr "취소"
 
@@ -81,10 +81,10 @@ msgstr "버블"
 msgid "Clicked"
 msgstr "클릭함"
 
-#: src/lib/elm_button.c:270 src/lib/elm_check.c:234 src/lib/elm_gengrid.c:816
-#: src/lib/elm_genlist.c:1621 src/lib/elm_list.c:2221 src/lib/elm_radio.c:264
+#: src/lib/elm_button.c:270 src/lib/elm_check.c:234 src/lib/elm_gengrid.c:817
+#: src/lib/elm_genlist.c:1622 src/lib/elm_list.c:2227 src/lib/elm_radio.c:264
 #: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:785
-#: src/lib/elm_toolbar.c:2226
+#: src/lib/elm_toolbar.c:2227
 msgid "State: Disabled"
 msgstr "상태 : 비활성화"
 
@@ -165,35 +165,35 @@ msgstr "상태: 편집 가능"
 msgid "Clock"
 msgstr "시계"
 
-#: src/lib/elm_colorselector.c:718
+#: src/lib/elm_colorselector.c:725
 msgid "Pick a color"
 msgstr "색상 선택"
 
-#: src/lib/elm_colorselector.c:754
+#: src/lib/elm_colorselector.c:761
 msgid "R:"
 msgstr "빨:"
 
-#: src/lib/elm_colorselector.c:756
+#: src/lib/elm_colorselector.c:763
 msgid "G:"
 msgstr "녹:"
 
-#: src/lib/elm_colorselector.c:758
+#: src/lib/elm_colorselector.c:765
 msgid "B:"
 msgstr "파:"
 
-#: src/lib/elm_colorselector.c:760
+#: src/lib/elm_colorselector.c:767
 msgid "A:"
 msgstr "투명:"
 
-#: src/lib/elm_colorselector.c:1433
+#: src/lib/elm_colorselector.c:1440
 msgid "color selector palette item"
 msgstr "색상 선택기 팔레트 항목"
 
-#: src/lib/elm_config.c:3229
+#: src/lib/elm_config.c:3099
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: src/lib/elm_dayselector.c:405
+#: src/lib/elm_dayselector.c:406
 msgid "day selector item"
 msgstr "날짜 셀렉터 항목"
 
@@ -201,27 +201,27 @@ msgstr "날짜 셀렉터 항목"
 msgid "diskselector item"
 msgstr "디스크셀렉터 항목"
 
-#: src/lib/elm_entry.c:1499
+#: src/lib/elm_entry.c:1555
 msgid "Copy"
 msgstr "복사"
 
-#: src/lib/elm_entry.c:1504
+#: src/lib/elm_entry.c:1560
 msgid "Cut"
 msgstr "잘라내기"
 
-#: src/lib/elm_entry.c:1508 src/lib/elm_entry.c:1531
+#: src/lib/elm_entry.c:1564 src/lib/elm_entry.c:1587
 msgid "Paste"
 msgstr "붙여넣기"
 
-#: src/lib/elm_entry.c:1524
+#: src/lib/elm_entry.c:1580
 msgid "Select"
 msgstr "선택"
 
-#: src/lib/elm_entry.c:3515
+#: src/lib/elm_entry.c:3571
 msgid "Entry"
 msgstr "엔트리"
 
-#: src/lib/elm_gengrid.c:846
+#: src/lib/elm_gengrid.c:847
 msgid "Gengrid Item"
 msgstr "젠그리드 항목"
 
@@ -265,7 +265,7 @@ msgstr "프로그레스바"
 msgid "Radio"
 msgstr "라디오 버튼"
 
-#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2228
+#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2229
 msgid "State: Selected"
 msgstr "상태: 선택함"
 
@@ -305,22 +305,22 @@ msgstr "스피너 감소 버튼"
 msgid "spinner text"
 msgstr "스피너 텍스트"
 
-#: src/lib/elm_toolbar.c:1686 src/lib/elm_toolbar.c:2285
+#: src/lib/elm_toolbar.c:1687 src/lib/elm_toolbar.c:2286
 msgid "Selected"
 msgstr "선택"
 
-#: src/lib/elm_toolbar.c:2224
+#: src/lib/elm_toolbar.c:2225
 msgid "Separator"
 msgstr "구분선"
 
-#: src/lib/elm_toolbar.c:2230
+#: src/lib/elm_toolbar.c:2231
 msgid "Has menu"
 msgstr "메뉴 있음"
 
-#: src/lib/elm_toolbar.c:2280
+#: src/lib/elm_toolbar.c:2281
 msgid "Unselected"
 msgstr "선택 해제"
 
-#: src/lib/elm_toolbar.c:2297
+#: src/lib/elm_toolbar.c:2298
 msgid "Toolbar Item"
 msgstr "툴바 항목"

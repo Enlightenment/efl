@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # Konrad Makowski <poczta@konradmakowski.pl>, 2013.
 #
-#: src/lib/elm_config.c:3213
+#: src/lib/elm_config.c:3083
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-05-25 11:47+0900\n"
+"POT-Creation-Date: 2015-06-22 11:28+0900\n"
 "PO-Revision-Date: 2013-11-23 14:48+0100\n"
 "Last-Translator: Konrad Makowski <poczta@konradmakowski.pl>\n"
 "Language-Team: General\n"
@@ -28,8 +28,8 @@ msgstr "Początek"
 msgid "Search"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1707 src/lib/elm_entry.c:1512
-#: src/lib/elm_entry.c:1537
+#: src/lib/elc_fileselector.c:1707 src/lib/elm_entry.c:1568
+#: src/lib/elm_entry.c:1593
 msgid "Cancel"
 msgstr "Anuluj"
 
@@ -77,10 +77,10 @@ msgstr "Bąbelek"
 msgid "Clicked"
 msgstr "Kliknięty"
 
-#: src/lib/elm_button.c:270 src/lib/elm_check.c:234 src/lib/elm_gengrid.c:816
-#: src/lib/elm_genlist.c:1621 src/lib/elm_list.c:2221 src/lib/elm_radio.c:264
+#: src/lib/elm_button.c:270 src/lib/elm_check.c:234 src/lib/elm_gengrid.c:817
+#: src/lib/elm_genlist.c:1622 src/lib/elm_list.c:2227 src/lib/elm_radio.c:264
 #: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:785
-#: src/lib/elm_toolbar.c:2226
+#: src/lib/elm_toolbar.c:2227
 msgid "State: Disabled"
 msgstr "Statuj: wyłączony"
 
@@ -161,35 +161,35 @@ msgstr "Stan: edytowalny"
 msgid "Clock"
 msgstr "Zegar"
 
-#: src/lib/elm_colorselector.c:718
+#: src/lib/elm_colorselector.c:725
 msgid "Pick a color"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:754
+#: src/lib/elm_colorselector.c:761
 msgid "R:"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:756
+#: src/lib/elm_colorselector.c:763
 msgid "G:"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:758
+#: src/lib/elm_colorselector.c:765
 msgid "B:"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:760
+#: src/lib/elm_colorselector.c:767
 msgid "A:"
 msgstr ""
 
-#: src/lib/elm_colorselector.c:1433
+#: src/lib/elm_colorselector.c:1440
 msgid "color selector palette item"
 msgstr "paleta wyboru kolorów"
 
-#: src/lib/elm_config.c:3229
+#: src/lib/elm_config.c:3099
 msgid "default:LTR"
 msgstr "default:RTL"
 
-#: src/lib/elm_dayselector.c:405
+#: src/lib/elm_dayselector.c:406
 msgid "day selector item"
 msgstr "wybór dni"
 
@@ -197,27 +197,27 @@ msgstr "wybór dni"
 msgid "diskselector item"
 msgstr "wybór dysków"
 
-#: src/lib/elm_entry.c:1499
+#: src/lib/elm_entry.c:1555
 msgid "Copy"
 msgstr "Kopiuj"
 
-#: src/lib/elm_entry.c:1504
+#: src/lib/elm_entry.c:1560
 msgid "Cut"
 msgstr "Wytnij"
 
-#: src/lib/elm_entry.c:1508 src/lib/elm_entry.c:1531
+#: src/lib/elm_entry.c:1564 src/lib/elm_entry.c:1587
 msgid "Paste"
 msgstr "Wklej"
 
-#: src/lib/elm_entry.c:1524
+#: src/lib/elm_entry.c:1580
 msgid "Select"
 msgstr "Wybór"
 
-#: src/lib/elm_entry.c:3515
+#: src/lib/elm_entry.c:3571
 msgid "Entry"
 msgstr "Pozycja"
 
-#: src/lib/elm_gengrid.c:846
+#: src/lib/elm_gengrid.c:847
 msgid "Gengrid Item"
 msgstr ""
 
@@ -261,7 +261,7 @@ msgstr "pasek postępu"
 msgid "Radio"
 msgstr ""
 
-#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2228
+#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2229
 msgid "State: Selected"
 msgstr "Stan: wybrany"
 
@@ -302,22 +302,22 @@ msgstr "przycisk zmniejszający typu spinner"
 msgid "spinner text"
 msgstr "spinner"
 
-#: src/lib/elm_toolbar.c:1686 src/lib/elm_toolbar.c:2285
+#: src/lib/elm_toolbar.c:1687 src/lib/elm_toolbar.c:2286
 msgid "Selected"
 msgstr "Wybrany"
 
-#: src/lib/elm_toolbar.c:2224
+#: src/lib/elm_toolbar.c:2225
 msgid "Separator"
 msgstr "Separator"
 
-#: src/lib/elm_toolbar.c:2230
+#: src/lib/elm_toolbar.c:2231
 msgid "Has menu"
 msgstr "Posiada menu"
 
-#: src/lib/elm_toolbar.c:2280
+#: src/lib/elm_toolbar.c:2281
 msgid "Unselected"
 msgstr "Nie wybrany"
 
-#: src/lib/elm_toolbar.c:2297
+#: src/lib/elm_toolbar.c:2298
 msgid "Toolbar Item"
 msgstr "Pasek narzędzi"

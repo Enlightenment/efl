@@ -1,12 +1,12 @@
 # Italian translation for Elementary.
 # This file is put in the public domain.
 # Massimo Maiurana <maiurana@gmail.com>, 2011.
-#: src/lib/elm_config.c:3213
+#: src/lib/elm_config.c:3083
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-06-11 12:37+0200\n"
+"POT-Creation-Date: 2015-06-22 11:28+0900\n"
 "PO-Revision-Date: 2015-06-11 14:19+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
@@ -27,8 +27,8 @@ msgstr "Home"
 msgid "Search"
 msgstr "Cerca"
 
-#: src/lib/elc_fileselector.c:1707 src/lib/elm_entry.c:1517
-#: src/lib/elm_entry.c:1542
+#: src/lib/elc_fileselector.c:1707 src/lib/elm_entry.c:1568
+#: src/lib/elm_entry.c:1593
 msgid "Cancel"
 msgstr "Annulla"
 
@@ -77,7 +77,7 @@ msgid "Clicked"
 msgstr "Cliccato"
 
 #: src/lib/elm_button.c:270 src/lib/elm_check.c:234 src/lib/elm_gengrid.c:817
-#: src/lib/elm_genlist.c:1622 src/lib/elm_list.c:2222 src/lib/elm_radio.c:264
+#: src/lib/elm_genlist.c:1622 src/lib/elm_list.c:2227 src/lib/elm_radio.c:264
 #: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:785
 #: src/lib/elm_toolbar.c:2227
 msgid "State: Disabled"
@@ -160,35 +160,35 @@ msgstr "Stato: modificabile"
 msgid "Clock"
 msgstr "Orologio"
 
-#: src/lib/elm_colorselector.c:718
+#: src/lib/elm_colorselector.c:725
 msgid "Pick a color"
 msgstr "Seleziona un colore"
 
-#: src/lib/elm_colorselector.c:754
+#: src/lib/elm_colorselector.c:761
 msgid "R:"
 msgstr "R:"
 
-#: src/lib/elm_colorselector.c:756
+#: src/lib/elm_colorselector.c:763
 msgid "G:"
 msgstr "G:"
 
-#: src/lib/elm_colorselector.c:758
+#: src/lib/elm_colorselector.c:765
 msgid "B:"
 msgstr "B:"
 
-#: src/lib/elm_colorselector.c:760
+#: src/lib/elm_colorselector.c:767
 msgid "A:"
 msgstr "A:"
 
-#: src/lib/elm_colorselector.c:1433
+#: src/lib/elm_colorselector.c:1440
 msgid "color selector palette item"
 msgstr "oggetto palette selezione colore"
 
-#: src/lib/elm_config.c:3229
+#: src/lib/elm_config.c:3099
 msgid "default:LTR"
 msgstr "predefintito: LTR"
 
-#: src/lib/elm_dayselector.c:405
+#: src/lib/elm_dayselector.c:406
 msgid "day selector item"
 msgstr "oggetto selettore giorno"
 
@@ -196,23 +196,23 @@ msgstr "oggetto selettore giorno"
 msgid "diskselector item"
 msgstr "selettore disco"
 
-#: src/lib/elm_entry.c:1504
+#: src/lib/elm_entry.c:1555
 msgid "Copy"
 msgstr "Copia"
 
-#: src/lib/elm_entry.c:1509
+#: src/lib/elm_entry.c:1560
 msgid "Cut"
 msgstr "Taglia"
 
-#: src/lib/elm_entry.c:1513 src/lib/elm_entry.c:1536
+#: src/lib/elm_entry.c:1564 src/lib/elm_entry.c:1587
 msgid "Paste"
 msgstr "Incolla"
 
-#: src/lib/elm_entry.c:1529
+#: src/lib/elm_entry.c:1580
 msgid "Select"
 msgstr "Seleziona"
 
-#: src/lib/elm_entry.c:3520
+#: src/lib/elm_entry.c:3571
 msgid "Entry"
 msgstr "Voce"
 

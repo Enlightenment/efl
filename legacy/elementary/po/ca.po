@@ -2,12 +2,12 @@
 # This file is put in the public domain.
 # Marc Furtià  i Puig <marc.furtia@gmail.com>, 2013.
 # Joan Coll <jcoll2@gmail.com>, 2013.
-#: src/lib/elm_config.c:3213
+#: src/lib/elm_config.c:3083
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2015-05-25 11:47+0900\n"
+"POT-Creation-Date: 2015-06-22 11:28+0900\n"
 "PO-Revision-Date: 2015-02-10 09:34+0000\n"
 "Last-Translator: JoanColl <Unknown>\n"
 "Language-Team: Catalan\n"
@@ -30,8 +30,8 @@ msgstr "Carpeta personal"
 msgid "Search"
 msgstr "Cerca"
 
-#: src/lib/elc_fileselector.c:1707 src/lib/elm_entry.c:1512
-#: src/lib/elm_entry.c:1537
+#: src/lib/elc_fileselector.c:1707 src/lib/elm_entry.c:1568
+#: src/lib/elm_entry.c:1593
 msgid "Cancel"
 msgstr "Cancel·la"
 
@@ -79,10 +79,10 @@ msgstr "Bombolla"
 msgid "Clicked"
 msgstr "Clicat"
 
-#: src/lib/elm_button.c:270 src/lib/elm_check.c:234 src/lib/elm_gengrid.c:816
-#: src/lib/elm_genlist.c:1621 src/lib/elm_list.c:2221 src/lib/elm_radio.c:264
+#: src/lib/elm_button.c:270 src/lib/elm_check.c:234 src/lib/elm_gengrid.c:817
+#: src/lib/elm_genlist.c:1622 src/lib/elm_list.c:2227 src/lib/elm_radio.c:264
 #: src/lib/elm_segment_control.c:524 src/lib/elm_spinner.c:785
-#: src/lib/elm_toolbar.c:2226
+#: src/lib/elm_toolbar.c:2227
 msgid "State: Disabled"
 msgstr "Estat: desactivat"
 
@@ -163,35 +163,35 @@ msgstr "Estat: Editable"
 msgid "Clock"
 msgstr "Rellotge"
 
-#: src/lib/elm_colorselector.c:718
+#: src/lib/elm_colorselector.c:725
 msgid "Pick a color"
 msgstr "Trieu un color"
 
-#: src/lib/elm_colorselector.c:754
+#: src/lib/elm_colorselector.c:761
 msgid "R:"
 msgstr "R:"
 
-#: src/lib/elm_colorselector.c:756
+#: src/lib/elm_colorselector.c:763
 msgid "G:"
 msgstr "G:"
 
-#: src/lib/elm_colorselector.c:758
+#: src/lib/elm_colorselector.c:765
 msgid "B:"
 msgstr "B:"
 
-#: src/lib/elm_colorselector.c:760
+#: src/lib/elm_colorselector.c:767
 msgid "A:"
 msgstr "A:"
 
-#: src/lib/elm_colorselector.c:1433
+#: src/lib/elm_colorselector.c:1440
 msgid "color selector palette item"
 msgstr "paleta de selecció de color"
 
-#: src/lib/elm_config.c:3229
+#: src/lib/elm_config.c:3099
 msgid "default:LTR"
 msgstr "Per defecte: LTR"
 
-#: src/lib/elm_dayselector.c:405
+#: src/lib/elm_dayselector.c:406
 msgid "day selector item"
 msgstr "selector de dia"
 
@@ -199,27 +199,27 @@ msgstr "selector de dia"
 msgid "diskselector item"
 msgstr "selector de disc"
 
-#: src/lib/elm_entry.c:1499
+#: src/lib/elm_entry.c:1555
 msgid "Copy"
 msgstr "Copia"
 
-#: src/lib/elm_entry.c:1504
+#: src/lib/elm_entry.c:1560
 msgid "Cut"
 msgstr "Retalla"
 
-#: src/lib/elm_entry.c:1508 src/lib/elm_entry.c:1531
+#: src/lib/elm_entry.c:1564 src/lib/elm_entry.c:1587
 msgid "Paste"
 msgstr "Enganxa"
 
-#: src/lib/elm_entry.c:1524
+#: src/lib/elm_entry.c:1580
 msgid "Select"
 msgstr "Selecciona"
 
-#: src/lib/elm_entry.c:3515
+#: src/lib/elm_entry.c:3571
 msgid "Entry"
 msgstr "Entrada"
 
-#: src/lib/elm_gengrid.c:846
+#: src/lib/elm_gengrid.c:847
 msgid "Gengrid Item"
 msgstr "Quadrícula genèrica"
 
@@ -263,7 +263,7 @@ msgstr "barra de progrés"
 msgid "Radio"
 msgstr "Opció"
 
-#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2228
+#: src/lib/elm_segment_control.c:527 src/lib/elm_toolbar.c:2229
 msgid "State: Selected"
 msgstr "Estat: Seleccionat"
 
@@ -303,22 +303,22 @@ msgstr "botó de decrement del spinner"
 msgid "spinner text"
 msgstr "text  rotatiu"
 
-#: src/lib/elm_toolbar.c:1686 src/lib/elm_toolbar.c:2285
+#: src/lib/elm_toolbar.c:1687 src/lib/elm_toolbar.c:2286
 msgid "Selected"
 msgstr "Seleccionat"
 
-#: src/lib/elm_toolbar.c:2224
+#: src/lib/elm_toolbar.c:2225
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elm_toolbar.c:2230
+#: src/lib/elm_toolbar.c:2231
 msgid "Has menu"
 msgstr "Té menú"
 
-#: src/lib/elm_toolbar.c:2280
+#: src/lib/elm_toolbar.c:2281
 msgid "Unselected"
 msgstr "No seleccionat"
 
-#: src/lib/elm_toolbar.c:2297
+#: src/lib/elm_toolbar.c:2298
 msgid "Toolbar Item"
 msgstr "Element de barra d'eines"
