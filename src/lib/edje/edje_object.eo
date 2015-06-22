@@ -2384,6 +2384,29 @@ class Edje.Object (Evas.Smart_Clipped, Efl.File)
             @in obj_swallow: Evas.Object *; /*@ The object to occupy that part */
          }
       }
+      @property transition_duration_factor {
+         set {
+            /*@
+              @brief Set transition duration factor.
+
+              This define the transition duration factor on this
+              specific object. By default all animation are run at a speed
+              factor of 1.0.
+             */
+         }
+         get {
+            /*@
+              @brief Get transition duration factor.
+
+              This define the transition duration factor on this
+              specific object. By default all animation are run at a speed
+              factor of 1.0.
+             */
+         }
+         values {
+            scale: double; /*@ The transition duration factor */
+         }
+      }
    }
    implements {
       Eo.Base.constructor;

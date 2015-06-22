@@ -1573,6 +1573,8 @@ struct _Edje
    EPhysics_World       *world;
 #endif
 
+   double                duration_scale;
+
    Eina_List            *user_defined;
 
    lua_State            *L;

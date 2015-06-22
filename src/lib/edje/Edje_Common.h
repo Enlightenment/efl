@@ -1834,7 +1834,7 @@ EAPI void         edje_thaw                       (void);
 EAPI void         edje_language_set               (const char *locale);
 
 /**
- * @brief Set edje trasition's duration factor.
+ * @brief Set edje transition duration factor.
  *
  * @param scale The edje trasition's duration factor (the default value is @c 1.0)
  *
@@ -1857,7 +1857,7 @@ EAPI void         edje_language_set               (const char *locale);
 EAPI void         edje_transition_duration_factor_set        (double scale);
 
 /**
- * @brief Retrieve trasitions'duration factor.
+ * @brief Retrieve transitions duration factor.
  *
  * @return The edje transition duration factor
  *

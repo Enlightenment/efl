@@ -195,6 +195,19 @@ edje_transition_duration_factor_set(double scale)
    _edje_transition_duration_scale = FROM_DOUBLE(scale);
 }
 
+EOLIAN void
+_edje_object_transition_duration_factor_set(Eo *obj EINA_UNUSED,
+                                            Edje *pd, double scale)
+{
+   pd->duration_scale = scale;
+}
+
+EOLIAN double
+_edje_object_transition_duration_factor_get(Eo *obj EINA_UNUSED, Edje *pd)
+{
+   return pd->duration_scale;
+}
+
 void
 edje_object_propagate_callback_add(Evas_Object *obj, void (*func)(void *data, Evas_Object *o, const char *emission, const char *source), void *data)
 {
@@ -412,7 +425,7 @@ _edje_object_animation_get(Eo *obj EINA_UNUSED, Edje *ed)
 Eina_Bool
 _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 {
-   FLOAT_T t, total, t_scale = 1.0;
+   FLOAT_T t, total, t_scale = runp->edje->duration_scale;
    Eina_List *l;
    Edje *ed;
    Edje_Program_Target *pt;

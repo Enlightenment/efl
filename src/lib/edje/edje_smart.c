@@ -28,6 +28,7 @@ EOLIAN static Eo *
 _edje_object_eo_base_constructor(Eo *obj, Edje *ed)
 {
    ed->base = eo_data_ref(obj, EVAS_SMART_CLIPPED_CLASS);
+   ed->duration_scale = 1.0;
 
    obj = eo_do_super_ret(obj, MY_CLASS, obj, eo_constructor());
    eo_do(obj, evas_obj_type_set(MY_CLASS_NAME_LEGACY));
