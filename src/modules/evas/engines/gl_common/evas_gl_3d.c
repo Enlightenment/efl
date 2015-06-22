@@ -395,6 +395,8 @@ e3d_drawable_new(int w, int h, int alpha, GLenum depth_format, GLenum stencil_fo
    drawable->stencil_format = stencil_format;
    drawable->tex = tex;
    drawable->fbo = fbo;
+   drawable->texcolorpick = texcolorpick;
+   drawable->color_pick_fb_id = color_pick_fb_id;
    drawable->depth_stencil_buf = depth_stencil_buf;
    drawable->depth_buf = depth_buf;
    drawable->stencil_buf = stencil_buf;
