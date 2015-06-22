@@ -1823,6 +1823,7 @@ struct _Edje_Real_Part
    Edje_Part                *part; // 4
    Evas_Object              *object; // 4
    Evas_Object              *nested_smart; // 4
+   Eo                       *node; // 4
    Edje_Real_Part_Drag      *drag; // 4
    Edje_Part_Description_Common *chosen_description; // 4
    // WITH EDJE_CALC_CACHE: 307

@@ -26,6 +26,71 @@ static void                          _edje_part_recalc_single(Edje *ed, Edje_Rea
 #define EINA_COW_CALC_MAP_END(Calc, Write) \
   EINA_COW_WRITE_END(_edje_calc_params_map_cow, Calc->map, Write);
 
+#ifdef BUILD_EDJE_FP
+
+#define TYPE_EPSILON FLT_EPSILON
+
+#else
+
+#define TYPE_EPSILON DBL_EPSILON
+
+#endif
+
+
+#define SET_QUATERNION(type)                                                 \
+   double norm;                                                              \
+   Eina_Quaternion quaternion;                                               \
+                                                                             \
+   eina_quaternion_set(&quaternion, pd_##type->type.orientation.data[0],     \
+                                    pd_##type->type.orientation.data[1],     \
+                                    pd_##type->type.orientation.data[2],     \
+                                    pd_##type->type.orientation.data[3]);    \
+                                                                             \
+   norm = eina_quaternion_norm(&quaternion);                                 \
+                                                                             \
+   if ((norm - 0.0) <= TYPE_EPSILON)                                         \
+     ERR("%s %s",                                                            \
+         "{0, 0, 0, 0} quaternion gives rotation on non-zero angle",         \
+         "around axis without orientation");                                 \
+                                                                             \
+   eina_quaternion_scale(&quaternion, &quaternion, 1/norm);                  \
+                                                                             \
+   eo_do(ep->node,                                                           \
+         evas_canvas3d_node_orientation_set(quaternion.x, quaternion.y,            \
+                                      quaternion.z, quaternion.w));
+
+#define SET_LOOK_AT(type)                                                 \
+   eo_do(ep->node,                                                        \
+         evas_canvas3d_node_look_at_set(pd_##type->type.position.space,         \
+                                  pd_##type->type.orientation.data[0],    \
+                                  pd_##type->type.orientation.data[1],    \
+                                  pd_##type->type.orientation.data[2],    \
+                                  pd_##type->type.position.space,         \
+                                  pd_##type->type.orientation.data[3],    \
+                                  pd_##type->type.orientation.data[4],    \
+                                  pd_##type->type.orientation.data[5]));
+
+#define SET_LOOK_TO(type)                                                                    \
+   Edje_Real_Part *look_to;                                                                  \
+   Evas_Real x, y ,z;                                                                        \
+   look_to = ed->table_parts[pd_##type->type.orientation.look_to % ed->table_parts_size];    \
+   eo_do(look_to->node,                                                                      \
+         evas_canvas3d_node_position_get(pd_##type->type.position.space, &x, &y, &z));             \
+   eo_do(ep->node,                                                                           \
+         evas_canvas3d_node_look_at_set(pd_##type->type.position.space, x, y, z,                   \
+                                  pd_##type->type.position.space,                            \
+                                  pd_##type->type.orientation.data[3],                       \
+                                  pd_##type->type.orientation.data[4],                       \
+                                  pd_##type->type.orientation.data[5]));
+
+#define SET_ANGLE_AXIS(type)                                                             \
+   eo_do(ep->node,                                                                       \
+         evas_canvas3d_node_orientation_angle_axis_set(pd_##type->type.orientation.data[0],    \
+                                                 pd_##type->type.orientation.data[1],    \
+                                                 pd_##type->type.orientation.data[2],    \
+                                                 pd_##type->type.orientation.data[3]));
+
+
 void
 _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2, FLOAT_T v3, FLOAT_T v4)
 {
@@ -286,6 +351,9 @@ case EDJE_PART_TYPE_##Short:                                          \
         EDIT_ALLOC_POOL_RTL(BOX, Box, box);
         EDIT_ALLOC_POOL_RTL(TABLE, Table, table);
         EDIT_ALLOC_POOL_RTL(EXTERNAL, External, external_params);
+        EDIT_ALLOC_POOL_RTL(CAMERA, Camera, camera);
+        EDIT_ALLOC_POOL_RTL(LIGHT, Light, light);
+        EDIT_ALLOC_POOL_RTL(MESH_NODE, Mesh_Node, mesh_node);
      }
 
    if (desc_rtl)
@@ -2479,6 +2547,9 @@ _edje_part_recalc_single(Edje *ed,
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_GROUP:
       case EDJE_PART_TYPE_PROXY:
+      case EDJE_PART_TYPE_MESH_NODE:
+      case EDJE_PART_TYPE_LIGHT:
+      case EDJE_PART_TYPE_CAMERA:
         break;
 
       case EDJE_PART_TYPE_GRADIENT:
@@ -4077,6 +4148,210 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
            case EDJE_PART_TYPE_SPACER:
              /* We really should do nothing on SPACER part */
              break;
+           case EDJE_PART_TYPE_CAMERA:
+             {
+                Evas_Canvas3D_Camera *camera = NULL;
+                Edje_Part_Description_Camera *pd_camera;
+
+                pd_camera = (Edje_Part_Description_Camera*) ep->chosen_description;
+                eo_do(ep->node, camera = evas_canvas3d_node_camera_get());
+
+                eo_do(camera,
+                      evas_canvas3d_camera_projection_perspective_set(pd_camera->camera.camera.fovy, pd_camera->camera.camera.aspect,
+                                                                pd_camera->camera.camera.frustum_near, pd_camera->camera.camera.frustum_far));
+
+                eo_do(ep->node,
+                      evas_canvas3d_node_position_set(pd_camera->camera.position.point.x, pd_camera->camera.position.point.y,
+                                                  pd_camera->camera.position.point.z));
+                switch (pd_camera->camera.orientation.type)
+                  {
+                     case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE:
+                     case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_QUATERNION:
+                       {
+                          SET_QUATERNION(camera)
+                          break;
+                       }
+                     case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT:
+                       SET_LOOK_AT(camera)
+                       break;
+                     case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_TO:
+                       {
+                          SET_LOOK_TO(camera)
+                          break;
+                       }
+                     case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS:
+                       SET_ANGLE_AXIS(camera)
+                       break;
+                  }
+                break;
+             }
+           case EDJE_PART_TYPE_LIGHT:
+             {
+                Evas_Canvas3D_Light *light = NULL;
+                Edje_Part_Description_Light *pd_light;
+
+                pd_light = (Edje_Part_Description_Light*) ep->chosen_description;
+                eo_do(ep->node, light = evas_canvas3d_node_light_get());
+
+                eo_do(light,
+                      evas_canvas3d_light_ambient_set(pd_light->light.properties.ambient.r / 255, pd_light->light.properties.ambient.g / 255,
+                                                pd_light->light.properties.ambient.b / 255, pd_light->light.properties.ambient.a / 255),
+                      evas_canvas3d_light_diffuse_set(pd_light->light.properties.diffuse.r / 255, pd_light->light.properties.diffuse.g / 255,
+                                                pd_light->light.properties.diffuse.b / 255, pd_light->light.properties.diffuse.a / 255),
+                      evas_canvas3d_light_specular_set(pd_light->light.properties.specular.r / 255, pd_light->light.properties.specular.g / 255,
+                                                 pd_light->light.properties.specular.b / 255, pd_light->light.properties.specular.a / 255),
+                      evas_canvas3d_light_directional_set(EINA_TRUE));
+
+                eo_do(ep->node,
+                      evas_canvas3d_node_position_set(pd_light->light.position.point.x, pd_light->light.position.point.y,
+                                                  pd_light->light.position.point.z));
+                switch (pd_light->light.orientation.type)
+                  {
+                     case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE:
+                     case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_QUATERNION:
+                       {
+                          SET_QUATERNION(light);
+                          break;
+                       }
+                     case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT:
+                       SET_LOOK_AT(light)
+                       break;
+                     case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_TO:
+                       {
+                          SET_LOOK_TO(light)
+                          break;
+                       }
+                     case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS:
+                       SET_ANGLE_AXIS(light)
+                       break;
+                  }
+                break;
+             }
+           case EDJE_PART_TYPE_MESH_NODE:
+             {
+                Evas_Canvas3D_Material *material = NULL;
+                Evas_Canvas3D_Texture *texture = NULL;
+                Evas_Canvas3D_Mesh *mesh = NULL;
+                const char *proxy;
+                Edje_Part_Description_Mesh_Node *pd_mesh_node;
+                const Eina_List *meshes;
+                const Eina_List *list;
+
+                eo_do(ep->node, meshes = evas_canvas3d_node_mesh_list_get());
+
+                EINA_LIST_FOREACH(meshes, list, mesh)
+                  {
+                     eo_do(mesh,  material = evas_canvas3d_mesh_frame_material_get(0));
+                     eo_do(material,  texture = evas_canvas3d_material_texture_get(EVAS_CANVAS3D_MATERIAL_DIFFUSE));
+
+                     pd_mesh_node = (Edje_Part_Description_Mesh_Node*) ep->chosen_description;
+
+                     eo_do(material,
+                           evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_AMBIENT, EINA_TRUE),
+                           evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE, EINA_TRUE),
+                           evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_SPECULAR, EINA_TRUE),
+                           evas_canvas3d_material_enable_set(EVAS_CANVAS3D_MATERIAL_NORMAL, pd_mesh_node->mesh_node.properties.normal),
+                           evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_AMBIENT,
+                                                      pd_mesh_node->mesh_node.properties.ambient.r / 255,
+                                                      pd_mesh_node->mesh_node.properties.ambient.g / 255,
+                                                      pd_mesh_node->mesh_node.properties.ambient.b / 255,
+                                                      pd_mesh_node->mesh_node.properties.ambient.a / 255),
+                           evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_DIFFUSE,
+                                                      pd_mesh_node->mesh_node.properties.diffuse.r / 255,
+                                                      pd_mesh_node->mesh_node.properties.diffuse.g / 255,
+                                                      pd_mesh_node->mesh_node.properties.diffuse.b / 255,
+                                                      pd_mesh_node->mesh_node.properties.diffuse.a / 255),
+                           evas_canvas3d_material_color_set(EVAS_CANVAS3D_MATERIAL_SPECULAR,
+                                                      pd_mesh_node->mesh_node.properties.specular.r / 255,
+                                                      pd_mesh_node->mesh_node.properties.specular.g / 255,
+                                                      pd_mesh_node->mesh_node.properties.specular.b / 255,
+                                                      pd_mesh_node->mesh_node.properties.specular.a / 255),
+                           evas_canvas3d_material_shininess_set(pd_mesh_node->mesh_node.properties.shininess));
+
+                     switch(pd_mesh_node->mesh_node.mesh.primitive)
+                       {
+                          case EVAS_CANVAS3D_MESH_PRIMITIVE_CUBE:
+                            {
+                               Eo *primitive = NULL;
+
+                               eo_do(primitive,
+                                     evas_canvas3d_primitive_form_set(EVAS_CANVAS3D_MESH_PRIMITIVE_CUBE));
+
+                               eo_do(mesh,
+                                     evas_canvas3d_mesh_from_primitive_set(0, primitive));
+                               break;
+                            }
+                          case EVAS_CANVAS3D_MESH_PRIMITIVE_SPHERE:
+                            {
+                               Eo *primitive = NULL;
+
+                               eo_do(primitive,
+                                     evas_canvas3d_primitive_form_set(EVAS_CANVAS3D_MESH_PRIMITIVE_SPHERE),
+                                     evas_canvas3d_primitive_precision_set(20));
+
+                               eo_do(mesh,
+                                     evas_canvas3d_mesh_from_primitive_set(0, primitive));
+                               break;
+                            }
+                          default:
+                            break;
+                       }
+
+                     if (pd_mesh_node->mesh_node.texture.need_texture && pd_mesh_node->mesh_node.texture.textured)
+                       {
+                          proxy = NULL;
+
+                          eo_do(material,
+                                texture = evas_canvas3d_material_texture_get(EVAS_CANVAS3D_MATERIAL_DIFFUSE));
+
+                          //proxy = _edje_image_name_find(ed, pd_mesh_node->mesh_node.texture.id);
+                          /*FIXME Conflict with function _edje_image_name_find (two places in edje_utils and edje_edit.c,
+                          temporary desicion need to clarify up to commit to phab*/
+                          proxy = ed->file->image_dir->entries[pd_mesh_node->mesh_node.texture.id].entry;
+                          if (proxy)
+                            {
+                               eo_do(texture,
+                                     evas_canvas3d_texture_file_set(eina_stringshare_add(proxy), NULL),
+                                     evas_canvas3d_texture_filter_set(pd_mesh_node->mesh_node.texture.filter1,
+                                                                pd_mesh_node->mesh_node.texture.filter2),
+                                     evas_canvas3d_texture_wrap_set(pd_mesh_node->mesh_node.texture.wrap1,
+                                                              pd_mesh_node->mesh_node.texture.wrap2));
+                            }
+                       }
+
+                     eo_do(mesh,
+                           evas_canvas3d_mesh_frame_material_set(0, material),
+                           evas_canvas3d_mesh_shade_mode_set(pd_mesh_node->mesh_node.properties.shade),
+                           evas_canvas3d_mesh_vertex_assembly_set(pd_mesh_node->mesh_node.mesh.assembly));
+                     eo_do(ep->node,
+                           evas_canvas3d_node_scale_set(ep->part->scale_3d.x, ep->part->scale_3d.y,
+                                                  ep->part->scale_3d.z),
+                           evas_canvas3d_node_position_set(pd_mesh_node->mesh_node.position.point.x,
+                                                     pd_mesh_node->mesh_node.position.point.y,
+                                                     pd_mesh_node->mesh_node.position.point.z));
+                     switch (pd_mesh_node->mesh_node.orientation.type)
+                       {
+                          case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_NONE:
+                          case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_QUATERNION:
+                            {
+                               SET_QUATERNION(mesh_node)
+                               break;
+                            }
+                          case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_AT:
+                            SET_LOOK_AT(mesh_node)
+                            break;
+                          case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_LOOK_TO:
+                            {
+                               SET_LOOK_TO(mesh_node)
+                               break;
+                            }
+                          case EVAS_CANVAS3D_NODE_ORIENTATION_TYPE_ANGLE_AXIS:
+                            SET_ANGLE_AXIS(mesh_node)
+                            break;
+                       }
+                  }
+                break;
+             }
           }
 
         /* Some object need special recalc. */
