@@ -4442,11 +4442,11 @@ static Eina_Bool
 _item_process(Elm_Genlist_Data *sd,
               Elm_Gen_Item *it)
 {
-   if (!_item_block_add(sd, it)) return EINA_TRUE;
+   if (!_item_block_add(sd, it)) return EINA_FALSE;
    if (!sd->blocks)
      _item_block_realize(it->item->block);
 
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static void
@@ -4511,7 +4511,7 @@ _queue_process(Elm_Genlist_Data *sd)
         it = eina_list_data_get(sd->queue);
         sd->queue = eina_list_remove_list(sd->queue, sd->queue);
         it->item->queued = EINA_FALSE;
-        if (_item_process(sd, it)) continue;
+        if (!_item_process(sd, it)) continue;
         t = ecore_time_get();
         _item_process_post(sd, it, EINA_TRUE);
         /* same as eina_inlist_count > 1 */
