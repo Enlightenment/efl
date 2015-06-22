@@ -3859,10 +3859,9 @@ _long_press_cb(void *data)
    Eina_List *list;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
-   it->long_timer = NULL;
    if (_is_no_select(it) ||
        eo_do_ret(EO_OBJ(it), tmp, elm_wdg_item_disabled_get()) || (it->dragging))
-     return ECORE_CALLBACK_CANCEL;
+     goto end;
 
    sd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(WIDGET(it), SIG_LONGPRESSED, EO_OBJ(it));
@@ -3897,6 +3896,8 @@ _long_press_cb(void *data)
           edje_object_signal_emit(VIEW(it), SIGNAL_REORDER_ENABLED, "elm");
      }
 
+end:
+   it->long_timer = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
