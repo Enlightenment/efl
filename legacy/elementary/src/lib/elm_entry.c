@@ -439,15 +439,14 @@ _viewport_region_get(Evas_Object *obj)
      {
         if (eo_isa(parent, ELM_INTERFACE_SCROLLABLE_MIXIN))
           {
-             Eina_Rectangle *pr = eina_rectangle_new(0, 0, 0, 0);
-             evas_object_geometry_get(parent, &pr->x, &pr->y, &pr->w, &pr->h);
-             if (!eina_rectangle_intersection(rect, pr))
+             Eina_Rectangle r;
+             EINA_RECTANGLE_SET(&r, 0, 0, 0, 0);
+             evas_object_geometry_get(parent, &r.x, &r.y, &r.w, &r.h);
+             if (!eina_rectangle_intersection(rect, &r))
                {
                   rect->x = rect->y = rect->w = rect->h = 0;
-                  eina_rectangle_free(pr);
                   break;
                }
-             eina_rectangle_free(pr);
           }
         parent = elm_widget_parent_get(parent);
      }
