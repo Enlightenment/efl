@@ -1772,7 +1772,15 @@ _item_realize(Elm_Gen_Item *it,
 
              focus_raise = edje_object_data_get(VIEW(it), "focusraise");
              if ((focus_raise) && (!strcmp(focus_raise, "on")))
-               evas_object_raise(VIEW(it));
+               {
+                  Elm_Gen_Item *git;
+                  Eina_List *l;
+                  evas_object_raise(VIEW(it));
+                  EINA_LIST_FOREACH(sd->group_items, l, git)
+                    {
+                       if (git->realized) evas_object_raise(VIEW(git));
+                    }
+               }
 
              _elm_widget_item_highlight_in_theme(WIDGET(it), EO_OBJ(it));
              _elm_widget_highlight_in_theme_update(WIDGET(it));
@@ -2359,10 +2367,6 @@ _elm_genlist_pan_evas_object_smart_calculate(Eo *obj, Elm_Genlist_Pan_Data *psd)
 
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    evas_output_viewport_get(evas_object_evas_get(obj), &cvx, &cvy, &cvw, &cvh);
-   EINA_LIST_FOREACH(sd->group_items, l, git)
-     {
-        git->item->want_realize = EINA_FALSE;
-     }
 
    if (sd->tree_effect_enabled &&
        (sd->move_effect_mode != ELM_GENLIST_TREE_EFFECT_NONE))
@@ -2427,6 +2431,12 @@ _elm_genlist_pan_evas_object_smart_calculate(Eo *obj, Elm_Genlist_Pan_Data *psd)
 
    if (sd->focused_item && !sd->item_loop_enable)
      _elm_widget_focus_highlight_start(psd->wobj);
+
+   EINA_LIST_FOREACH(sd->group_items, l, git)
+     {
+        git->item->want_realize = EINA_FALSE;
+        if (git->realized) evas_object_raise(VIEW(git));
+     }
 
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
@@ -2623,7 +2633,15 @@ _elm_genlist_item_focused(Elm_Object_Item *eo_it)
 
         focus_raise = edje_object_data_get(VIEW(it), "focusraise");
         if ((focus_raise) && (!strcmp(focus_raise, "on")))
-          evas_object_raise(VIEW(it));
+          {
+             Elm_Gen_Item *git;
+             Eina_List *l;
+             evas_object_raise(VIEW(it));
+             EINA_LIST_FOREACH(sd->group_items, l, git)
+               {
+                  if (git->realized) evas_object_raise(VIEW(git));
+               }
+          }
      }
    evas_object_smart_callback_call(obj, SIG_ITEM_FOCUSED, eo_it);
    if (_elm_config->atspi_mode)
