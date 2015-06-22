@@ -1570,6 +1570,7 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
    ep->tween.v2 = ep2->tween.v2;
    ep->tween.v3 = ep2->tween.v3;
    ep->tween.v4 = ep2->tween.v4;
+   ep->tween.use_duration_factor = ep2->tween.use_duration_factor;
    ep->sample_name = STRDUP(ep2->sample_name);
    ep->tone_name = STRDUP(ep2->tone_name);
    ep->duration = ep2->duration;
@@ -12002,6 +12003,7 @@ ob_collections_group_programs_program(void)
    ep = mem_alloc(SZ(Edje_Program_Parser));
    ep->id = -1;
    ep->tween.mode = EDJE_TWEEN_MODE_LINEAR;
+   ep->tween.use_duration_factor = EINA_FALSE;
    ep->after = NULL;
    epp = (Edje_Program_Parser *)ep;
    epp->can_override = EINA_FALSE;
@@ -12486,7 +12488,8 @@ st_collections_group_programs_program_action(void)
 static void
 st_collections_group_programs_program_transition(void)
 {
-   char *tmp = NULL;
+   int current = -1, index = -1;
+   unsigned int required_args = 0;
 
    check_min_arg_count(2);
 
@@ -12522,106 +12525,101 @@ st_collections_group_programs_program_transition(void)
 					    "SPRING", EDJE_TWEEN_MODE_SPRING,
 					    NULL);
    current_program->tween.time = FROM_DOUBLE(parse_float_range(1, 0.0, 999999999.0));
-   if ((current_program->tween.mode >= EDJE_TWEEN_MODE_LINEAR) &&
-       (current_program->tween.mode <= EDJE_TWEEN_MODE_DECELERATE))
+
+  //Check the index of params not related to tweenmode's param
+  //This index use for count of the tweenmode's param
+   if ((index = get_param_index("USE_DURATION_FACTOR")) != -1)
      {
-        tmp = NULL;
-        if ((get_arg_count() == 3) && (!strcmp((tmp = parse_str(2)), "CURRENT")))
-          {
-             free(tmp);
-             current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
-          }
-        else if (get_arg_count() != 2)
-          {
-             free(tmp);
-             ERR("parse error %s:%i. Need 2rd parameter to set time",
-                 file_in, line - 1);
-             exit(-1);
-          }
+        current_program->tween.use_duration_factor = parse_bool(index + 1);
+        required_args += 2;
      }
-   // the following need v1
-   // EDJE_TWEEN_MODE_ACCELERATE_FACTOR
-   // EDJE_TWEEN_MODE_DECELERATE_FACTOR
-   // EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR
-   // current_program->tween.v1
-   else if ((current_program->tween.mode >= EDJE_TWEEN_MODE_ACCELERATE_FACTOR) &&
-       (current_program->tween.mode <= EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR))
+   if ((current = get_param_index("CURRENT")) != -1)
      {
-        tmp = NULL;
-        if ((get_arg_count() == 4) && (!strcmp((tmp = parse_str(3)), "CURRENT")))
-          {
-             free(tmp);
-             current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
-          }
-        else if (get_arg_count() != 3)
-          {
-             free(tmp);
-	     ERR("parse error %s:%i. Need 3rd parameter to set factor",
-		 file_in, line - 1);
-	     exit(-1);
-          }
-        current_program->tween.v1 = FROM_DOUBLE(parse_float_range(2, 0.0, 999999999.0));
+        if (index == -1 || current < index)
+          index = current;
+        required_args++;
      }
-   // the followjng also need v2
-   // EDJE_TWEEN_MODE_DIVISOR_INTERP
-   // EDJE_TWEEN_MODE_BOUNCE
-   // EDJE_TWEEN_MODE_SPRING
-   // current_program->tween.v2
-   else if ((current_program->tween.mode >= EDJE_TWEEN_MODE_DIVISOR_INTERP) &&
-            (current_program->tween.mode <= EDJE_TWEEN_MODE_SPRING))
+   switch(current_program->tween.mode)
      {
-        tmp = NULL;
-        if ((get_arg_count() == 5) && (!strcmp((tmp = parse_str(4)), "CURRENT")))
+        case EDJE_TWEEN_MODE_LINEAR:
+        case EDJE_TWEEN_MODE_SINUSOIDAL:
+        case EDJE_TWEEN_MODE_ACCELERATE:
+        case EDJE_TWEEN_MODE_DECELERATE:
           {
-             free(tmp);
-             current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+             required_args += 2;
+             check_arg_count(required_args);
           }
-        else if (get_arg_count() != 4)
+        break;
+
+        // the following need v1
+        case EDJE_TWEEN_MODE_ACCELERATE_FACTOR:
+        case EDJE_TWEEN_MODE_DECELERATE_FACTOR:
+        case EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR:
           {
-             free(tmp);
-	     ERR("parse error %s:%i. "
-		 "Need 3rd and 4th parameters to set factor and counts",
-		 file_in, line - 1);
-	     exit(-1);
+             required_args += 3;
+             check_arg_count(required_args);
+             if (index == -1 || index > 2)
+               {
+                   current_program->tween.v1 =
+                      FROM_DOUBLE(parse_float_range(2, -999999999.0, 999999999.0));
+                   break;
+               }
+             else
+               {
+                  ERR("parse error %s:%i. Need 3rd parameter to set factor",
+                  file_in, line - 1);
+                  exit(-1);
+               }
           }
-        current_program->tween.v1 = FROM_DOUBLE(parse_float_range(2, 0.0, 999999999.0));
-        current_program->tween.v2 = FROM_DOUBLE(parse_float_range(3, 0.0, 999999999.0));
-     }
-   else if (current_program->tween.mode == EDJE_TWEEN_MODE_CUBIC_BEZIER)
-     {
-        tmp = NULL;
-        if ((get_arg_count() == 7) && (!strcmp((tmp = parse_str(4)), "CURRENT")))
+        case EDJE_TWEEN_MODE_DIVISOR_INTERP:
+        case EDJE_TWEEN_MODE_BOUNCE:
+        case EDJE_TWEEN_MODE_SPRING:
           {
-             free(tmp);
-             current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+             required_args += 4;
+             check_arg_count(required_args);
+             if (index == -1 || index > 3)
+               {
+                   current_program->tween.v1 =
+                      FROM_DOUBLE(parse_float_range(2, -999999999.0, 999999999.0));
+                   current_program->tween.v2 =
+                      FROM_DOUBLE(parse_float_range(3, -999999999.0, 999999999.0));
+                   break;
+               }
+             else
+               {
+                  ERR("parse error %s:%i. "
+                  "Need 3rd and 4th parameters to set factor and counts",
+                  file_in, line - 1);
+                  exit(-1);
+               }
           }
-        else if (get_arg_count() != 6)
+        case EDJE_TWEEN_MODE_CUBIC_BEZIER:
           {
-             free(tmp);
-             ERR("parse error %s:%i. "
-             "Need 3rd, 4th, 5th and 6th parameters to set x1, y1, x2 and y2",
-             file_in, line - 1);
-             exit(-1);
+             required_args += 6;
+             check_arg_count(required_args);
+             if (index == -1 || index > 5)
+               {
+                   current_program->tween.v1 =
+                      FROM_DOUBLE(parse_float_range(2, -999999999.0, 999999999.0));
+                   current_program->tween.v2 =
+                      FROM_DOUBLE(parse_float_range(3, -999999999.0, 999999999.0));
+                   current_program->tween.v3 =
+                      FROM_DOUBLE(parse_float_range(4, -999999999.0, 999999999.0));
+                   current_program->tween.v4 =
+                      FROM_DOUBLE(parse_float_range(5, -999999999.0, 999999999.0));
+                   break;
+               }
+             else
+               {
+                  ERR("parse error %s:%i. "
+                  "Need 3rd, 4th, 5th and 6th parameters to set x1, y1, x2 and y2",
+                  file_in, line - 1);
+                  exit(-1);
+               }
           }
-        current_program->tween.v1 =
-           FROM_DOUBLE(parse_float_range(2, -999999999.0, 999999999.0));
-        current_program->tween.v2 =
-           FROM_DOUBLE(parse_float_range(3, -999999999.0, 999999999.0));
-        if (get_arg_count() == 7)
-          {
-             current_program->tween.v3 =
-                FROM_DOUBLE(parse_float_range(5, -999999999.0, 999999999.0));
-             current_program->tween.v4 =
-                FROM_DOUBLE(parse_float_range(6, -999999999.0, 999999999.0));
-          }
-        else
-          {
-             current_program->tween.v3 =
-                FROM_DOUBLE(parse_float_range(4, -999999999.0, 999999999.0));
-             current_program->tween.v4 =
-                FROM_DOUBLE(parse_float_range(5, -999999999.0, 999999999.0));
-          }
-     }
+        }
+      if (current > 0)
+        current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
 }
 
 static void

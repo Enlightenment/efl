@@ -247,6 +247,7 @@ Eina_Bool edje_cc_handlers_wildcard(void);
 void edje_cc_handlers_hierarchy_alloc(void);
 void edje_cc_handlers_hierarchy_free(void);
 void edje_cc_handlers_pop_notify(const char *token);
+int get_param_index(char *str);
 
 /* global vars */
 extern Eina_List             *ext_dirs;

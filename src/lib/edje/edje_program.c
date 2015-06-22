@@ -7,6 +7,7 @@ static void _edje_param_set(Edje *ed, Edje_Real_Part *part, const char *param, c
 int _edje_anim_count = 0;
 Ecore_Animator *_edje_timer = NULL;
 Eina_List *_edje_animators = NULL;
+static double _edje_transition_duration_scale = 0;
 
 static Eina_Bool
 _edje_emit_aliased(Edje *ed, const char *part, const char *sig, const char *src)
@@ -180,6 +181,18 @@ EAPI double
 edje_frametime_get(void)
 {
    return ecore_animator_frametime_get();
+}
+
+EAPI double
+edje_transition_duration_factor_get(void)
+{
+   return _edje_transition_duration_scale;
+}
+
+EAPI void
+edje_transition_duration_factor_set(double scale)
+{
+   _edje_transition_duration_scale = FROM_DOUBLE(scale);
 }
 
 void
@@ -399,7 +412,7 @@ _edje_object_animation_get(Eo *obj EINA_UNUSED, Edje *ed)
 Eina_Bool
 _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 {
-   FLOAT_T t, total;
+   FLOAT_T t, total, t_scale = 1.0;
    Eina_List *l;
    Edje *ed;
    Edje_Program_Target *pt;
@@ -410,8 +423,11 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
    _edje_block(ed);
    _edje_ref(ed);
    _edje_util_freeze(ed);
+
+   if (runp->program->tween.use_duration_factor)
+     t_scale = _edje_transition_duration_scale;
    t = FROM_DOUBLE(tim - runp->start_time);
-   total = runp->program->tween.time;
+   total = runp->program->tween.time * t_scale;
    t = DIV(t, total);
    if (t > FROM_INT(1)) t = FROM_INT(1);
    EINA_LIST_FOREACH(runp->program->targets, l, pt)

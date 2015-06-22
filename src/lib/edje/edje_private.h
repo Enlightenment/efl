@@ -756,6 +756,7 @@ struct _Edje_Program /* a conditional program to be run */
       FLOAT_T  v2; /* other value for drag actions */
       FLOAT_T  v3; /* other value for drag actions */
       FLOAT_T  v4; /* other value for drag actions */
+      Eina_Bool use_duration_factor; /* use duration factor or not */
    } tween;
 
    Eina_List  *targets; /* list of target parts to apply the state to */

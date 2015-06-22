@@ -1815,3 +1815,15 @@ strstrip(const char *in, char *out, size_t size)
    *out = '\0';
    return 1;
 }
+
+int
+get_param_index(char *str)
+{
+  int index ;
+  for(index = 0; index < get_arg_count(); index++)
+  {
+      if(!strcmp(str,_parse_param_get(index)))
+        return index;
+  }
+  return -1;
+}

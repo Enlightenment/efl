@@ -1834,6 +1834,43 @@ EAPI void         edje_thaw                       (void);
 EAPI void         edje_language_set               (const char *locale);
 
 /**
+ * @brief Set edje trasition's duration factor.
+ *
+ * @param scale The edje trasition's duration factor (the default value is @c 1.0)
+ *
+ * This function sets the edje transition duration factor
+ * It will affect the speed of transitions
+ * which had the @c use_duration_factor property set to @1.
+ * The default value of @c use_duration_factor property is @c zero,
+ * but can be changed by @p "USE_DURATION_FACTOR 1" or @p "USE_DURATION_FACTOR 0"
+ * as parameter of @c "TRANSITION" property at EDC level.
+ * If the parameter is @p "USE_DURATION_FACTOR 0" or not mentioned about @p "USE_DURATION_FACTOR",
+ * the duration of transition keeps original duration
+ *
+ * @warning The transition's duration factor cannot be set on each translation.
+ * If you use this function, it will affect transitions globally
+ *
+ * @see edje_transition_duration_factor_get()
+ *
+ * @since 1.15
+ */
+EAPI void         edje_transition_duration_factor_set        (double scale);
+
+/**
+ * @brief Retrieve trasitions'duration factor.
+ *
+ * @return The edje transition duration factor
+ *
+ * This function returns the edje transition duration factor.
+ *
+ * @see edje_transition_duration_set() for more details
+ *
+ * @since 1.15
+ *
+ */
+EAPI double       edje_transition_duration_factor_get                  (void);
+
+/**
  * @}
  */
 
