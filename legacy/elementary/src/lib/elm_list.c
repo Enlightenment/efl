@@ -883,7 +883,6 @@ _items_fix(Evas_Object *obj)
                      "vertical" : "horizontal", style);
              else if (sd->mode == ELM_LIST_COMPRESS)
                {
-                  printf("fix item to %s\n", it_compress);
                   if (it->even)
                     elm_widget_theme_object_set
                       (obj, VIEW(it), "list", it_compress, style);
