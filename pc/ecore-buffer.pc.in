@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: ecore-buffer
+Description: E core library, graphic buffer module
+Requires.private: @requirements_pc_ecore_buffer@
+Version: @VERSION@
+Libs: -L${libdir} -lecore_buffer
+Libs.private: @requirements_libs_ecore_buffer@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/ecore-buffer-@VMAJ@

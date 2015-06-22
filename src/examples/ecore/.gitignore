@@ -43,3 +43,6 @@
 /ecore_thread_example
 /ecore_time_functions_example
 /ecore_timer_example
+/ecore_buffer_example
+/ecore_buffer_consumer_example
+/ecore_buffer_provider_example

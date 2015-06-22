@@ -8,6 +8,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/eo \
 -I$(top_srcdir)/src/lib/evas \
 -I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_buffer \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_input_evas \
 -I$(top_srcdir)/src/lib/ecore_file \
@@ -35,6 +36,9 @@ AM_CPPFLAGS = \
 
 EXTRA_PROGRAMS = \
 ecore_animator_example \
+ecore_buffer_example \
+ecore_buffer_consumer_example \
+ecore_buffer_provider_example \
 ecore_client_bench \
 ecore_compose_get_example \
 ecore_con_client_example \
@@ -111,6 +115,18 @@ $(ECORE_COMMON_LDADD)
 
 ecore_animator_example_SOURCES = ecore_animator_example.c
 ecore_animator_example_LDADD = $(ECORE_EVAS_COMMON_LDADD)
+
+ecore_buffer_example_SOURCES = ecore_buffer_example.c
+ecore_buffer_example_LDADD = $(ECORE_EVAS_COMMON_LDADD) \
+                             $(top_builddir)/src/lib/ecore_buffer/libecore_buffer.la
+
+ecore_buffer_consumer_example_SOURCES = ecore_buffer_consumer_example.c
+ecore_buffer_consumer_example_LDADD = $(ECORE_EVAS_COMMON_LDADD) \
+                             $(top_builddir)/src/lib/ecore_buffer/libecore_buffer.la
+
+ecore_buffer_provider_example_SOURCES = ecore_buffer_provider_example.c
+ecore_buffer_provider_example_LDADD = $(ECORE_EVAS_COMMON_LDADD) \
+                             $(top_builddir)/src/lib/ecore_buffer/libecore_buffer.la
 
 ecore_client_bench_SOURCES = ecore_client_bench.c
 ecore_client_bench_LDADD = $(ECORE_CON_COMMON_LDADD)
@@ -249,6 +265,9 @@ ecore_con_eet_server_example_LDADD = $(ECORE_CON_COMMON_LDADD)
 
 SRCS = \
 ecore_animator_example.c \
+ecore_buffer_example.c \
+ecore_buffer_consumer_example.c \
+ecore_buffer_provider_example.c \
 ecore_audio_custom.c \
 ecore_audio_playback.c \
 ecore_audio_to_ogg.c \

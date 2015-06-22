@@ -54,6 +54,7 @@ include Makefile_Ecore_Avahi.am
 include Makefile_Embryo.am
 include Makefile_Eio.am
 include Makefile_Efreet.am
+include Makefile_Ecore_Buffer.am
 include Makefile_EPhysics.am
 include Makefile_Edje.am
 include Makefile_Emotion.am
