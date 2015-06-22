@@ -525,3 +525,36 @@ EAPI void                          elm_scroller_loop_set(Evas_Object *obj, Eina_
  * @ingroup Scroller
  */
 EAPI void                          elm_scroller_loop_get(const Evas_Object *obj, Eina_Bool *loop_h, Eina_Bool *loop_v);
+
+/**
+ * @brief Enable or disable mouse wheel to be used to scroll the scroller.
+ *
+ * @param obj The scroller object
+ * @param disabled The mouse wheel disabled over the scroller.
+ * 
+ * Mouse wheel can be used to scroll up and down the scroller.
+ * Wheel is enabled by default.
+ *
+ * @since 1.15
+ *
+ * @see elm_scroller_wheel_disabled_get()
+ *
+ * @ingroup Scroller 
+ */
+ EAPI void                          elm_scroller_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+
+ /**
+ * @brief Get a value whether mouse wheel is enabled or not over the scroller.
+ *
+ * @param obj The scroller object
+ * @return @c EINA_TRUE means scroller wheel is disabled. @c EINA_FALSE indicates it is enabled.
+ *
+ * Mouse wheel can be used to scroll up and down the scroller.
+ *
+ * @since 1.15
+ *
+ * @see elm_scroller_wheel_disabled_set()
+ *
+ * @ingroup Scroller 
+ */
+ EAPI Eina_Bool                     elm_scroller_wheel_disabled_get(const Evas_Object *obj);

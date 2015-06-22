@@ -1284,6 +1284,24 @@ elm_scroller_loop_get(const Evas_Object *obj,
    eo_do(obj, elm_interface_scrollable_loop_get(loop_h, loop_v));
 }
 
+EAPI void
+elm_scroller_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+{
+   ELM_SCROLLABLE_CHECK(obj);
+
+   eo_do((Eo *)obj, elm_interface_scrollable_wheel_disabled_set(disabled));
+}
+
+EAPI Eina_Bool
+elm_scroller_wheel_disabled_get(const Evas_Object *obj)
+{
+   ELM_SCROLLABLE_CHECK(obj, EINA_FALSE);
+
+   Eina_Bool ret;
+
+   return eo_do_ret((Eo *) obj, ret, elm_interface_scrollable_wheel_disabled_get());
+}
+
 EOLIAN static void
 _elm_scroller_propagate_events_set(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED, Eina_Bool propagation)
 {
