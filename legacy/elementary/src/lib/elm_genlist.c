@@ -1067,6 +1067,9 @@ _item_tree_effect_finish(Elm_Genlist_Data *sd)
 {
    Elm_Object_Item *eo_it = NULL;
    const Eina_List *l;
+   Item_Block *itb;
+   Elm_Gen_Item *it1;
+   Evas_Coord y = 0;
 
    if (sd->tree_effect_animator)
      {
@@ -1084,6 +1087,22 @@ _item_tree_effect_finish(Elm_Genlist_Data *sd)
                   //XXX: for compat
                   edje_object_signal_emit(VIEW(it), SIGNAL_SHOW, "");
                   edje_object_signal_emit(VIEW(it), SIGNAL_SHOW, "elm");
+               }
+          }
+        if (sd->move_effect_mode ==
+            ELM_GENLIST_TREE_EFFECT_EXPAND)
+          {
+             EINA_INLIST_FOREACH(sd->blocks, itb)
+               {
+                  EINA_LIST_FOREACH(itb->items, l, it1)
+                   {
+                       if (it1->item->scrl_y <= y)
+                         {
+                            it1->item->scrl_y = y + it1->item->h;
+                            _elm_genlist_item_unrealize(it1, EINA_FALSE);
+                         }
+                       y = it1->item->scrl_y;
+                   }
                }
           }
      }
