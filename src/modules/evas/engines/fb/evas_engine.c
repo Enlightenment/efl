@@ -114,10 +114,11 @@ eng_output_free(void *data)
 {
    Render_Engine *re;
 
-   re = (Render_Engine *)data;
-
-   evas_render_engine_software_generic_clean(&re->generic);
-   free(re);
+   if (re = (Render_Engine *)data)
+     {
+        evas_render_engine_software_generic_clean(&re->generic);
+        free(re);
+     }
 
    evas_common_shutdown();
 }
