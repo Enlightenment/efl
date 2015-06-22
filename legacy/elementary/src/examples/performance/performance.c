@@ -80,18 +80,18 @@ static Eina_Bool
 _animate_scene(void *data)
 {
    Eina_List *l;
-   Evas_3D_Node *node;
+   Evas_Canvas3D_Node *node;
 
    static float angle = 0.0f;
    angle += 0.03;
 
-   eo_do((Evas_3D_Node *)data,
-          evas_3d_node_look_at_set(EVAS_3D_SPACE_PARENT, 8 * sin(angle), 0.0, 8 * cos(angle),
-                                   EVAS_3D_SPACE_PARENT, 0.0, 1.0, 0.0));
+   eo_do((Evas_Canvas3D_Node *)data,
+          evas_canvas3d_node_look_at_set(EVAS_CANVAS3D_SPACE_PARENT, 8 * sin(angle), 0.0, 8 * cos(angle),
+                                   EVAS_CANVAS3D_SPACE_PARENT, 0.0, 1.0, 0.0));
 
    EINA_LIST_FOREACH (globalGraphical.list_nodes, l, node)
      {
-        eo_do(node, evas_3d_node_orientation_angle_axis_set(10 * angle, 1.0, 1.0, 0.0));
+        eo_do(node, evas_canvas3d_node_orientation_angle_axis_set(10 * angle, 1.0, 1.0, 0.0));
      }
 
    /* Rotate */
@@ -113,8 +113,8 @@ _on_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
    int scene_w, scene_h;
    Evas_Real scene_x, scene_y;
    Evas_Real s, t;
-   Evas_3D_Node *n;
-   Evas_3D_Mesh *m;
+   Evas_Canvas3D_Node *n;
+   Evas_Canvas3D_Mesh *m;
    Eina_Bool pick;
    clock_t time;
    float diff_sec;
@@ -132,7 +132,7 @@ _on_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
         obj_x = ev->canvas.x - x;
         obj_y = ev->canvas.y - y;
 
-        eo_do(globalGraphical.scene, evas_3d_scene_size_get(&scene_w, &scene_h));
+        eo_do(globalGraphical.scene, evas_canvas3d_scene_size_get(&scene_w, &scene_h));
 
         scene_x = obj_x * scene_w / (Evas_Real)w;
         scene_y = obj_y * scene_h / (Evas_Real)h;
@@ -140,29 +140,29 @@ _on_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
         time = clock();
         if (globalGraphical.flags.colorpick_enable)
           {
-             eo_do(globalGraphical.scene, pick = evas_3d_scene_color_pick_enable_set(EINA_TRUE));
+             eo_do(globalGraphical.scene, pick = evas_canvas3d_scene_color_pick_enable_set(EINA_TRUE));
              eo_do(globalGraphical.scene,
-                   pick = evas_3d_scene_pick(ev->canvas.x, ev->canvas.y, &n, &m, NULL, NULL));
+                   pick = evas_canvas3d_scene_pick(ev->canvas.x, ev->canvas.y, &n, &m, NULL, NULL));
              time = clock() - time;
              diff_sec = ((float)time) / CLOCKS_PER_SEC / 10;
              if (pick)
                {
                   fprintf(stdout, "Boom! Color pick time expended for pick: %2.7f \n", diff_sec);
                   if (n != globalGraphical.mesh_nodebox)
-                    eo_do(n, evas_3d_node_scale_set(0.5, 0.5, 0.5));
+                    eo_do(n, evas_canvas3d_node_scale_set(0.5, 0.5, 0.5));
                }
           }
         else
           {
-             eo_do(globalGraphical.scene, pick = evas_3d_scene_color_pick_enable_set(EINA_FALSE));
-             eo_do(globalGraphical.scene, pick = evas_3d_scene_pick(scene_x, scene_y, &n, &m, &s, &t));
+             eo_do(globalGraphical.scene, pick = evas_canvas3d_scene_color_pick_enable_set(EINA_FALSE));
+             eo_do(globalGraphical.scene, pick = evas_canvas3d_scene_pick(scene_x, scene_y, &n, &m, &s, &t));
              time = clock() - time;
              diff_sec = ((float)time) / CLOCKS_PER_SEC / 10;
              if (pick)
                {
                   fprintf(stdout, "Boom! Geometry pick time expended for pick: %2.7f, TexCoord (%f, %f)\n", diff_sec, s, t);
                   if (n != globalGraphical.mesh_nodebox)
-                     eo_do(n, evas_3d_node_scale_set(0.5, 0.5, 0.5));
+                     eo_do(n, evas_canvas3d_node_scale_set(0.5, 0.5, 0.5));
                }
           }
      }
@@ -200,16 +200,16 @@ _node_orientation_change_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *it;
    Eina_List *l;
-   Evas_3D_Node *node;
+   Evas_Canvas3D_Node *node;
    it = elm_flipselector_selected_item_get((Evas_Object*)data);
    const char *str = elm_object_item_text_get(it);
    if (str && !strcmp(str, "root node"))
-     eo_do(globalGraphical.root_node, evas_3d_node_orientation_angle_axis_set(15, 1.0, 1.0, 1.0));
+     eo_do(globalGraphical.root_node, evas_canvas3d_node_orientation_angle_axis_set(15, 1.0, 1.0, 1.0));
    else
      {
         EINA_LIST_FOREACH (globalGraphical.list_nodes, l, node)
           {
-             eo_do((Eo*)node, evas_3d_node_orientation_angle_axis_set(15, 1.0, 1.0, 1.0));
+             eo_do((Eo*)node, evas_canvas3d_node_orientation_angle_axis_set(15, 1.0, 1.0, 1.0));
           }
      }
 }
@@ -218,16 +218,16 @@ _node_position_change_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *it;
    Eina_List *l;
-   Evas_3D_Node *node;
+   Evas_Canvas3D_Node *node;
    it = elm_flipselector_selected_item_get((Evas_Object*)data);
    const char *str = elm_object_item_text_get(it);
    if (str && !strcmp(str, "root node"))
-     eo_do(globalGraphical.root_node, evas_3d_node_position_set(10.0, 1.0, 1.0));
+     eo_do(globalGraphical.root_node, evas_canvas3d_node_position_set(10.0, 1.0, 1.0));
    else
      {
         EINA_LIST_FOREACH (globalGraphical.list_nodes, l, node)
           {
-             eo_do((Eo*)node, evas_3d_node_position_set(1.0, 1.0, 1.0));
+             eo_do((Eo*)node, evas_canvas3d_node_position_set(1.0, 1.0, 1.0));
           }
      }
 }
@@ -236,16 +236,16 @@ _node_scale_change_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *it;
    Eina_List *l;
-   Evas_3D_Node *node;
+   Evas_Canvas3D_Node *node;
    it = elm_flipselector_selected_item_get((Evas_Object*)data);
    const char *str = elm_object_item_text_get(it);
    if (str && !strcmp(str, "root node"))
-     eo_do(globalGraphical.root_node, evas_3d_node_scale_set(1.0, 1.0, 1.0));
+     eo_do(globalGraphical.root_node, evas_canvas3d_node_scale_set(1.0, 1.0, 1.0));
    else
      {
         EINA_LIST_FOREACH (globalGraphical.list_nodes, l, node)
           {
-             eo_do((Eo*)node, evas_3d_node_scale_set(1.0, 1.0, 1.0));
+             eo_do((Eo*)node, evas_canvas3d_node_scale_set(1.0, 1.0, 1.0));
           }
      }
 }
