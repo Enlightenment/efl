@@ -4425,9 +4425,8 @@ _item_process_post(Elm_Genlist_Data *sd,
         it->item->block->changed = 0;
         if (sd->pan_changed)
           {
+             evas_object_smart_changed(sd->pan_obj);
              ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
-             _calc_job(sd->obj);
-             sd->pan_changed = EINA_FALSE;
           }
      }
    if (show_me) it->item->block->show_me = EINA_TRUE;
