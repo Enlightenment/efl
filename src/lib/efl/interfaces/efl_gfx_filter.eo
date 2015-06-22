@@ -70,5 +70,14 @@ interface Efl.Gfx.Filter
             @out source: Efl.Gfx.Base*; [[object used as a proxy source]]
          }
       }
+      data_set {
+         [[Pass extra data to the filter program.
+
+         This sets a global value as a string.]]
+         params {
+            @in name: const(char)*; [[name of the global variable]]
+            @in value: const(char)*; [[string value to use as data]]
+         }
+      }
    }
 }

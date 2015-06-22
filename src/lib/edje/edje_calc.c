@@ -2535,6 +2535,67 @@ _edje_part_recalc_single_filter(Edje *ed,
               efl_gfx_filter_state_set(chosen_desc->state.name, chosen_desc->state.value,
                                        NULL, 0.0, pos);
            }
+         /* pass extra data items */
+         if (filter->data)
+           {
+              Eina_Iterator *it = eina_hash_iterator_tuple_new(filter->data);
+              Eina_Hash_Tuple *tup;
+              EINA_ITERATOR_FOREACH(it, tup)
+                {
+                   const char *name = tup->key;
+                   char *value = tup->data;
+                   if (!value)
+                     {
+                        efl_gfx_filter_data_set(name, NULL);
+                     }
+                   else if (!strncmp(value, "color_class('", sizeof("color_class('") - 1))
+                     {
+                        /* special handling for color classes even tho they're not that great */
+                        char *ccname, *buffer, *r;
+                        Edje_Color_Class *cc;
+
+                        ccname = strdup(value + sizeof("color_class('") - 1);
+                        if (ccname)
+                          {
+                             r = strchr(ccname, '\'');
+                             if (r)
+                               {
+                                  *r = '\0';
+                                  cc = _edje_color_class_find(ed, ccname);
+                                  if (cc)
+                                    {
+                                       static const char *fmt =
+                                             "%s={r=%d,g=%d,b=%d,a=%d,"
+                                             "r2=%d,g2=%d,b2=%d,a2=%d,"
+                                             "r3=%d,g3=%d,b3=%d,a3=%d}";
+                                       int len = sizeof(fmt);
+                                       len += strlen(ccname);
+                                       buffer = alloca(len);
+                                       snprintf(buffer, len - 1, fmt, ccname,
+                                                cc->r, cc->g, cc->b, cc->a,
+                                                cc->r2, cc->g2, cc->b2, cc->a2,
+                                                cc->r3, cc->g3, cc->b3, cc->a3);
+                                       efl_gfx_filter_data_set(name, buffer);
+                                    }
+                                  else
+                                    {
+                                       ERR("Unknown color class: %s", ccname);
+                                       eina_hash_del(filter->data, tup->key, tup->data);
+                                    }
+                               }
+                             else
+                               {
+                                  ERR("Failed to parse color class: %s", value);
+                                  eina_hash_del(filter->data, tup->key, tup->data);
+                               }
+                             free(ccname);
+                          }
+                     }
+                   else
+                     efl_gfx_filter_data_set(name, value);
+                }
+              eina_iterator_free(it);
+           }
          );
 }
 

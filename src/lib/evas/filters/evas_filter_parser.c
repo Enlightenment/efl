@@ -341,6 +341,7 @@ struct _Evas_Filter_Program
       int l, r, t, b;
    } pad;
    Evas_Filter_Program_State state;
+   Eina_Hash /* str -> str */ *data;
    lua_State *L;
    int       lua_func;
    int       last_bufid;
@@ -2620,6 +2621,24 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
    }
    lua_setglobal(L, "state");
 
+   /* now push all extra data */
+   if (pgm->data)
+     {
+        Eina_Iterator *it = eina_hash_iterator_tuple_new(pgm->data);
+        Eina_Hash_Tuple *tup;
+        EINA_ITERATOR_FOREACH(it, tup)
+          {
+             const char *name = tup->key;
+             const char *value = tup->data;
+             if (value)
+               lua_pushstring(L, value);
+             else
+               lua_pushnil(L);
+             lua_setglobal(L, name);
+          }
+        eina_iterator_free(it);
+     }
+
 #undef JOINC
 #undef SETFIELD
 #undef SETCOLOR
@@ -2903,6 +2922,13 @@ evas_filter_program_source_set_all(Evas_Filter_Program *pgm,
 {
    if (!pgm) return;
    pgm->proxies = proxies;
+}
+
+void
+evas_filter_program_data_set_all(Evas_Filter_Program *pgm, Eina_Hash *data)
+{
+   if (!pgm) return;
+   pgm->data = data;
 }
 
 /** Glue with Evas' filters */

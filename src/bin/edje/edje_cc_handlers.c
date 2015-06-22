@@ -396,6 +396,7 @@ static void st_collections_group_parts_part_description_mesh_assembly(void);
 static void st_collections_group_parts_part_description_mesh_geometry(void);
 static void st_collections_group_parts_part_description_filter_code(void);
 static void st_collections_group_parts_part_description_filter_source(void);
+static void st_collections_group_parts_part_description_filter_data(void);
 
 #ifdef HAVE_EPHYSICS
 static void st_collections_group_parts_part_description_physics_mass(void);
@@ -849,6 +850,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.mesh.geometry", st_collections_group_parts_part_description_mesh_geometry},
      {"collections.group.parts.part.description.filter.code", st_collections_group_parts_part_description_filter_code},
      {"collections.group.parts.part.description.filter.source", st_collections_group_parts_part_description_filter_source},
+     {"collections.group.parts.part.description.filter.data", st_collections_group_parts_part_description_filter_data},
 
 #ifdef HAVE_EPHYSICS
      {"collections.group.parts.part.description.physics.mass", st_collections_group_parts_part_description_physics_mass},
@@ -11649,6 +11651,56 @@ st_collections_group_parts_part_description_filter_source(void)
    free(name);
 }
 
+/**
+    @page edcref
+
+    @property
+        filter.data
+    @parameters
+        [name] [content]
+    @effect
+        Pass extra data to the Lua filter program. This can be used to pass
+        extra colors from a color_class using the following syntax:
+          filter.data: "mycc" "color_class('my_color_class')";
+        If not a color class, the data will simply be set as a string attached
+        to the global variable 'name' in the Lua program.
+        For more information, please refer to the page "Evas filters reference".
+        @see evasfiltersref
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_filter_data(void)
+{
+   Edje_Part_Description_Spec_Filter *filter;
+   char *name, *value;
+
+   if (current_part->type == EDJE_PART_TYPE_TEXT)
+     filter = &(((Edje_Part_Description_Text *)current_desc)->text.filter);
+   else if (current_part->type == EDJE_PART_TYPE_IMAGE)
+     filter = &(((Edje_Part_Description_Image *)current_desc)->image.filter);
+   else
+     {
+        ERR("parse error %s:%i. filter set for non-TEXT and non-IMAGE part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   check_arg_count(2);
+
+   if (!filter->data)
+     filter->data = eina_hash_string_small_new(EINA_FREE_CB(free));
+
+   name = parse_str(0);
+   value = parse_str(1);
+   if (eina_hash_find(filter->data, name))
+     {
+        ERR("parse error %s:%i. filter.data '%s' already exists in this context",
+            file_in, line - 1, name);
+        exit(-1);
+     }
+
+   eina_hash_add(filter->data, name, value);
+}
 
 /** @edcsubsection{collections_group_parts_descriptions_params,
  *                 Group.Parts.Part.Description.Params} */

@@ -1283,6 +1283,7 @@ struct _Edje_Part_Description_Spec_Filter
    const char    *code;
    const char    *name;
    Eina_List     *sources; /* "part" or "buffer:part" */
+   Eina_Hash     *data; /* "name" --> "data" */
    Eina_Bool      checked_data : 1; // checked whether this is a data item or embedded string
    Eina_Bool      no_free : 1;
 };

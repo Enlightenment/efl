@@ -959,6 +959,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.fill.type", image.fill.type, EET_T_CHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.filter.code", image.filter.code, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_LIST_STRING(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.filter.sources", image.filter.sources);
+   EET_DATA_DESCRIPTOR_ADD_HASH_STRING(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.filter.data", image.filter.data);
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Proxy);
    eddc.func.mem_free = mem_free_proxy;
@@ -1017,6 +1018,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.ellipsis", text.ellipsis, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.filter", text.filter.code, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_LIST_STRING(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.filter_sources", text.filter.sources);
+   EET_DATA_DESCRIPTOR_ADD_HASH_STRING(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.filter.data", text.filter.data); // @since 1.15
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Text);
    eddc.func.mem_free = mem_free_textblock;

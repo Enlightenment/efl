@@ -123,6 +123,7 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
              Evas_Filter_Program *pgm;
              pgm = evas_filter_program_new(fcow->name, alpha);
              evas_filter_program_source_set_all(pgm, fcow->sources);
+             evas_filter_program_data_set_all(pgm, fcow->data);
              evas_filter_program_state_set(pgm, eo_obj, obj,
                                            fcow->state.cur.name, fcow->state.cur.value,
                                            fcow->state.next.name, fcow->state.next.value,
@@ -274,6 +275,7 @@ _evas_filter_efl_gfx_filter_program_set(Eo *eo_obj, Evas_Filter_Data *pd,
              alpha = eo_do_ret(eo_obj, alpha, evas_filter_input_alpha());
              pgm = evas_filter_program_new(fcow->name, alpha);
              evas_filter_program_source_set_all(pgm, fcow->sources);
+             evas_filter_program_data_set_all(pgm, fcow->data);
              evas_filter_program_state_set(pgm, eo_obj, obj,
                                            fcow->state.cur.name, fcow->state.cur.value,
                                            fcow->state.next.name, fcow->state.next.value,
@@ -377,6 +379,7 @@ _evas_filter_efl_gfx_filter_source_set(Eo *eo_obj, Evas_Filter_Data *pd,
 
    eina_hash_add(fcow->sources, pb->name, pb);
    evas_filter_program_source_set_all(fcow->chain, fcow->sources);
+   evas_filter_program_data_set_all(fcow->chain, fcow->data);
 
    // Update object
 update:
@@ -497,9 +500,36 @@ _evas_filter_destructor(Eo *eo_obj, Evas_Filter_Data *pd)
    if (pd->data->output)
      ENFN->image_free(ENDT, pd->data->output);
    eina_hash_free(pd->data->sources);
+   eina_hash_free(pd->data->data);
    evas_filter_program_del(pd->data->chain);
    eina_stringshare_del(pd->data->code);
    eina_cow_free(evas_object_filter_cow, (const Eina_Cow_Data **) &pd->data);
+}
+
+EOLIAN void
+_evas_filter_efl_gfx_filter_data_set(Eo *obj EINA_UNUSED, Evas_Filter_Data *pd,
+                                     const char *name, const char *value)
+{
+   const char *check = NULL;
+
+   if (!pd->data) return;
+
+   if (pd->data->data && ((check = eina_hash_find(pd->data->data, name)) != NULL))
+     {
+        if (!strcmp(check, value))
+          return;
+     }
+
+   EINA_COW_WRITE_BEGIN(evas_object_filter_cow, fcow, Evas_Object_Filter_Data, fcow)
+     {
+        if (!fcow->data)
+          fcow->data = eina_hash_string_small_new(free);
+        eina_hash_set(fcow->data, name, value ? strdup(value) : NULL);
+        if (fcow->chain)
+          evas_filter_program_data_set_all(fcow->chain, fcow->data);
+        fcow->changed = 1;
+     }
+   EINA_COW_WRITE_END(evas_object_filter_cow, fcow, fcow);
 }
 
 #include "evas_filter.eo.c"

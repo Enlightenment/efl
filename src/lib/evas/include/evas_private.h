@@ -1178,6 +1178,7 @@ struct _Evas_Object_Filter_Data
    Eina_Stringshare    *code;
    Evas_Filter_Program *chain;
    Eina_Hash           *sources; // Evas_Filter_Proxy_Binding
+   Eina_Hash           *data; // str -> str
    void                *output;
    struct {
       struct {
