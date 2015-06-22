@@ -1,0 +1,23 @@
+class Ecore.Con.Eet.Base (Eo.Base) {
+   legacy_prefix: null;
+   eo_prefix: ecore_con_eet_base;
+   methods {
+      @property server {
+         /*@
+          * The server object to which we send and receive.
+          */
+         set {
+         }
+         get {
+         }
+         values {
+            data: Ecore_Con_Server*;
+         }
+      }
+   }
+   implements {
+      Eo.Base.constructor;
+      Eo.Base.destructor;
+      Eo.Base.finalize;
+   }
+}

@@ -43,7 +43,7 @@
  * @{
  */
 
-typedef struct _Ecore_Con_Eet Ecore_Con_Eet;
+typedef Eo Ecore_Con_Eet;
 typedef struct _Ecore_Con_Reply Ecore_Con_Reply;
 
 /**
@@ -69,6 +69,13 @@ typedef Eina_Bool (*Ecore_Con_Eet_Client_Cb)(void *data, Ecore_Con_Reply *reply,
  * @brief Called when the server has accepted the connection of the client.
  */
 typedef Eina_Bool (*Ecore_Con_Eet_Server_Cb)(void *data, Ecore_Con_Reply *reply, Ecore_Con_Server *conn);
+
+#ifndef EFL_NOLEGACY_API_SUPPORT
+#include "Ecore_Con_Eet_Legacy.h"
+#endif
+#ifdef EFL_EO_API_SUPPORT
+#include "Ecore_Con_Eet_Eo.h"
+#endif
 
 /**
  * Create a Ecore_Con_Eet server.
