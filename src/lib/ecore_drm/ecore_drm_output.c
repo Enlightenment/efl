@@ -960,8 +960,6 @@ ecore_drm_output_enable(Ecore_Drm_Output *output)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
 
-   if (output->enabled) return EINA_TRUE;
-
    output->enabled = EINA_TRUE;
    ecore_drm_output_dpms_set(output, DRM_MODE_DPMS_ON);
 
@@ -974,8 +972,6 @@ EAPI void
 ecore_drm_output_disable(Ecore_Drm_Output *output)
 {
    EINA_SAFETY_ON_NULL_RETURN(output);
-
-   if (!output->enabled) return;
 
    output->enabled = EINA_FALSE;
    ecore_drm_output_dpms_set(output, DRM_MODE_DPMS_OFF);
