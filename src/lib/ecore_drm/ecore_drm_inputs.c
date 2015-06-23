@@ -214,7 +214,6 @@ EAPI Eina_Bool
 ecore_drm_inputs_create(Ecore_Drm_Device *dev)
 {
    Ecore_Drm_Input *input;
-   int level, priority = LIBINPUT_LOG_PRIORITY_ERROR;
 
    /* check for valid device */
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
@@ -235,27 +234,8 @@ ecore_drm_inputs_create(Ecore_Drm_Device *dev)
         goto err;
      }
 
-   /* get the current eina_log level */
-   level = eina_log_domain_registered_level_get(_ecore_drm_log_dom);
-   switch (level)
-     {
-      case EINA_LOG_LEVEL_DBG:
-        priority = LIBINPUT_LOG_PRIORITY_DEBUG;
-        break;
-      case EINA_LOG_LEVEL_INFO:
-        priority = LIBINPUT_LOG_PRIORITY_INFO;
-        break;
-      case EINA_LOG_LEVEL_CRITICAL:
-      case EINA_LOG_LEVEL_ERR:
-      case EINA_LOG_LEVEL_WARN:
-        priority = LIBINPUT_LOG_PRIORITY_ERROR;
-        break;
-      default:
-        break;
-     }
-
    /* set libinput log priority */
-   libinput_log_set_priority(input->libinput, priority);
+   libinput_log_set_priority(input->libinput, LIBINPUT_LOG_PRIORITY_INFO);
 
    /* assign udev seat */
    if (libinput_udev_assign_seat(input->libinput, dev->seat) != 0)
