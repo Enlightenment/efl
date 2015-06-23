@@ -203,6 +203,40 @@ START_TEST(edje_test_masking)
 }
 END_TEST
 
+START_TEST(edje_test_filters)
+{
+   Evas *evas = EDJE_TEST_INIT_EVAS();
+   const Evas_Object *text, *sub;
+   Evas_Object *obj, *src = NULL;
+   const char *prg, *name;
+   Eina_Bool b;
+
+   obj = edje_object_add(evas);
+   fail_unless(edje_object_file_set(obj, test_layout_get("test_filters.edj"), "test_group"));
+
+   evas_object_resize(obj, 200, 200);
+
+   /* check value of no_render flag as seen from evas land */
+   sub = edje_object_part_object_get(obj, "mask");
+   fail_if(!eo_do_ret(sub, b, evas_obj_no_render_get()));
+
+   /* text part: check filter status */
+   text = edje_object_part_object_get(obj, "text");
+   fail_if(!text);
+
+   eo_do(text, efl_gfx_filter_program_get(&prg, &name));
+   fail_if(!prg);
+   fail_if(!name || strcmp(name, "filterfile"));
+
+   eo_do(text, efl_gfx_filter_source_get("mask", &src));
+   fail_if(!src);
+
+   // TODO: Verify properly that the filter runs well
+
+   EDJE_TEST_FREE_EVAS();
+}
+END_TEST
+
 void edje_test_edje(TCase *tc)
 {    
    tcase_add_test(tc, edje_test_edje_init);
@@ -212,4 +246,5 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_complex_layout);
    tcase_add_test(tc, edje_test_calculate_parens);
    tcase_add_test(tc, edje_test_masking);
+   tcase_add_test(tc, edje_test_filters);
 }

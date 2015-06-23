@@ -1,0 +1,62 @@
+data {
+   file: "filterfile" "filter.lua";
+}
+color_classes {
+   color_class {
+      name: "cc1";
+      color: 0 0 255 255;
+      color2: 0 255 255 255;
+      color3: 0 0 255 255;
+   }
+}
+collections {
+   images {
+      // found in tests/emotion/data
+      image: "pnl.png" COMP;
+   }
+   group { name: "test_group";
+      parts {
+         part { name: "background";
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 33 32 32 255;
+               rel1.relative: 0 0;
+               rel2.relative: 1 1;
+               max: 200 200;
+            }
+         }
+         part { name: "mask";
+            type: IMAGE;
+            no_render: 1; 
+            description { state: "default" 0.0;
+               rel1.relative: 0 0;
+               rel2.relative: 1 1;
+               rel.to: "text";
+               max: 999 50;
+               image.normal: "pnl.png";
+            }
+         }
+         part { name: "text";
+            type: TEXT;
+            description { state: "default" 0.0;
+               rel1.relative: 0 0;
+               rel2.relative: 1 1;
+               rel1.to: "background";
+               rel2.to: "background";
+               text {
+                  text: "FILTER";
+                  font: "Sans";
+                  size: 48;
+               }
+               filter {
+                  code: "filterfile";
+                  source: "mask";
+                  data: "mycolor" "#f0f8"; 
+                  data: "cc" "color_class('cc1')";
+               }
+               color: 255 80 0 200;
+            }
+         }
+      }
+   }
+}
