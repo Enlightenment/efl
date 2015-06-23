@@ -38,8 +38,6 @@ struct _Elm_Entry_Data
    Evas_Object                          *start_handler;
    Evas_Object                          *end_handler;
    Ecore_Job                            *deferred_recalc_job;
-   Ecore_Event_Handler                  *sel_notify_handler;
-   Ecore_Event_Handler                  *sel_clear_handler;
    Ecore_Timer                          *longpress_timer;
    Ecore_Timer                          *delay_write;
    /* for deferred appending */

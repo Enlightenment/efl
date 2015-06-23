@@ -1411,6 +1411,19 @@ _paste_cb(void *data,
 }
 
 static void
+_selection_clear(void *data, Elm_Sel_Type selection)
+{
+   ELM_ENTRY_DATA_GET(data, sd);
+
+   if (!sd->have_selection) return;
+   if ((selection == ELM_SEL_TYPE_CLIPBOARD) ||
+       (selection == ELM_SEL_TYPE_PRIMARY))
+     {
+        elm_entry_select_none(data);
+     }
+}
+
+static void
 _selection_store(Elm_Sel_Type seltype,
                  Evas_Object *obj)
 {
@@ -1423,6 +1436,7 @@ _selection_store(Elm_Sel_Type seltype,
 
    elm_cnp_selection_set
      (obj, seltype, ELM_SEL_FORMAT_MARKUP, sel, strlen(sel));
+   elm_cnp_selection_loss_callback_set(obj, seltype, _selection_clear, obj);
    if (seltype == ELM_SEL_TYPE_CLIPBOARD)
      eina_stringshare_replace(&sd->cut_sel, sel);
 }
@@ -2055,8 +2069,11 @@ _entry_selection_start_signal_cb(void *data,
 
    top = elm_widget_top_get(data);
    if (txt && top && (elm_win_window_id_get(top)))
-     elm_cnp_selection_set(data, ELM_SEL_TYPE_PRIMARY,
-                           ELM_SEL_FORMAT_MARKUP, txt, strlen(txt));
+     {
+        elm_cnp_selection_set(data, ELM_SEL_TYPE_PRIMARY,
+              ELM_SEL_FORMAT_MARKUP, txt, strlen(txt));
+        elm_cnp_selection_loss_callback_set(data, ELM_SEL_TYPE_PRIMARY, _selection_clear, data);
+     }
    elm_object_focus_set(data, EINA_TRUE);
 }
 
@@ -2106,28 +2123,18 @@ _entry_selection_cleared_signal_cb(void *data,
 
    sd->have_selection = EINA_FALSE;
    evas_object_smart_callback_call(data, SIG_SELECTION_CLEARED, NULL);
-   if (sd->sel_notify_handler)
+   if (sd->cut_sel)
      {
-        if (sd->cut_sel)
-          {
-             Evas_Object *top;
+        elm_cnp_selection_set
+           (data, ELM_SEL_TYPE_PRIMARY, ELM_SEL_FORMAT_MARKUP,
+            sd->cut_sel, eina_stringshare_strlen(sd->cut_sel));
+        elm_cnp_selection_loss_callback_set(data, ELM_SEL_TYPE_PRIMARY, _selection_clear, data);
 
-             top = elm_widget_top_get(data);
-             if ((top) && (elm_win_window_id_get(top)))
-               elm_cnp_selection_set
-                 (data, ELM_SEL_TYPE_PRIMARY, ELM_SEL_FORMAT_MARKUP,
-                 sd->cut_sel, eina_stringshare_strlen(sd->cut_sel));
-
-             ELM_SAFE_FREE(sd->cut_sel, eina_stringshare_del);
-          }
-        else
-          {
-             Evas_Object *top;
-
-             top = elm_widget_top_get(data);
-             if ((top) && (elm_win_window_id_get(top)))
-               elm_object_cnp_selection_clear(data, ELM_SEL_TYPE_PRIMARY);
-          }
+        ELM_SAFE_FREE(sd->cut_sel, eina_stringshare_del);
+     }
+   else
+     {
+        elm_object_cnp_selection_clear(data, ELM_SEL_TYPE_PRIMARY);
      }
    _hide_selection_handler(data);
 }
@@ -2514,87 +2521,6 @@ _entry_mouse_triple_signal_cb(void *data,
 {
    evas_object_smart_callback_call(data, SIG_CLICKED_TRIPLE, NULL);
 }
-
-#ifdef HAVE_ELEMENTARY_X
-static Eina_Bool
-_event_selection_notify(void *data,
-                        int type EINA_UNUSED,
-                        void *event)
-{
-   Ecore_X_Event_Selection_Notify *ev = event;
-
-   ELM_ENTRY_DATA_GET(data, sd);
-
-   if ((!sd->selection_asked) && (!sd->drag_selection_asked))
-     return ECORE_CALLBACK_PASS_ON;
-
-   if ((ev->selection == ECORE_X_SELECTION_CLIPBOARD) ||
-       (ev->selection == ECORE_X_SELECTION_PRIMARY))
-     {
-        Ecore_X_Selection_Data_Text *text_data;
-
-        text_data = ev->data;
-        if (text_data->data.content == ECORE_X_SELECTION_CONTENT_TEXT)
-          {
-             if (text_data->text)
-               {
-                  char *txt = _elm_util_text_to_mkup(text_data->text);
-
-                  if (txt)
-                    {
-                       elm_entry_entry_insert(data, txt);
-                       free(txt);
-                    }
-               }
-          }
-        sd->selection_asked = EINA_FALSE;
-     }
-   else if (ev->selection == ECORE_X_SELECTION_XDND)
-     {
-        Ecore_X_Selection_Data_Text *text_data;
-
-        text_data = ev->data;
-        if (text_data->data.content == ECORE_X_SELECTION_CONTENT_TEXT)
-          {
-             if (text_data->text)
-               {
-                  char *txt = _elm_util_text_to_mkup(text_data->text);
-
-                  if (txt)
-                    {
-                       /* Massive FIXME: this should be at the drag point */
-                       elm_entry_entry_insert(data, txt);
-                       free(txt);
-                    }
-               }
-          }
-        sd->drag_selection_asked = EINA_FALSE;
-
-        ecore_x_dnd_send_finished();
-     }
-
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_event_selection_clear(void *data EINA_UNUSED,
-                       int type EINA_UNUSED,
-                       void *event EINA_UNUSED)
-{
-   Ecore_X_Event_Selection_Clear *ev = event;
-
-   ELM_ENTRY_DATA_GET(data, sd);
-
-   if (!sd->have_selection) return ECORE_CALLBACK_PASS_ON;
-   if ((ev->selection == ECORE_X_SELECTION_CLIPBOARD) ||
-       (ev->selection == ECORE_X_SELECTION_PRIMARY))
-     {
-        elm_entry_select_none(data);
-     }
-
-   return ECORE_CALLBACK_PASS_ON;
-}
-#endif
 
 static Evas_Object *
 _item_get(void *data,
@@ -3404,10 +3330,6 @@ _end_handler_mouse_move_cb(void *data,
 EOLIAN static void
 _elm_entry_evas_object_smart_add(Eo *obj, Elm_Entry_Data *priv)
 {
-#ifdef HAVE_ELEMENTARY_X
-   Evas_Object *top;
-#endif
-
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
@@ -3540,21 +3462,6 @@ _elm_entry_evas_object_smart_add(Eo *obj, Elm_Entry_Data *priv)
    priv->autocapital_type = (Elm_Autocapital_Type)edje_object_part_text_autocapital_type_get
        (priv->entry_edje, "elm.text");
 
-#ifdef HAVE_ELEMENTARY_X
-   top = elm_widget_top_get(obj);
-   if (!eo_isa(top, ELM_WIN_CLASS))
-     top = ecore_evas_data_get(ecore_evas_ecore_evas_get(evas_object_evas_get(obj)), "elm_win");
-   if ((top) && (elm_win_xwindow_get(top)))
-     {
-        priv->sel_notify_handler =
-          ecore_event_handler_add
-            (ECORE_X_EVENT_SELECTION_NOTIFY, _event_selection_notify, obj);
-        priv->sel_clear_handler =
-          ecore_event_handler_add
-            (ECORE_X_EVENT_SELECTION_CLEAR, _event_selection_clear, obj);
-     }
-#endif
-
    entries = eina_list_prepend(entries, obj);
 
    // module - find module for entry
@@ -3638,10 +3545,6 @@ _elm_entry_evas_object_smart_del(Eo *obj, Elm_Entry_Data *sd)
    evas_object_del(sd->mgf_clip);
 
    entries = eina_list_remove(entries, obj);
-#ifdef HAVE_ELEMENTARY_X
-   ecore_event_handler_del(sd->sel_notify_handler);
-   ecore_event_handler_del(sd->sel_clear_handler);
-#endif
    eina_stringshare_del(sd->cut_sel);
    eina_stringshare_del(sd->text);
    ecore_job_del(sd->deferred_recalc_job);
