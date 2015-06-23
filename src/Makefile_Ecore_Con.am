@@ -37,7 +37,9 @@ dist_installed_ecoreconmainheaders_DATA = \
 lib/ecore_con/Ecore_Con.h \
 lib/ecore_con/Ecore_Con_Legacy.h \
 lib/ecore_con/Ecore_Con_Eo.h \
-lib/ecore_con/Ecore_Con_Eet.h
+lib/ecore_con/Ecore_Con_Eet.h \
+lib/ecore_con/Ecore_Con_Eet_Legacy.h \
+lib/ecore_con/Ecore_Con_Eet_Eo.h
 
 nodist_installed_ecoreconmainheaders_DATA = \
                                             $(ecore_con_eolian_h)
