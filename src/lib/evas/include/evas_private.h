@@ -78,6 +78,7 @@ typedef struct _Evas_Object_Protected_Data  Evas_Object_Protected_Data;
 
 typedef struct _Evas_Filter_Program         Evas_Filter_Program;
 typedef struct _Evas_Object_Filter_Data     Evas_Object_Filter_Data;
+typedef struct _Evas_Filter_Data_Binding    Evas_Filter_Data_Binding;
 
 // 3D stuff
 
@@ -1178,7 +1179,7 @@ struct _Evas_Object_Filter_Data
    Eina_Stringshare    *code;
    Evas_Filter_Program *chain;
    Eina_Hash           *sources; // Evas_Filter_Proxy_Binding
-   Eina_Hash           *data; // str -> str
+   Eina_Inlist         *data; // Evas_Filter_Data_Binding
    void                *output;
    struct {
       struct {

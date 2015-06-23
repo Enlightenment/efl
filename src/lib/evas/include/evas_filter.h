@@ -133,7 +133,7 @@ Eina_Bool                evas_filter_context_program_use(Evas_Filter_Context *ct
 EAPI Eina_Bool           evas_filter_program_padding_get(Evas_Filter_Program *pgm, int *l, int *r, int *t, int *b);
 EAPI void                evas_filter_program_source_set_all(Evas_Filter_Program *pgm, Eina_Hash *sources);
 void                     evas_filter_context_proxy_render_all(Evas_Filter_Context *ctx, Eo *eo_obj, Eina_Bool do_async);
-void                     evas_filter_program_data_set_all(Evas_Filter_Program *pgm, Eina_Hash *data);
+void                     evas_filter_program_data_set_all(Evas_Filter_Program *pgm, Eina_Inlist *data);
 
 /* Filter context (low level) */
 Evas_Filter_Context     *evas_filter_context_new(Evas_Public_Data *evas, Eina_Bool async);
@@ -292,6 +292,14 @@ struct _Evas_Filter_Proxy_Binding
    Evas_Object *eo_proxy;
    Evas_Object *eo_source;
    Eina_Stringshare *name;
+};
+
+struct _Evas_Filter_Data_Binding
+{
+   EINA_INLIST;
+   Eina_Stringshare *name;
+   Eina_Stringshare *value;
+   Eina_Bool execute : 1;
 };
 
 #undef EAPI

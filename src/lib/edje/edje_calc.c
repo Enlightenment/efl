@@ -2486,7 +2486,7 @@ _edje_part_recalc_single_filter(Edje *ed,
                    char *value = tup->data;
                    if (!value)
                      {
-                        efl_gfx_filter_data_set(name, NULL);
+                        efl_gfx_filter_data_set(name, NULL, EINA_FALSE);
                      }
                    else if (!strncmp(value, "color_class('", sizeof("color_class('") - 1))
                      {
@@ -2504,7 +2504,7 @@ _edje_part_recalc_single_filter(Edje *ed,
                                   cc = _edje_color_class_find(ed, ccname);
                                   if (cc)
                                     {
-                                       static const char fmt[] = "--\n"
+                                       static const char fmt[] =
                                              "%s={r=%d,g=%d,b=%d,a=%d,"
                                              "r2=%d,g2=%d,b2=%d,a2=%d,"
                                              "r3=%d,g3=%d,b3=%d,a3=%d}";
@@ -2516,7 +2516,7 @@ _edje_part_recalc_single_filter(Edje *ed,
                                                 (int) cc->r2, (int) cc->g2, (int) cc->b2, (int) cc->a2,
                                                 (int) cc->r3, (int) cc->g3, (int) cc->b3, (int) cc->a3);
                                        buffer[len - 1] = 0;
-                                       efl_gfx_filter_data_set(name, buffer);
+                                       efl_gfx_filter_data_set(name, buffer, EINA_TRUE);
                                     }
                                   else
                                     {
@@ -2533,7 +2533,7 @@ _edje_part_recalc_single_filter(Edje *ed,
                           }
                      }
                    else
-                     efl_gfx_filter_data_set(name, value);
+                     efl_gfx_filter_data_set(name, value, EINA_FALSE);
                 }
               eina_iterator_free(it);
            }

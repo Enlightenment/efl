@@ -341,7 +341,7 @@ struct _Evas_Filter_Program
       int l, r, t, b;
    } pad;
    Evas_Filter_Program_State state;
-   Eina_Hash /* str -> str */ *data;
+   Eina_Inlist *data; // Evas_Filter_Data_Binding
    lua_State *L;
    int       lua_func;
    int       last_bufid;
@@ -2636,36 +2636,31 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
    /* now push all extra data */
    if (pgm->data)
      {
-        Eina_Iterator *it = eina_hash_iterator_tuple_new(pgm->data);
-        Eina_Hash_Tuple *tup;
-        EINA_ITERATOR_FOREACH(it, tup)
+        Evas_Filter_Data_Binding *db;
+        EINA_INLIST_FOREACH(pgm->data, db)
           {
-             const char *name = tup->key;
-             const char *value = tup->data;
-             if (value)
+             if (db->value)
                {
-                  if ((value[0] == '-') && (value[1] == '-') && value[2] == '\n')
+                  if (db->execute)
                     {
-                       if (luaL_dostring(L, value) != 0)
+                       if (luaL_dostring(L, db->value) != 0)
                          {
-                            eina_iterator_free(it);
                             ERR("Failed to run value: %s", lua_tostring(L, -1));
                             return EINA_FALSE;
                          }
                     }
                   else
                     {
-                       lua_pushstring(L, value);
-                       lua_setglobal(L, name);
+                       lua_pushstring(L, db->value);
+                       lua_setglobal(L, db->name);
                     }
                }
              else
                {
                   lua_pushnil(L);
-                  lua_setglobal(L, name);
+                  lua_setglobal(L, db->name);
                }
           }
-        eina_iterator_free(it);
      }
 
    return EINA_TRUE;
@@ -2959,7 +2954,7 @@ evas_filter_program_source_set_all(Evas_Filter_Program *pgm,
 }
 
 void
-evas_filter_program_data_set_all(Evas_Filter_Program *pgm, Eina_Hash *data)
+evas_filter_program_data_set_all(Evas_Filter_Program *pgm, Eina_Inlist *data)
 {
    if (!pgm) return;
    pgm->data = data;

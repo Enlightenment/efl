@@ -493,6 +493,8 @@ EOLIAN void
 _evas_filter_destructor(Eo *eo_obj, Evas_Filter_Data *pd)
 {
    Evas_Object_Protected_Data *obj = eo_data_scope_get(eo_obj, EVAS_OBJECT_CLASS);
+   Evas_Filter_Data_Binding *db;
+   Eina_Inlist *il;
 
    if (!pd->data) return;
    if (evas_object_filter_cow_default == pd->data) return;
@@ -500,7 +502,12 @@ _evas_filter_destructor(Eo *eo_obj, Evas_Filter_Data *pd)
    if (pd->data->output)
      ENFN->image_free(ENDT, pd->data->output);
    eina_hash_free(pd->data->sources);
-   eina_hash_free(pd->data->data);
+   EINA_INLIST_FOREACH_SAFE(pd->data->data, il, db)
+     {
+        eina_stringshare_del(db->name);
+        eina_stringshare_del(db->value);
+        free(db);
+     }
    evas_filter_program_del(pd->data->chain);
    eina_stringshare_del(pd->data->code);
    eina_cow_free(evas_object_filter_cow, (const Eina_Cow_Data **) &pd->data);
@@ -508,25 +515,45 @@ _evas_filter_destructor(Eo *eo_obj, Evas_Filter_Data *pd)
 
 EOLIAN void
 _evas_filter_efl_gfx_filter_data_set(Eo *obj EINA_UNUSED, Evas_Filter_Data *pd,
-                                     const char *name, const char *value)
+                                     const char *name, const char *value,
+                                     Eina_Bool execute)
 {
-   const char *check = NULL;
+   Evas_Filter_Data_Binding *db, *found = NULL;
 
-   if (!pd->data) return;
+   EINA_SAFETY_ON_NULL_RETURN(pd->data);
+   EINA_SAFETY_ON_NULL_RETURN(name);
 
-   if (pd->data->data && ((check = eina_hash_find(pd->data->data, name)) != NULL))
+   EINA_INLIST_FOREACH(pd->data->data, db)
      {
-        if (!strcmp(check, value))
-          return;
+        if (!strcmp(name, db->name))
+          {
+             if (db->execute == execute)
+               {
+                  if ((value == db->value) || (value && db->value && !strcmp(value, db->value)))
+                    return;
+               }
+             found = db;
+             break;
+          }
      }
 
    EINA_COW_WRITE_BEGIN(evas_object_filter_cow, pd->data, Evas_Object_Filter_Data, fcow)
      {
-        if (!fcow->data)
-          fcow->data = eina_hash_string_small_new(free);
-        eina_hash_set(fcow->data, name, value ? strdup(value) : NULL);
-        if (fcow->chain)
-          evas_filter_program_data_set_all(fcow->chain, fcow->data);
+        if (found)
+          {
+             // Note: we are keeping references to NULL values here.
+             eina_stringshare_replace(&found->value, value);
+             found->execute = execute;
+          }
+        else if (value)
+          {
+             db = calloc(1, sizeof(Evas_Filter_Data_Binding));
+             db->name = eina_stringshare_add(name);
+             db->value = eina_stringshare_add(value);
+             db->execute = execute;
+             fcow->data = eina_inlist_append(fcow->data, EINA_INLIST_GET(db));
+          }
+        evas_filter_program_data_set_all(fcow->chain, fcow->data);
         fcow->changed = 1;
      }
    EINA_COW_WRITE_END(evas_object_filter_cow, pd->data, fcow);

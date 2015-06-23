@@ -75,8 +75,9 @@ interface Efl.Gfx.Filter
 
          This sets a global value as a string.]]
          params {
-            @in name: const(char)*; [[name of the global variable]]
-            @in value: const(char)*; [[string value to use as data]]
+            @in name: const(char)*; [[Name of the global variable]]
+            @in value: const(char)*; [[String value to use as data]]
+            @in execute: bool; [[If true, execute 'name = value']]
          }
       }
    }
