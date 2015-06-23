@@ -706,9 +706,10 @@ _x11_selection_clear(void *udata EINA_UNUSED, int type EINA_UNUSED, void *event)
                                          _x11_sel_obj_del2, sel);
    sel->widget = NULL;
    sel->requestwidget = NULL;
+   sel->loss_cb = NULL;
+   sel->loss_data = NULL;
 
    sel->active = EINA_FALSE;
-   sel->widget = NULL;
    ELM_SAFE_FREE(sel->selbuf, free);
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -1852,7 +1853,7 @@ _x11_elm_cnp_selection_set(Ecore_X_Window xwin, Evas_Object *obj, Elm_Sel_Type s
      return elm_object_cnp_selection_clear(obj, selection);
 
    sel = _x11_selections + selection;
-   if (sel->loss_cb) sel->loss_cb(sel->loss_data, selection);
+   if (sel->widget != obj && sel->loss_cb) sel->loss_cb(sel->loss_data, selection);
    if (sel->widget)
      evas_object_event_callback_del_full(sel->widget, EVAS_CALLBACK_DEL,
                                          _x11_sel_obj_del, sel);
