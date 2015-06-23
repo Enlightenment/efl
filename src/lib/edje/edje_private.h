@@ -1285,6 +1285,7 @@ struct _Edje_Part_Description_Spec_Filter
    Eina_List     *sources; /* "part" or "buffer:part" */
    Eina_Hash     *data; /* "name" --> "data" */
    Eina_Bool      checked_data : 1; // checked whether this is a data item or embedded string
+   Eina_Bool      sources_set : 1;
    Eina_Bool      no_free : 1;
 };
 

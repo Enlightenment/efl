@@ -65,6 +65,7 @@ mixin Evas.Filter (Efl.Gfx.Filter)
       Efl.Gfx.Filter.padding.get;
       Efl.Gfx.Filter.source_set;
       Efl.Gfx.Filter.source_get;
+      Efl.Gfx.Filter.data_set;
       @virtual .input_alpha;
       @virtual .input_render;
       @virtual .dirty;

@@ -2570,7 +2570,7 @@ _legacy_strdup(const char *str)
 }
 #endif
 
-static void
+static Eina_Bool
 _filter_program_state_set(Evas_Filter_Program *pgm)
 {
    lua_State *L = pgm->L;
@@ -2646,8 +2646,12 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
                {
                   if ((value[0] == '-') && (value[1] == '-') && value[2] == '\n')
                     {
-                       int i = luaL_dostring(L, value);
-                       ERR("i %d", i);
+                       if (luaL_dostring(L, value) != 0)
+                         {
+                            eina_iterator_free(it);
+                            ERR("Failed to run value: %s", lua_tostring(L, -1));
+                            return EINA_FALSE;
+                         }
                     }
                   else
                     {
@@ -2658,17 +2662,20 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
              else
                {
                   lua_pushnil(L);
+                  lua_setglobal(L, name);
                }
           }
         eina_iterator_free(it);
      }
+
+   return EINA_TRUE;
 
 #undef JOINC
 #undef SETFIELD
 #undef SETCOLOR
 }
 
-static void
+static Eina_Bool
 _filter_program_reset(Evas_Filter_Program *pgm)
 {
    Evas_Filter_Instruction *instr;
@@ -2696,7 +2703,7 @@ _filter_program_reset(Evas_Filter_Program *pgm)
    _filter_program_buffers_set(pgm);
 
    // Reset state table
-   _filter_program_state_set(pgm);
+   return _filter_program_state_set(pgm);
 }
 
 /** Parse a style program */
@@ -2733,10 +2740,13 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
    if (ok)
      {
         pgm->lua_func = luaL_ref(L, LUA_REGISTRYINDEX);
-        _filter_program_reset(pgm);
-        lua_getglobal(L, _lua_errfunc_name);
-        lua_rawgeti(L, LUA_REGISTRYINDEX, pgm->lua_func);
-        ok = !lua_pcall(L, 0, LUA_MULTRET, -2);
+        ok =_filter_program_reset(pgm);
+        if (ok)
+          {
+             lua_getglobal(L, _lua_errfunc_name);
+             lua_rawgeti(L, LUA_REGISTRYINDEX, pgm->lua_func);
+             ok = !lua_pcall(L, 0, LUA_MULTRET, -2);
+          }
      }
 
    if (!ok)

@@ -520,7 +520,7 @@ _evas_filter_efl_gfx_filter_data_set(Eo *obj EINA_UNUSED, Evas_Filter_Data *pd,
           return;
      }
 
-   EINA_COW_WRITE_BEGIN(evas_object_filter_cow, fcow, Evas_Object_Filter_Data, fcow)
+   EINA_COW_WRITE_BEGIN(evas_object_filter_cow, pd->data, Evas_Object_Filter_Data, fcow)
      {
         if (!fcow->data)
           fcow->data = eina_hash_string_small_new(free);
@@ -529,7 +529,7 @@ _evas_filter_efl_gfx_filter_data_set(Eo *obj EINA_UNUSED, Evas_Filter_Data *pd,
           evas_filter_program_data_set_all(fcow->chain, fcow->data);
         fcow->changed = 1;
      }
-   EINA_COW_WRITE_END(evas_object_filter_cow, fcow, fcow);
+   EINA_COW_WRITE_END(evas_object_filter_cow, pd->data, fcow);
 }
 
 #include "evas_filter.eo.c"
