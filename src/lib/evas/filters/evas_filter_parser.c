@@ -2297,7 +2297,19 @@ _filter_program_buffers_set(Evas_Filter_Program *pgm)
         const char *source;
 
         EINA_ITERATOR_FOREACH(it, source)
-          _buffer_add(pgm, source, EINA_FALSE, source, EINA_FALSE);
+          {
+             // Cleanup name and avoid overriding existing globals
+             char name[64];
+             unsigned i;
+             snprintf(name, 64, "__source_%s", source);
+             name[63] = '\0';
+             for (i = 0; name[i]; i++)
+               {
+                  if (!isdigit(name[i]) && !isalpha(name[i]))
+                    name[i] = '_';
+               }
+             _buffer_add(pgm, name, EINA_FALSE, source, EINA_FALSE);
+          }
 
         eina_iterator_free(it);
      }
@@ -2631,10 +2643,22 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
              const char *name = tup->key;
              const char *value = tup->data;
              if (value)
-               lua_pushstring(L, value);
+               {
+                  if ((value[0] == '-') && (value[1] == '-') && value[2] == '\n')
+                    {
+                       int i = luaL_dostring(L, value);
+                       ERR("i %d", i);
+                    }
+                  else
+                    {
+                       lua_pushstring(L, value);
+                       lua_setglobal(L, name);
+                    }
+               }
              else
-               lua_pushnil(L);
-             lua_setglobal(L, name);
+               {
+                  lua_pushnil(L);
+               }
           }
         eina_iterator_free(it);
      }
