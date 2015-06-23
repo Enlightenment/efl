@@ -1621,9 +1621,6 @@ found:
                   savedtypes.imgfile);
         if (savedtypes.imgfile)
           {
-             char *entrytag;
-             static const char *tagstring =
-               "<item absize=240x180 href=file://%s></item>";
              ddata.x = savedtypes.x;
              ddata.y = savedtypes.y;
              ddata.action = act;
@@ -1631,25 +1628,12 @@ found:
              EINA_INLIST_FOREACH_SAFE(dropable->cbs_list, itr, cbs)
                {
                   /* If it's markup that also supports images */
-                  if ((cbs->types & ELM_SEL_FORMAT_MARKUP) &&
-                      (cbs->types & ELM_SEL_FORMAT_IMAGE))
-                    {
-                       int len;
-                       ddata.format = ELM_SEL_FORMAT_MARKUP;
-
-                       len = strlen(tagstring) + strlen(savedtypes.imgfile);
-                       entrytag = alloca(len + 1);
-                       snprintf(entrytag, len + 1, tagstring, savedtypes.imgfile);
-                       ddata.data = entrytag;
-                       cnp_debug("Insert %s\n", (char *)ddata.data);
-                       if ((cbs->types & dropable->last.format) && cbs->dropcb)
-                         cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
-                    }
-                  else if (cbs->types & ELM_SEL_FORMAT_IMAGE)
+                  if (cbs->types & ELM_SEL_FORMAT_IMAGE)
                     {
                        cnp_debug("Doing image insert (%s)\n", savedtypes.imgfile);
                        ddata.format = ELM_SEL_FORMAT_IMAGE;
                        ddata.data = (char *)savedtypes.imgfile;
+                       ddata.len = strlen(ddata.data);
                        if ((cbs->types & dropable->last.format) && cbs->dropcb)
                          cbs->dropcb(cbs->dropdata, dropable->obj, &ddata);
                     }
