@@ -402,6 +402,28 @@ _ecore_drm_output_backlight_shutdown(Ecore_Drm_Backlight *backlight)
    free(backlight);
 }
 
+static int
+_ecore_drm_output_subpixel_get(int subpixel)
+{
+   switch (subpixel)
+     {
+      case DRM_MODE_SUBPIXEL_UNKNOWN:
+        return 0; // WL_OUTPUT_SUBPIXEL_UNKNOWN;
+      case DRM_MODE_SUBPIXEL_NONE:
+        return 1; //WL_OUTPUT_SUBPIXEL_NONE;
+      case DRM_MODE_SUBPIXEL_HORIZONTAL_RGB:
+        return 2; //WL_OUTPUT_SUBPIXEL_HORIZONTAL_RGB;
+      case DRM_MODE_SUBPIXEL_HORIZONTAL_BGR:
+        return 3; // WL_OUTPUT_SUBPIXEL_HORIZONTAL_BGR;
+      case DRM_MODE_SUBPIXEL_VERTICAL_RGB:
+        return 4; // WL_OUTPUT_SUBPIXEL_VERTICAL_RGB;
+      case DRM_MODE_SUBPIXEL_VERTICAL_BGR:
+        return 5; //WL_OUTPUT_SUBPIXEL_VERTICAL_BGR;
+      default:
+        return 0; // WL_OUTPUT_SUBPIXEL_UNKNOWN;
+     }
+}
+
 static Ecore_Drm_Output *
 _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnector *conn, int x, int y, Eina_Bool cloned)
 {
@@ -428,7 +450,7 @@ _ecore_drm_output_create(Ecore_Drm_Device *dev, drmModeRes *res, drmModeConnecto
    output->cloned = cloned;
    output->phys_width = conn->mmWidth;
    output->phys_height = conn->mmHeight;
-   output->subpixel = conn->subpixel;
+   output->subpixel = _ecore_drm_output_subpixel_get(conn->subpixel);
 
    output->make = eina_stringshare_add("UNKNOWN");
    output->model = eina_stringshare_add("UNKNOWN");
