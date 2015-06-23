@@ -23,7 +23,6 @@ enum
    CNP_ATOM_TARGETS = 0,
    CNP_ATOM_ATOM,
    CNP_ATOM_LISTING_ATOMS = CNP_ATOM_ATOM,
-   CNP_ATOM_text_uri,
    CNP_ATOM_text_urilist,
    CNP_ATOM_text_x_vcard,
    CNP_ATOM_image_png,
@@ -452,14 +451,6 @@ static Cnp_Atom _atoms[CNP_N_ATOMS] = {
         .formats = ELM_SEL_FORMAT_MARKUP,
 #ifdef HAVE_ELEMENTARY_X
         .x_converter = _x11_general_converter,
-#endif
-   },
-   ARRAYINIT(CNP_ATOM_text_uri) {
-        .name = "text/uri",
-        .formats = ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE, /* Either images or entries */
-#ifdef HAVE_ELEMENTARY_X
-        .x_converter = _x11_general_converter,
-        .x_data_preparer = _x11_data_preparer_uri,
 #endif
    },
    ARRAYINIT(CNP_ATOM_text_urilist) {
@@ -930,8 +921,7 @@ _x11_notify_handler_targets(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Noti
           {
              if ((_atoms[j].x_atom == atomlist[i]) && (_atoms[j].x_data_preparer))
                {
-                  if ((j == CNP_ATOM_text_uri) ||
-                      (j == CNP_ATOM_text_urilist))
+                  if ((j == CNP_ATOM_text_urilist))
                     {
                        if (!_x11_is_uri_type_data(sel, notify)) continue;
                     }
@@ -3371,8 +3361,7 @@ _wl_drops_accept(const char *type)
                {
                 case ELM_SEL_FORMAT_TARGETS:
                 case ELM_SEL_FORMAT_IMAGE:
-                   if ((!strncmp(type, "text/uri", 8)) ||
-                         (!strncmp(type, "image/", 6)))
+                   if (!strncmp(type, "image/", 6))
                      {
                         wl_cnp_selection.requestwidget = drop->obj;
                         return EINA_TRUE;
