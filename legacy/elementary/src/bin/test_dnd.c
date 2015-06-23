@@ -105,6 +105,7 @@ _drag_data_extract(char **drag_data)
    if (s)
      p += FILESEP_LEN;
    s = strchr(p, '\n');
+   uri = p;
    if (s)
      {
         if (s - p > 0)
@@ -130,7 +131,6 @@ _drag_data_extract(char **drag_data)
      }
    else
      p = NULL;
-   uri = p;
    *drag_data = s;
 
    return uri;
