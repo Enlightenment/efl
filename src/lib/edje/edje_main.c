@@ -1,6 +1,5 @@
 #include "edje_private.h"
 
-extern int efreet_cache_update;
 static Edje_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Edje_Version * edje_version = &_version;
 
@@ -70,7 +69,6 @@ edje_init(void)
         goto shutdown_eet;
      }
 
-   efreet_cache_update = 0;
    if (!efreet_init())
      {
         ERR("Efreet init failed");
