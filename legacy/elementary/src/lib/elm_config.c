@@ -3065,8 +3065,7 @@ elm_config_all_flush(void)
    FILE *f;
    char buf[PATH_MAX];
 
-   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s/flush",
-                          _elm_profile);
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/flush");
    f = fopen(buf, "w+");
    if (f)
      {
