@@ -282,11 +282,11 @@ static struct Filter_Test_Case _test_cases[] = {
    { 5, 5, 5, 5, "a = buffer ({ 'alpha' }) blur ({ 5,dst = a }) bump ({ a, azimuth = 45.0, color = 'yellow' })", NULL },
 
    // Proxy tests  ({ RECT as a proxy object })
-   { 0, 0, 0, 0, "m = buffer ({ src = rect }) mask ({ m, fillmode = 'none' })", "rect" },
-   { 0, 0, 0, 0, "m = buffer ({ src = rect }) mask ({ m, fillmode = 'repeat_x_stretch_y' })", "rect" },
-   { 0, 0, 0, 0, "m = buffer ({ src = rect }) mask ({ m, fillmode = 'repeat' })", "rect" },
-   { 0, 0, 0, 0, "m = buffer ({ src = rect }) mask ({ m, fillmode = 'stretch' })", "rect" },
-   { 0, 0, 0, 0, "m = buffer ({ src = rect }) b = buffer ({ 'rgba' }) blend ({ m,dst = b, fillmode = 'repeat_x_stretch_y' }) blend ()", "rect" },
+   { 0, 0, 0, 0, "m = buffer ({ src = 'rect' }) mask ({ m, fillmode = 'none' })", "rect" },
+   { 0, 0, 0, 0, "m = buffer ({ src = 'rect' }) mask ({ m, fillmode = 'repeat_x_stretch_y' })", "rect" },
+   { 0, 0, 0, 0, "m = buffer ({ src = 'rect' }) mask ({ m, fillmode = 'repeat' })", "rect" },
+   { 0, 0, 0, 0, "m = buffer ({ src = 'rect' }) mask ({ m, fillmode = 'stretch' })", "rect" },
+   { 0, 0, 0, 0, "m = buffer ({ src = 'rect' }) b = buffer ({ 'rgba' }) blend ({ m,dst = b, fillmode = 'repeat_x_stretch_y' }) blend ()", "rect" },
 
    // Padding_set
    { 11, 22, 33, 44, "padding_set ({ 11,22,33,44 }) blend ()"}
@@ -400,13 +400,13 @@ START_TEST(evas_filter_text_render_test)
              eo_do(to,
                    efl_gfx_color_set(255, 255, 255, 255),
                    efl_gfx_filter_source_set(tc->source, o),
-                   efl_gfx_filter_program_set(tc->code, , "evas_test_filter"));
+                   efl_gfx_filter_program_set(tc->code, "evas_test_filter"));
           }
         else
           {
              eo_do(to,
                    efl_gfx_color_set(255, 255, 255, 255),
-                   efl_gfx_filter_program_set(tc->code, , "evas_test_filter"));
+                   efl_gfx_filter_program_set(tc->code, "evas_test_filter"));
           }
 
         evas_object_geometry_get(to, NULL, NULL, &w, &h);
