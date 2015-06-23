@@ -3,7 +3,7 @@ mixin Evas.Filter (Efl.Gfx.Filter)
    // Evas internal implementation
    legacy_prefix: null;
    methods {
-      @property changed {
+      @property changed @protected {
          set {
             [[Marks this filter as changed.]]
          }
@@ -11,7 +11,7 @@ mixin Evas.Filter (Efl.Gfx.Filter)
             val: bool;
          }
       }
-      @property invalid {
+      @property invalid @protected {
          set {
             [[Marks this filter as invalid.]]
          }
@@ -19,24 +19,24 @@ mixin Evas.Filter (Efl.Gfx.Filter)
             val: bool;
          }
       }
-      constructor {
+      constructor @protected {
          [[Initialize the Evas.Filter mixin.
 
            Should be called in a parent's class constructor.
          ]]
       }
-      destructor {
+      destructor @protected {
          [[Release all data held by this Evas.Filter.
 
            This may include image buffers allocated by the Evas engine.
            This should be called at the beginning of a parent's class destructor.
          ]]
       }
-      input_alpha {
+      input_alpha @protected {
          [[Called by Evas.Filter to determine whether the input is alpha or rgba.]]
          return: bool;
       }
-      input_render {
+      input_render @protected {
          [[Called by Evas.Filter when the parent class must render the input.
          ;
          ]]
@@ -51,7 +51,7 @@ mixin Evas.Filter (Efl.Gfx.Filter)
             do_async: bool;
          }
       }
-      dirty {
+      dirty @protected {
          [[Called when the filter changes must trigger a redraw of the object.
 
            Virtual, to be implemented in the parent class.

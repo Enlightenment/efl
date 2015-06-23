@@ -1,3 +1,5 @@
+#define EVAS_FILTER_PROTECTED
+
 #include "evas_common_private.h" /* Includes evas_bidi_utils stuff. */
 #include "evas_private.h"
 

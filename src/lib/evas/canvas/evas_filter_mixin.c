@@ -1,3 +1,5 @@
+#define EVAS_FILTER_PROTECTED
+
 #include "evas_common_private.h"
 #include "evas_private.h"
 #include "../../lib/efl/interfaces/efl_gfx_filter.eo.h"
