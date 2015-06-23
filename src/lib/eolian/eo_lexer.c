@@ -252,6 +252,116 @@ cend:
    if (tok) tok->value.s = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
 }
 
+enum Doc_Tokens {
+    DOC_MANGLED = -2, DOC_UNFINISHED = -1, DOC_TEXT = 0, DOC_SINCE = 1
+};
+
+static int
+doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool allow_since)
+{
+   Eina_Bool contdoc = EINA_FALSE;
+   eina_strbuf_reset(ls->buff);
+   for (;; contdoc = EINA_TRUE) switch (ls->current)
+     {
+      /* error case */
+      case '\0':
+        return DOC_UNFINISHED;
+      /* newline case: if two or more newlines are present, new paragraph
+       * if only one newline is present, append space to the text buffer
+       * when starting new paragraph, reset doc continutation
+       */
+      case '\n':
+      case '\r':
+        next_line(ls);
+        skip_ws(ls);
+        if (!is_newline(ls->current))
+          {
+             eina_strbuf_append_char(ls->buff, ' ');
+             continue;
+          }
+        while (is_newline(ls->current))
+          next_line_ws(ls);
+        eina_strbuf_trim(ls->buff);
+        return DOC_TEXT;
+      /* escape case: for any \X, output \X
+       * except for \\]], then output just ]]
+       */
+      case '\\':
+        next_char(ls);
+        if (ls->current == ']')
+          {
+             next_char(ls);
+             if (ls->current == ']')
+               {
+                  next_char(ls);
+                  eina_strbuf_append(ls->buff, "]]");
+               }
+             else
+               eina_strbuf_append(ls->buff, "\\]");
+          }
+        else
+          eina_strbuf_append_char(ls->buff, '\\');
+        continue;
+      /* terminating case */
+      case ']':
+        next_char(ls);
+        if (ls->current == ']')
+          {
+             /* terminate doc */
+             next_char(ls);
+             *term = EINA_TRUE;
+             eina_strbuf_trim(ls->buff);
+             return DOC_TEXT;
+          }
+        eina_strbuf_append_char(ls->buff, ']');
+        continue;
+      /* @since case - only when starting a new paragraph */
+      case '@':
+        eina_strbuf_append_char(ls->buff, '@');
+        next_char(ls);
+        while (ls->current && isalpha(ls->current))
+          {
+             eina_strbuf_append_char(ls->buff, ls->current);
+             next_char(ls);
+          }
+        if (contdoc)
+          continue;
+        if (!strcmp(eina_strbuf_string_get(ls->buff), "@since"))
+          {
+             /* since-token */
+             if (!allow_since)
+               return DOC_MANGLED;
+             *term = EINA_TRUE;
+             eina_strbuf_reset(ls->buff);
+             skip_ws(ls);
+             while (ls->current && (ls->current == '.' ||
+                                    ls->current == '_' ||
+                                    isalnum(ls->current)))
+               {
+                  eina_strbuf_append_char(ls->buff, ls->current);
+                  next_char(ls);
+               }
+             if (!eina_strbuf_length_get(ls->buff))
+               return DOC_UNFINISHED;
+             skip_ws(ls);
+             while (is_newline(ls->current))
+               next_line_ws(ls);
+             if (ls->current == ']')
+               next_char(ls);
+             if (ls->current != ']')
+               return DOC_MANGLED;
+             next_char(ls);
+             eina_strbuf_trim(ls->buff);
+             return DOC_SINCE;
+          }
+      /* default case - append character */
+      default:
+        eina_strbuf_append_char(ls->buff, ls->current);
+        next_char(ls);
+        continue;
+     }
+}
+
 void doc_error(Eo_Lexer *ls, const char *msg, Eolian_Documentation *doc, Eina_Strbuf *buf)
 {
    eina_stringshare_del(doc->summary);
@@ -269,168 +379,37 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
    doc->base.line = line;
    doc->base.column = column;
 
-   eina_strbuf_reset(ls->buff);
-
-   skip_ws(ls);
-   while (is_newline(ls->current))
-     next_line_ws(ls);
-
-   for (;;)
-     {
-        if (!ls->current)
-          {
-             doc_error(ls, "unfinished documentation", doc, NULL);
-             return; /* unreachable, for static analysis */
-          }
-        if (is_newline(ls->current))
-          {
-             next_line_ws(ls);
-             if (is_newline(ls->current))
-               {
-                  while (is_newline(ls->current))
-                    next_line_ws(ls);
-                  break;
-               }
-             else
-               eina_strbuf_append_char(ls->buff, ' ');
-          }
-        else
-          {
-             if (ls->current == ']')
-               {
-                  next_char(ls);
-                  if (ls->current != ']')
-                    eina_strbuf_append_char(ls->buff, ']');
-                  else
-                    {
-                       next_char(ls);
-                       eina_strbuf_trim(ls->buff);
-                       doc->summary = eina_stringshare_add(
-                           eina_strbuf_string_get(ls->buff));
-                       tok->value.doc = doc;
-                       return;
-                    }
-               }
-             eina_strbuf_append_char(ls->buff, ls->current);
-             next_char(ls);
-          }
-     }
-
-   eina_strbuf_trim(ls->buff);
-   doc->summary = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
-
    Eina_Strbuf *rbuf = eina_strbuf_new();
-   Eina_Bool had_nl = EINA_TRUE;
 
-   for (;;)
+   Eina_Bool term = EINA_FALSE;
+   while (!term)
      {
-        if (!ls->current)
+        int read = doc_lex(ls, &term, !!doc->summary);
+        switch (read)
           {
-             doc_error(ls, "unfinished documentation", doc, rbuf);
-             return; /* unreachable, for static analysis */
-          }
-
-        eina_strbuf_reset(ls->buff);
-
-        if (had_nl && ls->current == '@')
-          {
-#define LEX_SINCE(c, failure) \
-        next_char(ls); \
-        if (ls->current != c) \
-          { \
-             eina_strbuf_append(ls->buff, failure); \
-             goto normal; \
-          }
-
-             LEX_SINCE('s', "@");
-             LEX_SINCE('i', "@s");
-             LEX_SINCE('n', "@si");
-             LEX_SINCE('c', "@sin");
-             LEX_SINCE('e', "@sinc");
-             LEX_SINCE(' ', "@since");
-
-#undef LEX_SINCE
-
-             skip_ws(ls);
-
-             /* gotta have a value */
-             if (!ls->current || is_newline(ls->current) || ls->current == ']')
-               goto docerr;
-
-             /* append the since string */
-             while (ls->current && ls->current != ']' && !is_newline(ls->current))
-               {
-                  eina_strbuf_append_char(ls->buff, ls->current);
-                  next_char(ls);
-               }
-
-             /* trigger "unfinished documentation" if things end early */
-             if (!ls->current)
-               continue;
-
-             /* strip final whitespace */
-             while (isspace(ls->current))
-               {
-                  if (is_newline(ls->current))
-                    next_line(ls);
-                  else
-                    next_char(ls);
-               }
-
-             if (ls->current != ']') goto docerr;
-             next_char(ls);
-             if (ls->current != ']') goto docerr;
-             next_char(ls);
-
-             eina_strbuf_trim(ls->buff);
-             doc->since = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
-
-             goto done;
-docerr:
+           case DOC_MANGLED:
              doc_error(ls, "mangled documentation", doc, rbuf);
              return;
-          }
-
-normal:
-        had_nl = EINA_FALSE;
-        while (ls->current && !is_newline(ls->current))
-          {
-             if (ls->current == ']')
-               {
-                  next_char(ls);
-                  if (ls->current != ']')
-                    eina_strbuf_append_char(ls->buff, ']');
-                  else
-                    {
-                       next_char(ls);
-                       eina_strbuf_trim(ls->buff);
-                       eina_strbuf_append(rbuf, eina_strbuf_string_get(ls->buff));
-                       goto done;
-                    }
-               }
-             eina_strbuf_append_char(ls->buff, ls->current);
-             next_char(ls);
-          }
-        eina_strbuf_trim(ls->buff);
-        eina_strbuf_append(rbuf, eina_strbuf_string_get(ls->buff));
-
-        if (is_newline(ls->current))
-          {
-             next_line_ws(ls);
-             /* new paragraph */
-             if (is_newline(ls->current))
-               eina_strbuf_append(rbuf, "\n\n");
+           case DOC_UNFINISHED:
+             doc_error(ls, "unfinished documentation", doc, rbuf);
+             return;
+           case DOC_TEXT:
+             if (!doc->summary)
+               doc->summary = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
              else
-               eina_strbuf_append_char(rbuf, ' ');
-             while (is_newline(ls->current))
-               next_line_ws(ls);
-             had_nl = EINA_TRUE;
+               {
+                  if (eina_strbuf_length_get(rbuf))
+                    eina_strbuf_append(rbuf, "\n\n");
+                  eina_strbuf_append(rbuf, eina_strbuf_string_get(ls->buff));
+               }
+             break;
+           case DOC_SINCE:
+             doc->since = eina_stringshare_add(eina_strbuf_string_get(ls->buff));
+             break;
           }
      }
 
-done:
-   eina_strbuf_trim(rbuf);
-   if (eina_strbuf_string_get(rbuf)[0])
+   if (eina_strbuf_length_get(rbuf))
      doc->description = eina_stringshare_add(eina_strbuf_string_get(rbuf));
    eina_strbuf_free(rbuf);
    tok->value.doc = doc;
