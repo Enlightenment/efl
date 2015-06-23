@@ -257,7 +257,7 @@ enum Doc_Tokens {
 };
 
 static int
-doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool allow_since)
+doc_lex(Eo_Lexer *ls, Eina_Bool *term)
 {
    int tokret = -1;
    Eina_Bool contdoc = EINA_FALSE;
@@ -328,8 +328,6 @@ doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool allow_since)
         if (!strcmp(eina_strbuf_string_get(ls->buff), "@since"))
           {
              /* since-token */
-             if (!allow_since)
-               return DOC_MANGLED;
              eina_strbuf_reset(ls->buff);
              skip_ws(ls);
              while (ls->current && (ls->current == '.' ||
@@ -389,7 +387,7 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
    Eina_Bool term = EINA_FALSE;
    while (!term)
      {
-        int read = doc_lex(ls, &term, !!doc->summary);
+        int read = doc_lex(ls, &term);
         switch (read)
           {
            case DOC_MANGLED:
@@ -416,6 +414,8 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
 
    if (eina_strbuf_length_get(rbuf))
      doc->description = eina_stringshare_add(eina_strbuf_string_get(rbuf));
+   if (!doc->summary)
+     doc->summary = eina_stringshare_add("No description supplied.");
    eina_strbuf_free(rbuf);
    tok->value.doc = doc;
 }
