@@ -2233,30 +2233,4 @@ _evas_text_efl_gfx_filter_program_set(Eo *obj, Evas_Text_Data *pd EINA_UNUSED, c
    eo_do_super(obj, MY_CLASS, efl_gfx_filter_program_set(code, name));
 }
 
-EOLIAN void
-_evas_text_efl_gfx_filter_program_get(Eo *obj, Evas_Text_Data *pd EINA_UNUSED, const char **code, const char **name)
-{
-   eo_do_super(obj, MY_CLASS, efl_gfx_filter_program_get(code, name));
-}
-
-EOLIAN void
-_evas_text_efl_gfx_filter_source_set(Eo *obj, Evas_Text_Data *pd EINA_UNUSED, const char *name, Efl_Gfx_Base *source)
-{
-   eo_do_super(obj, MY_CLASS, efl_gfx_filter_source_set(name, source));
-}
-
-EOLIAN void
-_evas_text_efl_gfx_filter_source_get(Eo *obj, Evas_Text_Data *pd EINA_UNUSED, const char *name, Efl_Gfx_Base **source)
-{
-   eo_do_super(obj, MY_CLASS, efl_gfx_filter_source_get(name, source));
-}
-
-EOLIAN void
-_evas_text_efl_gfx_filter_state_set(Eo *obj, Evas_Text_Data *pd EINA_UNUSED,
-                                    const char *cur_state, double cur_val,
-                                    const char *next_state, double next_val, double pos)
-{
-   eo_do_super(obj, MY_CLASS, efl_gfx_filter_state_set(cur_state, cur_val, next_state, next_val, pos));
-}
-
 #include "canvas/evas_text.eo.c"

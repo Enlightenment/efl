@@ -327,10 +327,6 @@ class Evas.Text (Evas.Object, Efl.Text, Efl.Text_Properties, Evas.Filter)
       Efl.Text_Properties.font_source.get;
       Efl.Text_Properties.font_source.set;
       Efl.Gfx.Filter.program.set;
-      Efl.Gfx.Filter.program.get;
-      Efl.Gfx.Filter.source_set;
-      Efl.Gfx.Filter.source_get;
-      Efl.Gfx.Filter.state.set;
       Evas.Filter.input_alpha;
       Evas.Filter.input_render;
       Evas.Filter.dirty;
