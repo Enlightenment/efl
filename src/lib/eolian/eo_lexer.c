@@ -259,6 +259,7 @@ enum Doc_Tokens {
 static int
 doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool allow_since)
 {
+   int tokret = -1;
    Eina_Bool contdoc = EINA_FALSE;
    eina_strbuf_reset(ls->buff);
    for (;; contdoc = EINA_TRUE) switch (ls->current)
@@ -281,8 +282,8 @@ doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool allow_since)
           }
         while (is_newline(ls->current))
           next_line_ws(ls);
-        eina_strbuf_trim(ls->buff);
-        return DOC_TEXT;
+        tokret = DOC_TEXT;
+        goto exit_with_token;
       /* escape case: for any \X, output \X
        * except for \\]], then output just ]]
        */
@@ -308,10 +309,8 @@ doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool allow_since)
         if (ls->current == ']')
           {
              /* terminate doc */
-             next_char(ls);
-             *term = EINA_TRUE;
-             eina_strbuf_trim(ls->buff);
-             return DOC_TEXT;
+             tokret = DOC_TEXT;
+             goto terminated;
           }
         eina_strbuf_append_char(ls->buff, ']');
         continue;
@@ -319,19 +318,18 @@ doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool allow_since)
       case '@':
         eina_strbuf_append_char(ls->buff, '@');
         next_char(ls);
+        if (contdoc)
+          continue;
         while (ls->current && isalpha(ls->current))
           {
              eina_strbuf_append_char(ls->buff, ls->current);
              next_char(ls);
           }
-        if (contdoc)
-          continue;
         if (!strcmp(eina_strbuf_string_get(ls->buff), "@since"))
           {
              /* since-token */
              if (!allow_since)
                return DOC_MANGLED;
-             *term = EINA_TRUE;
              eina_strbuf_reset(ls->buff);
              skip_ws(ls);
              while (ls->current && (ls->current == '.' ||
@@ -343,16 +341,8 @@ doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool allow_since)
                }
              if (!eina_strbuf_length_get(ls->buff))
                return DOC_UNFINISHED;
-             skip_ws(ls);
-             while (is_newline(ls->current))
-               next_line_ws(ls);
-             if (ls->current == ']')
-               next_char(ls);
-             if (ls->current != ']')
-               return DOC_MANGLED;
-             next_char(ls);
-             eina_strbuf_trim(ls->buff);
-             return DOC_SINCE;
+             tokret = DOC_SINCE;
+             goto force_terminate;
           }
       /* default case - append character */
       default:
@@ -360,6 +350,21 @@ doc_lex(Eo_Lexer *ls, Eina_Bool *term, Eina_Bool allow_since)
         next_char(ls);
         continue;
      }
+
+force_terminate:
+   skip_ws(ls);
+   while (is_newline(ls->current))
+     next_line_ws(ls);
+   if (ls->current == ']')
+     next_char(ls);
+   if (ls->current != ']')
+     return DOC_MANGLED;
+terminated:
+   next_char(ls);
+   *term = EINA_TRUE;
+exit_with_token:
+   eina_strbuf_trim(ls->buff);
+   return tokret;
 }
 
 void doc_error(Eo_Lexer *ls, const char *msg, Eolian_Documentation *doc, Eina_Strbuf *buf)
