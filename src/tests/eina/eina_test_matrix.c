@@ -47,6 +47,9 @@ START_TEST(eina_matrix4)
    fail_if(!eina_matrix4_normalized(&n, &m));
    fail_if(eina_matrix4_type_get(&n) != EINA_MATRIX_TYPE_IDENTITY);
 
+   fail_if(!eina_matrix4_inverse(&n, &m));
+   fail_if(eina_matrix4_type_get(&n) != EINA_MATRIX_TYPE_IDENTITY);
+
    eina_matrix4_values_get(&m,
                            &xx, &xy, &xz, &xw,
                            &yx, &yy, &yz, &yw,
