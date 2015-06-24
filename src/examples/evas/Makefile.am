@@ -314,6 +314,7 @@ EXTRA_PROGRAMS += evas_cxx_rectangle
 evas_cxx_rectangle_SOURCES = evas_cxx_rectangle.cc
 evas_cxx_rectangle_LDADD = $(ECORE_EVAS_COMMON_LDADD)
 evas_cxx_rectangle_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS) @EINA_CXX_CFLAGS@ @EO_CXX_CFLAGS@ @EVAS_CXX_CFLAGS@ \
+-I$(top_builddir)/src/lib/evas/canvas/ \
 $(AM_CPPFLAGS) @EVAS_CFLAGS@
 
 endif

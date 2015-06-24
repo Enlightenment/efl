@@ -41,8 +41,10 @@ namespace efl { namespace eolian { namespace grammar {
 struct include_dependencies
 {
    eo_class const& _cls;
-   include_dependencies(eo_class const& cls)
+   eo_generator_options const& _opts;
+   include_dependencies(eo_class const& cls, eo_generator_options const& opts)
      : _cls(cls)
+     , _opts(opts)
    {}
 };
 
@@ -58,7 +60,8 @@ operator<<(std::ostream& out, include_dependencies const& x)
           it_p != last_p; ++it_p)
        for (eolian_type const& subtype : (*it_p).type.parts)
          for (std::string header : subtype.includes)
-           headers.insert(header);
+           if (header != x._opts.header_decl_file_name)
+             headers.insert(header);
 
    for (auto it = cls.functions.begin(), last  = cls.functions.end();
         it != last; ++it)
@@ -66,7 +69,8 @@ operator<<(std::ostream& out, include_dependencies const& x)
              it_p != last_p; ++it_p)
           for (eolian_type const& subtype : (*it_p).type.parts)
             for (std::string header : subtype.includes)
-              headers.insert(header);
+              if (header != x._opts.header_decl_file_name)
+                headers.insert(header);
 
    for (std::string header : headers)
      out << "#include <" << header << ">" << endl;
@@ -111,7 +115,7 @@ include_headers(std::ostream& out,
      {
        out << "#include \"" << cxx_header << "\"" << endl;
      }
-   out << include_dependencies(cls) << endl;
+   out << include_dependencies(cls, opts) << endl;
 }
 
 inline void

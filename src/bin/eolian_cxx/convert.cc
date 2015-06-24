@@ -302,7 +302,7 @@ convert_eolian_functions(efl::eolian::eo_class& cls, Eolian_Class const& klass)
           Eolian_Function const& func = *(::eolian_constructor_function_get(&ctor));
 
           efl::eolian::eo_function f;
-          if (::eolian_function_type_get(&func) != EOLIAN_PROPERTY)
+          if (function_op_type(func) == EOLIAN_METHOD)
             f = _convert_function(klass, func);
           else
             f = _convert_property_set_to_function(klass, func);

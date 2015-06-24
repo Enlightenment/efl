@@ -35,12 +35,13 @@ tests_ecore_audio_cxx_cxx_compile_test_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/efl \
 -I$(builddir)/src/lib/efl \
 -I$(srcdir)/src/lib/efl \
+-I$(top_builddir)/src/lib/evas/canvas/ \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_audio_cxx\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/ecore_audio_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_audio_cxx\" \
-@CHECK_CFLAGS@ @ECORE_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_AUDIO_CFLAGS@ \
-@ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EO_CXX_CFLAGS@ @ECORE_AUDIO_CXX_CFLAGS@
+@CHECK_CFLAGS@ @ECORE_CFLAGS@ @EINA_CFLAGS@ @EVAS_CFLAGS@ @EO_CFLAGS@ @ECORE_AUDIO_CFLAGS@ \
+@ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EVAS_CXX_CFLAGS@ @EO_CXX_CFLAGS@ @ECORE_AUDIO_CXX_CFLAGS@
 
 tests_ecore_audio_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_ECORE_LIBS@
 tests_ecore_audio_cxx_cxx_compile_test_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@

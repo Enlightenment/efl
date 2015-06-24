@@ -100,14 +100,14 @@ Eo** to_c(T* v, typename std::enable_if<std::is_convertible<T*, ::efl::eo::concr
 }
 
 template <typename R, typename T>
-R to_native(T const& v)
+R to_native(T& v)
 {
    static_assert(sizeof(T) == sizeof(R), "");
    return v.native_handle();
 }
 
 template <typename R, typename T>
-R to_native(eina::optional<T> const& v)
+R to_native(eina::optional<T>& v)
 {
    static_assert(sizeof(T) == sizeof(R), "");
    if (!v)

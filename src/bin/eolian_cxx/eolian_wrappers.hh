@@ -97,19 +97,6 @@ class_eo_name(Eolian_Class const& klass)
      (find_replace(class_full_name(klass) + "_" + suffix, ".", "_"));
 }
 
-inline std::string
-class_format_cxx(std::string const& fullname)
-{
-   std::string s = fullname;
-   auto found = s.find(".");
-   while (found != std::string::npos)
-     {
-        s.replace(found, 1, "::");
-        found = s.find(".");
-     }
-   return s;
-}
-
 inline efl::eolian::eo_class::eo_class_type
 class_type(Eolian_Class const& klass)
 {

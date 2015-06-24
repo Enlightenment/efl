@@ -34,7 +34,7 @@ tests_edje_cxx_cxx_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/efl/interfaces/ \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/edje_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/edje_cxx\" \
-@CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EDJE_CXX_CFLAGS@ @EO_CXX_CFLAGS@ \
+@CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EVAS_CXX_CFLAGS@ @EDJE_CXX_CFLAGS@ @EO_CXX_CFLAGS@ \
 @ECORE_CFLAGS@ @EINA_CFLAGS@ @EVAS_CFLAGS@ @EDJE_CFLAGS@ @EO_CFLAGS@
 tests_edje_cxx_cxx_compile_test_LDADD = @CHECK_LIBS@ @USE_EDJE_LIBS@
 tests_edje_cxx_cxx_compile_test_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
